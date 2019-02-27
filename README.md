@@ -15,7 +15,7 @@
 |    ⌦ | Canc         |    ⏏ | Eject        |
 |    ⎋ | Esc          |   Fn | Funzione     |
 
-######Azioni contestuali per i campi di testo (riferimento: TextEdit)
+###### Azioni contestuali per i campi di testo (riferimento: TextEdit)
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tasti&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Effetto | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tasti&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Effetto |
 | :---: | :--- | :---: | :--- |
@@ -29,7 +29,7 @@
 | `⌥⌫` | cancella una **parola** all'**indietro** | <br />`⌥⌦`<br /><br />`Fn⌥⌫`<br />&#x200b; | cancella una **parola** in **avanti** |
 | `⌘⌫` | cancella tutto il testo fino all'**inizio** della **riga** | <br />`⌘⌦`<br /><br />`Fn⌘⌫`<br />&#x200b; | cancella tutto il testo fino alla **fine** della **riga** |
 
-######Tasti funzione
+###### Tasti funzione
 
 | Tasti | Effetto |
 | :---: | :--- |
@@ -43,7 +43,7 @@
 
 # Sistema
 
-###Comandi globali
+### Comandi globali
 - **Logout utente**: `⇧⌘Q`
 - **Manda in stop**¹: `⌃⇧⌽` `⌃⇧⏏`
 - **Manda in standby**: `⌘⌥⌽` `⌘⌥⏏`
@@ -63,13 +63,13 @@
 
 ¹ **Impostare la richiesta password immediata**:<br />Preferenze di sistema → Sicurezza e Privacy → Generali → `Richiedi Password`
 
-###Applicazioni in esecuzione
+### Applicazioni in esecuzione
 - **Sfoglia applicazioni aperte** (avanti / indietro): `⌘⇥` `⇧⌘⇥`
 - **Passa all'app minimizzata** (mantenendo premuto `⌘`): `⌥` poi rilasciare
 - **Chiudi applicazione** (mantenendo premuto `⌘`): `Q`
 - **Mostra finestre aperte e documenti recenti** (mantenendo premuto `⌘`): `1`
 
-###Testo e selezione
+### Testo e selezione
 - **Copia / Taglia / Incolla**: `⌘C` / `⌘X` / `⌘V`
 - **Formato → Grassetto**: `⌘B`
 - **Formato → Corsivo**: `⌘I`
@@ -78,40 +78,40 @@
 - **Selettore emoji**: `⌃⌘␣`
 - **Selezione testo in un'area specifica**: `⌥` + clic e trascinamento
 
-###Spotlight (Ricerca)
+### Spotlight (Ricerca)
 - **Ricerca**: `⌘␣`
 - **Zoom in delle immagini fino a 100% / Zoom out**²: `⌥` (tenere premuto)
 - **Mostra percorso risultato**: `⌘` (tenere premuto)
 
 ² Solo se è attivo '**Utilizza le abbreviazioni da tastiera per ingrandire**':<br />Preferenze di Sistema → Accessibilità → `Zoom`
 
-###Audio e video
+### Audio e video
 - **Regolazione audio con bip**: `⇧ Vol↑` `⇧ Vol↓`
 - **Regolazione fine audio**: `⌥⇧ Vol↑` `⌥⇧ Vol↓`
 - **Regolazione fine luminosità**: `⌥⇧ Lum↑` `⌥⇧ Lum↓`
 
-###Accessibilità
+### Accessibilità
 - **Mostra PiP** (Picture-in-picture): `⌃⌥`
 - **Zoom in / out**: `⌥⌘0` / `⌥⌘-`
 - **Zoom in / out**: `^` + Mouse ↑↓
 - **Zoom cursore**: `⌃⌥`
 
-###Screenshot (Istantanea schermo)
+### Screenshot (Istantanea schermo)
 - **Schermo intero**: `⌘⇧3`
 - **Schermo intero (appunti)**: `⌃⌘⇧3`
 - **Area**: `⌘⇧4`
 - **Finestra**: `⌘⇧4␣`
 - **Opzioni avanzate**: `⌘⇧5`
 
-###Quick Look (Anteprima rapida)
+### Quick Look (Anteprima rapida)
 - **Apri / chiudi anteprima**: `␣`
 - **Apri / chiudi anteprima a tutto schermo**: `⌥␣`
 - **Zoom in delle immagini a 100% / Zoom out**: `⌥`
 
-###Barra dei menu
+### Barra dei menu
 - **Sposta un'icona**: `⌘` + trascinamento
 
-###Finder
+### Finder
 
 - **Copia / Incolla**: `⌘C` / `⌘V`
 - **Copia / Sposta**: `⌘C` / `⌥⌘V`
@@ -132,13 +132,13 @@
 - **Sposta una finestra in secondo piano**: `⌘` + Clic e trascinamento
 - **Aggiungi file / app alla barra degli strumenti**: `⌘` + Clic e trascinamento dell'elemento nella posizione desiderata
 
-###TextEdit
+### TextEdit
 - **Salva col nome**: `⌘⇧S`³
 - **Incolla e mantieni lo stile**: `⌘V`³
 
 <br />
 
-###³ Scorciatoie personalizzate globali
+### ³ Scorciatoie personalizzate globali
 
 **Preferenze di Sistema** → Tastiera → Abbreviazioni → Abbreviazioni app → `+`
 Digitare la funzione esattamente come appare nel menu (con eventuali `…` finali)
@@ -154,8 +154,8 @@ Digitare la funzione esattamente come appare nel menu (con eventuali `…` final
 
 # Applicazioni
 
-###After Effects
-######Timeline
+### After Effects
+###### Timeline
 - **Riproduzione in tempo reale dall'inizio**: `0` (Tastierino)
 - **Riproduzione in tempo reale dall'inizio con audio**: `,` (Tastierino)
 - **Zoom in**: `.`
@@ -170,26 +170,26 @@ Personalizzate tramite le scelte rapide da tastiera **Roccobot**:
 - **Aggiungi alla coda di Adobe Media Encoder**: `^⌘M`
 - **Chiudi progetto**: `⌘W`
 
-######Fotogramma
+###### Fotogramma
 - **Zoom in**: `+`
 - **Zoom out**: `-`
 - **Zoom 200%**: `<`
 - **Adatta immagine**: `⇧<`
 
-######Pannelli
+###### Pannelli
 - **Area di lavoro ↔ Timeline**: `à`
 - **Massimizza / Ripristina pannello attivo**: `'`
 
-###Illustrator
+### Illustrator
 - **Vista wireframe on / off**: `⌘Y`
 - **Crea maschera di ritaglio (due oggetti selezionati, maschera sopra)**: `⌘7`
 
-###Lightroom
+### Lightroom
 - **Info immagine (1 / 2 / off)**: `I`
 - **Regola con maschera al volo**: `⌥` + Spostamento slider di regolazione
 - **Regolazione automatica parametro**: `⇧` + Doppio clic sul cursore dello slider
 
-###Photoshop
+### Photoshop
 - **Aumenta / diminuisci la dimensione del pennello**: `⌃⌥→` / `⌃⌥←`
 - **Aumenta / diminuisci la sfumatura del pennello**: `⌃⌥↑` / `⌃⌥↓`
 - **Riempi selezione (colore primario, opacità 100%)**: `⌥⌫`
@@ -248,21 +248,21 @@ Opzionali (compromettono il funzionamento di *Vista corrente su nuovo livello*):
 | File → Esporta → Esportazione rapida come PNG (livello attivo) | `⌘⌥⇧'` |
 | Livello → Unisci visibili | `⌘⇧ù` |
 
-###Alfred
+### Alfred
 - **Attivazione (ricerca o <a href="https://www.alfredapp.com/help/getting-started/cheatsheet/">comando</a>)**: `^␣`
 
-###Alt-C
+### Alt-C
 - **Copia**: `⌃⌥C`
 - **Incolla**: `⌃⌥V`
 
-###Annotate
+### Annotate
 - **Cattura area**: `⌘⇧5`
 - **Cattura finestra**: `⌘⇧6`
 - **Cattura appunti**: `⌘⇧7`
 - **Cattura schermo**: `⌘⇧8`
 - **Porta in primo piano**: `⌘⇧0`
 
-###BetterSnapTool
+### BetterSnapTool
 - **Ridimensiona la finestra ad 1/2 orizzontale dello schermo**:
 Alto: `⌃⌘U`
 Basso: `⌃⌘J`
@@ -280,21 +280,21 @@ Basso / destra: `⌃⌘L`
 
 - **Ripristina dimensione e posizione della finestra**: `⌃⌘0`
 
-###Chrome
+### Chrome
 - **Scorri le schede verso destra / sinistra**: `^⇥` `^⇧⇥`
 - **Seleziona la scheda a destra / sinistra**: `^→` `^←`
 - **Riapri l'ultima scheda chiusa**: `⌘⇧T`
 - **Cancella i dati di navigazione**: `⌘⇧⌫`
 - **Ricarica la pagina senza cache**: `⌘⇧R` oppure `⇧` + clic sul tasto ⟳
 
-###Clipy
+### Clipy
 - **Menu applicazione**: `⌘<`
 - **Storico appunti**: `⌃<`
 - **Menu snippet**: `⌃\`
 - **Menu snippet più usati**: `^1`
 - **Menu snippet di lavoro**: `^2`
 
-###CotEditor
+### CotEditor
 - **Usa selezione per la ricerca**: `⌘E`
 - **Vai alla selezione**: `⌘J`
 - **Duplica riga**: `⌘D`
@@ -318,23 +318,23 @@ Basso / destra: `⌃⌘L`
 - **Scrivi in lettere minuscole**: `^⌘↓`
 - **Inserisci \<br />**: `⇧↩`
 
-###Downie
+### Downie
 - **Estrazione guidata dall'utente**: `⌘E`
 
-###ScreenFlow
+### ScreenFlow
 - **Inizio / Fine registrazione**: `⌘⇧2`
 
-###ScreenToLayers
+### ScreenToLayers
 - **Cattura schermata**: `⌘5`
 - **Cattura schermata con ritardo**: `⌘6`
 
-###Short Menu
+### Short Menu
 - **Copia link breve**: `⌃⌘C`
 
-###VLC
+### VLC
 \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/ShortcutsVLC.png">Vedi tabella</a>
 
-###Xee
+### Xee
 \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/ShortcutsXee.png">Vedi tabella</a>
 
 <br />
@@ -343,7 +343,7 @@ Basso / destra: `⌃⌘L`
 
 # MENU ESTESI
 
-######Opzioni aggiuntive dei menu
+###### Opzioni aggiuntive dei menu
 
 | Dock | |
 | ---: | :----------- |
@@ -387,16 +387,16 @@ Basso / destra: `⌃⌘L`
 
 # IMPOSTAZIONI
 
-###Istantanea Schermo
+### Istantanea Schermo
 - **Disattivare l'anteprima a comparsa e azzerare il ritardo di cattura**:
 `⌘⇧5` per avviare la cattura → `Opzioni` → Togliere la spunta da *Mostra anteprima fluttuante*
 
-###Chrome
+### Chrome
 - **Abilitare il salvataggio delle password in tutti i campi**:
 Aprire l'URL speciale `chrome://flags/#enable-password-force-saving`
 e impostare la funzionalità come `Enabled`
 
-###Dropbox
+### Dropbox
 - **Disattivare l'integrazione con il menu contestuale di Finder**:
 Cancellare il file `DropboxHelperInstaller X.Y.tgz` dal percorso
 `/Applications/Dropbox.app/Contents/Resources/`
@@ -409,7 +409,7 @@ Cancellare il file `DropboxHelperInstaller X.Y.tgz` dal percorso
 
 <img src="http://roccobot.altervista.org/_altervista_ht/a/Tastiera.gif">
 
-###Tastiera estesa ITA
+### Tastiera estesa ITA
 
 | Tasto | `⇧` | `⌥` | `⇧⌥` |
 | :---: | :---: | :---: | :---: |
@@ -473,9 +473,9 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 | `⌥9` | `a` `e` `i` `o` `u` `A` `E` `I` `O` `U` | **à**, **è**, **ì**, **ò**, **ù**, **À**, **È**, **Ì**, **Ò**, **Ù** |
 | `⌥ì` | `a` `e` `i` `o` `u` `A` `E` `I` `O` `U` | **â**, **ê**, **î**, **ô**, **û**, **Â**, **Ê**, **Î**, **Ô**, **Û** |
 
-###\\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/Caratteri.html">Caratteri speciali</a>
+### \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/Caratteri.html">Caratteri speciali</a>
 
-###Sostituzione testo
+### Sostituzione testo
 (Preferenze di Sistema → Tastiera → Testo)
 
 | Sostituisci | con |
@@ -490,7 +490,7 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 
 # PERCORSI
 
-###Variabili*
+### Variabili*
 
 `/Volumes` = Elenco dei dischi locali (anche virtuali)
 
@@ -500,7 +500,7 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 
 <br />
 
-###Cartelle di sistema
+### Cartelle di sistema
 
 - **Dispositivo** (Computer, Rete, File Recenti, Tutti i file, AirDrop, iCloud Drive)
 
@@ -545,7 +545,7 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 		/Library/QuickLook
 		/System/Library/QuickLook
 
-###Adobe
+### Adobe
 
 - **Impostazioni per tutti gli utenti**
 
@@ -565,7 +565,7 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 
 		~/Documents/Adobe
 
-###Microsoft
+### Microsoft
 
 - **Modelli di Office**
 
@@ -577,9 +577,9 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 
 # TERMINALE
 
-###Impostazioni avanzate
+### Impostazioni avanzate
 
-######Finder
+###### Finder
 Impedire la creazione di file di sistema su drive di rete:
 
 	defaults write com.apple.desktopservices DSDontWriteNetworkStores true
@@ -596,7 +596,7 @@ Mostrare / nascondere il percorso completo come titolo delle finestre:
 	defaults write com.apple.finder _FXShowPosixPathInTitle -bool NO
 	killall Finder
 
-######GateKeeper
+###### GateKeeper
 Abilitare 'Dovunque' come origine delle applicazioni consentite:
 
 	sudo spctl --master-disable
@@ -605,7 +605,7 @@ Ripristinare l'impostazione predefinita:
 
 	sudo spctl --master-enable
 
-######Dock
+###### Dock
 
 Impostare il ritardo del Dock (in modalità 'Mostra e nascondi') a 5 secondi:
 
@@ -617,9 +617,9 @@ Ripristinare il comportamento definitivo:
 
 <br />
 
-###Correzione di errori, manutenzione e pulizia
+### Correzione di errori, manutenzione e pulizia
 
-######Sistema
+###### Sistema
 
 Pulizia della cache dei font:
 
@@ -631,9 +631,9 @@ Risolvere il conflitto dell'applicazione di posta predefinita:
 
 <br />
 
-###Operazioni avanzate su dischi e volumi
+### Operazioni avanzate su dischi e volumi
 
-######DiskUtil
+###### DiskUtil
 
 | Comando Terminale | Effetto |
 | :--- | :--- |
@@ -660,7 +660,7 @@ Risolvere il conflitto dell'applicazione di posta predefinita:
 | `hfsx` | Mac OS Extended (Case-sensitive) |
 | `jhfsx` | Mac OS Extended (Case-sensitive, Journaled) |
 
-#####Casistiche
+##### Casistiche
 
 - **Inizializzazione di un disco non riconosciuto o con errore 'Spazio insufficiente' di MediaKit**:
  
@@ -732,7 +732,7 @@ Si consiglia di rinominare l'installer di macOS con un nome di una sola parola; 
 
 # MODALITÀ DI AVVIO SPECIALI
 
-######Premere la combinazione di tasti immediatamente dopo l'accensione e mantenere premuto fino al caricamento del sistema
+###### Premere la combinazione di tasti immediatamente dopo l'accensione e mantenere premuto fino al caricamento del sistema
 
 | Tasto | Tipo di avvio |
 | ---: | :--- |
@@ -757,8 +757,8 @@ Si consiglia di rinominare l'installer di macOS con un nome di una sola parola; 
 -
 
 
-###\\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/Formati.html">Risoluzioni, schermi, standard video, dispositivi</a>
+### \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/Formati.html">Risoluzioni, schermi, standard video, dispositivi</a>
 
 -
 
-###\\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/AdServers.html">Liste di filtri per sicurezza, privacy e blocco pubblicità</a>
+### \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/AdServers.html">Liste di filtri per sicurezza, privacy e blocco pubblicità</a>
