@@ -1,8 +1,8 @@
-#roccobotOS 
+# roccobotOS 
 
 # TASTIERA
 
-######Tasti di macOS
+###### Tasti di macOS
 
 | Simbolo | Tasto | Simbolo | Tasto |
 | ---: | :----------- | ---: | :----------- |
