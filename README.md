@@ -37,7 +37,7 @@
 
 <br />
 
---
+---
 
 # SCORCIATOIE
 
@@ -339,7 +339,7 @@ Basso / destra: `⌃⌘L`
 
 <br />
 
--
+---
 
 # MENU ESTESI
 
@@ -361,7 +361,7 @@ Basso / destra: `⌃⌘L`
 
 <br />
 
--
+---
 
 # APPLICAZIONI PREDEFINITE
 
@@ -383,7 +383,7 @@ Basso / destra: `⌃⌘L`
 
 <br />
 
--
+---
 
 # IMPOSTAZIONI
 
@@ -403,7 +403,7 @@ Cancellare il file `DropboxHelperInstaller X.Y.tgz` dal percorso
 
 <br />
 
--
+---
 
 # CARATTERI
 
@@ -486,7 +486,7 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 
 <br />
 
--
+---
 
 # PERCORSI
 
@@ -573,7 +573,7 @@ Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro caratter
 
 <br />
 
--
+---
 
 # TERMINALE
 
@@ -682,7 +682,7 @@ Risolvere il conflitto dell'applicazione di posta predefinita:
 
 <br />
 
--
+---
 
 # BACKUP
 
@@ -708,7 +708,7 @@ Elementi da escludere
 
 <br />
 
--
+---
 
 # INSTALLAZIONE PULITA DI MACOS
 
@@ -728,7 +728,7 @@ Si consiglia di rinominare l'installer di macOS con un nome di una sola parola; 
 
 <br />
 
--
+---
 
 # MODALITÀ DI AVVIO SPECIALI
 
@@ -754,11 +754,11 @@ Si consiglia di rinominare l'installer di macOS con un nome di una sola parola; 
 
 <br />
 
--
+---
 
 
 ### \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/Formati.html">Risoluzioni, schermi, standard video, dispositivi</a>
 
--
+---
 
 ### \\\ <a href="http://roccobot.altervista.org/_altervista_ht/a/AdServers.html">Liste di filtri per sicurezza, privacy e blocco pubblicità</a>
