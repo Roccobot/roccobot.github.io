@@ -420,7 +420,7 @@ Cancellare il file `DropboxHelperInstaller X.Y.tgz` dal percorso
 | 4 | $ | ¥ | ¢ |
 | 5 | % | ~ | ‰ |
 | 6 | & | ‹ | › |
-| 7 | / | ÷ | ⁄<br />^(fraction slash) |
+| 7 | / | ÷ | ⁄<br /><sup>fraction slash</sup> |
 | 8 | ( | ´ |  |
 | 9 | ) | ` |   |
 | 0 | = | ≠ | ≈ |
@@ -439,7 +439,7 @@ Cancellare il file `DropboxHelperInstaller X.Y.tgz` dal percorso
 | è | é | [ | { |
 | + | * | ] | } |
 | a | A | å | Å |
-| s | S | ß | ¯<br />^(macron) |
+| s | S | ß | ¯<br /><sup>macron</sup> |
 | d | D | ∂ | ˘ |
 | f | F | ƒ | ˙ |
 | g | G | ∞ | ˚ |
@@ -460,8 +460,8 @@ Cancellare il file `DropboxHelperInstaller X.Y.tgz` dal percorso
 | m | M | µ | Ú |
 | , | ; | … |   |
 | . | : | • | · |
-| -<br />^(hyphen-minus) | _<br />^(low line) | –<br />^(en dash) | —<br />^(em dash) |
-| ␣<br />^(spazio) | | ⍽<br />^(nbsp) |  |
+| -<br /><sup>hyphen-minus</sup> | _<br /><sup>low line</sup> | –<br /><sup>en dash</sup> | —<br /><sup>em dash</sup> |
+| ␣<br /><sup>spazio</sup> | | ⍽<br /><sup>nbsp</sup> |  |
 
 Dopo `⌥N`, `⌥U`, `⌥8`, `⌥9` e `⌥ì` si può digitare un altro carattere:
 
