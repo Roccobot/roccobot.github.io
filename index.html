@@ -1,8 +1,8 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png" />
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <title>Link Prodotti PBX</title><style>html{font-size:16px;}</style><style>
 
 html,body{background-color: #feffff; text-align: center;}
@@ -14,7 +14,6 @@ html,body{background-color: #feffff; text-align: center;}
   color: #333333;
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
   font-size: 1.3rem;
-  word-wrap: break-word;
 }
 
 .markdown-body .octicon {
@@ -347,10 +346,6 @@ html,body{background-color: #feffff; text-align: center;}
   margin-bottom: 0;
 }
 
-.markdown-body li {
-  word-wrap: break-all;
-}
-
 .markdown-body li>p {
   margin-top: 1rem;
 }
@@ -462,7 +457,6 @@ html,body{background-color: #feffff; text-align: center;}
 
 .markdown-body pre code {
   display: inline;
-  max-width: auto;
   padding: 0;
   margin: 0;
   overflow: visible;
@@ -499,10 +493,6 @@ border: 1px solid #0366dd;border-radius: 2px;
     margin-top:3rem;
     border-top:solid 1px #e1e2e2;
     padding-top:0px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .markdown-body mark{color: #111;}
 }
 
 code[class*="language-"],
@@ -590,7 +580,7 @@ pre[class*="language-"] {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-    color: #$$codeBlockColor$$;
+    color: #6b7280;
 }
 
 .token.atrule,
@@ -749,60 +739,24 @@ div.code-toolbar > .toolbar > .toolbar-item > span:focus {
 }
 </style> <style>body{max-width:1080px; padding:24px;}</style>
 <style>
-.markdown-body a {
-  color: #00727b;
-}
-
-.markdown-body a:hover {
-  text-decoration: underline;
-}
-
-/* Modalità scura automatica */
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #121212;
-    color: #EAEAEA;
-  }
-  .markdown-body {
-    color: #EAEAEA;
-  }
-  .markdown-body h1,
-  .markdown-body h2,
-  .markdown-body h3,
-  .markdown-body h4,
-  .markdown-body h5,
-  .markdown-body h6 {
-    color: #inherit;
-    border-color: #2A2A2A;
-  }
-  .markdown-body a {
-    color: #43B59E;
-  }
-  .markdown-body table th {
-    background-color: #1E1E1E;
-  }
-  .markdown-body table tr {
-    background-color: #181818;
-  }
-  .markdown-body hr {
-    background-color: #2A2A2A;
-  }
-  .markdown-body code {
-    background-color: #1E1E1E;
-    color: #BC4A61;
-  }
-}
+.markdown-body a { color: #00727b; }
+.markdown-body a:hover { text-decoration: underline; }
 </style>
 <style>
-/* Override esplicito del tema via attributo sul <html> */
+/* h3: testo normale e bold con colori diversi in tutti i temi */
+.markdown-body h3 { color: #BC4A61; }
+.markdown-body h3 strong { color: #0595bf; }
+</style>
+<style>
+/* Tema scuro attivato da html[data-theme='dark'] */
 html[data-theme='dark'],
 html[data-theme='dark'] body {
   background-color: #121212;
   color: #EAEAEA;
 }
-
 html[data-theme='dark'] .markdown-body { color: #EAEAEA; }
 
+/* Titoli in dark: niente h3 qui, così non lo tocchiamo */
 html[data-theme='dark'] .markdown-body h1,
 html[data-theme='dark'] .markdown-body h4,
 html[data-theme='dark'] .markdown-body h5,
@@ -811,40 +765,33 @@ html[data-theme='dark'] .markdown-body h6 {
   border-color: #2A2A2A;
 }
 
-html[data-theme='dark'] .markdown-body h1 {
-  color: #DCF1F1;
-  border-color: #2A2A2A;
-}
+/* h1 specifico in dark */
+html[data-theme='dark'] .markdown-body h1 { color: #DCF1F1; }
 
-html[data-theme='dark'] .markdown-body h2 {
-  color: #BC4A61;
-  border-color: #2A2A2A;
-}
-
-/* Mantieni h2 richiesti in #03bdbf in entrambi i temi */
+/* h2 fisso al colore richiesto, in entrambi i temi */
 html[data-theme='dark'] .markdown-body h2,
 html[data-theme='light'] .markdown-body h2 {
   color: #03bdbf !important;
 }
 
-/* Link sempre #43B59E */
+/* Link identici in entrambi i temi */
 html[data-theme='dark'] .markdown-body a,
 html[data-theme='light'] .markdown-body a { color: #43B59E; }
 
-/* Contrasto 'LIVE'/'DEVELOP' dentro i titoli */
+/* Niente 'inherit' sul bold dei titoli h3: escludo h3 */
 html[data-theme='dark'] .markdown-body h1 strong,
 html[data-theme='dark'] .markdown-body h2 strong,
-html[data-theme='dark'] .markdown-body h3 strong,
 html[data-theme='dark'] .markdown-body h4 strong,
 html[data-theme='dark'] .markdown-body h5 strong,
 html[data-theme='dark'] .markdown-body h6 strong { color: inherit; }
 
-/* Elementi scuri principali */
+/* Elementi scuri accessori */
 html[data-theme='dark'] .markdown-body table th { background-color: #1E1E1E; }
 html[data-theme='dark'] .markdown-body table tr { background-color: #181818; border-color: #2A2A2A; }
 html[data-theme='dark'] .markdown-body hr { background-color: #2A2A2A; }
 html[data-theme='dark'] .markdown-body code { background-color: #1E1E1E; color: #43B59E; }
-
+</style>
+<style>
 /* Toggle minimal, fisso in alto a destra */
 .theme-toggle {
   position: fixed;
@@ -871,42 +818,37 @@ html[data-theme='dark'] .theme-toggle {
 .theme-toggle svg { width: 18px; height: 18px; }
 </style>
 <style>
-.markdown-body h1 {
-  font-size: 2.4rem;
-}
-
-.markdown-body h2 {
-  font-size: 1.9rem;
-}
+.markdown-body h1 { font-size: 2.4rem; }
+.markdown-body h2 { font-size: 1.9rem; }
 </style>
 </head><body><div id='markdown_content' class='markdown-body'><h1><a id="ita" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>🇮🇹 ITA 🇮🇹</h1>
-<h2><a id="fotolibri" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FOTOLIBRI</h2>
-<h3><a id="live-prod" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
+<h2><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FOTOLIBRI</h2>
+<h3><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=f61181bc-e400-47fe-925b-ed335d050cf0&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n" target="_blank" style="white-space: nowrap;">ATTIMI</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=26f2106e-4a2f-40a2-b3f8-abf5b741e011&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n" target="_blank" style="white-space: nowrap;">EVENTI</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=95ebb650-2217-414e-a960-61e4b21b7ada&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n" target="_blank" style="white-space: nowrap;">RACCONTI</a></p>
-<p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=c76ab818-a7ca-4b1b-8435-0da198c822ca" target="_blank" style="white-space: nowrap;">RIVESTITO</a><br /></p>
-<h3><a id="develop-qa" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>DEVELOP</strong> / QA</h3>
+<p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=c76ab818-a7ca-4b1b-8435-0da198c822ca" target="_blank" style="white-space: nowrap;">RIVESTITO</a><br></p>
+<h3><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>DEVELOP</strong> / QA</h3>
 <p><a href="https://hubspot.photoforse.online/it/editor?productType=Book&productConfigurationId=a1618e01-33fd-4654-ad5c-6b10f56f43e8&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n" target="_blank" style="white-space: nowrap;">ATTIMI</a></p>
 <p><a href="https://hubspot.photoforse.online/it/editor?productType=Book&productConfigurationId=585e1e08-0abc-49f9-93f5-47a09b595f6e&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n" target="_blank" style="white-space: nowrap;">EVENTI</a></p>
 <p><a href="https://hubspot.photoforse.online/it/editor?productType=Book&productConfigurationId=7b27f5b7-d247-49fb-ba9e-7cb6e3fb2d4d&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n" target="_blank" style="white-space: nowrap;">RACCONTI</a></p>
 <p><a href="https://hubspot.photoforse.online/it/editor?productConfigurationId=464ed58d-6743-4bbb-816d-162979169fff&productType=BookTravel" target="_blank" style="white-space: nowrap;">RACCONTI (Travel Design Collection)</a></p>
 <p><a href="https://qa-photosi-pbx2.getprintbox.com/editor/test-project/275/#&step=editor&BOOK_CATEGORY=BOOK_CATEGORY_RIVESTITO&PAGE_FORMAT=PAGE_FORMAT_20x20&MATERIAL_COVER_THEME=MATERIAL_COVER_THEME_LIGHTBLUE&productId=6426" target="_blank" style="white-space: nowrap;">RIVESTITO</a></p>
-<br />
+<br>
 <h2><a id="calendari" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CALENDARI</h2>
-<h3><a id="live-prod" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
+<h3><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
 <p><a href="https://www.photosi.com/it/editor?productType=CalendarYear&productConfigurationId=c30ded6e-470a-4fe6-9c0b-443bf44a1b9e" target="_blank" style="white-space: nowrap;">ANNUALE</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=CalendarMonth&productConfigurationId=272a763f-3bc4-b296-0a5c-a0195fc7f97f" target="_blank" style="white-space: nowrap;">MENSILE 'MAXI'</a></p>
-<p><a href="https://www.photosi.com/it/editor?productType=CalendarTableTop&productConfigurationId=06d46405-fe0a-e1f7-0dda-337b9b05173c" target="_blank" style="white-space: nowrap;">DA TAVOLO</a><br /></p>
-<h3><a id="develop-qa" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>DEVELOP</strong> / QA</h3>
+<p><a href="https://www.photosi.com/it/editor?productType=CalendarTableTop&productConfigurationId=06d46405-fe0a-e1f7-0dda-337b9b05173c" target="_blank" style="white-space: nowrap;">DA TAVOLO</a><br></p>
+<h3><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>DEVELOP</strong> / QA</h3>
 <p><a href="https://hubspot.photoforse.online/it/editor?productType=CalendarYear&productConfigurationId=20c81b63-4e8d-ef98-726d-f4e6255b9b58" target="_blank" style="white-space: nowrap;">ANNUALE</a></p>
 <p><a href="https://hubspot.photoforse.online/it/editor?productType=CalendarMonth&productConfigurationId=52b27c7c-9d7a-1f6e-016c-fd675a3130f5" target="_blank" style="white-space: nowrap;">MENSILE 'MAXI'</a></p>
 <p><a href="https://hubspot.photoforse.online/it/editor?productType=CalendarTableTop&productConfigurationId=30325cb9-2bb0-85aa-fb6b-8e8eceece9da" target="_blank" style="white-space: nowrap;">DA TAVOLO</a></p>
-<br />
-<br />
+<br>
+<br>
 <h1><a id="esp" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>🇪🇸 ESP 🇪🇸</h1>
-<h2><a id="fotolibri" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FOTOLIBRI</h2>
-<h3><a id="live-prod" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
+<h2><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FOTOLIBRI</h2>
+<h3><a class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=f61181bc-e400-47fe-925b-ed335d050cf0&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n&language=es" target="_blank" style="white-space: nowrap;">ATTIMI</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=26f2106e-4a2f-40a2-b3f8-abf5b741e011&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n&language=es" target="_blank" style="white-space: nowrap;">EVENTI</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=95ebb650-2217-414e-a960-61e4b21b7ada&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n&language=es" target="_blank" style="white-space: nowrap;">RACCONTI</a></p>
