@@ -793,6 +793,84 @@ div.code-toolbar > .toolbar > .toolbar-item > span:focus {
   }
 }
 </style>
+<style>
+/* Override esplicito del tema via attributo sul <html> */
+html[data-theme='dark'],
+html[data-theme='dark'] body {
+  background-color: #121212;
+  color: #EAEAEA;
+}
+
+html[data-theme='dark'] .markdown-body { color: #EAEAEA; }
+
+html[data-theme='dark'] .markdown-body h1,
+html[data-theme='dark'] .markdown-body h2,
+html[data-theme='dark'] .markdown-body h3,
+html[data-theme='dark'] .markdown-body h4,
+html[data-theme='dark'] .markdown-body h5,
+html[data-theme='dark'] .markdown-body h6 {
+  color: #43B59E;
+  border-color: #2A2A2A;
+}
+
+/* Mantieni h2 richiesti in #03bdbf in entrambi i temi */
+html[data-theme='dark'] .markdown-body h2,
+html[data-theme='light'] .markdown-body h2 {
+  color: #03bdbf !important;
+}
+
+/* Link sempre #43B59E */
+html[data-theme='dark'] .markdown-body a,
+html[data-theme='light'] .markdown-body a { color: #43B59E; }
+
+/* Contrasto 'LIVE'/'DEVELOP' dentro i titoli */
+html[data-theme='dark'] .markdown-body h1 strong,
+html[data-theme='dark'] .markdown-body h2 strong,
+html[data-theme='dark'] .markdown-body h3 strong,
+html[data-theme='dark'] .markdown-body h4 strong,
+html[data-theme='dark'] .markdown-body h5 strong,
+html[data-theme='dark'] .markdown-body h6 strong { color: inherit; }
+
+/* Elementi scuri principali */
+html[data-theme='dark'] .markdown-body table th { background-color: #1E1E1E; }
+html[data-theme='dark'] .markdown-body table tr { background-color: #181818; border-color: #2A2A2A; }
+html[data-theme='dark'] .markdown-body hr { background-color: #2A2A2A; }
+html[data-theme='dark'] .markdown-body code { background-color: #1E1E1E; color: #43B59E; }
+
+/* Toggle minimal, fisso in alto a destra */
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 999px;
+  background: rgba(255,255,255,.6);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: .65;
+  transition: opacity .15s ease, border-color .15s ease, background .15s ease;
+}
+.theme-toggle:hover { opacity: 1; }
+html[data-theme='dark'] .theme-toggle {
+  background: rgba(20,20,20,.6);
+  border-color: rgba(255,255,255,.15);
+}
+.theme-toggle svg { width: 18px; height: 18px; }
+</style>
+<style>
+.markdown-body h1 {
+  font-size: 2.4rem;
+}
+
+.markdown-body h2 {
+  font-size: 1.9rem;
+}
+</style>
 </head><body><div id='markdown_content' class='markdown-body'><h1><a id="ita" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>🇮🇹 ITA 🇮🇹</h1>
 <h2><a id="fotolibri" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>FOTOLIBRI</h2>
 <h3><a id="live-prod" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>LIVE</strong> / PROD</h3>
@@ -825,4 +903,51 @@ div.code-toolbar > .toolbar > .toolbar-item > span:focus {
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=26f2106e-4a2f-40a2-b3f8-abf5b741e011&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n&language=es" target="_blank" style="white-space: nowrap;">EVENTI</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=95ebb650-2217-414e-a960-61e4b21b7ada&ipLabsThemeId=theme_8gaxr7qUuw68mSAGVUCS8n&language=es" target="_blank" style="white-space: nowrap;">RACCONTI</a></p>
 <p><a href="https://www.photosi.com/it/editor?productType=Book&productConfigurationId=c76ab818-a7ca-4b1b-8435-0da198c822ca&language=es" target="_blank" style="white-space: nowrap;">RIVESTITO</a></p>
-</div></body></html>
+</div>
+<button class="theme-toggle" id="themeToggle" aria-label="Cambia tema" title="Cambia tema">
+  <!-- icona sole/luna auto -->
+  <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+  </svg>
+  <svg id="iconMoon" style="display:none" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
+<script>
+(function () {
+  const html = document.documentElement;
+  const mql = window.matchMedia('(prefers-color-scheme: dark)');
+  const btn = document.getElementById('themeToggle');
+  const iconSun = document.getElementById('iconSun');
+  const iconMoon = document.getElementById('iconMoon');
+
+  // All'avvio: allinea al tema del browser
+  function setBySystem() {
+    const dark = mql.matches;
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    iconSun.style.display = dark ? 'none' : '';
+    iconMoon.style.display = dark ? '' : 'none';
+  }
+  setBySystem();
+
+  // Se il sistema cambia tema durante la sessione e l'utente non ha appena togglato, riallinea
+  let userJustToggled = false;
+  mql.addEventListener('change', () => {
+    if (userJustToggled) return;
+    setBySystem();
+  });
+
+  // Toggle manuale, non persistente: al refresh torna al tema di sistema
+  btn.addEventListener('click', () => {
+    userJustToggled = true;
+    const now = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', now);
+    iconSun.style.display = now === 'dark' ? 'none' : '';
+    iconMoon.style.display = now === 'dark' ? '' : 'none';
+    setTimeout(() => { userJustToggled = false; }, 1500);
+  });
+})();
+</script>
+</body></html>
