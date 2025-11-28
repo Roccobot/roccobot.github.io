@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript">
+        window.onorientationchange = function() { 
+        var orientation = window.orientation; 
+            switch(orientation) { 
+                case 0:
+                case 90:
+                case -90: window.location.reload(); 
+                break; } 
+        };
+        </script>
+        <link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+		<link rel="manifest" href="manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+        <title>Ma che parola è</title>
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .container .child {
+                width: 100%;
+                margin-top: 3vmax;
+                text-align: center;
+                font-size: 3vmax;
+                font-weight: 800;
+                text-transform: uppercase;
+                font-family: BrainFlower;
+                letter-spacing: 0.4vmax;
+                line-height: 7vmax;
+                color: #888888
+            }
+            
+            .angle_tl {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 8vmax;
+            }
+      
+            .angle_tr {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 8vmax;
+            }
+      
+            .angle_tr img, .angle_tl img {
+                width: 100%;
+            }
+            
+            .title_container {
+				display: inline-block;
+				width: 26vmax;
+				min-width: 32vmax;
+				min-height: 10vmax;
+			}
+			
+			.title_container img {
+				width: 80%;
+				opacity:0.7;
+				filter:alpha(opacity=70);
+			}
+
+            @media screen and (max-device-width: 1000px) {
+                .container .child {
+                    font-size: 2.5vmax;
+                    margin-top: 2%;
+                }
+            }
+            @media screen and (max-device-width: 600px) {
+                .container .child {
+                    font-size: 3vmax;
+                    margin-top: 5%;
+                }
+            }
+            @font-face {
+            font-family: BrainFlower;
+            src: url(BrainFlower.ttf);
+}
+            @font-face {
+            font-family: ArialNarrow;
+            src: url(ArialNarrow.ttf);
+}
+        </style>
+    </head>
+    <body>
+        <!--<div class="angle_tl"><img src="angolo_sinistro.png" style="opacity:0.08;filter:alpha(opacity=8);" /></div>
+		<div class="angle_tr"><img src="angolo_destro.png" style="opacity:0.08;filter:alpha(opacity=8);" /></div>-->
+        <div class="container">
+            <div class="child">
+            <div class="title_container">
+				<img src="titolo.gif" />
+			</div>
+            <p>
+            <!--<font size= -0.8vmax color= #EAEAEA face= ArialNarrow>
+            &nbsp; &nbsp;MA CHE PAROLA &#200;...
+            <br /></font>-->
+            fringuello<br />
+            frangiflutti<br />
+            sciabordare<br />
+            contraltare<br />
+            cardiopalma<br />
+            vilipendio<br />
+            stalattiti<br />
+            sciorinare<br />
+            palombaro<br />
+            promontorio<br />
+            bambagia<br />
+            sulfureo<br />
+            suppellettili<br />
+            bitume<br />
+            sabaudo<br />
+            cobalto<br />
+            ettolitro<br />
+            perentorio<br />
+            taratura<br />
+            gengivite<br />
+            duodeno<br />
+            fessacchiotto<br />
+            frontespizio<br />
+            frattanto<br />
+            clausura<br />
+            santoreggia<br >
+            zolfanello<br />
+            stantuffo<br />
+            saudita<br />
+            ringhiera<br />
+            frollino<br />
+            panatura<br />
+            cloruro<br />
+            catapulta<br />
+            contiguo<br />
+            andropausa<br />
+            leguminose<br />
+            alambicco<br />
+            pluriennale<br />
+            rugiada<br />
+            prurito<br />
+            sutura<br />
+            portantina<br />
+            apoteosi<br />
+            subodorare<br />
+            bruciapelo<br />
+            auriga<br />
+            rilento<br />
+            umettare<br />
+            nomadismo<br />
+            luminare<br />
+            luitaio<br />
+            alitosi<br />
+            calamaio<br />
+            frantoio<br />
+            faretra<br />
+            epopea<br />
+            radura<br />
+            cotanto<br />
+            aratro<br />
+            altura<br />
+            furfante<br />
+            soprassalto<br />
+            parapetto<br />
+            limonare<br />
+            polpastrelli<br />
+            fogliame<br />
+            pulsantiera<br />
+            sutura<br />
+            salamoia<br />
+            pagaia<br />
+            gramigna<br />
+            besciamella<br />
+            borlotto<br />
+            garganella<br />
+            inverecondo<br />
+            <br />
+            tamugno<br />
+            <br />
+            ippolito<br />
+            gianfranco<br />
+            reginaldo<br />
+            baldassarre<br />
+            luigi<br />
+            &lrm;<br />
+            <font size= -1vmax color= #EAEAEA face= ArialNarrow>© 2017 FDPA &amp; gulpegaspe</font>
+            </p>
+            </div>
+        </div>
+    </body>
+</html>

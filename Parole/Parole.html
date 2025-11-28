@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript">
+        window.onorientationchange = function() {
+        var orientation = window.orientation;
+            switch(orientation) {
+                case 0:
+                case 90:
+                case -90: window.location.reload();
+                break; }
+        };
+        </script>
+        <link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+		<link rel="manifest" href="manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+        <title>Ma che parola è</title>
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .container .child {
+                width: 100%;
+                margin-top: 3vmax;
+                text-align: center;
+                font-size: 3vmax;
+                font-weight: 800;
+                text-transform: uppercase;
+                font-family: BrainFlower;
+                letter-spacing: 0.4vmax;
+                line-height: 7vmax;
+                color: #888888
+            }
+
+            .angle_tl {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 8vmax;
+            }
+
+            .angle_tr {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 8vmax;
+            }
+
+            .angle_tr img, .angle_tl img {
+                width: 100%;
+            }
+
+            .title_container {
+				display: inline-block;
+				width: 26vmax;
+				min-width: 32vmax;
+				min-height: 10vmax;
+			}
+
+			.title_container img {
+				width: 80%;
+				opacity:0.7;
+				filter:alpha(opacity=70);
+			}
+
+            @media screen and (max-device-width: 1000px) {
+                .container .child {
+                    font-size: 2.5vmax;
+                    margin-top: 2%;
+                }
+            }
+            @media screen and (max-device-width: 600px) {
+                .container .child {
+                    font-size: 3vmax;
+                    margin-top: 5%;
+                }
+            }
+            @font-face {
+            font-family: BrainFlower;
+            src: url(BrainFlower.ttf);
+}
+            @font-face {
+            font-family: ArialNarrow;
+            src: url(ArialNarrow.ttf);
+}
+        </style>
+    </head>
+    <body>
+        <!--<div class="angle_tl"><img src="angolo_sinistro.png" style="opacity:0.08;filter:alpha(opacity=8);" /></div>
+		<div class="angle_tr"><img src="angolo_destro.png" style="opacity:0.08;filter:alpha(opacity=8);" /></div>-->
+        <div class="container">
+            <div class="child">
+            <div class="title_container">
+				<img src="titolo.gif" />
+			</div>
+            <p>
+            <!--<font size= -0.8vmax color= #EAEAEA face= ArialNarrow>
+            &nbsp; &nbsp;MA CHE PAROLA &#200;...
+            <br /></font>-->
+            fringuello<br />
+            frangiflutti<br />
+            repentaglio<br />
+            mangrovia<br />
+            cipresso<br />
+            rurale<br />
+            sciabordare<br />
+            contraltare<br />
+            cardiopalma<br />
+            pennichella<br />
+            vilipendio<br />
+            stalattiti<br />
+            sciorinare<br />
+            palombaro<br />
+            promontorio<br />
+            bambagia<br />
+            sulfureo<br />
+            suppellettili<br />
+            bitume<br />
+            primula<br />
+            sabaudo<br />
+            cobalto<br />
+            frottola<br />
+            ettolitro<br />
+            perentorio<br />
+            taratura<br />
+            gengivite<br />
+            duodeno<br />
+            fessacchiotto<br />
+            frontespizio<br />
+            frattanto<br />
+            fregola<br />
+            clausura<br />
+            santoreggia<br >
+            zolfanello<br />
+            saudita<br />
+            ringhiera<br />
+            frollino<br />
+            panatura<br />
+            cloruro<br />
+            catapulta<br />
+            contiguo<br />
+            andropausa<br />
+            leguminose<br />
+            alambicco<br />
+            pluriennale<br />
+            rugiada<br />
+            fandonia<br />
+            prurito<br />
+            sutura<br />
+            portantina<br />
+            apoteosi<br />
+            subodorare<br />
+            bruciapelo<br />
+            auriga<br />
+            rilento<br />
+            umettare<br />
+            nomadismo<br />
+            luminare<br />
+            liutaio<br />
+            alitosi<br />
+            calamaio<br />
+            frantoio<br />
+            faretra<br />
+            epopea<br />
+            radura<br />
+            cotanto<br />
+            aratro<br />
+            furfante<br />
+            soprassalto<br />
+            parapetto<br />
+            limonare<br />
+            polpastrelli<br />
+            fogliame<br />
+            pulsantiera<br />
+            salamoia<br />
+            pagaia<br />
+            paffutella<br />
+            corbezzolo<br />
+            adibire<br />
+            bitorzoluto<br />
+            bisaccia<br />
+            monouso<br />
+            calcinaccio<br />
+            arraffare<br />
+            fattucchiera<br />
+            rinvigorire<br />
+            giuggiola<br />
+            savoiardo<br />
+            nerboruto<br />
+            patrocinato<br />
+            drammaturgo<br />
+            lapislazzuli<br />
+            soppiatto<br />
+            bisonte<br />
+            bisunto<br />
+            sconfinferare<br />
+            cruscotto<br />
+            paleontologo<br />
+            ruminante<br />
+            singulto<br />
+            puleggia<br />
+            suffumigi<br />
+            fumenti<br />
+            frumento<br />
+            caraffa<br />
+            sinonimo<br />
+            partorire<br />
+            cinciallegra<br />
+            baldanzoso<br />
+            amaramente<br />
+            finferli<br />
+            nostromo<br />
+            astrolabio<br />
+            osteopata<br />
+            risicato<br />
+            farfugliare<br />
+            filigrana<br />
+            cupidigia<br />
+            pilastro<br />
+            scafandro<br />
+            depauperare<br />
+            cosmesi<br />
+            catarro<br />
+            maritozzo<br />
+            brodo<br />
+            poppante<br />
+            salsedine<br />
+            malapena<br />
+            avamposto<br />
+            subliminale<br />
+            smerigliare<br />
+            lombrico<br />
+            minuetto<br />
+            mandragola<br />
+            malavoglia<br />
+            fornicare<br />
+            beffardo<br />
+            bofonchiare<br />
+            fresatura<br />
+            dirimpetto<br />
+            pettoruto<br />
+            fregnaccia<br />
+            mulinello<br />
+            rintronato<br />
+            effluvio<br />
+            sinalefe<br />
+            stantuffo<br />
+            brigante<br />
+            monolite<br />
+            smottamento<br />
+            paturnie<br />
+            inusitato<br />
+            gramigna<br />
+            borlotto<br />
+            besciamella<br />
+            garganella<br />
+            inverecondo<br />
+            cloaca<br />
+            ciarpame<br />
+            raganella<br />
+            tremarella<br />
+            poltiglia<br />
+            lampredotto<br />
+            poltrire<br />
+            spaparanzarsi<br />
+            occhieggiare<br />
+            calendula<br />
+            troccolo<br />
+            baritono<br />
+            croccante<br />
+            follicolo<br />
+            sopperire<br />
+            inturgidito<br />
+            barlume<br />
+            zibibbo<br />
+            mammoletta<br />
+            pusillanime<br />
+            caparra<br />
+            moffetta<br />
+            addirittura<br />
+            nientemeno<br />
+            omuncolo<br />
+            capibara<br />
+            sdoganare<br />
+            betoniera<br />
+            mannaggia<br />
+            ceruleo<br />
+            tritolo<br />
+            basalto<br />
+            brillo<br />
+            bicocca<br />
+            pattuglia<br />
+            metetarso<br />
+            titubante<br />
+            titillare<br />
+            petauro<br />
+            sottopalla<br />
+            marachella<br />
+            mascalzone<br />
+            briccone<br />
+            birbante<br />
+            marrano<br />
+            gaglioffo<br />
+            manigoldo<br />
+            lestofante<br />
+            scagnozzo<br />
+            sgherro<br />
+            fragoroso<br />
+            accrocchio<br />
+            combriccola<br />
+            plurale<br />
+            statuario<br />
+            armadillo<br />
+            cuccagna<br />
+            toeletta<br />
+            balaustra<br />
+            cartotecnica<br />
+            dittongo<br />
+            andirivieni<br />
+            appiccicaticcio<br />
+            concomitanza<br />
+            oberato<br />
+            tarantella<br />
+            prosopopea<br />
+            antonomasia<br />
+            pupo<br />
+            sasso<br />
+            remo<br />
+            tortora<br />
+            calcestruzzo<br />
+            rimorchio<br />
+            macigno<br />
+            purpurea<br />
+            ponpon<br />
+            piegamento<br />
+            petunia<br />
+            cozza<br />
+            porticato<br />
+            succulento<br />
+            criniera<br />
+            cremisi<br />
+            paranza<br />
+            squacquerone<br />
+            redarguito<br />
+            argilla<br />
+            bollore<br />
+            spolverino<br />
+            tripudio<br />
+            saltimbanco<br />
+            paciugo<br />
+            sgranocchiare<br />
+            ginocchio<br />
+            capocchia<br />
+            turpiloquio<br />
+            grattugia<br />
+            danaro<br />
+            bavero<br />
+            prono<br />
+            sbrodolare<br />
+            idillio<br />
+            ebbene<br />
+            ordunque<br />
+            poffare<br />
+            poffarbacco<br />
+            rimuginare<br />
+            ciancigare<br />
+            prosperosa<br />
+            ragguardevole<br />
+            tritatutto<br />
+            bomboniera<br />
+            traveggole<br />
+            baluardo<br />
+            pluripremiato<br />
+            avatar<br />
+            tartara<br />
+            sorbetto<br />
+            sbarbato<br />
+            botolo<br />
+            pistillo<br />
+            pralinato<br />
+            scroto<br />
+            lapilli<br />
+            funesto<br />
+            fustigare<br />
+            piroetta<br />
+            sonnellino<br />
+            vetusto<br />
+            pagnotta<br />
+            tungsteno<br />
+            totocalcio<br />
+            rotocalco<br />
+            concupire<br />
+            aggeggio<br />
+            fuliggine<br />
+            lanuggine<br />
+            flanella<br />
+            lichene<br />
+            prosumer<br />
+            aficionado<br />
+            discolo<br />
+            succhiotto<br />
+            sparviero<br />
+            ammutinamento<br />
+            spumeggiante<br />
+            soporifero<br />
+            voluminoso<br />
+            triceratopo<br />
+            baricentro<br />
+            ridacchiare<br />
+            bislacco<br />
+            ammoniaca<br />
+            armamentario<br />
+            ammutolire<br />
+            scalogna<br />
+            appioppare<br />
+            accollato<br />
+            melenso<br />
+            nosocomio<br />
+            pelandrone<br />
+            cangiante<br />
+            allibito<br />
+            ribollita<br />
+            protuberanza<br />
+            proboscide<br />
+            bomber<br />
+            crauto<br />
+            paraculo<br />
+            pennuto<br />
+            batuffolo<br />
+            fagotto<br />
+            paffutello<br />
+            claudicante<br />
+            pareo<br />
+            quintessenza<br />
+            intercapedine<br />
+            intruglio<br />
+            intrufolarsi<br />
+            cormorano<br />
+            estenuante<br />
+            ghiacciaia<br />
+            citrullo<br />
+            fratricida<br />
+            forestiero<br />
+            furente<br />
+            gomitolo<br />
+            graticola<br />
+            fragore<br />
+            saputello<br />
+            bulbo<br />
+            burino<br />
+            balbuzie<br />
+            sbertucciare<br />
+            sgomento<br />
+            saltuario<br />
+            catacomba<br />
+            rupestre<br />
+            bolla<br />
+            baffi<br />
+            poppe<br />
+            subbuglio<br />
+            prodigio<br />
+            patrocinio<br />
+            lattosio<br />
+            surrogato<br />
+            parapendio<br />
+            propoli<br />
+            calcinculo<br />
+            maniscalco<br />
+            piroga<br />
+            lupanare<br />
+            madido<br />
+            catamarano<br />
+            confettura<br />
+            splendere<br />
+            pediluvio<br />
+            sviolinare<br />
+            risucchio<br />
+            anemone<br />
+            nonostante<br />
+            quantunque<br />
+            carpaccio<br />
+            petardo<br />
+            areola<br />
+            refrattario<br />
+            pachiderma<br />
+            ruspante<br />
+            altolà<br />
+            caciotta<br />
+            pappataci<br />
+            esausto<br />
+            frattempo<br />
+            scucito<br />
+            sottecchi<br />
+            balocco<br />
+            esanime<br />
+            <br />
+            sgulvanito<br />
+            bartavella<br />
+            sbiontare<br />
+            tamugno<br />
+            barzotto<br />
+            mariuolo<br />
+            sbietta<br />
+            saccagnare<br />
+            sbligare<br />
+            scapuzzo<br />
+            luviria<br />
+            papagna<br />
+            paciugo<br />
+            sgarzolino<br />
+            <br />
+            ippolito<br />
+            gianfranco<br />
+            vladimiro<br />
+            reginaldo<br />
+            baldassarre<br />
+            manolo<br />
+            carmine<br />
+            manlio<br />
+            teodoro<br />
+            gioele<br />
+            luigi<br />
+            <br />
+            castrocaro<br />
+            selinunte<br />
+            brisighella<br />
+            filicudi<br />
+            longastrino<br />
+            morciano<br />
+            &lrm;<br />
+            <font size= -1vmax color= #EAEAEA face= ArialNarrow>© 2017 FDPA &amp; gulpegaspe</font>
+            </p>
+            </div>
+        </div>
+    </body>
+</html>
