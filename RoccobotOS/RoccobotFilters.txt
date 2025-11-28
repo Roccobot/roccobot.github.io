@@ -1,0 +1,556 @@
+! Title: Roccobot Filters
+! Last updated: 2025-08-13
+
+@@||squarespace.com/static/*
+*ads.js
+*pagead.js
+*partner.ads.js
+/pagead.js$domain=d3ward.github.io
+/widget/ads.
+##.onetrust-banner-dark-filter
+||18ck9y1227.tech^$empty,important
+||1fileupload-5.xyz^$empty,important
+||24option.com^$empty,important
+||2daytrendingnews.com^$empty,important
+||2mdn.net^$empty,important
+||30kdropout.com^$empty,important
+||375dyspe.tech^$empty,important
+||43yagowe3y.com^$empty,important
+||45eijvhgj2.com^$empty,important
+||49oa3o49b6.com^$empty,important
+||7113717.com^$empty,important
+||888casino.it^$empty,important
+||aaucwbe.com^$empty,important
+||abctrack.bid^$empty,important
+||adcash.com^$empty,important
+||adcmtd.mac-torrent-download.net^$empty,important
+||adexc.me^$empty,important
+||adexc.net^$empty,important
+||adform.net^$empty,important
+||adplxmd.com^$empty,important
+||adroll.app^$empty,important
+||adsco.re^$empty,important
+||adtng.com^$empty,important
+||adventurefeeds.com^$empty,important
+||afeuvqrsswz.com^$empty,important
+||aff-online.com^$empty,important
+||affiliaxe.com^$empty,important
+||alfafile.net/premium*$document
+||algocashmaster.com^$empty,important
+||amiderations.info^$empty,important
+||appscleaners.com^$empty,important
+||armuchteetthat.info^$empty,important
+||asikol.space^$empty,important
+||atlaslife.eu^$empty,important
+||audienceline.com^$empty,important
+||autoizers.info^$empty,important
+||bemobpath.com^$empty,important
+||bet365.it^$empty,important
+||betsonsport.ru/*$image
+||betworld.com^$empty,important
+||betworld17.com^$empty,important
+||bitsontherun.com^$empty,important
+||blockadblock.com^$empty,important
+||bounceexchange.com^$empty,important
+||browsergames2019.com^$empty,important
+||c4tracking01.com^$empty,important
+||cam4.com^$empty,important
+||cam4tracking.com^$empty,important
+||cashtrafic.info^$empty,important
+||catbox.moe/bgs/texture*.png$image
+||catbox.moe/pictures/qts/1512072270390.png$image
+||cdn-edge.kwork.ru/images/partner/*$image
+||cdn.camshq.info/streamate/*$image
+||cleanmacsecurity.co^$empty,important
+||cleanmymac.host^$empty,important
+||clickonupdate.site^$empty,important
+||clickpalace.com^$empty,important
+||cobalten.com^$empty,important
+||coin-hive.com^$empty,important
+||com-control.website^$empty,important
+||com-scan.live^$empty,important
+||com-shield-device.live^$empty,important
+||constintptr.com^$empty,important
+||cool-4free.top^$empty,important
+||cryptobrowser.site^$empty,important
+||cyberprivacy.pro^$empty,important
+||deloplen.com^$empty,important
+||dfiles.eu/gold*$document
+||dgafgadsgkjg.top^$empty,important
+||dimart74.altervista.org/*
+||discovertheforest.org^$empty,important
+||dxo.com^$empty,important
+||easylist.club^$empty,important
+||ethfw0370q.com^$empty,important
+||etreflased.info^$empty,important
+||eurobet.it^$empty,important
+||exclusiverewards.com^$empty,important
+||exdynsrv.com^$empty,important
+||exoclick.com^$empty,important
+||exosrv.com^$empty,important
+||exrtbsrv.com^$empty,important
+||festivaldellamericalatina.it^$empty,important
+||festivaldelloriente.org^$empty,important
+||festivalirlandese.it^$empty,important
+||findthebestoffer.com^$empty,important
+||finishclueobscure.info^$empty,important
+||flixtools.com^$empty,important
+||free-converterz.com^$empty,important
+||freefarcy.com^$empty,important
+||freepornsex.net###custom_html-2
+||gaming-guide-online.com^$empty,important
+||genesis.vision^$empty,important
+||givemethisoffer.com^$empty,important
+||gmboxx.com^$empty,important
+||goodflashupgradestable.icu^$empty,important
+||gtasfix.xyz^$empty,important
+||hentaiheroes.com^$empty,important
+||hentaiprosnetwork.com^$empty,important
+||i.imgur.com/JYiidvE.jpg$image,domain=hanime.tv,important
+||ie8eamus.com^$empty,important
+||ifilez.org^$empty,important
+||il-metodo-italiano.com^$empty,important
+||ilcorsaroblu.org/*$inline-script
+||ilcorsaroblu.org/*$script
+||ilcorsaroblu.org^$third-party
+||img.pr0gramm.com/pr0paganda/$image
+||insightexpressai.com^$empty,important
+||installerscalablemac.com^$empty,important
+||iperadventure.com^$empty,important
+||iskysoft.com^$empty,important
+||istripper.com^$empty,important
+||italianmethod.com^$empty,important
+||j2756.ru^$empty,important
+||jf71qh5v14.com^$empty,important
+||joom.com^$empty,important
+||justmineit.com^$empty,important
+||karmashack.club^$empty,important
+||kinguin.net^$empty,important
+||lcg.com^$empty,important
+||legendsofhonor.com^$empty,important
+||letmegofaster.world^$empty,important
+||linksprm.xyz/*^$empty,important
+||liveadexchanger.com^$empty,important
+||liveinternet.ru^$empty,important
+||livejasmin.com^$empty,important
+||macbed.com/*$inline-script
+||macbed.com/*$script
+||macbed.com^$third-party
+||mackeeper.com^$empty,important
+||marketgid.com^$empty,important
+||media-match.com^$empty,important
+||mfigasff.com^$empty,important
+||mgid.com^$empty,important
+||mirmay.xyz^$empty,important
+||mpayment.it^$empty,important
+||munrvscurlms.com^$empty,important
+||mylink.me.uk^$empty,important
+||mymacupdate.host^$empty,important
+||myspicylinks.com^$empty,important
+||mystighty.info^$empty,important
+||mywaifulist.moe/build/images/affiliates/*$image
+||mywholeteamwinning.com^$empty,important
+||nitroflare.com/payment*$document
+||nordvpn.com^$empty,important
+||nukip.space^$empty,important
+||nutaku.net^$empty,important
+||obdev.at^$empty,important
+||omaze.com^$empty,important
+||one.com^$empty,important
+||opensubtitles.pw^$empty,important
+||parallels.com^$empty,important
+||partypoker.it^$empty,important
+||paypal.com^$empty,important
+||pcfreeupdate.xyz^$empty,important
+||pcfreeupdates.club^$empty,important
+||pingamovies.com^$empty,important
+||planetwin365.it^$empty,important
+||planetwin365affiliate.com^$empty,important
+||polostrijisjw.info^$empty,important
+||popcash.net^$empty,important
+||popmyads.com^$empty,important
+||popunder.bid^$empty,important
+||pornnoble.com^$empty,important
+||pornsos.com^$empty,important
+||push-notifications.top^$empty,important
+||pushedwebnews.com^$empty,important
+||putrr14.com^$empty,important
+||qnjdtefk.com^$empty,important
+||rapidgator.net/article/premium*$document
+||reacheffect.com^$empty,important
+||realtime-bid.com^$empty,important
+||redirect2719.ws^$empty,important
+||repair.live^$empty,important
+||resolveanyissue.com^$empty,important
+||retainguaninefluorite.info^$empty,important
+||robinbob.in/images/promo*$image
+||rsalcuk.com^$empty,important
+||runtnc.net^$empty,important
+||s2.teraboxcdn.com/fe-opera-static/node-static-v4/fe-webv4-main/img/*.png$image
+||s2.teraboxcdn.com/fe-opera-static/node-static-v4/fe-webv4-main/img/vi-drainage.6f606203.png$image
+||safeitaly707.club^$empty,important
+||safeplugin-update.org^$empty,important
+||searchmulty.com^$empty,important
+||securecloud-smart.com^$empty,important
+||securemacfix.com^$empty,important
+||securessl-smart.com^$empty,important
+||selector-v.net^$empty,important
+||seomafia.net$generichide
+||servedbytrackingdesk.com^$empty,important
+||servingclks.com^$empty,important
+||sexfortuna.com^$empty,important
+||sexmotors.com^$empty,important
+||sheedsoh.com^$empty,important
+||shein.com^$empty,important^$empty,important
+||skincarie.com^$empty,important
+||soft2download.website^$empty,important
+||softonic.com^$empty,important
+||softonic.it^$empty,important
+||spagat.space^$empty,important
+||special-offers.online^$empty,important
+||spklmis.com^$empty,important
+||spotscenered.info^$empty,important
+||srchmoney.com^$empty,important
+||srnk.club^$empty,important
+||startmag.it^$empty,important
+||stimmtso.space^$empty,important
+||storereviews.org^$empty,important
+||sukebei.nyaa.net/img/mafuyu.svg$image
+||sygox.com^$empty,important
+||tapstream.com^$empty,important
+||tavertotsand.info^$empty,important
+||tdstraf.com^$empty,important
+||the-binary-trader.biz^$empty,important
+||theprofitsmaker.com^$empty,important
+||thetimingsystem.com^$empty,important
+||tool-online.faith^$empty,important
+||torrage.info^$empty,important
+||traccen.info^$empty,important
+||tracking-agent.top^$empty,important
+||trafficjunky.net^$empty,important
+||ttoc8ok.com^$empty,important
+||turbobit.net/turbo*$document
+||ulinkths.com^$empty,important
+||unibet.com^$empty,important
+||uod2quk646.com^$empty,important
+||upload.forumfree.net/i/ff1777983/*
+||uploaded.net/register*$document
+||utbutretcelac.info^$empty,important
+||vatleta.com^$empty,important
+||whatisuptodaynow.com^$empty,important
+||wikia.nocookie.net/*/Wiki-background*$important
+||wish.com^$empty,important
+||worldssl.net^$empty,important
+||www.deepbrid.com/application/default/themes/okagev3/public/img/*sale*$image
+||wyewucbre.site^$empty,important
+||x19network.com^$empty,important
+||xilbalar.com^$empty,important
+1337x.info###sampopDiv
+1337xx.com###popDiv
+35photo.pro##div.col-md-4:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1)
+35photo.pro##div.col-md-4:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2)
+500px.com##.site_promotion.inside
+ad.doubleclick.net
+ads-api.tiktok.com
+ads-api.twitter.com
+ads.facebook.com
+ads.google.com
+ads.pinterest.com
+ads.tiktok.com
+ads.yahoo.com
+adservice.google.com
+adsfs.oppomobile.com
+adshnk.com##.fc-consent-root
+adshnk.com##.fc-dialog-overlay
+adshnk.com##.preloader
+adtools.facebook.com
+advertising-api-eu.amazon.com
+advertising.apple.com
+advertising.yahoo.com
+advertising.yandex.ru
+advice-ads.s3.amazonaws.com
+an.facebook.com
+analytics.s3.amazonaws.com
+analyticsengine.s3.amazonaws.com
+anidb.net##.hint
+anime-ultime.net###index
+animeworld.so##DIV[class="img-right"]
+api-adservices.apple.com
+api.bugsnag.com
+apkmirror.com###ezmobfooter > center:first-child
+app.bugsnag.com
+audio2.spotify.com
+beeg.com##.Banner
+beeg.com###inplayerbox > DIV.wrp > BUTTON.close-btn:first-child
+beeg.com###inplayerbox > DIV.wrp > DIV.sponor.i1:last-child
+bing.com##footer[id="footer"]
+bing.com##footer[id="footer"]
+booking.frs.es###app > div.frs__overlay:nth-child(2)
+books-analytics-events.apple.com
+browser.sentry-cdn.com
+business-api.tiktok.com
+cdn.embedly.com##.adsense-ad.box_ad.googad
+chat.deepseek.com###root > div.ds-theme > div.cb86951c:first-child > div.c3ecdb44:last-child > div._7780f2e:last-child > div._765a5cd > div._660ca72 > div._9a2f8e4:last-child > div._0fcaa63._7941d9f:last-child
+chat.openai.com##.md\:pt-3.md\:pb-6.md\:px-\[60px\].dark\:text-gray-300.text-gray-600.text-xs.text-center.pt-2.pb-3
+click.googleanalytics.com
+coomer.party##.shifted.content-wrapper > [href] > div
+coomer.party##div.ad-container
+coomer.st###announcement-banner
+corriere.it##.privacy-cp-wall
+corriere.it##div.bck-adblock.is--active:nth-child(21) > div.adblock__container
+d3ward.github.io##.adbox.banner_ads.adsbox
+d3ward.github.io##.textads
+data.mistat.india.xiaomi.com
+data.mistat.rus.xiaomi.com
+data.mistat.xiaomi.com
+deezer.com###livebar_menu
+desktop.spotify.com
+doubleclick.net
+duckduckgo.com##.minimal-homepage_belowTheFoldWrapper___c_wJ
+duckduckgo.com##.tagline_tagline__WIZP8, .minimal-homepage_tagline__NbPoB, .button_button__GGtY1, .button_ghost___IPIW, .button_size-md__1jSxL
+duckduckgo.com###__next > div.home_root___gvmE > main.minimal-homepage_layout__5B6f9 > div.minimal-homepage_minimalHero__2yzex:first-child > div.homepage-cta-section_scrollCta__Wmixn.minimal-homepage_exploreFeatureScroller__7agV_.center_root___q8wn.center_intrinsic__Gt_PZ.center_andText__q9Qi5:last-child
+duckduckgo.com###__next > div.home_root___gvmE > main.minimal-homepage_layout__5B6f9 > div.minimal-homepage_minimalHero__2yzex:first-child > div.is-not-mobile-device:first-child > div.container_root__Ycg94.container_responsive__hpeZ9.container_fullWidth__1H_L8
+e-hentai.org###eventpane
+eascia.org##DIV[class="spu-bg"]
+en.shrinke.me###cookie-pop
+enf-cmnf.com##.header_logo
+enf-cmnf.com###footer_bg
+enf-cmnf.com###post_entry > table > tbody > tr > td > div
+enf-cmnf.com###text-25 > .div_wrap_sidebar
+enf-cmnf.com###text-34 > .div_wrap_sidebar
+epicload.com##.show.modal
+epicload.com##.show.modal-backdrop
+erai-raws.info###container > div.col-xs-12.col-sm-12.col-md-12.col-lg-3:last-child > div.col-xs-8.col-sm-8.col-md-8.col-lg-12:last-child > div.col-xs-6.col-sm-6.col-md-6.col-lg-12:last-child > a:nth-child(2) > div > img
+erai-raws.info###container > div.col-xs-12.col-sm-12.col-md-12.col-lg-3:last-child > div.col-xs-8.col-sm-8.col-md-8.col-lg-12:last-child > div.col-xs-6.col-sm-6.col-md-6.col-lg-12:nth-child(3) > a:last-child > div > img
+erai-raws.info###wrapper > div:first-child > header.col-xs-12.col-sm-12.col-md-12.col-lg-12 > div.header-container.background-image.text-center:first-child > img
+eventhubs.com##DIV.qc-cmp-ui-container.qc-cmp-showing:first-child
+fansubdb.it##.navbar-brand
+fantastik07rad.altervista.org.popup_adb_wrap
+fantastik07rad.altervista.org##div:nth-of-type(18)
+fantastik07rad.altervista.org##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+fantastik07rad.altervista.orgpopup_adb
+fapservice.com###branding
+fapservice.com###media_image-3
+filecr.com###modal > div.modal_wrap__YUA_W.modal_active__BgqWx
+filmperevolvere.org##.ht-show.progress
+filmperevolvere.org###ht-preloader-wrap
+filmperevolvere.org###kofi-wo-container-mobikofi-widget-overlay-dc644671-4c06-4b76-8b9c-deac7d71a1aa
+forumfree.it##.note
+freepornsex.net##*wrapper|blackout|ad-container|overlay*
+freepornsex.net^$script
+frs.es##div.cookie-hint__overlay.cookie-hint__overlay--visible:nth-child(6)
+fullporner.com##.col-md-right
+fumettologica.it##.kzfkbwrvdrjrffowtljaeiowvbegfbhbmbzcawvrethfumycwdxrwfenxpwufgburqydzsqmrakpurekpure.mgdiuhbtnozeqbknqvpfsxjrsgzdwdrmtljeusyywkwrcwqnvdzkpure
+fumettologica.it##.ofmycbitnzsspsnfcupuetnqlxafkrwawtwnldowxycevodkpure.qqrdzezzoesszbsbbmfxnloxzypmervnhqvxyzbpywhqahtzzkpure
+gelbooru.com##.footerAd2
+gelbooru.com##.headerAd
+gelbooru.com###idontneedashower
+gfycat.com##.adsense-ad.box_ad.googad
+gloyah.net##iframe[scrolling="no"][style*="position: fixed;"][style*="left: 50px;"]
+google.com##div.L3eUgb:nth-child(2) > div.o3j99:last-child
+google.it##.gb_g.gb_aa
+gql.twitch.tv##div:nth-of-type(18)
+gql.twitch.tv##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+grs.hicloud.com
+hanime.tv###app > div.application--wrap:last-child > main.content:nth-child(4) > div.content--wrap > div.container.pa-0.fluid > div.landing.full-page-height > div.parallax-container:first-child > div.parallax
+hanime.tv###app > div.application--wrap:last-child > main.content:nth-child(4) > div.content--wrap > div.container.pa-0.fluid > div.video.page.flex.column.align-center > div.segment-main.flex.column.align-center:first-child > div.htvnad.mobile.native_0.action-bar.flex.column:nth-child(2)
+hanime.tv###app > div.application--wrap:last-child > main.content:nth-child(4) > div.content--wrap > div.container.pa-0.fluid > div.video.page.flex.column.align-center > div.segment-remainder.flex.column:nth-child(2) > div.htvnad1.mobile.native_1.action-bar.flex.column.mt-2:nth-child(2)
+hentaiera.com###slider_video_container
+hentaisaturn.tv###HSPlanet
+hentaisaturn.tv##div.container:nth-child(3)
+hentaiworld.me##.alert-danger.alert
+hentaiworld.me##.img-right
+hentaiworld.me##div#sidebar:nth-of-type(3)
+hentaiworld.me##div#sidebar:nth-of-type(5)
+howifx.com__vliadb83
+howifx.com__vliadb83-bg
+howifx.com.__vliadb83-content
+https://a.storyblok.com/f/241562/*
+https://cdn.hentaisaturn.tv/static/images/general/HS-Mascotte2.png$domain=hentaisaturn.tv
+https://cdn.hentaiworld.me/static/images/general/Chizuru.png
+https://cdn.hentaiworld.me/static/images/general/player.png
+https://duckduckgo.com/_next/static/media/google-play-store-v2.962e9ea3.png
+https://fapservice.com/wp-content/uploads/2019/12/Cuye_background_v1.9.jpg
+https://i.ibb.co/*nuvola*
+https://i.imgur.com/c3wpouD.gif$domain=redanimedatabase.forumcommunity.net
+https://i.imgur.com/cnRSB.jpg
+https://img.animeworld.so/general/*yuriko*$image
+https://img.animeworld.so/general/ADBLOCK.gif
+https://www.freepornsex.net/wp-content/themes/mts_sense/images/nobg.png$image
+iadsdk.apple.com
+icv-crew.com###header
+ilcorsaroviola.info##div.blossomfeaturebox.openbox:last-child
+Iltemu.com^
+iot-eu-logser.realme.com
+iot-logser.realme.com
+k2sporn.com##.block.banner
+kemono.cr###announcement-banner
+kemono.party##.shifted.content-wrapper > [href] > div
+kemono.party##[href="https://kemono.su"] > div
+kickasstorrents.bz##div.tabs:nth-of-type(2)
+linkdrop.net##div:nth-of-type(5)
+linkdrop.net##div:nth-of-type(5) > div
+log.byteoversea.com
+log.fc.yahoo.com
+macosicons.com###app > main.announcement-top-banner:first-child
+mangadex.org##.swiper-container-horizontal.swiper-container-initialized.hide-edges.\!px-6.\!-mx-6.\!pt-2.\!pb-12.swiper-container > .swiper-wrapper
+mangadex.org##.text-white.bg-primary.px-6.p-4.justify-center.rounded.items-center.flex
+mangaworld.bz##.rounded-0.border-0.text-center.alert-success.alert
+mangaworld.cx##div.alert.alert-success.text-center.border-0.rounded-0:nth-child(3)
+mangaworldadult.net##div.alert.alert-success.text-center.border-0.rounded-0:nth-child(3)
+metrics.icloud.com
+metrics.mzstatic.com
+mrproblogger.com##.ts-modal*
+myanimelist.net##.sUaidzctQfngSNMH-pdatla
+myanimelist.net###gdpr-modal-bottom
+nhentai.net###download
+notes-analytics-events.apple.com
+notformembersonly.com##.amMb78RPPU8tNuFfBZUD.sXMjiAYIyLfUvykrs3RT.EO1yJtdgfnudgUYegQ3u.cQBiQUBGsHphKE1GuS3N.YT4KyBxROV_k96PW_DLJ.frvBxo3OzNO6g_x_mz5H._4KjPzfFqnPyBgIgiXkX
+notformembersonly.com##.visible-lg-block.visible-md-block
+notformembersonly.com###container > div.enlace_descarga:nth-child(6)
+notformembersonly.com##div._4KjPzfFqnPyBgIgiXkX.frvBxo3OzNO6g_x_mz5H.YT4KyBxROV_k96PW_DLJ.cQBiQUBGsHphKE1GuS3N.EO1yJtdgfnudgUYegQ3u.sXMjiAYIyLfUvykrs3RT.amMb78RPPU8tNuFfBZUD:nth-child(60)
+notformembersonly.com39 Jcwz3I4BNXIP81dbHqTv5oa7sduyA
+notformembersonly.comSMyIL7Z5IAI68l3gnYlljKwUljgeta
+notify.bugsnag.com
+nudegirls.wiki###jerky-im > .jerky-im-avatar
+nytimes.com##.e1x0szx60.css-17nqy7q.expanded-dock.expanded.shown.gdpr
+ocsp.apple.com
+offerwall.yandex.net
+pagead2.googleadservices.com
+pagead2.googlesyndication.com
+pantsu.cat###mascot
+partnerads.ysm.yahoo.com
+passport.twitch.tv##div:nth-of-type(18)
+passport.twitch.tv##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+patreon.com###banner-manager
+pixel.facebook.com
+player.twitch.tv##div:nth-of-type(18)
+player.twitch.tv##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+pornolab.net##.bypass-alert
+pornolab.net##.hide-for-print.ta-inf2.top-alert
+pornolab.net###cookieNotice
+pornolab.net###logo
+pornolab.net###sidebar1
+pr0gramm.com##.gpt.mobile-sticky-header
+pr0gramm.com###footer-links
+redanimedatabase.forumcommunity.net.popup_adb_wrap
+redanimedatabase.forumcommunity.net##.popup_adb
+redanimedatabase.forumcommunity.net###container > div:nth-child(18)
+redanimedatabase.forumcommunity.net###container > embed:nth-child(45)
+redanimedatabase.forumcommunity.net###FFA-box
+redanimedatabase.forumcommunity.net###popup_adb
+redanimedatabase.forumcommunity.net##div:nth-of-type(18)
+redanimedatabase.forumcommunity.net##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+repubblica.it##.iubenda-cs-container
+repubblica.it##.iubenda-cs-visible.iubenda-cs-no-heading.iubenda-cs-slidein.iubenda-cs-center.iubenda-cs-top.iubenda-cs-default-floating.iubenda-cs-black
+rutracker.org##.w100.tCenter > div
+secure.splitwise.com.ads_disabled
+secure.splitwise.com##.ads_disabled
+secure.splitwise.com##[src*="https://assets.splitwise.com/assets/pro/logo-337b1a7d372db4b56c075c7893d68bfc6873a65d2f77d61b27cb66b6d62c976c.svg"]
+segugio.it/images/skin*
+sessions.bugsnag.com
+static.adf.ly
+stream24.ilsole24ore.com###onetrust-button-group-parent
+stream24.ilsole24ore.com###onetrust-group-container
+theconomy.me##.adb
+theconomy.me##+js(noeval-if, /chp_?ad/)
+tinypic.com/images/goodbye
+toptv.cloud###adb
+tracking.rus.miui.com
+twitter.com###layers > div.css-175oi2r.r-aqfbo4.r-zchlnj.r-1xcajam.r-1d2f490.r-12vffkv:last-child > div.css-175oi2r.r-12vffkv > div.css-175oi2r.r-12vffkv > div.css-175oi2r.r-1p0dtai.r-1adg3ll.r-1d2f490.r-bnwqim.r-zchlnj.r-ipm5af > div.r-1oszu61.r-1niwhzg.r-vqxq0j.r-deolkf.r-1mlwlqe.r-eqz5dr.r-1ebb2ja.r-crgep1.r-ifefl9.r-bcqeeo.r-t60dpp.r-13wfysu.r-417010.r-1p0dtai.r-1adg3ll.r-1d2f490.r-bnwqim.r-zchlnj.r-ipm5af > div.css-175oi2r.r-1pz39u2.r-16y2uox.r-1wbh5a2 > div.css-175oi2r.r-1ny4l3l.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv.r-1awozwy:nth-child(2) > div.css-175oi2r.r-1wbh5a2.r-htvplk.r-1udh08x.r-1867qdf.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1:last-child > div.css-175oi2r.r-14lw9ot.r-16y2uox.r-1wbh5a2 > div.css-175oi2r.r-1pz39u2.r-16y2uox.r-1wbh5a2 > div.css-175oi2r.r-1ny4l3l.r-6koalj.r-16y2uox.r-14lw9ot.r-1wbh5a2:nth-child(2) > div.css-175oi2r.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-13qz1uu.r-1ye8kvj:last-child > div.css-175oi2r.r-16y2uox.r-1wbh5a2.r-1dqxon3 > div.css-175oi2r > div.css-175oi2r.r-ywje51.r-nllxps.r-jxj0sb.r-1dye5f7.r-16wqof > div.css-175oi2r.r-1awozwy.r-1777fci.r-ywje51.r-usiww2.r-eu3ka:nth-child(2)
+twitter.com###layers > div.css-175oi2r.r-aqfbo4.r-zchlnj.r-1xcajam.r-1d2f490.r-1p0dtai.r-12vffkv > div.css-175oi2r.r-12vffkv:first-child > div.css-175oi2r.r-12vffkv > div.css-175oi2r.r-l5o3uw.r-1upvrn0.r-yz1j6i
+twitter.com###react-root > div.css-175oi2r.r-13awgt0.r-12vffkv > div.css-175oi2r.r-13awgt0.r-12vffkv > div.css-175oi2r.r-13qz1uu.r-417010.r-18u37iz:last-child > div.css-175oi2r.r-1awozwy.r-1777fci:last-child
+twitter.com###react-root > div.css-175oi2r.r-13awgt0.r-12vffkv > div.css-175oi2r.r-13awgt0.r-12vffkv > div.css-175oi2r.r-13qz1uu.r-417010.r-18u37iz:last-child > main.css-175oi2r.r-16y2uox.r-1wbh5a2.r-1habvwh:nth-child(4) > div.css-175oi2r.r-150rngu.r-16y2uox.r-1wbh5a2.r-113js5t > div.css-175oi2r.r-aqfbo4.r-16y2uox > div.css-175oi2r.r-1oszu61.r-1niwhzg.r-18u37iz.r-16y2uox.r-2llsf.r-13qz1uu.r-1wtj0ep > div.css-175oi2r.r-aqfbo4.r-fif9oo.r-1hycxz:last-child > div.css-175oi2r.r-1pi2tsx > div.css-175oi2r.r-1hycxz.r-1xcajam:last-child > div.css-175oi2r.r-1adg3ll > div.css-175oi2r > div.css-175oi2r.r-vacyoi.r-ttdzmv > div.css-175oi2r.r-14lw9ot.r-jxzhtn.r-1867qdf.r-1phboty.r-rs99b7.r-1ifxtd0.r-1udh08x:first-child
+udc.yahoo.com
+udem.yahoo.com
+vault.bitwarden.com##.card.border-success.mb-4
+viper.to###basePopping
+vipergirls.to###basePopping
+vocalley.com__vliadb83
+vocalley.com__vliadb83-bg
+vocalley.com.__vliadb83-content
+waskucity.com##[src*="styles/blue/banners/AsianSexDiaryBottom.gif"]
+weather-analytics-events.apple.com
+whataicandotoday.com###app > div.w-full.bg-gradient-to-r.from-blue-400.via-purple-400.to-cyan-400.text-black:nth-child(2)
+widgets.pinterest.com
+wordreference.com###footer
+wordreference.com###rightcolumn
+www.amazon.it##.ssf-background
+www.ansa.it###iubenda-cs-banner
+www.artstation.com##.ng-star-inserted.justify-content-center.d-sm-flex.d-none
+www.artstation.com##div.ng-star-inserted.d-sm-flex.d-none.separator
+www.bing.com##.gi_n
+www.bing.com##.on.gi_fre_pu
+www.bing.com###gi_tc
+www.erai-raws.info###smart_push_smio_overlay
+www.erai-raws.info###smart_push_smio_window
+www.erosberry.com##canvas:nth-of-type(2)
+www.flickr.com##.flat.rail-item
+www.forumcommunity.net.popup_adb_wrap
+www.forumcommunity.net##div:nth-of-type(18)
+www.forumcommunity.net##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+www.forumcommunity.netpopup_adb
+www.freepornsex.net##*wrapper|blackout|ad-container|overlay*
+www.freepornsex.net^$script
+www.hotpornfile.org##.open.reveal-modal
+www.hotpornfile.org##.reveal-modal-bg
+www.ilfattoquotidiano.it##.cc-policy-update__blur
+www.ilfattoquotidiano.it##.cc-policy-update__wrapper
+www.ilpost.it##.call-to-action
+www.ilpost.it##.call-to-action > [href^="https://abbonati.ilpost.it/"]
+www.ilpost.it###maxticker
+www.ilsole24ore.com##.ot-fade-in.onetrust-pc-dark-filter
+www.ilsole24ore.com###onetrust-button-group-parent
+www.ilsole24ore.com###onetrust-group-container
+www.lascimmiapensa.com###Brid_42685946
+www.newscon.net##.adblock-warning.overlay--light.overlay
+www.opensubtitles.com##.adds-area.col-xs-12
+www.opensubtitles.com###sub-dl-buttons-content-6873535 > .panel
+www.opensubtitles.com###sub-dl-buttons-content-6873535_np_container > .install_ext_infos.col-xs-12
+www.opensubtitles.org##.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.ui-draggable.ui-resizable
+www.opensubtitles.org###bounce_arrow
+www.opensubtitles.org###chromepop
+www.photopea.com##.app.flexrow > div:nth-of-type(2)
+www.pixiv.net##.TbiBa.sc-1p2gd44-9
+www.qwant.com##.pNh52._35zId._2GnA8._1Jf6R > ._1Rv8e > ._1ZfhW > [href*="https://chrome.google.com/webstore/detail/hnlkiofnhhoahaiimdicppgemmmomijo"]
+www.recaptcha.net##.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.ui-draggable.ui-resizable
+www.recaptcha.net###bounce_arrow
+www.recaptcha.net###chromepop
+www.reddit.com##.adsense-ad.box_ad.googad
+www.reddit.com###tokenContainer
+www.redditmedia.com##.adsense-ad.box_ad.googad
+www.repubblica.it##.iubenda-cs-visible.iubenda-cs-no-heading.iubenda-cs-slidein.iubenda-cs-center.iubenda-cs-top.iubenda-cs-default-floating.iubenda-cs-black
+www.rollingstone.it##.c-ad--320x50.c-ad--mobile-header.c-ad
+www.theverge.com##.volume-video.c-video-embed
+www.theverge.com###privacy-consent
+www.torrentmac.net##.-blackout.active
+www.torrentmac.net##.-modal.-the-modal.active
+www.torrentmac.net##.-wrapper
+www.tripadvisor.it##*.ad
+www.tuttoandroid.net##.ta-adblock-modal
+www.twitch.tv##div:nth-of-type(18)
+www.twitch.tv##div.container:nth-of-type(21) > table:nth-of-type(1) > tbody > tr > td
+www.wikipedia.org##.cn-IMD_2022_Limited
+www.wikipedia.org##.frb-button.frb-nag-link
+www.wikipedia.org##.frb-country-IT.frb-rml-enabled.frb
+www.wikipedia.org##.frb-message-inner_height.frb-message-inner
+www.wikipedia.org##.frb-rml-enabled.frb-nag.frb
+www.wikipedia.org##.frb-smallprint.frb-footer
+www.wikipedia.org##.frb-step-1.frb-step
+www.wikipedia.org###frb-form
+www.wikipedia.org###frb-main > .frb-layout > .frb-form-wrapper
+www.wikipedia.org###frb-main > .frb-layout > .frb-message
+www.wikipedia.org###siteNotice
+www.wikipedia.org###tskaff_WMIT_5X1000_2022_dsk
+www.wordreference.com##.cfyd394cmfib
+www.wordreference.com##.j8etqankrtb2
+www.youtube.com##.opened
+www.youtube.com##.ytd-popup-container.style-scope > .yt-upsell-dialog-renderer.style-scope
+www.youtube.com###consent-bump > .ytd-consent-bump-lightbox.style-scope
+xe.com###__next > div.__variable_ccac51 > div.h-\[90px\].bg-blue-900.max-\[900px\]\:h-\[50px\]:first-child
+xhamster.com##.column-left
+xhamster.com##.cookies-modal
+xiaoshenke.net##.col-md-right
+xxxadulttorrent.org###nav-panel
+yogablogfit.com##.qc-cmp2-consent-info
+yogablogfit.com##.qc-cmp2-container

@@ -1,0 +1,2 @@
+- Iconcine da rendere come SVG che cambiano colore come il testo in base al tema
+- nome delle sezioni (clic su un elemento della Table of Contents a sinistra → ultimo segmento dell'URL)
