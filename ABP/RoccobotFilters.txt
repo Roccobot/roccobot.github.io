@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-03-19
+! Last updated: 2026-03-24
 
 *ads.js
 *pagead.js
@@ -492,3 +492,40 @@ xiaoshenke.net##.col-md-right
 xxxadulttorrent.org###nav-panel
 yogablogfit.com##.qc-cmp2-consent-info
 yogablogfit.com##.qc-cmp2-container
+
+
+! --- HARDCORE FILTERS ---
+
+! --- Affiliate & Redirect Trackers (Tracciatori di link e coupon) ---
+||affinity.net^
+||awin1.com^
+||tradedoubler.com^
+||ad.zanox.com^
+||anrdoezrs.net^
+||jdoqocy.com^
+||tkqlhce.com^
+||dpbolvw.net^
+||shareasale.com^
+||skimresources.com^
+||skimlinks.com^
+||viglink.com^
+||linksynergy.com^
+||pxf.io^
+||impactradius.com^
+||clickbank.net^
+
+! --- Ad Networks & Click Trackers (Reti pubblicitarie e tracciamento click) ---
+||ad.doubleclick.net^
+||googleadservices.com^
+||google-analytics.com^
+||criteo.com^
+||taboola.com^
+||outbrain.com^
+||adition.com^
+
+! --- Telemetry & Analytics (Spioni di comportamento in background) ---
+||scorecardresearch.com^
+||quantserve.com^
+||hotjar.com^
+||appsflyer.com^
+||branch.io^
