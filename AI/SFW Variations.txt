@@ -1,0 +1,25 @@
+NEGATIVES: 3D, abs, annotation, bad anatomy, bib pocket, bikini tie, black bars, blank canvas, blank paper, body hair, border, bra, bralette, elf ears, empty canvas, extra fingers, extra hands, extra limbs, extra straps, fabric tag, fade to white, flat chest, floating background, frame, fused bodies, genitals, hairy arms, hairy legs, hidden nip bumps, HUD, isolated background, invisible chest peaks/bumps, layered clothing, letterboxing, logo, long nails, medium chest, mirror, missing fingers, missing hands, missing limbs, monster ears, muscular, original background, phone in hand, photographic, pillarboxing, pointy ears, realistic, rough paper edges, selfie, sharp nails, side tie, small bust, speaking, speech bubble, sticker, sunburn, text, UI, underwear, unpainted edges, vignette, visible ribs, volumetric light, watermark, western media, white bars, white borders.
+
+EXTRA: choose the best fitting variant from the list below and use the described outfit to REPLACE the original. CRITICAL FOR EVERY >0 VARIANT: A) don't change framing/perspective. B) don't add any extra (non described) pieces of clothing, not even undies. C) modest tasteful pose, ensure SFW. D) no footwear. E) No UI, no text.
+A specific variant can be forced by appending the corresponding number at the end of this prompt.
+0) [original outfit].
+1) Lace lingerie, matching garter belt and stockings.
+2) Loose draped short towel with deep vent/slit.
+3) Light-blue embroidered overalls only, bare underneath; large square breast window hole on bib; one strap down.
+4) Embroidered cheeky overall shorts only, bare underneath. Unfastened straps, dropped front bib hanging at waist; waist-up bare skin; SFW strategic coverage: long front hair draped over chest.
+5) Short loose deep neckline apron only with extremely daring vents.
+6) White micro culottes and slim suspenders passing over the center of each breast; bare underneath.
+7) Transparent two piece microkini + thigh highs.
+8) Qipao only, bare underneath; deep plunging neckline, single-button fastened bust for strategic coverage; open front, extreme high slit; pose: one bare leg out; anklets.
+9) Minimalist red string harness only, thin red cord wrapping torso and hips; extreme micro-string outfit, mostly bare skin; SFW strategic coverage, intersecting strings perfectly concealing bust and bottom.
+10) Extremely low-waist white ruffled micro-shorts, frilly bloomer shorts, side string ties, bare midriff, exposed lower belly; bare waist-up; hands covering bare chest, SFW strategic coverage, arms concealing bust.
+11) Lace crop top, deep plunge neckline, bare midriff, visible bellybutton; strapless maebari micro-bottom, SFW strategic front coverage. Silver link waist chain, bare hips, bare legs.
+12) Bare skin, bandaid bikini concept, minimalist medical tape only; one single horizontal tape piece covering chest, one single vertical tape piece covering lower area; SFW strategic coverage; bare midriff, bare hips, bare legs, no clothes.
+13) Completely bare skin, SFW strategic coverage; bust and lower body covered by arms/hands.
+14) Completely bare skin only, holding regular sized teddy bear in front; SFW strategic coverage, plush toy perfecty concealing chest, lower body and lap area. Cute pose.
+15) Completely bare skin, SFW strategic coverage; long hair draped over chest concealing bust, one hand covering lap.
+16) Seethru ribbed knit light cardigan only, bare underneath. Unbuttoned, wide open front with strategic coverage, sheer fabric adapting to body peaks. No shirt, no bra, no undies.
+17) SFW implicitly unclothed: floral body paint only (except chest, lap, face).
+18) Frontal view, standing, implicitly unclothed, SFW; holding a mighty sword pointing down, resting on the ground with peak on the floor exactly in front of the character: arms concealing chest in order to be able to grasp the hilt from both sides; blade hiding lap.
+19) Completely bare skin. Introduce a second female figure, also with bare skin, standing directly behind the main subject and kissing them on the cheek. The ensemble provides strict SFW strategic coverage through an embrace: the second figure's arms wrap around the main subject, with one arm draped across the chest perfectly concealing the bust area, and the other hand elegantly positioned to cover the lower lap area. A tasteful, artistic pose ensuring full modesty with no explicit nudity visible. Maintain original lighting and background vibe.
+20) Completely bare skin. Introduce two additional female figures flanking the main subject, also with bare skin. The ensemble creates strict SFW strategic coverage: the hands of the two surrounding figures are elegantly positioned to simultaneously and completely conceal both the main subject's bust area and the lower body/lap area. A collaborative, artistic pose ensuring absolute modesty with no explicit nudity visible.
