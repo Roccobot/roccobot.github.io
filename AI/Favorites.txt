@@ -1,6 +1,26 @@
-Symbol { Prompt }
+• SYNTAX:
+Symbol { Prompt },
+⸻ (separator)
+Symbol { Prompt },
+⸻
+...etc. Empty new lines don't count.
 
-⚇ {Analyze the attached image and describe its content in highly technical, ultra-precise English, optimized for a generative AI prompt. Provide a description so meticulously detailed that a blind artist could reproduce the image from scratch on a blank canvas. There are three operating modes: your description must focus on different aspects depending on the letter provided at the very end of this prompt. CRITICAL OUTPUT RULE: Output ONLY the raw description. Strictly NO conversational filler, NO preambles, NO postambles, and NO meta-commentary (e.g., 'The image depicts...', 'As requested...'). Start directly with the first word of the description.
+
+• GLOSSARY / INTERNAL CONVENTIONS (ordered by meaning/relevance):
+FreshGen, ex-novo = synonyms of 'from scratch'. It means 'Don't apply filters or transformations to existing elements: CREATE NEW ONES'. This is valid universally.
+SFW = content can be sexy, revealing or risqué, but does not involve nudity.
+NSFW = involves nudity or sporadic borderline content, but NOT sexually explicit.
+NEGATIVE TERMS = keywords or sentences describing objects or concepts that MUST NOT appear in the generated content.
+NEGATIVES: short for 'negative terms'.
+NEGATIVE SCAFFOLDING = long list of negative terms.
+NIPS = synonim of nipples.
+PUBES = synonym of pubic area.
+
+
+• PROMPTS:
+
+⚇ {
+Analyze the attached image and describe its content in highly technical, ultra-precise English, optimized for a generative AI prompt. Provide a description so meticulously detailed that a blind artist could reproduce the image from scratch on a blank canvas. There are three operating modes: your description must focus on different aspects depending on the letter provided at the very end of this prompt. CRITICAL OUTPUT RULE: Output ONLY the raw description. Strictly NO conversational filler, NO preambles, NO postambles, and NO meta-commentary (e.g., 'The image depicts...', 'As requested...'). Start directly with the first word of the description.
 
 If I choose A (Full scene): Describe the entire scene. Focus on people (or equivalents, e.g., fictional humanoid characters), animals, landscapes or interiors, architectural elements, and distinctive environmental features. Strictly ignore any artificial, UI, or non-diegetic elements.
 
@@ -8,47 +28,90 @@ If I choose B (Anatomy, pose & features): Provide a comprehensive anatomical and
 
 If I choose C (Style transfer prompt): Act as a prompt engineer and help me formulate a generic, universal generative prompt. This prompt will be fed to an AI image generator to accurately apply this exact specific style (technique, overall aesthetic, character design rules, color grading, lighting, etc.) to any arbitrary new input image.
 
-Default: A}
+Default: A
+},
 
+⸻
 
-▦ {Use the original image as a strict reference and preserve 100% identity, face structure, pose, and composition.
+▦ {
+Use the original image as a strict reference and preserve 100% identity, face structure, pose, and composition.
 Perform ultra-high-resolution 8K upscaling with maximum detail enhancement. Add realistic skin texture with visible pores, fine lines, and natural imperfections, avoiding any plastic or artificial smoothing. Enhance facial details including sharp eyes, realistic eyelashes, natural eyebrows, detailed lips, and individual hair strands.
 Apply professional DSLR camera quality using a full-frame camera look with a premium 85mm or 50mm lens. Improve lighting with a natural key light, soft fill light, and subtle rim light to separate the subject from the background. Increase clarity and sharpness naturally without over-sharpening.
 Balance highlights and shadows with improved dynamic range and true-to-life colors. Reduce noise and compression artifacts while preserving original texture. Apply cinematic yet realistic color grading with accurate skin tones and authentic depth of field. Output should look ultra-photorealistic, high-end studio quality, DSLR-level realism.
-"negative_prompt": "over-smoothed skin, plastic face, cartoon style, anime, painterly look, AI artifacts, distorted face, fake skin texture, blur, low detail, harsh sharpening, oversaturation, unrealistic lighting, color bleeding, noise artifacts". "resolution": "7680x4320", "quality": "8K", "style": "photorealistic, DSLR", "detail_level": "maximum", "identity_preservation": "strong", "reference_image_weight": "high", "noise_reduction": "high without texture loss", "sharpening": "natural and controlled", "lighting": "realistic studio lighting", "camera": {"type": "DSLR", "sensor": "full-frame", "lens": "85mm portrait lens", "aperture": "f/1.8"}." },
-      { "label": "⨝|Recreate EX-NOVO the whole scene from provided image (or from the latest I sent here) as a high-quality semi-realistic full color 3D render: very high budget, high fidelity game cinematic frame: semi-realistic 3D render, Unreal Engine 5 style, ultra smooth surfaces, HD, raytracing, global illumination, subsurface scattering, smooth porcelain skin (idealized, no photorealistic pores/blemishes), strand-based hair, ArtStation quality. Hint of orange in the lights, hint of teal in the shadows. Reproduce original framing and perspective.
+"negative_prompt": "over-smoothed skin, plastic face, cartoon style, anime, painterly look, AI artifacts, distorted face, fake skin texture, blur, low detail, harsh sharpening, oversaturation, unrealistic lighting, color bleeding, noise artifacts", "resolution": "7680x4320", "quality": "8K", "style": "photorealistic, DSLR", "detail_level": "maximum", "identity_preservation": "strong", "reference_image_weight": "high", "noise_reduction": "high without texture loss", "sharpening": "natural and controlled", "lighting": "realistic studio lighting", "camera": {"type": "DSLR", "sensor": "full-frame", "lens": "85mm portrait lens", "aperture": "f/1.8"}.
+},
+
+⸻
+
+⨝ {
+Recreate EX-NOVO the whole scene from provided image (or from the latest I sent here) as a high-quality semi-realistic full color 3D render: very high budget, high fidelity game cinematic frame: semi-realistic 3D render, Unreal Engine 5 style, ultra smooth surfaces, HD, raytracing, global illumination, subsurface scattering, smooth porcelain skin (idealized, no photorealistic pores/blemishes), strand-based hair, ArtStation quality. Hint of orange in the lights, hint of teal in the shadows. Reproduce original framing and perspective.
 
 Remove HUD text, UI, stickers, logos, overlays. Crop out black bars, frames, borders, letterboxing: resulting image proportions defines output's aspect ratio (don't go vertical beyond 2:3). If original background is very chaotic/messy, replace with a simple, neutral, or atmospheric background to maintain focus on the subject.
 
-NEGATIVES: 2D, abs, anime, annotation, anorexic, artifact, bad anatomy, baggy clothes, bikini tie, black bars, blank canvas, blemishes, block heels, body hair, border, bulky clothes, cartoon, clothing label, cluttered background, dangling string, Disney/Pixar style, distorted face, empty canvas, extra fingers, extra limbs, fabric tag, flat chest, flat neckline, flat shading, flattened body, frame, hairy arms, hairy legs, hidden nip bumps, high-necked, holding phone, HUD, invisible chest peaks/bumps, jagged lines, knee-high boots, layered clothing, letterboxing, logo, long nails, low poly, medium chest, messy, mirror, missing fingers, missing limbs, muscular, neon colors, original background, out of character, oversized clothing, painting, phone in hand, skin pores, pillarboxing, pointy ears, ribbon bow, selfie, sharp nails, side tie, sketch, small bust, speaking, speech bubble, sticker, stiletto nails, sunburn, text, top & bottom bars, UI, visible ribs, watermark, wedge heels, western cartoon proportions, western media, white bars, wrinkles." },
-      { "label": "▧|Add some extra space around character(s) and make the image square and the main character represented full body.
+NEGATIVES: 2D, abs, anime, annotation, anorexic, artifact, bad anatomy, baggy clothes, bikini tie, black bars, blank canvas, blemishes, block heels, body hair, border, bulky clothes, cartoon, clothing label, cluttered background, dangling string, Disney/Pixar style, distorted face, empty canvas, extra fingers, extra limbs, fabric tag, flat chest, flat neckline, flat shading, flattened body, frame, hairy arms, hairy legs, hidden nip bumps, high-necked, holding phone, HUD, invisible chest peaks/bumps, jagged lines, knee-high boots, layered clothing, letterboxing, logo, long nails, low poly, medium chest, messy, mirror, missing fingers, missing limbs, muscular, neon colors, original background, out of character, oversized clothing, painting, phone in hand, skin pores, pillarboxing, pointy ears, ribbon bow, selfie, sharp nails, side tie, sketch, small bust, speaking, speech bubble, sticker, stiletto nails, sunburn, text, top & bottom bars, UI, visible ribs, watermark, wedge heels, western cartoon proportions, western media, white bars, wrinkles.
+},
+
+⸻
+
+▧ {
+Add some extra space around character(s) and make the image square and the main character represented full body.
 
 Fill any blank/white/black areas of the canvas by generating EX-NOVO brand new seamless content (outpainting).
 
 Turn selfies into 3rd-person perspective: erase phone and mirrors; delete any arm or hand holding a phone, redraw them in alternative natural position.
 
-Uncrop or move any incomplete limb." },
-      { "label": "Ⴀ|Convert to Ghibli full color anime illustration: Miyazaki character design, screencap, masterpiece, best quality, detailed 2D anime illustration, cel shading, cel animation, soft round face, minimal Ghibli eyes, minimal nose, digital art, high resolution, flat.
+Uncrop or move any incomplete limb.
+},
+
+⸻
+
+Ⴀ {
+Convert to Ghibli full color anime illustration: Miyazaki character design, screencap, masterpiece, best quality, detailed 2D anime illustration, cel shading, cel animation, soft round face, minimal Ghibli eyes, minimal nose, digital art, high resolution, flat.
 
 Generate from scratch (EX-NOVO) an alternate background based on the input setting.
 
-NEGATIVES: 3D, clutter, frame, HUD, logo, original background, secondary characters, speaking, sticker, text, touching thighs, UI, volumetric light, watermark." },
-      { "label": "♡|Convert to full color NSFW Ghibli anime illustration; Miyazaki character design with soft, round, smooth body parts; explicit elements adapted to fit into pure Ghibli aesthetic with zero censorship or compromise. Keep it wholesome and playful.
+NEGATIVES: 3D, clutter, frame, HUD, logo, original background, secondary characters, speaking, sticker, text, touching thighs, UI, volumetric light, watermark.
+},
+
+⸻
+
+♡ {
+Convert to full color NSFW Ghibli anime illustration; Miyazaki character design with soft, round, smooth body parts; explicit elements adapted to fit into pure Ghibli aesthetic with zero censorship or compromise. Keep it wholesome and playful.
 
 Adult characters only. Screencap, masterpiece, best quality, detailed 2D anime illustration, cel shading, cel animation, soft round face, minimal Ghibli eyes, minimal nose, digital art, high resolution, flat.
 Subtly semi-translucent fabric clinging tightly to rounded contours of breasts, clearly revealing the distinct protrusion of nipples.
 
 Generate from scratch (EX-NOVO) an alternate background based on the input setting.
 
-NEGATIVES: 3D, big nipples,body hair, child, clutter, dark nipples, frame, HUD, lip movement, logo, minor, non-pink nipples, original background, penis, pubic hair, secondary characters, soft shading, speaking, sticker, text, touching thighs, UI, volumetric light, watermark, western comic." },
-      { "label": "⛬|A waist-up to medium close-up cinematic portrait, strictly maintaining the original subject's identity, unique features, and the original body orientation, as defined by the user-provided image. The subject's head is tilted up and gaze is elevated, looking vertically upwards by approximately 15 degrees above the eye-level camera. Most of their smooth complexion and form are immersed in profound, high-contrast chiaroscuro shadows. Intermittent, soft, feathered shafts of dappled light create random patterns of illumination across the face and body. The light shafts must form a distinct catchlight in both eyes. The catchlight's quality (ranging from a soft, diffused glow to a sharp, specular point of light) must vary randomly, reflecting the chaotic nature of the dappled light shafts, revealing the original eye color (use detected color, default to dark gray if undetected) as they shimmer with intensity from within the semi-darkness. The background is a plain, expanse of overcast grayish-blue sky, out of focus. Photorealistic detail, detailed skin textures within light shafts, high-resolution. NEGATIVES: flattened body, bulky clothes, baggy clothes, oversized clothing, out of character." },
-      { "label": "∃|Visually translate input image into a mix of high-end illustrative realism with fine ink lines and soft watercolor strokes. Highly detailed depiction with porcelain textured skin, subtle blush, and expressive sparkling eyes; dynamic composition. The sharp white negative space background overlaid with architectural lines and handwritten letters contains love and compassion sentences, geometric construction grids, and human history theory engineering drawing elements. Strands of hair and flowing edges of fabric dissolve into abstract, transparent shards of color and splashes of paint. Soft pastel palette (soft blue, warm yellow, pale pink, light gray) with controlled saturation. An elegant balance between precise sketch lines and loose, atmospheric paint effects. Cinematic editorial illustration aesthetics with the feel of modern fashion art, dreamy but sharp, minimalist but rich in detail.
+NEGATIVES: 3D, big nipples,body hair, child, clutter, dark nipples, frame, HUD, lip movement, logo, minor, non-pink nipples, original background, penis, pubic hair, secondary characters, soft shading, speaking, sticker, text, touching thighs, UI, volumetric light, watermark, western comic.
+},
 
-NEGATIVES: 3D, baggy clothes, bulky clothes, clutter, flat chest, flattened body, frame, HUD, logo, original background, out of character, oversized clothing, secondary characters, speaking, sticker, text, touching thighs, UI, volumetric light, watermark." },
-      { "label": "ᗜ|Two POV female hands coming from the sides of the frame massage her breasts GENTLY and SLOWLY. Breasts are very firm and hard, and oppose a certain resistance: make them react to squeeze, touch, fondle & grope accordingly. She enjoys the massage and reacts with a blissful smile; eyes closed, gaze upwards, cute little moans. Focus on arms and hands consistency, STRICTLY avoid flipping/distorting/mirroring/ghosting halfway. If chest is covered, all clothing layers are removed beforehand. If the framing is not suitable for POV interaction, adjust zoom and/or camera distance.
+⸻
 
-NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark." },
-      { "label": "✦|Redraw EX-NOVO (FreshGen) the scene from the provided image as a full-color vintage 1990s retro anime screencap, a cel animation masterpiece in strictly Studio Ghibli style, classic Hayao Miyazaki character design. Global settings: optimal brightness, natural color balance, very subtly warmer tones, subtle teal/orange color contrast, warm nostalgic cinematic lighting, and very subtle natural soft grain.
+⛬ {
+A waist-up to medium close-up cinematic portrait, strictly maintaining the original subject's identity, unique features, and the original body orientation, as defined by the user-provided image. The subject's head is tilted up and gaze is elevated, looking vertically upwards by approximately 15 degrees above the eye-level camera. Most of their smooth complexion and form are immersed in profound, high-contrast chiaroscuro shadows. Intermittent, soft, feathered shafts of dappled light create random patterns of illumination across the face and body. The light shafts must form a distinct catchlight in both eyes. The catchlight's quality (ranging from a soft, diffused glow to a sharp, specular point of light) must vary randomly, reflecting the chaotic nature of the dappled light shafts, revealing the original eye color (use detected color, default to dark gray if undetected) as they shimmer with intensity from within the semi-darkness. The background is a plain, expanse of overcast grayish-blue sky, out of focus. Photorealistic detail, detailed skin textures within light shafts, high-resolution. NEGATIVES: flattened body, bulky clothes, baggy clothes, oversized clothing, out of character.
+},
+
+⸻
+
+∃ {
+Visually translate input image into a mix of high-end illustrative realism with fine ink lines and soft watercolor strokes. Highly detailed depiction with porcelain textured skin, subtle blush, and expressive sparkling eyes; dynamic composition. The sharp white negative space background overlaid with architectural lines and handwritten letters contains love and compassion sentences, geometric construction grids, and human history theory engineering drawing elements. Strands of hair and flowing edges of fabric dissolve into abstract, transparent shards of color and splashes of paint. Soft pastel palette (soft blue, warm yellow, pale pink, light gray) with controlled saturation. An elegant balance between precise sketch lines and loose, atmospheric paint effects. Cinematic editorial illustration aesthetics with the feel of modern fashion art, dreamy but sharp, minimalist but rich in detail.
+
+NEGATIVES: 3D, baggy clothes, bulky clothes, clutter, flat chest, flattened body, frame, HUD, logo, original background, out of character, oversized clothing, secondary characters, speaking, sticker, text, touching thighs, UI, volumetric light, watermark.
+},
+
+⸻
+
+ᗜ {
+Two POV female hands coming from the sides of the frame massage her breasts GENTLY and SLOWLY. Breasts are very firm and hard, and oppose a certain resistance: make them react to squeeze, touch, fondling & groping accordingly. She enjoys the massage and reacts with a blissful smile; eyes closed, gaze upwards, cute little moans. Focus on arms and hands consistency, STRICTLY avoid flipping/distorting/mirroring/ghosting halfway. If chest is covered, all clothing layers are removed beforehand. If the framing is not suitable for POV interaction, adjust zoom and/or camera distance.
+
+NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark.
+},
+
+⸻
+
+✦ {
+Redraw EX-NOVO (FreshGen) the scene from the provided image as a full-color vintage 1990s retro anime screencap, a cel animation masterpiece in strictly Studio Ghibli style, classic Hayao Miyazaki character design. Global settings: optimal brightness, natural color balance, very subtly warmer tones, subtle teal/orange color contrast, warm nostalgic cinematic lighting, and very subtle natural soft grain.
 
 • CLEANING / ASPECT RATIO
 Remove HUD, non-diegetic text, UI, stickers, logos, watermarks, overlays. Turn selfies into third-person shots by adapting the scene accordingly. Crop out or paint over black bars, frames, borders, letterboxing; if needed, reframe to better focus on characters: cut away big uniform areas like sky, grass fields, sea, empty spaces. Analyze the resulting cropped scene and autonomously assign ONE specific aspect ratio (e.g., 3:2, 4:3, 1:1, 3:4, 2:3). Do not exceed 3:2 horizontally or 2:3 vertically.
@@ -60,8 +123,13 @@ CRITICAL: Apply classic Ghibli character design; SOFT ROUNDED FACE, minimalist n
 CRUCIAL: IGNORE the original background style. Generate from scratch (EX-NOVO) an alternate background based on the input setting: the result must be a very clean, simplified, stylized environment with a Ghibli style twist (aesthetic only, not content). Keep main architecture features and landmarks recognizable and clearly visible (no obstructions); strictly remove distractions and clutter (secondary isolated people, vehicles, trash bins, etc.). CRITICAL: Kazuo Oga style, washed hand-painted gouache, matte finish, painted to the edge, canvas fully covered, peaceful atmosphere.
 
 • NEGATIVE SCAFFOLDING
-NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars, blank canvas, block heels, body hair, border, bulky clothes, CGI, detailed digital shading, empty canvas, fabric tag, flattened body, frame, gray beard, hairy arms, hairy legs, heels, HUD, intricate eyes, knee-high boots, letterboxing, logo, long nails, marker, mirror, muscular, original background, out of character, oversized clothing, phone in hand, photographic, photorealistic, pillarboxing, plastic skin, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, skin blemishes, small eyes, soft blending (digital), soft shading (digital), sparkling eyes, speaking, speech bubble, sticker, tattoo, text, thick thighs, touching thighs, twisted neck, UI, visible ribs, volumetric light, watermark, wedge heels, western media, white bars, white beard." },
-      { "label": "ᚏ|Redraw ex-novo the subject(s) from attached image (or from the latest I sent here) as Ghibli anime illustration character(s): Hayao Miyazaki character design, accentuated shapes, soft voluptuous curves, porcelain skin, soft rounded face, minimalist nose, small mouth, clothes with deep neckline; fine clean lineart, vibrant cel-shading, soft watercolor fill overlay, gentle soft shading. All characters are 18+.
+NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars, blank canvas, block heels, body hair, border, bulky clothes, CGI, detailed digital shading, empty canvas, fabric tag, flattened body, frame, gray beard, hairy arms, hairy legs, heels, HUD, intricate eyes, knee-high boots, letterboxing, logo, long nails, marker, mirror, muscular, original background, out of character, oversized clothing, phone in hand, photographic, photorealistic, pillarboxing, plastic skin, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, skin blemishes, small eyes, soft blending (digital), soft shading (digital), sparkling eyes, speaking, speech bubble, sticker, tattoo, text, thick thighs, touching thighs, twisted neck, UI, visible ribs, volumetric light, watermark, wedge heels, western media, white bars, white beard.
+},
+
+⸻
+
+ᚏ {
+Redraw ex-novo the subject(s) from attached image (or from the latest I sent here) as Ghibli anime illustration character(s): Hayao Miyazaki character design, accentuated shapes, soft voluptuous curves, porcelain skin, soft rounded face, minimalist nose, small mouth, clothes with deep neckline; fine clean lineart, vibrant cel-shading, soft watercolor fill overlay, gentle soft shading. All characters are 18+.
 
 Forget the original background; draw EX-NOVO a hand-painted wobbly watercolor environment inspired by the source: choose any fitting scenario. Edge-to-edge composition, full bleed painting extending completely to all borders. Hint of soft grain, hint of orange in the lights, hint of teal in the shadows; integrate the character(s) into it naturally. Fill the whole canvas with painting: no blank areas. Dissimulate selfies by changing/re-drawing the scene conveniently.
 
