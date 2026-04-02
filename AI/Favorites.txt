@@ -102,14 +102,6 @@ NEGATIVES: 3D, baggy clothes, bulky clothes, clutter, flat chest, flattened body
 
 ⸻
 
-ᗜ {
-Two POV female hands coming from the sides of the frame massage her breasts GENTLY and SLOWLY. Breasts are very firm and hard, and oppose a certain resistance: make them react to squeeze, touch, fondling & groping accordingly. She enjoys the massage and reacts with a blissful smile; eyes closed, gaze upwards, cute little moans. Focus on arms and hands consistency, STRICTLY avoid flipping/distorting/mirroring/ghosting halfway. If chest is covered, all clothing layers are removed beforehand. If the framing is not suitable for POV interaction, adjust zoom and/or camera distance.
-
-NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark.
-},
-
-⸻
-
 ✦ {
 Redraw EX-NOVO (FreshGen) the scene from the provided image as a full-color vintage 1990s retro anime screencap, a cel animation masterpiece in strictly Studio Ghibli style, classic Hayao Miyazaki character design. Global settings: optimal brightness, natural color balance, very subtly warmer tones, subtle teal/orange color contrast, warm nostalgic cinematic lighting, and very subtle natural soft grain.
 
@@ -128,39 +120,8 @@ NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars,
 
 ⸻
 
-ᚏ {
-Redraw ex-novo the subject(s) from attached image (or from the latest I sent here) as Ghibli anime illustration character(s): Hayao Miyazaki character design, accentuated shapes, soft voluptuous curves, porcelain skin, soft rounded face, minimalist nose, small mouth, clothes with deep neckline; fine clean lineart, vibrant cel-shading, soft watercolor fill overlay, gentle soft shading. All characters are 18+.
-
-Forget the original background; draw EX-NOVO a hand-painted wobbly watercolor environment inspired by the source: choose any fitting scenario. Edge-to-edge composition, full bleed painting extending completely to all borders. Hint of soft grain, hint of orange in the lights, hint of teal in the shadows; integrate the character(s) into it naturally. Fill the whole canvas with painting: no blank areas. Dissimulate selfies by changing/re-drawing the scene conveniently.
-
-NEGATIVES: 3D, abs, annotation, bad anatomy, bib pocket, bikini tie, black bars, blank canvas, blank paper, body hair, border, bra, bralette, elf ears, empty canvas, extra fingers, extra hands, extra limbs, extra straps, fabric tag, fade to white, flat chest, floating background, frame, fused bodies, genitals, hairy arms, hairy legs, hidden nip bumps, HUD, isolated background, invisible chest peaks/bumps, layered clothing, letterboxing, logo, long nails, medium chest, mirror, missing fingers, missing hands, missing limbs, monster ears, muscular, original background, phone in hand, photographic, pillarboxing, pointy ears, realistic, rough paper edges, selfie, sharp nails, side tie, small bust, speaking, speech bubble, sticker, sunburn, text, UI, underwear, unpainted edges, vignette, visible ribs, volumetric light, watermark, western media, white bars, white borders.
-
-EXTRA: choose the best fitting variant from the list below and use the described outfit to REPLACE the original. CRITICAL FOR EVERY >0 VARIANT: A) don't change framing/perspective. B) don't add any extra (non described) pieces of clothing, not even undies. C) modest tasteful pose, ensure SFW. D) no footwear. E) No UI, no text.
-A specific variant can be forced by appending the corresponding number at the end of this prompt.
-0) [original outfit].
-1) Lace lingerie, matching garter belt and stockings.
-2) Loose draped short towel with deep vent/slit.
-3) Light-blue embroidered overalls only, bare underneath; large square breast window hole on bib; one strap down.
-4) Embroidered cheeky overall shorts only, bare underneath. Unfastened straps, dropped front bib hanging at waist; waist-up bare skin; SFW strategic coverage: long front hair draped over chest.
-5) Short loose deep neckline apron only with extremely daring vents.
-6) White micro culottes and slim suspenders passing over the center of each breast; bare underneath.
-7) Transparent two piece microkini + thigh highs.
-8) Qipao only, bare underneath; deep plunging neckline, single-button fastened bust for strategic coverage; open front, extreme high slit; pose: one bare leg out; anklets.
-9) Minimalist red string harness only, thin red cord wrapping torso and hips; extreme micro-string outfit, mostly bare skin; SFW strategic coverage, intersecting strings perfectly concealing bust and bottom.
-10) Extremely low-waist white ruffled micro-shorts, frilly bloomer shorts, side string ties, bare midriff, exposed lower belly; bare waist-up; hands covering bare chest, SFW strategic coverage, arms concealing bust.
-11) Lace crop top, deep plunge neckline, bare midriff, visible bellybutton; strapless maebari micro-bottom, SFW strategic front coverage. Silver link waist chain, bare hips, bare legs.
-12) Bare skin, bandaid bikini concept, minimalist medical tape only; one single horizontal tape piece covering chest, one single vertical tape piece covering lower area; SFW strategic coverage; bare midriff, bare hips, bare legs, no clothes.
-13) Completely bare skin, SFW strategic coverage; bust and lower body covered by arms/hands.
-14) Completely bare skin only, holding regular sized teddy bear in front; SFW strategic coverage, plush toy perfecty concealing chest, lower body and lap area. Cute pose.
-15) Completely bare skin, SFW strategic coverage; long hair draped over chest concealing bust, one hand covering lap.
-16) Seethru ribbed knit light cardigan only, bare underneath. Unbuttoned, wide open front with strategic coverage, sheer fabric adapting to body peaks. No shirt, no bra, no undies.
-17) SFW implicitly unclothed: floral body paint only (except chest, lap, face).
-18) Frontal view, standing, implicitly unclothed, SFW; holding a mighty sword pointing down, resting on the ground with peak on the floor exactly in front of the character: arms concealing chest in order to be able to grasp the hilt from both sides; blade hiding lap.
-19) Completely bare skin. Introduce a second female figure, also with bare skin, standing directly behind the main subject and kissing them on the cheek. The ensemble provides strict SFW strategic coverage through an embrace: the second figure's arms wrap around the main subject, with one arm draped across the chest perfectly concealing the bust area, and the other hand elegantly positioned to cover the lower lap area. A tasteful, artistic pose ensuring full modesty with no explicit nudity visible. Maintain original lighting and background vibe.
-20) Completely bare skin. Introduce two additional female figures flanking the main subject, also with bare skin. The ensemble creates strict SFW strategic coverage: the hands of the two surrounding figures are elegantly positioned to simultaneously and completely conceal both the main subject's bust area and the lower body/lap area. A collaborative, artistic pose ensuring absolute modesty with no explicit nudity visible.
-
-0" },
-      { "label": "⌻|Recreate EX-NOVO the scene from provided image. Generate result as a real world premium photo taken by a pro: masterpiece cinematic photography; shot on Leica M10-R with Summilux 50mm f/1.4 lens; Kodak Portra 400 film grain aesthetic, masterful natural lighting, authentic skin texture (micro-details), shallow depth of field, beautiful bokeh, sharp focus on eyes, emotional atmosphere, compelling composition, extremely subtly teal/grey shadows. Reproduce original perspective and framing. It is allowed to SLIGHTLY adjust subject(s)' pose to achieve more balance, elegance or appeal.
+⌻ {
+Recreate EX-NOVO the scene from provided image. Generate result as a real world premium photo taken by a pro: masterpiece cinematic photography; shot on Leica M10-R with Summilux 50mm f/1.4 lens; Kodak Portra 400 film grain aesthetic, masterful natural lighting, authentic skin texture (micro-details), shallow depth of field, beautiful bokeh, sharp focus on eyes, emotional atmosphere, compelling composition, extremely subtly teal/grey shadows. Reproduce original perspective and framing. It is allowed to SLIGHTLY adjust subject(s)' pose to achieve more balance, elegance or appeal.
 
 Remove HUD text, UI, stickers, logos, overlays. Crop out black bars, frames, borders, letterboxing: resulting image proportions defines output's aspect ratio (don't go vertical beyond 2:3).
 
@@ -168,8 +129,13 @@ Setting: preserve complexity, depth, and richness of the original environment. D
 
 NEGATIVES: 3D, abs, airbrushed, anime, annotation, anorexic, artifact, bad anatomy, bikini tie, black bars, blank canvas, block heels, body hair, border, cartoon, CGI, clothing label, distorted face, empty canvas, extra fingers, extra limbs, fabric tag, flash photography, flat chest, flat lighting, flat neckline, flat shading, frame, front pocket, hairy female arms, hairy female legs, hidden nip bumps, high-necked, HUD, invisible chest peaks/bumps, knee-high boots, letterboxing, logo, long nails, mirror, missing fingers, missing limbs, muscular, original background, painting, phone in hand, pillarboxing, plastic skin, pointy ears, ribbon bow, selfie, sharp nails, side tie, sketch, small bust, speaking, speech bubble, sticker, stock photo look, sunburn, text, top & bottom bars, UI, visible ribs, watermark, wedge heels, western media, white bars.
 
-Ensure SFW." },
-      { "label": "𐋅|Recreate EX-NOVO the main subject from the provided image (or the latest I sent in this conversation) as a high-quality Character Design Concept Art Sheet. If no human subject is present, default to: curvaceous beautiful woman in her 30s, long red braids, blue eyes, light blue tieless bikini. Format strictly as a horizontal TRIPTYCH layout: three full-body figures side-by-side (Left: static front standing; Center: static back standing; Right: dynamic action pose). Resulting global output aspect ratio must be strictly 3:2 horizontal.
+Ensure SFW.
+},
+
+⸻
+
+𐋅 {
+Recreate EX-NOVO the main subject from the provided image (or the latest I sent in this conversation) as a high-quality Character Design Concept Art Sheet. If no human subject is present, default to: curvaceous beautiful woman in her 30s, long red braids, blue eyes, light blue tieless bikini. Format strictly as a horizontal TRIPTYCH layout: three full-body figures side-by-side (Left: static front standing; Center: static back standing; Right: dynamic action pose). Resulting global output aspect ratio must be strictly 3:2 horizontal.
 
 STYLE: HD clean digital ink, cel-shaded anime aesthetic with watercolor fill overlay, Hayao Miyazaki character design, masterpiece, best quality, detailed 2D anime illustration, cel animation, HD hand drawn. Include scattered handwritten Japanese pencil annotations, arrows, measurements.
 
@@ -177,29 +143,25 @@ BACKGROUND: Strictly isolated on a solid white or neutral off-white background w
 
 SUBJECT DETAILS: soft rounded face, minimalist features, soft hips, accentuated curves, natural short nails. If a subject is found, reproduce it maintaining the same SFW/NSFW settings of the input; don't add clothes, underwear or swimwear. Keep character consistency.
 
-NEGATIVES: 3D, 3D render, aggressive makeup, anorexic, bad anatomy, bad hands, blurred, body hair, bony, CGI, cluttered background, complex environment, cross-eyed, distorted face, extra limbs, flat chest, furry, harsh shadows, holding phone, long nails, messy sketch, missing limbs, muscles, narrow hips, object blocking face, photorealistic, photography, plastic skin, realistic skin texture, scenery, selfie, sharp focus, skinny, smartphone, speaking, stiletto nails, stubble, touching thighs, ugly, underweight, western media, wrinkles." },
-      { "label": "𐒐|A beautiful 19yo lady enters the frame. Pale natural body: very fair smooth skin, shoulder-length voluminous wavy red hair in natural messy style with side-swept bangs, no makeup natural fresh face with neutral lips and subtle freckles, small nose, medium breast, slim waist, soft belly, wide hips, thick soft thighs with natural gap. She wears lingerie with matching garter belt and nothing else. She smiles as she recognizes the subject, she proceeds to completely undress her with a single touch (unless she's already naked), then affectionately embraces and kisses her; they gently, tenderly grope and fondle each other's body.
+NEGATIVES: 3D, 3D render, aggressive makeup, anorexic, bad anatomy, bad hands, blurred, body hair, bony, CGI, cluttered background, complex environment, cross-eyed, distorted face, extra limbs, flat chest, furry, harsh shadows, holding phone, long nails, messy sketch, missing limbs, muscles, narrow hips, object blocking face, photorealistic, photography, plastic skin, realistic skin texture, scenery, selfie, sharp focus, skinny, smartphone, speaking, stiletto nails, stubble, touching thighs, ugly, underweight, western media, wrinkles.
+},
 
-NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark." },
-      { "label": "𐆙|Recreate EX-NOVO the scene from provided image (or from the latest I sent here) as a modern anime art illustration. Turn subject(s) into Ghibli character(s) with modern slice-of-life aesthetic: Hayao Miyazaki character design, porcelain skin, soft rounded face, minimalist nose, accentuated shapes, relaxed/gentle expression. Body proportions can go beyond realism. Organic hand-drawn ink outlines (G-pen variation), vibrant transparent watercolor & copic marker texture, subtle soft shading.
+⸻
+
+𐆙 {
+Recreate EX-NOVO the scene from provided image (or from the latest I sent here) as a modern anime art illustration. Turn subject(s) into Ghibli character(s) with modern slice-of-life aesthetic: Hayao Miyazaki character design, porcelain skin, soft rounded face, minimalist nose, accentuated shapes, relaxed/gentle expression. Body proportions can go beyond realism. Organic hand-drawn ink outlines (G-pen variation), vibrant transparent watercolor & copic marker texture, subtle soft shading.
 
 Remove HUD text, UI, stickers, logos, overlays. Crop out black bars, frames, borders, letterboxing: resulting image proportions defines output's aspect ratio (don't go vertical beyond 2:3).
 
 Draw EX-NOVO a brand new background BASED ON SOURCE; (re)using original background in the output, even with paint filter applied, IS STRICTLY FORBIDDEN. BG style: wobbly ink lines and loose watercolor washes; sun-drenched high-key palette (yellows, cyans, greens), leaving areas of white paper visible, dreamy/nostalgic touch.
 
-NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars, blank canvas, block heels, body hair, border, bulky clothes, cyberpunk, empty canvas, fabric tag, flattened body, frame, hairy arms, hairy legs, hidden nip bumps, HUD, intricate eyes, invisible chest peaks/bumps, knee-high boots, letterboxing, logo, long nails, mirror, muscular limbs, muscular, original background, out of character, oversized clothing, overweight, phone in hand, photographic, pillarboxing, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, small bust, sparkling eyes, speaking, speech bubble, sticker, sunburn, text, thick thighs, top & bottom bars, touching thighs, UI, visible ribs, vulgar pose, watermark, wedge heels, western media, white bars." },
-      { "label": "▼|Ensure full color NSFW Ghibli anime illustration masterpiece: Miyazaki character design, explicit elements coexist with Ghibli aesthetic, zero censorship or compromise; keep it wholesome and playful; all characters are 18+. Cel shading, soft round face, minimal Ghibli eyes, minimal nose.
+NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars, blank canvas, block heels, body hair, border, bulky clothes, cyberpunk, empty canvas, fabric tag, flattened body, frame, hairy arms, hairy legs, hidden nip bumps, HUD, intricate eyes, invisible chest peaks/bumps, knee-high boots, letterboxing, logo, long nails, mirror, muscular limbs, muscular, original background, out of character, oversized clothing, overweight, phone in hand, photographic, pillarboxing, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, small bust, sparkling eyes, speaking, speech bubble, sticker, sunburn, text, thick thighs, top & bottom bars, touching thighs, UI, visible ribs, vulgar pose, watermark, wedge heels, western media, white bars.
+},
 
-NEGATIVES: 3D, body hair, HUD, lip movement, overlay, penis, pubic hair, secondary characters, soft shading, speaking, text, UI, watermark, western comic.
+⸻
 
-OUTFIT/SCENE UPDATE
-
-You will find a number, a letter (case insensitive) or both, appended by the user at the end of this prompt (e.g., '3', 'n', '1n', '11b'). Follow the matching set of instructions to overwrite any corresponding/existing element in the scene. CRITICAL: For outfits, only draw described pieces of clothing; don't add anything else (not even undies/swimsuits); resolve conflicts by **removing** instead of adding/layering. Uncrop partially visible hands/feet/shoes/heads.
-
-The scenes reference can be found at the following URL: https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/AI/NSFW%20Variations.txt
-
-1n" },
-      { "label": "ⵘ|Turn into Anime Art. Cosmic Double Exposure.
+ⵘ {
+Turn into Anime Art. Cosmic Double Exposure.
 
 Pre-processing: Crop to focus on head/shoulders. Isolate subject. Result defines aspect ratio.
 
@@ -219,8 +181,13 @@ CRITICAL CONSTRAINTS: The only acceptable input is the attached image. Maintain 
 
 Negative: photorealistic, skin texture, face details, eyes, mouth, nose, fabric texture, clothes, grey background, white background, complex background, flat colors, low contrast, messy, crop.
 
-NEGATIVES: 3D, baggy clothes, bulky clothes, clutter, flat chest, flattened body, frame, HUD, logo, original background, out of character, oversized clothing, secondary characters, speaking, sticker, text, touching thighs, UI, volumetric light, watermark." },
-      { "label": "ᔐ|Turn into a hybrid semi-realistic Ghibli anime illustration, perfectly blending organic traditional watercolor with modern digital concept art techniques. Delicate pencil linework, thin hand-drawn ink contours with natural line variation, and subtle graphite underdrawing visible beneath the paint.
+NEGATIVES: 3D, baggy clothes, bulky clothes, clutter, flat chest, flattened body, frame, HUD, logo, original background, out of character, oversized clothing, secondary characters, speaking, sticker, text, touching thighs, UI, volumetric light, watermark.
+},
+
+⸻
+
+ᔐ {
+Turn into a hybrid semi-realistic Ghibli anime illustration, perfectly blending organic traditional watercolor with modern digital concept art techniques. Delicate pencil linework, thin hand-drawn ink contours with natural line variation, and subtle graphite underdrawing visible beneath the paint.
 
 Hayao Miyazaki character design, accentuated shapes, soft voluptuous curves, porcelain skin, soft rounded face, minimalist nose, small mouth, clothes with deep neckline; fine clean lineart, vibrant cel-shading, soft watercolor fill overlay, gentle soft shading. All characters are 18+.
 
@@ -230,7 +197,29 @@ Smooth digital gradient shading blended seamlessly with organic watercolor wash 
 
 The background is a fully gouache painted, lightly textured canvas in beige and soft gray tones, completely avoiding stark white or faded areas. Calm urban atmosphere, elegant proportions, clean yet organic finish. The entire scene is enhanced by modern, subtle volumetric lighting and gentle cinematic illumination. High resolution, gallery-quality masterpiece.
 
-NEGATIVES: 3D, abs, altered body, annotation, artifact, baggy clothes, bikini tie, block heels, body hair, border, bulky clothes, CGI, crowd, fabric tag, flattened body, frame, gray beard, hairy arms, hairy legs, heels, HUD, intricate eyes, knee-high boots, logo, long nails, mirror, muscular, out of character,oversized clothing, people in background, phone in hand, photographic, photorealistic, plastic skin, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, skin blemishes, small eyes, sparkling eyes, speaking, speech bubble, sticker, tattoo, text, thick thighs, touching thighs, twisted neck, UI, visible ribs, volumetric light, watermark, wedge heels, western media, white beard." },
-      { "label": "🜲|Two beautiful handmaidens (both curvy with buns) strip her clothes away instantly, then caress and kiss her. She fondles her own chest, turning her face upward with eyes closed and a look of bliss.
+NEGATIVES: 3D, abs, altered body, annotation, artifact, baggy clothes, bikini tie, block heels, body hair, border, bulky clothes, CGI, crowd, fabric tag, flattened body, frame, gray beard, hairy arms, hairy legs, heels, HUD, intricate eyes, knee-high boots, logo, long nails, mirror, muscular, out of character,oversized clothing, people in background, phone in hand, photographic, photorealistic, plastic skin, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, skin blemishes, small eyes, sparkling eyes, speaking, speech bubble, sticker, tattoo, text, thick thighs, touching thighs, twisted neck, UI, visible ribs, volumetric light, watermark, wedge heels, western media, white beard.
+},
+
+⸻ ↓ Prompt VIDEO ⸻
+
+🜲 {
+Two beautiful handmaidens (both curvy with buns) strip her clothes away instantly, then caress and kiss her. She fondles her own chest, turning her face upward with eyes closed and a look of bliss.
 
 NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark.
+}
+
+⸻
+
+𐒐 {
+A beautiful 19yo lady enters the frame. Pale natural body: very fair smooth skin, shoulder-length voluminous wavy red hair in natural messy style with side-swept bangs, no makeup natural fresh face with neutral lips and subtle freckles, small nose, medium breast, slim waist, soft belly, wide hips, thick soft thighs with natural gap. She wears lingerie with matching garter belt and nothing else. She smiles as she recognizes the subject, she proceeds to completely undress her with a single touch (unless she's already naked), then affectionately embraces and kisses her; they gently, tenderly grope and fondle each other's body.
+
+NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark.
+},
+
+⸻
+
+ᗜ {
+Two POV female hands coming from the sides of the frame massage her breasts GENTLY and SLOWLY. Breasts are very firm and hard, and oppose a certain resistance: make them react to squeeze, touch, fondling & groping accordingly. She enjoys the massage and reacts with a blissful smile; eyes closed, gaze upwards, cute little moans. Focus on arms and hands consistency, STRICTLY avoid flipping/distorting/mirroring/ghosting halfway. If chest is covered, all clothing layers are removed beforehand. If the framing is not suitable for POV interaction, adjust zoom and/or camera distance.
+
+NEGATIVES: blurred image, borders, censored, censorship, emoji, ghost frames, HUD, lip movement, skin wrinkles, sound effects for physical contact/steps/breathing, speaking, text, veil, visible ribs, watermark.
+},
