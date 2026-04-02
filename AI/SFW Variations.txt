@@ -1,7 +1,8 @@
 NEGATIVES: 3D, abs, annotation, bad anatomy, bib pocket, bikini tie, black bars, blank canvas, blank paper, body hair, border, bra, bralette, elf ears, empty canvas, extra fingers, extra hands, extra limbs, extra straps, fabric tag, fade to white, flat chest, floating background, frame, fused bodies, genitals, hairy arms, hairy legs, hidden nip bumps, HUD, isolated background, invisible chest peaks/bumps, layered clothing, letterboxing, logo, long nails, medium chest, mirror, missing fingers, missing hands, missing limbs, monster ears, muscular, original background, phone in hand, photographic, pillarboxing, pointy ears, realistic, rough paper edges, selfie, sharp nails, side tie, small bust, speaking, speech bubble, sticker, sunburn, text, UI, underwear, unpainted edges, vignette, visible ribs, volumetric light, watermark, western media, white bars, white borders.
 
 EXTRA: choose the best fitting variant from the list below and use the described outfit to REPLACE the original. CRITICAL FOR EVERY >0 VARIANT: A) don't change framing/perspective. B) don't add any extra (non described) pieces of clothing, not even undies. C) modest tasteful pose, ensure SFW. D) no footwear. E) No UI, no text.
-A specific variant can be forced by appending the corresponding number at the end of this prompt.
+Resolve conflicts by **removing** instead of adding/layering. Uncrop partially visible hands/feet/heads.
+
 0) [original outfit].
 1) Lace lingerie, matching garter belt and stockings.
 2) Loose draped short towel with deep vent/slit.
