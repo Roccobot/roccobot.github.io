@@ -83,7 +83,7 @@ Subtly semi-translucent fabric clinging tightly to rounded contours of breasts, 
 
 Generate from scratch (EX-NOVO) an alternate background based on the input setting.
 
-NEGATIVES: 3D, big nipples,body hair, child, clutter, dark nipples, frame, HUD, lip movement, logo, minor, non-pink nipples, original background, penis, pubic hair, secondary characters, soft shading, speaking, sticker, text, touching thighs, UI, volumetric light, watermark, western comic.
+NEGATIVES: 3D, big nipples, body hair, child, clutter, colorful eyes, dark lips, dark nipples, frame, HUD, lip movement, logo, minor, narrow hips, non-pink nipples, original background, penis, pubic hair, red lips, saggy breasts, secondary characters, soft shading, skinny, smaller breasts, speaking, sticker, text, touching thighs, UI, underwear/swimwear with no nipple hint, volumetric light, watermark, western comic.
 },
 
 ⸻
@@ -115,7 +115,7 @@ CRITICAL: Apply classic Ghibli character design; SOFT ROUNDED FACE, minimalist n
 CRUCIAL: IGNORE the original background style. Generate from scratch (EX-NOVO) an alternate background based on the input setting: the result must be a very clean, simplified, stylized environment with a Ghibli style twist (aesthetic only, not content). Keep main architecture features and landmarks recognizable and clearly visible (no obstructions); strictly remove distractions and clutter (secondary isolated people, vehicles, trash bins, etc.). CRITICAL: Kazuo Oga style, washed hand-painted gouache, matte finish, painted to the edge, canvas fully covered, peaceful atmosphere.
 
 • NEGATIVE SCAFFOLDING
-NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars, blank canvas, block heels, body hair, border, bulky clothes, CGI, detailed digital shading, empty canvas, fabric tag, flattened body, frame, gray beard, hairy arms, hairy legs, heels, HUD, intricate eyes, knee-high boots, letterboxing, logo, long nails, marker, mirror, muscular, original background, out of character, oversized clothing, phone in hand, photographic, photorealistic, pillarboxing, plastic skin, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, skin blemishes, small eyes, soft blending (digital), soft shading (digital), sparkling eyes, speaking, speech bubble, sticker, tattoo, text, thick thighs, touching thighs, twisted neck, UI, visible ribs, volumetric light, watermark, wedge heels, western media, white bars, white beard.
+NEGATIVES: 3D, abs, annotation, artifact, baggy clothes, bikini tie, black bars, blank canvas, block heels, body hair, border, bulky clothes, CGI, detailed digital shading, empty canvas, fabric tag, flattened body, frame, gray beard, hairy arms, hairy legs, heels, HUD, intricate eyes, knee-high boots, letterboxing, logo, long nails, marker, mirror, muscular, original background, out of character, oversized clothing, phone in hand, photographic, photorealistic, pillarboxing, plastic skin, pointy ears, realistic, ribbon bow, selfie, sharp nails, side tie, skin blemishes, small eyes, soft blending (digital), soft shading (digital), sparkling eyes, speaking, speech bubble, sticker, tattoo, text, thick thighs, touching thighs, twisted neck, UI, underwear/swimwear with no nipple hint, visible ribs, volumetric light, watermark, wedge heels, western media, white bars, white beard.
 },
 
 ⸻
