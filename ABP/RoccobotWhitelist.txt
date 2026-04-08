@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-03-28
+! Last updated: 2026-04-08
 
 @@||192.168.1.2^
 @@||aci.it^
@@ -103,6 +103,7 @@
 @@||roccobot.altervista.org^$document,subdocument
 @@||roccobot.iliadboxos.it^$document,subdocument
 @@||roccobot.me^$document,subdocument
+@@||run.app^$document,subdocument
 @@||ryanair.com^
 @@||satispay.com^$document,subdocument
 @@||scontrinosmart.it^$document,subdocument
