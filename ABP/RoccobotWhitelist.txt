@@ -120,7 +120,7 @@
 @@||sponsor.ajay^
 @@||squarespace.com^
 @@||store.apple.com^$document,subdocument
-@@||stripe.com^
+@@||stripe.com^$document,subdocument
 @@||tasgroup.eu^
 @@||threadless.com^
 @@||tolkiengateway.net^
