@@ -7,7 +7,6 @@
 @@||agos.it^$document,subdocument
 @@||agosweb.it^$document,subdocument
 @@||animeworld.ac^
-@@||anobii.com^$document,subdocument
 @@||aruba.it^$document,subdocument
 @@||axerve.com^
 @@||battle.net^
