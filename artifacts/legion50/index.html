@@ -1,1 +1,1319 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d0608">
+<title>Legio Immortalis - I 50 più grandi guerrieri della finzione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0608;
+  --ink-deep: #070304;
+  --parchment: #f0e0cc;
+  --parchment-dim: #c4a88a;
+  --gold: #c84a30;
+  --gold-bright: #e86040;
+  --gold-deep: #8a2418;
+  --blood: #7a1a1a;
+  --violet: #2a1010;
+  --violet-glow: #c84040;
+  --azure-deep: #1a0a0a;
+  --shadow: rgba(0,0,0,0.7);
+}
 
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--ink-deep);
+  color: var(--parchment);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(122,26,26,0.45) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(42,16,16,0.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(80,20,20,0.18) 0%, transparent 70%),
+    var(--ink-deep);
+  z-index:-2;
+  transition: background 0.3s;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(1px 1px at 23% 18%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(1px 1px at 71% 42%, var(--gold-bright) 50%, transparent 100%),
+    radial-gradient(1px 1px at 42% 67%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(1px 1px at 87% 73%, var(--parchment-dim) 50%, transparent 100%),
+    radial-gradient(1px 1px at 12% 88%, var(--gold-bright) 50%, transparent 100%),
+    radial-gradient(2px 2px at 58% 14%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(1px 1px at 92% 31%, var(--parchment-dim) 50%, transparent 100%),
+    radial-gradient(1px 1px at 35% 39%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(2px 2px at 8% 56%, var(--gold-bright) 50%, transparent 100%),
+    radial-gradient(1px 1px at 64% 91%, var(--parchment) 50%, transparent 100%);
+  opacity:0.5; z-index:-1;
+  animation: flicker 10s ease-in-out infinite;
+  pointer-events:none;
+  transition: opacity 0.3s;
+}
+
+@keyframes flicker { 0%,100%{opacity:0.3} 50%{opacity:0.65} }
+
+/* ── HEADER ── */
+header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
+
+.lang-switch {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(200,74,48,0.15);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lang-switch:hover {
+  background: var(--gold);
+  color: var(--ink);
+  transform: scale(1.05);
+}
+
+.crest {
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(0.7rem,2vw,0.85rem);
+  letter-spacing:0.45em; color:var(--gold);
+  margin-bottom:1.5rem; text-transform:uppercase;
+}
+
+.crest::before,.crest::after { content:'⚔'; margin:0 0.8em; color:var(--gold-bright); }
+
+h1 {
+  font-family:'Cinzel Decorative',serif; font-weight:900;
+  font-size:clamp(2.4rem,8vw,5.5rem); line-height:0.95;
+  letter-spacing:0.02em;
+  text-shadow:0 0 30px rgba(200,74,48,0.4),0 0 60px rgba(122,26,26,0.3),0 4px 12px rgba(0,0,0,0.8);
+  background:linear-gradient(180deg,var(--parchment) 0%,var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:1rem;
+}
+
+.subtitle {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
+  max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
+}
+
+.flourish { width:200px; height:30px; margin:1.5rem auto; opacity:0.7; }
+
+.intro {
+  max-width:580px; margin:2rem auto 0;
+  font-size:0.95rem; color:var(--parchment-dim); line-height:1.7;
+  padding:1.2rem 1.5rem; font-style:italic;
+  border-top:1px solid rgba(200,74,48,0.25);
+  border-bottom:1px solid rgba(200,74,48,0.25);
+}
+
+/* ── LISTA ── */
+.scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
+
+.rank-item {
+  position:relative;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:clamp(0.8rem,3vw,2rem);
+  padding:1.2rem 1.2rem 1.2rem 0.5rem;
+  margin:0.4rem 0;
+  background:linear-gradient(90deg,rgba(13,6,8,0.6) 0%,rgba(30,10,10,0.4) 100%);
+  border:1px solid rgba(200,74,48,0.15);
+  border-radius:4px;
+  cursor:pointer;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+  width:100%; text-align:left;
+  font:inherit; color:inherit;
+}
+
+.rank-item::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(200,74,48,0.06) 50%,transparent 100%);
+  opacity:0; transition:opacity 0.4s; pointer-events:none;
+}
+
+.rank-item:hover,.rank-item:focus-visible {
+  border-color:var(--gold);
+  transform:translateX(6px);
+  box-shadow:0 0 30px rgba(200,74,48,0.2),0 4px 20px rgba(0,0,0,0.6);
+  outline:none;
+}
+
+.rank-item:hover::before { opacity:1; }
+
+.rank-item:hover .rank-num,.rank-item:focus-visible .rank-num {
+  color:var(--gold-bright);
+  text-shadow:0 0 20px rgba(232,96,64,0.6);
+}
+
+.rank-item:hover .rank-name,.rank-item:focus-visible .rank-name { color:var(--parchment); }
+
+.rank-num {
+  font-family:'Cinzel',serif; font-weight:900;
+  font-size:clamp(1.6rem,4.5vw,2.4rem);
+  color:var(--gold-deep);
+  min-width:clamp(48px,9vw,70px);
+  text-align:center; letter-spacing:0.05em;
+  transition:all 0.35s; line-height:1;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 0 12px rgba(200,74,48,0.25);
+}
+
+.rank-content { display:flex; flex-direction:column; gap:0.2rem; min-width:0; }
+
+.rank-name {
+  font-family:'Cinzel',serif; font-weight:700;
+  font-size:clamp(1rem,3vw,1.4rem);
+  color:var(--parchment-dim); letter-spacing:0.03em;
+  transition:color 0.35s; line-height:1.2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.rank-source {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(0.78rem,2vw,0.92rem);
+  color:var(--gold-deep); letter-spacing:0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.rank-arrow {
+  font-family:'Cinzel',serif; color:var(--gold-deep);
+  font-size:1.2rem; transition:transform 0.35s,color 0.35s; flex-shrink:0;
+}
+
+.rank-item:hover .rank-arrow,.rank-item:focus-visible .rank-arrow {
+  transform:translateX(4px); color:var(--gold-bright);
+}
+
+/* Top 3 */
+.rank-item.top-3 {
+  background:linear-gradient(90deg,rgba(100,20,20,0.35) 0%,rgba(30,10,10,0.4) 100%);
+  border:1px solid rgba(200,74,48,0.4);
+  padding:1.6rem 1.2rem 1.6rem 0.5rem;
+}
+
+.rank-item.top-3 .rank-num { color:var(--gold); text-shadow:0 0 20px rgba(200,74,48,0.5); }
+.rank-item.top-3 .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
+
+.rank-item.top-3::after {
+  content:'⚔'; position:absolute; top:8px; right:12px;
+  color:var(--gold); font-size:0.9rem; opacity:0.6;
+}
+
+.rank-item.rank-2.top-3::after { content:'🛡'; }
+.rank-item.rank-3.top-3::after { content:'✦'; }
+
+/* Featured (3 obbligatori) */
+.rank-item.featured .rank-name::after {
+  content:'★'; color:var(--gold-bright); margin-left:0.3em;
+  font-size:0.7em; vertical-align:super;
+  text-shadow:0 0 10px rgba(232,96,64,0.6);
+}
+
+/* Badge tipo */
+.badge {
+  display:inline-block;
+  font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
+  color:var(--violet-glow); border:1px solid rgba(200,64,64,0.5);
+  border-radius:2px; padding:1px 5px;
+  opacity:0.8; text-transform:uppercase;
+}
+
+/* Bandierina */
+.flag {
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  object-fit: cover;
+  border: 1px solid rgba(200,74,48,0.4);
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* ── MODAL ── */
+.modal-backdrop {
+  position:fixed; inset:0;
+  background:rgba(5,2,2,0.92);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  padding:1rem; opacity:0; visibility:hidden;
+  transition:opacity 0.3s,visibility 0.3s;
+  overflow-y:auto;
+}
+
+.modal-backdrop.active { opacity:1; visibility:visible; }
+
+.modal {
+  background:linear-gradient(135deg,var(--ink) 0%,#1a0808 100%);
+  border:1px solid var(--gold); border-radius:6px;
+  max-width:680px; width:100%; max-height:90vh; overflow-y:auto;
+  padding:2rem clamp(1.2rem,4vw,2.5rem);
+  position:relative;
+  box-shadow:0 0 60px rgba(200,74,48,0.3),0 0 120px rgba(122,26,26,0.2),0 20px 60px rgba(0,0,0,0.8);
+  transform:translateY(20px) scale(0.96);
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.modal-backdrop.active .modal { transform:translateY(0) scale(1); }
+
+.modal::before {
+  content:''; position:absolute; inset:8px;
+  border:1px solid rgba(200,74,48,0.3); border-radius:3px; pointer-events:none;
+}
+
+.modal-close {
+  position:absolute; top:14px; right:14px;
+  width:36px; height:36px;
+  background:rgba(200,74,48,0.1); border:1px solid var(--gold);
+  border-radius:50%; color:var(--gold);
+  font-family:'Cinzel',serif; font-size:1.1rem;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.25s; z-index:10;
+}
+
+.modal-close:hover,.modal-close:focus-visible {
+  background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none;
+}
+
+.modal-rank {
+  font-family:'Cinzel',serif; font-weight:900; font-size:0.85rem;
+  letter-spacing:0.3em; color:var(--gold); text-transform:uppercase; margin-bottom:0.5rem;
+}
+
+.modal-name {
+  font-family:'Cinzel Decorative',serif; font-weight:900;
+  font-size:clamp(1.8rem,6vw,2.6rem); color:var(--parchment);
+  line-height:1.1; margin-bottom:0.4rem; letter-spacing:0.01em;
+}
+
+.modal-source {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(1rem,2.5vw,1.15rem); color:var(--gold-bright);
+  margin-bottom:1.5rem; border-bottom:1px solid rgba(200,74,48,0.3); padding-bottom:1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  flex-wrap: wrap;
+}
+
+.modal-section { margin-bottom:1.4rem; }
+
+.modal-section h3 {
+  font-family:'Cinzel',serif; font-weight:700; font-size:0.78rem;
+  letter-spacing:0.25em; color:var(--gold); text-transform:uppercase;
+  margin-bottom:0.6rem; display:flex; align-items:center; gap:0.6em;
+}
+
+.modal-section h3::before,.modal-section h3::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,74,48,0.4),transparent);
+}
+
+.modal-section p { font-family:'EB Garamond',serif; font-size:1.02rem; line-height:1.7; color:var(--parchment); }
+
+.modal-quote {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:1rem; color:var(--parchment-dim);
+  padding:1rem 1.4rem; border-left:2px solid var(--gold);
+  margin-top:1.2rem; background:rgba(200,74,48,0.04);
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align:center; padding:4rem 1.5rem 3rem;
+  border-top:1px solid rgba(200,74,48,0.15); margin-top:4rem;
+}
+
+footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max-width:500px; margin:0 auto; }
+
+/* Reveal */
+.rank-item { opacity:0; transform:translateY(20px); animation:reveal 0.8s forwards; }
+
+@keyframes reveal { to { opacity:1; transform:translateY(0); } }
+
+::-webkit-scrollbar { width:8px; }
+::-webkit-scrollbar-track { background:var(--ink-deep); }
+::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--gold-deep),var(--gold)); border-radius:4px; }
+
+@media (max-width:480px) {
+  header { padding:3rem 1rem 2rem; }
+  .scroll { margin:2rem auto; padding:0 0.6rem; }
+  .rank-item { padding:1rem 0.8rem 1rem 0.3rem; gap:0.7rem; }
+  .modal { padding:1.8rem 1.2rem; }
+  .modal-close { top:10px; right:10px; }
+  .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --ink: #f7eded;
+    --ink-deep: #f7eded;
+    --parchment: #111111;
+    --parchment-dim: #222222;
+    --gold: #8a2418;
+    --gold-bright: #b03020;
+    --gold-deep: #5a1008;
+    --violet: #4a1010;
+    --violet-glow: #8a2020;
+    --shadow: rgba(0,0,0,0.2);
+  }
+
+  body {
+    background: #f7eded;
+    color: #111111;
+    font-weight: 500;
+  }
+  body::before { background: #f7eded; }
+  body::after { display: none; }
+
+  p, li, .subtitle, .intro, .rank-source, footer p {
+    font-weight: 500;
+  }
+
+  h1 {
+    background: linear-gradient(180deg, #111111 0%, #8a2418 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+  }
+  .crest { color: #8a2418; }
+  .subtitle { color: #222222; }
+  .intro {
+    color: #222222;
+    background: #eddddd;
+    border-top-color: #c84a30;
+    border-bottom-color: #c84a30;
+  }
+  .lang-switch {
+    background: #f0dddd;
+    border-color: #8a2418;
+    color: #5a1008;
+  }
+  .lang-switch:hover { background: #8a2418; color: #f7eded; }
+
+  .rank-item {
+    background: #eedada;
+    border: 1px solid #c84a30;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .rank-item::before { display: none; }
+  .rank-item:hover, .rank-item:focus-visible {
+    background: #e4cccc;
+    border-color: #8a2418;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    transform: translateX(6px);
+  }
+  .rank-item.top-3 {
+    background: #e8d0d0;
+    border-color: #b03020;
+    border-width: 2px;
+  }
+  .rank-num {
+    color: #5a1008;
+    text-shadow: none;
+    font-weight: 900;
+  }
+  .rank-item:hover .rank-num,
+  .rank-item:focus-visible .rank-num { color: #8a2418; text-shadow: none; }
+  .rank-item.top-3 .rank-num { color: #5a1008; }
+  .rank-name {
+    color: #111111;
+    font-weight: 700;
+  }
+  .rank-item:hover .rank-name,
+  .rank-item:focus-visible .rank-name { color: #000000; }
+  .rank-item.top-3 .rank-name { color: #111111; font-size: clamp(1.1rem,3.4vw,1.6rem); }
+  .rank-source {
+    color: #3a2020;
+    font-weight: 500;
+  }
+  .rank-arrow { color: #8a2418; }
+  .rank-item:hover .rank-arrow,
+  .rank-item:focus-visible .rank-arrow { color: #5a1008; }
+  .rank-item.top-3::after { color: #b03020; }
+
+  .badge {
+    color: #6a1010;
+    border-color: #aa4040;
+    background: rgba(100,20,20,0.1);
+    font-weight: 700;
+  }
+
+  .modal-backdrop { background: rgba(60,20,20,0.6); backdrop-filter: blur(6px); }
+  .modal {
+    background: #f7eded;
+    border: 2px solid #b03020;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  }
+  .modal::before { border-color: #c84a30; }
+  .modal-close {
+    background: #eddddd;
+    border-color: #8a2418;
+    color: #5a1008;
+  }
+  .modal-close:hover { background: #8a2418; color: #f7eded; }
+  .modal-rank { color: #8a2418; font-weight: 700; }
+  .modal-name { color: #111111; }
+  .modal-source {
+    color: #3a2020;
+    border-bottom-color: #c84a30;
+    font-weight: 500;
+  }
+  .modal-section h3 { color: #5a1008; }
+  .modal-section h3::before,
+  .modal-section h3::after { background: linear-gradient(90deg, transparent, #c84a30, transparent); }
+  .modal-section p { color: #111111; font-weight: 500; }
+  .modal-quote {
+    color: #222222;
+    border-left-color: #b03020;
+    background: #eddddd;
+    font-weight: 500;
+  }
+
+  footer { border-top-color: #c84a30; }
+  footer p { color: #333333; font-weight: 500; }
+
+  ::-webkit-scrollbar-track { background: #eddddd; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #5a1008, #b03020); }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
+  <div class="crest" id="crest">Legio Immortalis</div>
+  <h1 id="title">La Legione</h1>
+  <p class="subtitle" id="subtitle">Una classifica dei più grandi guerrieri, combattenti e generali mai immaginati - dalla letteratura, dall'epica, dai manga e dal cinema</p>
+  <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#c84a30" stroke-width="0.8" fill="none" opacity="0.6"/>
+    <circle cx="100" cy="15" r="3" fill="#e86040"/>
+    <circle cx="60" cy="12" r="1.5" fill="#c84a30"/>
+    <circle cx="140" cy="18" r="1.5" fill="#c84a30"/>
+  </svg>
+  <div class="intro" id="intro">
+    Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>. Tocca un nome per leggere la scheda completa. La stella (★) segna i tre nomi imprescindibili.
+  </div>
+</header>
+
+<main class="scroll" id="rank-list"></main>
+
+<footer>
+  <div class="crest">Finis</div>
+  <p id="footer-text">'La gloria di un guerriero non sta nel non cadere mai, ma nel rialzarsi ogni volta.' Il campo di battaglia, qui, è la pagina.</p>
+</footer>
+
+<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">&#x2715;</button>
+    <div class="modal-rank" id="modal-rank"></div>
+    <h2 class="modal-name" id="modal-name"></h2>
+    <div class="modal-source" id="modal-source"></div>
+    <div class="modal-section">
+      <h3 id="modal-powers-title">Abilità in combattimento</h3>
+      <p id="modal-powers"></p>
+    </div>
+    <div class="modal-section">
+      <h3 id="modal-lore-title">Gesta memorabili</h3>
+      <p id="modal-lore"></p>
+    </div>
+    <div class="modal-quote" id="modal-quote"></div>
+  </div>
+</div>
+
+<script>
+var currentLang = localStorage.getItem('legion-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
+
+var i18n = {
+  it: {
+    crest: 'Legio Immortalis',
+    title: 'La Legione',
+    subtitle: "Una classifica dei più grandi guerrieri, combattenti e generali mai immaginati - dalla letteratura, dall'epica, dai manga e dal cinema",
+    intro: "Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>. Tocca un nome per leggere la scheda completa. La stella (★) segna i tre nomi imprescindibili.",
+    footer: "'La gloria di un guerriero non sta nel non cadere mai, ma nel rialzarsi ogni volta.' Il campo di battaglia, qui, è la pagina.",
+    position: 'Posizione',
+    powers: 'Abilità in combattimento',
+    lore: 'Gesta memorabili',
+    manga: 'manga', anime: 'anime', novel: 'romanzo',
+    epicSaga: 'saga epica', epicPoem: 'poema epico',
+    play: 'teatro', folklore: 'tradizione', film: 'film',
+    history: 'tradizione storica', game: 'videogioco'
+  },
+  en: {
+    crest: 'Legio Immortalis',
+    title: 'The Legion',
+    subtitle: 'A ranking of the greatest warriors, fighters and generals ever imagined - from literature, epic poetry, manga and cinema',
+    intro: "Excluding deities, demigods, superhero comic universes and <em>isekai</em> worlds. Tap a name to read the full entry. The star (★) marks the three indispensable names.",
+    footer: "'The glory of a warrior lies not in never falling, but in rising every time.' The battlefield, here, is the page.",
+    position: 'Position',
+    powers: 'Combat Skills',
+    lore: 'Memorable Deeds',
+    manga: 'manga', anime: 'anime', novel: 'novel',
+    epicSaga: 'epic saga', epicPoem: 'epic poem',
+    play: 'play', folklore: 'folklore', film: 'film',
+    history: 'historical tradition', game: 'video game'
+  }
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('legion-lang', lang);
+  document.documentElement.lang = lang;
+  document.getElementById('lang-switch').textContent = lang === 'it' ? 'EN' : 'IT';
+  document.getElementById('crest').textContent = i18n[lang].crest;
+  document.getElementById('title').textContent = i18n[lang].title;
+  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
+  document.getElementById('intro').innerHTML = i18n[lang].intro;
+  document.getElementById('footer-text').innerHTML = i18n[lang].footer;
+  document.getElementById('modal-powers-title').textContent = i18n[lang].powers;
+  document.getElementById('modal-lore-title').textContent = i18n[lang].lore;
+  renderList();
+}
+
+document.getElementById('lang-switch').addEventListener('click', function() {
+  setLang(currentLang === 'it' ? 'en' : 'it');
+});
+
+var dati = [
+  {
+    nome:"Guts",
+    fonte:"Berserk (Kentaro Miura, 1989-2021)",
+    fonte_en:"Berserk (Kentaro Miura, 1989-2021)",
+    paese:"jp", tipo:"manga", tipo_en:"manga", featured:true,
+    poteri:"Forza sovrumana e resistenza al dolore fuori scala. Brandisce la Spada del Drago — lama lunga quanto un uomo — con una sola mano. L'Armatura Berserk moltiplica le capacità ignorando i limiti del corpo fino alla morte.",
+    poteri_en:"Superhuman strength and pain resistance off the scale. Wields the Dragon Slayer — a blade as long as a man — with one hand. The Berserker Armor multiplies his abilities by ignoring the body's limits until death.",
+    aneddoti:"Nato da una madre impiccata, sopravvissuto a tutto. Dopo il Sacrificio dell'Eclissi perse occhio e braccio ma sopravvisse a creature che uccidono decine di cavalieri. Il suo viaggio è una guerra continua contro il destino stesso.",
+    aneddoti_en:"Born from a hanged mother, survived everything. After the Eclipse Sacrifice he lost an eye and arm but survived creatures that kill dozens of knights. His journey is a continuous war against fate itself.",
+    citazione:"'Non ho nulla. Nient'altro che questa spada.'",
+    citazione_en:"'I have nothing. Nothing but this sword.'"
+  },
+  {
+    nome:"Achille", nome_en:"Achilles",
+    fonte:"Iliade (Omero, c. VIII sec. a.C.)",
+    fonte_en:"Iliad (Homer, c. VIII century BCE)",
+    paese:"gr", tipo:"poema epico", tipo_en:"epicPoem", featured:true,
+    poteri:"Velocità soprannaturale: nessun guerriero può tenergli il passo. Forza e furia in battaglia senza paragoni. Semidio invulnerabile salvo il tallone. Con la sua morte cade Troia.",
+    poteri_en:"Supernatural speed: no warrior can keep pace with him. Unmatched strength and battle fury. Demigod-like invulnerability save for his heel. With his death falls Troy.",
+    aneddoti:"Scelse la gloria breve sulla lunga vita oscura. Uccìse Ettore e trascinò il suo corpo per rabbia, poi cede alla supplica di Priamo. La sua collera è il motore dell'intera Iliade.",
+    aneddoti_en:"He chose brief glory over a long obscure life. Killed Hector and dragged his body in rage, then yielded to Priam's plea. His wrath is the engine of the entire Iliad.",
+    citazione:"'Preferisco morire giovane e glorioso che invecchiare senza essere ricordato.'",
+    citazione_en:"'I would rather die young and glorious than grow old unremembered.'"
+  },
+  {
+    nome:"Rostam",
+    fonte:"Shahnameh (Abolqasem Ferdowsi, c. 977-1010)",
+    fonte_en:"Shahnameh (Abolqasem Ferdowsi, c. 977-1010)",
+    paese:"ir", tipo:"poema epico", tipo_en:"epicPoem", featured:true,
+    poteri:"Forza leggendaria: doma elefanti con le mani nude. Rakhsh, il suo cavallo magico, combatte con lui come un guerriero. Sette prove (Haft Khan) superate da solo contro draghi, stregoni e demoni div.",
+    poteri_en:"Legendary strength: tames elephants bare-handed. Rakhsh, his magical horse, fights alongside him like a warrior. Seven labors (Haft Khan) completed alone against dragons, sorcerers and div demons.",
+    aneddoti:"Campione del mondo per sette generazioni di re persiani. Uccìse involontariamente suo figlio Sohrab — la tragedia più crudele dell'epica persiana. Invincibile finché non fu tradito.",
+    aneddoti_en:"Champion of the world for seven generations of Persian kings. Unwittingly killed his own son Sohrab — the cruellest tragedy in Persian epic. Undefeated until betrayed.",
+    citazione:"'L'eroe non è chi non teme la morte, ma chi la guarda in faccia e avanza.'",
+    citazione_en:"'The hero is not one who does not fear death, but one who faces it and advances.'"
+  },
+  {
+    nome:"Sundiata Keita",
+    fonte:"L'epopea di Sundiata (Djibril Tamsir Niane, 1960)",
+    fonte_en:"Sundiata: An Epic of Old Mali (Djibril Tamsir Niane, 1960)",
+    paese:"ml", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Forza invincibile sbocciata dopo anni di paralisi. Arciere e spadaccino senza pari. Guida militare carismatica che unisce tribù nemiche in un solo esercito. Il baobab strappato a mani nude è il suo segno.",
+    poteri_en:"Invincible strength that bloomed after years of paralysis. Peerless archer and swordsman. Charismatic military leader who unites enemy tribes into one army. The baobab uprooted bare-handed is his sign.",
+    aneddoti:"Non riuscì a camminare fino ai sette anni; poi si alzò strappando un baobab. Sconfisse Soumaoro Kanté, il re-stregone, e fondò l'Impero del Mali. La sua storia è trasmessa ancora oggi dai griot.",
+    aneddoti_en:"Could not walk until age seven; then rose and uprooted a baobab. Defeated Soumaoro Kanté, the sorcerer-king, and founded the Mali Empire. His story is still told today by griots.",
+    citazione:"'Un re che non soffre non può capire il suo popolo.'",
+    citazione_en:"'A king who has not suffered cannot understand his people.'"
+  },
+  {
+    nome:"Guan Yu",
+    fonte:"Il Romanzo dei Tre Regni (Luo Guanzhong, c. 1400)",
+    fonte_en:"Romance of the Three Kingdoms (Luo Guanzhong, c. 1400)",
+    paese:"cn", tipo:"romanzo", tipo_en:"novel", featured:false,
+    poteri:"Maestro dell'asta della luna crescente (Green Dragon Crescent Blade), lunga due metri. Forza fisica titanica. Destrezza tattica che trasforma battaglie disperate in vittorie. Venerato come dio della guerra e della lealtà.",
+    poteri_en:"Master of the Green Dragon Crescent Blade, two metres long. Titanic physical strength. Tactical skill that turns desperate battles into victories. Venerated as god of war and loyalty.",
+    aneddoti:"Attraversò cinque passi e uccìse sei generali nemici per ricongiungersi a Liu Bei. Si fece operare un braccio avvelenato senza anestesia, continuando a giocare a scacchi. Simbolo millenario di lealtà e valore in tutta l'Asia orientale.",
+    aneddoti_en:"Crossed five passes and killed six enemy generals to reunite with Liu Bei. Had a poisoned arm operated without anaesthesia, continuing to play chess. A millennia-old symbol of loyalty and valour across East Asia.",
+    citazione:"'La fedeltà al fratello vale più della vita.'",
+    citazione_en:"'Loyalty to one's brother is worth more than life.'"
+  },
+  {
+    nome:"Arjuna",
+    fonte:"Mahabharata (Veda Vyasa, c. IV sec. a.C.)",
+    fonte_en:"Mahabharata (Veda Vyasa, c. IV century BCE)",
+    paese:"in", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Arciere più preciso mai nato. Arco divino Gandiva. Padroneggia le armi celesti (astra) donategli dagli dèi. Krishna come auriga: la Bhagavad Gita nasce dal suo dubbio prima della battaglia.",
+    poteri_en:"The most precise archer ever born. Divine bow Gandiva. Masters celestial weapons (astra) gifted by the gods. Krishna as his charioteer: the Bhagavad Gita is born from his doubt before battle.",
+    aneddoti:"Vinse il torneo degli eroi colpendo il riflesso di un pesce rotante. Attraversò mondi soprannaturali per raccogliere armi divine. La sua crisi interiore prima di Kurukshetra generò uno dei testi filosofici più influenti della storia.",
+    aneddoti_en:"Won the heroes' tournament hitting the reflection of a rotating fish. Traversed supernatural worlds to gather divine weapons. His inner crisis before Kurukshetra produced one of history's most influential philosophical texts.",
+    citazione:"'Non piango per i morti. Piango per coloro che non sanno ancora di essere morti.'",
+    citazione_en:"'I do not mourn for the dead. I mourn for those who do not yet know they are dead.'"
+  },
+  {
+    nome:"Sigurd",
+    fonte:"Völsunga saga (anonimo norreno, c. 1260)",
+    fonte_en:"Völsunga saga (anonymous Old Norse, c. 1260)",
+    paese:"is", tipo:"saga epica", tipo_en:"epicSaga", featured:false,
+    poteri:"Forza che supera ogni uomo. Spada Gram forgiata da Odino, unica lama capace di fendere un'incudine da cima a fondo. Dopo aver bevuto il sangue di Fafnir comprende il linguaggio degli uccelli.",
+    poteri_en:"Strength beyond any man. Sword Gram forged by Odin, the only blade able to cleave an anvil top to bottom. After drinking Fafnir's blood he understands the language of birds.",
+    aneddoti:"Uccìse il drago Fafnir da solo, una gesta impossibile. Attraversò il muro di fuoco per svegliare la valchiria Brunilde. Tradito e assassinato per invidia, il suo nome risuona nel Nibelungenlied come Sigfrido.",
+    aneddoti_en:"Killed the dragon Fafnir alone, an impossible feat. Crossed the wall of fire to awaken the Valkyrie Brynhildr. Betrayed and murdered out of jealousy, his name echoes in the Nibelungenlied as Siegfried.",
+    citazione:"'Meglio morire con onore che vivere con vergogna.'",
+    citazione_en:"'Better to die with honour than to live in shame.'"
+  },
+  {
+    nome:"Geralt di Rivia", nome_en:"Geralt of Rivia",
+    fonte:"Saga dello Stregone (Andrzej Sapkowski, 1986-2013)",
+    fonte_en:"The Witcher Saga (Andrzej Sapkowski, 1986-2013)",
+    paese:"pl", tipo:"romanzo", tipo_en:"novel", featured:false,
+    poteri:"Mutante addestrato a uccidere mostri: riflessi ultrarapidi, resistenza ai veleni, sensi potenziati. Segni magici (Aard, Igni, Quen, Axii, Yrden). Spade d'acciaio e d'argento per ogni tipo di nemico.",
+    poteri_en:"Mutant trained to kill monsters: ultra-fast reflexes, poison resistance, enhanced senses. Magical Signs (Aard, Igni, Quen, Axii, Yrden). Steel and silver swords for every enemy type.",
+    aneddoti:"Scelse la via di mezzo in un mondo senza eroi. Il contratto con il destino lo lega a Ciri, che diventa la figlia che non voleva. La sua forza risiede nel saper scegliere il male minore in un mondo senza bene.",
+    aneddoti_en:"Chose the lesser evil in a world without heroes. A contract with destiny binds him to Ciri, who becomes the daughter he never wanted. His strength lies in choosing the lesser evil in a world without good.",
+    citazione:"'Il male è il male. Preferibile non scegliere. Ma se devi scegliere, scegli il male minore.'",
+    citazione_en:"'Evil is evil. Lesser, greater, middling — it's all the same. If I have to choose, I'd rather choose the lesser evil.'"
+  },
+  {
+    nome:"Musashi Miyamoto",
+    fonte:"Vagabond (Takehiko Inoue, 1998-2015)",
+    fonte_en:"Vagabond (Takehiko Inoue, 1998-2015)",
+    paese:"jp", tipo:"manga", tipo_en:"manga", featured:false,
+    poteri:"Due spade in simultanea (Niten Ichi-ryū). Velocità di reazione impossibile da seguire con gli occhi. Lettura del campo di battaglia e dell'avversario istantanea. Forza bruta abbinata a tecnica assoluta.",
+    poteri_en:"Two swords simultaneously (Niten Ichi-ryū). Reaction speed impossible to follow with the eyes. Instantaneous battlefield and opponent reading. Brute force combined with absolute technique.",
+    aneddoti:"Sopravvissuto alla battaglia di Sekigahara. Duelò con il leggendario Sasaki Kojërô su un'isola e vinse con un'oar intagliata. Basato sul Miyamoto Musashi storico, rimasto imbattuto in sessanta duelli.",
+    aneddoti_en:"Survived the Battle of Sekigahara. Duelled the legendary Sasaki Kojûrō on an island and won with a carved oar. Based on the historical Musashi, who remained undefeated in sixty duels.",
+    citazione:"'Diventare il più forte non è abbastanza. Devo diventare ciò che è il più forte.'",
+    citazione_en:"'Becoming the strongest is not enough. I must become what the strongest is.'"
+  },
+  {
+    nome:"Levi Ackerman",
+    fonte:"L'Attacco dei Giganti (Hajime Isayama, 2009-2021)",
+    fonte_en:"Attack on Titan (Hajime Isayama, 2009-2021)",
+    paese:"jp", tipo:"manga", tipo_en:"manga", featured:false,
+    poteri:"Capacità di combattimento fuori scala grazie al clan Ackerman. Velocità e precisione con le lame capaci di abbattere Giganti interi da solo. Istinto da battaglia innato che si attiva automaticamente in pericolo.",
+    poteri_en:"Off-scale combat ability due to the Ackerman clan. Speed and precision with blades capable of taking down entire Titans alone. Innate battle instinct that activates automatically in danger.",
+    aneddoti:"Sterminò l'intero Distaccamento Speciale delle Forze di Polizia in pochi minuti da solo. Tenne testa a Zeke in forma bestiale più volte. Il personaggio più temuto dell'esercito umano.",
+    aneddoti_en:"Wiped out the entire Special Garrison Police in minutes alone. Held his own against Beast Titan Zeke multiple times. The most feared soldier in the human military.",
+    citazione:"'Nessuno sa come andrà a finire. Quindi non rimpiangere la scelta che fai.'",
+    citazione_en:"'No one knows how things will turn out. So don't regret the choice you make.'"
+  },
+  {
+    nome:"Cú Chulainn",
+    fonte:"Ciclo dell'Ulster (tradizione celtica irlandese, c. VIII-XII sec.)",
+    fonte_en:"Ulster Cycle (Irish Celtic tradition, c. VIII-XII century)",
+    paese:"ie", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Warp spasm (ríastrad): trasformazione in mostro di guerra. Uso del Gáe Bulg, lancia che fa esplodere i corpi dall'interno. Forza e velocità soprannaturali.",
+    poteri_en:"Warp spasm (ríastrad): transformation into a war-monster that kills friends and foes alike. Use of the Gáe Bulg, spear that explodes bodies from within. Supernatural strength and speed.",
+    aneddoti:"Difese da solo l'Ulster per mesi mentre l'intero esercito era colpito da una maledizione. A diciassette anni uccìse il cane del fabbro Culann e si offrì come suo sostituto — da qui il nome. Morì legato a una roccia per continuare a combattere.",
+    aneddoti_en:"Defended Ulster alone for months while the entire army was cursed. At seventeen killed the smith Culann's hound and offered himself as its replacement — hence the name 'Hound of Culann'. Died tied to a rock to keep fighting.",
+    citazione:"'La mia ora è breve. Ma brucerà come il sole.'",
+    citazione_en:"'My hour is brief. But it will burn like the sun.'"
+  },
+  {
+    nome:"Roland",
+    fonte:"La Chanson de Roland (anonimo, c. 1040-1115)",
+    fonte_en:"The Song of Roland (anonymous, c. 1040-1115)",
+    paese:"fr", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Forza eccezionale e coraggio incrollabile. Spada Durendal (indistruttibile, contenente reliquie sacre). Olifante, il corno la cui nota risuona a trenta miglia. Paladino di Carlo Magno tra i dodici più valenti.",
+    poteri_en:"Exceptional strength and unshakeable courage. Sword Durendal (indestructible, containing sacred relics). Olifant, the horn whose note carries thirty miles. Paladin of Charlemagne among the twelve most valiant.",
+    aneddoti:"Alla Battaglia di Roncisvalle rifiutò di suonare il corno finché era troppo tardi, per non sfigurare davanti ai pagani. Morì solo contro l'intera retroguardia saracena. Il suo epitaffio è il fondamento della chanson de geste francese.",
+    aneddoti_en:"At the Battle of Roncevaux refused to blow his horn until it was too late, so as not to look weak before the pagans. Died alone against the entire Saracen rearguard. His epitaph is the foundation of French chanson de geste.",
+    citazione:"'Un cavaliere coraggioso vale più di venti codardi.'",
+    citazione_en:"'One brave knight is worth more than twenty cowards.'"
+  },
+  {
+    nome:"Bradamante",
+    fonte:"Orlando Furioso (Ludovico Ariosto, 1516-1532)",
+    fonte_en:"Orlando Furioso (Ludovico Ariosto, 1516-1532)",
+    paese:"it", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Cavaliera cristiana invincibile con la lancia d'oro (abbatte qualunque avversario). Combatte pari con i paladini più potenti. Intelligenza tattica e coraggio che spesso superano i guerrieri maschili.",
+    poteri_en:"Invincible Christian knight with the golden lance (unhorsing any opponent). Fights equally against the most powerful paladins. Tactical intelligence and courage that often surpass male warriors.",
+    aneddoti:"Innamorata del saraceno Ruggiero, nemico del suo popolo. Liberò la maga Melissa, sconfisse il mago Atlante. Capostipite mitica della casata d'Este.",
+    aneddoti_en:"In love with the Saracen Ruggiero, enemy of her people. Freed the sorceress Melissa, defeated the wizard Atlante. Legendary ancestress of the Este dynasty.",
+    citazione:"'Chi combatte per amore non conosce stanchezza.'",
+    citazione_en:"'One who fights for love knows no weariness.'"
+  },
+  {
+    nome:"Antar ibn Shaddad", nome_en:"Antarah ibn Shaddad",
+    fonte:"Sirat Antar (tradizione araba, c. VI-XII sec.)",
+    fonte_en:"Sirat Antar (Arabic tradition, c. VI-XII century)",
+    paese:"sa", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Forza fisica straordinaria fin dall'infanzia. Poeta-guerriero: le sue odi (mu'allaqat) sono tra le più celebri della letteratura araba preislamica. Cavaliere invincibile con la spada Dhami.",
+    poteri_en:"Extraordinary physical strength from childhood. Poet-warrior: his odes (mu'allaqat) are among the most celebrated in pre-Islamic Arabic literature. Invincible knight with the sword Dhami.",
+    aneddoti:"Figlio di un nobile arabo e una schiava abissina, dovette guadagnarsi la libertà attraverso le imprese militari. Liberò la tribù degli Abs decine di volte. Il suo amore impossibile per Abla è il filo rosso di mille avventure.",
+    aneddoti_en:"Son of an Arab noble and an Abyssinian slave, had to earn his freedom through military deeds. Freed the Abs tribe dozens of times. His impossible love for Abla is the red thread of a thousand adventures.",
+    citazione:"'Colpisco con la lancia, e con la penna scrivo la gloria delle nazioni.'",
+    citazione_en:"'I strike with the lance, and with the pen I write the glory of nations.'"
+  },
+  {
+    nome:"Hua Mulan",
+    fonte:"Ballata di Mulan (tradizione cinese, c. V-VI sec.)",
+    fonte_en:"Ballad of Mulan (Chinese tradition, c. V-VI century)",
+    paese:"cn", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Combattente completa: arceria, equitazione, combattimento corpo a corpo. Intelligenza strategica e capacità di adattamento superiore. Resistenza fisica e mentale in condizioni estreme.",
+    poteri_en:"Complete fighter: archery, horsemanship, hand-to-hand combat. Strategic intelligence and superior adaptability. Physical and mental endurance in extreme conditions.",
+    aneddoti:"Si travestì da uomo e combattè al posto del padre anziano per dodici anni senza essere mai scoperta. Rifiutò titoli e onori imperiali per tornare a casa. Simbolo di sacrificio filiale e forza femminile in tutta l'Asia orientale.",
+    aneddoti_en:"Disguised herself as a man and fought in her elderly father's place for twelve years without ever being discovered. Refused imperial titles and honours to return home. Symbol of filial sacrifice and female strength across East Asia.",
+    citazione:"'Non ho bisogno della gloria. Ho bisogno di mio padre a casa.'",
+    citazione_en:"'I do not need glory. I need my father home.'"
+  },
+  {
+    nome:"El Cid", nome_en:"El Cid (Rodrigo Díaz de Vivar)",
+    fonte:"Cantar de Mio Cid (anonimo, c. 1200)",
+    fonte_en:"Cantar de Mio Cid (anonymous, c. 1200)",
+    paese:"es", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Condottiero militare di genio: governa forze eterogenee con uguale efficacia. Spada Tizona, leggendaria per seminare terrore nei nemici. Tattica di guerra lampo e assedio insuperabile.",
+    poteri_en:"Military genius commander: leads heterogeneous forces with equal effectiveness. Sword Tizona, legendary for striking terror into enemies. Unmatched lightning war and siege tactics.",
+    aneddoti:"Esiliato dal re Alfonso VI, conquistò Valencia da solo e la governò come principe. Combattè per cristiani e mori indifferentemente, fedele solo al proprio codice d'onore. Morto in battaglia, il suo cadavere fu messo su un cavallo per ispirare le truppe.",
+    aneddoti_en:"Exiled by King Alfonso VI, conquered Valencia alone and ruled it as prince. Fought for Christians and Moors alike, loyal only to his own code of honour. Died in battle; his corpse was placed on a horse to inspire the troops.",
+    citazione:"'Dio è grande, e il mio braccio è il suo strumento.'",
+    citazione_en:"'God is great, and my arm is his instrument.'"
+  },
+  {
+    nome:"Aragorn",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
+    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    paese:"gb", tipo:"saga epica", tipo_en:"epicSaga", featured:false,
+    poteri:"Abilità con la spada Andúril che supera qualsiasi umano. Resistenza e forza rangeriana sviluppata in decenni di sopravvivenza. Capacità di leadership che raduna eserciti altrimenti dispersi — inclusi i Morti di Dunharrow.",
+    poteri_en:"Sword skill with Andúril surpassing any human. Ranger endurance and strength developed over decades of survival. Leadership ability that rallies otherwise scattered armies — including the Dead of Dunharrow.",
+    aneddoti:"Visse ottantasette anni in incognito come Granpasso. Radunò i Morti di Dunharrow e prese i Palantír per sfidare Sauron. La sua forza più grande: saper rinunciare alla gloria per fare ciò che è giusto.",
+    aneddoti_en:"Lived eighty-seven years incognito as Strider. Summoned the Dead of Dunharrow and seized the Palantír to challenge Sauron. His greatest strength: knowing when to forsake glory to do what is right.",
+    citazione:"'I morti non regnano sui vivi. Non ancora.'",
+    citazione_en:"'The dead do not rule the living. Not yet.'"
+  },
+  {
+    nome:"Ilya Muromets",
+    fonte:"Byliny (Kirsha Danilov, c. XVIII sec.)",
+    fonte_en:"Byliny (Kirsha Danilov, c. XVIII century)",
+    paese:"ru", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Forza divina: solleva blocchi di pietra da solo, ferma eserciti interi. Resistenza soprannaturale. Protettore della terra russa contro i tartari e il Nightingale Robber.",
+    poteri_en:"Divine strength: lifts stone blocks alone, halts entire armies. Supernatural endurance. Protector of the Russian land against Tatars and the Nightingale Robber.",
+    aneddoti:"Paralizzato fino ai trent'anni, guarì bevendo un sorso offerto da pellegrini. In un giorno solo sconfisse migliaia di soldati tartari. Il personaggio più amato dell'epica eroica russa — bogatyr per eccellenza.",
+    aneddoti_en:"Paralyzed until age thirty, healed by drinking a sip offered by pilgrims. In a single day defeated thousands of Tatar soldiers. The most beloved figure in Russian heroic epic — the bogatyr par excellence.",
+    citazione:"'La Russia non cadrà finché io sono in piedi.'",
+    citazione_en:"'Russia will not fall as long as I stand.'"
+  },
+  {
+    nome:"Beowulf",
+    fonte:"Beowulf (anonimo anglosassone, c. VIII sec.)",
+    fonte_en:"Beowulf (anonymous Anglo-Saxon, c. VIII century)",
+    paese:"gb", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Forza delle trenta mani: la presa è irresistibile. Combatte Grendel a mani nude per non usare armi contro chi non le usa. Tiene il respiro sott'acqua per ore. Da re, doma un drago da solo nell'ultimo atto.",
+    poteri_en:"Strength of thirty men: his grip is irresistible. Fights Grendel bare-handed so as not to use weapons against one who uses none. Holds his breath underwater for hours. As king, faces a dragon alone in his final act.",
+    aneddoti:"Uccìse Grendel strappandogli il braccio. Nuotò fino al fondo del lago per uccidere la madre di Grendel. Regnò per cinquant'anni, poi morì uccidendo il drago che minacciava il suo popolo.",
+    aneddoti_en:"Killed Grendel by tearing off his arm. Swam to the lake bottom to kill Grendel's mother. Reigned fifty years, then died killing the dragon threatening his people. The oldest poem in English literature.",
+    citazione:"'La gloria di un re è proteggere il suo popolo, anche con la propria vita.'",
+    citazione_en:"'The glory of a king is to protect his people, even with his own life.'"
+  },
+  {
+    nome:"Brunilde", nome_en:"Brynhildr",
+    fonte:"Nibelungenlied (anonimo tedesco, c. 1200)",
+    fonte_en:"Nibelungenlied (anonymous German, c. 1200)",
+    paese:"de", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Forza soprannaturale da valchiria: supera qualsiasi guerriero maschio finché è vergine. Solo Sigfrido (travestito da Gunther) riesce a domarla. Lancia che sfreccia tre volte più lontano di qualsiasi uomo.",
+    poteri_en:"Supernatural strength as a Valkyrie: surpasses any male warrior while remaining a virgin. Only Siegfried (disguised as Gunther) can subdue her. Spear that flies three times farther than any man's.",
+    aneddoti:"Regina di Islanda invincibile in guerra. Ingannata nel matrimonio con Gunther, la sua vendetta travolge l'intera saga. Guerriera prima di tutto.",
+    aneddoti_en:"Undefeated warrior queen of Iceland. Deceived into marriage with Gunther, her vengeance sweeps the entire saga. Warrior above all.",
+    citazione:"'Nessun uomo mi ha mai vinta. E nessuno lo farà.'",
+    citazione_en:"'No man has ever defeated me. And none ever shall.'"
+  },
+  {
+    nome:"Thorfinn Karlsefni",
+    fonte:"Vinland Saga (Makoto Yukimura, 2005-)",
+    fonte_en:"Vinland Saga (Makoto Yukimura, 2005-)",
+    paese:"jp", tipo:"manga", tipo_en:"manga", featured:false,
+    poteri:"Velocità e agilità da combattimento soprannaturali. Uso letale di due coltelli in combattimento ravvicinato. Da bambino supera guerrieri adulti. In seguito trasforma la propria furia in forza di costruzione.",
+    poteri_en:"Supernatural combat speed and agility. Lethal use of two knives in close combat. As a child surpasses adult warriors. Later transforms his fury into a force for building.",
+    aneddoti:"Crebbe come schiavo di guerra con un solo obiettivo: uccidere Askeladd. Dopo averlo raggiunto trovò che la vendetta era vuota. Divenne fondatore di una colonia pacifica in America del Nord — un guerriero che smise di combattere.",
+    aneddoti_en:"Grew up as a war slave with one goal: to kill Askeladd. After achieving it found that revenge was empty. Became founder of a peaceful colony in North America — a warrior who chose to stop fighting.",
+    citazione:"'Un vero guerriero non ha bisogno di nemici.'",
+    citazione_en:"'A true warrior has no need for enemies.'"
+  },
+  {
+    nome:"Giovanna d'Arco", nome_en:"Joan of Arc",
+    fonte:"tradizione storica francese (Cronache di Enguerrand de Monstrelet, c. 1430)",
+    fonte_en:"French historical tradition (Chronicles of Enguerrand de Monstrelet, c. 1430)",
+    paese:"fr", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Ispirazione mistica che trasforma contadini in eserciti vincenti. Tattiche d'assedio intuìte senza formazione militare. Coraggio fisico in prima linea che galvanizza le truppe.",
+    poteri_en:"Mystical inspiration that transforms peasants into winning armies. Siege tactics intuited without military training. Physical courage at the front line that galvanises the troops.",
+    aneddoti:"A diciassette anni guidò l'esercito francese alla liberazione di Orléans. Incoronò Carlo VII e invertì il corso della Guerra dei Cent'Anni. Catturata, processata e bruciata a diciannove anni. Canonizzata nel 1920.",
+    aneddoti_en:"At seventeen led the French army to liberate Orléans. Crowned Charles VII and reversed the course of the Hundred Years' War. Captured, tried and burned at nineteen. Canonized in 1920.",
+    citazione:"'Ho paura di nulla tranne il tradimento.'",
+    citazione_en:"'I fear nothing except betrayal.'"
+  },
+  {
+    nome:"Conan il Barbaro", nome_en:"Conan the Barbarian",
+    fonte:"Le storie di Conan (Robert Ervin Howard, 1932-1936)",
+    fonte_en:"The Conan Stories (Robert Ervin Howard, 1932-1936)",
+    paese:"us", tipo:"romanzo", tipo_en:"novel", featured:false,
+    poteri:"Forza, velocità e resistenza oltre i limiti umani. Combattente istintivo in ogni stile: spada, ascia, lotta libera. Sopravvive a ferite mortali per pura volontà.",
+    poteri_en:"Strength, speed and endurance beyond human limits. Instinctive fighter in every style: sword, axe, wrestling. Survives mortal wounds through sheer will. Improvised but highly effective military strategist.",
+    aneddoti:"Da Cimmeria all'Hyboria, fu schiavo, ladro, pirata, mercenario, generale e re. Non vinse per tecnica ma per intensità animale. Il suo nome definisce il genere sword and sorcery.",
+    aneddoti_en:"From Cimmeria to Hyboria, was slave, thief, pirate, mercenary, general and king. Did not win through technique but through animal intensity. His name defines the sword-and-sorcery genre.",
+    citazione:"'Schiacciare i nemici, vederli cadere ai tuoi piedi e sentire le lamentazioni delle loro donne — questa è la risposta.'",
+    citazione_en:"'To crush your enemies, see them driven before you, and to hear the lamentation of their women — this is the answer.'"
+  },
+  {
+    nome:"Kratos",
+    fonte:"God of War (Santa Monica Studio, 2005-)",
+    fonte_en:"God of War (Santa Monica Studio, 2005-)",
+    paese:"us", tipo:"videogioco", tipo_en:"game", featured:false,
+    poteri:"Forza divina ereditata dal sangue di Ares. Le Catene del Caos devastano area. Lo Scudo Leviatano para qualsiasi colpo. Nella serie nordica, la potenza si unisce alla saggezza paterna.",
+    poteri_en:"Divine strength inherited from Ares' blood. The Blades of Chaos devastate an area. The Leviathan Shield blocks any blow. In the Norse series, power merges with fatherly wisdom.",
+    aneddoti:"Uccìse l'intero pantheon greco — Ares, Atena, Poseidone, Zeus. Morì e resuscitò. Poi sconfisse divinità norrene. Nessun altro personaggio fictizio può vantare un kill count olimpico completo.",
+    aneddoti_en:"Killed the entire Greek pantheon — Ares, Athena, Poseidon, Zeus. Died and resurrected. Then defeated Norse deities. No other fictional character can claim a complete Olympic kill count.",
+    citazione:"'Chiudi gli occhi. Apri gli occhi. Sei un dio.'",
+    citazione_en:"'Close your eyes. Open your eyes. You are a god.'"
+  },
+  {
+    nome:"Manas",
+    fonte:"Epopea di Manas (tradizione kirghisa, c. IX-XII sec.)",
+    fonte_en:"Epic of Manas (Kyrgyz tradition, c. IX-XII century)",
+    paese:"kg", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Forza leggendaria fin dalla nascita. Guerriero invincibile con il cavallo Ak-Kula. Guida militare che unifica i quaranta clan kirghisi in un unico popolo.",
+    poteri_en:"Legendary strength from birth. Invincible warrior with the horse Ak-Kula. Military leader who unifies the forty Kyrgyz clans into one people.",
+    aneddoti:"L'epopea di Manas è una delle più lunghe al mondo — 500.000 versi. È simbolo nazionale del Kirghizistan. Manas non è solo guerriero: è il fondatore della nazione kirghisa, il suo spirito collettivo.",
+    aneddoti_en:"The Manas epic is one of the longest in the world — 500,000 verses. It is the national symbol of Kyrgyzstan. Manas is not only a warrior: he is the founder of the Kyrgyz nation, its collective spirit.",
+    citazione:"'Sono il cuore del mio popolo. Il mio respiro è il loro respiro.'",
+    citazione_en:"'I am the heart of my people. My breath is their breath.'"
+  },
+  {
+    nome:"Lemminkainen", nome_en:"Lemminkainen",
+    fonte:"Kalevala (Elias Lönnrot, 1835-1849)",
+    fonte_en:"Kalevala (Elias Lönnrot, 1835-1849)",
+    paese:"fi", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Spadaccino e arciere magico. Canto runico come arma (può uccidere con le parole). Capace di trasformarsi in animali. Dopo essere stato fatto a pezzi e gettato nel fiume Tuonela, viene riportato in vita dalla madre.",
+    poteri_en:"Magical swordsman and archer. Runic song as a weapon (can kill with words). Able to transform into animals. After being cut to pieces and thrown into the river Tuonela, is brought back to life by his mother.",
+    aneddoti:"Avventuriero irriverente che seduce, combatte e muore più volte. La sua discesa negli inferi e la resurrezione per mano materna sono tra i miti più potenti della Kalevala.",
+    aneddoti_en:"Irreverent adventurer who seduces, fights and dies multiple times. His descent into the underworld and resurrection by his mother's hand are among the most powerful myths in the Kalevala.",
+    citazione:"'La morte mi ha già preso tre volte. E tre volte ho riso.'",
+    citazione_en:"'Death has already taken me three times. And three times I laughed.'"
+  },
+  {
+    nome:"Odisseo", nome_en:"Odysseus",
+    fonte:"Odissea (Omero, c. VIII sec. a.C.)",
+    fonte_en:"Odyssey (Homer, c. VIII century BCE)",
+    paese:"gr", tipo:"poema epico", tipo_en:"epicPoem", featured:false,
+    poteri:"Il solo in grado di tendere il proprio arco — con cui abbatte dodici pretendenti in pochi minuti. Forza fuori scala mascherata da intelligenza straordinaria. Il cavallo di Troia è la sua invenzione.",
+    poteri_en:"The only one able to string his own bow — with which he kills twelve suitors in minutes. Off-scale strength masked by extraordinary intelligence. The Trojan Horse is his invention.",
+    aneddoti:"Vent'anni lontano da Itaca: guerra e viaggio. Sopravvisse a Polifemo, Circe, Scilla e Cariddi, le Sirene, i Lestrigoni. Tornò a casa travestito da mendicante e riprese il trono con le sole frecce e l'astuzia.",
+    aneddoti_en:"Twenty years away from Ithaca: war and journey. Survived Polyphemus, Circe, Scylla and Charybdis, the Sirens, the Laestrygonians. Returned home disguised as a beggar and reclaimed the throne with only arrows and cunning.",
+    citazione:"'Non la forza ma l'ingegno abbatte i forti.'",
+    citazione_en:"'Not strength but ingenuity brings down the mighty.'"
+  },
+  {
+    nome:"Yujiro Hanma",
+    fonte:"Baki (Keisuke Itagaki, 1991-)",
+    fonte_en:"Baki (Keisuke Itagaki, 1991-)",
+    paese:"jp", tipo:"manga", tipo_en:"manga", featured:false,
+    poteri:"Il combattente più forte del mondo: nessuna tecnica o stile che non padroneggi. Muscolatura che simula la faccia di un demone sulla schiena in stato di tensione massima. Ferma terremoti con la forza bruta.",
+    poteri_en:"The strongest fighter in the world: no technique or style he does not master. Musculature that simulates a demon's face on his back at maximum tension. Stops earthquakes with raw strength.",
+    aneddoti:"Ha fermato un esercito degli Stati Uniti da solo. Sconfitto solo da suo figlio Baki — ma a condizioni concordate. La sua filosofia: la forza è l'unica verità. Chiamato 'l'Orco'.",
+    aneddoti_en:"Stopped a US Army alone. Defeated only by his son Baki — under agreed conditions. His philosophy is simple: strength is the only truth. Called 'the Ogre'.",
+    citazione:"'Il forte non ha bisogno di regole. Le regole esistono per i deboli.'",
+    citazione_en:"'The strong have no need for rules. Rules exist for the weak.'"
+  },
+  {
+    nome:"Roronoa Zoro",
+    fonte:"One Piece (Eiichiro Oda, 1997-)",
+    fonte_en:"One Piece (Eiichiro Oda, 1997-)",
+    paese:"jp", tipo:"manga", tipo_en:"manga", featured:false,
+    poteri:"Tre-spade stile Santoryu: tiene la terza spada tra i denti. Asura: sei braccia, nove spade in una sola figura. Haki dell'armatura e dell'osservazione. Assorbì tutto il dolore di Rufy senza perdere conoscenza.",
+    poteri_en:"Three-sword style Santoryu: holds the third sword between his teeth. Asura: six arms, nine blades in one figure. Armament and Observation Haki. Absorbed all of Luffy's pain without losing consciousness.",
+    aneddoti:"'Nulla è successo.' — La risposta di Zoro a Mihawk dopo aver assorbito ferite mortali. Vuole diventare il più grande spadaccino del mondo: la sua ambizione è l'unica stella polare che segue.",
+    aneddoti_en:"'Nothing happened.' — Zoro's reply to Mihawk after absorbing mortal wounds. Wants to become the world's greatest swordsman: his ambition is the only north star he follows.",
+    citazione:"'Se mi fermo qui, quale promessa posso fare al mio capitano?'",
+    citazione_en:"'If I stop here, what promise can I make to my captain?'"
+  },
+  {
+    nome:"Leonida", nome_en:"Leonidas",
+    fonte:"Le Storie (Erodoto, c. 440 a.C.)",
+    fonte_en:"The Histories (Herodotus, c. 440 BCE)",
+    paese:"gr", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Comandante tattico di genio: sfrutta le Termopili per neutralizzare un esercito di centinaia di migliaia. Combattente personale di prima linea. La phalange spartana sotto il suo comando è un meccanismo perfetto.",
+    poteri_en:"Tactical genius commander: uses Thermopylae to neutralise an army of hundreds of thousands. Personal frontline fighter. The Spartan phalanx under his command is a perfect mechanism.",
+    aneddoti:"Selezioniò trecento uomini con figli adulti — perché sapeva che sarebbero morti tutti. Tenne il passo tre giorni contro l'intera armata persiana di Serse. Morì combattendo, non ritirandosi. La sua risposta all'ultimatum: 'Molon labe'.",
+    aneddoti_en:"Selected three hundred men with adult sons — because he knew they would all die. Held the pass three days against Xerxes' entire Persian army. Died fighting, not retreating. His response to the ultimatum 'Lay down your arms': 'Molon labe — come and take them'.",
+    citazione:"'Molon labe.'",
+    citazione_en:"'Molon labe — come and take them.'"
+  },
+  {
+    nome:"Beatrix Kiddo", nome_en:"The Bride",
+    fonte:"Kill Bill (Quentin Tarantino, 2003-2004)",
+    fonte_en:"Kill Bill (Quentin Tarantino, 2003-2004)",
+    paese:"us", tipo:"film", tipo_en:"film", featured:false,
+    poteri:"Hakujin no Hime: tecnica dei cinque tocchi di morte. Katana di Hattori Hanzō. Combattimento corpo a corpo contro decine di avversari. Resistenza al trauma fisico e psicologico assoluta.",
+    poteri_en:"Hakujin no Hime: five-point palm exploding heart technique. Hattori Hanzō katana. Hand-to-hand combat against dozens of opponents. Absolute resistance to physical and psychological trauma.",
+    aneddoti:"Si risvegliò dal coma, si riabilitò in pochi giorni, e sistematicamente eliminò ogni membro della Deadly Viper Assassination Squad. Non corre. Non si affretta. È inevitabile.",
+    aneddoti_en:"Woke from a coma, rehabilitated in days, and systematically eliminated every member of the Deadly Viper Assassination Squad. Does not run. Does not rush. She is inevitable.",
+    citazione:"'Ora siediti sul letto, respira e inizia a contare i tuoi torti.'",
+    citazione_en:"'Now sit down on the bed, breathe, and begin counting your wrongs.'"
+  },
+  {
+    nome:"Temüjin (Gengis Khan)", nome_en:"Temüjin (Genghis Khan)",
+    fonte:"La storia segreta dei Mongoli (anonimo, c. 1227)",
+    fonte_en:"The Secret History of the Mongols (anonymous, c. 1227)",
+    paese:"mn", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Strategia militare rivoluzionaria: cavalleria leggera, comunicazioni di segnale, guerra psicologica su scala industriale. Memoria fotografica degli alleati e dei traditori. Capacità di motivare tribù diversissime verso un obiettivo.",
+    poteri_en:"Revolutionary military strategy: light cavalry, signal communications, psychological warfare on an industrial scale. Photographic memory of allies and traitors. Ability to motivate very different tribes toward a single goal.",
+    aneddoti:"Nacque con un grumo di sangue nel pugno — segno di destino guerriero. Rapito e tenuto come schiavo da giovane, si affrancò. Creò il più grande impero contiguo della storia. La sua tattica del falso ritiro indusse eserciti interi alla rotta.",
+    aneddoti_en:"Born clutching a blood clot in his fist — sign of warrior destiny. Kidnapped and kept as a slave when young, freed himself. Created the largest contiguous empire in history. His feigned retreat tactic led entire armies to rout.",
+    citazione:"'Se non sei capace di proteggere ciò che ami, perché combattere?'",
+    citazione_en:"'If you cannot protect what you love, why fight at all?'"
+  },
+  {
+    nome:"Gwanggaeto il Grande", nome_en:"Gwanggaeto the Great",
+    fonte:"Samguk Sagi (Kim Busik, 1145)",
+    fonte_en:"Samguk Sagi (Kim Busik, 1145)",
+    paese:"kr", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Campagne militari folgoranti: 64 fortezze e 1400 villaggi conquistati. Cavalleria e fanteria coordinate con precisione moderna. Diplomatico e guerriero che espande il regno senza spezzarlo.",
+    poteri_en:"Lightning military campaigns: 64 fortresses and 1400 villages conquered. Cavalry and infantry coordinated with modern precision. Diplomat and warrior who expands the kingdom without breaking it.",
+    aneddoti:"Salì al trono a diciotto anni. Triplicò il territorio del regno di Goguryeo. Sconfisse Baekje, Silla, i Khitan e persino l'esercito dell'imperatore cinese. Morì a trentanove anni. La stele commemorativa è ancora in piedi in Cina.",
+    aneddoti_en:"Ascended the throne at eighteen. Tripled the territory of the Goguryeo kingdom. Defeated Baekje, Silla, the Khitans and even the Chinese emperor's army. Died at thirty-nine. The commemorative stele still stands in China.",
+    citazione:"'Il confine del mio regno è il confine della mia volontà.'",
+    citazione_en:"'The border of my kingdom is the border of my will.'"
+  },
+  {
+    nome:"Cuauhtémoc",
+    fonte:"tradizione storica azteca (Ignacio Rodríguez Galván, 1843)",
+    fonte_en:"Aztec historical tradition (Ignacio Rodríguez Galván, 1843)",
+    paese:"mx", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Difesa di Tenochtitlan per ottanta giorni contro Cortés con risorse sempre più ridotte. Combattimento guerriglia urbana innovativo. Leadership carismatica che mantiene l'esercito unito fino all'ultima resistenza.",
+    poteri_en:"Defence of Tenochtitlan for eighty days against Cortés with ever-diminishing resources. Innovative urban guerrilla combat. Charismatic leadership that keeps the army united until the last resistance.",
+    aneddoti:"Ultimo imperatore azteco. Catturato, torturato per rivelare l'oro nascosto (con i piedi bruciati), rispose: 'Credi che io stia su un letto di rose?' Non parlò mai. Simbolo della resistenza indigena delle Americhe.",
+    aneddoti_en:"Last Aztec emperor. Captured, tortured to reveal hidden gold (feet burned), replied: 'Do you think I am lying on a bed of roses?' Never spoke. Symbol of indigenous resistance of the Americas.",
+    citazione:"'Ho fatto ciò che doveva essere fatto. Non vi dirò altro.'",
+    citazione_en:"'I did what had to be done. I will tell you nothing more.'"
+  },
+  {
+    nome:"Furiosa",
+    fonte:"Mad Max: Fury Road (George Miller, 2015-2024)",
+    fonte_en:"Mad Max: Fury Road (George Miller, 2015-2024)",
+    paese:"au", tipo:"film", tipo_en:"film", featured:false,
+    poteri:"Combattente ambidestra con il braccio meccanico. Guida e pilota di veicoli pesanti in condizioni estreme. Tattica istintiva in ambienti caotici. Resistenza fisica e psicologica che sfida qualsiasi limite.",
+    poteri_en:"Ambidextrous fighter with mechanical arm. Driver and pilot of heavy vehicles in extreme conditions. Instinctive tactics in chaotic environments. Physical and psychological resilience defying any limit.",
+    aneddoti:"Cresciuta nelle Molte Madri. Scalò i ranghi dell'Immortan Joe fino a diventare Imperatrice, poi si ribellò. Guidò la Rig attraverso il deserto per liberare cinque donne — una delle grandi storie di riscatto del cinema moderno.",
+    aneddoti_en:"Grew up among the Many Mothers. Rose through the ranks of Immortan Joe to become Imperator, then rebelled. Drove the Rig across the desert to free five women — one of the great redemption stories of modern cinema.",
+    citazione:"'Non sono la tua proprietà. Non sono mai stata la tua proprietà.'",
+    citazione_en:"'I am not your property. I was never your property.'"
+  },
+  {
+    nome:"Le Sorelle Trưng", nome_en:"The Trưng Sisters",
+    fonte:"tradizione storica vietnamita (storico, 40 d.C.)",
+    fonte_en:"Vietnamese historical tradition (historical, 40 CE)",
+    paese:"vn", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Leadership militare che trasformò un esercito di contadini in una forza che sconfisse l'esercito Han. Cavalcatura su elefante da guerra. Trưng Trắc fu la prima donna a diventare regina del Vietnam.",
+    poteri_en:"Military leadership that transformed a peasant army into a force that defeated the Han army. Riding war elephants. Trưng Trắc was the first woman to become queen of Vietnam.",
+    aneddoti:"Trưng Trắc si ribellò dopo che il marito fu giustiziato dal governatore Han. La sorella Trưng Nhị la seguì. Liberarono sessantacinque città in pochi mesi. Ancora venerate come divinità protettrici in Vietnam.",
+    aneddoti_en:"Trưng Trắc rebelled after her husband was executed by the Han governor. Her sister Trưng Nhị followed. They liberated sixty-five cities in months. Still venerated as protective deities in Vietnam.",
+    citazione:"'Ci hanno tolto tutto. Ma non la nostra volontà.'",
+    citazione_en:"'They took everything from us. But not our will.'"
+  },
+  {
+    nome:"Shaka Zulu",
+    fonte:"Shaka Zulu (Ernest Alexander Ritter, 1955)",
+    fonte_en:"Shaka Zulu (Ernest Alexander Ritter, 1955)",
+    paese:"za", tipo:"romanzo", tipo_en:"novel", featured:false,
+    poteri:"Riforma militare totale: eliminò i sandali per aumentare velocità, inventò la tattica 'corna del bufalo' (isifuba) che accerchiava il nemico. Assegai accorciato (iklwa) più letale. Transformò i Zulu in una forza continentale.",
+    poteri_en:"Total military reform: eliminated sandals for speed, invented the 'bull's horns' tactic (isifuba) that encircled the enemy. Shortened assegai (iklwa) more lethal. Transformed the Zulu into a continental force.",
+    aneddoti:"Salì al potere dopo anni di umiliazioni. In dieci anni creò il regno Zulu da una piccola tribù. Conquistò quasi tutta l'Africa australe. La sua riforma militare è studiata ancora oggi nelle accademie militari.",
+    aneddoti_en:"Rose to power after years of humiliation. In ten years built the Zulu kingdom from a small tribe. Conquered almost all of southern Africa. His military reform is still studied in military academies today.",
+    citazione:"'Non sconfiggi il nemico colpendolo. Lo sconfiggi prima che possa colpirti.'",
+    citazione_en:"'You do not defeat the enemy by striking him. You defeat him before he can strike you.'"
+  },
+  {
+    nome:"Zumbi dos Palmares",
+    fonte:"tradizione afro-brasiliana (storico, c. 1655-1695)",
+    fonte_en:"Afro-Brazilian historical tradition (historical, c. 1655-1695)",
+    paese:"br", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Combattente di capoeira e guerriglia tropicale. Comandante militare di Quilombo dos Palmares — la più grande comunità di afrodiscendenti liberi del Brasile coloniale. Resistenza di trent'anni contro le forze coloniali portoghesi.",
+    poteri_en:"Capoeira and tropical guerrilla fighter. Military commander of Quilombo dos Palmares — the largest community of free Afro-descendants in colonial Brazil. Thirty years of resistance against Portuguese colonial forces.",
+    aneddoti:"Nacque libero nel Quilombo, fu catturato e addestrato dai portoghesi, poi fuggì e tornò alla sua gente. Guidò Palmares per vent'anni fino alla caduta nel 1694. Morì piuttosto che arrendersi. Simbolo della resistenza afrobrasiliana.",
+    aneddoti_en:"Born free in the Quilombo, captured and trained by the Portuguese, then escaped and returned to his people. Led Palmares for twenty years until its fall in 1694. Died rather than surrender. Symbol of Afro-Brazilian resistance.",
+    citazione:"'La libertà non si negozia. Si difende con il sangue.'",
+    citazione_en:"'Freedom is not negotiated. It is defended with blood.'"
+  },
+  {
+    nome:"Tariq ibn Ziyad",
+    fonte:"tradizione storica maghrebina (storico, c. 670-720 d.C.)",
+    fonte_en:"Maghrebi historical tradition (historical, c. 670-720 CE)",
+    paese:"ma", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Stratega militare audacissimo. Sbarcò in Hispania con 7.000 uomini contro un esercito visigoto di 100.000. Tattica di attacco frontale abbinata all'aggiramento: sconfisse Rodrigo nella battaglia del Guadalquivir.",
+    poteri_en:"Boldest of military strategists. Landed in Hispania with 7,000 men against a Visigoth army of 100,000. Frontal attack tactic combined with flanking: defeated Rodrigo at the battle of the Guadalquivir.",
+    aneddoti:"Bruciò le proprie navi dopo lo sbarco — nessuna ritirata possibile. Conquistò quasi tutta la penisola iberica in tre anni. La rocca dello sbarco porta ancora il suo nome: Gibilterra (Jabal al-Tāriq, Monte di Tariq).",
+    aneddoti_en:"Burned his own ships after landing — no retreat possible. Conquered nearly the entire Iberian peninsula in three years. The rock of the landing still bears his name: Gibraltar (Jabal al-Tāriq, Mountain of Tariq).",
+    citazione:"'Non c'è ritiro. Il nemico è davanti. Il mare è dietro. Avanzate.'",
+    citazione_en:"'There is no retreat. The enemy is ahead. The sea is behind. Advance.'"
+  },
+  {
+    nome:"Viriato",
+    fonte:"tradizione iberica (Appiano di Alessandria, c. II sec. d.C.)",
+    fonte_en:"Iberian tradition (Appian of Alexandria, c. II century CE)",
+    paese:"pt", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Guerriglia montagnosa contro l'esercito romano — tecnica che Roma non aveva mai fronteggiato. Velocità di movimento e imboscata che annientò legioni intere. Carisma che mantenne unite tribù portoghesi eterogenee per un decennio.",
+    poteri_en:"Mountain guerrilla warfare against the Roman army — a technique Rome had never faced. Speed of movement and ambush that annihilated entire legions. Charisma that kept heterogeneous Portuguese tribes united for a decade.",
+    aneddoti:"Pastore che divenne condottiero. Sconfisse quattro eserciti romani consecutivamente. Roma, incapace di batterlo militarmente, lo fece assassinare nel sonno dai suoi stessi amici. Il senato romano rifiutò di pagare i sicari: 'Roma non paga i traditori'.",
+    aneddoti_en:"Shepherd who became a warlord. Defeated four Roman armies consecutively. Rome, unable to beat him militarily, had him assassinated in his sleep by his own friends. The Roman senate refused to pay the killers: 'Rome does not pay traitors'.",
+    citazione:"'Combatto perché questa terra è mia. Non vostra.'",
+    citazione_en:"'I fight because this land is mine. Not yours.'"
+  },
+  {
+    nome:"Kozak Mamaj", nome_en:"Cossack Mamay",
+    fonte:"tradizione cosacca ucraina (folklore, XVI-XVII sec.)",
+    fonte_en:"Ukrainian Cossack tradition (folklore, XVI-XVII century)",
+    paese:"ua", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Guerriero-musicista: suona la bandura tra una battaglia e l'altra. Cavalleria cosacca incomparabile. Maestro di imboscata e guerra di movimento nella steppa.",
+    poteri_en:"Warrior-musician: plays the bandura between battles. Incomparable Cossack cavalry. Master of ambush and movement warfare on the steppe.",
+    aneddoti:"Il personaggio più dipinto della storia ucraina: migliaia di ritratti su legno lo mostrano seduto a gambe incrociate con la bandura. Simbolo della libertà cosacca e dell'identità ucraina.",
+    aneddoti_en:"The most painted character in Ukrainian history: thousands of portraits on wood show him cross-legged with his bandura. Symbol of Cossack freedom and Ukrainian identity.",
+    citazione:"'La libertà si suona e si combatte. Nello stesso respiro.'",
+    citazione_en:"'Freedom is played and fought. In the same breath.'"
+  },
+  {
+    nome:"Köroğlu",
+    fonte:"epica turca e azerbaigiana (tradizione oghuz, c. XVI sec.)",
+    fonte_en:"Turkish and Azerbaijani epic (Oghuz tradition, c. XVI century)",
+    paese:"tr", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Cavaliere invincibile su Kırat, il cavallo magico. Forza e coraggio leggendari. Poeta-guerriero: le sue türküler (canzoni) sono ancora cantate. Resiste a eserciti interi con la sua banda di quaranta cavalieri.",
+    poteri_en:"Invincible knight on Kırat, the magical horse. Legendary strength and courage. Poet-warrior: his türküler (songs) are still sung. Resists entire armies with his band of forty horsemen.",
+    aneddoti:"Figlio di un palafreniere accecato ingiustamente, si ribellò al signore oppressore. Visse come fuorilegge eroico sulle montagne, difendendo i poveri. Venerato in Turchia, Azerbaijan, Iran, Armenia e Asia Centrale.",
+    aneddoti_en:"Son of a groom unjustly blinded, he rebelled against the oppressive lord. Lived as a heroic outlaw in the mountains, defending the poor. Venerated in Turkey, Azerbaijan, Iran, Armenia and Central Asia.",
+    citazione:"'Il tiranno governa con il terrore. Io governo con la libertà.'",
+    citazione_en:"'The tyrant rules with terror. I rule with freedom.'"
+  },
+  {
+    nome:"Lapu-Lapu",
+    fonte:"tradizione storica filippina (storico, c. 1491-1542)",
+    fonte_en:"Philippine historical tradition (historical, c. 1491-1542)",
+    paese:"ph", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Guerriero della tradizione Visayan: esperto di kampilan e kalasag. Tattiche di guerriglia costiera contro forze superiori. Leadership che organizza la difesa dell'isola di Mactan contro gli spagnoli.",
+    poteri_en:"Visayan tradition warrior: expert with kampilan sword and kalasag shield. Coastal guerrilla tactics against superior forces. Leadership that organises the defence of the island of Mactan against the Spanish.",
+    aneddoti:"Il 27 aprile 1521, guidò i guerrieri di Mactan contro le truppe di Magellano. Magellano morì in quella battaglia — primo esploratore europeo ucciso in campo asiatico. Lapu-Lapu è il primo eroe nazionale riconosciuto delle Filippine.",
+    aneddoti_en:"On 27 April 1521, led the warriors of Mactan against Magellan's troops. Magellan died in that battle — the first European explorer killed on Asian soil. Lapu-Lapu is the first recognised national hero of the Philippines.",
+    citazione:"'Questa terra non vi appartiene. Non vi apparterrà mai.'",
+    citazione_en:"'This land does not belong to you. It never will.'"
+  },
+  {
+    nome:"Decebal",
+    fonte:"tradizione storica daco-rumena (storico, 87-106 d.C.)",
+    fonte_en:"Dacian-Romanian historical tradition (historical, 87-106 CE)",
+    paese:"ro", tipo:"history", tipo_en:"history", featured:false,
+    poteri:"Tattica militare difensiva di livello superiore: fortezze daciche, imboscate nelle foreste dei Carpazi. Diplomazia come arma: trattò con Domiziano da posizione di forza dopo aver battuto due legioni romane.",
+    poteri_en:"Superior level defensive military tactic: Dacian fortresses, ambushes in the Carpathian forests. Diplomacy as a weapon: negotiated with Domitian from a position of strength after defeating two Roman legions.",
+    aneddoti:"Sconfisse due imperatori romani prima di cedere al terzo (Traiano). Quando la sconfitta fu certa, si tagliò la gola piuttosto che essere portato in catene a Roma. Le sue imprese sono scolpite sulla Colonna Traiana — anche lui, paradossalmente, nella colonna del nemico.",
+    aneddoti_en:"Defeated two Roman emperors before yielding to a third (Trajan). When defeat was certain, cut his own throat rather than be taken in chains to Rome. His deeds are carved on Trajan's Column — paradoxically in the enemy's monument.",
+    citazione:"'Un re che si arrende non è più re. Non lo è mai stato.'",
+    citazione_en:"'A king who surrenders is no longer a king. He never was.'"
+  },
+  {
+    nome:"John Wick",
+    fonte:"John Wick (Chad Stahelski, 2014-)",
+    fonte_en:"John Wick (Chad Stahelski, 2014-)",
+    paese:"us", tipo:"film", tipo_en:"film", featured:false,
+    poteri:"Gun-fu: fusione di judo, sambo e tiro di precisione con movimenti fluidi. Velocità di eliminazione impossibile: decine di operativi in pochi minuti. Resistenza al dolore e capacità di combattere ferito fuori scala.",
+    poteri_en:"Gun-fu: fusion of judo, sambo and precision shooting in fluid movements. Impossible elimination speed: dozens of operatives in minutes. Off-scale pain resistance and ability to fight while wounded.",
+    aneddoti:"Uscito dal ritiro per vendicare un cane. Riuscì a uccidere tre uomini con una matita. Il Baba Yaga: il mostro che si manda a uccidere il Baba Yaga. Nell'universo del film, è il personaggio più temuto in assoluto.",
+    aneddoti_en:"Came out of retirement to avenge a dog. Managed to kill three men with a pencil. The Baba Yaga: the monster you send to kill the Baba Yaga. In the film's universe, he is the most feared character bar none.",
+    citazione:"'Pensavi davvero che potesse finire così?'",
+    citazione_en:"'Did you really think it could end this way?'"
+  },
+  {
+    nome:"Gatotkaca",
+    fonte:"tradizione wayang indonesiana (basata sul Mahabharata, c. IX sec.)",
+    fonte_en:"Indonesian wayang tradition (based on the Mahabharata, c. IX century)",
+    paese:"id", tipo:"folklore", tipo_en:"folklore", featured:false,
+    poteri:"Vola senz'ali: il cielo è la sua strada. Pelle dura come ferro, ossa d'acciaio. Forza titanica. Armatura Brajamusti-Brajadenta che lo rende quasi invulnerabile.",
+    poteri_en:"Flies without wings: the sky is his road. Skin hard as iron, bones of steel. Titanic strength. Brajamusti-Brajadenta armour that makes him near-invulnerable.",
+    aneddoti:"Eroe nazionale indonesiano venerato da secoli nel wayang kulit (teatro delle ombre). Morì a Kurukshetra contro Karna, sacrificandosi per i Pandava. Il suo nome è sinonimo di eroismo in Indonesia, Malesia e Giava.",
+    aneddoti_en:"Indonesian national hero venerated for centuries in wayang kulit (shadow theatre). Died at Kurukshetra against Karna, sacrificing himself for the Pandavas. His name is synonymous with heroism in Indonesia, Malaysia and Java.",
+    citazione:"'Il cielo è grande abbastanza per tutti. Tranne per i codardi.'",
+    citazione_en:"'The sky is large enough for all. Except cowards.'"
+  },
+  {
+    nome:"Ellen Ripley",
+    fonte:"Alien (Dan O'Bannon e Ronald Shusett, 1979-)",
+    fonte_en:"Alien (Dan O'Bannon and Ronald Shusett, 1979-)",
+    paese:"us", tipo:"film", tipo_en:"film", featured:false,
+    poteri:"Adattabilità tattica in ambienti sconosciuti e ostili. Forza e determinazione fuori dalla norma. Capacità di improvvisare armi letali da materiali disponibili. Abilità con il lanciafiamme e tute meccanizzate.",
+    poteri_en:"Tactical adaptability in unknown hostile environments. Strength and determination beyond the norm. Ability to improvise lethal weapons from available materials. Skill with flamethrower and mechanised suits.",
+    aneddoti:"Sopravvissuta al Nostromo, alla colonia di LV-426, all'Alien³, alla nave della Weyland-Yutani. Morì pur di non lasciare che la Regina Xenomorfa cadesse nelle mani della corporation. Si clonò per tornare. La persistenza come superpotere.",
+    aneddoti_en:"Survived the Nostromo, LV-426 colony, Alien³, the Weyland-Yutani ship. Died rather than let the Xenomorph Queen fall into corporate hands. Was cloned to return. Persistence as a superpower.",
+    citazione:"'Io non la lascio a voi. Non la lascio a nessuno.'",
+    citazione_en:"'I am not leaving her to you. Not to anyone.'"
+  },
+  {
+    nome:"Xena",
+    fonte:"Xena: Guerriera dell'Amore (Robert Tapert e John Schulian, 1995-2001)",
+    fonte_en:"Xena: Warrior Princess (Robert Tapert and John Schulian, 1995-2001)",
+    paese:"us", tipo:"film", tipo_en:"film", featured:false,
+    poteri:"Chakram: disco rotante che rimbalza su più bersagli prima di tornare in mano. Combattimento con lancia, spada, mani nude contro decine di avversari. Velocità e acrobatica soprannaturale.",
+    poteri_en:"Chakram: rotating disc that ricochets off multiple targets before returning to hand. Combat with spear, sword, bare hands against dozens of opponents. Supernatural speed and acrobatics.",
+    aneddoti:"Ex conqueratrice del mondo convertita alla redenzione. Sconfisse Ares, Alti, Callisto e persino divinità olimpiche. Morì e resuscitò più volte. Con Gabrielle, una delle prime coppie protagoniste LGBTQ+ della tv.",
+    aneddoti_en:"Former world conqueror converted to redemption. Defeated Ares, Alti, Callisto and even Olympian deities. Died and resurrected multiple times. With Gabrielle, one of the first LGBTQ+ protagonist couples on TV.",
+    citazione:"'Ho scelto la luce. Ma il buio non mi dimentica mai.'",
+    citazione_en:"'I chose the light. But the darkness never forgets me.'"
+  },
+  {
+    nome:"Sharpe",
+    fonte:"Le avventure di Sharpe (Bernard Cornwell, 1988-2006)",
+    fonte_en:"Sharpe's Adventures (Bernard Cornwell, 1988-2006)",
+    paese:"gb", tipo:"romanzo", tipo_en:"novel", featured:false,
+    poteri:"Fuciliere d'élite: precisione con il Baker Rifle a distanze impossibili. Tattica di fanteria leggera. Combattimento corpo a corpo brutale e efficace. Adattabilità estrema in qualsiasi ambiente.",
+    poteri_en:"Elite rifleman: precision with the Baker Rifle at impossible distances. Light infantry tactics. Brutal and effective hand-to-hand combat. Extreme adaptability in any environment.",
+    aneddoti:"Nato nei bassifondi di Londra. Arruolato come fante, salì al grado di ufficiale attraverso il merito puro — cosa quasi impossibile nell'esercito britannico del XVIII secolo. Combattè con Wellington dall'India a Waterloo.",
+    aneddoti_en:"Born in the slums of London. Enlisted as a private, rose to officer rank through pure merit — nearly impossible in the 18th-century British army. Fought with Wellington from India to Waterloo.",
+    citazione:"'Non sono un gentiluomo. Non ho mai avuto bisogno di esserlo.'",
+    citazione_en:"'I am not a gentleman. I have never needed to be.'"
+  },
+  {
+    nome:"Birgitte Silverbow", nome_en:"Birgitte Silverbow",
+    fonte:"La Ruota del Tempo (Robert Jordan, 1990-2013)",
+    fonte_en:"The Wheel of Time (Robert Jordan, 1990-2013)",
+    paese:"us", tipo:"saga epica", tipo_en:"epicSaga", featured:false,
+    poteri:"Arciera divina rinata per migliaia di anni in cicli successivi. Precisione assoluta con l'arco anche a distanze impossibili. Memoria di vite precedenti come guerriera — nessuna battaglia è mai veramente nuova per lei.",
+    poteri_en:"Divine archer reborn for thousands of years in successive cycles. Absolute accuracy with the bow even at impossible distances. Memory of previous lives as a warrior — no battle is ever truly new to her.",
+    aneddoti:"Strappata dal Mondo dei Sogni prima del tempo, legata all'anima di Elayne Trakand. Combattè in ogni epoca della storia come arciera leggendaria. Una delle poche eroine di Randland la cui reputazione supera i secoli.",
+    aneddoti_en:"Torn from Tel'aran'rhiod before her time, soul-bonded to Elayne Trakand. Fought in every age of history as a legendary archer. One of the few heroines of Randland whose reputation spans centuries.",
+    citazione:"'Ho già perso prima. Non significa nulla. Si ricomincia.'",
+    citazione_en:"'I have lost before. It means nothing. We begin again.'"
+  },
+];
+
+function getFlag(paese) {
+  if (!paese) return '';
+  return '<img class="flag" src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/svg/' + paese + '.svg" alt="' + paese + '" loading="lazy">';
+}
+
+function getBadge(p) {
+  var lang = currentLang;
+  var typeMap = {
+    'manga': i18n[lang].manga,
+    'anime': i18n[lang].anime,
+    'romanzo': i18n[lang].novel,
+    'novel': i18n[lang].novel,
+    'saga epica': i18n[lang].epicSaga,
+    'poema epico': i18n[lang].epicPoem,
+    'teatro': i18n[lang].play,
+    'tradizione': i18n[lang].folklore,
+    'folklore': i18n[lang].folklore,
+    'film': i18n[lang].film,
+    'tradizione storica': i18n[lang].history,
+    'history': i18n[lang].history,
+    'videogioco': i18n[lang].game,
+    'video game': i18n[lang].game
+  };
+  var tipo = lang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
+  var label = typeMap[tipo] || tipo;
+  return '<span class="badge">' + label + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById('rank-list');
+  var html = '';
+  for (var i = 0; i < dati.length; i++) {
+    var p = dati[i];
+    var n = i + 1;
+    var isTop3 = n <= 3;
+    var nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
+    var fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+    var classes = 'rank-item' + (isTop3 ? ' top-3 rank-' + n : '') + (p.featured ? ' featured' : '');
+    html += '<button class="' + classes + '" style="animation-delay:' + (i * 0.04) + 's" data-idx="' + i + '" aria-label="' + nome + ', posizione ' + n + '">' +
+      '<span class="rank-num">' + n + '</span>' +
+      '<span class="rank-content">' +
+        '<span class="rank-name">' + nome + getBadge(p) + '</span>' +
+        '<span class="rank-source">' + getFlag(p.paese) + fonte + '</span>' +
+      '</span>' +
+      '<span class="rank-arrow">›</span>' +
+    '</button>';
+  }
+  list.innerHTML = html;
+
+  var items = list.querySelectorAll('.rank-item');
+  for (var j = 0; j < items.length; j++) {
+    items[j].addEventListener('click', (function(idx) {
+      return function() { openModal(idx); };
+    })(j));
+  }
+}
+
+var currentIdx = null;
+
+function openModal(idx) {
+  currentIdx = idx;
+  var p = dati[idx];
+  var lang = currentLang;
+  var nome = lang === 'it' ? p.nome : (p.nome_en || p.nome);
+  var fonte = lang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+  var poteri = lang === 'it' ? p.poteri : (p.poteri_en || p.poteri);
+  var aneddoti = lang === 'it' ? p.aneddoti : (p.aneddoti_en || p.aneddoti);
+  var citazione = lang === 'it' ? p.citazione : (p.citazione_en || p.citazione);
+
+  document.getElementById('modal-rank').textContent = i18n[lang].position + ' ' + (idx + 1);
+  document.getElementById('modal-name').textContent = nome;
+  document.getElementById('modal-source').innerHTML = getFlag(p.paese) + fonte;
+  document.getElementById('modal-powers').innerHTML = poteri;
+  document.getElementById('modal-lore').innerHTML = aneddoti;
+  document.getElementById('modal-quote').innerHTML = citazione || '';
+  document.getElementById('modal-backdrop').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-close').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('active');
+  document.body.style.overflow = '';
+  currentIdx = null;
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-backdrop').addEventListener('click', function(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowRight' && currentIdx !== null && currentIdx < dati.length - 1) openModal(currentIdx + 1);
+  if (e.key === 'ArrowLeft' && currentIdx !== null && currentIdx > 0) openModal(currentIdx - 1);
+});
+
+setLang(currentLang);
+</script>
+</body>
+</html>
