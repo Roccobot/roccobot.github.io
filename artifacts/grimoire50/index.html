@@ -199,6 +199,13 @@ h1 {
   gap: 0.4em;
 }
 
+.rank-title {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(0.82rem,2.1vw,0.98rem);
+  color:var(--parchment-dim); letter-spacing:0.01em;
+  display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
+}
+
 .rank-source {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(0.78rem,2vw,0.92rem);
@@ -325,9 +332,15 @@ h1 {
   font-size:clamp(1rem,2.5vw,1.15rem); color:var(--gold-bright);
   margin-bottom:1.5rem; border-bottom:1px solid rgba(212,166,74,0.3); padding-bottom:1rem;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25em;
+}
+
+.modal-source .modal-author {
+  display: flex;
   align-items: center;
-  gap: 0.6em;
-  flex-wrap: wrap;
+  gap: 0.5em;
 }
 
 .modal-section { margin-bottom:1.4rem; }
@@ -465,6 +478,10 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   .rank-item:hover .rank-name,
   .rank-item:focus-visible .rank-name { color: #000000; }
   .rank-item.top-3 .rank-name { color: #111111; font-size: clamp(1.1rem,3.4vw,1.6rem); }
+  .rank-title {
+    color: #222222;
+    font-weight: 500;
+  }
   .rank-source {
     color: #3a3020;
     font-weight: 500;
@@ -1233,6 +1250,16 @@ const dati = [
   }
 ];
 
+function parseFonte(fonte) {
+  const lp = fonte.lastIndexOf('(');
+  if (lp === -1) return { title: fonte, author: fonte, year: '' };
+  const title = fonte.slice(0, lp).trim();
+  const inside = fonte.slice(lp + 1).replace(/\)$/, '');
+  const fc = inside.indexOf(',');
+  if (fc === -1) return { title, author: inside.trim(), year: '' };
+  return { title, author: inside.slice(0, fc).trim(), year: inside.slice(fc + 1).trim() };
+}
+
 const lista = document.getElementById('rank-list');
 const backdrop = document.getElementById('modal-backdrop');
 const closeBtn = document.getElementById('modal-close');
@@ -1254,14 +1281,17 @@ function renderList() {
     const tipo = currentLang === 'en' ? i18n.en[p.tipo_en] || p.tipo_en : i18n.it[p.tipo] || p.tipo;
     const badge = `<span class="badge">${tipo}</span>`;
     const flag = p.paese ? `<img src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/svg/${p.paese}.svg" class="flag" alt="${p.paese}">` : '';
+    const pf = parseFonte(fonte);
+    const titleYear = pf.title + (pf.year ? ` (${pf.year})` : '');
 
     item.setAttribute('aria-label', `${nome}, ${i18n[currentLang].position} ${rango}`);
 
     item.innerHTML = `
       <div class="rank-num">${rango}</div>
       <div class="rank-content">
-        <div class="rank-name">${nome}${badge}</div>
-        <div class="rank-source">${fonte}${flag}</div>
+        <div class="rank-name">${nome}</div>
+        <div class="rank-title">${titleYear}${badge}</div>
+        <div class="rank-source">${flag}${pf.author}</div>
       </div>
       <div class="rank-arrow">→</div>
     `;
@@ -1278,10 +1308,12 @@ function apriModal(p, rango) {
   const aneddoti = currentLang === 'en' && p.aneddoti_en ? p.aneddoti_en : p.aneddoti;
   const citazione = currentLang === 'en' && p.citazione_en ? p.citazione_en : p.citazione;
   const flag = p.paese ? `<img src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/svg/${p.paese}.svg" class="flag" alt="${p.paese}">` : '';
+  const pf = parseFonte(fonte);
+  const titleYear = pf.title + (pf.year ? ` (${pf.year})` : '');
 
   document.getElementById('modal-rank').textContent = `${i18n[currentLang].position} ${rango}`;
   document.getElementById('modal-name').innerHTML = nome;
-  document.getElementById('modal-source').innerHTML = `${fonte}${flag}`;
+  document.getElementById('modal-source').innerHTML = `<span>${titleYear}</span><span class="modal-author">${flag}${pf.author}</span>`;
   document.getElementById('modal-powers').innerHTML = poteri;
   document.getElementById('modal-lore').innerHTML = aneddoti;
   document.getElementById('modal-quote').innerHTML = citazione;
