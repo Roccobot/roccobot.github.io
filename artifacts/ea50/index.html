@@ -162,7 +162,7 @@ footer p { max-width:600px; margin:1rem auto; }
 <header>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Silmarils</div>
-  <h1 id="title">I 50 divini di Arda</h1>
+  <h1 id="title">I divini di Arda 50</h1>
   <p class="subtitle" id="subtitle">Una classifica dei più potenti esseri divini e sovrumani della Terra di Mezzo - Valar, Maiar, Draghi, Ungoliant e creature dell'oscurità</p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#a9a9a9" stroke-width="0.8" fill="none" opacity="0.6"/>
@@ -206,9 +206,9 @@ let currentLang = localStorage.getItem('ea-lang') || (navigator.language.startsW
 const i18n = {
   it: {
     crest: 'Silmarils',
-    title: 'I 50 divini di Arda',
+    title: 'I divini di Arda 50',
     subtitle: "Una classifica dei più potenti esseri divini e sovrumani della Terra di Mezzo - Valar, Maiar, Draghi, Ungoliant e creature dell'oscurità",
-    intro: "I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri.<span class='intro-cta'>Tocca o clicca un nome per evocare la scheda completa.</span>",
+    intro: "I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri. Escluso anche Eru Ilúvatar.<span class='intro-cta'>Tocca o clicca un nome per evocare la scheda completa.</span>",
     footer: "'Nel principio era Eä, e nella Musica dei Ainur si tessé il destino di tutti gli esseri.' - Il Silmarillion",
     position: 'Posizione',
     powers: 'Capacità',
@@ -218,7 +218,7 @@ const i18n = {
     crest: 'Silmarils',
     title: 'The 50 Divine Ones of Arda',
     subtitle: 'A ranking of the most powerful divine and superhuman beings of Middle-earth - Valar, Maiar, Dragons, Ungoliant and creatures of darkness',
-    intro: "The only beings excluded from the standard ranking: Valar and their allies, Maiar in autonomous form, primordial dragons, Ungoliant the mother of all dark spiders.<span class='intro-cta'>Tap or click a name to summon the full entry.</span>",
+    intro: "The only beings excluded from the standard ranking: Valar and their allies, Maiar in autonomous form, primordial dragons, Ungoliant the mother of all dark spiders. Also excluding Eru Ilúvatar.<span class='intro-cta'>Tap or click a name to summon the full entry.</span>",
     footer: "'In the beginning was Eä, and in the Music of the Ainur the fate of all beings was woven.' - The Silmarillion",
     position: 'Position',
     powers: 'Powers',
@@ -228,10 +228,10 @@ const i18n = {
 
 const dati = [
   {
-    nome:"Morgoth", nome_en:"Morgoth (Melkor)",
+    nome:"Melkor", nome_en:"Melkor",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Morgoth, il Nero, Signore della Terra Oscura",
     poteri:"Vala corrotto, potenza quasi pari a Manwë. Controllo assoluto sulla magia oscura, fuoco infernale e tentazione dell'anima. Creatore di draghi, Balrog e creature mostruose. Forgia dell'Anello Unico.",
     poteri_en:"Corrupted Vala, power nearly equal to Manwë. Absolute control over dark magic, hellfire and soul temptation. Creator of dragons, Balrogs and monstrous creatures. Forger of the One Ring.",
     aneddoti:"Fuggì dalla musica dei Valar e venne a Arda con intenzioni malvagie. Imprigionò i Silmarils e scatenò la Maledizione di Mandos sui figli di Fëanor. Regnò incontrastato in Angband per quasi un'era intera.",
@@ -564,18 +564,6 @@ const dati = [
     citazione_en:"'My web is inescapable as death, my hunger eternal.'"
   },
   {
-    nome:"Un Balrog Senza Nome", nome_en:"A Nameless Balrog",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"balrog", tipo_en:"Balrog", featured:false,
-    poteri:"Fuoco e oscurità. Resistenza sovrumana. Frusta infuocato. Orrore incarnato.",
-    poteri_en:"Fire and darkness. Superhuman resistance. Whip of flame. Incarnate terror.",
-    aneddoti:"Un fra i molti Balrog creati da Morgoth. Meno noto, ma altrettanto terribile. Compagno di Gothmog nei giorni più bui.",
-    aneddoti_en:"One among the many Balrogs created by Morgoth. Less known, but equally terrible. Companion to Gothmog in the darkest days.",
-    citazione:"'Nella fiamma consumerò tutto ciò che il bene ha creato.'",
-    citazione_en:"'In flame I shall consume all that good has created.'"
-  },
-  {
     nome:"Alatar, il Mago Blu dell'Est", nome_en:"Alatar, the Blue Wizard of the East",
     fonte:"Il Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
     fonte_en:"The Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
@@ -600,54 +588,6 @@ const dati = [
     citazione_en:"'The secrets I keep shall never be revealed in the Western world.'"
   },
   {
-    nome:"Gwaihir il Signore dei Venti", nome_en:"Gwaihir the Windlord",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"aquila", tipo_en:"Eagle", featured:false,
-    poteri:"Aquila gigantesca, più intelligente di molti mortali. Volo ultra-rapido, vista onnisciente da grandi altezze. Potenza sovrumana.",
-    poteri_en:"Giant eagle, more intelligent than many mortals. Ultra-fast flight, omniscient sight from great heights. Superhuman power.",
-    aneddoti:"Salvò Gandalf da Isengard. Partecipò attivamente alla Battaglia di Pelenor. Rimase fedele fino alla fine della Terza Era.",
-    aneddoti_en:"Saved Gandalf from Isengard. Actively participated in the Battle of Pelennor Fields. Remained faithful until the end of the Third Age.",
-    citazione:"'Sulle ali del vento, io vedo ciò che i mortali non possono vedere.'",
-    citazione_en:"'On the wings of wind, I see what mortals cannot.'"
-  },
-  {
-    nome:"Landroval il Grande", nome_en:"Landroval the Great",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"aquila", tipo_en:"Eagle", featured:false,
-    poteri:"Aquila possente, fratello di Gwaihir. Volo inarrivabile, forza divina. Compagno fedele nella guerra del Belleriand.",
-    poteri_en:"Mighty eagle, brother of Gwaihir. Unmatched flight, divine strength. Faithful companion in the War of Beleriand.",
-    aneddoti:"Meno conosciuto di Gwaihir ma altrettanto valoroso. Partecipò alla Guerra dell'Ira. Portò in salvo molti dalla rovina.",
-    aneddoti_en:"Less known than Gwaihir but equally valiant. Participated in the War of Wrath. Rescued many from ruin.",
-    citazione:"'La vittoria appartiene a chi ha il coraggio di combattere dal cielo.'",
-    citazione_en:"'Victory belongs to those brave enough to fight from the sky.'"
-  },
-  {
-    nome:"Thorondor, Signore delle Aquile", nome_en:"Thorondor, Lord of Eagles",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"aquila", tipo_en:"Eagle", featured:false,
-    poteri:"Aquila primordiale della Prima Era. Apertura alare di 30 fathom (circa 180 piedi). Forza e intelligenza sovrumane.",
-    poteri_en:"Primordial eagle of the First Age. Wingspan of 30 fathoms (about 180 feet). Superhuman strength and intelligence.",
-    aneddoti:"Viveva nei Monti Circummondani. Salvò Beren e Lúthien. La sua testimonianza fu cruciale nella Guerra dell'Ira.",
-    aneddoti_en:"Dwelt in the Circling Mountains. Saved Beren and Lúthien. His testimony was crucial in the War of Wrath.",
-    citazione:"'Dalle alte vette vedo tutto ciò che accade nel mondo.'",
-    citazione_en:"'From the high peaks I see all that happens in the world.'"
-  },
-  {
-    nome:"Un Nano-Re Minore di Arda", nome_en:"A Minor Dwarven King of Arda",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"nano", tipo_en:"Dwarf", featured:false,
-    poteri:"Forza divina della stirpe nanica. Maestria negli artigianato. Longevità innaturale. Resistenza ai poteri oscuri.",
-    poteri_en:"Divine strength of the dwarven race. Mastery of craftsmanship. Unnatural longevity. Resistance to dark powers.",
-    aneddoti:"Regnante su uno dei sette regno nani. Custode di ricchezze e segreti. Alleato dei popoli liberi nei tempi di bisogno.",
-    aneddoti_en:"Ruler of one of the seven dwarf kingdoms. Keeper of riches and secrets. Ally of the Free Peoples in times of need.",
-    citazione:"'La nostra stirpe persisterà finché la pietra esista.'",
-    citazione_en:"'Our race shall endure as long as stone exists.'"
-  },
-  {
     nome:"Il Necromante di Dol Guldur", nome_en:"The Necromancer of Dol Guldur",
     fonte:"Il Hobbit (John Ronald Reuel Tolkien, 1937)",
     fonte_en:"The Hobbit (John Ronald Reuel Tolkien, 1937)",
@@ -659,66 +599,6 @@ const dati = [
     citazione:"'L'oscurità cresce, e la mia volontà si estende su tutte le terre.'",
     citazione_en:"'Darkness grows, and my will extends over all lands.'"
   },
-  {
-    nome:"Una Regina dei Wraith", nome_en:"A Queen of Wraiths",
-    fonte:"Il Silmarillion & The Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    fonte_en:"The Silmarillion & The Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    paese:"gb", tipo:"wraith", tipo_en:"Wraith", featured:false,
-    poteri:"Invisibilità totale. Tentacoli di oscurità. Timore incarnato. Controllo psichico.",
-    poteri_en:"Total invisibility. Tentacles of darkness. Incarnate terror. Psychic control.",
-    aneddoti:"Una fra i Nove Signori degli Anelli, corrotta da Sauron. Portava l'Anello che la legava eternamente. La sua volontà non era più propria.",
-    aneddoti_en:"One of the Nine Lords of Rings, corrupted by Sauron. Wore the Ring that bound her eternally. Her will was no longer her own.",
-    citazione:"'Sono eterno, invisibile, ineluttabile come la morte stessa.'",
-    citazione_en:"'I am eternal, invisible, as inescapable as death itself.'"
-  },
-  {
-    nome:"Un Signore dei Wraith", nome_en:"A Lord of Wraiths",
-    fonte:"Il Silmarillion & The Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    fonte_en:"The Silmarillion & The Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    paese:"gb", tipo:"wraith", tipo_en:"Wraith", featured:false,
-    poteri:"Incorporeità totale. Arma di spettro freddo. Aura di terrore. Immortalità maledetta.",
-    poteri_en:"Total incorporeality. Weapon of cold death. Aura of terror. Accursed immortality.",
-    aneddoti:"Uno dei Nove, grande condottiero di Sauron. Combattè nella Guerra dell'Anello. Resiste ancora alle frontiere del mondo.",
-    aneddoti_en:"One of the Nine, great commander of Sauron. Fought in the War of the Ring. Still endures at the world's boundaries.",
-    citazione:"'Il nostro regno è eterno, e l'Anello che porta il nostro marchio non conosce fine.'",
-    citazione_en:"'Our realm is eternal, and the Ring bearing our mark knows no end.'"
-  },
-  {
-    nome:"Un Capo dei Servi Oscuri", nome_en:"A Lord of Dark Servants",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"spirito", tipo_en:"Spirit", featured:false,
-    poteri:"Oscurità incarnata. Magia nera. Corruzione delle menti. Tenebre viventi.",
-    poteri_en:"Incarnate darkness. Black magic. Corruption of minds. Living shadow.",
-    aneddoti:"Servo diretto di Morgoth in passato. Continua il suo odio per il bene anche nella Terza Era. Quasi indistruttibile senza aiuto cosmico.",
-    aneddoti_en:"Direct servant of Morgoth in the past. Continues his hatred for good even in the Third Age. Nearly indestructible without cosmic aid.",
-    citazione:"'La mia fedeltà alla Malvagità non tramonta mai.'",
-    citazione_en:"'My allegiance to Evil never fades.'"
-  },
-  {
-    nome:"Cerchio di Drago Oscuro Minore", nome_en:"Circle of Lesser Dark Dragon",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false,
-    poteri:"Fuoco distruttore. Ali potenti. Armatura resistente. Intelligenza animale elevata.",
-    poteri_en:"Destructive fire. Powerful wings. Resistant armor. High animal intelligence.",
-    aneddoti:"Dragone minore della Prima Era. Combattè accanto a draghi maggiori. Morì in battaglia contro i Valar.",
-    aneddoti_en:"Lesser dragon of the First Age. Fought alongside greater dragons. Died in battle against the Valar.",
-    citazione:"'Il fuoco scorre nelle mie vene, la morte soffia dalle mie fauci.'",
-    citazione_en:"'Fire flows through my veins, death breathes from my jaws.'"
-  },
-  {
-    nome:"Una Ragna della Stirpe di Ungoliant", nome_en:"A Spider of Ungoliant's Line",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:false,
-    poteri:"Ragnatele letali. Veleno paralizzante. Invisibilità. Appetito insaziabile.",
-    poteri_en:"Lethal webs. Paralyzing venom. Invisibility. Insatiable hunger.",
-    aneddoti:"Discendente diretto di Ungoliant. Ancora pericolosa nonostante sia minore. Custodisce i segreti delle profondità.",
-    aneddoti_en:"Direct descendant of Ungoliant. Still dangerous despite being lesser. Keeps the secrets of the depths.",
-    citazione:"'Il veleno è la mia benedizione, la ragnatela la mia catena.'",
-    citazione_en:"'Venom is my blessing, the web my chain.'"
-  }
 ];
 
 const lista = document.getElementById('rank-list');
