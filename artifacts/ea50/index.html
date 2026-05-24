@@ -731,14 +731,11 @@ function renderList() {
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var titleYear = pf.title + ' (' + pf.year + ')';
     var badge = '<span class="badge">' + tipo + '</span>';
-    var flag = '<svg viewBox="0 0 3 2" style="width:1.2em;height:0.8em;vertical-align:middle;margin-right:0.3em"><rect width="3" height="2" fill="#' + (p.paese === 'gb' ? 'c12c2e' : 'FFD700') + '"/></svg>';
-
     item.innerHTML = `
       <div class="rank-num">${rango}</div>
       <div class="rank-content">
         <div class="rank-name">${nome}</div>
         <div class="rank-title">${titleYear}${badge}</div>
-        <div class="rank-source">${flag}${pf.author}</div>
       </div>
       <div class="rank-arrow">→</div>
     `;
