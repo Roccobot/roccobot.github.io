@@ -6,81 +6,125 @@
   <meta name="description" content="I 50 esseri divini di Arda - Valar, Maiar, Draghi e creature oscure dalla Terra di Mezzo di Tolkien">
   <title>I divini di Arda 50 - Tolkien</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body { font-family:'Georgia','Palatino',serif; background:var(--ink); color:var(--parchment); line-height:1.6; }
-
 :root {
-  --ink:#0d0d0d;
-  --ink-deep:#000000;
-  --parchment:#f5f5f0;
-  --gold:#a9a9a9;
-  --gold-bright:#e8e8e8;
-  --gold-deep:#696969;
+  --ink: #0d0d0d;
+  --ink-deep: #000000;
+  --parchment: #f5f5f0;
+  --parchment-dim: #888888;
+  --gold: #a9a9a9;
+  --gold-bright: #e8e8e8;
+  --gold-deep: #696969;
+  --shadow: rgba(0,0,0,0.7);
 }
 
-button, a { cursor:pointer; }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--ink-deep);
+  color: var(--parchment);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(100,100,100,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(80,80,80,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(90,90,90,0.08) 0%, transparent 70%),
+    var(--ink-deep);
+  z-index:-2;
+  transition: background 0.3s;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(1px 1px at 23% 18%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(1px 1px at 71% 42%, var(--gold-bright) 50%, transparent 100%),
+    radial-gradient(1px 1px at 42% 67%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(1px 1px at 87% 73%, var(--parchment-dim) 50%, transparent 100%),
+    radial-gradient(1px 1px at 12% 88%, var(--gold-bright) 50%, transparent 100%),
+    radial-gradient(2px 2px at 58% 14%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(1px 1px at 92% 31%, var(--parchment-dim) 50%, transparent 100%),
+    radial-gradient(1px 1px at 35% 39%, var(--parchment) 50%, transparent 100%),
+    radial-gradient(2px 2px at 8% 56%, var(--gold-bright) 50%, transparent 100%),
+    radial-gradient(1px 1px at 64% 91%, var(--parchment) 50%, transparent 100%);
+  opacity:0.35; z-index:-1;
+  animation: flicker 10s ease-in-out infinite;
+  pointer-events:none;
+  transition: opacity 0.3s;
+}
+
+@keyframes flicker { 0%,100%{opacity:0.2} 50%{opacity:0.45} }
 
 header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
-.crest { font-size:0.9rem; letter-spacing:0.3em; margin-bottom:0.8rem; font-weight:normal; color:var(--gold); }
-h1 { font-size:clamp(1.8rem, 6vw, 3.5rem); line-height:1.1; margin-bottom:1rem; font-weight:normal; color:var(--gold-bright); }
-.subtitle { font-size:1rem; color:var(--gold); margin-bottom:2rem; max-width:600px; margin-left:auto; margin-right:auto; }
-.flourish { width:100%; max-width:300px; margin-bottom:2rem; opacity:0.6; }
 
 .lang-switch {
-  position:fixed; top:1rem; right:1.5rem; z-index:100;
-  background:var(--gold); color:var(--ink);
-  border:none; padding:0.5rem 1rem; font-size:0.9rem; border-radius:4px;
-  font-weight:bold; cursor:pointer; transition:all 0.3s;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(169,169,169,0.15);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
-.lang-switch:hover { background:var(--gold-bright); }
 
-.scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
-
-.rank-item {
-  padding:1rem 1.2rem 1rem 1rem; margin-bottom:0.8rem; cursor:pointer;
-  border-left:3px solid var(--gold); position:relative;
-  transition:all 0.25s; display:flex; gap:1rem; align-items:flex-start;
+.lang-switch:hover {
+  background: var(--gold);
+  color: var(--ink);
+  transform: scale(1.05);
 }
-.rank-item::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(169,169,169,0.1),transparent); opacity:0; pointer-events:none; transition:opacity 0.25s; }
-.rank-item:hover,.rank-item:focus-visible { background:rgba(169,169,169,0.15); border-left-color:var(--gold-bright); }
-.rank-item:hover::before { opacity:1; }
-.rank-item:hover .rank-num,.rank-item:focus-visible .rank-num { color:var(--gold-bright); }
-.rank-item:hover .rank-name,.rank-item:focus-visible .rank-name { color:var(--parchment); }
 
-.rank-num {
-  font-size:1.4rem; font-weight:bold; color:var(--gold); min-width:3rem; text-align:right;
-  transition:all 0.25s;
+.crest {
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(0.7rem,2vw,0.85rem);
+  letter-spacing:0.45em; color:var(--gold);
+  margin-bottom:1.5rem; text-transform:uppercase;
 }
-.rank-content { display:flex; flex-direction:column; gap:0.2rem; min-width:0; }
-.rank-name {
-  font-size:1.1rem; font-weight:bold; color:var(--gold-bright); transition:color 0.25s;
-  word-break:break-word;
-}
-.rank-title {
-  font-size:0.85rem; color:var(--gold); font-style:italic;
-  word-break:break-word;
-}
-.rank-source {
-  font-size:0.8rem; color:var(--gold-deep); display:flex; gap:0.4rem; align-items:center;
-}
-.rank-arrow {
-  font-size:1.2rem; color:var(--gold); transition:all 0.25s; margin-left:auto; padding-left:0.5rem;
-}
-.rank-item:hover .rank-arrow,.rank-item:focus-visible .rank-arrow { color:var(--gold-bright); }
 
-.rank-item.top-3 { border-left-width:5px; background:rgba(169,169,169,0.2); }
-.rank-item.top-3 .rank-num { color:var(--gold); text-shadow:0 0 20px rgba(169,169,169,0.5); }
-.rank-item.top-3 .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
+.crest::before,.crest::after { content:'✦'; margin:0 0.8em; color:var(--gold-bright); }
 
-.badge { font-size:0.75rem; padding:0.15rem 0.4rem; border:1px solid var(--gold); border-radius:3px; color:var(--gold); margin-left:0.3rem; }
+h1 {
+  font-family:'EB Garamond',serif; font-weight:700;
+  font-size:clamp(2.4rem,8vw,5.5rem); line-height:0.95;
+  letter-spacing:0.02em;
+  text-shadow:0 0 30px rgba(169,169,169,0.4),0 0 60px rgba(100,100,100,0.3),0 4px 12px rgba(0,0,0,0.8);
+  background:linear-gradient(180deg,var(--parchment) 0%,var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:1rem;
+}
 
-footer { text-align:center; padding:4rem 1.5rem; color:var(--gold-deep); font-size:0.95rem; }
-footer .crest { margin-bottom:1rem; }
-footer p { max-width:600px; margin:1rem auto; }
+.subtitle {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
+  max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
+}
 
-.intro { color:var(--gold); max-width:700px; margin:2rem auto; padding:1.4rem 1.8rem; position:relative; }
+.flourish { width:200px; height:30px; margin:1.5rem auto; opacity:0.7; }
+
+.intro {
+  max-width:580px; margin:2rem auto 0;
+  font-size:0.95rem; color:var(--parchment-dim); line-height:1.7;
+  padding:1.4rem 1.8rem; position:relative;
+}
 .intro::before {
   content:''; position:absolute; top:0; left:0; right:0; height:1px;
   background:linear-gradient(90deg,transparent,var(--gold),transparent);
@@ -89,73 +133,379 @@ footer p { max-width:600px; margin:1rem auto; }
   content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
   background:linear-gradient(90deg,transparent,var(--gold),transparent);
 }
-.intro-cta { display:block; margin-top:0.7rem; font-size:0.9rem; opacity:0.85; }
+.intro-cta {
+  display:block; margin-top:0.7rem; color:var(--gold); font-size:0.9rem;
+}
+
+.scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
+
+.rank-item {
+  position:relative;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:clamp(0.8rem,3vw,2rem);
+  padding:1.2rem 1.2rem 1.2rem 0.5rem;
+  margin:0.4rem 0;
+  background:linear-gradient(90deg,rgba(50,50,50,0.4) 0%,rgba(40,40,40,0.2) 100%);
+  border-left:3px solid var(--gold);
+  border:1px solid rgba(169,169,169,0.15);
+  border-left:3px solid var(--gold);
+  border-radius:4px;
+  cursor:pointer;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+  width:100%; text-align:left;
+  font:inherit; color:inherit;
+}
+
+.rank-item::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(169,169,169,0.06) 50%,transparent 100%);
+  opacity:0; transition:opacity 0.4s; pointer-events:none;
+}
+
+.rank-item:hover,.rank-item:focus-visible {
+  border-left-color:var(--gold-bright);
+  border-color:var(--gold);
+  transform:translateX(6px);
+  box-shadow:0 0 30px rgba(169,169,169,0.2),0 4px 20px rgba(0,0,0,0.4);
+  background:linear-gradient(90deg,rgba(80,80,80,0.4) 0%,rgba(60,60,60,0.2) 100%);
+  outline:none;
+}
+
+.rank-item:hover::before { opacity:1; }
+
+.rank-item:hover .rank-num,.rank-item:focus-visible .rank-num {
+  color:var(--gold-bright);
+  text-shadow:0 0 20px rgba(232,232,232,0.5);
+}
+
+.rank-item:hover .rank-name,.rank-item:focus-visible .rank-name { color:var(--parchment); }
+
+.rank-num {
+  font-family:'Cinzel',serif; font-weight:900;
+  font-size:clamp(1.6rem,4.5vw,2.4rem);
+  color:var(--gold-deep);
+  min-width:clamp(48px,9vw,70px);
+  text-align:center; letter-spacing:0.05em;
+  transition:all 0.35s; line-height:1;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 0 12px rgba(169,169,169,0.25);
+}
+
+.rank-content { display:flex; flex-direction:column; gap:0.2rem; min-width:0; }
+
+.rank-name {
+  font-family:'Cinzel',serif; font-weight:700;
+  font-size:clamp(1rem,3vw,1.4rem);
+  color:var(--parchment-dim); letter-spacing:0.03em;
+  transition:color 0.35s; line-height:1.2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.rank-title {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(0.82rem,2.1vw,0.98rem);
+  color:var(--parchment-dim); letter-spacing:0.01em;
+  display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
+}
+
+.rank-source {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(0.78rem,2vw,0.92rem);
+  color:var(--gold-deep); letter-spacing:0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.rank-arrow {
+  font-family:'Cinzel',serif; color:var(--gold-deep);
+  font-size:1.2rem; transition:transform 0.35s,color 0.35s; flex-shrink:0;
+}
+
+.rank-item:hover .rank-arrow,.rank-item:focus-visible .rank-arrow {
+  transform:translateX(4px); color:var(--gold-bright);
+}
+
+.rank-item.top-3 {
+  background:linear-gradient(90deg,rgba(80,80,80,0.35) 0%,rgba(70,70,70,0.25) 100%);
+  border:2px solid rgba(169,169,169,0.4);
+  border-left:5px solid var(--gold);
+  padding:1.6rem 1.2rem 1.6rem 0.5rem;
+}
+
+.rank-item.top-3 .rank-num { color:var(--gold); text-shadow:0 0 20px rgba(169,169,169,0.5); }
+.rank-item.top-3 .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
+
+.badge {
+  display:inline-block;
+  font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
+  color:var(--gold-deep); border:1px solid rgba(169,169,169,0.5);
+  border-radius:2px; padding:1px 5px;
+  opacity:0.8; text-transform:uppercase;
+}
 
 .modal-backdrop {
-  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:200;
+  position:fixed; inset:0;
+  background:rgba(5,7,16,0.92);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  padding:1rem; opacity:0; visibility:hidden;
+  transition:opacity 0.3s,visibility 0.3s;
+  overflow-y:auto;
 }
-.modal-backdrop.open { display:grid; place-items:center; }
+
+.modal-backdrop.open { opacity:1; visibility:visible; }
+
 .modal {
-  background:var(--ink); border:2px solid var(--gold); padding:2rem; max-height:80vh; overflow-y:auto;
-  max-width:600px; width:90%; position:relative; box-shadow:0 0 40px rgba(0,0,0,0.8);
+  background:linear-gradient(135deg,var(--ink) 0%,#1a1a1a 100%);
+  border:1px solid var(--gold); border-radius:6px;
+  max-width:680px; width:100%; max-height:90vh; overflow-y:auto;
+  padding:2rem clamp(1.2rem,4vw,2.5rem);
+  position:relative;
+  box-shadow:0 0 60px rgba(169,169,169,0.3),0 0 120px rgba(100,100,100,0.2),0 20px 60px rgba(0,0,0,0.8);
+  transform:translateY(20px) scale(0.96);
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
+
+.modal-backdrop.open .modal { transform:translateY(0) scale(1); }
+
+.modal::before {
+  content:''; position:absolute; inset:8px;
+  border:1px solid rgba(169,169,169,0.3); border-radius:3px; pointer-events:none;
+}
+
 .modal-close {
-  position:absolute; top:1rem; right:1rem; background:transparent; border:none;
-  color:var(--gold); font-size:1.5rem; cursor:pointer; transition:color 0.25s;
+  position:absolute; top:14px; right:14px;
+  width:36px; height:36px;
+  background:rgba(169,169,169,0.1); border:1px solid var(--gold);
+  border-radius:50%; color:var(--gold);
+  font-family:'Cinzel',serif; font-size:1.1rem;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.25s; z-index:10;
 }
-.modal-close:hover { color:var(--gold-bright); }
 
-.modal-rank { color:var(--gold-deep); font-weight:700; }
-.modal-name { font-size:1.8rem; margin:1rem 0; color:var(--gold-bright); }
-.modal-source { font-size:0.9rem; color:var(--gold); margin-bottom:1.5rem; display:flex; gap:0.5rem; align-items:center; }
-.modal-section { margin-bottom:1.5rem; }
-.modal-section h3 { color:var(--gold); font-size:1rem; margin-bottom:0.5rem; }
-.modal-section p { color:var(--parchment); line-height:1.7; }
-.modal-quote { margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--gold); color:var(--gold-deep); font-style:italic; }
-
-@media (max-width:768px) {
-  .scroll { margin:2rem auto; padding:0 0.6rem; }
-  .rank-item { padding:0.8rem 0.6rem 0.8rem 0.3rem; gap:0.7rem; }
-  .rank-num { font-size:1.1rem; min-width:2rem; }
-  .rank-name { font-size:1rem; }
-  header { padding:2rem 1rem 1.5rem; }
-  h1 { font-size:clamp(1.4rem,5vw,2.5rem); margin-bottom:0.8rem; }
+.modal-close:hover,.modal-close:focus-visible {
+  background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none;
 }
+
+.modal-rank {
+  font-family:'Cinzel',serif; font-weight:900; font-size:0.85rem;
+  letter-spacing:0.3em; color:var(--gold); text-transform:uppercase; margin-bottom:0.5rem;
+}
+
+.modal-name {
+  font-family:'EB Garamond',serif; font-weight:700;
+  font-size:clamp(1.8rem,6vw,2.6rem); color:var(--parchment);
+  line-height:1.1; margin-bottom:0.4rem; letter-spacing:0.01em;
+}
+
+.modal-source {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(0.9rem,2.5vw,1.05rem); color:var(--gold-bright);
+  margin-bottom:1.5rem; border-bottom:1px solid rgba(169,169,169,0.3); padding-bottom:1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25em;
+}
+
+.modal-source .modal-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.modal-section { margin-bottom:1.4rem; }
+
+.modal-section h3 {
+  font-family:'Cinzel',serif; font-weight:700; font-size:0.78rem;
+  letter-spacing:0.25em; color:var(--gold); text-transform:uppercase;
+  margin-bottom:0.6rem; display:flex; align-items:center; gap:0.6em;
+}
+
+.modal-section h3::before,.modal-section h3::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(169,169,169,0.4),transparent);
+}
+
+.modal-section p { font-family:'EB Garamond',serif; font-size:1.02rem; line-height:1.7; color:var(--parchment); }
+
+.modal-quote {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:1rem; color:var(--parchment-dim);
+  padding:1rem 1.4rem; border-left:2px solid var(--gold);
+  margin-top:1.2rem; background:rgba(169,169,169,0.04);
+}
+
+footer {
+  text-align:center; padding:4rem 1.5rem 3rem;
+  border-top:1px solid rgba(169,169,169,0.15); margin-top:4rem;
+}
+
+footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max-width:500px; margin:0 auto; }
 
 .rank-item { opacity:0; transform:translateY(20px); animation:reveal 0.8s forwards; }
+
 @keyframes reveal { to { opacity:1; transform:translateY(0); } }
 .rank-item:nth-child(1) { animation-delay:0.05s; }
 .rank-item:nth-child(2) { animation-delay:0.1s; }
 .rank-item:nth-child(3) { animation-delay:0.15s; }
 .rank-item:nth-child(n+4) { animation-delay:0.2s; }
 
+::-webkit-scrollbar { width:8px; }
+::-webkit-scrollbar-track { background:var(--ink-deep); }
+::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--gold-deep),var(--gold)); border-radius:4px; }
+
+@media (max-width:480px) {
+  header { padding:3rem 1rem 2rem; }
+  .scroll { margin:2rem auto; padding:0 0.6rem; }
+  .rank-item { padding:1rem 0.8rem 1rem 0.3rem; gap:0.7rem; }
+  .modal { padding:1.8rem 1.2rem; }
+  .modal-close { top:10px; right:10px; }
+  .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     --ink: #eff4f8;
     --ink-deep: #ffffff;
     --parchment: #111111;
-    --gold: #5a7a8a;
+    --parchment-dim: #444444;
+    --gold: #6a7a8a;
     --gold-bright: #2a5a7a;
-    --gold-deep: #3a6a8a;
+    --gold-deep: #4a6a8a;
+    --shadow: rgba(0,0,0,0.15);
   }
-  body { background: #eff4f8; }
-  .rank-item:hover, .rank-item:focus-visible { background: rgba(90,122,138,0.1); }
-  .rank-item.top-3 { background: rgba(90,122,138,0.15); }
-  .rank-item::before { background: linear-gradient(90deg,rgba(90,122,138,0.08),transparent); }
-  .modal { border-color: #2a5a7a; }
-  .modal-backdrop { background: rgba(0,0,0,0.6); }
-  p, li, .subtitle, .intro, .rank-source, footer p { color: #1a2a3a; }
-  h1, .rank-name, .modal-name { color: #1a3a5a; }
-  .rank-num { color: #3a5a7a; text-shadow: none; }
-  .rank-title, .crest, .lang-switch { color: #4a6a8a; }
-  .lang-switch { background: #5a7a8a; color: #ffffff; }
-  .lang-switch:hover { background: #4a6a8a; }
-  .badge { border-color: #2a5a7a; color: #2a5a7a; }
-  .rank-item.top-3 .rank-num { color: #1a3a5a; text-shadow: none; }
-  .modal-rank { color: #3a6a8a; }
-  .modal-close:hover { color: #1a3a5a; }
-  .modal-quote { color: #4a6a8a; border-color: #4a6a8a; }
+
+  body {
+    background: #eff4f8;
+    color: #111111;
+  }
+  body::before { background: #eff4f8; }
+  body::after { display: none; }
+
+  p, li, .subtitle, .intro, .rank-source, footer p {
+    color: #1a2a3a;
+  }
+
+  h1 {
+    background: linear-gradient(180deg, #111111 0%, #2a5a7a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+  }
+  .crest { color: #4a6a8a; }
+  .subtitle { color: #444444; }
+  .intro { color: #444444; }
+  .lang-switch {
+    background: #ddeaf5;
+    border-color: #6a7a8a;
+    color: #2a5a7a;
+  }
+  .lang-switch:hover { background: #6a7a8a; color: #eff4f8; }
+
+  .rank-item {
+    background: #f0f5fa;
+    border: 1px solid #8a9aaa;
+    border-left: 3px solid #6a7a8a;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .rank-item::before { display: none; }
+  .rank-item:hover, .rank-item:focus-visible {
+    background: #e8f0f8;
+    border-color: #6a7a8a;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    transform: translateX(6px);
+  }
+  .rank-item.top-3 {
+    background: #e0ecf5;
+    border-color: #6a7a8a;
+    border-left: 5px solid #4a6a8a;
+  }
+  .rank-num {
+    color: #4a6a8a;
+    text-shadow: none;
+    font-weight: 900;
+  }
+  .rank-item:hover .rank-num,
+  .rank-item:focus-visible .rank-num { color: #2a5a7a; text-shadow: none; }
+  .rank-item.top-3 .rank-num { color: #2a5a7a; }
+  .rank-name {
+    color: #111111;
+    font-weight: 700;
+  }
+  .rank-item:hover .rank-name,
+  .rank-item:focus-visible .rank-name { color: #000000; }
+  .rank-item.top-3 .rank-name { color: #111111; font-size: clamp(1.1rem,3.4vw,1.6rem); }
+  .rank-title {
+    color: #333333;
+    font-weight: 500;
+  }
+  .rank-source {
+    color: #5a7a8a;
+    font-weight: 500;
+  }
+  .rank-arrow { color: #6a7a8a; }
+  .rank-item:hover .rank-arrow,
+  .rank-item:focus-visible .rank-arrow { color: #4a6a8a; }
+  .badge {
+    color: #4a6a8a;
+    border-color: #8a9aaa;
+    background: rgba(90,120,140,0.08);
+    font-weight: 700;
+  }
+
+  .modal-backdrop { background: rgba(10,30,50,0.5); backdrop-filter: blur(6px); }
+  .modal {
+    background: #eff4f8;
+    border: 2px solid #8a9aaa;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  }
+  .modal::before { border-color: #8a9aaa; }
+  .modal-close {
+    background: #ddeaf5;
+    border-color: #6a7a8a;
+    color: #2a5a7a;
+  }
+  .modal-close:hover { background: #6a7a8a; color: #eff4f8; }
+  .modal-rank { color: #4a6a8a; font-weight: 700; }
+  .modal-name { color: #111111; }
+  .modal-source {
+    color: #2a5a7a;
+    border-bottom-color: #8a9aaa;
+    font-weight: 500;
+  }
+  .modal-section h3 { color: #4a6a8a; }
+  .modal-section h3::before,
+  .modal-section h3::after { background: linear-gradient(90deg, transparent, #8a9aaa, transparent); }
+  .modal-section p { color: #111111; font-weight: 500; }
+  .modal-quote {
+    color: #444444;
+    border-left-color: #8a9aaa;
+    background: #ddeaf5;
+    font-weight: 500;
+  }
+
+  footer { border-top-color: #8a9aaa; }
+  footer p { color: #333333; font-weight: 500; }
+
+  ::-webkit-scrollbar-track { background: #ddeaf5; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #4a6a8a, #8a9aaa); }
 }
+
   </style>
 </head>
 <body>
@@ -171,7 +521,7 @@ footer p { max-width:600px; margin:1rem auto; }
     <circle cx="140" cy="18" r="1.5" fill="#a9a9a9"/>
   </svg>
   <div class="intro" id="intro">
-    I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri. Escluso anche Eru Ilúvatar.<span class="intro-cta">Tocca o clicca un nome per evocare la scheda completa.</span>
+    Valar, Maiar, Draghi, Ungoliant la madre di tutti i ragni oscuri, e creature primordiali della Terra di Mezzo. Escluso anche Eru Ilúvatar.<span class="intro-cta">Tocca o clicca un nome per evocare la scheda completa.</span>
   </div>
 </header>
 
@@ -208,7 +558,7 @@ const i18n = {
     crest: 'Silmarils',
     title: 'I divini di Arda 50',
     subtitle: "Una classifica dei più potenti esseri divini e sovrumani della Terra di Mezzo - Valar, Maiar, Draghi, Ungoliant e creature dell'oscurità",
-    intro: "I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri. Escluso anche Eru Ilúvatar.<span class='intro-cta'>Tocca o clicca un nome per evocare la scheda completa.</span>",
+    intro: "Valar, Maiar, Draghi, Ungoliant la madre di tutti i ragni oscuri, e creature primordiali della Terra di Mezzo. Escluso anche Eru Ilúvatar.<span class='intro-cta'>Tocca o clicca un nome per evocare la scheda completa.</span>",
     footer: "'Nel principio era Eä, e nella Musica dei Ainur si tessé il destino di tutti gli esseri.' - Il Silmarillion",
     position: 'Posizione',
     powers: 'Capacità',
@@ -218,7 +568,7 @@ const i18n = {
     crest: 'Silmarils',
     title: 'The 50 Divine Ones of Arda',
     subtitle: 'A ranking of the most powerful divine and superhuman beings of Middle-earth - Valar, Maiar, Dragons, Ungoliant and creatures of darkness',
-    intro: "The only beings excluded from the standard ranking: Valar and their allies, Maiar in autonomous form, primordial dragons, Ungoliant the mother of all dark spiders. Also excluding Eru Ilúvatar.<span class='intro-cta'>Tap or click a name to summon the full entry.</span>",
+    intro: "Valar, Maiar, Dragons, Ungoliant the mother of all dark spiders, and primordial creatures of Middle-earth. Also excluding Eru Ilúvatar.<span class='intro-cta'>Tap or click a name to summon the full entry.</span>",
     footer: "'In the beginning was Eä, and in the Music of the Ainur the fate of all beings was woven.' - The Silmarillion",
     position: 'Position',
     powers: 'Powers',
@@ -243,7 +593,7 @@ const dati = [
     nome:"Manwë Súlimo", nome_en:"Manwë Súlimo",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Sulimo",
     poteri:"Signore dei Valar. Domina il vento e l'aria, conosce i pensieri di tutte le creature sotto il cielo. Potenza cosmica, decreto divino incontestabile.",
     poteri_en:"Lord of the Valar. Dominates wind and air, knows the thoughts of all creatures beneath the sky. Cosmic power, indisputable divine decree.",
     aneddoti:"Più giusto e saggio fra i Valar, guida il consiglio con equità. Concedette i Silmarils a Fëanor sapendo che avrebbero causato rovina. Ordinò la contaminazione di Valinor per sconfiggere Morgoth.",
@@ -252,28 +602,28 @@ const dati = [
     citazione_en:"'The Music of the Ainur never ceases, even in dark times.'"
   },
   {
-    nome:"Sauron", nome_en:"Sauron (Mairon)",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:true,
-    poteri:"Creatore dell'Anello Unico. Dominio assoluto sulla magia oscura e sulla volontà altrui tramite l'Anello. Controllo sulla forma e sulla percezione. Invisibilità totale con l'Anello indosso.",
-    poteri_en:"Creator of the One Ring. Absolute dominion over dark magic and the will of others through the Ring. Control over form and perception. Total invisibility while wearing the Ring.",
-    aneddoti:"Originariamente Mairon, aiutante di Aulë, si corruppe in Angband agli ordini di Morgoth. Fuggì e creò l'Anello Unico per conquistare il mondo. Regnò a Mordor per migliaia di anni fino alla sua caduta nella Terza Era.",
-    aneddoti_en:"Originally Mairon, aide of Aulë, became corrupted in Angband under Morgoth's command. Fled and forged the One Ring to conquer the world. Reigned in Mordor for thousands of years until his fall in the Third Age.",
-    citazione:"'Un Anello per dominarli tutti, Un Anello per trovarli, Un Anello per portarli tutti e nell'oscurità incatenarli.'",
-    citazione_en:"'One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.'"
-  },
-  {
     nome:"Varda Elentári", nome_en:"Varda Elentári",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Regina delle Stelle, creatrice dei cieli stellati. Benedice gli elfi e gli ama più di tutte le sue opere. Visione onnisciente, benedizione divina inviolabile.",
-    poteri_en:"Queen of the Stars, creator of the starry heavens. Blesses the Elves and loves them more than all her works. Omniscient vision, inviolable divine blessing.",
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Regina delle Stelle",
+    poteri:"Creatrice dei cieli stellati. Benedice gli elfi e li ama più di tutte le sue opere. Visione onnisciente, benedizione divina inviolabile.",
+    poteri_en:"Creator of the starry heavens. Blesses the Elves and loves them more than all her works. Omniscient vision, inviolable divine blessing.",
     aneddoti:"Pose il sigillo della benedizione sugli Elfi, proteggendoli dal male. I Valar consultano sempre Varda nelle decisioni più importanti. Illumina la Via dei Morti.",
     aneddoti_en:"Placed the seal of blessing upon the Elves, protecting them from evil. The Valar always consult Varda in the most important decisions. She illuminates the Path of the Dead.",
     citazione:"'Sono Varda Elentári, e la benedizione mia è su tutti gli Elfi.'",
     citazione_en:"'I am Varda Elentári, and my blessing is upon all the Elves.'"
+  },
+  {
+    nome:"Ungoliant", nome_en:"Ungoliant",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:true,
+    poteri:"Ragno gigantesco di potenza cosmica. Può tessere ragnatele indistruttibili. Beve luce stessa per nutrirsi. Praticamente immortale.",
+    poteri_en:"Giant spider of cosmic power. Can weave indestructible webs. Drinks light itself for sustenance. Practically immortal.",
+    aneddoti:"Distrusse i Due Alberi Silpion e Laurelin insieme a Morgoth. Almeno altrettanto malvagia del suo alleato. Infine inghiottì se stessa nella follia della fame.",
+    aneddoti_en:"Destroyed the Two Trees Silpion and Laurelin with Morgoth. At least as evil as her ally. Finally consumed herself in the madness of hunger.",
+    citazione:"'Io non ho bisogno di nient'altro che luce, e tutto ciò che è luce sarà mio.'",
+    citazione_en:"'I need nothing but light, and all that is light shall be mine.'"
   },
   {
     nome:"Ulmo", nome_en:"Ulmo",
@@ -303,7 +653,7 @@ const dati = [
     nome:"Yavanna Kementári", nome_en:"Yavanna Kementári",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Regina della Terra",
     poteri:"Donatrice dei Frutti. Creatrice di piante e alberi. Benedice i Doni dei Tre Alberi di Valinor. Connessa a tutte le forme di vita che crescono.",
     poteri_en:"Giver of Fruits. Creator of plants and trees. Blesses the Gifts of the Three Trees of Valinor. Connected to all growing life.",
     aneddoti:"Creò i due Alberi Silpion e Laurelin per illuminare Valinor. Pianse quando furono distrutti da Morgoth e Ungoliant. Dona speranza e rigenerazione.",
@@ -315,7 +665,7 @@ const dati = [
     nome:"Aulë il Fabbro", nome_en:"Aulë the Smith",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"il Creatore",
     poteri:"Maestro di tutti gli artigiani. Plasma la materia e la forma con volontà assoluta. Creatore dei Nani e di innumerevoli meraviglie.",
     poteri_en:"Master of all craftsmen. Shapes matter and form with absolute will. Creator of the Dwarves and countless wonders.",
     aneddoti:"Creò i Nani perché sentiva la solitudine nell'opera creativa. Costruì i Silmarils con Fëanor ma riconobbe il limite di ogni creazione. Fece il Compasso di Arda.",
@@ -324,12 +674,12 @@ const dati = [
     citazione_en:"'Every work bears the mark of its maker, and nothing else can ever equal it.'"
   },
   {
-    nome:"Mandos", nome_en:"Mandos",
+    nome:"Námo Mandos", nome_en:"Námo Mandos",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Giudice dei Morti. Domina il regno dei morti e il destino delle anime. Comprende il tempo presente e futuro. Sentenza assoluta.",
-    poteri_en:"Judge of the Dead. Dominates the realm of the dead and fate of souls. Understands present and future time. Absolute judgment.",
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Giudice dei Morti",
+    poteri:"Domina il regno dei morti e il destino delle anime. Comprende il tempo presente e futuro. Sentenza assoluta.",
+    poteri_en:"Dominates the realm of the dead and fate of souls. Understands present and future time. Absolute judgment.",
     aneddoti:"Giudica con saggezza e severità. Pronunciò la Maledizione di Mandos su Fëanor e i suoi figli. Custodisce tutti i nomi e i segreti.",
     aneddoti_en:"Judges with wisdom and severity. Pronounced the Curse of Mandos upon Fëanor and his sons. Keeps all names and secrets.",
     citazione:"'Il vostro destino è scritto nelle mie mani, e la mia sentenza è legge.'",
@@ -348,28 +698,52 @@ const dati = [
     citazione_en:"'In true lamentation lies the hope of redemption.'"
   },
   {
-    nome:"Tulkas Astaldo", nome_en:"Tulkas Astaldo",
+    nome:"Melian", nome_en:"Melian",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Il Più Forte. Potenza fisica infinita. Non ha tolto le mani dal bene per combattere il male. Guerriero supremo.",
-    poteri_en:"The Strongest. Infinite physical power. Never rested his hands from good to fight evil. Supreme warrior.",
-    aneddoti:"Arrivò tardi a Arda quando Morgoth era già presente. Catturò Morgoth alla fine della Prima Era con forza bruta. Il riso di Tulkas è tonante e ribollente.",
-    aneddoti_en:"Arrived late to Arda when Morgoth was already present. Captured Morgoth at the end of the First Age through brute force. Tulkas's laughter is thunderous and boiling.",
-    citazione:"'La forza può redimere tutto ciò che il male ha corrotto.'",
-    citazione_en:"'Strength can redeem all that evil has corrupted.'"
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"di Yavanna",
+    poteri:"Regina di Doriath. Magia della protezione e dell'illusione. Crea il Girdle di Melian, barriera impenetrabile. Sapienza inarrivabile.",
+    poteri_en:"Queen of Doriath. Magic of protection and illusion. Creates the Girdle of Melian, impenetrable barrier. Unmatched wisdom.",
+    aneddoti:"Innamorata di Thingol, rinunciò al suo stato di Maia. Protesse Doriath per ere intere. Quando fu sepolta dalla tragedia, il suo potere si dissolse.",
+    aneddoti_en:"Enamored with Thingol, she renounced her Maia status. Protected Doriath for entire ages. When tragedy befell her, her power dissolved.",
+    citazione:"'L'amore di una Maia per un mortale cambia il corso del destino.'",
+    citazione_en:"'The love of a Maia for a mortal changes the course of fate.'"
   },
   {
-    nome:"Lórien", nome_en:"Lórien",
+    nome:"Irmo Lórien", nome_en:"Irmo Lórien",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"il Bellissimo",
     poteri:"Signore dei Sogni e della Visione. Crea il regno del sogno e della fantasia. Comunica tramite visioni e rivelazioni.",
     poteri_en:"Lord of Dreams and Visions. Creates the realm of dream and fantasy. Communicates through visions and revelations.",
     aneddoti:"Meno noto ma profondamente importante. Il suo regno è rifugio per gli stanchi. Ispira gli artisti e i visionari.",
     aneddoti_en:"Less known but profoundly important. His realm is refuge for the weary. Inspires artists and visionaries.",
     citazione:"'Nei sogni risiede la verità che il giorno nasconde.'",
     citazione_en:"'In dreams lies the truth that day conceals.'"
+  },
+  {
+    nome:"Tulkas Astaldo", nome_en:"Tulkas Astaldo",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"il Più Forte",
+    poteri:"Potenza fisica infinita. Non ha tolto le mani dal bene per combattere il male. Guerriero supremo.",
+    poteri_en:"Infinite physical power. Never rested his hands from good to fight evil. Supreme warrior.",
+    aneddoti:"Arrivò tardi a Arda quando Morgoth era già presente. Catturò Morgoth alla fine della Prima Era con forza bruta. Il riso di Tulkas è tonante e ribollente.",
+    aneddoti_en:"Arrived late to Arda when Morgoth was already present. Captured Morgoth at the end of the First Age through brute force. Tulkas's laughter is thunderous and boiling.",
+    citazione:"'La forza può redimere tutto ciò che il male ha corrotto.'",
+    citazione_en:"'Strength can redeem all that evil has corrupted.'"
+  },
+  {
+    nome:"Eönwë", nome_en:"Eönwë",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Luogotenente di Manwë",
+    poteri:"Luogotenente supremo dei Valar. Porta la volontà di Manwë in battaglia. Guerriero celestiale, banniera del conflitto cosmico.",
+    poteri_en:"Supreme Lieutenant of the Valar. Bears Manwë's will in battle. Celestial warrior, banner of cosmic conflict.",
+    aneddoti:"Comandò le forze divine nella Guerra dell'Ira. Pronunciò il giudizio finale su Morgoth. Guidò gli ultimi attacchi contro le fortezze oscure.",
+    aneddoti_en:"Commanded divine forces in the War of Wrath. Pronounced final judgment on Morgoth. Led the final assaults on dark strongholds.",
+    citazione:"'La volontà di Manwë è mia volontà, e la sua sentenza è scritta nel cielo.'",
+    citazione_en:"'The will of Manwë is my will, and his judgment is written in the sky.'"
   },
   {
     nome:"Estë", nome_en:"Estë",
@@ -387,9 +761,9 @@ const dati = [
     nome:"Vairë la Tessitrice", nome_en:"Vairë the Weaver",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Tessitrice del Tempo e del Destino. Registra tutti gli eventi in tappezzerie immortali. Conosce il filo di ogni vita.",
-    poteri_en:"Weaver of Time and Fate. Records all events in immortal tapestries. Knows the thread of every life.",
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Tessitrice del Fato",
+    poteri:"Registra tutti gli eventi in tappezzerie immortali. Conosce il filo di ogni vita. Domina tempo e memoria.",
+    poteri_en:"Records all events in immortal tapestries. Knows the thread of every life. Dominates time and memory.",
     aneddoti:"Meno guerriera, più contemplativa. Le sue tappezzerie contengono la storia di Arda completamente tessuta. Nulla le sfugge.",
     aneddoti_en:"Less warrior, more contemplative. Her tapestries contain the complete woven history of Arda. Nothing escapes her.",
     citazione:"'Ogni filo ha il suo posto nel grande tappeto del destino.'",
@@ -399,7 +773,7 @@ const dati = [
     nome:"Nessa la Veloce", nome_en:"Nessa the Swift",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Signora della Danza",
     poteri:"Velocità infinita. Danza attraverso i mondi. Gioia e movimento eterno.",
     poteri_en:"Infinite speed. Dances across the worlds. Joy and eternal motion.",
     aneddoti:"La meno considerata fra i Valar, ma la sua danza è fondamentale. Compagna di Tulkas nel gioco e nella ricerca.",
@@ -411,7 +785,7 @@ const dati = [
     nome:"Vana l'Eterna Giovane", nome_en:"Vana the Ever-young",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Signora della Primavera",
     poteri:"Perpetua giovinezza e rigenerazione. Porta nuovo fiore a tutti i fiori. Nemesi dell'invecchiamento.",
     poteri_en:"Perpetual youth and regeneration. Brings new bloom to all flowers. Nemesis of aging.",
     aneddoti:"Sorella di Yavanna, meno descritta. Il suo dono è la rinascita eterna. Spesso descritta con flori nei capelli.",
@@ -420,10 +794,10 @@ const dati = [
     citazione_en:"'Youth knows no end and the flower forever blooms again.'"
   },
   {
-    nome:"Gandalf", nome_en:"Gandalf (Olórin)",
+    nome:"Olórin", nome_en:"Olórin (Gandalf)",
     fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
     fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:true, aka:"Gandalf, Mithrandir, Tharkûn, Incánus, Greyhame, Láthspell; il Grigio, il Bianco, il Bianco Cavaliere, Corvotempesta",
     poteri:"Istari mandato a Arda come uomo anziano. Magia della parola e del fuoco. Saggezza cosmica. Non può agire direttamente ma influenza tramite consiglio.",
     poteri_en:"Istari sent to Arda as an old man. Magic of word and fire. Cosmic wisdom. Cannot act directly but influences through counsel.",
     aneddoti:"Vincitore del Balrog di Moria. Tornò come Gandalf il Bianco, potenziato. Principale artefice della sconfitta di Sauron.",
@@ -432,22 +806,22 @@ const dati = [
     citazione_en:"'I do not choose the time of my death. Not even the Wise can see it.'"
   },
   {
-    nome:"Saruman", nome_en:"Saruman (Curunír)",
+    nome:"Curumo", nome_en:"Curumo (Saruman)",
     fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
     fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Saruman il Bianco, il Tradimento",
     poteri:"Istari, maestro di sapere e artigianato. Magia dell'eloquenza e dell'influenza. Controllo su Isengard tramite artificio e ingegneria.",
     poteri_en:"Istari, master of lore and craft. Magic of eloquence and influence. Control of Isengard through artifice and engineering.",
     aneddoti:"Originariamente capo degli Istari, ma si corruppe cercando il potere. Creò un esercito di Uruk-hai. La sua corruzione mostra come anche i potenti possono cadere.",
     aneddoti_en:"Originally chief of the Istari, but became corrupted seeking power. Created an army of Uruk-hai. His corruption shows how even the mighty can fall.",
-    citazione:"'Non devo sfuggire ad alcuno! Sono Saruman il Saggio!'",
-    citazione_en:"'I need not flee from any! I am Saruman the Wise!'"
+    citazione:"'Posso comprendere il desiderio di potere, poiché lo condivido.'",
+    citazione_en:"'I can understand the desire for power, because I share it.'"
   },
   {
-    nome:"Radagast", nome_en:"Radagast (Aicanaro)",
+    nome:"Aiwendil", nome_en:"Aiwendil (Radagast)",
     fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
     fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Radagast, l'Amico degli Uccelli",
     poteri:"Istari, amico degli animali e della natura. Comunica con bestie e uccelli. Magia della natura e della guarigione.",
     poteri_en:"Istari, friend of animals and nature. Communicates with beasts and birds. Magic of nature and healing.",
     aneddoti:"Meno interessato alla politica e alla guerra. Viaja in forma di uccello tramite i suoi compagni piumati. Rimane fedele alla sua missione originale.",
@@ -456,22 +830,118 @@ const dati = [
     citazione_en:"'The birds bring me news from distant horizons.'"
   },
   {
-    nome:"Melian", nome_en:"Melian",
+    nome:"Ossë", nome_en:"Ossë",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Regina di Doriath. Magia della protezione e dell'illusione. Crea il Girdle di Melian, barriera impenetrabile. Sapienza inarrivabile.",
-    poteri_en:"Queen of Doriath. Magic of protection and illusion. Creates the Girdle of Melian, impenetrable barrier. Unmatched wisdom.",
-    aneddoti:"Innamorata di Thingol, rinunciò al suo stato di Maia. Protesse Doriath per ere intere. Quando fu sepolta dalla tragedia, il suo potere si dissolse.",
-    aneddoti_en:"Enamored with Thingol, she renounced her Maia status. Protected Doriath for entire ages. When tragedy befell her, her power dissolved.",
-    citazione:"'L'amore di una Maia per un mortale cambia il corso del destino.'",
-    citazione_en:"'The love of a Maia for a mortal changes the course of fate.'"
+    poteri:"Maia delle acque oceaniche. Domina tempeste e maree. Guerriero del mare, potente e mutevole.",
+    poteri_en:"Maia of the oceanic waters. Dominates storms and tides. Warrior of the sea, powerful and changeable.",
+    aneddoti:"Servo di Ulmo, ma spesso agisce in autonomia. Amico dei Numenoreani e degli navigatori. Mutevole nel temperamento come le onde.",
+    aneddoti_en:"Servant of Ulmo, but often acts independently. Friend to Numenoreans and mariners. Changeable in temperament as the waves.",
+    citazione:"'Il mare è mio dominio, e la mia furia è la furia dell'oceano.'",
+    citazione_en:"'The sea is my domain, and my fury is the fury of the ocean.'"
   },
   {
-    nome:"Gothmog, Signore dei Balrog", nome_en:"Gothmog, Lord of Balrogs",
+    nome:"Uinen", nome_en:"Uinen",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"balrog", tipo_en:"Balrog", featured:false,
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
+    poteri:"Maia, sposa di Ossë. Domina le calme acque e le correnti benefiche. Protettrice dei naviganti.",
+    poteri_en:"Maia, spouse of Ossë. Dominates calm waters and beneficial currents. Protector of navigators.",
+    aneddoti:"Compagna di Ossë e sua moderatrice. Protegge chi naviga con cuore puro. È la calma dopo la tempesta.",
+    aneddoti_en:"Companion of Ossë and his moderator. Protects those who sail with pure heart. She is the calm after the storm.",
+    citazione:"'Non temo la tempesta, poiché la calma segue sempre la furia.'",
+    citazione_en:"'I do not fear the storm, for calm always follows fury.'"
+  },
+  {
+    nome:"Arien", nome_en:"Arien",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
+    poteri:"Maia, conduttrice del Sole. Domina il fuoco primordiale e la luce vitale. Guaritrice tramite il calore.",
+    poteri_en:"Maia, conductor of the Sun. Dominates primordial fire and vital light. Healer through warmth.",
+    aneddoti:"Guida il Sole attraverso i cieli dal Secondo Albero. Protegge coloro che cercano la verità e la guarigione. Non è mai stata corrotta.",
+    aneddoti_en:"Guides the Sun across the skies from the Second Tree. Protects those who seek truth and healing. Has never been corrupted.",
+    citazione:"'La luce del sole non mente, e il suo calore guarisce tutte le ferite.'",
+    citazione_en:"'The light of the sun does not lie, and its warmth heals all wounds.'"
+  },
+  {
+    nome:"Tilion", nome_en:"Tilion",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
+    poteri:"Maia, conduttore della Luna. Domina i sogni e i misteri notturni. Custode delle visioni oscure.",
+    poteri_en:"Maia, conductor of the Moon. Dominates dreams and nocturnal mysteries. Keeper of dark visions.",
+    aneddoti:"Guida la Luna attraverso i cieli. Perseguita perpetuamente Arien, mai raggiungendola. Ispira i mistici e i veggenti.",
+    aneddoti_en:"Guides the Moon across the skies. Perpetually pursues Arien, never catching her. Inspires mystics and seers.",
+    citazione:"'La luna riflette i segreti che il sole non può rivelare.'",
+    citazione_en:"'The moon reflects the secrets that the sun cannot reveal.'"
+  },
+  {
+    nome:"Thuringwethil", nome_en:"Thuringwethil",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"creatura", tipo_en:"Creature", featured:false, aka:"Donna-lupo",
+    poteri:"Può mutare forma fra donna e pipistrello gigante. Messaggera di Morgoth, veloce come il vento notturno.",
+    poteri_en:"Can transform between woman and giant bat. Morgoth's messenger, swift as night wind.",
+    aneddoti:"Servì come spiona e messaggera di Morgoth. Fu catturata da Eöl e morì. La sua pelle divenne il mantello di Mablung.",
+    aneddoti_en:"Served as Morgoth's spy and messenger. Was captured by Eöl and died. Her skin became Mablung's cloak.",
+    citazione:"'Volo nelle tenebre, portando parole che sconvolgono regni.'",
+    citazione_en:"'I fly in darkness, carrying words that shake kingdoms.'"
+  },
+  {
+    nome:"Draugluin", nome_en:"Draugluin",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"lupo", tipo_en:"Werewolf", featured:false, aka:"Lupo ancestrale",
+    poteri:"Lupo mostruoso della Prima Era. Fuoco, artigli infuocati, morso velenoso. Praticamente invincibile.",
+    poteri_en:"Monstrous wolf of the First Age. Fire, flaming claws, poisoned bite. Practically invincible.",
+    aneddoti:"Padre di Carcharoth. Combattè eroicamente contro gli Elfi. Morì nelle mani di Celegorm.",
+    aneddoti_en:"Father of Carcharoth. Fought heroically against the Elves. Died at Celegorm's hands.",
+    citazione:"'La mia fame non ha fine, e il mio artiglio taglia come il fuoco.'",
+    citazione_en:"'My hunger knows no end, and my claw cuts like fire.'"
+  },
+  {
+    nome:"Carcharoth", nome_en:"Carcharoth",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"lupo", tipo_en:"Werewolf", featured:false, aka:"Lupo di Angband",
+    poteri:"Lupo mostruoso, più potente del padre. Fuoco infernale, artigli di ferro. Quasi immortale.",
+    poteri_en:"Monstrous wolf, more powerful than his sire. Hellfire, iron claws. Nearly immortal.",
+    aneddoti:"Inghiottì la Silmaril e fu consumato dal suo fuoco. Combattè fino alla morte in battaglia contro gli Elfi. La sua agonia era terribile.",
+    aneddoti_en:"Swallowed the Silmaril and was consumed by its fire. Fought to death in battle against the Elves. His agony was terrible.",
+    citazione:"'Io ingoio il fuoco stesso, e il fuoco mi consuma!'",
+    citazione_en:"'I swallow fire itself, and fire consumes me!'"
+  },
+  {
+    nome:"Huan", nome_en:"Huan",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"cane", tipo_en:"Hound", featured:false, aka:"Cane di Valinor",
+    poteri:"Cane di Valinor. Velocità sovrumana, intelligenza quasi umana, forza incredibile. Quasi invulnerabile.",
+    poteri_en:"Hound of Valinor. Superhuman speed, near-human intelligence, incredible strength. Nearly invulnerable.",
+    aneddoti:"Il più fedele fra i cani. Aiutò Beren e Lúthien. Sconfisse il lupo Draugluin in combattimento. Morì solo quando perse il suo scopo.",
+    aneddoti_en:"The most faithful of hounds. Aided Beren and Lúthien. Defeated the wolf Draugluin in combat. Died only when his purpose was lost.",
+    citazione:"'Seguo colui che amo fino ai confini della morte stessa.'",
+    citazione_en:"'I follow whom I love to the very ends of death itself.'"
+  },
+  {
+    nome:"Nahar", nome_en:"Nahar",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"cavallo", tipo_en:"Horse", featured:false, aka:"Cavallo di Oromë",
+    poteri:"Cavallo divino di Oromë. Velocità sovrumana, intelligenza, resistenza infinita. Riesce a salire sui monti più alti.",
+    poteri_en:"Divine horse of Oromë. Superhuman speed, intelligence, infinite endurance. Can climb the highest mountains.",
+    aneddoti:"Cammina al fianco di Oromë nelle sue cacce. Non è mai stato catturato da alcun nemico. Rappresenta la libertà e la potenza del Cacciatore.",
+    aneddoti_en:"Walks at Oromë's side in his hunts. Has never been captured by any foe. Represents the freedom and power of the Hunter.",
+    citazione:"'Io corro più veloce del vento, e il mio cuore è uno con Oromë.'",
+    citazione_en:"'I run faster than the wind, and my heart is one with Oromë.'"
+  },
+  {
+    nome:"Gothmog", nome_en:"Gothmog",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"balrog", tipo_en:"Balrog", featured:false, aka:"Signore dei Balrog",
     poteri:"Balrog supremo. Fuoco infernale e oscurità vivente. Arma di fiamma e frusta infuocato. Resistenza quasi divina.",
     poteri_en:"Supreme Balrog. Hellfire and living darkness. Whip of fire and flaming sword. Nearly divine resilience.",
     aneddoti:"Sconfisse Fingon il valoroso elfo nella battaglia di Nirnaeth Arnoediad. Terrorizzò il Nord durante la Prima Era. Cadde solo di fronte a forze combinate.",
@@ -480,7 +950,7 @@ const dati = [
     citazione_en:"'I am the fire and the ruin, the terror of the Alliance!'"
   },
   {
-    nome:"Il Balrog di Moria", nome_en:"The Balrog of Moria",
+    nome:"Flagello di Dúrin", nome_en:"The Balrog of Moria",
     fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
     fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"balrog", tipo_en:"Balrog", featured:false,
@@ -492,10 +962,10 @@ const dati = [
     citazione_en:"'I shall follow you into the deepest darkness, to the ends of the world.'"
   },
   {
-    nome:"Glaurung, il Padre dei Draghi", nome_en:"Glaurung, Father of Dragons",
+    nome:"Glaurung", nome_en:"Glaurung",
     fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
     fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false,
+    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false, aka:"Padre dei Draghi",
     poteri:"Primo dragone mai creato. Fuoco infernale, volo possente, armatura di scaglie impenetrabile. Magia dello sguardo ipnotizzante.",
     poteri_en:"First dragon ever created. Hellfire, mighty flight, impenetrable scale armor. Magic of hypnotic gaze.",
     aneddoti:"Devastò le terre degli Elfi durante la Prima Era. Distrusse Nargothrond. Fu ucciso da Túrin ma non prima di aver compiuto rovina indicibile.",
@@ -516,10 +986,10 @@ const dati = [
     citazione_en:"'My shadow covers the sun, my fire dissolves mountains!'"
   },
   {
-    nome:"Scatha il Worm", nome_en:"Scatha the Worm",
+    nome:"Scatha", nome_en:"Scatha the Worm",
     fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
     fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false,
+    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false, aka:"il Verme",
     poteri:"Dragone antico della Terza Era. Fuoco distruttore, volo rapido. Accumulò immenso tesoro. Resistenza sovrumana.",
     poteri_en:"Ancient dragon of the Third Age. Destructive fire, swift flight. Accumulated immense treasure. Superhuman resistance.",
     aneddoti:"Terrorizzò le terre da Rhovanion fino agli Stendardi. Eorl il Giovane e i Rohirrim lo uccisero in battaglia glorioso. Il suo tesoro nacque una leggenda.",
@@ -528,10 +998,10 @@ const dati = [
     citazione_en:"'Nothing dares challenge Scatha the Worm and live!'"
   },
   {
-    nome:"Smaug il Magnifico", nome_en:"Smaug the Magnificent",
+    nome:"Smaug", nome_en:"Smaug the Magnificent",
     fonte:"Lo Hobbit (John Ronald Reuel Tolkien, 1937)",
     fonte_en:"The Hobbit (John Ronald Reuel Tolkien, 1937)",
-    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false,
+    paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false, aka:"il Magnifico, il Possente",
     poteri:"Dragone ultimo della Terza Era. Fuoco che arde per giorni. Intelligenza quasi umana, vanità letale. Armatura di diamante vivente.",
     poteri_en:"Last dragon of the Third Age. Fire that burns for days. Near-human intelligence, lethal vanity. Living diamond armor.",
     aneddoti:"Conquistò la Montagna Solitaria e uccise il Re Dwarf. Dormi su immensa ricchezza per cent'anni. Fu ucciso da Bard per una freccia nel cuore.",
@@ -540,22 +1010,10 @@ const dati = [
     citazione_en:"'My name is Smaug, and my name is synonymous with death!'"
   },
   {
-    nome:"Ungoliant la Ragnatrice Oscura", nome_en:"Ungoliant the Dark Spinner",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:false,
-    poteri:"Ragno gigantesco di potenza cosmica. Può tessere ragnatele indistruttibili. Beve luce stessa per nutrirsi. Praticamente immortale.",
-    poteri_en:"Giant spider of cosmic power. Can weave indestructible webs. Drinks light itself for sustenance. Practically immortal.",
-    aneddoti:"Distrusse i Due Alberi Silpion e Laurelin insieme a Morgoth. Almeno altrettanto malvagia del suo alleato. Inghiottì infine se stessa nella follia della fame.",
-    aneddoti_en:"Destroyed the Two Trees Silpion and Laurelin with Morgoth. At least as evil as her ally. Finally consumed herself in the madness of hunger.",
-    citazione:"'Io non ho bisogno di nient'altro che luce, e tutto ciò che è luce sarà mio.'",
-    citazione_en:"'I need nothing but light, and all that is light shall be mine.'"
-  },
-  {
-    nome:"Shelob la Grande", nome_en:"Shelob the Great",
+    nome:"Shelob", nome_en:"Shelob the Great",
     fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
     fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
-    paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:false,
+    paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:false, aka:"la Ragnatela Oscura",
     poteri:"Ragna gigantesca, figlia di Ungoliant. Tesse ragnatele impenetrabili. Veleno che paralizza. Invisibilità a piacimento.",
     poteri_en:"Giant spider, daughter of Ungoliant. Weaves impenetrable webs. Venom that paralyzes. Invisibility at will.",
     aneddoti:"Abitante di Cirith Ungol per migliaia di anni. Quasi catturò Frodo. Fu ferita da Sting e dalla Stella di Eärendil ma sopravvisse.",
@@ -564,41 +1022,41 @@ const dati = [
     citazione_en:"'My web is inescapable as death, my hunger eternal.'"
   },
   {
-    nome:"Alatar, il Mago Blu dell'Est", nome_en:"Alatar, the Blue Wizard of the East",
+    nome:"Sauron", nome_en:"Sauron (Mairon)",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
+    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:true,
+    poteri:"Creatore dell'Anello Unico. Dominio assoluto sulla magia oscura e sulla volontà altrui tramite l'Anello. Controllo sulla forma e sulla percezione. Invisibilità totale con l'Anello indosso.",
+    poteri_en:"Creator of the One Ring. Absolute dominion over dark magic and the will of others through the Ring. Control over form and perception. Total invisibility while wearing the Ring.",
+    aneddoti:"Originariamente Mairon, aiutante di Aulë, si corruppe in Angband agli ordini di Morgoth. Fuggì e creò l'Anello Unico per conquistare il mondo. Regnò a Mordor per migliaia di anni fino alla sua caduta nella Terza Era.",
+    aneddoti_en:"Originally Mairon, aide of Aulë, became corrupted in Angband under Morgoth's command. Fled and forged the One Ring to conquer the world. Reigned in Mordor for thousands of years until his fall in the Third Age.",
+    citazione:"'Un Anello per dominarli tutti, Un Anello per trovarli, Un Anello per portarli tutti e nell'oscurità incatenarli.'",
+    citazione_en:"'One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.'"
+  },
+  {
+    nome:"Osservatore nell'Acqua", nome_en:"Watcher in the Water",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
+    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    paese:"gb", tipo:"creatura", tipo_en:"Creature", featured:false,
+    poteri:"Creatura acquatica di origine oscura. Tentacoli di forza terribile. Intelligenza primitiva ma letale. Domina le acque.",
+    poteri_en:"Aquatic creature of dark origin. Tentacles of terrible strength. Primitive but lethal intelligence. Dominates the waters.",
+    aneddoti:"Guardia invisibile della Porta del Moria. Quasi catturò la Compagnia dell'Anello. Tornò alle acque oscure quando furono fuggiti.",
+    aneddoti_en:"Invisible guard of the Gate of Moria. Nearly captured the Fellowship of the Ring. Returned to dark waters when they fled.",
+    citazione:"'Io vivo nelle acque più profonde, e i miei tentacoli afferrano tutti coloro che si avvicinano.'",
+    citazione_en:"'I live in the deepest waters, and my tentacles seize all who approach.'"
+  },
+  {
+    nome:"Stregone Blu", nome_en:"Blue Wizard (Alatar/Pallando)",
     fonte:"Il Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
     fonte_en:"The Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
     poteri:"Istari mandato ad oriente. Magia oscura e sapienza. Controllo su terre lontane tramite oscuri servitori.",
     poteri_en:"Istari sent to the East. Dark magic and wisdom. Control of distant lands through dark servants.",
-    aneddoti:"Poco noto negli annali occidentali. Si credette che fosse corrotto o scomparso. La sua vera missione rimane mistero.",
-    aneddoti_en:"Little known in western lore. Believed to be either corrupted or vanished. His true mission remains a mystery.",
+    aneddoti:"Poco noto negli annali occidentali. Si credette che fosse corrotto o scomparso. La vera missione rimane mistero.",
+    aneddoti_en:"Little known in western lore. Believed to be either corrupted or vanished. The true mission remains a mystery.",
     citazione:"'In oriente lavoro nelle ombre, lontano dagli occhi dei Savi.'",
     citazione_en:"'In the East I work in shadows, far from the eyes of the Wise.'"
-  },
-  {
-    nome:"Pallando, il Mago Blu dell'Est", nome_en:"Pallando, the Blue Wizard of the East",
-    fonte:"Il Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    fonte_en:"The Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Istari gemello di Alatar. Magia e sapienza dell'oriente. Influenza su popoli e regni lontani.",
-    poteri_en:"Istari twin of Alatar. Magic and wisdom of the East. Influence over distant peoples and kingdoms.",
-    aneddoti:"Compagno inseparabile di Alatar nella missione a oriente. Ancor più misterioso di Alatar stesso. Forse ancora agisce in terre ignote.",
-    aneddoti_en:"Inseparable companion to Alatar on the eastern mission. Even more mysterious than Alatar himself. Perhaps still acts in unknown lands.",
-    citazione:"'I segreti che custodisco non saranno mai rivelati nel mondo occidentale.'",
-    citazione_en:"'The secrets I keep shall never be revealed in the Western world.'"
-  },
-  {
-    nome:"Il Necromante di Dol Guldur", nome_en:"The Necromancer of Dol Guldur",
-    fonte:"Il Hobbit (John Ronald Reuel Tolkien, 1937)",
-    fonte_en:"The Hobbit (John Ronald Reuel Tolkien, 1937)",
-    paese:"gb", tipo:"stregone", tipo_en:"Sorcerer", featured:false,
-    poteri:"Magia nera suprema. Controllo su spiriti e cadaveri. Invisibilità magica. Tenebre viventi.",
-    poteri_en:"Supreme dark magic. Control over spirits and corpses. Magical invisibility. Living darkness.",
-    aneddoti:"Era in realtà Sauron stesso, prima di rivelarsi apertamente. Dominò il Bosco Nero da Dol Guldur. Fu scacciato ma non distrutto.",
-    aneddoti_en:"Was actually Sauron himself before openly revealing himself. Dominated Mirkwood from Dol Guldur. Was driven away but not destroyed.",
-    citazione:"'L'oscurità cresce, e la mia volontà si estende su tutte le terre.'",
-    citazione_en:"'Darkness grows, and my will extends over all lands.'"
-  },
+  }
 ];
 
 const lista = document.getElementById('rank-list');
@@ -608,8 +1066,7 @@ function renderList() {
   dati.forEach((p, i) => {
     const rango = i + 1;
     const item = document.createElement('div');
-    item.className = 'rank-item' + (p.featured ? ' featured' : '') + (rango <= 3 ? ' top-3 rank-' + rango : '');
-    if (rango <= 3) item.classList.add('top-3', 'rank-' + rango);
+    item.className = 'rank-item' + (p.featured ? ' featured' : '') + (rango <= 3 ? ' top-3' : '');
 
     var pf = parseFonte(currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte));
     var nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
@@ -756,9 +1213,9 @@ function showAdminPanel() {
     panel.id = 'admin-panel';
     panel.style.cssText = `
       position: fixed; bottom: 2rem; right: 2rem; z-index: 150;
-      background: rgba(104,144,168,0.95); border: 1px solid var(--gold);
+      background: rgba(169,169,169,0.95); border: 1px solid var(--gold);
       border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      max-width: 320px; font-size: 0.9rem; color: var(--parchment);
+      max-width: 320px; font-size: 0.9rem; color: var(--ink);
       backdrop-filter: blur(8px);
     `;
     document.body.appendChild(panel);
