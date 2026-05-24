@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#060a14">
 <title>I Grandi di Arda - I 50 più potenti dell'universo di Tolkien</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -126,9 +127,18 @@ h1 {
 .intro {
   max-width:580px; margin:2rem auto 0;
   font-size:0.95rem; color:var(--parchment-dim); line-height:1.7;
-  padding:1.2rem 1.5rem; font-style:italic;
-  border-top:1px solid rgba(104,144,168,0.25);
-  border-bottom:1px solid rgba(104,144,168,0.25);
+  padding:1.4rem 1.8rem; position:relative;
+}
+.intro::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.intro::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.intro-cta {
+  display:block; margin-top:0.7rem; color:var(--gold); font-size:0.9rem;
 }
 
 .scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
@@ -231,20 +241,6 @@ h1 {
 
 .rank-item.top-3 .rank-num { color:var(--gold); text-shadow:0 0 20px rgba(104,144,168,0.5); }
 .rank-item.top-3 .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
-
-.rank-item.top-3::after {
-  content:'✦'; position:absolute; top:8px; right:12px;
-  color:var(--gold); font-size:0.9rem; opacity:0.6;
-}
-
-.rank-item.rank-2.top-3::after { content:'✦'; }
-.rank-item.rank-3.top-3::after { content:'⚔'; }
-
-.rank-item.featured .rank-name::after {
-  content:'★'; color:var(--gold-bright); margin-left:0.3em;
-  font-size:0.7em; vertical-align:super;
-  text-shadow:0 0 10px rgba(154,192,216,0.6);
-}
 
 .badge {
   display:inline-block;
@@ -421,12 +417,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   }
   .crest { color: #2a5878; }
   .subtitle { color: #222222; }
-  .intro {
-    color: #222222;
-    background: #ddeaf5;
-    border-top-color: #3a6888;
-    border-bottom-color: #3a6888;
-  }
+  .intro { color: #222222; }
   .lang-switch {
     background: #ddeaf5;
     border-color: #2a5878;
@@ -477,8 +468,6 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   .rank-arrow { color: #2a5878; }
   .rank-item:hover .rank-arrow,
   .rank-item:focus-visible .rank-arrow { color: #1a3850; }
-  .rank-item.top-3::after { color: #3a6888; }
-
   .badge {
     color: #1a3850;
     border-color: #3a6888;
@@ -539,7 +528,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
     <circle cx="140" cy="18" r="1.5" fill="#6890a8"/>
   </svg>
   <div class="intro" id="intro">
-    Esclusi Valar, Maiar e draghi. Ammessi i mezzi-Maiar, gli Ent e le Aquile. Il 'potere' è inteso nel senso più ampio: forza magica, bruta, politica, militare, influenza e capacità di plasmare il destino del mondo. Tocca un nome per la scheda completa. La stella (★) segna i tre nomi imprescindibili.
+    Esclusi Valar, Maiar e draghi. Ammessi i mezzi-Maiar, gli Ent e le Aquile. Il 'potere' è inteso nel senso più ampio: forza magica, bruta, politica, militare, influenza e capacità di plasmare il destino del mondo.<span class="intro-cta">Tocca o clicca un nome per leggere la scheda completa.</span>
   </div>
 </header>
 
@@ -576,7 +565,7 @@ var i18n = {
     crest: 'Arda · I 50 più potenti',
     title: 'I Grandi di Arda',
     subtitle: "Una classifica dei personaggi più potenti nell'universo di Tolkien — dalla Prima Era alla Terza",
-    intro: "Esclusi Valar, Maiar e draghi. Ammessi i mezzi-Maiar, gli Ent e le Aquile. Il 'potere' è inteso nel senso più ampio: forza magica, bruta, politica, militare, influenza e capacità di plasmare il destino del mondo. Tocca un nome per la scheda completa. La stella (★) segna i tre nomi imprescindibili.",
+    intro: "Esclusi Valar, Maiar e draghi. Ammessi i mezzi-Maiar, gli Ent e le Aquile. Il 'potere' è inteso nel senso più ampio: forza magica, bruta, politica, militare, influenza e capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
     footer: "'Non tutta coloro che vagano sono perduti.' Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
     powers: 'Poteri e influenza',
@@ -586,7 +575,7 @@ var i18n = {
     crest: 'Arda · The 50 most powerful',
     title: 'The Great of Arda',
     subtitle: 'A ranking of the most powerful characters in Tolkien\'s universe — from the First Age to the Third',
-    intro: "Excluding Valar, Maiar and dragons. Half-Maiar, Ents and Eagles are admitted. 'Power' is understood in the broadest sense: magical, brute, political, military force, influence and the ability to shape the world's fate. Tap a name to read the full entry. The star (★) marks the three indispensable names.",
+    intro: "Excluding Valar, Maiar and dragons. Half-Maiar, Ents and Eagles are admitted. 'Power' is understood in the broadest sense: magical, brute, political, military force, influence and the ability to shape the world's fate.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
     footer: "'Not all those who wander are lost.' Power in Arda does not always wear a crown.",
     position: 'Position',
     powers: 'Powers & Influence',

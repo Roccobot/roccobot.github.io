@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="I 50 esseri divini di Arda - Valar, Maiar, Draghi e creature oscure dalla Terra di Mezzo di Tolkien">
   <title>I 50 divini di Arda - Tolkien</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>">
   <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -72,18 +73,23 @@ h1 { font-size:clamp(1.8rem, 6vw, 3.5rem); line-height:1.1; margin-bottom:1rem; 
 .rank-item.top-3 { border-left-width:5px; background:rgba(169,169,169,0.2); }
 .rank-item.top-3 .rank-num { color:var(--gold); text-shadow:0 0 20px rgba(169,169,169,0.5); }
 .rank-item.top-3 .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
-.rank-item.top-3::after { content:'✦'; position:absolute; top:8px; right:12px; font-size:1.2rem; color:var(--gold); }
-.rank-item.rank-2.top-3::after { content:'⬡'; }
-.rank-item.rank-3.top-3::after { content:'⬢'; }
 
-.rank-item.featured .rank-name::after { content:' ★'; color:var(--gold-bright); }
 .badge { font-size:0.75rem; padding:0.15rem 0.4rem; border:1px solid var(--gold); border-radius:3px; color:var(--gold); margin-left:0.3rem; }
 
 footer { text-align:center; padding:4rem 1.5rem; color:var(--gold-deep); font-size:0.95rem; }
 footer .crest { margin-bottom:1rem; }
 footer p { max-width:600px; margin:1rem auto; }
 
-.intro { font-style:italic; color:var(--gold); max-width:700px; margin:2rem auto; padding:0 1rem; }
+.intro { color:var(--gold); max-width:700px; margin:2rem auto; padding:1.4rem 1.8rem; position:relative; }
+.intro::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.intro::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.intro-cta { display:block; margin-top:0.7rem; font-size:0.9rem; opacity:0.85; }
 
 .modal-backdrop {
   display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:200;
@@ -146,7 +152,6 @@ footer p { max-width:600px; margin:1rem auto; }
   .lang-switch:hover { background: #4a6a8a; }
   .badge { border-color: #2a5a7a; color: #2a5a7a; }
   .rank-item.top-3 .rank-num { color: #1a3a5a; text-shadow: none; }
-  .rank-item.top-3::after { color: #2a5a7a; }
   .modal-rank { color: #3a6a8a; }
   .modal-close:hover { color: #1a3a5a; }
   .modal-quote { color: #4a6a8a; border-color: #4a6a8a; }
@@ -166,7 +171,7 @@ footer p { max-width:600px; margin:1rem auto; }
     <circle cx="140" cy="18" r="1.5" fill="#a9a9a9"/>
   </svg>
   <div class="intro" id="intro">
-    I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri. Tocca un nome per evocare la scheda completa. La stella (★) segna i tre nomi imprescindibili.
+    I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri.<span class="intro-cta">Tocca o clicca un nome per evocare la scheda completa.</span>
   </div>
 </header>
 
@@ -203,7 +208,7 @@ const i18n = {
     crest: 'Silmarils',
     title: 'I 50 divini di Arda',
     subtitle: "Una classifica dei più potenti esseri divini e sovrumani della Terra di Mezzo - Valar, Maiar, Draghi, Ungoliant e creature dell'oscurità",
-    intro: "I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri. Tocca un nome per evocare la scheda completa. La stella (★) segna i tre nomi imprescindibili.",
+    intro: "I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri.<span class='intro-cta'>Tocca o clicca un nome per evocare la scheda completa.</span>",
     footer: "'Nel principio era Eä, e nella Musica dei Ainur si tessé il destino di tutti gli esseri.' - Il Silmarillion",
     position: 'Posizione',
     powers: 'Capacità',
@@ -213,7 +218,7 @@ const i18n = {
     crest: 'Silmarils',
     title: 'The 50 Divine Ones of Arda',
     subtitle: 'A ranking of the most powerful divine and superhuman beings of Middle-earth - Valar, Maiar, Dragons, Ungoliant and creatures of darkness',
-    intro: "The only beings excluded from the standard ranking: Valar and their allies, Maiar in autonomous form, primordial dragons, Ungoliant the mother of all dark spiders. Tap a name to summon the full entry. The star (★) marks the three indispensable names.",
+    intro: "The only beings excluded from the standard ranking: Valar and their allies, Maiar in autonomous form, primordial dragons, Ungoliant the mother of all dark spiders.<span class='intro-cta'>Tap or click a name to summon the full entry.</span>",
     footer: "'In the beginning was Eä, and in the Music of the Ainur the fate of all beings was woven.' - The Silmarillion",
     position: 'Position',
     powers: 'Powers',
