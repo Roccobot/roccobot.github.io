@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d0608">
 <title>Legio Immortalis - I 50 più grandi guerrieri della finzione</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -127,9 +128,18 @@ h1 {
 .intro {
   max-width:580px; margin:2rem auto 0;
   font-size:0.95rem; color:var(--parchment-dim); line-height:1.7;
-  padding:1.2rem 1.5rem; font-style:italic;
-  border-top:1px solid rgba(200,74,48,0.25);
-  border-bottom:1px solid rgba(200,74,48,0.25);
+  padding:1.4rem 1.8rem; position:relative;
+}
+.intro::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.intro::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.intro-cta {
+  display:block; margin-top:0.7rem; color:var(--gold); font-size:0.9rem;
 }
 
 /* ── LISTA ── */
@@ -234,21 +244,6 @@ h1 {
 
 .rank-item.top-3 .rank-num { color:var(--gold); text-shadow:0 0 20px rgba(200,74,48,0.5); }
 .rank-item.top-3 .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
-
-.rank-item.top-3::after {
-  content:'⚔'; position:absolute; top:8px; right:12px;
-  color:var(--gold); font-size:0.9rem; opacity:0.6;
-}
-
-.rank-item.rank-2.top-3::after { content:'🛡'; }
-.rank-item.rank-3.top-3::after { content:'✦'; }
-
-/* Featured (3 obbligatori) */
-.rank-item.featured .rank-name::after {
-  content:'★'; color:var(--gold-bright); margin-left:0.3em;
-  font-size:0.7em; vertical-align:super;
-  text-shadow:0 0 10px rgba(232,96,64,0.6);
-}
 
 /* Badge tipo */
 .badge {
@@ -430,12 +425,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   }
   .crest { color: #8a2418; }
   .subtitle { color: #222222; }
-  .intro {
-    color: #222222;
-    background: #eddddd;
-    border-top-color: #c84a30;
-    border-bottom-color: #c84a30;
-  }
+  .intro { color: #222222; }
   .lang-switch {
     background: #f0dddd;
     border-color: #8a2418;
@@ -486,8 +476,6 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   .rank-arrow { color: #8a2418; }
   .rank-item:hover .rank-arrow,
   .rank-item:focus-visible .rank-arrow { color: #5a1008; }
-  .rank-item.top-3::after { color: #b03020; }
-
   .badge {
     color: #6a1010;
     border-color: #aa4040;
@@ -548,7 +536,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
     <circle cx="140" cy="18" r="1.5" fill="#c84a30"/>
   </svg>
   <div class="intro" id="intro">
-    Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>. Tocca un nome per leggere la scheda completa. La stella (★) segna i tre nomi imprescindibili.
+    Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>.<span class="intro-cta">Tocca o clicca un nome per leggere la scheda completa.</span>
   </div>
 </header>
 
@@ -585,7 +573,7 @@ var i18n = {
     crest: 'Legio Immortalis',
     title: 'La Legione',
     subtitle: "Una classifica dei più grandi guerrieri, combattenti e generali mai immaginati - dalla letteratura, dall'epica, dai manga e dal cinema",
-    intro: "Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>. Tocca un nome per leggere la scheda completa. La stella (★) segna i tre nomi imprescindibili.",
+    intro: "Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
     footer: "'La gloria di un guerriero non sta nel non cadere mai, ma nel rialzarsi ogni volta.' Il campo di battaglia, qui, è la pagina.",
     position: 'Posizione',
     powers: 'Abilità in combattimento',
@@ -599,7 +587,7 @@ var i18n = {
     crest: 'Legio Immortalis',
     title: 'The Legion',
     subtitle: 'A ranking of the greatest warriors, fighters and generals ever imagined - from literature, epic poetry, manga and cinema',
-    intro: "Excluding deities, demigods, superhero comic universes and <em>isekai</em> worlds. Tap a name to read the full entry. The star (★) marks the three indispensable names.",
+    intro: "Excluding deities, demigods, superhero comic universes and <em>isekai</em> worlds.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
     footer: "'The glory of a warrior lies not in never falling, but in rising every time.' The battlefield, here, is the page.",
     position: 'Position',
     powers: 'Combat Skills',
