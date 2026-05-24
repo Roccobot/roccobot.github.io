@@ -868,7 +868,7 @@ function showAdminPanel() {
           saveBtn.onmouseover = () => saveBtn.style.background = '#5aaa6a';
           saveBtn.onmouseout = () => saveBtn.style.background = '#4a9a5a';
           saveBtn.onclick = () => {
-            localStorage.setItem('arda-ranking-' + currentLang, JSON.stringify(dati));
+            localStorage.setItem('arda-ranking-v2-' + currentLang, JSON.stringify(dati));
             saveBtn.textContent = '✓ Salvato!';
             setTimeout(() => saveBtn.textContent = '💾 Salva permanente', 2000);
           };
@@ -880,7 +880,7 @@ function showAdminPanel() {
   }
 }
 
-const saved = localStorage.getItem('arda-ranking-' + currentLang);
+const saved = localStorage.getItem('arda-ranking-v2-' + currentLang);
 if (saved) {
   try {
     dati = JSON.parse(saved);
