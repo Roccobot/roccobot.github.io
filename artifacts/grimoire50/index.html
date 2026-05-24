@@ -529,7 +529,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
 <header>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Grimorium Magnum</div>
-  <h1 id="title">I Cinquanta</h1>
+  <h1 id="title">Il Conclave</h1>
   <p class="subtitle" id="subtitle">Una classifica dei più formidabili praticanti d'arti arcane mai immaginati - dalla letteratura, dal cinema, dai manga e dagli anime</p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#d4a64a" stroke-width="0.8" fill="none" opacity="0.6"/>
@@ -574,7 +574,7 @@ let currentLang = localStorage.getItem('grimoire-lang') || (navigator.language.s
 const i18n = {
   it: {
     crest: 'Grimorium Magnum',
-    title: 'I Cinquanta',
+    title: 'Il Conclave',
     subtitle: "Una classifica dei più formidabili praticanti d'arti arcane mai immaginati - dalla letteratura, dal cinema, dai manga e dagli anime",
     intro: "Esclusi divinità, semidei, gli universi a fumetti supereroistici e i mondi <em>isekai</em>. Tocca un nome per evocare la scheda completa. La stella (★) segna i tre nomi imprescindibili.",
     footer: "'Ogni magia ha un nome - e ogni nome ha un prezzo.' Il prezzo della lettura, qui, è la curiosità.",
@@ -592,7 +592,7 @@ const i18n = {
   },
   en: {
     crest: 'Grimorium Magnum',
-    title: 'The Fifty',
+    title: 'The Conclave',
     subtitle: 'A ranking of the most formidable practitioners of arcane arts ever imagined - from literature, cinema, manga and anime',
     intro: "Excluding deities, demigods, superhero comic universes and <em>isekai</em> worlds. Tap a name to summon the full entry. The star (★) marks the three indispensable names.",
     footer: "'Every magic has a name - and every name has a price.' The price of reading, here, is curiosity.",
@@ -666,6 +666,18 @@ const dati = [
     aneddoti_en:"The Stone Monkey born from primordial chaos defied Heaven and survived, paying with 500 years under a mountain. Redeemed himself guiding Monk Xuanzang to Enlightenment.",
     citazione:"'Io sono il Grande Saggio Uguale ai Cieli.'",
     citazione_en:"'I am the Great Sage Equal to Heaven.'"
+  },
+  {
+    nome:"Salomone", nome_en:"Solomon",
+    fonte:"Fate/Grand Order (Type-Moon, 2015)",
+    fonte_en:"Fate/Grand Order (Type-Moon, 2015)",
+    paese:"jp", tipo:"videogioco", tipo_en:"video game", featured:false,
+    poteri:"Dieci Anelli di Salomone: ogni anello è una Noble Phantasm autonoma che piega la realtà. Ars Almadel Salomonis: luce divina che cancella l'esistenza. Visione onnisciente dell'intera storia umana. Grand Caster, il più potente Servant di classe Caster mai evocato.",
+    poteri_en:"Ten Rings of Solomon: each ring is an independent Noble Phantasm that bends reality. Ars Almadel Salomonis: divine light that erases existence. Omniscient vision of all human history. Grand Caster, the most powerful Caster-class Servant ever summoned.",
+    aneddoti:"Primo e sommo mago della storia umana, padre di ogni tradizione magica. Rinunciò all'immortalità divina per essere evocato come Servant. Si nascose per anni sotto la falsa identità di Romani Archaman, guidando Chaldea dall'ombra. Sacrificò la propria esistenza per distruggere Goetia e salvare il Genere Umano.",
+    aneddoti_en:"First and supreme mage of human history, father of every magical tradition. Renounced divine immortality to be summoned as a Servant. Hid for years under the false identity of Romani Archaman, guiding Chaldea from the shadows. Sacrificed his own existence to destroy Goetia and save Humanity.",
+    citazione:"'Ho visto la nascita, la vita e la morte di ogni essere umano. Eppure non ho potuto amare nessuno di voi. Questo era il mio unico limite.'",
+    citazione_en:"'I have seen the birth, life and death of every human being. Yet I could not love any of you. That was my only limitation.'"
   },
   {
     nome:"Väinämöinen",
@@ -1050,18 +1062,6 @@ const dati = [
     aneddoti_en:"Usurped of his dukedom, develops supreme magic on the island for twelve years. Forgives his enemies and voluntarily renounces power for love of his daughter.",
     citazione:"'Siamo fatti della materia dei sogni, e la nostra breve vita è circondata dal sonno.'",
     citazione_en:"'We are such stuff as dreams are made on, and our little life is rounded with a sleep.'"
-  },
-  {
-    nome:"Nonna Weatherwax",
-    fonte:"Mondo Disco (Terry Pratchett, 1987-2015)",
-    fonte_en:"Discworld (Terry Pratchett, 1987-2015)",
-    paese:"gb", tipo:"romanzo", tipo_en:"novel", featured:false,
-    poteri:"Cefalonomia: magia mentale pura. Controllo della realtà tramite convinzione assoluta. Resistenza al male sovrumana.",
-    poteri_en:"Headology: pure mental magic. Reality control through absolute conviction. Superhuman resistance to evil.",
-    aneddoti:"Resiste a tentazioni demoniache tutta la vita e le sconfigge col puro rifiuto. Non ha mai ceduto al lato oscuro, il che la rende la più pericolosa strega di tutte.",
-    aneddoti_en:"Resists demonic temptations her whole life and defeats them with pure refusal. Never gave in to the dark side, which makes her the most dangerous witch of all.",
-    citazione:"'Non ne dubito.'",
-    citazione_en:"'I aten't dead.'"
   },
   {
     nome:"Kvothe",
