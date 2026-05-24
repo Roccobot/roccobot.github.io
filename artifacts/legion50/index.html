@@ -1336,6 +1336,155 @@ document.addEventListener('keydown', function(e) {
 });
 
 setLang(currentLang);
+enableDragDrop();
+
+// ── DRAG-DROP & REORDERING ──
+let isDragging = null;
+let hasMovedItem = false;
+
+function enableDragDrop() {
+  const list = document.getElementById('rank-list');
+  if (!list) return;
+
+  const items = list.querySelectorAll('.rank-item');
+  items.forEach((item, idx) => {
+    item.draggable = true;
+    item.dataset.idx = idx;
+
+    let handle = item.querySelector('.drag-handle');
+    if (!handle) {
+      handle = document.createElement('div');
+      handle.className = 'drag-handle';
+      handle.innerHTML = '⋮';
+      handle.style.cssText = `
+        position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+        cursor: grab; color: var(--gold); font-size: 1.2rem; user-select: none;
+        opacity: 0; transition: opacity 0.2s; z-index: 5;
+      `;
+      item.appendChild(handle);
+    }
+
+    item.addEventListener('mouseenter', () => handle.style.opacity = '0.6');
+    item.addEventListener('mouseleave', () => handle.style.opacity = '0');
+
+    item.addEventListener('dragstart', (e) => {
+      isDragging = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      item.style.opacity = '0.5';
+    });
+
+    item.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const thisIdx = parseInt(item.dataset.idx);
+      if (isDragging !== null && isDragging !== thisIdx) {
+        const draggedItem = dati[isDragging];
+        dati.splice(isDragging, 1);
+        dati.splice(isDragging < thisIdx ? thisIdx - 1 : thisIdx, 0, draggedItem);
+        isDragging = isDragging < thisIdx ? thisIdx - 1 : thisIdx;
+        hasMovedItem = true;
+        renderList();
+        enableDragDrop();
+        showAdminPanel();
+      }
+    });
+
+    item.addEventListener('dragend', () => {
+      item.style.opacity = '1';
+      isDragging = null;
+    });
+  });
+}
+
+function showAdminPanel() {
+  if (!hasMovedItem) return;
+
+  let panel = document.getElementById('admin-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'admin-panel';
+    panel.style.cssText = `
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 150;
+      background: rgba(200,74,48,0.95); border: 1px solid var(--gold);
+      border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      max-width: 320px; font-size: 0.9rem; color: var(--parchment);
+      backdrop-filter: blur(8px);
+    `;
+    document.body.appendChild(panel);
+  }
+
+  if (!document.getElementById('copy-btn')) {
+    const copyBtn = document.createElement('button');
+    copyBtn.id = 'copy-btn';
+    copyBtn.textContent = '📋 Copia lista';
+    copyBtn.style.cssText = `
+      display: block; width: 100%; padding: 0.6rem; margin-bottom: 0.8rem;
+      background: var(--gold); color: var(--ink); border: none; border-radius: 4px;
+      cursor: pointer; font-weight: bold; transition: all 0.2s;
+    `;
+    copyBtn.onmouseover = () => copyBtn.style.background = 'var(--gold-bright)';
+    copyBtn.onmouseout = () => copyBtn.style.background = 'var(--gold)';
+    copyBtn.onclick = () => {
+      const text = dati.map((p, i) => {
+        const nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
+        const fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+        const pf = parseFonte(fonte);
+        return `${i+1}. ${nome} (${pf.title}, ${pf.year}) - ${p.paese.toUpperCase()} ${pf.author}`;
+      }).join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = '✓ Copiato!';
+        setTimeout(() => copyBtn.textContent = '📋 Copia lista', 2000);
+      });
+    };
+    panel.appendChild(copyBtn);
+  }
+
+  if (!document.getElementById('admin-input')) {
+    const pwdLabel = document.createElement('label');
+    pwdLabel.style.cssText = 'display: block; margin-bottom: 0.4rem; font-size: 0.8rem; color: var(--gold);';
+    pwdLabel.textContent = 'Password admin:';
+    const input = document.createElement('input');
+    input.id = 'admin-input';
+    input.type = 'password';
+    input.placeholder = 'mellon mofo';
+    input.style.cssText = `
+      width: 100%; padding: 0.5rem; border: 1px solid var(--gold);
+      background: rgba(13,6,8,0.8); color: var(--parchment);
+      border-radius: 4px; font-size: 0.85rem;
+    `;
+    input.onkeyup = () => {
+      if (input.value === 'mellon mofo') {
+        if (!document.getElementById('save-btn')) {
+          const saveBtn = document.createElement('button');
+          saveBtn.id = 'save-btn';
+          saveBtn.textContent = '💾 Salva permanente';
+          saveBtn.style.cssText = `
+            display: block; width: 100%; padding: 0.6rem; margin-top: 0.6rem;
+            background: #4a9a5a; color: white; border: none; border-radius: 4px;
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+          `;
+          saveBtn.onmouseover = () => saveBtn.style.background = '#5aaa6a';
+          saveBtn.onmouseout = () => saveBtn.style.background = '#4a9a5a';
+          saveBtn.onclick = () => {
+            localStorage.setItem('legion-ranking-' + currentLang, JSON.stringify(dati));
+            saveBtn.textContent = '✓ Salvato!';
+            setTimeout(() => saveBtn.textContent = '💾 Salva permanente', 2000);
+          };
+          panel.appendChild(saveBtn);
+        }
+      }
+    };
+    panel.appendChild(pwdLabel);
+    panel.appendChild(input);
+  }
+}
+
+// Load saved ranking if exists
+const saved = localStorage.getItem('legion-ranking-' + currentLang);
+if (saved) {
+  try {
+    dati = JSON.parse(saved);
+  } catch(e) {}
+}
 </script>
 </body>
 </html>
