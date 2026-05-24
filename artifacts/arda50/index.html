@@ -50,25 +50,7 @@ body::before {
   transition: background 0.3s;
 }
 
-body::after {
-  content:'';
-  position:fixed; inset:0;
-  background-image:
-    radial-gradient(1px 1px at 23% 18%, var(--parchment) 50%, transparent 100%),
-    radial-gradient(1px 1px at 71% 42%, var(--gold-bright) 50%, transparent 100%),
-    radial-gradient(1px 1px at 42% 67%, var(--parchment) 50%, transparent 100%),
-    radial-gradient(1px 1px at 87% 73%, var(--parchment-dim) 50%, transparent 100%),
-    radial-gradient(1px 1px at 12% 88%, var(--gold-bright) 50%, transparent 100%),
-    radial-gradient(2px 2px at 58% 14%, var(--parchment) 50%, transparent 100%),
-    radial-gradient(1px 1px at 92% 31%, var(--parchment-dim) 50%, transparent 100%),
-    radial-gradient(1px 1px at 35% 39%, var(--parchment) 50%, transparent 100%),
-    radial-gradient(2px 2px at 8% 56%, var(--gold-bright) 50%, transparent 100%),
-    radial-gradient(1px 1px at 64% 91%, var(--parchment) 50%, transparent 100%);
-  opacity:0.5; z-index:-1;
-  animation: flicker 10s ease-in-out infinite;
-  pointer-events:none;
-  transition: opacity 0.3s;
-}
+body::after { display:none; }
 
 @keyframes flicker { 0%,100%{opacity:0.3} 50%{opacity:0.65} }
 
@@ -731,7 +713,7 @@ function renderList() {
         riga2 +
         '<span class="rank-title">' + titleYear + '</span>' +
       '</span>' +
-      '<span class="rank-arrow">›</span>' +
+      '' +
     '</button>';
   }
   list.innerHTML = html;
@@ -808,7 +790,11 @@ function enableDragDrop() {
     item.appendChild(handle);
     handle.addEventListener('mouseenter', () => handle.style.opacity = '0.8');
     handle.addEventListener('mouseleave', () => { if (!isDragging) handle.style.opacity = '0.25'; });
-    handle.addEventListener('mousedown', () => { item.draggable = true; });
+    handle.addEventListener('mousedown', () => {
+      item.draggable = true;
+      const reset = () => { item.draggable = false; document.removeEventListener('mouseup', reset); };
+      document.addEventListener('mouseup', reset);
+    });
     item.addEventListener('dragstart', (e) => {
       isDragging = idx;
       e.dataTransfer.effectAllowed = 'move';
@@ -858,11 +844,10 @@ function showAdminPanel() {
     copyBtn.onmouseover = () => copyBtn.style.background = 'var(--gold-bright)';
     copyBtn.onmouseout = () => copyBtn.style.background = 'var(--gold)';
     copyBtn.onclick = () => {
-      const text = dati.map((p, i) => {
+      const text = dati.map((p) => {
         const nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
-        const fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
-        const pf = parseFonte(fonte);
-        return `${i+1}. ${nome} (${pf.title}, ${pf.year}) - ${p.paese.toUpperCase()} ${pf.author}`;
+        const tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
+        return `${nome} (${tipo})`;
       }).join('\n');
       navigator.clipboard.writeText(text).then(() => {
         copyBtn.textContent = '✓ Copiato!';
