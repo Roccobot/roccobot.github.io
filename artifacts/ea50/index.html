@@ -1113,11 +1113,7 @@ function enableDragDrop() {
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
     handle.innerHTML = '⠿';
-    handle.style.cssText = `
-      position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%);
-      cursor: grab; color: var(--gold); font-size: 1.4rem; user-select: none;
-      opacity: 0.25; transition: opacity 0.2s; letter-spacing: -1px;
-    `;
+    handle.style.cssText = `position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);cursor:grab;color:var(--gold);font-size:1.4rem;user-select:none;opacity:0.25;transition:opacity 0.2s;letter-spacing:-1px;`;
     item.appendChild(handle);
     handle.addEventListener('mouseenter', () => handle.style.opacity = '0.8');
     handle.addEventListener('mouseleave', () => { if (!isDragging) handle.style.opacity = '0.25'; });
@@ -1181,32 +1177,26 @@ function showAdminPanel() {
   if (!document.getElementById('copy-btn')) {
     const copyBtn = document.createElement('button');
     copyBtn.id = 'copy-btn';
-    copyBtn.textContent = '📋 Copia lista';
-    copyBtn.style.cssText = `
-      display: block; width: 100%; padding: 0.6rem; margin-bottom: 0.8rem;
-      background: var(--gold); color: var(--ink); border: none; border-radius: 4px;
-      cursor: pointer; font-weight: bold; transition: all 0.2s;
-    `;
+    copyBtn.textContent = 'Copia lista';
+    copyBtn.style.cssText = `display:block;width:100%;padding:0.9rem 0.6rem;margin-bottom:0.6rem;background:var(--gold);color:var(--ink);border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-size:1rem;letter-spacing:0.03em;transition:all 0.2s;`;
     copyBtn.onmouseover = () => copyBtn.style.background = 'var(--gold-bright)';
     copyBtn.onmouseout = () => copyBtn.style.background = 'var(--gold)';
     copyBtn.onclick = () => {
-      const text = dati.map((p) => {
+      const text = dati.map((p, i) => {
         const nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
-        const tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
-        return `${nome} (${tipo})`;
+        const fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+        const pf = parseFonte(fonte);
+        return `${i+1}. ${nome} (${pf.title}, ${pf.year}) - ${p.paese.toUpperCase()} ${pf.author}`;
       }).join('\n');
       navigator.clipboard.writeText(text).then(() => {
         copyBtn.textContent = '✓ Copiato!';
-        setTimeout(() => copyBtn.textContent = '📋 Copia lista', 2000);
+        setTimeout(() => copyBtn.textContent = 'Copia lista', 2000);
       });
     };
     panel.appendChild(copyBtn);
   }
 
   if (!document.getElementById('admin-input')) {
-    const pwdLabel = document.createElement('label');
-    pwdLabel.style.cssText = 'display: block; margin-bottom: 0.4rem; font-size: 0.8rem; color: var(--gold);';
-    pwdLabel.textContent = 'Password admin:';
     const input = document.createElement('input');
     input.id = 'admin-input';
     input.type = 'password';
@@ -1238,7 +1228,6 @@ function showAdminPanel() {
         }
       }
     };
-    panel.appendChild(pwdLabel);
     panel.appendChild(input);
   }
 }
