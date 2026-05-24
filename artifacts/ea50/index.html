@@ -214,6 +214,16 @@ h1 {
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
 
+.rank-subtitle {
+  font-family:'EB Garamond',serif;
+  font-size:clamp(0.75rem,1.8vw,0.88rem);
+  color:var(--parchment-dim);
+  opacity:0.75;
+  letter-spacing:0.01em;
+  line-height:1.4;
+  margin-top:0.1rem;
+}
+
 .rank-source {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(0.78rem,2vw,0.92rem);
@@ -578,486 +588,417 @@ const i18n = {
 
 const dati = [
   {
-    nome:"Melkor", nome_en:"Melkor",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Melkor", nome_en:"Melkor" ,
+    nomi_alternativi:"**Melkor** (vero nome), Morgoth, il Nero, Signore della Terra Oscura", nomi_alternativi_en:"**Melkor** (true name), Morgoth, the Dark One, Lord of the Dark Land",
+    appellativi:"il Signore Oscuro, l'Antico Re, il Signore dei Destini di Arda", appellativi_en:"the Dark Lord, the Ancient King, the Lord of the Fates of Arda",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Morgoth, il Nero, Signore della Terra Oscura",
-    poteri:"Vala corrotto, potenza quasi pari a Manwë. Controllo assoluto sulla magia oscura, fuoco infernale e tentazione dell'anima. Creatore di draghi, Balrog e creature mostruose. Forgia dell'Anello Unico.",
-    poteri_en:"Corrupted Vala, power nearly equal to Manwë. Absolute control over dark magic, hellfire and soul temptation. Creator of dragons, Balrogs and monstrous creatures. Forger of the One Ring.",
-    aneddoti:"Fuggì dalla musica dei Valar e venne a Arda con intenzioni malvagie. Imprigionò i Silmarils e scatenò la Maledizione di Mandos sui figli di Fëanor. Regnò incontrastato in Angband per quasi un'era intera.",
-    aneddoti_en:"Fled from the Music of the Ainur and came to Arda with evil intent. Imprisoned the Silmarils and unleashed the Curse of Mandos on the children of Fëanor. Reigned unchallenged in Angband for nearly an entire age.",
-    citazione:"'Non c'è al di fuori di Angband alcun luogo dove la mia volontà non possa raggiungervi.'",
-    citazione_en:"'There is no place outside Angband where my will cannot reach you.'"
+    poteri:"Vala corrotto, potenza quasi pari a Manwë. Controllo assoluto sulla magia oscura, fuoco infernale e tentazione dell'anima. Creatore di draghi, Balrog e creature mostruose. Forgia dell'Anello Unico.", poteri_en:"Corrupted Vala, power nearly equal to Manwë. Absolute control over dark magic, hellfire and soul temptation. Creator of dragons, Balrogs and monstrous creatures. Forger of the One Ring.",
+    aneddoti:"Fuggì dalla musica dei Valar e venne a Arda con intenzioni malvagie. Imprigionò i Silmarils e scatenò la Maledizione di Mandos sui figli di Fëanor. Regnò incontrastato in Angband per quasi un'era intera.", aneddoti_en:"Fled from the Music of the Ainur and came to Arda with evil intent. Imprisoned the Silmarils and unleashed the Curse of Mandos on the children of Fëanor. Reigned unchallenged in Angband for nearly an entire age.",
+    citazione:"'Non c'è al di fuori di Angband alcun luogo dove la mia volontà non possa raggiungervi.'", citazione_en:"'There is no place outside Angband where my will cannot reach you.'"
   },
   {
-    nome:"Manwë Súlimo", nome_en:"Manwë Súlimo",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Sulimo",
-    poteri:"Signore dei Valar. Domina il vento e l'aria, conosce i pensieri di tutte le creature sotto il cielo. Potenza cosmica, decreto divino incontestabile.",
-    poteri_en:"Lord of the Valar. Dominates wind and air, knows the thoughts of all creatures beneath the sky. Cosmic power, indisputable divine decree.",
-    aneddoti:"Più giusto e saggio fra i Valar, guida il consiglio con equità. Concedette i Silmarils a Fëanor sapendo che avrebbero causato rovina. Ordinò la contaminazione di Valinor per sconfiggere Morgoth.",
-    aneddoti_en:"Justest and wisest of the Valar, leads the council with equity. Granted the Silmarils to Fëanor knowing they would cause ruin. Ordered the marring of Valinor to defeat Morgoth.",
-    citazione:"'La Musica dei Ainur non cessa mai, anche nei tempi bui.'",
-    citazione_en:"'The Music of the Ainur never ceases, even in dark times.'"
-  },
-  {
-    nome:"Varda Elentári", nome_en:"Varda Elentári",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Regina delle Stelle",
-    poteri:"Creatrice dei cieli stellati. Benedice gli elfi e li ama più di tutte le sue opere. Visione onnisciente, benedizione divina inviolabile.",
-    poteri_en:"Creator of the starry heavens. Blesses the Elves and loves them more than all her works. Omniscient vision, inviolable divine blessing.",
-    aneddoti:"Pose il sigillo della benedizione sugli Elfi, proteggendoli dal male. I Valar consultano sempre Varda nelle decisioni più importanti. Illumina la Via dei Morti.",
-    aneddoti_en:"Placed the seal of blessing upon the Elves, protecting them from evil. The Valar always consult Varda in the most important decisions. She illuminates the Path of the Dead.",
-    citazione:"'Sono Varda Elentári, e la benedizione mia è su tutti gli Elfi.'",
-    citazione_en:"'I am Varda Elentári, and my blessing is upon all the Elves.'"
-  },
-  {
-    nome:"Ungoliant", nome_en:"Ungoliant",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Ungoliant", nome_en:"Ungoliant" ,
+    nomi_alternativi:"Ungoliant (nome unico)", nomi_alternativi_en:"Ungoliant (unique name)",
+    appellativi:"la Ragnatela Oscura, Madre dei Ragni, la Divoratrice di Luce", appellativi_en:"the Dark Web, Mother of Spiders, the Drinker of Light",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:true,
-    poteri:"Ragno gigantesco di potenza cosmica. Può tessere ragnatele indistruttibili. Beve luce stessa per nutrirsi. Praticamente immortale.",
-    poteri_en:"Giant spider of cosmic power. Can weave indestructible webs. Drinks light itself for sustenance. Practically immortal.",
-    aneddoti:"Distrusse i Due Alberi Silpion e Laurelin insieme a Morgoth. Almeno altrettanto malvagia del suo alleato. Infine inghiottì se stessa nella follia della fame.",
-    aneddoti_en:"Destroyed the Two Trees Silpion and Laurelin with Morgoth. At least as evil as her ally. Finally consumed herself in the madness of hunger.",
-    citazione:"'Io non ho bisogno di nient'altro che luce, e tutto ciò che è luce sarà mio.'",
-    citazione_en:"'I need nothing but light, and all that is light shall be mine.'"
+    poteri:"Ragno gigantesco di potenza cosmica. Può tessere ragnatele indistruttibili. Beve luce stessa per nutrirsi. Praticamente immortale.", poteri_en:"Giant spider of cosmic power. Can weave indestructible webs. Drinks light itself for sustenance. Practically immortal.",
+    aneddoti:"Distrusse i Due Alberi Silpion e Laurelin insieme a Morgoth. Almeno altrettanto malvagia del suo alleato. Infine inghiottì se stessa nella follia della fame.", aneddoti_en:"Destroyed the Two Trees Silpion and Laurelin with Morgoth. At least as evil as her ally. Finally consumed herself in the madness of hunger.",
+    citazione:"'Io non ho bisogno di nient'altro che luce, e tutto ciò che è luce sarà mio.'", citazione_en:"'I need nothing but light, and all that is light shall be mine.'"
   },
   {
-    nome:"Ulmo", nome_en:"Ulmo",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Manwë Súlimo", nome_en:"Manwë Súlimo" ,
+    nomi_alternativi:"Manwë (nome principale), Sulimo", nomi_alternativi_en:"Manwë (main name), Sulimo",
+    appellativi:"il Signore dei Valar, Re del Vento, il Più Giusto", appellativi_en:"Lord of the Valar, King of Wind, the Justest",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Sulimo",
+    poteri:"Signore dei Valar. Domina il vento e l'aria, conosce i pensieri di tutte le creature sotto il cielo. Potenza cosmica, decreto divino incontestabile.", poteri_en:"Lord of the Valar. Dominates wind and air, knows the thoughts of all creatures beneath the sky. Cosmic power, indisputable divine decree.",
+    aneddoti:"Più giusto e saggio fra i Valar, guida il consiglio con equità. Concedette i Silmarils a Fëanor sapendo che avrebbero causato rovina. Ordinò la contaminazione di Valinor per sconfiggere Morgoth.", aneddoti_en:"Justest and wisest of the Valar, leads the council with equity. Granted the Silmarils to Fëanor knowing they would cause ruin. Ordered the marring of Valinor to defeat Morgoth.",
+    citazione:"'La Musica dei Ainur non cessa mai, anche nei tempi bui.'", citazione_en:"'The Music of the Ainur never ceases, even in dark times.'"
+  },
+  {
+    nome:"Varda Elentári", nome_en:"Varda Elentári" ,
+    nomi_alternativi:"Varda (nome principale), Elentári, Regina delle Stelle", nomi_alternativi_en:"Varda (main name), Elentári, Queen of Stars",
+    appellativi:"la Donatrice di Stelle, la Benedittrice degli Elfi, Colei che Illumina", appellativi_en:"the Giver of Stars, Blesser of the Elves, She Who Illuminates",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    paese:"gb", tipo:"vala", tipo_en:"Vala", featured:true, aka:"Regina delle Stelle",
+    poteri:"Creatrice dei cieli stellati. Benedice gli elfi e li ama più di tutte le sue opere. Visione onnisciente, benedizione divina inviolabile.", poteri_en:"Creator of the starry heavens. Blesses the Elves and loves them more than all her works. Omniscient vision, inviolable divine blessing.",
+    aneddoti:"Pose il sigillo della benedizione sugli Elfi, proteggendoli dal male. I Valar consultano sempre Varda nelle decisioni più importanti. Illumina la Via dei Morti.", aneddoti_en:"Placed the seal of blessing upon the Elves, protecting them from evil. The Valar always consult Varda in the most important decisions. She illuminates the Path of the Dead.",
+    citazione:"'Sono Varda Elentári, e la benedizione mia è su tutti gli Elfi.'", citazione_en:"'I am Varda Elentári, and my blessing is upon all the Elves.'"
+  },
+  {
+    nome:"Ulmo", nome_en:"Ulmo" ,
+    nomi_alternativi:"Ulmo (nome unico)", nomi_alternativi_en:"Ulmo (unique name)",
+    appellativi:"il Signore delle Acque, il Dio del Mare, l'Invisibile", appellativi_en:"Lord of Waters, the God of the Sea, the Invisible",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Signore delle Acque. Controllo assoluto su tutti i mari, fiumi e acque del mondo. Comunicazione tramite le acque, sapienza infinita.",
-    poteri_en:"Lord of the Waters. Absolute control over all seas, rivers and waters of the world. Communication through waters, infinite wisdom.",
-    aneddoti:"Aiutò Túrin inviando la Grande Onda che distrusse Nargothrond. Guidò Eöl e altri attraverso le acque. Meno interessato al controllo diretto, agisce tramite agenti.",
-    aneddoti_en:"Aided Túrin by sending the Great Wave that destroyed Nargothrond. Guided Eöl and others across the waters. Less interested in direct control, he acts through agents.",
-    citazione:"'Tutte le acque portano i miei messaggi a chi sa ascoltare.'",
-    citazione_en:"'All waters carry my messages to those who listen.'"
+    poteri:"Signore delle Acque. Controllo assoluto su tutti i mari, fiumi e acque del mondo. Comunicazione tramite le acque, sapienza infinita.", poteri_en:"Lord of the Waters. Absolute control over all seas, rivers and waters of the world. Communication through waters, infinite wisdom.",
+    aneddoti:"Aiutò Túrin inviando la Grande Onda che distrusse Nargothrond. Guidò Eöl e altri attraverso le acque. Meno interessato al controllo diretto, agisce tramite agenti.", aneddoti_en:"Aided Túrin by sending the Great Wave that destroyed Nargothrond. Guided Eöl and others across the waters. Less interested in direct control, he acts through agents.",
+    citazione:"'Tutte le acque portano i miei messaggi a chi sa ascoltare.'", citazione_en:"'All waters carry my messages to those who listen.'"
   },
   {
-    nome:"Oromë", nome_en:"Oromë",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Oromë", nome_en:"Oromë" ,
+    nomi_alternativi:"Oromë (nome unico)", nomi_alternativi_en:"Oromë (unique name)",
+    appellativi:"il Signore della Caccia, l'Amico dei Cavalli, il Grande Cacciatore", appellativi_en:"Lord of Hunt, Friend of Horses, the Great Hunter",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Signore delle Foreste e della Caccia. Domina bestie selvagge, cammina fra gli alberi senza traccia. Guerriero valoroso, ama la battaglia.",
-    poteri_en:"Lord of Forests and Hunt. Dominates wild beasts, walks among trees without trace. Valiant warrior, loves battle.",
-    aneddoti:"Scoprì gli Elfi nella loro nascita e li chiamò alla Benedizione di Valinor. Combattè indefessamente contro Morgoth, la sua caccia riecheggia ancora in Arda.",
-    aneddoti_en:"Discovered the Elves at their awakening and called them to the Blessing of Valinor. Fought tirelessly against Morgoth, his hunt still echoes in Arda.",
-    citazione:"'Seguitemi nella Grande Caccia!'",
-    citazione_en:"'Follow me in the Great Hunt!'"
+    poteri:"Signore delle Foreste e della Caccia. Domina bestie selvagge, cammina fra gli alberi senza traccia. Guerriero valoroso, ama la battaglia.", poteri_en:"Lord of Forests and Hunt. Dominates wild beasts, walks among trees without trace. Valiant warrior, loves battle.",
+    aneddoti:"Scoprì gli Elfi nella loro nascita e li chiamò alla Benedizione di Valinor. Combattè indefessamente contro Morgoth, la sua caccia riecheggia ancora in Arda.", aneddoti_en:"Discovered the Elves at their awakening and called them to the Blessing of Valinor. Fought tirelessly against Morgoth, his hunt still echoes in Arda.",
+    citazione:"'Seguitemi nella Grande Caccia!'", citazione_en:"'Follow me in the Great Hunt!'"
   },
   {
-    nome:"Yavanna Kementári", nome_en:"Yavanna Kementári",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Yavanna Kementári", nome_en:"Yavanna Kementári" ,
+    nomi_alternativi:"Yavanna (nome principale), Kementári, Regina della Terra", nomi_alternativi_en:"Yavanna (main name), Kementári, Queen of Earth",
+    appellativi:"la Donatrice dei Frutti, la Creatrice di Piante, la Benedittrice della Vita", appellativi_en:"the Giver of Fruits, Creator of Plants, Blesser of Life",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Regina della Terra",
-    poteri:"Donatrice dei Frutti. Creatrice di piante e alberi. Benedice i Doni dei Tre Alberi di Valinor. Connessa a tutte le forme di vita che crescono.",
-    poteri_en:"Giver of Fruits. Creator of plants and trees. Blesses the Gifts of the Three Trees of Valinor. Connected to all growing life.",
-    aneddoti:"Creò i due Alberi Silpion e Laurelin per illuminare Valinor. Pianse quando furono distrutti da Morgoth e Ungoliant. Dona speranza e rigenerazione.",
-    aneddoti_en:"Created the two Trees Silpion and Laurelin to illuminate Valinor. Wept when they were destroyed by Morgoth and Ungoliant. Grants hope and regeneration.",
-    citazione:"'La vita cresce dove il male non ha ancora reclamato la terra.'",
-    citazione_en:"'Life grows where evil has not yet claimed the land.'"
+    poteri:"Donatrice dei Frutti. Creatrice di piante e alberi. Benedice i Doni dei Tre Alberi di Valinor. Connessa a tutte le forme di vita che crescono.", poteri_en:"Giver of Fruits. Creator of plants and trees. Blesses the Gifts of the Three Trees of Valinor. Connected to all growing life.",
+    aneddoti:"Creò i due Alberi Silpion e Laurelin per illuminare Valinor. Pianse quando furono distrutti da Morgoth e Ungoliant. Dona speranza e rigenerazione.", aneddoti_en:"Created the two Trees Silpion and Laurelin to illuminate Valinor. Wept when they were destroyed by Morgoth and Ungoliant. Grants hope and regeneration.",
+    citazione:"'La vita cresce dove il male non ha ancora reclamato la terra.'", citazione_en:"'Life grows where evil has not yet claimed the land.'"
   },
   {
-    nome:"Aulë il Fabbro", nome_en:"Aulë the Smith",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Aulë il Fabbro", nome_en:"Aulë the Smith" ,
+    nomi_alternativi:"Aulë (nome principale), il Creatore, il Fabbro Supremo", nomi_alternativi_en:"Aulë (main name), the Creator, the Supreme Smith",
+    appellativi:"il Maestro degli Artigiani, il Creatore dei Nani, il Plasmaforma", appellativi_en:"Master of Craftsmen, Creator of Dwarves, the Shaper",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"il Creatore",
-    poteri:"Maestro di tutti gli artigiani. Plasma la materia e la forma con volontà assoluta. Creatore dei Nani e di innumerevoli meraviglie.",
-    poteri_en:"Master of all craftsmen. Shapes matter and form with absolute will. Creator of the Dwarves and countless wonders.",
-    aneddoti:"Creò i Nani perché sentiva la solitudine nell'opera creativa. Costruì i Silmarils con Fëanor ma riconobbe il limite di ogni creazione. Fece il Compasso di Arda.",
-    aneddoti_en:"Created the Dwarves because he felt lonely in creative work. Forged the Silmarils with Fëanor but recognized the limit of every creation. Made the Compass of Arda.",
-    citazione:"'Ogni opera ha il marchio del suo creatore, e null'altro può mai eguagliarla.'",
-    citazione_en:"'Every work bears the mark of its maker, and nothing else can ever equal it.'"
+    poteri:"Maestro di tutti gli artigiani. Plasma la materia e la forma con volontà assoluta. Creatore dei Nani e di innumerevoli meraviglie.", poteri_en:"Master of all craftsmen. Shapes matter and form with absolute will. Creator of the Dwarves and countless wonders.",
+    aneddoti:"Creò i Nani perché sentiva la solitudine nell'opera creativa. Costruì i Silmarils con Fëanor ma riconobbe il limite di ogni creazione. Fece il Compasso di Arda.", aneddoti_en:"Created the Dwarves because he felt lonely in creative work. Forged the Silmarils with Fëanor but recognized the limit of every creation. Made the Compass of Arda.",
+    citazione:"'Ogni opera ha il marchio del suo creatore, e null'altro può mai eguagliarla.'", citazione_en:"'Every work bears the mark of its maker, and nothing else can ever equal it.'"
   },
   {
-    nome:"Námo Mandos", nome_en:"Námo Mandos",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Námo Mandos", nome_en:"Námo Mandos" ,
+    nomi_alternativi:"Námo (nome principale), Mandos, il Giudice dei Morti", nomi_alternativi_en:"Námo (main name), Mandos, Judge of the Dead",
+    appellativi:"il Giudice Assoluto, il Custode dei Nomi, l'Arbitro del Fato", appellativi_en:"the Absolute Judge, Keeper of Names, the Arbiter of Fate",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Giudice dei Morti",
-    poteri:"Domina il regno dei morti e il destino delle anime. Comprende il tempo presente e futuro. Sentenza assoluta.",
-    poteri_en:"Dominates the realm of the dead and fate of souls. Understands present and future time. Absolute judgment.",
-    aneddoti:"Giudica con saggezza e severità. Pronunciò la Maledizione di Mandos su Fëanor e i suoi figli. Custodisce tutti i nomi e i segreti.",
-    aneddoti_en:"Judges with wisdom and severity. Pronounced the Curse of Mandos upon Fëanor and his sons. Keeps all names and secrets.",
-    citazione:"'Il vostro destino è scritto nelle mie mani, e la mia sentenza è legge.'",
-    citazione_en:"'Your fate is written in my hands, and my judgment is law.'"
+    poteri:"Domina il regno dei morti e il destino delle anime. Comprende il tempo presente e futuro. Sentenza assoluta.", poteri_en:"Dominates the realm of the dead and fate of souls. Understands present and future time. Absolute judgment.",
+    aneddoti:"Giudica con saggezza e severità. Pronunciò la Maledizione di Mandos su Fëanor e i suoi figli. Custodisce tutti i nomi e i segreti.", aneddoti_en:"Judges with wisdom and severity. Pronounced the Curse of Mandos upon Fëanor and his sons. Keeps all names and secrets.",
+    citazione:"'Il vostro destino è scritto nelle mie mani, e la mia sentenza è legge.'", citazione_en:"'Your fate is written in my hands, and my judgment is law.'"
   },
   {
-    nome:"Nienna", nome_en:"Nienna",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Nienna", nome_en:"Nienna" ,
+    nomi_alternativi:"Nienna (nome unico)", nomi_alternativi_en:"Nienna (unique name)",
+    appellativi:"la Regina della Pietà, la Consolatrice, la Portatrice di Speranza", appellativi_en:"Queen of Pity, the Consoler, the Bearer of Hope",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Regina della Pietà e del Pianto. Comprende il dolore di tutte le creature. Guarigione attraverso il rimpianto e la redenzione.",
-    poteri_en:"Queen of Pity and Lamentation. Understands the pain of all creatures. Healing through remorse and redemption.",
-    aneddoti:"Pianse per la distruzione dei Silmarils. Meno attiva degli altri Valar, ma profondamente saggia. Offre conforto a chi soffre veramente.",
-    aneddoti_en:"Wept for the destruction of the Silmarils. Less active than other Valar, but deeply wise. Offers comfort to those who truly suffer.",
-    citazione:"'Nel pianto vero risiede la speranza di redenzione.'",
-    citazione_en:"'In true lamentation lies the hope of redemption.'"
+    poteri:"Regina della Pietà e del Pianto. Comprende il dolore di tutte le creature. Guarigione attraverso il rimpianto e la redenzione.", poteri_en:"Queen of Pity and Lamentation. Understands the pain of all creatures. Healing through remorse and redemption.",
+    aneddoti:"Pianse per la distruzione dei Silmarils. Meno attiva degli altri Valar, ma profondamente saggia. Offre conforto a chi soffre veramente.", aneddoti_en:"Wept for the destruction of the Silmarils. Less active than other Valar, but deeply wise. Offers comfort to those who truly suffer.",
+    citazione:"'Nel pianto vero risiede la speranza di redenzione.'", citazione_en:"'In true lamentation lies the hope of redemption.'"
   },
   {
-    nome:"Melian", nome_en:"Melian",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Melian", nome_en:"Melian" ,
+    nomi_alternativi:"Melian (nome principale), di Yavanna", nomi_alternativi_en:"Melian (main name), of Yavanna",
+    appellativi:"la Regina di Doriath, la Reggitrice del Girdle, la Donatrice di Amore", appellativi_en:"Queen of Doriath, Holder of the Girdle, the Giver of Love",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"di Yavanna",
-    poteri:"Regina di Doriath. Magia della protezione e dell'illusione. Crea il Girdle di Melian, barriera impenetrabile. Sapienza inarrivabile.",
-    poteri_en:"Queen of Doriath. Magic of protection and illusion. Creates the Girdle of Melian, impenetrable barrier. Unmatched wisdom.",
-    aneddoti:"Innamorata di Thingol, rinunciò al suo stato di Maia. Protesse Doriath per ere intere. Quando fu sepolta dalla tragedia, il suo potere si dissolse.",
-    aneddoti_en:"Enamored with Thingol, she renounced her Maia status. Protected Doriath for entire ages. When tragedy befell her, her power dissolved.",
-    citazione:"'L'amore di una Maia per un mortale cambia il corso del destino.'",
-    citazione_en:"'The love of a Maia for a mortal changes the course of fate.'"
+    poteri:"Regina di Doriath. Magia della protezione e dell'illusione. Crea il Girdle di Melian, barriera impenetrabile. Sapienza inarrivabile.", poteri_en:"Queen of Doriath. Magic of protection and illusion. Creates the Girdle of Melian, impenetrable barrier. Unmatched wisdom.",
+    aneddoti:"Innamorata di Thingol, rinunciò al suo stato di Maia. Protesse Doriath per ere intere. Quando fu sepolta dalla tragedia, il suo potere si dissolse.", aneddoti_en:"Enamored with Thingol, she renounced her Maia status. Protected Doriath for entire ages. When tragedy befell her, her power dissolved.",
+    citazione:"'L'amore di una Maia per un mortale cambia il corso del destino.'", citazione_en:"'The love of a Maia for a mortal changes the course of fate.'"
   },
   {
-    nome:"Irmo Lórien", nome_en:"Irmo Lórien",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Irmo Lórien", nome_en:"Irmo Lórien" ,
+    nomi_alternativi:"Irmo (nome principale), Lórien, il Bellissimo", nomi_alternativi_en:"Irmo (main name), Lórien, the Most Beautiful",
+    appellativi:"il Signore dei Sogni, il Creatore di Visioni, l'Ispiratore dei Visionari", appellativi_en:"Lord of Dreams, Creator of Visions, Inspirer of Visionaries",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"il Bellissimo",
-    poteri:"Signore dei Sogni e della Visione. Crea il regno del sogno e della fantasia. Comunica tramite visioni e rivelazioni.",
-    poteri_en:"Lord of Dreams and Visions. Creates the realm of dream and fantasy. Communicates through visions and revelations.",
-    aneddoti:"Meno noto ma profondamente importante. Il suo regno è rifugio per gli stanchi. Ispira gli artisti e i visionari.",
-    aneddoti_en:"Less known but profoundly important. His realm is refuge for the weary. Inspires artists and visionaries.",
-    citazione:"'Nei sogni risiede la verità che il giorno nasconde.'",
-    citazione_en:"'In dreams lies the truth that day conceals.'"
+    poteri:"Signore dei Sogni e della Visione. Crea il regno del sogno e della fantasia. Comunica tramite visioni e rivelazioni.", poteri_en:"Lord of Dreams and Visions. Creates the realm of dream and fantasy. Communicates through visions and revelations.",
+    aneddoti:"Meno noto ma profondamente importante. Il suo regno è rifugio per gli stanchi. Ispira gli artisti e i visionari.", aneddoti_en:"Less known but profoundly important. His realm is refuge for the weary. Inspires artists and visionaries.",
+    citazione:"'Nei sogni risiede la verità che il giorno nasconde.'", citazione_en:"'In dreams lies the truth that day conceals.'"
   },
   {
-    nome:"Tulkas Astaldo", nome_en:"Tulkas Astaldo",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Tulkas Astaldo", nome_en:"Tulkas Astaldo" ,
+    nomi_alternativi:"Tulkas (nome principale), Astaldo, il Più Forte", nomi_alternativi_en:"Tulkas (main name), Astaldo, the Strongest",
+    appellativi:"il Guerriero Supremo, il Vincitore di Morgoth, la Potenza Incarnata", appellativi_en:"the Supreme Warrior, Conqueror of Morgoth, Power Incarnate",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"il Più Forte",
-    poteri:"Potenza fisica infinita. Non ha tolto le mani dal bene per combattere il male. Guerriero supremo.",
-    poteri_en:"Infinite physical power. Never rested his hands from good to fight evil. Supreme warrior.",
-    aneddoti:"Arrivò tardi a Arda quando Morgoth era già presente. Catturò Morgoth alla fine della Prima Era con forza bruta. Il riso di Tulkas è tonante e ribollente.",
-    aneddoti_en:"Arrived late to Arda when Morgoth was already present. Captured Morgoth at the end of the First Age through brute force. Tulkas's laughter is thunderous and boiling.",
-    citazione:"'La forza può redimere tutto ciò che il male ha corrotto.'",
-    citazione_en:"'Strength can redeem all that evil has corrupted.'"
+    poteri:"Potenza fisica infinita. Non ha tolto le mani dal bene per combattere il male. Guerriero supremo.", poteri_en:"Infinite physical power. Never rested his hands from good to fight evil. Supreme warrior.",
+    aneddoti:"Arrivò tardi a Arda quando Morgoth era già presente. Catturò Morgoth alla fine della Prima Era con forza bruta. Il riso di Tulkas è tonante e ribollente.", aneddoti_en:"Arrived late to Arda when Morgoth was already present. Captured Morgoth at the end of the First Age through brute force. Tulkas's laughter is thunderous and boiling.",
+    citazione:"'La forza può redimere tutto ciò che il male ha corrotto.'", citazione_en:"'Strength can redeem all that evil has corrupted.'"
   },
   {
-    nome:"Eönwë", nome_en:"Eönwë",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Eönwë", nome_en:"Eönwë" ,
+    nomi_alternativi:"Eönwë (nome principale), il Luogotenente di Manwë", nomi_alternativi_en:"Eönwë (main name), Lieutenant of Manwë",
+    appellativi:"il Comandante Celeste, il Portatore della Volontà di Manwë, il Giudice di Morgoth", appellativi_en:"the Heavenly Commander, Bearer of Manwë's Will, Judge of Morgoth",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Luogotenente di Manwë",
-    poteri:"Luogotenente supremo dei Valar. Porta la volontà di Manwë in battaglia. Guerriero celestiale, banniera del conflitto cosmico.",
-    poteri_en:"Supreme Lieutenant of the Valar. Bears Manwë's will in battle. Celestial warrior, banner of cosmic conflict.",
-    aneddoti:"Comandò le forze divine nella Guerra dell'Ira. Pronunciò il giudizio finale su Morgoth. Guidò gli ultimi attacchi contro le fortezze oscure.",
-    aneddoti_en:"Commanded divine forces in the War of Wrath. Pronounced final judgment on Morgoth. Led the final assaults on dark strongholds.",
-    citazione:"'La volontà di Manwë è mia volontà, e la sua sentenza è scritta nel cielo.'",
-    citazione_en:"'The will of Manwë is my will, and his judgment is written in the sky.'"
+    poteri:"Luogotenente supremo dei Valar. Porta la volontà di Manwë in battaglia. Guerriero celestiale, banniera del conflitto cosmico.", poteri_en:"Supreme Lieutenant of the Valar. Bears Manwë's will in battle. Celestial warrior, banner of cosmic conflict.",
+    aneddoti:"Comandò le forze divine nella Guerra dell'Ira. Pronunciò il giudizio finale su Morgoth. Guidò gli ultimi attacchi contro le fortezze oscure.", aneddoti_en:"Commanded divine forces in the War of Wrath. Pronounced final judgment on Morgoth. Led the final assaults on dark strongholds.",
+    citazione:"'La volontà di Manwë è mia volontà, e la sua sentenza è scritta nel cielo.'", citazione_en:"'The will of Manwë is my will, and his judgment is written in the sky.'"
   },
   {
-    nome:"Estë", nome_en:"Estë",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Estë", nome_en:"Estë" ,
+    nomi_alternativi:"Estë (nome unico)", nomi_alternativi_en:"Estë (unique name)",
+    appellativi:"la Regina del Riposo, la Guanitrice, la Lenritrice del Dolore", appellativi_en:"Queen of Healing Rest, the Healer, the Soother of Pain",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false,
-    poteri:"Regina del Riposo. Dona il riposo guaritore. Lenisce dolore e preoccupazione.",
-    poteri_en:"Queen of Healing Rest. Grants restorative rest. Soothes pain and worry.",
-    aneddoti:"Meno consapevole degli intrighi del mondo. Il suo dono è semplice ma universale. Tutti i viventi ricercano il riposo che ella concede.",
-    aneddoti_en:"Less aware of the world's intrigues. Her gift is simple but universal. All living things seek the rest she grants.",
-    citazione:"'Nel riposo profondo trova guarigione l'anima stanca.'",
-    citazione_en:"'In deep rest, the weary soul finds healing.'"
+    poteri:"Regina del Riposo. Dona il riposo guaritore. Lenisce dolore e preoccupazione.", poteri_en:"Queen of Healing Rest. Grants restorative rest. Soothes pain and worry.",
+    aneddoti:"Meno consapevole degli intrighi del mondo. Il suo dono è semplice ma universale. Tutti i viventi ricercano il riposo che ella concede.", aneddoti_en:"Less aware of the world's intrigues. Her gift is simple but universal. All living things seek the rest she grants.",
+    citazione:"'Nel riposo profondo trova guarigione l'anima stanca.'", citazione_en:"'In deep rest, the weary soul finds healing.'"
   },
   {
-    nome:"Vairë la Tessitrice", nome_en:"Vairë the Weaver",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Vairë la Tessitrice", nome_en:"Vairë the Weaver" ,
+    nomi_alternativi:"Vairë (nome principale), la Tessitrice, la Tessitrice del Fato", nomi_alternativi_en:"Vairë (main name), the Weaver, Weaver of Fate",
+    appellativi:"la Registratrice del Tempo, la Custode della Memoria, la Taccheggina della Storia", appellativi_en:"the Recorder of Time, Keeper of Memory, the Keeper of History",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Tessitrice del Fato",
-    poteri:"Registra tutti gli eventi in tappezzerie immortali. Conosce il filo di ogni vita. Domina tempo e memoria.",
-    poteri_en:"Records all events in immortal tapestries. Knows the thread of every life. Dominates time and memory.",
-    aneddoti:"Meno guerriera, più contemplativa. Le sue tappezzerie contengono la storia di Arda completamente tessuta. Nulla le sfugge.",
-    aneddoti_en:"Less warrior, more contemplative. Her tapestries contain the complete woven history of Arda. Nothing escapes her.",
-    citazione:"'Ogni filo ha il suo posto nel grande tappeto del destino.'",
-    citazione_en:"'Every thread has its place in the great tapestry of fate.'"
+    poteri:"Registra tutti gli eventi in tappezzerie immortali. Conosce il filo di ogni vita. Domina tempo e memoria.", poteri_en:"Records all events in immortal tapestries. Knows the thread of every life. Dominates time and memory.",
+    aneddoti:"Meno guerriera, più contemplativa. Le sue tappezzerie contengono la storia di Arda completamente tessuta. Nulla le sfugge.", aneddoti_en:"Less warrior, more contemplative. Her tapestries contain the complete woven history of Arda. Nothing escapes her.",
+    citazione:"'Ogni filo ha il suo posto nel grande tappeto del destino.'", citazione_en:"'Every thread has its place in the great tapestry of fate.'"
   },
   {
-    nome:"Nessa la Veloce", nome_en:"Nessa the Swift",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Nessa la Veloce", nome_en:"Nessa the Swift" ,
+    nomi_alternativi:"Nessa (nome principale), la Veloce, la Signora della Danza", nomi_alternativi_en:"Nessa (main name), the Swift, Lady of the Dance",
+    appellativi:"la Danzatrice Eterna, la Portatrice di Gioia, la Libertà Incarnata", appellativi_en:"the Eternal Dancer, Bearer of Joy, Freedom Incarnate",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Signora della Danza",
-    poteri:"Velocità infinita. Danza attraverso i mondi. Gioia e movimento eterno.",
-    poteri_en:"Infinite speed. Dances across the worlds. Joy and eternal motion.",
-    aneddoti:"La meno considerata fra i Valar, ma la sua danza è fondamentale. Compagna di Tulkas nel gioco e nella ricerca.",
-    aneddoti_en:"The least considered of the Valar, but her dance is fundamental. Companion to Tulkas in play and pursuit.",
-    citazione:"'La velocità è libertà, la libertà è gioia.'",
-    citazione_en:"'Speed is freedom, freedom is joy.'"
+    poteri:"Velocità infinita. Danza attraverso i mondi. Gioia e movimento eterno.", poteri_en:"Infinite speed. Dances across the worlds. Joy and eternal motion.",
+    aneddoti:"La meno considerata fra i Valar, ma la sua danza è fondamentale. Compagna di Tulkas nel gioco e nella ricerca.", aneddoti_en:"The least considered of the Valar, but her dance is fundamental. Companion to Tulkas in play and pursuit.",
+    citazione:"'La velocità è libertà, la libertà è gioia.'", citazione_en:"'Speed is freedom, freedom is joy.'"
   },
   {
-    nome:"Vana l'Eterna Giovane", nome_en:"Vana the Ever-young",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Vana l'Eterna Giovane", nome_en:"Vana the Ever-young" ,
+    nomi_alternativi:"Vana (nome principale), l'Eterna Giovane, la Signora della Primavera", nomi_alternativi_en:"Vana (main name), the Ever-young, Lady of Spring",
+    appellativi:"la Rinascitrice, la Portatrice di Fiori Eterni, la Nemesi dell'Invecchiamento", appellativi_en:"the Rebirth-giver, Bearer of Eternal Flowers, Nemesis of Aging",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"vala", tipo_en:"Vala", featured:false, aka:"Signora della Primavera",
-    poteri:"Perpetua giovinezza e rigenerazione. Porta nuovo fiore a tutti i fiori. Nemesi dell'invecchiamento.",
-    poteri_en:"Perpetual youth and regeneration. Brings new bloom to all flowers. Nemesis of aging.",
-    aneddoti:"Sorella di Yavanna, meno descritta. Il suo dono è la rinascita eterna. Spesso descritta con flori nei capelli.",
-    aneddoti_en:"Sister of Yavanna, less described. Her gift is eternal rebirth. Often depicted with flowers in her hair.",
-    citazione:"'La giovinezza non conosce fine e il fiore sempre risboccia.'",
-    citazione_en:"'Youth knows no end and the flower forever blooms again.'"
+    poteri:"Perpetua giovinezza e rigenerazione. Porta nuovo fiore a tutti i fiori. Nemesi dell'invecchiamento.", poteri_en:"Perpetual youth and regeneration. Brings new bloom to all flowers. Nemesis of aging.",
+    aneddoti:"Sorella di Yavanna, meno descritta. Il suo dono è la rinascita eterna. Spesso descritta con flori nei capelli.", aneddoti_en:"Sister of Yavanna, less described. Her gift is eternal rebirth. Often depicted with flowers in her hair.",
+    citazione:"'La giovinezza non conosce fine e il fiore sempre risboccia.'", citazione_en:"'Youth knows no end and the flower forever blooms again.'"
   },
   {
-    nome:"Olórin", nome_en:"Olórin (Gandalf)",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Olórin", nome_en:"Olórin (Gandalf)" ,
+    nomi_alternativi:"**Olórin** (vero nome), Gandalf, Mithrandir, Tharkûn, Incánus, Greyhame, Láthspell", nomi_alternativi_en:"**Olórin** (true name), Gandalf, Mithrandir, Tharkûn, Incánus, Greyhame, Láthspell",
+    appellativi:"il Grigio, il Bianco, il Bianco Cavaliere, Corvotempesta", appellativi_en:"the Grey, the White, the White Rider, Storm-crow",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:true, aka:"Gandalf, Mithrandir, Tharkûn, Incánus, Greyhame, Láthspell; il Grigio, il Bianco, il Bianco Cavaliere, Corvotempesta",
-    poteri:"Istari mandato a Arda come uomo anziano. Magia della parola e del fuoco. Saggezza cosmica. Non può agire direttamente ma influenza tramite consiglio.",
-    poteri_en:"Istari sent to Arda as an old man. Magic of word and fire. Cosmic wisdom. Cannot act directly but influences through counsel.",
-    aneddoti:"Vincitore del Balrog di Moria. Tornò come Gandalf il Bianco, potenziato. Principale artefice della sconfitta di Sauron.",
-    aneddoti_en:"Defeated the Balrog of Moria. Returned as Gandalf the White, empowered. Primary architect of Sauron's defeat.",
-    citazione:"'Io non scelgo il momento della mia morte. Neppure i Saggi possono vederlo.'",
-    citazione_en:"'I do not choose the time of my death. Not even the Wise can see it.'"
+    poteri:"Istari mandato a Arda come uomo anziano. Magia della parola e del fuoco. Saggezza cosmica. Non può agire direttamente ma influenza tramite consiglio.", poteri_en:"Istari sent to Arda as an old man. Magic of word and fire. Cosmic wisdom. Cannot act directly but influences through counsel.",
+    aneddoti:"Vincitore del Balrog di Moria. Tornò come Gandalf il Bianco, potenziato. Principale artefice della sconfitta di Sauron.", aneddoti_en:"Defeated the Balrog of Moria. Returned as Gandalf the White, empowered. Primary architect of Sauron's defeat.",
+    citazione:"'Io non scelgo il momento della mia morte. Neppure i Saggi possono vederlo.'", citazione_en:"'I do not choose the time of my death. Not even the Wise can see it.'"
   },
   {
-    nome:"Curumo", nome_en:"Curumo (Saruman)",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Curumo", nome_en:"Curumo (Saruman)" ,
+    nomi_alternativi:"**Curumo** (vero nome), Saruman il Bianco, il Tradimento", nomi_alternativi_en:"**Curumo** (true name), Saruman the White, the Betrayer",
+    appellativi:"il Mago Bianco, il Corrotto, il Signore di Isengard", appellativi_en:"the White Wizard, the Corrupted One, Lord of Isengard",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Saruman il Bianco, il Tradimento",
-    poteri:"Istari, maestro di sapere e artigianato. Magia dell'eloquenza e dell'influenza. Controllo su Isengard tramite artificio e ingegneria.",
-    poteri_en:"Istari, master of lore and craft. Magic of eloquence and influence. Control of Isengard through artifice and engineering.",
-    aneddoti:"Originariamente capo degli Istari, ma si corruppe cercando il potere. Creò un esercito di Uruk-hai. La sua corruzione mostra come anche i potenti possono cadere.",
-    aneddoti_en:"Originally chief of the Istari, but became corrupted seeking power. Created an army of Uruk-hai. His corruption shows how even the mighty can fall.",
-    citazione:"'Posso comprendere il desiderio di potere, poiché lo condivido.'",
-    citazione_en:"'I can understand the desire for power, because I share it.'"
+    poteri:"Istari, maestro di sapere e artigianato. Magia dell'eloquenza e dell'influenza. Controllo su Isengard tramite artificio e ingegneria.", poteri_en:"Istari, master of lore and craft. Magic of eloquence and influence. Control of Isengard through artifice and engineering.",
+    aneddoti:"Originariamente capo degli Istari, ma si corruppe cercando il potere. Creò un esercito di Uruk-hai. La sua corruzione mostra come anche i potenti possono cadere.", aneddoti_en:"Originally chief of the Istari, but became corrupted seeking power. Created an army of Uruk-hai. His corruption shows how even the mighty can fall.",
+    citazione:"'Posso comprendere il desiderio di potere, poiché lo condivido.'", citazione_en:"'I can understand the desire for power, because I share it.'"
   },
   {
-    nome:"Aiwendil", nome_en:"Aiwendil (Radagast)",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Aiwendil", nome_en:"Aiwendil (Radagast)" ,
+    nomi_alternativi:"**Aiwendil** (vero nome), Radagast, l'Amico degli Uccelli", nomi_alternativi_en:"**Aiwendil** (true name), Radagast, Friend of Birds",
+    appellativi:"il Mago Marrone, l'Amico della Natura, il Guardiano degli Animali", appellativi_en:"the Brown Wizard, Friend of Nature, Guardian of Animals",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Radagast, l'Amico degli Uccelli",
-    poteri:"Istari, amico degli animali e della natura. Comunica con bestie e uccelli. Magia della natura e della guarigione.",
-    poteri_en:"Istari, friend of animals and nature. Communicates with beasts and birds. Magic of nature and healing.",
-    aneddoti:"Meno interessato alla politica e alla guerra. Viaja in forma di uccello tramite i suoi compagni piumati. Rimane fedele alla sua missione originale.",
-    aneddoti_en:"Less interested in politics and war. Travels as a bird through his feathered companions. Remains faithful to his original mission.",
-    citazione:"'Gli uccelli mi portano notizie da lontani orizzonti.'",
-    citazione_en:"'The birds bring me news from distant horizons.'"
+    poteri:"Istari, amico degli animali e della natura. Comunica con bestie e uccelli. Magia della natura e della guarigione.", poteri_en:"Istari, friend of animals and nature. Communicates with beasts and birds. Magic of nature and healing.",
+    aneddoti:"Meno interessato alla politica e alla guerra. Viaja in forma di uccello tramite i suoi compagni piumati. Rimane fedele alla sua missione originale.", aneddoti_en:"Less interested in politics and war. Travels as a bird through his feathered companions. Remains faithful to his original mission.",
+    citazione:"'Gli uccelli mi portano notizie da lontani orizzonti.'", citazione_en:"'The birds bring me news from distant horizons.'"
   },
   {
-    nome:"Ossë", nome_en:"Ossë",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Ossë", nome_en:"Ossë" ,
+    nomi_alternativi:"Ossë (nome unico)", nomi_alternativi_en:"Ossë (unique name)",
+    appellativi:"il Signore dei Mari Tempestosi, il Guerriero dell'Oceano, il Mutevole", appellativi_en:"Lord of Stormy Seas, Warrior of the Ocean, the Changeable",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Maia delle acque oceaniche. Domina tempeste e maree. Guerriero del mare, potente e mutevole.",
-    poteri_en:"Maia of the oceanic waters. Dominates storms and tides. Warrior of the sea, powerful and changeable.",
-    aneddoti:"Servo di Ulmo, ma spesso agisce in autonomia. Amico dei Numenoreani e degli navigatori. Mutevole nel temperamento come le onde.",
-    aneddoti_en:"Servant of Ulmo, but often acts independently. Friend to Numenoreans and mariners. Changeable in temperament as the waves.",
-    citazione:"'Il mare è mio dominio, e la mia furia è la furia dell'oceano.'",
-    citazione_en:"'The sea is my domain, and my fury is the fury of the ocean.'"
+    poteri:"Maia delle acque oceaniche. Domina tempeste e maree. Guerriero del mare, potente e mutevole.", poteri_en:"Maia of the oceanic waters. Dominates storms and tides. Warrior of the sea, powerful and changeable.",
+    aneddoti:"Servo di Ulmo, ma spesso agisce in autonomia. Amico dei Numenoreani e degli navigatori. Mutevole nel temperamento come le onde.", aneddoti_en:"Servant of Ulmo, but often acts independently. Friend to Numenoreans and mariners. Changeable in temperament as the waves.",
+    citazione:"'Il mare è mio dominio, e la mia furia è la furia dell'oceano.'", citazione_en:"'The sea is my domain, and my fury is the fury of the ocean.'"
   },
   {
-    nome:"Uinen", nome_en:"Uinen",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Uinen", nome_en:"Uinen" ,
+    nomi_alternativi:"Uinen (nome unico)", nomi_alternativi_en:"Uinen (unique name)",
+    appellativi:"la Signora delle Acque Calme, la Protettrice dei Naviganti, la Calma dopo la Tempesta", appellativi_en:"Lady of Calm Waters, Protector of Navigators, Calm After Storm",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Maia, sposa di Ossë. Domina le calme acque e le correnti benefiche. Protettrice dei naviganti.",
-    poteri_en:"Maia, spouse of Ossë. Dominates calm waters and beneficial currents. Protector of navigators.",
-    aneddoti:"Compagna di Ossë e sua moderatrice. Protegge chi naviga con cuore puro. È la calma dopo la tempesta.",
-    aneddoti_en:"Companion of Ossë and his moderator. Protects those who sail with pure heart. She is the calm after the storm.",
-    citazione:"'Non temo la tempesta, poiché la calma segue sempre la furia.'",
-    citazione_en:"'I do not fear the storm, for calm always follows fury.'"
+    poteri:"Maia, sposa di Ossë. Domina le calme acque e le correnti benefiche. Protettrice dei naviganti.", poteri_en:"Maia, spouse of Ossë. Dominates calm waters and beneficial currents. Protector of navigators.",
+    aneddoti:"Compagna di Ossë e sua moderatrice. Protegge chi naviga con cuore puro. È la calma dopo la tempesta.", aneddoti_en:"Companion of Ossë and his moderator. Protects those who sail with pure heart. She is the calm after the storm.",
+    citazione:"'Non temo la tempesta, poiché la calma segue sempre la furia.'", citazione_en:"'I do not fear the storm, for calm always follows fury.'"
   },
   {
-    nome:"Arien", nome_en:"Arien",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Arien", nome_en:"Arien" ,
+    nomi_alternativi:"Arien (nome unico)", nomi_alternativi_en:"Arien (unique name)",
+    appellativi:"la Conduttrice del Sole, la Portatrice di Luce, la Guaritrice tramite Calore", appellativi_en:"Conductor of the Sun, Bearer of Light, Healer through Warmth",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Maia, conduttrice del Sole. Domina il fuoco primordiale e la luce vitale. Guaritrice tramite il calore.",
-    poteri_en:"Maia, conductor of the Sun. Dominates primordial fire and vital light. Healer through warmth.",
-    aneddoti:"Guida il Sole attraverso i cieli dal Secondo Albero. Protegge coloro che cercano la verità e la guarigione. Non è mai stata corrotta.",
-    aneddoti_en:"Guides the Sun across the skies from the Second Tree. Protects those who seek truth and healing. Has never been corrupted.",
-    citazione:"'La luce del sole non mente, e il suo calore guarisce tutte le ferite.'",
-    citazione_en:"'The light of the sun does not lie, and its warmth heals all wounds.'"
+    poteri:"Maia, conduttrice del Sole. Domina il fuoco primordiale e la luce vitale. Guaritrice tramite il calore.", poteri_en:"Maia, conductor of the Sun. Dominates primordial fire and vital light. Healer through warmth.",
+    aneddoti:"Guida il Sole attraverso i cieli dal Secondo Albero. Protegge coloro che cercano la verità e la guarigione. Non è mai stata corrotta.", aneddoti_en:"Guides the Sun across the skies from the Second Tree. Protects those who seek truth and healing. Has never been corrupted.",
+    citazione:"'La luce del sole non mente, e il suo calore guarisce tutte le ferite.'", citazione_en:"'The light of the sun does not lie, and its warmth heals all wounds.'"
   },
   {
-    nome:"Tilion", nome_en:"Tilion",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Tilion", nome_en:"Tilion" ,
+    nomi_alternativi:"Tilion (nome unico)", nomi_alternativi_en:"Tilion (unique name)",
+    appellativi:"il Conduttore della Luna, il Persecutore di Arien, l'Ispiratore dei Mistici", appellativi_en:"Conductor of the Moon, Pursuer of Arien, Inspirer of Mystics",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Maia, conduttore della Luna. Domina i sogni e i misteri notturni. Custode delle visioni oscure.",
-    poteri_en:"Maia, conductor of the Moon. Dominates dreams and nocturnal mysteries. Keeper of dark visions.",
-    aneddoti:"Guida la Luna attraverso i cieli. Perseguita perpetuamente Arien, mai raggiungendola. Ispira i mistici e i veggenti.",
-    aneddoti_en:"Guides the Moon across the skies. Perpetually pursues Arien, never catching her. Inspires mystics and seers.",
-    citazione:"'La luna riflette i segreti che il sole non può rivelare.'",
-    citazione_en:"'The moon reflects the secrets that the sun cannot reveal.'"
+    poteri:"Maia, conduttore della Luna. Domina i sogni e i misteri notturni. Custode delle visioni oscure.", poteri_en:"Maia, conductor of the Moon. Dominates dreams and nocturnal mysteries. Keeper of dark visions.",
+    aneddoti:"Guida la Luna attraverso i cieli. Perseguita perpetuamente Arien, mai raggiungendola. Ispira i mistici e i veggenti.", aneddoti_en:"Guides the Moon across the skies. Perpetually pursues Arien, never catching her. Inspires mystics and seers.",
+    citazione:"'La luna riflette i segreti che il sole non può rivelare.'", citazione_en:"'The moon reflects the secrets that the sun cannot reveal.'"
   },
   {
-    nome:"Thuringwethil", nome_en:"Thuringwethil",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Thuringwethil", nome_en:"Thuringwethil" ,
+    nomi_alternativi:"Thuringwethil (nome principale), Donna-Lupo", nomi_alternativi_en:"Thuringwethil (main name), Woman-wolf",
+    appellativi:"la Messaggera di Morgoth, la Mutante, la Spietta delle Tenebre", appellativi_en:"Morgoth's Messenger, the Shapeshifter, Spy of Darkness",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"creatura", tipo_en:"Creature", featured:false, aka:"Donna-lupo",
-    poteri:"Può mutare forma fra donna e pipistrello gigante. Messaggera di Morgoth, veloce come il vento notturno.",
-    poteri_en:"Can transform between woman and giant bat. Morgoth's messenger, swift as night wind.",
-    aneddoti:"Servì come spiona e messaggera di Morgoth. Fu catturata da Eöl e morì. La sua pelle divenne il mantello di Mablung.",
-    aneddoti_en:"Served as Morgoth's spy and messenger. Was captured by Eöl and died. Her skin became Mablung's cloak.",
-    citazione:"'Volo nelle tenebre, portando parole che sconvolgono regni.'",
-    citazione_en:"'I fly in darkness, carrying words that shake kingdoms.'"
+    poteri:"Può mutare forma fra donna e pipistrello gigante. Messaggera di Morgoth, veloce come il vento notturno.", poteri_en:"Can transform between woman and giant bat. Morgoth's messenger, swift as night wind.",
+    aneddoti:"Servì come spiona e messaggera di Morgoth. Fu catturata da Eöl e morì. La sua pelle divenne il mantello di Mablung.", aneddoti_en:"Served as Morgoth's spy and messenger. Was captured by Eöl and died. Her skin became Mablung's cloak.",
+    citazione:"'Volo nelle tenebre, portando parole che sconvolgono regni.'", citazione_en:"'I fly in darkness, carrying words that shake kingdoms.'"
   },
   {
-    nome:"Draugluin", nome_en:"Draugluin",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Draugluin", nome_en:"Draugluin" ,
+    nomi_alternativi:"Draugluin (nome unico)", nomi_alternativi_en:"Draugluin (unique name)",
+    appellativi:"il Lupo Ancestrale, il Padre di Carcharoth, il Divoratore di Elfi", appellativi_en:"the Ancestral Wolf, Father of Carcharoth, Devourer of Elves",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"lupo", tipo_en:"Werewolf", featured:false, aka:"Lupo ancestrale",
-    poteri:"Lupo mostruoso della Prima Era. Fuoco, artigli infuocati, morso velenoso. Praticamente invincibile.",
-    poteri_en:"Monstrous wolf of the First Age. Fire, flaming claws, poisoned bite. Practically invincible.",
-    aneddoti:"Padre di Carcharoth. Combattè eroicamente contro gli Elfi. Morì nelle mani di Celegorm.",
-    aneddoti_en:"Father of Carcharoth. Fought heroically against the Elves. Died at Celegorm's hands.",
-    citazione:"'La mia fame non ha fine, e il mio artiglio taglia come il fuoco.'",
-    citazione_en:"'My hunger knows no end, and my claw cuts like fire.'"
+    poteri:"Lupo mostruoso della Prima Era. Fuoco, artigli infuocati, morso velenoso. Praticamente invincibile.", poteri_en:"Monstrous wolf of the First Age. Fire, flaming claws, poisoned bite. Practically invincible.",
+    aneddoti:"Padre di Carcharoth. Combattè eroicamente contro gli Elfi. Morì nelle mani di Celegorm.", aneddoti_en:"Father of Carcharoth. Fought heroically against the Elves. Died at Celegorm's hands.",
+    citazione:"'La mia fame non ha fine, e il mio artiglio taglia come il fuoco.'", citazione_en:"'My hunger knows no end, and my claw cuts like fire.'"
   },
   {
-    nome:"Carcharoth", nome_en:"Carcharoth",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Carcharoth", nome_en:"Carcharoth" ,
+    nomi_alternativi:"Carcharoth (nome principale), il Lupo di Angband", nomi_alternativi_en:"Carcharoth (main name), Wolf of Angband",
+    appellativi:"il Divoratore di Silmaril, il Lupo Infuocato, la Furia Divoratrice", appellativi_en:"the Devourer of the Silmaril, the Flaming Wolf, the Consuming Fury",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"lupo", tipo_en:"Werewolf", featured:false, aka:"Lupo di Angband",
-    poteri:"Lupo mostruoso, più potente del padre. Fuoco infernale, artigli di ferro. Quasi immortale.",
-    poteri_en:"Monstrous wolf, more powerful than his sire. Hellfire, iron claws. Nearly immortal.",
-    aneddoti:"Inghiottì la Silmaril e fu consumato dal suo fuoco. Combattè fino alla morte in battaglia contro gli Elfi. La sua agonia era terribile.",
-    aneddoti_en:"Swallowed the Silmaril and was consumed by its fire. Fought to death in battle against the Elves. His agony was terrible.",
-    citazione:"'Io ingoio il fuoco stesso, e il fuoco mi consuma!'",
-    citazione_en:"'I swallow fire itself, and fire consumes me!'"
+    poteri:"Lupo mostruoso, più potente del padre. Fuoco infernale, artigli di ferro. Quasi immortale.", poteri_en:"Monstrous wolf, more powerful than his sire. Hellfire, iron claws. Nearly immortal.",
+    aneddoti:"Inghiottì la Silmaril e fu consumato dal suo fuoco. Combattè fino alla morte in battaglia contro gli Elfi. La sua agonia era terribile.", aneddoti_en:"Swallowed the Silmaril and was consumed by its fire. Fought to death in battle against the Elves. His agony was terrible.",
+    citazione:"'Io ingoio il fuoco stesso, e il fuoco mi consuma!'", citazione_en:"'I swallow fire itself, and fire consumes me!'"
   },
   {
-    nome:"Huan", nome_en:"Huan",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Huan", nome_en:"Huan" ,
+    nomi_alternativi:"Huan (nome principale), il Cane di Valinor", nomi_alternativi_en:"Huan (main name), Hound of Valinor",
+    appellativi:"il Fedele, il Sconfittore di Draugluin, l'Aiutante di Beren e Lúthien", appellativi_en:"the Faithful, Slayer of Draugluin, Helper of Beren and Lúthien",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"cane", tipo_en:"Hound", featured:false, aka:"Cane di Valinor",
-    poteri:"Cane di Valinor. Velocità sovrumana, intelligenza quasi umana, forza incredibile. Quasi invulnerabile.",
-    poteri_en:"Hound of Valinor. Superhuman speed, near-human intelligence, incredible strength. Nearly invulnerable.",
-    aneddoti:"Il più fedele fra i cani. Aiutò Beren e Lúthien. Sconfisse il lupo Draugluin in combattimento. Morì solo quando perse il suo scopo.",
-    aneddoti_en:"The most faithful of hounds. Aided Beren and Lúthien. Defeated the wolf Draugluin in combat. Died only when his purpose was lost.",
-    citazione:"'Seguo colui che amo fino ai confini della morte stessa.'",
-    citazione_en:"'I follow whom I love to the very ends of death itself.'"
+    poteri:"Cane di Valinor. Velocità sovrumana, intelligenza quasi umana, forza incredibile. Quasi invulnerabile.", poteri_en:"Hound of Valinor. Superhuman speed, near-human intelligence, incredible strength. Nearly invulnerable.",
+    aneddoti:"Il più fedele fra i cani. Aiutò Beren e Lúthien. Sconfisse il lupo Draugluin in combattimento. Morì solo quando perse il suo scopo.", aneddoti_en:"The most faithful of hounds. Aided Beren and Lúthien. Defeated the wolf Draugluin in combat. Died only when his purpose was lost.",
+    citazione:"'Seguo colui che amo fino ai confini della morte stessa.'", citazione_en:"'I follow whom I love to the very ends of death itself.'"
   },
   {
-    nome:"Nahar", nome_en:"Nahar",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Nahar", nome_en:"Nahar" ,
+    nomi_alternativi:"Nahar (nome principale), il Cavallo di Oromë", nomi_alternativi_en:"Nahar (main name), Horse of Oromë",
+    appellativi:"il Velocissimo, il Compagno del Cacciatore, la Libertà Incarnata", appellativi_en:"the Swiftest, Companion of the Hunter, Freedom Incarnate",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"cavallo", tipo_en:"Horse", featured:false, aka:"Cavallo di Oromë",
-    poteri:"Cavallo divino di Oromë. Velocità sovrumana, intelligenza, resistenza infinita. Riesce a salire sui monti più alti.",
-    poteri_en:"Divine horse of Oromë. Superhuman speed, intelligence, infinite endurance. Can climb the highest mountains.",
-    aneddoti:"Cammina al fianco di Oromë nelle sue cacce. Non è mai stato catturato da alcun nemico. Rappresenta la libertà e la potenza del Cacciatore.",
-    aneddoti_en:"Walks at Oromë's side in his hunts. Has never been captured by any foe. Represents the freedom and power of the Hunter.",
-    citazione:"'Io corro più veloce del vento, e il mio cuore è uno con Oromë.'",
-    citazione_en:"'I run faster than the wind, and my heart is one with Oromë.'"
+    poteri:"Cavallo divino di Oromë. Velocità sovrumana, intelligenza, resistenza infinita. Riesce a salire sui monti più alti.", poteri_en:"Divine horse of Oromë. Superhuman speed, intelligence, infinite endurance. Can climb the highest mountains.",
+    aneddoti:"Cammina al fianco di Oromë nelle sue cacce. Non è mai stato catturato da alcun nemico. Rappresenta la libertà e la potenza del Cacciatore.", aneddoti_en:"Walks at Oromë's side in his hunts. Has never been captured by any foe. Represents the freedom and power of the Hunter.",
+    citazione:"'Io corro più veloce del vento, e il mio cuore è uno con Oromë.'", citazione_en:"'I run faster than the wind, and my heart is one with Oromë.'"
   },
   {
-    nome:"Gothmog", nome_en:"Gothmog",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Gothmog", nome_en:"Gothmog" ,
+    nomi_alternativi:"Gothmog (nome principale), il Signore dei Balrog", nomi_alternativi_en:"Gothmog (main name), Lord of Balrogs",
+    appellativi:"il Balrog Supremo, il Terrore di Nirnaeth, il Fuoco e la Rovina", appellativi_en:"the Supreme Balrog, Terror of Nirnaeth, Fire and Ruin",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"balrog", tipo_en:"Balrog", featured:false, aka:"Signore dei Balrog",
-    poteri:"Balrog supremo. Fuoco infernale e oscurità vivente. Arma di fiamma e frusta infuocato. Resistenza quasi divina.",
-    poteri_en:"Supreme Balrog. Hellfire and living darkness. Whip of fire and flaming sword. Nearly divine resilience.",
-    aneddoti:"Sconfisse Fingon il valoroso elfo nella battaglia di Nirnaeth Arnoediad. Terrorizzò il Nord durante la Prima Era. Cadde solo di fronte a forze combinate.",
-    aneddoti_en:"Defeated Fingon the valiant elf in the Battle of Nirnaeth Arnoediad. Terrorized the North during the First Age. Fell only before combined forces.",
-    citazione:"'Io sono il fuoco e la rovina, il terrore dell'Alleanza!'",
-    citazione_en:"'I am the fire and the ruin, the terror of the Alliance!'"
+    poteri:"Balrog supremo. Fuoco infernale e oscurità vivente. Arma di fiamma e frusta infuocato. Resistenza quasi divina.", poteri_en:"Supreme Balrog. Hellfire and living darkness. Whip of fire and flaming sword. Nearly divine resilience.",
+    aneddoti:"Sconfisse Fingon il valoroso elfo nella battaglia di Nirnaeth Arnoediad. Terrorizzò il Nord durante la Prima Era. Cadde solo di fronte a forze combinate.", aneddoti_en:"Defeated Fingon the valiant elf in the Battle of Nirnaeth Arnoediad. Terrorized the North during the First Age. Fell only before combined forces.",
+    citazione:"'Io sono il fuoco e la rovina, il terrore dell'Alleanza!'", citazione_en:"'I am the fire and the ruin, the terror of the Alliance!'"
   },
   {
-    nome:"Flagello di Dúrin", nome_en:"The Balrog of Moria",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Flagello di Dúrin", nome_en:"The Balrog of Moria" ,
+    nomi_alternativi:"Flagello di Dúrin (nome principale), il Balrog di Moria", nomi_alternativi_en:"Scourge of Durin (main name), Balrog of Moria",
+    appellativi:"il Fuoco Primordiale, lo Spettro delle Profondità, il Persecutore di Gandalf", appellativi_en:"the Primordial Fire, Phantom of the Depths, Pursuer of Gandalf",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"balrog", tipo_en:"Balrog", featured:false,
-    poteri:"Fuoco primordiale e oscurità. Frusta di fuoco che schianta roccia. Quasi immortale se non di forza cosmica.",
-    poteri_en:"Primordial fire and darkness. Whip of fire that shatters stone. Nearly immortal except by cosmic force.",
-    aneddoti:"Dormiva negli abissi di Moria per ere. Svegliato dai nani, devastò Khazad-dûm. Perseguitò Gandalf nella profondità prima di cadere.",
-    aneddoti_en:"Slept in the depths of Moria for ages. Awakened by dwarves, devastated Khazad-dûm. Pursued Gandalf into the depths before falling.",
-    citazione:"'Ti seguirò nel buio più profondo, fino ai confini del mondo.'",
-    citazione_en:"'I shall follow you into the deepest darkness, to the ends of the world.'"
+    poteri:"Fuoco primordiale e oscurità. Frusta di fuoco che schianta roccia. Quasi immortale se non di forza cosmica.", poteri_en:"Primordial fire and darkness. Whip of fire that shatters stone. Nearly immortal except by cosmic force.",
+    aneddoti:"Dormiva negli abissi di Moria per ere. Svegliato dai nani, devastò Khazad-dûm. Perseguitò Gandalf nella profondità prima di cadere.", aneddoti_en:"Slept in the depths of Moria for ages. Awakened by dwarves, devastated Khazad-dûm. Pursued Gandalf into the depths before falling.",
+    citazione:"'Ti seguirò nel buio più profondo, fino ai confini del mondo.'", citazione_en:"'I shall follow you into the deepest darkness, to the ends of the world.'"
   },
   {
-    nome:"Glaurung", nome_en:"Glaurung",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Glaurung", nome_en:"Glaurung" ,
+    nomi_alternativi:"Glaurung (nome unico)", nomi_alternativi_en:"Glaurung (unique name)",
+    appellativi:"il Padre dei Draghi, il Grande Verme, il Re-Drago di Nargothrond", appellativi_en:"Father of Dragons, the Great Worm, Dragon-King of Nargothrond",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false, aka:"Padre dei Draghi",
-    poteri:"Primo dragone mai creato. Fuoco infernale, volo possente, armatura di scaglie impenetrabile. Magia dello sguardo ipnotizzante.",
-    poteri_en:"First dragon ever created. Hellfire, mighty flight, impenetrable scale armor. Magic of hypnotic gaze.",
-    aneddoti:"Devastò le terre degli Elfi durante la Prima Era. Distrusse Nargothrond. Fu ucciso da Túrin ma non prima di aver compiuto rovina indicibile.",
-    aneddoti_en:"Devastated Elven lands during the First Age. Destroyed Nargothrond. Was slain by Túrin but not before causing untold ruin.",
-    citazione:"'Io sono il potere, la magnificenza, la fine di tutte le speranze!'",
-    citazione_en:"'I am power, magnificence, the end of all hopes!'"
+    poteri:"Primo dragone mai creato. Fuoco infernale, volo possente, armatura di scaglie impenetrabile. Magia dello sguardo ipnotizzante.", poteri_en:"First dragon ever created. Hellfire, mighty flight, impenetrable scale armor. Magic of hypnotic gaze.",
+    aneddoti:"Devastò le terre degli Elfi durante la Prima Era. Distrusse Nargothrond. Fu ucciso da Túrin ma non prima di aver compiuto rovina indicibile.", aneddoti_en:"Devastated Elven lands during the First Age. Destroyed Nargothrond. Was slain by Túrin but not before causing untold ruin.",
+    citazione:"'Io sono il potere, la magnificenza, la fine di tutte le speranze!'", citazione_en:"'I am power, magnificence, the end of all hopes!'"
   },
   {
-    nome:"Ancalagon il Nero", nome_en:"Ancalagon the Black",
-    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",
-    fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
+    nome:"Ancalagon il Nero", nome_en:"Ancalagon the Black" ,
+    nomi_alternativi:"Ancalagon (nome principale), il Nero", nomi_alternativi_en:"Ancalagon (main name), the Black",
+    appellativi:"il Più Grande Drago, il Divoratore di Mondi, l'Ombra che Copre il Sole", appellativi_en:"the Greatest Dragon, Devourer of Worlds, Shadow Covering the Sun",
+    fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)", fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",
     paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false,
-    poteri:"Dragone più grande mai creato. Fuoco che consuma mondi. Ali che coprono il cielo. Praticamente invincibile in battaglia.",
-    poteri_en:"Largest dragon ever created. Fire that consumes worlds. Wings that cover the sky. Practically invincible in battle.",
-    aneddoti:"Guidò l'assalto finale di Morgoth nella Guerra dell'Ira. Sorvolò l'intera Nargothrond. Fu abbattuto da Eärendil dal cielo.",
-    aneddoti_en:"Led Morgoth's final assault in the War of Wrath. Flew over all of Nargothrond. Was struck down by Eärendil from the sky.",
-    citazione:"'La mia ombra copre il sole, il mio fuoco dissolve le montagne!'",
-    citazione_en:"'My shadow covers the sun, my fire dissolves mountains!'"
+    poteri:"Dragone più grande mai creato. Fuoco che consuma mondi. Ali che coprono il cielo. Praticamente invincibile in battaglia.", poteri_en:"Largest dragon ever created. Fire that consumes worlds. Wings that cover the sky. Practically invincible in battle.",
+    aneddoti:"Guidò l'assalto finale di Morgoth nella Guerra dell'Ira. Sorvolò l'intera Nargothrond. Fu abbattuto da Eärendil dal cielo.", aneddoti_en:"Led Morgoth's final assault in the War of Wrath. Flew over all of Nargothrond. Was struck down by Eärendil from the sky.",
+    citazione:"'La mia ombra copre il sole, il mio fuoco dissolve le montagne!'", citazione_en:"'My shadow covers the sun, my fire dissolves mountains!'"
   },
   {
-    nome:"Scatha", nome_en:"Scatha the Worm",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Scatha", nome_en:"Scatha the Worm" ,
+    nomi_alternativi:"Scatha (nome principale), il Verme", nomi_alternativi_en:"Scatha (main name), the Worm",
+    appellativi:"il Drago Antico, il Terrore di Rhovanion, l'Accumulatore di Tesori", appellativi_en:"the Ancient Dragon, Terror of Rhovanion, Hoarder of Treasures",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false, aka:"il Verme",
-    poteri:"Dragone antico della Terza Era. Fuoco distruttore, volo rapido. Accumulò immenso tesoro. Resistenza sovrumana.",
-    poteri_en:"Ancient dragon of the Third Age. Destructive fire, swift flight. Accumulated immense treasure. Superhuman resistance.",
-    aneddoti:"Terrorizzò le terre da Rhovanion fino agli Stendardi. Eorl il Giovane e i Rohirrim lo uccisero in battaglia glorioso. Il suo tesoro nacque una leggenda.",
-    aneddoti_en:"Terrorized lands from Rhovanion to the Plains. Eorl the Young and the Rohirrim slew him in glorious battle. His hoard became legend.",
-    citazione:"'Nulla osa sfidare Scatha il Worm e vivere!'",
-    citazione_en:"'Nothing dares challenge Scatha the Worm and live!'"
+    poteri:"Dragone antico della Terza Era. Fuoco distruttore, volo rapido. Accumulò immenso tesoro. Resistenza sovrumana.", poteri_en:"Ancient dragon of the Third Age. Destructive fire, swift flight. Accumulated immense treasure. Superhuman resistance.",
+    aneddoti:"Terrorizzò le terre da Rhovanion fino agli Stendardi. Eorl il Giovane e i Rohirrim lo uccisero in battaglia glorioso. Il suo tesoro nacque una leggenda.", aneddoti_en:"Terrorized lands from Rhovanion to the Plains. Eorl the Young and the Rohirrim slew him in glorious battle. His hoard became legend.",
+    citazione:"'Nulla osa sfidare Scatha il Worm e vivere!'", citazione_en:"'Nothing dares challenge Scatha the Worm and live!'"
   },
   {
-    nome:"Smaug", nome_en:"Smaug the Magnificent",
-    fonte:"Lo Hobbit (John Ronald Reuel Tolkien, 1937)",
-    fonte_en:"The Hobbit (John Ronald Reuel Tolkien, 1937)",
+    nome:"Smaug", nome_en:"Smaug the Magnificent" ,
+    nomi_alternativi:"Smaug (nome principale), il Magnifico, il Possente", nomi_alternativi_en:"Smaug (main name), the Magnificent, the Mighty",
+    appellativi:"l'Ultimo Drago, il Conquistatore della Montagna Solitaria, l'Armatura di Diamante", appellativi_en:"the Last Dragon, Conqueror of Lonely Mountain, Living Diamond Armor",
+    fonte:"Lo Hobbit (John Ronald Reuel Tolkien, 1937)", fonte_en:"The Hobbit (John Ronald Reuel Tolkien, 1937)",
     paese:"gb", tipo:"drago", tipo_en:"Dragon", featured:false, aka:"il Magnifico, il Possente",
-    poteri:"Dragone ultimo della Terza Era. Fuoco che arde per giorni. Intelligenza quasi umana, vanità letale. Armatura di diamante vivente.",
-    poteri_en:"Last dragon of the Third Age. Fire that burns for days. Near-human intelligence, lethal vanity. Living diamond armor.",
-    aneddoti:"Conquistò la Montagna Solitaria e uccise il Re Dwarf. Dormi su immensa ricchezza per cent'anni. Fu ucciso da Bard per una freccia nel cuore.",
-    aneddoti_en:"Conquered the Lonely Mountain and slew the Dwarf King. Slept upon immense wealth for a hundred years. Was slain by Bard through an arrow to the heart.",
-    citazione:"'Mi chiamo Smaug, e il mio nome è sinonimo di morte!'",
-    citazione_en:"'My name is Smaug, and my name is synonymous with death!'"
+    poteri:"Dragone ultimo della Terza Era. Fuoco che arde per giorni. Intelligenza quasi umana, vanità letale. Armatura di diamante vivente.", poteri_en:"Last dragon of the Third Age. Fire that burns for days. Near-human intelligence, lethal vanity. Living diamond armor.",
+    aneddoti:"Conquistò la Montagna Solitaria e uccise il Re Dwarf. Dormi su immensa ricchezza per cent'anni. Fu ucciso da Bard per una freccia nel cuore.", aneddoti_en:"Conquered the Lonely Mountain and slew the Dwarf King. Slept upon immense wealth for a hundred years. Was slain by Bard through an arrow to the heart.",
+    citazione:"'Mi chiamo Smaug, e il mio nome è sinonimo di morte!'", citazione_en:"'My name is Smaug, and my name is synonymous with death!'"
   },
   {
-    nome:"Shelob", nome_en:"Shelob the Great",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Shelob", nome_en:"Shelob the Great" ,
+    nomi_alternativi:"Shelob (nome principale), la Ragnatela Oscura", nomi_alternativi_en:"Shelob (main name), the Dark Web",
+    appellativi:"la Ragnatela Gigantesca, la Figlia di Ungoliant, la Paralizzatrice", appellativi_en:"the Giant Spider, Daughter of Ungoliant, the Paralyzer",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"ragno", tipo_en:"Spider", featured:false, aka:"la Ragnatela Oscura",
-    poteri:"Ragna gigantesca, figlia di Ungoliant. Tesse ragnatele impenetrabili. Veleno che paralizza. Invisibilità a piacimento.",
-    poteri_en:"Giant spider, daughter of Ungoliant. Weaves impenetrable webs. Venom that paralyzes. Invisibility at will.",
-    aneddoti:"Abitante di Cirith Ungol per migliaia di anni. Quasi catturò Frodo. Fu ferita da Sting e dalla Stella di Eärendil ma sopravvisse.",
-    aneddoti_en:"Inhabitant of Cirith Ungol for thousands of years. Nearly captured Frodo. Was wounded by Sting and the Star of Eärendil but survived.",
-    citazione:"'La mia ragnatela è inescapabile come la morte, la mia fame eterna.'",
-    citazione_en:"'My web is inescapable as death, my hunger eternal.'"
+    poteri:"Ragna gigantesca, figlia di Ungoliant. Tesse ragnatele impenetrabili. Veleno che paralizza. Invisibilità a piacimento.", poteri_en:"Giant spider, daughter of Ungoliant. Weaves impenetrable webs. Venom that paralyzes. Invisibility at will.",
+    aneddoti:"Abitante di Cirith Ungol per migliaia di anni. Quasi catturò Frodo. Fu ferita da Sting e dalla Stella di Eärendil ma sopravvisse.", aneddoti_en:"Inhabitant of Cirith Ungol for thousands of years. Nearly captured Frodo. Was wounded by Sting and the Star of Eärendil but survived.",
+    citazione:"'La mia ragnatela è inescapabile come la morte, la mia fame eterna.'", citazione_en:"'My web is inescapable as death, my hunger eternal.'"
   },
   {
-    nome:"Sauron", nome_en:"Sauron (Mairon)",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Sauron", nome_en:"Sauron (Mairon)" ,
+    nomi_alternativi:"**Mairon** (vero nome), Sauron, il Creatore dell'Anello Unico", nomi_alternativi_en:"**Mairon** (true name), Sauron, Creator of the One Ring",
+    appellativi:"il Signore Oscuro, il Sauron il Potente, l'Occhio Che Non Dorme", appellativi_en:"the Dark Lord, Sauron the Mighty, the Eye That Does Not Sleep",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"maia", tipo_en:"Maia", featured:true,
-    poteri:"Creatore dell'Anello Unico. Dominio assoluto sulla magia oscura e sulla volontà altrui tramite l'Anello. Controllo sulla forma e sulla percezione. Invisibilità totale con l'Anello indosso.",
-    poteri_en:"Creator of the One Ring. Absolute dominion over dark magic and the will of others through the Ring. Control over form and perception. Total invisibility while wearing the Ring.",
-    aneddoti:"Originariamente Mairon, aiutante di Aulë, si corruppe in Angband agli ordini di Morgoth. Fuggì e creò l'Anello Unico per conquistare il mondo. Regnò a Mordor per migliaia di anni fino alla sua caduta nella Terza Era.",
-    aneddoti_en:"Originally Mairon, aide of Aulë, became corrupted in Angband under Morgoth's command. Fled and forged the One Ring to conquer the world. Reigned in Mordor for thousands of years until his fall in the Third Age.",
-    citazione:"'Un Anello per dominarli tutti, Un Anello per trovarli, Un Anello per portarli tutti e nell'oscurità incatenarli.'",
-    citazione_en:"'One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.'"
+    poteri:"Creatore dell'Anello Unico. Dominio assoluto sulla magia oscura e sulla volontà altrui tramite l'Anello. Controllo sulla forma e sulla percezione. Invisibilità totale con l'Anello indosso.", poteri_en:"Creator of the One Ring. Absolute dominion over dark magic and the will of others through the Ring. Control over form and perception. Total invisibility while wearing the Ring.",
+    aneddoti:"Originariamente Mairon, aiutante di Aulë, si corruppe in Angband agli ordini di Morgoth. Fuggì e creò l'Anello Unico per conquistare il mondo. Regnò a Mordor per migliaia di anni fino alla sua caduta nella Terza Era.", aneddoti_en:"Originally Mairon, aide of Aulë, became corrupted in Angband under Morgoth's command. Fled and forged the One Ring to conquer the world. Reigned in Mordor for thousands of years until his fall in the Third Age.",
+    citazione:"'Un Anello per dominarli tutti, Un Anello per trovarli, Un Anello per portarli tutti e nell'oscurità incatenarli.'", citazione_en:"'One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.'"
   },
   {
-    nome:"Osservatore nell'Acqua", nome_en:"Watcher in the Water",
-    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)",
-    fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
+    nome:"Osservatore nell'Acqua", nome_en:"Watcher in the Water" ,
+    nomi_alternativi:"Osservatore nell'Acqua (nome unico)", nomi_alternativi_en:"Watcher in the Water (unique name)",
+    appellativi:"la Guardia della Porta di Moria, la Creatura Acquatica, il Tentacolato", appellativi_en:"Guard of the Gate of Moria, the Aquatic Creature, the Tentacled One",
+    fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954-1955)", fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954-1955)",
     paese:"gb", tipo:"creatura", tipo_en:"Creature", featured:false,
-    poteri:"Creatura acquatica di origine oscura. Tentacoli di forza terribile. Intelligenza primitiva ma letale. Domina le acque.",
-    poteri_en:"Aquatic creature of dark origin. Tentacles of terrible strength. Primitive but lethal intelligence. Dominates the waters.",
-    aneddoti:"Guardia invisibile della Porta del Moria. Quasi catturò la Compagnia dell'Anello. Tornò alle acque oscure quando furono fuggiti.",
-    aneddoti_en:"Invisible guard of the Gate of Moria. Nearly captured the Fellowship of the Ring. Returned to dark waters when they fled.",
-    citazione:"'Io vivo nelle acque più profonde, e i miei tentacoli afferrano tutti coloro che si avvicinano.'",
-    citazione_en:"'I live in the deepest waters, and my tentacles seize all who approach.'"
+    poteri:"Creatura acquatica di origine oscura. Tentacoli di forza terribile. Intelligenza primitiva ma letale. Domina le acque.", poteri_en:"Aquatic creature of dark origin. Tentacles of terrible strength. Primitive but lethal intelligence. Dominates the waters.",
+    aneddoti:"Guardia invisibile della Porta del Moria. Quasi catturò la Compagnia dell'Anello. Tornò alle acque oscure quando furono fuggiti.", aneddoti_en:"Invisible guard of the Gate of Moria. Nearly captured the Fellowship of the Ring. Returned to dark waters when they fled.",
+    citazione:"'Io vivo nelle acque più profonde, e i miei tentacoli afferrano tutti coloro che si avvicinano.'", citazione_en:"'I live in the deepest waters, and my tentacles seize all who approach.'"
   },
   {
-    nome:"Stregone Blu", nome_en:"Blue Wizard (Alatar/Pallando)",
-    fonte:"Il Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    fonte_en:"The Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
-    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false,
-    poteri:"Istari mandato ad oriente. Magia oscura e sapienza. Controllo su terre lontane tramite oscuri servitori.",
-    poteri_en:"Istari sent to the East. Dark magic and wisdom. Control of distant lands through dark servants.",
-    aneddoti:"Poco noto negli annali occidentali. Si credette che fosse corrotto o scomparso. La vera missione rimane mistero.",
-    aneddoti_en:"Little known in western lore. Believed to be either corrupted or vanished. The true mission remains a mystery.",
-    citazione:"'In oriente lavoro nelle ombre, lontano dagli occhi dei Savi.'",
-    citazione_en:"'In the East I work in shadows, far from the eyes of the Wise.'"
+    nome:"Pallando", nome_en:"Pallando" ,
+    nomi_alternativi:"Pallando (nome principale), lo Stregone Blu", nomi_alternativi_en:"Pallando (main name), the Blue Wizard",
+    appellativi:"il Mago Mistico, il Lavoratore nelle Ombre, l'Aiutante di Alatar", appellativi_en:"the Mystical Wizard, Worker in Shadows, Helper of Alatar",
+    fonte:"Il Silmarillion & Racconti Incompiuti (John Ronald Reuel Tolkien, 1977/1980)", fonte_en:"The Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Lo Stregone Blu",
+    poteri:"Istari mandato ad oriente con Alatar. Magia oscura e sapienza. Controllo su terre lontane tramite oscuri servitori.", poteri_en:"Istari sent to the East with Alatar. Dark magic and wisdom. Control of distant lands through dark servants.",
+    aneddoti:"Poco noto negli annali occidentali. Si credette che fosse corrotto o scomparso. La vera missione rimane mistero. Uno dei due Stregoni Blu.", aneddoti_en:"Little known in western lore. Believed to be either corrupted or vanished. The true mission remains a mystery. One of the two Blue Wizards.",
+    citazione:"'In oriente lavoro nelle ombre, lontano dagli occhi dei Savi.'", citazione_en:"'In the East I work in shadows, far from the eyes of the Wise.'"
+  },
+  {
+    nome:"Alatar", nome_en:"Alatar" ,
+    nomi_alternativi:"Alatar (nome principale), lo Stregone Blu", nomi_alternativi_en:"Alatar (main name), the Blue Wizard",
+    appellativi:"il Mago Mistico, il Seminatore della Rovina di Sauron, il Compagno di Pallando", appellativi_en:"the Mystical Wizard, Sower of Sauron's Ruin, Companion of Pallando",
+    fonte:"Il Silmarillion & Racconti Incompiuti (John Ronald Reuel Tolkien, 1977/1980)", fonte_en:"The Silmarillion & Unfinished Tales (John Ronald Reuel Tolkien, 1977/1980)",
+    paese:"gb", tipo:"maia", tipo_en:"Maia", featured:false, aka:"Lo Stregone Blu",
+    poteri:"Istari mandato ad oriente con Pallando. Magia oscura e sapienza. Controllo su terre lontane tramite oscuri servitori.", poteri_en:"Istari sent to the East with Pallando. Dark magic and wisdom. Control of distant lands through dark servants.",
+    aneddoti:"Poco noto negli annali occidentali. Si credette che fosse corrotto o scomparso. La vera missione rimane mistero. Uno dei due Stregoni Blu.", aneddoti_en:"Little known in western lore. Believed to be either corrupted or vanished. The true mission remains a mystery. One of the two Blue Wizards.",
+    citazione:"'Nelle terre oscure semino i semi della rovina di Sauron.'", citazione_en:"'In the dark lands I sow the seeds of Sauron's ruin.'"
   }
 ];
+
 
 const lista = document.getElementById('rank-list');
 
@@ -1071,13 +1012,27 @@ function renderList() {
     var pf = parseFonte(currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte));
     var nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
+    var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
+    var appell = currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || '');
     var titleYear = pf.title + ' (' + pf.year + ')';
-    var badge = '<span class="badge">' + tipo + '</span>';
+    var tipoStr = tipo ? ' [' + tipo + ']' : '';
+
+    // Costruisci la riga 2: nomi_alternativi | appellativi
+    var riga2 = '';
+    if (nomiAlt || appell) {
+      riga2 = '<div class="rank-subtitle">';
+      if (nomiAlt) riga2 += nomiAlt;
+      if (nomiAlt && appell) riga2 += ' | ';
+      if (appell) riga2 += appell;
+      riga2 += '</div>';
+    }
+
     item.innerHTML = `
       <div class="rank-num">${rango}</div>
       <div class="rank-content">
-        <div class="rank-name">${nome}</div>
-        <div class="rank-title">${titleYear}${badge}</div>
+        <div class="rank-name">${nome}${tipoStr}</div>
+        ${riga2}
+        <div class="rank-title">${titleYear}</div>
       </div>
       <div class="rank-arrow">→</div>
     `;
