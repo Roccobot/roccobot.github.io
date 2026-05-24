@@ -218,6 +218,16 @@ h1 {
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
 
+.rank-subtitle {
+  font-family:'EB Garamond',serif;
+  font-size:clamp(0.75rem,1.8vw,0.88rem);
+  color:var(--parchment-dim);
+  opacity:0.75;
+  letter-spacing:0.01em;
+  line-height:1.4;
+  margin-top:0.1rem;
+}
+
 .rank-source {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(0.78rem,2vw,0.92rem);
@@ -690,14 +700,27 @@ function renderList() {
     var isTop3 = n <= 3;
     var nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
     var fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+    var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
+    var appell = currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || '');
+    var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var pf = parseFonte(fonte);
     var titleYear = pf.title + (pf.year ? ' (' + pf.year + ')' : '');
+    var tipoStr = tipo ? ' [' + tipo + ']' : '';
+    var riga2 = '';
+    if (nomiAlt || appell) {
+      riga2 = '<span class="rank-subtitle">';
+      if (nomiAlt) riga2 += nomiAlt;
+      if (nomiAlt && appell) riga2 += ' | ';
+      if (appell) riga2 += appell;
+      riga2 += '</span>';
+    }
     var classes = 'rank-item' + (isTop3 ? ' top-3 rank-' + n : '') + (p.featured ? ' featured' : '');
     html += '<button class="' + classes + '" style="animation-delay:' + (i * 0.04) + 's" data-idx="' + i + '" aria-label="' + nome + ', posizione ' + n + '">' +
       '<span class="rank-num">' + n + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name">' + nome + '</span>' +
-        '<span class="rank-title">' + titleYear + getBadge(p) + '</span>' +
+        '<span class="rank-name">' + nome + tipoStr + '</span>' +
+        riga2 +
+        '<span class="rank-title">' + titleYear + '</span>' +
       '</span>' +
       '<span class="rank-arrow">›</span>' +
     '</button>';
