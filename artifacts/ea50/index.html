@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="I 50 esseri divini di Arda - Valar, Maiar, Draghi e creature oscure dalla Terra di Mezzo di Tolkien">
-  <title>I 50 divini di Arda - Tolkien</title>
+  <title>I divini di Arda 50 - Tolkien</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>">
   <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -171,7 +171,7 @@ footer p { max-width:600px; margin:1rem auto; }
     <circle cx="140" cy="18" r="1.5" fill="#a9a9a9"/>
   </svg>
   <div class="intro" id="intro">
-    I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri.<span class="intro-cta">Tocca o clicca un nome per evocare la scheda completa.</span>
+    I soli esseri che sfuggono alla classifica standard: Valar e loro alleati, Maiar in forma autonoma, draghi primigeni, Ungoliant la madre di tutti i ragni oscuri. Escluso anche Eru Ilúvatar.<span class="intro-cta">Tocca o clicca un nome per evocare la scheda completa.</span>
   </div>
 </header>
 
@@ -806,6 +806,157 @@ document.getElementById('lang-switch').addEventListener('click', () => {
 
 document.getElementById('lang-switch').textContent = currentLang === 'it' ? 'EN' : 'IT';
 renderList();
+enableDragDrop();
+
+// ── DRAG-DROP & REORDERING ──
+let isDragging = null;
+let dragOffset = 0;
+let hasMovedItem = false;
+
+function enableDragDrop() {
+  const list = document.getElementById('rank-list');
+  if (!list) return;
+
+  const items = list.querySelectorAll('.rank-item');
+  items.forEach((item, idx) => {
+    item.draggable = true;
+    item.dataset.idx = idx;
+
+    const handle = document.createElement('div');
+    handle.className = 'drag-handle';
+    handle.innerHTML = '⋮';
+    handle.style.cssText = `
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+      cursor: grab; color: var(--gold); font-size: 1.2rem; user-select: none;
+      opacity: 0; transition: opacity 0.2s;
+    `;
+    item.appendChild(handle);
+    item.addEventListener('mouseenter', () => handle.style.opacity = '0.6');
+    item.addEventListener('mouseleave', () => handle.style.opacity = '0');
+
+    item.addEventListener('dragstart', (e) => {
+      isDragging = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      item.style.opacity = '0.5';
+    });
+
+    item.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const thisIdx = parseInt(item.dataset.idx);
+      if (isDragging !== null && isDragging !== thisIdx) {
+        const draggedItem = dati[isDragging];
+        if (isDragging < thisIdx) {
+          dati.splice(isDragging, 1);
+          dati.splice(thisIdx - 1, 0, draggedItem);
+        } else {
+          dati.splice(isDragging, 1);
+          dati.splice(thisIdx, 0, draggedItem);
+        }
+        isDragging = thisIdx;
+        hasMovedItem = true;
+        renderList();
+        enableDragDrop();
+        showAdminPanel();
+      }
+    });
+
+    item.addEventListener('dragend', () => {
+      item.style.opacity = '1';
+      isDragging = null;
+    });
+  });
+}
+
+function showAdminPanel() {
+  if (!hasMovedItem) return;
+
+  let panel = document.getElementById('admin-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'admin-panel';
+    panel.style.cssText = `
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 150;
+      background: rgba(104,144,168,0.95); border: 1px solid var(--gold);
+      border-radius: 8px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      max-width: 320px; font-size: 0.9rem; color: var(--parchment);
+      backdrop-filter: blur(8px);
+    `;
+    document.body.appendChild(panel);
+  }
+
+  if (!document.getElementById('copy-btn')) {
+    const copyBtn = document.createElement('button');
+    copyBtn.id = 'copy-btn';
+    copyBtn.textContent = '📋 Copia lista';
+    copyBtn.style.cssText = `
+      display: block; width: 100%; padding: 0.6rem; margin-bottom: 0.8rem;
+      background: var(--gold); color: var(--ink); border: none; border-radius: 4px;
+      cursor: pointer; font-weight: bold; transition: all 0.2s;
+    `;
+    copyBtn.onmouseover = () => copyBtn.style.background = 'var(--gold-bright)';
+    copyBtn.onmouseout = () => copyBtn.style.background = 'var(--gold)';
+    copyBtn.onclick = () => {
+      const text = dati.map((p, i) => {
+        const nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
+        const fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+        const pf = parseFonte(fonte);
+        return `${i+1}. ${nome} (${pf.title}, ${pf.year}) - ${p.paese.toUpperCase()} ${pf.author}`;
+      }).join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = '✓ Copiato!';
+        setTimeout(() => copyBtn.textContent = '📋 Copia lista', 2000);
+      });
+    };
+    panel.appendChild(copyBtn);
+  }
+
+  if (!document.getElementById('admin-input')) {
+    const pwdLabel = document.createElement('label');
+    pwdLabel.style.cssText = 'display: block; margin-bottom: 0.4rem; font-size: 0.8rem; color: var(--gold);';
+    pwdLabel.textContent = 'Password admin:';
+    const input = document.createElement('input');
+    input.id = 'admin-input';
+    input.type = 'password';
+    input.placeholder = 'mellon mofo';
+    input.style.cssText = `
+      width: 100%; padding: 0.5rem; border: 1px solid var(--gold);
+      background: rgba(13,10,20,0.8); color: var(--parchment);
+      border-radius: 4px; font-size: 0.85rem;
+    `;
+    input.onkeyup = () => {
+      if (input.value === 'mellon mofo') {
+        if (!document.getElementById('save-btn')) {
+          const saveBtn = document.createElement('button');
+          saveBtn.id = 'save-btn';
+          saveBtn.textContent = '💾 Salva permanente';
+          saveBtn.style.cssText = `
+            display: block; width: 100%; padding: 0.6rem; margin-top: 0.6rem;
+            background: #4a9a5a; color: white; border: none; border-radius: 4px;
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+          `;
+          saveBtn.onmouseover = () => saveBtn.style.background = '#5aaa6a';
+          saveBtn.onmouseout = () => saveBtn.style.background = '#4a9a5a';
+          saveBtn.onclick = () => {
+            localStorage.setItem('ea-ranking-' + currentLang, JSON.stringify(dati));
+            saveBtn.textContent = '✓ Salvato!';
+            setTimeout(() => saveBtn.textContent = '💾 Salva permanente', 2000);
+          };
+          panel.appendChild(saveBtn);
+        }
+      }
+    };
+    panel.appendChild(pwdLabel);
+    panel.appendChild(input);
+  }
+}
+
+// Load saved ranking if exists
+const saved = localStorage.getItem('ea-ranking-' + currentLang);
+if (saved) {
+  try {
+    dati = JSON.parse(saved);
+  } catch(e) {}
+}
 </script>
 </body>
 </html>
