@@ -626,7 +626,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.7</span>
+  <span class="version-badge">v2.7.1</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1016,9 +1016,9 @@ function showAdminPanel() {
     const copyBtn = document.createElement('button');
     copyBtn.id = 'copy-btn';
     copyBtn.textContent = 'Copia lista';
-    copyBtn.style.cssText = `display:block;width:100%;padding:0.9rem 0.6rem;margin-bottom:0.6rem;background:var(--gold);color:var(--ink);border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-size:1rem;letter-spacing:0.03em;transition:all 0.2s;`;
-    copyBtn.onmouseover = () => copyBtn.style.background = 'var(--gold-bright)';
-    copyBtn.onmouseout = () => copyBtn.style.background = 'var(--gold)';
+    copyBtn.style.cssText = `display:block;width:100%;padding:0.9rem 0.6rem;margin-bottom:0.6rem;background:#d4a820;color:#0a0a0a;border:2px solid #f0c830;border-radius:6px;cursor:pointer;font-weight:bold;font-size:1rem;letter-spacing:0.05em;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.35);`;
+    copyBtn.onmouseover = () => { copyBtn.style.background = '#f0c830'; copyBtn.style.borderColor = '#fff'; };
+    copyBtn.onmouseout = () => { copyBtn.style.background = '#d4a820'; copyBtn.style.borderColor = '#f0c830'; };
     copyBtn.onclick = () => {
       const text = dati.map((p, i) => {
         const nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
@@ -1044,7 +1044,7 @@ function showAdminPanel() {
         if (!document.getElementById('save-btn')) {
           const saveBtn = document.createElement('button');
           saveBtn.id = 'save-btn';
-          saveBtn.textContent = '💾 Salva permanente';
+          saveBtn.textContent = 'Salva';
           saveBtn.style.cssText = `display:block;width:100%;padding:0.6rem;margin-top:0.6rem;background:#4a9a5a;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:bold;transition:all 0.2s;`;
           saveBtn.onmouseover = () => saveBtn.style.background = '#5aaa6a';
           saveBtn.onmouseout = () => saveBtn.style.background = '#4a9a5a';
