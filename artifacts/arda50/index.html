@@ -439,6 +439,9 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
 ::-webkit-scrollbar-track { background:var(--ink-deep); }
 ::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--gold-deep),var(--gold)); border-radius:4px; }
 
+.rank-item.drop-above { box-shadow: 0 -3px 0 0 var(--gold-bright) !important; }
+.rank-item.drop-below { box-shadow: 0 3px 0 0 var(--gold-bright) !important; }
+
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
   .scroll { margin:2rem auto; padding:0 0.6rem; }
@@ -932,6 +935,16 @@ setLang(currentLang);
 let isDragging = null;
 let hasMovedItem = false;
 
+var dragSrc = null;
+var dropTarget = null;
+var dropPos = null;
+
+function clearDropIndicators() {
+  document.querySelectorAll('.rank-item').forEach(function(i) {
+    i.classList.remove('drop-above', 'drop-below');
+  });
+}
+
 function enableDragDrop() {
   const list = document.getElementById('rank-list');
   if (!list) return;
@@ -946,35 +959,46 @@ function enableDragDrop() {
     item.appendChild(handle);
     handle.addEventListener('mouseenter', () => handle.style.opacity = '0.8');
     handle.addEventListener('mouseleave', () => { if (!isDragging) handle.style.opacity = '0.25'; });
-    handle.addEventListener('mousedown', () => { item.draggable = true; });
+    handle.addEventListener('mousedown', () => {
+      item.draggable = true;
+      const reset = () => { item.draggable = false; document.removeEventListener('mouseup', reset); };
+      document.addEventListener('mouseup', reset);
+    });
     item.addEventListener('dragstart', (e) => {
+      dragSrc = idx;
       isDragging = idx;
       e.dataTransfer.effectAllowed = 'move';
-      item.style.opacity = '0.5';
+      setTimeout(() => { item.style.opacity = '0.4'; }, 0);
     });
     item.addEventListener('dragend', () => {
       item.draggable = false;
       item.style.opacity = '1';
-      isDragging = null;
+      clearDropIndicators();
+      dragSrc = null; dropTarget = null; dropPos = null; isDragging = null;
     });
     item.addEventListener('dragover', (e) => {
       e.preventDefault();
-      const thisIdx = parseInt(item.dataset.idx);
-      if (isDragging !== null && isDragging !== thisIdx) {
-        const draggedItem = dati[isDragging];
-        if (isDragging < thisIdx) {
-          dati.splice(isDragging, 1);
-          dati.splice(thisIdx - 1, 0, draggedItem);
-        } else {
-          dati.splice(isDragging, 1);
-          dati.splice(thisIdx, 0, draggedItem);
-        }
-        isDragging = thisIdx;
-        hasMovedItem = true;
-        renderList();
-        enableDragDrop();
-        showAdminPanel();
-      }
+      if (dragSrc === null || dragSrc === idx) return;
+      const rect = item.getBoundingClientRect();
+      const pos = e.clientY < rect.top + rect.height / 2 ? 'above' : 'below';
+      clearDropIndicators();
+      item.classList.add(pos === 'above' ? 'drop-above' : 'drop-below');
+      dropTarget = idx;
+      dropPos = pos;
+    });
+    item.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (dragSrc === null || dropTarget === null) return;
+      var insertAt = dropPos === 'below' ? dropTarget + 1 : dropTarget;
+      if (dragSrc < insertAt) insertAt--;
+      const draggedItem = dati.splice(dragSrc, 1)[0];
+      dati.splice(insertAt, 0, draggedItem);
+      clearDropIndicators();
+      dragSrc = null; dropTarget = null; dropPos = null; isDragging = null;
+      hasMovedItem = true;
+      renderList();
+      enableDragDrop();
+      showAdminPanel();
     });
   });
 }
