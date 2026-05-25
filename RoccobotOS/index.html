@@ -2708,7 +2708,7 @@
       <p>• Identificare quale processo tiene bloccato un disco montato:</p>
       <p><code class="language-plain_text">sudo lsof /Volumes/ </code>[+ trascinamento dell'icona del volume nella
         finestra del terminale]</p>
-      <p>• Identificare quale versione di un framework, script, pacchetto o servizio è installata e ha priorità nel PATH:</p>
+      <p>• Identificare quale versione di un framework, script, pacchetto o servizio è installata e ha priorità.</p>
       <pre><code class="language-plain_text">which &lt;nomePacchetto&gt;
 </code></pre>
       <p>• Scaricare (disattivare) un agente o demone di avvio:</p>
@@ -2717,7 +2717,7 @@
       <p>• Caricare (attivare) un agente o demone di avvio:</p>
       <pre><code class="language-plain_text">launchctl bootstrap gui/$(id -u) &lt;percorso&gt;/&lt;nomeAgente&gt;.plist
 </code></pre>
-      <p>• Verificare che un agente di avvio o demone sia attivo e correttamente caricato:</p>
+      <p>• Verificare che un agente di avvio sia attivo e caricato:<br>(se la seconda colonna dell'output è 0, è configurato correttamente):</p>
       <pre><code class="language-plain_text">launchctl list | grep &lt;nomePacchetto&gt;
 </code></pre>
       <h3><a id="tastiera-e-testo" class="anchor" aria-hidden="true"><span
