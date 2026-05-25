@@ -2442,7 +2442,7 @@
       <h2><a id="a-id-notavar-a-variabili-di-sistema-sup%C2%A7-sup" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a id="NotaVar"></a>Variabili di sistema <sup>§</sup></h2>
       <p><code>/</code> = Radice del disco di sistema</p>
-      <p><code>~</code> = Cartella Home (<code>/Users/&lt;nomeutente&gt;</code>)</p><br>
+      <p><code>~</code> = Cartella Home (<code>/Users/&lt;nomeUtente&gt;</code>)</p><br>
       <h2><a id="applicazioni-e-servizi-di-sistema" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Applicazioni e servizi di sistema</h2>
       <pre><code class="language-plain_text">/System/Library/CoreServices/Finder.app
@@ -2704,10 +2704,22 @@
       <p><code class="language-plain_text">head -c 20 </code>[+ percorso e nome del file o trascinamento nella finestra
         del terminale]</p>
 
-      <h3><a id="processi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Processi</h3>
+      <h3><a id="processi-e-servizi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Processi e servizi</h3>
       <p>• Identificare quale processo tiene bloccato un disco montato:</p>
       <p><code class="language-plain_text">sudo lsof /Volumes/ </code>[+ trascinamento dell'icona del volume nella
         finestra del terminale]</p>
+      <p>• Identificare quale versione di un framework, script, pacchetto o servizio è installata e ha priorità nel PATH:</p>
+      <pre><code class="language-plain_text">which &lt;nomePacchetto&gt;
+</code></pre>
+      <p>• Scaricare (disattivare) un agente o demone di avvio:</p>
+      <pre><code class="language-plain_text">launchctl bootout gui/$(id -u) &lt;percorso&gt;/&lt;nomeAgente&gt;.plist
+</code></pre>
+      <p>• Caricare (attivare) un agente o demone di avvio:</p>
+      <pre><code class="language-plain_text">launchctl bootstrap gui/$(id -u) &lt;percorso&gt;/&lt;nomeAgente&gt;.plist
+</code></pre>
+      <p>• Verificare che un agente di avvio o demone sia attivo e correttamente caricato:</p>
+      <pre><code class="language-plain_text">launchctl list | grep &lt;nomePacchetto&gt;
+</code></pre>
       <h3><a id="tastiera-e-testo" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Tastiera e testo</h3>
       <p>• Attivare il selettore dei caratteri extra con la pressione lunga su un tasto fisico</p><img
@@ -2729,10 +2741,10 @@
 </code></pre>
       <p>• Eseguire un comando come amministratori senza cambiare account<br>(occorre conoscere le credenziali di un
         utente amministratore)</p>
-      <pre><code class="language-plain_text">su - &lt;utenteadmin&gt; -c &lt;comando&gt;
+      <pre><code class="language-plain_text">su - &lt;utenteAdmin&gt; -c &lt;comando&gt;
 </code></pre>
       <p>• Creare un link simbolico:</p>
-      <pre><code class="language-plain_text">ln -s &lt;CartellaOrigine&gt; &lt;CartellaDestinazione&gt;
+      <pre><code class="language-plain_text">ln -s &lt;cartellaOrigine&gt; &lt;cartellaDestinazione&gt;
 </code></pre>
       <p><sup>es. <strong>ln -s ~/Cartella\ origine ~/Cartella\ destinazione</strong></sup><br><sup>N.B. ad ogni spazio
           va anteposto l'escape character backslash '\'</sup></p>
@@ -2749,7 +2761,17 @@ defaults write com.apple.finder CreateDesktop false
       <h3><a id="applicazioni-e-script-a-id-notaf-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Applicazioni e script<a id="NotaFTop"></a></h3>
       <p>• <a id="Pacchetti">Trovare il nome univoco del pacchetto di un'applicazione:</a></p>
-      <pre><code class="language-plain_text">osascript -e 'id of app &quot;&lt;nomeapp&gt;&quot;'
+      <p>Conoscendo il nome dell'app:</p>
+      <pre><code class="language-plain_text">osascript -e 'id of app &quot;&lt;nomeApp&gt;&quot;'
+</code></pre>
+      <p>Conoscendo il percorso del bundle (.app):</p>
+      <p><code class="language-plain_text">mdls -name kMDItemCFBundleIdentifier </code>[+ trascinamento del bundle .app sul Terminale]</p>
+      <p>• Escludere un'applicazione dalla politica di risparmio energetico App Nap:<br>
+        <sup>(sostituire <code>&lt;nomePacchetto&gt;</code> con il nome univoco del pacchetto, es. <code>com.apple.finder</code>)</sup></p>
+      <pre><code class="language-plain_text">defaults write &lt;nomePacchetto&gt; NSAppSleepDisabled -bool YES
+</code></pre>
+      <p>Per ripristinare il comportamento predefinito:</p>
+      <pre><code class="language-plain_text">defaults delete &lt;nomePacchetto&gt; NSAppSleepDisabled
 </code></pre><!--<h3><a id="gatekeeper" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GateKeeper</h3><p>• Permettere l'esecuzione di un'app non firmata (rimozione dalla Quarantena, richiede permessi admin):</p><pre><code class="language-plain_text">sudo xattr -rd com.apple.quarantine [+ trascinare l'app sul Terminale]
 </code></pre><p>• Permettere l'esecuzione di un'app non firmata (rimozione della data di Quarantena):</p><pre><code class="language-plain_text">xattr -d com.apple.quarantine [+ trascinare l'app sul Terminale]
 </code></pre><p>• Abilitare 'Dovunque' come origine delle applicazioni consentite:</p><pre><code class="language-plain_text">sudo spctl - -master-disable
@@ -2972,14 +2994,14 @@ launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
           </tr>
           <tr>
             <td style="text-align:left">python3 -m pip <strong>install</strong> --upgrade
-              <code>&lt;nomemodulo&gt;</code><br>python3 -m pip <strong>install</strong> -U
-              <code>&lt;nomemodulo&gt;</code>
+              <code>&lt;nomeModulo&gt;</code><br>python3 -m pip <strong>install</strong> -U
+              <code>&lt;nomeModulo&gt;</code>
             </td>
-            <td style="text-align:left">installa o aggiorna il modulo <code>&lt;nomemodulo&gt;</code></td>
+            <td style="text-align:left">installa o aggiorna il modulo <code>&lt;nomeModulo&gt;</code></td>
           </tr>
           <tr>
-            <td style="text-align:left">python3 -m pip <strong>show</strong> <code>&lt;nomemodulo&gt;</code></td>
-            <td style="text-align:left">mostra le informazioni sul modulo <code>&lt;nomemodulo&gt;</code></td>
+            <td style="text-align:left">python3 -m pip <strong>show</strong> <code>&lt;nomeModulo&gt;</code></td>
+            <td style="text-align:left">mostra le informazioni sul modulo <code>&lt;nomeModulo&gt;</code></td>
           </tr>
         </tbody>
       </table><br>
@@ -3083,7 +3105,7 @@ launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
             <td style="text-align:left">Elenca i pacchetti installati sul dispositivo (comando shell)</td>
           </tr>
           <tr>
-            <td style="text-align:left">    pm uninstall --user 0 <code>&lt;NomePacchetto&gt;</code>*</td>
+            <td style="text-align:left">    pm uninstall --user 0 <code>&lt;nomePacchetto&gt;</code>*</td>
             <td style="text-align:left">Disinstalla un'app o servizio di sistema (comando shell)</td>
           </tr>
         </tbody>
