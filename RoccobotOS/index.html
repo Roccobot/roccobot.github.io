@@ -818,7 +818,7 @@
         </tbody>
       </table>
       <p><a id="NotaPS"></a> * Può compromettere il funzionamento di <em>Vista corrente su nuovo livello</em></p>
-      <p><strong>Extra</strong>: <a href="http://roccobot.altervista.org/_altervista_ht/a/Metodi%20di%20fusione.html"
+      <p><strong>Extra</strong>: <a href="https://roccobot.altervista.org/_altervista_ht/a/Metodi%20di%20fusione.html"
           target="_blank" style="white-space:nowrap">Metodi di fusione</a><br><br></p>
       <h2><a
           id="a-href-https-www-alfredapp-com-target-blank-alfred-a-a-href-https-www-raycast-com-target-blank-raycast-a"
@@ -2779,10 +2779,10 @@ defaults write com.apple.finder CreateDesktop false
 </code></pre>-->
       <h3><a id="dock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dock</h3>
       <p>• Disattivare in modo permanente l'animazione ('rimbalzo') delle icone:</p>
-      <pre><code class="language-plain_text">defaults write com.apple.dock no-bouncing -bool TRUE
+      <pre><code class="language-plain_text">defaults write com.apple.dock no-bouncing -bool true
 </code></pre>
       <p>• Ripristinare l'animazione ('rimbalzo') delle icone:</p>
-      <pre><code class="language-plain_text">defaults write com.apple.dock no-bouncing -bool FALSE
+      <pre><code class="language-plain_text">defaults write com.apple.dock no-bouncing -bool false
 </code></pre>
       <p>• Impostare il ritardo del Dock (in modalità 'Mostra e nascondi') a 5 secondi:</p>
       <pre><code class="language-plain_text">defaults write com.apple.dock autohide-delay -float 5 &amp;&amp; killall Dock
@@ -2794,7 +2794,7 @@ defaults write com.apple.finder CreateDesktop false
           aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://en.wikipedia.org/wiki/Shell_(computing)" target="_blank">Shell di sistema</a></h3>
       <p>• Cambiare l'interprete della linea di comando:</p>
-      <p>Impostare <a href="https://zsh.sourceforge.io/" target="_blank">zsh</a> (Predefinito da macOS 15 Sequoia)</p>
+      <p>Impostare <a href="https://zsh.sourceforge.io/" target="_blank">zsh</a> (Predefinito da macOS Catalina, 10.15)</p>
       <pre><code class="language-plain_text">/usr/bin/chsh -s /bin/zsh
 </code></pre>
       <p>Impostare <a href="https://www.gnu.org/software/bash/" target="_blank">bash</a></p>
@@ -2821,13 +2821,6 @@ defaults write com.apple.finder CreateDesktop false
       <p>• Risolvere il conflitto dell'applicazione di posta predefinita:</p>
       <pre><code class="language-plain_text">/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -all local,system,user
 </code></pre>
-      <h3><a id="prodotti-microsoft" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Prodotti Microsoft</h3>
-      <p>• Risolvere i problemi di aggiornamento tramite Microsoft AutoUpdate:</p>
-      <pre><code class="language-plain_text">launchctl stop /Library/LaunchAgents/com.microsoft.update.agent.plist
-launchctl unload -w /Library/LaunchAgents/com.microsoft.update.agent.plist
-launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
-</code></pre><br>
       <h2><a id="operazioni-avanzate-su-dischi-e-volumi" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Operazioni avanzate su dischi e volumi</h2>
       <h3><a id="diskutil" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DiskUtil</h3>
@@ -2944,7 +2937,7 @@ launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
       <p><code>diskutil list</code></p>
       <p><code>diskutil unmountDisk force DiskName</code></p>
       <p><code>sudo dd if=/dev/zero of=/dev/DiskName bs=1024 count=1024</code></p>
-      <p><code>diskutil partitionDisk DiskName GPT JHFS+ &quot;MyDisk&quot; 0g</code></p>
+      <p><code>diskutil partitionDisk DiskName gpt jhfs+ &quot;MyDisk&quot; 0g</code></p>
       <ul>
         <li><strong>Creazione di un'unità esterna con la massima retrocompatibilità (MBR / FAT32)</strong></li>
       </ul>
@@ -3029,7 +3022,7 @@ launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
         </thead>
         <tbody>
           <tr>
-            <td style="text-align:left">fastbot devices</td>
+            <td style="text-align:left">fastboot devices</td>
             <td style="text-align:left">Elenca i dispositivi collegati in modalità Fastboot</td>
           </tr>
           <tr>
@@ -3138,10 +3131,9 @@ launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
             class="octicon octicon-link"></span></a>Eliminazione di file 'non cancellabili'</h2>
       <p><strong>Eliminazione di file che Finder non può spostare nel Cestino perché tenuti impegnati da 'un processo'
           non specificato (o eliminazione definitiva dal Cestino se l'automatismo fallisce)</strong></p>
-      <p>Aprire il <strong>Terminale</strong> e digitare <code>sudo rm –R</code> poi aggiungere uno spazio in
+      <p>Aprire il <strong>Terminale</strong> e digitare <code>sudo rm -R</code> poi aggiungere uno spazio in
         coda.<br>Trascinare i file non cancellabili (selezionati dal Finder) sulla finestra del Terminale.<br>Inserire
-        la password da amministratore e confermare con <strong>Invio</strong> (⏎).<br><strong>N.B.</strong> Funziona con
-        i file, <em>non con le cartelle</em>.</p><br>
+        la password da amministratore e confermare con <strong>Invio</strong> (⏎).<br><strong>Attenzione:</strong> al trascinamento di una cartella, è cancellato ricorsivamente TUTTO il contenuto.</p><br>
       <hr>
       <h1><a id="a-id-backup-backup-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a id="Backup">BACKUP</a></h1>
@@ -3348,13 +3340,13 @@ launchctl load -w /Library/LaunchAgents/com.microsoft.update.agent.plist
             <td style="text-align:left"><strong>Google</strong></td>
             <td style="text-align:center">8.8.8.8</td>
             <td style="text-align:center">8.8.4.4</td>
-            <td style="text-align:left"><a href="dns.google">dns.google</a></td>
+            <td style="text-align:left">dns.google</td>
           </tr>
           <tr>
             <td style="text-align:left"><strong>Keweon</strong></td>
             <td style="text-align:center">176.9.62.58</td>
             <td style="text-align:center">213.239.212.148</td>
-            <td style="text-align:left"><a href="dns.keweon.center">dns.keweon.center</a></td>
+            <td style="text-align:left">dns.keweon.center</td>
           </tr>
           <tr>
             <td style="text-align:left"><strong>OpenDNS</strong></td>
