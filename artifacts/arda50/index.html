@@ -102,6 +102,7 @@ h1 {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
   max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
+  white-space: pre-line;
 }
 
 .flourish { width:200px; height:30px; margin:1.5rem auto; opacity:0.7; }
@@ -158,6 +159,12 @@ h1 {
   box-shadow:0 0 30px rgba(104,144,168,0.2),0 4px 20px rgba(0,0,0,0.4);
   background:linear-gradient(90deg,rgba(32,22,40,0.4) 0%,rgba(24,14,30,0.2) 100%);
   outline:none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rank-item { cursor: default; }
+  .rank-name { cursor: pointer; text-decoration-line: none; }
+  .rank-name:hover { text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
 }
 
 .rank-item:hover::before { opacity:1; }
@@ -431,28 +438,29 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
 
 @media (prefers-color-scheme: light) {
   :root {
-    --ink: #f2ead8;
-    --ink-deep: #ede4cc;
-    --parchment: #1a1208;
-    --parchment-dim: #3a2c18;
-    --gold: #7a5020;
-    --gold-bright: #9a6830;
-    --gold-deep: #5a3810;
-    --violet: #2a1808;
-    --violet-glow: #8a5828;
-    --shadow: rgba(0,0,0,0.15);
+    --ink: #f2f2f6;
+    --ink-deep: #ebebef;
+    --parchment: #12141e;
+    --parchment-dim: #2a2d3e;
+    --gold: #3a5878;
+    --gold-bright: #4a7090;
+    --gold-deep: #253d58;
+    --violet: #0a1020;
+    --violet-glow: #3a5878;
+    --shadow: rgba(0,0,0,0.12);
   }
 
   body {
-    background: #ede4cc;
-    color: #1a1208;
+    background: #ebebef;
+    color: #12141e;
     font-weight: 500;
   }
   body::before {
     background:
-      radial-gradient(ellipse at 20% 10%, rgba(180,140,80,0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(160,120,60,0.10) 0%, transparent 55%),
-      #ede4cc;
+      radial-gradient(ellipse at 15% 20%, rgba(180,190,215,0.35) 0%, transparent 40%),
+      radial-gradient(ellipse at 85% 70%, rgba(170,180,210,0.28) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 95%, rgba(190,195,220,0.22) 0%, transparent 50%),
+      #ebebef;
   }
   body::after { display: none; }
 
@@ -461,138 +469,138 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   }
 
   h1 {
-    background: linear-gradient(180deg, #111111 0%, #2a5878 100%);
+    background: linear-gradient(180deg, #12141e 0%, #3a5878 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
   }
-  .crest { color: #2a5878; }
-  .subtitle { color: #222222; }
-  .intro { color: #222222; }
+  .crest { color: #3a5878; }
+  .subtitle { color: #2a2d3e; }
+  .intro { color: #2a2d3e; }
   .lang-switch {
-    background: #ddeaf5;
-    border-color: #2a5878;
-    color: #1a3850;
+    background: rgba(200,210,230,0.5);
+    border-color: #3a5878;
+    color: #253d58;
   }
-  .lang-switch:hover { background: #2a5878; color: #eff4f8; }
+  .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
 
   .rank-item {
-    background: linear-gradient(90deg, rgba(210,188,140,0.5) 0%, rgba(220,198,155,0.35) 100%);
-    border: 1px solid rgba(130,90,40,0.35);
-    border-left: 3px solid #9a6830;
-    box-shadow: 0 1px 6px rgba(80,50,10,0.12);
+    background: rgba(255,255,255,0.62);
+    border: 1px solid rgba(80,110,150,0.2);
+    border-left: 3px solid #3a5878;
+    box-shadow: 0 1px 6px rgba(20,30,60,0.08);
   }
   .rank-item::before { display: none; }
   .rank-item:hover, .rank-item:focus-visible {
-    background: linear-gradient(90deg, rgba(200,175,120,0.6) 0%, rgba(210,185,135,0.45) 100%);
-    border-color: rgba(130,90,30,0.5);
-    border-left-color: #7a5020;
-    box-shadow: 0 2px 14px rgba(80,50,10,0.2);
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(80,110,150,0.35);
+    border-left-color: #4a7090;
+    box-shadow: 0 2px 16px rgba(20,30,60,0.14);
     transform: translateX(6px);
   }
   .rank-item.top-3 {
-    background: linear-gradient(90deg, rgba(215,185,125,0.65) 0%, rgba(225,200,150,0.5) 100%);
-    border-color: rgba(130,90,30,0.5);
-    border-left-color: #7a5020;
+    background: rgba(255,255,255,0.75);
+    border-color: rgba(80,110,150,0.3);
+    border-left-color: #3a5878;
     border-width: 1px;
     border-left-width: 3px;
   }
   .rank-num {
-    color: #5a3810;
+    color: #253d58;
     text-shadow: none;
     font-weight: 900;
   }
   .rank-item:hover .rank-num,
-  .rank-item:focus-visible .rank-num { color: #7a5020; text-shadow: none; }
-  .rank-item.top-3 .rank-num { color: #5a3810; }
+  .rank-item:focus-visible .rank-num { color: #3a5878; text-shadow: none; }
+  .rank-item.top-3 .rank-num { color: #253d58; }
   .rank-name {
-    color: #1a1208;
+    color: #12141e;
     font-weight: 700;
   }
   .rank-item:hover .rank-name,
-  .rank-item:focus-visible .rank-name { color: #0a0804; }
-  .rank-item.top-3 .rank-name { color: #1a1208; font-size: clamp(1.1rem,3.4vw,1.6rem); }
+  .rank-item:focus-visible .rank-name { color: #000000; }
+  .rank-item.top-3 .rank-name { color: #12141e; font-size: clamp(1.1rem,3.4vw,1.6rem); }
   .rank-title {
-    color: #3a2c18;
+    color: #2a2d3e;
     font-weight: 500;
   }
   .rank-source {
-    color: #5a3810;
+    color: #253d58;
     font-weight: 500;
   }
-  .rank-arrow { color: #7a5020; }
+  .rank-arrow { color: #3a5878; }
   .rank-item:hover .rank-arrow,
-  .rank-item:focus-visible .rank-arrow { color: #5a3810; }
+  .rank-item:focus-visible .rank-arrow { color: #253d58; }
   .badge {
-    color: #5a3810;
-    border-color: #9a6830;
-    background: rgba(130,90,30,0.12);
+    color: #253d58;
+    border-color: #4a7090;
+    background: rgba(58,88,120,0.1);
     font-weight: 700;
   }
 
-  .modal-backdrop { background: rgba(30,15,5,0.55); backdrop-filter: blur(6px); }
+  .modal-backdrop { background: rgba(10,15,30,0.5); backdrop-filter: blur(6px); }
   .modal {
-    background: linear-gradient(135deg, #f0e8d0 0%, #e8ddc0 100%);
-    border: 2px solid #9a6830;
-    box-shadow: 0 8px 40px rgba(80,50,10,0.3);
+    background: linear-gradient(135deg, #f6f6fa 0%, #eeeeF4 100%);
+    border: 2px solid #4a7090;
+    box-shadow: 0 8px 40px rgba(20,30,60,0.2);
   }
-  .modal::before { border-color: rgba(130,90,30,0.4); }
+  .modal::before { border-color: rgba(58,88,120,0.3); }
   .modal-close {
-    background: rgba(200,175,120,0.4);
-    border-color: #9a6830;
-    color: #5a3810;
+    background: rgba(200,210,230,0.4);
+    border-color: #4a7090;
+    color: #253d58;
   }
-  .modal-close:hover { background: #7a5020; color: #f0e8d0; }
-  .modal-rank { color: #7a5020; font-weight: 700; }
-  .modal-name { color: #1a1208; }
+  .modal-close:hover { background: #3a5878; color: #f6f6fa; }
+  .modal-rank { color: #3a5878; font-weight: 700; }
+  .modal-name { color: #12141e; }
   .modal-source {
-    color: #5a3810;
-    border-bottom-color: #9a6830;
+    color: #253d58;
+    border-bottom-color: #4a7090;
     font-weight: 500;
   }
-  .modal-section h3 { color: #7a5020; }
+  .modal-section h3 { color: #3a5878; }
   .modal-section h3::before,
-  .modal-section h3::after { background: linear-gradient(90deg, transparent, rgba(130,90,30,0.5), transparent); }
-  .modal-section p { color: #1a1208; font-weight: 500; }
+  .modal-section h3::after { background: linear-gradient(90deg, transparent, rgba(74,112,144,0.4), transparent); }
+  .modal-section p { color: #12141e; font-weight: 500; }
   .modal-quote {
-    color: #3a2c18;
-    border-left-color: #9a6830;
-    background: rgba(200,175,120,0.25);
+    color: #2a2d3e;
+    border-left-color: #4a7090;
+    background: rgba(180,200,230,0.18);
     font-weight: 500;
   }
 
-  footer { border-top-color: rgba(130,90,30,0.3); }
-  footer p { color: #3a2c18; font-weight: 500; }
+  footer { border-top-color: rgba(58,88,120,0.25); }
+  footer p { color: #2a2d3e; font-weight: 500; }
 
-  ::-webkit-scrollbar-track { background: #e8ddc0; }
-  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #5a3810, #9a6830); }
+  ::-webkit-scrollbar-track { background: #e4e4ea; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #253d58, #4a7090); }
 
-  /* race badge light-mode overrides: darken colors for readability */
-  .tipo-noldor      { background:rgba(40,80,180,0.12); border-color:rgba(60,110,200,0.5); color:#2050a0; }
-  .tipo-noldor-vanyar { background:rgba(50,90,190,0.12); border-color:rgba(70,120,210,0.48); color:#2858a8; }
-  .tipo-vanyar      { background:rgba(60,110,200,0.10); border-color:rgba(80,140,220,0.45); color:#2060b0; }
-  .tipo-teleri      { background:rgba(20,110,160,0.12); border-color:rgba(30,150,185,0.45); color:#107090; }
-  .tipo-sindar      { background:rgba(30,80,120,0.12); border-color:rgba(50,100,150,0.45); color:#1a5880; }
-  .tipo-teleri-maia { background:rgba(40,80,160,0.12); border-color:rgba(60,110,200,0.45); color:#2050a0; }
-  .tipo-mezzelfo    { background:rgba(80,40,150,0.12); border-color:rgba(110,70,190,0.45); color:#6030b0; }
-  .tipo-numenorean  { background:rgba(150,20,20,0.12); border-color:rgba(190,40,40,0.48); color:#900808; }
-  .tipo-hador       { background:rgba(150,50,10,0.12); border-color:rgba(190,70,30,0.45); color:#903010; }
-  .tipo-beor        { background:rgba(130,30,20,0.12); border-color:rgba(170,50,40,0.45); color:#801808; }
-  .tipo-rohirrim    { background:rgba(140,40,15,0.12); border-color:rgba(180,60,30,0.45); color:#882010; }
-  .tipo-dunadan     { background:rgba(120,20,15,0.12); border-color:rgba(160,35,35,0.45); color:#781010; }
-  .tipo-eothéod     { background:rgba(130,40,12,0.12); border-color:rgba(175,60,28,0.45); color:#841c08; }
-  .tipo-beorn       { background:rgba(130,50,10,0.12); border-color:rgba(175,80,30,0.45); color:#883008; }
-  .tipo-dale        { background:rgba(140,55,8,0.12); border-color:rgba(185,90,30,0.45); color:#8c3808; }
-  .tipo-nano        { background:rgba(140,90,0,0.12); border-color:rgba(190,140,20,0.48); color:#806000; }
-  .tipo-orco        { background:rgba(80,0,120,0.12); border-color:rgba(130,40,180,0.48); color:#600888; }
-  .tipo-hobbit      { background:rgba(130,100,0,0.12); border-color:rgba(190,160,20,0.48); color:#786000; }
-  .tipo-gollum      { background:rgba(140,65,0,0.12); border-color:rgba(195,100,20,0.5); color:#884000; }
-  .tipo-aquila      { background:rgba(0,110,110,0.12); border-color:rgba(20,170,165,0.48); color:#007868; }
-  .tipo-ent         { background:rgba(15,90,10,0.12); border-color:rgba(50,140,40,0.48); color:#207010; }
-  .tipo-maia        { background:rgba(130,10,60,0.12); border-color:rgba(185,30,90,0.5); color:#800040; }
-  .tipo-istari      { background:rgba(70,70,100,0.12); border-color:rgba(130,130,170,0.45); color:#404870; }
-  .tipo-generico    { background:rgba(80,80,80,0.08); border-color:rgba(130,130,130,0.35); color:#505050; }
+  /* race badge light-mode overrides: saturated on marble/grey */
+  .tipo-noldor      { background:rgba(40,80,180,0.1); border-color:rgba(60,110,200,0.5); color:#1848a0; }
+  .tipo-noldor-vanyar { background:rgba(50,90,190,0.1); border-color:rgba(70,120,210,0.48); color:#2050a8; }
+  .tipo-vanyar      { background:rgba(60,110,200,0.09); border-color:rgba(80,140,220,0.45); color:#1858b0; }
+  .tipo-teleri      { background:rgba(20,110,160,0.1); border-color:rgba(30,150,185,0.45); color:#006888; }
+  .tipo-sindar      { background:rgba(30,80,120,0.1); border-color:rgba(50,100,150,0.45); color:#1a5080; }
+  .tipo-teleri-maia { background:rgba(40,80,160,0.1); border-color:rgba(60,110,200,0.45); color:#1848a0; }
+  .tipo-mezzelfo    { background:rgba(80,40,150,0.1); border-color:rgba(110,70,190,0.45); color:#5828a8; }
+  .tipo-numenorean  { background:rgba(150,20,20,0.1); border-color:rgba(190,40,40,0.5); color:#880808; }
+  .tipo-hador       { background:rgba(150,50,10,0.1); border-color:rgba(190,70,30,0.48); color:#882808; }
+  .tipo-beor        { background:rgba(130,30,20,0.1); border-color:rgba(170,50,40,0.48); color:#781008; }
+  .tipo-rohirrim    { background:rgba(140,40,15,0.1); border-color:rgba(180,60,30,0.48); color:#801808; }
+  .tipo-dunadan     { background:rgba(120,20,15,0.1); border-color:rgba(160,35,35,0.48); color:#700808; }
+  .tipo-eothéod     { background:rgba(130,40,12,0.1); border-color:rgba(175,60,28,0.48); color:#7c1800; }
+  .tipo-beorn       { background:rgba(130,50,10,0.1); border-color:rgba(175,80,30,0.48); color:#802800; }
+  .tipo-dale        { background:rgba(140,55,8,0.1); border-color:rgba(185,90,30,0.48); color:#883000; }
+  .tipo-nano        { background:rgba(140,90,0,0.1); border-color:rgba(190,140,20,0.5); color:#705800; }
+  .tipo-orco        { background:rgba(80,0,120,0.1); border-color:rgba(130,40,180,0.5); color:#580080; }
+  .tipo-hobbit      { background:rgba(130,100,0,0.1); border-color:rgba(190,160,20,0.5); color:#686000; }
+  .tipo-gollum      { background:rgba(140,65,0,0.1); border-color:rgba(195,100,20,0.52); color:#804000; }
+  .tipo-aquila      { background:rgba(0,110,110,0.1); border-color:rgba(20,170,165,0.5); color:#007068; }
+  .tipo-ent         { background:rgba(15,90,10,0.1); border-color:rgba(50,140,40,0.5); color:#186810; }
+  .tipo-maia        { background:rgba(130,10,60,0.1); border-color:rgba(185,30,90,0.52); color:#780038; }
+  .tipo-istari      { background:rgba(70,70,100,0.1); border-color:rgba(130,130,170,0.48); color:#384068; }
+  .tipo-generico    { background:rgba(80,80,80,0.07); border-color:rgba(130,130,130,0.38); color:#484848; }
 }
 
 </style>
@@ -602,7 +610,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
-  <p class="subtitle" id="subtitle">Una classifica dei personaggi più potenti nell'universo di Tolkien — dalla Prima Era alla Terza</p>
+  <p class="subtitle" id="subtitle">Una classifica dei personaggi più potenti nell'universo di Tolkien,<br>dall'inizio dei tempi alla Terza Era del Sole.</p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#6890a8" stroke-width="0.8" fill="none" opacity="0.6"/>
     <circle cx="100" cy="15" r="3" fill="#9ac0d8"/>
@@ -646,7 +654,7 @@ var i18n = {
   it: {
     crest: 'Arda · I 50 più potenti',
     title: 'I Grandi di Arda',
-    subtitle: "Una classifica dei personaggi più potenti nell'universo di Tolkien — dalla Prima Era alla Terza",
+    subtitle: "Una classifica dei personaggi più potenti nell'universo di Tolkien,\ndall'inizio dei tempi alla Terza Era del Sole.",
     intro: "Esclusi Valar, Maiar e draghi. Ammessi i mezzi-Maiar, gli Ent e le Aquile. Il 'potere' è inteso nel senso più ampio: forza magica, bruta, politica, militare, influenza e capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
     footer: "'Non tutta coloro che vagano sono perduti.' Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
@@ -656,7 +664,7 @@ var i18n = {
   en: {
     crest: 'Arda · The 50 most powerful',
     title: 'The Great of Arda',
-    subtitle: 'A ranking of the most powerful characters in Tolkien\'s universe — from the First Age to the Third',
+    subtitle: 'A ranking of the most powerful characters in Tolkien\'s universe,\nfrom the dawn of time to the Third Age of the Sun.',
     intro: "Excluding Valar, Maiar and dragons. Half-Maiar, Ents and Eagles are admitted. 'Power' is understood in the broadest sense: magical, brute, political, military force, influence and the ability to shape the world's fate.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
     footer: "'Not all those who wander are lost.' Power in Arda does not always wear a crown.",
     position: 'Position',
@@ -672,7 +680,7 @@ function setLang(lang) {
   document.getElementById('lang-switch').textContent = lang === 'it' ? 'EN' : 'IT';
   document.getElementById('crest').textContent = i18n[lang].crest;
   document.getElementById('title').textContent = i18n[lang].title;
-  document.getElementById('subtitle').textContent = i18n[lang].subtitle;
+  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle.replace(/\n/g, '<br>');
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
   document.getElementById('modal-powers-title').textContent = i18n[lang].powers;
@@ -835,10 +843,25 @@ function renderList() {
   list.innerHTML = html;
 
   var items = list.querySelectorAll('.rank-item');
+  var isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   for (var j = 0; j < items.length; j++) {
-    items[j].addEventListener('click', (function(idx) {
-      return function() { openModal(idx); };
-    })(j));
+    (function(idx) {
+      var item = items[idx];
+      var nameEl = item.querySelector('.rank-name');
+      if (isDesktop) {
+        // desktop: only name click opens modal
+        if (nameEl) nameEl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openModal(idx);
+        });
+      } else {
+        // mobile: anywhere on card (except drag handle) opens modal
+        item.addEventListener('click', function(e) {
+          if (e.target.classList.contains('drag-handle') || e.target.closest('.drag-handle')) return;
+          openModal(idx);
+        });
+      }
+    })(j);
   }
 }
 
