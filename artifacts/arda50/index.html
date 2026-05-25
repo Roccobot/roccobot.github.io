@@ -441,6 +441,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
 
 .rank-item.drop-above { box-shadow: 0 -3px 0 0 var(--gold-bright) !important; }
 .rank-item.drop-below { box-shadow: 0 3px 0 0 var(--gold-bright) !important; }
+body.is-dragging .rank-item * { pointer-events: none; }
 
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
@@ -626,7 +627,7 @@ footer p { color:var(--parchment-dim); font-style:italic; font-size:0.95rem; max
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.7.2</span>
+  <span class="version-badge">v2.7.3</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -968,38 +969,46 @@ function enableDragDrop() {
       dragSrc = idx;
       isDragging = idx;
       e.dataTransfer.effectAllowed = 'move';
+      document.body.classList.add('is-dragging');
       setTimeout(() => { item.style.opacity = '0.4'; }, 0);
     });
     item.addEventListener('dragend', () => {
       item.draggable = false;
       item.style.opacity = '1';
+      document.body.classList.remove('is-dragging');
       clearDropIndicators();
       dragSrc = null; dropTarget = null; dropPos = null; isDragging = null;
     });
-    item.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (dragSrc === null || dragSrc === idx) return;
-      const rect = item.getBoundingClientRect();
-      const pos = e.clientY < rect.top + rect.height / 2 ? 'above' : 'below';
-      clearDropIndicators();
-      item.classList.add(pos === 'above' ? 'drop-above' : 'drop-below');
-      dropTarget = idx;
-      dropPos = pos;
-    });
-    item.addEventListener('drop', (e) => {
-      e.preventDefault();
-      if (dragSrc === null || dropTarget === null) return;
-      var insertAt = dropPos === 'below' ? dropTarget + 1 : dropTarget;
-      if (dragSrc < insertAt) insertAt--;
-      const draggedItem = dati.splice(dragSrc, 1)[0];
-      dati.splice(insertAt, 0, draggedItem);
-      clearDropIndicators();
-      dragSrc = null; dropTarget = null; dropPos = null; isDragging = null;
-      hasMovedItem = true;
-      renderList();
-      enableDragDrop();
-      showAdminPanel();
-    });
+  });
+  if (list._dndReady) return;
+  list._dndReady = true;
+  list.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (dragSrc === null) return;
+    const item = e.target.closest('.rank-item');
+    if (!item) return;
+    const idx = parseInt(item.dataset.idx);
+    if (dragSrc === idx) return;
+    const rect = item.getBoundingClientRect();
+    const pos = e.clientY < rect.top + rect.height / 2 ? 'above' : 'below';
+    clearDropIndicators();
+    item.classList.add(pos === 'above' ? 'drop-above' : 'drop-below');
+    dropTarget = idx;
+    dropPos = pos;
+  });
+  list.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (dragSrc === null || dropTarget === null) return;
+    var insertAt = dropPos === 'below' ? dropTarget + 1 : dropTarget;
+    if (dragSrc < insertAt) insertAt--;
+    const draggedItem = dati.splice(dragSrc, 1)[0];
+    dati.splice(insertAt, 0, draggedItem);
+    clearDropIndicators();
+    dragSrc = null; dropTarget = null; dropPos = null; isDragging = null;
+    hasMovedItem = true;
+    renderList();
+    enableDragDrop();
+    showAdminPanel();
   });
 }
 
@@ -1010,7 +1019,16 @@ function showAdminPanel() {
     panel = document.createElement('div');
     panel.id = 'admin-panel';
     panel.style.cssText = `position:fixed;bottom:2rem;right:2rem;z-index:150;background:rgba(20,35,60,0.55);border:1px solid rgba(104,144,168,0.35);border-radius:12px;padding:1rem;max-width:320px;font-size:0.9rem;color:var(--parchment);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);`;
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = `position:absolute;top:0.35rem;right:0.5rem;background:none;border:none;color:var(--parchment);font-size:1.3rem;line-height:1;padding:0 0.2rem;cursor:pointer;opacity:0.45;`;
+    closeBtn.onmouseover = () => closeBtn.style.opacity = '1';
+    closeBtn.onmouseout = () => closeBtn.style.opacity = '0.45';
+    closeBtn.onclick = () => { panel.style.display = 'none'; };
+    panel.appendChild(closeBtn);
     document.body.appendChild(panel);
+  } else {
+    panel.style.display = '';
   }
   if (!document.getElementById('copy-btn')) {
     const copyBtn = document.createElement('button');
@@ -1051,7 +1069,7 @@ function showAdminPanel() {
           saveBtn.onclick = () => {
             localStorage.setItem('arda-ranking-v3-' + currentLang, JSON.stringify(dati));
             saveBtn.textContent = '✓ Salvato!';
-            setTimeout(() => saveBtn.textContent = '💾 Salva permanente', 2000);
+            setTimeout(() => saveBtn.textContent = 'Salva', 2000);
           };
           panel.appendChild(saveBtn);
         }
