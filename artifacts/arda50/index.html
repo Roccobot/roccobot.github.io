@@ -950,13 +950,13 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft' && currentIdx !== null && currentIdx > 0) openModal(currentIdx - 1);
 });
 
+let isFirstRender = true;
 setLang(currentLang);
 
 // ── DRAG-DROP & REORDERING ──
 let hasMovedItem = false;
 let saveUnlocked = false;
 let pointerDragState = null;
-let isFirstRender = true;
 
 function enableDragDrop() {
   const list = document.getElementById('rank-list');
