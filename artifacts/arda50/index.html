@@ -835,7 +835,11 @@ function getFlag(paese) {
 }
 
 function processAlt(str) {
-  return str ? str.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') : '';
+  if (!str) return '';
+  // **testo** → <strong> (legacy), Nome* → <strong> (convenzione asterisco finale)
+  return str
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/([^,|*]+?)\s*\*/g, (_, n) => '<strong>' + n.trim() + '</strong>');
 }
 
 function tipoClass(tipo) {
@@ -1296,7 +1300,7 @@ function showAdminEditor() {
     { key:'tipo', label:'Tipo IT', full:false }, { key:'tipo_en', label:'Tipo EN', full:false },
     { key:'descrizione', label:'Descrizione IT', full:false }, { key:'descrizione_en', label:'Descrizione EN', full:false },
     { key:'padre', label:'Padre', full:false }, { key:'madre', label:'Madre', full:false },
-    { key:'nomi_alternativi', label:'Nomi alternativi', full:false },
+    { key:'nomi_alternativi', label:'Nomi alternativi  (Nome* = grassetto)', full:false },
     { key:'appellativi', label:'Appellativi IT', full:false }, { key:'appellativi_en', label:'Appellativi EN', full:false },
     { key:'poteri', label:'Poteri IT', full:true, ta:true }, { key:'poteri_en', label:'Poteri EN', full:true, ta:true },
     { key:'aneddoti', label:'Aneddoti IT', full:true, ta:true }, { key:'aneddoti_en', label:'Aneddoti EN', full:true, ta:true },
