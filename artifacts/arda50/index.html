@@ -66,8 +66,10 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
   color: var(--gold-deep);
   opacity: 0.55;
   user-select: none;
-  pointer-events: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
+.version-badge:hover { opacity: 0.85; }
 
 .lang-switch {
   position: absolute;
@@ -456,6 +458,27 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-modal-box input[type=password]:focus { border-color:rgba(154,192,216,0.8); }
 .fab-modal-close { position:absolute;top:0.45rem;right:0.55rem;background:none;border:none;color:var(--parchment);opacity:0.4;font-size:1.2rem;cursor:pointer;line-height:1;padding:0 0.2rem; }
 .fab-modal-close:hover { opacity:1; }
+.fab-modal-confirm { display:block;width:100%;margin-top:0.8rem;padding:0.5rem 0;background:rgba(104,144,168,0.15);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.15s,border-color 0.15s; }
+.fab-modal-confirm:hover { background:rgba(104,144,168,0.3);border-color:rgba(154,192,216,0.65); }
+.admin-overlay { position:fixed;inset:0;z-index:300;overflow-y:auto;background:rgba(6,10,20,0.97);padding:2rem 1rem; }
+.admin-header { display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 2rem;padding:0 0.5rem;flex-wrap:wrap;gap:1rem; }
+.admin-title { font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold-bright);letter-spacing:0.08em; }
+.admin-btn-wrap { display:flex;gap:0.8rem; }
+.admin-btn { font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.08em;padding:0.5rem 1.4rem;border-radius:4px;cursor:pointer;transition:background 0.15s,border-color 0.15s; }
+.admin-btn-back { background:none;border:1px solid rgba(104,144,168,0.4);color:var(--parchment-dim); }
+.admin-btn-back:hover { background:rgba(104,144,168,0.1); }
+.admin-btn-save { background:rgba(30,80,50,0.5);border:1px solid rgba(90,200,110,0.5);color:#88e8a0; }
+.admin-btn-save:hover { background:rgba(30,100,60,0.6); }
+.admin-cards { max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem; }
+.admin-card { border:1px solid rgba(104,144,168,0.18);border-radius:6px;padding:1.2rem;background:rgba(20,30,50,0.4); }
+.admin-card-title { font-family:'Cinzel',serif;font-size:0.82rem;letter-spacing:0.1em;color:var(--gold);margin-bottom:1rem; }
+.admin-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem; }
+.admin-field { display:flex;flex-direction:column;gap:0.2rem; }
+.admin-field.full { grid-column:1/-1; }
+.admin-label { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;color:var(--parchment-dim);opacity:0.65; }
+.admin-input,.admin-textarea { background:rgba(0,0,0,0.35);border:1px solid rgba(104,144,168,0.28);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:0.88rem;padding:0.35rem 0.55rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s; }
+.admin-input:focus,.admin-textarea:focus { border-color:rgba(154,192,216,0.65); }
+.admin-textarea { resize:vertical;min-height:4.5rem; }
 
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
@@ -464,6 +487,14 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .modal { padding:1.8rem 1.2rem; }
   .modal-close { top:10px; right:10px; }
   .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
+}
+@media (max-width:768px) {
+  .fab-container { right:auto;left:2rem;align-items:flex-start; }
+  .fab-item { flex-direction:row-reverse; }
+  .fab-tooltip { transform:translateX(-4px); }
+  .fab-item:hover .fab-tooltip { transform:translateX(0); }
+  .admin-grid { grid-template-columns:1fr; }
+  .admin-field.full { grid-column:1; }
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -646,7 +677,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.10.0</span>
+  <span class="version-badge">v2.11.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -735,7 +766,7 @@ document.getElementById('lang-switch').addEventListener('click', function() {
 var dati = [
   {nome:"Lúthien",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"f",padre:"Thingol",madre:"Melian",tipo:"Elfa (Teleri), Maia",tipo_en:"Elf (Teleri), Maia",nomi_alternativi:"Tinúviel",appellativi:"Dama del Doriath, Signora di Tol Galen",appellativi_en:"Lady of Doriath, Lady of Tol Galen",descrizione:"La più bella tra i Primogeniti, incantò Morgoth e mosse il signore dei morti",descrizione_en:"The most beautiful of the Firstborn, enchanted Morgoth and moved the lord of the dead",featured:true,poteri:"La più bella di tutti gli esseri creati. Il suo canto può incantare Morgoth stesso e addormentare guardie infernali. Figlia di Thingol (re sindar) e Melian (Maia), eredita poteri soprannaturali da entrambi. Rinunciò all'immortalità per scegliere la vita mortale accanto a Beren.",poteri_en:"The most beautiful of all created beings. Her song can enchant Morgoth himself and put infernal guards to sleep. Daughter of Thingol and Melian (a Maia), she inherits supernatural powers from both. She surrendered her immortality to choose a mortal life beside Beren.",aneddoti:"Danzò davanti a Morgoth e con il suo canto lo addormentò permettendo di strappare un Silmaril dalla sua corona. Superò la guardia di Sauron, ingannò i lupi di Angband, discese al trono di Mandos e con il suo lamento commosse il signore dei morti stesso — unica creatura che vi riuscì.",aneddoti_en:"She danced before Morgoth and put him to sleep with her song, allowing a Silmaril to be wrested from his crown. She overcame Sauron's guard, deceived the wolves of Angband, descended to the throne of Mandos and with her lament moved the lord of the dead himself.",citazione:"\"Non ho paura di te, Signore Oscuro. Ho attraversato le tue porte cantando.\"",citazione_en:"\"I do not fear you, Dark Lord. I walked through your gates singing.\""},
   {nome:"Fëanor",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",padre:"Finwë",madre:"Míriel Serindë",tipo:"Elfo (Noldor)",tipo_en:"Elf (Noldor)",nomi_alternativi:"**Curufinwë**, Fëanaro",appellativi:"Figlio di Serindë, Signore delle Luci, il Superbo",appellativi_en:"Son of Serindë, Lord of Lights, the Proud",descrizione:"Creò i Silmaril e guidò i Noldor nell'Esilio con il suo giuramento fatale",descrizione_en:"Crafted the Silmarils and led the Noldor into Exile with his fatal oath",featured:true,poteri:"Il più grande artigiano mai nato tra gli Elfi. Creò i Silmaril: gemme contenenti la luce degli Alberi del Mondo, impossibili da ricreare. Inventò nuovi script, linguaggi e tecnologie. Spirito e volontà senza pari in tutta la storia di Arda.",poteri_en:"The greatest craftsman ever born among the Elves. He created the Silmarils: gems containing the light of the Two Trees, impossible to recreate. He invented new scripts, languages and technologies. Spirit and will unmatched in all the history of Arda.",aneddoti:"Forgiò da solo i Tre Silmaril, impresa che nessun altro elfo o essere avrebbe mai potuto emulare. Con la sua orazione al Tirion spinse un'intera nazione a lasciare il Paradiso. Combatté i Balrog da solo alla morte; la sua pira bruciò per giorni. Il suo spirito fu così ardente che rifiutò di tornare in forma corporea.",aneddoti_en:"He forged the Three Silmarils alone, a feat no other elf or being could ever have emulated. With his oration at Tirion he drove an entire nation to leave Paradise. He fought Balrogs alone until death; his pyre burned for days. His spirit was so fierce it refused to return to bodily form.",citazione:"\"Nessuno userà mai i Silmaril. Li ho forgiati, e appartengono solo a me.\"",citazione_en:"\"No one shall ever use the Silmarils. I forged them, and they belong to me alone.\""},
-  {nome:"Eärendil",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",padre:"Tuor",madre:"Idril",tipo:"Mezzelfo (Noldor)",tipo_en:"Half-elf (Noldor)",nomi_alternativi:"",appellativi:"Stella del Mattino, Portatore del Silmaril",appellativi_en:"the Morning Star, Bearer of the Silmaril",descrizione:"Il marinaio celeste, ambasciatore degli Elfi e degli Uomini a Valinor",descrizione_en:"The celestial mariner, ambassador of Elves and Men to Valinor",featured:true,poteri:"Navigatore celeste: porta il Silmaril sulla fronte navigando il cielo con la nave Vingilot come stella del mattino. Figlio di Tuor (uomo) e Idril (elfa), scelto dai Valar per portare la supplica di Elfi e Uomini alla Battaglia finale contro Morgoth.",poteri_en:"Celestial navigator: he bears the Silmaril on his brow, sailing the sky with the ship Vingilot as the Morning Star. Son of Tuor and Idril, chosen by the Valar. His light illuminated Mordor.",aneddoti:"Navigò le Acque Celesti per raggiungere Valinor quando sembrava impossibile, portando la supplica che portò alla Guerra dell'Ira e alla caduta di Morgoth. La sua luce in bottiglia illuminò le tenebre di Shelob per Frodo nella Terza Era — il Silmaril si dimostrò indistruttibile anche dopo ere.",aneddoti_en:"He sailed the Heavenly Waters to reach Valinor when it seemed impossible, bringing the plea that led to the War of Wrath and Morgoth's fall. His light bottled by Galadriel illuminated Shelob's darkness for Frodo.",citazione:"\"Navigherò finché vedrò la Terra dei Valar — o la morte mi troverà prima.\"",citazione_en:"\"I will sail until I see the Land of the Valar — or death finds me first.\""},
+  {nome:"Eärendil",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",padre:"Tuor",madre:"Idril",tipo:"Mezzelfo (→ Elfo Noldor)",tipo_en:"Half-elf (→ Noldor Elf)",nomi_alternativi:"",appellativi:"Stella del Mattino, Portatore del Silmaril",appellativi_en:"the Morning Star, Bearer of the Silmaril",descrizione:"Il marinaio celeste, ambasciatore degli Elfi e degli Uomini a Valinor",descrizione_en:"The celestial mariner, ambassador of Elves and Men to Valinor",featured:true,poteri:"Navigatore celeste: porta il Silmaril sulla fronte navigando il cielo con la nave Vingilot come stella del mattino. Figlio di Tuor (uomo) e Idril (elfa), scelto dai Valar per portare la supplica di Elfi e Uomini alla Battaglia finale contro Morgoth.",poteri_en:"Celestial navigator: he bears the Silmaril on his brow, sailing the sky with the ship Vingilot as the Morning Star. Son of Tuor and Idril, chosen by the Valar. His light illuminated Mordor.",aneddoti:"Navigò le Acque Celesti per raggiungere Valinor quando sembrava impossibile, portando la supplica che portò alla Guerra dell'Ira e alla caduta di Morgoth. La sua luce in bottiglia illuminò le tenebre di Shelob per Frodo nella Terza Era — il Silmaril si dimostrò indistruttibile anche dopo ere.",aneddoti_en:"He sailed the Heavenly Waters to reach Valinor when it seemed impossible, bringing the plea that led to the War of Wrath and Morgoth's fall. His light bottled by Galadriel illuminated Shelob's darkness for Frodo.",citazione:"\"Navigherò finché vedrò la Terra dei Valar — o la morte mi troverà prima.\"",citazione_en:"\"I will sail until I see the Land of the Valar — or death finds me first.\""},
   {nome:"Fingolfin",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",padre:"Finwë",madre:"Indis",tipo:"Elfo (Noldor/Vanyar)",tipo_en:"Elf (Noldor/Vanyar)",nomi_alternativi:"**Ñolofinwë**",appellativi:"Alto Re dei Noldor, Re del Nord",appellativi_en:"High King of the Noldor, King of the North",descrizione:"Alto Re dei Noldor in Beleriand, sfidò Morgoth in singolar tenzone",descrizione_en:"High King of the Noldor in Beleriand, challenged Morgoth to single combat",featured:true,poteri:"Alto Re dei Noldor, il più possente degli Elfi incarnati nella Terra di Mezzo in forza bruta e abilità in combattimento. Cavalcò da solo fino alle porte di Angband con la spada Ringil e ingaggiò duello con Morgoth — divinità caduta di potenza quasi illimitata.",poteri_en:"High King of the Noldor, the mightiest of all Elves incarnate in Middle-earth in raw strength and combat skill. He rode alone to the gates of Angband with his sword Ringil and challenged Morgoth to single combat.",aneddoti:"Ferì Morgoth sette volte: ferite che il Signore Oscuro portò per sempre, zoppicando. Nessun altro essere nella storia della Terra di Mezzo si avvicinò a quell'impresa. Morgoth non accettò mai più nessun duello singolo. Thorondor, re delle aquile, strappò il corpo di Fingolfin all'onta del nemico.",aneddoti_en:"He wounded Morgoth seven times: wounds the Dark Lord bore forever, leaving him with a permanent limp. No other being in all the history of Middle-earth came close to that deed. Morgoth never accepted single combat again.",citazione:"\"Vieni avanti, tiranno! Rispondi alla sfida del Re dei Noldor, o confessa la tua codardia davanti al mondo.\"",citazione_en:"\"Come forth, tyrant! Answer the challenge of the King of the Noldor, or confess your cowardice before all the world.\""},
   {nome:"Ingwë",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",tipo:"Elfo (Vanyar)",tipo_en:"Elf (Vanyar)",nomi_alternativi:"",appellativi:"Re dei Vanyar, Alto Re di tutti gli Elfi",appellativi_en:"King of the Vanyar, High King of all Elves",descrizione:"Il più esaltato degli Elfi, primo a giungere a Valinor",descrizione_en:"Most exalted of all Elves, first to arrive in Valinor",featured:false,poteri:"Re dei Vanyar, la più nobile delle tre stirpi elfiche. Abitante di Valinor, maestro di ogni arti elfiche. Visione profetica che abbraccia tutte le ere.",poteri_en:"King of the Vanyar, the most noble of the three Elvish kindreds. Inhabitant of Valinor, master of all Elvish arts. Prophetic vision spanning all ages.",aneddoti:"Fu il primo tra gli Elfi e il più puro. Rimase fedele ai Valar e visse in Valinor mentre gli altri soffrirono in Terra di Mezzo. La sua benedizione fu invocata dai Noldor anche nella sconfitta.",aneddoti_en:"He was the first among the Elves and the purest. He remained faithful to the Valar and lived in Valinor while others suffered in Middle-earth. His blessing was invoked by the Noldor even in defeat.",citazione:"\"La fedeltà ai Valar è la sola forza che non conosce fine.\"",citazione_en:"\"Loyalty to the Valar is the only strength that knows no end.\""},
   {nome:"Galadriel",fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954)",fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954)",paese:"gb",genere:"f",padre:"Finarfin",madre:"Eärwen",tipo:"Elfa (Noldor)",tipo_en:"Elf (Noldor)",nomi_alternativi:"**Artanis**, Nerwen, Altáriel",appellativi:"Signora di Lothlórien, Donzella della Luce d'Oro",appellativi_en:"Lady of Lothlórien, Maiden of the Golden Light",descrizione:"Guardiana dell'Anello Nenya, la più grande dei Noldor rimasti in Terra di Mezzo",descrizione_en:"Bearer of the Ring Nenya, greatest of the Noldor remaining in Middle-earth",featured:false,poteri:"Una dei Noldor più antichi, porta Nenya (Anello dell'Acqua). Visione profetica attraverso lo Specchio. Una dei pochissimi esseri capaci di resistere alla corruzione dell'Anello Unico. Mantenne Lothlórien come fortezza vivente contro il Male per secoli.",poteri_en:"One of the eldest Noldor, she bears Nenya (the Ring of Water). Prophetic vision through her Mirror. One of very few beings capable of resisting the corruption of the One Ring. She maintained Lothlórien as a living fortress against Evil for centuries.",aneddoti:"Visse in Valinor prima del primo Sole. Rifiutò di partire con Fëanor ma fu comunque esiliata. Rifiutò l'Anello da Frodo: 'Sono passata la prova. Rimango Galadriel.' Abbatté le mura di Dol Guldur dopo la distruzione dell'Anello.",aneddoti_en:"She lived in Valinor before the first Sun. She refused to follow Fëanor but was exiled nonetheless. She refused the Ring from Frodo. She cast down the walls of Dol Guldur after the Ring's destruction.",citazione:"\"Sono passata la prova. Rimango Galadriel.\"",citazione_en:"\"I pass the test. I will remain Galadriel.\""},
@@ -959,6 +990,20 @@ setLang(currentLang);
 let hasMovedItem = false;
 let saveUnlocked = false;
 let pointerDragState = null;
+let scrollRAF = null;
+
+function startAutoScroll(dir) {
+  if (scrollRAF) return;
+  function tick() {
+    if (!pointerDragState) { scrollRAF = null; return; }
+    window.scrollBy(0, dir * 7);
+    scrollRAF = requestAnimationFrame(tick);
+  }
+  scrollRAF = requestAnimationFrame(tick);
+}
+function stopAutoScroll() {
+  if (scrollRAF) { cancelAnimationFrame(scrollRAF); scrollRAF = null; }
+}
 
 function enableDragDrop() {
   const list = document.getElementById('rank-list');
@@ -1006,7 +1051,7 @@ function enableDragDrop() {
     document.body.appendChild(clone);
     item.style.visibility = 'hidden';
 
-    pointerDragState = { item, clone, list, allItems, startIdx: idx, currentIdx: idx, itemRects, offsetY: e.clientY - rect.top };
+    pointerDragState = { item, clone, list, allItems, startIdx: idx, currentIdx: idx, itemRects, offsetY: e.clientY - rect.top, scrollYStart: window.scrollY };
     document.body.classList.add('is-dragging');
     document.addEventListener('pointermove', onPointerMove, { passive: false });
     document.addEventListener('pointerup', onPointerUp);
@@ -1017,8 +1062,9 @@ function enableDragDrop() {
 function onPointerMove(e) {
   if (!pointerDragState) return;
   e.preventDefault();
-  const { clone, offsetY, allItems, startIdx, itemRects } = pointerDragState;
+  const { clone, offsetY, allItems, startIdx, itemRects, scrollYStart } = pointerDragState;
   const h = itemRects[startIdx].height;
+  const scrollDelta = window.scrollY - scrollYStart;
 
   const newTop = e.clientY - offsetY;
   clone.style.top = newTop + 'px';
@@ -1026,14 +1072,20 @@ function onPointerMove(e) {
   const cloneCenter = newTop + h / 2;
   const cur = pointerDragState.currentIdx;
 
-  // Hit-detection sui centri VISIVI (naturale + shift già applicato)
+  // Auto-scroll vicino ai bordi (solo su touch/mobile)
+  const EDGE = 80;
+  if (e.clientY < EDGE) startAutoScroll(-1);
+  else if (e.clientY > window.innerHeight - EDGE) startAutoScroll(1);
+  else stopAutoScroll();
+
+  // Hit-detection: item centers aggiustati per scroll avvenuto dopo drag start
   let count = 0;
   for (let i = 0; i < itemRects.length; i++) {
     if (i === startIdx) continue;
     let shift = 0;
     if (cur > startIdx && i > startIdx && i <= cur) shift = -h;
     else if (cur < startIdx && i >= cur && i < startIdx) shift = h;
-    if (itemRects[i].center + shift < cloneCenter) count++;
+    if (itemRects[i].center - scrollDelta + shift < cloneCenter) count++;
   }
 
   if (count !== cur) {
@@ -1053,6 +1105,7 @@ function onPointerUp() {
   document.removeEventListener('pointermove', onPointerMove);
   document.removeEventListener('pointerup', onPointerUp);
   document.removeEventListener('pointercancel', onPointerUp);
+  stopAutoScroll();
   if (!pointerDragState) return;
 
   const { item, clone, allItems, startIdx, currentIdx } = pointerDragState;
@@ -1100,7 +1153,7 @@ function doSave(btn) {
   if (btn) { btn.style.opacity = '0.35'; setTimeout(() => btn.style.opacity = '', 1200); }
 }
 
-function showSaveModal(onSuccess) {
+function showPasswordModal(promptText, onSuccess) {
   if (document.getElementById('fab-modal')) return;
   const overlay = document.createElement('div');
   overlay.id = 'fab-modal';
@@ -1112,16 +1165,12 @@ function showSaveModal(onSuccess) {
   closeBtn.textContent = '×';
   closeBtn.onclick = () => overlay.remove();
   const p = document.createElement('p');
-  p.textContent = 'Inserisci la parola d\'ordine per sbloccare il salvataggio permanente.';
+  p.textContent = promptText;
   const input = document.createElement('input');
   input.type = 'password';
   input.autocomplete = 'off';
-  input.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter') return;
+  const confirm = () => {
     if (input.value === atob('bWVsbG9uIG1vZm8=')) {
-      saveUnlocked = true;
-      const sb = document.getElementById('fab-save');
-      if (sb) sb.classList.add('fab-unlocked');
       overlay.remove();
       onSuccess();
     } else {
@@ -1129,14 +1178,29 @@ function showSaveModal(onSuccess) {
       input.value = '';
       setTimeout(() => input.style.borderColor = '', 700);
     }
-  });
+  };
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirm(); });
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'fab-modal-confirm';
+  confirmBtn.textContent = 'Conferma';
+  confirmBtn.onclick = confirm;
   box.appendChild(closeBtn);
   box.appendChild(p);
   box.appendChild(input);
+  box.appendChild(confirmBtn);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   setTimeout(() => input.focus(), 60);
+}
+
+function showSaveModal(onSuccess) {
+  showPasswordModal('Inserisci la parola d\'ordine per sbloccare il salvataggio permanente.', () => {
+    saveUnlocked = true;
+    const sb = document.getElementById('fab-save');
+    if (sb) sb.classList.add('fab-unlocked');
+    onSuccess();
+  });
 }
 
 function showFAB() {
@@ -1178,6 +1242,107 @@ function showFAB() {
   fab.appendChild(saveItem);
   document.body.appendChild(fab);
 }
+
+function showAdminEditor() {
+  const overlay = document.createElement('div');
+  overlay.className = 'admin-overlay';
+
+  const header = document.createElement('div');
+  header.className = 'admin-header';
+  const title = document.createElement('div');
+  title.className = 'admin-title';
+  title.textContent = 'Admin — Modifica testi';
+  const btnWrap = document.createElement('div');
+  btnWrap.className = 'admin-btn-wrap';
+  const backBtn = document.createElement('button');
+  backBtn.className = 'admin-btn admin-btn-back';
+  backBtn.textContent = 'Indietro';
+  backBtn.onclick = () => overlay.remove();
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'admin-btn admin-btn-save';
+  saveBtn.textContent = 'Salva';
+  saveBtn.onclick = () => {
+    dati.forEach((p, i) => {
+      const g = (field) => { const el = document.getElementById('ae-' + i + '-' + field); return el ? el.value : (p[field] || ''); };
+      p.nome = g('nome');
+      p.tipo = g('tipo'); p.tipo_en = g('tipo_en');
+      p.descrizione = g('descrizione'); p.descrizione_en = g('descrizione_en');
+      p.padre = g('padre'); p.madre = g('madre');
+      p.nomi_alternativi = g('nomi_alternativi');
+      p.appellativi = g('appellativi'); p.appellativi_en = g('appellativi_en');
+      p.poteri = g('poteri'); p.poteri_en = g('poteri_en');
+      p.aneddoti = g('aneddoti'); p.aneddoti_en = g('aneddoti_en');
+      p.citazione = g('citazione'); p.citazione_en = g('citazione_en');
+      p.fonte = g('fonte'); p.fonte_en = g('fonte_en');
+    });
+    localStorage.setItem('arda-ranking-v3-it', JSON.stringify(dati));
+    localStorage.setItem('arda-ranking-v3-en', JSON.stringify(dati));
+    renderList();
+    overlay.remove();
+  };
+  btnWrap.appendChild(backBtn);
+  btnWrap.appendChild(saveBtn);
+  header.appendChild(title);
+  header.appendChild(btnWrap);
+  overlay.appendChild(header);
+
+  const cards = document.createElement('div');
+  cards.className = 'admin-cards';
+  const FIELDS = [
+    { key:'nome', label:'Nome', full:false },
+    { key:'tipo', label:'Tipo IT', full:false }, { key:'tipo_en', label:'Tipo EN', full:false },
+    { key:'descrizione', label:'Descrizione IT', full:false }, { key:'descrizione_en', label:'Descrizione EN', full:false },
+    { key:'padre', label:'Padre', full:false }, { key:'madre', label:'Madre', full:false },
+    { key:'nomi_alternativi', label:'Nomi alternativi', full:false },
+    { key:'appellativi', label:'Appellativi IT', full:false }, { key:'appellativi_en', label:'Appellativi EN', full:false },
+    { key:'poteri', label:'Poteri IT', full:true, ta:true }, { key:'poteri_en', label:'Poteri EN', full:true, ta:true },
+    { key:'aneddoti', label:'Aneddoti IT', full:true, ta:true }, { key:'aneddoti_en', label:'Aneddoti EN', full:true, ta:true },
+    { key:'citazione', label:'Citazione IT', full:true }, { key:'citazione_en', label:'Citazione EN', full:true },
+    { key:'fonte', label:'Fonte IT', full:true }, { key:'fonte_en', label:'Fonte EN', full:true },
+  ];
+  dati.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'admin-card';
+    const ct = document.createElement('div');
+    ct.className = 'admin-card-title';
+    ct.textContent = '#' + (i + 1) + ' — ' + p.nome;
+    card.appendChild(ct);
+    const grid = document.createElement('div');
+    grid.className = 'admin-grid';
+    FIELDS.forEach(f => {
+      const wrap = document.createElement('div');
+      wrap.className = 'admin-field' + (f.full ? ' full' : '');
+      const lbl = document.createElement('label');
+      lbl.className = 'admin-label';
+      lbl.textContent = f.label;
+      lbl.htmlFor = 'ae-' + i + '-' + f.key;
+      let inp;
+      if (f.ta) {
+        inp = document.createElement('textarea');
+        inp.className = 'admin-textarea';
+        inp.rows = 3;
+      } else {
+        inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'admin-input';
+      }
+      inp.id = 'ae-' + i + '-' + f.key;
+      inp.value = p[f.key] || '';
+      wrap.appendChild(lbl);
+      wrap.appendChild(inp);
+      grid.appendChild(wrap);
+    });
+    card.appendChild(grid);
+    cards.appendChild(card);
+  });
+  overlay.appendChild(cards);
+  document.body.appendChild(overlay);
+}
+
+// Click sul badge versione → admin editor
+document.querySelector('.version-badge').addEventListener('click', () => {
+  showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+});
 
 const saved = localStorage.getItem('arda-ranking-v3-' + currentLang);
 if (saved) { try { dati = JSON.parse(saved); } catch(e) {} }
