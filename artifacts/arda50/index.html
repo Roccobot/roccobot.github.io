@@ -637,13 +637,18 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .tipo-maia        { background:rgba(180,8,90,0.12); border-color:rgba(220,28,118,0.55); color:#900050; }
   .tipo-istari      { background:rgba(112,115,158,0.11); border-color:rgba(160,162,208,0.52); color:#404878; }
   .tipo-generico    { background:rgba(80,80,80,0.07); border-color:rgba(135,135,135,0.38); color:#484848; }
+  .fab-modal-overlay { background:rgba(180,195,215,0.5); }
+  .fab-modal-box { background:rgba(238,242,250,0.97); border-color:rgba(60,95,140,0.35); }
+  .fab-modal-box p { color:#1a2535; opacity:0.7; }
+  .fab-modal-box input[type=password] { background:rgba(255,255,255,0.92); color:#12141e; border-color:rgba(60,110,170,0.45); }
+  .fab-modal-close { color:#1a2535; }
 }
 
 </style>
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.9.4</span>
+  <span class="version-badge">v2.9.5</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -958,11 +963,10 @@ let pointerDragState = null;
 
 function enableDragDrop() {
   const list = document.getElementById('rank-list');
-  if (!list || list._dndReady) return;
-  list._dndReady = true;
+  if (!list) return;
 
-  const items = list.querySelectorAll('.rank-item');
-  items.forEach((item, idx) => {
+  // Sempre ricostruisce le handle (renderList preserva lo stesso elemento <ul>)
+  list.querySelectorAll('.rank-item').forEach((item, idx) => {
     item.dataset.idx = idx;
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
@@ -972,6 +976,10 @@ function enableDragDrop() {
     handle.addEventListener('mouseenter', () => handle.style.opacity = '0.9');
     handle.addEventListener('mouseleave', () => { if (!pointerDragState) handle.style.opacity = '0.22'; });
   });
+
+  // Il listener pointerdown si aggiunge una sola volta (l'elemento lista persiste)
+  if (list._dndReady) return;
+  list._dndReady = true;
 
   list.addEventListener('pointerdown', (e) => {
     const handle = e.target.closest('.drag-handle');
@@ -1009,25 +1017,32 @@ function onPointerMove(e) {
   if (!pointerDragState) return;
   e.preventDefault();
   const { clone, offsetY, allItems, startIdx, itemRects } = pointerDragState;
+  const h = itemRects[startIdx].height;
 
   const newTop = e.clientY - offsetY;
   clone.style.top = newTop + 'px';
 
-  const cloneCenter = newTop + itemRects[startIdx].height / 2;
+  const cloneCenter = newTop + h / 2;
+  const cur = pointerDragState.currentIdx;
+
+  // Hit-detection sui centri VISIVI (naturale + shift già applicato)
   let count = 0;
   for (let i = 0; i < itemRects.length; i++) {
-    if (i !== startIdx && itemRects[i].center < cloneCenter) count++;
+    if (i === startIdx) continue;
+    let shift = 0;
+    if (cur > startIdx && i > startIdx && i <= cur) shift = -h;
+    else if (cur < startIdx && i >= cur && i < startIdx) shift = h;
+    if (itemRects[i].center + shift < cloneCenter) count++;
   }
 
-  if (count !== pointerDragState.currentIdx) {
+  if (count !== cur) {
     pointerDragState.currentIdx = count;
-    const h = itemRects[startIdx].height;
     allItems.forEach((it, i) => {
       if (i === startIdx) return;
       let shift = 0;
       if (count > startIdx && i > startIdx && i <= count) shift = -h;
       else if (count < startIdx && i >= count && i < startIdx) shift = h;
-      it.style.transition = 'transform 0.2s cubic-bezier(0.2,0,0,1)';
+      it.style.transition = 'transform 0.15s cubic-bezier(0.2,0,0,1)';
       it.style.transform = shift ? `translateY(${shift}px)` : '';
     });
   }
