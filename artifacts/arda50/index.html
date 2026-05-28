@@ -701,7 +701,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.16.0</span>
+  <span class="version-badge">v2.17.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1292,25 +1292,61 @@ function showAdminEditor() {
   backBtn.className = 'admin-btn admin-btn-back';
   backBtn.textContent = 'Indietro';
   backBtn.onclick = () => overlay.remove();
+  const BILINGUAL = [
+    { it:'tipo',        en:'tipo_en',        li:'Tipo IT',        le:'Tipo EN' },
+    { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN' },
+    { it:'appellativi', en:'appellativi_en', li:'Appellativi IT', le:'Appellativi EN' },
+    { it:'poteri',      en:'poteri_en',      li:'Poteri IT',      le:'Poteri EN',    ta:true },
+    { it:'aneddoti',    en:'aneddoti_en',    li:'Aneddoti IT',    le:'Aneddoti EN',  ta:true },
+    { it:'citazione',   en:'citazione_en',   li:'Citazione IT',   le:'Citazione EN' },
+    { it:'fonte',       en:'fonte_en',       li:'Fonte IT',       le:'Fonte EN' },
+  ];
+  const originals = dati.map(p => {
+    const s = { nome: p.nome || '' };
+    BILINGUAL.forEach(({ it, en }) => { s[it] = p[it] || ''; s[en] = p[en] || ''; });
+    return s;
+  });
   const saveBtn = document.createElement('button');
   saveBtn.className = 'admin-btn admin-btn-save';
   saveBtn.textContent = 'Salva';
   saveBtn.onclick = async () => {
+    saveBtn.disabled = true;
+    const g = (i, f) => { const el = document.getElementById('ae-' + i + '-' + f); return el ? el.value : (dati[i][f] || ''); };
+    const tasks = [];
     dati.forEach((p, i) => {
-      const g = (field) => { const el = document.getElementById('ae-' + i + '-' + field); return el ? el.value : (p[field] || ''); };
-      p.nome = g('nome');
-      p.tipo = g('tipo'); p.tipo_en = g('tipo_en');
-      p.descrizione = g('descrizione'); p.descrizione_en = g('descrizione_en');
-      p.padre = g('padre'); p.madre = g('madre');
-      p.nomi_alternativi = g('nomi_alternativi');
-      p.appellativi = g('appellativi'); p.appellativi_en = g('appellativi_en');
-      p.poteri = g('poteri'); p.poteri_en = g('poteri_en');
-      p.aneddoti = g('aneddoti'); p.aneddoti_en = g('aneddoti_en');
-      p.citazione = g('citazione'); p.citazione_en = g('citazione_en');
-      p.fonte = g('fonte'); p.fonte_en = g('fonte_en');
+      BILINGUAL.forEach(({ it, en }) => {
+        const itVal = g(i, it), enVal = g(i, en);
+        if (itVal !== originals[i][it] && enVal === originals[i][en] && itVal.trim()) {
+          tasks.push({ i, en, itVal });
+        }
+      });
+    });
+    if (tasks.length) {
+      saveBtn.textContent = 'Traduzione…';
+      const results = await Promise.all(tasks.map(t =>
+        fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(t.itVal) + '&langpair=it|en')
+          .then(r => r.json())
+          .then(d => d.responseStatus === 200 ? (d.responseData?.translatedText || t.itVal) : t.itVal)
+          .catch(() => t.itVal)
+      ));
+      results.forEach((tr, idx) => {
+        const el = document.getElementById('ae-' + tasks[idx].i + '-' + tasks[idx].en);
+        if (el) el.value = tr;
+      });
+    }
+    dati.forEach((p, i) => {
+      p.nome = g(i, 'nome');
+      p.tipo = g(i, 'tipo'); p.tipo_en = g(i, 'tipo_en');
+      p.descrizione = g(i, 'descrizione'); p.descrizione_en = g(i, 'descrizione_en');
+      p.padre = g(i, 'padre'); p.madre = g(i, 'madre');
+      p.nomi_alternativi = g(i, 'nomi_alternativi');
+      p.appellativi = g(i, 'appellativi'); p.appellativi_en = g(i, 'appellativi_en');
+      p.poteri = g(i, 'poteri'); p.poteri_en = g(i, 'poteri_en');
+      p.aneddoti = g(i, 'aneddoti'); p.aneddoti_en = g(i, 'aneddoti_en');
+      p.citazione = g(i, 'citazione'); p.citazione_en = g(i, 'citazione_en');
+      p.fonte = g(i, 'fonte'); p.fonte_en = g(i, 'fonte_en');
     });
     saveBtn.textContent = 'Salvataggio…';
-    saveBtn.disabled = true;
     const res = await doCommit('admin: modifica testi personaggi');
     if (res.ok) {
       saveBtn.textContent = 'Salvato ✓';
@@ -1331,16 +1367,6 @@ function showAdminEditor() {
 
   const FLAG_IT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><path fill="#CE2B37" d="M36 27c0 2.209-1.791 4-4 4h-8V5h8c2.209 0 4 1.791 4 4v18z"/><path fill="#009246" d="M4 5C1.791 5 0 6.791 0 9v18c0 2.209 1.791 4 4 4h8V5H4z"/><path fill="#EEE" d="M12 5h12v26H12z"/></svg>';
   const FLAG_EN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><path fill="#00247D" d="M0 9.059V13h5.628zM4.664 31H13v-5.837zM23 25.164V31h8.335zM0 23v3.941L5.63 23zM31.337 5H23v5.837zM36 26.942V23h-5.631zM36 13V9.059L30.371 13zM13 5H4.664L13 10.837z"/><path fill="#CF1B2B" d="M25.14 23l9.712 6.801c.471-.479.808-1.082.99-1.749L28.627 23H25.14zM13 23h-2.141l-9.711 6.8c.521.53 1.189.909 1.938 1.085L13 23.943V23zm10-10h2.141l9.711-6.8c-.521-.53-1.188-.909-1.937-1.085L23 12.057V13zm-12.141 0L1.148 6.2C.677 6.68.34 7.282.157 7.949L7.372 13h3.487z"/><path fill="#EEE" d="M36 21H21v10h2v-5.836L31.335 31H32c1.117 0 2.126-.461 2.852-1.199L25.14 23h3.487l7.215 5.052c.093-.337.158-.686.158-1.052v-.058L30.369 23H36v-2zM0 21v2h5.63L0 26.941V27c0 1.091.439 2.078 1.148 2.8l9.711-6.8H13v.943l-9.914 6.941c.294.07.598.116.914.116h.664L13 25.163V31h2V21H0zM36 9c0-1.091-.439-2.078-1.148-2.8L25.141 13H23v-.943l9.915-6.942C32.62 5.046 32.316 5 32 5h-.663L23 10.837V5h-2v10h15v-2h-5.629L36 9.059V9zM13 5v5.837L4.664 5H4c-1.118 0-2.126.461-2.852 1.2l9.711 6.8H7.372L.157 7.949C.065 8.286 0 8.634 0 9v.059L5.628 13H0v2h15V5h-2z"/><path fill="#CF1B2B" d="M21 15V5h-6v10H0v6h15v10h6V21h15v-6z"/></svg>';
-
-  const BILINGUAL = [
-    { it:'tipo',      en:'tipo_en',      li:'Tipo IT',       le:'Tipo EN' },
-    { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN' },
-    { it:'appellativi', en:'appellativi_en', li:'Appellativi IT', le:'Appellativi EN' },
-    { it:'poteri',    en:'poteri_en',    li:'Poteri IT',     le:'Poteri EN',    ta:true },
-    { it:'aneddoti',  en:'aneddoti_en',  li:'Aneddoti IT',   le:'Aneddoti EN',  ta:true },
-    { it:'citazione', en:'citazione_en', li:'Citazione IT',  le:'Citazione EN' },
-    { it:'fonte',     en:'fonte_en',     li:'Fonte IT',      le:'Fonte EN' },
-  ];
 
   const mkInp = (i, key, ta) => {
     let el;
