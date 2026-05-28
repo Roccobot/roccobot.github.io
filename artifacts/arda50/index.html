@@ -701,7 +701,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.17.0</span>
+  <span class="version-badge">v2.17.1</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1312,11 +1312,27 @@ function showAdminEditor() {
   saveBtn.onclick = async () => {
     saveBtn.disabled = true;
     const g = (i, f) => { const el = document.getElementById('ae-' + i + '-' + f); return el ? el.value : (dati[i][f] || ''); };
+    // Levenshtein edit distance (returns 99 fast if diff > 4)
+    const editDist = (a, b) => {
+      if (Math.abs(a.length - b.length) > 4) return 99;
+      const row = Array.from({length: b.length + 1}, (_, k) => k);
+      for (let i = 1; i <= a.length; i++) {
+        let prev = row[0]; row[0] = i;
+        for (let j = 1; j <= b.length; j++) {
+          const tmp = row[j];
+          row[j] = a[i-1] === b[j-1] ? prev : 1 + Math.min(prev, row[j], row[j-1]);
+          prev = tmp;
+        }
+      }
+      return row[b.length];
+    };
     const tasks = [];
     dati.forEach((p, i) => {
       BILINGUAL.forEach(({ it, en }) => {
         const itVal = g(i, it), enVal = g(i, en);
-        if (itVal !== originals[i][it] && enVal === originals[i][en] && itVal.trim()) {
+        const origIt = originals[i][it], origEn = originals[i][en];
+        // Translate only when: IT changed substantially (edit dist > 4), EN still untouched
+        if (itVal !== origIt && enVal === origEn && itVal.trim() && editDist(origIt, itVal) > 4) {
           tasks.push({ i, en, itVal });
         }
       });
