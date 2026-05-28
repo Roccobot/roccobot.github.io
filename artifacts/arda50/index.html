@@ -1174,13 +1174,13 @@ function replaceDatiInHTML(html) {
 
 async function doCommit(msg) {
   localStorage.setItem('arda-ranking-v3-' + currentLang, JSON.stringify(dati));
-  const token = sessionStorage.getItem('arda-admin-token');
+  const token = localStorage.getItem('arda-admin-token');
   if (!token) return { ok: false, reason: 'no-token' };
   const api = 'https://api.github.com/repos/roccobot/roccobot.github.io/contents/artifacts/arda50/index.html';
   try {
     const get = await fetch(api, { headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json' } });
     if (!get.ok) {
-      if (get.status === 401) sessionStorage.removeItem('arda-admin-token');
+      if (get.status === 401) localStorage.removeItem('arda-admin-token');
       throw new Error('HTTP ' + get.status);
     }
     const fd = await get.json();
@@ -1225,7 +1225,7 @@ function showPasswordModal(promptText, onSuccess) {
       }
       saveUnlocked = true;
       document.querySelectorAll('#fab-save').forEach(b => b.classList.add('fab-unlocked'));
-      if (sessionStorage.getItem('arda-admin-token')) { overlay.remove(); onSuccess(); }
+      if (localStorage.getItem('arda-admin-token')) { overlay.remove(); onSuccess(); }
       else buildStep2();
     };
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryAuth(); });
@@ -1249,7 +1249,7 @@ function showPasswordModal(promptText, onSuccess) {
     inp.type = 'password'; inp.autocomplete = 'off';
     const doToken = () => {
       const t = inp.value.trim();
-      if (t) sessionStorage.setItem('arda-admin-token', t);
+      if (t) localStorage.setItem('arda-admin-token', t);
       overlay.remove(); onSuccess();
     };
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') doToken(); });
