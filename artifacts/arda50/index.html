@@ -489,8 +489,6 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
 .admin-textarea { resize:vertical;min-height:5rem; }
-.admin-input-gender-warn,.admin-textarea-gender-warn { border-color:#c8930a !important;background:rgba(200,147,10,0.07) !important; }
-.admin-gender-warn { display:block;font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.06em;color:#c8930a;margin-top:0.25rem; }
 
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
@@ -703,7 +701,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.18.1</span>
+  <span class="version-badge">v2.18.2</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1348,28 +1346,8 @@ function showAdminEditor() {
           .catch(() => t.itVal)
       ));
       results.forEach((tr, idx) => {
-        const { i: ri, en: rk } = tasks[idx];
-        const el = document.getElementById('ae-' + ri + '-' + rk);
-        if (!el) return;
-        el.value = tr;
-        // Segnala possibili pronomi di genere errati (bug comune dei traduttori automatici)
-        const genere = dati[ri].genere || '';
-        const mismatch = (genere === 'f' && /\b(he|his|him)\b/i.test(tr)) ||
-                         (genere === 'm' && /\b(she|her|hers)\b/i.test(tr));
-        const warnId = 'gw-' + ri + '-' + rk;
-        const existing = document.getElementById(warnId);
-        if (mismatch) {
-          el.classList.add(el.tagName === 'TEXTAREA' ? 'admin-textarea-gender-warn' : 'admin-input-gender-warn');
-          if (!existing) {
-            const w = document.createElement('span');
-            w.id = warnId; w.className = 'admin-gender-warn';
-            w.textContent = '⚠ Verifica pronomi di genere (EN)';
-            el.parentNode.appendChild(w);
-          }
-        } else {
-          el.classList.remove('admin-input-gender-warn','admin-textarea-gender-warn');
-          if (existing) existing.remove();
-        }
+        const el = document.getElementById('ae-' + tasks[idx].i + '-' + tasks[idx].en);
+        if (el) el.value = tr;
       });
     }
     dati.forEach((p, i) => {
