@@ -462,6 +462,9 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-modal-close:hover { opacity:1; }
 .fab-modal-confirm { display:block;width:100%;margin-top:0.8rem;padding:0.5rem 0;background:rgba(104,144,168,0.15);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.15s,border-color 0.15s; }
 .fab-modal-confirm:hover { background:rgba(104,144,168,0.3);border-color:rgba(154,192,216,0.65); }
+.fab-modal-skip { display:block;width:100%;margin-top:0.4rem;padding:0.35rem 0;background:none;border:none;color:var(--parchment-dim);font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.06em;cursor:pointer;opacity:0.45;transition:opacity 0.15s; }
+.fab-modal-skip:hover { opacity:0.85; }
+.fab-modal-note { font-size:0.7rem !important;opacity:0.42 !important;margin-bottom:0.6rem !important; }
 .admin-overlay { position:fixed;inset:0;z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:rgba(6,10,20,0.97);padding:1.5rem 1rem calc(2rem + env(safe-area-inset-bottom,0px)); }
 .admin-header { position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 1.5rem;padding:0.8rem 0.5rem;background:rgba(6,10,20,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(104,144,168,0.15);flex-wrap:wrap;gap:0.8rem; }
 .admin-title { font-family:'Cinzel',serif;font-size:1rem;color:var(--gold-bright);letter-spacing:0.06em; }
@@ -766,7 +769,7 @@ document.getElementById('lang-switch').addEventListener('click', function() {
   setLang(currentLang === 'it' ? 'en' : 'it');
 });
 
-var dati = [
+/*DS*/var dati = [
   {nome:"Lúthien",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"f",padre:"Thingol",madre:"Melian",tipo:"Elfa (Teleri), Maia",tipo_en:"Elf (Teleri), Maia",nomi_alternativi:"Tinúviel",appellativi:"Dama del Doriath, Signora di Tol Galen",appellativi_en:"Lady of Doriath, Lady of Tol Galen",descrizione:"La più bella tra i Primogeniti, incantò Morgoth e mosse il signore dei morti",descrizione_en:"The most beautiful of the Firstborn, enchanted Morgoth and moved the lord of the dead",featured:true,poteri:"La più bella di tutti gli esseri creati. Il suo canto può incantare Morgoth stesso e addormentare guardie infernali. Figlia di Thingol (re sindar) e Melian (Maia), eredita poteri soprannaturali da entrambi. Rinunciò all'immortalità per scegliere la vita mortale accanto a Beren.",poteri_en:"The most beautiful of all created beings. Her song can enchant Morgoth himself and put infernal guards to sleep. Daughter of Thingol and Melian (a Maia), she inherits supernatural powers from both. She surrendered her immortality to choose a mortal life beside Beren.",aneddoti:"Danzò davanti a Morgoth e con il suo canto lo addormentò permettendo di strappare un Silmaril dalla sua corona. Superò la guardia di Sauron, ingannò i lupi di Angband, discese al trono di Mandos e con il suo lamento commosse il signore dei morti stesso — unica creatura che vi riuscì.",aneddoti_en:"She danced before Morgoth and put him to sleep with her song, allowing a Silmaril to be wrested from his crown. She overcame Sauron's guard, deceived the wolves of Angband, descended to the throne of Mandos and with her lament moved the lord of the dead himself.",citazione:"\"Non ho paura di te, Signore Oscuro. Ho attraversato le tue porte cantando.\"",citazione_en:"\"I do not fear you, Dark Lord. I walked through your gates singing.\""},
   {nome:"Fëanor",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",padre:"Finwë",madre:"Míriel Serindë",tipo:"Elfo (Noldor)",tipo_en:"Elf (Noldor)",nomi_alternativi:"**Curufinwë**, Fëanaro",appellativi:"Figlio di Serindë, Signore delle Luci, il Superbo",appellativi_en:"Son of Serindë, Lord of Lights, the Proud",descrizione:"Creò i Silmaril e guidò i Noldor nell'Esilio con il suo giuramento fatale",descrizione_en:"Crafted the Silmarils and led the Noldor into Exile with his fatal oath",featured:true,poteri:"Il più grande artigiano mai nato tra gli Elfi. Creò i Silmaril: gemme contenenti la luce degli Alberi del Mondo, impossibili da ricreare. Inventò nuovi script, linguaggi e tecnologie. Spirito e volontà senza pari in tutta la storia di Arda.",poteri_en:"The greatest craftsman ever born among the Elves. He created the Silmarils: gems containing the light of the Two Trees, impossible to recreate. He invented new scripts, languages and technologies. Spirit and will unmatched in all the history of Arda.",aneddoti:"Forgiò da solo i Tre Silmaril, impresa che nessun altro elfo o essere avrebbe mai potuto emulare. Con la sua orazione al Tirion spinse un'intera nazione a lasciare il Paradiso. Combatté i Balrog da solo alla morte; la sua pira bruciò per giorni. Il suo spirito fu così ardente che rifiutò di tornare in forma corporea.",aneddoti_en:"He forged the Three Silmarils alone, a feat no other elf or being could ever have emulated. With his oration at Tirion he drove an entire nation to leave Paradise. He fought Balrogs alone until death; his pyre burned for days. His spirit was so fierce it refused to return to bodily form.",citazione:"\"Nessuno userà mai i Silmaril. Li ho forgiati, e appartengono solo a me.\"",citazione_en:"\"No one shall ever use the Silmarils. I forged them, and they belong to me alone.\""},
   {nome:"Eärendil",fonte:"Il Silmarillion (John Ronald Reuel Tolkien, 1977)",fonte_en:"The Silmarillion (John Ronald Reuel Tolkien, 1977)",paese:"gb",genere:"m",padre:"Tuor",madre:"Idril",tipo:"Mezzelfo (→ Elfo Noldor)",tipo_en:"Half-elf (→ Noldor Elf)",nomi_alternativi:"",appellativi:"Stella del Mattino, Portatore del Silmaril",appellativi_en:"the Morning Star, Bearer of the Silmaril",descrizione:"Il marinaio celeste, ambasciatore degli Elfi e degli Uomini a Valinor",descrizione_en:"The celestial mariner, ambassador of Elves and Men to Valinor",featured:true,poteri:"Navigatore celeste: porta il Silmaril sulla fronte navigando il cielo con la nave Vingilot come stella del mattino. Figlio di Tuor (uomo) e Idril (elfa), scelto dai Valar per portare la supplica di Elfi e Uomini alla Battaglia finale contro Morgoth.",poteri_en:"Celestial navigator: he bears the Silmaril on his brow, sailing the sky with the ship Vingilot as the Morning Star. Son of Tuor and Idril, chosen by the Valar. His light illuminated Mordor.",aneddoti:"Navigò le Acque Celesti per raggiungere Valinor quando sembrava impossibile, portando la supplica che portò alla Guerra dell'Ira e alla caduta di Morgoth. La sua luce in bottiglia illuminò le tenebre di Shelob per Frodo nella Terza Era — il Silmaril si dimostrò indistruttibile anche dopo ere.",aneddoti_en:"He sailed the Heavenly Waters to reach Valinor when it seemed impossible, bringing the plea that led to the War of Wrath and Morgoth's fall. His light bottled by Galadriel illuminated Shelob's darkness for Frodo.",citazione:"\"Navigherò finché vedrò la Terra dei Valar — o la morte mi troverà prima.\"",citazione_en:"\"I will sail until I see the Land of the Valar — or death finds me first.\""},
@@ -817,7 +820,7 @@ var dati = [
   {nome:"Mathan",fonte:"I Racconti Incompiuti (John Ronald Reuel Tolkien, 1980)",fonte_en:"Unfinished Tales (John Ronald Reuel Tolkien, 1980)",paese:"gb",genere:"m",tipo:"Elfo (Noldor)",tipo_en:"Elf (Noldor)",nomi_alternativi:"**Urundil**",appellativi:"Maestro Fabbro, Discepolo di Aulë",appellativi_en:"Master Smith, Disciple of Aulë",descrizione:"Il più grande fabbro dei Noldor prima di Fëanor, suocero di Nerdanel",descrizione_en:"Greatest Noldor smith before Fëanor, father-in-law of Nerdanel",featured:false,poteri:"Il più grande fabbro dei Noldor prima di Fëanor, di cui fu suocero e primo maestro indiretto. Allievo prediletto di Aulë, apprese dai Valar i segreti dei metalli. Tramite Nerdanel trasmise l'arte della forgiatura a Fëanor stesso — che superò ogni maestro ma non dimenticò mai le origini della sua sapienza.",poteri_en:"The greatest smith of the Noldor before Fëanor, whose father-in-law and first indirect teacher he was. Aulë's favourite pupil, he learned the secrets of metals from the Valar. Through Nerdanel he passed the smithing art to Fëanor himself — who surpassed every master but never forgot the origins of his knowledge.",aneddoti:"Rimase in Valinor quando i Noldor partirono per l'esilio, scelta che lo salvò dalla tragedia ma lo separò dalla figlia Nerdanel e dai nipoti. La sua bottega a Tirion fu il luogo dove Fëanor mosse i primi passi nella grande arte della forgiatura. La sua specialità era il rame e il bronzo — i metalli di Aulë.",aneddoti_en:"He remained in Valinor when the Noldor left for exile — a choice that saved him from tragedy but separated him from his daughter Nerdanel and his grandchildren. His forge in Tirion was where Fëanor first took steps in the great art of smithing. His specialty was copper and bronze — the metals of Aulë.",citazione:"\"Il metallo ricorda le mani di chi lo ha forgiato. Per questo le mie opere portano ancora il calore del fuoco di Aulë.\"",citazione_en:"\"Metal remembers the hands that forged it. That is why my works still carry the warmth of Aulë's fire.\""},
   {nome:"Fram",fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954)",fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954)",paese:"gb",genere:"m",padre:"Frumgar",tipo:"Uomo (Éothéod)",tipo_en:"Man (Éothéod)",nomi_alternativi:"",appellativi:"Uccisore di Scatha, Signore dell'Éothéod",appellativi_en:"Scatha's Bane, Lord of the Éothéod",descrizione:"Uccise il drago Scatha e tenne il suo tesoro, causando guerra con i Nani",descrizione_en:"Slew the dragon Scatha and kept his hoard, sparking a war with the Dwarves",featured:false,poteri:"Signore dell'Éothéod, gli antenati dei Rohirrim. Uccise il drago Scatha il Grande che terrorizzava le Montagne del Grigio. Valoroso guerriero di una delle ultime generazioni eroiche del Nord.",poteri_en:"Lord of the Éothéod, ancestors of the Rohirrim. He killed the great dragon Scatha who terrorised the Grey Mountains. Valiant warrior of one of the last heroic generations of the North.",aneddoti:"Sconfisse e uccise Scatha, liberando le genti del nord dalle sue razzie. Quando i Nani di Erebor reclamarono il tesoro del drago come loro proprietà, Fram inviò loro i denti di Scatha come 'compenso'. I Nani lo uccisero in duello per l'affronto.",aneddoti_en:"He defeated and slew Scatha, freeing the peoples of the north from his raids. When the Dwarves of Erebor claimed the dragon's hoard as their property, Fram sent them Scatha's teeth as 'compensation'. The Dwarves slew him in a duel over the insult.",citazione:"\"Ecco il vostro tesoro — i denti della bestia che io solo ho osato uccidere.\"",citazione_en:"\"Here is your treasure — the teeth of the beast that I alone dared to slay.\""},
   {nome:"Éowyn",fonte:"Il Signore degli Anelli (John Ronald Reuel Tolkien, 1954)",fonte_en:"The Lord of the Rings (John Ronald Reuel Tolkien, 1954)",paese:"gb",genere:"f",padre:"Éomund",madre:"Théodwyn",tipo:"Donna (Rohirrim)",tipo_en:"Woman (Rohirrim)",nomi_alternativi:"Dernhelm",appellativi:"Bianca Dama di Rohan",appellativi_en:"White Lady of Rohan",descrizione:"Scudera di Rohan travestita da cavaliere, uccise il Re dei Nazgûl a Pelennor",descrizione_en:"Shieldmaiden of Rohan disguised as a knight, slew the Witch-king at Pelennor",featured:false,poteri:"Schermitrice di alta levatura. Mascherata da cavaliere combatté alla Battaglia dei Campi del Pelennor. Uccise il Re degli Stregoni — l'impresa militare più notevole di qualsiasi essere umano della Terza Era.",poteri_en:"Highly skilled swordswoman. Disguised as a knight she fought at the Battle of the Pelennor Fields. She slew the Witch-King.",aneddoti:"Ignorando gli ordini si camuffò da Dernhelm e portò Merry in battaglia. Decapitò il Fellbeast. Di fronte al Re degli Stregoni si tolse l'elmo: 'Non sono un uomo' — e lo trafisse.",aneddoti_en:"Ignoring orders she disguised herself as Dernhelm and carried Merry into battle. She beheaded the Fellbeast. Before the Witch-King she removed her helm: 'I am no man' — and she pierced him.",citazione:"\"Non sono un uomo.\"",citazione_en:"\"I am no man.\""}
-];
+];/*DE*/
 
 function parseFonte(fonte) {
   var lp = fonte.lastIndexOf('(');
@@ -1156,8 +1159,44 @@ function copyListToClipboard(btn) {
 }
 
 function doSave(btn) {
+  if (btn) btn.style.opacity = '0.35';
+  doCommit('classifica: aggiorna ordine').then(res => {
+    if (btn) setTimeout(() => btn.style.opacity = '', 1200);
+  });
+}
+
+function replaceDatiInHTML(html) {
+  const s = html.indexOf('/*DS*/');
+  const e = html.indexOf('/*DE*/');
+  if (s === -1 || e === -1) return null;
+  return html.substring(0, s) + '/*DS*/var dati = ' + JSON.stringify(dati) + ';/*DE*/' + html.substring(e + 6);
+}
+
+async function doCommit(msg) {
   localStorage.setItem('arda-ranking-v3-' + currentLang, JSON.stringify(dati));
-  if (btn) { btn.style.opacity = '0.35'; setTimeout(() => btn.style.opacity = '', 1200); }
+  const token = sessionStorage.getItem('arda-admin-token');
+  if (!token) return { ok: false, reason: 'no-token' };
+  const api = 'https://api.github.com/repos/roccobot/roccobot.github.io/contents/artifacts/arda50/index.html';
+  try {
+    const get = await fetch(api, { headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json' } });
+    if (!get.ok) {
+      if (get.status === 401) sessionStorage.removeItem('arda-admin-token');
+      throw new Error('HTTP ' + get.status);
+    }
+    const fd = await get.json();
+    const cur = decodeURIComponent(escape(atob(fd.content.replace(/\n/g, ''))));
+    const upd = replaceDatiInHTML(cur);
+    if (!upd) throw new Error('marker assente nel file');
+    const put = await fetch(api, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg || 'admin: aggiorna', content: btoa(unescape(encodeURIComponent(upd))), sha: fd.sha })
+    });
+    if (!put.ok) { const er = await put.json(); throw new Error(er.message || 'PUT ' + put.status); }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, reason: err.message };
+  }
 }
 
 function showPasswordModal(promptText, onSuccess) {
@@ -1167,47 +1206,68 @@ function showPasswordModal(promptText, onSuccess) {
   overlay.className = 'fab-modal-overlay';
   const box = document.createElement('div');
   box.className = 'fab-modal-box';
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'fab-modal-close';
-  closeBtn.textContent = '×';
-  closeBtn.onclick = () => overlay.remove();
-  const p = document.createElement('p');
-  p.textContent = promptText;
-  const input = document.createElement('input');
-  input.type = 'password';
-  input.autocomplete = 'off';
-  const confirm = () => {
-    if (input.value === atob('bWVsbG9uIG1vZm8=')) {
-      overlay.remove();
-      onSuccess();
-    } else {
-      input.style.borderColor = 'rgba(220,80,80,0.8)';
-      input.value = '';
-      setTimeout(() => input.style.borderColor = '', 700);
-    }
-  };
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirm(); });
-  const confirmBtn = document.createElement('button');
-  confirmBtn.className = 'fab-modal-confirm';
-  confirmBtn.textContent = 'Conferma';
-  confirmBtn.onclick = confirm;
-  box.appendChild(closeBtn);
-  box.appendChild(p);
-  box.appendChild(input);
-  box.appendChild(confirmBtn);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
-  setTimeout(() => input.focus(), 60);
+
+  function buildStep1() {
+    box.innerHTML = '';
+    const cl = document.createElement('button');
+    cl.className = 'fab-modal-close'; cl.textContent = '×';
+    cl.onclick = () => overlay.remove();
+    const p = document.createElement('p'); p.textContent = promptText;
+    const inp = document.createElement('input');
+    inp.type = 'password'; inp.autocomplete = 'off';
+    const tryAuth = () => {
+      if (inp.value !== atob('bWVsbG9uIG1vZm8=')) {
+        inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
+        setTimeout(() => inp.style.borderColor = '', 700); return;
+      }
+      saveUnlocked = true;
+      document.querySelectorAll('#fab-save').forEach(b => b.classList.add('fab-unlocked'));
+      if (sessionStorage.getItem('arda-admin-token')) { overlay.remove(); onSuccess(); }
+      else buildStep2();
+    };
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryAuth(); });
+    const cb = document.createElement('button');
+    cb.className = 'fab-modal-confirm'; cb.textContent = 'Conferma'; cb.onclick = tryAuth;
+    box.appendChild(cl); box.appendChild(p); box.appendChild(inp); box.appendChild(cb);
+    setTimeout(() => inp.focus(), 60);
+  }
+
+  function buildStep2() {
+    box.innerHTML = '';
+    const cl = document.createElement('button');
+    cl.className = 'fab-modal-close'; cl.textContent = '×';
+    cl.onclick = () => { overlay.remove(); onSuccess(); };
+    const p = document.createElement('p');
+    p.textContent = 'Per salvare in modo permanente e pubblico inserisci il GitHub Personal Access Token con accesso in scrittura al repository.';
+    const note = document.createElement('p');
+    note.className = 'fab-modal-note';
+    note.textContent = 'Lascia vuoto per salvare solo su questo browser (temporaneo).';
+    const inp = document.createElement('input');
+    inp.type = 'password'; inp.autocomplete = 'off';
+    const doToken = () => {
+      const t = inp.value.trim();
+      if (t) sessionStorage.setItem('arda-admin-token', t);
+      overlay.remove(); onSuccess();
+    };
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') doToken(); });
+    const cb = document.createElement('button');
+    cb.className = 'fab-modal-confirm'; cb.textContent = 'Conferma'; cb.onclick = doToken;
+    const sk = document.createElement('button');
+    sk.className = 'fab-modal-skip'; sk.textContent = 'Salta (solo browser)';
+    sk.onclick = () => { overlay.remove(); onSuccess(); };
+    box.appendChild(cl); box.appendChild(p); box.appendChild(note);
+    box.appendChild(inp); box.appendChild(cb); box.appendChild(sk);
+    setTimeout(() => inp.focus(), 60);
+  }
+
+  buildStep1();
 }
 
 function showSaveModal(onSuccess) {
-  showPasswordModal('Inserisci la parola d\'ordine per sbloccare il salvataggio permanente.', () => {
-    saveUnlocked = true;
-    const sb = document.getElementById('fab-save');
-    if (sb) sb.classList.add('fab-unlocked');
-    onSuccess();
-  });
+  showPasswordModal('Inserisci la parola d\'ordine per sbloccare il salvataggio permanente.', onSuccess);
 }
 
 function showFAB() {
@@ -1268,7 +1328,7 @@ function showAdminEditor() {
   const saveBtn = document.createElement('button');
   saveBtn.className = 'admin-btn admin-btn-save';
   saveBtn.textContent = 'Salva';
-  saveBtn.onclick = () => {
+  saveBtn.onclick = async () => {
     dati.forEach((p, i) => {
       const g = (field) => { const el = document.getElementById('ae-' + i + '-' + field); return el ? el.value : (p[field] || ''); };
       p.nome = g('nome');
@@ -1282,10 +1342,19 @@ function showAdminEditor() {
       p.citazione = g('citazione'); p.citazione_en = g('citazione_en');
       p.fonte = g('fonte'); p.fonte_en = g('fonte_en');
     });
-    localStorage.setItem('arda-ranking-v3-it', JSON.stringify(dati));
-    localStorage.setItem('arda-ranking-v3-en', JSON.stringify(dati));
-    renderList();
-    overlay.remove();
+    saveBtn.textContent = 'Salvataggio…';
+    saveBtn.disabled = true;
+    const res = await doCommit('admin: modifica testi personaggi');
+    if (res.ok) {
+      saveBtn.textContent = 'Salvato ✓';
+      setTimeout(() => { renderList(); overlay.remove(); }, 700);
+    } else if (res.reason === 'no-token') {
+      renderList(); overlay.remove();
+    } else {
+      saveBtn.textContent = 'Errore: ' + res.reason.substring(0, 28);
+      saveBtn.disabled = false;
+      setTimeout(() => { saveBtn.textContent = 'Salva'; }, 3500);
+    }
   };
   btnWrap.appendChild(backBtn);
   btnWrap.appendChild(saveBtn);
@@ -1348,7 +1417,8 @@ function showAdminEditor() {
 
 // Click sul badge versione → admin editor
 document.querySelector('.version-badge').addEventListener('click', () => {
-  showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+  if (saveUnlocked) showAdminEditor();
+  else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
 });
 
 const saved = localStorage.getItem('arda-ranking-v3-' + currentLang);
