@@ -473,12 +473,19 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .admin-btn-back { background:none;border:1px solid rgba(104,144,168,0.4);color:var(--parchment-dim); }
 .admin-btn-save { background:rgba(30,80,50,0.5);border:1px solid rgba(90,200,110,0.5);color:#88e8a0; }
 .admin-cards { max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:1.2rem;padding-bottom:4rem; }
-.admin-card { border:1px solid rgba(104,144,168,0.18);border-radius:6px;padding:1rem;background:var(--ink); }
-.admin-card-title { font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.9rem; }
-.admin-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 0.9rem; }
-.admin-field { display:flex;flex-direction:column;gap:0.2rem; }
-.admin-field.full { grid-column:1/-1; }
+.admin-card { border:1px solid rgba(104,144,168,0.18);border-radius:6px;padding:1rem 1rem 1.2rem;background:var(--ink); }
+.admin-rank-num { text-align:center;font-family:'Cinzel',serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:900;color:var(--gold-deep);letter-spacing:0.05em;margin-bottom:0.7rem; }
+.admin-name-row { display:grid;grid-template-columns:2.4rem 1fr 2.4rem;align-items:center;gap:0.8rem;margin-bottom:1rem; }
+.admin-flag { display:flex;align-items:center;justify-content:center; }
+.admin-flag svg { width:2.4rem;height:auto;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,0.4); }
+.admin-name-label { display:block;text-align:center; }
+.admin-name-input { text-align:center;font-family:'Cinzel',serif !important;font-size:1.1rem !important;font-weight:700;letter-spacing:0.03em; }
+.admin-bilingual-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1.4rem;margin-bottom:0.8rem; }
+.admin-field { display:flex;flex-direction:column;gap:0.18rem; }
 .admin-label { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;color:var(--gold);opacity:0.75; }
+.admin-label-en { text-align:right; }
+.admin-mono-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1.4rem; }
+.admin-field-full { grid-column:1/-1; }
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
 .admin-textarea { resize:vertical;min-height:5rem; }
@@ -499,8 +506,10 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .fab-item { flex-direction:row-reverse; }
   .fab-tooltip { transform:translateX(-4px); }
   .fab-item:hover .fab-tooltip { transform:translateX(0); }
-  .admin-grid { grid-template-columns:1fr; }
-  .admin-field.full { grid-column:1; }
+  .admin-bilingual-grid { grid-template-columns:1fr; }
+  .admin-mono-grid { grid-template-columns:1fr; }
+  .admin-label-en { text-align:left; }
+  .admin-name-row { grid-template-columns:2rem 1fr 2rem; gap:0.5rem; }
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -681,6 +690,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .admin-overlay { background:#eef1f8; }
   .admin-header { background:#eef1f8;border-bottom-color:rgba(58,88,120,0.2); }
   .admin-card { background:#ffffff;border-color:rgba(58,88,120,0.18);box-shadow:0 1px 4px rgba(20,30,60,0.06); }
+  .admin-rank-num { color:#253d58; }
   .admin-input,.admin-textarea { background:#ffffff;border-color:rgba(58,88,120,0.3);color:#12141e; }
   .admin-input:focus,.admin-textarea:focus { border-color:#4a7090;background:#f8faff; }
   .admin-btn-back { border-color:rgba(58,88,120,0.4);color:#253d58; }
@@ -1319,53 +1329,89 @@ function showAdminEditor() {
   header.appendChild(btnWrap);
   overlay.appendChild(header);
 
+  const FLAG_IT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>';
+  const FLAG_EN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="9"/><rect x="25" width="10" height="30" fill="#fff"/><rect y="12" width="60" height="6" fill="#fff"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="5"/><rect x="27" width="6" height="30" fill="#C8102E"/><rect y="13" width="60" height="4" fill="#C8102E"/></svg>';
+
+  const BILINGUAL = [
+    { it:'tipo',      en:'tipo_en',      li:'Tipo IT',       le:'Tipo EN' },
+    { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN' },
+    { it:'appellativi', en:'appellativi_en', li:'Appellativi IT', le:'Appellativi EN' },
+    { it:'poteri',    en:'poteri_en',    li:'Poteri IT',     le:'Poteri EN',    ta:true },
+    { it:'aneddoti',  en:'aneddoti_en',  li:'Aneddoti IT',   le:'Aneddoti EN',  ta:true },
+    { it:'citazione', en:'citazione_en', li:'Citazione IT',  le:'Citazione EN' },
+    { it:'fonte',     en:'fonte_en',     li:'Fonte IT',      le:'Fonte EN' },
+  ];
+
+  const mkInp = (i, key, ta) => {
+    let el;
+    if (ta) { el = document.createElement('textarea'); el.className = 'admin-textarea'; el.rows = 3; }
+    else     { el = document.createElement('input');    el.type = 'text'; el.className = 'admin-input'; }
+    el.id = 'ae-' + i + '-' + key;
+    return el;
+  };
+  const mkField = (i, key, label, p, extraClass, labelClass) => {
+    const w = document.createElement('div');
+    w.className = 'admin-field' + (extraClass ? ' ' + extraClass : '');
+    const l = document.createElement('label');
+    l.className = 'admin-label' + (labelClass ? ' ' + labelClass : '');
+    l.textContent = label; l.htmlFor = 'ae-' + i + '-' + key;
+    const inp = mkInp(i, key, false);
+    inp.value = p[key] || '';
+    w.appendChild(l); w.appendChild(inp); return w;
+  };
+
   const cards = document.createElement('div');
   cards.className = 'admin-cards';
-  const FIELDS = [
-    { key:'nome', label:'Nome', full:false },
-    { key:'tipo', label:'Tipo IT', full:false }, { key:'tipo_en', label:'Tipo EN', full:false },
-    { key:'descrizione', label:'Descrizione IT', full:false }, { key:'descrizione_en', label:'Descrizione EN', full:false },
-    { key:'padre', label:'Padre', full:false }, { key:'madre', label:'Madre', full:false },
-    { key:'nomi_alternativi', label:'Nomi alternativi  (Nome* = grassetto)', full:false },
-    { key:'appellativi', label:'Appellativi IT', full:false }, { key:'appellativi_en', label:'Appellativi EN', full:false },
-    { key:'poteri', label:'Poteri IT', full:true, ta:true }, { key:'poteri_en', label:'Poteri EN', full:true, ta:true },
-    { key:'aneddoti', label:'Aneddoti IT', full:true, ta:true }, { key:'aneddoti_en', label:'Aneddoti EN', full:true, ta:true },
-    { key:'citazione', label:'Citazione IT', full:true }, { key:'citazione_en', label:'Citazione EN', full:true },
-    { key:'fonte', label:'Fonte IT', full:true }, { key:'fonte_en', label:'Fonte EN', full:true },
-  ];
+
   dati.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'admin-card';
-    const ct = document.createElement('div');
-    ct.className = 'admin-card-title';
-    ct.textContent = '#' + (i + 1) + ' — ' + p.nome;
-    card.appendChild(ct);
-    const grid = document.createElement('div');
-    grid.className = 'admin-grid';
-    FIELDS.forEach(f => {
-      const wrap = document.createElement('div');
-      wrap.className = 'admin-field' + (f.full ? ' full' : '');
-      const lbl = document.createElement('label');
-      lbl.className = 'admin-label';
-      lbl.textContent = f.label;
-      lbl.htmlFor = 'ae-' + i + '-' + f.key;
-      let inp;
-      if (f.ta) {
-        inp = document.createElement('textarea');
-        inp.className = 'admin-textarea';
-        inp.rows = 3;
-      } else {
-        inp = document.createElement('input');
-        inp.type = 'text';
-        inp.className = 'admin-input';
-      }
-      inp.id = 'ae-' + i + '-' + f.key;
-      inp.value = p[f.key] || '';
-      wrap.appendChild(lbl);
-      wrap.appendChild(inp);
-      grid.appendChild(wrap);
+
+    // Numero
+    const num = document.createElement('div');
+    num.className = 'admin-rank-num'; num.textContent = i + 1;
+    card.appendChild(num);
+
+    // Riga nome: bandiera IT | label+input | bandiera EN
+    const nameRow = document.createElement('div');
+    nameRow.className = 'admin-name-row';
+    const fIt = document.createElement('div'); fIt.className = 'admin-flag'; fIt.innerHTML = FLAG_IT;
+    const nameWrap = document.createElement('div'); nameWrap.className = 'admin-field';
+    const nameLbl = document.createElement('label');
+    nameLbl.className = 'admin-label admin-name-label'; nameLbl.textContent = 'Nome'; nameLbl.htmlFor = 'ae-' + i + '-nome';
+    const nameInp = mkInp(i, 'nome', false);
+    nameInp.className += ' admin-name-input'; nameInp.value = p.nome || '';
+    nameWrap.appendChild(nameLbl); nameWrap.appendChild(nameInp);
+    const fEn = document.createElement('div'); fEn.className = 'admin-flag'; fEn.innerHTML = FLAG_EN;
+    nameRow.appendChild(fIt); nameRow.appendChild(nameWrap); nameRow.appendChild(fEn);
+    card.appendChild(nameRow);
+
+    // Griglia bilingue: colonna IT (sx) | colonna EN (dx)
+    const biGrid = document.createElement('div');
+    biGrid.className = 'admin-bilingual-grid';
+    BILINGUAL.forEach(f => {
+      const itWrap = document.createElement('div'); itWrap.className = 'admin-field';
+      const itLbl = document.createElement('label'); itLbl.className = 'admin-label'; itLbl.textContent = f.li; itLbl.htmlFor = 'ae-' + i + '-' + f.it;
+      const itInp = mkInp(i, f.it, f.ta); itInp.value = p[f.it] || '';
+      itWrap.appendChild(itLbl); itWrap.appendChild(itInp);
+
+      const enWrap = document.createElement('div'); enWrap.className = 'admin-field';
+      const enLbl = document.createElement('label'); enLbl.className = 'admin-label admin-label-en'; enLbl.textContent = f.le; enLbl.htmlFor = 'ae-' + i + '-' + f.en;
+      const enInp = mkInp(i, f.en, f.ta); enInp.value = p[f.en] || '';
+      enWrap.appendChild(enLbl); enWrap.appendChild(enInp);
+
+      biGrid.appendChild(itWrap); biGrid.appendChild(enWrap);
     });
-    card.appendChild(grid);
+    card.appendChild(biGrid);
+
+    // Campi mono: padre + madre affiancati, nomi_alternativi full
+    const monoGrid = document.createElement('div');
+    monoGrid.className = 'admin-mono-grid';
+    monoGrid.appendChild(mkField(i, 'padre', 'Padre', p));
+    monoGrid.appendChild(mkField(i, 'madre', 'Madre', p));
+    monoGrid.appendChild(mkField(i, 'nomi_alternativi', 'Nomi alternativi  (Nome* = grassetto)', p, 'admin-field-full'));
+    card.appendChild(monoGrid);
+
     cards.appendChild(card);
   });
   overlay.appendChild(cards);
