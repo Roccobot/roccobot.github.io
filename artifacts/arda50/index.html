@@ -704,7 +704,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.21.0</span>
+  <span class="version-badge">v2.22.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1151,7 +1151,7 @@ function replaceDatiInHTML(html) {
 }
 
 async function doCommit(msg) {
-  localStorage.setItem('arda-ranking-v3-' + currentLang, JSON.stringify(dati));
+  localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; })));
   const token = localStorage.getItem('arda-admin-token');
   if (!token) return { ok: false, reason: 'no-token' };
   const api = 'https://api.github.com/repos/roccobot/roccobot.github.io/contents/artifacts/arda50/index.html';
@@ -1477,8 +1477,20 @@ document.querySelector('.version-badge').addEventListener('click', () => {
   else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
 });
 
-const saved = localStorage.getItem('arda-ranking-v3-' + currentLang);
-if (saved) { try { dati = JSON.parse(saved); } catch(e) {} }
+(function(){
+  var _raw = localStorage.getItem('arda-ranking-v4-' + currentLang)
+           || localStorage.getItem('arda-ranking-v3-' + currentLang);
+  if (!_raw) return;
+  try {
+    var _saved = JSON.parse(_raw);
+    if (!Array.isArray(_saved)) return;
+    var _names = (typeof _saved[0] === 'string') ? _saved : _saved.map(function(d){ return d.nome; });
+    var _master = dati.slice();
+    var _ordered = _names.map(function(n){ return _master.find(function(d){ return d.nome === n; }); }).filter(Boolean);
+    var _extras  = _master.filter(function(d){ return _names.indexOf(d.nome) === -1; });
+    dati = _ordered.concat(_extras);
+  } catch(e) {}
+})();
 
 renderList();
 enableDragDrop();
