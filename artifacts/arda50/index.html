@@ -286,7 +286,7 @@ h1 {
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
 }
 .tipo-badge + .tipo-badge { margin-left:0.28em; }
-.ring-icon { display:inline-block; width:1.15em; height:1.15em; vertical-align:middle; margin-left:0.35em; filter:drop-shadow(0 0 1.5px rgba(0,0,0,0.45)); }
+.ring-icon { display:inline-block; width:0.82em; height:0.82em; vertical-align:middle; margin-left:0.1em; }
 
 .genere-sym {
   font-size:0.75em; opacity:0.5; margin-left:0.15em;
@@ -704,7 +704,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 </head>
 <body>
 <header>
-  <span class="version-badge">v2.22.0</span>
+  <span class="version-badge">v2.23.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Arda · I 50 più potenti</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -868,7 +868,7 @@ function renderList() {
     var tipoStr = tipo ? tipo.split('|').map(function(seg){
       seg = seg.trim();
       return '<span class="tipo-badge ' + tipoClass(seg) + '">' + seg + '</span>';
-    }).join('') + genereSym : '';
+    }).join('') : '';
     var ringStr = '';
     if (p.rings && p.rings.length) {
       ringStr = p.rings.map(function(r){ return '<img class="ring-icon" src="' + RING_SVG[r] + '" alt="' + r + '" title="' + (RING_LABEL[r]||r) + '">'; }).join('');
@@ -900,7 +900,7 @@ function renderList() {
     html += '<button class="' + classes + '" style="animation-delay:' + (i * 0.04) + 's" data-idx="' + i + '" aria-label="' + nome + ', posizione ' + n + '">' +
       '<span class="rank-num">' + n + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name">' + nome + tipoStr + ringStr + '</span>' +
+        '<span class="rank-name">' + nome + tipoStr + ringStr + genereSym + '</span>' +
         rigaDesc +
         riga2 +
         '<span class="rank-title">' + titleYear + '</span>' +
