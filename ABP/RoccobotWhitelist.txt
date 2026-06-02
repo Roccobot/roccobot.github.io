@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-05-20
+! Last updated: 2026-06-02
 
 @@||192.168.1.2^
 @@||aci.it^
@@ -70,6 +70,7 @@
 @@||macosicons.com^$document,subdocument
 @@||mail.google.com^
 @@||manus.space^$document,subdocument
+@@||media.anobii.com^
 @@||media.ilpost.it^
 @@||mediailpost-meride-tv.akamaized.net^
 @@||messages.google.com^
