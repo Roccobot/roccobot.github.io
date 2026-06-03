@@ -48,6 +48,7 @@
 @@||githubusercontent.com^$document,subdocument
 @@||googleapis.com^$document,subdocument
 @@||googleusercontent.com^$document,subdocument
+@@||grok.com^$document,subdocument
 @@||gstatic.com^
 @@||hamrick.com^
 @@||hcaptcha.com^
