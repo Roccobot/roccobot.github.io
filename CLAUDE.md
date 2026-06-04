@@ -20,6 +20,16 @@ Saltare questo passo causa conflitti al momento del push.
 - Le label/placeholder NON devono mai mostrare "Password admin"
 - Rispondere in italiano
 
+## Strategia di merge delle PR
+
+- Scegliere di volta in volta la modalità più sicura/pulita, **senza chiedere
+  conferma** salvo modifiche particolarmente significative.
+- Priorità assoluta: **non perdere informazioni né le modifiche admin** dell'utente.
+- Spiegare sempre, a fini didattici, perché si è scelta una determinata modalità:
+  - **squash** quando il branch ha commit intermedi di debug/retry/reset da comprimere;
+  - **merge commit** quando la storia dei commit è già pulita e vale la pena conservarla;
+  - **rebase** quando serve una storia lineare senza commit di merge.
+
 ## Struttura dati
 
 - Array `dati` delimitato da `/*DS*/` e `/*DE*/` per sostituzione sicura
