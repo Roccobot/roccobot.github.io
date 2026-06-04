@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-06-02
+! Last updated: 2026-06-04
 
 @@||192.168.1.2^
 @@||aci.it^
@@ -39,6 +39,9 @@
 @@||fastspring.com^$document,subdocument
 @@||fattureincloud.it^
 @@||fideuram.it^$document,subdocument
+@@||firebase-settings.crashlytics.com^
+@@||firebaselogging.googleapis.com^
+@@||firebaselogging-pa.googleapis.com^
 @@||freepornsex.net^
 @@||gemini.google.com^$document,subdocument
 @@||getzowie.com^
