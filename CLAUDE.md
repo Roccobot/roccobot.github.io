@@ -30,6 +30,19 @@ Saltare questo passo causa conflitti al momento del push.
   - **merge commit** quando la storia dei commit è già pulita e vale la pena conservarla;
   - **rebase** quando serve una storia lineare senza commit di merge.
 
+## Opere di J.R.R. Tolkien — fonti e citazioni
+
+- **Fedeltà assoluta alle fonti canoniche** per ogni campo (Silmarillion,
+  Racconti Incompiuti, HoME, Tolkien Gateway), mai fatti inventati.
+- **Citazioni verbatim** dal testo pubblicato in italiano, mai parafrasi
+  o ritraduzioni dall'inglese. Traduzioni di riferimento:
+  - *Il Signore degli Anelli* → **Vicky Alliata di Villafranca** (Rusconi/
+    Bompiani, rev. Quirino Principe) — NON la versione Fatica 2019.
+  - *Lo Hobbit* → **Elena Jeronimidis Conte** (Adelphi).
+  - *Il Silmarillion* → **Francesco Saba Sardi** (Rusconi/Bompiani).
+- Quando una citazione verbatim non è verificabile con certezza, segnalarlo
+  esplicitamente invece di inventare.
+
 ## Struttura dati
 
 - Array `dati` delimitato da `/*DS*/` e `/*DE*/` per sostituzione sicura
