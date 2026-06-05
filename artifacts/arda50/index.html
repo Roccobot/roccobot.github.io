@@ -175,9 +175,8 @@ h1 {
 
 .rank-item:hover,.rank-item:focus-visible {
   border-left-color:var(--gold-bright);
-  border-color:rgba(200,202,210,0.42);
-  box-shadow:0 0 30px rgba(190,192,200,0.13),0 4px 20px rgba(0,0,0,0.35);
-  background:linear-gradient(90deg,rgba(72,76,90,0.62) 0%,rgba(200,202,210,0.07) 100%);
+  border-color:rgba(200,202,210,0.45);
+  background:linear-gradient(90deg,rgba(78,82,96,0.66) 0%,rgba(200,202,210,0.08) 100%);
   outline:none;
 }
 
@@ -300,7 +299,7 @@ h1 {
 }
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
-#ctrl-fab svg { height:2.7rem; width:auto; fill:currentColor; stroke:none; }
+#ctrl-fab svg { height:1.9rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB sinistra: icona oro in scuro, teal+bianco in chiaro */
 #ctrl-fab { color:var(--gold); }
 /* Categorie con bottone solo */
@@ -686,17 +685,15 @@ html[data-theme="light"] {
   .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
 
   .rank-item {
-    background: rgba(255,255,255,0.62);
-    border: 1px solid rgba(80,110,150,0.2);
+    background: rgba(225,234,248,0.85);
+    border: 1px solid rgba(80,110,150,0.22);
     border-left: 3px solid #3a5878;
-    box-shadow: 0 1px 6px rgba(20,30,60,0.08);
   }
   .rank-item::before { display: none; }
   .rank-item:hover, .rank-item:focus-visible {
-    background: rgba(255,255,255,0.99);
-    border-color: rgba(70,95,130,0.5);
+    background: rgba(202,221,247,0.97);
+    border-color: rgba(60,95,150,0.55);
     border-left-color: #4a7090;
-    box-shadow: 0 4px 22px rgba(20,30,60,0.20);
   }
   /* vis-top: inline-style handles border; no background override */
   .rank-num {
@@ -706,12 +703,18 @@ html[data-theme="light"] {
   /* #2 — il numero non cambia colore al passaggio del mouse */
 
   .rank-item.divine {
-    background: linear-gradient(90deg, rgba(212,176,58,0.05) 0%, rgba(212,176,58,0.012) 100%);
-    border-color: rgba(80,110,150,0.2);
+    background: rgba(249,241,214,0.86);
+    border-color: rgba(80,110,150,0.22);
     border-left-color: rgba(170,135,30,0.70);
   }
-  .rank-item.divine.morgoth { background:linear-gradient(90deg,rgba(160,30,90,0.085) 0%,rgba(160,30,90,0.03) 100%); border-left-color:rgba(150,25,80,0.65); }
-  .rank-item.divine.bombadil { background:linear-gradient(90deg,rgba(50,120,30,0.085) 0%,rgba(50,120,30,0.03) 100%); border-left-color:rgba(45,100,25,0.65); }
+  .rank-item.divine:hover, .rank-item.divine:focus-visible {
+    background: rgba(245,231,176,0.97);
+    border-color: rgba(155,120,30,0.5);
+  }
+  .rank-item.divine.morgoth { background: rgba(249,223,233,0.86); border-left-color:rgba(150,25,80,0.65); }
+  .rank-item.divine.morgoth:hover, .rank-item.divine.morgoth:focus-visible { background: rgba(247,205,221,0.97); border-color:rgba(150,30,90,0.5); }
+  .rank-item.divine.bombadil { background: rgba(225,245,219,0.86); border-left-color:rgba(45,100,25,0.65); }
+  .rank-item.divine.bombadil:hover, .rank-item.divine.bombadil:focus-visible { background: rgba(205,239,197,0.97); border-color:rgba(50,110,30,0.5); }
   .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
   .ctrl-row, .ctrl-legend-row { color:#12141e; }
   .ctrl-h { color:#3a5878; }
@@ -836,7 +839,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v4.5.1</span>
+  <span class="version-badge">v4.5.2</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1227,7 +1230,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.5.1</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.5.2</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
