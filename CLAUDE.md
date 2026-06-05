@@ -1,5 +1,11 @@
 # Regole di progetto — roccobot.github.io
 
+## Modello da usare
+
+Usare sempre **Claude Opus** (ultima versione disponibile). Il modello è già
+forzato a livello di progetto in `.claude/settings.json` (`"model": "opus"`,
+alias che punta sempre all'ultima release di Opus). Non usare Sonnet o Haiku.
+
 ## Workflow obbligatorio prima di modificare index.html
 
 L'editor admin del sito (`artifacts/arda50/index.html`) può creare commit
@@ -11,6 +17,15 @@ git pull origin master
 ```
 
 Saltare questo passo causa conflitti al momento del push.
+
+Dopo il pull, **verificare immediatamente** il numero di versione nel file:
+
+```bash
+grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' artifacts/arda50/index.html | head -1
+```
+
+Se la versione locale non corrisponde a quella attesa (o all'ultima nota),
+recuperare il file reale via GitHub API prima di procedere.
 
 ## Regole generali
 
