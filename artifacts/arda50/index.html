@@ -23,6 +23,7 @@
   --violet-glow: #6890d8;
   --azure-deep: #081020;
   --shadow: rgba(0,0,0,0.7);
+  --name: #cdd3dc; --name-hover: #eef2f8;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -174,27 +175,27 @@ h1 {
 
 .rank-item:hover,.rank-item:focus-visible {
   border-left-color:var(--gold-bright);
-  border-color:rgba(196,198,206,0.26);
-  box-shadow:0 0 26px rgba(190,192,200,0.07),0 4px 20px rgba(0,0,0,0.3);
-  background:linear-gradient(90deg,rgba(46,48,56,0.55) 0%,rgba(200,202,210,0.05) 100%);
+  border-color:rgba(200,202,210,0.42);
+  box-shadow:0 0 30px rgba(190,192,200,0.13),0 4px 20px rgba(0,0,0,0.35);
+  background:linear-gradient(90deg,rgba(72,76,90,0.62) 0%,rgba(200,202,210,0.07) 100%);
   outline:none;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rank-item { cursor: default; }
-  .rank-name-text:hover { color: var(--gold-bright); }
+  .rank-name-text:hover { color: var(--name-hover); }
 }
 
 .rank-item:hover::before { opacity:1; }
 
 /* #2 — il numero non cambia colore al passaggio del mouse */
 
-.rank-item:hover .rank-name,.rank-item:focus-visible .rank-name { color:var(--parchment); }
+.rank-item:hover .rank-name,.rank-item:focus-visible .rank-name { color:var(--name); }
 
 .rank-num {
   font-family:'Cinzel',serif; font-weight:900;
   font-size:clamp(1.6rem,4.5vw,2.4rem);
-  color:var(--gold-deep);
+  color:var(--name);
   min-width:clamp(48px,9vw,70px);
   text-align:center; letter-spacing:0.05em;
   transition:all 0.35s; line-height:1;
@@ -207,7 +208,7 @@ h1 {
 .rank-name {
   font-family:'Cinzel',serif; font-weight:700;
   font-size:clamp(1.1rem,3.2vw,1.6rem);
-  color:var(--parchment-dim); letter-spacing:0.03em;
+  color:var(--name); letter-spacing:0.03em;
   transition:color 0.35s; line-height:1.2;
   display: inline-flex;
   align-items: center;
@@ -263,7 +264,7 @@ h1 {
 }
 
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
-.rank-item.vis-top .rank-name { color:var(--parchment); font-size:clamp(1.1rem,3.4vw,1.6rem); }
+.rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.1rem,3.4vw,1.6rem); }
 
 .badge {
   display:inline-block;
@@ -285,7 +286,7 @@ h1 {
 /* ── CARD DEGLI ESSERI SUPERIORI — lieve dominante dorata ── */
 /* #2 — card speciali: tinta lievissima, bordo identitario a sinistra; hover e numero ereditano lo stile sobrio delle card normali */
 .rank-item.divine {
-  background:linear-gradient(90deg,rgba(120,92,20,0.10) 0%,rgba(120,92,20,0.035) 100%);
+  background:linear-gradient(90deg,rgba(120,92,20,0.06) 0%,rgba(120,92,20,0.02) 100%);
   border:1px solid rgba(104,144,168,0.15);
   border-left:3px solid rgba(214,176,58,0.72);
 }
@@ -299,7 +300,7 @@ h1 {
 }
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
-.ctrl-fab svg { width:2.8rem; height:2.8rem; fill:currentColor; stroke:none; }
+#ctrl-fab svg { height:2.7rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB sinistra: icona oro in scuro, teal+bianco in chiaro */
 #ctrl-fab { color:var(--gold); }
 /* Categorie con bottone solo */
@@ -313,7 +314,7 @@ h1 {
   cursor:pointer; transition:background 0.15s,opacity 0.15s; white-space:nowrap; user-select:none;
 }
 .ctrl-solo:hover:not(:disabled) { background:rgba(104,144,168,0.28); }
-.ctrl-toolbar { display:flex; justify-content:flex-end; margin-bottom:0.7rem; }
+.ctrl-toolbar { display:flex; justify-content:center; margin-bottom:0.7rem; }
 .ctrl-icon-btn { width:2rem; height:2rem; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); cursor:pointer; padding:0; transition:background 0.15s,border-color 0.15s; }
 .ctrl-icon-btn:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 .ctrl-icon-btn svg { width:1.15rem; height:1.15rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -326,7 +327,7 @@ h1 {
 .ctrl-row.cat-locked { cursor:default; pointer-events:none; }
 .ctrl-solo.cat-locked { opacity:0.35; pointer-events:none; }
 .ctrl-panel {
-  position:fixed; z-index:210; bottom:6rem; left:2rem; width:300px; max-width:calc(100vw - 4rem);
+  position:fixed; z-index:210; bottom:6rem; left:2rem; width:max-content; min-width:280px; max-width:calc(100vw - 4rem);
   max-height:70vh; overflow-y:auto;
   background:rgba(16,24,44,0.94); border:1px solid rgba(104,144,168,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
@@ -359,7 +360,9 @@ h1 {
 }
 .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.45; }
 .ctrl-dot { width:0.85rem; height:0.85rem; border-radius:3px; flex-shrink:0; }
-.ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.3rem; font-size:0.8rem; color:var(--parchment); }
+.ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.3rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; }
+.ctrl-legend-row span { white-space:nowrap; }
+.ctrl-label { white-space:nowrap; }
 .ctrl-legend-row svg, .ctrl-legend-row img { width:1.05rem; height:1.05rem; flex-shrink:0; }
 .ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
 .ctrl-extra { display:none; }
@@ -425,8 +428,8 @@ h1 {
 .tipo-vala        { background:rgba(190,150,30,0.26); border:1px solid rgba(245,210,110,0.7); color:#f3d574; }
 .tipo-valie       { background:rgba(205,175,80,0.22); border:1px solid rgba(245,225,150,0.68); color:#f5e2a4; }
 .tipo-maia-dark   { background:rgba(120,12,78,0.36); border:1px solid rgba(210,55,140,0.66); color:#f060b8; }
-.tipo-balrog      { background:rgba(150,42,8,0.36); border:1px solid rgba(255,118,40,0.72); color:#ff8038; text-shadow:0 0 10px rgba(255,120,40,0.35); }
-.tipo-drago       { background:rgba(155,22,18,0.34); border:1px solid rgba(245,80,55,0.68); color:#fa6450; }
+.tipo-balrog      { background:rgba(200,140,20,0.32); border:1px solid rgba(245,190,75,0.7); color:#ffc24d; text-shadow:0 0 10px rgba(255,190,70,0.3); }
+.tipo-drago       { background:rgba(200,140,20,0.32); border:1px solid rgba(245,190,75,0.7); color:#ffc24d; }
 .tipo-ragno       { background:rgba(58,40,82,0.4); border:1px solid rgba(158,128,196,0.64); color:#c4a6e6; }
 .tipo-lupo        { background:rgba(72,78,92,0.38); border:1px solid rgba(166,176,196,0.62); color:#c6cedc; }
 .tipo-bestia      { background:rgba(122,92,40,0.32); border:1px solid rgba(214,176,96,0.62); color:#e2c888; }
@@ -644,6 +647,7 @@ html[data-theme="light"] {
     --violet: #0a1020;
     --violet-glow: #3a5878;
     --shadow: rgba(0,0,0,0.12);
+    --name: #34373f; --name-hover: #6c6f78;
   }
 
   body {
@@ -689,21 +693,20 @@ html[data-theme="light"] {
   }
   .rank-item::before { display: none; }
   .rank-item:hover, .rank-item:focus-visible {
-    background: rgba(236,236,240,0.96);
-    border-color: rgba(120,122,132,0.35);
+    background: rgba(255,255,255,0.99);
+    border-color: rgba(70,95,130,0.5);
     border-left-color: #4a7090;
-    box-shadow: 0 2px 16px rgba(20,30,60,0.12);
+    box-shadow: 0 4px 22px rgba(20,30,60,0.20);
   }
   /* vis-top: inline-style handles border; no background override */
   .rank-num {
-    color: #253d58;
     text-shadow: none;
     font-weight: 900;
   }
   /* #2 — il numero non cambia colore al passaggio del mouse */
 
   .rank-item.divine {
-    background: linear-gradient(90deg, rgba(212,176,58,0.10) 0%, rgba(212,176,58,0.035) 100%);
+    background: linear-gradient(90deg, rgba(212,176,58,0.05) 0%, rgba(212,176,58,0.012) 100%);
     border-color: rgba(80,110,150,0.2);
     border-left-color: rgba(170,135,30,0.70);
   }
@@ -713,12 +716,10 @@ html[data-theme="light"] {
   .ctrl-row, .ctrl-legend-row { color:#12141e; }
   .ctrl-h { color:#3a5878; }
   .rank-name {
-    color: #12141e;
     font-weight: 700;
   }
-  .rank-item:hover .rank-name,
-  .rank-item:focus-visible .rank-name { color: #000000; }
-  .rank-item.vis-top .rank-name { color: #12141e; font-size: clamp(1.1rem,3.4vw,1.6rem); }
+  /* #4 — hover nome gestito da var(--name-hover) */
+  .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
   .rank-title {
     color: #2a2d3e;
     font-weight: 500;
@@ -804,9 +805,9 @@ html[data-theme="light"] {
   .tipo-valie       { background:rgba(200,170,75,0.12); border-color:rgba(210,185,90,0.55); color:#8a7016; }
   .tipo-morgoth     { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.55); color:#9a1450; text-shadow:none; }
   .tipo-oscurita    { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
-  .tipo-balrog      { background:rgba(150,42,8,0.12); border-color:rgba(200,80,30,0.55); color:#9a3008; text-shadow:none; }
+  .tipo-balrog      { background:rgba(190,140,10,0.13); border-color:rgba(215,170,40,0.58); color:#8a6410; text-shadow:none; }
   .tipo-maia-dark   { background:rgba(150,12,90,0.12); border-color:rgba(200,55,140,0.55); color:#900858; }
-  .tipo-drago       { background:rgba(155,22,18,0.12); border-color:rgba(210,55,40,0.55); color:#981810; }
+  .tipo-drago       { background:rgba(190,140,10,0.13); border-color:rgba(215,170,40,0.58); color:#8a6410; }
   .tipo-ragno       { background:rgba(80,55,120,0.12); border-color:rgba(140,110,185,0.55); color:#5a3d8a; }
   .tipo-lupo        { background:rgba(72,78,92,0.12); border-color:rgba(120,130,150,0.55); color:#404858; }
   .tipo-bestia      { background:rgba(122,92,40,0.12); border-color:rgba(180,140,70,0.55); color:#705418; }
@@ -835,7 +836,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v4.5.0</span>
+  <span class="version-badge">v4.5.1</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1098,9 +1099,10 @@ function renderList() {
       riga2 += '</span>';
     }
     var classes = 'rank-item' + (isVisTop ? ' vis-top' : '') + (p.featured ? ' featured' : '');
-    if (p.divino) {
+    var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
+    if (p.divino || darkBg) {
       classes += ' divine';
-      if (/melkor|morgoth/i.test(p.nome)) classes += ' morgoth';
+      if (darkBg) classes += ' morgoth';
       else if (/bombadil/i.test(p.nome)) classes += ' bombadil';
     }
     html += '<div class="' + classes + '" style="animation-delay:' + (i * 0.04) + 's' +
@@ -1225,7 +1227,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.5.0</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.5.1</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
