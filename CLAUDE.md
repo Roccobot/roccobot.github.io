@@ -30,6 +30,64 @@ Saltare questo passo causa conflitti al momento del push.
   - **merge commit** quando la storia dei commit è già pulita e vale la pena conservarla;
   - **rebase** quando serve una storia lineare senza commit di merge.
 
+## Opere di J.R.R. Tolkien — fonti e citazioni
+
+- **Fedeltà assoluta alle fonti canoniche** per ogni campo (Silmarillion,
+  Racconti Incompiuti, HoME, Tolkien Gateway), mai fatti inventati.
+- **Citazioni verbatim** dal testo pubblicato in italiano, mai parafrasi
+  o ritraduzioni dall'inglese. Traduzioni di riferimento:
+  - *Il Signore degli Anelli* → **Vicky Alliata di Villafranca** (Rusconi/
+    Bompiani, rev. Quirino Principe) — NON la versione Fatica 2019.
+  - *Lo Hobbit* → **Elena Jeronimidis Conte** (Adelphi).
+  - *Il Silmarillion* → **Francesco Saba Sardi** (Rusconi/Bompiani).
+- Quando una citazione verbatim non è verificabile con certezza, segnalarlo
+  esplicitamente invece di inventare.
+
+## 🧙🏻‍♂️ Canone Tolkieniano
+
+Libri canonici (Verità assoluta):
+- 📖 Ordine di priorità: 'Il Signore degli Anelli', 'Il Silmarillion',
+  'Racconti incompiuti', 'Lo Hobbit', `Tolkien Gateway`, `NoME`, `HoME`,
+  Opere extra-canone (Incompiute, Lettere, Saggi): consultabili solo se il
+  canone tace.
+
+Versioni ammesse:
+- 🇬🇧 Originale inglese.
+- 🇮🇹 Traduzioni storiche revisionate dalla Società Tolkieniana Italiana
+  (es. SdA di Quirino Principe con terminologia aggiornata come 'Troll' o
+  'Porti Grigi').
+- 🚫 Divieto assoluto: qualsiasi edizione tradotta da Ottavio Fatica,
+  adattamenti a schermo (film, serie, altro).
+
+Fonte web di riferimento:
+- 🌐 The Tolkien Gateway (https://tolkiengateway.net): affidabilità equiparata
+  al canone.
+
+Acronimi Ufficiali:
+- 🔤 SdA / LotR: Il Signore degli Anelli
+- 🔤 Hob: Lo Hobbit
+- 🔤 Sil: Il Silmarillion
+- 🔤 RI / UT: Racconti incompiuti
+- 🔤 TTG / TG: The Tolkien Gateway
+- 🔤 HoME: History of Middle-Earth
+- 🔤 NoME: Nature of Middle-Earth
+
+Regole d'oro:
+- ⛔ Divieto severo: non inventare mai nulla per colmare le lacune.
+- 💎 Le fonti sono l'unica sorgente di verità ammissibile.
+
+### Integrazioni operative (armonizzazione con le sezioni sopra)
+
+- Le traduzioni di riferimento già elencate (*SdA* → Alliata rev. Principe;
+  *Hob* → Jeronimidis Conte; *Sil* → Saba Sardi) rientrano nelle «traduzioni
+  storiche revisionate dalla STI». In caso di discordanza terminologica,
+  prevale la forma rivista dalla STI (es. *Troll*, *Porti Grigi*).
+- Per ogni campo, in caso di conflitto tra fonti, seguire l'**ordine di
+  priorità** dei libri canonici sopra; TTG vale come canone ma non *sopra* i
+  testi primari quando questi parlano.
+- Nomenclatura: privilegiare i toponimi/nomi nella forma italiana storica
+  STI; mai nelle forme dell'edizione Fatica o degli adattamenti a schermo.
+
 ## Struttura dati
 
 - Array `dati` delimitato da `/*DS*/` e `/*DE*/` per sostituzione sicura
