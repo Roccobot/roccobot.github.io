@@ -845,7 +845,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v4.9.0</span>
+  <span class="version-badge">v5.0.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -889,7 +889,7 @@ var i18n = {
     crest: '<a href="https://roccobot.me"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
-    intro: "Dalle potenze angeliche degli Ainur al più umile bambino Hobbit. Il 'potere' è inteso nel senso più ampio immaginabile: forza magica, abilità in combattimento, potere politico, militare, influenza e capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
+    intro: "Dalle potenze angeliche al più umile servitore. Il 'potere' sfugge ad ogni definizione: può essere potenza magica, abilità in combattimento, potere politico, militare, influenza o capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
     footer: "<em>’Non tutto quel ch’è oro brilla, né gli erranti sono perduti.’</em><br>Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione'
   },
@@ -1010,7 +1010,7 @@ var ICON_LABEL = {
   it: {
     aratar:  "Aratar: i più grandi e potenti degli Ainur",
     silmaril:"Possedette o toccò un Silmaril",
-    istari:  "Membro dell’ordine degli Istari",
+    istari:  "Membro dell’ordine degli Istari (Stregoni)",
     survivor:"Visse nella Terra di Mezzo durante la Quarta Era",
     west:    "Attraversò l’Oceano verso le Terre Imperiture",
     onering: "Portatore dell’Unico Anello",
@@ -1022,7 +1022,7 @@ var ICON_LABEL = {
   en: {
     aratar:  "Aratar: the greatest and mightiest of the Ainur",
     silmaril:"Possessed or touched a Silmaril",
-    istari:  "Member of the Order of the Istari",
+    istari:  "Member of the Order of the Istari (Wizards)",
     survivor:"Lived in Middle-earth during the Fourth Age",
     west:    "Crossed the Sea to the Undying Lands",
     onering: "Bearer of the One Ring",
@@ -1246,7 +1246,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.9.0</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.0.0</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1283,7 +1283,11 @@ function wireControlPanel() {
     });
   });
   var resetBtn = document.getElementById('ctrl-reset');
-  if (resetBtn) resetBtn.addEventListener('click', function(){ CATS.forEach(function(k){ filterState[k] = true; }); applyFilter(); });
+  if (resetBtn) {
+    var doReset = function(e) { if (e.cancelable) e.preventDefault(); CATS.forEach(function(k){ filterState[k] = true; }); applyFilter(); };
+    resetBtn.addEventListener('click', doReset);
+    resetBtn.addEventListener('touchend', doReset); // iOS: touchend garantisce risposta anche dentro bottom sheet scrollabile
+  }
   var themeBtn = document.getElementById('ctrl-theme');
   if (themeBtn) themeBtn.addEventListener('click', function(){ toggleTheme(); refreshControlPanel(); });
   var close = document.getElementById('ctrl-close');
