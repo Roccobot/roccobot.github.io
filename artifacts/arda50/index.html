@@ -849,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.2.0</span>
+  <span class="version-badge">v5.2.1</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -890,7 +890,7 @@ var currentLang = localStorage.getItem('arda-lang') || (navigator.language.start
 
 var i18n = {
   it: {
-    crest: '<a href="https://roccobot.me"><strong>Roccobot</strong></a> presenta',
+    crest: '<a href="https://roccobot.me" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
     intro: "Dalle potenze angeliche al più umile servitore. Il 'potere' sfugge ad ogni definizione: può essere potenza magica, abilità in combattimento, potere politico, militare, influenza o capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
@@ -898,7 +898,7 @@ var i18n = {
     position: 'Posizione'
   },
   en: {
-    crest: '<a href="https://roccobot.me"><strong>Roccobot</strong></a> presents',
+    crest: '<a href="https://roccobot.me" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Arda',
     subtitle: 'The mightiest beings* in Tolkien\'s world, from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
     intro: "From the angelic powers of the Ainur down to the humblest Hobbit child. 'Power' is understood in the broadest sense imaginable: magical force, skill in combat, political and military power, influence and the ability to shape the world's fate.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
@@ -1249,7 +1249,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.2.0</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.2.1</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
