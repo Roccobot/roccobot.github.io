@@ -1,0 +1,15 @@
+# Configurazione Cloudflare Worker — proxy admin del Grimorio di Arda
+#
+# I SECRET (GITHUB_PAT, ADMIN_PASSWORD) NON vanno qui: si impostano con
+#   wrangler secret put GITHUB_PAT
+#   wrangler secret put ADMIN_PASSWORD
+# (oppure dal dashboard: Workers → arda-admin-proxy → Settings → Variables → Secrets)
+#
+# Qui sotto solo la variabile NON segreta dell'origine autorizzata (CORS).
+
+name = "arda-admin-proxy"
+main = "arda-admin-proxy.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://roccobot.github.io"

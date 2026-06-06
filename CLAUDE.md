@@ -60,7 +60,11 @@ di quanto ricordato), fermarsi e investigare prima di procedere.
 
 - Branch di sviluppo: `master` (regola stabilita dall'utente)
 - Bump SemVer ad ogni commit (patch per fix, minor per feature/contenuto)
-- La password `mellon mofo` compare SOLO come `atob('bWVsbG9uIG1vZm8=')` — mai in chiaro
+- **La parola d'ordine admin è validata SOLO lato server** dal Cloudflare Worker
+  (secret `ADMIN_PASSWORD`). NON deve mai comparire nel sorgente del sito — né
+  in chiaro né in base64. La vecchia `atob('bWVsbG9uIG1vZm8=')` è stata rimossa.
+- **Nessuna credenziale GitHub nel client**: il PAT vive solo come secret del
+  Worker (`GITHUB_PAT`). Mai reintrodurre token nel `localStorage` o nel codice.
 - Le label/placeholder NON devono mai mostrare "Password admin"
 - Rispondere in italiano
 
@@ -135,5 +139,11 @@ Regole d'oro:
 ## Struttura dati
 
 - Array `dati` delimitato da `/*DS*/` e `/*DE*/` per sostituzione sicura
-- `doCommit()` usa GitHub Contents API (PUT) con SHA corrente — già race-condition safe
-- Token GitHub PAT in `localStorage` con chiave `arda-admin-token`
+- Il salvataggio passa dal **proxy Cloudflare Worker** (`proxy/arda-admin-proxy.js`):
+  il browser invia solo `dati` + parola d'ordine; il Worker valida la password
+  e fa il read-modify-write su GitHub (Contents API, PUT con SHA — race-safe).
+- `doCommit()` nel client fa `POST proxyUrl()` con `{action:'commit', password, dati, message}`.
+  L'URL del Worker è in `ADMIN_PROXY_URL_DEFAULT` (non segreto), overridabile dal
+  campo "Proxy" dell'editor admin (`localStorage` chiave `arda-proxy-url`).
+- La parola d'ordine sta solo in memoria (`adminPassword`) per la sessione; mai
+  persistita. Vedi `proxy/README.md` per il deploy e la gestione dei secret.

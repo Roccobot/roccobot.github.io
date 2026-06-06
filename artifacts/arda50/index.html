@@ -845,7 +845,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v4.8.0</span>
+  <span class="version-badge">v4.9.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1246,7 +1246,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.8.0</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.9.0</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1330,6 +1330,13 @@ setLang(currentLang);
 // ── DRAG-DROP & REORDERING ──
 let hasMovedItem = false;
 let saveUnlocked = false;
+// Parola d'ordine admin: tenuta solo in memoria per la sessione, validata dal
+// proxy server-side. Non finisce mai nel localStorage né nel sorgente pubblico.
+let adminPassword = '';
+// URL del proxy admin (Cloudflare Worker). Non è un segreto: è solo l'endpoint.
+// Overridabile al volo dal campo "Proxy" nell'editor admin (localStorage).
+var ADMIN_PROXY_URL_DEFAULT = 'https://arda-admin-proxy.PLACEHOLDER.workers.dev';
+function proxyUrl() { return localStorage.getItem('arda-proxy-url') || ADMIN_PROXY_URL_DEFAULT; }
 let pointerDragState = null;
 let scrollRAF = null;
 
@@ -1501,34 +1508,23 @@ function doSave(btn) {
   });
 }
 
-function replaceDatiInHTML(html) {
-  const s = html.indexOf('/*DS*/');
-  const e = html.indexOf('/*DE*/');
-  if (s === -1 || e === -1) return null;
-  return html.substring(0, s) + '/*DS*/var dati = ' + JSON.stringify(dati) + ';/*DE*/' + html.substring(e + 6);
-}
-
 async function doCommit(msg) {
   localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; })));
-  const token = localStorage.getItem('arda-admin-token');
-  if (!token) return { ok: false, reason: 'no-token' };
-  const api = 'https://api.github.com/repos/roccobot/roccobot.github.io/contents/artifacts/arda50/index.html';
+  if (!adminPassword) return { ok: false, reason: 'no-auth' };
+  // Il commit passa dal proxy: il browser invia solo l'array dati e la parola
+  // d'ordine; il PAT vive lato server e fa il read-modify-write su GitHub.
   try {
-    const get = await fetch(api, { headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json' } });
-    if (!get.ok) {
-      if (get.status === 401) localStorage.removeItem('arda-admin-token');
-      throw new Error('HTTP ' + get.status);
-    }
-    const fd = await get.json();
-    const cur = decodeURIComponent(escape(atob(fd.content.replace(/\n/g, ''))));
-    const upd = replaceDatiInHTML(cur);
-    if (!upd) throw new Error('marker assente nel file');
-    const put = await fetch(api, {
-      method: 'PUT',
-      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg || 'admin: aggiorna', content: btoa(unescape(encodeURIComponent(upd))), sha: fd.sha })
+    const res = await fetch(proxyUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'commit', password: adminPassword, dati: dati, message: msg || 'admin: aggiorna' })
     });
-    if (!put.ok) { const er = await put.json(); throw new Error(er.message || 'PUT ' + put.status); }
+    let r = {};
+    try { r = await res.json(); } catch (e) {}
+    if (!res.ok || !r.ok) {
+      if (res.status === 401) { adminPassword = ''; saveUnlocked = false; }
+      return { ok: false, reason: r.error || ('HTTP ' + res.status) };
+    }
     return { ok: true };
   } catch (err) {
     return { ok: false, reason: err.message };
@@ -1554,11 +1550,28 @@ function showPasswordModal(promptText, onSuccess) {
     const p = document.createElement('p'); p.textContent = promptText;
     const inp = document.createElement('input');
     inp.type = 'password'; inp.autocomplete = 'off';
-    const tryAuth = () => {
-      if (inp.value !== atob('bWVsbG9uIG1vZm8=')) {
-        inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
-        setTimeout(() => inp.style.borderColor = '', 700); return;
-      }
+    const fail = () => {
+      inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
+      setTimeout(() => inp.style.borderColor = '', 700);
+    };
+    const tryAuth = async () => {
+      const pw = inp.value;
+      if (!pw) { fail(); return; }
+      cb.disabled = true;
+      let ok = false;
+      // Validazione lato server: la parola d'ordine non è nel sorgente pubblico.
+      try {
+        const res = await fetch(proxyUrl(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'auth', password: pw })
+        });
+        let r = {}; try { r = await res.json(); } catch (e) {}
+        ok = res.ok && r.ok;
+      } catch (e) { ok = false; }
+      cb.disabled = false;
+      if (!ok) { fail(); return; }
+      adminPassword = pw; // solo in memoria, per i commit di questa sessione
       saveUnlocked = true;
       document.querySelectorAll('#fab-save').forEach(b => b.classList.add('fab-unlocked'));
       overlay.remove(); onSuccess();
@@ -1626,27 +1639,29 @@ function showAdminEditor() {
   const title = document.createElement('div');
   title.className = 'admin-title';
   title.textContent = 'Admin — Modifica testi';
-  // Token field in header
+  // Campo Proxy: URL del Worker admin (non è un segreto). Override per dispositivo;
+  // se vuoto si usa la costante ADMIN_PROXY_URL_DEFAULT cablata nel codice.
   const tokenWrap = document.createElement('div');
   tokenWrap.style.cssText = 'display:flex;align-items:center;gap:0.5rem;font-family:Cinzel,serif;font-size:0.64rem;';
   const tokenLbl = document.createElement('span');
-  tokenLbl.textContent = 'GH Token:';
+  tokenLbl.textContent = 'Proxy:';
   tokenLbl.style.cssText = 'color:var(--gold);opacity:0.7;white-space:nowrap;';
   const tokenInp = document.createElement('input');
-  tokenInp.type = 'password';
+  tokenInp.type = 'text';
   tokenInp.className = 'admin-input';
-  tokenInp.style.cssText = 'width:160px;padding:0.3rem 0.5rem;font-size:0.75rem;';
-  tokenInp.placeholder = '(non impostato)';
-  const storedTok = localStorage.getItem('arda-admin-token');
-  if (storedTok) tokenInp.value = storedTok;
+  tokenInp.style.cssText = 'width:220px;padding:0.3rem 0.5rem;font-size:0.75rem;';
+  tokenInp.placeholder = ADMIN_PROXY_URL_DEFAULT;
+  const storedProxy = localStorage.getItem('arda-proxy-url');
+  if (storedProxy) tokenInp.value = storedProxy;
   const tokenSaveBtn = document.createElement('button');
   tokenSaveBtn.className = 'admin-btn admin-btn-save';
   tokenSaveBtn.style.cssText = 'min-height:32px;padding:0 0.7rem;font-size:0.7rem;';
   tokenSaveBtn.textContent = 'Set';
   tokenSaveBtn.onclick = () => {
     const t = tokenInp.value.trim();
-    if (t) { localStorage.setItem('arda-admin-token', t); tokenSaveBtn.textContent = '✓'; setTimeout(() => { tokenSaveBtn.textContent = 'Set'; }, 1200); }
-    else { localStorage.removeItem('arda-admin-token'); tokenSaveBtn.textContent = '✓'; setTimeout(() => { tokenSaveBtn.textContent = 'Set'; }, 1200); }
+    if (t) localStorage.setItem('arda-proxy-url', t);
+    else localStorage.removeItem('arda-proxy-url');
+    tokenSaveBtn.textContent = '✓'; setTimeout(() => { tokenSaveBtn.textContent = 'Set'; }, 1200);
   };
   tokenWrap.appendChild(tokenLbl);
   tokenWrap.appendChild(tokenInp);
