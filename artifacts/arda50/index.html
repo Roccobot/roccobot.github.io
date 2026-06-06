@@ -1087,7 +1087,7 @@ function renderList() {
     var genere = p.genere || 'm';
     var genereSym = genere === 'f' ? '<span class="genere-sym">♀</span>' : genere === 'm' ? '<span class="genere-sym">♂</span>' : '';
     var hasAinur = p.nome !== 'Lúthien' && tipo && /(?:^|\|)\s*(valë|valië|vala|maia)/i.test(tipo) && !/balrog/i.test(tipo);
-    var tipoStr = hasAinur ? '<span class="tipo-badge tipo-ainur">Ainur</span>' : '';
+    var tipoStr = hasAinur ? '<span class="tipo-badge tipo-ainur">Ainu</span>' : '';
     tipoStr += tipo ? tipo.split('|').map(function(seg){
       seg = seg.trim();
       return '<span class="tipo-badge ' + tipoClass(seg) + '">' + seg + '</span>';
