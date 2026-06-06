@@ -845,7 +845,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v4.7.1</span>
+  <span class="version-badge">v4.8.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1056,10 +1056,15 @@ function categoria(p) {
   return 'divini'; // forze ancestrali residue (Ent, Aquile)
 }
 var filterState = {};
+// Categorie spente al primo caricamento (default pagina): esseri angelici/ancestrali e animali
+var CAT_DEFAULT_OFF = { divini:true, animali:true };
 (function(){
   var saved = {};
   try { saved = JSON.parse(localStorage.getItem('arda-filtri') || '{}'); } catch(e) {}
-  CATS.forEach(function(c){ filterState[c] = saved[c] !== false; });
+  CATS.forEach(function(c){
+    // Rispetta una scelta salvata; altrimenti applica il default (tutto acceso tranne divini/animali)
+    filterState[c] = (c in saved) ? (saved[c] !== false) : !CAT_DEFAULT_OFF[c];
+  });
 })();
 
 function renderList() {
@@ -1204,8 +1209,8 @@ var CAT_LABEL = {
 };
 var CAT_COLOR = { divini:'#5540e0', elfi:'#70c0e8', edain:'#8a1818', uomini:'#ff4040', nani:'#e0c020', hobbit:'#ffa838', orchi:'#da50ff', animali:'#5ac060' };
 var CTRL_I18N = {
-  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi' },
-  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close' }
+  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti' },
+  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All' }
 };
 
 function controlPanelHTML() {
@@ -1220,7 +1225,7 @@ function controlPanelHTML() {
   var themeLbl = isLight ? (currentLang==='it'?'Tema scuro':'Dark theme') : (currentLang==='it'?'Tema chiaro':'Light theme');
   h += '<div class="ctrl-toolbar"><button class="ctrl-icon-btn" id="ctrl-theme" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button></div>';
   // Filtri
-  h += '<div class="ctrl-section"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button class="ctrl-reset" id="ctrl-reset">Reset</button></div>';
+  h += '<div class="ctrl-section"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button class="ctrl-reset" id="ctrl-reset">' + T.all + '</button></div>';
   var soloTxt = currentLang === 'it' ? 'solo' : 'only';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){
@@ -1241,7 +1246,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.7.1</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v4.8.0</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
