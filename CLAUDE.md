@@ -56,6 +56,19 @@ di quanto ricordato), fermarsi e investigare prima di procedere.
 > **non sostituisce** questo controllo manuale obbligatorio — come dimostrato,
 > il hook non può girare se la snapshot è anteriore al commit che lo ha introdotto.
 
+## Stile di comunicazione
+
+- **Non dare per scontate competenze tecniche.** Spiegare ogni concetto (es. "hook", "snapshot", "container") in linguaggio piano e passo per passo, senza presumere che l'utente li conosca.
+- **Spiegare di persona, non rimandare alla documentazione.** Se serve consultare la doc ufficiale, la leggo io e riassumo i passi concreti; non mando l'utente a leggere materiale tecnico.
+- **Nessuna contraddizione.** Evitare affermazioni che si smentiscono tra loro nello stesso messaggio.
+
+## Infrastruttura e ambiente
+
+- **Nome del progetto: "I Grandi di Arda".** "Grimorio" è terminologia morta (sopravvive solo nel nome di branch vecchi e in commit storici): non usarla mai nei testi né parlando con l'utente.
+- **Setup script dell'ambiente cloud** (impostazione UI di claude.ai/code, non nel repo): contiene `git fetch origin master && git reset --hard origin/master`. Serve a forzare il riscatto della cache dell'ambiente così ogni nuovo container parte dall'ultimo `master`. Non rimuovere o modificare senza motivo: è il fix strutturale allo "snapshot stale".
+- **Variabili d'ambiente: campo vuoto.** Il campo "Variabili d'ambiente" dell'ambiente cloud è visibile a chiunque possa modificare l'ambiente — non inserirci mai credenziali. PAT GitHub e password admin vivono solo come secret del Cloudflare Worker.
+- **Eliminazione branch:** l'ambiente remoto non consente `git push --delete` (errore 403). I branch obsoleti li elimina l'utente manualmente dalla UI di GitHub. Indicare sempre quali branch sono sicuri da rimuovere.
+
 ## Regole generali
 
 - Branch di sviluppo: `master` (regola stabilita dall'utente)
