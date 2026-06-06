@@ -1639,33 +1639,6 @@ function showAdminEditor() {
   const title = document.createElement('div');
   title.className = 'admin-title';
   title.textContent = 'Admin — Modifica testi';
-  // Campo Proxy: URL del Worker admin (non è un segreto). Override per dispositivo;
-  // se vuoto si usa la costante ADMIN_PROXY_URL_DEFAULT cablata nel codice.
-  const tokenWrap = document.createElement('div');
-  tokenWrap.style.cssText = 'display:flex;align-items:center;gap:0.5rem;font-family:Cinzel,serif;font-size:0.64rem;';
-  const tokenLbl = document.createElement('span');
-  tokenLbl.textContent = 'Proxy:';
-  tokenLbl.style.cssText = 'color:var(--gold);opacity:0.7;white-space:nowrap;';
-  const tokenInp = document.createElement('input');
-  tokenInp.type = 'text';
-  tokenInp.className = 'admin-input';
-  tokenInp.style.cssText = 'width:220px;padding:0.3rem 0.5rem;font-size:0.75rem;';
-  tokenInp.placeholder = ADMIN_PROXY_URL_DEFAULT;
-  const storedProxy = localStorage.getItem('arda-proxy-url');
-  if (storedProxy) tokenInp.value = storedProxy;
-  const tokenSaveBtn = document.createElement('button');
-  tokenSaveBtn.className = 'admin-btn admin-btn-save';
-  tokenSaveBtn.style.cssText = 'min-height:32px;padding:0 0.7rem;font-size:0.7rem;';
-  tokenSaveBtn.textContent = 'Set';
-  tokenSaveBtn.onclick = () => {
-    const t = tokenInp.value.trim();
-    if (t) localStorage.setItem('arda-proxy-url', t);
-    else localStorage.removeItem('arda-proxy-url');
-    tokenSaveBtn.textContent = '✓'; setTimeout(() => { tokenSaveBtn.textContent = 'Set'; }, 1200);
-  };
-  tokenWrap.appendChild(tokenLbl);
-  tokenWrap.appendChild(tokenInp);
-  tokenWrap.appendChild(tokenSaveBtn);
   const btnWrap = document.createElement('div');
   btnWrap.className = 'admin-btn-wrap';
   const backBtn = document.createElement('button');
@@ -1760,7 +1733,6 @@ function showAdminEditor() {
   btnWrap.appendChild(backBtn);
   btnWrap.appendChild(saveBtn);
   header.appendChild(title);
-  header.appendChild(tokenWrap);
   header.appendChild(btnWrap);
   overlay.appendChild(header);
 
