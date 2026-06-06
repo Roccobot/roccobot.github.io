@@ -1,3 +1,17 @@
 {
-  "model": "opus"
+  "model": "opus",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git fetch origin master --quiet 2>/dev/null && { git diff --quiet && git diff --cached --quiet && git reset --hard origin/master --quiet && echo \"[SessionStart] Allineato a origin/master ($(git rev-parse --short HEAD))\" || echo \"[SessionStart] Working tree non pulito: reset saltato, ref remoti aggiornati\"; } || echo \"[SessionStart] fetch fallito: nessun allineamento\"",
+            "timeout": 45,
+            "statusMessage": "Allineamento a origin/master…"
+          }
+        ]
+      }
+    ]
+  }
 }

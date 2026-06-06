@@ -6,26 +6,46 @@ Usare sempre **Claude Opus** (ultima versione disponibile). Il modello è già
 forzato a livello di progetto in `.claude/settings.json` (`"model": "opus"`,
 alias che punta sempre all'ultima release di Opus). Non usare Sonnet o Haiku.
 
-## Workflow obbligatorio prima di modificare index.html
+## Allineamento automatico al remote (fix snapshot stale)
+
+Il container effimero di "Claude Code on the web" può ripartire da uno
+**snapshot git vecchio** (es. fermo a una versione passata) mentre il vero
+stato è su GitHub. In più, l'editor admin del sito committa direttamente su
+GitHub via API. Quindi **l'unica fonte di verità è `origin/master`**, mai il
+clone locale.
+
+Per risolverlo alla radice, un **SessionStart hook** in
+`.claude/settings.json` allinea automaticamente il working tree a
+`origin/master` all'avvio di ogni sessione:
+
+- fa sempre `git fetch origin master`;
+- esegue `git reset --hard origin/master` **solo se il working tree è pulito**
+  (se ci fosse lavoro non committato, salta il reset e aggiorna solo i ref —
+  nessuna perdita di dati).
+
+Non modificare/rimuovere questo hook senza motivo: è la difesa strutturale
+contro il bug dello snapshot stale.
+
+## Workflow prima di modificare index.html
 
 L'editor admin del sito (`artifacts/arda50/index.html`) può creare commit
-direttamente su GitHub via API in qualsiasi momento. Prima di qualsiasi
-modifica locale al file, eseguire **sempre**:
+direttamente su GitHub via API in qualsiasi momento. Il SessionStart hook
+allinea già il repo all'avvio, ma se la sessione resta aperta a lungo
+eseguire comunque, prima di modifiche locali:
 
 ```bash
-git pull origin master
+git fetch origin master && git reset --hard origin/master   # tree pulito
+# oppure: git pull origin master                            # se ci sono modifiche locali
 ```
 
-Saltare questo passo causa conflitti al momento del push.
-
-Dopo il pull, **verificare immediatamente** il numero di versione nel file:
+Verifica rapida della versione dopo l'allineamento:
 
 ```bash
 grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' artifacts/arda50/index.html | head -1
 ```
 
-Se la versione locale non corrisponde a quella attesa (o all'ultima nota),
-recuperare il file reale via GitHub API prima di procedere.
+Se la versione non corrisponde a quella attesa, recuperare il file reale via
+GitHub API prima di procedere.
 
 ## Regole generali
 
