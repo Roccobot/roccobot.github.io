@@ -65,7 +65,7 @@ di quanto ricordato), fermarsi e investigare prima di procedere.
 ## Infrastruttura e ambiente
 
 - **Nome del progetto: "I Grandi di Arda".** "Grimorio" è terminologia morta (sopravvive solo nel nome di branch vecchi e in commit storici): non usarla mai nei testi né parlando con l'utente.
-- **Setup script dell'ambiente cloud** (impostazione UI di claude.ai/code, non nel repo): contiene `git fetch origin master && git reset --hard origin/master`. Serve a forzare il riscatto della cache dell'ambiente così ogni nuovo container parte dall'ultimo `master`. Non rimuovere o modificare senza motivo: è il fix strutturale allo "snapshot stale".
+- **Setup script dell'ambiente cloud** (impostazione UI di claude.ai/code, non nel repo): deve restare un comando innocuo che esce con successo, es. `echo "setup ok"`. NON usarlo per operazioni git: lo script gira prima che il repo sia clonato nella cartella di lavoro, quindi `git fetch`/`reset` falliscono con `fatal: not a git repository` (exit 128) e bloccano l'avvio della sessione. Il suo unico scopo qui è che, modificandolo, si forza il riscatto della cache dell'ambiente (fresh clone sull'ultimo `master`). L'allineamento vero a `origin/master` è compito del SessionStart hook, che gira dopo, nella cartella giusta del repo.
 - **Variabili d'ambiente: campo vuoto.** Il campo "Variabili d'ambiente" dell'ambiente cloud è visibile a chiunque possa modificare l'ambiente — non inserirci mai credenziali. PAT GitHub e password admin vivono solo come secret del Cloudflare Worker.
 - **Eliminazione branch:** l'ambiente remoto non consente `git push --delete` (errore 403). I branch obsoleti li elimina l'utente manualmente dalla UI di GitHub. Indicare sempre quali branch sono sicuri da rimuovere.
 
