@@ -391,6 +391,10 @@ h1 {
   font-size:0.75em; opacity:0.5; margin-left:0.15em;
   vertical-align:middle; line-height:1; user-select:none;
 }
+.genere-svg {
+  width:1.05em; height:1.05em;
+  user-select:none; flex:none;
+}
 /* ELFI — tonalità blu/celeste */
 .tipo-noldor      { background:rgba(30,95,155,0.28); border:1px solid rgba(108,185,230,0.62); color:#70c0e8; }
 .tipo-noldor-vanyar { background:rgba(30,70,210,0.3); border:1px solid rgba(80,140,248,0.68); color:#5895f0; }
@@ -845,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.0.0</span>
+  <span class="version-badge">v5.1.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1060,12 +1064,21 @@ var filterState = {};
 var CAT_DEFAULT_OFF = { divini:true, animali:true };
 (function(){
   var saved = {};
-  try { saved = JSON.parse(localStorage.getItem('arda-filtri') || '{}'); } catch(e) {}
+  // Chiave versionata: il vecchio 'arda-filtri' (tutto attivo) NON deve mascherare
+  // il nuovo default (divini/animali spenti). Chi ha solo la vecchia chiave riceve
+  // il nuovo default una volta, poi le sue scelte ripersistono sotto la chiave v2.
+  try { saved = JSON.parse(localStorage.getItem('arda-filtri-v2') || '{}'); } catch(e) {}
   CATS.forEach(function(c){
     // Rispetta una scelta salvata; altrimenti applica il default (tutto acceso tranne divini/animali)
     filterState[c] = (c in saved) ? (saved[c] !== false) : !CAT_DEFAULT_OFF[c];
   });
 })();
+
+// Simboli di genere in SVG stile emoji (tratti spessi e colorati, leggibili a ogni dimensione)
+var GENERE_SVG = {
+  f: '<svg class="genere-svg" viewBox="0 0 36 36" role="img" aria-label="femmina"><circle cx="18" cy="13" r="8.5" fill="none" stroke="#e84d8a" stroke-width="4.2"/><path d="M18 21.5V34 M11.5 28.5H24.5" fill="none" stroke="#e84d8a" stroke-width="4.2" stroke-linecap="round"/></svg>',
+  m: '<svg class="genere-svg" viewBox="0 0 36 36" role="img" aria-label="maschio"><circle cx="14.5" cy="21.5" r="8.5" fill="none" stroke="#4a90e2" stroke-width="4.2"/><path d="M20.5 15.5L30 6 M22.5 5.5H30.5V13.5" fill="none" stroke="#4a90e2" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
 
 function renderList() {
   var list = document.getElementById('rank-list');
@@ -1085,7 +1098,7 @@ function renderList() {
     var pf = parseFonte(fonte);
     var titleYear = pf.title + (pf.year ? ' (' + pf.year + ')' : '');
     var genere = p.genere || 'm';
-    var genereSym = genere === 'f' ? '<span class="genere-sym">♀</span>' : genere === 'm' ? '<span class="genere-sym">♂</span>' : '';
+    var genereSym = genere === 'f' ? GENERE_SVG.f : genere === 'm' ? GENERE_SVG.m : '';
     var hasAinur = p.nome !== 'Lúthien' && tipo && /(?:^|\|)\s*(valë|valië|vala|maia)/i.test(tipo) && !/balrog/i.test(tipo);
     var tipoStr = hasAinur ? '<span class="tipo-badge tipo-ainur">Ainu</span>' : '';
     tipoStr += tipo ? tipo.split('|').map(function(seg){
@@ -1246,7 +1259,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.0.0</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.1.0</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1261,7 +1274,7 @@ function refreshControlPanel() {
 function wireControlPanel() {
   var panel = document.getElementById('ctrl-panel');
   function applyFilter() {
-    try { localStorage.setItem('arda-filtri', JSON.stringify(filterState)); } catch(e) {}
+    try { localStorage.setItem('arda-filtri-v2', JSON.stringify(filterState)); } catch(e) {}
     renderList();
     enableDragDrop();
     var st = panel.scrollTop;
