@@ -26,26 +26,35 @@ Per risolverlo alla radice, un **SessionStart hook** in
 Non modificare/rimuovere questo hook senza motivo: è la difesa strutturale
 contro il bug dello snapshot stale.
 
-## Workflow prima di modificare index.html
+## ⛔ REGOLA ASSOLUTA — Allineamento obbligatorio prima di qualsiasi modifica
 
-L'editor admin del sito (`artifacts/arda50/index.html`) può creare commit
-direttamente su GitHub via API in qualsiasi momento. Il SessionStart hook
-allinea già il repo all'avvio, ma se la sessione resta aperta a lungo
-eseguire comunque, prima di modifiche locali:
+**Nessuna modifica a nessun file è consentita senza aver prima eseguito:**
 
 ```bash
-git fetch origin master && git reset --hard origin/master   # tree pulito
-# oppure: git pull origin master                            # se ci sono modifiche locali
+git pull origin master
 ```
 
-Verifica rapida della versione dopo l'allineamento:
+Questa regola non ha eccezioni. Non importa quanto sembri fresco il clone locale,
+non importa se il SessionStart hook è già girato: il container effimero può ripartire
+da una snapshot stale in qualsiasi momento, e l'editor admin committa direttamente
+su GitHub via API. **L'unica fonte di verità è `origin/master`.**
+
+Sequenza obbligatoria prima di toccare qualsiasi file:
 
 ```bash
+# 1. Allinea sempre (obbligatorio, senza eccezioni)
+git pull origin master
+
+# 2. Verifica la versione del file principale
 grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' artifacts/arda50/index.html | head -1
 ```
 
-Se la versione non corrisponde a quella attesa, recuperare il file reale via
-GitHub API prima di procedere.
+Se la versione dopo il pull non corrisponde a quella attesa (es. è più vecchia
+di quanto ricordato), fermarsi e investigare prima di procedere.
+
+> Il SessionStart hook in `.claude/settings.json` è una difesa aggiuntiva ma
+> **non sostituisce** questo controllo manuale obbligatorio — come dimostrato,
+> il hook non può girare se la snapshot è anteriore al commit che lo ha introdotto.
 
 ## Regole generali
 
