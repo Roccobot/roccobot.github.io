@@ -35,7 +35,7 @@
 @@||emby.at^
 @@||emby.media^
 @@||enel.it^
-@@||enf-cmnf.cc^
+@@||enf-cmnf.cc^$stealth
 @@||fascicolo-sanitario.it^$document,subdocument
 @@||fastspring.com^$document,subdocument
 @@||fattureincloud.it^
