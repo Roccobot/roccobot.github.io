@@ -788,9 +788,9 @@ html[data-theme="light"] {
   ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #253d58, #4a7090); }
 
   /* race badge light-mode: vivid but dark enough for marble bg */
-  .tipo-noldor      { background:rgba(30,95,155,0.11); border-color:rgba(70,150,210,0.82); color:#1560a0; }
+  .tipo-noldor      { background:rgba(30,95,155,0.11); border-color:rgba(30,100,185,0.90); color:#1560a0; }
   .tipo-noldor-vanyar { background:rgba(30,70,210,0.12); border-color:rgba(50,120,230,0.55); color:#1040c8; }
-  .tipo-vanyar      { background:rgba(0,150,195,0.12); border-color:rgba(0,195,225,0.85); color:#007898; }
+  .tipo-vanyar      { background:rgba(0,150,195,0.12); border-color:rgba(0,140,175,0.90); color:#007898; }
   .tipo-teleri      { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
   .tipo-calaquendi  { background:rgba(12,148,132,0.16); border-color:rgba(22,200,178,0.72); color:#097a6c; }
   .tipo-sindar      { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
@@ -809,7 +809,7 @@ html[data-theme="light"] {
   .tipo-hobbit      { background:rgba(210,100,0,0.12); border-color:rgba(228,138,35,0.82); color:#a84800; }
   .tipo-gollum      { background:rgba(110,70,20,0.11); border-color:rgba(160,110,40,0.52); color:#7a4c10; }
   .tipo-aquila      { background:rgba(0,185,180,0.12); border-color:rgba(0,218,215,0.55); color:#007870; }
-  .tipo-ent         { background:rgba(22,168,18,0.12); border-color:rgba(55,200,40,0.55); color:#187810; }
+  .tipo-ent         { background:rgba(22,168,18,0.12); border-color:rgba(25,140,15,0.90); color:#187810; }
   .tipo-maia        { background:rgba(180,8,90,0.12); border-color:rgba(220,28,118,0.55); color:#900050; }
   .tipo-istari      { background:rgba(112,115,158,0.11); border-color:rgba(160,162,208,0.52); color:#404878; }
   .tipo-generico    { background:rgba(80,80,80,0.07); border-color:rgba(135,135,135,0.72); color:#484848; }
@@ -849,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.4.0</span>
+  <span class="version-badge">v5.4.1</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1249,7 +1249,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.4.0</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.4.1</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
