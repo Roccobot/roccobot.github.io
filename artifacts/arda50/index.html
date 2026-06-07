@@ -571,7 +571,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-btn:hover { background:rgba(80,130,210,0.88);border-color:rgba(180,215,255,0.9);transform:scale(1.08); }
 .fab-btn svg { width:1.35rem;height:1.35rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 .fab-btn.fab-unlocked { border-color:rgba(90,200,110,0.55);background:rgba(30,80,50,0.45); }
-.fab-tooltip { font-size:0.78rem;font-weight:600;color:#e8f2ff;background:rgba(50,80,140,0.90);border:1px solid rgba(154,192,216,0.45);padding:0.28rem 0.7rem;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0.82;transform:translateX(0);transition:opacity 0.15s,transform 0.15s;backdrop-filter:blur(8px); }
+.fab-tooltip { font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:0.78rem;font-weight:600;color:#e8f2ff;background:rgba(50,80,140,0.90);border:1px solid rgba(154,192,216,0.45);padding:0.28rem 0.7rem;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0.82;transform:translateX(0);transition:opacity 0.15s,transform 0.15s;backdrop-filter:blur(8px); }
 .fab-item:hover .fab-tooltip { opacity:1;transform:translateX(0); }
 .fab-modal-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center; }
 .fab-modal-box { background:rgba(18,28,50,0.92);border:1px solid rgba(104,144,168,0.4);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
@@ -849,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.3.6</span>
+  <span class="version-badge">v5.3.7</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1249,7 +1249,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.3.6</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.3.7</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1622,7 +1622,7 @@ function showFAB() {
   saveItem.className = 'fab-item';
   const saveTip = document.createElement('span');
   saveTip.className = 'fab-tooltip';
-  saveTip.textContent = 'Salva classifica';
+  saveTip.textContent = 'Salva';
   const saveBtn = document.createElement('button');
   saveBtn.id = 'fab-save';
   saveBtn.className = 'fab-btn' + (saveUnlocked ? ' fab-unlocked' : '');
