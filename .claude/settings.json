@@ -1,6 +1,18 @@
 {
   "model": "opus",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git fetch origin master --quiet 2>/dev/null && { REMOTE=$(git rev-parse origin/master); LOCAL=$(git rev-parse HEAD); if [ \"$REMOTE\" != \"$LOCAL\" ]; then git reset --hard origin/master --quiet && echo \"[PreEdit] Aggiornato a origin/master ($(git rev-parse --short HEAD)) — c'erano modifiche admin!\"; else echo \"[PreEdit] Già aggiornato ($(git rev-parse --short HEAD))\"; fi; }",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "startup|resume",
