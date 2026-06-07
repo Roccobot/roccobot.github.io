@@ -430,7 +430,7 @@ h1 {
 .tipo-istari      { background:rgba(115,118,162,0.24); border:1px solid rgba(195,198,238,0.9); color:#c8caf8; }
 .tipo-generico    { background:rgba(100,100,100,0.15); border:1px solid rgba(175,175,175,0.82); color:#b8b8b8; }
 /* ESSERI SUPERIORI — oro/ambra per Valar e Valier */
-.tipo-vala        { background:rgba(72,10,44,0.50); border:1px solid rgba(200,52,116,0.84); color:#ec5fa2; text-shadow:0 0 10px rgba(220,60,130,0.4); }
+.tipo-vala        { background:rgba(90,15,55,0.44); border:1px solid rgba(215,95,162,0.82); color:#f098d0; text-shadow:0 0 8px rgba(220,100,180,0.35); }
 .tipo-valie       { background:rgba(90,15,55,0.44); border:1px solid rgba(215,95,162,0.82); color:#f098d0; text-shadow:0 0 8px rgba(220,100,180,0.35); }
 .tipo-maia-dark   { background:rgba(120,12,78,0.36); border:1px solid rgba(210,55,140,0.9); color:#f060b8; }
 .tipo-balrog      { background:rgba(105,5,22,0.48); border:1px solid rgba(210,18,55,0.92); color:#c8103c; text-shadow:0 0 10px rgba(190,10,40,0.5); }
@@ -814,7 +814,7 @@ html[data-theme="light"] {
   .tipo-istari      { background:rgba(112,115,158,0.11); border-color:rgba(160,162,208,0.52); color:#404878; }
   .tipo-generico    { background:rgba(80,80,80,0.07); border-color:rgba(135,135,135,0.72); color:#484848; }
   .tipo-vala        { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.70); color:#9a1450; text-shadow:none; }
-  .tipo-valie       { background:rgba(185,25,95,0.11); border-color:rgba(210,80,150,0.70); color:#961448; text-shadow:none; }
+  .tipo-valie       { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.70); color:#9a1450; text-shadow:none; }
   .tipo-morgoth     { background:rgba(55,48,72,0.12); border-color:rgba(110,95,140,0.80); color:#5a4e78; text-shadow:none; }
   .tipo-oscurita    { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
   .tipo-balrog      { background:rgba(105,5,22,0.11); border-color:rgba(185,15,48,0.78); color:#9a0828; text-shadow:none; }
@@ -849,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.4.1</span>
+  <span class="version-badge">v5.4.2</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1249,7 +1249,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.4.1</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.4.2</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
