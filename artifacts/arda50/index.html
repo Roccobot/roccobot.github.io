@@ -849,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.3.9</span>
+  <span class="version-badge">v5.4.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1249,7 +1249,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.3.9</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.4.0</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1507,10 +1507,34 @@ function copyListToClipboard(btn) {
   });
 }
 
+function showToast(msg, isError) {
+  var t = document.getElementById('arda-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'arda-toast';
+    t.style.cssText = 'position:fixed;bottom:5.5rem;right:2rem;z-index:300;padding:0.45rem 0.9rem;border-radius:6px;font-family:system-ui,-apple-system,sans-serif;font-size:0.82rem;font-weight:600;max-width:280px;pointer-events:none;transition:opacity 0.4s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = isError ? 'rgba(160,20,30,0.92)' : 'rgba(20,100,50,0.92)';
+  t.style.color = '#fff';
+  t.style.border = isError ? '1px solid rgba(255,80,80,0.7)' : '1px solid rgba(60,210,100,0.7)';
+  t.style.opacity = '1';
+  clearTimeout(t._hide);
+  t._hide = setTimeout(() => { t.style.opacity = '0'; }, 4000);
+}
+
 function doSave(btn) {
   if (btn) btn.style.opacity = '0.35';
   doCommit('classifica: aggiorna ordine').then(res => {
     if (btn) setTimeout(() => btn.style.opacity = '', 1200);
+    if (!res.ok) {
+      var msg = res.reason || 'errore sconosciuto';
+      if (msg === 'no-auth') msg = 'sessione scaduta — sblocca di nuovo';
+      showToast('✗ Salvataggio fallito: ' + msg, true);
+    } else {
+      showToast('✓ Classifica salvata', false);
+    }
   });
 }
 
@@ -1556,9 +1580,13 @@ function showPasswordModal(promptText, onSuccess) {
     const p = document.createElement('p'); p.textContent = promptText;
     const inp = document.createElement('input');
     inp.type = 'password'; inp.autocomplete = 'off';
+    const errMsg = document.createElement('p');
+    errMsg.style.cssText = 'color:#e05050;font-size:0.78rem;margin:0.3rem 0 0;opacity:0;transition:opacity 0.2s;';
+    errMsg.textContent = 'Password errata';
     const fail = () => {
       inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
-      setTimeout(() => inp.style.borderColor = '', 700);
+      errMsg.style.opacity = '1';
+      setTimeout(() => { inp.style.borderColor = ''; errMsg.style.opacity = '0'; }, 2200);
     };
     const tryAuth = async () => {
       const pw = inp.value;
@@ -1585,7 +1613,7 @@ function showPasswordModal(promptText, onSuccess) {
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryAuth(); });
     const cb = document.createElement('button');
     cb.className = 'fab-modal-confirm'; cb.textContent = 'Conferma'; cb.onclick = tryAuth;
-    box.appendChild(cl); box.appendChild(p); box.appendChild(inp); box.appendChild(cb);
+    box.appendChild(cl); box.appendChild(p); box.appendChild(inp); box.appendChild(errMsg); box.appendChild(cb);
     setTimeout(() => inp.focus(), 60);
   }
 
@@ -1731,9 +1759,11 @@ function showAdminEditor() {
     } else if (res.reason === 'no-token') {
       renderList(); overlay.remove();
     } else {
-      saveBtn.textContent = 'Errore: ' + res.reason.substring(0, 28);
+      var why = (res.reason || 'errore').substring(0, 40);
+      saveBtn.textContent = '✗ ' + why;
+      showToast('✗ Salvataggio fallito: ' + (res.reason || 'errore sconosciuto'), true);
       saveBtn.disabled = false;
-      setTimeout(() => { saveBtn.textContent = 'Salva'; }, 3500);
+      setTimeout(() => { saveBtn.textContent = 'Salva'; }, 4000);
     }
   };
   btnWrap.appendChild(backBtn);
