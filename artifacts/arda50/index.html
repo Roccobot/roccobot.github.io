@@ -434,7 +434,7 @@ h1 {
 .tipo-valie       { background:rgba(205,175,80,0.22); border:1px solid rgba(245,225,150,0.68); color:#f5e2a4; }
 .tipo-maia-dark   { background:rgba(120,12,78,0.36); border:1px solid rgba(210,55,140,0.66); color:#f060b8; }
 .tipo-balrog      { background:rgba(225,70,15,0.34); border:1px solid rgba(255,110,40,0.78); color:#ff6e28; text-shadow:0 0 11px rgba(255,95,30,0.5); }
-.tipo-drago       { background:rgba(200,140,20,0.32); border:1px solid rgba(245,190,75,0.7); color:#ffc24d; }
+.tipo-drago       { background:rgba(20,55,185,0.30); border:1px solid rgba(70,120,255,0.72); color:#6b9fff; }
 .tipo-ragno       { background:rgba(58,40,82,0.4); border:1px solid rgba(158,128,196,0.64); color:#c4a6e6; }
 .tipo-lupo        { background:rgba(72,78,92,0.38); border:1px solid rgba(166,176,196,0.62); color:#c6cedc; }
 .tipo-bestia      { background:rgba(122,92,40,0.32); border:1px solid rgba(214,176,96,0.62); color:#e2c888; }
@@ -567,11 +567,11 @@ body.is-dragging { cursor:grabbing !important; user-select:none; }
 body.is-dragging .rank-item * { pointer-events:none; }
 .fab-container { position:fixed;bottom:2rem;right:2rem;z-index:150;display:flex;flex-direction:column;gap:0.6rem;align-items:flex-end; }
 .fab-item { position:relative;display:flex;align-items:center;gap:0.5rem; }
-.fab-btn { width:3rem;height:3rem;border-radius:50%;background:rgba(20,35,60,0.72);border:1px solid rgba(104,144,168,0.4);color:var(--parchment);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform 0.15s,background 0.15s,border-color 0.15s,opacity 0.15s;flex-shrink:0;padding:0; }
-.fab-btn:hover { background:rgba(70,110,170,0.55);border-color:rgba(154,192,216,0.7);transform:scale(1.08); }
-.fab-btn svg { width:1.2rem;height:1.2rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
+.fab-btn { width:3rem;height:3rem;border-radius:50%;background:rgba(60,95,150,0.82);border:1.5px solid rgba(154,192,216,0.75);color:#e8f2ff;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform 0.15s,background 0.15s,border-color 0.15s,opacity 0.15s;flex-shrink:0;padding:0; }
+.fab-btn:hover { background:rgba(80,130,210,0.88);border-color:rgba(180,215,255,0.9);transform:scale(1.08); }
+.fab-btn svg { width:1.35rem;height:1.35rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 .fab-btn.fab-unlocked { border-color:rgba(90,200,110,0.55);background:rgba(30,80,50,0.45); }
-.fab-tooltip { font-size:0.75rem;color:var(--parchment);background:rgba(20,35,60,0.88);padding:0.25rem 0.6rem;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transform:translateX(4px);transition:opacity 0.15s,transform 0.15s;backdrop-filter:blur(8px); }
+.fab-tooltip { font-size:0.78rem;font-weight:600;color:#e8f2ff;background:rgba(50,80,140,0.90);border:1px solid rgba(154,192,216,0.45);padding:0.28rem 0.7rem;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0.82;transform:translateX(0);transition:opacity 0.15s,transform 0.15s;backdrop-filter:blur(8px); }
 .fab-item:hover .fab-tooltip { opacity:1;transform:translateX(0); }
 .fab-modal-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center; }
 .fab-modal-box { background:rgba(18,28,50,0.92);border:1px solid rgba(104,144,168,0.4);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
@@ -819,7 +819,7 @@ html[data-theme="light"] {
   .tipo-oscurita    { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
   .tipo-balrog      { background:rgba(220,70,15,0.14); border-color:rgba(225,90,30,0.6); color:#c2440c; text-shadow:none; }
   .tipo-maia-dark   { background:rgba(150,12,90,0.12); border-color:rgba(200,55,140,0.55); color:#900858; }
-  .tipo-drago       { background:rgba(190,140,10,0.13); border-color:rgba(215,170,40,0.58); color:#8a6410; }
+  .tipo-drago       { background:rgba(20,55,185,0.10); border-color:rgba(50,100,230,0.55); color:#2244bb; }
   .tipo-ragno       { background:rgba(80,55,120,0.12); border-color:rgba(140,110,185,0.55); color:#5a3d8a; }
   .tipo-lupo        { background:rgba(72,78,92,0.12); border-color:rgba(120,130,150,0.55); color:#404858; }
   .tipo-bestia      { background:rgba(122,92,40,0.12); border-color:rgba(180,140,70,0.55); color:#705418; }
@@ -849,7 +849,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.3.5</span>
+  <span class="version-badge">v5.3.6</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1249,7 +1249,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.3.5</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.3.6</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
