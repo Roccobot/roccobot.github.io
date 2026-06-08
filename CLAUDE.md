@@ -160,3 +160,25 @@ Regole d'oro:
   campo "Proxy" dell'editor admin (`localStorage` chiave `arda-proxy-url`).
 - La parola d'ordine sta solo in memoria (`adminPassword`) per la sessione; mai
   persistita. Vedi `proxy/README.md` per il deploy e la gestione dei secret.
+
+## Bonifica e ottimizzazione degli asset
+
+I file inviati dall'utente che possono contenere metadati extra inutili
+(HTML, XML, JSON, SVG, CSS, EPUB, ecc.) vanno **sempre ripuliti / bonificati /
+ottimizzati prima dell'uso**. Non incollare mai nel progetto il contenuto
+grezzo così com'è.
+
+- **EPUB** (in sostanza uno ZIP con dentro una pagina Web): estrarre solo le
+  parti effettivamente utilizzabili (HTML, CSS, testo), verificare l'encoding
+  (UTF-8), risolvere eventuali conflitti, applicare le correzioni necessarie e
+  **archiviare solo le versioni ripulite**, scartando il resto.
+- **SVG**: eliminare tutti i metadati Adobe Illustrator/Inkscape o simili
+  (tag `<metadata>`, namespace `xmlns:*` superflui, commenti `<!-- Generator -->`,
+  attributi `id` autogenerati, ecc.). Sono cancellabili **senza alcuna perdita
+  di informazione né effetto collaterale** sul rendering.
+- **HTML / XML / JSON / CSS**: rimuovere commenti-firma di editor, attributi
+  ridondanti, whitespace inutile e ogni metadato non funzionale.
+
+Verifica periodica: a **ogni main release** (bump *minor* o *major*) controllare
+che tutti gli asset del progetto abbiano ricevuto questo trattamento; se si
+trova materiale non bonificato, ripulirlo prima di rilasciare.
