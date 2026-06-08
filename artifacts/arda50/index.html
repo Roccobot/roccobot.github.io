@@ -611,11 +611,10 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .admin-label { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;color:var(--gold);opacity:0.75; }
 .admin-label-en { text-align:right; }
 .admin-mono-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1.4rem; }
-.admin-flags-row { display:flex;flex-wrap:wrap;gap:0.35rem 0.7rem;padding:0.6rem 0 0.2rem;margin-top:0.5rem;border-top:1px solid rgba(104,144,168,0.15); }
-.admin-flag-chk { display:flex;align-items:center;gap:0.25rem;cursor:pointer; }
-.admin-flag-chk input { width:13px;height:13px;accent-color:var(--gold);cursor:pointer;flex-shrink:0; }
-.admin-flag-chk svg { width:1.1rem;height:1.1rem; }
-.admin-flag-key { font-family:'Cinzel',serif;font-size:0.5rem;letter-spacing:0.08em;color:var(--parchment-dim);text-transform:uppercase; }
+.admin-flags-row { display:flex;flex-wrap:wrap;gap:0.5rem 0.9rem;padding:0.6rem 0 0.2rem;margin-top:0.5rem;border-top:1px solid rgba(104,144,168,0.15); }
+.admin-flag-chk { display:flex;align-items:center;gap:0.3rem;cursor:pointer; }
+.admin-flag-chk input { width:15px;height:15px;accent-color:var(--gold);cursor:pointer;flex-shrink:0; }
+.admin-flag-chk svg { width:1.35rem;height:1.35rem; }
 .admin-field-full { grid-column:1/-1; }
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
@@ -632,9 +631,20 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .admin-btn-wrap { justify-content:stretch; }
   .admin-btn { flex:1; }
 }
+/* Navigazione admin + salti classifica: nascosti di default, visibili solo su mobile */
+.admin-nav { display:none; }
+.jump-fabs { display:none; }
 @media (max-width:768px) {
   /* FAB di controllo a destra su mobile (pollice destro); il pannello è una bottom-sheet a tutta larghezza */
   #ctrl-fab { left:auto; right:2rem; }
+  /* Navigazione rapida nell'editor admin (cluster verticale, lato destro) */
+  .admin-nav { display:flex; flex-direction:column; gap:0.45rem; position:fixed; right:0.55rem; bottom:calc(4.5rem + env(safe-area-inset-bottom,0px)); z-index:320; }
+  .admin-nav-btn { width:2.7rem;height:2.7rem;border-radius:50%;background:rgba(60,95,150,0.92);border:1.5px solid rgba(154,192,216,0.7);color:#e8f2ff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,0.45);padding:0;-webkit-tap-highlight-color:transparent; }
+  .admin-nav-btn:active { background:rgba(80,130,210,0.98);transform:scale(0.94); }
+  .admin-nav-btn svg { width:1.3rem;height:1.3rem;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round; }
+  /* Salti inizio/fine classifica: impilati sopra il FAB del pannello (in basso a destra) */
+  .jump-fabs { display:flex; flex-direction:column; gap:0.55rem; position:fixed; right:2rem; bottom:5.75rem; z-index:160; }
+  .jump-fab svg { width:1.3rem;height:1.3rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
   .fab-tooltip { transform:translateX(-4px); }
@@ -862,7 +872,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.10.6</span>
+  <span class="version-badge">v5.11.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1290,7 +1300,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.6</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.11.0</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1380,6 +1390,24 @@ function buildControlPanel() {
 
 buildControlPanel();
 setLang(currentLang);
+
+// Pulsanti inizio/fine (solo mobile): salto rapido in cima/in fondo alla classifica.
+(function buildJumpFabs(){
+  var wrap = document.createElement('div');
+  wrap.className = 'jump-fabs';
+  var TOP = '<svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="5"/><polyline points="7 13 12 8 17 13"/></svg>';
+  var BOT = '<svg viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="19"/><polyline points="7 11 12 16 17 11"/></svg>';
+  function mk(svg, label, fn){
+    var b = document.createElement('button');
+    b.className = 'fab-btn jump-fab'; b.innerHTML = svg;
+    b.title = label; b.setAttribute('aria-label', label);
+    b.addEventListener('click', fn);
+    return b;
+  }
+  wrap.appendChild(mk(TOP, 'Vai in cima', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }));
+  wrap.appendChild(mk(BOT, 'Vai in fondo', function(){ window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }));
+  document.body.appendChild(wrap);
+})();
 
 // ── DRAG-DROP & REORDERING ──
 let hasMovedItem = false;
@@ -1918,16 +1946,15 @@ function showAdminEditor() {
     ICON_ORDER.forEach(function(k) {
       const lbl = document.createElement('label');
       lbl.className = 'admin-flag-chk';
+      // Solo icone: il nome dell'indicatore resta accessibile via title (hover/long-press)
+      lbl.title = (ICON_LABEL[currentLang] && ICON_LABEL[currentLang][k]) || k;
       const chk = document.createElement('input');
       chk.type = 'checkbox';
       chk.id = 'ae-' + i + '-flag-' + k;
       chk.checked = !!p[k];
       const iconEl = document.createElement('span');
       iconEl.innerHTML = ICON_SVG[k].replace('%L%', '');
-      const keyLbl = document.createElement('span');
-      keyLbl.className = 'admin-flag-key';
-      keyLbl.textContent = k;
-      lbl.appendChild(chk); lbl.appendChild(iconEl); lbl.appendChild(keyLbl);
+      lbl.appendChild(chk); lbl.appendChild(iconEl);
       flagsRow.appendChild(lbl);
     });
     card.appendChild(flagsRow);
@@ -1935,6 +1962,42 @@ function showAdminEditor() {
     cards.appendChild(card);
   });
   overlay.appendChild(cards);
+
+  // Navigazione rapida (solo mobile): salta al personaggio precedente/successivo o di ±10.
+  // Scorrere a mano una pagina così lunga è scomodo, questi tasti flottanti la rendono navigabile.
+  const CHEV_UP   = '<svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg>';
+  const CHEV_DN   = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  const CHEV2_UP  = '<svg viewBox="0 0 24 24"><polyline points="6 13 12 7 18 13"/><polyline points="6 18 12 12 18 18"/></svg>';
+  const CHEV2_DN  = '<svg viewBox="0 0 24 24"><polyline points="6 6 12 12 18 6"/><polyline points="6 11 12 17 18 11"/></svg>';
+  const headerOffset = () => (header.offsetHeight || 60) + 12;
+  const cardEls = () => Array.prototype.slice.call(cards.querySelectorAll('.admin-card'));
+  const currentCardIndex = () => {
+    const cs = cardEls();
+    const top = overlay.scrollTop + headerOffset() + 4;
+    let idx = 0;
+    for (let j = 0; j < cs.length; j++) { if (cs[j].offsetTop <= top) idx = j; else break; }
+    return idx;
+  };
+  const goToCard = (idx) => {
+    const cs = cardEls();
+    idx = Math.max(0, Math.min(cs.length - 1, idx));
+    overlay.scrollTo({ top: Math.max(0, cs[idx].offsetTop - headerOffset()), behavior: 'smooth' });
+  };
+  const nav = document.createElement('div');
+  nav.className = 'admin-nav';
+  const mkNav = (svg, delta, label) => {
+    const b = document.createElement('button');
+    b.className = 'admin-nav-btn'; b.innerHTML = svg;
+    b.title = label; b.setAttribute('aria-label', label);
+    b.onclick = () => goToCard(currentCardIndex() + delta);
+    return b;
+  };
+  nav.appendChild(mkNav(CHEV2_UP, -10, 'Indietro di 10'));
+  nav.appendChild(mkNav(CHEV_UP,   -1, 'Personaggio precedente'));
+  nav.appendChild(mkNav(CHEV_DN,    1, 'Personaggio successivo'));
+  nav.appendChild(mkNav(CHEV2_DN,  10, 'Avanti di 10'));
+  overlay.appendChild(nav);
+
   document.body.appendChild(overlay);
 }
 
