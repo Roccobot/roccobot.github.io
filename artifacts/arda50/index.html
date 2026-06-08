@@ -862,7 +862,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.10.3</span>
+  <span class="version-badge">v5.10.4</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -5319,7 +5319,7 @@ function renderList() {
       if (darkBg) classes += ' morgoth';
       else if (/bombadil/i.test(p.nome)) classes += ' bombadil';
     }
-    html += '<div class="' + classes + '" style="animation-delay:' + (i * 0.04) + 's' +
+    html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' +
       (isVisTop ? ';border-left-width:5px;border-left-color:' + CAT_COLOR[cat] + '' : '') +
       '" data-idx="' + i + '">' +
       '<span class="rank-num">' + visN + '</span>' +
@@ -5334,6 +5334,10 @@ function renderList() {
   if (isFirstRender) {
     list.classList.add('list-animate');
     isFirstRender = false;
+    // Rete di sicurezza: su alcuni motori (Safari iOS) le animazioni fuori schermo
+    // vengono sospese e gli item resterebbero a opacity:0. Dopo che la stagger è
+    // conclusa, rimuoviamo la classe così nessun item può restare invisibile.
+    setTimeout(function(){ list.classList.remove('list-animate'); }, 1600);
   } else {
     list.classList.remove('list-animate');
   }
@@ -5449,7 +5453,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.3</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.4</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
