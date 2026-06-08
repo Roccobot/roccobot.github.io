@@ -168,9 +168,11 @@ I file inviati dall'utente che possono contenere metadati extra inutili
 ottimizzati prima dell'uso**. Non incollare mai nel progetto il contenuto
 grezzo così com'è.
 
+- **Tutti i file di testo**: verificare che l'encoding sia UTF-8 senza BOM e
+  con fine riga LF (non CRLF); sostituire i mojibake con i caratteri corretti;
+  risolvere eventuali conflitti o errori tipici dei problemi di codifica.
 - **EPUB** (in sostanza uno ZIP con dentro una pagina Web): estrarre solo le
-  parti effettivamente utilizzabili (HTML, CSS, testo), verificare l'encoding
-  (UTF-8), risolvere eventuali conflitti, applicare le correzioni necessarie e
+  parti effettivamente utilizzabili (HTML, CSS, testo) e
   **archiviare solo le versioni ripulite**, scartando il resto.
 - **SVG**: eliminare tutti i metadati Adobe Illustrator/Inkscape o simili
   (tag `<metadata>`, namespace `xmlns:*` superflui, commenti `<!-- Generator -->`,
