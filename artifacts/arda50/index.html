@@ -646,7 +646,13 @@ body.is-dragging .rank-item * { pointer-events:none; }
 }
 
 @media (prefers-reduced-motion:reduce) {
-  *,*::before,*::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  *,*::before,*::after { animation-duration:0.01ms !important; animation-delay:0ms !important; transition-duration:0.01ms !important; }
+}
+@media (max-width:768px) {
+  /* Su mobile Safari le animazioni off-screen vengono sospese: gli item sotto la piega
+     restano a opacity:0 per tutta la durata del loro delay. Si disabilita la stagger
+     animation sul primo render e si mostrano subito tutti gli item. */
+  .list-animate .rank-item { animation:none; opacity:1; transform:none; }
 }
 
 html[data-theme="light"] {
@@ -856,7 +862,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.10.2</span>
+  <span class="version-badge">v5.10.3</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -5443,7 +5449,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.2</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.3</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
