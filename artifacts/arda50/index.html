@@ -332,6 +332,11 @@ h1 {
   opacity:0; visibility:hidden; transform:translateY(12px); transition:opacity 0.2s,transform 0.2s,visibility 0.2s;
 }
 .ctrl-panel.open { opacity:1; visibility:visible; transform:translateY(0); }
+@media (min-width:769px) {
+  /* su desktop nascondi la barra di scorrimento del pannello (scroll comunque attivo) */
+  .ctrl-panel { scrollbar-width:none; -ms-overflow-style:none; }
+  .ctrl-panel::-webkit-scrollbar { width:0; height:0; display:none; }
+}
 .ctrl-sheet-head { display:none; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
@@ -851,7 +856,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.10.1</span>
+  <span class="version-badge">v5.10.2</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -5438,7 +5443,7 @@ function controlPanelHTML() {
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.1</span>' +
+  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.10.2</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
