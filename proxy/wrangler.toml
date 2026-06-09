@@ -1,4 +1,4 @@
-# Configurazione Cloudflare Worker — proxy admin del Grimorio di Arda
+# Configurazione Cloudflare Worker — proxy admin di Arda Top
 #
 # I SECRET (GITHUB_PAT, ADMIN_PASSWORD) NON vanno qui: si impostano con
 #   wrangler secret put GITHUB_PAT

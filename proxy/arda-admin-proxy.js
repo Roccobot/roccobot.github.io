@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker — proxy di commit sicuro per il Grimorio di Arda
+ * Cloudflare Worker — proxy di commit sicuro per Arda Top
  * =================================================================
  *
  * Scopo: tenere il GitHub PAT (e la parola d'ordine admin) FUORI dal sito
@@ -11,15 +11,18 @@
  *   GITHUB_PAT      → PAT fine-grained, scope minimo: Contents = Read & Write
  *                     SOLO sul repo roccobot/roccobot.github.io
  *   ADMIN_PASSWORD  → la parola d'ordine admin (validata qui, assente dal client)
+ *   ANTHROPIC_API_KEY → (opzionale) API key di Claude per l'action 'translate'.
+ *                     Serve solo se si usa la traduzione automatica IT↔EN.
  *
- * Variabile non segreta (impostabile come plain var):
+ * Variabili non segrete (impostabili come plain var):
  *   ALLOWED_ORIGIN  → origine autorizzata, es. https://roccobot.github.io
+ *   ANTHROPIC_MODEL → (opzionale) override del model; default 'claude-opus-4-8'
  *
  * Deploy: vedi proxy/README.md
  */
 
 const REPO = 'roccobot/roccobot.github.io';
-const FILE_PATH = 'artifacts/arda50/index.html';
+const FILE_PATH = 'arda/top/index.html';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
 // Origine di produzione: fallback sicuro se ALLOWED_ORIGIN non è configurato.
@@ -134,6 +137,64 @@ export default {
         return json({ ok: false, error: er.message || ('gh-put ' + put.status) }, 502, ch);
       }
       return json({ ok: true }, 200, ch);
+    }
+
+    // Traduzione IT↔EN tramite Claude (model opus). La API key vive solo qui
+    // come secret ANTHROPIC_API_KEY: mai nel client.
+    if (body.action === 'translate') {
+      const text = String(body.text || '');
+      const from = body.from === 'en' ? 'en' : 'it';
+      const to = body.to === 'it' ? 'it' : 'en';
+      if (!text.trim()) return json({ ok: true, text: '' }, 200, ch);
+      if (!env.ANTHROPIC_API_KEY) return json({ ok: false, error: 'no-anthropic-key' }, 500, ch);
+
+      const srcLang = from === 'it' ? 'italiano' : 'inglese';
+      const dstLang = to === 'it' ? 'italiano' : 'inglese';
+      const system =
+        'Sei un traduttore esperto del legendarium di J.R.R. Tolkien. Traduci il testo ' +
+        'dal ' + srcLang + ' all\'' + dstLang + '. Regole tassative:\n' +
+        '- Usa SEMPRE le forme canoniche dei nomi propri nella lingua di destinazione, ' +
+        'secondo le traduzioni storiche riviste dalla Società Tolkieniana Italiana ' +
+        '(Il Signore degli Anelli: Alliata rev. Principe; Lo Hobbit: Jeronimidis Conte; ' +
+        'Il Silmarillion: Saba Sardi) — MAI le forme dell\'edizione Fatica o degli adattamenti a schermo. ' +
+        'Esempi IT↔EN: Granburrone↔Rivendell, Pungolo↔Sting, Terra di Mezzo↔Middle-earth, ' +
+        'la Contea↔the Shire, Monte Fato↔Mount Doom, Porti Grigi↔Grey Havens, Boscatetro↔Mirkwood, ' +
+        'Samvise↔Samwise, Fosso di Helm↔Helm\'s Deep.\n' +
+        '- Non inventare nulla: traduci solo ciò che è presente.\n' +
+        '- Conserva ESATTAMENTE la formattazione: tag HTML come <br>, i marcatori asterisco ' +
+        '(es. Nome*), le barre verticali "|" e le virgole separatrici.\n' +
+        '- Rispondi SOLO con la traduzione, senza preamboli, virgolette o commenti.';
+
+      try {
+        const ar = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': env.ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: env.ANTHROPIC_MODEL || 'claude-opus-4-8',
+            max_tokens: 2048,
+            system: system,
+            messages: [{ role: 'user', content: text }],
+          }),
+        });
+        if (!ar.ok) {
+          let er = {};
+          try { er = await ar.json(); } catch (e) {}
+          return json({ ok: false, error: (er.error && er.error.message) || ('anthropic ' + ar.status) }, 502, ch);
+        }
+        const data = await ar.json();
+        const out = (data.content || [])
+          .filter(function (b) { return b.type === 'text'; })
+          .map(function (b) { return b.text; })
+          .join('')
+          .trim();
+        return json({ ok: true, text: out }, 200, ch);
+      } catch (err) {
+        return json({ ok: false, error: String(err && err.message || err) }, 502, ch);
+      }
     }
 
     return json({ ok: false, error: 'unknown-action' }, 400, ch);

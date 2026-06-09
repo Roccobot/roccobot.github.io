@@ -46,7 +46,7 @@ Sequenza obbligatoria prima di toccare qualsiasi file:
 git pull origin master
 
 # 2. Verifica la versione del file principale
-grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' artifacts/arda50/index.html | head -1
+grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' arda/top/index.html | head -1
 ```
 
 Se la versione dopo il pull non corrisponde a quella attesa (es. è più vecchia
