@@ -11,12 +11,12 @@
  *   GITHUB_PAT      → PAT fine-grained, scope minimo: Contents = Read & Write
  *                     SOLO sul repo roccobot/roccobot.github.io
  *   ADMIN_PASSWORD  → la parola d'ordine admin (validata qui, assente dal client)
- *   ANTHROPIC_API_KEY → (opzionale) API key di Claude per l'action 'translate'.
+ *   GEMINI_API_KEY  → (opzionale) API key di Google Gemini per l'action 'translate'.
  *                     Serve solo se si usa la traduzione automatica IT↔EN.
  *
  * Variabili non segrete (impostabili come plain var):
  *   ALLOWED_ORIGIN  → origine autorizzata, es. https://roccobot.github.io
- *   ANTHROPIC_MODEL → (opzionale) override del model; default 'claude-opus-4-8'
+ *   GEMINI_MODEL    → (opzionale) override del model; default 'gemini-flash-latest'
  *
  * Deploy: vedi proxy/README.md
  */
@@ -139,14 +139,14 @@ export default {
       return json({ ok: true }, 200, ch);
     }
 
-    // Traduzione IT↔EN tramite Claude (model opus). La API key vive solo qui
-    // come secret ANTHROPIC_API_KEY: mai nel client.
+    // Traduzione IT↔EN tramite Google Gemini. La API key vive solo qui
+    // come secret GEMINI_API_KEY: mai nel client.
     if (body.action === 'translate') {
       const text = String(body.text || '');
       const from = body.from === 'en' ? 'en' : 'it';
       const to = body.to === 'it' ? 'it' : 'en';
       if (!text.trim()) return json({ ok: true, text: '' }, 200, ch);
-      if (!env.ANTHROPIC_API_KEY) return json({ ok: false, error: 'no-anthropic-key' }, 500, ch);
+      if (!env.GEMINI_API_KEY) return json({ ok: false, error: 'no-gemini-key' }, 500, ch);
 
       const srcLang = from === 'it' ? 'italiano' : 'inglese';
       const dstLang = to === 'it' ? 'italiano' : 'inglese';
@@ -165,30 +165,32 @@ export default {
         '(es. Nome*), le barre verticali "|" e le virgole separatrici.\n' +
         '- Rispondi SOLO con la traduzione, senza preamboli, virgolette o commenti.';
 
+      const model = env.GEMINI_MODEL || 'gemini-flash-latest';
+      const gemUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' +
+        encodeURIComponent(model) + ':generateContent';
+
       try {
-        const ar = await fetch('https://api.anthropic.com/v1/messages', {
+        const ar = await fetch(gemUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': env.ANTHROPIC_API_KEY,
-            'anthropic-version': '2023-06-01',
+            'x-goog-api-key': env.GEMINI_API_KEY,
           },
           body: JSON.stringify({
-            model: env.ANTHROPIC_MODEL || 'claude-opus-latest',
-            max_tokens: 2048,
-            system: system,
-            messages: [{ role: 'user', content: text }],
+            system_instruction: { parts: [{ text: system }] },
+            contents: [{ role: 'user', parts: [{ text: text }] }],
+            generationConfig: { temperature: 0.2, maxOutputTokens: 2048 },
           }),
         });
         if (!ar.ok) {
           let er = {};
           try { er = await ar.json(); } catch (e) {}
-          return json({ ok: false, error: (er.error && er.error.message) || ('anthropic ' + ar.status) }, 502, ch);
+          return json({ ok: false, error: (er.error && er.error.message) || ('gemini ' + ar.status) }, 502, ch);
         }
         const data = await ar.json();
-        const out = (data.content || [])
-          .filter(function (b) { return b.type === 'text'; })
-          .map(function (b) { return b.text; })
+        const cand = (data.candidates || [])[0] || {};
+        const out = ((cand.content && cand.content.parts) || [])
+          .map(function (p) { return p.text || ''; })
           .join('')
           .trim();
         return json({ ok: true, text: out }, 200, ch);

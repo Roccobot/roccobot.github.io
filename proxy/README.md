@@ -53,7 +53,9 @@ nell'editor admin). Comunicalo e lo cablo nel codice.
 3. **Edit code**: incolla il contenuto di `arda-admin-proxy.js` → **Deploy**.
 4. **Settings → Variables**:
    - **Secrets** → Add: `GITHUB_PAT` = il PAT; `ADMIN_PASSWORD` = la parola d'ordine.
+   - (traduzione automatica IT↔EN, opzionale) **Secrets** → Add: `GEMINI_API_KEY` = la API key di Google Gemini (da https://aistudio.google.com/apikey).
    - **Variables** (plain) → Add: `ALLOWED_ORIGIN` = `https://roccobot.github.io`.
+   - (opzionale) **Variables** (plain) → `GEMINI_MODEL` = override del modello; default `gemini-flash-latest`.
 5. Copia l'URL `*.workers.dev` mostrato in alto.
 
 ## Test rapido
