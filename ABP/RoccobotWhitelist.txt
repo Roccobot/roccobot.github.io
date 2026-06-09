@@ -7,6 +7,7 @@
 @@||agos.it^$document,subdocument
 @@||agosweb.it^$document,subdocument
 @@||animeworld.ac^
+@@||arda-admin-proxy.roccobot-b90.workers.dev^
 @@||aruba.it^$document,subdocument
 @@||axerve.com^
 @@||battle.net^
