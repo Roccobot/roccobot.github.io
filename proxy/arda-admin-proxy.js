@@ -101,7 +101,7 @@ export default {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'arda-admin-proxy',
       };
-      const get = await fetch(GH_API, { headers: ghHeaders });
+      const get = await fetch(GH_API + '?_=' + Date.now(), { headers: ghHeaders });
       if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
       const fd = await get.json();
       const cur = b64ToUtf8(fd.content);
