@@ -22,9 +22,14 @@ const REPO = 'roccobot/roccobot.github.io';
 const FILE_PATH = 'artifacts/arda50/index.html';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
+// Origine di produzione: fallback sicuro se ALLOWED_ORIGIN non è configurato.
+const PROD_ORIGIN = 'https://roccobot.github.io';
+
 function corsHeaders(origin, allowed) {
-  // Se ALLOWED_ORIGIN è configurato, riflette solo quell'origine; altrimenti '*'.
-  const o = allowed ? (origin === allowed ? origin : allowed) : '*';
+  // Riflette solo l'origine autorizzata. Se ALLOWED_ORIGIN non è impostata,
+  // ripiega sull'origine di produzione (mai '*'): difesa in profondità.
+  const ref = allowed || PROD_ORIGIN;
+  const o = origin === ref ? origin : ref;
   return {
     'Access-Control-Allow-Origin': o,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -41,12 +46,17 @@ function json(obj, status, extra) {
   });
 }
 
-// Confronto a tempo (quasi) costante per non rivelare la lunghezza/posizione.
-function safeEqual(a, b) {
+// Confronto a tempo costante che non rivela nemmeno la lunghezza: si confrontano
+// gli hash SHA-256 (sempre 32 byte) tramite crypto.subtle.timingSafeEqual.
+async function safeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
-  if (a.length !== b.length) return false;
+  const enc = new TextEncoder();
+  const ha = await crypto.subtle.digest('SHA-256', enc.encode(a));
+  const hb = await crypto.subtle.digest('SHA-256', enc.encode(b));
+  const va = new Uint8Array(ha);
+  const vb = new Uint8Array(hb);
   let r = 0;
-  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  for (let i = 0; i < va.length; i++) r |= va[i] ^ vb[i];
   return r === 0;
 }
 
@@ -86,7 +96,7 @@ export default {
     catch (e) { return json({ ok: false, error: 'bad-json' }, 400, ch); }
 
     // Autenticazione lato server: la password non esiste nel client.
-    if (!safeEqual(String(body.password || ''), String(env.ADMIN_PASSWORD || ''))) {
+    if (!(await safeEqual(String(body.password || ''), String(env.ADMIN_PASSWORD || '')))) {
       return json({ ok: false, error: 'auth' }, 401, ch);
     }
 
@@ -101,7 +111,9 @@ export default {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'arda-admin-proxy',
       };
-      const get = await fetch(GH_API + '?_=' + Date.now(), { headers: ghHeaders });
+      // cache:'no-store' garantisce uno SHA sempre fresco (evita il bug del
+      // secondo salvataggio consecutivo) senza sporcare l'URL con query-string.
+      const get = await fetch(GH_API, { headers: ghHeaders, cache: 'no-store' });
       if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
       const fd = await get.json();
       const cur = b64ToUtf8(fd.content);

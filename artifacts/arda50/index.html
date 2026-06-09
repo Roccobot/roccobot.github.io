@@ -876,7 +876,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.14.2</span>
+  <span class="version-badge">v5.15.0</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -966,13 +966,28 @@ function parseFonte(fonte) {
 
 function getFlag(paese) {
   if (!paese) return '';
+  // Accetta solo codici paese plausibili (lettere/trattino): blinda src e alt.
+  if (!/^[a-z-]{2,6}$/i.test(paese)) return '';
   return '<img class="flag" src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/svg/' + paese + '.svg" alt="' + paese + '" loading="lazy">';
+}
+
+// Neutralizza i caratteri speciali HTML: i campi testuali dei dati non devono
+// mai poter iniettare markup nella pagina (difesa anti-XSS).
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function processAlt(str) {
   if (!str) return '';
-  // **testo** → <strong> (legacy), Nome* → <strong> (convenzione asterisco finale)
-  return str
+  // Prima si escapa l'HTML (sicurezza), poi si applicano le sole convenzioni
+  // tipografiche ammesse: **testo** → <strong> (legacy), Nome* → <strong>.
+  return escapeHtml(str)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/([^,|*]+?)\s*\*/g, (_, n) => '<strong>' + n.trim() + '</strong>');
 }
@@ -1122,14 +1137,14 @@ function renderList() {
     if (!filterState[cat]) continue;
     visN++;
     var isVisTop = visN <= 3;
-    var nome = currentLang === 'it' ? p.nome : (p.nome_en || p.nome);
+    var nome = escapeHtml(currentLang === 'it' ? p.nome : (p.nome_en || p.nome));
     var fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
     var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
-    var appell = currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || '');
+    var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
     var pf = parseFonte(fonte);
-    var titleYear = pf.title + (pf.year ? ' (' + pf.year + ')' : '');
+    var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
     var genere = p.genere || 'm';
     var genereSym = genere === 'f' ? GENERE_SVG.f : genere === 'm' ? GENERE_SVG.m : '';
     var hasAinur = p.nome !== 'Lúthien' && tipo && /(?:^|\|)\s*(valë|valië|vala|maia)/i.test(tipo) && !/balrog/i.test(tipo);
@@ -1137,14 +1152,14 @@ function renderList() {
     tipoStr += tipo ? tipo.split('|').map(function(seg, idx){
       seg = seg.trim();
       var labelSegs = tipoLabel.split('|');
-      var displaySeg = (labelSegs[idx] || seg).trim();
+      var displaySeg = escapeHtml((labelSegs[idx] || seg).trim());
       return '<span class="tipo-badge ' + tipoClass(seg) + '">' + displaySeg + '</span>';
     }).join('') : '';
     var statusStr = buildStatus(p);
     // Riga 2: descrizione + lineage
-    var padre = p.padre || '';
-    var madre = p.madre || '';
-    var desc = currentLang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || '');
+    var padre = escapeHtml(p.padre || '');
+    var madre = escapeHtml(p.madre || '');
+    var desc = escapeHtml(currentLang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || ''));
     var descParts = [];
     if (desc) descParts.push(desc);
     if (padre || madre) {
@@ -1172,7 +1187,7 @@ function renderList() {
       else if (/bombadil/i.test(p.nome)) classes += ' bombadil';
     }
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' +
-      (isVisTop ? ';border-left-width:5px;border-left-color:' + CAT_COLOR[cat] + '' : '') +
+      (isVisTop ? ';border-left-width:5px;border-left-color:' + (CAT_COLOR[cat] || 'transparent') + '' : '') +
       '" data-idx="' + i + '">' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
@@ -1224,12 +1239,16 @@ function openModal(idx) {
   document.getElementById('modal-rank').textContent = i18n[lang].position + ' ' + (idx + 1);
   document.getElementById('modal-name').textContent = nome;
   var pf = parseFonte(fonte);
-  var titleYear = pf.title + (pf.year ? ' (' + pf.year + ')' : '');
+  var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+  // titleYear e autore sono testo puro → escapati. getFlag produce un <img>
+  // costruito da noi su un codice paese, quindi resta HTML legittimo.
   document.getElementById('modal-source').innerHTML =
     '<span>' + titleYear + '</span>' +
-    '<span class="modal-author">' + getFlag(p.paese) + pf.author + '</span>';
+    '<span class="modal-author">' + getFlag(p.paese) + escapeHtml(pf.author) + '</span>';
+  // info contiene HTML intenzionale (<br>): resta innerHTML.
   document.getElementById('modal-info').innerHTML = info;
-  document.getElementById('modal-quote').innerHTML = citazione || '';
+  // citazione è testo puro: textContent azzera ogni rischio di injection.
+  document.getElementById('modal-quote').textContent = citazione || '';
   document.getElementById('modal-backdrop').classList.add('active');
   document.body.style.overflow = 'hidden';
   document.getElementById('modal-close').focus();
@@ -1661,8 +1680,6 @@ function doSave(btn) {
   _saving = true;
   if (btn) { btn.style.opacity = '0.35'; btn.disabled = true; }
   doCommit('classifica: aggiorna ordine').then(res => {
-    _saving = false;
-    if (btn) { btn.style.opacity = ''; btn.disabled = false; }
     if (!res.ok) {
       var msg = res.reason || 'errore sconosciuto';
       if (msg === 'no-auth') msg = 'sessione scaduta — sblocca di nuovo';
@@ -1674,11 +1691,21 @@ function doSave(btn) {
         if (fab) fab.remove();
       }, 10000);
     }
+  }).catch(err => {
+    showToast('✗ Salvataggio fallito: ' + (err && err.message || err), true);
+  }).finally(() => {
+    // Il lock va sempre rilasciato, anche se la Promise rigetta (rete, bug),
+    // altrimenti tutti i salvataggi successivi resterebbero bloccati.
+    _saving = false;
+    if (btn) { btn.style.opacity = ''; btn.disabled = false; }
   });
 }
 
-async function doCommit(msg) {
-  localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; })));
+async function doCommit(msg, payload) {
+  // payload opzionale: consente di committare una copia senza aver ancora
+  // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
+  const data = payload || dati;
+  localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(data.map(function(d){ return d.nome; })));
   if (!adminPassword) return { ok: false, reason: 'no-auth' };
   // Il commit passa dal proxy: il browser invia solo l'array dati e la parola
   // d'ordine; il PAT vive lato server e fa il read-modify-write su GitHub.
@@ -1686,7 +1713,7 @@ async function doCommit(msg) {
     const res = await fetch(proxyUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'commit', password: adminPassword, dati: dati, message: msg || 'admin: aggiorna' })
+      body: JSON.stringify({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' })
     });
     let r = {};
     try { r = await res.json(); } catch (e) {}
@@ -1863,7 +1890,10 @@ function showAdminEditor() {
         }
       });
     });
-    if (tasks.length) {
+    // Auto-traduzione IT→EN: invia testi a un servizio esterno (mymemory).
+    // Chiediamo conferma esplicita perché i testi escono dal sito verso terzi
+    // e la traduzione sovrascriverebbe i campi EN ancora vuoti/non modificati.
+    if (tasks.length && confirm('Tradurre automaticamente in inglese ' + tasks.length + ' campo/i modificato/i?\n\nI testi verranno inviati a un servizio di traduzione esterno (mymemory.translated.net) e il risultato riempirà i campi EN ancora vuoti. Annulla per salvare senza tradurre.')) {
       saveBtn.textContent = 'Traduzione…';
       const results = await Promise.all(tasks.map(t =>
         fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(t.itVal) + '&langpair=it|en')
@@ -1876,7 +1906,12 @@ function showAdminEditor() {
         if (el) el.value = tr;
       });
     }
-    dati.forEach((p, i) => {
+    // Si lavora su una COPIA profonda: `dati` non viene toccato finché il
+    // commit non è andato a buon fine. Così, se il salvataggio fallisce, lo
+    // stato in memoria resta coerente con quello su GitHub (niente modifiche
+    // perse in silenzio).
+    const next = JSON.parse(JSON.stringify(dati));
+    next.forEach((p, i) => {
       p.nome = g(i, 'nome');
       p.tipo = g(i, 'tipo'); p.tipo_en = g(i, 'tipo_en');
       p.descrizione = g(i, 'descrizione'); p.descrizione_en = g(i, 'descrizione_en');
@@ -1892,12 +1927,14 @@ function showAdminEditor() {
       });
     });
     saveBtn.textContent = 'Salvataggio…';
-    const res = await doCommit('admin: modifica testi personaggi');
+    const res = await doCommit('admin: modifica testi personaggi', next);
     if (res.ok) {
+      // Solo ora applichiamo le modifiche all'array globale (in place, così i
+      // riferimenti esistenti restano validi).
+      dati.length = 0;
+      next.forEach(function(p){ dati.push(p); });
       saveBtn.textContent = 'Salvato ✓';
       setTimeout(() => { renderList(); overlay.remove(); }, 700);
-    } else if (res.reason === 'no-token') {
-      renderList(); overlay.remove();
     } else {
       var why = (res.reason || 'errore').substring(0, 40);
       saveBtn.textContent = '✗ ' + why;
