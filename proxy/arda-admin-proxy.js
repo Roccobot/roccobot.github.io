@@ -49,8 +49,9 @@ function json(obj, status, extra) {
   });
 }
 
-// Confronto a tempo costante che non rivela nemmeno la lunghezza: si confrontano
-// gli hash SHA-256 (sempre 32 byte) tramite crypto.subtle.timingSafeEqual.
+// Confronto a tempo costante che non rivela nemmeno la lunghezza: si calcolano
+// gli hash SHA-256 (sempre 32 byte) dei due valori e li si confronta byte per
+// byte con XOR accumulato, senza uscita anticipata.
 async function safeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
   const enc = new TextEncoder();
@@ -193,6 +194,9 @@ export default {
           .map(function (p) { return p.text || ''; })
           .join('')
           .trim();
+        // Output vuoto (es. blocco di sicurezza, finishReason ≠ STOP): trattalo
+        // come errore così il client lascia il campo intatto invece di svuotarlo.
+        if (!out) return json({ ok: false, error: 'empty (' + (cand.finishReason || 'no-content') + ')' }, 502, ch);
         return json({ ok: true, text: out }, 200, ch);
       } catch (err) {
         return json({ ok: false, error: String(err && err.message || err) }, 502, ch);
