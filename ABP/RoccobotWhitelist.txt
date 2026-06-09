@@ -23,6 +23,7 @@
 @@||cofidis.it^
 @@||contactretail.apple.com^
 @@||contacts.google.com^
+@@||copecart.com^$important,document
 @@||cupweb.it^$document,subdocument
 @@||curve.com^
 @@||cutsy.net^
