@@ -441,7 +441,7 @@ h1 {
 .tipo-maia-dark   { background:rgba(120,12,78,0.36); border:1px solid rgba(210,55,140,0.9); color:#f060b8; }
 .tipo-balrog      { background:rgba(58,40,82,0.4); border:1px solid rgba(158,128,196,0.9); color:#c4a6e6; }
 .tipo-drago       { background:rgba(170,15,15,0.40); border:1px solid rgba(230,55,55,0.9); color:#ff3030; }
-.tipo-ragno       { background:rgba(105,5,22,0.48); border:1px solid rgba(210,18,55,0.92); color:#c8103c; text-shadow:0 0 10px rgba(190,10,40,0.5); }
+.tipo-ragno       { background:rgba(28,18,46,0.55); border:1px solid rgba(128,98,178,0.9); color:#ad8de0; }
 .tipo-lupo        { background:rgba(72,78,92,0.38); border:1px solid rgba(166,176,196,0.9); color:#c6cedc; }
 .tipo-bestia      { background:rgba(122,92,40,0.32); border:1px solid rgba(214,176,96,0.90); color:#e2c888; }
 .tipo-oscurita    { background:rgba(28,18,46,0.55); border:1px solid rgba(128,98,178,0.9); color:#ad8de0; }
@@ -638,10 +638,10 @@ body.is-dragging .rank-item * { pointer-events:none; }
   /* FAB di controllo a destra su mobile (pollice destro); il pannello è una bottom-sheet a tutta larghezza */
   #ctrl-fab { left:auto; right:2rem; }
   /* Navigazione rapida nell'editor admin (cluster verticale, lato destro) */
-  .admin-nav { display:flex; flex-direction:column; gap:0.45rem; position:fixed; right:0.55rem; bottom:calc(4.5rem + env(safe-area-inset-bottom,0px)); z-index:320; }
-  .admin-nav-btn { width:2.7rem;height:2.7rem;border-radius:50%;background:rgba(60,95,150,0.92);border:1.5px solid rgba(154,192,216,0.7);color:#e8f2ff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,0.45);padding:0;-webkit-tap-highlight-color:transparent; }
-  .admin-nav-btn:active { background:rgba(80,130,210,0.98);transform:scale(0.94); }
-  .admin-nav-btn svg { width:1.3rem;height:1.3rem;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round; }
+  .admin-nav { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:0.55rem; bottom:calc(4.5rem + env(safe-area-inset-bottom,0px)); z-index:320; }
+  .admin-nav-btn { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(60,95,150,0.25);border:1px solid rgba(154,192,216,0.23);color:rgba(232,242,255,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent; }
+  .admin-nav-btn:active { background:rgba(80,130,210,0.45);transform:scale(0.94); }
+  .admin-nav-btn svg { width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round; }
   /* Salti inizio/fine classifica: angolo basso-sinistra, piccoli e semi-trasparenti */
   .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; left:1rem; bottom:1.5rem; z-index:160; }
   .jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(60,95,150,0.25);border:1px solid rgba(154,192,216,0.23);color:rgba(232,242,255,0.65);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent; }
@@ -844,7 +844,7 @@ html[data-theme="light"] {
   .tipo-balrog      { background:rgba(80,55,120,0.12); border-color:rgba(140,110,185,0.55); color:#5a3d8a; text-shadow:none; }
   .tipo-maia-dark   { background:rgba(150,12,90,0.12); border-color:rgba(200,55,140,0.55); color:#900858; }
   .tipo-drago       { background:rgba(170,15,15,0.10); border-color:rgba(210,45,45,0.55); color:#b81818; }
-  .tipo-ragno       { background:rgba(105,5,22,0.11); border-color:rgba(185,15,48,0.78); color:#9a0828; text-shadow:none; }
+  .tipo-ragno       { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
   .tipo-lupo        { background:rgba(72,78,92,0.12); border-color:rgba(120,130,150,0.55); color:#404858; }
   .tipo-bestia      { background:rgba(122,92,40,0.12); border-color:rgba(180,140,70,0.85); color:#705418; }
   .tipo-bombadil    { background:rgba(36,82,28,0.12); border-color:rgba(70,140,50,0.55); color:#2d6418; }
@@ -873,7 +873,7 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v5.12.0</span>
+  <span class="version-badge">v5.12.1</span>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -1528,14 +1528,14 @@ function onPointerMove(e) {
   const cloneCenter = newTop + h / 2;
   const cur = pointerDragState.currentIdx;
 
-  // Auto-scroll vicino ai bordi: velocità proporzionale alla vicinanza (7–22px/frame)
-  const EDGE = 120;
+  // Auto-scroll vicino ai bordi: velocità proporzionale alla vicinanza (18–70px/frame)
+  const EDGE = 160;
   if (e.clientY < EDGE) {
-    const speed = Math.round(7 + 15 * (1 - e.clientY / EDGE));
-    startAutoScroll(-1, speed); scrollSpeed = speed;
+    const speed = Math.round(18 + 52 * (1 - e.clientY / EDGE));
+    startAutoScroll(-1, speed);
   } else if (e.clientY > window.innerHeight - EDGE) {
-    const speed = Math.round(7 + 15 * (1 - (window.innerHeight - e.clientY) / EDGE));
-    startAutoScroll(1, speed); scrollSpeed = speed;
+    const speed = Math.round(18 + 52 * (1 - (window.innerHeight - e.clientY) / EDGE));
+    startAutoScroll(1, speed);
   } else stopAutoScroll();
 
   // Hit-detection: item centers aggiustati per scroll avvenuto dopo drag start
