@@ -110,34 +110,46 @@ export default {
     // Commit dell'array dati.
     if (body.action === 'commit') {
       if (!Array.isArray(body.dati)) return json({ ok: false, error: 'no-dati' }, 400, ch);
-      const ghHeaders = {
-        'Authorization': 'token ' + env.GITHUB_PAT,
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'arda-admin-proxy',
-      };
-      // cache:'no-store' garantisce uno SHA sempre fresco (evita il bug del
-      // secondo salvataggio consecutivo) senza sporcare l'URL con query-string.
-      const get = await fetch(GH_API, { headers: ghHeaders, cache: 'no-store' });
-      if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
-      const fd = await get.json();
-      const cur = b64ToUtf8(fd.content);
-      const upd = replaceDati(cur, body.dati);
-      if (!upd) return json({ ok: false, error: 'marker-assente' }, 500, ch);
-      const put = await fetch(GH_API, {
-        method: 'PUT',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders),
-        body: JSON.stringify({
-          message: body.message || 'admin: aggiorna',
-          content: utf8ToB64(upd),
-          sha: fd.sha,
-        }),
-      });
-      if (!put.ok) {
-        let er = {};
-        try { er = await put.json(); } catch (e) {}
-        return json({ ok: false, error: er.message || ('gh-put ' + put.status) }, 502, ch);
+      // IMPORTANTE: tutto il dialogo con GitHub è dentro try/catch. Senza, una
+      // qualsiasi eccezione qui farebbe crashare il Worker, che risponderebbe
+      // con un 500 di sistema PRIVO di header CORS → il browser lo blocca e
+      // mostra il generico "Failed to fetch", mascherando l'errore reale.
+      try {
+        const ghHeaders = {
+          'Authorization': 'token ' + env.GITHUB_PAT,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'arda-admin-proxy',
+        };
+        if (!env.GITHUB_PAT) return json({ ok: false, error: 'no-github-pat' }, 500, ch);
+        // cache:'no-store' garantisce uno SHA sempre fresco (evita il bug del
+        // secondo salvataggio consecutivo) senza sporcare l'URL con query-string.
+        const get = await fetch(GH_API, { headers: ghHeaders, cache: 'no-store' });
+        if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
+        const fd = await get.json();
+        if (!fd || typeof fd.content !== 'string') {
+          return json({ ok: false, error: 'gh-no-content (file >1MB o path errato?)' }, 502, ch);
+        }
+        const cur = b64ToUtf8(fd.content);
+        const upd = replaceDati(cur, body.dati);
+        if (!upd) return json({ ok: false, error: 'marker-assente' }, 500, ch);
+        const put = await fetch(GH_API, {
+          method: 'PUT',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders),
+          body: JSON.stringify({
+            message: body.message || 'admin: aggiorna',
+            content: utf8ToB64(upd),
+            sha: fd.sha,
+          }),
+        });
+        if (!put.ok) {
+          let er = {};
+          try { er = await put.json(); } catch (e) {}
+          return json({ ok: false, error: er.message || ('gh-put ' + put.status) }, 502, ch);
+        }
+        return json({ ok: true }, 200, ch);
+      } catch (err) {
+        return json({ ok: false, error: 'commit-exception: ' + String(err && err.message || err) }, 502, ch);
       }
-      return json({ ok: true }, 200, ch);
     }
 
     // Traduzione IT↔EN tramite Google Gemini. La API key vive solo qui
