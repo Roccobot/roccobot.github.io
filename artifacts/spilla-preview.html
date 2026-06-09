@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Spilla Elfica — Anteprima varianti</title>
+<style>
+  body { background:#13182a; color:#c8d8f0; font-family:system-ui,sans-serif; padding:2rem; margin:0; }
+  h1 { font-size:1.2rem; color:#e8d87a; margin-bottom:0.5rem; }
+  .row { display:flex; flex-wrap:wrap; gap:3rem; align-items:flex-start; margin-top:1.5rem; }
+  .card { background:rgba(255,255,255,0.05); border:1px solid rgba(104,144,168,0.25); border-radius:10px;
+          padding:1.5rem 2rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+  label { font-size:0.82rem; color:#9ab; text-align:center; max-width:140px; line-height:1.5; }
+  .actual { display:flex; align-items:center; gap:0.6rem; margin-top:0.2rem; }
+  .actual svg { width:16px; height:16px; }
+  .actual span { font-size:0.68rem; color:#567; }
+  p.note { font-size:0.75rem; color:#789; font-style:italic; max-width:480px; line-height:1.5; margin-top:0.5rem; }
+</style>
+</head>
+<body>
+<h1>Spilla elfica — Compagnia dell'Anello</h1>
+<p class="note">Due varianti di orientamento. Dimensione reale nel sito: ~16×16 px (in basso a destra di ogni card).</p>
+
+<div class="row">
+
+  <!-- Verticale (punta in alto) -->
+  <div class="card">
+    <svg width="96" height="96" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18,3 C18,3 28,12 26,22 C24,30 18,33 18,33 C18,33 12,30 10,22 C8,12 18,3 18,3 Z"
+            fill="#3d8c52" stroke="#2a6038" stroke-width="1"/>
+      <line x1="18" y1="5"  x2="18" y2="31"  stroke="#5ab870" stroke-width="0.9" opacity="0.8"/>
+      <line x1="18" y1="12" x2="22.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+      <line x1="18" y1="12" x2="13.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+      <line x1="18" y1="18" x2="23"   y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+      <line x1="18" y1="18" x2="13"   y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+      <ellipse cx="15.5" cy="11" rx="1.8" ry="2.8" fill="#7dd890" opacity="0.3" transform="rotate(-15,15.5,11)"/>
+    </svg>
+    <div class="actual">
+      <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18,3 C18,3 28,12 26,22 C24,30 18,33 18,33 C18,33 12,30 10,22 C8,12 18,3 18,3 Z" fill="#3d8c52" stroke="#2a6038" stroke-width="1"/>
+        <line x1="18" y1="5" x2="18" y2="31" stroke="#5ab870" stroke-width="0.9" opacity="0.8"/>
+        <line x1="18" y1="12" x2="22.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <line x1="18" y1="12" x2="13.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <line x1="18" y1="18" x2="23" y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <line x1="18" y1="18" x2="13" y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+      </svg>
+      <span>reale (16px)</span>
+    </div>
+    <label>Verticale<br>(punta in cima)</label>
+  </div>
+
+  <!-- Diagonale (punta in alto a destra, ~45°) -->
+  <div class="card">
+    <svg width="96" height="96" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(45, 18, 18)">
+        <path d="M18,3 C18,3 28,12 26,22 C24,30 18,33 18,33 C18,33 12,30 10,22 C8,12 18,3 18,3 Z"
+              fill="#3d8c52" stroke="#2a6038" stroke-width="1"/>
+        <line x1="18" y1="5"  x2="18" y2="31"  stroke="#5ab870" stroke-width="0.9" opacity="0.8"/>
+        <line x1="18" y1="12" x2="22.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <line x1="18" y1="12" x2="13.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <line x1="18" y1="18" x2="23"   y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <line x1="18" y1="18" x2="13"   y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        <ellipse cx="15.5" cy="11" rx="1.8" ry="2.8" fill="#7dd890" opacity="0.3" transform="rotate(-15,15.5,11)"/>
+      </g>
+    </svg>
+    <div class="actual">
+      <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(45, 18, 18)">
+          <path d="M18,3 C18,3 28,12 26,22 C24,30 18,33 18,33 C18,33 12,30 10,22 C8,12 18,3 18,3 Z" fill="#3d8c52" stroke="#2a6038" stroke-width="1"/>
+          <line x1="18" y1="5" x2="18" y2="31" stroke="#5ab870" stroke-width="0.9" opacity="0.8"/>
+          <line x1="18" y1="12" x2="22.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+          <line x1="18" y1="12" x2="13.5" y2="17" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+          <line x1="18" y1="18" x2="23" y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+          <line x1="18" y1="18" x2="13" y2="22" stroke="#5ab870" stroke-width="0.65" opacity="0.6"/>
+        </g>
+      </svg>
+      <span>reale (16px)</span>
+    </div>
+    <label>Diagonale<br>(punta in alto a destra, ~45°)</label>
+  </div>
+
+</div>
+<p class="note">La variante diagonale evoca una spilla appuntata sul mantello — come viene descritta nel testo — invece di una foglia che "cade" verticalmente.</p>
+</body>
+</html>
