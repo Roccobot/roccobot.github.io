@@ -56,6 +56,25 @@ di quanto ricordato), fermarsi e investigare prima di procedere.
 > **non sostituisce** questo controllo manuale obbligatorio — come dimostrato,
 > il hook non può girare se la snapshot è anteriore al commit che lo ha introdotto.
 
+## Consulenza estetica proattiva
+
+Se una richiesta riguarda colori, stile, design, proporzioni o scelte visive
+e c'è motivo di ritenere che il risultato possa stonare rispetto al resto
+dell'interfaccia (palette, coerenza visiva, leggibilità a dimensione reale,
+ecc.), **dare sempre un avviso preventivo e/o proporre un'alternativa** —
+anche se l'utente non lo ha chiesto esplicitamente.
+
+Esempi tipici:
+- Colori troppo saturi o vividi rispetto agli altri badge (come accaduto con
+  il Maia #f2dbda/#fe8b96/#c83056).
+- Dettagli SVG troppo fini per essere visibili alla dimensione reale di ~22 px
+  (come la spilla della Compagnia e l'occhio di Sauron).
+- Scelte che contraddicono la coerenza visiva già stabilita.
+
+In questi casi: **sconsigliare apertamente e proporre alternative**, senza
+aspettare la conferma dell'utente. L'utente ha autorizzato questo tipo di
+feedback proattivo.
+
 ## Stile di comunicazione
 
 - **Non dare per scontate competenze tecniche.** Spiegare ogni concetto (es. "hook", "snapshot", "container") in linguaggio piano e passo per passo, senza presumere che l'utente li conosca.
