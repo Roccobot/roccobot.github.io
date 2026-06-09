@@ -121,9 +121,11 @@ export default {
           'User-Agent': 'arda-admin-proxy',
         };
         if (!env.GITHUB_PAT) return json({ ok: false, error: 'no-github-pat' }, 500, ch);
-        // cache:'no-store' garantisce uno SHA sempre fresco (evita il bug del
-        // secondo salvataggio consecutivo) senza sporcare l'URL con query-string.
-        const get = await fetch(GH_API, { headers: ghHeaders, cache: 'no-store' });
+        // SHA sempre fresco (evita il bug del secondo salvataggio consecutivo):
+        // NB il runtime di Cloudflare Workers NON implementa l'opzione `cache`
+        // di fetch (lancerebbe un'eccezione). Per bypassare l'eventuale cache
+        // edge si usa un parametro anti-cache nell'URL, che GitHub ignora.
+        const get = await fetch(GH_API + '?_=' + Date.now(), { headers: ghHeaders });
         if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
         const fd = await get.json();
         if (!fd || typeof fd.content !== 'string') {
