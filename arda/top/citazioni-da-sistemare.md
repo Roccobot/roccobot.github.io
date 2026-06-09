@@ -1,20 +1,10 @@
-# Citazioni da reperire / verificare — revisione v7.x
+# Citazioni — revisione v7.x: COMPLETATA ✅
 
-Dopo l'arrivo degli originali inglesi completi (incluso *Unfinished Tales*),
-**tutte le citazioni sono verbatim verificate contro i testi**, in entrambe le
-lingue, con un'unica eccezione.
+Tutte le 159 coppie di citazioni (IT + EN) sono **verbatim verificate** contro
+i testi canonici: traduzioni STI (Alliata/Principe, Saba Sardi, Jeronimidis
+Conte, RI, CoH, B&L, CdG) e originali inglesi (LotR, Sil, Hobbit, UT, NoME).
 
-## Caso aperto
+L'ultimo caso aperto — **Narvi**, «Io, Narvi, le feci» — è stato confermato
+sul cartaceo Alliata (l'epub riportava il refuso «le led.»).
 
-| Personaggio | Citazione | Note |
-|---|---|---|
-| Narvi | ❌ | L'epub Alliata riporta «Io, Narvi, le led.» — refuso *nell'edizione digitale stessa* («led» non è italiano). Nel sito c'è la correzione deduttiva «le feci»: da verificare sul cartaceo. |
-
-## Chiuse con Unfinished Tales EN (v7.4.0)
-
-- **Tar-Minastir**: EN inventata sostituita con l'originale («He laid the foundation for the achievement of Tar-Minastir…»).
-- **Gamil Zirak**: EN inventata sostituita; corretto anche l'IT («spade e asce, scudi ed elmi», non «coltelli»).
-- **Alatar**: coppia allineata al passo del concilio dei Valar («But two only came forward: Curumo, who was chosen by Aulë…»).
-- **Pallando**: EN resa esattamente verbatim (rimosso un "with him" spurio).
-- **Elemmakil**: EN sostituita con il passo reale di *Of Tuor* («Then Voronwë will remember also the laws of his land…»).
-- **Saruman, Radagast, Khamûl, Enerdhil**: verificate ✓ (già corrette).
+Nessuna voce residua.
