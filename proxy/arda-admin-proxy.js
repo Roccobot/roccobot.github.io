@@ -174,7 +174,7 @@ export default {
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model: env.ANTHROPIC_MODEL || 'claude-opus-4-8',
+            model: env.ANTHROPIC_MODEL || 'claude-opus-latest',
             max_tokens: 2048,
             system: system,
             messages: [{ role: 'user', content: text }],
