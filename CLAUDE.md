@@ -92,6 +92,13 @@ feedback proattivo.
 
 - Branch di sviluppo: `master` (regola stabilita dall'utente)
 - Bump SemVer ad ogni commit (patch per fix, minor per feature/contenuto)
+- **Versione visibile: un'unica fonte.** Il numero hardcoded vive SOLO nel
+  badge della testata (`.version-badge` in `arda/top/index.html`); il numero
+  nel pannello mobile (`.ctrl-ver`) lo legge da lì a runtime, quindi si
+  aggiorna da solo. Ad ogni bump va quindi toccato un solo punto. Non
+  reintrodurre mai numeri di versione duplicati/hardcoded altrove (storico:
+  il pannello era rimasto fermo a v5.11.0 per mesi). Nota: su mobile il
+  numero nel pannello è anche l'accesso all'area admin.
 - **La parola d'ordine admin è validata SOLO lato server** dal Cloudflare Worker
   (secret `ADMIN_PASSWORD`). NON deve mai comparire nel sorgente del sito — né
   in chiaro né in base64. La vecchia `atob('bWVsbG9uIG1vZm8=')` è stata rimossa.

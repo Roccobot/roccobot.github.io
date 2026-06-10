@@ -57,22 +57,28 @@ body::after { display:none; }
 
 header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
 
-.version-badge {
+.brand-corner {
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
+  top: 0.9rem;
+  left: 0.7rem;
+  display: flex;
+  align-items: center;
+}
+.version-badge, .home-link {
   font-family: 'Cinzel', serif;
   font-size: 0.65rem;
   letter-spacing: 0.12em;
   color: var(--gold-deep);
-  opacity: 0.55;
+  opacity: 0.7;
   user-select: none;
   cursor: pointer;
   transition: opacity 0.2s;
+  /* il padding allarga l'area tap senza spostare il testo (compensato da .brand-corner) */
   padding: 0.6rem 0.8rem;
-  margin: -0.6rem -0.8rem;
+  text-decoration: none;
 }
-.version-badge:hover { opacity: 0.85; }
+.home-link { padding-left: 0; }
+.version-badge:hover, .home-link:hover { opacity: 1; }
 
 .lang-switch {
   position: absolute;
@@ -374,7 +380,8 @@ h1 {
   font-family:'Cinzel',serif; font-size:0.74rem; letter-spacing:0.08em; padding:0.4rem 0.9rem;
   border-radius:8px; border:1px solid var(--gold); background:rgba(104,144,168,0.15); color:var(--gold-bright); cursor:pointer;
 }
-.ctrl-ver { font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.12em; color:var(--gold-deep); opacity:0.7; }
+/* Su mobile è anche la porta d'accesso all'admin: area tap allargata col padding */
+.ctrl-ver { font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.12em; color:var(--gold-deep); opacity:0.7; cursor:pointer; padding:0.5rem 0.7rem; margin:-0.5rem -0.7rem; }
 .ctrl-backdrop { position:fixed; inset:0; z-index:205; background:rgba(0,0,0,0.4); opacity:0; visibility:hidden; transition:opacity 0.2s,visibility 0.2s; }
 .ctrl-backdrop.open { opacity:1; visibility:visible; }
 
@@ -658,8 +665,16 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .admin-nav-btn { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(60,95,150,0.25);border:1px solid rgba(154,192,216,0.23);color:rgba(232,242,255,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent; }
   .admin-nav-btn:active { background:rgba(80,130,210,0.45);transform:scale(0.94); }
   .admin-nav-btn svg { width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round; }
-  /* Salti inizio/fine classifica: mobile → angolo basso-sinistra */
-  .jump-fabs { right:auto; left:1rem; bottom:1.5rem; }
+  /* Testata mobile: niente badge versione (l'admin si apre dal numero di
+     versione nel pannello), resta solo roccobot.me centrato in piccolo */
+  .version-badge { display:none; }
+  .brand-corner { left:50%; transform:translateX(-50%); }
+  /* Cluster di navigazione: colonna a destra allineata al centro del FAB
+     principale, che parte a ~2/3 della viewport dall'alto; più piccoli,
+     distanziati e discreti rispetto al desktop */
+  .jump-fabs { right:2.55rem; bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.75rem; }
+  .jump-fab { width:1.9rem; height:1.9rem; opacity:0.8; }
+  .jump-fab svg { width:0.95rem; height:0.95rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
   .fab-tooltip { transform:translateX(-4px); }
@@ -887,7 +902,9 @@ html[data-theme="light"] {
 </head>
 <body>
 <header>
-  <span class="version-badge">v7.6.3</span>
+  <div class="brand-corner">
+    <span class="version-badge">v7.7.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+  </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
@@ -930,7 +947,7 @@ var currentLang = localStorage.getItem('arda-lang') || (navigator.language.start
 
 var i18n = {
   it: {
-    crest: '<a href="https://roccobot.me" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
+    crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
     intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.",
@@ -938,7 +955,7 @@ var i18n = {
     position: 'Posizione'
   },
   en: {
-    crest: '<a href="https://roccobot.me" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
+    crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Arda',
     subtitle: 'The mightiest beings* in Tolkien\'s world, from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
     intro: "From the angelic powers of the Ainur down to the humblest Hobbit child. 'Power' is understood in the broadest sense imaginable: magical force, skill in combat, political and military power, influence and the ability to shape the world's fate.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
@@ -1347,8 +1364,9 @@ function controlPanelHTML() {
     h += '<div class="ctrl-legend-row">' + ICON_SVG[k].replace('%L%','') + '<span>' + IL[k] + '</span></div>';
   });
   h += '</div>';
-  // Opzioni (visibili solo su mobile via CSS .ctrl-extra)
-  h += '<div class="ctrl-extra"><span class="ctrl-ver">v5.11.0</span>' +
+  // Opzioni (visibili solo su mobile via CSS .ctrl-extra). La versione è
+  // letta dal badge della testata: unica fonte, niente più numeri stantii.
+  h += '<div class="ctrl-extra"><span class="ctrl-ver" id="ctrl-ver">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>' +
        '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   return h;
 }
@@ -1402,6 +1420,14 @@ function wireControlPanel() {
   if (close) close.addEventListener('click', toggleControlPanel);
   var langBtn = document.getElementById('ctrl-lang');
   if (langBtn) langBtn.addEventListener('click', function(){ setLang(currentLang === 'it' ? 'en' : 'it'); });
+  // Su mobile la testata non mostra più il badge versione: l'accesso admin
+  // è il numero di versione del pannello (chiude il pannello e apre l'editor)
+  var verBtn = document.getElementById('ctrl-ver');
+  if (verBtn) verBtn.addEventListener('click', function(){
+    toggleControlPanel();
+    if (saveUnlocked) showAdminEditor();
+    else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+  });
 }
 
 function toggleControlPanel() {
@@ -1439,10 +1465,13 @@ function buildControlPanel() {
 buildControlPanel();
 setLang(currentLang);
 
-// Pulsanti inizio/fine: visibili su scroll/rotella/trascinamento, si nascondono dopo 3s.
+// Pulsanti di navigazione: visibili su scroll/rotella/trascinamento; si
+// nascondono dopo 3s su desktop e 0,8s su mobile. Su mobile compaiono anche
+// Pagina su/giù (come nell'editor admin), solo quando c'è dove andare.
 var jumpFabsWrap = null;
 var _jumpFabsTimer = null;
 var _jumpScrollEndTimer = null;
+function isMobileViewport() { return window.matchMedia('(max-width:768px)').matches; }
 function showJumpFabsTemporarily() {
   if (!jumpFabsWrap) return;
   if (document.getElementById('fab-container')) return;
@@ -1458,15 +1487,19 @@ function showJumpFabsTemporarily() {
     clearTimeout(_jumpFabsTimer);
     _jumpFabsTimer = setTimeout(function(){
       if (jumpFabsWrap){ jumpFabsWrap.style.opacity='0'; jumpFabsWrap.style.pointerEvents='none'; }
-    }, 3000);
+    }, isMobileViewport() ? 800 : 3000);
   }, 150);
 }
 (function buildJumpFabs(){
   var wrap = document.createElement('div');
   wrap.className = 'jump-fabs';
   jumpFabsWrap = wrap;
-  var TOP = '<svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="5"/><polyline points="7 13 12 8 17 13"/></svg>';
-  var BOT = '<svg viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="19"/><polyline points="7 11 12 16 17 11"/></svg>';
+  /* Glifi centrati nel viewBox 24×24: span verticale 8–16, centro 12
+     (le versioni precedenti erano sbilanciate: 5–13 e 11–19) */
+  var TOP = '<svg viewBox="0 0 24 24"><line x1="6" y1="8" x2="18" y2="8"/><polyline points="7 16 12 11 17 16"/></svg>';
+  var BOT = '<svg viewBox="0 0 24 24"><line x1="6" y1="16" x2="18" y2="16"/><polyline points="7 8 12 13 17 8"/></svg>';
+  var PGUP = '<svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg>';
+  var PGDN = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
   function mk(svg, label, fn){
     var b = document.createElement('button');
     b.className = 'jump-fab'; b.innerHTML = svg;
@@ -1474,16 +1507,24 @@ function showJumpFabsTemporarily() {
     b.addEventListener('click', fn);
     return b;
   }
-  var btnTop = mk(TOP, 'Vai in cima', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  var btnBot = mk(BOT, 'Vai in fondo', function(){ window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); });
+  var btnTop  = mk(TOP,  'Vai in cima',  function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  var btnPgUp = mk(PGUP, 'Pagina su',    function(){ window.scrollBy({ top: -window.innerHeight * 0.85, behavior: 'smooth' }); });
+  var btnPgDn = mk(PGDN, 'Pagina giù',   function(){ window.scrollBy({ top: window.innerHeight * 0.85, behavior: 'smooth' }); });
+  var btnBot  = mk(BOT,  'Vai in fondo', function(){ window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); });
   wrap.appendChild(btnTop);
+  wrap.appendChild(btnPgUp);
+  wrap.appendChild(btnPgDn);
   wrap.appendChild(btnBot);
   document.body.appendChild(wrap);
   wrap._upd = function(){
     var atTop = window.scrollY <= 1;
     var atBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 5;
+    var mob = isMobileViewport();
     btnTop.style.display = atTop ? 'none' : 'flex';
     btnBot.style.display = atBottom ? 'none' : 'flex';
+    // Pagina su/giù: solo mobile, e solo quando usabili
+    btnPgUp.style.display = (mob && !atTop) ? 'flex' : 'none';
+    btnPgDn.style.display = (mob && !atBottom) ? 'flex' : 'none';
   };
   window.addEventListener('scroll', showJumpFabsTemporarily, { passive: true });
   window.addEventListener('wheel',  showJumpFabsTemporarily, { passive: true });
