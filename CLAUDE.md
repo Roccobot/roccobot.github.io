@@ -90,6 +90,12 @@ feedback proattivo.
 
 ## Regole generali
 
+- **Terminologia: «versione test» / «sandbox».** Quando l'utente chiede una
+  "versione test" o "sandbox" intende una versione provvisoria dell'oggetto
+  richiesto (es. l'intera homepage) da consegnargli direttamente in chat
+  (file o ZIP), **senza alcuna modifica reale al repository**: niente commit,
+  niente push, working tree pulito a fine lavoro. Serve solo a esplorare
+  possibilità prima di un'eventuale integrazione vera.
 - Branch di sviluppo: `master` (regola stabilita dall'utente)
 - Bump SemVer ad ogni commit (patch per fix, minor per feature/contenuto)
 - **Versione visibile: un'unica fonte.** Il numero hardcoded vive SOLO nel
