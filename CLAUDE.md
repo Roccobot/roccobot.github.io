@@ -217,7 +217,15 @@ grezzo così com'è.
 - **SVG**: eliminare tutti i metadati Adobe Illustrator/Inkscape o simili
   (tag `<metadata>`, namespace `xmlns:*` superflui, commenti `<!-- Generator -->`,
   attributi `id` autogenerati, ecc.). Sono cancellabili **senza alcuna perdita
-  di informazione né effetto collaterale** sul rendering.
+  di informazione né effetto collaterale** sul rendering, **CON UN'ECCEZIONE
+  imparata a caro prezzo**: gli `id` **referenziati** altrove nel file —
+  `fill="url(#X)"`, `clip-path="url(#X)"`, `href="#X"`/`xlink:href="#X"` —
+  vanno preservati, altrimenti gradienti/clip/use si rompono e i riempimenti
+  diventano neri o spariscono (successo con i 18 gradienti
+  `Sfumatura_senza_nome_NN` della nave5: icona resa scura, colori stravolti).
+  Procedura: raccogliere prima tutti gli id referenziati, rimuovere solo gli
+  altri. **Verifica obbligatoria dopo ogni bonifica SVG**: rendering raw vs
+  bonificato e confronto pixel (diff massima attesa: 0).
 - **HTML / XML / JSON / CSS**: rimuovere commenti-firma di editor, attributi
   ridondanti, whitespace inutile e ogni metadato non funzionale.
 
