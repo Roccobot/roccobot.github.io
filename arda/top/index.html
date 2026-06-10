@@ -669,12 +669,12 @@ body.is-dragging .rank-item * { pointer-events:none; }
      versione nel pannello), resta solo roccobot.me centrato in piccolo */
   .version-badge { display:none; }
   .brand-corner { left:50%; transform:translateX(-50%); }
-  /* Cluster di navigazione: colonna a destra allineata al centro del FAB
-     principale, che parte a ~2/3 della viewport dall'alto; più piccoli,
-     distanziati e discreti rispetto al desktop */
-  .jump-fabs { right:2.55rem; bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.75rem; }
-  .jump-fab { width:1.9rem; height:1.9rem; opacity:0.8; }
-  .jump-fab svg { width:0.95rem; height:0.95rem; }
+  /* Cluster di navigazione (misure dal mockup utente): colonna quasi a filo
+     del bordo destro come il cluster admin, parte a ~2/3 della viewport
+     dall'alto e resta sopra il FAB principale; piccoli, distanziati, discreti */
+  .jump-fabs { right:0.55rem; bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
+  .jump-fab { width:1.65rem; height:1.65rem; opacity:0.7; }
+  .jump-fab svg { width:0.85rem; height:0.85rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
   .fab-tooltip { transform:translateX(-4px); }
@@ -903,7 +903,7 @@ html[data-theme="light"] {
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.7.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.7.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
