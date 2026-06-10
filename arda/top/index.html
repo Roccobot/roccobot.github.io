@@ -903,7 +903,7 @@ html[data-theme="light"] {
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.7.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.7.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1466,8 +1466,12 @@ buildControlPanel();
 setLang(currentLang);
 
 // Pulsanti di navigazione: visibili su scroll/rotella/trascinamento; si
-// nascondono dopo 3s su desktop e 0,8s su mobile. Su mobile compaiono anche
-// Pagina su/giù (come nell'editor admin), solo quando c'è dove andare.
+// nascondono dopo 3s su desktop e 0,8s su mobile. Su mobile possono comparire
+// anche Pagina su/giù (come nell'editor admin), solo quando c'è dove andare.
+// Flag: Pagina su/giù nel cluster mobile della home. Disattivati su richiesta
+// dell'utente; per ripristinarli basta rimettere true (nessun'altra modifica).
+// Non influisce né sul desktop (non li ha mai mostrati) né sull'admin-nav.
+var JUMP_PAGE_BTNS = false;
 var jumpFabsWrap = null;
 var _jumpFabsTimer = null;
 var _jumpScrollEndTimer = null;
@@ -1522,9 +1526,9 @@ function showJumpFabsTemporarily() {
     var mob = isMobileViewport();
     btnTop.style.display = atTop ? 'none' : 'flex';
     btnBot.style.display = atBottom ? 'none' : 'flex';
-    // Pagina su/giù: solo mobile, e solo quando usabili
-    btnPgUp.style.display = (mob && !atTop) ? 'flex' : 'none';
-    btnPgDn.style.display = (mob && !atBottom) ? 'flex' : 'none';
+    // Pagina su/giù: solo mobile (se attivati dal flag), e solo quando usabili
+    btnPgUp.style.display = (JUMP_PAGE_BTNS && mob && !atTop) ? 'flex' : 'none';
+    btnPgDn.style.display = (JUMP_PAGE_BTNS && mob && !atBottom) ? 'flex' : 'none';
   };
   window.addEventListener('scroll', showJumpFabsTemporarily, { passive: true });
   window.addEventListener('wheel',  showJumpFabsTemporarily, { passive: true });
