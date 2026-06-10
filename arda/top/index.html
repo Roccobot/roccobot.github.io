@@ -26,7 +26,7 @@
 <meta name="twitter:title" content="Arda Top by Roccobot">
 <meta name="twitter:description" content="Gli esseri più potenti del mondo di Tolkien · The mightiest beings in Tolkien's world">
 <meta name="twitter:image" content="https://roccobot.github.io/arda/top/og-image.jpg">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E💍%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -716,8 +716,9 @@ body.is-dragging .rank-item * { pointer-events:none; }
   .list-animate .rank-item { animation:none; opacity:1; transform:none; }
 }
 
+/* ── Tema chiaro (appiattito: niente CSS nesting, per compatibilità
+   e validazione W3C; semantica e specificità invariate) ── */
 html[data-theme="light"] {
-  & {
     --ink: #f2f2f6;
     --ink-deep: #ebebef;
     --parchment: #12141e;
@@ -731,192 +732,191 @@ html[data-theme="light"] {
     --name: #34373f; --name-hover: #6c6f78;
   }
 
-  body {
+html[data-theme="light"] body {
     background: #ebebef;
     color: #12141e;
     font-weight: 500;
   }
-  body::before {
+html[data-theme="light"] body::before {
     background:
       radial-gradient(ellipse at 15% 20%, rgba(180,190,215,0.35) 0%, transparent 40%),
       radial-gradient(ellipse at 85% 70%, rgba(170,180,210,0.28) 0%, transparent 45%),
       radial-gradient(ellipse at 50% 95%, rgba(190,195,220,0.22) 0%, transparent 50%),
       #ebebef;
   }
-  body::after { display: none; }
+html[data-theme="light"] body::after { display: none; }
 
-  p, li, .subtitle, .intro, .rank-source, footer p {
+html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"] .subtitle, html[data-theme="light"] .intro, html[data-theme="light"] .rank-source, html[data-theme="light"] footer p {
     font-weight: 500;
   }
 
-  h1 {
+html[data-theme="light"] h1 {
     background: linear-gradient(180deg, #12141e 0%, #3a5878 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
   }
-  .crest { color: #3a5878; }
-  .subtitle { color: #2a2d3e; }
-  .intro { color: #2a2d3e; }
-  .lang-switch {
+html[data-theme="light"] .crest { color: #3a5878; }
+html[data-theme="light"] .subtitle { color: #2a2d3e; }
+html[data-theme="light"] .intro { color: #2a2d3e; }
+html[data-theme="light"] .lang-switch {
     background: rgba(200,210,230,0.5);
     border-color: #3a5878;
     color: #253d58;
   }
-  .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
+html[data-theme="light"] .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
 
-  .rank-item {
+html[data-theme="light"] .rank-item {
     background: rgba(224,236,252,0.16);
     border: 1px solid rgba(80,110,150,0.22);
     border-left: 3px solid #3a5878;
   }
-  .rank-item::before { display: none; }
-  .rank-item:hover, .rank-item:focus-visible {
+html[data-theme="light"] .rank-item::before { display: none; }
+html[data-theme="light"] .rank-item:hover, html[data-theme="light"] .rank-item:focus-visible {
     background: rgba(224,236,252,0.40);
     border-color: rgba(60,95,150,0.55);
     border-left-color: #4a7090;
   }
-  /* vis-top: inline-style handles border; no background override */
-  .rank-num {
+/* vis-top: inline-style handles border; no background override */
+html[data-theme="light"] .rank-num {
     text-shadow: none;
     font-weight: 900;
   }
-  /* #2 — il numero non cambia colore al passaggio del mouse */
+/* #2 — il numero non cambia colore al passaggio del mouse */
 
-  .rank-item.divine {
+html[data-theme="light"] .rank-item.divine {
     background: rgba(251,245,224,0.16);
     border-color: rgba(80,110,150,0.22);
     border-left-color: rgba(170,135,30,0.55);
   }
-  .rank-item.divine:hover, .rank-item.divine:focus-visible {
+html[data-theme="light"] .rank-item.divine:hover, html[data-theme="light"] .rank-item.divine:focus-visible {
     background: rgba(251,245,224,0.40);
     border-color: rgba(155,120,30,0.5);
   }
-  .rank-item.divine.morgoth { background: rgba(251,232,240,0.16); border-left-color:rgba(150,25,80,0.50); }
-  .rank-item.divine.morgoth:hover, .rank-item.divine.morgoth:focus-visible { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
-  .rank-item.divine.bombadil { background: rgba(230,250,228,0.16); border-left-color:rgba(45,100,25,0.50); }
-  .rank-item.divine.bombadil:hover, .rank-item.divine.bombadil:focus-visible { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
-  .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
-  .ctrl-row, .ctrl-legend-row { color:#12141e; }
-  .ctrl-h { color:#3a5878; }
-  .rank-name {
+html[data-theme="light"] .rank-item.divine.morgoth { background: rgba(251,232,240,0.16); border-left-color:rgba(150,25,80,0.50); }
+html[data-theme="light"] .rank-item.divine.morgoth:hover, html[data-theme="light"] .rank-item.divine.morgoth:focus-visible { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
+html[data-theme="light"] .rank-item.divine.bombadil { background: rgba(230,250,228,0.16); border-left-color:rgba(45,100,25,0.50); }
+html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="light"] .rank-item.divine.bombadil:focus-visible { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
+html[data-theme="light"] .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
+html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
+html[data-theme="light"] .ctrl-h { color:#3a5878; }
+html[data-theme="light"] .rank-name {
     font-weight: 700;
   }
-  /* #4 — hover nome gestito da var(--name-hover) */
-  .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
-  .rank-title {
+/* #4 — hover nome gestito da var(--name-hover) */
+html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
+html[data-theme="light"] .rank-title {
     color: #2a2d3e;
     font-weight: 500;
   }
-  .rank-source {
+html[data-theme="light"] .rank-source {
     color: #253d58;
     font-weight: 500;
   }
-  .rank-arrow { color: #3a5878; }
-  .rank-item:hover .rank-arrow,
-  .rank-item:focus-visible .rank-arrow { color: #253d58; }
-  .badge {
+html[data-theme="light"] .rank-arrow { color: #3a5878; }
+.rank-item:hover .rank-arrow,
+html[data-theme="light"] .rank-item:focus-visible .rank-arrow { color: #253d58; }
+html[data-theme="light"] .badge {
     color: #253d58;
     border-color: #4a7090;
     background: rgba(58,88,120,0.1);
     font-weight: 700;
   }
 
-  .modal-backdrop { background: rgba(10,15,30,0.5); backdrop-filter: blur(6px); }
-  .modal {
+html[data-theme="light"] .modal-backdrop { background: rgba(10,15,30,0.5); backdrop-filter: blur(6px); }
+html[data-theme="light"] .modal {
     background: linear-gradient(135deg, #f6f6fa 0%, #eeeeF4 100%);
     border: 2px solid #4a7090;
     box-shadow: 0 8px 40px rgba(20,30,60,0.2);
   }
-  .modal::before { border-color: rgba(58,88,120,0.3); }
-  .modal-close {
+html[data-theme="light"] .modal::before { border-color: rgba(58,88,120,0.3); }
+html[data-theme="light"] .modal-close {
     background: rgba(200,210,230,0.4);
     border-color: #4a7090;
     color: #253d58;
   }
-  .modal-close:hover { background: #3a5878; color: #f6f6fa; }
-  .modal-rank { color: #3a5878; font-weight: 700; }
-  .modal-name { color: #12141e; }
-  .modal-source {
+html[data-theme="light"] .modal-close:hover { background: #3a5878; color: #f6f6fa; }
+html[data-theme="light"] .modal-rank { color: #3a5878; font-weight: 700; }
+html[data-theme="light"] .modal-name { color: #12141e; }
+html[data-theme="light"] .modal-source {
     color: #253d58;
     border-bottom-color: #4a7090;
     font-weight: 500;
   }
-  .modal-section h3 { color: #3a5878; }
-  .modal-section h3::before,
-  .modal-section h3::after { background: linear-gradient(90deg, transparent, rgba(74,112,144,0.4), transparent); }
-  .modal-section p { color: #12141e; font-weight: 500; }
-  .modal-quote {
+html[data-theme="light"] .modal-section h3 { color: #3a5878; }
+.modal-section h3::before,
+html[data-theme="light"] .modal-section h3::after { background: linear-gradient(90deg, transparent, rgba(74,112,144,0.4), transparent); }
+html[data-theme="light"] .modal-section p { color: #12141e; font-weight: 500; }
+html[data-theme="light"] .modal-quote {
     color: #2a2d3e;
     border-left-color: #4a7090;
     background: rgba(180,200,230,0.18);
     font-weight: 500;
   }
 
-  footer { border-top-color: rgba(58,88,120,0.25); }
-  footer p { color: #2a2d3e; font-weight: 500; }
+html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
+html[data-theme="light"] footer p { color: #2a2d3e; font-weight: 500; }
 
-  ::-webkit-scrollbar-track { background: #e4e4ea; }
-  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #253d58, #4a7090); }
+html[data-theme="light"] ::-webkit-scrollbar-track { background: #e4e4ea; }
+html[data-theme="light"] ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #253d58, #4a7090); }
 
-  /* race badge light-mode: vivid but dark enough for marble bg */
-  .tipo-noldor      { background:rgba(30,95,155,0.11); border-color:rgba(30,100,185,0.90); color:#1560a0; }
-  .tipo-noldor-vanyar { background:rgba(30,70,210,0.12); border-color:rgba(50,120,230,0.55); color:#1040c8; }
-  .tipo-vanyar      { background:rgba(0,150,195,0.12); border-color:rgba(0,140,175,0.90); color:#007898; }
-  .tipo-teleri      { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
-  .tipo-calaquendi  { background:rgba(12,148,132,0.16); border-color:rgba(22,200,178,0.72); color:#097a6c; }
-  .tipo-sindar      { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
-  .tipo-teleri-maia { background:rgba(60,20,175,0.12); border-color:rgba(140,100,230,0.55); color:#4818c0; }
-  .tipo-mezzelfo    { background:rgba(30,60,175,0.11); border-color:rgba(70,130,230,0.55); color:#1040b8; }
-  .tipo-numenorean  { background:rgba(200,12,12,0.12); border-color:rgba(220,40,40,0.55); color:#a00000; }
-  .tipo-hador       { background:rgba(210,62,8,0.12); border-color:rgba(225,90,35,0.52); color:#a83000; }
-  .tipo-beor        { background:rgba(185,25,16,0.11); border-color:rgba(210,55,45,0.52); color:#981808; }
-  .tipo-rohirrim    { background:rgba(198,40,16,0.11); border-color:rgba(215,70,45,0.52); color:#a02008; }
-  .tipo-dunadan     { background:rgba(175,16,16,0.11); border-color:rgba(205,38,38,0.52); color:#900808; }
-  .tipo-eothéod     { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
-  .tipo-beorn       { background:rgba(195,60,6,0.11); border-color:rgba(215,88,35,0.5); color:#a03000; }
-  .tipo-dale        { background:rgba(205,78,6,0.12); border-color:rgba(222,112,45,0.52); color:#a84000; }
-  .tipo-nano        { background:rgba(185,128,0,0.13); border-color:rgba(150,118,0,0.9); color:#806800; }
-  .tipo-orco        { background:rgba(130,6,195,0.12); border-color:rgba(115,10,165,0.9); color:#680098; }
-  .tipo-hobbit      { background:rgba(210,100,0,0.12); border-color:rgba(180,92,8,0.9); color:#a84800; }
-  .tipo-gollum      { background:rgba(110,70,20,0.11); border-color:rgba(105,68,12,0.9); color:#7a4c10; }
-  .tipo-aquila      { background:rgba(0,185,180,0.12); border-color:rgba(0,130,128,0.9); color:#007870; }
-  .tipo-ent         { background:rgba(10,110,60,0.13); border-color:rgba(12,120,68,0.90); color:#0a7838; }
-  .tipo-maia        { background:rgba(22,168,18,0.12); border-color:rgba(25,140,15,0.90); color:#187810; }
-  .tipo-istari      { background:rgba(112,115,158,0.11); border-color:rgba(160,162,208,0.52); color:#404878; }
-  .tipo-generico    { background:rgba(80,80,80,0.07); border-color:rgba(135,135,135,0.72); color:#484848; }
-  .tipo-misterioso  { background:rgba(75,45,115,0.08); border-color:rgba(110,70,180,0.60); color:#5c2fa0; }
-  .tipo-vala        { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.70); color:#9a1450; text-shadow:none; }
-  .tipo-valie       { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.70); color:#9a1450; text-shadow:none; }
-  .tipo-morgoth     { background:rgba(55,48,72,0.12); border-color:rgba(110,95,140,0.80); color:#5a4e78; text-shadow:none; }
-  .tipo-oscurita    { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
-  .tipo-balrog      { background:rgba(80,55,120,0.12); border-color:rgba(140,110,185,0.55); color:#5a3d8a; text-shadow:none; }
-  .tipo-maia-dark   { background:rgba(150,12,90,0.12); border-color:rgba(200,55,140,0.55); color:#900858; }
-  .tipo-drago       { background:rgba(170,15,15,0.10); border-color:rgba(210,45,45,0.55); color:#b81818; }
-  .tipo-ragno       { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
-  .tipo-lupo        { background:rgba(72,78,92,0.12); border-color:rgba(120,130,150,0.55); color:#404858; }
-  .tipo-bestia      { background:rgba(122,92,40,0.12); border-color:rgba(180,140,70,0.85); color:#705418; }
-  .tipo-bombadil    { background:rgba(36,82,28,0.12); border-color:rgba(70,140,50,0.55); color:#2d6418; }
-  .tipo-ainur       { background:rgba(20,55,185,0.10); border-color:rgba(50,100,230,0.55); color:#2244bb; }
-  .si-west path { fill:#3a6a9e; }
-  #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
-  #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
-  .fab-modal-overlay { background:rgba(180,195,215,0.5); }
-  .fab-modal-box { background:rgba(238,242,250,0.97); border-color:rgba(60,95,140,0.35); }
-  .fab-modal-box p { color:#1a2535; opacity:0.7; }
-  .fab-modal-box input[type=password] { background:rgba(255,255,255,0.92); color:#12141e; border-color:rgba(60,110,170,0.45); }
-  .fab-modal-close { color:#1a2535; }
+/* race badge light-mode: vivid but dark enough for marble bg */
+html[data-theme="light"] .tipo-noldor { background:rgba(30,95,155,0.11); border-color:rgba(30,100,185,0.90); color:#1560a0; }
+html[data-theme="light"] .tipo-noldor-vanyar { background:rgba(30,70,210,0.12); border-color:rgba(50,120,230,0.55); color:#1040c8; }
+html[data-theme="light"] .tipo-vanyar { background:rgba(0,150,195,0.12); border-color:rgba(0,140,175,0.90); color:#007898; }
+html[data-theme="light"] .tipo-teleri { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
+html[data-theme="light"] .tipo-calaquendi { background:rgba(12,148,132,0.16); border-color:rgba(22,200,178,0.72); color:#097a6c; }
+html[data-theme="light"] .tipo-sindar { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
+html[data-theme="light"] .tipo-teleri-maia { background:rgba(60,20,175,0.12); border-color:rgba(140,100,230,0.55); color:#4818c0; }
+html[data-theme="light"] .tipo-mezzelfo { background:rgba(30,60,175,0.11); border-color:rgba(70,130,230,0.55); color:#1040b8; }
+html[data-theme="light"] .tipo-numenorean { background:rgba(200,12,12,0.12); border-color:rgba(220,40,40,0.55); color:#a00000; }
+html[data-theme="light"] .tipo-hador { background:rgba(210,62,8,0.12); border-color:rgba(225,90,35,0.52); color:#a83000; }
+html[data-theme="light"] .tipo-beor { background:rgba(185,25,16,0.11); border-color:rgba(210,55,45,0.52); color:#981808; }
+html[data-theme="light"] .tipo-rohirrim { background:rgba(198,40,16,0.11); border-color:rgba(215,70,45,0.52); color:#a02008; }
+html[data-theme="light"] .tipo-dunadan { background:rgba(175,16,16,0.11); border-color:rgba(205,38,38,0.52); color:#900808; }
+html[data-theme="light"] .tipo-eothéod { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
+html[data-theme="light"] .tipo-beorn { background:rgba(195,60,6,0.11); border-color:rgba(215,88,35,0.5); color:#a03000; }
+html[data-theme="light"] .tipo-dale { background:rgba(205,78,6,0.12); border-color:rgba(222,112,45,0.52); color:#a84000; }
+html[data-theme="light"] .tipo-nano { background:rgba(185,128,0,0.13); border-color:rgba(150,118,0,0.9); color:#806800; }
+html[data-theme="light"] .tipo-orco { background:rgba(130,6,195,0.12); border-color:rgba(115,10,165,0.9); color:#680098; }
+html[data-theme="light"] .tipo-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(180,92,8,0.9); color:#a84800; }
+html[data-theme="light"] .tipo-gollum { background:rgba(110,70,20,0.11); border-color:rgba(105,68,12,0.9); color:#7a4c10; }
+html[data-theme="light"] .tipo-aquila { background:rgba(0,185,180,0.12); border-color:rgba(0,130,128,0.9); color:#007870; }
+html[data-theme="light"] .tipo-ent { background:rgba(10,110,60,0.13); border-color:rgba(12,120,68,0.90); color:#0a7838; }
+html[data-theme="light"] .tipo-maia { background:rgba(22,168,18,0.12); border-color:rgba(25,140,15,0.90); color:#187810; }
+html[data-theme="light"] .tipo-istari { background:rgba(112,115,158,0.11); border-color:rgba(160,162,208,0.52); color:#404878; }
+html[data-theme="light"] .tipo-generico { background:rgba(80,80,80,0.07); border-color:rgba(135,135,135,0.72); color:#484848; }
+html[data-theme="light"] .tipo-misterioso { background:rgba(75,45,115,0.08); border-color:rgba(110,70,180,0.60); color:#5c2fa0; }
+html[data-theme="light"] .tipo-vala { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.70); color:#9a1450; text-shadow:none; }
+html[data-theme="light"] .tipo-valie { background:rgba(180,20,90,0.11); border-color:rgba(205,52,116,0.70); color:#9a1450; text-shadow:none; }
+html[data-theme="light"] .tipo-morgoth { background:rgba(55,48,72,0.12); border-color:rgba(110,95,140,0.80); color:#5a4e78; text-shadow:none; }
+html[data-theme="light"] .tipo-oscurita { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
+html[data-theme="light"] .tipo-balrog { background:rgba(80,55,120,0.12); border-color:rgba(140,110,185,0.55); color:#5a3d8a; text-shadow:none; }
+html[data-theme="light"] .tipo-maia-dark { background:rgba(150,12,90,0.12); border-color:rgba(200,55,140,0.55); color:#900858; }
+html[data-theme="light"] .tipo-drago { background:rgba(170,15,15,0.10); border-color:rgba(210,45,45,0.55); color:#b81818; }
+html[data-theme="light"] .tipo-ragno { background:rgba(80,40,140,0.11); border-color:rgba(128,98,178,0.55); color:#5a2d9a; }
+html[data-theme="light"] .tipo-lupo { background:rgba(72,78,92,0.12); border-color:rgba(120,130,150,0.55); color:#404858; }
+html[data-theme="light"] .tipo-bestia { background:rgba(122,92,40,0.12); border-color:rgba(180,140,70,0.85); color:#705418; }
+html[data-theme="light"] .tipo-bombadil { background:rgba(36,82,28,0.12); border-color:rgba(70,140,50,0.55); color:#2d6418; }
+html[data-theme="light"] .tipo-ainur { background:rgba(20,55,185,0.10); border-color:rgba(50,100,230,0.55); color:#2244bb; }
+html[data-theme="light"] .si-west path { fill:#3a6a9e; }
+html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
+html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
+html[data-theme="light"] .fab-modal-overlay { background:rgba(180,195,215,0.5); }
+html[data-theme="light"] .fab-modal-box { background:rgba(238,242,250,0.97); border-color:rgba(60,95,140,0.35); }
+html[data-theme="light"] .fab-modal-box p { color:#1a2535; opacity:0.7; }
+html[data-theme="light"] .fab-modal-box input[type=password] { background:rgba(255,255,255,0.92); color:#12141e; border-color:rgba(60,110,170,0.45); }
+html[data-theme="light"] .fab-modal-close { color:#1a2535; }
 
-  .admin-overlay { background:#eef1f8; }
-  .admin-header { background:#eef1f8;border-bottom-color:rgba(58,88,120,0.2); }
-  .admin-card { background:#ffffff;border-color:rgba(58,88,120,0.18);box-shadow:0 1px 4px rgba(20,30,60,0.06); }
-  .admin-rank-num { color:#253d58; }
-  .admin-input,.admin-textarea { background:#ffffff;border-color:rgba(58,88,120,0.3);color:#12141e; }
-  .admin-input:focus,.admin-textarea:focus { border-color:#4a7090;background:#f8faff; }
-  .admin-btn-back { border-color:rgba(58,88,120,0.4);color:#253d58; }
-  .admin-btn-save { background:rgba(20,100,50,0.12);border-color:rgba(30,140,70,0.5);color:#1a6832; }
-}
+html[data-theme="light"] .admin-overlay { background:#eef1f8; }
+html[data-theme="light"] .admin-header { background:#eef1f8;border-bottom-color:rgba(58,88,120,0.2); }
+html[data-theme="light"] .admin-card { background:#ffffff;border-color:rgba(58,88,120,0.18);box-shadow:0 1px 4px rgba(20,30,60,0.06); }
+html[data-theme="light"] .admin-rank-num { color:#253d58; }
+html[data-theme="light"] .admin-input, html[data-theme="light"] .admin-textarea { background:#ffffff;border-color:rgba(58,88,120,0.3);color:#12141e; }
+html[data-theme="light"] .admin-input:focus, html[data-theme="light"] .admin-textarea:focus { border-color:#4a7090;background:#f8faff; }
+html[data-theme="light"] .admin-btn-back { border-color:rgba(58,88,120,0.4);color:#253d58; }
+html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);border-color:rgba(30,140,70,0.5);color:#1a6832; }
 
 </style>
 <script>(function(){var l=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches;document.documentElement.setAttribute('data-theme',l?'light':'dark');})();</script>
@@ -924,7 +924,7 @@ html[data-theme="light"] {
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.8.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.0.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -953,7 +953,7 @@ html[data-theme="light"] {
     <button class="modal-close" id="modal-close" aria-label="Close">&#x2715;</button>
     <div class="modal-body" id="modal-body">
       <div class="modal-rank" id="modal-rank"></div>
-      <h2 class="modal-name" id="modal-name"></h2>
+      <div class="modal-name" id="modal-name" role="heading" aria-level="2"></div>
       <div class="modal-source" id="modal-source"></div>
       <div class="modal-section">
         <p id="modal-info"></p>
