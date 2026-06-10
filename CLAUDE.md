@@ -90,8 +90,9 @@ feedback proattivo.
 
 ## Regole generali
 
-- **Terminologia: «versione test» / «sandbox».** Quando l'utente chiede una
-  "versione test" o "sandbox" intende una versione provvisoria dell'oggetto
+- **Terminologia: «versione test» / «sandbox» / «anteprima» / «bozza».**
+  Quando l'utente chiede una "versione test", "sandbox", "anteprima" o
+  "bozza" intende una versione provvisoria dell'oggetto
   richiesto (es. l'intera homepage) da consegnargli direttamente in chat
   (file o ZIP), **senza alcuna modifica reale al repository**: niente commit,
   niente push, working tree pulito a fine lavoro. Serve solo a esplorare
