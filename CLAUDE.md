@@ -97,6 +97,13 @@ feedback proattivo.
   (file o ZIP), **senza alcuna modifica reale al repository**: niente commit,
   niente push, working tree pulito a fine lavoro. Serve solo a esplorare
   possibilità prima di un'eventuale integrazione vera.
+- **Convenzione «rinomina in SVG».** Se l'utente invia un file (tipicamente
+  `.txt`) dicendo "rinomina in SVG" o simili, s'intende: cambiare
+  l'estensione in `.svg` e trattarlo come immagine vettoriale. È un
+  workaround necessario perché il caricamento diretto degli `.svg` in chat
+  fallisce quasi sempre, mentre rinominandoli `.txt` passa — e così si evita
+  lo ZIP. (Vale anche al contrario: gli `.ai` PDF-compatibili sono
+  convertibili in SVG con PyMuPDF, se mai servisse.)
 - Branch di sviluppo: `master` (regola stabilita dall'utente)
 - Bump SemVer ad ogni commit (patch per fix, minor per feature/contenuto)
 - **Versione visibile: un'unica fonte.** Il numero hardcoded vive SOLO nel
