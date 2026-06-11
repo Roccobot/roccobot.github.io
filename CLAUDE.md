@@ -201,6 +201,29 @@ Regole d'oro:
 - La parola d'ordine sta solo in memoria (`adminPassword`) per la sessione; mai
   persistita. Vedi `proxy/README.md` per il deploy e la gestione dei secret.
 
+## Grafica
+
+- **Consiglio proattivo sul formato degli asset.** In base alla circostanza,
+  consigliare proattivamente all'utente come è meglio preparare gli asset per
+  un certo obiettivo (es. SVG vs PNG), senza aspettare che lo chieda.
+- **Ottimizzazione PNG: solo lossless.** La modalità lossy è ammessa solo se
+  la differenza è impercettibile.
+- **SVG sempre in versione 1.1.** Vale anche per i file inviati dall'utente:
+  verificarne la conformità e segnalare/adeguare se non sono SVG 1.1.
+
+## Comandi da terminale (richieste all'utente)
+
+- **Evitare lunghi giri da Terminale.** Mai far usare all'utente comandi tipo
+  `cat` per vedere il contenuto di un file di testo: chiedere sempre l'invio
+  del file originale. Richiedere azioni da linea di comando solo quando è
+  assolutamente necessario; per tutto il resto è più agile pescare i file da
+  controllare/inviare direttamente dal filesystem.
+- **Comandi pronti da incollare.** Quando si spiega cosa incollare nel
+  terminale: tutto in un'unica casella di codice pronta da copiare, su
+  un'unica riga, specialmente se si tratta di più comandi concatenati. Se
+  invece sono comandi da usare uno per volta, una casella di codice per
+  ciascuno.
+
 ## Bonifica e ottimizzazione degli asset
 
 I file inviati dall'utente che possono contenere metadati extra inutili
