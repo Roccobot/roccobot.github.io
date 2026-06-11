@@ -1,5 +1,27 @@
 # Regole di progetto — roccobot.github.io
 
+## Protocollo «Aggiungi alle regole»
+
+Quando l'utente chiede di aggiungere una regola **senza specificare dove**
+("aggiungi alle regole" o formule simili), Claude classifica in autonomia:
+
+- **Regola specifica del progetto** → va in questo `CLAUDE.md`.
+- **Regola generale** (buonsenso, praticità, ottimizzazione, preferenze
+  estetiche/di comunicazione…) → destinazione finale:
+  `rules/Roccobot.md` nel repo pubblico `Roccobot/tools`, **previa conferma
+  dell'utente**. Le sessioni agganciate ad altri repo di norma non possono
+  scriverci, quindi in ordine: 1) tentare l'aggancio del repo `tools` con lo
+  strumento `add_repo`, se disponibile nella sessione; 2) altrimenti
+  accodare la regola, già formulata e pronta, in una sezione
+  «📤 Da migrare a Roccobot.md» in fondo a questo file (creandola se
+  manca) e segnalarlo all'utente. Svuotamento della coda: su richiesta
+  ("svuota la posta"), in una sessione che può scrivere su `tools`.
+- Le regole universali si leggono a inizio sessione da
+  <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
+  (finché il repo `tools` non esiste, fa fede l'ultima bozza di Roccobot.md
+  consegnata in chat). **In caso di conflitti o incongruenze, questo
+  CLAUDE.md ha la priorità.**
+
 ## Modello da usare
 
 Usare sempre **Claude Opus** (ultima versione disponibile). Il modello è già
