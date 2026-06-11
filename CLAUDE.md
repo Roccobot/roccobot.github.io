@@ -9,13 +9,20 @@
 
 - Tutte le regole universali di collaborazione vivono in
   `rules/Roccobot.md` del repo `Roccobot/tools`: ogni sessione le legge e
-  le applica per intero. Raw:
-  <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
+  le applica per intero.
 - Il canone tolkieniano universale (priorità delle fonti, versioni ammesse,
-  acronimi, divieti) vive in `rules/JRRT.md`, stesso repo. Raw:
-  <https://raw.githubusercontent.com/Roccobot/tools/main/rules/JRRT.md>
+  acronimi, divieti) vive in `rules/JRRT.md`, stesso repo.
+- **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
+  - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
+  - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
+
+  In alternativa, finché il repo è pubblico, i raw GitHub:
+  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
+  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/JRRT.md>
 - Se la sessione non ha accesso diretto a `Roccobot/tools`: tentare
-  l'aggancio con lo strumento `add_repo`, altrimenti leggere i raw URL.
+  l'aggancio con lo strumento `add_repo`, altrimenti leggere dagli URL
+  qui sopra. Per la **scrittura** senza accesso diretto c'è il Worker
+  (protocollo 'Aggiungi alle regole' in `Roccobot.md`).
 
 ## ⚖️ Priorità in caso di conflitto
 
