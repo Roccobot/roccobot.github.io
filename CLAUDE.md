@@ -17,10 +17,8 @@ Quando l'utente chiede di aggiungere una regola **senza specificare dove**
   manca) e segnalarlo all'utente. Svuotamento della coda: su richiesta
   ("svuota la posta"), in una sessione che può scrivere su `tools`.
 - Le regole universali si leggono a inizio sessione da
-  <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
-  (finché il repo `tools` non esiste, fa fede l'ultima bozza di Roccobot.md
-  consegnata in chat). **In caso di conflitti o incongruenze, questo
-  CLAUDE.md ha la priorità.**
+  <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>.
+  **In caso di conflitti o incongruenze, questo CLAUDE.md ha la priorità.**
 
 ## Modello da usare
 
