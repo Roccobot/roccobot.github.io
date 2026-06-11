@@ -103,6 +103,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   della sessione; mai persistita. Deploy e gestione secret:
   `proxy/README.md`.
 
+## 🏅 Criteri editoriali dei badge
+
+- **Badge Aman ('Attraversò l'Oceano verso le Terre Imperiture')**: segna la
+  **partenza individuale e definitiva** verso Aman di chi si era stabilito
+  nella Terra-di-Mezzo (il congedo del crepuscolo degli Elfi e affini).
+  **Escluse** le migrazioni primordiali degli Anni degli Alberi: viaggio
+  degli ambasciatori con Oromë e Grande Viaggio. Il criterio è volutamente
+  NON spiegato nella legenda della pagina (semplicità).
+  Casi decisi dall'utente: Finwë, Thingol e Ingwë senza badge; Melian,
+  Eärendil, Elwing, Tuor e Idril lo tengono. Il valore `'presunto'` indica
+  partenza dedotta ma non attestata (icona al 50%).
+
 ## 🧹 Asset del progetto
 
 - A ogni **main release** (bump minor o major) verificare che tutti gli
