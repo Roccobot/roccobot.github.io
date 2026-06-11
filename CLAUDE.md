@@ -114,6 +114,11 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   Casi decisi dall'utente: Finwë, Thingol e Ingwë senza badge; Melian,
   Eärendil, Elwing, Tuor e Idril lo tengono. Il valore `'presunto'` indica
   partenza dedotta ma non attestata (icona al 50%).
+- **Badge Ambasciatori** (chiave `envoy`, `icons/Ambasciatori.png`: la nave
+  di Aman su mare viola): marca il **viaggio primordiale degli ambasciatori
+  degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
+  Arda. Portatori: Finwë, Thingol, Ingwë. **Volutamente fuori dalla
+  legenda** (resta il tooltip): l'eccezionalità non va spiegata in pagina.
 
 ## 🧹 Asset del progetto
 
