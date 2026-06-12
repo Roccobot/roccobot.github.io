@@ -123,8 +123,9 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
   Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come
-  parentesi della riga Aman**, 'Approdò ad Aman (Ambasciatore degli
-  Eldar)', stesso schema della riga dei Re; il tooltip resta la frase
+  gruppo secondario della riga Aman** (senza parentesi), 'Approdò ad
+  Aman / Ambasciatore degli Eldar', stesso schema della riga dei Re
+  ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
   estesa e l'eccezionalità dell'evento non va spiegata in pagina.
 
 ## 🧹 Asset del progetto
