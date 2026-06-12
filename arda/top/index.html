@@ -972,7 +972,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.5.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.5.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1183,7 +1183,7 @@ var ICON_LABEL = {
     king_high_now:"Re Supremo dei Noldor (in carica)",
     king_std:"Alto Re dei Noldor nella Terra di Mezzo",
     survivor:"Visse nella Terra di Mezzo durante la Quarta Era",
-    west:    "Approdò ad Aman",
+    west:    "Salpò per l’Ovest e approdò nelle Terre Imperiture",
     envoy:   "Salpò per Valinor con Oromë come ambasciatore degli Eldar",
     onering: "Portatore dell’Unico Anello",
     vilya:   "Portatore di Vilya (Anello dell’Aria)",
@@ -1200,7 +1200,7 @@ var ICON_LABEL = {
     king_high_now:"High King of the Noldor (current)",
     king_std:"High King of the Noldor in Middle-earth",
     survivor:"Lived in Middle-earth during the Fourth Age",
-    west:    "Reached Aman",
+    west:    "Sailed into the West and reached the Undying Lands",
     envoy:   "Sailed to Valinor with Oromë as ambassador of the Eldar",
     onering: "Bearer of the One Ring",
     vilya:   "Bearer of Vilya (Ring of Air)",
@@ -1476,8 +1476,10 @@ function controlPanelHTML() {
       return;
     }
     if (k === 'west') {
+      // In legenda etichette corte (il tooltip del badge resta la frase estesa)
+      var westTxt = currentLang === 'it' ? 'Approdò ad Aman' : 'Reached Aman';
       var envoyTxt = currentLang === 'it' ? 'Ambasciatore degli Elfi' : 'Ambassador of the Elves';
-      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].replace('%L%','') + '</span><span>' + IL['west'] + '</span>'
+      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].replace('%L%','') + '</span><span>' + westTxt + '</span>'
          + '<span class="leg-group">' + ICON_SVG['envoy'].replace('%L%','') + '<span>' + envoyTxt + '</span></span></div>';
       return;
     }
