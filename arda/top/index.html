@@ -408,6 +408,11 @@ h1 {
 .ctrl-legend-row span { white-space:nowrap; }
 .ctrl-label { white-space:nowrap; }
 .ctrl-legend-row img { font-size:1.141rem; flex-shrink:0; } /* 1.05rem / 0.92em */
+/* Gruppo '(corona) in carica': inline-flex così l'icona è centrata in
+   verticale dal flexbox come la corona gemella, non dalla baseline del
+   testo (che la spostava in basso di qualche pixel). */
+.ctrl-legend-row .leg-paren { display:inline-flex; align-items:center; gap:0.2em; }
+.ctrl-legend-row .leg-paren img { margin-left:0; }
 .ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
 .ctrl-extra { display:none; }
 .ctrl-lang-btn {
@@ -933,7 +938,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.2.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.3.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1113,7 +1118,7 @@ var ICON_SVG = {
   king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.png\" title=\"%L%\" alt=\"\">",
   survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.png\" title=\"%L%\" alt=\"\">",
   west:       "<img class=\"status-icon\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"\">",
-  envoy:      "<img class=\"status-icon\" src=\"icons/Ambasciatori.png\" title=\"%L%\" alt=\"\">",
+  envoy:      "<img class=\"status-icon\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"\">",
   onering:    "<img class=\"status-icon si-unico\" src=\"icons/Unico.png\" title=\"%L%\" alt=\"\">",
   vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.png\" title=\"%L%\" alt=\"\">",
   nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"\">",
@@ -1394,7 +1399,7 @@ function controlPanelHTML() {
     if (k === 'envoy') return; // fuori legenda per scelta editoriale (vedi CLAUDE.md)
     if (k === 'king_high') {
       h += '<div class="ctrl-legend-row">' + ICON_SVG['king_high'].replace('%L%','') + '<span>' + IL['king_high'] + '</span>'
-         + '<span>(' + ICON_SVG['king_high_now'].replace('%L%','') + ' ' + attualeTxt + ')</span></div>';
+         + '<span class="leg-paren">(' + ICON_SVG['king_high_now'].replace('%L%','') + '<span>' + attualeTxt + ')</span></span></div>';
       return;
     }
     h += '<div class="ctrl-legend-row">' + ICON_SVG[k].replace('%L%','') + '<span>' + IL[k] + '</span></div>';
