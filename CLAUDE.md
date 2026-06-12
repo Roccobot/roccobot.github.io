@@ -102,10 +102,15 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 - La parola d'ordine sta solo in memoria (`adminPassword`) per la durata
   della sessione; mai persistita. Deploy e gestione secret:
   `proxy/README.md`.
+- **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
+  presente solo dove diverge dal nome inglese (disambigue o titoli
+  diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
+  bottone nella modale costruisce l'URL con `tg`, in mancanza con
+  `nome_en`, in mancanza con `nome`.
 
 ## 🏅 Criteri editoriali dei badge
 
-- **Badge Aman ('Attraversò l'Oceano verso le Terre Imperiture')**: segna la
+- **Badge Aman ('Approdò ad Aman')**: segna la
   **partenza individuale e definitiva** verso Aman di chi si era stabilito
   nella Terra-di-Mezzo (il congedo del crepuscolo degli Elfi e affini).
   **Escluse** le migrazioni primordiali degli Anni degli Alberi: viaggio
@@ -115,10 +120,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   Eärendil, Elwing, Tuor e Idril lo tengono. Il valore `'presunto'` indica
   partenza dedotta ma non attestata (icona al 50%).
 - **Badge Ambasciatori** (chiave `envoy`, `icons/Valinor.png`: la nave
-  sotto le stelle degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
+  degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
-  Arda. Portatori: Finwë, Thingol, Ingwë. **Volutamente fuori dalla
-  legenda** (resta il tooltip): l'eccezionalità non va spiegata in pagina.
+  Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come
+  parentesi della riga Aman**, 'Approdò ad Aman (Ambasciatore degli
+  Eldar)', stesso schema della riga dei Re; il tooltip resta la frase
+  estesa e l'eccezionalità dell'evento non va spiegata in pagina.
 
 ## 🧹 Asset del progetto
 
