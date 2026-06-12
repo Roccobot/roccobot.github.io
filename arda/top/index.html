@@ -308,22 +308,26 @@ h1 {
 .status-icon.si-dim { opacity:0.5; }
 /* Icone PNG normalizzate: i fattori replicano la resa esatta dei vecchi
    SVG letterboxati nel box 0.92em. Le icone già bilanciate in file
-   (Mappa, Aman, Compagnia, Silmaril) usano il box pieno. */
+   (Mappa, Aman, Silmaril) usano il box pieno. Le icone con oggetto
+   nettamente verticale derogano dal canvas 256x256 (es. Hobbit 220x256,
+   anelli 176x256): meno margini fantasma, larghezza CSS proporzionata. */
 .si-aratar { width:.823em; height:.823em; }
 .si-istari { width:.935em; height:.935em; position:relative; left:-0.026em; }
 .si-resupremo { width:.935em; height:.935em; }
 .si-refinarfin { width:.935em; height:.935em; }
 .si-renoldor { width:.935em; height:.935em; }
 .si-unico { width:.707em; height:.707em; }
+.si-hobbit { width:.791em; height:.92em; }
 /* Anelli degli Elfi (gemma in alto, fascia in basso): il glifo è centrato
-   sul canvas ma il cerchio della fascia cade a +16.2% sotto il centro
-   (fit del cerchio esterno). Risalita di .935em*0.162=.152em così è la
-   fascia, non la gemma, ad allinearsi otticamente con le altre icone
-   (stessa logica dei cerchi dei simboli di genere); +1px di rifinitura
-   percettiva a valle, deciso a occhio sul sito reale. */
-.si-vilya { width:.935em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
-.si-nenya { width:.935em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
-.si-narya { width:.935em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
+   sul canvas (176x256 dopo il ritaglio del letterbox) ma il cerchio della
+   fascia cade a +16.2% sotto il centro (fit del cerchio esterno).
+   Risalita di .935em*0.162=.152em così è la fascia, non la gemma, ad
+   allinearsi otticamente con le altre icone (stessa logica dei cerchi dei
+   simboli di genere); +1px di rifinitura percettiva a valle, deciso a
+   occhio sul sito reale. */
+.si-vilya { width:.643em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
+.si-nenya { width:.643em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
+.si-narya { width:.643em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
 .si-nove { width:.613em; height:.613em; }
 
 /* ── CARD DEGLI ESSERI SUPERIORI — lieve dominante dorata ── */
@@ -415,16 +419,16 @@ h1 {
 .ctrl-label { white-space:nowrap; }
 .ctrl-legend-row img { font-size:1.141rem; flex-shrink:0; } /* 1.05rem / 0.92em */
 /* Colonna icone della legenda: slot a larghezza fissa con icona centrata.
-   I glifi hanno letterbox diversi dentro i loro canvas (es. anelli degli
-   Elfi al 65% della larghezza) e box di larghezze diverse (.613-.935em):
-   senza slot i centri ottici e l'attacco del testo risultano sfalsati. */
-.ctrl-legend-row .leg-ico { width:1.05em; display:inline-flex; justify-content:center; flex-shrink:0; font-size:1.141rem; }
+   I box delle icone hanno larghezze diverse (.613-.935em): senza slot i
+   centri ottici e l'attacco del testo risultano sfalsati. */
+.ctrl-legend-row .leg-ico { width:.95em; display:inline-flex; justify-content:center; flex-shrink:0; font-size:1.141rem; }
 .ctrl-legend-row .leg-ico img { margin-left:0; }
 /* Gruppo secondario della riga (es. corona 'In carica', nave Ambasciatore):
    inline-flex così l'icona è centrata in verticale dal flexbox come la
    gemella, non dalla baseline del testo (che la spostava in basso di
-   qualche pixel). */
-.ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.2em; }
+   qualche pixel). Gap icona-testo identico a quello della colonna
+   principale (0.6rem) e ampio respiro prima del gruppo. */
+.ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.65em; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 .ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
 .ctrl-extra { display:none; }
@@ -455,9 +459,10 @@ h1 {
 }
 .genere-svg { user-select:none; flex:none; }
 /* PNG al vivo e centrati: dimensioni e offset replicano la resa precedente
-   (cerchi riallineati alla 'o' minuscola). */
+   (cerchi riallineati alla 'o' minuscola). Femmina: canvas 220x256 (deroga
+   verticale), larghezza proporzionata. */
 .genere-svg--m { width:.721em; height:.721em; transform:translate(.006em,-0.066em); }
-.genere-svg--f { width:.844em; height:.844em; transform:translateY(.15em); }
+.genere-svg--f { width:.725em; height:.844em; transform:translateY(.15em); }
 /* ELFI — tonalità blu/celeste */
 .tipo-noldor      { background:rgba(30,95,155,0.28); border:1px solid rgba(108,185,230,0.90); color:#70c0e8; }
 .tipo-noldor-vanyar { background:rgba(30,70,210,0.3); border:1px solid rgba(80,140,248,0.9); color:#5895f0; }
@@ -967,7 +972,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.4.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.5.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1149,7 +1154,7 @@ var ICON_SVG = {
   aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"\">",
   silmaril:   "<img class=\"status-icon\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"\">",
   istari:     "<img class=\"status-icon si-istari\" src=\"icons/Istari.png\" title=\"%L%\" alt=\"\">",
-  fellowship: "<img class=\"status-icon\" src=\"icons/Compagnia.png\" title=\"%L%\" alt=\"\">",
+  fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"\">",
   king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.png\" title=\"%L%\" alt=\"\">",
   king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.png\" title=\"%L%\" alt=\"\">",
   king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.png\" title=\"%L%\" alt=\"\">",
@@ -1163,6 +1168,11 @@ var ICON_SVG = {
   menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"\">"
 };
 var ICON_ORDER = ['aratar','silmaril','istari','king_high','king_high_now','king_std','survivor','west','envoy','fellowship','onering','vilya','nenya','narya','menring'];
+// Varianti per la sola legenda: dove la lista usa una deroga verticale,
+// qui serve il canvas quadrato (slot centrato, resa più ariosa).
+var ICON_LEGENDA = {
+  fellowship: "<img class=\"status-icon\" src=\"icons/Hobbit_Legenda.png\" title=\"%L%\" alt=\"\">"
+};
 var ICON_LABEL = {
   it: {
     aratar:  "Aratar: i più grandi e potenti degli Ainur",
@@ -1215,6 +1225,10 @@ function buildStatus(p) {
 // \u2500\u2500 Categorie per il filtro \u2500\u2500
 var CATS = ['divini','elfi','edain','uomini','nani','hobbit','orchi','animali'];
 function categoria(p) {
+  // Bestie e creature leggendarie mostrate tra gli Animali per scelta
+  // editoriale (solo visualizzazione: tipo ed etichette restano invariati).
+  // Prima del check 'divino': molte hanno divino:true.
+  if (/^(Nahar|Huan|Carcharoth|Shelob|Draugluin|Thorondor|Gwaihir|Rochallor)$/.test(p.nome)) return 'animali';
   if (p.divino) return 'divini';
   if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) return 'divini'; // Spettri-capi: tra le creature ancestrali
   var t = (p.tipo || '').toLowerCase();
@@ -1462,12 +1476,12 @@ function controlPanelHTML() {
       return;
     }
     if (k === 'west') {
-      var envoyTxt = currentLang === 'it' ? 'Ambasciatore degli Eldar' : 'Ambassador of the Eldar';
+      var envoyTxt = currentLang === 'it' ? 'Ambasciatore degli Elfi' : 'Ambassador of the Elves';
       h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].replace('%L%','') + '</span><span>' + IL['west'] + '</span>'
          + '<span class="leg-group">' + ICON_SVG['envoy'].replace('%L%','') + '<span>' + envoyTxt + '</span></span></div>';
       return;
     }
-    h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG[k].replace('%L%','') + '</span><span>' + IL[k] + '</span></div>';
+    h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).replace('%L%','') + '</span><span>' + IL[k] + '</span></div>';
   });
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra). La versione è
