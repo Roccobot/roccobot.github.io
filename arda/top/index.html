@@ -719,6 +719,31 @@ html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(1
 .fab-modal-confirm.is-danger:hover { background:rgba(170,40,40,0.28);border-color:rgba(232,104,104,0.92); }
 html[data-theme="light"] .fab-modal-confirm.is-danger { background:rgba(180,30,30,0.10);border-color:rgba(190,60,60,0.6);color:#a82020; }
 html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(180,30,30,0.18);border-color:#9a1c1c; }
+/* ── STAMPA / EXPORT PDF (doExport forza il tema chiaro) ── */
+.print-running-header { display:none; }
+@media print {
+  html, body { background:#fff !important; }
+  body { margin:0 !important; }
+  header, footer, .lang-switch, .jump-fabs, #ctrl-fab, #ctrl-panel, #ctrl-backdrop,
+  .fab-container, #fab-modal, .modal-backdrop, #arda-toast { display:none !important; }
+  .drag-handle { display:none !important; }
+  #rank-list { margin:0 !important; padding:0 !important; max-width:none !important; }
+  .rank-item { break-inside:avoid; page-break-inside:avoid; box-shadow:none !important; margin:0.18rem 0 !important; }
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  @page { margin:1.1cm 1.1cm 1.3cm; }
+  /* roccobot.me su ogni pagina: thead di tabella (display:table-header-group),
+     che il browser ripete in cima a ogni pagina, col contenuto che fluisce
+     sotto senza sovrapposizioni. */
+  #print-table { width:100%; border-collapse:collapse; }
+  #print-table > thead { display:table-header-group; }
+  #print-table td { padding:0; }
+  .print-running-header {
+    display:flex !important; justify-content:space-between; align-items:flex-end;
+    padding:0 0.1cm 0.18cm; margin-bottom:0.35cm;
+    font-family:'Cinzel',serif; font-size:9pt; letter-spacing:0.04em;
+    color:#3a5878; border-bottom:1px solid rgba(60,95,140,0.35);
+  }
+}
 .fab-modal-skip { display:block;width:100%;margin-top:0.4rem;padding:0.35rem 0;background:none;border:none;color:var(--parchment-dim);font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.06em;cursor:pointer;opacity:0.45;transition:opacity 0.15s; }
 .fab-modal-skip:hover { opacity:0.85; }
 .fab-modal-note { font-size:0.7rem !important;opacity:0.42 !important;margin-bottom:0.6rem !important; }
@@ -1026,7 +1051,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.2.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.3.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1044,6 +1069,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 </header>
 
 <main class="scroll" id="rank-list"></main>
+<div class="print-running-header" aria-hidden="true"><span>I Grandi di Arda</span><span>roccobot.me</span></div>
 
 <footer>
   <p style="color:var(--gold-bright);font-size:1.2rem;margin-bottom:1.5rem;">✦</p>
@@ -1505,9 +1531,13 @@ var CAT_LABEL = {
 var CAT_COLOR = { divini:'#5540e0', elfi:'#70c0e8', edain:'#8a1818', uomini:'#ff4040', nani:'#e0c020', hobbit:'#ffa838', orchi:'#da50ff', animali:'#5ac060' };
 var CTRL_I18N = {
   it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
-        confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente' },
+        confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
+        dSave:'Salva', dKeep:'Chiudi', dRestore:'Ripristina', exportLabel:'Esporta',
+        introAdmin:"Funzionalità solo per amministratori: inserisci la password. Se sei un visitatore, usa il tasto 'Esporta' per salvare la tua classifica personale." },
   en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
-        confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state' }
+        confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state',
+        dSave:'Save', dKeep:'Close', dRestore:'Restore', exportLabel:'Export',
+        introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
 };
 
 function controlPanelHTML() {
@@ -1641,6 +1671,75 @@ function exitReorder() {
   enableDragDrop();
   refreshControlPanel();
 }
+// Helper condivisi tra trivio mobile e desktop.
+function saveLocalDraft(){ localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; }))); }
+function restoreServerOrder(){
+  var master = dati.slice();
+  dati = DATI_SERVER_ORDER.map(function(n){ return master.find(function(d){ return d.nome === n; }); }).filter(Boolean)
+         .concat(master.filter(function(d){ return DATI_SERVER_ORDER.indexOf(d.nome) === -1; }));
+  localStorage.removeItem('arda-ranking-v4-' + currentLang);
+  localStorage.removeItem('arda-ranking-v3-' + currentLang);
+}
+function hideSaveFab(){ var f = document.getElementById('fab-container'); if (f) f.remove(); }
+// Export: stampa nativa del browser (PDF A4) su tema chiaro ottimizzato per
+// la carta; ripristina il tema al termine (evento afterprint).
+function buildPrintLayout(){
+  if (document.getElementById('print-table')) return null;
+  var list = document.getElementById('rank-list');
+  var header = document.querySelector('.print-running-header');
+  var home = document.createComment('rl'); list.parentNode.insertBefore(home, list);
+  var tbl = document.createElement('table'); tbl.id = 'print-table';
+  var thead = document.createElement('thead'), htr = document.createElement('tr'), htd = document.createElement('td');
+  htd.appendChild(header); htr.appendChild(htd); thead.appendChild(htr);
+  var tbody = document.createElement('tbody'), btr = document.createElement('tr'), btd = document.createElement('td');
+  btd.appendChild(list); btr.appendChild(btd); tbody.appendChild(btr);
+  tbl.appendChild(thead); tbl.appendChild(tbody);
+  home.parentNode.insertBefore(tbl, home);
+  return function teardown(){
+    home.parentNode.insertBefore(list, home);
+    list.parentNode.insertBefore(header, list.nextSibling);
+    tbl.remove(); home.remove();
+  };
+}
+// Export PDF: tema chiaro ottimizzato per la carta + thead (roccobot.me)
+// ripetuto su ogni pagina via tabella; ripristino su afterprint.
+function doExport(){
+  var prev = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', 'light');
+  var teardown = buildPrintLayout();
+  function restore(){
+    if (teardown) teardown();
+    if (prev) document.documentElement.setAttribute('data-theme', prev); else document.documentElement.removeAttribute('data-theme');
+    window.removeEventListener('afterprint', restore);
+  }
+  window.addEventListener('afterprint', restore);
+  window.print();
+}
+// Trivio desktop (dal FAB salva): Salva / Chiudi / Ripristina, senza
+// sottotitoli. 'Salva' apre la modale password (con ripiego 'Esporta' per i
+// visitatori). 'Chiudi' tiene la bozza locale (manopole restano su desktop).
+// 'Ripristina' torna all'ordine del server.
+function showDesktopReorderModal(){
+  if (document.getElementById('fab-modal')) return;
+  var T = CTRL_I18N[currentLang];
+  var overlay = document.createElement('div');
+  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box';
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
+  function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : ''); b.textContent = label; b.onclick = fn; return b; }
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss;
+  box.appendChild(cl);
+  box.appendChild(mkBtn(T.dSave, 'is-primary', function(){
+    dismiss();
+    if (saveUnlocked) doSave();
+    else showPasswordModal(T.introAdmin, function(){ doSave(); }, { label: T.exportLabel, onclick: doExport });
+  }));
+  box.appendChild(mkBtn(T.dKeep, '', function(){ dismiss(); saveLocalDraft(); hideSaveFab(); }));
+  box.appendChild(mkBtn(T.dRestore, 'is-danger', function(){ dismiss(); restoreServerOrder(); renderList(); enableDragDrop(); hideSaveFab(); }));
+}
 // Modale del numero di versione: due tasti sovrapposti. Sopra: Riordina
 // (o 'Fine modifica ordine' se già in riordino). Sotto: Modifica contenuti.
 function showActionChoiceModal() {
@@ -1683,21 +1782,9 @@ function showActionChoiceModal() {
     // Conferma: commit permanente (doSave esce dal riordino al successo).
     box.appendChild(mkBtn(T.confirm, T.confirmSub, 'is-primary', function(){ dismiss(); doSave(); }));
     // Chiudi: tiene le modifiche come bozza locale (localStorage) ed esce dal riordino.
-    box.appendChild(mkBtn(T.keep, T.keepSub, '', function(){
-      dismiss();
-      localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; })));
-      exitReorder();
-    }));
+    box.appendChild(mkBtn(T.keep, T.keepSub, '', function(){ dismiss(); saveLocalDraft(); exitReorder(); }));
     // Scarta: svuota la bozza locale e ripristina l'ordine del server (snapshot HTML).
-    box.appendChild(mkBtn(T.discard, T.discardSub, 'is-danger', function(){
-      dismiss();
-      var master = dati.slice();
-      dati = DATI_SERVER_ORDER.map(function(n){ return master.find(function(d){ return d.nome === n; }); }).filter(Boolean)
-             .concat(master.filter(function(d){ return DATI_SERVER_ORDER.indexOf(d.nome) === -1; }));
-      localStorage.removeItem('arda-ranking-v4-' + currentLang);
-      localStorage.removeItem('arda-ranking-v3-' + currentLang);
-      exitReorder();
-    }));
+    box.appendChild(mkBtn(T.discard, T.discardSub, 'is-danger', function(){ dismiss(); restoreServerOrder(); exitReorder(); }));
   }
   viewMain();
 }
@@ -2105,7 +2192,7 @@ async function doCommit(msg, payload) {
   }
 }
 
-function showPasswordModal(promptText, onSuccess) {
+function showPasswordModal(promptText, onSuccess, extra) {
   if (document.getElementById('fab-modal')) return;
   const overlay = document.createElement('div');
   overlay.id = 'fab-modal';
@@ -2160,6 +2247,7 @@ function showPasswordModal(promptText, onSuccess) {
     const cb = document.createElement('button');
     cb.className = 'fab-modal-confirm'; cb.textContent = 'Conferma'; cb.onclick = tryAuth;
     box.appendChild(cl); box.appendChild(p); box.appendChild(inp); box.appendChild(errMsg); box.appendChild(cb);
+    if (extra) { var eb = document.createElement('button'); eb.className = 'fab-modal-confirm'; eb.textContent = extra.label; eb.onclick = function(){ closePw(); extra.onclick(); }; box.appendChild(eb); }
     setTimeout(() => inp.focus(), 60);
   }
 
@@ -2171,6 +2259,7 @@ function showSaveModal(onSuccess) {
 }
 
 function showFAB() {
+  if (isMobileView()) return; // su mobile il salvataggio passa dal numero di versione
   if (!hasMovedItem) return;
   const existing = document.getElementById('fab-container');
   if (existing) { existing.style.display = 'flex'; _hideJumpFabs(); return; }
@@ -2185,11 +2274,12 @@ function showFAB() {
   const copyTip = document.createElement('span');
   copyTip.className = 'fab-tooltip';
   const copyBtn = document.createElement('button');
-  copyBtn.id = 'fab-copy';
+  copyBtn.id = 'fab-export';
   copyBtn.className = 'fab-btn';
-  copyBtn.title = 'Copia lista'; copyBtn.setAttribute('aria-label', 'Copia lista');
-  copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>`;
-  copyBtn.onclick = () => copyListToClipboard(copyBtn);
+  copyBtn.title = CTRL_I18N[currentLang].exportLabel; copyBtn.setAttribute('aria-label', CTRL_I18N[currentLang].exportLabel);
+  copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 3v11"/><polyline points="8 10 12 14 16 10"/><path d="M5 21h14"/></svg>`;
+  copyBtn.onclick = () => doExport();
+  copyTip.textContent = CTRL_I18N[currentLang].exportLabel;
   copyItem.appendChild(copyTip);
   copyItem.appendChild(copyBtn);
 
@@ -2202,7 +2292,7 @@ function showFAB() {
   saveBtn.title = 'Salva'; saveBtn.setAttribute('aria-label', 'Salva');
   saveBtn.className = 'fab-btn' + (saveUnlocked ? ' fab-unlocked' : '');
   saveBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
-  saveBtn.onclick = () => saveUnlocked ? doSave(saveBtn) : showSaveModal(() => doSave(saveBtn));
+  saveBtn.onclick = () => showDesktopReorderModal();
   saveItem.appendChild(saveTip);
   saveItem.appendChild(saveBtn);
 
