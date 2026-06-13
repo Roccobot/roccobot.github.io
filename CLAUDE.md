@@ -110,7 +110,8 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 ## 🏅 Criteri editoriali dei badge
 
-- **Badge Aman ('Approdò ad Aman')**: segna la
+- **Badge Aman** (legenda: 'Raggiunse Aman'; tooltip esteso in lista:
+  'Salpò per l'Ovest e approdò nelle Terre Imperiture'): segna la
   **partenza individuale e definitiva** verso Aman di chi si era stabilito
   nella Terra-di-Mezzo (il congedo del crepuscolo degli Elfi e affini).
   **Escluse** le migrazioni primordiali degli Anni degli Alberi: viaggio
@@ -123,10 +124,15 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
   Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come
-  gruppo secondario della riga Aman** (senza parentesi), 'Approdò ad
+  gruppo secondario della riga Aman** (senza parentesi), 'Raggiunse
   Aman / Ambasciatore degli Elfi', stesso schema della riga dei Re
   ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
   estesa e l'eccezionalità dell'evento non va spiegata in pagina.
+- **Badge Istari** (chiave `istari`): in lista un'icona per mago, dal
+  colore della veste/ordine (`Grigio.png` Gandalf, `Bianco.png` Saruman,
+  `Bruno.png` Radagast, `Blu1.png` Alatar, `Blu2.png` Pallando; mappa
+  `ISTARI_ICON`). In legenda l'emblema dell'ordine è il mago bianco
+  (`Bianco.png` via `ICON_LEGENDA`).
 
 ## 🧹 Asset del progetto
 
