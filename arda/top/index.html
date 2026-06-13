@@ -390,6 +390,19 @@ h1 {
   .ctrl-panel::-webkit-scrollbar { width:0; height:0; display:none; }
 }
 .ctrl-sheet-head { display:none; }
+/* Tasto chiudi del pannello (solo mobile): tondo, stile coerente con la
+   modale. Vive nell'header sticky così resta visibile mentre la legenda
+   scorre. */
+.ctrl-sheet-close {
+  width:32px; height:32px; flex-shrink:0; padding:0;
+  background:rgba(104,144,168,0.1); border:1px solid var(--gold); border-radius:50%;
+  color:var(--gold); font-family:'Cinzel',serif; font-size:0.95rem; line-height:1;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background 0.25s,color 0.25s,transform 0.25s;
+}
+.ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none; }
+html[data-theme="light"] .ctrl-sheet-close { background:rgba(200,210,230,0.4); border-color:#4a7090; color:#253d58; }
+html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl-sheet-close:focus-visible { background:#3a5878; color:#f6f6fa; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
 .ctrl-h {
@@ -449,10 +462,20 @@ h1 {
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
-    border-radius:18px 18px 0 0; transform:translateY(100%); padding-bottom:calc(1.6rem + env(safe-area-inset-bottom,0px));
+    border-radius:18px 18px 0 0; transform:translateY(100%);
+    padding-top:0; padding-bottom:calc(1.6rem + env(safe-area-inset-bottom,0px));
   }
   .ctrl-panel.open { transform:translateY(0); }
-  .ctrl-sheet-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  /* Header sticky: titolo + tasto chiudi restano in cima mentre la legenda
+     scorre. Sfondo opaco e margini negativi per coprire tutta la larghezza
+     del pannello (e il suo padding) mascherando il contenuto che scorre. */
+  .ctrl-sheet-head {
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:3;
+    margin:0 -1.2rem 1rem; padding:1.3rem 1.2rem 0.7rem;
+    background:rgba(16,24,44,0.98); border-radius:18px 18px 0 0;
+  }
+  html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   .ctrl-extra { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:0.4rem; padding-top:0.9rem; border-top:1px solid rgba(104,144,168,0.2); }
 }
@@ -976,7 +999,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.7.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.7.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1460,9 +1483,9 @@ var CTRL_I18N = {
 
 function controlPanelHTML() {
   var T = CTRL_I18N[currentLang], CL = CAT_LABEL[currentLang], IL = ICON_LABEL[currentLang];
-  var h = '<div class="ctrl-sheet-grab"></div>';
-  h += '<div class="ctrl-sheet-head"><span class="ctrl-h" style="margin:0">' + T.title + '</span>' +
-       '<button class="fab-modal-close" id="ctrl-close" aria-label="' + T.close + '">×</button></div>';
+  var h = '<div class="ctrl-sheet-head"><div class="ctrl-sheet-grab"></div>'
+        + '<span class="ctrl-h" style="margin:0">' + T.title + '</span>'
+        + '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '">&#x2715;</button></div>';
   // Toggle tema (sole/luna) — non persistente
   var isLight = document.documentElement.getAttribute('data-theme') === 'light';
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
