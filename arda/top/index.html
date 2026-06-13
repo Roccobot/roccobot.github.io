@@ -312,7 +312,7 @@ h1 {
    nettamente verticale derogano dal canvas 256x256 (es. Hobbit 220x256,
    anelli 176x256): meno margini fantasma, larghezza CSS proporzionata. */
 .si-aratar { width:.823em; height:.823em; }
-.si-istari { width:.935em; height:.935em; position:relative; left:-0.026em; }
+.si-istari { width:.935em; height:.935em; }
 .si-resupremo { width:.935em; height:.935em; }
 .si-refinarfin { width:.935em; height:.935em; }
 .si-renoldor { width:.935em; height:.935em; }
@@ -426,9 +426,14 @@ h1 {
 /* Gruppo secondario della riga (es. corona 'In carica', nave Ambasciatore):
    inline-flex così l'icona è centrata in verticale dal flexbox come la
    gemella, non dalla baseline del testo (che la spostava in basso di
-   qualche pixel). Gap icona-testo identico a quello della colonna
-   principale (0.6rem) e ampio respiro prima del gruppo. */
-.ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.65em; }
+   qualche pixel). Micro-rifiniture decise a occhio su schermo ad alto DPI
+   (valori device dimezzati a px CSS prima della conversione in em):
+   margin-left -1.5px (Noldor/Aman piu' vicini all'icona gemella); gap
+   interno -0.5px per la corona, -1px per la nave (whitespace diverso nei
+   due PNG). */
+.ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.533em; }
+.ctrl-legend-row .leg-group--king { gap:0.569rem; }
+.ctrl-legend-row .leg-group--aman { gap:0.538rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 .ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
 .ctrl-extra { display:none; }
@@ -972,7 +977,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.5.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.6.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1153,7 +1158,7 @@ function tipoClass(tipo) {
 var ICON_SVG = {
   aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"\">",
   silmaril:   "<img class=\"status-icon\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"\">",
-  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Istari.png\" title=\"%L%\" alt=\"\">",
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"\">",
   fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"\">",
   king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.png\" title=\"%L%\" alt=\"\">",
   king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.png\" title=\"%L%\" alt=\"\">",
@@ -1169,9 +1174,16 @@ var ICON_SVG = {
 };
 var ICON_ORDER = ['aratar','silmaril','istari','king_high','king_high_now','king_std','survivor','west','envoy','fellowship','onering','vilya','nenya','narya','menring'];
 // Varianti per la sola legenda: dove la lista usa una deroga verticale,
-// qui serve il canvas quadrato (slot centrato, resa più ariosa).
+// qui serve il canvas quadrato (slot centrato, resa più ariosa); per gli
+// Istari la legenda usa il mago bianco come emblema dell'ordine.
 var ICON_LEGENDA = {
-  fellowship: "<img class=\"status-icon\" src=\"icons/Hobbit_Legenda.png\" title=\"%L%\" alt=\"\">"
+  fellowship: "<img class=\"status-icon\" src=\"icons/Hobbit_Legenda.png\" title=\"%L%\" alt=\"\">",
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"\">"
+};
+// Istari in lista: un'icona per mago (colore del rispettivo ordine/veste).
+var ISTARI_ICON = {
+  'Gandalf': 'Grigio.png', 'Saruman': 'Bianco.png', 'Radagast': 'Bruno.png',
+  'Alatar': 'Blu1.png', 'Pallando': 'Blu2.png'
 };
 var ICON_LABEL = {
   it: {
@@ -1216,7 +1228,12 @@ function buildStatus(p) {
     // (es. Radagast, Glorfindel) — icona al 50% di opacità, etichetta marcata.
     var dim = p[k] === 'presunto';
     var label = L[k] + (dim ? (currentLang === 'it' ? ' (presunto)' : ' (presumed)') : '');
-    var svg = ICON_SVG[k].replace('%L%', label);
+    var tpl = ICON_SVG[k];
+    // Istari: in lista un'icona dedicata per ciascun mago
+    if (k === 'istari' && ISTARI_ICON[p.nome]) {
+      tpl = '<img class="status-icon si-istari" src="icons/' + ISTARI_ICON[p.nome] + '" title="%L%" alt="">';
+    }
+    var svg = tpl.replace('%L%', label);
     if (dim) svg = svg.replace('status-icon', 'status-icon si-dim');
     return svg;
   }).join('');
@@ -1472,15 +1489,15 @@ function controlPanelHTML() {
     if (k === 'envoy') return; // reso nella stessa riga di west
     if (k === 'king_high') {
       h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['king_high'].replace('%L%','') + '</span><span>' + IL['king_high'] + '</span>'
-         + '<span class="leg-group">' + ICON_SVG['king_high_now'].replace('%L%','') + '<span>' + attualeTxt + '</span></span></div>';
+         + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].replace('%L%','') + '<span>' + attualeTxt + '</span></span></div>';
       return;
     }
     if (k === 'west') {
       // In legenda etichette corte (il tooltip del badge resta la frase estesa)
-      var westTxt = currentLang === 'it' ? 'Approdò ad Aman' : 'Reached Aman';
+      var westTxt = currentLang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
       var envoyTxt = currentLang === 'it' ? 'Ambasciatore degli Elfi' : 'Ambassador of the Elves';
       h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].replace('%L%','') + '</span><span>' + westTxt + '</span>'
-         + '<span class="leg-group">' + ICON_SVG['envoy'].replace('%L%','') + '<span>' + envoyTxt + '</span></span></div>';
+         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].replace('%L%','') + '<span>' + envoyTxt + '</span></span></div>';
       return;
     }
     h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).replace('%L%','') + '</span><span>' + IL[k] + '</span></div>';
