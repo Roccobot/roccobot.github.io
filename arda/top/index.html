@@ -694,7 +694,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-tooltip { font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:0.78rem;font-weight:600;color:#e8f2ff;background:rgba(50,80,140,0.90);border:1px solid rgba(154,192,216,0.45);padding:0.28rem 0.7rem;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0.82;transform:translateX(0);transition:opacity 0.15s,transform 0.15s;backdrop-filter:blur(8px); }
 .fab-tooltip:empty { display:none; }
 .fab-item:hover .fab-tooltip { opacity:1;transform:translateX(0); }
-.fab-modal-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center; }
+.fab-modal-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;overscroll-behavior:contain; }
 .fab-modal-box { background:rgba(18,28,50,0.92);border:1px solid rgba(104,144,168,0.4);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
 .fab-modal-box p { margin:0 0 0.9rem;font-size:0.82rem;color:var(--parchment);opacity:0.65;line-height:1.4; }
 .fab-modal-box input[type=password] { width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;background:rgba(0,0,0,0.4);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-size:0.9rem;outline:none;transition:border-color 0.15s; }
@@ -703,6 +703,16 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-modal-close:hover { opacity:1; }
 .fab-modal-confirm { display:block;width:100%;margin-top:0.8rem;padding:0.5rem 0;background:rgba(104,144,168,0.15);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.15s,border-color 0.15s; }
 .fab-modal-confirm:hover { background:rgba(104,144,168,0.3);border-color:rgba(154,192,216,0.65); }
+/* Salva: evidenziato (blu). Pending: tasto 'Chiudi modalità ordinamento' in
+   riordino, colore d'attenzione (qualcosa in sospeso, non ancora salvato). */
+.fab-modal-confirm.is-primary { background:rgba(56,120,196,0.88);border-color:rgba(120,176,238,0.95);color:#fff; }
+.fab-modal-confirm.is-primary:hover { background:rgba(72,140,216,0.98);border-color:rgba(150,196,248,1); }
+.fab-modal-confirm.is-pending { background:rgba(210,178,92,0.18);border-color:var(--gold);color:var(--gold-bright); }
+.fab-modal-confirm.is-pending:hover { background:rgba(210,178,92,0.3);border-color:var(--gold-bright); }
+html[data-theme="light"] .fab-modal-confirm.is-primary { background:#3a78c0;border-color:#3a78c0;color:#fff; }
+html[data-theme="light"] .fab-modal-confirm.is-primary:hover { background:#3369ab;border-color:#3369ab; }
+html[data-theme="light"] .fab-modal-confirm.is-pending { background:rgba(190,140,30,0.14);border-color:#b8860b;color:#8a6508; }
+html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(190,140,30,0.24);border-color:#9a6f08; }
 .fab-modal-skip { display:block;width:100%;margin-top:0.4rem;padding:0.35rem 0;background:none;border:none;color:var(--parchment-dim);font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.06em;cursor:pointer;opacity:0.45;transition:opacity 0.15s; }
 .fab-modal-skip:hover { opacity:0.85; }
 .fab-modal-note { font-size:0.7rem !important;opacity:0.42 !important;margin-bottom:0.6rem !important; }
@@ -1010,7 +1020,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.0.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.1.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1488,8 +1498,8 @@ var CAT_LABEL = {
 };
 var CAT_COLOR = { divini:'#5540e0', elfi:'#70c0e8', edain:'#8a1818', uomini:'#ff4040', nani:'#e0c020', hobbit:'#ffa838', orchi:'#da50ff', animali:'#5ac060' };
 var CTRL_I18N = {
-  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Fine modifica ordine', editContent:'Modifica contenuti', chooseAction:'Cosa vuoi fare?' },
-  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Done reordering', editContent:'Edit content', chooseAction:'What do you want to do?' }
+  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti', save:'Salva', cancel:'Annulla' },
+  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content', save:'Save', cancel:'Cancel' }
 };
 
 function controlPanelHTML() {
@@ -1632,26 +1642,35 @@ function showActionChoiceModal() {
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
-  overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.remove(); });
-  var cl = document.createElement('button');
-  cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = function(){ overlay.remove(); };
-  var p = document.createElement('p'); p.textContent = T.chooseAction;
-  var b1 = document.createElement('button'); b1.className = 'fab-modal-confirm';
-  b1.textContent = reorderMode ? T.reorderExit : T.reorder;
-  b1.onclick = function(){
-    overlay.remove();
-    if (reorderMode) { exitReorder(); return; }
-    if (saveUnlocked) enterReorder();
-    else showPasswordModal('Inserisci la parola d\'ordine per riordinare le card.', enterReorder);
-  };
-  var b2 = document.createElement('button'); b2.className = 'fab-modal-confirm';
-  b2.textContent = T.editContent;
-  b2.onclick = function(){
-    overlay.remove();
-    if (saveUnlocked) showAdminEditor();
-    else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
-  };
-  box.appendChild(cl); box.appendChild(p); box.appendChild(b1); box.appendChild(b2);
+  document.body.style.overflow = 'hidden'; // blocca lo scroll del contenuto sotto
+  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
+  function mkClose(){ var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; return cl; }
+  function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : ''); b.textContent = label; b.onclick = fn; return b; }
+  function viewMain(){
+    box.innerHTML = ''; box.appendChild(mkClose());
+    if (reorderMode) {
+      // In riordino: tasto 'in sospeso' -> apre la conferma Salva/Annulla
+      box.appendChild(mkBtn(T.reorderExit, 'is-pending', viewSaveCancel));
+    } else {
+      box.appendChild(mkBtn(T.reorder, '', function(){
+        dismiss();
+        if (saveUnlocked) enterReorder();
+        else showPasswordModal('Inserisci la parola d\'ordine per riordinare le card.', enterReorder);
+      }));
+    }
+    box.appendChild(mkBtn(T.editContent, '', function(){
+      dismiss();
+      if (saveUnlocked) showAdminEditor();
+      else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+    }));
+  }
+  function viewSaveCancel(){
+    box.innerHTML = ''; box.appendChild(mkClose());
+    box.appendChild(mkBtn(T.save, 'is-primary', function(){ dismiss(); doSave(); })); // commit; doSave esce dal riordino al successo
+    box.appendChild(mkBtn(T.cancel, '', dismiss));                                    // torna al riordino, manopole intatte
+  }
+  viewMain();
 }
 
 function toggleControlPanel() {
@@ -2066,13 +2085,15 @@ function showPasswordModal(promptText, onSuccess) {
   box.className = 'fab-modal-box';
   overlay.appendChild(box);
   document.body.appendChild(overlay);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+  document.body.style.overflow = 'hidden'; // blocca lo scroll del contenuto sotto
+  const closePw = () => { overlay.remove(); document.body.style.overflow = ''; };
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closePw(); });
 
   function buildStep1() {
     box.innerHTML = '';
     const cl = document.createElement('button');
     cl.className = 'fab-modal-close'; cl.textContent = '×';
-    cl.onclick = () => overlay.remove();
+    cl.onclick = () => closePw();
     const p = document.createElement('p'); p.textContent = promptText;
     const inp = document.createElement('input');
     inp.type = 'password'; inp.autocomplete = 'off';
@@ -2104,7 +2125,7 @@ function showPasswordModal(promptText, onSuccess) {
       adminPassword = pw; // solo in memoria, per i commit di questa sessione
       saveUnlocked = true;
       document.querySelectorAll('#fab-save').forEach(b => b.classList.add('fab-unlocked'));
-      overlay.remove(); onSuccess();
+      closePw(); onSuccess();
     };
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryAuth(); });
     const cb = document.createElement('button');

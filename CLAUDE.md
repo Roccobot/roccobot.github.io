@@ -107,13 +107,16 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   quel caso. Su **mobile** no: servono solo dietro azione esplicita, la
   **modalità riordino** (`reorderMode`). Punto d'accesso mobile: il **numero
   di versione** in fondo al pannello del FAB apre una modale
-  (`showActionChoiceModal`) con due tasti: 'Riordina' (o 'Fine modifica
-  ordine' se già attivo) e 'Modifica contenuti' (editor admin). Sia riordino
-  sia editor sono **admin-only, dietro parola d'ordine** (il riordino la
-  chiede entrando, `enterReorder`; uscire no). Entrando: attiva tutte le
-  categorie, chiude il pannello, mostra le manopole. Si esce dal toggle o
-  dopo un salvataggio riuscito. Scopo: di default le card sfruttano tutta la
-  larghezza (niente padding per le manopole).
+  (`showActionChoiceModal`) con due tasti: 'Riordina' (o 'Chiudi modalità
+  ordinamento' se già in riordino, in colore d'attenzione) e 'Modifica
+  contenuti' (editor admin). Sia riordino sia editor sono **admin-only,
+  dietro parola d'ordine** (il riordino la chiede entrando, `enterReorder`).
+  In riordino, 'Chiudi modalità ordinamento' apre nella stessa modale un
+  secondo bivio: 'Salva' (evidenziato: commit + esce dal riordino) e
+  'Annulla' (torna al riordino, manopole intatte). Entrando nel riordino:
+  attiva tutte le categorie, chiude il pannello, mostra le manopole. Scopo:
+  di default le card sfruttano tutta la larghezza (niente padding per le
+  manopole).
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1
