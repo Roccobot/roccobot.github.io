@@ -426,14 +426,13 @@ h1 {
 /* Gruppo secondario della riga (es. corona 'In carica', nave Ambasciatore):
    inline-flex così l'icona è centrata in verticale dal flexbox come la
    gemella, non dalla baseline del testo (che la spostava in basso di
-   qualche pixel). Micro-rifiniture decise a occhio su schermo ad alto DPI
-   (valori device dimezzati a px CSS prima della conversione in em):
-   margin-left -1.5px (Noldor/Aman piu' vicini all'icona gemella); gap
-   interno -0.5px per la corona, -1px per la nave (whitespace diverso nei
-   due PNG). */
-.ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.533em; }
-.ctrl-legend-row .leg-group--king { gap:0.569rem; }
-.ctrl-legend-row .leg-group--aman { gap:0.538rem; }
+   qualche pixel). Spaziature ricavate per matching visivo dal mockup
+   dell'utente (la 2a icona piu' vicina al testo che la precede). Il gap
+   interno differisce tra corona e nave perché i due PNG hanno whitespace
+   interno diverso: serve un gap CSS minore per la nave a parità di resa. */
+.ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.12em; }
+.ctrl-legend-row .leg-group--king { gap:0.44rem; }
+.ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 .ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
 .ctrl-extra { display:none; }
@@ -977,7 +976,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.6.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.6.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
