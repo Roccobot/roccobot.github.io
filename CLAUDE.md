@@ -108,7 +108,7 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   **modalità riordino** (`reorderMode`), attivata dal pulsante 'Modifica
   l'ordine' nel pannello del FAB (a sinistra del tema). Entrando: attiva
   tutte le categorie, chiude il pannello, mostra le manopole; il toggle
-  diventa 'Fine riordino'. Si esce dal toggle o dopo un salvataggio
+  diventa 'Fine modifiche'. Si esce dal toggle o dopo un salvataggio
   riuscito. Scopo: di default le card sfruttano tutta la larghezza
   (niente padding per le manopole).
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
