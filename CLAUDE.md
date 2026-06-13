@@ -102,6 +102,15 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 - La parola d'ordine sta solo in memoria (`adminPassword`) per la durata
   della sessione; mai persistita. Deploy e gestione secret:
   `proxy/README.md`.
+- **Riordino card e manopole.** Il drag-and-drop richiede tutte le categorie
+  visibili (`enableDragDrop`). Su **desktop** le manopole appaiono subito in
+  quel caso. Su **mobile** no: servono solo dietro azione esplicita, la
+  **modalità riordino** (`reorderMode`), attivata dal pulsante 'Modifica
+  l'ordine' nel pannello del FAB (a sinistra del tema). Entrando: attiva
+  tutte le categorie, chiude il pannello, mostra le manopole; il toggle
+  diventa 'Fine riordino'. Si esce dal toggle o dopo un salvataggio
+  riuscito. Scopo: di default le card sfruttano tutta la larghezza
+  (niente padding per le manopole).
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
   presente solo dove diverge dal nome inglese (disambigue o titoli
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
