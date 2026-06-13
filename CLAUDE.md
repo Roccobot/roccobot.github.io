@@ -105,12 +105,21 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 - **Riordino card e manopole.** Il drag-and-drop richiede tutte le categorie
   visibili (`enableDragDrop`). Su **desktop** le manopole appaiono subito in
   quel caso. Su **mobile** no: servono solo dietro azione esplicita, la
-  **modalità riordino** (`reorderMode`), attivata dal pulsante 'Modifica
-  l'ordine' nel pannello del FAB (a sinistra del tema). Entrando: attiva
-  tutte le categorie, chiude il pannello, mostra le manopole; il toggle
-  diventa 'Fine modifiche'. Si esce dal toggle o dopo un salvataggio
-  riuscito. Scopo: di default le card sfruttano tutta la larghezza
-  (niente padding per le manopole).
+  **modalità riordino** (`reorderMode`). Punto d'accesso mobile: il **numero
+  di versione** in fondo al pannello del FAB apre una modale
+  (`showActionChoiceModal`) con due tasti: 'Riordina' (o 'Fine modifica
+  ordine' se già attivo) e 'Modifica contenuti' (editor admin). Sia riordino
+  sia editor sono **admin-only, dietro parola d'ordine** (il riordino la
+  chiede entrando, `enterReorder`; uscire no). Entrando: attiva tutte le
+  categorie, chiude il pannello, mostra le manopole. Si esce dal toggle o
+  dopo un salvataggio riuscito. Scopo: di default le card sfruttano tutta la
+  larghezza (niente padding per le manopole).
+- **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
+  desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
+  **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1
+  se ci entrano tutte, altrimenti vanno **tutte** a capo sulla riga 2. Resa
+  via `display:contents` (desktop invariato) e `flex-shrink:0` + `order` in
+  media query. Le icone non si spezzano mai su due righe.
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
   presente solo dove diverge dal nome inglese (disambigue o titoli
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
