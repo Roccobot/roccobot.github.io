@@ -72,10 +72,6 @@ body::before {
   transition: background 0.3s;
 }
 
-body::after { display:none; }
-
-@keyframes flicker { 0%,100%{opacity:0.3} 50%{opacity:0.65} }
-
 header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
 
 .brand-corner {
@@ -172,13 +168,12 @@ h1 {
 .rank-item {
   position:relative;
   display:grid;
-  grid-template-columns:auto 1fr auto;
+  grid-template-columns:auto 1fr;
   align-items:center;
   gap:clamp(0.8rem,3vw,2rem);
   padding:1.2rem 1.2rem 1.2rem 0.5rem;
   margin:0.4rem 0;
   background:linear-gradient(90deg,rgba(20,14,26,0.4) 0%,rgba(16,10,20,0.2) 100%);
-  border-left:3px solid var(--gold);
   border:1px solid rgba(104,144,168,0.15);
   border-left:3px solid var(--gold);
   border-radius:4px;
@@ -204,7 +199,6 @@ h1 {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rank-item { cursor: default; }
   .rank-name-text:hover { color: var(--name-hover); }
 }
 
@@ -278,15 +272,6 @@ h1 {
   align-items: center;
   gap: 0.4em;
   flex-wrap: wrap;
-}
-
-.rank-arrow {
-  font-family:'Cinzel',serif; color:var(--gold-deep);
-  font-size:1.2rem; transition:transform 0.35s,color 0.35s; flex-shrink:0;
-}
-
-.rank-item:hover .rank-arrow,.rank-item:focus-visible .rank-arrow {
-  transform:translateX(4px); color:var(--gold-bright);
 }
 
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
@@ -517,7 +502,7 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .tipo-beor        { background:rgba(185,28,18,0.26); border:1px solid rgba(248,82,72,0.9); color:#f85848; }
 .tipo-rohirrim    { background:rgba(198,42,18,0.26); border:1px solid rgba(252,100,72,0.9); color:#fc6848; }
 .tipo-dunadan     { background:rgba(175,18,18,0.26); border:1px solid rgba(240,60,60,0.9); color:#f04040; }
-.tipo-eothéod     { background:rgba(192,42,14,0.26); border:1px solid rgba(250,95,65,0.9); color:#fa6842; }
+.tipo-eotheod     { background:rgba(192,42,14,0.26); border:1px solid rgba(250,95,65,0.9); color:#fa6842; }
 .tipo-beorn       { background:rgba(195,62,8,0.26); border:1px solid rgba(250,118,58,0.9); color:#fa7838; }
 .tipo-dale        { background:rgba(205,80,8,0.28); border:1px solid rgba(252,148,72,0.9); color:#fc9848; }
 /* NANI — ambra/oro */
@@ -536,7 +521,7 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .tipo-istari      { background:rgba(115,118,162,0.24); border:1px solid rgba(195,198,238,0.9); color:#c8caf8; }
 .tipo-generico    { background:rgba(100,100,100,0.15); border:1px solid rgba(175,175,175,0.82); color:#b8b8b8; }
 .tipo-misterioso  { background:rgba(75,45,115,0.30); border:1px solid rgba(165,120,235,0.88); color:#c8a8ff; }
-/* ESSERI SUPERIORI — oro/ambra per Valar e Valier */
+/* ESSERI SUPERIORI — rosa/magenta per Valar e Valier */
 .tipo-vala        { background:rgba(90,15,55,0.44); border:1px solid rgba(215,95,162,0.82); color:#f098d0; text-shadow:0 0 8px rgba(220,100,180,0.35); }
 .tipo-valie       { background:rgba(90,15,55,0.44); border:1px solid rgba(215,95,162,0.82); color:#f098d0; text-shadow:0 0 8px rgba(220,100,180,0.35); }
 .tipo-maia-dark   { background:rgba(120,12,78,0.36); border:1px solid rgba(210,55,140,0.9); color:#f060b8; }
@@ -550,16 +535,6 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .tipo-morgoth     { background:rgba(38,32,52,0.62); border:1px solid rgba(138,120,168,0.88); color:#a898c5; }
 .tipo-bombadil    { background:rgba(36,82,28,0.42); border:1px solid rgba(126,206,96,0.9); color:#8ad862; }
 .tipo-ainur       { background:rgba(20,55,185,0.30); border:1px solid rgba(70,120,255,0.9); color:#6b9fff; }
-
-.flag {
-  width: 20px;
-  height: 14px;
-  border-radius: 3px;
-  object-fit: cover;
-  border: 1px solid rgba(104,144,168,0.4);
-  vertical-align: middle;
-  flex-shrink: 0;
-}
 
 .modal-backdrop {
   position:fixed; inset:0;
@@ -653,17 +628,6 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 }
 
 .modal-section { margin-bottom:1.4rem; }
-
-.modal-section h3 {
-  font-family:'Cinzel',serif; font-weight:700; font-size:0.78rem;
-  letter-spacing:0.25em; color:var(--gold); text-transform:uppercase;
-  margin-bottom:0.6rem; display:flex; align-items:center; gap:0.6em;
-}
-
-.modal-section h3::before,.modal-section h3::after {
-  content:''; flex:1; height:1px;
-  background:linear-gradient(90deg,transparent,rgba(104,144,168,0.4),transparent);
-}
 
 .modal-section p { font-family:'EB Garamond',serif; font-size:1.02rem; line-height:1.7; color:var(--parchment); }
 
@@ -876,8 +840,6 @@ html[data-theme="light"] body::before {
       radial-gradient(ellipse at 50% 95%, rgba(190,195,220,0.22) 0%, transparent 50%),
       #ebebef;
   }
-html[data-theme="light"] body::after { display: none; }
-
 html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"] .subtitle, html[data-theme="light"] .intro, html[data-theme="light"] .rank-source, html[data-theme="light"] footer p {
     font-weight: 500;
   }
@@ -946,9 +908,6 @@ html[data-theme="light"] .rank-source {
     color: #253d58;
     font-weight: 500;
   }
-html[data-theme="light"] .rank-arrow { color: #3a5878; }
-.rank-item:hover .rank-arrow,
-html[data-theme="light"] .rank-item:focus-visible .rank-arrow { color: #253d58; }
 html[data-theme="light"] .badge {
     color: #253d58;
     border-color: #4a7090;
@@ -978,9 +937,6 @@ html[data-theme="light"] .modal-source {
     border-bottom-color: #4a7090;
     font-weight: 500;
   }
-html[data-theme="light"] .modal-section h3 { color: #3a5878; }
-.modal-section h3::before,
-html[data-theme="light"] .modal-section h3::after { background: linear-gradient(90deg, transparent, rgba(74,112,144,0.4), transparent); }
 html[data-theme="light"] .modal-section p { color: #12141e; font-weight: 500; }
 html[data-theme="light"] .modal-quote {
     color: #2a2d3e;
@@ -1009,7 +965,7 @@ html[data-theme="light"] .tipo-hador { background:rgba(210,62,8,0.12); border-co
 html[data-theme="light"] .tipo-beor { background:rgba(185,25,16,0.11); border-color:rgba(210,55,45,0.52); color:#981808; }
 html[data-theme="light"] .tipo-rohirrim { background:rgba(198,40,16,0.11); border-color:rgba(215,70,45,0.52); color:#a02008; }
 html[data-theme="light"] .tipo-dunadan { background:rgba(175,16,16,0.11); border-color:rgba(205,38,38,0.52); color:#900808; }
-html[data-theme="light"] .tipo-eothéod { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
+html[data-theme="light"] .tipo-eotheod { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
 html[data-theme="light"] .tipo-beorn { background:rgba(195,60,6,0.11); border-color:rgba(215,88,35,0.5); color:#a03000; }
 html[data-theme="light"] .tipo-dale { background:rgba(205,78,6,0.12); border-color:rgba(222,112,45,0.52); color:#a84000; }
 html[data-theme="light"] .tipo-nano { background:rgba(185,128,0,0.13); border-color:rgba(150,118,0,0.9); color:#806800; }
@@ -1057,12 +1013,12 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.3.6</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.4.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
-  <p class="subtitle" id="subtitle">Gli esseri più potenti del mondo di Tolkien, dall’Ainulindalë alla Terza Era</p>
+  <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien, dall’Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#6890a8" stroke-width="0.8" fill="none" opacity="0.6"/>
     <circle cx="100" cy="15" r="3" fill="#9ac0d8"/>
@@ -1070,7 +1026,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
     <circle cx="140" cy="18" r="1.5" fill="#6890a8"/>
   </svg>
   <div class="intro" id="intro">
-    Esclusi Valar, Maiar e draghi. Ammessi i mezzi-Maiar, gli Ent e le Aquile. Il 'potere' è inteso nel senso più ampio: forza magica, bruta, politica, militare, influenza e capacità di plasmare il destino del mondo.
+    Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class="intro-cta">Tocca o clicca un nome per leggere la scheda completa.</span>
   </div>
 </header>
 
@@ -1111,7 +1067,7 @@ var i18n = {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
-    intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.",
+    intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
     footer: "<em>’Non tutto quel ch’è oro brilla, né gli erranti sono perduti.’</em><br>Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
     tgLink: 'Voce su Tolkien Gateway'
@@ -1155,13 +1111,6 @@ function parseFonte(fonte) {
   var fc = inside.indexOf(',');
   if (fc === -1) return { title: title, author: inside.trim(), year: '' };
   return { title: title, author: inside.slice(0, fc).trim(), year: inside.slice(fc + 1).trim() };
-}
-
-function getFlag(paese) {
-  if (!paese) return '';
-  // Accetta solo codici paese plausibili (lettere/trattino): blinda src e alt.
-  if (!/^[a-z-]{2,6}$/i.test(paese)) return '';
-  return '<img class="flag" src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/svg/' + paese + '.svg" alt="' + paese + '" loading="lazy">';
 }
 
 // Neutralizza i caratteri speciali HTML: i campi testuali dei dati non devono
@@ -1221,7 +1170,7 @@ function tipoClass(tipo) {
   if (t.includes('bëor') || t.includes('casa di beor')) return 'tipo-beor';
   if (t.includes('rohir')) return 'tipo-rohirrim';
   if (t.includes('dúnadan') || t.includes('dunadan') || t.includes('dúnedain') || t.includes('dunedain')) return 'tipo-dunadan';
-  if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'tipo-eothéod';
+  if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'tipo-eotheod';
   if (t.includes('beorniano') || t.includes('beorning')) return 'tipo-beorn';
   if (t.includes('dale')) return 'tipo-dale';
   if (t.includes('donna mortale') || t.includes('mortal woman')) return 'tipo-beor';
@@ -1237,29 +1186,29 @@ function tipoClass(tipo) {
 // arda/top/icons/, nomi da legenda ITA. La resa identica agli SVG di
 // prima è garantita dalle classi si-* (fattori di scala) nel CSS.
 var ICON_SVG = {
-  aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"\">",
-  silmaril:   "<img class=\"status-icon\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"\">",
-  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"\">",
-  fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"\">",
-  king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.png\" title=\"%L%\" alt=\"\">",
-  king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.png\" title=\"%L%\" alt=\"\">",
-  king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.png\" title=\"%L%\" alt=\"\">",
-  survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.png\" title=\"%L%\" alt=\"\">",
-  west:       "<img class=\"status-icon\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"\">",
-  envoy:      "<img class=\"status-icon\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"\">",
-  onering:    "<img class=\"status-icon si-unico\" src=\"icons/Unico.png\" title=\"%L%\" alt=\"\">",
-  vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.png\" title=\"%L%\" alt=\"\">",
-  nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"\">",
-  narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"\">",
-  menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"\">"
+  aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"%L%\">",
+  silmaril:   "<img class=\"status-icon\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"%L%\">",
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">",
+  fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"%L%\">",
+  king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.png\" title=\"%L%\" alt=\"%L%\">",
+  king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.png\" title=\"%L%\" alt=\"%L%\">",
+  king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.png\" title=\"%L%\" alt=\"%L%\">",
+  survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.png\" title=\"%L%\" alt=\"%L%\">",
+  west:       "<img class=\"status-icon\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"%L%\">",
+  envoy:      "<img class=\"status-icon\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"%L%\">",
+  onering:    "<img class=\"status-icon si-unico\" src=\"icons/Unico.png\" title=\"%L%\" alt=\"%L%\">",
+  vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.png\" title=\"%L%\" alt=\"%L%\">",
+  nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"%L%\">",
+  narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"%L%\">",
+  menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"%L%\">"
 };
 var ICON_ORDER = ['aratar','silmaril','istari','king_high','king_high_now','king_std','survivor','west','envoy','fellowship','onering','vilya','nenya','narya','menring'];
 // Varianti per la sola legenda: dove la lista usa una deroga verticale,
 // qui serve il canvas quadrato (slot centrato, resa più ariosa); per gli
 // Istari la legenda usa il mago bianco come emblema dell'ordine.
 var ICON_LEGENDA = {
-  fellowship: "<img class=\"status-icon\" src=\"icons/Hobbit_Legenda.png\" title=\"%L%\" alt=\"\">",
-  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"\">"
+  fellowship: "<img class=\"status-icon\" src=\"icons/Hobbit_Legenda.png\" title=\"%L%\" alt=\"%L%\">",
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Istari in lista: una o piu' icone per mago (colore dell'ordine/veste).
 // Gandalf e' l'unico con due icone (Grigio poi Bianco): fu sia il Grigio
@@ -1315,7 +1264,7 @@ function buildStatus(p) {
     // Istari: in lista un'icona dedicata per ciascun mago (Gandalf ne ha due)
     if (k === 'istari' && ISTARI_ICON[p.nome]) {
       tpl = ISTARI_ICON[p.nome].map(function(f){
-        return '<img class="status-icon si-istari" src="icons/' + f + '" title="%L%" alt="">';
+        return '<img class="status-icon si-istari" src="icons/' + f + '" title="%L%" alt="%L%">';
       }).join('');
     }
     var svg = tpl.split('%L%').join(label);
@@ -1351,9 +1300,13 @@ var filterState = {};
 })();
 
 // Simboli di genere in SVG stile emoji (tratti spessi e colorati, leggibili a ogni dimensione)
+var GENDER_LABEL = {
+  it: { m: 'Maschio', f: 'Femmina' },
+  en: { m: 'Male', f: 'Female' }
+};
 var GENERE_SVG = {
-  f: '<img class="genere-svg genere-svg--f" src="icons/Femmina.png" alt="femmina">',
-  m: '<img class="genere-svg genere-svg--m" src="icons/Maschio.png" alt="maschio">'
+  f: '<img class="genere-svg genere-svg--f" src="icons/Femmina.png" title="%L%" alt="%L%">',
+  m: '<img class="genere-svg genere-svg--m" src="icons/Maschio.png" title="%L%" alt="%L%">'
 };
 
 function renderList() {
@@ -1375,7 +1328,8 @@ function renderList() {
     var pf = parseFonte(fonte);
     var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
     var genere = p.genere || 'm';
-    var genereSym = genere === 'f' ? GENERE_SVG.f : genere === 'm' ? GENERE_SVG.m : '';
+    var gl = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
+    var genereSym = genere === 'f' ? GENERE_SVG.f.split('%L%').join(gl.f) : genere === 'm' ? GENERE_SVG.m.split('%L%').join(gl.m) : '';
     var hasAinur = p.nome !== 'Lúthien' && tipo && /(?:^|\|)\s*(valë|valië|vala|maia)/i.test(tipo) && !/balrog/i.test(tipo);
     var tipoStr = hasAinur ? '<span class="tipo-badge tipo-ainur">Ainu</span>' : '';
     // tipo_color: override del colore allineato per segmento ('|'), come tipo/tipo_label.
@@ -1412,7 +1366,7 @@ function renderList() {
       if (appell) riga2 += appell;
       riga2 += '</span>';
     }
-    var classes = 'rank-item' + (isVisTop ? ' vis-top' : '') + (p.featured ? ' featured' : '');
+    var classes = 'rank-item' + (isVisTop ? ' vis-top' : '');
     var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
     if (p.divino || darkBg) {
       classes += ' divine';
@@ -1495,11 +1449,10 @@ function openModal(idx) {
   tgBtn.setAttribute('aria-label', i18n[lang].tgLink);
   var pf = parseFonte(fonte);
   var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
-  // titleYear e autore sono testo puro → escapati. getFlag produce un <img>
-  // costruito da noi su un codice paese, quindi resta HTML legittimo.
+  // titleYear e autore sono testo puro → escapati.
   document.getElementById('modal-source').innerHTML =
     '<span>' + titleYear + '</span>' +
-    '<span class="modal-author">' + getFlag(p.paese) + escapeHtml(pf.author) + '</span>';
+    '<span class="modal-author">' + escapeHtml(pf.author) + '</span>';
   // info contiene HTML intenzionale (<br>): resta innerHTML.
   document.getElementById('modal-info').innerHTML = info;
   // citazione è testo puro: textContent azzera ogni rischio di injection.
@@ -1579,20 +1532,24 @@ function controlPanelHTML() {
     if (k === 'king_high_now') return; // reso nella stessa riga di king_high
     if (k === 'envoy') return; // reso nella stessa riga di west
     if (k === 'king_high') {
-      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['king_high'].replace('%L%','') + '</span><span>' + IL['king_high'] + '</span>'
-         + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].replace('%L%','') + '<span>' + attualeTxt + '</span></span></div>';
+      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
+         + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span></div>';
       return;
     }
     if (k === 'west') {
       // In legenda etichette corte (il tooltip del badge resta la frase estesa)
       var westTxt = currentLang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
       var envoyTxt = currentLang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].replace('%L%','') + '</span><span>' + westTxt + '</span>'
-         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].replace('%L%','') + '<span>' + envoyTxt + '</span></span></div>';
+      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
+         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span></div>';
       return;
     }
-    h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).replace('%L%','') + '</span><span>' + IL[k] + '</span></div>';
+    h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span></div>';
   });
+  // Simboli di genere (informativi come le altre icone)
+  var GLb = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
+  h += '<div class="ctrl-legend-row"><span class="leg-ico">' + GENERE_SVG.m.split('%L%').join('') + '</span><span>' + GLb.m + '</span></div>';
+  h += '<div class="ctrl-legend-row"><span class="leg-ico">' + GENERE_SVG.f.split('%L%').join('') + '</span><span>' + GLb.f + '</span></div>';
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra). La versione è
   // letta dal badge della testata: unica fonte, niente più numeri stantii.
@@ -2076,27 +2033,6 @@ function onPointerUp() {
   showFAB();
 }
 
-function copyListToClipboard(btn) {
-  const text = dati.map((p, i) => {
-    const lines = [`[${i + 1}]`];
-    const sym = p.genere === 'f' ? '♀' : p.genere === 'm' ? '♂' : '';
-    lines.push(`${p.nome} [${p.tipo}] (${sym})`);
-    const padre = p.padre || '', madre = p.madre || '';
-    if (padre || madre) {
-      const pre = p.genere === 'f' ? 'figlia di' : 'figlio di';
-      lines.push(`${pre} ${[padre, madre].filter(Boolean).join(' e ')}`);
-    }
-    const nomi = (p.nomi_alternativi || '').trim(), app = (p.appellativi || '').trim();
-    if (nomi || app) lines.push([nomi, app].filter(Boolean).join(' | '));
-    const pf = parseFonte(p.fonte);
-    lines.push(`${pf.title} di J.R.R. Tolkien (${pf.year})`);
-    return lines.join('\n');
-  }).join('\n\n');
-  navigator.clipboard.writeText(text).then(() => {
-    if (btn) { btn.style.opacity = '0.35'; setTimeout(() => btn.style.opacity = '', 1200); }
-  });
-}
-
 function showToast(msg, isError) {
   var t = document.getElementById('arda-toast');
   if (!t) {
@@ -2561,7 +2497,7 @@ function showAdminEditor() {
       chk.id = 'ae-' + i + '-flag-' + k;
       chk.checked = !!p[k];
       const iconEl = document.createElement('span');
-      iconEl.innerHTML = ICON_SVG[k].replace('%L%', '');
+      iconEl.innerHTML = ICON_SVG[k].split('%L%').join('');
       lbl.appendChild(chk); lbl.appendChild(iconEl);
       flagsRow.appendChild(lbl);
     });
