@@ -121,7 +121,20 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   trascinamento resta in memoria finché non si sceglie Conferma o Chiudi.
   Entrando nel riordino: attiva tutte le categorie, chiude il pannello, mostra
   le manopole. Scopo: di default le card sfruttano tutta la larghezza (niente
-  padding per le manopole).
+  padding per le manopole). **Su desktop** il riordino resta frictionless
+  (manopole dirette, niente password per trascinare); il **FAB flottante** ha
+  'Esporta' + un tasto che apre il trivio desktop (`showDesktopReorderModal`,
+  senza sottotitoli): 'Salva' apre la modale password (con ripiego 'Esporta'
+  per i visitatori, `showPasswordModal(.,.,extra)`), 'Chiudi' e 'Ripristina'
+  come su mobile. Il FAB flottante è **rimosso su mobile** (`showFAB` esce se
+  `isMobileView()`).
+- **Export PDF (`doExport`).** Stampa nativa del browser ottimizzata per la
+  carta: forza il tema chiaro (già leggibile su bianco), avvolge `#rank-list`
+  in una tabella (`buildPrintLayout`) il cui `<thead>` (`display:table-header-group`)
+  ripete `roccobot.me` / 'I Grandi di Arda' su **ogni** pagina senza
+  sovrapporsi, `@media print` nasconde la chrome e mette `break-inside:avoid`
+  sulle card (mai tagliate tra pagine A4). Ripristino del DOM/tema su
+  `afterprint`. Nessuna dipendenza esterna.
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1
