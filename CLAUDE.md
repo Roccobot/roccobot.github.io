@@ -164,7 +164,7 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
   Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come
   gruppo secondario della riga Aman** (senza parentesi), 'Raggiunse
-  Aman / Ambasciatore degli Elfi', stesso schema della riga dei Re
+  Aman / Al seguito di Oromë', stesso schema della riga dei Re
   ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
   estesa e l'eccezionalità dell'evento non va spiegata in pagina.
 - **Badge Istari** (chiave `istari`): in lista una o più icone per mago, dal
