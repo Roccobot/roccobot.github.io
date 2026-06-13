@@ -128,11 +128,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   Aman / Ambasciatore degli Elfi', stesso schema della riga dei Re
   ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
   estesa e l'eccezionalità dell'evento non va spiegata in pagina.
-- **Badge Istari** (chiave `istari`): in lista un'icona per mago, dal
-  colore della veste/ordine (`Grigio.png` Gandalf, `Bianco.png` Saruman,
-  `Bruno.png` Radagast, `Blu1.png` Alatar, `Blu2.png` Pallando; mappa
-  `ISTARI_ICON`). In legenda l'emblema dell'ordine è il mago bianco
-  (`Bianco.png` via `ICON_LEGENDA`).
+- **Badge Istari** (chiave `istari`): in lista una o più icone per mago, dal
+  colore della veste/ordine (`Bianco.png` Saruman, `Bruno.png` Radagast,
+  `Blu1.png` Alatar, `Blu2.png` Pallando; mappa `ISTARI_ICON`, i cui valori
+  sono array). **Gandalf è l'unico con due icone**, `Grigio.png` poi
+  `Bianco.png`: fu sia il Grigio sia il Bianco. In legenda l'emblema
+  dell'ordine è il mago bianco (`Bianco.png` via `ICON_LEGENDA`).
 
 ## 🧹 Asset del progetto
 
