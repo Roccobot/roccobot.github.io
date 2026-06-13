@@ -112,11 +112,16 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   contenuti' (editor admin). Sia riordino sia editor sono **admin-only,
   dietro parola d'ordine** (il riordino la chiede entrando, `enterReorder`).
   In riordino, 'Chiudi modalità ordinamento' apre nella stessa modale un
-  secondo bivio: 'Salva' (evidenziato: commit + esce dal riordino) e
-  'Annulla' (torna al riordino, manopole intatte). Entrando nel riordino:
-  attiva tutte le categorie, chiude il pannello, mostra le manopole. Scopo:
-  di default le card sfruttano tutta la larghezza (niente padding per le
-  manopole).
+  trivio (ogni tasto con sottotitolo esplicativo): **Conferma** (commit
+  permanente sul repo via `doSave`, poi esce), **Chiudi** (tiene le modifiche
+  come bozza locale in `localStorage` ed esce, 'continua a modificare') e
+  **Scarta** (svuota `localStorage` e ripristina l'ordine del server da
+  `DATI_SERVER_ORDER`, lo snapshot HTML catturato prima della bozza). L'ordine
+  vive in `localStorage` (`arda-ranking-v4-{lang}`), applicato al load; il solo
+  trascinamento resta in memoria finché non si sceglie Conferma o Chiudi.
+  Entrando nel riordino: attiva tutte le categorie, chiude il pannello, mostra
+  le manopole. Scopo: di default le card sfruttano tutta la larghezza (niente
+  padding per le manopole).
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1

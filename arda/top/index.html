@@ -713,6 +713,12 @@ html[data-theme="light"] .fab-modal-confirm.is-primary { background:#3a78c0;bord
 html[data-theme="light"] .fab-modal-confirm.is-primary:hover { background:#3369ab;border-color:#3369ab; }
 html[data-theme="light"] .fab-modal-confirm.is-pending { background:rgba(190,140,30,0.14);border-color:#b8860b;color:#8a6508; }
 html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(190,140,30,0.24);border-color:#9a6f08; }
+.fab-modal-confirm .fmc-main { display:block; }
+.fab-modal-confirm .fmc-sub { display:block;font-family:'EB Garamond',serif;font-weight:normal;font-size:0.64rem;letter-spacing:0.01em;text-transform:none;opacity:0.72;margin-top:0.15rem;line-height:1.2; }
+.fab-modal-confirm.is-danger { background:rgba(170,40,40,0.16);border-color:rgba(212,84,84,0.7);color:#f08a8a; }
+.fab-modal-confirm.is-danger:hover { background:rgba(170,40,40,0.28);border-color:rgba(232,104,104,0.92); }
+html[data-theme="light"] .fab-modal-confirm.is-danger { background:rgba(180,30,30,0.10);border-color:rgba(190,60,60,0.6);color:#a82020; }
+html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(180,30,30,0.18);border-color:#9a1c1c; }
 .fab-modal-skip { display:block;width:100%;margin-top:0.4rem;padding:0.35rem 0;background:none;border:none;color:var(--parchment-dim);font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.06em;cursor:pointer;opacity:0.45;transition:opacity 0.15s; }
 .fab-modal-skip:hover { opacity:0.85; }
 .fab-modal-note { font-size:0.7rem !important;opacity:0.42 !important;margin-bottom:0.6rem !important; }
@@ -1020,7 +1026,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.1.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.2.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1498,8 +1504,10 @@ var CAT_LABEL = {
 };
 var CAT_COLOR = { divini:'#5540e0', elfi:'#70c0e8', edain:'#8a1818', uomini:'#ff4040', nani:'#e0c020', hobbit:'#ffa838', orchi:'#da50ff', animali:'#5ac060' };
 var CTRL_I18N = {
-  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti', save:'Salva', cancel:'Annulla' },
-  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content', save:'Save', cancel:'Cancel' }
+  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
+        confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente' },
+  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
+        confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state' }
 };
 
 function controlPanelHTML() {
@@ -1646,29 +1654,50 @@ function showActionChoiceModal() {
   function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   function mkClose(){ var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; return cl; }
-  function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : ''); b.textContent = label; b.onclick = fn; return b; }
+  function mkBtn(main, sub, extra, fn){
+    var b = document.createElement('button');
+    b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : '');
+    b.innerHTML = '<span class="fmc-main">' + main + '</span>' + (sub ? '<span class="fmc-sub">' + sub + '</span>' : '');
+    b.onclick = fn; return b;
+  }
   function viewMain(){
     box.innerHTML = ''; box.appendChild(mkClose());
     if (reorderMode) {
-      // In riordino: tasto 'in sospeso' -> apre la conferma Salva/Annulla
-      box.appendChild(mkBtn(T.reorderExit, 'is-pending', viewSaveCancel));
+      // In riordino: tasto 'in sospeso' -> apre il trivio Conferma/Chiudi/Scarta
+      box.appendChild(mkBtn(T.reorderExit, '', 'is-pending', viewConfirm));
     } else {
-      box.appendChild(mkBtn(T.reorder, '', function(){
+      box.appendChild(mkBtn(T.reorder, '', '', function(){
         dismiss();
         if (saveUnlocked) enterReorder();
         else showPasswordModal('Inserisci la parola d\'ordine per riordinare le card.', enterReorder);
       }));
     }
-    box.appendChild(mkBtn(T.editContent, '', function(){
+    box.appendChild(mkBtn(T.editContent, '', '', function(){
       dismiss();
       if (saveUnlocked) showAdminEditor();
       else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
     }));
   }
-  function viewSaveCancel(){
+  function viewConfirm(){
     box.innerHTML = ''; box.appendChild(mkClose());
-    box.appendChild(mkBtn(T.save, 'is-primary', function(){ dismiss(); doSave(); })); // commit; doSave esce dal riordino al successo
-    box.appendChild(mkBtn(T.cancel, '', dismiss));                                    // torna al riordino, manopole intatte
+    // Conferma: commit permanente (doSave esce dal riordino al successo).
+    box.appendChild(mkBtn(T.confirm, T.confirmSub, 'is-primary', function(){ dismiss(); doSave(); }));
+    // Chiudi: tiene le modifiche come bozza locale (localStorage) ed esce dal riordino.
+    box.appendChild(mkBtn(T.keep, T.keepSub, '', function(){
+      dismiss();
+      localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; })));
+      exitReorder();
+    }));
+    // Scarta: svuota la bozza locale e ripristina l'ordine del server (snapshot HTML).
+    box.appendChild(mkBtn(T.discard, T.discardSub, 'is-danger', function(){
+      dismiss();
+      var master = dati.slice();
+      dati = DATI_SERVER_ORDER.map(function(n){ return master.find(function(d){ return d.nome === n; }); }).filter(Boolean)
+             .concat(master.filter(function(d){ return DATI_SERVER_ORDER.indexOf(d.nome) === -1; }));
+      localStorage.removeItem('arda-ranking-v4-' + currentLang);
+      localStorage.removeItem('arda-ranking-v3-' + currentLang);
+      exitReorder();
+    }));
   }
   viewMain();
 }
@@ -2490,6 +2519,9 @@ document.querySelector('.version-badge').addEventListener('click', () => {
   else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
 });
 
+// Ordine 'di fabbrica' (HTML = committato sul repo), catturato prima che
+// la bozza locale lo riordini: serve a 'Scarta' per tornare allo stato server.
+var DATI_SERVER_ORDER = dati.map(function(d){ return d.nome; });
 (function(){
   var _raw = localStorage.getItem('arda-ranking-v4-' + currentLang)
            || localStorage.getItem('arda-ranking-v3-' + currentLang);
