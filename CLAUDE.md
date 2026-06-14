@@ -167,6 +167,11 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   dall'head, + media query `max-width:768px`). Scopo: interfaccia mobile più
   pulita; la lingua si cambia comunque dal Pannello del FAB. Su **desktop**
   il tasto resta sempre visibile.
+- **`oneRing`** (non un on/off ma un **selettore di variante**): icona
+  dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
+  `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
+  file restano in cartella apposta: per alternare basta cambiare il valore,
+  niente altro. `ICON_SVG.onering` costruisce il `src` dal flag.
 
 ## 🏅 Criteri editoriali dei badge
 

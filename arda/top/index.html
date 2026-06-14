@@ -1057,7 +1057,10 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 //  - langSwitchMobile: il tasto cambio lingua in alto a destra, SOLO su
 //    mobile. Spento per un'interfaccia mobile più pulita; la lingua resta
 //    cambiabile dal Pannello del FAB. Su desktop è sempre visibile.
-var FEATURES = { genderLegendPill: false, langSwitchMobile: false };
+//  - oneRing: variante dell'Unico Anello, 'A' (icons/Unico.png, attiva) o
+//    'B' (icons/Unico_B.png, design precedente). Due file in cartella: per
+//    alternare il design basta cambiare questo valore.
+var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A' };
 (function(){
   var l = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   document.documentElement.setAttribute('data-theme', l ? 'light' : 'dark');
@@ -1070,7 +1073,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false };
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.5.3</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.6.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1253,7 +1256,7 @@ var ICON_SVG = {
   survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.png\" title=\"%L%\" alt=\"%L%\">",
   west:       "<img class=\"status-icon\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"%L%\">",
   envoy:      "<img class=\"status-icon\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"%L%\">",
-  onering:    "<img class=\"status-icon si-unico\" src=\"icons/Unico.png\" title=\"%L%\" alt=\"%L%\">",
+  onering:    "<img class=\"status-icon si-unico\" src=\"icons/" + (FEATURES.oneRing === 'B' ? 'Unico_B.png' : 'Unico.png') + "\" title=\"%L%\" alt=\"%L%\">",
   vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.png\" title=\"%L%\" alt=\"%L%\">",
   nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"%L%\">",
   narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"%L%\">",
