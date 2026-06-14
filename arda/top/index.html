@@ -444,6 +444,17 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 .ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
+/* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
+   l'unica icona di fatto sempre presente, quindi messa in evidenza su una
+   riga sola. Larghezza dal bordo delle checkbox dei filtri (rientro .3rem del
+   padding di riga) al bordo destro dei tasti 'solo'. */
+.leg-gender { display:flex; align-items:stretch; margin:0.5rem 0 0 0.3rem; background:rgba(104,144,168,0.10); border:1px solid rgba(104,144,168,0.30); border-radius:10px; overflow:hidden; }
+.leg-gender .leg-g-half { flex:1; display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.5rem 0.4rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; }
+.leg-gender .leg-g-half:first-child { border-right:1px solid rgba(104,144,168,0.25); }
+.leg-gender .leg-g-half img { font-size:1.141rem; flex-shrink:0; }
+.leg-gender .genere-svg { display:inline-block; transform:none; }
+.leg-gender .genere-svg--m { width:.92em; height:.92em; }
+.leg-gender .genere-svg--f { width:.79em; height:.92em; }
 .ctrl-extra { display:none; }
 .ctrl-lang-btn {
   font-family:'Cinzel',serif; font-size:0.74rem; letter-spacing:0.08em; padding:0.4rem 0.9rem;
@@ -895,6 +906,8 @@ html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="ligh
 html[data-theme="light"] .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
+html[data-theme="light"] .leg-gender { background:rgba(58,88,120,0.07); border-color:rgba(58,88,120,0.28); }
+html[data-theme="light"] .leg-gender .leg-g-half:first-child { border-right-color:rgba(58,88,120,0.20); }
 html[data-theme="light"] .rank-name {
     font-weight: 700;
   }
@@ -1013,7 +1026,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.4.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.4.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1546,10 +1559,15 @@ function controlPanelHTML() {
     }
     h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span></div>';
   });
-  // Simboli di genere (informativi come le altre icone)
+  // Riga del genere: pill unica a due metà (Maschio | Femmina) in fondo alla
+  // legenda. È l'unica icona di fatto sempre presente (tutti i personaggi
+  // hanno un genere convenzionale, salvo rare creature ancestrali), quindi è
+  // messa in evidenza su una sola riga.
   var GLb = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
-  h += '<div class="ctrl-legend-row"><span class="leg-ico">' + GENERE_SVG.m.split('%L%').join('') + '</span><span>' + GLb.m + '</span></div>';
-  h += '<div class="ctrl-legend-row"><span class="leg-ico">' + GENERE_SVG.f.split('%L%').join('') + '</span><span>' + GLb.f + '</span></div>';
+  h += '<div class="leg-gender">'
+     + '<span class="leg-g-half">' + GENERE_SVG.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
+     + '<span class="leg-g-half">' + GENERE_SVG.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
+     + '</div>';
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra). La versione è
   // letta dal badge della testata: unica fonte, niente più numeri stantii.
