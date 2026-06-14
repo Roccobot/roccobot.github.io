@@ -123,7 +123,9 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   le manopole. Scopo: di default le card sfruttano tutta la larghezza (niente
   padding per le manopole). **Su desktop** il riordino resta frictionless
   (manopole dirette, niente password per trascinare); il **FAB flottante** ha
-  'Esporta' + un tasto che apre il trivio desktop (`showDesktopReorderModal`,
+  'Esporta' (tasto icona-only, senza etichetta di testo: scelta deliberata,
+  non reintrodurla) + un tasto che apre il trivio desktop
+  (`showDesktopReorderModal`,
   senza sottotitoli): 'Salva' apre la modale password (con ripiego 'Esporta'
   per i visitatori, `showPasswordModal(.,.,extra)`), 'Chiudi' e 'Ripristina'
   come su mobile. Il FAB flottante è **rimosso su mobile** (`showFAB` esce se
