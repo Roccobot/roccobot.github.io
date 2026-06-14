@@ -389,10 +389,12 @@ h1 {
 }
 /* Finestra desktop bassa: il Pannello passa a DUE colonne (Categorie a
    sinistra, Legenda a destra) per usare lo spazio orizzontale invece di
-   scrollare. Soglia: altezza finestra <= 860px (e larghezza >= 860px, per
-   avere spazio a due colonne). Sotto i ~600px anche le due colonne scrollano
-   (fallback max-height). */
-@media (min-width:860px) and (max-height:860px) {
+   scrollare. Soglia: altezza finestra <= 940px, poco sopra il punto in cui la
+   colonna singola (~805px + margini ≈ 933px) inizierebbe a scorrere (così si
+   evita anche quel filo di scroll); larghezza >= 860px per avere spazio alle
+   due colonne. Sotto i ~600px anche le due colonne scrollano (fallback
+   max-height). */
+@media (min-width:860px) and (max-height:940px) {
   #ctrl-panel { display:grid; grid-template-columns:auto auto; column-gap:2rem; align-items:start; }
   #ctrl-panel .ctrl-toolbar { grid-column:1; grid-row:1; }
   #ctrl-panel .ctrl-section--filtri { grid-column:1; grid-row:2; margin-bottom:0; }
@@ -1061,7 +1063,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false };
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.5.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.5.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
