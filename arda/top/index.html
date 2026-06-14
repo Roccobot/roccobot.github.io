@@ -1049,7 +1049,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false };
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.4.5</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.4.6</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1239,11 +1239,10 @@ var ICON_SVG = {
   menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"%L%\">"
 };
 var ICON_ORDER = ['aratar','silmaril','istari','king_high','king_high_now','king_std','survivor','west','envoy','fellowship','onering','vilya','nenya','narya','menring'];
-// Varianti per la sola legenda: dove la lista usa una deroga verticale,
-// qui serve il canvas quadrato (slot centrato, resa più ariosa); per gli
-// Istari la legenda usa il mago bianco come emblema dell'ordine.
+// Variante per la sola legenda: per gli Istari si usa il mago bianco come
+// emblema dell'ordine (in lista invece c'è un'icona per ciascun mago). Il
+// Fellowship (Hobbit) non ha più variante: una sola icona, come tutte le altre.
 var ICON_LEGENDA = {
-  fellowship: "<img class=\"status-icon\" src=\"icons/Hobbit_Legenda.png\" title=\"%L%\" alt=\"%L%\">",
   istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Istari in lista: una o piu' icone per mago (colore dell'ordine/veste).
