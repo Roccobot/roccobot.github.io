@@ -267,16 +267,6 @@ h1 {
   margin-top:0.05rem;
 }
 
-.rank-source {
-  font-family:'EB Garamond',serif; font-style:italic;
-  font-size:clamp(0.78rem,2vw,0.92rem);
-  color:var(--gold-deep); letter-spacing:0.01em;
-  display: flex;
-  align-items: center;
-  gap: 0.4em;
-  flex-wrap: wrap;
-}
-
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
 .rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.1rem,3.4vw,1.6rem); }
 
@@ -466,7 +456,6 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .ctrl-legend-row .leg-group--king { gap:0.44rem; }
 .ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
-.ctrl-legend-row .leg-swatch { width:1.1rem; height:1.1rem; border-radius:4px; flex-shrink:0; }
 /* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
    l'unica icona di fatto sempre presente, quindi messa in evidenza su una
    riga sola. Larghezza dal bordo delle checkbox dei filtri (rientro .3rem del
@@ -510,10 +499,6 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
   .ctrl-extra { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:0.4rem; padding-top:0.9rem; border-top:1px solid rgba(104,144,168,0.2); }
 }
 
-.genere-sym {
-  font-size:0.75em; opacity:0.5; margin-left:0.15em;
-  vertical-align:middle; line-height:1; user-select:none;
-}
 .genere-svg { user-select:none; flex:none; }
 /* PNG al vivo e centrati: dimensioni e offset replicano la resa precedente
    (cerchi riallineati alla 'o' minuscola). Femmina: canvas 220x256 (deroga
@@ -748,9 +733,6 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
     color:#3a5878; border-bottom:1px solid rgba(60,95,140,0.35);
   }
 }
-.fab-modal-skip { display:block;width:100%;margin-top:0.4rem;padding:0.35rem 0;background:none;border:none;color:var(--parchment-dim);font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.06em;cursor:pointer;opacity:0.45;transition:opacity 0.15s; }
-.fab-modal-skip:hover { opacity:0.85; }
-.fab-modal-note { font-size:0.7rem !important;opacity:0.42 !important;margin-bottom:0.6rem !important; }
 .admin-overlay { position:fixed;inset:0;z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--ink-deep);padding:1.5rem 1rem calc(2rem + env(safe-area-inset-bottom,0px)); }
 .admin-header { position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 1.5rem;padding:0.8rem 0.5rem;background:var(--ink-deep);border-bottom:1px solid rgba(104,144,168,0.15);flex-wrap:wrap;gap:0.8rem; }
 .admin-title { font-family:'Cinzel',serif;font-size:1rem;color:var(--gold-bright);letter-spacing:0.06em; }
@@ -778,7 +760,6 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
 .admin-flag-chk { display:flex;align-items:center;gap:0.3rem;cursor:pointer; }
 .admin-flag-chk input { width:15px;height:15px;accent-color:var(--gold);cursor:pointer;flex-shrink:0; }
 .admin-flag-chk img { font-size:1.467rem; } /* 1.35rem / 0.92em */
-.admin-field-full { grid-column:1/-1; }
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
 .admin-textarea { resize:vertical;min-height:5rem; }
@@ -874,7 +855,7 @@ html[data-theme="light"] body::before {
       radial-gradient(ellipse at 50% 95%, rgba(190,195,220,0.22) 0%, transparent 50%),
       #ebebef;
   }
-html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"] .subtitle, html[data-theme="light"] .intro, html[data-theme="light"] .rank-source, html[data-theme="light"] footer p {
+html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"] .subtitle, html[data-theme="light"] .intro, html[data-theme="light"] footer p {
     font-weight: 500;
   }
 
@@ -938,10 +919,6 @@ html[data-theme="light"] .rank-name {
 html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
 html[data-theme="light"] .rank-title {
     color: #2a2d3e;
-    font-weight: 500;
-  }
-html[data-theme="light"] .rank-source {
-    color: #253d58;
     font-weight: 500;
   }
 html[data-theme="light"] .badge {
@@ -1073,7 +1050,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A' 
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.6.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.0.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
