@@ -771,7 +771,12 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
   /* Riga nome (mobile): icone subito dopo il nome, in blocco inscindibile
      (flex-shrink:0 + nowrap); etichette dopo, in blocco (flex-shrink:0):
      stanno tutte sulla riga 1 se c'è spazio, altrimenti vanno tutte a capo. */
-  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; flex-shrink:0; gap:0.28em; font-size:0.92em; order:1; }
+  /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel e' tutto
+     maiuscolo e siede in alto nella line-box, percio' le icone centrate sulla
+     riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
+     alto l'intero blocco (icone + simbolo di genere) di .07em: gli allineamenti
+     interni restano intatti (anelli e genere hanno gia' i propri nudge). */
+  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; flex-shrink:0; gap:0.28em; font-size:0.92em; order:1; transform:translateY(-0.07em); }
   .rank-name > .rank-flags .status-icon, .rank-name > .rank-flags .genere-svg { margin-left:0; }
   .rank-name > .rank-tipi { display:inline-flex; align-items:center; flex-wrap:wrap; flex-shrink:0; max-width:100%; gap:0.4em; order:2; }
   .modal-body { padding:1.8rem 1.2rem; }
@@ -1050,7 +1055,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A' 
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.1.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.1.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
