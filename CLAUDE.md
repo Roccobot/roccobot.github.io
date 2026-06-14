@@ -199,6 +199,13 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   sono array). **Gandalf è l'unico con due icone**, `Grigio.png` poi
   `Bianco.png`: fu sia il Grigio sia il Bianco. In legenda l'emblema
   dell'ordine è il mago bianco (`Bianco.png` via `ICON_LEGENDA`).
+- **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
+  i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
+  In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
+  `istari`). Portatori tra i 159, da canone (*Silmarillion*, 'Della fuga dei
+  Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril, Finrod, Angrod, Aegnor,
+  Galadriel. NON lo attraversarono i Fëanoriani (giunsero con le navi) né
+  Finarfin (tornò indietro a Valinor).
 
 ## 🧹 Asset del progetto
 
