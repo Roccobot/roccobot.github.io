@@ -147,6 +147,25 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   bottone nella modale costruisce l'URL con `tg`, in mancanza con
   `nome_en`, in mancanza con `nome`.
 
+## 🚩 Feature flag (elementi disattivati, ma non rimossi)
+
+- Oggetto **`FEATURES`** in testa allo script di `arda/top/index.html`:
+  interruttori per spegnere elementi senza cancellarli dal codice (`false`
+  = spento, `true` = attivo; per riattivare basta il flag, niente altre
+  modifiche). Non sono bug né codice morto: sono scelte deliberate, elencate
+  qui apposta.
+- **`genderLegendPill`** (spento): la pill 'Maschio | Femmina' in fondo alla
+  legenda del Pannello. Disattivata per risparmiare spazio e lasciare
+  implicita un'informazione ovvia (quasi tutti i personaggi hanno un genere
+  convenzionale). Da riaccendere se nasceranno funzioni collegate al genere
+  (es. filtri). Attenzione: i **simboli di genere nelle card** (riga del
+  nome) NON dipendono dal flag, li gestisce `renderList` e restano sempre.
+- **`langSwitchMobile`** (spento): il tasto cambio lingua in alto a destra,
+  **solo su mobile** (classe `no-langswitch-mobile` su `<html>`, applicata
+  dall'head, + media query `max-width:768px`). Scopo: interfaccia mobile più
+  pulita; la lingua si cambia comunque dal Pannello del FAB. Su **desktop**
+  il tasto resta sempre visibile.
+
 ## 🏅 Criteri editoriali dei badge
 
 - **Badge Aman** (legenda: 'Raggiunse Aman'; tooltip esteso in lista:

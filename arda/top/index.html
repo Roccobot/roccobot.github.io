@@ -119,6 +119,9 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
   color: var(--ink);
   transform: scale(1.05);
 }
+/* Cambio lingua nascosto su mobile quando il flag langSwitchMobile è spento
+   (classe no-langswitch-mobile sull'html). Resta nel DOM e su desktop. */
+@media (max-width:768px) { html.no-langswitch-mobile .lang-switch { display:none; } }
 
 .crest {
   font-family:'Cinzel Decorative',serif;
@@ -1021,12 +1024,33 @@ html[data-theme="light"] .admin-btn-back { border-color:rgba(58,88,120,0.4);colo
 html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);border-color:rgba(30,140,70,0.5);color:#1a6832; }
 
 </style>
-<script>(function(){var l=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches;document.documentElement.setAttribute('data-theme',l?'light':'dark');})();</script>
+<script>
+// ── Feature flag ──────────────────────────────────────────────────────
+// Interruttori per disattivare elementi SENZA rimuoverli dal codice: a
+// false sono SPENTI; rimettere a true per riattivarli (nessun'altra
+// modifica necessaria). Non sono bug né codice in disuso, ma scelte
+// deliberate (documentate anche nel CLAUDE.md del repo).
+//  - genderLegendPill: la pill 'Maschio | Femmina' in fondo alla legenda.
+//    Spenta per risparmiare spazio e lasciare implicita un'informazione
+//    ovvia; da riaccendere se nasceranno funzioni collegate al genere
+//    (es. filtri). I simboli di genere nelle card non dipendono dal flag.
+//  - langSwitchMobile: il tasto cambio lingua in alto a destra, SOLO su
+//    mobile. Spento per un'interfaccia mobile più pulita; la lingua resta
+//    cambiabile dal Pannello del FAB. Su desktop è sempre visibile.
+var FEATURES = { genderLegendPill: false, langSwitchMobile: false };
+(function(){
+  var l = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  document.documentElement.setAttribute('data-theme', l ? 'light' : 'dark');
+  // Cambio lingua nascosto su mobile col flag spento: classe sull'html, la
+  // CSS la applica solo sotto i 768px. Fatto qui nell'head per evitare il flash.
+  if (!FEATURES.langSwitchMobile) document.documentElement.classList.add('no-langswitch-mobile');
+})();
+</script>
 </head>
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.4.3</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.4.4</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1560,14 +1584,18 @@ function controlPanelHTML() {
     h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span></div>';
   });
   // Riga del genere: pill unica a due metà (Maschio | Femmina) in fondo alla
-  // legenda. È l'unica icona di fatto sempre presente (tutti i personaggi
-  // hanno un genere convenzionale, salvo rare creature ancestrali), quindi è
-  // messa in evidenza su una sola riga.
-  var GLb = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
-  h += '<div class="leg-gender">'
-     + '<span class="leg-g-half">' + GENERE_SVG.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
-     + '<span class="leg-g-half">' + GENERE_SVG.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
-     + '</div>';
+  // legenda. Dietro il flag FEATURES.genderLegendPill (definito nell'head):
+  // di norma SPENTA, per risparmiare spazio e lasciare implicita
+  // un'informazione ovvia. Da riaccendere col flag se nasceranno funzioni
+  // collegate al genere (es. filtri). I simboli di genere nelle card non
+  // dipendono da questo flag.
+  if (FEATURES.genderLegendPill) {
+    var GLb = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
+    h += '<div class="leg-gender">'
+       + '<span class="leg-g-half">' + GENERE_SVG.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
+       + '<span class="leg-g-half">' + GENERE_SVG.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
+       + '</div>';
+  }
   h += '</div>';
   // Opzioni (visibili solo su mobile via CSS .ctrl-extra). La versione è
   // letta dal badge della testata: unica fonte, niente più numeri stantii.
