@@ -302,7 +302,8 @@ h1 {
    SVG letterboxati nel box 0.92em. Le icone già bilanciate in file
    (Mappa, Aman, Silmaril) usano il box pieno. Le icone con oggetto
    nettamente verticale derogano dal canvas 256x256 (es. Hobbit 220x256,
-   anelli 173x256): meno margini fantasma, larghezza CSS proporzionata. */
+   anelli degli Elfi 195x256, anello degli Uomini 234x256): meno margini
+   fantasma, larghezza CSS proporzionata. */
 .si-aratar { width:.823em; height:.823em; }
 .si-istari { width:.935em; height:.935em; }
 .si-resupremo { width:.935em; height:.935em; }
@@ -310,23 +311,21 @@ h1 {
 .si-renoldor { width:.935em; height:.935em; }
 .si-unico { width:.707em; height:.707em; }
 .si-hobbit { width:.791em; height:.92em; }
-/* Anelli degli Elfi (gemma in alto, fascia in basso): il glifo è centrato
-   sul canvas (173x256 dopo il ritaglio del letterbox) ma il cerchio della
-   fascia cade a +16.2% sotto il centro (fit del cerchio esterno).
-   Risalita di .935em*0.162=.152em così è la fascia, non la gemma, ad
-   allinearsi otticamente con le altre icone (stessa logica dei cerchi dei
-   simboli di genere); +1px di rifinitura percettiva a valle, deciso a
-   occhio sul sito reale. */
-.si-vilya { width:.632em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
-.si-nenya { width:.632em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
-.si-narya { width:.632em; height:.935em; transform:translateY(calc(-.152em + 1px)); }
-/* Anello degli Uomini (i Nove): gemma in alto, tondo sotto. Canvas 241x256,
-   tondo (Ø esterno ~212px) centrato a (120,146): il suo centro cade ~18px
-   sotto il centro del canvas. Risalita di .749em*(18/256)=.054em così è il
-   tondo, non la gemma, ad allinearsi agli altri cerchi della riga (Unico,
-   anelli degli Elfi, simboli di genere; stessa logica). Ø reso ~.62em: poco
-   piu' piccolo dell'Unico (~.685em). */
-.si-nove { width:.705em; height:.749em; transform:translateY(-.054em); }
+/* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
+   (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
+   non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
+   cerchi dei simboli di genere); +1px di rifinitura percettiva, a occhio sul
+   sito reale. Misure scelte per resa IDENTICA ai vecchi anelli (Ø ~.624em). */
+.si-vilya { width:.680em; height:.893em; transform:translateY(calc(-.106em + 1px)); }
+.si-nenya { width:.680em; height:.893em; transform:translateY(calc(-.106em + 1px)); }
+.si-narya { width:.680em; height:.893em; transform:translateY(calc(-.106em + 1px)); }
+/* Anello degli Uomini (i Nove / Nazgûl): gemma in alto, tondo sotto. Canvas
+   234x256, tondo (Ø esterno ~216px) centrato a (~116,139): risalita di
+   ~.032em così è il tondo, non la gemma, ad allinearsi agli altri cerchi
+   della riga (Unico, anelli degli Elfi, simboli di genere). Misure scelte per
+   resa IDENTICA al vecchio anello: Ø reso ~.623em, leggermente più piccolo
+   degli anelli degli Elfi (~.624em) e dell'Unico (~.685em). */
+.si-nove { width:.675em; height:.738em; transform:translateY(-.032em); }
 
 /* ── CARD DEGLI ESSERI SUPERIORI — lieve dominante dorata ── */
 /* #2 — card speciali: tinta lievissima, bordo identitario a sinistra; hover e numero ereditano lo stile sobrio delle card normali */
@@ -1050,7 +1049,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false };
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.4.4</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.4.5</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
