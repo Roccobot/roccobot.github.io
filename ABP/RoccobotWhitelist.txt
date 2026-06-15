@@ -195,6 +195,11 @@
 @@||anthropic.com^$important
 @@||claude.ai^$important
 @@||claude.com^$important
+! Contenuti in iframe: artefatti, file, bridge Chrome, visualizzazioni MCP
+@@||claudemcpcontent.com^$important
+@@||claudemcpcontent.com^$document,subdocument,important
+@@||claudeusercontent.com^$important
+@@||claudeusercontent.com^$document,subdocument,important
 @@||registry.npmjs.org^$important
 @@||npmjs.com^$important
 ! ── Telemetria/feature flag e report errori (non essenziali al funzionamento)
