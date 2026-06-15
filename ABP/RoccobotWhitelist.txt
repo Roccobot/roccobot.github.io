@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-06-09
+! Last updated: 2026-06-15
 
 @@||192.168.1.2^
 @@||aci.it^
@@ -7,7 +7,6 @@
 @@||agos.it^$document,subdocument
 @@||agosweb.it^$document,subdocument
 @@||animeworld.ac^
-@@||arda-admin-proxy.roccobot-b90.workers.dev^
 @@||aruba.it^$document,subdocument
 @@||axerve.com^
 @@||battle.net^
@@ -17,9 +16,6 @@
 @@||cardinalcommerce.com^$document,subdocument
 @@||cdninstagram.com^
 @@||clicklab.be^
-@@||cloudflare.com^
-@@||cloudflareaccess.com^
-@@||cloudflareinsights.com^
 @@||cobalt.tools^
 @@||cofidis.it^
 @@||contactretail.apple.com^
@@ -149,5 +145,17 @@
 ! @@||statsig.com^
 ! @@||sentry.io^
 
-! Proxy delle regole (lettura/scrittura rules; gemello di arda-admin-proxy)
-@@||rules-proxy.roccobot-b90.workers.dev^
+! ── Cloudflare (infrastruttura propria) ──
+! Whitelist totale: ogni sottodominio, percorso, file, iframe e script. Senza
+! modificatori la regola vale per tutti i tipi di richiesta (più ampia di
+! $document,subdocument). Copre anche i proxy di progetto su workers.dev
+! (arda-admin-proxy per l'editor del sito, rules-proxy per lettura/scrittura regole).
+@@||cloudflare.com^
+@@||cloudflare.net^
+@@||cloudflareaccess.com^
+@@||cloudflareinsights.com^
+@@||cloudflarestream.com^
+@@||cloudflare-dns.com^
+@@||cloudflarestorage.com^
+@@||workers.dev^
+@@||pages.dev^
