@@ -239,12 +239,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   AAAA-MM-GG`, da aggiornare a ogni commit che ne tocca il contenuto. Il
   numero di versione del sito (es. `v10.1.2`) riguarda solo `arda/top`, non
   questo progetto.
-- **Sintassi delle eccezioni.** `@@||dominio^` senza modificatori vale per
-  **tutti** i tipi di richiesta e per tutti i sottodomini/percorsi: è più
-  ampia di `@@||dominio^$document,subdocument` (che restringe a pagina e
-  iframe). Cloudflare e `workers.dev`/`pages.dev` sono whitelistati per
-  intero nel blocco 'Cloudflare' del file (copre anche i proxy di progetto
-  `arda-admin-proxy` e `rules-proxy`). Nota: `workers.dev` e `pages.dev` sono
-  domini condivisi (chiunque può crearvi un sottodominio gratis): la whitelist
-  totale lascia passare anche eventuali Worker di terzi. Scelta deliberata
-  dell'utente; restringibile ai soli sottodomini `roccobot-b90` se serve.
+- **Schema delle eccezioni** (legenda in testa al file). Ogni eccezione attiva
+  porta `$important`, così vince anche sui blocchi `$important` (è un
+  modificatore AdGuard/uBO, non ABP classico). Banche, pagamenti, finanza,
+  assicurazioni e PA/identità hanno la **doppia riga** `+ $document,important`
+  (fiducia totale alla pagina: disattiva anche cosmetiche e scriptlet). Le
+  eccezioni 'pagina + iframe' non finanziarie restano `$document,subdocument`
+  (con `,important`). `@@||dominio^` senza tipo vale comunque per tutti i tipi
+  di richiesta e per tutti i sottodomini/percorsi.
+- **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
+  blocco 'Cloudflare' del file (copre anche i proxy di progetto
+  `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
+  la riga `$document,important`. Nota: `workers.dev` e `pages.dev` sono domini
+  condivisi (chiunque può crearvi un sottodominio gratis): la whitelist totale
+  lascia passare anche eventuali Worker di terzi. Scelta deliberata dell'utente;
+  restringibile ai soli sottodomini `roccobot-b90` se serve.
