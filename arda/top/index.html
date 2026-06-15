@@ -369,13 +369,15 @@ h1 {
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow:0 12px 48px rgba(0,0,0,0.5);
   opacity:0; visibility:hidden; transform:translateY(12px); transition:opacity 0.2s,transform 0.2s,visibility 0.2s;
+  scrollbar-width:none; -ms-overflow-style:none;
 }
+.ctrl-panel::-webkit-scrollbar { width:0; height:0; display:none; }
 .ctrl-panel.open { opacity:1; visibility:visible; transform:translateY(0); }
 @media (min-width:769px) {
-  /* su desktop nascondi la barra di scorrimento e lascia crescere il pannello
-     fino allo spazio disponibile: scorre solo se non ci sta tutto in altezza */
-  .ctrl-panel { scrollbar-width:none; -ms-overflow-style:none; max-height:calc(100vh - 8rem); }
-  .ctrl-panel::-webkit-scrollbar { width:0; height:0; display:none; }
+  /* su desktop lascia crescere il pannello fino allo spazio disponibile:
+     scorre solo se non ci sta tutto in altezza (barra di scorrimento gia'
+     nascosta a livello globale, vedi sopra) */
+  .ctrl-panel { max-height:calc(100vh - 8rem); }
 }
 /* DESKTOP: il Pannello e' SEMPRE a due colonne (Categorie a sinistra, Legenda
    a destra), a qualsiasi dimensione della finestra sopra la soglia mobile
@@ -506,20 +508,23 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .ctrl-backdrop.open { opacity:1; visibility:visible; }
 
 @media (max-width:768px) {
-  /* su mobile il pannello diventa una bottom-sheet onnicomprensiva */
+  /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura
+     in DISSOLVENZA (niente slide): la sensazione di ingresso e' data dal
+     fade-in piu' lo scorrimento-in-cima dell'hint (vedi toggleControlPanel).
+     Lo slide verso il basso resta solo per la chiusura a trascinamento. */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
-    border-radius:18px 18px 0 0; transform:translateY(100%);
+    border-radius:18px 18px 0 0; transform:none;
+    transition:opacity 0.3s ease, visibility 0.3s ease;
     padding-top:0; padding-bottom:0;
   }
-  .ctrl-panel.open { transform:translateY(0); }
   /* Testata sticky: solo la barretta di trascinamento (punto di presa per
      chiudere la sheet). Sfondo opaco e margini negativi per coprire la
      larghezza piena del pannello mentre il contenuto scorre sotto. */
   .ctrl-sheet-head {
     display:block; position:sticky; top:0; z-index:3; height:1.5rem;
-    margin:0 -1.2rem 0.4rem; background:rgba(16,24,44,0.98);
-    border-radius:18px 18px 0 0; touch-action:none;
+    margin:0 -1.2rem 0.4rem; background:rgba(16,24,44,0.98); pointer-events:none;
+    border-radius:18px 18px 0 0;
   }
   html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
@@ -1123,7 +1128,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A' 
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.3.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.3.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1754,37 +1759,6 @@ function wireControlPanel() {
     toggleControlPanel();
     showActionChoiceModal();
   });
-  // Trascinamento per chiudere (solo mobile): si trascina la testata (la
-  // barretta) verso il basso; oltre la soglia la bottom-sheet si chiude, sotto
-  // rientra. La sheet segue il dito; niente effetto su desktop.
-  var head = panel.querySelector('.ctrl-sheet-head');
-  if (head && window.matchMedia('(max-width:768px)').matches) {
-    var startY = 0, dy = 0, dragging = false;
-    head.addEventListener('touchstart', function(e){
-      if (e.touches.length !== 1) return;
-      startY = e.touches[0].clientY; dy = 0; dragging = true;
-      panel.style.transition = 'none';
-    }, { passive: true });
-    head.addEventListener('touchmove', function(e){
-      if (!dragging) return;
-      dy = e.touches[0].clientY - startY;
-      if (dy < 0) dy = 0;
-      panel.style.transform = 'translateY(' + dy + 'px)';
-      if (dy > 0 && e.cancelable) e.preventDefault();
-    }, { passive: false });
-    head.addEventListener('touchend', function(){
-      if (!dragging) return;
-      dragging = false;
-      if (dy > 90) {
-        panel.style.transition = 'transform 0.22s ease';
-        panel.style.transform = 'translateY(100%)';
-        setTimeout(function(){ toggleControlPanel(); panel.style.transition = ''; panel.style.transform = ''; }, 210);
-      } else {
-        panel.style.transition = '';
-        panel.style.transform = '';
-      }
-    }, { passive: true });
-  }
 }
 
 // Entra/esce dalla modalità riordino (mobile). Riordino ed editor sono
@@ -1930,17 +1904,26 @@ function toggleControlPanel() {
   // Inibisce lo scroll della pagina sottostante mentre il Pannello è aperto
   // (desktop e mobile, come per le modali).
   document.body.style.overflow = open ? 'hidden' : '';
-  // Hint di scorrimento (solo mobile): se all'apertura il contenuto eccede,
-  // un breve 'peek' verso il basso e ritorno suggerisce che si puo' scorrere
-  // (senza mostrare la barra di scorrimento, nascosta su mobile).
+  // Hint di apertura (solo mobile): la sheet appare in dissolvenza (CSS) e il
+  // contenuto, che parte sceso di ~2-3 righe, scorre fino in cima decelerando
+  // in modo organico (easeOutCubic). Suggerisce la scrollabilita' senza dover
+  // mostrare la barra di scorrimento (nascosta).
   if (open && window.matchMedia('(max-width:768px)').matches) {
     requestAnimationFrame(function(){
-      if (panel.scrollHeight > panel.clientHeight + 8) {
-        setTimeout(function(){
-          panel.scrollTo({ top: 30, behavior: 'smooth' });
-          setTimeout(function(){ panel.scrollTo({ top: 0, behavior: 'smooth' }); }, 450);
-        }, 350);
+      var maxScroll = panel.scrollHeight - panel.clientHeight;
+      if (maxScroll < 24) return; // niente da scorrere: nessun hint
+      var offset = Math.min(70, maxScroll);
+      panel.scrollTop = offset;
+      var t0 = null, dur = 620;
+      function ease(t){ return 1 - Math.pow(1 - t, 3); } // easeOutCubic (decelerazione)
+      function step(ts){
+        if (t0 === null) t0 = ts;
+        var t = Math.min(1, (ts - t0) / dur);
+        panel.scrollTop = offset * (1 - ease(t));
+        if (t < 1) requestAnimationFrame(step);
       }
+      // breve pausa per far percepire la posizione iniziale, poi scorre in cima
+      setTimeout(function(){ requestAnimationFrame(step); }, 90);
     });
   }
 }
@@ -1968,6 +1951,47 @@ function buildControlPanel() {
   document.body.appendChild(bd);
   document.body.appendChild(panel);
   document.body.appendChild(fab);
+  // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet e'
+  // gia' in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
+  // punto la segue e, oltre la soglia, la chiude; sotto soglia rientra. Se non
+  // si e' in cima, il gesto scorre normalmente il contenuto. La barretta in
+  // alto resta solo come indicatore. Attaccato una volta sola (il pannello
+  // persiste; si rigenera solo l'innerHTML).
+  (function(){
+    var startY = 0, dy = 0, dragging = false, atTop = false;
+    panel.addEventListener('touchstart', function(e){
+      if (e.touches.length !== 1) return;
+      if (!window.matchMedia('(max-width:768px)').matches) return;
+      startY = e.touches[0].clientY; dy = 0; dragging = false;
+      atTop = panel.scrollTop <= 0;
+    }, { passive: true });
+    panel.addEventListener('touchmove', function(e){
+      if (e.touches.length !== 1) return;
+      dy = e.touches[0].clientY - startY;
+      if (dragging || (atTop && dy > 0)) {
+        dragging = true;
+        panel.style.transition = 'none';
+        panel.style.transform = 'translateY(' + (dy > 0 ? dy : 0) + 'px)';
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+    function endDrag(){
+      if (!dragging) return;
+      dragging = false;
+      if (dy > 90) {
+        panel.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+        panel.style.transform = 'translateY(100%)';
+        panel.style.opacity = '0';
+        setTimeout(function(){ toggleControlPanel(); panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = ''; }, 210);
+      } else {
+        panel.style.transition = 'transform 0.2s ease';
+        panel.style.transform = 'translateY(0)';
+        setTimeout(function(){ panel.style.transition = ''; panel.style.transform = ''; }, 210);
+      }
+    }
+    panel.addEventListener('touchend', endDrag, { passive: true });
+    panel.addEventListener('touchcancel', endDrag, { passive: true });
+  })();
   refreshControlPanel();
 }
 
