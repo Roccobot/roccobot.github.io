@@ -134,25 +134,20 @@
 @@||tolkiengateway.net^
 @@||unisalute.it^$document,subdocument
 @@||usercontent.google.com^$document,subdocument
+@@||validator.w3.org^
 @@||vhx.tv^
 @@||vimeocdn.com^
 @@||ws-hp.com^
 
-! ── Claude / Anthropic (aggiunti 2026-06-14, da ordinare) ──
-! API del modello, app web e console: copre api/console/statsig.anthropic.com
+! ── Claude / Anthropic ──
 @@||anthropic.com^
-! App Claude (incl. claude.ai/code)
 @@||claude.ai^
-! Dominio Claude e documentazione (code.claude.com)
 @@||claude.com^
-! Distribuzione e aggiornamento della CLI Claude Code via npm
 @@||registry.npmjs.org^
 @@||npmjs.com^
-! Telemetria/feature flag e report errori (non essenziali al funzionamento)
-@@||statsig.com^
-@@||sentry.io^
-! ── Endpoint del flusso di lavoro di questo progetto ──
+! ── Telemetria/feature flag e report errori (non essenziali al funzionamento)
+! @@||statsig.com^
+! @@||sentry.io^
+
 ! Proxy delle regole (lettura/scrittura rules; gemello di arda-admin-proxy)
 @@||rules-proxy.roccobot-b90.workers.dev^
-! Validatore W3C (controllo 0 errori / 0 warning del sito)
-@@||validator.w3.org^
