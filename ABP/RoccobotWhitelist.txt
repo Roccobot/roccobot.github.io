@@ -2,14 +2,15 @@
 ! Last updated: 2026-06-15
 
 ! ── Schema delle eccezioni ──
-! $important            : l'eccezione vince anche sui blocchi $important.
-! $document,important   : fiducia totale alla pagina (cosmetiche e scriptlet
-!                         inclusi); doppia riga per banche, pagamenti, finanza, PA.
-! $document,subdocument : pagina + iframe, senza toccare gli altri tipi.
+! $important                       : l'eccezione vince anche sui blocchi $important.
+! $document,important              : fiducia totale alla pagina (cosmetiche e scriptlet).
+! $document,subdocument,important  : come sopra ma anche quando il dominio e' in iframe
+!                                    (widget di pagamento/verifica: Stripe e simili).
+! Doppia riga = banche, pagamenti, finanza, assicurazioni, PA/identita'.
 
 @@||192.168.1.2^$important
 @@||aci.it^$important
-@@||aci.it^$document,important
+@@||aci.it^$document,subdocument,important
 @@||adf.ly^$important
 @@||agos.it^$important
 @@||agos.it^$document,important
@@ -19,7 +20,7 @@
 @@||aruba.it^$important
 @@||aruba.it^$document,important
 @@||axerve.com^$important
-@@||axerve.com^$document,important
+@@||axerve.com^$document,subdocument,important
 @@||battle.net^$important
 @@||bitwarden.com^$important
 @@||bitwarden.com^$document,important
@@ -27,7 +28,7 @@
 @@||bonusx.it^$important
 @@||bonusx.it^$document,important
 @@||cardinalcommerce.com^$important
-@@||cardinalcommerce.com^$document,important
+@@||cardinalcommerce.com^$document,subdocument,important
 @@||cdninstagram.com^$important
 @@||clicklab.be^$important
 @@||cobalt.tools^$important
@@ -36,7 +37,7 @@
 @@||contactretail.apple.com^$important
 @@||contacts.google.com^$important
 @@||copecart.com^$important
-@@||copecart.com^$document,important
+@@||copecart.com^$document,subdocument,important
 @@||cupweb.it^$important
 @@||cupweb.it^$document,important
 @@||curve.com^$important
@@ -57,9 +58,9 @@
 @@||fascicolo-sanitario.it^$important
 @@||fascicolo-sanitario.it^$document,important
 @@||fastspring.com^$important
-@@||fastspring.com^$document,important
+@@||fastspring.com^$document,subdocument,important
 @@||fattureincloud.it^$important
-@@||fattureincloud.it^$document,important
+@@||fattureincloud.it^$document,subdocument,important
 @@||fideuram.it^$important
 @@||fideuram.it^$document,important
 @@||find.api.micloud.xiaomi.net^$important
@@ -87,7 +88,7 @@
 @@||interno.gov.it^$important
 @@||interno.gov.it^$document,important
 @@||ixopay.com^$important
-@@||ixopay.com^$document,important
+@@||ixopay.com^$document,subdocument,important
 @@||jobs.lever.co^$important
 @@||kiwi.com^$important
 @@||lefrecce.it^$important
@@ -96,7 +97,7 @@
 @@||linear.it^$important
 @@||linear.it^$document,important
 @@||link.com^$important
-@@||link.com^$document,important
+@@||link.com^$document,subdocument,important
 @@||linktr.ee^$important
 @@||linkvertise.com^$important
 @@||liveperson.net^$important
@@ -109,35 +110,36 @@
 @@||mediailpost-meride-tv.akamaized.net^$important
 @@||messages.google.com^$important
 @@||mollie.nl^$important
-@@||mollie.nl^$document,important
+@@||mollie.nl^$document,subdocument,important
 @@||msedge.api.cdp.microsoft.com^$important
 @@||mylink.love^$important
 @@||mylink.me.uk^$important
 @@||nexi.it^$important
-@@||nexi.it^$document,important
+@@||nexi.it^$document,subdocument,important
 @@||nexigroup.com^$important
-@@||nexigroup.com^$document,important
+@@||nexigroup.com^$document,subdocument,important
 @@||one.google.com^$document,subdocument,important
 @@||onetrust.com^$important
 @@||onfido.com^$important
-@@||onfido.com^$document,important
+@@||onfido.com^$document,subdocument,important
 @@||paddle.com^$important
-@@||paddle.com^$document,important
+@@||paddle.com^$document,subdocument,important
 @@||pagonlinesanita.it^$important
 @@||pagonlinesanita.it^$document,important
 @@||pastetoday.com^$important
 @@||patreonusercontent.com^$important
 @@||pay.google.com^$important
-@@||pay.google.com^$document,important
+@@||pay.google.com^$document,subdocument,important
 @@||paykickstart.com^$important
-@@||paykickstart.com^$document,important
+@@||paykickstart.com^$document,subdocument,important
 @@||payments.google.com^$important
-@@||payments.google.com^$document,important
+@@||payments.google.com^$document,subdocument,important
 @@||payments.ui.bitx.com^$important
-@@||payments.ui.bitx.com^$document,important
+@@||payments.ui.bitx.com^$document,subdocument,important
 @@||pec.it^$important
 @@||pec.it^$document,important
 @@||perchance.org^$important
+@@||photosi.com^$important
 @@||photosi.com^$document,subdocument,important
 @@||poste.it^$important
 @@||poste.it^$document,important
@@ -154,30 +156,30 @@
 @@||run.app^$document,subdocument,important
 @@||ryanair.com^$important
 @@||satispay.com^$important
-@@||satispay.com^$document,important
+@@||satispay.com^$document,subdocument,important
 @@||scontrinosmart.it^$important
 @@||scontrinosmart.it^$document,important
 @@||secureserver.net^$important
 @@||sella.it^$important
 @@||sella.it^$document,important
 @@||servizienti.it^$important
-@@||servizienti.it^$document,important
+@@||servizienti.it^$document,subdocument,important
 @@||shapecatcher.com^$important
 @@||shop.app^$important
-@@||shop.app^$document,important
+@@||shop.app^$document,subdocument,important
 @@||shopify.com^$document,subdocument,important
 @@||sieltecloud.it^$important
-@@||sieltecloud.it^$document,important
+@@||sieltecloud.it^$document,subdocument,important
 @@||signaturit.com^$important
-@@||signaturit.com^$document,important
+@@||signaturit.com^$document,subdocument,important
 @@||smart-glocal.com^$important
-@@||smart-glocal.com^$document,important
+@@||smart-glocal.com^$document,subdocument,important
 @@||socifi.com^$important
 @@||sponsor.ajay^$important
 @@||squarespace.com^$important
 @@||store.apple.com^$document,subdocument,important
 @@||stripe.com^$important
-@@||stripe.com^$document,important
+@@||stripe.com^$document,subdocument,important
 @@||tasgroup.eu^$important
 @@||threadless.com^$important
 @@||tolkiengateway.net^$important
