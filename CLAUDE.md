@@ -1,9 +1,13 @@
 # CLAUDE.md: regole del progetto 'I Grandi di Arda'
 
 > **Cos'è questo file.** Le regole specifiche del repository
-> `Roccobot/roccobot.github.io`, che ospita il sito 'I Grandi di Arda'
-> (<https://roccobot.github.io/arda/top/>). Tutto ciò che non è specifico
-> di questo progetto vive nelle regole universali.
+> `Roccobot/roccobot.github.io`. Il repo ospita **più di un progetto** (per
+> convenzione `progetto` ≠ `repo`: almeno un progetto per cartella di root,
+> vedi `rules/Roccobot.md`), raccolti in questo unico `CLAUDE.md`:
+> il sito 'I Grandi di Arda' (`arda/top/`,
+> <https://roccobot.github.io/arda/top/>) e le 'Regole AdBlock' (`ABP/`,
+> sezione in fondo). Tutto ciò che non è specifico di questi progetti vive
+> nelle regole universali.
 
 ## 📜 Regola n. 1: attingere alle regole universali
 
@@ -216,3 +220,31 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   saturi rispetto agli altri badge (caso Maia #f2dbda/#fe8b96/#c83056);
   dettagli SVG troppo fini per la dimensione reale di ~22 px (spilla
   della Compagnia, occhio di Sauron).
+
+## 🛡️ Progetto '/ABP': Regole AdBlock (Roccobot ABP)
+
+- **Cos'è.** Le liste di filtri AdBlock/AdGuard del repo, nella cartella
+  `ABP/`. Progetto distinto da 'I Grandi di Arda'. Nomi con cui l'utente lo
+  chiama: 'Roccobot ABP', 'Regole AdBlock', 'Regole Adguard' o simili.
+- **Due file, due scopi** (sintassi ABP/AdGuard):
+  - `ABP/RoccobotFilters.txt`: regole di **blocco** (righe `||dominio^...`,
+    cosmetiche `##...`, ecc.).
+  - `ABP/RoccobotWhitelist.txt`: **eccezioni**/whitelist (righe `@@||...`).
+- **Comandi in linguaggio naturale** (mappa fissa):
+  - 'Aggiungi alle regole di blocco' (o simili) → aggiungere righe a
+    `ABP/RoccobotFilters.txt`.
+  - 'Aggiungi un'eccezione' / 'metti in whitelist' (o simili) → mettere mano
+    a `ABP/RoccobotWhitelist.txt`.
+- **Versione.** Niente SemVer: ogni file ha l'header `! Last updated:
+  AAAA-MM-GG`, da aggiornare a ogni commit che ne tocca il contenuto. Il
+  numero di versione del sito (es. `v10.1.2`) riguarda solo `arda/top`, non
+  questo progetto.
+- **Sintassi delle eccezioni.** `@@||dominio^` senza modificatori vale per
+  **tutti** i tipi di richiesta e per tutti i sottodomini/percorsi: è più
+  ampia di `@@||dominio^$document,subdocument` (che restringe a pagina e
+  iframe). Cloudflare e `workers.dev`/`pages.dev` sono whitelistati per
+  intero nel blocco 'Cloudflare' del file (copre anche i proxy di progetto
+  `arda-admin-proxy` e `rules-proxy`). Nota: `workers.dev` e `pages.dev` sono
+  domini condivisi (chiunque può crearvi un sottodominio gratis): la whitelist
+  totale lascia passare anche eventuali Worker di terzi. Scelta deliberata
+  dell'utente; restringibile ai soli sottodomini `roccobot-b90` se serve.
