@@ -220,6 +220,6 @@
 @@||cloudflareaccess.com^$document,important
 @@||cloudflare.net^$important
 @@||cloudflare-dns.com^$important
-@@||cloudflareinsights.com^$important
+! @@||cloudflareinsights.com^$important
 @@||cloudflarestream.com^$important
 @@||cloudflarestorage.com^$important
