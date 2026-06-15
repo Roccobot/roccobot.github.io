@@ -243,10 +243,13 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   porta `$important`, così vince anche sui blocchi `$important` (è un
   modificatore AdGuard/uBO, non ABP classico). Banche, pagamenti, finanza,
   assicurazioni e PA/identità hanno la **doppia riga** `+ $document,important`
-  (fiducia totale alla pagina: disattiva anche cosmetiche e scriptlet). Le
-  eccezioni 'pagina + iframe' non finanziarie restano `$document,subdocument`
-  (con `,important`). `@@||dominio^` senza tipo vale comunque per tutti i tipi
-  di richiesta e per tutti i sottodomini/percorsi.
+  (fiducia totale alla pagina: disattiva anche cosmetiche e scriptlet). I
+  **widget di pagamento/verifica incorporati come iframe** (Stripe e simili)
+  usano invece `$document,subdocument,important`, per fidarli anche quando il
+  dominio è caricato in un iframe di terzi. Le eccezioni 'pagina + iframe' non
+  finanziarie restano `$document,subdocument` (con `,important`). `@@||dominio^`
+  senza tipo vale comunque per tutti i tipi di richiesta e per tutti i
+  sottodomini/percorsi.
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
