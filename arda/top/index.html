@@ -48,7 +48,10 @@
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { scroll-behavior:smooth; }
+/* scrollbar-gutter:stable riserva sempre lo spazio della scrollbar: quando il
+   Pannello apre e mette body in overflow:hidden, la scrollbar sparisce ma lo
+   spazio resta, così la pagina (e gli elementi fissi) non slittano a destra. */
+html { scroll-behavior:smooth; scrollbar-gutter:stable; }
 body {
   background: var(--ink-deep);
   color: var(--parchment);
@@ -394,7 +397,7 @@ h1 {
 .ctrl-panel.closing {
   visibility:visible; transition:none;
   animation:ctrl-pop-close 0.34s cubic-bezier(0.16,1,0.3,1) forwards,
-            ctrl-sheet-fade 0.16s ease 0.18s forwards;
+            ctrl-sheet-fade 0.16s ease 0.18s both;  /* both: tiene opacita 1 durante il delay (niente sfarfallio) */
 }
 @media (min-width:769px) {
   /* su desktop lascia crescere il pannello fino allo spazio disponibile:
@@ -575,7 +578,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-finger::after { background:linea
   .ctrl-panel.closing {
     visibility:visible; transition:none;
     animation:ctrl-sheet-close 0.5s cubic-bezier(0.16,1,0.3,1) forwards,
-              ctrl-sheet-fade 0.18s ease 0.32s forwards;
+              ctrl-sheet-fade 0.18s ease 0.32s both;  /* both: tiene opacita 1 durante il delay (niente sfarfallio) */
   }
   /* Testata sticky: solo la barretta di trascinamento (punto di presa per
      chiudere la sheet). Sfondo opaco e margini negativi per coprire la
@@ -1196,7 +1199,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.12.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.12.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
