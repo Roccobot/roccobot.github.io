@@ -512,16 +512,25 @@ h1 {
 .ctrl-ver { font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.12em; color:var(--gold-deep); opacity:0.7; cursor:pointer; padding:0.5rem 0.7rem; margin:-0.5rem -0.7rem; }
 .ctrl-backdrop { position:fixed; inset:0; z-index:205; background:rgba(0,0,0,0.4); opacity:0; visibility:hidden; transition:opacity 0.2s,visibility 0.2s; }
 .ctrl-backdrop.open { opacity:1; visibility:visible; }
-/* Freccina 'scorri in fondo' (bottom-sheet mobile): centrata otticamente sul
-   tasto Chiudi della bottombar, cioè a destra. Il centro del tasto Chiudi sta a
-   (padding destro bottombar 1.2rem + meta tasto 16px) dal bordo destro; la
-   freccina vi si centra sottraendo la propria meta larghezza (1.15rem). Il +3px
-   è una correzione OTTICA misurata sullo screenshot dell'utente (la freccina
-   risultava ~3px troppo a destra): allinea i centri sul reso reale. */
-.ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem + 3px); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); transform:translateY(0.8rem); z-index:211; width:2.3rem; height:2.3rem; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(16,24,44,0.92); border:1px solid rgba(154,192,216,0.5); color:var(--gold-bright); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.22); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.34s ease, visibility 0.34s ease, transform 0.34s ease; }
-.ctrl-scroll-hint.show { opacity:0.6; visibility:visible; pointer-events:auto; transform:translateY(0); }
-.ctrl-scroll-hint svg { width:1.2rem; height:1.2rem; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-html[data-theme="light"] .ctrl-scroll-hint { background:rgba(244,246,250,0.96); border-color:rgba(60,95,140,0.45); color:#1c344f; }
+/* Hint 'scorri in fondo' (bottom-sheet mobile): animazione 'dito che scorre'.
+   Un polpastrello semitrasparente parte ESATTAMENTE dal centro del tasto Chiudi,
+   tocca e scorre in su lasciando una scia che sfuma (fade lungo, finisce mentre
+   il dito è ancora visibile); alla fine il dito si dissolve sul posto (solo
+   fade, niente ulteriore spostamento). Non tappabile (pointer-events:none),
+   nessun chevron. Va in scena UNA volta sola: alla prima apertura del Pannello
+   dopo il caricamento pagina (vedi toggleControlPanel). Il +3px sul right è una
+   correzione OTTICA (misurata: risultava ~3px troppo a destra) per centrarlo sul
+   tasto Chiudi al reso reale. */
+.ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem + 3px); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); z-index:211; width:2.3rem; height:2.3rem; pointer-events:none; }
+.ctrl-scroll-hint .csh-finger { position:absolute; inset:0; border-radius:50%; opacity:0; background:radial-gradient(circle at 50% 42%, rgba(240,211,144,0.95), rgba(240,211,144,0.35) 60%, rgba(240,211,144,0) 72%); border:1px solid rgba(240,211,144,0.55); box-shadow:0 0 14px rgba(240,211,144,0.45); }
+.ctrl-scroll-hint .csh-finger::after { content:''; position:absolute; left:50%; top:62%; transform:translateX(-50%); width:42%; height:52px; opacity:0; border-radius:0 0 50% 50%/0 0 100% 100%; background:linear-gradient(to bottom, rgba(240,211,144,0.5), rgba(240,211,144,0)); filter:blur(1px); }
+.ctrl-scroll-hint.play .csh-finger { animation:csh-swipe 3.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+.ctrl-scroll-hint.play .csh-finger::after { animation:csh-trail 3.5s linear forwards; }
+@keyframes csh-swipe { 0%{transform:translateY(10px);opacity:0} 6%{transform:translateY(0);opacity:0.92} 50%{transform:translateY(-72px);opacity:0.92} 62%{transform:translateY(-72px);opacity:0} 100%{transform:translateY(-72px);opacity:0} }
+@keyframes csh-trail { 0%{opacity:0} 6%{opacity:1} 40%{opacity:0} 100%{opacity:0} }
+html[data-theme="light"] .ctrl-scroll-hint .csh-finger { background:radial-gradient(circle at 50% 42%, rgba(40,68,140,0.9), rgba(40,68,140,0.3) 60%, rgba(40,68,140,0) 72%); border-color:rgba(40,68,140,0.5); box-shadow:0 0 14px rgba(40,68,140,0.3); }
+html[data-theme="light"] .ctrl-scroll-hint .csh-finger::after { background:linear-gradient(to bottom, rgba(40,68,140,0.45), rgba(40,68,140,0)); }
+@media (prefers-reduced-motion:reduce){ .ctrl-scroll-hint.play .csh-finger, .ctrl-scroll-hint.play .csh-finger::after { animation:none; } }
 
 @media (max-width:768px) {
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura:
@@ -1155,7 +1164,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.9.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.10.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1941,26 +1950,27 @@ function showActionChoiceModal() {
   viewMain();
 }
 
-var scrollHintTimer;
+// L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
+// pagina: flag in memoria (si azzera solo ricaricando), niente localStorage.
+var scrollHintPlayed = false;
 function toggleControlPanel() {
   var panel = document.getElementById('ctrl-panel'), bd = document.getElementById('ctrl-backdrop');
   var open = panel.classList.toggle('open');
   bd.classList.toggle('open', open);
   // Inibisce lo scroll della pagina sottostante mentre il Pannello è aperto.
   document.body.style.overflow = open ? 'hidden' : '';
+  // Solo mobile: alla PRIMA apertura del Pannello dopo il caricamento pagina, e
+  // solo se c'è da scorrere, parte una volta l'animazione 'dito che scorre' (poi
+  // mai più, finché non si ricarica). Ritardo breve per partire a slide-up quasi
+  // concluso.
   var hint = document.getElementById('ctrl-scroll-hint');
-  clearTimeout(scrollHintTimer);
-  if (hint) hint.classList.remove('show');
-  // Solo mobile: a slide-up concluso la freccina appare al 60% di opacità e
-  // dopo 1s sfuma scivolando in giù (tappabile finché visibile = 'scorri in
-  // fondo'). Solo se c'è da scorrere.
-  if (open && hint && window.matchMedia('(max-width:768px)').matches) {
-    requestAnimationFrame(function(){
+  if (open && hint && !scrollHintPlayed && window.matchMedia('(max-width:768px)').matches) {
+    scrollHintPlayed = true;
+    setTimeout(function(){
       if (!panel.classList.contains('open')) return;
-      if (panel.scrollHeight - panel.clientHeight <= 24) return;
-      hint.classList.add('show'); // appare insieme allo slide, già lì alla fine
-      scrollHintTimer = setTimeout(function(){ hint.classList.remove('show'); }, 1000);
-    });
+      if (panel.scrollHeight - panel.clientHeight <= 24) { scrollHintPlayed = false; return; }
+      hint.classList.remove('play'); void hint.offsetWidth; hint.classList.add('play');
+    }, 250);
   }
 }
 
@@ -1987,35 +1997,13 @@ function buildControlPanel() {
   document.body.appendChild(bd);
   document.body.appendChild(panel);
   document.body.appendChild(fab);
-  // Freccina 'scorri in fondo' (solo mobile): bollino in basso a destra,
-  // allineato al tasto Chiudi; mostrato a sheet aperta e nascosto dopo ~1s;
-  // finché visibile è tappabile.
-  var scrollHint = document.createElement('button');
+  // Hint 'scorri in fondo' (solo mobile): animazione 'dito che scorre', non
+  // tappabile (puramente visiva), nessun chevron. La regia (una volta sola alla
+  // prima apertura del Pannello) è in toggleControlPanel.
+  var scrollHint = document.createElement('div');
   scrollHint.id = 'ctrl-scroll-hint'; scrollHint.className = 'ctrl-scroll-hint';
-  scrollHint.setAttribute('aria-label', currentLang === 'it' ? 'Scorri in fondo' : 'Scroll to bottom');
-  scrollHint.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
-  var scrollAnimId = null;
-  scrollHint.addEventListener('click', function(){
-    var p = document.getElementById('ctrl-panel');
-    // Scorrimento con decelerazione marcata: parte MOLTO veloce e si ferma in
-    // fondo molto gradualmente (ease-out quintico). Animazione manuale a rAF
-    // invece di behavior:'smooth' (che decelera troppo poco): la decelerazione
-    // è ciò che dà la sensazione di fluidità.
-    var start = p.scrollTop, end = p.scrollHeight - p.clientHeight, dist = end - start;
-    if (scrollAnimId) cancelAnimationFrame(scrollAnimId);
-    if (dist > 0) {
-      var dur = 850, t0 = null;
-      var ease = function(x){ return 1 - Math.pow(1 - x, 5); }; // easeOutQuint
-      var step = function(ts){
-        if (t0 === null) t0 = ts;
-        var k = Math.min(1, (ts - t0) / dur);
-        p.scrollTop = start + dist * ease(k);
-        scrollAnimId = k < 1 ? requestAnimationFrame(step) : null;
-      };
-      scrollAnimId = requestAnimationFrame(step);
-    }
-    scrollHint.classList.remove('show'); clearTimeout(scrollHintTimer);
-  });
+  scrollHint.setAttribute('aria-hidden', 'true');
+  scrollHint.innerHTML = '<span class="csh-finger"></span>';
   document.body.appendChild(scrollHint);
   // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet e'
   // gia' in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
