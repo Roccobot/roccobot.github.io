@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-04-17
+! Last updated: 2026-06-16
 
 *ads.js
 *pagead.js
@@ -314,11 +314,11 @@ duckduckgo.com,start.duckduckgo.com##[class*="tagline_tagline"]
 e-hentai.org###eventpane
 eascia.org##.spu-bg
 en.shrinke.me###cookie-pop
-enf-cmnf.com##.header_logo
-enf-cmnf.com###footer_bg
-enf-cmnf.com###post_entry > table > tbody > tr > td > div
-enf-cmnf.com###text-25 > .div_wrap_sidebar
-enf-cmnf.com###text-34 > .div_wrap_sidebar
+enf-cmnf.*##.header_logo
+enf-cmnf.*###footer_bg
+enf-cmnf.*###post_entry > table > tbody > tr > td > div
+enf-cmnf.*###text-25 > .div_wrap_sidebar
+enf-cmnf.*###text-34 > .div_wrap_sidebar
 epicload.com##.show.modal
 epicload.com##.show.modal-backdrop
 erai-raws.info,www.erai-raws.info###smart_push_smio_overlay
