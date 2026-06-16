@@ -152,12 +152,45 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
   bottone nella modale costruisce l'URL con `tg`, in mancanza con
   `nome_en`, in mancanza con `nome`.
-- **Nome identico in ITA ed ENG: compilare solo `nome_en`**, lasciando
-  `nome` vuoto. La resa fa fallback (`p.nome || p.nome_en` in italiano,
-  `p.nome_en || p.nome` in inglese), quindi lo stesso valore appare in
-  entrambe le lingue senza duplicarlo. Si riempie `nome` solo quando il
-  nome italiano differisce davvero da quello inglese (es. `Baccador` /
-  `Goldberry`, `Ombromanto` / `Shadowfax`).
+- **Nome identico in ITA ed ENG: compilare ENTRAMBI i campi** (`nome` e
+  `nome_en`) con lo stesso valore (es. `Fangorn` / `Fangorn`). Il fallback di
+  resa (`p.nome || p.nome_en` in italiano, `p.nome_en || p.nome` in inglese)
+  resta come rete di sicurezza, ma i due campi vanno comunque riempiti entrambi.
+  Valori diversi solo quando il nome italiano differisce davvero dall'inglese
+  (es. `Baccador` / `Goldberry`, `Ombromanto` / `Shadowfax`).
+  - Storico: fino a v10.4.x valeva la regola opposta (solo `nome_en`, `nome`
+    vuoto, affidandosi al fallback). Invertita su richiesta dell'utente.
+- **Salvataggio editor admin: controllo campi dimenticati.** Per ogni coppia
+  bilingue (incluso `nome`), se al salvataggio un lato è compilato (>3 caratteri)
+  e l'altro è ≤3 caratteri, parte una **modale di conferma sequenziale** (una per
+  occorrenza): titolo col nome del personaggio, testo `Specifica il contenuto di
+  [campo] in [l'altra lingua], o lascialo vuoto`, campo di testo, tasto
+  'Conferma'. I ≤3 caratteri del lato corto sono scartati (modale vuota). Testo
+  digitato → inserito tale e quale; **vuoto** → sul `nome` copia identica dalla
+  controparte, su tutto il resto resta invariato (vuoto). Non retroattivo (vale
+  solo per i salvataggi futuri). La **traduzione automatica IT↔EN** al salvataggio
+  è stata rimossa; il tasto manuale '⇄ Traduci' è dietro `FEATURES.adminTranslate`
+  (oggi `false`, riattivabile).
+
+## 📚 Nuovi personaggi e canone
+
+- **Verifica delle fonti sempre.** Per ogni personaggio nuovo o modificato,
+  verificare le fonti e **non scrivere nulla di incerto** (vale per testi,
+  citazioni, genealogie, tipi e anche per icone/badge). Le citazioni devono
+  essere verbatim dalle edizioni ammesse (`rules/JRRT.md`); se un dato non è
+  attestato, ometterlo o segnalarlo, mai inventarlo. **Alla peggio, chiedere.**
+- **Posizioni in classifica.** Claude può decidere autonomamente dove collocare
+  i nuovi personaggi; a fine lavoro **riferire sempre le loro posizioni** in
+  classifica, calcolate **con tutte le categorie attive**.
+- **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
+  (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
+  ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
+  Uomo-Salice, etichettato 'Spirito della foresta', colore degli Ent) restano
+  in `divini`.
+- **Test di accessibilità con TUTTE le categorie attive.** L'audit `axe-core`
+  va eseguito dopo aver attivato tutte le categorie (`divini` e `animali` sono
+  spente di default): altrimenti i badge di quelle categorie non vengono testati
+  (storico: il fix contrasto v10.4.2 mancò aquila/balrog/ent proprio per questo).
 
 ## 🚩 Feature flag (elementi disattivati, ma non rimossi)
 
@@ -182,6 +215,10 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
   file restano in cartella apposta: per alternare basta cambiare il valore,
   niente altro. `ICON_SVG.onering` costruisce il `src` dal flag.
+- **`adminTranslate`** (spento): traduzione automatica IT↔EN nell'editor admin
+  (tasto manuale '⇄ Traduci' per coppia bilingue). Spenta su richiesta
+  dell'utente in favore della modale di conferma dei campi dimenticati (vedi
+  'Struttura dati'). Riattivabile mettendo il flag a `true`.
 
 ## 🏅 Criteri editoriali dei badge
 
