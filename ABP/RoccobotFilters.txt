@@ -315,6 +315,7 @@ e-hentai.org###eventpane
 eascia.org##.spu-bg
 en.shrinke.me###cookie-pop
 enf-cmnf.*##.header_logo
+enf-cmnf.*##.courteous-ad-block-detector-notice
 enf-cmnf.*###footer_bg
 enf-cmnf.*###post_entry > table > tbody > tr > td > div
 enf-cmnf.*###text-25 > .div_wrap_sidebar
