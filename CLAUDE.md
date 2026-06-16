@@ -69,6 +69,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 - **Branch principale: `master`.** Si lavora e si pusha direttamente lì,
   come da regola universale.
+- **Go-live sempre (default), senza chiedere.** Istruzione durevole dell'utente
+  ('vai sempre live'): dopo ogni task con i test verdi, portare subito le
+  modifiche in produzione su `master` (se la sessione è vincolata a un branch
+  `claude/*`, aprire la PR e **mergiarla immediatamente**, squash). Non chiedere
+  conferma per il go-live: è già autorizzato. Vale come i comandi di via libera,
+  applicato di default.
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
