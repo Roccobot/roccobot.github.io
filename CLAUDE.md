@@ -23,6 +23,12 @@
   In alternativa, finché il repo è pubblico, i raw GitHub:
   - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
   - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/JRRT.md>
+- **Leggi sempre in grezzo, mai con un fetch che riassume**: strumenti tipo
+  `WebFetch` sintetizzano i file lunghi e restituiscono un riassunto al posto
+  del testo reale. Usa `curl` con UA da browser (o l'aggancio del repo +
+  lettura diretta), poi verifica che ci siano l'intestazione e la riga
+  `> **Versione**:`. Regola completa e motivazione nella sezione Worker
+  `rules-proxy` di `Roccobot.md`.
 - Se la sessione non ha accesso diretto a `Roccobot/tools`: tentare
   l'aggancio con lo strumento `add_repo`, altrimenti leggere dagli URL
   qui sopra. Per la **scrittura** senza accesso diretto c'è il Worker
