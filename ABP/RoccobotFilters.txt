@@ -416,6 +416,9 @@ pornolab.net###logo
 pornolab.net###sidebar1
 pr0gramm.com##.gpt.mobile-sticky-header
 pr0gramm.com###footer-links
+qwant.com###root > div:first-child > div._1xQVj.zY7ez > div._3kDcn._1xQVj:first-child > main.znfcF:last-child > div.ZZ32M._1xQVj:last-child > div._1xQVj.zY7ez.xsF9p._9NAb0.iVQuc
+qwant.com###root > div:first-child > div._1xQVj.zY7ez > div._3kDcn._1xQVj:first-child > main.znfcF:last-child > div > main > div.yzeNN:first-child > div.JIy08._1xQVj.zY7ez > div.A0rNc._1xQVj.Ag3wj.G-2qb.xsF9p.iVQuc > div._1xQVj.uorL9._5eIRO > a.DbWPH._80pp5._3SaIj._1xQVj.uorL9.G-2qb
+qwant.com##.-L64N
 repubblica.it,www.repubblica.it##.iubenda-cs-container
 repubblica.it,www.repubblica.it##.iubenda-cs-visible.iubenda-cs-black
 rutracker.org##.w100.tCenter > div

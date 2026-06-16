@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-06-15
+! Last updated: 2026-06-16
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -36,6 +36,7 @@
 @@||cofidis.it^$document,important
 @@||contactretail.apple.com^$important
 @@||contacts.google.com^$important
+@@||contacts.google.com^$document,important
 @@||copecart.com^$important
 @@||copecart.com^$document,subdocument,important
 @@||cupweb.it^$important
@@ -139,6 +140,8 @@
 @@||pec.it^$important
 @@||pec.it^$document,important
 @@||perchance.org^$important
+@@||photos.google.com^$important
+@@||photos.google.com^$document,important
 @@||photosi.com^$important
 @@||photosi.com^$document,subdocument,important
 @@||poste.it^$important
