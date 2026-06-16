@@ -344,6 +344,14 @@ h1 {
 #ctrl-fab { position:fixed; left:2rem; bottom:2rem; z-index:160; }
 #ctrl-fab.fab-btn { background:rgba(210,178,92,0.96); border:none; color:#3a2808; box-shadow:0 3px 14px rgba(0,0,0,0.45); }
 #ctrl-fab.fab-btn:hover { background:rgba(224,194,108,1); border:none; }
+/* Finezze FAB. Tap (apertura): piccolo rimbalzo sull'asse Z (si schiaccia 'sotto
+   il dito' e rimbalza). Chiusura del Pannello: il FAB cresce dalle dimensioni
+   ridotte a quelle normali, in sincrono col Pannello. Regia: toggleControlPanel. */
+#ctrl-fab.fab-tap { animation:fab-tap 0.42s cubic-bezier(0.34,1.56,0.64,1); }
+#ctrl-fab.fab-grow { animation:fab-grow 0.5s cubic-bezier(0.16,1,0.3,1); }
+@keyframes fab-tap { 0% { transform:scale(1); } 32% { transform:scale(0.85); } 100% { transform:scale(1); } }
+@keyframes fab-grow { from { transform:scale(0.8); } to { transform:scale(1); } }
+@media (prefers-reduced-motion:reduce){ #ctrl-fab.fab-tap, #ctrl-fab.fab-grow { animation:none; } }
 /* Categorie con bottone solo */
 .ctrl-cat-row { display:flex; align-items:center; }
 .ctrl-cat-row .ctrl-row { flex:1; min-width:0; }
@@ -531,19 +539,33 @@ h1 {
 html[data-theme="light"] .ctrl-scroll-hint .csh-finger { background:radial-gradient(circle at 50% 42%, rgba(40,68,140,0.9), rgba(40,68,140,0.3) 60%, rgba(40,68,140,0) 72%); border-color:rgba(40,68,140,0.5); box-shadow:0 0 14px rgba(40,68,140,0.3); }
 html[data-theme="light"] .ctrl-scroll-hint .csh-finger::after { background:linear-gradient(to bottom, rgba(40,68,140,0.45), rgba(40,68,140,0)); }
 @media (prefers-reduced-motion:reduce){ .ctrl-scroll-hint.play .csh-finger, .ctrl-scroll-hint.play .csh-finger::after { animation:none; } }
+/* Chiusura morbida del Pannello (bottom-sheet mobile, classe .closing): parte
+   veloce e DECELERA subito fino allo stop, con un breve fade solo alla fine
+   (l'apertura resta la transition nel media query). Vedi toggleControlPanel. */
+@keyframes ctrl-sheet-close { from { transform:translateY(0); } to { transform:translateY(100%); } }
+@keyframes ctrl-sheet-fade { from { opacity:1; } to { opacity:0; } }
 
 @media (max-width:768px) {
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura:
      SLIDE-UP intero dal bordo basso (transform translateY(100%) -> 0) con
      decelerazione molto graduale (ease-out, ~350ms) e un velo di fade (160ms),
-     tutto in CSS. Niente JS: anima bene anche al primo tocco del FAB. Lo slide
-     vale anche per la chiusura (e per il trascinamento, gestito inline nel drag
-     handler). La freccina 'scorri in fondo' è gestita in toggleControlPanel. */
+     tutto in CSS. Chiusura via classe .closing (animazione, vedi sopra): parte
+     veloce e decelera subito, con breve fade finale. Il trascinamento per
+     chiudere è gestito inline nel drag handler. La freccia 'scorri in fondo' è
+     gestita in toggleControlPanel. */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
     border-radius:18px 18px 0 0; transform:translateY(100%);
     transition:transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.16s ease, visibility 0.35s;
     padding-top:0; padding-bottom:0;
+  }
+  /* Chiusura: comanda l'animazione (niente transition); resta visibile finché
+     non finisce, poi .closing viene rimossa (animationend). Il fade parte solo
+     in coda (delay 0.32s = 0.5s - 0.18s): breve dissolvenza finale. */
+  .ctrl-panel.closing {
+    visibility:visible; transition:none;
+    animation:ctrl-sheet-close 0.5s cubic-bezier(0.16,1,0.3,1) forwards,
+              ctrl-sheet-fade 0.18s ease 0.32s forwards;
   }
   /* Testata sticky: solo la barretta di trascinamento (punto di presa per
      chiudere la sheet). Sfondo opaco e margini negativi per coprire la
@@ -1164,7 +1186,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.10.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.11.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1953,12 +1975,19 @@ function showActionChoiceModal() {
 // L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
 // pagina: flag in memoria (si azzera solo ricaricando), niente localStorage.
 var scrollHintPlayed = false;
-function toggleControlPanel() {
-  var panel = document.getElementById('ctrl-panel'), bd = document.getElementById('ctrl-backdrop');
+function toggleControlPanel(skipSheetAnim) {
+  var panel = document.getElementById('ctrl-panel'), bd = document.getElementById('ctrl-backdrop'),
+      fab = document.getElementById('ctrl-fab');
   var open = panel.classList.toggle('open');
   bd.classList.toggle('open', open);
   // Inibisce lo scroll della pagina sottostante mentre il Pannello è aperto.
   document.body.style.overflow = open ? 'hidden' : '';
+  // FAB: rimbalzo Z all'apertura, crescita alla chiusura (mutuamente esclusivi).
+  if (fab) { fab.classList.remove('fab-tap', 'fab-grow'); void fab.offsetWidth; fab.classList.add(open ? 'fab-tap' : 'fab-grow'); }
+  // Chiusura morbida del Pannello (solo mobile, animazione .closing). Saltata se
+  // skipSheetAnim===true (il drag handler anima da sé); l'apertura usa la transition.
+  if (open) { panel.classList.remove('closing'); }
+  else if (skipSheetAnim !== true && window.matchMedia('(max-width:768px)').matches) { panel.classList.add('closing'); }
   // Solo mobile: alla PRIMA apertura del Pannello dopo il caricamento pagina, e
   // solo se c'è da scorrere, parte una volta l'animazione 'dito che scorre' (poi
   // mai più, finché non si ricarica). Ritardo breve per partire a slide-up quasi
@@ -1994,6 +2023,9 @@ function buildControlPanel() {
   fab.setAttribute('aria-label', 'Filtri e legenda');
   fab.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 605.87"><path fill="currentColor" d="M448.76 422.32c-29.8-11.97-57.74-37.2-84.81-61.64-15.46-13.96-31.13-28.1-47.64-40.17 39.83-22.19 62.96-60.22 62.96-108.78 0-24.9-7.25-47.1-21.53-66.06h43.09c3.29 0 6.11-1.9 6.69-4.5l9.45-42.54c.75-3.34-2.46-6.41-6.69-6.41h-151.3V5.23c0-3.3-3.42-5.78-7.08-5.13l-53.98 9.54c-2.77.49-4.76 2.63-4.76 5.13v77.45H51.17c-3.29 0-6.11 1.9-6.69 4.5l-9.45 42.54c-.75 3.34 2.46 6.41 6.69 6.41h52.54c-14.28 18.96-21.53 41.16-21.53 66.06 0 48.56 23.12 86.59 62.96 108.78-16.51 12.07-32.18 26.21-47.64 40.17-27.07 24.44-55.02 49.67-84.81 61.64-2.68 1.08-3.93 3.83-2.85 6.24l18.73 41.64c1.15 2.56 4.48 3.79 7.33 2.69 41.45-16 75.57-46.8 105.8-74.1 21.2-19.14 41.62-37.57 60.9-47.94v1.13c-.05.42-.07.85-.07 1.29 0 10.58.05 20.46.07 29.71v16.51c-.22 53.37-19.53 105.39-55.38 148.36-1.45 1.73-2.83 3.3-4.03 4.61-1.83 1.99-2.28 4.71-1.15 7.08 3.7 7.78 13.09 28.66 19.63 41.12 2.98 5.68 7.79 7.29 13.07 1.87 19.51-18.77 43.18-45.97 62.13-82.31 26.48-50.81 31.04-85.68 31.57-123.18v-.19c.09-6.66.06-13.4 0-20.33v-25.6c19.24 10.38 39.62 28.78 60.76 47.87 30.24 27.3 64.36 58.1 105.8 74.1 2.86 1.1 6.18-.13 7.33-2.69l18.73-41.64c1.09-2.41-.17-5.16-2.85-6.24M193.15 283.79c-38.08-9.1-58.62-33.88-58.62-72.03 0-26.83 13.89-46.26 42.46-59.42 5.36-2.47 10.83-4.52 16.16-6.22zm65.83-.04V146.16c5.28 1.7 10.7 3.73 16.02 6.18 28.57 13.16 42.46 32.59 42.46 59.42 0 38.11-20.49 62.87-58.48 72Z"/></svg>';
   fab.addEventListener('click', toggleControlPanel);
+  // Pulizia delle classi di animazione a fine corsa (così sono ri-attivabili).
+  panel.addEventListener('animationend', function(e){ if (e.target === panel && e.animationName === 'ctrl-sheet-close') panel.classList.remove('closing'); });
+  fab.addEventListener('animationend', function(){ fab.classList.remove('fab-tap', 'fab-grow'); });
   document.body.appendChild(bd);
   document.body.appendChild(panel);
   document.body.appendChild(fab);
@@ -2036,7 +2068,7 @@ function buildControlPanel() {
         panel.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
         panel.style.transform = 'translateY(100%)';
         panel.style.opacity = '0';
-        setTimeout(function(){ toggleControlPanel(); panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = ''; }, 210);
+        setTimeout(function(){ toggleControlPanel(true); panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = ''; }, 210);
       } else {
         panel.style.transition = 'transform 0.2s ease';
         panel.style.transform = 'translateY(0)';
