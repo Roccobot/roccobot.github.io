@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.0.0
-// @description  Ripulisce Qwant (doodle/veste d'evento → logo semplice, via la sidebar, il footer e le card promozionali) e, nella ricerca immagini, apre il clic direttamente sul file originale.
+// @version      2.1.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
 // @match        https://qwant.com/*
@@ -19,10 +19,11 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   // — Pulizia dell'interfaccia —
   const NASCONDI_SIDEBAR   = true;  // barra a sinistra (Search / Junior / Shadow Drive) + toggle menu
+  const NASCONDI_OPZIONI   = true;  // SERP: tasto "Filtri"/opzioni e relativi menu (regione, periodo)
   const NASCONDI_FOOTER    = true;  // piè di pagina
-  const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer") e banner "scarica l'app"
-  const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant semplice
-  const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = wordmark integrato nello script
+  const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer"), banner app, promo estensione
+  const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant ufficiale (home + SERP)
+  const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = logo ufficiale integrato nello script
   // — Immagini —
   // true  = il clic su una miniatura apre l'originale in una NUOVA scheda (consigliato);
   // false = lo apre nella scheda corrente.
@@ -45,7 +46,12 @@
     );
     if (NASCONDI_PROMO) regole.push(
       '[data-testid="heroTiles"]{display:none!important}',
-      '[data-testid^="downloadApp"]{display:none!important}'
+      '[data-testid^="downloadApp"]{display:none!important}',
+      'a[href*="chrome.google.com/webstore"]{display:none!important}'
+    );
+    if (NASCONDI_OPZIONI) regole.push(
+      '[data-testid="toggleFiltersButton"]{display:none!important}',
+      '[data-testid="localeDropdown"],[data-testid="freshnessDropdown"]{display:none!important}'
     );
     if (regole.length) {
       const style = document.createElement('style');
@@ -53,26 +59,39 @@
       (document.head || document.documentElement).appendChild(style);
     }
 
-    // ── Logo semplice al posto del doodle ──
+    // ── Logo ufficiale al posto del doodle ──
     // Il doodle è l'immagine "hero" (data-testid="logoHero"); la sostituiamo con
-    // un wordmark "Qwant" pulito (o con LOGO_PERSONALIZZATO, se impostato).
-    const svgLogo =
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64">' +
-      '<text x="8" y="49" font-family="Georgia, serif" font-size="54" font-weight="700" fill="#1b1b1f">Qwant</text>' +
-      '<path d="M190 6l-1.4 5.3-5.2 1.34v.52l5.2 1.34 1.4 5.3h.5l1.4-5.3 5.3-1.36v-.52l-5.3-1.34L190.5 6z" fill="#1b1b1f"/>' +
-      '</svg>';
+    // il logo Qwant ufficiale (wordmark 2024), incorporato qui come SVG, oppure
+    // con LOGO_PERSONALIZZATO se impostato.
+    const svgLogo = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="120" height="34" viewBox="0 0 120 34" fill="none"><g clip-path="url(#qclip)"><path d="M112.956 0.561646L111.625 5.72188L106.52 7.03872V7.56464L111.625 8.88148L112.956 14.0418H113.453L114.784 8.88148L120 7.53599V7.06737L114.784 5.72188L113.453 0.561646H112.956Z" fill="#282B2F"></path><path d="M96.6422 26.4213C97.6366 27.4411 98.9377 27.9509 100.546 27.9509C101.921 27.9509 103.115 27.6003 104.131 26.8993C105.169 26.1983 105.876 25.2529 106.258 24.0633L105.306 23.4578C104.48 24.435 103.476 24.9237 102.291 24.9237C100.535 24.9237 99.657 23.7021 99.657 21.259V14.4412L104.798 15.3654L105.242 15.0149V11.3502H104.671L99.657 12.3382V7.30168H98.7367L92.3899 14.2485V14.9176H95.1508V22.3744C95.1508 24.0527 95.6479 25.4016 96.6422 26.4213Z" fill="#282B2F"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M55.4629 26.7721C56.3515 27.558 57.4833 27.951 58.8584 27.951C61.1644 27.951 63.0261 27.1225 64.4437 25.4654H64.7291L65.8399 27.9192H66.5699L70.8223 25.8797V25.2424L68.8548 23.4898V17.0848C68.8548 15.2153 68.2307 13.7918 66.9823 12.8148C65.7342 11.8375 63.9147 11.3489 61.5241 11.3489C60.2337 11.3489 58.9218 11.4975 57.589 11.795C56.2774 12.0923 55.2301 12.4642 54.4474 12.9103L54.2058 13.4113L55.9862 17.1484H56.7478L59.2788 13.7325C59.6808 13.605 60.4875 13.4202 60.8895 13.4202C61.9896 13.4202 62.8357 13.7706 63.4282 14.4718C64.0416 15.1516 64.3485 16.1393 64.3485 17.4354V17.6584L60.9846 18.2319C56.4149 19.0604 54.13 20.8769 54.13 23.6809C54.13 24.9344 54.5744 25.9647 55.4629 26.7721ZM59.4296 24.4777C59.0277 24.074 58.8266 23.511 58.8266 22.7888C58.8266 22.024 59.1018 21.4078 59.6518 20.9406C60.223 20.4732 61.1644 20.0801 62.4762 19.7616L64.3485 19.2835V24.0952C63.4599 24.7326 62.402 25.0513 61.175 25.0513C60.4345 25.0513 59.8528 24.86 59.4296 24.4777Z" fill="#282B2F"></path><path d="M26.4397 14.7605L32.8798 27.5049H34.4192L38.867 18.03L43.0533 27.5049H44.5348L51.017 14.7605L52.9899 12.3629V11.8267H45.9213V12.3629L47.5498 14.5396L45.6276 22.9426L40.5752 11.8267H38.0008L35.3302 22.8179L31.0094 14.6659L32.5874 12.3629V11.8267H24.3662V12.3629L26.4397 14.7605Z" fill="#282B2F"></path><path d="M72.1223 27.5049V26.9951L74.185 24.9876V16.3838L71.932 14.2487V13.6114L77.7393 11.6038H78.6595L78.4374 14.3761H78.5961C80.5213 12.358 82.5312 11.3489 84.6256 11.3489C86.2547 11.3489 87.5135 11.8375 88.402 12.8148C89.3117 13.7918 89.7666 15.1728 89.7666 16.9573V24.9876L91.8292 26.9951V27.5049H83.3245V26.9951L85.2603 24.9876V18.0727C85.2603 16.8193 85.017 15.9163 84.5304 15.364C84.065 14.8116 83.3033 14.5355 82.2456 14.5355C80.9127 14.5355 79.7279 14.9709 78.6913 15.842V24.9876L80.6271 26.9951V27.5049H72.1223Z" fill="#282B2F"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M11.6131 5.16858C18.0268 5.16858 23.2261 9.03933 23.2261 16.5572C23.2261 23.672 18.6324 27.4739 12.7542 27.9047C15.5503 29.6131 19.7719 29.6151 22.3981 27.3851L23.2179 27.8298L22.7375 32.3253L22.3981 32.7525C17.7364 34.1242 13.1203 32.6926 10.1211 27.875C4.412 27.3223 0 23.5406 0 16.5572C0 9.03727 5.19939 5.16858 11.6131 5.16858ZM11.6136 25.9235C15.7342 25.9235 17.7138 21.7301 17.7138 16.5572C17.7138 11.3845 15.9985 7.19109 11.6136 7.19109C7.35213 7.19109 5.51337 11.3845 5.51337 16.5572C5.51337 21.7301 7.28011 25.9235 11.6136 25.9235Z" fill="#282B2F"></path></g><defs><clipPath id="qclip"><rect width="120" height="32.8767" fill="white" transform="translate(0 0.561646)"></rect></clipPath></defs></svg>';
     const LOGO = LOGO_PERSONALIZZATO || ('data:image/svg+xml,' + encodeURIComponent(svgLogo));
+
+    function rimpiazzaLogo(el) {
+      if (!el || el.dataset.roccobot) return;
+      let img;
+      if (el.tagName === 'IMG') {            // home: <img data-testid="logoHero">
+        img = el;
+        img.removeAttribute('srcset');
+        img.src = LOGO;
+        img.style.setProperty('object-fit', 'contain', 'important');
+      } else {                               // SERP: <svg data-testid="qwantSoccerLogoTopbar">
+        img = document.createElement('img');
+        img.src = LOGO;
+        img.alt = 'Qwant';
+        const h = el.getBoundingClientRect().height || el.clientHeight || 0;
+        if (h) img.style.height = Math.round(h) + 'px';
+        img.style.width = 'auto';
+        el.replaceWith(img);
+      }
+      img.dataset.roccobot = '1';
+      const a = img.closest('a');
+      if (a) a.setAttribute('href', '/'); // il logo torna alla home, non alla ricerca dell'evento
+    }
 
     function sistemaDoodle() {
       if (!SOSTITUISCI_DOODLE) return;
-      const img = document.querySelector('img[data-testid="logoHero"]');
-      if (!img || img.dataset.roccobot) return;
-      img.dataset.roccobot = '1';
-      img.removeAttribute('srcset');
-      img.src = LOGO;
-      img.style.setProperty('object-fit', 'contain', 'important');
-      const a = img.closest('a');
-      if (a) a.setAttribute('href', '/'); // il logo torna alla home, non alla ricerca dell'evento
+      rimpiazzaLogo(document.querySelector('img[data-testid="logoHero"]:not([data-roccobot])'));
+      rimpiazzaLogo(document.querySelector('[data-testid="qwantSoccerLogoTopbar"]:not([data-roccobot])'));
     }
 
     function nascondiPromo() {

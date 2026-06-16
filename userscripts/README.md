@@ -10,11 +10,12 @@ GitHub Pages, si installano (e si aggiornano) direttamente dal loro URL.
 
 Uno script unico per Qwant, con due funzioni:
 
-1. **Qwant nudo e crudo.** Toglie la "veste" alla pagina: doodle/grafiche
-   d'evento sostituiti dal logo Qwant semplice, via la **barra a sinistra**
-   (Search / Junior / Shadow Drive), il **footer** e le **card promozionali**
-   (tile, "Follow Soccer", banner "scarica l'app"). Restano logo e barra di
-   ricerca.
+1. **Qwant nudo e crudo** (home e pagine dei risultati). Toglie la "veste"
+   alla pagina: doodle/grafiche d'evento sostituiti dal **logo Qwant
+   ufficiale**, via la **barra a sinistra** (Search / Junior / Shadow Drive),
+   il **tasto opzioni/filtri** della SERP, il **footer** e le **card
+   promozionali** (tile, "Follow Soccer", banner "scarica l'app", promo
+   estensione). Restano logo e barra di ricerca (più i risultati, nella SERP).
 2. **Immagini dirette.** Nella ricerca immagini (`qwant.com` → scheda
    *Immagini*), il clic su una miniatura apre **direttamente il file
    originale** in una nuova scheda, invece del pannello di anteprima.
@@ -40,10 +41,11 @@ In cima allo script ci sono alcuni interruttori:
 
 ```js
 const NASCONDI_SIDEBAR    = true;  // barra a sinistra + toggle menu
+const NASCONDI_OPZIONI    = true;  // SERP: tasto "Filtri"/opzioni e relativi menu
 const NASCONDI_FOOTER     = true;  // piè di pagina
-const NASCONDI_PROMO      = true;  // tile, card promozionali, banner app
-const SOSTITUISCI_DOODLE  = true;  // doodle/veste evento → logo semplice
-const LOGO_PERSONALIZZATO = '';    // URL di un logo a scelta; vuoto = wordmark integrato
+const NASCONDI_PROMO      = true;  // tile, card promozionali, banner app, promo estensione
+const SOSTITUISCI_DOODLE  = true;  // doodle/veste evento → logo Qwant ufficiale
+const LOGO_PERSONALIZZATO = '';    // URL di un logo a scelta; vuoto = logo ufficiale integrato
 const APRI_IN_NUOVA_SCHEDA = true; // immagini: nuova scheda (true) o corrente (false)
 ```
 
@@ -55,8 +57,9 @@ modificare i valori → salvare (Ctrl+S).
 - **Pulizia**: lo script si aggancia ad attributi *stabili* (`data-testid`,
   `aria-label`, `title`), non alle classi CSS di Qwant, che sono auto-generate
   e cambiano a ogni rilascio. Nasconde via CSS iniettato subito (niente
-  sfarfallio) e sostituisce il doodle (`img[data-testid="logoHero"]`) con un
-  wordmark "Qwant" integrato.
+  sfarfallio) e sostituisce il logo (`img[data-testid="logoHero"]` in home,
+  `svg[data-testid="qwantSoccerLogoTopbar"]` in SERP) con il wordmark Qwant
+  ufficiale incorporato.
 - **Immagini**: ascolta le risposte dell'API interna
   (`api.qwant.com/.../search/images`), che per ogni immagine indica miniatura e
   file originale; al clic apre l'originale e riscrive i link della griglia (così
@@ -68,5 +71,6 @@ modificare i valori → salvare (Ctrl+S).
   `aria-label`) o i campi della sua API (`media` / `thumbnail`), la parte
   interessata smette di agire e il sito torna al comportamento di serie: non si
   rompe nulla, ma lo script va aggiornato.
-- Il logo semplice è un wordmark ricostruito; per il logo Qwant esatto, impostare
-  `LOGO_PERSONALIZZATO` con l'URL dell'immagine desiderata.
+- Il logo che sostituisce il doodle è il wordmark **ufficiale** Qwant,
+  incorporato nello script come SVG; con `LOGO_PERSONALIZZATO` si può comunque
+  usare un'altra immagine (URL).
