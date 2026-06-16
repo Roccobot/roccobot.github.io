@@ -253,10 +253,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril, Finrod, Angrod, Aegnor,
   Galadriel. NON lo attraversarono i Fëanoriani (giunsero con le navi) né
   Finarfin (tornò indietro a Valinor). **Elenwë** (sposa di Turgon, madre di
-  Idril) porta il badge a **opacità 50%** (valore `'presunto'`, stesso
-  trattamento visivo dei casi Aman dedotti): unica Elfa con nome noto a
-  perire nella traversata, non la portò a termine. Fonte: *HoME XII: I
-  popoli della Terra di Mezzo* (che ne attesta nome e stirpe Vanya).
+  Idril) porta il badge a **opacità 50%** (valore `'presunto'`, che dà il
+  50%), ma con **etichetta dedicata** nel tooltip — 'Morì nella traversata
+  dell'Helcaraxë' (via `ICON_LABEL_OVERRIDE`): è l'unica Elfa con nome noto a
+  perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
+  traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo*
+  (HoME XII, J.R.R. Tolkien, 1996), che ne attesta nome e stirpe Vanya.
 
 ## 🧹 Asset del progetto
 
