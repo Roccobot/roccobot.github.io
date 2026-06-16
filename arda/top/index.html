@@ -1428,7 +1428,8 @@ function categoria(p) {
   if (/n\u00famen|numen|d\u00fanad|dunad|d\u00faned|duned|hador|b\u00ebor|casa di beor/.test(t)) return 'edain';
   if (/uomo|man |donna|woman|rohir|gondor|beorn|dale|\u00e9oth\u00e9od|eoth\u00e9od/.test(t)) return 'uomini';
   if (/cavallo|pony|corvo|mearas|raven|horse/.test(t)) return 'animali';
-  return 'divini'; // forze ancestrali residue (Ent, Aquile)
+  return 'divini'; // forze ancestrali residue (es. Ent). NB: le Grandi Aquile
+                   // sono dirottate in 'animali' dall'override per nome in cima.
 }
 var filterState = {};
 (function(){
