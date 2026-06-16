@@ -415,20 +415,19 @@ h1 {
    solo nella bottom-sheet (vedi @media max-width:768px). */
 .ctrl-mobile-note { display:none; }
 .ctrl-bottombar { display:none; }
-/* Tasto chiudi del pannello (solo mobile): tondo, stile coerente con la
-   modale. Vive nell'header sticky così resta visibile mentre la legenda
-   scorre. */
+/* Tasto chiudi del pannello (solo mobile): tondo, ma stessa palette dei tasti
+   tema/lingua della barra (sfondo, bordo e colore uniformi, in entrambi i
+   temi: niente più accento oro). Vive nell'header sticky così resta visibile
+   mentre la legenda scorre. */
 .ctrl-sheet-close {
   width:32px; height:32px; flex-shrink:0; padding:0;
-  background:rgba(104,144,168,0.1); border:1px solid var(--gold); border-radius:50%;
-  color:var(--gold);
+  background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); border-radius:50%;
+  color:var(--parchment);
   cursor:pointer; display:flex; align-items:center; justify-content:center;
   transition:background 0.25s,color 0.25s,transform 0.25s;
 }
 .ctrl-sheet-close svg { width:14px; height:14px; stroke:currentColor; stroke-width:2.2; fill:none; stroke-linecap:round; display:block; }
 .ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none; }
-html[data-theme="light"] .ctrl-sheet-close { background:rgba(200,210,230,0.4); border-color:#4a7090; color:#253d58; }
-html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl-sheet-close:focus-visible { background:#3a5878; color:#f6f6fa; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
 .ctrl-h {
@@ -513,8 +512,8 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .ctrl-ver { font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.12em; color:var(--gold-deep); opacity:0.7; cursor:pointer; padding:0.5rem 0.7rem; margin:-0.5rem -0.7rem; }
 .ctrl-backdrop { position:fixed; inset:0; z-index:205; background:rgba(0,0,0,0.4); opacity:0; visibility:hidden; transition:opacity 0.2s,visibility 0.2s; }
 .ctrl-backdrop.open { opacity:1; visibility:visible; }
-.ctrl-scroll-hint { position:fixed; left:50%; bottom:calc(4rem + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:211; width:2.3rem; height:2.3rem; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(16,24,44,0.92); border:1px solid rgba(154,192,216,0.5); color:var(--gold-bright); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.22); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.34s ease, visibility 0.34s ease; }
-.ctrl-scroll-hint.show { opacity:1; visibility:visible; pointer-events:auto; }
+.ctrl-scroll-hint { position:fixed; left:50%; bottom:calc(4rem + env(safe-area-inset-bottom,0px)); transform:translateX(-50%) translateY(0.8rem); z-index:211; width:2.3rem; height:2.3rem; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(16,24,44,0.92); border:1px solid rgba(154,192,216,0.5); color:var(--gold-bright); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.22); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.34s ease, visibility 0.34s ease, transform 0.34s ease; }
+.ctrl-scroll-hint.show { opacity:0.6; visibility:visible; pointer-events:auto; transform:translateX(-50%) translateY(0); }
 .ctrl-scroll-hint svg { width:1.2rem; height:1.2rem; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 html[data-theme="light"] .ctrl-scroll-hint { background:rgba(244,246,250,0.96); border-color:rgba(60,95,140,0.45); color:#1c344f; }
 
@@ -1147,7 +1146,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.6.4</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.7.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1426,9 +1425,13 @@ function categoria(p) {
   // L'override per nome precede il check Ainur/divino (molte hanno divino:true).
   if (/^(Nahar|Huan|Carcharoth|Shelob|Draugluin|Thorondor|Gwaihir|Landroval|Meneldor|Rochallor)$/.test(p.nome)) return 'animal';
   var t = (p.tipo || '').toLowerCase();
-  // Ainur = SOLO Valar, Valiër e Morgoth (tipo Vala / Valië / Vala decaduto)
+  // Ainur = Valar, Valiër e Morgoth (tipo Vala / Valië / Vala decaduto) E tutti
+  // i Maiar (tipo che contiene 'maia' o 'balrog': Balrog e Sauron 'Maia
+  // decaduto' inclusi). Lúthien, unica Maia in categoria diversa, resta tra gli
+  // Elfi: esclusa per nome qui, ricade poi nel check elfo/elfa più sotto.
   if (/^val(a|i[eë])/.test(t)) return 'ainur';
-  if (p.divino) return 'arcane'; // altri esseri arcani/ancestrali: Maiar, draghi, spiriti, Ungoliant...
+  if (p.nome !== 'Lúthien' && /maia|balrog/.test(t)) return 'ainur';
+  if (p.divino) return 'arcane'; // altri esseri arcani/ancestrali: draghi, spiriti, vampiri, Ungoliant, Ent...
   if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) return 'arcane'; // Spettri-capi
   if (/orco|orc|uruk/.test(t)) return 'orc';
   if (/hobbit/.test(t)) return 'hobbit';
@@ -1939,14 +1942,15 @@ function toggleControlPanel() {
   var hint = document.getElementById('ctrl-scroll-hint');
   clearTimeout(scrollHintTimer);
   if (hint) hint.classList.remove('show');
-  // Solo mobile: a slide-up concluso la freccina appare ~1s poi sfuma
-  // (tappabile finché visibile = 'scorri in fondo'). Solo se c'è da scorrere.
+  // Solo mobile: a slide-up concluso la freccina appare al 60% di opacità e
+  // dopo 1s sfuma scivolando in giù (tappabile finché visibile = 'scorri in
+  // fondo'). Solo se c'è da scorrere.
   if (open && hint && window.matchMedia('(max-width:768px)').matches) {
     requestAnimationFrame(function(){
       if (!panel.classList.contains('open')) return;
       if (panel.scrollHeight - panel.clientHeight <= 24) return;
       hint.classList.add('show'); // appare insieme allo slide, già lì alla fine
-      scrollHintTimer = setTimeout(function(){ hint.classList.remove('show'); }, 1340);
+      scrollHintTimer = setTimeout(function(){ hint.classList.remove('show'); }, 1000);
     });
   }
 }
