@@ -515,8 +515,10 @@ h1 {
 /* Freccina 'scorri in fondo' (bottom-sheet mobile): centrata otticamente sul
    tasto Chiudi della bottombar, cioè a destra. Il centro del tasto Chiudi sta a
    (padding destro bottombar 1.2rem + meta tasto 16px) dal bordo destro; la
-   freccina vi si centra sottraendo la propria meta larghezza (1.15rem). */
-.ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); transform:translateY(0.8rem); z-index:211; width:2.3rem; height:2.3rem; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(16,24,44,0.92); border:1px solid rgba(154,192,216,0.5); color:var(--gold-bright); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.22); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.34s ease, visibility 0.34s ease, transform 0.34s ease; }
+   freccina vi si centra sottraendo la propria meta larghezza (1.15rem). Il +3px
+   è una correzione OTTICA misurata sullo screenshot dell'utente (la freccina
+   risultava ~3px troppo a destra): allinea i centri sul reso reale. */
+.ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem + 3px); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); transform:translateY(0.8rem); z-index:211; width:2.3rem; height:2.3rem; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(16,24,44,0.92); border:1px solid rgba(154,192,216,0.5); color:var(--gold-bright); cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.22); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.34s ease, visibility 0.34s ease, transform 0.34s ease; }
 .ctrl-scroll-hint.show { opacity:0.6; visibility:visible; pointer-events:auto; transform:translateY(0); }
 .ctrl-scroll-hint svg { width:1.2rem; height:1.2rem; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 html[data-theme="light"] .ctrl-scroll-hint { background:rgba(244,246,250,0.96); border-color:rgba(60,95,140,0.45); color:#1c344f; }
@@ -524,14 +526,14 @@ html[data-theme="light"] .ctrl-scroll-hint { background:rgba(244,246,250,0.96); 
 @media (max-width:768px) {
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura:
      SLIDE-UP intero dal bordo basso (transform translateY(100%) -> 0) con
-     decelerazione molto graduale (ease-out, ~340ms) e un velo di fade (160ms),
+     decelerazione molto graduale (ease-out, ~350ms) e un velo di fade (160ms),
      tutto in CSS. Niente JS: anima bene anche al primo tocco del FAB. Lo slide
      vale anche per la chiusura (e per il trascinamento, gestito inline nel drag
      handler). La freccina 'scorri in fondo' è gestita in toggleControlPanel. */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
     border-radius:18px 18px 0 0; transform:translateY(100%);
-    transition:transform 0.34s cubic-bezier(0.22,1,0.36,1), opacity 0.16s ease, visibility 0.34s;
+    transition:transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.16s ease, visibility 0.35s;
     padding-top:0; padding-bottom:0;
   }
   /* Testata sticky: solo la barretta di trascinamento (punto di presa per
@@ -1153,7 +1155,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.9.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.9.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1992,9 +1994,26 @@ function buildControlPanel() {
   scrollHint.id = 'ctrl-scroll-hint'; scrollHint.className = 'ctrl-scroll-hint';
   scrollHint.setAttribute('aria-label', currentLang === 'it' ? 'Scorri in fondo' : 'Scroll to bottom');
   scrollHint.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  var scrollAnimId = null;
   scrollHint.addEventListener('click', function(){
     var p = document.getElementById('ctrl-panel');
-    p.scrollTo({ top: p.scrollHeight, behavior: 'smooth' });
+    // Scorrimento con decelerazione marcata: parte MOLTO veloce e si ferma in
+    // fondo molto gradualmente (ease-out quintico). Animazione manuale a rAF
+    // invece di behavior:'smooth' (che decelera troppo poco): la decelerazione
+    // è ciò che dà la sensazione di fluidità.
+    var start = p.scrollTop, end = p.scrollHeight - p.clientHeight, dist = end - start;
+    if (scrollAnimId) cancelAnimationFrame(scrollAnimId);
+    if (dist > 0) {
+      var dur = 850, t0 = null;
+      var ease = function(x){ return 1 - Math.pow(1 - x, 5); }; // easeOutQuint
+      var step = function(ts){
+        if (t0 === null) t0 = ts;
+        var k = Math.min(1, (ts - t0) / dur);
+        p.scrollTop = start + dist * ease(k);
+        scrollAnimId = k < 1 ? requestAnimationFrame(step) : null;
+      };
+      scrollAnimId = requestAnimationFrame(step);
+    }
     scrollHint.classList.remove('show'); clearTimeout(scrollHintTimer);
   });
   document.body.appendChild(scrollHint);
