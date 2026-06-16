@@ -1,0 +1,406 @@
+// ==UserScript==
+// @name         QwantRoccobot — Qwant essenziale + immagini dirette
+// @namespace    https://roccobot.github.io/
+// @version      2.0.0
+// @description  Ripulisce Qwant (doodle/veste d'evento → logo semplice, via la sidebar, il footer e le card promozionali) e, nella ricerca immagini, apre il clic direttamente sul file originale.
+// @author       Roccobot
+// @match        https://www.qwant.com/*
+// @match        https://qwant.com/*
+// @run-at       document-start
+// @noframes
+// @grant        none
+// @updateURL    https://roccobot.github.io/userscripts/QwantRoccobot.user.js
+// @downloadURL  https://roccobot.github.io/userscripts/QwantRoccobot.user.js
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  // ════════════════════════ IMPOSTAZIONI ════════════════════════
+  // — Pulizia dell'interfaccia —
+  const NASCONDI_SIDEBAR   = true;  // barra a sinistra (Search / Junior / Shadow Drive) + toggle menu
+  const NASCONDI_FOOTER    = true;  // piè di pagina
+  const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer") e banner "scarica l'app"
+  const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant semplice
+  const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = wordmark integrato nello script
+  // — Immagini —
+  // true  = il clic su una miniatura apre l'originale in una NUOVA scheda (consigliato);
+  // false = lo apre nella scheda corrente.
+  const APRI_IN_NUOVA_SCHEDA = true;
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  MODULO 1 — Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
+  // ═══════════════════════════════════════════════════════════════════════
+  // Tutti gli agganci sono attributi STABILI (data-testid, aria-label, title):
+  // le classi CSS di Qwant sono auto-generate e cambiano a ogni deploy.
+  (function pulizia() {
+    // ── CSS iniettato subito, così non c'è sfarfallio (run-at document-start) ──
+    const regole = [];
+    if (NASCONDI_SIDEBAR) regole.push(
+      'nav:has([data-testid="button-open-drawer"]){display:none!important}',
+      'a[title="Mostra menu"],a[title="Show menu"]{display:none!important}'
+    );
+    if (NASCONDI_FOOTER) regole.push(
+      '[aria-label="Piè di pagina"]{display:none!important}'
+    );
+    if (NASCONDI_PROMO) regole.push(
+      '[data-testid="heroTiles"]{display:none!important}',
+      '[data-testid^="downloadApp"]{display:none!important}'
+    );
+    if (regole.length) {
+      const style = document.createElement('style');
+      style.textContent = regole.join('\n');
+      (document.head || document.documentElement).appendChild(style);
+    }
+
+    // ── Logo semplice al posto del doodle ──
+    // Il doodle è l'immagine "hero" (data-testid="logoHero"); la sostituiamo con
+    // un wordmark "Qwant" pulito (o con LOGO_PERSONALIZZATO, se impostato).
+    const svgLogo =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64">' +
+      '<text x="8" y="49" font-family="Georgia, serif" font-size="54" font-weight="700" fill="#1b1b1f">Qwant</text>' +
+      '<path d="M190 6l-1.4 5.3-5.2 1.34v.52l5.2 1.34 1.4 5.3h.5l1.4-5.3 5.3-1.36v-.52l-5.3-1.34L190.5 6z" fill="#1b1b1f"/>' +
+      '</svg>';
+    const LOGO = LOGO_PERSONALIZZATO || ('data:image/svg+xml,' + encodeURIComponent(svgLogo));
+
+    function sistemaDoodle() {
+      if (!SOSTITUISCI_DOODLE) return;
+      const img = document.querySelector('img[data-testid="logoHero"]');
+      if (!img || img.dataset.roccobot) return;
+      img.dataset.roccobot = '1';
+      img.removeAttribute('srcset');
+      img.src = LOGO;
+      img.style.setProperty('object-fit', 'contain', 'important');
+      const a = img.closest('a');
+      if (a) a.setAttribute('href', '/'); // il logo torna alla home, non alla ricerca dell'evento
+    }
+
+    function nascondiPromo() {
+      if (!NASCONDI_PROMO) return;
+      // Le card promozionali della home (es. "Follow Soccer with Qwant") non hanno
+      // un id stabile, ma usano immagini con nome "<evento>-light-desktop-<lingua>.png".
+      // Si nasconde l'antenato che fa da card (contiene immagine + bottone).
+      for (const im of document.querySelectorAll('img[src*="-light-desktop-"]:not([data-roccobot])')) {
+        im.dataset.roccobot = '1';
+        let el = im;
+        for (let i = 0; i < 8 && el && el.parentElement; i++, el = el.parentElement) {
+          if (el.tagName === 'MAIN' || el.tagName === 'BODY') break;
+          if (el.querySelector('button') && el.querySelector('img')) {
+            el.style.setProperty('display', 'none', 'important');
+            break;
+          }
+        }
+      }
+    }
+
+    function applica() { sistemaDoodle(); nascondiPromo(); }
+
+    // La home è una SPA: doodle e card compaiono dopo il primo render → si osserva.
+    function avvio() {
+      applica();
+      new MutationObserver(applica).observe(document.documentElement, {
+        subtree: true, childList: true
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
+    else avvio();
+  })();
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  MODULO 2 — Immagini: il clic apre subito il file originale
+  // ═══════════════════════════════════════════════════════════════════════
+  // La pagina di Qwant chiede i risultati a un servizio interno
+  // (api.qwant.com/.../search/images) che per ogni immagine fornisce sia la
+  // miniatura ("thumbnail") sia l'indirizzo del file originale ("media"). Lo
+  // script ascolta quelle risposte, memorizza la coppia miniatura → originale e,
+  // al clic su una miniatura, apre direttamente il file originale.
+  (function immaginiDirette() {
+
+    // ── Memoria miniatura → immagine originale ────────────────────────────
+    const mediaPerMiniatura = new Map();
+    let ultimaApiImmagini = '';
+    let recuperoInCorso = false;
+    let bypass = false;
+
+    function chiave(u) {
+      // ignora il protocollo: l'API usa spesso URL che iniziano con "//"
+      return typeof u === 'string' && u ? u.replace(/^https?:/, '') : '';
+    }
+
+    function ricorda(miniatura, media) {
+      const k = chiave(miniatura);
+      if (k && typeof media === 'string' && media) mediaPerMiniatura.set(k, media);
+    }
+
+    // Scorre ricorsivamente il JSON dell'API e raccoglie le coppie utili.
+    function raccogli(nodo, prof) {
+      if (!nodo || typeof nodo !== 'object' || prof > 14) return;
+      if (typeof nodo.media === 'string' && nodo.media) {
+        if (typeof nodo.thumbnail === 'string') ricorda(nodo.thumbnail, nodo.media);
+        // così anche l'anteprima grande del pannello laterale apre il file
+        ricorda(nodo.media, nodo.media);
+      }
+      const valori = Array.isArray(nodo) ? nodo : Object.values(nodo);
+      for (const v of valori) raccogli(v, prof + 1);
+    }
+
+    // ── Intercettazione delle risposte dell'API (fetch + XMLHttpRequest) ──
+    const fetchOriginale = window.fetch;
+    window.fetch = function (input) {
+      const promessa = fetchOriginale.apply(this, arguments);
+      try {
+        const url = typeof input === 'string' ? input
+          : (input && typeof input.url === 'string' ? input.url : String(input || ''));
+        if (url.includes('/search/')) {
+          if (url.includes('/search/images')) ultimaApiImmagini = url;
+          promessa.then(function (risposta) {
+            risposta.clone().json().then(function (dati) {
+              raccogli(dati, 0);
+              riscriviPresto();
+            }).catch(function () {});
+          }).catch(function () {});
+        }
+      } catch (e) { /* mai interferire con la pagina */ }
+      return promessa;
+    };
+
+    const openXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (metodo, url) {
+      try { this._urlQwant = String(url || ''); } catch (e) { /* ignora */ }
+      return openXhr.apply(this, arguments);
+    };
+    const sendXhr = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function () {
+      const xhr = this;
+      try {
+        if ((xhr._urlQwant || '').includes('/search/')) {
+          if (xhr._urlQwant.includes('/search/images')) ultimaApiImmagini = xhr._urlQwant;
+          xhr.addEventListener('load', function () {
+            try {
+              const dati = xhr.responseType === 'json' ? xhr.response : JSON.parse(xhr.responseText);
+              raccogli(dati, 0);
+              riscriviPresto();
+            } catch (e) { /* non era JSON */ }
+          });
+        }
+      } catch (e) { /* ignora */ }
+      return sendXhr.apply(this, arguments);
+    };
+
+    // ── Dati già presenti nell'HTML iniziale (rendering lato server) ──────
+    function scappa(s) {
+      if (!s) return '';
+      try { return JSON.parse('"' + s + '"'); } catch (e) { return s.replace(/\\\//g, '/'); }
+    }
+
+    function raccogliDagliScript() {
+      for (const s of document.scripts) {
+        const t = s.textContent;
+        if (!t || t.indexOf('thumbnail') === -1) continue;
+        try { raccogli(JSON.parse(t), 0); continue; } catch (e) { /* non era JSON puro */ }
+        const re = /"media":"((?:[^"\\]|\\.)*)"[^{}]*?"thumbnail":"((?:[^"\\]|\\.)*)"|"thumbnail":"((?:[^"\\]|\\.)*)"[^{}]*?"media":"((?:[^"\\]|\\.)*)"/g;
+        let m;
+        while ((m = re.exec(t))) ricorda(scappa(m[2] || m[3]), scappa(m[1] || m[4]));
+      }
+    }
+
+    // ── Abbinamento miniatura cliccata → URL originale ────────────────────
+    function mediaPerImg(img) {
+      const candidati = [img.currentSrc, img.src,
+        img.getAttribute && img.getAttribute('src'),
+        img.getAttribute && img.getAttribute('data-src')];
+      const srcset = (img.getAttribute && img.getAttribute('srcset')) || '';
+      for (const parte of srcset.split(',')) {
+        const u = parte.trim().split(/\s+/)[0];
+        if (u) candidati.push(u);
+      }
+      for (const c of candidati) {
+        const m = mediaPerMiniatura.get(chiave(c));
+        if (m) return m;
+      }
+      return '';
+    }
+
+    function sfondoUrl(el) {
+      try {
+        const m = /url\(["']?(.*?)["']?\)/.exec(getComputedStyle(el).backgroundImage || '');
+        return m ? m[1] : '';
+      } catch (e) { return ''; }
+    }
+
+    function cercaNelloScope(el) {
+      if (!el || !el.querySelectorAll) return null;
+      if (el.tagName === 'IMG') {
+        const m = mediaPerImg(el);
+        return m ? { media: m, el: el } : null;
+      }
+      const imgs = el.querySelectorAll('img');
+      if (imgs.length > 6) return null; // contenitore troppo grande: non è una singola card
+      for (const img of imgs) {
+        const m = mediaPerImg(img);
+        if (m) return { media: m, el: img };
+      }
+      const sfondo = sfondoUrl(el);
+      if (sfondo) {
+        const m = mediaPerMiniatura.get(chiave(sfondo));
+        if (m) return { media: m, el: el };
+      }
+      return null;
+    }
+
+    function trovaMedia(t) {
+      // se il clic è dentro un link/bottone, si cerca SOLO lì dentro: così i
+      // bottoni del pannello laterale ("Visita la pagina", ecc.) restano intatti
+      const interattivo = t.closest && t.closest('a, button, [role="button"], [role="link"]');
+      if (interattivo) return cercaNelloScope(interattivo);
+      let el = t;
+      for (let i = 0; i < 6 && el && el !== document.body; i++, el = el.parentElement) {
+        const trovato = cercaNelloScope(el);
+        if (trovato) return trovato;
+      }
+      return null;
+    }
+
+    function miniaturaQwant(t) {
+      const interattivo = t.closest && t.closest('a, button, [role="button"], [role="link"]');
+      const scope = interattivo || t;
+      if (!scope.querySelectorAll) return null;
+      const imgs = scope.tagName === 'IMG' ? [scope] : Array.from(scope.querySelectorAll('img'));
+      if (imgs.length === 0 || imgs.length > 6) return null;
+      for (const img of imgs) {
+        if (/\.qwant\.com\/thumbr\//.test(img.currentSrc || img.src || '')) return img;
+      }
+      return null;
+    }
+
+    // ── Recupero d'emergenza: interroga l'API come farebbe la pagina ──────
+    function urlApi(q, offset) {
+      try {
+        if (ultimaApiImmagini) {
+          const u = new URL(ultimaApiImmagini, location.href);
+          if ((u.searchParams.get('q') || '') === q) {
+            u.searchParams.set('offset', String(offset));
+            u.searchParams.set('count', '50');
+            return u.href;
+          }
+        }
+      } catch (e) { /* ignora */ }
+      let loc = (navigator.language || 'it-IT').replace('-', '_');
+      if (!loc.includes('_')) loc = loc + '_' + loc.toUpperCase();
+      return 'https://api.qwant.com/v3/search/images?q=' + encodeURIComponent(q) +
+        '&count=50&offset=' + offset + '&device=desktop&safesearch=1&locale=' + loc + '&tgp=1';
+    }
+
+    async function recuperaViaApi(img) {
+      const q = new URLSearchParams(location.search).get('q') || '';
+      if (!q) return '';
+      for (let offset = 0; offset <= 100; offset += 50) {
+        let dati;
+        try {
+          const r = await fetchOriginale.call(window, urlApi(q, offset), { credentials: 'include' });
+          if (!r.ok) break;
+          dati = await r.json();
+        } catch (e) { break; }
+        raccogli(dati, 0);
+        const m = mediaPerImg(img);
+        if (m) return m;
+      }
+      return '';
+    }
+
+    // ── Apertura e gestione del clic ──────────────────────────────────────
+    function apri(url, e) {
+      const nuovaScheda = APRI_IN_NUOVA_SCHEDA || e.ctrlKey || e.metaKey || e.type === 'auxclick';
+      if (nuovaScheda) {
+        const w = window.open(url, '_blank', 'noopener');
+        if (!w) location.assign(url); // popup bloccato: ripiega sulla scheda corrente
+      } else {
+        location.assign(url);
+      }
+    }
+
+    function riclic(el) {
+      bypass = true;
+      try { el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })); }
+      finally { bypass = false; }
+    }
+
+    function alClic(e) {
+      if (bypass) return;
+      const aux = e.type === 'auxclick';
+      if ((aux && e.button !== 1) || (!aux && e.button !== 0)) return;
+      const t = e.target instanceof Element ? e.target : null;
+      if (!t) return;
+
+      const trovato = trovaMedia(t);
+      if (trovato) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        const a = t.closest && t.closest('a');
+        if (a) {
+          // si corregge il link e si lascia fare al browser: nessun popup-blocker
+          a.href = trovato.media;
+          a.rel = 'noopener';
+          if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
+          else a.removeAttribute('target');
+          return;
+        }
+        e.preventDefault();
+        apri(trovato.media, e);
+        return;
+      }
+
+      // miniatura non ancora in memoria (es. risultati arrivati col primo HTML):
+      // si tenta il recupero via API, altrimenti si ripristina il clic normale
+      const img = miniaturaQwant(t);
+      if (img && !recuperoInCorso) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        recuperoInCorso = true;
+        recuperaViaApi(img).then(function (m) {
+          recuperoInCorso = false;
+          if (m) apri(m, e);
+          else riclic(img);
+        });
+      }
+    }
+
+    document.addEventListener('click', alClic, true);
+    document.addEventListener('auxclick', alClic, true);
+
+    // ── Riscrittura dei link in griglia (tasto centrale, "copia indirizzo") ──
+    let timerRiscrittura = 0;
+    function riscriviPresto() {
+      clearTimeout(timerRiscrittura);
+      timerRiscrittura = setTimeout(riscriviTutto, 200);
+    }
+
+    function riscriviTutto() {
+      if (!mediaPerMiniatura.size || !document.body) return;
+      for (const img of document.images) {
+        const m = mediaPerImg(img);
+        if (!m) continue;
+        const a = img.closest('a');
+        if (a && a.href !== m) {
+          a.href = m;
+          a.rel = 'noopener';
+          if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
+        }
+        if (!img.title) img.title = "Clic: apre l'immagine originale";
+      }
+    }
+
+    function avvio() {
+      raccogliDagliScript();
+      riscriviTutto();
+      new MutationObserver(riscriviPresto).observe(document.documentElement, {
+        subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'srcset']
+      });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
+    else avvio();
+    window.addEventListener('load', function () { raccogliDagliScript(); riscriviTutto(); });
+  })();
+})();
