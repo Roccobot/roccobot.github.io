@@ -514,13 +514,15 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 
 @media (max-width:768px) {
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura
-     in DISSOLVENZA (niente slide): la sensazione di ingresso e' data dal
-     fade-in piu' lo scorrimento-in-cima dell'hint (vedi toggleControlPanel).
-     Lo slide verso il basso resta solo per la chiusura a trascinamento. */
+     stile app-drawer Android: fade-in 200ms + la sheet sale dal basso mentre
+     il contenuto scorre in senso OPPOSTO alla stessa velocita' (easeOutExpo,
+     ~220ms; vedi toggleControlPanel). Il transform e' guidato da JS (niente
+     transition CSS sul transform su mobile); lo slide verso il basso resta
+     per la chiusura a trascinamento. */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
     border-radius:18px 18px 0 0; transform:none;
-    transition:opacity 0.3s ease, visibility 0.3s ease;
+    transition:opacity 0.2s ease, visibility 0.2s ease;
     padding-top:0; padding-bottom:0;
   }
   /* Testata sticky: solo la barretta di trascinamento (punto di presa per
@@ -1139,7 +1141,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.6.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.6.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1927,26 +1929,29 @@ function toggleControlPanel() {
   // Inibisce lo scroll della pagina sottostante mentre il Pannello è aperto
   // (desktop e mobile, come per le modali).
   document.body.style.overflow = open ? 'hidden' : '';
-  // Hint di apertura (solo mobile): la sheet appare in dissolvenza (CSS) e il
-  // contenuto, che parte sceso di ~2-3 righe, scorre fino in cima decelerando
-  // in modo organico (easeOutCubic). Suggerisce la scrollabilita' senza dover
-  // mostrare la barra di scorrimento (nascosta).
+  // Hint di apertura (solo mobile, stile app-drawer Android): la sheet sale dal
+  // basso (translateY -> 0) mentre il suo contenuto scorre in senso OPPOSTO alla
+  // stessa velocità (scrollTop -> 0); il fade-in è gestito dal CSS. Entrambi i
+  // moti decelerano in modo molto morbido (easeOutExpo) entro ~220 ms.
   if (open && window.matchMedia('(max-width:768px)').matches) {
     requestAnimationFrame(function(){
       var maxScroll = panel.scrollHeight - panel.clientHeight;
-      if (maxScroll < 24) return; // niente da scorrere: nessun hint
-      var offset = Math.min(70, maxScroll);
-      panel.scrollTop = offset;
-      var t0 = null, dur = 620;
-      function ease(t){ return 1 - Math.pow(1 - t, 3); } // easeOutCubic (decelerazione)
+      var d = Math.min(64, maxScroll);
+      if (d < 8) return; // contenuto troppo corto: solo fade
+      panel.scrollTop = d;
+      panel.style.transform = 'translateY(' + d + 'px)';
+      var t0 = null, dur = 220;
+      function ease(t){ return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); } // easeOutExpo (molto soft)
       function step(ts){
         if (t0 === null) t0 = ts;
         var t = Math.min(1, (ts - t0) / dur);
-        panel.scrollTop = offset * (1 - ease(t));
-        if (t < 1) requestAnimationFrame(step);
+        var k = 1 - ease(t);
+        panel.style.transform = 'translateY(' + (d * k) + 'px)';
+        panel.scrollTop = d * k;
+        if (t < 1) { requestAnimationFrame(step); }
+        else { panel.style.transform = ''; panel.scrollTop = 0; }
       }
-      // breve pausa per far percepire la posizione iniziale, poi scorre in cima
-      setTimeout(function(){ requestAnimationFrame(step); }, 90);
+      requestAnimationFrame(step);
     });
   }
 }
