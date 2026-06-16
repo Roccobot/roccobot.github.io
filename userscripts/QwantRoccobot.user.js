@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.1.0
+// @version      2.2.0
 // @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
@@ -20,7 +20,8 @@
   // — Pulizia dell'interfaccia —
   const NASCONDI_SIDEBAR   = true;  // barra a sinistra (Search / Junior / Shadow Drive) + toggle menu
   const NASCONDI_OPZIONI   = true;  // SERP: tasto "Filtri"/opzioni e relativi menu (regione, periodo)
-  const NASCONDI_FOOTER    = true;  // piè di pagina
+  const NASCONDI_FOOTER    = true;  // piè di pagina (l'intero elemento <footer>)
+  const HOME_SENZA_SCROLL  = true;  // home: niente scorrimento verticale (resta solo logo + ricerca)
   const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer"), banner app, promo estensione
   const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant ufficiale (home + SERP)
   const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = logo ufficiale integrato nello script
@@ -42,7 +43,10 @@
       'a[title="Mostra menu"],a[title="Show menu"]{display:none!important}'
     );
     if (NASCONDI_FOOTER) regole.push(
-      '[aria-label="Piè di pagina"]{display:none!important}'
+      'footer,[aria-label="Piè di pagina"]{display:none!important}'
+    );
+    if (HOME_SENZA_SCROLL) regole.push(
+      'html:has([data-testid="home"]),html:has([data-testid="home"]) body{overflow:hidden!important}'
     );
     if (NASCONDI_PROMO) regole.push(
       '[data-testid="heroTiles"]{display:none!important}',

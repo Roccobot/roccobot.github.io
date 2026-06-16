@@ -15,7 +15,8 @@ Uno script unico per Qwant, con due funzioni:
    ufficiale**, via la **barra a sinistra** (Search / Junior / Shadow Drive),
    il **tasto opzioni/filtri** della SERP, il **footer** e le **card
    promozionali** (tile, "Follow Soccer", banner "scarica l'app", promo
-   estensione). Restano logo e barra di ricerca (più i risultati, nella SERP).
+   estensione). In home restano **solo logo e barra di ricerca, senza
+   scorrimento verticale**; nella SERP restano anche i risultati.
 2. **Immagini dirette.** Nella ricerca immagini (`qwant.com` → scheda
    *Immagini*), il clic su una miniatura apre **direttamente il file
    originale** in una nuova scheda, invece del pannello di anteprima.
@@ -42,7 +43,8 @@ In cima allo script ci sono alcuni interruttori:
 ```js
 const NASCONDI_SIDEBAR    = true;  // barra a sinistra + toggle menu
 const NASCONDI_OPZIONI    = true;  // SERP: tasto "Filtri"/opzioni e relativi menu
-const NASCONDI_FOOTER     = true;  // piè di pagina
+const NASCONDI_FOOTER     = true;  // piè di pagina (intero <footer>)
+const HOME_SENZA_SCROLL   = true;  // home: niente scroll verticale (solo logo + ricerca)
 const NASCONDI_PROMO      = true;  // tile, card promozionali, banner app, promo estensione
 const SOSTITUISCI_DOODLE  = true;  // doodle/veste evento → logo Qwant ufficiale
 const LOGO_PERSONALIZZATO = '';    // URL di un logo a scelta; vuoto = logo ufficiale integrato
