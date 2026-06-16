@@ -306,22 +306,3 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   condivisi (chiunque può crearvi un sottodominio gratis): la whitelist totale
   lascia passare anche eventuali Worker di terzi. Scelta deliberata dell'utente;
   restringibile ai soli sottodomini `roccobot-b90` se serve.
-
-## 📤 Da migrare a `rules/Roccobot.md`
-
-> Regole di portata **generale** raccolte qui in attesa di promozione a
-> `rules/Roccobot.md` (questa sessione non ha accesso diretto a `Roccobot/tools`
-> né allo strumento `add_repo`; vale il protocollo 'Aggiungi alle regole').
-
-- **Inserimento in liste/file di regole (ordine e dedup).** Quando l'utente
-  chiede di aggiungere righe a una lista (file `.txt`, `.js`, `.css`, `.md`,
-  tabella Excel o simili), inserire i valori:
-  - in **ordine alfabetico** se la lista è uniforme/senza sezioni (es. IP da
-    redirigere);
-  - oppure in un **nuovo blocco commentato in fondo** se la lista è organizzata
-    in sezioni (es. un gruppo di regole di adblocking).
-
-  Identificare correttamente il tipo di lista; in caso di dubbio, chiedere.
-  **Sempre** verificare che non ci siano doppioni e che non esista già una
-  regola/voce più generica che copre il caso (es. non aggiungere un sottodominio
-  in whitelist se il dominio è già whitelistato).
