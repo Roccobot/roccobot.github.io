@@ -355,7 +355,9 @@ h1 {
   cursor:pointer; transition:background 0.15s,opacity 0.15s; white-space:nowrap; user-select:none;
 }
 .ctrl-solo:hover:not(:disabled) { background:rgba(104,144,168,0.28); }
-.ctrl-toolbar { display:flex; justify-content:center; margin-bottom:0.7rem; }
+.ctrl-toolbar { display:flex; align-items:center; justify-content:center; gap:0.55rem; margin-bottom:0.7rem; }
+.ctrl-toolbar .ctrl-lang-btn { height:2rem; padding:0 0.7rem; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.1em; display:inline-flex; align-items:center; cursor:pointer; }
+.ctrl-toolbar .ctrl-lang-btn:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 .ctrl-icon-btn { width:2rem; height:2rem; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); cursor:pointer; padding:0; transition:background 0.15s,border-color 0.15s; }
 .ctrl-icon-btn:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 .ctrl-icon-btn svg { width:1.15rem; height:1.15rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -513,16 +515,15 @@ html[data-theme="light"] .ctrl-sheet-close:hover, html[data-theme="light"] .ctrl
 .ctrl-backdrop.open { opacity:1; visibility:visible; }
 
 @media (max-width:768px) {
-  /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura
-     stile app-drawer Android: fade-in 200ms + la sheet sale dal basso mentre
-     il contenuto scorre in senso OPPOSTO alla stessa velocita' (easeOutExpo,
-     ~220ms; vedi toggleControlPanel). Il transform e' guidato da JS (niente
-     transition CSS sul transform su mobile); lo slide verso il basso resta
-     per la chiusura a trascinamento. */
+  /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura:
+     normale SLIDE-UP (transform translateY(100%) -> 0) con leggero fade, tutto
+     in CSS (~240ms, ease-out). Niente JS: cosi' anima bene anche al primo tocco
+     del FAB. Lo slide vale anche per la chiusura (e per la chiusura a
+     trascinamento, gestita inline nel drag handler). */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
-    border-radius:18px 18px 0 0; transform:none;
-    transition:opacity 0.2s ease, visibility 0.2s ease;
+    border-radius:18px 18px 0 0; transform:translateY(100%);
+    transition:transform 0.24s cubic-bezier(0.32,0.72,0,1), opacity 0.2s ease, visibility 0.24s;
     padding-top:0; padding-bottom:0;
   }
   /* Testata sticky: solo la barretta di trascinamento (punto di presa per
@@ -1141,7 +1142,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.6.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.6.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1629,7 +1630,7 @@ var CAT_LABEL = {
   it: { ainur:'Ainur', arcane:'Esseri arcani/ancestrali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi', animal:'Animali' },
   en: { ainur:'Ainur', arcane:'Arcane/ancestral beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs', animal:'Animals' }
 };
-var CAT_COLOR = { ainur:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#da50ff', animal:'#c8ad7f' };
+var CAT_COLOR = { ainur:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
 var CTRL_I18N = {
   it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
@@ -1650,7 +1651,7 @@ function controlPanelHTML() {
   var MOON = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
   var themeLbl = isLight ? (currentLang==='it'?'Tema scuro':'Dark theme') : (currentLang==='it'?'Tema chiaro':'Light theme');
   h += '<div class="ctrl-left">';
-  h += '<div class="ctrl-toolbar"><button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button></div>';
+  h += '<div class="ctrl-toolbar"><button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button><button class="ctrl-lang-btn" aria-label="' + (currentLang === 'it' ? 'English' : 'Italiano') + '">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button></div>';
   // Filtri
   h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button class="ctrl-reset" id="ctrl-reset">' + T.all + '</button></div>';
   var soloTxt = currentLang === 'it' ? 'solo' : 'only';
@@ -1775,8 +1776,9 @@ function wireControlPanel() {
   });
   var close = document.getElementById('ctrl-close');
   if (close) close.addEventListener('click', toggleControlPanel);
-  var langBtn = document.getElementById('ctrl-lang');
-  if (langBtn) langBtn.addEventListener('click', function(){ setLang(currentLang === 'it' ? 'en' : 'it'); });
+  panel.querySelectorAll('.ctrl-lang-btn').forEach(function(b){
+    b.addEventListener('click', function(){ setLang(currentLang === 'it' ? 'en' : 'it'); });
+  });
   // Il numero di versione del pannello (mobile) è il punto d'accesso admin:
   // apre una modale con la scelta tra riordinare le card e modificare i testi.
   var verBtn = document.getElementById('ctrl-ver');
@@ -1929,31 +1931,6 @@ function toggleControlPanel() {
   // Inibisce lo scroll della pagina sottostante mentre il Pannello è aperto
   // (desktop e mobile, come per le modali).
   document.body.style.overflow = open ? 'hidden' : '';
-  // Hint di apertura (solo mobile, stile app-drawer Android): la sheet sale dal
-  // basso (translateY -> 0) mentre il suo contenuto scorre in senso OPPOSTO alla
-  // stessa velocità (scrollTop -> 0); il fade-in è gestito dal CSS. Entrambi i
-  // moti decelerano in modo molto morbido (easeOutExpo) entro ~220 ms.
-  if (open && window.matchMedia('(max-width:768px)').matches) {
-    requestAnimationFrame(function(){
-      var maxScroll = panel.scrollHeight - panel.clientHeight;
-      var d = Math.min(64, maxScroll);
-      if (d < 8) return; // contenuto troppo corto: solo fade
-      panel.scrollTop = d;
-      panel.style.transform = 'translateY(' + d + 'px)';
-      var t0 = null, dur = 220;
-      function ease(t){ return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); } // easeOutExpo (molto soft)
-      function step(ts){
-        if (t0 === null) t0 = ts;
-        var t = Math.min(1, (ts - t0) / dur);
-        var k = 1 - ease(t);
-        panel.style.transform = 'translateY(' + (d * k) + 'px)';
-        panel.scrollTop = d * k;
-        if (t < 1) { requestAnimationFrame(step); }
-        else { panel.style.transform = ''; panel.scrollTop = 0; }
-      }
-      requestAnimationFrame(step);
-    });
-  }
 }
 
 // #3 — toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)
