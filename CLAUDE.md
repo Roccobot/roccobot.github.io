@@ -152,6 +152,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
   bottone nella modale costruisce l'URL con `tg`, in mancanza con
   `nome_en`, in mancanza con `nome`.
+- **Nome identico in ITA ed ENG: compilare solo `nome_en`**, lasciando
+  `nome` vuoto. La resa fa fallback (`p.nome || p.nome_en` in italiano,
+  `p.nome_en || p.nome` in inglese), quindi lo stesso valore appare in
+  entrambe le lingue senza duplicarlo. Si riempie `nome` solo quando il
+  nome italiano differisce davvero da quello inglese (es. `Baccador` /
+  `Goldberry`, `Ombromanto` / `Shadowfax`).
 
 ## 🚩 Feature flag (elementi disattivati, ma non rimossi)
 
