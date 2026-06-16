@@ -196,8 +196,8 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 - **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
   (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
-  Uomo-Salice, etichettato 'Spirito della foresta', colore degli Ent) restano
-  in `divini`.
+  Uomo Salice, etichettato 'Spirito della foresta', colore di Tom Bombadil come
+  Baccador, via `tipo_color`) restano in `divini`.
 - **Test di accessibilità con TUTTE le categorie attive.** L'audit `axe-core`
   va eseguito dopo aver attivato tutte le categorie (`divini` e `animali` sono
   spente di default): altrimenti i badge di quelle categorie non vengono testati
