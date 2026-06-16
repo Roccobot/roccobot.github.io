@@ -289,6 +289,10 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     `ABP/RoccobotFilters.txt`.
   - 'Aggiungi un'eccezione' / 'metti in whitelist' (o simili) → mettere mano
     a `ABP/RoccobotWhitelist.txt`.
+- **Sinonimi con cui l'utente chiama le liste** (oltre ai comandi sopra):
+  `blocklist`, `adblock list`, `filtri Roccobot`, `filtri di blocco` (e simili)
+  = `ABP/RoccobotFilters.txt`; `whitelist`, `allowlist`, `lista consentiti`,
+  `siti consentiti`, `lista bianca` (e simili) = `ABP/RoccobotWhitelist.txt`.
 - **Versione.** Niente SemVer: ogni file ha l'header `! Last updated:
   AAAA-MM-GG`, da aggiornare a ogni commit che ne tocca il contenuto. Il
   numero di versione del sito (es. `v10.1.2`) riguarda solo `arda/top`, non
