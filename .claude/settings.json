@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git fetch origin master --quiet 2>/dev/null && { REMOTE=$(git rev-parse origin/master); LOCAL=$(git rev-parse HEAD); if [ \"$REMOTE\" != \"$LOCAL\" ]; then git reset --hard origin/master --quiet && echo \"[PreEdit] Aggiornato a origin/master ($(git rev-parse --short HEAD)) — c'erano modifiche admin!\"; else echo \"[PreEdit] Già aggiornato ($(git rev-parse --short HEAD))\"; fi; }",
+            "command": "git fetch origin master --quiet 2>/dev/null; B=$(git symbolic-ref --short -q HEAD); if [ \"$B\" = master ]; then if git diff --quiet && git diff --cached --quiet; then if git merge --ff-only origin/master --quiet 2>/dev/null; then echo \"[PreEdit] ff a origin/master ($(git rev-parse --short HEAD))\"; else echo \"[PreEdit] master diverge da origin/master: nessun allineamento (risolvi a mano)\"; fi; else echo \"[PreEdit] modifiche locali non committate: allineamento saltato (nessun reset)\"; fi; else echo \"[PreEdit] su branch '$B' (non master): nessun allineamento automatico a master\"; fi",
             "timeout": 30
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git fetch origin master --quiet 2>/dev/null && { git diff --quiet && git diff --cached --quiet && git reset --hard origin/master --quiet && echo \"[SessionStart] Allineato a origin/master ($(git rev-parse --short HEAD))\" || echo \"[SessionStart] Working tree non pulito: reset saltato, ref remoti aggiornati\"; } || echo \"[SessionStart] fetch fallito: nessun allineamento\"",
+            "command": "git fetch origin master --quiet 2>/dev/null; B=$(git symbolic-ref --short -q HEAD); if [ \"$B\" = master ] && git diff --quiet && git diff --cached --quiet; then git merge --ff-only origin/master --quiet 2>/dev/null && echo \"[SessionStart] ff a origin/master ($(git rev-parse --short HEAD))\" || echo \"[SessionStart] master diverge o ff impossibile: ref aggiornati, nessun reset\"; else echo \"[SessionStart] no auto-align (branch '$B' o modifiche locali): ref remoti aggiornati\"; fi",
             "timeout": 45,
             "statusMessage": "Allineamento a origin/master…"
           }
