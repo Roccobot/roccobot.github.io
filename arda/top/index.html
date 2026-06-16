@@ -85,7 +85,9 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
   font-family: 'Cinzel', serif;
   font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: var(--gold-deep);
+  /* colore dedicato (non var(--gold-deep)): garantisce WCAG AA 4.5:1 a opacity 0.7;
+     override tema chiaro subito sotto */
+  color: #8fadc5;
   opacity: 0.7;
   user-select: none;
   cursor: pointer;
@@ -96,6 +98,7 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
 }
 .home-link { padding-left: 0; }
 .version-badge:hover, .home-link:hover { opacity: 1; }
+html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: #1c344f; }
 
 .lang-switch {
   position: absolute;
@@ -149,7 +152,7 @@ h1 {
   max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
   white-space: pre-line;
 }
-.subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.55; letter-spacing:0.04em; margin-top:0.15rem; }
+.subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.69; letter-spacing:0.04em; margin-top:0.15rem; }
 
 .flourish { width:200px; height:30px; margin:1.5rem auto; opacity:0.7; }
 
@@ -1047,10 +1050,10 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb { background: linear-gradient
 /* race badge light-mode: vivid but dark enough for marble bg */
 html[data-theme="light"] .tipo-noldor { background:rgba(30,95,155,0.11); border-color:rgba(30,100,185,0.90); color:#1560a0; }
 html[data-theme="light"] .tipo-noldor-vanyar { background:rgba(30,70,210,0.12); border-color:rgba(50,120,230,0.55); color:#1040c8; }
-html[data-theme="light"] .tipo-vanyar { background:rgba(0,150,195,0.12); border-color:rgba(0,140,175,0.90); color:#007898; }
-html[data-theme="light"] .tipo-teleri { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
-html[data-theme="light"] .tipo-calaquendi { background:rgba(12,148,132,0.16); border-color:rgba(22,200,178,0.72); color:#097a6c; }
-html[data-theme="light"] .tipo-sindar { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0e7a6e; }
+html[data-theme="light"] .tipo-vanyar { background:rgba(0,150,195,0.12); border-color:rgba(0,140,175,0.90); color:#006a86; }
+html[data-theme="light"] .tipo-teleri { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0c6d62; }
+html[data-theme="light"] .tipo-calaquendi { background:rgba(12,148,132,0.16); border-color:rgba(22,200,178,0.72); color:#086a5e; }
+html[data-theme="light"] .tipo-sindar { background:rgba(25,130,120,0.11); border-color:rgba(40,160,145,0.85); color:#0c6d62; }
 html[data-theme="light"] .tipo-teleri-maia { background:rgba(60,20,175,0.12); border-color:rgba(140,100,230,0.55); color:#4818c0; }
 html[data-theme="light"] .tipo-mezzelfo { background:rgba(30,60,175,0.11); border-color:rgba(70,130,230,0.55); color:#1040b8; }
 html[data-theme="light"] .tipo-numenorean { background:rgba(200,12,12,0.12); border-color:rgba(220,40,40,0.55); color:#a00000; }
@@ -1061,13 +1064,13 @@ html[data-theme="light"] .tipo-dunadan { background:rgba(175,16,16,0.11); border
 html[data-theme="light"] .tipo-eotheod { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
 html[data-theme="light"] .tipo-beorn { background:rgba(195,60,6,0.11); border-color:rgba(215,88,35,0.5); color:#a03000; }
 html[data-theme="light"] .tipo-dale { background:rgba(205,78,6,0.12); border-color:rgba(222,112,45,0.52); color:#a84000; }
-html[data-theme="light"] .tipo-nano { background:rgba(185,128,0,0.13); border-color:rgba(150,118,0,0.9); color:#806800; }
+html[data-theme="light"] .tipo-nano { background:rgba(185,128,0,0.13); border-color:rgba(150,118,0,0.9); color:#745f00; }
 html[data-theme="light"] .tipo-orco { background:rgba(130,6,195,0.12); border-color:rgba(115,10,165,0.9); color:#680098; }
-html[data-theme="light"] .tipo-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(180,92,8,0.9); color:#a84800; }
+html[data-theme="light"] .tipo-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(180,92,8,0.9); color:#a14500; }
 html[data-theme="light"] .tipo-gollum { background:rgba(110,70,20,0.11); border-color:rgba(105,68,12,0.9); color:#7a4c10; }
 html[data-theme="light"] .tipo-aquila { background:rgba(0,185,180,0.12); border-color:rgba(0,130,128,0.9); color:#007870; }
 html[data-theme="light"] .tipo-ent { background:rgba(10,110,60,0.13); border-color:rgba(12,120,68,0.90); color:#0a7838; }
-html[data-theme="light"] .tipo-maia { background:rgba(22,168,18,0.12); border-color:rgba(25,140,15,0.90); color:#187810; }
+html[data-theme="light"] .tipo-maia { background:rgba(22,168,18,0.12); border-color:rgba(25,140,15,0.90); color:#17710f; }
 html[data-theme="light"] .tipo-istari { background:rgba(112,115,158,0.11); border-color:rgba(160,162,208,0.52); color:#404878; }
 html[data-theme="light"] .tipo-generico { background:rgba(80,80,80,0.07); border-color:rgba(135,135,135,0.72); color:#484848; }
 html[data-theme="light"] .tipo-misterioso { background:rgba(75,45,115,0.08); border-color:rgba(110,70,180,0.60); color:#5c2fa0; }
@@ -1130,7 +1133,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A' 
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.4.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.4.2</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
