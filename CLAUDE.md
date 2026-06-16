@@ -27,6 +27,13 @@
   l'aggancio con lo strumento `add_repo`, altrimenti leggere dagli URL
   qui sopra. Per la **scrittura** senza accesso diretto c'è il Worker
   (protocollo 'Aggiungi alle regole' in `Roccobot.md`).
+- **Scrittura su `Roccobot/tools` via Worker `rules-proxy`**: farla **sempre e
+  in automatico** (senza chiedere conferma), usando la parola d'ordine nella
+  variabile d'ambiente `RULES_PASSWORD` (mai stamparla; se manca, chiederla).
+  POST JSON `{action:'commit', password, file, content, message}`, con relativo
+  bump SemVer del file di regole. **Nota operativa**: il Worker (e i raw GitHub,
+  quando `tools` è privato) rifiuta le richieste senza User-Agent da browser (la
+  UA di default di `curl`/`urllib` riceve `403`): impostare una UA tipo Chrome.
 
 ## ⚖️ Priorità in caso di conflitto
 
