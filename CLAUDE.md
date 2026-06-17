@@ -451,3 +451,13 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   condivisi (chiunque può crearvi un sottodominio gratis): la whitelist totale
   lascia passare anche eventuali Worker di terzi. Scelta deliberata dell'utente;
   restringibile ai soli sottodomini `roccobot-b90` se serve.
+
+## 🧩 Userscript (`/userscripts`)
+
+- Progetto a sé: script Tampermonkey ospitati su GitHub Pages, installabili e
+  aggiornabili dal loro URL.
+- **Link di installazione a fine lavoro.** Quando crei o aggiorni uno
+  userscript, nel messaggio finale includi **sempre** il link da cui
+  installarlo/aggiornarlo (es.
+  <https://roccobot.github.io/userscripts/NOME.user.js>), per comodità
+  dell'utente.
