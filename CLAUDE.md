@@ -157,8 +157,10 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     solo dai commit di codice. Prima (fino a v10.13.x) i salvataggi admin NON
     bumpavano: la versione restava identica, rendendo le modifiche admin
     invisibili al controllo di freschezza basato sul numero (vedi sopra il
-    confronto dei ref come verifica affidabile). **Richiede il Worker
-    ridistribuito** (modifica che non basta committare).
+    confronto dei ref come verifica affidabile). Il codice del Worker si
+    ridistribuisce **da sé** via la Git integration di Cloudflare (Workers
+    Builds, `proxy/wrangler.toml`) a ogni push su `master`; `wrangler deploy`
+    resta solo come fallback manuale.
 - Su mobile il numero di versione nel pannello è anche **l'accesso
   all'area admin**.
 
@@ -194,8 +196,9 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   bumpata) con un PUT (Contents API, SHA: race-safe). Niente più marker né
   read-modify-write dell'HTML.
   **Attenzione:** `FILE_PATH` del Worker punta a `arda/top/dati.js`; se si
-  rinomina/sposta il file dati, va riallineato e il Worker **ridistribuito**
-  (è una modifica che non basta committare).
+  rinomina/sposta il file dati, va riallineato nel Worker (che poi si
+  ridistribuisce da sé via la Git integration di Cloudflare, vedi '🔢 Versione
+  del sito').
 - `doCommit()` nel client fa `POST proxyUrl()` con
   `{action:'commit', password, dati, message}`. L'URL del Worker è in
   `ADMIN_PROXY_URL_DEFAULT` (non segreto), overridabile dal campo 'Proxy'

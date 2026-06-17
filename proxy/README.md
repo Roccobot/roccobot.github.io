@@ -66,11 +66,14 @@ restituisce nella risposta (`{"ok":true,"version":"X.Y.Z"}`); il sito aggiorna
 il badge senza reload. La versione è quindi un contatore di revisioni dei
 contenuti: minor/major restano decise solo dai commit di codice.
 
-> **Dopo ogni modifica a `arda-admin-proxy.js` va ridistribuito il Worker**
-> (`wrangler deploy`, o incolla il codice nel dashboard): non basta committare
-> il file nel repo. Finché non lo ridistribuisci resta attiva la versione
-> precedente del Worker (per l'auto-bump: la versione non sale, ma il sito
-> mostra comunque il fallback dal badge).
+> **Deploy automatico.** Il repo ha una *Git integration* di Cloudflare
+> (Workers Builds, vedi `wrangler.toml`): a ogni push il Worker viene
+> ricostruito e ridistribuito **da solo** appena il commit arriva su `master`
+> — lo confermano i commenti di deploy del bot `cloudflare-workers-and-pages`
+> sulle PR. Quindi una modifica ad `arda-admin-proxy.js` non richiede
+> `wrangler deploy` manuale (che resta come fallback). Nella breve finestra in
+> cui il nuovo Worker non fosse ancora attivo, l'auto-bump non parte ma il sito
+> mostra comunque la versione dal fallback nel badge.
 
 ## Test rapido
 
