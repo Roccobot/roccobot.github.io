@@ -258,6 +258,17 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   rendere il link idempotente; riaprirlo rimostra tutto, toglierlo torna ai
   default). Pensato per condividere un link che apre la lista intera —
   es. `https://roccobot.github.io/arda/top/?tutte`.
+- **Tasto 'copia link' e parametro `?cat=`.** Oltre a `?tutte`, l'URL accetta
+  `?cat=k1,k2,…` che attiva **esattamente** le categorie elencate (chiavi tra
+  `CATS`: ainur, arcane, elf, adan, man, dwarf, hobbit, orc, animal; chiavi
+  ignote scartate; se nessuna è valida restano i default). Nel Pannello un
+  **tasto 'copia link'** (icona catena, `.ctrl-share-btn`; su **desktop** a
+  destra del cambio-lingua nella toolbar, su **mobile** nel gruppo centrato con
+  tema/lingua della barra inferiore) copia negli appunti l'URL della **vista
+  corrente** via `buildShareUrl`: `?tutte` se tutte attive, **nessun parametro**
+  se è la vista di default (snapshot `FILTER_DEFAULT`), altrimenti
+  `?cat=<attive>`; con conferma visiva (✓ + tinta oro, `.ctrl-share-done`) e
+  ripiego `execCommand` fuori dai contesti sicuri.
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1

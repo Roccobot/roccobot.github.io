@@ -380,6 +380,11 @@ h1 {
 .ctrl-icon-btn { width:2rem; height:2rem; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); cursor:pointer; padding:0; transition:background 0.15s,border-color 0.15s; }
 .ctrl-icon-btn:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 .ctrl-icon-btn svg { width:1.15rem; height:1.15rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+/* Stato 'link copiato' del tasto condividi (✓ + tinta oro). Il 2° selettore
+   (specificità 0,3,0) vince anche sulla regola .ctrl-bottombar .ctrl-icon-btn
+   della barra mobile. */
+.ctrl-icon-btn.ctrl-share-done,
+.ctrl-bottombar .ctrl-icon-btn.ctrl-share-done { background:var(--gold); border-color:var(--gold-bright); color:var(--ink); }
 .ctrl-cat-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
 .ctrl-cat-head .ctrl-h { margin:0; }
 .ctrl-reset { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32); border-radius:3px; color:var(--parchment); padding:3px 11px; cursor:pointer; transition:background 0.15s,border-color 0.15s; white-space:nowrap; }
@@ -1233,7 +1238,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.16.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.17.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1557,17 +1562,26 @@ var filterState = {};
 (function(){
   CATS.forEach(function(c){ filterState[c] = (c !== 'ainur' && c !== 'arcane' && c !== 'animal'); });
 })();
-// Permalink 'tutte le categorie': se l'URL porta ?tutte (o alias ?all), al
-// caricamento attiva TUTTE le categorie, scavalcando i default (Ainur/Arcani/
-// Animali spenti). Vale SOLO all'avvio — i filtri restano poi liberamente
-// modificabili. Lo stato dei filtri non è persistito, quindi è il parametro a
-// rendere il link idempotente (riaprirlo mostra di nuovo tutto); togliendolo si
-// torna ai default. Pensato per condividere un link che apre la lista intera.
+// Snapshot dei default (prima di un eventuale override da URL): serve a
+// buildShareUrl per riconoscere la vista di default e copiarne il link pulito.
+var FILTER_DEFAULT = {};
+CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
+// Permalink della vista: se l'URL porta ?tutte (o alias ?all) si attivano
+// TUTTE le categorie; se porta ?cat=key1,key2,... si attivano esattamente
+// quelle (chiavi sconosciute ignorate; se nessuna valida, restano i default).
+// Vale SOLO all'avvio — i filtri restano poi liberamente modificabili (lo
+// stato non è persistito, quindi è il parametro a rendere il link idempotente).
+// È il tasto 'copia link' del Pannello a generare questi URL (buildShareUrl),
+// così riaprire un link riapre esattamente la vista condivisa.
 (function(){
   try {
     var qs = new URLSearchParams(window.location.search);
     if (qs.has('tutte') || qs.has('all')) {
       CATS.forEach(function(c){ filterState[c] = true; });
+    } else if (qs.has('cat')) {
+      var valid = (qs.get('cat') || '').split(',').map(function(s){ return s.trim(); })
+                    .filter(function(c){ return CATS.indexOf(c) !== -1; });
+      if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
     }
   } catch (e) {}
 })();
@@ -1779,6 +1793,8 @@ function controlPanelHTML() {
   var isLight = document.documentElement.getAttribute('data-theme') === 'light';
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var MOON = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var LINK_ICON = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+  var shareLbl = currentLang === 'it' ? 'Copia il link a questa vista' : 'Copy link to this view';
   var themeLbl = isLight ? (currentLang==='it'?'Tema scuro':'Dark theme') : (currentLang==='it'?'Tema chiaro':'Light theme');
   h += '<div class="ctrl-left">';
   // Versione anche nel Pannello desktop: in alto a sinistra (allineata alle
@@ -1791,6 +1807,7 @@ function controlPanelHTML() {
      + '<span class="ctrl-toolbar-btns">'
      +   '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
      +   '<button class="ctrl-lang-btn" aria-label="' + (currentLang === 'it' ? 'English' : 'Italiano') + '">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button>'
+     +   '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      + '</span>'
      + '</div>';
   // Filtri
@@ -1861,6 +1878,7 @@ function controlPanelHTML() {
      +   '<span class="ctrl-bb-group">'
      +     '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
      +     '<button class="ctrl-lang-btn" id="ctrl-lang">' + (currentLang === 'it' ? 'English' : 'Italiano') + '</button>'
+     +     '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      +   '</span>'
      +   '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>'
      + '</div>';
@@ -1935,6 +1953,60 @@ function wireControlPanel() {
     if (saveUnlocked) showAdminEditor();
     else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
   });
+  // Tasto 'copia link': copia negli appunti l'URL della vista corrente
+  // (buildShareUrl) con conferma visiva. Due istanze (toolbar desktop / barra
+  // mobile), entrambe .ctrl-share-btn.
+  panel.querySelectorAll('.ctrl-share-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ copyShareLink(btn); });
+  });
+}
+
+// URL della vista corrente: ?tutte se sono attive TUTTE le categorie, nessun
+// parametro se è la vista di default, altrimenti ?cat=key1,key2,... con le
+// categorie attive. Il loader in testa allo script rilegge questi parametri,
+// così riaprire il link riproduce esattamente la vista.
+function buildShareUrl() {
+  var base = location.origin + location.pathname;
+  var active = CATS.filter(function(c){ return filterState[c]; });
+  if (active.length === CATS.length) return base + '?tutte';
+  var isDefault = CATS.every(function(c){ return !!filterState[c] === !!FILTER_DEFAULT[c]; });
+  if (isDefault || !active.length) return base;
+  return base + '?cat=' + active.join(',');
+}
+
+var ICON_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+// Copia l'URL della vista negli appunti con conferma visiva (icona ✓ + tinta
+// oro per ~1.6s); clipboard API con ripiego su execCommand nei contesti non
+// sicuri. Aggiorna title/aria-label per gli screen reader.
+function copyShareLink(btn) {
+  var url = buildShareUrl();
+  var feedback = function(){
+    if (btn._shareT) clearTimeout(btn._shareT);
+    else { btn._shareHTML = btn.innerHTML; btn._shareLbl = btn.getAttribute('title'); }
+    btn.classList.add('ctrl-share-done');
+    btn.innerHTML = ICON_CHECK;
+    var copied = currentLang === 'it' ? 'Link copiato!' : 'Link copied!';
+    btn.setAttribute('title', copied); btn.setAttribute('aria-label', copied);
+    btn._shareT = setTimeout(function(){
+      btn.classList.remove('ctrl-share-done');
+      btn.innerHTML = btn._shareHTML;
+      btn.setAttribute('title', btn._shareLbl); btn.setAttribute('aria-label', btn._shareLbl);
+      btn._shareT = null;
+    }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(feedback, function(){ fallbackCopy(url); feedback(); });
+  } else { fallbackCopy(url); feedback(); }
+}
+function fallbackCopy(text) {
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  } catch (e) {}
 }
 
 // Entra/esce dalla modalità riordino (mobile). Riordino ed editor sono
