@@ -249,6 +249,15 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   sovrapporsi, `@media print` nasconde la chrome e mette `break-inside:avoid`
   sulle card (mai tagliate tra pagine A4). Ripristino del DOM/tema su
   `afterprint`. Nessuna dipendenza esterna.
+- **Permalink 'tutte le categorie' (`?tutte`, alias `?all`).** Le categorie
+  attive (`filterState`) si inizializzano al load con Ainur, Arcani e Animali
+  **spenti** e NON sono persistite. Se l'URL porta `?tutte` (o `?all`), al
+  caricamento `filterState` viene forzato con **tutte** le categorie attive,
+  scavalcando i default. Vale **solo all'avvio**: dopo, i filtri restano
+  liberamente modificabili (lo stato non è salvato, quindi è il parametro a
+  rendere il link idempotente; riaprirlo rimostra tutto, toglierlo torna ai
+  default). Pensato per condividere un link che apre la lista intera —
+  es. `https://roccobot.github.io/arda/top/?tutte`.
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1

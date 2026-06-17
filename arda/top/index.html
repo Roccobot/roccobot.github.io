@@ -1233,7 +1233,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.15.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.16.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1556,6 +1556,20 @@ function categoria(p) {
 var filterState = {};
 (function(){
   CATS.forEach(function(c){ filterState[c] = (c !== 'ainur' && c !== 'arcane' && c !== 'animal'); });
+})();
+// Permalink 'tutte le categorie': se l'URL porta ?tutte (o alias ?all), al
+// caricamento attiva TUTTE le categorie, scavalcando i default (Ainur/Arcani/
+// Animali spenti). Vale SOLO all'avvio — i filtri restano poi liberamente
+// modificabili. Lo stato dei filtri non è persistito, quindi è il parametro a
+// rendere il link idempotente (riaprirlo mostra di nuovo tutto); togliendolo si
+// torna ai default. Pensato per condividere un link che apre la lista intera.
+(function(){
+  try {
+    var qs = new URLSearchParams(window.location.search);
+    if (qs.has('tutte') || qs.has('all')) {
+      CATS.forEach(function(c){ filterState[c] = true; });
+    }
+  } catch (e) {}
 })();
 
 // Simboli di genere in SVG stile emoji (tratti spessi e colorati, leggibili a ogni dimensione)
