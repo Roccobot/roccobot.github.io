@@ -58,6 +58,20 @@ nell'editor admin). Comunicalo e lo cablo nel codice.
    - (opzionale) **Variables** (plain) → `GEMINI_MODEL` = override del modello; default `gemini-flash-latest`.
 5. Copia l'URL `*.workers.dev` mostrato in alto.
 
+## Versione del sito: auto-bump a ogni salvataggio
+
+A ogni commit dell'editor admin il Worker legge `var datiVersion` da `dati.js`,
+ne incrementa la **patch** (+0.0.1), la riscrive in testa al file e la
+restituisce nella risposta (`{"ok":true,"version":"X.Y.Z"}`); il sito aggiorna
+il badge senza reload. La versione è quindi un contatore di revisioni dei
+contenuti: minor/major restano decise solo dai commit di codice.
+
+> **Dopo ogni modifica a `arda-admin-proxy.js` va ridistribuito il Worker**
+> (`wrangler deploy`, o incolla il codice nel dashboard): non basta committare
+> il file nel repo. Finché non lo ridistribuisci resta attiva la versione
+> precedente del Worker (per l'auto-bump: la versione non sale, ma il sito
+> mostra comunque il fallback dal badge).
+
 ## Test rapido
 
 ```bash

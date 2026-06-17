@@ -136,10 +136,29 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 ## 🔢 Versione del sito
 
 - **Bump SemVer a ogni commit che tocca il sito** (regola universale).
-  Il numero hardcoded vive SOLO nel badge della testata (`.version-badge`
-  in `arda/top/index.html`); il numero nel pannello mobile (`.ctrl-ver`)
-  lo legge da lì a runtime e si aggiorna da solo. Mai reintrodurre numeri
-  duplicati/hardcoded altrove (storico: pannello fermo a v5.11.0 per mesi).
+- **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
+  Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
+  caricamento di `dati.js`) e la scrive nel badge della testata
+  (`.version-badge`); il numero nel pannello mobile (`.ctrl-ver`) lo eredita dal
+  badge. Il numero scritto a mano nel badge HTML resta **solo come fallback** se
+  `dati.js` non carica. Mai reintrodurre un secondo numero hardcoded "vivo"
+  altrove (storico: pannello fermo a v5.11.0 per mesi).
+  - **Bump a mano (commit di codice):** modificare `datiVersion` in `dati.js`
+    (ed eventualmente allineare il fallback nel badge, cosmetico). Storico: fino
+    a v10.13.x il numero "vivo" stava nel badge di `index.html`; spostato in
+    `dati.js` in v10.14.0 perché il Worker possa incrementarlo.
+  - **Bump automatico (salvataggi admin):** a OGNI commit dell'editor admin il
+    Worker legge `datiVersion` dal `dati.js` corrente e ne incrementa la
+    **patch** (+0.0.1), riscrivendola in testa al file, e la restituisce nella
+    risposta JSON (`version`) così il client aggiorna subito il badge senza
+    reload. Effetto: la versione sale a ogni salvataggio admin (incluse le
+    conferme di riordino) e diventa di fatto un contatore di revisioni dei
+    contenuti — il terzo numero cresce in fretta, minor/major restano decise
+    solo dai commit di codice. Prima (fino a v10.13.x) i salvataggi admin NON
+    bumpavano: la versione restava identica, rendendo le modifiche admin
+    invisibili al controllo di freschezza basato sul numero (vedi sopra il
+    confronto dei ref come verifica affidabile). **Richiede il Worker
+    ridistribuito** (modifica che non basta committare).
 - Su mobile il numero di versione nel pannello è anche **l'accesso
   all'area admin**.
 
@@ -162,14 +181,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   in `index.html` tra i marker `/*DS*/ … /*DE*/` (riga unica da ~361 KB, ~69% del
   file, diff illeggibili e a ridosso del limite 1 MB della Contents API);
   separato in v10.13.3 per diff leggibili e margine sul limite.
-- **Serializzazione: una voce JSON per riga** (`var dati = [\n{...},\n{...}\n];`),
-  così i diff su GitHub sono per-personaggio. Stessa identica forma sia a mano
-  sia dal Worker → i commit admin restano puliti.
+- **Serializzazione: prima riga `var datiVersion = "X.Y.Z";`, poi una voce JSON
+  per riga** (`var datiVersion = "...";\nvar dati = [\n{...},\n{...}\n];`), così
+  i diff su GitHub sono per-personaggio. Stessa identica forma sia a mano sia
+  dal Worker → i commit admin restano puliti. (`datiVersion` è la fonte unica
+  della versione del sito, vedi '🔢 Versione del sito'.)
 - Il salvataggio passa dal **proxy Cloudflare Worker**
   (`proxy/arda-admin-proxy.js`): il browser invia solo `dati` + parola
-  d'ordine; il Worker valida, prende lo SHA di `dati.js` con un GET e
-  **riscrive l'intero file** (`buildDatiFile`) con un PUT (Contents API, SHA:
-  race-safe). Niente più marker né read-modify-write dell'HTML.
+  d'ordine; il Worker valida, prende lo SHA di `dati.js` con un GET (dal cui
+  contenuto legge anche `datiVersion`, per incrementarne la patch) e
+  **riscrive l'intero file** (`buildDatiFile`, che riemette `datiVersion`
+  bumpata) con un PUT (Contents API, SHA: race-safe). Niente più marker né
+  read-modify-write dell'HTML.
   **Attenzione:** `FILE_PATH` del Worker punta a `arda/top/dati.js`; se si
   rinomina/sposta il file dati, va riallineato e il Worker **ridistribuito**
   (è una modifica che non basta committare).

@@ -27,6 +27,13 @@ const REPO = 'roccobot/roccobot.github.io';
 const FILE_PATH = 'arda/top/dati.js';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
+// Versione del sito: la fonte unica è `var datiVersion` in cima a dati.js.
+// A OGNI salvataggio admin il Worker la legge dal file corrente e ne
+// incrementa la patch (+0.0.1). DEFAULT_VERSION serve solo da rete di
+// sicurezza se la riga manca (es. finestra tra il deploy di questo Worker e
+// un dati.js scritto dalla versione precedente che non la emetteva).
+const DEFAULT_VERSION = '10.14.0';
+
 // Origine di produzione: fallback sicuro se ALLOWED_ORIGIN non è configurato.
 const PROD_ORIGIN = 'https://roccobot.github.io';
 
@@ -66,13 +73,43 @@ async function safeEqual(a, b) {
   return r === 0;
 }
 
-// Genera l'INTERO contenuto di dati.js: una voce JSON per riga, così i diff
-// su GitHub restano leggibili (per-personaggio) e il file è coerente con la
-// serializzazione usata a mano. `var dati` resta globale per il sito.
-function buildDatiFile(dati) {
-  return 'var dati = [\n' +
+// Genera l'INTERO contenuto di dati.js: in cima `var datiVersion` (fonte unica
+// del numero di versione, letto a runtime dal sito), poi `var dati` con una
+// voce JSON per riga, così i diff su GitHub restano leggibili (per-personaggio)
+// e il file è coerente con la serializzazione usata a mano. Entrambe le var
+// restano globali per il sito.
+function buildDatiFile(dati, version) {
+  return 'var datiVersion = "' + version + '";\n' +
+    'var dati = [\n' +
     dati.map(function (d) { return JSON.stringify(d); }).join(',\n') +
     '\n];\n';
+}
+
+// Estrae la versione corrente (`var datiVersion = "X.Y.Z"`) dal sorgente di
+// dati.js. Ritorna null se assente.
+function readVersion(src) {
+  const m = /var\s+datiVersion\s*=\s*["']([0-9]+\.[0-9]+\.[0-9]+)["']/.exec(src || '');
+  return m ? m[1] : null;
+}
+
+// Incrementa la patch (terzo numero) di una versione SemVer X.Y.Z.
+function bumpPatch(v) {
+  let p = String(v || '').split('.').map(Number);
+  if (p.length !== 3 || p.some(function (n) { return !Number.isFinite(n); })) {
+    p = DEFAULT_VERSION.split('.').map(Number);
+  }
+  p[2] += 1;
+  return p.join('.');
+}
+
+// Decodifica base64 (con eventuali newline) → stringa UTF-8. Inverso di
+// utf8ToB64: atob lavora byte-per-byte (Latin-1), quindi si ricostruiscono i
+// byte e si lascia decodificare l'UTF-8 a TextDecoder.
+function b64ToUtf8(b64) {
+  const bin = atob(String(b64 || '').replace(/\n/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
 }
 
 // GitHub Contents API restituisce/accetta base64; gestiamo l'UTF-8 a mano
@@ -129,15 +166,18 @@ export default {
         if (!fd || typeof fd.sha !== 'string') {
           return json({ ok: false, error: 'gh-no-sha (path errato?)' }, 502, ch);
         }
-        // Non serve più leggere/decodificare il vecchio contenuto: riscriviamo
-        // l'intero dati.js dall'array ricevuto. Il GET serve solo per lo SHA
-        // (read-modify-write race-safe).
-        const upd = buildDatiFile(body.dati);
+        // Si legge il vecchio contenuto solo per ricavare la versione corrente
+        // (`var datiVersion`) e incrementarne la patch; i dati invece si
+        // riscrivono interi dall'array ricevuto. Lo SHA del GET rende il
+        // read-modify-write race-safe.
+        const oldSrc = b64ToUtf8(fd.content);
+        const newVersion = bumpPatch(readVersion(oldSrc) || DEFAULT_VERSION);
+        const upd = buildDatiFile(body.dati, newVersion);
         const put = await fetch(GH_API, {
           method: 'PUT',
           headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders),
           body: JSON.stringify({
-            message: body.message || 'admin: aggiorna',
+            message: (body.message || 'admin: aggiorna') + ' (v' + newVersion + ')',
             content: utf8ToB64(upd),
             sha: fd.sha,
           }),
@@ -147,7 +187,7 @@ export default {
           try { er = await put.json(); } catch (e) {}
           return json({ ok: false, error: er.message || ('gh-put ' + put.status) }, 502, ch);
         }
-        return json({ ok: true }, 200, ch);
+        return json({ ok: true, version: newVersion }, 200, ch);
       } catch (err) {
         return json({ ok: false, error: 'commit-exception: ' + String(err && err.message || err) }, 502, ch);
       }
