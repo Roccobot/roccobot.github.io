@@ -551,16 +551,23 @@ h1 {
    dopo il caricamento pagina (vedi toggleControlPanel). Il +3px sul right è una
    correzione OTTICA (misurata: risultava ~3px troppo a destra) per centrarlo sul
    tasto Chiudi al reso reale. */
-.ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem + 3px); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); z-index:211; width:2.3rem; height:2.3rem; pointer-events:none; }
-.ctrl-scroll-hint .csh-finger { position:absolute; inset:0; border-radius:50%; opacity:0; background:radial-gradient(circle at 50% 42%, rgba(240,211,144,0.95), rgba(240,211,144,0.35) 60%, rgba(240,211,144,0) 72%); border:1px solid rgba(240,211,144,0.55); box-shadow:0 0 14px rgba(240,211,144,0.45); }
-.ctrl-scroll-hint .csh-finger::after { content:''; position:absolute; left:50%; top:62%; transform:translateX(-50%); width:42%; height:52px; opacity:0; border-radius:0 0 50% 50%/0 0 100% 100%; background:linear-gradient(to bottom, rgba(240,211,144,0.5), rgba(240,211,144,0)); filter:blur(1px); }
-.ctrl-scroll-hint.play .csh-finger { animation:csh-swipe 3.5s cubic-bezier(0.22,1,0.36,1) forwards; }
-.ctrl-scroll-hint.play .csh-finger::after { animation:csh-trail 3.5s linear forwards; }
-@keyframes csh-swipe { 0%{transform:translateY(10px);opacity:0} 6%{transform:translateY(0);opacity:0.92} 50%{transform:translateY(-72px);opacity:0.92} 62%{transform:translateY(-72px);opacity:0} 100%{transform:translateY(-72px);opacity:0} }
+/* Animazione 'dito che scorre' (solo mobile). Struttura: container (centrato sul
+   tasto Chiudi) con due figli: .csh-tail (la scia, dietro) e .csh-dot (il tondo
+   pieno, sopra, che ne copre l'inizio). Lo swipe (su + dissolvenza) è sul
+   container; la coda ha la sua dissolvenza. Cerchio SOLIDO e opaco, colore appena
+   più scuro dello sfondo; bordo a contrasto minimo. Coda dietro al tondo, stesso
+   colore, più larga, con fade che finisce prima. Niente +3px (lo shift della
+   scrollbar che compensava è stato risolto): centratura geometrica sul Chiudi. */
+.ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); z-index:211; width:2.3rem; height:2.3rem; pointer-events:none; opacity:0; }
+.ctrl-scroll-hint .csh-dot { position:absolute; inset:0; border-radius:50%; background:#36486e; border:1px solid rgba(150,178,225,0.42); }
+.ctrl-scroll-hint .csh-tail { position:absolute; left:50%; top:42%; transform:translateX(-50%); width:60%; height:34px; border-radius:0 0 50% 50%/0 0 100% 100%; background:linear-gradient(to bottom, #36486e, #36486e 55%, transparent); }
+.ctrl-scroll-hint.play { animation:csh-swipe 3.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+.ctrl-scroll-hint.play .csh-tail { animation:csh-trail 3.5s linear forwards; }
+@keyframes csh-swipe { 0%{transform:translateY(10px);opacity:0} 6%{transform:translateY(0);opacity:1} 50%{transform:translateY(-72px);opacity:1} 62%{transform:translateY(-72px);opacity:0} 100%{transform:translateY(-72px);opacity:0} }
 @keyframes csh-trail { 0%{opacity:0} 6%{opacity:1} 40%{opacity:0} 100%{opacity:0} }
-html[data-theme="light"] .ctrl-scroll-hint .csh-finger { background:radial-gradient(circle at 50% 42%, rgba(40,68,140,0.9), rgba(40,68,140,0.3) 60%, rgba(40,68,140,0) 72%); border-color:rgba(40,68,140,0.5); box-shadow:0 0 14px rgba(40,68,140,0.3); }
-html[data-theme="light"] .ctrl-scroll-hint .csh-finger::after { background:linear-gradient(to bottom, rgba(40,68,140,0.45), rgba(40,68,140,0)); }
-@media (prefers-reduced-motion:reduce){ .ctrl-scroll-hint.play .csh-finger, .ctrl-scroll-hint.play .csh-finger::after { animation:none; } }
+html[data-theme="light"] .ctrl-scroll-hint .csh-dot { background:#cdd8ec; border-color:rgba(70,100,160,0.40); }
+html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:linear-gradient(to bottom, #cdd8ec, #cdd8ec 55%, transparent); }
+@media (prefers-reduced-motion:reduce){ .ctrl-scroll-hint.play, .ctrl-scroll-hint.play .csh-tail { animation:none; } }
 /* Chiusura morbida del Pannello (bottom-sheet mobile, classe .closing): parte
    veloce e DECELERA subito fino allo stop, con un breve fade solo alla fine
    (l'apertura resta la transition nel media query). Vedi toggleControlPanel. */
@@ -1210,7 +1217,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.12.3</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.12.4</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2059,7 +2066,7 @@ function buildControlPanel() {
   var scrollHint = document.createElement('div');
   scrollHint.id = 'ctrl-scroll-hint'; scrollHint.className = 'ctrl-scroll-hint';
   scrollHint.setAttribute('aria-hidden', 'true');
-  scrollHint.innerHTML = '<span class="csh-finger"></span>';
+  scrollHint.innerHTML = '<span class="csh-tail"></span><span class="csh-dot"></span>';
   document.body.appendChild(scrollHint);
   // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet e'
   // gia' in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
