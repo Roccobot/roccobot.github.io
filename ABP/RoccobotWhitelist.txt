@@ -75,8 +75,10 @@
 @@||github.dev^$document,subdocument,important
 @@||github.io^$document,subdocument,important
 @@||githubusercontent.com^$document,subdocument,important
+@@||goodreads.com^$important
 @@||googleapis.com^$document,subdocument,important
 @@||googleusercontent.com^$document,subdocument,important
+@@||gr-assets.com^$important
 @@||grok.com^$document,subdocument,important
 @@||gstatic.com^$important
 @@||hamrick.com^$important
@@ -106,6 +108,7 @@
 @@||macosicons.com^$document,subdocument,important
 @@||mail.google.com^$important
 @@||manus.space^$document,subdocument,important
+@@||media-amazon.com^$important
 @@||media.anobii.com^$important
 @@||media.ilpost.it^$important
 @@||mediailpost-meride-tv.akamaized.net^$important
@@ -180,6 +183,7 @@
 @@||socifi.com^$important
 @@||sponsor.ajay^$important
 @@||squarespace.com^$important
+@@||ssl-images-amazon.com^$important
 @@||store.apple.com^$document,subdocument,important
 @@||stripe.com^$important
 @@||stripe.com^$document,subdocument,important
