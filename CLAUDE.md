@@ -114,6 +114,22 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   vecchia dell'attesa, fermarsi e investigare. Qui il rischio di
   disallineamento è concreto: l'editor admin del sito committa
   direttamente su GitHub via API.
+  - **Il numero di versione NON basta come spia.** I salvataggi admin
+    committano solo `arda/top/dati.js` (testi/ordine dei personaggi) **senza
+    bump**: la versione resta identica anche con `master` avanti. Perciò
+    affiancare sempre al `grep` il **confronto dei ref col remoto**, che è la
+    verifica affidabile:
+
+    ```bash
+    git fetch origin master \
+      && git rev-list --left-right --count origin/master...HEAD
+    ```
+
+    Il primo numero è quanti commit si è **dietro** a `origin/master`: se è >0
+    ci sono modifiche admin (o altri commit) da prendere → allinearsi prima di
+    lavorare. Caso reale: il commit admin `db3f453` ('modifica testi
+    personaggi') toccò solo `dati.js`, lasciando la versione a `v10.13.6`; il
+    solo `grep` non l'avrebbe colto, il confronto dei ref sì.
 - Il **SessionStart hook** standard (regola universale) è già configurato
   in `.claude/settings.json` di questo repo.
 
