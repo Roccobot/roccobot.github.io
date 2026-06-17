@@ -1238,7 +1238,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.17.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.18.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1567,8 +1567,12 @@ var filterState = {};
 var FILTER_DEFAULT = {};
 CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
 // Permalink della vista: se l'URL porta ?tutte (o alias ?all) si attivano
-// TUTTE le categorie; se porta ?cat=key1,key2,... si attivano esattamente
-// quelle (chiavi sconosciute ignorate; se nessuna valida, restano i default).
+// TUTTE le categorie. ?cat=... accetta DUE forme: (a) bitmask compatto, un
+// carattere 0/1 per categoria nell'ordine di CATS, con gli zeri finali
+// omettibili (es. ?cat=10111 → ainur, elf, adan, man); (b) lista di chiavi
+// ?cat=key1,key2,... (forma storica, chiavi sconosciute ignorate; se nessuna
+// valida, restano i default). Le due forme si distinguono al volo: solo 0/1 =
+// bitmask, altrimenti lista. buildShareUrl genera la forma compatta (a).
 // Vale SOLO all'avvio — i filtri restano poi liberamente modificabili (lo
 // stato non è persistito, quindi è il parametro a rendere il link idempotente).
 // È il tasto 'copia link' del Pannello a generare questi URL (buildShareUrl),
@@ -1579,9 +1583,16 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
     if (qs.has('tutte') || qs.has('all')) {
       CATS.forEach(function(c){ filterState[c] = true; });
     } else if (qs.has('cat')) {
-      var valid = (qs.get('cat') || '').split(',').map(function(s){ return s.trim(); })
-                    .filter(function(c){ return CATS.indexOf(c) !== -1; });
-      if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
+      var raw = (qs.get('cat') || '').trim();
+      if (/^[01]+$/.test(raw)) {
+        // Bitmask: i-esimo carattere = categoria CATS[i]; bit oltre la stringa
+        // (zeri finali omessi) valgono 0, quindi restano spenti.
+        CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
+      } else {
+        var valid = raw.split(',').map(function(s){ return s.trim(); })
+                      .filter(function(c){ return CATS.indexOf(c) !== -1; });
+        if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
+      }
     }
   } catch (e) {}
 })();
@@ -1962,16 +1973,19 @@ function wireControlPanel() {
 }
 
 // URL della vista corrente: ?tutte se sono attive TUTTE le categorie, nessun
-// parametro se è la vista di default, altrimenti ?cat=key1,key2,... con le
-// categorie attive. Il loader in testa allo script rilegge questi parametri,
-// così riaprire il link riproduce esattamente la vista.
+// parametro se è la vista di default, altrimenti ?cat=<bitmask> compatto (un
+// bit per categoria nell'ordine di CATS, zeri finali omessi: es. ?cat=10111).
+// Il loader in testa allo script rilegge questi parametri (e per retro-
+// compatibilità anche la vecchia forma ?cat=key1,key2,...), così riaprire il
+// link riproduce esattamente la vista.
 function buildShareUrl() {
   var base = location.origin + location.pathname;
   var active = CATS.filter(function(c){ return filterState[c]; });
   if (active.length === CATS.length) return base + '?tutte';
   var isDefault = CATS.every(function(c){ return !!filterState[c] === !!FILTER_DEFAULT[c]; });
   if (isDefault || !active.length) return base;
-  return base + '?cat=' + active.join(',');
+  var bits = CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('').replace(/0+$/, '');
+  return base + '?cat=' + bits;
 }
 
 var ICON_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
