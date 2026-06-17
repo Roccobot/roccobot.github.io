@@ -139,10 +139,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
-  (`.version-badge`); il numero nel pannello mobile (`.ctrl-ver`) lo eredita dal
-  badge. Il numero scritto a mano nel badge HTML resta **solo come fallback** se
-  `dati.js` non carica. Mai reintrodurre un secondo numero hardcoded "vivo"
-  altrove (storico: pannello fermo a v5.11.0 per mesi).
+  (`.version-badge`); gli specchi nel Pannello la ereditano dal badge — su
+  **mobile** il numero nella barra inferiore (`.ctrl-ver`), su **desktop** il
+  numero in alto a sinistra nella toolbar (`.ctrl-ver-desk`). Il numero scritto
+  a mano nel badge HTML resta **solo come fallback** se `dati.js` non carica.
+  Mai reintrodurre un secondo numero hardcoded "vivo" altrove (storico: pannello
+  fermo a v5.11.0 per mesi).
   - **Bump a mano (commit di codice):** modificare `datiVersion` in `dati.js`
     (ed eventualmente allineare il fallback nel badge, cosmetico). Storico: fino
     a v10.13.x il numero "vivo" stava nel badge di `index.html`; spostato in
@@ -161,8 +163,14 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     ridistribuisce **da sé** via la Git integration di Cloudflare (Workers
     Builds, `proxy/wrangler.toml`) a ogni push su `master`; `wrangler deploy`
     resta solo come fallback manuale.
-- Su mobile il numero di versione nel pannello è anche **l'accesso
-  all'area admin**.
+- Il numero di versione è anche **l'accesso all'area admin**, con DUE
+  comportamenti distinti:
+  - **Badge in testata** (`.version-badge`) e **versione del Pannello desktop**
+    (`.ctrl-ver-desk`, in alto a sinistra nella toolbar): click → **dritto
+    all'editor admin** (`showAdminEditor`, con `showPasswordModal` se non già
+    sbloccato). La versione desktop chiude prima il pannello.
+  - **Versione del Pannello mobile** (`.ctrl-ver`, barra inferiore): click →
+    apre il trivio `showActionChoiceModal` (Riordina / Modifica contenuti).
 
 ## 🔐 Admin e segreti
 
