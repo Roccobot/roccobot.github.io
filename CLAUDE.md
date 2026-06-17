@@ -69,12 +69,22 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 - **Branch principale: `master`.** Si lavora e si pusha direttamente lì,
   come da regola universale.
-- **Go-live sempre (default), senza chiedere.** Istruzione durevole dell'utente
-  ('vai sempre live'): dopo ogni task con i test verdi, portare subito le
-  modifiche in produzione su `master` (se la sessione è vincolata a un branch
-  `claude/*`, aprire la PR e **mergiarla immediatamente**, squash). Non chiedere
-  conferma per il go-live: è già autorizzato. Vale come i comandi di via libera,
-  applicato di default.
+- **Go-live sempre (default), senza chiedere — salvo modifiche pesanti.**
+  Istruzione durevole dell'utente ('vai sempre live'): dopo ogni task con i
+  test verdi, portare subito le modifiche in produzione su `master` (se la
+  sessione è vincolata a un branch `claude/*`, aprire la PR e **mergiarla
+  immediatamente**, squash). Non chiedere conferma per il go-live: è già
+  autorizzato, vale come i comandi di via libera, applicato di default.
+  - **Eccezione: modifiche pesanti / significative / rischiose / strutturali.**
+    Qui il go-live automatico **non** si applica: aprire comunque la PR ma
+    **non mergiarla**, fermarsi e **chiedere conferma all'utente** prima di
+    andare live (presentando in breve cosa cambia e perché è delicato). Sono
+    'pesanti' p.es.: rifacimenti/refactor estesi, modifiche all'architettura o
+    al flusso dati (`dati.js`, proxy/Worker, schema dati), interventi che
+    toccano segreti/admin/deploy, riscritture ampie o cambi che incidono su
+    molte voci o sull'intera UI. Nel dubbio sul peso di una modifica, trattarla
+    come pesante e chiedere. Le modifiche ordinarie (contenuti, fix puntuali,
+    ritocchi, documentazione) restano in go-live automatico.
 - **Dopo il go-live su branch `claude/*`: riallineare il branch al `master`.**
   Concluso lo squash-merge, oltre al consueto `git reset --hard origin/master`
   in locale, riportare anche il **branch remoto** `claude/*` su `master`:
