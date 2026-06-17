@@ -15,7 +15,8 @@ Uno script unico per Qwant, con due funzioni:
    ufficiale**, via la **barra a sinistra** (Search / Junior / Shadow Drive),
    il **tasto opzioni/filtri** della SERP, il **footer** e le **card
    promozionali** (tile, "Follow Soccer", banner "scarica l'app", promo
-   estensione). In home restano **solo logo e barra di ricerca, senza
+   estensione e la card "Estensione Qwant / Aggiungi a Chrome"). In home
+   restano **solo logo e barra di ricerca, senza
    scorrimento verticale**; nella SERP restano anche i risultati.
 2. **Immagini dirette.** Nella ricerca immagini (`qwant.com` → scheda
    *Immagini*), il clic su una miniatura apre **direttamente il file

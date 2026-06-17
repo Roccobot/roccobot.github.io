@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.2.0
+// @version      2.3.0
 // @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
@@ -51,7 +51,7 @@
     if (NASCONDI_PROMO) regole.push(
       '[data-testid="heroTiles"]{display:none!important}',
       '[data-testid^="downloadApp"]{display:none!important}',
-      'a[href*="chrome.google.com/webstore"]{display:none!important}'
+      'a[href*="chrome.google.com/webstore"],a[href*="chromewebstore.google.com"]{display:none!important}'
     );
     if (NASCONDI_OPZIONI) regole.push(
       '[data-testid="toggleFiltersButton"]{display:none!important}',
@@ -116,7 +116,24 @@
       }
     }
 
-    function applica() { sistemaDoodle(); nascondiPromo(); }
+    function nascondiBannerEstensione() {
+      if (!NASCONDI_PROMO) return;
+      // Toast "Estensione Qwant / Aggiungi a Chrome": niente id stabile, ma il
+      // pulsante linka a chromewebstore.google.com e la card ha la X di chiusura.
+      // Dal link si risale all'antenato che contiene quel button[aria-label="close"]
+      // (= la card) e lo si nasconde.
+      const sel = 'a[href*="chromewebstore.google.com"]:not([data-rbext]),a[href*="chrome.google.com/webstore"]:not([data-rbext])';
+      for (const link of document.querySelectorAll(sel)) {
+        link.dataset.rbext = '1';
+        let card = null;
+        for (let el = link.parentElement; el && el !== document.body; el = el.parentElement) {
+          if (el.querySelector('button[aria-label="close"]')) { card = el; break; }
+        }
+        (card || link).style.setProperty('display', 'none', 'important');
+      }
+    }
+
+    function applica() { sistemaDoodle(); nascondiPromo(); nascondiBannerEstensione(); }
 
     // La home è una SPA: doodle e card compaiono dopo il primo render → si osserva.
     function avvio() {
