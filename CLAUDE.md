@@ -262,15 +262,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `?cat=` accetta **due forme** (distinte al volo: solo `0/1` ⇒ bitmask,
   altrimenti lista di chiavi):
   - **Bitmask compatto (forma canonica, dalla v10.18.0).** Un carattere `0/1`
-    per categoria nell'**ordine fisso di `CATS`** (ainur, arcane, elf, adan,
-    man, dwarf, hobbit, orc, animal): es. `?cat=101110000` = ainur, elf, adan,
+    per categoria nell'**ordine fisso di `CATS`** (ainu, arcane, elf, adan,
+    man, dwarf, hobbit, orc, animal): es. `?cat=101110000` = ainu, elf, adan,
     man. Gli **zeri finali si omettono** (i bit mancanti valgono 0), quindi lo
     stesso link si abbrevia in `?cat=10111`. È la forma generata da
     `buildShareUrl` (link più corti).
   - **Lista di chiavi (forma storica, retro-compatibile).** `?cat=k1,k2,…`
     attiva **esattamente** le categorie elencate (chiavi tra `CATS`; chiavi
     ignote scartate; se nessuna è valida restano i default). I vecchi link
-    continuano a funzionare; non è più la forma emessa.
+    continuano a funzionare; non è più la forma emessa. La chiave interna di
+    questa categoria è `ainu` (singolare, coerente con `elf`/`man`/`orc`); la
+    vecchia `ainur` è **aliasata** a `ainu` in lettura, così i link storici
+    `?cat=ainur,…` restano validi.
   Nel Pannello un **tasto 'copia link'** (icona catena, `.ctrl-share-btn`; su
   **desktop** a destra del cambio-lingua nella toolbar, su **mobile** nel gruppo
   centrato con tema/lingua della barra inferiore) copia negli appunti l'URL

@@ -1238,7 +1238,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.18.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.18.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1531,7 +1531,7 @@ function buildStatus(p) {
 }
 
 // \u2500\u2500 Categorie per il filtro \u2500\u2500
-var CATS = ['ainur','arcane','elf','adan','man','dwarf','hobbit','orc','animal'];
+var CATS = ['ainu','arcane','elf','adan','man','dwarf','hobbit','orc','animal'];
 function categoria(p) {
   // Bestie e creature leggendarie mostrate tra gli Animali per scelta
   // editoriale (solo visualizzazione: tipo ed etichette restano invariati).
@@ -1542,8 +1542,8 @@ function categoria(p) {
   // i Maiar (tipo che contiene 'maia' o 'balrog': Balrog e Sauron 'Maia
   // decaduto' inclusi). Lúthien, unica Maia in categoria diversa, resta tra gli
   // Elfi: esclusa per nome qui, ricade poi nel check elfo/elfa più sotto.
-  if (/^val(a|i[eë])/.test(t)) return 'ainur';
-  if (p.nome !== 'Lúthien' && /maia|balrog/.test(t)) return 'ainur';
+  if (/^val(a|i[eë])/.test(t)) return 'ainu';
+  if (p.nome !== 'Lúthien' && /maia|balrog/.test(t)) return 'ainu';
   if (p.divino) return 'arcane'; // altri esseri arcani/ancestrali: draghi, spiriti, vampiri, Ungoliant, Ent...
   if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) return 'arcane'; // Spettri-capi
   if (/orco|orc|uruk/.test(t)) return 'orc';
@@ -1560,7 +1560,7 @@ function categoria(p) {
 }
 var filterState = {};
 (function(){
-  CATS.forEach(function(c){ filterState[c] = (c !== 'ainur' && c !== 'arcane' && c !== 'animal'); });
+  CATS.forEach(function(c){ filterState[c] = (c !== 'ainu' && c !== 'arcane' && c !== 'animal'); });
 })();
 // Snapshot dei default (prima di un eventuale override da URL): serve a
 // buildShareUrl per riconoscere la vista di default e copiarne il link pulito.
@@ -1569,7 +1569,7 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
 // Permalink della vista: se l'URL porta ?tutte (o alias ?all) si attivano
 // TUTTE le categorie. ?cat=... accetta DUE forme: (a) bitmask compatto, un
 // carattere 0/1 per categoria nell'ordine di CATS, con gli zeri finali
-// omettibili (es. ?cat=10111 → ainur, elf, adan, man); (b) lista di chiavi
+// omettibili (es. ?cat=10111 → ainu, elf, adan, man); (b) lista di chiavi
 // ?cat=key1,key2,... (forma storica, chiavi sconosciute ignorate; se nessuna
 // valida, restano i default). Le due forme si distinguono al volo: solo 0/1 =
 // bitmask, altrimenti lista. buildShareUrl genera la forma compatta (a).
@@ -1590,6 +1590,7 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
         CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
       } else {
         var valid = raw.split(',').map(function(s){ return s.trim(); })
+                      .map(function(c){ return c === 'ainur' ? 'ainu' : c; }) // alias: vecchi link
                       .filter(function(c){ return CATS.indexOf(c) !== -1; });
         if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
       }
@@ -1782,10 +1783,10 @@ let isFirstRender = true;
 
 // ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
-  it: { ainur:'Ainur', arcane:'Esseri arcani/ancestrali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi', animal:'Animali' },
-  en: { ainur:'Ainur', arcane:'Arcane/ancestral beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs', animal:'Animals' }
+  it: { ainu:'Ainur', arcane:'Esseri arcani/ancestrali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi', animal:'Animali' },
+  en: { ainu:'Ainur', arcane:'Arcane/ancestral beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs', animal:'Animals' }
 };
-var CAT_COLOR = { ainur:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
+var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
 var CTRL_I18N = {
   it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
