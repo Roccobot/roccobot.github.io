@@ -75,6 +75,24 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `claude/*`, aprire la PR e **mergiarla immediatamente**, squash). Non chiedere
   conferma per il go-live: è già autorizzato. Vale come i comandi di via libera,
   applicato di default.
+- **Dopo il go-live su branch `claude/*`: riallineare il branch al `master`.**
+  Concluso lo squash-merge, oltre al consueto `git reset --hard origin/master`
+  in locale, riportare anche il **branch remoto** `claude/*` su `master`:
+
+  ```bash
+  git fetch origin master && git reset --hard origin/master \
+    && git push --force-with-lease origin HEAD:<nome-branch-claude>
+  ```
+
+  Motivo: lo stop hook `~/.claude/stop-hook-git-check.sh` segnala come
+  «Unverified» ogni commit nel range `origin/<branch>..HEAD` il cui committer
+  non sia `noreply@anthropic.com`. Lo squash-merge crea un merge-commit con
+  committer `GitHub <noreply@github.com>`: su GitHub.com è **già "Verified"**
+  (firmato dalla web-flow key di GitHub), ma il hook lo legge come estraneo
+  perché il branch `claude/*` resta «dietro» rispetto a `master`. Riallineando
+  il branch remoto, quel range si svuota e l'avviso (falso positivo) sparisce.
+  Il hook vive in `~/.claude` (ambiente effimero): modificarlo non
+  persisterebbe tra sessioni, perciò si agisce sul workflow.
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
