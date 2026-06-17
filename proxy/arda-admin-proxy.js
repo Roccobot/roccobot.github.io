@@ -22,7 +22,9 @@
  */
 
 const REPO = 'roccobot/roccobot.github.io';
-const FILE_PATH = 'arda/top/index.html';
+// I dati vivono in un file dedicato (separato da index.html): il Worker
+// riscrive l'INTERO file a ogni commit, niente più marker /*DS*/.../*DE*/.
+const FILE_PATH = 'arda/top/dati.js';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
 // Origine di produzione: fallback sicuro se ALLOWED_ORIGIN non è configurato.
@@ -64,21 +66,17 @@ async function safeEqual(a, b) {
   return r === 0;
 }
 
-// Sostituzione sicura dell'array dati tra i marker /*DS*/ … /*DE*/.
-function replaceDati(html, dati) {
-  const s = html.indexOf('/*DS*/');
-  const e = html.indexOf('/*DE*/');
-  if (s === -1 || e === -1) return null;
-  return html.slice(0, s) + '/*DS*/var dati = ' + JSON.stringify(dati) + ';/*DE*/' + html.slice(e + 6);
+// Genera l'INTERO contenuto di dati.js: una voce JSON per riga, così i diff
+// su GitHub restano leggibili (per-personaggio) e il file è coerente con la
+// serializzazione usata a mano. `var dati` resta globale per il sito.
+function buildDatiFile(dati) {
+  return 'var dati = [\n' +
+    dati.map(function (d) { return JSON.stringify(d); }).join(',\n') +
+    '\n];\n';
 }
 
 // GitHub Contents API restituisce/accetta base64; gestiamo l'UTF-8 a mano
 // perché atob/btoa dei Worker lavorano byte-per-byte (Latin-1).
-function b64ToUtf8(b64) {
-  const bin = atob(b64.replace(/\n/g, ''));
-  const bytes = Uint8Array.from(bin, function (c) { return c.charCodeAt(0); });
-  return new TextDecoder().decode(bytes);
-}
 function utf8ToB64(str) {
   const bytes = new TextEncoder().encode(str);
   let bin = '';
@@ -128,12 +126,13 @@ export default {
         const get = await fetch(GH_API + '?_=' + Date.now(), { headers: ghHeaders });
         if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
         const fd = await get.json();
-        if (!fd || typeof fd.content !== 'string') {
-          return json({ ok: false, error: 'gh-no-content (file >1MB o path errato?)' }, 502, ch);
+        if (!fd || typeof fd.sha !== 'string') {
+          return json({ ok: false, error: 'gh-no-sha (path errato?)' }, 502, ch);
         }
-        const cur = b64ToUtf8(fd.content);
-        const upd = replaceDati(cur, body.dati);
-        if (!upd) return json({ ok: false, error: 'marker-assente' }, 500, ch);
+        // Non serve più leggere/decodificare il vecchio contenuto: riscriviamo
+        // l'intero dati.js dall'array ricevuto. Il GET serve solo per lo SHA
+        // (read-modify-write race-safe).
+        const upd = buildDatiFile(body.dati);
         const put = await fetch(GH_API, {
           method: 'PUT',
           headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders),

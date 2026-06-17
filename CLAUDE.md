@@ -111,11 +111,24 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 ## 🗃️ Struttura dati
 
-- Array `dati` delimitato da `/*DS*/` e `/*DE*/` per sostituzione sicura.
+- **L'array `dati` vive in un file dedicato: `arda/top/dati.js`** (`var dati =
+  [...]`), caricato da `index.html` con `<script src="dati.js"></script>` posto
+  **prima** dello script principale (sincrono e bloccante: `dati` è globale e
+  definita prima che il resto giri). Storico: fino a v10.13.2 l'array era inline
+  in `index.html` tra i marker `/*DS*/ … /*DE*/` (riga unica da ~361 KB, ~69% del
+  file, diff illeggibili e a ridosso del limite 1 MB della Contents API);
+  separato in v10.13.3 per diff leggibili e margine sul limite.
+- **Serializzazione: una voce JSON per riga** (`var dati = [\n{...},\n{...}\n];`),
+  così i diff su GitHub sono per-personaggio. Stessa identica forma sia a mano
+  sia dal Worker → i commit admin restano puliti.
 - Il salvataggio passa dal **proxy Cloudflare Worker**
   (`proxy/arda-admin-proxy.js`): il browser invia solo `dati` + parola
-  d'ordine; il Worker valida e fa read-modify-write su GitHub
-  (Contents API, PUT con SHA: race-safe).
+  d'ordine; il Worker valida, prende lo SHA di `dati.js` con un GET e
+  **riscrive l'intero file** (`buildDatiFile`) con un PUT (Contents API, SHA:
+  race-safe). Niente più marker né read-modify-write dell'HTML.
+  **Attenzione:** `FILE_PATH` del Worker punta a `arda/top/dati.js`; se si
+  rinomina/sposta il file dati, va riallineato e il Worker **ridistribuito**
+  (è una modifica che non basta committare).
 - `doCommit()` nel client fa `POST proxyUrl()` con
   `{action:'commit', password, dati, message}`. L'URL del Worker è in
   `ADMIN_PROXY_URL_DEFAULT` (non segreto), overridabile dal campo 'Proxy'
