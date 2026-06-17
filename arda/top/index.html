@@ -1221,7 +1221,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.13.3</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.13.4</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2413,7 +2413,7 @@ function showToast(msg, isError) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'arda-toast';
-    t.style.cssText = 'position:fixed;bottom:5.5rem;right:2rem;z-index:300;padding:0.45rem 0.9rem;border-radius:6px;font-family:system-ui,-apple-system,sans-serif;font-size:0.82rem;font-weight:600;max-width:280px;pointer-events:none;transition:opacity 0.4s;';
+    t.style.cssText = 'position:fixed;bottom:3.5rem;right:5.6rem;transform:translateY(50%);z-index:300;padding:0.45rem 0.9rem;border-radius:6px;font-family:system-ui,-apple-system,sans-serif;font-size:0.82rem;font-weight:600;max-width:280px;pointer-events:none;transition:opacity 0.4s;';
     document.body.appendChild(t);
   }
   t.textContent = msg;
