@@ -258,17 +258,27 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   rendere il link idempotente; riaprirlo rimostra tutto, toglierlo torna ai
   default). Pensato per condividere un link che apre la lista intera —
   es. `https://roccobot.github.io/arda/top/?tutte`.
-- **Tasto 'copia link' e parametro `?cat=`.** Oltre a `?tutte`, l'URL accetta
-  `?cat=k1,k2,…` che attiva **esattamente** le categorie elencate (chiavi tra
-  `CATS`: ainur, arcane, elf, adan, man, dwarf, hobbit, orc, animal; chiavi
-  ignote scartate; se nessuna è valida restano i default). Nel Pannello un
-  **tasto 'copia link'** (icona catena, `.ctrl-share-btn`; su **desktop** a
-  destra del cambio-lingua nella toolbar, su **mobile** nel gruppo centrato con
-  tema/lingua della barra inferiore) copia negli appunti l'URL della **vista
-  corrente** via `buildShareUrl`: `?tutte` se tutte attive, **nessun parametro**
-  se è la vista di default (snapshot `FILTER_DEFAULT`), altrimenti
-  `?cat=<attive>`; con conferma visiva (✓ + tinta oro, `.ctrl-share-done`) e
-  ripiego `execCommand` fuori dai contesti sicuri.
+- **Tasto 'copia link' e parametro `?cat=`.** Oltre a `?tutte`, il parametro
+  `?cat=` accetta **due forme** (distinte al volo: solo `0/1` ⇒ bitmask,
+  altrimenti lista di chiavi):
+  - **Bitmask compatto (forma canonica, dalla v10.18.0).** Un carattere `0/1`
+    per categoria nell'**ordine fisso di `CATS`** (ainur, arcane, elf, adan,
+    man, dwarf, hobbit, orc, animal): es. `?cat=101110000` = ainur, elf, adan,
+    man. Gli **zeri finali si omettono** (i bit mancanti valgono 0), quindi lo
+    stesso link si abbrevia in `?cat=10111`. È la forma generata da
+    `buildShareUrl` (link più corti).
+  - **Lista di chiavi (forma storica, retro-compatibile).** `?cat=k1,k2,…`
+    attiva **esattamente** le categorie elencate (chiavi tra `CATS`; chiavi
+    ignote scartate; se nessuna è valida restano i default). I vecchi link
+    continuano a funzionare; non è più la forma emessa.
+  Nel Pannello un **tasto 'copia link'** (icona catena, `.ctrl-share-btn`; su
+  **desktop** a destra del cambio-lingua nella toolbar, su **mobile** nel gruppo
+  centrato con tema/lingua della barra inferiore) copia negli appunti l'URL
+  della **vista corrente** via `buildShareUrl`: `?tutte` se tutte attive,
+  **nessun parametro** se è la vista di default (snapshot `FILTER_DEFAULT`),
+  altrimenti `?cat=<bitmask>` (zeri finali omessi); con conferma visiva (✓ +
+  tinta oro, `.ctrl-share-done`) e ripiego `execCommand` fuori dai contesti
+  sicuri.
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1
