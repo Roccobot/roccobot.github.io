@@ -908,11 +908,11 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
 .admin-cards { max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:1.2rem;padding-bottom:4rem; }
 .admin-card { border:1px solid rgba(104,144,168,0.18);border-radius:6px;padding:1rem 1rem 1.2rem;background:var(--ink); }
 .admin-rank-num { text-align:center;font-family:'Cinzel',serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:900;color:var(--gold-deep);letter-spacing:0.05em;margin-bottom:0.7rem; }
-.admin-name-row { display:grid;grid-template-columns:auto 1fr auto;align-items:stretch;gap:0.8rem;margin-bottom:1rem; }
-.admin-flag { display:flex;align-items:stretch; }
+.admin-name-row { margin-bottom:1rem; }
+.admin-name-field { display:flex;align-items:stretch;gap:0.5rem; }
+.admin-flag { display:flex;align-items:stretch;flex-shrink:0; }
 .admin-flag svg { height:100%;width:auto;border-radius:2px;display:block; }
-.admin-name-label { display:block;text-align:center; }
-.admin-name-input { text-align:center;font-family:'Cinzel',serif !important;font-size:1.1rem !important;font-weight:700;letter-spacing:0.03em; }
+.admin-name-input { text-align:center;font-family:'Cinzel',serif !important;font-size:1.1rem !important;font-weight:700;letter-spacing:0.03em;flex:1;min-width:0; }
 .admin-bilingual-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1.4rem;margin-bottom:0.8rem; }
 .admin-field { display:flex;flex-direction:column;gap:0.18rem; }
 .admin-label { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;color:var(--gold);opacity:0.75; }
@@ -984,7 +984,6 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
   .admin-bilingual-grid { grid-template-columns:1fr; }
   .admin-mono-grid { grid-template-columns:1fr; }
   .admin-label-en { text-align:left; }
-  .admin-name-row { grid-template-columns:auto 1fr auto; gap:0.5rem; }
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -1221,7 +1220,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.13.5</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.13.6</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2686,16 +2685,20 @@ function showAdminEditor() {
     const PAIRS = [{ it: 'nome', en: 'nome_en', label: 'Nome', isName: true }]
       .concat(BILINGUAL.map(function(f){ return { it: f.it, en: f.en, label: (f.li || f.it).replace(/ IT$/, '') }; }))
       .concat([{ it: 'nomi_alternativi', en: 'nomi_alternativi_en', label: 'Nomi alternativi' }]);
-    // Campi "dimenticati": un lato compilato (>3 char) e l'altro ≤3 (considerati
-    // spazzatura e scartati). La traduzione automatica al salvataggio è stata
-    // rimossa: ora si chiede conferma (vedi FEATURES.adminTranslate per il tasto
-    // 'Traduci' manuale, oggi spento).
+    // Campi "dimenticati": un lato compilato e l'altro COMPLETAMENTE VUOTO.
+    // (Storico: fino a v10.13.5 si considerava "vuoto" ogni lato ≤3 caratteri,
+    // ma questo dava falsi positivi su traduzioni corte valide come Elf/Orc/Man
+    // — 12 occorrenze — col rischio di cancellarle confermando vuoto. Ora il
+    // gap scatta solo se un lato è vuoto: il lato 'miss' è sempre quello vuoto,
+    // quindi nessun dato valido può essere cancellato.) La traduzione automatica
+    // al salvataggio è stata rimossa: ora si chiede conferma (vedi
+    // FEATURES.adminTranslate per il tasto 'Traduci' manuale, oggi spento).
     const gaps = [];
     dati.forEach(function(p, i){
       PAIRS.forEach(function(pair){
         const itV = g(i, pair.it).trim(), enV = g(i, pair.en).trim();
-        if (itV.length > 3 && enV.length <= 3)      gaps.push({ i: i, miss: pair.en, src: pair.it, lang: 'inglese',  label: pair.label, isName: pair.isName });
-        else if (enV.length > 3 && itV.length <= 3) gaps.push({ i: i, miss: pair.it, src: pair.en, lang: 'italiano', label: pair.label, isName: pair.isName });
+        if (itV.length > 0 && enV.length === 0)      gaps.push({ i: i, miss: pair.en, src: pair.it, lang: 'inglese',  label: pair.label, isName: pair.isName });
+        else if (enV.length > 0 && itV.length === 0) gaps.push({ i: i, miss: pair.it, src: pair.en, lang: 'italiano', label: pair.label, isName: pair.isName });
       });
     });
     // Una modale di conferma per occorrenza, in sequenza. Testo digitato → nel
@@ -2714,7 +2717,7 @@ function showAdminEditor() {
     // perse in silenzio).
     const next = JSON.parse(JSON.stringify(dati));
     next.forEach((p, i) => {
-      p.nome = g(i, 'nome');
+      p.nome = g(i, 'nome'); p.nome_en = g(i, 'nome_en');
       p.tipo = g(i, 'tipo'); p.tipo_en = g(i, 'tipo_en');
       p.descrizione = g(i, 'descrizione'); p.descrizione_en = g(i, 'descrizione_en');
       p.padre = g(i, 'padre'); p.madre = g(i, 'madre');
@@ -2810,18 +2813,33 @@ function showAdminEditor() {
     num.className = 'admin-rank-num'; num.textContent = i + 1;
     card.appendChild(num);
 
-    // Riga nome: bandiera IT | label+input | bandiera EN
+    // Riga nome: due campi bilingui (Nome IT | Nome EN), pre-compilati con
+    // p.nome / p.nome_en. La bandiera affianca il rispettivo campo (IT a sx,
+    // EN a dx). Quando i due nomi divergono (es. Faggiosso/Beechbone,
+    // Baccador/Goldberry) qui si impostano entrambi i lati.
     const nameRow = document.createElement('div');
-    nameRow.className = 'admin-name-row';
+    nameRow.className = 'admin-bilingual-grid admin-name-row';
+    // colonna IT
+    const nameItWrap = document.createElement('div'); nameItWrap.className = 'admin-field';
+    const nameItLbl = document.createElement('label');
+    nameItLbl.className = 'admin-label'; nameItLbl.textContent = 'Nome'; nameItLbl.htmlFor = 'ae-' + i + '-nome';
+    const nameItField = document.createElement('div'); nameItField.className = 'admin-name-field';
     const fIt = document.createElement('div'); fIt.className = 'admin-flag'; fIt.innerHTML = FLAG_IT;
-    const nameWrap = document.createElement('div'); nameWrap.className = 'admin-field';
-    const nameLbl = document.createElement('label');
-    nameLbl.className = 'admin-label admin-name-label'; nameLbl.textContent = 'Nome'; nameLbl.htmlFor = 'ae-' + i + '-nome';
-    const nameInp = mkInp(i, 'nome', false);
-    nameInp.className += ' admin-name-input'; nameInp.value = p.nome || '';
-    nameWrap.appendChild(nameLbl); nameWrap.appendChild(nameInp);
+    const nameItInp = mkInp(i, 'nome', false);
+    nameItInp.className += ' admin-name-input'; nameItInp.value = p.nome || '';
+    nameItField.appendChild(fIt); nameItField.appendChild(nameItInp);
+    nameItWrap.appendChild(nameItLbl); nameItWrap.appendChild(nameItField);
+    // colonna EN
+    const nameEnWrap = document.createElement('div'); nameEnWrap.className = 'admin-field';
+    const nameEnLbl = document.createElement('label');
+    nameEnLbl.className = 'admin-label admin-label-en'; nameEnLbl.textContent = 'Nome EN'; nameEnLbl.htmlFor = 'ae-' + i + '-nome_en';
+    const nameEnField = document.createElement('div'); nameEnField.className = 'admin-name-field';
+    const nameEnInp = mkInp(i, 'nome_en', false);
+    nameEnInp.className += ' admin-name-input'; nameEnInp.value = p.nome_en || '';
     const fEn = document.createElement('div'); fEn.className = 'admin-flag'; fEn.innerHTML = FLAG_EN;
-    nameRow.appendChild(fIt); nameRow.appendChild(nameWrap); nameRow.appendChild(fEn);
+    nameEnField.appendChild(nameEnInp); nameEnField.appendChild(fEn);
+    nameEnWrap.appendChild(nameEnLbl); nameEnWrap.appendChild(nameEnField);
+    nameRow.appendChild(nameItWrap); nameRow.appendChild(nameEnWrap);
     card.appendChild(nameRow);
 
     // Nomi alternativi: subito dopo il nome, colonne IT (sx) | EN (dx)

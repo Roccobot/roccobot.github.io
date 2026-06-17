@@ -187,20 +187,33 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   resa (`p.nome || p.nome_en` in italiano, `p.nome_en || p.nome` in inglese)
   resta come rete di sicurezza, ma i due campi vanno comunque riempiti entrambi.
   Valori diversi solo quando il nome italiano differisce davvero dall'inglese
-  (es. `Baccador` / `Goldberry`, `Ombromanto` / `Shadowfax`).
+  (es. `Baccador` / `Goldberry`, `Ombromanto` / `Shadowfax`, `Faggiosso` /
+  `Beechbone`).
   - Storico: fino a v10.4.x valeva la regola opposta (solo `nome_en`, `nome`
     vuoto, affidandosi al fallback). Invertita su richiesta dell'utente.
+- **Editor admin: doppio campo nome.** Dalla v10.13.6 la riga nome dell'editor
+  ha due campi affiancati, **Nome** (`nome`, IT, bandiera 🇮🇹) e **Nome EN**
+  (`nome_en`, bandiera 🇬🇧), entrambi pre-compilati e salvati. Prima c'era un
+  solo campo (modificava solo `nome`): `nome_en` non era gestibile da UI e le
+  bandierine ai lati erano fuorvianti. Ora i nomi tradotti (Baccador/Goldberry,
+  Faggiosso/Beechbone, ecc.) si impostano direttamente dall'editor.
 - **Salvataggio editor admin: controllo campi dimenticati.** Per ogni coppia
-  bilingue (incluso `nome`), se al salvataggio un lato è compilato (>3 caratteri)
-  e l'altro è ≤3 caratteri, parte una **modale di conferma sequenziale** (una per
+  bilingue (incluso `nome`), se al salvataggio un lato è compilato e l'altro è
+  **completamente vuoto**, parte una **modale di conferma sequenziale** (una per
   occorrenza): titolo col nome del personaggio, testo `Specifica il contenuto di
   [campo] in [l'altra lingua], o lascialo vuoto`, campo di testo, tasto
-  'Conferma'. I ≤3 caratteri del lato corto sono scartati (modale vuota). Testo
-  digitato → inserito tale e quale; **vuoto** → sul `nome` copia identica dalla
-  controparte, su tutto il resto resta invariato (vuoto). Non retroattivo (vale
-  solo per i salvataggi futuri). La **traduzione automatica IT↔EN** al salvataggio
-  è stata rimossa; il tasto manuale '⇄ Traduci' è dietro `FEATURES.adminTranslate`
-  (oggi `false`, riattivabile).
+  'Conferma'. Testo digitato → inserito tale e quale; **vuoto** → sul `nome`
+  copia identica dalla controparte, su tutto il resto resta vuoto (il lato
+  `miss` è sempre quello già vuoto, quindi **nessun dato valido può essere
+  cancellato**). Non retroattivo (vale solo per i salvataggi futuri).
+  - Storico: fino a v10.13.5 la soglia era "un lato >3 caratteri e l'altro ≤3"
+    (≤3 = spazzatura da scartare). Dava falsi positivi su traduzioni corte ma
+    valide (`Elf`/`Orc`/`Man`, 12 occorrenze) che, confermate vuote, venivano
+    cancellate. Cambiata in "scatta solo se un lato è vuoto" su richiesta
+    dell'utente.
+  - La **traduzione automatica IT↔EN** al salvataggio è stata rimossa; il tasto
+    manuale '⇄ Traduci' è dietro `FEATURES.adminTranslate` (oggi `false`,
+    riattivabile).
 
 ## 📚 Nuovi personaggi e canone
 
