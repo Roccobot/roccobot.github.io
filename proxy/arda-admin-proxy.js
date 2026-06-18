@@ -28,11 +28,12 @@ const FILE_PATH = 'arda/top/dati.js';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
 // Versione del sito: la fonte unica è `var datiVersion` in cima a dati.js.
-// A OGNI salvataggio admin il Worker la legge dal file corrente e ne
-// incrementa la patch (+0.0.1). DEFAULT_VERSION serve solo da rete di
-// sicurezza se la riga manca (es. finestra tra il deploy di questo Worker e
-// un dati.js scritto dalla versione precedente che non la emetteva).
-const DEFAULT_VERSION = '10.14.0';
+// A OGNI salvataggio admin il Worker la legge dal file corrente e applica
+// l'incremento "minore". Il Worker è BI-FORMATO: gestisce sia il nuovo schema
+// `x.xx` (intero + due decimali, +0.01 con riporto) sia il vecchio SemVer
+// `x.y.z` (+0.0.1), per non rompere la transizione. DEFAULT_VERSION serve solo
+// da rete di sicurezza se la riga manca.
+const DEFAULT_VERSION = '1.00';
 
 // Origine di produzione: fallback sicuro se ALLOWED_ORIGIN non è configurato.
 const PROD_ORIGIN = 'https://roccobot.github.io';
@@ -85,21 +86,30 @@ function buildDatiFile(dati, version) {
     '\n];\n';
 }
 
-// Estrae la versione corrente (`var datiVersion = "X.Y.Z"`) dal sorgente di
-// dati.js. Ritorna null se assente.
+// Estrae la versione corrente (`var datiVersion = "..."`) dal sorgente di
+// dati.js. Accetta sia il nuovo schema `x.xx` sia il vecchio `x.y.z` (l'ordine
+// dell'alternanza prova prima x.y.z, più specifico). Ritorna null se assente.
 function readVersion(src) {
-  const m = /var\s+datiVersion\s*=\s*["']([0-9]+\.[0-9]+\.[0-9]+)["']/.exec(src || '');
+  const m = /var\s+datiVersion\s*=\s*["'](\d+\.\d+\.\d+|\d+\.\d{2})["']/.exec(src || '');
   return m ? m[1] : null;
 }
 
-// Incrementa la patch (terzo numero) di una versione SemVer X.Y.Z.
-function bumpPatch(v) {
-  let p = String(v || '').split('.').map(Number);
-  if (p.length !== 3 || p.some(function (n) { return !Number.isFinite(n); })) {
-    p = DEFAULT_VERSION.split('.').map(Number);
+// Incremento "minore" del salvataggio admin, bi-formato:
+//  - schema nuovo `x.xx` → +0.01 (aritmetica in centesimi, riporto 1.99 → 2.00);
+//  - schema legacy `x.y.z` → +0.0.1 (patch).
+function bumpVersion(v) {
+  const s = String(v || '').trim();
+  let m = /^(\d+)\.(\d{2})$/.exec(s);
+  if (m) {
+    const cents = parseInt(m[1], 10) * 100 + parseInt(m[2], 10) + 1;
+    return Math.floor(cents / 100) + '.' + String(cents % 100).padStart(2, '0');
   }
-  p[2] += 1;
-  return p.join('.');
+  m = /^(\d+)\.(\d+)\.(\d+)$/.exec(s);
+  if (m) return m[1] + '.' + m[2] + '.' + (parseInt(m[3], 10) + 1);
+  // Rete di sicurezza: dal DEFAULT (schema nuovo) applicando +0.01.
+  const dp = DEFAULT_VERSION.split('.');
+  const dc = parseInt(dp[0], 10) * 100 + parseInt(dp[1], 10) + 1;
+  return Math.floor(dc / 100) + '.' + String(dc % 100).padStart(2, '0');
 }
 
 // Decodifica base64 (con eventuali newline) → stringa UTF-8. Inverso di
@@ -171,7 +181,7 @@ export default {
         // riscrivono interi dall'array ricevuto. Lo SHA del GET rende il
         // read-modify-write race-safe.
         const oldSrc = b64ToUtf8(fd.content);
-        const newVersion = bumpPatch(readVersion(oldSrc) || DEFAULT_VERSION);
+        const newVersion = bumpVersion(readVersion(oldSrc) || DEFAULT_VERSION);
         const upd = buildDatiFile(body.dati, newVersion);
         const put = await fetch(GH_API, {
           method: 'PUT',
