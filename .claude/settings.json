@@ -22,6 +22,12 @@
             "command": "git fetch origin master --quiet 2>/dev/null; B=$(git symbolic-ref --short -q HEAD); if [ \"$B\" = master ] && git diff --quiet && git diff --cached --quiet; then git merge --ff-only origin/master --quiet 2>/dev/null && echo \"[SessionStart] ff a origin/master ($(git rev-parse --short HEAD))\" || echo \"[SessionStart] master diverge o ff impossibile: ref aggiornati, nessun reset\"; else echo \"[SessionStart] no auto-align (branch '$B' o modifiche locali): ref remoti aggiornati\"; fi",
             "timeout": 45,
             "statusMessage": "Allineamento a origin/master…"
+          },
+          {
+            "type": "command",
+            "command": "BADGE=$(grep -oE 'version-badge\">v[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*v//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"[SessionStart] versione disallineata: badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea prima di committare.\"; fi",
+            "timeout": 15,
+            "statusMessage": "Controllo versione badge/dati.js…"
           }
         ]
       }
