@@ -700,6 +700,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .tipo-numenorean  { background:rgba(200,15,15,0.28); border:1px solid rgba(255,72,72,0.9); color:#ff5858; }
 .tipo-hador       { background:rgba(210,65,10,0.28); border:1px solid rgba(255,118,55,0.9); color:#ff8038; }
 .tipo-beor        { background:rgba(185,28,18,0.26); border:1px solid rgba(248,82,72,0.9); color:#f85848; }
+.tipo-haleth      { background:rgba(190,78,22,0.27); border:1px solid rgba(240,130,66,0.9); color:#e2843c; }
 .tipo-rohirrim    { background:rgba(198,42,18,0.26); border:1px solid rgba(252,100,72,0.9); color:#fc6848; }
 .tipo-dunadan     { background:rgba(175,18,18,0.26); border:1px solid rgba(240,60,60,0.9); color:#f04040; }
 .tipo-eotheod     { background:rgba(192,42,14,0.26); border:1px solid rgba(250,95,65,0.9); color:#fa6842; }
@@ -1186,6 +1187,7 @@ html[data-theme="light"] .tipo-mezzelfo { background:rgba(30,60,175,0.11); borde
 html[data-theme="light"] .tipo-numenorean { background:rgba(200,12,12,0.12); border-color:rgba(220,40,40,0.55); color:#a00000; }
 html[data-theme="light"] .tipo-hador { background:rgba(210,62,8,0.12); border-color:rgba(225,90,35,0.52); color:#a83000; }
 html[data-theme="light"] .tipo-beor { background:rgba(185,25,16,0.11); border-color:rgba(210,55,45,0.52); color:#981808; }
+html[data-theme="light"] .tipo-haleth { background:rgba(190,76,14,0.12); border-color:rgba(212,104,42,0.52); color:#984006; }
 html[data-theme="light"] .tipo-rohirrim { background:rgba(198,40,16,0.11); border-color:rgba(215,70,45,0.52); color:#a02008; }
 html[data-theme="light"] .tipo-dunadan { background:rgba(175,16,16,0.11); border-color:rgba(205,38,38,0.52); color:#900808; }
 html[data-theme="light"] .tipo-eotheod { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
@@ -1261,7 +1263,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.13</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1438,6 +1440,7 @@ function tipoClass(tipo) {
   if (t.includes('númenóreano') || t.includes('númenórean') || t.includes('numenorean')) return 'tipo-numenorean';
   if (t.includes('hador')) return 'tipo-hador';
   if (t.includes('bëor') || t.includes('casa di beor')) return 'tipo-beor';
+  if (t.includes('haleth')) return 'tipo-haleth';
   if (t.includes('rohir')) return 'tipo-rohirrim';
   if (t.includes('dúnadan') || t.includes('dunadan') || t.includes('dúnedain') || t.includes('dunedain')) return 'tipo-dunadan';
   if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'tipo-eotheod';
@@ -1576,7 +1579,7 @@ function categoria(p) {
   if (/drúed|drued/.test(t)) return 'man'; // Drúedain ≠ Edain
   if (p.nome === 'Elros') return 'adan';
   if (/elfo|elfa|mezzelf|half-elf/.test(t)) return 'elf';
-  if (/númen|numen|dúnad|dunad|dúned|duned|hador|bëor|casa di beor/.test(t)) return 'adan';
+  if (/númen|numen|dúnad|dunad|dúned|duned|hador|bëor|casa di beor|haleth/.test(t)) return 'adan';
   if (/uomo|man |donna|woman|rohir|gondor|beorn|dale|éothéod|eothéod/.test(t)) return 'man';
   if (/cavallo|pony|corvo|mearas|raven|horse/.test(t)) return 'animal';
   return 'arcane'; // forze ancestrali residue (es. Ent). Le Grandi Aquile sono
@@ -1590,13 +1593,15 @@ var filterState = {};
 // buildShareUrl per riconoscere la vista di default e copiarne il link pulito.
 var FILTER_DEFAULT = {};
 CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
-// Permalink della vista: se l'URL porta ?tutte (o alias ?all) si attivano
-// TUTTE le categorie. ?cat=... accetta DUE forme: (a) bitmask compatto, un
-// carattere 0/1 per categoria nell'ordine di CATS, con gli zeri finali
-// omettibili (es. ?cat=10111 → ainu, elf, adan, man); (b) lista di chiavi
-// ?cat=key1,key2,... (forma storica, chiavi sconosciute ignorate; se nessuna
-// valida, restano i default). Le due forme si distinguono al volo: solo 0/1 =
-// bitmask, altrimenti lista. buildShareUrl genera la forma compatta (a).
+// Permalink della vista. ?cat=1 attiva TUTTE le categorie: è la forma canonica
+// della vista più condivisa (?tutte e ?all restano come alias storici).
+// Altrimenti ?cat=... accetta DUE forme: (a) bitmask compatto, un carattere 0/1
+// per categoria nell'ordine di CATS, con gli zeri finali omettibili (es.
+// ?cat=10111 → ainu, elf, adan, man); una maschera tutta-zero (?cat=0) =
+// nessuna categoria, priva di senso, viene ignorata (restano i default);
+// (b) lista di chiavi ?cat=key1,key2,... (forma storica, chiavi sconosciute
+// ignorate). buildShareUrl genera ?cat=1 per 'tutte', la chiave ?cat=ainu per
+// la sola vista ainu, altrimenti la bitmask compatta.
 // Vale SOLO all'avvio — i filtri restano poi liberamente modificabili (lo
 // stato non è persistito, quindi è il parametro a rendere il link idempotente).
 // È il tasto 'copia link' del Pannello a generare questi URL (buildShareUrl),
@@ -1608,10 +1613,14 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
       CATS.forEach(function(c){ filterState[c] = true; });
     } else if (qs.has('cat')) {
       var raw = (qs.get('cat') || '').trim();
-      if (/^[01]+$/.test(raw)) {
+      if (raw === '1') {
+        // Forma canonica 'tutte le categorie' (sostituisce ?tutte).
+        CATS.forEach(function(c){ filterState[c] = true; });
+      } else if (/^[01]+$/.test(raw)) {
         // Bitmask: i-esimo carattere = categoria CATS[i]; bit oltre la stringa
-        // (zeri finali omessi) valgono 0, quindi restano spenti.
-        CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
+        // (zeri finali omessi) valgono 0, quindi restano spenti. Una maschera
+        // tutta-zero (es. ?cat=0) = nessuna categoria: priva di senso, si ignora.
+        if (raw.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
       } else {
         var valid = raw.split(',').map(function(s){ return s.trim(); })
                       .map(function(c){ return c === 'ainur' ? 'ainu' : c; }) // alias: vecchi link
@@ -2035,10 +2044,13 @@ function wireControlPanel() {
 function buildShareUrl() {
   var base = location.origin + location.pathname;
   var active = CATS.filter(function(c){ return filterState[c]; });
-  if (active.length === CATS.length) return base + '?tutte';
+  // 'tutte le categorie' (vista più condivisa): forma canonica compatta ?cat=1.
+  if (active.length === CATS.length) return base + '?cat=1';
   var isDefault = CATS.every(function(c){ return !!filterState[c] === !!FILTER_DEFAULT[c]; });
   if (isDefault || !active.length) return base;
   var bits = CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('').replace(/0+$/, '');
+  // '1' è riservato a 'tutte': la sola vista ainu usa la forma a chiave (?cat=ainu).
+  if (bits === '1') return base + '?cat=ainu';
   return base + '?cat=' + bits;
 }
 
@@ -2229,7 +2241,7 @@ var INFO_NOTE_HTML_IT =
   +   '<li><strong>Beren e Lúthien</strong>: Luca Manini e Simone Buttazzi (2017)</li>'
   +   '<li><strong>La caduta di Gondolin</strong>: Luca Manini e Simone Buttazzi (2018)</li>'
   + '</ul>'
-  + '<p>Anche se l\'originale inglese resta la fonte autentica e sacra, noi italiani siamo orgogliosissimi della nostra edizione storica, perché ebbe la benedizione del Professore in persona. Tolkien amava la nostra lingua (la studiò perfino per un periodo) e nel 1967 la primissima bozza italiana de <em>La Compagnia dell\'Anello</em>, di Vittoria Alliata, gli fu inviata in lettura. Ne fu entusiasta, lodandone la prosa ricca, poetica e lievemente arcaica come resa perfetta dello spirito epico e cavalleresco che aveva immaginato per la Terra di Mezzo. Così lo stile fondante della nostra amata edizione storica porta il sigillo d\'approvazione del Professore stesso.</p>'
+  + '<p>Anche se l\'originale inglese resta la fonte autentica e sacra, noi italiani siamo orgogliosissimi della nostra edizione storica, perché ebbe la benedizione del Professore in persona. Tolkien amava la nostra lingua (la studiò perfino per un periodo) e nel 1967 la primissima bozza italiana de <em>La Compagnia dell\'Anello</em>, di Vittoria Alliata, gli fu inviata in lettura. Ne fu entusiasta, lodandone la prosa ricca, poetica e lievemente arcaica come resa perfetta dello spirito epico e cavalleresco che aveva immaginato per la Terra di Mezzo. Fu lo stesso Professore, in definitiva, a confermare che non può esistere altro adattamento al di fuori della nostra amata edizione storica, perfezionata con le revisioni successive, sempre fedeli a quello spirito.</p>'
   + '<p>La terminologia segue la forma rivista dalla Società Tolkieniana Italiana (es. Troll, Porti Grigi); le citazioni sono sempre verbatim dalle edizioni di riferimento. Queste sono le uniche edizioni che consideriamo affidabili: quelle che hanno allietato il mondo prima del Nemico.</p>'
   + '<p class="info-note-final"><span class="info-note-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg></span><span>Ottavio Fatica è il male puro e non è ammesso su questa pagina.</span></p>'
   + '</div>';
