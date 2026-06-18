@@ -1238,7 +1238,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.18.1</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.19.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1506,7 +1506,8 @@ var ICON_LABEL = {
 // il dimezzamento dell'opacità può cambiare significato, chiarito nel tooltip
 // (Elenwë: badge Helcaraxë al 50% = morte durante la traversata, non presunto).
 var ICON_LABEL_OVERRIDE = {
-  'Elenwë': { helcaraxe: { it:'Morì nella traversata dell’Helcaraxë', en:'Died during the crossing of the Helcaraxë' } }
+  'Elenwë': { helcaraxe: { it:'Morì nella traversata dell’Helcaraxë', en:'Died during the crossing of the Helcaraxë' } },
+  'Morgoth': { aratar: { it:'Un tempo il più potente degli Ainur; decaduto, non è più annoverato tra gli Aratar', en:'Once the mightiest of the Ainur; fallen, no longer counted among the Aratar' } }
 };
 function buildStatus(p) {
   var L = ICON_LABEL[currentLang] || ICON_LABEL.it;
@@ -1950,12 +1951,17 @@ function wireControlPanel() {
   panel.querySelectorAll('.ctrl-lang-btn').forEach(function(b){
     b.addEventListener('click', function(){ setLang(currentLang === 'it' ? 'en' : 'it'); });
   });
-  // Il numero di versione del pannello (mobile) è il punto d'accesso admin:
-  // apre una modale con la scelta tra riordinare le card e modificare i testi.
+  // Il numero di versione del pannello (mobile) porta dritto all'editor admin
+  // (parola d'ordine se non già sbloccato), esattamente come il badge in testata
+  // e la versione desktop: niente più bivio modale. Su mobile il riordino card è
+  // disattivato (resta desktop-only). showActionChoiceModal e tutta la macchina
+  // del riordino restano nel codice, non più richiamate qui, per un eventuale
+  // ripristino futuro del riordino su mobile.
   var verBtn = document.getElementById('ctrl-ver');
   if (verBtn) verBtn.addEventListener('click', function(){
     toggleControlPanel();
-    showActionChoiceModal();
+    if (saveUnlocked) showAdminEditor();
+    else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
   });
   // Versione nel Pannello desktop: come il badge in testata, porta dritto
   // all'editor admin (password se non già sbloccato); chiude prima il pannello.
@@ -2479,6 +2485,12 @@ function enableDragDrop() {
 
     pointerDragState = { item, clone, list, allItems, startIdx: idx, currentIdx: idx, itemRects, offsetY: e.clientY - rect.top, scrollYStart: window.scrollY, pointerType: e.pointerType };
     document.body.classList.add('is-dragging');
+    // Durante il drag forziamo scroll-behavior:auto sull'elemento di scorrimento:
+    // il CSS globale html{scroll-behavior:smooth} renderebbe "smooth" ogni
+    // window.scrollBy() dell'autoscroll per-frame, accavallando le animazioni e
+    // rallentando moltissimo lo scorrimento ai bordi (la regressione segnalata).
+    // Ripristinato a fine drag in onPointerUp.
+    (document.scrollingElement || document.documentElement).style.scrollBehavior = 'auto';
     document.addEventListener('pointermove', onPointerMove, { passive: false });
     document.addEventListener('pointerup', onPointerUp);
     document.addEventListener('pointercancel', onPointerUp);
@@ -2539,6 +2551,8 @@ function onPointerUp() {
   document.removeEventListener('pointerup', onPointerUp);
   document.removeEventListener('pointercancel', onPointerUp);
   stopAutoScroll();
+  // Ripristina lo scroll-behavior:smooth globale (sospeso a inizio drag).
+  (document.scrollingElement || document.documentElement).style.scrollBehavior = '';
   if (!pointerDragState) return;
 
   const { item, clone, allItems, startIdx, currentIdx } = pointerDragState;

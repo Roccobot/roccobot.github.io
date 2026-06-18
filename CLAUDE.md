@@ -163,14 +163,22 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     ridistribuisce **da sé** via la Git integration di Cloudflare (Workers
     Builds, `proxy/wrangler.toml`) a ogni push su `master`; `wrangler deploy`
     resta solo come fallback manuale.
-- Il numero di versione è anche **l'accesso all'area admin**, con DUE
-  comportamenti distinti:
-  - **Badge in testata** (`.version-badge`) e **versione del Pannello desktop**
-    (`.ctrl-ver-desk`, in alto a sinistra nella toolbar): click → **dritto
-    all'editor admin** (`showAdminEditor`, con `showPasswordModal` se non già
-    sbloccato). La versione desktop chiude prima il pannello.
-  - **Versione del Pannello mobile** (`.ctrl-ver`, barra inferiore): click →
-    apre il trivio `showActionChoiceModal` (Riordina / Modifica contenuti).
+- Il numero di versione è anche **l'accesso all'area admin**. Dalla v10.19.0
+  **tutti** i punti d'accesso si comportano allo stesso modo — click → **dritto
+  all'editor admin** (`showAdminEditor`, con `showPasswordModal` se non già
+  sbloccato):
+  - **Badge in testata** (`.version-badge`);
+  - **versione del Pannello desktop** (`.ctrl-ver-desk`, in alto a sinistra
+    nella toolbar): chiude prima il pannello;
+  - **versione del Pannello mobile** (`.ctrl-ver`, barra inferiore): chiude
+    prima il pannello.
+  - Storico: fino alla v10.18.x il tap sulla versione **mobile** apriva un
+    bivio modale (`showActionChoiceModal`: Riordina / Modifica contenuti). Su
+    richiesta dell'utente il bivio è stato rimosso perché su mobile il riordino
+    si attivava ma **non si poteva salvare** (problema di flusso): ora
+    l'ordinamento card è **desktop-only**. `showActionChoiceModal` e tutta la
+    macchina del riordino restano nel codice, non più richiamate dal tap
+    versione, per un eventuale ripristino futuro del riordino su mobile.
 
 ## 🔐 Admin e segreti
 
@@ -216,13 +224,15 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `proxy/README.md`.
 - **Riordino card e manopole.** Il drag-and-drop richiede tutte le categorie
   visibili (`enableDragDrop`). Su **desktop** le manopole appaiono subito in
-  quel caso. Su **mobile** no: servono solo dietro azione esplicita, la
-  **modalità riordino** (`reorderMode`). Punto d'accesso mobile: il **numero
-  di versione** in fondo al pannello del FAB apre una modale
-  (`showActionChoiceModal`) con due tasti: 'Riordina' (o 'Chiudi modalità
-  ordinamento' se già in riordino, in colore d'attenzione) e 'Modifica
-  contenuti' (editor admin). Sia riordino sia editor sono **admin-only,
-  dietro parola d'ordine** (il riordino la chiede entrando, `enterReorder`).
+  quel caso. Su **mobile** il riordino è **disattivato dalla v10.19.0**: il tap
+  sul numero di versione va dritto all'editor admin (vedi '🔢 Versione del
+  sito'), non c'è più un punto d'accesso al riordino. La **modalità riordino**
+  (`reorderMode`) e la modale `showActionChoiceModal` (storico punto d'accesso
+  mobile: due tasti 'Riordina' / 'Modifica contenuti') **restano nel codice**
+  ma non sono più richiamate, pronte per un eventuale ripristino. Motivo della
+  rimozione: su mobile il riordino si attivava ma **non si poteva salvare**.
+  Sia riordino sia editor sono **admin-only, dietro parola d'ordine** (il
+  riordino la chiede entrando, `enterReorder`).
   In riordino, 'Chiudi modalità ordinamento' apre nella stessa modale un
   trivio (ogni tasto con sottotitolo esplicativo): **Conferma** (commit
   permanente sul repo via `doSave`, poi esce), **Chiudi** (tiene le modifiche
@@ -413,6 +423,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
   traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo*
   (HoME XII, J.R.R. Tolkien, 1996), che ne attesta nome e stirpe Vanya.
+- **Badge Aratar di Morgoth al 50%** (chiave `aratar`, valore `'presunto'`):
+  Morgoth è l'unico Aratar a opacità dimezzata, con **etichetta dedicata** nel
+  tooltip (via `ICON_LABEL_OVERRIDE`) — 'Un tempo il più potente degli Ainur;
+  decaduto, non è più annoverato tra gli Aratar'. Motivo: dopo la caduta
+  «Melkor non è più annoverato tra i Valar» (*Valaquenta*), dunque nemmeno tra
+  gli Aratar; il dimezzamento segna questo status conteso, non un dato presunto.
 
 ## 🧹 Asset del progetto
 
