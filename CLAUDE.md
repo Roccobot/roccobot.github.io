@@ -358,6 +358,19 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `Il Bianco`, `Finwë Noldóran` → `Noldóran`, `Míriel Serindë` → `Serindë`,
   `Galdor dei Porti` → `Dei Porti`, ecc. (incluse le forme `{Nome} {epiteto}`
   con preposizione). Regola dell'utente, applicata in blocco dalla v10.20.0.
+- **Nome vero in grassetto tra gli alternativi (lingua madre).** Tra i
+  `nomi_alternativi(_en)`, la forma nella **lingua madre** del personaggio va in
+  `**grassetto**` (`**Nome**`): è il vero nome, mentre il nome d'uso (in altra
+  lingua) equivale a una traduzione/appellativo. Per gli Elfi col nome d'uso
+  **sindarin**: in grassetto la forma **quenya** (Noldor) o **telerin** (Teleri).
+  Stesso trattamento per un nome originario coperto da un epiteto (`**Mairon**`
+  per Sauron, `**Artanis**` per Galadriel, `**Elwë**` per Thingol). Scelta
+  definitiva dell'utente (criterio B): la *traduzione* di un nome è equiparata a
+  un appellativo, quindi è la forma in lingua madre a essere evidenziata.
+  Applicata in blocco (dalla v1.38) a Fëanor, Fingolfin, Finarfin, Fingon,
+  Turgon, Maedhros, Maglor, Celebrimbor, Finrod, Orodreth, Glorfindel, Celegorm,
+  Caranthir, Curufin, Amrod, Amras, Idril, Aredhel, Elros (`Elerossë`) e Celeborn
+  (`Teleporno`, telerin). Il render converte `**...**` in grassetto (`processAlt`).
 - **Editor admin: doppio campo nome.** Dalla v10.13.6 la riga nome dell'editor
   ha due campi affiancati, **Nome** (`nome`, IT, bandiera 🇮🇹) e **Nome EN**
   (`nome_en`, bandiera 🇬🇧), entrambi pre-compilati e salvati. Prima c'era un
