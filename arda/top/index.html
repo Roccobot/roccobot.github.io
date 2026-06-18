@@ -1261,7 +1261,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.10</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1846,8 +1846,8 @@ function controlPanelHTML() {
   // Logo personale (inline, niente file salvabile): link a roccobot.me, in alto
   // a sinistra nella toolbar desktop, prima della versione.
   var logoTip = currentLang === 'it'
-    ? "Fatto da Rocco 'Roccobot' Casadei - 2026 / Nessun diritto riservato salvo il design di questo logo"
-    : "Made by Rocco 'Roccobot' Casadei - 2026 / No rights reserved except for this logo's design";
+    ? "Fatto da Rocco 'Roccobot' Casadei - 2026 / Nessun diritto riservato salvo il design di due loghi: questo (il mio personale) e la rivisitazione del monogramma tolkieniano sul pulsante fluttuante."
+    : "Made by Rocco 'Roccobot' Casadei - 2026 / No rights reserved except the design of two logos: this one (my own) and the reworked Tolkien monogram on the floating button.";
   var LOGO_HTML = '<a class="ctrl-logo" href="https://roccobot.me" target="_blank" rel="noopener" aria-label="roccobot.me" title="' + logoTip + '"><svg viewBox="0 0 1024 1024" aria-hidden="true"><path d="M598.44,464.22h387.88l-33.25-417.98H68.71v105.02h385.66c-5.54,75.62-13.3,143.88-24.38,206.89H38.79l29.92,106.07h335.79c-16.62,56.71-36.57,105.02-60.95,143.88C275.95,715.22,161.8,808.69,0,887.45l74.25,90.32c177.32-92.42,303.65-200.59,377.9-325.57,22.16-37.81,41-82.97,58.74-135.48,82.01,197.44,228.29,350.77,439.97,461.04l73.14-90.32c-206.13-99.77-347.98-240.5-425.56-423.24ZM571.84,151.25h288.57l9.08,206.89h-322.03c9.97-60.91,17.73-130.23,24.38-206.89Z" fill="currentColor" fill-rule="evenodd"/></svg></a>';
   h += '<div class="ctrl-left">';
   // Versione anche nel Pannello desktop: in alto a sinistra (allineata alle
