@@ -312,6 +312,11 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `Beechbone`).
   - Storico: fino a v10.4.x valeva la regola opposta (solo `nome_en`, `nome`
     vuoto, affidandosi al fallback). Invertita su richiesta dell'utente.
+- **Nomi alternativi: mai ripetere il nome principale** (`nomi_alternativi` /
+  `nomi_alternativi_en`). Si tiene solo l'epiteto nudo: `Saruman il Bianco` →
+  `Il Bianco`, `Finwë Noldóran` → `Noldóran`, `Míriel Serindë` → `Serindë`,
+  `Galdor dei Porti` → `Dei Porti`, ecc. (incluse le forme `{Nome} {epiteto}`
+  con preposizione). Regola dell'utente, applicata in blocco dalla v10.20.0.
 - **Editor admin: doppio campo nome.** Dalla v10.13.6 la riga nome dell'editor
   ha due campi affiancati, **Nome** (`nome`, IT, bandiera 🇮🇹) e **Nome EN**
   (`nome_en`, bandiera 🇬🇧), entrambi pre-compilati e salvati. Prima c'era un
