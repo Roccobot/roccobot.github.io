@@ -446,8 +446,8 @@ h1 {
      due 1fr). La versione è otticamente centrata in verticale coi tasti
      (align-items:center) e a sinistra si allinea con le checkbox sottostanti
      (padding-left 0.3rem = rientro di riga delle Categorie). */
-  #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin:3px 0 0; }
-  #ctrl-panel .ctrl-toolbar-btns { justify-self:center; display:flex; align-items:center; gap:0.55rem; }
+  #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto; align-items:center; margin:3px 0 0; }
+  #ctrl-panel .ctrl-toolbar-btns { justify-self:end; display:flex; align-items:center; gap:0.55rem; }
   #ctrl-panel .ctrl-ver-desk {
     justify-self:start; padding-left:0.3rem; white-space:nowrap;
     font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.06em;
@@ -887,6 +887,15 @@ html[data-theme="light"] .fab-modal-confirm.is-pending { background:rgba(190,140
 html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(190,140,30,0.24);border-color:#9a6f08; }
 .fab-modal-confirm .fmc-main { display:block; }
 .fab-modal-confirm .fmc-sub { display:block;font-family:'EB Garamond',serif;font-weight:normal;font-size:0.64rem;letter-spacing:0.01em;text-transform:none;opacity:0.72;margin-top:0.15rem;line-height:1.2; }
+/* Modale Info (nota traduzioni, solo IT): box piu' largo e scrollabile, testo a sinistra. */
+.fab-modal-box.info-note-box { max-width:440px; max-height:82vh; overflow-y:auto; text-align:left; }
+.info-note-box h3 { font-family:'Cinzel',serif; font-size:0.95rem; letter-spacing:0.04em; color:var(--gold-bright); margin:0 0 0.7rem; }
+.fab-modal-box.info-note-box p { font-size:0.82rem; color:var(--parchment); opacity:0.88; line-height:1.45; margin:0 0 0.8rem; }
+.info-note-box ul { list-style:none; margin:0 0 0.9rem; padding:0; }
+.info-note-box li { font-size:0.8rem; color:var(--parchment); opacity:0.92; line-height:1.4; margin:0 0 0.45rem; padding-left:0.95rem; position:relative; }
+.info-note-box li::before { content:'\203A'; position:absolute; left:0; color:var(--gold); opacity:0.85; }
+.info-note-box li strong { color:var(--gold-bright); font-weight:700; }
+.info-note-box .info-note-final { margin:0.2rem 0 0; opacity:0.95; color:var(--gold-bright); }
 .fab-modal-confirm.is-danger { background:rgba(170,40,40,0.16);border-color:rgba(212,84,84,0.7);color:#f08a8a; }
 .fab-modal-confirm.is-danger:hover { background:rgba(170,40,40,0.28);border-color:rgba(232,104,104,0.92); }
 html[data-theme="light"] .fab-modal-confirm.is-danger { background:rgba(180,30,30,0.10);border-color:rgba(190,60,60,0.6);color:#a82020; }
@@ -1238,7 +1247,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.20.3</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.21.0</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1811,8 +1820,15 @@ function controlPanelHTML() {
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var MOON = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
   var LINK_ICON = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
-  var shareLbl = currentLang === 'it' ? 'Copia il link a questa vista' : 'Copy link to this view';
-  var themeLbl = isLight ? (currentLang==='it'?'Tema scuro':'Dark theme') : (currentLang==='it'?'Tema chiaro':'Light theme');
+  var shareLbl = currentLang === 'it' ? 'Copia il link alla vista corrente (categorie attive)' : 'Copy a link to the current view (active categories)';
+  var themeLbl = isLight ? (currentLang==='it'?'Passa al tema scuro':'Switch to dark theme') : (currentLang==='it'?'Passa al tema chiaro':'Switch to light theme');
+  var langLbl = currentLang === 'it' ? 'Visualizza in inglese' : 'View in Italian';
+  // Tasto Info: SOLO italiano (nota sulle traduzioni). Icona stile Feather
+  // (cerchio + i), coerente coi tasti a tratto. Reso vuoto in inglese.
+  var INFO_ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+  var infoBtn = currentLang === 'it'
+    ? '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="Nota sui testi in italiano" title="Nota sui testi in italiano">' + INFO_ICON + '</button>'
+    : '';
   h += '<div class="ctrl-left">';
   // Versione anche nel Pannello desktop: in alto a sinistra (allineata alle
   // checkbox sotto), coi tasti tema/lingua centrati come gruppo. Cliccabile
@@ -1822,8 +1838,9 @@ function controlPanelHTML() {
   h += '<div class="ctrl-toolbar">'
      + '<span class="ctrl-ver-desk" id="ctrl-ver-desk">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>'
      + '<span class="ctrl-toolbar-btns">'
+     +   infoBtn
+     +   '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +   '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
-     +   '<button class="ctrl-lang-btn" aria-label="' + (currentLang === 'it' ? 'English' : 'Italiano') + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +   '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      + '</span>'
      + '</div>';
@@ -1893,8 +1910,9 @@ function controlPanelHTML() {
   h += '<div class="ctrl-bottombar">'
      +   '<span class="ctrl-ver" id="ctrl-ver">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>'
      +   '<span class="ctrl-bb-group">'
+     +     infoBtn
+     +     '<button class="ctrl-lang-btn" id="ctrl-lang" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
-     +     '<button class="ctrl-lang-btn" id="ctrl-lang" aria-label="' + (currentLang === 'it' ? 'English' : 'Italiano') + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      +   '</span>'
      +   '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>'
@@ -1980,6 +1998,10 @@ function wireControlPanel() {
   // mobile), entrambe .ctrl-share-btn.
   panel.querySelectorAll('.ctrl-share-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ copyShareLink(btn); });
+  });
+  // Tasto Info (solo IT): apre la nota sulle traduzioni italiane.
+  panel.querySelectorAll('.ctrl-info-btn').forEach(function(btn){
+    btn.addEventListener('click', showInfoNote);
   });
 }
 
@@ -2168,6 +2190,40 @@ function showActionChoiceModal() {
     box.appendChild(mkBtn(T.discard, T.discardSub, 'is-danger', function(){ dismiss(); restoreServerOrder(); exitReorder(); }));
   }
   viewMain();
+}
+
+// Nota sui testi in italiano (tasto Info, solo IT): traduzioni di riferimento
+// del canone con anni, terminologia STI, e la postilla su Fatica. Riusa la
+// modale .fab-modal-overlay con il box allargato .info-note-box.
+var INFO_NOTE_HTML =
+  '<div class="info-note">'
+  + '<h3>Nota sui testi in italiano</h3>'
+  + '<p>I testi italiani di questa pagina seguono le traduzioni di riferimento del canone (in linea con la Società Tolkieniana Italiana):</p>'
+  + '<ul>'
+  +   '<li><strong>Il Signore degli Anelli</strong>: Vittoria Alliata (1967), rev. Quirino Principe (1970), rev. S.T.I. (2004)</li>'
+  +   '<li><strong>Lo Hobbit</strong>: Caterina Ciuferri e Paolo Paron (2012)</li>'
+  +   '<li><strong>Il Silmarillion</strong>: Francesco Saba Sardi (1978)</li>'
+  +   '<li><strong>Racconti incompiuti</strong>: Francesco Saba Sardi (1981), rev. S.T.I. (2001/2013)</li>'
+  +   '<li><strong>I figli di Húrin</strong>: Caterina Ciuferri (2007)</li>'
+  +   '<li><strong>Beren e Lúthien</strong>: Luca Manini e Simone Buttazzi (2017)</li>'
+  +   '<li><strong>La caduta di Gondolin</strong>: Luca Manini e Simone Buttazzi (2018)</li>'
+  + '</ul>'
+  + '<p>La terminologia segue la forma rivista dalla S.T.I. (es. Troll, Porti Grigi); le citazioni sono sempre verbatim dalle edizioni di riferimento.</p>'
+  + '<p class="info-note-final">Ottavio Fatica è il male puro e non è ammesso su questa pagina.</p>'
+  + '</div>';
+function showInfoNote() {
+  if (document.getElementById('fab-modal')) return;
+  var overlay = document.createElement('div');
+  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box info-note-box';
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', 'Chiudi');
+  box.appendChild(cl);
+  box.insertAdjacentHTML('beforeend', INFO_NOTE_HTML);
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  cl.onclick = dismiss;
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
 }
 
 // L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
