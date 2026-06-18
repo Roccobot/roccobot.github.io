@@ -1261,7 +1261,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.13</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1840,9 +1840,8 @@ function controlPanelHTML() {
   // Tasto Info: SOLO italiano (nota sulle traduzioni). Icona stile Feather
   // (cerchio + i), coerente coi tasti a tratto. Reso vuoto in inglese.
   var INFO_ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-  var infoBtn = currentLang === 'it'
-    ? '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="Nota sui testi in italiano" title="Nota sui testi in italiano">' + INFO_ICON + '</button>'
-    : '';
+  var infoLbl = currentLang === 'it' ? 'Nota sui testi in italiano' : 'A note on the texts';
+  var infoBtn = '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>';
   // Logo personale (inline, niente file salvabile): link a roccobot.me, in alto
   // a sinistra nella toolbar desktop, prima della versione.
   var logoTip = currentLang === 'it'
@@ -2217,21 +2216,39 @@ function showActionChoiceModal() {
 // Nota sui testi in italiano (tasto Info, solo IT): traduzioni di riferimento
 // del canone con anni, terminologia STI, e la postilla su Fatica. Riusa la
 // modale .fab-modal-overlay con il box allargato .info-note-box.
-var INFO_NOTE_HTML =
+var INFO_NOTE_HTML_IT =
   '<div class="info-note">'
   + '<h3>Nota sui testi in italiano</h3>'
   + '<p>I testi italiani di questa pagina seguono le traduzioni di riferimento del canone (in linea con la Società Tolkieniana Italiana):</p>'
   + '<ul>'
-  +   '<li><strong>Il Signore degli Anelli</strong>: Vittoria Alliata (1967), rev. Quirino Principe (1970), rev. S.T.I. (2004)</li>'
+  +   '<li><strong>Il Signore degli Anelli</strong>: Vittoria Alliata (1967), rev. Quirino Principe (1970), rev. Società Tolkieniana Italiana (2004)</li>'
   +   '<li><strong>Lo Hobbit</strong>: Caterina Ciuferri e Paolo Paron (2012)</li>'
   +   '<li><strong>Il Silmarillion</strong>: Francesco Saba Sardi (1978)</li>'
-  +   '<li><strong>Racconti incompiuti</strong>: Francesco Saba Sardi (1981), rev. S.T.I. (2001/2013)</li>'
+  +   '<li><strong>Racconti incompiuti</strong>: Francesco Saba Sardi (1981), rev. Società Tolkieniana Italiana (2001/2013)</li>'
   +   '<li><strong>I figli di Húrin</strong>: Caterina Ciuferri (2007)</li>'
   +   '<li><strong>Beren e Lúthien</strong>: Luca Manini e Simone Buttazzi (2017)</li>'
   +   '<li><strong>La caduta di Gondolin</strong>: Luca Manini e Simone Buttazzi (2018)</li>'
   + '</ul>'
-  + '<p>La terminologia segue la forma rivista dalla S.T.I. (es. Troll, Porti Grigi); le citazioni sono sempre verbatim dalle edizioni di riferimento.</p>'
+  + '<p>Anche se l\'originale inglese resta la fonte autentica e sacra, noi italiani siamo orgogliosissimi della nostra edizione storica, perché ebbe la benedizione del Professore in persona. Tolkien amava la nostra lingua (la studiò perfino per un periodo) e nel 1967 la primissima bozza italiana de <em>La Compagnia dell\'Anello</em>, di Vittoria Alliata, gli fu inviata in lettura. Ne fu entusiasta, lodandone la prosa ricca, poetica e lievemente arcaica come resa perfetta dello spirito epico e cavalleresco che aveva immaginato per la Terra di Mezzo. Così lo stile fondante della nostra amata edizione storica porta il sigillo d\'approvazione del Professore stesso.</p>'
+  + '<p>La terminologia segue la forma rivista dalla Società Tolkieniana Italiana (es. Troll, Porti Grigi); le citazioni sono sempre verbatim dalle edizioni di riferimento. Queste sono le uniche edizioni che consideriamo affidabili: quelle che hanno allietato il mondo prima del Nemico.</p>'
   + '<p class="info-note-final"><span class="info-note-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg></span><span>Ottavio Fatica è il male puro e non è ammesso su questa pagina.</span></p>'
+  + '</div>';
+var INFO_NOTE_HTML_EN =
+  '<div class="info-note">'
+  + '<h3>A note on the texts</h3>'
+  + '<p>On this page the quotations are verbatim: English from Tolkien\'s own text, Italian from the reference editions.</p>'
+  + '<p>Even though the original English is the true and sacred source, we Italians are fiercely proud of our historical literary edition, because the Professor himself gave it his blessing. Tolkien loved our language (he even studied it for a while), and in 1967 the very first Italian draft of <em>The Fellowship of the Ring</em>, by Vittoria Alliata, was sent to him for review. He was thrilled with the manuscript, praising its rich, poetic, slightly archaic prose as a perfect match for the epic and chivalric spirit he had imagined for Middle-earth. So the foundational style of our beloved historical edition carries the Professor\'s own seal of approval.</p>'
+  + '<p>These are the only editions we hold trustworthy and usable, the ones that gladdened the world before the Enemy:</p>'
+  + '<ul>'
+  +   '<li><strong>The Lord of the Rings</strong> → Vittoria Alliata (1967), rev. Quirino Principe (1970), rev. Società Tolkieniana Italiana (2004)</li>'
+  +   '<li><strong>The Hobbit</strong> → Caterina Ciuferri and Paolo Paron (2012)</li>'
+  +   '<li><strong>The Silmarillion</strong> → Francesco Saba Sardi (1978)</li>'
+  +   '<li><strong>Unfinished Tales</strong> → Francesco Saba Sardi (1981), rev. Società Tolkieniana Italiana (2001/2013)</li>'
+  +   '<li><strong>The Children of Húrin</strong> → Caterina Ciuferri (2007)</li>'
+  +   '<li><strong>Beren and Lúthien</strong> → Luca Manini and Simone Buttazzi (2017)</li>'
+  +   '<li><strong>The Fall of Gondolin</strong> → Luca Manini and Simone Buttazzi (2018)</li>'
+  + '</ul>'
+  + '<p class="info-note-final"><span class="info-note-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg></span><span>Ottavio Fatica is pure evil and is not allowed on this page.</span></p>'
   + '</div>';
 function showInfoNote() {
   if (document.getElementById('fab-modal')) return;
@@ -2240,7 +2257,7 @@ function showInfoNote() {
   var box = document.createElement('div'); box.className = 'fab-modal-box info-note-box';
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', 'Chiudi');
   box.appendChild(cl);
-  box.insertAdjacentHTML('beforeend', INFO_NOTE_HTML);
+  box.insertAdjacentHTML('beforeend', currentLang === 'it' ? INFO_NOTE_HTML_IT : INFO_NOTE_HTML_EN);
   overlay.appendChild(box); document.body.appendChild(overlay);
   document.body.style.overflow = 'hidden';
   function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
