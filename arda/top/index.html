@@ -935,7 +935,11 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
     color:#3a5878; border-bottom:1px solid rgba(60,95,140,0.35);
   }
 }
-.admin-overlay { position:fixed;inset:0;z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--ink-deep);padding:1.5rem 1rem calc(2rem + env(safe-area-inset-bottom,0px)); }
+.admin-overlay { position:fixed;inset:0;z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--ink-deep);padding:0 1rem calc(2rem + env(safe-area-inset-bottom,0px)); }
+/* Con editor admin aperto: nasconde TUTTO il resto della pagina (display:none →
+   non più trovabile da Ctrl/Cmd+F sotto la modale). Restano la modale stessa, la
+   gap-modal di conferma campi (.fab-modal-overlay) e i toast (#arda-toast). */
+html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#arda-toast) { display:none !important; }
 .admin-header { position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 1.5rem;padding:0.8rem 0.5rem;background:var(--ink-deep);border-bottom:1px solid rgba(104,144,168,0.15);flex-wrap:wrap;gap:0.8rem; }
 .admin-title { font-family:'Cinzel',serif;font-size:1rem;color:var(--gold-bright);letter-spacing:0.06em; }
 .admin-btn-wrap { display:flex;gap:0.7rem; }
@@ -1257,7 +1261,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.07</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.09</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2896,6 +2900,7 @@ function showFieldGapModal(charName, fieldLabel, lang) {
 function showAdminEditor() {
   const overlay = document.createElement('div');
   overlay.className = 'admin-overlay';
+  document.documentElement.classList.add('admin-open');
 
   const header = document.createElement('div');
   header.className = 'admin-header';
@@ -2907,7 +2912,7 @@ function showAdminEditor() {
   const backBtn = document.createElement('button');
   backBtn.className = 'admin-btn admin-btn-back';
   backBtn.textContent = 'Indietro';
-  backBtn.onclick = () => overlay.remove();
+  backBtn.onclick = () => { overlay.remove(); document.documentElement.classList.remove('admin-open'); };
   const BILINGUAL = [
     { it:'tipo',        en:'tipo_en',        li:'Tipo IT',        le:'Tipo EN' },
     { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN' },
@@ -2989,7 +2994,7 @@ function showAdminEditor() {
       dati.length = 0;
       next.forEach(function(p){ dati.push(p); });
       saveBtn.textContent = 'Salvato ✓';
-      setTimeout(() => { renderList(); overlay.remove(); }, 700);
+      setTimeout(() => { overlay.remove(); document.documentElement.classList.remove('admin-open'); renderList(); }, 700);
     } else {
       var why = (res.reason || 'errore').substring(0, 40);
       saveBtn.textContent = '✗ ' + why;
