@@ -131,6 +131,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     solo `grep` non l'avrebbe colto, il confronto dei ref sì.
 - Il **SessionStart hook** standard (regola universale) è già configurato
   in `.claude/settings.json` di questo repo.
+- **Salvaguardie anti-conflitto coi salvataggi admin** (in `.claude/settings.json`).
+  L'editor admin committa `dati.js` direttamente su `master` via Worker: se la
+  sessione lavora su un branch `claude/*` basato su un `master` vecchio, al merge
+  scoppia il conflitto. Due hook prevengono il caso:
+  1. **`UserPromptSubmit`**: a ogni turno fa `git fetch` e, se il branch è
+     **pulito e 0 ahead** ma dietro `origin/master`, fa `git reset --hard
+     origin/master` (riallineamento sicuro = solo fast-forward, nessuna perdita);
+     altrimenti avvisa. Così, se fai un salvataggio admin e poi mi scrivi, parto
+     già aggiornato.
+  2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
+     `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
+     (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
 
 ## 🔢 Versione del sito
 

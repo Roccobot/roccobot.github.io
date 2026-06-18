@@ -20,6 +20,12 @@
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) BADGE=$(grep -oE 'version-badge\">v[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*v//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"Commit bloccato: versione disallineata, badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea i due numeri prima di committare.\" >&2; exit 2; fi ;; esac",
             "timeout": 15,
             "statusMessage": "Controllo versione (pre-commit)…"
+          },
+          {
+            "type": "command",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) git fetch origin master --quiet 2>/dev/null; BEHIND=$(git rev-list --count HEAD..origin/master 2>/dev/null); if [ \"${BEHIND:-0}\" -gt 0 ]; then echo \"Commit bloccato: $BEHIND commit dietro origin/master (probabile salvataggio admin su dati.js). Riallinea a origin/master e riapplica prima di committare.\" >&2; exit 2; fi ;; esac",
+            "timeout": 20,
+            "statusMessage": "Controllo freschezza vs origin/master…"
           }
         ]
       }
@@ -39,6 +45,18 @@
             "command": "BADGE=$(grep -oE 'version-badge\">v[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*v//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"[SessionStart] versione disallineata: badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea prima di committare.\"; fi",
             "timeout": 15,
             "statusMessage": "Controllo versione badge/dati.js…"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git fetch origin master --quiet 2>/dev/null; B=$(git symbolic-ref --short -q HEAD); BEHIND=$(git rev-list --count HEAD..origin/master 2>/dev/null); AHEAD=$(git rev-list --count origin/master..HEAD 2>/dev/null); if [ \"${BEHIND:-0}\" -gt 0 ]; then if [ \"${AHEAD:-0}\" = 0 ] && git diff --quiet && git diff --cached --quiet; then git reset --hard origin/master 2>/dev/null && echo \"[turn] branch '$B' riallineato a origin/master ($(git rev-parse --short HEAD)): $BEHIND commit recuperati (probabile salvataggio admin).\"; else echo \"[turn] ATTENZIONE: $BEHIND commit dietro origin/master (ahead=$AHEAD o modifiche locali): riallinea a mano prima di lavorare su dati.js.\"; fi; fi",
+            "timeout": 20,
+            "statusMessage": "Allineamento a origin/master…"
           }
         ]
       }
