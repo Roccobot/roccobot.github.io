@@ -61,10 +61,12 @@ nell'editor admin). Comunicalo e lo cablo nel codice.
 ## Versione del sito: auto-bump a ogni salvataggio
 
 A ogni commit dell'editor admin il Worker legge `var datiVersion` da `dati.js`,
-ne incrementa la **patch** (+0.0.1), la riscrive in testa al file e la
-restituisce nella risposta (`{"ok":true,"version":"X.Y.Z"}`); il sito aggiorna
-il badge senza reload. La versione è quindi un contatore di revisioni dei
-contenuti: minor/major restano decise solo dai commit di codice.
+applica l'incremento **minore** e la riscrive in testa al file, restituendola
+nella risposta (`{"ok":true,"version":"x.xx"}`); il sito aggiorna il badge senza
+reload. Il Worker è **bi-formato**: sul nuovo schema `x.xx` fa **+0.01** (con
+riporto, es. 1.99 → 2.00), sul vecchio SemVer `x.y.z` fa **+0.0.1**. La versione
+è quindi un contatore di revisioni dei contenuti: gli incrementi maggiori
+(+0.1 / +1.0) restano decisi solo dai commit di codice.
 
 > **Deploy automatico.** Il repo ha una *Git integration* di Cloudflare
 > (Workers Builds, vedi `wrangler.toml`): a ogni push il Worker viene

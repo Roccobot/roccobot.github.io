@@ -107,18 +107,17 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   obbligatorio previsto dalla regola universale):
 
   ```bash
-  git pull origin master && grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' arda/top/index.html | head -1
+  git pull origin master && grep -oE 'version-badge">v[0-9.]+' arda/top/index.html | head -1
   ```
 
   Il `grep` legge la versione del sito: se dopo il pull risulta più
   vecchia dell'attesa, fermarsi e investigare. Qui il rischio di
   disallineamento è concreto: l'editor admin del sito committa
   direttamente su GitHub via API.
-  - **Il numero di versione NON basta come spia.** I salvataggi admin
-    committano solo `arda/top/dati.js` (testi/ordine dei personaggi) **senza
-    bump**: la versione resta identica anche con `master` avanti. Perciò
-    affiancare sempre al `grep` il **confronto dei ref col remoto**, che è la
-    verifica affidabile:
+  - **Il numero di versione da solo non basta come spia.** I salvataggi admin
+    committano `arda/top/dati.js` e dalla v10.14.0 **bumpano** (+0.01 via
+    Worker): il numero cambia, ma per sapere se e di quanto si è indietro serve
+    comunque il **confronto dei ref col remoto**, la verifica affidabile:
 
     ```bash
     git fetch origin master \
@@ -135,7 +134,19 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 ## 🔢 Versione del sito
 
-- **Bump SemVer a ogni commit che tocca il sito** (regola universale).
+- **Versione: schema custom `x.xx` (dalla v1.00).** Formato: intero + due cifre
+  decimali (es. `1.00`, `1.07`, `2.13`); override di progetto del SemVer
+  universale. Bump a ogni commit che tocca il sito, per entità della modifica:
+  - secondaria/minore: **+0.01**;
+  - aggiunta di funzionalità (o simile): **+0.1**;
+  - modifica sostanziale (nuova release): **+1.0**.
+
+  Aritmetica a due decimali con riporto (1.99 → 2.00, 9.99 → 10.00). Lo schema
+  `x.xx` **succede** al vecchio SemVer `x.y.z` (storia fino a v10.21.1): per
+  convenzione di lettura ogni `x.xx` è da intendersi successivo a ogni `x.y.z`
+  (1.00 viene dopo 10.21.1). Nessun codice confronta le versioni per ordine
+  (solo l'uguaglianza badge↔datiVersion dei guard), quindi la convenzione vale
+  per gli umani; **nessun prefisso `r`** (romperebbe quei guard).
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
@@ -158,15 +169,17 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
          (exit 2, messaggio restituito a Claude). Permissivo in ogni altro caso
          (commit non coinvolto, file assenti, numeri allineati).
       Le salvaguardie intercettano solo il disallineamento; **non** decidono
-      l'entità del bump (patch/minor/major resta scelta manuale e contestuale).
+      l'entità del bump (+0.01 / +0.1 / +1.0 resta scelta manuale e contestuale).
   - **Bump automatico (salvataggi admin):** a OGNI commit dell'editor admin il
-    Worker legge `datiVersion` dal `dati.js` corrente e ne incrementa la
-    **patch** (+0.0.1), riscrivendola in testa al file, e la restituisce nella
-    risposta JSON (`version`) così il client aggiorna subito il badge senza
-    reload. Effetto: la versione sale a ogni salvataggio admin (incluse le
-    conferme di riordino) e diventa di fatto un contatore di revisioni dei
-    contenuti — il terzo numero cresce in fretta, minor/major restano decise
-    solo dai commit di codice. Prima (fino a v10.13.x) i salvataggi admin NON
+    Worker legge `datiVersion` dal `dati.js` corrente e applica l'incremento
+    **minore (+0.01)** con riporto, riscrivendola in testa al file, e la
+    restituisce nella risposta JSON (`version`) così il client aggiorna subito il
+    badge senza reload. Il Worker è **bi-formato**: gestisce sia `x.xx` (+0.01)
+    sia il legacy `x.y.z` (+0.0.1), per non rompere la transizione. Effetto: la
+    versione sale a ogni salvataggio admin (incluse le conferme di riordino) e
+    diventa di fatto un contatore di revisioni dei contenuti: le due cifre
+    decimali crescono in fretta, mentre +0.1/+1.0 restano decise solo dai commit
+    di codice. Prima (fino a v10.13.x) i salvataggi admin NON
     bumpavano: la versione restava identica, rendendo le modifiche admin
     invisibili al controllo di freschezza basato sul numero (vedi sopra il
     confronto dei ref come verifica affidabile). Il codice del Worker si
