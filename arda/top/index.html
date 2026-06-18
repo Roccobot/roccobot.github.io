@@ -698,9 +698,9 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .tipo-mezzelfo    { background:rgba(35,65,175,0.28); border:1px solid rgba(100,155,240,0.9); color:#88c0ff; box-shadow:inset 0 0 8px rgba(120,170,255,0.15); }
 /* UOMINI — rosso/vermiglio/ocra rossa */
 .tipo-numenorean  { background:rgba(200,15,15,0.28); border:1px solid rgba(255,72,72,0.9); color:#ff5858; }
-.tipo-hador       { background:rgba(210,65,10,0.28); border:1px solid rgba(255,118,55,0.9); color:#ff8038; }
-.tipo-beor        { background:rgba(185,28,18,0.26); border:1px solid rgba(248,82,72,0.9); color:#f85848; }
-.tipo-haleth      { background:rgba(190,78,22,0.27); border:1px solid rgba(240,130,66,0.9); color:#e2843c; }
+.tipo-hador       { background:rgba(192,93,12,0.27); border:1px solid rgba(243,150,73,0.9); color:#f39649; }
+.tipo-beor        { background:rgba(192,36,12,0.27); border:1px solid rgba(243,96,73,0.9); color:#f36049; }
+.tipo-haleth      { background:rgba(192,147,12,0.27); border:1px solid rgba(243,201,73,0.9); color:#f3c949; }
 .tipo-rohirrim    { background:rgba(198,42,18,0.26); border:1px solid rgba(252,100,72,0.9); color:#fc6848; }
 .tipo-dunadan     { background:rgba(175,18,18,0.26); border:1px solid rgba(240,60,60,0.9); color:#f04040; }
 .tipo-eotheod     { background:rgba(192,42,14,0.26); border:1px solid rgba(250,95,65,0.9); color:#fa6842; }
@@ -1185,9 +1185,9 @@ html[data-theme="light"] .tipo-sindar { background:rgba(25,130,120,0.11); border
 html[data-theme="light"] .tipo-teleri-maia { background:rgba(60,20,175,0.12); border-color:rgba(140,100,230,0.55); color:#4818c0; }
 html[data-theme="light"] .tipo-mezzelfo { background:rgba(30,60,175,0.11); border-color:rgba(70,130,230,0.55); color:#1040b8; }
 html[data-theme="light"] .tipo-numenorean { background:rgba(200,12,12,0.12); border-color:rgba(220,40,40,0.55); color:#a00000; }
-html[data-theme="light"] .tipo-hador { background:rgba(210,62,8,0.12); border-color:rgba(225,90,35,0.52); color:#a83000; }
-html[data-theme="light"] .tipo-beor { background:rgba(185,25,16,0.11); border-color:rgba(210,55,45,0.52); color:#981808; }
-html[data-theme="light"] .tipo-haleth { background:rgba(190,76,14,0.12); border-color:rgba(212,104,42,0.52); color:#984006; }
+html[data-theme="light"] .tipo-hador { background:rgba(192,93,12,0.12); border-color:rgba(207,120,48,0.52); color:#964808; }
+html[data-theme="light"] .tipo-beor { background:rgba(192,36,12,0.12); border-color:rgba(207,70,48,0.52); color:#961b08; }
+html[data-theme="light"] .tipo-haleth { background:rgba(192,147,12,0.12); border-color:rgba(207,167,48,0.52); color:#967308; }
 html[data-theme="light"] .tipo-rohirrim { background:rgba(198,40,16,0.11); border-color:rgba(215,70,45,0.52); color:#a02008; }
 html[data-theme="light"] .tipo-dunadan { background:rgba(175,16,16,0.11); border-color:rgba(205,38,38,0.52); color:#900808; }
 html[data-theme="light"] .tipo-eotheod { background:rgba(192,40,12,0.11); border-color:rgba(212,68,38,0.5); color:#9c1c00; }
@@ -1263,7 +1263,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.33</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1447,7 +1447,7 @@ function tipoClass(tipo) {
   if (t.includes('beorniano') || t.includes('beorning')) return 'tipo-beorn';
   if (t.includes('dale')) return 'tipo-dale';
   if (t.includes('donna mortale') || t.includes('mortal woman')) return 'tipo-beor';
-  if (t.includes('nano') || t.includes('dwarf')) return 'tipo-nano';
+  if (t.includes('nano') || t.includes('nana') || t.includes('dwarf')) return 'tipo-nano';
   if (t.includes('orco') || t.includes('orc') || t.includes('uruk')) return 'tipo-orco';
   if (t.includes('aquila') || t.includes('eagle')) return 'tipo-aquila';
   if (t.includes('ent')) return 'tipo-ent';
@@ -1575,7 +1575,7 @@ function categoria(p) {
   if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) return 'arcane'; // Spettri-capi
   if (/orco|orc|uruk/.test(t)) return 'orc';
   if (/hobbit/.test(t)) return 'hobbit';
-  if (/nano|nanerott|dwarf/.test(t)) return 'dwarf'; // 'nanerott' = Nanerottoli (Petty-dwarves, es. Mîm)
+  if (/nano|nana|nanerott|dwarf/.test(t)) return 'dwarf'; // 'nana' = nana (es. Dís); 'nanerott' = Nanerottoli (Petty-dwarves, es. Mîm)
   if (/drúed|drued/.test(t)) return 'man'; // Drúedain ≠ Edain
   if (p.nome === 'Elros') return 'adan';
   if (/elfo|elfa|mezzelf|half-elf/.test(t)) return 'elf';
