@@ -190,6 +190,7 @@
 @@||tasgroup.eu^$important
 @@||threadless.com^$important
 @@||tolkiengateway.net^$important
+@@||tolkiengateway.net^$document,subdocument,important
 @@||unisalute.it^$important
 @@||unisalute.it^$document,important
 @@||usercontent.google.com^$document,subdocument,important
