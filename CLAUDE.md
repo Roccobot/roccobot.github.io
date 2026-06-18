@@ -149,11 +149,16 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     (ed eventualmente allineare il fallback nel badge, cosmetico). Storico: fino
     a v10.13.x il numero "vivo" stava nel badge di `index.html`; spostato in
     `dati.js` in v10.14.0 perché il Worker possa incrementarlo.
-    - **Salvaguardia:** un secondo comando del **SessionStart hook**
-      (`.claude/settings.json`) confronta il numero del badge HTML con
-      `datiVersion` e, se differiscono, stampa un avviso a inizio sessione
-      (silenzioso se allineati). Serve a intercettare un bump fatto su uno solo
-      dei due; non decide l'entità del bump (resta scelta manuale).
+    - **Salvaguardia (due livelli, in `.claude/settings.json`):** confronta il
+      numero del badge HTML con `datiVersion` e segnala se differiscono.
+      1) **SessionStart** — avviso a inizio sessione (silenzioso se allineati):
+         intercetta un disallineamento già finito su `master`.
+      2) **PreToolUse su `Bash`** — proattivo: se il comando contiene
+         `git commit` e i due numeri non coincidono, **blocca il commit**
+         (exit 2, messaggio restituito a Claude). Permissivo in ogni altro caso
+         (commit non coinvolto, file assenti, numeri allineati).
+      Le salvaguardie intercettano solo il disallineamento; **non** decidono
+      l'entità del bump (patch/minor/major resta scelta manuale e contestuale).
   - **Bump automatico (salvataggi admin):** a OGNI commit dell'editor admin il
     Worker legge `datiVersion` dal `dati.js` corrente e ne incrementa la
     **patch** (+0.0.1), riscrivendola in testa al file, e la restituisce nella
