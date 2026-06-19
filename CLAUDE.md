@@ -423,6 +423,22 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     manuale '⇄ Traduci' è dietro `FEATURES.adminTranslate` (oggi `false`,
     riattivabile).
 
+## ✒️ Convenzioni tipografiche dei dati (`dati.js`)
+
+Stile uniforme per **tutti** i campi testuali delle voci, deciso dall'utente e
+applicato in blocco con la bonifica della v1.84 (le regole universali — p.es.
+l'apostrofo dritto in `Roccobot.md` — restano invariate; questo è lo standard
+specifico del dataset):
+
+- **Virgolette: sempre apice dritto `'`.** Ogni tipo di virgoletta — caporali
+  `«»`, doppie curve `“”`, doppie dritte `"` — si rende con l'apice dritto
+  singolo `'`, sia per le citazioni (`citazione`) sia per glosse/incisi interni.
+  Mai `«»`, mai virgolette curve, mai doppie.
+- **Apostrofi: sempre dritti `'`** (mai i curvi `’`/`‘`).
+- **Trattini:** `–` (en-dash) **solo negli intervalli d'anno** della `fonte`
+  (es. `1954–55`); nei testi (parentetici, incisi) si usa sempre `—` (em-dash).
+- **Ellissi:** tre punti `...` (mai il carattere unico `…`).
+
 ## 📚 Nuovi personaggi e canone
 
 - **Verifica delle fonti sempre.** Per ogni personaggio nuovo o modificato,
