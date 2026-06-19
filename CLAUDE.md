@@ -294,29 +294,27 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   sovrapporsi, `@media print` nasconde la chrome e mette `break-inside:avoid`
   sulle card (mai tagliate tra pagine A4). Ripristino del DOM/tema su
   `afterprint`. Nessuna dipendenza esterna.
-- **Permalink 'tutte le categorie' (`?cat=1`; `?tutte`/`?all` alias storici).** Le categorie
+- **Permalink 'tutte le categorie' (`?cat=x` o `?cat=2`; `?tutte`/`?all` alias storici).** Le categorie
   attive (`filterState`) si inizializzano al load con Ainur, Arcani e Animali
-  **spenti** e NON sono persistite. Se l'URL porta `?cat=1` (o gli alias storici `?tutte`/`?all`), al
+  **spenti** e NON sono persistite. Se l'URL porta `?cat=x` (o `?cat=2`, o gli alias storici `?tutte`/`?all`), al
   caricamento `filterState` viene forzato con **tutte** le categorie attive,
   scavalcando i default. Vale **solo all'avvio**: dopo, i filtri restano
   liberamente modificabili (lo stato non è salvato, quindi è il parametro a
   rendere il link idempotente; riaprirlo rimostra tutto, toglierlo torna ai
   default). Pensato per condividere un link che apre la lista intera —
-  es. `https://roccobot.github.io/arda/top/?cat=1`.
-- **Tasto 'copia link' e parametro `?cat=`.** `?cat=1` è la forma **canonica
-  per 'tutte le categorie'** (la vista più condivisa; `?tutte`/`?all` restano
-  alias storici). Per le altre viste `?cat=` accetta **due forme** (distinte al
+  es. `https://roccobot.github.io/arda/top/?cat=x`.
+- **Tasto 'copia link' e parametro `?cat=`.** `?cat=x` (o `?cat=2`) è la forma
+  **breve e language-agnostic per 'tutte le categorie'** (la vista più
+  condivisa; `?tutte`/`?all` restano alias storici). Per le altre viste `?cat=` accetta **due forme** (distinte al
   volo: solo `0/1` ⇒ bitmask, altrimenti lista di chiavi):
   - **Bitmask compatto (dalla v10.18.0).** Un carattere `0/1`
     per categoria nell'**ordine fisso di `CATS`** (ainu, arcane, elf, adan,
     man, dwarf, hobbit, orc, animal): es. `?cat=101110000` = ainu, elf, adan,
     man. Gli **zeri finali si omettono** (i bit mancanti valgono 0), quindi lo
-    stesso link si abbrevia in `?cat=10111`. È la forma generata da
-    `buildShareUrl` per le viste parziali. Due casi speciali: una maschera
+    stesso link si abbrevia in `?cat=10111`; la **sola vista ainu** è `?cat=1`.
+    È la forma generata da `buildShareUrl` per le viste parziali. Una maschera
     **tutta-zero** (`?cat=0`) = nessuna categoria, priva di senso, **viene
-    ignorata** (restano i default); la **sola vista ainu** (che si abbrevierebbe
-    nell'ambiguo `?cat=1`, ormai riservato a 'tutte') è emessa come chiave
-    `?cat=ainu`.
+    ignorata** (restano i default).
   - **Lista di chiavi (forma storica, retro-compatibile).** `?cat=k1,k2,…`
     attiva **esattamente** le categorie elencate (chiavi tra `CATS`; chiavi
     ignote scartate; se nessuna è valida restano i default). I vecchi link
@@ -327,9 +325,9 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   Nel Pannello un **tasto 'copia link'** (icona catena, `.ctrl-share-btn`; su
   **desktop** a destra del cambio-lingua nella toolbar, su **mobile** nel gruppo
   centrato con tema/lingua della barra inferiore) copia negli appunti l'URL
-  della **vista corrente** via `buildShareUrl`: `?cat=1` se tutte attive,
+  della **vista corrente** via `buildShareUrl`: `?cat=x` se tutte attive,
   **nessun parametro** se è la vista di default (snapshot `FILTER_DEFAULT`),
-  `?cat=ainu` per la sola vista ainu, altrimenti `?cat=<bitmask>` (zeri finali
+  altrimenti `?cat=<bitmask>` (zeri finali
   omessi); con conferma visiva (✓ +
   tinta oro, `.ctrl-share-done`) e ripiego `execCommand` fuori dai contesti
   sicuri.

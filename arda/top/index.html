@@ -1261,7 +1261,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.54</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.55</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1591,15 +1591,15 @@ var filterState = {};
 // buildShareUrl per riconoscere la vista di default e copiarne il link pulito.
 var FILTER_DEFAULT = {};
 CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
-// Permalink della vista. ?cat=1 attiva TUTTE le categorie: è la forma canonica
-// della vista più condivisa (?tutte e ?all restano come alias storici).
+// Permalink della vista. ?cat=x (o ?cat=2) attiva TUTTE le categorie: forma
+// breve e language-agnostic (?tutte e ?all restano come alias storici).
 // Altrimenti ?cat=... accetta DUE forme: (a) bitmask compatto, un carattere 0/1
 // per categoria nell'ordine di CATS, con gli zeri finali omettibili (es.
-// ?cat=10111 → ainu, elf, adan, man); una maschera tutta-zero (?cat=0) =
-// nessuna categoria, priva di senso, viene ignorata (restano i default);
+// ?cat=10111 → ainu, elf, adan, man; ?cat=1 → sola ainu); una maschera
+// tutta-zero (?cat=0) = nessuna categoria, priva di senso, viene ignorata;
 // (b) lista di chiavi ?cat=key1,key2,... (forma storica, chiavi sconosciute
-// ignorate). buildShareUrl genera ?cat=1 per 'tutte', la chiave ?cat=ainu per
-// la sola vista ainu, altrimenti la bitmask compatta.
+// ignorate). buildShareUrl genera ?cat=x per 'tutte', altrimenti la bitmask
+// compatta (?cat=1 = sola ainu).
 // Vale SOLO all'avvio — i filtri restano poi liberamente modificabili (lo
 // stato non è persistito, quindi è il parametro a rendere il link idempotente).
 // È il tasto 'copia link' del Pannello a generare questi URL (buildShareUrl),
@@ -1611,13 +1611,13 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
       CATS.forEach(function(c){ filterState[c] = true; });
     } else if (qs.has('cat')) {
       var raw = (qs.get('cat') || '').trim();
-      if (raw === '1') {
-        // Forma canonica 'tutte le categorie' (sostituisce ?tutte).
+      if (raw === 'x' || raw === '2') {
+        // Token 'tutte le categorie' (forma breve, language-agnostic).
         CATS.forEach(function(c){ filterState[c] = true; });
       } else if (/^[01]+$/.test(raw)) {
-        // Bitmask: i-esimo carattere = categoria CATS[i]; bit oltre la stringa
-        // (zeri finali omessi) valgono 0, quindi restano spenti. Una maschera
-        // tutta-zero (es. ?cat=0) = nessuna categoria: priva di senso, si ignora.
+        // Bitmask: i-esimo carattere = categoria CATS[i] (es. ?cat=1 = sola ainu);
+        // zeri finali omessi. Una maschera tutta-zero (es. ?cat=0) = nessuna
+        // categoria: priva di senso, si ignora (restano i default).
         if (raw.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
       } else {
         var valid = raw.split(',').map(function(s){ return s.trim(); })
@@ -2042,13 +2042,12 @@ function wireControlPanel() {
 function buildShareUrl() {
   var base = location.origin + location.pathname;
   var active = CATS.filter(function(c){ return filterState[c]; });
-  // 'tutte le categorie' (vista più condivisa): forma canonica compatta ?cat=1.
-  if (active.length === CATS.length) return base + '?cat=1';
+  // 'tutte le categorie' (vista più condivisa): token compatto ?cat=x.
+  if (active.length === CATS.length) return base + '?cat=x';
   var isDefault = CATS.every(function(c){ return !!filterState[c] === !!FILTER_DEFAULT[c]; });
   if (isDefault || !active.length) return base;
+  // bitmask compatta; '1' = sola vista ainu (CATS[0]), zeri finali omessi.
   var bits = CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('').replace(/0+$/, '');
-  // '1' è riservato a 'tutte': la sola vista ainu usa la forma a chiave (?cat=ainu).
-  if (bits === '1') return base + '?cat=ainu';
   return base + '?cat=' + bits;
 }
 
