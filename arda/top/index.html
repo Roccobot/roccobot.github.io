@@ -344,6 +344,22 @@ h1 {
   border-left-color:rgba(126,206,96,0.75);
 }
 
+/* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
+.rank-item.apocrifo {
+  background:linear-gradient(90deg,rgba(130,130,142,0.08) 0%,rgba(130,130,142,0.025) 100%);
+  border-left-color:rgba(172,174,186,0.55);
+  opacity:0.8;
+}
+.rank-item.apocrifo:hover, .rank-item.apocrifo:focus-visible { opacity:1; }
+/* pill «Solo HoME»: contornata, in alto a destra, distinta dalle etichette tipo */
+.pill-home {
+  position:absolute; top:0.6rem; right:0.7rem;
+  font-size:0.62rem; letter-spacing:0.06em; line-height:1.4;
+  padding:1px 7px; border-radius:4px;
+  border:1px solid rgba(188,190,202,0.45); color:rgba(206,208,218,0.82);
+  background:rgba(255,255,255,0.03); pointer-events:none;
+}
+
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
 #ctrl-fab svg { height:1.9rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB di controllo: a sinistra su desktop, a destra su mobile. Icona oro in scuro, teal+bianco in chiaro */
@@ -389,6 +405,18 @@ h1 {
 .ctrl-cat-head .ctrl-h { margin:0; }
 .ctrl-reset { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32); border-radius:3px; color:var(--parchment); padding:3px 11px; cursor:pointer; transition:background 0.15s,border-color 0.15s; white-space:nowrap; }
 .ctrl-reset:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
+/* interruttore «Apocrifi» (catalogo esteso): a destra di 'Categorie', a sinistra di 'Tutti' */
+.ctrl-apo { display:inline-flex; align-items:center; gap:0.4rem; margin-left:auto; background:none; border:none; padding:0; cursor:pointer; color:inherit; }
+.ctrl-apo .apo-lbl { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--parchment); opacity:0.72; white-space:nowrap; transition:opacity 0.15s,color 0.15s; }
+.ctrl-apo .apo-sw { position:relative; width:30px; height:16px; border-radius:8px; background:rgba(140,140,150,0.35); border:1px solid rgba(154,156,168,0.4); transition:background 0.15s,border-color 0.15s; flex-shrink:0; }
+.ctrl-apo .apo-sw::after { content:''; position:absolute; top:1px; left:1px; width:12px; height:12px; border-radius:50%; background:rgba(230,226,214,0.9); transition:left 0.15s; }
+.ctrl-apo.on .apo-sw { background:rgba(210,178,92,0.85); border-color:rgba(224,194,108,0.9); }
+.ctrl-apo.on .apo-sw::after { left:15px; background:#3a2808; }
+.ctrl-apo.on .apo-lbl { opacity:1; color:rgba(224,194,108,0.95); }
+html[data-theme="light"] .ctrl-apo .apo-lbl { color:var(--ink); }
+html[data-theme="light"] .ctrl-apo.on .apo-lbl { color:rgba(150,108,16,0.95); }
+html[data-theme="light"] .ctrl-apo.on .apo-sw { background:rgba(58,88,120,0.85); border-color:rgba(58,88,120,0.9); }
+html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
 .ctrl-row.cat-locked { cursor:default; pointer-events:none; }
@@ -1117,6 +1145,9 @@ html[data-theme="light"] .rank-item.divine.morgoth { background: rgba(251,232,24
 html[data-theme="light"] .rank-item.divine.morgoth:hover, html[data-theme="light"] .rank-item.divine.morgoth:focus-visible { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
 html[data-theme="light"] .rank-item.divine.bombadil { background: rgba(230,250,228,0.16); border-left-color:rgba(45,100,25,0.50); }
 html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="light"] .rank-item.divine.bombadil:focus-visible { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
+html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
+html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-visible { background: rgba(236,236,239,0.85); }
+html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
 html[data-theme="light"] .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
@@ -1261,7 +1292,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.55</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1591,33 +1622,33 @@ var filterState = {};
 // buildShareUrl per riconoscere la vista di default e copiarne il link pulito.
 var FILTER_DEFAULT = {};
 CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
-// Permalink della vista. ?cat=x (o ?cat=2) attiva TUTTE le categorie: forma
-// breve e language-agnostic (?tutte e ?all restano come alias storici).
-// Altrimenti ?cat=... accetta DUE forme: (a) bitmask compatto, un carattere 0/1
-// per categoria nell'ordine di CATS, con gli zeri finali omettibili (es.
-// ?cat=10111 → ainu, elf, adan, man; ?cat=1 → sola ainu); una maschera
-// tutta-zero (?cat=0) = nessuna categoria, priva di senso, viene ignorata;
-// (b) lista di chiavi ?cat=key1,key2,... (forma storica, chiavi sconosciute
-// ignorate). buildShareUrl genera ?cat=x per 'tutte', altrimenti la bitmask
-// compatta (?cat=1 = sola ainu).
-// Vale SOLO all'avvio — i filtri restano poi liberamente modificabili (lo
-// stato non è persistito, quindi è il parametro a rendere il link idempotente).
-// È il tasto 'copia link' del Pannello a generare questi URL (buildShareUrl),
-// così riaprire un link riapre esattamente la vista condivisa.
+// Permalink della vista (forma BARE, senza 'cat='): la query è direttamente il
+// token. ?x = tutte le categorie; ?<bitmask> = un carattere 0/1 per categoria
+// nell'ordine di CATS (es. ?101 → ainu, elf; ?1 → sola ainu), zeri finali
+// omessi; il 10° bit, se 1, accende gli Apocrifi (es. ?1000000001 = sola ainu +
+// apocrifi; ?1111111111 = tutto + apocrifi). Maschera tutta-zero = ignorata.
+// Forme LEGACY ancora lette: ?cat=x|2 / ?tutte / ?all (tutte), ?cat=<bitmask>,
+// ?cat=key1,key2,... (chiavi), ?a=1 (apocrifi). buildShareUrl genera la forma
+// bare. Vale SOLO all'avvio (lo stato non è persistito). È il tasto 'copia
+// link' del Pannello a generare questi URL.
+var showApocrifi = false;
 (function(){
   try {
+    var bare = (window.location.search || '').replace(/^\?/, '');
     var qs = new URLSearchParams(window.location.search);
-    if (qs.has('tutte') || qs.has('all')) {
+    if (bare === 'x') {
+      CATS.forEach(function(c){ filterState[c] = true; });
+    } else if (/^[01]{1,10}$/.test(bare)) {
+      var catBits = bare.slice(0, 9); // primi 9 bit = categorie; 10° bit = Apocrifi
+      if (catBits.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = catBits.charAt(i) === '1'; });
+      if (bare.length >= 10 && bare.charAt(9) === '1') showApocrifi = true;
+    } else if (qs.has('tutte') || qs.has('all')) {
       CATS.forEach(function(c){ filterState[c] = true; });
     } else if (qs.has('cat')) {
       var raw = (qs.get('cat') || '').trim();
       if (raw === 'x' || raw === '2') {
-        // Token 'tutte le categorie' (forma breve, language-agnostic).
         CATS.forEach(function(c){ filterState[c] = true; });
       } else if (/^[01]+$/.test(raw)) {
-        // Bitmask: i-esimo carattere = categoria CATS[i] (es. ?cat=1 = sola ainu);
-        // zeri finali omessi. Una maschera tutta-zero (es. ?cat=0) = nessuna
-        // categoria: priva di senso, si ignora (restano i default).
         if (raw.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
       } else {
         var valid = raw.split(',').map(function(s){ return s.trim(); })
@@ -1626,6 +1657,7 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
         if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
       }
     }
+    if (qs.get('a') === '1') showApocrifi = true; // legacy: apocrifi via ?a=1
   } catch (e) {}
 })();
 
@@ -1645,6 +1677,7 @@ function renderList() {
   var visN = 0;
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
+    if (p.apocrifo && !showApocrifi) continue; // catalogo esteso: visibile solo con l'interruttore Apocrifi
     var cat = categoria(p);
     if (!filterState[cat]) continue;
     visN++;
@@ -1703,9 +1736,17 @@ function renderList() {
       if (darkBg) classes += ' morgoth';
       else if (/bombadil/i.test(p.nome)) classes += ' bombadil';
     }
+    if (p.apocrifo) classes += ' apocrifo';
+    // Pill 'Solo HoME/NoME' (catalogo esteso): in alto a destra della card.
+    var apoPill = '';
+    if (p.apocrifo) {
+      var apoSrc = (typeof p.apocrifo === 'string') ? p.apocrifo : 'HoME';
+      var apoTxt = currentLang === 'it' ? ('Solo ' + apoSrc) : (apoSrc + '-only');
+      apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + escapeHtml(apoTxt) + '</span>';
+    }
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' +
       (isVisTop ? ';border-left-width:5px;border-left-color:' + (CAT_COLOR[cat] || 'transparent') + '' : '') +
-      '" data-idx="' + i + '">' +
+      '" data-idx="' + i + '">' + apoPill +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
         '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-tipi">' + tipoStr + '</span><span class="rank-flags">' + statusStr + genereSym + '</span></span>' +
@@ -1823,11 +1864,11 @@ var CAT_LABEL = {
 };
 var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
 var CTRL_I18N = {
-  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
+  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
         dSave:'Salva', dKeep:'Chiudi', dRestore:'Annulla le modifiche', exportLabel:'Esporta',
         introAdmin:"Funzionalità solo per amministratori: inserisci la password. Se sei un visitatore, usa il tasto 'Esporta' per salvare la tua classifica personale." },
-  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
+  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', apocrifi:'Apocrypha', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
         confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state',
         dSave:'Save', dKeep:'Close', dRestore:'Discard changes', exportLabel:'Export',
         introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
@@ -1873,7 +1914,7 @@ function controlPanelHTML() {
      + '</span>'
      + '</div>';
   // Filtri
-  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button class="ctrl-reset" id="ctrl-reset">' + T.all + '</button></div>';
+  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button type="button" class="ctrl-apo' + (showApocrifi ? ' on' : '') + '" id="ctrl-apo" role="switch" aria-checked="' + (showApocrifi ? 'true' : 'false') + '" title="' + T.apocrifi + '"><span class="apo-sw"></span><span class="apo-lbl">' + T.apocrifi + '</span></button><button class="ctrl-reset" id="ctrl-reset">' + T.all + '</button></div>';
   var soloTxt = currentLang === 'it' ? 'solo' : 'only';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){
@@ -1991,6 +2032,13 @@ function wireControlPanel() {
     resetBtn.addEventListener('click', doReset);
     resetBtn.addEventListener('touchend', doReset); // iOS: touchend garantisce risposta anche dentro bottom sheet scrollabile
   }
+  // Interruttore Apocrifi (catalogo esteso HoME/NoME): indipendente dalle categorie.
+  var apoBtn = document.getElementById('ctrl-apo');
+  if (apoBtn) {
+    var doApo = function(e){ if (e.cancelable) e.preventDefault(); showApocrifi = !showApocrifi; setTimeout(applyFilter, 0); };
+    apoBtn.addEventListener('click', doApo);
+    apoBtn.addEventListener('touchend', doApo);
+  }
   // Interruttore tema: due istanze (colonna sinistra su desktop, barra in basso
   // su mobile), entrambe con classe .ctrl-theme-btn.
   panel.querySelectorAll('.ctrl-theme-btn').forEach(function(btn){
@@ -2042,13 +2090,13 @@ function wireControlPanel() {
 function buildShareUrl() {
   var base = location.origin + location.pathname;
   var active = CATS.filter(function(c){ return filterState[c]; });
-  // 'tutte le categorie' (vista più condivisa): token compatto ?cat=x.
-  if (active.length === CATS.length) return base + '?cat=x';
+  // 'tutte le categorie' senza apocrifi: forma bare ?x.
+  if (active.length === CATS.length && !showApocrifi) return base + '?x';
   var isDefault = CATS.every(function(c){ return !!filterState[c] === !!FILTER_DEFAULT[c]; });
-  if (isDefault || !active.length) return base;
-  // bitmask compatta; '1' = sola vista ainu (CATS[0]), zeri finali omessi.
-  var bits = CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('').replace(/0+$/, '');
-  return base + '?cat=' + bits;
+  if (isDefault && !showApocrifi) return base;
+  // bitmask bare: 9 bit categorie + 10° bit apocrifi, zeri finali omessi.
+  var bits = (CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('') + (showApocrifi ? '1' : '')).replace(/0+$/, '');
+  return bits ? base + '?' + bits : base;
 }
 
 var ICON_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -3011,6 +3059,9 @@ function showAdminEditor() {
         // la checkbox lo mantiene se resta spuntata, lo rimuove se deselezionata.
         if (chkEl) { if (chkEl.checked) p[k] = (p[k] === 'presunto' ? 'presunto' : true); else delete p[k]; }
       });
+      // catalogo esteso «Apocrifi»: preserva un'eventuale stringa-fonte ('HoME'/'NoME'), altrimenti true/assente
+      const apoChkEl = document.getElementById('ae-' + i + '-apocrifo');
+      if (apoChkEl) { if (apoChkEl.checked) p.apocrifo = (typeof p.apocrifo === 'string' ? p.apocrifo : true); else delete p.apocrifo; }
     });
     saveBtn.textContent = 'Salvataggio…';
     const res = await doCommit('admin: modifica testi personaggi', next);
@@ -3180,6 +3231,19 @@ function showAdminEditor() {
       flagsRow.appendChild(lbl);
     });
     card.appendChild(flagsRow);
+
+    // Catalogo esteso «Apocrifi» (personaggio attestato solo in HoME/NoME)
+    const apoRow = document.createElement('label');
+    apoRow.className = 'admin-flag-chk admin-apo-chk';
+    apoRow.title = 'Apocrifo: personaggio attestato solo nella HoME/NoME';
+    const apoChk = document.createElement('input');
+    apoChk.type = 'checkbox';
+    apoChk.id = 'ae-' + i + '-apocrifo';
+    apoChk.checked = !!p.apocrifo;
+    const apoTxt = document.createElement('span');
+    apoTxt.textContent = 'Apocrifo';
+    apoRow.appendChild(apoChk); apoRow.appendChild(apoTxt);
+    card.appendChild(apoRow);
 
     cards.appendChild(card);
   });

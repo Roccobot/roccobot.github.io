@@ -294,43 +294,61 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   sovrapporsi, `@media print` nasconde la chrome e mette `break-inside:avoid`
   sulle card (mai tagliate tra pagine A4). Ripristino del DOM/tema su
   `afterprint`. Nessuna dipendenza esterna.
-- **Permalink 'tutte le categorie' (`?cat=x` o `?cat=2`; `?tutte`/`?all` alias storici).** Le categorie
-  attive (`filterState`) si inizializzano al load con Ainur, Arcani e Animali
-  **spenti** e NON sono persistite. Se l'URL porta `?cat=x` (o `?cat=2`, o gli alias storici `?tutte`/`?all`), al
-  caricamento `filterState` viene forzato con **tutte** le categorie attive,
-  scavalcando i default. Vale **solo all'avvio**: dopo, i filtri restano
-  liberamente modificabili (lo stato non è salvato, quindi è il parametro a
-  rendere il link idempotente; riaprirlo rimostra tutto, toglierlo torna ai
-  default). Pensato per condividere un link che apre la lista intera —
-  es. `https://roccobot.github.io/arda/top/?cat=x`.
-- **Tasto 'copia link' e parametro `?cat=`.** `?cat=x` (o `?cat=2`) è la forma
-  **breve e language-agnostic per 'tutte le categorie'** (la vista più
-  condivisa; `?tutte`/`?all` restano alias storici). Per le altre viste `?cat=` accetta **due forme** (distinte al
-  volo: solo `0/1` ⇒ bitmask, altrimenti lista di chiavi):
-  - **Bitmask compatto (dalla v10.18.0).** Un carattere `0/1`
-    per categoria nell'**ordine fisso di `CATS`** (ainu, arcane, elf, adan,
-    man, dwarf, hobbit, orc, animal): es. `?cat=101110000` = ainu, elf, adan,
-    man. Gli **zeri finali si omettono** (i bit mancanti valgono 0), quindi lo
-    stesso link si abbrevia in `?cat=10111`; la **sola vista ainu** è `?cat=1`.
-    È la forma generata da `buildShareUrl` per le viste parziali. Una maschera
-    **tutta-zero** (`?cat=0`) = nessuna categoria, priva di senso, **viene
-    ignorata** (restano i default).
-  - **Lista di chiavi (forma storica, retro-compatibile).** `?cat=k1,k2,…`
-    attiva **esattamente** le categorie elencate (chiavi tra `CATS`; chiavi
-    ignote scartate; se nessuna è valida restano i default). I vecchi link
-    continuano a funzionare; non è più la forma emessa. La chiave interna di
-    questa categoria è `ainu` (singolare, coerente con `elf`/`man`/`orc`); la
-    vecchia `ainur` è **aliasata** a `ainu` in lettura, così i link storici
-    `?cat=ainur,…` restano validi.
-  Nel Pannello un **tasto 'copia link'** (icona catena, `.ctrl-share-btn`; su
-  **desktop** a destra del cambio-lingua nella toolbar, su **mobile** nel gruppo
-  centrato con tema/lingua della barra inferiore) copia negli appunti l'URL
-  della **vista corrente** via `buildShareUrl`: `?cat=x` se tutte attive,
-  **nessun parametro** se è la vista di default (snapshot `FILTER_DEFAULT`),
-  altrimenti `?cat=<bitmask>` (zeri finali
-  omessi); con conferma visiva (✓ +
-  tinta oro, `.ctrl-share-done`) e ripiego `execCommand` fuori dai contesti
-  sicuri.
+- **Permalink della vista — forma BARE (dalla v1.60).** La query è
+  **direttamente il token**, senza `cat=`. Le categorie attive (`filterState`)
+  si inizializzano al load con Ainur, Arcani e Animali **spenti** e NON sono
+  persistite; l'URL le scavalca **solo all'avvio** (lo stato non è salvato →
+  riaprire il link riproduce la vista, toglierlo torna ai default; è il
+  parametro a rendere il link idempotente). Forme bare lette dal loader:
+  - **`?x`** = **tutte le categorie** attive (la vista più condivisa). Es.
+    `https://roccobot.github.io/arda/top/?x`.
+  - **`?<bitmask>`** = un carattere `0/1` per categoria nell'**ordine fisso di
+    `CATS`** (ainu, arcane, elf, adan, man, dwarf, hobbit, orc, animal), con un
+    **10° bit** opzionale per gli **Apocrifi**. Es. `?1` = sola ainu, `?101` =
+    ainu+elf, `?1111111111` = tutto + apocrifi, `?1000000001` = sola ainu +
+    apocrifi. Gli **zeri finali si omettono** (i bit mancanti valgono 0). Una
+    maschera tutta-zero non accende nulla (restano i default). È la forma
+    generata da `buildShareUrl`.
+- **Forme LEGACY ancora lette** (retro-compatibilità, non più emesse):
+  `?cat=x` / `?cat=2` / `?tutte` / `?all` = tutte le categorie; `?cat=<bitmask>`
+  (9 bit, vecchia forma senza 10° bit); `?cat=k1,k2,…` = lista di chiavi tra
+  `CATS` (chiavi ignote scartate; `ainur` **aliasata** a `ainu`, così i link
+  storici `?cat=ainur,…` restano validi); `?a=1` = apocrifi ON. Il loader
+  distingue le forme al volo: prima `?x`, poi bare-bitmask `/^[01]{1,10}$/`,
+  poi i parametri `tutte`/`all`/`cat`, infine `a=1` per gli apocrifi.
+- **Tasto 'copia link' (`buildShareUrl`).** Nel Pannello un tasto icona-catena
+  (`.ctrl-share-btn`; su **desktop** a destra del cambio-lingua nella toolbar,
+  su **mobile** nel gruppo centrato con tema/lingua della barra inferiore) copia
+  l'URL della **vista corrente**: `?x` se tutte le categorie sono attive e gli
+  apocrifi spenti; **nessun parametro** se è la vista di default (snapshot
+  `FILTER_DEFAULT`) con apocrifi spenti; altrimenti il bitmask bare (9 bit
+  categorie + 10° bit apocrifi, zeri finali omessi). Conferma visiva (✓ + tinta
+  oro, `.ctrl-share-done`) e ripiego `execCommand` fuori dai contesti sicuri.
+- **Catalogo esteso «Apocrifi» (dalla v1.60).** Un **interruttore** nel
+  Pannello (`.ctrl-apo`, nella `ctrl-cat-head`, **a destra di 'Categorie' e a
+  sinistra di 'Tutti'**) mostra/nasconde i personaggi del **catalogo esteso**:
+  voci attestate **solo nella HoME/NoME** (extra-canon). **Non è una categoria**
+  (non entra in `CATS` né nel conteggio del bitmask categorie): è una
+  visibilità a sé, governata dalla variabile globale `showApocrifi` (default
+  **OFF**) e dal **10° bit** del permalink bare. Il tasto **'Tutti'**
+  (`ctrl-reset`) agisce **solo sulle categorie**, mai sugli Apocrifi.
+  - **Flag dati: `apocrifo`** sulla voce. `true` (o una stringa-fonte, es.
+    `"HoME"`/`"NoME"`, usata per il testo della pill). In `renderList` la voce
+    è saltata se `p.apocrifo && !showApocrifi`. La classifica è **identica** ma
+    più lunga quando l'interruttore è ON (le posizioni non cambiano).
+  - **Card dedicata:** classe `.rank-item.apocrifo` — sfondo grigio molto tenue,
+    bordo sinistro grigio, **opacità 0.8** (piena al hover/focus). In alto a
+    destra una **pill `.pill-home`** contornata (distinta dalle etichette tipo):
+    dice **'Solo HoME' / 'HoME-only'** (o 'Solo <fonte>' se `apocrifo` è una
+    stringa). La parola **'Apocrifo' compare SOLO nell'etichetta
+    dell'interruttore** del Pannello (qualifica una *fonte*, non un personaggio):
+    mai nella card, mai nei testi delle voci.
+  - **Editor admin:** checkbox **'Apocrifo'** (`ae-<i>-apocrifo`) sotto la riga
+    dei flag-badge; al salvataggio imposta/rimuove `p.apocrifo` (preservando
+    un'eventuale stringa-fonte). Il Worker conserva il campo come ogni altra
+    chiave (nessuna modifica al Worker).
+  - **Voci flaggate (3, fonte 'I popoli della Terra di Mezzo', HoME XII):**
+    **Anairë**, **Elenwë**, **Eldalótë**.
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1
