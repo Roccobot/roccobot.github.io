@@ -438,6 +438,11 @@ specifico del dataset):
 - **Trattini:** `–` (en-dash) **solo negli intervalli d'anno** della `fonte`
   (es. `1954–55`); nei testi (parentetici, incisi) si usa sempre `—` (em-dash).
 - **Ellissi:** tre punti `...` (mai il carattere unico `…`).
+- **Maiuscola iniziale:** ogni campo-riga mostrato nella card — `descrizione`,
+  `nomi_alternativi`, `appellativi` (IT ed EN) — **inizia con la maiuscola**,
+  anche gli epiteti nudi (`Il Bianco`, `L'Alto`, `Il Vecchio`, `The Old`). Vale
+  per la prima lettera della riga; gli elementi successivi di un elenco separato
+  da virgola seguono le regole normali.
 
 ## 📚 Nuovi personaggi e canone
 

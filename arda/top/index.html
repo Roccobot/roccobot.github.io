@@ -180,7 +180,7 @@ h1 {
 .rank-item {
   position:relative;
   display:grid;
-  grid-template-columns:auto 1fr;
+  grid-template-columns:clamp(54px,10vw,76px) 1fr;
   align-items:center;
   gap:clamp(0.8rem,3vw,2rem);
   padding:1.2rem 1.2rem 1.2rem 0.5rem;
@@ -222,11 +222,11 @@ h1 {
 
 .rank-num {
   font-family:'Cinzel',serif; font-weight:900;
-  font-size:clamp(1.6rem,4.5vw,2.4rem);
+  font-size:clamp(1.45rem,3.9vw,2.05rem);
   color:var(--name);
-  min-width:clamp(48px,9vw,70px);
-  text-align:center; letter-spacing:0.05em;
-  transition:all 0.35s; line-height:1;
+  width:100%;
+  text-align:center; letter-spacing:0.04em;
+  transition:color 0.35s,text-shadow 0.35s; line-height:1;
   font-variant-numeric:tabular-nums;
   text-shadow:0 0 12px rgba(104,144,168,0.25);
 }
@@ -241,7 +241,7 @@ h1 {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.4em;
+  gap: 0.32em;
 }
 .rank-name-text { cursor:pointer; transition:color 0.2s; }
 /* #2 — Etichette (tipi) e icone raggruppate. Desktop: display:contents, resa
@@ -1292,7 +1292,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.84</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1462,6 +1462,9 @@ function tipoClass(tipo) {
   if (t.includes('teler')) return 'tipo-teleri';
   if (t.includes('sinda')) return 'tipo-sindar';
   if (t.includes('nando') || t.includes('nandor') || t.includes('silvan') || t.includes('verde') || t.includes('green-elf')) return 'tipo-teleri'; // Nandor/Silvani: ramo teleri
+  if (t.includes('minya')) return 'tipo-vanyar'; // Minyar (Imin): ramo vanyar
+  if (t.includes('tatya')) return 'tipo-noldor'; // Tatyar (Tata): ramo noldor
+  if (t.includes('nelya')) return 'tipo-teleri'; // Nelyar (Enel): ramo teleri
   if ((t.includes('mezzelf') || t.includes('half-elf')) && t.includes('noldo')) return 'tipo-noldor-vanyar';
   if ((t.includes('mezzelf') || t.includes('half-elf')) && (t.includes('dúnadan') || t.includes('dunadan'))) return 'tipo-dunadan';
   if (t.includes('mezzelf') || t.includes('half-elf')) return 'tipo-mezzelfo';
@@ -1473,6 +1476,7 @@ function tipoClass(tipo) {
   if (t.includes('haleth')) return 'tipo-haleth';
   if (t.includes('rohir')) return 'tipo-rohirrim';
   if (t.includes('dúnadan') || t.includes('dunadan') || t.includes('dúnedain') || t.includes('dunedain')) return 'tipo-dunadan';
+  if (t.includes('gondorian')) return 'tipo-dunadan'; // Gondoriani comuni: etichetta diversa (rango), stesso colore dei Dúnedain
   if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'tipo-eotheod';
   if (t.includes('beorniano') || t.includes('beorning')) return 'tipo-beorn';
   if (t.includes('dale')) return 'tipo-dale';
