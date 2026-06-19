@@ -1292,7 +1292,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.70</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1461,6 +1461,7 @@ function tipoClass(tipo) {
   if (t.includes('teler') && t.includes('calaquend')) return 'tipo-calaquendi';
   if (t.includes('teler')) return 'tipo-teleri';
   if (t.includes('sinda')) return 'tipo-sindar';
+  if (t.includes('nando') || t.includes('nandor') || t.includes('silvan') || t.includes('verde') || t.includes('green-elf')) return 'tipo-teleri'; // Nandor/Silvani: ramo teleri
   if ((t.includes('mezzelf') || t.includes('half-elf')) && t.includes('noldo')) return 'tipo-noldor-vanyar';
   if ((t.includes('mezzelf') || t.includes('half-elf')) && (t.includes('dúnadan') || t.includes('dunadan'))) return 'tipo-dunadan';
   if (t.includes('mezzelf') || t.includes('half-elf')) return 'tipo-mezzelfo';
