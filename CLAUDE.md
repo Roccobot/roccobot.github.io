@@ -347,18 +347,20 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     dei flag-badge; al salvataggio imposta/rimuove `p.apocrifo` (preservando
     un'eventuale stringa-fonte). Il Worker conserva il campo come ogni altra
     chiave (nessuna modifica al Worker).
-  - **Voci flaggate `apocrifo` (20, tutte attestate solo in HoME/NoME):**
-    - *I popoli della Terra di Mezzo* (HoME XII): **Anairë**, **Elenwë**,
-      **Eldalótë**, **Findis**, **Irimë** (Lalwen), **Tal-Elmar**, **Hazad**,
-      **Buldar**.
+  - **Voci flaggate `apocrifo` (18, tutte attestate solo in HoME/NoME):**
+    - *I popoli della Terra di Mezzo* (HoME XII): **Eldalótë**, **Findis**,
+      **Irimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**.
     - *La guerra dei gioielli* (HoME XI): i primi Elfi destatisi a Cuiviénen
       **Imin/Iminyë**, **Tata/Tatië**, **Enel/Enelyë**; e gli Uomini delle
       *Wanderings of Húrin* **Manthor**, **Hardang**, **Asgon**, **Avranc**,
       **Hundar**.
     - *L'anello di Morgoth* (HoME X): **Andreth** (l'Athrabeth).
-    - **NON apocrifo benché solo-HoME:** **Argon** (Arakáno, HoME XII), per
-      esplicita scelta dell'utente — caso della regola «note tardive = canone»
-      (come Gil-galad figlio di Orodreth): dato voluto da JRRT, non ripensamento.
+    - **NON apocrifi benché solo-HoME** (tutti *I popoli della Terra di Mezzo*,
+      HoME XII), per esplicita scelta dell'utente — caso della regola «note
+      tardive = canone» (come Gil-galad figlio di Orodreth, dati voluti da JRRT,
+      non ripensamenti): **Argon** (Arakáno), **Anairë** ed **Elenwë**. Elenwë
+      mantiene comunque il badge Helcaraxë al 50%. (**Eldalótë**, dello stesso
+      volume, resta invece apocrifa per scelta editoriale.)
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) e poi le
   **etichette tipo** (`.rank-tipi`, anch'esse in blocco): stanno sulla riga 1
