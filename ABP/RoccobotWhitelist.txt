@@ -189,7 +189,6 @@
 @@||stripe.com^$document,subdocument,important
 @@||tasgroup.eu^$important
 @@||threadless.com^$important
-@@||tolkiengateway.net^$important
 @@||unisalute.it^$important
 @@||unisalute.it^$document,important
 @@||usercontent.google.com^$document,subdocument,important
