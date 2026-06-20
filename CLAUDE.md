@@ -381,6 +381,16 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   `Beechbone`).
   - Storico: fino a v10.4.x valeva la regola opposta (solo `nome_en`, `nome`
     vuoto, affidandosi al fallback). Invertita su richiesta dell'utente.
+- **Due campi, due ruoli (riga sotto il nome).** La riga mostra
+  `nomi_alternativi` e, dopo un ` | `, `appellativi` (il separatore ` | `
+  compare solo se entrambe le parti ci sono):
+  - **`nomi_alternativi` = NOMI** (a sinistra del `|`): nomi alternativi
+    ufficiali **e** soprannomi/epiteti noti (anche non ufficiali), tutti
+    insieme; preferibilmente i nomi ufficiali per primi (il **vero nome** in
+    testa, se c'è). Es. `Il Gioielliere di Gondolin` (epiteto), `Cúthalion
+    (Arcoforte)`, `il Bianco`.
+  - **`appellativi` = TITOLI** (a destra del `|`): cariche e titoli, es.
+    `Erede di...`, `Principe`, `Re`, `Capitano`, `Signore di...`.
 - **Nomi alternativi: mai ripetere il nome principale** (`nomi_alternativi` /
   `nomi_alternativi_en`). Si tiene solo l'epiteto nudo: `Saruman il Bianco` →
   `Il Bianco`, `Finwë Noldóran` → `Noldóran`, `Míriel Serindë` → `Serindë`,
