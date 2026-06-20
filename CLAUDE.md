@@ -391,6 +391,14 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     (Arcoforte)`, `il Bianco`.
   - **`appellativi` = TITOLI** (a destra del `|`): cariche e titoli, es.
     `Erede di...`, `Principe`, `Re`, `Capitano`, `Signore di...`.
+  - **Notazione abbreviata (convenzione di dialogo).** Per indicare a parole la
+    struttura delle due righe della card si può scrivere indifferentemente
+    `descrizione breve | genealogia` ⤶ `nomi alternativi / appellativi | titoli`
+    **oppure** la forma corta `info | genitori` ⤶ `nomi | titoli`, a
+    prescindere da come si chiamino davvero i campi nella struttura dati
+    (`info` ↔ `descrizione`, `genitori` ↔ `genealogia` resa da `padre`/`madre`,
+    `nomi` ↔ `nomi_alternativi`, `titoli` ↔ `appellativi`). È solo un modo più
+    rapido di riferirsi ai campi quando se ne discute.
 - **Nomi alternativi: mai ripetere il nome principale** (`nomi_alternativi` /
   `nomi_alternativi_en`). Si tiene solo l'epiteto nudo: `Saruman il Bianco` →
   `Il Bianco`, `Finwë Noldóran` → `Noldóran`, `Míriel Serindë` → `Serindë`,
