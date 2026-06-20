@@ -1292,7 +1292,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v1.88</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2603,8 +2603,11 @@ function enableDragDrop() {
   list.classList.add('has-handles');
 
   // Costruisce le handle
-  list.querySelectorAll('.rank-item').forEach((item, idx) => {
-    item.dataset.idx = idx;
+  list.querySelectorAll('.rank-item').forEach((item) => {
+    // NON sovrascrivere item.dataset.idx: è l'indice REALE in `dati` impostato
+    // da renderList. Serve a onPointerUp per rimappare la posizione visiva sullo
+    // slot reale quando la lista resa è un sottoinsieme (apocrifi nascosti o
+    // categorie filtrate). Sovrascriverlo con l'indice visivo rompeva il riordino.
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
     handle.style.cssText = 'position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);cursor:grab;color:var(--gold);opacity:0.22;transition:opacity 0.2s;touch-action:none;padding:0.35rem;display:flex;align-items:center;';
@@ -2628,7 +2631,7 @@ function enableDragDrop() {
     const allItems = [...list.querySelectorAll('.rank-item')];
     // Cancella eventuali animazioni reveal in corso (altrimenti override style.transform)
     allItems.forEach(it => { it.style.animation = 'none'; it.style.opacity = '1'; });
-    const idx = parseInt(item.dataset.idx);
+    const idx = allItems.indexOf(item); // posizione VISIVA (per l'animazione di scorrimento)
     const rect = item.getBoundingClientRect();
     const itemRects = allItems.map(it => {
       const r = it.getBoundingClientRect();
@@ -2726,8 +2729,16 @@ function onPointerUp() {
   document.body.classList.remove('is-dragging');
 
   if (startIdx !== currentIdx) {
-    const moved = dati.splice(startIdx, 1)[0];
-    dati.splice(currentIdx, 0, moved);
+    // startIdx/currentIdx sono posizioni VISIVE: la lista resa può essere un
+    // sottoinsieme di `dati` (apocrifi nascosti, categorie filtrate). Si leggono
+    // gli indici REALI in `dati` dalle card (data-idx, impostato da renderList,
+    // in ordine crescente) e si riordina solo tra le voci visibili, lasciando le
+    // voci nascoste nei loro slot. Senza questo, lo splice colpiva voci sbagliate.
+    const visSlots = allItems.map(function(it){ return parseInt(it.dataset.idx, 10); });
+    const visEntries = visSlots.map(function(i){ return dati[i]; });
+    const moved = visEntries.splice(startIdx, 1)[0];
+    visEntries.splice(currentIdx, 0, moved);
+    visSlots.forEach(function(slot, k){ dati[slot] = visEntries[k]; });
     hasMovedItem = true;
     renderList();
     enableDragDrop();
