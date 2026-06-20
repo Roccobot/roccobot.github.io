@@ -241,7 +241,7 @@ h1 {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.32em;
+  gap: 0.24em;
 }
 .rank-name-text { cursor:pointer; transition:color 0.2s; }
 /* #2 — Etichette (tipi) e icone raggruppate. Desktop: display:contents, resa
@@ -264,7 +264,11 @@ h1 {
   letter-spacing:0.01em;
   line-height:1.4;
   margin-top:0.1rem;
+  text-wrap:pretty; /* riduce gli orfani di una sola parola a fine riga */
 }
+/* Ogni nome/titolo alternativo è un blocco inscindibile: la riga va a capo solo
+   ai separatori (virgole, |), mai dentro un titolo di più parole. */
+.rank-subtitle .alt-token { white-space:nowrap; }
 
 .rank-desc {
   font-family:'EB Garamond',serif;
@@ -288,9 +292,9 @@ h1 {
 }
 
 .tipo-badge {
-  display:inline-flex; align-items:center; gap:0.3em;
+  display:inline-flex; align-items:center; gap:0.25em;
   font-family:'EB Garamond',serif; font-size:0.72em; font-style:normal; font-weight:normal;
-  border-radius:3px; padding:1px 6px;
+  border-radius:3px; padding:1px 5px;
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
 }
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
@@ -1295,7 +1299,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v1.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.01</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1731,11 +1735,13 @@ function renderList() {
     // Riga 3: nomi alternativi + appellativi
     var riga2 = '';
     if (nomiAlt || appell) {
-      riga2 = '<span class="rank-subtitle">';
-      if (nomiAlt) riga2 += processAlt(nomiAlt);
-      if (nomiAlt && appell) riga2 += ' | ';
-      if (appell) riga2 += appell;
-      riga2 += '</span>';
+      // Ogni voce separata da virgola diventa un .alt-token (nowrap): la riga va
+      // a capo solo ai separatori (virgola, |), mai dentro un titolo di più
+      // parole. (appell è già escapato; i nomi passano da processAlt.)
+      var altParts = [];
+      if (nomiAlt) altParts.push(nomiAlt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
+      if (appell) altParts.push(appell.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
+      riga2 = '<span class="rank-subtitle">' + altParts.join(' | ') + '</span>';
     }
     var classes = 'rank-item' + (isVisTop ? ' vis-top' : '');
     var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
