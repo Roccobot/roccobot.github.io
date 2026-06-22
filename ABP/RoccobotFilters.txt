@@ -1,10 +1,10 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-06-20
+! Last updated: 2026-06-22
 
 *ads.js
 *pagead.js
 *partner.ads.js
-/pagead.js$domain=d3ward.github.io
+/pagead.js$domain=d3ward.*
 /widget/ads.
 ||18ck9y1227.tech^$empty,important
 ||1fileupload-5.xyz^$empty,important
@@ -296,8 +296,8 @@ coomer.party,coomer.st##.shifted.content-wrapper > [href] > div
 coomer.party,coomer.st###announcement-banner
 corriere.it##.privacy-cp-wall
 corriere.it##[class*="bck-adblock"] > .adblock__container
-d3ward.github.io##.adbox.banner_ads.adsbox
-d3ward.github.io##.textads
+d3ward.*##.adbox.banner_ads.adsbox
+d3ward.*##.textads
 data.mistat.india.xiaomi.com
 data.mistat.rus.xiaomi.com
 data.mistat.xiaomi.com
