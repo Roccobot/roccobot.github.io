@@ -531,3 +531,36 @@ yogablogfit.com##.qc-cmp2-container
 ||appsflyer.com^
 ||branch.io^
 ||metrika.yandex.ru^
+
+! --- Tracker in formato ||...^ per il filtraggio di CONTENUTO (desktop) ---
+! Le voci "nude" altrove agiscono come regole DNS (funzionano sul telefono con
+! AdGuard DNS); queste ||...^ bloccano anche col solo filtraggio di contenuto,
+! cioe' sul desktop dove non usi AdGuard DNS. Coprono i rossi del test d3ward.
+||media.net^
+||bugsnag.com^
+||sentry-cdn.com^
+||getsentry.com^
+||byteoversea.com^
+||yahooinc.com^
+||googleanalytics.com^
+||analytics.google.com^
+||appmetrica.yandex.ru^
+||ads.pinterest.com^
+||log.pinterest.com^
+||analytics.pinterest.com^
+||trk.pinterest.com^
+||ads.tiktok.com^
+||ads-api.tiktok.com^
+||analytics.tiktok.com^
+||ads-sg.tiktok.com^
+||analytics-sg.tiktok.com^
+||business-api.tiktok.com^
+||ads.yahoo.com^
+||analytics.yahoo.com^
+||geo.yahoo.com^
+||udc.yahoo.com^
+||udcm.yahoo.com^
+||analytics.query.yahoo.com^
+||partnerads.ysm.yahoo.com^
+||log.fc.yahoo.com^
+||gemini.yahoo.com^
