@@ -436,7 +436,7 @@ treccani.it###TargetVideo_61312139
 twitter.com###layers > div.css-175oi2r.r-aqfbo4.r-zchlnj
 twitter.com###react-root > div.css-175oi2r.r-13awgt0
 udc.yahoo.com
-udem.yahoo.com
+udcm.yahoo.com
 vault.bitwarden.com##.card.border-success.mb-4
 viper.to,vipergirls.to###basePopping
 waskucity.com##[src*="AsianSexDiaryBottom.gif"]
@@ -532,35 +532,113 @@ yogablogfit.com##.qc-cmp2-container
 ||branch.io^
 ||metrika.yandex.ru^
 
-! --- Tracker in formato ||...^ per il filtraggio di CONTENUTO (desktop) ---
-! Le voci "nude" altrove agiscono come regole DNS (funzionano sul telefono con
-! AdGuard DNS); queste ||...^ bloccano anche col solo filtraggio di contenuto,
-! cioe' sul desktop dove non usi AdGuard DNS. Coprono i rossi del test d3ward.
+! --- Copertura completa del test adblock Turtlecute/d3ward (filtraggio di CONTENUTO) ---
+! Le voci "nude" sparse sopra agiscono come regole DNS (telefono con AdGuard DNS);
+! queste ||...^ bloccano anche col solo filtraggio di contenuto, cioe' sul desktop
+! dove non usi AdGuard DNS. Coprono l'intera host-list del test (apici "puri" da
+! tracker collassati al dominio padre; domini condivisi — S3, social, OEM — col
+! solo sottodominio, per non bloccare il sito legittimo).
+! Fonte: github.com/Turtlecute33/toolz -> src/d3host.adblock (ex d3ward).
+! Hotjar (||hotjar.com^), Yandex Metrica (||metrika.yandex.ru^) e Google Analytics
+! (||google-analytics.com^) sono gia' coperti sopra.
+
+! Ads
+||adtago.s3.amazonaws.com^
+||analyticsengine.s3.amazonaws.com^
+||analytics.s3.amazonaws.com^
+||advice-ads.s3.amazonaws.com^
+||googlesyndication.com^
+||adservice.google.com^
+||doubleclick.net^
+||adcolony.com^
 ||media.net^
+
+! Analytics
+||analytics.google.com^
+||googleanalytics.com^
+||hotjar.io^
+||mouseflow.com^
+||freshmarketer.com^
+||luckyorange.com^
+||luckyorange.net^
+||stats.wp.com^
+
+! Error tracker
 ||bugsnag.com^
 ||sentry-cdn.com^
 ||getsentry.com^
-||byteoversea.com^
-||yahooinc.com^
-||googleanalytics.com^
-||analytics.google.com^
-||appmetrica.yandex.ru^
+
+! Social
+||pixel.facebook.com^
+||an.facebook.com^
+||ads-twitter.com^
+||ads-api.twitter.com^
+||ads.linkedin.com^
+||analytics.pointdrive.linkedin.com^
 ||ads.pinterest.com^
 ||log.pinterest.com^
-||analytics.pinterest.com^
 ||trk.pinterest.com^
+||events.reddit.com^
+||events.redditmedia.com^
+||ads.youtube.com^
 ||ads.tiktok.com^
 ||ads-api.tiktok.com^
 ||analytics.tiktok.com^
 ||ads-sg.tiktok.com^
 ||analytics-sg.tiktok.com^
 ||business-api.tiktok.com^
+||byteoversea.com^
+
+! Mix (Yahoo, Yandex, Unity)
 ||ads.yahoo.com^
 ||analytics.yahoo.com^
 ||geo.yahoo.com^
-||udc.yahoo.com^
 ||udcm.yahoo.com^
 ||analytics.query.yahoo.com^
 ||partnerads.ysm.yahoo.com^
 ||log.fc.yahoo.com^
 ||gemini.yahoo.com^
+||yahooinc.com^
+||appmetrica.yandex.ru^
+||adfstat.yandex.ru^
+||adfox.yandex.ru^
+||extmaps-api.yandex.net^
+||offerwall.yandex.net^
+||unityads.unity3d.com^
+
+! OEM (Realme, Xiaomi, Oppo, Huawei, OnePlus, Samsung, Apple)
+||iot-eu-logser.realme.com^
+||iot-logser.realme.com^
+||bdapi-ads.realmemobile.com^
+||bdapi-in-ads.realmemobile.com^
+||api.ad.xiaomi.com^
+||sdkconfig.ad.xiaomi.com^
+||sdkconfig.ad.intl.xiaomi.com^
+||data.mistat.xiaomi.com^
+||data.mistat.india.xiaomi.com^
+||data.mistat.rus.xiaomi.com^
+||tracking.rus.miui.com^
+||adsfs.oppomobile.com^
+||adx.ads.oppomobile.com^
+||ck.ads.oppomobile.com^
+||data.ads.oppomobile.com^
+||metrics.data.hicloud.com^
+||metrics2.data.hicloud.com^
+||grs.hicloud.com^
+||logservice.hicloud.com^
+||logservice1.hicloud.com^
+||logbak.hicloud.com^
+||click.oneplus.cn^
+||open.oneplus.net^
+||samsungads.com^
+||smetrics.samsung.com^
+||nmetrics.samsung.com^
+||samsung-com.112.2o7.net^
+||analytics-api.samsunghealthcn.com^
+||iadsdk.apple.com^
+||api-adservices.apple.com^
+||metrics.icloud.com^
+||metrics.mzstatic.com^
+||books-analytics-events.apple.com^
+||weather-analytics-events.apple.com^
+||notes-analytics-events.apple.com^
