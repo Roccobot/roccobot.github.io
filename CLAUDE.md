@@ -423,6 +423,22 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   solo campo (modificava solo `nome`): `nome_en` non era gestibile da UI e le
   bandierine ai lati erano fuorvianti. Ora i nomi tradotti (Baccador/Goldberry,
   Faggiosso/Beechbone, ecc.) si impostano direttamente dall'editor.
+- **Editor admin: ordine campi e 'Titoli e onorificenze'.** Il campo
+  `appellativi` nell'editor è **rinominato 'Titoli e onorificenze'** (IT/EN) e
+  **spostato subito sotto i 'Nomi alternativi'** (non più nella griglia bilingue
+  con tipo/descrizione/info), così la coppia NOMI ↔ TITOLI della riga sotto il
+  nome resta unita. Gli `id` dei campi (`ae-<i>-appellativi`,
+  `ae-<i>-appellativi_en`) e la chiave dati (`appellativi`) **non cambiano**: è
+  solo posizione+etichetta. Il controllo dei campi dimenticati copre anche
+  questa coppia (label 'Titoli e onorificenze').
+- **Editor admin: indicatore 'campo modificato' (sessione corrente).** Ogni
+  input/textarea memorizza all'apertura il valore di partenza
+  (`dataset.orig`); a ogni digitazione, se il valore differisce, il wrapper
+  `.admin-field` riceve la classe `.admin-modified` (rimossa se si torna
+  all'originale). Il CSS la rende con **bordo/anello arancio + etichetta accesa**
+  (varianti tema scuro/chiaro), per ritrovare a colpo d'occhio i campi toccati e
+  rivederli prima di salvare. Riguarda **solo i campi testo** (non le
+  checkbox-flag). È puramente client/visivo: niente nei dati salvati.
 - **Salvataggio editor admin: controllo campi dimenticati.** Per ogni coppia
   bilingue (incluso `nome`), se al salvataggio un lato è compilato e l'altro è
   **completamente vuoto**, parte una **modale di conferma sequenziale** (una per

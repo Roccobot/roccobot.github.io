@@ -1004,6 +1004,15 @@ html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#arda-t
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
 .admin-textarea { resize:vertical;min-height:5rem; }
+/* Campo modificato nella sessione corrente: bordo/anello arancio ben visibile
+   + etichetta accesa, per ritrovare a colpo d'occhio cosa si è toccato prima
+   di salvare. La classe .admin-modified la mette/toglie il JS dell'editor. */
+.admin-field.admin-modified .admin-input,
+.admin-field.admin-modified .admin-textarea { border-color:#f59e42;box-shadow:0 0 0 2px rgba(245,158,66,0.45);background:rgba(245,158,66,0.10); }
+.admin-field.admin-modified .admin-label { color:#f7a94e;opacity:1;font-weight:700; }
+html[data-theme="light"] .admin-field.admin-modified .admin-input,
+html[data-theme="light"] .admin-field.admin-modified .admin-textarea { border-color:#e07b39;box-shadow:0 0 0 2px rgba(224,123,57,0.40);background:#fff7ef; }
+html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1e; }
 
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
@@ -1299,7 +1308,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.13</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.25</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3062,7 +3071,6 @@ function showAdminEditor() {
   const BILINGUAL = [
     { it:'tipo',        en:'tipo_en',        li:'Tipo IT',        le:'Tipo EN' },
     { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN' },
-    { it:'appellativi', en:'appellativi_en', li:'Appellativi IT', le:'Appellativi EN' },
     { it:'info',        en:'info_en',        li:'Info IT',        le:'Info EN',      ta:8 },
     { it:'citazione',   en:'citazione_en',   li:'Citazione IT',   le:'Citazione EN', ta:3 },
     { it:'fonte',       en:'fonte_en',       li:'Fonte IT',       le:'Fonte EN' },
@@ -3083,7 +3091,8 @@ function showAdminEditor() {
     // campi: il nome ha trattamento speciale alla conferma vuota (copia identica).
     const PAIRS = [{ it: 'nome', en: 'nome_en', label: 'Nome', isName: true }]
       .concat(BILINGUAL.map(function(f){ return { it: f.it, en: f.en, label: (f.li || f.it).replace(/ IT$/, '') }; }))
-      .concat([{ it: 'nomi_alternativi', en: 'nomi_alternativi_en', label: 'Nomi alternativi' }]);
+      .concat([{ it: 'nomi_alternativi', en: 'nomi_alternativi_en', label: 'Nomi alternativi' },
+               { it: 'appellativi', en: 'appellativi_en', label: 'Titoli e onorificenze' }]);
     // Campi "dimenticati": un lato compilato e l'altro COMPLETAMENTE VUOTO.
     // (Storico: fino a v10.13.5 si considerava "vuoto" ogni lato ≤3 caratteri,
     // ma questo dava falsi positivi su traduzioni corte valide come Elf/Orc/Man
@@ -3259,6 +3268,23 @@ function showAdminEditor() {
     altGrid.appendChild(altItWrap); altGrid.appendChild(altEnWrap);
     card.appendChild(altGrid);
 
+    // Titoli e onorificenze (ex 'Appellativi'): subito sotto i nomi alternativi,
+    // colonne IT (sx) | EN (dx). Spostato qui (e rinominato) per tenere insieme
+    // la coppia 'nomi ↔ titoli' della riga sotto il nome nella card.
+    const titGrid = document.createElement('div');
+    titGrid.className = 'admin-bilingual-grid';
+    const titItWrap = document.createElement('div'); titItWrap.className = 'admin-field';
+    const titItLbl = document.createElement('label'); titItLbl.className = 'admin-label'; titItLbl.textContent = 'Titoli e onorificenze IT'; titItLbl.htmlFor = 'ae-' + i + '-appellativi';
+    const titItInp = mkInp(i, 'appellativi', false); titItInp.value = p.appellativi || '';
+    titItWrap.appendChild(titItLbl); titItWrap.appendChild(titItInp);
+    const titEnWrap = document.createElement('div'); titEnWrap.className = 'admin-field';
+    const titEnLbl = document.createElement('label'); titEnLbl.className = 'admin-label admin-label-en'; titEnLbl.textContent = 'Titoli e onorificenze EN'; titEnLbl.htmlFor = 'ae-' + i + '-appellativi_en';
+    const titEnInp = mkInp(i, 'appellativi_en', false); titEnInp.value = p.appellativi_en || '';
+    titEnWrap.appendChild(titEnLbl); titEnWrap.appendChild(titEnInp);
+    if (FEATURES.adminTranslate) titEnWrap.appendChild(mkTransBtn(i, 'appellativi', 'appellativi_en'));
+    titGrid.appendChild(titItWrap); titGrid.appendChild(titEnWrap);
+    card.appendChild(titGrid);
+
     // Griglia bilingue: colonna IT (sx) | colonna EN (dx)
     const biGrid = document.createElement('div');
     biGrid.className = 'admin-bilingual-grid';
@@ -3320,6 +3346,21 @@ function showAdminEditor() {
     cards.appendChild(card);
   });
   overlay.appendChild(cards);
+
+  // Indicatore "campo modificato nella sessione": ogni input/textarea memorizza
+  // il proprio valore di partenza (dataset.orig, catturato all'apertura
+  // dell'editor) e, a ogni digitazione, accende/spegne la classe
+  // '.admin-modified' sul wrapper .admin-field se il valore differisce
+  // dall'originale. Il CSS evidenzia bordo/etichetta così i campi toccati si
+  // ritrovano a colpo d'occhio per una revisione prima di salvare. Solo campi
+  // testo (le checkbox-flag non sono coinvolte).
+  Array.prototype.slice.call(cards.querySelectorAll('.admin-input, .admin-textarea')).forEach(function(el){
+    el.dataset.orig = el.value;
+    el.addEventListener('input', function(){
+      var wrap = el.closest('.admin-field');
+      if (wrap) wrap.classList.toggle('admin-modified', el.value !== el.dataset.orig);
+    });
+  });
 
   // Navigazione rapida (solo mobile): salta al personaggio precedente/successivo o di ±10.
   // Scorrere a mano una pagina così lunga è scomodo, questi tasti flottanti la rendono navigabile.
