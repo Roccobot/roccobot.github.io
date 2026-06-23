@@ -241,9 +241,15 @@ h1 {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.24em;
+  gap: 0.32em;
 }
 .rank-name-text { cursor:pointer; transition:color 0.2s; }
+/* Override mirato (.tight-row): solo le card con nome molto lungo — gli
+   Spettri-capi (Re-Stregone di Angmar, Khamûl) — stringono riga-nome e pill
+   per stare su una riga sola, senza penalizzare la spaziatura di tutte le
+   altre card (storico: in v2.01 questo restringimento era globale). */
+.rank-item.tight-row .rank-name { gap:0.24em; }
+.rank-item.tight-row .tipo-badge { gap:0.25em; padding:1px 5px; }
 /* #2 — Etichette (tipi) e icone raggruppate. Desktop: display:contents, resa
    identica a prima. Mobile (vedi media query): nome + blocco icone inscindibile
    sulla riga 1, etichette tutte di seguito o tutte a capo. */
@@ -292,9 +298,9 @@ h1 {
 }
 
 .tipo-badge {
-  display:inline-flex; align-items:center; gap:0.25em;
+  display:inline-flex; align-items:center; gap:0.3em;
   font-family:'EB Garamond',serif; font-size:0.72em; font-style:normal; font-weight:normal;
-  border-radius:3px; padding:1px 5px;
+  border-radius:3px; padding:1px 6px;
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
 }
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
@@ -1308,7 +1314,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.25</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.26</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1760,6 +1766,8 @@ function renderList() {
       else if (/bombadil/i.test(p.nome)) classes += ' bombadil';
     }
     if (p.apocrifo) classes += ' apocrifo';
+    // Spettri-capi (nome lungo): riga-nome e pill più strette, solo qui.
+    if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) classes += ' tight-row';
     // Pill 'Solo HoME/NoME' (catalogo esteso): in alto a destra della card.
     var apoPill = '';
     if (p.apocrifo) {
