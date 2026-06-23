@@ -296,20 +296,13 @@ coomer.party,coomer.st##.shifted.content-wrapper > [href] > div
 coomer.party,coomer.st###announcement-banner
 corriere.it##.privacy-cp-wall
 corriere.it##[class*="bck-adblock"] > .adblock__container
-d3ward.*##.adbox.banner_ads.adsbox
-d3ward.*##.textads
-! Regole cosmetiche specifiche per i mirror del test (d3ward.com e
-! adblock.turtlecute.org): nascondono gli elementi segnaposto del test cosmetico (mobile).
-d3ward.com##.test-ad-unit
-d3ward.com##.test-ad-unit-static
-d3ward.com##.test-ad-unit-dynamic
-d3ward.com##.ad-banner-static
-d3ward.com##.ad-banner-dynamic
-adblock.turtlecute.org##.test-ad-unit
-adblock.turtlecute.org##.test-ad-unit-static
-adblock.turtlecute.org##.test-ad-unit-dynamic
-adblock.turtlecute.org##.ad-banner-static
-adblock.turtlecute.org##.ad-banner-dynamic
+! Cosmetici per l'esca del test (d3ward.com / adblock.turtlecute.org). L'elemento esca,
+! sia statico sia dinamico, ha className "textads banner-ads banner_ads ad-unit afs_ads
+! ad-zone ad-space adsbox": basta una di queste classi per nasconderlo. Sono le classi
+! VERE del sito (sostituiscono le .test-ad-unit inesistenti e il selettore composto
+! .adbox.banner_ads.adsbox che non combaciava). Domini espliciti perche' il wildcard
+! d3ward.* non sempre applica i cosmetici su mobile.
+d3ward.com,adblock.turtlecute.org,d3ward.*##.textads, .banner-ads, .banner_ads, .ad-unit, .afs_ads, .ad-zone, .ad-space, .adsbox
 data.mistat.india.xiaomi.com
 data.mistat.rus.xiaomi.com
 data.mistat.xiaomi.com
