@@ -298,13 +298,18 @@ corriere.it##.privacy-cp-wall
 corriere.it##[class*="bck-adblock"] > .adblock__container
 d3ward.*##.adbox.banner_ads.adsbox
 d3ward.*##.textads
-! Regole cosmetiche specifiche per d3ward.com (test cosmetico, mobile): nascondono
-! gli elementi segnaposto del test.
+! Regole cosmetiche specifiche per i mirror del test (d3ward.com e
+! adblock.turtlecute.org): nascondono gli elementi segnaposto del test cosmetico (mobile).
 d3ward.com##.test-ad-unit
 d3ward.com##.test-ad-unit-static
 d3ward.com##.test-ad-unit-dynamic
 d3ward.com##.ad-banner-static
 d3ward.com##.ad-banner-dynamic
+adblock.turtlecute.org##.test-ad-unit
+adblock.turtlecute.org##.test-ad-unit-static
+adblock.turtlecute.org##.test-ad-unit-dynamic
+adblock.turtlecute.org##.ad-banner-static
+adblock.turtlecute.org##.ad-banner-dynamic
 data.mistat.india.xiaomi.com
 data.mistat.rus.xiaomi.com
 data.mistat.xiaomi.com
