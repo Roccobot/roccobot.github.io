@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-06-16
+! Last updated: 2026-06-23
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -80,6 +80,8 @@
 @@||googleusercontent.com^$document,subdocument,important
 @@||gr-assets.com^$important
 @@||grok.com^$document,subdocument,important
+@@||grokusercontent.com^$important
+@@||grokusercontent.com^$document,subdocument,important
 @@||gstatic.com^$important
 @@||hamrick.com^$important
 @@||hcaptcha.com^$important
@@ -196,6 +198,8 @@
 @@||vhx.tv^$important
 @@||vimeocdn.com^$important
 @@||ws-hp.com^$important
+@@||x.ai^$important
+@@||x.ai^$document,subdocument,important
 
 ! ── Claude / Anthropic ──
 @@||anthropic.com^$important
