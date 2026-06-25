@@ -78,6 +78,8 @@
 @@||goodreads.com^$important
 @@||googleapis.com^$document,subdocument,important
 @@||googleusercontent.com^$document,subdocument,important
+@@||gov.it^$important
+@@||gov.it^$document,important
 @@||gr-assets.com^$important
 @@||grok.com^$document,subdocument,important
 @@||grokusercontent.com^$important
@@ -90,8 +92,6 @@
 @@||iliad.it^$important
 @@||infocert.it^$important
 @@||infocert.it^$document,important
-@@||interno.gov.it^$important
-@@||interno.gov.it^$document,important
 @@||ixopay.com^$important
 @@||ixopay.com^$document,subdocument,important
 @@||jobs.lever.co^$important
