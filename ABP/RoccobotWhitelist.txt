@@ -149,6 +149,8 @@
 @@||photos.google.com^$document,important
 @@||photosi.com^$important
 @@||photosi.com^$document,subdocument,important
+@@||poliziadistato.it^$important
+@@||poliziadistato.it^$document,important
 @@||poste.it^$important
 @@||poste.it^$document,important
 @@||prima.it^$important
