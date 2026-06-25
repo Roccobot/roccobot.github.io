@@ -404,7 +404,7 @@ nhentai.net###download
 notes-analytics-events.apple.com
 notformembersonly.com##.visible-lg-block.visible-md-block
 notformembersonly.com###container > .enlace_descarga
-notify.bugsnag.com
+nsfwalbum.com###pwaInstallBanner
 nytimes.com##.expanded-dock.expanded.shown.gdpr
 ocsp.apple.com
 offerwall.yandex.net
