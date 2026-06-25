@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-06-22
+! Last updated: 2026-06-25
 
 *ads.js
 *pagead.js
@@ -353,6 +353,7 @@ gelbooru.com###idontneedashower
 gemini.google.com##.hallucination-disclaimer*
 gfycat.com##.adsense-ad.box_ad.googad
 gloyah.net##iframe[scrolling="no"][style*="position: fixed;"]
+goodreads.com##.siteHeader__topFullImageContainer
 google.com,google.it##.gb_g.gb_aa
 google.com,google.it##div.L3eUgb > div.o3j99
 gql.twitch.tv,passport.twitch.tv,player.twitch.tv,www.twitch.tv##div.container > table > tbody > tr > td
