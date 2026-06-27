@@ -363,12 +363,17 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
       volume, resta invece apocrifa per scelta editoriale.)
 - **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
   desktop: `nome → icone` (status + genere, in blocco inscindibile) sulla
-  riga 1, e le **etichette tipo** (`.rank-tipi`, in blocco) **sempre a capo
-  sulla riga 2** (`flex-basis:100%` nella media query). Prima stavano sulla
-  riga 1 se ci entravano; spostate sempre a capo perché su card lunghe o
-  apocrife collidevano con la pill 'Solo HoME' in alto a destra. Resa via
-  `display:contents` (desktop invariato) e `flex-shrink:0` + `order`. Le icone
-  non si spezzano mai su due righe.
+  riga 1, poi le **etichette tipo** (`.rank-tipi`, in blocco). Comportamento:
+  - **card ordinarie**: le etichette stanno sulla riga 1 se ci entrano,
+    altrimenti vanno a capo (flex-wrap naturale);
+  - **card apocrife** (con la pill 'Solo HoME' in alto a destra): le etichette
+    vanno **sempre a capo** (`.rank-item.apocrifo .rank-name > .rank-tipi {
+    flex-basis:100% }`), per non collidere con la pill.
+
+  Storico: per un breve periodo il `flex-basis:100%` era applicato a *tutte* le
+  card → le etichette andavano a capo anche dove c'era spazio (es. Ingwë);
+  ristretto agli apocrifi. Resa via `display:contents` (desktop invariato) e
+  `flex-shrink:0` + `order`. Le icone non si spezzano mai su due righe.
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
   presente solo dove diverge dal nome inglese (disambigue o titoli
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
