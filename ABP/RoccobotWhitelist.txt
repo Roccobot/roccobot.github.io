@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-06-23
+! Last updated: 2026-06-28
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -29,6 +29,7 @@
 @@||bonusx.it^$document,important
 @@||cardinalcommerce.com^$important
 @@||cardinalcommerce.com^$document,subdocument,important
+@@||cdn.cookielaw.org^$important
 @@||cdninstagram.com^$important
 @@||clicklab.be^$important
 @@||cobalt.tools^$important
