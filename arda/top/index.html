@@ -1270,6 +1270,25 @@ html[data-theme="light"] .admin-input:focus, html[data-theme="light"] .admin-tex
 html[data-theme="light"] .admin-btn-back { border-color:rgba(58,88,120,0.4);color:#253d58; }
 html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);border-color:rgba(30,140,70,0.5);color:#1a6832; }
 
+/* Footer 'Resources and maps': solo il testo è cliccabile, i ✦ restano decorativi */
+#res-link { background:none; border:none; color:var(--gold-bright); font:inherit; cursor:pointer; padding:0 .15em; border-bottom:1px dotted transparent; transition:border-color .2s; }
+#res-link:hover, #res-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
+/* Modale risorse: riusa fab-modal, box più largo e voci a sinistra bilingui */
+.res-modal-box { max-width:380px; }
+.res-modal-title { font-family:'Cinzel',serif; color:var(--gold); font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
+.res-modal-box .fab-modal-confirm { text-align:left; padding:.55rem .8rem; }
+.res-modal-box .fmc-main { display:block; }
+.res-modal-box .fmc-sub { display:block; opacity:.6; font-size:.7rem; margin-top:.15rem; }
+/* Visualizzatore immagini zoomabile */
+.imgv-overlay { position:fixed; inset:0; z-index:500; background:rgba(3,5,12,0.95); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; flex-direction:column; }
+.imgv-bar { display:flex; align-items:center; gap:.5rem; padding:.6rem .8rem; flex:0 0 auto; }
+.imgv-title { font-family:'Cinzel',serif; color:var(--parchment); font-size:.85rem; letter-spacing:.05em; opacity:.85; margin-right:auto; }
+.imgv-btn { width:36px; height:36px; flex:0 0 auto; border-radius:50%; border:1px solid var(--gold); background:rgba(104,144,168,0.12); color:var(--gold); font-family:'Cinzel',serif; font-size:1.1rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s,color .2s; }
+.imgv-btn:hover, .imgv-btn:focus-visible { background:var(--gold); color:var(--ink); outline:none; }
+.imgv-stage { flex:1 1 auto; overflow:hidden; position:relative; cursor:grab; touch-action:none; }
+.imgv-stage.dragging { cursor:grabbing; }
+.imgv-stage img { position:absolute; top:0; left:0; transform-origin:0 0; max-width:none; user-select:none; -webkit-user-drag:none; }
+
 </style>
 <script>
 // ── Feature flag ──────────────────────────────────────────────────────
@@ -1300,7 +1319,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.76</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1321,7 +1340,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <div class="print-running-header" aria-hidden="true"><span>I Grandi di Arda</span><span>roccobot.me</span></div>
 
 <footer>
-  <p style="color:var(--gold-bright);font-size:1.2rem;margin-bottom:1.5rem;">✦</p>
+  <p style="color:var(--gold-bright);font-size:1.2rem;margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and maps</button> ✦</p>
   <p id="footer-text"><em>'Non tutto quel ch'è oro brilla, né gli erranti sono perduti.'</em><br>Il potere, in Arda, non sempre indossa una corona.</p>
 </footer>
 
@@ -1862,6 +1881,95 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowRight' && currentIdx !== null) { var nx = stepVisible(currentIdx, 1); if (nx !== null) openModal(nx); }
   if (e.key === 'ArrowLeft' && currentIdx !== null) { var pv = stepVisible(currentIdx, -1); if (pv !== null) openModal(pv); }
 });
+
+// ── 'Resources and maps' (footer) → modale con voci bilingui → viewer zoomabile ──
+function openResourcesModal() {
+  if (document.getElementById('res-modal')) return;
+  var ov = document.createElement('div'); ov.id = 'res-modal'; ov.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box res-modal-box';
+  ov.appendChild(box); document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+  function dismiss() { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); }
+  function onKey(e) { if (e.key === 'Escape') dismiss(); }
+  document.addEventListener('keydown', onKey);
+  ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', 'Close'); cl.onclick = dismiss; box.appendChild(cl);
+  var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = 'Resources and maps'; box.appendChild(h);
+  function item(it, en, src) {
+    var b = document.createElement('button'); b.className = 'fab-modal-confirm';
+    b.innerHTML = '<span class="fmc-main">🇮🇹 ' + it + '</span><span class="fmc-sub">🇬🇧 ' + en + '</span>';
+    b.onclick = function() { dismiss(); openImageViewer(src, currentLang === 'it' ? it : en); };
+    box.appendChild(b);
+  }
+  item('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
+  item('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png');
+}
+
+function openImageViewer(src, title) {
+  if (document.getElementById('imgv')) return;
+  var ov = document.createElement('div'); ov.id = 'imgv'; ov.className = 'imgv-overlay';
+  var bar = document.createElement('div'); bar.className = 'imgv-bar';
+  var ttl = document.createElement('span'); ttl.className = 'imgv-title'; ttl.textContent = title;
+  var stage = document.createElement('div'); stage.className = 'imgv-stage';
+  var img = document.createElement('img'); img.alt = title; img.draggable = false;
+  stage.appendChild(img);
+  function mkBtn(txt, label, fn) { var b = document.createElement('button'); b.className = 'imgv-btn'; b.textContent = txt; b.setAttribute('aria-label', label); b.onclick = fn; return b; }
+  var scale = 1, tx = 0, ty = 0, minScale = 1, natW = 0, natH = 0;
+  function apply() { img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')'; }
+  function clampPan() {
+    var sw = stage.clientWidth, sh = stage.clientHeight, iw = natW * scale, ih = natH * scale;
+    tx = iw <= sw ? (sw - iw) / 2 : Math.min(0, Math.max(sw - iw, tx));
+    ty = ih <= sh ? (sh - ih) / 2 : Math.min(0, Math.max(sh - ih, ty));
+  }
+  function fit() {
+    var sw = stage.clientWidth, sh = stage.clientHeight;
+    if (!natW || !sw) return;
+    minScale = Math.min(sw / natW, sh / natH);
+    scale = minScale; clampPan(); apply();
+  }
+  function zoomBy(f, cx, cy) {
+    var ns = Math.max(minScale, Math.min(minScale * 8, scale * f));
+    var ix = (cx - tx) / scale, iy = (cy - ty) / scale;
+    scale = ns; tx = cx - ix * scale; ty = cy - iy * scale; clampPan(); apply();
+  }
+  img.addEventListener('load', function() { natW = img.naturalWidth; natH = img.naturalHeight; fit(); });
+  img.src = src;
+  stage.addEventListener('wheel', function(e) { e.preventDefault(); var r = stage.getBoundingClientRect(); zoomBy(e.deltaY < 0 ? 1.15 : 0.87, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  stage.addEventListener('dblclick', function(e) { var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top); });
+  // pan + pinch via pointer events
+  var pts = {}, pinchD = 0, pinchMid = null;
+  stage.addEventListener('pointerdown', function(e) { pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); if (Object.keys(pts).length === 1) stage.classList.add('dragging'); });
+  stage.addEventListener('pointermove', function(e) {
+    if (!pts[e.pointerId]) return;
+    var ids = Object.keys(pts);
+    if (ids.length >= 2) {
+      var a = pts[ids[0]], bb = pts[ids[1]];
+      pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var na = pts[ids[0]], nb = pts[ids[1]];
+      var nd = Math.hypot(na.x - nb.x, na.y - nb.y);
+      var r = stage.getBoundingClientRect();
+      var mx = (na.x + nb.x) / 2 - r.left, my = (na.y + nb.y) / 2 - r.top;
+      if (pinchD) zoomBy(nd / pinchD, mx, my);
+      pinchD = nd;
+    } else {
+      var p = pts[e.pointerId];
+      tx += e.clientX - p.x; ty += e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+      clampPan(); apply();
+    }
+  });
+  function up(e) { delete pts[e.pointerId]; if (Object.keys(pts).length < 2) pinchD = 0; if (!Object.keys(pts).length) stage.classList.remove('dragging'); }
+  stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+  function close() { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); }
+  function onKey(e) { if (e.key === 'Escape') close(); }
+  bar.appendChild(ttl);
+  bar.appendChild(mkBtn('−', 'Zoom out', function() { zoomBy(0.8, stage.clientWidth / 2, stage.clientHeight / 2); }));
+  bar.appendChild(mkBtn('+', 'Zoom in', function() { zoomBy(1.25, stage.clientWidth / 2, stage.clientHeight / 2); }));
+  bar.appendChild(mkBtn('↺', 'Reset', fit));
+  bar.appendChild(mkBtn('✕', 'Close', close));
+  ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+  document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
+}
+
+(function() { var rl = document.getElementById('res-link'); if (rl) rl.addEventListener('click', openResourcesModal); })();
 
 let isFirstRender = true;
 

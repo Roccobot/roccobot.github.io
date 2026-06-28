@@ -294,6 +294,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   sovrapporsi, `@media print` nasconde la chrome e mette `break-inside:avoid`
   sulle card (mai tagliate tra pagine A4). Ripristino del DOM/tema su
   `afterprint`. Nessuna dipendenza esterna.
+- **'Resources and maps' (footer).** In fondo alla pagina, tra i due `✦`
+  decorativi, il **solo testo** `Resources and maps` è cliccabile (`#res-link`,
+  i ✦ restano non interattivi) e apre `openResourcesModal` (riusa lo stile
+  `fab-modal-*`): un elenco di voci **bilingui** (🇮🇹/🇬🇧 simultanee). Ogni voce
+  apre `openImageViewer(src, titolo)`, un **visualizzatore immagini zoomabile**
+  costruito ad hoc (overlay `.imgv-*`, z-index 500): fit-to-screen all'apertura,
+  zoom con rotella/pinch/doppio-clic e pulsanti +/−/↺, pan in trascinamento
+  (pointer events), chiusura con ✕/Esc/click sul backdrop. Le immagini stanno
+  in **`arda/res/`** (path assoluti `/arda/res/...`). Voci attuali: *Il Grande
+  Viaggio degli Elfi* (`Journey.png`) e *Suddivisioni dei popoli degli Elfi* /
+  *Sundering of the Firstborn* (`Sundering.png`). Per aggiungerne altre basta
+  una riga `item(it, en, '/arda/res/FILE.png')` in `openResourcesModal`.
 - **Permalink della vista — forma BARE (dalla v1.60).** La query è
   **direttamente il token**, senza `cat=`. Le categorie attive (`filterState`)
   si inizializzano al load con Ainur, Arcani e Animali **spenti** e NON sono
