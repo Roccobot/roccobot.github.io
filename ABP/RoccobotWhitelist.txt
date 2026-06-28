@@ -201,6 +201,7 @@
 @@||vhx.tv^$important
 @@||vimeocdn.com^$important
 @@||ws-hp.com^$important
+@@||www.ranker.com^$important
 @@||x.ai^$important
 @@||x.ai^$document,subdocument,important
 
