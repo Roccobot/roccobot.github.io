@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.3.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale.
+// @version      2.4.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
 // @match        https://qwant.com/*
@@ -23,6 +23,7 @@
   const NASCONDI_FOOTER    = true;  // piè di pagina (l'intero elemento <footer>)
   const HOME_SENZA_SCROLL  = true;  // home: niente scorrimento verticale (resta solo logo + ricerca)
   const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer"), banner app, promo estensione
+  const NASCONDI_ADS_SIDEBAR = true; // SERP: card pubblicitarie nella colonna a destra (preserva "Notizie")
   const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant ufficiale (home + SERP)
   const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = logo ufficiale integrato nello script
   // — Immagini —
@@ -56,6 +57,11 @@
     if (NASCONDI_OPZIONI) regole.push(
       '[data-testid="toggleFiltersButton"]{display:none!important}',
       '[data-testid="localeDropdown"],[data-testid="freshnessDropdown"]{display:none!important}'
+    );
+    if (NASCONDI_ADS_SIDEBAR) regole.push(
+      // SERP: nasconde la card della colonna destra (.is-sidebar) che contiene un
+      // annuncio (link sponsorizzato data-testid="aal"). Lascia intatte le altre.
+      '.is-sidebar > * > *:has(a[data-testid="aal"]){display:none!important}'
     );
     if (regole.length) {
       const style = document.createElement('style');
@@ -133,7 +139,29 @@
       }
     }
 
-    function applica() { sistemaDoodle(); nascondiPromo(); nascondiBannerEstensione(); }
+    function nascondiAdsSidebar() {
+      if (!NASCONDI_ADS_SIDEBAR) return;
+      // SERP: la colonna a destra (.is-sidebar) dispone le card in una griglia.
+      // Le card pubblicitarie contengono un link sponsorizzato (data-testid="aal",
+      // redirect fdn.qwant.com/v3/r/...). Si risale dal link alla card (figlio
+      // diretto della griglia) e la si nasconde, lasciando intatte le altre (es.
+      // "Notizie", che non ha quel link). Il CSS :has copre già il caso comune
+      // senza sfarfallio; questo è il ripiego robusto per strutture diverse.
+      for (const sidebar of document.querySelectorAll('.is-sidebar')) {
+        const sel = 'a[data-testid="aal"]:not([data-rbad]),a[href*="/v3/r/"]:not([data-rbad])';
+        for (const a of sidebar.querySelectorAll(sel)) {
+          a.dataset.rbad = '1';
+          let card = a;
+          while (card.parentElement && card.parentElement.parentElement !== sidebar) {
+            card = card.parentElement;
+          }
+          const target = (card.parentElement && card.parentElement.parentElement === sidebar) ? card : a;
+          target.style.setProperty('display', 'none', 'important');
+        }
+      }
+    }
+
+    function applica() { sistemaDoodle(); nascondiPromo(); nascondiBannerEstensione(); nascondiAdsSidebar(); }
 
     // La home è una SPA: doodle e card compaiono dopo il primo render → si osserva.
     function avvio() {
