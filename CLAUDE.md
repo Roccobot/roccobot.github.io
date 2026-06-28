@@ -545,6 +545,19 @@ specifico del dataset):
   dell'utente in favore della modale di conferma dei campi dimenticati (vedi
   'Struttura dati'). Riattivabile mettendo il flag a `true`.
 
+## 🎨 Etichette tipo (colori e bordo)
+
+- **Bordo del riquadro etichetta = colore del testo all'80%.** Ogni etichetta
+  tipo (`.tipo-*`) ha un colore del testo (`color`); il bordo del riquadro usa
+  lo **stesso identico colore RGB**, ma con **opacità 0.8** (`border:
+  rgba(R,G,B,0.8)`). Vale per **tutte** le etichette e in **entrambi i temi**
+  (scuro e chiaro), senza eccezioni: ogni nuova etichetta deve seguire lo
+  stesso schema. (Storico: standard deciso dall'utente e applicato in blocco;
+  verificato uniforme su tutte le `.tipo-*` esistenti.)
+- **Contrasto.** Il colore del testo dell'etichetta deve restare leggibile sul
+  proprio sfondo in entrambi i temi (cfr. l'audit `axe-core` in 'Nuovi
+  personaggi e canone'): verificarlo per ogni colore nuovo.
+
 ## 🏅 Criteri editoriali dei badge
 
 - **Badge Aman** (legenda: 'Raggiunse Aman'; tooltip esteso in lista:
