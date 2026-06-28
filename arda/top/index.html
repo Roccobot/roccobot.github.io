@@ -1323,7 +1323,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1593,7 +1593,8 @@ var ICON_LABEL = {
 // (Elenwë: badge Helcaraxë al 50% = morte durante la traversata, non presunto).
 var ICON_LABEL_OVERRIDE = {
   'Elenwë': { helcaraxe: { it:'Morì nella traversata dell’Helcaraxë', en:'Died during the crossing of the Helcaraxë' } },
-  'Morgoth': { aratar: { it:'Un tempo il più potente degli Ainur; decaduto, non è più annoverato tra gli Aratar', en:'Once the mightiest of the Ainur; fallen, no longer counted among the Aratar' } }
+  'Morgoth': { aratar: { it:'Un tempo il più potente degli Ainur; decaduto, non è più annoverato tra gli Aratar', en:'Once the mightiest of the Ainur; fallen, no longer counted among the Aratar' } },
+  'Bill': { fellowship: { it:'Accompagnò la Compagnia dell’Anello', en:'Accompanied the Fellowship of the Ring' } }
 };
 function buildStatus(p) {
   var L = ICON_LABEL[currentLang] || ICON_LABEL.it;
@@ -1633,7 +1634,7 @@ function categoria(p) {
   if (p.nome !== 'Lúthien' && /maia|balrog/.test(t)) return 'ainu';
   if (p.divino) return 'arcane'; // altri esseri arcani/ancestrali: draghi, spiriti, vampiri, Ungoliant, Ent...
   if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) return 'arcane'; // Spettri-capi
-  if (/orco|orc|uruk|troll/.test(t)) return 'orc'; // Troll inclusi: stessa categoria 'orc' (legenda 'Orchi e troll')
+  if (/orco|orc|uruk|troll/.test(t)) return 'orc'; // Troll inclusi: stessa categoria 'orc' (legenda 'Orchi e Troll')
   if (/hobbit/.test(t)) return 'hobbit';
   if (/nano|nana|nanerott|dwarf/.test(t)) return 'dwarf'; // 'nana' = nana (es. Dís); 'nanerott' = Nanerottoli (Petty-dwarves, es. Mîm)
   if (/drúed|drued/.test(t)) return 'man'; // Drúedain ≠ Edain
@@ -2010,8 +2011,8 @@ let isFirstRender = true;
 
 // ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
-  it: { ainu:'Ainur', arcane:'Esseri arcani/ancestrali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi e troll', animal:'Animali' },
-  en: { ainu:'Ainur', arcane:'Arcane/ancestral beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs & trolls', animal:'Animals' }
+  it: { ainu:'Ainur', arcane:'Esseri arcani/ancestrali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi e Troll', animal:'Animali' },
+  en: { ainu:'Ainur', arcane:'Arcane/ancestral beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs and Trolls', animal:'Animals' }
 };
 var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
 var CTRL_I18N = {
