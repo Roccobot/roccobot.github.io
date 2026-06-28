@@ -740,6 +740,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .tipo-nano        { background:rgba(195,135,0,0.3); border:1px solid rgba(255,216,40,0.8); color:#ffd828; }
 /* ORCHI — viola */
 .tipo-orco        { background:rgba(143,0,213,0.3); border:1px solid rgba(218,80,255,0.8); color:#da50ff; }
+.tipo-troll       { background:rgba(199,60,205,0.3); border:1px solid rgba(237,131,224,0.8); color:#ed83e0; }
 /* HOBBIT — giallo/ocra */
 .tipo-hobbit      { background:rgba(215,108,0,0.3); border:1px solid rgba(255,168,56,0.8); color:#ffa838; }
 .tipo-gollum      { background:rgba(124,72,6,0.35); border:1px solid rgba(233,165,87,0.8); color:#e9a557; }
@@ -1234,6 +1235,7 @@ html[data-theme="light"] .tipo-dunadan { background:rgba(190,14,46,0.12); border
 html[data-theme="light"] .tipo-eotheod { background:rgba(204,156,0,0.12); border-color:rgba(133,102,0,0.8); color:#856600; }
 html[data-theme="light"] .tipo-nano { background:rgba(185,128,0,0.13); border-color:rgba(116,95,0,0.8); color:#745f00; }
 html[data-theme="light"] .tipo-orco { background:rgba(132,0,201,0.12); border-color:rgba(104,0,152,0.8); color:#680098; }
+html[data-theme="light"] .tipo-troll { background:rgba(200,80,170,0.12); border-color:rgba(156,38,128,0.8); color:#9c2680; }
 html[data-theme="light"] .tipo-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(161,69,0,0.8); color:#a14500; }
 html[data-theme="light"] .tipo-gollum { background:rgba(124,72,6,0.11); border-color:rgba(138,78,0,0.8); color:#8a4e00; }
 html[data-theme="light"] .tipo-aquila { background:rgba(0,185,180,0.12); border-color:rgba(0,110,103,0.8); color:#006e67; }
@@ -1321,7 +1323,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.93</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1506,6 +1508,7 @@ function tipoClass(tipo) {
   if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'tipo-eotheod';
   if (t.includes('donna mortale') || t.includes('mortal woman')) return 'tipo-beor';
   if (t.includes('nano') || t.includes('nana') || t.includes('dwarf')) return 'tipo-nano';
+  if (t.includes('troll')) return 'tipo-troll';
   if (t.includes('orco') || t.includes('orc') || t.includes('uruk')) return 'tipo-orco';
   if (t.includes('aquila') || t.includes('eagle')) return 'tipo-aquila';
   if (t.includes('ent')) return 'tipo-ent';
