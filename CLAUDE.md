@@ -489,7 +489,11 @@ specifico del dataset):
   Mai `«»`, mai virgolette curve, mai doppie.
 - **Apostrofi: sempre dritti `'`** (mai i curvi `’`/`‘`).
 - **Trattini:** `–` (en-dash) **solo negli intervalli d'anno** della `fonte`
-  (es. `1954–55`); nei testi (parentetici, incisi) si usa sempre `—` (em-dash).
+  (es. `1954–55`). Negli incisi dei testi è **ammesso** l'em-dash `—`, ma con
+  questa **priorità**: preferire sempre la coppia di **virgole** o le
+  **parentesi**; l'em-dash solo quando risulta davvero migliore o più elegante.
+  (Bonifica non retroattiva: gli em-dash già presenti restano finché non si
+  decide di rivederli.)
 - **Ellissi:** tre punti `...` (mai il carattere unico `…`).
 - **Maiuscola iniziale:** ogni campo-riga mostrato nella card — `descrizione`,
   `nomi_alternativi`, `appellativi` (IT ed EN) — **inizia con la maiuscola**,
