@@ -236,3 +236,61 @@
 ! @@||cloudflareinsights.com^$important
 @@||cloudflarestream.com^$important
 @@||cloudflarestorage.com^$important
+
+! ── Eccezioni removeparam (parametri URL funzionali: auth/login, pagamenti, banche, PA) ──
+! Impediscono alle regole $removeparam (in primis la lista "AdGuard URL Tracking",
+! ~2540 regole) di strippare parametri funzionali (token, code, state, callback) su
+! questi domini, dove lo stripping romperebbe login o pagamenti. patreon.com aggiunto
+! perche' il parameter stripping impediva di ricevere il codice di accesso.
+@@||aci.it^$removeparam
+@@||agos.it^$removeparam
+@@||agosweb.it^$removeparam
+@@||anthropic.com^$removeparam
+@@||axerve.com^$removeparam
+@@||bitwarden.com^$removeparam
+@@||bonusx.it^$removeparam
+@@||cardinalcommerce.com^$removeparam
+@@||claude.ai^$removeparam
+@@||claude.com^$removeparam
+@@||cofidis.it^$removeparam
+@@||copecart.com^$removeparam
+@@||curve.com^$removeparam
+@@||easyparkitalia.it^$removeparam
+@@||edenred.it^$removeparam
+@@||fascicolo-sanitario.it^$removeparam
+@@||fastspring.com^$removeparam
+@@||fattureincloud.it^$removeparam
+@@||fideuram.it^$removeparam
+@@||github.com^$removeparam
+@@||gov.it^$removeparam
+@@||grok.com^$removeparam
+@@||infocert.it^$removeparam
+@@||ixopay.com^$removeparam
+@@||lepida.it^$removeparam
+@@||linear.it^$removeparam
+@@||link.com^$removeparam
+@@||mollie.nl^$removeparam
+@@||nexi.it^$removeparam
+@@||nexigroup.com^$removeparam
+@@||onfido.com^$removeparam
+@@||paddle.com^$removeparam
+@@||pagonlinesanita.it^$removeparam
+@@||patreon.com^$removeparam
+@@||pay.google.com^$removeparam
+@@||paykickstart.com^$removeparam
+@@||payments.google.com^$removeparam
+@@||payments.ui.bitx.com^$removeparam
+@@||pec.it^$removeparam
+@@||poliziadistato.it^$removeparam
+@@||prima.it^$removeparam
+@@||revolut.com^$removeparam
+@@||satispay.com^$removeparam
+@@||scontrinosmart.it^$removeparam
+@@||sella.it^$removeparam
+@@||servizienti.it^$removeparam
+@@||sieltecloud.it^$removeparam
+@@||signaturit.com^$removeparam
+@@||smart-glocal.com^$removeparam
+@@||stripe.com^$removeparam
+@@||unisalute.it^$removeparam
+@@||x.ai^$removeparam
