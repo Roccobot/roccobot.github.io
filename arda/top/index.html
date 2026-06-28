@@ -1319,7 +1319,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.88</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1420,6 +1420,7 @@ function setLang(lang) {
   document.getElementById('subtitle').innerHTML = i18n[lang].subtitle.replace(/\n/g, '<br>');
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
+  var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e mappe' : 'Resources and maps';
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
 }
@@ -1893,7 +1894,7 @@ function openResourcesModal() {
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', 'Close'); cl.onclick = dismiss; box.appendChild(cl);
-  var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = 'Resources and maps'; box.appendChild(h);
+  var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; box.appendChild(h);
   function mkBtn(it, en, fn) {
     var b = document.createElement('button'); b.className = 'fab-modal-confirm';
     b.innerHTML = '<span class="fmc-main">🇮🇹 ' + it + '</span><span class="fmc-sub">🇬🇧 ' + en + '</span>';
@@ -1971,7 +1972,7 @@ function openImageViewer(src, title) {
   document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
 }
 
-(function() { var rl = document.getElementById('res-link'); if (rl) rl.addEventListener('click', openResourcesModal); })();
+(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; rl.addEventListener('click', openResourcesModal); } })();
 
 let isFirstRender = true;
 
