@@ -1317,7 +1317,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v2.89</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v2.90</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1934,7 +1934,24 @@ function openImageViewer(src, title) {
   }
   img.addEventListener('load', function() { natW = img.naturalWidth; natH = img.naturalHeight; fit(); });
   img.src = src;
-  stage.addEventListener('wheel', function(e) { e.preventDefault(); var r = stage.getBoundingClientRect(); zoomBy(e.deltaY < 0 ? 1.15 : 0.87, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  // Zoom con rotella E pinch del trackpad. Il visualizzatore ha la precedenza
+  // sul browser: rotella e pinch (che Chrome/Vivaldi inviano come ctrl+wheel)
+  // sono catturati su tutto l'overlay con preventDefault → il browser non
+  // ingrandisce mai la pagina né memorizza una percentuale di zoom.
+  function onWheel(e) {
+    e.preventDefault();
+    var r = stage.getBoundingClientRect();
+    var cx = Math.max(0, Math.min(stage.clientWidth, e.clientX - r.left));
+    var cy = Math.max(0, Math.min(stage.clientHeight, e.clientY - r.top));
+    var f = e.ctrlKey ? Math.exp(-e.deltaY * 0.01)   // pinch trackpad: continuo
+                      : (e.deltaY < 0 ? 1.15 : 0.87); // rotella: a scatti
+    zoomBy(f, cx, cy);
+  }
+  ov.addEventListener('wheel', onWheel, { passive: false });
+  // Safari/trackpad: blocca anche i gesture nativi (no-op altrove)
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function(g) {
+    ov.addEventListener(g, function(e) { e.preventDefault(); });
+  });
   stage.addEventListener('dblclick', function(e) { var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top); });
   // pan + pinch via pointer events
   var pts = {}, pinchD = 0, pinchMid = null;
@@ -1964,7 +1981,7 @@ function openImageViewer(src, title) {
   bar.appendChild(ttl);
   bar.appendChild(mkBtn('−', 'Zoom out', function() { zoomBy(0.8, stage.clientWidth / 2, stage.clientHeight / 2); }));
   bar.appendChild(mkBtn('+', 'Zoom in', function() { zoomBy(1.25, stage.clientWidth / 2, stage.clientHeight / 2); }));
-  bar.appendChild(mkBtn('↺', 'Reset', fit));
+  bar.appendChild(mkBtn('⛶', 'Adatta allo schermo', fit));
   bar.appendChild(mkBtn('✕', 'Close', close));
   ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); document.body.style.overflow = 'hidden';
   document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
