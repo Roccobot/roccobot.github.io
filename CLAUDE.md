@@ -512,6 +512,14 @@ specifico del dataset):
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
   Uomo Salice, etichettato 'Spirito della foresta', colore di Tom Bombadil come
   Baccador, via `tipo_color`) restano in `divini`.
+- **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria
+  'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
+  interna invariata), la cui **legenda recita 'Orchi e troll' / 'Orcs &
+  trolls'** (`CAT_LABEL`). Il `tipo` resta 'Troll' col suo colore-badge
+  dedicato (`tipo-troll`, vedi 'Etichette tipo'); `categoria()` mappa
+  `troll → orc`. La decisione è di **merito canonico/editoriale**, non dettata
+  dalla visibilità di default (cfr. regola universale 'Correttezza e canone
+  prima della funzionalità').
 - **Test di accessibilità con TUTTE le categorie attive.** L'audit `axe-core`
   va eseguito dopo aver attivato tutte le categorie (`divini` e `animali` sono
   spente di default): altrimenti i badge di quelle categorie non vengono testati
