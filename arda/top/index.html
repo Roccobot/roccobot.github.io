@@ -517,14 +517,16 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   transition:background 0.25s,color 0.25s,transform 0.25s;
 }
 .ctrl-sheet-close svg { width:16px; height:16px; stroke:currentColor; stroke-width:2.2; fill:none; stroke-linecap:round; stroke-linejoin:round; display:block; }
-/* A riposo una linea dritta; all'hover/focus si piega con lo spigolo verso il
-   basso (morph del path). Dove il CSS 'd' non è animabile resta il chevron
-   dell'attributo SVG (fallback). */
-.ctrl-sheet-close svg path { transition:d 0.28s ease; }
+/* All'apertura del pannello il glifo si piega da linea a chevron: animazione
+   una-tantum che termina poco dopo la comparsa del pannello (tocco finale
+   percepibile, non invasivo). Stato finale e fallback senza 'd' animabile:
+   il chevron dell'attributo SVG. */
 @supports (d: path("M0 0")) {
-  .ctrl-sheet-close svg path { d:path("M6 12 12 12 18 12"); }
-  .ctrl-sheet-close:hover svg path, .ctrl-sheet-close:focus-visible svg path { d:path("M6 9 12 15 18 9"); }
+  .ctrl-sheet-close svg path { d:path("M6 9 12 15 18 9"); }
+  .ctrl-panel.open .ctrl-sheet-close svg path { animation:ctrl-close-bend 0.45s cubic-bezier(0.22,1,0.36,1) 0.2s both; }
+  @keyframes ctrl-close-bend { from { d:path("M6 12 12 12 18 12"); } to { d:path("M6 9 12 15 18 9"); } }
 }
+@media (prefers-reduced-motion:reduce) { .ctrl-panel.open .ctrl-sheet-close svg path { animation:none; } }
 .ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); outline:none; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
@@ -1331,7 +1333,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.04</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.05</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
