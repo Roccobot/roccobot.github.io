@@ -518,7 +518,7 @@ specifico del dataset):
   Baccador, via `tipo_color`) restano in `divini`.
 - **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria
   'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
-  interna invariata), la cui **legenda recita 'Orchi e Troll' / 'Orcs and
+  interna invariata), la cui **legenda recita 'Orchi e Troll' / 'Orcs &
   Trolls'** (`CAT_LABEL`). Il `tipo` resta 'Troll' col suo colore-badge
   dedicato (`tipo-troll`, vedi 'Etichette tipo'); `categoria()` mappa
   `troll → orc`. La decisione è di **merito canonico/editoriale**, non dettata
