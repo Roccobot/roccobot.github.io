@@ -1006,6 +1006,12 @@ html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#arda-t
 .admin-flag-chk { display:flex;align-items:center;gap:0.3rem;cursor:pointer; }
 .admin-flag-chk input { width:15px;height:15px;accent-color:var(--gold);cursor:pointer;flex-shrink:0; }
 .admin-flag-chk img { font-size:1.467rem; } /* 1.35rem / 0.92em */
+/* Editor admin: qui i badge sono icona-soltanto (niente testo), quindi l'allineamento
+   non segue la pagina vera. Le .status-icon sono inline-block+vertical-align:middle
+   (allineate sulla x-height): nello span-icona le rendiamo block dentro un flex, così
+   il centro-box dell'icona coincide con quello della checkbox (offset azzerato). */
+.admin-flags-row .admin-flag-chk > span { display:flex;align-items:center; }
+.admin-flags-row .admin-flag-chk img { display:block;transform:none; } /* annulla i nudge verticali si-* (anelli): qui il flex centra da sé */
 /* Su desktop i badge stanno su un'unica riga, distribuiti per l'intera
    larghezza; 'Apocrifo' va centrato subito sotto. Su mobile resta a capo. */
 .admin-apo-chk { justify-content:center;margin-top:0.7rem; }
@@ -1339,7 +1345,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.09</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3478,13 +3484,13 @@ function showAdminEditor() {
     // Catalogo esteso «Apocrifi» (personaggio attestato solo in HoME/NoME)
     const apoRow = document.createElement('label');
     apoRow.className = 'admin-flag-chk admin-apo-chk';
-    apoRow.title = 'Apocrifo: personaggio attestato solo nella HoME/NoME';
+    apoRow.title = 'Fonte apocrifa: personaggio attestato solo nella HoME/NoME';
     const apoChk = document.createElement('input');
     apoChk.type = 'checkbox';
     apoChk.id = 'ae-' + i + '-apocrifo';
     apoChk.checked = !!p.apocrifo;
     const apoTxt = document.createElement('span');
-    apoTxt.textContent = 'Apocrifo';
+    apoTxt.textContent = 'Fonte apocrifa';
     apoRow.appendChild(apoChk); apoRow.appendChild(apoTxt);
     card.appendChild(apoRow);
 
