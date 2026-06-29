@@ -517,7 +517,15 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   transition:background 0.25s,color 0.25s,transform 0.25s;
 }
 .ctrl-sheet-close svg { width:16px; height:16px; stroke:currentColor; stroke-width:2.2; fill:none; stroke-linecap:round; stroke-linejoin:round; display:block; }
-.ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); transform:translateY(2px); outline:none; }
+/* A riposo una linea dritta; all'hover/focus si piega con lo spigolo verso il
+   basso (morph del path). Dove il CSS 'd' non è animabile resta il chevron
+   dell'attributo SVG (fallback). */
+.ctrl-sheet-close svg path { transition:d 0.28s ease; }
+@supports (d: path("M0 0")) {
+  .ctrl-sheet-close svg path { d:path("M6 12 12 12 18 12"); }
+  .ctrl-sheet-close:hover svg path, .ctrl-sheet-close:focus-visible svg path { d:path("M6 9 12 15 18 9"); }
+}
+.ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); outline:none; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
 .ctrl-h {
@@ -1323,7 +1331,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.03</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.04</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2147,7 +2155,7 @@ function controlPanelHTML() {
      +     '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      +   '</span>'
-     +   '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10 12 16 18 10"/></svg></button>'
+     +   '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9 12 15 18 9"/></svg></button>'
      + '</div>';
   return h;
 }
