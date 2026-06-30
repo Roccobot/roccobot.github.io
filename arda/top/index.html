@@ -1057,8 +1057,41 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .admin-btn-wrap { justify-content:stretch; }
   .admin-btn { flex:1; }
 }
-/* Navigazione admin: nascosta di default, visibile solo su mobile */
-.admin-nav { display:none; }
+/* Navigazione admin (precedente/successivo ±1 e ±10): chevron flottanti in
+   basso a destra, su desktop e mobile (la media query mobile ne ritocca la posizione). */
+.admin-nav { display:flex; flex-direction:column; gap:0.35rem; position:fixed; right:1rem; bottom:1.3rem; z-index:330; }
+.admin-nav-btn { width:2.5rem;height:2.5rem;border-radius:50%;background:rgba(60,95,150,0.32);border:1px solid rgba(154,192,216,0.32);color:rgba(232,242,255,0.82);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent;transition:background 0.15s,transform 0.1s; }
+.admin-nav-btn:hover { background:rgba(80,130,210,0.5); }
+.admin-nav-btn:active { background:rgba(80,130,210,0.5);transform:scale(0.94); }
+.admin-nav-btn svg { width:1.15rem;height:1.15rem;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round; }
+/* Indicatore di caricamento incrementale (nell'header sticky) */
+.admin-loading { font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.08em;color:var(--parchment-dim);opacity:0.7;margin-left:0.7rem;white-space:nowrap; }
+.admin-btn-find { background:none;border:1px solid rgba(104,144,168,0.4);color:var(--parchment-dim); }
+/* Campo raggiunto dalla ricerca: anello oro */
+.admin-search-hit .admin-input, .admin-search-hit .admin-textarea { border-color:var(--gold)!important;box-shadow:0 0 0 2px rgba(210,178,92,0.6)!important; }
+/* Ricerca tipo Spotlight: sfondo sfocato, dissolvenza in uscita */
+.admin-search-layer { position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;align-items:center;padding-top:8vh;opacity:1; }
+.admin-search-layer.closing { opacity:0;transition:opacity 0.18s ease; }
+.admin-search-backdrop { position:absolute;inset:0;background:rgba(8,12,24,0.4);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px); }
+.admin-search-box { position:relative;z-index:1;width:min(620px,92vw);display:flex;flex-direction:column;background:var(--ink);border:1px solid var(--gold-deep);border-radius:12px;box-shadow:0 18px 60px rgba(0,0,0,0.55);overflow:hidden; }
+.admin-search-top { display:flex;align-items:center;gap:0.55rem;padding:0.7rem 0.95rem;border-bottom:1px solid rgba(104,144,168,0.18); }
+.admin-search-ic { opacity:0.7;font-size:0.95rem; }
+.admin-search-input { flex:1;background:none;border:none;outline:none;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1.15rem;min-width:0; }
+.admin-search-count { font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.06em;color:var(--parchment-dim);white-space:nowrap; }
+.admin-search-results { max-height:52vh;overflow-y:auto; }
+.admin-search-empty { padding:0.9rem;text-align:center;color:var(--parchment-dim);font-size:0.9rem; }
+.admin-search-item { display:flex;align-items:baseline;gap:0.6rem;padding:0.5rem 0.95rem;cursor:pointer;border-left:3px solid transparent; }
+.admin-search-item .as-name { font-family:'Cinzel',serif;font-size:0.9rem;color:var(--parchment);white-space:nowrap;flex-shrink:0; }
+.admin-search-item .as-snip { color:var(--parchment-dim);font-size:0.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0; }
+.admin-search-item .as-snip em { font-style:normal;color:var(--gold-deep); }
+.admin-search-item mark { background:rgba(210,178,92,0.32);color:inherit;border-radius:2px;padding:0 1px; }
+.admin-search-item.sel { background:rgba(104,144,168,0.18);border-left-color:var(--gold); }
+.admin-search-item.as-namematch { background:rgba(210,178,92,0.07); }
+.admin-search-item.as-namematch::before { content:'◆';color:var(--gold);font-size:0.6rem;align-self:center;flex-shrink:0; }
+.admin-search-item.as-namematch .as-name { color:var(--gold-bright);font-weight:600;font-size:0.98rem; }
+.admin-search-item.as-namematch.sel { background:rgba(210,178,92,0.16); }
+html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.5); }
+html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
 .jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(60,95,150,0.41);border:1px solid rgba(154,192,216,0.38);color:rgba(232,242,255,0.85);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent; }
@@ -1345,7 +1378,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.15</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.26</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3319,8 +3352,17 @@ function showAdminEditor() {
       setTimeout(() => { saveBtn.textContent = 'Salva'; }, 4000);
     }
   };
+  const findBtn = document.createElement('button');
+  findBtn.className = 'admin-btn admin-btn-find';
+  findBtn.textContent = 'Trova';
+  findBtn.title = 'Trova nel contenuto (⌘F)';
+  findBtn.onclick = function(){ openSearch(); };
+  btnWrap.appendChild(findBtn);
   btnWrap.appendChild(backBtn);
   btnWrap.appendChild(saveBtn);
+  var loadingEl = document.createElement('span');
+  loadingEl.className = 'admin-loading';
+  title.appendChild(loadingEl);
   header.appendChild(title);
   header.appendChild(btnWrap);
   overlay.appendChild(header);
@@ -3373,9 +3415,9 @@ function showAdminEditor() {
   const cards = document.createElement('div');
   cards.className = 'admin-cards';
 
-  dati.forEach((p, i) => {
+  function buildCard(p, i) {
     const card = document.createElement('div');
-    card.className = 'admin-card';
+    card.className = 'admin-card'; card.dataset.idx = i;
 
     // Numero
     const num = document.createElement('div');
@@ -3501,24 +3543,46 @@ function showAdminEditor() {
     apoRow.appendChild(apoChk); apoRow.appendChild(apoTxt);
     card.appendChild(apoRow);
 
-    cards.appendChild(card);
-  });
+    // Indicatore 'campo modificato nella sessione': ogni input/textarea memorizza
+    // il valore di partenza (dataset.orig) e, a ogni digitazione, accende/spegne
+    // '.admin-modified' sul wrapper se differisce. Cablato qui, per-card, così
+    // resta valido col rendering a batch (non c'è più un giro globale a fine build).
+    Array.prototype.slice.call(card.querySelectorAll('.admin-input, .admin-textarea')).forEach(function(el){
+      el.dataset.orig = el.value;
+      el.addEventListener('input', function(){
+        var wrap = el.closest('.admin-field');
+        if (wrap) wrap.classList.toggle('admin-modified', el.value !== el.dataset.orig);
+      });
+    });
+    return card;
+  }
   overlay.appendChild(cards);
 
-  // Indicatore "campo modificato nella sessione": ogni input/textarea memorizza
-  // il proprio valore di partenza (dataset.orig, catturato all'apertura
-  // dell'editor) e, a ogni digitazione, accende/spegne la classe
-  // '.admin-modified' sul wrapper .admin-field se il valore differisce
-  // dall'originale. Il CSS evidenzia bordo/etichetta così i campi toccati si
-  // ritrovano a colpo d'occhio per una revisione prima di salvare. Solo campi
-  // testo (le checkbox-flag non sono coinvolte).
-  Array.prototype.slice.call(cards.querySelectorAll('.admin-input, .admin-textarea')).forEach(function(el){
-    el.dataset.orig = el.value;
-    el.addEventListener('input', function(){
-      var wrap = el.closest('.admin-field');
-      if (wrap) wrap.classList.toggle('admin-modified', el.value !== el.dataset.orig);
-    });
-  });
+  // ── Rendering incrementale ──────────────────────────────────────────────
+  // Le ~300 card sono pesanti: costruirle tutte insieme bloccava la pagina.
+  // Le costruiamo a batch via requestAnimationFrame: overlay/header e le prime
+  // voci sono subito interattivi, il resto si riempie senza freeze.
+  // ensureRendered(i) forza il build fino all'indice i (serve al salto da
+  // ricerca verso una voce non ancora renderizzata).
+  var renderedCount = 0;
+  function updateLoading() {
+    if (!loadingEl) return;
+    if (renderedCount >= dati.length) { loadingEl.remove(); loadingEl = null; }
+    else loadingEl.textContent = 'Caricamento... ' + renderedCount + '/' + dati.length;
+  }
+  function renderUpTo(target) {
+    target = Math.min(target, dati.length);
+    var frag = document.createDocumentFragment();
+    while (renderedCount < target) { frag.appendChild(buildCard(dati[renderedCount], renderedCount)); renderedCount++; }
+    cards.appendChild(frag);
+    updateLoading();
+  }
+  function ensureRendered(i) { if (i >= renderedCount) renderUpTo(i + 1); }
+  var RENDER_BATCH = 12;
+  (function renderTick() {
+    renderUpTo(renderedCount + RENDER_BATCH);
+    if (renderedCount < dati.length) requestAnimationFrame(renderTick);
+  })();
 
   // Navigazione rapida (solo mobile): salta al personaggio precedente/successivo o di ±10.
   // Scorrere a mano una pagina così lunga è scomodo, questi tasti flottanti la rendono navigabile.
@@ -3554,6 +3618,116 @@ function showAdminEditor() {
   nav.appendChild(mkNav(CHEV_DN,    1, 'Personaggio successivo'));
   nav.appendChild(mkNav(CHEV2_DN,  10, 'Avanti di 10'));
   overlay.appendChild(nav);
+
+  // ── Ricerca tipo Spotlight (override ⌘F apre, ⌘G / ⌘⇧G succ./prec.) ───────
+  // Cerca SOLO nel contenuto dei campi (mai nelle etichette UI) di TUTTE le voci,
+  // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
+  // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
+  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre'];
+  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
+  var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
+  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
+  function snippet(val, ql){
+    val = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
+    var lo = val.toLowerCase().indexOf(ql);
+    if (lo < 0) return esc(val.slice(0,70));
+    var a = Math.max(0, lo-24);
+    return (a>0?'…':'') + esc(val.slice(a,lo)) + '<mark>' + esc(val.slice(lo,lo+ql.length)) + '</mark>' + esc(val.slice(lo+ql.length, lo+ql.length+36)) + (lo+ql.length+36<val.length?'…':'');
+  }
+  function computeMatches(q){
+    var ql = q.trim().toLowerCase(); if (!ql) return [];
+    var nameHits = [], other = [];
+    for (var i=0;i<dati.length;i++){
+      var p = dati[i];
+      var isName = ((p.nome||'').toLowerCase().indexOf(ql)>=0) || ((p.nome_en||'').toLowerCase().indexOf(ql)>=0);
+      var hf=null, hv=null;
+      for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && String(v).toLowerCase().indexOf(ql)>=0){ hf=f; hv=String(v); break; } }
+      if (!hf) continue;
+      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, ql:ql });
+    }
+    return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
+  }
+  function clearHit(){ Array.prototype.slice.call(overlay.querySelectorAll('.admin-search-hit')).forEach(function(w){ w.classList.remove('admin-search-hit'); }); }
+  function renderResults(q){
+    results = computeMatches(q); sel = 0; lastQuery = q;
+    listEl.innerHTML = '';
+    countEl.textContent = q.trim() ? (results.length + (results.length===1?' risultato':' risultati')) : '';
+    if (q.trim() && !results.length){ var e=document.createElement('div'); e.className='admin-search-empty'; e.textContent='Nessun risultato'; listEl.appendChild(e); return; }
+    results.forEach(function(r, idx){
+      var it = document.createElement('div');
+      it.className = 'admin-search-item' + (r.isName?' as-namematch':'') + (idx===0?' sel':'');
+      var nm = document.createElement('span'); nm.className='as-name';
+      nm.innerHTML = r.isName ? snippet(r.name, r.ql) : esc(r.name);
+      it.appendChild(nm);
+      if (!r.isName){ var sp=document.createElement('span'); sp.className='as-snip'; sp.innerHTML='<em>'+esc(FIELD_LABEL[r.field]||r.field)+':</em> '+snippet(r.val, r.ql); it.appendChild(sp); }
+      it.onmousedown = function(ev){ ev.preventDefault(); sel=idx; jump(); };
+      listEl.appendChild(it);
+    });
+  }
+  function setSel(n){
+    if (!results.length) return;
+    sel = (n + results.length) % results.length;
+    var items = listEl.querySelectorAll('.admin-search-item');
+    for (var j=0;j<items.length;j++) items[j].classList.toggle('sel', j===sel);
+    if (items[sel]) items[sel].scrollIntoView({block:'nearest'});
+  }
+  function jump(){
+    if (!results.length) return;
+    var r = results[sel];
+    ensureRendered(r.i);
+    var card = cards.children[r.i];
+    if (card){
+      var vh = overlay.clientHeight, hh = (header.offsetHeight||60);
+      overlay.scrollTop = Math.max(0, card.offsetTop - Math.max(hh + 8, (vh - card.offsetHeight)/2));
+      clearHit();
+      var fe = document.getElementById('ae-'+r.i+'-'+r.field);
+      if (fe){ var w=fe.closest('.admin-field'); if (w) w.classList.add('admin-search-hit');
+        try { var lo=String(fe.value).toLowerCase().indexOf(r.ql); if (lo>=0){ fe.focus({preventScroll:true}); fe.setSelectionRange(lo, lo+r.ql.length); } } catch(e){}
+      }
+    }
+    closeSearch(true);
+  }
+  function openSearch(){
+    if (!overlay.isConnected) return;
+    if (searchLayer){ inputEl.focus(); inputEl.select(); return; }
+    searchLayer = document.createElement('div'); searchLayer.className='admin-search-layer';
+    var bd = document.createElement('div'); bd.className='admin-search-backdrop'; bd.onmousedown=function(){ closeSearch(false); };
+    var box = document.createElement('div'); box.className='admin-search-box';
+    var top = document.createElement('div'); top.className='admin-search-top';
+    var ic = document.createElement('span'); ic.className='admin-search-ic'; ic.textContent='🔍';
+    inputEl = document.createElement('input'); inputEl.className='admin-search-input'; inputEl.type='text';
+    inputEl.placeholder='Cerca nei contenuti...'; inputEl.value=lastQuery; inputEl.setAttribute('aria-label','Cerca nei contenuti');
+    countEl = document.createElement('span'); countEl.className='admin-search-count';
+    top.appendChild(ic); top.appendChild(inputEl); top.appendChild(countEl);
+    listEl = document.createElement('div'); listEl.className='admin-search-results';
+    box.appendChild(top); box.appendChild(listEl);
+    searchLayer.appendChild(bd); searchLayer.appendChild(box);
+    overlay.appendChild(searchLayer);
+    var deb;
+    inputEl.addEventListener('input', function(){ clearTimeout(deb); deb=setTimeout(function(){ renderResults(inputEl.value); }, 110); });
+    inputEl.addEventListener('keydown', function(e){
+      if (e.key==='ArrowDown'){ e.preventDefault(); setSel(sel+1); }
+      else if (e.key==='ArrowUp'){ e.preventDefault(); setSel(sel-1); }
+      else if (e.key==='Enter'){ e.preventDefault(); jump(); }
+      else if (e.key==='Escape'){ e.preventDefault(); closeSearch(false); }
+    });
+    renderResults(inputEl.value);
+    inputEl.focus(); inputEl.select();
+  }
+  function closeSearch(fade){
+    if (!searchLayer) return;
+    var layer = searchLayer; searchLayer = null;
+    if (fade){ layer.classList.add('closing'); setTimeout(function(){ layer.remove(); }, 190); }
+    else { layer.remove(); }
+  }
+  function onAdminKey(e){
+    if (!overlay.isConnected){ document.removeEventListener('keydown', onAdminKey, true); return; }
+    if (!(e.metaKey || e.ctrlKey)) return;
+    var k = (e.key||'').toLowerCase();
+    if (k==='f'){ e.preventDefault(); openSearch(); }
+    else if (k==='g'){ e.preventDefault(); if (!searchLayer) openSearch(); if (results.length) setSel(sel + (e.shiftKey?-1:1)); }
+  }
+  document.addEventListener('keydown', onAdminKey, true);
 
   document.body.appendChild(overlay);
 }
