@@ -610,12 +610,15 @@ specifico del dataset):
   perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
   traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo*
   (HoME XII, J.R.R. Tolkien, 1996), che ne attesta nome e stirpe Vanya.
-- **Badge Aratar di Morgoth al 50%** (chiave `aratar`, valore `'presunto'`):
-  Morgoth è l'unico Aratar a opacità dimezzata, con **etichetta dedicata** nel
-  tooltip (via `ICON_LABEL_OVERRIDE`) — 'Un tempo il più potente degli Ainur;
-  decaduto, non è più annoverato tra gli Aratar'. Motivo: dopo la caduta
-  «Melkor non è più annoverato tra i Valar» (*Valaquenta*), dunque nemmeno tra
+- **Badge Aratar di Melkor al 50%** (chiave `aratar`, valore `'presunto'`):
+  Melkor è l'unico Aratar a opacità dimezzata, con **etichetta dedicata** nel
+  tooltip (via `ICON_LABEL_OVERRIDE`, chiave `'Melkor'` = il `nome` della voce):
+  IT 'Non più annoverato tra gli Aratar dopo la sua ribellione', EN 'No longer
+  counted among the Aratar after his rebellion'. Motivo: dopo la caduta
+  'Melkor non è più annoverato tra i Valar' (*Valaquenta*), dunque nemmeno tra
   gli Aratar; il dimezzamento segna questo status conteso, non un dato presunto.
+  (Storico: l'override era erroneamente su chiave `'Morgoth'`, che non combacia
+  col `nome` `Melkor`, perciò non scattava e si vedeva il default '(presunto)'.)
 
 ## 🧹 Asset del progetto
 
