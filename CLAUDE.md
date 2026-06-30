@@ -580,8 +580,17 @@ specifico del dataset):
   degli ambasciatori con Oromë e Grande Viaggio. Il criterio è volutamente
   NON spiegato nella legenda della pagina (semplicità).
   Casi decisi dall'utente: Finwë, Thingol e Ingwë senza badge; Melian,
-  Eärendil, Elwing, Tuor e Idril lo tengono. Il valore `'presunto'` indica
-  partenza dedotta ma non attestata (icona al 50%).
+  Eärendil, Elwing, Tuor e Idril lo tengono. Il valore `'presunto'` rende
+  l'icona al **50%** (`si-dim`).
+- **Il badge semitrasparente è scollegato dall'idea di 'presunto'.** Il 50% è
+  solo un segnale visivo di 'stato a sé': **nessun** suffisso `(presunto)`
+  automatico nel tooltip (rimosso da `buildStatus`). Il significato va dato
+  caso per caso in `ICON_LABEL_OVERRIDE`; se non si è certi di cosa scrivere,
+  **chiedere all'utente**. Le partenze per l'Ovest dedotte ma non attestate
+  (Radagast, Glorfindel, Erestor, Lindir) usano il tooltip comune
+  `AMAN_DEDOTTO`: 'Approdò nelle Terre Imperiture (dedotto, non attestato dalle
+  fonti canoniche)' / 'Reached the Undying Lands (deduced, not attested in the
+  canonical sources)'.
 - **Badge Ambasciatori** (chiave `envoy`, `icons/Valinor.png`: la nave
   degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
