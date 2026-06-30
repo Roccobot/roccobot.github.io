@@ -589,8 +589,8 @@ specifico del dataset):
   **chiedere all'utente**. Le partenze per l'Ovest dedotte ma non attestate
   (Radagast, Glorfindel, Erestor, Lindir) usano il tooltip comune
   `AMAN_DEDOTTO`: 'Approdò nelle Terre Imperiture (dedotto, non attestato dalle
-  fonti canoniche)' / 'Reached the Undying Lands (deduced, not attested in the
-  canonical sources)'.
+  fonti canoniche)' / 'Reached the Undying Lands (inferred, not canonically
+  confirmed)'.
 - **Badge Ambasciatori** (chiave `envoy`, `icons/Valinor.png`: la nave
   degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
