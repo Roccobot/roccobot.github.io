@@ -1378,7 +1378,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.26</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3726,6 +3726,9 @@ function showAdminEditor() {
     var k = (e.key||'').toLowerCase();
     if (k==='f'){ e.preventDefault(); openSearch(); }
     else if (k==='g'){ e.preventDefault(); if (!searchLayer) openSearch(); if (results.length) setSel(sel + (e.shiftKey?-1:1)); }
+    // ⌘↓/⌘↑ = personaggio succ./prec.; ⌘⇧↓/⌘⇧↑ = ±10 (equivalenti ai chevron).
+    else if (k==='arrowdown'){ e.preventDefault(); if (!searchLayer) goToCard(currentCardIndex() + (e.shiftKey?10:1)); }
+    else if (k==='arrowup'){ e.preventDefault(); if (!searchLayer) goToCard(currentCardIndex() - (e.shiftKey?10:1)); }
   }
   document.addEventListener('keydown', onAdminKey, true);
 
