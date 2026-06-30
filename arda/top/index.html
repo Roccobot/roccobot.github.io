@@ -1378,7 +1378,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.28</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3627,23 +3627,35 @@ function showAdminEditor() {
   var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
-  function snippet(val, ql){
+  // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
+  // i segni diacritici via NFD, così 'eonwe' trova 'Eönwë' e ogni vocale semplice
+  // copre le sue varianti accentate. foldFind() localizza la query (già foldata,
+  // 'qf') e restituisce gli indici NELLA stringa ORIGINALE [start,end), per
+  // evidenziare/selezionare il testo vero (non quello foldato).
+  function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function foldFind(str, qf){
+    var f='', map=[];
+    for (var i=0;i<str.length;i++){ var c=str[i].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); for (var j=0;j<c.length;j++){ f+=c[j]; map.push(i); } }
+    var lo = f.indexOf(qf); if (lo<0) return null;
+    return [ map[lo], (lo+qf.length<=map.length ? map[lo+qf.length-1]+1 : str.length) ];
+  }
+  function snippet(val, qf){
     val = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
-    var lo = val.toLowerCase().indexOf(ql);
-    if (lo < 0) return esc(val.slice(0,70));
-    var a = Math.max(0, lo-24);
-    return (a>0?'…':'') + esc(val.slice(a,lo)) + '<mark>' + esc(val.slice(lo,lo+ql.length)) + '</mark>' + esc(val.slice(lo+ql.length, lo+ql.length+36)) + (lo+ql.length+36<val.length?'…':'');
+    var sp = foldFind(val, qf);
+    if (!sp) return esc(val.slice(0,70));
+    var os=sp[0], oe=sp[1], a=Math.max(0, os-24);
+    return (a>0?'…':'') + esc(val.slice(a,os)) + '<mark>' + esc(val.slice(os,oe)) + '</mark>' + esc(val.slice(oe, oe+36)) + (oe+36<val.length?'…':'');
   }
   function computeMatches(q){
-    var ql = q.trim().toLowerCase(); if (!ql) return [];
+    var qf = fold(q.trim()); if (!qf) return [];
     var nameHits = [], other = [];
     for (var i=0;i<dati.length;i++){
       var p = dati[i];
-      var isName = ((p.nome||'').toLowerCase().indexOf(ql)>=0) || ((p.nome_en||'').toLowerCase().indexOf(ql)>=0);
+      var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0);
       var hf=null, hv=null;
-      for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && String(v).toLowerCase().indexOf(ql)>=0){ hf=f; hv=String(v); break; } }
+      for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
       if (!hf) continue;
-      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, ql:ql });
+      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, qf:qf });
     }
     return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
   }
@@ -3657,9 +3669,9 @@ function showAdminEditor() {
       var it = document.createElement('div');
       it.className = 'admin-search-item' + (r.isName?' as-namematch':'') + (idx===0?' sel':'');
       var nm = document.createElement('span'); nm.className='as-name';
-      nm.innerHTML = r.isName ? snippet(r.name, r.ql) : esc(r.name);
+      nm.innerHTML = r.isName ? snippet(r.name, r.qf) : esc(r.name);
       it.appendChild(nm);
-      if (!r.isName){ var sp=document.createElement('span'); sp.className='as-snip'; sp.innerHTML='<em>'+esc(FIELD_LABEL[r.field]||r.field)+':</em> '+snippet(r.val, r.ql); it.appendChild(sp); }
+      if (!r.isName){ var sp=document.createElement('span'); sp.className='as-snip'; sp.innerHTML='<em>'+esc(FIELD_LABEL[r.field]||r.field)+':</em> '+snippet(r.val, r.qf); it.appendChild(sp); }
       it.onmousedown = function(ev){ ev.preventDefault(); sel=idx; jump(); };
       listEl.appendChild(it);
     });
@@ -3682,7 +3694,7 @@ function showAdminEditor() {
       clearHit();
       var fe = document.getElementById('ae-'+r.i+'-'+r.field);
       if (fe){ var w=fe.closest('.admin-field'); if (w) w.classList.add('admin-search-hit');
-        try { var lo=String(fe.value).toLowerCase().indexOf(r.ql); if (lo>=0){ fe.focus({preventScroll:true}); fe.setSelectionRange(lo, lo+r.ql.length); } } catch(e){}
+        try { var spn=foldFind(String(fe.value), r.qf); if (spn){ fe.focus({preventScroll:true}); fe.setSelectionRange(spn[0], spn[1]); } } catch(e){}
       }
     }
     closeSearch(true);
