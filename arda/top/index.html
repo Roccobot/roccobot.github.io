@@ -1400,7 +1400,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.64</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1825,7 +1825,7 @@ function renderList() {
     // Riga 2: descrizione + lineage
     var padre = escapeHtml(p.padre || '');
     var madre = escapeHtml(p.madre || '');
-    var desc = escapeHtml(currentLang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || ''));
+    var desc = escapeHtml(currentLang === 'it' ? (p.info || '') : (p.info_en || p.info || ''));
     var descParts = [];
     if (desc) descParts.push(desc);
     if (padre || madre) {
@@ -1964,7 +1964,7 @@ function openModal(idx) {
   var lang = currentLang;
   var nome = lang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
   var fonte = lang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
-  var info = lang === 'it' ? (p.info || '') : (p.info_en || p.info || '');
+  var info = lang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || '');
   var citazione = lang === 'it' ? p.citazione : (p.citazione_en || p.citazione);
 
   document.getElementById('modal-rank').textContent = i18n[lang].position + ' ' + visiblePos(idx);
@@ -3336,8 +3336,8 @@ function showAdminEditor() {
   backBtn.onclick = () => { overlay.remove(); document.documentElement.classList.remove('admin-open'); };
   const BILINGUAL = [
     { it:'tipo',        en:'tipo_en',        li:'Tipo IT',        le:'Tipo EN' },
-    { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN' },
-    { it:'info',        en:'info_en',        li:'Info IT',        le:'Info EN',      ta:8 },
+    { it:'info',        en:'info_en',        li:'Info IT',        le:'Info EN' },
+    { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN', ta:8 },
     { it:'citazione',   en:'citazione_en',   li:'Citazione IT',   le:'Citazione EN', ta:3 },
     { it:'fonte',       en:'fonte_en',       li:'Fonte IT',       le:'Fonte EN' },
   ];
@@ -3393,11 +3393,11 @@ function showAdminEditor() {
     next.forEach((p, i) => {
       p.nome = g(i, 'nome'); p.nome_en = g(i, 'nome_en');
       p.tipo = g(i, 'tipo'); p.tipo_en = g(i, 'tipo_en');
-      p.descrizione = g(i, 'descrizione'); p.descrizione_en = g(i, 'descrizione_en');
+      p.info = g(i, 'info'); p.info_en = g(i, 'info_en');
       p.padre = g(i, 'padre'); p.madre = g(i, 'madre');
       p.nomi_alternativi = g(i, 'nomi_alternativi'); p.nomi_alternativi_en = g(i, 'nomi_alternativi_en');
       p.appellativi = g(i, 'appellativi'); p.appellativi_en = g(i, 'appellativi_en');
-      p.info = g(i, 'info'); p.info_en = g(i, 'info_en');
+      p.descrizione = g(i, 'descrizione'); p.descrizione_en = g(i, 'descrizione_en');
       p.citazione = g(i, 'citazione'); p.citazione_en = g(i, 'citazione_en');
       p.fonte = g(i, 'fonte'); p.fonte_en = g(i, 'fonte_en');
       ICON_ORDER.forEach(function(k) {

@@ -258,7 +258,7 @@ Nomi con cui si designano gli elementi testuali delle card nel dialogo,
   che mostrano a colpo d'occhio razze, stirpi, progenie o tipi di creatura
   (campo `tipo`, resa `.rank-tipi`).
 - **`Info`**: la descrizione breve del personaggio scritta direttamente nella
-  card (campo dati `descrizione`). Es. Melkor: `Il più potente degli Ainur,
+  card (campo dati `info`, dalla v3.64). Es. Melkor: `Il più potente degli Ainur,
   fonte di ogni corruzione di Arda`. NON include genealogia, nomi alternativi,
   titoli/appellativi né fonte.
 - **`Genealogia`** o **`genitori`**: padre e madre, o uno dei due, o nessuno
@@ -274,10 +274,12 @@ Nomi con cui si designano gli elementi testuali delle card nel dialogo,
 - **`Descrizione`**, **`descrizione completa`** o **`scheda`** (nel contesto,
   anche **`modale`** se riferito a un testo): il testo completo visualizzato
   nella modale del personaggio, con il link a Tolkien Gateway (campo dati
-  `info`).
-- ⚠️ **Trappola dei nomi incrociati**: il campo dati `descrizione` è la
-  **Info** colloquiale, e il campo dati `info` è la **Descrizione**
-  colloquiale. Non confonderli mai.
+  `descrizione`, dalla v3.64).
+- **Campi allineati ai nomi colloquiali (dalla v3.64).** I campi dati sono
+  stati rinominati per coincidere col glossario: `info` = Info breve della
+  card, `descrizione` = Descrizione/scheda della modale (idem `_en`).
+  ⚠️ Storico: fino alla v3.63 era l'INVERSO (campo `descrizione` = Info,
+  campo `info` = scheda): tenerlo a mente leggendo commit e diff vecchi.
 
 ### 🧹 Regola della non-ripetizione: ogni cosa nel suo campo
 
@@ -518,8 +520,9 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     `descrizione breve | genealogia` ⤶ `nomi alternativi / appellativi | titoli`
     **oppure** la forma corta `info | genitori` ⤶ `nomi | titoli`, a
     prescindere da come si chiamino davvero i campi nella struttura dati
-    (`info` ↔ `descrizione`, `genitori` ↔ `genealogia` resa da `padre`/`madre`,
-    `nomi` ↔ `nomi_alternativi`, `titoli` ↔ `appellativi`). È solo un modo più
+    (`genitori` ↔ `genealogia` resa da `padre`/`madre`,
+    `nomi` ↔ `nomi_alternativi`, `titoli` ↔ `appellativi`; `info` e
+    `descrizione` coincidono coi campi dalla v3.64). È solo un modo più
     rapido di riferirsi ai campi quando se ne discute.
 - **Nomi alternativi: mai ripetere il nome principale** (`nomi_alternativi` /
   `nomi_alternativi_en`). Si tiene solo l'epiteto nudo: `Saruman il Bianco` →
