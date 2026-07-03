@@ -275,6 +275,11 @@ Nomi con cui si designano gli elementi testuali delle card nel dialogo,
   anche **`modale`** se riferito a un testo): il testo completo visualizzato
   nella modale del personaggio, con il link a Tolkien Gateway (campo dati
   `descrizione`, dalla v3.64).
+- **`Campi scheda`**: espressione collettiva per `Nome`, `Info`, `Genealogia`,
+  `Nomi`, `Titoli` (per esteso anche `Fonte`, benché lì ci sia di rado
+  qualcosa da modificare). In sostanza: tutti i campi testuali visibili dalla
+  home del progetto nella scheda di ogni personaggio, prima di qualsiasi clic
+  o interazione (la `Descrizione`/modale è esclusa).
 - **Campi allineati ai nomi colloquiali (dalla v3.64).** I campi dati sono
   stati rinominati per coincidere col glossario: `info` = Info breve della
   card, `descrizione` = Descrizione/scheda della modale (idem `_en`).
