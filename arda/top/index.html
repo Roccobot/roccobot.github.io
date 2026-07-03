@@ -244,10 +244,15 @@ h1 {
   gap: 0.32em;
 }
 .rank-name-text { cursor:pointer; transition:color 0.2s; }
-/* #2 — Etichette (tipi) e icone raggruppate. Desktop: display:contents, resa
-   identica a prima. Mobile (vedi media query): nome + blocco icone inscindibile
-   sulla riga 1, etichette tutte di seguito o tutte a capo. */
+/* #2 — Etichette (tipi) e icone raggruppate. Il DOM emette l'ordine di resa
+   mobile (nome → icone → etichette), perché su mobile la riga è in flusso
+   inline (vedi media query max-width:480px) e lì l'ordine visivo può venire
+   solo dal DOM. Su desktop/tablet display:contents rende i figli flex item di
+   .rank-name e l'order qui sotto ripristina la resa storica
+   nome → etichette → icone (identica a prima). */
 .rank-tipi, .rank-flags { display:contents; }
+.rank-name > .rank-tipi > * { order:1; }
+.rank-name > .rank-flags > * { order:2; }
 
 .rank-title {
   font-family:'EB Garamond',serif; font-style:italic;
@@ -1035,21 +1040,31 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   header { padding:3rem 1rem 2rem; }
   .scroll { margin:2rem auto; padding:0 0.6rem; }
   .rank-item { padding:1rem 0.8rem 1rem 0.3rem; gap:0.7rem; }
-  /* Riga nome (mobile): icone subito dopo il nome, in blocco inscindibile
-     (flex-shrink:0 + nowrap); etichette dopo, in blocco (flex-shrink:0):
-     stanno tutte sulla riga 1 se c'è spazio, altrimenti vanno tutte a capo. */
+  /* Riga nome (mobile): FLUSSO INLINE, non flex. Regola: le etichette non
+     vanno mai a capo forzato; proseguono sulla stessa riga di testo dopo
+     l'ultima parola del nome (se il nome occupa due righe, l'etichetta segue
+     in coda alla seconda), andando a capo solo per reale mancanza di spazio.
+     Col flex ciò era impossibile: il box del nome andato a capo occupa tutta
+     la larghezza e spinge le etichette su una riga nuova anche quando dopo
+     l'ultima parola c'è spazio (bug storico: 'Guardiani di Cirith Ungol').
+     Ordine: nome → icone (blocco inscindibile, inline-flex nowrap) →
+     etichette (inline, a capo singolarmente); viene dal DOM (vedi #2). */
+  .rank-name { display:block; }
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel e' tutto
      maiuscolo e siede in alto nella line-box, percio' le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
      alto l'intero blocco (icone + simbolo di genere) di .07em: gli allineamenti
      interni restano intatti (anelli e genere hanno gia' i propri nudge). */
-  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; flex-shrink:0; gap:0.28em; font-size:0.92em; order:1; transform:translateY(-0.07em); }
+  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0.32em; vertical-align:middle; transform:translateY(-0.07em); }
+  .rank-name > .rank-flags:empty { display:none; }
   .rank-name > .rank-flags .status-icon, .rank-name > .rank-flags .genere-svg { margin-left:0; }
-  .rank-name > .rank-tipi { display:inline-flex; align-items:center; flex-wrap:wrap; flex-shrink:0; max-width:100%; gap:0.4em; order:2; }
+  .rank-name > .rank-tipi { display:inline; }
+  .rank-name > .rank-tipi .tipo-badge { margin-left:0.4em; }
   /* Solo le card apocrife (con la pill 'Solo HoME' in alto a destra) mandano
      SEMPRE le etichette a capo, per non collidere con la pill. Le card
-     ordinarie tengono le etichette sulla riga 1 se ci stanno. */
-  .rank-item.apocrifo .rank-name > .rank-tipi { flex-basis:100%; }
+     ordinarie tengono le etichette in coda al nome se ci stanno. */
+  .rank-item.apocrifo .rank-name > .rank-tipi { display:block; margin-top:0.3em; }
+  .rank-item.apocrifo .rank-name > .rank-tipi .tipo-badge:first-child { margin-left:0; }
   .modal-body { padding:1.8rem 1.2rem; }
   .modal-close { top:10px; right:10px; }
   .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
@@ -1378,7 +1393,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.41</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.42</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1845,7 +1860,7 @@ function renderList() {
       '" data-idx="' + i + '">' + apoPill +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-tipi">' + tipoStr + '</span><span class="rank-flags">' + statusStr + genereSym + '</span></span>' +
+        '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
         rigaDesc +
         riga2 +
         '<span class="rank-title">' + titleYear + '</span>' +
