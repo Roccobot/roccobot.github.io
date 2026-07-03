@@ -373,19 +373,32 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
       non ripensamenti): **Argon** (Arakáno), **Anairë** ed **Elenwë**. Elenwë
       mantiene comunque il badge Helcaraxë al 50%. (**Eldalótë**, dello stesso
       volume, resta invece apocrifa per scelta editoriale.)
-- **Riga del nome su mobile.** Solo mobile, l'ordine è invertito rispetto al
-  desktop: `nome → icone` (status + genere, in blocco inscindibile) sulla
-  riga 1, poi le **etichette tipo** (`.rank-tipi`, in blocco). Comportamento:
-  - **card ordinarie**: le etichette stanno sulla riga 1 se ci entrano,
-    altrimenti vanno a capo (flex-wrap naturale);
+- **Riga del nome su mobile.** Solo mobile (≤480px), l'ordine è invertito
+  rispetto al desktop: `nome → icone` (status + genere, in blocco inscindibile)
+  poi le **etichette tipo** (`.rank-tipi`). Regola di resa (dalla v3.42): la
+  riga è in **flusso inline**, non flex — le etichette **non vanno mai a capo
+  forzato**: proseguono sulla stessa riga di testo dopo l'ultima parola del
+  nome (se il nome occupa due righe, l'etichetta segue in coda alla seconda) e
+  vanno a capo solo per reale mancanza di spazio. Comportamento:
+  - **card ordinarie**: etichette in coda al nome se ci stanno, altrimenti a
+    capo (wrap inline naturale, etichetta per etichetta);
   - **card apocrife** (con la pill 'Solo HoME' in alto a destra): le etichette
     vanno **sempre a capo** (`.rank-item.apocrifo .rank-name > .rank-tipi {
-    flex-basis:100% }`), per non collidere con la pill.
+    display:block }`), per non collidere con la pill.
 
-  Storico: per un breve periodo il `flex-basis:100%` era applicato a *tutte* le
-  card → le etichette andavano a capo anche dove c'era spazio (es. Ingwë);
-  ristretto agli apocrifi. Resa via `display:contents` (desktop invariato) e
-  `flex-shrink:0` + `order`. Le icone non si spezzano mai su due righe.
+  Implementazione: il DOM emette l'ordine di resa mobile
+  (`nome → .rank-flags → .rank-tipi`), perché nel flusso inline l'ordine visivo
+  può venire solo dal DOM; su **desktop/tablet** (>480px) `display:contents` fa
+  dei figli i flex item di `.rank-name` e due regole `order` ripristinano la
+  resa storica `nome → etichette → icone` (desktop invariato). Le icone non si
+  spezzano mai su due righe (blocco `inline-flex nowrap`).
+  Storico: (1) per un breve periodo il `flex-basis:100%` era applicato a
+  *tutte* le card → etichette a capo anche dove c'era spazio (es. Ingwë),
+  ristretto agli apocrifi; (2) fino alla v3.41 la riga era un flex container:
+  quando il *nome* andava a capo, il suo box occupava tutta la larghezza e
+  spingeva l'etichetta su una riga nuova anche con spazio libero dopo l'ultima
+  parola (caso 'Guardiani di Cirith Ungol') — da qui il passaggio al flusso
+  inline.
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
   presente solo dove diverge dal nome inglese (disambigue o titoli
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
