@@ -340,6 +340,14 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   rimozione: su mobile il riordino si attivava ma **non si poteva salvare**.
   Sia riordino sia editor sono **admin-only, dietro parola d'ordine** (il
   riordino la chiede entrando, `enterReorder`).
+  ⚠️ **Omonimi in classifica** (Galdor ×3, Rúmil ×2): l'ordine (bozza locale e
+  `DATI_SERVER_ORDER`) è memorizzato come lista di NOMI; la risoluzione
+  nome→voce deve passare da `orderByNames` (coda per nome: la n-esima
+  occorrenza prende la n-esima voce omonima), MAI da `find()`. Storico: il
+  salvataggio riordino v2.00 (2026-06-20, commit `d8815b0b`) risolveva con
+  `find()` e collassò gli omonimi: duplicò il Galdor Uomo e il Rúmil Noldo
+  perdendo il Galdor dei Porti e il Rúmil Silvano; scoperto e riparato in
+  v3.63 (voci ripristinate dalla storia git, bug corretto).
   In riordino, 'Chiudi modalità ordinamento' apre nella stessa modale un
   trivio (ogni tasto con sottotitolo esplicativo): **Conferma** (commit
   permanente sul repo via `doSave`, poi esce), **Chiudi** (tiene le modifiche

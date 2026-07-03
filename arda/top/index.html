@@ -1400,7 +1400,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.53</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2450,10 +2450,24 @@ function exitReorder() {
 }
 // Helper condivisi tra trivio mobile e desktop.
 function saveLocalDraft(){ localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; }))); }
+/* Riordino per nome con OMONIMI: mai risolvere con find(), che aggancia
+   sempre la PRIMA voce con quel nome. Con due omonimi in classifica la
+   seconda occorrenza collassava sulla prima (voce duplicata) e l'altra voce
+   veniva scartata: caso reale del salvataggio riordino v2.00, che duplicò
+   Galdor e Rúmil perdendo il Galdor dei Porti e il Rúmil Silvano. Qui si
+   consuma una CODA per nome (la n-esima occorrenza del nome nell'ordine
+   salvato prende la n-esima voce con quel nome); le voci non citate
+   dall'ordine salvato si accodano in fondo nell'ordine originale. */
+function orderByNames(master, names) {
+  var buckets = {};
+  master.forEach(function(d){ (buckets[d.nome] = buckets[d.nome] || []).push(d); });
+  var picked = [];
+  names.forEach(function(n){ var q = buckets[n]; if (q && q.length) picked.push(q.shift()); });
+  var used = new Set(picked);
+  return picked.concat(master.filter(function(d){ return !used.has(d); }));
+}
 function restoreServerOrder(){
-  var master = dati.slice();
-  dati = DATI_SERVER_ORDER.map(function(n){ return master.find(function(d){ return d.nome === n; }); }).filter(Boolean)
-         .concat(master.filter(function(d){ return DATI_SERVER_ORDER.indexOf(d.nome) === -1; }));
+  dati = orderByNames(dati.slice(), DATI_SERVER_ORDER);
   localStorage.removeItem('arda-ranking-v4-' + currentLang);
   localStorage.removeItem('arda-ranking-v3-' + currentLang);
 }
@@ -3825,10 +3839,9 @@ var DATI_SERVER_ORDER = dati.map(function(d){ return d.nome; });
     var _saved = JSON.parse(_raw);
     if (!Array.isArray(_saved)) return;
     var _names = (typeof _saved[0] === 'string') ? _saved : _saved.map(function(d){ return d.nome; });
-    var _master = dati.slice();
-    var _ordered = _names.map(function(n){ return _master.find(function(d){ return d.nome === n; }); }).filter(Boolean);
-    var _extras  = _master.filter(function(d){ return _names.indexOf(d.nome) === -1; });
-    dati = _ordered.concat(_extras);
+    // orderByNames (definita più su) consuma una coda per nome: robusta
+    // con gli omonimi (Galdor ×3, Rúmil ×2), niente doppioni né perdite.
+    dati = orderByNames(dati.slice(), _names);
   } catch(e) {}
 })();
 
