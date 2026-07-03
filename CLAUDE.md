@@ -245,6 +245,58 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente
   dell'ambiente cloud.
 
+## 🗒️ Glossario dei contenuti (nomi colloquiali)
+
+Nomi con cui si designano gli elementi testuali delle card nel dialogo,
+**a prescindere dai nomi effettivi nel codice o nella struttura dati**:
+
+- **`Nome`** (singolare) o **`nome principale`**: il nome scritto in grande di
+  ogni personaggio (campi `nome`/`nome_en`). Non sempre è il vero nome.
+- **`Icone`** o **`badge`**: le immaginette che rappresentano alcuni punti
+  chiave della storia del personaggio (chiavi status: `west`, `aratar`...).
+- **`Etichette`**, **`etichette tipo`** o **`label`**: le etichette colorate
+  che mostrano a colpo d'occhio razze, stirpi, progenie o tipi di creatura
+  (campo `tipo`, resa `.rank-tipi`).
+- **`Info`**: la descrizione breve del personaggio scritta direttamente nella
+  card (campo dati `descrizione`). Es. Melkor: `Il più potente degli Ainur,
+  fonte di ogni corruzione di Arda`. NON include genealogia, nomi alternativi,
+  titoli/appellativi né fonte.
+- **`Genealogia`** o **`genitori`**: padre e madre, o uno dei due, o nessuno
+  se ignoti (campi `padre`/`madre`); sulla stessa riga della Info, dopo `|`.
+- **`Nomi`** (plurale) o **`nomi alternativi`**: la lista dei nomi e
+  soprannomi con cui è noto il personaggio (campo `nomi_alternativi`); il vero
+  nome in grassetto. Può essere vuota.
+- **`Titoli`** o **`onorificenze`**: elenco di titoli nobiliari, onorifici o
+  politici (campo `appellativi`); sulla stessa riga dei Nomi, dopo `|`. Può
+  essere vuoto.
+- **`Fonte`**: titolo dell'opera di riferimento, ultimo elemento della scheda
+  (campo `fonte`).
+- **`Descrizione`**, **`descrizione completa`** o **`scheda`** (nel contesto,
+  anche **`modale`** se riferito a un testo): il testo completo visualizzato
+  nella modale del personaggio, con il link a Tolkien Gateway (campo dati
+  `info`).
+- ⚠️ **Trappola dei nomi incrociati**: il campo dati `descrizione` è la
+  **Info** colloquiale, e il campo dati `info` è la **Descrizione**
+  colloquiale. Non confonderli mai.
+
+### 🧹 Regola della non-ripetizione: ogni cosa nel suo campo
+
+Ogni elemento che ha un campo apposito (Nomi, Titoli, Genitori) vive **solo
+lì** e non si ripete nella Info, che va riformulata senza quelle parti.
+Corollari (bonifica completa v3.53, audit 2026-07-03):
+
+- Gli **attributi** che non sono veri nomi o titoli (es. `Prima Regina
+  Regnante di Númenor`, `fratello di Gwaihir`, `Capostipite della Casa di
+  Bëor`) stanno SOLO nella Info, mai tra Nomi/Titoli.
+- Le **genealogie** (`figlio/figlia di ...`) non stanno mai tra i Nomi o i
+  Titoli: ci sono i campi Genitori (eccezione tenuta: `Figlia del Fiume` di
+  Baccador, epiteto canonico, non genealogia in senso proprio).
+- Gli **epiteti genuini** stanno nei Nomi e non si narrano nella Info (niente
+  `detto X`), salvo quando la narrazione ha valore proprio (origine del
+  soprannome: `Labadal` di Sador, `il Capo` di Lotho).
+- Restano lecite le **sovrapposizioni solo apparenti** (la Info descrive con
+  parole comuni ciò che un'etichetta o un titolo dicono formalmente).
+
 ## 🗃️ Struttura dati
 
 - **L'array `dati` vive in un file dedicato: `arda/top/dati.js`** (`var dati =
