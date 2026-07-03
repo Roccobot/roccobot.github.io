@@ -392,6 +392,16 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   dei figli i flex item di `.rank-name` e due regole `order` ripristinano la
   resa storica `nome → etichette → icone` (desktop invariato). Le icone non si
   spezzano mai su due righe (blocco `inline-flex nowrap`).
+  - **Compattazione mirata `.name-tight` (dalla v3.43).** La funzione
+    `tightenNames` (chiamata a fine `renderList`, al resize e al caricamento
+    dei font) conta le righe occupate da nome+icone+etichette e, se sono più
+    di una, prova la classe `.name-tight` (solo spaziature più strette:
+    `letter-spacing` 0.03→0.006em, margini/gap ridotti; **mai** il corpo del
+    font), tenendola SOLO se fa guadagnare una riga intera. Copre i casi che
+    'per un pelo' sforano l'optimum (es. `Guardiani di Cirith Ungol`,
+    `Re-stregone di Angmar` a certe larghezze); il recupero è ~3%: oltre, la
+    riga in più è spazio davvero mancante, non spreco. Dinamica per necessità:
+    quali card sforano dipende da viewport e font del dispositivo.
   Storico: (1) per un breve periodo il `flex-basis:100%` era applicato a
   *tutte* le card → etichette a capo anche dove c'era spazio (es. Ingwë),
   ristretto agli apocrifi; (2) fino alla v3.41 la riga era un flex container:

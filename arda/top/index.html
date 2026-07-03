@@ -253,6 +253,11 @@ h1 {
 .rank-tipi, .rank-flags { display:contents; }
 .rank-name > .rank-tipi > * { order:1; }
 .rank-name > .rank-flags > * { order:2; }
+/* Compattazione mirata della riga nome (.name-tight, applicata da
+   tightenNames): recupera ~3% di larghezza stringendo SOLO le spaziature
+   (mai il corpo del font), e solo sulle card dove questo fa guadagnare una
+   riga intera: i casi che 'per un pelo' sforano l'optimum. */
+.rank-name.name-tight { letter-spacing:0.006em; gap:0.24em; }
 
 .rank-title {
   font-family:'EB Garamond',serif; font-style:italic;
@@ -1060,6 +1065,8 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name > .rank-flags .status-icon, .rank-name > .rank-flags .genere-svg { margin-left:0; }
   .rank-name > .rank-tipi { display:inline; }
   .rank-name > .rank-tipi .tipo-badge { margin-left:0.4em; }
+  .rank-name.name-tight > .rank-flags { margin-left:0.24em; }
+  .rank-name.name-tight > .rank-tipi .tipo-badge { margin-left:0.3em; }
   /* Solo le card apocrife (con la pill 'Solo HoME' in alto a destra) mandano
      SEMPRE le etichette a capo, per non collidere con la pill. Le card
      ordinarie tengono le etichette in coda al nome se ci stanno. */
@@ -1393,7 +1400,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.42</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1892,7 +1899,46 @@ function renderList() {
       }
     })(items[j]);
   }
+  tightenNames();
 }
+
+/* Compattazione mirata della riga nome. Conta le righe di testo occupate da
+   nome + icone + etichette; se sono piu' di una prova la classe .name-tight
+   (spaziature strette, vedi CSS) e la tiene SOLO se fa guadagnare una riga
+   intera. Dipende da viewport e font: si ricalcola a ogni render, al resize
+   e al caricamento dei font. Tre sole passate di layout (misura tutti,
+   applica ai candidati, verifica), niente lavoro per-card ripetuto. */
+function rankNameLines(el) {
+  var tops = [];
+  var nodes = el.querySelectorAll('.rank-name-text, .rank-flags, .rank-tipi .tipo-badge');
+  for (var i = 0; i < nodes.length; i++) {
+    var rects = nodes[i].getClientRects();
+    for (var k = 0; k < rects.length; k++) if (rects[k].width > 0.5) tops.push(rects[k].top);
+  }
+  if (!tops.length) return 0;
+  tops.sort(function(a, b){ return a - b; });
+  var lines = 1, cur = tops[0];
+  for (var j = 0; j < tops.length; j++) { if (tops[j] - cur > 8) { lines++; cur = tops[j]; } }
+  return lines;
+}
+function tightenNames() {
+  var els = document.querySelectorAll('#rank-list .rank-name');
+  var i, cand = [];
+  for (i = 0; i < els.length; i++) els[i].classList.remove('name-tight');
+  for (i = 0; i < els.length; i++) {
+    var n = rankNameLines(els[i]);
+    if (n > 1) cand.push({ el: els[i], before: n });
+  }
+  for (i = 0; i < cand.length; i++) cand[i].el.classList.add('name-tight');
+  for (i = 0; i < cand.length; i++)
+    if (rankNameLines(cand[i].el) >= cand[i].before) cand[i].el.classList.remove('name-tight');
+}
+var tightenTimer = null;
+window.addEventListener('resize', function() {
+  clearTimeout(tightenTimer);
+  tightenTimer = setTimeout(tightenNames, 150);
+});
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ tightenNames(); });
 
 var currentIdx = null;
 
