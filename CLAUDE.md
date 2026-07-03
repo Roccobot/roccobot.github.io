@@ -117,8 +117,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   farsi ingannare, contano solo i run creati da un push. Verifica di
   pubblicazione avvenuta: `curl` su
   `https://roccobot.github.io/arda/top/dati.js` e confronto di `datiVersion`
-  con l'attesa (caso reale: v3.42 e v3.43 rimaste non pubblicate per ore il
-  2026-07-03, sito fermo alla v3.41, tre deploy falliti e due rerun fantasma).
+  con l'attesa (caso reale: v3.42 e v3.43 rimaste non pubblicate il
+  2026-07-03, sito fermo alla v3.41: oltre 4 ore di blocco, 4 deploy falliti
+  e 2 rerun fantasma, con la pagina di stato GitHub sempre verde; questi
+  disservizi a raggio ristretto non vi compaiono, cfr. deploy-pages issue
+  418). Se il blocco persiste oltre le ~12 ore: ticket al supporto GitHub
+  (solo il proprietario del repo può aprirlo).
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
