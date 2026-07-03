@@ -103,6 +103,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   il branch remoto, quel range si svuota e l'avviso (falso positivo) sparisce.
   Il hook vive in `~/.claude` (ambiente effimero): modificarlo non
   persisterebbe tra sessioni, perciò si agisce sul workflow.
+- **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta
+  a pubblicare: serve che il workflow `pages build and deployment` di GitHub
+  vada a buon fine. Se fallisce con `Deployment failed, try again later`
+  (errore transitorio della piattaforma, il build dell'artefatto riesce) si
+  rilancia il job (`rerun_failed_jobs`); ma se il rilancio resta **appeso in
+  coda** con stati incoerenti (`queued` + `Cannot cancel` + `already running`),
+  non insistere sui rerun: **un nuovo push su `master`** (via PR ordinaria)
+  crea un run nuovo di zecca che riparte su infrastruttura fresca. Verifica di
+  pubblicazione avvenuta: `curl` su
+  `https://roccobot.github.io/arda/top/dati.js` e confronto di `datiVersion`
+  con l'attesa (caso reale: v3.42 e v3.43 rimaste non pubblicate per ore il
+  2026-07-03, sito fermo alla v3.41).
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
