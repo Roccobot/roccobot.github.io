@@ -191,6 +191,8 @@ h1 {
   -webkit-user-select:text; user-select:text;
 }
 
+.rank-empty { text-align:center; padding:2.5rem 1rem; color:var(--parchment-dim); font-style:italic; }
+
 .rank-item::before {
   content:''; position:absolute; inset:0;
   background:linear-gradient(90deg,transparent 0%,rgba(202,204,212,0.10) 50%,transparent 100%);
@@ -518,12 +520,11 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
     transition:opacity 0.2s;
   }
   #ctrl-panel .ctrl-ver-desk:hover { opacity:1; }
-  /* Categorie CENTRATE in verticale rispetto al pannello: i margini auto le
-     centrano tra toolbar (sopra) e nota (sotto), ma i due blocchi hanno
-     altezze diverse (nota più alta di ~12px): il top compensa la differenza
-     così il vuoto sopra e sotto le categorie, misurato dai bordi del
-     pannello, coincide. Ricalibrare se cambiano toolbar o nota. */
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:auto 0; position:relative; top:6px; }
+  /* Categorie ANCORATE IN ALTO (dalla v4.05, via l'intestazione della
+     legenda): l'intestazione 'CATEGORIE' si allinea otticamente con la
+     prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
+     ospita il tag del filtro badge. */
+  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:0; }
   #ctrl-panel .ctrl-names-note { display:block; margin-bottom:5.45px; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
@@ -602,7 +603,21 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 }
 .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.45; }
 .ctrl-dot { width:0.85rem; height:0.85rem; border-radius:3px; flex-shrink:0; }
-.ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.3rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; }
+/* Righe legenda = interruttori del filtro badge (v4.05): cliccabili, stato
+   .on evidenziato in oro, focus visibile da tastiera. */
+.ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.4rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; cursor:pointer; border:1px solid transparent; border-radius:6px; transition:background 0.15s,border-color 0.15s; user-select:none; }
+.ctrl-legend-row:hover { background:rgba(104,144,168,0.12); }
+.ctrl-legend-row:focus-visible { outline:2px solid var(--gold-bright); outline-offset:1px; }
+.ctrl-legend-row.on { background:rgba(210,178,92,0.13); border-color:rgba(224,194,108,0.55); }
+html[data-theme="light"] .ctrl-legend-row:hover { background:rgba(58,88,120,0.10); }
+html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); border-color:rgba(58,88,120,0.55); }
+/* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
+   × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
+.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; margin:0.65rem 0 0 0.3rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
+.ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:1; font-family:'EB Garamond',serif; }
+html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
+html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18); }
 .ctrl-legend-row span { white-space:nowrap; }
 .ctrl-label { white-space:nowrap; }
 .ctrl-legend-row img { font-size:1.141rem; flex-shrink:0; } /* 1.05rem / 0.92em */
@@ -1461,7 +1476,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.05</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1710,6 +1725,20 @@ var ICON_SVG = {
 // (west+envoy), (drago+balrog), (vilya+nenya+narya); 'est' ha riga propria
 // PRIMA di quella di Aman (la nave che va, poi la nave che torna).
 var ICON_ORDER = ['aratar','silmaril','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','morgoth','fellowship','onering','vilya','nenya','narya','menring'];
+// ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
+// Selezione per RIGA di legenda (le righe raggruppate contano come unità):
+// la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
+// (unione), incrociato con le categorie attive. Non persistito e ignorato
+// dagli URL condivisi (scelte dell'utente); azzerato entrando nel riordino.
+var BADGE_ROWS = {
+  aratar:['aratar'], silmaril:['silmaril'], incarnazione:['incarnazione'],
+  helcaraxe:['helcaraxe'], istari:['istari'],
+  king_high:['king_high','king_high_now'], king_std:['king_std'],
+  survivor:['survivor'], est:['est'], west:['west','envoy'],
+  drago:['drago','balrog'], morgoth:['morgoth'], fellowship:['fellowship'],
+  onering:['onering'], vilya:['vilya','nenya','narya'], menring:['menring']
+};
+var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
 // emblema dell'ordine (in lista invece c'è un'icona per ciascun mago). Il
 // Fellowship (Hobbit) non ha più variante: una sola icona, come tutte le altre.
@@ -1899,6 +1928,13 @@ var GENERE_SVG = {
 // modale e la navigazione con le frecce restano sempre coerenti con la lista.
 function isVisibile(p) {
   if (p.apocrifo && !showApocrifi) return false; // catalogo esteso: visibile solo con l'interruttore Apocrifi
+  if (badgeFilter.size) {
+    var hit = false;
+    badgeFilter.forEach(function(row){
+      if (!hit) BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; });
+    });
+    if (!hit) return false;
+  }
   return !!filterState[categoria(p)];
 }
 
@@ -1990,6 +2026,12 @@ function renderList() {
         '<span class="rank-title">' + titleYear + '</span>' +
       '</span>' +
     '</div>';
+  }
+  // Incrocio categorie × badge senza risultati: messaggio al posto del vuoto.
+  if (visN === 0) {
+    html = '<p class="rank-empty">' + (currentLang === 'it'
+      ? 'Nessun personaggio corrisponde ai filtri attivi.'
+      : 'No character matches the active filters.') + '</p>';
   }
   if (isFirstRender) {
     list.classList.add('list-animate');
@@ -2316,11 +2358,11 @@ var CAT_LABEL = {
 };
 var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
 var CTRL_I18N = {
-  it: { cat:'Categorie', icons:'Legenda iconografie', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
+  it: { cat:'Categorie', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
         dSave:'Salva', dKeep:'Chiudi', dRestore:'Annulla le modifiche', exportLabel:'Esporta',
         introAdmin:"Funzionalità solo per amministratori: inserisci la password. Se sei un visitatore, usa il tasto 'Esporta' per salvare la tua classifica personale." },
-  en: { cat:'Categories', icons:'Icon legend', close:'Close', all:'All', apocrifi:'Apocrypha', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
+  en: { cat:'Categories', close:'Close', all:'All', apocrifi:'Apocrypha', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
         confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state',
         dSave:'Save', dKeep:'Close', dRestore:'Discard changes', exportLabel:'Export',
         introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
@@ -2390,6 +2432,16 @@ function controlPanelHTML() {
     h += '<button class="ctrl-solo' + (isLocked ? ' cat-locked' : '') + '" data-cat="' + c + '"' + (isLocked ? ' disabled' : '') + '>' + soloTxt + '</button>';
     h += '</div>';
   });
+  // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a
+  // sinistra): compare sotto 'Animali' SOLO a filtro attivo; il click azzera
+  // tutti i badge selezionati.
+  if (badgeFilter.size) {
+    var nB = badgeFilter.size;
+    var tagTxt = currentLang === 'it' ? (nB === 1 ? '1 badge attivo' : nB + ' badge attivi')
+                                      : (nB === 1 ? '1 active badge' : nB + ' active badges');
+    var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
+    h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '"><span class="tag-x">×</span>' + tagTxt + '</button>';
+  }
   h += '</div>';
   // Nota sui nomi (visibile solo nel layout orizzontale, via CSS): sotto il
   // nome ci sono le alternative note; i veri nomi sono in grassetto.
@@ -2398,43 +2450,50 @@ function controlPanelHTML() {
      : 'Below each character\'s name are the known alternatives. The <strong>true names</strong> are in bold.') + '</div>';
   h += '</div>'; // chiude .ctrl-left
   // Legenda iconografie
-  h += '<div class="ctrl-section ctrl-section--legend"><div class="ctrl-h">' + T.icons + '</div>';
+  // Legenda SENZA intestazione (rimossa in v4.05 per compattezza, scelta
+  // utente: i badge sono autoesplicativi). Ogni riga è anche un FILTRO:
+  // click/Invio la attiva-disattiva (stato .on, aria-pressed); le righe
+  // raggruppate filtrano l'unione dei loro badge (vedi BADGE_ROWS).
+  h += '<div class="ctrl-section ctrl-section--legend">';
   var attualeTxt = currentLang === 'it' ? 'In carica' : 'Current';
+  function legRow(row, inner, extraCls) {
+    var on = badgeFilter.has(row);
+    return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + (on ? ' on' : '')
+      + '" data-row="' + row + '" role="button" tabindex="0" aria-pressed="' + (on ? 'true' : 'false') + '">' + inner + '</div>';
+  }
   ICON_ORDER.forEach(function(k){
     // Resi nella stessa riga del capofila del gruppo (vedi nota su ICON_ORDER)
     if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya') return;
     if (k === 'king_high') {
-      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
-         + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span></div>';
+      h += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
+         + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span>');
       return;
     }
     if (k === 'west') {
       // In legenda etichette corte (il tooltip del badge resta la frase estesa)
       var westTxt = currentLang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
       var envoyTxt = currentLang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
-         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span></div>';
+      h += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
+         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
       return;
     }
     if (k === 'drago') {
-      // Coppia degli uccisori: 'Uccise un Drago / un Balrog' su una riga sola
-      var balrogTxt = IL['balrog']; // per esteso ('Uccise un Balrog'), scelta utente
-      h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span>' + IL['drago'] + '</span>'
-         + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + balrogTxt + '</span></span></div>';
+      // Coppia degli uccisori, entrambe per esteso (scelta utente)
+      h += legRow('drago', '<span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span>' + IL['drago'] + '</span>'
+         + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
       return;
     }
     if (k === 'vilya') {
       // Riga unica dei Tre Anelli degli Elfi: tre icone + testo unico; il nome
       // del singolo Anello resta nel tooltip di ciascuna icona.
-      var ringsTxt = currentLang === 'it' ? 'Portatore di un Anello degli Elfi' : 'Bearer of one of the Elven Rings';
-      h += '<div class="ctrl-legend-row ctrl-legend-rings">'
-         + '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join('Vilya') + '</span>'
+      var ringsTxt = currentLang === 'it' ? 'Portatore di uno dei Tre Anelli degli Elfi' : 'Bearer of one of the Three Elven Rings';
+      h += legRow('vilya', '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join('Vilya') + '</span>'
          + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join('Nenya') + '</span>'
          + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join('Narya') + '</span>'
-         + '<span>' + ringsTxt + '</span></div>';
+         + '<span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
       return;
     }
-    h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span></div>';
+    h += legRow(k, '<span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
   });
   // Riga del genere: pill unica a due metà (Maschio | Femmina) in fondo alla
   // legenda. Dietro il flag FEATURES.genderLegendPill (definito nell'head):
@@ -2500,6 +2559,19 @@ function wireControlPanel() {
       applyFilter();
     });
   });
+  // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio)
+  function toggleBadgeRow(row){
+    if (badgeFilter.has(row)) badgeFilter.delete(row); else badgeFilter.add(row);
+    applyFilter();
+  }
+  panel.querySelectorAll('.ctrl-legend-row[data-row]').forEach(function(rowEl){
+    rowEl.addEventListener('click', function(){ toggleBadgeRow(rowEl.getAttribute('data-row')); });
+    rowEl.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBadgeRow(rowEl.getAttribute('data-row')); }
+    });
+  });
+  var badgeTag = document.getElementById('ctrl-badge-tag');
+  if (badgeTag) badgeTag.addEventListener('click', function(){ badgeFilter.clear(); applyFilter(); });
   var resetBtn = document.getElementById('ctrl-reset');
   if (resetBtn) {
     // "Tutti": abilita tutte le categorie. Su mobile il touchend rigenera il pannello;
@@ -2626,6 +2698,7 @@ function fallbackCopy(text) {
 // admin-only: entrambi dietro parola d'ordine (entrando nel riordino;
 // uscire no). enterReorder forza tutte le categorie visibili (requisito).
 function enterReorder() {
+  badgeFilter.clear(); // il riordino esige la lista completa (come le categorie tutte attive)
   CATS.forEach(function(c){ filterState[c] = true; });
   showApocrifi = true; // classifica ASSOLUTA: il riordino opera sull'elenco completo (Apocrifi inclusi)
   reorderMode = true;
