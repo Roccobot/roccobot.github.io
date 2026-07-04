@@ -524,11 +524,16 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      legenda): l'intestazione 'CATEGORIE' si allinea otticamente con la
      prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
      ospita il tag del filtro badge. */
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:2.15rem 0 0; }
+  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:calc(2.15rem + 3px) 0 0; }
   /* Righe categoria e righe legenda sullo STESSO passo verticale (31.5px):
      senza altezza esplicita i due ritmi differivano di ~0.3px a riga e le
      righe uscivano progressivamente di fase (4px sull'ultima). */
   #ctrl-panel .ctrl-legend-row { box-sizing:border-box; height:31.5px; }
+  /* ALLINEAMENTO SUI CONTORNI (riquadri delle righe attive), non sul testo:
+     il contorno della PRIMA riga combacia col box della toolbar (in alto) e
+     quello dell'ULTIMA riga col fondo visivo del testo della nota (in
+     basso, margine negativo che compensa lo slack di interlinea). */
+  #ctrl-panel .ctrl-section--legend { margin-top:3px; }
   #ctrl-panel .ctrl-cat-row { height:31.5px; }
   /* Tag del filtro: centrato in orizzontale (auto laterali) e in verticale
      nello spazio tra 'Animali' e l'avviso sui nomi (auto sopra/sotto; con
@@ -541,9 +546,14 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
      nota, non ammassato in fondo. */
-  /* margin-bottom tarato perché l'ULTIMA riga dell'avviso condivida la
-     linea di base col testo dei Nove Anelli (ultima riga della legenda). */
-  #ctrl-panel .ctrl-names-note { display:block; margin-top:auto; margin-bottom:0.45px; }
+  /* Armonizzazione ottica dei due stati (scelta utente): la LINEA DI BASE
+     del testo della nota combacia con quella del testo dell'ultima riga
+     della legenda (riferimento a contorni spenti); la righetta qui sotto
+     chiude la colonna alla stessa quota del fondo del contorno attivo
+     (riferimento a contorni accesi). Margini tarati su misura. */
+  #ctrl-panel .ctrl-names-note { display:block; margin-top:auto; margin-bottom:0; }
+  #ctrl-panel .ctrl-note-rule { display:block; height:1px; background:rgba(104,144,168,0.28); margin:2px 0 0 0.3rem; }
+  html[data-theme="light"] #ctrl-panel .ctrl-note-rule { background:rgba(58,88,120,0.3); }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
 .ctrl-sheet-head { display:none; }
@@ -601,6 +611,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   color:var(--parchment-dim); padding:0 0.3rem; max-width:17rem;
 }
 .ctrl-names-note strong { font-weight:600; color:var(--parchment); }
+.ctrl-note-rule { display:none; }
 .ctrl-row {
   display:flex; align-items:center; gap:0.55rem; padding:0.32rem 0.3rem; border-radius:7px;
   cursor:pointer; font-size:0.84rem; color:var(--parchment); transition:background 0.15s; user-select:none;
@@ -1498,7 +1509,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.08</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.09</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2477,6 +2488,11 @@ function controlPanelHTML() {
   h += '<div class="ctrl-names-note">' + (currentLang === 'it'
      ? 'Sotto i nomi dei personaggi sono indicate le alternative note. I <strong>veri nomi</strong> sono in grassetto.'
      : 'Below each character\'s name are the known alternatives. The <strong>true names</strong> are in bold.') + '</div>';
+  // Righetta di riferimento sotto la nota (solo desktop, via CSS): elemento
+  // grafico che segna il bordo inferiore della colonna anche quando nessun
+  // contorno di riga è acceso; il suo fondo combacia col fondo del contorno
+  // dell'ultima riga della legenda (entrambi chiudono la colonna).
+  h += '<div class="ctrl-note-rule"></div>';
   h += '</div>'; // chiude .ctrl-left
   // Legenda iconografie
   // Legenda SENZA intestazione (rimossa in v4.05 per compattezza, scelta
