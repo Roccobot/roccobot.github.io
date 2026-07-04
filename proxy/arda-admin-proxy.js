@@ -147,11 +147,30 @@ const DATI_MAX_BYTES = 900000;
 const MSG_MAX = 300;       // messaggio di commit
 const TRANSLATE_MAX = 20000; // testo da tradurre
 
-// Rate limiting per IP (contatore in Workers KV, binding RL_KV): al massimo
-// RL_MAX richieste ogni RL_WINDOW secondi. L'uso legittimo (1-2 richieste
-// per salvataggio admin) non si avvicina mai alla soglia.
+// Rate limiting per IP: al massimo RL_MAX richieste ogni RL_WINDOW secondi.
+// L'uso legittimo (1-2 richieste per salvataggio admin) non si avvicina mai
+// alla soglia. Meccanismo PRIMARIO: contatore IN MEMORIA nell'isolate
+// (finestra scorrevole), immediato e coerente; il KV fa da rinforzo
+// secondario best-effort tra isolate (vedi sotto). Perché non KV da solo:
+// le letture KV sono servite da cache e le scritture propagano con ritardo,
+// quindi il valore riletto resta indietro e la soglia non scatterebbe in
+// tempo (verificato: 60 tentativi in ~30 s, nessun 429). L'in-memory non ha
+// questo ritardo; un brute force reale (raffica veloce dallo stesso IP)
+// colpisce lo stesso isolate caldo e viene fermato.
 const RL_MAX = 20;
 const RL_WINDOW = 60;
+// Stato in memoria dell'isolate: IP -> array di timestamp (secondi) entro la
+// finestra. Vive quanto l'isolate; azzerarsi a un riavvio è accettabile (il
+// KV resta come rete). Potatura opportunistica per non crescere all'infinito.
+const rlMem = new Map();
+function rlCheck(ip, now) {
+  var arr = rlMem.get(ip);
+  if (!arr) { arr = []; rlMem.set(ip, arr); }
+  var cutoff = now - RL_WINDOW;
+  while (arr.length && arr[0] < cutoff) arr.shift();
+  if (rlMem.size > 5000) { for (const k of rlMem.keys()) { if (k !== ip) { rlMem.delete(k); if (rlMem.size <= 4000) break; } } }
+  return arr;
+}
 
 // fetch con timeout: senza, una GitHub/Gemini appesa terrebbe la richiesta
 // bloccata fino al limite del runtime.
@@ -170,34 +189,33 @@ export default {
     // 'rev' dice quale revisione del Worker è davvero attiva (i deploy della
     // Git integration non sono verificabili in altro modo senza dashboard),
     // 'rl' se il binding del rate limiting (KV) è presente. Nessun segreto.
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 5, rl: !!env.RL_KV }, 405, ch);
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 6, rl: true, rlkv: !!env.RL_KV }, 405, ch);
 
-    // Rate limiting per IP: contatore a finestra fissa in Workers KV (binding
-    // RL_KV, vedi wrangler.toml), applicato PRIMA di leggere il body e di
-    // toccare la password: un brute force scala da migliaia di tentativi al
-    // minuto a ~RL_MAX. Dettagli e compromessi:
-    //  - finestra fissa di RL_WINDOW secondi: chiave rl:<ip>:<n-finestra>,
-    //    scade da sé (expirationTtl, minimo KV 60 s);
-    //  - una volta oltre soglia si risponde 429 in sola lettura (niente
-    //    scritture: non si consuma quota KV e non si tocca il limite di
-    //    1 scrittura/s per chiave);
-    //  - l'incremento read-modify-write non è atomico e KV si propaga con
-    //    qualche secondo di ritardo: sotto attacco concorrente può sfuggire
-    //    qualche tentativo oltre soglia — irrilevante per lo scopo;
-    //  - FAIL-OPEN: qualunque errore KV lascia passare (meglio un Worker
-    //    senza limitatore che un admin chiuso fuori).
-    // (Storico: prima c'era il binding nativo 'ratelimit' [unsafe.bindings],
-    // che i Workers Builds accettano ma NON attivano: limit() rispondeva
-    // sempre success:true. Diagnosi del 2026-07-04, PR #294-297.)
-    if (env.RL_KV) {
-      try {
-        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-        const win = Math.floor(Date.now() / 1000 / RL_WINDOW);
-        const key = 'rl:' + ip + ':' + win;
-        const count = parseInt(await env.RL_KV.get(key), 10) || 0;
-        if (count >= RL_MAX) return json({ ok: false, error: 'rate-limited' }, 429, ch);
-        await env.RL_KV.put(key, String(count + 1), { expirationTtl: Math.max(2 * RL_WINDOW, 60) });
-      } catch (e) {}
+    // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
+    // password: un brute force scala da migliaia di tentativi al minuto a
+    // ~RL_MAX. Primario: contatore in memoria dell'isolate (rlCheck),
+    // immediato. Secondario best-effort: contatore a finestra fissa in KV,
+    // che aiuta a limitare anche quando le richieste cadono su isolate
+    // diversi; siccome le letture KV possono essere stale, la decisione usa
+    // il MASSIMO tra i due (chi vede più tentativi fa scattare il blocco).
+    // FAIL-OPEN su ogni errore: meglio un Worker senza limitatore che un
+    // admin chiuso fuori. (Storico: il binding nativo 'ratelimit' via
+    // unsafe.bindings è no-op sui Workers Builds; il solo KV è troppo lento.
+    // Diagnosi 2026-07-04, PR #294-298.)
+    {
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      const now = Date.now() / 1000;
+      const hits = rlCheck(ip, now);
+      let kvCount = 0, kvKey = null;
+      if (env.RL_KV) {
+        try {
+          kvKey = 'rl:' + ip + ':' + Math.floor(now / RL_WINDOW);
+          kvCount = parseInt(await env.RL_KV.get(kvKey), 10) || 0;
+        } catch (e) {}
+      }
+      if (Math.max(hits.length, kvCount) >= RL_MAX) return json({ ok: false, error: 'rate-limited' }, 429, ch);
+      hits.push(now);
+      if (kvKey) { try { await env.RL_KV.put(kvKey, String(kvCount + 1), { expirationTtl: Math.max(2 * RL_WINDOW, 60) }); } catch (e) {} }
     }
 
     let body;
