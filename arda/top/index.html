@@ -1333,6 +1333,24 @@ html[data-theme="light"] .tipo-drago { background:rgba(185,0,0,0.10); border-col
 html[data-theme="light"] .tipo-lupo { background:rgba(69,77,95,0.12); border-color:rgba(60,71,92,0.8); color:#3c475c; }
 html[data-theme="light"] .tipo-bestia { background:rgba(134,95,28,0.12); border-color:rgba(125,89,11,0.8); color:#7d590b; }
 html[data-theme="light"] .tipo-bombadil { background:rgba(30,90,20,0.12); border-color:rgba(39,108,13,0.8); color:#276c0d; }
+/* ── Compensazione contrasto sulle card apocrife (SOLO tema chiaro) ──
+   La velatura opacity:0.8 delle card apocrife (scelta deliberata, intatta)
+   sbiadisce le etichette sotto la soglia AA 4.5:1. Qui i colori di partenza
+   sono più scuri del minimo necessario perché il colore PERCEPITO dopo la
+   velatura superi 4.6:1 (bordo = stesso RGB @0.8, come da regola). Coprono
+   i tipi presenti oggi sulle 18 voci apocrife: se in futuro una voce
+   apocrifa avrà un tipo diverso, aggiungere qui la compensazione. */
+html[data-theme="light"] .rank-item.apocrifo .tipo-noldor { border-color:rgba(13,54,159,0.8); color:#0d369f; }
+html[data-theme="light"] .rank-item.apocrifo .tipo-teleri, html[data-theme="light"] .rank-item.apocrifo .tipo-sindar { border-color:rgba(0,76,66,0.8); color:#004c42; }
+html[data-theme="light"] .rank-item.apocrifo .tipo-vanyar { border-color:rgba(0,72,91,0.8); color:#00485b; }
+html[data-theme="light"] .rank-item.apocrifo .tipo-haleth { border-color:rgba(84,63,0,0.8); color:#543f00; }
+html[data-theme="light"] .rank-item.apocrifo .tipo-hador { border-color:rgba(107,48,0,0.8); color:#6b3000; }
+html[data-theme="light"] .rank-item.apocrifo .tipo-beor { border-color:rgba(141,19,0,0.8); color:#8d1300; }
+html[data-theme="light"] .rank-item.apocrifo .tipo-generico { border-color:rgba(68,68,68,0.8); color:#444444; }
+html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
+/* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
+   override locale, non si tocca la variabile. */
+html[data-theme="light"] #res-link { color:#486d8c; }
 html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
 html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
 /* Stesso override anche per i jump-FAB: coi colori del tema scuro erano
@@ -1414,7 +1432,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.81</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.82</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
