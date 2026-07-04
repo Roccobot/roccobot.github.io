@@ -649,6 +649,17 @@ specifico del dataset):
   per la prima lettera della riga; gli elementi successivi di un elenco separato
   da virgola seguono le regole normali.
 
+- **Filtri badge (dalla v4.05).** Ogni riga della legenda del Pannello è un
+  interruttore (`BADGE_ROWS`: le righe raggruppate filtrano l'unione dei loro
+  badge): selezioni multiple in **unione**, incrociate con le categorie
+  attive dentro `isVisibile`. Non persistito, **ignorato dagli URL
+  condivisi**, azzerato entrando nel riordino; incrocio senza risultati →
+  messaggio `.rank-empty`. Sotto le Categorie: a filtro attivo il **tag**
+  `× N badge attivi` (centrato sui due assi, il click azzera), a filtro
+  spento il **suggerimento** in corsivo (solo desktop). Le righe categoria
+  e legenda condividono il passo verticale esplicito di 31.5px (righe in
+  fase, deriva azzerata).
+
 ## 📚 Nuovi personaggi e canone
 
 - **Verifica delle fonti sempre.** Per ogni personaggio nuovo o modificato,
