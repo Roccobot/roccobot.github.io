@@ -537,14 +537,13 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      basso, margine negativo che compensa lo slack di interlinea). */
   #ctrl-panel .ctrl-section--legend { margin-top:3px; }
   #ctrl-panel .ctrl-cat-row { height:31.5px; }
-  /* Tag del filtro: centrato in orizzontale (auto laterali) e in verticale
-     nello spazio tra 'Animali' e l'avviso sui nomi (auto sopra/sotto; con
-     tag presente l'avviso rinuncia al proprio margin-top:auto, regola qui
-     sotto, così i due auto del tag si spartiscono equamente lo spazio). */
-  #ctrl-panel .ctrl-left .ctrl-badge-tag { margin:auto; }
-  #ctrl-panel .ctrl-left .ctrl-badge-hint { display:block; margin:auto 0; }
-  #ctrl-panel .ctrl-left .ctrl-badge-tag + .ctrl-names-note,
-  #ctrl-panel .ctrl-left .ctrl-badge-hint + .ctrl-names-note { margin-top:0; }
+  /* Slot del tag: centrato in verticale nello spazio tra 'Animali' e
+     l'avviso sui nomi (auto sopra/sotto; l'avviso rinuncia al proprio
+     margin-top:auto, regola qui sotto). Dentro: tag centrato, suggerimento
+     allineato a sinistra. */
+  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:auto 0; min-height:0; display:flex; flex-direction:column; align-items:center; }
+  #ctrl-panel .ctrl-left .ctrl-tag-slot .ctrl-badge-hint { display:block; align-self:flex-start; margin:0; }
+  #ctrl-panel .ctrl-left .ctrl-tag-slot + .ctrl-names-note { margin-top:0; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
      nota, non ammassato in fondo. */
@@ -644,7 +643,11 @@ html[data-theme="light"] .ctrl-legend-row:hover { background:rgba(58,88,120,0.10
 html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); border-color:rgba(58,88,120,0.55); }
 /* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
    × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
-.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; margin:0.8rem auto 0.4rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+/* Slot del tag: su mobile altezza FISSA (spazio riservato anche a filtro
+   spento: niente salti quando il tag compare), tag centrato dentro; un po'
+   più su e con aria prima della legenda (scelte utente). */
+.ctrl-tag-slot { min-height:2.9rem; display:flex; align-items:center; justify-content:center; margin:0.15rem 0 0.55rem; }
+.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
 /* × centrata in verticale nel riquadro: line-height azzerata (il glifo in
    Garamond siede alto sulla baseline) e centraggio affidato al flex. */
@@ -1515,7 +1518,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.11</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2486,6 +2489,9 @@ function controlPanelHTML() {
   // sinistra): SOLO a filtro attivo; figlio diretto di .ctrl-left, così su
   // desktop i margini auto lo centrano (in orizzontale e in verticale tra
   // 'Animali' e l'avviso sui nomi). Il click azzera tutti i badge.
+  // SLOT del tag sempre presente (altezza riservata su mobile): la comparsa
+  // del tag non fa scorrere la legenda sottostante.
+  h += '<div class="ctrl-tag-slot">';
   if (badgeFilter.size) {
     var nB = badgeFilter.size;
     var tagTxt = currentLang === 'it' ? (nB === 1 ? '1 badge attivo' : nB + ' badge attivi')
@@ -2499,6 +2505,7 @@ function controlPanelHTML() {
        ? 'Scegli uno o più badge (colonna a destra)<br>per filtrare la selezione attuale.'
        : 'Pick one or more badges (right column)<br>to filter the current selection.') + '</p>';
   }
+  h += '</div>';
   // Nota sui nomi (visibile solo nel layout orizzontale, via CSS): sotto il
   // nome ci sono le alternative note; i veri nomi sono in grassetto.
   h += '<div class="ctrl-names-note">' + (currentLang === 'it'
