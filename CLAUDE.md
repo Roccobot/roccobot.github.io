@@ -121,8 +121,13 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   2026-07-03, sito fermo alla v3.41: oltre 4 ore di blocco, 4 deploy falliti
   e 2 rerun fantasma, con la pagina di stato GitHub sempre verde; questi
   disservizi a raggio ristretto non vi compaiono, cfr. deploy-pages issue
-  418). Se il blocco persiste oltre le ~12 ore: ticket al supporto GitHub
-  (solo il proprietario del repo può aprirlo).
+  418). Il disservizio può essere **intermittente per giorni** (2026-07-03/04:
+  fallimenti a macchia di leopardo per oltre 24 ore, con deploy riusciti in
+  mezzo; caso v3.70 rimasta indietro ~9 ore, rerun fantasma per tutta la
+  notte): finché i push freschi pubblicano, non è un blocco totale e basta
+  attendere il push successivo. Se anche i push freschi falliscono
+  ininterrottamente oltre le ~12 ore: ticket al supporto GitHub (solo il
+  proprietario del repo può aprirlo).
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
