@@ -81,7 +81,7 @@ modificare i valori → salvare (Ctrl+S).
   incorporato nello script come SVG; con `LOGO_PERSONALIZZATO` si può comunque
   usare un'altra immagine (URL).
 
-## Emojis.wiki AI — reset limite generazioni
+## Emojis.wiki AI Gen Reset
 
 **File:** `EmojisWikiReset.user.js`
 
