@@ -159,7 +159,11 @@ export default {
     const ch = corsHeaders(origin, allowed);
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: ch });
-    if (request.method !== 'POST') return json({ ok: false, error: 'method' }, 405, ch);
+    // La risposta al GET fa anche da spia di salute osservabile dall'esterno:
+    // 'rev' dice quale revisione del Worker è davvero attiva (i deploy della
+    // Git integration non sono verificabili in altro modo senza dashboard),
+    // 'rl' se il binding di rate limiting è presente. Nessun segreto esposto.
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 2, rl: !!env.LIMITER }, 405, ch);
 
     // Rate limiting per IP (binding nativo LIMITER, vedi wrangler.toml):
     // risponde 429 PRIMA di leggere il body e di toccare la password, così un
