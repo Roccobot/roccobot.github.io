@@ -518,7 +518,12 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
     transition:opacity 0.2s;
   }
   #ctrl-panel .ctrl-ver-desk:hover { opacity:1; }
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:auto 0; }
+  /* Categorie CENTRATE in verticale rispetto al pannello: i margini auto le
+     centrano tra toolbar (sopra) e nota (sotto), ma i due blocchi hanno
+     altezze diverse (nota più alta di ~12px): il top compensa la differenza
+     così il vuoto sopra e sotto le categorie, misurato dai bordi del
+     pannello, coincide. Ricalibrare se cambiano toolbar o nota. */
+  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:auto 0; position:relative; top:6px; }
   #ctrl-panel .ctrl-names-note { display:block; margin-bottom:5.45px; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
@@ -619,7 +624,8 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 .ctrl-legend-row .leg-group--est { gap:0.34rem; }
 .ctrl-legend-row .leg-group--balrog { gap:0.4rem; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
-.ctrl-legend-rings { gap:0.45rem; }
+.ctrl-legend-rings { gap:0.5rem; }
+.ctrl-legend-rings .leg-ring + .leg-ring { margin-left:-0.28rem; }
 .ctrl-legend-rings .leg-ring { display:inline-flex; align-items:center; gap:0.22rem; }
 .ctrl-legend-rings .leg-ring img { margin-left:0; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
@@ -1455,7 +1461,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.93</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1701,8 +1707,9 @@ var ICON_SVG = {
 // Ordine definitivo dei badge (deciso dall'utente, 2026-07-04): vale per la
 // resa in lista, per la legenda del Pannello e per la griglia dell'editor
 // admin. In legenda condividono la riga: (king_high+king_high_now),
-// (west+envoy+est), (drago+balrog), (vilya+nenya+narya).
-var ICON_ORDER = ['aratar','silmaril','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','west','envoy','est','drago','balrog','morgoth','fellowship','onering','vilya','nenya','narya','menring'];
+// (west+envoy), (drago+balrog), (vilya+nenya+narya); 'est' ha riga propria
+// PRIMA di quella di Aman (la nave che va, poi la nave che torna).
+var ICON_ORDER = ['aratar','silmaril','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','morgoth','fellowship','onering','vilya','nenya','narya','menring'];
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
 // emblema dell'ordine (in lista invece c'è un'icona per ciascun mago). Il
 // Fellowship (Hobbit) non ha più variante: una sola icona, come tutte le altre.
@@ -1734,8 +1741,8 @@ var ICON_LABEL = {
     nenya:   "Portatore di Nenya (Anello dell’Acqua)",
     narya:   "Portatore di Narya (Anello del Fuoco)",
     menring: "Portatore di uno dei Nove Anelli degli Uomini",
-    incarnazione: "Riebbe il corpo dopo le Aule di Mandos",
-    est:     "Attraversò il Mare verso Est, dalle Terre Imperiture alla Terra di Mezzo",
+    incarnazione: "Tornò con il proprio corpo dalle Aule di Mandos",
+    est:     "Attraversò il Mare da Aman alla Terra di Mezzo",
     drago:   "Uccise un Drago",
     balrog:  "Uccise un Balrog",
     morgoth: "Affrontò Morgoth in duello"
@@ -1757,8 +1764,8 @@ var ICON_LABEL = {
     nenya:   "Bearer of Nenya (Ring of Water)",
     narya:   "Bearer of Narya (Ring of Fire)",
     menring: "Bearer of one of the Nine Rings of Men",
-    incarnazione: "Re-embodied after the Halls of Mandos",
-    est:     "Crossed the Sea eastward, from the Undying Lands to Middle-earth",
+    incarnazione: "Returned bodily from the Halls of Mandos",
+    est:     "Crossed the Sea from Aman to Middle-earth",
     drago:   "Slew a Dragon",
     balrog:  "Slew a Balrog",
     morgoth: "Faced Morgoth in single combat"
@@ -1777,6 +1784,7 @@ var ICON_LABEL_OVERRIDE = {
   'Radagast': { west: AMAN_DEDOTTO },
   'Glorfindel': { west: AMAN_DEDOTTO },
   'Erestor': { west: AMAN_DEDOTTO },
+  'Ingwion': { west: AMAN_DEDOTTO },
   'Lindir': { west: AMAN_DEDOTTO }
 };
 function buildStatus(p) {
@@ -2394,7 +2402,7 @@ function controlPanelHTML() {
   var attualeTxt = currentLang === 'it' ? 'In carica' : 'Current';
   ICON_ORDER.forEach(function(k){
     // Resi nella stessa riga del capofila del gruppo (vedi nota su ICON_ORDER)
-    if (k === 'king_high_now' || k === 'envoy' || k === 'est' || k === 'balrog' || k === 'nenya' || k === 'narya') return;
+    if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya') return;
     if (k === 'king_high') {
       h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
          + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span></div>';
@@ -2404,26 +2412,26 @@ function controlPanelHTML() {
       // In legenda etichette corte (il tooltip del badge resta la frase estesa)
       var westTxt = currentLang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
       var envoyTxt = currentLang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-      var estTxt = currentLang === 'it' ? 'Tornò a Est' : 'Sailed back East';
       h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
-         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>'
-         + '<span class="leg-group leg-group--est">' + ICON_SVG['est'].split('%L%').join('') + '<span>' + estTxt + '</span></span></div>';
+         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span></div>';
       return;
     }
     if (k === 'drago') {
       // Coppia degli uccisori: 'Uccise un Drago / un Balrog' su una riga sola
-      var balrogTxt = currentLang === 'it' ? 'Un Balrog' : 'A Balrog';
+      var balrogTxt = IL['balrog']; // per esteso ('Uccise un Balrog'), scelta utente
       h += '<div class="ctrl-legend-row"><span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span>' + IL['drago'] + '</span>'
          + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + balrogTxt + '</span></span></div>';
       return;
     }
     if (k === 'vilya') {
-      // Riga unica dei Tre Anelli degli Elfi: 'Portatore di [icona] Vilya ...'
-      var bearerTxt = currentLang === 'it' ? 'Portatore di' : 'Bearer of';
-      h += '<div class="ctrl-legend-row ctrl-legend-rings"><span>' + bearerTxt + '</span>'
-         + '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join('') + '<span>Vilya</span></span>'
-         + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join('') + '<span>Nenya</span></span>'
-         + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join('') + '<span>Narya</span></span></div>';
+      // Riga unica dei Tre Anelli degli Elfi: tre icone + testo unico; il nome
+      // del singolo Anello resta nel tooltip di ciascuna icona.
+      var ringsTxt = currentLang === 'it' ? 'Portatore di un Anello degli Elfi' : 'Bearer of one of the Elven Rings';
+      h += '<div class="ctrl-legend-row ctrl-legend-rings">'
+         + '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join('Vilya') + '</span>'
+         + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join('Nenya') + '</span>'
+         + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join('Narya') + '</span>'
+         + '<span>' + ringsTxt + '</span></div>';
       return;
     }
     h += '<div class="ctrl-legend-row"><span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span></div>';
