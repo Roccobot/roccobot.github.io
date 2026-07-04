@@ -249,6 +249,28 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 - **Il PAT GitHub vive solo come secret del Worker** (`GITHUB_PAT`): mai
   nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente
   dell'ambiente cloud.
+- **Rate limiting anti brute force sulla parola d'ordine (via Durable
+  Object).** Il Worker limita a 20 richieste/60 s per IP prima ancora di
+  validare la password, con un **Durable Object** `RateLimiter` (una istanza
+  per IP → contatore atomico e globale, finestra scorrevole; binding `RL_DO`
+  + migrazione `new_sqlite_classes` nel `wrangler.toml`, piano gratuito).
+  **Fail-open**: qualunque errore lascia passare (mai chiudere fuori
+  l'admin). La vera serratura resta la password (confronto a tempo costante
+  lato server); il rate limiting è difesa in più.
+  - **Cosa NON funziona su questo hosting** (verificato il 2026-07-04, non
+    riprovarlo): il *binding nativo* `ratelimit` (`unsafe.bindings`) è
+    **no-op** quando lo deploya la Git integration (Workers Builds) —
+    `limit()` risponde sempre `success:true`; un *contatore in KV* è troppo
+    lento (letture cachate, scritture con propagazione ritardata: la soglia
+    non scatta in tempo); un *contatore in memoria dell'isolate* non conta
+    perché Cloudflare sparge le richieste su isolate diversi. Solo il Durable
+    Object dà un conteggio affidabile. Storia in PR #294-#302.
+  - **Spia di salute del Worker:** un `GET` (o qualunque non-POST) risponde
+    `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del
+    codice attiva (utile per verificare che una ridistribuzione via Git sia
+    andata a buon fine, non altrimenti ispezionabile senza dashboard), `rl`
+    se il binding `RL_DO` è presente. Nessun segreto esposto. Bump di `rev`
+    a ogni modifica sostanziale del Worker.
 
 ## 🗒️ Glossario dei contenuti (nomi colloquiali)
 
