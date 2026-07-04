@@ -18,6 +18,10 @@
  *   ALLOWED_ORIGIN  → origine autorizzata, es. https://roccobot.github.io
  *   GEMINI_MODEL    → (opzionale) override del model; default 'gemini-flash-latest'
  *
+ * Binding (wrangler.toml):
+ *   LIMITER         → rate limiting nativo per IP (20 richieste/60 s), anti
+ *                     brute force sulla parola d'ordine; fail-open se assente.
+ *
  * Deploy: vedi proxy/README.md
  */
 
@@ -156,6 +160,19 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: ch });
     if (request.method !== 'POST') return json({ ok: false, error: 'method' }, 405, ch);
+
+    // Rate limiting per IP (binding nativo LIMITER, vedi wrangler.toml):
+    // risponde 429 PRIMA di leggere il body e di toccare la password, così un
+    // brute force scala da migliaia di tentativi al minuto a 20. Fail-open se
+    // il binding manca o dà errore (deploy manuale senza binding): meglio un
+    // Worker senza limitatore che un admin chiuso fuori.
+    if (env.LIMITER) {
+      try {
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const rl = await env.LIMITER.limit({ key: ip });
+        if (rl && rl.success === false) return json({ ok: false, error: 'rate-limited' }, 429, ch);
+      } catch (e) {}
+    }
 
     let body;
     try { body = await request.json(); }
