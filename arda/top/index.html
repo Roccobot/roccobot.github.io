@@ -525,12 +525,19 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
      ospita il tag del filtro badge. */
   #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:2.15rem 0 0; }
+  /* Righe categoria e righe legenda sullo STESSO passo verticale (31.5px):
+     senza altezza esplicita i due ritmi differivano di ~0.3px a riga e le
+     righe uscivano progressivamente di fase (4px sull'ultima). */
+  #ctrl-panel .ctrl-legend-row { box-sizing:border-box; height:31.5px; }
+  #ctrl-panel .ctrl-cat-row { height:31.5px; }
   /* Tag del filtro: centrato in orizzontale (auto laterali) e in verticale
      nello spazio tra 'Animali' e l'avviso sui nomi (auto sopra/sotto; con
      tag presente l'avviso rinuncia al proprio margin-top:auto, regola qui
      sotto, così i due auto del tag si spartiscono equamente lo spazio). */
   #ctrl-panel .ctrl-left .ctrl-badge-tag { margin:auto; }
-  #ctrl-panel .ctrl-left .ctrl-badge-tag + .ctrl-names-note { margin-top:0; }
+  #ctrl-panel .ctrl-left .ctrl-badge-hint { display:block; margin:auto 0; }
+  #ctrl-panel .ctrl-left .ctrl-badge-tag + .ctrl-names-note,
+  #ctrl-panel .ctrl-left .ctrl-badge-hint + .ctrl-names-note { margin-top:0; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
      nota, non ammassato in fondo. */
@@ -631,6 +638,8 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:0; font-family:'EB Garamond',serif; display:inline-flex; align-items:center; position:relative; top:-0.04em; }
 html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
 html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18); }
+/* Suggerimento a filtro spento (solo desktop): occupa il posto del tag. */
+.ctrl-badge-hint { display:none; font-family:'EB Garamond',serif; font-style:italic; font-size:0.85rem; line-height:1.5; color:var(--gold-bright); opacity:0.85; margin:0; padding-left:0.3rem; }
 .ctrl-legend-row span { white-space:nowrap; }
 .ctrl-label { white-space:nowrap; }
 .ctrl-legend-row img { font-size:1.141rem; flex-shrink:0; } /* 1.05rem / 0.92em */
@@ -1489,7 +1498,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.06</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.07</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1787,7 +1796,7 @@ var ICON_LABEL = {
     est:     "Attraversò il Mare da Aman alla Terra di Mezzo",
     drago:   "Uccise un Drago",
     balrog:  "Uccise un Balrog",
-    morgoth: "Affrontò Morgoth in duello"
+    morgoth: "Affrontò e ferì Morgoth in duello"
   },
   en: {
     aratar:  "Aratar: the greatest and mightiest of the Ainur",
@@ -1810,7 +1819,7 @@ var ICON_LABEL = {
     est:     "Crossed the Sea from Aman to Middle-earth",
     drago:   "Slew a Dragon",
     balrog:  "Slew a Balrog",
-    morgoth: "Faced Morgoth in single combat"
+    morgoth: "Faced and wounded Morgoth in single combat"
   }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
@@ -2456,6 +2465,12 @@ function controlPanelHTML() {
                                       : (nB === 1 ? '1 active badge' : nB + ' active badges');
     var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
     h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '"><span class="tag-x">×</span>' + tagTxt + '</button>';
+  } else {
+    // Suggerimento al posto del tag (solo desktop, via CSS): riempie la
+    // colonna sinistra e spiega che la legenda è cliccabile.
+    h += '<p class="ctrl-badge-hint">' + (currentLang === 'it'
+       ? 'Scegli uno o più badge<br>per filtrare la selezione attuale.'
+       : 'Pick one or more badges<br>to filter the current selection.') + '</p>';
   }
   // Nota sui nomi (visibile solo nel layout orizzontale, via CSS): sotto il
   // nome ci sono le alternative note; i veri nomi sono in grassetto.
