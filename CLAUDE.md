@@ -839,6 +839,10 @@ specifico del dataset):
 
 - Progetto a sé: script Tampermonkey ospitati su GitHub Pages, installabili e
   aggiornabili dal loro URL.
+- **Prima di generare un NUOVO userscript, chiedere sempre all'utente** il
+  **nome del file** `.js` e il **titolo** (`@name`) da assegnare. Non deciderli
+  in autonomia: attendere la risposta prima di creare il file. (Vale per i nuovi
+  script; per gli aggiornamenti di script esistenti si mantengono nome e titolo.)
 - **Link di installazione a fine lavoro.** Quando crei o aggiorni uno
   userscript, nel messaggio finale includi **sempre** il link da cui
   installarlo/aggiornarlo (es.
