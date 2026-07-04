@@ -470,6 +470,15 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     stringa). La parola **'Apocrifo' compare SOLO nell'etichetta
     dell'interruttore** del Pannello (qualifica una *fonte*, non un personaggio):
     mai nella card, mai nei testi delle voci.
+    - **Compensazione contrasto (solo tema chiaro, dalla v3.82):** la velatura
+      0.8 sbiadisce le etichette tipo e la pill sotto la soglia AA; nel CSS
+      c'è un blocco di override scoped `.rank-item.apocrifo .tipo-*` (7 classi
+      + pill + nota) con colori più scuri del minimo necessario perché il
+      colore percepito DOPO la velatura superi 4.7:1 (bordo = RGB testo @0.8).
+      ⚠️ Se una futura voce apocrifa avrà un `tipo` non coperto, aggiungere lì
+      la compensazione corrispondente (e verificare con axe a pagina assestata:
+      l'audit va lanciato DOPO l'animazione di comparsa delle card, ~2 s,
+      altrimenti segnala centinaia di falsi positivi da opacità transitoria).
   - **Editor admin:** checkbox **'Apocrifo'** (`ae-<i>-apocrifo`) sotto la riga
     dei flag-badge; al salvataggio imposta/rimuove `p.apocrifo` (preservando
     un'eventuale stringa-fonte). Il Worker conserva il campo come ogni altra
