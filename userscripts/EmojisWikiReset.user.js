@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Emojis.wiki AI — reset limite generazioni
+// @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.1.0
+// @version      1.1.1
 // @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki ripulendo l'intero stato client del sito (localStorage, sessionStorage, cookie anche HttpOnly, IndexedDB, Cache Storage, Service Worker) e ricaricando: come "Cancella dati del sito" del browser, ma con un clic. Attende il completamento di tutte le cancellazioni prima di ricaricare.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
