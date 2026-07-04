@@ -163,21 +163,7 @@ export default {
     // 'rev' dice quale revisione del Worker è davvero attiva (i deploy della
     // Git integration non sono verificabili in altro modo senza dashboard),
     // 'rl' se il binding di rate limiting è presente. Nessun segreto esposto.
-    if (request.method !== 'POST') {
-      // Diagnostica del limitatore: chiama davvero limit() con una chiave
-      // fissa e riporta cosa ritorna (tipo del metodo, esito, eventuale
-      // errore). Serve a distinguere 'binding assente' da 'binding presente
-      // ma non funzionante'. Chiave dedicata: non consuma la quota degli IP.
-      let probe = null;
-      if (env.LIMITER) {
-        try {
-          const fn = typeof (env.LIMITER.limit);
-          const r = await env.LIMITER.limit({ key: 'healthcheck' });
-          probe = { fn: fn, success: r && r.success };
-        } catch (e) { probe = { err: String(e && e.message || e) }; }
-      }
-      return json({ ok: false, error: 'method', rev: 3, rl: !!env.LIMITER, probe: probe }, 405, ch);
-    }
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 4, rl: !!env.LIMITER }, 405, ch);
 
     // Rate limiting per IP (binding nativo LIMITER, vedi wrangler.toml):
     // risponde 429 PRIMA di leggere il body e di toccare la password, così un
