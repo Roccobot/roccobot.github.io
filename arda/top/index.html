@@ -1134,7 +1134,11 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      l'ultima parola c'è spazio (bug storico: 'Guardiani di Cirith Ungol').
      Ordine: nome → icone (blocco inscindibile, inline-flex nowrap) →
      etichette (inline, a capo singolarmente); viene dal DOM (vedi #2). */
-  .rank-name { display:block; }
+  /* Interlinea più ariosa (1.2 -> 1.5): dà respiro alla riga delle etichette
+     quando va a capo sotto il nome (prima quasi lo toccava) senza toccare
+     l'allineamento del caso in-linea (vertical-align:middle è indipendente
+     dall'interlinea). Giova anche ai nomi su due righe. */
+  .rank-name { display:block; line-height:1.5; }
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel e' tutto
      maiuscolo e siede in alto nella line-box, percio' le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
@@ -1511,7 +1515,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.10</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.11</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
