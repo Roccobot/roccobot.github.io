@@ -19,8 +19,9 @@
  *   GEMINI_MODEL    → (opzionale) override del model; default 'gemini-flash-latest'
  *
  * Binding (wrangler.toml):
- *   LIMITER         → rate limiting nativo per IP (20 richieste/60 s), anti
- *                     brute force sulla parola d'ordine; fail-open se assente.
+ *   RL_KV           → namespace Workers KV per il rate limiting per IP
+ *                     (RL_MAX richieste/RL_WINDOW s), anti brute force sulla
+ *                     parola d'ordine; fail-open se assente o in errore.
  *
  * Deploy: vedi proxy/README.md
  */
@@ -146,6 +147,12 @@ const DATI_MAX_BYTES = 900000;
 const MSG_MAX = 300;       // messaggio di commit
 const TRANSLATE_MAX = 20000; // testo da tradurre
 
+// Rate limiting per IP (contatore in Workers KV, binding RL_KV): al massimo
+// RL_MAX richieste ogni RL_WINDOW secondi. L'uso legittimo (1-2 richieste
+// per salvataggio admin) non si avvicina mai alla soglia.
+const RL_MAX = 20;
+const RL_WINDOW = 60;
+
 // fetch con timeout: senza, una GitHub/Gemini appesa terrebbe la richiesta
 // bloccata fino al limite del runtime.
 function fetchT(url, opts, ms) {
@@ -162,19 +169,34 @@ export default {
     // La risposta al GET fa anche da spia di salute osservabile dall'esterno:
     // 'rev' dice quale revisione del Worker è davvero attiva (i deploy della
     // Git integration non sono verificabili in altro modo senza dashboard),
-    // 'rl' se il binding di rate limiting è presente. Nessun segreto esposto.
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 4, rl: !!env.LIMITER }, 405, ch);
+    // 'rl' se il binding del rate limiting (KV) è presente. Nessun segreto.
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 5, rl: !!env.RL_KV }, 405, ch);
 
-    // Rate limiting per IP (binding nativo LIMITER, vedi wrangler.toml):
-    // risponde 429 PRIMA di leggere il body e di toccare la password, così un
-    // brute force scala da migliaia di tentativi al minuto a 20. Fail-open se
-    // il binding manca o dà errore (deploy manuale senza binding): meglio un
-    // Worker senza limitatore che un admin chiuso fuori.
-    if (env.LIMITER) {
+    // Rate limiting per IP: contatore a finestra fissa in Workers KV (binding
+    // RL_KV, vedi wrangler.toml), applicato PRIMA di leggere il body e di
+    // toccare la password: un brute force scala da migliaia di tentativi al
+    // minuto a ~RL_MAX. Dettagli e compromessi:
+    //  - finestra fissa di RL_WINDOW secondi: chiave rl:<ip>:<n-finestra>,
+    //    scade da sé (expirationTtl, minimo KV 60 s);
+    //  - una volta oltre soglia si risponde 429 in sola lettura (niente
+    //    scritture: non si consuma quota KV e non si tocca il limite di
+    //    1 scrittura/s per chiave);
+    //  - l'incremento read-modify-write non è atomico e KV si propaga con
+    //    qualche secondo di ritardo: sotto attacco concorrente può sfuggire
+    //    qualche tentativo oltre soglia — irrilevante per lo scopo;
+    //  - FAIL-OPEN: qualunque errore KV lascia passare (meglio un Worker
+    //    senza limitatore che un admin chiuso fuori).
+    // (Storico: prima c'era il binding nativo 'ratelimit' [unsafe.bindings],
+    // che i Workers Builds accettano ma NON attivano: limit() rispondeva
+    // sempre success:true. Diagnosi del 2026-07-04, PR #294-297.)
+    if (env.RL_KV) {
       try {
         const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-        const rl = await env.LIMITER.limit({ key: ip });
-        if (rl && rl.success === false) return json({ ok: false, error: 'rate-limited' }, 429, ch);
+        const win = Math.floor(Date.now() / 1000 / RL_WINDOW);
+        const key = 'rl:' + ip + ':' + win;
+        const count = parseInt(await env.RL_KV.get(key), 10) || 0;
+        if (count >= RL_MAX) return json({ ok: false, error: 'rate-limited' }, 429, ch);
+        await env.RL_KV.put(key, String(count + 1), { expirationTtl: Math.max(2 * RL_WINDOW, 60) });
       } catch (e) {}
     }
 

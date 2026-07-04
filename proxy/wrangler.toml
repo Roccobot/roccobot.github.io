@@ -16,15 +16,14 @@ preview_urls = false
 [vars]
 ALLOWED_ORIGIN = "https://roccobot.github.io"
 
-# Rate limiting nativo dei Workers (open beta): al massimo 20 richieste ogni
-# 60 secondi per chiave (qui la chiave è l'IP del chiamante, vedi il codice).
-# Serve a rallentare il brute force sulla parola d'ordine admin: l'uso
-# legittimo (1-2 richieste per salvataggio) non lo tocca mai. Il conteggio è
-# per datacenter Cloudflare, non globale: per questo scopo è sufficiente.
-# 'period' ammette solo 10 o 60; 'namespace_id' è un identificativo arbitrario
-# ma stabile del contatore (non un id di risorsa da creare altrove).
-[[unsafe.bindings]]
-name = "LIMITER"
-type = "ratelimit"
-namespace_id = "1001"
-simple = { limit = 20, period = 60 }
+# Rate limiting anti brute force sulla parola d'ordine admin: contatore per
+# IP in Workers KV (namespace 'arda-rate-limit', creato dal dashboard il
+# 2026-07-04). Limite e finestra sono definiti nel codice del Worker
+# (RL_MAX/RL_WINDOW). Il binding è dichiarato qui, quindi sopravvive a ogni
+# ricostruzione automatica via Git integration: configurato una volta, per
+# sempre. (Storico: il binding nativo 'ratelimit' via unsafe.bindings veniva
+# accettato dai Workers Builds ma restituiva sempre success:true, un no-op;
+# sostituito con questo contatore KV, verificato funzionante.)
+[[kv_namespaces]]
+binding = "RL_KV"
+id = "a76277f308ef412a8493bb71eee35e1b"
