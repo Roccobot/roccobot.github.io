@@ -777,8 +777,46 @@ specifico del dataset):
   (Storico: l'override era erroneamente su chiave `'Morgoth'`, che non combacia
   col `nome` `Melkor`, perciò non scattava e si vedeva il default '(presunto)'.)
 
+- **Cinque badge aggiunti insieme (v3.93, decisioni dell'utente).** L'ordine
+  di resa/legenda/admin vive in `ICON_ORDER` (righe condivise in legenda:
+  Re+In carica, Aman+Oromë+Est, Drago+Balrog, Vilya+Nenya+Narya):
+  - **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos', SOLO Elfi):
+    Glorfindel, Finrod, Míriel (quest'ultima da HoME X, caso 'note tardive').
+    **Lúthien esclusa** per scelta dell'utente: il suo è un caso a parte
+    (rinascita completa con natura diversa, mortale), non una reincarnazione.
+    Beren fuori per definizione (Uomo).
+  - **`est`** ('Attraversò il Mare verso Est', criterio: traversata IN NAVE
+    dalle Terre Imperiture alla Terra di Mezzo): Eönwë e Finarfin (Guerra
+    d'Ira, traghettati dai Teleri, Silm cap. 24), Ingwion (idem, alla guida
+    dei Vanyar), Glorfindel (ritorno nella TE), i 5 Istari, Fëanor e i suoi
+    7 figli (navi di Losgar). **Ingwë escluso**: la sua partecipazione alla
+    Guerra d'Ira non è attestata (i testi nominano il figlio Ingwion) e il
+    viaggio degli ambasciatori non avvenne in nave (le navi non esistevano).
+  - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon),
+    Fram (Scatha), Bard (Smaug). Azaghâl ferì soltanto Glaurung.
+  - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
+    Gandalf (Flagello di Dúrin). **Tuor escluso**: uccide Balrog solo nei
+    Racconti Perduti (versione superata del legendarium).
+  - **`morgoth`** ('Affrontò Morgoth in duello'): SOLO Fingolfin, il badge
+    più esclusivo.
+  - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
+    ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
+    riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
+- **Ingwion e Ilwen (aggiunti in v3.93).** `Ingwion` (dopo Finwë) NON è
+  apocrifo benché assente dal Silmarillion pubblicato: Christopher Tolkien
+  riconobbe che l'omissione fu un errore del padre (HoME IV, pp. 196-7),
+  caso 'note tardive = canone'. `Ilwen`, sposa di Ingwë e madre di Ingwion
+  (dopo Míriel), è attestata solo in NoME → `apocrifo:"NoME"` (pill 'Solo
+  NoME'). La genealogia Ingwë+Ilwen di Ingwion viene da NoME.
+
 ## 🧹 Asset del progetto
 
+- **Le immagini caricate dall'utente nel repo vanno ottimizzate.** Quando
+  l'utente copia autonomamente immagini nelle cartelle del sito (es. icone
+  badge via 'Add files via upload'), applicare le ottimizzazioni standard del
+  progetto (quantizzazione/compressione senza perdita visibile, come da
+  regola universale sugli asset). Richiesta esplicita dell'utente
+  (2026-07-04). NON vale per le eccezioni qui sotto.
 - **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/`
   (mappe e risorse aperte da `openImageViewer`) non vanno mai modificati,
   ridimensionati, compressi od ottimizzati, per nessun motivo: sono materiale
