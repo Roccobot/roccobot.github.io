@@ -19,9 +19,10 @@
  *   GEMINI_MODEL    → (opzionale) override del model; default 'gemini-flash-latest'
  *
  * Binding (wrangler.toml):
- *   RL_KV           → namespace Workers KV per il rate limiting per IP
- *                     (RL_MAX richieste/RL_WINDOW s), anti brute force sulla
- *                     parola d'ordine; fail-open se assente o in errore.
+ *   RL_DO           → Durable Object (classe RateLimiter) per il rate
+ *                     limiting per IP (RL_MAX richieste/RL_WINDOW s), anti
+ *                     brute force sulla parola d'ordine; fail-open se assente
+ *                     o in errore.
  *
  * Deploy: vedi proxy/README.md
  */
@@ -149,27 +150,32 @@ const TRANSLATE_MAX = 20000; // testo da tradurre
 
 // Rate limiting per IP: al massimo RL_MAX richieste ogni RL_WINDOW secondi.
 // L'uso legittimo (1-2 richieste per salvataggio admin) non si avvicina mai
-// alla soglia. Meccanismo PRIMARIO: contatore IN MEMORIA nell'isolate
-// (finestra scorrevole), immediato e coerente; il KV fa da rinforzo
-// secondario best-effort tra isolate (vedi sotto). Perché non KV da solo:
-// le letture KV sono servite da cache e le scritture propagano con ritardo,
-// quindi il valore riletto resta indietro e la soglia non scatterebbe in
-// tempo (verificato: 60 tentativi in ~30 s, nessun 429). L'in-memory non ha
-// questo ritardo; un brute force reale (raffica veloce dallo stesso IP)
-// colpisce lo stesso isolate caldo e viene fermato.
+// alla soglia. Il conteggio vive in un Durable Object (vedi RateLimiter):
+// unico strumento sui Workers che dà un contatore GLOBALE e coerente per
+// chiave. (Storico: il binding nativo 'ratelimit' via unsafe.bindings è
+// no-op sui Workers Builds; il contatore in KV è troppo lento, letture
+// cachate; quello in memoria dell'isolate non conta perché le richieste si
+// spargono su isolate diversi. Diagnosi 2026-07-04, PR #294-299.)
 const RL_MAX = 20;
 const RL_WINDOW = 60;
-// Stato in memoria dell'isolate: IP -> array di timestamp (secondi) entro la
-// finestra. Vive quanto l'isolate; azzerarsi a un riavvio è accettabile (il
-// KV resta come rete). Potatura opportunistica per non crescere all'infinito.
-const rlMem = new Map();
-function rlCheck(ip, now) {
-  var arr = rlMem.get(ip);
-  if (!arr) { arr = []; rlMem.set(ip, arr); }
-  var cutoff = now - RL_WINDOW;
-  while (arr.length && arr[0] < cutoff) arr.shift();
-  if (rlMem.size > 5000) { for (const k of rlMem.keys()) { if (k !== ip) { rlMem.delete(k); if (rlMem.size <= 4000) break; } } }
-  return arr;
+
+// Durable Object coordinatore del rate limiting: un'istanza per IP (chiave =
+// idFromName(ip)), quindi tutte le richieste di quello stesso IP finiscono
+// nella stessa istanza e il conteggio è atomico e globale. Finestra
+// scorrevole: tiene i soli timestamp entro RL_WINDOW e blocca oltre RL_MAX.
+// Risponde 'ok'/'limited' come testo. Lo stato vive in memoria dell'oggetto
+// (basta per una finestra di 60 s; se l'oggetto viene sfrattato riparte da
+// zero, effetto trascurabile per lo scopo).
+export class RateLimiter {
+  constructor(state) { this.state = state; this.hits = []; }
+  async fetch() {
+    const now = Date.now() / 1000;
+    const cutoff = now - RL_WINDOW;
+    while (this.hits.length && this.hits[0] < cutoff) this.hits.shift();
+    if (this.hits.length >= RL_MAX) return new Response('limited');
+    this.hits.push(now);
+    return new Response('ok');
+  }
 }
 
 // fetch con timeout: senza, una GitHub/Gemini appesa terrebbe la richiesta
@@ -189,33 +195,23 @@ export default {
     // 'rev' dice quale revisione del Worker è davvero attiva (i deploy della
     // Git integration non sono verificabili in altro modo senza dashboard),
     // 'rl' se il binding del rate limiting (KV) è presente. Nessun segreto.
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 6, rl: true, rlkv: !!env.RL_KV }, 405, ch);
+    // 'rl' segnala se il binding del Durable Object di rate limiting è
+    // presente; nessun segreto esposto.
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 7, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
-    // ~RL_MAX. Primario: contatore in memoria dell'isolate (rlCheck),
-    // immediato. Secondario best-effort: contatore a finestra fissa in KV,
-    // che aiuta a limitare anche quando le richieste cadono su isolate
-    // diversi; siccome le letture KV possono essere stale, la decisione usa
-    // il MASSIMO tra i due (chi vede più tentativi fa scattare il blocco).
-    // FAIL-OPEN su ogni errore: meglio un Worker senza limitatore che un
-    // admin chiuso fuori. (Storico: il binding nativo 'ratelimit' via
-    // unsafe.bindings è no-op sui Workers Builds; il solo KV è troppo lento.
-    // Diagnosi 2026-07-04, PR #294-298.)
-    {
-      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-      const now = Date.now() / 1000;
-      const hits = rlCheck(ip, now);
-      let kvCount = 0, kvKey = null;
-      if (env.RL_KV) {
-        try {
-          kvKey = 'rl:' + ip + ':' + Math.floor(now / RL_WINDOW);
-          kvCount = parseInt(await env.RL_KV.get(kvKey), 10) || 0;
-        } catch (e) {}
-      }
-      if (Math.max(hits.length, kvCount) >= RL_MAX) return json({ ok: false, error: 'rate-limited' }, 429, ch);
-      hits.push(now);
-      if (kvKey) { try { await env.RL_KV.put(kvKey, String(kvCount + 1), { expirationTtl: Math.max(2 * RL_WINDOW, 60) }); } catch (e) {} }
+    // ~RL_MAX. Il conteggio è delegato al Durable Object RateLimiter (una
+    // istanza per IP): contatore globale e coerente, l'unico modo affidabile
+    // sui Workers. FAIL-OPEN su ogni errore: meglio un Worker senza
+    // limitatore che un admin chiuso fuori.
+    if (env.RL_DO) {
+      try {
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const stub = env.RL_DO.get(env.RL_DO.idFromName(ip));
+        const verdict = await (await stub.fetch('https://rl/')).text();
+        if (verdict === 'limited') return json({ ok: false, error: 'rate-limited' }, 429, ch);
+      } catch (e) {}
     }
 
     let body;

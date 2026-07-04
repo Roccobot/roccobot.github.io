@@ -17,13 +17,21 @@ preview_urls = false
 ALLOWED_ORIGIN = "https://roccobot.github.io"
 
 # Rate limiting anti brute force sulla parola d'ordine admin: contatore per
-# IP in Workers KV (namespace 'arda-rate-limit', creato dal dashboard il
-# 2026-07-04). Limite e finestra sono definiti nel codice del Worker
-# (RL_MAX/RL_WINDOW). Il binding è dichiarato qui, quindi sopravvive a ogni
-# ricostruzione automatica via Git integration: configurato una volta, per
-# sempre. (Storico: il binding nativo 'ratelimit' via unsafe.bindings veniva
-# accettato dai Workers Builds ma restituiva sempre success:true, un no-op;
-# sostituito con questo contatore KV, verificato funzionante.)
-[[kv_namespaces]]
-binding = "RL_KV"
-id = "a76277f308ef412a8493bb71eee35e1b"
+# IP in un Durable Object (classe RateLimiter nel codice), unico strumento
+# sui Workers con conteggio globale e coerente. Limite e finestra sono nel
+# codice (RL_MAX/RL_WINDOW). Binding + migrazione dichiarati qui, quindi
+# sopravvivono a ogni ricostruzione automatica via Git integration:
+# configurato una volta, per sempre.
+# (Storico: il binding nativo 'ratelimit' [unsafe.bindings] è no-op sui
+# Workers Builds; il contatore in KV è troppo lento [letture cachate];
+# quello in memoria dell'isolate non conta [richieste sparse su isolate
+# diversi]. Diagnosi 2026-07-04, PR #294-299.)
+[[durable_objects.bindings]]
+name = "RL_DO"
+class_name = "RateLimiter"
+
+# Migrazione una tantum: registra la classe come Durable Object con backend
+# SQLite (disponibile anche sul piano gratuito).
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RateLimiter"]
