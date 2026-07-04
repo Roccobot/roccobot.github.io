@@ -193,19 +193,10 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: ch });
     // Spia di salute osservabile dall'esterno: 'rev' = revisione attiva del
     // Worker (i deploy Git non sono altrimenti verificabili senza dashboard),
-    // 'rl' = presenza del binding del Durable Object. 'probe' chiama davvero
-    // il DO e riporta verdetto o errore, per distinguere 'binding assente' da
-    // 'presente ma non funzionante'. Nessun segreto esposto.
-    if (request.method !== 'POST') {
-      let probe = null;
-      if (env.RL_DO) {
-        try {
-          const stub = env.RL_DO.get(env.RL_DO.idFromName('healthcheck'));
-          probe = await (await stub.fetch('https://rl/')).text();
-        } catch (e) { probe = 'ERR: ' + String(e && e.message || e); }
-      }
-      return json({ ok: false, error: 'method', rev: 8, rl: !!env.RL_DO, probe: probe }, 405, ch);
-    }
+    // 'rl' = presenza del binding del Durable Object di rate limiting.
+    // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
+    // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 9, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
