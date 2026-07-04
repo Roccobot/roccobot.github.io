@@ -191,13 +191,21 @@ export default {
     const ch = corsHeaders(origin, allowed);
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: ch });
-    // La risposta al GET fa anche da spia di salute osservabile dall'esterno:
-    // 'rev' dice quale revisione del Worker è davvero attiva (i deploy della
-    // Git integration non sono verificabili in altro modo senza dashboard),
-    // 'rl' se il binding del rate limiting (KV) è presente. Nessun segreto.
-    // 'rl' segnala se il binding del Durable Object di rate limiting è
-    // presente; nessun segreto esposto.
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 7, rl: !!env.RL_DO }, 405, ch);
+    // Spia di salute osservabile dall'esterno: 'rev' = revisione attiva del
+    // Worker (i deploy Git non sono altrimenti verificabili senza dashboard),
+    // 'rl' = presenza del binding del Durable Object. 'probe' chiama davvero
+    // il DO e riporta verdetto o errore, per distinguere 'binding assente' da
+    // 'presente ma non funzionante'. Nessun segreto esposto.
+    if (request.method !== 'POST') {
+      let probe = null;
+      if (env.RL_DO) {
+        try {
+          const stub = env.RL_DO.get(env.RL_DO.idFromName('healthcheck'));
+          probe = await (await stub.fetch('https://rl/')).text();
+        } catch (e) { probe = 'ERR: ' + String(e && e.message || e); }
+      }
+      return json({ ok: false, error: 'method', rev: 8, rl: !!env.RL_DO, probe: probe }, 405, ch);
+    }
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
