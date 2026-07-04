@@ -454,7 +454,9 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 .ctrl-solo.cat-locked { opacity:0.35; pointer-events:none; }
 .ctrl-panel {
   position:fixed; z-index:210; bottom:6rem; left:2rem; width:max-content; min-width:280px; max-width:calc(100vw - 4rem);
-  max-height:80vh; overflow-y:auto;
+  /* overscroll-behavior:contain — a fine corsa il gesto NON si incatena
+     alla pagina sotto (su mobile scorreva la classifica dietro il pannello) */
+  max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
   background:rgba(16,24,44,0.94); border:1px solid rgba(104,144,168,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow:0 12px 48px rgba(0,0,0,0.5);
@@ -894,7 +896,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 /* Lo scroll vive qui e NON su .modal: la cornice ::before e il pulsante di
    chiusura sono ancorati a .modal e devono restare fermi mentre il contenuto
    scorre (altrimenti il testo "esce" dal riquadro, come accadeva su mobile). */
-.modal-body { overflow-y:auto; min-height:0; padding:2rem clamp(1.2rem,4vw,2.5rem); }
+.modal-body { overflow-y:auto; overscroll-behavior:contain; min-height:0; padding:2rem clamp(1.2rem,4vw,2.5rem); }
 
 .modal-close {
   position:absolute; top:14px; right:14px;
@@ -1509,7 +1511,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.09</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.10</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1581,6 +1583,16 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 }
 
 var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
+
+// Blocco dello scroll di pagina (pannello/modali aperti). DEVE agire su
+// documentElement: con html{overflow-y:scroll} lo scroller della pagina è
+// html, non body, e il solo body.style.overflow='hidden' non blocca nulla
+// (bug storico: su mobile la classifica scorreva sotto il pannello aperto).
+// Si tocca anche body per compatibilità con eventuali browser che propagano.
+function lockPageScroll(on) {
+  document.documentElement.style.overflow = on ? 'hidden' : '';
+  document.body.style.overflow = on ? 'hidden' : '';
+}
 
 // ── Numero di versione ────────────────────────────────────────────────
 // Fonte unica: `var datiVersion` in dati.js, incrementato (patch) dal Worker
@@ -2188,7 +2200,7 @@ function openModal(idx) {
   quoteEl.style.display = citazione ? '' : 'none';
   document.getElementById('modal-body').scrollTop = 0;
   document.getElementById('modal-backdrop').classList.add('active');
-  document.body.style.overflow = 'hidden';
+  lockPageScroll(true);
   // Ricorda da dove si è aperta (per restituire il focus alla chiusura) e
   // sposta il focus DOPO che il backdrop non è più visibility:hidden: un
   // elemento nascosto non è focalizzabile, la focus() sincrona era un no-op
@@ -2200,7 +2212,7 @@ function openModal(idx) {
 var modalOpener = null;
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('active');
-  document.body.style.overflow = '';
+  lockPageScroll(false);
   currentIdx = null;
   // Restituisce il focus al punto di partenza (la card da cui si era aperta).
   if (modalOpener && modalOpener.isConnected) { try { modalOpener.focus(); } catch (e) {} }
@@ -2249,8 +2261,8 @@ function openResourcesModal() {
   if (document.getElementById('res-modal')) return;
   var ov = document.createElement('div'); ov.id = 'res-modal'; ov.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box res-modal-box';
-  ov.appendChild(box); document.body.appendChild(ov); document.body.style.overflow = 'hidden';
-  function dismiss() { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); }
+  ov.appendChild(box); document.body.appendChild(ov); lockPageScroll(true);
+  function dismiss() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); }
   function onKey(e) { if (e.key === 'Escape') dismiss(); }
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
@@ -2368,7 +2380,7 @@ function openImageViewer(src, title) {
     }
   }
   stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
-  function close() { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); }
+  function close() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); }
   function onKey(e) { if (e.key === 'Escape') close(); }
   var itL = currentLang === 'it';
   bar.appendChild(ttl);
@@ -2376,7 +2388,7 @@ function openImageViewer(src, title) {
   bar.appendChild(mkBtn('+', itL ? 'Ingrandisci' : 'Zoom in', function() { zoomBy(1.25, stage.clientWidth / 2, stage.clientHeight / 2); }));
   bar.appendChild(mkBtn('⛶', itL ? 'Adatta allo schermo' : 'Fit to screen', fit));
   bar.appendChild(mkBtn('✕', itL ? 'Chiudi' : 'Close', close));
-  ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+  ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); lockPageScroll(true);
   document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
 }
 
@@ -2840,8 +2852,8 @@ function confirmDiscardReorder(){
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden';
-  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  lockPageScroll(true);
+  function dismiss(){ overlay.remove(); lockPageScroll(false); }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; box.appendChild(cl);
   var q = document.createElement('div'); q.className = 'fab-modal-charname';
@@ -2861,8 +2873,8 @@ function showDesktopReorderModal(){
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden';
-  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  lockPageScroll(true);
+  function dismiss(){ overlay.remove(); lockPageScroll(false); }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : ''); b.textContent = label; b.onclick = fn; return b; }
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss;
@@ -2884,8 +2896,8 @@ function showActionChoiceModal() {
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden'; // blocca lo scroll del contenuto sotto
-  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  lockPageScroll(true); // blocca lo scroll del contenuto sotto
+  function dismiss(){ overlay.remove(); lockPageScroll(false); }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   function mkClose(){ var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; return cl; }
   function mkBtn(main, sub, extra, fn){
@@ -2969,8 +2981,8 @@ function showInfoNote() {
   box.appendChild(cl);
   box.insertAdjacentHTML('beforeend', currentLang === 'it' ? INFO_NOTE_HTML_IT : INFO_NOTE_HTML_EN);
   overlay.appendChild(box); document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden';
-  function dismiss(){ overlay.remove(); document.body.style.overflow = ''; }
+  lockPageScroll(true);
+  function dismiss(){ overlay.remove(); lockPageScroll(false); }
   cl.onclick = dismiss;
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
 }
@@ -2984,7 +2996,7 @@ function toggleControlPanel(skipSheetAnim) {
   var open = panel.classList.toggle('open');
   bd.classList.toggle('open', open);
   // Inibisce lo scroll della pagina sottostante mentre il Pannello è aperto.
-  document.body.style.overflow = open ? 'hidden' : '';
+  lockPageScroll(open);
   // FAB: rimbalzo Z all'apertura, crescita alla chiusura (mutuamente esclusivi).
   if (fab) { fab.classList.remove('fab-tap', 'fab-grow'); void fab.offsetWidth; fab.classList.add(open ? 'fab-tap' : 'fab-grow'); }
   // Il focus segue il Pannello: dentro all'apertura, di nuovo sul FAB alla
@@ -3559,8 +3571,8 @@ function showPasswordModal(promptText, onSuccess, extra) {
   box.className = 'fab-modal-box';
   overlay.appendChild(box);
   document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden'; // blocca lo scroll del contenuto sotto
-  const closePw = () => { overlay.remove(); document.body.style.overflow = ''; };
+  lockPageScroll(true); // blocca lo scroll del contenuto sotto
+  const closePw = () => { overlay.remove(); lockPageScroll(false); };
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closePw(); });
 
   function buildStep1() {
