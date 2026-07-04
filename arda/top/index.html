@@ -524,8 +524,11 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      legenda): l'intestazione 'CATEGORIE' si allinea otticamente con la
      prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
      ospita il tag del filtro badge. */
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:0; }
-  #ctrl-panel .ctrl-names-note { display:block; margin-bottom:5.45px; }
+  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:1.1rem 0 0; }
+  /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
+     flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
+     nota, non ammassato in fondo. */
+  #ctrl-panel .ctrl-names-note { display:block; margin-top:auto; margin-bottom:5.45px; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
 .ctrl-sheet-head { display:none; }
@@ -613,7 +616,7 @@ html[data-theme="light"] .ctrl-legend-row:hover { background:rgba(58,88,120,0.10
 html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); border-color:rgba(58,88,120,0.55); }
 /* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
    × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
-.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; margin:0.65rem 0 0 0.3rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; margin:1rem 0 0.6rem 0.3rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
 .ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:1; font-family:'EB Garamond',serif; }
 html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
@@ -1476,7 +1479,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.05</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.06</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
