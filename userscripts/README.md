@@ -80,3 +80,42 @@ modificare i valori → salvare (Ctrl+S).
 - Il logo che sostituisce il doodle è il wordmark **ufficiale** Qwant,
   incorporato nello script come SVG; con `LOGO_PERSONALIZZATO` si può comunque
   usare un'altra immagine (URL).
+
+## Emojis.wiki AI — reset limite generazioni
+
+**File:** `EmojisWikiReset.user.js`
+
+Il generatore di emoji con l'AI di [emojis.wiki/ai](https://emojis.wiki/ai/) ha un
+**limite giornaliero** di generazioni. Il limite è tracciato **lato client** (si
+azzera aprendo una finestra in incognito). Questo script aggiunge un pulsante
+flottante **"🔄 Reset generazioni"** che replica l'incognito con un clic:
+ripulisce **tutto lo stato client del sito** (localStorage, sessionStorage,
+cookie — anche HttpOnly via `GM_cookie` — IndexedDB, Cache Storage, Service
+Worker) e ricarica la pagina, così riparti con la quota fresca senza aprire
+nuove finestre.
+
+È l'equivalente di "Cancella dati del sito" del browser, ristretto a
+`emojis.wiki`, azionabile con un tasto (o dal menu di Tampermonkey).
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/EmojisWikiReset.user.js>
+3. Premere **Installa**. Tampermonkey può chiedere il permesso per l'accesso ai
+   cookie (`GM_cookie`): concederlo, serve a rimuovere anche i cookie HttpOnly.
+
+### Personalizzazione
+
+```js
+const MOSTRA_PULSANTE  = true;   // pulsante flottante "Reset generazioni"
+const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pagina
+```
+
+### Note
+
+- Ripulendo lo stato si azzerano anche eventuali preferenze del sito (es. tema);
+  il consenso cookie, se lo gestisci con un'estensione, viene re-impostato da
+  quella al ricaricamento.
+- Se `GM_cookie` non è disponibile nel tuo gestore, lo script ripulisce comunque
+  storage e cookie accessibili da JS: se il limite fosse legato a un cookie
+  HttpOnly, in quel caso servirebbe Tampermonkey (che supporta `GM_cookie`).
