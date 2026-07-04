@@ -39,11 +39,6 @@
   --gold: #6890a8;
   --gold-bright: #9ac0d8;
   --gold-deep: #3a5870;
-  --blood: #1a2a4a;
-  --violet: #0a1428;
-  --violet-glow: #6890d8;
-  --azure-deep: #081020;
-  --shadow: rgba(0,0,0,0.7);
   --name: #cdd3dc; --name-hover: #eef2f8;
 }
 
@@ -156,7 +151,6 @@ h1 {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
   max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
-  white-space: pre-line;
 }
 .subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.69; letter-spacing:0.04em; margin-top:0.15rem; }
 
@@ -203,9 +197,11 @@ h1 {
   opacity:0; transition:opacity 0.4s; pointer-events:none;
 }
 
-.rank-item:hover,.rank-item:focus-visible {
-  border-left-color:var(--gold-bright);
+.rank-item:hover,.rank-item:focus-within {
+  /* border-color (shorthand) PRIMA di border-left-color: l'ordine inverso
+     annullerebbe il bordo sinistro oro promesso dall'hover */
   border-color:rgba(200,202,210,0.45);
+  border-left-color:var(--gold-bright);
   background:linear-gradient(90deg,rgba(78,82,96,0.66) 0%,rgba(200,202,210,0.08) 100%);
   outline:none;
 }
@@ -218,7 +214,7 @@ h1 {
 
 /* #2 — il numero non cambia colore al passaggio del mouse */
 
-.rank-item:hover .rank-name,.rank-item:focus-visible .rank-name { color:var(--name); }
+.rank-item:hover .rank-name,.rank-item:focus-within .rank-name { color:var(--name); }
 
 .rank-num {
   font-family:'Cinzel',serif; font-weight:900;
@@ -293,14 +289,6 @@ h1 {
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
 .rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.1rem,3.4vw,1.6rem); }
 
-.badge {
-  display:inline-block;
-  font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
-  color:var(--violet-glow); border:1px solid rgba(104,144,168,0.5);
-  border-radius:2px; padding:1px 5px;
-  opacity:0.8; text-transform:uppercase;
-}
-
 .tipo-badge {
   display:inline-flex; align-items:center; gap:0.3em;
   font-family:'EB Garamond',serif; font-size:0.72em; font-style:normal; font-weight:normal;
@@ -357,6 +345,22 @@ h1 {
   background:linear-gradient(90deg,rgba(50,110,30,0.10) 0%,rgba(50,110,30,0.035) 100%);
   border-left-color:rgba(126,206,96,0.75);
 }
+/* Hover delle card speciali nel tema scuro: definite DOPO le regole base
+   (stessa specificità: senza queste, .divine annullerebbe l'hover comune,
+   come accadeva). Tinta identitaria intensificata, come nel tema chiaro. */
+.rank-item.divine:hover, .rank-item.divine:focus-within {
+  background:linear-gradient(90deg,rgba(120,92,20,0.16) 0%,rgba(120,92,20,0.06) 100%);
+  border-color:rgba(200,202,210,0.45);
+  border-left-color:var(--gold-bright);
+}
+.rank-item.divine.morgoth:hover, .rank-item.divine.morgoth:focus-within {
+  background:linear-gradient(90deg,rgba(150,30,80,0.22) 0%,rgba(150,30,80,0.08) 100%);
+  border-left-color:rgba(226,88,148,0.95);
+}
+.rank-item.divine.bombadil:hover, .rank-item.divine.bombadil:focus-within {
+  background:linear-gradient(90deg,rgba(50,110,30,0.22) 0%,rgba(50,110,30,0.08) 100%);
+  border-left-color:rgba(146,226,116,0.95);
+}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -364,7 +368,7 @@ h1 {
   border-left-color:rgba(172,174,186,0.55);
   opacity:0.8;
 }
-.rank-item.apocrifo:hover, .rank-item.apocrifo:focus-visible { opacity:1; }
+.rank-item.apocrifo:hover, .rank-item.apocrifo:focus-within { opacity:1; }
 /* pill «Solo HoME»: contornata, in alto a destra, distinta dalle etichette tipo */
 .pill-home {
   position:absolute; top:0.6rem; right:0.7rem;
@@ -434,6 +438,14 @@ html[data-theme="light"] .ctrl-apo .apo-lbl { color:var(--ink); }
 html[data-theme="light"] .ctrl-apo.on .apo-lbl { color:rgba(150,108,16,0.95); }
 html[data-theme="light"] .ctrl-apo.on .apo-sw { background:rgba(58,88,120,0.85); border-color:rgba(58,88,120,0.9); }
 html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
+/* Target touch su mobile: area cliccabile più alta (≥ ~28px) e testi un filo
+   più grandi per i controlli del Pannello, senza cambiarne il disegno. */
+@media (max-width:768px) {
+  .ctrl-solo { padding:7px 10px; font-size:0.64rem; }
+  .ctrl-reset { padding:7px 12px; font-size:0.64rem; }
+  .ctrl-apo { padding:6px 0; }
+  .ctrl-apo .apo-lbl { font-size:0.64rem; }
+}
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
 .ctrl-row.cat-locked { cursor:default; pointer-events:none; }
@@ -449,9 +461,9 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 }
 .ctrl-panel::-webkit-scrollbar { width:0; height:0; display:none; }
 .ctrl-panel.open { opacity:1; visibility:visible; transform:translateY(0) scale(1); }
-/* Chiusura desktop (popover): decelera con breve fade finale, riducendosi un
-   filo verso l'angolo del FAB (transform-origin bottom-left). Su mobile vince la
-   .closing del media query (bottom-sheet). Regia: toggleControlPanel. */
+/* Chiusura desktop (popover): fade out puro sul posto (niente transform,
+   vedi nota nella regola). Su mobile vince la .closing del media query
+   (bottom-sheet). Regia: toggleControlPanel. */
 .ctrl-panel.closing {
   visibility:visible; transition:none;
   /* DESKTOP: chiusura = fade out PURO (niente transform): l'animazione del
@@ -570,7 +582,10 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   cursor:pointer; font-size:0.84rem; color:var(--parchment); transition:background 0.15s; user-select:none;
 }
 .ctrl-row:hover { background:rgba(104,144,168,0.12); }
-.ctrl-row input { display:none; }
+/* Nascosta ma FOCALIZZABILE (display:none la toglieva dal giro del Tab:
+   filtri non azionabili da tastiera). Il focus si disegna sul quadratino. */
+.ctrl-row input { position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; clip-path:inset(50%); overflow:hidden; white-space:nowrap; }
+.ctrl-row input:focus-visible + .ctrl-chk { outline:2px solid var(--gold-bright); outline-offset:2px; }
 .ctrl-chk {
   width:1.05rem; height:1.05rem; border-radius:5px; border:1.5px solid rgba(154,192,216,0.6);
   flex-shrink:0; position:relative; transition:background 0.15s,border-color 0.15s;
@@ -613,7 +628,6 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 .leg-gender .genere-svg { display:inline-block; transform:none; }
 .leg-gender .genere-svg--m { width:.92em; height:.92em; }
 .leg-gender .genere-svg--f { width:.79em; height:.92em; }
-.ctrl-extra { display:none; }
 .ctrl-lang-btn {
   font-family:'Cinzel',serif; font-size:0.74rem; font-weight:700; letter-spacing:0.08em; padding:0.4rem 0.9rem;
   border-radius:8px; border:1px solid var(--gold); background:rgba(104,144,168,0.15); color:var(--gold-bright); cursor:pointer;
@@ -656,7 +670,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
    (l'apertura resta la transition nel media query). Vedi toggleControlPanel. */
 @keyframes ctrl-sheet-close { from { transform:translateY(0); } to { transform:translateY(100%); } }
 @keyframes ctrl-sheet-fade { from { opacity:1; } to { opacity:0; } }
-/* Chiusura del popover desktop: scende un filo e si rimpicciolisce verso il FAB. */
+/* Chiusura del popover desktop: fade out puro (vedi nota su .ctrl-panel.closing). */
 @keyframes ctrl-pop-fade { from { opacity:1; } to { opacity:0; } }
 
 @media (max-width:768px) {
@@ -899,7 +913,9 @@ footer {
 footer p { color:var(--parchment-dim); font-size:0.95rem; max-width:500px; margin:0 auto; }
 @media (max-width:768px) {
   footer p { max-width:100%; }
-  #footer-text { white-space:nowrap; font-size:clamp(8px, 2.5vw, 14px); }
+  /* Niente nowrap: forzava la citazione su una riga sola facendo scendere il
+     corpo fino a ~9.75px sui viewport stretti. Meglio l'a-capo naturale. */
+  #footer-text { font-size:clamp(12px, 3.4vw, 14px); }
 }
 
 .list-animate .rank-item { opacity:0; transform:translateY(20px); animation:reveal 0.8s forwards; }
@@ -918,9 +934,6 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-btn:hover { background:rgba(80,130,210,0.88);border-color:rgba(180,215,255,0.9);transform:scale(1.08); }
 .fab-btn svg { width:1.35rem;height:1.35rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 .fab-btn.fab-unlocked { border-color:rgba(90,200,110,0.55);background:rgba(30,80,50,0.45); }
-.fab-tooltip { font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:0.78rem;font-weight:600;color:#e8f2ff;background:rgba(50,80,140,0.90);border:1px solid rgba(154,192,216,0.45);padding:0.28rem 0.7rem;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0.82;transform:translateX(0);transition:opacity 0.15s,transform 0.15s;backdrop-filter:blur(8px); }
-.fab-tooltip:empty { display:none; }
-.fab-item:hover .fab-tooltip { opacity:1;transform:translateX(0); }
 .fab-modal-overlay { position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;overscroll-behavior:contain; }
 .fab-modal-box { background:rgba(18,28,50,0.92);border:1px solid rgba(104,144,168,0.4);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
 .fab-modal-box p { margin:0 0 0.9rem;font-size:0.82rem;color:var(--parchment);opacity:0.65;line-height:1.4; }
@@ -1140,8 +1153,6 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
   .jump-fab svg { width:0.85rem; height:0.85rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
-  .fab-tooltip { transform:translateX(-4px); }
-  .fab-item:hover .fab-tooltip { transform:translateX(0); }
   .admin-bilingual-grid { grid-template-columns:1fr; }
   .admin-mono-grid { grid-template-columns:1fr; }
   .admin-label-en { text-align:left; }
@@ -1167,9 +1178,6 @@ html[data-theme="light"] {
     --gold: #3a5878;
     --gold-bright: #4a7090;
     --gold-deep: #253d58;
-    --violet: #0a1020;
-    --violet-glow: #3a5878;
-    --shadow: rgba(0,0,0,0.12);
     --name: #34373f; --name-hover: #6c6f78;
   }
 
@@ -1212,7 +1220,7 @@ html[data-theme="light"] .rank-item {
     border-left: 3px solid #3a5878;
   }
 html[data-theme="light"] .rank-item::before { display: none; }
-html[data-theme="light"] .rank-item:hover, html[data-theme="light"] .rank-item:focus-visible {
+html[data-theme="light"] .rank-item:hover, html[data-theme="light"] .rank-item:focus-within {
     background: rgba(224,236,252,0.40);
     border-color: rgba(60,95,150,0.55);
     border-left-color: #4a7090;
@@ -1229,16 +1237,16 @@ html[data-theme="light"] .rank-item.divine {
     border-color: rgba(80,110,150,0.22);
     border-left-color: rgba(170,135,30,0.55);
   }
-html[data-theme="light"] .rank-item.divine:hover, html[data-theme="light"] .rank-item.divine:focus-visible {
+html[data-theme="light"] .rank-item.divine:hover, html[data-theme="light"] .rank-item.divine:focus-within {
     background: rgba(251,245,224,0.40);
     border-color: rgba(155,120,30,0.5);
   }
 html[data-theme="light"] .rank-item.divine.morgoth { background: rgba(251,232,240,0.16); border-left-color:rgba(150,25,80,0.50); }
-html[data-theme="light"] .rank-item.divine.morgoth:hover, html[data-theme="light"] .rank-item.divine.morgoth:focus-visible { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
+html[data-theme="light"] .rank-item.divine.morgoth:hover, html[data-theme="light"] .rank-item.divine.morgoth:focus-within { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
 html[data-theme="light"] .rank-item.divine.bombadil { background: rgba(230,250,228,0.16); border-left-color:rgba(45,100,25,0.50); }
-html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="light"] .rank-item.divine.bombadil:focus-visible { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
+html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="light"] .rank-item.divine.bombadil:focus-within { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
 html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
-html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-visible { background: rgba(236,236,239,0.85); }
+html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-within { background: rgba(236,236,239,0.85); }
 html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
 html[data-theme="light"] .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
@@ -1253,12 +1261,6 @@ html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.1rem
 html[data-theme="light"] .rank-title {
     color: #2a2d3e;
     font-weight: 500;
-  }
-html[data-theme="light"] .badge {
-    color: #253d58;
-    border-color: #4a7090;
-    background: rgba(58,88,120,0.1);
-    font-weight: 700;
   }
 
 html[data-theme="light"] .modal-backdrop { background: rgba(10,15,30,0.5); backdrop-filter: blur(6px); }
@@ -1333,6 +1335,12 @@ html[data-theme="light"] .tipo-bestia { background:rgba(134,95,28,0.12); border-
 html[data-theme="light"] .tipo-bombadil { background:rgba(30,90,20,0.12); border-color:rgba(40,111,13,0.8); color:#286f0d; }
 html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
 html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
+/* Stesso override anche per i jump-FAB: coi colori del tema scuro erano
+   quasi invisibili su fondo chiaro (contrasto ~1:1). */
+html[data-theme="light"] .jump-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
+/* Etichette categoria deselezionate: opacità meno spinta nel chiaro
+   (0.45 le portava sotto la soglia di leggibilità AA). */
+html[data-theme="light"] .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.62; }
 html[data-theme="light"] .fab-modal-overlay { background:rgba(180,195,215,0.5); }
 html[data-theme="light"] .fab-modal-box { background:rgba(238,242,250,0.97); border-color:rgba(60,95,140,0.35); }
 html[data-theme="light"] .fab-modal-box p { color:#1a2535; opacity:0.7; }
@@ -1363,9 +1371,12 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 /* Visualizzatore immagini zoomabile */
 .imgv-overlay { position:fixed; inset:0; z-index:500; background:rgba(3,5,12,0.95); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; flex-direction:column; }
 .imgv-bar { display:flex; align-items:center; gap:.5rem; padding:.6rem .8rem; flex:0 0 auto; }
-.imgv-title { font-family:'Cinzel',serif; color:var(--parchment); font-size:.85rem; letter-spacing:.05em; opacity:.85; margin-right:auto; }
-.imgv-btn { width:36px; height:36px; flex:0 0 auto; border-radius:50%; border:1px solid var(--gold); background:rgba(104,144,168,0.12); color:var(--gold); font-family:'Cinzel',serif; font-size:1.1rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s,color .2s; }
-.imgv-btn:hover, .imgv-btn:focus-visible { background:var(--gold); color:var(--ink); outline:none; }
+/* Palette FISSA (niente variabili di tema): l'overlay è sempre quasi nero,
+   quindi titolo e pulsanti devono restare chiari anche nel tema chiaro
+   (con le variabili diventavano scuro-su-scuro, illeggibili). */
+.imgv-title { font-family:'Cinzel',serif; color:#e8eef8; font-size:.85rem; letter-spacing:.05em; opacity:.85; margin-right:auto; }
+.imgv-btn { width:36px; height:36px; flex:0 0 auto; border-radius:50%; border:1px solid #6890a8; background:rgba(104,144,168,0.12); color:#8ab0c8; font-family:'Cinzel',serif; font-size:1.1rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s,color .2s; }
+.imgv-btn:hover, .imgv-btn:focus-visible { background:#6890a8; color:#060a14; outline:none; }
 .imgv-stage { flex:1 1 auto; overflow:hidden; position:relative; cursor:grab; touch-action:none; }
 .imgv-stage.dragging { cursor:grabbing; }
 .imgv-stage img { position:absolute; top:0; left:0; transform-origin:0 0; max-width:none; user-select:none; -webkit-user-drag:none; }
@@ -1391,6 +1402,9 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 (function(){
   var l = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   document.documentElement.setAttribute('data-theme', l ? 'light' : 'dark');
+  // Allinea subito anche la meta theme-color (la barra di sistema): il valore
+  // hardcoded è quello scuro e per chi arriva col sistema in chiaro stonava.
+  if (l) { var tm = document.querySelector('meta[name="theme-color"]'); if (tm) tm.setAttribute('content', '#ebebef'); }
   // Cambio lingua nascosto su mobile col flag spento: classe sull'html, la
   // CSS la applica solo sotto i 768px. Fatto qui nell'head per evitare il flash.
   if (!FEATURES.langSwitchMobile) document.documentElement.classList.add('no-langswitch-mobile');
@@ -1400,7 +1414,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v3.70</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v3.80</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1426,7 +1440,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 </footer>
 
 <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-name">
-  <div class="modal" id="modal">
+  <div class="modal">
     <button class="modal-close" id="modal-close" aria-label="Close">&#x2715;</button>
     <div class="modal-body" id="modal-body">
       <div class="modal-rank" id="modal-rank"></div>
@@ -1448,7 +1462,30 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 
 <script src="dati.js"></script>
 <script>
-var currentLang = localStorage.getItem('arda-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
+// ── Guardie d'ingresso ────────────────────────────────────────────────
+// localStorage tollerante: con i cookie/dati-siti bloccati il browser lancia
+// una SecurityError al PRIMO accesso, che spegnerebbe l'intero sito. Tutte le
+// letture/scritture passano da qui: senza storage il sito funziona comunque,
+// solo senza preferenze persistite.
+var LS = {
+  getItem: function(k){ try { return localStorage.getItem(k); } catch (e) { return null; } },
+  setItem: function(k, v){ try { localStorage.setItem(k, v); } catch (e) {} },
+  removeItem: function(k){ try { localStorage.removeItem(k); } catch (e) {} },
+  keys: function(){ try { var a = []; for (var i = 0; i < localStorage.length; i++) a.push(localStorage.key(i)); return a; } catch (e) { return []; } }
+};
+// Se dati.js non è arrivato (deploy inceppato, rete), niente pagina bianca
+// muta: un messaggio visibile al posto della lista, e lo script si ferma.
+if (typeof dati === 'undefined' || !Array.isArray(dati)) {
+  (function(){
+    var rl = document.getElementById('rank-list');
+    if (rl) rl.innerHTML = '<p style="text-align:center;padding:2rem 1rem;opacity:.8">' +
+      'Impossibile caricare i dati della classifica. Ricarica la pagina tra qualche istante.<br>' +
+      'Could not load the ranking data. Please reload the page in a moment.</p>';
+  })();
+  throw new Error('dati.js non caricato');
+}
+
+var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
 
 // ── Numero di versione ────────────────────────────────────────────────
 // Fonte unica: `var datiVersion` in dati.js, incrementato (patch) dal Worker
@@ -1493,15 +1530,16 @@ var i18n = {
 
 function setLang(lang) {
   currentLang = lang;
-  localStorage.setItem('arda-lang', lang);
+  LS.setItem('arda-lang', lang);
   document.documentElement.lang = lang;
   document.getElementById('lang-switch').textContent = lang === 'it' ? 'EN' : 'IT';
   document.getElementById('crest').innerHTML = i18n[lang].crest;
   document.getElementById('title').textContent = i18n[lang].title;
-  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle.replace(/\n/g, '<br>');
+  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
   var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e mappe' : 'Resources and maps';
+  var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
 }
@@ -1513,6 +1551,7 @@ document.getElementById('lang-switch').addEventListener('click', function() {
 
 
 function parseFonte(fonte) {
+  fonte = String(fonte || ''); // una voce senza fonte non deve rompere il render
   var lp = fonte.lastIndexOf('(');
   if (lp === -1) return { title: fonte, author: fonte, year: '' };
   var title = fonte.slice(0, lp).trim();
@@ -1787,15 +1826,22 @@ var GENERE_SVG = {
   m: '<img class="genere-svg genere-svg--m" src="icons/Maschio.png" title="%L%" alt="%L%">'
 };
 
+// Predicato di visibilità UNICO (filtri categoria + interruttore Apocrifi):
+// condiviso da renderList, visiblePos e stepVisible, così la posizione nella
+// modale e la navigazione con le frecce restano sempre coerenti con la lista.
+function isVisibile(p) {
+  if (p.apocrifo && !showApocrifi) return false; // catalogo esteso: visibile solo con l'interruttore Apocrifi
+  return !!filterState[categoria(p)];
+}
+
 function renderList() {
   var list = document.getElementById('rank-list');
   var html = '';
   var visN = 0;
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
-    if (p.apocrifo && !showApocrifi) continue; // catalogo esteso: visibile solo con l'interruttore Apocrifi
+    if (!isVisibile(p)) continue;
     var cat = categoria(p);
-    if (!filterState[cat]) continue;
     visN++;
     var isVisTop = visN <= 3;
     var nome = escapeHtml(currentLang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome));
@@ -1819,6 +1865,9 @@ function renderList() {
       var labelSegs = tipoLabel.split('|');
       var displaySeg = escapeHtml((labelSegs[idx] || seg).trim());
       var ov = (colorSegs[idx] || '').trim();
+      // Whitelist: l'override finisce in un attributo class senza escaping,
+      // quindi si accetta solo la forma 'tipo-xxx' (tutto il resto è ignorato).
+      if (!/^tipo-[a-z-]*$/.test(ov)) ov = '';
       return '<span class="tipo-badge ' + (ov || tipoClass(seg)) + '">' + displaySeg + '</span>';
     }).join('') : '';
     var statusStr = buildStatus(p);
@@ -1910,7 +1959,9 @@ function renderList() {
    applica ai candidati, verifica), niente lavoro per-card ripetuto. */
 function rankNameLines(el) {
   var tops = [];
-  var nodes = el.querySelectorAll('.rank-name-text, .rank-flags, .rank-tipi .tipo-badge');
+  // Anche i FIGLI di .rank-flags: su desktop il contenitore è display:contents
+  // e non genera rect propri (le icone non venivano contate).
+  var nodes = el.querySelectorAll('.rank-name-text, .rank-flags, .rank-flags > *, .rank-tipi .tipo-badge');
   for (var i = 0; i < nodes.length; i++) {
     var rects = nodes[i].getClientRects();
     for (var k = 0; k < rects.length; k++) if (rects[k].width > 0.5) tops.push(rects[k].top);
@@ -1947,14 +1998,15 @@ var currentIdx = null;
 // assoluto in dati.
 function visiblePos(idx) {
   var n = 0;
-  for (var i = 0; i <= idx; i++) if (filterState[categoria(dati[i])]) n++;
+  for (var i = 0; i <= idx; i++) if (isVisibile(dati[i])) n++;
   return n;
 }
 // Prossimo/precedente indice visibile, per la navigazione con le frecce
-// (gli indici nascosti dai filtri vanno saltati, non mostrati).
+// (gli indici nascosti dai filtri o dall'interruttore Apocrifi vanno
+// saltati, non mostrati).
 function stepVisible(from, dir) {
   for (var i = from + dir; i >= 0 && i < dati.length; i += dir)
-    if (filterState[categoria(dati[i])]) return i;
+    if (isVisibile(dati[i])) return i;
   return null;
 }
 
@@ -1981,8 +2033,10 @@ function openModal(idx) {
   document.getElementById('modal-source').innerHTML =
     '<span>' + titleYear + '</span>' +
     '<span class="modal-author">' + escapeHtml(pf.author) + '</span>';
-  // info contiene HTML intenzionale (<br>): resta innerHTML.
-  document.getElementById('modal-info').innerHTML = info;
+  // La descrizione ammette SOLO i <br> come markup: si escapa tutto e si
+  // ripristinano i soli <br>, così il sink innerHTML non può eseguire nulla.
+  document.getElementById('modal-info').innerHTML =
+    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>');
   // citazione è testo puro: textContent azzera ogni rischio di injection.
   // Se manca (alcune voci non hanno un verbatim attestato), si nasconde il
   // blocco: evita il riquadro col bordo-oro vuoto.
@@ -1992,22 +2046,57 @@ function openModal(idx) {
   document.getElementById('modal-body').scrollTop = 0;
   document.getElementById('modal-backdrop').classList.add('active');
   document.body.style.overflow = 'hidden';
-  document.getElementById('modal-close').focus();
+  // Ricorda da dove si è aperta (per restituire il focus alla chiusura) e
+  // sposta il focus DOPO che il backdrop non è più visibility:hidden: un
+  // elemento nascosto non è focalizzabile, la focus() sincrona era un no-op
+  // e il Tab continuava a scorrere le card dietro la modale.
+  if (!modalOpener) modalOpener = document.activeElement;
+  setTimeout(function(){ document.getElementById('modal-close').focus(); }, 60);
 }
 
+var modalOpener = null;
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('active');
   document.body.style.overflow = '';
   currentIdx = null;
+  // Restituisce il focus al punto di partenza (la card da cui si era aperta).
+  if (modalOpener && modalOpener.isConnected) { try { modalOpener.focus(); } catch (e) {} }
+  modalOpener = null;
 }
 
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-backdrop').addEventListener('click', function(e) {
   if (e.target === document.getElementById('modal-backdrop')) closeModal();
 });
+// Trappola del Tab: finché la modale è aperta il focus resta al suo interno
+// (senza, il Tab scorreva le card dietro la modale aperta).
+document.getElementById('modal-backdrop').addEventListener('keydown', function(e) {
+  if (e.key !== 'Tab') return;
+  var bd = document.getElementById('modal-backdrop');
+  if (!bd.classList.contains('active')) return;
+  var focusables = bd.querySelectorAll('button, a[href]');
+  if (!focusables.length) return;
+  var first = focusables[0], last = focusables[focusables.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModal();
+  // Esc agisce solo a modale davvero aperta: senza il guard, closeModal()
+  // azzerava body.overflow anche col Pannello aperto (scroll sbloccato sotto).
+  // Con più livelli aperti chiude il più in alto: prima le modali secondarie
+  // (gestite dai loro handler), poi la scheda personaggio, infine il Pannello.
+  if (e.key === 'Escape') {
+    // Modali della famiglia fab-modal (trivio riordino, conferma scarto,
+    // password): Esc = tasto ×, comportamento uniforme. Le modali con handler
+    // proprio (viewer immagini, risorse) restano gestite da loro.
+    var fm = document.getElementById('fab-modal');
+    if (fm) { var x = fm.querySelector('.fab-modal-close'); if (x) x.click(); return; }
+    if (document.getElementById('imgv') || document.getElementById('res-modal')) return;
+    if (document.getElementById('modal-backdrop').classList.contains('active')) { closeModal(); return; }
+    var pnl = document.getElementById('ctrl-panel');
+    if (pnl && pnl.classList.contains('open')) { toggleControlPanel(); return; }
+  }
   if (e.key === 'ArrowRight' && currentIdx !== null) { var nx = stepVisible(currentIdx, 1); if (nx !== null) openModal(nx); }
   if (e.key === 'ArrowLeft' && currentIdx !== null) { var pv = stepVisible(currentIdx, -1); if (pv !== null) openModal(pv); }
 });
@@ -2022,7 +2111,7 @@ function openResourcesModal() {
   function onKey(e) { if (e.key === 'Escape') dismiss(); }
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', 'Close'); cl.onclick = dismiss; box.appendChild(cl);
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
   var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; box.appendChild(h);
   // Su mobile i testi lunghi usano un'etichetta abbreviata (niente a-capo).
   var mobile = isMobileViewport();
@@ -2096,7 +2185,10 @@ function openImageViewer(src, title) {
   stage.addEventListener('dblclick', function(e) { var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top); });
   // pan + pinch via pointer events
   var pts = {}, pinchD = 0, pinchMid = null;
-  stage.addEventListener('pointerdown', function(e) { pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); if (Object.keys(pts).length === 1) stage.classList.add('dragging'); });
+  // Traccia il gesto per la chiusura da backdrop: un click secco (nessun
+  // trascinamento, un solo dito) FUORI dall'immagine chiude il viewer.
+  var pressMoved = 0, pressSingle = false;
+  stage.addEventListener('pointerdown', function(e) { pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); var n = Object.keys(pts).length; if (n === 1) { stage.classList.add('dragging'); pressMoved = 0; pressSingle = true; } else { pressSingle = false; } });
   stage.addEventListener('pointermove', function(e) {
     if (!pts[e.pointerId]) return;
     var ids = Object.keys(pts);
@@ -2111,19 +2203,36 @@ function openImageViewer(src, title) {
       pinchD = nd;
     } else {
       var p = pts[e.pointerId];
+      pressMoved += Math.abs(e.clientX - p.x) + Math.abs(e.clientY - p.y);
       tx += e.clientX - p.x; ty += e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
       clampPan(); apply();
     }
   });
-  function up(e) { delete pts[e.pointerId]; if (Object.keys(pts).length < 2) pinchD = 0; if (!Object.keys(pts).length) stage.classList.remove('dragging'); }
+  function up(e) {
+    delete pts[e.pointerId];
+    if (Object.keys(pts).length < 2) pinchD = 0;
+    if (!Object.keys(pts).length) {
+      stage.classList.remove('dragging');
+      // Click secco fuori dall'immagine → chiude (backdrop, come da regola
+      // ✕/Esc/backdrop). Con trascinamento o pinch non chiude mai.
+      if (pressSingle && pressMoved < 6 && natW) {
+        var r = stage.getBoundingClientRect();
+        var sx = e.clientX - r.left, sy = e.clientY - r.top;
+        var inImg = sx >= tx && sx <= tx + natW * scale && sy >= ty && sy <= ty + natH * scale;
+        if (!inImg) close();
+      }
+      pressSingle = false;
+    }
+  }
   stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
   function close() { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); }
   function onKey(e) { if (e.key === 'Escape') close(); }
+  var itL = currentLang === 'it';
   bar.appendChild(ttl);
-  bar.appendChild(mkBtn('−', 'Zoom out', function() { zoomBy(0.8, stage.clientWidth / 2, stage.clientHeight / 2); }));
-  bar.appendChild(mkBtn('+', 'Zoom in', function() { zoomBy(1.25, stage.clientWidth / 2, stage.clientHeight / 2); }));
-  bar.appendChild(mkBtn('⛶', 'Adatta allo schermo', fit));
-  bar.appendChild(mkBtn('✕', 'Close', close));
+  bar.appendChild(mkBtn('−', itL ? 'Riduci' : 'Zoom out', function() { zoomBy(0.8, stage.clientWidth / 2, stage.clientHeight / 2); }));
+  bar.appendChild(mkBtn('+', itL ? 'Ingrandisci' : 'Zoom in', function() { zoomBy(1.25, stage.clientWidth / 2, stage.clientHeight / 2); }));
+  bar.appendChild(mkBtn('⛶', itL ? 'Adatta allo schermo' : 'Fit to screen', fit));
+  bar.appendChild(mkBtn('✕', itL ? 'Chiudi' : 'Close', close));
   ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); document.body.style.overflow = 'hidden';
   document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
 }
@@ -2139,11 +2248,11 @@ var CAT_LABEL = {
 };
 var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
 var CTRL_I18N = {
-  it: { title:'Controlli', cat:'Categorie', icons:'Legenda iconografie', opts:'Opzioni', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
+  it: { cat:'Categorie', icons:'Legenda iconografie', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
         dSave:'Salva', dKeep:'Chiudi', dRestore:'Annulla le modifiche', exportLabel:'Esporta',
         introAdmin:"Funzionalità solo per amministratori: inserisci la password. Se sei un visitatore, usa il tasto 'Esporta' per salvare la tua classifica personale." },
-  en: { title:'Controls', cat:'Categories', icons:'Icon legend', opts:'Options', close:'Close', all:'All', apocrifi:'Apocrypha', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
+  en: { cat:'Categories', icons:'Icon legend', close:'Close', all:'All', apocrifi:'Apocrypha', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
         confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state',
         dSave:'Save', dKeep:'Close', dRestore:'Discard changes', exportLabel:'Export',
         introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
@@ -2266,7 +2375,7 @@ function controlPanelHTML() {
      +   '<span class="ctrl-ver" id="ctrl-ver">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>'
      +   '<span class="ctrl-bb-group">'
      +     infoBtn
-     +     '<button class="ctrl-lang-btn" id="ctrl-lang" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
+     +     '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      +   '</span>'
@@ -2327,7 +2436,7 @@ function wireControlPanel() {
   }
   // Tasto Riordina/Scarta (↑↓ / ×) — solo desktop. Fuori dal riordino entra in
   // modalità riordino (enterReorder forza Apocrifi + categorie); in riordino
-  // chiede conferma e scarta tutto (localStorage.clear + reload).
+  // chiede conferma e scarta la bozza-ordine (chiavi arda-ranking-*) + reload.
   panel.querySelectorAll('.ctrl-reorder-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       if (reorderMode) confirmDiscardReorder();
@@ -2353,16 +2462,14 @@ function wireControlPanel() {
   var verBtn = document.getElementById('ctrl-ver');
   if (verBtn) verBtn.addEventListener('click', function(){
     toggleControlPanel();
-    if (saveUnlocked) showAdminEditor();
-    else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+    openAdminGate();
   });
   // Versione nel Pannello desktop: come il badge in testata, porta dritto
   // all'editor admin (password se non già sbloccato); chiude prima il pannello.
   var verDesk = document.getElementById('ctrl-ver-desk');
   if (verDesk) verDesk.addEventListener('click', function(){
     toggleControlPanel();
-    if (saveUnlocked) showAdminEditor();
-    else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+    openAdminGate();
   });
   // Tasto 'copia link': copia negli appunti l'URL della vista corrente
   // (buildShareUrl) con conferma visiva. Due istanze (toolbar desktop / barra
@@ -2376,12 +2483,12 @@ function wireControlPanel() {
   });
 }
 
-// URL della vista corrente: ?tutte se sono attive TUTTE le categorie, nessun
-// parametro se è la vista di default, altrimenti ?cat=<bitmask> compatto (un
-// bit per categoria nell'ordine di CATS, zeri finali omessi: es. ?cat=10111).
-// Il loader in testa allo script rilegge questi parametri (e per retro-
-// compatibilità anche la vecchia forma ?cat=key1,key2,...), così riaprire il
-// link riproduce esattamente la vista.
+// URL della vista corrente, in forma BARE (dalla v1.60): ?x se sono attive
+// TUTTE le categorie (apocrifi spenti), nessun parametro se è la vista di
+// default, altrimenti ?<bitmask> (un bit 0/1 per categoria nell'ordine di
+// CATS + 10° bit Apocrifi, zeri finali omessi: es. ?101). Il loader rilegge
+// queste forme (più le legacy ?cat=..., ?tutte, ?all, ?a=1, non più emesse),
+// così riaprire il link riproduce esattamente la vista.
 function buildShareUrl() {
   var base = location.origin + location.pathname;
   var active = CATS.filter(function(c){ return filterState[c]; });
@@ -2449,7 +2556,10 @@ function exitReorder() {
   refreshControlPanel();
 }
 // Helper condivisi tra trivio mobile e desktop.
-function saveLocalDraft(){ localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(dati.map(function(d){ return d.nome; }))); }
+// Bozza-ordine: CHIAVE UNICA (i nomi salvati sono sempre p.nome, italiani,
+// a prescindere dalla lingua della UI: una chiave per lingua era incoerente
+// e faceva risorgere bozze scartate al cambio lingua).
+function saveLocalDraft(){ LS.setItem('arda-ranking-v4', JSON.stringify(dati.map(function(d){ return d.nome; }))); }
 /* Riordino per nome con OMONIMI: mai risolvere con find(), che aggancia
    sempre la PRIMA voce con quel nome. Con due omonimi in classifica la
    seconda occorrenza collassava sulla prima (voce duplicata) e l'altra voce
@@ -2468,8 +2578,7 @@ function orderByNames(master, names) {
 }
 function restoreServerOrder(){
   dati = orderByNames(dati.slice(), DATI_SERVER_ORDER);
-  localStorage.removeItem('arda-ranking-v4-' + currentLang);
-  localStorage.removeItem('arda-ranking-v3-' + currentLang);
+  clearDraftOrderKeys();
 }
 function hideSaveFab(){ var f = document.getElementById('fab-container'); if (f) f.remove(); }
 // Export: stampa nativa del browser (PDF A4) su tema chiaro ottimizzato per
@@ -2511,8 +2620,15 @@ function doExport(){
 // visitatori). 'Chiudi' tiene la bozza locale (manopole restano su desktop).
 // 'Ripristina' torna all'ordine del server.
 // Scarta le modifiche all'ordine (tasto × del Pannello). Conferma in modale,
-// poi azzera tutto: localStorage.clear() + reload forzato (così Apocrifi
-// tornano OFF e l'ordine torna quello del server).
+// poi rimuove le sole chiavi della bozza-ordine (arda-ranking-*) + reload
+// forzato (così Apocrifi tornano OFF e l'ordine torna quello del server).
+// MAI localStorage.clear(): l'origine roccobot.github.io è condivisa con
+// altri progetti e con preferenze da conservare (lingua, override proxy).
+function clearDraftOrderKeys(){
+  LS.keys().forEach(function(k){
+    if (k && (k === 'arda-ranking-v4' || k.indexOf('arda-ranking-') === 0)) LS.removeItem(k);
+  });
+}
 function confirmDiscardReorder(){
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it';
@@ -2530,7 +2646,7 @@ function confirmDiscardReorder(){
   function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? ' ' + extra : ''); b.textContent = label; b.onclick = fn; return b; }
   box.appendChild(mkBtn(it ? 'No, continua a modificare' : 'No, keep editing', '', dismiss));
   box.appendChild(mkBtn(it ? 'Sì, scarta tutto' : 'Yes, discard all', 'is-danger', function(){
-    try { localStorage.clear(); } catch (e) {}
+    clearDraftOrderKeys();
     location.reload();
   }));
 }
@@ -2588,8 +2704,7 @@ function showActionChoiceModal() {
     }
     box.appendChild(mkBtn(T.editContent, '', '', function(){
       dismiss();
-      if (saveUnlocked) showAdminEditor();
-      else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+      openAdminGate();
     }));
   }
   function viewConfirm(){
@@ -2668,6 +2783,10 @@ function toggleControlPanel(skipSheetAnim) {
   document.body.style.overflow = open ? 'hidden' : '';
   // FAB: rimbalzo Z all'apertura, crescita alla chiusura (mutuamente esclusivi).
   if (fab) { fab.classList.remove('fab-tap', 'fab-grow'); void fab.offsetWidth; fab.classList.add(open ? 'fab-tap' : 'fab-grow'); }
+  // Il focus segue il Pannello: dentro all'apertura, di nuovo sul FAB alla
+  // chiusura (da tastiera servivano centinaia di Tab per raggiungerlo).
+  if (open) setTimeout(function(){ panel.focus(); }, 60);
+  else if (fab) fab.focus();
   // Chiusura morbida del Pannello (solo mobile, animazione .closing). Saltata se
   // skipSheetAnim===true (il drag handler anima da sé); l'apertura usa la transition.
   if (open) { panel.classList.remove('closing'); }
@@ -2702,6 +2821,12 @@ function buildControlPanel() {
   bd.addEventListener('click', toggleControlPanel);
   var panel = document.createElement('div');
   panel.id = 'ctrl-panel'; panel.className = 'ctrl-panel';
+  // Annunciato come dialogo agli screen reader; il focus vi entra all'apertura
+  // (vedi toggleControlPanel), senza serve un Tab per ogni card per arrivarci.
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', currentLang === 'it' ? 'Pannello di controllo' : 'Control panel');
+  panel.setAttribute('tabindex', '-1');
   var fab = document.createElement('button');
   fab.id = 'ctrl-fab'; fab.className = 'fab-btn ctrl-fab';
   fab.setAttribute('aria-label', 'Filtri e legenda');
@@ -2764,6 +2889,30 @@ function buildControlPanel() {
   })();
   refreshControlPanel();
 }
+
+// Bozza-ordine applicata PRIMA del primo render (setLang → renderList): prima
+// veniva riapplicata in coda allo script, con un secondo render completo
+// all'avvio (50-200 ms sprecati su mobile).
+// Ordine 'di fabbrica' (HTML = committato sul repo), catturato prima che
+// la bozza locale lo riordini: serve a 'Scarta' per tornare allo stato server.
+var DATI_SERVER_ORDER = dati.map(function(d){ return d.nome; });
+(function(){
+  // Chiave unica (i nomi sono sempre italiani); le chiavi legacy per-lingua
+  // restano lette in ripiego per le bozze salvate prima del cambio.
+  var _raw = LS.getItem('arda-ranking-v4')
+           || LS.getItem('arda-ranking-v4-' + currentLang)
+           || LS.getItem('arda-ranking-v3-' + currentLang);
+  if (!_raw) return;
+  try {
+    var _saved = JSON.parse(_raw);
+    if (!Array.isArray(_saved)) return;
+    var _names = (typeof _saved[0] === 'string') ? _saved : _saved.map(function(d){ return d.nome; });
+    // orderByNames (function declaration, quindi già disponibile qui)
+    // consuma una coda per nome: robusta
+    // con gli omonimi (Galdor ×3, Rúmil ×2), niente doppioni né perdite.
+    dati = orderByNames(dati.slice(), _names);
+  } catch(e) {}
+})();
 
 buildControlPanel();
 setLang(currentLang);
@@ -2888,7 +3037,20 @@ let adminPassword = '';
 // URL del proxy admin (Cloudflare Worker). Non è un segreto: è solo l'endpoint.
 // Overridabile al volo dal campo "Proxy" nell'editor admin (localStorage).
 var ADMIN_PROXY_URL_DEFAULT = 'https://arda-admin-proxy.roccobot-b90.workers.dev';
-function proxyUrl() { return localStorage.getItem('arda-proxy-url') || ADMIN_PROXY_URL_DEFAULT; }
+// L'override da localStorage è comodo per i test ma è anche un bersaglio:
+// chi riuscisse a scrivere quella chiave dirotterebbe la parola d'ordine
+// verso un server proprio al prossimo sblocco. Allowlist: solo https sui
+// Worker dell'account roccobot-b90; tutto il resto viene ignorato.
+function proxyUrl() {
+  var ov = LS.getItem('arda-proxy-url');
+  if (ov) {
+    try {
+      var u = new URL(ov);
+      if (u.protocol === 'https:' && /^[a-z0-9-]+\.roccobot-b90\.workers\.dev$/.test(u.hostname)) return ov;
+    } catch (e) {}
+  }
+  return ADMIN_PROXY_URL_DEFAULT;
+}
 let pointerDragState = null;
 let scrollRAF = null;
 let scrollSpeed = 7;
@@ -2911,7 +3073,6 @@ function stopAutoScroll() {
 }
 
 // Mobile: stessa soglia CSS della bottom-sheet (max-width:768px)
-function isMobileView() { return window.matchMedia('(max-width:768px)').matches; }
 // Modalità riordino: su mobile le manopole NON appaiono in automatico quando
 // tutte le categorie sono attive, ma solo dopo un'azione esplicita (pulsante
 // 'Modifica l'ordine'); così di default le card sfruttano tutta la larghezza.
@@ -2926,7 +3087,7 @@ function enableDragDrop() {
   // ora separato dalla visualizzazione. La classifica è ASSOLUTA, perciò
   // enterReorder forza Apocrifi + tutte le categorie. Il tasto ↑↓ del Pannello
   // entra in riordino; 'Tutti' tocca solo le categorie, non più il riordino.
-  const gateOpen = reorderMode && !isMobileView();
+  const gateOpen = reorderMode && !isMobileViewport();
   list.querySelectorAll('.drag-handle').forEach(function(h){ h.remove(); });
   list.classList.remove('has-handles');
   if (!gateOpen) return; // niente manopole fuori dalla modalità riordino (o su mobile)
@@ -2969,7 +3130,6 @@ function enableDragDrop() {
     });
 
     const clone = item.cloneNode(true);
-    clone.id = 'drag-clone';
     clone.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;` +
       `pointer-events:none;z-index:9999;border-radius:4px;` +
       `transform:scale(1.04);box-shadow:0 16px 44px rgba(0,0,0,0.6);opacity:0.97;` +
@@ -3156,7 +3316,6 @@ async function doCommit(msg, payload) {
   // payload opzionale: consente di committare una copia senza aver ancora
   // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
   const data = payload || dati;
-  localStorage.setItem('arda-ranking-v4-' + currentLang, JSON.stringify(data.map(function(d){ return d.nome; })));
   if (!adminPassword) return { ok: false, reason: 'no-auth' };
   // Il commit passa dal proxy: il browser invia solo l'array dati e la parola
   // d'ordine; il PAT vive lato server e fa il read-modify-write su GitHub.
@@ -3175,6 +3334,12 @@ async function doCommit(msg, payload) {
     // Il Worker ha incrementato la versione (patch) e la restituisce: aggiorna
     // subito il badge senza ricaricare la pagina.
     if (r.version) setVersionBadge(r.version);
+    // Il commit è andato: l'ordine committato È il nuovo ordine del server,
+    // quindi la bozza-ordine locale va invalidata (altrimenti il loader la
+    // riapplicherebbe per sempre, mascherando ogni modifica arrivata via git)
+    // e lo snapshot per 'Scarta' va aggiornato al nuovo stato.
+    clearDraftOrderKeys();
+    DATI_SERVER_ORDER = data.map(function(d){ return d.nome; });
     return { ok: true, version: r.version };
   } catch (err) {
     return { ok: false, reason: err.message };
@@ -3210,9 +3375,12 @@ function showPasswordModal(promptText, onSuccess, extra) {
       errMsg.style.opacity = '1';
       setTimeout(() => { inp.style.borderColor = ''; errMsg.style.opacity = '0'; }, 2200);
     };
+    let authing = false; // anti-rientro: Invio ripetuto non deve rilanciare l'auth in volo
     const tryAuth = async () => {
+      if (authing) return;
+      authing = true;
       const pw = inp.value;
-      if (!pw) { fail(); return; }
+      if (!pw) { fail(); authing = false; return; }
       cb.disabled = true;
       let ok = false;
       // Validazione lato server: la parola d'ordine non è nel sorgente pubblico.
@@ -3226,7 +3394,7 @@ function showPasswordModal(promptText, onSuccess, extra) {
         ok = res.ok && r.ok;
       } catch (e) { ok = false; }
       cb.disabled = false;
-      if (!ok) { fail(); return; }
+      if (!ok) { fail(); authing = false; return; }
       adminPassword = pw; // solo in memoria, per i commit di questa sessione
       saveUnlocked = true;
       document.querySelectorAll('#fab-save').forEach(b => b.classList.add('fab-unlocked'));
@@ -3243,12 +3411,8 @@ function showPasswordModal(promptText, onSuccess, extra) {
   buildStep1();
 }
 
-function showSaveModal(onSuccess) {
-  showPasswordModal('Inserisci la parola d\'ordine per sbloccare il salvataggio permanente.', onSuccess);
-}
-
 function showFAB() {
-  if (isMobileView()) return; // su mobile il salvataggio passa dal numero di versione
+  if (isMobileViewport()) return; // niente FAB su mobile: il riordino è desktop-only (dalla v10.19.0)
   if (!hasMovedItem) return;
   const existing = document.getElementById('fab-container');
   if (existing) { existing.style.display = 'flex'; _hideJumpFabs(); return; }
@@ -3260,30 +3424,23 @@ function showFAB() {
 
   const copyItem = document.createElement('div');
   copyItem.className = 'fab-item';
-  const copyTip = document.createElement('span');
-  copyTip.className = 'fab-tooltip';
   const copyBtn = document.createElement('button');
-  copyBtn.id = 'fab-export';
   copyBtn.className = 'fab-btn';
   copyBtn.title = CTRL_I18N[currentLang].exportLabel; copyBtn.setAttribute('aria-label', CTRL_I18N[currentLang].exportLabel);
   copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 3v11"/><polyline points="8 10 12 14 16 10"/><path d="M5 21h14"/></svg>`;
   copyBtn.onclick = () => doExport();
   // Tasto Esporta icona-only: NIENTE etichetta di testo (scelta deliberata,
   // come il tasto Salva; non reintrodurla). Il nome resta in title/aria-label.
-  copyItem.appendChild(copyTip);
   copyItem.appendChild(copyBtn);
 
   const saveItem = document.createElement('div');
   saveItem.className = 'fab-item';
-  const saveTip = document.createElement('span');
-  saveTip.className = 'fab-tooltip';
   const saveBtn = document.createElement('button');
   saveBtn.id = 'fab-save';
   saveBtn.title = 'Salva'; saveBtn.setAttribute('aria-label', 'Salva');
   saveBtn.className = 'fab-btn' + (saveUnlocked ? ' fab-unlocked' : '');
   saveBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
   saveBtn.onclick = () => showDesktopReorderModal();
-  saveItem.appendChild(saveTip);
   saveItem.appendChild(saveBtn);
 
   fab.appendChild(copyItem);
@@ -3291,7 +3448,7 @@ function showFAB() {
   document.body.appendChild(fab);
 }
 
-// Modale per campo bilingue dimenticato (lato ≤3 caratteri). Ritorna una Promise
+// Modale per campo bilingue dimenticato (un lato compilato, l'altro VUOTO). Ritorna una Promise
 // che si risolve col testo digitato (eventualmente vuoto) alla conferma.
 function showFieldGapModal(charName, fieldLabel, lang) {
   return new Promise(function(resolve){
@@ -3319,6 +3476,10 @@ function showFieldGapModal(charName, fieldLabel, lang) {
 }
 
 function showAdminEditor() {
+  // Guardia singleton: mai due editor sovrapposti (gli id dei campi sono
+  // per-indice: un secondo overlay li duplicherebbe e il salvataggio
+  // leggerebbe i valori del primo, committando testi vecchi in silenzio).
+  if (document.querySelector('.admin-overlay')) return;
   const overlay = document.createElement('div');
   overlay.className = 'admin-overlay';
   document.documentElement.classList.add('admin-open');
@@ -3333,7 +3494,13 @@ function showAdminEditor() {
   const backBtn = document.createElement('button');
   backBtn.className = 'admin-btn admin-btn-back';
   backBtn.textContent = 'Indietro';
-  backBtn.onclick = () => { overlay.remove(); document.documentElement.classList.remove('admin-open'); };
+  backBtn.onclick = () => {
+    // Con modifiche non salvate (indicatore arancio acceso) chiede conferma.
+    if (overlay.querySelector('.admin-modified') &&
+        !window.confirm('Ci sono modifiche non salvate: uscire senza salvare?')) return;
+    overlay.remove();
+    document.documentElement.classList.remove('admin-open');
+  };
   const BILINGUAL = [
     { it:'tipo',        en:'tipo_en',        li:'Tipo IT',        le:'Tipo EN' },
     { it:'info',        en:'info_en',        li:'Info IT',        le:'Info EN' },
@@ -3351,6 +3518,10 @@ function showAdminEditor() {
   saveBtn.textContent = 'Salva';
   saveBtn.onclick = async () => {
     saveBtn.disabled = true;
+    // Prima di leggere i campi, forza il build di TUTTE le card: col rendering
+    // incrementale fermo (tab in background) le card mancanti farebbero
+    // ripiegare g() sui valori vecchi e scarterebbero il digitato nei gap.
+    renderUpTo(dati.length);
     const g = (i, f) => { const el = document.getElementById('ae-' + i + '-' + f); return el ? el.value : (dati[i][f] || ''); };
     const setVal = (i, f, v) => { const el = document.getElementById('ae-' + i + '-' + f); if (el) el.value = v; };
     // Coppie bilingui (nome incluso). I nomi identici vanno scritti in entrambi i
@@ -3381,10 +3552,14 @@ function showAdminEditor() {
     for (const gp of gaps) {
       const charName = (g(gp.i, 'nome') || g(gp.i, 'nome_en') || ('#' + (gp.i + 1))).trim();
       const typed = await showFieldGapModal(charName, gp.label, gp.lang);
+      // Se nel frattempo l'editor è stato chiuso (Indietro), NIENTE commit:
+      // senza questo guard partiva un salvataggio spurio (+bump versione).
+      if (!overlay.isConnected) return;
       if (typed && typed.trim()) setVal(gp.i, gp.miss, typed);
       else if (gp.isName)        setVal(gp.i, gp.miss, g(gp.i, gp.src));
       else                       setVal(gp.i, gp.miss, '');
     }
+    if (!overlay.isConnected) return;
     // Si lavora su una COPIA profonda: `dati` non viene toccato finché il
     // commit non è andato a buon fine. Così, se il salvataggio fallisce, lo
     // stato in memoria resta coerente con quello su GitHub (niente modifiche
@@ -3655,6 +3830,7 @@ function showAdminEditor() {
   function ensureRendered(i) { if (i >= renderedCount) renderUpTo(i + 1); }
   var RENDER_BATCH = 12;
   (function renderTick() {
+    if (!overlay.isConnected && renderedCount > 0) return; // editor chiuso: stop, niente CPU sprecata
     renderUpTo(renderedCount + RENDER_BATCH);
     if (renderedCount < dati.length) requestAnimationFrame(renderTick);
   })();
@@ -3735,10 +3911,12 @@ function showAdminEditor() {
     return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
   }
   function clearHit(){ Array.prototype.slice.call(overlay.querySelectorAll('.admin-search-hit')).forEach(function(w){ w.classList.remove('admin-search-hit'); }); }
+  var SEARCH_CAP = 100; // tetto alla LISTA renderizzata (query corte = centinaia di nodi); il conteggio resta totale
   function renderResults(q){
-    results = computeMatches(q); sel = 0; lastQuery = q;
+    var all = computeMatches(q); sel = 0; lastQuery = q;
+    results = all.slice(0, SEARCH_CAP);
     listEl.innerHTML = '';
-    countEl.textContent = q.trim() ? (results.length + (results.length===1?' risultato':' risultati')) : '';
+    countEl.textContent = q.trim() ? (all.length + (all.length===1?' risultato':' risultati') + (all.length > SEARCH_CAP ? ' (primi ' + SEARCH_CAP + ')' : '')) : '';
     if (q.trim() && !results.length){ var e=document.createElement('div'); e.className='admin-search-empty'; e.textContent='Nessun risultato'; listEl.appendChild(e); return; }
     results.forEach(function(r, idx){
       var it = document.createElement('div');
@@ -3822,30 +4000,18 @@ function showAdminEditor() {
   document.body.appendChild(overlay);
 }
 
-// Click sul badge versione → admin editor
-document.querySelector('.version-badge').addEventListener('click', () => {
+// Gate d'accesso admin unico (badge testata, versioni del Pannello, modale
+// storica): editor diretto se già sbloccato, altrimenti modale password.
+function openAdminGate() {
   if (saveUnlocked) showAdminEditor();
   else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+}
+
+// Click sul badge versione → admin editor
+document.querySelector('.version-badge').addEventListener('click', () => {
+  openAdminGate();
 });
 
-// Ordine 'di fabbrica' (HTML = committato sul repo), catturato prima che
-// la bozza locale lo riordini: serve a 'Scarta' per tornare allo stato server.
-var DATI_SERVER_ORDER = dati.map(function(d){ return d.nome; });
-(function(){
-  var _raw = localStorage.getItem('arda-ranking-v4-' + currentLang)
-           || localStorage.getItem('arda-ranking-v3-' + currentLang);
-  if (!_raw) return;
-  try {
-    var _saved = JSON.parse(_raw);
-    if (!Array.isArray(_saved)) return;
-    var _names = (typeof _saved[0] === 'string') ? _saved : _saved.map(function(d){ return d.nome; });
-    // orderByNames (definita più su) consuma una coda per nome: robusta
-    // con gli omonimi (Galdor ×3, Rúmil ×2), niente doppioni né perdite.
-    dati = orderByNames(dati.slice(), _names);
-  } catch(e) {}
-})();
-
-renderList();
 enableDragDrop();
 </script>
 </body>

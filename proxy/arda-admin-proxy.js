@@ -131,6 +131,23 @@ function utf8ToB64(str) {
   return btoa(bin);
 }
 
+// Guard-rail sull'array dati: un payload assurdo (vuoto, troncato o gonfiato)
+// non deve MAI riscrivere il file. La classifica reale ha ~300 voci: sotto le
+// 50 è certamente un client rotto, sopra le 2000 (o oltre ~900 KB serializzati,
+// vicino al limite 1 MB della Contents API) idem.
+const DATI_MIN = 50;
+const DATI_MAX = 2000;
+const DATI_MAX_BYTES = 900000;
+// Cap sugli input liberi: oltre non è un uso legittimo.
+const MSG_MAX = 300;       // messaggio di commit
+const TRANSLATE_MAX = 20000; // testo da tradurre
+
+// fetch con timeout: senza, una GitHub/Gemini appesa terrebbe la richiesta
+// bloccata fino al limite del runtime.
+function fetchT(url, opts, ms) {
+  return fetch(url, Object.assign({}, opts, { signal: AbortSignal.timeout(ms || 15000) }));
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
@@ -155,6 +172,13 @@ export default {
     // Commit dell'array dati.
     if (body.action === 'commit') {
       if (!Array.isArray(body.dati)) return json({ ok: false, error: 'no-dati' }, 400, ch);
+      // Soglie di sanità: mai riscrivere il file con un payload implausibile.
+      if (body.dati.length < DATI_MIN || body.dati.length > DATI_MAX) {
+        return json({ ok: false, error: 'dati-size (' + body.dati.length + ' voci)' }, 400, ch);
+      }
+      if (!body.dati.every(function (d) { return d && typeof d === 'object' && !Array.isArray(d) && typeof d.nome === 'string'; })) {
+        return json({ ok: false, error: 'dati-shape' }, 400, ch);
+      }
       // IMPORTANTE: tutto il dialogo con GitHub è dentro try/catch. Senza, una
       // qualsiasi eccezione qui farebbe crashare il Worker, che risponderebbe
       // con un 500 di sistema PRIVO di header CORS → il browser lo blocca e
@@ -166,40 +190,50 @@ export default {
           'User-Agent': 'arda-admin-proxy',
         };
         if (!env.GITHUB_PAT) return json({ ok: false, error: 'no-github-pat' }, 500, ch);
-        // SHA sempre fresco (evita il bug del secondo salvataggio consecutivo):
-        // NB il runtime di Cloudflare Workers NON implementa l'opzione `cache`
-        // di fetch (lancerebbe un'eccezione). Per bypassare l'eventuale cache
-        // edge si usa un parametro anti-cache nell'URL, che GitHub ignora.
-        const get = await fetch(GH_API + '?_=' + Date.now(), { headers: ghHeaders });
-        if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
-        const fd = await get.json();
-        if (!fd || typeof fd.sha !== 'string') {
-          return json({ ok: false, error: 'gh-no-sha (path errato?)' }, 502, ch);
+        // Cap sul messaggio di commit (input libero dal client).
+        const msg = String(body.message || 'admin: aggiorna').slice(0, MSG_MAX);
+        // Read-modify-write con UN retry sul conflitto SHA (409): se un altro
+        // salvataggio si è infilato tra il GET e il PUT, si riprende uno SHA
+        // fresco e si ritenta una volta sola.
+        let newVersion = null;
+        for (let attempt = 0; attempt < 2; attempt++) {
+          // SHA sempre fresco (evita il bug del secondo salvataggio consecutivo):
+          // NB il runtime di Cloudflare Workers NON implementa l'opzione `cache`
+          // di fetch (lancerebbe un'eccezione). Per bypassare l'eventuale cache
+          // edge si usa un parametro anti-cache nell'URL, che GitHub ignora.
+          const get = await fetchT(GH_API + '?_=' + Date.now(), { headers: ghHeaders });
+          if (!get.ok) return json({ ok: false, error: 'gh-get ' + get.status }, 502, ch);
+          const fd = await get.json();
+          if (!fd || typeof fd.sha !== 'string') {
+            return json({ ok: false, error: 'gh-no-sha (path errato?)' }, 502, ch);
+          }
+          // Si legge il vecchio contenuto solo per ricavare la versione corrente
+          // (`var datiVersion`) e incrementarne la patch; i dati invece si
+          // riscrivono interi dall'array ricevuto. Lo SHA del GET rende il
+          // read-modify-write race-safe.
+          const oldSrc = b64ToUtf8(fd.content);
+          newVersion = bumpVersion(readVersion(oldSrc) || DEFAULT_VERSION);
+          const upd = buildDatiFile(body.dati, newVersion);
+          if (upd.length > DATI_MAX_BYTES) return json({ ok: false, error: 'dati-too-big' }, 400, ch);
+          const put = await fetchT(GH_API, {
+            method: 'PUT',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders),
+            body: JSON.stringify({
+              message: msg + ' (v' + newVersion + ')',
+              content: utf8ToB64(upd),
+              sha: fd.sha,
+            }),
+          });
+          if (put.ok) return json({ ok: true, version: newVersion }, 200, ch);
+          if (put.status === 409 && attempt === 0) continue; // SHA scaduto: retry con SHA fresco
+          // Dettaglio nei log del Worker, messaggio SINTETICO al client (mai
+          // rilanciare testuale la risposta interna di GitHub).
+          try { console.log('gh-put', put.status, await put.text()); } catch (e) {}
+          return json({ ok: false, error: 'gh-put ' + put.status }, 502, ch);
         }
-        // Si legge il vecchio contenuto solo per ricavare la versione corrente
-        // (`var datiVersion`) e incrementarne la patch; i dati invece si
-        // riscrivono interi dall'array ricevuto. Lo SHA del GET rende il
-        // read-modify-write race-safe.
-        const oldSrc = b64ToUtf8(fd.content);
-        const newVersion = bumpVersion(readVersion(oldSrc) || DEFAULT_VERSION);
-        const upd = buildDatiFile(body.dati, newVersion);
-        const put = await fetch(GH_API, {
-          method: 'PUT',
-          headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders),
-          body: JSON.stringify({
-            message: (body.message || 'admin: aggiorna') + ' (v' + newVersion + ')',
-            content: utf8ToB64(upd),
-            sha: fd.sha,
-          }),
-        });
-        if (!put.ok) {
-          let er = {};
-          try { er = await put.json(); } catch (e) {}
-          return json({ ok: false, error: er.message || ('gh-put ' + put.status) }, 502, ch);
-        }
-        return json({ ok: true, version: newVersion }, 200, ch);
       } catch (err) {
-        return json({ ok: false, error: 'commit-exception: ' + String(err && err.message || err) }, 502, ch);
+        console.log('commit-exception', String(err && err.message || err));
+        return json({ ok: false, error: 'commit-failed' }, 502, ch);
       }
     }
 
@@ -210,6 +244,7 @@ export default {
       const from = body.from === 'en' ? 'en' : 'it';
       const to = body.to === 'it' ? 'it' : 'en';
       if (!text.trim()) return json({ ok: true, text: '' }, 200, ch);
+      if (text.length > TRANSLATE_MAX) return json({ ok: false, error: 'text-too-long' }, 400, ch);
       if (!env.GEMINI_API_KEY) return json({ ok: false, error: 'no-gemini-key' }, 500, ch);
 
       const srcLang = from === 'it' ? 'italiano' : 'inglese';
@@ -234,7 +269,7 @@ export default {
         encodeURIComponent(model) + ':generateContent';
 
       try {
-        const ar = await fetch(gemUrl, {
+        const ar = await fetchT(gemUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -247,9 +282,8 @@ export default {
           }),
         });
         if (!ar.ok) {
-          let er = {};
-          try { er = await ar.json(); } catch (e) {}
-          return json({ ok: false, error: (er.error && er.error.message) || ('gemini ' + ar.status) }, 502, ch);
+          try { console.log('gemini', ar.status, await ar.text()); } catch (e) {}
+          return json({ ok: false, error: 'gemini ' + ar.status }, 502, ch);
         }
         const data = await ar.json();
         const cand = (data.candidates || [])[0] || {};
@@ -262,7 +296,8 @@ export default {
         if (!out) return json({ ok: false, error: 'empty (' + (cand.finishReason || 'no-content') + ')' }, 502, ch);
         return json({ ok: true, text: out }, 200, ch);
       } catch (err) {
-        return json({ ok: false, error: String(err && err.message || err) }, 502, ch);
+        console.log('translate-exception', String(err && err.message || err));
+        return json({ ok: false, error: 'translate-failed' }, 502, ch);
       }
     }
 

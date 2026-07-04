@@ -378,7 +378,8 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   senza sottotitoli): 'Salva' apre la modale password (con ripiego 'Esporta'
   per i visitatori, `showPasswordModal(.,.,extra)`), 'Chiudi' e 'Ripristina'
   come su mobile. Il FAB flottante è **rimosso su mobile** (`showFAB` esce se
-  `isMobileView()`).
+  `isMobileViewport()`; il vecchio doppione `isMobileView` è stato unificato
+  nella bonifica v3.80).
 - **Export PDF (`doExport`).** Stampa nativa del browser ottimizzata per la
   carta: forza il tema chiaro (già leggibile su bianco), avvolge `#rank-list`
   in una tabella (`buildPrintLayout`) il cui `<thead>` (`display:table-header-group`)
@@ -746,6 +747,13 @@ specifico del dataset):
   col `nome` `Melkor`, perciò non scattava e si vedeva il default '(presunto)'.)
 
 ## 🧹 Asset del progetto
+
+- **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/`
+  (mappe e risorse aperte da `openImageViewer`) non vanno mai modificati,
+  ridimensionati, compressi od ottimizzati, per nessun motivo: sono materiale
+  da consultazione a piena qualità. Regola esplicita dell'utente (2026-07-04).
+  Anche `favicon.png` e le altre immagini esistenti restano come sono, salvo
+  sua richiesta esplicita.
 
 - A ogni **main release** (bump minor o major) verificare che tutti gli
   asset del progetto siano stati bonificati secondo la regola universale;
