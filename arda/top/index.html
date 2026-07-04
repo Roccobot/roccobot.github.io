@@ -524,11 +524,19 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      legenda): l'intestazione 'CATEGORIE' si allinea otticamente con la
      prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
      ospita il tag del filtro badge. */
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:1.1rem 0 0; }
+  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:2.15rem 0 0; }
+  /* Tag del filtro: centrato in orizzontale (auto laterali) e in verticale
+     nello spazio tra 'Animali' e l'avviso sui nomi (auto sopra/sotto; con
+     tag presente l'avviso rinuncia al proprio margin-top:auto, regola qui
+     sotto, così i due auto del tag si spartiscono equamente lo spazio). */
+  #ctrl-panel .ctrl-left .ctrl-badge-tag { margin:auto; }
+  #ctrl-panel .ctrl-left .ctrl-badge-tag + .ctrl-names-note { margin-top:0; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
      nota, non ammassato in fondo. */
-  #ctrl-panel .ctrl-names-note { display:block; margin-top:auto; margin-bottom:5.45px; }
+  /* margin-bottom tarato perché l'ULTIMA riga dell'avviso condivida la
+     linea di base col testo dei Nove Anelli (ultima riga della legenda). */
+  #ctrl-panel .ctrl-names-note { display:block; margin-top:auto; margin-bottom:0.45px; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
 .ctrl-sheet-head { display:none; }
@@ -616,9 +624,11 @@ html[data-theme="light"] .ctrl-legend-row:hover { background:rgba(58,88,120,0.10
 html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); border-color:rgba(58,88,120,0.55); }
 /* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
    × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
-.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; margin:1rem 0 0.6rem 0.3rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; margin:0.8rem auto 0.4rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
-.ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:1; font-family:'EB Garamond',serif; }
+/* × centrata in verticale nel riquadro: line-height azzerata (il glifo in
+   Garamond siede alto sulla baseline) e centraggio affidato al flex. */
+.ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:0; font-family:'EB Garamond',serif; display:inline-flex; align-items:center; position:relative; top:-0.04em; }
 html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
 html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18); }
 .ctrl-legend-row span { white-space:nowrap; }
@@ -2435,9 +2445,11 @@ function controlPanelHTML() {
     h += '<button class="ctrl-solo' + (isLocked ? ' cat-locked' : '') + '" data-cat="' + c + '"' + (isLocked ? ' disabled' : '') + '>' + soloTxt + '</button>';
     h += '</div>';
   });
+  h += '</div>';
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a
-  // sinistra): compare sotto 'Animali' SOLO a filtro attivo; il click azzera
-  // tutti i badge selezionati.
+  // sinistra): SOLO a filtro attivo; figlio diretto di .ctrl-left, così su
+  // desktop i margini auto lo centrano (in orizzontale e in verticale tra
+  // 'Animali' e l'avviso sui nomi). Il click azzera tutti i badge.
   if (badgeFilter.size) {
     var nB = badgeFilter.size;
     var tagTxt = currentLang === 'it' ? (nB === 1 ? '1 badge attivo' : nB + ' badge attivi')
@@ -2445,7 +2457,6 @@ function controlPanelHTML() {
     var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
     h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '"><span class="tag-x">×</span>' + tagTxt + '</button>';
   }
-  h += '</div>';
   // Nota sui nomi (visibile solo nel layout orizzontale, via CSS): sotto il
   // nome ci sono le alternative note; i veri nomi sono in grassetto.
   h += '<div class="ctrl-names-note">' + (currentLang === 'it'
