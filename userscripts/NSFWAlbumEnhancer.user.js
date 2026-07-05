@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         NSFWAlbum Enhancer
 // @namespace    https://roccobot.github.io/
-// @version      1.0.0
-// @description  Su nsfwalbum.com rende l'immagine grande cliccabile in modo naturale: neutralizza l'SVG trasparente sovrapposto che intercetta il tasto destro, così "apri immagine in una nuova scheda" e "salva immagine" agiscono sul file vero (imx.to). Nessun accesso a servizi esterni: agisce solo sul DOM della pagina.
+// @version      1.1.0
+// @description  Su nsfwalbum.com rende l'immagine grande cliccabile in modo naturale: neutralizza l'SVG trasparente sovrapposto che intercetta il tasto destro (così "apri immagine"/"salva immagine" agiscono sul file vero imx.to) e nasconde la lente d'ingrandimento (.magnify-lens). Agisce solo sul DOM della pagina.
 // @author       Roccobot
 // @match        https://nsfwalbum.com/*
 // @match        https://www.nsfwalbum.com/*
@@ -16,9 +16,14 @@
 (function () {
   'use strict';
 
-  // ── CSS subito: l'immagine vera dev'essere sempre interagibile ──
+  // ════════════════════════ IMPOSTAZIONI ════════════════════════
+  const NASCONDI_LENTE = true; // nasconde la lente d'ingrandimento (overlay .magnify-lens)
+
+  // ── CSS subito: immagine interagibile + (opz.) lente nascosta ──
+  const regole = ['#zoom{pointer-events:auto!important}'];
+  if (NASCONDI_LENTE) regole.push('.magnify-lens{display:none!important}');
   const style = document.createElement('style');
-  style.textContent = '#zoom{pointer-events:auto!important}';
+  style.textContent = regole.join('');
   (document.head || document.documentElement).appendChild(style);
 
   // ── Perché ──
@@ -33,14 +38,19 @@
     if (!img) return;
     const r = img.getBoundingClientRect();
     if (!r.width || !r.height) return;
-    for (const svg of document.querySelectorAll('svg')) {
-      if (svg.dataset.rbNsfw) continue;
-      if (svg.childElementCount !== 0) continue; // solo SVG VUOTI (l'esca; le icone hanno figli)
-      const s = svg.getBoundingClientRect();
+    img.style.setProperty('pointer-events', 'auto', 'important');
+    // Overlay che rubano il clic (SVG-esca e superficie della lente): riconosciuti
+    // perche' sovrapposti a #zoom e grandi quanto l'immagine (le icone vere sono
+    // piccole), oppure SVG senza figli. La lente visibile e' gia' nascosta dal CSS.
+    for (const el of document.querySelectorAll('svg,[class*="magnif"]')) {
+      if (el.dataset.rbNsfw || el === img) continue;
+      const s = el.getBoundingClientRect();
       const overlappa = !(s.right <= r.left || s.left >= r.right || s.bottom <= r.top || s.top >= r.bottom);
-      if (overlappa) {
-        svg.style.setProperty('pointer-events', 'none', 'important');
-        svg.dataset.rbNsfw = '1';
+      const grande = s.width >= r.width * 0.6 && s.height >= r.height * 0.6;
+      const svgVuoto = el.tagName.toLowerCase() === 'svg' && el.childElementCount === 0;
+      if (overlappa && (grande || svgVuoto)) {
+        el.style.setProperty('pointer-events', 'none', 'important');
+        el.dataset.rbNsfw = '1';
       }
     }
   }

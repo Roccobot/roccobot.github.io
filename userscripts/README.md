@@ -128,12 +128,20 @@ Su `nsfwalbum.com`, nella pagina della singola foto (`/photo/<id>`), l'immagine
 grande (`<img id="zoom">`, che punta al file vero su imx.to) ha sopra un **`<svg>`
 vuoto trasparente** che intercetta il tasto destro: "apri immagine in una nuova
 scheda" restituisce quell'SVG serializzato invece della foto. Lo script mette
-`pointer-events:none` su quell'SVG-esca (individuato perché **vuoto** e
-**sovrapposto** all'immagine), così clic e menu contestuale passano all'immagine
-vera sotto: **"apri immagine"** e **"salva immagine"** tornano a funzionare in
-modo naturale sul file reale.
+`pointer-events:none` sugli overlay che rubano il clic — l'SVG-esca (vuoto) e la
+superficie della lente, riconosciuti perché **sovrapposti** all'immagine e
+**grandi quanto** essa (le icone vere sono piccole) — così clic e menu contestuale
+passano all'immagine vera sotto: **"apri immagine"** e **"salva immagine"**
+tornano a funzionare in modo naturale sul file reale. Inoltre **nasconde la lente
+d'ingrandimento** (`.magnify-lens`), l'overlay che si sovrappone alla foto.
 
 Agisce solo sul DOM della pagina (`@grant none`), nessun accesso a servizi esterni.
+
+### Personalizzazione
+
+```js
+const NASCONDI_LENTE = true;  // nasconde la lente d'ingrandimento (.magnify-lens)
+```
 
 ### Installazione
 
