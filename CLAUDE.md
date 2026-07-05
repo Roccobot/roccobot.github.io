@@ -702,14 +702,20 @@ specifico del dataset):
   campi, UI). Applicato subito il sottoinsieme certo (12 fix: italiano nei campi
   `_en`, inglese rotto, refusi, badge Helcaraxë di Celeborn rimosso, `Aracáno`
   tolto da Fingolfin perché è il nome di Argon). **Restano in sospeso, per
-  decisione editoriale dell'utente** (non toccare senza via libera): (a) alcune
-  `citazione`/`citazione_en` che sono passi DIVERSI e vanno riallineati allo
-  stesso brano verbatim (Oropher, Denethor II, Celebrimbor, Shelob, Carc);
-  (b) epiteti forse non attestati nei `nomi_alternativi` (Imrahil 'il Bello',
-  Bilbo 'il Magnifico', Isildur, Balin 'il Più Anziano', Arwen 'Gioiello degli
-  Elfi', Helm 'il Difensore', Alatar 'Haimenar', Pallando 'Palacendo'): possibili
-  coniazioni volute; (c) `Sindaco di Pietraforata` (campo IT di Samvise): il
-  campo EN è stato corretto in 'Michel Delving', la resa italiana è da confermare.
+  decisione editoriale dell'utente**. **Risolti in v4.41 (decisioni utente):**
+  (a) le citazioni IT/EN disallineate riallineate allo stesso passo verbatim —
+  Denethor II e Celebrimbor e Shelob (nuovo testo IT), Oropher (nuovo
+  `citazione_en` verbatim), Carc (nuovo IT = battuta di Roäc); (c) `Pietraforata`
+  **confermato** come resa IT voluta di Michel Delving (carica 'Sindaco di
+  Pietraforata'; in inglese resta 'Michel Delving') — il campo IT di Samvise NON
+  si tocca. **Restano scelte tenute apposta:** gli epiteti forse non attestati
+  (Imrahil 'il Bello', Bilbo 'il Magnifico', Isildur, Balin, Arwen 'Gioiello
+  degli Elfi', Helm 'il Difensore') e i nomi apocrifi di Alatar ('Haimenar') e
+  Pallando ('Palacendo'), che l'utente **vuole mantenere**.
+- **Bandobras → Brandobras (v4.41).** In italiano il nome è `Brandobras Tuc`
+  (con la R; l'inglese resta `Bandobras Took`). Il soprannome `Bullroarer` ha
+  **due rese ITA attestate**, entrambe tenute: `Ruggitoro, Ruggibrante`. Il
+  monte degli Orchi è `Monte Gram` (mai `Monte Gramma`, forma errata da fandom).
 - **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
   (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
@@ -746,6 +752,13 @@ specifico del dataset):
   dall'head, + media query `max-width:768px`). Scopo: interfaccia mobile più
   pulita; la lingua si cambia comunque dal Pannello del FAB. Su **desktop**
   il tasto resta sempre visibile.
+  - **Fluttuante su desktop + scorciatoia ⌘L (dalla v4.41).** `.lang-switch` è
+    `position:fixed` (z-index 50): resta in alto a destra anche scorrendo. In
+    modalità admin sparisce da sé, perché `html.admin-open` nasconde l'intero
+    `<header>` che lo contiene. La scorciatoia **⌘L / Ctrl+L** commuta IT↔EN
+    all'istante (listener `keydown` con `preventDefault`, che scavalca l'azione
+    predefinita del browser sulla barra indirizzi); disattivata quando
+    `html.admin-open` per non interferire con l'editor.
 - **`oneRing`** (non un on/off ma un **selettore di variante**): icona
   dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
