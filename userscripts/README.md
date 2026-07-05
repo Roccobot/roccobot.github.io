@@ -119,3 +119,24 @@ const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pa
 - Se `GM_cookie` non è disponibile nel tuo gestore, lo script ripulisce comunque
   storage e cookie accessibili da JS: se il limite fosse legato a un cookie
   HttpOnly, in quel caso servirebbe Tampermonkey (che supporta `GM_cookie`).
+
+## NSFWAlbum Enhancer
+
+**File:** `NSFWAlbumEnhancer.user.js`
+
+Su `nsfwalbum.com`, nella pagina della singola foto (`/photo/<id>`), l'immagine
+grande (`<img id="zoom">`, che punta al file vero su imx.to) ha sopra un **`<svg>`
+vuoto trasparente** che intercetta il tasto destro: "apri immagine in una nuova
+scheda" restituisce quell'SVG serializzato invece della foto. Lo script mette
+`pointer-events:none` su quell'SVG-esca (individuato perché **vuoto** e
+**sovrapposto** all'immagine), così clic e menu contestuale passano all'immagine
+vera sotto: **"apri immagine"** e **"salva immagine"** tornano a funzionare in
+modo naturale sul file reale.
+
+Agisce solo sul DOM della pagina (`@grant none`), nessun accesso a servizi esterni.
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/NSFWAlbumEnhancer.user.js>
+3. Premere **Installa**.
