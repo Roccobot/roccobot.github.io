@@ -706,12 +706,19 @@ specifico del dataset):
   (a) le citazioni IT/EN disallineate riallineate allo stesso passo verbatim —
   Denethor II e Celebrimbor e Shelob (nuovo testo IT), Oropher (nuovo
   `citazione_en` verbatim), Carc (nuovo IT = battuta di Roäc); (c) `Pietraforata`
-  **confermato** come resa IT voluta di Michel Delving (carica 'Sindaco di
-  Pietraforata'; in inglese resta 'Michel Delving') — il campo IT di Samvise NON
-  si tocca. **Restano scelte tenute apposta:** gli epiteti forse non attestati
-  (Imrahil 'il Bello', Bilbo 'il Magnifico', Isildur, Balin, Arwen 'Gioiello
-  degli Elfi', Helm 'il Difensore') e i nomi apocrifi di Alatar ('Haimenar') e
-  Pallando ('Palacendo'), che l'utente **vuole mantenere**.
+  **confermato** come resa IT voluta di Michel Delving. **Corrispondenza:**
+  `Michel Delving` = **Pietraforata** (località, di fatto la 'capitale' della
+  Contea); la carica `Sindaco di Pietraforata` = `Mayor of Michel Delving`, ed è
+  **sinonimo** di `Sindaco della Contea`.
+- **Epiteti dell'audit — decisioni utente (v4.43).** RIMOSSI perché non
+  attestati: Isildur 'Tagliatore dell'Anello', Balin 'il Più Anziano', Helm
+  'il Difensore', Bilbo 'il Ritrovatore dell'Anello'. CORRETTO: Arwen
+  'Stella della Sera' (inventato) → **'Stella del Vespro'** (traduzione di
+  Evenstar, a sua volta di Undómiel). TENUTI apposta: **Imrahil 'il Bello'**
+  (verbatim, SdA Libro V cap. 6 — è attestato), **Bilbo 'il Magnifico'**
+  (epiteto dato da Thranduil nominandolo Amico degli Elfi, fine dello Hobbit),
+  Arwen 'Gioiello degli Elfi', e i nomi apocrifi di Alatar ('Haimenar') e
+  Pallando ('Palacendo').
 - **Bandobras → Brandobras (v4.41).** In italiano il nome è `Brandobras Tuc`
   (con la R; l'inglese resta `Bandobras Took`). Il soprannome `Bullroarer` ha
   **due rese ITA attestate**, entrambe tenute: `Ruggitoro, Ruggibrante`. Il
@@ -859,7 +866,7 @@ specifico del dataset):
   - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon),
     Fram (Scatha), Bard (Smaug). Azaghâl ferì soltanto Glaurung.
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
-    Gandalf (Flagello di Dúrin). **Tuor escluso**: uccide Balrog solo nei
+    Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo nei
     Racconti Perduti (versione superata del legendarium).
   - **`morgoth`** ('Affrontò Morgoth in duello'): SOLO Fingolfin, il badge
     più esclusivo.
