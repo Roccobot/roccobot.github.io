@@ -1540,12 +1540,12 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.48</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.58</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title">I Grandi di Arda</h1>
-  <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien, dall’Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
+  <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#6890a8" stroke-width="0.8" fill="none" opacity="0.6"/>
     <circle cx="100" cy="15" r="3" fill="#9ac0d8"/>
@@ -1649,7 +1649,7 @@ var i18n = {
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
     intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
-    footer: "<em>’Non tutto quel ch’è oro brilla, né gli erranti sono perduti.’</em><br>Il potere, in Arda, non sempre indossa una corona.",
+    footer: "<em>'Non tutto quel ch'è oro brilla, né gli erranti sono perduti.'</em><br>Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
     tgLink: 'Voce su Tolkien Gateway'
   },
@@ -1841,18 +1841,18 @@ var ICON_LABEL = {
   it: {
     aratar:  "Aratar: i più grandi e potenti degli Ainur",
     silmaril:"Possedette o toccò un Silmaril",
-    helcaraxe:"Attraversò i ghiacci dell’Helcaraxë",
-    istari:  "Membro dell’ordine degli Istari (Stregoni)",
-    fellowship:"Membro della Compagnia dell’Anello",
+    helcaraxe:"Attraversò i ghiacci dell'Helcaraxë",
+    istari:  "Membro dell'ordine degli Istari (Stregoni)",
+    fellowship:"Membro della Compagnia dell'Anello",
     king_high:"Re Supremo dei Noldor",
     king_high_now:"Re Supremo dei Noldor (in carica)",
     king_std:"Alto Re dei Noldor nella Terra di Mezzo",
     survivor:"Visse nella Terra di Mezzo durante la Quarta Era",
-    west:    "Salpò per l’Ovest e approdò nelle Terre Imperiture",
+    west:    "Salpò per l'Ovest e approdò nelle Terre Imperiture",
     envoy:   "Salpò per Valinor con Oromë come ambasciatore degli Eldar",
-    onering: "Portatore dell’Unico Anello",
-    vilya:   "Portatore di Vilya (Anello dell’Aria)",
-    nenya:   "Portatore di Nenya (Anello dell’Acqua)",
+    onering: "Portatore dell'Unico Anello",
+    vilya:   "Portatore di Vilya (Anello dell'Aria)",
+    nenya:   "Portatore di Nenya (Anello dell'Acqua)",
     narya:   "Portatore di Narya (Anello del Fuoco)",
     menring: "Portatore di uno dei Nove Anelli degli Uomini",
     incarnazione: "Tornò con il proprio corpo dalle Aule di Mandos",
@@ -1892,9 +1892,9 @@ var ICON_LABEL = {
 // (badge 'west' al 50%): Radagast, Glorfindel, Erestor, Lindir.
 var AMAN_DEDOTTO = { it:'Approdò nelle Terre Imperiture (dedotto, non attestato dalle fonti canoniche)', en:'Reached the Undying Lands (inferred, not canonically confirmed)' };
 var ICON_LABEL_OVERRIDE = {
-  'Elenwë': { helcaraxe: { it:'Morì nella traversata dell’Helcaraxë', en:'Died during the crossing of the Helcaraxë' } },
+  'Elenwë': { helcaraxe: { it:'Morì nella traversata dell\'Helcaraxë', en:'Died during the crossing of the Helcaraxë' } },
   'Melkor': { aratar: { it:'Non più annoverato tra gli Aratar dopo la sua ribellione', en:'No longer counted among the Aratar after his rebellion' } },
-  'Bill': { fellowship: { it:'Accompagnò la Compagnia dell’Anello', en:'Accompanied the Fellowship of the Ring' } },
+  'Bill': { fellowship: { it:'Accompagnò la Compagnia dell\'Anello', en:'Accompanied the Fellowship of the Ring' } },
   'Radagast': { west: AMAN_DEDOTTO },
   'Glorfindel': { west: AMAN_DEDOTTO },
   'Erestor': { west: AMAN_DEDOTTO },
@@ -2372,7 +2372,7 @@ function openResourcesModal() {
   }
   item('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
   item('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
-  linkItem('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-Earth', 'https://middle-earth-interactive-map.web.app', 'Mappa della Terra di Mezzo', 'Map of Middle-Earth');
+  linkItem('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'https://middle-earth-interactive-map.web.app', 'Mappa della Terra di Mezzo', 'Map of Middle-earth');
 }
 
 function openImageViewer(src, title) {
