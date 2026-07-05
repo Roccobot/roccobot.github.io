@@ -102,7 +102,12 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
 html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: #1c344f; }
 
 .lang-switch {
-  position: absolute;
+  /* Fisso in alto a destra: resta visibile e fluttuante anche scorrendo (desktop).
+     Su mobile è comunque nascosto dal flag langSwitchMobile. In modalità admin
+     l'intero <header> che lo contiene è display:none (regola html.admin-open),
+     quindi sparisce da sé. */
+  position: fixed;
+  z-index: 50;
   top: 1.5rem;
   right: 1.5rem;
   background: rgba(104,144,168,0.15);
@@ -1532,7 +1537,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.31</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.41</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1674,6 +1679,17 @@ function setLang(lang) {
 
 document.getElementById('lang-switch').addEventListener('click', function() {
   setLang(currentLang === 'it' ? 'en' : 'it');
+});
+
+// Scorciatoia ⌘L / Ctrl+L: interruttore istantaneo IT<->EN. preventDefault
+// scavalca l'azione predefinita del browser (focus sulla barra indirizzi).
+// Disattivata in modalità admin per non interferire con l'editor.
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && (e.key === 'l' || e.key === 'L')) {
+    if (document.documentElement.classList.contains('admin-open')) return;
+    e.preventDefault();
+    setLang(currentLang === 'it' ? 'en' : 'it');
+  }
 });
 
 
