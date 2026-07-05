@@ -485,7 +485,7 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     chiave (nessuna modifica al Worker).
   - **Voci flaggate `apocrifo` (18, tutte attestate solo in HoME/NoME):**
     - *I popoli della Terra di Mezzo* (HoME XII): **Eldalótë**, **Findis**,
-      **Irimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**.
+      **Írimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**.
     - *La guerra dei gioielli* (HoME XI): i primi Elfi destatisi a Cuiviénen
       **Imin/Iminyë**, **Tata/Tatië**, **Enel/Enelyë**; e gli Uomini delle
       *Wanderings of Húrin* **Manthor**, **Hardang**, **Asgon**, **Avranc**,
