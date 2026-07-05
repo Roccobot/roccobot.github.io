@@ -1521,7 +1521,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.18</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2607,8 +2607,43 @@ function refreshControlPanel() {
   wireControlPanel();
 }
 
+// Lineetta di riferimento sotto la nota: deve finire ESATTAMENTE dove finisce
+// il testo (al punto dell'ultima riga), non riempire la colonna. Si misura il
+// bordo destro massimo delle righe della nota e vi si adatta la larghezza.
+// Solo desktop (su mobile la .ctrl-note-rule è display:none).
+function fitNoteRule() {
+  var panel = document.getElementById('ctrl-panel');
+  if (!panel) return;
+  var note = panel.querySelector('.ctrl-names-note');
+  var rule = panel.querySelector('.ctrl-note-rule');
+  if (!note || !rule || getComputedStyle(rule).display === 'none') { if (rule) rule.style.width = ''; return; }
+  var range = document.createRange();
+  range.selectNodeContents(note);
+  var rects = range.getClientRects();
+  if (!rects.length) return;
+  // Bordo destro dell'ULTIMA riga (dove sta il punto finale), non della riga
+  // più larga: si prende il top massimo (ultima riga) e, tra i frammenti su
+  // quella riga, il right massimo.
+  var lastTop = -Infinity;
+  for (var i = 0; i < rects.length; i++) if (rects[i].top > lastTop) lastTop = rects[i].top;
+  var right = 0;
+  for (var j = 0; j < rects.length; j++) if (rects[j].top >= lastTop - 1) right = Math.max(right, rects[j].right);
+  // Larghezza dal bordo sinistro REALE della lineetta (i margini di nota e
+  // lineetta possono differire). Le misure getBoundingClientRect sono nello
+  // spazio TRASFORMATO: a pannello chiuso il transform scale(0.96) le
+  // rimpicciolisce, quindi si divide per lo scale reale (a pannello aperto
+  // vale 1, nessun effetto).
+  var ruleLeft = rule.getBoundingClientRect().left;
+  var m = new DOMMatrixReadOnly(getComputedStyle(panel).transform);
+  var sx = m.a || 1;
+  rule.style.width = Math.max(0, Math.round((right - ruleLeft) / sx)) + 'px';
+}
+window.addEventListener('resize', function(){ clearTimeout(window._noteRuleT); window._noteRuleT = setTimeout(fitNoteRule, 150); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fitNoteRule(); });
+
 function wireControlPanel() {
   var panel = document.getElementById('ctrl-panel');
+  fitNoteRule();
   function applyFilter() {
     renderList();
     enableDragDrop();
