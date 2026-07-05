@@ -1532,7 +1532,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.25</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.29</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2042,8 +2042,11 @@ function renderList() {
     }).join('') : '';
     var statusStr = buildStatus(p);
     // Riga 2: descrizione + lineage
-    var padre = escapeHtml(p.padre || '');
-    var madre = escapeHtml(p.madre || '');
+    // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i
+    // genitori dal nome tradotto (Tuc/Took, Brandibuck/Brandybuck, di/of...);
+    // assenti = nome identico nelle due lingue (fallback su padre/madre).
+    var padre = escapeHtml(currentLang === 'it' ? (p.padre || '') : (p.padre_en || p.padre || ''));
+    var madre = escapeHtml(currentLang === 'it' ? (p.madre || '') : (p.madre_en || p.madre || ''));
     var desc = escapeHtml(currentLang === 'it' ? (p.info || '') : (p.info_en || p.info || ''));
     var descParts = [];
     if (desc) descParts.push(desc);
@@ -4205,7 +4208,7 @@ function showAdminEditor() {
   // Cerca SOLO nel contenuto dei campi (mai nelle etichette UI) di TUTTE le voci,
   // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
   // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
-  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre'];
+  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre','padre_en','madre_en'];
   var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }

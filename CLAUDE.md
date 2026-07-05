@@ -546,6 +546,13 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   riga continua a spezzarsi al suo interno; e se la parte 2 rientra in coda
   a una parte 1 lunga senza costo, resta il wrap naturale col `|`. Vale su
   desktop e mobile (decisione misurata per card e viewport).
+- **Campi opzionali `padre_en`/`madre_en` (dalla v4.29)**: forma inglese del
+  nome del genitore, presente SOLO dove diverge dall'italiana (cognomi hobbit
+  tradotti: Tuc/Took, Brandibuck/Brandybuck, Bolgeri/Bolger, Eglantina/Eglantine,
+  e i «di/of»: Boromir di Ladros, Finduilas di Dol Amroth). Il render usa
+  `padre_en || padre` in inglese (idem madre); campo assente = nome identico
+  nelle due lingue. L'editor admin non li espone (li preserva al salvataggio,
+  lavorando su copia profonda): si modificano dal repo.
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
   presente solo dove diverge dal nome inglese (disambigue o titoli
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
