@@ -29,7 +29,7 @@
   <link rel="icon" type="image/png" sizes="512x512" href="favicon.png?v=240">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink: #060a14;
@@ -277,6 +277,11 @@ h1 {
 /* Ogni nome/titolo alternativo è un blocco inscindibile: la riga va a capo solo
    ai separatori (virgole, |), mai dentro un titolo di più parole. */
 .rank-subtitle .alt-token { white-space:nowrap; }
+/* Vero nome (lingua madre) fra gli alternativi: peso 800 dell'asse variabile
+   di EB Garamond (font caricato con wght@400..800). Prima era uno <strong>
+   a 700 'finto' (nessuna vera bold caricata): stacca poco. Tutto il resto
+   del sottotitolo resta a 400. */
+.rank-subtitle strong { font-weight:800; }
 
 .rank-desc {
   font-family:'EB Garamond',serif;
@@ -611,7 +616,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   font-family:'EB Garamond',serif; font-size:0.84rem; line-height:1.45;
   color:var(--parchment-dim); padding:0 0.3rem; max-width:17rem;
 }
-.ctrl-names-note strong { font-weight:600; color:var(--parchment); }
+.ctrl-names-note strong { font-weight:800; color:var(--parchment); }
 .ctrl-note-rule { display:none; }
 .ctrl-row {
   display:flex; align-items:center; gap:0.55rem; padding:0.32rem 0.3rem; border-radius:7px;
@@ -1521,7 +1526,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.18</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.19</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
