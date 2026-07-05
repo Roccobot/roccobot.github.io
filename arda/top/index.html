@@ -293,6 +293,12 @@ h1 {
   margin-top:0.05rem;
 }
 
+/* A capo ottimizzato delle righe bipartite (vedi optimizeBipartite): quando
+   la parte 2 (genealogia o titoli) andrebbe a capo lasciando una testa breve
+   sulla prima riga, .bp-break la manda a capo per intero e nasconde il '|'. */
+.bp-break .bp-sep { display:none; }
+.bp-break .bp-b { display:block; }
+
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
 .rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.1rem,3.4vw,1.6rem); }
 
@@ -1526,7 +1532,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.24</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.25</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2048,7 +2054,7 @@ function renderList() {
       if (madre) linParts.push(madre);
       descParts.push(preL + ' ' + linParts.join(currentLang === 'it' ? ' e ' : ' and '));
     }
-    var rigaDesc = '<span class="rank-desc">' + descParts.join(' | ') + '</span>';
+    var rigaDesc = '<span class="rank-desc">' + joinBipartite(descParts) + '</span>';
     // Riga 3: nomi alternativi + appellativi
     var riga2 = '';
     if (nomiAlt || appell) {
@@ -2058,7 +2064,7 @@ function renderList() {
       var altParts = [];
       if (nomiAlt) altParts.push(nomiAlt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
       if (appell) altParts.push(appell.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
-      riga2 = '<span class="rank-subtitle">' + altParts.join(' | ') + '</span>';
+      riga2 = '<span class="rank-subtitle">' + joinBipartite(altParts) + '</span>';
     }
     var classes = 'rank-item' + (isVisTop ? ' vis-top' : '');
     var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
@@ -2118,7 +2124,7 @@ function renderList() {
       }
     })(items[j]);
   }
-  tightenNames();
+  reflowRows();
 }
 
 /* Compattazione mirata della riga nome. Conta le righe di testo occupate da
@@ -2154,12 +2160,54 @@ function tightenNames() {
   for (i = 0; i < cand.length; i++)
     if (rankNameLines(cand[i].el) >= cand[i].before) cand[i].el.classList.remove('name-tight');
 }
+
+/* A capo ottimizzato delle righe bipartite (info | genealogia e nomi | titoli).
+   Se la parte dopo il separatore (.bp-b) andrebbe a capo lasciando solo una
+   testa breve sulla prima riga (es. '| Figlia' e il resto sotto), si manda a
+   capo l'intera parte 2 e si omette il '|' (classe .bp-break); la si tiene
+   SOLO se non aumenta il numero totale di righe (se la parte 1 è lunga e la
+   parte 2 rientra in coda, resta il wrap naturale). Non è tutto-o-niente in
+   assoluto: una parte 2 più lunga di una riga continua a spezzarsi al suo
+   interno. Stesse tre passate di layout di tightenNames (misura, applica,
+   verifica), ricalcolate a ogni render, al resize e al load dei font. */
+function rowLines(el) {
+  var range = document.createRange();
+  range.selectNodeContents(el);
+  var rects = range.getClientRects();
+  var tops = [], i;
+  for (i = 0; i < rects.length; i++) if (rects[i].width > 0.5) tops.push(rects[i].top);
+  if (!tops.length) return 0;
+  tops.sort(function(a, b){ return a - b; });
+  var lines = 1, cur = tops[0];
+  for (i = 0; i < tops.length; i++) { if (tops[i] - cur > 8) { lines++; cur = tops[i]; } }
+  return lines;
+}
+function optimizeBipartite() {
+  var rows = document.querySelectorAll('#rank-list .rank-desc, #rank-list .rank-subtitle');
+  var i, cand = [];
+  for (i = 0; i < rows.length; i++) rows[i].classList.remove('bp-break');
+  for (i = 0; i < rows.length; i++) {
+    if (!rows[i].querySelector('.bp-b')) continue;
+    var n = rowLines(rows[i]);
+    if (n > 1) cand.push({ el: rows[i], before: n });
+  }
+  for (i = 0; i < cand.length; i++) cand[i].el.classList.add('bp-break');
+  for (i = 0; i < cand.length; i++)
+    if (rowLines(cand[i].el) > cand[i].before) cand[i].el.classList.remove('bp-break');
+}
+// Emissione delle righe bipartite: con due parti, ciascuna in uno span
+// misurabile e separatore a sé (nascosto da .bp-break); con una sola, testo nudo.
+function joinBipartite(parts) {
+  if (parts.length < 2) return parts.join(' | ');
+  return '<span class="bp-a">' + parts[0] + '</span><span class="bp-sep"> | </span><span class="bp-b">' + parts[1] + '</span>';
+}
+function reflowRows() { tightenNames(); optimizeBipartite(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
-  tightenTimer = setTimeout(tightenNames, 150);
+  tightenTimer = setTimeout(reflowRows, 150);
 });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ tightenNames(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); });
 
 var currentIdx = null;
 
