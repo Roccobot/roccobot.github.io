@@ -1,5 +1,10 @@
 {
   "model": "opus",
+  "permissions": {
+    "allow": [
+      "Artifact"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
