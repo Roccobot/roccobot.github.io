@@ -533,6 +533,19 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   spingeva l'etichetta su una riga nuova anche con spazio libero dopo l'ultima
   parola (caso 'Guardiani di Cirith Ungol') — da qui il passaggio al flusso
   inline.
+- **A capo ottimizzato delle righe bipartite (dalla v4.25).** Le due righe
+  `info | genealogia` (`.rank-desc`) e `nomi | titoli` (`.rank-subtitle`)
+  sono emesse con le parti in span misurabili (`joinBipartite`: `.bp-a`,
+  `.bp-sep`, `.bp-b`). La funzione `optimizeBipartite` (in `reflowRows` con
+  `tightenNames`: a fine `renderList`, al resize, al load dei font) evita la
+  'testa vedova' (es. `... | Figlia` a fine riga e il resto sotto): se la
+  riga va a capo, prova la classe `.bp-break` (parte 2 `display:block`,
+  separatore `|` nascosto) e la tiene SOLO se non aumenta il numero totale
+  di righe (a parità di righe preferisce l'a-capo pieno, semanticamente più
+  pulito). Non è tutto-o-niente in assoluto: una parte 2 più lunga di una
+  riga continua a spezzarsi al suo interno; e se la parte 2 rientra in coda
+  a una parte 1 lunga senza costo, resta il wrap naturale col `|`. Vale su
+  desktop e mobile (decisione misurata per card e viewport).
 - **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
   presente solo dove diverge dal nome inglese (disambigue o titoli
   diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
