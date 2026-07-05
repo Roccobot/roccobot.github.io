@@ -660,6 +660,13 @@ specifico del dataset):
   e legenda condividono il passo verticale esplicito di 31.5px (righe in
   fase, deriva azzerata).
 
+- **Elfi senza stirpe attestata: etichetta `Elfo`, colore 'suggerito'.**
+  Erestor e Lindir non hanno stirpe attestata dalle fonti: l'etichetta resta
+  `Elfo`/`Elfa` (niente invenzioni), ma il COLORE via `tipo_color` suggerisce
+  l'appartenenza più probabile, per scelta dell'utente: **Erestor** →
+  `tipo-noldor`, **Lindir** → `tipo-sindar` (ramo Teleri). Non sono anomalie
+  da ripulire: gli override sono deliberati.
+
 ## 📚 Nuovi personaggi e canone
 
 - **Verifica delle fonti sempre.** Per ogni personaggio nuovo o modificato,
