@@ -694,6 +694,15 @@ specifico del dataset):
   citazioni, genealogie, tipi e anche per icone/badge). Le citazioni devono
   essere verbatim dalle edizioni ammesse (`rules/JRRT.md`); se un dato non è
   attestato, ometterlo o segnalarlo, mai inventarlo. **Alla peggio, chiedere.**
+- **Ogni audit dei contenuti DEVE includere la conformità dei nomi propri alla
+  resa STI**, come dimensione a sé. Un nome inglese lasciato in un campo IT (es.
+  `Pippin`→`Pipino`, `Brandybuck`→`Brandibuck`, `Dale`→`la Valle`) NON è un
+  errore di grammatica né di canone e sfugge a un audit di sola qualità del
+  testo: va confrontato voce per voce con le corrispondenze in `JRRT.md` (e con
+  TP/STI per i casi non elencati). Scansione minima: per ogni campo italiano
+  (`nome`, `nomi_alternativi`, `appellativi`, `info`, `descrizione`, `padre`,
+  `madre`) controllare che non resti alcun toponimo/nome anglofono con resa STI
+  nota. Vale anche per i controlli automatici (grep dei nomi anglofoni).
 - **Posizioni in classifica.** Claude può decidere autonomamente dove collocare
   i nuovi personaggi; a fine lavoro **riferire sempre le loro posizioni** in
   classifica, calcolate **con tutte le categorie attive**.
