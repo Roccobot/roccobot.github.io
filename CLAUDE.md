@@ -697,6 +697,19 @@ specifico del dataset):
 - **Posizioni in classifica.** Claude può decidere autonomamente dove collocare
   i nuovi personaggi; a fine lavoro **riferire sempre le loro posizioni** in
   classifica, calcolate **con tutte le categorie attive**.
+- **Audit bilingue del 2026-07-05 (v4.30).** Passata multi-agente su tutte le
+  310 voci (qualità EN, italiano residuo, coerenza IT↔EN, canone, convenzioni
+  campi, UI). Applicato subito il sottoinsieme certo (12 fix: italiano nei campi
+  `_en`, inglese rotto, refusi, badge Helcaraxë di Celeborn rimosso, `Aracáno`
+  tolto da Fingolfin perché è il nome di Argon). **Restano in sospeso, per
+  decisione editoriale dell'utente** (non toccare senza via libera): (a) alcune
+  `citazione`/`citazione_en` che sono passi DIVERSI e vanno riallineati allo
+  stesso brano verbatim (Oropher, Denethor II, Celebrimbor, Shelob, Carc);
+  (b) epiteti forse non attestati nei `nomi_alternativi` (Imrahil 'il Bello',
+  Bilbo 'il Magnifico', Isildur, Balin 'il Più Anziano', Arwen 'Gioiello degli
+  Elfi', Helm 'il Difensore', Alatar 'Haimenar', Pallando 'Palacendo'): possibili
+  coniazioni volute; (c) `Sindaco di Pietraforata` (campo IT di Samvise): il
+  campo EN è stato corretto in 'Michel Delving', la resa italiana è da confermare.
 - **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
   (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
