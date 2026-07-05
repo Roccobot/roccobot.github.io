@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         NSFWAlbum Enhancer
 // @namespace    https://roccobot.github.io/
-// @version      1.1.0
-// @description  Su nsfwalbum.com rende l'immagine grande cliccabile in modo naturale: neutralizza l'SVG trasparente sovrapposto che intercetta il tasto destro (così "apri immagine"/"salva immagine" agiscono sul file vero imx.to) e nasconde la lente d'ingrandimento (.magnify-lens). Agisce solo sul DOM della pagina.
+// @version      1.2.0
+// @description  Su nsfwalbum.com rende l'immagine grande cliccabile in modo naturale: neutralizza (anche al clic, in modo affidabile su tutte le foto) l'SVG trasparente sovrapposto che intercetta il tasto destro (così "apri immagine"/"salva immagine" agiscono sul file vero imx.to) e nasconde la lente d'ingrandimento (.magnify-lens). Agisce solo sul DOM della pagina.
 // @author       Roccobot
 // @match        https://nsfwalbum.com/*
 // @match        https://www.nsfwalbum.com/*
@@ -64,6 +64,12 @@
     window.addEventListener('load', neutralizza);
     window.addEventListener('resize', neutralizza);
     document.addEventListener('scroll', neutralizza, true);
+    // Chiave: l'SVG-esca è creato al passaggio del mouse; lo si neutralizza
+    // PRIMA del menu contestuale (mousedown/pointerdown precedono il contextmenu),
+    // così il tasto destro cade sempre sull'immagine vera.
+    document.addEventListener('pointerdown', neutralizza, true);
+    document.addEventListener('mousedown', neutralizza, true);
+    document.addEventListener('mouseover', neutralizza, true);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
