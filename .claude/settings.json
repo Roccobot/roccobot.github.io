@@ -36,6 +36,12 @@
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) git fetch origin master --quiet 2>/dev/null; BEHIND=$(git rev-list --count HEAD..origin/master 2>/dev/null); if [ \"${BEHIND:-0}\" -gt 0 ]; then echo \"Commit bloccato: $BEHIND commit dietro origin/master (probabile salvataggio admin su dati.js). Riallinea a origin/master e riapplica prima di committare.\" >&2; exit 2; fi ;; esac",
             "timeout": 20,
             "statusMessage": "Controllo freschezza vs origin/master…"
+          },
+          {
+            "type": "command",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) if git diff --cached | python3 -c \"import sys; ls=[l for l in sys.stdin if l.startswith('+') and not l.startswith('+++')]; sys.exit(1 if any(chr(0x2014) in l for l in ls) else 0)\"; then :; else echo 'Commit bloccato: em-dash (trattino lungo) nelle righe aggiunte. Regola universale: mai em-dash, usa virgola, due punti o parentesi. (L en-dash resta ammesso solo negli intervalli d anno, es. 2758-59.)' >&2; exit 2; fi ;; esac",
+            "timeout": 20,
+            "statusMessage": "Controllo em-dash (pre-commit)…"
           }
         ]
       }
