@@ -787,12 +787,11 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
     margin:0 -1.2rem 0.4rem; background:rgba(16,24,44,0.98); pointer-events:none;
     border-radius:18px 18px 0 0;
   }
-  /* Allineamento verticale (solo mobile): il bordo sinistro dell'icona badge
-     (righe legenda) coincide con quello del riquadro colorato delle categorie.
-     Nella riga categoria il dot parte a 1.9rem dal bordo riga (0.3 padding +
-     1.05 checkbox + 0.55 gap); la riga legenda riceve lo stesso rientro a
-     sinistra, così le icone si incolonnano coi quadratini colorati. */
-  #ctrl-panel .ctrl-legend-row { padding-left:1.9rem; }
+  /* Blocco legenda centrato in orizzontale (solo mobile, scelta utente): la
+     sezione si restringe al contenuto (width:fit-content) e si centra con
+     margini auto. Le righe restano allineate tra loro (icone incolonnate),
+     ma il gruppo nel suo insieme è centrato nel pannello. */
+  #ctrl-panel .ctrl-section--legend { width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
   html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
@@ -1546,7 +1545,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.67</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.68</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
