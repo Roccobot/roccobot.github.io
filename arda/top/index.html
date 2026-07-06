@@ -1545,7 +1545,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.68</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.78</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1662,7 +1662,7 @@ var i18n = {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Arda',
     subtitle: 'The mightiest beings* in Tolkien\'s world, from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
-    intro: "From the angelic powers of the Ainur down to the humblest Hobbit child. 'Power' is understood in the broadest sense imaginable: magical force, skill in combat, political and military power, influence and the ability to shape the world's fate.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
+    intro: "From the semi-divine powers to the humblest of servants. In Arda power takes many forms: it may be mastery of magic, skill in combat, political or military power, resistance to the seduction of darkness, the ability to shape the fate of the world.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
     footer: "<em>'Not all that glitters is gold, nor all who wander are lost.'</em><br>Power in Arda does not always wear a crown.",
     position: 'Position',
     tgLink: 'Entry on Tolkien Gateway'
@@ -1683,20 +1683,29 @@ function setLang(lang) {
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
+  // Se una scheda è aperta, ricarica la modale nella nuova lingua (la parte
+  // admin non usa questa modale, quindi resta esclusa di fatto).
+  if (currentIdx !== null && document.getElementById('modal-backdrop').classList.contains('active')) openModal(currentIdx);
 }
 
 document.getElementById('lang-switch').addEventListener('click', function() {
   setLang(currentLang === 'it' ? 'en' : 'it');
 });
 
-// Scorciatoia ⌘L / Ctrl+L: interruttore istantaneo IT<->EN. preventDefault
-// scavalca l'azione predefinita del browser (focus sulla barra indirizzi).
-// Disattivata in modalità admin per non interferire con l'editor.
+// Scorciatoie con Ctrl (o Cmd) e override (preventDefault), disattivate in
+// modalità admin per non interferire con l'editor:
+//  - Ctrl+L: interruttore istantaneo IT<->EN (aggiorna anche una scheda aperta).
+//  - Ctrl+Freccia Su / Giù: vai in cima / in fondo alla pagina.
 document.addEventListener('keydown', function(e) {
-  if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && (e.key === 'l' || e.key === 'L')) {
-    if (document.documentElement.classList.contains('admin-open')) return;
+  if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
+  if (document.documentElement.classList.contains('admin-open')) return;
+  if (e.key === 'l' || e.key === 'L') {
     e.preventDefault();
     setLang(currentLang === 'it' ? 'en' : 'it');
+  } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    var sc = document.scrollingElement || document.documentElement;
+    window.scrollTo({ top: e.key === 'ArrowUp' ? 0 : sc.scrollHeight, behavior: 'smooth' });
   }
 });
 
@@ -2281,7 +2290,7 @@ function openModal(idx) {
   // La descrizione ammette SOLO i <br> come markup: si escapa tutto e si
   // ripristinano i soli <br>, così il sink innerHTML non può eseguire nulla.
   document.getElementById('modal-info').innerHTML =
-    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   // citazione è testo puro: textContent azzera ogni rischio di injection.
   // Se manca (alcune voci non hanno un verbatim attestato), si nasconde il
   // blocco: evita il riquadro col bordo-oro vuoto.

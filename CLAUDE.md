@@ -773,13 +773,19 @@ specifico del dataset):
   dall'head, + media query `max-width:768px`). Scopo: interfaccia mobile più
   pulita; la lingua si cambia comunque dal Pannello del FAB. Su **desktop**
   il tasto resta sempre visibile.
-  - **Fluttuante su desktop + scorciatoia ⌘L (dalla v4.41).** `.lang-switch` è
-    `position:fixed` (z-index 50): resta in alto a destra anche scorrendo. In
-    modalità admin sparisce da sé, perché `html.admin-open` nasconde l'intero
-    `<header>` che lo contiene. La scorciatoia **⌘L / Ctrl+L** commuta IT↔EN
-    all'istante (listener `keydown` con `preventDefault`, che scavalca l'azione
-    predefinita del browser sulla barra indirizzi); disattivata quando
-    `html.admin-open` per non interferire con l'editor.
+  - **Fluttuante su desktop + scorciatoie da tastiera (dalla v4.41).**
+    `.lang-switch` è `position:fixed` (z-index 50): resta in alto a destra anche
+    scorrendo. In modalità admin sparisce da sé, perché `html.admin-open`
+    nasconde l'intero `<header>` che lo contiene. Un unico listener `keydown`
+    (con `preventDefault` = override dell'azione predefinita del browser)
+    gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate quando
+    `html.admin-open`:
+    - **Ctrl+L** (su Mac è `⌃L`, col tasto Control, non Command): commuta IT↔EN
+      all'istante; se una scheda (modale) è aperta, dalla v4.78 `setLang`
+      **ricarica anche la modale** nella nuova lingua (prima cambiava solo la
+      pagina sotto).
+    - **Ctrl+Freccia Su / Giù** (dalla v4.78): vai in cima / in fondo alla
+      pagina (`window.scrollTo` smooth).
 - **`oneRing`** (non un on/off ma un **selettore di variante**): icona
   dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
