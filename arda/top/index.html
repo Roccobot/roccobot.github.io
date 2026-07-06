@@ -1545,7 +1545,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.88</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v4.89</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1692,10 +1692,36 @@ document.getElementById('lang-switch').addEventListener('click', function() {
   setLang(currentLang === 'it' ? 'en' : 'it');
 });
 
+// Scroll di pagina con easing quintico (ease-out): parte rapido e decelera
+// morbido, meglio del behavior:'smooth' nativo. Definito qui a scope condiviso
+// e riusato SIA dai tasti flottanti ↑/↓ (buildJumpFabs) SIA dalle scorciatoie
+// Ctrl+Freccia, così l'animazione è identica.
+var pageScrollRAF = null;
+function pageScrollTo(target){
+  var el = document.scrollingElement || document.documentElement;
+  var start = el.scrollTop, end = Math.max(0, Math.min(target, el.scrollHeight - el.clientHeight));
+  var dist = end - start;
+  if (Math.abs(dist) < 1) return;
+  if (pageScrollRAF) cancelAnimationFrame(pageScrollRAF);
+  el.style.scrollBehavior = 'auto';   // niente smooth nativo: comanda l'easing
+  var dur = Math.min(800, 280 + Math.abs(dist) * 0.16), t0 = null;
+  var ease = function(x){ return 1 - Math.pow(1 - x, 5); };
+  var step = function(ts){
+    if (t0 === null) t0 = ts;
+    var k = Math.min(1, (ts - t0) / dur);
+    el.scrollTop = start + dist * ease(k);
+    if (k < 1) pageScrollRAF = requestAnimationFrame(step);
+    else { pageScrollRAF = null; el.style.scrollBehavior = ''; }
+  };
+  pageScrollRAF = requestAnimationFrame(step);
+}
+function sEl(){ return document.scrollingElement || document.documentElement; }
+
 // Scorciatoie con Ctrl (o Cmd) e override (preventDefault), disattivate in
 // modalità admin per non interferire con l'editor:
 //  - Ctrl+L: interruttore istantaneo IT<->EN (aggiorna anche una scheda aperta).
-//  - Ctrl+Freccia Su / Giù: vai in cima / in fondo alla pagina.
+//  - Ctrl+Freccia Su / Giù: vai in cima / in fondo alla pagina (stesso easing
+//    dei tasti flottanti, via pageScrollTo).
 document.addEventListener('keydown', function(e) {
   if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
@@ -1704,8 +1730,7 @@ document.addEventListener('keydown', function(e) {
     setLang(currentLang === 'it' ? 'en' : 'it');
   } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
     e.preventDefault();
-    var sc = document.scrollingElement || document.documentElement;
-    window.scrollTo({ top: e.key === 'ArrowUp' ? 0 : sc.scrollHeight, behavior: 'smooth' });
+    pageScrollTo(e.key === 'ArrowUp' ? 0 : sEl().scrollHeight);
   }
 });
 
@@ -3348,29 +3373,8 @@ function showJumpFabsTemporarily() {
     b.addEventListener('click', fn);
     return b;
   }
-  // Scroll dei tasti: parte molto rapido e decelera in modo fluido (ease-out
-  // quintico) invece del behavior:'smooth' nativo (che decelera poco). Durata
-  // proporzionata alla distanza ma con tetto, così resta sempre 'molto rapido'.
-  var pageScrollRAF = null;
-  function pageScrollTo(target){
-    var el = document.scrollingElement || document.documentElement;
-    var start = el.scrollTop, end = Math.max(0, Math.min(target, el.scrollHeight - el.clientHeight));
-    var dist = end - start;
-    if (Math.abs(dist) < 1) return;
-    if (pageScrollRAF) cancelAnimationFrame(pageScrollRAF);
-    el.style.scrollBehavior = 'auto';   // niente smooth nativo: comanda l'easing
-    var dur = Math.min(800, 280 + Math.abs(dist) * 0.16), t0 = null;
-    var ease = function(x){ return 1 - Math.pow(1 - x, 5); };
-    var step = function(ts){
-      if (t0 === null) t0 = ts;
-      var k = Math.min(1, (ts - t0) / dur);
-      el.scrollTop = start + dist * ease(k);
-      if (k < 1) pageScrollRAF = requestAnimationFrame(step);
-      else { pageScrollRAF = null; el.style.scrollBehavior = ''; }
-    };
-    pageScrollRAF = requestAnimationFrame(step);
-  }
-  var sEl = function(){ return document.scrollingElement || document.documentElement; };
+  // Scroll dei tasti: usa la funzione globale pageScrollTo (easing quintico),
+  // condivisa con le scorciatoie Ctrl+Freccia.
   var btnTop  = mk(TOP,  'Vai in cima',  function(){ pageScrollTo(0); });
   var btnPgUp = mk(PGUP, 'Pagina su',    function(){ pageScrollTo(sEl().scrollTop - window.innerHeight * 0.85); });
   var btnPgDn = mk(PGDN, 'Pagina giù',   function(){ pageScrollTo(sEl().scrollTop + window.innerHeight * 0.85); });

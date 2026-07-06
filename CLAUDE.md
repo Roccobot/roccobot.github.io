@@ -792,8 +792,12 @@ specifico del dataset):
       all'istante; se una scheda (modale) è aperta, dalla v4.78 `setLang`
       **ricarica anche la modale** nella nuova lingua (prima cambiava solo la
       pagina sotto).
-    - **Ctrl+Freccia Su / Giù** (dalla v4.78): vai in cima / in fondo alla
-      pagina (`window.scrollTo` smooth).
+    - **Ctrl (o Cmd) + Freccia Su / Giù** (dalla v4.78): vai in cima / in fondo
+      alla pagina, con lo **stesso easing** dei tasti flottanti (funzione
+      condivisa `pageScrollTo`, promossa a scope globale dalla v4.89). ⚠️ Su
+      **macOS** `⌃↑`/`⌃↓` sono riservati dal sistema (Mission Control / App
+      Exposé) e non arrivano al browser: lì funziona `⌘↑`/`⌘↓` (il listener
+      accetta sia Ctrl sia Cmd). Su Windows/Linux funziona `Ctrl`.
 - **`oneRing`** (non un on/off ma un **selettore di variante**): icona
   dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
