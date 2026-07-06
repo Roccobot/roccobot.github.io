@@ -807,6 +807,13 @@ specifico del dataset):
   (tasto manuale '⇄ Traduci' per coppia bilingue). Spenta su richiesta
   dell'utente in favore della modale di conferma dei campi dimenticati (vedi
   'Struttura dati'). Riattivabile mettendo il flag a `true`.
+- **`smoothScroll`** (spento, dalla v4.90): stile dello scorrimento di pagina
+  di `pageScrollTo` (condivisa da tasti flottanti ↑/↓ e scorciatoie
+  Ctrl/Cmd+Freccia). `false` = **diretto/istantaneo** (salto immediato, default,
+  preferenza dell'utente); `true` = **fluido** (animazione con easing quintico
+  ease-out). Nota tecnica: il ramo istantaneo forza `scroll-behavior:auto`
+  perché il CSS globale `html{scroll-behavior:smooth}` altrimenti animerebbe
+  anche il semplice set di `scrollTop`.
 
 ## 🎨 Etichette tipo (colori e bordo)
 
