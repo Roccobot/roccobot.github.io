@@ -602,8 +602,16 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   un appellativo, quindi è la forma in lingua madre a essere evidenziata.
   Applicata in blocco (dalla v1.38) a Fëanor, Fingolfin, Finarfin, Fingon,
   Turgon, Maedhros, Maglor, Celebrimbor, Finrod, Orodreth, Glorfindel, Celegorm,
-  Caranthir, Curufin, Amrod, Amras, Idril, Aredhel, Elros (`Elerossë`) e Celeborn
-  (`Teleporno`, telerin). Il render converte `**...**` in grassetto (`processAlt`).
+  Caranthir, Curufin, Amrod, Amras, Idril, Aredhel ed Elros (`Elerossë`). Il
+  render converte `**...**` in grassetto (`processAlt`).
+  - **Celeborn: NON si usa `Teleporno`.** `Teleporno` (telerin) sarebbe il vero
+    nome solo nella linea narrativa in cui Celeborn è un Elfo di Valinor: una
+    versione **scartata dal progetto** perché genera una catena di incoerenze
+    che J.R.R. Tolkien stesso non ha mai risolto. Per 'I Grandi di Arda' vale la
+    **versione Sindarin** di Celeborn: è un Elfo della Terra di Mezzo, signore
+    del Doriath e parente di Thingol. Perciò `Teleporno` **non va aggiunto** tra
+    i nomi alternativi, e Celeborn **non rientra** tra i casi di grassetto in
+    lingua madre. (Storico: la v1.38 lo aveva erroneamente incluso.)
 - **Editor admin: doppio campo nome.** Dalla v10.13.6 la riga nome dell'editor
   ha due campi affiancati, **Nome** (`nome`, IT, bandiera 🇮🇹) e **Nome EN**
   (`nome_en`, bandiera 🇬🇧), entrambi pre-compilati e salvati. Prima c'era un
