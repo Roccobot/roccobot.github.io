@@ -2,7 +2,12 @@
   "model": "opus",
   "permissions": {
     "allow": [
-      "Artifact"
+      "Artifact",
+      "WebFetch",
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(curl:*)"
     ]
   },
   "hooks": {
