@@ -668,6 +668,11 @@ specifico del dataset):
   anche gli epiteti nudi (`Il Bianco`, `L'Alto`, `Il Vecchio`, `The Old`). Vale
   per la prima lettera della riga; gli elementi successivi di un elenco separato
   da virgola seguono le regole normali.
+- **Toponimo 'Terra di Mezzo' con l'articolo:** in italiano si scrive sempre
+  **'nella Terra di Mezzo'** (e 'della/alla/dalla Terra di Mezzo'), **mai** la
+  forma nuda 'in Terra di Mezzo'. Regola dell'utente (2026-07-06), applicata in
+  blocco al dataset (Finarfin, Galadriel, Círdan). Vale per ogni campo IT; l'EN
+  resta 'in Middle-earth'.
 
 - **Filtri badge (dalla v4.05).** Ogni riga della legenda del Pannello è un
   interruttore (`BADGE_ROWS`: le righe raggruppate filtrano l'unione dei loro
