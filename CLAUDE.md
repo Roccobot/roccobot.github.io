@@ -567,6 +567,17 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   `Beechbone`).
   - Storico: fino a v10.4.x valeva la regola opposta (solo `nome_en`, `nome`
     vuoto, affidandosi al fallback). Invertita su richiesta dell'utente.
+- **Dedup delle aggiunte in blocco: sempre PER-LINGUA, mai per-voce.** Quando si
+  applicano aggiunte massive ai campi bilingui (`nomi_alternativi`/`appellativi`
+  e i rispettivi `_en`), la deduplica va valutata **separatamente** per l'italiano
+  e per l'inglese. Le due lingue possono divergere: lo stesso valore EN può essere
+  già presente mentre l'IT è diverso (o viceversa). Una dedup che scarta l'intera
+  aggiunta quando coincide UNA sola lingua butta via il miglioramento nell'altra.
+  Es. (fix v4.91): per Eldarion l'EN `King of the Reunited Kingdom` era già
+  presente, ma l'IT proposto `Re del Reame Unificato` differiva dall'esistente
+  `Re del Reame Unito`; una dedup per-voce lo scartò, lasciando la resa vecchia.
+  Regola: aggiungi il valore di una lingua se in quella lingua è realmente nuovo,
+  a prescindere dall'altra.
 - **Due campi, due ruoli (riga sotto il nome).** La riga mostra
   `nomi_alternativi` e, dopo un ` | `, `appellativi` (il separatore ` | `
   compare solo se entrambe le parti ci sono):
