@@ -804,8 +804,9 @@ specifico del dataset):
       **ricarica anche la modale** nella nuova lingua (prima cambiava solo la
       pagina sotto).
     - **Ctrl (o Cmd) + Freccia Su / Giù** (dalla v4.78): vai in cima / in fondo
-      alla pagina, con lo **stesso easing** dei tasti flottanti (funzione
-      condivisa `pageScrollTo`, promossa a scope globale dalla v4.89). ⚠️ Su
+      alla pagina. **Istantaneo** (dalla v4.97): `pageScrollTo(target, false)`;
+      i **tasti flottanti** invece scorrono in modo **fluido** (vedi sotto).
+      La funzione `pageScrollTo` è a scope globale dalla v4.89. ⚠️ Su
       **macOS** `⌃↑`/`⌃↓` sono riservati dal sistema (Mission Control / App
       Exposé) e non arrivano al browser: lì funziona `⌘↑`/`⌘↓` (il listener
       accetta sia Ctrl sia Cmd). Su Windows/Linux funziona `Ctrl`.
@@ -818,13 +819,19 @@ specifico del dataset):
   (tasto manuale '⇄ Traduci' per coppia bilingue). Spenta su richiesta
   dell'utente in favore della modale di conferma dei campi dimenticati (vedi
   'Struttura dati'). Riattivabile mettendo il flag a `true`.
-- **`smoothScroll`** (spento, dalla v4.90): stile dello scorrimento di pagina
-  di `pageScrollTo` (condivisa da tasti flottanti ↑/↓ e scorciatoie
-  Ctrl/Cmd+Freccia). `false` = **diretto/istantaneo** (salto immediato, default,
-  preferenza dell'utente); `true` = **fluido** (animazione con easing quintico
-  ease-out). Nota tecnica: il ramo istantaneo forza `scroll-behavior:auto`
-  perché il CSS globale `html{scroll-behavior:smooth}` altrimenti animerebbe
-  anche il semplice set di `scrollTop`.
+- **Scorrimento di pagina — NON è più un flag (dalla v4.97).** La funzione
+  condivisa `pageScrollTo(target, smooth)` ha due modi **fissi**, uno per tipo
+  di comando (scelta dell'utente):
+  - **Tasti flottanti** ↑/↓ e Pagina su/giù (`buildJumpFabs`): `smooth:true` =
+    animazione **veloce ma fluida** (easing quintico ease-out: parte rapida e
+    decelera a fine corsa, effetto inerzia). Vale su desktop e mobile.
+  - **Scorciatoie** Ctrl/Cmd+Freccia: `smooth:false` = **salto istantaneo**.
+
+  Nota tecnica: il ramo istantaneo forza `scroll-behavior:auto` perché il CSS
+  globale `html{scroll-behavior:smooth}` altrimenti animerebbe anche il semplice
+  set di `scrollTop`. (Storico: fino alla v4.96 esisteva il flag
+  `FEATURES.smoothScroll`, che governava un unico comportamento condiviso da
+  entrambi; rimosso quando l'utente ha voluto i due modi distinti.)
 
 ## 🎨 Etichette tipo (colori e bordo)
 
