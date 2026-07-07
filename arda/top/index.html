@@ -290,6 +290,11 @@ h1 {
    a 700 'finto' (nessuna vera bold caricata): stacca poco. Tutto il resto
    del sottotitolo resta a 400. */
 .rank-subtitle strong { font-weight:800; }
+/* Titoli (parte 2 della riga, .bp-b = appellativi): corsivo + una tinta che
+   mescola il colore-base con l'accento del tema (si adatta da sé a chiaro/scuro),
+   così si distinguono dai Nomi (parte 1) anche quando vanno a capo senza il '|'.
+   Fallback al colore-base dove color-mix non è supportato (resta il corsivo). */
+.rank-subtitle .bp-b { font-style:italic; color:var(--parchment-dim); color:color-mix(in srgb, var(--parchment-dim) 64%, var(--gold) 36%); }
 
 .rank-desc {
   font-family:'EB Garamond',serif;
