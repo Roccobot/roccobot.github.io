@@ -1187,8 +1187,12 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
      alto l'intero blocco (icone + simbolo di genere) di .07em: gli allineamenti
      interni restano intatti (anelli e genere hanno gia' i propri nudge). */
-  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0.32em; margin-right:0.4em; vertical-align:middle; transform:translateY(-0.07em); }
+  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0; margin-right:0.4em; vertical-align:middle; transform:translateY(-0.07em); }
   .rank-name > .rank-flags:empty { display:none; }
+  /* Gap nome->(icone o etichette) come margine di coda del nome: presente
+     anche quando .rank-flags e' vuoto (creature senza icone), e mai
+     indentante quando le etichette vanno a capo. */
+  .rank-name > .rank-name-text { margin-right:0.32em; }
   .rank-name > .rank-flags .status-icon, .rank-name > .rank-flags .genere-svg { margin-left:0; }
   /* Etichette = BLOCCO ATOMICO (inline-flex): o stanno TUTTE in coda al nome
      (dopo le icone), o vanno TUTTE a capo insieme, nell'ordine dato,
@@ -1205,7 +1209,8 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name > .rank-tipi { display:inline-flex; flex-wrap:wrap; align-items:center; gap:0.35em 0.4em; max-width:100%; vertical-align:middle; transform:translateY(-1px); }
   .rank-name > .rank-tipi:empty { display:none; }
   .rank-name > .rank-tipi .tipo-badge { margin-left:0; }
-  .rank-name.name-tight > .rank-flags { margin-left:0.24em; margin-right:0.3em; }
+  .rank-name.name-tight > .rank-flags { margin-left:0; margin-right:0.3em; }
+  .rank-name.name-tight > .rank-name-text { margin-right:0.24em; }
   .rank-name.name-tight > .rank-tipi { gap:0.3em; }
   /* Solo le card apocrife (con la pill 'Solo HoME' in alto a destra) mandano
      SEMPRE le etichette a capo, per non collidere con la pill. Le card
@@ -1581,7 +1586,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.36</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.37</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
