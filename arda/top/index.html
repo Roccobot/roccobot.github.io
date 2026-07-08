@@ -1556,7 +1556,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v4.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.00</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2098,7 +2098,10 @@ function renderList() {
     var genere = p.genere || 'm';
     var gl = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
     var genereSym = genere === 'f' ? GENERE_SVG.f.split('%L%').join(gl.f) : genere === 'm' ? GENERE_SVG.m.split('%L%').join(gl.m) : '';
-    var hasAinur = p.nome !== 'Lúthien' && tipo && /(?:^|\|)\s*(valë|valië|vala|maia)/i.test(tipo) && !/balrog/i.test(tipo);
+    // Badge 'Ainu' calcolato sul tipo CANONICO italiano (p.tipo): l'inglese
+    // antepone l'aggettivo ('Fallen Vala', 'Fallen Maia') e la regex ancorata a
+    // inizio segmento non scatterebbe, facendo sparire il badge solo in EN.
+    var hasAinur = p.nome !== 'Lúthien' && p.tipo && /(?:^|\|)\s*(valë|valië|vala|maia)/i.test(p.tipo) && !/balrog/i.test(p.tipo);
     var tipoStr = hasAinur ? '<span class="tipo-badge tipo-ainur">Ainu</span>' : '';
     // tipo_color: override del colore allineato per segmento ('|'), come tipo/tipo_label.
     // Un segmento vuoto lascia il colore automatico da tipoClass().
