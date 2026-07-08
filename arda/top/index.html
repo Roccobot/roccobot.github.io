@@ -1507,12 +1507,22 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
    larghezza adattiva da leggere, con tetto massimo (essay-width). */
 .note-viewer-box { width:min(760px,92vw); max-width:760px; max-height:82vh; overflow-y:auto; text-align:left; line-height:1.55; }
 .note-viewer-box h3 { color:var(--gold-bright); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
-.note-viewer-box p { margin:0 0 .7em; }
+/* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
+   conferma: stessa dimensione e pienezza dell'elenco (font-size/opacity/colore
+   ereditati dal box). Vale per tutte le note, presenti e future. */
+.note-viewer-box p { margin:0 0 .8em; font-size:inherit; line-height:inherit; opacity:1; color:inherit; }
+html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
+.note-viewer-box .note-h { font-weight:700; color:var(--gold-bright); margin:1.15em 0 .35em; }
+.note-viewer-box .note-src { opacity:.72; margin:.1em 0 .4em; }
 .note-viewer-box ul { margin:.2em 0 0; padding:0; list-style:none; }
 .note-viewer-box li { margin:.55em 0; position:relative; padding-left:1.1em; }
 .note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:var(--gold-bright); }
 .note-viewer-box .note-sub { margin:.25em 0 .25em .4em; position:relative; padding-left:1em; }
 .note-viewer-box .note-sub::before { content:'–'; position:absolute; left:0; color:var(--gold-bright); }
+/* Rimando interno dalla scheda di un personaggio alla sua nota editoriale */
+.modal-noteref { margin-top:1.1em; line-height:1.5; }
+.modal-noteref-link { cursor:pointer; color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
+.modal-noteref-link:hover, .modal-noteref-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 .note-charlink { display:inline; background:none; border:none; padding:0; margin:0; font:inherit; font-weight:700; color:var(--gold-bright); cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 /* Modale risorse: riusa fab-modal. Desktop: box adattato al testo, mai a capo */
@@ -1569,7 +1579,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.21</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.31</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1609,6 +1619,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
       <div class="modal-source" id="modal-source"></div>
       <div class="modal-section">
         <p id="modal-info"></p>
+        <div class="modal-noteref" id="modal-noteref" hidden></div>
       </div>
       <div class="modal-quote" id="modal-quote"></div>
     </div>
@@ -2353,7 +2364,25 @@ function openModal(idx) {
   // La descrizione ammette SOLO i <br> come markup: si escapa tutto e si
   // ripristinano i soli <br>, così il sink innerHTML non può eseguire nulla.
   document.getElementById('modal-info').innerHTML =
-    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>').replace(/&lt;(\/?)em&gt;/gi, '<$1em>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Rimando cliccabile alla nota editoriale collegata (se il personaggio ne ha
+  // una in NOTE_BY_CHAR): '→ Nota Editoriale: <titolo>' apre il viewer.
+  var refEl = document.getElementById('modal-noteref');
+  var linkedNote = (typeof NOTE_BY_CHAR !== 'undefined') ? NOTE_BY_CHAR[p.nome] : null;
+  if (refEl) {
+    if (linkedNote) {
+      var refLbl = lang === 'it' ? 'Nota Editoriale' : 'Editorial Note';
+      var refTitle = lang === 'it' ? linkedNote.titleIt : linkedNote.titleEn;
+      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0">→ <strong>' + escapeHtml(refLbl) + '</strong>: ' + escapeHtml(refTitle) + '</span>';
+      refEl.hidden = false;
+      var refLink = refEl.querySelector('.modal-noteref-link');
+      var goNote = function() { closeModal(); openNoteViewer(linkedNote); };
+      refLink.onclick = goNote;
+      refLink.onkeydown = function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goNote(); } };
+    } else {
+      refEl.hidden = true; refEl.innerHTML = '';
+    }
+  }
   // citazione è testo puro: textContent azzera ogni rischio di injection.
   // Se manca (alcune voci non hanno un verbatim attestato), si nasconde il
   // blocco: evita il riquadro col bordo-oro vuoto.
@@ -2598,8 +2627,47 @@ var EDITORIAL_NOTES = [
     shortIt: 'Ascendenza di Celeborn', shortEn: 'Ancestry of Celeborn',
     bodyIt: `<p>Una serie di appunti tardivi di J.R.R. Tolkien, che miravano a correggere alcuni episodi della vita di #{Galadriel}# per 'purificarla', stabiliva che #{Celeborn}# non era un Elfo del Doriath, bensì un Falmar di Aman, poi trasferitosi nella Terra di Mezzo con Galadriel. Poiché non ebbe tempo di rivedere e ampliare questa nuova versione canonica, essa causa una catena di incoerenze che l'Autore non ebbe mai tempo di risolvere. In questa pagina, pertanto, si considera canonica la versione iniziale (Sindarin) di Celeborn.</p>`,
     bodyEn: `<p>A set of late notes by J.R.R. Tolkien, meant to revise certain episodes of #{Galadriel}#'s life to 'ennoble' her, held that #{Celeborn}# was not an Elf of Doriath but a Falmar of Aman, who later crossed into Middle-earth with Galadriel. As he had no time to revise and expand this new canonical version, it gives rise to a chain of inconsistencies the Author never had time to resolve. On this page, therefore, Celeborn's original (Sindarin) version is taken as canonical.</p>`
+  },
+  {
+    titleIt: 'Il Ritorno di Glorfindel e la \'Reincarnazione\' Elfica',
+    titleEn: 'The Return of Glorfindel and Elven \'Reincarnation\'',
+    shortIt: 'Ritorno di Glorfindel', shortEn: 'Return of Glorfindel',
+    refChars: ['Glorfindel'],
+    bodyIt: `<p>Una convinzione errata molto diffusa tra gli appassionati di Tolkien suggerisce che il ritorno di #{Glorfindel}# nella Terra di Mezzo sia eccezionale semplicemente perché è 'tornato dalla morte'. In realtà, il ritorno in vita è il destino biologico e teologico standard per tutti gli Elfi.</p>
+<div class="note-h">La reincarnazione come regola</div>
+<p>Gli Elfi sono indissolubilmente legati ad Arda (la Terra) fino alla sua fine. I loro corpi (hröar) e i loro spiriti (fëar) non possono esserne separati, nemmeno con la morte. Quando un Elfo muore, il suo spirito raggiunge le Aule di Mandos. Dopo un periodo di attesa, riflessione e guarigione, gli viene normalmente concesso un nuovo corpo fisico identico al precedente. Le uniche eccezioni riguardano coloro a cui i Valar proibiscono esplicitamente il ritorno (come #{Fëanor}#, a causa dei suoi crimini) o coloro che scelgono liberamente di rimanere disincarnati.</p>
+<div class="note-src">(Fonte: <em>Laws and Customs among the Eldar</em>, <em>Morgoth's Ring</em>)</div>
+<div class="note-h">Il precedente di Finrod Felagund</div>
+<p>Sebbene la natura stessa degli Elfi stabilisca questa regola, abbiamo chiare conferme narrative del processo. La più celebre è quella di #{Finrod Felagund|Finrod}#: ne <em>Il Silmarillion</em>, Tolkien scrive esplicitamente che, dopo la sua morte eroica, il suo tempo in Mandos fu breve, e fu reincarnato per camminare con suo padre #{Finarfin}# sotto gli alberi di Eldamar.</p>
+<div class="note-h">Il silenzio sugli altri reincarnati</div>
+<p>Se la reincarnazione è lo standard, ci si potrebbe chiedere perché Tolkien ne scriva così poco. La risposta risiede in un limite geografico: una volta ottenuto un nuovo corpo, gli Elfi sono tenuti a rimanere nelle Terre Immortali (Aman) in uno stato di grazia. Poiché a Valinor non vi sono conflitti né guerre dopo la Prima Era, questi Elfi rinati semplicemente non vivono più avventure epiche degne di essere narrate.</p>
+<div class="note-h">La vera eccezionalità di Glorfindel</div>
+<p>Ciò che rende Glorfindel davvero speciale è la sua destinazione. Grazie al suo sacrificio contro il Balrog, il suo tempo in Mandos fu incredibilmente breve. Ma soprattutto, la sua anomalia è un'altra: essendo un Noldo esiliato, fu perdonato dai Valar a tal punto da ricevere il permesso di attraversare nuovamente il Mare verso Est (la Terra di Mezzo), per aiutare #{Gil-galad}# ed #{Elrond}#.</p>
+<div class="note-src">(Fonte: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
+<div class="note-h">Un potere angelico accresciuto</div>
+<p>Infine, Glorfindel tornò con un significativo aumento di potere. Tolkien specifica che, durante la sua permanenza a Valinor, Glorfindel visse tra i Maiar. Quando tornò nella Terra di Mezzo il suo potere spirituale era immensamente accresciuto, conferendogli una presenza radiosa e terrificante nel mondo 'Invisibile'. Questo lo elevò a uno status quasi angelico, rendendolo potenzialmente il guerriero più letale della Terza Era.</p>
+<div class="note-src">(Fonte: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>`,
+    bodyEn: `<p>A widespread misconception among Tolkien enthusiasts suggests that #{Glorfindel}#'s return to Middle-earth is exceptional simply because he 'came back from the dead'. In truth, returning to life is the standard biological and theological destiny for all Elves.</p>
+<div class="note-h">Reincarnation as the rule</div>
+<p>Elves are indissolubly bound to Arda (the Earth) until its end. Their bodies (hröar) and spirits (fëar) cannot be separated from it, even in death. When an Elf dies, their spirit reaches the Halls of Mandos. After a period of waiting, reflection and healing, they are normally granted a new physical body identical to the former one. The only exceptions concern those whom the Valar explicitly forbid to return (such as #{Fëanor}#, because of his crimes) or those who freely choose to remain disembodied.</p>
+<div class="note-src">(Source: <em>Laws and Customs among the Eldar</em>, <em>Morgoth's Ring</em>)</div>
+<div class="note-h">The precedent of Finrod Felagund</div>
+<p>Although the very nature of the Elves establishes this rule, we have clear narrative confirmations of the process. The most famous is that of #{Finrod Felagund|Finrod}#: in <em>The Silmarillion</em>, Tolkien writes explicitly that, after his heroic death, his time in Mandos was short, and he was re-embodied to walk with his father #{Finarfin}# beneath the trees of Eldamar.</p>
+<div class="note-h">The silence on other reincarnates</div>
+<p>If reincarnation is the standard, one might wonder why Tolkien wrote so little about it. The answer lies in a geographical limit: once a new body is granted, the Elves are bound to remain in the Undying Lands (Aman) in a state of grace. Since there is no conflict or war in Valinor after the First Age, these reborn Elves simply live no further epic adventures worth narrating.</p>
+<div class="note-h">Glorfindel's true exceptionality</div>
+<p>What makes Glorfindel truly special is his destination. Thanks to his sacrifice against the Balrog, his time in Mandos was incredibly brief. But above all, his anomaly is another: being an exiled Noldo, he was pardoned by the Valar to such a degree that he was allowed to cross the Sea eastward again (to Middle-earth) to aid #{Gil-galad}# and #{Elrond}#.</p>
+<div class="note-src">(Source: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
+<div class="note-h">An enhanced angelic power</div>
+<p>Finally, Glorfindel returned with a significant increase in power. Tolkien specifies that, during his stay in Valinor, Glorfindel dwelt among the Maiar. When he returned to Middle-earth his spiritual power was immensely enhanced, giving him a radiant and terrifying presence in the 'Unseen' world. This elevated him to an almost angelic status, making him arguably the deadliest warrior of the Third Age.</p>
+<div class="note-src">(Source: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>`
   }
 ];
+
+// Mappa nome-personaggio -> nota editoriale collegata (campo refChars della
+// nota): la scheda di quel personaggio mostra un rimando cliccabile alla nota.
+var NOTE_BY_CHAR = {};
+EDITORIAL_NOTES.forEach(function(n) { (n.refChars || []).forEach(function(c) { if (!NOTE_BY_CHAR[c]) NOTE_BY_CHAR[c] = n; }); });
 
 function noteCharIndex() {
   var m = {};
