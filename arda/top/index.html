@@ -1581,7 +1581,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.35</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.36</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2030,7 +2030,7 @@ function categoria(p) {
   if (/hobbit/.test(t)) return 'hobbit';
   if (/nano|nana|nanerott|dwarf/.test(t)) return 'dwarf'; // 'nana' = nana (es. Dís); 'nanerott' = Nanerottoli (Petty-dwarves, es. Mîm)
   if (/drúed|drued/.test(t)) return 'man'; // Drúedain ≠ Edain
-  if (p.nome === 'Elros') return 'adan';
+  if (p.nome === 'Elros' || p.nome === 'Dior') return 'adan'; // Dior: mortale, tra gli Edain (colore Teleri = eredità di Doriath, scelta editoriale)
   if (/elfo|elfa|mezzelf|half-elf/.test(t)) return 'elf';
   if (/númen|numen|dúnad|dunad|dúned|duned|hador|bëor|casa di beor|haleth|gondor/.test(t)) return 'adan'; // Gondoriani = stirpe edain/dúnedain
   if (/uomo|man |donna|woman|rohir|beorn|dale|éothéod|eothéod/.test(t)) return 'man';
