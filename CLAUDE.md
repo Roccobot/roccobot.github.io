@@ -960,6 +960,48 @@ specifico del dataset):
   dettagli SVG troppo fini per la dimensione reale di ~22 px (spilla
   della Compagnia, occhio di Sauron).
 
+## 📝 Note editoriali (footer)
+
+- **Cosa sono.** Approfondimenti di lore mostrati dal link **'Note editoriali'
+  / 'Editorial notes'** nel footer (accanto a 'Risorse e mappe'). Il link apre
+  una modale con **un pulsante per nota** (stile gemello di 'Risorse e mappe');
+  ogni pulsante apre un **viewer testuale** bilingue.
+- **Dove vivono.** Array **`EDITORIAL_NOTES`** in testa alla logica del footer
+  in `arda/top/index.html`, appena dopo `openResourcesModal`. Le funzioni sono
+  `openNotesModal` (elenco pulsanti) e `openNoteViewer` (viewer). Aggiungere
+  una nota = aggiungere un oggetto all'array; pulsante e viewer si generano da
+  soli. Ogni oggetto ha: `titleIt`/`titleEn` (titolo pieno), `shortIt`/`shortEn`
+  (etichetta **breve per mobile**, obbligatoria), `bodyIt`/`bodyEn` (HTML).
+- **Protocollo quando l'utente passa una NUOVA nota** (regola durevole,
+  2026-07-08): aggiungere la voce/pulsante e **formattare il contenuto sul
+  modello della nota dei Mezzelfi**. In dettaglio:
+  - **Personaggi in grassetto e cliccabili:** avvolgere i nomi nel marcatore
+    **`#{Nome}#`** (o `#{Testo mostrato|NomeDati}#` quando il nome in classifica
+    differisce, es. `#{Aragorn|Aragorn II}#`, `#{Finrod Felagund|Finrod}#`).
+    `renderNoteBodyHtml` li rende come `span.note-charlink` (grassetto oro,
+    cliccabili, accessibili da tastiera) che aprono la scheda via `openModal`;
+    se il nome non è in classifica, ripiega su grassetto semplice. Convenzione:
+    marcare la **prima occorrenza** di ciascun personaggio (le successive
+    restano testo piano), e **non** marcare i nomi dentro i titoletti.
+  - **Opere citate come fonte in CORSIVO:** i titoli delle opere vanno in
+    `<em>` (es. `<em>Il Silmarillion</em>`, `<em>Morgoth's Ring</em>`). Le righe
+    fonte usano `<div class="note-src">(Fonte: <em>...</em>)</div>`.
+  - **Struttura e spaziature:** titoletti di sezione con
+    `<div class="note-h">...</div>`, paragrafi in `<p>`, spaziature per
+    leggibilità e pulizia. **L'inglese deve rispecchiare l'italiano**:
+    stesse spaziature, stessi a-capo, stessa struttura (stessi titoletti e
+    stesso ordine di paragrafi/fonti).
+  - **Tipografia:** apici **dritti** e niente em-dash, come per `dati.js`.
+- **Dimensione del testo (dalla v5.31):** i paragrafi del viewer sono forzati
+  alla stessa dimensione/pienezza dell'elenco (17px, opacità piena) perché
+  altrimenti erediterebbero il `font-size:0.82rem`/`opacity:0.65` di
+  `.fab-modal-box p`; l'override `.note-viewer-box p` (con gemello per il tema
+  chiaro) vale per **tutte** le note. Il box del viewer è a larghezza adattiva
+  con tetto massimo (`min(760px,92vw)`).
+- **Doppia collocazione ammessa.** Una nota può vivere sia qui sia altrove: la
+  nota 'Ascendenza e origine di Celeborn' è replicata nel viewer **e** in calce
+  alla `descrizione` di Celeborn (scelta dell'utente).
+
 ## 🛡️ Progetto '/ABP': Regole AdBlock (Roccobot ABP)
 
 - **Cos'è.** Le liste di filtri AdBlock/AdGuard del repo, nella cartella
