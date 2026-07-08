@@ -1014,11 +1014,13 @@ footer {
 }
 
 footer p { color:var(--parchment-dim); font-size:0.95rem; max-width:500px; margin:0 auto; }
+#footer-links { font-size:1.2rem; }
 @media (max-width:768px) {
   footer p { max-width:100%; }
   /* Niente nowrap: forzava la citazione su una riga sola facendo scendere il
      corpo fino a ~9.75px sui viewport stretti. Meglio l'a-capo naturale. */
   #footer-text { font-size:clamp(12px, 3.4vw, 14px); }
+  #footer-links { font-size:clamp(12px, 3.2vw, 16px); white-space:nowrap; }
 }
 
 .list-animate .rank-item { opacity:0; transform:translateY(20px); animation:reveal 0.8s forwards; }
@@ -1579,7 +1581,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.34</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.35</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1600,8 +1602,8 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <div class="print-running-header" aria-hidden="true"><span>I Grandi di Arda</span><span>roccobot.me</span></div>
 
 <footer>
-  <p style="color:var(--gold-bright);font-size:1.2rem;margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and maps</button> ✦ <button type="button" id="notes-link">Editorial notes</button> ✦</p>
-  <p id="footer-text"><em>'Non tutto quel ch'è oro brilla, né gli erranti sono perduti.'</em><br>Il potere, in Arda, non sempre indossa una corona.</p>
+  <p id="footer-links" style="color:var(--gold-bright);margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and maps</button> ✦ <button type="button" id="notes-link">Editorial notes</button> ✦</p>
+  <p id="footer-text"><em>Non tutto quel ch'è oro brilla, né gli erranti sono perduti.</em><br>Il potere, in Arda, non sempre indossa una corona.</p>
 </footer>
 
 <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-name">
@@ -1689,7 +1691,7 @@ var i18n = {
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
     intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
-    footer: "<em>'Non tutto quel ch'è oro brilla, né gli erranti sono perduti.'</em><br>Il potere, in Arda, non sempre indossa una corona.",
+    footer: "<em>Non tutto quel ch'è oro brilla, né gli erranti sono perduti.</em><br>Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
     tgLink: 'Voce su Tolkien Gateway'
   },
@@ -1698,7 +1700,7 @@ var i18n = {
     title: 'The Great Ones of Arda',
     subtitle: 'The mightiest beings* in Tolkien\'s world, from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
     intro: "From the semi-divine powers to the humblest of servants. In Arda power takes many forms: it may be mastery of magic, skill in combat, political or military power, resistance to the seduction of darkness, the ability to shape the fate of the world.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
-    footer: "<em>'Not all that glitters is gold, nor all who wander are lost.'</em><br>Power in Arda does not always wear a crown.",
+    footer: "<em>Not all that glitters is gold, nor all who wander are lost.</em><br>Power in Arda does not always wear a crown.",
     position: 'Position',
     tgLink: 'Entry on Tolkien Gateway'
   }
