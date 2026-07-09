@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-07-08
+! Last updated: 2026-07-09
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -117,6 +117,8 @@
 @@||media.ilpost.it^$important
 @@||mediailpost-meride-tv.akamaized.net^$important
 @@||messages.google.com^$important
+@@||middle-earth-interactive-map.web.app^$important
+@@||middle-earth-interactive-map.web.app^$document,important
 @@||mollie.nl^$important
 @@||mollie.nl^$document,subdocument,important
 @@||msedge.api.cdp.microsoft.com^$important
@@ -158,6 +160,7 @@
 @@||prima.it^$important
 @@||prima.it^$document,important
 @@||raiplaysound.it^$document,subdocument,important
+@@||ranker.com^$important
 @@||recaptcha.net^$document,subdocument,important
 @@||revolut.com^$important
 @@||revolut.com^$document,important
@@ -202,7 +205,6 @@
 @@||vhx.tv^$important
 @@||vimeocdn.com^$important
 @@||ws-hp.com^$important
-@@||www.ranker.com^
 @@||x.ai^$important
 @@||x.ai^$document,subdocument,important
 
