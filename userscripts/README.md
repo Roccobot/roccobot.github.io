@@ -125,15 +125,19 @@ const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pa
 **File:** `NSFWAlbumEnhancer.user.js`
 
 Su `nsfwalbum.com`, nella pagina della singola foto (`/photo/<id>`), l'immagine
-grande (`<img id="zoom">`, che punta al file vero su imx.to) ha sopra un **`<svg>`
-vuoto trasparente** che intercetta il tasto destro: "apri immagine in una nuova
-scheda" restituisce quell'SVG serializzato invece della foto. Lo script mette
-`pointer-events:none` sugli overlay che rubano il clic — l'SVG-esca (vuoto) e la
-superficie della lente, riconosciuti perché **sovrapposti** all'immagine e
-**grandi quanto** essa (le icone vere sono piccole) — così clic e menu contestuale
-passano all'immagine vera sotto: **"apri immagine"** e **"salva immagine"**
-tornano a funzionare in modo naturale sul file reale. Inoltre **nasconde la lente
-d'ingrandimento** (`.magnify-lens`), l'overlay che si sovrappone alla foto.
+grande (`<img id="zoom">`, che punta al file vero su imx.to) ha sopra un
+**overlay-esca trasparente** (spesso un `<svg>`, a volte piccolo, "a puntino")
+che intercetta il tasto destro: "apri immagine in una nuova scheda" restituisce
+quell'overlay serializzato invece della foto. Al **clic destro** lo script legge
+lo stack sotto il cursore (`document.elementsFromPoint`) e mette
+`pointer-events:none` su **tutto ciò che sta sopra `#zoom` nel punto esatto**
+cliccato — a prescindere da tag, dimensione o vuotezza dell'esca — così il menu
+contestuale cade sempre sull'immagine vera sotto: **"apri immagine"** e
+**"salva immagine"** tornano a funzionare sul file reale. Agisce solo sul tasto
+destro (le interazioni col tasto sinistro restano intatte) e mantiene una
+neutralizzazione di riserva per le esche grandi/vuote già note. Inoltre
+**nasconde la lente d'ingrandimento** (`.magnify-lens`), l'overlay che si
+sovrappone alla foto.
 
 Agisce solo sul DOM della pagina (`@grant none`), nessun accesso a servizi esterni.
 
