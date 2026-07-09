@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-06-25
+! Last updated: 2026-07-09
 
 *ads.js
 *pagead.js
@@ -331,6 +331,9 @@ epicload.com##.show.modal-backdrop
 erai-raws.info,www.erai-raws.info###smart_push_smio_overlay
 erai-raws.info,www.erai-raws.info###smart_push_smio_window
 eventhubs.com##.qc-cmp-ui-container.qc-cmp-showing
+facebook.com##div[role="complementary"]
+facebook.com##div[aria-label="Nuovo messaggio"]
+facebook.com##div[aria-label="New message"]
 fansubdb.it##.navbar-brand
 fapservice.com###branding
 fapservice.com###media_image-3
