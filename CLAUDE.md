@@ -993,9 +993,12 @@ specifico del dataset):
     differisce, es. `#{Aragorn|Aragorn II}#`, `#{Finrod Felagund|Finrod}#`).
     `renderNoteBodyHtml` li rende come `span.note-charlink` (grassetto oro,
     cliccabili, accessibili da tastiera) che aprono la scheda via `openModal`;
-    se il nome non è in classifica, ripiega su grassetto semplice. Convenzione:
-    marcare la **prima occorrenza** di ciascun personaggio (le successive
-    restano testo piano), e **non** marcare i nomi dentro i titoletti.
+    se il nome non è in classifica, ripiega su grassetto semplice. Convenzione
+    (dalla v5.67, scelta dell'utente): marcare **tutte le occorrenze** di
+    ciascun personaggio (più comodo per la consultazione, ed evita elenchi o
+    coppie in cui solo alcuni nomi risultano cliccabili), **tranne** i nomi
+    dentro i **titoletti** (`.note-h`), che restano testo piano. Storico: fino
+    alla v5.66 valeva 'solo la prima occorrenza'.
   - **Opere citate come fonte in CORSIVO:** i titoli delle opere vanno in
     `<em>` (es. `<em>Il Silmarillion</em>`, `<em>Morgoth's Ring</em>`). Le righe
     fonte usano `<div class="note-src">(Fonte: <em>...</em>)</div>`.
