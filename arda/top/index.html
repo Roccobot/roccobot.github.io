@@ -295,7 +295,7 @@ h1 {
    il colore-base con l'accento del tema (adattiva a chiaro/scuro), così si
    distinguono dalla parte 1 (Nomi / Info) anche a capo senza il '|'. Fallback al
    colore-base dove color-mix non è supportato (resta il corsivo). */
-.rank-subtitle .bp-b, .rank-desc .bp-b { font-style:italic; color:var(--parchment-dim); color:color-mix(in srgb, var(--parchment-dim) 64%, var(--gold) 36%); }
+.rank-subtitle .bp-b, .rank-subtitle .bp-solo, .rank-desc .bp-b { font-style:italic; color:var(--parchment-dim); color:color-mix(in srgb, var(--parchment-dim) 64%, var(--gold) 36%); }
 
 .rank-desc {
   font-family:'EB Garamond',serif;
@@ -1594,7 +1594,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.44</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2189,7 +2189,13 @@ function renderList() {
       var altParts = [];
       if (nomiAlt) altParts.push(nomiAlt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
       if (appell) altParts.push(appell.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
-      riga2 = '<span class="rank-subtitle">' + joinBipartite(altParts) + '</span>';
+      // Solo titoli (nessun nome): vanno resi in corsivo come i titoli
+      // bipartiti; joinBipartite() a parte singola li lascerebbe 'nudi'.
+      if (appell && !nomiAlt) {
+        riga2 = '<span class="rank-subtitle"><span class="bp-solo">' + altParts[0] + '</span></span>';
+      } else {
+        riga2 = '<span class="rank-subtitle">' + joinBipartite(altParts) + '</span>';
+      }
     }
     var classes = 'rank-item' + (isVisTop ? ' vis-top' : '');
     var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
@@ -2609,7 +2615,7 @@ var EDITORIAL_NOTES = [
     titleIt: 'Mezzelfi e unioni miste',
     titleEn: 'Half-elven and mixed unions',
     shortIt: 'Mezzelfi e unioni miste', shortEn: 'Half-elven & mixed unions',
-    refChars: ['Eldarion', 'Dior', 'Eärendil', 'Elwing', 'Elrond', 'Elros', 'Elladan', 'Elrohir', 'Arwen'],
+    refChars: ['Eldarion', 'Dior', 'Eärendil', 'Elwing', 'Elrond', 'Elros', 'Elladan', 'Elrohir', 'Arwen', 'Mithrellas', 'Imrazôr'],
     bodyIt: `<p>Nel Legendarium tolkieniano, possedere sangue misto non è sufficiente per essere definiti Mezzelfi (Peredhil). Esiste una profonda differenza tra lo status biologico e quello teologico: di norma, l'unione tra un mortale e un immortale genera una prole mortale, perché il 'Dono degli Uomini' (la mortalità) ha la priorità. Non è però una legge inviolabile: la mortalità poté essere concessa a chi non l'aveva (#{Lúthien}# vi rinunciò per amore) o superata in senso opposto (#{Tuor}#, unico fra gli Uomini, fu 'annoverato tra la stirpe antica', il suo fato separato da quello dei mortali).</p>
 <p>Il caso principale in cui questa consuetudine venne derogata fu la stirpe di #{Eärendil}# ed #{Elwing}#: per premiare le loro gesta incommensurabili, i Valar (con il permesso di Eru) concessero a loro e ai loro diretti discendenti la 'Scelta', ovvero il libero arbitrio di decidere a quale razza appartenere spiritualmente (oltre al caso unico di Tuor, elevato tra gli Elfi per grazia). Al di fuori di questa specifica linea di sangue, gli incroci hanno prodotto Uomini dotati di eccezionale nobiltà, ma sempre soggetti al destino mortale (come nel caso di #{Dior}#, di norma annoverato tra i mortali benché di sangue misto, peraltro concepito quando Lúthien aveva già abbracciato una vita mortale).</p>
 <p>Di seguito, il quadro completo delle unioni miste documentate:</p>
