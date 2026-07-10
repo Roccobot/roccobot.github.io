@@ -692,6 +692,12 @@ specifico del dataset):
   forma nuda 'in Terra di Mezzo'. Regola dell'utente (2026-07-06), applicata in
   blocco al dataset (Finarfin, Galadriel, Círdan). Vale per ogni campo IT; l'EN
   resta 'in Middle-earth'.
+- **'Legendarium' sempre con l'iniziale maiuscola.** Il termine (il corpus
+  mitologico di J.R.R. Tolkien) si scrive **'Legendarium'**, mai 'legendarium',
+  in ogni campo, in entrambe le lingue e anche nelle note editoriali. Regola
+  dell'utente (2026-07-10), applicata in blocco a `dati.js` (16 occorrenze) e
+  alle note in `index.html`. È anche regola universale di canone: vedi
+  `rules/JRRT.md`.
 
 - **Filtri badge (dalla v4.05).** Ogni riga della legenda del Pannello è un
   interruttore (`BADGE_ROWS`: le righe raggruppate filtrano l'unione dei loro
@@ -755,8 +761,10 @@ specifico del dataset):
   Evenstar, a sua volta di Undómiel). TENUTI apposta: **Imrahil 'il Bello'**
   (verbatim, SdA Libro V cap. 6 — è attestato), **Bilbo 'il Magnifico'**
   (epiteto dato da Thranduil nominandolo Amico degli Elfi, fine dello Hobbit),
-  Arwen 'Gioiello degli Elfi', e i nomi apocrifi di Alatar ('Haimenar') e
-  Pallando ('Palacendo').
+  Arwen 'Gioiello degli Elfi'. (I nomi apocrifi di Alatar 'Haimenar' e
+  Pallando 'Palacendo', qui inizialmente tenuti, sono stati poi RIMOSSI in
+  v5.59 su richiesta dell'utente, dentro una bonifica più ampia di nomi e
+  titoli non attestati o ridondanti.)
 - **Bandobras → Brandobras (v4.41).** In italiano il nome è `Brandobras Tuc`
   (con la R; l'inglese resta `Bandobras Took`). Il soprannome `Bullroarer` ha
   **due rese ITA attestate**, entrambe tenute: `Ruggitoro, Ruggibrante`. Il
@@ -929,7 +937,7 @@ specifico del dataset):
     Fram (Scatha), Bard (Smaug). Azaghâl ferì soltanto Glaurung.
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
     Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo nei
-    Racconti Perduti (versione superata del legendarium).
+    Racconti Perduti (versione superata del Legendarium).
   - **`morgoth`** ('Affrontò Morgoth in duello'): SOLO Fingolfin, il badge
     più esclusivo.
   - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
