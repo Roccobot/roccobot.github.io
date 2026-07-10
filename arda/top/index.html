@@ -1557,6 +1557,10 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .modal-noteref-link:hover, .modal-noteref-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 .note-charlink { display:inline; background:none; border:none; padding:0; margin:0; font:inherit; font-weight:700; color:var(--gold-bright); cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
+/* Rimando 'Leggi anche' in fondo a una nota, verso una nota correlata. */
+.note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; }
+.note-notelink { color:var(--gold-bright); font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
+.note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 /* Modale risorse: riusa fab-modal. Desktop: box adattato al testo, mai a capo */
 .res-modal-box { width:auto; max-width:92vw; }
 .res-modal-title { font-family:'Cinzel',serif; color:var(--gold); font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
@@ -1611,7 +1615,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.68</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.69</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2696,7 +2700,8 @@ var EDITORIAL_NOTES = [
 <li><strong>L'unione 'ibrida':</strong> l'Elfa #{Nimloth}# e il mortale #{Dior}#.</li>
 <li><strong>L'unione dei Mezzelfi:</strong> #{Elwing}# ed #{Eärendil}# (i due Mezzelfi originari, nati da due delle unioni precedenti; resta un unicum assoluto).</li>
 <li><strong>L'unione mancata:</strong> l'Elfo #{Aegnor}# e l'umana #{Andreth}#. Si amarono profondamente, ma non si sposarono mai per diverse ragioni: le rigide consuetudini elfiche vietavano i matrimoni in tempo di guerra, le inesorabili tempistiche biologiche della vita umana rappresentavano un ostacolo insormontabile e il destino si compì definitivamente quando #{Aegnor}# cadde in battaglia.</li>
-</ul>`,
+</ul>
+<div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi">Glorfindel e il 'ritorno' degli Elfi</span></div>`,
     bodyEn: `<div class="note-h">Divine law</div>
 <p>In the Tolkien Legendarium, the status of the Half-elven (Peredhil) is theological/juridical, not biological: possessing mixed blood is not enough to grant the privilege of Choice. Typically, a union between a mortal and an immortal generates <em>mortal</em> offspring, because the 'Gift of Men' (mortality) takes precedence and cannot be revoked. It is a divine law (literally: established by Ilúvatar), with only two exceptions outside the Half-elven proper in the entire history of Arda. Mortality was granted to #{Lúthien}#, who embraced it for love, and revoked for #{Tuor}#, father of #{Eärendil}#, the only Man who was <em>numbered among the elder race,</em> [...] <em>his fate being sundered from that of Men</em>.</p>
 <div class="note-h">Right of Choice (the true Half-elven)</div>
@@ -2721,7 +2726,8 @@ var EDITORIAL_NOTES = [
 <li><strong>The 'hybrid' union:</strong> the Elf #{Nimloth}# and the mortal #{Dior}#.</li>
 <li><strong>The union of the Half-elven:</strong> #{Elwing}# and #{Eärendil}# (the two original Half-elven, born from two of the previous unions; it remains an entirely unique case).</li>
 <li><strong>The unfulfilled union:</strong> the Elf #{Aegnor}# and the human #{Andreth}#. They loved each other deeply but never married for several reasons: strict Elven customs forbade marriage in times of war, the inexorable biological timeline of human life presented an insurmountable obstacle, and their fate was permanently sealed when #{Aegnor}# fell in battle.</li>
-</ul>`
+</ul>
+<div class="note-seealso">See also → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi">Glorfindel and the 'return' of the Elves</span></div>`
   },
   {
     titleIt: 'Celeborn canonico',
@@ -2750,7 +2756,8 @@ var EDITORIAL_NOTES = [
 <div class="note-src">(Fonte: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
 <div class="note-h">Un potere angelico accresciuto</div>
 <p>Infine, #{Glorfindel}# tornò con un significativo aumento di potere. Tolkien specifica che, durante la sua permanenza a Valinor, #{Glorfindel}# visse tra i Maiar. Quando tornò nella Terra di Mezzo il suo potere spirituale era immensamente accresciuto, conferendogli una presenza radiosa e terrificante nel mondo 'Invisibile'. Questo lo elevò a uno status quasi angelico, rendendolo potenzialmente il guerriero più letale della Terza Era.</p>
-<div class="note-src">(Fonte: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>`,
+<div class="note-src">(Fonte: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
+<div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Mezzelfi e unioni miste">Mezzelfi e unioni miste</span></div>`,
     bodyEn: `<p>A widespread misconception among Tolkien enthusiasts suggests that #{Glorfindel}#'s return to Middle-earth is exceptional simply because he 'came back from the dead'. In truth, returning to life is the destiny, in both biological and theological senses, of <em>all</em> Elves.</p>
 <div class="note-h">Reincarnation as the rule</div>
 <p>Elves are indissolubly bound to Arda (the Earth) until its end. Their bodies (hröar) and spirits (fëar) cannot be separated from it, even in death. When an Elf dies, their spirit reaches the Halls of Mandos. After a period of waiting, reflection and healing, they are normally granted a new physical body identical to the former one. The only exceptions concern those whom the Valar explicitly forbid to return (such as #{Fëanor}#, because of his crimes) or those who freely choose to remain disembodied.</p>
@@ -2764,7 +2771,8 @@ var EDITORIAL_NOTES = [
 <div class="note-src">(Source: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
 <div class="note-h">An enhanced angelic power</div>
 <p>Finally, #{Glorfindel}# returned with a significant increase in power. Tolkien specifies that, during his stay in Valinor, #{Glorfindel}# dwelt among the Maiar. When he returned to Middle-earth his spiritual power was immensely enhanced, giving him a radiant and terrifying presence in the 'Unseen' world. This elevated him to an almost angelic status, making him arguably the deadliest warrior of the Third Age.</p>
-<div class="note-src">(Source: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>`
+<div class="note-src">(Source: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
+<div class="note-seealso">See also → <span class="note-notelink" role="button" tabindex="0" data-note="Mezzelfi e unioni miste">Half-elven and mixed unions</span></div>`
   }
 ];
 
@@ -2815,13 +2823,19 @@ function openNoteViewer(note) {
     modalReturn = function(){ openNoteViewer(note2); var nb = document.querySelector('#note-modal .note-viewer-box'); if (nb) nb.scrollTop = st; };
     openModal(i);
   }
+  // Rimando 'Leggi anche' a un'altra nota: data-note = titleIt della nota bersaglio.
+  function openNote(el) {
+    var tgt = EDITORIAL_NOTES.find(function(n){ return n.titleIt === el.getAttribute('data-note'); });
+    if (tgt) { dismiss(); openNoteViewer(tgt); }
+  }
   box.addEventListener('click', function(e) {
-    var b = e.target.closest('.note-charlink'); if (b) openChar(b);
+    var b = e.target.closest('.note-charlink'); if (b) { openChar(b); return; }
+    var nl = e.target.closest('.note-notelink'); if (nl) openNote(nl);
   });
   box.addEventListener('keydown', function(e) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
-    var b = e.target.closest('.note-charlink'); if (!b) return;
-    e.preventDefault(); openChar(b);
+    var b = e.target.closest('.note-charlink'); if (b) { e.preventDefault(); openChar(b); return; }
+    var nl = e.target.closest('.note-notelink'); if (nl) { e.preventDefault(); openNote(nl); }
   });
 }
 
