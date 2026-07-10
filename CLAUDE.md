@@ -713,6 +713,11 @@ specifico del dataset):
 
 ## 📚 Nuovi personaggi e canone
 
+- **'La nuova ombra' (*The New Shadow*, HoME XII) è esclusa da Arda Top.** Il
+  seguito del *Signore degli Anelli* ambientato nella Quarta Era è appena
+  abbozzato (poche pagine, abbandonato da J.R.R. Tolkien): i suoi personaggi
+  (p.es. Saelon, Borlas) **non vanno inseriti** in classifica. Decisione
+  dell'utente (2026-07-10); Saelon, aggiunto in v5.54, è stato rimosso in v5.55.
 - **Verifica delle fonti sempre.** Per ogni personaggio nuovo o modificato,
   verificare le fonti e **non scrivere nulla di incerto** (vale per testi,
   citazioni, genealogie, tipi e anche per icone/badge). Le citazioni devono
