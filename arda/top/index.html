@@ -698,13 +698,15 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    spento: niente salti quando il tag compare), tag centrato dentro; un po'
    più su e con aria prima della legenda (scelte utente). */
 .ctrl-tag-slot { min-height:1.5rem; display:flex; align-items:center; justify-content:center; margin:0.1rem 0 0.4rem; }
-.ctrl-badge-tag { display:inline-grid; justify-items:center; align-items:center; min-width:146px; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 /* Larghezza stabile: min-width:146px fissa il riquadro alla stessa misura in
    entrambe le lingue (il testo più lungo, '16 active badges', sta sotto i
    146px), così nemmeno il cambio lingua lo fa 'ballare'. La faccia visibile e
    un segnaposto invisibile con la stringa più larga condividono la STESSA cella
    di griglia (rete di sicurezza anti-clip se un domani il testo superasse i
-   146px). La faccia è centrata; il numero (da 1 a 16) non fa più scattare. */
+   146px). La faccia è ancorata a SINISTRA (justify-items:start): la × di
+   chiusura resta ferma pixel-perfect e varia solo il testo che la segue
+   (numero da 1 a 16, singolare/plurale), senza più scivolare. */
 .ctrl-badge-tag > .tag-face, .ctrl-badge-tag > .tag-measure { grid-area:1 / 1; display:inline-flex; align-items:center; gap:0.45rem; white-space:nowrap; }
 .ctrl-badge-tag > .tag-measure { visibility:hidden; pointer-events:none; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
@@ -1636,7 +1638,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.73</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.74</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
