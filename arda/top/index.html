@@ -322,6 +322,14 @@ h1 {
   border-radius:3px; padding:1px 6px;
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
 }
+/* Desktop/tablet (>480px): risalita ottica di ~2px delle etichette tipo
+   rispetto alla base della riga nome (le maiuscole del Cinzel siedono in alto,
+   percio' i badge centrati sul flex cadono percettivamente bassi). Solo
+   trasformazione visiva: non tocca icone, nome, flusso o a-capo. Su <=480px
+   il nudge lo da gia' il translateY di .rank-tipi. */
+@media (min-width:481px) {
+  .rank-name .tipo-badge { transform:translateY(-2px); }
+}
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
    Rimosso il margin-left ridondante che la raddoppiava (~0.68em -> 0.4em). */
@@ -1586,7 +1594,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.39</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
