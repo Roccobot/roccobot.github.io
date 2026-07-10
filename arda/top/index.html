@@ -1607,7 +1607,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.61</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1749,6 +1749,11 @@ var i18n = {
   }
 };
 
+// Callback impostata dalla modale attualmente aperta: al cambio lingua la
+// ri-renderizza (o ne aggiorna i testi) nella nuova lingua. La guardia
+// document.body.contains nel closure evita che una modale già chiusa venga
+// riaperta, così non serve azzerarla in ogni dismiss.
+var langRefresh = null;
 function setLang(lang) {
   currentLang = lang;
   LS.setItem('arda-lang', lang);
@@ -1767,6 +1772,9 @@ function setLang(lang) {
   // Se una scheda è aperta, ricarica la modale nella nuova lingua (la parte
   // admin non usa questa modale, quindi resta esclusa di fatto).
   if (currentIdx !== null && document.getElementById('modal-backdrop').classList.contains('active')) openModal(currentIdx);
+  // Qualsiasi altra modale aperta (note, risorse, image viewer, riordino...)
+  // si aggiorna nella nuova lingua tramite la callback che ha registrato.
+  if (typeof langRefresh === 'function') langRefresh();
 }
 
 document.getElementById('lang-switch').addEventListener('click', function() {
@@ -1810,6 +1818,10 @@ function sEl(){ return document.scrollingElement || document.documentElement; }
 document.addEventListener('keydown', function(e) {
   if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
+  // Col focus in un campo di testo (es. la password del riordino) NON dirottare
+  // Ctrl+L/frecce: l'utente sta scrivendo, non vuole cambiare lingua o scrollare.
+  var tgt = e.target;
+  if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable)) return;
   if (e.key === 'l' || e.key === 'L') {
     e.preventDefault();
     setLang(currentLang === 'it' ? 'en' : 'it');
@@ -2510,6 +2522,7 @@ function openResourcesModal() {
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
   var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; box.appendChild(h);
+  langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openResourcesModal(); };
   // Su mobile i testi lunghi usano un'etichetta abbreviata (niente a-capo).
   var mobile = isMobileViewport();
   function label(itF, enF, itS, enS) {
@@ -2521,8 +2534,7 @@ function openResourcesModal() {
     b.textContent = txt; b.onclick = fn; box.appendChild(b);
   }
   function item(itF, enF, src, itS, enS) {
-    var full = currentLang === 'it' ? itF : enF;
-    mkBtn(label(itF, enF, itS, enS), function() { dismiss(); openImageViewer(src, full); });
+    mkBtn(label(itF, enF, itS, enS), function() { dismiss(); openImageViewer(src, itF, enF); });
   }
   function linkItem(itF, enF, url, itS, enS) {
     mkBtn(label(itF, enF, itS, enS), function() { dismiss(); window.open(url, '_blank', 'noopener'); });
@@ -2532,8 +2544,9 @@ function openResourcesModal() {
   linkItem('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'https://middle-earth-interactive-map.web.app', 'Mappa della Terra di Mezzo', 'Map of Middle-earth');
 }
 
-function openImageViewer(src, title) {
+function openImageViewer(src, titleIt, titleEn) {
   if (document.getElementById('imgv')) return;
+  var title = currentLang === 'it' ? titleIt : (titleEn || titleIt);
   var ov = document.createElement('div'); ov.id = 'imgv'; ov.className = 'imgv-overlay';
   var bar = document.createElement('div'); bar.className = 'imgv-bar';
   var ttl = document.createElement('span'); ttl.className = 'imgv-title'; ttl.textContent = title;
@@ -2632,6 +2645,8 @@ function openImageViewer(src, title) {
   bar.appendChild(mkBtn('✕', itL ? 'Chiudi' : 'Close', close));
   ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); lockPageScroll(true);
   document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
+  // Al cambio lingua aggiorna solo il titolo, in place: lo zoom/pan resta.
+  langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } ttl.textContent = currentLang === 'it' ? titleIt : (titleEn || titleIt); };
 }
 
 (function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; rl.addEventListener('click', openResourcesModal); } })();
@@ -2753,6 +2768,7 @@ function openNoteViewer(note) {
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
   var h = document.createElement('h3'); h.textContent = currentLang === 'it' ? note.titleIt : note.titleEn; box.appendChild(h);
+  langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openNoteViewer(note); };
   var body = document.createElement('div');
   body.innerHTML = renderNoteBodyHtml(currentLang === 'it' ? note.bodyIt : note.bodyEn);
   box.appendChild(body);
@@ -2779,6 +2795,7 @@ function openNotesModal() {
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
   var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = currentLang === 'it' ? 'Note editoriali' : 'Editorial notes'; box.appendChild(h);
+  langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openNotesModal(); };
   var mobile = isMobileViewport();
   EDITORIAL_NOTES.forEach(function(note) {
     var full = currentLang === 'it' ? note.titleIt : note.titleEn;
@@ -3306,6 +3323,7 @@ function confirmDiscardReorder(){
   var q = document.createElement('div'); q.className = 'fab-modal-charname';
   q.textContent = it ? 'Vuoi davvero scartare le modifiche?' : 'Discard your changes?';
   box.appendChild(q);
+  langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; confirmDiscardReorder(); };
   function mkBtn(main, sub, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? ' ' + extra : ''); b.innerHTML = '<span class="fmc-main">' + main + '</span><span class="fmc-sub">' + sub + '</span>'; b.onclick = fn; return b; }
   box.appendChild(mkBtn('No', it ? '(continua a riordinare)' : '(keep reordering)', '', dismiss));
   box.appendChild(mkBtn(it ? 'Sì' : 'Yes', it ? '(scarta le modifiche)' : '(discard changes)', 'is-danger', function(){
@@ -3323,6 +3341,7 @@ function showDesktopReorderModal(){
   lockPageScroll(true);
   function dismiss(){ overlay.remove(); lockPageScroll(false); }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
+  langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; showDesktopReorderModal(); };
   function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : ''); b.textContent = label; b.onclick = fn; return b; }
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss;
   box.appendChild(cl);
@@ -3345,6 +3364,7 @@ function showActionChoiceModal() {
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true); // blocca lo scroll del contenuto sotto
   function dismiss(){ overlay.remove(); lockPageScroll(false); }
+  langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; showActionChoiceModal(); };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   function mkClose(){ var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; return cl; }
   function mkBtn(main, sub, extra, fn){
@@ -3432,6 +3452,7 @@ function showInfoNote() {
   function dismiss(){ overlay.remove(); lockPageScroll(false); }
   cl.onclick = dismiss;
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
+  langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; showInfoNote(); };
 }
 
 // L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
