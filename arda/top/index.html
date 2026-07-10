@@ -685,7 +685,13 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    spento: niente salti quando il tag compare), tag centrato dentro; un po'
    più su e con aria prima della legenda (scelte utente). */
 .ctrl-tag-slot { min-height:1.5rem; display:flex; align-items:center; justify-content:center; margin:0.1rem 0 0.4rem; }
-.ctrl-badge-tag { display:inline-flex; align-items:center; gap:0.45rem; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag { display:inline-grid; justify-items:center; align-items:center; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+/* Larghezza stabile: la faccia visibile e un segnaposto invisibile con la
+   stringa più larga possibile ('16 ...') occupano la STESSA cella di griglia,
+   così il riquadro prende da subito la larghezza massima e non scatta a ogni
+   tap al variare del numero (da 1 a 16 badge). La faccia è centrata. */
+.ctrl-badge-tag > .tag-face, .ctrl-badge-tag > .tag-measure { grid-area:1 / 1; display:inline-flex; align-items:center; gap:0.45rem; white-space:nowrap; }
+.ctrl-badge-tag > .tag-measure { visibility:hidden; pointer-events:none; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
 /* × centrata in verticale nel riquadro: line-height azzerata (il glifo in
    Garamond siede alto sulla baseline) e centraggio affidato al flex. */
@@ -1615,7 +1621,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.71</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.72</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2078,10 +2084,15 @@ var CATS = ['ainu','arcane','elf','adan','man','dwarf','hobbit','orc','animal'];
 // Le esclusioni specifiche (Balrog dal badge, Lúthien) restano ai chiamanti.
 function isAinu(p) { return /(?:^|\|)\s*(vala|vali[eë]|maia|balrog)/i.test(p.tipo || ''); }
 function categoria(p) {
-  // Bestie e creature leggendarie mostrate tra gli Animali per scelta
-  // editoriale (solo visualizzazione: tipo ed etichette restano invariati).
-  // L'override per nome precede il check Ainur/divino (molte hanno divino:true).
-  if (/^(Nahar|Huan|Carcharoth|Shelob|Draugluin|Thorondor|Gwaihir|Landroval|Meneldor|Rochallor)$/.test(p.nome)) return 'animal';
+  // Bestie e creature leggendarie mostrate per scelta editoriale in una
+  // categoria diversa dalla tassonomia del tipo (solo visualizzazione: tipo ed
+  // etichette restano invariati). L'override per nome precede il check
+  // Ainur/divino (molte hanno divino:true) e i check sul tipo.
+  // Destrieri dei Valar, Grandi Aquile, i grandi lupi e il ragno →
+  // Esseri arcani/ancestrali.
+  if (/^(Nahar|Huan|Carcharoth|Shelob|Draugluin|Thorondor|Gwaihir|Landroval|Meneldor)$/.test(p.nome)) return 'arcane';
+  // Rochallor (cavallo di Fingolfin) resta tra gli Animali.
+  if (p.nome === 'Rochallor') return 'animal';
   var t = (p.tipo || '').toLowerCase();
   // Ainur = Valar, Valië e Morgoth E tutti i Maiar (Balrog e Sauron 'Maia
   // decaduto' inclusi), via isAinu(). Lúthien, unica Maia in categoria diversa,
@@ -2972,7 +2983,13 @@ function controlPanelHTML() {
     var tagTxt = currentLang === 'it' ? (nB === 1 ? '1 badge attivo' : nB + ' badge attivi')
                                       : (nB === 1 ? '1 active badge' : nB + ' active badges');
     var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
-    h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '"><span class="tag-x">×</span>' + tagTxt + '</button>';
+    // Segnaposto invisibile con la stringa più larga possibile (2 cifre): fissa
+    // la larghezza del riquadro fin dal primo tap (vedi CSS .tag-measure).
+    var tagMax = currentLang === 'it' ? '16 badge attivo' : '16 active badges';
+    h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '">'
+       + '<span class="tag-face"><span class="tag-x">×</span>' + tagTxt + '</span>'
+       + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMax + '</span>'
+       + '</button>';
   } else {
     // Suggerimento al posto del tag (solo desktop, via CSS): riempie la
     // colonna sinistra e spiega che la legenda è cliccabile.
