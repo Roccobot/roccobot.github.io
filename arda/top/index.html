@@ -1547,6 +1547,10 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:var(--gold-bright); }
 .note-viewer-box .note-sub { margin:.25em 0 .25em .4em; position:relative; padding-left:1em; }
 .note-viewer-box .note-sub::before { content:'–'; position:absolute; left:0; color:var(--gold-bright); }
+/* Liste numerate (le tre unioni della tradizione): numeri, niente pallino. */
+.note-viewer-box ol { margin:.3em 0 .3em .6em; padding-left:1.4em; list-style:decimal; }
+.note-viewer-box ol > li { margin:.3em 0; padding-left:.2em; }
+.note-viewer-box ol > li::before { content:none; }
 /* Rimando interno dalla scheda di un personaggio alla sua nota editoriale */
 .modal-noteref { margin-top:1.1em; line-height:1.5; }
 .modal-noteref-link { cursor:pointer; color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
@@ -1607,7 +1611,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.62</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2661,31 +2665,55 @@ var EDITORIAL_NOTES = [
     titleEn: 'Half-elven and mixed unions',
     shortIt: 'Mezzelfi e unioni miste', shortEn: 'Half-elven & mixed unions',
     refChars: ['Eldarion', 'Dior', 'Eärendil', 'Elwing', 'Elrond', 'Elros', 'Elladan', 'Elrohir', 'Arwen', 'Mithrellas', 'Imrazôr', 'Galador', 'Gilmith'],
-    bodyIt: `<p>Nel Legendarium tolkieniano, possedere sangue misto non è sufficiente per essere definiti Mezzelfi (Peredhil). Esiste una profonda differenza tra lo status biologico e quello teologico: di norma, l'unione tra un mortale e un immortale genera una prole mortale, perché il 'Dono degli Uomini' (la mortalità) ha la priorità. Non è però una legge inviolabile: la mortalità poté essere concessa a chi non l'aveva (#{Lúthien}# vi rinunciò per amore) o superata in senso opposto (#{Tuor}#, unico fra gli Uomini, fu 'annoverato tra la stirpe antica', il suo fato separato da quello dei mortali).</p>
-<p>Il caso principale in cui questa consuetudine venne derogata fu la stirpe di #{Eärendil}# ed #{Elwing}#: per premiare le loro gesta incommensurabili, i Valar (con il permesso di Eru) concessero a loro e ai loro diretti discendenti la 'Scelta', ovvero il libero arbitrio di decidere a quale razza appartenere spiritualmente (oltre al caso unico di Tuor, elevato tra gli Elfi per grazia). Al di fuori di questa specifica linea di sangue, gli incroci hanno prodotto Uomini dotati di eccezionale nobiltà, ma sempre soggetti al destino mortale (come nel caso di #{Dior}#, di norma annoverato tra i mortali benché di sangue misto, peraltro concepito quando Lúthien aveva già abbracciato una vita mortale).</p>
-<p>Di seguito, il quadro completo delle unioni miste documentate:</p>
+    bodyIt: `<div class="note-h">Legge divina</div>
+<p>Nel Legendarium tolkieniano, quello di Mezzelfi (Peredhil) è uno status teologico/giuridico, non biologico: possedere sangue misto non è sufficiente ad avere il privilegio della scelta. Di norma, l'unione tra un mortale e un immortale genera una prole <em>mortale</em>, perché il 'Dono degli Uomini' (la mortalità) ha la precedenza e non può essere revocato. È una legge divina (in senso letterale: stabilita da Ilúvatar), con due sole eccezioni al di fuori dei Mezzelfi propriamente detti in tutta la storia di Arda. La mortalità fu concessa a #{Lúthien}#, che l'abbracciò per amore, e revocata a #{Tuor}#, padre di #{Eärendil}#, unico Uomo che fu 'annoverato tra la razza primogenita, [...] il suo fato essendo stato scisso da quello degli Uomini'.</p>
+<div class="note-h">Diritto di scelta (i veri Mezzelfi)</div>
+<p>Ciò che definisce a tutti gli effetti un <em>Peredhel</em> (Mezzelfo) non è il sangue misto, ma il possesso del <strong>diritto di Scelta</strong>. Poiché questo diritto non esiste per natura, esso fu istituito come deroga divina e limitato esclusivamente a Eärendil, #{Elwing}# e alla loro stirpe. Per premiare le loro gesta leggendarie, i Valar (su concessione di Eru Ilúvatar) permisero a loro e ai loro discendenti il libero arbitrio sulla scelta della razza di appartenenza.</p>
+<p>È solo in virtù di questa deroga e del principio di 'reversibilità' dell'appartenenza agli Eldar che a figure come #{Elrond}# (figlio di due Mezzelfi) o #{Arwen}# (figlia di un'Elfa e di un Mezzelfo immortale) fu concesso il diritto di Scelta.</p>
+<div class="note-h">Sangue elfico, destino umano</div>
+<p>Al di fuori della linea di successione in cui vige il diritto di scelta, o nei casi in cui tale diritto sia già stato esercitato in favore del 'Dono degli Uomini', vale la regola naturale. La mortalità, una volta abbracciata, è definitiva, e si trasmette alla discendenza. Ne sono la prova alcune figure celebri, nate come <strong>Uomini a tutti gli effetti</strong>:</p>
 <ul>
-<li>Le tre unioni 'ufficiali' secondo la tradizione degli annali (unioni fra gli Eldar e le tre Case degli Edain: è questa precisa categoria a definirle, ed è la ragione per cui le due unioni seguenti, pur miste, non vi rientrano):
-<div class="note-sub">#{Lúthien}# e #{Beren}#;</div>
-<div class="note-sub">#{Idril}# e #{Tuor}#;</div>
-<div class="note-sub">#{Arwen}# e #{Aragorn|Aragorn II}#.</div></li>
-<li>L'unione 'silvana': l'Elfa #{Mithrellas}# e il Númenóreano #{Imrazôr}#.</li>
-<li>L'unione 'ibrida': l'Elfa #{Nimloth}# e il mortale #{Dior}#.</li>
-<li>L'unione dei Mezzelfi: #{Eärendil}# ed #{Elwing}# (l'unione tra i due Peredhil originari, generati da due delle unioni precedenti; unicum assoluto).</li>
-<li>L'unione mancata: l'Elfo #{Aegnor}# e l'umana #{Andreth}#. Si amarono profondamente ma non si sposarono mai: le rigide consuetudini elfiche vietavano i matrimoni in tempo di guerra, le spietate tempistiche biologiche della vita umana rappresentavano un ostacolo, e il destino si compì definitivamente quando Aegnor cadde in battaglia.</li>
+<li>#{Dior}#: benché di discendenza originariamente mista, fu concepito quando sua madre Lúthien aveva già compiuto la sua scelta, rinunciando all'immortalità per tornare nel mondo. Nacque, quindi, da genitori entrambi mortali.</li>
+<li>#{Eldarion}#: poiché Arwen aveva già compiuto la sua scelta di mortalità prima di concepirlo, Eldarion nacque a tutti gli effetti da due genitori umani con il dono di Ilúvatar.</li>
+<li>#{Gilmith}# e #{Galador}#, figli di #{Imrazôr}# e #{Mithrellas}#, nacquero mortali, non avendo vincoli di sangue con i veri Mezzelfi cui fu concessa la scelta.</li>
+</ul>
+<div class="note-h">Unioni miste documentate</div>
+<ul>
+<li><strong>Le tre unioni della tradizione</strong>, ovvero quelle menzionate negli annali. Sono le unioni storiche avvenute tra gli Eldar e le Tre Case degli Edain:
+<ol>
+<li>Lúthien e #{Beren}#</li>
+<li>#{Idril}# e Tuor</li>
+<li>Arwen e #{Aragorn|Aragorn II}#</li>
+</ol></li>
+<li><strong>L'unione 'silvana':</strong> l'Elfa Mithrellas e il Númenóreano Imrazôr.</li>
+<li><strong>L'unione 'ibrida':</strong> l'Elfa #{Nimloth}# e il mortale Dior.</li>
+<li><strong>L'unione dei Mezzelfi:</strong> Elwing ed Eärendil (i due Mezzelfi originari, nati da due delle unioni precedenti; resta un unicum assoluto).</li>
+<li><strong>L'unione mancata:</strong> l'Elfo #{Aegnor}# e l'umana #{Andreth}#. Si amarono profondamente, ma non si sposarono mai per diverse ragioni: le rigide consuetudini elfiche vietavano i matrimoni in tempo di guerra, le inesorabili tempistiche biologiche della vita umana rappresentavano un ostacolo insormontabile e il destino si compì definitivamente quando Aegnor cadde in battaglia.</li>
 </ul>`,
-    bodyEn: `<p>In Tolkien's Legendarium, possessing mixed blood is not enough to be classified as Half-elven (Peredhil). There is a profound distinction between biological and theological status: as a rule, the union of a mortal and an immortal yields mortal offspring, since the 'Gift of Men' (mortality) takes precedence. It is not, however, an inviolable law: mortality could be granted to one who lacked it (#{Lúthien}# renounced hers for love) or overcome in the opposite direction (#{Tuor}#, alone among Men, was 'numbered among the elder race', his fate sundered from that of mortals).</p>
-<p>The main instance in which this custom was set aside was the lineage of #{Eärendil}# and #{Elwing}#: as a reward for their immeasurable deeds, the Valar (with Eru's consent) granted them and their direct descendants the 'Choice', the free will to decide which kindred they would spiritually belong to (besides the unique case of Tuor, raised among the Elves by grace). Outside this specific bloodline, mixed unions produced Men of exceptional nobility, but ultimately bound by a mortal fate (as with #{Dior}#, usually reckoned among mortals despite his mixed blood, and notably conceived after Lúthien had already embraced a mortal life).</p>
-<p>Below is the complete overview of all documented mixed unions:</p>
+    bodyEn: `<div class="note-h">Divine law</div>
+<p>In the Tolkien Legendarium, the status of the Half-elven (Peredhil) is theological/juridical, not biological: possessing mixed blood is not enough to grant the privilege of choice. Typically, a union between a mortal and an immortal generates <em>mortal</em> offspring, because the 'Gift of Men' (mortality) takes precedence and cannot be revoked. It is a divine law (literally: established by Ilúvatar), with only two exceptions outside the Half-elven proper in the entire history of Arda. Mortality was granted to #{Lúthien}#, who embraced it for love, and revoked for #{Tuor}#, father of #{Eärendil}#, the only Man who was 'numbered among the elder race, [...] his fate being sundered from that of Men'.</p>
+<div class="note-h">Right of choice (the true Half-elven)</div>
+<p>What effectively defines a <em>Peredhel</em> (Half-elf) is not mixed blood, but possessing the <strong>right of Choice</strong>. Since this right does not exist by nature, it was established as a divine exception and limited exclusively to Eärendil, #{Elwing}# and their lineage. To reward their legendary deeds, the Valar (by permission of Eru Ilúvatar) granted them and their descendants the free will to choose their race.</p>
+<p>It is only by virtue of this exception and the principle of 'reversibility' of belonging to the Eldar that figures like #{Elrond}# (son of two Half-elven) or #{Arwen}# (daughter of an Elf and an immortal Half-elf) were granted the right of Choice.</p>
+<div class="note-h">Elven blood, human destiny</div>
+<p>Outside the line of succession where the right of choice applies, or in cases where this right has already been exercised in favor of the 'Gift of Men', the natural rule dictates. Mortality, once embraced, is definitive and is passed down to offspring. This is proven by several renowned figures who were born entirely as <strong>Men</strong>:</p>
 <ul>
-<li>The three 'official' unions according to the Tradition of the Annals (unions between the Eldar and the three Houses of the Edain: it is this precise category that defines them, and the reason the two unions below, though mixed, are not counted among them):
-<div class="note-sub">#{Lúthien}# and #{Beren}#;</div>
-<div class="note-sub">#{Idril}# and #{Tuor}#;</div>
-<div class="note-sub">#{Arwen}# and #{Aragorn|Aragorn II}#.</div></li>
-<li>The 'sylvan' union: the Elf #{Mithrellas}# and the Númenórean #{Imrazôr}#.</li>
-<li>The 'hybrid' union: the Elf #{Nimloth}# and the mortal #{Dior}#.</li>
-<li>The union of the Half-elven: #{Eärendil}# and #{Elwing}# (the union between the two original Peredhil, born from two of the previous unions; an absolute unicum).</li>
-<li>The unfulfilled union: the Elf #{Aegnor}# and the mortal woman #{Andreth}#. They loved each other deeply but never married: rigid Elvish customs forbade weddings during wartime, the fleeting biological clock of human life posed a tragic hurdle, and their fate was ultimately sealed when Aegnor fell in battle.</li>
+<li>#{Dior}#: although of originally mixed descent, he was conceived when his mother Lúthien had already made her choice, renouncing immortality to return to the world. He was, therefore, born to two mortal parents.</li>
+<li>#{Eldarion}#: since Arwen had already made her choice of mortality before conceiving him, Eldarion was born to all intents and purposes to two human parents with the gift of Ilúvatar.</li>
+<li>#{Gilmith}# and #{Galador}#, children of #{Imrazôr}# and #{Mithrellas}#, were born mortal, having no blood ties to the true Half-elven who were granted the choice.</li>
+</ul>
+<div class="note-h">Documented mixed unions</div>
+<ul>
+<li><strong>The three unions of tradition</strong>, namely those mentioned in the annals. These are the historical unions that occurred between the Eldar and the Three Houses of the Edain:
+<ol>
+<li>Lúthien and #{Beren}#</li>
+<li>#{Idril}# and Tuor</li>
+<li>Arwen and #{Aragorn|Aragorn II}#</li>
+</ol></li>
+<li><strong>The 'silvan' union:</strong> the Elf Mithrellas and the Númenórean Imrazôr.</li>
+<li><strong>The 'hybrid' union:</strong> the Elf #{Nimloth}# and the mortal Dior.</li>
+<li><strong>The union of the Half-elven:</strong> Elwing and Eärendil (the two original Half-elven, born from two of the previous unions; it remains an entirely unique case).</li>
+<li><strong>The unfulfilled union:</strong> the Elf #{Aegnor}# and the human #{Andreth}#. They loved each other deeply but never married for several reasons: strict Elven customs forbade marriage in times of war, the inexorable biological timeline of human life presented an insurmountable obstacle, and their fate was permanently sealed when Aegnor fell in battle.</li>
 </ul>`
   },
   {
