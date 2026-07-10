@@ -435,13 +435,24 @@ h1 {
 /* Categorie con bottone solo */
 .ctrl-cat-row { display:flex; align-items:center; }
 .ctrl-cat-row .ctrl-row { flex:1; min-width:0; }
+/* Wrapper delle due colonne: trasparente ovunque (la griglia desktop di
+   #ctrl-panel vede .ctrl-left e la legenda come figli diretti); su mobile
+   diventa un blocco flex centrato (vedi media query). */
+.ctrl-cols { display:contents; }
 .ctrl-solo {
   flex-shrink:0; margin-left:0.35rem;
+  display:inline-grid; justify-items:center; align-items:center;
   font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em;
   background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32);
   border-radius:3px; color:var(--parchment); padding:2px 8px;
   cursor:pointer; transition:background 0.15s,opacity 0.15s; white-space:nowrap; user-select:none;
 }
+/* Larghezza costante fra le lingue = testo più lungo tra 'solo' ed 'only'
+   (faccia visibile + altra lingua invisibile, stessa cella): la colonna
+   Solo/Only resta ferma al pixel al cambio lingua. Sostituisce il vecchio
+   width:53px mobile-EN. */
+.ctrl-solo > span { grid-area:1 / 1; }
+.ctrl-solo > .solo-alt { visibility:hidden; pointer-events:none; }
 .ctrl-solo:hover:not(:disabled) { background:rgba(104,144,168,0.28); }
 .ctrl-toolbar { display:flex; align-items:center; justify-content:center; gap:0.55rem; margin-bottom:0.7rem; }
 .ctrl-toolbar .ctrl-lang-btn { height:2rem; width:2rem; padding:0; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.1em; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
@@ -493,11 +504,6 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   .ctrl-reset { padding:7px 12px; font-size:0.64rem; }
   .ctrl-apo { padding:6px 0; }
   .ctrl-apo .apo-lbl { font-size:0.64rem; }
-  /* Solo mobile ENG: i bottoni 'Only' delle righe categoria hanno larghezza
-     fissa (indipendente dal font), col testo centrato, per allinearli in colonna.
-     Il bottone 'Tutti'/'All' NON è più qui: la sua larghezza è ora costante tra
-     le lingue via grid-stack (vedi .ctrl-reset), per tenere fermo lo switch. */
-  html[lang="en"] .ctrl-cat-row .ctrl-solo { box-sizing:border-box; width:53px; padding-left:2px; padding-right:2px; text-align:center; }
 }
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
@@ -718,7 +724,13 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 /* Suggerimento a filtro spento (solo desktop): occupa il posto del tag. */
 .ctrl-badge-hint { display:none; font-family:'EB Garamond',serif; font-style:italic; font-size:0.85rem; line-height:1.5; color:var(--gold-bright); opacity:0.85; margin:0; padding-left:0.3rem; }
 .ctrl-legend-row span { white-space:nowrap; }
-.ctrl-label { white-space:nowrap; }
+.ctrl-label { white-space:nowrap; display:inline-grid; justify-items:start; align-items:center; }
+/* Larghezza dell'etichetta = testo più lungo tra IT ed EN (faccia visibile +
+   altra lingua invisibile nella stessa cella): così la colonna sinistra del
+   Pannello ha la STESSA larghezza in entrambe le lingue e i tasti della toolbar,
+   'Tutti'/'All' e la colonna 'Solo' restano fermi al pixel al cambio lingua. */
+.ctrl-label > span { grid-area:1 / 1; }
+.ctrl-label > .ctrl-label-alt { visibility:hidden; pointer-events:none; }
 .ctrl-legend-row img { font-size:1.141rem; flex-shrink:0; } /* 1.05rem / 0.92em */
 /* Colonna icone della legenda: slot a larghezza fissa con icona centrata.
    I box delle icone hanno larghezze diverse (.613-.935em): senza slot i
@@ -827,13 +839,25 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   .ctrl-sheet-head {
     display:block; position:sticky; top:0; z-index:3; height:1.5rem;
     margin:0 -1.2rem 0.4rem; background:rgba(16,24,44,0.98); pointer-events:none;
-    border-radius:18px 18px 0 0;
+    /* NIENTE border-radius proprio: la testata riempie l'intera fascia alta e
+       viene arrotondata dalla clip del pannello (overflow + border-radius). Il
+       raggio 18px 'suo' lasciava una scheggia di sfondo agli angoli che
+       spezzava la linea del bordo (glitch segnalato). */
   }
-  /* Blocco legenda centrato in orizzontale (solo mobile, scelta utente): la
-     sezione si restringe al contenuto (width:fit-content) e si centra con
-     margini auto. Le righe restano allineate tra loro (icone incolonnate),
-     ma il gruppo nel suo insieme è centrato nel pannello. */
-  #ctrl-panel .ctrl-section--legend { width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
+  /* Categorie + legenda come UNICO blocco centrato (dalla v5.79): il wrapper
+     .ctrl-cols si restringe al contenuto e si centra; le due colonne si
+     allineano a sinistra al suo bordo, così le checkbox delle categorie
+     risultano incolonnate con le icone della legenda. Niente più categorie a
+     tutta larghezza né legenda centrata a sé (che si disallineavano). */
+  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
+  #ctrl-panel .ctrl-cols > .ctrl-left { width:auto; }
+  #ctrl-panel .ctrl-cols > .ctrl-section--legend { width:auto; }
+  /* Ritocco: allinea al pixel il bordo sinistro del quadratino checkbox con
+     quello dell'icona badge (le due righe hanno padding-left diversi: 0.3rem
+     la categoria, 0.4rem la legenda). */
+  #ctrl-panel .ctrl-section--legend { margin-left:-0.16rem; }
+  /* Nota nomi in fondo: centrata come il blocco (non più a sinistra). */
+  #ctrl-panel .ctrl-mobile-note { text-align:center; }
   html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
@@ -1585,8 +1609,11 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-notelink { color:var(--gold-bright); font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 /* Modale risorse: riusa fab-modal. Desktop: box adattato al testo, mai a capo */
-.res-modal-box { width:auto; max-width:92vw; }
+.res-modal-box { width:auto; max-width:92vw; max-height:85vh; overflow-y:auto; }
 .res-modal-title { font-family:'Cinzel',serif; color:var(--gold); font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
+/* Secondo titolo di sezione ('Note editoriali') dentro la modale unica: stacco
+   dal blocco di bottoni precedente. */
+.res-modal-box .res-modal-section { margin-top:1.15rem; }
 .res-modal-box .fab-modal-confirm { text-align:center; padding:.55rem 1.1rem; white-space:nowrap; }
 /* Mobile: larghezza fissa; i testi lunghi usano etichette abbreviate (no a-capo) */
 @media (max-width:768px) {
@@ -1638,7 +1665,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.77</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.79</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1659,7 +1686,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <div class="print-running-header" aria-hidden="true"><span>I Grandi di Arda</span><span>roccobot.me</span></div>
 
 <footer>
-  <p id="footer-links" style="color:var(--gold-bright);margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and maps</button> ✦ <button type="button" id="notes-link">Editorial notes</button> ✦</p>
+  <p id="footer-links" style="color:var(--gold-bright);margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and notes</button> ✦</p>
   <p id="footer-text"><em>Non tutto quel ch'è oro brilla, né gli erranti sono perduti.</em><br>Il potere, in Arda, non sempre indossa una corona.</p>
 </footer>
 
@@ -1795,8 +1822,7 @@ function setLang(lang) {
   document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
-  var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e mappe' : 'Resources and maps';
-  var nl = document.getElementById('notes-link'); if (nl) nl.textContent = lang === 'it' ? 'Note editoriali' : 'Editorial notes';
+  var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
@@ -2510,6 +2536,9 @@ var modalReturn = null;
 // '→ Nota Editoriale' di una scheda (torna a quella scheda). null = torna alla
 // pagina.
 var noteReturn = null;
+// Analogo per la nota 'Traduzione italiana' (showInfoNote): callback per
+// tornare alla modale 'Risorse e note' da cui la si è aperta. null = niente.
+var infoReturn = null;
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('active');
   lockPageScroll(false);
@@ -2560,6 +2589,10 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ── 'Resources and maps' (footer) → modale con voci bilingui → viewer zoomabile ──
+// Modale unica 'Risorse e note' (dalla v5.79): unifica le vecchie modali
+// 'Risorse e mappe' e 'Note editoriali'. Due sezioni: 'Risorse utili' (le due
+// mappe + il link esterno) e 'Note editoriali' (le note + 'Traduzione
+// italiana', ex tasto Info). È raggiunta dal link a piè pagina e dal tasto Info.
 function openResourcesModal() {
   if (document.getElementById('res-modal')) return;
   var ov = document.createElement('div'); ov.id = 'res-modal'; ov.className = 'fab-modal-overlay';
@@ -2570,27 +2603,28 @@ function openResourcesModal() {
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
-  var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; box.appendChild(h);
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openResourcesModal(); };
   // Su mobile i testi lunghi usano un'etichetta abbreviata (niente a-capo).
   var mobile = isMobileViewport();
-  function label(itF, enF, itS, enS) {
-    var it = mobile && itS ? itS : itF, en = mobile && enS ? enS : enF;
-    return currentLang === 'it' ? it : en;
-  }
-  function mkBtn(txt, fn) {
-    var b = document.createElement('button'); b.className = 'fab-modal-confirm';
-    b.textContent = txt; b.onclick = fn; box.appendChild(b);
-  }
-  function item(itF, enF, src, itS, enS) {
-    mkBtn(label(itF, enF, itS, enS), function() { dismiss(); openImageViewer(src, itF, enF); });
-  }
-  function linkItem(itF, enF, url, itS, enS) {
-    mkBtn(label(itF, enF, itS, enS), function() { dismiss(); window.open(url, '_blank', 'noopener'); });
-  }
-  item('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
-  item('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
-  linkItem('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'https://middle-earth-interactive-map.web.app', 'Mappa della Terra di Mezzo', 'Map of Middle-earth');
+  function section(txt, extra) { var p = document.createElement('p'); p.className = 'res-modal-title' + (extra ? ' ' + extra : ''); p.textContent = txt; box.appendChild(p); }
+  function mkBtn(txt, fn) { var b = document.createElement('button'); b.className = 'fab-modal-confirm'; b.textContent = txt; b.onclick = fn; box.appendChild(b); }
+  function label(itF, enF, itS, enS) { var it = mobile && itS ? itS : itF, en = mobile && enS ? enS : enF; return currentLang === 'it' ? it : en; }
+  // ── Risorse utili: le due mappe (viewer immagini) + il link esterno ──
+  section(currentLang === 'it' ? 'Risorse utili' : 'Useful resources');
+  function imgItem(itF, enF, src, itS, enS) { mkBtn(label(itF, enF, itS, enS), function() { dismiss(); openImageViewer(src, itF, enF); }); }
+  imgItem('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
+  imgItem('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
+  mkBtn(label('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'Mappa della Terra di Mezzo', 'Map of Middle-earth'),
+        function() { dismiss(); window.open('https://middle-earth-interactive-map.web.app', '_blank', 'noopener'); });
+  // ── Note editoriali: le note (ritorno a questa modale alla chiusura) +
+  //    'Traduzione italiana' (la ex nota del tasto Info) ──
+  section(currentLang === 'it' ? 'Note editoriali' : 'Editorial notes', 'res-modal-section');
+  EDITORIAL_NOTES.forEach(function(note) {
+    var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : (currentLang === 'it' ? note.titleIt : note.titleEn);
+    mkBtn(lbl, function() { dismiss(); noteReturn = function(){ openResourcesModal(); }; openNoteViewer(note); });
+  });
+  mkBtn(currentLang === 'it' ? 'Traduzione italiana' : 'Italian translation',
+        function() { dismiss(); infoReturn = function(){ openResourcesModal(); }; showInfoNote(); });
 }
 
 function openImageViewer(src, titleIt, titleEn) {
@@ -2698,7 +2732,7 @@ function openImageViewer(src, titleIt, titleEn) {
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } ttl.textContent = currentLang === 'it' ? titleIt : (titleEn || titleIt); };
 }
 
-(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse e mappe' : 'Resources and maps'; rl.addEventListener('click', openResourcesModal); } })();
+(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse e note' : 'Resources and notes'; rl.addEventListener('click', openResourcesModal); } })();
 
 // ── 'Note editoriali' (footer) → modale con pulsanti → viewer testuale ──
 // Ogni nota ha titolo pieno + breve (mobile) e corpo bilingue in HTML statico.
@@ -2881,28 +2915,8 @@ function openNoteViewer(note) {
   });
 }
 
-function openNotesModal() {
-  if (document.getElementById('notes-modal')) return;
-  var ov = document.createElement('div'); ov.id = 'notes-modal'; ov.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box res-modal-box';
-  ov.appendChild(box); document.body.appendChild(ov); lockPageScroll(true);
-  function dismiss() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); }
-  function onKey(e) { if (e.key === 'Escape') dismiss(); }
-  document.addEventListener('keydown', onKey);
-  ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
-  var h = document.createElement('p'); h.className = 'res-modal-title'; h.textContent = currentLang === 'it' ? 'Note editoriali' : 'Editorial notes'; box.appendChild(h);
-  langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openNotesModal(); };
-  var mobile = isMobileViewport();
-  EDITORIAL_NOTES.forEach(function(note) {
-    var full = currentLang === 'it' ? note.titleIt : note.titleEn;
-    var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : full;
-    var b = document.createElement('button'); b.className = 'fab-modal-confirm';
-    b.textContent = lbl; b.onclick = function() { dismiss(); noteReturn = function(){ openNotesModal(); }; openNoteViewer(note); }; box.appendChild(b);
-  });
-}
-
-(function() { var nl = document.getElementById('notes-link'); if (nl) { nl.textContent = currentLang === 'it' ? 'Note editoriali' : 'Editorial notes'; nl.addEventListener('click', openNotesModal); } })();
+// (openNotesModal rimossa nella v5.79: le note editoriali vivono ora dentro la
+// modale unica 'Risorse e note', vedi openResourcesModal.)
 
 let isFirstRender = true;
 
@@ -2925,6 +2939,7 @@ var CTRL_I18N = {
 
 function controlPanelHTML() {
   var T = CTRL_I18N[currentLang], CL = CAT_LABEL[currentLang], IL = ICON_LABEL[currentLang];
+  var CLo = CAT_LABEL[currentLang === 'it' ? 'en' : 'it']; // etichette nell'altra lingua (segnaposto di larghezza)
   var h = '<div class="ctrl-sheet-head"><div class="ctrl-sheet-grab"></div></div>';
   // Toggle tema (sole/luna) — non persistente
   var isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -2934,10 +2949,11 @@ function controlPanelHTML() {
   var shareLbl = currentLang === 'it' ? 'Copia il link alla vista corrente (categorie attive)' : 'Copy a link to the current view (active categories)';
   var themeLbl = isLight ? (currentLang==='it'?'Passa al tema scuro':'Switch to dark theme') : (currentLang==='it'?'Passa al tema chiaro':'Switch to light theme');
   var langLbl = currentLang === 'it' ? 'Visualizza in inglese' : 'View in Italian';
-  // Tasto Info: SOLO italiano (nota sulle traduzioni). Icona stile Feather
-  // (cerchio + i), coerente coi tasti a tratto. Reso vuoto in inglese.
+  // Tasto Info (cerchio + i, stile Feather): dalla v5.79 apre la modale unica
+  // 'Risorse e note' (non più direttamente la nota sulle traduzioni, che ora è
+  // una voce di quella modale). Bilingue.
   var INFO_ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-  var infoLbl = currentLang === 'it' ? 'Nota sui testi in italiano' : 'A note on the texts';
+  var infoLbl = currentLang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var infoBtn = '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>';
   // Tasto Riordina (↑↓) — SOLO toolbar desktop, a sinistra di Info. Entra in
   // modalità riordino forzando Apocrifi + tutte le categorie (la classifica è
@@ -2955,6 +2971,11 @@ function controlPanelHTML() {
     ? "Fatto da Rocco 'Roccobot' Casadei - 2026 / Nessun diritto riservato salvo il design di due loghi: questo (il mio personale) e la rivisitazione del monogramma tolkieniano sul pulsante fluttuante."
     : "Made by Rocco 'Roccobot' Casadei - 2026 / No rights reserved except the design of two logos: this one (my own) and the reworked Tolkien monogram on the floating button.";
   var LOGO_HTML = '<a class="ctrl-logo" href="https://roccobot.me" target="_blank" rel="noopener" aria-label="roccobot.me" title="' + logoTip + '"><svg viewBox="0 0 1024 1024" aria-hidden="true"><path d="M598.44,464.22h387.88l-33.25-417.98H68.71v105.02h385.66c-5.54,75.62-13.3,143.88-24.38,206.89H38.79l29.92,106.07h335.79c-16.62,56.71-36.57,105.02-60.95,143.88C275.95,715.22,161.8,808.69,0,887.45l74.25,90.32c177.32-92.42,303.65-200.59,377.9-325.57,22.16-37.81,41-82.97,58.74-135.48,82.01,197.44,228.29,350.77,439.97,461.04l73.14-90.32c-206.13-99.77-347.98-240.5-425.56-423.24ZM571.84,151.25h288.57l9.08,206.89h-322.03c9.97-60.91,17.73-130.23,24.38-206.89Z" fill="currentColor" fill-rule="evenodd"/></svg></a>';
+  // Wrapper delle due colonne (sinistra + legenda): su desktop è trasparente
+  // (display:contents, la griglia di #ctrl-panel resta a 2 colonne); su mobile
+  // diventa un blocco flex centrato con le due colonne allineate a sinistra
+  // (checkbox incolonnate con le icone badge). Vedi CSS .ctrl-cols.
+  h += '<div class="ctrl-cols">';
   h += '<div class="ctrl-left">';
   // Versione anche nel Pannello desktop: in alto a sinistra (allineata alle
   // checkbox sotto), coi tasti tema/lingua centrati come gruppo. Cliccabile
@@ -2976,6 +2997,8 @@ function controlPanelHTML() {
   // Filtri
   h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button type="button" class="ctrl-apo' + (showApocrifi ? ' on' : '') + '" id="ctrl-apo" role="switch" aria-checked="' + (showApocrifi ? 'true' : 'false') + '" title="' + T.apocrifi + '"><span class="apo-sw"></span><span class="apo-lbl"><span class="apo-lbl-face">' + T.apocrifi + '</span><span class="apo-lbl-alt" aria-hidden="true">' + CTRL_I18N[currentLang === 'it' ? 'en' : 'it'].apocrifi + '</span></span></button><button class="ctrl-reset" id="ctrl-reset"><span class="rst-face">' + T.all + '</span><span class="rst-alt" aria-hidden="true">' + CTRL_I18N[currentLang === 'it' ? 'en' : 'it'].all + '</span></button></div>';
   var soloTxt = currentLang === 'it' ? 'solo' : 'only';
+  var soloAlt = currentLang === 'it' ? 'only' : 'solo';
+  var soloInner = '<span class="solo-face">' + soloTxt + '</span><span class="solo-alt" aria-hidden="true">' + soloAlt + '</span>';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){
     var isLocked = activeCats.length === 1 && filterState[c];
@@ -2983,8 +3006,8 @@ function controlPanelHTML() {
     h += '<label class="ctrl-row' + (isLocked ? ' cat-locked' : '') + '">'
        + '<input type="checkbox" data-cat="' + c + '"' + (filterState[c] ? ' checked' : '') + (isLocked ? ' disabled' : '') + '>'
        + '<span class="ctrl-chk"></span><span class="ctrl-dot" style="background:' + CAT_COLOR[c] + '"></span>'
-       + '<span class="ctrl-label">' + CL[c] + '</span></label>';
-    h += '<button class="ctrl-solo' + (isLocked ? ' cat-locked' : '') + '" data-cat="' + c + '"' + (isLocked ? ' disabled' : '') + '>' + soloTxt + '</button>';
+       + '<span class="ctrl-label"><span class="ctrl-label-face">' + CL[c] + '</span><span class="ctrl-label-alt" aria-hidden="true">' + CLo[c] + '</span></span></label>';
+    h += '<button class="ctrl-solo' + (isLocked ? ' cat-locked' : '') + '" data-cat="' + c + '"' + (isLocked ? ' disabled' : '') + '>' + soloInner + '</button>';
     h += '</div>';
   });
   h += '</div>';
@@ -3086,6 +3109,7 @@ function controlPanelHTML() {
        + '</div>';
   }
   h += '</div>';
+  h += '</div>'; // chiude .ctrl-cols
   // Nota nomi (solo mobile, via CSS): in fondo, dopo la legenda.
   h += '<div class="ctrl-mobile-note">' + (currentLang === 'it'
      ? 'Nelle schede dei personaggi i veri nomi sono in grassetto.'
@@ -3248,9 +3272,9 @@ function wireControlPanel() {
   panel.querySelectorAll('.ctrl-share-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ copyShareLink(btn); });
   });
-  // Tasto Info (solo IT): apre la nota sulle traduzioni italiane.
+  // Tasto Info: apre la modale unica 'Risorse e note' (dalla v5.79).
   panel.querySelectorAll('.ctrl-info-btn').forEach(function(btn){
-    btn.addEventListener('click', showInfoNote);
+    btn.addEventListener('click', openResourcesModal);
   });
 }
 
@@ -3552,10 +3576,15 @@ function showInfoNote() {
   box.insertAdjacentHTML('beforeend', currentLang === 'it' ? INFO_NOTE_HTML_IT : INFO_NOTE_HTML_EN);
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
-  function dismiss(){ overlay.remove(); lockPageScroll(false); }
+  // Chiusura reale (× / Esc / backdrop): se aperta dalla modale 'Risorse e
+  // note', vi ritorna (infoReturn). Il cambio lingua NON passa di qui (usa
+  // langRefresh, che preserva infoReturn).
+  function dismiss(){ overlay.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); var r = infoReturn; infoReturn = null; if (r) r(); }
+  function onKey(e){ if (e.key === 'Escape') dismiss(); }
+  document.addEventListener('keydown', onKey);
   cl.onclick = dismiss;
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
-  langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; showInfoNote(); };
+  langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); overlay.remove(); langRefresh = null; showInfoNote(); };
 }
 
 // L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
