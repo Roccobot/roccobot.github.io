@@ -1638,7 +1638,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.76</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.77</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2125,7 +2125,7 @@ function categoria(p) {
   if (/elfo|elfa|mezzelf|half-elf/.test(t)) return 'elf';
   if (/númen|numen|dúnad|dunad|dúned|duned|hador|bëor|casa di beor|haleth|gondor/.test(t)) return 'adan'; // Gondoriani = stirpe edain/dúnedain
   if (/uomo|man |donna|woman|rohir|beorn|dale|éothéod|eothéod/.test(t)) return 'man';
-  if (/cavallo|pony|corvo|mearas|raven|horse/.test(t)) return 'animal';
+  if (/cavallo|pony|corvo|mearas|raven|horse|cane|dog|hound|segugio/.test(t)) return 'animal';
   return 'arcane'; // forze ancestrali residue (es. Ent). Le Grandi Aquile sono
                    // dirottate in 'animal' dall'override per nome in cima.
 }
