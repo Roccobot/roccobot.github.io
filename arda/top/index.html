@@ -442,17 +442,11 @@ h1 {
 .ctrl-solo {
   flex-shrink:0; margin-left:0.35rem;
   display:inline-grid; justify-items:center; align-items:center;
-  font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em;
+  font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase;
   background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32);
-  border-radius:3px; color:var(--parchment); padding:2px 8px;
+  border-radius:3px; color:var(--parchment); padding:3px 11px;
   cursor:pointer; transition:background 0.15s,opacity 0.15s; white-space:nowrap; user-select:none;
 }
-/* Larghezza costante fra le lingue = testo più lungo tra 'solo' ed 'only'
-   (faccia visibile + altra lingua invisibile, stessa cella): la colonna
-   Solo/Only resta ferma al pixel al cambio lingua. Sostituisce il vecchio
-   width:53px mobile-EN. */
-.ctrl-solo > span { grid-area:1 / 1; }
-.ctrl-solo > .solo-alt { visibility:hidden; pointer-events:none; }
 .ctrl-solo:hover:not(:disabled) { background:rgba(104,144,168,0.28); }
 .ctrl-toolbar { display:flex; align-items:center; justify-content:center; gap:0.55rem; margin-bottom:0.7rem; }
 .ctrl-toolbar .ctrl-lang-btn { height:2rem; width:2rem; padding:0; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.1em; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
@@ -469,15 +463,19 @@ h1 {
 .ctrl-icon-btn.ctrl-share-done,
 .ctrl-bottombar .ctrl-icon-btn.ctrl-share-done { background:var(--gold); border-color:var(--gold-bright); color:var(--ink); }
 .ctrl-cat-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
-.ctrl-cat-head .ctrl-h { margin:0; }
+.ctrl-cat-head .ctrl-h { margin:0; display:inline-grid; justify-items:start; align-items:center; }
+/* Testata categorie a larghezza costante fra le lingue (grid-stack): impedisce
+   che 'CATEGORIE'/'CATEGORIES' faccia scivolare 'Tutti' e la colonna 'Solo'. */
+.ctrl-cat-head .ctrl-h > span { grid-area:1 / 1; }
+.ctrl-cat-head .ctrl-h > .ctrl-h-alt { visibility:hidden; pointer-events:none; }
 .ctrl-reset { display:inline-grid; justify-items:center; align-items:center; font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32); border-radius:3px; color:var(--parchment); padding:3px 11px; cursor:pointer; transition:background 0.15s,border-color 0.15s; white-space:nowrap; }
-/* Larghezza del bottone = testo più lungo tra IT ('Tutti') ed EN ('All'): la
-   faccia visibile e la forma nell'altra lingua (invisibile) condividono la
-   stessa cella di griglia. Serve a tenere fermo lo switch 'Apocrifi' al cambio
-   lingua: il gruppo [switch][label][Tutti] è ancorato a destra, quindi la
-   posizione dello switch dipende anche dalla larghezza di questo bottone. */
-.ctrl-reset > span { grid-area:1 / 1; }
-.ctrl-reset > .rst-alt { visibility:hidden; pointer-events:none; }
+/* Tutti i tasti quadrati (Tutti/All + Solo/Only) hanno la STESSA larghezza:
+   la faccia visibile e i quattro segnaposto invisibili (.ctrl-btn-m, le quattro
+   parole) condividono la stessa cella → larghezza = testo più largo fra tutte,
+   uguale in entrambe le lingue. Tiene anche fermo lo switch 'Apocrifi' e la
+   colonna 'Solo'. */
+.ctrl-reset > *, .ctrl-solo > * { grid-area:1 / 1; }
+.ctrl-reset > .ctrl-btn-m, .ctrl-solo > .ctrl-btn-m { visibility:hidden; pointer-events:none; }
 .ctrl-reset:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 /* interruttore «Apocrifi» (catalogo esteso): a destra di 'Categorie', a sinistra di 'Tutti' */
 .ctrl-apo { display:inline-flex; align-items:center; gap:0.4rem; margin-left:auto; background:none; border:none; padding:0; cursor:pointer; color:inherit; }
@@ -500,8 +498,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 /* Target touch su mobile: area cliccabile più alta (≥ ~28px) e testi un filo
    più grandi per i controlli del Pannello, senza cambiarne il disegno. */
 @media (max-width:768px) {
-  .ctrl-solo { padding:7px 10px; font-size:0.64rem; }
-  .ctrl-reset { padding:7px 12px; font-size:0.64rem; }
+  .ctrl-solo, .ctrl-reset { padding:7px 12px; font-size:0.64rem; }
   .ctrl-apo { padding:6px 0; }
   .ctrl-apo .apo-lbl { font-size:0.64rem; }
 }
@@ -1673,7 +1670,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.79</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.80</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2615,10 +2612,10 @@ function openResourcesModal() {
   // Su mobile i testi lunghi usano un'etichetta abbreviata (niente a-capo).
   var mobile = isMobileViewport();
   function section(txt, extra) { var p = document.createElement('p'); p.className = 'res-modal-title' + (extra ? ' ' + extra : ''); p.textContent = txt; box.appendChild(p); }
-  function mkBtn(txt, fn) { var b = document.createElement('button'); b.className = 'fab-modal-confirm'; b.textContent = txt; b.onclick = fn; box.appendChild(b); }
+  function mkBtn(txt, fn, asHtml) { var b = document.createElement('button'); b.className = 'fab-modal-confirm'; if (asHtml) b.innerHTML = txt; else b.textContent = txt; b.onclick = fn; box.appendChild(b); }
   function label(itF, enF, itS, enS) { var it = mobile && itS ? itS : itF, en = mobile && enS ? enS : enF; return currentLang === 'it' ? it : en; }
-  // ── Risorse utili: le due mappe (viewer immagini) + il link esterno ──
-  section(currentLang === 'it' ? 'Risorse utili' : 'Useful resources');
+  // ── Risorse: le due mappe (viewer immagini) + il link esterno ──
+  section(currentLang === 'it' ? 'Risorse' : 'Resources');
   function imgItem(itF, enF, src, itS, enS) { mkBtn(label(itF, enF, itS, enS), function() { dismiss(); openImageViewer(src, itF, enF); }); }
   imgItem('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
   imgItem('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
@@ -2629,7 +2626,10 @@ function openResourcesModal() {
   section(currentLang === 'it' ? 'Note editoriali' : 'Editorial notes', 'res-modal-section');
   EDITORIAL_NOTES.forEach(function(note) {
     var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : (currentLang === 'it' ? note.titleIt : note.titleEn);
-    mkBtn(lbl, function() { dismiss(); noteReturn = function(){ openResourcesModal(); }; openNoteViewer(note); });
+    // La nota di Glorfindel va a capo dopo 'Glorfindel' (scelta utente): il
+    // titolo è il più lungo e su una riga sola sballa la larghezza dei bottoni.
+    var brk = lbl.replace(/^(Glorfindel)\s+/, '$1<br>');
+    mkBtn(brk, function() { dismiss(); noteReturn = function(){ openResourcesModal(); }; openNoteViewer(note); }, brk !== lbl);
   });
   mkBtn(currentLang === 'it' ? 'Traduzione italiana' : 'Italian translation',
         function() { dismiss(); infoReturn = function(){ openResourcesModal(); }; showInfoNote(); });
@@ -3003,10 +3003,19 @@ function controlPanelHTML() {
      + '</span>'
      + '</div>';
   // Filtri
-  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head"><span class="ctrl-h">' + T.cat + '</span><button type="button" class="ctrl-apo' + (showApocrifi ? ' on' : '') + '" id="ctrl-apo" role="switch" aria-checked="' + (showApocrifi ? 'true' : 'false') + '" title="' + T.apocrifi + '"><span class="apo-sw"></span><span class="apo-lbl"><span class="apo-lbl-face">' + T.apocrifi + '</span><span class="apo-lbl-alt" aria-hidden="true">' + CTRL_I18N[currentLang === 'it' ? 'en' : 'it'].apocrifi + '</span></span></button><button class="ctrl-reset" id="ctrl-reset"><span class="rst-face">' + T.all + '</span><span class="rst-alt" aria-hidden="true">' + CTRL_I18N[currentLang === 'it' ? 'en' : 'it'].all + '</span></button></div>';
+  var To = CTRL_I18N[currentLang === 'it' ? 'en' : 'it']; // stringhe nell'altra lingua (segnaposto di larghezza)
+  // Segnaposto invisibile comune a TUTTI i tasti quadrati (Tutti/All + Solo/Only):
+  // sovrapposto nella stessa cella, riserva la larghezza del testo più largo tra
+  // tutte e quattro le parole → i tasti hanno la STESSA larghezza in entrambe le
+  // lingue (richiesta utente). Vedi CSS .ctrl-btn-m.
+  var BTN_MEAS = '<span class="ctrl-btn-m" aria-hidden="true">Tutti</span><span class="ctrl-btn-m" aria-hidden="true">All</span><span class="ctrl-btn-m" aria-hidden="true">solo</span><span class="ctrl-btn-m" aria-hidden="true">only</span>';
+  // Testata 'CATEGORIE'/'CATEGORIES' stabilizzata (grid-stack) così la colonna
+  // categorie ha la stessa larghezza fra le lingue: senza, il bottone 'Tutti' e
+  // la colonna 'Solo' scivolavano al cambio lingua (jitter mobile e desktop).
+  var catHead = '<span class="ctrl-h"><span class="ctrl-h-face">' + T.cat + '</span><span class="ctrl-h-alt" aria-hidden="true">' + To.cat + '</span></span>';
+  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head">' + catHead + '<button type="button" class="ctrl-apo' + (showApocrifi ? ' on' : '') + '" id="ctrl-apo" role="switch" aria-checked="' + (showApocrifi ? 'true' : 'false') + '" title="' + T.apocrifi + '"><span class="apo-sw"></span><span class="apo-lbl"><span class="apo-lbl-face">' + T.apocrifi + '</span><span class="apo-lbl-alt" aria-hidden="true">' + To.apocrifi + '</span></span></button><button class="ctrl-reset" id="ctrl-reset"><span class="rst-face">' + T.all + '</span>' + BTN_MEAS + '</button></div>';
   var soloTxt = currentLang === 'it' ? 'solo' : 'only';
-  var soloAlt = currentLang === 'it' ? 'only' : 'solo';
-  var soloInner = '<span class="solo-face">' + soloTxt + '</span><span class="solo-alt" aria-hidden="true">' + soloAlt + '</span>';
+  var soloInner = '<span class="solo-face">' + soloTxt + '</span>' + BTN_MEAS;
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){
     var isLocked = activeCats.length === 1 && filterState[c];
