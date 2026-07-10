@@ -1611,7 +1611,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.67</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.68</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2294,9 +2294,9 @@ function renderList() {
       var dataIdx = parseInt(el.getAttribute('data-idx'));
       var nameEl = el.querySelector('.rank-name-text');
       if (nameEl) {
-        nameEl.addEventListener('click', function(e) { e.stopPropagation(); openModal(dataIdx); });
+        nameEl.addEventListener('click', function(e) { e.stopPropagation(); modalReturn = null; openModal(dataIdx); });
         nameEl.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(dataIdx); }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); modalReturn = null; openModal(dataIdx); }
         });
       }
     })(items[j]);
@@ -2443,7 +2443,7 @@ function openModal(idx) {
       refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0">→ <strong>' + escapeHtml(refLbl) + '</strong>: ' + escapeHtml(refTitle) + '</span>';
       refEl.hidden = false;
       var refLink = refEl.querySelector('.modal-noteref-link');
-      var goNote = function() { closeModal(); openNoteViewer(linkedNote); };
+      var goNote = function() { modalReturn = null; closeModal(); openNoteViewer(linkedNote); };
       refLink.onclick = goNote;
       refLink.onkeydown = function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goNote(); } };
     } else {
@@ -2468,6 +2468,10 @@ function openModal(idx) {
 }
 
 var modalOpener = null;
+// Contenuto a cui tornare quando si chiude la scheda personaggio (es. la nota
+// da cui si è cliccato il link del nome): callback che lo riapre, o null (in
+// tal caso, chiudendo, si torna alla nuda lista, com'era prima).
+var modalReturn = null;
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('active');
   lockPageScroll(false);
@@ -2475,6 +2479,9 @@ function closeModal() {
   // Restituisce il focus al punto di partenza (la card da cui si era aperta).
   if (modalOpener && modalOpener.isConnected) { try { modalOpener.focus(); } catch (e) {} }
   modalOpener = null;
+  // Se la scheda era stata aperta da un contenuto precedente (una nota), lo
+  // riapre invece di lasciare la lista sotto. Sincrono: nessun flicker di scroll.
+  if (modalReturn) { var r = modalReturn; modalReturn = null; r(); }
 }
 
 document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -2801,7 +2808,13 @@ function openNoteViewer(note) {
   body.innerHTML = renderNoteBodyHtml(currentLang === 'it' ? note.bodyIt : note.bodyEn);
   box.appendChild(body);
   // Un nome cliccato apre la scheda del personaggio (chiude prima il viewer).
-  function openChar(b) { var i = parseInt(b.getAttribute('data-idx'), 10); dismiss(); openModal(i); }
+  function openChar(b) {
+    var i = parseInt(b.getAttribute('data-idx'), 10);
+    var st = box.scrollTop, note2 = note;   // per tornare alla nota, alla stessa posizione di lettura
+    dismiss();
+    modalReturn = function(){ openNoteViewer(note2); var nb = document.querySelector('#note-modal .note-viewer-box'); if (nb) nb.scrollTop = st; };
+    openModal(i);
+  }
   box.addEventListener('click', function(e) {
     var b = e.target.closest('.note-charlink'); if (b) openChar(b);
   });
