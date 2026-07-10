@@ -693,6 +693,14 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 /* Righe legenda = interruttori del filtro badge (v4.05): cliccabili, stato
    .on evidenziato in oro, focus visibile da tastiera. */
 .ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.4rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; cursor:pointer; border:1px solid transparent; border-radius:6px; transition:background 0.15s,border-color 0.15s; user-select:none; }
+/* Grid-stack bilingue della legenda: faccia visibile + copia invisibile
+   nell'altra lingua nella stessa cella → la colonna riserva la larghezza
+   MASSIMA fra le due lingue e non cambia dimensione al cambio lingua (bordo
+   destro del Pannello fermo). La copia-misura è visibility:hidden (fuori dal
+   tab order e dall'albero a11y). */
+.ctrl-section--legend .leg-stack { display:grid; }
+.ctrl-section--legend .leg-stack > .leg-face, .ctrl-section--legend .leg-stack > .leg-measure { grid-area:1 / 1; }
+.ctrl-section--legend .leg-stack > .leg-measure { visibility:hidden; pointer-events:none; }
 .ctrl-legend-row:hover { background:rgba(104,144,168,0.12); }
 .ctrl-legend-row:focus-visible { outline:2px solid var(--gold-bright); outline-offset:1px; }
 .ctrl-legend-row.on { background:rgba(210,178,92,0.13); border-color:rgba(224,194,108,0.55); }
@@ -3054,61 +3062,64 @@ function controlPanelHTML() {
   // utente: i badge sono autoesplicativi). Ogni riga è anche un FILTRO:
   // click/Invio la attiva-disattiva (stato .on, aria-pressed); le righe
   // raggruppate filtrano l'unione dei loro badge (vedi BADGE_ROWS).
-  h += '<div class="ctrl-section ctrl-section--legend">';
-  var attualeTxt = currentLang === 'it' ? 'In carica' : 'Current';
-  function legRow(row, inner, extraCls) {
-    var on = badgeFilter.has(row);
-    return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + (on ? ' on' : '')
-      + '" data-row="' + row + '" role="button" tabindex="0" aria-pressed="' + (on ? 'true' : 'false') + '">' + inner + '</div>';
+  // Legenda costruita in ENTRAMBE le lingue e sovrapposta nella stessa cella
+  // (grid-stack): la copia invisibile nell'altra lingua RISERVA la larghezza,
+  // così la colonna legenda - e quindi l'intero Pannello desktop - non cambia
+  // dimensione al cambio lingua (bordo destro fermo). La copia-misura non è
+  // interattiva (niente data-row/tabindex) e resta fuori dall'albero a11y
+  // (visibility:hidden).
+  function buildLegend(lang, measure) {
+    var IL = ICON_LABEL[lang];
+    var attualeTxt = lang === 'it' ? 'In carica' : 'Current';
+    function legRow(row, inner, extraCls) {
+      if (measure) return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + '">' + inner + '</div>';
+      var on = badgeFilter.has(row);
+      return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + (on ? ' on' : '')
+        + '" data-row="' + row + '" role="button" tabindex="0" aria-pressed="' + (on ? 'true' : 'false') + '">' + inner + '</div>';
+    }
+    var s = '';
+    ICON_ORDER.forEach(function(k){
+      if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya') return;
+      if (k === 'king_high') {
+        s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
+           + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span>');
+        return;
+      }
+      if (k === 'west') {
+        var westTxt = lang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
+        var envoyTxt = lang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
+        s += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
+           + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
+        return;
+      }
+      if (k === 'drago') {
+        s += legRow('drago', '<span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span>' + IL['drago'] + '</span>'
+           + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
+        return;
+      }
+      if (k === 'vilya') {
+        var ringsTxt = lang === 'it' ? 'Portatore di uno dei Tre Anelli degli Elfi' : 'Bearer of one of the Three Elven Rings';
+        s += legRow('vilya', '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join('Vilya') + '</span>'
+           + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join('Nenya') + '</span>'
+           + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join('Narya') + '</span>'
+           + '<span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
+        return;
+      }
+      s += legRow(k, '<span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
+    });
+    if (FEATURES.genderLegendPill) {
+      var GLb = GENDER_LABEL[lang] || GENDER_LABEL.it;
+      s += '<div class="leg-gender">'
+         + '<span class="leg-g-half">' + GENERE_SVG.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
+         + '<span class="leg-g-half">' + GENERE_SVG.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
+         + '</div>';
+    }
+    return s;
   }
-  ICON_ORDER.forEach(function(k){
-    // Resi nella stessa riga del capofila del gruppo (vedi nota su ICON_ORDER)
-    if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya') return;
-    if (k === 'king_high') {
-      h += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
-         + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span>');
-      return;
-    }
-    if (k === 'west') {
-      // In legenda etichette corte (il tooltip del badge resta la frase estesa)
-      var westTxt = currentLang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
-      var envoyTxt = currentLang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-      h += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
-         + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
-      return;
-    }
-    if (k === 'drago') {
-      // Coppia degli uccisori, entrambe per esteso (scelta utente)
-      h += legRow('drago', '<span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span>' + IL['drago'] + '</span>'
-         + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
-      return;
-    }
-    if (k === 'vilya') {
-      // Riga unica dei Tre Anelli degli Elfi: tre icone + testo unico; il nome
-      // del singolo Anello resta nel tooltip di ciascuna icona.
-      var ringsTxt = currentLang === 'it' ? 'Portatore di uno dei Tre Anelli degli Elfi' : 'Bearer of one of the Three Elven Rings';
-      h += legRow('vilya', '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join('Vilya') + '</span>'
-         + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join('Nenya') + '</span>'
-         + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join('Narya') + '</span>'
-         + '<span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
-      return;
-    }
-    h += legRow(k, '<span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
-  });
-  // Riga del genere: pill unica a due metà (Maschio | Femmina) in fondo alla
-  // legenda. Dietro il flag FEATURES.genderLegendPill (definito nell'head):
-  // di norma SPENTA, per risparmiare spazio e lasciare implicita
-  // un'informazione ovvia. Da riaccendere col flag se nasceranno funzioni
-  // collegate al genere (es. filtri). I simboli di genere nelle card non
-  // dipendono da questo flag.
-  if (FEATURES.genderLegendPill) {
-    var GLb = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
-    h += '<div class="leg-gender">'
-       + '<span class="leg-g-half">' + GENERE_SVG.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
-       + '<span class="leg-g-half">' + GENERE_SVG.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
-       + '</div>';
-  }
-  h += '</div>';
+  h += '<div class="ctrl-section ctrl-section--legend"><div class="leg-stack">'
+     + '<div class="leg-face">' + buildLegend(currentLang, false) + '</div>'
+     + '<div class="leg-measure" aria-hidden="true">' + buildLegend(currentLang === 'it' ? 'en' : 'it', true) + '</div>'
+     + '</div></div>';
   h += '</div>'; // chiude .ctrl-cols
   // Nota nomi (solo mobile, via CSS): in fondo, dopo la legenda.
   h += '<div class="ctrl-mobile-note">' + (currentLang === 'it'
