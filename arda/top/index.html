@@ -1069,6 +1069,12 @@ html[data-theme="light"] .fab-modal-confirm.is-pending { background:rgba(190,140
 html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(190,140,30,0.24);border-color:#9a6f08; }
 .fab-modal-confirm .fmc-main { display:block; }
 .fab-modal-confirm .fmc-sub { display:block;font-family:'EB Garamond',serif;font-weight:normal;font-size:0.64rem;letter-spacing:0.01em;text-transform:none;opacity:0.72;margin-top:0.15rem;line-height:1.2; }
+/* Modale di conferma scarto riordino: domanda centrata, pulsanti a due righe
+   piu' alti, No/Si in evidenza (grassetto, corpo maggiore) e sotto-riga tra
+   parentesi piu' piccola (eredita .fmc-sub). Scoped: non tocca le altre modali. */
+.fmb-discard .fab-modal-charname { text-align:center; }
+.fmb-discard .fab-modal-confirm { padding:0.72rem 0; }
+.fmb-discard .fmc-main { font-size:0.95rem; font-weight:700; }
 /* Modale Info (nota traduzioni, solo IT): box piu' largo e scrollabile, testo a sinistra. */
 .fab-modal-box.info-note-box { max-width:440px; max-height:82vh; overflow-y:auto; text-align:left; }
 .info-note-box h3 { font-family:'Cinzel',serif; font-size:0.95rem; letter-spacing:0.04em; color:var(--gold-bright); margin:0 0 0.7rem; }
@@ -1601,7 +1607,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.59</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1678,11 +1684,28 @@ var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it'
 // Blocco dello scroll di pagina (pannello/modali aperti). DEVE agire su
 // documentElement: con html{overflow-y:scroll} lo scroller della pagina è
 // html, non body, e il solo body.style.overflow='hidden' non blocca nulla
-// (bug storico: su mobile la classifica scorreva sotto il pannello aperto).
-// Si tocca anche body per compatibilità con eventuali browser che propagano.
+// (bug storico: su mobile la classifica scorreva sotto il pannello aperto;
+// verificato con wheel input reale: body-only NON blocca, serve html).
+// Ma overflow:hidden su html annulla overflow-y:scroll e RIMUOVE la scrollbar
+// sempre-presente: su desktop (finestra larga, card centrate) togliere i ~15px
+// della scrollbar riallarga il viewport e le card si ri-centrano slittando di
+// pochi px (glitch percepibile). Fix: misurare la larghezza della scrollbar
+// PRIMA di nasconderla e compensarla con padding-right sul body, così la
+// larghezza utile del contenuto resta identica e le card non si muovono.
+// Guardia anti-doppio-lock: se già bloccato non rimisurare (sarebbe 0 -> shift).
 function lockPageScroll(on) {
-  document.documentElement.style.overflow = on ? 'hidden' : '';
-  document.body.style.overflow = on ? 'hidden' : '';
+  var html = document.documentElement;
+  if (on) {
+    if (html.style.overflow === 'hidden') return;
+    var sbw = window.innerWidth - html.clientWidth;
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    if (sbw > 0) document.body.style.paddingRight = sbw + 'px';
+  } else {
+    html.style.overflow = '';
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+  }
 }
 
 // ── Numero di versione ────────────────────────────────────────────────
@@ -3274,7 +3297,7 @@ function confirmDiscardReorder(){
   var it = currentLang === 'it';
   var overlay = document.createElement('div');
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box';
+  var box = document.createElement('div'); box.className = 'fab-modal-box fmb-discard';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
   function dismiss(){ overlay.remove(); lockPageScroll(false); }
@@ -3283,9 +3306,9 @@ function confirmDiscardReorder(){
   var q = document.createElement('div'); q.className = 'fab-modal-charname';
   q.textContent = it ? 'Vuoi davvero scartare le modifiche?' : 'Discard your changes?';
   box.appendChild(q);
-  function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? ' ' + extra : ''); b.textContent = label; b.onclick = fn; return b; }
-  box.appendChild(mkBtn(it ? 'No, continua a modificare' : 'No, keep editing', '', dismiss));
-  box.appendChild(mkBtn(it ? 'Sì, scarta tutto' : 'Yes, discard all', 'is-danger', function(){
+  function mkBtn(main, sub, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? ' ' + extra : ''); b.innerHTML = '<span class="fmc-main">' + main + '</span><span class="fmc-sub">' + sub + '</span>'; b.onclick = fn; return b; }
+  box.appendChild(mkBtn('No', it ? '(continua a riordinare)' : '(keep reordering)', '', dismiss));
+  box.appendChild(mkBtn(it ? 'Sì' : 'Yes', it ? '(scarta le modifiche)' : '(discard changes)', 'is-danger', function(){
     clearDraftOrderKeys();
     location.reload();
   }));
