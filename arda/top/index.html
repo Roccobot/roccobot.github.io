@@ -1000,14 +1000,16 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .modal-body { overflow-y:auto; overscroll-behavior:contain; min-height:0; padding:2rem clamp(1.2rem,4vw,2.5rem); }
 
 .modal-close {
-  position:absolute; top:14px; right:14px;
+  position:absolute; top:6px; right:6px;
   width:36px; height:36px;
   background:rgba(104,144,168,0.1); border:1px solid var(--gold);
   border-radius:50%; color:var(--gold);
-  font-family:'Cinzel',serif; font-size:1.1rem;
   cursor:pointer; display:flex; align-items:center; justify-content:center;
   transition:all 0.25s; z-index:10;
 }
+/* Glifo × in SVG (non font): centrato per geometria, indipendente dalle
+   metriche di Cinzel (il vecchio ✕ testuale risultava basso-sinistra). */
+.modal-close svg { width:1rem; height:1rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; }
 
 .modal-close:hover,.modal-close:focus-visible {
   background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none;
@@ -1283,7 +1285,7 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      ordinarie tengono le etichette in coda al nome se ci stanno. */
   .rank-item.apocrifo .rank-name > .rank-tipi { display:flex; margin-top:0.3em; }
   .modal-body { padding:1.8rem 1.2rem; }
-  .modal-close { top:20px; right:12px; }
+  .modal-close { top:6px; right:6px; }
   .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
   .admin-header { flex-direction:column; align-items:stretch; }
   .admin-btn-wrap { justify-content:stretch; }
@@ -1670,7 +1672,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.81</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.82</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -1697,7 +1699,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 
 <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-name">
   <div class="modal">
-    <button class="modal-close" id="modal-close" aria-label="Close">&#x2715;</button>
+    <button class="modal-close" id="modal-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
     <div class="modal-body" id="modal-body">
       <div class="modal-rank" id="modal-rank"></div>
       <div class="modal-head">
