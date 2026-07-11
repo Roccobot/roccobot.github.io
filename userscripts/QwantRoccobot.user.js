@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.4.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale.
+// @version      2.5.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. NON altera le richieste di Qwant (niente più patch di fetch/XHR: faceva scattare l'anti-bot → 403): usa PerformanceObserver + una fetch propria.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
 // @match        https://qwant.com/*
@@ -30,12 +30,14 @@
   // true  = il clic su una miniatura apre l'originale in una NUOVA scheda (consigliato);
   // false = lo apre nella scheda corrente.
   const APRI_IN_NUOVA_SCHEDA = true;
+  const IMMAGINI_DIRETTE = true;    // false = disattiva del tutto il modulo immagini (solo pulizia)
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 1 — Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
   // ═══════════════════════════════════════════════════════════════════════
   // Tutti gli agganci sono attributi STABILI (data-testid, aria-label, title):
   // le classi CSS di Qwant sono auto-generate e cambiano a ogni deploy.
+  // Questo modulo è solo CSS + DOM: non fa richieste di rete, non tocca l'API.
   (function pulizia() {
     // ── CSS iniettato subito, così non c'è sfarfallio (run-at document-start) ──
     const regole = [];
@@ -177,12 +179,22 @@
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 2 — Immagini: il clic apre subito il file originale
   // ═══════════════════════════════════════════════════════════════════════
-  // La pagina di Qwant chiede i risultati a un servizio interno
-  // (api.qwant.com/.../search/images) che per ogni immagine fornisce sia la
-  // miniatura ("thumbnail") sia l'indirizzo del file originale ("media"). Lo
-  // script ascolta quelle risposte, memorizza la coppia miniatura → originale e,
-  // al clic su una miniatura, apre direttamente il file originale.
+  // ⚠️ IMPORTANTE — perché è fatto così: la SERP immagini di Qwant NON contiene
+  // i risultati nell'HTML; arrivano solo via API client-side. La v2.4 leggeva
+  // quelle risposte RIMPIAZZANDO window.fetch e XMLHttpRequest: l'anti-bot di
+  // Qwant rileva quel rimpiazzo dei metodi nativi e rispondeva 403 su OGNI
+  // ricerca. Qui NON si tocca più niente di nativo:
+  //   1) PerformanceObserver ci dice, in sola lettura, quale URL API la pagina
+  //      ha chiamato (passivo, invisibile all'anti-bot);
+  //   2) rifacciamo NOI quella stessa richiesta con una fetch nativa e i cookie
+  //      di sessione, per leggerne i risultati e ricavare gli URL originali.
+  // Le richieste DELLA PAGINA restano intatte → la ricerca funziona sempre. Se
+  // la nostra fetch venisse rifiutata, la funzione "immagine diretta" non agisce
+  // (clic normale): degrada, non rompe.
   (function immaginiDirette() {
+    if (!IMMAGINI_DIRETTE) return;
+
+    const fetchNativo = window.fetch.bind(window); // riferimento nativo, mai sostituito
 
     // ── Memoria miniatura → immagine originale ────────────────────────────
     const mediaPerMiniatura = new Map();
@@ -212,48 +224,35 @@
       for (const v of valori) raccogli(v, prof + 1);
     }
 
-    // ── Intercettazione delle risposte dell'API (fetch + XMLHttpRequest) ──
-    const fetchOriginale = window.fetch;
-    window.fetch = function (input) {
-      const promessa = fetchOriginale.apply(this, arguments);
-      try {
-        const url = typeof input === 'string' ? input
-          : (input && typeof input.url === 'string' ? input.url : String(input || ''));
-        if (url.includes('/search/')) {
-          if (url.includes('/search/images')) ultimaApiImmagini = url;
-          promessa.then(function (risposta) {
-            risposta.clone().json().then(function (dati) {
-              raccogli(dati, 0);
-              riscriviPresto();
-            }).catch(function () {});
-          }).catch(function () {});
+    // ── Scoperta passiva dell'URL API (PerformanceObserver) ───────────────
+    // Il resource timing espone in SOLA LETTURA l'URL completo (query inclusa)
+    // di ogni richiesta, anche fetch/XHR e anche cross-origin. Da lì prendiamo
+    // l'URL esatto delle chiamate /search/images (compresi gli offset dello
+    // scroll) e lo ririchiediamo noi per popolare la mappa miniatura→originale.
+    let timerPopola = 0;
+    function popolaDaApi() {
+      clearTimeout(timerPopola);
+      timerPopola = setTimeout(async function () {
+        if (!ultimaApiImmagini) return;
+        try {
+          const r = await fetchNativo(ultimaApiImmagini, { credentials: 'include' });
+          if (!r.ok) return;               // anti-bot ci rifiuta → si degrada, nessun danno
+          raccogli(await r.json(), 0);
+          riscriviTutto();
+        } catch (e) { /* mai interferire con la pagina */ }
+      }, 250);
+    }
+    try {
+      new PerformanceObserver(function (list) {
+        for (const e of list.getEntries()) {
+          const u = e.name || '';
+          if (u.includes('/search/images') && u !== ultimaApiImmagini) {
+            ultimaApiImmagini = u;
+            popolaDaApi();
+          }
         }
-      } catch (e) { /* mai interferire con la pagina */ }
-      return promessa;
-    };
-
-    const openXhr = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function (metodo, url) {
-      try { this._urlQwant = String(url || ''); } catch (e) { /* ignora */ }
-      return openXhr.apply(this, arguments);
-    };
-    const sendXhr = XMLHttpRequest.prototype.send;
-    XMLHttpRequest.prototype.send = function () {
-      const xhr = this;
-      try {
-        if ((xhr._urlQwant || '').includes('/search/')) {
-          if (xhr._urlQwant.includes('/search/images')) ultimaApiImmagini = xhr._urlQwant;
-          xhr.addEventListener('load', function () {
-            try {
-              const dati = xhr.responseType === 'json' ? xhr.response : JSON.parse(xhr.responseText);
-              raccogli(dati, 0);
-              riscriviPresto();
-            } catch (e) { /* non era JSON */ }
-          });
-        }
-      } catch (e) { /* ignora */ }
-      return sendXhr.apply(this, arguments);
-    };
+      }).observe({ entryTypes: ['resource'] });
+    } catch (e) { /* PerformanceObserver assente: resta il ripiego al clic */ }
 
     // ── Dati già presenti nell'HTML iniziale (rendering lato server) ──────
     function scappa(s) {
@@ -341,7 +340,9 @@
       return null;
     }
 
-    // ── Recupero d'emergenza: interroga l'API come farebbe la pagina ──────
+    // ── Ripiego al clic: interroga l'API come farebbe la pagina ───────────
+    // Usa la fetch NATIVA (mai sostituita) coi cookie di sessione. Riparte
+    // dall'URL osservato (parametri esatti) o, in mancanza, lo ricostruisce.
     function urlApi(q, offset) {
       try {
         if (ultimaApiImmagini) {
@@ -365,8 +366,8 @@
       for (let offset = 0; offset <= 100; offset += 50) {
         let dati;
         try {
-          const r = await fetchOriginale.call(window, urlApi(q, offset), { credentials: 'include' });
-          if (!r.ok) break;
+          const r = await fetchNativo(urlApi(q, offset), { credentials: 'include' });
+          if (!r.ok) break;               // anti-bot ci rifiuta → si degrada
           dati = await r.json();
         } catch (e) { break; }
         raccogli(dati, 0);
@@ -418,8 +419,8 @@
         return;
       }
 
-      // miniatura non ancora in memoria (es. risultati arrivati col primo HTML):
-      // si tenta il recupero via API, altrimenti si ripristina il clic normale
+      // miniatura non ancora in memoria: si tenta il recupero via API (fetch
+      // nostra, non intercettata); se fallisce, si ripristina il clic normale
       const img = miniaturaQwant(t);
       if (img && !recuperoInCorso) {
         e.preventDefault();

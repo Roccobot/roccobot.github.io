@@ -53,6 +53,7 @@ const NASCONDI_ADS_SIDEBAR = true; // SERP: pubblicità nella colonna a destra (
 const SOSTITUISCI_DOODLE  = true;  // doodle/veste evento → logo Qwant ufficiale
 const LOGO_PERSONALIZZATO = '';    // URL di un logo a scelta; vuoto = logo ufficiale integrato
 const APRI_IN_NUOVA_SCHEDA = true; // immagini: nuova scheda (true) o corrente (false)
+const IMMAGINI_DIRETTE    = true;  // false = disattiva il modulo immagini (solo pulizia)
 ```
 
 Per cambiarli: icona Tampermonkey → *Dashboard* → clic sul nome dello script →
@@ -66,10 +67,19 @@ modificare i valori → salvare (Ctrl+S).
   sfarfallio) e sostituisce il logo (`img[data-testid="logoHero"]` in home,
   `svg[data-testid="qwantSoccerLogoTopbar"]` in SERP) con il wordmark Qwant
   ufficiale incorporato.
-- **Immagini**: ascolta le risposte dell'API interna
-  (`api.qwant.com/.../search/images`), che per ogni immagine indica miniatura e
-  file originale; al clic apre l'originale e riscrive i link della griglia (così
-  funzionano anche il tasto centrale e "Copia indirizzo link").
+- **Immagini** (dalla v2.5.0, approccio *passivo*): lo script **non** altera più
+  le richieste di Qwant. Usa `PerformanceObserver` per leggere — in sola lettura —
+  *quale* URL dell'API interna (`api.qwant.com/.../search/images`) la pagina ha
+  chiamato, poi **rifà lui** quella richiesta con una `fetch` nativa e i cookie di
+  sessione per ricavare, per ogni immagine, miniatura → file originale; al clic
+  apre l'originale e riscrive i link della griglia (così funzionano anche il tasto
+  centrale e "Copia indirizzo link").
+  - **Perché così**: fino alla v2.4.0 lo script *rimpiazzava* `window.fetch` e
+    `XMLHttpRequest` per leggere quelle risposte. L'anti-bot di Qwant rileva la
+    manomissione dei metodi nativi e ha iniziato a rispondere **HTTP 403 su tutte
+    le ricerche**. Ora le chiamate della pagina restano intatte: la ricerca
+    funziona sempre e, se la nostra `fetch` venisse rifiutata, l'apertura diretta
+    semplicemente non agisce (clic normale) invece di rompere il sito.
 
 ### Limiti noti
 
