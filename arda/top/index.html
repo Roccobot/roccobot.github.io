@@ -498,9 +498,23 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 /* Target touch su mobile: area cliccabile più alta (≥ ~28px) e testi un filo
    più grandi per i controlli del Pannello, senza cambiarne il disegno. */
 @media (max-width:768px) {
-  .ctrl-solo, .ctrl-reset { padding:7px 12px; font-size:0.64rem; }
+  /* Tasti piu bassi (padding verticale 7->5px) per dare aria tra i Solo;
+     min-height sulla riga preserva il passo verticale di prima (31.72px),
+     cosi l'aria guadagnata resta TRA i tasti e il ritmo non cambia.
+     Tutti e Solo condividono la stessa regola: riquadri identici. */
+  .ctrl-solo, .ctrl-reset { padding:5px 12px; font-size:0.64rem; }
+  .ctrl-cat-row { min-height:31.72px; }
   .ctrl-apo { padding:6px 0; }
   .ctrl-apo .apo-lbl { font-size:0.64rem; }
+  /* Centrature ottiche mobile (misure utente da smartphone, DPR 3, quindi /3;
+     em = relative al font dell'elemento). Il blocco testata scende per rendere
+     il gap Tutti->primo Solo IDENTICO al gap tra i Solo (valore tarato sul DOM
+     reale, vedi sotto); transform = niente riflusso. */
+  #ctrl-panel .ctrl-cat-head { transform:translateY(0.384rem); }
+  #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.379em); }
+  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-lbl { transform:translateY(0.065em); }
+  #ctrl-panel .ctrl-reset .rst-face { transform:translateY(0.081em); }
+  #ctrl-panel .ctrl-solo .solo-face { transform:translateY(0.098em); }
 }
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
@@ -1737,7 +1751,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3001,7 +3015,7 @@ let isFirstRender = true;
 
 // ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
-  it: { ainu:'Ainur', arcane:'Esseri arcani/ancestrali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi e Troll', animal:'Animali' },
+  it: { ainu:'Ainur', arcane:'Esseri arcani/primordiali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi e Troll', animal:'Animali' },
   en: { ainu:'Ainur', arcane:'Arcane/ancestral beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs & Trolls', animal:'Animals' }
 };
 var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
