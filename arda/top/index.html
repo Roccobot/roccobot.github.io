@@ -980,6 +980,22 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   .ctrl-bottombar .ctrl-icon-btn { width:2rem; padding:0; }
   .ctrl-bottombar .ctrl-lang-btn { width:2rem; padding:0; }
 }
+/* LARGHEZZE INTERMEDIE (tablet, telefoni grandi in orizzontale, 640-768px):
+   la bottom-sheet resta, ma il contenuto passa a DUE COLONNE affiancate
+   (categorie+tag a sinistra, legenda a destra), blocco centrato: la colonna
+   singola pensata per i telefoni stretti (390-480px) qui affogava nel vuoto
+   (enormi margini laterali e sheet lunghissima). Sotto i 640px le due colonne
+   non ci stanno fisicamente (283+288+gap) e resta la colonna singola.
+   Viene DOPO il blocco mobile: a parita di specificita vince in cascata. */
+@media (min-width:640px) and (max-width:768px) {
+  #ctrl-panel .ctrl-cols { display:grid; grid-template-columns:auto auto; column-gap:1.5rem; align-items:start; }
+  /* .ctrl-left torna scatola reale (era display:contents): colonna sinistra
+     con categorie sopra e tag del filtro sotto, come sul desktop. */
+  #ctrl-panel .ctrl-cols > .ctrl-left { display:flex; flex-direction:column; }
+  #ctrl-panel .ctrl-cols > .ctrl-section--legend { grid-column:2; grid-row:1; margin-left:0; }
+  /* Il tag (dentro .ctrl-left) si centra rispetto alla colonna sinistra. */
+  #ctrl-panel .ctrl-left .ctrl-tag-slot { align-self:center; }
+}
 
 .genere-svg { user-select:none; flex:none; }
 /* PNG al vivo e centrati: dimensioni e offset replicano la resa precedente
@@ -1757,7 +1773,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.00</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.01</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
