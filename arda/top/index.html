@@ -857,6 +857,11 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-left { width:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-section--legend { width:auto; }
+  /* .ctrl-left è display:contents, quindi i suoi figli (categorie, tag-slot,
+     nota) sono flex-item diretti del blocco .ctrl-cols, allineati a sinistra.
+     Il tag del filtro badge va invece CENTRATO nel blocco (= centro pannello):
+     align-self:center sul suo slot. Categorie e legenda restano a sinistra. */
+  #ctrl-panel .ctrl-cols .ctrl-tag-slot { align-self:center; }
   /* Ritocco: allinea al pixel il bordo sinistro del quadratino checkbox con
      quello dell'icona badge (le due righe hanno padding-left diversi: 0.3rem
      la categoria, 0.4rem la legenda). */
@@ -1678,7 +1683,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.84</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.85</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
