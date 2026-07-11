@@ -591,7 +591,8 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      - CATEGORIE (Cinzel, corpo maggiore): translateY 0.326em -> centro OTTICO
        riga (geometricamente era gia centrata, ma otticamente va ~0.5px piu su).
      - APOCRIFI (Cinzel, corpo minore): +0.067em (~0.62px) sul centro riga.
-     - interruttore Apocrifi: +0.026rem (~0.42px) sul centro riga.
+     - interruttore Apocrifi: +0.010rem (~0.17px): centrato sulla riga (~0.42px)
+       e poi alzato ~0.25px per la centratura ottica (richiesta utente).
      - testo dei tasti Tutti/Solo: translate(0.081em, 0.105em) = ~0.75px a DESTRA
        e ~0.97px in GIU, per la centratura OTTICA (non geometrica) nel bottone.
        Il 'a destra' compensa il letter-spacing di coda (spazio dopo l'ultima
@@ -603,7 +604,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   #ctrl-panel .ctrl-cat-head { transform:translateY(0.2375rem); }
   #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.326em); }
   #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-lbl { transform:translateY(0.067em); }
-  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-sw { transform:translateY(0.026rem); }
+  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-sw { transform:translateY(0.010rem); }
   #ctrl-panel .ctrl-reset .rst-face, #ctrl-panel .ctrl-solo .solo-face { transform:translate(0.081em, 0.105em); }
   /* Righe categoria e righe legenda sullo STESSO passo verticale (31.5px):
      senza altezza esplicita i due ritmi differivano di ~0.3px a riga e le
@@ -1724,7 +1725,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.93</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
