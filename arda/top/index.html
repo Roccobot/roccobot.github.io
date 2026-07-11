@@ -602,10 +602,14 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      em = relativo al font dell'elemento (la centratura regge a ogni scala).
      Transform = spostamento visivo, nessun riflusso delle righe sotto. */
   #ctrl-panel .ctrl-cat-head { transform:translateY(0.2375rem); }
-  #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.326em); }
+  #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.302em); }
   #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-lbl { transform:translateY(0.067em); }
-  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-sw { transform:translateY(0.010rem); }
-  #ctrl-panel .ctrl-reset .rst-face, #ctrl-panel .ctrl-solo .solo-face { transform:translate(0.081em, 0.105em); }
+  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-sw { transform:translateY(0.004rem); }
+  /* Testo Tutti/All e Solo/Only regolati SEPARATAMENTE (ritocchi ottici per
+     pulsante, richiesta utente): stesso spostamento a destra (letter-spacing di
+     coda), Y diversa. */
+  #ctrl-panel .ctrl-reset .rst-face { transform:translate(0.081em, 0.051em); }
+  #ctrl-panel .ctrl-solo .solo-face { transform:translate(0.081em, 0.105em); }
   /* Righe categoria e righe legenda sullo STESSO passo verticale (31.5px):
      senza altezza esplicita i due ritmi differivano di ~0.3px a riga e le
      righe uscivano progressivamente di fase (4px sull'ultima). */
@@ -1725,7 +1729,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
