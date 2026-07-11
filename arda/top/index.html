@@ -975,6 +975,12 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 }
 
 .modal-backdrop.active { opacity:1; visibility:visible; }
+/* Niente barre di scorrimento nel sistema-modale (scelta coerente col
+   Pannello): su mobile comparivano DUE barre (quella interna del .modal-body e
+   quella esterna del .modal-backdrop, che su mobile può scorrere per via del
+   variare dell'altezza viewport con la barra URL). Lo scroll resta al tocco. */
+.modal-backdrop, .modal, .modal-body { scrollbar-width:none; -ms-overflow-style:none; }
+.modal-backdrop::-webkit-scrollbar, .modal::-webkit-scrollbar, .modal-body::-webkit-scrollbar { width:0; height:0; display:none; }
 
 .modal {
   background:linear-gradient(135deg,var(--ink) 0%,#0a0f20 100%);
@@ -1672,7 +1678,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.82</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.83</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4832,6 +4838,53 @@ document.querySelector('.version-badge').addEventListener('click', () => {
 });
 
 enableDragDrop();
+
+// ── Tasto "Indietro" (Android / gesto del browser): chiude l'overlay in cima
+//    invece di abbandonare il sito, tornando al contenuto precedente (come il
+//    tasto × / Esc). Meccanismo: una sola voce di history come "trappola",
+//    armata (pushState) quando si apre un overlay partendo da zero; il popstate
+//    (Indietro) chiude l'overlay in cima; se un ritorno ne riapre un altro la
+//    trappola si ri-arma; chiudendo via UI fino a zero overlay la trappola si
+//    consuma (history.back guardato). Aperture/chiusure rilevate con un
+//    MutationObserver: le mutazioni di uno stesso turno si vedono già assestate,
+//    perciò le transizioni (nota → scheda → nota) non generano falsi 'indietro'.
+(function backToClose(){
+  if (!window.MutationObserver || !window.history || !history.pushState) return;
+  function panelOpen(){ var p = document.getElementById('ctrl-panel'); return !!(p && p.classList.contains('open')); }
+  function anyOpen(){
+    var bd = document.getElementById('modal-backdrop');
+    return !!(document.getElementById('imgv') || document.getElementById('fab-modal') ||
+      document.getElementById('note-modal') || document.getElementById('res-modal') ||
+      (bd && bd.classList.contains('active')) || panelOpen());
+  }
+  function closeTop(){
+    var el;
+    if ((el = document.getElementById('imgv'))){ var bs = el.querySelectorAll('.imgv-btn'); if (bs.length) bs[bs.length - 1].click(); return; }
+    if ((el = document.getElementById('fab-modal'))){ var x = el.querySelector('.fab-modal-close'); if (x) x.click(); return; }
+    if ((el = document.getElementById('note-modal'))){ var x = el.querySelector('.fab-modal-close'); if (x) x.click(); return; }
+    if ((el = document.getElementById('res-modal'))){ var x = el.querySelector('.fab-modal-close'); if (x) x.click(); return; }
+    var bd = document.getElementById('modal-backdrop'); if (bd && bd.classList.contains('active')){ closeModal(); return; }
+    if (panelOpen()) toggleControlPanel();
+  }
+  var trapped = false, selfPop = false;
+  function refresh(){
+    var open = anyOpen();
+    if (open && !trapped){ trapped = true; try { history.pushState({ ardaOverlay: 1 }, ''); } catch (e) {} }
+    else if (!open && trapped){ trapped = false; selfPop = true; try { history.back(); } catch (e) { selfPop = false; } }
+  }
+  var obs = new MutationObserver(refresh);
+  obs.observe(document.body, { childList: true });
+  var bd0 = document.getElementById('modal-backdrop'); if (bd0) obs.observe(bd0, { attributes: true, attributeFilter: ['class'] });
+  var pnl0 = document.getElementById('ctrl-panel'); if (pnl0) obs.observe(pnl0, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('popstate', function(){
+    if (selfPop){ selfPop = false; return; }
+    if (anyOpen()){
+      closeTop();
+      trapped = anyOpen();
+      if (trapped){ try { history.pushState({ ardaOverlay: 1 }, ''); } catch (e) {} }
+    } else { trapped = false; }
+  });
+})();
 </script>
 </body>
 </html>
