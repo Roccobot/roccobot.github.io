@@ -322,6 +322,19 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
 - Gli **attributi** che non sono veri nomi o titoli (es. `Prima Regina
   Regnante di Númenor`, `fratello di Gwaihir`, `Capostipite della Casa di
   Bëor`) stanno SOLO nella Info, mai tra Nomi/Titoli.
+- **I Titoli sono la carica nuda: i qualificatori non ne fanno MAI parte.**
+  Aggettivi come `Ultimo`, `Primo`, `Grande` e simili non appartengono al
+  titolo in sé, anche quando sono veri: il titolo è `Re di Gondor`, non `Ultimo
+  Re di Gondor`; `Signore di Dol Amroth`, non `Primo Signore di Dol Amroth`. Il
+  fatto (essere il primo, l'ultimo...) va semmai nella Info, dove la ripetizione
+  del titolo è accettabile e anzi utile. Bonifica v6.17: rimossi `Ultimo` da
+  Eärnur (`Re di Gondor`) e `Primo` da Galador (`Signore di Dol Amroth`) e
+  Fastred (`Custode dei Confini Occidentali`), col dato spostato/tenuto nella
+  Info. **Eccezioni tenute per merito eccezionale, decise dall'utente:** `Primo
+  Re di Númenor` (Elros) e `Il Primo dei Quendi` (Imin), dove l'essere il primo
+  è la sostanza stessa della figura. Falso positivo da non toccare: `Grande
+  Porta` di Ecthelion (`Grande` è parte del nome proprio Great Gate, non un
+  qualificatore).
 - Le **genealogie** (`figlio/figlia di ...`) non stanno mai tra i Nomi o i
   Titoli: ci sono i campi Genitori (eccezione tenuta: `Figlia del Fiume` di
   Baccador, epiteto canonico, non genealogia in senso proprio).
