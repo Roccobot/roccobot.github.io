@@ -578,6 +578,11 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   `Re del Reame Unito`; una dedup per-voce lo scartò, lasciando la resa vecchia.
   Regola: aggiungi il valore di una lingua se in quella lingua è realmente nuovo,
   a prescindere dall'altra.
+  - **Asimmetrie bilingui legittime (non segnalarle negli audit):** un campo può
+    essere compilato in UNA sola lingua quando il dato esiste solo lì. Caso
+    accertato: **Will Piedebianco**, soprannome EN `Flourdumpling` senza
+    equivalente IT perché la traduzione italiana l'ha soppresso (verificato
+    dall'utente, 2026-07-11).
 - **Due campi, due ruoli (riga sotto il nome).** La riga mostra
   `nomi_alternativi` e, dopo un ` | `, `appellativi` (il separatore ` | `
   compare solo se entrambe le parti ci sono):
@@ -675,8 +680,10 @@ specifico del dataset):
   singolo `'`, sia per le citazioni (`citazione`) sia per glosse/incisi interni.
   Mai `«»`, mai virgolette curve, mai doppie.
 - **Apostrofi: sempre dritti `'`** (mai i curvi `’`/`‘`).
-- **Trattini:** `–` (en-dash) **solo negli intervalli d'anno** della `fonte`
-  (es. `1954–55`). Negli incisi dei testi è **ammesso** l'em-dash `—`, ma con
+- **Trattini:** `–` (en-dash) **solo negli intervalli d'anno**: tipicamente
+  nella `fonte` (es. `1954–55`), ma legittimo anche nei testi quando esprime
+  un intervallo di anni (es. `2758–59` nella descrizione di Helm; chiarimento
+  2026-07-11). Negli incisi dei testi è **ammesso** l'em-dash `—`, ma con
   questa **priorità**: preferire sempre la coppia di **virgole** o le
   **parentesi**; l'em-dash solo quando risulta davvero migliore o più elegante.
   (Bonifica non retroattiva: gli em-dash già presenti restano finché non si
@@ -876,7 +883,10 @@ specifico del dataset):
   degli ambasciatori con Oromë e Grande Viaggio. Il criterio è volutamente
   NON spiegato nella legenda della pagina (semplicità).
   Casi decisi dall'utente: Finwë, Thingol e Ingwë senza badge; Melian,
-  Eärendil, Elwing, Tuor e Idril lo tengono. Il valore `'presunto'` rende
+  Eärendil, Elwing, Tuor e Idril lo tengono. **Eönwë tiene il badge** (per il
+  momento, decisione utente 2026-07-11) benché Maia nativo di Aman: un audit
+  canonico ne aveva proposto la rimozione (il criterio parla di chi si era
+  stabilito nella Terra di Mezzo), respinta. Il valore `'presunto'` rende
   l'icona al **50%** (`si-dim`).
 - **Il badge semitrasparente è scollegato dall'idea di 'presunto'.** Il 50% è
   solo un segnale visivo di 'stato a sé': **nessun** suffisso `(presunto)`
@@ -956,6 +966,12 @@ specifico del dataset):
   caso 'note tardive = canone'. `Ilwen`, sposa di Ingwë e madre di Ingwion
   (dopo Míriel), è attestata solo in NoME → `apocrifo:"NoME"` (pill 'Solo
   NoME'). La genealogia Ingwë+Ilwen di Ingwion viene da NoME.
+  - **Anche la genealogia di Indis (padre Ingwë, madre Ilwen) viene da NoME**
+    ('Ingwë married... his first child (Indis) was born in 2181'), stessa
+    famiglia di scelte: NON è un errore da correggere. Il Silmarillion
+    pubblicato dice solo 'parente stretta d'Ingwë' e la Shibboleth la fa
+    sorella o nipote: un audit canonico che non peschi NoME la segnalerà come
+    sbagliata (successo il 2026-07-11, correzione respinta).
 
 ## 🧹 Asset del progetto
 
