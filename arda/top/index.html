@@ -720,6 +720,9 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    (numero da 1 a 16, singolare/plurale), senza più scivolare. */
 .ctrl-badge-tag > .tag-face, .ctrl-badge-tag > .tag-measure { grid-area:1 / 1; display:inline-flex; align-items:center; gap:0.45rem; white-space:nowrap; }
 .ctrl-badge-tag > .tag-measure { visibility:hidden; pointer-events:none; }
+/* Numero del filtro in uno slot a larghezza fissa (2 cifre), centrato: il testo
+   che segue parte sempre dalla stessa x → nessun jitter passando da 1 a 2 cifre. */
+.ctrl-badge-tag .tag-num { display:inline-block; min-width:1.4em; text-align:center; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
 /* × centrata in verticale nel riquadro: line-height azzerata (il glifo in
    Garamond siede alto sulla baseline) e centraggio affidato al flex. */
@@ -1683,7 +1686,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.85</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2557,6 +2560,10 @@ var noteReturn = null;
 // Analogo per la nota 'Traduzione italiana' (showInfoNote): callback per
 // tornare alla modale 'Risorse e note' da cui la si è aperta. null = niente.
 var infoReturn = null;
+// Analogo per il viewer immagini (openImageViewer): callback per tornare alla
+// modale 'Risorse e note' alla chiusura (✕/Esc/backdrop/gesto indietro). null =
+// niente (immagine aperta senza una modale di provenienza).
+var imgvReturn = null;
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('active');
   lockPageScroll(false);
@@ -2629,7 +2636,7 @@ function openResourcesModal() {
   function label(itF, enF, itS, enS) { var it = mobile && itS ? itS : itF, en = mobile && enS ? enS : enF; return currentLang === 'it' ? it : en; }
   // ── Risorse: le due mappe (viewer immagini) + il link esterno ──
   section(currentLang === 'it' ? 'Risorse' : 'Resources');
-  function imgItem(itF, enF, src, itS, enS) { mkBtn(label(itF, enF, itS, enS), function() { dismiss(); openImageViewer(src, itF, enF); }); }
+  function imgItem(itF, enF, src, itS, enS) { mkBtn(label(itF, enF, itS, enS), function() { dismiss(); imgvReturn = function(){ openResourcesModal(); }; openImageViewer(src, itF, enF); }); }
   imgItem('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
   imgItem('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
   mkBtn(label('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'Mappa della Terra di Mezzo', 'Map of Middle-earth'),
@@ -2739,7 +2746,7 @@ function openImageViewer(src, titleIt, titleEn) {
     }
   }
   stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
-  function close() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); }
+  function close() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); if (imgvReturn) { var r = imgvReturn; imgvReturn = null; r(); } }
   function onKey(e) { if (e.key === 'Escape') close(); }
   var itL = currentLang === 'it';
   bar.appendChild(ttl);
@@ -3050,12 +3057,21 @@ function controlPanelHTML() {
   h += '<div class="ctrl-tag-slot">';
   if (badgeFilter.size) {
     var nB = badgeFilter.size;
-    var tagTxt = currentLang === 'it' ? (nB === 1 ? '1 badge attivo' : nB + ' badge attivi')
-                                      : (nB === 1 ? '1 active badge' : nB + ' active badges');
+    // La parte numerica ha uno slot a larghezza fissa (.tag-num, vedi CSS): il
+    // numero è centrato nel suo spazio, così il testo 'badge attiv...' parte
+    // sempre dalla stessa x e non fa jitter orizzontale quando il conteggio
+    // cambia numero di cifre (1 → 10). L'unica variazione (o/i, s finale) resta
+    // in coda e non sposta nulla a sinistra.
+    // niente spazio iniziale prima di 'badge': la separazione la dà il gap flex
+    // del .tag-face (come tra × e numero), così lo spazio resta costante.
+    var numHtml = '<span class="tag-num">' + nB + '</span>';
+    var tagTxt = currentLang === 'it' ? (numHtml + '<span>badge attiv' + (nB === 1 ? 'o' : 'i') + '</span>')
+                                      : (numHtml + '<span>active badge' + (nB === 1 ? '' : 's') + '</span>');
     var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
-    // Segnaposto invisibile con la stringa più larga possibile (2 cifre): fissa
-    // la larghezza del riquadro fin dal primo tap (vedi CSS .tag-measure).
-    var tagMax = currentLang === 'it' ? '16 badge attivo' : '16 active badges';
+    // Segnaposto invisibile con la stringa più larga possibile (2 cifre + forma
+    // più lunga): fissa la larghezza del riquadro fin dal primo tap (CSS .tag-measure).
+    var tagMax = currentLang === 'it' ? '<span class="tag-num">16</span><span>badge attivo</span>'
+                                      : '<span class="tag-num">16</span><span>active badges</span>';
     h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '">'
        + '<span class="tag-face"><span class="tag-x">×</span>' + tagTxt + '</span>'
        + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMax + '</span>'
