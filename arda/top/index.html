@@ -709,7 +709,7 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    spento: niente salti quando il tag compare), tag centrato dentro; un po'
    più su e con aria prima della legenda (scelte utente). */
 .ctrl-tag-slot { min-height:1.5rem; display:flex; align-items:center; justify-content:center; margin:0.1rem 0 0.4rem; }
-.ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 12px 4px 10px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 9px 4px 8px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 /* Larghezza stabile: min-width:146px fissa il riquadro alla stessa misura in
    entrambe le lingue (il testo più lungo, '16 active badges', sta sotto i
    146px), così nemmeno il cambio lingua lo fa 'ballare'. La faccia visibile e
@@ -720,9 +720,13 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    (numero da 1 a 16, singolare/plurale), senza più scivolare. */
 .ctrl-badge-tag > .tag-face, .ctrl-badge-tag > .tag-measure { grid-area:1 / 1; display:inline-flex; align-items:center; gap:0.45rem; white-space:nowrap; }
 .ctrl-badge-tag > .tag-measure { visibility:hidden; pointer-events:none; }
-/* Numero del filtro in uno slot a larghezza fissa (2 cifre), centrato: il testo
-   che segue parte sempre dalla stessa x → nessun jitter passando da 1 a 2 cifre. */
-.ctrl-badge-tag .tag-num { display:inline-block; min-width:1.4em; text-align:center; }
+/* Numero del filtro in uno slot a larghezza fissa = quella di '16', centrato
+   (grid-stack: numero visibile sovrapposto a un '16' invisibile): il testo che
+   segue parte sempre dalla stessa x → nessun jitter passando da 1 a 2 cifre,
+   con la larghezza minima possibile per 2 cifre (niente spazio sprecato). */
+.ctrl-badge-tag .tag-num { display:inline-grid; justify-items:center; align-items:center; }
+.ctrl-badge-tag .tag-num > span { grid-area:1 / 1; }
+.ctrl-badge-tag .tag-num-m { visibility:hidden; pointer-events:none; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
 /* × centrata in verticale nel riquadro: line-height azzerata (il glifo in
    Garamond siede alto sulla baseline) e centraggio affidato al flex. */
@@ -1686,7 +1690,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3064,14 +3068,17 @@ function controlPanelHTML() {
     // in coda e non sposta nulla a sinistra.
     // niente spazio iniziale prima di 'badge': la separazione la dà il gap flex
     // del .tag-face (come tra × e numero), così lo spazio resta costante.
-    var numHtml = '<span class="tag-num">' + nB + '</span>';
-    var tagTxt = currentLang === 'it' ? (numHtml + '<span>badge attiv' + (nB === 1 ? 'o' : 'i') + '</span>')
-                                      : (numHtml + '<span>active badge' + (nB === 1 ? '' : 's') + '</span>');
+    // Slot del numero a larghezza fissa = quella di '16' (il massimo: 16 righe
+    // badge), col numero visibile sovrapposto a un '16' invisibile (grid-stack):
+    // larghezza minima per 2 cifre, quindi nessun jitter da 1 a 2 cifre.
+    function numSlot(n){ return '<span class="tag-num"><span class="tag-num-f">' + n + '</span><span class="tag-num-m" aria-hidden="true">16</span></span>'; }
+    var tagTxt = currentLang === 'it' ? (numSlot(nB) + '<span>badge attiv' + (nB === 1 ? 'o' : 'i') + '</span>')
+                                      : (numSlot(nB) + '<span>active badge' + (nB === 1 ? '' : 's') + '</span>');
     var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
     // Segnaposto invisibile con la stringa più larga possibile (2 cifre + forma
     // più lunga): fissa la larghezza del riquadro fin dal primo tap (CSS .tag-measure).
-    var tagMax = currentLang === 'it' ? '<span class="tag-num">16</span><span>badge attivo</span>'
-                                      : '<span class="tag-num">16</span><span>active badges</span>';
+    var tagMax = currentLang === 'it' ? (numSlot('16') + '<span>badge attivo</span>')
+                                      : (numSlot('16') + '<span>active badges</span>');
     h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '">'
        + '<span class="tag-face"><span class="tag-x">×</span>' + tagTxt + '</span>'
        + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMax + '</span>'
@@ -3321,9 +3328,14 @@ function wireControlPanel() {
   panel.querySelectorAll('.ctrl-share-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ copyShareLink(btn); });
   });
-  // Tasto Info: apre la modale unica 'Risorse e note' (dalla v5.79).
+  // Tasto Info: apre la modale unica 'Risorse e note' (dalla v5.79). Chiude
+  // prima il Pannello, così l'unico overlay resta 'Risorse' e il gesto indietro
+  // torna dritto alla classifica (non al Pannello sottostante).
   panel.querySelectorAll('.ctrl-info-btn').forEach(function(btn){
-    btn.addEventListener('click', openResourcesModal);
+    btn.addEventListener('click', function(){
+      if (panel.classList.contains('open')) toggleControlPanel();
+      openResourcesModal();
+    });
   });
 }
 
