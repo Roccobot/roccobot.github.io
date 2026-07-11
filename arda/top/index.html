@@ -154,6 +154,7 @@ h1 {
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   margin-bottom:1rem;
 }
+#title a { color:inherit; text-decoration:none; -webkit-text-fill-color:inherit; cursor:pointer; }
 
 .subtitle {
   font-family:'EB Garamond',serif; font-style:italic;
@@ -1788,11 +1789,11 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.13</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
-  <h1 id="title">I Grandi di Arda</h1>
+  <h1 id="title"><a id="title-link" href="https://roccobot.github.io/arda/top/">I Grandi di Arda</a></h1>
   <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#6890a8" stroke-width="0.8" fill="none" opacity="0.6"/>
@@ -1941,7 +1942,7 @@ function setLang(lang) {
   document.documentElement.lang = lang;
   document.getElementById('lang-switch').textContent = lang === 'it' ? 'EN' : 'IT';
   document.getElementById('crest').innerHTML = i18n[lang].crest;
-  document.getElementById('title').textContent = i18n[lang].title;
+  document.getElementById('title-link').textContent = i18n[lang].title;
   document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
@@ -1992,37 +1993,44 @@ function sEl(){ return document.scrollingElement || document.documentElement; }
 
 // Scorciatoie con Ctrl (o Cmd) e override (preventDefault), disattivate in
 // modalità admin per non interferire con l'editor:
-//  - Ctrl+L: interruttore istantaneo IT<->EN (aggiorna anche una scheda aperta).
 //  - Ctrl+Freccia Su / Giù: vai in cima / in fondo alla pagina, ISTANTANEO
 //    (pageScrollTo senza smooth; i tasti flottanti invece sono fluidi).
 document.addEventListener('keydown', function(e) {
   if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
   // Col focus in un campo di testo (es. la password del riordino) NON dirottare
-  // Ctrl+L/frecce: l'utente sta scrivendo, non vuole cambiare lingua o scrollare.
+  // le frecce: l'utente sta scrivendo, non vuole scrollare.
   var tgt = e.target;
   if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable)) return;
-  if (e.key === 'l' || e.key === 'L') {
-    e.preventDefault();
-    setLang(currentLang === 'it' ? 'en' : 'it');
-  } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
     e.preventDefault();
     pageScrollTo(e.key === 'ArrowUp' ? 0 : sEl().scrollHeight, false);
   }
 });
-// Scorciatoia a tasto NUDO (stile YouTube): P apre/chiude il Pannello, come un
-// click sul FAB. Nota: i tasti di sistema chiesti in origine (Fn su macOS,
-// Win/Super) NON sono catturabili da una pagina web: Fn non genera eventi,
-// Win/Super e riservato all'OS (menu Start / vista Attivita, non prevenibili).
-// Guardie: niente modificatori, niente campi di testo, niente admin/riordino,
-// nessun overlay aperto (li il FAB non sarebbe comunque cliccabile).
+// Scorciatoie a tasto NUDO (stile YouTube): P apre/chiude il Pannello (come un
+// click sul FAB), L commuta la lingua IT<->EN (come il tasto lingua; se una
+// scheda e aperta la ricarica nella nuova lingua, cfr. setLang). Nota: i tasti
+// di sistema chiesti in origine (Fn su macOS, Win/Super) NON sono catturabili
+// da una pagina web: Fn non genera eventi, Win/Super e riservato all'OS (menu
+// Start / vista Attivita, non prevenibili) -> ripiego su tasti lettera.
+// Guardie comuni: niente modificatori, niente campi di testo, niente
+// admin/riordino. In piu, SOLO per P: nessun overlay aperto (li il FAB non
+// sarebbe comunque cliccabile). L invece resta attivo con una scheda aperta,
+// apposta per poterla ricaricare nell'altra lingua.
 document.addEventListener('keydown', function(e) {
-  if (e.key !== 'p' && e.key !== 'P') return;
+  var k = e.key.toLowerCase();
+  if (k !== 'p' && k !== 'l') return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
   if (typeof reorderMode !== 'undefined' && reorderMode) return;
   var tgt = e.target;
   if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.tagName === 'SELECT' || tgt.isContentEditable)) return;
+  if (k === 'l') {
+    e.preventDefault();
+    setLang(currentLang === 'it' ? 'en' : 'it');
+    return;
+  }
+  // k === 'p': col Pannello dietro un overlay il toggle non avrebbe senso.
   var bd = document.getElementById('modal-backdrop');
   if ((bd && bd.classList.contains('active')) || document.getElementById('imgv')
       || document.getElementById('fab-modal') || document.getElementById('note-modal')
