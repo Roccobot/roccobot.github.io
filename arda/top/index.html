@@ -720,6 +720,14 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    (numero da 1 a 16, singolare/plurale), senza più scivolare. */
 .ctrl-badge-tag > .tag-face, .ctrl-badge-tag > .tag-measure { grid-area:1 / 1; display:inline-flex; align-items:center; gap:0.45rem; white-space:nowrap; }
 .ctrl-badge-tag > .tag-measure { visibility:hidden; pointer-events:none; }
+/* Centraggio verticale OTTICO del testo: in maiuscoletto (Cinzel all-caps) il
+   line-box riserva sotto la base uno spazio per i discendenti che le maiuscole
+   non usano, così l'inchiostro risulta ~1.6px troppo in alto rispetto al centro
+   geometrico del riquadro. Un nudge in giù di 0.13em (~1.4px, scala col font)
+   riallinea il centro dell'inchiostro a quello del box (scarto residuo <0.7px,
+   bilanciato tra mobile e desktop). Solo la faccia visibile (il segnaposto-misura
+   resta invisibile). */
+.ctrl-badge-tag > .tag-face { transform:translateY(0.13em); }
 /* Numero del filtro in uno slot a larghezza fissa = quella di '16', centrato
    (grid-stack: numero visibile sovrapposto a un '16' invisibile): il testo che
    segue parte sempre dalla stessa x → nessun jitter passando da 1 a 2 cifre,
@@ -1690,7 +1698,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.88</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
