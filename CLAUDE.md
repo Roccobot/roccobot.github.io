@@ -823,6 +823,13 @@ specifico del dataset):
       **macOS** `⌃↑`/`⌃↓` sono riservati dal sistema (Mission Control / App
       Exposé) e non arrivano al browser: lì funziona `⌘↑`/`⌘↓` (il listener
       accetta sia Ctrl sia Cmd). Su Windows/Linux funziona `Ctrl`.
+    - **P (tasto nudo, dalla v6.11)**: apre/chiude il Pannello, come un click
+      sul FAB (listener a parte, stesso file). Guardie: niente modificatori,
+      niente campi di testo/admin/riordino, nessun overlay aperto. Storia: la
+      richiesta originaria era catturare **Fn** (macOS) o **Win/Super**, ma
+      NON è possibile da una pagina web (Fn non genera eventi; Win/Super è
+      riservato all'OS: menu Start / vista Attività non prevenibili): non
+      riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
 - **`oneRing`** (non un on/off ma un **selettore di variante**): icona
   dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
