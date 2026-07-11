@@ -581,6 +581,19 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
      ospita il tag del filtro badge. */
   #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:calc(2.15rem + 3px) 0 0; }
+  /* Ritocco di centratura (richiesta utente). Due spostamenti indipendenti,
+     misurati a pixel (le stime dell'utente erano su screenshot zoomato ~1.85x):
+     1) l'intera testata {CATEGORIE, interruttore Apocrifi, tasto Tutti} scende
+        di 0.2375rem (=3.8px a default) così il gap testata->prima riga eguaglia
+        il passo delle righe categoria (tutti i gap fra bordi = 13.5px, ritmo
+        uniforme). rem = relativo al root, scala con lo zoom testo.
+     2) la sola scritta CATEGORIE scende di 0.42em (=~4.45px) perché il suo
+        inchiostro (Cinzel maiuscoletto, alto nel line-box) coincida col centro
+        della riga (toggle e tasto Tutti, già centrati). em = relativo al font
+        della scritta, così la centratura ottica regge a ogni scala.
+     Transform = spostamento visivo, nessun riflusso delle righe sotto. */
+  #ctrl-panel .ctrl-cat-head { transform:translateY(0.2375rem); }
+  #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.42em); }
   /* Righe categoria e righe legenda sullo STESSO passo verticale (31.5px):
      senza altezza esplicita i due ritmi differivano di ~0.3px a riga e le
      righe uscivano progressivamente di fase (4px sull'ultima). */
@@ -720,14 +733,15 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    (numero da 1 a 16, singolare/plurale), senza più scivolare. */
 .ctrl-badge-tag > .tag-face, .ctrl-badge-tag > .tag-measure { grid-area:1 / 1; display:inline-flex; align-items:center; gap:0.45rem; white-space:nowrap; }
 .ctrl-badge-tag > .tag-measure { visibility:hidden; pointer-events:none; }
-/* Centratura verticale OTTICA del testo: in maiuscoletto (Cinzel all-caps) il
-   line-box riserva sotto la base uno spazio per i discendenti che le maiuscole
-   non usano, così l'inchiostro risulta ~1.6px troppo in alto rispetto al centro
-   geometrico del riquadro. Un nudge in giù di 0.13em (~1.4px, scala col font)
-   riallinea il centro dell'inchiostro a quello del box (scarto residuo <0.7px,
-   bilanciato tra mobile e desktop). Solo la faccia visibile (il segnaposto-misura
-   resta invisibile). */
-.ctrl-badge-tag > .tag-face { transform:translateY(0.13em); }
+/* Centratura verticale OTTICA, per-elemento e INDIPENDENTE (richiesta utente):
+   ×, numero e testo hanno metriche diverse (il × è EB Garamond a 1.05rem, numero
+   e testo sono Cinzel maiuscoletto a 0.66rem), quindi il loro inchiostro non è
+   centrato alla stessa quota nel line-box. Ciascuno riceve il proprio nudge
+   verticale così che il centro del suo inchiostro coincida col centro del box.
+   Valori misurati a pixel (analisi dell'inchiostro), bilanciati mobile/desktop. */
+.ctrl-badge-tag .tag-x { transform:translateY(0.045em); }
+.ctrl-badge-tag .tag-face .tag-num-f { transform:translateY(0.11em); }
+.ctrl-badge-tag .tag-txt { transform:translateY(0.11em); }
 /* Numero del filtro in uno slot a larghezza fissa = quella di '16', centrato
    (grid-stack: numero visibile sovrapposto a un '16' invisibile): il testo che
    segue parte sempre dalla stessa x → nessun jitter passando da 1 a 2 cifre,
@@ -736,9 +750,10 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-num > span { grid-area:1 / 1; }
 .ctrl-badge-tag .tag-num-m { visibility:hidden; pointer-events:none; }
 .ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
-/* × centrata in verticale nel riquadro: line-height azzerata (il glifo in
-   Garamond siede alto sulla baseline) e centratura affidata al flex. */
-.ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:0; font-family:'EB Garamond',serif; display:inline-flex; align-items:center; position:relative; top:-0.04em; }
+/* × in EB Garamond, più grande del testo: line-height azzerata (il glifo siede
+   alto sulla baseline). La centratura verticale fine è affidata al transform
+   per-elemento sopra (.tag-x translateY), non più a un top negativo. */
+.ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:0; font-family:'EB Garamond',serif; display:inline-flex; align-items:center; }
 html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
 html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18); }
 /* Suggerimento a filtro spento (solo desktop): occupa il posto del tag. */
@@ -1698,7 +1713,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v5.89</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v5.90</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language">EN</button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3080,8 +3095,8 @@ function controlPanelHTML() {
     // badge), col numero visibile sovrapposto a un '16' invisibile (grid-stack):
     // larghezza minima per 2 cifre, quindi nessun jitter da 1 a 2 cifre.
     function numSlot(n){ return '<span class="tag-num"><span class="tag-num-f">' + n + '</span><span class="tag-num-m" aria-hidden="true">16</span></span>'; }
-    var tagTxt = currentLang === 'it' ? (numSlot(nB) + '<span>badge attiv' + (nB === 1 ? 'o' : 'i') + '</span>')
-                                      : (numSlot(nB) + '<span>active badge' + (nB === 1 ? '' : 's') + '</span>');
+    var tagTxt = currentLang === 'it' ? (numSlot(nB) + '<span class="tag-txt">badge attiv' + (nB === 1 ? 'o' : 'i') + '</span>')
+                                      : (numSlot(nB) + '<span class="tag-txt">active badge' + (nB === 1 ? '' : 's') + '</span>');
     var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
     // Segnaposto invisibile con la stringa più larga possibile (2 cifre + forma
     // più lunga): fissa la larghezza del riquadro fin dal primo tap (CSS .tag-measure).
