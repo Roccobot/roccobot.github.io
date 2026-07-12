@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.5.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. NON altera le richieste di Qwant (niente più patch di fetch/XHR: faceva scattare l'anti-bot → 403): usa PerformanceObserver + una fetch propria.
+// @version      2.6.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e non tocca fetch/XHR (lo facevano v2.4/v2.5 e l'anti-bot di Qwant rispondeva 403): ricava l'originale solo dall'URL della miniatura. Se non ci riesce, lascia il clic normale: non può rompere la ricerca.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
 // @match        https://qwant.com/*
@@ -179,87 +179,83 @@
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 2 — Immagini: il clic apre subito il file originale
   // ═══════════════════════════════════════════════════════════════════════
-  // ⚠️ IMPORTANTE — perché è fatto così: la SERP immagini di Qwant NON contiene
-  // i risultati nell'HTML; arrivano solo via API client-side. La v2.4 leggeva
-  // quelle risposte RIMPIAZZANDO window.fetch e XMLHttpRequest: l'anti-bot di
-  // Qwant rileva quel rimpiazzo dei metodi nativi e rispondeva 403 su OGNI
-  // ricerca. Qui NON si tocca più niente di nativo:
-  //   1) PerformanceObserver ci dice, in sola lettura, quale URL API la pagina
-  //      ha chiamato (passivo, invisibile all'anti-bot);
-  //   2) rifacciamo NOI quella stessa richiesta con una fetch nativa e i cookie
-  //      di sessione, per leggerne i risultati e ricavare gli URL originali.
-  // Le richieste DELLA PAGINA restano intatte → la ricerca funziona sempre. Se
-  // la nostra fetch venisse rifiutata, la funzione "immagine diretta" non agisce
-  // (clic normale): degrada, non rompe.
+  // ⚠️ STORIA (perché è fatto così, e cosa NON rifare):
+  //   v2.4 → rimpiazzava window.fetch / XMLHttpRequest per leggere i risultati
+  //          immagini dall'API: l'anti-bot di Qwant rileva la manomissione dei
+  //          metodi nativi → HTTP 403 su TUTTE le ricerche.
+  //   v2.5 → niente più patch, ma faceva una NOSTRA fetch all'API di Qwant. Quella
+  //          chiamata non "firmata" fa scattare l'anti-bot e può avvelenare il
+  //          cookie di sessione → di nuovo 403 (intermittente).
+  //   v2.6 → (questa) ZERO chiamate di rete e ZERO manomissioni. Le richieste della
+  //          pagina restano intatte, quindi il modulo NON PUÒ rompere la ricerca.
+  // L'originale si ricava SOLO da ciò che è già nel DOM: dall'URL della miniatura
+  // (le proxy s*.qwant.com/thumbr/ possono incapsulare l'URL sorgente) o da dati
+  // eventualmente presenti nell'HTML. Se non si ricava, il clic resta quello di
+  // Qwant (apre l'anteprima): degrada, non rompe.
   (function immaginiDirette() {
     if (!IMMAGINI_DIRETTE) return;
 
-    const fetchNativo = window.fetch.bind(window); // riferimento nativo, mai sostituito
-
-    // ── Memoria miniatura → immagine originale ────────────────────────────
+    // Memoria miniatura → originale (popolata solo da dati DOM/HTML, mai da rete)
     const mediaPerMiniatura = new Map();
-    let ultimaApiImmagini = '';
-    let recuperoInCorso = false;
     let bypass = false;
 
     function chiave(u) {
-      // ignora il protocollo: l'API usa spesso URL che iniziano con "//"
+      // ignora il protocollo: gli URL possono iniziare con "//"
       return typeof u === 'string' && u ? u.replace(/^https?:/, '') : '';
     }
-
     function ricorda(miniatura, media) {
       const k = chiave(miniatura);
       if (k && typeof media === 'string' && media) mediaPerMiniatura.set(k, media);
     }
 
-    // Scorre ricorsivamente il JSON dell'API e raccoglie le coppie utili.
-    function raccogli(nodo, prof) {
-      if (!nodo || typeof nodo !== 'object' || prof > 14) return;
-      if (typeof nodo.media === 'string' && nodo.media) {
-        if (typeof nodo.thumbnail === 'string') ricorda(nodo.thumbnail, nodo.media);
-        // così anche l'anteprima grande del pannello laterale apre il file
-        ricorda(nodo.media, nodo.media);
+    // ── Estrazione dell'originale DALL'URL della miniatura (zero rete) ─────
+    // Le thumbnail di Qwant passano da s*.qwant.com/thumbr/... In diverse
+    // versioni l'URL sorgente è incapsulato: come parametro (?u=, ?url=...) o
+    // annidato nel path (spesso URL-encoded una o due volte). Si estrae in modo
+    // CONSERVATIVO: si restituisce solo un http(s) esterno plausibile, altrimenti
+    // '' (→ nessuna azione, clic normale). Non fa alcuna richiesta.
+    function originaleDaThumbr(u) {
+      if (!u || typeof u !== 'string' || !/\/thumbr\//.test(u)) return '';
+      let url;
+      try { url = new URL(u, location.href); } catch (e) { return ''; }
+      // 1) parametri query che contengono l'originale
+      for (const k of ['u', 'url', 'src', 'uri', 'o', 'image', 'q']) {
+        let v = url.searchParams.get(k);
+        if (!v) continue;
+        try { if (/%3a/i.test(v)) v = decodeURIComponent(v); } catch (e) { /* ignora */ }
+        if (/^https?:\/\/./i.test(v) && !/\/thumbr\//.test(v)) return v;
       }
-      const valori = Array.isArray(nodo) ? nodo : Object.values(nodo);
-      for (const v of valori) raccogli(v, prof + 1);
-    }
-
-    // ── Scoperta passiva dell'URL API (PerformanceObserver) ───────────────
-    // Il resource timing espone in SOLA LETTURA l'URL completo (query inclusa)
-    // di ogni richiesta, anche fetch/XHR e anche cross-origin. Da lì prendiamo
-    // l'URL esatto delle chiamate /search/images (compresi gli offset dello
-    // scroll) e lo ririchiediamo noi per popolare la mappa miniatura→originale.
-    let timerPopola = 0;
-    function popolaDaApi() {
-      clearTimeout(timerPopola);
-      timerPopola = setTimeout(async function () {
-        if (!ultimaApiImmagini) return;
-        try {
-          const r = await fetchNativo(ultimaApiImmagini, { credentials: 'include' });
-          if (!r.ok) return;               // anti-bot ci rifiuta → si degrada, nessun danno
-          raccogli(await r.json(), 0);
-          riscriviTutto();
-        } catch (e) { /* mai interferire con la pagina */ }
-      }, 250);
-    }
-    try {
-      new PerformanceObserver(function (list) {
-        for (const e of list.getEntries()) {
-          const u = e.name || '';
-          if (u.includes('/search/images') && u !== ultimaApiImmagini) {
-            ultimaApiImmagini = u;
-            popolaDaApi();
+      // 2) http annidato nel path/query (decodifica fino a 3 volte)
+      let s = u;
+      for (let i = 0; i < 3; i++) {
+        let dec = s;
+        try { dec = decodeURIComponent(s); } catch (e) { /* ignora */ }
+        const m = dec.match(/https?:\/\/[^\s"'<>]+/gi);
+        if (m) {
+          for (let j = m.length - 1; j >= 0; j--) {
+            if (!/\/thumbr\//.test(m[j])) return m[j];
           }
         }
-      }).observe({ entryTypes: ['resource'] });
-    } catch (e) { /* PerformanceObserver assente: resta il ripiego al clic */ }
+        if (dec === s) break;
+        s = dec;
+      }
+      return '';
+    }
 
     // ── Dati già presenti nell'HTML iniziale (rendering lato server) ──────
     function scappa(s) {
       if (!s) return '';
       try { return JSON.parse('"' + s + '"'); } catch (e) { return s.replace(/\\\//g, '/'); }
     }
-
+    function raccogli(nodo, prof) {
+      if (!nodo || typeof nodo !== 'object' || prof > 14) return;
+      if (typeof nodo.media === 'string' && nodo.media) {
+        if (typeof nodo.thumbnail === 'string') ricorda(nodo.thumbnail, nodo.media);
+        ricorda(nodo.media, nodo.media);
+      }
+      const valori = Array.isArray(nodo) ? nodo : Object.values(nodo);
+      for (const v of valori) raccogli(v, prof + 1);
+    }
     function raccogliDagliScript() {
       for (const s of document.scripts) {
         const t = s.textContent;
@@ -271,7 +267,7 @@
       }
     }
 
-    // ── Abbinamento miniatura cliccata → URL originale ────────────────────
+    // ── Abbinamento miniatura → URL originale (mappa DOM, poi decodifica) ──
     function mediaPerImg(img) {
       const candidati = [img.currentSrc, img.src,
         img.getAttribute && img.getAttribute('src'),
@@ -284,6 +280,10 @@
       for (const c of candidati) {
         const m = mediaPerMiniatura.get(chiave(c));
         if (m) return m;
+      }
+      for (const c of candidati) {
+        const o = originaleDaThumbr(c);
+        if (o) return o;
       }
       return '';
     }
@@ -309,7 +309,7 @@
       }
       const sfondo = sfondoUrl(el);
       if (sfondo) {
-        const m = mediaPerMiniatura.get(chiave(sfondo));
+        const m = mediaPerMiniatura.get(chiave(sfondo)) || originaleDaThumbr(sfondo);
         if (m) return { media: m, el: el };
       }
       return null;
@@ -328,55 +328,6 @@
       return null;
     }
 
-    function miniaturaQwant(t) {
-      const interattivo = t.closest && t.closest('a, button, [role="button"], [role="link"]');
-      const scope = interattivo || t;
-      if (!scope.querySelectorAll) return null;
-      const imgs = scope.tagName === 'IMG' ? [scope] : Array.from(scope.querySelectorAll('img'));
-      if (imgs.length === 0 || imgs.length > 6) return null;
-      for (const img of imgs) {
-        if (/\.qwant\.com\/thumbr\//.test(img.currentSrc || img.src || '')) return img;
-      }
-      return null;
-    }
-
-    // ── Ripiego al clic: interroga l'API come farebbe la pagina ───────────
-    // Usa la fetch NATIVA (mai sostituita) coi cookie di sessione. Riparte
-    // dall'URL osservato (parametri esatti) o, in mancanza, lo ricostruisce.
-    function urlApi(q, offset) {
-      try {
-        if (ultimaApiImmagini) {
-          const u = new URL(ultimaApiImmagini, location.href);
-          if ((u.searchParams.get('q') || '') === q) {
-            u.searchParams.set('offset', String(offset));
-            u.searchParams.set('count', '50');
-            return u.href;
-          }
-        }
-      } catch (e) { /* ignora */ }
-      let loc = (navigator.language || 'it-IT').replace('-', '_');
-      if (!loc.includes('_')) loc = loc + '_' + loc.toUpperCase();
-      return 'https://api.qwant.com/v3/search/images?q=' + encodeURIComponent(q) +
-        '&count=50&offset=' + offset + '&device=desktop&safesearch=1&locale=' + loc + '&tgp=1';
-    }
-
-    async function recuperaViaApi(img) {
-      const q = new URLSearchParams(location.search).get('q') || '';
-      if (!q) return '';
-      for (let offset = 0; offset <= 100; offset += 50) {
-        let dati;
-        try {
-          const r = await fetchNativo(urlApi(q, offset), { credentials: 'include' });
-          if (!r.ok) break;               // anti-bot ci rifiuta → si degrada
-          dati = await r.json();
-        } catch (e) { break; }
-        raccogli(dati, 0);
-        const m = mediaPerImg(img);
-        if (m) return m;
-      }
-      return '';
-    }
-
     // ── Apertura e gestione del clic ──────────────────────────────────────
     function apri(url, e) {
       const nuovaScheda = APRI_IN_NUOVA_SCHEDA || e.ctrlKey || e.metaKey || e.type === 'auxclick';
@@ -388,12 +339,6 @@
       }
     }
 
-    function riclic(el) {
-      bypass = true;
-      try { el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })); }
-      finally { bypass = false; }
-    }
-
     function alClic(e) {
       if (bypass) return;
       const aux = e.type === 'auxclick';
@@ -402,37 +347,21 @@
       if (!t) return;
 
       const trovato = trovaMedia(t);
-      if (trovato) {
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        const a = t.closest && t.closest('a');
-        if (a) {
-          // si corregge il link e si lascia fare al browser: nessun popup-blocker
-          a.href = trovato.media;
-          a.rel = 'noopener';
-          if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
-          else a.removeAttribute('target');
-          return;
-        }
-        e.preventDefault();
-        apri(trovato.media, e);
+      if (!trovato) return; // originale non ricavabile → clic normale di Qwant (nessun danno)
+
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      const a = t.closest && t.closest('a');
+      if (a) {
+        // si corregge il link e si lascia fare al browser: nessun popup-blocker
+        a.href = trovato.media;
+        a.rel = 'noopener';
+        if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
+        else a.removeAttribute('target');
         return;
       }
-
-      // miniatura non ancora in memoria: si tenta il recupero via API (fetch
-      // nostra, non intercettata); se fallisce, si ripristina il clic normale
-      const img = miniaturaQwant(t);
-      if (img && !recuperoInCorso) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        recuperoInCorso = true;
-        recuperaViaApi(img).then(function (m) {
-          recuperoInCorso = false;
-          if (m) apri(m, e);
-          else riclic(img);
-        });
-      }
+      e.preventDefault();
+      apri(trovato.media, e);
     }
 
     document.addEventListener('click', alClic, true);
@@ -444,9 +373,8 @@
       clearTimeout(timerRiscrittura);
       timerRiscrittura = setTimeout(riscriviTutto, 200);
     }
-
     function riscriviTutto() {
-      if (!mediaPerMiniatura.size || !document.body) return;
+      if (!document.body) return;
       for (const img of document.images) {
         const m = mediaPerImg(img);
         if (!m) continue;
@@ -463,6 +391,8 @@
     function avvio() {
       raccogliDagliScript();
       riscriviTutto();
+      // Solo lettura del DOM: quando le miniature compaiono/cambiano, si prova a
+      // riscrivere i link. Nessuna richiesta di rete, nessun aggancio a fetch/XHR.
       new MutationObserver(riscriviPresto).observe(document.documentElement, {
         subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'srcset']
       });
