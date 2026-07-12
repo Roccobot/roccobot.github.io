@@ -1803,7 +1803,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.50</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2773,9 +2773,11 @@ document.addEventListener('keydown', function(e) {
 
 // ── 'Resources and maps' (footer) → modale con voci bilingui → viewer zoomabile ──
 // Modale unica 'Risorse e note' (dalla v5.79): unifica le vecchie modali
-// 'Risorse e mappe' e 'Note editoriali'. Due sezioni: 'Risorse utili' (le due
-// mappe + il link esterno) e 'Note editoriali' (le note + 'Traduzione
-// italiana', ex tasto Info). È raggiunta dal link a piè pagina e dal tasto Info.
+// Modale unica delle risorse e note, con tre sezioni: 'Risorse' (le due mappe +
+// il link esterno), 'Note' (note di pura lore in-universe, cat:'lore') e 'Note
+// editoriali' (scelte editoriali/presentazione dei dati, cat:'editorial', con
+// 'Traduzione italiana' ex tasto Info in testa). È raggiunta dal link a piè
+// pagina e dal tasto Info.
 function openResourcesModal() {
   if (document.getElementById('res-modal')) return;
   var ov = document.createElement('div'); ov.id = 'res-modal'; ov.className = 'fab-modal-overlay';
@@ -2799,18 +2801,22 @@ function openResourcesModal() {
   imgItem('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
   mkBtn(label('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'Mappa della Terra di Mezzo', 'Map of Middle-earth'),
         function() { dismiss(); window.open('https://middle-earth-interactive-map.web.app', '_blank', 'noopener'); });
-  // ── Note editoriali: le note (ritorno a questa modale alla chiusura) +
-  //    'Traduzione italiana' (la ex nota del tasto Info) ──
-  section(currentLang === 'it' ? 'Note editoriali' : 'Editorial notes', 'res-modal-section');
-  EDITORIAL_NOTES.forEach(function(note) {
+  function noteBtn(note) {
     var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : (currentLang === 'it' ? note.titleIt : note.titleEn);
     // La nota di Glorfindel va a capo dopo 'Glorfindel' (scelta utente): il
     // titolo è il più lungo e su una riga sola sballa la larghezza dei bottoni.
     var brk = lbl.replace(/^(Glorfindel)\s+/, '$1<br>');
     mkBtn(brk, function() { dismiss(); noteReturn = function(){ openResourcesModal(); }; openNoteViewer(note); }, brk !== lbl);
-  });
+  }
+  // ── Note (lore in-universe): spiegano puramente la lore del mondo ──
+  section(currentLang === 'it' ? 'Note' : 'Notes', 'res-modal-section');
+  EDITORIAL_NOTES.forEach(function(note) { if (note.cat === 'lore') noteBtn(note); });
+  // ── Note editoriali: scelte editoriali e modo in cui la pagina presenta i
+  //    dati. 'Traduzione italiana' (la ex nota del tasto Info) in testa. ──
+  section(currentLang === 'it' ? 'Note editoriali' : 'Editorial notes', 'res-modal-section');
   mkBtn(currentLang === 'it' ? 'Traduzione italiana' : 'Italian translation',
         function() { dismiss(); infoReturn = function(){ openResourcesModal(); }; showInfoNote(); });
+  EDITORIAL_NOTES.forEach(function(note) { if (note.cat === 'editorial') noteBtn(note); });
 }
 
 function openImageViewer(src, titleIt, titleEn) {
@@ -2929,6 +2935,7 @@ var EDITORIAL_NOTES = [
     titleIt: 'Glorfindel e il \'ritorno\' degli Elfi',
     titleEn: 'Glorfindel and the \'return\' of the Elves',
     shortIt: 'Glorfindel e il \'ritorno\' degli Elfi', shortEn: 'Glorfindel and the \'return\' of the Elves',
+    cat: 'lore',
     refChars: ['Glorfindel'],
     bodyIt: `<p>Una convinzione errata molto diffusa tra gli appassionati di Tolkien suggerisce che il ritorno di #{Glorfindel}# nella Terra di Mezzo sia eccezionale semplicemente perché è 'tornato dalla morte'. In realtà, il ritorno in vita è il destino, in senso biologico e teologico, di <em>tutti</em> gli Elfi.</p>
 <div class="note-h">La reincarnazione come regola</div>
@@ -2965,6 +2972,7 @@ var EDITORIAL_NOTES = [
     titleIt: 'Unioni miste e Mezzelfi',
     titleEn: 'Mixed unions and the Half-elven',
     shortIt: 'Unioni miste e Mezzelfi', shortEn: 'Mixed unions and the Half-elven',
+    cat: 'lore',
     refChars: ['Eldarion', 'Dior', 'Eärendil', 'Elwing', 'Elrond', 'Elros', 'Elladan', 'Elrohir', 'Arwen', 'Mithrellas', 'Imrazôr', 'Galador', 'Gilmith'],
     bodyIt: `<div class="note-h">Legge divina</div>
 <p>Nel Legendarium tolkieniano, quello di Mezzelfi (Peredhil) è uno status teologico/giuridico, non biologico: possedere sangue misto non è sufficiente ad avere il privilegio della scelta. Di norma, l'unione tra un mortale e un immortale genera una prole <em>mortale</em>, perché il 'Dono degli Uomini' (la mortalità) ha la precedenza e non può essere revocato. È una legge divina (in senso letterale: stabilita da Ilúvatar), con due sole eccezioni al di fuori dei Mezzelfi propriamente detti in tutta la storia di Arda. La mortalità fu concessa a #{Lúthien}#, che l'abbracciò per amore, e revocata a #{Tuor}#, padre di #{Eärendil}#, unico Uomo che fu <em>annoverato tra la razza primogenita,</em> [...] <em>il suo fato essendo stato scisso da quello degli Uomini</em>.</p>
@@ -3023,10 +3031,21 @@ var EDITORIAL_NOTES = [
     titleIt: 'Celeborn figlio di Galadhon',
     titleEn: 'Celeborn son of Galadhon',
     shortIt: 'Celeborn figlio di Galadhon', shortEn: 'Celeborn son of Galadhon',
+    cat: 'editorial',
     bodyIt: `<p>Una serie di appunti tardivi di J.R.R. Tolkien, che miravano a correggere alcuni episodi della vita di #{Galadriel}# per 'purificarla', stabiliva che #{Celeborn}# non era un Elfo del Doriath, bensì un Falmar di Aman, poi trasferitosi nella Terra di Mezzo con #{Galadriel}#.</p>
 <p>Questa nuova linea narrativa rappresenta probabilmente la direzione definitiva scelta da J.R.R. Tolkien, ma fu soltanto abbozzata, generando una catena di inconsistenze e contraddizioni mai risolte. In mancanza di un'integrazione coerente nel quadro più ampio del Legendarium, consideriamo canonica la versione storica (Sindarin) di #{Celeborn}#.</p>`,
     bodyEn: `<p>A set of late notes by J.R.R. Tolkien, meant to revise certain episodes of #{Galadriel}#'s life to 'ennoble' her, held that #{Celeborn}# was not an Elf of Doriath but a Falmar of Aman, who later crossed into Middle-earth with #{Galadriel}#.</p>
 <p>This new narrative line probably represents the definitive direction chosen by J.R.R. Tolkien, but it was only sketched out, generating a chain of inconsistencies and contradictions that were never resolved. Lacking a coherent integration into the wider picture of the Legendarium, we take #{Celeborn}#'s historical (Sindarin) version as canonical.</p>`
+  },
+  {
+    titleIt: 'Badge dei personaggi',
+    titleEn: 'Character Badges',
+    shortIt: 'Badge dei personaggi', shortEn: 'Character Badges',
+    cat: 'editorial',
+    bodyIt: `<p>I badge si riferiscono a imprese, titoli, appartenenze o peculiarità notevoli dei personaggi. Sono spesso semplificazioni e sono da considerarsi più un abbellimento che aiuta il 'colpo d'occhio' piuttosto che un'annotazione filologicamente impeccabile. Ad esempio, #{Celebrimbor}# ha i badge di tutti e tre gli Anelli degli Elfi pur non essendo mai stato il loro portatore effettivo: è un omaggio al fatto che ne è il creatore.</p>
+<p>L'etichetta 'Approdò ad Aman' è una sintesi adottata per ragioni di spazio. Il suo significato reale e volutamente ampio è: attraversò il Mare dalla Terra di Mezzo ad Aman. Il badge si applica a chiunque abbia compiuto questa traversata, a prescindere dalla stirpe o dal luogo di nascita: abitanti originari di Aman (come i Maiar, i Vanyar o i Noldor di ritorno), esuli e individui nativi della Terra di Mezzo.</p>`,
+    bodyEn: `<p>Badges represent feats, titles, affiliations, or notable character traits. They are simplifications designed for quick visual reference rather than strict philological accuracy. For example, #{Celebrimbor}# displays the badges for all three Elven Rings, not because he bore them, but as a tribute to him being their creator.</p>
+<p>The label 'Landed in Aman' is a concise simplification. Its actual, broader meaning is: crossed the Sea from Middle-earth to Aman. This badge is intentionally inclusive and applies to anyone who made this crossing, regardless of their kindred or birthplace: original inhabitants of Aman (such as Maiar, Vanyar, or returning Noldor), exiles, and natives of Middle-earth.</p>`
   }
 
 ];
