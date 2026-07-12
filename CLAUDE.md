@@ -1041,18 +1041,33 @@ specifico del dataset):
   dettagli SVG troppo fini per la dimensione reale di ~22 px (spilla
   della Compagnia, occhio di Sauron).
 
-## 📝 Note editoriali (footer)
+## 📝 Note e Note editoriali (modale 'Risorse e note')
 
-- **Cosa sono.** Approfondimenti di lore mostrati dal link **'Note editoriali'
-  / 'Editorial notes'** nel footer (accanto a 'Risorse e mappe'). Il link apre
-  una modale con **un pulsante per nota** (stile gemello di 'Risorse e mappe');
-  ogni pulsante apre un **viewer testuale** bilingue.
+- **Cosa sono.** Approfondimenti bilingui raccolti in **un'unica modale**
+  ('Risorse e note' / 'Resources and notes'), raggiungibile da **due accessi**:
+  il link nel footer e il tasto Info. Ogni voce è un **pulsante** (stile
+  `fab-modal-*`) che apre un **viewer testuale** bilingue.
+- **Tre sezioni nella modale** (dalla v6.50, `openResourcesModal`), nell'ordine:
+  1. **Risorse** — le due mappe (viewer immagini) + la mappa interattiva
+     esterna. Non sono note (non stanno in `EDITORIAL_NOTES`).
+  2. **Note** ('Notes') — note di **pura lore in-universe**, che spiegano il
+     mondo (es. Glorfindel e il 'ritorno' degli Elfi, Unioni miste e Mezzelfi).
+  3. **Note editoriali** ('Editorial notes') — le **scelte editoriali** e il
+     **modo in cui la pagina presenta i dati** (es. Traduzione italiana in
+     testa, Celeborn, Badge dei personaggi).
+  - **Discrimine (regola dell'utente, 2026-07-12):** una nota che spiega
+    *puramente la lore* del mondo va in **Note**; una nota che riguarda le
+    *scelte dell'utente* o *come il sito rende i dati* va in **Note editoriali**.
 - **Dove vivono.** Array **`EDITORIAL_NOTES`** in testa alla logica del footer
-  in `arda/top/index.html`, appena dopo `openResourcesModal`. Le funzioni sono
-  `openNotesModal` (elenco pulsanti) e `openNoteViewer` (viewer). Aggiungere
-  una nota = aggiungere un oggetto all'array; pulsante e viewer si generano da
-  soli. Ogni oggetto ha: `titleIt`/`titleEn` (titolo pieno), `shortIt`/`shortEn`
-  (etichetta **breve per mobile**, obbligatoria), `bodyIt`/`bodyEn` (HTML).
+  in `arda/top/index.html`, appena dopo `openResourcesModal` (che disegna la
+  modale); il viewer è `openNoteViewer`. Aggiungere una nota = aggiungere un
+  oggetto all'array; pulsante e viewer si generano da soli. Ogni oggetto ha:
+  `titleIt`/`titleEn` (titolo pieno), `shortIt`/`shortEn` (etichetta **breve per
+  mobile**, obbligatoria), **`cat`** (`'lore'` = sezione Note, `'editorial'` =
+  sezione Note editoriali; il rendering filtra per categoria), `bodyIt`/`bodyEn`
+  (HTML). Storico: fino alla v5.79 le note stavano in una modale a sé
+  (`openNotesModal`, poi rimossa); fuse nella modale unica; la terza sezione
+  (Note vs Note editoriali) è della v6.50.
 - **Protocollo quando l'utente passa una NUOVA nota** (regola durevole,
   2026-07-08): aggiungere la voce/pulsante e **formattare il contenuto sul
   modello della nota dei Mezzelfi**. In dettaglio:
