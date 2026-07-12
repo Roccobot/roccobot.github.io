@@ -106,12 +106,19 @@ Il generatore di emoji con l'AI di [emojis.wiki/ai](https://emojis.wiki/ai/) ha 
 **limite giornaliero** di generazioni. Il limite è tracciato **lato client** (si
 azzera aprendo una finestra in incognito). Questo script aggiunge un pulsante
 flottante **"🔄 Reset generazioni"** che replica l'incognito con un clic:
-ripulisce **tutto lo stato client del sito** (localStorage, sessionStorage,
-cookie — anche HttpOnly via `GM_cookie` — IndexedDB, Cache Storage, Service
-Worker) e ricarica la pagina, così riparti con la quota fresca senza aprire
-nuove finestre.
+ripulisce in modo **mirato** lo stato client del sito (localStorage,
+sessionStorage, cookie — anche HttpOnly via `GM_cookie` — IndexedDB)
+**preservando** i cookie Cloudflare (`cf_clearance`/`__cf_bm`…) e **senza toccare
+Service Worker/Cache** — altrimenti la generazione si rompeva — poi ricarica la
+pagina, così riparti con la quota fresca senza aprire nuove finestre.
 
-È l'equivalente di "Cancella dati del sito" del browser, ristretto a
+Il pulsante **compare solo sulle pagine del generatore** (URL che iniziano con
+`https://emojis.wiki/ai/`); altrove non appare. Il reset resta comunque
+disponibile dal **menu di Tampermonkey**, a prescindere dall'URL. Se il sito
+cambia pagina come SPA (URL che muta senza reload), il pulsante appare/scompare
+di conseguenza entrando/uscendo da `/ai/`.
+
+È in pratica un "Cancella dati del sito" **selettivo**, ristretto a
 `emojis.wiki`, azionabile con un tasto (o dal menu di Tampermonkey).
 
 ### Installazione

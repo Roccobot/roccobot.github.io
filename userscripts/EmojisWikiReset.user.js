@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.2.0
-// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly, IndexedDB) PRESERVANDO i cookie Cloudflare e senza toccare Service Worker/Cache, così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
+// @version      1.3.0
+// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Il pulsante compare SOLO sulle pagine del generatore (URL che iniziano con /ai/). Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly, IndexedDB) PRESERVANDO i cookie Cloudflare e senza toccare Service Worker/Cache, così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
 // @match        https://www.emojis.wiki/*
@@ -107,7 +107,7 @@
 
   // ── Pulsante flottante ──
   function aggiungiPulsante() {
-    if (!MOSTRA_PULSANTE || document.getElementById('rb-reset-emoji') || !document.body) return;
+    if (!MOSTRA_PULSANTE || !suPaginaAI() || document.getElementById('rb-reset-emoji') || !document.body) return;
     const b = document.createElement('button');
     b.id = 'rb-reset-emoji';
     b.type = 'button';
@@ -127,12 +127,48 @@
     document.body.appendChild(b);
   }
 
+  // ── Il pulsante compare SOLO sulle pagine del generatore (/ai/...) ──
+  // Il @match resta ampio (emojis.wiki/*) così lo script è già attivo anche se
+  // arrivi su /ai/ navigando come SPA; è questo controllo sul path a decidere
+  // se mostrare il pulsante. Il reset resta comunque disponibile dal menu di
+  // Tampermonkey, a prescindere dall'URL.
+  function suPaginaAI() {
+    return /^\/ai(\/|$)/i.test(location.pathname);
+  }
+  function rimuoviPulsante() {
+    const b = document.getElementById('rb-reset-emoji');
+    if (b) b.remove();
+  }
+  function sincronizzaPulsante() {
+    if (suPaginaAI()) aggiungiPulsante();
+    else rimuoviPulsante();
+  }
+
   if (typeof GM_registerMenuCommand !== 'undefined') {
     GM_registerMenuCommand('Reset limite generazioni (ripulisci e ricarica)', function () { reset(); });
   }
 
-  if (RESET_AUTOMATICO) { svuotaTutto(); }
+  if (RESET_AUTOMATICO && suPaginaAI()) { svuotaTutto(); }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aggiungiPulsante);
-  else aggiungiPulsante();
+  // emojis.wiki può cambiare pagina come SPA (URL che muta senza reload):
+  // si intercettano i cambi di history per mostrare/nascondere il pulsante
+  // quando si entra/esce da /ai/.
+  (function osservaNavigazione() {
+    const avvolgi = function (tipo) {
+      const orig = history[tipo];
+      if (typeof orig !== 'function') return;
+      history[tipo] = function () {
+        const r = orig.apply(this, arguments);
+        try { window.dispatchEvent(new Event('rb-urlchange')); } catch (e) {}
+        return r;
+      };
+    };
+    avvolgi('pushState'); avvolgi('replaceState');
+    window.addEventListener('popstate', sincronizzaPulsante);
+    window.addEventListener('hashchange', sincronizzaPulsante);
+    window.addEventListener('rb-urlchange', sincronizzaPulsante);
+  })();
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sincronizzaPulsante);
+  else sincronizzaPulsante();
 })();
