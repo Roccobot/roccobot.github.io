@@ -1807,7 +1807,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.52</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.53</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2838,6 +2838,11 @@ function openResourcesModal() {
   // dismiss), così tornando si ritrova l'elenco delle risorse dov'era.
   mkBtn(label('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'Mappa della Terra di Mezzo', 'Map of Middle-earth'),
         function() { window.open('https://middle-earth-interactive-map.web.app', '_blank', 'noopener'); });
+  // Mappe PDF (in arda/res): aprono/scaricano in nuova scheda, modale aperta.
+  mkBtn(label('Mappa fisica', 'Physical map'),
+        function() { window.open('/arda/res/Physical%20Map.pdf', '_blank', 'noopener'); });
+  mkBtn(label('Mappa vettoriale', 'Vector map'),
+        function() { window.open('/arda/res/Vector%20Map.pdf', '_blank', 'noopener'); });
   function noteBtn(note) {
     var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : (currentLang === 'it' ? note.titleIt : note.titleEn);
     // La nota di Glorfindel va a capo dopo 'Glorfindel' (scelta utente): il
