@@ -1100,6 +1100,8 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 }
 
 .modal-backdrop.active { opacity:1; visibility:visible; }
+/* Apertura senza animazione (transizione da una nota): niente dissolvenza. */
+.modal-backdrop.no-anim, .modal-backdrop.no-anim .modal { transition:none !important; }
 /* Niente barre di scorrimento nel sistema-modale (scelta coerente col
    Pannello): su mobile comparivano DUE barre (quella interna del .modal-body e
    quella esterna del .modal-backdrop, che su mobile può scorrere per via del
@@ -1261,11 +1263,13 @@ html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(1
 .fmb-discard .fab-modal-confirm { padding:0.72rem 0; }
 .fmb-discard .fmc-main { font-size:0.95rem; font-weight:700; }
 /* Modale Info (nota traduzioni, solo IT): box piu' largo e scrollabile, testo a sinistra. */
-.fab-modal-box.info-note-box { max-width:440px; max-height:82vh; overflow-y:auto; text-align:left; }
-.info-note-box h3 { font-family:'Cinzel',serif; font-size:0.95rem; letter-spacing:0.04em; color:var(--gold-bright); margin:0 0 0.7rem; }
-.fab-modal-box.info-note-box p { font-size:0.82rem; color:var(--parchment); opacity:0.88; line-height:1.45; margin:0 0 0.8rem; }
-.info-note-box ul { list-style:none; margin:0 0 0.9rem; padding:0; }
-.info-note-box li { font-size:0.8rem; color:var(--parchment); opacity:0.92; line-height:1.4; margin:0 0 0.45rem; padding-left:0.95rem; position:relative; }
+/* Nota 'Traduzione italiana': stessa larghezza e dimensione-testo del viewer
+   delle altre note (.note-viewer-box), per uniformità (era 440px e 0.82rem). */
+.fab-modal-box.info-note-box { width:min(760px,92vw); max-width:760px; max-height:82vh; overflow-y:auto; text-align:left; line-height:1.55; }
+.info-note-box h3 { font-family:'Cinzel',serif; font-size:1.15rem; letter-spacing:0.04em; color:var(--gold-bright); margin:0 0 .9em; padding:0 1.4em; text-align:center; }
+.fab-modal-box.info-note-box p { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.55; margin:0 0 .8em; }
+.info-note-box ul { list-style:none; margin:0 0 0.9em; padding:0; }
+.info-note-box li { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.5; margin:0 0 0.5em; padding-left:0.95rem; position:relative; }
 .info-note-box li::before { content:'\203A'; position:absolute; left:0; color:var(--gold); opacity:0.85; }
 .info-note-box li strong { color:var(--gold-bright); font-weight:700; }
 .info-note-box .info-note-final { display:flex; align-items:center; gap:0.55rem; margin:0.75rem 0 0; padding:0.6rem 0.8rem; border-radius:10px; background:rgba(150,25,40,0.16); border:1px solid rgba(205,70,80,0.42); color:var(--parchment); opacity:1; font-style:normal; font-weight:normal; line-height:1.35; }
@@ -1803,7 +1807,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.50</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.51</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2220,7 +2224,7 @@ var ICON_LABEL = {
     king_high_now:"Re Supremo dei Noldor (in carica)",
     king_std:"Alto Re dei Noldor nella Terra di Mezzo",
     survivor:"Visse nella Terra di Mezzo durante la Quarta Era",
-    west:    "Salpò per l'Ovest e approdò nelle Terre Imperiture",
+    west:    "Attraversò il Mare su una nave degli Elfi dalla Terra di Mezzo ad Aman",
     envoy:   "Salpò per Valinor con Oromë come ambasciatore degli Eldar",
     onering: "Portatore dell'Unico Anello",
     vilya:   "Portatore di Vilya (Anello dell'Aria)",
@@ -2228,7 +2232,7 @@ var ICON_LABEL = {
     narya:   "Portatore di Narya (Anello del Fuoco)",
     menring: "Portatore di uno dei Nove Anelli degli Uomini",
     incarnazione: "Tornò con il proprio corpo dalle Aule di Mandos",
-    est:     "Attraversò il Mare da Aman alla Terra di Mezzo",
+    est:     "Attraversò il Mare su una nave degli Elfi da Aman alla Terra di Mezzo",
     drago:   "Uccise un Drago",
     balrog:  "Uccise un Balrog",
     morgoth: "Affrontò e ferì Morgoth in duello"
@@ -2243,7 +2247,7 @@ var ICON_LABEL = {
     king_high_now:"High King of the Noldor (current)",
     king_std:"High King of the Noldor in Middle-earth",
     survivor:"Lived in Middle-earth during the Fourth Age",
-    west:    "Sailed into the West and reached the Undying Lands",
+    west:    "Crossed the Sea on an Elven ship from Middle-earth to Aman",
     envoy:   "Sailed to Valinor with Oromë as ambassador of the Eldar",
     onering: "Bearer of the One Ring",
     vilya:   "Bearer of Vilya (Ring of Air)",
@@ -2251,7 +2255,7 @@ var ICON_LABEL = {
     narya:   "Bearer of Narya (Ring of Fire)",
     menring: "Bearer of one of the Nine Rings of Men",
     incarnazione: "Returned bodily from the Halls of Mandos",
-    est:     "Crossed the Sea from Aman to Middle-earth",
+    est:     "Crossed the Sea on an Elven ship from Aman to Middle-earth",
     drago:   "Slew a Dragon",
     balrog:  "Slew a Balrog",
     morgoth: "Faced and wounded Morgoth in single combat"
@@ -2642,7 +2646,7 @@ function stepVisible(from, dir) {
   return null;
 }
 
-function openModal(idx) {
+function openModal(idx, instant) {
   currentIdx = idx;
   var p = dati[idx];
   var lang = currentLang;
@@ -2694,7 +2698,14 @@ function openModal(idx) {
   quoteEl.textContent = citazione || '';
   quoteEl.style.display = citazione ? '' : 'none';
   document.getElementById('modal-body').scrollTop = 0;
-  document.getElementById('modal-backdrop').classList.add('active');
+  var bd = document.getElementById('modal-backdrop');
+  // instant=true (transizione da una nota): la scheda compare SENZA dissolvenza,
+  // così non si vede la lista sotto nel varco lasciato dalla nota che si chiude.
+  if (instant) {
+    bd.classList.add('no-anim'); bd.classList.add('active'); void bd.offsetWidth; bd.classList.remove('no-anim');
+  } else {
+    bd.classList.add('active');
+  }
   lockPageScroll(true);
   // Ricorda da dove si è aperta (per restituire il focus alla chiusura) e
   // sposta il focus DOPO che il backdrop non è più visibility:hidden: un
@@ -2722,16 +2733,40 @@ var infoReturn = null;
 // modale 'Risorse e note' alla chiusura (✕/Esc/backdrop/gesto indietro). null =
 // niente (immagine aperta senza una modale di provenienza).
 var imgvReturn = null;
+// Consumatori dello scroll-lock ancora attivi: se ce n'è almeno uno, NON
+// sbloccare (lo farà lui alla propria chiusura). Protegge lo sblocco differito
+// della scheda dal riattivarsi mentre un altro overlay/pannello è aperto.
+function scrollLockNeeded() {
+  var bd = document.getElementById('modal-backdrop');
+  var panel = document.getElementById('ctrl-panel');
+  return (bd && bd.classList.contains('active'))
+      || !!document.querySelector('.fab-modal-overlay')
+      || !!document.getElementById('imgv')
+      || document.documentElement.classList.contains('admin-open')
+      || (panel && panel.classList.contains('open'));
+}
 function closeModal() {
-  document.getElementById('modal-backdrop').classList.remove('active');
-  lockPageScroll(false);
+  var bd = document.getElementById('modal-backdrop');
+  bd.classList.remove('active');
   currentIdx = null;
   // Restituisce il focus al punto di partenza (la card da cui si era aperta).
   if (modalOpener && modalOpener.isConnected) { try { modalOpener.focus(); } catch (e) {} }
   modalOpener = null;
-  // Se la scheda era stata aperta da un contenuto precedente (una nota), lo
-  // riapre invece di lasciare la lista sotto. Sincrono: nessun flicker di scroll.
-  if (modalReturn) { var r = modalReturn; modalReturn = null; r(); }
+  // Se la scheda era stata aperta da una nota, la si riapre: lo scroll resta
+  // bloccato per l'intero giro (niente toggle sblocca/riblocca). Sincrono.
+  if (modalReturn) { var r = modalReturn; modalReturn = null; r(); return; }
+  // Chiusura verso la lista: sblocca lo scroll DOPO la dissolvenza del backdrop.
+  // Sbloccarlo subito farebbe ricomparire la barra di scorrimento mentre la
+  // modale sfuma, e il ricentramento la farebbe 'tremolare' di ~mezza barra.
+  var done = false;
+  var fin = function() {
+    if (done) return; done = true;
+    bd.removeEventListener('transitionend', onEnd);
+    if (!scrollLockNeeded()) lockPageScroll(false);
+  };
+  var onEnd = function(e) { if (e.target === bd && e.propertyName === 'opacity') fin(); };
+  bd.addEventListener('transitionend', onEnd);
+  setTimeout(fin, 360);   // fallback se transitionend non scatta
 }
 
 document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -2799,8 +2834,10 @@ function openResourcesModal() {
   function imgItem(itF, enF, src, itS, enS) { mkBtn(label(itF, enF, itS, enS), function() { dismiss(); imgvReturn = function(){ openResourcesModal(); }; openImageViewer(src, itF, enF); }); }
   imgItem('Il Grande Viaggio degli Elfi', 'The Great Journey of the Elves', '/arda/res/Journey.png');
   imgItem('Suddivisioni dei popoli degli Elfi', 'Sundering of the Firstborn', '/arda/res/Sundering.png', 'Suddivisioni degli Elfi');
+  // Link esterno: apre in una nuova scheda ma LASCIA la modale aperta (niente
+  // dismiss), così tornando si ritrova l'elenco delle risorse dov'era.
   mkBtn(label('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'Mappa della Terra di Mezzo', 'Map of Middle-earth'),
-        function() { dismiss(); window.open('https://middle-earth-interactive-map.web.app', '_blank', 'noopener'); });
+        function() { window.open('https://middle-earth-interactive-map.web.app', '_blank', 'noopener'); });
   function noteBtn(note) {
     var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : (currentLang === 'it' ? note.titleIt : note.titleEn);
     // La nota di Glorfindel va a capo dopo 'Glorfindel' (scelta utente): il
@@ -3102,7 +3139,7 @@ function openNoteViewer(note) {
     var st = box.scrollTop, note2 = note;   // per tornare alla nota, alla stessa posizione di lettura
     dismiss(true);   // transizione: preserva noteReturn per l'intero giro nota → scheda → nota
     modalReturn = function(){ openNoteViewer(note2); var nb = document.querySelector('#note-modal .note-viewer-box'); if (nb) nb.scrollTop = st; };
-    openModal(i);
+    openModal(i, true);   // istantanea: la nota è appena sparita, niente flash della lista
   }
   // Rimando 'Leggi anche' a un'altra nota: data-note = titleIt della nota bersaglio.
   function openNote(el) {
@@ -3312,6 +3349,13 @@ function controlPanelHTML() {
         var envoyTxt = lang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
         s += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
            + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
+        return;
+      }
+      if (k === 'est') {
+        // In legenda l'etichetta breve resta concisa (il tooltip esteso della
+        // card è più lungo, 'su una nave degli Elfi...'): qui testo dedicato.
+        var estLeg = lang === 'it' ? 'Attraversò il Mare da Aman alla Terra di Mezzo' : 'Crossed the Sea from Aman to Middle-earth';
+        s += legRow('est', '<span class="leg-ico">' + ICON_SVG['est'].split('%L%').join('') + '</span><span>' + estLeg + '</span>');
         return;
       }
       if (k === 'drago') {
