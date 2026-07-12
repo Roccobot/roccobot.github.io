@@ -1005,6 +1005,34 @@ specifico del dataset):
   - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
     ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
     riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
+- **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via
+  grep sulle fonti.** In legenda: `guerradira` **dopo** `morgoth`, `suicidio`
+  **prima** di `fellowship`; portatori (`p.suicidio`/`p.guerradira` = `true`):
+  - **`suicidio`** ('Si tolse la vita', icona `Sangue.png`, goccia): **7** voci:
+    Túrin (spada Gurthang), Nienor (nel Teiglin), Húrin (nel mare occidentale,
+    'si dice'), Maedhros (voragine di fuoco), Denethor II (rogo), Míriel Serindë
+    (abbandono volontario della vita, primo trapasso in Aman: caso atipico ma
+    voluto), Aerin (rogo della sala di Brodda: attestazione **implicita**, non
+    verbatim, tenuta per scelta dell'utente).
+  - **`guerradira`** ('Combattè nella Guerra d'Ira', icona `Ira.png`, spade
+    incrociate): **7** voci, entrambe le sponde ('tutti quelli trovati'):
+    schiera dei Valar = **Eönwë** (comandante), **Finarfin** (guidò i Noldor di
+    Valinor), **Ingwion** (guidò i Vanyar, HoME IV-V), **Eärendil** (uccise
+    Ancalagon nella battaglia aerea), **Thorondor** (capitano delle Aquile);
+    sponda di Morgoth = **Melkor** ('stood at last at bay') e **Ancalagon**.
+    **Esclusi per attestazione** (Silm cap. 24: 'among them went none of those
+    Elves who had dwelt... in the Hither Lands'): Gil-galad, Círdan, Maedhros,
+    Maglor, Elrond, Elros non marciarono con la schiera; Maedhros e Maglor
+    vennero *dopo* la guerra, per i Silmaril.
+- **Tutti gli Anelli in un'unica riga di legenda (v6.63).** L'Unico, i Tre
+  degli Elfi (Vilya, Nenya, Narya) e i Nove non hanno più tre righe separate:
+  una sola riga **in coda** alla legenda mostra le 5 icone in orizzontale
+  (ordine `Unico, Vilya, Nenya, Narya, Nove`) con didascalia unica **'Portatore
+  di uno degli Anelli del Potere'**. I **tooltip dei singoli anelli restano
+  inalterati** (ciascuno il proprio, da `ICON_LABEL`); il filtro badge di quella
+  riga (`BADGE_ROWS.rings`) accende chiunque porti un anello qualsiasi. La riga
+  è resa dal caso `k === 'onering'` in legenda (che salta `vilya/nenya/narya/
+  menring`); su card ed editor l'ordine segue `ICON_ORDER`.
 - **Ingwion e Ilwen (aggiunti in v3.93).** `Ingwion` (dopo Finwë) NON è
   apocrifo benché assente dal Silmarillion pubblicato: Christopher Tolkien
   riconobbe che l'omissione fu un errore del padre (HoME IV, pp. 196-7),
