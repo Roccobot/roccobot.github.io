@@ -718,6 +718,26 @@ specifico del dataset):
   dell'utente (2026-07-10), applicata in blocco a `dati.js` (16 occorrenze) e
   alle note in `index.html`. È anche regola universale di canone: vedi
   `rules/JRRT.md`.
+- **Toponimo 'Nargothrond': regno (con articolo) vs città (senza).**
+  Nargothrond è al tempo stesso il **regno** e la sua **capitale**: l'articolo
+  dipende dal senso, da ricavare **dal contesto caso per caso**.
+  - **Regno → con articolo** (in italiano prende l'articolo come i nomi di
+    regno): titoli di sovrano/nobiliare (`Re/Principe/Principessa/Signore del
+    Nargothrond`), genitivi riferiti al regno (`popolo/saccheggio/tesoro/fedeli
+    del Nargothrond`) e i locativi che indicano lo stare/muoversi entro il
+    regno (`nel Nargothrond`, `sul Nargothrond`, `cacciato dal Nargothrond`).
+  - **Città → senza articolo** (si comporta come ogni nome di città):
+    raggiungere/portare fisicamente il luogo (`a Nargothrond`, `portò a
+    Nargothrond`), le sue rovine (`rovine di Nargothrond`) e la città come
+    soggetto/oggetto di saccheggio o caduta (`Saccheggiò Nargothrond`,
+    `Nargothrond fu saccheggiata`, `Nargothrond cadde` — concordanza al
+    **femminile**, 'la città'). NB: senza articolo il participio torna
+    femminile (`saccheggiata`, non `saccheggiato`).
+  - **EN invariato:** l'inglese non prende mai articolo (`of/to/at/from
+    Nargothrond`), in entrambi i sensi.
+  - Regola dell'utente (2026-07-12), applicata in blocco al dataset (bonifica
+    v6.37→v6.39). È il primo toponimo del progetto con articolo dipendente dal
+    contesto; la difficoltà è proprio distinguere ogni volta regno da città.
 
 - **Filtri badge (dalla v4.05).** Ogni riga della legenda del Pannello è un
   interruttore (`BADGE_ROWS`: le righe raggruppate filtrano l'unione dei loro
