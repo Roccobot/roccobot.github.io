@@ -184,10 +184,17 @@ Come funziona: le miniature del sito sono URL tipo
 URL senza il prefisso `t_`** (`…/1000//0001.jpg`, ≈200 KB — è la risoluzione
 massima disponibile sul sito). Lo script scorre la pagina per forzare il
 lazy-load, raccoglie le immagini della galleria (esclude gli avatar), scarica gli
-originali via `GM_xmlhttpRequest` (con barra di avanzamento sul pulsante) e li
-comprime con **JSZip** (caricato via `@require` da cdnjs). I file nello ZIP
+originali via `GM_xmlhttpRequest` come `ArrayBuffer` (con barra di avanzamento sul
+pulsante) e li impacchetta in uno **ZIP creato da un writer interno** (metodo
+*store*, senza compressione — le JPEG sono già compresse). I file nello ZIP
 mantengono la numerazione originale (`0001.jpg`, `0002.jpg`…). Nessun dato lascia
 il sito: solo download.
+
+> **Nota tecnica (dalla v1.1.0):** lo ZIP è generato da un piccolo writer
+> incorporato, **senza dipendenze esterne**. Le versioni 1.0.x usavano JSZip (via
+> `@require`), ma nella sandbox di Tampermonkey la sua `generateAsync` si bloccava
+> in fase di compressione (pulsante fermo su "Comprimo…"). Il writer *store* è
+> sincrono, deterministico e verificato (`unzip -t` OK).
 
 ### Personalizzazione
 
@@ -202,4 +209,4 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 2. Aprire: <https://roccobot.github.io/userscripts/FapopediaPlus.user.js>
 3. Premere **Installa**. Tampermonkey può chiedere il permesso per
    `GM_xmlhttpRequest` verso `fapopedia.net`: concederlo (serve a scaricare le
-   immagini).
+   immagini). Nessuna dipendenza esterna: lo ZIP è creato internamente.
