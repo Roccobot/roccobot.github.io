@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Fapopedia+
 // @namespace    https://roccobot.github.io/
-// @version      1.0.1
-// @description  Su fapopedia.net aggiunge un pulsante per scaricare con un clic TUTTE le immagini della galleria in ALTA RISOLUZIONE, impacchettate in un unico file ZIP. Ricava l'originale dalla miniatura (toglie il prefisso "t_"); scarica via GM_xmlhttpRequest (ArrayBuffer) e comprime con JSZip. Nessun dato lascia il sito: solo download.
+// @version      1.1.0
+// @description  Su fapopedia.net aggiunge un pulsante per scaricare con un clic TUTTE le immagini della galleria in ALTA RISOLUZIONE, impacchettate in un unico file ZIP. Ricava l'originale dalla miniatura (toglie il prefisso "t_"); scarica via GM_xmlhttpRequest (ArrayBuffer). ZIP creato da un writer interno (metodo "store", nessuna dipendenza esterna: JSZip si bloccava in compressione nella sandbox). Nessun dato lascia il sito: solo download.
 // @author       Roccobot
 // @match        https://fapopedia.net/*
 // @match        https://www.fapopedia.net/*
@@ -11,7 +11,6 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
 // @connect      fapopedia.net
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // @updateURL    https://roccobot.github.io/userscripts/FapopediaPlus.user.js
 // @downloadURL  https://roccobot.github.io/userscripts/FapopediaPlus.user.js
 // ==/UserScript==
@@ -31,6 +30,54 @@
   // (verificato: /1000/ senza t_ è la risoluzione massima disponibile sul sito).
 
   const sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+  // ── Writer ZIP interno (metodo "store", nessuna compressione) ─────────
+  // Perché non JSZip: nella sandbox di Tampermonkey la sua generateAsync si
+  // bloccava all'infinito in fase di compressione. Le JPEG sono già compresse,
+  // quindi lo "store" (nessuna ricompressione) non perde nulla ed è sincrono,
+  // deterministico e senza dipendenze @require. Verificato con unzip -t.
+  const CRC_TABLE = (function () {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(u8) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  // files: [{ name:string, data:Uint8Array }] → Uint8Array (l'archivio ZIP)
+  function creaZipStore(files) {
+    const enc = new TextEncoder();
+    const chunks = []; const central = []; let offset = 0;
+    const u16 = function (v) { return new Uint8Array([v & 0xFF, (v >>> 8) & 0xFF]); };
+    const u32 = function (v) { v = v >>> 0; return new Uint8Array([v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF]); };
+    const push = function (a) { chunks.push(a); offset += a.length; };
+    for (const f of files) {
+      const nb = enc.encode(f.name), data = f.data, crc = crc32(data), lo = offset;
+      [u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0), u32(crc),
+        u32(data.length), u32(data.length), u16(nb.length), u16(0), nb].forEach(push);
+      push(data);
+      central.push({ nb: nb, crc: crc, size: data.length, lo: lo });
+    }
+    const cdStart = offset;
+    for (const c of central) {
+      [u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0), u32(c.crc),
+        u32(c.size), u32(c.size), u16(c.nb.length), u16(0), u16(0), u16(0), u16(0),
+        u32(0), u32(c.lo), c.nb].forEach(push);
+    }
+    const cdSize = offset - cdStart;
+    [u32(0x06054b50), u16(0), u16(0), u16(central.length), u16(central.length),
+      u32(cdSize), u32(cdStart), u16(0)].forEach(push);
+    const total = chunks.reduce(function (s, a) { return s + a.length; }, 0);
+    const out = new Uint8Array(total); let o = 0;
+    for (const a of chunks) { out.set(a, o); o += a.length; }
+    return out;
+  }
 
   // Miniatura → URL alta risoluzione (toglie "t_" dal nome file).
   function altaRis(u) { return u.replace(/\/t_([^\/?#]+)$/i, '/$1'); }
@@ -70,10 +117,8 @@
   }
 
   // Scarica una singola immagine come ArrayBuffer (via GM_xmlhttpRequest, con
-  // referer). NB: si usa ArrayBuffer e NON Blob perche' JSZip, ricevendo Blob
-  // ottenuti da GM_xmlhttpRequest, li legge con FileReader e in quel contesto
-  // puo' bloccarsi in fase di compressione. L'ArrayBuffer e' letto in modo
-  // sincrono da JSZip: niente FileReader, niente stallo su "Comprimo...".
+  // referer). ArrayBuffer → Uint8Array è ciò che serve al writer ZIP interno,
+  // tutto sincrono e senza dipendenze.
   function scaricaDato(url) {
     return new Promise(function (resolve, reject) {
       GM_xmlhttpRequest({
@@ -127,11 +172,6 @@
     const lista = raccogliUrl();
     if (!lista.length) { alert('Fapopedia+: nessuna immagine di galleria trovata in questa pagina.'); return; }
 
-    if (typeof JSZip === 'undefined') {
-      alert('Fapopedia+: JSZip non caricato (dipendenza @require bloccata?). Impossibile creare lo ZIP.');
-      return;
-    }
-
     inCorso = true;
     const testoIniziale = btn.textContent;
     btn.disabled = true;
@@ -141,23 +181,25 @@
         btn.textContent = '⬇️ ' + fatti + '/' + tot + '…';
       });
 
-      const zip = new JSZip();
-      let aggiunte = 0, falliti = 0;
+      const files = [];
+      const visti = {};
+      let falliti = 0;
       lista.forEach(function (u, idx) {
         const buf = dati[idx];
         if (!buf) { falliti++; return; }
         let nome = nomeFile(u);
-        if (zip.file(nome)) nome = String(idx + 1).padStart(4, '0') + '_' + nome; // evita collisioni
-        zip.file(nome, buf); // ArrayBuffer: JSZip lo legge in modo sincrono
-        aggiunte++;
+        if (visti[nome]) nome = String(idx + 1).padStart(4, '0') + '_' + nome; // evita collisioni
+        visti[nome] = 1;
+        files.push({ name: nome, data: new Uint8Array(buf) });
       });
 
-      if (!aggiunte) { alert('Fapopedia+: nessuna immagine scaricata (tutte fallite).'); return; }
+      if (!files.length) { alert('Fapopedia+: nessuna immagine scaricata (tutte fallite).'); return; }
 
-      btn.textContent = '📦 Comprimo…';
-      const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'STORE' }, function (m) {
-        btn.textContent = '📦 ' + Math.round(m.percent) + '%';
-      });
+      btn.textContent = '📦 Creo ZIP…';
+      await sleep(0); // lascia ridipingere il pulsante prima del lavoro sincrono
+      const zipBytes = creaZipStore(files);
+      const zipBlob = new Blob([zipBytes], { type: 'application/zip' });
+      const aggiunte = files.length;
 
       const a = document.createElement('a');
       a.href = URL.createObjectURL(zipBlob);
