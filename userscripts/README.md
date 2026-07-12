@@ -67,19 +67,26 @@ modificare i valori → salvare (Ctrl+S).
   sfarfallio) e sostituisce il logo (`img[data-testid="logoHero"]` in home,
   `svg[data-testid="qwantSoccerLogoTopbar"]` in SERP) con il wordmark Qwant
   ufficiale incorporato.
-- **Immagini** (dalla v2.5.0, approccio *passivo*): lo script **non** altera più
-  le richieste di Qwant. Usa `PerformanceObserver` per leggere — in sola lettura —
-  *quale* URL dell'API interna (`api.qwant.com/.../search/images`) la pagina ha
-  chiamato, poi **rifà lui** quella richiesta con una `fetch` nativa e i cookie di
-  sessione per ricavare, per ogni immagine, miniatura → file originale; al clic
-  apre l'originale e riscrive i link della griglia (così funzionano anche il tasto
-  centrale e "Copia indirizzo link").
-  - **Perché così**: fino alla v2.4.0 lo script *rimpiazzava* `window.fetch` e
-    `XMLHttpRequest` per leggere quelle risposte. L'anti-bot di Qwant rileva la
-    manomissione dei metodi nativi e ha iniziato a rispondere **HTTP 403 su tutte
-    le ricerche**. Ora le chiamate della pagina restano intatte: la ricerca
-    funziona sempre e, se la nostra `fetch` venisse rifiutata, l'apertura diretta
-    semplicemente non agisce (clic normale) invece di rompere il sito.
+- **Immagini** (dalla v2.6.0, approccio *senza rete*): il modulo immagini **non
+  fa nessuna chiamata di rete e non tocca `fetch`/`XHR`**. Ricava l'URL originale
+  **solo dal DOM** — in particolare decodificando l'URL della miniatura
+  (`s*.qwant.com/thumbr/...`, che in molte versioni incapsula l'indirizzo
+  sorgente) e da eventuali dati già presenti nell'HTML; al clic apre l'originale e
+  riscrive i link della griglia (così funzionano anche il tasto centrale e "Copia
+  indirizzo link"). Se l'originale non è ricavabile, **lascia il clic normale di
+  Qwant** (apre l'anteprima): degrada, non rompe.
+  - **Perché così** (storia dei 403): la v2.4.0 *rimpiazzava* `window.fetch` e
+    `XMLHttpRequest` per leggere le risposte dell'API immagini → l'anti-bot di
+    Qwant rileva la manomissione dei metodi nativi e risponde **HTTP 403 su tutte
+    le ricerche**. La v2.5.0 non li rimpiazzava più ma faceva una *propria* `fetch`
+    all'API: quella chiamata non firmata fa scattare l'anti-bot e può avvelenare il
+    cookie di sessione → 403 di nuovo (intermittente). La v2.6.0 elimina ogni
+    chiamata di rete: le richieste della pagina restano intatte, quindi il modulo
+    **non può rompere la ricerca**.
+  - **Limite**: se una versione di Qwant non incapsula l'originale nell'URL della
+    miniatura, l'apertura diretta non agisce (clic normale). In quel caso serve un
+    esempio di URL miniatura per capire se è recuperabile in altro modo — sempre
+    senza chiamate di rete.
 
 ### Limiti noti
 
