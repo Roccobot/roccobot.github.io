@@ -169,3 +169,37 @@ const NASCONDI_LENTE = true;  // nasconde la lente d'ingrandimento (.magnify-len
 1. Installare Tampermonkey (se non c'è già).
 2. Aprire: <https://roccobot.github.io/userscripts/NSFWAlbumEnhancer.user.js>
 3. Premere **Installa**.
+
+## Fapopedia+
+
+**File:** `FapopediaPlus.user.js`
+
+Su `fapopedia.net`, nelle pagine-galleria, aggiunge un pulsante flottante
+**"⬇️ Scarica galleria (N) — ZIP"** che con un clic scarica **tutte** le immagini
+in **alta risoluzione** e le impacchetta in un unico file **ZIP** (nominato come
+la galleria, es. `gabi-summers-nude-leaks.zip`).
+
+Come funziona: le miniature del sito sono URL tipo
+`…/photos/g/a/<slug>/1000//t_0001.jpg` (≈7 KB); l'alta risoluzione è lo **stesso
+URL senza il prefisso `t_`** (`…/1000//0001.jpg`, ≈200 KB — è la risoluzione
+massima disponibile sul sito). Lo script scorre la pagina per forzare il
+lazy-load, raccoglie le immagini della galleria (esclude gli avatar), scarica gli
+originali via `GM_xmlhttpRequest` (con barra di avanzamento sul pulsante) e li
+comprime con **JSZip** (caricato via `@require` da cdnjs). I file nello ZIP
+mantengono la numerazione originale (`0001.jpg`, `0002.jpg`…). Nessun dato lascia
+il sito: solo download.
+
+### Personalizzazione
+
+```js
+const PARALLELE  = 4;      // quanti download contemporanei
+const TIMEOUT_MS = 60000;  // timeout per singola immagine
+```
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/FapopediaPlus.user.js>
+3. Premere **Installa**. Tampermonkey può chiedere il permesso per
+   `GM_xmlhttpRequest` verso `fapopedia.net`: concederlo (serve a scaricare le
+   immagini).
