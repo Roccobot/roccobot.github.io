@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Fapopedia+
 // @namespace    https://roccobot.github.io/
-// @version      1.0.0
-// @description  Su fapopedia.net aggiunge un pulsante per scaricare con un clic TUTTE le immagini della galleria in ALTA RISOLUZIONE, impacchettate in un unico file ZIP. Ricava l'originale dalla miniatura (toglie il prefisso "t_"); scarica via GM_xmlhttpRequest e comprime con JSZip. Nessun dato lascia il sito: solo download.
+// @version      1.0.1
+// @description  Su fapopedia.net aggiunge un pulsante per scaricare con un clic TUTTE le immagini della galleria in ALTA RISOLUZIONE, impacchettate in un unico file ZIP. Ricava l'originale dalla miniatura (toglie il prefisso "t_"); scarica via GM_xmlhttpRequest (ArrayBuffer) e comprime con JSZip. Nessun dato lascia il sito: solo download.
 // @author       Roccobot
 // @match        https://fapopedia.net/*
 // @match        https://www.fapopedia.net/*
@@ -69,14 +69,18 @@
     await sleep(150);
   }
 
-  // Scarica una singola immagine come Blob (via GM_xmlhttpRequest, con referer).
-  function scaricaBlob(url) {
+  // Scarica una singola immagine come ArrayBuffer (via GM_xmlhttpRequest, con
+  // referer). NB: si usa ArrayBuffer e NON Blob perche' JSZip, ricevendo Blob
+  // ottenuti da GM_xmlhttpRequest, li legge con FileReader e in quel contesto
+  // puo' bloccarsi in fase di compressione. L'ArrayBuffer e' letto in modo
+  // sincrono da JSZip: niente FileReader, niente stallo su "Comprimo...".
+  function scaricaDato(url) {
     return new Promise(function (resolve, reject) {
       GM_xmlhttpRequest({
-        method: 'GET', url: url, responseType: 'blob', timeout: TIMEOUT_MS,
+        method: 'GET', url: url, responseType: 'arraybuffer', timeout: TIMEOUT_MS,
         headers: { Referer: location.href },
         onload: function (r) {
-          if (r.status >= 200 && r.status < 300 && r.response) resolve(r.response);
+          if (r.status >= 200 && r.status < 300 && r.response && r.response.byteLength) resolve(r.response);
           else reject(new Error('HTTP ' + r.status));
         },
         onerror: function () { reject(new Error('errore di rete')); },
@@ -92,7 +96,7 @@
     async function worker() {
       while (i < urls.length) {
         const idx = i++;
-        try { out[idx] = await scaricaBlob(urls[idx]); ok++; }
+        try { out[idx] = await scaricaDato(urls[idx]); ok++; }
         catch (e) { out[idx] = null; }
         fatti++; onProg(fatti, urls.length, ok);
       }
@@ -133,18 +137,18 @@
     btn.disabled = true;
     try {
       await forzaLazyLoad();
-      const blobs = await scaricaTutte(lista, function (fatti, tot) {
+      const dati = await scaricaTutte(lista, function (fatti, tot) {
         btn.textContent = '⬇️ ' + fatti + '/' + tot + '…';
       });
 
       const zip = new JSZip();
       let aggiunte = 0, falliti = 0;
       lista.forEach(function (u, idx) {
-        const b = blobs[idx];
-        if (!b) { falliti++; return; }
+        const buf = dati[idx];
+        if (!buf) { falliti++; return; }
         let nome = nomeFile(u);
         if (zip.file(nome)) nome = String(idx + 1).padStart(4, '0') + '_' + nome; // evita collisioni
-        zip.file(nome, b);
+        zip.file(nome, buf); // ArrayBuffer: JSZip lo legge in modo sincrono
         aggiunte++;
       });
 
