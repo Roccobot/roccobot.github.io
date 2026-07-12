@@ -749,6 +749,18 @@ specifico del dataset):
   citazioni, genealogie, tipi e anche per icone/badge). Le citazioni devono
   essere verbatim dalle edizioni ammesse (`rules/JRRT.md`); se un dato non è
   attestato, ometterlo o segnalarlo, mai inventarlo. **Alla peggio, chiedere.**
+- **Verifica alla lettera SEMPRE tramite grep sulle fonti scaricabili** (regola
+  universale, `rules/JRRT.md` sez. 'Verifica alla lettera'). Ogni conferma su
+  citazioni verbatim, correttezza di un nome proprio, dato attribuito a una
+  fonte o simili si produce **tramite** una ricerca di stringa/grep concreta
+  sulle fonti scaricabili elencate in `JRRT.md`, **mai a memoria** (né su TG né
+  su conoscenza pregressa). Mirata → task singolo; ampia/sistematica → ricerca
+  multi-agente con report finale, **previa conferma** dell'utente. Bacino: quello
+  indicato dall'utente; se non indicato, **tutte** le fonti nell'ordine del
+  canone. Ricerca **a prova di diacritici, in due passaggi**: prima la forma
+  esatta (`Helcaraxë`), poi, solo se non trova, la forma ripulita (`helcaraxe`),
+  perché la stessa parola può avere due grafie legittime tra edizioni (es.
+  `Númenóreano` nel Silmarillion vs `Numenoreano` nel SdA).
 - **Ogni audit dei contenuti DEVE includere la conformità dei nomi propri alla
   resa STI**, come dimensione a sé. Un nome inglese lasciato in un campo IT (es.
   `Pippin`→`Pipino`, `Brandybuck`→`Brandibuck`, `Dale`→`la Valle`) NON è un
