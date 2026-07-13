@@ -865,6 +865,11 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    sua icona - parte allo stesso x nelle due righe (colonna perfetta) e NON si
    sposta al cambio lingua (anti-jitter). 7em = 89.6px, margine sulla misura. */
 .ctrl-legend-row .leg-lbl-col { width:7em; flex:none; }
+/* Stesso principio per la riga Re Supremo (corona 'In carica'/'Current'):
+   etichetta primaria a larghezza fissa (>= 'High King of the Noldor' ~126.6px
+   @0.8rem, la più larga tra IT/EN), così la corona secondaria non si sposta al
+   cambio lingua. Larghezza propria perché l'etichetta è più lunga delle altre. */
+.ctrl-legend-row .leg-lbl-king { width:10em; flex:none; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:-0.28rem; }
@@ -1825,7 +1830,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.85</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3378,7 +3383,7 @@ function controlPanelHTML() {
     ICON_ORDER.forEach(function(k){
       if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring') return;
       if (k === 'king_high') {
-        s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span>' + IL['king_high'] + '</span>'
+        s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + IL['king_high'] + '</span>'
            + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span>');
         return;
       }
