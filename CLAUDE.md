@@ -1060,6 +1060,15 @@ specifico del dataset):
     pubblicato dice solo 'parente stretta d'Ingwë' e la Shibboleth la fa
     sorella o nipote: un audit canonico che non peschi NoME la segnalerà come
     sbagliata (successo il 2026-07-11, correzione respinta).
+  - **Ordinale dei figli di Finarfin: Angrod = SECONDO, Aegnor = TERZO** (dalla
+    v6.87, decisione dell'utente). Coerente con la scelta del progetto di fare
+    di **Orodreth un figlio di Angrod** (non di Finarfin, caso 'note tardive =
+    canone' come Gil-galad): tolto Orodreth dai figli di Finarfin, i maschi
+    sono Finrod (1°), Angrod (2°), Aegnor (3°). ⚠️ Un audit sul Silmarillion
+    pubblicato — dove Orodreth È figlio di Finarfin, quindi Angrod 3° e Aegnor
+    4° — li segnalerà come sbagliati: NON è un errore, è la conseguenza
+    coerente della genealogia adottata (segnalato dal RAG Antigravity come
+    'incoerenza interna', corretto proprio perché tale).
 
 ## 🧹 Asset del progetto
 

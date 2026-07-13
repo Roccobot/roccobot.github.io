@@ -174,6 +174,9 @@ h1 {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
   max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
+  /* Bilancia le due righe così l'ultima parola non resta orfana su una riga
+     tutta sua (es. 'Age' / 'Era' a larghezza piena). Vale in entrambe le lingue. */
+  text-wrap:balance;
 }
 .subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.69; letter-spacing:0.04em; margin-top:0.15rem; }
 
@@ -1830,7 +1833,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
