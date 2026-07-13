@@ -1008,7 +1008,8 @@ specifico del dataset):
 - **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via
   grep sulle fonti.** In legenda: `guerradira` **dopo** `morgoth`, `suicidio`
   **prima** di `fellowship`; portatori (`p.suicidio`/`p.guerradira` = `true`):
-  - **`suicidio`** ('Si tolse la vita', icona `Sangue.png`, goccia): **7** voci:
+  - **`suicidio`** ('Si tolse la vita', icona `Teschio.png`, teschio con lacrima
+    di sangue): **7** voci:
     Túrin (spada Gurthang), Nienor (nel Teiglin), Húrin (nel mare occidentale,
     'si dice'), Maedhros (voragine di fuoco), Denethor II (rogo), Míriel Serindë
     (abbandono volontario della vita, primo trapasso in Aman: caso atipico ma
