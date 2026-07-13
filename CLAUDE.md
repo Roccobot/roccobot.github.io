@@ -1016,15 +1016,17 @@ specifico del dataset):
     voluto), Aerin (rogo della sala di Brodda: attestazione **implicita**, non
     verbatim, tenuta per scelta dell'utente).
   - **`guerradira`** ('Combattè nella Guerra d'Ira', icona `Ira.png`, spade
-    incrociate): **7** voci, entrambe le sponde ('tutti quelli trovati'):
-    schiera dei Valar = **Eönwë** (comandante), **Finarfin** (guidò i Noldor di
-    Valinor), **Ingwion** (guidò i Vanyar, HoME IV-V), **Eärendil** (uccise
-    Ancalagon nella battaglia aerea), **Thorondor** (capitano delle Aquile);
-    sponda di Morgoth = **Melkor** ('stood at last at bay') e **Ancalagon**.
-    **Esclusi per attestazione** (Silm cap. 24: 'among them went none of those
-    Elves who had dwelt... in the Hither Lands'): Gil-galad, Círdan, Maedhros,
-    Maglor, Elrond, Elros non marciarono con la schiera; Maedhros e Maglor
-    vennero *dopo* la guerra, per i Silmaril.
+    incrociate): **5** voci, **solo la schiera attaccante dei Valar**: **Eönwë**
+    (comandante), **Finarfin** (guidò i Noldor di Valinor), **Ingwion** (guidò i
+    Vanyar, HoME IV-V), **Eärendil** (uccise Ancalagon nella battaglia aerea),
+    **Thorondor** (capitano delle Aquile). **Definizione (scelta editoriale
+    soggettiva dell'utente, v6.66):** 'combattere' la Guerra d'Ira è un'azione
+    **attiva**; chi si *difendeva* dall'armata di Valinor (in un certo senso
+    *subiva*) faceva una cosa diversa → **Melkor e Ancalagon esclusi** benché
+    presenti alla battaglia. **Esclusi per attestazione** (Silm cap. 24: 'among
+    them went none of those Elves who had dwelt... in the Hither Lands'):
+    Gil-galad, Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la
+    schiera; Maedhros e Maglor vennero *dopo* la guerra, per i Silmaril.
 - **Tutti gli Anelli in un'unica riga di legenda (v6.63).** L'Unico, i Tre
   degli Elfi (Vilya, Nenya, Narya) e i Nove non hanno più tre righe separate:
   una sola riga **in coda** alla legenda mostra le 5 icone in orizzontale
