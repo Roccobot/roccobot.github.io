@@ -67,26 +67,34 @@ modificare i valori → salvare (Ctrl+S).
   sfarfallio) e sostituisce il logo (`img[data-testid="logoHero"]` in home,
   `svg[data-testid="qwantSoccerLogoTopbar"]` in SERP) con il wordmark Qwant
   ufficiale incorporato.
-- **Immagini** (dalla v2.6.0, approccio *senza rete*): il modulo immagini **non
-  fa nessuna chiamata di rete e non tocca `fetch`/`XHR`**. Ricava l'URL originale
-  **solo dal DOM** — in particolare decodificando l'URL della miniatura
-  (`s*.qwant.com/thumbr/...`, che in molte versioni incapsula l'indirizzo
-  sorgente) e da eventuali dati già presenti nell'HTML; al clic apre l'originale e
-  riscrive i link della griglia (così funzionano anche il tasto centrale e "Copia
-  indirizzo link"). Se l'originale non è ricavabile, **lascia il clic normale di
-  Qwant** (apre l'anteprima): degrada, non rompe.
+- **Immagini** (approccio *senza rete*, e dalla v2.7.0 *solo sulla scheda
+  Immagini*): il modulo immagini **non fa nessuna chiamata di rete e non tocca
+  `fetch`/`XHR`**. Ricava l'URL originale **solo dal DOM** — in particolare
+  decodificando l'URL della miniatura (`s*.qwant.com/thumbr/...`, che in molte
+  versioni incapsula l'indirizzo sorgente) e da eventuali dati già presenti
+  nell'HTML; al clic apre l'originale e riscrive i link della griglia (così
+  funzionano anche il tasto centrale e "Copia indirizzo link"). Se l'originale non
+  è ricavabile, **lascia il clic normale di Qwant** (apre l'anteprima): degrada,
+  non rompe. I suoi listener si agganciano **solo** quando l'URL è la ricerca
+  immagini (`?t=images`) e si staccano appena si esce; il cambio scheda (SPA) è
+  rilevato con un polling passivo (nessun wrap di `history`).
   - **Perché così** (storia dei 403): la v2.4.0 *rimpiazzava* `window.fetch` e
     `XMLHttpRequest` per leggere le risposte dell'API immagini → l'anti-bot di
     Qwant rileva la manomissione dei metodi nativi e risponde **HTTP 403 su tutte
     le ricerche**. La v2.5.0 non li rimpiazzava più ma faceva una *propria* `fetch`
     all'API: quella chiamata non firmata fa scattare l'anti-bot e può avvelenare il
     cookie di sessione → 403 di nuovo (intermittente). La v2.6.0 elimina ogni
-    chiamata di rete: le richieste della pagina restano intatte, quindi il modulo
-    **non può rompere la ricerca**.
+    chiamata di rete, ma i **listener globali** del modulo (su tutta la pagina)
+    disturbavano ancora l'anti-bot sulla ricerca **web** → 403. La v2.7.0 li
+    confina alla sola scheda Immagini (e il gestore del clic è tutto in
+    `try/catch`, così non può mai interrompere gli eventi del sito): la ricerca
+    web non ha più alcun aggancio del modulo.
   - **Limite**: se una versione di Qwant non incapsula l'originale nell'URL della
     miniatura, l'apertura diretta non agisce (clic normale). In quel caso serve un
     esempio di URL miniatura per capire se è recuperabile in altro modo — sempre
-    senza chiamate di rete.
+    senza chiamate di rete. E se anche i soli listener sulla scheda Immagini
+    dovessero far scattare l'anti-bot lì, si può disattivare del tutto il modulo
+    con `IMMAGINI_DIRETTE = false` (la pulizia resta).
 
 ### Limiti noti
 

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QwantRoccobot — Qwant essenziale + immagini dirette
 // @namespace    https://roccobot.github.io/
-// @version      2.6.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e non tocca fetch/XHR (lo facevano v2.4/v2.5 e l'anti-bot di Qwant rispondeva 403): ricava l'originale solo dall'URL della miniatura. Se non ci riesce, lascia il clic normale: non può rompere la ricerca.
+// @version      2.7.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale solo dall'URL della miniatura; se non ci riesce, lascia il clic normale.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
 // @match        https://qwant.com/*
@@ -340,32 +340,34 @@
     }
 
     function alClic(e) {
-      if (bypass) return;
-      const aux = e.type === 'auxclick';
-      if ((aux && e.button !== 1) || (!aux && e.button !== 0)) return;
-      const t = e.target instanceof Element ? e.target : null;
-      if (!t) return;
+      // Tutto in try/catch: un listener in fase di cattura che lancia
+      // un'eccezione può interrompere la propagazione agli handler del sito
+      // (incluso l'anti-bot) e farlo insospettire. Qui non deve MAI lanciare.
+      try {
+        if (bypass) return;
+        const aux = e.type === 'auxclick';
+        if ((aux && e.button !== 1) || (!aux && e.button !== 0)) return;
+        const t = e.target instanceof Element ? e.target : null;
+        if (!t) return;
 
-      const trovato = trovaMedia(t);
-      if (!trovato) return; // originale non ricavabile → clic normale di Qwant (nessun danno)
+        const trovato = trovaMedia(t);
+        if (!trovato) return; // originale non ricavabile → clic normale di Qwant (nessun danno)
 
-      e.stopImmediatePropagation();
-      e.stopPropagation();
-      const a = t.closest && t.closest('a');
-      if (a) {
-        // si corregge il link e si lascia fare al browser: nessun popup-blocker
-        a.href = trovato.media;
-        a.rel = 'noopener';
-        if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
-        else a.removeAttribute('target');
-        return;
-      }
-      e.preventDefault();
-      apri(trovato.media, e);
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        const a = t.closest && t.closest('a');
+        if (a) {
+          // si corregge il link e si lascia fare al browser: nessun popup-blocker
+          a.href = trovato.media;
+          a.rel = 'noopener';
+          if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
+          else a.removeAttribute('target');
+          return;
+        }
+        e.preventDefault();
+        apri(trovato.media, e);
+      } catch (err) { /* mai disturbare la pagina né l'anti-bot */ }
     }
-
-    document.addEventListener('click', alClic, true);
-    document.addEventListener('auxclick', alClic, true);
 
     // ── Riscrittura dei link in griglia (tasto centrale, "copia indirizzo") ──
     let timerRiscrittura = 0;
@@ -374,7 +376,7 @@
       timerRiscrittura = setTimeout(riscriviTutto, 200);
     }
     function riscriviTutto() {
-      if (!document.body) return;
+      if (!attivo || !document.body) return;
       for (const img of document.images) {
         const m = mediaPerImg(img);
         if (!m) continue;
@@ -388,18 +390,50 @@
       }
     }
 
-    function avvio() {
+    // ── Attivazione SOLO sulla scheda Immagini (?t=images) ────────────────
+    // Perché: i listener/observer di questo modulo, se attivi sulla ricerca
+    // WEB, disturbano l'anti-bot di Qwant e fanno tornare il 403 su OGNI
+    // ricerca (isolato: spegnendo questo modulo la ricerca torna a funzionare).
+    // Sulla ricerca web non servono comunque. Quindi ci si aggancia SOLO quando
+    // l'URL è la ricerca immagini, staccando tutto appena si esce. Nessun
+    // aggancio a fetch/XHR né a history: il cambio URL (SPA) si rileva con un
+    // polling passivo, per non toccare nulla di nativo su un sito con anti-bot.
+    let attivo = false;
+    let osservatore = null;
+    function attiva() {
+      if (attivo) return;
+      attivo = true;
+      document.addEventListener('click', alClic, true);
+      document.addEventListener('auxclick', alClic, true);
+      try {
+        osservatore = new MutationObserver(riscriviPresto);
+        osservatore.observe(document.documentElement, {
+          subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'srcset']
+        });
+      } catch (e) { /* ignora */ }
       raccogliDagliScript();
       riscriviTutto();
-      // Solo lettura del DOM: quando le miniature compaiono/cambiano, si prova a
-      // riscrivere i link. Nessuna richiesta di rete, nessun aggancio a fetch/XHR.
-      new MutationObserver(riscriviPresto).observe(document.documentElement, {
-        subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'srcset']
-      });
     }
+    function disattiva() {
+      if (!attivo) return;
+      attivo = false;
+      document.removeEventListener('click', alClic, true);
+      document.removeEventListener('auxclick', alClic, true);
+      if (osservatore) { try { osservatore.disconnect(); } catch (e) {} osservatore = null; }
+    }
+    function suRicercaImmagini() {
+      try { return new URLSearchParams(location.search).get('t') === 'images'; }
+      catch (e) { return false; }
+    }
+    function sincronizza() { if (suRicercaImmagini()) attiva(); else disattiva(); }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
-    else avvio();
-    window.addEventListener('load', function () { raccogliDagliScript(); riscriviTutto(); });
+    sincronizza();
+    // Qwant è una SPA: passando da 'Tutto' a 'Immagini' l'URL cambia senza
+    // reload. Si rileva col polling (niente wrap di history/pushState: su un
+    // sito con anti-bot è più prudente non toccare le API native).
+    let ultimoHref = location.href;
+    setInterval(function () {
+      if (location.href !== ultimoHref) { ultimoHref = location.href; sincronizza(); }
+    }, 600);
   })();
 })();
