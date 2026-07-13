@@ -859,6 +859,12 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group--est { gap:0.34rem; }
 .ctrl-legend-row .leg-group--balrog { gap:0.4rem; }
+/* Incolonnamento delle righe Aman (nave viola 'envoy') e Drago (Balrog):
+   l'etichetta primaria ha larghezza FISSA (>= la più lunga delle 4 stringhe
+   IT/EN: 'Raggiunse Aman' ~87.8px @0.8rem), così il gruppo secondario - e la
+   sua icona - parte allo stesso x nelle due righe (colonna perfetta) e NON si
+   sposta al cambio lingua (anti-jitter). 7em = 89.6px, margine sulla misura. */
+.ctrl-legend-row .leg-lbl-col { width:7em; flex:none; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:-0.28rem; }
@@ -1819,7 +1825,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.84</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.85</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3379,7 +3385,7 @@ function controlPanelHTML() {
       if (k === 'west') {
         var westTxt = lang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
         var envoyTxt = lang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-        s += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span>' + westTxt + '</span>'
+        s += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + westTxt + '</span>'
            + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
         return;
       }
@@ -3391,7 +3397,7 @@ function controlPanelHTML() {
         return;
       }
       if (k === 'drago') {
-        s += legRow('drago', '<span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span>' + IL['drago'] + '</span>'
+        s += legRow('drago', '<span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + IL['drago'] + '</span>'
            + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
         return;
       }
