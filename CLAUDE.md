@@ -1015,6 +1015,18 @@ specifico del dataset):
     (abbandono volontario della vita, primo trapasso in Aman: caso atipico ma
     voluto), Aerin (rogo della sala di Brodda: attestazione **implicita**, non
     verbatim, tenuta per scelta dell'utente).
+    - **Distinzione (audit 2026-07-13, decisione utente): 'togliersi la vita' ≠
+      'rendere la vita'.** Il badge marca il **gesto estremo** (violenza,
+      disperazione, rogo). Ne restano **esclusi** i mortali che *si lasciano
+      andare* alla morte per non subire il degrado della vecchiaia (Dono degli
+      Uomini, alla maniera dei re di Númenor): **Aragorn II** (depone la vita
+      nella Casa dei Re) e **Arwen** (si corica a Cerin Amroth) NON hanno il
+      badge. **Míriel** è l'unica eccezione a-là-suicidio perché è un'**Elfa**
+      che rinuncia alla vita in Aman, atto innaturale per la sua stirpe. Altri
+      esclusi verificati: **Elwing** (si getta in mare ma Ulmo la salva, non
+      muore), **Maglor** (getta il Silmaril e vaga: nel Silm pubblicato non si
+      uccide; il 'took his own life' è solo HoME IV, riferito a Maidros =
+      Maedhros), **Saeros** e **Amroth** (morti accidentali, non deliberate).
   - **`guerradira`** ('Combattè nella Guerra d'Ira', icona `Ira.png`, spade
     incrociate): **5** voci, **solo la schiera attaccante dei Valar**: **Eönwë**
     (comandante), **Finarfin** (guidò i Noldor di Valinor), **Ingwion** (guidò i
