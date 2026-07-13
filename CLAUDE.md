@@ -595,7 +595,11 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     essere compilato in UNA sola lingua quando il dato esiste solo lì. Caso
     accertato: **Will Piedebianco**, soprannome EN `Flourdumpling` senza
     equivalente IT perché la traduzione italiana l'ha soppresso (verificato
-    dall'utente, 2026-07-11).
+    dall'utente, 2026-07-11). Caso inverso (DUE rese in una sola lingua, da
+    tenere entrambe): **Halfast Gamgee**, `nomi_alternativi` IT `Al, Hal` — sono
+    le due rese italiane del soprannome in due edizioni del SdA (pre e post
+    revisione S.T.I.); l'utente le vuole entrambe. NON è un anglicismo residuo
+    da bonificare (2026-07-13).
 - **Due campi, due ruoli (riga sotto il nome).** La riga mostra
   `nomi_alternativi` e, dopo un ` | `, `appellativi` (il separatore ` | `
   compare solo se entrambe le parti ci sono):
@@ -793,6 +797,20 @@ specifico del dataset):
 - **Posizioni in classifica.** Claude può decidere autonomamente dove collocare
   i nuovi personaggi; a fine lavoro **riferire sempre le loro posizioni** in
   classifica, calcolate **con tutte le categorie attive**.
+- **Secondo audit semantico multi-agente (2026-07-13, dalla v6.92).** Passata su
+  tutte le 355 voci (coerenza IT↔EN, canone, tipografia, resa STI), ogni rilievo
+  grep-verificato sulle fonti locali; 35 rilievi, applicato il taglio deciso
+  dall'utente. **Decisioni 'da non ri-segnalare':**
+  - **Nomi alternativi tenuti perché attestati in PE17** (Parma Eldalamberon 17,
+    p.56, ora fonte ammessa): **`Gaerdil`** (Eärendil), **`Elerondo`** (Elrond,
+    via il patronimico *Elerondiel* di Arwen), **`Laicolassë`** (Legolas, da
+    *laic-olasse* 'green-foliage'). Un audit che non peschi PE17 li segnalerà
+    come non attestati: NON lo sono.
+  - **Éomund 'Primo Maresciallo del Mark'**: resa ITA ufficiale tenuta di
+    proposito, benché le fonti usino 'chief/Sommo Maresciallo del Mark' (scelta
+    dell'utente, 'la abbracciamo così com'è').
+  - **Berúthiel `Donna (Númenóreana Nera?)`**: il `?` è voluto (stirpe non
+    attestata dalle fonti), già confermato in un audit precedente.
 - **Audit bilingue del 2026-07-05 (v4.30).** Passata multi-agente su tutte le
   310 voci (qualità EN, italiano residuo, coerenza IT↔EN, canone, convenzioni
   campi, UI). Applicato subito il sottoinsieme certo (12 fix: italiano nei campi
