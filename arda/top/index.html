@@ -364,9 +364,10 @@ h1 {
 .si-renoldor { width:.935em; height:.935em; }
 .si-unico { width:.707em; height:.707em; }
 .si-hobbit { width:.791em; height:.92em; }
-/* Guerra d'Ira (spade) e suicidio (teschio). Canvas 240x256 (compensazione
-   ottica dell'utente): larghezza proporzionata = 240/256 * .92em. */
-.si-ira, .si-teschio { width:.863em; height:.92em; }
+/* Guerra d'Ira (spade). Canvas 240x256 (compensazione ottica dell'utente):
+   larghezza proporzionata = 240/256 * .92em. Il badge suicidio (fiore reciso,
+   Morte.png) è quadrato 256x256 e usa il box .status-icon di default. */
+.si-ira { width:.863em; height:.92em; }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -1818,7 +1819,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.83</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.84</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2191,7 +2192,7 @@ var ICON_SVG = {
   balrog:     "<img class=\"status-icon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
   morgoth:    "<img class=\"status-icon\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
-  suicidio:   "<img class=\"status-icon si-teschio\" src=\"icons/Teschio.png\" title=\"%L%\" alt=\"%L%\">"
+  suicidio:   "<img class=\"status-icon\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Ordine definitivo dei badge (deciso dall'utente, 2026-07-04): vale per la
 // resa in lista, per la legenda del Pannello e per la griglia dell'editor
@@ -3039,17 +3040,18 @@ var EDITORIAL_NOTES = [
     shortIt: 'Mezzelfi tra la vita e la morte', shortEn: 'The Half-elven between life and death',
     cat: 'lore',
     refChars: ['Eldarion', 'Dior', 'Eärendil', 'Elwing', 'Elrond', 'Elros', 'Elladan', 'Elrohir', 'Arwen', 'Mithrellas', 'Imrazôr', 'Galador', 'Gilmith'],
-    bodyIt: `<div class="note-h">Legge divina</div>
-<p>Nel Legendarium tolkieniano, quello di Mezzelfi (Peredhil) è uno status teologico/giuridico, non biologico: possedere sangue misto non è sufficiente ad avere il privilegio della scelta. Di norma, l'unione tra un mortale e un immortale genera una prole <em>mortale</em>, perché il 'Dono degli Uomini' (la mortalità) ha la precedenza e non può essere revocato. È una legge divina (in senso letterale: stabilita da Ilúvatar), con due sole eccezioni al di fuori dei Mezzelfi propriamente detti in tutta la storia di Arda. La mortalità fu concessa a #{Lúthien}#, che l'abbracciò per amore, e revocata a #{Tuor}#, padre di #{Eärendil}#, unico Uomo che fu <em>annoverato tra la razza primogenita,</em> [...] <em>il suo fato essendo stato scisso da quello degli Uomini</em>.</p>
+    bodyIt: `<div class="note-h">La Scelta dei Mezzelfi</div>
+<div class="note-h">Legge divina</div>
+<p>Nel Legendarium tolkieniano, quello di Mezzelfi (Peredhil) è uno status teologico/giuridico, non biologico: possedere sangue misto non è sufficiente ad avere il privilegio della Scelta. Di norma, l'unione tra un mortale e un immortale genera una prole <em>mortale</em>, perché il 'Dono degli Uomini' (la mortalità) ha la precedenza e non può essere revocato. È una legge divina (in senso letterale: stabilita da Ilúvatar), con due sole eccezioni al di fuori dei Mezzelfi propriamente detti in tutta la storia di Arda. La mortalità fu concessa a #{Lúthien}#, che l'abbracciò per amore, e revocata a #{Tuor}#, padre di #{Eärendil}#, unico Uomo che fu <em>annoverato tra la razza primogenita,</em> [...] <em>il suo fato essendo stato scisso da quello degli Uomini</em>.</p>
 <div class="note-h">Diritto di scelta (i veri Mezzelfi)</div>
-<p>Ciò che definisce a tutti gli effetti un <em>Peredhel</em> (Mezzelfo) non è il sangue misto, ma il possesso del <strong>diritto di scelta</strong>. Poiché questo diritto non esiste per natura, esso fu istituito come deroga divina e limitato esclusivamente a #{Eärendil}#, #{Elwing}# e alla loro stirpe. Per premiare le loro gesta leggendarie, i Valar (su concessione di Eru Ilúvatar) concessero a loro e ai loro discendenti il libero arbitrio sulla scelta della razza di appartenenza.</p>
+<p>Ciò che definisce a tutti gli effetti un <em>Peredhel</em> (Mezzelfo) non è il sangue misto, ma il possesso del <strong>diritto di Scelta</strong>. Poiché questo diritto non esiste per natura, esso fu istituito come deroga divina e limitato esclusivamente a #{Eärendil}#, #{Elwing}# e alla loro stirpe. Per premiare le loro gesta leggendarie, i Valar (su concessione di Eru Ilúvatar) concessero a loro e ai loro discendenti il libero arbitrio sulla scelta della razza di appartenenza.</p>
 <p>È solo in virtù di questa deroga e del principio di 'reversibilità' dell'appartenenza agli Eldar che a figure come #{Elrond}# (figlio di due Mezzelfi) o #{Arwen}# (figlia di un'Elfa e di un Mezzelfo immortale) fu concesso il diritto di scelta.</p>
 <div class="note-h">Sangue elfico, destino umano</div>
 <p>Al di fuori della linea di successione in cui vige il diritto di scelta, o nei casi in cui tale diritto sia già stato esercitato in favore del 'Dono degli Uomini', vale la regola naturale. La mortalità, una volta abbracciata, è definitiva, e si trasmette alla discendenza. Ne sono la prova alcune figure celebri, nate come <strong>Uomini a tutti gli effetti</strong>:</p>
 <ul>
 <li>#{Dior}#: benché di discendenza originariamente mista, fu concepito quando sua madre #{Lúthien}# aveva già compiuto la sua scelta, rinunciando all'immortalità per tornare nel mondo. Nacque, quindi, da genitori entrambi mortali.</li>
 <li>#{Eldarion}#: poiché #{Arwen}# aveva già compiuto la sua scelta di mortalità prima di concepirlo, #{Eldarion}# nacque a tutti gli effetti da due genitori umani con il dono di Ilúvatar.</li>
-<li>#{Gilmith}# e #{Galador}#, figli di #{Imrazôr}# e #{Mithrellas}#, nacquero mortali, non avendo vincoli di sangue con i veri Mezzelfi cui fu concessa la scelta.</li>
+<li>#{Gilmith}# e #{Galador}#, figli di #{Imrazôr}# e #{Mithrellas}#, nacquero mortali, non avendo vincoli di sangue con i veri Mezzelfi cui fu concessa la Scelta.</li>
 </ul>
 <div class="note-h">Unioni miste documentate</div>
 <ul>
@@ -3065,7 +3067,8 @@ var EDITORIAL_NOTES = [
 <li><strong>L'unione mancata:</strong> l'Elfo #{Aegnor}# e l'umana #{Andreth}#. Si amarono profondamente, ma non si sposarono mai per diverse ragioni: le rigide consuetudini elfiche vietavano i matrimoni in tempo di guerra, le inesorabili tempistiche biologiche della vita umana rappresentavano un ostacolo insormontabile e il destino si compì definitivamente quando #{Aegnor}# cadde in battaglia.</li>
 </ul>
 <div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi">Glorfindel e il 'ritorno' degli Elfi</span></div>`,
-    bodyEn: `<div class="note-h">Divine law</div>
+    bodyEn: `<div class="note-h">The Choice of the Half-elven</div>
+<div class="note-h">Divine law</div>
 <p>In the Tolkien Legendarium, the status of the Half-elven (Peredhil) is theological/juridical, not biological: possessing mixed blood is not enough to grant the privilege of Choice. Typically, a union between a mortal and an immortal generates <em>mortal</em> offspring, because the 'Gift of Men' (mortality) takes precedence and cannot be revoked. It is a divine law (literally: established by Ilúvatar), with only two exceptions outside the Half-elven proper in the entire history of Arda. Mortality was granted to #{Lúthien}#, who embraced it for love, and revoked for #{Tuor}#, father of #{Eärendil}#, the only Man who was <em>numbered among the elder race,</em> [...] <em>his fate being sundered from that of Men</em>.</p>
 <div class="note-h">Right of Choice (the true Half-elven)</div>
 <p>What effectively defines a <em>Peredhel</em> (Half-elf) is not mixed blood, but possessing the <strong>right of Choice</strong>. Since this right does not exist by nature, it was established as a divine exception and limited exclusively to #{Eärendil}#, #{Elwing}# and their lineage. To reward their legendary deeds, the Valar (by permission of Eru Ilúvatar) granted them and their descendants the free will to choose their race.</p>
