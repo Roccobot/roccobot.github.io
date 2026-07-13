@@ -599,7 +599,10 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     tenere entrambe): **Halfast Gamgee**, `nomi_alternativi` IT `Al, Hal` — sono
     le due rese italiane del soprannome in due edizioni del SdA (pre e post
     revisione S.T.I.); l'utente le vuole entrambe. NON è un anglicismo residuo
-    da bonificare (2026-07-13).
+    da bonificare (2026-07-13). Analogo caso **solo-ITA**: **Círdan**,
+    `nomi_alternativi` IT `il Carpentiere, il Fabbricante di Navi` — due rese
+    del titolo 'Shipwright' da edizioni diverse, tenute entrambe e in
+    quest'ordine; l'EN resta il solo `the Shipwright` (2026-07-13).
 - **Due campi, due ruoli (riga sotto il nome).** La riga mostra
   `nomi_alternativi` e, dopo un ` | `, `appellativi` (il separatore ` | `
   compare solo se entrambe le parti ci sono):
