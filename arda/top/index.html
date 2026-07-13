@@ -364,9 +364,10 @@ h1 {
 .si-renoldor { width:.935em; height:.935em; }
 .si-unico { width:.707em; height:.707em; }
 .si-hobbit { width:.791em; height:.92em; }
-/* Guerra d'Ira (spade) e suicidio (teschio). Canvas 240x256 (compensazione
-   ottica dell'utente): larghezza proporzionata = 240/256 * .92em. */
-.si-ira, .si-teschio { width:.863em; height:.92em; }
+/* Guerra d'Ira (spade). Canvas 240x256 (compensazione ottica): larghezza
+   proporzionata = 240/256 * .92em. Il teschio (suicidio) è tornato 256x256
+   quadrato: usa il box standard .status-icon, senza classe dedicata. */
+.si-ira { width:.863em; height:.92em; }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -1760,6 +1761,14 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
    dal blocco di bottoni precedente. */
 .res-modal-box .res-modal-section { margin-top:1.15rem; }
 .res-modal-box .fab-modal-confirm { text-align:center; padding:.55rem 1.1rem; white-space:nowrap; }
+/* Mappa fisica + Mappa vettoriale sulla stessa riga (mockup utente). Ciascun
+   tasto prende ESATTAMENTE metà dello spazio (flex:1 1 0 + min-width:0 batte il
+   pavimento min-content): si adatta allo spazio, non al testo. Il testo può
+   andare a capo (white-space:normal); align-items:stretch tiene i due tasti alla
+   stessa altezza, così se uno va su due righe l'altro lo eguaglia. Larghezze
+   fisse al 50% = niente jitter col cambio lingua/contenuto. */
+.res-map-row { display:flex; gap:0.8rem; margin-top:0.8rem; align-items:stretch; }
+.res-modal-box .res-map-row .fab-modal-confirm { flex:1 1 0; min-width:0; width:auto; margin-top:0; white-space:normal; }
 /* Mobile: larghezza fissa; i testi lunghi usano etichette abbreviate (no a-capo) */
 @media (max-width:768px) {
   .res-modal-box { width:88vw; max-width:88vw; }
@@ -1810,7 +1819,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.68</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.69</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2183,7 +2192,7 @@ var ICON_SVG = {
   balrog:     "<img class=\"status-icon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
   morgoth:    "<img class=\"status-icon\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
-  suicidio:   "<img class=\"status-icon si-teschio\" src=\"icons/Teschio.png\" title=\"%L%\" alt=\"%L%\">"
+  suicidio:   "<img class=\"status-icon\" src=\"icons/Teschio.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Ordine definitivo dei badge (deciso dall'utente, 2026-07-04): vale per la
 // resa in lista, per la legenda del Pannello e per la griglia dell'editor
@@ -2848,11 +2857,13 @@ function openResourcesModal() {
   // dismiss), così tornando si ritrova l'elenco delle risorse dov'era.
   mkBtn(label('Mappa interattiva della Terra di Mezzo', 'Interactive map of Middle-earth', 'Mappa della Terra di Mezzo', 'Map of Middle-earth'),
         function() { window.open('https://middle-earth-interactive-map.web.app', '_blank', 'noopener'); });
-  // Mappe PDF (in arda/res): aprono/scaricano in nuova scheda, modale aperta.
-  mkBtn(label('Mappa fisica', 'Physical map'),
-        function() { window.open('/arda/res/Physical%20Map.pdf', '_blank', 'noopener'); });
-  mkBtn(label('Mappa vettoriale', 'Vector map'),
-        function() { window.open('/arda/res/Vector%20Map.pdf', '_blank', 'noopener'); });
+  // Mappe PDF (in arda/res): due tasti sulla STESSA riga (flex), aprono in
+  // nuova scheda lasciando la modale aperta.
+  var mapRow = document.createElement('div'); mapRow.className = 'res-map-row';
+  function mapBtn(txt, url) { var mb = document.createElement('button'); mb.className = 'fab-modal-confirm'; mb.textContent = txt; mb.onclick = function(){ window.open(url, '_blank', 'noopener'); }; mapRow.appendChild(mb); }
+  mapBtn(label('Mappa fisica', 'Physical map'), '/arda/res/Physical%20Map.pdf');
+  mapBtn(label('Mappa vettoriale', 'Vector map'), '/arda/res/Vector%20Map.pdf');
+  box.appendChild(mapRow);
   function noteBtn(note) {
     var lbl = mobile ? (currentLang === 'it' ? note.shortIt : note.shortEn) : (currentLang === 'it' ? note.titleIt : note.titleEn);
     // La nota di Glorfindel va a capo dopo 'Glorfindel' (scelta utente): il
