@@ -348,7 +348,7 @@ h1 {
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
    Rimosso il margin-left ridondante che la raddoppiava (~0.68em -> 0.4em). */
-.status-icon { display:inline-block; width:0.92em; height:0.92em; vertical-align:middle; margin-left:0.12em; }
+.status-icon { display:inline-block; width:0.92em; height:0.92em; vertical-align:middle; margin-left:0.12em; object-fit:contain; }
 /* Partenza per l'Ovest presunta (dedotta, non attestata): icona semitrasparente */
 .status-icon.si-dim { opacity:0.5; }
 /* Icone PNG normalizzate: i fattori replicano la resa esatta dei vecchi
@@ -364,6 +364,8 @@ h1 {
 .si-renoldor { width:.935em; height:.935em; }
 .si-unico { width:.707em; height:.707em; }
 .si-hobbit { width:.791em; height:.92em; }
+/* Goccia di sangue (suicidio). Canvas 186x256: larghezza proporzionata. */
+.si-sangue { width:.668em; height:.92em; }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -1807,7 +1809,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.64</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2180,7 +2182,7 @@ var ICON_SVG = {
   balrog:     "<img class=\"status-icon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
   morgoth:    "<img class=\"status-icon\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
-  suicidio:   "<img class=\"status-icon\" src=\"icons/Sangue.png\" title=\"%L%\" alt=\"%L%\">"
+  suicidio:   "<img class=\"status-icon si-sangue\" src=\"icons/Sangue.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Ordine definitivo dei badge (deciso dall'utente, 2026-07-04): vale per la
 // resa in lista, per la legenda del Pannello e per la griglia dell'editor
