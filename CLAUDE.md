@@ -184,6 +184,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   (1.00 viene dopo 10.21.1). Nessun codice confronta le versioni per ordine
   (solo l'uguaglianza badge↔datiVersion dei guard), quindi la convenzione vale
   per gli umani; **nessun prefisso `r`** (romperebbe quei guard).
+  - **Gate W3C a ogni release da +0.1 in su (regola dell'utente, 2026-07-14).**
+    Per ogni release con bump **+0.1 o +1.0** (funzionalità o release maggiore,
+    NON i +0.01 di rifinitura), **prima di aprire la PR** rifare il test
+    **W3C Nu Html Checker** su **tutte le pagine modificate** in quella release,
+    e sistemare gli errori finché non è **0**. Comando (per ogni file toccato):
+    `curl -sS -H "Content-Type: text/html; charset=utf-8" -H "User-Agent:
+    Mozilla/5.0" --data-binary @PAGINA.html "https://validator.w3.org/nu/?out=json"`
+    e leggere i messaggi `type:"error"`. Vale per ogni pagina HTML del sito
+    toccata (non solo `arda/top/index.html`). Nota tecnica: la proprietà CSS
+    `d` (animazione del glifo di chiusura) è valida ma non riconosciuta dal Nu
+    Checker, perciò è iniettata via JS e non nel `<style>` statico (vedi il
+    commento `ctrl-close-bend`): non reintrodurla nel CSS o tornano 4 errori.
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
