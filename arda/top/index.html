@@ -867,12 +867,12 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    IT/EN: 'Raggiunse Aman' ~87.8px @0.8rem), così il gruppo secondario - e la
    sua icona - parte allo stesso x nelle due righe (colonna perfetta) e NON si
    sposta al cambio lingua (anti-jitter). 7em = 89.6px, margine sulla misura. */
-.ctrl-legend-row .leg-lbl-col { width:7.7em; flex:none; }
+.ctrl-legend-row .leg-lbl-col { width:10.05em; flex:none; }
 /* Stesso principio per la riga Re Supremo (corona 'In carica'/'Current'):
    etichetta primaria a larghezza fissa (>= 'High King of the Noldor' ~126.6px
    @0.8rem, la più larga tra IT/EN), così la corona secondaria non si sposta al
    cambio lingua. Larghezza propria perché l'etichetta è più lunga delle altre. */
-.ctrl-legend-row .leg-lbl-king { width:10em; flex:none; }
+.ctrl-legend-row .leg-lbl-king { width:10.05em; flex:none; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:-0.28rem; }
@@ -885,6 +885,15 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    così il suo centro si incolonna con le icone singole sopra; la sovrapposizione
    tra gli anelli (margin-left negativo) resta intatta. */
 .ctrl-legend-rings .leg-ring:first-child { margin-left:0.138rem; }
+/* Cluster a larghezza fissa attorno alle 5 icone (Anelli e Istari): il testo
+   che segue parte SEMPRE dallo stesso x nelle due righe (allineamento esatto),
+   a prescindere dalla dimensione delle icone. */
+.ctrl-legend-rings .leg-cluster { display:inline-flex; align-items:center; width:6.9em; flex:none; }
+/* Istari: icone un filo più piccole (per stare nel cluster e non risultare
+   troppo spaziate rispetto agli Anelli) + micro-nudge a sinistra del primo
+   (Saruman) per compensarne la forma otticamente più a destra dell'Unico. */
+.ctrl-legend-istari .si-istari { width:.79em; height:.79em; }
+.ctrl-legend-istari .leg-cluster .leg-ring:first-child { margin-left:-0.06rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 /* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
    l'unica icona di fatto sempre presente, quindi messa in evidenza su una
@@ -1875,7 +1884,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.22</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2246,16 +2255,19 @@ var ICON_SVG = {
   est:        "<img class=\"status-icon\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
   drago:      "<img class=\"status-icon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
   balrog:     "<img class=\"status-icon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
+  morgoth:    "<img class=\"status-icon\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
   calaquende: "<img class=\"status-icon\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
   suicidio:   "<img class=\"status-icon\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
 };
-// Ordine dei badge (riordinato dall'utente in v7.22): vale per la resa in
+// Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
 // lista, per la legenda del Pannello e per la griglia dell'editor admin. In
 // legenda condividono la riga: (king_high+king_high_now), (west+envoy),
-// (drago+balrog), (onering+vilya+nenya+narya+menring); gli altri hanno riga
-// propria. 'est' precede 'Aman/west' (la nave che va, poi la nave che torna).
-var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','guerradira','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','istari','suicidio','fellowship','survivor','onering','vilya','nenya','narya','menring'];
+// (drago+balrog), (istari: 5 maghi in fila), (onering+vilya+nenya+narya+menring);
+// gli altri hanno riga propria. 'est' precede 'Aman/west' (la nave che va, poi
+// quella che torna). 'morgoth' è un EASTER EGG (solo Fingolfin): saltato in
+// legenda e nella griglia admin, appare solo sulla sua card.
+var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','morgoth','guerradira','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','suicidio','fellowship','survivor','istari','onering','vilya','nenya','narya','menring'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
@@ -2308,7 +2320,8 @@ var ICON_LABEL = {
     balrog:  "Uccise un Balrog",
     calaquende: "Calaquendë: vide la Luce dei Due Alberi di Valinor",
     guerradira: "Combattè nella Guerra d'Ira",
-    suicidio: "Si tolse la vita (non il 'deporre la vita' númenóreano)"
+    suicidio: "Si tolse la vita (non il 'deporre la vita' númenóreano)",
+    morgoth: "Sfidò Morgoth a duello e lo ferì sette volte: una delle più grandi imprese della storia di Arda."
   },
   en: {
     aratar:  "Aratar: the greatest and mightiest of the Ainur",
@@ -2333,7 +2346,8 @@ var ICON_LABEL = {
     balrog:  "Slew a Balrog",
     calaquende: "Calaquendë: beheld the Light of the Two Trees of Valinor",
     guerradira: "Fought in the War of Wrath",
-    suicidio: "Took their own life (not the Númenórean 'passing')"
+    suicidio: "Took their own life (not the Númenórean 'passing')",
+    morgoth: "He challenged Morgoth to single combat and wounded him seven times: one of the greatest deeds in the history of Arda."
   }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
@@ -3442,6 +3456,16 @@ function controlPanelHTML() {
     var s = '';
     ICON_ORDER.forEach(function(k){
       if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring') return;
+      if (k === 'morgoth') return; // easter egg (solo Fingolfin): nessuna riga in legenda
+      if (k === 'istari') {
+        // I 5 Istari in fila (come gli Anelli): Saruman, Gandalf, Radagast,
+        // Alatar, Pallando (un'icona per mago, dal colore della veste/ordine).
+        var wiz = [['Bianco.png','Saruman'],['Grigio.png','Gandalf'],['Bruno.png','Radagast'],['Blu1.png','Alatar'],['Blu2.png','Pallando']];
+        s += legRow('istari', '<span class="leg-cluster">' + wiz.map(function(w){
+          return '<span class="leg-ring"><img class="status-icon si-istari" src="icons/' + w[0] + '" title="' + w[1] + '" alt="' + w[1] + '"></span>';
+        }).join('') + '</span><span>' + IL['istari'] + '</span>', 'ctrl-legend-rings ctrl-legend-istari');
+        return;
+      }
       if (k === 'king_high') {
         s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + IL['king_high'] + '</span>'
            + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span>');
@@ -3470,12 +3494,13 @@ function controlPanelHTML() {
         // Tutti gli Anelli in un'unica riga (Unico, Vilya, Nenya, Narya, Nove),
         // in coda alla legenda. I singoli tooltip restano quelli di ICON_LABEL.
         var ringsTxt = lang === 'it' ? 'Portatore di uno degli Anelli del Potere' : 'Bearer of one of the Rings of Power';
-        s += legRow('rings', '<span class="leg-ring">' + ICON_SVG['onering'].split('%L%').join(IL['onering']) + '</span>'
+        s += legRow('rings', '<span class="leg-cluster">'
+           + '<span class="leg-ring">' + ICON_SVG['onering'].split('%L%').join(IL['onering']) + '</span>'
            + '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join(IL['vilya']) + '</span>'
            + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join(IL['nenya']) + '</span>'
            + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join(IL['narya']) + '</span>'
            + '<span class="leg-ring">' + ICON_SVG['menring'].split('%L%').join(IL['menring']) + '</span>'
-           + '<span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
+           + '</span><span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
         return;
       }
       s += legRow(k, '<span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
@@ -4763,6 +4788,7 @@ function showAdminEditor() {
       p.citazione = g(i, 'citazione'); p.citazione_en = g(i, 'citazione_en');
       p.fonte = g(i, 'fonte'); p.fonte_en = g(i, 'fonte_en');
       ICON_ORDER.forEach(function(k) {
+        if (k === 'morgoth') return; // easter egg: nessuna checkbox, il valore su Fingolfin va PRESERVATO
         const chkEl = document.getElementById('ae-' + i + '-flag-' + k);
         // Preserva il valore speciale 'presunto' (non impostabile da UI):
         // la checkbox lo mantiene se resta spuntata, lo rimuove se deselezionata.
@@ -4952,6 +4978,7 @@ function showAdminEditor() {
     const flagsRow = document.createElement('div');
     flagsRow.className = 'admin-flags-row';
     ICON_ORDER.forEach(function(k) {
+      if (k === 'morgoth') return; // easter egg (solo Fingolfin): non esposto nell'editor admin
       const lbl = document.createElement('label');
       lbl.className = 'admin-flag-chk';
       // Solo icone: il nome dell'indicatore resta accessibile via title (hover/long-press)
