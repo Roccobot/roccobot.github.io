@@ -846,16 +846,20 @@ specifico del dataset):
   (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
   Uomo Salice, etichettato 'Spirito della foresta') restano in `divini`.
-- **Colori-badge di Ent, Aquile e casi affini (dalla v7.16, scelte dell'utente).**
-  Via `tipo_color`: **tutti gli Ent** (Fangorn, Bregalad, Fladrif, Faggiosso,
-  Finglas e **Fimbrethil** — quest'ultima col colore dalla v7.17; dalla v7.18 il
-  suo `tipo` è stato normalizzato da 'Entessa'/'Entwife' a **'Ent'** — `genere:f`
-  invariato — così non sfugge alle future azioni sugli Ent) e **tutte le Grandi
-  Aquile** (Thorondor, Gwaihir, Meneldor, Landroval)
-  usano il colore di **Tom Bombadil** (`tipo-bombadil`); il **Vecchio Uomo
-  Salice** usa il colore di **Osservatore nell'Acqua** (`tipo-misterioso`) — non
-  più quello di Tom Bombadil. Le etichette-testo ('Ent', 'Grande Aquila',
-  'Spirito della foresta') restano invariate: cambia solo il colore. Contrasto AA
+- **Schede (card) di Ent, Aquile e Vecchio Uomo Salice (dalla v7.19, scelte
+  dell'utente).** Riguarda la **card** (classe `.rank-item.divine*`: sfondo,
+  bordo sinistro, hover), NON l'etichetta tipo. Assegnata in `renderList` (non da
+  dati): **tutti gli Ent** (`p.tipo === 'Ent'`: Fangorn, Bregalad, Fladrif,
+  Faggiosso, Finglas, Fimbrethil) e **tutte le Grandi Aquile** (`p.tipo ===
+  'Grande Aquila'`: Thorondor, Gwaihir, Meneldor, Landroval) prendono la **scheda
+  verde di Tom Bombadil** (`.divine.bombadil`); il **Vecchio Uomo Salice** (per
+  nome) prende la **scheda generica oro come Osservatore nell'Acqua** (`.divine`).
+  Le **etichette tipo** restano ai colori automatici (`tipo-ent`, `tipo-aquila`;
+  il Vecchio Uomo Salice tiene `tipo-bombadil`): NON si toccano. ⚠️ Storia: nelle
+  v7.16-7.18 avevo erroneamente cambiato le *etichette* (`tipo_color`) invece
+  delle *schede*; etichette ripristinate e schede corrette in v7.19. Fimbrethil:
+  dalla v7.18 il `tipo` è normalizzato da 'Entessa'/'Entwife' a **'Ent'**
+  (`genere:f` invariato), così rientra nel match `tipo === 'Ent'`. Contrasto AA
   verificato con axe (tutte le categorie attive) in entrambi i temi.
 - **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria
   'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
