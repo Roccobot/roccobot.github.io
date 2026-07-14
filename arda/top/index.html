@@ -975,12 +975,18 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
        raggio 18px 'suo' lasciava una scheggia di sfondo agli angoli che
        spezzava la linea del bordo (glitch segnalato). */
   }
-  /* Categorie + legenda come UNICO blocco centrato (dalla v5.79): il wrapper
-     .ctrl-cols si restringe al contenuto e si centra; le due colonne si
-     allineano a sinistra al suo bordo, così le checkbox delle categorie
-     risultano incolonnate con le icone della legenda. Niente più categorie a
-     tutta larghezza né legenda centrata a sé (che si disallineavano). */
-  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
+  /* Categorie + legenda come UNICO blocco centrato (dalla v5.79): le due
+     colonne si allineano a sinistra al bordo del blocco, così le checkbox delle
+     categorie sono incolonnate con le icone della legenda. Niente più categorie
+     a tutta larghezza né legenda centrata a sé (che si disallineavano).
+     LARGHEZZA DEFINITA (dalla v6.96), non più fit-content: min(100%, 21rem).
+     Motivo: con fit-content il centraggio (margin:auto) su alcuni motori mobile
+     finiva fuori centro (il blocco appariva spostato a destra); una larghezza
+     definita + margin:auto è centrata in modo affidabile su qualsiasi device.
+     21rem dà anche più respiro alle righe (margini ~19px invece di ~37px) e la
+     riga anelli ci sta comoda. Su viewport più stretti scende a 100% (il
+     padding simmetrico del pannello fa da margine). */
+  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:min(100%, 21rem); max-width:100%; margin-left:auto; margin-right:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-left { width:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-section--legend { width:auto; }
   /* .ctrl-left è display:contents, quindi i suoi figli (categorie, tag-slot,
@@ -1850,7 +1856,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
