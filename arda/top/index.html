@@ -875,24 +875,24 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .ctrl-legend-row .leg-lbl-king { width:10.05em; flex:none; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
-.ctrl-legend-rings .leg-ring + .leg-ring { margin-left:-0.28rem; }
+.ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
 .ctrl-legend-rings .leg-ring { display:inline-flex; align-items:center; gap:0.22rem; }
 .ctrl-legend-rings .leg-ring img { margin-left:0; }
 /* La prima icona-anello (Unico, .707em) è più stretta dello slot .leg-ico
    (.95em) delle righe normali e, non essendo centrata in uno slot, il suo
    centro cadrebbe ~2.2px a sinistra della colonna delle altre icone. La si
    sposta a destra di (.95em - .707em)/2 nel contesto icona (1.141rem) = 0.138rem
-   così il suo centro si incolonna con le icone singole sopra; la sovrapposizione
-   tra gli anelli (margin-left negativo) resta intatta. */
+   così il suo centro si incolonna con le icone singole sopra. Le icone delle
+   righe multi-icona sono DISTANZIATE (gap positivo 0.22rem, dalla v7.25), non
+   più sovrapposte: c'è spazio in abbondanza (scelta dell'utente). */
 .ctrl-legend-rings .leg-ring:first-child { margin-left:0.138rem; }
 /* Cluster a larghezza fissa attorno alle 5 icone (Anelli e Istari): il testo
    che segue parte SEMPRE dallo stesso x nelle due righe (allineamento esatto),
    a prescindere dalla dimensione delle icone. */
-.ctrl-legend-rings .leg-cluster { display:inline-flex; align-items:center; width:6.9em; flex:none; }
+.ctrl-legend-rings .leg-cluster { display:inline-flex; align-items:center; width:8em; flex:none; }
 /* Istari: icone un filo più piccole (per stare nel cluster e non risultare
    troppo spaziate rispetto agli Anelli) + micro-nudge a sinistra del primo
    (Saruman) per compensarne la forma otticamente più a destra dell'Unico. */
-.ctrl-legend-istari .si-istari { width:.79em; height:.79em; }
 .ctrl-legend-istari .leg-cluster .leg-ring:first-child { margin-left:-0.06rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 /* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
@@ -1884,7 +1884,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.24</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.25</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

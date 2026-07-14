@@ -1039,7 +1039,13 @@ specifico del dataset):
   Gandalf (`Grigio`), Radagast (`Bruno`), Alatar (`Blu1`), Pallando (`Blu2`),
   ognuno col proprio nome come tooltip (caso `k === 'istari'` in `buildLegend`;
   `ICON_LEGENDA.istari` non è più usato). La riga Istari è stata spostata al
-  **penultimo posto**, subito prima degli Anelli.
+  **penultimo posto**, subito prima degli Anelli. Le icone delle righe
+  multi-icona (Istari e Anelli) sono avvolte in un `.leg-cluster` a larghezza
+  fissa (`8em`, dalla v7.25) così il testo delle due righe parte dallo stesso x
+  (allineamento esatto, IT ed EN); le icone sono **distanziate** con gap
+  positivo (`0.22rem`), non sovrapposte (dalla v7.25: prima erano ammucchiate),
+  e la prima icona Istari (Saruman) ha un micro-nudge a sinistra per
+  compensarne la forma otticamente più a destra dell'Unico.
 - **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
   i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
   In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
