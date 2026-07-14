@@ -1875,7 +1875,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.21</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.22</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2250,12 +2250,12 @@ var ICON_SVG = {
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
   suicidio:   "<img class=\"status-icon\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
 };
-// Ordine definitivo dei badge (deciso dall'utente, 2026-07-04): vale per la
-// resa in lista, per la legenda del Pannello e per la griglia dell'editor
-// admin. In legenda condividono la riga: (king_high+king_high_now),
-// (west+envoy), (drago+balrog), (vilya+nenya+narya); 'est' ha riga propria
-// PRIMA di quella di Aman (la nave che va, poi la nave che torna).
-var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','guerradira','suicidio','fellowship','onering','vilya','nenya','narya','menring'];
+// Ordine dei badge (riordinato dall'utente in v7.22): vale per la resa in
+// lista, per la legenda del Pannello e per la griglia dell'editor admin. In
+// legenda condividono la riga: (king_high+king_high_now), (west+envoy),
+// (drago+balrog), (onering+vilya+nenya+narya+menring); gli altri hanno riga
+// propria. 'est' precede 'Aman/west' (la nave che va, poi la nave che torna).
+var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','guerradira','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','istari','suicidio','fellowship','survivor','onering','vilya','nenya','narya','menring'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
