@@ -1034,8 +1034,12 @@ specifico del dataset):
   colore della veste/ordine (`Bianco.png` Saruman, `Bruno.png` Radagast,
   `Blu1.png` Alatar, `Blu2.png` Pallando; mappa `ISTARI_ICON`, i cui valori
   sono array). **Gandalf è l'unico con due icone**, `Grigio.png` poi
-  `Bianco.png`: fu sia il Grigio sia il Bianco. In legenda l'emblema
-  dell'ordine è il mago bianco (`Bianco.png` via `ICON_LEGENDA`).
+  `Bianco.png`: fu sia il Grigio sia il Bianco. **In legenda (dalla v7.23) i
+  5 maghi sono in fila** (come gli Anelli), nell'ordine Saruman (`Bianco`),
+  Gandalf (`Grigio`), Radagast (`Bruno`), Alatar (`Blu1`), Pallando (`Blu2`),
+  ognuno col proprio nome come tooltip (caso `k === 'istari'` in `buildLegend`;
+  `ICON_LEGENDA.istari` non è più usato). La riga Istari è stata spostata al
+  **penultimo posto**, subito prima degli Anelli.
 - **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
   i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
   In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
@@ -1080,14 +1084,19 @@ specifico del dataset):
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
     Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo nei
     Racconti Perduti (versione superata del Legendarium).
-  - **`morgoth`** ('Affrontò Morgoth in duello'): era SOLO Fingolfin, il badge
-    più esclusivo. **RIMOSSO nella v7.09** per far posto al badge `calaquende`
-    (scelta dell'utente: 'per quanto affezionato all'esclusivo badge Morgoth lo
-    tolgo per fare spazio a un badge Calaquendi'). L'icona `Morgoth.png` resta in
-    cartella (recuperabile); la card di Fingolfin non lo espone più. Restano
-    intatte le feature omonime ma distinte: la classe card `.rank-item.divine.morgoth`
-    (sfondo scuro dei villain, via `darkBg`) e l'etichetta tipo `.tipo-morgoth`
-    ('vala decaduto').
+  - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin. Rimosso in v7.09
+    per far posto a `calaquende`, poi **ri-introdotto in v7.23 come EASTER EGG**
+    (icona nuova `icons/Morgoth.png`, guerriero corazzato): appare **solo sulla
+    card di Fingolfin**, NON in legenda (skip in `buildLegend`) né nella griglia
+    admin (skip nella generazione checkbox; il valore è comunque preservato al
+    salvataggio perché la checkbox è assente). In `ICON_ORDER` sta **subito dopo
+    `helcaraxe`**. Tooltip (via `ICON_LABEL`, unico portatore): IT 'Sfidò Morgoth
+    a duello e lo ferì sette volte: una delle più grandi imprese della storia di
+    Arda.' / EN 'He challenged Morgoth to single combat and wounded him seven
+    times: one of the greatest deeds in the history of Arda.'. Non è in
+    `BADGE_ROWS` (non filtrabile). Restano intatte le feature omonime ma distinte:
+    la classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via
+    `darkBg`) e l'etichetta tipo `.tipo-morgoth` ('vala decaduto').
   - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
     ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
     riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
@@ -1126,6 +1135,15 @@ specifico del dataset):
     them went none of those Elves who had dwelt... in the Hither Lands'):
     Gil-galad, Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la
     schiera; Maedhros e Maglor vennero *dopo* la guerra, per i Silmaril.
+- **Allineamento seconde icone delle righe a due colonne (dalla v7.23).** Le
+  righe legenda a due colonne (west+envoy, drago+balrog, king_high+king_high_now)
+  hanno la prima colonna a **larghezza fissa unica `10.05em`** (`.leg-lbl-col`
+  e `.leg-lbl-king`), così le tre seconde icone (Valinor, Balrog, In carica)
+  sono incolonnate allo stesso x e restano immobili al cambio lingua (anti-jitter).
+  La larghezza regge l'etichetta più lunga tra IT/EN (`High King of the Noldor`,
+  ~9.89em); il valore `10.05em` la posiziona ~2px più a sinistra rispetto al
+  puro fit (scelta dell'utente). Effetto collaterale voluto: dopo le etichette
+  corte resta più spazio prima della seconda icona.
 - **Tutti gli Anelli in un'unica riga di legenda (v6.63).** L'Unico, i Tre
   degli Elfi (Vilya, Nenya, Narya) e i Nove non hanno più tre righe separate:
   una sola riga **in coda** alla legenda mostra le 5 icone in orizzontale
