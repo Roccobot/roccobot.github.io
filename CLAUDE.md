@@ -943,6 +943,17 @@ specifico del dataset):
   editoriali dei badge'), quindi le 7 voci che avevano `Teler/Calaquendë` sono
   state ripulite: Galadriel, Thingol, Finrod, Aegnor, Angrod → `Teler`
   (`tipo-teleri`); la vecchia classe `tipo-calaquendi` è stata **rimossa**.
+- **Teleri di Beleriand = etichetta `Sinda`, non `Teler` generico (dalla v7.14).**
+  I Teleri rimasti nella Terra di Mezzo sono Sindar: etichetta `Elfo/Elfa
+  (Sinda)`. Bonifica: **Thingol, Círdan, Elmo, Galathil, Galadhon** (stirpe di
+  Doriath, parenti di Thingol) e **Galdor dei Porti Grigi** (gente di Círdan,
+  Falathrim) passati da `Teler` a `Sinda`. Colore invariato: `tipo-sindar`
+  condivide il CSS di `tipo-teleri` (stesso teal). **Eccezione tenuta:**
+  **Lúthien** resta `Elfa (Teler)` come seconda etichetta (caso unico: figlia
+  di un Sinda e di una Maia, la si lascia sul Teler generico per volontà
+  dell'utente). Restano legittimamente `Teler` anche le etichette **secondarie
+  d'eredità** dei figli di Finarfin (Galadriel, Finrod, Aegnor, Angrod: Telerin
+  per parte di Eärwen).
 - **Etichetta `Falmar` (dalla v7.11): i Teleri di Aman con colore dedicato.**
   **Olwë** ed **Eärwen** portano l'etichetta `Elfo/Elfa (Falmar)` con la classe
   `tipo-falmar` (dark `#45d8ee`, light `#006870`): un azzurro **leggermente più
