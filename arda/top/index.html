@@ -1875,7 +1875,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.18</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.19</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2571,10 +2571,15 @@ function renderList() {
     }
     var classes = 'rank-item' + (isVisTop ? ' vis-top' : '');
     var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
-    if (p.divino || darkBg) {
+    // Scheda (card) 'divine': Ainur/darkBg + gli esseri arcani che ne condividono
+    // la resa. Ent e Grandi Aquile -> scheda VERDE di Tom Bombadil (.bombadil);
+    // il Vecchio Uomo Salice -> scheda generica come Osservatore nell'Acqua (.divine).
+    var isEntEagle = (p.tipo === 'Ent' || p.tipo === 'Grande Aquila');
+    var isForestSpirit = (p.nome === 'Vecchio Uomo Salice');
+    if (p.divino || darkBg || isEntEagle || isForestSpirit) {
       classes += ' divine';
       if (darkBg) classes += ' morgoth';
-      else if (/bombadil/i.test(p.nome)) classes += ' bombadil';
+      else if (/bombadil/i.test(p.nome) || isEntEagle) classes += ' bombadil';
     }
     if (p.apocrifo) classes += ' apocrifo';
     // Pill 'Solo HoME/NoME' (catalogo esteso): in alto a destra della card.
