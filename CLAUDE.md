@@ -1041,22 +1041,40 @@ specifico del dataset):
   `ICON_LEGENDA.istari` non è più usato). La riga Istari è stata spostata al
   **penultimo posto**, subito prima degli Anelli. Le icone delle righe
   multi-icona (Istari e Anelli) sono avvolte in un `.leg-cluster` a larghezza
-  fissa (`8em`) così il testo delle due righe parte dallo stesso x (allineamento
-  esatto, IT ed EN). **Spaziatura (v7.27):** i PNG dei maghi sono stati
+  **fissa** così il testo delle due righe parte dallo stesso x (allineamento
+  esatto, IT ed EN). **Larghezza cluster `6.40em` (dalla v7.28):** era `8em`,
+  troppo largo → il testo partiva ~18px dopo l'ultima icona ('molto più in là').
+  Ridotto perché il gap icona→testo pareggi le righe a icona singola (~10.7px:
+  ~2.7px interni al cluster + gli 8px del `gap:0.5rem` di riga). Entrambe le
+  righe (Istari e Anelli) finiscono le icone allo stesso x (~442px), quindi il
+  cluster fisso le mantiene incolonnate. **Spaziatura Istari (v7.27):** i PNG dei maghi sono stati
   **RITAGLIATI** (rimosso il ~16% di trasparente per lato: ora 174×256,
   verticali). In legenda si dimensionano per **altezza** (`.ctrl-legend-istari
   .si-istari { width:auto }`) → il box avvolge stretto la figura, così bastano
-  **gap positivi** (`0.16rem`) per averli vicini ma **distinti, senza
-  sovrapposizione dei PNG** (era l'overlap a dare il 'rotto'). Gli **Anelli**
-  invariati (gap `0.22rem`). Le **card NON cambiano**: là il box resta quadrato
-  con `object-fit:contain` (la figura verticale riempie l'altezza, resa identica
-  a prima). Il primo mago (Saruman) ha un nudge (`0.13rem`) per allineare la riga
+  **gap positivi** per averli vicini ma **distinti, senza sovrapposizione dei
+  PNG** (era l'overlap a dare il 'rotto'). **Gap `0.30rem` (dalla v7.28):** era
+  `0.16rem`, troppo stretto → c-t-c 14.1px; portato a `0.30rem` per un c-t-c
+  ~16.4px, cioè **allineato agli Anelli** (~16px, che l'utente non contestava).
+  L'utente misura in 'suoi pixel' (screenshot retina, **fattore ~2**): il suo
+  '+4.75 px per gap, +19 totali' = ~+2.3px css/gap. Gli **Anelli** invariati
+  (gap `0.22rem`). Le **card NON cambiano**: là il box resta quadrato con
+  `object-fit:contain` (la figura verticale riempie l'altezza, resa identica a
+  prima). Il primo mago (Saruman) ha un nudge (`0.13rem`) per allineare la riga
   all'Unico. Storico: v7.23 ammucchiate, v7.25 troppo spaziate, v7.26 fan
-  sovrapposto (dava 'PNG uno sull'altro'), v7.27 ritaglio + gap positivo (pulito).
+  sovrapposto (dava 'PNG uno sull'altro'), v7.27 ritaglio + gap positivo, v7.28
+  gap allargato ad allinearsi agli Anelli + cluster ristretto (testo vicino).
 - **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
   i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
   In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
-  `istari`). Portatori tra i 159, da canone (*Silmarillion*, 'Della fuga dei
+  `istari`). **PNG ritagliata al contenuto (dalla v7.28): 202×229.** Prima era
+  234×256, con ~16px di trasparente per lato: dentro il box quadrato
+  `object-fit:contain` (limitato dall'altezza 256) l'iceberg riempiva solo ~79%
+  della larghezza e appariva 'troppo spaziato' rispetto ai badge quadrati vicini
+  (es. Calaquendi, ~88%). Ritagliata al bounding box del contenuto, ora riempie
+  ~88% larghezza (100% altezza), peso visivo uniforme con gli altri badge sulle
+  card. (Il canvas *largo* 234 in sé non contava — sotto contain-by-height la
+  larghezza del canvas è ininfluente: contava il padding che rimpiccioliva il
+  contenuto.) Portatori tra i 159, da canone (*Silmarillion*, 'Della fuga dei
   Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril, Finrod, Angrod, Aegnor,
   Galadriel, Orodreth (figlio di Angrod, nato a Valinor, giunto con l'oste di
   Fingolfin). NON lo attraversarono i Fëanoriani (giunsero con le navi) né
