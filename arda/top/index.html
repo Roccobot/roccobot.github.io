@@ -867,7 +867,7 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    IT/EN: 'Raggiunse Aman' ~87.8px @0.8rem), così il gruppo secondario - e la
    sua icona - parte allo stesso x nelle due righe (colonna perfetta) e NON si
    sposta al cambio lingua (anti-jitter). 7em = 89.6px, margine sulla misura. */
-.ctrl-legend-row .leg-lbl-col { width:7em; flex:none; }
+.ctrl-legend-row .leg-lbl-col { width:7.7em; flex:none; }
 /* Stesso principio per la riga Re Supremo (corona 'In carica'/'Current'):
    etichetta primaria a larghezza fissa (>= 'High King of the Noldor' ~126.6px
    @0.8rem, la più larga tra IT/EN), così la corona secondaria non si sposta al
@@ -1875,7 +1875,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.20</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.21</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2308,7 +2308,7 @@ var ICON_LABEL = {
     balrog:  "Uccise un Balrog",
     calaquende: "Calaquendë: vide la Luce dei Due Alberi di Valinor",
     guerradira: "Combattè nella Guerra d'Ira",
-    suicidio: "Si tolse la vita (non la 'dipartita' dei re númenóreani)"
+    suicidio: "Si tolse la vita (non il 'deporre la vita' númenóreano)"
   },
   en: {
     aratar:  "Aratar: the greatest and mightiest of the Ainur",
@@ -2333,7 +2333,7 @@ var ICON_LABEL = {
     balrog:  "Slew a Balrog",
     calaquende: "Calaquendë: beheld the Light of the Two Trees of Valinor",
     guerradira: "Fought in the War of Wrath",
-    suicidio: "Took their own life (not the 'passing' of the Númenórean kings)"
+    suicidio: "Took their own life (not the Númenórean 'passing')"
   }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
@@ -3448,7 +3448,7 @@ function controlPanelHTML() {
         return;
       }
       if (k === 'west') {
-        var westTxt = lang === 'it' ? 'Raggiunse Aman' : 'Reached Aman';
+        var westTxt = lang === 'it' ? 'Attraversò il Mare' : 'Crossed the Sea';
         var envoyTxt = lang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
         s += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + westTxt + '</span>'
            + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
@@ -3457,7 +3457,7 @@ function controlPanelHTML() {
       if (k === 'est') {
         // In legenda l'etichetta breve resta concisa (il tooltip esteso della
         // card è più lungo, 'su una nave degli Elfi...'): qui testo dedicato.
-        var estLeg = lang === 'it' ? 'Attraversò il Mare da Aman alla Terra di Mezzo' : 'Crossed the Sea from Aman to Middle-earth';
+        var estLeg = lang === 'it' ? 'Veleggiò verso est da Aman alla Terra di Mezzo' : 'Sailed eastwards from Aman to Middle-earth';
         s += legRow('est', '<span class="leg-ico">' + ICON_SVG['est'].split('%L%').join('') + '</span><span>' + estLeg + '</span>');
         return;
       }
