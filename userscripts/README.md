@@ -116,11 +116,18 @@ Il generatore di emoji con l'AI di [emojis.wiki/ai](https://emojis.wiki/ai/) ha 
 **limite giornaliero** di generazioni. Il limite è tracciato **lato client** (si
 azzera aprendo una finestra in incognito). Questo script aggiunge un pulsante
 flottante **"🔄 Reset generazioni"** che replica l'incognito con un clic:
-ripulisce in modo **mirato** lo stato client del sito (localStorage,
-sessionStorage, cookie — anche HttpOnly via `GM_cookie` — IndexedDB)
-**preservando** i cookie Cloudflare (`cf_clearance`/`__cf_bm`…) e **senza toccare
-Service Worker/Cache** — altrimenti la generazione si rompeva — poi ricarica la
-pagina, così riparti con la quota fresca senza aprire nuove finestre.
+ripulisce lo stato client del sito (localStorage, sessionStorage, cookie — anche
+HttpOnly via `GM_cookie` — IndexedDB e, dalla v1.4.0, **Cache Storage**)
+**preservando** i cookie Cloudflare (`cf_clearance`/`__cf_bm`…), così la
+generazione continua a funzionare, poi ricarica la pagina e riparti con la quota
+fresca senza aprire nuove finestre.
+
+> **Perché la Cache Storage (v1.4.0):** il sito ha spostato lì il conteggio del
+> limite (le v1.2–1.3 preservavano Cache/Service Worker e il reset non azzerava
+> più nulla, mentre l'incognito sì). Svuotare la Cache è sicuro (l'app la
+> ricostruisce). Se non bastasse, c'è il flag `PULISCI_SERVICE_WORKER` (più
+> aggressivo) per disinstallare anche i Service Worker. I cookie Cloudflare
+> restano comunque preservati (senza, la generazione fallisce).
 
 Il pulsante **compare solo sulle pagine del generatore** (URL che iniziano con
 `https://emojis.wiki/ai/`); altrove non appare. Il reset resta comunque
@@ -143,6 +150,8 @@ di conseguenza entrando/uscendo da `/ai/`.
 ```js
 const MOSTRA_PULSANTE  = true;   // pulsante flottante "Reset generazioni"
 const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pagina
+const PULISCI_CACHE    = true;   // svuota anche la Cache Storage (spesso è lì il conteggio); sicuro
+const PULISCI_SERVICE_WORKER = false; // più aggressivo: disinstalla anche i Service Worker (solo se serve)
 ```
 
 ### Note

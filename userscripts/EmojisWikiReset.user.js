@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.3.0
-// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Il pulsante compare SOLO sulle pagine del generatore (URL che iniziano con /ai/). Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly, IndexedDB) PRESERVANDO i cookie Cloudflare e senza toccare Service Worker/Cache, così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
+// @version      1.4.0
+// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Il pulsante compare SOLO sulle pagine del generatore (URL che iniziano con /ai/). Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly, IndexedDB e Cache Storage) PRESERVANDO i cookie Cloudflare, così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
 // @match        https://www.emojis.wiki/*
@@ -20,6 +20,8 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   const MOSTRA_PULSANTE  = true;   // pulsante flottante "Reset generazioni"
   const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pagina
+  const PULISCI_CACHE    = true;   // svuota anche la Cache Storage (spesso è lì il conteggio); sicuro per la generazione
+  const PULISCI_SERVICE_WORKER = false; // disinstalla anche i Service Worker: PIÙ AGGRESSIVO, usalo solo se col solo svuotamento cache il limite non si azzera (può richiedere un secondo ricaricamento)
 
   // ═══════════════════════════════════════════════════════════════
   //  Il limite si azzera con "Cancella dati del sito", ma ripulire
@@ -91,12 +93,43 @@
     });
   }
 
+  // Cache Storage (spesso i siti/PWA vi memorizzano risposte API, quota inclusa).
+  // È sicura da svuotare: l'app la ricostruisce al reload. In incognito è vuota
+  // e la generazione funziona lo stesso → per questo, dalla v1.4.0, la ripuliamo.
+  function svuotaCache() {
+    return new Promise(function (resolve) {
+      try {
+        if (!window.caches || !caches.keys) { resolve(); return; }
+        caches.keys().then(function (nomi) {
+          return Promise.all((nomi || []).map(function (n) { return caches.delete(n); }));
+        }).then(function () { resolve(); }).catch(function () { resolve(); });
+      } catch (e) { resolve(); }
+    });
+  }
+
+  // Service Worker: più aggressivo (dietro flag). In incognito non c'è e la
+  // generazione va: disinstallarlo replica quella condizione. Se un SW intercetta
+  // le richieste e serve una risposta cachata col conteggio, toglierlo aiuta.
+  function svuotaServiceWorker() {
+    return new Promise(function (resolve) {
+      try {
+        if (!navigator.serviceWorker || !navigator.serviceWorker.getRegistrations) { resolve(); return; }
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all((regs || []).map(function (r) { try { return r.unregister(); } catch (e) { return null; } }));
+        }).then(function () { resolve(); }).catch(function () { resolve(); });
+      } catch (e) { resolve(); }
+    });
+  }
+
   async function svuotaTutto() {
     try { localStorage.clear(); } catch (e) {}
     try { sessionStorage.clear(); } catch (e) {}
     svuotaCookieJS();
-    // NB: niente Service Worker né Cache (rompevano l'app); niente cookie Cloudflare.
-    await Promise.allSettled([ svuotaCookieHttpOnly(), svuotaIndexedDB() ]);
+    // Si preservano SEMPRE i cookie Cloudflare (senza, la generazione fallisce).
+    const compiti = [ svuotaCookieHttpOnly(), svuotaIndexedDB() ];
+    if (PULISCI_CACHE) compiti.push(svuotaCache());
+    if (PULISCI_SERVICE_WORKER) compiti.push(svuotaServiceWorker());
+    await Promise.allSettled(compiti);
   }
 
   async function reset(btn) {
