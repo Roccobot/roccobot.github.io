@@ -790,6 +790,13 @@ specifico del dataset):
     nuovo attive). Il criterio giusto è per-riga sulle categorie, indipendente
     dagli altri badge. Con la disabilitazione il messaggio `.rank-empty` resta
     solo un fallback teorico.
+    ⚠️ **Potatura al cambio categoria (fix v7.45):** un filtro badge già ATTIVO
+    che, cambiando le categorie, non ha più portatori nelle categorie attive
+    va DISATTIVATO da sé. `pruneBadgeFilter()` (chiamata in testa a `applyFilter`)
+    rimuove da `badgeFilter` le righe senza portatori (via `rowHasMembersInCats`,
+    base condivisa con la disabilitazione). Senza, il filtro restava bloccato
+    dando lista vuota e non lo si riusciva più a togglare (segnalato: Tutti +
+    apocrifi, filtro Calaquendi, poi Solo Hobbit → lista vuota bloccata).
   - Sotto le Categorie c'è lo **slot del tag**
   (`.ctrl-tag-slot`): a filtro attivo mostra il **tag** `× N badge attivi`
   (centrato sui due assi, il click azzera); a filtro spento resta **vuoto ma
