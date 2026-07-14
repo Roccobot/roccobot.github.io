@@ -947,6 +947,14 @@ specifico del dataset):
   (tasto manuale '⇄ Traduci' per coppia bilingue). Spenta su richiesta
   dell'utente in favore della modale di conferma dei campi dimenticati (vedi
   'Struttura dati'). Riattivabile mettendo il flag a `true`.
+- **`istariFiveIcons`** (spento, dalla v7.30): la **riga di legenda** Istari con
+  le **5 icone** dei maghi in fila (Saruman, Gandalf, Radagast, Alatar,
+  Pallando). Spento = riga normale a icona singola (Gandalf grigio) + testo. A
+  `true` ripristina la fila di 5 icone (`.leg-cluster`), niente altre modifiche.
+  Riguarda **solo la legenda**; sulle card le icone-badge per-mago
+  (`ISTARI_ICON`, Gandalf grigio+bianco ecc.) restano sempre. Vedi 'Badge
+  Istari'. Storia: 5-icone in legenda dalla v7.23 (con una lunga saga di
+  spaziatura), riportata a icona singola in v7.30 (era nata come flag).
 - **Scorrimento di pagina — NON è più un flag (dalla v4.97).** La funzione
   condivisa `pageScrollTo(target, smooth)` ha due modi **fissi**, uno per tipo
   di comando (scelta dell'utente):
@@ -1045,7 +1053,21 @@ specifico del dataset):
   colore della veste/ordine (`Bianco.png` Saruman, `Bruno.png` Radagast,
   `Blu1.png` Alatar, `Blu2.png` Pallando; mappa `ISTARI_ICON`, i cui valori
   sono array). **Gandalf è l'unico con due icone**, `Grigio.png` poi
-  `Bianco.png`: fu sia il Grigio sia il Bianco. **In legenda (dalla v7.23) i
+  `Bianco.png`: fu sia il Grigio sia il Bianco. Questo vale per le **CARD**
+  (`buildStatus` via `ISTARI_ICON`), sempre.
+  - **RIGA DI LEGENDA: normale a icona singola (dalla v7.30), la 5-icone è ora
+    un feature flag SPENTO.** La riga di legenda Istari è tornata **normale**:
+    una sola icona (**Gandalf grigio**, `ICON_LEGENDA.istari` = `Grigio.png`) +
+    testo, come le altre righe, e **spostata prima della Compagnia** (in
+    `ICON_ORDER`, `istari` è ora subito prima di `fellowship`). La **variante a
+    5 icone** (Saruman, Gandalf, Radagast, Alatar, Pallando in fila) è
+    conservata dietro **`FEATURES.istariFiveIcons`** (default `false`): a `true`
+    torna la riga a 5 icone col cluster (ramo `k === 'istari' &&
+    FEATURES.istariFiveIcons` in `buildLegend`), niente altre modifiche. Motivo:
+    era nata come feature flag fin dall'inizio (l'utente ha aspettato a dirlo).
+    Il paragrafo sotto descrive lo **stato a 5 icone** (flag ON), tenuto per
+    memoria e per l'eventuale riaccensione.
+  - **[Flag ON] In legenda (dalla v7.23) i
   5 maghi sono in fila** (come gli Anelli), nell'ordine Saruman (`Bianco`),
   Gandalf (`Grigio`), Radagast (`Bruno`), Alatar (`Blu1`), Pallando (`Blu2`),
   ognuno col proprio nome come tooltip (caso `k === 'istari'` in `buildLegend`;
@@ -1077,15 +1099,16 @@ specifico del dataset):
 - **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
   i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
   In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
-  `istari`). **PNG ritagliata al contenuto (dalla v7.28): 202×229.** Prima era
-  234×256, con ~16px di trasparente per lato: dentro il box quadrato
-  `object-fit:contain` (limitato dall'altezza 256) l'iceberg riempiva solo ~79%
-  della larghezza e appariva 'troppo spaziato' rispetto ai badge quadrati vicini
-  (es. Calaquendi, ~88%). Ritagliata al bounding box del contenuto, ora riempie
-  ~88% larghezza (100% altezza), peso visivo uniforme con gli altri badge sulle
-  card. (Il canvas *largo* 234 in sé non contava — sotto contain-by-height la
-  larghezza del canvas è ininfluente: contava il padding che rimpiccioliva il
-  contenuto.) Portatori tra i 159, da canone (*Silmarillion*, 'Della fuga dei
+  `istari`). **PNG ritagliata: 202×214 (dalla v7.30, aspetto ~0.944).** Storia:
+  originale 234×256 (~79% larghezza nel box, 'troppo spaziato'); v7.28 ritaglio
+  al contenuto → 202×229 (~88% larghezza, 100% altezza); v7.30 ancora 'troppo
+  spazio ai lati' (l'iceberg è più alto che largo), quindi ritagliata anche la
+  **punta subacquea sottile in fondo** (che allungava il canvas senza aggiungere
+  larghezza) portando l'aspetto a ~0.944 → ora riempie **~94% larghezza** nel box
+  quadrato `object-fit:contain`, come le navi (~94%), lati quasi pieni. (Il
+  canvas *largo* non conta: sotto contain-by-height la larghezza del canvas è
+  ininfluente, conta il rapporto larghezza/altezza del contenuto.) Portatori tra
+  i 159, da canone (*Silmarillion*, 'Della fuga dei
   Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril, Finrod, Angrod, Aegnor,
   Galadriel, Orodreth (figlio di Angrod, nato a Valinor, giunto con l'oste di
   Fingolfin). NON lo attraversarono i Fëanoriani (giunsero con le navi) né
