@@ -845,8 +845,15 @@ specifico del dataset):
 - **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
   (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
-  Uomo Salice, etichettato 'Spirito della foresta', colore di Tom Bombadil come
-  Baccador, via `tipo_color`) restano in `divini`.
+  Uomo Salice, etichettato 'Spirito della foresta') restano in `divini`.
+- **Colori-badge di Ent, Aquile e casi affini (dalla v7.16, scelte dell'utente).**
+  Via `tipo_color`: **tutti gli Ent** (Fangorn, Bregalad, Fladrif, Faggiosso,
+  Finglas) e **tutte le Grandi Aquile** (Thorondor, Gwaihir, Meneldor, Landroval)
+  usano il colore di **Tom Bombadil** (`tipo-bombadil`); il **Vecchio Uomo
+  Salice** usa il colore di **Osservatore nell'Acqua** (`tipo-misterioso`) — non
+  più quello di Tom Bombadil. Le etichette-testo ('Ent', 'Grande Aquila',
+  'Spirito della foresta') restano invariate: cambia solo il colore. Contrasto AA
+  verificato con axe (tutte le categorie attive) in entrambi i temi.
 - **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria
   'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
   interna invariata), la cui **legenda recita 'Orchi e Troll' / 'Orcs &
