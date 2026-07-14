@@ -862,17 +862,18 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group--est { gap:0.34rem; }
 .ctrl-legend-row .leg-group--balrog { gap:0.4rem; }
-/* Incolonnamento delle righe Aman (nave viola 'envoy') e Drago (Balrog):
-   l'etichetta primaria ha larghezza FISSA (>= la più lunga delle 4 stringhe
-   IT/EN: 'Raggiunse Aman' ~87.8px @0.8rem), così il gruppo secondario - e la
-   sua icona - parte allo stesso x nelle due righe (colonna perfetta) e NON si
-   sposta al cambio lingua (anti-jitter). 7em = 89.6px, margine sulla misura. */
-.ctrl-legend-row .leg-lbl-col { width:10.05em; flex:none; }
-/* Stesso principio per la riga Re Supremo (corona 'In carica'/'Current'):
-   etichetta primaria a larghezza fissa (>= 'High King of the Noldor' ~126.6px
-   @0.8rem, la più larga tra IT/EN), così la corona secondaria non si sposta al
-   cambio lingua. Larghezza propria perché l'etichetta è più lunga delle altre. */
-.ctrl-legend-row .leg-lbl-king { width:10.05em; flex:none; }
+/* Incolonnamento delle 3 righe a due colonne, Aman (nave viola 'envoy'),
+   Drago (Balrog) e Re (Re Supremo), con etichetta primaria a larghezza FISSA
+   (>= la più lunga delle 6 stringhe IT/EN col1), così il gruppo secondario e la
+   sua icona partono allo stesso x nelle tre righe (colonna perfetta) e NON si
+   spostano al cambio lingua (anti-jitter). La più lunga è 'Alto Re dei Noldor'
+   ~98.5px @0.8rem; 8.5em = 108.8px lascia ~8px di respiro + tolleranza font.
+   `nowrap` così una resa font più larga non manda l'etichetta a capo. Storico:
+   fino alla v7.28 era 10.05em, tarata sul lunghissimo 'High King of the Noldor'
+   (126.6px) del vecchio Re 'in carica'; tolto quello (dalla v7.29), la colonna
+   si è potuta stringere azzerando il 'buco' tra etichetta e seconda icona. */
+.ctrl-legend-row .leg-lbl-col,
+.ctrl-legend-row .leg-lbl-king { width:8.5em; flex:none; white-space:nowrap; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
@@ -1419,14 +1420,17 @@ html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#arda-t
 .admin-flags-row .admin-flag-chk img { display:block;transform:none; } /* annulla i nudge verticali si-* (anelli): qui il flex centra da sé */
 /* GRIGLIA dei badge (dalla v3.93): su desktop 12 colonne regolari su due
    righe, con le colonne sovrapposte e i bordi allineati (prima e ultima
-   colonna di entrambe le righe combaciano); 'Fonte apocrifa' occupa le
-   ultime tre colonne della seconda riga (tre icone sopra di lei). Su
-   mobile resta il wrap fluido, con 'Fonte apocrifa' a tutta riga. */
+   colonna di entrambe le righe combaciano); 'Apocrifo' occupa i DUE spazi a
+   destra della seconda riga (grid-column 11/13), liberati dalla v7.29 togliendo
+   il Re 'in carica' (king_high_now) dai badge admin: prima erano 23 badge
+   (riga2 piena fino a col11) e l'apo scendeva a una terza riga; ora 22 badge
+   (riga2 fino a col10) e l'apo entra nei due slot 11-12. Su mobile resta il
+   wrap fluido, con 'Apocrifo' a tutta riga. */
 .admin-apo-chk { justify-content:center;margin-top:0.7rem;flex-basis:100%; }
 .admin-apo-chk > span:last-child { white-space:nowrap; }
 @media (min-width:769px) {
   .admin-flags-row { display:grid;grid-template-columns:repeat(12,1fr);gap:0.6rem 0.3rem;justify-items:start; }
-  .admin-apo-chk { grid-column:10 / 13;margin-top:0;flex-basis:auto;justify-content:start; }
+  .admin-apo-chk { grid-column:11 / 13;margin-top:0;flex-basis:auto;justify-content:start; }
 }
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
@@ -1889,7 +1893,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.28</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.29</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2281,7 +2285,7 @@ var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','m
 var BADGE_ROWS = {
   aratar:['aratar'], calaquende:['calaquende'], silmaril:['silmaril'],
   incarnazione:['incarnazione'], helcaraxe:['helcaraxe'], istari:['istari'],
-  king_high:['king_high','king_high_now'], king_std:['king_std'],
+  king_high:['king_high','king_high_now','king_std'],
   survivor:['survivor'], est:['est'], west:['west','envoy'],
   drago:['drago','balrog'], guerradira:['guerradira'],
   suicidio:['suicidio'], fellowship:['fellowship'],
@@ -3457,7 +3461,6 @@ function controlPanelHTML() {
   // (visibility:hidden).
   function buildLegend(lang, measure) {
     var IL = ICON_LABEL[lang];
-    var attualeTxt = lang === 'it' ? 'In carica' : 'Current';
     function legRow(row, inner, extraCls) {
       if (measure) return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + '">' + inner + '</div>';
       var on = badgeFilter.has(row);
@@ -3466,7 +3469,7 @@ function controlPanelHTML() {
     }
     var s = '';
     ICON_ORDER.forEach(function(k){
-      if (k === 'king_high_now' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring') return;
+      if (k === 'king_high_now' || k === 'king_std' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring') return;
       if (k === 'morgoth') return; // easter egg (solo Fingolfin): nessuna riga in legenda
       if (k === 'istari') {
         // I 5 Istari in fila (come gli Anelli): Saruman, Gandalf, Radagast,
@@ -3478,8 +3481,16 @@ function controlPanelHTML() {
         return;
       }
       if (k === 'king_high') {
-        s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_high'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + IL['king_high'] + '</span>'
-           + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high_now'].split('%L%').join('') + '<span>' + attualeTxt + '</span></span>');
+        // Riga Re unica (dalla v7.29): ReNoldor 'Alto Re dei Noldor' (col1) +
+        // ReSupremo 'Re Supremo (Aman)' (col2). Il Re 'in carica' (ReFinarfin,
+        // king_high_now) è stato tolto da legenda e admin: resta SOLO come badge
+        // sulla card di Finarfin (col suo tooltip), come l'easter egg di Morgoth.
+        // Testo di legenda inline: i tooltip delle card (ICON_LABEL) restano
+        // invariati per non rompere la convenzione 'Re Supremo vs Alto Re'.
+        var reNoldorTxt = lang === 'it' ? 'Alto Re dei Noldor' : 'King of the Noldor';
+        var reSupremoTxt = lang === 'it' ? 'Re Supremo (Aman)' : 'High King (Aman)';
+        s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_std'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + reNoldorTxt + '</span>'
+           + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high'].split('%L%').join('') + '<span>' + reSupremoTxt + '</span></span>');
         return;
       }
       if (k === 'west') {
@@ -4799,7 +4810,7 @@ function showAdminEditor() {
       p.citazione = g(i, 'citazione'); p.citazione_en = g(i, 'citazione_en');
       p.fonte = g(i, 'fonte'); p.fonte_en = g(i, 'fonte_en');
       ICON_ORDER.forEach(function(k) {
-        if (k === 'morgoth') return; // easter egg: nessuna checkbox, il valore su Fingolfin va PRESERVATO
+        if (k === 'morgoth' || k === 'king_high_now') return; // nessuna checkbox: valore PRESERVATO (Morgoth su Fingolfin, Re 'in carica' su Finarfin)
         const chkEl = document.getElementById('ae-' + i + '-flag-' + k);
         // Preserva il valore speciale 'presunto' (non impostabile da UI):
         // la checkbox lo mantiene se resta spuntata, lo rimuove se deselezionata.
@@ -4990,6 +5001,7 @@ function showAdminEditor() {
     flagsRow.className = 'admin-flags-row';
     ICON_ORDER.forEach(function(k) {
       if (k === 'morgoth') return; // easter egg (solo Fingolfin): non esposto nell'editor admin
+      if (k === 'king_high_now') return; // Re 'in carica' (Finarfin): come Morgoth, solo card. Il valore è PRESERVATO al salvataggio (checkbox assente)
       const lbl = document.createElement('label');
       lbl.className = 'admin-flag-chk';
       // Solo icone: il nome dell'indicatore resta accessibile via title (hover/long-press)
@@ -5004,8 +5016,9 @@ function showAdminEditor() {
       flagsRow.appendChild(lbl);
     });
     // Catalogo esteso «Apocrifi» (personaggio attestato solo in HoME/NoME):
-    // dentro la griglia dei flag, ultima cella della seconda riga (larga tre
-    // colonne su desktop, vedi CSS .admin-apo-chk).
+    // dentro la griglia dei flag, nei DUE spazi a destra della seconda riga
+    // (dalla v7.29, liberati togliendo il Re 'in carica' king_high_now dai
+    // badge admin; vedi CSS .admin-apo-chk, grid-column 11/13).
     const apoRow = document.createElement('label');
     apoRow.className = 'admin-flag-chk admin-apo-chk';
     apoRow.title = 'Fonte apocrifa: personaggio attestato solo nella HoME/NoME';
@@ -5014,7 +5027,7 @@ function showAdminEditor() {
     apoChk.id = 'ae-' + i + '-apocrifo';
     apoChk.checked = !!p.apocrifo;
     const apoTxt = document.createElement('span');
-    apoTxt.textContent = 'Fonte apocrifa';
+    apoTxt.textContent = 'Apocrifo';
     apoRow.appendChild(apoChk); apoRow.appendChild(apoTxt);
     flagsRow.appendChild(apoRow);
     card.appendChild(flagsRow);
