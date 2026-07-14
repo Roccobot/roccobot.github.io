@@ -1102,9 +1102,11 @@ specifico del dataset):
   persona la luce dei Due Alberi (visse o soggiornò in Aman prima
   dell'oscuramento). Icona `icons/Calaquendi.png` (fornita dall'utente). In
   `ICON_ORDER` sta **subito dopo `silmaril`** (i due badge della Luce vicini);
-  riga di legenda propria. **45 portatori** nel dataset:
-  - **40 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion,
-    Indis, Elenwë, Findis, Írimë, Elemmírë, Ilwen); i **Teleri di Aman/Falmari**
+  riga di legenda propria. **46 portatori** nel dataset:
+  - **41 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion,
+    Indis, Elenwë, Findis, Írimë, Elemmírë, Ilwen, **Amarië** — aggiunta in
+    v7.10, prima di Finduilas: personaggio canonico sfuggito, Vanya amata di
+    Finrod rimasta in Valinor, Silmarillion); i **Teleri di Aman/Falmari**
     (Olwë, Eärwen); i **Noldor nati/vissuti in Aman** (Finwë, Míriel, Fëanor,
     Fingolfin, Finarfin, Anairë, Mahtan, Nerdanel, **Rúmil il Noldo — NON il
     Silvano omonimo**, Maedhros, Maglor, Celegorm, Caranthir, Curufin, Amrod,
@@ -1119,7 +1121,8 @@ specifico del dataset):
   - **`Celeborn` ESCLUSO** benché Gemini (e la versione *Teleporno*) lo conti tra
     i Calaquendi: il progetto ha scartato quella linea (vedi 'Celeborn: NON si usa
     Teleporno'), il nostro Celeborn è **Sinda della Terra di Mezzo**, non vide gli
-    Alberi. **`Amarië`** (nella lista di Gemini) non è una voce del dataset.
+    Alberi. (**`Amarië`**, nella lista di Gemini, all'inizio mancava dal dataset:
+    aggiunta in v7.10.)
   - Storia: analisi utente↔Claude del 2026-07-14, rifinita contro una lista di
     Gemini (a cui il progetto ha aggiunto Thingol, Elemmírë, Anairë, Ilwen,
     Eldalótë e da cui ha tolto Celeborn).
