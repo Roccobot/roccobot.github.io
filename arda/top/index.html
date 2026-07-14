@@ -1879,7 +1879,13 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 //  - oneRing: variante dell'Unico Anello, 'A' (icons/Unico.png, attiva) o
 //    'B' (icons/Unico_B.png, design precedente). Due file in cartella: per
 //    alternare il design basta cambiare questo valore.
-var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A', adminTranslate: false };
+//  - istariFiveIcons: la RIGA DI LEGENDA degli Istari con le 5 icone dei maghi
+//    in fila (Saruman, Gandalf, Radagast, Alatar, Pallando). Spento (dalla
+//    v7.30): la riga torna NORMALE, con una sola icona (Gandalf grigio) + testo,
+//    come le altre righe. Lo 'stato a 5 icone' (v7.23-7.29) resta salvato qui:
+//    metterlo a true lo ripristina, niente altre modifiche. NB: riguarda SOLO
+//    la legenda; le icone-badge per-mago sulle CARD (ISTARI_ICON) restano.
+var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A', adminTranslate: false, istariFiveIcons: false };
 (function(){
   var l = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   document.documentElement.setAttribute('data-theme', l ? 'light' : 'dark');
@@ -1895,7 +1901,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.29</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.30</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2278,7 +2284,7 @@ var ICON_SVG = {
 // gli altri hanno riga propria. 'est' precede 'Aman/west' (la nave che va, poi
 // quella che torna). 'morgoth' è un EASTER EGG (solo Fingolfin): saltato in
 // legenda e nella griglia admin, appare solo sulla sua card.
-var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','morgoth','guerradira','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','suicidio','fellowship','survivor','istari','onering','vilya','nenya','narya','menring'];
+var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','morgoth','guerradira','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','suicidio','istari','fellowship','survivor','onering','vilya','nenya','narya','menring'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
@@ -2298,7 +2304,10 @@ var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
 // emblema dell'ordine (in lista invece c'è un'icona per ciascun mago). Il
 // Fellowship (Hobbit) non ha più variante: una sola icona, come tutte le altre.
 var ICON_LEGENDA = {
-  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">"
+  // Icona singola della riga di legenda Istari a flag spento (FEATURES.istari-
+  // FiveIcons=false): Gandalf grigio, il mago più iconico. La riga a 5 icone
+  // (flag ON) la costruisce a parte buildLegend.
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Grigio.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Istari in lista: una o piu' icone per mago (colore dell'ordine/veste).
 // Gandalf e' l'unico con due icone (Grigio poi Bianco): fu sia il Grigio
@@ -3214,9 +3223,9 @@ var EDITORIAL_NOTES = [
     shortIt: 'Badge dei personaggi', shortEn: 'Character Badges',
     cat: 'editorial',
     bodyIt: `<p>I badge si riferiscono a imprese, titoli, appartenenze o peculiarità notevoli dei personaggi. Sono spesso semplificazioni e sono da considerarsi più un abbellimento che aiuta il 'colpo d'occhio' piuttosto che un'annotazione filologicamente impeccabile. Ad esempio, #{Celebrimbor}# ha i badge di tutti e tre gli Anelli degli Elfi pur non essendo mai stato il loro portatore effettivo: è un omaggio al fatto che ne è il creatore.</p>
-<p>L'etichetta 'Approdò ad Aman' è una sintesi adottata per ragioni di spazio. Il suo significato reale e volutamente ampio è: attraversò il Mare dalla Terra di Mezzo ad Aman. Il badge si applica a chiunque abbia compiuto questa traversata, a prescindere dalla stirpe o dal luogo di nascita: abitanti originari di Aman (come i Maiar, i Vanyar o i Noldor di ritorno), esuli e individui nativi della Terra di Mezzo.</p>`,
+<p>L'etichetta 'Attraversò il Mare' è una sintesi adottata per ragioni di spazio. Il suo significato reale e volutamente ampio è: attraversò il Mare dalla Terra di Mezzo ad Aman. Il badge si applica a chiunque abbia compiuto questa traversata, a prescindere dalla stirpe o dal luogo di nascita: abitanti originari di Aman (Maiar, Vanyar, Noldor di ritorno), esuli e nativi della Terra di Mezzo.</p>`,
     bodyEn: `<p>Badges represent feats, titles, affiliations, or notable character traits. They are simplifications designed for quick visual reference rather than strict philological accuracy. For example, #{Celebrimbor}# displays the badges for all three Elven Rings, not because he bore them, but as a tribute to him being their creator.</p>
-<p>The label 'Landed in Aman' is a concise simplification. Its actual, broader meaning is: crossed the Sea from Middle-earth to Aman. This badge is intentionally inclusive and applies to anyone who made this crossing, regardless of their kindred or birthplace: original inhabitants of Aman (such as Maiar, Vanyar, or returning Noldor), exiles, and natives of Middle-earth.</p>`
+<p>The label 'Crossed the Sea' is a concise simplification. Its actual, broader meaning is: crossed the Sea from Middle-earth to Aman. This badge applies to anyone who made this crossing, regardless of kindred or birthplace: original inhabitants of Aman (Maiar, Vanyar, returning Noldor), exiles, and natives of Middle-earth.</p>`
   }
 
 ];
@@ -3473,9 +3482,11 @@ function controlPanelHTML() {
     ICON_ORDER.forEach(function(k){
       if (k === 'king_high_now' || k === 'king_std' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring') return;
       if (k === 'morgoth') return; // easter egg (solo Fingolfin): nessuna riga in legenda
-      if (k === 'istari') {
-        // I 5 Istari in fila (come gli Anelli): Saruman, Gandalf, Radagast,
-        // Alatar, Pallando (un'icona per mago, dal colore della veste/ordine).
+      if (k === 'istari' && FEATURES.istariFiveIcons) {
+        // Variante a 5 icone (feature flag, default OFF dalla v7.30): i 5 Istari
+        // in fila (come gli Anelli): Saruman, Gandalf, Radagast, Alatar, Pallando
+        // (un'icona per mago, dal colore della veste/ordine). A flag spento la
+        // riga cade nel ramo generico (icona singola Gandalf grigio + testo).
         var wiz = [['Bianco.png','Saruman'],['Grigio.png','Gandalf'],['Bruno.png','Radagast'],['Blu1.png','Alatar'],['Blu2.png','Pallando']];
         s += legRow('istari', '<span class="leg-cluster">' + wiz.map(function(w){
           return '<span class="leg-ring"><img class="status-icon si-istari" src="icons/' + w[0] + '" title="' + w[1] + '" alt="' + w[1] + '"></span>';
