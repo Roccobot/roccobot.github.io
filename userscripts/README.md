@@ -122,12 +122,16 @@ HttpOnly via `GM_cookie` — IndexedDB e, dalla v1.4.0, **Cache Storage**)
 generazione continua a funzionare, poi ricarica la pagina e riparti con la quota
 fresca senza aprire nuove finestre.
 
-> **Perché la Cache Storage (v1.4.0):** il sito ha spostato lì il conteggio del
-> limite (le v1.2–1.3 preservavano Cache/Service Worker e il reset non azzerava
-> più nulla, mentre l'incognito sì). Svuotare la Cache è sicuro (l'app la
-> ricostruisce). Se non bastasse, c'è il flag `PULISCI_SERVICE_WORKER` (più
-> aggressivo) per disinstallare anche i Service Worker. I cookie Cloudflare
-> restano comunque preservati (senza, la generazione fallisce).
+> **Il vero colpevole (v1.5.0): il cookie `_cfuvid` di Cloudflare.** Anche
+> svuotando Cache e Service Worker (v1.4.0) il limite non si azzerava, ma
+> l'incognito sì → restava un solo elemento preservato: i cookie Cloudflare. Tra
+> questi, **`_cfuvid`** è l'ID visitatore che Cloudflare usa per il **rate
+> limiting** (distingue utenti dietro lo stesso IP): è lì che è agganciato il
+> "Daily limit". Dalla v1.5.0 `_cfuvid` **non** è più preservato (viene
+> cancellato), mentre restano i soli cookie di *clearance* anti-bot
+> (`cf_clearance`/`__cf_bm`), senza i quali la generazione fallirebbe. Così il
+> limite riparte e la generazione continua a funzionare. (Cache e Service Worker
+> restano comunque ripulibili dai rispettivi flag, ma non erano loro la causa.)
 
 Il pulsante **compare solo sulle pagine del generatore** (URL che iniziano con
 `https://emojis.wiki/ai/`); altrove non appare. Il reset resta comunque
