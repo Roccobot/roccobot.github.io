@@ -770,7 +770,8 @@ specifico del dataset):
     segmento `Spettro dell'Anello` resta auto = `tipo-oscurita`). Il `?` era stato
     tolto perché allargava l'etichetta e rompeva la riga singola di nome+badge.
     ⚠️ Diverso da **Berúthiel** `Donna (Númenóreana Nera?)`, dove il `?` resta
-    voluto (vedi audit): non uniformare i due casi.
+    voluto: lì la confidenza dell'utente sulla stirpe è più alta (pur senza
+    ufficialità), quindi si tiene la forma con `?`. Non uniformare i due casi.
 
 ## 📚 Nuovi personaggi e canone
 
@@ -820,8 +821,9 @@ specifico del dataset):
   - **Éomund 'Primo Maresciallo del Mark'**: resa ITA ufficiale tenuta di
     proposito, benché le fonti usino 'chief/Sommo Maresciallo del Mark' (scelta
     dell'utente, 'la abbracciamo così com'è').
-  - **Berúthiel `Donna (Númenóreana Nera?)`**: il `?` è voluto (stirpe non
-    attestata dalle fonti), già confermato in un audit precedente.
+  - **Berúthiel `Donna (Númenóreana Nera?)`**: il `?` è voluto perché la
+    confidenza dell'utente sulla stirpe è alta (pur senza ufficialità); si tiene
+    la forma con `?`. Diverso dal Re-Stregone, ridotto a `Uomo` in v7.20.
 - **Audit bilingue del 2026-07-05 (v4.30).** Passata multi-agente su tutte le
   310 voci (qualità EN, italiano residuo, coerenza IT↔EN, canone, convenzioni
   campi, UI). Applicato subito il sottoinsieme certo (12 fix: italiano nei campi
@@ -986,7 +988,7 @@ specifico del dataset):
 
 ## 🏅 Criteri editoriali dei badge
 
-- **Badge Aman** (legenda: 'Raggiunse Aman'; tooltip esteso in lista:
+- **Badge Aman** (legenda: 'Attraversò il Mare', dalla v7.21; tooltip esteso in lista:
   'Salpò per l'Ovest e approdò nelle Terre Imperiture'): segna la
   **partenza individuale e definitiva** verso Aman di chi si era stabilito
   nella Terra-di-Mezzo (il congedo del crepuscolo degli Elfi e affini).
@@ -1012,8 +1014,8 @@ specifico del dataset):
   degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
   degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
   Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come
-  gruppo secondario della riga Aman** (senza parentesi), 'Raggiunse
-  Aman / Al seguito di Oromë', stesso schema della riga dei Re
+  gruppo secondario della riga Aman** (senza parentesi), 'Attraversò il
+  Mare / Al seguito di Oromë', stesso schema della riga dei Re
   ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
   estesa e l'eccezionalità dell'evento non va spiegata in pagina.
 - **Convenzione titoli 'Re Supremo' vs 'Alto Re' (dalla v7.15).** In inglese
