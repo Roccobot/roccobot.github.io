@@ -755,11 +755,18 @@ specifico del dataset):
   badge): selezioni multiple in **unione**, incrociate con le categorie
   attive dentro `isVisibile`. Non persistito, **ignorato dagli URL
   condivisi**, azzerato entrando nel riordino; incrocio senza risultati →
-  messaggio `.rank-empty`. Sotto le Categorie: a filtro attivo il **tag**
-  `× N badge attivi` (centrato sui due assi, il click azzera), a filtro
-  spento il **suggerimento** in corsivo (solo desktop). Le righe categoria
-  e legenda condividono il passo verticale esplicito di 31.5px (righe in
-  fase, deriva azzerata).
+  messaggio `.rank-empty`. Sotto le Categorie c'è lo **slot del tag**
+  (`.ctrl-tag-slot`): a filtro attivo mostra il **tag** `× N badge attivi`
+  (centrato sui due assi, il click azzera); a filtro spento resta **vuoto ma
+  riserva l'altezza del tag** (`min-height:21px` su desktop, dalla v7.29), così
+  il tag compare/sparisce **in-place senza reflow** e il blocco Categorie non si
+  sposta. Storico: fino alla v7.28 lo slot a filtro spento ospitava un
+  **suggerimento in corsivo** (`.ctrl-badge-hint`, 'Scegli uno o più badge...')
+  messo solo per **riempire il vuoto** della colonna sinistra; rimosso in v7.29
+  (ridondante e sotto la soglia AA di contrasto in tema chiaro) quando la
+  legenda, persa una riga per la riga Re unica, si è accorciata e il riempitivo
+  non serviva più. Le righe categoria e legenda condividono il passo verticale
+  esplicito di 31.5px (righe in fase, deriva azzerata).
 
 - **Elfi senza stirpe attestata: etichetta `Elfo`, colore 'suggerito'.**
   Erestor e Lindir non hanno stirpe attestata dalle fonti: l'etichetta resta

@@ -671,11 +671,12 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   #ctrl-panel .ctrl-section--legend { margin-top:3px; }
   #ctrl-panel .ctrl-cat-row { height:31.5px; }
   /* Slot del tag: centrato in verticale nello spazio tra 'Animali' e
-     l'avviso sui nomi (auto sopra/sotto; l'avviso rinuncia al proprio
-     margin-top:auto, regola qui sotto). Dentro: tag centrato, suggerimento
-     allineato a sinistra. */
-  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:auto 0; min-height:0; display:flex; flex-direction:column; align-items:center; }
-  #ctrl-panel .ctrl-left .ctrl-tag-slot .ctrl-badge-hint { display:block; align-self:flex-start; margin:0; }
+     l'avviso sui nomi (auto sopra/sotto). Riserva SEMPRE l'altezza del tag
+     (min-height:21px, dalla v7.29) anche a filtro spento (slot vuoto), così il
+     tag '× N badge attivi' compare/sparisce in-place senza reflow e il blocco
+     Categorie resta fermo. Il vecchio suggerimento in corsivo (.ctrl-badge-hint,
+     solo riempitivo) è stato rimosso. */
+  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:auto 0; min-height:21px; display:flex; flex-direction:column; align-items:center; }
   #ctrl-panel .ctrl-left .ctrl-tag-slot + .ctrl-names-note { margin-top:0; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
@@ -834,8 +835,6 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:0; font-family:'EB Garamond',serif; display:inline-flex; align-items:center; }
 html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
 html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18); }
-/* Suggerimento a filtro spento (solo desktop): occupa il posto del tag. */
-.ctrl-badge-hint { display:none; font-family:'EB Garamond',serif; font-style:italic; font-size:0.85rem; line-height:1.5; color:var(--gold-bright); opacity:0.85; margin:0; padding-left:0.3rem; }
 .ctrl-legend-row span { white-space:nowrap; }
 .ctrl-label { white-space:nowrap; display:inline-grid; justify-items:start; align-items:center; }
 /* Larghezza dell'etichetta = testo più lungo tra IT ed EN (faccia visibile +
@@ -3429,13 +3428,13 @@ function controlPanelHTML() {
        + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxIt + '</span>'
        + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxEn + '</span>'
        + '</button>';
-  } else {
-    // Suggerimento al posto del tag (solo desktop, via CSS): riempie la
-    // colonna sinistra e spiega che la legenda è cliccabile.
-    h += '<p class="ctrl-badge-hint">' + (currentLang === 'it'
-       ? 'Scegli uno o più badge (colonna a destra)<br>per filtrare la selezione attuale.'
-       : 'Pick one or more badges (right column)<br>to filter the current selection.') + '</p>';
   }
+  // A filtro spento lo slot resta VUOTO ma riserva l'altezza del tag (CSS
+  // min-height, dalla v7.29): il tag compare/sparisce in-place senza reflow e
+  // le Categorie (che stanno sopra) non si spostano. Storico: fino alla v7.28
+  // qui c'era un suggerimento in corsivo (.ctrl-badge-hint) messo solo per
+  // riempire il vuoto della colonna; rimosso perché ridondante (e sotto la
+  // soglia AA di contrasto in tema chiaro).
   h += '</div>';
   // Nota sui nomi (visibile solo nel layout orizzontale, via CSS): sotto il
   // nome ci sono le alternative note; i veri nomi sono in grassetto.
