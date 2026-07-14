@@ -4,9 +4,11 @@ Script personali per il browser, gestiti dall'estensione
 [Tampermonkey](https://www.tampermonkey.net/). Essendo ospitati su
 GitHub Pages, si installano (e si aggiornano) direttamente dal loro URL.
 
-## QwantRoccobot — Qwant essenziale + immagini dirette
+## Qwant Roccobot
 
-**File:** `QwantRoccobot.user.js`
+**File:** `QwantRoccobot.user.js` · **Titolo (`@name`):** `Qwant Roccobot`
+
+Qwant essenziale + immagini dirette.
 
 Uno script unico per Qwant, con due funzioni:
 
