@@ -938,6 +938,18 @@ specifico del dataset):
 - **Contrasto.** Il colore del testo dell'etichetta deve restare leggibile sul
   proprio sfondo in entrambi i temi (cfr. l'audit `axe-core` in 'Nuovi
   personaggi e canone'): verificarlo per ogni colore nuovo.
+- **Niente `/Calaquendë` nelle etichette tipo (dalla v7.11).** L'informazione
+  'vide gli Alberi' la porta ora il **badge** `calaquende` (vedi 'Criteri
+  editoriali dei badge'), quindi le 7 voci che avevano `Teler/Calaquendë` sono
+  state ripulite: Galadriel, Thingol, Finrod, Aegnor, Angrod → `Teler`
+  (`tipo-teleri`); la vecchia classe `tipo-calaquendi` è stata **rimossa**.
+- **Etichetta `Falmar` (dalla v7.11): i Teleri di Aman con colore dedicato.**
+  **Olwë** ed **Eärwen** portano l'etichetta `Elfo/Elfa (Falmar)` con la classe
+  `tipo-falmar` (dark `#45d8ee`, light `#006870`): un azzurro **leggermente più
+  ceruleo del teleri** (`#4de6cc`/`#006e61`), per distinguere i Falmari (i Teleri
+  che restarono in Aman) pur restando **ramo teleri** e **categoria elfi**
+  (`categoria()` li mappa via `elfo|elfa`). Scelta dell'utente; contrasto AA
+  verificato con axe in entrambi i temi (bordo = testo@0.8, come da regola sopra).
 
 ## 🏅 Criteri editoriali dei badge
 
