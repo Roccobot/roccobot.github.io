@@ -1018,7 +1018,15 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
      padding-right delle Categorie. Con quello a posto, fit-content è di nuovo
      centrato in modo affidabile (contenuto bilanciato dentro un blocco
      centrato). */
-  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
+  /* ANTI-JITTER (dalla v7.46): il blocco NON è più `fit-content` centrato ma a
+     `width:100%` ancorato. Il fit-content centrato raccoglieva minime differenze
+     di larghezza del contenuto tra IT ed EN (rese-font del dispositivo, che le
+     riserve anti-jitter per-elemento non azzerano al pixel) e, essendo centrato,
+     le amplificava in uno **spostamento orizzontale** dell'intero pannello al
+     cambio lingua (segnalato su mobile reale). A larghezza piena il bordo
+     sinistro (e le posizioni riservate di etichette/pulsanti) restano fissi:
+     niente scivolamento. Il tag resta centrato (align-self:center, sotto). */
+  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:100%; box-sizing:border-box; }
   #ctrl-panel .ctrl-cols > .ctrl-left { width:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-section--legend { width:auto; }
   /* .ctrl-left è display:contents, quindi i suoi figli (categorie, tag-slot,
