@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.4.0
-// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Il pulsante compare SOLO sulle pagine del generatore (URL che iniziano con /ai/). Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly, IndexedDB e Cache Storage) PRESERVANDO i cookie Cloudflare, così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
+// @version      1.5.0
+// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Il pulsante compare SOLO sulle pagine del generatore (URL che iniziano con /ai/). Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly incluso _cfuvid di Cloudflare, IndexedDB e Cache Storage) PRESERVANDO i soli cookie di clearance anti-bot di Cloudflare (cf_clearance/__cf_bm), così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
 // @match        https://www.emojis.wiki/*
@@ -33,8 +33,16 @@
   //  ma la richiesta di generazione continua a passare.
   // ═══════════════════════════════════════════════════════════════
 
-  // Cookie Cloudflare / anti-bot da PRESERVARE (senza, la generazione fallisce)
-  const CF = /^(__cf|cf_|_cfuvid)/i;
+  // Cookie Cloudflare da PRESERVARE = SOLO quelli di CLEARANCE anti-bot, senza
+  // i quali la generazione fallisce: cf_clearance, __cf_bm, __cf_chl*, cf_chl*
+  // (tutto ciò che inizia con __cf o cf_).
+  // ⚠️ NON si preserva più _cfuvid (dalla v1.5.0): è l'ID visitatore che
+  // Cloudflare usa per il RATE LIMITING (distinguere utenti dietro lo stesso IP),
+  // ed è quasi certamente lì che è agganciato il "Daily limit". In incognito
+  // _cfuvid è fresco → limite azzerato; preservandolo il limite restava. Non è
+  // un cookie di clearance, quindi cancellarlo azzera il limite SENZA rompere
+  // la generazione.
+  const CF = /^(__cf|cf_)/i;
 
   function scaduta(nome, dom, path) {
     document.cookie = nome + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=' +
