@@ -711,16 +711,12 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   transition:background 0.25s,color 0.25s,transform 0.25s;
 }
 .ctrl-sheet-close svg { width:16px; height:16px; stroke:currentColor; stroke-width:2.2; fill:none; stroke-linecap:round; stroke-linejoin:round; display:block; }
-/* All'apertura del pannello il glifo si piega da linea a chevron: animazione
-   una-tantum che termina poco dopo la comparsa del pannello (tocco finale
-   percepibile, non invasivo). Stato finale e fallback senza 'd' animabile:
-   il chevron dell'attributo SVG. */
-@supports (d: path("M0 0")) {
-  .ctrl-sheet-close svg path { d:path("M6 9 12 15 18 9"); }
-  .ctrl-panel.open .ctrl-sheet-close svg path { animation:ctrl-close-bend 0.45s cubic-bezier(0.22,1,0.36,1) 0.2s both; }
-  @keyframes ctrl-close-bend { from { d:path("M6 12 12 12 18 12"); } to { d:path("M6 9 12 15 18 9"); } }
-}
-@media (prefers-reduced-motion:reduce) { .ctrl-panel.open .ctrl-sheet-close svg path { animation:none; } }
+/* All'apertura del pannello il glifo si piega da linea a chevron (animazione
+   una-tantum, tocco finale). Usa la proprietà CSS 'd' su <path> (SVG 2): pur
+   valida, il validatore W3C Nu non la riconosce, quindi il blocco è INIETTATO
+   via JS (cerca 'ctrl-close-bend' nello script), NON qui nel <style> statico,
+   così il file resta W3C-pulito. Fallback senza JS: il chevron dell'attributo
+   'd' dell'SVG (statico, corretto). Il reduced-motion è gestito nell'iniezione. */
 .ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); outline:none; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
@@ -768,7 +764,10 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   font-size:0.72rem; color:var(--ink); font-weight:bold;
 }
-.ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.45; }
+/* Etichetta di categoria SPENTA: attenuata (segnale visivo). In tema scuro
+   0.55 (era 0.45, sotto la soglia AA: contrasto 3.99 su bg scuro; 0.55 = 5.37,
+   passa con margine); in tema chiaro l'override qui sotto la porta a 0.62. */
+.ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.55; }
 .ctrl-dot { width:0.85rem; height:0.85rem; border-radius:3px; flex-shrink:0; }
 /* Righe legenda = interruttori del filtro badge (v4.05): cliccabili, stato
    .on evidenziato in oro, focus visibile da tastiera. */
@@ -1900,6 +1899,22 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   // Cambio lingua nascosto su mobile col flag spento: classe sull'html, la
   // CSS la applica solo sotto i 768px. Fatto qui nell'head per evitare il flash.
   if (!FEATURES.langSwitchMobile) document.documentElement.classList.add('no-langswitch-mobile');
+})();
+// Animazione 'piega' del glifo di chiusura del pannello: usa la proprietà CSS
+// 'd' su <path> (SVG 2). E' valida, ma il validatore W3C Nu non la riconosce
+// (4 falsi positivi 'Property d doesn't exist'): perciò questo blocco è
+// iniettato via JS invece di stare nel <style> statico, così il file resta
+// W3C-pulito. Senza JS resta il chevron statico dell'attributo 'd' dell'SVG.
+// Il reduced-motion è incluso qui (dopo l'animazione) per vincere sull'ordine.
+(function(){
+  var css = '@supports (d: path("M0 0")) {'
+    + ' .ctrl-sheet-close svg path { d:path("M6 9 12 15 18 9"); }'
+    + ' .ctrl-panel.open .ctrl-sheet-close svg path { animation:ctrl-close-bend 0.45s cubic-bezier(0.22,1,0.36,1) 0.2s both; }'
+    + ' @keyframes ctrl-close-bend { from { d:path("M6 12 12 12 18 12"); } to { d:path("M6 9 12 15 18 9"); } }'
+    + ' }'
+    + ' @media (prefers-reduced-motion:reduce) { .ctrl-panel.open .ctrl-sheet-close svg path { animation:none; } }';
+  var st = document.createElement('style'); st.textContent = css;
+  (document.head || document.documentElement).appendChild(st);
 })();
 </script>
 </head>
