@@ -878,6 +878,13 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:-0.28rem; }
 .ctrl-legend-rings .leg-ring { display:inline-flex; align-items:center; gap:0.22rem; }
 .ctrl-legend-rings .leg-ring img { margin-left:0; }
+/* La prima icona-anello (Unico, .707em) è più stretta dello slot .leg-ico
+   (.95em) delle righe normali e, non essendo centrata in uno slot, il suo
+   centro cadrebbe ~2.2px a sinistra della colonna delle altre icone. La si
+   sposta a destra di (.95em - .707em)/2 nel contesto icona (1.141rem) = 0.138rem
+   così il suo centro si incolonna con le icone singole sopra; la sovrapposizione
+   tra gli anelli (margin-left negativo) resta intatta. */
+.ctrl-legend-rings .leg-ring:first-child { margin-left:0.138rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 /* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
    l'unica icona di fatto sempre presente, quindi messa in evidenza su una
@@ -1843,7 +1850,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
