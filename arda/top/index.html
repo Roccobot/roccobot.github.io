@@ -878,13 +878,16 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    (>= la più lunga delle 6 stringhe IT/EN col1), così il gruppo secondario e la
    sua icona partono allo stesso x nelle tre righe (colonna perfetta) e NON si
    spostano al cambio lingua (anti-jitter). La più lunga è 'Alto Re dei Noldor'
-   ~98.5px @0.8rem; 8.5em = 108.8px lascia ~8px di respiro + tolleranza font.
-   `nowrap` così una resa font più larga non manda l'etichetta a capo. Storico:
-   fino alla v7.28 era 10.05em, tarata sul lunghissimo 'High King of the Noldor'
-   (126.6px) del vecchio Re 'in carica'; tolto quello (dalla v7.29), la colonna
-   si è potuta stringere azzerando il 'buco' tra etichetta e seconda icona. */
+   ~98.5px @0.8rem. `nowrap` così una resa font più larga non manda l'etichetta
+   a capo. **Larghezza `7.7em` (dalla v7.46):** era `8.5em` (108.8px), ridotta a
+   ~98.6px per avvicinare a sinistra di ~10px le seconde icone (Valinor, Balrog,
+   Re Supremo), su richiesta dell'utente: 7.7em combacia con l'etichetta più
+   lunga (il gap alla seconda icona lo dà il margine di `.leg-group`). Meno
+   larghezza = meno divario di larghezza IT↔EN del blocco `fit-content` centrato
+   su mobile, quindi meno jitter. Storico: 10.05em fino a v7.28 (tarata sul
+   'High King of the Noldor' del vecchio Re 'in carica'), 8.5em v7.29-7.45. */
 .ctrl-legend-row .leg-lbl-col,
-.ctrl-legend-row .leg-lbl-king { width:8.5em; flex:none; white-space:nowrap; }
+.ctrl-legend-row .leg-lbl-king { width:7.7em; flex:none; white-space:nowrap; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
@@ -1926,7 +1929,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.45</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.46</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2389,7 +2392,7 @@ var ICON_LABEL = {
     est:     "Crossed the Sea on an Elven ship from Aman to Middle-earth",
     drago:   "Slew a Dragon",
     balrog:  "Slew a Balrog",
-    calaquende: "Calaquendë: beheld the Light of the Two Trees of Valinor",
+    calaquende: "Calaquendë: beheld the Light of the Two Trees",
     guerradira: "Fought in the War of Wrath",
     suicidio: "Took their own life (not the Númenórean 'passing')",
     morgoth: "He challenged Morgoth to single combat and wounded him seven times: one of the greatest deeds in the history of Arda."
