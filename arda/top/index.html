@@ -979,14 +979,17 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
      colonne si allineano a sinistra al bordo del blocco, così le checkbox delle
      categorie sono incolonnate con le icone della legenda. Niente più categorie
      a tutta larghezza né legenda centrata a sé (che si disallineavano).
-     LARGHEZZA DEFINITA (dalla v6.96), non più fit-content: min(100%, 21rem).
-     Motivo: con fit-content il centraggio (margin:auto) su alcuni motori mobile
-     finiva fuori centro (il blocco appariva spostato a destra); una larghezza
-     definita + margin:auto è centrata in modo affidabile su qualsiasi device.
-     21rem dà anche più respiro alle righe (margini ~19px invece di ~37px) e la
-     riga anelli ci sta comoda. Su viewport più stretti scende a 100% (il
-     padding simmetrico del pannello fa da margine). */
-  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:min(100%, 21rem); max-width:100%; margin-left:auto; margin-right:auto; }
+     LARGHEZZA fit-content (ripristinata dalla v6.98): il blocco si restringe ad
+     abbracciare la riga più larga (di norma gli anelli in IT), così il suo bordo
+     destro coincide con la fine di quella riga e i margini crescono. Si adatta
+     al font del device (a differenza di una larghezza fissa). Nota storica: la
+     v6.96 lo aveva reso a larghezza fissa (21rem) per curare un apparente
+     fuori-centro su mobile; la causa vera era però lo sbilanciamento interno dei
+     pulsanti SOLO/TUTTI (rientro destro assente), risolto in v6.97 col
+     padding-right delle Categorie. Con quello a posto, fit-content è di nuovo
+     centrato in modo affidabile (contenuto bilanciato dentro un blocco
+     centrato). */
+  #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:fit-content; max-width:100%; margin-left:auto; margin-right:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-left { width:auto; }
   #ctrl-panel .ctrl-cols > .ctrl-section--legend { width:auto; }
   /* .ctrl-left è display:contents, quindi i suoi figli (categorie, tag-slot,
@@ -999,11 +1002,11 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
      la categoria, 0.4rem la legenda). */
   #ctrl-panel .ctrl-section--legend { margin-left:-0.16rem; }
   /* Nota nomi in fondo: allineata a sinistra come le righe, e un filo più
-     chiara (più tenue) del resto (scelta utente). È fuori da .ctrl-cols, quindi
-     le do la stessa larghezza/centratura del blocco (min(100%,21rem)+auto) così
-     il suo bordo coincide col blocco a ogni viewport; il padding-left la
-     incolonna con le icone della legenda. */
-  #ctrl-panel .ctrl-mobile-note { text-align:left; opacity:0.8; width:min(100%, 21rem); margin-left:auto; margin-right:auto; box-sizing:border-box; padding-left:0.3rem; }
+     chiara (più tenue) del resto (scelta utente). Ora è DENTRO .ctrl-cols:
+     width:0 + min-width:100% la fa riempire la larghezza del blocco senza
+     dettarla (come le Categorie), così non allarga il blocco fit-content; il
+     padding-left la incolonna con le icone della legenda. */
+  #ctrl-panel .ctrl-mobile-note { text-align:left; opacity:0.8; width:0; min-width:100%; box-sizing:border-box; padding-left:0.3rem; white-space:normal; }
   html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
@@ -1865,7 +1868,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.97</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3468,11 +3471,13 @@ function controlPanelHTML() {
      + '<div class="leg-face">' + buildLegend(currentLang, false) + '</div>'
      + '<div class="leg-measure" aria-hidden="true">' + buildLegend(currentLang === 'it' ? 'en' : 'it', true) + '</div>'
      + '</div></div>';
-  h += '</div>'; // chiude .ctrl-cols
-  // Nota nomi (solo mobile, via CSS): in fondo, dopo la legenda.
+  // Nota nomi (solo mobile, via CSS): in fondo, dopo la legenda, DENTRO
+  // .ctrl-cols così segue la larghezza/posizione del blocco a ogni viewport
+  // (prima era fuori e andava allineata a mano).
   h += '<div class="ctrl-mobile-note">' + (currentLang === 'it'
      ? 'Nelle schede dei personaggi i veri nomi sono in grassetto.'
      : 'On character cards, the true names are in bold.') + '</div>';
+  h += '</div>'; // chiude .ctrl-cols
   // Barra sticky in basso (solo mobile): versione (anche accesso admin) a
   // sinistra, tema + lingua centrati come gruppo, chiudi a destra (vicino a
   // dove sta il FAB a pannello chiuso). La versione resta letta dal badge.
