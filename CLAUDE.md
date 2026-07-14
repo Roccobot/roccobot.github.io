@@ -994,6 +994,18 @@ specifico del dataset):
   Aman / Al seguito di Oromë', stesso schema della riga dei Re
   ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
   estesa e l'eccezionalità dell'evento non va spiegata in pagina.
+- **Convenzione titoli 'Re Supremo' vs 'Alto Re' (dalla v7.15).** In inglese
+  è sempre **High King** (i traduttori del Legendarium non l'hanno reso in modo
+  uniforme); in italiano il progetto distingue: **Re Supremo** = governa su
+  TUTTO il suo popolo, su qualunque sponda del Mare; **Alto Re** = nella Terra
+  di Mezzo. Perciò in EN i due si **collassano** in un solo 'High King' — è una
+  **asimmetria bilingue legittima** (Fëanor: IT `Re Supremo dei Noldor, Alto Re
+  dei Noldor`, EN il solo `High King of the Noldor`). Allineati in v7.15:
+  legenda `king_std` IT `Alto Re dei Noldor a est del Mare` (EN `east of the
+  Sea`); titoli di **Finarfin** (`Re Supremo dei Noldor`), **Ingwë** (`Re
+  Supremo di tutti gli Elfi`), **Gil-galad** (`Alto Re dei Noldor, ...`),
+  **Fëanor** (i due titoli sopra). I badge `king_high`=Re Supremo,
+  `king_std`=Alto Re seguono la stessa logica.
 - **Badge Istari** (chiave `istari`): in lista una o più icone per mago, dal
   colore della veste/ordine (`Bianco.png` Saruman, `Bruno.png` Radagast,
   `Blu1.png` Alatar, `Blu2.png` Pallando; mappa `ISTARI_ICON`, i cui valori
