@@ -492,10 +492,14 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
       la compensazione corrispondente (e verificare con axe a pagina assestata:
       l'audit va lanciato DOPO l'animazione di comparsa delle card, ~2 s,
       altrimenti segnala centinaia di falsi positivi da opacità transitoria).
-  - **Editor admin:** checkbox **'Apocrifo'** (`ae-<i>-apocrifo`) sotto la riga
-    dei flag-badge; al salvataggio imposta/rimuove `p.apocrifo` (preservando
-    un'eventuale stringa-fonte). Il Worker conserva il campo come ogni altra
-    chiave (nessuna modifica al Worker).
+  - **Editor admin:** checkbox **'Apocrifo'** (`ae-<i>-apocrifo`, testo 'Apocrifo'
+    dalla v7.29, prima 'Fonte apocrifa') **dentro** la griglia dei flag-badge,
+    nei **due spazi a destra della seconda riga** (`.admin-apo-chk`,
+    `grid-column:11/13` su desktop), liberati dalla v7.29 togliendo il Re 'in
+    carica' (`king_high_now`) dai badge admin (22 badge → riga2 fino a col10 →
+    slot 11-12 per l'apo). Al salvataggio imposta/rimuove `p.apocrifo`
+    (preservando un'eventuale stringa-fonte). Il Worker conserva il campo come
+    ogni altra chiave (nessuna modifica al Worker).
   - **Voci flaggate `apocrifo` (18, tutte attestate solo in HoME/NoME):**
     - *I popoli della Terra di Mezzo* (HoME XII): **Eldalótë**, **Findis**,
       **Írimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**.
@@ -751,11 +755,18 @@ specifico del dataset):
   badge): selezioni multiple in **unione**, incrociate con le categorie
   attive dentro `isVisibile`. Non persistito, **ignorato dagli URL
   condivisi**, azzerato entrando nel riordino; incrocio senza risultati →
-  messaggio `.rank-empty`. Sotto le Categorie: a filtro attivo il **tag**
-  `× N badge attivi` (centrato sui due assi, il click azzera), a filtro
-  spento il **suggerimento** in corsivo (solo desktop). Le righe categoria
-  e legenda condividono il passo verticale esplicito di 31.5px (righe in
-  fase, deriva azzerata).
+  messaggio `.rank-empty`. Sotto le Categorie c'è lo **slot del tag**
+  (`.ctrl-tag-slot`): a filtro attivo mostra il **tag** `× N badge attivi`
+  (centrato sui due assi, il click azzera); a filtro spento resta **vuoto ma
+  riserva l'altezza del tag** (`min-height:21px` su desktop, dalla v7.29), così
+  il tag compare/sparisce **in-place senza reflow** e il blocco Categorie non si
+  sposta. Storico: fino alla v7.28 lo slot a filtro spento ospitava un
+  **suggerimento in corsivo** (`.ctrl-badge-hint`, 'Scegli uno o più badge...')
+  messo solo per **riempire il vuoto** della colonna sinistra; rimosso in v7.29
+  (ridondante e sotto la soglia AA di contrasto in tema chiaro) quando la
+  legenda, persa una riga per la riga Re unica, si è accorciata e il riempitivo
+  non serviva più. Le righe categoria e legenda condividono il passo verticale
+  esplicito di 31.5px (righe in fase, deriva azzerata).
 
 - **Elfi senza stirpe attestata: etichetta `Elfo`, colore 'suggerito'.**
   Erestor e Lindir non hanno stirpe attestata dalle fonti: l'etichetta resta
@@ -1166,15 +1177,36 @@ specifico del dataset):
     them went none of those Elves who had dwelt... in the Hither Lands'):
     Gil-galad, Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la
     schiera; Maedhros e Maglor vennero *dopo* la guerra, per i Silmaril.
-- **Allineamento seconde icone delle righe a due colonne (dalla v7.23).** Le
-  righe legenda a due colonne (west+envoy, drago+balrog, king_high+king_high_now)
-  hanno la prima colonna a **larghezza fissa unica `10.05em`** (`.leg-lbl-col`
-  e `.leg-lbl-king`), così le tre seconde icone (Valinor, Balrog, In carica)
-  sono incolonnate allo stesso x e restano immobili al cambio lingua (anti-jitter).
-  La larghezza regge l'etichetta più lunga tra IT/EN (`High King of the Noldor`,
-  ~9.89em); il valore `10.05em` la posiziona ~2px più a sinistra rispetto al
-  puro fit (scelta dell'utente). Effetto collaterale voluto: dopo le etichette
-  corte resta più spazio prima della seconda icona.
+- **Riga Re unica + Re 'in carica' come easter egg da card (dalla v7.29).** Il
+  badge `king_high_now` (icona `ReFinarfin.png`, il Re 'in carica') è stato
+  **tolto da legenda e admin** e reso **card-only come Morgoth**: resta in
+  `ICON_ORDER` (quindi `buildStatus` lo disegna sulla **card di Finarfin** col
+  suo tooltip `ICON_LABEL`), ma è **saltato** in `buildLegend` (skip list) e
+  nella griglia admin (skip nella generazione checkbox **e** nel loop di
+  salvataggio, così il valore su Finarfin è preservato). Al suo posto una
+  **riga Re unica** a due colonne: `ReNoldor` (`king_std`) 'Alto Re dei
+  Noldor' / 'King of the Noldor' + `ReSupremo` (`king_high`) 'Re Supremo
+  (Aman)' / 'High King (Aman)'. ⚠️ Le diciture di legenda sono **testo inline**
+  in `buildLegend` (ramo `k === 'king_high'`, che salta anche `king_std`): i
+  **tooltip delle card** (`ICON_LABEL` di `king_high`='Re Supremo dei Noldor',
+  `king_std`='Alto Re dei Noldor a est del Mare') **NON cambiano**, per non
+  rompere la convenzione 'Re Supremo vs Alto Re'. **Filtro:**
+  `BADGE_ROWS.king_high = ['king_high','king_high_now','king_std']` (unica riga
+  'Re'; la vecchia `king_std` è stata rimossa da BADGE_ROWS): attivarla accende
+  tutti e 7 i Re **incluso Finarfin** (il Re mancante dalla legenda).
+- **Allineamento seconde icone delle righe a due colonne (dalla v7.23, colonna
+  ristretta v7.29).** Le tre righe legenda a due colonne (west+envoy,
+  drago+balrog, e dalla v7.29 la riga Re unica) hanno la prima colonna a
+  **larghezza fissa unica** (`.leg-lbl-col` e `.leg-lbl-king`, ora un solo
+  blocco CSS), così le tre seconde icone (Valinor, Balrog, Re Supremo) sono
+  incolonnate allo stesso x e restano immobili al cambio lingua (anti-jitter).
+  **Larghezza `8.5em` (dalla v7.29):** era `10.05em`, tarata sul lunghissimo
+  `High King of the Noldor` (~126.6px) del vecchio Re 'in carica'; tolto quello,
+  la più lunga tra le 6 stringhe col1 IT/EN è `Alto Re dei Noldor` (~98.5px),
+  quindi la colonna si è potuta **stringere** (8.5em = 108.8px, ~8px di respiro
+  + tolleranza font, con `nowrap` anti-wrap) **azzerando il 'buco enorme'** tra
+  etichetta e seconda icona (~20px recuperati). Effetto: seconde icone vicine
+  al testo, sempre incolonnate.
 - **Tutti gli Anelli in un'unica riga di legenda (v6.63).** L'Unico, i Tre
   degli Elfi (Vilya, Nenya, Narya) e i Nove non hanno più tre righe separate:
   una sola riga **in coda** alla legenda mostra le 5 icone in orizzontale
