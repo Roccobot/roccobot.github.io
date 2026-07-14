@@ -1926,7 +1926,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.44</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.45</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2588,17 +2588,29 @@ function visibleCountWithBadgeSet(rowSet) {
 // portatori nelle categorie tornerebbero erroneamente attivabili (bug v7.40:
 // dopo un filtro, tutte le righe prima spente 'riapparivano'). Le righe già
 // attive restano sempre cliccabili (si possono spegnere), quindi mai disabilitate.
-function badgeRowNoMembersInCats(row) {
-  if (badgeFilter.has(row)) return false;
+// Vero se ALMENO un personaggio nelle categorie attive (rispettando l'apocrifi)
+// porta uno dei badge della riga. Base condivisa da disabilitazione e potatura.
+function rowHasMembersInCats(row) {
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
     if (p.apocrifo && !showApocrifi) continue;
     if (!filterState[categoria(p)]) continue;
     var hit = false;
     BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; });
-    if (hit) return false; // c'è almeno un portatore nelle categorie attive
+    if (hit) return true;
   }
-  return true; // nessun portatore: la riga va disabilitata
+  return false;
+}
+// Riga da disabilitare: non attiva e senza portatori nelle categorie attive.
+function badgeRowNoMembersInCats(row) {
+  return !badgeFilter.has(row) && !rowHasMembersInCats(row);
+}
+// Potatura al cambio categoria/apocrifi (fix v7.45): un filtro badge ATTIVO che
+// non ha più portatori nelle categorie attive va DISATTIVATO da sé (altrimenti
+// resta bloccato dando lista vuota, e non lo si riesce più a togglare). Chiamata
+// a ogni applyFilter, prima del render.
+function pruneBadgeFilter() {
+  badgeFilter.forEach(function(row){ if (!rowHasMembersInCats(row)) badgeFilter['delete'](row); });
 }
 
 function renderList() {
@@ -3696,6 +3708,7 @@ function wireControlPanel() {
   var panel = document.getElementById('ctrl-panel');
   fitNoteRule();
   function applyFilter() {
+    pruneBadgeFilter(); // filtri badge non più validi (categorie cambiate) -> off
     renderList();
     enableDragDrop();
     syncUrl();
