@@ -184,15 +184,18 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   (1.00 viene dopo 10.21.1). Nessun codice confronta le versioni per ordine
   (solo l'uguaglianza badge↔datiVersion dei guard), quindi la convenzione vale
   per gli umani; **nessun prefisso `r`** (romperebbe quei guard).
-  - **Gate W3C a ogni release da +0.1 in su (regola dell'utente, 2026-07-14).**
-    Per ogni release con bump **+0.1 o +1.0** (funzionalità o release maggiore,
-    NON i +0.01 di rifinitura), **prima di aprire la PR** rifare il test
-    **W3C Nu Html Checker** su **tutte le pagine modificate** in quella release,
-    e sistemare gli errori finché non è **0**. Comando (per ogni file toccato):
-    `curl -sS -H "Content-Type: text/html; charset=utf-8" -H "User-Agent:
-    Mozilla/5.0" --data-binary @PAGINA.html "https://validator.w3.org/nu/?out=json"`
-    e leggere i messaggi `type:"error"`. Vale per ogni pagina HTML del sito
-    toccata (non solo `arda/top/index.html`). Nota tecnica: la proprietà CSS
+  - **Gate W3C a ogni release da +0.1 in su (regola dell'utente, 2026-07-14;
+    esteso a 0 warning il 2026-07-14).** Per ogni release con bump **+0.1 o
+    +1.0** (funzionalità o release maggiore, NON i +0.01 di rifinitura), **prima
+    di aprire la PR** rifare il test **W3C Nu Html Checker** su **tutte le pagine
+    modificate** in quella release e portarle a **0 errori E 0 warning**
+    (pulizia totale voluta dall'utente: non solo `type:"error"`, ma anche i
+    messaggi `type:"info"` con `subType:"warning"`). Comando (per ogni file
+    toccato): `curl -sS -H "Content-Type: text/html; charset=utf-8" -H
+    "User-Agent: Mozilla/5.0" --data-binary @PAGINA.html
+    "https://validator.w3.org/nu/?out=json"`, poi contare sia gli `error` sia i
+    `subType:"warning"` (entrambi devono essere 0). Vale per ogni pagina HTML del
+    sito toccata (non solo `arda/top/index.html`). Nota tecnica: la proprietà CSS
     `d` (animazione del glifo di chiusura) è valida ma non riconosciuta dal Nu
     Checker, perciò è iniettata via JS e non nel `<style>` statico (vedi il
     commento `ctrl-close-bend`): non reintrodurla nel CSS o tornano 4 errori.
@@ -1321,12 +1324,19 @@ specifico del dataset):
 
 ## 🧹 Asset del progetto
 
-- **Le immagini caricate dall'utente nel repo vanno ottimizzate.** Quando
-  l'utente copia autonomamente immagini nelle cartelle del sito (es. icone
-  badge via 'Add files via upload'), applicare le ottimizzazioni standard del
-  progetto (quantizzazione/compressione senza perdita visibile, come da
-  regola universale sugli asset). Richiesta esplicita dell'utente
-  (2026-07-04). NON vale per le eccezioni qui sotto.
+- **Ottimizzazione immagini: SOLO lossless, mai lossy (regola dell'utente,
+  2026-07-14).** Sulle immagini caricate dall'utente è ammessa **esclusivamente**
+  l'ottimizzazione a **impatto zero sui pixel**: rimozione di metadati e
+  ricompressione PNG **lossless** (es. `optipng`/`zopflipng`, che NON cambiano
+  un solo pixel). **VIETATA la quantizzazione a palette** (`PIL .quantize()`,
+  `pngquant`, riduzione colori) e qualunque passo lossy: su sfumature morbide
+  (gradienti di vele, corpi, cieli) produce **banding/posterizzazione visibile**.
+  ⚠️ Errore commesso: le navi elfiche (Aman/Est/Valinor) quantizzate a 256 colori
+  in v7.30 avevano banding evidente sulla vela blu e sul cigno; ripristinate agli
+  originali RGBA in v7.42. Se non c'è un optimizer lossless a disposizione,
+  **lasciare l'immagine com'è** (meglio un file più grande che una perdita
+  visibile). Vale per icone/badge e ogni immagine del sito; NON vale per le
+  eccezioni qui sotto (visualizzatore, favicon).
 - **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/`
   (mappe e risorse aperte da `openImageViewer`) non vanno mai modificati,
   ridimensionati, compressi od ottimizzati, per nessun motivo: sono materiale
