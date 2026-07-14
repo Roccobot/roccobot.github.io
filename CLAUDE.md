@@ -771,22 +771,26 @@ specifico del dataset):
   attive dentro `isVisibile`. Non persistito, **ignorato dagli URL
   condivisi**, azzerato entrando nel riordino; incrocio senza risultati →
   messaggio `.rank-empty`.
-  - **Filtro a risultati 0: impedito (dalla v7.40).** Una riga-badge che,
-    accesa, svuoterebbe la lista (dato l'incrocio con le categorie attive) NON è
-    attivabile. Due livelli: (1) **disabilitazione visiva**, in `buildLegend`
-    la riga prende la classe `.leg-disabled` (attenuata, `pointer-events:none`,
-    `aria-disabled`, niente `role`/`tabindex`) se `badgeRowWouldEmpty(row)`; si
-    riabilita da sé al cambio categorie (la legenda si ricostruisce a ogni
-    filtro); (2) **guard al clic** in `toggleBadgeRow`, un toggle il cui
-    risultato sarebbe 0 non viene applicato (rete di sicurezza anche per la
-    tastiera). Entrambi usano `visibleCountWithBadgeSet(rowSet)`, un dry-run che
-    conta le voci visibili con un ipotetico set di righe-badge (stessa logica di
-    `isVisibile`). NB: coi badge in **unione**, aggiungere una riga a un filtro
-    già non vuoto non svuota mai (l'insieme cresce) → le righe si disabilitano
-    solo quando il filtro è **vuoto** e quel badge non ha portatori nelle
-    categorie attive; le righe già **attive** restano sempre cliccabili (si
-    possono spegnere). Con la disabilitazione attiva il messaggio `.rank-empty`
-    resta solo come fallback teorico (i badge non possono più causarlo). Sotto le Categorie c'è lo **slot del tag**
+  - **Filtro a risultati 0: impedito (dalla v7.40; logica corretta e scossina
+    dalla v7.43).** Una riga-badge il cui badge non ha **alcun portatore nelle
+    categorie attive** viene **disabilitata**: `badgeRowNoMembersInCats(row)` in
+    `buildLegend` le mette la classe `.leg-disabled` (attenuata, `aria-disabled`).
+    Resta **cliccabile**: il clic non filtra, fa solo una **scossina**
+    (`.leg-shake`, keyframe CSS; `shakeRow`/`activateBadgeRow` in
+    `wireControlPanel`) come feedback 'non selezionabile'. Si riabilita da sé al
+    cambio categorie (la legenda si ricostruisce a ogni `applyFilter`). Le righe
+    già **attive** non sono mai disabilitate (si possono sempre spegnere). Resta
+    anche un **guard** in `toggleBadgeRow` (`visibleCountWithBadgeSet` == 0 →
+    nessun effetto) come rete di sicurezza per il toggle-off che svuoterebbe.
+    ⚠️ **Bug corretto in v7.43:** la prima versione usava `badgeRowWouldEmpty`
+    ('accenderla svuoterebbe il totale?'), sbagliato coi badge in **UNIONE**:
+    con un altro badge già attivo, aggiungerne uno non svuota mai (l'insieme
+    cresce), così dopo un filtro TUTTE le righe prima spente 'riapparivano'
+    attivabili (segnalato: Solo Animali → filtro Compagnia → tutte le righe di
+    nuovo attive). Il criterio giusto è per-riga sulle categorie, indipendente
+    dagli altri badge. Con la disabilitazione il messaggio `.rank-empty` resta
+    solo un fallback teorico.
+  - Sotto le Categorie c'è lo **slot del tag**
   (`.ctrl-tag-slot`): a filtro attivo mostra il **tag** `× N badge attivi`
   (centrato sui due assi, il click azzera); a filtro spento resta **vuoto ma
   riserva l'altezza del tag** (`min-height:21px` su desktop, dalla v7.29), così
