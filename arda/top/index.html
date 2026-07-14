@@ -1875,7 +1875,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.13</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2255,14 +2255,14 @@ var ICON_SVG = {
 // admin. In legenda condividono la riga: (king_high+king_high_now),
 // (west+envoy), (drago+balrog), (vilya+nenya+narya); 'est' ha riga propria
 // PRIMA di quella di Aman (la nave che va, poi la nave che torna).
-var ICON_ORDER = ['aratar','silmaril','calaquende','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','guerradira','suicidio','fellowship','onering','vilya','nenya','narya','menring'];
+var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','guerradira','suicidio','fellowship','onering','vilya','nenya','narya','menring'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
 // (unione), incrociato con le categorie attive. Non persistito e ignorato
 // dagli URL condivisi (scelte dell'utente); azzerato entrando nel riordino.
 var BADGE_ROWS = {
-  aratar:['aratar'], silmaril:['silmaril'], calaquende:['calaquende'],
+  aratar:['aratar'], calaquende:['calaquende'], silmaril:['silmaril'],
   incarnazione:['incarnazione'], helcaraxe:['helcaraxe'], istari:['istari'],
   king_high:['king_high','king_high_now'], king_std:['king_std'],
   survivor:['survivor'], est:['est'], west:['west','envoy'],

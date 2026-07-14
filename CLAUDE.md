@@ -1113,8 +1113,9 @@ specifico del dataset):
   vide la Luce dei Due Alberi di Valinor' — gli Elfi della Luce, chi vide di
   persona la luce dei Due Alberi (visse o soggiornò in Aman prima
   dell'oscuramento). Icona `icons/Calaquendi.png` (fornita dall'utente). In
-  `ICON_ORDER` sta **subito dopo `silmaril`** (i due badge della Luce vicini);
-  riga di legenda propria. **46 portatori** nel dataset:
+  `ICON_ORDER` sta **subito prima di `silmaril`** (i due badge della Luce
+  vicini; dalla v7.13 l'ordine è Calaquendi→Silmaril: gli Alberi vengono prima
+  dei loro frutti); riga di legenda propria. **46 portatori** nel dataset:
   - **41 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion,
     Indis, Elenwë, Findis, Írimë, Elemmírë, Ilwen, **Amarië** — aggiunta in
     v7.10, prima di Finduilas: personaggio canonico sfuggito, Vanya amata di
