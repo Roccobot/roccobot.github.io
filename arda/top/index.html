@@ -792,6 +792,11 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 .ctrl-legend-row.on { background:rgba(210,178,92,0.13); border-color:rgba(224,194,108,0.55); }
 html[data-theme="light"] .ctrl-legend-row:hover { background:rgba(58,88,120,0.10); }
 html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); border-color:rgba(58,88,120,0.55); }
+/* Riga-badge DISABILITATA ('filtro a risultati 0'): accenderla, incrociata con
+   le categorie attive, darebbe 0 voci. Non interattiva (pointer-events:none),
+   attenuata, niente hover; aria-disabled per gli screen reader. Si riabilita da
+   sé quando cambiano le categorie (la legenda si ricostruisce a ogni filtro). */
+.ctrl-legend-row.leg-disabled { opacity:0.32; pointer-events:none; cursor:default; }
 /* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
    × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
 /* Slot del tag: su mobile altezza FISSA (spazio riservato anche a filtro
@@ -1901,7 +1906,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.30</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2533,6 +2538,39 @@ function isVisibile(p) {
     if (!hit) return false;
   }
   return !!filterState[categoria(p)];
+}
+
+// Conta le voci visibili con un IPOTETICO set di righe-badge (dry-run), stessa
+// logica di isVisibile ma sostituendo badgeFilter con rowSet. Serve a (dalla
+// v1.00 dello schema x.xx, parte 'filtro a risultati 0'): (a) disabilitare le
+// righe-badge che darebbero 0 risultati con le categorie attive, (b) fare da
+// guard al clic (un toggle che svuoterebbe la lista non viene applicato).
+function visibleCountWithBadgeSet(rowSet) {
+  var n = 0;
+  for (var i = 0; i < dati.length; i++) {
+    var p = dati[i];
+    if (p.apocrifo && !showApocrifi) continue;
+    if (rowSet.size) {
+      var hit = false;
+      rowSet.forEach(function(row){ if (!hit) BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; }); });
+      if (!hit) continue;
+    }
+    if (!filterState[categoria(p)]) continue;
+    n++;
+  }
+  return n;
+}
+// Una riga-badge va DISABILITATA se, non essendo già attiva, accenderla darebbe
+// 0 risultati. Nota: coi badge in UNIONE, aggiungere una riga a un filtro già
+// non vuoto non può mai svuotare (l'insieme cresce): perciò le righe si spengono
+// solo quando il filtro è vuoto e quel badge, incrociato con le categorie
+// attive, non ha portatori. Le righe già attive restano sempre cliccabili
+// (si possono sempre spegnere).
+function badgeRowWouldEmpty(row) {
+  if (badgeFilter.has(row)) return false;
+  var test = new Set(badgeFilter);
+  test.add(row);
+  return visibleCountWithBadgeSet(test) === 0;
 }
 
 function renderList() {
@@ -3475,6 +3513,14 @@ function controlPanelHTML() {
     function legRow(row, inner, extraCls) {
       if (measure) return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + '">' + inner + '</div>';
       var on = badgeFilter.has(row);
+      // 'Filtro a risultati 0': la riga si disabilita se accenderla svuoterebbe
+      // la lista (date le categorie attive). Disabilitata = non interattiva
+      // (niente role/tabindex, pointer-events:none via CSS) e aria-disabled.
+      var dis = !on && badgeRowWouldEmpty(row);
+      if (dis) {
+        return '<div class="ctrl-legend-row leg-disabled' + (extraCls ? ' ' + extraCls : '')
+          + '" data-row="' + row + '" aria-disabled="true">' + inner + '</div>';
+      }
       return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + (on ? ' on' : '')
         + '" data-row="' + row + '" role="button" tabindex="0" aria-pressed="' + (on ? 'true' : 'false') + '">' + inner + '</div>';
     }
@@ -3642,12 +3688,17 @@ function wireControlPanel() {
       applyFilter();
     });
   });
-  // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio)
+  // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).
+  // Guard 'risultati 0' (rete di sicurezza oltre alla disabilitazione visiva):
+  // un toggle che svuoterebbe la lista NON viene applicato (nessun effetto).
   function toggleBadgeRow(row){
+    var test = new Set(badgeFilter);
+    if (test.has(row)) test.delete(row); else test.add(row);
+    if (visibleCountWithBadgeSet(test) === 0) return; // svuoterebbe la lista: ignora
     if (badgeFilter.has(row)) badgeFilter.delete(row); else badgeFilter.add(row);
     applyFilter();
   }
-  panel.querySelectorAll('.ctrl-legend-row[data-row]').forEach(function(rowEl){
+  panel.querySelectorAll('.ctrl-legend-row[data-row]:not(.leg-disabled)').forEach(function(rowEl){
     rowEl.addEventListener('click', function(){ toggleBadgeRow(rowEl.getAttribute('data-row')); });
     rowEl.addEventListener('keydown', function(e){
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBadgeRow(rowEl.getAttribute('data-row')); }

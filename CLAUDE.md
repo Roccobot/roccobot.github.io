@@ -755,7 +755,23 @@ specifico del dataset):
   badge): selezioni multiple in **unione**, incrociate con le categorie
   attive dentro `isVisibile`. Non persistito, **ignorato dagli URL
   condivisi**, azzerato entrando nel riordino; incrocio senza risultati →
-  messaggio `.rank-empty`. Sotto le Categorie c'è lo **slot del tag**
+  messaggio `.rank-empty`.
+  - **Filtro a risultati 0: impedito (dalla v7.40).** Una riga-badge che,
+    accesa, svuoterebbe la lista (dato l'incrocio con le categorie attive) NON è
+    attivabile. Due livelli: (1) **disabilitazione visiva**, in `buildLegend`
+    la riga prende la classe `.leg-disabled` (attenuata, `pointer-events:none`,
+    `aria-disabled`, niente `role`/`tabindex`) se `badgeRowWouldEmpty(row)`; si
+    riabilita da sé al cambio categorie (la legenda si ricostruisce a ogni
+    filtro); (2) **guard al clic** in `toggleBadgeRow`, un toggle il cui
+    risultato sarebbe 0 non viene applicato (rete di sicurezza anche per la
+    tastiera). Entrambi usano `visibleCountWithBadgeSet(rowSet)`, un dry-run che
+    conta le voci visibili con un ipotetico set di righe-badge (stessa logica di
+    `isVisibile`). NB: coi badge in **unione**, aggiungere una riga a un filtro
+    già non vuoto non svuota mai (l'insieme cresce) → le righe si disabilitano
+    solo quando il filtro è **vuoto** e quel badge non ha portatori nelle
+    categorie attive; le righe già **attive** restano sempre cliccabili (si
+    possono spegnere). Con la disabilitazione attiva il messaggio `.rank-empty`
+    resta solo come fallback teorico (i badge non possono più causarlo). Sotto le Categorie c'è lo **slot del tag**
   (`.ctrl-tag-slot`): a filtro attivo mostra il **tag** `× N badge attivi`
   (centrato sui due assi, il click azzera); a filtro spento resta **vuoto ma
   riserva l'altezza del tag** (`min-height:21px` su desktop, dalla v7.29), così
