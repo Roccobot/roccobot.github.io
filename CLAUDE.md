@@ -848,8 +848,10 @@ specifico del dataset):
   Uomo Salice, etichettato 'Spirito della foresta') restano in `divini`.
 - **Colori-badge di Ent, Aquile e casi affini (dalla v7.16, scelte dell'utente).**
   Via `tipo_color`: **tutti gli Ent** (Fangorn, Bregalad, Fladrif, Faggiosso,
-  Finglas) e **l'Entessa Fimbrethil** (`tipo` 'Entessa'/'Entwife', aggiunta in
-  v7.17) e **tutte le Grandi Aquile** (Thorondor, Gwaihir, Meneldor, Landroval)
+  Finglas e **Fimbrethil** — quest'ultima col colore dalla v7.17; dalla v7.18 il
+  suo `tipo` è stato normalizzato da 'Entessa'/'Entwife' a **'Ent'** — `genere:f`
+  invariato — così non sfugge alle future azioni sugli Ent) e **tutte le Grandi
+  Aquile** (Thorondor, Gwaihir, Meneldor, Landroval)
   usano il colore di **Tom Bombadil** (`tipo-bombadil`); il **Vecchio Uomo
   Salice** usa il colore di **Osservatore nell'Acqua** (`tipo-misterioso`) — non
   più quello di Tom Bombadil. Le etichette-testo ('Ent', 'Grande Aquila',
