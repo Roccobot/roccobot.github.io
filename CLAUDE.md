@@ -1021,13 +1021,20 @@ specifico del dataset):
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
     Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo nei
     Racconti Perduti (versione superata del Legendarium).
-  - **`morgoth`** ('Affrontò Morgoth in duello'): SOLO Fingolfin, il badge
-    più esclusivo.
+  - **`morgoth`** ('Affrontò Morgoth in duello'): era SOLO Fingolfin, il badge
+    più esclusivo. **RIMOSSO nella v7.09** per far posto al badge `calaquende`
+    (scelta dell'utente: 'per quanto affezionato all'esclusivo badge Morgoth lo
+    tolgo per fare spazio a un badge Calaquendi'). L'icona `Morgoth.png` resta in
+    cartella (recuperabile); la card di Fingolfin non lo espone più. Restano
+    intatte le feature omonime ma distinte: la classe card `.rank-item.divine.morgoth`
+    (sfondo scuro dei villain, via `darkBg`) e l'etichetta tipo `.tipo-morgoth`
+    ('vala decaduto').
   - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
     ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
     riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
 - **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via
-  grep sulle fonti.** In legenda: `guerradira` **dopo** `morgoth`, `suicidio`
+  grep sulle fonti.** In legenda: `guerradira` **dopo** `balrog` (era dopo
+  `morgoth`, rimosso in v7.09), `suicidio`
   **prima** di `fellowship`; portatori (`p.suicidio`/`p.guerradira` = `true`):
   - **`suicidio`** ('Si tolse la vita', icona `Teschio.png`, teschio con lacrima
     di sangue): **7** voci:
@@ -1090,6 +1097,32 @@ specifico del dataset):
     4° — li segnalerà come sbagliati: NON è un errore, è la conseguenza
     coerente della genealogia adottata (segnalato dal RAG Antigravity come
     'incoerenza interna', corretto proprio perché tale).
+- **Badge `calaquende` (aggiunto in v7.09, al posto di `morgoth`).** 'Calaquendë:
+  vide la Luce dei Due Alberi di Valinor' — gli Elfi della Luce, chi vide di
+  persona la luce dei Due Alberi (visse o soggiornò in Aman prima
+  dell'oscuramento). Icona `icons/Calaquendi.png` (fornita dall'utente). In
+  `ICON_ORDER` sta **subito dopo `silmaril`** (i due badge della Luce vicini);
+  riga di legenda propria. **45 portatori** nel dataset:
+  - **40 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion,
+    Indis, Elenwë, Findis, Írimë, Elemmírë, Ilwen); i **Teleri di Aman/Falmari**
+    (Olwë, Eärwen); i **Noldor nati/vissuti in Aman** (Finwë, Míriel, Fëanor,
+    Fingolfin, Finarfin, Anairë, Mahtan, Nerdanel, **Rúmil il Noldo — NON il
+    Silvano omonimo**, Maedhros, Maglor, Celegorm, Caranthir, Curufin, Amrod,
+    Amras, Fingon, Turgon, Aredhel, Argon, Finrod, Angrod, Aegnor, Eldalótë,
+    Galadriel, Celebrimbor, Idril, Orodreth, Glorfindel); e **Thingol** — unico
+    Sinda, con **tooltip dedicato** (`ICON_LABEL_OVERRIDE`): vide gli Alberi come
+    ambasciatore con Oromë, 'non annoverato tra i Moriquendi'.
+  - **5 al 50%** (`calaquende:'presunto'`, tooltip condiviso `CALAQUENDE_DEDOTTO`):
+    **Ecthelion, Gildor Inglorion, Gwindor, Gelmir, Edrahil** — Calaquendi solo
+    sull'assunto 'Esule nato in Aman', luogo di nascita non attestato dalle
+    fonti (Glorfindel invece è **certo**: nato a Valinor, scritto tardo di JRRT).
+  - **`Celeborn` ESCLUSO** benché Gemini (e la versione *Teleporno*) lo conti tra
+    i Calaquendi: il progetto ha scartato quella linea (vedi 'Celeborn: NON si usa
+    Teleporno'), il nostro Celeborn è **Sinda della Terra di Mezzo**, non vide gli
+    Alberi. **`Amarië`** (nella lista di Gemini) non è una voce del dataset.
+  - Storia: analisi utente↔Claude del 2026-07-14, rifinita contro una lista di
+    Gemini (a cui il progetto ha aggiunto Thingol, Elemmírë, Anairë, Ilwen,
+    Eldalótë e da cui ha tolto Celeborn).
 
 ## 🧹 Asset del progetto
 
