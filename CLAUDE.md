@@ -938,6 +938,18 @@ specifico del dataset):
 - **Contrasto.** Il colore del testo dell'etichetta deve restare leggibile sul
   proprio sfondo in entrambi i temi (cfr. l'audit `axe-core` in 'Nuovi
   personaggi e canone'): verificarlo per ogni colore nuovo.
+- **Niente `/Calaquendë` nelle etichette tipo (dalla v7.11).** L'informazione
+  'vide gli Alberi' la porta ora il **badge** `calaquende` (vedi 'Criteri
+  editoriali dei badge'), quindi le 7 voci che avevano `Teler/Calaquendë` sono
+  state ripulite: Galadriel, Thingol, Finrod, Aegnor, Angrod → `Teler`
+  (`tipo-teleri`); la vecchia classe `tipo-calaquendi` è stata **rimossa**.
+- **Etichetta `Falmar` (dalla v7.11): i Teleri di Aman con colore dedicato.**
+  **Olwë** ed **Eärwen** portano l'etichetta `Elfo/Elfa (Falmar)` con la classe
+  `tipo-falmar` (dark `#45d8ee`, light `#006870`): un azzurro **leggermente più
+  ceruleo del teleri** (`#4de6cc`/`#006e61`), per distinguere i Falmari (i Teleri
+  che restarono in Aman) pur restando **ramo teleri** e **categoria elfi**
+  (`categoria()` li mappa via `elfo|elfa`). Scelta dell'utente; contrasto AA
+  verificato con axe in entrambi i temi (bordo = testo@0.8, come da regola sopra).
 
 ## 🏅 Criteri editoriali dei badge
 
@@ -1021,13 +1033,20 @@ specifico del dataset):
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
     Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo nei
     Racconti Perduti (versione superata del Legendarium).
-  - **`morgoth`** ('Affrontò Morgoth in duello'): SOLO Fingolfin, il badge
-    più esclusivo.
+  - **`morgoth`** ('Affrontò Morgoth in duello'): era SOLO Fingolfin, il badge
+    più esclusivo. **RIMOSSO nella v7.09** per far posto al badge `calaquende`
+    (scelta dell'utente: 'per quanto affezionato all'esclusivo badge Morgoth lo
+    tolgo per fare spazio a un badge Calaquendi'). L'icona `Morgoth.png` resta in
+    cartella (recuperabile); la card di Fingolfin non lo espone più. Restano
+    intatte le feature omonime ma distinte: la classe card `.rank-item.divine.morgoth`
+    (sfondo scuro dei villain, via `darkBg`) e l'etichetta tipo `.tipo-morgoth`
+    ('vala decaduto').
   - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
     ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
     riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
 - **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via
-  grep sulle fonti.** In legenda: `guerradira` **dopo** `morgoth`, `suicidio`
+  grep sulle fonti.** In legenda: `guerradira` **dopo** `balrog` (era dopo
+  `morgoth`, rimosso in v7.09), `suicidio`
   **prima** di `fellowship`; portatori (`p.suicidio`/`p.guerradira` = `true`):
   - **`suicidio`** ('Si tolse la vita', icona `Teschio.png`, teschio con lacrima
     di sangue): **7** voci:
@@ -1090,6 +1109,35 @@ specifico del dataset):
     4° — li segnalerà come sbagliati: NON è un errore, è la conseguenza
     coerente della genealogia adottata (segnalato dal RAG Antigravity come
     'incoerenza interna', corretto proprio perché tale).
+- **Badge `calaquende` (aggiunto in v7.09, al posto di `morgoth`).** 'Calaquendë:
+  vide la Luce dei Due Alberi di Valinor' — gli Elfi della Luce, chi vide di
+  persona la luce dei Due Alberi (visse o soggiornò in Aman prima
+  dell'oscuramento). Icona `icons/Calaquendi.png` (fornita dall'utente). In
+  `ICON_ORDER` sta **subito dopo `silmaril`** (i due badge della Luce vicini);
+  riga di legenda propria. **46 portatori** nel dataset:
+  - **41 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion,
+    Indis, Elenwë, Findis, Írimë, Elemmírë, Ilwen, **Amarië** — aggiunta in
+    v7.10, prima di Finduilas: personaggio canonico sfuggito, Vanya amata di
+    Finrod rimasta in Valinor, Silmarillion); i **Teleri di Aman/Falmari**
+    (Olwë, Eärwen); i **Noldor nati/vissuti in Aman** (Finwë, Míriel, Fëanor,
+    Fingolfin, Finarfin, Anairë, Mahtan, Nerdanel, **Rúmil il Noldo — NON il
+    Silvano omonimo**, Maedhros, Maglor, Celegorm, Caranthir, Curufin, Amrod,
+    Amras, Fingon, Turgon, Aredhel, Argon, Finrod, Angrod, Aegnor, Eldalótë,
+    Galadriel, Celebrimbor, Idril, Orodreth, Glorfindel); e **Thingol** — unico
+    Sinda, con **tooltip dedicato** (`ICON_LABEL_OVERRIDE`): vide gli Alberi come
+    ambasciatore con Oromë, 'non annoverato tra i Moriquendi'.
+  - **5 al 50%** (`calaquende:'presunto'`, tooltip condiviso `CALAQUENDE_DEDOTTO`):
+    **Ecthelion, Gildor Inglorion, Gwindor, Gelmir, Edrahil** — Calaquendi solo
+    sull'assunto 'Esule nato in Aman', luogo di nascita non attestato dalle
+    fonti (Glorfindel invece è **certo**: nato a Valinor, scritto tardo di JRRT).
+  - **`Celeborn` ESCLUSO** benché Gemini (e la versione *Teleporno*) lo conti tra
+    i Calaquendi: il progetto ha scartato quella linea (vedi 'Celeborn: NON si usa
+    Teleporno'), il nostro Celeborn è **Sinda della Terra di Mezzo**, non vide gli
+    Alberi. (**`Amarië`**, nella lista di Gemini, all'inizio mancava dal dataset:
+    aggiunta in v7.10.)
+  - Storia: analisi utente↔Claude del 2026-07-14, rifinita contro una lista di
+    Gemini (a cui il progetto ha aggiunto Thingol, Elemmírë, Anairë, Ilwen,
+    Eldalótë e da cui ha tolto Celeborn).
 
 ## 🧹 Asset del progetto
 

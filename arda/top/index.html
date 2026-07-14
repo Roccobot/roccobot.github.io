@@ -1107,7 +1107,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .tipo-noldor      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
 .tipo-vanyar      { background:rgba(0,155,200,0.28); border:1px solid rgba(24,232,255,0.8); color:#18e8ff; }
 .tipo-teleri, .tipo-sindar { background:rgba(9,146,133,0.28); border:1px solid rgba(77,230,204,0.8); color:#4de6cc; }
-.tipo-calaquendi  { background:rgba(0,170,149,0.36); border:1px solid rgba(17,255,220,0.8); color:#11ffdc; }
+.tipo-falmar      { background:rgba(9,120,150,0.30); border:1px solid rgba(69,216,238,0.8); color:#45d8ee; }
 /* MEZZELFI — indaco stellare */
 .tipo-mezzelfo    { background:rgba(11,112,174,0.28); border:1px solid rgba(94,214,250,0.8); color:#5ed6fa; }
 /* UOMINI — rosso/vermiglio/ocra rossa */
@@ -1703,7 +1703,7 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb { background: linear-gradient
 html[data-theme="light"] .tipo-noldor { background:rgba(22,55,183,0.11); border-color:rgba(15,63,185,0.8); color:#0f3fb9; }
 html[data-theme="light"] .tipo-vanyar { background:rgba(0,150,195,0.12); border-color:rgba(0,106,134,0.8); color:#006a86; }
 html[data-theme="light"] .tipo-teleri, html[data-theme="light"] .tipo-sindar { background:rgba(9,146,133,0.11); border-color:rgba(0,110,97,0.8); color:#006e61; }
-html[data-theme="light"] .tipo-calaquendi { background:rgba(0,160,141,0.16); border-color:rgba(0,107,94,0.8); color:#006b5e; }
+html[data-theme="light"] .tipo-falmar { background:rgba(9,130,150,0.12); border-color:rgba(0,104,112,0.8); color:#006870; }
 html[data-theme="light"] .tipo-mezzelfo { background:rgba(11,112,174,0.11); border-color:rgba(0,100,157,0.8); color:#00649d; }
 html[data-theme="light"] .tipo-numenorean { background:rgba(204,0,34,0.12); border-color:rgba(169,0,27,0.8); color:#a9001b; }
 html[data-theme="light"] .tipo-hador { background:rgba(204,92,0,0.12); border-color:rgba(158,71,0,0.8); color:#9e4700; }
@@ -1875,7 +1875,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.11</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2195,7 +2195,7 @@ function tipoClass(tipo) {
   if (t.includes('hobbit')) return 'tipo-hobbit';
   if (t.includes('noldo')) return 'tipo-noldor';
   if (t.includes('vanya')) return 'tipo-vanyar';
-  if (t.includes('calaquend')) return 'tipo-calaquendi'; // qualunque '... (Calaquendë)' (Teler o Sinda) -> colore calaquendi
+  if (t.includes('falmar')) return 'tipo-falmar'; // Falmari (Teleri di Aman: Olwë, Eärwen) -> colore azzurro dedicato
   if (t.includes('teler')) return 'tipo-teleri';
   if (t.includes('sinda')) return 'tipo-sindar';
   if (t.includes('nando') || t.includes('nandor') || t.includes('silvan') || t.includes('verde') || t.includes('green-elf')) return 'tipo-teleri'; // Nandor/Silvani: ramo teleri
@@ -2246,7 +2246,7 @@ var ICON_SVG = {
   est:        "<img class=\"status-icon\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
   drago:      "<img class=\"status-icon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
   balrog:     "<img class=\"status-icon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
-  morgoth:    "<img class=\"status-icon\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
+  calaquende: "<img class=\"status-icon\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
   suicidio:   "<img class=\"status-icon\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
 };
@@ -2255,18 +2255,18 @@ var ICON_SVG = {
 // admin. In legenda condividono la riga: (king_high+king_high_now),
 // (west+envoy), (drago+balrog), (vilya+nenya+narya); 'est' ha riga propria
 // PRIMA di quella di Aman (la nave che va, poi la nave che torna).
-var ICON_ORDER = ['aratar','silmaril','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','morgoth','guerradira','suicidio','fellowship','onering','vilya','nenya','narya','menring'];
+var ICON_ORDER = ['aratar','silmaril','calaquende','incarnazione','helcaraxe','istari','king_high','king_high_now','king_std','survivor','est','west','envoy','drago','balrog','guerradira','suicidio','fellowship','onering','vilya','nenya','narya','menring'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
 // (unione), incrociato con le categorie attive. Non persistito e ignorato
 // dagli URL condivisi (scelte dell'utente); azzerato entrando nel riordino.
 var BADGE_ROWS = {
-  aratar:['aratar'], silmaril:['silmaril'], incarnazione:['incarnazione'],
-  helcaraxe:['helcaraxe'], istari:['istari'],
+  aratar:['aratar'], silmaril:['silmaril'], calaquende:['calaquende'],
+  incarnazione:['incarnazione'], helcaraxe:['helcaraxe'], istari:['istari'],
   king_high:['king_high','king_high_now'], king_std:['king_std'],
   survivor:['survivor'], est:['est'], west:['west','envoy'],
-  drago:['drago','balrog'], morgoth:['morgoth'], guerradira:['guerradira'],
+  drago:['drago','balrog'], guerradira:['guerradira'],
   suicidio:['suicidio'], fellowship:['fellowship'],
   rings:['onering','vilya','nenya','narya','menring']
 };
@@ -2306,7 +2306,7 @@ var ICON_LABEL = {
     est:     "Attraversò il Mare su una nave degli Elfi da Aman alla Terra di Mezzo",
     drago:   "Uccise un Drago",
     balrog:  "Uccise un Balrog",
-    morgoth: "Affrontò e ferì Morgoth in duello",
+    calaquende: "Calaquendë: vide la Luce dei Due Alberi di Valinor",
     guerradira: "Combattè nella Guerra d'Ira",
     suicidio: "Si tolse la vita"
   },
@@ -2331,7 +2331,7 @@ var ICON_LABEL = {
     est:     "Crossed the Sea on an Elven ship from Aman to Middle-earth",
     drago:   "Slew a Dragon",
     balrog:  "Slew a Balrog",
-    morgoth: "Faced and wounded Morgoth in single combat",
+    calaquende: "Calaquendë: beheld the Light of the Two Trees of Valinor",
     guerradira: "Fought in the War of Wrath",
     suicidio: "Took their own life"
   }
@@ -2342,6 +2342,10 @@ var ICON_LABEL = {
 // Tooltip dedicato per le partenze per l'Ovest dedotte ma non attestate
 // (badge 'west' al 50%): Radagast, Glorfindel, Erestor, Lindir.
 var AMAN_DEDOTTO = { it:'Approdò nelle Terre Imperiture (dedotto, non attestato dalle fonti canoniche)', en:'Reached the Undying Lands (inferred, not canonically confirmed)' };
+// Calaquendë 'presunto' (badge al 50%): Esuli dei Noldor il cui luogo di nascita
+// non è attestato — sono Calaquendi solo se nati in Aman prima dell'oscuramento
+// degli Alberi (lettura standard, non confermata dalle fonti).
+var CALAQUENDE_DEDOTTO = { it:'Calaquendë presunto: Esule dei Noldor, la nascita in Aman non è attestata dalle fonti', en:'Presumed Calaquendë: a Noldorin Exile whose birth in Aman is not attested by the sources' };
 var ICON_LABEL_OVERRIDE = {
   'Elenwë': { helcaraxe: { it:'Morì nella traversata dell\'Helcaraxë', en:'Died during the crossing of the Helcaraxë' } },
   'Melkor': { aratar: { it:'Non più annoverato tra gli Aratar dopo la sua ribellione', en:'No longer counted among the Aratar after his rebellion' } },
@@ -2350,7 +2354,13 @@ var ICON_LABEL_OVERRIDE = {
   'Glorfindel': { west: AMAN_DEDOTTO },
   'Erestor': { west: AMAN_DEDOTTO },
   'Ingwion': { west: AMAN_DEDOTTO },
-  'Lindir': { west: AMAN_DEDOTTO }
+  'Lindir': { west: AMAN_DEDOTTO },
+  'Thingol': { calaquende: { it:'Calaquendë: vide la Luce dei Due Alberi come ambasciatore con Oromë (unico Sinda tra i Calaquendi)', en:'Calaquendë: beheld the Light of the Two Trees as an ambassador with Oromë (the only Sinda among the Calaquendi)' } },
+  'Ecthelion': { calaquende: CALAQUENDE_DEDOTTO },
+  'Gildor Inglorion': { calaquende: CALAQUENDE_DEDOTTO },
+  'Gwindor': { calaquende: CALAQUENDE_DEDOTTO },
+  'Gelmir': { calaquende: CALAQUENDE_DEDOTTO },
+  'Edrahil': { calaquende: CALAQUENDE_DEDOTTO }
 };
 function buildStatus(p) {
   var L = ICON_LABEL[currentLang] || ICON_LABEL.it;
