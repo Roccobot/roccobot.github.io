@@ -626,11 +626,14 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   /* Come per la versione mobile: in tema chiaro blu piu scuro per superare
      il 4.7:1 percepito dopo opacity .9 (stesso difetto di contrasto). */
   html[data-theme="light"] #ctrl-panel .ctrl-ver-desk { color:#3e607e; }
-  /* Categorie ANCORATE IN ALTO (dalla v4.05, via l'intestazione della
-     legenda): l'intestazione 'CATEGORIE' si allinea otticamente con la
-     prima riga della legenda a destra; lo spazio recuperato sotto 'Animali'
-     ospita il tag del filtro badge. */
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:calc(2.15rem + 3px) 0 0; }
+  /* Categorie ANCORATE IN ALTO (dalla v4.05): lo spazio recuperato sotto
+     'Animali' ospita il tag del filtro badge. Dalla v7.29 il margine è ridotto
+     di 6px (era calc(2.15rem + 3px) = 37.4px, ora calc(2.15rem - 3px) = 31.4px)
+     per AZZERARE l'offset di 6px con cui le righe categoria cadevano sotto le
+     righe legenda: ora i box delle righe categoria si incolonnano con quelli
+     delle righe legenda (stesso passo 31.5px E stessa quota). L'ancoraggio
+     toolbar<->prima riga legenda (righe legenda) resta invariato. */
+  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:calc(2.15rem - 3px) 0 0; }
   /* Ritocco di centratura (richiesta utente), misurato sui FONT REALI (Cinzel):
      le tre voci della testata vengono portate sullo stesso centro ottico
      verticale (convergono entro ~0.1px). Valori piccoli perché le stime a occhio
