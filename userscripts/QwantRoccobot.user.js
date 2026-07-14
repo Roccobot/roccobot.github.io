@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         QwantRoccobot — Qwant essenziale + immagini dirette
+// @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.7.0
+// @version      2.7.1
 // @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale solo dall'URL della miniatura; se non ci riesce, lascia il clic normale.
 // @author       Roccobot
 // @match        https://www.qwant.com/*
