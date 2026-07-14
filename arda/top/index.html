@@ -1006,7 +1006,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
      width:0 + min-width:100% la fa riempire la larghezza del blocco senza
      dettarla (come le Categorie), così non allarga il blocco fit-content; il
      padding-left la incolonna con le icone della legenda. */
-  #ctrl-panel .ctrl-mobile-note { text-align:left; opacity:0.8; width:0; min-width:100%; box-sizing:border-box; padding-left:0.3rem; white-space:normal; }
+  #ctrl-panel .ctrl-mobile-note { text-align:left; opacity:0.8; width:0; min-width:100%; box-sizing:border-box; padding-left:0.3rem; white-space:nowrap; }
   html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
@@ -1062,6 +1062,13 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   }
   .ctrl-bottombar .ctrl-icon-btn { width:2rem; padding:0; }
   .ctrl-bottombar .ctrl-lang-btn { width:2rem; padding:0; }
+}
+/* Rete di sicurezza (<=360px): la nota nomi (nowrap, che di proposito sfora nel
+   margine destro sui telefoni normali) su schermi molto stretti potrebbe
+   eccedere il pannello; qui torna ad andare a capo, evitando scroll orizzontale.
+   Viene DOPO il blocco 768px: a parità di specificità vince in cascata. */
+@media (max-width:360px) {
+  #ctrl-panel .ctrl-mobile-note { white-space:normal; }
 }
 /* LARGHEZZE INTERMEDIE (tablet, telefoni grandi in orizzontale, 640-768px):
    la bottom-sheet resta, ma il contenuto passa a DUE COLONNE affiancate
@@ -1868,7 +1875,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v6.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v6.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
