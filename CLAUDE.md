@@ -1041,11 +1041,15 @@ specifico del dataset):
   `ICON_LEGENDA.istari` non è più usato). La riga Istari è stata spostata al
   **penultimo posto**, subito prima degli Anelli. Le icone delle righe
   multi-icona (Istari e Anelli) sono avvolte in un `.leg-cluster` a larghezza
-  fissa (`8em`, dalla v7.25) così il testo delle due righe parte dallo stesso x
-  (allineamento esatto, IT ed EN); le icone sono **distanziate** con gap
-  positivo (`0.22rem`), non sovrapposte (dalla v7.25: prima erano ammucchiate),
-  e la prima icona Istari (Saruman) ha un micro-nudge a sinistra per
-  compensarne la forma otticamente più a destra dell'Unico.
+  fissa (`8em`) così il testo delle due righe parte dallo stesso x (allineamento
+  esatto, IT ed EN). **Spaziatura (rifinita dall'utente in v7.26):** gli
+  **Anelli** sono distanziati (gap positivo `0.22rem`); gli **Istari** sono un
+  **fan compatto** (`.ctrl-legend-rings.ctrl-legend-istari .leg-ring+.leg-ring`
+  margin `-0.44rem` → ~10px center-to-center, sovrapposti); la prima icona
+  Istari (Saruman) ha un nudge (`0.065rem`) tarato dall'utente per far iniziare
+  la riga 2px più a destra, compensando la forma di Bianco.png. Storico: in
+  v7.23 tutte ammucchiate (rotto), in v7.25 tutte distanziate, in v7.26 la
+  taratura definitiva (Istari fan, Anelli spaziati).
 - **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
   i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
   In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
