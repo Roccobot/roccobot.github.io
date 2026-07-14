@@ -763,6 +763,14 @@ specifico del dataset):
   l'appartenenza più probabile, per scelta dell'utente: **Erestor** →
   `tipo-noldor`, **Lindir** → `tipo-sindar` (ramo Teleri). Non sono anomalie
   da ripulire: gli override sono deliberati.
+  - **Re-Stregone di Angmar: etichetta `Uomo`, colore númenóreano 'suggerito'
+    (dalla v7.20).** Stessa logica: la stirpe non è accertata, quindi l'etichetta
+    è il semplice `Uomo`/`Man` (non più `Uomo (Númenóreano?)`), ma `tipo_color`
+    `tipo-numenorean|` tiene il colore rosso dei Númenóreani come indizio (il 2º
+    segmento `Spettro dell'Anello` resta auto = `tipo-oscurita`). Il `?` era stato
+    tolto perché allargava l'etichetta e rompeva la riga singola di nome+badge.
+    ⚠️ Diverso da **Berúthiel** `Donna (Númenóreana Nera?)`, dove il `?` resta
+    voluto (vedi audit): non uniformare i due casi.
 
 ## 📚 Nuovi personaggi e canone
 
