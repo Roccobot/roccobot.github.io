@@ -108,70 +108,6 @@ modificare i valori → salvare (Ctrl+S).
   incorporato nello script come SVG; con `LOGO_PERSONALIZZATO` si può comunque
   usare un'altra immagine (URL).
 
-## Emojis.wiki AI Gen Reset
-
-**File:** `EmojisWikiReset.user.js`
-
-Il generatore di emoji con l'AI di [emojis.wiki/ai](https://emojis.wiki/ai/) ha un
-**limite giornaliero** di generazioni. Il limite è tracciato **lato client** (si
-azzera aprendo una finestra in incognito). Questo script aggiunge un pulsante
-flottante **"🔄 Reset generazioni"** che replica l'incognito con un clic:
-ripulisce lo stato client del sito (localStorage, sessionStorage, cookie — anche
-HttpOnly via `GM_cookie` — IndexedDB e, dalla v1.4.0, **Cache Storage**)
-**preservando** i cookie Cloudflare (`cf_clearance`/`__cf_bm`…), così la
-generazione continua a funzionare, poi ricarica la pagina e riparti con la quota
-fresca senza aprire nuove finestre.
-
-> **⚠️ Stato attuale (v1.8.0): il reset dallo stesso browser NON funziona; usa
-> l'incognito.** Cronologia dei tentativi: svuotare storage/IndexedDB/Cache/
-> Service Worker non azzerava il limite; cancellare `_cfuvid` tenendo
-> `cf_clearance` (v1.5.0) **peggiorava** le cose ('limit reached' anche con
-> token); nemmeno la "modalità incognito totale" (v1.7.0, che cancellava anche i
-> cookie Cloudflare) ci riusciva. **Fatto chiave:** in **incognito il limite si
-> azzera** pur essendo lo **stesso IP** → il limite è legato all'**identità del
-> browser** (i cookie Cloudflare, in primis `cf_clearance`), **non** all'IP. La
-> pulizia in-place non riesce a replicare l'incognito, quasi certamente perché
-> `cf_clearance` è **HttpOnly** e non viene davvero cancellato dalla pagina.
-> Perciò dalla v1.8.0 lo script torna a un reset **innocuo** (preserva i cookie
-> Cloudflare; modalità totale e Cache/SW off): non azzera il limite ma non
-> peggiora nulla. **Metodo che funziona: aprire `emojis.wiki/ai` in una finestra
-> in incognito** (una nuova identità di browser che uno userscript non può
-> creare).
-
-Il pulsante **compare solo sulle pagine del generatore** (URL che iniziano con
-`https://emojis.wiki/ai/`); altrove non appare. Il reset resta comunque
-disponibile dal **menu di Tampermonkey**, a prescindere dall'URL. Se il sito
-cambia pagina come SPA (URL che muta senza reload), il pulsante appare/scompare
-di conseguenza entrando/uscendo da `/ai/`.
-
-È in pratica un "Cancella dati del sito" **selettivo**, ristretto a
-`emojis.wiki`, azionabile con un tasto (o dal menu di Tampermonkey).
-
-### Installazione
-
-1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/EmojisWikiReset.user.js>
-3. Premere **Installa**. Tampermonkey può chiedere il permesso per l'accesso ai
-   cookie (`GM_cookie`): concederlo, serve a rimuovere anche i cookie HttpOnly.
-
-### Personalizzazione
-
-```js
-const MOSTRA_PULSANTE  = true;   // pulsante flottante "Reset generazioni"
-const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pagina
-const PULISCI_CACHE    = true;   // svuota anche la Cache Storage (spesso è lì il conteggio); sicuro
-const PULISCI_SERVICE_WORKER = false; // più aggressivo: disinstalla anche i Service Worker (solo se serve)
-```
-
-### Note
-
-- Ripulendo lo stato si azzerano anche eventuali preferenze del sito (es. tema);
-  il consenso cookie, se lo gestisci con un'estensione, viene re-impostato da
-  quella al ricaricamento.
-- Se `GM_cookie` non è disponibile nel tuo gestore, lo script ripulisce comunque
-  storage e cookie accessibili da JS: se il limite fosse legato a un cookie
-  HttpOnly, in quel caso servirebbe Tampermonkey (che supporta `GM_cookie`).
-
 ## NSFWAlbum Enhancer
 
 **File:** `NSFWAlbumEnhancer.user.js`
@@ -245,3 +181,50 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 3. Premere **Installa**. Tampermonkey può chiedere il permesso per
    `GM_xmlhttpRequest` verso `fapopedia.net`: concederlo (serve a scaricare le
    immagini). Nessuna dipendenza esterna: lo ZIP è creato internamente.
+
+## LotRWiki
+
+**File:** `LotRWiki.user.js`
+
+Alleggerisce la wiki LotR di Fandom (`lotr.fandom.com`): toglie l'**enorme immagine
+di sfondo** del tema (e, iniettando il CSS a `document-start`, ne **evita anche il
+caricamento**), e nasconde la roba pesante/inutile lasciando **intatti contenuto e
+leggibilità** della wiki. Solo CSS, nessuna richiesta di rete.
+
+Cosa nasconde (tutto attivabile/disattivabile dai flag in cima):
+
+- `NASCONDI_SFONDO` — l'immagine di sfondo del tema + l'hero dell'header di
+  community (obiettivo principale).
+- `NASCONDI_ADS` — gli slot pubblicitari residui (il blocco vero delle richieste
+  lo fa già AdGuard a livello di rete; qui si tolgono i placeholder).
+- `NASCONDI_RAIL` — la **colonna destra** (pubblicità, "Fan Feed", consigliati) e
+  allarga l'articolo a tutta la larghezza.
+- `NASCONDI_VIDEO` — il player video "in evidenza"/autoplay.
+- `NASCONDI_FOOTER_GLOBALE` — il footer gigante di Fandom ("Explore
+  properties"…). Il footer della **pagina** wiki (categorie, licenza) resta.
+- `NASCONDI_STICKY` — la barra che si appiccica in alto allo scroll (default
+  **off**: la tiene, serve alla navigazione).
+
+**Non tocca** articolo, infobox, indice (TOC), categorie, immagini dell'articolo,
+ricerca e navigazione: solo lo sfondo e la cornice pesante attorno.
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/LotRWiki.user.js>
+3. Premere **Installa**.
+
+### Personalizzazione
+
+```js
+const NASCONDI_SFONDO         = true;  // immagine di sfondo del tema (obiettivo principale)
+const NASCONDI_ADS            = true;  // slot pubblicitari residui
+const NASCONDI_RAIL           = true;  // colonna destra + allarga l'articolo
+const NASCONDI_VIDEO          = true;  // video "in evidenza"/autoplay
+const NASCONDI_FOOTER_GLOBALE = true;  // footer globale di Fandom
+const NASCONDI_STICKY         = false; // barra superiore sticky (default: tenuta)
+```
+
+> **Nota:** i selettori seguono lo skin standard `fandomdesktop` di Fandom. Se un
+> elemento non sparisce (Fandom cambia ogni tanto le classi), mandami l'elemento
+> dal DevTools e affino la regola.
