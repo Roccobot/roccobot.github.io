@@ -65,17 +65,15 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background:
-    radial-gradient(ellipse at 20% 10%, rgba(30,60,100,0.45) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(10,20,60,0.55) 0%, transparent 55%),
-    radial-gradient(ellipse at 50% 50%, rgba(20,40,80,0.18) 0%, transparent 70%),
-    var(--ink-deep);
-  z-index:-2;
-  transition: background 0.3s;
-}
+/* Sfondo pagina davvero NEUTRO (dalla v8.74): rimosso il vecchio overlay
+   decorativo `body::before` (radial-gradient blu-inchiostro, `position:fixed;
+   inset:0`). Due motivi: (1) la sua base opaca copriva il fondo neutro del
+   `body`, quindi il grigio #303030/#F5F5F5 non si vedeva (l'utente misurava
+   ~#DBDEE8, media dei gradienti); (2) essendo un layer FIXED grande quanto il
+   viewport, su mobile non seguiva la barra dinamica del browser e lasciava una
+   'linea' di giunzione sempre alla stessa altezza (il suo bordo contro il fondo
+   del body sotto). Ora il colore lo portano le card (cardcolor) e il fondo resta
+   piatto. Il gradiente ornato resta SOLO sul titolo `#title`, non sulla pagina. */
 
 header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
 
@@ -1683,16 +1681,9 @@ html[data-theme="light"] {
   html[data-theme="light"] .rank-desc .bp-b { color:#232c3d; }
 
 html[data-theme="light"] body {
-    background: #ebebef;
+    background: #F5F5F5;
     color: #12141e;
     font-weight: 500;
-  }
-html[data-theme="light"] body::before {
-    background:
-      radial-gradient(ellipse at 15% 20%, rgba(180,190,215,0.35) 0%, transparent 40%),
-      radial-gradient(ellipse at 85% 70%, rgba(170,180,210,0.28) 0%, transparent 45%),
-      radial-gradient(ellipse at 50% 95%, rgba(190,195,220,0.22) 0%, transparent 50%),
-      #ebebef;
   }
 html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"] .subtitle, html[data-theme="light"] .intro, html[data-theme="light"] footer p {
     font-weight: 500;
@@ -1714,9 +1705,6 @@ html[data-theme="light"] .lang-switch {
     color: #253d58;
   }
 html[data-theme="light"] .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
-
-/* Sfondo pagina neutro anche in chiaro (dalla v8.72), vedi body. */
-html[data-theme="light"] body { background: #F5F5F5; }
 
 html[data-theme="light"] .rank-item {
     background: rgba(224,236,252,0.16);
@@ -2009,7 +1997,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.73</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.74</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
