@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.6.0
-// @description  Pulsante (solo su /ai/) che ripulisce lo stato client di emojis.wiki (localStorage, sessionStorage, cookie non-Cloudflare anche HttpOnly, IndexedDB) preservando i cookie Cloudflare. NOTA (v1.6.0): il sito ha agganciato il "Daily limit" all'identità Cloudflare (cf_clearance) che serve anche a generare, quindi un reset client non azzera più il limite; le pulizie aggressive (Cache/Service Worker/_cfuvid) peggioravano le cose (limite raggiunto anche con token) e sono state DISATTIVATE per default. Solo una finestra in incognito (identità del tutto nuova) azzera il limite, e ciò non è replicabile da uno userscript.
+// @version      1.7.0
+// @description  Pulsante (solo su /ai/) che azzera il limite giornaliero del generatore AI di emojis.wiki ripulendo lo stato client. Dalla v1.7.0, in via SPERIMENTALE, la modalità "incognito totale" (flag RESET_TOTALE_COME_INCOGNITO) cancella TUTTO come una finestra in incognito, cookie Cloudflare inclusi, per forzare una nuova identità Cloudflare al reload. ATTENZIONE: al ricaricamento può apparire una verifica Cloudflare e potrebbe rompere la generazione; se peggiora, mettere il flag a false (torna al reset innocuo). Come aprire l'incognito, ma con un clic.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
 // @match        https://www.emojis.wiki/*
@@ -20,12 +20,19 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   const MOSTRA_PULSANTE  = true;   // pulsante flottante "Reset generazioni"
   const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pagina
-  // ⚠️ Le due pulizie qui sotto sono DISATTIVATE per default dalla v1.6.0: non
-  // azzeravano il limite (che il sito ha spostato sull'identità Cloudflare) e
-  // anzi peggioravano lo stato ('limit reached' anche con token). Lasciate solo
-  // come interruttori manuali, sconsigliati.
   const PULISCI_CACHE    = false;  // svuota anche la Cache Storage
   const PULISCI_SERVICE_WORKER = false; // disinstalla anche i Service Worker
+
+  // ⚠️⚠️ MODALITÀ "INCOGNITO TOTALE" (esperimento, dalla v1.7.0) ⚠️⚠️
+  // Cancella TUTTO come una finestra in incognito: storage, IndexedDB, Cache,
+  // Service Worker E TUTTI i cookie, INCLUSI quelli Cloudflare (cf_clearance/
+  // __cf_bm/_cfuvid). Scopo: al reload Cloudflare deve rifare la challenge e
+  // assegnare una NUOVA identità → forse quota fresca.
+  // RISCHI (dichiarati): al ricaricamento può apparire una verifica Cloudflare;
+  // può rompere la generazione ('Generation failed') o dare comunque 'limit
+  // reached'. Non è una soluzione affidabile, è un tentativo. Se peggiora,
+  // rimetti a false: si torna al reset innocuo della v1.6.0.
+  const RESET_TOTALE_COME_INCOGNITO = true;
 
   // ═══════════════════════════════════════════════════════════════
   //  Il limite si azzera con "Cancella dati del sito", ma ripulire
@@ -52,13 +59,16 @@
       (path || '/') + (dom ? ';domain=' + dom : '');
   }
 
-  // Cookie del sito accessibili da JS (non HttpOnly), esclusi i Cloudflare
+  // In modalità incognito totale si cancellano ANCHE i cookie Cloudflare.
+  function preserva(nome) { return !RESET_TOTALE_COME_INCOGNITO && CF.test(nome); }
+
+  // Cookie del sito accessibili da JS (non HttpOnly)
   function svuotaCookieJS() {
     try {
       const host = location.hostname, radice = host.replace(/^www\./, '');
       for (const pezzo of document.cookie.split(';')) {
         const nome = pezzo.split('=')[0].trim();
-        if (!nome || CF.test(nome)) continue;
+        if (!nome || preserva(nome)) continue;
         for (const dom of ['', host, '.' + host, radice, '.' + radice]) {
           scaduta(nome, dom, '/');
           scaduta(nome, dom, location.pathname);
@@ -67,13 +77,13 @@
     } catch (e) {}
   }
 
-  // Cookie HttpOnly del sito (via GM_cookie), esclusi i Cloudflare
+  // Cookie HttpOnly del sito (via GM_cookie)
   function svuotaCookieHttpOnly() {
     return new Promise(function (resolve) {
       if (typeof GM_cookie === 'undefined' || !GM_cookie.list) { resolve(); return; }
       try {
         GM_cookie.list({}, function (cookies) {
-          const daTogliere = (cookies || []).filter(function (c) { return c && c.name && !CF.test(c.name); });
+          const daTogliere = (cookies || []).filter(function (c) { return c && c.name && !preserva(c.name); });
           if (!daTogliere.length) { resolve(); return; }
           let rimasti = daTogliere.length;
           const fine = function () { if (--rimasti <= 0) resolve(); };
@@ -136,10 +146,11 @@
     try { localStorage.clear(); } catch (e) {}
     try { sessionStorage.clear(); } catch (e) {}
     svuotaCookieJS();
-    // Si preservano SEMPRE i cookie Cloudflare (senza, la generazione fallisce).
     const compiti = [ svuotaCookieHttpOnly(), svuotaIndexedDB() ];
-    if (PULISCI_CACHE) compiti.push(svuotaCache());
-    if (PULISCI_SERVICE_WORKER) compiti.push(svuotaServiceWorker());
+    // In modalità incognito totale si svuotano anche Cache e Service Worker,
+    // a prescindere dai singoli flag (si vuole replicare l'incognito per intero).
+    if (PULISCI_CACHE || RESET_TOTALE_COME_INCOGNITO) compiti.push(svuotaCache());
+    if (PULISCI_SERVICE_WORKER || RESET_TOTALE_COME_INCOGNITO) compiti.push(svuotaServiceWorker());
     await Promise.allSettled(compiti);
   }
 
