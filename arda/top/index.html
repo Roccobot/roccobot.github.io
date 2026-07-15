@@ -249,6 +249,11 @@ h1 {
   font-size:clamp(1.45rem,3.9vw,2.05rem);
   color:var(--name);
   width:100%;
+  /* Numero spostato un po' a destra (i 3 cifre stavano troppo vicini al margine
+     sinistro / alla striscia): padding-left col box-sizing border-box, così la
+     colonna della griglia NON cambia larghezza e il contenuto non si sposta. Il
+     numero resta centrato (text-align:center) nel contenitore così ridotto. */
+  padding-left:0.55rem;
   text-align:center; letter-spacing:0.04em;
   transition:color 0.35s,text-shadow 0.35s; line-height:1;
   font-variant-numeric:tabular-nums;
@@ -1973,7 +1978,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.69</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.70</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2705,7 +2710,12 @@ function renderList() {
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con piu'
     // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
     // Nessuna etichetta -> grigio generico.
-    var stripClass = badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico');
+    // Eccezione Noldor (scelta dell'utente): se la PRIMA etichetta è Noldor
+    // (Elfo/a (Noldo)), il bordino usa il colore Noldor, non la seconda. Per
+    // tutti gli altri resta la regola generale (2a se più d'una, altrimenti 1a).
+    var stripClass = badgeClasses[0] === 'tipo-noldor'
+      ? 'tipo-noldor'
+      : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
     var statusStr = buildStatus(p);
     // Riga 2: descrizione + lineage
     // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i
