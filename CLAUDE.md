@@ -287,6 +287,44 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     se il binding `RL_DO` è presente. Nessun segreto esposto. Bump di `rev`
     a ogni modifica sostanziale del Worker.
 
+## 🧭 Vocabolario strutturale (Tipo, Categoria, Classe, Badge)
+
+Termini interni **ufficiali** per parlare degli elementi strutturali di ogni
+voce (distinti dal glossario dei contenuti qui sotto, che nomina i campi
+testuali). Fissati dall'utente per comunicare in fretta:
+
+- **`Tipo`**: riguarda l'**etichetta** colorata sulla riga del nome (campo
+  `tipo`, resa `.rank-tipi` / `.tipo-*`). Es. `Vala`, `Sinda`, `Hobbit`,
+  `Troll`. Dettagli in 'Etichette tipo'.
+- **`Categoria`**: la **razza in senso esteso**, ed è il **filtro di
+  visualizzazione principale** della pagina. Sono le 9 voci di `CATS` (ainu,
+  arcane, elf, adan, man, dwarf, hobbit, orc, animal); la determina la funzione
+  `categoria()` e governa il Pannello categorie e i permalink.
+- **`Classe`**: ciò che definisce il **colore della card** (sfondo + bordo
+  sinistro + hover). Sono **quattro**, coi nomi ufficiali:
+  - **`Villain`**: corrotti, malvagi, crepuscolari, creature dell'ombra. Card
+    scura dei cattivi. CSS `.rank-item.divine.morgoth`, assegnata da `darkBg` in
+    `renderList` (villain per nome: Melkor, Morgoth, Ungoliant, Shelob,
+    Thuringwethil, Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl; più
+    chiunque abbia `tipo` Balrog o Drago).
+  - **`Divini`**: angelici, spirituali, divini. Card oro. CSS
+    `.rank-item.divine`, assegnata da `p.divino` (gli Ainur/Valar/Maiar; include
+    anche il **Vecchio Uomo Salice**, che prende la scheda generica oro come
+    l'Osservatore nell'Acqua).
+  - **`Tom Bombadil`**: arcani, ancestrali, primordiali. Card verde. CSS
+    `.rank-item.divine.bombadil`: **Tom Bombadil**, **tutti gli Ent** e **tutte
+    le Grandi Aquile**.
+  - **`Ordinarie`**: umanoidi, umani, normali, ordinari, ecc. Card base
+    (nessuna classe `divine`). CSS `.rank-item` semplice: Elfi, Uomini, Nani,
+    Hobbit non-cattivi, e in genere tutto il resto.
+- **`Badge`**: le icone-status di merito/evento accanto al nome (chiavi in
+  `ICON_ORDER`, es. `aratar`, `calaquende`, `silmaril`, `helcaraxe`...). Criteri
+  in 'Criteri editoriali dei badge'.
+
+`Tipo`, `Categoria` e `Classe` sono **assi indipendenti**: p.es. Melkor e Manwë
+hanno la stessa **Categoria** (`ainu`) ma **Tipo** diverso (`Vala decaduto` vs
+`Vala`) e **Classe** diversa (`Villain` vs `Divini`).
+
 ## 🗒️ Glossario dei contenuti (nomi colloquiali)
 
 Nomi con cui si designano gli elementi testuali delle card nel dialogo,
