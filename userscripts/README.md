@@ -228,3 +228,38 @@ const NASCONDI_STICKY         = false; // barra superiore sticky (default: tenut
 > **Nota:** i selettori seguono lo skin standard `fandomdesktop` di Fandom. Se un
 > elemento non sparisce (Fandom cambia ogni tanto le classi), mandami l'elemento
 > dal DevTools e affino la regola.
+
+## NSFWGallery
+
+**File:** `NSFWGallery.user.js`
+
+Su `nsfwalbum.com`, nelle pagine **album** (`/album/<id>`), aggiunge un pulsante
+flottante **"⬇️ Scarica set (ZIP)"** che con un clic scarica **tutte** le immagini
+del set a **piena risoluzione** e le impacchetta in un unico **ZIP**, nominato
+automaticamente come **`[studio] - [modella/e] - [titolo].zip`** (es.
+`Domai - Clelia - Set 2 - 09.07.2009.zip`).
+
+Come funziona: le thumbnail dell'album sono su imx.to
+(`image.imx.to/u/t/<data>/<nome>.jpg`); il file a piena risoluzione è lo stesso
+path sul percorso "immagine" (`i.imx.to/i/<data>/<nome>.jpg`). Lo script legge i
+`data-src` delle thumbnail, ricava gli URL full-res, li scarica via
+`GM_xmlhttpRequest` (con barra di avanzamento sul pulsante) e li mette in uno ZIP
+creato da un **writer interno** (metodo *store*, nessuna dipendenza). Il nome dello
+ZIP è ricavato dalla pagina: lo **studio** dal blocco `.models` ("Studio: …"), la
+**modella** e il **titolo** dal `<title>`. I file nello ZIP mantengono l'ordine
+dell'album (numerati `001.jpg`, `002.jpg`…). Nessun dato lascia il sito.
+
+### Personalizzazione
+
+```js
+const PARALLELE  = 4;      // quanti download contemporanei
+const TIMEOUT_MS = 60000;  // timeout per singola immagine
+```
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/NSFWGallery.user.js>
+3. Premere **Installa**. Tampermonkey può chiedere il permesso per
+   `GM_xmlhttpRequest` verso `imx.to`: concederlo (serve a scaricare le immagini).
+   Nessuna dipendenza esterna: lo ZIP è creato internamente.
