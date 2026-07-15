@@ -445,7 +445,7 @@ gruppo = cambiare una terna.
     (era `#486d8c`); aggiunta un'**ombra leggera neutra** al titolone in **tema
     chiaro** (prima `text-shadow:none`; ora l'equivalente 'in chiaro' del glow
     scuro, grigia).
-  - **Retrogusto verso il colore del FAB (dalla v8.82, entrambi i temi).** `.crest`
+  - **Accento verso il colore del FAB (dalla v8.82, entrambi i temi).** `.crest`
     'ROCCOBOT PRESENTS' (testo + ✦) e il link footer 'Risorse e note'
     (`#footer-links` + `#res-link`) prendono un grigio **virato verso il colore
     del FAB del tema** (il resto della testata/footer resta neutro):
