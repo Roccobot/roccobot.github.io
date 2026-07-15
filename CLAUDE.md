@@ -424,7 +424,7 @@ gruppo = cambiare una terna.
   spessore **non sposta di un pixel** il contenuto (verificato: `contentLeft`
   identico per podio e non-podio, in entrambi i temi).
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
-  **#303030** (scuro) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
+  **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
 - **Titolone `#title` invariato.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
@@ -1575,7 +1575,9 @@ specifico del dataset):
 - **Formato rimandi interni (dalla v8.75).** Sia il rimando **personaggio→nota**
   (`.modal-noteref`) sia i **nota→nota** (`.note-seealso`) usano
   `Leggi anche → <strong>Titolo</strong>` / `See also → ...`: prefisso normale,
-  **titolo in grassetto**, tutto linkato e **centrato**.
+  **titolo in grassetto**, tutto linkato e **allineato a sinistra** (dalla v8.78;
+  per un breve tratto in v8.75 erano centrati, poi riportati a sinistra su
+  richiesta dell'utente).
 - **Tre sezioni nella modale** (dalla v6.50, `openResourcesModal`), nell'ordine:
   1. **Risorse** — le due mappe (viewer immagini) + la mappa interattiva
      esterna. Non sono note (non stanno in `EDITORIAL_NOTES`).
