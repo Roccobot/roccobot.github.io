@@ -51,7 +51,11 @@
    complice overflow-x:hidden su body che sposta lo scroller). */
 html { scroll-behavior:smooth; overflow-y:scroll; }
 body {
-  background: var(--ink-deep);
+  /* Sfondo pagina NEUTRO (dalla v8.72): il colore lo portano le card (cardcolor),
+     quindi il fondo pagina non è più blu-inchiostro ma un grigio neutro (default
+     = tema scuro #303030; override chiaro #F5F5F5 sotto). Token invariati: titolo,
+     pannello, pulsanti restano com'erano. */
+  background: #303030;
   color: var(--parchment);
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 17px;
@@ -194,6 +198,13 @@ h1 {
 .intro-cta {
   display:block; margin-top:0.7rem; color:var(--gold); font-size:0.9rem;
 }
+/* Sfondo pagina neutro (v8.72): i testi ardesia dell'intestazione erano tarati
+   sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
+   (solo tema scuro; il titolo e il resto del chrome restano invariati). */
+html[data-theme="dark"] .crest, html[data-theme="dark"] .intro-cta { color:#93abc0; }
+html[data-theme="dark"] .subtitle-note { color:#9fb0c2; opacity:1; }
+html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#c2d6e6; }
+html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#a8c0d4; }
 
 .scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
 
@@ -433,21 +444,38 @@ h1 {
   background:linear-gradient(90deg,rgba(147,141,132,0.12) 0%,rgba(147,141,132,0.045) 100%);
   border-color:rgba(200,202,210,0.45);
 }
-/* ── Bordino sinistro colorato: STRISCIA in sovrapposizione (dalla v7.69) ── */
-/* Il colore del bordo sinistro NON viene più dalla Classe: è una striscia
-   assoluta (.rank-strip, fuori dal flusso) che eredita il colore dal contorno
-   dell'etichetta tipo (2a se più d'una) via `currentColor` della classe tipo
-   posata sulla striscia. Il bordo-sinistro di layout è perciò neutralizzato a
-   1px uniforme come gli altri lati (override sopra tutte le regole di classe),
-   così lo spessore 5px/10px della striscia non sposta nulla, nemmeno un pixel. */
+/* ── Colore card e bordino dalla FAMIGLIA cardcolor (dalla v8.72) ─────────── */
+/* La Classe non colora più la card. Ogni card ha una classe .cc-<famiglia> che
+   definisce --ccrgb (terna R,G,B, per tema). Lo SFONDO usa --ccrgb a bassa
+   opacità (5% chiaro / 10% scuro), il BORDINO la stessa terna a opacità alta
+   (0.85). Ricolorare un intero gruppo = cambiare una terna qui sotto. Il bordo
+   di layout resta neutralizzato a 1px; la striscia è assoluta (4/8px, non
+   sposta nulla). */
 .rank-item { border-left:1px solid rgba(104,144,168,0.15) !important; }
 .rank-strip {
   position:absolute; left:0; top:0; bottom:0; width:4px;
-  background:currentColor !important; opacity:0.8;
+  background:rgb(111,116,130);
   border:0 !important; box-shadow:none !important; text-shadow:none !important;
   padding:0; margin:0; border-radius:0; pointer-events:none; z-index:1;
 }
 .rank-item.vis-top .rank-strip { width:8px; }
+/* NB: sfondo card e bordino usano rgba(var(--ccrgb),alpha). Il Nu Html Checker
+   non sa parsare var() dentro rgba() (falso errore 'getType() null'), perciò
+   quelle 5 regole sono INIETTATE via JS (vedi injectCardColorRules), non qui.
+   Stesso trattamento della proprietà 'd' (ctrl-close-bend). Non reintrodurle
+   nel CSS statico o tornano gli errori W3C. Qui restano solo le terne --ccrgb,
+   che il Nu valida senza problemi. */
+/* Terne per famiglia (default = tema SCURO, bilanciato; override CHIARO sotto). */
+.cc-blue{--ccrgb:91,123,240} .cc-teal{--ccrgb:43,184,166} .cc-green{--ccrgb:82,185,95}
+.cc-lime{--ccrgb:159,182,65} .cc-orange{--ccrgb:224,138,58} .cc-gold{--ccrgb:216,178,60}
+.cc-red{--ccrgb:224,89,106} .cc-magenta{--ccrgb:222,90,142} .cc-purple{--ccrgb:160,107,224}
+.cc-brown{--ccrgb:179,148,104} .cc-grey{--ccrgb:144,152,168}
+html[data-theme="light"] .cc-blue{--ccrgb:47,79,208} html[data-theme="light"] .cc-teal{--ccrgb:21,158,143}
+html[data-theme="light"] .cc-green{--ccrgb:58,154,69} html[data-theme="light"] .cc-lime{--ccrgb:138,154,42}
+html[data-theme="light"] .cc-orange{--ccrgb:210,118,15} html[data-theme="light"] .cc-gold{--ccrgb:199,148,19}
+html[data-theme="light"] .cc-red{--ccrgb:196,34,51} html[data-theme="light"] .cc-magenta{--ccrgb:194,31,110}
+html[data-theme="light"] .cc-purple{--ccrgb:122,63,206} html[data-theme="light"] .cc-brown{--ccrgb:150,117,74}
+html[data-theme="light"] .cc-grey{--ccrgb:111,116,130}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -1687,6 +1715,9 @@ html[data-theme="light"] .lang-switch {
   }
 html[data-theme="light"] .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
 
+/* Sfondo pagina neutro anche in chiaro (dalla v8.72), vedi body. */
+html[data-theme="light"] body { background: #F5F5F5; }
+
 html[data-theme="light"] .rank-item {
     background: rgba(224,236,252,0.16);
     border: 1px solid rgba(80,110,150,0.22);
@@ -1978,7 +2009,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.72</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.72</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2324,6 +2355,46 @@ function tipoClass(tipo) {
   if (t.includes('ent')) return 'tipo-ent';
   return 'tipo-generico';
 }
+
+// ── Classe-colore card (cardcolor) ──────────────────────────────────────────
+// Consolida i ~33 gruppi-etichetta in 11 FAMIGLIE di colore. Ogni voce ha una
+// famiglia (derivata dalla stessa logica del bordino: 2a etichetta, con
+// eccezione 'prima etichetta' per Noldor E Mezzelfi), oppure un override
+// esplicito `p.cardcolor`. Lo SFONDO card usa la famiglia a bassa opacità, il
+// bordino la stessa famiglia a opacità alta (vedi CSS .cc-* / .rank-strip).
+// I valori colore per-tema vivono nel CSS (variabile --ccrgb per .cc-<fam>):
+// così si ricolora un intero gruppo cambiando un solo valore.
+var CARDCOLOR_OF = {
+  'tipo-noldor':'blue', 'tipo-mezzelfo':'blue',
+  'tipo-sindar':'teal', 'tipo-teleri':'teal', 'tipo-vanyar':'teal', 'tipo-falmar':'teal', 'tipo-aquila':'teal',
+  'tipo-maia':'green', 'tipo-ent':'green', 'tipo-bombadil':'green',
+  'tipo-rohirrim':'lime', 'tipo-uominicomuni':'lime', 'tipo-eotheod':'lime',
+  'tipo-hobbit':'orange', 'tipo-hador':'orange',
+  'tipo-nano':'gold', 'tipo-haleth':'gold',
+  'tipo-dunadan':'red', 'tipo-numenorean':'red', 'tipo-beor':'red', 'tipo-drago':'red',
+  'tipo-vala':'magenta', 'tipo-valie':'magenta', 'tipo-maia-dark':'magenta', 'tipo-ragno':'magenta', 'tipo-troll':'magenta',
+  'tipo-orco':'purple', 'tipo-oscurita':'purple', 'tipo-misterioso':'purple', 'tipo-morgoth':'purple',
+  'tipo-bestia':'brown', 'tipo-gollum':'brown',
+  'tipo-generico':'grey', 'tipo-lupo':'grey'
+};
+
+// Regole cardcolor iniettate via JS: usano rgba(var(--ccrgb),alpha), che il Nu
+// Html Checker non sa parsare (falso errore); iniettandole si tengono fuori dal
+// CSS statico (stesso trucco della proprietà 'd', ctrl-close-bend). Le terne
+// --ccrgb per famiglia restano nel <style> statico (Nu le valida). Sfondo card =
+// famiglia a bassa opacità (5% chiaro / 10% scuro), bordino = stessa terna a 0.85.
+(function injectCardColorRules(){
+  var css = [
+    '.rank-strip{background:rgba(var(--ccrgb,111,116,130),0.85)!important}',
+    '.rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.10)!important}',
+    '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
+    'html[data-theme="light"] .rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.05)!important}',
+    'html[data-theme="light"] .rank-item[class*="cc-"]:hover,html[data-theme="light"] .rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.11)!important}'
+  ].join('');
+  var s = document.createElement('style');
+  s.textContent = css;
+  document.head.appendChild(s);
+})();
 
 // Icone badge: PNG 256x256 normalizzati (oggetto al vivo, centrato) in
 // arda/top/icons/, nomi da legenda ITA. La resa identica agli SVG di
@@ -2710,12 +2781,15 @@ function renderList() {
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con piu'
     // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
     // Nessuna etichetta -> grigio generico.
-    // Eccezione Noldor (scelta dell'utente): se la PRIMA etichetta è Noldor
-    // (Elfo/a (Noldo)), il bordino usa il colore Noldor, non la seconda. Per
+    // Eccezione 'prima etichetta' (scelta dell'utente): se la PRIMA etichetta è
+    // Noldor (Elfo/a (Noldo)) O Mezzelfo, si usa quella, non la seconda. Per
     // tutti gli altri resta la regola generale (2a se più d'una, altrimenti 1a).
-    var stripClass = badgeClasses[0] === 'tipo-noldor'
-      ? 'tipo-noldor'
+    var stripClass = (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
+      ? badgeClasses[0]
       : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
+    // Famiglia colore card: override esplicito `p.cardcolor`, altrimenti derivata
+    // dalla classe-etichetta di cui sopra via CARDCOLOR_OF (fallback 'grey').
+    var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] || 'grey';
     var statusStr = buildStatus(p);
     // Riga 2: descrizione + lineage
     // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i
@@ -2770,6 +2844,10 @@ function renderList() {
       classes += ' animale';
     }
     if (p.apocrifo) classes += ' apocrifo';
+    // Classe-colore card (cardcolor): governa SFONDO + bordino. Sostituisce il
+    // colore-da-Classe (Crepuscolari/Angeliche/...): la Classe resta solo come
+    // logica (filtri/raggruppamenti), non colora più la card.
+    classes += ' cc-' + cardFam;
     // Pill 'Solo HoME/NoME' (catalogo esteso): in alto a destra della card.
     var apoPill = '';
     if (p.apocrifo) {
@@ -2782,7 +2860,7 @@ function renderList() {
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
       // sul layout), colore dal contorno dell'etichetta tipo (2a se piu' d'una).
       // Spessore 4px normali / 8px podio via CSS (.vis-top .rank-strip).
-      '<span class="rank-strip ' + stripClass + '" aria-hidden="true"></span>' + apoPill +
+      '<span class="rank-strip" aria-hidden="true"></span>' + apoPill +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
         '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
