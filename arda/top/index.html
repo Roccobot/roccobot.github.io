@@ -391,6 +391,11 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    larghezza proporzionata = 240/256 * .92em. Il badge suicidio (fiore reciso,
    Morte.png) è quadrato 256x256 e usa il box .status-icon di default. */
 .si-ira { width:.863em; height:.92em; }
+/* Morgoth (guerriero corazzato, easter-egg su Fingolfin): PNG ritagliata al
+   contenuto (215x237, dalla v8.80). Figura verticale -> box a pari aspetto,
+   così non resta whitespace orizzontale interno che allargava otticamente i
+   gap coi badge vicini (la 'voragine' Morgoth<->corona segnalata). */
+.si-morgoth { width:.835em; height:.92em; }
 /* Helcaraxë (iceberg a picchi): correzione OTTICA solo sulle CARD (non in
    legenda). La forma triangolare lascia percepire più spazio ai lati del box,
    quindi si stringono i margini orizzontali di ~2px per lato. Scoped a
@@ -1209,6 +1214,10 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 @media (min-width:481px) {
   .rank-name > .rank-flags .status-icon,
   .rank-name > .rank-flags .genere-svg { position:relative; top:-0.03em; }
+  /* Simbolo genere = gruppo a sé (dalla v8.80): stacco dai badge di merito con
+     un margine sinistro extra, così non 'tocca' l'ultimo badge (era ~8px, meno
+     del passo 11px tra badge). Solo desktop; su mobile sotto. */
+  .rank-name > .rank-flags .genere-svg { margin-left:0.28em; }
 }
 /* ELFI — tonalità blu/celeste */
 .tipo-noldor      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
@@ -1569,7 +1578,10 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      anche quando .rank-flags e' vuoto (creature senza icone), e mai
      indentante quando le etichette vanno a capo. */
   .rank-name > .rank-name-text { margin-right:0.32em; }
-  .rank-name > .rank-flags .status-icon, .rank-name > .rank-flags .genere-svg { margin-left:0; }
+  .rank-name > .rank-flags .status-icon { margin-left:0; }
+  /* Genere staccato dal cluster badge anche su mobile (dalla v8.80): margine
+     extra oltre al gap flex 0.28em (il caso più evidente segnalato dall'utente). */
+  .rank-name > .rank-flags .genere-svg { margin-left:0.3em; }
   /* Etichette = BLOCCO ATOMICO (inline-flex): o stanno TUTTE in coda al nome
      (dopo le icone), o vanno TUTTE a capo insieme, nell'ordine dato,
      allineate al bordo sinistro del contenuto (un box inline-level che non
@@ -2028,7 +2040,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.79</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.80</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2472,7 +2484,7 @@ var ICON_SVG = {
   est:        "<img class=\"status-icon\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
   drago:      "<img class=\"status-icon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
   balrog:     "<img class=\"status-icon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
-  morgoth:    "<img class=\"status-icon\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
+  morgoth:    "<img class=\"status-icon si-morgoth\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
   calaquende: "<img class=\"status-icon\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
   suicidio:   "<img class=\"status-icon\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
