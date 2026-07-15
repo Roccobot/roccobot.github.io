@@ -301,30 +301,40 @@ testuali). Fissati dall'utente per comunicare in fretta:
   arcane, elf, adan, man, dwarf, hobbit, orc, animal); la determina la funzione
   `categoria()` e governa il Pannello categorie e i permalink.
 - **`Classe`**: ciò che definisce il **colore della card** (sfondo + bordo
-  sinistro + hover). Sono **quattro**, coi nomi ufficiali (i **nomi CSS** restano
-  invariati: cambia solo l'etichetta con cui le chiamiamo):
-  - **`Demoniaci`**: corrotti, malvagi, crepuscolari, creature dell'ombra. Card
-    scura dei cattivi. CSS `.rank-item.divine.morgoth`, assegnata da `darkBg` in
-    `renderList` (per nome: Melkor, Morgoth, Ungoliant, Shelob,
-    Thuringwethil, Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl; più
-    chiunque abbia `tipo` Balrog o Drago). 14 voci alla v7.49.
-  - **`Angelici`**: angelici, spirituali, divini. Card oro. CSS
-    `.rank-item.divine`, assegnata da `p.divino` (gli Ainur/Valar/Maiar; include
-    anche il **Vecchio Uomo Salice**, che prende la scheda generica oro come
-    l'Osservatore nell'Acqua). 34 voci alla v7.49.
-  - **`Primordiali`**: arcani, ancestrali, primordiali. Card verde. CSS
-    `.rank-item.divine.bombadil`: **Tom Bombadil**, **tutti gli Ent** e **tutte
-    le Grandi Aquile**. 11 voci alla v7.49.
-  - **`Umanoidi`**: umanoidi, umani, normali, ordinari, ecc. Card base
-    (nessuna classe `divine`). CSS `.rank-item` semplice: Elfi, Uomini, Nani,
-    Hobbit non-cattivi, e in genere tutto il resto. 297 voci alla v7.49.
+  sinistro + hover). Sono **cinque** (dalla v7.59), coi nomi ufficiali pieni e
+  l'alias breve; i **nomi CSS** restano invariati (cambia solo l'etichetta con
+  cui le chiamiamo):
+  - **`Esseri crepuscolari`** (alias `crepuscolari`): corrotti, malvagi,
+    crepuscolari, creature dell'ombra. Card scura. CSS `.rank-item.divine.morgoth`,
+    assegnata da `darkBg` in `renderList` (per nome: Melkor, Morgoth, Ungoliant,
+    Shelob, Thuringwethil, Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl,
+    **Osservatore nell'Acqua**, **Vecchio Uomo Salice**, **Guardiani di Cirith
+    Ungol**; più chiunque abbia `tipo` Balrog o Drago). 17 voci alla v7.59
+    (dalla v7.59 i 3 in grassetto, spostati qui dalle Entità angeliche).
+  - **`Entità angeliche`** (alias `angelici`): angelici, spirituali, divini. Card
+    oro. CSS `.rank-item.divine`, assegnata da `p.divino` (gli Ainur/Valar/Maiar).
+    31 voci alla v7.59.
+  - **`Creature primordiali`** (alias `primordiali`): arcani, ancestrali,
+    primordiali. Card verde. CSS `.rank-item.divine.bombadil`: **Tom Bombadil**,
+    **tutti gli Ent** e **tutte le Grandi Aquile**. 11 voci alla v7.59.
+  - **`Umani e umanoidi`** (alias `umanoidi`): umanoidi, umani, normali, ordinari,
+    ecc. Card base (nessuna classe `divine`). CSS `.rank-item` semplice: Elfi,
+    Uomini, Nani, Hobbit non-cattivi, e in genere tutto il resto. 277 voci alla
+    v7.59.
+  - **`Animali`** (alias `animali`, dalla v7.59): **coincide al 100% con la
+    Categoria `animal`** (cavalli, pony, corvi, cani). Card base con tinta/bordo
+    **terra (tan Leggero)**, NON una variante `.divine`. CSS `.rank-item.animale`,
+    assegnata in `renderList` quando `categoria(p) === 'animal'` (ramo `else if`
+    dopo il blocco `.divine`). 20 voci alla v7.59. In tema chiaro l'etichetta
+    `.tipo-bestia` è scurita (compensazione contrasto, vedi 'Etichette tipo').
 - **`Badge`**: le icone-status di merito/evento accanto al nome (chiavi in
   `ICON_ORDER`, es. `aratar`, `calaquende`, `silmaril`, `helcaraxe`...). Criteri
   in 'Criteri editoriali dei badge'.
 
 `Tipo`, `Categoria` e `Classe` sono **assi indipendenti**: p.es. Melkor e Manwë
 hanno la stessa **Categoria** (`ainu`) ma **Tipo** diverso (`Vala decaduto` vs
-`Vala`) e **Classe** diversa (`Demoniaci` vs `Angelici`).
+`Vala`) e **Classe** diversa (`Esseri crepuscolari` vs `Entità angeliche`).
+Unica sovrapposizione totale: la Classe **Animali** ≡ Categoria `animal`.
 
 ## 🗒️ Glossario dei contenuti (nomi colloquiali)
 
@@ -954,9 +964,12 @@ specifico del dataset):
   dati): **tutti gli Ent** (`p.tipo === 'Ent'`: Fangorn, Bregalad, Fladrif,
   Faggiosso, Finglas, Fimbrethil) e **tutte le Grandi Aquile** (`p.tipo ===
   'Grande Aquila'`: Thorondor, Gwaihir, Meneldor, Landroval) prendono la **scheda
-  verde dei Primordiali** (`.divine.bombadil`, la Classe di Tom Bombadil); il
-  **Vecchio Uomo Salice** (per nome) prende la **scheda oro degli Angelici**
-  (`.divine`), come l'Osservatore nell'Acqua.
+  verde delle Creature primordiali** (`.divine.bombadil`, la Classe di Tom
+  Bombadil). ⚠️ **Dalla v7.59** il **Vecchio Uomo Salice**, l'**Osservatore
+  nell'Acqua** e i **Guardiani di Cirith Ungol** NON sono più Entità angeliche
+  (card oro): spostati agli **Esseri crepuscolari** (card scura `.divine.morgoth`,
+  via `darkBg`) come creature crepuscolari/dell'ombra; rimosso il vecchio ramo
+  `isForestSpirit`.
   Le **etichette tipo** restano ai colori automatici (`tipo-ent`, `tipo-aquila`;
   il Vecchio Uomo Salice tiene `tipo-bombadil`): NON si toccano. ⚠️ Storia: nelle
   v7.16-7.18 avevo erroneamente cambiato le *etichette* (`tipo_color`) invece
