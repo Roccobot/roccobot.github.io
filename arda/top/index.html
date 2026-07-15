@@ -253,7 +253,7 @@ h1 {
      sinistro / alla striscia): padding-left col box-sizing border-box, così la
      colonna della griglia NON cambia larghezza e il contenuto non si sposta. Il
      numero resta centrato (text-align:center) nel contenitore così ridotto. */
-  padding-left:0.55rem;
+  padding-left:0.8rem;
   text-align:center; letter-spacing:0.04em;
   transition:color 0.35s,text-shadow 0.35s; line-height:1;
   font-variant-numeric:tabular-nums;
@@ -427,10 +427,10 @@ h1 {
    governato dalla Classe: tinta TAUPE (grigio caldo) molto tenue. Il bordino
    sinistro viene dal contorno dell'etichetta tipo (.rank-strip), non da qui. */
 .rank-item.animale {
-  background:linear-gradient(90deg,rgba(150,140,120,0.05) 0%,rgba(150,140,120,0.016) 100%);
+  background:linear-gradient(90deg,rgba(147,141,132,0.05) 0%,rgba(147,141,132,0.016) 100%);
 }
 .rank-item.animale:hover, .rank-item.animale:focus-within {
-  background:linear-gradient(90deg,rgba(150,140,120,0.12) 0%,rgba(150,140,120,0.045) 100%);
+  background:linear-gradient(90deg,rgba(147,141,132,0.12) 0%,rgba(147,141,132,0.045) 100%);
   border-color:rgba(200,202,210,0.45);
 }
 /* ── Bordino sinistro colorato: STRISCIA in sovrapposizione (dalla v7.69) ── */
@@ -1720,8 +1720,8 @@ html[data-theme="light"] .rank-item.divine.morgoth { background: rgba(251,232,24
 html[data-theme="light"] .rank-item.divine.morgoth:hover, html[data-theme="light"] .rank-item.divine.morgoth:focus-within { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
 html[data-theme="light"] .rank-item.divine.bombadil { background: rgba(230,250,228,0.16); border-left-color:rgba(45,100,25,0.50); }
 html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="light"] .rank-item.divine.bombadil:focus-within { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
-html[data-theme="light"] .rank-item.animale { background: rgba(226,222,212,0.36); }
-html[data-theme="light"] .rank-item.animale:hover, html[data-theme="light"] .rank-item.animale:focus-within { background: rgba(226,222,212,0.55); border-color:rgba(150,140,120,0.5); }
+html[data-theme="light"] .rank-item.animale { background: rgba(223,221,216,0.36); }
+html[data-theme="light"] .rank-item.animale:hover, html[data-theme="light"] .rank-item.animale:focus-within { background: rgba(223,221,216,0.55); border-color:rgba(147,141,132,0.5); }
 /* Compensazione contrasto (solo tema chiaro): la tinta tan della card animale
    fa scendere l'etichetta .tipo-bestia (#7d590b) a 4.48:1, sotto AA. Scurita a
    #6d4a05 (5.6:1 sul tan) solo sulle card animali; bordo = testo @0.8. */
@@ -1978,7 +1978,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.70</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.71</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
