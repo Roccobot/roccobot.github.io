@@ -380,10 +380,10 @@ gruppo = cambiare una terna.
   - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
   - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
   - **`rohir`**: rohirrim, uominicomuni, eotheod.
-  - **`other`** (arancio, era `hobbit`; rinominata in v8.83): hobbit, **nano**,
-    **haleth** (i Nani e la Casa di Haleth spostati qui dalla vecchia `dwarf`).
-  - **`highmen`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**
-    (le Case degli Edain, spostate qui; i Nani NON sono più qui).
+  - **`other`** (arancio, era `hobbit`; rinominata in v8.83): hobbit, **nano**
+    (i Nani spostati qui dalla vecchia `dwarf`).
+  - **`highmen`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**,
+    **haleth** (le Case degli Edain; i Nani NON sono più qui).
   - **`westmen`** (NUOVA in v8.83, rosa spento): **dunadan**, **numenorean** (gli
     Uomini dell'Ovest / Dúnedain-Númenóreani, staccati dai draghi). Terna dark
     198,138,152 / light 160,92,112.
@@ -391,8 +391,8 @@ gruppo = cambiare una terna.
     **lupo**, **balrog**, **più tutta la Classe 'Esseri crepuscolari'** (override
     per nome via `isDarkBg`, vedi sotto: Melkor, Ungoliant, Shelob, Thuringwethil,
     Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl, Osservatore nell'Acqua,
-    Vecchio Uomo Salice, Guardiani di Cirith Ungol).
-  - **`vala`**: vala, valie, ragno (troll e maia-dark spostati a `orc` in v8.83).
+    Vecchio Uomo Salice, Guardiani di Cirith Ungol) **+ ragno** (dalla v8.83).
+  - **`vala`**: vala, valie (troll e maia-dark spostati a `orc`, ragno a `demon`).
   - **`orc`**: orco, oscurita, misterioso, morgoth, **troll**, **maia-dark**.
   - **`beast`**: bestia, gollum.
   - **`generic`**: generico (fallback; lupo spostato a `demon`).
