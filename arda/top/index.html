@@ -206,9 +206,10 @@ h1 {
    sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
    (solo tema scuro; il titolo e il resto del chrome restano invariati). */
 html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
-/* Retrogusto CALDO (dalla v8.81, esperimento): crest 'ROCCOBOT PRESENTS' e link
-   'Risorse e note' prendono un grigio virato verso il giallo del FAB (#d2b25c),
-   attenuato (~15%). Solo tema scuro per ora; se piace, anche chiaro. */
+/* Accento verso il colore del FAB (dalla v8.82, entrambi i temi; nato in v8.81
+   come esperimento caldo solo-scuro): crest 'ROCCOBOT PRESENTS' e link 'Risorse
+   e note' virano verso il colore del FAB del tema (scuro = oro, vedi qui;
+   chiaro = teal, vedi tema chiaro). Il resto della testata/footer resta neutro. */
 html[data-theme="dark"] .crest { color:#b4a98d; }
 html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { color:#c0b69a; }
 html[data-theme="dark"] #footer-links { color:#c0b69a !important; }
@@ -1733,7 +1734,7 @@ html[data-theme="light"] h1 {
        glow scuro, come drop-shadow morbida grigia (non blu). */
     text-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 0 20px rgba(0,0,0,0.07);
   }
-/* Retrogusto verso il FAB anche in tema CHIARO (dalla v8.82): qui il FAB è teal
+/* Accento verso il FAB anche in tema CHIARO (dalla v8.82): qui il FAB è teal
    (#1f5562), quindi gli accenti virano al FREDDO (teal-slate #445d64). Virando
    verso un colore scuro il contrasto sale (~6:1), AA ampiamente rispettato. */
 html[data-theme="light"] .crest { color: #445d64; }
