@@ -385,6 +385,11 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    larghezza proporzionata = 240/256 * .92em. Il badge suicidio (fiore reciso,
    Morte.png) è quadrato 256x256 e usa il box .status-icon di default. */
 .si-ira { width:.863em; height:.92em; }
+/* Helcaraxë (iceberg a picchi): correzione OTTICA solo sulle CARD (non in
+   legenda). La forma triangolare lascia percepire più spazio ai lati del box,
+   quindi si stringono i margini orizzontali di ~2px per lato. Scoped a
+   .rank-name .rank-flags così non tocca la riga di legenda. */
+.rank-name .rank-flags .si-helcaraxe { margin-left:-0.02em; margin-right:-0.14em; }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -467,13 +472,13 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .cc-noldo{--ccrgb:91,123,240} .cc-sinda{--ccrgb:43,184,166} .cc-maia{--ccrgb:82,185,95}
 .cc-rohir{--ccrgb:159,182,65} .cc-hobbit{--ccrgb:224,138,58} .cc-dwarf{--ccrgb:216,178,60}
 .cc-numenorean{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
-.cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168}
+.cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
 html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
 html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
 html[data-theme="light"] .cc-hobbit{--ccrgb:210,118,15} html[data-theme="light"] .cc-dwarf{--ccrgb:199,148,19}
 html[data-theme="light"] .cc-numenorean{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
 html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .cc-beast{--ccrgb:150,117,74}
-html[data-theme="light"] .cc-generic{--ccrgb:111,116,130}
+html[data-theme="light"] .cc-generic{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -1901,13 +1906,13 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-viewer-box ol > li { margin:.3em 0; padding-left:.2em; }
 .note-viewer-box ol > li::before { content:none; }
 /* Rimando interno dalla scheda di un personaggio alla sua nota editoriale */
-.modal-noteref { margin-top:1.1em; line-height:1.5; }
+.modal-noteref { margin-top:1.1em; line-height:1.5; text-align:center; }
 .modal-noteref-link { cursor:pointer; color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
 .modal-noteref-link:hover, .modal-noteref-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 .note-charlink { display:inline; background:none; border:none; padding:0; margin:0; font:inherit; font-weight:700; color:var(--gold-bright); cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 /* Rimando 'Leggi anche' in fondo a una nota, verso una nota correlata. */
-.note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; }
+.note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; text-align:center; }
 .note-notelink { color:var(--gold-bright); font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
 /* Modale risorse: riusa fab-modal. Desktop: box adattato al testo, mai a capo */
@@ -1997,7 +2002,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.74</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.75</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2353,7 +2358,7 @@ function tipoClass(tipo) {
 // I valori colore per-tema vivono nel CSS (variabile --ccrgb per .cc-<fam>):
 // così si ricolora un intero gruppo cambiando un solo valore.
 var CARDCOLOR_OF = {
-  'tipo-noldor':'noldo', 'tipo-mezzelfo':'noldo',
+  'tipo-noldor':'noldo', 'tipo-mezzelfo':'half-elf',
   'tipo-sindar':'sinda', 'tipo-teleri':'sinda', 'tipo-vanyar':'sinda', 'tipo-falmar':'sinda', 'tipo-aquila':'sinda',
   'tipo-maia':'maia', 'tipo-ent':'maia', 'tipo-bombadil':'maia',
   'tipo-rohirrim':'rohir', 'tipo-uominicomuni':'rohir', 'tipo-eotheod':'rohir',
@@ -2390,7 +2395,7 @@ var CARDCOLOR_OF = {
 var ICON_SVG = {
   aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"%L%\">",
   silmaril:   "<img class=\"status-icon\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"%L%\">",
-  helcaraxe:  "<img class=\"status-icon\" src=\"icons/Helcaraxe.png\" title=\"%L%\" alt=\"%L%\">",
+  helcaraxe:  "<img class=\"status-icon si-helcaraxe\" src=\"icons/Helcaraxe.png\" title=\"%L%\" alt=\"%L%\">",
   istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">",
   fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"%L%\">",
   king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.png\" title=\"%L%\" alt=\"%L%\">",
@@ -3026,9 +3031,9 @@ function openModal(idx, instant) {
   var linkedNote = (typeof NOTE_BY_CHAR !== 'undefined') ? NOTE_BY_CHAR[p.nome] : null;
   if (refEl) {
     if (linkedNote) {
-      var refLbl = lang === 'it' ? 'Nota Editoriale' : 'Editorial Note';
+      var refLbl = lang === 'it' ? 'Leggi anche' : 'See also';
       var refTitle = lang === 'it' ? linkedNote.titleIt : linkedNote.titleEn;
-      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0">→ <strong>' + escapeHtml(refLbl) + '</strong>: ' + escapeHtml(refTitle) + '</span>';
+      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0">' + escapeHtml(refLbl) + ' &rarr; <strong>' + escapeHtml(refTitle) + '</strong></span>';
       refEl.hidden = false;
       var refLink = refEl.querySelector('.modal-noteref-link');
       var goNote = function() { modalReturn = null; closeModal(); noteReturn = function(){ openModal(idx); }; openNoteViewer(linkedNote); };
@@ -3345,7 +3350,7 @@ var EDITORIAL_NOTES = [
 <div class="note-h">Un potere angelico accresciuto</div>
 <p>Infine, #{Glorfindel}# tornò con un significativo aumento di potere. Tolkien specifica che, durante la sua permanenza a Valinor, #{Glorfindel}# visse tra i Maiar. Quando tornò nella Terra di Mezzo il suo potere spirituale era immensamente accresciuto, conferendogli una presenza radiosa e terrificante nel mondo 'Invisibile'. Questo lo elevò a uno status quasi angelico, rendendolo potenzialmente il guerriero più letale della Terza Era.</p>
 <div class="note-src">(Fonte: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
-<div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Mezzelfi tra la vita e la morte">Mezzelfi tra la vita e la morte</span></div>`,
+<div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Mezzelfi tra la vita e la morte"><strong>Mezzelfi tra la vita e la morte</strong></span></div>`,
     bodyEn: `<p>A widespread misconception among Tolkien enthusiasts suggests that #{Glorfindel}#'s return to Middle-earth is exceptional simply because he 'came back from the dead'. In truth, returning to life is the destiny, in both biological and theological senses, of <em>all</em> Elves.</p>
 <div class="note-h">Reincarnation as the rule</div>
 <p>Elves are indissolubly bound to Arda (the Earth) until its end. Their bodies (hröar) and spirits (fëar) cannot be separated from it, even in death. When an Elf dies, their spirit reaches the Halls of Mandos. After a period of waiting, reflection and healing, they are normally granted a new physical body identical to the former one. The only exceptions concern those whom the Valar explicitly forbid to return (such as #{Fëanor}#, because of his crimes) or those who freely choose to remain disembodied.</p>
@@ -3360,7 +3365,7 @@ var EDITORIAL_NOTES = [
 <div class="note-h">An enhanced angelic power</div>
 <p>Finally, #{Glorfindel}# returned with a significant increase in power. Tolkien specifies that, during his stay in Valinor, #{Glorfindel}# dwelt among the Maiar. When he returned to Middle-earth his spiritual power was immensely enhanced, giving him a radiant and terrifying presence in the 'Unseen' world. This elevated him to an almost angelic status, making him arguably the deadliest warrior of the Third Age.</p>
 <div class="note-src">(Source: <em>Glorfindel</em>, <em>The Peoples of Middle-earth</em>)</div>
-<div class="note-seealso">See also → <span class="note-notelink" role="button" tabindex="0" data-note="Mezzelfi tra la vita e la morte">The Half-elven between life and death</span></div>`
+<div class="note-seealso">See also → <span class="note-notelink" role="button" tabindex="0" data-note="Mezzelfi tra la vita e la morte"><strong>The Half-elven between life and death</strong></span></div>`
   },
   {
     titleIt: 'Mezzelfi tra la vita e la morte',
@@ -3394,7 +3399,7 @@ var EDITORIAL_NOTES = [
 <li><strong>L'unione dei Mezzelfi:</strong> #{Elwing}# ed #{Eärendil}# (i due Mezzelfi originari, nati da due delle unioni precedenti; resta un unicum assoluto).</li>
 <li><strong>L'unione mancata:</strong> l'Elfo #{Aegnor}# e l'umana #{Andreth}#. Si amarono profondamente, ma non si sposarono mai per diverse ragioni: le rigide consuetudini elfiche vietavano i matrimoni in tempo di guerra, le inesorabili tempistiche biologiche della vita umana rappresentavano un ostacolo insormontabile e il destino si compì definitivamente quando #{Aegnor}# cadde in battaglia.</li>
 </ul>
-<div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi">Glorfindel e il 'ritorno' degli Elfi</span></div>`,
+<div class="note-seealso">Leggi anche → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi"><strong>Glorfindel e il 'ritorno' degli Elfi</strong></span></div>`,
     bodyEn: `<div class="note-h">The Choice of the Half-elven</div>
 <div class="note-h">Divine law</div>
 <p>In the Tolkien Legendarium, the status of the Half-elven (Peredhil) is theological/juridical, not biological: possessing mixed blood is not enough to grant the privilege of Choice. Typically, a union between a mortal and an immortal generates <em>mortal</em> offspring, because the 'Gift of Men' (mortality) takes precedence and cannot be revoked. It is a divine law (literally: established by Ilúvatar), with only two exceptions outside the Half-elven proper in the entire history of Arda. Mortality was granted to #{Lúthien}#, who embraced it for love, and revoked for #{Tuor}#, father of #{Eärendil}#, the only Man who was <em>numbered among the elder race,</em> [...] <em>his fate being sundered from that of Men</em>.</p>
@@ -3421,7 +3426,7 @@ var EDITORIAL_NOTES = [
 <li><strong>The union of the Half-elven:</strong> #{Elwing}# and #{Eärendil}# (the two original Half-elven, born from two of the previous unions; it remains an entirely unique case).</li>
 <li><strong>The unfulfilled union:</strong> the Elf #{Aegnor}# and the human #{Andreth}#. They loved each other deeply but never married for several reasons: strict Elven customs forbade marriage in times of war, the inexorable biological timeline of human life presented an insurmountable obstacle, and their fate was permanently sealed when #{Aegnor}# fell in battle.</li>
 </ul>
-<div class="note-seealso">See also → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi">Glorfindel and the 'return' of the Elves</span></div>`
+<div class="note-seealso">See also → <span class="note-notelink" role="button" tabindex="0" data-note="Glorfindel e il 'ritorno' degli Elfi"><strong>Glorfindel and the 'return' of the Elves</strong></span></div>`
   },
   {
     titleIt: 'Celeborn figlio di Galadhon',

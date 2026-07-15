@@ -368,11 +368,16 @@ gruppo = cambiare una terna.
   delle classi-etichetta (`badgeClasses`, incluso `tipo-ainur` se presente);
   `stripClass` = **2ª** se ≥2 etichette, altrimenti la 1ª (fallback
   `tipo-generico`). **Eccezione 'prima etichetta'**: se la 1ª è `tipo-noldor`
-  **oppure `tipo-mezzelfo`** (dalla v8.72), si usa quella. Così Noldor e Mezzelfi
-  restano `noldo` anche col badge `Ainu`/eredità come 2ª etichetta.
-- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. Le 11
+  **oppure `tipo-mezzelfo`** (dalla v8.72), si usa quella. Così Noldor (→ `noldo`)
+  e Mezzelfi (→ `half-elf` dalla v8.75) tengono la famiglia della 1ª etichetta
+  anche col badge `Ainu`/eredità come 2ª.
+- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. Le 12
   famiglie e i loro membri (`.tipo-*`):
-  - **`noldo`**: noldor, mezzelfo.
+  - **`noldo`**: noldor.
+  - **`half-elf`** (dalla v8.75): mezzelfo. Famiglia dedicata ai **7 Peredhil**
+    (Eärendil, Elwing, Elrond, Elros, Arwen, Elladan, Elrohir), staccata da
+    `noldo`: colore petrolio-cyan (light `#1E5462` = 30,84,98; dark 58,160,186),
+    a mezza via tra il blu Noldo e il teal Sinda. Scelta dell'utente.
   - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
   - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
   - **`rohir`**: rohirrim, uominicomuni, eotheod.
@@ -400,7 +405,8 @@ gruppo = cambiare una terna.
   21,158,143; maia 82,185,95 / 58,154,69; rohir 159,182,65 / 138,154,42; hobbit
   224,138,58 / 210,118,15; dwarf 216,178,60 / 199,148,19; numenorean 224,89,106 /
   196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
-  beast 179,148,104 / 150,117,74; generic 144,152,168 / 111,116,130).
+  beast 179,148,104 / 150,117,74; generic 144,152,168 / 111,116,130;
+  half-elf 58,160,186 / 30,84,98).
 - ⚠️ **W3C: le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
   (`injectCardColorRules`, IIFE subito dopo `CARDCOLOR_OF`). Il Nu Html Checker
   non sa parsare `var()` dentro `rgba()` (falso errore 'getType() null'), quindi
