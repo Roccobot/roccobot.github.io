@@ -122,16 +122,19 @@ HttpOnly via `GM_cookie` — IndexedDB e, dalla v1.4.0, **Cache Storage**)
 generazione continua a funzionare, poi ricarica la pagina e riparti con la quota
 fresca senza aprire nuove finestre.
 
-> **Il vero colpevole (v1.5.0): il cookie `_cfuvid` di Cloudflare.** Anche
-> svuotando Cache e Service Worker (v1.4.0) il limite non si azzerava, ma
-> l'incognito sì → restava un solo elemento preservato: i cookie Cloudflare. Tra
-> questi, **`_cfuvid`** è l'ID visitatore che Cloudflare usa per il **rate
-> limiting** (distingue utenti dietro lo stesso IP): è lì che è agganciato il
-> "Daily limit". Dalla v1.5.0 `_cfuvid` **non** è più preservato (viene
-> cancellato), mentre restano i soli cookie di *clearance* anti-bot
-> (`cf_clearance`/`__cf_bm`), senza i quali la generazione fallirebbe. Così il
-> limite riparte e la generazione continua a funzionare. (Cache e Service Worker
-> restano comunque ripulibili dai rispettivi flag, ma non erano loro la causa.)
+> **⚠️ Stato attuale (v1.6.0): il reset del limite NON funziona più.** Il sito ha
+> agganciato il "Daily limit" all'**identità Cloudflare** (`cf_clearance`) che
+> serve *anche* a generare: non si può azzerare il limite senza distruggere ciò
+> che permette di generare. Le prove: svuotare storage/IndexedDB/Cache/Service
+> Worker non azzerava il limite; cancellare `_cfuvid` tenendo `cf_clearance`
+> (tentativo v1.5.0) **peggiorava** le cose ('limit reached' anche con token).
+> Solo una finestra **in incognito** azzera il limite, perché crea un'identità
+> del tutto nuova (nuova challenge Cloudflare) — cosa che **uno userscript non
+> può replicare** (non può aprire un contesto incognito né forgiare una nuova
+> identità CF in modo pulito). Dalla v1.6.0 lo script è tornato a un reset
+> **innocuo** (preserva tutti i cookie Cloudflare; Cache/Service Worker off per
+> default): non azzera il limite, ma non peggiora nulla. Per azzerare davvero il
+> limite resta solo l'incognito, a mano.
 
 Il pulsante **compare solo sulle pagine del generatore** (URL che iniziano con
 `https://emojis.wiki/ai/`); altrove non appare. Il reset resta comunque
