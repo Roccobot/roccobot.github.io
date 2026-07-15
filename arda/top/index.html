@@ -34,12 +34,16 @@
 :root {
   --ink: #060a14;
   --ink-deep: #030710;
-  --parchment: #e8eef8;
-  --parchment-dim: #9ab0c8;
-  --gold: #6890a8;
-  --gold-bright: #9ac0d8;
-  --gold-deep: #3a5870;
-  --name: #cdd3dc; --name-hover: #eef2f8;
+  /* Colori TESTO/ACCENTO neutralizzati (dalla v8.79, scelta utente): grigi a
+     PARI LUMINANZA relativa dei vecchi ardesia (saturazione 0, luminosità
+     invariata) → i contrasti AA restano identici. Erano #e8eef8/#9ab0c8/
+     #6890a8/#9ac0d8/#3a5870/#cdd3dc/#eef2f8. --ink/--ink-deep (fondali) restano. */
+  --parchment: #ededed;
+  --parchment-dim: #aeaeae;
+  --gold: #8b8b8b;
+  --gold-bright: #bbbbbb;
+  --gold-deep: #555555;
+  --name: #d2d2d2; --name-hover: #f2f2f2;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -90,7 +94,7 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
   letter-spacing: 0.12em;
   /* colore dedicato (non var(--gold-deep)): garantisce WCAG AA 4.5:1 a opacity 0.7;
      override tema chiaro subito sotto */
-  color: #8fadc5;
+  color: #a9a9a9;
   opacity: 0.7;
   user-select: none;
   cursor: pointer;
@@ -101,7 +105,7 @@ header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
 }
 .home-link { padding-left: 0; }
 .version-badge:hover, .home-link:hover { opacity: 1; }
-html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: #1c344f; }
+html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: #333333; }
 
 .lang-switch {
   /* Fisso in alto a destra: resta visibile e fluttuante anche scorrendo (desktop).
@@ -165,7 +169,9 @@ h1 {
   font-family:'Cinzel Decorative',serif; font-weight:900;
   font-size:clamp(2.4rem,8vw,5.5rem); line-height:0.95;
   letter-spacing:0.02em;
-  text-shadow:0 0 30px rgba(104,144,168,0.4),0 0 60px rgba(30,60,100,0.3),0 4px 12px rgba(0,0,0,0.8);
+  /* Bagliore neutralizzato (dalla v8.79): grigi a pari luminanza dei vecchi
+     rgba(104,144,168)/rgba(30,60,100). L'effetto sul font resta, la tinta no. */
+  text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
   background:linear-gradient(180deg,var(--parchment) 0%,var(--gold) 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   margin-bottom:1rem;
@@ -199,10 +205,10 @@ h1 {
 /* Sfondo pagina neutro (v8.72): i testi ardesia dell'intestazione erano tarati
    sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
    (solo tema scuro; il titolo e il resto del chrome restano invariati). */
-html[data-theme="dark"] .crest, html[data-theme="dark"] .intro-cta { color:#93abc0; }
-html[data-theme="dark"] .subtitle-note { color:#9fb0c2; opacity:1; }
-html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#c2d6e6; }
-html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#a8c0d4; }
+html[data-theme="dark"] .crest, html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
+html[data-theme="dark"] .subtitle-note { color:#aeaeae; opacity:1; }
+html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#d3d3d3; }
+html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#bdbdbd; }
 
 .scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
 
@@ -266,7 +272,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   text-align:center; letter-spacing:0.04em;
   transition:color 0.35s,text-shadow 0.35s; line-height:1;
   font-variant-numeric:tabular-nums;
-  text-shadow:0 0 12px rgba(104,144,168,0.25);
+  text-shadow:0 0 12px rgba(139,139,139,0.25);
 }
 
 .rank-content { display:flex; flex-direction:column; gap:0.2rem; min-width:0; }
@@ -1674,12 +1680,14 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
 html[data-theme="light"] {
     --ink: #f2f2f6;
     --ink-deep: #ebebef;
-    --parchment: #12141e;
-    --parchment-dim: #2a2d3e;
-    --gold: #3a5878;
-    --gold-bright: #4a7090;
-    --gold-deep: #253d58;
-    --name: #34373f; --name-hover: #6c6f78;
+    /* Token neutralizzati anche in chiaro (dalla v8.79): grigi a pari luminanza
+       dei vecchi #12141e/#2a2d3e/#3a5878/#4a7090/#253d58/#34373f/#6c6f78. */
+    --parchment: #141414;
+    --parchment-dim: #2e2e2e;
+    --gold: #565656;
+    --gold-bright: #6c6c6c;
+    --gold-deep: #3b3b3b;
+    --name: #373737; --name-hover: #6f6f6f;
   }
   /* Genealogia (.bp-b in .rank-desc): la riga descrizione ha opacity 0.72,
      che in tema chiaro fa scendere il color-mix pergamena+oro a ~4.36:1
@@ -1698,21 +1706,21 @@ html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"
   }
 
 html[data-theme="light"] h1 {
-    background: linear-gradient(180deg, #12141e 0%, #3a5878 100%);
+    background: linear-gradient(180deg, #141414 0%, #565656 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
   }
-html[data-theme="light"] .crest { color: #3a5878; }
-html[data-theme="light"] .subtitle { color: #2a2d3e; }
-html[data-theme="light"] .intro { color: #2a2d3e; }
+html[data-theme="light"] .crest { color: #565656; }
+html[data-theme="light"] .subtitle { color: #2e2e2e; }
+html[data-theme="light"] .intro { color: #2e2e2e; }
 html[data-theme="light"] .lang-switch {
-    background: rgba(200,210,230,0.5);
-    border-color: #3a5878;
-    color: #253d58;
+    background: rgba(210,212,218,0.5);
+    border-color: #565656;
+    color: #3b3b3b;
   }
-html[data-theme="light"] .lang-switch:hover { background: #3a5878; color: #f2f2f6; }
+html[data-theme="light"] .lang-switch:hover { background: #565656; color: #f2f2f6; }
 
 html[data-theme="light"] .rank-item {
     background: rgba(224,236,252,0.16);
@@ -1767,7 +1775,7 @@ html[data-theme="light"] .rank-name {
 /* #4 — hover nome gestito da var(--name-hover) */
 html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
 html[data-theme="light"] .rank-title {
-    color: #2a2d3e;
+    color: #2e2e2e;
     font-weight: 500;
   }
 
@@ -1814,7 +1822,7 @@ html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-numenorean)
 html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-numenorean):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-close { color:#253d58!important; border-color:#4a7090!important; }
 
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
-html[data-theme="light"] footer p { color: #2a2d3e; font-weight: 500; }
+html[data-theme="light"] footer p { color: #2e2e2e; font-weight: 500; }
 
 
 /* race badge light-mode: vivid but dark enough for marble bg */
@@ -2020,17 +2028,17 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.78</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.79</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title"><a id="title-link" href="https://roccobot.github.io/arda/top/">I Grandi di Arda</a></h1>
   <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#6890a8" stroke-width="0.8" fill="none" opacity="0.6"/>
-    <circle cx="100" cy="15" r="3" fill="#9ac0d8"/>
-    <circle cx="60" cy="12" r="1.5" fill="#6890a8"/>
-    <circle cx="140" cy="18" r="1.5" fill="#6890a8"/>
+    <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#8b8b8b" stroke-width="0.8" fill="none" opacity="0.6"/>
+    <circle cx="100" cy="15" r="3" fill="#bbbbbb"/>
+    <circle cx="60" cy="12" r="1.5" fill="#8b8b8b"/>
+    <circle cx="140" cy="18" r="1.5" fill="#8b8b8b"/>
   </svg>
   <div class="intro" id="intro">
     Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class="intro-cta">Tocca o clicca un nome per leggere la scheda completa.</span>

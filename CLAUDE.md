@@ -426,9 +426,23 @@ gruppo = cambiare una terna.
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
-- **Titolone `#title` invariato.** Il gradiente ornato della testata
+- **Testi e accenti NEUTRALIZZATI (dalla v8.79, scelta utente).** I colori di
+  testo/accento ardesia (token `--parchment`, `--parchment-dim`, `--gold`,
+  `--gold-bright`, `--gold-deep`, `--name`, `--name-hover` in **entrambi** i temi;
+  più gli hardcoded di header/footer/titolo: badge versione, `roccobot.me`,
+  `.crest` 'ROCCOBOT PRESENTS', sottotitolo, `.subtitle-note`, `.intro`/`.intro-cta`,
+  separatore `.flourish`, link footer, `.lang-switch`, glow del titolone e glow
+  hover del nome) sono stati portati a **grigio a saturazione 0**. Metodo:
+  **grigio a PARI LUMINANZA relativa** del colore originale → i rapporti di
+  contrasto restano identici (axe invariato, 0 violazioni). Il **titolone** tiene
+  il gradiente e il glow (effetto sul font invariato) ma in **grigio/argento**, non
+  più blu. **NON toccati:** etichette tipo (`.tipo-*`), famiglie `cardcolor`
+  (`--ccrgb`), simboli di genere (PNG), e i fondali/tint del Pannello e dei bordi
+  modale (rgba(104,144,168,…) a bassa opacità: sono sfondi/bordi di controlli, non
+  'testi'). `--ink`/`--ink-deep` (fondali scuri) restano.
+- **Titolone `#title`.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
-  **resta identico** (blu su chiaro, argento su scuro): il cardcolor non lo tocca.
+  e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.
 - **Accento cardcolor sulla SCHEDA personaggio (dalla v8.77).** La `.modal` della
   scheda eredita la famiglia della card: `openModal` le assegna `cc-<fam>` (via
   la funzione pura **`familyOf(p)`**, stessa logica di `renderList`). Da lì
