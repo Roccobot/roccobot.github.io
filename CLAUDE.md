@@ -300,10 +300,12 @@ testuali). Fissati dall'utente per comunicare in fretta:
   visualizzazione principale** della pagina. Sono le 9 voci di `CATS` (ainu,
   arcane, elf, adan, man, dwarf, hobbit, orc, animal); la determina la funzione
   `categoria()` e governa il Pannello categorie e i permalink.
-- **`Classe`**: ciò che definisce il **colore della card** (sfondo + bordo
-  sinistro + hover). Sono **cinque** (dalla v7.59), coi nomi ufficiali pieni e
-  l'alias breve; i **nomi CSS** restano invariati (cambia solo l'etichetta con
-  cui le chiamiamo):
+- **`Classe`**: ciò che definisce lo **sfondo della card** (e l'hover). ⚠️ Dalla
+  v7.69 il **bordino sinistro colorato NON dipende più dalla Classe** ma dal
+  contorno dell'etichetta tipo (vedi 'Bordino sinistro delle card'); la Classe
+  governa solo sfondo+hover. Sono **cinque** (dalla v7.59), coi nomi ufficiali
+  pieni e l'alias breve; i **nomi CSS** restano invariati (cambia solo l'etichetta
+  con cui le chiamiamo):
   - **`Esseri crepuscolari`** (alias `crepuscolari`): corrotti, malvagi,
     crepuscolari, creature dell'ombra. Card scura. CSS `.rank-item.divine.morgoth`,
     assegnata da `darkBg` in `renderList` (per nome: Melkor, Morgoth, Ungoliant,
@@ -322,8 +324,9 @@ testuali). Fissati dall'utente per comunicare in fretta:
     Uomini, Nani, Hobbit non-cattivi, e in genere tutto il resto. 277 voci alla
     v7.59.
   - **`Animali`** (alias `animali`, dalla v7.59): **coincide al 100% con la
-    Categoria `animal`** (cavalli, pony, corvi, cani). Card base con tinta/bordo
-    **terra (tan Leggero)**, NON una variante `.divine`. CSS `.rank-item.animale`,
+    Categoria `animal`** (cavalli, pony, corvi, cani). Sfondo **TAUPE (grigio
+    caldo) molto tenue** (dalla v7.69; prima era un tan che, attenuato, virava
+    all'oro degli Angelici), NON una variante `.divine`. CSS `.rank-item.animale`,
     assegnata in `renderList` quando `categoria(p) === 'animal'` (ramo `else if`
     dopo il blocco `.divine`). 20 voci alla v7.59. In tema chiaro l'etichetta
     `.tipo-bestia` è scurita (compensazione contrasto, vedi 'Etichette tipo').
@@ -335,6 +338,29 @@ testuali). Fissati dall'utente per comunicare in fretta:
 hanno la stessa **Categoria** (`ainu`) ma **Tipo** diverso (`Vala decaduto` vs
 `Vala`) e **Classe** diversa (`Esseri crepuscolari` vs `Entità angeliche`).
 Unica sovrapposizione totale: la Classe **Animali** ≡ Categoria `animal`.
+
+### 🎗️ Bordino sinistro delle card (dalla v7.69)
+
+- **Colore ereditato dall'etichetta tipo, non dalla Classe.** Il bordino sinistro
+  colorato prende il colore del **contorno dell'etichetta tipo**; con più
+  etichette renderizzate si usa la **seconda** (il badge automatico `Ainu` conta
+  come prima, quindi per gli Ainur il bordino è il colore della loro Vala/Valië).
+  In `renderList` si raccoglie l'ordine delle classi badge (`badgeClasses`,
+  incluso `tipo-ainur` se presente) e `stripClass` = 2ª se ≥2, altrimenti la 1ª
+  (fallback `tipo-generico`).
+- **Meccanismo: striscia in sovrapposizione, non un vero bordo.** È un elemento
+  assoluto `<span class="rank-strip TIPOCLASS">` (fuori dal flusso), con
+  `background:currentColor` a **opacità 0.8**: la classe tipo posata sulla
+  striscia le dà il `color`, quindi la striscia riproduce **esattamente** il
+  contorno dell'etichetta (il bordo `.tipo-*` è testo@0.8) e **si adatta al
+  tema** da sé (le classi tipo hanno override chiaro). Il `border-left` di
+  layout è neutralizzato a **1px uniforme** come gli altri lati (override
+  `!important` sopra tutte le regole di Classe, dark + light).
+- **Spessore: 5px normali, 10px per le 3 in cima** (`.rank-item.vis-top
+  .rank-strip { width:10px }`). Essendo la striscia **assoluta**, il cambio di
+  spessore **non sposta di un pixel** il contenuto (verificato: `contentLeft`
+  identico per podio e non-podio, in entrambi i temi).
+- Lo **sfondo** della card resta governato dalla **Classe** (vedi sopra).
 
 ## 🗒️ Glossario dei contenuti (nomi colloquiali)
 
@@ -536,6 +562,13 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   visibilità a sé, governata dalla variabile globale `showApocrifi` (default
   **OFF**) e dal **10° bit** del permalink bare. Il tasto **'Tutti'**
   (`ctrl-reset`) agisce **solo sulle categorie**, mai sugli Apocrifi.
+  - **Label 'Apocrifi' sempre visibile (fix v7.69).** L'etichetta accanto
+    all'interruttore usa `color:var(--parchment)` (colore testo, corretto in
+    entrambi i temi grazie all'inversione dei token in chiaro) a opacità 0.72 da
+    spenta. C'era un override `html[data-theme="light"] .apo-lbl {
+    color:var(--ink) }` che in chiaro rendeva la parola **invisibile** (in chiaro
+    `--ink` è il colore di SFONDO chiaro): rimosso. La parola resta leggibile
+    anche a interruttore spento (richiesta dell'utente: più corretto in UI).
   - **Flag dati: `apocrifo`** sulla voce. `true` (o una stringa-fonte, es.
     `"HoME"`/`"NoME"`, usata per il testo della pill). In `renderList` la voce
     è saltata se `p.apocrifo && !showApocrifi`. La classifica è **identica** ma
