@@ -1400,7 +1400,16 @@ specifico del dataset):
     times: one of the greatest deeds in the history of Arda.'. Non è in
     `BADGE_ROWS` (non filtrabile). Restano intatte le feature omonime ma distinte:
     la classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via
-    `darkBg`) e l'etichetta tipo `.tipo-morgoth` ('vala decaduto').
+    `darkBg`) e l'etichetta tipo `.tipo-morgoth` ('vala decaduto'). **Dalla v8.80
+    la PNG è ritagliata al contenuto (215x237) e ha classe `.si-morgoth`
+    (`width:.835em`), perché la figura verticale col padding asimmetrico originale
+    lasciava whitespace interno che allargava otticamente i gap coi badge vicini
+    (la 'voragine' Morgoth↔corona).**
+- **Distanziamento del simbolo di genere (dalla v8.80).** Il simbolo ♂/♀
+  (`.genere-svg`, PNG) è staccato dal cluster dei badge di merito con un margine
+  sinistro extra (desktop `margin-left:0.28em` → gap ~15px vs ~11px tra badge;
+  mobile `0.3em` oltre al gap flex): prima 'toccava' l'ultimo badge (~8px). È un
+  gruppo a sé (stato anagrafico, non merito), quindi va otticamente separato.
   - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
     ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
     riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
