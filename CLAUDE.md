@@ -1139,17 +1139,19 @@ specifico del dataset):
   sovrapposto (dava 'PNG uno sull'altro'), v7.27 ritaglio + gap positivo, v7.28
   gap allargato ad allinearsi agli Anelli + cluster ristretto (testo vicino).
 - **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
-  i ghiacci dell'Helcaraxë' (icona iceberg, con contorno per il tema chiaro).
-  In `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`** (prima di
-  `istari`). **PNG ritagliata: 202×214 (dalla v7.30, aspetto ~0.944).** Storia:
-  originale 234×256 (~79% larghezza nel box, 'troppo spaziato'); v7.28 ritaglio
-  al contenuto → 202×229 (~88% larghezza, 100% altezza); v7.30 ancora 'troppo
-  spazio ai lati' (l'iceberg è più alto che largo), quindi ritagliata anche la
-  **punta subacquea sottile in fondo** (che allungava il canvas senza aggiungere
-  larghezza) portando l'aspetto a ~0.944 → ora riempie **~94% larghezza** nel box
-  quadrato `object-fit:contain`, come le navi (~94%), lati quasi pieni. (Il
-  canvas *largo* non conta: sotto contain-by-height la larghezza del canvas è
-  ininfluente, conta il rapporto larghezza/altezza del contenuto.) Portatori tra
+  i ghiacci dell'Helcaraxë' (icona iceberg). In `ICON_ORDER` sta al **3° posto,
+  subito dopo `silmaril`** (prima di `istari`). **PNG ritagliata: 224×215
+  (dalla v7.48, aspetto ~1.042).** Storia del disegno: fino alla v7.47 era un
+  iceberg stilizzato a faccette (con contorno per il tema chiaro); in v7.48
+  sostituito, su scelta dell'utente, con un iceberg a picchi affilati e base +
+  riflesso azzurro (la 'Proposta 4' tra quattro varianti confrontate). L'icona
+  si rende `object-fit:contain` in un box quadrato: con aspetto ~1.042 (poco più
+  larga che alta) riempie ~100% della larghezza. Ogni nuova icona va **ritagliata
+  al contenuto** (bbox alpha, lossless RGBA, nessuna quantizzazione, vedi
+  'Ottimizzazione immagini') così riempie il box come le altre badge. Storia
+  della vecchia arte a faccette: originale 234×256; v7.28 ritaglio → 202×229;
+  v7.30 → 202×214 (~0.944), rimossa la punta subacquea sottile che allungava il
+  canvas senza aggiungere larghezza. Portatori tra
   i 159, da canone (*Silmarillion*, 'Della fuga dei
   Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril, Finrod, Angrod, Aegnor,
   Galadriel, Orodreth (figlio di Angrod, nato a Valinor, giunto con l'oste di
