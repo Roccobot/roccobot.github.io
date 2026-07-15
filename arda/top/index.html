@@ -209,10 +209,10 @@ html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
 /* Retrogusto CALDO (dalla v8.81, esperimento): crest 'ROCCOBOT PRESENTS' e link
    'Risorse e note' prendono un grigio virato verso il giallo del FAB (#d2b25c),
    attenuato (~15%). Solo tema scuro per ora; se piace, anche chiaro. */
-html[data-theme="dark"] .crest { color:#aea99d; }
-html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { color:#bebaad; }
-html[data-theme="dark"] #footer-links { color:#bebaad !important; }
-html[data-theme="dark"] #res-link { color:#bebaad; }
+html[data-theme="dark"] .crest { color:#b4a98d; }
+html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { color:#c0b69a; }
+html[data-theme="dark"] #footer-links { color:#c0b69a !important; }
+html[data-theme="dark"] #res-link { color:#c0b69a; }
 html[data-theme="dark"] .subtitle-note { color:#aeaeae; opacity:1; }
 html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#d3d3d3; }
 html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#bdbdbd; }
@@ -1211,7 +1211,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
    (cerchi riallineati alla 'o' minuscola). Femmina: canvas 220x256 (deroga
    verticale), larghezza proporzionata. */
 .genere-svg--m { width:.721em; height:.721em; transform:translate(.006em,-0.066em); }
-.genere-svg--f { width:.725em; height:.844em; transform:translateY(.15em); }
+.genere-svg--f { width:.603em; height:.844em; transform:translateY(.15em); }
 /* Risalita ottica del blocco icone della riga nome su DESKTOP (corona, anelli,
    simboli di genere): il gruppo cadeva troppo in basso rispetto alle maiuscole,
    come gia' accadeva su mobile (poi risolto). Qui si usa position:relative+top
@@ -1733,7 +1733,12 @@ html[data-theme="light"] h1 {
        glow scuro, come drop-shadow morbida grigia (non blu). */
     text-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 0 20px rgba(0,0,0,0.07);
   }
-html[data-theme="light"] .crest { color: #565656; }
+/* Retrogusto verso il FAB anche in tema CHIARO (dalla v8.82): qui il FAB è teal
+   (#1f5562), quindi gli accenti virano al FREDDO (teal-slate #445d64). Virando
+   verso un colore scuro il contrasto sale (~6:1), AA ampiamente rispettato. */
+html[data-theme="light"] .crest { color: #445d64; }
+html[data-theme="light"] .crest::before, html[data-theme="light"] .crest::after { color: #445d64; }
+html[data-theme="light"] #footer-links { color: #445d64 !important; }
 html[data-theme="light"] .subtitle { color: #2e2e2e; }
 html[data-theme="light"] .intro { color: #2e2e2e; }
 html[data-theme="light"] .lang-switch {
@@ -1898,7 +1903,7 @@ html[data-theme="light"] .rank-item.apocrifo .tipo-generico { border-color:rgba(
 html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
-html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#696969; }
+html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#445d64; }
 html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
 html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
 /* Stesso override anche per i jump-FAB: coi colori del tema scuro erano
@@ -2049,7 +2054,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.81</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.82</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

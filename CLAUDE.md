@@ -445,17 +445,29 @@ gruppo = cambiare una terna.
     (era `#486d8c`); aggiunta un'**ombra leggera neutra** al titolone in **tema
     chiaro** (prima `text-shadow:none`; ora l'equivalente 'in chiaro' del glow
     scuro, grigia).
-  - **Retrogusto CALDO (esperimento v8.81, solo tema SCURO).** `.crest` 'ROCCOBOT
-    PRESENTS' (testo + ✦) e il link footer 'Risorse e note' (`#footer-links` +
-    `#res-link`) prendono un grigio **virato ~15% verso il giallo del FAB**
-    (`rgba(210,178,92)` = #d2b25c): crest `#aea99d`, link `#bebaad`. Il resto
-    resta neutro. Estendibile al tema chiaro se approvato.
+  - **Retrogusto verso il colore del FAB (dalla v8.82, entrambi i temi).** `.crest`
+    'ROCCOBOT PRESENTS' (testo + ✦) e il link footer 'Risorse e note'
+    (`#footer-links` + `#res-link`) prendono un grigio **virato verso il colore
+    del FAB del tema** (il resto della testata/footer resta neutro):
+    - **Tema SCURO → CALDO** (FAB oro `#CAAB59`): crest `#b4a98d`, link/✦
+      `#c0b69a` (~34%). Contrasti 6.5-7.6.
+    - **Tema CHIARO → FREDDO** (FAB teal `#1f5562`): crest/link/✦ `#445d64`
+      (~40%). Virando verso un colore scuro il contrasto **sale** (~6:1), AA
+      ampiamente ok. Storico: nato come esperimento caldo solo-scuro in v8.81
+      (15% verso #d2b25c), poi saturato ed esteso al chiaro (verso il rispettivo
+      FAB) in v8.82 su richiesta dell'utente.
 - **Distanziamento simbolo genere: rifinito in v8.81.** Il margine extra della
   v8.80 (0.28/0.3em) era troppo (gap ~15px); ridotto (desktop `0.07em`, mobile
   `0.06em`) → gap ~10px, tra il precedente 8.3px e il passo badge 11.3px.
   Allineamento **verticale** dei cerchi (anelli + genere) sul centro-cap del nome
   **invariato**: ♂/anelli condividono il centro esatto, ♀ tiene il suo
   `translateY(.15em)` storico che porta il *cerchio* alla stessa quota.
+  - **`Femmina.png` ritagliata ai lati (dalla v8.82).** Il PNG aveva ~30px di
+    trasparente per lato (27% orizzontale) → il ♀ aveva spazio fantasma. Ritagliato
+    L/R (versione fornita dall'utente, 180×252, non a filo) e larghezza del box
+    adattata al nuovo aspetto (`.genere-svg--f { width:.603em }`, era `.725em`);
+    **altezza `.844em` e `translateY(.15em)` invariati** → allineamento verticale
+    identico, il ♀ solo più stretto/vicino. `Maschio.png` non toccato.
 - **Titolone `#title`.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
   e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.
