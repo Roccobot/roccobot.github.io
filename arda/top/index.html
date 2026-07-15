@@ -466,16 +466,16 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    nel CSS statico o tornano gli errori W3C. Qui restano solo le terne --ccrgb,
    che il Nu valida senza problemi. */
 /* Terne per famiglia (default = tema SCURO, bilanciato; override CHIARO sotto). */
-.cc-blue{--ccrgb:91,123,240} .cc-teal{--ccrgb:43,184,166} .cc-green{--ccrgb:82,185,95}
-.cc-lime{--ccrgb:159,182,65} .cc-orange{--ccrgb:224,138,58} .cc-gold{--ccrgb:216,178,60}
-.cc-red{--ccrgb:224,89,106} .cc-magenta{--ccrgb:222,90,142} .cc-purple{--ccrgb:160,107,224}
-.cc-brown{--ccrgb:179,148,104} .cc-grey{--ccrgb:144,152,168}
-html[data-theme="light"] .cc-blue{--ccrgb:47,79,208} html[data-theme="light"] .cc-teal{--ccrgb:21,158,143}
-html[data-theme="light"] .cc-green{--ccrgb:58,154,69} html[data-theme="light"] .cc-lime{--ccrgb:138,154,42}
-html[data-theme="light"] .cc-orange{--ccrgb:210,118,15} html[data-theme="light"] .cc-gold{--ccrgb:199,148,19}
-html[data-theme="light"] .cc-red{--ccrgb:196,34,51} html[data-theme="light"] .cc-magenta{--ccrgb:194,31,110}
-html[data-theme="light"] .cc-purple{--ccrgb:122,63,206} html[data-theme="light"] .cc-brown{--ccrgb:150,117,74}
-html[data-theme="light"] .cc-grey{--ccrgb:111,116,130}
+.cc-noldo{--ccrgb:91,123,240} .cc-sinda{--ccrgb:43,184,166} .cc-maia{--ccrgb:82,185,95}
+.cc-rohir{--ccrgb:159,182,65} .cc-hobbit{--ccrgb:224,138,58} .cc-dwarf{--ccrgb:216,178,60}
+.cc-numenorean{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
+.cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168}
+html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
+html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
+html[data-theme="light"] .cc-hobbit{--ccrgb:210,118,15} html[data-theme="light"] .cc-dwarf{--ccrgb:199,148,19}
+html[data-theme="light"] .cc-numenorean{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
+html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .cc-beast{--ccrgb:150,117,74}
+html[data-theme="light"] .cc-generic{--ccrgb:111,116,130}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -2009,7 +2009,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.72</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.73</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2365,17 +2365,17 @@ function tipoClass(tipo) {
 // I valori colore per-tema vivono nel CSS (variabile --ccrgb per .cc-<fam>):
 // così si ricolora un intero gruppo cambiando un solo valore.
 var CARDCOLOR_OF = {
-  'tipo-noldor':'blue', 'tipo-mezzelfo':'blue',
-  'tipo-sindar':'teal', 'tipo-teleri':'teal', 'tipo-vanyar':'teal', 'tipo-falmar':'teal', 'tipo-aquila':'teal',
-  'tipo-maia':'green', 'tipo-ent':'green', 'tipo-bombadil':'green',
-  'tipo-rohirrim':'lime', 'tipo-uominicomuni':'lime', 'tipo-eotheod':'lime',
-  'tipo-hobbit':'orange', 'tipo-hador':'orange',
-  'tipo-nano':'gold', 'tipo-haleth':'gold',
-  'tipo-dunadan':'red', 'tipo-numenorean':'red', 'tipo-beor':'red', 'tipo-drago':'red',
-  'tipo-vala':'magenta', 'tipo-valie':'magenta', 'tipo-maia-dark':'magenta', 'tipo-ragno':'magenta', 'tipo-troll':'magenta',
-  'tipo-orco':'purple', 'tipo-oscurita':'purple', 'tipo-misterioso':'purple', 'tipo-morgoth':'purple',
-  'tipo-bestia':'brown', 'tipo-gollum':'brown',
-  'tipo-generico':'grey', 'tipo-lupo':'grey'
+  'tipo-noldor':'noldo', 'tipo-mezzelfo':'noldo',
+  'tipo-sindar':'sinda', 'tipo-teleri':'sinda', 'tipo-vanyar':'sinda', 'tipo-falmar':'sinda', 'tipo-aquila':'sinda',
+  'tipo-maia':'maia', 'tipo-ent':'maia', 'tipo-bombadil':'maia',
+  'tipo-rohirrim':'rohir', 'tipo-uominicomuni':'rohir', 'tipo-eotheod':'rohir',
+  'tipo-hobbit':'hobbit', 'tipo-hador':'hobbit',
+  'tipo-nano':'dwarf', 'tipo-haleth':'dwarf',
+  'tipo-dunadan':'numenorean', 'tipo-numenorean':'numenorean', 'tipo-beor':'numenorean', 'tipo-drago':'numenorean',
+  'tipo-vala':'vala', 'tipo-valie':'vala', 'tipo-maia-dark':'vala', 'tipo-ragno':'vala', 'tipo-troll':'vala',
+  'tipo-orco':'orc', 'tipo-oscurita':'orc', 'tipo-misterioso':'orc', 'tipo-morgoth':'orc',
+  'tipo-bestia':'beast', 'tipo-gollum':'beast',
+  'tipo-generico':'generic', 'tipo-lupo':'generic'
 };
 
 // Regole cardcolor iniettate via JS: usano rgba(var(--ccrgb),alpha), che il Nu
@@ -2788,8 +2788,8 @@ function renderList() {
       ? badgeClasses[0]
       : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
     // Famiglia colore card: override esplicito `p.cardcolor`, altrimenti derivata
-    // dalla classe-etichetta di cui sopra via CARDCOLOR_OF (fallback 'grey').
-    var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] || 'grey';
+    // dalla classe-etichetta di cui sopra via CARDCOLOR_OF (fallback 'generic').
+    var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] || 'generic';
     var statusStr = buildStatus(p);
     // Riga 2: descrizione + lineage
     // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i

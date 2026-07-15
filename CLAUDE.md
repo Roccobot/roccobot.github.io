@@ -353,30 +353,42 @@ classi-etichetta `.tipo-*` sono **consolidate in 11 famiglie**. Vantaggio: una
 sola terna RGB per famiglia governa sfondo + bordino, e ricolorare un intero
 gruppo = cambiare una terna.
 
+- **Nomi famiglia = nomi di GRUPPO, non di colore (dalla v8.73, scelta
+  dell'utente).** Le famiglie prendono il nome della **stirpe/categoria
+  dominante** (inglese, singolare, senza accenti), NON il colore: così se un
+  domani si cambiano drasticamente le tinte i nomi non 'mentono'. Storico: alla
+  v8.72 erano nominate col colore (`blue`, `teal`, `green`...); rinominate in
+  v8.73 (`noldo`, `sinda`, `maia`...).
 - **Famiglia per personaggio.** In `renderList`, dopo aver calcolato `stripClass`
-  (vedi sotto), `var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] || 'grey'`.
-  Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-blue`). Override
-  per-voce col campo dati **`p.cardcolor`** (stringa nome-famiglia) se si vuole
-  forzare un colore diverso da quello mappato dal tipo.
+  (vedi sotto), `var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] ||
+  'generic'`. Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-noldo`).
+  Override per-voce col campo dati **`p.cardcolor`** (stringa nome-famiglia) se si
+  vuole forzare un gruppo diverso da quello mappato dal tipo.
 - **`stripClass` (invariato dalla logica del bordino).** Si raccoglie l'ordine
   delle classi-etichetta (`badgeClasses`, incluso `tipo-ainur` se presente);
   `stripClass` = **2ª** se ≥2 etichette, altrimenti la 1ª (fallback
   `tipo-generico`). **Eccezione 'prima etichetta'**: se la 1ª è `tipo-noldor`
   **oppure `tipo-mezzelfo`** (dalla v8.72), si usa quella. Così Noldor e Mezzelfi
-  restano `blue` anche col badge `Ainu`/eredità come 2ª etichetta.
+  restano `noldo` anche col badge `Ainu`/eredità come 2ª etichetta.
 - **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. Le 11
-  famiglie e i loro membri principali:
-  - **`blue`**: noldor, mezzelfo.
-  - **`teal`**: sindar, teleri, vanyar, falmar, aquila.
-  - **`green`**: maia, ent, bombadil (Primordiali/spiriti buoni).
-  - **`lime`**: rohirrim, uominicomuni, eotheod.
-  - **`orange`**: hobbit, hador.
-  - **`gold`**: nano, haleth.
-  - **`red`**: dunadan, numenorean, beor, drago.
-  - **`magenta`**: vala, valie, maia-dark, ragno, troll.
-  - **`purple`**: orco, oscurita, misterioso, morgoth.
-  - **`brown`**: bestia, gollum.
-  - **`grey`**: generico, lupo (fallback).
+  famiglie e i loro membri (`.tipo-*`):
+  - **`noldo`**: noldor, mezzelfo.
+  - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
+  - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
+  - **`rohir`**: rohirrim, uominicomuni, eotheod.
+  - **`hobbit`**: hobbit, hador.
+  - **`dwarf`**: nano, haleth.
+  - **`numenorean`**: dunadan, numenorean, beor, drago.
+  - **`vala`**: vala, valie, maia-dark, ragno, troll.
+  - **`orc`**: orco, oscurita, misterioso, morgoth.
+  - **`beast`**: bestia, gollum.
+  - **`generic`**: generico, lupo (fallback).
+
+  ⚠️ Le famiglie sono raggruppamenti **per colore** ereditati dalla v8.72, quindi
+  alcune mescolano stirpi diverse (es. `dwarf` include la Casa di Haleth, `hobbit`
+  la Casa di Hador, `vala` anche Troll e Ragni). L'utente potrà **ri-raggruppare**
+  in futuro (staccare i macro-gruppi impropri): il nome è solo della stirpe
+  dominante, non una verità tassonomica.
 - **Meccanismo colore: una terna `--ccrgb` per famiglia, per tema.** Ogni classe
   `.cc-<fam>` definisce la custom property `--ccrgb` (terna `R,G,B`) nel `<style>`
   statico; c'è un blocco **default = tema SCURO** e un override
@@ -384,11 +396,11 @@ gruppo = cambiare una terna.
   tinta rende diversamente sui due fondi, vedi sotto). Sfondo card =
   `rgba(var(--ccrgb),0.05)` in chiaro / `0.10` in scuro; hover `0.11`/`0.18`;
   **bordino** = `rgba(var(--ccrgb),0.85)`. Terne scure/chiare bilanciate e
-  approvate dall'utente (blue 91,123,240 / 47,79,208; teal 43,184,166 /
-  21,158,143; green 82,185,95 / 58,154,69; lime 159,182,65 / 138,154,42; orange
-  224,138,58 / 210,118,15; gold 216,178,60 / 199,148,19; red 224,89,106 /
-  196,34,51; magenta 222,90,142 / 194,31,110; purple 160,107,224 / 122,63,206;
-  brown 179,148,104 / 150,117,74; grey 144,152,168 / 111,116,130).
+  approvate dall'utente (noldo 91,123,240 / 47,79,208; sinda 43,184,166 /
+  21,158,143; maia 82,185,95 / 58,154,69; rohir 159,182,65 / 138,154,42; hobbit
+  224,138,58 / 210,118,15; dwarf 216,178,60 / 199,148,19; numenorean 224,89,106 /
+  196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
+  beast 179,148,104 / 150,117,74; generic 144,152,168 / 111,116,130).
 - ⚠️ **W3C: le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
   (`injectCardColorRules`, IIFE subito dopo `CARDCOLOR_OF`). Il Nu Html Checker
   non sa parsare `var()` dentro `rgba()` (falso errore 'getType() null'), quindi
