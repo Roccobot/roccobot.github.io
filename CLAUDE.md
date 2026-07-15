@@ -440,6 +440,22 @@ gruppo = cambiare una terna.
   (`--ccrgb`), simboli di genere (PNG), e i fondali/tint del Pannello e dei bordi
   modale (rgba(104,144,168,…) a bassa opacità: sono sfondi/bordi di controlli, non
   'testi'). `--ink`/`--ink-deep` (fondali scuri) restano.
+  - **Rifiniture v8.81:** neutralizzati anche i **tasti salto ↑/↓** (`.jump-fab`,
+    erano blu/teal in entrambi i temi) e il link footer chiaro `#res-link`
+    (era `#486d8c`); aggiunta un'**ombra leggera neutra** al titolone in **tema
+    chiaro** (prima `text-shadow:none`; ora l'equivalente 'in chiaro' del glow
+    scuro, grigia).
+  - **Retrogusto CALDO (esperimento v8.81, solo tema SCURO).** `.crest` 'ROCCOBOT
+    PRESENTS' (testo + ✦) e il link footer 'Risorse e note' (`#footer-links` +
+    `#res-link`) prendono un grigio **virato ~15% verso il giallo del FAB**
+    (`rgba(210,178,92)` = #d2b25c): crest `#aea99d`, link `#bebaad`. Il resto
+    resta neutro. Estendibile al tema chiaro se approvato.
+- **Distanziamento simbolo genere: rifinito in v8.81.** Il margine extra della
+  v8.80 (0.28/0.3em) era troppo (gap ~15px); ridotto (desktop `0.07em`, mobile
+  `0.06em`) → gap ~10px, tra il precedente 8.3px e il passo badge 11.3px.
+  Allineamento **verticale** dei cerchi (anelli + genere) sul centro-cap del nome
+  **invariato**: ♂/anelli condividono il centro esatto, ♀ tiene il suo
+  `translateY(.15em)` storico che porta il *cerchio* alla stessa quota.
 - **Titolone `#title`.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
   e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.

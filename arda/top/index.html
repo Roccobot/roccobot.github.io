@@ -205,7 +205,14 @@ h1 {
 /* Sfondo pagina neutro (v8.72): i testi ardesia dell'intestazione erano tarati
    sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
    (solo tema scuro; il titolo e il resto del chrome restano invariati). */
-html[data-theme="dark"] .crest, html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
+html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
+/* Retrogusto CALDO (dalla v8.81, esperimento): crest 'ROCCOBOT PRESENTS' e link
+   'Risorse e note' prendono un grigio virato verso il giallo del FAB (#d2b25c),
+   attenuato (~15%). Solo tema scuro per ora; se piace, anche chiaro. */
+html[data-theme="dark"] .crest { color:#aea99d; }
+html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { color:#bebaad; }
+html[data-theme="dark"] #footer-links { color:#bebaad !important; }
+html[data-theme="dark"] #res-link { color:#bebaad; }
 html[data-theme="dark"] .subtitle-note { color:#aeaeae; opacity:1; }
 html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#d3d3d3; }
 html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#bdbdbd; }
@@ -1217,7 +1224,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   /* Simbolo genere = gruppo a sé (dalla v8.80): stacco dai badge di merito con
      un margine sinistro extra, così non 'tocca' l'ultimo badge (era ~8px, meno
      del passo 11px tra badge). Solo desktop; su mobile sotto. */
-  .rank-name > .rank-flags .genere-svg { margin-left:0.28em; }
+  .rank-name > .rank-flags .genere-svg { margin-left:0.07em; }
 }
 /* ELFI — tonalità blu/celeste */
 .tipo-noldor      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
@@ -1579,9 +1586,9 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      indentante quando le etichette vanno a capo. */
   .rank-name > .rank-name-text { margin-right:0.32em; }
   .rank-name > .rank-flags .status-icon { margin-left:0; }
-  /* Genere staccato dal cluster badge anche su mobile (dalla v8.80): margine
-     extra oltre al gap flex 0.28em (il caso più evidente segnalato dall'utente). */
-  .rank-name > .rank-flags .genere-svg { margin-left:0.3em; }
+  /* Genere: minimo stacco extra oltre al gap flex 0.28em (dalla v8.81: la v8.80
+     0.3em risultava troppo distanziata). */
+  .rank-name > .rank-flags .genere-svg { margin-left:0.06em; }
   /* Etichette = BLOCCO ATOMICO (inline-flex): o stanno TUTTE in coda al nome
      (dopo le icone), o vanno TUTTE a capo insieme, nell'ordine dato,
      allineate al bordo sinistro del contenuto (un box inline-level che non
@@ -1648,7 +1655,7 @@ html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.
 html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
-.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(60,95,150,0.41);border:1px solid rgba(154,192,216,0.38);color:rgba(232,242,255,0.85);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent; }
+.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(95,95,95,0.41);border:1px solid rgba(187,187,187,0.38);color:rgba(241,241,241,0.85);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent; }
 .jump-fab svg { width:1.05rem;height:1.05rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 /* Padding destro quando le maniglie di trascinamento sono visibili */
 #rank-list.has-handles .rank-content { padding-right:2.6rem; }
@@ -1722,7 +1729,9 @@ html[data-theme="light"] h1 {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: none;
+    /* Ombreggiatura leggera e neutra (dalla v8.81): equivalente 'in chiaro' del
+       glow scuro, come drop-shadow morbida grigia (non blu). */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 0 20px rgba(0,0,0,0.07);
   }
 html[data-theme="light"] .crest { color: #565656; }
 html[data-theme="light"] .subtitle { color: #2e2e2e; }
@@ -1889,12 +1898,12 @@ html[data-theme="light"] .rank-item.apocrifo .tipo-generico { border-color:rgba(
 html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
-html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#486d8c; }
+html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#696969; }
 html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
 html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
 /* Stesso override anche per i jump-FAB: coi colori del tema scuro erano
    quasi invisibili su fondo chiaro (contrasto ~1:1). */
-html[data-theme="light"] .jump-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
+html[data-theme="light"] .jump-fab { background:#4e4e4e; border-color:rgba(78,78,78,0.55); color:#ffffff; }
 /* Etichette categoria deselezionate: opacità meno spinta nel chiaro
    (0.45 le portava sotto la soglia di leggibilità AA). */
 html[data-theme="light"] .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.62; }
@@ -2040,7 +2049,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.80</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.81</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
