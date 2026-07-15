@@ -1426,9 +1426,9 @@ html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(1
 /* Modale Info (nota traduzioni, solo IT): box piu' largo e scrollabile, testo a sinistra. */
 /* Nota 'Traduzione italiana': stessa larghezza e dimensione-testo del viewer
    delle altre note (.note-viewer-box), per uniformità (era 440px e 0.82rem). */
-.fab-modal-box.info-note-box { width:min(760px,92vw); max-width:760px; max-height:82vh; overflow-y:auto; text-align:left; line-height:1.55; }
+.info-note-box { text-align:left; line-height:1.55; }
 .info-note-box h3 { font-family:'Cinzel',serif; font-size:1.15rem; letter-spacing:0.04em; color:var(--gold-bright); margin:0 0 .9em; padding:0 1.4em; text-align:center; }
-.fab-modal-box.info-note-box p { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.55; margin:0 0 .8em; }
+.info-note-box p { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.55; margin:0 0 .8em; }
 .info-note-box ul { list-style:none; margin:0 0 0.9em; padding:0; }
 .info-note-box li { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.5; margin:0 0 0.5em; padding-left:0.95rem; position:relative; }
 .info-note-box li::before { content:'\203A'; position:absolute; left:0; color:var(--gold); opacity:0.85; }
@@ -1768,7 +1768,10 @@ html[data-theme="light"] .rank-title {
     font-weight: 500;
   }
 
-html[data-theme="light"] .modal-backdrop { background: rgba(10,15,30,0.5); backdrop-filter: blur(6px); }
+/* Backdrop uniforme (dalla v8.76): CHIARO su tema chiaro (prima era un velo
+   scuro anche in chiaro). Vale per tutti i modali che usano .modal-backdrop
+   (scheda, note, risorse, info). */
+html[data-theme="light"] .modal-backdrop { background: rgba(216,220,228,0.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 html[data-theme="light"] .modal {
     background: linear-gradient(135deg, #f6f6fa 0%, #eeeeF4 100%);
     border: 2px solid #4a7090;
@@ -1887,7 +1890,9 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 /* Note editoriali: viewer testuale nella fab-modal + nomi personaggio cliccabili */
 /* Il viewer testuale sovrascrive il max-width:280px del box di conferma:
    larghezza adattiva da leggere, con tetto massimo (essay-width). */
-.note-viewer-box { width:min(760px,92vw); max-width:760px; max-height:82vh; overflow-y:auto; text-align:left; line-height:1.55; }
+/* Contenuto nota: sta dentro .modal-body (che gestisce scroll e dimensioni del
+   guscio standard, dalla v8.76). Qui restano solo tipografia e allineamento. */
+.note-viewer-box { text-align:left; line-height:1.55; }
 .note-viewer-box h3 { color:var(--gold-bright); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
 /* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
    conferma: stessa dimensione e pienezza dell'elenco (font-size/opacity/colore
@@ -1915,13 +1920,16 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; text-align:center; }
 .note-notelink { color:var(--gold-bright); font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
-/* Modale risorse: riusa fab-modal. Desktop: box adattato al testo, mai a capo */
-.res-modal-box { width:auto; max-width:92vw; max-height:85vh; overflow-y:auto; }
+/* Modale risorse: guscio standard (.modal + .modal-body, dalla v8.76). Il menu
+   di bottoni è raccolto in .res-modal-inner, largo al massimo ~340px e centrato
+   nel body (che è largo quanto la scheda personaggio). */
+.std-modal-inner { width:100%; }
+.res-modal-inner { max-width:340px; margin:0 auto; }
 .res-modal-title { font-family:'Cinzel',serif; color:var(--gold); font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
 /* Secondo titolo di sezione ('Note editoriali') dentro la modale unica: stacco
    dal blocco di bottoni precedente. */
-.res-modal-box .res-modal-section { margin-top:1.15rem; }
-.res-modal-box .fab-modal-confirm { text-align:center; padding:.55rem 1.1rem; white-space:nowrap; }
+.res-modal-inner .res-modal-section { margin-top:1.15rem; }
+.res-modal-inner .fab-modal-confirm { text-align:center; padding:.55rem 1.1rem; white-space:nowrap; }
 /* Mappa fisica + Mappa vettoriale sulla stessa riga (mockup utente). Ciascun
    tasto prende ESATTAMENTE metà dello spazio (flex:1 1 0 + min-width:0 batte il
    pavimento min-content): si adatta allo spazio, non al testo. Il testo può
@@ -1929,10 +1937,10 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
    stessa altezza, così se uno va su due righe l'altro lo eguaglia. Larghezze
    fisse al 50% = niente jitter col cambio lingua/contenuto. */
 .res-map-row { display:flex; gap:0.8rem; margin-top:0.8rem; align-items:stretch; }
-.res-modal-box .res-map-row .fab-modal-confirm { flex:1 1 0; min-width:0; width:auto; margin-top:0; white-space:normal; }
-/* Mobile: larghezza fissa; i testi lunghi usano etichette abbreviate (no a-capo) */
+.res-modal-inner .res-map-row .fab-modal-confirm { flex:1 1 0; min-width:0; width:auto; margin-top:0; white-space:normal; }
+/* Mobile: il menu risorse riempie il body (etichette abbreviate, no a-capo) */
 @media (max-width:768px) {
-  .res-modal-box { width:88vw; max-width:88vw; }
+  .res-modal-inner { max-width:none; }
 }
 /* Visualizzatore immagini zoomabile */
 .imgv-overlay { position:fixed; inset:0; z-index:500; background:rgba(3,5,12,0.95); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; flex-direction:column; }
@@ -2002,7 +2010,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.75</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.76</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3093,6 +3101,7 @@ function scrollLockNeeded() {
   var panel = document.getElementById('ctrl-panel');
   return (bd && bd.classList.contains('active'))
       || !!document.querySelector('.fab-modal-overlay')
+      || !!document.querySelector('.modal-backdrop.dyn-modal')
       || !!document.getElementById('imgv')
       || document.documentElement.classList.contains('admin-open')
       || (panel && panel.classList.contains('open'));
@@ -3148,7 +3157,7 @@ document.addEventListener('keydown', function(e) {
     // password): Esc = tasto ×, comportamento uniforme. Le modali con handler
     // proprio (viewer immagini, risorse) restano gestite da loro.
     var fm = document.getElementById('fab-modal');
-    if (fm) { var x = fm.querySelector('.fab-modal-close'); if (x) x.click(); return; }
+    if (fm) { var x = fm.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
     if (document.getElementById('imgv') || document.getElementById('res-modal')) return;
     if (document.getElementById('modal-backdrop').classList.contains('active')) { closeModal(); return; }
     var pnl = document.getElementById('ctrl-panel');
@@ -3165,17 +3174,38 @@ document.addEventListener('keydown', function(e) {
 // editoriali' (scelte editoriali/presentazione dei dati, cat:'editorial', con
 // 'Traduzione italiana' ex tasto Info in testa). È raggiunta dal link a piè
 // pagina e dal tasto Info.
+// ── Guscio-modale STANDARD condiviso (dalla v8.76) ──────────────────────────
+// Note, Risorse e Info riusano lo stesso guscio della scheda personaggio:
+// backdrop sfocato (chiaro su tema chiaro, scuro su scuro), .modal con doppio
+// bordo (::before), tasto di chiusura TONDO animato (.modal-close, glifo × SVG)
+// e .modal-body scrollabile — lo scroll vive nel body, che è clippato dal
+// border-radius di .modal (overflow:hidden), quindi la barra non tocca mai
+// l'angolo stondato (era il difetto delle vecchie .fab-modal). La classe
+// 'dyn-modal' distingue questi overlay dinamici dalla scheda (#modal-backdrop),
+// per scrollLockNeeded. Ritorna { backdrop, modal, body, close }.
+function buildStdModal(id) {
+  var bd = document.createElement('div'); bd.id = id; bd.className = 'modal-backdrop dyn-modal';
+  var modal = document.createElement('div'); modal.className = 'modal';
+  var close = document.createElement('button'); close.className = 'modal-close';
+  close.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close');
+  close.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>';
+  var body = document.createElement('div'); body.className = 'modal-body';
+  modal.appendChild(close); modal.appendChild(body); bd.appendChild(modal);
+  return { backdrop: bd, modal: modal, body: body, close: close };
+}
+function activateStdModal(bd) { document.body.appendChild(bd); void bd.offsetWidth; bd.classList.add('active'); }
+
 function openResourcesModal() {
   if (document.getElementById('res-modal')) return;
-  var ov = document.createElement('div'); ov.id = 'res-modal'; ov.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box res-modal-box';
-  ov.appendChild(box); document.body.appendChild(ov); lockPageScroll(true);
-  function dismiss() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); }
+  var m = buildStdModal('res-modal'); var bd = m.backdrop;
+  var box = document.createElement('div'); box.className = 'std-modal-inner res-modal-inner'; m.body.appendChild(box);
+  activateStdModal(bd); lockPageScroll(true);
+  function dismiss() { bd.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); }
   function onKey(e) { if (e.key === 'Escape') dismiss(); }
   document.addEventListener('keydown', onKey);
-  ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = dismiss; box.appendChild(cl);
-  langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openResourcesModal(); };
+  bd.addEventListener('click', function(e) { if (e.target === bd) dismiss(); });
+  m.close.onclick = dismiss;
+  langRefresh = function(){ if (!document.body.contains(bd)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); bd.remove(); langRefresh = null; openResourcesModal(); };
   // Su mobile i testi lunghi usano un'etichetta abbreviata (niente a-capo).
   var mobile = isMobileViewport();
   function section(txt, extra) { var p = document.createElement('p'); p.className = 'res-modal-title' + (extra ? ' ' + extra : ''); p.textContent = txt; box.appendChild(p); }
@@ -3478,9 +3508,9 @@ function renderNoteBodyHtml(html) {
 
 function openNoteViewer(note) {
   if (document.getElementById('note-modal')) return;
-  var ov = document.createElement('div'); ov.id = 'note-modal'; ov.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box note-viewer-box';
-  ov.appendChild(box); document.body.appendChild(ov); lockPageScroll(true);
+  var m = buildStdModal('note-modal'); var ov = m.backdrop;
+  var box = document.createElement('div'); box.className = 'note-viewer-box'; m.body.appendChild(box);
+  activateStdModal(ov); lockPageScroll(true);
   // keep=true: transizione verso un'altra modale (scheda o altra nota) → non
   // sbloccare lo scroll né innescare noteReturn (la destinazione se ne occupa).
   function dismiss(keep) {
@@ -3492,7 +3522,7 @@ function openNoteViewer(note) {
   function onKey(e) { if (e.key === 'Escape') dismiss(); }
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', function(e) { if (e.target === ov) dismiss(); });
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close'); cl.onclick = function(){ dismiss(); }; box.appendChild(cl);
+  m.close.onclick = function(){ dismiss(); };
   var h = document.createElement('h3'); h.textContent = currentLang === 'it' ? note.titleIt : note.titleEn; box.appendChild(h);
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); ov.remove(); langRefresh = null; openNoteViewer(note); };
   var body = document.createElement('div');
@@ -3501,9 +3531,9 @@ function openNoteViewer(note) {
   // Un nome cliccato apre la scheda del personaggio (chiude prima il viewer).
   function openChar(b) {
     var i = parseInt(b.getAttribute('data-idx'), 10);
-    var st = box.scrollTop, note2 = note;   // per tornare alla nota, alla stessa posizione di lettura
+    var st = m.body.scrollTop, note2 = note;   // lo scroll vive in .modal-body; si ripristina al ritorno
     dismiss(true);   // transizione: preserva noteReturn per l'intero giro nota → scheda → nota
-    modalReturn = function(){ openNoteViewer(note2); var nb = document.querySelector('#note-modal .note-viewer-box'); if (nb) nb.scrollTop = st; };
+    modalReturn = function(){ openNoteViewer(note2); var nb = document.querySelector('#note-modal .modal-body'); if (nb) nb.scrollTop = st; };
     openModal(i, true);   // istantanea: la nota è appena sparita, niente flash della lista
   }
   // Rimando 'Leggi anche' a un'altra nota: data-note = titleIt della nota bersaglio.
@@ -4266,21 +4296,19 @@ var INFO_NOTE_HTML_EN =
   + '</div>';
 function showInfoNote() {
   if (document.getElementById('fab-modal')) return;
-  var overlay = document.createElement('div');
-  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box info-note-box';
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.setAttribute('aria-label', 'Chiudi');
-  box.appendChild(cl);
+  // Guscio-modale standard (come note/risorse): id 'fab-modal' mantenuto per le
+  // guardie 'overlay aperto' e gli handler Escape che lo cercano per id.
+  var m = buildStdModal('fab-modal'); var overlay = m.backdrop;
+  var box = document.createElement('div'); box.className = 'info-note-box'; m.body.appendChild(box);
   box.insertAdjacentHTML('beforeend', currentLang === 'it' ? INFO_NOTE_HTML_IT : INFO_NOTE_HTML_EN);
-  overlay.appendChild(box); document.body.appendChild(overlay);
-  lockPageScroll(true);
+  activateStdModal(overlay); lockPageScroll(true);
   // Chiusura reale (× / Esc / backdrop): se aperta dalla modale 'Risorse e
   // note', vi ritorna (infoReturn). Il cambio lingua NON passa di qui (usa
   // langRefresh, che preserva infoReturn).
   function dismiss(){ overlay.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); var r = infoReturn; infoReturn = null; if (r) r(); }
   function onKey(e){ if (e.key === 'Escape') dismiss(); }
   document.addEventListener('keydown', onKey);
-  cl.onclick = dismiss;
+  m.close.onclick = dismiss;
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); overlay.remove(); langRefresh = null; showInfoNote(); };
 }
@@ -5534,9 +5562,9 @@ enableDragDrop();
   function closeTop(){
     var el;
     if ((el = document.getElementById('imgv'))){ var bs = el.querySelectorAll('.imgv-btn'); if (bs.length) bs[bs.length - 1].click(); return; }
-    if ((el = document.getElementById('fab-modal'))){ var x = el.querySelector('.fab-modal-close'); if (x) x.click(); return; }
-    if ((el = document.getElementById('note-modal'))){ var x = el.querySelector('.fab-modal-close'); if (x) x.click(); return; }
-    if ((el = document.getElementById('res-modal'))){ var x = el.querySelector('.fab-modal-close'); if (x) x.click(); return; }
+    if ((el = document.getElementById('fab-modal'))){ var x = el.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
+    if ((el = document.getElementById('note-modal'))){ var x = el.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
+    if ((el = document.getElementById('res-modal'))){ var x = el.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
     var bd = document.getElementById('modal-backdrop'); if (bd && bd.classList.contains('active')){ closeModal(); return; }
     if (panelOpen()) toggleControlPanel();
   }
