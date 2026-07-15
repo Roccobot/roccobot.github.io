@@ -371,29 +371,44 @@ gruppo = cambiare una terna.
   **oppure `tipo-mezzelfo`** (dalla v8.72), si usa quella. Così Noldor (→ `noldo`)
   e Mezzelfi (→ `half-elf` dalla v8.75) tengono la famiglia della 1ª etichetta
   anche col badge `Ainu`/eredità come 2ª.
-- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. Le 12
-  famiglie e i loro membri (`.tipo-*`):
+- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. **Grande
+  ri-raggruppamento nella v8.83** (scelta utente): spostati vari gruppi, rinominate
+  3 famiglie e creata `westmen`. Le **13** famiglie e i loro membri (`.tipo-*`):
   - **`noldo`**: noldor.
-  - **`half-elf`** (dalla v8.75): mezzelfo. Famiglia dedicata ai **7 Peredhil**
-    (Eärendil, Elwing, Elrond, Elros, Arwen, Elladan, Elrohir), staccata da
-    `noldo`: colore petrolio-cyan (light `#1E5462` = 30,84,98; dark 58,160,186),
-    a mezza via tra il blu Noldo e il teal Sinda. Scelta dell'utente.
+  - **`half-elf`** (dalla v8.75): mezzelfo (7 Peredhil). Petrolio-cyan (light
+    `#1E5462` = 30,84,98; dark 58,160,186).
   - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
   - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
   - **`rohir`**: rohirrim, uominicomuni, eotheod.
-  - **`hobbit`**: hobbit, hador.
-  - **`dwarf`**: nano, haleth.
-  - **`numenorean`**: dunadan, numenorean, beor, drago.
-  - **`vala`**: vala, valie, maia-dark, ragno, troll.
-  - **`orc`**: orco, oscurita, misterioso, morgoth.
+  - **`other`** (arancio, era `hobbit`; rinominata in v8.83): hobbit, **nano**
+    (i Nani spostati qui dalla vecchia `dwarf`).
+  - **`highmen`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**,
+    **haleth** (le Case degli Edain; i Nani NON sono più qui).
+  - **`westmen`** (NUOVA in v8.83, rosa spento): **dunadan**, **numenorean** (gli
+    Uomini dell'Ovest / Dúnedain-Númenóreani, staccati dai draghi). Terna dark
+    198,138,152 / light 160,92,112.
+  - **`demon`** (rosso, era `numenorean`; rinominata in v8.83): **drago**,
+    **lupo**, **balrog**, **più tutta la Classe 'Esseri crepuscolari'** (override
+    per nome via `isDarkBg`, vedi sotto: Melkor, Ungoliant, Shelob, Thuringwethil,
+    Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl, Osservatore nell'Acqua,
+    Vecchio Uomo Salice, Guardiani di Cirith Ungol) **+ ragno** (dalla v8.83).
+  - **`vala`**: vala, valie (troll e maia-dark spostati a `orc`, ragno a `demon`).
+  - **`orc`**: orco, oscurita, misterioso, morgoth, **troll**, **maia-dark**.
   - **`beast`**: bestia, gollum.
-  - **`generic`**: generico, lupo (fallback).
+  - **`generic`**: generico (fallback; lupo spostato a `demon`).
+- **Override 'Classe crepuscolari → demon' (dalla v8.83).** La Classe **Esseri
+  crepuscolari** (funzione condivisa **`isDarkBg(p)`**: regex per nome + tipo
+  Balrog/Drago) forza la famiglia a **`demon`** in `familyOf`, PRIMA della mappa
+  per-tipo. Copre i crepuscolari il cui tipo mapperebbe altrove (Melkor/`morgoth`,
+  Shelob/`ragno`, Thuringwethil/`oscurità`, ...); draghi, lupi e balrog ci
+  arrivano comunque via `CARDCOLOR_OF`. `familyOf` è ora la fonte UNICA (usata sia
+  da `renderList` per bordino/sfondo sia dalla scheda per l'accento): ordine
+  `p.cardcolor` > `isDarkBg → demon` > `CARDCOLOR_OF[stripClass]` > `generic`.
 
-  ⚠️ Le famiglie sono raggruppamenti **per colore** ereditati dalla v8.72, quindi
-  alcune mescolano stirpi diverse (es. `dwarf` include la Casa di Haleth, `hobbit`
-  la Casa di Hador, `vala` anche Troll e Ragni). L'utente potrà **ri-raggruppare**
-  in futuro (staccare i macro-gruppi impropri): il nome è solo della stirpe
-  dominante, non una verità tassonomica.
+  ⚠️ I nomi sono **di gruppo, non tassonomici** e alcune famiglie restano miste
+  (es. `other` = Hobbit + Nani + Casa di Haleth; `orc` = Orchi + Troll + Maia
+  oscuri; `demon` = draghi/balrog/lupi + crepuscolari vari). È il ri-raggruppamento
+  voluto dall'utente.
 - **Meccanismo colore: una terna `--ccrgb` per famiglia, per tema.** Ogni classe
   `.cc-<fam>` definisce la custom property `--ccrgb` (terna `R,G,B`) nel `<style>`
   statico; c'è un blocco **default = tema SCURO** e un override
@@ -402,11 +417,14 @@ gruppo = cambiare una terna.
   `rgba(var(--ccrgb),0.05)` in chiaro / `0.10` in scuro; hover `0.11`/`0.18`;
   **bordino** = `rgba(var(--ccrgb),0.85)`. Terne scure/chiare bilanciate e
   approvate dall'utente (noldo 91,123,240 / 47,79,208; sinda 43,184,166 /
-  21,158,143; maia 82,185,95 / 58,154,69; rohir 159,182,65 / 138,154,42; hobbit
-  224,138,58 / 210,118,15; dwarf 216,178,60 / 199,148,19; numenorean 224,89,106 /
-  196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
+  21,158,143; maia 82,185,95 / 58,154,69; rohir 159,182,65 / 138,154,42; **other**
+  224,138,58 / 210,118,15; **highmen** 216,178,60 / 199,148,19; **demon** 224,89,106
+  / 196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
   beast 179,148,104 / 150,117,74; generic 144,152,168 / 111,116,130;
-  half-elf 58,160,186 / 30,84,98).
+  half-elf 58,160,186 / 30,84,98; **westmen** 198,138,152 / 160,92,112). ⚠️ Nei
+  rinomini v8.83 il **colore è rimasto legato alla classe rinominata** (other =
+  ex-hobbit arancio, highmen = ex-dwarf oro, demon = ex-numenorean rosso); i
+  membri sono cambiati, i valori RGB no.
 - ⚠️ **W3C: le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
   (`injectCardColorRules`, IIFE subito dopo `CARDCOLOR_OF`). Il Nu Html Checker
   non sa parsare `var()` dentro `rgba()` (falso errore 'getType() null'), quindi
@@ -480,11 +498,12 @@ gruppo = cambiare una terna.
     (`border-bottom`), bordo sinistro `.modal-quote`.
   - **TESTI/ICONE (`.modal-rank` 'POSIZIONE', testo `.modal-source`, tasto
     `.modal-close`): col colore famiglia solo dove regge l'AA.** In tema **scuro**
-    tutte le 12 famiglie passano 4.5:1 (fondo modale quasi nero) → accento pieno.
+    tutte le famiglie passano 4.5:1 (fondo modale quasi nero) → accento pieno.
     In tema **chiaro** solo le famiglie con luminanza bassa reggono: **`noldo`,
-    `numenorean`, `vala`, `orc`, `half-elf`**; le altre 7 (`sinda, maia, rohir,
-    hobbit, dwarf, beast, generic`) **ripiegano a gold** sul testo (override
-    statico `html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(...)`),
+    `demon`, `vala`, `orc`, `half-elf`** (i nomi aggiornati al ri-raggruppamento
+    v8.83; `demon` = ex-numenorean); le altre (`sinda, maia, rohir, other, highmen,
+    westmen, beast, generic`) **ripiegano a gold** sul testo (override statico
+    `html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(...)`),
     tenendo però i bordi col colore famiglia. Nome (`.modal-name`) e bottone TG
     (`.modal-tg`) restano invariati.
   - ⚠️ Le regole `rgba(var(--ccrgb),…)` della scheda sono **iniettate via JS**
