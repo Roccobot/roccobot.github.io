@@ -356,8 +356,8 @@ Unica sovrapposizione totale: la Classe **Animali** ≡ Categoria `animal`.
   tema** da sé (le classi tipo hanno override chiaro). Il `border-left` di
   layout è neutralizzato a **1px uniforme** come gli altri lati (override
   `!important` sopra tutte le regole di Classe, dark + light).
-- **Spessore: 5px normali, 10px per le 3 in cima** (`.rank-item.vis-top
-  .rank-strip { width:10px }`). Essendo la striscia **assoluta**, il cambio di
+- **Spessore: 4px normali, 8px per le 3 in cima** (`.rank-item.vis-top
+  .rank-strip { width:8px }`). Essendo la striscia **assoluta**, il cambio di
   spessore **non sposta di un pixel** il contenuto (verificato: `contentLeft`
   identico per podio e non-podio, in entrambi i temi).
 - Lo **sfondo** della card resta governato dalla **Classe** (vedi sopra).

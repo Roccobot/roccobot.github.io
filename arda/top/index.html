@@ -442,12 +442,12 @@ h1 {
    così lo spessore 5px/10px della striscia non sposta nulla, nemmeno un pixel. */
 .rank-item { border-left:1px solid rgba(104,144,168,0.15) !important; }
 .rank-strip {
-  position:absolute; left:0; top:0; bottom:0; width:5px;
+  position:absolute; left:0; top:0; bottom:0; width:4px;
   background:currentColor !important; opacity:0.8;
   border:0 !important; box-shadow:none !important; text-shadow:none !important;
   padding:0; margin:0; border-radius:0; pointer-events:none; z-index:1;
 }
-.rank-item.vis-top .rank-strip { width:10px; }
+.rank-item.vis-top .rank-strip { width:8px; }
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -1978,7 +1978,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v7.71</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v7.72</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2781,7 +2781,7 @@ function renderList() {
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
       // sul layout), colore dal contorno dell'etichetta tipo (2a se piu' d'una).
-      // Spessore 5px normali / 10px podio via CSS (.vis-top .rank-strip).
+      // Spessore 4px normali / 8px podio via CSS (.vis-top .rank-strip).
       '<span class="rank-strip ' + stripClass + '" aria-hidden="true"></span>' + apoPill +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
