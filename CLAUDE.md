@@ -429,6 +429,27 @@ gruppo = cambiare una terna.
 - **Titolone `#title` invariato.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
   **resta identico** (blu su chiaro, argento su scuro): il cardcolor non lo tocca.
+- **Accento cardcolor sulla SCHEDA personaggio (dalla v8.77).** La `.modal` della
+  scheda eredita la famiglia della card: `openModal` le assegna `cc-<fam>` (via
+  la funzione pura **`familyOf(p)`**, stessa logica di `renderList`). Da lì
+  derivano gli accenti oggi in `--gold`:
+  - **BORDI (decorativi): sempre col colore famiglia**, in entrambi i temi —
+    bordo `.modal`, doppio bordo `::before`, filetto `.modal-source`
+    (`border-bottom`), bordo sinistro `.modal-quote`.
+  - **TESTI/ICONE (`.modal-rank` 'POSIZIONE', testo `.modal-source`, tasto
+    `.modal-close`): col colore famiglia solo dove regge l'AA.** In tema **scuro**
+    tutte le 12 famiglie passano 4.5:1 (fondo modale quasi nero) → accento pieno.
+    In tema **chiaro** solo le famiglie con luminanza bassa reggono: **`noldo`,
+    `numenorean`, `vala`, `orc`, `half-elf`**; le altre 7 (`sinda, maia, rohir,
+    hobbit, dwarf, beast, generic`) **ripiegano a gold** sul testo (override
+    statico `html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(...)`),
+    tenendo però i bordi col colore famiglia. Nome (`.modal-name`) e bottone TG
+    (`.modal-tg`) restano invariati.
+  - ⚠️ Le regole `rgba(var(--ccrgb),…)` della scheda sono **iniettate via JS**
+    (`injectCardColorRules`) come le altre cardcolor (limite Nu su `var()` in
+    `rgba()`); i ripieghi a gold in chiaro sono colori pieni nel CSS statico.
+    Verificato con axe (schede aperte, famiglie safe e non): 0 violazioni in
+    entrambi i temi.
 
 Storico del bordino (fino alla v8.71): dalla v7.69 il colore veniva dal
 `currentColor` dell'etichetta tipo (`background:currentColor` a opacità 0.8, la
