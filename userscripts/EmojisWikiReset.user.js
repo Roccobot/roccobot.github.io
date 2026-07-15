@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.7.0
-// @description  Pulsante (solo su /ai/) che azzera il limite giornaliero del generatore AI di emojis.wiki ripulendo lo stato client. Dalla v1.7.0, in via SPERIMENTALE, la modalità "incognito totale" (flag RESET_TOTALE_COME_INCOGNITO) cancella TUTTO come una finestra in incognito, cookie Cloudflare inclusi, per forzare una nuova identità Cloudflare al reload. ATTENZIONE: al ricaricamento può apparire una verifica Cloudflare e potrebbe rompere la generazione; se peggiora, mettere il flag a false (torna al reset innocuo). Come aprire l'incognito, ma con un clic.
+// @version      1.8.0
+// @description  Pulsante (solo su /ai/) che ripulisce lo stato client di emojis.wiki (localStorage, sessionStorage, cookie non-Cloudflare anche HttpOnly, IndexedDB) preservando i cookie Cloudflare. ⚠️ Il reset del "Daily limit" dallo stesso browser NON funziona: l'incognito lo azzera (stesso IP → il limite è legato all'IDENTITÀ del browser, non all'IP), ma la pulizia in-place non riesce a replicarlo (probabilmente cf_clearance, HttpOnly, non viene davvero cancellato). La modalità "incognito totale" è stata DISATTIVATA perché rischiosa (verifiche Cloudflare/generazione rotta) e comunque inefficace. Metodo che funziona: aprire /ai in una finestra in incognito.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
 // @match        https://www.emojis.wiki/*
@@ -32,7 +32,7 @@
   // può rompere la generazione ('Generation failed') o dare comunque 'limit
   // reached'. Non è una soluzione affidabile, è un tentativo. Se peggiora,
   // rimetti a false: si torna al reset innocuo della v1.6.0.
-  const RESET_TOTALE_COME_INCOGNITO = true;
+  const RESET_TOTALE_COME_INCOGNITO = false;
 
   // ═══════════════════════════════════════════════════════════════
   //  Il limite si azzera con "Cancella dati del sito", ma ripulire

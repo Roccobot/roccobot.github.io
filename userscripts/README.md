@@ -122,19 +122,21 @@ HttpOnly via `GM_cookie` — IndexedDB e, dalla v1.4.0, **Cache Storage**)
 generazione continua a funzionare, poi ricarica la pagina e riparti con la quota
 fresca senza aprire nuove finestre.
 
-> **⚠️ Stato attuale (v1.6.0): il reset del limite NON funziona più.** Il sito ha
-> agganciato il "Daily limit" all'**identità Cloudflare** (`cf_clearance`) che
-> serve *anche* a generare: non si può azzerare il limite senza distruggere ciò
-> che permette di generare. Le prove: svuotare storage/IndexedDB/Cache/Service
-> Worker non azzerava il limite; cancellare `_cfuvid` tenendo `cf_clearance`
-> (tentativo v1.5.0) **peggiorava** le cose ('limit reached' anche con token).
-> Solo una finestra **in incognito** azzera il limite, perché crea un'identità
-> del tutto nuova (nuova challenge Cloudflare) — cosa che **uno userscript non
-> può replicare** (non può aprire un contesto incognito né forgiare una nuova
-> identità CF in modo pulito). Dalla v1.6.0 lo script è tornato a un reset
-> **innocuo** (preserva tutti i cookie Cloudflare; Cache/Service Worker off per
-> default): non azzera il limite, ma non peggiora nulla. Per azzerare davvero il
-> limite resta solo l'incognito, a mano.
+> **⚠️ Stato attuale (v1.8.0): il reset dallo stesso browser NON funziona; usa
+> l'incognito.** Cronologia dei tentativi: svuotare storage/IndexedDB/Cache/
+> Service Worker non azzerava il limite; cancellare `_cfuvid` tenendo
+> `cf_clearance` (v1.5.0) **peggiorava** le cose ('limit reached' anche con
+> token); nemmeno la "modalità incognito totale" (v1.7.0, che cancellava anche i
+> cookie Cloudflare) ci riusciva. **Fatto chiave:** in **incognito il limite si
+> azzera** pur essendo lo **stesso IP** → il limite è legato all'**identità del
+> browser** (i cookie Cloudflare, in primis `cf_clearance`), **non** all'IP. La
+> pulizia in-place non riesce a replicare l'incognito, quasi certamente perché
+> `cf_clearance` è **HttpOnly** e non viene davvero cancellato dalla pagina.
+> Perciò dalla v1.8.0 lo script torna a un reset **innocuo** (preserva i cookie
+> Cloudflare; modalità totale e Cache/SW off): non azzera il limite ma non
+> peggiora nulla. **Metodo che funziona: aprire `emojis.wiki/ai` in una finestra
+> in incognito** (una nuova identità di browser che uno userscript non può
+> creare).
 
 Il pulsante **compare solo sulle pagine del generatore** (URL che iniziano con
 `https://emojis.wiki/ai/`); altrove non appare. Il reset resta comunque
