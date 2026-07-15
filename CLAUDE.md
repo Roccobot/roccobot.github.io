@@ -1530,7 +1530,31 @@ specifico del dataset):
 - **Cosa sono.** Approfondimenti bilingui raccolti in **un'unica modale**
   ('Risorse e note' / 'Resources and notes'), raggiungibile da **due accessi**:
   il link nel footer e il tasto Info. Ogni voce è un **pulsante** (stile
-  `fab-modal-*`) che apre un **viewer testuale** bilingue.
+  `fab-modal-confirm`) che apre un **viewer testuale** bilingue.
+- **Guscio-modale STANDARD condiviso (dalla v8.76).** Note, Risorse e Info
+  (`openNoteViewer`, `openResourcesModal`, `showInfoNote`) NON usano più il
+  vecchio guscio `.fab-modal-box` (bordo al vivo, × piccolo, scroll che rovinava
+  l'angolo stondato): riusano lo **stesso guscio della scheda personaggio** via
+  l'helper **`buildStdModal(id)`** + `activateStdModal` — `.modal-backdrop`
+  sfocato, `.modal` con **doppio bordo** (`::before`), **tasto di chiusura tondo
+  animato** (`.modal-close`, glifo × SVG, rotazione 90° all'hover), e
+  `.modal-body` scrollabile. Lo scroll vive nel `.modal-body`, clippato dal
+  `border-radius` di `.modal` (`overflow:hidden`), quindi **la barra non tocca
+  mai l'angolo** (era il difetto delle `.fab-modal`). Gli overlay dinamici hanno
+  la classe **`dyn-modal`** (li distingue da `#modal-backdrop` in
+  `scrollLockNeeded`; gli handler Escape/`closeTop` cercano `.modal-close,
+  .fab-modal-close`). Il contenuto tipografico resta nelle classi `.note-viewer-box`
+  / `.info-note-box` / `.res-modal-inner` (private delle proprietà di box:
+  larghezza/scroll li gestisce il guscio). Le **altre** `.fab-modal-*` (password,
+  trivio riordino, conferma campi) restano invariate: non sono 'note'.
+- **Backdrop uniforme (dalla v8.76).** Tutti i modali che usano `.modal-backdrop`
+  (scheda, note, risorse, info) condividono lo stesso velo sfocato: **chiaro** su
+  tema chiaro (`rgba(216,220,228,0.62)`, prima era scuro anche in chiaro),
+  **scuro** su tema scuro (`rgba(5,7,16,0.92)`).
+- **Formato rimandi interni (dalla v8.75).** Sia il rimando **personaggio→nota**
+  (`.modal-noteref`) sia i **nota→nota** (`.note-seealso`) usano
+  `Leggi anche → <strong>Titolo</strong>` / `See also → ...`: prefisso normale,
+  **titolo in grassetto**, tutto linkato e **centrato**.
 - **Tre sezioni nella modale** (dalla v6.50, `openResourcesModal`), nell'ordine:
   1. **Risorse** — le due mappe (viewer immagini) + la mappa interattiva
      esterna. Non sono note (non stanno in `EDITORIAL_NOTES`).
