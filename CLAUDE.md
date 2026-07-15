@@ -300,12 +300,17 @@ testuali). Fissati dall'utente per comunicare in fretta:
   visualizzazione principale** della pagina. Sono le 9 voci di `CATS` (ainu,
   arcane, elf, adan, man, dwarf, hobbit, orc, animal); la determina la funzione
   `categoria()` e governa il Pannello categorie e i permalink.
-- **`Classe`**: ciò che definisce lo **sfondo della card** (e l'hover). ⚠️ Dalla
-  v7.69 il **bordino sinistro colorato NON dipende più dalla Classe** ma dal
-  contorno dell'etichetta tipo (vedi 'Bordino sinistro delle card'); la Classe
-  governa solo sfondo+hover. Sono **cinque** (dalla v7.59), coi nomi ufficiali
-  pieni e l'alias breve; i **nomi CSS** restano invariati (cambia solo l'etichetta
-  con cui le chiamiamo):
+- **`Classe`**: concetto **storico** (fino alla v8.71) che definiva lo **sfondo
+  della card** in 5 gruppi. ⚠️ **Dalla v8.72 lo sfondo della card NON dipende più
+  dalla Classe** ma dalla **famiglia `cardcolor`** (vedi 'Colore card (sistema
+  cardcolor)'), stesso asse che colora il bordino sinistro: entrambi derivano da
+  una terna `--ccrgb`. Le 5 Classi sotto restano descritte come **memoria
+  storica** e perché i nomi CSS (`.divine`, `.divine.morgoth`, `.divine.bombadil`,
+  `.animale`) **sono ancora assegnati nel DOM** da `renderList` (via
+  `darkBg`/`p.divino`/`isEntEagle`/`categoria`), ma le loro **regole di sfondo non
+  hanno più effetto**: le sovrascrivono le regole `.rank-item[class*="cc-"]` con
+  `!important` (vedi 'Colore card (sistema cardcolor)'). Restano vive solo per
+  compatibilità/eventuale ripristino. Erano **cinque** (dalla v7.59):
   - **`Esseri crepuscolari`** (alias `crepuscolari`): corrotti, malvagi,
     crepuscolari, creature dell'ombra. Card scura. CSS `.rank-item.divine.morgoth`,
     assegnata da `darkBg` in `renderList` (per nome: Melkor, Morgoth, Ungoliant,
@@ -339,28 +344,79 @@ hanno la stessa **Categoria** (`ainu`) ma **Tipo** diverso (`Vala decaduto` vs
 `Vala`) e **Classe** diversa (`Esseri crepuscolari` vs `Entità angeliche`).
 Unica sovrapposizione totale: la Classe **Animali** ≡ Categoria `animal`.
 
-### 🎗️ Bordino sinistro delle card (dalla v7.69)
+### 🎨 Colore card (sistema cardcolor, dalla v8.72)
 
-- **Colore ereditato dall'etichetta tipo, non dalla Classe.** Il bordino sinistro
-  colorato prende il colore del **contorno dell'etichetta tipo**; con più
-  etichette renderizzate si usa la **seconda** (il badge automatico `Ainu` conta
-  come prima, quindi per gli Ainur il bordino è il colore della loro Vala/Valië).
-  In `renderList` si raccoglie l'ordine delle classi badge (`badgeClasses`,
-  incluso `tipo-ainur` se presente) e `stripClass` = 2ª se ≥2, altrimenti la 1ª
-  (fallback `tipo-generico`).
-- **Meccanismo: striscia in sovrapposizione, non un vero bordo.** È un elemento
-  assoluto `<span class="rank-strip TIPOCLASS">` (fuori dal flusso), con
-  `background:currentColor` a **opacità 0.8**: la classe tipo posata sulla
-  striscia le dà il `color`, quindi la striscia riproduce **esattamente** il
-  contorno dell'etichetta (il bordo `.tipo-*` è testo@0.8) e **si adatta al
-  tema** da sé (le classi tipo hanno override chiaro). Il `border-left` di
-  layout è neutralizzato a **1px uniforme** come gli altri lati (override
-  `!important` sopra tutte le regole di Classe, dark + light).
+Rifacimento del colore delle card deciso dall'utente: **sfondo card e bordino
+sinistro derivano dalla stessa 'famiglia colore'** (`cardcolor`), non più dalla
+Classe (sfondo) né dal `currentColor` dell'etichetta tipo (bordino). Le ~33
+classi-etichetta `.tipo-*` sono **consolidate in 11 famiglie**. Vantaggio: una
+sola terna RGB per famiglia governa sfondo + bordino, e ricolorare un intero
+gruppo = cambiare una terna.
+
+- **Famiglia per personaggio.** In `renderList`, dopo aver calcolato `stripClass`
+  (vedi sotto), `var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] || 'grey'`.
+  Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-blue`). Override
+  per-voce col campo dati **`p.cardcolor`** (stringa nome-famiglia) se si vuole
+  forzare un colore diverso da quello mappato dal tipo.
+- **`stripClass` (invariato dalla logica del bordino).** Si raccoglie l'ordine
+  delle classi-etichetta (`badgeClasses`, incluso `tipo-ainur` se presente);
+  `stripClass` = **2ª** se ≥2 etichette, altrimenti la 1ª (fallback
+  `tipo-generico`). **Eccezione 'prima etichetta'**: se la 1ª è `tipo-noldor`
+  **oppure `tipo-mezzelfo`** (dalla v8.72), si usa quella. Così Noldor e Mezzelfi
+  restano `blue` anche col badge `Ainu`/eredità come 2ª etichetta.
+- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. Le 11
+  famiglie e i loro membri principali:
+  - **`blue`**: noldor, mezzelfo.
+  - **`teal`**: sindar, teleri, vanyar, falmar, aquila.
+  - **`green`**: maia, ent, bombadil (Primordiali/spiriti buoni).
+  - **`lime`**: rohirrim, uominicomuni, eotheod.
+  - **`orange`**: hobbit, hador.
+  - **`gold`**: nano, haleth.
+  - **`red`**: dunadan, numenorean, beor, drago.
+  - **`magenta`**: vala, valie, maia-dark, ragno, troll.
+  - **`purple`**: orco, oscurita, misterioso, morgoth.
+  - **`brown`**: bestia, gollum.
+  - **`grey`**: generico, lupo (fallback).
+- **Meccanismo colore: una terna `--ccrgb` per famiglia, per tema.** Ogni classe
+  `.cc-<fam>` definisce la custom property `--ccrgb` (terna `R,G,B`) nel `<style>`
+  statico; c'è un blocco **default = tema SCURO** e un override
+  `html[data-theme="light"] .cc-*` col valore **chiaro** (necessario: la stessa
+  tinta rende diversamente sui due fondi, vedi sotto). Sfondo card =
+  `rgba(var(--ccrgb),0.05)` in chiaro / `0.10` in scuro; hover `0.11`/`0.18`;
+  **bordino** = `rgba(var(--ccrgb),0.85)`. Terne scure/chiare bilanciate e
+  approvate dall'utente (blue 91,123,240 / 47,79,208; teal 43,184,166 /
+  21,158,143; green 82,185,95 / 58,154,69; lime 159,182,65 / 138,154,42; orange
+  224,138,58 / 210,118,15; gold 216,178,60 / 199,148,19; red 224,89,106 /
+  196,34,51; magenta 222,90,142 / 194,31,110; purple 160,107,224 / 122,63,206;
+  brown 179,148,104 / 150,117,74; grey 144,152,168 / 111,116,130).
+- ⚠️ **W3C: le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
+  (`injectCardColorRules`, IIFE subito dopo `CARDCOLOR_OF`). Il Nu Html Checker
+  non sa parsare `var()` dentro `rgba()` (falso errore 'getType() null'), quindi
+  quelle 5 regole (sfondo card ×4 + bordino) non stanno nel `<style>` statico ma
+  in un `<style>` creato a runtime, come la proprietà `d` (ctrl-close-bend). Le
+  **terne `--ccrgb` restano statiche** (il Nu le valida). **Non reintrodurre**
+  quelle 5 regole nel CSS statico o tornano 5 errori W3C.
+- **Bordino: striscia assoluta, non un vero bordo.** `<span class="rank-strip">`
+  (fuori dal flusso) eredita `--ccrgb` dalla card `.cc-<fam>` e fa
+  `background:rgba(var(--ccrgb),0.85)`. Il `border-left` di layout è neutralizzato
+  a **1px uniforme** come gli altri lati (`!important` sopra le regole di Classe,
+  dark + light). Fallback statico `rgb(111,116,130)` se `--ccrgb` mancasse.
 - **Spessore: 4px normali, 8px per le 3 in cima** (`.rank-item.vis-top
   .rank-strip { width:8px }`). Essendo la striscia **assoluta**, il cambio di
   spessore **non sposta di un pixel** il contenuto (verificato: `contentLeft`
   identico per podio e non-podio, in entrambi i temi).
-- Lo **sfondo** della card resta governato dalla **Classe** (vedi sopra).
+- **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
+  **#303030** (scuro) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
+  (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
+- **Titolone `#title` invariato.** Il gradiente ornato della testata
+  (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
+  **resta identico** (blu su chiaro, argento su scuro): il cardcolor non lo tocca.
+
+Storico del bordino (fino alla v8.71): dalla v7.69 il colore veniva dal
+`currentColor` dell'etichetta tipo (`background:currentColor` a opacità 0.8, la
+classe `.tipo-*` posata sulla striscia); prima ancora dipendeva dalla Classe. La
+logica di scelta `stripClass` (2ª etichetta, eccezione Noldor) è la stessa,
+cambia solo come se ne ricava il colore (ora via famiglia/`--ccrgb`).
 
 ## 🗒️ Glossario dei contenuti (nomi colloquiali)
 
