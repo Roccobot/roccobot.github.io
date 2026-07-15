@@ -489,15 +489,17 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    che il Nu valida senza problemi. */
 /* Terne per famiglia (default = tema SCURO, bilanciato; override CHIARO sotto). */
 .cc-noldo{--ccrgb:91,123,240} .cc-sinda{--ccrgb:43,184,166} .cc-maia{--ccrgb:82,185,95}
-.cc-rohir{--ccrgb:159,182,65} .cc-hobbit{--ccrgb:224,138,58} .cc-dwarf{--ccrgb:216,178,60}
-.cc-numenorean{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
+.cc-rohir{--ccrgb:159,182,65} .cc-other{--ccrgb:224,138,58} .cc-highmen{--ccrgb:216,178,60}
+.cc-demon{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
 .cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
+.cc-westmen{--ccrgb:198,138,152}
 html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
 html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
-html[data-theme="light"] .cc-hobbit{--ccrgb:210,118,15} html[data-theme="light"] .cc-dwarf{--ccrgb:199,148,19}
-html[data-theme="light"] .cc-numenorean{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
+html[data-theme="light"] .cc-other{--ccrgb:210,118,15} html[data-theme="light"] .cc-highmen{--ccrgb:199,148,19}
+html[data-theme="light"] .cc-demon{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
 html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .cc-beast{--ccrgb:150,117,74}
 html[data-theme="light"] .cc-generic{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
+html[data-theme="light"] .cc-westmen{--ccrgb:160,92,112}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -1844,9 +1846,9 @@ html[data-theme="light"] .modal-quote {
    gold su rank/source/chiudi. I BORDI restano col colore famiglia (decorativi,
    non testo). In tema scuro tutte le famiglie sono AA-safe: nessun ripiego.
    Le regole col colore famiglia sono iniettate via JS (injectCardColorRules). */
-html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-numenorean):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-rank { color:#3a5878!important; }
-html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-numenorean):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-source { color:#253d58!important; }
-html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-numenorean):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-close { color:#253d58!important; border-color:#4a7090!important; }
+html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-rank { color:#3a5878!important; }
+html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-source { color:#253d58!important; }
+html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-close { color:#253d58!important; border-color:#4a7090!important; }
 
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
 html[data-theme="light"] footer p { color: #2e2e2e; font-weight: 500; }
@@ -2055,7 +2057,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.82</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.83</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2415,13 +2417,14 @@ var CARDCOLOR_OF = {
   'tipo-sindar':'sinda', 'tipo-teleri':'sinda', 'tipo-vanyar':'sinda', 'tipo-falmar':'sinda', 'tipo-aquila':'sinda',
   'tipo-maia':'maia', 'tipo-ent':'maia', 'tipo-bombadil':'maia',
   'tipo-rohirrim':'rohir', 'tipo-uominicomuni':'rohir', 'tipo-eotheod':'rohir',
-  'tipo-hobbit':'hobbit', 'tipo-hador':'hobbit',
-  'tipo-nano':'dwarf', 'tipo-haleth':'dwarf',
-  'tipo-dunadan':'numenorean', 'tipo-numenorean':'numenorean', 'tipo-beor':'numenorean', 'tipo-drago':'numenorean',
-  'tipo-vala':'vala', 'tipo-valie':'vala', 'tipo-maia-dark':'vala', 'tipo-ragno':'vala', 'tipo-troll':'vala',
-  'tipo-orco':'orc', 'tipo-oscurita':'orc', 'tipo-misterioso':'orc', 'tipo-morgoth':'orc',
+  'tipo-hobbit':'other', 'tipo-nano':'other', 'tipo-haleth':'other',
+  'tipo-hador':'highmen', 'tipo-beor':'highmen',
+  'tipo-dunadan':'westmen', 'tipo-numenorean':'westmen',
+  'tipo-drago':'demon', 'tipo-lupo':'demon', 'tipo-balrog':'demon',
+  'tipo-vala':'vala', 'tipo-valie':'vala', 'tipo-ragno':'vala',
+  'tipo-orco':'orc', 'tipo-oscurita':'orc', 'tipo-misterioso':'orc', 'tipo-morgoth':'orc', 'tipo-troll':'orc', 'tipo-maia-dark':'orc',
   'tipo-bestia':'beast', 'tipo-gollum':'beast',
-  'tipo-generico':'generic', 'tipo-lupo':'generic'
+  'tipo-generico':'generic'
 };
 
 // Regole cardcolor iniettate via JS: usano rgba(var(--ccrgb),alpha), che il Nu
@@ -2455,12 +2458,24 @@ var CARDCOLOR_OF = {
   document.head.appendChild(s);
 })();
 
+// Classe 'Esseri crepuscolari' (card scura .divine.morgoth): membri per NOME +
+// chiunque abbia tipo Balrog/Drago. Estratta in funzione condivisa (dalla v8.83)
+// perché ora determina ANCHE la famiglia cardcolor 'demon' (vedi familyOf).
+function isDarkBg(p) {
+  return /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul|osservatore nell'acqua|vecchio uomo salice|guardiani di cirith ungol/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
+}
+
 // Famiglia cardcolor di una voce: STESSA logica di renderList (2a etichetta,
 // eccezione 'prima etichetta' Noldor/Mezzelfo, override p.cardcolor). Usata
-// dalla scheda personaggio per ereditare l'accento colore (dalla v8.77).
-// tipoClass è language-stable, ma per combaciare esattamente col bordino della
-// card si usa lo stesso `tipo` localizzato di renderList.
+// da renderList (bordino/sfondo) e dalla scheda personaggio (accento colore).
+// tipoClass è language-stable, ma per combaciare col bordino si usa lo stesso
+// `tipo` localizzato di renderList.
 function familyOf(p) {
+  if (p.cardcolor) return p.cardcolor;
+  // Classe crepuscolari -> famiglia 'demon' (dalla v8.83): copre i nomi il cui
+  // tipo mapperebbe altrove (Melkor/oscurità, Shelob/ragno, ecc.); draghi, lupi
+  // e balrog ci arrivano comunque via CARDCOLOR_OF.
+  if (isDarkBg(p)) return 'demon';
   var tp = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
   var badgeClasses = (p.nome !== 'Lúthien' && isAinu(p)) ? ['tipo-ainur'] : [];
   var colorSegs = (p.tipo_color || '').split('|');
@@ -2472,7 +2487,7 @@ function familyOf(p) {
   var sc = (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
     ? badgeClasses[0]
     : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
-  return p.cardcolor || CARDCOLOR_OF[sc] || 'generic';
+  return CARDCOLOR_OF[sc] || 'generic';
 }
 
 // Icone badge: PNG 256x256 normalizzati (oggetto al vivo, centrato) in
@@ -2866,9 +2881,9 @@ function renderList() {
     var stripClass = (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
       ? badgeClasses[0]
       : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
-    // Famiglia colore card: override esplicito `p.cardcolor`, altrimenti derivata
-    // dalla classe-etichetta di cui sopra via CARDCOLOR_OF (fallback 'generic').
-    var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] || 'generic';
+    // Famiglia colore card via familyOf (unica fonte, condivisa con la scheda):
+    // override p.cardcolor, poi Classe crepuscolari -> 'demon', poi CARDCOLOR_OF.
+    var cardFam = familyOf(p);
     var statusStr = buildStatus(p);
     // Riga 2: descrizione + lineage
     // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i
@@ -2909,7 +2924,7 @@ function renderList() {
     // nome + Balrog/Draghi per tipo, più (dalla v7.59) Osservatore nell'Acqua,
     // Vecchio Uomo Salice e Guardiani di Cirith Ungol (spostati qui da Entità
     // angeliche: creature crepuscolari/dell'ombra).
-    var darkBg = /melkor|morgoth|ungoliant|shelob|thuringwethil|draugluin|carcharoth|re-stregone|angmar|khamûl|khamul|osservatore nell'acqua|vecchio uomo salice|guardiani di cirith ungol/i.test(p.nome) || /balrog|drago|dragon/i.test(p.tipo || '');
+    var darkBg = isDarkBg(p);
     // Classe della card (colore): 'divine' = Crepuscolari/Angeliche/Primordiali;
     // Ent e Grandi Aquile -> scheda VERDE dei Primordiali (.bombadil).
     var isEntEagle = (p.tipo === 'Ent' || p.tipo === 'Grande Aquila');
