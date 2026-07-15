@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Emojis.wiki AI Gen Reset
 // @namespace    https://roccobot.github.io/
-// @version      1.5.0
-// @description  Un pulsante per azzerare il limite giornaliero del generatore AI di emojis.wiki. Il pulsante compare SOLO sulle pagine del generatore (URL che iniziano con /ai/). Ripulisce lo stato client del sito (localStorage, sessionStorage, cookie del sito anche HttpOnly incluso _cfuvid di Cloudflare, IndexedDB e Cache Storage) PRESERVANDO i soli cookie di clearance anti-bot di Cloudflare (cf_clearance/__cf_bm), così la generazione continua a funzionare. Come aprire l'incognito, ma con un clic.
+// @version      1.6.0
+// @description  Pulsante (solo su /ai/) che ripulisce lo stato client di emojis.wiki (localStorage, sessionStorage, cookie non-Cloudflare anche HttpOnly, IndexedDB) preservando i cookie Cloudflare. NOTA (v1.6.0): il sito ha agganciato il "Daily limit" all'identità Cloudflare (cf_clearance) che serve anche a generare, quindi un reset client non azzera più il limite; le pulizie aggressive (Cache/Service Worker/_cfuvid) peggioravano le cose (limite raggiunto anche con token) e sono state DISATTIVATE per default. Solo una finestra in incognito (identità del tutto nuova) azzera il limite, e ciò non è replicabile da uno userscript.
 // @author       Roccobot
 // @match        https://emojis.wiki/*
 // @match        https://www.emojis.wiki/*
@@ -20,8 +20,12 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   const MOSTRA_PULSANTE  = true;   // pulsante flottante "Reset generazioni"
   const RESET_AUTOMATICO = false;  // true = ripulisce a ogni caricamento della pagina
-  const PULISCI_CACHE    = true;   // svuota anche la Cache Storage (spesso è lì il conteggio); sicuro per la generazione
-  const PULISCI_SERVICE_WORKER = false; // disinstalla anche i Service Worker: PIÙ AGGRESSIVO, usalo solo se col solo svuotamento cache il limite non si azzera (può richiedere un secondo ricaricamento)
+  // ⚠️ Le due pulizie qui sotto sono DISATTIVATE per default dalla v1.6.0: non
+  // azzeravano il limite (che il sito ha spostato sull'identità Cloudflare) e
+  // anzi peggioravano lo stato ('limit reached' anche con token). Lasciate solo
+  // come interruttori manuali, sconsigliati.
+  const PULISCI_CACHE    = false;  // svuota anche la Cache Storage
+  const PULISCI_SERVICE_WORKER = false; // disinstalla anche i Service Worker
 
   // ═══════════════════════════════════════════════════════════════
   //  Il limite si azzera con "Cancella dati del sito", ma ripulire
@@ -33,16 +37,15 @@
   //  ma la richiesta di generazione continua a passare.
   // ═══════════════════════════════════════════════════════════════
 
-  // Cookie Cloudflare da PRESERVARE = SOLO quelli di CLEARANCE anti-bot, senza
-  // i quali la generazione fallisce: cf_clearance, __cf_bm, __cf_chl*, cf_chl*
-  // (tutto ciò che inizia con __cf o cf_).
-  // ⚠️ NON si preserva più _cfuvid (dalla v1.5.0): è l'ID visitatore che
-  // Cloudflare usa per il RATE LIMITING (distinguere utenti dietro lo stesso IP),
-  // ed è quasi certamente lì che è agganciato il "Daily limit". In incognito
-  // _cfuvid è fresco → limite azzerato; preservandolo il limite restava. Non è
-  // un cookie di clearance, quindi cancellarlo azzera il limite SENZA rompere
-  // la generazione.
-  const CF = /^(__cf|cf_)/i;
+  // Cookie Cloudflare da PRESERVARE (senza, la generazione fallisce).
+  // Storico: la v1.5.0 aveva tolto _cfuvid dalla lista (ipotizzando fosse lì il
+  // rate-limit). Effetto reale: PEGGIORE — 'limit reached' anche con token
+  // disponibili. Motivo: il sito lega il limite all'identità Cloudflare
+  // (cf_clearance) che serve pure a generare; cancellare _cfuvid tenendo
+  // cf_clearance crea uno stato incoerente. Dalla v1.6.0 si torna a preservare
+  // TUTTI i cookie Cloudflare (incluso _cfuvid): reset innocuo, niente
+  // peggioramenti. (Il limite non si azzera comunque: vedi descrizione.)
+  const CF = /^(__cf|cf_|_cfuvid)/i;
 
   function scaduta(nome, dom, path) {
     document.cookie = nome + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=' +
