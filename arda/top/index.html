@@ -2104,7 +2104,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.37</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.38</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5896,7 +5896,7 @@ function showColorEditor() {
     var famLine = document.createElement('p'); famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
     famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (isCustom ? (it ? ' (colore individuale)' : ' (individual)') : '');
     var picker = document.createElement('input'); picker.type = 'color'; picker.value = curHex;
-    picker.style.cssText = 'width:48px;height:34px;border:none;background:none;cursor:pointer;vertical-align:middle;';
+    picker.style.cssText = 'width:48px;height:34px;border:none;background:none;cursor:pointer;vertical-align:middle;border-radius:6px;overflow:hidden;';
     var swatch = document.createElement('span'); swatch.style.cssText = 'font-family:ui-monospace,monospace;font-size:0.8rem;opacity:0.8;margin-left:0.6rem;';
     swatch.textContent = curHex;
     picker.addEventListener('input', function(){ swatch.textContent = picker.value; });
@@ -5924,8 +5924,8 @@ function showColorEditor() {
     panel.innerHTML = '';
     // 1) Colore per tema
     var h1 = mkH(it ? 'Colore (per tema)' : 'Colour (per theme)');
-    var pd = document.createElement('input'); pd.type = 'color'; pd.value = ccFamHex(fam,'dark'); pd.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;';
-    var pl = document.createElement('input'); pl.type = 'color'; pl.value = ccFamHex(fam,'light'); pl.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;';
+    var pd = document.createElement('input'); pd.type = 'color'; pd.value = ccFamHex(fam,'dark'); pd.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;overflow:hidden;';
+    var pl = document.createElement('input'); pl.type = 'color'; pl.value = ccFamHex(fam,'light'); pl.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;overflow:hidden;';
     var crow = document.createElement('div'); crow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.2rem 0 0.4rem;font-size:0.8rem;';
     crow.appendChild(document.createTextNode(it?'Scuro':'Dark')); crow.appendChild(pd);
     crow.appendChild(document.createTextNode(it?'Chiaro':'Light')); crow.appendChild(pl);
@@ -5939,7 +5939,7 @@ function showColorEditor() {
       var ch = pair[0];
       var sw = document.createElement('button');
       sw.title = (it?'Ripristina ':'Restore ') + pair[1] + ': ' + saved[ch];
-      sw.style.cssText = 'width:26px;height:22px;border:1px solid rgba(128,128,128,0.5);border-radius:4px;cursor:pointer;padding:0;background:' + saved[ch] + ';';
+      sw.style.cssText = 'width:26px;height:22px;border:1px solid rgba(128,128,128,0.5);border-radius:6px;cursor:pointer;padding:0;background:' + saved[ch] + ';';
       sw.onclick = function(){
         (ch==='dark'?pd:pl).value = saved[ch];
         CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value };
