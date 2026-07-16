@@ -1658,7 +1658,11 @@ html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.
 html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
-.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(95,95,95,0.41);border:1px solid rgba(187,187,187,0.38);color:rgba(241,241,241,0.85);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent; }
+/* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
+   al FAB principale (opacità 0.82). Su mobile diventano solo freccine, vedi la
+   media query in fondo. */
+.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:filter 0.15s,background 0.15s; }
+.jump-fab:hover { filter:brightness(1.1); }
 .jump-fab svg { width:1.05rem;height:1.05rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 /* Padding destro quando le maniglie di trascinamento sono visibili */
 #rank-list.has-handles .rank-content { padding-right:2.6rem; }
@@ -1678,7 +1682,7 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
      del bordo destro come il cluster admin, parte a ~2/3 della viewport
      dall'alto e resta sopra il FAB principale; piccoli, distanziati, discreti */
   .jump-fabs { right:0.75rem; bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
-  .jump-fab { width:1.65rem; height:1.65rem; opacity:0.7; }
+  .jump-fab { width:1.65rem; height:1.65rem; }
   .jump-fab svg { width:0.85rem; height:0.85rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
@@ -1909,9 +1913,24 @@ html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
 html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#445d64; }
 html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
 html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
-/* Stesso override anche per i jump-FAB: coi colori del tema scuro erano
-   quasi invisibili su fondo chiaro (contrasto ~1:1). */
-html[data-theme="light"] .jump-fab { background:#4e4e4e; border-color:rgba(78,78,78,0.55); color:#ffffff; }
+/* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
+   dalla regola base). */
+html[data-theme="light"] .jump-fab { background:rgba(31,85,98,0.9); border-color:transparent; color:#ffffff; }
+/* ── Tasti salto su MOBILE: versione "solo freccine" (senza tondo) ──────────
+   Meno invadente del cerchio; le freccine restano leggibili grazie a una
+   leggera ombra. Il tondo VELATO (versione B) si riattiva con
+   FEATURES.jumpMobileCircle = true (aggiunge html.jump-mobile-circle), utile
+   se le sole freccine non fossero abbastanza usabili. Questo blocco sta DOPO
+   l'override chiaro qui sopra apposta: stessa specificità, sorgente più in
+   basso -> vince su mobile senza !important. */
+@media (max-width:768px) {
+  .jump-fab { background:transparent;border-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;color:rgba(241,241,241,0.85);filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6)); }
+  html[data-theme="light"] .jump-fab { background:transparent;border-color:transparent;color:rgba(34,34,38,0.8);filter:drop-shadow(0 1px 1.5px rgba(255,255,255,0.7)); }
+  .jump-fab svg { width:1rem;height:1rem;stroke-width:2.4; }
+  /* Riattivazione del tondo (fallback): cerchio velato versione B */
+  html.jump-mobile-circle .jump-fab { background:rgba(95,95,95,0.2);border-color:rgba(187,187,187,0.18);color:rgba(241,241,241,0.6);filter:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px); }
+  html.jump-mobile-circle[data-theme="light"] .jump-fab { background:rgba(64,64,68,0.24);border-color:rgba(64,64,68,0.16);color:rgba(30,30,34,0.62);filter:none; }
+}
 /* Etichette categoria deselezionate: opacità meno spinta nel chiaro
    (0.45 le portava sotto la soglia di leggibilità AA). */
 html[data-theme="light"] .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.62; }
@@ -2025,7 +2044,12 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 //    come le altre righe. Lo 'stato a 5 icone' (v7.23-7.29) resta salvato qui:
 //    metterlo a true lo ripristina, niente altre modifiche. NB: riguarda SOLO
 //    la legenda; le icone-badge per-mago sulle CARD (ISTARI_ICON) restano.
-var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A', adminTranslate: false, istariFiveIcons: false };
+//  - jumpMobileCircle: il TONDO dei tasti salto pagina su MOBILE. Spento: su
+//    mobile restano solo le freccine (senza cerchio), più discrete. A true
+//    ripristina il cerchio velato (versione B) via la classe
+//    html.jump-mobile-circle, se le sole freccine non fossero abbastanza
+//    usabili. Riguarda solo mobile; su desktop i tasti sono sempre col tondo.
+var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A', adminTranslate: false, istariFiveIcons: false, jumpMobileCircle: false };
 (function(){
   var l = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   document.documentElement.setAttribute('data-theme', l ? 'light' : 'dark');
@@ -2035,6 +2059,8 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   // Cambio lingua nascosto su mobile col flag spento: classe sull'html, la
   // CSS la applica solo sotto i 768px. Fatto qui nell'head per evitare il flash.
   if (!FEATURES.langSwitchMobile) document.documentElement.classList.add('no-langswitch-mobile');
+  // Tondo dei tasti salto su mobile: acceso solo col flag (default = solo freccine).
+  if (FEATURES.jumpMobileCircle) document.documentElement.classList.add('jump-mobile-circle');
 })();
 // Animazione 'piega' del glifo di chiusura del pannello: usa la proprietà CSS
 // 'd' su <path> (SVG 2). E' valida, ma il validatore W3C Nu non la riconosce
@@ -2057,7 +2083,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.04</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
