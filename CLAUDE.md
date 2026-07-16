@@ -77,23 +77,22 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 - **Branch principale: `master`.** Si lavora e si pusha direttamente lì,
   come da regola universale.
-- **Go-live sempre, senza chiedere, ANCHE per le modifiche pesanti (istruzione
-  durevole rafforzata dall'utente, 'consento SEMPRE', 2026-07-16).** Dopo ogni
-  task con i test/gate verdi, portare subito le modifiche in produzione su
-  `master` (se la sessione è vincolata a un branch `claude/*`, aprire la PR e
-  **mergiarla immediatamente**, squash). **Non chiedere mai conferma per il
-  go-live**, nemmeno per interventi pesanti/strutturali/Worker: l'utente ha dato
-  autorizzazione permanente. Resta invariato l'obbligo di **verificare i gate
-  prima** di mergiare (axe 0, W3C 0/0 per i +0.1, test funzionali): la
-  pre-autorizzazione riguarda il *non attendere il via libera*, non il saltare
-  le verifiche.
-  - **Storico (superato):** fino al 2026-07-16 le modifiche pesanti
-    (refactor estesi, `dati.js`/proxy/Worker/schema dati, segreti/admin/deploy,
-    riscritture ampie) si aprivano in PR **senza** mergiare, fermandosi a
-    chiedere conferma. Con 'consento SEMPRE' questa eccezione è **revocata**: si
-    va live comunque (previa verifica dei gate). Per una modifica davvero fuori
-    dall'ordinario o irreversibile conviene comunque avvisare in breve *cosa* si
-    è fatto, ma senza bloccare il go-live.
+- **Go-live sempre (default), senza chiedere, salvo modifiche pesanti.**
+  Istruzione durevole dell'utente ('vai sempre live'): dopo ogni task con i
+  test verdi, portare subito le modifiche in produzione su `master` (se la
+  sessione è vincolata a un branch `claude/*`, aprire la PR e **mergiarla
+  immediatamente**, squash). Non chiedere conferma per il go-live: è già
+  autorizzato, vale come i comandi di via libera, applicato di default.
+  - **Eccezione: modifiche pesanti / significative / rischiose / strutturali.**
+    Qui il go-live automatico **non** si applica: aprire comunque la PR ma
+    **non mergiarla**, fermarsi e **chiedere conferma all'utente** prima di
+    andare live (presentando in breve cosa cambia e perché è delicato). Sono
+    'pesanti' p.es.: rifacimenti/refactor estesi, modifiche all'architettura o
+    al flusso dati (`dati.js`, proxy/Worker, schema dati), interventi che
+    toccano segreti/admin/deploy, riscritture ampie o cambi che incidono su
+    molte voci o sull'intera UI. Nel dubbio sul peso di una modifica, trattarla
+    come pesante e chiedere. Le modifiche ordinarie (contenuti, fix puntuali,
+    ritocchi, documentazione) restano in go-live automatico.
 - **Dopo il go-live su branch `claude/*`: riallineare il branch al `master`.**
   Concluso lo squash-merge, oltre al consueto `git reset --hard origin/master`
   in locale, riportare anche il **branch remoto** `claude/*` su `master`:
