@@ -2104,7 +2104,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2478,6 +2478,42 @@ var CARDCOLOR_OF = {
   'tipo-generico':'generic'
 };
 
+// ── Config colori EDITABILE (Fase 2, dalla v9.27) ───────────────────────────
+// Le famiglie (colore per tema, formato hex '#rrggbb') e la mappa tipo→famiglia
+// vivono in un DATO (`var cardColors` in dati.js, scritto dal Worker) così
+// l'editor colori le modifica salvando solo dati.js. Se `cardColors` è assente
+// (prima di ogni modifica di famiglia) si usa il FALLBACK qui sotto = i valori
+// storici (identici a quelli statici del CSS). `familyOf`, l'iniezione delle
+// --ccrgb e l'editor leggono/scrivono SEMPRE CARDCOLORS (mai le costanti sopra).
+var CARDCOLORS_FALLBACK = {
+  fam: {
+    "noldo": { dark:"#5b7bf0", light:"#2f4fd0" }, "sinda": { dark:"#2bb8a6", light:"#159e8f" },
+    "maia": { dark:"#52b95f", light:"#3a9a45" }, "rohir": { dark:"#9fb641", light:"#8a9a2a" },
+    "other": { dark:"#e08a3a", light:"#d2760f" }, "highmen": { dark:"#d8b23c", light:"#c79413" },
+    "demon": { dark:"#e0596a", light:"#c42233" }, "vala": { dark:"#de5a8e", light:"#c21f6e" },
+    "orc": { dark:"#a06be0", light:"#7a3fce" }, "beast": { dark:"#b39468", light:"#96754a" },
+    "generic": { dark:"#9098a8", light:"#6f7482" }, "half-elf": { dark:"#3aa0ba", light:"#1e5462" },
+    "westmen": { dark:"#c68a98", light:"#a05c70" }
+  },
+  map: CARDCOLOR_OF
+};
+// Config attiva: quella salvata (`var cardColors` globale da dati.js) se valida,
+// altrimenti il fallback. Oggetto MUTABILE che l'editor colori aggiorna e invia
+// al Worker. map: se dati.js porta una map parziale, la si fonde col fallback
+// (le voci non toccate restano mappate).
+var CARDCOLORS = (function(){
+  var saved = (typeof cardColors !== 'undefined') ? cardColors : null;
+  if (saved && saved.fam && saved.map) {
+    return { fam: saved.fam, map: Object.assign({}, CARDCOLOR_OF, saved.map) };
+  }
+  return { fam: CARDCOLORS_FALLBACK.fam, map: CARDCOLORS_FALLBACK.map };
+})();
+function ccHexToTriplet(h) {
+  h = String(h || '').replace('#', '');
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) return '144,152,168';
+  return parseInt(h.substr(0,2),16) + ',' + parseInt(h.substr(2,2),16) + ',' + parseInt(h.substr(4,2),16);
+}
+
 // Regole cardcolor iniettate via JS: usano rgba(var(--ccrgb),alpha), che il Nu
 // Html Checker non sa parsare (falso errore); iniettandole si tengono fuori dal
 // CSS statico (stesso trucco della proprietà 'd', ctrl-close-bend). Le terne
@@ -2503,11 +2539,33 @@ var CARDCOLOR_OF = {
     '.modal[class*="cc-"] .modal-source{color:rgba(var(--ccrgb),1)!important}',
     '.modal[class*="cc-"] .modal-close{border-color:rgba(var(--ccrgb),0.9)!important;color:rgba(var(--ccrgb),1)!important}',
     '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}'
-  ].join('');
+  ];
+  // Terne --ccrgb per famiglia DALLA CONFIG (CARDCOLORS.fam, hex→terna): queste
+  // regole, iniettate dopo il <style> statico, lo scavalcano (stessa specificità,
+  // sorgente più in basso). Così cambiare un colore famiglia = cambiare la config
+  // e ri-iniettare, senza toccare il CSS statico (che resta come fallback).
+  Object.keys(CARDCOLORS.fam).forEach(function(k){
+    var f = CARDCOLORS.fam[k] || {};
+    css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + '}');
+    css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + '}');
+  });
   var s = document.createElement('style');
-  s.textContent = css;
+  s.id = 'cc-fam-rules';
+  s.textContent = css.join('');
   document.head.appendChild(s);
 })();
+// Ri-inietta le sole terne --ccrgb per famiglia (dopo un edit colori in anteprima).
+function reinjectFamilyColors(){
+  var old = document.getElementById('cc-fam-vars'); if (old) old.remove();
+  var css = [];
+  Object.keys(CARDCOLORS.fam).forEach(function(k){
+    var f = CARDCOLORS.fam[k] || {};
+    css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + '}');
+    css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + '}');
+  });
+  var s = document.createElement('style'); s.id = 'cc-fam-vars'; s.textContent = css.join('');
+  document.head.appendChild(s);
+}
 
 // Classe 'Esseri crepuscolari' (card scura .divine.morgoth): membri per NOME +
 // chiunque abbia tipo Balrog/Drago. Estratta in funzione condivisa (dalla v8.83)
@@ -2521,11 +2579,37 @@ function isDarkBg(p) {
 // da renderList (bordino/sfondo) e dalla scheda personaggio (accento colore).
 // tipoClass è language-stable, ma per combaciare col bordino si usa lo stesso
 // `tipo` localizzato di renderList.
-// Terna 'R,G,B' valida (0-255) per il colore individuale p.cardrgb.
-function validCardRgb(s) {
-  if (typeof s !== 'string') return false;
-  var m = s.replace(/\s/g, '').match(/^(\d{1,3}),(\d{1,3}),(\d{1,3})$/);
-  return !!m && [m[1], m[2], m[3]].every(function(n){ return +n >= 0 && +n <= 255; });
+// Colore card → terna 'R,G,B' per --ccrgb. Accetta hex '#rrggbb' (formato
+// canonico dei dati, dalla v9.27) e, per tolleranza, il vecchio 'R,G,B'.
+// Ritorna la terna, o null se non valido.
+function cardTriplet(v) {
+  if (typeof v !== 'string') return null;
+  v = v.trim();
+  if (/^#?[0-9a-fA-F]{6}$/.test(v)) {
+    var h = v.replace('#', '');
+    return parseInt(h.substr(0,2),16) + ',' + parseInt(h.substr(2,2),16) + ',' + parseInt(h.substr(4,2),16);
+  }
+  var t = v.replace(/\s/g, '');
+  if (/^\d{1,3},\d{1,3},\d{1,3}$/.test(t) && t.split(',').every(function(n){ return +n >= 0 && +n <= 255; })) return t;
+  return null;
+}
+function validCardRgb(s) { return cardTriplet(s) !== null; }
+// Classe-etichetta (tipo-*) che determina la famiglia di una voce: 2a etichetta
+// se >=2, eccezione 'prima etichetta' per Noldor/Mezzelfo. Estratta da familyOf
+// (dalla v9.27) perché la usa anche 'Sposta per tipo' dell'editor colori per
+// trovare le voci di un dato tipo-classe.
+function stripClassOf(p) {
+  var tp = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
+  var badgeClasses = (p.nome !== 'Lúthien' && isAinu(p)) ? ['tipo-ainur'] : [];
+  var colorSegs = (p.tipo_color || '').split('|');
+  if (tp) tp.split('|').forEach(function(seg, i){
+    var ov = (colorSegs[i] || '').trim();
+    if (!/^tipo-[a-z-]*$/.test(ov)) ov = '';
+    badgeClasses.push(ov || tipoClass(seg.trim()));
+  });
+  return (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
+    ? badgeClasses[0]
+    : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
 }
 function familyOf(p) {
   // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
@@ -2536,18 +2620,8 @@ function familyOf(p) {
   // tipo mapperebbe altrove (Melkor/oscurità, Shelob/ragno, ecc.); draghi, lupi
   // e balrog ci arrivano comunque via CARDCOLOR_OF.
   if (isDarkBg(p)) return 'demon';
-  var tp = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
-  var badgeClasses = (p.nome !== 'Lúthien' && isAinu(p)) ? ['tipo-ainur'] : [];
-  var colorSegs = (p.tipo_color || '').split('|');
-  if (tp) tp.split('|').forEach(function(seg, i){
-    var ov = (colorSegs[i] || '').trim();
-    if (!/^tipo-[a-z-]*$/.test(ov)) ov = '';
-    badgeClasses.push(ov || tipoClass(seg.trim()));
-  });
-  var sc = (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
-    ? badgeClasses[0]
-    : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
-  return CARDCOLOR_OF[sc] || 'generic';
+  var sc = stripClassOf(p);
+  return CARDCOLORS.map[sc] || 'generic';
 }
 
 // Icone badge: PNG 256x256 normalizzati (oggetto al vivo, centrato) in
@@ -3011,7 +3085,8 @@ function renderList() {
     }
     // Voci 'custom' (Modifica mirata): la terna individuale arriva inline e
     // scavalca la --ccrgb della classe (la card e la striscia la ereditano).
-    var ccInline = (cardFam === 'custom' && validCardRgb(p.cardrgb)) ? (';--ccrgb:' + p.cardrgb.replace(/\s/g, '')) : '';
+    var _ct = cardFam === 'custom' ? cardTriplet(p.cardrgb) : null;
+    var ccInline = _ct ? (';--ccrgb:' + _ct) : '';
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
@@ -5000,9 +5075,11 @@ async function translateText(text, from, to) {
   }
 }
 
-async function doCommit(msg, payload) {
+async function doCommit(msg, payload, cardColors) {
   // payload opzionale: consente di committare una copia senza aver ancora
   // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
+  // cardColors opzionale: config colori editabile (Fase 2). Se passata, il Worker
+  // la scrive in dati.js; se omessa, il Worker PRESERVA quella esistente.
   const data = payload || dati;
   if (!adminPassword) return { ok: false, reason: 'no-auth' };
   // Il commit passa dal proxy: il browser invia solo l'array dati e la parola
@@ -5011,7 +5088,7 @@ async function doCommit(msg, payload) {
     const res = await fetch(proxyUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' })
+      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}))
     });
     let r = {};
     try { r = await res.json(); } catch (e) {}
@@ -5731,109 +5808,164 @@ function showAdminChoiceModal() {
 // dal batch). Salva su repo via doCommit (il Worker preserva il campo e bumpa la
 // versione). Le funzioni di FAMIGLIA (imposta colore/rinomina/sposta-per-tipo)
 // arriveranno in Fase 2, quando la config colori sara' spostata su dato.
-function hexToRgbStr(hex){ var h = hex.replace('#',''); return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)].join(','); }
-function rgbStrToHex(rgb){ return '#' + rgb.replace(/\s/g,'').split(',').map(function(n){ return ('0'+(+n).toString(16)).slice(-2); }).join(''); }
-function familyRgbStr(fam){
-  var s = document.createElement('span'); s.className = 'cc-' + fam; s.style.display = 'none';
-  document.body.appendChild(s);
-  var v = getComputedStyle(s).getPropertyValue('--ccrgb').trim(); s.remove();
-  return /^\d/.test(v) ? v.replace(/\s/g,'') : '144,152,168';
-}
+function ccTripletToHex(t){ return '#' + t.split(',').map(function(n){ return ('0'+(+n).toString(16)).slice(-2); }).join(''); }
+function ccTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+function ccFamHex(fam, theme){ var f = CARDCOLORS.fam[fam]; return (f && f[theme]) ? f[theme] : '#9098a8'; }
+// Salvataggio condiviso dell'editor colori: committa dati (con eventuali
+// cardcolor riassegnati) + la config CARDCOLORS. Ritorna la Promise di doCommit.
+function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS); }
+
 function showColorEditor() {
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it';
   var overlay = document.createElement('div');
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '460px';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '480px';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
-
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
-  var title = document.createElement('p'); title.textContent = it ? 'Modifica colori — Mirata' : 'Edit colours — Targeted';
-  var hint = document.createElement('p');
-  hint.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0.1rem 0 0.5rem;';
-  hint.textContent = it ? 'Cerca un personaggio e definisci solo il suo colore.' : 'Search a character and set only its colour.';
-  var search = document.createElement('input');
-  search.type = 'text'; search.autocomplete = 'off';
-  search.placeholder = it ? 'Cerca per nome…' : 'Search by name…';
-  var results = document.createElement('div');
-  results.style.cssText = 'max-height:180px;overflow:auto;margin:0.4rem 0;display:flex;flex-direction:column;gap:2px;';
-  var panel = document.createElement('div'); // pannello del personaggio scelto
+  box.appendChild(cl);
 
-  box.appendChild(cl); box.appendChild(title); box.appendChild(hint);
-  box.appendChild(search); box.appendChild(results); box.appendChild(panel);
+  // Due modalità: Mirata (singolo personaggio) e Famiglie.
+  var tabs = document.createElement('div');
+  tabs.style.cssText = 'display:flex;gap:0.4rem;margin:0 0 0.6rem;';
+  var content = document.createElement('div');
+  var tMirata = document.createElement('button'), tFam = document.createElement('button');
+  [tMirata, tFam].forEach(function(t){ t.className = 'fab-modal-confirm'; t.style.cssText = 'flex:1;padding:0.4rem;'; });
+  tMirata.textContent = it ? 'Mirata' : 'Targeted';
+  tFam.textContent = it ? 'Famiglie' : 'Families';
+  function setTab(which){
+    tMirata.style.opacity = which === 'm' ? '1' : '0.5';
+    tFam.style.opacity = which === 'f' ? '1' : '0.5';
+    content.innerHTML = '';
+    if (which === 'm') buildMirata(content); else buildFamilies(content);
+  }
+  tMirata.onclick = function(){ setTab('m'); };
+  tFam.onclick = function(){ setTab('f'); };
+  tabs.appendChild(tMirata); tabs.appendChild(tFam);
+  box.appendChild(tabs); box.appendChild(content);
+  setTab('m');
 
-  function renderResults(q){
-    results.innerHTML = ''; panel.innerHTML = '';
-    q = (q || '').trim().toLowerCase();
-    if (q.length < 1) return;
-    var hits = [];
-    for (var i = 0; i < dati.length && hits.length < 20; i++){
-      var p = dati[i];
-      var n1 = (p.nome || '').toLowerCase(), n2 = (p.nome_en || '').toLowerCase();
-      if (n1.indexOf(q) !== -1 || n2.indexOf(q) !== -1) hits.push(i);
+  // ── Modalità MIRATA: colore individuale (p.cardrgb, hex) → famiglia 'custom' ──
+  function buildMirata(root){
+    var hint = document.createElement('p');
+    hint.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
+    hint.textContent = it ? 'Cerca un personaggio e definisci solo il suo colore.' : 'Search a character and set only its colour.';
+    var search = document.createElement('input'); search.type = 'text'; search.autocomplete = 'off';
+    search.placeholder = it ? 'Cerca per nome…' : 'Search by name…';
+    var results = document.createElement('div');
+    results.style.cssText = 'max-height:170px;overflow:auto;margin:0.4rem 0;display:flex;flex-direction:column;gap:2px;';
+    var panel = document.createElement('div');
+    root.appendChild(hint); root.appendChild(search); root.appendChild(results); root.appendChild(panel);
+    function renderResults(q){
+      results.innerHTML = ''; panel.innerHTML = '';
+      q = (q || '').trim().toLowerCase(); if (q.length < 1) return;
+      var hits = [];
+      for (var i = 0; i < dati.length && hits.length < 20; i++){
+        var p = dati[i];
+        if ((p.nome||'').toLowerCase().indexOf(q) !== -1 || (p.nome_en||'').toLowerCase().indexOf(q) !== -1) hits.push(i);
+      }
+      hits.forEach(function(i){
+        var p = dati[i];
+        var row = document.createElement('button'); row.className = 'fab-modal-confirm';
+        row.style.cssText = 'text-align:left;padding:0.4rem 0.6rem;font-size:0.9rem;';
+        row.textContent = (it ? (p.nome||p.nome_en) : (p.nome_en||p.nome)) + '  ·  ' + familyOf(p);
+        row.onclick = function(){ selectChar(i, panel); };
+        results.appendChild(row);
+      });
     }
-    hits.forEach(function(i){
-      var p = dati[i];
-      var row = document.createElement('button'); row.className = 'fab-modal-confirm';
-      row.style.cssText = 'text-align:left;padding:0.4rem 0.6rem;font-size:0.9rem;';
-      var fam = familyOf(p);
-      row.textContent = (it ? (p.nome || p.nome_en) : (p.nome_en || p.nome)) + '  ·  ' + fam;
-      row.onclick = function(){ selectChar(i); };
-      results.appendChild(row);
-    });
+    search.addEventListener('input', function(){ renderResults(search.value); });
+    setTimeout(function(){ search.focus(); }, 60);
   }
-  function selectChar(i){
-    var p = dati[i];
-    panel.innerHTML = '';
-    var fam = familyOf(p);
-    var curRgb = validCardRgb(p.cardrgb) ? p.cardrgb.replace(/\s/g,'') : familyRgbStr(fam);
-    var name = document.createElement('p');
-    name.style.cssText = 'font-weight:600;margin:0.6rem 0 0.2rem;';
-    name.textContent = it ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
-    var famLine = document.createElement('p');
-    famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
+  function selectChar(i, panel){
+    var p = dati[i]; panel.innerHTML = '';
     var isCustom = validCardRgb(p.cardrgb);
-    famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + fam + (isCustom ? (it ? ' (colore individuale)' : ' (individual colour)') : '');
-    var pickRow = document.createElement('div');
-    pickRow.style.cssText = 'display:flex;align-items:center;gap:0.6rem;margin:0.3rem 0 0.6rem;';
-    var picker = document.createElement('input'); picker.type = 'color'; picker.value = rgbStrToHex(curRgb);
-    picker.style.cssText = 'width:48px;height:34px;border:none;background:none;cursor:pointer;';
-    var swatch = document.createElement('span');
-    swatch.style.cssText = 'font-family:ui-monospace,monospace;font-size:0.8rem;opacity:0.8;';
-    swatch.textContent = rgbStrToHex(curRgb);
+    var curHex = isCustom ? ccTripletToHex(cardTriplet(p.cardrgb)) : ccFamHex(familyOf(p), ccTheme());
+    var name = document.createElement('p'); name.style.cssText = 'font-weight:600;margin:0.6rem 0 0.2rem;';
+    name.textContent = it ? (p.nome||p.nome_en) : (p.nome_en||p.nome);
+    var famLine = document.createElement('p'); famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
+    famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (isCustom ? (it ? ' (colore individuale)' : ' (individual)') : '');
+    var picker = document.createElement('input'); picker.type = 'color'; picker.value = curHex;
+    picker.style.cssText = 'width:48px;height:34px;border:none;background:none;cursor:pointer;vertical-align:middle;';
+    var swatch = document.createElement('span'); swatch.style.cssText = 'font-family:ui-monospace,monospace;font-size:0.8rem;opacity:0.8;margin-left:0.6rem;';
+    swatch.textContent = curHex;
     picker.addEventListener('input', function(){ swatch.textContent = picker.value; });
-    pickRow.appendChild(picker); pickRow.appendChild(swatch);
-
-    var btnApply = document.createElement('button'); btnApply.className = 'fab-modal-confirm';
-    btnApply.textContent = it ? 'Applica (anteprima)' : 'Apply (preview)';
-    btnApply.onclick = function(){ p.cardrgb = hexToRgbStr(picker.value); renderList(); famLine.textContent = (it ? 'Famiglia attuale: custom (colore individuale)' : 'Current family: custom (individual colour)'); showToast(it ? '✓ Anteprima applicata' : '✓ Preview applied', false); };
-
-    var btnRemove = document.createElement('button'); btnRemove.className = 'fab-modal-confirm';
-    btnRemove.textContent = it ? 'Rimuovi colore individuale' : 'Remove individual colour';
-    btnRemove.onclick = function(){ delete p.cardrgb; renderList(); showToast(it ? '✓ Torna alla famiglia' : '✓ Back to family', false); selectChar(i); };
-
-    var btnSave = document.createElement('button'); btnSave.className = 'fab-modal-confirm'; btnSave.style.cssText = 'background:rgba(90,200,110,0.16);';
-    btnSave.textContent = it ? 'Salva sul repo' : 'Save to repo';
-    btnSave.onclick = function(){
-      p.cardrgb = hexToRgbStr(picker.value); renderList();
-      btnSave.disabled = true; btnSave.style.opacity = '0.4';
-      var nm = p.nome || p.nome_en;
-      doCommit('colori: colore individuale di ' + nm).then(function(res){
-        if (res.ok) { showToast(it ? '✓ Colore salvato' : '✓ Colour saved', false); }
-        else { showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true); }
-      }).finally(function(){ btnSave.disabled = false; btnSave.style.opacity = ''; });
-    };
-
-    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(pickRow);
-    panel.appendChild(btnApply);
-    if (isCustom) panel.appendChild(btnRemove);
-    panel.appendChild(btnSave);
+    var row = document.createElement('div'); row.style.cssText = 'margin:0.3rem 0 0.6rem;'; row.appendChild(picker); row.appendChild(swatch);
+    var bApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ p.cardrgb = picker.value; renderList(); famLine.textContent = (it?'Famiglia attuale: custom (colore individuale)':'Current family: custom (individual)'); showToast(it?'✓ Anteprima applicata':'✓ Preview applied', false); });
+    var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ p.cardrgb = picker.value; renderList(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + (p.nome||p.nome_en))); }, true);
+    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(row); panel.appendChild(bApply);
+    if (isCustom) panel.appendChild(mkBtn(it ? 'Rimuovi colore individuale' : 'Remove individual colour', function(){ delete p.cardrgb; renderList(); showToast(it?'✓ Torna alla famiglia':'✓ Back to family', false); selectChar(i, panel); }));
+    panel.appendChild(bSave);
   }
-  search.addEventListener('input', function(){ renderResults(search.value); });
-  setTimeout(function(){ search.focus(); }, 60);
+
+  // ── Modalità FAMIGLIE: colore (per tema), rinomina, sposta-per-tipo ──────────
+  function buildFamilies(root){
+    var lbl = document.createElement('p'); lbl.style.cssText = 'font-size:0.82rem;margin:0 0 0.3rem;';
+    lbl.textContent = it ? 'Famiglia:' : 'Family:';
+    var sel = document.createElement('select'); sel.style.cssText = 'width:100%;padding:0.4rem;';
+    Object.keys(CARDCOLORS.fam).sort().forEach(function(k){ var o = document.createElement('option'); o.value = k; o.textContent = k + ' (' + famCount(k) + ')'; sel.appendChild(o); });
+    var panel = document.createElement('div');
+    root.appendChild(lbl); root.appendChild(sel); root.appendChild(panel);
+    sel.onchange = function(){ buildFamPanel(sel.value, panel); };
+    buildFamPanel(sel.value, panel);
+  }
+  function famCount(fam){ var n = 0; for (var i = 0; i < dati.length; i++) if (familyOf(dati[i]) === fam) n++; return n; }
+  function buildFamPanel(fam, panel){
+    panel.innerHTML = '';
+    // 1) Colore per tema
+    var h1 = mkH(it ? 'Colore (per tema)' : 'Colour (per theme)');
+    var pd = document.createElement('input'); pd.type = 'color'; pd.value = ccFamHex(fam,'dark'); pd.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;';
+    var pl = document.createElement('input'); pl.type = 'color'; pl.value = ccFamHex(fam,'light'); pl.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;';
+    var crow = document.createElement('div'); crow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.2rem 0 0.5rem;font-size:0.8rem;';
+    crow.appendChild(document.createTextNode(it?'Scuro':'Dark')); crow.appendChild(pd);
+    crow.appendChild(document.createTextNode(it?'Chiaro':'Light')); crow.appendChild(pl);
+    var bColApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value }; reinjectFamilyColors(); showToast(it?'✓ Anteprima':'✓ Preview', false); });
+    var bColSave = mkBtn(it ? 'Salva colore' : 'Save colour', function(btn){ CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value }; reinjectFamilyColors(); withBtn(btn, saveColorsToRepo('colori: colore famiglia ' + fam)); }, true);
+    // 2) Rinomina
+    var h2 = mkH(it ? 'Rinomina famiglia' : 'Rename family');
+    var rin = document.createElement('input'); rin.type = 'text'; rin.value = fam; rin.style.cssText = 'width:60%;padding:0.35rem;';
+    var bRen = mkBtn(it ? 'Rinomina e salva' : 'Rename & save', function(btn){
+      var nn = (rin.value||'').trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+      if (!nn || nn === fam) { showToast(it?'Nome non valido':'Invalid name', true); return; }
+      if (CARDCOLORS.fam[nn]) { showToast(it?'Nome già in uso':'Name already used', true); return; }
+      CARDCOLORS.fam[nn] = CARDCOLORS.fam[fam]; delete CARDCOLORS.fam[fam];
+      Object.keys(CARDCOLORS.map).forEach(function(t){ if (CARDCOLORS.map[t] === fam) CARDCOLORS.map[t] = nn; });
+      dati.forEach(function(p){ if (p.cardcolor === fam) p.cardcolor = nn; });
+      reinjectFamilyColors(); renderList();
+      withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ showColorEditor && close(); });
+    }, true);
+    // 3) Sposta per tipo → questa famiglia
+    var h3 = mkH((it ? 'Sposta un tipo in ' : 'Move a type into ') + fam);
+    var selT = document.createElement('select'); selT.style.cssText = 'width:100%;padding:0.35rem;';
+    Object.keys(CARDCOLORS.map).sort().forEach(function(t){ var o = document.createElement('option'); o.value = t; o.textContent = t + ' → ' + CARDCOLORS.map[t] + ' (' + tipoCount(t) + ')'; selT.appendChild(o); });
+    var bMove = mkBtn(it ? 'Sposta e salva' : 'Move & save', function(btn){
+      var t = selT.value; var moved = 0;
+      CARDCOLORS.map[t] = fam;
+      dati.forEach(function(p){ if (!validCardRgb(p.cardrgb) && stripClassOf(p) === t) { p.cardcolor = fam; moved++; } });
+      reinjectFamilyColors(); renderList();
+      withBtn(btn, saveColorsToRepo('colori: sposta ' + t + ' -> ' + fam + ' (' + moved + ' voci)'));
+    }, true);
+    [h1, crow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
+  }
+  function tipoCount(t){ var n = 0; for (var i = 0; i < dati.length; i++) if (!validCardRgb(dati[i].cardrgb) && stripClassOf(dati[i]) === t) n++; return n; }
+
+  // Helper UI condivisi
+  function mkBtn(label, fn, green){
+    var b = document.createElement('button'); b.className = 'fab-modal-confirm'; b.textContent = label;
+    if (green) b.style.cssText = 'background:rgba(90,200,110,0.16);';
+    b.onclick = function(){ fn(b); };
+    return b;
+  }
+  function mkH(txt){ var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:0.82rem;margin:0.7rem 0 0.2rem;border-top:1px solid rgba(128,128,128,0.2);padding-top:0.5rem;'; h.textContent = txt; return h; }
+  function withBtn(btn, promise, onOk){
+    btn.disabled = true; btn.style.opacity = '0.4';
+    promise.then(function(res){
+      if (res.ok) { showToast(it?'✓ Salvato':'✓ Saved', false); if (onOk) onOk(); }
+      else { showToast((it?'✗ Salvataggio fallito: ':'✗ Save failed: ') + (res.reason||''), true); }
+    }).finally(function(){ btn.disabled = false; btn.style.opacity = ''; });
+  }
 }
 
 // Click sul badge versione → admin editor

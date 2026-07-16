@@ -85,11 +85,47 @@ async function safeEqual(a, b) {
 // voce JSON per riga, così i diff su GitHub restano leggibili (per-personaggio)
 // e il file è coerente con la serializzazione usata a mano. Entrambe le var
 // restano globali per il sito.
-function buildDatiFile(dati, version) {
-  return 'var datiVersion = "' + version + '";\n' +
+function buildDatiFile(dati, version, cardColors) {
+  var head = 'var datiVersion = "' + version + '";\n';
+  // Config colori editabile (Fase 2): se presente, emessa come `var cardColors`
+  // su UNA riga (JSON.stringify non produce newline) SUBITO dopo datiVersion, così
+  // readCardColors puo' rileggerla con una regex su riga singola. Assente = riga
+  // omessa (il sito usa il fallback interno).
+  if (cardColors && typeof cardColors === 'object') {
+    head += 'var cardColors = ' + JSON.stringify(cardColors) + ';\n';
+  }
+  return head +
     'var dati = [\n' +
     dati.map(function (d) { return JSON.stringify(d); }).join(',\n') +
     '\n];\n';
+}
+
+// Estrae `var cardColors = {...};` (una riga) dal sorgente corrente, per
+// PRESERVARLO quando un salvataggio (es. editor personaggi) non lo invia.
+// Ritorna l'oggetto valido o null.
+function readCardColors(src) {
+  var m = /var\s+cardColors\s*=\s*(\{[^\n]*\})\s*;/.exec(src || '');
+  if (!m) return null;
+  try { var o = JSON.parse(m[1]); return (o && o.fam && o.map) ? o : null; } catch (e) { return null; }
+}
+
+// Validazione di forma della config colori inviata dal client: oggetto con
+// `fam` (mappa famiglia→{dark,light} in hex '#rrggbb') e `map` (tipo-*→famiglia).
+function validCardColors(cc) {
+  if (!cc || typeof cc !== 'object' || Array.isArray(cc)) return false;
+  if (!cc.fam || typeof cc.fam !== 'object' || Array.isArray(cc.fam)) return false;
+  if (!cc.map || typeof cc.map !== 'object' || Array.isArray(cc.map)) return false;
+  var famKeys = Object.keys(cc.fam);
+  if (famKeys.length < 1 || famKeys.length > 60) return false;
+  var hex = /^#[0-9a-fA-F]{6}$/;
+  var famOk = famKeys.every(function (k) {
+    var f = cc.fam[k];
+    return f && typeof f === 'object' && hex.test(String(f.dark || '')) && hex.test(String(f.light || ''));
+  });
+  if (!famOk) return false;
+  var mapKeys = Object.keys(cc.map);
+  if (mapKeys.length > 300) return false;
+  return mapKeys.every(function (k) { return typeof cc.map[k] === 'string'; });
 }
 
 // Estrae la versione corrente (`var datiVersion = "..."`) dal sorgente di
@@ -196,7 +232,7 @@ export default {
     // 'rl' = presenza del binding del Durable Object di rate limiting.
     // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
     // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 9, rl: !!env.RL_DO }, 405, ch);
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 10, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
@@ -235,6 +271,11 @@ export default {
       if (!body.dati.every(function (d) { return d && typeof d === 'object' && !Array.isArray(d) && typeof d.nome === 'string'; })) {
         return json({ ok: false, error: 'dati-shape' }, 400, ch);
       }
+      // Se il client invia una config colori, deve essere ben formata: meglio un
+      // errore esplicito che scrivere/preservare una config corrotta.
+      if (body.cardColors !== undefined && !validCardColors(body.cardColors)) {
+        return json({ ok: false, error: 'bad-cardcolors' }, 400, ch);
+      }
       // IMPORTANTE: tutto il dialogo con GitHub è dentro try/catch. Senza, una
       // qualsiasi eccezione qui farebbe crashare il Worker, che risponderebbe
       // con un 500 di sistema PRIVO di header CORS → il browser lo blocca e
@@ -269,7 +310,11 @@ export default {
           // read-modify-write race-safe.
           const oldSrc = b64ToUtf8(fd.content);
           newVersion = bumpVersion(readVersion(oldSrc) || DEFAULT_VERSION);
-          const upd = buildDatiFile(body.dati, newVersion);
+          // Config colori: usa quella inviata (gia' validata) se presente,
+          // altrimenti PRESERVA quella nel file (un salvataggio di contenuti non
+          // deve cancellarla).
+          const cc = body.cardColors !== undefined ? body.cardColors : readCardColors(oldSrc);
+          const upd = buildDatiFile(body.dati, newVersion, cc);
           if (upd.length > DATI_MAX_BYTES) return json({ ok: false, error: 'dati-too-big' }, 400, ch);
           const put = await fetchT(GH_API, {
             method: 'PUT',
