@@ -496,9 +496,10 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
 .cc-westmen{--ccrgb:198,138,152}
 /* Famiglia speciale 'custom' (Modifica mirata): tiene insieme le voci con colore
-   individuale. La terna reale arriva INLINE dalla card (style="--ccrgb:R,G,B" da
-   p.cardrgb); questa e' solo un fallback neutro se mancasse. NON e' modificabile a
-   blocchi (ogni voce resta isolata). Uguale nei due temi. */
+   individuale. Le due terne per-tema arrivano INLINE dalla card
+   (style="--ccdark:R,G,B;--cclight:R,G,B" da p.cardrgb {dark,light}); le regole
+   iniettate .cc-custom mappano --ccrgb sulla terna del tema. Questa e' solo un
+   fallback neutro se mancassero. NON e' modificabile a blocchi (voci isolate). */
 .cc-custom{--ccrgb:144,152,168}
 html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
 html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
@@ -2095,7 +2096,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.73</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2594,7 +2595,13 @@ function ccAaText(fg, bg, target) {
     '.cc-pick{-webkit-appearance:none;-moz-appearance:none;appearance:none;border:none;padding:0;background:none;cursor:pointer;border-radius:6px;overflow:hidden}',
     '.cc-pick::-webkit-color-swatch-wrapper{padding:0}',
     '.cc-pick::-webkit-color-swatch{border:none;border-radius:6px}',
-    '.cc-pick::-moz-color-swatch{border:none;border-radius:6px}'
+    '.cc-pick::-moz-color-swatch{border:none;border-radius:6px}',
+    // Voci 'custom' (colore individuale per-tema): --ccrgb pesca la terna del
+    // tema dai custom props inline della card (--ccdark/--cclight). Iniettate qui
+    // (non nel CSS statico) per stare dopo il fallback statico .cc-custom e per
+    // coerenza con le altre regole var()-based. Fallback neutro se i tag mancano.
+    '.cc-custom{--ccrgb:var(--ccdark,144,152,168)}',
+    'html[data-theme="light"] .cc-custom{--ccrgb:var(--cclight,144,152,168)}'
   ];
   // Terne --ccrgb per famiglia DALLA CONFIG (CARDCOLORS.fam, hex→terna): queste
   // regole, iniettate dopo il <style> statico, lo scavalcano (stessa specificità,
@@ -2650,6 +2657,22 @@ function cardTriplet(v) {
   return null;
 }
 function validCardRgb(s) { return cardTriplet(s) !== null; }
+// Colore individuale PER-TEMA (Modifica mirata, dalla v9.7x). p.cardrgb accetta:
+//  - OGGETTO {dark,light} (nuovo): due hex/terne, uno per tema;
+//  - STRINGA singola (legacy): stesso colore in entrambi i temi.
+// Ritorna {dark,light} come TERNE 'R,G,B' (pronte per --ccdark/--cclight), o null
+// se non c'e' un colore individuale valido. Un lato mancante ripiega sull'altro.
+function customPair(p) {
+  if (!p) return null;
+  var v = p.cardrgb;
+  if (v && typeof v === 'object') {
+    var d = cardTriplet(v.dark), l = cardTriplet(v.light);
+    if (d || l) return { dark: d || l, light: l || d };
+    return null;
+  }
+  var t = cardTriplet(v);
+  return t ? { dark: t, light: t } : null;
+}
 // Classe-etichetta (tipo-*) che determina la famiglia di una voce: 2a etichetta
 // se >=2, eccezione 'prima etichetta' per Noldor/Mezzelfo. Estratta da familyOf
 // (dalla v9.27) perché la usa anche 'Sposta per tipo' dell'editor colori per
@@ -2669,8 +2692,8 @@ function stripClassOf(p) {
 }
 function familyOf(p) {
   // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
-  // (isolata dal batch, ogni voce tiene la propria terna via p.cardrgb).
-  if (validCardRgb(p.cardrgb)) return 'custom';
+  // (isolata dal batch, ogni voce tiene la propria coppia per-tema via p.cardrgb).
+  if (customPair(p)) return 'custom';
   if (p.cardcolor) return p.cardcolor;
   // Classe crepuscolari -> famiglia 'demon' (dalla v8.83): copre i nomi il cui
   // tipo mapperebbe altrove (Melkor/oscurità, Shelob/ragno, ecc.); draghi, lupi
@@ -3139,10 +3162,12 @@ function renderList() {
       var apoTxt = currentLang === 'it' ? ('Solo ' + apoSrc) : (apoSrc + '-only');
       apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + escapeHtml(apoTxt) + '</span>';
     }
-    // Voci 'custom' (Modifica mirata): la terna individuale arriva inline e
-    // scavalca la --ccrgb della classe (la card e la striscia la ereditano).
-    var _ct = cardFam === 'custom' ? cardTriplet(p.cardrgb) : null;
-    var ccInline = _ct ? (';--ccrgb:' + _ct) : '';
+    // Voci 'custom' (Modifica mirata): le due terne per-tema arrivano inline
+    // (--ccdark/--cclight) e le regole .cc-custom iniettate le mappano su --ccrgb
+    // per tema (la card e la striscia la ereditano). Un solo colore (legacy) =
+    // stessa terna nei due tag.
+    var _cp = cardFam === 'custom' ? customPair(p) : null;
+    var ccInline = _cp ? (';--ccdark:' + _cp.dark + ';--cclight:' + _cp.light) : '';
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
@@ -5870,12 +5895,13 @@ function showAdminChoiceModal() {
   box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2);
 }
 
-// ── Editor colori — Fase 1: Modifica mirata ─────────────────────────────────
-// Ricerca un personaggio e ne definisce il colore INDIVIDUALE (campo dati
-// p.cardrgb = 'R,G,B'), che lo mette nella famiglia speciale 'custom' (isolata
-// dal batch). Salva su repo via doCommit (il Worker preserva il campo e bumpa la
-// versione). Le funzioni di FAMIGLIA (imposta colore/rinomina/sposta-per-tipo)
-// arriveranno in Fase 2, quando la config colori sara' spostata su dato.
+// ── Editor colori: Modifica mirata (per personaggio) ────────────────────────
+// Ricerca un personaggio e ne definisce il colore INDIVIDUALE PER-TEMA (campo
+// dati p.cardrgb = {dark,light} hex; una stringa singola resta accettata come
+// legacy = stesso colore nei due temi), che lo mette nella famiglia speciale
+// 'custom' (isolata dal batch). Due picker Chiaro/Scuro + tasto 'Auto'
+// (ccDerivePair) come la scheda Famiglie. Salva su repo via saveColorsToRepo
+// (keepVersion: NON bumpa la versione, come gli altri salvataggi colore).
 function ccTripletToHex(t){ return '#' + t.split(',').map(function(n){ return ('0'+(+n).toString(16)).slice(-2); }).join(''); }
 function ccTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
 function ccFamHex(fam, theme){ var f = CARDCOLORS.fam[fam]; return (f && f[theme]) ? f[theme] : '#9098a8'; }
@@ -5924,7 +5950,7 @@ function showColorEditor() {
   box.appendChild(tabs); box.appendChild(content);
   setTab('f');
 
-  // ── Modalità MIRATA: colore individuale (p.cardrgb, hex) → famiglia 'custom' ──
+  // ── Modalità MIRATA: colore individuale per-tema (p.cardrgb {dark,light}) → 'custom' ──
   function buildMirata(root){
     var hint = document.createElement('p');
     hint.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
@@ -5957,21 +5983,37 @@ function showColorEditor() {
   }
   function selectChar(i, panel){
     var p = dati[i]; panel.innerHTML = '';
-    var isCustom = validCardRgb(p.cardrgb);
-    var curHex = isCustom ? ccTripletToHex(cardTriplet(p.cardrgb)) : ccFamHex(familyOf(p), ccTheme());
+    var cp = customPair(p);
+    var isCustom = !!cp;
+    var fam = familyOf(p);
+    // Colori di partenza: se già individuale, le sue due terne per-tema;
+    // altrimenti i colori della famiglia attuale nei due temi (base sensata).
+    var curDark  = isCustom ? ccTripletToHex(cp.dark)  : ccFamHex(fam, 'dark');
+    var curLight = isCustom ? ccTripletToHex(cp.light) : ccFamHex(fam, 'light');
     var name = document.createElement('p'); name.style.cssText = 'font-weight:600;margin:0.6rem 0 0.2rem;';
     name.textContent = it ? (p.nome||p.nome_en) : (p.nome_en||p.nome);
     var famLine = document.createElement('p'); famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
-    famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (isCustom ? (it ? ' (colore individuale)' : ' (individual)') : '');
-    var picker = document.createElement('input'); picker.type = 'color'; picker.value = curHex; picker.className = 'cc-pick';
-    picker.style.cssText = 'width:48px;height:34px;vertical-align:middle;';
-    var swatch = document.createElement('span'); swatch.style.cssText = 'font-family:ui-monospace,monospace;font-size:0.8rem;opacity:0.8;margin-left:0.6rem;';
-    swatch.textContent = curHex;
-    picker.addEventListener('input', function(){ swatch.textContent = picker.value; });
-    var row = document.createElement('div'); row.style.cssText = 'margin:0.3rem 0 0.6rem;'; row.appendChild(picker); row.appendChild(swatch);
-    var bApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ p.cardrgb = picker.value; renderList(); famLine.textContent = (it?'Famiglia attuale: custom (colore individuale)':'Current family: custom (individual)'); showToast(it?'✓ Anteprima applicata':'✓ Preview applied', false); });
-    var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ p.cardrgb = picker.value; renderList(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + (p.nome||p.nome_en))); }, true);
-    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(row); panel.appendChild(bApply);
+    function setFamLine(){ famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (customPair(p) ? (it ? ' (colore individuale)' : ' (individual)') : ''); }
+    setFamLine();
+    // Pickers per tema + Auto, stesso schema della scheda Famiglie.
+    function mkPick(val){ var el = document.createElement('input'); el.type = 'color'; el.value = val; el.className = 'cc-pick'; el.style.cssText = 'width:44px;height:32px;'; return el; }
+    var pd = mkPick(curDark), pl = mkPick(curLight);
+    var pbase = mkPick(ccTheme() === 'light' ? curLight : curDark);
+    var bDerive = document.createElement('button'); bDerive.className = 'fab-modal-confirm';
+    bDerive.style.cssText = 'width:auto;height:32px;padding:0 0.85rem;font-size:0.8rem;line-height:1;';
+    bDerive.textContent = 'Auto';
+    bDerive.onclick = function(){ var pr = ccDerivePair(pbase.value); pd.value = pr.dark; pl.value = pr.light; showToast(it?'✓ Varianti derivate (rifinibili sotto)':'✓ Variants derived (fine-tune below)', false); };
+    function ccLab(t){ var s = document.createElement('span'); s.textContent = t; return s; }
+    var grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:max-content max-content 1fr;align-items:end;gap:0.5rem 0.7rem;margin:0.4rem 0 0.6rem;font-size:0.8rem;';
+    grid.appendChild(ccLab('Base')); grid.appendChild(pbase); grid.appendChild(bDerive);
+    grid.appendChild(ccLab(it?'Chiaro':'Light')); grid.appendChild(pl);
+    var scGroup = document.createElement('div'); scGroup.style.cssText = 'display:flex;align-items:flex-end;gap:0.5rem;';
+    scGroup.appendChild(ccLab(it?'Scuro':'Dark')); scGroup.appendChild(pd); grid.appendChild(scGroup);
+    function apply(){ p.cardrgb = { dark: pd.value, light: pl.value }; renderList(); setFamLine(); }
+    var bApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ apply(); showToast(it?'✓ Anteprima applicata':'✓ Preview applied', false); });
+    var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ apply(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + (p.nome||p.nome_en))); }, true);
+    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(grid); panel.appendChild(bApply);
     if (isCustom) panel.appendChild(mkBtn(it ? 'Rimuovi colore individuale' : 'Remove individual colour', function(){ delete p.cardrgb; renderList(); showToast(it?'✓ Torna alla famiglia':'✓ Back to family', false); selectChar(i, panel); }));
     panel.appendChild(bSave);
   }
@@ -6056,13 +6098,13 @@ function showColorEditor() {
     var bMove = mkBtn(it ? 'Sposta e salva' : 'Move & save', function(btn){
       var t = selT.value; var moved = 0;
       CARDCOLORS.map[t] = fam;
-      dati.forEach(function(p){ if (!validCardRgb(p.cardrgb) && stripClassOf(p) === t) { p.cardcolor = fam; moved++; } });
+      dati.forEach(function(p){ if (!customPair(p) && stripClassOf(p) === t) { p.cardcolor = fam; moved++; } });
       reinjectFamilyColors(); renderList();
       withBtn(btn, saveColorsToRepo('colori: sposta ' + t + ' -> ' + fam + ' (' + moved + ' voci)'));
     }, true);
     [h1, grid, srow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
   }
-  function tipoCount(t){ var n = 0; for (var i = 0; i < dati.length; i++) if (!validCardRgb(dati[i].cardrgb) && stripClassOf(dati[i]) === t) n++; return n; }
+  function tipoCount(t){ var n = 0; for (var i = 0; i < dati.length; i++) if (!customPair(dati[i]) && stripClassOf(dati[i]) === t) n++; return n; }
 
   // Helper UI condivisi
   function mkBtn(label, fn, green){
