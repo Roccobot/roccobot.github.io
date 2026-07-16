@@ -2104,7 +2104,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.37</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5075,11 +5075,12 @@ async function translateText(text, from, to) {
   }
 }
 
-async function doCommit(msg, payload, cardColors) {
+async function doCommit(msg, payload, cardColors, keepVersion) {
   // payload opzionale: consente di committare una copia senza aver ancora
   // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
   // cardColors opzionale: config colori editabile (Fase 2). Se passata, il Worker
   // la scrive in dati.js; se omessa, il Worker PRESERVA quella esistente.
+  // keepVersion: se true il Worker NON bumpa datiVersion (salvataggi colore).
   const data = payload || dati;
   if (!adminPassword) return { ok: false, reason: 'no-auth' };
   // Il commit passa dal proxy: il browser invia solo l'array dati e la parola
@@ -5088,7 +5089,7 @@ async function doCommit(msg, payload, cardColors) {
     const res = await fetch(proxyUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}))
+      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}, keepVersion ? { keepVersion: true } : {}))
     });
     let r = {};
     try { r = await res.json(); } catch (e) {}
@@ -5811,9 +5812,16 @@ function showAdminChoiceModal() {
 function ccTripletToHex(t){ return '#' + t.split(',').map(function(n){ return ('0'+(+n).toString(16)).slice(-2); }).join(''); }
 function ccTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
 function ccFamHex(fam, theme){ var f = CARDCOLORS.fam[fam]; return (f && f[theme]) ? f[theme] : '#9098a8'; }
+// Snapshot dell'ultimo colore SALVATO per famiglia (rete di sicurezza): copia
+// profonda di CARDCOLORS.fam catturata al load (= i valori committati in dati.js
+// o il fallback), risincronizzata dopo ogni salvataggio colore. Serve alla UI
+// per mostrare/ripristinare con un clic l'ultimo colore salvato mentre si
+// sperimenta un colore nuovo (non ancora salvato).
+var CARDCOLORS_SAVED = JSON.parse(JSON.stringify(CARDCOLORS.fam));
 // Salvataggio condiviso dell'editor colori: committa dati (con eventuali
-// cardcolor riassegnati) + la config CARDCOLORS. Ritorna la Promise di doCommit.
-function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS); }
+// cardcolor riassegnati) + la config CARDCOLORS, SENZA bumpare la versione
+// (keepVersion). Ritorna la Promise di doCommit.
+function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
 
 function showColorEditor() {
   if (document.getElementById('fab-modal')) return;
@@ -5918,9 +5926,28 @@ function showColorEditor() {
     var h1 = mkH(it ? 'Colore (per tema)' : 'Colour (per theme)');
     var pd = document.createElement('input'); pd.type = 'color'; pd.value = ccFamHex(fam,'dark'); pd.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;';
     var pl = document.createElement('input'); pl.type = 'color'; pl.value = ccFamHex(fam,'light'); pl.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;';
-    var crow = document.createElement('div'); crow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.2rem 0 0.5rem;font-size:0.8rem;';
+    var crow = document.createElement('div'); crow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.2rem 0 0.4rem;font-size:0.8rem;';
     crow.appendChild(document.createTextNode(it?'Scuro':'Dark')); crow.appendChild(pd);
     crow.appendChild(document.createTextNode(it?'Chiaro':'Light')); crow.appendChild(pl);
+    // Rete di sicurezza: quadrati con l'ULTIMO colore SALVATO (da CARDCOLORS_SAVED,
+    // non l'anteprima). Un clic ripristina quel canale come corrente, così si può
+    // sperimentare un colore nuovo e tornare indietro con certezza.
+    var saved = CARDCOLORS_SAVED[fam] || CARDCOLORS.fam[fam] || { dark:'#9098a8', light:'#9098a8' };
+    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;margin:0 0 0.5rem;font-size:0.74rem;opacity:0.85;';
+    srow.appendChild(document.createTextNode(it?'Ultimo salvato (clic per ripristinare):':'Last saved (click to restore):'));
+    [['dark', it?'scuro':'dark'], ['light', it?'chiaro':'light']].forEach(function(pair){
+      var ch = pair[0];
+      var sw = document.createElement('button');
+      sw.title = (it?'Ripristina ':'Restore ') + pair[1] + ': ' + saved[ch];
+      sw.style.cssText = 'width:26px;height:22px;border:1px solid rgba(128,128,128,0.5);border-radius:4px;cursor:pointer;padding:0;background:' + saved[ch] + ';';
+      sw.onclick = function(){
+        (ch==='dark'?pd:pl).value = saved[ch];
+        CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value };
+        reinjectFamilyColors();
+        showToast(it?'✓ Ripristinato colore salvato':'✓ Restored saved colour', false);
+      };
+      srow.appendChild(sw);
+    });
     var bColApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value }; reinjectFamilyColors(); showToast(it?'✓ Anteprima':'✓ Preview', false); });
     var bColSave = mkBtn(it ? 'Salva colore' : 'Save colour', function(btn){ CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value }; reinjectFamilyColors(); withBtn(btn, saveColorsToRepo('colori: colore famiglia ' + fam)); }, true);
     // 2) Rinomina
@@ -5947,7 +5974,7 @@ function showColorEditor() {
       reinjectFamilyColors(); renderList();
       withBtn(btn, saveColorsToRepo('colori: sposta ' + t + ' -> ' + fam + ' (' + moved + ' voci)'));
     }, true);
-    [h1, crow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
+    [h1, crow, srow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
   }
   function tipoCount(t){ var n = 0; for (var i = 0; i < dati.length; i++) if (!validCardRgb(dati[i].cardrgb) && stripClassOf(dati[i]) === t) n++; return n; }
 
@@ -5962,7 +5989,11 @@ function showColorEditor() {
   function withBtn(btn, promise, onOk){
     btn.disabled = true; btn.style.opacity = '0.4';
     promise.then(function(res){
-      if (res.ok) { showToast(it?'✓ Salvato':'✓ Saved', false); if (onOk) onOk(); }
+      if (res.ok) {
+        // Salvataggio riuscito: l'ULTIMO SALVATO diventa lo stato attuale.
+        CARDCOLORS_SAVED = JSON.parse(JSON.stringify(CARDCOLORS.fam));
+        showToast(it?'✓ Salvato':'✓ Saved', false); if (onOk) onOk();
+      }
       else { showToast((it?'✗ Salvataggio fallito: ':'✗ Save failed: ') + (res.reason||''), true); }
     }).finally(function(){ btn.disabled = false; btn.style.opacity = ''; });
   }
