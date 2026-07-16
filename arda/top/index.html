@@ -499,6 +499,11 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .cc-demon{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
 .cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
 .cc-westmen{--ccrgb:198,138,152}
+/* Famiglia speciale 'custom' (Modifica mirata): tiene insieme le voci con colore
+   individuale. La terna reale arriva INLINE dalla card (style="--ccrgb:R,G,B" da
+   p.cardrgb); questa e' solo un fallback neutro se mancasse. NON e' modificabile a
+   blocchi (ogni voce resta isolata). Uguale nei due temi. */
+.cc-custom{--ccrgb:144,152,168}
 html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
 html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
 html[data-theme="light"] .cc-other{--ccrgb:210,118,15} html[data-theme="light"] .cc-highmen{--ccrgb:199,148,19}
@@ -2099,7 +2104,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.07</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2516,7 +2521,16 @@ function isDarkBg(p) {
 // da renderList (bordino/sfondo) e dalla scheda personaggio (accento colore).
 // tipoClass è language-stable, ma per combaciare col bordino si usa lo stesso
 // `tipo` localizzato di renderList.
+// Terna 'R,G,B' valida (0-255) per il colore individuale p.cardrgb.
+function validCardRgb(s) {
+  if (typeof s !== 'string') return false;
+  var m = s.replace(/\s/g, '').match(/^(\d{1,3}),(\d{1,3}),(\d{1,3})$/);
+  return !!m && [m[1], m[2], m[3]].every(function(n){ return +n >= 0 && +n <= 255; });
+}
 function familyOf(p) {
+  // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
+  // (isolata dal batch, ogni voce tiene la propria terna via p.cardrgb).
+  if (validCardRgb(p.cardrgb)) return 'custom';
   if (p.cardcolor) return p.cardcolor;
   // Classe crepuscolari -> famiglia 'demon' (dalla v8.83): copre i nomi il cui
   // tipo mapperebbe altrove (Melkor/oscurità, Shelob/ragno, ecc.); draghi, lupi
@@ -2995,7 +3009,10 @@ function renderList() {
       var apoTxt = currentLang === 'it' ? ('Solo ' + apoSrc) : (apoSrc + '-only');
       apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + escapeHtml(apoTxt) + '</span>';
     }
-    html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' +
+    // Voci 'custom' (Modifica mirata): la terna individuale arriva inline e
+    // scavalca la --ccrgb della classe (la card e la striscia la ereditano).
+    var ccInline = (cardFam === 'custom' && validCardRgb(p.cardrgb)) ? (';--ccrgb:' + p.cardrgb.replace(/\s/g, '')) : '';
+    html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
       // sul layout), colore dal contorno dell'etichetta tipo (2a se piu' d'una).
@@ -3153,7 +3170,10 @@ function openModal(idx, instant) {
   // cui derivano bordo/filetto/rank/source/chiudi (dalla v8.77). Reset+set a
   // ogni apertura; le modali note/risorse non hanno cc-<fam> e restano gold.
   var modalEl = document.querySelector('#modal-backdrop > .modal');
-  if (modalEl) modalEl.className = 'modal cc-' + familyOf(p);
+  // Le voci 'custom' (colore individuale) usano l'accento neutro 'generic' sulla
+  // scheda: un colore arbitrario non e' garantito AA-safe sui testi della modale,
+  // mentre sulla card (sfondo/striscia a bassa opacita') e' sempre sicuro.
+  if (modalEl) { var mf = familyOf(p); if (mf === 'custom') mf = 'generic'; modalEl.className = 'modal cc-' + mf; }
   var nome = lang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
   var fonte = lang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
   var info = lang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || '');
@@ -5676,8 +5696,144 @@ function showAdminEditor() {
 // Gate d'accesso admin unico (badge testata, versioni del Pannello, modale
 // storica): editor diretto se già sbloccato, altrimenti modale password.
 function openAdminGate() {
-  if (saveUnlocked) showAdminEditor();
-  else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminEditor);
+  if (saveUnlocked) showAdminChoiceModal();
+  else showPasswordModal('Inserisci la parola d\'ordine per accedere all\'area admin.', showAdminChoiceModal);
+}
+
+// ── Bivio admin (dopo lo sblocco): personaggi vs colori ─────────────────────
+// Sostituisce l'ingresso diretto nell'editor: si sceglie tra 'Modifica
+// personaggi' (editor esistente) e 'Modifica colori' (pannello colori, Fase 1 =
+// Modifica mirata del singolo personaggio; funzioni di famiglia in Fase 2).
+function showAdminChoiceModal() {
+  if (document.getElementById('fab-modal')) return;
+  var it = currentLang === 'it';
+  var overlay = document.createElement('div');
+  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box';
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  lockPageScroll(true);
+  var close = function(){ overlay.remove(); lockPageScroll(false); };
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
+  var t = document.createElement('p'); t.textContent = it ? 'Cosa vuoi modificare?' : 'What do you want to edit?';
+  var b1 = document.createElement('button'); b1.className = 'fab-modal-confirm';
+  b1.textContent = it ? 'Modifica personaggi' : 'Edit characters';
+  b1.onclick = function(){ close(); showAdminEditor(); };
+  var b2 = document.createElement('button'); b2.className = 'fab-modal-confirm';
+  b2.textContent = it ? 'Modifica colori' : 'Edit colours';
+  b2.onclick = function(){ close(); showColorEditor(); };
+  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2);
+}
+
+// ── Editor colori — Fase 1: Modifica mirata ─────────────────────────────────
+// Ricerca un personaggio e ne definisce il colore INDIVIDUALE (campo dati
+// p.cardrgb = 'R,G,B'), che lo mette nella famiglia speciale 'custom' (isolata
+// dal batch). Salva su repo via doCommit (il Worker preserva il campo e bumpa la
+// versione). Le funzioni di FAMIGLIA (imposta colore/rinomina/sposta-per-tipo)
+// arriveranno in Fase 2, quando la config colori sara' spostata su dato.
+function hexToRgbStr(hex){ var h = hex.replace('#',''); return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)].join(','); }
+function rgbStrToHex(rgb){ return '#' + rgb.replace(/\s/g,'').split(',').map(function(n){ return ('0'+(+n).toString(16)).slice(-2); }).join(''); }
+function familyRgbStr(fam){
+  var s = document.createElement('span'); s.className = 'cc-' + fam; s.style.display = 'none';
+  document.body.appendChild(s);
+  var v = getComputedStyle(s).getPropertyValue('--ccrgb').trim(); s.remove();
+  return /^\d/.test(v) ? v.replace(/\s/g,'') : '144,152,168';
+}
+function showColorEditor() {
+  if (document.getElementById('fab-modal')) return;
+  var it = currentLang === 'it';
+  var overlay = document.createElement('div');
+  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '460px';
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  lockPageScroll(true);
+  var close = function(){ overlay.remove(); lockPageScroll(false); };
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
+
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
+  var title = document.createElement('p'); title.textContent = it ? 'Modifica colori — Mirata' : 'Edit colours — Targeted';
+  var hint = document.createElement('p');
+  hint.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0.1rem 0 0.5rem;';
+  hint.textContent = it ? 'Cerca un personaggio e definisci solo il suo colore.' : 'Search a character and set only its colour.';
+  var search = document.createElement('input');
+  search.type = 'text'; search.autocomplete = 'off';
+  search.placeholder = it ? 'Cerca per nome…' : 'Search by name…';
+  var results = document.createElement('div');
+  results.style.cssText = 'max-height:180px;overflow:auto;margin:0.4rem 0;display:flex;flex-direction:column;gap:2px;';
+  var panel = document.createElement('div'); // pannello del personaggio scelto
+
+  box.appendChild(cl); box.appendChild(title); box.appendChild(hint);
+  box.appendChild(search); box.appendChild(results); box.appendChild(panel);
+
+  function renderResults(q){
+    results.innerHTML = ''; panel.innerHTML = '';
+    q = (q || '').trim().toLowerCase();
+    if (q.length < 1) return;
+    var hits = [];
+    for (var i = 0; i < dati.length && hits.length < 20; i++){
+      var p = dati[i];
+      var n1 = (p.nome || '').toLowerCase(), n2 = (p.nome_en || '').toLowerCase();
+      if (n1.indexOf(q) !== -1 || n2.indexOf(q) !== -1) hits.push(i);
+    }
+    hits.forEach(function(i){
+      var p = dati[i];
+      var row = document.createElement('button'); row.className = 'fab-modal-confirm';
+      row.style.cssText = 'text-align:left;padding:0.4rem 0.6rem;font-size:0.9rem;';
+      var fam = familyOf(p);
+      row.textContent = (it ? (p.nome || p.nome_en) : (p.nome_en || p.nome)) + '  ·  ' + fam;
+      row.onclick = function(){ selectChar(i); };
+      results.appendChild(row);
+    });
+  }
+  function selectChar(i){
+    var p = dati[i];
+    panel.innerHTML = '';
+    var fam = familyOf(p);
+    var curRgb = validCardRgb(p.cardrgb) ? p.cardrgb.replace(/\s/g,'') : familyRgbStr(fam);
+    var name = document.createElement('p');
+    name.style.cssText = 'font-weight:600;margin:0.6rem 0 0.2rem;';
+    name.textContent = it ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
+    var famLine = document.createElement('p');
+    famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
+    var isCustom = validCardRgb(p.cardrgb);
+    famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + fam + (isCustom ? (it ? ' (colore individuale)' : ' (individual colour)') : '');
+    var pickRow = document.createElement('div');
+    pickRow.style.cssText = 'display:flex;align-items:center;gap:0.6rem;margin:0.3rem 0 0.6rem;';
+    var picker = document.createElement('input'); picker.type = 'color'; picker.value = rgbStrToHex(curRgb);
+    picker.style.cssText = 'width:48px;height:34px;border:none;background:none;cursor:pointer;';
+    var swatch = document.createElement('span');
+    swatch.style.cssText = 'font-family:ui-monospace,monospace;font-size:0.8rem;opacity:0.8;';
+    swatch.textContent = rgbStrToHex(curRgb);
+    picker.addEventListener('input', function(){ swatch.textContent = picker.value; });
+    pickRow.appendChild(picker); pickRow.appendChild(swatch);
+
+    var btnApply = document.createElement('button'); btnApply.className = 'fab-modal-confirm';
+    btnApply.textContent = it ? 'Applica (anteprima)' : 'Apply (preview)';
+    btnApply.onclick = function(){ p.cardrgb = hexToRgbStr(picker.value); renderList(); famLine.textContent = (it ? 'Famiglia attuale: custom (colore individuale)' : 'Current family: custom (individual colour)'); showToast(it ? '✓ Anteprima applicata' : '✓ Preview applied', false); };
+
+    var btnRemove = document.createElement('button'); btnRemove.className = 'fab-modal-confirm';
+    btnRemove.textContent = it ? 'Rimuovi colore individuale' : 'Remove individual colour';
+    btnRemove.onclick = function(){ delete p.cardrgb; renderList(); showToast(it ? '✓ Torna alla famiglia' : '✓ Back to family', false); selectChar(i); };
+
+    var btnSave = document.createElement('button'); btnSave.className = 'fab-modal-confirm'; btnSave.style.cssText = 'background:rgba(90,200,110,0.16);';
+    btnSave.textContent = it ? 'Salva sul repo' : 'Save to repo';
+    btnSave.onclick = function(){
+      p.cardrgb = hexToRgbStr(picker.value); renderList();
+      btnSave.disabled = true; btnSave.style.opacity = '0.4';
+      var nm = p.nome || p.nome_en;
+      doCommit('colori: colore individuale di ' + nm).then(function(res){
+        if (res.ok) { showToast(it ? '✓ Colore salvato' : '✓ Colour saved', false); }
+        else { showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true); }
+      }).finally(function(){ btnSave.disabled = false; btnSave.style.opacity = ''; });
+    };
+
+    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(pickRow);
+    panel.appendChild(btnApply);
+    if (isCustom) panel.appendChild(btnRemove);
+    panel.appendChild(btnSave);
+  }
+  search.addEventListener('input', function(){ renderResults(search.value); });
+  setTimeout(function(){ search.focus(); }, 60);
 }
 
 // Click sul badge versione → admin editor
