@@ -1664,6 +1664,10 @@ html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.
 html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+/* Desktop: a riposo sono al 50% (impostato inline da showJumpFabsTemporarily);
+   al passaggio del mouse tornano pieni. !important perché scavalca l'opacità
+   inline. Su mobile è ininfluente (touch, nessun hover; opacità a riposo già piena). */
+.jump-fabs:hover { opacity:1 !important; }
 /* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
    al FAB principale (opacità 0.82). Su mobile diventano solo freccine, vedi la
    media query in fondo. */
@@ -2090,7 +2094,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.05</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.06</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4631,7 +4635,9 @@ function showJumpFabsTemporarily() {
   var atBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 5;
   if (atTop && atBottom) return; // pagina non scorrevole
   jumpFabsWrap._upd();
-  jumpFabsWrap.style.opacity = '1';
+  // Desktop: semitrasparenti (50%) a riposo, discreti; tornano pieni al passaggio
+  // del mouse (regola CSS .jump-fabs:hover). Mobile: piena opacità (solo freccine).
+  jumpFabsWrap.style.opacity = isMobileViewport() ? '1' : '0.5';
   jumpFabsWrap.style.pointerEvents = 'auto';
   // Stadio 1: aspetta 150ms senza eventi scroll (stop inerzia), poi avvia il timer da 3s
   clearTimeout(_jumpScrollEndTimer);
