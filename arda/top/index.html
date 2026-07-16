@@ -2102,7 +2102,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.58</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.59</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2569,7 +2569,14 @@ function ccDerivePair(base) {
     '.modal[class*="cc-"] .modal-rank{color:rgba(var(--ccrgb),1)!important}',
     '.modal[class*="cc-"] .modal-source{color:rgba(var(--ccrgb),1)!important}',
     '.modal[class*="cc-"] .modal-close{border-color:rgba(var(--ccrgb),0.9)!important;color:rgba(var(--ccrgb),1)!important}',
-    '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}'
+    '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}',
+    // Picker colore arrotondati (editor colori): i <input type=color> nativi non
+    // rispettano border-radius sullo swatch interno; qui si stilano i pseudo
+    // vendor. Iniettate via JS così il Nu Checker non si lamenta dei pseudo.
+    '.cc-pick{-webkit-appearance:none;-moz-appearance:none;appearance:none;border:none;padding:0;background:none;cursor:pointer;border-radius:6px;overflow:hidden}',
+    '.cc-pick::-webkit-color-swatch-wrapper{padding:0}',
+    '.cc-pick::-webkit-color-swatch{border:none;border-radius:6px}',
+    '.cc-pick::-moz-color-swatch{border:none;border-radius:6px}'
   ];
   // Terne --ccrgb per famiglia DALLA CONFIG (CARDCOLORS.fam, hex→terna): queste
   // regole, iniettate dopo il <style> statico, lo scavalcano (stessa specificità,
@@ -5927,8 +5934,8 @@ function showColorEditor() {
     name.textContent = it ? (p.nome||p.nome_en) : (p.nome_en||p.nome);
     var famLine = document.createElement('p'); famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
     famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (isCustom ? (it ? ' (colore individuale)' : ' (individual)') : '');
-    var picker = document.createElement('input'); picker.type = 'color'; picker.value = curHex;
-    picker.style.cssText = 'width:48px;height:34px;border:none;background:none;cursor:pointer;vertical-align:middle;border-radius:6px;overflow:hidden;';
+    var picker = document.createElement('input'); picker.type = 'color'; picker.value = curHex; picker.className = 'cc-pick';
+    picker.style.cssText = 'width:48px;height:34px;vertical-align:middle;';
     var swatch = document.createElement('span'); swatch.style.cssText = 'font-family:ui-monospace,monospace;font-size:0.8rem;opacity:0.8;margin-left:0.6rem;';
     swatch.textContent = curHex;
     picker.addEventListener('input', function(){ swatch.textContent = picker.value; });
@@ -5956,25 +5963,30 @@ function showColorEditor() {
     panel.innerHTML = '';
     // 1) Colore per tema
     var h1 = mkH(it ? 'Colore (per tema)' : 'Colour (per theme)');
-    var pd = document.createElement('input'); pd.type = 'color'; pd.value = ccFamHex(fam,'dark'); pd.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;overflow:hidden;';
-    var pl = document.createElement('input'); pl.type = 'color'; pl.value = ccFamHex(fam,'light'); pl.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;overflow:hidden;';
-    // Colore base -> declina automaticamente le due varianti (tiene la tinta).
-    var baseRow = document.createElement('div'); baseRow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.2rem 0 0.4rem;font-size:0.8rem;';
-    var pbase = document.createElement('input'); pbase.type = 'color'; pbase.value = ccFamHex(fam, ccTheme());
-    pbase.style.cssText = 'width:44px;height:32px;border:none;background:none;cursor:pointer;border-radius:6px;overflow:hidden;';
+    function ccMkPick(val){ var p = document.createElement('input'); p.type = 'color'; p.value = val; p.className = 'cc-pick'; p.style.cssText = 'width:44px;height:32px;'; return p; }
+    var pd = ccMkPick(ccFamHex(fam,'dark'));
+    var pl = ccMkPick(ccFamHex(fam,'light'));
+    var pbase = ccMkPick(ccFamHex(fam, ccTheme()));
+    // 'Auto': da un colore base declina le due varianti tema (ccDerivePair).
+    // Alto quanto il rettangolo del colore (32px).
     var bDerive = document.createElement('button'); bDerive.className = 'fab-modal-confirm';
-    bDerive.style.cssText = 'width:auto;padding:0.3rem 0.7rem;font-size:0.8rem;';
-    bDerive.textContent = it ? 'Declina auto ↓' : 'Auto-derive ↓';
+    bDerive.style.cssText = 'width:auto;height:32px;padding:0 0.85rem;font-size:0.8rem;line-height:1;';
+    bDerive.textContent = 'Auto';
     bDerive.onclick = function(){ var pr = ccDerivePair(pbase.value); pd.value = pr.dark; pl.value = pr.light; CARDCOLORS.fam[fam] = { dark: pr.dark, light: pr.light }; reinjectFamilyColors(); showToast(it?'✓ Varianti derivate (rifinibili sotto)':'✓ Variants derived (fine-tune below)', false); };
-    baseRow.appendChild(document.createTextNode(it?'Colore base':'Base colour')); baseRow.appendChild(pbase); baseRow.appendChild(bDerive);
-    var crow = document.createElement('div'); crow.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.2rem 0 0.4rem;font-size:0.8rem;';
-    crow.appendChild(document.createTextNode(it?'Scuro':'Dark')); crow.appendChild(pd);
-    crow.appendChild(document.createTextNode(it?'Chiaro':'Light')); crow.appendChild(pl);
-    // Rete di sicurezza: quadrati con l'ULTIMO colore SALVATO (da CARDCOLORS_SAVED,
-    // non l'anteprima). Un clic ripristina quel canale come corrente, così si può
-    // sperimentare un colore nuovo e tornare indietro con certezza.
+    // Griglia allineata (vedi linee del mockup): colonna etichette a larghezza
+    // fissa (= 'Colore base') così base-picker e Chiaro-picker sono incolonnati;
+    // 3a colonna per Auto (riga1) e Scuro (riga2). Chiaro PRIMA di Scuro.
+    function ccLab(t){ var s = document.createElement('span'); s.textContent = t; return s; }
+    var grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:max-content max-content 1fr;align-items:center;gap:0.5rem 0.7rem;margin:0.2rem 0 0.5rem;font-size:0.8rem;';
+    grid.appendChild(ccLab(it?'Colore base':'Base colour')); grid.appendChild(pbase); grid.appendChild(bDerive);
+    grid.appendChild(ccLab(it?'Chiaro':'Light')); grid.appendChild(pl);
+    var scGroup = document.createElement('div'); scGroup.style.cssText = 'display:flex;align-items:center;gap:0.5rem;';
+    scGroup.appendChild(ccLab(it?'Scuro':'Dark')); scGroup.appendChild(pd); grid.appendChild(scGroup);
+    // Rete di sicurezza: ultimo colore SALVATO (clic per ripristinare), allineato
+    // a DESTRA. 'Salvato' = committato, non l'anteprima.
     var saved = CARDCOLORS_SAVED[fam] || CARDCOLORS.fam[fam] || { dark:'#9098a8', light:'#9098a8' };
-    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;margin:0 0 0.5rem;font-size:0.74rem;opacity:0.85;';
+    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;justify-content:flex-end;gap:0.4rem;flex-wrap:wrap;margin:0 0 0.5rem;font-size:0.74rem;opacity:0.85;';
     srow.appendChild(document.createTextNode(it?'Ultimo salvato (clic per ripristinare):':'Last saved (click to restore):'));
     [['dark', it?'scuro':'dark'], ['light', it?'chiaro':'light']].forEach(function(pair){
       var ch = pair[0];
@@ -6018,7 +6030,7 @@ function showColorEditor() {
       reinjectFamilyColors(); renderList();
       withBtn(btn, saveColorsToRepo('colori: sposta ' + t + ' -> ' + fam + ' (' + moved + ' voci)'));
     }, true);
-    [h1, baseRow, crow, srow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
+    [h1, grid, srow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
   }
   function tipoCount(t){ var n = 0; for (var i = 0; i < dati.length; i++) if (!validCardRgb(dati[i].cardrgb) && stripClassOf(dati[i]) === t) n++; return n; }
 
