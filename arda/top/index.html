@@ -79,7 +79,7 @@ body {
    del body sotto). Ora il colore lo portano le card (cardcolor) e il fondo resta
    piatto. Il gradiente ornato resta SOLO sul titolo `#title`, non sulla pagina. */
 
-header { text-align:center; padding:4rem 1.5rem 3rem; position: relative; }
+header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
 
 .brand-corner {
   position: absolute;
@@ -159,7 +159,7 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
   font-family:'Cinzel Decorative',serif;
   font-size:clamp(0.7rem,2vw,0.85rem);
   letter-spacing:0.45em; color:var(--gold);
-  margin-bottom:1.5rem; text-transform:uppercase;
+  margin-bottom:0.9rem; text-transform:uppercase;
 }
 
 .crest::before,.crest::after { content:'✦'; margin:0 0.8em; color:var(--gold-bright); }
@@ -180,26 +180,26 @@ h1 {
      padding-bottom estende il box di riempimento verso il basso e li copre; il
      margin-bottom è ridotto della stessa quantità così lo spazio sotto non cambia. */
   padding-bottom:0.14em;
-  margin-bottom:calc(1rem - 0.14em);
+  margin-bottom:calc(0.5rem - 0.14em);
 }
 #title a { color:inherit; text-decoration:none; -webkit-text-fill-color:inherit; cursor:pointer; }
 
 .subtitle {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
-  max-width:640px; margin:0 auto 1.5rem; line-height:1.5;
+  max-width:640px; margin:0 auto 0.8rem; line-height:1.5;
   /* Bilancia le due righe così l'ultima parola non resta orfana su una riga
      tutta sua (es. 'Age' / 'Era' a larghezza piena). Vale in entrambe le lingue. */
   text-wrap:balance;
 }
 .subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.69; letter-spacing:0.04em; margin-top:0.15rem; }
 
-.flourish { width:200px; height:30px; margin:1.5rem auto; opacity:0.7; }
+.flourish { width:200px; height:30px; margin:0.7rem auto; opacity:0.7; }
 
 .intro {
-  max-width:580px; margin:2rem auto 0;
-  font-size:0.95rem; color:var(--parchment-dim); line-height:1.7;
-  padding:1.4rem 1.8rem; position:relative;
+  max-width:580px; margin:0.9rem auto 0;
+  font-size:0.95rem; color:var(--parchment-dim); line-height:1.5;
+  padding:0.9rem 1.8rem; position:relative;
 }
 .intro::after {
   content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
@@ -224,7 +224,7 @@ html[data-theme="dark"] .subtitle-note { color:#aeaeae; opacity:1; }
 html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#d3d3d3; }
 html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#bdbdbd; }
 
-.scroll { max-width:920px; margin:3rem auto; padding:0 1rem; }
+.scroll { max-width:920px; margin:1.2rem auto 3rem; padding:0 1rem; }
 
 .rank-item {
   position:relative;
@@ -1572,7 +1572,7 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
 
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
-  .scroll { margin:2rem auto; padding:0 0.6rem; }
+  .scroll { margin:1.2rem auto 2rem; padding:0 0.6rem; }
   .rank-item { padding:1rem 0.8rem 1rem 0.3rem; gap:0.7rem; }
   /* Riga nome (mobile): FLUSSO INLINE, non flex. Regola: le etichette non
      vanno mai a capo forzato; proseguono sulla stessa riga di testo dopo
@@ -1669,15 +1669,13 @@ html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.
 html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
-/* Desktop: a riposo sono al 50% (impostato inline da showJumpFabsTemporarily);
-   al passaggio del mouse tornano pieni. !important perché scavalca l'opacità
-   inline. Su mobile è ininfluente (touch, nessun hover; opacità a riposo già piena). */
-.jump-fabs:hover { opacity:1 !important; }
 /* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
-   al FAB principale (opacità 0.82). Su mobile diventano solo freccine, vedi la
-   media query in fondo. */
-.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:filter 0.15s,background 0.15s; }
-.jump-fab:hover { filter:brightness(1.1); }
+   al FAB principale (opacità 0.82). L'opacità di riposo 0.5 sta sul SINGOLO
+   tasto (non sul contenitore), così l'hover illumina solo il tasto sotto il
+   puntatore; su mobile diventano solo freccine a piena opacità (media query in
+   fondo). Il contenitore gestisce solo il fade di comparsa (opacity 0->1). */
+.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0.5;transition:filter 0.15s,background 0.15s,opacity 0.15s; }
+.jump-fab:hover { filter:brightness(1.1); opacity:1; }
 .jump-fab svg { width:1.05rem;height:1.05rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 /* Padding destro quando le maniglie di trascinamento sono visibili */
 #rank-list.has-handles .rank-content { padding-right:2.6rem; }
@@ -1697,7 +1695,7 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
      del bordo destro come il cluster admin, parte a ~2/3 della viewport
      dall'alto e resta sopra il FAB principale; piccoli, distanziati, discreti */
   .jump-fabs { right:0.75rem; bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
-  .jump-fab { width:1.65rem; height:1.65rem; }
+  .jump-fab { width:1.65rem; height:1.65rem; opacity:1; }
   .jump-fab svg { width:0.85rem; height:0.85rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
@@ -2104,7 +2102,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.48</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.58</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2117,7 +2115,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
     <circle cx="140" cy="18" r="1.5" fill="#8b8b8b"/>
   </svg>
   <div class="intro" id="intro">
-    Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class="intro-cta">Tocca o clicca un nome per leggere la scheda completa.</span>
+    Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.
   </div>
 </header>
 
@@ -2237,7 +2235,7 @@ var i18n = {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Arda',
     subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
-    intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.<span class='intro-cta'>Tocca o clicca un nome per leggere la scheda completa.</span>",
+    intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.",
     footer: "<em>Non tutto quel ch'è oro brilla, né gli erranti sono perduti.</em><br>Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
     tgLink: 'Voce su Tolkien Gateway'
@@ -2246,7 +2244,7 @@ var i18n = {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Arda',
     subtitle: 'The mightiest beings* in Tolkien\'s world, from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
-    intro: "From the semi-divine powers to the humblest of servants. In Arda power takes many forms: it may be mastery of magic, skill in combat, political or military power, resistance to the seduction of darkness, the ability to shape the fate of the world.<span class='intro-cta'>Tap or click a name to read the full entry.</span>",
+    intro: "From the semi-divine powers to the humblest of servants. In Arda power takes many forms: it may be mastery of magic, skill in combat, political or military power, resistance to the seduction of darkness, the ability to shape the fate of the world.",
     footer: "<em>Not all that glitters is gold, nor all who wander are lost.</em><br>Power in Arda does not always wear a crown.",
     position: 'Position',
     tgLink: 'Entry on Tolkien Gateway'
@@ -4768,9 +4766,10 @@ function showJumpFabsTemporarily() {
   var atBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 5;
   if (atTop && atBottom) return; // pagina non scorrevole
   jumpFabsWrap._upd();
-  // Desktop: semitrasparenti (50%) a riposo, discreti; tornano pieni al passaggio
-  // del mouse (regola CSS .jump-fabs:hover). Mobile: piena opacità (solo freccine).
-  jumpFabsWrap.style.opacity = isMobileViewport() ? '1' : '0.5';
+  // Il contenitore fa solo il fade (0->1); l'opacità di riposo 0.5 (desktop) e
+  // l'hover a piena opacità vivono sul singolo .jump-fab (CSS), così l'hover
+  // illumina un tasto per volta. Mobile: tasti già a piena opacità.
+  jumpFabsWrap.style.opacity = '1';
   jumpFabsWrap.style.pointerEvents = 'auto';
   // Stadio 1: aspetta 150ms senza eventi scroll (stop inerzia), poi avvia il timer da 3s
   clearTimeout(_jumpScrollEndTimer);

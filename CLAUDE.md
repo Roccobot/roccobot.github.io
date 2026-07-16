@@ -1389,6 +1389,12 @@ specifico del dataset):
   `.jump-fab` apposta (stessa specificità, sorgente più in basso → vince senza
   `!important`). Storico: fino alla v8.94 i tasti erano grigi neutri identici su
   desktop e mobile.
+  - **Opacità di riposo 50% e hover PER-TASTO (dalla v9.58).** Su desktop
+    l'opacità di riposo 0.5 e l'hover a piena opacità (`.jump-fab`/`.jump-fab:hover`)
+    stanno sul **singolo tasto**, NON sul contenitore: così l'hover illumina solo
+    il tasto sotto il puntatore (prima `.jump-fabs:hover` accendeva entrambi). Il
+    contenitore `.jump-fabs` gestisce solo il fade di comparsa (opacity 0→1, messo
+    a 1 da `showJumpFabsTemporarily`); su mobile i tasti restano a piena opacità.
 - **Scorrimento di pagina — NON è più un flag (dalla v4.97).** La funzione
   condivisa `pageScrollTo(target, smooth)` ha due modi **fissi**, uno per tipo
   di comando (scelta dell'utente):
