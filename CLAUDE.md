@@ -388,29 +388,42 @@ gruppo = cambiare una terna.
     esistente si edita direttamente il suo `cardcolor` (l'editor admin conserva
     il campo come ogni altra chiave; il Worker pure).
   - **Colore INDIVIDUALE per voce + famiglia `custom` (Modifica mirata, dalla
-    v9.17, Fase 1).** Campo dati **`p.cardrgb`** = terna **`"R,G,B"`** (0-255):
-    è un colore su misura per la singola voce, che **vince su tutto** in
-    `familyOf` (prima di `cardrgb`... anzi prima di `cardcolor`/derivazione) e
-    mette la voce nella famiglia speciale **`custom`**. La `custom` **conta** le
-    voci ma è **isolata dal batch** (ogni voce tiene la propria terna: NON si
-    ricolora a gruppo). Resa: `renderList` aggiunge la classe `cc-custom` e la
-    terna **inline** `style="--ccrgb:R,G,B"` sulla card (scavalca la `--ccrgb`
-    della classe; card e striscia la ereditano). `.cc-custom` nel CSS statico è
-    solo un fallback neutro. **Scheda:** per le voci `custom` `openModal` usa
-    l'accento neutro **`generic`** (un colore arbitrario non è garantito AA-safe
-    sui testi della modale; sulla card sfondo/striscia a bassa opacità è sempre
-    sicuro). Helper `validCardRgb`. Salvataggio via `doCommit` (il Worker
-    preserva `cardrgb` e bumpa la versione).
+    v9.17, Fase 1).** Campo dati **`p.cardrgb`**: colore su misura per la singola
+    voce, che **vince su tutto** in `familyOf` (prima di `cardcolor`/derivazione)
+    e mette la voce nella famiglia speciale **`custom`**. La `custom` **conta** le
+    voci ma è **isolata dal batch** (ogni voce tiene il proprio colore: NON si
+    ricolora a gruppo). **Formato PER-TEMA (dalla v9.73):** `p.cardrgb` è un
+    **oggetto `{dark:"#hex", light:"#hex"}`** (due colori, uno per tema); una
+    **stringa singola** (`"#hex"` o legacy `"R,G,B"`) resta accettata e vale come
+    *stesso colore nei due temi*. L'helper **`customPair(p)`** normalizza entrambe
+    le forme in `{dark, light}` (terne `R,G,B`), o `null` se non c'è colore
+    valido; un lato mancante ripiega sull'altro. `validCardRgb(s)` resta per le
+    stringhe, ma i punti che contano (`familyOf`, `renderList`, 'Sposta per
+    tipo', conteggi) usano `customPair`. Resa: `renderList` aggiunge la classe
+    `cc-custom` e le **due terne inline** `style="--ccdark:R,G,B;--cclight:R,G,B"`
+    sulla card; le regole **iniettate** `.cc-custom{--ccrgb:var(--ccdark,…)}` +
+    `html[data-theme="light"] .cc-custom{--ccrgb:var(--cclight,…)}` mappano
+    `--ccrgb` sulla terna del tema (card e striscia la ereditano). `.cc-custom`
+    nel CSS statico è solo un fallback neutro. **Scheda:** per le voci `custom`
+    `openModal` usa l'accento neutro **`generic`** (un colore arbitrario non è
+    garantito AA-safe sui testi della modale; sulla card sfondo/striscia a bassa
+    opacità è sempre sicuro). Salvataggio via `saveColorsToRepo` (`keepVersion`:
+    NON bumpa la versione, come gli altri salvataggi colore; il Worker serializza
+    `cardrgb` oggetto come JSON, round-trip pulito).
   - **Bivio admin + editor colori (dalla v9.17).** Il tap sulla versione (badge,
     `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON va più dritto all'editor:
     `openAdminGate` apre `showAdminChoiceModal` (bivio **Modifica personaggi** →
     `showAdminEditor` esistente / **Modifica colori** → `showColorEditor`). La
-    **Fase 1** di `showColorEditor` è la **Modifica mirata**: ricerca per nome →
-    selezione → `<input type=color>` pre-compilato col colore attuale
-    (`familyRgbStr` legge la `--ccrgb` della famiglia dal CSS, o `p.cardrgb` se
-    custom) → Applica (anteprima: setta `cardrgb` + `renderList`) / Rimuovi
-    colore individuale / Salva sul repo. Dalla v9.27 `showColorEditor` ha **due
-    modalità** (tab): **Mirata** (sopra) e **Famiglie** (Fase 2, vedi sotto).
+    la **Modifica mirata** (tab **'Personaggio'**) di `showColorEditor`: ricerca
+    per nome → selezione → **due `<input type=color>` Chiaro/Scuro** pre-compilati
+    (dal `p.cardrgb` se già custom, altrimenti dai colori della famiglia attuale
+    nei due temi) + tasto **'Auto'** che da un colore **Base** declina le due
+    varianti tema (`ccDerivePair`, come la scheda Famiglie) → Applica (anteprima:
+    setta `cardrgb={dark,light}` + `renderList`) / Rimuovi colore individuale /
+    Salva sul repo. Storico: fino alla v9.72 la Mirata aveva **un solo** picker
+    (colore unico nei due temi, semplificazione di Fase 1); il per-tema + Auto
+    sono della v9.73. Dalla v9.27 `showColorEditor` ha **due modalità** (tab):
+    **Personaggio** e **Famiglie** (Fase 2, vedi sotto).
   - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
     colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
     famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
