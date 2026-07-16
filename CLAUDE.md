@@ -65,6 +65,14 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   livello di progetto in `.claude/settings.json` (`"model": "opus"`).
   Non usare Sonnet o Haiku.
 
+## 🖼️ Artefatti
+
+- **Generazione di artefatti sempre autorizzata (istruzione durevole
+  dell'utente, 2026-07-16).** Quando un confronto visivo (mockup, schema,
+  proposta di UI, ecc.) è utile, generare l'artefatto **senza chiedere
+  conferma**: è pre-autorizzato. Restano privati finché l'utente non li
+  condivide.
+
 ## 🌿 Branch, allineamento e push
 
 - **Branch principale: `master`.** Si lavora e si pusha direttamente lì,
@@ -518,6 +526,20 @@ gruppo = cambiare una terna.
 - **Titolone `#title`.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
   e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.
+  - **Ombra in tema chiaro = variante 'C doppia profondità' (dalla v9.05).**
+    L'equivalente 'in chiaro' del bagliore scuro: `text-shadow: 0 1px 1px
+    rgba(0,0,0,.20), 0 4px 10px rgba(0,0,0,.15), 0 0 26px rgba(90,90,90,.10)`
+    (ombra ravvicinata + profondità morbida + alone grigio tenue). Sostituisce
+    l'ombra più piatta della v8.81 (`0 1px 2px .16, 0 0 20px .07`), su scelta
+    dell'utente dopo un mockup di confronto.
+  - **Fix 'glifi tagliati in basso' (dalla v9.05).** Con `background-clip:text` il
+    gradiente riempie il testo solo entro il **box di riga**; con `line-height:0.95`
+    gli **svolazzi bassi di Cinzel Decorative** (code di G/R/A) uscivano dal box e
+    restavano trasparenti (parevano 'tagliati', in **entrambi** i temi). Fix sul
+    selettore base `h1`: `padding-bottom:0.14em` estende il box di riempimento
+    verso il basso e li copre, con `margin-bottom:calc(1rem - 0.14em)` a
+    compensare (spazio sotto invariato). Il bug è specifico del **font reale**
+    (Cinzel Decorative): coi fallback serif non si riproduce.
 - **Accento cardcolor sulla SCHEDA personaggio (dalla v8.77).** La `.modal` della
   scheda eredita la famiglia della card: `openModal` le assegna `cc-<fam>` (via
   la funzione pura **`familyOf(p)`**, stessa logica di `renderList`). Da lì

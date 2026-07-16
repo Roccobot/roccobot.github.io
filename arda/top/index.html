@@ -174,7 +174,13 @@ h1 {
   text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
   background:linear-gradient(180deg,var(--parchment) 0%,var(--gold) 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-  margin-bottom:1rem;
+  /* Con background-clip:text il gradiente riempie il testo solo entro il box di
+     riga; con line-height:0.95 gli svolazzi bassi di Cinzel Decorative (code di
+     G/R/A) uscivano dal box e restavano trasparenti (parevano 'tagliati'). Un
+     padding-bottom estende il box di riempimento verso il basso e li copre; il
+     margin-bottom è ridotto della stessa quantità così lo spazio sotto non cambia. */
+  padding-bottom:0.14em;
+  margin-bottom:calc(1rem - 0.14em);
 }
 #title a { color:inherit; text-decoration:none; -webkit-text-fill-color:inherit; cursor:pointer; }
 
@@ -1736,9 +1742,10 @@ html[data-theme="light"] h1 {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* Ombreggiatura leggera e neutra (dalla v8.81): equivalente 'in chiaro' del
-       glow scuro, come drop-shadow morbida grigia (non blu). */
-    text-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 0 20px rgba(0,0,0,0.07);
+    /* Ombra 'doppia profondità' (variante C, dalla v9.05): equivalente 'in chiaro'
+       del bagliore scuro — ombra ravvicinata + profondità morbida + alone grigio
+       tenue. Leggera e discreta, ma con più stacco della v8.81. */
+    text-shadow: 0 1px 1px rgba(0,0,0,0.20), 0 4px 10px rgba(0,0,0,0.15), 0 0 26px rgba(90,90,90,0.10);
   }
 /* Accento verso il FAB anche in tema CHIARO (dalla v8.82): qui il FAB è teal
    (#1f5562), quindi gli accenti virano al FREDDO (teal-slate #445d64). Virando
@@ -2083,7 +2090,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.04</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.05</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
