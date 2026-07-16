@@ -444,6 +444,16 @@ gruppo = cambiare una terna.
       bordi/testi; un colore famiglia molto chiaro può non essere AA-safe sui
       testi della modale in tema chiaro (resta il ripiego a gold per le famiglie
       note; per nomi/colori nuovi la gestione AA fine è ancora manuale).
+    - **Derivazione automatica delle varianti tema (dalla v9.48).** Nel tab
+      Famiglie, sopra ai picker manuali, un controllo **'Colore base → Declina
+      auto'**: da UN colore scelto, `ccDerivePair` tiene la **tinta** (HSL) e
+      genera la variante **scura** (L=0.62, pop su fondo scuro) e la **chiara**
+      (L=0.42, sat +5%, contrasto su fondo chiaro), riempiendo i due picker
+      scuro/chiaro + anteprima; poi si rifinisce a mano e si salva. Helper
+      `ccHexToHsl`/`ccHslToHex`. Sfondo card e striscia restano sempre AA-safe
+      (bassa opacità); il **testo della scheda** per tinte non-AA in chiaro
+      continua a ripiegare a oro (gestione statica come oggi: l'AA dinamico della
+      scheda per famiglie nuove/rinominate resta il limite noto da chiudere).
     - **Rete di sicurezza 'ultimo colore salvato' (dalla v9.37).** Snapshot
       globale **`CARDCOLORS_SAVED`** (copia profonda di `CARDCOLORS.fam` al load,
       risincronizzata dopo ogni salvataggio colore riuscito). Nel tab Famiglie,
