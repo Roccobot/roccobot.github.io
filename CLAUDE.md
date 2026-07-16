@@ -439,10 +439,9 @@ gruppo = cambiare una terna.
       (scegli un `tipo-*` → `CARDCOLORS.map[tipo]=fam` e riassegna `cardcolor`
       alle voci con `stripClassOf(p)===tipo` non-custom). `stripClassOf(p)` è
       estratta da `familyOf`. Ogni operazione salva con `saveColorsToRepo` (dati
-      + `cardColors`). ⚠️ Limite noto: la **scheda** usa il colore famiglia per
-      bordi/testi; un colore famiglia molto chiaro può non essere AA-safe sui
-      testi della modale in tema chiaro (resta il ripiego a gold per le famiglie
-      note; per nomi/colori nuovi la gestione AA fine è ancora manuale).
+      + `cardColors`). L'AA della **scheda** per i testi è ora **dinamico** (vedi
+      `--cctext`, dalla v9.62): qualunque colore famiglia (anche nuovo/rinominato)
+      resta leggibile senza gestione manuale.
     - **Derivazione automatica delle varianti tema (dalla v9.48).** Nel tab
       Famiglie, sopra ai picker manuali, un controllo **'Colore base → Declina
       auto'**: da UN colore scelto, `ccDerivePair` tiene la **tinta** (HSL) e
@@ -450,9 +449,20 @@ gruppo = cambiare una terna.
       (L=0.42, sat +5%, contrasto su fondo chiaro), riempiendo i due picker
       scuro/chiaro + anteprima; poi si rifinisce a mano e si salva. Helper
       `ccHexToHsl`/`ccHslToHex`. Sfondo card e striscia restano sempre AA-safe
-      (bassa opacità); il **testo della scheda** per tinte non-AA in chiaro
-      continua a ripiegare a oro (gestione statica come oggi: l'AA dinamico della
-      scheda per famiglie nuove/rinominate resta il limite noto da chiudere).
+      (bassa opacità); il **testo della scheda** è reso AA in automatico dal
+      meccanismo `--cctext` (v9.62, vedi sotto).
+    - **AA dinamico del testo scheda (`--cctext`, dalla v9.62).** Chiude il
+      vecchio 'limite noto' della lista-oro statica. All'apertura della scheda,
+      `openModal` calcola un **colore-testo AA** per rank/source/chiudi:
+      `ccAaText(coloreFamiglia, fondoModale, 4.5)` tiene la **tinta** e ne
+      aggiusta la luminosità (scurisce su fondo chiaro `#eeeef4`, schiarisce su
+      scuro `#0a0f20`) finché il contrasto raggiunge 4.5:1; se il colore è già AA
+      resta invariato. Il risultato (terna) va nella property inline **`--cctext`**
+      sulla `.modal`; le regole testo usano `rgba(var(--cctext,var(--ccrgb)),1)`,
+      i **bordi** restano su `--ccrgb` (decorativi). Helper `ccRelLum`/`ccContrast`.
+      Vale per ogni famiglia (anche nuova/rinominata) in **entrambi** i temi; la
+      vecchia regola statica `:not(.cc-...)` che ripiegava a oro è stata **rimossa**.
+      Verificato axe: 0 violazioni di contrasto su tutte le famiglie, chiaro e scuro.
     - **Rete di sicurezza 'ultimo colore salvato' (dalla v9.37).** Snapshot
       globale **`CARDCOLORS_SAVED`** (copia profonda di `CARDCOLORS.fam` al load,
       risincronizzata dopo ogni salvataggio colore riuscito). Nel tab Famiglie,
@@ -634,18 +644,19 @@ gruppo = cambiare una terna.
     bordo `.modal`, doppio bordo `::before`, filetto `.modal-source`
     (`border-bottom`), bordo sinistro `.modal-quote`.
   - **TESTI/ICONE (`.modal-rank` 'POSIZIONE', testo `.modal-source`, tasto
-    `.modal-close`): col colore famiglia solo dove regge l'AA.** In tema **scuro**
-    tutte le famiglie passano 4.5:1 (fondo modale quasi nero) → accento pieno.
-    In tema **chiaro** solo le famiglie con luminanza bassa reggono: **`noldo`,
-    `demon`, `vala`, `orc`, `half-elf`** (i nomi aggiornati al ri-raggruppamento
-    v8.83; `demon` = ex-numenorean); le altre (`sinda, maia, rohir, other, highmen,
-    westmen, beast, generic`) **ripiegano a gold** sul testo (override statico
-    `html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(...)`),
-    tenendo però i bordi col colore famiglia. Nome (`.modal-name`) e bottone TG
+    `.modal-close`): colore famiglia reso AA in automatico (dalla v9.62).** Non
+    più una lista fissa: `openModal` calcola `--cctext` = `ccAaText(colore
+    famiglia, fondo modale, 4.5)`: tiene la **tinta** e la scurisce (chiaro) o
+    schiarisce (scuro) finché regge 4.5:1, o la lascia com'è se già AA. I testi
+    usano `rgba(var(--cctext,var(--ccrgb)),1)`; i bordi restano `--ccrgb`. Vale per
+    ogni famiglia (anche nuova/rinominata), entrambi i temi. Storico: fino alla
+    v9.61 le famiglie non-AA in chiaro (`sinda, maia, rohir, other, highmen,
+    westmen, beast, generic`) ripiegavano a **gold** via un override statico
+    `:not(.cc-...)`, ora **rimosso**. Nome (`.modal-name`) e bottone TG
     (`.modal-tg`) restano invariati.
-  - ⚠️ Le regole `rgba(var(--ccrgb),…)` della scheda sono **iniettate via JS**
-    (`injectCardColorRules`) come le altre cardcolor (limite Nu su `var()` in
-    `rgba()`); i ripieghi a gold in chiaro sono colori pieni nel CSS statico.
+  - ⚠️ Le regole `rgba(var(--ccrgb),…)`/`rgba(var(--cctext),…)` della scheda sono
+    **iniettate via JS** (`injectCardColorRules`) come le altre cardcolor (limite
+    Nu su `var()` in `rgba()`); `--cctext` è impostata inline da `openModal`.
     Verificato con axe (schede aperte, famiglie safe e non): 0 violazioni in
     entrambi i temi.
 

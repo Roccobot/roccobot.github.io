@@ -1859,15 +1859,12 @@ html[data-theme="light"] .modal-quote {
     background: rgba(180,200,230,0.18);
     font-weight: 500;
   }
-/* Accento cardcolor scheda (dalla v8.77): in tema CHIARO le famiglie NON
-   AA-safe per il testo (tutte TRANNE noldo/numenorean/vala/orc/half-elf, le sole
-   con luminanza abbastanza bassa da reggere 4.5:1 su fondo chiaro) ripiegano a
-   gold su rank/source/chiudi. I BORDI restano col colore famiglia (decorativi,
-   non testo). In tema scuro tutte le famiglie sono AA-safe: nessun ripiego.
-   Le regole col colore famiglia sono iniettate via JS (injectCardColorRules). */
-html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-rank { color:#3a5878!important; }
-html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-source { color:#253d58!important; }
-html[data-theme="light"] .modal[class*="cc-"]:not(.cc-noldo):not(.cc-demon):not(.cc-vala):not(.cc-orc):not(.cc-half-elf) .modal-close { color:#253d58!important; border-color:#4a7090!important; }
+/* Accento cardcolor scheda: i TESTI (rank/source/chiudi) usano --cctext, il
+   colore-testo AA calcolato a runtime in openModal (dalla v9.62): tiene la tinta
+   della famiglia e la rende contrastata sul fondo modale, o resta il colore
+   stesso se già AA. I BORDI restano col colore famiglia (--ccrgb, decorativi).
+   Sostituisce la vecchia lista-oro statica :not(...) (rimossa): ora vale per
+   ogni famiglia, anche nuova o rinominata, in entrambi i temi. */
 
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
 html[data-theme="light"] footer p { color: #2e2e2e; font-weight: 500; }
@@ -2098,7 +2095,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.61</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.62</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2540,6 +2537,31 @@ function ccDerivePair(base) {
   var a = ccHexToHsl(base);
   return { dark: ccHslToHex(a[0], Math.min(1,a[1]), 0.62), light: ccHslToHex(a[0], Math.min(1,a[1]*1.05), 0.42) };
 }
+// Luminanza relativa WCAG + rapporto di contrasto tra due hex.
+function ccRelLum(hex) {
+  var h = String(hex||'').replace('#',''); if (h.length!==6) return 0;
+  function ch(v){ v/=255; return v<=0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055,2.4); }
+  return 0.2126*ch(parseInt(h.substr(0,2),16)) + 0.7152*ch(parseInt(h.substr(2,2),16)) + 0.0722*ch(parseInt(h.substr(4,2),16));
+}
+function ccContrast(a, b) { var la=ccRelLum(a), lb=ccRelLum(b), hi=Math.max(la,lb), lo=Math.min(la,lb); return (hi+0.05)/(lo+0.05); }
+// Colore-testo AA per la SCHEDA (dalla v9.62): tiene la TINTA del colore famiglia
+// e ne aggiusta la luminosità (scurisce su fondo chiaro / schiarisce su fondo
+// scuro) finché il contrasto sul fondo modale raggiunge `target` (4.5:1). Se il
+// colore è già AA lo restituisce invariato. Sostituisce la lista-oro statica:
+// vale per ogni famiglia, anche nuova o rinominata.
+function ccAaText(fg, bg, target) {
+  target = target || 4.5;
+  if (ccContrast(fg, bg) >= target) return fg;
+  var hsl = ccHexToHsl(fg), dir = ccRelLum(bg) > 0.5 ? -1 : 1, l = hsl[2];
+  for (var i = 0; i < 100; i++) {
+    l += dir * 0.01;
+    if (l < 0) l = 0; if (l > 1) l = 1;
+    var c = ccHslToHex(hsl[0], hsl[1], l);
+    if (ccContrast(c, bg) >= target) return c;
+    if (l <= 0 || l >= 1) break;
+  }
+  return ccRelLum(bg) > 0.5 ? '#000000' : '#ffffff';
+}
 
 // Regole cardcolor iniettate via JS: usano rgba(var(--ccrgb),alpha), che il Nu
 // Html Checker non sa parsare (falso errore); iniettandole si tengono fuori dal
@@ -2562,9 +2584,9 @@ function ccDerivePair(base) {
     '.modal[class*="cc-"]::before{border-color:rgba(var(--ccrgb),0.34)!important}',
     '.modal[class*="cc-"] .modal-source{border-bottom-color:rgba(var(--ccrgb),0.32)!important}',
     '.modal[class*="cc-"] .modal-quote{border-left-color:rgba(var(--ccrgb),0.85)!important}',
-    '.modal[class*="cc-"] .modal-rank{color:rgba(var(--ccrgb),1)!important}',
-    '.modal[class*="cc-"] .modal-source{color:rgba(var(--ccrgb),1)!important}',
-    '.modal[class*="cc-"] .modal-close{border-color:rgba(var(--ccrgb),0.9)!important;color:rgba(var(--ccrgb),1)!important}',
+    '.modal[class*="cc-"] .modal-rank{color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
+    '.modal[class*="cc-"] .modal-source{color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
+    '.modal[class*="cc-"] .modal-close{border-color:rgba(var(--ccrgb),0.9)!important;color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
     '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}',
     // Picker colore arrotondati (editor colori): i <input type=color> nativi non
     // rispettano border-radius sullo swatch interno; qui si stilano i pseudo
@@ -3282,7 +3304,17 @@ function openModal(idx, instant) {
   // Le voci 'custom' (colore individuale) usano l'accento neutro 'generic' sulla
   // scheda: un colore arbitrario non e' garantito AA-safe sui testi della modale,
   // mentre sulla card (sfondo/striscia a bassa opacita') e' sempre sicuro.
-  if (modalEl) { var mf = familyOf(p); if (mf === 'custom') mf = 'generic'; modalEl.className = 'modal cc-' + mf; }
+  if (modalEl) {
+    var mf = familyOf(p); if (mf === 'custom') mf = 'generic'; modalEl.className = 'modal cc-' + mf;
+    // Colore-testo AA (v9.62): tinta della famiglia, resa contrastata sul fondo
+    // modale del tema. I BORDI restano col colore famiglia (--ccrgb); i TESTI
+    // (rank/source/close) usano --cctext = versione AA-safe (o il colore stesso
+    // se già a contrasto). Rimpiazza la vecchia lista-oro statica.
+    var _th = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    var _famHex = (CARDCOLORS.fam[mf] && CARDCOLORS.fam[mf][_th]) ? CARDCOLORS.fam[mf][_th] : '#9098a8';
+    var _bg = _th === 'light' ? '#eeeef4' : '#0a0f20';
+    modalEl.style.setProperty('--cctext', ccHexToTriplet(ccAaText(_famHex, _bg, 4.5)));
+  }
   var nome = lang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
   var fonte = lang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
   var info = lang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || '');
