@@ -2057,7 +2057,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v8.83</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v8.84</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2384,8 +2384,12 @@ function tipoClass(tipo) {
   if (t.includes('minya')) return 'tipo-vanyar'; // Minyar (Imin): ramo vanyar
   if (t.includes('tatya')) return 'tipo-noldor'; // Tatyar (Tata): ramo noldor
   if (t.includes('nelya')) return 'tipo-teleri'; // Nelyar (Enel): ramo teleri
-  if ((t.includes('mezzelf') || t.includes('half-elf')) && (t.includes('dúnadan') || t.includes('dunadan'))) return 'tipo-dunadan';
-  if (t.includes('mezzelf') || t.includes('half-elf')) return 'tipo-mezzelfo';
+  if ((t.includes('mezzelf') || t.includes('half-el')) && (t.includes('dúnadan') || t.includes('dunadan'))) return 'tipo-dunadan';
+  // 'half-el' copre sia 'half-elf' sia 'half-elven'/'half-elves' (la resa EN
+  // dei Peredhil non è uniforme: Elladan/Elrohir/Arwen usano 'Half-elven', che
+  // NON contiene 'half-elf' per via della 'v'). Così tutti e 7 i Mezzelfi
+  // ottengono 'tipo-mezzelfo' -> famiglia 'half-elf' in ENTRAMBE le lingue.
+  if (t.includes('mezzelf') || t.includes('half-el')) return 'tipo-mezzelfo';
   if (t.includes('maia')) return 'tipo-maia';
   if (t.includes('númenóreano') || t.includes('númenórean') || t.includes('numenorean')) return 'tipo-numenorean';
   if (t.includes('hador')) return 'tipo-hador';
@@ -2698,7 +2702,7 @@ function categoria(p) {
   if (/nano|nana|nanerott|dwarf/.test(t)) return 'dwarf'; // 'nana' = nana (es. Dís); 'nanerott' = Nanerottoli (Petty-dwarves, es. Mîm)
   if (/drúed|drued/.test(t)) return 'man'; // Drúedain ≠ Edain
   if (p.nome === 'Elros' || p.nome === 'Dior') return 'adan'; // Dior: mortale, tra gli Edain (colore Teleri = eredità di Doriath, scelta editoriale)
-  if (/elfo|elfa|mezzelf|half-elf/.test(t)) return 'elf';
+  if (/elfo|elfa|mezzelf|half-el/.test(t)) return 'elf';
   if (/númen|numen|dúnad|dunad|dúned|duned|hador|bëor|casa di beor|haleth|gondor/.test(t)) return 'adan'; // Gondoriani = stirpe edain/dúnedain
   if (/uomo|man |donna|woman|rohir|beorn|dale|éothéod|eothéod/.test(t)) return 'man';
   if (/cavallo|pony|corvo|mearas|raven|horse|cane|dog|hound|segugio/.test(t)) return 'animal';
