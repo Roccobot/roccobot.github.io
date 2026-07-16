@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-07-09
+! Last updated: 2026-07-16
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -27,6 +27,7 @@
 @@||blizzard.com^$important
 @@||bonusx.it^$important
 @@||bonusx.it^$document,important
+@@||captcha-delivery.com^$important
 @@||cardinalcommerce.com^$important
 @@||cardinalcommerce.com^$document,subdocument,important
 @@||cdn.cookielaw.org^$important
@@ -45,6 +46,7 @@
 @@||curve.com^$important
 @@||curve.com^$document,important
 @@||cutsy.net^$important
+@@||datadome.co^$important
 @@||deezer.com^$document,subdocument,important
 @@||developer.apple.com^$important
 @@||digicert.com^$important
