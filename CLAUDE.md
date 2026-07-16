@@ -376,7 +376,11 @@ gruppo = cambiare una terna.
   3 famiglie e creata `westmen`. Le **13** famiglie e i loro membri (`.tipo-*`):
   - **`noldo`**: noldor.
   - **`half-elf`** (dalla v8.75): mezzelfo (7 Peredhil). Petrolio-cyan (light
-    `#1E5462` = 30,84,98; dark 58,160,186).
+    `#1E5462` = 30,84,98; dark 58,160,186). ⚠️ `tipoClass` matcha **`half-el`**
+    (non `half-elf`): la resa EN dei Peredhil non è uniforme (Elladan/Elrohir/Arwen
+    usano `Half-elven`, che NON contiene `half-elf` per via della `v`); col prefisso
+    `half-el` tutti e 7 restano `half-elf` in **entrambe le lingue** (fix v8.84,
+    prima in EN i 3 cadevano su `noldo`/`highmen` dalla 2ª etichetta).
   - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
   - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
   - **`rohir`**: rohirrim, uominicomuni, eotheod.
