@@ -526,6 +526,12 @@ gruppo = cambiare una terna.
 - **Titolone `#title`.** Il gradiente ornato della testata
   (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
   e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.
+  - **Fill teal chiaro in tema chiaro (dalla v9.07).** Il gradiente del titolo in
+    chiaro è passato dal charcoal quasi nero (`#141414→#565656`) a un **teal chiaro
+    e tenue** in famiglia col FAB: `linear-gradient(180deg,#34707f,#66909a)`. Il
+    **fondo** (`#66909a`) è il punto più chiaro: contrasto **3.20:1** su `#F5F5F5`,
+    sopra la soglia AA per il testo grande (3:1). ⚠️ Non schiarire oltre il fondo o
+    il titolo scende sotto soglia. Solo il tema chiaro; lo scuro resta grigio/argento.
   - **Ombra in tema chiaro = variante 'C doppia profondità' (dalla v9.05).**
     L'equivalente 'in chiaro' del bagliore scuro: `text-shadow: 0 1px 1px
     rgba(0,0,0,.20), 0 4px 10px rgba(0,0,0,.15), 0 0 26px rgba(90,90,90,.10)`
