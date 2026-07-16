@@ -1268,6 +1268,19 @@ specifico del dataset):
   (`ISTARI_ICON`, Gandalf grigio+bianco ecc.) restano sempre. Vedi 'Badge
   Istari'. Storia: 5-icone in legenda dalla v7.23 (con una lunga saga di
   spaziatura), riportata a icona singola in v7.30 (era nata come flag).
+- **`jumpMobileCircle`** (spento, dalla v9.04): il **tondo** dei tasti salto
+  pagina (`.jump-fab`) su **mobile**. Spento = su mobile restano **solo le
+  freccine** (sfondo/bordo trasparenti, glifo con leggera `drop-shadow` per la
+  leggibilità), più discrete. A `true` aggiunge la classe `html.jump-mobile-circle`
+  che ripristina il **cerchio velato (versione B)** su mobile (sfondo grigio a
+  bassissima opacità + `backdrop-filter`), utile se le sole freccine non fossero
+  abbastanza usabili. Riguarda **solo mobile**. Su **desktop** i tasti hanno
+  sempre il tondo **in tinta col FAB** (versione A: oro su scuro `rgba(210,178,92,0.82)`,
+  teal su chiaro `rgba(31,85,98,0.9)`, `backdrop-filter:blur`, glifo `#3a2808`/bianco;
+  hover `brightness`). Il blocco CSS mobile sta **dopo** l'override chiaro del
+  `.jump-fab` apposta (stessa specificità, sorgente più in basso → vince senza
+  `!important`). Storico: fino alla v8.94 i tasti erano grigi neutri identici su
+  desktop e mobile.
 - **Scorrimento di pagina — NON è più un flag (dalla v4.97).** La funzione
   condivisa `pageScrollTo(target, smooth)` ha due modi **fissi**, uno per tipo
   di comando (scelta dell'utente):
