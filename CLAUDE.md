@@ -443,6 +443,20 @@ gruppo = cambiare una terna.
       bordi/testi; un colore famiglia molto chiaro può non essere AA-safe sui
       testi della modale in tema chiaro (resta il ripiego a gold per le famiglie
       note; per nomi/colori nuovi la gestione AA fine è ancora manuale).
+    - **Rete di sicurezza 'ultimo colore salvato' (dalla v9.37).** Snapshot
+      globale **`CARDCOLORS_SAVED`** (copia profonda di `CARDCOLORS.fam` al load,
+      risincronizzata dopo ogni salvataggio colore riuscito). Nel tab Famiglie,
+      due **quadrati cliccabili** mostrano l'ultimo colore SALVATO (scuro/chiaro)
+      della famiglia; un clic lo ripristina come corrente (`CARDCOLORS.fam` +
+      reinject). Così si sperimenta un colore nuovo sapendo di poter tornare
+      all'ultimo salvato. 'Salvato' = committato in `dati.js`, non l'anteprima.
+    - **Salvataggi colore SENZA bump di versione (dalla v9.37, scelta utente).**
+      `saveColorsToRepo` passa `keepVersion:true` a `doCommit`; il Worker (rev 11)
+      con `body.keepVersion===true` **ri-emette la versione corrente** invece di
+      bumparla (+0.01). Ritoccare i colori va live subito ma NON gonfia
+      `datiVersion` né il badge. Vale per Mirata e Famiglie. (Gli altri salvataggi
+      admin (contenuti, riordino) continuano a bumpare +0.01.) Il controllo di
+      freschezza basato sul confronto dei ref git resta affidabile comunque.
   - **Fix 'tipo-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
     Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
     voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel

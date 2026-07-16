@@ -232,7 +232,7 @@ export default {
     // 'rl' = presenza del binding del Durable Object di rate limiting.
     // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
     // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 10, rl: !!env.RL_DO }, 405, ch);
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 11, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
@@ -309,7 +309,11 @@ export default {
           // riscrivono interi dall'array ricevuto. Lo SHA del GET rende il
           // read-modify-write race-safe.
           const oldSrc = b64ToUtf8(fd.content);
-          newVersion = bumpVersion(readVersion(oldSrc) || DEFAULT_VERSION);
+          // keepVersion: i salvataggi COLORE (editor colori) vanno live senza
+          // toccare datiVersion (scelta dell'utente: ritoccare i colori non deve
+          // gonfiare il numero di versione). Gli altri salvataggi bumpano +0.01.
+          const curVer = readVersion(oldSrc) || DEFAULT_VERSION;
+          newVersion = (body.keepVersion === true) ? curVer : bumpVersion(curVer);
           // Config colori: usa quella inviata (gia' validata) se presente,
           // altrimenti PRESERVA quella nel file (un salvataggio di contenuti non
           // deve cancellarla).
