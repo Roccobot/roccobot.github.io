@@ -5964,9 +5964,12 @@ function showColorEditor() {
       withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ showColorEditor && close(); });
     }, true);
     // 3) Sposta per tipo → questa famiglia
-    var h3 = mkH((it ? 'Sposta un tipo in ' : 'Move a type into ') + fam);
+    var h3 = mkH(''); h3.innerHTML = (it ? 'Sposta un tipo in ' : 'Move a type into ') + '<strong>' + escapeHtml(fam) + '</strong>';
     var selT = document.createElement('select'); selT.style.cssText = 'width:100%;padding:0.35rem;';
-    Object.keys(CARDCOLORS.map).sort().forEach(function(t){ var o = document.createElement('option'); o.value = t; o.textContent = t + ' → ' + CARDCOLORS.map[t] + ' (' + tipoCount(t) + ')'; selT.appendChild(o); });
+    // La destinazione è SEMPRE la famiglia in cima (fam). Nella option mostriamo
+    // il tipo + la sua famiglia ATTUALE (senza freccia, che faceva sembrare la
+    // option stessa una destinazione) + il conteggio voci.
+    Object.keys(CARDCOLORS.map).sort().forEach(function(t){ var o = document.createElement('option'); o.value = t; o.textContent = t + '  (' + (it ? 'ora ' : 'now ') + CARDCOLORS.map[t] + ', ' + tipoCount(t) + ')'; selT.appendChild(o); });
     var bMove = mkBtn(it ? 'Sposta e salva' : 'Move & save', function(btn){
       var t = selT.value; var moved = 0;
       CARDCOLORS.map[t] = fam;
