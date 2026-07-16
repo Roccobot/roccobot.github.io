@@ -409,10 +409,40 @@ gruppo = cambiare una terna.
     selezione → `<input type=color>` pre-compilato col colore attuale
     (`familyRgbStr` legge la `--ccrgb` della famiglia dal CSS, o `p.cardrgb` se
     custom) → Applica (anteprima: setta `cardrgb` + `renderList`) / Rimuovi
-    colore individuale / Salva sul repo. **Fase 2** (da fare): funzioni di
-    FAMIGLIA (imposta colore, rinomina, sposta-per-tipo), che richiedono di
-    spostare la config colori (terne `--ccrgb`, `CARDCOLOR_OF`) da CSS statico a
-    **dato editabile**, perché il Worker salva solo `dati.js` (non `index.html`).
+    colore individuale / Salva sul repo. Dalla v9.27 `showColorEditor` ha **due
+    modalità** (tab): **Mirata** (sopra) e **Famiglie** (Fase 2, vedi sotto).
+  - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
+    colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
+    famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
+    (tollera ancora il vecchio `R,G,B`). I `<input type=color>` danno hex nativo.
+  - **Config colori data-driven + Fase 2 (dalla v9.27).** Le famiglie e la mappa
+    `tipo→famiglia` non vivono più solo in CSS/JS statici ma in un **dato
+    editabile**, così l'editor colori le modifica salvando solo `dati.js`.
+    - **`var cardColors = { fam:{}, map:{} }`** (opzionale in `dati.js`, scritto
+      dal Worker): `fam` = `famiglia → {dark:"#hex", light:"#hex"}`; `map` =
+      `tipo-* → famiglia` (l'ex `CARDCOLOR_OF`). A runtime `CARDCOLORS` = quella
+      salvata se valida, altrimenti il **fallback** interno `CARDCOLORS_FALLBACK`
+      (= i valori storici, identici al CSS statico). `familyOf` legge
+      `CARDCOLORS.map`; `injectCardColorRules` inietta le `.cc-<fam>{--ccrgb:…}`
+      dalla config (scavalcano il CSS statico, che resta fallback);
+      `reinjectFamilyColors()` le ri-inietta dopo un'anteprima.
+    - **Worker esteso (rev 10):** `buildDatiFile(dati, version, cardColors)`
+      emette `var cardColors = {…};` (una riga) dopo `datiVersion`;
+      `readCardColors(src)` lo rilegge; un salvataggio che **non** invia
+      `cardColors` (es. editor personaggi) **preserva** quello esistente;
+      `validCardColors` rifiuta config malformate (400 `bad-cardcolors`).
+      `doCommit(msg, payload, cardColors)` lo invia; il redeploy è automatico.
+    - **Le tre funzioni di famiglia** (tab Famiglie): **imposta colore** (due
+      picker scuro/chiaro → `CARDCOLORS.fam[fam]` + reinject), **rinomina**
+      (nuova chiave: aggiorna `fam`, `map` e in **batch** il `cardcolor` di tutte
+      le voci della famiglia; le `custom` restano intatte), **sposta per tipo**
+      (scegli un `tipo-*` → `CARDCOLORS.map[tipo]=fam` e riassegna `cardcolor`
+      alle voci con `stripClassOf(p)===tipo` non-custom). `stripClassOf(p)` è
+      estratta da `familyOf`. Ogni operazione salva con `saveColorsToRepo` (dati
+      + `cardColors`). ⚠️ Limite noto: la **scheda** usa il colore famiglia per
+      bordi/testi; un colore famiglia molto chiaro può non essere AA-safe sui
+      testi della modale in tema chiaro (resta il ripiego a gold per le famiglie
+      note; per nomi/colori nuovi la gestione AA fine è ancora manuale).
   - **Fix 'tipo-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
     Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
     voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
