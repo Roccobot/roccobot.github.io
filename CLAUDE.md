@@ -387,6 +387,32 @@ gruppo = cambiare una terna.
     leggono `p.cardcolor` per primo). Per cambiare la famiglia di una voce
     esistente si edita direttamente il suo `cardcolor` (l'editor admin conserva
     il campo come ogni altra chiave; il Worker pure).
+  - **Colore INDIVIDUALE per voce + famiglia `custom` (Modifica mirata, dalla
+    v9.17, Fase 1).** Campo dati **`p.cardrgb`** = terna **`"R,G,B"`** (0-255):
+    è un colore su misura per la singola voce, che **vince su tutto** in
+    `familyOf` (prima di `cardrgb`... anzi prima di `cardcolor`/derivazione) e
+    mette la voce nella famiglia speciale **`custom`**. La `custom` **conta** le
+    voci ma è **isolata dal batch** (ogni voce tiene la propria terna: NON si
+    ricolora a gruppo). Resa: `renderList` aggiunge la classe `cc-custom` e la
+    terna **inline** `style="--ccrgb:R,G,B"` sulla card (scavalca la `--ccrgb`
+    della classe; card e striscia la ereditano). `.cc-custom` nel CSS statico è
+    solo un fallback neutro. **Scheda:** per le voci `custom` `openModal` usa
+    l'accento neutro **`generic`** (un colore arbitrario non è garantito AA-safe
+    sui testi della modale; sulla card sfondo/striscia a bassa opacità è sempre
+    sicuro). Helper `validCardRgb`. Salvataggio via `doCommit` (il Worker
+    preserva `cardrgb` e bumpa la versione).
+  - **Bivio admin + editor colori (dalla v9.17).** Il tap sulla versione (badge,
+    `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON va più dritto all'editor:
+    `openAdminGate` apre `showAdminChoiceModal` (bivio **Modifica personaggi** →
+    `showAdminEditor` esistente / **Modifica colori** → `showColorEditor`). La
+    **Fase 1** di `showColorEditor` è la **Modifica mirata**: ricerca per nome →
+    selezione → `<input type=color>` pre-compilato col colore attuale
+    (`familyRgbStr` legge la `--ccrgb` della famiglia dal CSS, o `p.cardrgb` se
+    custom) → Applica (anteprima: setta `cardrgb` + `renderList`) / Rimuovi
+    colore individuale / Salva sul repo. **Fase 2** (da fare): funzioni di
+    FAMIGLIA (imposta colore, rinomina, sposta-per-tipo), che richiedono di
+    spostare la config colori (terne `--ccrgb`, `CARDCOLOR_OF`) da CSS statico a
+    **dato editabile**, perché il Worker salva solo `dati.js` (non `index.html`).
   - **Fix 'tipo-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
     Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
     voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
