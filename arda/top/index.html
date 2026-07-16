@@ -2102,7 +2102,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.59</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5881,7 +5881,7 @@ function showColorEditor() {
   var content = document.createElement('div');
   var tMirata = document.createElement('button'), tFam = document.createElement('button');
   [tMirata, tFam].forEach(function(t){ t.className = 'fab-modal-confirm'; t.style.cssText = 'flex:1;padding:0.4rem;'; });
-  tMirata.textContent = it ? 'Mirata' : 'Targeted';
+  tMirata.textContent = it ? 'Personaggio' : 'Character';
   tFam.textContent = it ? 'Famiglie' : 'Families';
   function setTab(which){
     tMirata.style.opacity = which === 'm' ? '1' : '0.5';
@@ -5891,9 +5891,10 @@ function showColorEditor() {
   }
   tMirata.onclick = function(){ setTab('m'); };
   tFam.onclick = function(){ setTab('f'); };
-  tabs.appendChild(tMirata); tabs.appendChild(tFam);
+  // Ordine: Famiglie a sinistra, Personaggio a destra; default = Famiglie.
+  tabs.appendChild(tFam); tabs.appendChild(tMirata);
   box.appendChild(tabs); box.appendChild(content);
-  setTab('m');
+  setTab('f');
 
   // ── Modalità MIRATA: colore individuale (p.cardrgb, hex) → famiglia 'custom' ──
   function buildMirata(root){
@@ -5978,10 +5979,11 @@ function showColorEditor() {
     // 3a colonna per Auto (riga1) e Scuro (riga2). Chiaro PRIMA di Scuro.
     function ccLab(t){ var s = document.createElement('span'); s.textContent = t; return s; }
     var grid = document.createElement('div');
-    grid.style.cssText = 'display:grid;grid-template-columns:max-content max-content 1fr;align-items:center;gap:0.5rem 0.7rem;margin:0.2rem 0 0.5rem;font-size:0.8rem;';
-    grid.appendChild(ccLab(it?'Colore base':'Base colour')); grid.appendChild(pbase); grid.appendChild(bDerive);
+    // align-items:end -> etichette e tasto Auto allineati alla BASE delle caselle.
+    grid.style.cssText = 'display:grid;grid-template-columns:max-content max-content 1fr;align-items:end;gap:0.5rem 0.7rem;margin:0.2rem 0 0.5rem;font-size:0.8rem;';
+    grid.appendChild(ccLab('Base')); grid.appendChild(pbase); grid.appendChild(bDerive);
     grid.appendChild(ccLab(it?'Chiaro':'Light')); grid.appendChild(pl);
-    var scGroup = document.createElement('div'); scGroup.style.cssText = 'display:flex;align-items:center;gap:0.5rem;';
+    var scGroup = document.createElement('div'); scGroup.style.cssText = 'display:flex;align-items:flex-end;gap:0.5rem;';
     scGroup.appendChild(ccLab(it?'Scuro':'Dark')); scGroup.appendChild(pd); grid.appendChild(scGroup);
     // Rete di sicurezza: ultimo colore SALVATO (clic per ripristinare), allineato
     // a DESTRA. 'Salvato' = committato, non l'anteprima.
