@@ -364,6 +364,31 @@ gruppo = cambiare una terna.
   'generic'`. Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-noldo`).
   Override per-voce col campo dati **`p.cardcolor`** (stringa nome-famiglia) se si
   vuole forzare un gruppo diverso da quello mappato dal tipo.
+  - **SEEDING v8.94: `cardcolor` è ora scritto ESPLICITAMENTE su TUTTE le 356
+    voci** (scelta dell'utente: 'il colore va scritto e memorizzato per
+    personaggio con riferimento alle famiglie colore per l'eventuale cambio in
+    batch'). Ogni voce di `dati.js` porta il campo `"cardcolor": "<famiglia>"`
+    (es. `"demon"`, `"noldo"`), col **NOME della famiglia** (non la terna RGB):
+    così la tinta di un intero gruppo si cambia in **un punto solo** (la terna
+    `--ccrgb` di `.cc-<fam>` nel CSS), mentre l'appartenenza per-voce resta
+    stabile e **scollegata dal `tipo`**. I valori seminati coincidono con quelli
+    che la derivazione produceva (nessun cambiamento visivo su IT; corregge in
+    più i 5 colori EN sbagliati, vedi sotto). La derivazione
+    (`isDarkBg`→`demon` > `CARDCOLOR_OF[stripClass]` > `generic`) **resta come
+    fallback** per le voci FUTURE prive del campo (`familyOf`/`renderList`
+    leggono `p.cardcolor` per primo). Per cambiare la famiglia di una voce
+    esistente si edita direttamente il suo `cardcolor` (l'editor admin conserva
+    il campo come ogni altra chiave; il Worker pure).
+  - **Fix 'tipo-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
+    Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
+    voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
+    `tipo` IT ma non nel `tipo_en`: **Beregond**/**Ioreth** (`Gondoriano/a` →
+    `westmen` in IT, `of Gondor` → `generic` in EN) e **Rata**/**Zanna**/**Lupo**
+    (`Cane` → `beast` in IT, `Dog` → `generic` in EN). Corretto in `tipoClass`:
+    la regola Gondor matcha ora il prefisso **`gondor`** (non `gondorian`, così
+    copre anche `of Gondor`) e la lista animali include **`dog`**. Dopo il fix,
+    0 divergenze IT↔EN su tutte le 356 (stessa natura del fix `half-el` dei
+    Mezzelfi in v8.84). Il seeding usa i valori IT canonici (ora == EN).
 - **`stripClass` (invariato dalla logica del bordino).** Si raccoglie l'ordine
   delle classi-etichetta (`badgeClasses`, incluso `tipo-ainur` se presente);
   `stripClass` = **2ª** se ≥2 etichette, altrimenti la 1ª (fallback
