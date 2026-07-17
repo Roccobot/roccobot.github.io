@@ -600,6 +600,25 @@ gruppo = cambiare una terna.
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
+- **Peso del testo UNIFORME nei due temi (400, dalla v9.93, scelta utente).**
+  Prima il tema chiaro usava `font-weight:500` su `body`/`p`/`.intro`/`.subtitle`/
+  footer/testi delle schede (per 'ingrassare' il testo su fondo chiaro), mentre lo
+  scuro era 400. Il peso maggiore era più largo e cambiava gli **a-capo**: l'intro
+  dell'header e le righe delle schede andavano a capo diversamente al cambio tema
+  (una riga in più in chiaro). Portati **tutti a 400** in entrambi i temi: resa e
+  wrap identici, contrasto in chiaro ampiamente AA. (La salvaguardia anti-jitter
+  `.leg-measure{font-weight:500}` della legenda resta: innocua, riserva larghezza.)
+- **Fondo delle MODALI = colore neutro del tema (dalla v9.93, scelta utente).**
+  Tutte le modali seguono lo sfondo principale del tema, non più l'azzurrino/blu-
+  ardesia: **`.modal`** (schede personaggio + note/risorse/info, che condividono il
+  guscio) e **`.fab-modal-box`** (password, conferme, editor colori, trivio) hanno
+  fondo **#252525** (scuro) / **#F4F4F4** (chiaro). Il bordo delle `.fab-modal-box` è
+  neutralizzato (grigio tenue); la `.modal` scheda tiene il **bordo accento
+  cardcolor** (famiglia) e il velo `.modal-backdrop` resta sfocato invariato. ⚠️ Il
+  fondo di riferimento per l'AA del testo scheda (`--cctext` via `ccAaText` in
+  `openModal`) è stato aggiornato di conseguenza a **#252525 / #F4F4F4** (era
+  #0a0f20 / #eeeef4); idem il fondo della mini-scheda nell'anteprima
+  `renderPreview` dell'editor colori.
 - **Testi e accenti NEUTRALIZZATI (dalla v8.79, scelta utente).** I colori di
   testo/accento ardesia (token `--parchment`, `--parchment-dim`, `--gold`,
   `--gold-bright`, `--gold-deep`, `--name`, `--name-hover` in **entrambi** i temi;
@@ -643,8 +662,15 @@ gruppo = cambiare una terna.
     **altezza `.844em` e `translateY(.15em)` invariati** → allineamento verticale
     identico, il ♀ solo più stretto/vicino. `Maschio.png` non toccato.
 - **Titolone `#title`.** Il gradiente ornato della testata
-  (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
-  e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.
+  (`background-clip:text`) e il suo glow restano come effetto. La tinta:
+  - **Fill ORO in tema SCURO (dalla v9.93, scelta utente):** gradiente
+    `linear-gradient(180deg,#efe0b8,#a67c34)` (champagne caldo → oro medio,
+    'Variante A' di un confronto a 3). Sostituisce il grigio/argento neutralizzato
+    (v8.79) SOLO sul titolo: testi e accenti restano neutri. AA testo grande
+    verificato (punto più scuro `#a67c34` su `#262626` ≈ 4.0:1, sopra 3:1). Storico:
+    i token `--parchment`/`--gold` (usati prima nel gradiente) erano neutralizzati e
+    per giunta storicamente blu/argento, mai oro: l'oro della v9.93 è nuovo, non un
+    ripristino.
   - **Fill teal chiaro in tema chiaro (dalla v9.07).** Il gradiente del titolo in
     chiaro è passato dal charcoal quasi nero (`#141414→#565656`) a un **teal chiaro
     e tenue** in famiglia col FAB: `linear-gradient(180deg,#34707f,#66909a)`. Il

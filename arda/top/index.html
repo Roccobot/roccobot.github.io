@@ -172,7 +172,11 @@ h1 {
   /* Bagliore neutralizzato (dalla v8.79): grigi a pari luminanza dei vecchi
      rgba(104,144,168)/rgba(30,60,100). L'effetto sul font resta, la tinta no. */
   text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
-  background:linear-gradient(180deg,var(--parchment) 0%,var(--gold) 100%);
+  /* Fill ORO (tema scuro, scelta utente): gradiente champagne caldo -> oro medio
+     (Variante A). Solo la tinta del titolo torna calda; testi e accenti restano
+     neutralizzati. Il tema chiaro mantiene il fill teal (regola light piu' sotto).
+     AA testo grande verificato (punto piu' scuro #a67c34 su #262626 >= 3:1). */
+  background:linear-gradient(180deg,#efe0b8 0%,#a67c34 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   /* Con background-clip:text il gradiente riempie il testo solo entro il box di
      riga; con line-height:0.95 gli svolazzi bassi di Cinzel Decorative (code di
@@ -1304,7 +1308,9 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .modal-backdrop::-webkit-scrollbar, .modal::-webkit-scrollbar, .modal-body::-webkit-scrollbar { width:0; height:0; display:none; }
 
 .modal {
-  background:linear-gradient(135deg,var(--ink) 0%,#0a0f20 100%);
+  /* Fondo neutro del tema scuro (scelta utente): #252525, come lo sfondo
+     principale. Il bordo resta l'accento cardcolor (iniettato per famiglia). */
+  background:#252525;
   border:1px solid var(--gold); border-radius:6px;
   max-width:680px; width:100%; max-height:90vh;
   display:flex; flex-direction:column; overflow:hidden;
@@ -1432,7 +1438,7 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-btn svg { width:1.35rem;height:1.35rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 .fab-btn.fab-unlocked { border-color:rgba(90,200,110,0.55);background:rgba(30,80,50,0.45); }
 .fab-modal-overlay { position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;overscroll-behavior:contain; }
-.fab-modal-box { background:rgba(18,28,50,0.92);border:1px solid rgba(104,144,168,0.4);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
+.fab-modal-box { background:#252525;border:1px solid rgba(160,160,160,0.28);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
 .fab-modal-box p { margin:0 0 0.9rem;font-size:0.82rem;color:var(--parchment);opacity:0.65;line-height:1.4; }
 .fab-modal-box input[type=password], .fab-modal-box input[type=text] { width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;background:rgba(0,0,0,0.4);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-size:0.9rem;outline:none;transition:border-color 0.15s; }
 .fab-modal-box input[type=password]:focus, .fab-modal-box input[type=text]:focus { border-color:rgba(154,192,216,0.8); }
@@ -1735,11 +1741,12 @@ html[data-theme="light"] {
 html[data-theme="light"] body {
     background: #F5F5F5;
     color: #12141e;
-    font-weight: 500;
   }
-html[data-theme="light"] p, html[data-theme="light"] li, html[data-theme="light"] .subtitle, html[data-theme="light"] .intro, html[data-theme="light"] footer p {
-    font-weight: 500;
-  }
+/* Peso testo UNIFORME nei due temi (400), scelta utente: prima il tema chiaro
+   usava font-weight:500 su body/p/intro/schede per 'ingrassare' il testo, ma il
+   peso maggiore era piu' largo e cambiava gli a-capo (l'intro e le schede
+   andavano a capo diversamente al cambio tema). Con 400 ovunque la resa e gli
+   a-capo sono identici; il contrasto in chiaro resta ampiamente AA. */
 
 html[data-theme="light"] h1 {
     /* Fill teal chiaro e tenue (v9.07): stessa tonalità del FAB ma molto più
@@ -1833,7 +1840,7 @@ html[data-theme="light"] .rank-title {
    (scheda, note, risorse, info). */
 html[data-theme="light"] .modal-backdrop { background: rgba(216,220,228,0.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 html[data-theme="light"] .modal {
-    background: linear-gradient(135deg, #f6f6fa 0%, #eeeeF4 100%);
+    background: #F4F4F4;
     border: 2px solid #4a7090;
     box-shadow: 0 8px 40px rgba(20,30,60,0.2);
   }
@@ -1851,14 +1858,12 @@ html[data-theme="light"] .modal-tg:hover, html[data-theme="light"] .modal-tg:foc
 html[data-theme="light"] .modal-source {
     color: #253d58;
     border-bottom-color: #4a7090;
-    font-weight: 500;
   }
-html[data-theme="light"] .modal-section p { color: #12141e; font-weight: 500; }
+html[data-theme="light"] .modal-section p { color: #12141e; }
 html[data-theme="light"] .modal-quote {
     color: #2a2d3e;
     border-left-color: #4a7090;
     background: rgba(180,200,230,0.18);
-    font-weight: 500;
   }
 /* Accento cardcolor scheda: i TESTI (rank/source/chiudi) usano --cctext, il
    colore-testo AA calcolato a runtime in openModal (dalla v9.62): tiene la tinta
@@ -1868,7 +1873,7 @@ html[data-theme="light"] .modal-quote {
    ogni famiglia, anche nuova o rinominata, in entrambi i temi. */
 
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
-html[data-theme="light"] footer p { color: #2e2e2e; font-weight: 500; }
+html[data-theme="light"] footer p { color: #2e2e2e; }
 
 
 /* race badge light-mode: vivid but dark enough for marble bg */
@@ -1948,7 +1953,7 @@ html[data-theme="light"] .jump-fab { background:rgba(31,85,98,0.9); border-color
    (0.45 le portava sotto la soglia di leggibilità AA). */
 html[data-theme="light"] .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.62; }
 html[data-theme="light"] .fab-modal-overlay { background:rgba(180,195,215,0.5); }
-html[data-theme="light"] .fab-modal-box { background:rgba(238,242,250,0.97); border-color:rgba(60,95,140,0.35); }
+html[data-theme="light"] .fab-modal-box { background:#F4F4F4; border-color:rgba(90,90,90,0.28); }
 html[data-theme="light"] .fab-modal-box p { color:#1a2535; opacity:0.7; }
 html[data-theme="light"] .fab-modal-box input[type=password], html[data-theme="light"] .fab-modal-box input[type=text] { background:rgba(255,255,255,0.92); color:#12141e; border-color:rgba(60,110,170,0.45); }
 html[data-theme="light"] .fab-modal-charname { color:#1a2535; }
@@ -2096,7 +2101,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.83</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.93</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3337,7 +3342,7 @@ function openModal(idx, instant) {
     // se già a contrasto). Rimpiazza la vecchia lista-oro statica.
     var _th = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     var _famHex = (CARDCOLORS.fam[mf] && CARDCOLORS.fam[mf][_th]) ? CARDCOLORS.fam[mf][_th] : '#9098a8';
-    var _bg = _th === 'light' ? '#eeeef4' : '#0a0f20';
+    var _bg = _th === 'light' ? '#F4F4F4' : '#252525';
     modalEl.style.setProperty('--cctext', ccHexToTriplet(ccAaText(_famHex, _bg, 4.5)));
   }
   var nome = lang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
@@ -6078,8 +6083,8 @@ function showColorEditor() {
     host.innerHTML = '';
     // [tema, hex, sfondoPagina, sfondoScheda, opacitàCard, coloreTesto]
     // Ordine: CHIARO a sinistra, SCURO a destra (in colonna con le caselle sopra).
-    [['light', lightHex, '#F5F5F5', '#eeeef4', 0.05, 'rgba(30,30,34,0.92)'],
-     ['dark', darkHex, '#262626', '#0a0f20', 0.10, 'rgba(232,232,232,0.92)']].forEach(function(row){
+    [['light', lightHex, '#F5F5F5', '#F4F4F4', 0.05, 'rgba(30,30,34,0.92)'],
+     ['dark', darkHex, '#262626', '#252525', 0.10, 'rgba(232,232,232,0.92)']].forEach(function(row){
       var hex = row[1], pageBg = row[2], modalBg = row[3], cardOp = row[4], txt = row[5];
       var trip = ccHexToTriplet(hex);
       var cct = ccHexToTriplet(ccAaText(hex, modalBg, 4.5));
