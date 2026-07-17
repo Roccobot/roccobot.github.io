@@ -438,7 +438,7 @@ gruppo = cambiare una terna.
     editabili + tasto 'Auto' (v9.73) o, prima ancora (fino alla v9.72), un solo
     picker con colore unico nei due temi (Fase 1, v9.17).
   - **Modale statistiche `showColorStats` (dalla v10.06; 3 viste dalla v10.16).**
-    Un **link in calce** all'editor colori ('📊 Statistiche famiglie') apre una
+    Un **link in calce** all'editor colori ('📊 Statistiche') apre una
     modale (overlay `#stats-modal`, sopra l'editor) con **3 tab**: **Famiglie**
     (per famiglia colore: due swatch chiaro/scuro + barra nella tinta del tema),
     **Categorie** (le 9 `CATS` via `categoria()`, etichette `CAT_LABEL`, barra in
