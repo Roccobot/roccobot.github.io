@@ -414,16 +414,29 @@ gruppo = cambiare una terna.
     `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON va più dritto all'editor:
     `openAdminGate` apre `showAdminChoiceModal` (bivio **Modifica personaggi** →
     `showAdminEditor` esistente / **Modifica colori** → `showColorEditor`). La
-    la **Modifica mirata** (tab **'Personaggio'**) di `showColorEditor`: ricerca
-    per nome → selezione → **due `<input type=color>` Chiaro/Scuro** pre-compilati
-    (dal `p.cardrgb` se già custom, altrimenti dai colori della famiglia attuale
-    nei due temi) + tasto **'Auto'** che da un colore **Base** declina le due
-    varianti tema (`ccDerivePair`, come la scheda Famiglie) → Applica (anteprima:
-    setta `cardrgb={dark,light}` + `renderList`) / Rimuovi colore individuale /
-    Salva sul repo. Storico: fino alla v9.72 la Mirata aveva **un solo** picker
-    (colore unico nei due temi, semplificazione di Fase 1); il per-tema + Auto
-    sono della v9.73. Dalla v9.27 `showColorEditor` ha **due modalità** (tab):
-    **Personaggio** e **Famiglie** (Fase 2, vedi sotto).
+    **Modifica mirata** (tab **'Personaggio'**) di `showColorEditor`: ricerca
+    per nome → selezione → **controllo colore condiviso** `buildColorControl`
+    (vedi sotto) → Rimuovi colore individuale / Salva sul repo (setta
+    `cardrgb={dark,light}` + `renderList`). Dalla v9.27 `showColorEditor` ha
+    **due modalità** (tab): **Personaggio** e **Famiglie** (Fase 2, vedi sotto).
+  - **Controllo colore condiviso `buildColorControl` + anteprima live (dalla
+    v9.83, scelta dell'utente).** UNICO controllo usato sia da **Personaggio**
+    sia da **Famiglie**: un solo tasto **'Scegli colore'** apre il `<input
+    type=color>`; alla scelta le **due varianti tema (Chiaro/Scuro) si derivano
+    da sé** (`ccDerivePair`) e restano in **sola lettura** (niente più picker
+    per-tema editabili né tasto 'Auto': l'automazione garantisce colori sensati e
+    AA-safe e semplifica la UI). Accanto, un'**anteprima in tempo reale**
+    (`renderPreview`) mostra, per **ENTRAMBI i temi** affiancati, tutti gli
+    elementi che il colore definisce: mini-**card** (sfondo + striscia + nome +
+    etichetta tipo) e mini-**scheda** (bordo famiglia + testo AA-safe via
+    `ccAaText`/`--cctext` + filetto fonte), così si valuta il colore **prima** di
+    confermare. Colori concreti (nessun `var()`, mai visto dal Nu perché creati a
+    runtime). La modale è allargata (`max-width:620px`, `overflow-y:auto`). I
+    colori di partenza (`initDark`/`initLight`) restano mostrati finché non si
+    sceglie un nuovo colore, così **aprire+salvare non altera un colore
+    intoccato**. Storico: fino alla v9.82 c'erano due picker Chiaro/Scuro
+    editabili + tasto 'Auto' (v9.73) o, prima ancora (fino alla v9.72), un solo
+    picker con colore unico nei due temi (Fase 1, v9.17).
   - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
     colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
     famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
@@ -445,8 +458,10 @@ gruppo = cambiare una terna.
       `cardColors` (es. editor personaggi) **preserva** quello esistente;
       `validCardColors` rifiuta config malformate (400 `bad-cardcolors`).
       `doCommit(msg, payload, cardColors)` lo invia; il redeploy è automatico.
-    - **Le tre funzioni di famiglia** (tab Famiglie): **imposta colore** (due
-      picker scuro/chiaro → `CARDCOLORS.fam[fam]` + reinject), **rinomina**
+    - **Le tre funzioni di famiglia** (tab Famiglie): **imposta colore** (via il
+      controllo condiviso `buildColorControl`, dalla v9.83 → `CARDCOLORS.fam[fam]`
+      + reinject; una **rete 'ultimo salvato'** con due quadratini ripristina il
+      colore committato), **rinomina**
       (nuova chiave: aggiorna `fam`, `map` e in **batch** il `cardcolor` di tutte
       le voci della famiglia; le `custom` restano intatte), **sposta per tipo**
       (scegli un `tipo-*` → `CARDCOLORS.map[tipo]=fam` e riassegna `cardcolor`
@@ -455,15 +470,16 @@ gruppo = cambiare una terna.
       + `cardColors`). L'AA della **scheda** per i testi è ora **dinamico** (vedi
       `--cctext`, dalla v9.62): qualunque colore famiglia (anche nuovo/rinominato)
       resta leggibile senza gestione manuale.
-    - **Derivazione automatica delle varianti tema (dalla v9.48).** Nel tab
-      Famiglie, sopra ai picker manuali, un controllo **'Colore base → Declina
-      auto'**: da UN colore scelto, `ccDerivePair` tiene la **tinta** (HSL) e
-      genera la variante **scura** (L=0.62, pop su fondo scuro) e la **chiara**
-      (L=0.42, sat +5%, contrasto su fondo chiaro), riempiendo i due picker
-      scuro/chiaro + anteprima; poi si rifinisce a mano e si salva. Helper
-      `ccHexToHsl`/`ccHslToHex`. Sfondo card e striscia restano sempre AA-safe
-      (bassa opacità); il **testo della scheda** è reso AA in automatico dal
-      meccanismo `--cctext` (v9.62, vedi sotto).
+    - **Derivazione automatica delle varianti tema (dalla v9.48; unico
+      meccanismo dalla v9.83).** Da UN colore scelto (tasto 'Scegli colore'),
+      `ccDerivePair` tiene la **tinta** (HSL) e genera la variante **scura**
+      (L=0.62, pop su fondo scuro) e la **chiara** (L=0.42, sat +5%, contrasto su
+      fondo chiaro). Dalla v9.83 questa derivazione è l'**unico** modo di
+      impostare le due varianti: i valori tema sono **in sola lettura** (niente
+      più rifinitura manuale né tasto 'Auto'). Helper `ccHexToHsl`/`ccHslToHex`.
+      Sfondo card e striscia restano sempre AA-safe (bassa opacità); il **testo
+      della scheda** è reso AA in automatico dal meccanismo `--cctext` (v9.62,
+      vedi sotto).
     - **AA dinamico del testo scheda (`--cctext`, dalla v9.62).** Chiude il
       vecchio 'limite noto' della lista-oro statica. All'apertura della scheda,
       `openModal` calcola un **colore-testo AA** per rank/source/chiudi:
