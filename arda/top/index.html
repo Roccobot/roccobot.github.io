@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.18</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5910,14 +5910,19 @@ function showAdminChoiceModal() {
   var close = function(){ overlay.remove(); lockPageScroll(false); };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
-  var t = document.createElement('p'); t.textContent = it ? 'Cosa vuoi modificare?' : 'What do you want to edit?';
+  var t = document.createElement('p'); t.textContent = it ? 'Area admin' : 'Admin area';
   var b1 = document.createElement('button'); b1.className = 'fab-modal-confirm';
   b1.textContent = it ? 'Modifica personaggi' : 'Edit characters';
   b1.onclick = function(){ close(); showAdminEditor(); };
   var b2 = document.createElement('button'); b2.className = 'fab-modal-confirm';
   b2.textContent = it ? 'Modifica colori' : 'Edit colours';
   b2.onclick = function(){ close(); showColorEditor(); };
-  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2);
+  // Statistiche: non riguardano più solo i colori, quindi vivono qui (non
+  // nell'editor colori). Chiude il bivio e apre la modale stats (standalone).
+  var b3 = document.createElement('button'); b3.className = 'fab-modal-confirm';
+  b3.textContent = it ? 'Statistiche' : 'Stats';
+  b3.onclick = function(){ close(); showColorStats(); };
+  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3);
 }
 
 // ── Editor colori: colore per personaggio e per famiglia ────────────────────
@@ -5943,17 +5948,18 @@ var CARDCOLORS_SAVED = JSON.parse(JSON.stringify(CARDCOLORS.fam));
 // (keepVersion). Ritorna la Promise di doCommit.
 function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
 
-// Statistiche: modale (link in calce all'editor) con 3 viste (tab): FAMIGLIE
-// (colore), CATEGORIE (le 9 razze), TIPI (le etichette type-*). Legge dati +
-// CARDCOLORS + i colori-etichetta AL VOLO, quindi rispecchia in tempo reale ogni
-// modifica. Overlay separato (z-index sopra l'editor); non tocca lockPageScroll.
+// Statistiche: modale (dal bivio admin 'Area admin' → 'Statistiche') con 3 viste
+// (tab): FAMIGLIE (colore), CATEGORIE (le 9 razze), TIPI (le etichette type-*).
+// Legge dati + CARDCOLORS + i colori-etichetta AL VOLO, quindi rispecchia in tempo
+// reale ogni modifica. Modale standalone: gestisce lockPageScroll da sé.
 function showColorStats() {
   if (document.getElementById('stats-modal')) return;
   var it = currentLang === 'it';
-  var ov = document.createElement('div'); ov.id = 'stats-modal'; ov.className = 'fab-modal-overlay'; ov.style.zIndex = '260';
+  var ov = document.createElement('div'); ov.id = 'stats-modal'; ov.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '580px'; box.style.maxHeight = '88vh'; box.style.overflowY = 'auto';
   ov.appendChild(box); document.body.appendChild(ov);
-  var close = function(){ ov.remove(); };
+  lockPageScroll(true);
+  var close = function(){ ov.remove(); lockPageScroll(false); };
   ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
   var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.5rem;';
@@ -6053,12 +6059,6 @@ function showColorEditor() {
   tabs.appendChild(tFam); tabs.appendChild(tMirata);
   box.appendChild(tabs); box.appendChild(content);
   setTab('f');
-  // Link in calce: apre la modale statistiche (distribuzione per famiglia).
-  var statsLink = document.createElement('button'); statsLink.className = 'fab-modal-confirm';
-  statsLink.style.cssText = 'width:100%;margin-top:1rem;font-size:0.85rem;';
-  statsLink.textContent = it ? '📊 Statistiche' : '📊 Statistics';
-  statsLink.onclick = function(){ showColorStats(); };
-  box.appendChild(statsLink);
 
   // ── Modalità MIRATA: colore individuale per-tema (p.cardrgb {dark,light}) → 'custom' ──
   function buildMirata(root){
