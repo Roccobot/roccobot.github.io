@@ -437,6 +437,16 @@ gruppo = cambiare una terna.
     intoccato**. Storico: fino alla v9.82 c'erano due picker Chiaro/Scuro
     editabili + tasto 'Auto' (v9.73) o, prima ancora (fino alla v9.72), un solo
     picker con colore unico nei due temi (Fase 1, v9.17).
+  - **Modale statistiche famiglie `showColorStats` (dalla v10.06).** Un **link in
+    calce** all'editor colori ('📊 Statistiche famiglie') apre una modale
+    (overlay `#stats-modal`, sopra l'editor) con la **distribuzione dei
+    personaggi per famiglia**: per ogni famiglia i due swatch (chiaro/scuro), una
+    **barra proporzionale** nella tinta del tema attivo, conteggio e percentuale,
+    ordinate dalla più numerosa; in testa il totale ('N personaggi in M
+    famiglie', + le eventuali voci `custom` contate a parte). Legge `dati` +
+    `CARDCOLORS` **al volo a ogni apertura**, quindi rispecchia in tempo reale
+    ogni modifica a colori/dataset. Non tocca `lockPageScroll` (già attivo per
+    l'editor sotto).
   - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
     colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
     famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
@@ -1869,6 +1879,17 @@ specifico del dataset):
   (scheda, note, risorse, info) condividono lo stesso velo sfocato: **chiaro** su
   tema chiaro (`rgba(216,220,228,0.62)`, prima era scuro anche in chiaro),
   **scuro** su tema scuro (`rgba(5,7,16,0.92)`).
+- **Contenuto di sfondo INERTE a modale aperto (dalla v10.06).** `lockPageScroll`
+  (il choke point condiviso da TUTTI i modali) marca `header`, `main` e `footer`
+  con **`inert` + `aria-hidden`** quando un modale si apre, e li ripristina alla
+  chiusura (via `setBgInert`). Doppio scopo: **focus-trap/accessibilità** (il
+  contenuto velato non è focusabile né letto dagli screen reader) e **axe pulito**
+  (i testi tenui delle card sotto il velo scendevano sotto 4.5:1 su fondo-card
+  chiaro: falso positivo da contenuto velato, ora ignorato perché aria-hidden). Il
+  modale (fratello di header/main/footer) resta attivo. NB: l'audit axe con una
+  scheda aperta va fatto in un tema NATIVO (aprire già in quel tema): cambiare
+  tema a scheda aperta è uno scenario non raggiungibile dall'utente (il toggle
+  vive nel Pannello, coperto dalla scheda) e in test dà falsi rilievi transitori.
 - **Formato rimandi interni (dalla v8.75).** Sia il rimando **personaggio→nota**
   (`.modal-noteref`) sia i **nota→nota** (`.note-seealso`) usano
   `Leggi anche → <strong>Titolo</strong>` / `See also → ...`: prefisso normale,
