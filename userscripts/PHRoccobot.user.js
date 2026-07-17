@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.5.1
+// @version      1.6.0
 // @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" (SEMPRE visibile, stili !important + retry, così non "sparisce") che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). La sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
@@ -214,13 +214,18 @@
   const SFONDO_BASE = '#ff9000';
   function sfondo(btn, css) { if (btn) btn.style.setProperty('background', css, 'important'); }
 
+  // Stato del download in corso (per poterlo ANNULLARE con un secondo clic).
+  var dlAttivo = false;      // c'è un'operazione in corso?
+  var dlHandle = null;       // oggetto ritornato da GM_download (ha .abort())
+  var dlAnnullato = false;   // l'utente ha annullato?
+
   // Download con avanzamento: GM_download scarica il file su un temporaneo e SOLO
   // alla fine mostra il salva-file; con onprogress mostriamo la percentuale (e una
   // barra di riempimento) sul tasto durante l'attesa. Promise: si risolve a
-  // scaricamento completato, si rifiuta su errore.
+  // scaricamento completato, si rifiuta su errore/abort. Salva l'handle per abort().
   function scaricaFile(url, nome, btn) {
     return new Promise(function (resolve, reject) {
-      GM_download({
+      const h = GM_download({
         url: url, name: nome, saveAs: SALVA_CON_DIALOGO,
         headers: { Referer: location.href },
         onprogress: function (e) {
@@ -237,14 +242,35 @@
         onerror: function (err) { reject(err || new Error('download')); },
         ontimeout: function () { reject(new Error('timeout')); }
       });
+      dlHandle = (h && typeof h.abort === 'function') ? h : null;
     });
   }
 
+  function annullaDownload(btn) {
+    dlAnnullato = true;
+    try { if (dlHandle && dlHandle.abort) dlHandle.abort(); } catch (e) {}
+    dlHandle = null;
+    dlAttivo = false;
+    if (btn) {
+      btn.textContent = '✖︎ annullato';
+      sfondo(btn, '#d0021b');
+      setTimeout(function () {
+        if (!dlAttivo) { btn.textContent = '⬇️ Scarica video'; sfondo(btn, SFONDO_BASE); }
+      }, 3500);
+    }
+  }
+
   async function scarica(btn) {
-    const testo0 = (btn && btn.textContent) || '⬇️ Scarica video';
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Cerco qualità…'; }
+    // Secondo clic mentre è in corso → ANNULLA.
+    if (dlAttivo) { annullaDownload(btn); return; }
+
+    dlAttivo = true; dlAnnullato = false; dlHandle = null;
+    const testo0 = '⬇️ Scarica video';
+    // NB: il tasto resta cliccabile (non disabled) così un altro clic annulla.
+    if (btn) { btn.title = 'Clic di nuovo per annullare'; btn.textContent = '⏳ Cerco qualità…'; }
     try {
       const q = await qualitaDisponibili();
+      if (dlAnnullato) return;
       if (!q.mp4.length) {
         if (q.hls.length) {
           alert('PH Roccobot: questo video è disponibile solo in HLS (streaming a segmenti .m3u8), non come file MP4 diretto.\n' +
@@ -259,19 +285,26 @@
       if (btn) { btn.textContent = '⬇️ 0%'; }
       try {
         await scaricaFile(best.url, nome, btn);
+        if (dlAnnullato) return;
         if (btn) { btn.textContent = '✅ ' + (best.quality || '') + 'p'; sfondo(btn, '#12b76a'); }
       } catch (err) {
+        if (dlAnnullato) return; // l'errore è l'abort volontario: nessun ripiego
         // ripiego: apri l'URL così l'utente può salvarlo a mano
         window.open(best.url, '_blank', 'noopener');
         if (btn) { btn.textContent = '↗︎ aperto'; sfondo(btn, '#d0021b'); }
       }
     } catch (e) {
+      if (dlAnnullato) return;
       alert('PH Roccobot: errore nel preparare il download.\n' + (e && e.message ? e.message : e));
       if (btn) { btn.textContent = '⚠️ Errore'; sfondo(btn, '#d0021b'); }
     } finally {
+      const eraAnnullato = dlAnnullato;
+      dlAttivo = false; dlHandle = null;
       if (btn) {
-        btn.disabled = false;
-        setTimeout(function () { btn.textContent = testo0; sfondo(btn, SFONDO_BASE); }, 8000);
+        btn.title = 'Scarica il video alla qualità massima disponibile';
+        if (!eraAnnullato) setTimeout(function () {
+          if (!dlAttivo) { btn.textContent = testo0; sfondo(btn, SFONDO_BASE); }
+        }, 8000);
       }
     }
   }
