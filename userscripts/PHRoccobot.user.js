@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.0.0
-// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" che scarica il file alla qualità massima disponibile. Legge la struttura reale della pagina a runtime (flashvars/mediaDefinitions), quindi si adatta ai formati mp4 diretti, alle definizioni "remote" (get_media) e rileva l'HLS.
+// @version      1.1.0
+// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" che scarica il file alla qualità massima disponibile. Il tasto appare su tutte le pagine video; la sorgente si ricava a runtime da flashvars/mediaDefinitions (via oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
 // @match        https://pornhub.com/*
@@ -70,12 +70,47 @@
   // il JSON con gli URL per-qualità). Si leggono a runtime, si espandono le
   // remote, si tiene l'mp4 di qualità più alta.
 
+  // Pagina video? (per mostrare il pulsante anche prima di aver risolto la sorgente)
+  function ePaginaVideo() {
+    if (/view_video\.php|[?&]viewkey=|\/video\//i.test(location.href)) return true;
+    return !!document.querySelector('#player, .mgp_container, [id^="player"] video, video');
+  }
+
+  // flashvars: prima dall'oggetto globale (unsafeWindow), poi — se non si trova —
+  // parsando il testo degli <script> (più robusto: non dipende dall'enumerazione
+  // di window né dal timing di definizione della variabile).
   function flashvars() {
     try {
       const w = (typeof unsafeWindow !== 'undefined') ? unsafeWindow : window;
       const k = Object.keys(w).find(function (n) { return /^flashvars_/.test(n) && w[n] && w[n].mediaDefinitions; });
-      return k ? w[k] : null;
-    } catch (e) { return null; }
+      if (k) return w[k];
+      // accesso diretto per-viewkey (a volte enumerazione fallisce ma la prop esiste)
+      const vk = (location.href.match(/[?&]viewkey=([0-9a-z]+)/i) || [])[1];
+      if (vk && w['flashvars_' + vk] && w['flashvars_' + vk].mediaDefinitions) return w['flashvars_' + vk];
+    } catch (e) { /* continua col parse */ }
+    return flashvarsDaScript();
+  }
+
+  function flashvarsDaScript() {
+    try {
+      for (const s of document.scripts) {
+        const t = s.textContent;
+        if (!t || t.indexOf('flashvars_') === -1 || t.indexOf('mediaDefinitions') === -1) continue;
+        const m = t.match(/flashvars_[0-9a-zA-Z]+\s*=\s*\{/);
+        if (!m) continue;
+        const start = t.indexOf('{', m.index);
+        let depth = 0, i = start, inStr = false, q = '', esc = false;
+        for (; i < t.length; i++) {
+          const c = t[i];
+          if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === q) inStr = false; }
+          else if (c === '"' || c === "'") { inStr = true; q = c; }
+          else if (c === '{') depth++;
+          else if (c === '}') { depth--; if (depth === 0) { i++; break; } }
+        }
+        try { const o = JSON.parse(t.slice(start, i)); if (o && o.mediaDefinitions) return o; } catch (e) { /* prova il prossimo */ }
+      }
+    } catch (e) {}
+    return null;
   }
 
   function getJSON(url) {
@@ -162,7 +197,7 @@
 
   function aggiungiPulsante() {
     if (document.getElementById('rb-ph-dl') || !document.body) return;
-    if (!flashvars()) return; // solo nelle pagine video (con sorgente)
+    if (!ePaginaVideo()) return; // solo nelle pagine video
     const b = document.createElement('button');
     b.id = 'rb-ph-dl';
     b.type = 'button';
