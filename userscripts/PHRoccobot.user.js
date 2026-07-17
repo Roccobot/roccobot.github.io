@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.7.0
-// @description  Su pornhub.com: reindirizza il sottodominio-lingua (es. it.pornhub.com) a www.pornhub.com (sito internazionale, così i titoli NON vengono tradotti) e aggiunge in basso a destra un tasto "⬇️ Scarica video" (sempre visibile) che scarica il file MP4 alla qualità massima, con avanzamento sul tasto e clic-per-annullare. Nome file: "[Nome canale] Titolo.mp4". La sorgente si ricava a runtime da flashvars/mediaDefinitions.
+// @version      1.8.0
+// @description  Su pornhub.com: mantiene lingua inglese/Paese Worldwide riscrivendo a ogni caricamento i cookie lang=en e overwriteCCVal=world (PH ogni tanto li ripristina su it), e reindirizza il sottodominio-lingua (es. it.pornhub.com) a www.pornhub.com così i titoli NON vengono tradotti. Aggiunge in basso a destra un tasto "⬇️ Scarica video" (sempre visibile) che scarica il file MP4 alla qualità massima, con avanzamento sul tasto e clic-per-annullare. Nome file: "[Nome canale] Titolo.mp4". Sorgente ricavata a runtime da flashvars/mediaDefinitions.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
 // @match        https://pornhub.com/*
@@ -28,32 +28,45 @@
   const SALVA_CON_DIALOGO = true;    // true = chiede dove salvare; false = scarica diretto
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  1) FORZA PAGINA INTERNAZIONALE (www.) invece del sottodominio lingua
+  //  1) FORZA INGLESE/INTERNAZIONALE (cookie di preferenza + redirect da it.)
   // ═══════════════════════════════════════════════════════════════════════
-  // Dall'Italia PH carica it.pornhub.com, ed è QUELLO che traduce i titoli (non
-  // la lingua UI). La soluzione vera è stare su www.pornhub.com (internazionale).
-  // Qui, se l'host è un sottodominio-lingua (2 lettere, es. it/de/fr/es...), si
-  // reindirizza a www conservando percorso/query. location.replace così l'URL
-  // "it." non resta nella cronologia. Guardia in sessionStorage: se dopo il
-  // reindirizzamento PH ci rimanda comunque sul sottodominio (forzatura lato
-  // server), non si riprova (niente loop). Eseguito a document-start = prima del
-  // render, così non si carica nemmeno la pagina italiana.
-  function forzaInternazionale() {
+  // Dall'Italia PH carica it.pornhub.com e traduce i titoli. Le preferenze sono
+  // in DUE cookie: lang=en (lingua) e overwriteCCVal=world (Paese=Worldwide).
+  // PH ogni tanto (al login) li ripristina su it → qui li RISCRIVIAMO a ogni
+  // caricamento (document-start, prima delle richieste), così non può più
+  // riportarti in italiano. In più, se sei atterrato su un sottodominio-lingua
+  // (it/de/fr...), si reindirizza a www conservando percorso/query — ora coi
+  // cookie giusti www "tiene".
+  function impostaPreferenze() {
     if (!FORZA_INTERNAZIONALE) return;
+    const opz = '; path=/; domain=.pornhub.com; max-age=31536000; samesite=lax; secure';
+    try {
+      document.cookie = 'lang=en' + opz;
+      document.cookie = 'overwriteCCVal=world' + opz;
+    } catch (e) { /* mai rompere la pagina */ }
+  }
+
+  function forzaInternazionale() {
+    if (!FORZA_INTERNAZIONALE) return false;
     try {
       const h = location.hostname;
       if (/^[a-z]{2}\.pornhub\.com$/i.test(h)) {
-        if (sessionStorage.getItem('rb-ph-intl')) return; // già tentato → PH forza lato server, evito il loop
-        sessionStorage.setItem('rb-ph-intl', '1');
+        // guardia anti-loop A TEMPO: se abbiamo reindirizzato < 6s fa e siamo di
+        // nuovo qui, è un rimbalzo → non insistere. Ma dopo non resta bloccata.
+        let last = 0;
+        try { last = +sessionStorage.getItem('rb-ph-intl-t') || 0; } catch (e) {}
+        const ora = Date.now();
+        if (ora - last < 6000) return false;
+        try { sessionStorage.setItem('rb-ph-intl-t', String(ora)); } catch (e) {}
         location.replace('https://www.pornhub.com' + location.pathname + location.search + location.hash);
-        return true; // stiamo navigando via: il resto dello script non serve
+        return true; // stiamo navigando via
       }
-      if (h === 'www.pornhub.com' || h === 'pornhub.com') sessionStorage.removeItem('rb-ph-intl');
     } catch (e) { /* mai rompere la pagina */ }
     return false;
   }
 
-  // Eseguito SUBITO (document-start): se reindirizza, fermiamo qui lo script.
+  // Eseguiti SUBITO (document-start): prima i cookie, poi l'eventuale redirect.
+  impostaPreferenze();
   if (forzaInternazionale()) return;
 
   // ═══════════════════════════════════════════════════════════════════════
