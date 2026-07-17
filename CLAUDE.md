@@ -410,10 +410,14 @@ gruppo = cambiare una terna.
     opacità è sempre sicuro). Salvataggio via `saveColorsToRepo` (`keepVersion`:
     NON bumpa la versione, come gli altri salvataggi colore; il Worker serializza
     `cardrgb` oggetto come JSON, round-trip pulito).
-  - **Bivio admin + editor colori (dalla v9.17).** Il tap sulla versione (badge,
-    `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON va più dritto all'editor:
-    `openAdminGate` apre `showAdminChoiceModal` (bivio **Modifica personaggi** →
-    `showAdminEditor` esistente / **Modifica colori** → `showColorEditor`). La
+  - **Bivio admin + editor colori (dalla v9.17; titolo e 3ª voce dalla v10.18).**
+    Il tap sulla versione (badge, `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON
+    va più dritto all'editor: `openAdminGate` apre `showAdminChoiceModal`, la
+    modale **'Area admin'** con tre tasti: **Modifica personaggi** →
+    `showAdminEditor` / **Modifica colori** → `showColorEditor` / **Statistiche**
+    → `showColorStats` (le stats non riguardano più solo i colori, quindi vivono
+    qui, non nell'editor colori; ogni tasto chiude il bivio e apre la sua modale
+    standalone). La
     **Modifica mirata** (tab **'Personaggio'**) di `showColorEditor`: ricerca
     per nome → selezione → **controllo colore condiviso** `buildColorControl`
     (vedi sotto) → Rimuovi colore individuale / Salva sul repo (setta
