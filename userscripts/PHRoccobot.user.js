@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.2.0
-// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). Il tasto appare su tutte le pagine video; la sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
+// @version      1.3.0
+// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" (SEMPRE visibile, stili !important + retry, così non "sparisce") che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). La sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
 // @match        https://pornhub.com/*
@@ -234,34 +234,51 @@
   }
 
   function aggiungiPulsante() {
-    if (document.getElementById('rb-ph-dl') || !document.body) return;
-    if (!ePaginaVideo()) return; // solo nelle pagine video
-    const b = document.createElement('button');
-    b.id = 'rb-ph-dl';
-    b.type = 'button';
-    b.textContent = '⬇️ Scarica video';
-    b.title = 'Scarica il video alla qualità massima disponibile';
-    Object.assign(b.style, {
-      position: 'fixed', zIndex: '2147483647', bottom: '16px', right: '16px',
-      padding: '10px 14px', borderRadius: '999px', border: 'none',
-      background: '#ff9000', color: '#000',
-      font: '700 14px/1 system-ui, -apple-system, sans-serif',
-      cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.4)', opacity: '0.92'
-    });
-    b.addEventListener('mouseenter', function () { b.style.opacity = '1'; });
-    b.addEventListener('mouseleave', function () { b.style.opacity = '0.92'; });
-    b.addEventListener('click', function () { scarica(b); });
-    document.body.appendChild(b);
+    try {
+      if (document.getElementById('rb-ph-dl') || !document.body) return;
+      // Niente più gate "pagina video": il pulsante appare sempre su pornhub.com
+      // (se non è una pagina video, al clic dirà che non trova la sorgente). Così
+      // non può "sparire" per una rilevazione sbagliata.
+      const b = document.createElement('button');
+      b.id = 'rb-ph-dl';
+      b.type = 'button';
+      b.textContent = '⬇️ Scarica video';
+      b.title = 'Scarica il video alla qualità massima disponibile';
+      // stili con !important: il CSS di PornHub non può nasconderlo/spostarlo
+      const st = {
+        'position': 'fixed', 'bottom': '16px', 'right': '16px', 'z-index': '2147483647',
+        'display': 'block', 'visibility': 'visible', 'opacity': '0.92',
+        'width': 'auto', 'height': 'auto', 'margin': '0', 'padding': '10px 14px',
+        'border': 'none', 'border-radius': '999px',
+        'background': '#ff9000', 'color': '#000',
+        'font': '700 14px/1 system-ui, -apple-system, sans-serif',
+        'cursor': 'pointer', 'box-shadow': '0 4px 14px rgba(0,0,0,.4)',
+        'text-transform': 'none', 'letter-spacing': 'normal', 'line-height': '1'
+      };
+      for (const k in st) b.style.setProperty(k, st[k], 'important');
+      b.addEventListener('mouseenter', function () { b.style.setProperty('opacity', '1', 'important'); });
+      b.addEventListener('mouseleave', function () { b.style.setProperty('opacity', '0.92', 'important'); });
+      b.addEventListener('click', function () { scarica(b); });
+      document.body.appendChild(b);
+    } catch (e) { /* mai rompere la pagina */ }
   }
 
   // PH è in parte una SPA: il pulsante va (ri)messo quando compare un video.
   function avvio() {
-    forzaInglese();
+    try { forzaInglese(); } catch (e) {}
     aggiungiPulsante();
+    // PH è una SPA e a volte ricostruisce il DOM: si riprova con l'observer…
     try {
       new MutationObserver(function () { aggiungiPulsante(); })
         .observe(document.documentElement, { subtree: true, childList: true });
     } catch (e) {}
+    // …e con una rete di sicurezza a intervalli (finché il pulsante non c'è).
+    let n = 0;
+    const iv = setInterval(function () {
+      aggiungiPulsante();
+      if (++n > 20 || document.getElementById('rb-ph-dl')) clearInterval(iv);
+    }, 700);
+    window.addEventListener('load', aggiungiPulsante);
   }
 
   if (typeof GM_registerMenuCommand !== 'undefined') {
