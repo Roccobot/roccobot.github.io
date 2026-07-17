@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.6.0
-// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" (SEMPRE visibile, stili !important + retry, così non "sparisce") che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). La sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
+// @version      1.7.0
+// @description  Su pornhub.com: reindirizza il sottodominio-lingua (es. it.pornhub.com) a www.pornhub.com (sito internazionale, così i titoli NON vengono tradotti) e aggiunge in basso a destra un tasto "⬇️ Scarica video" (sempre visibile) che scarica il file MP4 alla qualità massima, con avanzamento sul tasto e clic-per-annullare. Nome file: "[Nome canale] Titolo.mp4". La sorgente si ricava a runtime da flashvars/mediaDefinitions.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
 // @match        https://pornhub.com/*
-// @run-at       document-idle
+// @run-at       document-start
 // @noframes
 // @grant        unsafeWindow
 // @grant        GM_download
@@ -24,42 +24,37 @@
   'use strict';
 
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
-  const FORZA_INGLESE = true;   // se la pagina è in un'altra lingua, passa all'inglese
-  const SALVA_CON_DIALOGO = true; // true = chiede dove salvare; false = scarica diretto
+  const FORZA_INTERNAZIONALE = true; // reindirizza it.pornhub.com (o altra lingua) → www.pornhub.com
+  const SALVA_CON_DIALOGO = true;    // true = chiede dove salvare; false = scarica diretto
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  1) FORZA INGLESE — usando lo switcher di lingua del sito stesso
+  //  1) FORZA PAGINA INTERNAZIONALE (www.) invece del sottodominio lingua
   // ═══════════════════════════════════════════════════════════════════════
-  // Non conosco (né voglio indovinare) il cookie interno di PH per la lingua:
-  // uso il MECCANISMO del sito. Se <html lang> non è inglese, cerco nel menu
-  // lingua la voce "English" e ne seguo il link UNA volta (guardia in
-  // sessionStorage per non entrare in loop se il cambio non "attacca").
-  function forzaInglese() {
-    if (!FORZA_INGLESE) return;
+  // Dall'Italia PH carica it.pornhub.com, ed è QUELLO che traduce i titoli (non
+  // la lingua UI). La soluzione vera è stare su www.pornhub.com (internazionale).
+  // Qui, se l'host è un sottodominio-lingua (2 lettere, es. it/de/fr/es...), si
+  // reindirizza a www conservando percorso/query. location.replace così l'URL
+  // "it." non resta nella cronologia. Guardia in sessionStorage: se dopo il
+  // reindirizzamento PH ci rimanda comunque sul sottodominio (forzatura lato
+  // server), non si riprova (niente loop). Eseguito a document-start = prima del
+  // render, così non si carica nemmeno la pagina italiana.
+  function forzaInternazionale() {
+    if (!FORZA_INTERNAZIONALE) return;
     try {
-      if (sessionStorage.getItem('rb-ph-en')) return;
-      const lang = (document.documentElement.getAttribute('lang') || '').toLowerCase();
-      if (!lang || lang.indexOf('en') === 0) return; // già inglese o lingua ignota → non tocco nulla
-
-      // candidati: elementi con data-language/data-lang = en*, o link il cui testo è "English"
-      let target = null;
-      const nodi = document.querySelectorAll('a[href], [data-language], [data-lang], [data-country]');
-      for (const el of nodi) {
-        const dl = (el.getAttribute('data-language') || el.getAttribute('data-lang') || '').toLowerCase();
-        const txt = (el.textContent || '').trim().toLowerCase();
-        const href = (el.getAttribute('href') || '');
-        if (/^en(\b|-|_)/.test(dl) || txt === 'english' ||
-            /[?&](lang|locale|language)=en\b/i.test(href)) {
-          target = el; break;
-        }
+      const h = location.hostname;
+      if (/^[a-z]{2}\.pornhub\.com$/i.test(h)) {
+        if (sessionStorage.getItem('rb-ph-intl')) return; // già tentato → PH forza lato server, evito il loop
+        sessionStorage.setItem('rb-ph-intl', '1');
+        location.replace('https://www.pornhub.com' + location.pathname + location.search + location.hash);
+        return true; // stiamo navigando via: il resto dello script non serve
       }
-      if (!target) return; // switcher non trovato: meglio non fare nulla
-      sessionStorage.setItem('rb-ph-en', '1');
-      const href = target.getAttribute('href');
-      if (href && href !== '#') location.href = new URL(href, location.href).href;
-      else target.click();
+      if (h === 'www.pornhub.com' || h === 'pornhub.com') sessionStorage.removeItem('rb-ph-intl');
     } catch (e) { /* mai rompere la pagina */ }
+    return false;
   }
+
+  // Eseguito SUBITO (document-start): se reindirizza, fermiamo qui lo script.
+  if (forzaInternazionale()) return;
 
   // ═══════════════════════════════════════════════════════════════════════
   //  2) TASTO "Scarica video" — qualità massima
@@ -345,7 +340,6 @@
 
   // PH è in parte una SPA: il pulsante va (ri)messo quando compare un video.
   function avvio() {
-    try { forzaInglese(); } catch (e) {}
     aggiungiPulsante();
     // PH è una SPA e a volte ricostruisce il DOM: si riprova con l'observer…
     try {
