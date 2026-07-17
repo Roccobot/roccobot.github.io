@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.5.0
+// @version      1.5.1
 // @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" (SEMPRE visibile, stili !important + retry, così non "sparisce") che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). La sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
@@ -263,7 +263,7 @@
       } catch (err) {
         // ripiego: apri l'URL così l'utente può salvarlo a mano
         window.open(best.url, '_blank', 'noopener');
-        if (btn) { btn.textContent = '↗︎ aperto (salva a mano)'; sfondo(btn, '#d0021b'); }
+        if (btn) { btn.textContent = '↗︎ aperto'; sfondo(btn, '#d0021b'); }
       }
     } catch (e) {
       alert('PH Roccobot: errore nel preparare il download.\n' + (e && e.message ? e.message : e));
@@ -291,7 +291,11 @@
       const st = {
         'position': 'fixed', 'bottom': '16px', 'right': '16px', 'z-index': '2147483647',
         'display': 'block', 'visibility': 'visible', 'opacity': '0.92',
-        'width': 'auto', 'height': 'auto', 'margin': '0', 'padding': '10px 14px',
+        // larghezza FISSA + testo centrato: le cifre della percentuale non fanno
+        // "ballare" il tasto; il testo lungo viene troncato con l'ellissi.
+        'width': '200px', 'box-sizing': 'border-box', 'text-align': 'center',
+        'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis',
+        'height': 'auto', 'margin': '0', 'padding': '10px 14px',
         'border': 'none', 'border-radius': '999px',
         'background': '#ff9000', 'color': '#000',
         'font': '700 14px/1 system-ui, -apple-system, sans-serif',
