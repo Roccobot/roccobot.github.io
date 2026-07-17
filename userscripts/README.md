@@ -278,9 +278,10 @@ Su `pornhub.com` fa due cose:
    il file alla **qualità massima** disponibile. Legge a runtime l'oggetto
    `flashvars_<viewkey>` della pagina e le sue `mediaDefinitions`, **espande** le
    definizioni "remote" (endpoint `get_media`) e sceglie l'**MP4** con la qualità
-   più alta; il download va su disco via `GM_download` (nome file = titolo del
-   video + `[NNNp].mp4`). Se il video è **solo HLS** (streaming a segmenti), avvisa
-   che il download MP4 diretto non è possibile.
+   più alta; il download va su disco via `GM_download`. **Nome file:**
+   `[Nome canale] Titolo.mp4` — il nome del canale/uploader tra **parentesi quadre
+   letterali**, ricavato dalla pagina. Se il video è **solo HLS** (streaming a
+   segmenti), avvisa che il download MP4 diretto non è possibile.
 
 ### Personalizzazione
 
