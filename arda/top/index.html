@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.06</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.16</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5943,46 +5943,81 @@ var CARDCOLORS_SAVED = JSON.parse(JSON.stringify(CARDCOLORS.fam));
 // (keepVersion). Ritorna la Promise di doCommit.
 function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
 
-// Statistiche colori: modale (apribile dal link in calce all'editor colori) con
-// la distribuzione dei personaggi per famiglia. Legge dati + CARDCOLORS AL VOLO,
-// quindi rispecchia in tempo reale ogni modifica a colori/dataset. Overlay
-// separato (z-index sopra l'editor); non tocca lockPageScroll (gestito dall'editor).
+// Statistiche: modale (link in calce all'editor) con 3 viste (tab): FAMIGLIE
+// (colore), CATEGORIE (le 9 razze), TIPI (le etichette type-*). Legge dati +
+// CARDCOLORS + i colori-etichetta AL VOLO, quindi rispecchia in tempo reale ogni
+// modifica. Overlay separato (z-index sopra l'editor); non tocca lockPageScroll.
 function showColorStats() {
   if (document.getElementById('stats-modal')) return;
   var it = currentLang === 'it';
   var ov = document.createElement('div'); ov.id = 'stats-modal'; ov.className = 'fab-modal-overlay'; ov.style.zIndex = '260';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '560px'; box.style.maxHeight = '88vh'; box.style.overflowY = 'auto';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '580px'; box.style.maxHeight = '88vh'; box.style.overflowY = 'auto';
   ov.appendChild(box); document.body.appendChild(ov);
   var close = function(){ ov.remove(); };
   ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
-  var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
-  h.textContent = it ? 'Distribuzione per famiglia' : 'Distribution by family'; box.appendChild(h);
-  // Conteggio al volo (custom = colori individuali, isolati dalle famiglie).
-  var counts = {}, custom = 0;
-  dati.forEach(function(x){ var f = familyOf(x); if (f === 'custom') { custom++; return; } counts[f] = (counts[f] || 0) + 1; });
-  var rows = Object.keys(counts).map(function(k){ return { fam: k, n: counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
-  var total = dati.length, max = rows.length ? rows[0].n : 1, theme = ccTheme();
-  var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.82rem;opacity:0.7;margin:0 0 0.9rem;';
-  sub.textContent = total + (it ? ' personaggi in ' : ' characters in ') + rows.length + (it ? ' famiglie' : ' families') + (custom ? (' + ' + custom + (it ? ' colori individuali' : ' individual')) : '');
-  box.appendChild(sub);
-  rows.forEach(function(r){
-    var dark = ccFamHex(r.fam, 'dark'), light = ccFamHex(r.fam, 'light'), col = theme === 'light' ? light : dark;
-    var pct = Math.round(r.n / total * 100);
-    var row = document.createElement('div'); row.style.cssText = 'display:grid;grid-template-columns:48px 104px 1fr auto;align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
-    var sw = document.createElement('span'); sw.style.cssText = 'display:inline-flex;gap:3px;';
-    [light, dark].forEach(function(hx){ var s = document.createElement('span'); s.style.cssText = 'width:20px;height:15px;border-radius:3px;border:1px solid rgba(128,128,128,0.4);background:' + hx + ';'; sw.appendChild(s); });
-    var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;'; nm.textContent = r.fam;
-    var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
-    var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (r.n / max * 100) + '%;background:' + col + ';'; track.appendChild(fill);
-    var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;';
-    cnt.innerHTML = '<b>' + r.n + '</b> · ' + pct + '%';
-    row.appendChild(sw); row.appendChild(nm); row.appendChild(track); row.appendChild(cnt);
-    box.appendChild(row);
+  var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.5rem;';
+  h.textContent = it ? 'Statistiche' : 'Statistics'; box.appendChild(h);
+  var theme = ccTheme(), total = dati.length;
+  // Tab
+  var tabs = document.createElement('div'); tabs.style.cssText = 'display:flex;gap:0.4rem;margin:0 0 0.8rem;';
+  var content = document.createElement('div'); var btns = {};
+  [['fam', it?'Famiglie':'Families'], ['cat', it?'Categorie':'Categories'], ['type', it?'Tipi':'Types']].forEach(function(t){
+    var b = document.createElement('button'); b.className = 'fab-modal-confirm'; b.style.cssText = 'flex:1;padding:0.4rem;font-size:0.85rem;';
+    b.textContent = t[1]; b.onclick = function(){ setStatTab(t[0]); }; btns[t[0]] = b; tabs.appendChild(b);
   });
-  var note = document.createElement('p'); note.style.cssText = 'font-size:0.72rem;opacity:0.55;margin:0.9rem 0 0;border-top:1px solid rgba(128,128,128,0.2);padding-top:0.6rem;';
-  note.textContent = it ? 'Swatch e barre nel colore della famiglia; aggiornato a ogni apertura.' : 'Swatches and bars in the family colour; updated on each open.';
-  box.appendChild(note);
+  box.appendChild(tabs); box.appendChild(content);
+  // Riga-barra. o: {swatches?, name, n, max, barColor}
+  function statRow(host, o){
+    var pct = Math.round(o.n / total * 100);
+    var row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:' + (o.swatches ? '46px 108px 1fr auto' : '108px 1fr auto') + ';align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
+    if (o.swatches){ var sw = document.createElement('span'); sw.style.cssText = 'display:inline-flex;gap:3px;'; o.swatches.forEach(function(hx){ var s = document.createElement('span'); s.style.cssText = 'width:20px;height:15px;border-radius:3px;border:1px solid rgba(128,128,128,0.4);background:' + hx + ';'; sw.appendChild(s); }); row.appendChild(sw); }
+    var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
+    var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
+    var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
+    var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.innerHTML = '<b>' + o.n + '</b> · ' + pct + '%'; row.appendChild(cnt);
+    host.appendChild(row);
+  }
+  function subLine(host, txt){ var s = document.createElement('p'); s.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 0.8rem;'; s.textContent = txt; host.appendChild(s); }
+  function noteLine(host, txt){ var n = document.createElement('p'); n.style.cssText = 'font-size:0.72rem;opacity:0.55;margin:0.9rem 0 0;border-top:1px solid rgba(128,128,128,0.2);padding-top:0.6rem;'; n.textContent = txt; host.appendChild(n); }
+  // Colore di un'etichetta type-* letto dal CSS reale (tema attivo).
+  function typeLabelColor(cls){ var pr = document.createElement('span'); pr.className = 'type-badge ' + cls; pr.style.cssText = 'position:absolute;left:-9999px;'; document.body.appendChild(pr); var c = getComputedStyle(pr).color; pr.remove(); return c; }
+  // Tutte le classi-etichetta di una voce (replica renderList/stripClassOf).
+  function typeClassesOf(p){
+    var tp = it ? p.tipo : (p.tipo_en || p.tipo);
+    var cls = (p.nome !== 'Lúthien' && isAinu(p)) ? ['type-ainu'] : [];
+    var segs = (p.tipo_color || '').split('|');
+    if (tp) tp.split('|').forEach(function(seg, i){ var ov = (segs[i] || '').trim(); if (!/^type-[a-z-]*$/.test(ov)) ov = ''; cls.push(ov || tipoClass(seg.trim())); });
+    return cls;
+  }
+  function buildFam(host){
+    var counts = {}, custom = 0;
+    dati.forEach(function(x){ var f = familyOf(x); if (f === 'custom'){ custom++; return; } counts[f] = (counts[f] || 0) + 1; });
+    var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
+    var max = rows.length ? rows[0].n : 1;
+    subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' famiglie':' families') + (custom ? (' + ' + custom + (it?' individuali':' individual')) : ''));
+    rows.forEach(function(r){ var d = ccFamHex(r.k,'dark'), l = ccFamHex(r.k,'light'); statRow(host, { swatches:[l,d], name:r.k, n:r.n, max:max, barColor: theme==='light'?l:d }); });
+    noteLine(host, it?'Swatch e barra nel colore della famiglia.':'Swatch and bar in the family colour.');
+  }
+  function buildCat(host){
+    var counts = {}; dati.forEach(function(x){ var c = categoria(x); counts[c] = (counts[c] || 0) + 1; });
+    var rows = CATS.map(function(k){ return { k:k, n:counts[k]||0 }; }).filter(function(r){ return r.n > 0; }).sort(function(a, b){ return b.n - a.n; });
+    var max = rows.length ? rows[0].n : 1, CL = CAT_LABEL[it?'it':'en'], acc = theme==='light' ? '#5a6b7a' : '#8aa0b4';
+    subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' categorie':' categories'));
+    rows.forEach(function(r){ statRow(host, { name: CL[r.k]||r.k, n:r.n, max:max, barColor:acc }); });
+    noteLine(host, it?'La Categoria è la razza in senso esteso (il filtro principale della pagina).':'Category is the broad race (the page main filter).');
+  }
+  function buildType(host){
+    var counts = {}; dati.forEach(function(x){ typeClassesOf(x).forEach(function(c){ if (c) counts[c] = (counts[c] || 0) + 1; }); });
+    var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
+    var max = rows.length ? rows[0].n : 1, tot = rows.reduce(function(s, r){ return s + r.n; }, 0);
+    subLine(host, tot + (it?' etichette su ':' labels across ') + total + (it?' personaggi, ':' characters, ') + rows.length + (it?' tipi':' types'));
+    rows.forEach(function(r){ var col = typeLabelColor(r.k); statRow(host, { swatches:[col], name: r.k.replace(/^type-/,''), n:r.n, max:max, barColor:col }); });
+    noteLine(host, it?'Swatch e barra nel colore dell\'etichetta; chi ha più etichette conta in più tipi.':'Swatch and bar in the label colour; a character with several labels counts in several types.');
+  }
+  function setStatTab(w){ Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); content.innerHTML = ''; if (w==='fam') buildFam(content); else if (w==='cat') buildCat(content); else buildType(content); }
+  setStatTab('fam');
 }
 
 function showColorEditor() {
