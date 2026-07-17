@@ -368,7 +368,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
 .rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.1rem,3.4vw,1.6rem); }
 
-.tipo-badge {
+.type-badge {
   display:inline-flex; align-items:center; gap:0.3em;
   font-family:'EB Garamond',serif; font-size:0.72em; font-style:normal; font-weight:normal;
   border-radius:3px; padding:1px 6px;
@@ -380,7 +380,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    trasformazione visiva: non tocca icone, nome, flusso o a-capo. Su <=480px
    il nudge lo da gia' il translateY di .rank-tipi. */
 @media (min-width:481px) {
-  .rank-name .tipo-badge { transform:translateY(-2px); }
+  .rank-name .type-badge { transform:translateY(-2px); }
 }
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
@@ -1242,49 +1242,49 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   .rank-name > .rank-flags .genere-svg { margin-left:0.07em; }
 }
 /* ELFI — tonalità blu/celeste */
-.tipo-noldor      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
-.tipo-vanyar      { background:rgba(0,155,200,0.28); border:1px solid rgba(24,232,255,0.8); color:#18e8ff; }
-.tipo-teleri, .tipo-sindar { background:rgba(9,146,133,0.28); border:1px solid rgba(77,230,204,0.8); color:#4de6cc; }
-.tipo-falmar      { background:rgba(9,120,150,0.30); border:1px solid rgba(69,216,238,0.8); color:#45d8ee; }
+.type-noldo      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
+.type-vanya      { background:rgba(0,155,200,0.28); border:1px solid rgba(24,232,255,0.8); color:#18e8ff; }
+.type-teler, .type-sinda { background:rgba(9,146,133,0.28); border:1px solid rgba(77,230,204,0.8); color:#4de6cc; }
+.type-falma      { background:rgba(9,120,150,0.30); border:1px solid rgba(69,216,238,0.8); color:#45d8ee; }
 /* MEZZELFI — indaco stellare */
-.tipo-mezzelfo    { background:rgba(11,112,174,0.28); border:1px solid rgba(94,214,250,0.8); color:#5ed6fa; }
+.type-half-elf    { background:rgba(11,112,174,0.28); border:1px solid rgba(94,214,250,0.8); color:#5ed6fa; }
 /* UOMINI — rosso/vermiglio/ocra rossa */
-.tipo-numenorean  { background:rgba(204,0,34,0.27); border:1px solid rgba(255,66,97,0.8); color:#ff4261; }
-.tipo-hador       { background:rgba(204,92,0,0.27); border:1px solid rgba(255,149,61,0.8); color:#ff953d; }
-.tipo-beor        { background:rgba(204,27,0,0.27); border:1px solid rgba(255,87,61,0.8); color:#ff573d; }
-.tipo-haleth      { background:rgba(204,153,0,0.27); border:1px solid rgba(255,207,61,0.8); color:#ffcf3d; }
-.tipo-rohirrim    { background:rgba(124,184,20,0.27); border:1px solid rgba(170,231,65,0.8); color:#aae741; }
-.tipo-dunadan     { background:rgba(190,14,46,0.27); border:1px solid rgba(226,83,109,0.8); color:#e2536d; }
-.tipo-eotheod     { background:rgba(204,156,0,0.27); border:1px solid rgba(235,179,0,0.8); color:#ebb300; }
+.type-numenorean  { background:rgba(204,0,34,0.27); border:1px solid rgba(255,66,97,0.8); color:#ff4261; }
+.type-hador       { background:rgba(204,92,0,0.27); border:1px solid rgba(255,149,61,0.8); color:#ff953d; }
+.type-beor        { background:rgba(204,27,0,0.27); border:1px solid rgba(255,87,61,0.8); color:#ff573d; }
+.type-haleth      { background:rgba(204,153,0,0.27); border:1px solid rgba(255,207,61,0.8); color:#ffcf3d; }
+.type-rohir    { background:rgba(124,184,20,0.27); border:1px solid rgba(170,231,65,0.8); color:#aae741; }
+.type-dunadan     { background:rgba(190,14,46,0.27); border:1px solid rgba(226,83,109,0.8); color:#e2536d; }
+.type-eotheod     { background:rgba(204,156,0,0.27); border:1px solid rgba(235,179,0,0.8); color:#ebb300; }
 /* NANI — ambra/oro */
-.tipo-nano        { background:rgba(195,135,0,0.3); border:1px solid rgba(255,216,40,0.8); color:#ffd828; }
+.type-dwarf        { background:rgba(195,135,0,0.3); border:1px solid rgba(255,216,40,0.8); color:#ffd828; }
 /* ORCHI — viola */
-.tipo-orco        { background:rgba(143,0,213,0.3); border:1px solid rgba(218,80,255,0.8); color:#da50ff; }
-.tipo-troll       { background:rgba(199,60,205,0.3); border:1px solid rgba(237,131,224,0.8); color:#ed83e0; }
+.type-orc        { background:rgba(143,0,213,0.3); border:1px solid rgba(218,80,255,0.8); color:#da50ff; }
+.type-troll       { background:rgba(199,60,205,0.3); border:1px solid rgba(237,131,224,0.8); color:#ed83e0; }
 /* HOBBIT — giallo/ocra */
-.tipo-hobbit      { background:rgba(215,108,0,0.3); border:1px solid rgba(255,168,56,0.8); color:#ffa838; }
-.tipo-gollum      { background:rgba(124,72,6,0.35); border:1px solid rgba(233,165,87,0.8); color:#e9a557; }
+.type-hobbit      { background:rgba(215,108,0,0.3); border:1px solid rgba(255,168,56,0.8); color:#ffa838; }
+.type-gollum      { background:rgba(124,72,6,0.35); border:1px solid rgba(233,165,87,0.8); color:#e9a557; }
 /* AQUILE — turchese */
-.tipo-aquila      { background:rgba(0,190,188,0.28); border:1px solid rgba(24,255,248,0.8); color:#18fff8; }
+.type-eagle      { background:rgba(0,190,188,0.28); border:1px solid rgba(24,255,248,0.8); color:#18fff8; }
 /* ENT — verde */
-.tipo-ent         { background:rgba(14,132,61,0.30); border:1px solid rgba(68,206,107,0.8); color:#44ce6b; }
+.type-ent         { background:rgba(14,132,61,0.30); border:1px solid rgba(68,206,107,0.8); color:#44ce6b; }
 /* AINUR/ISTARI */
-.tipo-maia        { background:rgba(6,195,0,0.28); border:1px solid rgba(91,255,65,0.8); color:#5bff41; }
-.tipo-generico    { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
-.tipo-ainur       { background:rgba(0,43,205,0.30); border:1px solid rgba(107,159,255,0.8); color:#6b9fff; }
-.tipo-misterioso  { background:rgba(73,34,126,0.30); border:1px solid rgba(200,168,255,0.8); color:#c8a8ff; }
-.tipo-uominicomuni { background:rgba(136,149,55,0.27); border:1px solid rgba(174,186,99,0.8); color:#aeba63; }
+.type-maia        { background:rgba(6,195,0,0.28); border:1px solid rgba(91,255,65,0.8); color:#5bff41; }
+.type-fallback    { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
+.type-ainu       { background:rgba(0,43,205,0.30); border:1px solid rgba(107,159,255,0.8); color:#6b9fff; }
+.type-mystery  { background:rgba(73,34,126,0.30); border:1px solid rgba(200,168,255,0.8); color:#c8a8ff; }
+.type-northmen { background:rgba(136,149,55,0.27); border:1px solid rgba(174,186,99,0.8); color:#aeba63; }
 /* ESSERI SUPERIORI — rosa/magenta per Valar e Valier */
-.tipo-vala, .tipo-valie { background:rgba(101,4,56,0.44); border:1px solid rgba(253,139,212,0.8); color:#fd8bd4; text-shadow:0 0 8px rgba(220,100,180,0.35); }
-.tipo-maia-dark   { background:rgba(132,0,81,0.36); border:1px solid rgba(255,81,187,0.8); color:#ff51bb; }
-.tipo-balrog      { background:rgba(177,44,0,0.42); border:1px solid rgba(255,112,56,0.8); color:#ff7038; }
-.tipo-drago       { background:rgba(185,0,0,0.40); border:1px solid rgba(255,76,76,0.8); color:#ff4c4c; }
-.tipo-ragno, .tipo-oscurita { background:rgba(120,72,210,0.28); border:1px solid rgba(170,129,236,0.8); color:#aa81ec; }
-.tipo-lupo        { background:rgba(69,77,95,0.38); border:1px solid rgba(195,205,223,0.8); color:#c3cddf; }
-.tipo-bestia      { background:rgba(134,95,28,0.32); border:1px solid rgba(240,206,122,0.8); color:#f0ce7a; }
+.type-vala, .type-valie { background:rgba(101,4,56,0.44); border:1px solid rgba(253,139,212,0.8); color:#fd8bd4; text-shadow:0 0 8px rgba(220,100,180,0.35); }
+.type-darkmaia   { background:rgba(132,0,81,0.36); border:1px solid rgba(255,81,187,0.8); color:#ff51bb; }
+.type-balrog      { background:rgba(177,44,0,0.42); border:1px solid rgba(255,112,56,0.8); color:#ff7038; }
+.type-dragon       { background:rgba(185,0,0,0.40); border:1px solid rgba(255,76,76,0.8); color:#ff4c4c; }
+.type-spider, .type-shadow { background:rgba(120,72,210,0.28); border:1px solid rgba(170,129,236,0.8); color:#aa81ec; }
+.type-wolf        { background:rgba(69,77,95,0.38); border:1px solid rgba(195,205,223,0.8); color:#c3cddf; }
+.type-beast      { background:rgba(134,95,28,0.32); border:1px solid rgba(240,206,122,0.8); color:#f0ce7a; }
 /* COLORI A PARTE — Morgoth e Tom Bombadil */
-.tipo-morgoth     { background:rgba(37,29,55,0.62); border:1px solid rgba(166,145,204,0.8); color:#a691cc; }
-.tipo-bombadil    { background:rgba(30,90,20,0.42); border:1px solid rgba(132,234,80,0.8); color:#84ea50; }
+.type-morgoth     { background:rgba(37,29,55,0.62); border:1px solid rgba(166,145,204,0.8); color:#a691cc; }
+.type-bombadil    { background:rgba(30,90,20,0.42); border:1px solid rgba(132,234,80,0.8); color:#84ea50; }
 
 .modal-backdrop {
   position:fixed; inset:0;
@@ -1620,7 +1620,7 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      card, il wrap interno del flex resta comunque allineato. */
   .rank-name > .rank-tipi { display:inline-flex; flex-wrap:wrap; align-items:center; gap:0.35em 0.4em; max-width:100%; vertical-align:middle; transform:translateY(-1px); }
   .rank-name > .rank-tipi:empty { display:none; }
-  .rank-name > .rank-tipi .tipo-badge { margin-left:0; }
+  .rank-name > .rank-tipi .type-badge { margin-left:0; }
   .rank-name.name-tight > .rank-flags { margin-left:0; margin-right:0.3em; }
   .rank-name.name-tight > .rank-name-text { margin-right:0.24em; }
   .rank-name.name-tight > .rank-tipi { gap:0.3em; }
@@ -1818,9 +1818,9 @@ html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="ligh
 html[data-theme="light"] .rank-item.animale { background: rgba(223,221,216,0.36); }
 html[data-theme="light"] .rank-item.animale:hover, html[data-theme="light"] .rank-item.animale:focus-within { background: rgba(223,221,216,0.55); border-color:rgba(147,141,132,0.5); }
 /* Compensazione contrasto (solo tema chiaro): la tinta tan della card animale
-   fa scendere l'etichetta .tipo-bestia (#7d590b) a 4.48:1, sotto AA. Scurita a
+   fa scendere l'etichetta .type-beast (#7d590b) a 4.48:1, sotto AA. Scurita a
    #6d4a05 (5.6:1 sul tan) solo sulle card animali; bordo = testo @0.8. */
-html[data-theme="light"] .rank-item.animale .tipo-bestia { color:#6d4a05; border-color:rgba(109,74,5,0.8); }
+html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-color:rgba(109,74,5,0.8); }
 html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
 html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-within { background: rgba(236,236,239,0.85); }
 html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
@@ -1881,39 +1881,39 @@ html[data-theme="light"] footer p { color: #2e2e2e; }
 
 
 /* race badge light-mode: vivid but dark enough for marble bg */
-html[data-theme="light"] .tipo-noldor { background:rgba(22,55,183,0.11); border-color:rgba(15,63,185,0.8); color:#0f3fb9; }
-html[data-theme="light"] .tipo-vanyar { background:rgba(0,150,195,0.12); border-color:rgba(0,106,134,0.8); color:#006a86; }
-html[data-theme="light"] .tipo-teleri, html[data-theme="light"] .tipo-sindar { background:rgba(9,146,133,0.11); border-color:rgba(0,110,97,0.8); color:#006e61; }
-html[data-theme="light"] .tipo-falmar { background:rgba(9,130,150,0.12); border-color:rgba(0,104,112,0.8); color:#006870; }
-html[data-theme="light"] .tipo-mezzelfo { background:rgba(11,112,174,0.11); border-color:rgba(0,100,157,0.8); color:#00649d; }
-html[data-theme="light"] .tipo-numenorean { background:rgba(204,0,34,0.12); border-color:rgba(169,0,27,0.8); color:#a9001b; }
-html[data-theme="light"] .tipo-hador { background:rgba(204,92,0,0.12); border-color:rgba(158,71,0,0.8); color:#9e4700; }
-html[data-theme="light"] .tipo-beor { background:rgba(204,27,0,0.12); border-color:rgba(158,21,0,0.8); color:#9e1500; }
-html[data-theme="light"] .tipo-haleth { background:rgba(204,153,0,0.12); border-color:rgba(125,94,0,0.8); color:#7d5e00; }
-html[data-theme="light"] .tipo-rohirrim { background:rgba(124,184,20,0.12); border-color:rgba(70,110,0,0.8); color:#466e00; }
-html[data-theme="light"] .tipo-dunadan { background:rgba(190,14,46,0.12); border-color:rgba(136,6,31,0.8); color:#88061f; }
-html[data-theme="light"] .tipo-eotheod { background:rgba(204,156,0,0.12); border-color:rgba(133,102,0,0.8); color:#856600; }
-html[data-theme="light"] .tipo-nano { background:rgba(185,128,0,0.13); border-color:rgba(116,95,0,0.8); color:#745f00; }
-html[data-theme="light"] .tipo-orco { background:rgba(132,0,201,0.12); border-color:rgba(104,0,152,0.8); color:#680098; }
-html[data-theme="light"] .tipo-troll { background:rgba(200,80,170,0.12); border-color:rgba(156,38,128,0.8); color:#9c2680; }
-html[data-theme="light"] .tipo-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(161,69,0,0.8); color:#a14500; }
-html[data-theme="light"] .tipo-gollum { background:rgba(124,72,6,0.11); border-color:rgba(138,78,0,0.8); color:#8a4e00; }
-html[data-theme="light"] .tipo-aquila { background:rgba(0,185,180,0.12); border-color:rgba(0,110,103,0.8); color:#006e67; }
-html[data-theme="light"] .tipo-ent { background:rgba(0,120,60,0.13); border-color:rgba(0,108,44,0.8); color:#006c2c; }
-html[data-theme="light"] .tipo-maia { background:rgba(5,186,0,0.12); border-color:rgba(10,115,0,0.8); color:#0a7300; }
-html[data-theme="light"] .tipo-generico { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
-html[data-theme="light"] .tipo-ainur { background:rgba(0,43,205,0.10); border-color:rgba(11,55,210,0.8); color:#0b37d2; }
-html[data-theme="light"] .tipo-misterioso { background:rgba(73,34,126,0.08); border-color:rgba(89,30,177,0.8); color:#591eb1; }
-html[data-theme="light"] .tipo-uominicomuni { background:rgba(136,149,55,0.12); border-color:rgba(94,103,32,0.8); color:#5e6720; }
-html[data-theme="light"] .tipo-vala, html[data-theme="light"] .tipo-valie { background:rgba(200,0,87,0.11); border-color:rgba(174,0,78,0.8); color:#ae004e; text-shadow:none; }
-html[data-theme="light"] .tipo-morgoth { background:rgba(54,44,76,0.12); border-color:rgba(87,72,126,0.8); color:#57487e; text-shadow:none; }
-html[data-theme="light"] .tipo-ragno, html[data-theme="light"] .tipo-oscurita { background:rgba(77,25,155,0.11); border-color:rgba(87,29,170,0.8); color:#571daa; }
-html[data-theme="light"] .tipo-balrog { background:rgba(205,55,0,0.12); border-color:rgba(171,53,0,0.8); color:#ab3500; text-shadow:none; }
-html[data-theme="light"] .tipo-maia-dark { background:rgba(162,0,92,0.12); border-color:rgba(152,0,89,0.8); color:#980059; }
-html[data-theme="light"] .tipo-drago { background:rgba(185,0,0,0.10); border-color:rgba(190,0,0,0.8); color:#be0000; }
-html[data-theme="light"] .tipo-lupo { background:rgba(69,77,95,0.12); border-color:rgba(60,71,92,0.8); color:#3c475c; }
-html[data-theme="light"] .tipo-bestia { background:rgba(134,95,28,0.12); border-color:rgba(125,89,11,0.8); color:#7d590b; }
-html[data-theme="light"] .tipo-bombadil { background:rgba(30,90,20,0.12); border-color:rgba(39,108,13,0.8); color:#276c0d; }
+html[data-theme="light"] .type-noldo { background:rgba(22,55,183,0.11); border-color:rgba(15,63,185,0.8); color:#0f3fb9; }
+html[data-theme="light"] .type-vanya { background:rgba(0,150,195,0.12); border-color:rgba(0,106,134,0.8); color:#006a86; }
+html[data-theme="light"] .type-teler, html[data-theme="light"] .type-sinda { background:rgba(9,146,133,0.11); border-color:rgba(0,110,97,0.8); color:#006e61; }
+html[data-theme="light"] .type-falma { background:rgba(9,130,150,0.12); border-color:rgba(0,104,112,0.8); color:#006870; }
+html[data-theme="light"] .type-half-elf { background:rgba(11,112,174,0.11); border-color:rgba(0,100,157,0.8); color:#00649d; }
+html[data-theme="light"] .type-numenorean { background:rgba(204,0,34,0.12); border-color:rgba(169,0,27,0.8); color:#a9001b; }
+html[data-theme="light"] .type-hador { background:rgba(204,92,0,0.12); border-color:rgba(158,71,0,0.8); color:#9e4700; }
+html[data-theme="light"] .type-beor { background:rgba(204,27,0,0.12); border-color:rgba(158,21,0,0.8); color:#9e1500; }
+html[data-theme="light"] .type-haleth { background:rgba(204,153,0,0.12); border-color:rgba(125,94,0,0.8); color:#7d5e00; }
+html[data-theme="light"] .type-rohir { background:rgba(124,184,20,0.12); border-color:rgba(70,110,0,0.8); color:#466e00; }
+html[data-theme="light"] .type-dunadan { background:rgba(190,14,46,0.12); border-color:rgba(136,6,31,0.8); color:#88061f; }
+html[data-theme="light"] .type-eotheod { background:rgba(204,156,0,0.12); border-color:rgba(133,102,0,0.8); color:#856600; }
+html[data-theme="light"] .type-dwarf { background:rgba(185,128,0,0.13); border-color:rgba(116,95,0,0.8); color:#745f00; }
+html[data-theme="light"] .type-orc { background:rgba(132,0,201,0.12); border-color:rgba(104,0,152,0.8); color:#680098; }
+html[data-theme="light"] .type-troll { background:rgba(200,80,170,0.12); border-color:rgba(156,38,128,0.8); color:#9c2680; }
+html[data-theme="light"] .type-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(161,69,0,0.8); color:#a14500; }
+html[data-theme="light"] .type-gollum { background:rgba(124,72,6,0.11); border-color:rgba(138,78,0,0.8); color:#8a4e00; }
+html[data-theme="light"] .type-eagle { background:rgba(0,185,180,0.12); border-color:rgba(0,110,103,0.8); color:#006e67; }
+html[data-theme="light"] .type-ent { background:rgba(0,120,60,0.13); border-color:rgba(0,108,44,0.8); color:#006c2c; }
+html[data-theme="light"] .type-maia { background:rgba(5,186,0,0.12); border-color:rgba(10,115,0,0.8); color:#0a7300; }
+html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
+html[data-theme="light"] .type-ainu { background:rgba(0,43,205,0.10); border-color:rgba(11,55,210,0.8); color:#0b37d2; }
+html[data-theme="light"] .type-mystery { background:rgba(73,34,126,0.08); border-color:rgba(89,30,177,0.8); color:#591eb1; }
+html[data-theme="light"] .type-northmen { background:rgba(136,149,55,0.12); border-color:rgba(94,103,32,0.8); color:#5e6720; }
+html[data-theme="light"] .type-vala, html[data-theme="light"] .type-valie { background:rgba(200,0,87,0.11); border-color:rgba(174,0,78,0.8); color:#ae004e; text-shadow:none; }
+html[data-theme="light"] .type-morgoth { background:rgba(54,44,76,0.12); border-color:rgba(87,72,126,0.8); color:#57487e; text-shadow:none; }
+html[data-theme="light"] .type-spider, html[data-theme="light"] .type-shadow { background:rgba(77,25,155,0.11); border-color:rgba(87,29,170,0.8); color:#571daa; }
+html[data-theme="light"] .type-balrog { background:rgba(205,55,0,0.12); border-color:rgba(171,53,0,0.8); color:#ab3500; text-shadow:none; }
+html[data-theme="light"] .type-darkmaia { background:rgba(162,0,92,0.12); border-color:rgba(152,0,89,0.8); color:#980059; }
+html[data-theme="light"] .type-dragon { background:rgba(185,0,0,0.10); border-color:rgba(190,0,0,0.8); color:#be0000; }
+html[data-theme="light"] .type-wolf { background:rgba(69,77,95,0.12); border-color:rgba(60,71,92,0.8); color:#3c475c; }
+html[data-theme="light"] .type-beast { background:rgba(134,95,28,0.12); border-color:rgba(125,89,11,0.8); color:#7d590b; }
+html[data-theme="light"] .type-bombadil { background:rgba(30,90,20,0.12); border-color:rgba(39,108,13,0.8); color:#276c0d; }
 /* ── Compensazione contrasto sulle card apocrife (SOLO tema chiaro) ──
    La velatura opacity:0.8 delle card apocrife (scelta deliberata, intatta)
    sbiadisce le etichette sotto la soglia AA 4.5:1. Qui i colori di partenza
@@ -1921,14 +1921,14 @@ html[data-theme="light"] .tipo-bombadil { background:rgba(30,90,20,0.12); border
    velatura superi 4.6:1 (bordo = stesso RGB @0.8, come da regola). Coprono
    i tipi presenti oggi sulle 18 voci apocrife: se in futuro una voce
    apocrifa avrà un tipo diverso, aggiungere qui la compensazione. */
-html[data-theme="light"] .rank-item.apocrifo .tipo-noldor { border-color:rgba(13,54,159,0.8); color:#0d369f; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-teleri, html[data-theme="light"] .rank-item.apocrifo .tipo-sindar { border-color:rgba(0,76,66,0.8); color:#004c42; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-vanyar { border-color:rgba(0,72,91,0.8); color:#00485b; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-haleth { border-color:rgba(84,63,0,0.8); color:#543f00; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-hador { border-color:rgba(107,48,0,0.8); color:#6b3000; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-beor { border-color:rgba(141,19,0,0.8); color:#8d1300; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-dunadan { border-color:rgba(121,0,27,0.8); color:#79001b; }
-html[data-theme="light"] .rank-item.apocrifo .tipo-generico { border-color:rgba(68,68,68,0.8); color:#444444; }
+html[data-theme="light"] .rank-item.apocrifo .type-noldo { border-color:rgba(13,54,159,0.8); color:#0d369f; }
+html[data-theme="light"] .rank-item.apocrifo .type-teler, html[data-theme="light"] .rank-item.apocrifo .type-sinda { border-color:rgba(0,76,66,0.8); color:#004c42; }
+html[data-theme="light"] .rank-item.apocrifo .type-vanya { border-color:rgba(0,72,91,0.8); color:#00485b; }
+html[data-theme="light"] .rank-item.apocrifo .type-haleth { border-color:rgba(84,63,0,0.8); color:#543f00; }
+html[data-theme="light"] .rank-item.apocrifo .type-hador { border-color:rgba(107,48,0,0.8); color:#6b3000; }
+html[data-theme="light"] .rank-item.apocrifo .type-beor { border-color:rgba(141,19,0,0.8); color:#8d1300; }
+html[data-theme="light"] .rank-item.apocrifo .type-dunadan { border-color:rgba(121,0,27,0.8); color:#79001b; }
+html[data-theme="light"] .rank-item.apocrifo .type-fallback { border-color:rgba(68,68,68,0.8); color:#444444; }
 html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2404,56 +2404,56 @@ function processAlt(str) {
 }
 
 function tipoClass(tipo) {
-  if (!tipo) return 'tipo-generico';
+  if (!tipo) return 'type-fallback';
   var t = tipo.replace(/^→\s*/,'').toLowerCase();
   // ── Esseri superiori (divini / ancestrali) ──
-  if (t.includes('vala decaduto') || t.includes('fallen vala')) return 'tipo-morgoth';
-  if (t.includes('valië') || t.includes('valie')) return 'tipo-valie';
-  if (t.includes('vala')) return 'tipo-vala';
-  if (t.includes('balrog')) return 'tipo-balrog';
-  if (t.includes('essere ancestrale') || t.includes('primordial')) return 'tipo-bombadil';
-  if (t.includes('spirito delle acque') || t.includes('water-spirit')) return 'tipo-bombadil'; // Baccador: stessa resa-colore di Tom Bombadil
-  if (t.includes('maia') && (t.includes('decadut') || t.includes('fallen'))) return 'tipo-maia-dark';
-  if (t.includes('drago') || t.includes('dragon')) return 'tipo-drago';
-  if (t.includes('ragno') || t.includes('spider')) return 'tipo-ragno';
-  if (t.includes('lupo') || t.includes('mannaro') || t.includes('werewolf')) return 'tipo-lupo';
-  if (t.includes('vampiro') || t.includes('vampire') || t.includes('pipistrello')) return 'tipo-oscurita';
-  if (t.includes('segugio') || t.includes('hound') || t.includes('cane') || t.includes('dog') || t.includes('cavallo') || t.includes('horse') || t.includes('orso') || t.includes('bear') || t.includes('pony') || t.includes('corvo') || t.includes('raven')) return 'tipo-bestia';
-  if (t.includes('spirito') || t.includes('spirit') || t.includes('spettro') || t.includes('wraith')) return 'tipo-oscurita';
+  if (t.includes('vala decaduto') || t.includes('fallen vala')) return 'type-morgoth';
+  if (t.includes('valië') || t.includes('valie')) return 'type-valie';
+  if (t.includes('vala')) return 'type-vala';
+  if (t.includes('balrog')) return 'type-balrog';
+  if (t.includes('essere ancestrale') || t.includes('primordial')) return 'type-bombadil';
+  if (t.includes('spirito delle acque') || t.includes('water-spirit')) return 'type-bombadil'; // Baccador: stessa resa-colore di Tom Bombadil
+  if (t.includes('maia') && (t.includes('decadut') || t.includes('fallen'))) return 'type-darkmaia';
+  if (t.includes('drago') || t.includes('dragon')) return 'type-dragon';
+  if (t.includes('ragno') || t.includes('spider')) return 'type-spider';
+  if (t.includes('lupo') || t.includes('mannaro') || t.includes('werewolf')) return 'type-wolf';
+  if (t.includes('vampiro') || t.includes('vampire') || t.includes('pipistrello')) return 'type-shadow';
+  if (t.includes('segugio') || t.includes('hound') || t.includes('cane') || t.includes('dog') || t.includes('cavallo') || t.includes('horse') || t.includes('orso') || t.includes('bear') || t.includes('pony') || t.includes('corvo') || t.includes('raven')) return 'type-beast';
+  if (t.includes('spirito') || t.includes('spirit') || t.includes('spettro') || t.includes('wraith')) return 'type-shadow';
   // ── Razze incarnate ──
-  if (t.includes('corrotto') || t.includes('corrotta') || t.includes('corrupted')) return 'tipo-gollum';
-  if (t.includes('hobbit')) return 'tipo-hobbit';
-  if (t.includes('noldo')) return 'tipo-noldor';
-  if (t.includes('vanya')) return 'tipo-vanyar';
-  if (t.includes('falmar')) return 'tipo-falmar'; // Falmari (Teleri di Aman: Olwë, Eärwen) -> colore azzurro dedicato
-  if (t.includes('teler')) return 'tipo-teleri';
-  if (t.includes('sinda')) return 'tipo-sindar';
-  if (t.includes('nando') || t.includes('nandor') || t.includes('silvan') || t.includes('verde') || t.includes('green-elf')) return 'tipo-teleri'; // Nandor/Silvani: ramo teleri
-  if (t.includes('minya')) return 'tipo-vanyar'; // Minyar (Imin): ramo vanyar
-  if (t.includes('tatya')) return 'tipo-noldor'; // Tatyar (Tata): ramo noldor
-  if (t.includes('nelya')) return 'tipo-teleri'; // Nelyar (Enel): ramo teleri
-  if ((t.includes('mezzelf') || t.includes('half-el')) && (t.includes('dúnadan') || t.includes('dunadan'))) return 'tipo-dunadan';
+  if (t.includes('corrotto') || t.includes('corrotta') || t.includes('corrupted')) return 'type-gollum';
+  if (t.includes('hobbit')) return 'type-hobbit';
+  if (t.includes('noldo')) return 'type-noldo';
+  if (t.includes('vanya')) return 'type-vanya';
+  if (t.includes('falmar')) return 'type-falma'; // Falmari (Teleri di Aman: Olwë, Eärwen) -> colore azzurro dedicato
+  if (t.includes('teler')) return 'type-teler';
+  if (t.includes('sinda')) return 'type-sinda';
+  if (t.includes('nando') || t.includes('nandor') || t.includes('silvan') || t.includes('verde') || t.includes('green-elf')) return 'type-teler'; // Nandor/Silvani: ramo teleri
+  if (t.includes('minya')) return 'type-vanya'; // Minyar (Imin): ramo vanyar
+  if (t.includes('tatya')) return 'type-noldo'; // Tatyar (Tata): ramo noldor
+  if (t.includes('nelya')) return 'type-teler'; // Nelyar (Enel): ramo teleri
+  if ((t.includes('mezzelf') || t.includes('half-el')) && (t.includes('dúnadan') || t.includes('dunadan'))) return 'type-dunadan';
   // 'half-el' copre sia 'half-elf' sia 'half-elven'/'half-elves' (la resa EN
   // dei Peredhil non è uniforme: Elladan/Elrohir/Arwen usano 'Half-elven', che
   // NON contiene 'half-elf' per via della 'v'). Così tutti e 7 i Mezzelfi
-  // ottengono 'tipo-mezzelfo' -> famiglia 'half-elf' in ENTRAMBE le lingue.
-  if (t.includes('mezzelf') || t.includes('half-el')) return 'tipo-mezzelfo';
-  if (t.includes('maia')) return 'tipo-maia';
-  if (t.includes('númenóreano') || t.includes('númenórean') || t.includes('numenorean')) return 'tipo-numenorean';
-  if (t.includes('hador')) return 'tipo-hador';
-  if (t.includes('bëor') || t.includes('casa di beor')) return 'tipo-beor';
-  if (t.includes('haleth')) return 'tipo-haleth';
-  if (t.includes('rohir')) return 'tipo-rohirrim';
-  if (t.includes('dúnadan') || t.includes('dunadan') || t.includes('dúnedain') || t.includes('dunedain')) return 'tipo-dunadan';
-  if (t.includes('gondor')) return 'tipo-dunadan'; // Gondoriani comuni ('Gondoriano'/'of Gondor'): etichetta diversa (rango), stesso colore dei Dúnedain. 'gondor' (non 'gondorian') per coprire anche la resa EN 'of Gondor'
-  if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'tipo-eotheod';
-  if (t.includes('donna mortale') || t.includes('mortal woman')) return 'tipo-beor';
-  if (t.includes('nano') || t.includes('nana') || t.includes('dwarf')) return 'tipo-nano';
-  if (t.includes('troll')) return 'tipo-troll';
-  if (t.includes('orco') || t.includes('orc') || t.includes('uruk')) return 'tipo-orco';
-  if (t.includes('aquila') || t.includes('eagle')) return 'tipo-aquila';
-  if (t.includes('ent')) return 'tipo-ent';
-  return 'tipo-generico';
+  // ottengono 'type-half-elf' -> famiglia 'half-elf' in ENTRAMBE le lingue.
+  if (t.includes('mezzelf') || t.includes('half-el')) return 'type-half-elf';
+  if (t.includes('maia')) return 'type-maia';
+  if (t.includes('númenóreano') || t.includes('númenórean') || t.includes('numenorean')) return 'type-numenorean';
+  if (t.includes('hador')) return 'type-hador';
+  if (t.includes('bëor') || t.includes('casa di beor')) return 'type-beor';
+  if (t.includes('haleth')) return 'type-haleth';
+  if (t.includes('rohir')) return 'type-rohir';
+  if (t.includes('dúnadan') || t.includes('dunadan') || t.includes('dúnedain') || t.includes('dunedain')) return 'type-dunadan';
+  if (t.includes('gondor')) return 'type-dunadan'; // Gondoriani comuni ('Gondoriano'/'of Gondor'): etichetta diversa (rango), stesso colore dei Dúnedain. 'gondor' (non 'gondorian') per coprire anche la resa EN 'of Gondor'
+  if (t.includes('éothéod') || t.includes('eothéod') || t.includes('eotheod')) return 'type-eotheod';
+  if (t.includes('donna mortale') || t.includes('mortal woman')) return 'type-beor';
+  if (t.includes('nano') || t.includes('nana') || t.includes('dwarf')) return 'type-dwarf';
+  if (t.includes('troll')) return 'type-troll';
+  if (t.includes('orco') || t.includes('orc') || t.includes('uruk')) return 'type-orc';
+  if (t.includes('aquila') || t.includes('eagle')) return 'type-eagle';
+  if (t.includes('ent')) return 'type-ent';
+  return 'type-fallback';
 }
 
 // ── Classe-colore card (cardcolor) ──────────────────────────────────────────
@@ -2465,18 +2465,18 @@ function tipoClass(tipo) {
 // I valori colore per-tema vivono nel CSS (variabile --ccrgb per .cc-<fam>):
 // così si ricolora un intero gruppo cambiando un solo valore.
 var CARDCOLOR_OF = {
-  'tipo-noldor':'noldo', 'tipo-mezzelfo':'half-elf',
-  'tipo-sindar':'sinda', 'tipo-teleri':'sinda', 'tipo-vanyar':'sinda', 'tipo-falmar':'sinda', 'tipo-aquila':'sinda',
-  'tipo-maia':'maia', 'tipo-ent':'maia', 'tipo-bombadil':'maia',
-  'tipo-rohirrim':'rohir', 'tipo-uominicomuni':'rohir', 'tipo-eotheod':'rohir',
-  'tipo-hobbit':'other', 'tipo-nano':'other',
-  'tipo-hador':'highman', 'tipo-beor':'highman', 'tipo-haleth':'highman',
-  'tipo-dunadan':'westman', 'tipo-numenorean':'westman',
-  'tipo-drago':'demon', 'tipo-lupo':'demon', 'tipo-balrog':'demon', 'tipo-ragno':'demon',
-  'tipo-vala':'vala', 'tipo-valie':'vala',
-  'tipo-orco':'orc', 'tipo-oscurita':'orc', 'tipo-misterioso':'orc', 'tipo-morgoth':'orc', 'tipo-troll':'orc', 'tipo-maia-dark':'orc',
-  'tipo-bestia':'beast', 'tipo-gollum':'beast',
-  'tipo-generico':'man'
+  'type-noldo':'noldo', 'type-half-elf':'half-elf',
+  'type-sinda':'sinda', 'type-teler':'sinda', 'type-vanya':'sinda', 'type-falma':'sinda', 'type-eagle':'sinda',
+  'type-maia':'maia', 'type-ent':'maia', 'type-bombadil':'maia',
+  'type-rohir':'rohir', 'type-northmen':'rohir', 'type-eotheod':'rohir',
+  'type-hobbit':'other', 'type-dwarf':'other',
+  'type-hador':'highman', 'type-beor':'highman', 'type-haleth':'highman',
+  'type-dunadan':'westman', 'type-numenorean':'westman',
+  'type-dragon':'demon', 'type-wolf':'demon', 'type-balrog':'demon', 'type-spider':'demon',
+  'type-vala':'vala', 'type-valie':'vala',
+  'type-orc':'orc', 'type-shadow':'orc', 'type-mystery':'orc', 'type-morgoth':'orc', 'type-troll':'orc', 'type-darkmaia':'orc',
+  'type-beast':'beast', 'type-gollum':'beast',
+  'type-fallback':'man'
 };
 
 // ── Config colori EDITABILE (Fase 2, dalla v9.27) ───────────────────────────
@@ -2682,22 +2682,22 @@ function customPair(p) {
   var t = cardTriplet(v);
   return t ? { dark: t, light: t } : null;
 }
-// Classe-etichetta (tipo-*) che determina la famiglia di una voce: 2a etichetta
+// Classe-etichetta (type-*) che determina la famiglia di una voce: 2a etichetta
 // se >=2, eccezione 'prima etichetta' per Noldor/Mezzelfo. Estratta da familyOf
 // (dalla v9.27) perché la usa anche 'Sposta per tipo' dell'editor colori per
-// trovare le voci di un dato tipo-classe.
+// trovare le voci di un dato type-classe.
 function stripClassOf(p) {
   var tp = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
-  var badgeClasses = (p.nome !== 'Lúthien' && isAinu(p)) ? ['tipo-ainur'] : [];
+  var badgeClasses = (p.nome !== 'Lúthien' && isAinu(p)) ? ['type-ainu'] : [];
   var colorSegs = (p.tipo_color || '').split('|');
   if (tp) tp.split('|').forEach(function(seg, i){
     var ov = (colorSegs[i] || '').trim();
-    if (!/^tipo-[a-z-]*$/.test(ov)) ov = '';
+    if (!/^type-[a-z-]*$/.test(ov)) ov = '';
     badgeClasses.push(ov || tipoClass(seg.trim()));
   });
-  return (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
+  return (badgeClasses[0] === 'type-noldo' || badgeClasses[0] === 'type-half-elf')
     ? badgeClasses[0]
-    : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
+    : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback'));
 }
 function familyOf(p) {
   // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
@@ -2892,7 +2892,7 @@ function buildStatus(p) {
 var CATS = ['ainu','arcane','elf','adan','man','dwarf','hobbit','orc','animal'];
 // Ainu (Vala/Valië/Maia/Balrog) dedotto dal tipo CANONICO italiano (p.tipo):
 // FONTE UNICA condivisa dalla categoria 'ainu' e dal badge 'Ainu', così le due
-// logiche non possono più divergere. Il tipo-segmento conta a inizio stringa o
+// logiche non possono più divergere. Il type-segmento conta a inizio stringa o
 // dopo un '|' (es. Lúthien: 'Elfa (Teler) | Maia | ...'). Usa il tipo canonico,
 // non quello localizzato: le viste restano coerenti IT/EN (l'inglese anticipa
 // l'aggettivo, es. 'Fallen Vala', e una regex ancorata sul localizzato fallirebbe).
@@ -3077,8 +3077,8 @@ function renderList() {
     // Balrog INCLUSI: mostrano 'Ainu' come primo badge (tipoStr costruito prima
     // dei segmenti di p.tipo), poi 'Maia decaduto'/'Balrog'. Lúthien esclusa.
     var hasAinur = p.nome !== 'Lúthien' && isAinu(p);
-    var badgeClasses = hasAinur ? ['tipo-ainur'] : [];
-    var tipoStr = hasAinur ? '<span class="tipo-badge tipo-ainur">Ainu</span>' : '';
+    var badgeClasses = hasAinur ? ['type-ainu'] : [];
+    var tipoStr = hasAinur ? '<span class="type-badge type-ainu">Ainu</span>' : '';
     // tipo_color: override del colore allineato per segmento ('|'), come tipo/tipo_label.
     // Un segmento vuoto lascia il colore automatico da tipoClass().
     var colorSegs = (p.tipo_color || '').split('|');
@@ -3088,11 +3088,11 @@ function renderList() {
       var displaySeg = escapeHtml((labelSegs[idx] || seg).trim());
       var ov = (colorSegs[idx] || '').trim();
       // Whitelist: l'override finisce in un attributo class senza escaping,
-      // quindi si accetta solo la forma 'tipo-xxx' (tutto il resto è ignorato).
-      if (!/^tipo-[a-z-]*$/.test(ov)) ov = '';
+      // quindi si accetta solo la forma 'type-xxx' (tutto il resto è ignorato).
+      if (!/^type-[a-z-]*$/.test(ov)) ov = '';
       var segCls = ov || tipoClass(seg);
       badgeClasses.push(segCls);
-      return '<span class="tipo-badge ' + segCls + '">' + displaySeg + '</span>';
+      return '<span class="type-badge ' + segCls + '">' + displaySeg + '</span>';
     }).join('') : '';
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con piu'
     // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
@@ -3100,9 +3100,9 @@ function renderList() {
     // Eccezione 'prima etichetta' (scelta dell'utente): se la PRIMA etichetta è
     // Noldor (Elfo/a (Noldo)) O Mezzelfo, si usa quella, non la seconda. Per
     // tutti gli altri resta la regola generale (2a se più d'una, altrimenti 1a).
-    var stripClass = (badgeClasses[0] === 'tipo-noldor' || badgeClasses[0] === 'tipo-mezzelfo')
+    var stripClass = (badgeClasses[0] === 'type-noldo' || badgeClasses[0] === 'type-half-elf')
       ? badgeClasses[0]
-      : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'tipo-generico'));
+      : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback'));
     // Famiglia colore card via familyOf (unica fonte, condivisa con la scheda):
     // override p.cardcolor, poi Classe crepuscolari -> 'demon', poi CARDCOLOR_OF.
     var cardFam = familyOf(p);
@@ -3236,7 +3236,7 @@ function rankNameLines(el) {
   var tops = [];
   // Anche i FIGLI di .rank-flags: su desktop il contenitore è display:contents
   // e non genera rect propri (le icone non venivano contate).
-  var nodes = el.querySelectorAll('.rank-name-text, .rank-flags, .rank-flags > *, .rank-tipi .tipo-badge');
+  var nodes = el.querySelectorAll('.rank-name-text, .rank-flags, .rank-flags > *, .rank-tipi .type-badge');
   for (var i = 0; i < nodes.length; i++) {
     var rects = nodes[i].getClientRects();
     for (var k = 0; k < rects.length; k++) if (rects[k].width > 0.5) tops.push(rects[k].top);
