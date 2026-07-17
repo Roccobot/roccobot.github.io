@@ -614,7 +614,10 @@ gruppo = cambiare una terna.
   guscio) e **`.fab-modal-box`** (password, conferme, editor colori, trivio) hanno
   fondo **#252525** (scuro) / **#F4F4F4** (chiaro). Il bordo delle `.fab-modal-box` è
   neutralizzato (grigio tenue); la `.modal` scheda tiene il **bordo accento
-  cardcolor** (famiglia) e il velo `.modal-backdrop` resta sfocato invariato. ⚠️ Il
+  cardcolor** (famiglia) e il velo `.modal-backdrop` resta sfocato invariato. Anche
+  lo sfondo del box **citazione** (`.modal-quote`) è neutralizzato (era azzurrino:
+  `rgba(255,255,255,0.05)` scuro / `rgba(0,0,0,0.05)` chiaro; il bordino sinistro
+  resta l'accento cardcolor). ⚠️ Il
   fondo di riferimento per l'AA del testo scheda (`--cctext` via `ccAaText` in
   `openModal`) è stato aggiornato di conseguenza a **#252525 / #F4F4F4** (era
   #0a0f20 / #eeeef4); idem il fondo della mini-scheda nell'anteprima
@@ -677,12 +680,14 @@ gruppo = cambiare una terna.
     **fondo** (`#66909a`) è il punto più chiaro: contrasto **3.20:1** su `#F5F5F5`,
     sopra la soglia AA per il testo grande (3:1). ⚠️ Non schiarire oltre il fondo o
     il titolo scende sotto soglia. Solo il tema chiaro; lo scuro resta grigio/argento.
-  - **Ombra in tema chiaro = variante 'C doppia profondità' (dalla v9.05).**
-    L'equivalente 'in chiaro' del bagliore scuro: `text-shadow: 0 1px 1px
-    rgba(0,0,0,.20), 0 4px 10px rgba(0,0,0,.15), 0 0 26px rgba(90,90,90,.10)`
-    (ombra ravvicinata + profondità morbida + alone grigio tenue). Sostituisce
-    l'ombra più piatta della v8.81 (`0 1px 2px .16, 0 0 20px .07`), su scelta
-    dell'utente dopo un mockup di confronto.
+  - **Effetto 'alone teal soffuso' in tema chiaro (dalla v9.93, scelta utente su
+    mockup a 5 varianti).** Sostituisce l'ombra grigia 'C doppia profondità'
+    (v9.05): ora `filter: drop-shadow(0 2px 3px rgba(0,0,0,.18)) drop-shadow(0 0
+    14px rgba(52,112,127,.38))` (uno stacco scuro ravvicinato + un alone tenue
+    nella tinta del FAB attorno ai glifi). Via **`filter`** (non `text-shadow`):
+    con `background-clip:text` l'alone deve seguire la forma reale delle lettere.
+    Solo tema chiaro; decorativo, non tocca il contrasto del fill. Le altre
+    varianti scartate erano: letterpress inciso, contorno+profondità, metallico.
   - **Fix 'glifi tagliati in basso' (dalla v9.05).** Con `background-clip:text` il
     gradiente riempie il testo solo entro il **box di riga**; con `line-height:0.95`
     gli **svolazzi bassi di Cinzel Decorative** (code di G/R/A) uscivano dal box e

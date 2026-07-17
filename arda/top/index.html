@@ -1397,7 +1397,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:1rem; color:var(--parchment-dim);
   padding:1rem 1.4rem; border-left:2px solid var(--gold);
-  margin-top:1.2rem; background:rgba(104,144,168,0.04);
+  margin-top:1.2rem; background:rgba(255,255,255,0.05);
   /* preserva gli a capo (\n) nelle citazioni in versi, es. Nevecrino; il testo
      resta inserito via textContent, quindi niente <br>. */
   white-space:pre-line;
@@ -1758,10 +1758,11 @@ html[data-theme="light"] h1 {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* Ombra 'doppia profondità' (variante C, dalla v9.05): equivalente 'in chiaro'
-       del bagliore scuro — ombra ravvicinata + profondità morbida + alone grigio
-       tenue. Leggera e discreta, ma con più stacco della v8.81. */
-    text-shadow: 0 1px 1px rgba(0,0,0,0.20), 0 4px 10px rgba(0,0,0,0.15), 0 0 26px rgba(90,90,90,0.10);
+    /* Effetto 'alone teal soffuso' (dalla v9.93, scelta utente): un drop-shadow
+       scuro ravvicinato per lo stacco + un alone tenue nella tinta del FAB
+       (rgba(52,112,127)) attorno ai glifi. Via `filter` (non text-shadow) perché
+       con background-clip:text l'alone segue la forma reale delle lettere. */
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.18)) drop-shadow(0 0 14px rgba(52,112,127,0.38));
   }
 /* Accento verso il FAB anche in tema CHIARO (dalla v8.82): qui il FAB è teal
    (#1f5562), quindi gli accenti virano al FREDDO (teal-slate #445d64). Virando
@@ -1863,7 +1864,7 @@ html[data-theme="light"] .modal-section p { color: #12141e; }
 html[data-theme="light"] .modal-quote {
     color: #2a2d3e;
     border-left-color: #4a7090;
-    background: rgba(180,200,230,0.18);
+    background: rgba(0,0,0,0.05);
   }
 /* Accento cardcolor scheda: i TESTI (rank/source/chiudi) usano --cctext, il
    colore-testo AA calcolato a runtime in openModal (dalla v9.62): tiene la tinta
