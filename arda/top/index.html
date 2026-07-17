@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.20</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.21</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6230,6 +6230,15 @@ function showColorEditor() {
     var baseSw = document.createElement('span'); baseSw.style.cssText = 'width:18px;height:18px;border-radius:4px;border:1px solid rgba(128,128,128,0.5);display:inline-block;background:' + baseInput.value + ';';
     chooseBtn.appendChild(baseSw); chooseBtn.appendChild(document.createTextNode(it ? 'Scegli colore' : 'Pick colour'));
     chooseBtn.onclick = function(){ baseInput.click(); };
+    // Campo HEX editabile accanto al tasto: digitare/incollare un colore aggiorna
+    // tutto (anteprima + varianti tema) senza aprire il picker nativo, la cui
+    // modalità HEX/RGB/HSL è cromo del browser e NON è impostabile via web.
+    var hexInput = document.createElement('input'); hexInput.type = 'text'; hexInput.spellcheck = false;
+    hexInput.maxLength = 7; hexInput.setAttribute('aria-label', it ? 'Codice colore HEX' : 'HEX colour code');
+    hexInput.value = baseInput.value;
+    hexInput.style.cssText = 'width:88px;padding:0.4rem 0.5rem;font-family:ui-monospace,monospace;font-size:0.82rem;text-align:center;border-radius:6px;border:1px solid rgba(128,128,128,0.5);background:transparent;color:inherit;';
+    var centerBox = document.createElement('div'); centerBox.style.cssText = 'display:inline-flex;flex-direction:column;align-items:center;gap:0.5rem;';
+    centerBox.appendChild(chooseBtn); centerBox.appendChild(hexInput);
     // Casella swatch+hex (senza etichetta): va agli estremi, per non confliggere
     // col tasto centrale.
     function swatchBox(){
@@ -6245,7 +6254,7 @@ function showColorEditor() {
     var topRow = document.createElement('div');
     topRow.style.cssText = 'display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:0.6rem;margin:0.4rem 0 1rem;';
     swLight.box.style.justifySelf = 'start'; swDark.box.style.justifySelf = 'end';
-    topRow.appendChild(swLight.box); topRow.appendChild(chooseBtn); topRow.appendChild(swDark.box);
+    topRow.appendChild(swLight.box); topRow.appendChild(centerBox); topRow.appendChild(swDark.box);
     topRow.appendChild(baseInput);
     // Etichette tema CENTRATE, ciascuna in testa al proprio riquadro (chiaro sx,
     // scuro dx, in colonna coi riquadri di anteprima sotto).
@@ -6260,13 +6269,16 @@ function showColorEditor() {
       swDark.sw.style.background = state.dark; swDark.hx.textContent = state.dark;
       renderPreview(prevWrap, state.dark, state.light, sampleName, sampleTipo);
     }
-    baseInput.addEventListener('input', function(){ var pr = ccDerivePair(baseInput.value); state.dark = pr.dark; state.light = pr.light; baseSw.style.background = baseInput.value; update(); });
+    function applyBase(hex, syncHex){ var pr = ccDerivePair(hex); state.dark = pr.dark; state.light = pr.light; baseInput.value = hex; baseSw.style.background = hex; if (syncHex) hexInput.value = hex; update(); }
+    baseInput.addEventListener('input', function(){ applyBase(baseInput.value, true); });
+    hexInput.addEventListener('input', function(){ var v = hexInput.value.trim(); if (v && v.charAt(0) !== '#') v = '#' + v; if (/^#[0-9a-fA-F]{6}$/.test(v)) applyBase(v.toLowerCase(), false); });
+    hexInput.addEventListener('blur', function(){ hexInput.value = baseInput.value; });
     update();
     wrap.appendChild(topRow); wrap.appendChild(labRow); wrap.appendChild(prevWrap);
     return {
       el: wrap,
       get: function(){ return { dark: state.dark, light: state.light }; },
-      set: function(d, l){ state.dark = d; state.light = l; baseInput.value = ccTheme() === 'light' ? l : d; baseSw.style.background = baseInput.value; update(); }
+      set: function(d, l){ state.dark = d; state.light = l; baseInput.value = ccTheme() === 'light' ? l : d; baseSw.style.background = baseInput.value; hexInput.value = baseInput.value; update(); }
     };
   }
 
