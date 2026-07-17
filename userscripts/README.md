@@ -270,13 +270,16 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 
 Su `pornhub.com` fa due cose:
 
-1. **Forza il sito internazionale (`www.`).** Dall'Italia PH carica
-   `it.pornhub.com`, ed è quel **sottodominio-lingua** a tradurre i titoli (non la
-   lingua dell'interfaccia). Se l'host è un sottodominio-lingua (2 lettere, es.
-   `it`/`de`/`fr`/`es`…), lo script reindirizza a **`www.pornhub.com`**
-   conservando percorso e query (`location.replace`, eseguito a `document-start`
-   così non si carica nemmeno la pagina tradotta). Guardia in `sessionStorage`
-   anti-loop: se PH forzasse comunque il sottodominio lato server, non si riprova.
+1. **Mantiene inglese/internazionale.** Dall'Italia PH carica `it.pornhub.com` e
+   **traduce i titoli** (non dipende dalla lingua UI, ma dal Paese). Le preferenze
+   stanno in due cookie: **`lang=en`** e **`overwriteCCVal=world`** (Paese =
+   Worldwide). PH ogni tanto (al login) li **ripristina** su `it`: lo script li
+   **riscrive a ogni caricamento** (a `document-start`, prima delle richieste), così
+   non può più riportarti in italiano. In più, se sei atterrato su un
+   sottodominio-lingua (2 lettere, es. `it`/`de`/`fr`/`es`…), reindirizza a
+   **`www.pornhub.com`** conservando percorso e query (`location.replace`) — coi
+   cookie giusti `www.` "tiene". Guardia anti-loop a tempo (se PH rimbalzasse, non
+   insiste, ma non resta bloccata).
 2. **Tasto "⬇️ Scarica video"** in basso a destra (sempre visibile): scarica il
    file alla **qualità massima**. Legge a runtime l'oggetto `flashvars_<viewkey>` e
    le sue `mediaDefinitions`, **espande** le definizioni "remote" (`get_media`) e
