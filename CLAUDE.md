@@ -437,16 +437,18 @@ gruppo = cambiare una terna.
     intoccato**. Storico: fino alla v9.82 c'erano due picker Chiaro/Scuro
     editabili + tasto 'Auto' (v9.73) o, prima ancora (fino alla v9.72), un solo
     picker con colore unico nei due temi (Fase 1, v9.17).
-  - **Modale statistiche famiglie `showColorStats` (dalla v10.06).** Un **link in
-    calce** all'editor colori ('📊 Statistiche famiglie') apre una modale
-    (overlay `#stats-modal`, sopra l'editor) con la **distribuzione dei
-    personaggi per famiglia**: per ogni famiglia i due swatch (chiaro/scuro), una
-    **barra proporzionale** nella tinta del tema attivo, conteggio e percentuale,
-    ordinate dalla più numerosa; in testa il totale ('N personaggi in M
-    famiglie', + le eventuali voci `custom` contate a parte). Legge `dati` +
-    `CARDCOLORS` **al volo a ogni apertura**, quindi rispecchia in tempo reale
-    ogni modifica a colori/dataset. Non tocca `lockPageScroll` (già attivo per
-    l'editor sotto).
+  - **Modale statistiche `showColorStats` (dalla v10.06; 3 viste dalla v10.16).**
+    Un **link in calce** all'editor colori ('📊 Statistiche famiglie') apre una
+    modale (overlay `#stats-modal`, sopra l'editor) con **3 tab**: **Famiglie**
+    (per famiglia colore: due swatch chiaro/scuro + barra nella tinta del tema),
+    **Categorie** (le 9 `CATS` via `categoria()`, etichette `CAT_LABEL`, barra in
+    accento uniforme) e **Tipi** (le etichette `type-*`: swatch + barra nel COLORE
+    reale dell'etichetta, letto dal CSS a runtime con un elemento-sonda; una voce
+    con più etichette conta in più tipi, quindi il totale etichette > N voci).
+    Ogni riga: nome, barra proporzionale, conteggio e percentuale, ordinate per
+    numerosità; in testa il totale. Legge `dati` + `CARDCOLORS` + i colori-etichetta
+    **al volo a ogni apertura**, quindi rispecchia in tempo reale ogni modifica a
+    colori/dataset. Non tocca `lockPageScroll` (già attivo per l'editor sotto).
   - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
     colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
     famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
