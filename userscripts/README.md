@@ -263,3 +263,42 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 3. Premere **Installa**. Tampermonkey può chiedere il permesso per
    `GM_xmlhttpRequest` verso `imx.to`: concederlo (serve a scaricare le immagini).
    Nessuna dipendenza esterna: lo ZIP è creato internamente.
+
+## PH Roccobot
+
+**File:** `PHRoccobot.user.js` (titolo `@name`: **PH Roccobot**)
+
+Su `pornhub.com` fa due cose:
+
+1. **Forza l'inglese.** Se la pagina è in un'altra lingua (`<html lang>` diverso da
+   `en`), usa lo **switcher di lingua del sito stesso** per passare all'inglese
+   (cerca la voce "English"/`data-language="en"` e ne segue il link, una sola volta
+   per sessione — nessun cookie interno indovinato, nessun loop).
+2. **Tasto "⬇️ Scarica video"** in basso a destra (solo nelle pagine video): scarica
+   il file alla **qualità massima** disponibile. Legge a runtime l'oggetto
+   `flashvars_<viewkey>` della pagina e le sue `mediaDefinitions`, **espande** le
+   definizioni "remote" (endpoint `get_media`) e sceglie l'**MP4** con la qualità
+   più alta; il download va su disco via `GM_download` (nome file = titolo del
+   video + `[NNNp].mp4`). Se il video è **solo HLS** (streaming a segmenti), avvisa
+   che il download MP4 diretto non è possibile.
+
+### Personalizzazione
+
+```js
+const FORZA_INGLESE     = true;  // passa all'inglese se la pagina è in altra lingua
+const SALVA_CON_DIALOGO = true;  // true = chiede dove salvare; false = scarica diretto
+```
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/PHRoccobot.user.js>
+3. Premere **Installa** e concedere i permessi richiesti (`GM_download`,
+   `GM_xmlhttpRequest`) per scaricare i file.
+
+> **Nota:** PornHub blocca gli strumenti automatici, quindi non ho potuto
+> verificare lo script sul sito dal vivo: è scritto per **adattarsi a runtime**
+> alla struttura reale (legge `flashvars`/`mediaDefinitions` nel browser). Se il
+> tasto non trova la sorgente, o l'inglese non "attacca", mandami un dettaglio
+> (URL video / cosa mostra la console) e affino. Solo MP4 diretto per ora; l'HLS
+> a segmenti si può aggiungere se serve.
