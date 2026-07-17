@@ -2096,7 +2096,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.73</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.83</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5895,12 +5895,14 @@ function showAdminChoiceModal() {
   box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2);
 }
 
-// ── Editor colori: Modifica mirata (per personaggio) ────────────────────────
-// Ricerca un personaggio e ne definisce il colore INDIVIDUALE PER-TEMA (campo
-// dati p.cardrgb = {dark,light} hex; una stringa singola resta accettata come
-// legacy = stesso colore nei due temi), che lo mette nella famiglia speciale
-// 'custom' (isolata dal batch). Due picker Chiaro/Scuro + tasto 'Auto'
-// (ccDerivePair) come la scheda Famiglie. Salva su repo via saveColorsToRepo
+// ── Editor colori: colore per personaggio e per famiglia ────────────────────
+// Un unico controllo condiviso (buildColorControl): si sceglie UN colore col
+// picker ('Scegli colore') e le due varianti tema (Chiaro/Scuro) sono DERIVATE
+// in automatico (ccDerivePair, AA-safe) e mostrate in anteprima in tempo reale
+// (renderPreview: card + scheda in ENTRAMBI i temi), non editabili a mano. Il
+// colore individuale (p.cardrgb = {dark,light} hex; stringa singola legacy =
+// stesso colore nei due temi) mette la voce nella famiglia speciale 'custom'; i
+// colori di famiglia stanno in CARDCOLORS.fam. Salvataggio via saveColorsToRepo
 // (keepVersion: NON bumpa la versione, come gli altri salvataggi colore).
 function ccTripletToHex(t){ return '#' + t.split(',').map(function(n){ return ('0'+(+n).toString(16)).slice(-2); }).join(''); }
 function ccTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
@@ -5921,7 +5923,7 @@ function showColorEditor() {
   var it = currentLang === 'it';
   var overlay = document.createElement('div');
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '480px';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '620px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); };
@@ -5995,25 +5997,13 @@ function showColorEditor() {
     var famLine = document.createElement('p'); famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
     function setFamLine(){ famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (customPair(p) ? (it ? ' (colore individuale)' : ' (individual)') : ''); }
     setFamLine();
-    // Pickers per tema + Auto, stesso schema della scheda Famiglie.
-    function mkPick(val){ var el = document.createElement('input'); el.type = 'color'; el.value = val; el.className = 'cc-pick'; el.style.cssText = 'width:44px;height:32px;'; return el; }
-    var pd = mkPick(curDark), pl = mkPick(curLight);
-    var pbase = mkPick(ccTheme() === 'light' ? curLight : curDark);
-    var bDerive = document.createElement('button'); bDerive.className = 'fab-modal-confirm';
-    bDerive.style.cssText = 'width:auto;height:32px;padding:0 0.85rem;font-size:0.8rem;line-height:1;';
-    bDerive.textContent = 'Auto';
-    bDerive.onclick = function(){ var pr = ccDerivePair(pbase.value); pd.value = pr.dark; pl.value = pr.light; showToast(it?'✓ Varianti derivate (rifinibili sotto)':'✓ Variants derived (fine-tune below)', false); };
-    function ccLab(t){ var s = document.createElement('span'); s.textContent = t; return s; }
-    var grid = document.createElement('div');
-    grid.style.cssText = 'display:grid;grid-template-columns:max-content max-content 1fr;align-items:end;gap:0.5rem 0.7rem;margin:0.4rem 0 0.6rem;font-size:0.8rem;';
-    grid.appendChild(ccLab('Base')); grid.appendChild(pbase); grid.appendChild(bDerive);
-    grid.appendChild(ccLab(it?'Chiaro':'Light')); grid.appendChild(pl);
-    var scGroup = document.createElement('div'); scGroup.style.cssText = 'display:flex;align-items:flex-end;gap:0.5rem;';
-    scGroup.appendChild(ccLab(it?'Scuro':'Dark')); scGroup.appendChild(pd); grid.appendChild(scGroup);
-    function apply(){ p.cardrgb = { dark: pd.value, light: pl.value }; renderList(); setFamLine(); }
-    var bApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ apply(); showToast(it?'✓ Anteprima applicata':'✓ Preview applied', false); });
+    var sampleTipo = ((it ? p.tipo : (p.tipo_en || p.tipo)) || '').split('|')[0].trim() || (it ? 'Tipo' : 'Type');
+    // Controllo condiviso: scegli un colore, le varianti tema si derivano da sé
+    // e l'anteprima mostra card + scheda nei due temi in tempo reale.
+    var ctrl = buildColorControl(curDark, curLight, name.textContent, sampleTipo);
+    function apply(){ var g = ctrl.get(); p.cardrgb = { dark: g.dark, light: g.light }; renderList(); setFamLine(); }
     var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ apply(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + (p.nome||p.nome_en))); }, true);
-    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(grid); panel.appendChild(bApply);
+    panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(ctrl.el);
     if (isCustom) panel.appendChild(mkBtn(it ? 'Rimuovi colore individuale' : 'Remove individual colour', function(){ delete p.cardrgb; renderList(); showToast(it?'✓ Torna alla famiglia':'✓ Back to family', false); selectChar(i, panel); }));
     panel.appendChild(bSave);
   }
@@ -6032,49 +6022,22 @@ function showColorEditor() {
   function famCount(fam){ var n = 0; for (var i = 0; i < dati.length; i++) if (familyOf(dati[i]) === fam) n++; return n; }
   function buildFamPanel(fam, panel){
     panel.innerHTML = '';
-    // 1) Colore per tema
-    var h1 = mkH(it ? 'Colore (per tema)' : 'Colour (per theme)');
-    function ccMkPick(val){ var p = document.createElement('input'); p.type = 'color'; p.value = val; p.className = 'cc-pick'; p.style.cssText = 'width:44px;height:32px;'; return p; }
-    var pd = ccMkPick(ccFamHex(fam,'dark'));
-    var pl = ccMkPick(ccFamHex(fam,'light'));
-    var pbase = ccMkPick(ccFamHex(fam, ccTheme()));
-    // 'Auto': da un colore base declina le due varianti tema (ccDerivePair).
-    // Alto quanto il rettangolo del colore (32px).
-    var bDerive = document.createElement('button'); bDerive.className = 'fab-modal-confirm';
-    bDerive.style.cssText = 'width:auto;height:32px;padding:0 0.85rem;font-size:0.8rem;line-height:1;';
-    bDerive.textContent = 'Auto';
-    bDerive.onclick = function(){ var pr = ccDerivePair(pbase.value); pd.value = pr.dark; pl.value = pr.light; CARDCOLORS.fam[fam] = { dark: pr.dark, light: pr.light }; reinjectFamilyColors(); showToast(it?'✓ Varianti derivate (rifinibili sotto)':'✓ Variants derived (fine-tune below)', false); };
-    // Griglia allineata (vedi linee del mockup): colonna etichette a larghezza
-    // fissa (= 'Colore base') così base-picker e Chiaro-picker sono incolonnati;
-    // 3a colonna per Auto (riga1) e Scuro (riga2). Chiaro PRIMA di Scuro.
-    function ccLab(t){ var s = document.createElement('span'); s.textContent = t; return s; }
-    var grid = document.createElement('div');
-    // align-items:end -> etichette e tasto Auto allineati alla BASE delle caselle.
-    grid.style.cssText = 'display:grid;grid-template-columns:max-content max-content 1fr;align-items:end;gap:0.5rem 0.7rem;margin:0.2rem 0 0.5rem;font-size:0.8rem;';
-    grid.appendChild(ccLab('Base')); grid.appendChild(pbase); grid.appendChild(bDerive);
-    grid.appendChild(ccLab(it?'Chiaro':'Light')); grid.appendChild(pl);
-    var scGroup = document.createElement('div'); scGroup.style.cssText = 'display:flex;align-items:flex-end;gap:0.5rem;';
-    scGroup.appendChild(ccLab(it?'Scuro':'Dark')); scGroup.appendChild(pd); grid.appendChild(scGroup);
+    // 1) Colore (auto per tema): si sceglie UN colore, le due varianti tema sono
+    // derivate in automatico (AA-safe) e mostrate in anteprima. Non editabili.
+    var h1 = mkH(it ? 'Colore (auto per tema)' : 'Colour (auto per theme)');
+    var ctrl = buildColorControl(ccFamHex(fam,'dark'), ccFamHex(fam,'light'), fam, fam);
     // Rete di sicurezza: ultimo colore SALVATO (clic per ripristinare), allineato
     // a DESTRA. 'Salvato' = committato, non l'anteprima.
     var saved = CARDCOLORS_SAVED[fam] || CARDCOLORS.fam[fam] || { dark:'#9098a8', light:'#9098a8' };
-    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;justify-content:flex-end;gap:0.4rem;flex-wrap:wrap;margin:0 0 0.5rem;font-size:0.74rem;opacity:0.85;';
+    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;justify-content:flex-end;gap:0.45rem;flex-wrap:wrap;margin:0 0 0.5rem;font-size:0.74rem;opacity:0.85;';
     srow.appendChild(document.createTextNode(it?'Ultimo salvato (clic per ripristinare):':'Last saved (click to restore):'));
-    [['dark', it?'scuro':'dark'], ['light', it?'chiaro':'light']].forEach(function(pair){
-      var ch = pair[0];
-      var sw = document.createElement('button');
-      sw.title = (it?'Ripristina ':'Restore ') + pair[1] + ': ' + saved[ch];
-      sw.style.cssText = 'width:26px;height:22px;border:1px solid rgba(128,128,128,0.5);border-radius:6px;cursor:pointer;padding:0;background:' + saved[ch] + ';';
-      sw.onclick = function(){
-        (ch==='dark'?pd:pl).value = saved[ch];
-        CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value };
-        reinjectFamilyColors();
-        showToast(it?'✓ Ripristinato colore salvato':'✓ Restored saved colour', false);
-      };
-      srow.appendChild(sw);
-    });
-    var bColApply = mkBtn(it ? 'Applica (anteprima)' : 'Apply (preview)', function(){ CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value }; reinjectFamilyColors(); showToast(it?'✓ Anteprima':'✓ Preview', false); });
-    var bColSave = mkBtn(it ? 'Salva colore' : 'Save colour', function(btn){ CARDCOLORS.fam[fam] = { dark: pd.value, light: pl.value }; reinjectFamilyColors(); withBtn(btn, saveColorsToRepo('colori: colore famiglia ' + fam)); }, true);
+    var restoreBtn = document.createElement('button');
+    restoreBtn.title = it?'Ripristina l\'ultimo colore salvato (chiaro e scuro)':'Restore the last saved colour (light and dark)';
+    restoreBtn.style.cssText = 'display:inline-flex;gap:3px;align-items:center;border:1px solid rgba(128,128,128,0.5);border-radius:6px;cursor:pointer;padding:2px 4px;background:transparent;';
+    [saved.light, saved.dark].forEach(function(hx){ var s = document.createElement('span'); s.style.cssText = 'width:20px;height:16px;border-radius:3px;display:inline-block;background:' + hx + ';'; restoreBtn.appendChild(s); });
+    restoreBtn.onclick = function(){ ctrl.set(saved.dark, saved.light); showToast(it?'✓ Ripristinato colore salvato':'✓ Restored saved colour', false); };
+    srow.appendChild(restoreBtn);
+    var bColSave = mkBtn(it ? 'Salva colore' : 'Save colour', function(btn){ var g = ctrl.get(); CARDCOLORS.fam[fam] = { dark: g.dark, light: g.light }; reinjectFamilyColors(); withBtn(btn, saveColorsToRepo('colori: colore famiglia ' + fam)); }, true);
     // 2) Rinomina
     var h2 = mkH(it ? 'Rinomina famiglia' : 'Rename family');
     var rin = document.createElement('input'); rin.type = 'text'; rin.value = fam; rin.style.cssText = 'width:60%;padding:0.35rem;';
@@ -6102,9 +6065,86 @@ function showColorEditor() {
       reinjectFamilyColors(); renderList();
       withBtn(btn, saveColorsToRepo('colori: sposta ' + t + ' -> ' + fam + ' (' + moved + ' voci)'));
     }, true);
-    [h1, grid, srow, bColApply, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
+    [h1, ctrl.el, srow, bColSave, h2, rin, bRen, h3, selT, bMove].forEach(function(el){ panel.appendChild(el); });
   }
   function tipoCount(t){ var n = 0; for (var i = 0; i < dati.length; i++) if (!customPair(dati[i]) && stripClassOf(dati[i]) === t) n++; return n; }
+
+  // Anteprima in tempo reale: per ENTRAMBI i temi mostra tutti gli elementi che
+  // il colore definisce. CARD: sfondo (rgba a 0.05 chiaro / 0.10 scuro) +
+  // striscia (0.85) + nome + etichetta tipo (bordo/testo alla terna). SCHEDA:
+  // bordo famiglia + testo AA-safe (--cctext via ccAaText) + filetto fonte.
+  // Fedele a renderList/openModal; colori concreti (nessun var(), mai visto dal Nu).
+  function renderPreview(host, darkHex, lightHex, sampleName, sampleTipo){
+    host.innerHTML = '';
+    // [tema, hex, sfondoPagina, sfondoScheda, opacitàCard, etichetta, coloreTesto]
+    [['dark', darkHex, '#262626', '#0a0f20', 0.10, it ? 'Tema scuro' : 'Dark theme', 'rgba(232,232,232,0.92)'],
+     ['light', lightHex, '#F5F5F5', '#eeeef4', 0.05, it ? 'Tema chiaro' : 'Light theme', 'rgba(30,30,34,0.92)']].forEach(function(row){
+      var hex = row[1], pageBg = row[2], modalBg = row[3], cardOp = row[4], lbl = row[5], txt = row[6];
+      var trip = ccHexToTriplet(hex);
+      var cct = ccHexToTriplet(ccAaText(hex, modalBg, 4.5));
+      var col = document.createElement('div'); col.style.cssText = 'flex:1;min-width:0;';
+      col.innerHTML =
+        '<div style="font-size:0.66rem;opacity:0.6;text-align:center;margin-bottom:0.3rem;">' + lbl + '</div>' +
+        '<div style="background:' + pageBg + ';border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;">' +
+          '<div style="position:relative;background:rgba(' + trip + ',' + cardOp + ');border:1px solid rgba(128,128,128,0.18);border-radius:6px;padding:0.4rem 0.5rem 0.4rem 0.75rem;overflow:hidden;">' +
+            '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:rgba(' + trip + ',0.85);"></span>' +
+            '<div style="color:' + txt + ';font-weight:600;font-size:0.78rem;line-height:1.15;">' + escapeHtml(sampleName) + '</div>' +
+            '<span style="display:inline-block;margin-top:0.28rem;font-size:0.6rem;padding:1px 6px;border-radius:4px;color:rgba(' + trip + ',1);border:1px solid rgba(' + trip + ',0.8);">' + escapeHtml(sampleTipo) + '</span>' +
+          '</div>' +
+          '<div style="background:' + modalBg + ';border:1px solid rgba(' + trip + ',0.9);border-radius:6px;padding:0.4rem 0.55rem;">' +
+            '<div style="color:rgba(' + cct + ',1);font-size:0.56rem;letter-spacing:0.09em;font-weight:700;">' + (it ? 'POSIZIONE' : 'RANK') + ' 1</div>' +
+            '<div style="color:' + txt + ';font-size:0.74rem;margin:0.12rem 0 0.2rem;">' + escapeHtml(sampleName) + '</div>' +
+            '<div style="color:rgba(' + cct + ',1);font-size:0.6rem;border-bottom:1px solid rgba(' + trip + ',0.32);padding-bottom:0.2rem;display:inline-block;">' + (it ? 'Il Silmarillion' : 'The Silmarillion') + '</div>' +
+          '</div>' +
+        '</div>';
+      host.appendChild(col);
+    });
+  }
+  // Controllo colore condiviso (Personaggio e Famiglie): 'Scegli colore' apre il
+  // picker; alla scelta le due varianti tema si derivano da sé (ccDerivePair) e
+  // restano in sola lettura, con anteprima in tempo reale via renderPreview.
+  // initDark/initLight = colori di partenza (mostrati finché non si sceglie un
+  // nuovo colore, così aprire+salvare non altera un colore intoccato).
+  function buildColorControl(initDark, initLight, sampleName, sampleTipo){
+    var state = { dark: initDark, light: initLight };
+    var wrap = document.createElement('div');
+    var baseInput = document.createElement('input'); baseInput.type = 'color';
+    baseInput.value = ccTheme() === 'light' ? initLight : initDark;
+    baseInput.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
+    var chooseBtn = document.createElement('button'); chooseBtn.className = 'fab-modal-confirm';
+    chooseBtn.style.cssText = 'width:auto;padding:0.45rem 0.9rem;font-size:0.85rem;display:inline-flex;align-items:center;gap:0.5rem;';
+    var baseSw = document.createElement('span'); baseSw.style.cssText = 'width:18px;height:18px;border-radius:4px;border:1px solid rgba(128,128,128,0.5);display:inline-block;background:' + baseInput.value + ';';
+    chooseBtn.appendChild(baseSw); chooseBtn.appendChild(document.createTextNode(it ? 'Scegli colore' : 'Pick colour'));
+    chooseBtn.onclick = function(){ baseInput.click(); };
+    var chooseRow = document.createElement('div'); chooseRow.style.cssText = 'display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin:0.2rem 0 0.5rem;';
+    chooseRow.appendChild(chooseBtn); chooseRow.appendChild(baseInput);
+    function roSw(label){
+      var box = document.createElement('div'); box.style.cssText = 'display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;opacity:0.9;';
+      var sw = document.createElement('span'); sw.style.cssText = 'width:22px;height:18px;border-radius:4px;border:1px solid rgba(128,128,128,0.5);display:inline-block;';
+      var hx = document.createElement('span'); hx.style.cssText = 'font-family:ui-monospace,monospace;';
+      box.appendChild(document.createTextNode(label)); box.appendChild(sw); box.appendChild(hx);
+      return { box: box, sw: sw, hx: hx };
+    }
+    var roLight = roSw(it ? 'Tema chiaro' : 'Light theme'), roDark = roSw(it ? 'Tema scuro' : 'Dark theme');
+    var roRow = document.createElement('div'); roRow.style.cssText = 'display:flex;gap:1.1rem;flex-wrap:wrap;margin:0 0 0.5rem;';
+    roRow.appendChild(roLight.box); roRow.appendChild(roDark.box);
+    var note = document.createElement('p'); note.style.cssText = 'font-size:0.68rem;opacity:0.55;margin:0 0 0.4rem;';
+    note.textContent = it ? 'Le due varianti tema sono derivate in automatico (AA-safe). Anteprima in tempo reale.' : 'The two theme variants are auto-derived (AA-safe). Live preview.';
+    var prevWrap = document.createElement('div'); prevWrap.style.cssText = 'display:flex;gap:0.6rem;margin:0.1rem 0 0.3rem;';
+    function update(){
+      roLight.sw.style.background = state.light; roLight.hx.textContent = state.light;
+      roDark.sw.style.background = state.dark; roDark.hx.textContent = state.dark;
+      renderPreview(prevWrap, state.dark, state.light, sampleName, sampleTipo);
+    }
+    baseInput.addEventListener('input', function(){ var pr = ccDerivePair(baseInput.value); state.dark = pr.dark; state.light = pr.light; baseSw.style.background = baseInput.value; update(); });
+    update();
+    wrap.appendChild(chooseRow); wrap.appendChild(roRow); wrap.appendChild(note); wrap.appendChild(prevWrap);
+    return {
+      el: wrap,
+      get: function(){ return { dark: state.dark, light: state.light }; },
+      set: function(d, l){ state.dark = d; state.light = l; baseInput.value = ccTheme() === 'light' ? l : d; baseSw.style.background = baseInput.value; update(); }
+    };
+  }
 
   // Helper UI condivisi
   function mkBtn(label, fn, green){
