@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.4.0
+// @version      1.5.0
 // @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" (SEMPRE visibile, stili !important + retry, così non "sparisce") che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). La sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
@@ -211,8 +211,37 @@
     return base.slice(0, 180) + '.mp4';
   }
 
+  const SFONDO_BASE = '#ff9000';
+  function sfondo(btn, css) { if (btn) btn.style.setProperty('background', css, 'important'); }
+
+  // Download con avanzamento: GM_download scarica il file su un temporaneo e SOLO
+  // alla fine mostra il salva-file; con onprogress mostriamo la percentuale (e una
+  // barra di riempimento) sul tasto durante l'attesa. Promise: si risolve a
+  // scaricamento completato, si rifiuta su errore.
+  function scaricaFile(url, nome, btn) {
+    return new Promise(function (resolve, reject) {
+      GM_download({
+        url: url, name: nome, saveAs: SALVA_CON_DIALOGO,
+        headers: { Referer: location.href },
+        onprogress: function (e) {
+          if (!btn || !e) return;
+          if (e.total) {
+            const pct = Math.max(0, Math.min(100, Math.round((e.loaded / e.total) * 100)));
+            btn.textContent = '⬇️ ' + pct + '%';
+            sfondo(btn, 'linear-gradient(90deg,#12b76a ' + pct + '%,' + SFONDO_BASE + ' ' + pct + '%)');
+          } else if (e.loaded) {
+            btn.textContent = '⬇️ ' + (e.loaded / 1048576).toFixed(1) + ' MB';
+          }
+        },
+        onload: function () { resolve(); },
+        onerror: function (err) { reject(err || new Error('download')); },
+        ontimeout: function () { reject(new Error('timeout')); }
+      });
+    });
+  }
+
   async function scarica(btn) {
-    const testo0 = btn ? btn.textContent : '';
+    const testo0 = (btn && btn.textContent) || '⬇️ Scarica video';
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Cerco qualità…'; }
     try {
       const q = await qualitaDisponibili();
@@ -227,23 +256,23 @@
       }
       const best = q.mp4[0];
       const nome = nomeFile();
-      if (btn) btn.textContent = '⬇️ ' + (best.quality || '') + 'p…';
-
-      GM_download({
-        url: best.url, name: nome, saveAs: SALVA_CON_DIALOGO,
-        headers: { Referer: location.href },
-        onload: function () { if (btn) btn.textContent = '✅ ' + (best.quality || '') + 'p'; },
-        onerror: function () {
-          // ripiego: apri l'URL così l'utente può salvarlo a mano
-          window.open(best.url, '_blank', 'noopener');
-          if (btn) btn.textContent = '↗︎ aperto';
-        }
-      });
+      if (btn) { btn.textContent = '⬇️ 0%'; }
+      try {
+        await scaricaFile(best.url, nome, btn);
+        if (btn) { btn.textContent = '✅ ' + (best.quality || '') + 'p'; sfondo(btn, '#12b76a'); }
+      } catch (err) {
+        // ripiego: apri l'URL così l'utente può salvarlo a mano
+        window.open(best.url, '_blank', 'noopener');
+        if (btn) { btn.textContent = '↗︎ aperto (salva a mano)'; sfondo(btn, '#d0021b'); }
+      }
     } catch (e) {
       alert('PH Roccobot: errore nel preparare il download.\n' + (e && e.message ? e.message : e));
-      if (btn) btn.textContent = '⚠️ Errore';
+      if (btn) { btn.textContent = '⚠️ Errore'; sfondo(btn, '#d0021b'); }
     } finally {
-      if (btn) { btn.disabled = false; setTimeout(function () { btn.textContent = testo0; }, 6000); }
+      if (btn) {
+        btn.disabled = false;
+        setTimeout(function () { btn.textContent = testo0; sfondo(btn, SFONDO_BASE); }, 8000);
+      }
     }
   }
 
