@@ -1761,7 +1761,10 @@ html[data-theme="light"] h1 {
     /* Effetto 'alone teal soffuso' (dalla v9.93, scelta utente): un drop-shadow
        scuro ravvicinato per lo stacco + un alone tenue nella tinta del FAB
        (rgba(52,112,127)) attorno ai glifi. Via `filter` (non text-shadow) perché
-       con background-clip:text l'alone segue la forma reale delle lettere. */
+       con background-clip:text l'alone segue la forma reale delle lettere.
+       text-shadow:none azzera il glow grigio della regola base h1 (pensato per
+       lo scuro): in chiaro resta SOLO il filter teal, come da mockup. */
+    text-shadow: none;
     filter: drop-shadow(0 2px 3px rgba(0,0,0,0.18)) drop-shadow(0 0 14px rgba(52,112,127,0.38));
   }
 /* Accento verso il FAB anche in tema CHIARO (dalla v8.82): qui il FAB è teal
