@@ -369,7 +369,7 @@ gruppo = cambiare una terna.
   v8.73 (`noldo`, `sinda`, `maia`...).
 - **Famiglia per personaggio.** In `renderList`, dopo aver calcolato `stripClass`
   (vedi sotto), `var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] ||
-  'generic'`. Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-noldo`).
+  'man'`. Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-noldo`).
   Override per-voce col campo dati **`p.cardcolor`** (stringa nome-famiglia) se si
   vuole forzare un gruppo diverso da quello mappato dal tipo.
   - **SEEDING v8.94: `cardcolor` è ora scritto ESPLICITAMENTE su TUTTE le 356
@@ -382,7 +382,7 @@ gruppo = cambiare una terna.
     stabile e **scollegata dal `tipo`**. I valori seminati coincidono con quelli
     che la derivazione produceva (nessun cambiamento visivo su IT; corregge in
     più i 5 colori EN sbagliati, vedi sotto). La derivazione
-    (`isDarkBg`→`demon` > `CARDCOLOR_OF[stripClass]` > `generic`) **resta come
+    (`isDarkBg`→`demon` > `CARDCOLOR_OF[stripClass]` > `man`) **resta come
     fallback** per le voci FUTURE prive del campo (`familyOf`/`renderList`
     leggono `p.cardcolor` per primo). Per cambiare la famiglia di una voce
     esistente si edita direttamente il suo `cardcolor` (l'editor admin conserva
@@ -405,7 +405,7 @@ gruppo = cambiare una terna.
     `html[data-theme="light"] .cc-custom{--ccrgb:var(--cclight,…)}` mappano
     `--ccrgb` sulla terna del tema (card e striscia la ereditano). `.cc-custom`
     nel CSS statico è solo un fallback neutro. **Scheda:** per le voci `custom`
-    `openModal` usa l'accento neutro **`generic`** (un colore arbitrario non è
+    `openModal` usa l'accento neutro **`man`** (un colore arbitrario non è
     garantito AA-safe sui testi della modale; sulla card sfondo/striscia a bassa
     opacità è sempre sicuro). Salvataggio via `saveColorsToRepo` (`keepVersion`:
     NON bumpa la versione, come gli altri salvataggi colore; il Worker serializza
@@ -510,8 +510,8 @@ gruppo = cambiare una terna.
     Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
     voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
     `tipo` IT ma non nel `tipo_en`: **Beregond**/**Ioreth** (`Gondoriano/a` →
-    `westmen` in IT, `of Gondor` → `generic` in EN) e **Rata**/**Zanna**/**Lupo**
-    (`Cane` → `beast` in IT, `Dog` → `generic` in EN). Corretto in `tipoClass`:
+    `westman` in IT, `of Gondor` → `man` in EN) e **Rata**/**Zanna**/**Lupo**
+    (`Cane` → `beast` in IT, `Dog` → `man` in EN). Corretto in `tipoClass`:
     la regola Gondor matcha ora il prefisso **`gondor`** (non `gondorian`, così
     copre anche `of Gondor`) e la lista animali include **`dog`**. Dopo il fix,
     0 divergenze IT↔EN su tutte le 356 (stessa natura del fix `half-el` dei
@@ -525,22 +525,22 @@ gruppo = cambiare una terna.
   anche col badge `Ainu`/eredità come 2ª.
 - **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. **Grande
   ri-raggruppamento nella v8.83** (scelta utente): spostati vari gruppi, rinominate
-  3 famiglie e creata `westmen`. Le **13** famiglie e i loro membri (`.tipo-*`):
+  3 famiglie e creata `westman`. Le **13** famiglie e i loro membri (`.tipo-*`):
   - **`noldo`**: noldor.
   - **`half-elf`** (dalla v8.75): mezzelfo (7 Peredhil). Petrolio-cyan (light
     `#1E5462` = 30,84,98; dark 58,160,186). ⚠️ `tipoClass` matcha **`half-el`**
     (non `half-elf`): la resa EN dei Peredhil non è uniforme (Elladan/Elrohir/Arwen
     usano `Half-elven`, che NON contiene `half-elf` per via della `v`); col prefisso
     `half-el` tutti e 7 restano `half-elf` in **entrambe le lingue** (fix v8.84,
-    prima in EN i 3 cadevano su `noldo`/`highmen` dalla 2ª etichetta).
+    prima in EN i 3 cadevano su `noldo`/`highman` dalla 2ª etichetta).
   - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
   - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
   - **`rohir`**: rohirrim, uominicomuni, eotheod.
   - **`other`** (arancio, era `hobbit`; rinominata in v8.83): hobbit, **nano**
     (i Nani spostati qui dalla vecchia `dwarf`).
-  - **`highmen`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**,
+  - **`highman`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**,
     **haleth** (le Case degli Edain; i Nani NON sono più qui).
-  - **`westmen`** (NUOVA in v8.83, rosa spento): **dunadan**, **numenorean** (gli
+  - **`westman`** (NUOVA in v8.83, rosa spento): **dunadan**, **numenorean** (gli
     Uomini dell'Ovest / Dúnedain-Númenóreani, staccati dai draghi). Terna dark
     198,138,152 / light 160,92,112.
   - **`demon`** (rosso, era `numenorean`; rinominata in v8.83): **drago**,
@@ -551,7 +551,7 @@ gruppo = cambiare una terna.
   - **`vala`**: vala, valie (troll e maia-dark spostati a `orc`, ragno a `demon`).
   - **`orc`**: orco, oscurita, misterioso, morgoth, **troll**, **maia-dark**.
   - **`beast`**: bestia, gollum.
-  - **`generic`**: generico (fallback; lupo spostato a `demon`).
+  - **`man`**: generico (fallback; lupo spostato a `demon`).
 - **Override 'Classe crepuscolari → demon' (dalla v8.83).** La Classe **Esseri
   crepuscolari** (funzione condivisa **`isDarkBg(p)`**: regex per nome + tipo
   Balrog/Drago) forza la famiglia a **`demon`** in `familyOf`, PRIMA della mappa
@@ -559,7 +559,7 @@ gruppo = cambiare una terna.
   Shelob/`ragno`, Thuringwethil/`oscurità`, ...); draghi, lupi e balrog ci
   arrivano comunque via `CARDCOLOR_OF`. `familyOf` è ora la fonte UNICA (usata sia
   da `renderList` per bordino/sfondo sia dalla scheda per l'accento): ordine
-  `p.cardcolor` > `isDarkBg → demon` > `CARDCOLOR_OF[stripClass]` > `generic`.
+  `p.cardcolor` > `isDarkBg → demon` > `CARDCOLOR_OF[stripClass]` > `man`.
 
   ⚠️ I nomi sono **di gruppo, non tassonomici** e alcune famiglie restano miste
   (es. `other` = Hobbit + Nani + Casa di Haleth; `orc` = Orchi + Troll + Maia
@@ -574,12 +574,12 @@ gruppo = cambiare una terna.
   **bordino** = `rgba(var(--ccrgb),0.85)`. Terne scure/chiare bilanciate e
   approvate dall'utente (noldo 91,123,240 / 47,79,208; sinda 43,184,166 /
   21,158,143; maia 82,185,95 / 58,154,69; rohir 159,182,65 / 138,154,42; **other**
-  224,138,58 / 210,118,15; **highmen** 216,178,60 / 199,148,19; **demon** 224,89,106
+  224,138,58 / 210,118,15; **highman** 216,178,60 / 199,148,19; **demon** 224,89,106
   / 196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
-  beast 179,148,104 / 150,117,74; generic 144,152,168 / 111,116,130;
-  half-elf 58,160,186 / 30,84,98; **westmen** 198,138,152 / 160,92,112). ⚠️ Nei
+  beast 179,148,104 / 150,117,74; man 144,152,168 / 111,116,130;
+  half-elf 58,160,186 / 30,84,98; **westman** 198,138,152 / 160,92,112). ⚠️ Nei
   rinomini v8.83 il **colore è rimasto legato alla classe rinominata** (other =
-  ex-hobbit arancio, highmen = ex-dwarf oro, demon = ex-numenorean rosso); i
+  ex-hobbit arancio, highman = ex-dwarf oro, demon = ex-numenorean rosso); i
   membri sono cambiati, i valori RGB no.
 - ⚠️ **W3C: le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
   (`injectCardColorRules`, IIFE subito dopo `CARDCOLOR_OF`). Il Nu Html Checker
@@ -710,8 +710,8 @@ gruppo = cambiare una terna.
     schiarisce (scuro) finché regge 4.5:1, o la lascia com'è se già AA. I testi
     usano `rgba(var(--cctext,var(--ccrgb)),1)`; i bordi restano `--ccrgb`. Vale per
     ogni famiglia (anche nuova/rinominata), entrambi i temi. Storico: fino alla
-    v9.61 le famiglie non-AA in chiaro (`sinda, maia, rohir, other, highmen,
-    westmen, beast, generic`) ripiegavano a **gold** via un override statico
+    v9.61 le famiglie non-AA in chiaro (`sinda, maia, rohir, other, highman,
+    westman, beast, man`) ripiegavano a **gold** via un override statico
     `:not(.cc-...)`, ora **rimosso**. Nome (`.modal-name`) e bottone TG
     (`.modal-tg`) restano invariati.
   - ⚠️ Le regole `rgba(var(--ccrgb),…)`/`rgba(var(--cctext),…)` della scheda sono

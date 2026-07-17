@@ -495,10 +495,10 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    che il Nu valida senza problemi. */
 /* Terne per famiglia (default = tema SCURO, bilanciato; override CHIARO sotto). */
 .cc-noldo{--ccrgb:91,123,240} .cc-sinda{--ccrgb:43,184,166} .cc-maia{--ccrgb:82,185,95}
-.cc-rohir{--ccrgb:159,182,65} .cc-other{--ccrgb:224,138,58} .cc-highmen{--ccrgb:216,178,60}
+.cc-rohir{--ccrgb:159,182,65} .cc-other{--ccrgb:224,138,58} .cc-highman{--ccrgb:216,178,60}
 .cc-demon{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
-.cc-beast{--ccrgb:179,148,104} .cc-generic{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
-.cc-westmen{--ccrgb:198,138,152}
+.cc-beast{--ccrgb:179,148,104} .cc-man{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
+.cc-westman{--ccrgb:198,138,152}
 /* Famiglia speciale 'custom' (Modifica mirata): tiene insieme le voci con colore
    individuale. Le due terne per-tema arrivano INLINE dalla card
    (style="--ccdark:R,G,B;--cclight:R,G,B" da p.cardrgb {dark,light}); le regole
@@ -507,11 +507,11 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .cc-custom{--ccrgb:144,152,168}
 html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
 html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
-html[data-theme="light"] .cc-other{--ccrgb:210,118,15} html[data-theme="light"] .cc-highmen{--ccrgb:199,148,19}
+html[data-theme="light"] .cc-other{--ccrgb:210,118,15} html[data-theme="light"] .cc-highman{--ccrgb:199,148,19}
 html[data-theme="light"] .cc-demon{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
 html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .cc-beast{--ccrgb:150,117,74}
-html[data-theme="light"] .cc-generic{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
-html[data-theme="light"] .cc-westmen{--ccrgb:160,92,112}
+html[data-theme="light"] .cc-man{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
+html[data-theme="light"] .cc-westman{--ccrgb:160,92,112}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.93</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.94</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2470,13 +2470,13 @@ var CARDCOLOR_OF = {
   'tipo-maia':'maia', 'tipo-ent':'maia', 'tipo-bombadil':'maia',
   'tipo-rohirrim':'rohir', 'tipo-uominicomuni':'rohir', 'tipo-eotheod':'rohir',
   'tipo-hobbit':'other', 'tipo-nano':'other',
-  'tipo-hador':'highmen', 'tipo-beor':'highmen', 'tipo-haleth':'highmen',
-  'tipo-dunadan':'westmen', 'tipo-numenorean':'westmen',
+  'tipo-hador':'highman', 'tipo-beor':'highman', 'tipo-haleth':'highman',
+  'tipo-dunadan':'westman', 'tipo-numenorean':'westman',
   'tipo-drago':'demon', 'tipo-lupo':'demon', 'tipo-balrog':'demon', 'tipo-ragno':'demon',
   'tipo-vala':'vala', 'tipo-valie':'vala',
   'tipo-orco':'orc', 'tipo-oscurita':'orc', 'tipo-misterioso':'orc', 'tipo-morgoth':'orc', 'tipo-troll':'orc', 'tipo-maia-dark':'orc',
   'tipo-bestia':'beast', 'tipo-gollum':'beast',
-  'tipo-generico':'generic'
+  'tipo-generico':'man'
 };
 
 // ── Config colori EDITABILE (Fase 2, dalla v9.27) ───────────────────────────
@@ -2490,11 +2490,11 @@ var CARDCOLORS_FALLBACK = {
   fam: {
     "noldo": { dark:"#5b7bf0", light:"#2f4fd0" }, "sinda": { dark:"#2bb8a6", light:"#159e8f" },
     "maia": { dark:"#52b95f", light:"#3a9a45" }, "rohir": { dark:"#9fb641", light:"#8a9a2a" },
-    "other": { dark:"#e08a3a", light:"#d2760f" }, "highmen": { dark:"#d8b23c", light:"#c79413" },
+    "other": { dark:"#e08a3a", light:"#d2760f" }, "highman": { dark:"#d8b23c", light:"#c79413" },
     "demon": { dark:"#e0596a", light:"#c42233" }, "vala": { dark:"#de5a8e", light:"#c21f6e" },
     "orc": { dark:"#a06be0", light:"#7a3fce" }, "beast": { dark:"#b39468", light:"#96754a" },
-    "generic": { dark:"#9098a8", light:"#6f7482" }, "half-elf": { dark:"#3aa0ba", light:"#1e5462" },
-    "westmen": { dark:"#c68a98", light:"#a05c70" }
+    "man": { dark:"#9098a8", light:"#6f7482" }, "half-elf": { dark:"#3aa0ba", light:"#1e5462" },
+    "westman": { dark:"#c68a98", light:"#a05c70" }
   },
   map: CARDCOLOR_OF
 };
@@ -2709,7 +2709,7 @@ function familyOf(p) {
   // e balrog ci arrivano comunque via CARDCOLOR_OF.
   if (isDarkBg(p)) return 'demon';
   var sc = stripClassOf(p);
-  return CARDCOLORS.map[sc] || 'generic';
+  return CARDCOLORS.map[sc] || 'man';
 }
 
 // Icone badge: PNG 256x256 normalizzati (oggetto al vivo, centrato) in
@@ -3335,11 +3335,11 @@ function openModal(idx, instant) {
   // cui derivano bordo/filetto/rank/source/chiudi (dalla v8.77). Reset+set a
   // ogni apertura; le modali note/risorse non hanno cc-<fam> e restano gold.
   var modalEl = document.querySelector('#modal-backdrop > .modal');
-  // Le voci 'custom' (colore individuale) usano l'accento neutro 'generic' sulla
+  // Le voci 'custom' (colore individuale) usano l'accento neutro 'man' sulla
   // scheda: un colore arbitrario non e' garantito AA-safe sui testi della modale,
   // mentre sulla card (sfondo/striscia a bassa opacita') e' sempre sicuro.
   if (modalEl) {
-    var mf = familyOf(p); if (mf === 'custom') mf = 'generic'; modalEl.className = 'modal cc-' + mf;
+    var mf = familyOf(p); if (mf === 'custom') mf = 'man'; modalEl.className = 'modal cc-' + mf;
     // Colore-testo AA (v9.62): tinta della famiglia, resa contrastata sul fondo
     // modale del tema. I BORDI restano col colore famiglia (--ccrgb); i TESTI
     // (rank/source/close) usano --cctext = versione AA-safe (o il colore stesso
