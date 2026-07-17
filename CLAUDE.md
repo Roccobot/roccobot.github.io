@@ -302,7 +302,7 @@ voce (distinti dal glossario dei contenuti qui sotto, che nomina i campi
 testuali). Fissati dall'utente per comunicare in fretta:
 
 - **`Tipo`**: riguarda l'**etichetta** colorata sulla riga del nome (campo
-  `tipo`, resa `.rank-tipi` / `.tipo-*`). Es. `Vala`, `Sinda`, `Hobbit`,
+  `tipo`, resa `.rank-tipi` / `.type-*`). Es. `Vala`, `Sinda`, `Hobbit`,
   `Troll`. Dettagli in 'Etichette tipo'.
 - **`Categoria`**: la **razza in senso esteso**, ed è il **filtro di
   visualizzazione principale** della pagina. Sono le 9 voci di `CATS` (ainu,
@@ -342,7 +342,7 @@ testuali). Fissati dall'utente per comunicare in fretta:
     all'oro degli Angelici), NON una variante `.divine`. CSS `.rank-item.animale`,
     assegnata in `renderList` quando `categoria(p) === 'animal'` (ramo `else if`
     dopo il blocco `.divine`). 20 voci alla v7.59. In tema chiaro l'etichetta
-    `.tipo-bestia` è scurita (compensazione contrasto, vedi 'Etichette tipo').
+    `.type-beast` è scurita (compensazione contrasto, vedi 'Etichette tipo').
 - **`Badge`**: le icone-status di merito/evento accanto al nome (chiavi in
   `ICON_ORDER`, es. `aratar`, `calaquende`, `silmaril`, `helcaraxe`...). Criteri
   in 'Criteri editoriali dei badge'.
@@ -357,7 +357,7 @@ Unica sovrapposizione totale: la Classe **Animali** ≡ Categoria `animal`.
 Rifacimento del colore delle card deciso dall'utente: **sfondo card e bordino
 sinistro derivano dalla stessa 'famiglia colore'** (`cardcolor`), non più dalla
 Classe (sfondo) né dal `currentColor` dell'etichetta tipo (bordino). Le ~33
-classi-etichetta `.tipo-*` sono **consolidate in 11 famiglie**. Vantaggio: una
+classi-etichetta `.type-*` sono **consolidate in 11 famiglie**. Vantaggio: una
 sola terna RGB per famiglia governa sfondo + bordino, e ricolorare un intero
 gruppo = cambiare una terna.
 
@@ -446,7 +446,7 @@ gruppo = cambiare una terna.
     editabile**, così l'editor colori le modifica salvando solo `dati.js`.
     - **`var cardColors = { fam:{}, map:{} }`** (opzionale in `dati.js`, scritto
       dal Worker): `fam` = `famiglia → {dark:"#hex", light:"#hex"}`; `map` =
-      `tipo-* → famiglia` (l'ex `CARDCOLOR_OF`). A runtime `CARDCOLORS` = quella
+      `type-* → famiglia` (l'ex `CARDCOLOR_OF`). A runtime `CARDCOLORS` = quella
       salvata se valida, altrimenti il **fallback** interno `CARDCOLORS_FALLBACK`
       (= i valori storici, identici al CSS statico). `familyOf` legge
       `CARDCOLORS.map`; `injectCardColorRules` inietta le `.cc-<fam>{--ccrgb:…}`
@@ -464,7 +464,7 @@ gruppo = cambiare una terna.
       colore committato), **rinomina**
       (nuova chiave: aggiorna `fam`, `map` e in **batch** il `cardcolor` di tutte
       le voci della famiglia; le `custom` restano intatte), **sposta per tipo**
-      (scegli un `tipo-*` → `CARDCOLORS.map[tipo]=fam` e riassegna `cardcolor`
+      (scegli un `type-*` → `CARDCOLORS.map[tipo]=fam` e riassegna `cardcolor`
       alle voci con `stripClassOf(p)===tipo` non-custom). `stripClassOf(p)` è
       estratta da `familyOf`. Ogni operazione salva con `saveColorsToRepo` (dati
       + `cardColors`). L'AA della **scheda** per i testi è ora **dinamico** (vedi
@@ -506,7 +506,7 @@ gruppo = cambiare una terna.
       `datiVersion` né il badge. Vale per Mirata e Famiglie. (Gli altri salvataggi
       admin (contenuti, riordino) continuano a bumpare +0.01.) Il controllo di
       freschezza basato sul confronto dei ref git resta affidabile comunque.
-  - **Fix 'tipo-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
+  - **Fix 'type-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
     Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
     voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
     `tipo` IT ma non nel `tipo_en`: **Beregond**/**Ioreth** (`Gondoriano/a` →
@@ -517,15 +517,15 @@ gruppo = cambiare una terna.
     0 divergenze IT↔EN su tutte le 356 (stessa natura del fix `half-el` dei
     Mezzelfi in v8.84). Il seeding usa i valori IT canonici (ora == EN).
 - **`stripClass` (invariato dalla logica del bordino).** Si raccoglie l'ordine
-  delle classi-etichetta (`badgeClasses`, incluso `tipo-ainur` se presente);
+  delle classi-etichetta (`badgeClasses`, incluso `type-ainu` se presente);
   `stripClass` = **2ª** se ≥2 etichette, altrimenti la 1ª (fallback
-  `tipo-generico`). **Eccezione 'prima etichetta'**: se la 1ª è `tipo-noldor`
-  **oppure `tipo-mezzelfo`** (dalla v8.72), si usa quella. Così Noldor (→ `noldo`)
+  `type-fallback`). **Eccezione 'prima etichetta'**: se la 1ª è `type-noldo`
+  **oppure `type-half-elf`** (dalla v8.72), si usa quella. Così Noldor (→ `noldo`)
   e Mezzelfi (→ `half-elf` dalla v8.75) tengono la famiglia della 1ª etichetta
   anche col badge `Ainu`/eredità come 2ª.
-- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.tipo-* → famiglia`. **Grande
+- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.type-* → famiglia`. **Grande
   ri-raggruppamento nella v8.83** (scelta utente): spostati vari gruppi, rinominate
-  3 famiglie e creata `westman`. Le **13** famiglie e i loro membri (`.tipo-*`):
+  3 famiglie e creata `westman`. Le **13** famiglie e i loro membri (`.type-*`):
   - **`noldo`**: noldor.
   - **`half-elf`** (dalla v8.75): mezzelfo (7 Peredhil). Petrolio-cyan (light
     `#1E5462` = 30,84,98; dark 58,160,186). ⚠️ `tipoClass` matcha **`half-el`**
@@ -632,7 +632,7 @@ gruppo = cambiare una terna.
   **grigio a PARI LUMINANZA relativa** del colore originale → i rapporti di
   contrasto restano identici (axe invariato, 0 violazioni). Il **titolone** tiene
   il gradiente e il glow (effetto sul font invariato) ma in **grigio/argento**, non
-  più blu. **NON toccati:** etichette tipo (`.tipo-*`), famiglie `cardcolor`
+  più blu. **NON toccati:** etichette tipo (`.type-*`), famiglie `cardcolor`
   (`--ccrgb`), simboli di genere (PNG), e i fondali/tint del Pannello e dei bordi
   modale (rgba(104,144,168,…) a bassa opacità: sono sfondi/bordi di controlli, non
   'testi'). `--ink`/`--ink-deep` (fondali scuri) restano.
@@ -722,7 +722,7 @@ gruppo = cambiare una terna.
 
 Storico del bordino (fino alla v8.71): dalla v7.69 il colore veniva dal
 `currentColor` dell'etichetta tipo (`background:currentColor` a opacità 0.8, la
-classe `.tipo-*` posata sulla striscia); prima ancora dipendeva dalla Classe. La
+classe `.type-*` posata sulla striscia); prima ancora dipendeva dalla Classe. La
 logica di scelta `stripClass` (2ª etichetta, eccezione Noldor) è la stessa,
 cambia solo come se ne ricava il colore (ora via famiglia/`--ccrgb`).
 
@@ -946,7 +946,7 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     mai nella card, mai nei testi delle voci.
     - **Compensazione contrasto (solo tema chiaro, dalla v3.82):** la velatura
       0.8 sbiadisce le etichette tipo e la pill sotto la soglia AA; nel CSS
-      c'è un blocco di override scoped `.rank-item.apocrifo .tipo-*` (7 classi
+      c'è un blocco di override scoped `.rank-item.apocrifo .type-*` (7 classi
       + pill + nota) con colori più scuri del minimo necessario perché il
       colore percepito DOPO la velatura superi 4.7:1 (bordo = RGB testo @0.8).
       ⚠️ Se una futura voce apocrifa avrà un `tipo` non coperto, aggiungere lì
@@ -1260,13 +1260,13 @@ specifico del dataset):
   Erestor e Lindir non hanno stirpe attestata dalle fonti: l'etichetta resta
   `Elfo`/`Elfa` (niente invenzioni), ma il COLORE via `tipo_color` suggerisce
   l'appartenenza più probabile, per scelta dell'utente: **Erestor** →
-  `tipo-noldor`, **Lindir** → `tipo-sindar` (ramo Teleri). Non sono anomalie
+  `type-noldo`, **Lindir** → `type-sinda` (ramo Teleri). Non sono anomalie
   da ripulire: gli override sono deliberati.
   - **Re-Stregone di Angmar: etichetta `Uomo`, colore númenóreano 'suggerito'
     (dalla v7.20).** Stessa logica: la stirpe non è accertata, quindi l'etichetta
     è il semplice `Uomo`/`Man` (non più `Uomo (Númenóreano?)`), ma `tipo_color`
-    `tipo-numenorean|` tiene il colore rosso dei Númenóreani come indizio (il 2º
-    segmento `Spettro dell'Anello` resta auto = `tipo-oscurita`). Il `?` era stato
+    `type-numenorean|` tiene il colore rosso dei Númenóreani come indizio (il 2º
+    segmento `Spettro dell'Anello` resta auto = `type-shadow`). Il `?` era stato
     tolto perché allargava l'etichetta e rompeva la riga singola di nome+badge.
     ⚠️ Diverso da **Berúthiel** `Donna (Númenóreana Nera?)`, dove il `?` resta
     voluto: lì la confidenza dell'utente sulla stirpe è più alta (pur senza
@@ -1367,8 +1367,8 @@ specifico del dataset):
   (card oro): spostati agli **Esseri crepuscolari** (card scura `.divine.morgoth`,
   via `darkBg`) come creature crepuscolari/dell'ombra; rimosso il vecchio ramo
   `isForestSpirit`.
-  Le **etichette tipo** restano ai colori automatici (`tipo-ent`, `tipo-aquila`;
-  il Vecchio Uomo Salice tiene `tipo-bombadil`): NON si toccano. ⚠️ Storia: nelle
+  Le **etichette tipo** restano ai colori automatici (`type-ent`, `type-eagle`;
+  il Vecchio Uomo Salice tiene `type-bombadil`): NON si toccano. ⚠️ Storia: nelle
   v7.16-7.18 avevo erroneamente cambiato le *etichette* (`tipo_color`) invece
   delle *schede*; etichette ripristinate e schede corrette in v7.19. Fimbrethil:
   dalla v7.18 il `tipo` è normalizzato da 'Entessa'/'Entwife' a **'Ent'**
@@ -1378,7 +1378,7 @@ specifico del dataset):
   'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
   interna invariata), la cui **legenda recita 'Orchi e Troll' / 'Orcs &
   Trolls'** (`CAT_LABEL`). Il `tipo` resta 'Troll' col suo colore-badge
-  dedicato (`tipo-troll`, vedi 'Etichette tipo'); `categoria()` mappa
+  dedicato (`type-troll`, vedi 'Etichette tipo'); `categoria()` mappa
   `troll → orc`. La decisione è di **merito canonico/editoriale**, non dettata
   dalla visibilità di default (cfr. regola universale 'Correttezza e canone
   prima della funzionalità').
@@ -1483,12 +1483,12 @@ specifico del dataset):
 ## 🎨 Etichette tipo (colori e bordo)
 
 - **Bordo del riquadro etichetta = colore del testo all'80%.** Ogni etichetta
-  tipo (`.tipo-*`) ha un colore del testo (`color`); il bordo del riquadro usa
+  tipo (`.type-*`) ha un colore del testo (`color`); il bordo del riquadro usa
   lo **stesso identico colore RGB**, ma con **opacità 0.8** (`border:
   rgba(R,G,B,0.8)`). Vale per **tutte** le etichette e in **entrambi i temi**
   (scuro e chiaro), senza eccezioni: ogni nuova etichetta deve seguire lo
   stesso schema. (Storico: standard deciso dall'utente e applicato in blocco;
-  verificato uniforme su tutte le `.tipo-*` esistenti.)
+  verificato uniforme su tutte le `.type-*` esistenti.)
 - **Contrasto.** Il colore del testo dell'etichetta deve restare leggibile sul
   proprio sfondo in entrambi i temi (cfr. l'audit `axe-core` in 'Nuovi
   personaggi e canone'): verificarlo per ogni colore nuovo.
@@ -1496,13 +1496,13 @@ specifico del dataset):
   'vide gli Alberi' la porta ora il **badge** `calaquende` (vedi 'Criteri
   editoriali dei badge'), quindi le 7 voci che avevano `Teler/Calaquendë` sono
   state ripulite: Galadriel, Thingol, Finrod, Aegnor, Angrod → `Teler`
-  (`tipo-teleri`); la vecchia classe `tipo-calaquendi` è stata **rimossa**.
+  (`type-teler`); la vecchia classe `type-calaquendi` è stata **rimossa**.
 - **Teleri di Beleriand = etichetta `Sinda`, non `Teler` generico (dalla v7.14).**
   I Teleri rimasti nella Terra di Mezzo sono Sindar: etichetta `Elfo/Elfa
   (Sinda)`. Bonifica: **Thingol, Círdan, Elmo, Galathil, Galadhon** (stirpe di
   Doriath, parenti di Thingol) e **Galdor dei Porti Grigi** (gente di Círdan,
-  Falathrim) passati da `Teler` a `Sinda`. Colore invariato: `tipo-sindar`
-  condivide il CSS di `tipo-teleri` (stesso teal). **Eccezione tenuta:**
+  Falathrim) passati da `Teler` a `Sinda`. Colore invariato: `type-sinda`
+  condivide il CSS di `type-teler` (stesso teal). **Eccezione tenuta:**
   **Lúthien** resta `Elfa (Teler)` come seconda etichetta (caso unico: figlia
   di un Sinda e di una Maia, la si lascia sul Teler generico per volontà
   dell'utente). Restano legittimamente `Teler` anche le etichette **secondarie
@@ -1510,7 +1510,7 @@ specifico del dataset):
   per parte di Eärwen).
 - **Etichetta `Falmar` (dalla v7.11): i Teleri di Aman con colore dedicato.**
   **Olwë** ed **Eärwen** portano l'etichetta `Elfo/Elfa (Falmar)` con la classe
-  `tipo-falmar` (dark `#45d8ee`, light `#006870`): un azzurro **leggermente più
+  `type-falma` (dark `#45d8ee`, light `#006870`): un azzurro **leggermente più
   ceruleo del teleri** (`#4de6cc`/`#006e61`), per distinguere i Falmari (i Teleri
   che restarono in Aman) pur restando **ramo teleri** e **categoria elfi**
   (`categoria()` li mappa via `elfo|elfa`). Scelta dell'utente; contrasto AA
@@ -1674,7 +1674,7 @@ specifico del dataset):
     times: one of the greatest deeds in the history of Arda.'. Non è in
     `BADGE_ROWS` (non filtrabile). Restano intatte le feature omonime ma distinte:
     la classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via
-    `darkBg`) e l'etichetta tipo `.tipo-morgoth` ('vala decaduto'). **Dalla v8.80
+    `darkBg`) e l'etichetta tipo `.type-morgoth` ('vala decaduto'). **Dalla v8.80
     la PNG è ritagliata al contenuto (215x237) e ha classe `.si-morgoth`
     (`width:.835em`), perché la figura verticale col padding asimmetrico originale
     lasciava whitespace interno che allargava otticamente i gap coi badge vicini
