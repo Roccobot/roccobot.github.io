@@ -1273,7 +1273,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .type-fallback    { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
 .type-ainu       { background:rgba(0,43,205,0.30); border:1px solid rgba(107,159,255,0.8); color:#6b9fff; }
 .type-mystery  { background:rgba(73,34,126,0.30); border:1px solid rgba(200,168,255,0.8); color:#c8a8ff; }
-.type-northmen { background:rgba(136,149,55,0.27); border:1px solid rgba(174,186,99,0.8); color:#aeba63; }
+.type-northman { background:rgba(136,149,55,0.27); border:1px solid rgba(174,186,99,0.8); color:#aeba63; }
 /* ESSERI SUPERIORI — rosa/magenta per Valar e Valier */
 .type-vala, .type-valie { background:rgba(101,4,56,0.44); border:1px solid rgba(253,139,212,0.8); color:#fd8bd4; text-shadow:0 0 8px rgba(220,100,180,0.35); }
 .type-darkmaia   { background:rgba(132,0,81,0.36); border:1px solid rgba(255,81,187,0.8); color:#ff51bb; }
@@ -1284,7 +1284,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
 .type-beast      { background:rgba(134,95,28,0.32); border:1px solid rgba(240,206,122,0.8); color:#f0ce7a; }
 /* COLORI A PARTE — Morgoth e Tom Bombadil */
 .type-morgoth     { background:rgba(37,29,55,0.62); border:1px solid rgba(166,145,204,0.8); color:#a691cc; }
-.type-bombadil    { background:rgba(30,90,20,0.42); border:1px solid rgba(132,234,80,0.8); color:#84ea50; }
+.type-spirit    { background:rgba(30,90,20,0.42); border:1px solid rgba(132,234,80,0.8); color:#84ea50; }
 
 .modal-backdrop {
   position:fixed; inset:0;
@@ -1904,7 +1904,7 @@ html[data-theme="light"] .type-maia { background:rgba(5,186,0,0.12); border-colo
 html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
 html[data-theme="light"] .type-ainu { background:rgba(0,43,205,0.10); border-color:rgba(11,55,210,0.8); color:#0b37d2; }
 html[data-theme="light"] .type-mystery { background:rgba(73,34,126,0.08); border-color:rgba(89,30,177,0.8); color:#591eb1; }
-html[data-theme="light"] .type-northmen { background:rgba(136,149,55,0.12); border-color:rgba(94,103,32,0.8); color:#5e6720; }
+html[data-theme="light"] .type-northman { background:rgba(136,149,55,0.12); border-color:rgba(94,103,32,0.8); color:#5e6720; }
 html[data-theme="light"] .type-vala, html[data-theme="light"] .type-valie { background:rgba(200,0,87,0.11); border-color:rgba(174,0,78,0.8); color:#ae004e; text-shadow:none; }
 html[data-theme="light"] .type-morgoth { background:rgba(54,44,76,0.12); border-color:rgba(87,72,126,0.8); color:#57487e; text-shadow:none; }
 html[data-theme="light"] .type-spider, html[data-theme="light"] .type-shadow { background:rgba(77,25,155,0.11); border-color:rgba(87,29,170,0.8); color:#571daa; }
@@ -1913,7 +1913,7 @@ html[data-theme="light"] .type-darkmaia { background:rgba(162,0,92,0.12); border
 html[data-theme="light"] .type-dragon { background:rgba(185,0,0,0.10); border-color:rgba(190,0,0,0.8); color:#be0000; }
 html[data-theme="light"] .type-wolf { background:rgba(69,77,95,0.12); border-color:rgba(60,71,92,0.8); color:#3c475c; }
 html[data-theme="light"] .type-beast { background:rgba(134,95,28,0.12); border-color:rgba(125,89,11,0.8); color:#7d590b; }
-html[data-theme="light"] .type-bombadil { background:rgba(30,90,20,0.12); border-color:rgba(39,108,13,0.8); color:#276c0d; }
+html[data-theme="light"] .type-spirit { background:rgba(30,90,20,0.12); border-color:rgba(39,108,13,0.8); color:#276c0d; }
 /* ── Compensazione contrasto sulle card apocrife (SOLO tema chiaro) ──
    La velatura opacity:0.8 delle card apocrife (scelta deliberata, intatta)
    sbiadisce le etichette sotto la soglia AA 4.5:1. Qui i colori di partenza
@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v9.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v9.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2411,8 +2411,8 @@ function tipoClass(tipo) {
   if (t.includes('valië') || t.includes('valie')) return 'type-valie';
   if (t.includes('vala')) return 'type-vala';
   if (t.includes('balrog')) return 'type-balrog';
-  if (t.includes('essere ancestrale') || t.includes('primordial')) return 'type-bombadil';
-  if (t.includes('spirito delle acque') || t.includes('water-spirit')) return 'type-bombadil'; // Baccador: stessa resa-colore di Tom Bombadil
+  if (t.includes('essere ancestrale') || t.includes('primordial')) return 'type-spirit';
+  if (t.includes('spirito delle acque') || t.includes('water-spirit')) return 'type-spirit'; // Baccador: stessa resa-colore di Tom Bombadil
   if (t.includes('maia') && (t.includes('decadut') || t.includes('fallen'))) return 'type-darkmaia';
   if (t.includes('drago') || t.includes('dragon')) return 'type-dragon';
   if (t.includes('ragno') || t.includes('spider')) return 'type-spider';
@@ -2467,8 +2467,8 @@ function tipoClass(tipo) {
 var CARDCOLOR_OF = {
   'type-noldo':'noldo', 'type-half-elf':'half-elf',
   'type-sinda':'sinda', 'type-teler':'sinda', 'type-vanya':'sinda', 'type-falma':'sinda', 'type-eagle':'sinda',
-  'type-maia':'maia', 'type-ent':'maia', 'type-bombadil':'maia',
-  'type-rohir':'rohir', 'type-northmen':'rohir', 'type-eotheod':'rohir',
+  'type-maia':'maia', 'type-ent':'maia', 'type-spirit':'maia',
+  'type-rohir':'rohir', 'type-northman':'rohir', 'type-eotheod':'rohir',
   'type-hobbit':'other', 'type-dwarf':'other',
   'type-hador':'highman', 'type-beor':'highman', 'type-haleth':'highman',
   'type-dunadan':'westman', 'type-numenorean':'westman',

@@ -1368,7 +1368,7 @@ specifico del dataset):
   via `darkBg`) come creature crepuscolari/dell'ombra; rimosso il vecchio ramo
   `isForestSpirit`.
   Le **etichette tipo** restano ai colori automatici (`type-ent`, `type-eagle`;
-  il Vecchio Uomo Salice tiene `type-bombadil`): NON si toccano. ⚠️ Storia: nelle
+  il Vecchio Uomo Salice tiene `type-spirit`): NON si toccano. ⚠️ Storia: nelle
   v7.16-7.18 avevo erroneamente cambiato le *etichette* (`tipo_color`) invece
   delle *schede*; etichette ripristinate e schede corrette in v7.19. Fimbrethil:
   dalla v7.18 il `tipo` è normalizzato da 'Entessa'/'Entwife' a **'Ent'**
