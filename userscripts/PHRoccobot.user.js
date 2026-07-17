@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.3.0
+// @version      1.4.0
 // @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" (SEMPRE visibile, stili !important + retry, così non "sparisce") che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). La sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
@@ -157,7 +157,21 @@
     return (s || '').replace(/[\/\\:*?"<>|\x00-\x1f]/g, ' ').replace(/\s+/g, ' ').trim();
   }
 
+  function decodeEntita(s) {
+    try { const ta = document.createElement('textarea'); ta.innerHTML = s; return ta.value; } catch (e) { return s; }
+  }
+
   function titolo() {
+    // 1) titolo canonico dal player (flashvars.video_title): spesso è l'ORIGINALE,
+    //    meno soggetto alla traduzione automatica che PH applica all'h1 nella
+    //    lingua dell'interfaccia.
+    try {
+      const fv = flashvars();
+      if (fv && typeof fv.video_title === 'string' && fv.video_title.trim()) {
+        return pulisciTesto(decodeEntita(fv.video_title)) || 'video';
+      }
+    } catch (e) { /* continua con l'h1 */ }
+    // 2) h1 della pagina (può essere tradotto nella lingua UI)
     const h = document.querySelector('h1.title span, h1.title, .title-container h1, h1.inlineFree');
     let t = (h && h.textContent) ? h.textContent.trim() : (document.title || 'video');
     t = t.replace(/\s*-\s*Pornhub\.com\s*$/i, '').trim();
