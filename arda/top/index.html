@@ -1048,17 +1048,17 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    colore, più larga, con fade che finisce prima. Niente +3px (lo shift della
    scrollbar che compensava è stato risolto): centratura geometrica sul Chiudi. */
 .ctrl-scroll-hint { position:fixed; right:calc(1.2rem + 16px - 1.15rem + 2px); bottom:calc(4rem + env(safe-area-inset-bottom,0px)); z-index:211; width:2.3rem; height:2.3rem; pointer-events:none; opacity:0; }
-.ctrl-scroll-hint .csh-dot { position:absolute; inset:0; border-radius:50%; background:#36486e; border:1px solid rgba(150,178,225,0.42); }
+.ctrl-scroll-hint .csh-dot { position:absolute; inset:0; border-radius:50%; background:#d2b25c; border:1px solid rgba(224,194,108,0.6); }
 /* Scia 'a trascinamento': due righe parallele (bordi) + un'area di riempimento
    dello stesso colore del tondo ma più trasparente; il tutto sfuma verso il
    basso via mask (niente forma a cono). Il top sta dietro al tondo opaco. */
-.ctrl-scroll-hint .csh-tail { position:absolute; left:0; width:100%; top:50%; height:30px; background:rgba(120,150,210,0.34); -webkit-mask-image:linear-gradient(to bottom,#000,#000 50%,transparent); mask-image:linear-gradient(to bottom,#000,#000 50%,transparent); }
+.ctrl-scroll-hint .csh-tail { position:absolute; left:0; width:100%; top:50%; height:30px; background:rgba(210,178,92,0.34); -webkit-mask-image:linear-gradient(to bottom,#000,#000 50%,transparent); mask-image:linear-gradient(to bottom,#000,#000 50%,transparent); }
 .ctrl-scroll-hint.play { animation:csh-swipe 3.5s cubic-bezier(0.22,1,0.36,1) forwards; }
 .ctrl-scroll-hint.play .csh-tail { animation:csh-trail 3.5s linear forwards; }
 @keyframes csh-swipe { 0%{transform:translateY(10px);opacity:0} 6%{transform:translateY(0);opacity:1} 50%{transform:translateY(-72px);opacity:1} 62%{transform:translateY(-72px);opacity:0} 100%{transform:translateY(-72px);opacity:0} }
 @keyframes csh-trail { 0%{opacity:0} 6%{opacity:0} 13%{opacity:0.5} 50%{opacity:0} 100%{opacity:0} }
-html[data-theme="light"] .ctrl-scroll-hint .csh-dot { background:#cdd8ec; border-color:rgba(70,100,160,0.40); }
-html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,200,0.34); }
+html[data-theme="light"] .ctrl-scroll-hint .csh-dot { background:#1f5562; border-color:rgba(31,85,98,0.55); }
+html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,0.34); }
 @media (prefers-reduced-motion:reduce){ .ctrl-scroll-hint.play, .ctrl-scroll-hint.play .csh-tail { animation:none; } }
 /* Chiusura morbida del Pannello (bottom-sheet mobile, classe .closing): parte
    veloce e DECELERA subito fino allo stop, con un breve fade solo alla fine
@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.24</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
