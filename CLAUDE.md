@@ -1978,8 +1978,10 @@ specifico del dataset):
   **nome del file** `.js` e il **titolo** (`@name`) da assegnare. Non deciderli
   in autonomia: attendere la risposta prima di creare il file. (Vale per i nuovi
   script; per gli aggiornamenti di script esistenti si mantengono nome e titolo.)
-- **Link di installazione a fine lavoro.** Quando crei o aggiorni uno
-  userscript, nel messaggio finale includi **sempre** il link da cui
+- **Link di installazione a fine lavoro / dopo OGNI go-live (regola rafforzata
+  dall'utente, 2026-07-16).** Ogni volta che crei o **aggiorni** uno userscript,
+  **dopo il go-live** ri-invia **sempre** nel messaggio finale il link da cui
   installarlo/aggiornarlo (es.
-  <https://roccobot.github.io/userscripts/NOME.user.js>), per comodità
-  dell'utente.
+  <https://roccobot.github.io/userscripts/NOME.user.js>). Vale per **qualsiasi**
+  aggiornamento, anche minore/patch: dopo ogni pubblicazione l'URL va ripetuto,
+  senza eccezioni.
