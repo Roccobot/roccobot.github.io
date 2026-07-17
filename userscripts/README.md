@@ -270,24 +270,28 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 
 Su `pornhub.com` fa due cose:
 
-1. **Forza l'inglese.** Se la pagina è in un'altra lingua (`<html lang>` diverso da
-   `en`), usa lo **switcher di lingua del sito stesso** per passare all'inglese
-   (cerca la voce "English"/`data-language="en"` e ne segue il link, una sola volta
-   per sessione — nessun cookie interno indovinato, nessun loop).
-2. **Tasto "⬇️ Scarica video"** in basso a destra (solo nelle pagine video): scarica
-   il file alla **qualità massima** disponibile. Legge a runtime l'oggetto
-   `flashvars_<viewkey>` della pagina e le sue `mediaDefinitions`, **espande** le
-   definizioni "remote" (endpoint `get_media`) e sceglie l'**MP4** con la qualità
-   più alta; il download va su disco via `GM_download`. **Nome file:**
-   `[Nome canale] Titolo.mp4` — il nome del canale/uploader tra **parentesi quadre
-   letterali**, ricavato dalla pagina. Se il video è **solo HLS** (streaming a
-   segmenti), avvisa che il download MP4 diretto non è possibile.
+1. **Forza il sito internazionale (`www.`).** Dall'Italia PH carica
+   `it.pornhub.com`, ed è quel **sottodominio-lingua** a tradurre i titoli (non la
+   lingua dell'interfaccia). Se l'host è un sottodominio-lingua (2 lettere, es.
+   `it`/`de`/`fr`/`es`…), lo script reindirizza a **`www.pornhub.com`**
+   conservando percorso e query (`location.replace`, eseguito a `document-start`
+   così non si carica nemmeno la pagina tradotta). Guardia in `sessionStorage`
+   anti-loop: se PH forzasse comunque il sottodominio lato server, non si riprova.
+2. **Tasto "⬇️ Scarica video"** in basso a destra (sempre visibile): scarica il
+   file alla **qualità massima**. Legge a runtime l'oggetto `flashvars_<viewkey>` e
+   le sue `mediaDefinitions`, **espande** le definizioni "remote" (`get_media`) e
+   sceglie l'**MP4** con la qualità più alta; il download va su disco via
+   `GM_download`, con **avanzamento sul tasto** (percentuale + barra) e
+   **clic-per-annullare** durante lo scaricamento. **Nome file:**
+   `[Nome canale] Titolo.mp4` — canale tra **parentesi quadre letterali**. Se il
+   video è **solo HLS** (streaming a segmenti), avvisa che il download MP4 diretto
+   non è possibile.
 
 ### Personalizzazione
 
 ```js
-const FORZA_INGLESE     = true;  // passa all'inglese se la pagina è in altra lingua
-const SALVA_CON_DIALOGO = true;  // true = chiede dove salvare; false = scarica diretto
+const FORZA_INTERNAZIONALE = true; // it.pornhub.com (o altra lingua) → www.pornhub.com
+const SALVA_CON_DIALOGO    = true; // true = chiede dove salvare; false = scarica diretto
 ```
 
 ### Installazione
