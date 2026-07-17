@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.1.0
-// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" che scarica il file alla qualità massima disponibile. Il tasto appare su tutte le pagine video; la sorgente si ricava a runtime da flashvars/mediaDefinitions (via oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
+// @version      1.2.0
+// @description  Su pornhub.com: forza l'interfaccia in inglese e aggiunge in basso a destra un tasto "⬇️ Scarica video" che scarica il file MP4 alla qualità massima. Nome file: "[Nome canale] Titolo.mp4" (parentesi quadre letterali). Il tasto appare su tutte le pagine video; la sorgente si ricava a runtime da flashvars/mediaDefinitions (oggetto globale o parsando gli script), gestendo mp4 diretti, definizioni "remote" (get_media) e rilevando l'HLS.
 // @author       Roccobot
 // @match        https://*.pornhub.com/*
 // @match        https://pornhub.com/*
@@ -152,11 +152,49 @@
     return { mp4: mp4, hls: hls };
   }
 
+  function pulisciTesto(s) {
+    // toglie i caratteri illegali nei nomi file, MA tiene le parentesi quadre [ ]
+    return (s || '').replace(/[\/\\:*?"<>|\x00-\x1f]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
   function titolo() {
     const h = document.querySelector('h1.title span, h1.title, .title-container h1, h1.inlineFree');
     let t = (h && h.textContent) ? h.textContent.trim() : (document.title || 'video');
     t = t.replace(/\s*-\s*Pornhub\.com\s*$/i, '').trim();
-    return (t.replace(/[\/\\:*?"<>|\x00-\x1f]/g, ' ').replace(/\s+/g, ' ').trim() || 'video').slice(0, 150);
+    return pulisciTesto(t) || 'video';
+  }
+
+  // Nome del canale/uploader (per il prefisso "[Canale]"). Provo più selettori
+  // (la struttura PH varia) e prendo il primo non vuoto.
+  function canale() {
+    const sel = [
+      '.video-detailed-info .usernameBadgesWrapper a',
+      '.video-info-row .usernameWrap a',
+      '.video-actions-tabs .usernameBadgesWrapper a',
+      '.userInfo a.bolded',
+      '[data-entity="user"] a.bolded',
+      '.channelsWrapper .title a',
+      '.channelButton .title',
+      'a.bolded[href*="/model/"]',
+      'a.bolded[href*="/channels/"]',
+      'a.bolded[href*="/pornstar/"]',
+      'a.bolded[href*="/users/"]',
+      '.pornstarLink'
+    ];
+    for (const s of sel) {
+      const el = document.querySelector(s);
+      const t = el && pulisciTesto(el.textContent);
+      if (t) return t;
+    }
+    return '';
+  }
+
+  // Nome file richiesto: "[Nome del canale] Titolo.mp4" (parentesi quadre letterali).
+  function nomeFile() {
+    const t = titolo();
+    const c = canale();
+    const base = c ? '[' + c + '] ' + t : t;
+    return base.slice(0, 180) + '.mp4';
   }
 
   async function scarica(btn) {
@@ -174,7 +212,7 @@
         return;
       }
       const best = q.mp4[0];
-      const nome = titolo() + ' [' + (best.quality || '?') + 'p].mp4';
+      const nome = nomeFile();
       if (btn) btn.textContent = '⬇️ ' + (best.quality || '') + 'p…';
 
       GM_download({
