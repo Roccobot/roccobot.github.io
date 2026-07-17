@@ -647,7 +647,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   /* overscroll-behavior:contain — a fine corsa il gesto NON si incatena
      alla pagina sotto (su mobile scorreva la classifica dietro il pannello) */
   max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
-  background:rgba(16,24,44,0.94); border:1px solid rgba(104,144,168,0.4); border-radius:14px;
+  background:rgba(30,29,26,0.94); border:1px solid rgba(136,133,126,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow:0 12px 48px rgba(0,0,0,0.5);
   opacity:0; visibility:hidden; transform:translateY(14px) scale(0.96); transform-origin:bottom left; transition:opacity 0.18s ease, transform 0.34s cubic-bezier(0.22,1,0.36,1), visibility 0.34s;
@@ -1095,7 +1095,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
      larghezza piena del pannello mentre il contenuto scorre sotto. */
   .ctrl-sheet-head {
     display:block; position:sticky; top:0; z-index:3; height:1.5rem;
-    margin:0 -1.2rem 0.4rem; background:rgba(16,24,44,0.98); pointer-events:none;
+    margin:0 -1.2rem 0.4rem; background:rgba(30,29,26,0.98); pointer-events:none;
     /* NIENTE border-radius proprio: la testata riempie l'intera fascia alta e
        viene arrotondata dalla clip del pannello (overflow + border-radius). Il
        raggio 18px 'suo' lasciava una scheggia di sfondo agli angoli che
@@ -1141,7 +1141,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
      dettarla (come le Categorie), così non allarga il blocco fit-content; il
      padding-left la incolonna con le icone della legenda. */
   #ctrl-panel .ctrl-mobile-note { text-align:left; opacity:0.8; width:0; min-width:100%; box-sizing:border-box; padding-left:0.3rem; white-space:nowrap; }
-  html[data-theme="light"] .ctrl-sheet-head { background:rgba(244,246,250,0.98); }
+  html[data-theme="light"] .ctrl-sheet-head { background:rgba(245,247,247,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
      in basso */
@@ -1178,9 +1178,9 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(110,140,2
     position:sticky; bottom:0; z-index:3;
     margin:1rem -1.2rem 0;
     padding:0.7rem 1.2rem calc(0.7rem + env(safe-area-inset-bottom,0px));
-    border-top:1px solid rgba(104,144,168,0.2); background:rgba(16,24,44,0.98);
+    border-top:1px solid rgba(104,144,168,0.2); background:rgba(30,29,26,0.98);
   }
-  html[data-theme="light"] .ctrl-bottombar { background:rgba(244,246,250,0.98); }
+  html[data-theme="light"] .ctrl-bottombar { background:rgba(245,247,247,0.98); }
   /* Versione leggibile in tema chiaro: blu piu scuro cosi il colore percepito
      dopo opacity .9 supera 4.7:1 (axe: il --gold-bright chiaro dava 4.0:1). */
   html[data-theme="light"] .ctrl-bottombar .ctrl-ver { color:#3e607e; }
@@ -1824,7 +1824,7 @@ html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-
 html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
 html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-within { background: rgba(236,236,239,0.85); }
 html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
-html[data-theme="light"] .ctrl-panel { background:rgba(244,246,250,0.97); border-color:rgba(60,95,140,0.35); }
+html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
 html[data-theme="light"] .leg-gender { background:rgba(58,88,120,0.07); border-color:rgba(58,88,120,0.28); }
@@ -2105,7 +2105,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.22</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
