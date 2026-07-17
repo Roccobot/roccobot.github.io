@@ -6029,7 +6029,7 @@ function showColorEditor() {
     // Rete di sicurezza: ultimo colore SALVATO (clic per ripristinare), allineato
     // a DESTRA. 'Salvato' = committato, non l'anteprima.
     var saved = CARDCOLORS_SAVED[fam] || CARDCOLORS.fam[fam] || { dark:'#9098a8', light:'#9098a8' };
-    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;justify-content:flex-end;gap:0.45rem;flex-wrap:wrap;margin:0 0 0.5rem;font-size:0.74rem;opacity:0.85;';
+    var srow = document.createElement('div'); srow.style.cssText = 'display:flex;align-items:center;justify-content:flex-end;gap:0.45rem;flex-wrap:wrap;margin:1.1rem 0 0.6rem;font-size:0.74rem;opacity:0.85;';
     srow.appendChild(document.createTextNode(it?'Ultimo salvato (clic per ripristinare):':'Last saved (click to restore):'));
     var restoreBtn = document.createElement('button');
     restoreBtn.title = it?'Ripristina l\'ultimo colore salvato (chiaro e scuro)':'Restore the last saved colour (light and dark)';
@@ -6111,42 +6111,44 @@ function showColorEditor() {
     var baseInput = document.createElement('input'); baseInput.type = 'color';
     baseInput.value = ccTheme() === 'light' ? initLight : initDark;
     baseInput.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
-    // Titolo 'Colore' centrato, sopra il tasto.
-    var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:0.85rem;text-align:center;margin:0.5rem 0 0.5rem;';
-    h.textContent = it ? 'Colore' : 'Colour';
     var chooseBtn = document.createElement('button'); chooseBtn.className = 'fab-modal-confirm';
-    chooseBtn.style.cssText = 'width:auto;padding:0.45rem 0.9rem;font-size:0.85rem;display:inline-flex;align-items:center;gap:0.5rem;';
+    chooseBtn.style.cssText = 'width:auto;padding:0.5rem 1.1rem;font-size:0.85rem;display:inline-flex;align-items:center;gap:0.5rem;';
     var baseSw = document.createElement('span'); baseSw.style.cssText = 'width:18px;height:18px;border-radius:4px;border:1px solid rgba(128,128,128,0.5);display:inline-block;background:' + baseInput.value + ';';
     chooseBtn.appendChild(baseSw); chooseBtn.appendChild(document.createTextNode(it ? 'Scegli colore' : 'Pick colour'));
     chooseBtn.onclick = function(){ baseInput.click(); };
-    // Tasto centrato.
-    var chooseRow = document.createElement('div'); chooseRow.style.cssText = 'display:flex;justify-content:center;align-items:center;gap:0.6rem;flex-wrap:wrap;margin:0 0 0.7rem;';
-    chooseRow.appendChild(chooseBtn); chooseRow.appendChild(baseInput);
-    // Casella per tema: larga come la colonna di anteprima (flex:1), etichetta a
-    // SINISTRA e swatch+hex a DESTRA (space-between), così è centrata sul riquadro.
-    function roSw(label){
-      var box = document.createElement('div'); box.style.cssText = 'flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:0.4rem;font-size:0.78rem;';
-      var lab = document.createElement('span'); lab.textContent = label;
-      var right = document.createElement('span'); right.style.cssText = 'display:inline-flex;align-items:center;gap:0.4rem;';
-      var sw = document.createElement('span'); sw.style.cssText = 'width:22px;height:18px;border-radius:4px;border:1px solid rgba(128,128,128,0.5);display:inline-block;';
+    // Casella swatch+hex (senza etichetta): va agli estremi, per non confliggere
+    // col tasto centrale.
+    function swatchBox(){
+      var box = document.createElement('div'); box.style.cssText = 'display:inline-flex;align-items:center;gap:0.4rem;font-size:0.76rem;';
+      var sw = document.createElement('span'); sw.style.cssText = 'width:22px;height:18px;border-radius:4px;border:1px solid rgba(128,128,128,0.5);display:inline-block;flex:none;';
       var hx = document.createElement('span'); hx.style.cssText = 'font-family:ui-monospace,monospace;';
-      right.appendChild(sw); right.appendChild(hx);
-      box.appendChild(lab); box.appendChild(right);
+      box.appendChild(sw); box.appendChild(hx);
       return { box: box, sw: sw, hx: hx };
     }
-    // Chiaro a sinistra, Scuro a destra (in colonna con i riquadri di anteprima).
-    var roLight = roSw(it ? 'Tema chiaro' : 'Light theme'), roDark = roSw(it ? 'Tema scuro' : 'Dark theme');
-    var roRow = document.createElement('div'); roRow.style.cssText = 'display:flex;gap:0.6rem;margin:0 0 0.5rem;';
-    roRow.appendChild(roLight.box); roRow.appendChild(roDark.box);
-    var prevWrap = document.createElement('div'); prevWrap.style.cssText = 'display:flex;gap:0.6rem;margin:0.1rem 0 0.3rem;';
+    var swLight = swatchBox(), swDark = swatchBox();
+    // Riga: casella chiaro a SINISTRA, tasto al CENTRO (colonna auto), casella
+    // scuro a DESTRA. Grid 1fr/auto/1fr = tasto sempre centrato, caselle agli estremi.
+    var topRow = document.createElement('div');
+    topRow.style.cssText = 'display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:0.6rem;margin:0.4rem 0 1rem;';
+    swLight.box.style.justifySelf = 'start'; swDark.box.style.justifySelf = 'end';
+    topRow.appendChild(swLight.box); topRow.appendChild(chooseBtn); topRow.appendChild(swDark.box);
+    topRow.appendChild(baseInput);
+    // Etichette tema CENTRATE, ciascuna in testa al proprio riquadro (chiaro sx,
+    // scuro dx, in colonna coi riquadri di anteprima sotto).
+    var labRow = document.createElement('div'); labRow.style.cssText = 'display:flex;gap:0.6rem;margin:0 0 0.45rem;';
+    [it ? 'Tema chiaro' : 'Light theme', it ? 'Tema scuro' : 'Dark theme'].forEach(function(t){
+      var c = document.createElement('div'); c.style.cssText = 'flex:1;min-width:0;text-align:center;font-size:0.74rem;opacity:0.75;';
+      c.textContent = t; labRow.appendChild(c);
+    });
+    var prevWrap = document.createElement('div'); prevWrap.style.cssText = 'display:flex;gap:0.6rem;margin:0;';
     function update(){
-      roLight.sw.style.background = state.light; roLight.hx.textContent = state.light;
-      roDark.sw.style.background = state.dark; roDark.hx.textContent = state.dark;
+      swLight.sw.style.background = state.light; swLight.hx.textContent = state.light;
+      swDark.sw.style.background = state.dark; swDark.hx.textContent = state.dark;
       renderPreview(prevWrap, state.dark, state.light, sampleName, sampleTipo);
     }
     baseInput.addEventListener('input', function(){ var pr = ccDerivePair(baseInput.value); state.dark = pr.dark; state.light = pr.light; baseSw.style.background = baseInput.value; update(); });
     update();
-    wrap.appendChild(h); wrap.appendChild(chooseRow); wrap.appendChild(roRow); wrap.appendChild(prevWrap);
+    wrap.appendChild(topRow); wrap.appendChild(labRow); wrap.appendChild(prevWrap);
     return {
       el: wrap,
       get: function(){ return { dark: state.dark, light: state.light }; },
