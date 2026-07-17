@@ -600,6 +600,28 @@ gruppo = cambiare una terna.
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
+- **Peso del testo UNIFORME nei due temi (400, dalla v9.93, scelta utente).**
+  Prima il tema chiaro usava `font-weight:500` su `body`/`p`/`.intro`/`.subtitle`/
+  footer/testi delle schede (per 'ingrassare' il testo su fondo chiaro), mentre lo
+  scuro era 400. Il peso maggiore era più largo e cambiava gli **a-capo**: l'intro
+  dell'header e le righe delle schede andavano a capo diversamente al cambio tema
+  (una riga in più in chiaro). Portati **tutti a 400** in entrambi i temi: resa e
+  wrap identici, contrasto in chiaro ampiamente AA. (La salvaguardia anti-jitter
+  `.leg-measure{font-weight:500}` della legenda resta: innocua, riserva larghezza.)
+- **Fondo delle MODALI = colore neutro del tema (dalla v9.93, scelta utente).**
+  Tutte le modali seguono lo sfondo principale del tema, non più l'azzurrino/blu-
+  ardesia: **`.modal`** (schede personaggio + note/risorse/info, che condividono il
+  guscio) e **`.fab-modal-box`** (password, conferme, editor colori, trivio) hanno
+  fondo **#252525** (scuro) / **#F4F4F4** (chiaro). Il bordo delle `.fab-modal-box` è
+  neutralizzato (grigio tenue); la `.modal` scheda tiene il **bordo accento
+  cardcolor** (famiglia) e il velo `.modal-backdrop` resta sfocato invariato. Anche
+  lo sfondo del box **citazione** (`.modal-quote`) è neutralizzato (era azzurrino:
+  `rgba(255,255,255,0.05)` scuro / `rgba(0,0,0,0.05)` chiaro; il bordino sinistro
+  resta l'accento cardcolor). ⚠️ Il
+  fondo di riferimento per l'AA del testo scheda (`--cctext` via `ccAaText` in
+  `openModal`) è stato aggiornato di conseguenza a **#252525 / #F4F4F4** (era
+  #0a0f20 / #eeeef4); idem il fondo della mini-scheda nell'anteprima
+  `renderPreview` dell'editor colori.
 - **Testi e accenti NEUTRALIZZATI (dalla v8.79, scelta utente).** I colori di
   testo/accento ardesia (token `--parchment`, `--parchment-dim`, `--gold`,
   `--gold-bright`, `--gold-deep`, `--name`, `--name-hover` in **entrambi** i temi;
@@ -643,20 +665,29 @@ gruppo = cambiare una terna.
     **altezza `.844em` e `translateY(.15em)` invariati** → allineamento verticale
     identico, il ♀ solo più stretto/vicino. `Maschio.png` non toccato.
 - **Titolone `#title`.** Il gradiente ornato della testata
-  (`linear-gradient(180deg,var(--parchment),var(--gold))` + `background-clip:text`)
-  e il suo glow restano come effetto, ma **neutri** (grigio/argento) dalla v8.79.
+  (`background-clip:text`) e il suo glow restano come effetto. La tinta:
+  - **Fill ORO in tema SCURO (dalla v9.93, scelta utente):** gradiente
+    `linear-gradient(180deg,#efe0b8,#a67c34)` (champagne caldo → oro medio,
+    'Variante A' di un confronto a 3). Sostituisce il grigio/argento neutralizzato
+    (v8.79) SOLO sul titolo: testi e accenti restano neutri. AA testo grande
+    verificato (punto più scuro `#a67c34` su `#262626` ≈ 4.0:1, sopra 3:1). Storico:
+    i token `--parchment`/`--gold` (usati prima nel gradiente) erano neutralizzati e
+    per giunta storicamente blu/argento, mai oro: l'oro della v9.93 è nuovo, non un
+    ripristino.
   - **Fill teal chiaro in tema chiaro (dalla v9.07).** Il gradiente del titolo in
     chiaro è passato dal charcoal quasi nero (`#141414→#565656`) a un **teal chiaro
     e tenue** in famiglia col FAB: `linear-gradient(180deg,#34707f,#66909a)`. Il
     **fondo** (`#66909a`) è il punto più chiaro: contrasto **3.20:1** su `#F5F5F5`,
     sopra la soglia AA per il testo grande (3:1). ⚠️ Non schiarire oltre il fondo o
     il titolo scende sotto soglia. Solo il tema chiaro; lo scuro resta grigio/argento.
-  - **Ombra in tema chiaro = variante 'C doppia profondità' (dalla v9.05).**
-    L'equivalente 'in chiaro' del bagliore scuro: `text-shadow: 0 1px 1px
-    rgba(0,0,0,.20), 0 4px 10px rgba(0,0,0,.15), 0 0 26px rgba(90,90,90,.10)`
-    (ombra ravvicinata + profondità morbida + alone grigio tenue). Sostituisce
-    l'ombra più piatta della v8.81 (`0 1px 2px .16, 0 0 20px .07`), su scelta
-    dell'utente dopo un mockup di confronto.
+  - **Effetto 'alone teal soffuso' in tema chiaro (dalla v9.93, scelta utente su
+    mockup a 5 varianti).** Sostituisce l'ombra grigia 'C doppia profondità'
+    (v9.05): ora `filter: drop-shadow(0 2px 3px rgba(0,0,0,.18)) drop-shadow(0 0
+    14px rgba(52,112,127,.38))` (uno stacco scuro ravvicinato + un alone tenue
+    nella tinta del FAB attorno ai glifi). Via **`filter`** (non `text-shadow`):
+    con `background-clip:text` l'alone deve seguire la forma reale delle lettere.
+    Solo tema chiaro; decorativo, non tocca il contrasto del fill. Le altre
+    varianti scartate erano: letterpress inciso, contorno+profondità, metallico.
   - **Fix 'glifi tagliati in basso' (dalla v9.05).** Con `background-clip:text` il
     gradiente riempie il testo solo entro il **box di riga**; con `line-height:0.95`
     gli **svolazzi bassi di Cinzel Decorative** (code di G/R/A) uscivano dal box e
