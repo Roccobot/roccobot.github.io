@@ -2122,7 +2122,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.45</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.46</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6039,7 +6039,7 @@ function showColorStats() {
     var pct = Math.round(o.n / total * 100);
     var row = document.createElement('div');
     row.style.cssText = 'display:grid;grid-template-columns:' + (o.swatches ? '46px 108px 1fr auto' : '108px 1fr auto') + ';align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
-    if (o.swatches){ var sw = document.createElement('span'); sw.style.cssText = 'display:inline-flex;gap:3px;'; o.swatches.forEach(function(hx){ var s = document.createElement('span'); s.style.cssText = 'width:20px;height:15px;border-radius:3px;border:1px solid rgba(128,128,128,0.4);background:' + hx + ';'; sw.appendChild(s); }); row.appendChild(sw); }
+    if (o.swatches){ var sw = document.createElement('span'); sw.style.cssText = 'display:inline-flex;gap:3px;'; o.swatches.forEach(function(hx){ var s = document.createElement('span'); var base = 'width:20px;height:15px;border-radius:3px;display:inline-block;flex:none;'; if (hx && typeof hx === 'object'){ s.style.cssText = base + 'background:' + hx.bg + ';border:1px solid ' + hx.border + ';'; } else { s.style.cssText = base + 'border:1px solid rgba(128,128,128,0.4);background:' + hx + ';'; } sw.appendChild(s); }); row.appendChild(sw); }
     var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
     var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
     var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
@@ -6061,6 +6061,10 @@ function showColorStats() {
   function noteLine(host, txt){ var n = document.createElement('p'); n.style.cssText = 'font-size:0.72rem;opacity:0.55;margin:0.9rem 0 0;border-top:1px solid rgba(128,128,128,0.2);padding-top:0.6rem;'; n.textContent = txt; host.appendChild(n); }
   // Colore di un'etichetta type-* letto dal CSS reale (tema attivo).
   function typeLabelColor(cls){ var pr = document.createElement('span'); pr.className = 'type-badge ' + cls; pr.style.cssText = 'position:absolute;left:-9999px;'; document.body.appendChild(pr); var c = getComputedStyle(pr).color; pr.remove(); return c; }
+  // Colori REALI dell'etichetta come renderizzata nel tema corrente (testo,
+  // sfondo tenue e bordo): lo swatch li usa per essere una mini-pill fedele
+  // invece di un blocco pieno del solo colore-testo.
+  function typeLabelStyle(cls){ var pr = document.createElement('span'); pr.className = 'type-badge ' + cls; pr.style.cssText = 'position:absolute;left:-9999px;'; document.body.appendChild(pr); var s = getComputedStyle(pr); var o = { color: s.color, bg: s.backgroundColor, border: s.borderTopColor }; pr.remove(); return o; }
   // Tutte le classi-etichetta di una voce (replica renderList/stripClassOf).
   function typeClassesOf(p){
     var tp = it ? p.tipo : (p.tipo_en || p.tipo);
@@ -6109,7 +6113,7 @@ function showColorStats() {
       var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
       var max = rows.length ? rows[0].n : 1;
       subLine(host, rows.length + (it ? ' tipi in questa categoria' : ' types in this category'));
-      rows.forEach(function(r){ var col = typeLabelColor(r.k); statRow(host, { swatches:[col], name: typeName(r.k), n:r.n, max:max, barColor:col, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
+      rows.forEach(function(r){ var st = typeLabelStyle(r.k); statRow(host, { swatches:[{bg:st.bg, border:st.border}], name: typeName(r.k), n:r.n, max:max, barColor:st.color, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
       noteLine(host, it ? 'Tocca un tipo per vederne i personaggi.' : 'Tap a type to see its characters.');
     };
   }
@@ -6139,7 +6143,7 @@ function showColorStats() {
     var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
     var max = rows.length ? rows[0].n : 1, tot = rows.reduce(function(s, r){ return s + r.n; }, 0);
     subLine(host, tot + (it?' etichette su ':' labels across ') + total + (it?' personaggi, ':' characters, ') + rows.length + (it?' tipi':' types'));
-    rows.forEach(function(r){ var col = typeLabelColor(r.k); statRow(host, { swatches:[col], name: typeName(r.k), n:r.n, max:max, barColor:col, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
+    rows.forEach(function(r){ var st = typeLabelStyle(r.k); statRow(host, { swatches:[{bg:st.bg, border:st.border}], name: typeName(r.k), n:r.n, max:max, barColor:st.color, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
     noteLine(host, it?'Tocca un tipo per vederne i personaggi; chi ha più etichette conta in più tipi.':'Tap a type to see its characters; a character with several labels counts in several types.');
   }
   function setStatTab(w){ Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); stack = [ w==='fam' ? famView : w==='cat' ? catView : typeView ]; renderTop(); }
