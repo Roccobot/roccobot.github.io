@@ -1267,7 +1267,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 .type-troll       { background:rgba(199,60,205,0.3); border:1px solid rgba(237,131,224,0.8); color:#ed83e0; }
 /* HOBBIT — giallo/ocra */
 .type-hobbit      { background:rgba(215,108,0,0.3); border:1px solid rgba(255,168,56,0.8); color:#ffa838; }
-.type-gollum      { background:rgba(124,72,6,0.35); border:1px solid rgba(233,165,87,0.8); color:#e9a557; }
 /* AQUILE — turchese */
 .type-eagle      { background:rgba(0,190,188,0.28); border:1px solid rgba(24,255,248,0.8); color:#18fff8; }
 /* ENT — verde */
@@ -1901,7 +1900,6 @@ html[data-theme="light"] .type-dwarf { background:rgba(185,128,0,0.13); border-c
 html[data-theme="light"] .type-orc { background:rgba(132,0,201,0.12); border-color:rgba(104,0,152,0.8); color:#680098; }
 html[data-theme="light"] .type-troll { background:rgba(200,80,170,0.12); border-color:rgba(156,38,128,0.8); color:#9c2680; }
 html[data-theme="light"] .type-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(161,69,0,0.8); color:#a14500; }
-html[data-theme="light"] .type-gollum { background:rgba(124,72,6,0.11); border-color:rgba(138,78,0,0.8); color:#8a4e00; }
 html[data-theme="light"] .type-eagle { background:rgba(0,185,180,0.12); border-color:rgba(0,110,103,0.8); color:#006e67; }
 html[data-theme="light"] .type-ent { background:rgba(0,120,60,0.13); border-color:rgba(0,108,44,0.8); color:#006c2c; }
 html[data-theme="light"] .type-maia { background:rgba(5,186,0,0.12); border-color:rgba(10,115,0,0.8); color:#0a7300; }
@@ -2109,7 +2107,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.38</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.39</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2441,7 +2439,6 @@ function tipoClass(tipo) {
   if (t.includes('segugio') || t.includes('hound') || t.includes('cane') || t.includes('dog') || t.includes('cavallo') || t.includes('horse') || t.includes('orso') || t.includes('bear') || t.includes('pony') || t.includes('corvo') || t.includes('raven')) return 'type-beast';
   if (t.includes('spirito') || t.includes('spirit') || t.includes('spettro') || t.includes('wraith')) return 'type-shadow';
   // ── Razze incarnate ──
-  if (t.includes('corrotto') || t.includes('corrotta') || t.includes('corrupted')) return 'type-gollum';
   if (t.includes('hobbit')) return 'type-hobbit';
   if (t.includes('noldo')) return 'type-noldo';
   if (t.includes('vanya')) return 'type-vanya';
@@ -2495,7 +2492,7 @@ var CARDCOLOR_OF = {
   'type-dragon':'demon', 'type-wolf':'demon', 'type-balrog':'demon', 'type-spider':'demon',
   'type-vala':'vala', 'type-valie':'vala',
   'type-orc':'orc', 'type-shadow':'orc', 'type-mystery':'orc', 'type-morgoth':'orc', 'type-troll':'orc', 'type-darkmaia':'orc',
-  'type-beast':'beast', 'type-gollum':'beast',
+  'type-beast':'beast',
   'type-fallback':'man'
 };
 
@@ -3930,8 +3927,8 @@ var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
 // (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
 var TYPE_LABEL = {
-  it: { 'type-ainu':'Ainur', 'type-vala':'Valar', 'type-valie':'Valier', 'type-maia':'Maiar', 'type-darkmaia':'Maiar decaduti', 'type-morgoth':'Vala decaduto', 'type-balrog':'Balrog', 'type-noldo':'Elfi Noldor', 'type-vanya':'Elfi Vanyar', 'type-teler':'Elfi Teleri', 'type-falma':'Elfi Falmari', 'type-sinda':'Elfi Sindar', 'type-half-elf':'Mezzelfi', 'type-dunadan':'Dúnedain', 'type-numenorean':'Númenóreani', 'type-hador':'Casa di Hador', 'type-beor':'Casa di Bëor', 'type-haleth':'Casa di Haleth', 'type-rohir':'Rohirrim', 'type-northman':'Uomini del Nord', 'type-eotheod':'Éothéod', 'type-hobbit':'Hobbit', 'type-dwarf':'Nani', 'type-dragon':'Draghi', 'type-wolf':'Lupi', 'type-spider':'Ragni', 'type-shadow':'Creature dell\'Ombra', 'type-mystery':'Creature ignote', 'type-spirit':'Esseri arcani', 'type-ent':'Ent', 'type-eagle':'Grandi Aquile', 'type-beast':'Animali', 'type-gollum':'Schiavo dell\'Anello', 'type-orc':'Orchi', 'type-troll':'Troll', 'type-fallback':'Altro' },
-  en: { 'type-ainu':'Ainur', 'type-vala':'Valar', 'type-valie':'Valier', 'type-maia':'Maiar', 'type-darkmaia':'Fallen Maiar', 'type-morgoth':'Fallen Vala', 'type-balrog':'Balrogs', 'type-noldo':'Noldor Elves', 'type-vanya':'Vanyar Elves', 'type-teler':'Teleri Elves', 'type-falma':'Falmari Elves', 'type-sinda':'Sindar Elves', 'type-half-elf':'Half-elven', 'type-dunadan':'Dúnedain', 'type-numenorean':'Númenóreans', 'type-hador':'House of Hador', 'type-beor':'House of Bëor', 'type-haleth':'House of Haleth', 'type-rohir':'Rohirrim', 'type-northman':'Northmen', 'type-eotheod':'Éothéod', 'type-hobbit':'Hobbits', 'type-dwarf':'Dwarves', 'type-dragon':'Dragons', 'type-wolf':'Wolves', 'type-spider':'Spiders', 'type-shadow':'Shadow creatures', 'type-mystery':'Unknown creatures', 'type-spirit':'Arcane beings', 'type-ent':'Ents', 'type-eagle':'Great Eagles', 'type-beast':'Animals', 'type-gollum':'Thrall of the Ring', 'type-orc':'Orcs', 'type-troll':'Trolls', 'type-fallback':'Others' }
+  it: { 'type-ainu':'Ainur', 'type-vala':'Valar', 'type-valie':'Valier', 'type-maia':'Maiar', 'type-darkmaia':'Maiar decaduti', 'type-morgoth':'Vala decaduto', 'type-balrog':'Balrog', 'type-noldo':'Elfi Noldor', 'type-vanya':'Elfi Vanyar', 'type-teler':'Elfi Teleri', 'type-falma':'Elfi Falmari', 'type-sinda':'Elfi Sindar', 'type-half-elf':'Mezzelfi', 'type-dunadan':'Dúnedain', 'type-numenorean':'Númenóreani', 'type-hador':'Casa di Hador', 'type-beor':'Casa di Bëor', 'type-haleth':'Casa di Haleth', 'type-rohir':'Rohirrim', 'type-northman':'Uomini del Nord', 'type-eotheod':'Éothéod', 'type-hobbit':'Hobbit', 'type-dwarf':'Nani', 'type-dragon':'Draghi', 'type-wolf':'Lupi', 'type-spider':'Ragni', 'type-shadow':'Creature dell\'Ombra', 'type-mystery':'Creature ignote', 'type-spirit':'Esseri arcani', 'type-ent':'Ent', 'type-eagle':'Grandi Aquile', 'type-beast':'Animali', 'type-orc':'Orchi', 'type-troll':'Troll', 'type-fallback':'Altro' },
+  en: { 'type-ainu':'Ainur', 'type-vala':'Valar', 'type-valie':'Valier', 'type-maia':'Maiar', 'type-darkmaia':'Fallen Maiar', 'type-morgoth':'Fallen Vala', 'type-balrog':'Balrogs', 'type-noldo':'Noldor Elves', 'type-vanya':'Vanyar Elves', 'type-teler':'Teleri Elves', 'type-falma':'Falmari Elves', 'type-sinda':'Sindar Elves', 'type-half-elf':'Half-elven', 'type-dunadan':'Dúnedain', 'type-numenorean':'Númenóreans', 'type-hador':'House of Hador', 'type-beor':'House of Bëor', 'type-haleth':'House of Haleth', 'type-rohir':'Rohirrim', 'type-northman':'Northmen', 'type-eotheod':'Éothéod', 'type-hobbit':'Hobbits', 'type-dwarf':'Dwarves', 'type-dragon':'Dragons', 'type-wolf':'Wolves', 'type-spider':'Spiders', 'type-shadow':'Shadow creatures', 'type-mystery':'Unknown creatures', 'type-spirit':'Arcane beings', 'type-ent':'Ents', 'type-eagle':'Great Eagles', 'type-beast':'Animals', 'type-orc':'Orcs', 'type-troll':'Trolls', 'type-fallback':'Others' }
 };
 var CTRL_I18N = {
   it: { cat:'Categorie', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
