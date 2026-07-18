@@ -1627,10 +1627,11 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name.name-tight > .rank-flags { margin-left:0; margin-right:0.3em; }
   .rank-name.name-tight > .rank-name-text { margin-right:0.24em; }
   .rank-name.name-tight > .rank-tipi { gap:0.3em; }
-  /* Solo le card apocrife (con la pill 'Solo HoME' in alto a destra) mandano
-     SEMPRE le etichette a capo, per non collidere con la pill. Le card
-     ordinarie tengono le etichette in coda al nome se ci stanno. */
-  .rank-item.apocrifo .rank-name > .rank-tipi { display:flex; margin-top:0.3em; }
+  /* Card apocrife: le etichette vanno a capo SOLO quando collidono davvero con
+     la pill 'Solo HoME' in alto a destra (classe .apo-wrap, assegnata da
+     reflowApoLabels misurando riga per riga). Con nomi corti (es. Duilin,
+     Penlod) resta lo spazio per tenerle in coda al nome, come le card ordinarie. */
+  .rank-item.apocrifo.apo-wrap .rank-name > .rank-tipi { display:flex; margin-top:0.3em; }
   .modal-body { padding:1.8rem 1.2rem; }
   .modal-close { top:14px; right:14px; }
   .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
@@ -2107,7 +2108,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.39</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3322,7 +3323,27 @@ function joinBipartite(parts) {
   if (parts.length < 2) return parts.join(' | ');
   return '<span class="bp-a">' + parts[0] + '</span><span class="bp-sep"> | </span><span class="bp-b">' + parts[1] + '</span>';
 }
-function reflowRows() { tightenNames(); optimizeBipartite(); }
+/* Etichette delle card apocrife: in linea al nome se c'è spazio, a capo solo se
+   collidono con la pill 'Solo HoME' (assoluta, in alto a destra). Solo mobile
+   (≤480px): lì la riga del nome è in flusso inline e le etichette scorrerebbero
+   SOTTO la pill. Si misura in stato inline e si aggiunge .apo-wrap solo a chi
+   sovrappone la pill; i nomi corti (Duilin, Penlod) restano in linea. */
+function reflowApoLabels() {
+  var mobile = window.matchMedia('(max-width:480px)').matches;
+  var items = document.querySelectorAll('#rank-list .rank-item.apocrifo');
+  for (var i = 0; i < items.length; i++) {
+    var it = items[i];
+    it.classList.remove('apo-wrap');
+    if (!mobile) continue;
+    var tipi = it.querySelector('.rank-name > .rank-tipi');
+    var pill = it.querySelector('.pill-home');
+    if (!tipi || !pill || !tipi.children.length) continue;
+    var t = tipi.getBoundingClientRect(), p = pill.getBoundingClientRect();
+    // Sovrapposizione su entrambi gli assi (stessa riga della pill + invasione a destra).
+    if (t.right > p.left - 4 && t.left < p.right && t.top < p.bottom && t.bottom > p.top) it.classList.add('apo-wrap');
+  }
+}
+function reflowRows() { tightenNames(); optimizeBipartite(); reflowApoLabels(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
