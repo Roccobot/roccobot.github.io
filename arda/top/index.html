@@ -409,11 +409,12 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    larghezza proporzionata = 240/256 * .92em. Il badge suicidio (fiore reciso,
    Morte.png) è quadrato 256x256 e usa il box .status-icon di default. */
 .si-ira { width:.863em; height:.92em; }
-/* Morgoth (guerriero corazzato, easter-egg su Fingolfin): PNG ritagliata al
-   contenuto (215x237, dalla v8.80). Figura verticale -> box a pari aspetto,
-   così non resta whitespace orizzontale interno che allargava otticamente i
-   gap coi badge vicini (la 'voragine' Morgoth<->corona segnalata). */
-.si-morgoth { width:.835em; height:.92em; }
+/* Morgoth (guerriero corazzato, easter-egg su Fingolfin): PNG su canvas
+   quadrato standard 256x256 (padding trasparente CONSERVATO, voluto
+   dall'utente). Box quadrato di default, come le altre icone bilanciate.
+   Storico: fino alla v10.42 era ritagliata al contenuto (215x237) con box
+   .835em, per togliere il whitespace che allargava i gap coi badge vicini. */
+.si-morgoth { width:.92em; height:.92em; }
 /* Helcaraxë (iceberg a picchi): correzione OTTICA solo sulle CARD (non in
    legenda). La forma triangolare lascia percepire più spazio ai lati del box,
    quindi si stringono i margini orizzontali di ~2px per lato. Scoped a
@@ -2111,7 +2112,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.42</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
