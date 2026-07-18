@@ -425,6 +425,10 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-name .rank-flags .si-demon { margin-left:-0.05em; }
 /* Badge Est (nave verso Est): correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-est { margin-left:-0.04em; }
+/* Silmaril, Incarnazione, Ira: correzione spaziatura a sinistra, solo sulle card. */
+.rank-name .rank-flags .si-silmaril,
+.rank-name .rank-flags .si-incarnazione,
+.rank-name .rank-flags .si-ira { margin-left:-0.05em; }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -2122,7 +2126,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.46</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.47</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2749,7 +2753,7 @@ function familyOf(p) {
 // prima è garantita dalle classi si-* (fattori di scala) nel CSS.
 var ICON_SVG = {
   aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"%L%\">",
-  silmaril:   "<img class=\"status-icon\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"%L%\">",
+  silmaril:   "<img class=\"status-icon si-silmaril\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"%L%\">",
   helcaraxe:  "<img class=\"status-icon si-helcaraxe\" src=\"icons/Helcaraxe.png\" title=\"%L%\" alt=\"%L%\">",
   istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">",
   fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"%L%\">",
@@ -2764,7 +2768,7 @@ var ICON_SVG = {
   nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"%L%\">",
   narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"%L%\">",
   menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"%L%\">",
-  incarnazione: "<img class=\"status-icon\" src=\"icons/Incarnazione.png\" title=\"%L%\" alt=\"%L%\">",
+  incarnazione: "<img class=\"status-icon si-incarnazione\" src=\"icons/Incarnazione.png\" title=\"%L%\" alt=\"%L%\">",
   est:        "<img class=\"status-icon si-est\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
   drago:      "<img class=\"status-icon si-demon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
   balrog:     "<img class=\"status-icon si-demon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
