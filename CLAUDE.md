@@ -1690,14 +1690,18 @@ specifico del dataset):
     times: one of the greatest deeds in the history of Arda.'. Non è in
     `BADGE_ROWS` (non filtrabile). Restano intatte le feature omonime ma distinte:
     la classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via
-    `darkBg`) e l'etichetta tipo `.type-morgoth` ('vala decaduto'). **Dalla v10.43
-    la PNG è su canvas quadrato standard 256x256 (nuova arte fornita dall'utente,
-    padding trasparente CONSERVATO su richiesta esplicita) e `.si-morgoth` usa il
-    box quadrato di default (`width:.92em; height:.92em`), come le icone
-    bilanciate. Storico: dalla v8.80 alla v10.42 la PNG era ritagliata al
-    contenuto (215x237) con box `.835em`, per togliere il whitespace che
-    allargava otticamente i gap coi badge vicini (la 'voragine' Morgoth↔corona);
-    la nuova arte a canvas pieno ha reso superfluo il ritaglio.**
+    `darkBg`) e l'etichetta tipo `.type-morgoth` ('vala decaduto'). **Dalla v10.45
+    la PNG è la nuova arte fornita dall'utente (guerriero con elmo cornuto e
+    Grond), canvas 236x256 (padding trasparente CONSERVATO su richiesta), e
+    `.si-morgoth` ha box `width:.848em; height:.92em` (= aspetto 236/256, così
+    l'immagine riempie il box senza letterbox). Poiché il badge esiste su UN solo
+    personaggio (Fingolfin), si sono tarati margini OTTICI per-viewport misurati
+    inchiostro-a-inchiostro (`optic.js`), così tutti i suoi badge risultano
+    equidistanti: DESKTOP `margin-right:-0.11em` (il gap verso la corona era
+    ~12.6px vs ~9-10 degli altri), MOBILE `margin-left:0.11em` (il gap verso
+    l'Helcaraxe era ~3.6px vs ~5.5). Storico: dalla v8.80 alla v10.42 ritagliata
+    al contenuto (215x237) con box `.835em`; in v10.43 una prima nuova arte
+    256x256 quadrata con box `.92em`, sostituita in v10.45.**
 - **Distanziamento del simbolo di genere (dalla v8.80).** Il simbolo ♂/♀
   (`.genere-svg`, PNG) è staccato dal cluster dei badge di merito con un margine
   sinistro extra (desktop `margin-left:0.28em` → gap ~15px vs ~11px tra badge;

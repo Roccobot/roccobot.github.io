@@ -414,7 +414,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    dall'utente). Box quadrato di default, come le altre icone bilanciate.
    Storico: fino alla v10.42 era ritagliata al contenuto (215x237) con box
    .835em, per togliere il whitespace che allargava i gap coi badge vicini. */
-.si-morgoth { width:.92em; height:.92em; }
+.si-morgoth { width:.848em; height:.92em; }
 /* Helcaraxë (iceberg a picchi): correzione OTTICA solo sulle CARD (non in
    legenda). La forma triangolare lascia percepire più spazio ai lati del box,
    quindi si stringono i margini orizzontali di ~2px per lato. Scoped a
@@ -1250,6 +1250,10 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      un margine sinistro extra, così non 'tocca' l'ultimo badge (era ~8px, meno
      del passo 11px tra badge). Solo desktop; su mobile sotto. */
   .rank-name > .rank-flags .genere-svg { margin-left:0.07em; }
+  /* Morgoth (canvas quadrato 236x256): equidistanza ottica dei badge di
+     Fingolfin. Su DESKTOP il gap a destra (verso la corona) era più largo
+     (~12.6px vs ~9-10 degli altri): lo stringe. Misurato inchiostro-a-inchiostro. */
+  .rank-name > .rank-flags .si-morgoth { margin-right:-0.11em; }
 }
 /* ELFI — tonalità blu/celeste */
 .type-noldo      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
@@ -1615,6 +1619,10 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   /* Genere: minimo stacco extra oltre al gap flex 0.28em (dalla v8.81: la v8.80
      0.3em risultava troppo distanziata). */
   .rank-name > .rank-flags .genere-svg { margin-left:0.06em; }
+  /* Morgoth (canvas quadrato 236x256): su MOBILE il gap a sinistra (verso
+     l'Helcaraxe) era stretto (~3.6px vs ~5.5 degli altri): lo allarga per
+     l'equidistanza ottica. Misurato inchiostro-a-inchiostro. */
+  .rank-name > .rank-flags .si-morgoth { margin-left:0.11em; }
   /* Etichette = BLOCCO ATOMICO (inline-flex): o stanno TUTTE in coda al nome
      (dopo le icone), o vanno TUTTE a capo insieme, nell'ordine dato,
      allineate al bordo sinistro del contenuto (un box inline-level che non
@@ -2114,7 +2122,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.44</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.45</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
