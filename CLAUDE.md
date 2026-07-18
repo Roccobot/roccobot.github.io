@@ -1690,11 +1690,14 @@ specifico del dataset):
     times: one of the greatest deeds in the history of Arda.'. Non è in
     `BADGE_ROWS` (non filtrabile). Restano intatte le feature omonime ma distinte:
     la classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via
-    `darkBg`) e l'etichetta tipo `.type-morgoth` ('vala decaduto'). **Dalla v8.80
-    la PNG è ritagliata al contenuto (215x237) e ha classe `.si-morgoth`
-    (`width:.835em`), perché la figura verticale col padding asimmetrico originale
-    lasciava whitespace interno che allargava otticamente i gap coi badge vicini
-    (la 'voragine' Morgoth↔corona).**
+    `darkBg`) e l'etichetta tipo `.type-morgoth` ('vala decaduto'). **Dalla v10.43
+    la PNG è su canvas quadrato standard 256x256 (nuova arte fornita dall'utente,
+    padding trasparente CONSERVATO su richiesta esplicita) e `.si-morgoth` usa il
+    box quadrato di default (`width:.92em; height:.92em`), come le icone
+    bilanciate. Storico: dalla v8.80 alla v10.42 la PNG era ritagliata al
+    contenuto (215x237) con box `.835em`, per togliere il whitespace che
+    allargava otticamente i gap coi badge vicini (la 'voragine' Morgoth↔corona);
+    la nuova arte a canvas pieno ha reso superfluo il ritaglio.**
 - **Distanziamento del simbolo di genere (dalla v8.80).** Il simbolo ♂/♀
   (`.genere-svg`, PNG) è staccato dal cluster dei badge di merito con un margine
   sinistro extra (desktop `margin-left:0.28em` → gap ~15px vs ~11px tra badge;
