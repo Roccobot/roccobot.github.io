@@ -2109,7 +2109,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.38</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3927,6 +3927,12 @@ var CAT_LABEL = {
   en: { ainu:'Ainur', arcane:'Arcane/primordial beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs & Trolls', animal:'Animals' }
 };
 var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
+// Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
+// (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
+var TYPE_LABEL = {
+  it: { 'type-ainu':'Ainur', 'type-vala':'Valar', 'type-valie':'Valier', 'type-maia':'Maiar', 'type-darkmaia':'Maiar decaduti', 'type-morgoth':'Vala decaduto', 'type-balrog':'Balrog', 'type-noldo':'Elfi Noldor', 'type-vanya':'Elfi Vanyar', 'type-teler':'Elfi Teleri', 'type-falma':'Elfi Falmari', 'type-sinda':'Elfi Sindar', 'type-half-elf':'Mezzelfi', 'type-dunadan':'Dúnedain', 'type-numenorean':'Númenóreani', 'type-hador':'Casa di Hador', 'type-beor':'Casa di Bëor', 'type-haleth':'Casa di Haleth', 'type-rohir':'Rohirrim', 'type-northman':'Uomini del Nord', 'type-eotheod':'Éothéod', 'type-hobbit':'Hobbit', 'type-dwarf':'Nani', 'type-dragon':'Draghi', 'type-wolf':'Lupi', 'type-spider':'Ragni', 'type-shadow':'Creature dell\'Ombra', 'type-mystery':'Creature ignote', 'type-spirit':'Esseri arcani', 'type-ent':'Ent', 'type-eagle':'Grandi Aquile', 'type-beast':'Animali', 'type-gollum':'Schiavo dell\'Anello', 'type-orc':'Orchi', 'type-troll':'Troll', 'type-fallback':'Altro' },
+  en: { 'type-ainu':'Ainur', 'type-vala':'Valar', 'type-valie':'Valier', 'type-maia':'Maiar', 'type-darkmaia':'Fallen Maiar', 'type-morgoth':'Fallen Vala', 'type-balrog':'Balrogs', 'type-noldo':'Noldor Elves', 'type-vanya':'Vanyar Elves', 'type-teler':'Teleri Elves', 'type-falma':'Falmari Elves', 'type-sinda':'Sindar Elves', 'type-half-elf':'Half-elven', 'type-dunadan':'Dúnedain', 'type-numenorean':'Númenóreans', 'type-hador':'House of Hador', 'type-beor':'House of Bëor', 'type-haleth':'House of Haleth', 'type-rohir':'Rohirrim', 'type-northman':'Northmen', 'type-eotheod':'Éothéod', 'type-hobbit':'Hobbits', 'type-dwarf':'Dwarves', 'type-dragon':'Dragons', 'type-wolf':'Wolves', 'type-spider':'Spiders', 'type-shadow':'Shadow creatures', 'type-mystery':'Unknown creatures', 'type-spirit':'Arcane beings', 'type-ent':'Ents', 'type-eagle':'Great Eagles', 'type-beast':'Animals', 'type-gollum':'Thrall of the Ring', 'type-orc':'Orcs', 'type-troll':'Trolls', 'type-fallback':'Others' }
+};
 var CTRL_I18N = {
   it: { cat:'Categorie', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
@@ -5262,34 +5268,45 @@ function showPasswordModal(promptText, onSuccess, extra) {
     const p = document.createElement('p'); p.textContent = promptText;
     const inp = document.createElement('input');
     inp.type = 'password'; inp.autocomplete = 'off';
+    // Hardening input su mobile: alcune tastiere alterano il testo (maiuscola
+    // automatica, autocorrezione) e su un campo mascherato non te ne accorgi →
+    // la password parte diversa da come l'hai digitata. Le disattiviamo.
+    inp.setAttribute('autocapitalize', 'none'); inp.setAttribute('autocorrect', 'off'); inp.spellcheck = false;
     const errMsg = document.createElement('p');
     errMsg.style.cssText = 'color:#e05050;font-size:0.78rem;margin:0.3rem 0 0;opacity:0;transition:opacity 0.2s;';
     errMsg.textContent = 'Password errata';
-    const fail = () => {
+    // Messaggi distinti: 'Password errata' è solo il vero 401. Un fallimento di
+    // rete/blocco o un rate-limit (429) mostravano lo STESSO testo, mascherando
+    // la causa reale (utile p.es. sul bug 'mai riconosciuta da mobile').
+    const MSG = { auth: 'Password errata', rate: 'Troppi tentativi: attendi circa un minuto', net: 'Impossibile contattare il server (rete assente o richiesta bloccata)' };
+    const fail = (kind) => {
       inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
+      errMsg.textContent = MSG[kind] || MSG.auth;
       errMsg.style.opacity = '1';
-      setTimeout(() => { inp.style.borderColor = ''; errMsg.style.opacity = '0'; }, 2200);
+      setTimeout(() => { inp.style.borderColor = ''; errMsg.style.opacity = '0'; }, 3400);
     };
     let authing = false; // anti-rientro: Invio ripetuto non deve rilanciare l'auth in volo
     const tryAuth = async () => {
       if (authing) return;
       authing = true;
       const pw = inp.value;
-      if (!pw) { fail(); authing = false; return; }
+      if (!pw) { fail('auth'); authing = false; return; }
       cb.disabled = true;
-      let ok = false;
+      let outcome = 'net';
       // Validazione lato server: la parola d'ordine non è nel sorgente pubblico.
+      // Distinguiamo l'esito: 429 = rate-limit, fetch fallito = rete/blocco,
+      // 401 (o r.ok falso) = password davvero errata.
       try {
         const res = await fetch(proxyUrl(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'auth', password: pw })
         });
-        let r = {}; try { r = await res.json(); } catch (e) {}
-        ok = res.ok && r.ok;
-      } catch (e) { ok = false; }
+        if (res.status === 429) outcome = 'rate';
+        else { let r = {}; try { r = await res.json(); } catch (e) {} outcome = (res.ok && r.ok) ? 'ok' : 'auth'; }
+      } catch (e) { outcome = 'net'; }
       cb.disabled = false;
-      if (!ok) { fail(); authing = false; return; }
+      if (outcome !== 'ok') { fail(outcome); authing = false; return; }
       adminPassword = pw; // solo in memoria, per i commit di questa sessione
       saveUnlocked = true;
       document.querySelectorAll('#fab-save').forEach(b => b.classList.add('fab-unlocked'));
@@ -5995,6 +6012,17 @@ function showColorStats() {
     var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
     var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
     var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.innerHTML = '<b>' + o.n + '</b> · ' + pct + '%'; row.appendChild(cnt);
+    if (o.onClick){
+      row.style.cursor = 'pointer'; row.style.borderRadius = '6px'; row.style.padding = '0.12rem 0.25rem'; row.style.margin = '0.18rem -0.25rem';
+      row.tabIndex = 0; row.setAttribute('role', 'button'); row.setAttribute('aria-label', o.name + ', ' + o.n);
+      var chev = document.createElement('span'); chev.textContent = ' ›'; chev.style.cssText = 'opacity:0.5;font-weight:700;'; cnt.appendChild(chev);
+      var hoverBg = theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.07)';
+      var on = function(){ row.style.background = hoverBg; }, off = function(){ row.style.background = ''; };
+      row.addEventListener('mouseenter', on); row.addEventListener('mouseleave', off);
+      row.addEventListener('focus', on); row.addEventListener('blur', off);
+      row.addEventListener('click', o.onClick);
+      row.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); o.onClick(); } });
+    }
     host.appendChild(row);
   }
   function subLine(host, txt){ var s = document.createElement('p'); s.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 0.8rem;'; s.textContent = txt; host.appendChild(s); }
@@ -6009,35 +6037,80 @@ function showColorStats() {
     if (tp) tp.split('|').forEach(function(seg, i){ var ov = (segs[i] || '').trim(); if (!/^type-[a-z-]*$/.test(ov)) ov = ''; cls.push(ov || tipoClass(seg.trim())); });
     return cls;
   }
-  function buildFam(host){
+  var acc = theme === 'light' ? '#5a6b7a' : '#8aa0b4';
+  // ── Stack di viste (drill-down). Ogni vista è una fn(host). Il primo elemento
+  //    è la vista base della tab corrente; push apre un dettaglio, pop torna su. ──
+  var stack = [];
+  function renderTop(){ content.innerHTML = ''; box.scrollTop = 0; stack[stack.length - 1](content); }
+  function pushView(fn){ stack.push(fn); renderTop(); }
+  function popView(){ if (stack.length > 1){ stack.pop(); renderTop(); } }
+  // Barra 'indietro' + titolo per le viste di dettaglio.
+  function backBar(host, title, colorDot){
+    var bar = document.createElement('div'); bar.style.cssText = 'display:flex;align-items:center;gap:0.5rem;margin:0 0 0.7rem;';
+    var bk = document.createElement('button'); bk.className = 'fab-modal-confirm'; bk.style.cssText = 'width:auto;flex:none;padding:0.3rem 0.7rem;font-size:0.82rem;margin:0;'; bk.textContent = it ? '‹ Indietro' : '‹ Back'; bk.onclick = popView; bar.appendChild(bk);
+    if (colorDot){ var d = document.createElement('span'); d.style.cssText = 'width:14px;height:14px;border-radius:3px;border:1px solid rgba(128,128,128,0.4);flex:none;background:' + colorDot + ';'; bar.appendChild(d); }
+    var t = document.createElement('span'); t.style.cssText = 'font-weight:700;font-size:0.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; t.textContent = title; bar.appendChild(t);
+    host.appendChild(bar);
+  }
+  // Lista di personaggi (nomi, in ordine di classifica).
+  function charList(host, chars){
+    subLine(host, chars.length + (it ? ' personaggi' : ' characters'));
+    var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;';
+    chars.forEach(function(p){
+      var r = document.createElement('div'); r.style.cssText = 'padding:0.3rem 0.35rem;font-size:0.9rem;border-bottom:1px solid rgba(128,128,128,0.12);';
+      r.textContent = it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); wrap.appendChild(r);
+    });
+    host.appendChild(wrap);
+  }
+  // Nome 'normalizzato' di una classe-etichetta (fallback: la classe senza prefisso).
+  function typeName(cls){ var m = TYPE_LABEL[it ? 'it' : 'en']; return (m && m[cls]) || cls.replace(/^type-/, ''); }
+  function charsOfType(cls){ return dati.filter(function(p){ return typeClassesOf(p).indexOf(cls) !== -1; }); }
+  function charsOfFam(fam){ return dati.filter(function(p){ return familyOf(p) === fam; }); }
+
+  // ── Viste di dettaglio ──
+  function typeDetailView(cls){ return function(host){ var col = typeLabelColor(cls); backBar(host, typeName(cls), col); charList(host, charsOfType(cls)); }; }
+  function famDetailView(fam){ return function(host){ backBar(host, fam, theme === 'light' ? ccFamHex(fam, 'light') : ccFamHex(fam, 'dark')); charList(host, charsOfFam(fam)); }; }
+  function catDetailView(catKey, catName){
+    return function(host){
+      backBar(host, catName, null);
+      var counts = {}; dati.forEach(function(p){ if (categoria(p) !== catKey) return; typeClassesOf(p).forEach(function(c){ if (c) counts[c] = (counts[c] || 0) + 1; }); });
+      var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
+      var max = rows.length ? rows[0].n : 1;
+      subLine(host, rows.length + (it ? ' tipi in questa categoria' : ' types in this category'));
+      rows.forEach(function(r){ var col = typeLabelColor(r.k); statRow(host, { swatches:[col], name: typeName(r.k), n:r.n, max:max, barColor:col, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
+      noteLine(host, it ? 'Tocca un tipo per vederne i personaggi.' : 'Tap a type to see its characters.');
+    };
+  }
+
+  // ── Viste base (una per tab) ──
+  function famView(host){
     var counts = {}, custom = 0;
     dati.forEach(function(x){ var f = familyOf(x); if (f === 'custom'){ custom++; return; } counts[f] = (counts[f] || 0) + 1; });
     var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
     var max = rows.length ? rows[0].n : 1;
     subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' famiglie':' families') + (custom ? (' + ' + custom + (it?' individuali':' individual')) : ''));
-    rows.forEach(function(r){ var d = ccFamHex(r.k,'dark'), l = ccFamHex(r.k,'light'); statRow(host, { swatches:[l,d], name:r.k, n:r.n, max:max, barColor: theme==='light'?l:d }); });
-    noteLine(host, it?'Swatch e barra nel colore della famiglia.':'Swatch and bar in the family colour.');
+    rows.forEach(function(r){ var d = ccFamHex(r.k,'dark'), l = ccFamHex(r.k,'light'); statRow(host, { swatches:[l,d], name:r.k, n:r.n, max:max, barColor: theme==='light'?l:d, onClick: function(){ pushView(famDetailView(r.k)); } }); });
+    noteLine(host, it?'Tocca una famiglia per vederne i personaggi.':'Tap a family to see its characters.');
   }
-  function buildCat(host){
+  function catView(host){
     var counts = {}; dati.forEach(function(x){ var c = categoria(x); counts[c] = (counts[c] || 0) + 1; });
     var rows = CATS.map(function(k){ return { k:k, n:counts[k]||0 }; }).filter(function(r){ return r.n > 0; }).sort(function(a, b){ return b.n - a.n; });
-    var max = rows.length ? rows[0].n : 1, CL = CAT_LABEL[it?'it':'en'], acc = theme==='light' ? '#5a6b7a' : '#8aa0b4';
-    // Etichette accorciate SOLO nelle stats (per brevità nella tabella); il
-    // Pannello categorie tiene le forme complete di CAT_LABEL.
+    var max = rows.length ? rows[0].n : 1, CL = CAT_LABEL[it?'it':'en'];
+    // Etichette accorciate SOLO nelle stats; il Pannello categorie tiene le forme complete.
     var SHORT = it ? { adan:'Edain', arcane:'Esseri arcani' } : { adan:'Edain', arcane:'Arcane beings' };
     subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' categorie':' categories'));
-    rows.forEach(function(r){ statRow(host, { name: SHORT[r.k] || CL[r.k] || r.k, n:r.n, max:max, barColor:acc }); });
-    noteLine(host, it?'La Categoria è la razza in senso esteso (il filtro principale della pagina).':'Category is the broad race (the page main filter).');
+    rows.forEach(function(r){ var nm = SHORT[r.k] || CL[r.k] || r.k; statRow(host, { name: nm, n:r.n, max:max, barColor:acc, onClick: function(){ pushView(catDetailView(r.k, nm)); } }); });
+    noteLine(host, it?'Tocca una categoria per vedere i tipi al suo interno.':'Tap a category to see the types within.');
   }
-  function buildType(host){
+  function typeView(host){
     var counts = {}; dati.forEach(function(x){ typeClassesOf(x).forEach(function(c){ if (c) counts[c] = (counts[c] || 0) + 1; }); });
     var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
     var max = rows.length ? rows[0].n : 1, tot = rows.reduce(function(s, r){ return s + r.n; }, 0);
     subLine(host, tot + (it?' etichette su ':' labels across ') + total + (it?' personaggi, ':' characters, ') + rows.length + (it?' tipi':' types'));
-    rows.forEach(function(r){ var col = typeLabelColor(r.k); statRow(host, { swatches:[col], name: r.k.replace(/^type-/,''), n:r.n, max:max, barColor:col }); });
-    noteLine(host, it?'Swatch e barra nel colore dell\'etichetta; chi ha più etichette conta in più tipi.':'Swatch and bar in the label colour; a character with several labels counts in several types.');
+    rows.forEach(function(r){ var col = typeLabelColor(r.k); statRow(host, { swatches:[col], name: typeName(r.k), n:r.n, max:max, barColor:col, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
+    noteLine(host, it?'Tocca un tipo per vederne i personaggi; chi ha più etichette conta in più tipi.':'Tap a type to see its characters; a character with several labels counts in several types.');
   }
-  function setStatTab(w){ Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); content.innerHTML = ''; if (w==='fam') buildFam(content); else if (w==='cat') buildCat(content); else buildType(content); }
+  function setStatTab(w){ Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); stack = [ w==='fam' ? famView : w==='cat' ? catView : typeView ]; renderTop(); }
   setStatTab('fam');
 }
 
