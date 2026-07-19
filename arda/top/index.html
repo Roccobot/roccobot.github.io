@@ -447,6 +447,9 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    resa IDENTICA al vecchio anello: Ø reso ~.623em, leggermente più piccolo
    degli anelli degli Elfi (~.624em) e dell'Unico (~.685em). */
 .si-nove { width:.675em; height:.738em; transform:translateY(-.032em); }
+/* Anello dei Nani (Sette): stesso canvas/bbox di Nove (234x256), quindi stessa
+   resa di si-nove per allineare il tondo agli altri anelli della riga. */
+.si-sette { width:.675em; height:.738em; transform:translateY(-.032em); }
 
 /* ── CARD DEGLI ESSERI SUPERIORI — lieve dominante dorata ── */
 /* #2 — card speciali: tinta lievissima, bordo identitario a sinistra; hover e numero ereditano lo stile sobrio delle card normali */
@@ -2129,7 +2132,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.51</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.61</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2771,6 +2774,7 @@ var ICON_SVG = {
   nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"%L%\">",
   narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"%L%\">",
   menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"%L%\">",
+  sette:      "<img class=\"status-icon si-sette\" src=\"icons/Sette.png\" title=\"%L%\" alt=\"%L%\">",
   incarnazione: "<img class=\"status-icon si-incarnazione\" src=\"icons/Incarnazione.png\" title=\"%L%\" alt=\"%L%\">",
   est:        "<img class=\"status-icon si-est\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
   drago:      "<img class=\"status-icon si-demon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
@@ -2787,7 +2791,7 @@ var ICON_SVG = {
 // gli altri hanno riga propria. 'est' precede 'Aman/west' (la nave che va, poi
 // quella che torna). 'morgoth' è un EASTER EGG (solo Fingolfin): saltato in
 // legenda e nella griglia admin, appare solo sulla sua card.
-var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','morgoth','guerradira','suicidio','fellowship','istari','survivor','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','onering','vilya','nenya','narya','menring'];
+var ICON_ORDER = ['aratar','calaquende','silmaril','incarnazione','helcaraxe','morgoth','guerradira','suicidio','fellowship','istari','survivor','est','west','envoy','drago','balrog','king_high','king_high_now','king_std','onering','vilya','nenya','narya','menring','sette'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
@@ -2800,7 +2804,7 @@ var BADGE_ROWS = {
   survivor:['survivor'], est:['est'], west:['west','envoy'],
   drago:['drago','balrog'], guerradira:['guerradira'],
   suicidio:['suicidio'], fellowship:['fellowship'],
-  rings:['onering','vilya','nenya','narya','menring']
+  rings:['onering','vilya','nenya','narya','menring','sette']
 };
 var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
@@ -2837,6 +2841,7 @@ var ICON_LABEL = {
     nenya:   "Portatore di Nenya (Anello dell'Acqua)",
     narya:   "Portatore di Narya (Anello del Fuoco)",
     menring: "Portatore di uno dei Nove Anelli degli Uomini",
+    sette:   "Portatore di uno dei Sette Anelli dei Nani",
     incarnazione: "Tornò con il proprio corpo dalle Aule di Mandos",
     est:     "Attraversò il Mare su una nave degli Elfi da Aman alla Terra di Mezzo",
     drago:   "Uccise un Drago",
@@ -2863,6 +2868,7 @@ var ICON_LABEL = {
     nenya:   "Bearer of Nenya (Ring of Water)",
     narya:   "Bearer of Narya (Ring of Fire)",
     menring: "Bearer of one of the Nine Rings of Men",
+    sette:   "Bearer of one of the Seven Rings of the Dwarves",
     incarnazione: "Returned bodily from the Halls of Mandos",
     est:     "Crossed the Sea on an Elven ship from Aman to Middle-earth",
     drago:   "Slew a Dragon",
@@ -4150,7 +4156,7 @@ function controlPanelHTML() {
     }
     var s = '';
     ICON_ORDER.forEach(function(k){
-      if (k === 'king_high_now' || k === 'king_std' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring') return;
+      if (k === 'king_high_now' || k === 'king_std' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring' || k === 'sette') return;
       if (k === 'morgoth') return; // easter egg (solo Fingolfin): nessuna riga in legenda
       if (k === 'istari' && FEATURES.istariFiveIcons) {
         // Variante a 5 icone (feature flag, default OFF dalla v7.30): i 5 Istari
@@ -4205,6 +4211,7 @@ function controlPanelHTML() {
            + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join(IL['nenya']) + '</span>'
            + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join(IL['narya']) + '</span>'
            + '<span class="leg-ring">' + ICON_SVG['menring'].split('%L%').join(IL['menring']) + '</span>'
+           + '<span class="leg-ring">' + ICON_SVG['sette'].split('%L%').join(IL['sette']) + '</span>'
            + '</span><span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
         return;
       }
