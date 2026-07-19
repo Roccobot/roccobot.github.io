@@ -1784,6 +1784,16 @@ specifico del dataset):
   riga (`BADGE_ROWS.rings`) accende chiunque porti un anello qualsiasi. La riga
   è resa dal caso `k === 'onering'` in legenda (che salta `vilya/nenya/narya/
   menring`); su card ed editor l'ordine segue `ICON_ORDER`.
+  - **Sesto anello: badge `sette` (Sette Anelli dei Nani, dalla v10.61).** Aggiunto
+    in coda alla riga anelli (icona `icons/Sette.png`, 234×256, stesso canvas/bbox di
+    `Nove.png` → classe `.si-sette` = copia di `.si-nove`; equidistante da Nove via
+    il `margin-left:0.22rem` della riga). Tooltip: IT 'Portatore di uno dei Sette
+    Anelli dei Nani', EN 'Bearer of one of the Seven Rings of the Dwarves'. In
+    `ICON_ORDER` dopo `menring`, in `BADGE_ROWS.rings` e nella skip-list della
+    legenda. **Portatori (2):** **Durin III** (primo, l'anello capofila della
+    stirpe di Durin, per tradizione nanica donato dagli Elfi-fabbri e non da Sauron)
+    e **Thráin II** (ultimo, glielo strappò Sauron a Dol Guldur). NB: 'unico anello
+    NOTO dei Nani', non l'Unico.
 - **Ingwion e Ilwen (aggiunti in v3.93).** `Ingwion` (dopo Finwë) NON è
   apocrifo benché assente dal Silmarillion pubblicato: Christopher Tolkien
   riconobbe che l'omissione fu un errore del padre (HoME IV, pp. 196-7),
