@@ -398,6 +398,11 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   border-radius:3px; padding:1px 6px;
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
 }
+/* Micro-correzione ottica: solo i due glifi parentesi '(' ')' delle etichette,
+   alzati di 0.03em (contenuto e testo esterno invariati). Il wrapper .tpwrap tiene
+   testo+parentesi in flusso inline, cosi' lo spazio 'Elfo (' resta preservato. */
+.type-badge .tpwrap { display:inline; }
+.type-badge .tparen { display:inline-block; transform:translateY(-0.03em); }
 /* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
    centrato (viewBox), NON come glifo di testo. Motivo: 'EB Garamond' arriva da
    Google Fonts e può non caricarsi (blocklist/rete); col fallback serif il glifo
@@ -2190,7 +2195,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.90</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.91</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3208,6 +3213,15 @@ function renderList() {
       if (!/^type-[a-z-]*$/.test(ov)) ov = '';
       var segCls = ov || tipoClass(seg);
       badgeClasses.push(segCls);
+      // Solo i due glifi parentesi '(' ')' avvolti in .tparen per alzarli
+      // otticamente (vedi CSS .type-badge .tparen); il contenuto e il testo fuori
+      // restano identici. Sicuro: l'HTML generato altrove (svg freccia, span) non
+      // contiene parentesi in testo/attributi. Il wrapper inline .tpwrap tiene
+      // testo+parentesi in un unico flex-item: senza, i .tparen sarebbero flex-item
+      // a se' e il contenitore flex taglierebbe lo spazio 'Elfo (' tra i due item.
+      if (displaySeg.indexOf('(') !== -1 || displaySeg.indexOf(')') !== -1) {
+        displaySeg = '<span class="tpwrap">' + displaySeg.split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>') + '</span>';
+      }
       return '<span class="type-badge ' + segCls + '">' + displaySeg + '</span>';
     }).join('') : '';
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con piu'
