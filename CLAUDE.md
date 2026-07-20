@@ -73,6 +73,21 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   conferma**: è pre-autorizzato. Restano privati finché l'utente non li
   condivide.
 
+## 📐 Misure in pixel → unità relative (istruzione durevole, 2026-07-20)
+
+- **L'utente fornisce gli spostamenti/spaziature in pixel, ma vanno SEMPRE
+  convertiti in misure relative (`em` o simili) nel CSS.** I pixel dell'utente
+  sono 'suoi pixel' letti su uno screenshot: dipendono dalla densità/scaling
+  dello schermo su cui l'ha catturato (retina/HiDPI ⇒ un fattore, storicamente
+  ~2). Non applicarli mai come `px` grezzi.
+- **Nell'output riferire SEMPRE lo spostamento anche in misura relativa**
+  (es. 'su di 3px ≈ `-0.12em`'), così l'utente prende meglio le misure.
+- **Per convertire serve la densità dello schermo dello screenshot** (device
+  pixel ratio / modello del dispositivo / risoluzione fisica vs logica): se
+  l'utente NON la fornisce, **chiedergliela** prima di dare la conversione.
+  Riferimenti em: desktop `1em ≈ 25.6px` CSS sulla riga nome, mobile
+  `1em ≈ 16.19px` (verificare al momento).
+
 ## 🌿 Branch, allineamento e push
 
 - **Branch principale: `master`.** Si lavora e si pusha direttamente lì,
