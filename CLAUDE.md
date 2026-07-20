@@ -469,27 +469,47 @@ gruppo = cambiare una terna.
     **al volo a ogni apertura**, quindi rispecchia in tempo reale ogni modifica a
     colori/dataset. Non tocca `lockPageScroll` (già attivo per l'editor sotto).
     - **Colonna nome allargata + nomi PER ESTESO (dalla v10.79).** `statRow`
-      accetta `o.nameW` (larghezza colonna nome, default `108px`); la tab
+      accetta `o.nameW` (larghezza colonna nome desiderata su desktop): la tab
       **Categorie** usa `212px` e mostra le etichette **complete** di `CAT_LABEL`
       (rimossa la vecchia mappa `SHORT` che accorciava `Edain`/`Esseri arcani`:
       ora `Edain e Númenóreani`, `Esseri arcani/primordiali`), la tab **Tipi** e i
-      dettagli-tipo usano `172px` (ci sta `Creature dell'Ombra`). Box allargato a
-      `660px`. Larghezza fissa per colonna = niente ellissi e barre incolonnate
-      (anti-jitter). Verificato: 0 troncamenti IT/EN, axe 0 su entrambe le tab.
+      dettagli-categoria usano `172px` (ci sta `Creature dell'Ombra`); `famView`
+      resta a `108px`. Box allargato a `660px`.
+      - **Colonna nome RESPONSIVE (anti-overflow mobile).** La `.fab-modal-box`
+        è `width:90%` senza override mobile: una colonna nome fissa a 212/172px
+        sforerebbe il box sui telefoni (barre collassate + scrollbar interna). Per
+        questo `nameW` è **ricalcolata al build** limitandola allo spazio davvero
+        disponibile (riservando swatch, conteggio, gap e una **barra min 24px** via
+        `minmax(24px,1fr)`): stesso valore per tutte le righe a un dato viewport →
+        barre **incolonnate**; e il nome **va a capo** (`overflow-wrap:anywhere`,
+        niente ellissi) quando la colonna si stringe, quindi resta leggibile per
+        intero anche su mobile. Verificato: 0 overflow a 320/375/390/414px (barre
+        42-49px, allineate), nomi interi su desktop, axe 0 su entrambe le tab.
   - **Scorciatoie L (lingua) e T (tema) DENTRO editor colori e statistiche
     (dalla v10.79).** Le modali `showColorEditor` e `showColorStats` NON impostano
     `html.admin-open` (lo fa solo l'editor personaggi), quindi i tasti nudi
     `L`/`T` ci arrivano già; ora vi si RICOSTRUISCONO nel nuovo lingua/tema
     conservando lo stato (anti-jitter). Meccanismo: globale **`themeRefresh`**
-    (gemello di `langRefresh`, chiamato da `toggleTheme`); entrambe le modali
-    registrano `langRefresh`+`themeRefresh` a un rebuild che salva **tab + scroll**
-    (stats) o **tab + famiglia selezionata + scroll** (editor), chiude e riapre con
-    quello stato (`showColorStats(initState)`, `showColorEditor(initState)`), e
-    azzera gli hook alla chiusura solo se ancora suoi. La drill-down delle stats
-    torna alla vista base della tab (transitoria). `#stats-modal` aggiunto alla
-    guardia del tasto `P`. (Accessibilità: aggiunti `aria-label` ai `<select>`
-    famiglia/tipo, all'`input` colore, ricerca e rinomina; anteprima con testo
-    pill-tipo reso AA sul fondo card miscelato. axe 0 su editor e stats.)
+    (gemello di `langRefresh`, chiamato da `toggleTheme`).
+    - **Statistiche**: registra `langRefresh`+`themeRefresh` a un rebuild che salva
+      **tab + scroll**, chiude e riapre (`showColorStats(initState)`) leggendo i
+      colori nel tema corrente. La drill-down torna alla vista base della tab
+      (transitoria). Esc ora la chiude (ramo `#stats-modal` nell'handler Escape) e
+      `#stats-modal` è nella guardia del tasto `P`.
+    - **Editor colori**: rebuild **solo su L** (i testi cambiano),
+      `showColorEditor(initState)` conserva **tab + famiglia selezionata + scroll**.
+      Su **T NON ricostruisce**: la modale si ricolora da sé via CSS e l'anteprima
+      mostra già ENTRAMBI i temi affiancati, quindi un rebuild sul tema sarebbe
+      inutile e perderebbe un eventuale **colore scelto ma non salvato** (vive solo
+      nello stato locale del controllo). ⚠️ Un rebuild su L resetta comunque un
+      colore non salvato: normale, si usa l'anteprima dual-tema per confrontare.
+    - Gli hook si azzerano alla chiusura solo se ancora propri (confronto identità);
+      il callback async di 'Rinomina e salva' chiama `close()` **solo se l'overlay è
+      ancora agganciato** (`document.body.contains`), per non sbloccare lo scroll di
+      un editor già ricostruito da un L in volo durante il commit.
+    - Accessibilità: `aria-label` su `<select>` famiglia/tipo, `input`
+      colore/ricerca/rinomina; anteprima con testo pill-tipo reso AA sul fondo card
+      miscelato. axe 0 su editor e stats (entrambi i temi e tab).
   - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
     colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
     famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`

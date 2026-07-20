@@ -3589,6 +3589,10 @@ document.addEventListener('keydown', function(e) {
     // proprio (viewer immagini, risorse) restano gestite da loro.
     var fm = document.getElementById('fab-modal');
     if (fm) { var x = fm.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
+    // Modale statistiche (id proprio 'stats-modal', non 'fab-modal'): Esc = ×,
+    // così è chiudibile come l'editor (ora è interattiva con L/T).
+    var sm = document.getElementById('stats-modal');
+    if (sm) { var sx = sm.querySelector('.fab-modal-close'); if (sx) sx.click(); return; }
     if (document.getElementById('imgv') || document.getElementById('res-modal')) return;
     if (document.getElementById('modal-backdrop').classList.contains('active')) { closeModal(); return; }
     var pnl = document.getElementById('ctrl-panel');
@@ -6078,11 +6082,21 @@ function showColorStats(initState) {
   // Riga-barra. o: {swatches?, name, n, max, barColor}
   function statRow(host, o){
     var pct = Math.round(o.n / total * 100);
-    var nw = o.nameW || '108px'; // larghezza colonna nome (parametrica: nomi lunghi non troncano)
+    // Larghezza colonna nome RESPONSIVE, calcolata al build così NON sfora mai il
+    // box (che su mobile è width:90%): si parte dalla larghezza desiderata (nameW,
+    // desktop) e la si limita allo spazio realmente disponibile riservando swatch,
+    // barra (min 24px), conteggio e gap. Uguale per tutte le righe a un dato
+    // viewport → barre incolonnate; il nome VA A CAPO (niente ellissi) se la
+    // colonna si stringe, quindi resta leggibile per intero anche su telefono.
+    var swW = o.swatches ? 46 : 0;
+    var reserved = swW + 80 /*conteggio*/ + (o.swatches ? 26 : 18) /*gap*/ + 24 /*barra min*/ + 4;
+    var innerW = Math.min(660, window.innerWidth * 0.9) - 60 /*padding+bordo box*/;
+    var nwPx = Math.max(40, Math.min(parseInt(o.nameW || '108', 10), Math.floor(innerW - reserved)));
+    var nw = nwPx + 'px';
     var row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:' + (o.swatches ? ('46px ' + nw + ' 1fr auto') : (nw + ' 1fr auto')) + ';align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
+    row.style.cssText = 'display:grid;grid-template-columns:' + (o.swatches ? ('46px ' + nw + ' minmax(24px,1fr) auto') : (nw + ' minmax(24px,1fr) auto')) + ';align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
     if (o.swatches){ var sw = document.createElement('span'); sw.style.cssText = 'display:inline-flex;gap:3px;'; o.swatches.forEach(function(hx){ var s = document.createElement('span'); var base = 'width:20px;height:15px;border-radius:3px;display:inline-block;flex:none;'; if (hx && typeof hx === 'object'){ s.style.cssText = base + 'background:' + hx.bg + ';border:1px solid ' + hx.border + ';'; } else { s.style.cssText = base + 'border:1px solid rgba(128,128,128,0.4);background:' + hx + ';'; } sw.appendChild(s); }); row.appendChild(sw); }
-    var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
+    var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow-wrap:anywhere;line-height:1.2;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
     var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
     var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
     var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.innerHTML = '<b>' + o.n + '</b> · ' + pct + '%'; row.appendChild(cnt);
@@ -6207,13 +6221,13 @@ function showColorStats(initState) {
 function showColorEditor(initState) {
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it';
-  var curTab = 'f', famSelectEl = null, myEdL, myEdT; // tab + select famiglia + hook lingua/tema (rebuild)
+  var curTab = 'f', famSelectEl = null, myEdL; // tab + select famiglia + hook lingua (rebuild solo su L)
   var overlay = document.createElement('div');
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '620px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
-  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh===myEdL) langRefresh=null; if (themeRefresh===myEdT) themeRefresh=null; };
+  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh===myEdL) langRefresh=null; };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
   box.appendChild(cl);
@@ -6249,15 +6263,18 @@ function showColorEditor(initState) {
     }
     if (initState.scroll) box.scrollTop = initState.scroll;
   }
-  // Scorciatoie L (lingua) e T (tema) mentre l'editor è aperto: si ricostruisce
-  // nel nuovo lingua/tema conservando tab, famiglia e scroll.
+  // Scorciatoia L (lingua): ricostruisce l'editor nella nuova lingua conservando
+  // tab, famiglia e scroll. La T (tema) NON ricostruisce: la modale si ricolora
+  // da sé via CSS e l'anteprima mostra già ENTRAMBI i temi affiancati, quindi un
+  // rebuild sul tema sarebbe inutile e perderebbe un eventuale colore scelto ma
+  // non ancora salvato (che vive solo nello stato locale del controllo).
   function rebuildEditor(){
-    if (!document.body.contains(overlay)) { if (langRefresh===myEdL) langRefresh=null; if (themeRefresh===myEdT) themeRefresh=null; return; }
+    if (!document.body.contains(overlay)) { if (langRefresh===myEdL) langRefresh=null; return; }
     var st = { tab: curTab, fam: (curTab==='f' && famSelectEl) ? famSelectEl.value : null, scroll: box.scrollTop };
     close(); showColorEditor(st);
   }
-  myEdL = rebuildEditor; myEdT = rebuildEditor;
-  langRefresh = myEdL; themeRefresh = myEdT;
+  myEdL = rebuildEditor;
+  langRefresh = myEdL;
 
   // ── Modalità MIRATA: colore individuale per-tema (p.cardrgb {dark,light}) → 'custom' ──
   function buildMirata(root){
@@ -6357,7 +6374,7 @@ function showColorEditor(initState) {
       Object.keys(CARDCOLORS.map).forEach(function(t){ if (CARDCOLORS.map[t] === fam) CARDCOLORS.map[t] = nn; });
       dati.forEach(function(p){ if (p.cardcolor === fam) p.cardcolor = nn; });
       reinjectFamilyColors(); renderList();
-      withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ showColorEditor && close(); });
+      withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ if (document.body.contains(overlay)) close(); });
     }, true);
     // 3) Sposta per tipo → questa famiglia
     var h3 = mkH(''); h3.innerHTML = (it ? 'Sposta un tipo in ' : 'Move a type into ') + '<strong>' + escapeHtml(fam) + '</strong>';
