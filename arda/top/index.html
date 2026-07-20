@@ -374,10 +374,14 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   border-radius:3px; padding:1px 6px;
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
 }
-/* Freccia '→' delle etichette di stato acquisito: il glifo siede sulla baseline
-   e cade otticamente basso rispetto alle maiuscole. La si alza col solo transform
-   (nessun impatto su flusso, box o a-capo) per centrarla in verticale. */
-.type-badge .tarrow { display:inline-block; transform:translateY(-0.085em); }
+/* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
+   centrato (viewBox), NON come glifo di testo. Motivo: 'EB Garamond' arriva da
+   Google Fonts e può non caricarsi (blocklist/rete); col fallback serif il glifo
+   '→' cadeva a quote diverse e il vecchio nudge fisso (translateY) sballava (su
+   desktop troppo in alto, su mobile troppo in basso). Con l'SVG l'allineamento è
+   INDIPENDENTE dal font: il flex align-items:center del .type-badge lo centra
+   verticalmente pixel-perfect su desktop e mobile. currentColor = colore etichetta. */
+.type-badge .tarrow { width:1em; height:0.72em; flex:none; display:inline-block; vertical-align:middle; }
 /* Desktop/tablet (>480px): risalita ottica di ~2px delle etichette tipo
    rispetto alla base della riga nome (le maiuscole del Cinzel siedono in alto,
    percio' i badge centrati sul flex cadono percettivamente bassi). Solo
@@ -2149,7 +2153,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.79</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.80</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3153,11 +3157,11 @@ function renderList() {
       seg = seg.trim();
       var labelSegs = tipoLabel.split('|');
       var displaySeg = escapeHtml((labelSegs[idx] || seg).trim());
-      // Freccia iniziale '→' (etichette di stato acquisito): avvolta in uno span
-      // dedicato per centrarla otticamente in verticale (il glifo poggia sulla
-      // baseline e cade basso rispetto alle maiuscole). Solo trasformazione
-      // visiva via CSS: non tocca testo, box né a-capo.
-      if (displaySeg.charAt(0) === '→') displaySeg = '<span class="tarrow">→</span>' + displaySeg.slice(1);
+      // Freccia iniziale '→' (etichette di stato acquisito): resa come SVG
+      // geometricamente centrato (classe .tarrow), NON glifo di testo, così
+      // l'allineamento verticale è indipendente dal font (vedi CSS .tarrow).
+      // Centrata dal flex align-items:center del .type-badge, su desktop e mobile.
+      if (displaySeg.charAt(0) === '→') displaySeg = '<svg class="tarrow" viewBox="0 0 22 16" aria-hidden="true" focusable="false"><path d="M2 7H18M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + displaySeg.slice(1);
       var ov = (colorSegs[idx] || '').trim();
       // Whitelist: l'override finisce in un attributo class senza escaping,
       // quindi si accetta solo la forma 'type-xxx' (tutto il resto è ignorato).
