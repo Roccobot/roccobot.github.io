@@ -389,7 +389,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    freccia al bordo sinistro (sposta freccia+testo insieme → il gap punta-testo
    NON cambia). translateY:0.109em = freccia più in basso (giù 3.33px CSS dalla
    posizione precedente), per centrarla otticamente sulle maiuscole. */
-.type-badge .tarrow { width:0.878em; height:0.72em; flex:none; display:inline-block; vertical-align:middle; transform:translateY(0.109em); margin-left:-0.326em; }
+.type-badge .tarrow { width:0.878em; height:0.72em; flex:none; display:inline-block; vertical-align:middle; transform:translateY(0.109em); margin-left:-0.24em; }
 /* Distanza punta-freccia → stelo della maiuscola (grazie escluse): ~4.08px CSS
    (0.221em). Il testo dopo la freccia (.ttx) ha il margine sinistro che regola
    SOLO questo gap. Etichette-freccia iniziano tutte con maiuscole a stelo
@@ -2166,7 +2166,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.84</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.85</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3177,7 +3177,7 @@ function renderList() {
       // Rimosso lo spazio 'letterale' dopo la freccia (replace ^\s+); il testo è
       // avvolto in .ttx così un margine sinistro negativo può stringere la
       // distanza punta→stelo a ~0.14em (vedi CSS .type-badge .ttx).
-      if (displaySeg.charAt(0) === '→') displaySeg = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M2 7H18M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + '<span class="ttx">' + displaySeg.slice(1).replace(/^\s+/, '') + '</span>';
+      if (displaySeg.charAt(0) === '→') displaySeg = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M1.83 7H18.18M12 1.83L18.18 7L12 12.18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + '<span class="ttx">' + displaySeg.slice(1).replace(/^\s+/, '') + '</span>';
       var ov = (colorSegs[idx] || '').trim();
       // Whitelist: l'override finisce in un attributo class senza escaping,
       // quindi si accetta solo la forma 'type-xxx' (tutto il resto è ignorato).
