@@ -468,6 +468,28 @@ gruppo = cambiare una terna.
     numerosità; in testa il totale. Legge `dati` + `CARDCOLORS` + i colori-etichetta
     **al volo a ogni apertura**, quindi rispecchia in tempo reale ogni modifica a
     colori/dataset. Non tocca `lockPageScroll` (già attivo per l'editor sotto).
+    - **Colonna nome allargata + nomi PER ESTESO (dalla v10.79).** `statRow`
+      accetta `o.nameW` (larghezza colonna nome, default `108px`); la tab
+      **Categorie** usa `212px` e mostra le etichette **complete** di `CAT_LABEL`
+      (rimossa la vecchia mappa `SHORT` che accorciava `Edain`/`Esseri arcani`:
+      ora `Edain e Númenóreani`, `Esseri arcani/primordiali`), la tab **Tipi** e i
+      dettagli-tipo usano `172px` (ci sta `Creature dell'Ombra`). Box allargato a
+      `660px`. Larghezza fissa per colonna = niente ellissi e barre incolonnate
+      (anti-jitter). Verificato: 0 troncamenti IT/EN, axe 0 su entrambe le tab.
+  - **Scorciatoie L (lingua) e T (tema) DENTRO editor colori e statistiche
+    (dalla v10.79).** Le modali `showColorEditor` e `showColorStats` NON impostano
+    `html.admin-open` (lo fa solo l'editor personaggi), quindi i tasti nudi
+    `L`/`T` ci arrivano già; ora vi si RICOSTRUISCONO nel nuovo lingua/tema
+    conservando lo stato (anti-jitter). Meccanismo: globale **`themeRefresh`**
+    (gemello di `langRefresh`, chiamato da `toggleTheme`); entrambe le modali
+    registrano `langRefresh`+`themeRefresh` a un rebuild che salva **tab + scroll**
+    (stats) o **tab + famiglia selezionata + scroll** (editor), chiude e riapre con
+    quello stato (`showColorStats(initState)`, `showColorEditor(initState)`), e
+    azzera gli hook alla chiusura solo se ancora suoi. La drill-down delle stats
+    torna alla vista base della tab (transitoria). `#stats-modal` aggiunto alla
+    guardia del tasto `P`. (Accessibilità: aggiunti `aria-label` ai `<select>`
+    famiglia/tipo, all'`input` colore, ricerca e rinomina; anteprima con testo
+    pill-tipo reso AA sul fondo card miscelato. axe 0 su editor e stats.)
   - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
     colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
     famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
@@ -541,7 +563,7 @@ gruppo = cambiare una terna.
     Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
     voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
     `tipo` IT ma non nel `tipo_en`: **Beregond**/**Ioreth** (`Gondoriano/a` →
-    `westman` in IT, `of Gondor` → `man` in EN) e **Rata**/**Zanna**/**Lupo**
+    `numenorean` in IT, `of Gondor` → `man` in EN) e **Rata**/**Zanna**/**Lupo**
     (`Cane` → `beast` in IT, `Dog` → `man` in EN). Corretto in `tipoClass`:
     la regola Gondor matcha ora il prefisso **`gondor`** (non `gondorian`, così
     copre anche `of Gondor`) e la lista animali include **`dog`**. Dopo il fix,
@@ -556,7 +578,7 @@ gruppo = cambiare una terna.
   anche col badge `Ainu`/eredità come 2ª.
 - **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.type-* → famiglia`. **Grande
   ri-raggruppamento nella v8.83** (scelta utente): spostati vari gruppi, rinominate
-  3 famiglie e creata `westman`. Le **13** famiglie e i loro membri (`.type-*`):
+  3 famiglie e creata `numenorean`. Le **13** famiglie e i loro membri (`.type-*`):
   - **`noldo`**: noldor.
   - **`half-elf`** (dalla v8.75): mezzelfo (7 Peredhil). Petrolio-cyan (light
     `#1E5462` = 30,84,98; dark 58,160,186). ⚠️ `tipoClass` matcha **`half-el`**
@@ -571,9 +593,16 @@ gruppo = cambiare una terna.
     (i Nani spostati qui dalla vecchia `dwarf`).
   - **`highman`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**,
     **haleth** (le Case degli Edain; i Nani NON sono più qui).
-  - **`westman`** (NUOVA in v8.83, rosa spento): **dunadan**, **numenorean** (gli
-    Uomini dell'Ovest / Dúnedain-Númenóreani, staccati dai draghi). Terna dark
-    198,138,152 / light 160,92,112.
+  - **`numenorean`** (era `westman`, rosa spento; **rinominata `numenorean` nella
+    v10.79** su richiesta dell'utente): **dunadan**, **numenorean** (gli Uomini
+    dell'Ovest / Dúnedain-Númenóreani) **+ i 5 draghi e i 2 balrog** spostati qui
+    dall'utente (v10.62, override per-voce `cardcolor`); tinta attuale rossa
+    (`#eb5151` scuro / `#c41212` chiaro). ⚠️ **I nomi delle famiglie colore NON
+    hanno mai caratteri accentati** (inglese, minuscolo, senza accenti): per questo
+    `westman` → `numenorean`, non `númenórean`. Storico: la sezione qui sopra
+    descrive lo stato v8.83; il config attuale (`cardColors` in `dati.js`,
+    data-driven) è divergente (famiglie `adan`, `dwarf`, `hobbit`, `shadow`,
+    `vanya`, ecc.): fa fede sempre `CARDCOLORS`, non questo elenco storico.
   - **`demon`** (rosso, era `numenorean`; rinominata in v8.83): **drago**,
     **lupo**, **balrog**, **più tutta la Classe 'Esseri crepuscolari'** (override
     per nome via `isDarkBg`, vedi sotto: Melkor, Ungoliant, Shelob, Thuringwethil,
@@ -608,7 +637,7 @@ gruppo = cambiare una terna.
   224,138,58 / 210,118,15; **highman** 216,178,60 / 199,148,19; **demon** 224,89,106
   / 196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
   beast 179,148,104 / 150,117,74; man 144,152,168 / 111,116,130;
-  half-elf 58,160,186 / 30,84,98; **westman** 198,138,152 / 160,92,112). ⚠️ Nei
+  half-elf 58,160,186 / 30,84,98; **numenorean** 198,138,152 / 160,92,112). ⚠️ Nei
   rinomini v8.83 il **colore è rimasto legato alla classe rinominata** (other =
   ex-hobbit arancio, highman = ex-dwarf oro, demon = ex-numenorean rosso); i
   membri sono cambiati, i valori RGB no.
@@ -742,7 +771,7 @@ gruppo = cambiare una terna.
     usano `rgba(var(--cctext,var(--ccrgb)),1)`; i bordi restano `--ccrgb`. Vale per
     ogni famiglia (anche nuova/rinominata), entrambi i temi. Storico: fino alla
     v9.61 le famiglie non-AA in chiaro (`sinda, maia, rohir, other, highman,
-    westman, beast, man`) ripiegavano a **gold** via un override statico
+    numenorean, beast, man`) ripiegavano a **gold** via un override statico
     `:not(.cc-...)`, ora **rimosso**. Nome (`.modal-name`) e bottone TG
     (`.modal-tg`) restano invariati.
   - ⚠️ Le regole `rgba(var(--ccrgb),…)`/`rgba(var(--cctext),…)` della scheda sono
@@ -1210,6 +1239,14 @@ specifico del dataset):
   anche gli epiteti nudi (`Il Bianco`, `L'Alto`, `Il Vecchio`, `The Old`). Vale
   per la prima lettera della riga; gli elementi successivi di un elenco separato
   da virgola seguono le regole normali.
+- **Nomi comuni di creatura in minuscolo se discorsivi (`drago`/`dragon`, ecc.).**
+  Quando la parola è usata come nome comune nel testo corrente va **minuscola**
+  in entrambe le lingue (`Misterioso drago...`, `a mysterious dragon...`); la
+  maiuscola resta solo per: inizio riga/frase, nomi propri (`Elmo del Drago` =
+  Dragon-helm, `Drago Verde` = Green Dragon), titoli/epiteti (`Padre dei Draghi`
+  = Father of Dragons, `Uccisore del Drago`) e composti propri EN (`Dragon-helm`,
+  `Dragon-sickness`). Verificato in blocco su tutti i draghi (2026-07-20): l'EN
+  già coerente; corretto il solo refuso IT `Misterioso Drago`→`drago` (Gostir).
 - **Toponimo 'Terra di Mezzo' con l'articolo:** in italiano si scrive sempre
   **'nella Terra di Mezzo'** (e 'della/alla/dalla Terra di Mezzo'), **mai** la
   forma nuda 'in Terra di Mezzo'. Regola dell'utente (2026-07-06), applicata in
