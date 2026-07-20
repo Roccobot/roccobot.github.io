@@ -369,7 +369,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.1rem,3.4vw,1.6rem); }
 
 .type-badge {
-  display:inline-flex; align-items:center; gap:0.14em;
+  display:inline-flex; align-items:center; gap:0;
   font-family:'EB Garamond',serif; font-size:0.72em; font-style:normal; font-weight:normal;
   border-radius:3px; padding:1px 6px;
   vertical-align:middle; white-space:nowrap; letter-spacing:0.03em;
@@ -381,11 +381,16 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    desktop troppo in alto, su mobile troppo in basso). Con l'SVG l'allineamento è
    INDIPENDENTE dal font: il flex align-items:center del .type-badge lo centra
    verticalmente pixel-perfect su desktop e mobile. currentColor = colore etichetta. */
-/* width 0.878em/height 0.72em = aspetto del viewBox stretto 19.5x16 (punta a
-   filo del bordo destro, così la distanza freccia→testo = solo il gap 0.14em del
-   .type-badge). translateY(-0.072em) = freccia al centro verticale della
+/* width 0.878em/height 0.72em = aspetto del viewBox stretto 19.5x16 (punta a filo
+   del bordo destro). translateY(-0.072em) = freccia al centro verticale della
    MAIUSCOLA (non del riquadro): correzione di ~2px @DPR 1.5 chiesta dall'utente. */
 .type-badge .tarrow { width:0.878em; height:0.72em; flex:none; display:inline-block; vertical-align:middle; transform:translateY(-0.072em); }
+/* Distanza COSTANTE punta-freccia → stelo della lettera (grazie escluse, che
+   stanno alle quote dove la freccia è rientrata): target ≈ 0.14em. Il gap flex è
+   0 e il testo (avvolto in .ttx) ha un margine sinistro negativo che assorbe il
+   residuo SVG + la sidebearing della maiuscola. Tutte le etichette-freccia
+   iniziano con maiuscole a stelo (D/E/M/U) → distanza ~costante. */
+.type-badge .ttx { margin-left:-0.018em; }
 /* Desktop/tablet (>480px): risalita ottica di ~2px delle etichette tipo
    rispetto alla base della riga nome (le maiuscole del Cinzel siedono in alto,
    percio' i badge centrati sul flex cadono percettivamente bassi). Solo
@@ -2157,7 +2162,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.81</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.82</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3165,9 +3170,10 @@ function renderList() {
       // geometricamente centrato (classe .tarrow), NON glifo di testo, così
       // l'allineamento verticale è indipendente dal font (vedi CSS .tarrow).
       // Centrata dal flex align-items:center del .type-badge, su desktop e mobile.
-      // Rimosso lo spazio 'letterale' dopo la freccia (replace ^\s+): la distanza
-      // freccia→testo è data solo dal gap 0.14em del .type-badge (costante).
-      if (displaySeg.charAt(0) === '→') displaySeg = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M2 7H18M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + displaySeg.slice(1).replace(/^\s+/, '');
+      // Rimosso lo spazio 'letterale' dopo la freccia (replace ^\s+); il testo è
+      // avvolto in .ttx così un margine sinistro negativo può stringere la
+      // distanza punta→stelo a ~0.14em (vedi CSS .type-badge .ttx).
+      if (displaySeg.charAt(0) === '→') displaySeg = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M2 7H18M12 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + '<span class="ttx">' + displaySeg.slice(1).replace(/^\s+/, '') + '</span>';
       var ov = (colorSegs[idx] || '').trim();
       // Whitelist: l'override finisce in un attributo class senza escaping,
       // quindi si accetta solo la forma 'type-xxx' (tutto il resto è ignorato).
