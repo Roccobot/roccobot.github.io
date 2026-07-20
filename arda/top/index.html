@@ -532,7 +532,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .cc-rohir{--ccrgb:159,182,65} .cc-other{--ccrgb:224,138,58} .cc-highman{--ccrgb:216,178,60}
 .cc-demon{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
 .cc-beast{--ccrgb:179,148,104} .cc-man{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
-.cc-westman{--ccrgb:198,138,152}
+.cc-numenorean{--ccrgb:198,138,152}
 /* Famiglia speciale 'custom' (Modifica mirata): tiene insieme le voci con colore
    individuale. Le due terne per-tema arrivano INLINE dalla card
    (style="--ccdark:R,G,B;--cclight:R,G,B" da p.cardrgb {dark,light}); le regole
@@ -545,7 +545,7 @@ html[data-theme="light"] .cc-other{--ccrgb:210,118,15} html[data-theme="light"] 
 html[data-theme="light"] .cc-demon{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
 html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .cc-beast{--ccrgb:150,117,74}
 html[data-theme="light"] .cc-man{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
-html[data-theme="light"] .cc-westman{--ccrgb:160,92,112}
+html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
 
 /* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
 .rank-item.apocrifo {
@@ -2149,7 +2149,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.69</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.79</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2319,6 +2319,11 @@ var i18n = {
 // document.body.contains nel closure evita che una modale già chiusa venga
 // riaperta, così non serve azzerarla in ogni dismiss.
 var langRefresh = null;
+// Gemello di langRefresh per il TEMA: una modale aperta il cui contenuto dipende
+// dal tema (es. editor colori, statistiche: swatch/barre calcolati sul tema
+// attivo) registra qui una callback che la ricostruisce nel nuovo tema. La
+// chiama toggleTheme. Stessa guardia body.contains dei refresh di lingua.
+var themeRefresh = null;
 function setLang(lang) {
   currentLang = lang;
   LS.setItem('arda-lang', lang);
@@ -2424,7 +2429,7 @@ document.addEventListener('keydown', function(e) {
   var bd = document.getElementById('modal-backdrop');
   if ((bd && bd.classList.contains('active')) || document.getElementById('imgv')
       || document.getElementById('fab-modal') || document.getElementById('note-modal')
-      || document.getElementById('res-modal')) return;
+      || document.getElementById('res-modal') || document.getElementById('stats-modal')) return;
   e.preventDefault();
   toggleControlPanel();
 });
@@ -2530,7 +2535,7 @@ var CARDCOLOR_OF = {
   'type-rohir':'rohir', 'type-northman':'rohir', 'type-eotheod':'rohir',
   'type-hobbit':'other', 'type-dwarf':'other',
   'type-hador':'highman', 'type-beor':'highman', 'type-haleth':'highman',
-  'type-dunadan':'westman', 'type-numenorean':'westman',
+  'type-dunadan':'numenorean', 'type-numenorean':'numenorean',
   'type-dragon':'demon', 'type-wolf':'demon', 'type-balrog':'demon', 'type-spider':'demon',
   'type-vala':'vala', 'type-valie':'vala',
   'type-orc':'orc', 'type-shadow':'orc', 'type-mystery':'orc', 'type-morgoth':'orc', 'type-troll':'orc', 'type-darkmaia':'orc',
@@ -2553,7 +2558,7 @@ var CARDCOLORS_FALLBACK = {
     "demon": { dark:"#e0596a", light:"#c42233" }, "vala": { dark:"#de5a8e", light:"#c21f6e" },
     "orc": { dark:"#a06be0", light:"#7a3fce" }, "beast": { dark:"#b39468", light:"#96754a" },
     "man": { dark:"#9098a8", light:"#6f7482" }, "half-elf": { dark:"#3aa0ba", light:"#1e5462" },
-    "westman": { dark:"#c68a98", light:"#a05c70" }
+    "numenorean": { dark:"#c68a98", light:"#a05c70" }
   },
   map: CARDCOLOR_OF
 };
@@ -3584,6 +3589,10 @@ document.addEventListener('keydown', function(e) {
     // proprio (viewer immagini, risorse) restano gestite da loro.
     var fm = document.getElementById('fab-modal');
     if (fm) { var x = fm.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
+    // Modale statistiche (id proprio 'stats-modal', non 'fab-modal'): Esc = ×,
+    // così è chiudibile come l'editor (ora è interattiva con L/T).
+    var sm = document.getElementById('stats-modal');
+    if (sm) { var sx = sm.querySelector('.fab-modal-close'); if (sx) sx.click(); return; }
     if (document.getElementById('imgv') || document.getElementById('res-modal')) return;
     if (document.getElementById('modal-backdrop').classList.contains('active')) { closeModal(); return; }
     var pnl = document.getElementById('ctrl-panel');
@@ -4789,6 +4798,9 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   var m = document.querySelector('meta[name="theme-color"]');
   if (m) m.setAttribute('content', next === 'light' ? '#ebebef' : '#060a14');
+  // Una modale aperta che dipende dal tema (editor colori/statistiche) si
+  // ricostruisce nel nuovo tema, conservando tab/scroll (anti-jitter).
+  if (typeof themeRefresh === 'function') themeRefresh();
 }
 
 function buildControlPanel() {
@@ -6045,14 +6057,15 @@ function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
 // (tab): FAMIGLIE (colore), CATEGORIE (le 9 razze), TIPI (le etichette type-*).
 // Legge dati + CARDCOLORS + i colori-etichetta AL VOLO, quindi rispecchia in tempo
 // reale ogni modifica. Modale standalone: gestisce lockPageScroll da sé.
-function showColorStats() {
+function showColorStats(initState) {
   if (document.getElementById('stats-modal')) return;
   var it = currentLang === 'it';
+  var curTab = 'fam', myStatsL, myStatsT; // tab attiva + hook lingua/tema (per rebuild)
   var ov = document.createElement('div'); ov.id = 'stats-modal'; ov.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '580px'; box.style.maxHeight = '88vh'; box.style.overflowY = 'auto';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '660px'; box.style.maxHeight = '88vh'; box.style.overflowY = 'auto';
   ov.appendChild(box); document.body.appendChild(ov);
   lockPageScroll(true);
-  var close = function(){ ov.remove(); lockPageScroll(false); };
+  var close = function(){ ov.remove(); lockPageScroll(false); if (langRefresh===myStatsL) langRefresh=null; if (themeRefresh===myStatsT) themeRefresh=null; };
   ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
   var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.5rem;';
@@ -6069,10 +6082,21 @@ function showColorStats() {
   // Riga-barra. o: {swatches?, name, n, max, barColor}
   function statRow(host, o){
     var pct = Math.round(o.n / total * 100);
+    // Larghezza colonna nome RESPONSIVE, calcolata al build così NON sfora mai il
+    // box (che su mobile è width:90%): si parte dalla larghezza desiderata (nameW,
+    // desktop) e la si limita allo spazio realmente disponibile riservando swatch,
+    // barra (min 24px), conteggio e gap. Uguale per tutte le righe a un dato
+    // viewport → barre incolonnate; il nome VA A CAPO (niente ellissi) se la
+    // colonna si stringe, quindi resta leggibile per intero anche su telefono.
+    var swW = o.swatches ? 46 : 0;
+    var reserved = swW + 80 /*conteggio*/ + (o.swatches ? 26 : 18) /*gap*/ + 24 /*barra min*/ + 4;
+    var innerW = Math.min(660, window.innerWidth * 0.9) - 60 /*padding+bordo box*/;
+    var nwPx = Math.max(40, Math.min(parseInt(o.nameW || '108', 10), Math.floor(innerW - reserved)));
+    var nw = nwPx + 'px';
     var row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:' + (o.swatches ? '46px 108px 1fr auto' : '108px 1fr auto') + ';align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
+    row.style.cssText = 'display:grid;grid-template-columns:' + (o.swatches ? ('46px ' + nw + ' minmax(24px,1fr) auto') : (nw + ' minmax(24px,1fr) auto')) + ';align-items:center;gap:0.55rem;margin:0.3rem 0;font-size:0.88rem;';
     if (o.swatches){ var sw = document.createElement('span'); sw.style.cssText = 'display:inline-flex;gap:3px;'; o.swatches.forEach(function(hx){ var s = document.createElement('span'); var base = 'width:20px;height:15px;border-radius:3px;display:inline-block;flex:none;'; if (hx && typeof hx === 'object'){ s.style.cssText = base + 'background:' + hx.bg + ';border:1px solid ' + hx.border + ';'; } else { s.style.cssText = base + 'border:1px solid rgba(128,128,128,0.4);background:' + hx + ';'; } sw.appendChild(s); }); row.appendChild(sw); }
-    var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
+    var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow-wrap:anywhere;line-height:1.2;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
     var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
     var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
     var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.innerHTML = '<b>' + o.n + '</b> · ' + pct + '%'; row.appendChild(cnt);
@@ -6145,7 +6169,7 @@ function showColorStats() {
       var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
       var max = rows.length ? rows[0].n : 1;
       subLine(host, rows.length + (it ? ' tipi in questa categoria' : ' types in this category'));
-      rows.forEach(function(r){ var st = typeLabelStyle(r.k); statRow(host, { swatches:[{bg:st.bg, border:st.border}], name: typeName(r.k), n:r.n, max:max, barColor:st.color, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
+      rows.forEach(function(r){ var st = typeLabelStyle(r.k); statRow(host, { swatches:[{bg:st.bg, border:st.border}], name: typeName(r.k), n:r.n, max:max, barColor:st.color, nameW:'172px', onClick: function(){ pushView(typeDetailView(r.k)); } }); });
       noteLine(host, it ? 'Tocca un tipo per vederne i personaggi.' : 'Tap a type to see its characters.');
     };
   }
@@ -6164,10 +6188,10 @@ function showColorStats() {
     var counts = {}; dati.forEach(function(x){ var c = categoria(x); counts[c] = (counts[c] || 0) + 1; });
     var rows = CATS.map(function(k){ return { k:k, n:counts[k]||0 }; }).filter(function(r){ return r.n > 0; }).sort(function(a, b){ return b.n - a.n; });
     var max = rows.length ? rows[0].n : 1, CL = CAT_LABEL[it?'it':'en'];
-    // Etichette accorciate SOLO nelle stats; il Pannello categorie tiene le forme complete.
-    var SHORT = it ? { adan:'Edain', arcane:'Esseri arcani' } : { adan:'Edain', arcane:'Arcane beings' };
+    // Nomi di categoria PER ESTESO (come nel Pannello): la colonna nome è
+    // allargata (nameW) così ci stanno interi, es. 'Esseri arcani/primordiali'.
     subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' categorie':' categories'));
-    rows.forEach(function(r){ var nm = SHORT[r.k] || CL[r.k] || r.k; statRow(host, { name: nm, n:r.n, max:max, barColor:acc, onClick: function(){ pushView(catDetailView(r.k, nm)); } }); });
+    rows.forEach(function(r){ var nm = CL[r.k] || r.k; statRow(host, { name: nm, n:r.n, max:max, barColor:acc, nameW:'212px', onClick: function(){ pushView(catDetailView(r.k, nm)); } }); });
     noteLine(host, it?'Tocca una categoria per vedere i tipi al suo interno.':'Tap a category to see the types within.');
   }
   function typeView(host){
@@ -6175,22 +6199,35 @@ function showColorStats() {
     var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
     var max = rows.length ? rows[0].n : 1, tot = rows.reduce(function(s, r){ return s + r.n; }, 0);
     subLine(host, tot + (it?' etichette su ':' labels across ') + total + (it?' personaggi, ':' characters, ') + rows.length + (it?' tipi':' types'));
-    rows.forEach(function(r){ var st = typeLabelStyle(r.k); statRow(host, { swatches:[{bg:st.bg, border:st.border}], name: typeName(r.k), n:r.n, max:max, barColor:st.color, onClick: function(){ pushView(typeDetailView(r.k)); } }); });
+    rows.forEach(function(r){ var st = typeLabelStyle(r.k); statRow(host, { swatches:[{bg:st.bg, border:st.border}], name: typeName(r.k), n:r.n, max:max, barColor:st.color, nameW:'172px', onClick: function(){ pushView(typeDetailView(r.k)); } }); });
     noteLine(host, it?'Tocca un tipo per vederne i personaggi; chi ha più etichette conta in più tipi.':'Tap a type to see its characters; a character with several labels counts in several types.');
   }
-  function setStatTab(w){ Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); stack = [ w==='fam' ? famView : w==='cat' ? catView : typeView ]; renderTop(); }
-  setStatTab('fam');
+  function setStatTab(w){ curTab = w; Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); stack = [ w==='fam' ? famView : w==='cat' ? catView : typeView ]; renderTop(); }
+  setStatTab(initState && initState.tab ? initState.tab : 'fam');
+  if (initState && initState.scroll) box.scrollTop = initState.scroll;
+  // Scorciatoie L (lingua) e T (tema) mentre la modale è aperta: si ricostruisce
+  // nel nuovo lingua/tema conservando tab e scroll (anti-jitter). La drill-down
+  // torna alla vista base della tab (transitoria). Legge i colori al volo, quindi
+  // rispecchia il tema corrente.
+  function rebuildStats(){
+    if (!document.body.contains(ov)) { if (langRefresh===myStatsL) langRefresh=null; if (themeRefresh===myStatsT) themeRefresh=null; return; }
+    var st = { tab: curTab, scroll: box.scrollTop };
+    close(); showColorStats(st);
+  }
+  myStatsL = rebuildStats; myStatsT = rebuildStats;
+  langRefresh = myStatsL; themeRefresh = myStatsT;
 }
 
-function showColorEditor() {
+function showColorEditor(initState) {
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it';
+  var curTab = 'f', famSelectEl = null, myEdL; // tab + select famiglia + hook lingua (rebuild solo su L)
   var overlay = document.createElement('div');
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '620px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
-  var close = function(){ overlay.remove(); lockPageScroll(false); };
+  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh===myEdL) langRefresh=null; };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
   box.appendChild(cl);
@@ -6204,6 +6241,7 @@ function showColorEditor() {
   tMirata.textContent = it ? 'Personaggio' : 'Character';
   tFam.textContent = it ? 'Famiglie' : 'Families';
   function setTab(which){
+    curTab = which;
     tMirata.style.opacity = which === 'm' ? '1' : '0.5';
     tFam.style.opacity = which === 'f' ? '1' : '0.5';
     content.innerHTML = '';
@@ -6215,6 +6253,28 @@ function showColorEditor() {
   tabs.appendChild(tFam); tabs.appendChild(tMirata);
   box.appendChild(tabs); box.appendChild(content);
   setTab('f');
+  // Ripristino stato dopo un rebuild da cambio lingua/tema (anti-jitter):
+  // stessa tab, stessa famiglia selezionata, stesso scroll.
+  if (initState){
+    if (initState.tab) setTab(initState.tab);
+    if (initState.tab === 'f' && initState.fam && famSelectEl){
+      var _has = Array.prototype.some.call(famSelectEl.options, function(o){ return o.value === initState.fam; });
+      if (_has){ famSelectEl.value = initState.fam; famSelectEl.onchange(); }
+    }
+    if (initState.scroll) box.scrollTop = initState.scroll;
+  }
+  // Scorciatoia L (lingua): ricostruisce l'editor nella nuova lingua conservando
+  // tab, famiglia e scroll. La T (tema) NON ricostruisce: la modale si ricolora
+  // da sé via CSS e l'anteprima mostra già ENTRAMBI i temi affiancati, quindi un
+  // rebuild sul tema sarebbe inutile e perderebbe un eventuale colore scelto ma
+  // non ancora salvato (che vive solo nello stato locale del controllo).
+  function rebuildEditor(){
+    if (!document.body.contains(overlay)) { if (langRefresh===myEdL) langRefresh=null; return; }
+    var st = { tab: curTab, fam: (curTab==='f' && famSelectEl) ? famSelectEl.value : null, scroll: box.scrollTop };
+    close(); showColorEditor(st);
+  }
+  myEdL = rebuildEditor;
+  langRefresh = myEdL;
 
   // ── Modalità MIRATA: colore individuale per-tema (p.cardrgb {dark,light}) → 'custom' ──
   function buildMirata(root){
@@ -6223,6 +6283,7 @@ function showColorEditor() {
     hint.textContent = it ? 'Cerca un personaggio e definisci solo il suo colore.' : 'Search a character and set only its colour.';
     var search = document.createElement('input'); search.type = 'text'; search.autocomplete = 'off';
     search.placeholder = it ? 'Cerca per nome…' : 'Search by name…';
+    search.setAttribute('aria-label', it ? 'Cerca personaggio per nome' : 'Search character by name');
     var results = document.createElement('div');
     results.style.cssText = 'max-height:170px;overflow:auto;margin:0.4rem 0;display:flex;flex-direction:column;gap:2px;';
     var panel = document.createElement('div');
@@ -6276,7 +6337,7 @@ function showColorEditor() {
   function buildFamilies(root){
     var lbl = document.createElement('p'); lbl.style.cssText = 'font-size:0.82rem;margin:0 0 0.3rem;';
     lbl.textContent = it ? 'Famiglia:' : 'Family:';
-    var sel = document.createElement('select'); sel.style.cssText = 'width:100%;padding:0.4rem;';
+    var sel = document.createElement('select'); sel.style.cssText = 'width:100%;padding:0.4rem;'; sel.setAttribute('aria-label', it ? 'Famiglia colore' : 'Colour family'); famSelectEl = sel;
     Object.keys(CARDCOLORS.fam).sort().forEach(function(k){ var o = document.createElement('option'); o.value = k; o.textContent = k + ' (' + famCount(k) + ')'; sel.appendChild(o); });
     var panel = document.createElement('div');
     root.appendChild(lbl); root.appendChild(sel); root.appendChild(panel);
@@ -6304,7 +6365,7 @@ function showColorEditor() {
     var bColSave = mkBtn(it ? 'Salva colore' : 'Save colour', function(btn){ var g = ctrl.get(); CARDCOLORS.fam[fam] = { dark: g.dark, light: g.light }; reinjectFamilyColors(); withBtn(btn, saveColorsToRepo('colori: colore famiglia ' + fam)); }, true);
     // 2) Rinomina
     var h2 = mkH(it ? 'Rinomina famiglia' : 'Rename family');
-    var rin = document.createElement('input'); rin.type = 'text'; rin.value = fam; rin.style.cssText = 'width:60%;padding:0.35rem;';
+    var rin = document.createElement('input'); rin.type = 'text'; rin.value = fam; rin.style.cssText = 'width:60%;padding:0.35rem;'; rin.setAttribute('aria-label', it ? 'Nuovo nome famiglia' : 'New family name');
     var bRen = mkBtn(it ? 'Rinomina e salva' : 'Rename & save', function(btn){
       var nn = (rin.value||'').trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
       if (!nn || nn === fam) { showToast(it?'Nome non valido':'Invalid name', true); return; }
@@ -6313,11 +6374,11 @@ function showColorEditor() {
       Object.keys(CARDCOLORS.map).forEach(function(t){ if (CARDCOLORS.map[t] === fam) CARDCOLORS.map[t] = nn; });
       dati.forEach(function(p){ if (p.cardcolor === fam) p.cardcolor = nn; });
       reinjectFamilyColors(); renderList();
-      withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ showColorEditor && close(); });
+      withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ if (document.body.contains(overlay)) close(); });
     }, true);
     // 3) Sposta per tipo → questa famiglia
     var h3 = mkH(''); h3.innerHTML = (it ? 'Sposta un tipo in ' : 'Move a type into ') + '<strong>' + escapeHtml(fam) + '</strong>';
-    var selT = document.createElement('select'); selT.style.cssText = 'width:100%;padding:0.35rem;';
+    var selT = document.createElement('select'); selT.style.cssText = 'width:100%;padding:0.35rem;'; selT.setAttribute('aria-label', it ? 'Tipo da spostare' : 'Type to move');
     // La destinazione è SEMPRE la famiglia in cima (fam). Nella option mostriamo
     // il tipo + la sua famiglia ATTUALE (senza freccia, che faceva sembrare la
     // option stessa una destinazione) + il conteggio voci.
@@ -6347,13 +6408,19 @@ function showColorEditor() {
       var hex = row[1], pageBg = row[2], modalBg = row[3], cardOp = row[4], txt = row[5];
       var trip = ccHexToTriplet(hex);
       var cct = ccHexToTriplet(ccAaText(hex, modalBg, 4.5));
+      // Testo della pill-tipo dell'anteprima reso AA sul fondo REALE della card
+      // (pageBg miscelato con la terna a bassa opacità, come nella card vera),
+      // stessa logica --cctext della scheda: tiene la tinta ma garantisce l'AA.
+      var _bg = ccHexToTriplet(pageBg).split(',').map(Number), _fg = ccHexToTriplet(hex).split(',').map(Number);
+      var cardBgHex = ccTripletToHex(_bg.map(function(c,i){ return Math.round(c*(1-cardOp)+_fg[i]*cardOp); }).join(','));
+      var tct = ccHexToTriplet(ccAaText(hex, cardBgHex, 4.6));
       var col = document.createElement('div'); col.style.cssText = 'flex:1;min-width:0;';
       col.innerHTML =
         '<div style="background:' + pageBg + ';border:1px solid rgba(128,128,128,0.5);border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;">' +
           '<div style="position:relative;background:rgba(' + trip + ',' + cardOp + ');border:1px solid rgba(128,128,128,0.18);border-radius:6px;padding:0.4rem 0.5rem 0.4rem 0.75rem;overflow:hidden;">' +
             '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:rgba(' + trip + ',0.85);"></span>' +
             '<div style="color:' + txt + ';font-weight:600;font-size:0.78rem;line-height:1.15;">' + escapeHtml(sampleName) + '</div>' +
-            '<span style="display:inline-block;margin-top:0.28rem;font-size:0.6rem;padding:1px 6px;border-radius:4px;color:rgba(' + trip + ',1);border:1px solid rgba(' + trip + ',0.8);">' + escapeHtml(sampleTipo) + '</span>' +
+            '<span style="display:inline-block;margin-top:0.28rem;font-size:0.6rem;padding:1px 6px;border-radius:4px;color:rgba(' + tct + ',1);border:1px solid rgba(' + trip + ',0.8);">' + escapeHtml(sampleTipo) + '</span>' +
           '</div>' +
           '<div style="background:' + modalBg + ';border:1px solid rgba(' + trip + ',0.9);border-radius:6px;padding:0.4rem 0.55rem;">' +
             '<div style="color:rgba(' + cct + ',1);font-size:0.56rem;letter-spacing:0.09em;font-weight:700;">' + (it ? 'POSIZIONE' : 'RANK') + ' 1</div>' +
@@ -6372,7 +6439,7 @@ function showColorEditor() {
   function buildColorControl(initDark, initLight, sampleName, sampleTipo){
     var state = { dark: initDark, light: initLight };
     var wrap = document.createElement('div');
-    var baseInput = document.createElement('input'); baseInput.type = 'color';
+    var baseInput = document.createElement('input'); baseInput.type = 'color'; baseInput.setAttribute('aria-label', it ? 'Selettore colore' : 'Colour picker');
     baseInput.value = ccTheme() === 'light' ? initLight : initDark;
     baseInput.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
     var chooseBtn = document.createElement('button'); chooseBtn.className = 'fab-modal-confirm';
