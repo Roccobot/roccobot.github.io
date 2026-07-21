@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.5.0
+// @version         2.5.1
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -55,8 +55,13 @@
     // formato, peso, dimensioni e zoom su UNA sola riga (lo zoom sempre visibile).
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
       'color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;padding:.5rem 1.15rem;' +
-      'position:fixed;top:1rem;left:1rem;z-index:10;display:flex;align-items:baseline;gap:.85rem;white-space:nowrap;' +
+      'position:fixed;top:1rem;left:1rem;z-index:10;display:flex;align-items:center;gap:.85rem;white-space:nowrap;' +
       'opacity:1;user-select:none;pointer-events:none}' +
+    // Centratura verticale OTTICA senza hack: si ritaglia il box del testo alle metriche
+    // cap-height/baseline (text-box-trim), così il testo è centrato davvero nel contenitore
+    // a prescindere dall'asimmetria ascender/descender del font. Dove non è supportato
+    // (browser vecchi) resta il semplice align-items:center: nessun peggioramento.
+    '.image-info>*{text-box-trim:trim-both;text-box-edge:cap alphabetic}' +
     '.ii-ext,.ii-zoom{font-weight:700}'
   );
 
