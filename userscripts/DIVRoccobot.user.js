@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.5.2
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
+// @version         2.6.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///): sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
 // @match           https://*/*
+// @match           file:///*
 // @noframes
 // @run-at          document-idle
 // @grant           GM_addStyle
