@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.3.1
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Mostra anche il livello di zoom corrente in un riquadro sotto le informazioni, in alto a sinistra.
+// @version         2.4.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Mostra il livello di zoom corrente in un riquadro sotto le informazioni (in alto a sinistra), solo quando lo zoom e' diverso dal 100%; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -21,8 +21,11 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
   const ZOOM_MAX_MULT = 12;    // zoom massimo = N× la dimensione reale (1:1)
+  const ZOOM_MIN_MULT = 0.1;   // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
+  const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
+  const ZOOM_SNAP_MS = 3000;   // ms: il '100%' resta visibile prima di sfumare
 
   // Agisce SOLO sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
   // Nota: restringere via @match/@include all'ESTENSIONE dell'URL e' fragile e va
@@ -51,9 +54,10 @@
       'background:transparent!important;cursor:pointer;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}' +
     // I due riquadri (info + zoom) vivono nello STESSO stack in alto a sinistra:
     // il posizionamento sta sul contenitore, i figli sono nel flusso (flex column).
-    '#dv-info-stack{position:fixed;top:1rem;left:1rem;z-index:10;display:flex;flex-direction:column;align-items:flex-start;gap:.55rem;pointer-events:none}' +
+    // align-items:stretch → il riquadro zoom è largo esattamente come l'info sovrastante.
+    '#dv-info-stack{position:fixed;top:1rem;left:1rem;z-index:10;display:flex;flex-direction:column;align-items:stretch;gap:.55rem;pointer-events:none}' +
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
-      'color:#fff;background:#000000b8;text-align:center;text-shadow:1px 1px 2px #444;border-radius:.2rem;padding:.4rem .7rem;width:fit-content;' +
+      'color:#fff;background:#000000b8;text-align:center;text-shadow:1px 1px 2px #444;border-radius:.2rem;padding:.4rem .7rem;' +
       'opacity:1;transition:opacity 200ms;user-select:none;pointer-events:none}' +
     '.image-info-title{display:flex;justify-content:space-evenly;flex-wrap:nowrap;gap:.5rem}' +
     '.image-info-ext{font-weight:700}' +
@@ -112,13 +116,18 @@
     const dpr = window.devicePixelRatio || 1;
     const realScale = 1 / dpr;   // 1 px immagine → 1 px FISICO (dimensione "reale", DPR ignorato)
 
+    const logR = Math.log(realScale);   // 100% = dimensione reale, in scala logaritmica
     function fitScale() { return Math.min(wrap.clientWidth / natW, wrap.clientHeight / natH); }
     function fitDisplay() { return Math.min(fitScale(), realScale); }   // adatta, ma mai oltre il reale
-    function clamp(s) { return Math.max(fitDisplay(), Math.min(s, realScale * ZOOM_MAX_MULT)); }
+    // Limite basso: si può rimpicciolire sotto l'adattato (fino a ZOOM_MIN_MULT del reale),
+    // senza però mai alzare l'adattato se l'immagine è enorme (fit già sotto quel minimo).
+    function minScale() { return Math.min(realScale * ZOOM_MIN_MULT, fitDisplay()); }
+    function clamp(s) { return Math.max(minScale(), Math.min(s, realScale * ZOOM_MAX_MULT)); }
 
     let scale = fitDisplay();
     let isFit = true;
-    let elZoom = null;
+    let zoomL = Math.log(scale);   // posizione di zoom "desiderata" (log), separata dal fermo al 100%
+    let elZoom = null, zoomPrevPerc = null, zoomTimer = 0, snapAttivo = false;
 
     function apply() {
       img.style.setProperty('width', (natW * scale) + 'px', 'important');
@@ -126,36 +135,85 @@
       aggiornaZoom();
     }
 
-    // Indicatore del livello di zoom (riquadro in alto a destra, stessa resa
-    // dell'overlay info). 100% = dimensione reale (1:1 coi pixel fisici); si
-    // aggiorna a ogni cambio scala (clic, ctrl+rotella, pinch, resize).
+    // Indicatore del livello di zoom (riquadro SOTTO l'overlay info, stessa resa,
+    // largo quanto quello; testo 'zoom: xx%' centrato). Visibilità:
+    //  - zoom diverso dal 100%          → visibile e stabile;
+    //  - quando si ARRIVA al 100% (fermo) → '100%' visibile per ZOOM_SNAP_MS, poi sfuma;
+    //  - 100% stabile o all'avvio a 100% → nascosto.
     function aggiornaZoom() {
       const perc = Math.round(scale / realScale * 100);
       if (!elZoom) {
         elZoom = document.createElement('div');
         elZoom.id = 'dv-zoom';
         elZoom.className = 'image-info image-info--zoom';
+        elZoom.style.display = 'none';   // di default nascosto (100% iniziale)
         stackEl().appendChild(elZoom);
       }
-      if (elZoom.dataset.perc === String(perc)) return; // nessun cambiamento: evita re-render
-      elZoom.dataset.perc = String(perc);
-      elZoom.innerHTML = '<div class="image-info-title"><div class="image-info-ext">ZOOM</div>' +
-        '<div class="image-info-size">' + perc + '%</div></div>';
+      if (elZoom.dataset.perc !== String(perc)) {
+        elZoom.dataset.perc = String(perc);
+        elZoom.textContent = 'zoom: ' + perc + '%';
+      }
+      clearTimeout(zoomTimer);
+      if (perc !== 100) {                          // fuori dal 100%: sempre visibile e stabile
+        snapAttivo = false;
+        elZoom.style.display = '';
+        elZoom.style.opacity = '1';
+      } else {
+        // perc == 100: visibile solo se ci si è appena ARRIVATI (o durante la permanenza
+        // subito dopo l'arrivo), non all'avvio a 100% né stando stabilmente a 100%.
+        if (zoomPrevPerc !== null && zoomPrevPerc !== 100) snapAttivo = true;
+        if (snapAttivo) {
+          elZoom.style.display = '';
+          elZoom.style.opacity = '1';
+          zoomTimer = setTimeout(function () {     // finché ci si muove sul 100% il timer si riarma
+            elZoom.style.opacity = '0';            // poi sfuma (transition:opacity su .image-info)
+            zoomTimer = setTimeout(function () {
+              if (elZoom.dataset.perc === '100') { elZoom.style.display = 'none'; snapAttivo = false; }
+            }, 260);
+          }, ZOOM_SNAP_MS);
+        } else {
+          elZoom.style.opacity = '0';
+          elZoom.style.display = 'none';
+        }
+      }
+      zoomPrevPerc = perc;
     }
 
-    // Zoom mantenendo fermo il punto (fx,fy in coordinate viewport) sotto il cursore/pinch.
-    function zoomTo(newScale, fx, fy) {
+    // Applica una scala già decisa, mantenendo fermo il punto (fx,fy) sotto il cursore/pinch.
+    function applicaScala(nuova, fx, fy) {
       const r = img.getBoundingClientRect();
       const px = r.width ? (fx - r.left) / r.width : 0.5;
       const py = r.height ? (fy - r.top) / r.height : 0.5;
-      scale = clamp(newScale);
+      scale = nuova;
       isFit = Math.abs(scale - fitDisplay()) < 0.0005;
       apply();
       const r2 = img.getBoundingClientRect();
       wrap.scrollLeft += (r2.left + px * r2.width) - fx;
       wrap.scrollTop += (r2.top + py * r2.height) - fy;
     }
-    function vaiFit() { scale = fitDisplay(); isFit = true; apply(); }
+    // Zoom "diretto" (clic): niente fermo, sincronizza la posizione virtuale.
+    function zoomTo(newScale, fx, fy) {
+      applicaScala(clamp(newScale), fx, fy);
+      zoomL = Math.log(scale);
+    }
+    // Fermo (detent) al 100%: attorno a logR c'è una "zona morta" di semiampiezza
+    // ZOOM_SNAP_STICK (log-scala). Dentro la zona la scala resta esattamente reale
+    // (100%); per uscirne bisogna spingere oltre. Fuori, il moto riprende con continuità.
+    function scalaConDetent(Ldes) {
+      const d = Ldes - logR;
+      if (Math.abs(d) <= ZOOM_SNAP_STICK) return realScale;
+      return Math.exp(logR + (d - (d > 0 ? ZOOM_SNAP_STICK : -ZOOM_SNAP_STICK)));
+    }
+    // Zoom "a gesto" (ctrl+rotella / pinch): applica il fermo al 100%.
+    function zoomGesto(Ldes, fx, fy) {
+      // se un singolo passo scavalcherebbe TUTTA la zona morta, cattura al centro (100%)
+      const prev = zoomL;
+      if ((prev <= logR - ZOOM_SNAP_STICK && Ldes >= logR + ZOOM_SNAP_STICK) ||
+          (prev >= logR + ZOOM_SNAP_STICK && Ldes <= logR - ZOOM_SNAP_STICK)) Ldes = logR;
+      zoomL = Ldes;
+      applicaScala(clamp(scalaConDetent(Ldes)), fx, fy);
+    }
+    function vaiFit() { scale = fitDisplay(); isFit = true; apply(); zoomL = Math.log(scale); }
 
     apply();
 
@@ -182,21 +240,21 @@
       else if (e.deltaMode === 2) dy *= (wrap.clientHeight || 800); // pagine → px
       if (dy > ZOOM_STEP_CAP) dy = ZOOM_STEP_CAP;              // limita i salti per singolo evento
       else if (dy < -ZOOM_STEP_CAP) dy = -ZOOM_STEP_CAP;
-      zoomTo(scale * Math.exp(-dy * ZOOM_SENS), e.clientX, e.clientY);
+      zoomGesto(zoomL - dy * ZOOM_SENS, e.clientX, e.clientY);
     }, { passive: false, capture: true });
 
     // ── TOUCH: pinch = zoom immagine (override pinch PAGINA) ───────────────
-    let d0 = 0, s0 = 1;
+    let d0 = 0, l0 = 0;
     function dist(t) { return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
     function mid(t) { return { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 }; }
     wrap.addEventListener('touchstart', function (e) {
-      if (e.touches.length === 2) { d0 = dist(e.touches); s0 = scale; daGesture = true; e.preventDefault(); }
+      if (e.touches.length === 2) { d0 = dist(e.touches); l0 = zoomL; daGesture = true; e.preventDefault(); }
     }, { passive: false });
     wrap.addEventListener('touchmove', function (e) {
       if (e.touches.length === 2 && d0) {
         e.preventDefault();
         const m = mid(e.touches);
-        zoomTo(s0 * (dist(e.touches) / d0), m.x, m.y);
+        zoomGesto(l0 + Math.log(dist(e.touches) / d0), m.x, m.y);
       }
     }, { passive: false });
     wrap.addEventListener('touchend', function (e) { if (e.touches.length < 2) d0 = 0; }, { passive: true });
