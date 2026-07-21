@@ -471,6 +471,8 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-name .rank-flags .si-demon { margin-left:-0.05em; }
 /* Badge Est (nave verso Est): correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-est { margin-left:-0.04em; }
+/* Badge suicidio (Morte.png): correzione spaziatura a sinistra, solo sulle card. */
+.rank-name .rank-flags .si-morte { margin-left:-0.05em; }
 /* Silmaril, Incarnazione, Ira: correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-silmaril,
 .rank-name .rank-flags .si-incarnazione,
@@ -928,6 +930,10 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   cursor:pointer; font-size:0.84rem; color:var(--parchment); transition:background 0.15s; user-select:none;
 }
 .ctrl-row:hover { background:#463E2B; }
+/* Tema chiaro: l'hover categorie NON deve usare il marrone scuro #463E2B (pensato
+   per lo scuro), altrimenti sborda sul chiaro. Ripristinato il valore originale
+   pre-v10.86 (translucido freddo), gemello dell'override della legenda. */
+html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
 /* Nascosta ma FOCALIZZABILE (display:none la toglieva dal giro del Tab:
    filtri non azionabili da tastiera). Il focus si disegna sul quadratino. */
 .ctrl-row input { position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; clip-path:inset(50%); overflow:hidden; white-space:nowrap; }
@@ -2195,7 +2201,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2850,7 +2856,7 @@ var ICON_SVG = {
   morgoth:    "<img class=\"status-icon si-morgoth\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
   calaquende: "<img class=\"status-icon\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
-  suicidio:   "<img class=\"status-icon\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
+  suicidio:   "<img class=\"status-icon si-morte\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
 };
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
 // lista, per la legenda del Pannello e per la griglia dell'editor admin. In
