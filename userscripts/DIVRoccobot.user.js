@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.3.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Mostra anche il livello di zoom corrente in un riquadro in alto a destra.
+// @version         2.3.1
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Mostra anche il livello di zoom corrente in un riquadro sotto le informazioni, in alto a sinistra.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -49,13 +49,16 @@
       'touch-action:none;-ms-touch-action:none;overscroll-behavior:contain}' +
     '#dv-wrap>img{display:block;flex:0 0 auto;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;' +
       'background:transparent!important;cursor:pointer;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}' +
+    // I due riquadri (info + zoom) vivono nello STESSO stack in alto a sinistra:
+    // il posizionamento sta sul contenitore, i figli sono nel flusso (flex column).
+    '#dv-info-stack{position:fixed;top:1rem;left:1rem;z-index:10;display:flex;flex-direction:column;align-items:flex-start;gap:.55rem;pointer-events:none}' +
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
       'color:#fff;background:#000000b8;text-align:center;text-shadow:1px 1px 2px #444;border-radius:.2rem;padding:.4rem .7rem;width:fit-content;' +
-      'position:fixed;top:1rem;left:1rem;opacity:1;transition:opacity 200ms;user-select:none;pointer-events:none;z-index:10}' +
+      'opacity:1;transition:opacity 200ms;user-select:none;pointer-events:none}' +
     '.image-info-title{display:flex;justify-content:space-evenly;flex-wrap:nowrap;gap:.5rem}' +
     '.image-info-ext{font-weight:700}' +
-    // Indicatore zoom: stessa resa dell'overlay info, ma ancorato in alto a DESTRA.
-    '.image-info.image-info--zoom{left:auto;right:1rem}'
+    // Indicatore zoom: SOTTO il riquadro info nello stesso stack (order lo tiene sotto).
+    '.image-info--zoom{order:1}'
   );
 
   // SVG: la "dimensione reale" in pixel non è definita come per le raster → lascio il comportamento nativo.
@@ -70,9 +73,15 @@
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(d)) + ' <strong>' + u[i] + '</strong>';
   }
+  // Contenitore condiviso (in alto a sinistra) dei due riquadri: info + zoom.
+  function stackEl() {
+    let s = document.getElementById('dv-info-stack');
+    if (!s) { s = document.createElement('div'); s.id = 'dv-info-stack'; (document.body || document.documentElement).appendChild(s); }
+    return s;
+  }
   function updateInfo() {
-    let info = document.querySelector('.image-info');
-    if (!info) { info = document.createElement('div'); info.className = 'image-info'; document.body.appendChild(info); }
+    let info = document.getElementById('dv-info');
+    if (!info) { info = document.createElement('div'); info.id = 'dv-info'; info.className = 'image-info'; stackEl().appendChild(info); }
     info.innerHTML =
       '<div class="image-info-title"><div class="image-info-ext">' + (imageInfo.ext || '').toUpperCase() +
       '</div><div class="image-info-size">' + (imageInfo.size || '') + '</div></div>' +
@@ -124,8 +133,9 @@
       const perc = Math.round(scale / realScale * 100);
       if (!elZoom) {
         elZoom = document.createElement('div');
+        elZoom.id = 'dv-zoom';
         elZoom.className = 'image-info image-info--zoom';
-        document.body.appendChild(elZoom);
+        stackEl().appendChild(elZoom);
       }
       if (elZoom.dataset.perc === String(perc)) return; // nessun cambiamento: evita re-render
       elZoom.dataset.perc = String(perc);
