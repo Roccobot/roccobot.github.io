@@ -333,6 +333,13 @@ const ZOOM_SENS = 0.0015;  // sensibilità dello zoom con ctrl+rotella
 2. Aprire: <https://roccobot.github.io/userscripts/DIVRoccobot.user.js>
 3. Premere **Installa**.
 
+> **File locali (`file:///...`):** lo script agisce anche sulle immagini aperte
+> da disco, ma serve abilitare in Tampermonkey l'opzione **'Consenti l'accesso
+> agli URL dei file'** (Chrome/Vivaldi: pagina delle estensioni → Tampermonkey →
+> Dettagli → 'Consenti l'accesso agli URL dei file'). Il peso del file potrebbe
+> non essere leggibile in locale su alcuni browser: in tal caso non compare, il
+> resto (sfondo, dimensioni, zoom) funziona comunque.
+
 > **Aggiorni da una versione precedente?** Il file è stato rinominato da
 > `DecentImageViewer.user.js` a `DIVRoccobot.user.js` (il titolo `@name` resta
 > `Decent Image Viewer`). Dato che l'URL è cambiato, la vecchia versione **non** si
