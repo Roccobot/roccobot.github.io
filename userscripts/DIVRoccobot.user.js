@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.5.1
+// @version         2.5.2
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -25,6 +25,12 @@
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
+  const OVERLAY_NUDGE_Y = 0;   // px: micro-compensazione verticale opzionale del testo dell'overlay.
+                               // Dopo text-box-trim resta solo un residuo SUB-PIXEL di arrotondamento
+                               // del rendering, che dipende dallo ZOOM DI PAGINA del browser (es. a
+                               // 110% il pelo e' sopra, al 100% sotto): NON e' correggibile in modo
+                               // stabile/universale. Default 0 = nessuna alterazione; tarabile a mano
+                               // (es. -0.5 oppure 0.5) per un livello di zoom abituale.
 
   // Agisce SOLO sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
   // Nota: restringere via @match/@include all'ESTENSIONE dell'URL e' fragile e va
@@ -61,7 +67,7 @@
     // cap-height/baseline (text-box-trim), così il testo è centrato davvero nel contenitore
     // a prescindere dall'asimmetria ascender/descender del font. Dove non è supportato
     // (browser vecchi) resta il semplice align-items:center: nessun peggioramento.
-    '.image-info>*{text-box-trim:trim-both;text-box-edge:cap alphabetic}' +
+    '.image-info>*{text-box-trim:trim-both;text-box-edge:cap alphabetic;transform:translateY(' + OVERLAY_NUDGE_Y + 'px)}' +
     '.ii-ext,.ii-zoom{font-weight:700}'
   );
 
