@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.4.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Mostra il livello di zoom corrente in un riquadro sotto le informazioni (in alto a sinistra), solo quando lo zoom e' diverso dal 100%; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
+// @version         2.5.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -25,7 +25,6 @@
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
-  const ZOOM_SNAP_MS = 3000;   // ms: il '100%' resta visibile prima di sfumare
 
   // Agisce SOLO sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
   // Nota: restringere via @match/@include all'ESTENSIONE dell'URL e' fragile e va
@@ -52,17 +51,13 @@
       'touch-action:none;-ms-touch-action:none;overscroll-behavior:contain}' +
     '#dv-wrap>img{display:block;flex:0 0 auto;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;' +
       'background:transparent!important;cursor:pointer;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}' +
-    // I due riquadri (info + zoom) vivono nello STESSO stack in alto a sinistra:
-    // il posizionamento sta sul contenitore, i figli sono nel flusso (flex column).
-    // align-items:stretch → il riquadro zoom è largo esattamente come l'info sovrastante.
-    '#dv-info-stack{position:fixed;top:1rem;left:1rem;z-index:10;display:flex;flex-direction:column;align-items:stretch;gap:.55rem;pointer-events:none}' +
+    // Riquadro unico (pill) in alto a sinistra, stessa spaziatura dal bordo:
+    // formato, peso, dimensioni e zoom su UNA sola riga (lo zoom sempre visibile).
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
-      'color:#fff;background:#000000b8;text-align:center;text-shadow:1px 1px 2px #444;border-radius:.2rem;padding:.4rem .7rem;' +
-      'opacity:1;transition:opacity 200ms;user-select:none;pointer-events:none}' +
-    '.image-info-title{display:flex;justify-content:space-evenly;flex-wrap:nowrap;gap:.5rem}' +
-    '.image-info-ext{font-weight:700}' +
-    // Indicatore zoom: SOTTO il riquadro info nello stesso stack (order lo tiene sotto).
-    '.image-info--zoom{order:1}'
+      'color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;padding:.5rem 1.15rem;' +
+      'position:fixed;top:1rem;left:1rem;z-index:10;display:flex;align-items:baseline;gap:.85rem;white-space:nowrap;' +
+      'opacity:1;user-select:none;pointer-events:none}' +
+    '.ii-ext,.ii-zoom{font-weight:700}'
   );
 
   // SVG: la "dimensione reale" in pixel non è definita come per le raster → lascio il comportamento nativo.
@@ -77,19 +72,26 @@
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(d)) + ' <strong>' + u[i] + '</strong>';
   }
-  // Contenitore condiviso (in alto a sinistra) dei due riquadri: info + zoom.
-  function stackEl() {
-    let s = document.getElementById('dv-info-stack');
-    if (!s) { s = document.createElement('div'); s.id = 'dv-info-stack'; (document.body || document.documentElement).appendChild(s); }
-    return s;
+  // Riquadro unico (pill). Struttura fissa a span, riempiti separatamente:
+  // ext + peso + dimensioni da updateInfo, zoom da aggiornaZoom (senza collisioni).
+  function boxEl() {
+    let b = document.getElementById('dv-info');
+    if (!b) {
+      b = document.createElement('div');
+      b.id = 'dv-info';
+      b.className = 'image-info';
+      b.innerHTML = '<b class="ii-ext"></b><span class="ii-size"></span><span class="ii-dim"></span><b class="ii-zoom"></b>';
+      (document.body || document.documentElement).appendChild(b);
+    }
+    return b;
   }
   function updateInfo() {
-    let info = document.getElementById('dv-info');
-    if (!info) { info = document.createElement('div'); info.id = 'dv-info'; info.className = 'image-info'; stackEl().appendChild(info); }
-    info.innerHTML =
-      '<div class="image-info-title"><div class="image-info-ext">' + (imageInfo.ext || '').toUpperCase() +
-      '</div><div class="image-info-size">' + (imageInfo.size || '') + '</div></div>' +
-      '<div class="image-info-dimensions">' + (imageInfo.dimensions || '') + '</div>';
+    const b = boxEl();
+    b.querySelector('.ii-ext').textContent = (imageInfo.ext || '').toUpperCase();
+    const sz = b.querySelector('.ii-size');
+    if (imageInfo.size) { sz.innerHTML = imageInfo.size; sz.style.display = ''; }
+    else { sz.textContent = ''; sz.style.display = 'none'; }   // niente peso: niente doppio gap
+    b.querySelector('.ii-dim').textContent = imageInfo.dimensions || '';
   }
   let ext = document.contentType.split('/')[1] || '';
   if (ext === 'x-icon' || ext === 'vnd.microsoft.icon') ext = 'ico';
@@ -127,7 +129,6 @@
     let scale = fitDisplay();
     let isFit = true;
     let zoomL = Math.log(scale);   // posizione di zoom "desiderata" (log), separata dal fermo al 100%
-    let elZoom = null, zoomPrevPerc = null, zoomTimer = 0, snapAttivo = false;
 
     function apply() {
       img.style.setProperty('width', (natW * scale) + 'px', 'important');
@@ -135,48 +136,12 @@
       aggiornaZoom();
     }
 
-    // Indicatore del livello di zoom (riquadro SOTTO l'overlay info, stessa resa,
-    // largo quanto quello; testo 'zoom: xx%' centrato). Visibilità:
-    //  - zoom diverso dal 100%          → visibile e stabile;
-    //  - quando si ARRIVA al 100% (fermo) → '100%' visibile per ZOOM_SNAP_MS, poi sfuma;
-    //  - 100% stabile o all'avvio a 100% → nascosto.
+    // Livello di zoom, SEMPRE visibile, nella stessa riga del riquadro info.
+    // 100% = dimensione reale (1:1 coi pixel fisici).
     function aggiornaZoom() {
-      const perc = Math.round(scale / realScale * 100);
-      if (!elZoom) {
-        elZoom = document.createElement('div');
-        elZoom.id = 'dv-zoom';
-        elZoom.className = 'image-info image-info--zoom';
-        elZoom.style.display = 'none';   // di default nascosto (100% iniziale)
-        stackEl().appendChild(elZoom);
-      }
-      if (elZoom.dataset.perc !== String(perc)) {
-        elZoom.dataset.perc = String(perc);
-        elZoom.textContent = 'zoom: ' + perc + '%';
-      }
-      clearTimeout(zoomTimer);
-      if (perc !== 100) {                          // fuori dal 100%: sempre visibile e stabile
-        snapAttivo = false;
-        elZoom.style.display = '';
-        elZoom.style.opacity = '1';
-      } else {
-        // perc == 100: visibile solo se ci si è appena ARRIVATI (o durante la permanenza
-        // subito dopo l'arrivo), non all'avvio a 100% né stando stabilmente a 100%.
-        if (zoomPrevPerc !== null && zoomPrevPerc !== 100) snapAttivo = true;
-        if (snapAttivo) {
-          elZoom.style.display = '';
-          elZoom.style.opacity = '1';
-          zoomTimer = setTimeout(function () {     // finché ci si muove sul 100% il timer si riarma
-            elZoom.style.opacity = '0';            // poi sfuma (transition:opacity su .image-info)
-            zoomTimer = setTimeout(function () {
-              if (elZoom.dataset.perc === '100') { elZoom.style.display = 'none'; snapAttivo = false; }
-            }, 260);
-          }, ZOOM_SNAP_MS);
-        } else {
-          elZoom.style.opacity = '0';
-          elZoom.style.display = 'none';
-        }
-      }
-      zoomPrevPerc = perc;
+      const perc = Math.round(scale / realScale * 100) + '%';
+      const z = boxEl().querySelector('.ii-zoom');
+      if (z && z.textContent !== perc) z.textContent = perc;
     }
 
     // Applica una scala già decisa, mantenendo fermo il punto (fx,fy) sotto il cursore/pinch.
