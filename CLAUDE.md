@@ -1262,7 +1262,7 @@ specifico del dataset):
 - **Nomi comuni di creatura in minuscolo se discorsivi (`drago`/`dragon`, ecc.).**
   Quando la parola è usata come nome comune nel testo corrente va **minuscola**
   in entrambe le lingue (`Misterioso drago...`, `a mysterious dragon...`); la
-  maiuscola resta solo per: inizio riga/frase, nomi propri (`Elmo del Drago` =
+  maiuscola resta solo per: inizio riga/frase, nomi propri (`Elmo-di-Drago` =
   Dragon-helm, `Drago Verde` = Green Dragon), titoli/epiteti (`Padre dei Draghi`
   = Father of Dragons, `Uccisore del Drago`) e composti propri EN (`Dragon-helm`,
   `Dragon-sickness`). Verificato in blocco su tutti i draghi (2026-07-20): l'EN
