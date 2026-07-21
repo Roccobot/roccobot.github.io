@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name         NSFWAlbum+
+// @name         NSFWA Roccobot
 // @namespace    https://roccobot.github.io/
 // @version      1.0.0
 // @description  Tutto-in-uno per nsfwalbum.com. Pagina FOTO (/photo/): rende cliccabile in modo naturale l'immagine vera (apri/salva immagine sul file imx.to reale), forzando #zoom visibile e in cima e neutralizzando le esche SVG/lente sovrapposte (incluso il caso in cui #zoom e' nascosto). Pagina ALBUM (/album/): pulsante per scaricare l'INTERO set a piena risoluzione in un unico ZIP, nominato "[studio] - [modella] - [titolo].zip". Unisce e sostituisce NSFWAlbum Enhancer + NSFWGallery.
 // @author       Roccobot
+// @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://nsfwalbum.com/*
 // @match        https://www.nsfwalbum.com/*
 // @run-at       document-start
@@ -13,8 +14,8 @@
 // @connect      i.imx.to
 // @connect      imx.to
 // @connect      image.imx.to
-// @updateURL    https://roccobot.github.io/userscripts/NSFWAlbumPlus.user.js
-// @downloadURL  https://roccobot.github.io/userscripts/NSFWAlbumPlus.user.js
+// @updateURL    https://roccobot.github.io/userscripts/NSFWARoccobot.user.js
+// @downloadURL  https://roccobot.github.io/userscripts/NSFWARoccobot.user.js
 // ==/UserScript==
 
 (function () {

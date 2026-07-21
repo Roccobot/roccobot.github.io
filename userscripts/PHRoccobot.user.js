@@ -4,6 +4,7 @@
 // @version      1.8.0
 // @description  Su pornhub.com: mantiene lingua inglese/Paese Worldwide riscrivendo a ogni caricamento i cookie lang=en e overwriteCCVal=world (PH ogni tanto li ripristina su it), e reindirizza il sottodominio-lingua (es. it.pornhub.com) a www.pornhub.com così i titoli NON vengono tradotti. Aggiunge in basso a destra un tasto "⬇️ Scarica video" (sempre visibile) che scarica il file MP4 alla qualità massima, con avanzamento sul tasto e clic-per-annullare. Nome file: "[Nome canale] Titolo.mp4". Sorgente ricavata a runtime da flashvars/mediaDefinitions.
 // @author       Roccobot
+// @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://*.pornhub.com/*
 // @match        https://pornhub.com/*
 // @run-at       document-start

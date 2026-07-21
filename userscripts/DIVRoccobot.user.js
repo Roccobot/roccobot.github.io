@@ -11,8 +11,8 @@
 // @run-at          document-idle
 // @grant           GM_addStyle
 // @grant           GM_xmlhttpRequest
-// @updateURL       https://roccobot.github.io/userscripts/DecentImageViewer.user.js
-// @downloadURL     https://roccobot.github.io/userscripts/DecentImageViewer.user.js
+// @updateURL       https://roccobot.github.io/userscripts/DIVRoccobot.user.js
+// @downloadURL     https://roccobot.github.io/userscripts/DIVRoccobot.user.js
 // ==/UserScript==
 
 (function () {

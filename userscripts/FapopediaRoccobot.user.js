@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name         Fapopedia+
+// @name         Fapopedia Roccobot
 // @namespace    https://roccobot.github.io/
 // @version      1.1.0
 // @description  Su fapopedia.net aggiunge un pulsante per scaricare con un clic TUTTE le immagini della galleria in ALTA RISOLUZIONE, impacchettate in un unico file ZIP. Ricava l'originale dalla miniatura (toglie il prefisso "t_"); scarica via GM_xmlhttpRequest (ArrayBuffer). ZIP creato da un writer interno (metodo "store", nessuna dipendenza esterna: JSZip si bloccava in compressione nella sandbox). Nessun dato lascia il sito: solo download.
 // @author       Roccobot
+// @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://fapopedia.net/*
 // @match        https://www.fapopedia.net/*
 // @run-at       document-idle
@@ -11,8 +12,8 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
 // @connect      fapopedia.net
-// @updateURL    https://roccobot.github.io/userscripts/FapopediaPlus.user.js
-// @downloadURL  https://roccobot.github.io/userscripts/FapopediaPlus.user.js
+// @updateURL    https://roccobot.github.io/userscripts/FapopediaRoccobot.user.js
+// @downloadURL  https://roccobot.github.io/userscripts/FapopediaRoccobot.user.js
 // ==/UserScript==
 
 (function () {

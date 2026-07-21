@@ -108,9 +108,9 @@ modificare i valori → salvare (Ctrl+S).
   incorporato nello script come SVG; con `LOGO_PERSONALIZZATO` si può comunque
   usare un'altra immagine (URL).
 
-## NSFWAlbum+
+## NSFWA Roccobot
 
-**File:** `NSFWAlbumPlus.user.js`
+**File:** `NSFWARoccobot.user.js` · **Titolo (`@name`):** `NSFWA Roccobot`
 
 Tutto-in-uno per `nsfwalbum.com` (unisce e sostituisce *NSFWAlbum Enhancer* +
 *NSFWGallery*):
@@ -144,13 +144,18 @@ const TIMEOUT_MS     = 60000;  // pagina album: timeout per immagine
 ### Installazione
 
 1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/NSFWAlbumPlus.user.js>
+2. Aprire: <https://roccobot.github.io/userscripts/NSFWARoccobot.user.js>
 3. Premere **Installa**. Sulla pagina album, concedere il permesso
    `GM_xmlhttpRequest` verso `imx.to` (serve a scaricare le immagini).
 
-## Fapopedia+
+> **Aggiorni da una versione precedente?** Questo script era `NSFWAlbum+`
+> (`NSFWAlbumPlus.user.js`). Dato che nome file e URL sono cambiati, la vecchia
+> versione **non** si aggiorna da sola: installa `NSFWARoccobot.user.js` dal nuovo
+> indirizzo e disinstalla la vecchia dal cruscotto di Tampermonkey.
 
-**File:** `FapopediaPlus.user.js`
+## Fapopedia Roccobot
+
+**File:** `FapopediaRoccobot.user.js` · **Titolo (`@name`):** `Fapopedia Roccobot`
 
 Su `fapopedia.net`, nelle pagine-galleria, aggiunge un pulsante flottante
 **"⬇️ Scarica galleria (N) — ZIP"** che con un clic scarica **tutte** le immagini
@@ -184,14 +189,19 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 ### Installazione
 
 1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/FapopediaPlus.user.js>
+2. Aprire: <https://roccobot.github.io/userscripts/FapopediaRoccobot.user.js>
 3. Premere **Installa**. Tampermonkey può chiedere il permesso per
    `GM_xmlhttpRequest` verso `fapopedia.net`: concederlo (serve a scaricare le
    immagini). Nessuna dipendenza esterna: lo ZIP è creato internamente.
 
-## LotRWiki
+> **Aggiorni da una versione precedente?** Questo script era `Fapopedia+`
+> (`FapopediaPlus.user.js`). Dato che nome file e URL sono cambiati, la vecchia
+> versione **non** si aggiorna da sola: installa `FapopediaRoccobot.user.js` dal
+> nuovo indirizzo e disinstalla la vecchia dal cruscotto di Tampermonkey.
 
-**File:** `LotRWiki.user.js`
+## LotRWiki Roccobot
+
+**File:** `LotRWikiRoccobot.user.js` · **Titolo (`@name`):** `LotRWiki Roccobot`
 
 Alleggerisce la wiki LotR di Fandom (`lotr.fandom.com`): toglie l'**enorme immagine
 di sfondo** del tema (e, iniettando il CSS a `document-start`, ne **evita anche il
@@ -218,8 +228,13 @@ ricerca e navigazione: solo lo sfondo e la cornice pesante attorno.
 ### Installazione
 
 1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/LotRWiki.user.js>
+2. Aprire: <https://roccobot.github.io/userscripts/LotRWikiRoccobot.user.js>
 3. Premere **Installa**.
+
+> **Aggiorni da una versione precedente?** Questo script era `LotRWiki`
+> (`LotRWiki.user.js`). Dato che nome file e URL sono cambiati, la vecchia
+> versione **non** si aggiorna da sola: installa `LotRWikiRoccobot.user.js` dal
+> nuovo indirizzo e disinstalla la vecchia dal cruscotto di Tampermonkey.
 
 ### Personalizzazione
 
@@ -285,7 +300,7 @@ const SALVA_CON_DIALOGO    = true; // true = chiede dove salvare; false = scaric
 
 ## Decent Image Viewer
 
-**File:** `DecentImageViewer.user.js`
+**File:** `DIVRoccobot.user.js` · **Titolo (`@name`):** `Decent Image Viewer`
 
 Migliora le **pagine-immagine del browser** (quando apri direttamente un file immagine,
 `content-type` `image/*`): sfondo a **scacchi**, un overlay con **formato / dimensioni /
@@ -315,8 +330,14 @@ const ZOOM_SENS = 0.0015;  // sensibilità dello zoom con ctrl+rotella
 ### Installazione
 
 1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/DecentImageViewer.user.js>
+2. Aprire: <https://roccobot.github.io/userscripts/DIVRoccobot.user.js>
 3. Premere **Installa**.
+
+> **Aggiorni da una versione precedente?** Il file è stato rinominato da
+> `DecentImageViewer.user.js` a `DIVRoccobot.user.js` (il titolo `@name` resta
+> `Decent Image Viewer`). Dato che l'URL è cambiato, la vecchia versione **non** si
+> aggiorna da sola: installa `DIVRoccobot.user.js` dal nuovo indirizzo e disinstalla
+> la vecchia dal cruscotto di Tampermonkey.
 
 > **Nota:** override del visualizzatore-immagine nativo del browser. Su alcuni browser
 > lo zoom-clic nativo è a livello di motore e non del tutto sopprimibile via JS: lo
