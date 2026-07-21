@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.0.0
+// @version         2.1.0
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
-// @match           http://*/*
-// @match           https://*/*
+// @include         /^https?:\/\/.+\.(?:jpeg|jpe|jpg|png|tiff|tif|avif|webp|heic|heif|ico|jp2|jxl|gif|apng)(?:[?#].*)?$/i
 // @noframes
 // @run-at          document-idle
 // @grant           GM_addStyle
@@ -21,7 +20,8 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
   const ZOOM_MAX_MULT = 12;    // zoom massimo = N× la dimensione reale (1:1)
-  const ZOOM_SENS = 0.0015;    // sensibilità dello zoom con ctrl+rotella
+  const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
+  const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
 
   // Agisce solo sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
   if ((document.contentType || '').indexOf('image/') !== 0) return;
@@ -137,7 +137,14 @@
     wrap.addEventListener('wheel', function (e) {
       if (!e.ctrlKey) return;             // scroll normale → pan dell'immagine ingrandita
       e.preventDefault();                  // blocca lo zoom di pagina
-      zoomTo(scale * Math.exp(-e.deltaY * ZOOM_SENS), e.clientX, e.clientY);
+      // Normalizzo l'unità di deltaY (righe/pagine → px) così la sensibilità è coerente
+      // tra trackpad (px, gesti piccoli) e rotella del mouse (a scatti).
+      var dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 16;                          // righe → px (altezza riga tipica)
+      else if (e.deltaMode === 2) dy *= (wrap.clientHeight || 800); // pagine → px
+      if (dy > ZOOM_STEP_CAP) dy = ZOOM_STEP_CAP;              // limita i salti per singolo evento
+      else if (dy < -ZOOM_STEP_CAP) dy = -ZOOM_STEP_CAP;
+      zoomTo(scale * Math.exp(-dy * ZOOM_SENS), e.clientX, e.clientY);
     }, { passive: false, capture: true });
 
     // ── TOUCH: pinch = zoom immagine (override pinch PAGINA) ───────────────
