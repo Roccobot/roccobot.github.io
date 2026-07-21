@@ -1748,8 +1748,9 @@ specifico del dataset):
   - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon),
     Fram (Scatha), Bard (Smaug). Azaghâl ferì soltanto Glaurung.
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
-    Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo nei
-    Racconti Perduti (versione superata del Legendarium).
+    Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo ne
+    'Il libro dei racconti perduti II' (la Caduta di Gondolin, versione
+    superata del Legendarium).
   - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin. Rimosso in v7.09
     per far posto a `calaquende`, poi **ri-introdotto in v7.23 come EASTER EGG**
     (icona nuova `icons/Morgoth.png`, guerriero corazzato): appare **solo sulla
