@@ -108,38 +108,45 @@ modificare i valori → salvare (Ctrl+S).
   incorporato nello script come SVG; con `LOGO_PERSONALIZZATO` si può comunque
   usare un'altra immagine (URL).
 
-## NSFWAlbum Enhancer
+## NSFWAlbum+
 
-**File:** `NSFWAlbumEnhancer.user.js`
+**File:** `NSFWAlbumPlus.user.js`
 
-Su `nsfwalbum.com`, nella pagina della singola foto (`/photo/<id>`), l'immagine
-grande (`<img id="zoom">`, che punta al file vero su imx.to) ha sopra un
-**overlay-esca trasparente** (spesso un `<svg>`, a volte piccolo, "a puntino")
-che intercetta il tasto destro: "apri immagine in una nuova scheda" restituisce
-quell'overlay serializzato invece della foto. Al **clic destro** lo script legge
-lo stack sotto il cursore (`document.elementsFromPoint`) e mette
-`pointer-events:none` su **tutto ciò che sta sopra `#zoom` nel punto esatto**
-cliccato — a prescindere da tag, dimensione o vuotezza dell'esca — così il menu
-contestuale cade sempre sull'immagine vera sotto: **"apri immagine"** e
-**"salva immagine"** tornano a funzionare sul file reale. Agisce solo sul tasto
-destro (le interazioni col tasto sinistro restano intatte) e mantiene una
-neutralizzazione di riserva per le esche grandi/vuote già note. Inoltre
-**nasconde la lente d'ingrandimento** (`.magnify-lens`), l'overlay che si
-sovrappone alla foto.
+Tutto-in-uno per `nsfwalbum.com` (unisce e sostituisce *NSFWAlbum Enhancer* +
+*NSFWGallery*):
 
-Agisce solo sul DOM della pagina (`@grant none`), nessun accesso a servizi esterni.
+- **Pagina foto (`/photo/<id>`):** rende l'immagine vera cliccabile in modo
+  naturale: «apri immagine»/«salva immagine» agiscono sul **file reale su
+  imx.to**, non sull'esca. La foto vera è in `<img id="zoom">` ma spesso è
+  **nascosta** (`class="hide"`) mentre uno script di protezione (`hl.js`)
+  sovrappone un `<svg>` **vuoto** grande quanto la foto che ruba il tasto destro
+  (→ `data:image/svg+xml…`). Lo script forza `#zoom` **visibile, cliccabile e in
+  cima** e **neutralizza** (`pointer-events:none`) le esche SVG/lente
+  sovrapposte, così il menu contestuale cade sull'immagine reale. Nasconde anche
+  la lente d'ingrandimento (`.magnify-lens`). *(Quando l'immagine manca davvero
+  il sito serve un JPEG placeholder da `/missed.php`: lì non c'è nulla da
+  recuperare, non è un'esca.)*
+- **Pagina album (`/album/<id>`):** pulsante flottante **«⬇️ Scarica set (ZIP)»**
+  che scarica **tutte** le immagini del set a **piena risoluzione** in un unico
+  **ZIP**, nominato **`[studio] - [modella] - [titolo].zip`** (ricavato dalla
+  pagina). Full-res da imx.to (thumb `//image.imx.to/u/t/…` → file
+  `//i.imx.to/i/…`); ZIP creato da un **writer interno** (metodo *store*, nessuna
+  dipendenza); file numerati in ordine d'album.
 
 ### Personalizzazione
 
 ```js
-const NASCONDI_LENTE = true;  // nasconde la lente d'ingrandimento (.magnify-lens)
+const NASCONDI_LENTE = true;  // pagina foto: nasconde la lente d'ingrandimento
+const PARALLELE      = 4;      // pagina album: download contemporanei
+const TIMEOUT_MS     = 60000;  // pagina album: timeout per immagine
 ```
 
 ### Installazione
 
 1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/NSFWAlbumEnhancer.user.js>
-3. Premere **Installa**.
+2. Aprire: <https://roccobot.github.io/userscripts/NSFWAlbumPlus.user.js>
+3. Premere **Installa**. Sulla pagina album, concedere il permesso
+   `GM_xmlhttpRequest` verso `imx.to` (serve a scaricare le immagini).
 
 ## Fapopedia+
 
@@ -228,41 +235,6 @@ const NASCONDI_STICKY         = false; // barra superiore sticky (default: tenut
 > **Nota:** i selettori seguono lo skin standard `fandomdesktop` di Fandom. Se un
 > elemento non sparisce (Fandom cambia ogni tanto le classi), mandami l'elemento
 > dal DevTools e affino la regola.
-
-## NSFWGallery
-
-**File:** `NSFWGallery.user.js`
-
-Su `nsfwalbum.com`, nelle pagine **album** (`/album/<id>`), aggiunge un pulsante
-flottante **"⬇️ Scarica set (ZIP)"** che con un clic scarica **tutte** le immagini
-del set a **piena risoluzione** e le impacchetta in un unico **ZIP**, nominato
-automaticamente come **`[studio] - [modella/e] - [titolo].zip`** (es.
-`Domai - Clelia - Set 2 - 09.07.2009.zip`).
-
-Come funziona: le thumbnail dell'album sono su imx.to
-(`image.imx.to/u/t/<data>/<nome>.jpg`); il file a piena risoluzione è lo stesso
-path sul percorso "immagine" (`i.imx.to/i/<data>/<nome>.jpg`). Lo script legge i
-`data-src` delle thumbnail, ricava gli URL full-res, li scarica via
-`GM_xmlhttpRequest` (con barra di avanzamento sul pulsante) e li mette in uno ZIP
-creato da un **writer interno** (metodo *store*, nessuna dipendenza). Il nome dello
-ZIP è ricavato dalla pagina: lo **studio** dal blocco `.models` ("Studio: …"), la
-**modella** e il **titolo** dal `<title>`. I file nello ZIP mantengono l'ordine
-dell'album (numerati `001.jpg`, `002.jpg`…). Nessun dato lascia il sito.
-
-### Personalizzazione
-
-```js
-const PARALLELE  = 4;      // quanti download contemporanei
-const TIMEOUT_MS = 60000;  // timeout per singola immagine
-```
-
-### Installazione
-
-1. Installare Tampermonkey (se non c'è già).
-2. Aprire: <https://roccobot.github.io/userscripts/NSFWGallery.user.js>
-3. Premere **Installa**. Tampermonkey può chiedere il permesso per
-   `GM_xmlhttpRequest` verso `imx.to`: concederlo (serve a scaricare le immagini).
-   Nessuna dipendenza esterna: lo ZIP è creato internamente.
 
 ## PH Roccobot
 
