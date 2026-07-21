@@ -478,6 +478,14 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-name .rank-flags .si-est { margin-left:-0.04em; }
 /* Badge suicidio (Morte.png): correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-morte { margin-left:-0.05em; }
+/* Navi Aman (west) e Valinor (envoy): correzione spaziatura a sinistra, solo card. */
+.rank-name .rank-flags .si-aman,
+.rank-name .rank-flags .si-valinor { margin-left:-0.05em; }
+/* Tre Anelli degli Elfi (Vilya, Nenya, Narya): correzione spaziatura su ENTRAMBI
+   i lati, solo sulle card. */
+.rank-name .rank-flags .si-vilya,
+.rank-name .rank-flags .si-nenya,
+.rank-name .rank-flags .si-narya { margin-left:-0.04em; margin-right:-0.04em; }
 /* Silmaril, Incarnazione, Ira: correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-silmaril,
 .rank-name .rank-flags .si-incarnazione,
@@ -2206,7 +2214,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.97</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v10.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2846,8 +2854,8 @@ var ICON_SVG = {
   king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.png\" title=\"%L%\" alt=\"%L%\">",
   king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.png\" title=\"%L%\" alt=\"%L%\">",
   survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.png\" title=\"%L%\" alt=\"%L%\">",
-  west:       "<img class=\"status-icon\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"%L%\">",
-  envoy:      "<img class=\"status-icon\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"%L%\">",
+  west:       "<img class=\"status-icon si-aman\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"%L%\">",
+  envoy:      "<img class=\"status-icon si-valinor\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"%L%\">",
   onering:    "<img class=\"status-icon si-unico\" src=\"icons/" + (FEATURES.oneRing === 'B' ? 'Unico_B.png' : 'Unico.png') + "\" title=\"%L%\" alt=\"%L%\">",
   vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.png\" title=\"%L%\" alt=\"%L%\">",
   nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"%L%\">",
