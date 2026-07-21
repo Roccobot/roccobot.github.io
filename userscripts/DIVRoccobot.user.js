@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.2.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina.
+// @version         2.3.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Mostra anche il livello di zoom corrente in un riquadro in alto a destra.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -53,7 +53,9 @@
       'color:#fff;background:#000000b8;text-align:center;text-shadow:1px 1px 2px #444;border-radius:.2rem;padding:.4rem .7rem;width:fit-content;' +
       'position:fixed;top:1rem;left:1rem;opacity:1;transition:opacity 200ms;user-select:none;pointer-events:none;z-index:10}' +
     '.image-info-title{display:flex;justify-content:space-evenly;flex-wrap:nowrap;gap:.5rem}' +
-    '.image-info-ext{font-weight:700}'
+    '.image-info-ext{font-weight:700}' +
+    // Indicatore zoom: stessa resa dell'overlay info, ma ancorato in alto a DESTRA.
+    '.image-info.image-info--zoom{left:auto;right:1rem}'
   );
 
   // SVG: la "dimensione reale" in pixel non è definita come per le raster → lascio il comportamento nativo.
@@ -107,10 +109,28 @@
 
     let scale = fitDisplay();
     let isFit = true;
+    let elZoom = null;
 
     function apply() {
       img.style.setProperty('width', (natW * scale) + 'px', 'important');
       img.style.setProperty('height', (natH * scale) + 'px', 'important');
+      aggiornaZoom();
+    }
+
+    // Indicatore del livello di zoom (riquadro in alto a destra, stessa resa
+    // dell'overlay info). 100% = dimensione reale (1:1 coi pixel fisici); si
+    // aggiorna a ogni cambio scala (clic, ctrl+rotella, pinch, resize).
+    function aggiornaZoom() {
+      const perc = Math.round(scale / realScale * 100);
+      if (!elZoom) {
+        elZoom = document.createElement('div');
+        elZoom.className = 'image-info image-info--zoom';
+        document.body.appendChild(elZoom);
+      }
+      if (elZoom.dataset.perc === String(perc)) return; // nessun cambiamento: evita re-render
+      elZoom.dataset.perc = String(perc);
+      elZoom.innerHTML = '<div class="image-info-title"><div class="image-info-ext">ZOOM</div>' +
+        '<div class="image-info-size">' + perc + '%</div></div>';
     }
 
     // Zoom mantenendo fermo il punto (fx,fy in coordinate viewport) sotto il cursore/pinch.
