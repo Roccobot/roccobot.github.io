@@ -310,3 +310,43 @@ const SALVA_CON_DIALOGO    = true; // true = chiede dove salvare; false = scaric
 > tasto non trova la sorgente, o l'inglese non "attacca", mandami un dettaglio
 > (URL video / cosa mostra la console) e affino. Solo MP4 diretto per ora; l'HLS
 > a segmenti si può aggiungere se serve.
+
+## Decent Image Viewer
+
+**File:** `DecentImageViewer.user.js`
+
+Migliora le **pagine-immagine del browser** (quando apri direttamente un file immagine,
+`content-type` `image/*`): sfondo a **scacchi**, un overlay con **formato / dimensioni /
+peso**, e soprattutto un comportamento di visualizzazione controllato:
+
+- **Adattamento alla vista, mai oltre il reale.** L'immagine è sempre adattata allo
+  spazio della scheda (`contain`), ma **non supera mai la dimensione reale** — dove
+  "reale" significa **1:1 con i pixel fisici** (DPR ignorato: su schermi HiDPI la
+  dimensione reale in CSS px è `larghezza naturale / devicePixelRatio`).
+- **Niente drag/move.** L'immagine non si trascina; quando è ingrandita oltre la vista
+  si scorre (rotella/trackpad/barre), non si trascina.
+- **Clic (desktop) = alterna** tra **adattato** e **reale (100%)**, centrando sul punto
+  cliccato.
+- **Zoom solo sull'immagine (override totale).** Qualsiasi gesto di zoom — **ctrl+rotella**
+  o pinch da trackpad su desktop, **pinch-to-zoom** su mobile — agisce **solo
+  sull'immagine del visualizzatore** e **non** applica lo zoom di pagina (rotella non-ctrl
+  = scroll/pan; `touch-action:none` per catturare il pinch).
+
+### Personalizzazione
+
+```js
+let THEME = 'dark';        // 'system' | 'dark' | 'light' (sfondo a scacchi)
+const ZOOM_MAX_MULT = 12;  // zoom massimo = N× la dimensione reale
+const ZOOM_SENS = 0.0015;  // sensibilità dello zoom con ctrl+rotella
+```
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/DecentImageViewer.user.js>
+3. Premere **Installa**.
+
+> **Nota:** override del visualizzatore-immagine nativo del browser. Su alcuni browser
+> lo zoom-clic nativo è a livello di motore e non del tutto sopprimibile via JS: lo
+> script impone comunque la propria dimensione (con `!important`) e gestisce clic/zoom,
+> ma se noti conflitti su un browser specifico segnalamelo e affino.
