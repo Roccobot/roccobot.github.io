@@ -65,6 +65,15 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   livello di progetto in `.claude/settings.json` (`"model": "opus"`).
   Non usare Sonnet o Haiku.
 
+## 🗣️ Lingua di risposta
+
+- **Rispondere SEMPRE in italiano** all'utente, in ogni messaggio e in ogni
+  circostanza (istruzione durevole e categorica dell'utente, 2026-07-21). Vale
+  per tutte le sessioni di questo repo, a prescindere dalla lingua del task, dei
+  file o della richiesta. I contenuti tecnici (codice, messaggi di commit, corpo
+  delle PR, nomi di file) seguono le loro convenzioni, ma la **comunicazione con
+  l'utente** è sempre in italiano.
+
 ## 🖼️ Artefatti
 
 - **Generazione di artefatti sempre autorizzata (istruzione durevole
