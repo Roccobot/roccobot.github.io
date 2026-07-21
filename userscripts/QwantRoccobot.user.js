@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.7.1
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale solo dall'URL della miniatura; se non ci riesce, lascia il clic normale.
+// @version      2.8.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -187,12 +187,20 @@
   //   v2.5 → niente più patch, ma faceva una NOSTRA fetch all'API di Qwant. Quella
   //          chiamata non "firmata" fa scattare l'anti-bot e può avvelenare il
   //          cookie di sessione → di nuovo 403 (intermittente).
-  //   v2.6 → (questa) ZERO chiamate di rete e ZERO manomissioni. Le richieste della
-  //          pagina restano intatte, quindi il modulo NON PUÒ rompere la ricerca.
-  // L'originale si ricava SOLO da ciò che è già nel DOM: dall'URL della miniatura
-  // (le proxy s*.qwant.com/thumbr/ possono incapsulare l'URL sorgente) o da dati
-  // eventualmente presenti nell'HTML. Se non si ricava, il clic resta quello di
-  // Qwant (apre l'anteprima): degrada, non rompe.
+  //   v2.6 → ZERO chiamate di rete e ZERO manomissioni. Le richieste della pagina
+  //          restano intatte, quindi il modulo NON PUÒ rompere la ricerca.
+  //   v2.8 → (questa) Qwant è passato a miniature BING (tse.mm.bing.net/th/id/OIP.<hash>):
+  //          il vecchio metodo (decodifica dell'URL miniatura s*.qwant.com/thumbr/)
+  //          non trova più l'originale, perché l'hash Bing NON è reversibile e i
+  //          risultati sono resi lato client (niente JSON negli <script>). Si legge
+  //          quindi l'URL sorgente dai DATI GIÀ IN PAGINA: lo stato dell'app React
+  //          (props/fiber dei risultati) contiene il vero URL immagine. È solo
+  //          lettura di oggetti JS: nessuna rete, nessuna patch di fetch/XHR/history
+  //          → l'anti-bot non c'entra.
+  // L'originale si ricava SOLO da ciò che è già nel client: 1) stato React dei
+  // risultati (thumbnail → media), 2) URL della miniatura (proxy thumbr legacy),
+  // 3) eventuale JSON nell'HTML. Se non si ricava, il clic resta quello di Qwant
+  // (apre l'anteprima): degrada, non rompe.
   (function immaginiDirette() {
     if (!IMMAGINI_DIRETTE) return;
 
@@ -265,6 +273,85 @@
         const re = /"media":"((?:[^"\\]|\\.)*)"[^{}]*?"thumbnail":"((?:[^"\\]|\\.)*)"|"thumbnail":"((?:[^"\\]|\\.)*)"[^{}]*?"media":"((?:[^"\\]|\\.)*)"/g;
         let m;
         while ((m = re.exec(t))) ricorda(scappa(m[2] || m[3]), scappa(m[1] || m[4]));
+      }
+    }
+
+    // ── Dati già caricati nello STATO REACT (zero rete, zero patch) ────────
+    // Qwant rende i risultati lato client: il vero URL immagine vive nelle props
+    // dei componenti (fiber), non nel DOM né in un <script>. Si legge da lì. È
+    // pura lettura di oggetti JS: non tocca fetch/XHR/history, quindi non fa
+    // scattare l'anti-bot. Tollerante ai nomi dei campi (Qwant può cambiarli).
+    const IMG_EXT = /\.(?:jpe?g|png|gif|webp|avif|bmp|tiff?|svg)(?:[?#]|$)/i;
+    function urlDaChiavi(o, chiavi) {
+      for (const k of chiavi) {
+        const v = o[k];
+        if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v;
+      }
+      return '';
+    }
+    function isThumbHost(u) {
+      return /\/\/[^/]*bing\.net\//i.test(u) || /[?&]pid=api/i.test(u) ||
+             /\/th\/id\//i.test(u) || /\/thumbr\//i.test(u) ||
+             /\/\/[^/]*qwant\.com\//i.test(u);
+    }
+    const MEDIA_STRONG = ['media', 'mediaUrl', 'media_url', 'fullsize', 'fullSize',
+      'original', 'originalUrl', 'image', 'imageUrl', 'img'];
+    const MEDIA_WEAK = ['url', 'src', 'href'];
+    const THUMB_KEYS = ['thumbnail', 'thumbnailUrl', 'thumbnail_url', 'thumb', 'thumbUrl'];
+    function trovaMediaThumb(o, prof, visti) {
+      if (!o || typeof o !== 'object' || prof > 8 || o.nodeType) return null;
+      if (visti.has(o)) return null;
+      visti.add(o);
+      if (visti.size > 4000) return null;
+      let media = urlDaChiavi(o, MEDIA_STRONG);
+      const thumb = urlDaChiavi(o, THUMB_KEYS);
+      if (!media) {                             // chiavi deboli solo se è chiaramente un'immagine
+        const w = urlDaChiavi(o, MEDIA_WEAK);
+        if (w && IMG_EXT.test(w)) media = w;
+      }
+      if (media && !isThumbHost(media)) {
+        if (thumb && thumb !== media) return { media: media, thumbnail: thumb };
+        if (IMG_EXT.test(media)) return { media: media, thumbnail: '' };
+      }
+      const valori = Array.isArray(o) ? o : Object.values(o);
+      for (const v of valori) {
+        if (v && typeof v === 'object') {
+          const r = trovaMediaThumb(v, prof + 1, visti);
+          if (r) return r;
+        }
+      }
+      return null;
+    }
+    function fiberDi(node) {
+      let keys;
+      try { keys = Object.getOwnPropertyNames(node); } catch (e) { return null; }
+      for (const k of keys) {
+        if (k.indexOf('__reactFiber$') === 0 || k.indexOf('__reactInternalInstance$') === 0) {
+          return node[k];
+        }
+      }
+      return null;
+    }
+    function scansionaFiber() {
+      const imgs = document.images;
+      for (let i = 0; i < imgs.length; i++) {
+        const img = imgs[i];
+        if (img.dataset.rbfib) continue;
+        const s0 = img.currentSrc || img.src || '';
+        if (!s0 || s0.indexOf('data:') === 0) continue; // salta loghi/icone (data URI) e img senza src
+        let node = img, trovato = null;
+        for (let up = 0; up < 8 && node && !trovato; up++, node = node.parentElement) {
+          let f = fiberDi(node);
+          for (let c = 0; c < 24 && f && !trovato; c++, f = f.return) {
+            const p = f.memoizedProps;
+            if (p && typeof p === 'object') trovato = trovaMediaThumb(p, 0, new Set());
+          }
+        }
+        if (trovato) {
+          if (trovato.thumbnail) ricorda(trovato.thumbnail, trovato.media);
+          ricorda(img.currentSrc || img.src, trovato.media);
+          img.dataset.rbfib = '1';
+        }
       }
     }
 
@@ -378,6 +465,7 @@
     }
     function riscriviTutto() {
       if (!attivo || !document.body) return;
+      scansionaFiber(); // legge dallo stato React i media non ricavabili dalla miniatura Bing
       for (const img of document.images) {
         const m = mediaPerImg(img);
         if (!m) continue;
