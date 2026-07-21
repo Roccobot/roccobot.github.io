@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.1.0
+// @version         2.2.0
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
-// @include         /^https?:\/\/.+\.(?:jpeg|jpe|jpg|png|tiff|tif|avif|webp|heic|heif|ico|jp2|jxl|gif|apng)(?:[?#].*)?$/i
+// @match           http://*/*
+// @match           https://*/*
 // @noframes
 // @run-at          document-idle
 // @grant           GM_addStyle
@@ -23,7 +24,14 @@
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
 
-  // Agisce solo sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
+  // Agisce SOLO sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
+  // Nota: restringere via @match/@include all'ESTENSIONE dell'URL e' fragile e va
+  // evitato: salta le immagini dirette con query string (es. ...preview01.jpg?1662541242)
+  // o senza estensione, e in certi gestori (AdGuard) l'@include a regex non inietta
+  // affatto lo script (v2.1.0: sfondo a scacchi + overlay + zoom spariti). Percio' il
+  // match resta ampio (http/https) e il VERO filtro e' questa guardia sul content-type:
+  // se la pagina non e' un file immagine servito direttamente (image/*), si esce subito
+  // senza toccare nulla.
   if ((document.contentType || '').indexOf('image/') !== 0) return;
 
   if (THEME === 'system') {
