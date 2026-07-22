@@ -436,6 +436,12 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
    Rimosso il margin-left ridondante che la raddoppiava (~0.68em -> 0.4em). */
 .status-icon { display:inline-block; width:0.92em; height:0.92em; vertical-align:middle; margin-left:0.12em; object-fit:contain; }
+/* Icone dei badge SULLE CARD: altezza UNIFORME (0.92em), larghezza AUTOMATICA
+   proporzionale all'aspetto nativo (regola dell'utente: canvas 256px in verticale
+   scalato a ~22px, larghezza di conseguenza; le icone si usano as-is, senza
+   ritaglio). Scoped a .rank-name .rank-flags cosi' scavalca le classi di larghezza
+   per-icona SOLO sulle card: la LEGENDA (stesse classi .si-*) resta intatta. */
+.rank-name .rank-flags .status-icon { width:auto; height:0.92em; }
 /* Partenza per l'Ovest presunta (dedotta, non attestata): icona semitrasparente */
 .status-icon.si-dim { opacity:0.5; }
 /* Icone PNG normalizzate: i fattori replicano la resa esatta dei vecchi
@@ -2868,7 +2874,7 @@ var ICON_SVG = {
   narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"%L%\">",
   menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"%L%\">",
   sette:      "<img class=\"status-icon si-sette\" src=\"icons/Sette.png\" title=\"%L%\" alt=\"%L%\">",
-  incarnazione: "<img class=\"status-icon si-incarnazione\" src=\"icons/Fenice.png\" title=\"%L%\" alt=\"%L%\">",
+  incarnazione: "<img class=\"status-icon si-incarnazione\" src=\"icons/Ritorno.png\" title=\"%L%\" alt=\"%L%\">",
   est:        "<img class=\"status-icon si-est\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
   drago:      "<img class=\"status-icon si-demon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
   balrog:     "<img class=\"status-icon si-demon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
