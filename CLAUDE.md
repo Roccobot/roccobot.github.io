@@ -1930,6 +1930,39 @@ specifico del dataset):
 
 ## 🧹 Asset del progetto
 
+### 🖼️ Rendering delle icone-badge sulle card (dalla v11.14)
+
+Modello unico deciso dall'utente per le icone-badge nella riga del nome. **NON**
+tocca la legenda, né il wrapping/posizionamento di nomi ed etichette (a-capo
+'smart', `tightenNames`, `optimizeBipartite`, ...): quelle logiche restano
+separate e intoccabili.
+
+- **Icone as-is** (regola universale, cfr. `Roccobot.md`): niente ritaglio,
+  niente spostamento dei pixel nel canvas. Si disegnano su canvas alto 256px e si
+  usano tali e quali; il padding trasparente attorno al disegno è voluto.
+- **Altezza UNIFORME, larghezza AUTOMATICA.** Sulla card ogni icona-badge ha
+  `height:0.92em` (~22-23px) e `width:auto` (proporzionale all'aspetto nativo):
+  regola scoped `.rank-name .rank-flags .status-icon { width:auto; height:0.92em }`,
+  che scavalca eventuali classi di larghezza per-icona SOLO sulle card e lascia la
+  **legenda intatta** (stesse classi `.si-*`, ma fuori da quel selettore). Niente
+  più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
+  uniforme, la larghezza segue in proporzione. La dimensione della figura la
+  governa l'utente disegnando dentro il canvas 256px.
+- **Un solo meccanismo di correzione (convenzione).** Le rifiniture della singola
+  icona si fanno sempre con la stessa logica: `margin` (sx/dx) per il **gap
+  orizzontale**, `transform` per il **nudge ottico** (verticale e
+  micro-orizzontale, senza spostare i vicini). Correzioni ad-hoc/ottiche, dipendono
+  dall'aspetto di ogni icona e da quelle ai lati.
+- **I due motori di layout NON si fondono.** Desktop: `.rank-name` è `inline-flex`
+  e i badge sono suoi flex-item via `display:contents`. Mobile: `.rank-name` è a
+  blocco e i badge stanno in `.rank-flags` `inline-flex`. Sono la logica di
+  wrapping e **non vanno toccati**: la coerenza desktop/mobile si cerca a livello
+  di convenzione delle correzioni, non fondendo i motori.
+- **Storico**: fino alla v11.04 le icone avevano box su misura per-icona (altezze
+  diverse: Unico `0.707em`, Nove/Sette `0.738em`, Aratar `0.823em`, anelli
+  `0.893em`, corone/Istari `0.934em`, le altre `0.92em`); dalla v11.14 tutte a
+  `0.92em` (scelta 'A1' dell'utente: alcune icone crescono di conseguenza).
+
 - **Ottimizzazione immagini: SOLO lossless, mai lossy (regola dell'utente,
   2026-07-14).** Sulle immagini caricate dall'utente è ammessa **esclusivamente**
   l'ottimizzazione a **impatto zero sui pixel**: rimozione di metadati e
