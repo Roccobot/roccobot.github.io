@@ -1965,9 +1965,16 @@ separate e intoccabili.
     applica quando l'utente lo chiede a parole (dice 'nudge' o equivalente). È
     l'**unico** strumento capace di alzare/abbassare una singola icona senza
     spostare le vicine (un `margin` verticale in flex sposterebbe l'allineamento
-    della riga): per questo `margin` e `nudge` non sono riducibili a uno solo. Usato
-    sia sulle **card** (le corone dei Re) sia nella **legenda** (corone, Helcaraxë,
-    Ritorno).
+    della riga): per questo `margin` e `nudge` non sono riducibili a uno solo.
+    Dalla v11.18 il nudge **NON è più usato sulle card** per le correzioni
+    discrezionali: le corone dei Re, che lo usavano, sono state convertite a `margin`
+    (coppia `margin-top/-bottom` per l'alzata verticale + `margin-left/-right` con
+    compensazione per lo spostamento orizzontale della sola corona; desktop
+    pixel-identico, mobile scarto ~0.42px accettato). Il nudge resta in **legenda**
+    (corone, Helcaraxë, Ritorno) e come **posizionamento intrinseco degli anelli**
+    (`.si-vilya/nenya/narya/nove/sette`, `transform:translateY`, regola GLOBALE
+    card+legenda che allinea la *fascia* dell'anello agli altri cerchi: non è un
+    ritocco discrezionale, non confonderlo con le correzioni di spaziatura).
   Correzioni ad-hoc/ottiche, dipendono dall'aspetto di ogni icona e da quelle ai
   lati. (Nota: la regola universale 'Posizionamenti assoluti e mirati' di
   `Roccobot.md` preferisce il `transform` per SPOSTARE un elemento senza toccare i
