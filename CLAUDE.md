@@ -1955,13 +1955,15 @@ separate e intoccabili.
 - **Due strumenti di correzione, divisi per ASSE (convenzione, dalla v11.19).**
   Le rifiniture della singola icona usano **solo due** strumenti, ognuno per il
   proprio asse:
-  - **ORIZZONTALE → `margin` (sx/dx).** Ogni spostamento/gap orizzontale si fa con
-    `margin`. Il margine sposta l'icona **e tutte quelle che la seguono** (regola il
-    gap); per spostare la sola icona senza muovere le seguenti si usa una coppia
-    `margin-left`/`margin-right` che si compensa. Le eventuali differenze
-    desktop/mobile sono lo **stesso** `margin` con valori diversi in media query,
-    non un meccanismo a sé (e dalla v11.17 non ce ne sono più: Morgoth, unico caso,
-    è stato unificato a un valore condiviso).
+  - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA.** Ogni spostamento/gap
+    orizzontale si fa con `margin` e **deve** spostare l'icona **e tutte quelle
+    che la seguono**: le icone-badge sono una fila renderizzata a cascata. **Niente
+    compensazioni** (coppie `margin-left`/`margin-right` di segno opposto pensate per
+    isolare il movimento su una sola icona senza spostare le seguenti): è vietato,
+    regola universale dell'utente (2026-07-22, vedi `Roccobot.md`). Le eventuali
+    differenze desktop/mobile sono lo **stesso** `margin` con valori diversi in media
+    query, non un meccanismo a sé (e dalla v11.17 non ce ne sono più: Morgoth, unico
+    caso, è stato unificato a un valore condiviso).
   - **VERTICALE → `transform`/nudge (`translateY`).** Ogni alzata/abbassata si fa col
     nudge, che sposta **solo quell'icona** senza toccare le vicine né il layout della
     riga. È l'**unico** strumento capace di farlo: un `margin` verticale in flex
@@ -1972,8 +1974,8 @@ separate e intoccabili.
   ripristinando `transform:translateY` per il verticale e tenendo il `margin` solo
   per l'orizzontale (l'intento dell'utente era eliminare i nudge **orizzontali**, non
   quelli verticali). Le corone sulle card usano ora `transform:translateY(-0.078em)`
-  (verticale) + `margin-left:-0.056em; margin-right:0.026em` (orizzontale, con
-  compensazione così i badge seguenti non si muovono). Il nudge verticale è usato
+  (verticale) + `margin-left:-0.056em` (orizzontale, a cascata; la compensazione
+  `margin-right:0.026em` è stata RIMOSSA nella v11.20). Il nudge verticale è usato
   anche in **legenda** (corone, Helcaraxë, Ritorno) e come **posizionamento
   intrinseco degli anelli** (`.si-vilya/nenya/narya/nove/sette`, `translateY`, regola
   GLOBALE card+legenda che allinea la *fascia* dell'anello agli altri cerchi).
