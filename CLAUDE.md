@@ -1957,8 +1957,9 @@ separate e intoccabili.
   proprio asse:
   - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA (modello 'caratteri
     consecutivi').** Le icone-badge si comportano come **caratteri consecutivi** di
-    una riga: modificare spaziatura/margine di UNA cascata **verso destra** (l'icona
-    e tutte quelle che la seguono si spostano), mentre **a sinistra nulla si muove**
+    una riga: modificare spaziatura/margine di UNA propaga i movimenti **a cascata
+    verso destra** (l'icona e tutte quelle che la seguono si spostano), mentre **a
+    sinistra nulla si muove**
     (le icone precedenti restano dove sono — è anche il comportamento naturale di
     `margin` su un flex item). **Niente compensazioni** (coppie
     `margin-left`/`margin-right` di segno opposto pensate per isolare il movimento su
