@@ -505,6 +505,11 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 /* Icone Istari (le 5 dei maghi): correzione spaziatura a SINISTRA e a DESTRA,
    solo sulle card (in legenda si-istari ha una sua gestione dedicata). */
 .rank-name .rank-flags .si-istari { margin-left:-0.05em; margin-right:-0.05em; }
+/* Morgoth (easter-egg su Fingolfin, canvas quadrato 236x256): UN SOLO valore
+   di margine per entrambi i layout (niente più per-viewport). Compromesso tra
+   il vecchio desktop (ml -0.05 / mr -0.11) e mobile (ml +0.07): piccolo scarto
+   ottico simmetrico accettato. Solo sulle card. */
+.rank-name .rank-flags .si-morgoth { margin-left:0.01em; margin-right:-0.06em; }
 /* Corone dei Re (Alto Re dei Noldor, Re Supremo, Re Supremo in carica):
    correzione OTTICA solo sulle CARD (non in legenda). Alzate di 0.078em
    (= 3px misurati su screenshot a DPR 1.5, cioe 2px CSS) per centrarle sulla
@@ -1358,10 +1363,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      un margine sinistro extra, così non 'tocca' l'ultimo badge (era ~8px, meno
      del passo 11px tra badge). Solo desktop; su mobile sotto. */
   .rank-name > .rank-flags .genere-svg { margin-left:0.07em; }
-  /* Morgoth (canvas quadrato 236x256): equidistanza ottica dei badge di
-     Fingolfin. Su DESKTOP il gap a destra (verso la corona) era più largo
-     (~12.6px vs ~9-10 degli altri): lo stringe. Misurato inchiostro-a-inchiostro. */
-  .rank-name > .rank-flags .si-morgoth { margin-right:-0.11em; margin-left:-0.05em; }
 }
 /* ELFI — tonalità blu/celeste */
 .type-noldo      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
@@ -1727,10 +1728,6 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   /* Genere: minimo stacco extra oltre al gap flex 0.28em (dalla v8.81: la v8.80
      0.3em risultava troppo distanziata). */
   .rank-name > .rank-flags .genere-svg { margin-left:0.06em; }
-  /* Morgoth (canvas quadrato 236x256): su MOBILE il gap a sinistra (verso
-     l'Helcaraxe) era stretto (~3.6px vs ~5.5 degli altri): lo allarga per
-     l'equidistanza ottica. Misurato inchiostro-a-inchiostro. */
-  .rank-name > .rank-flags .si-morgoth { margin-left:0.07em; }
   /* Etichette = BLOCCO ATOMICO (inline-flex): o stanno TUTTE in coda al nome
      (dopo le icone), o vanno TUTTE a capo insieme, nell'ordine dato,
      allineate al bordo sinistro del contenuto (un box inline-level che non
@@ -2230,7 +2227,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.16</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

@@ -1777,11 +1777,15 @@ specifico del dataset):
     Grond), canvas 236x256 (padding trasparente CONSERVATO su richiesta), e
     `.si-morgoth` ha box `width:.848em; height:.92em` (= aspetto 236/256, così
     l'immagine riempie il box senza letterbox). Poiché il badge esiste su UN solo
-    personaggio (Fingolfin), si sono tarati margini OTTICI per-viewport misurati
-    inchiostro-a-inchiostro (`optic.js`), così tutti i suoi badge risultano
-    equidistanti: DESKTOP `margin-right:-0.11em` (il gap verso la corona era
-    ~12.6px vs ~9-10 degli altri), MOBILE `margin-left:0.11em` (il gap verso
-    l'Helcaraxe era ~3.6px vs ~5.5). Storico: dalla v8.80 alla v10.42 ritagliata
+    personaggio (Fingolfin), il margine è tarato otticamente, ma con **un solo
+    valore condiviso** tra i due layout (`margin-left:0.01em; margin-right:-0.06em`,
+    solo sulle card): niente più regole per-viewport, così le correzioni delle
+    icone-badge restano ai soli due meccanismi `margin` + `nudge`. Storico: fino
+    alla v11.16 c'erano due regole per-device misurate inchiostro-a-inchiostro
+    (`optic.js`) — DESKTOP `margin-right:-0.11em; margin-left:-0.05em` (gap verso
+    la corona ~12.6px vs ~9-10 degli altri), MOBILE `margin-left:0.07em` (gap verso
+    l'Helcaraxe ~3.6px vs ~5.5); unificate nella v11.17 accettando un piccolo scarto
+    ottico simmetrico. Storico immagine: dalla v8.80 alla v10.42 ritagliata
     al contenuto (215x237) con box `.835em`; in v10.43 una prima nuova arte
     256x256 quadrata con box `.92em`, sostituita in v10.45.**
 - **Distanziamento del simbolo di genere (dalla v8.80).** Il simbolo ♂/♀
@@ -1948,14 +1952,22 @@ separate e intoccabili.
   più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
   uniforme, la larghezza segue in proporzione. La dimensione della figura la
   governa l'utente disegnando dentro il canvas 256px.
-- **Un solo meccanismo di correzione, con un DEFAULT (convenzione).** Le rifiniture
-  della singola icona usano due strumenti: `margin` (sx/dx) e `transform`.
+- **Due strumenti di correzione, con un DEFAULT (convenzione).** Le rifiniture
+  della singola icona usano **solo due** strumenti: `margin` (sx/dx) e `transform`.
+  Non esiste un terzo tipo: le eventuali differenze desktop/mobile sono lo **stesso**
+  `margin` con valori diversi in media query, non un meccanismo a sé (e dalla v11.17
+  non ce ne sono più: Morgoth, unico caso, è stato unificato a un valore condiviso).
   - **Default: quando l'utente NON specifica, si usa `margin`.** Il margine sposta
     l'icona **e tutte quelle che la seguono** (regola il **gap orizzontale**): è il
     metodo sottinteso per una richiesta di spaziatura.
   - **`transform` = nudge ottico, solo su richiesta ESPLICITA.** Sposta **solo
     quell'icona** (verticale e micro-orizzontale) **senza toccare le vicine**: si
-    applica quando l'utente lo chiede a parole (dice 'nudge' o equivalente).
+    applica quando l'utente lo chiede a parole (dice 'nudge' o equivalente). È
+    l'**unico** strumento capace di alzare/abbassare una singola icona senza
+    spostare le vicine (un `margin` verticale in flex sposterebbe l'allineamento
+    della riga): per questo `margin` e `nudge` non sono riducibili a uno solo. Usato
+    sia sulle **card** (le corone dei Re) sia nella **legenda** (corone, Helcaraxë,
+    Ritorno).
   Correzioni ad-hoc/ottiche, dipendono dall'aspetto di ogni icona e da quelle ai
   lati. (Nota: la regola universale 'Posizionamenti assoluti e mirati' di
   `Roccobot.md` preferisce il `transform` per SPOSTARE un elemento senza toccare i
