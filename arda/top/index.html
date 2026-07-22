@@ -470,7 +470,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    legenda). La forma triangolare lascia percepire più spazio ai lati del box,
    quindi si stringono i margini orizzontali di ~2px per lato. Scoped a
    .rank-name .rank-flags così non tocca la riga di legenda. */
-.rank-name .rank-flags .si-helcaraxe { margin-left:-0.02em; margin-right:-0.11em; }
+.rank-name .rank-flags .si-helcaraxe { margin-left:-0.02em; margin-right:-0.09em; }
 /* Badge Drago e Balrog: classe condivisa (correzione spaziatura, solo sulle
    CARD, non in legenda). */
 .rank-name .rank-flags .si-demon { margin-left:-0.05em; }
@@ -481,11 +481,16 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 /* Navi Aman (west) e Valinor (envoy): correzione spaziatura a sinistra, solo card. */
 .rank-name .rank-flags .si-aman,
 .rank-name .rank-flags .si-valinor { margin-left:-0.05em; }
-/* Tre Anelli degli Elfi (Vilya, Nenya, Narya): correzione spaziatura su ENTRAMBI
-   i lati, solo sulle card. */
+/* Tutti gli Anelli (Unico, Vilya, Nenya, Narya, Nove, Sette): correzione
+   spaziatura su ENTRAMBI i lati, solo sulle card. */
+.rank-name .rank-flags .si-unico,
 .rank-name .rank-flags .si-vilya,
 .rank-name .rank-flags .si-nenya,
-.rank-name .rank-flags .si-narya { margin-left:-0.04em; margin-right:-0.04em; }
+.rank-name .rank-flags .si-narya,
+.rank-name .rank-flags .si-nove,
+.rank-name .rank-flags .si-sette { margin-left:-0.02em; margin-right:-0.02em; }
+/* Calaquendi (badge calaquende): correzione spaziatura a destra, solo sulle card. */
+.rank-name .rank-flags .si-calaquende { margin-right:-0.04em; }
 /* Silmaril, Incarnazione, Ira: correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-silmaril,
 .rank-name .rank-flags .si-incarnazione,
@@ -2214,7 +2219,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v10.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.00</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2867,7 +2872,7 @@ var ICON_SVG = {
   drago:      "<img class=\"status-icon si-demon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
   balrog:     "<img class=\"status-icon si-demon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
   morgoth:    "<img class=\"status-icon si-morgoth\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
-  calaquende: "<img class=\"status-icon\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
+  calaquende: "<img class=\"status-icon si-calaquende\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
   guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
   suicidio:   "<img class=\"status-icon si-morte\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
 };
