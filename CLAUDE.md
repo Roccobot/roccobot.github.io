@@ -1955,15 +1955,18 @@ separate e intoccabili.
 - **Due strumenti di correzione, divisi per ASSE (convenzione, dalla v11.19).**
   Le rifiniture della singola icona usano **solo due** strumenti, ognuno per il
   proprio asse:
-  - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA.** Ogni spostamento/gap
-    orizzontale si fa con `margin` e **deve** spostare l'icona **e tutte quelle
-    che la seguono**: le icone-badge sono una fila renderizzata a cascata. **Niente
-    compensazioni** (coppie `margin-left`/`margin-right` di segno opposto pensate per
-    isolare il movimento su una sola icona senza spostare le seguenti): è vietato,
-    regola universale dell'utente (2026-07-22, vedi `Roccobot.md`). Le eventuali
-    differenze desktop/mobile sono lo **stesso** `margin` con valori diversi in media
-    query, non un meccanismo a sé (e dalla v11.17 non ce ne sono più: Morgoth, unico
-    caso, è stato unificato a un valore condiviso).
+  - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA (modello 'caratteri
+    consecutivi').** Le icone-badge si comportano come **caratteri consecutivi** di
+    una riga: modificare spaziatura/margine di UNA cascata **verso destra** (l'icona
+    e tutte quelle che la seguono si spostano), mentre **a sinistra nulla si muove**
+    (le icone precedenti restano dove sono — è anche il comportamento naturale di
+    `margin` su un flex item). **Niente compensazioni** (coppie
+    `margin-left`/`margin-right` di segno opposto pensate per isolare il movimento su
+    una sola icona senza spostare le seguenti): è vietato, regola universale
+    dell'utente (2026-07-22, vedi `Roccobot.md`). Le eventuali differenze
+    desktop/mobile sono lo **stesso** `margin` con valori diversi in media query, non
+    un meccanismo a sé (e dalla v11.17 non ce ne sono più: Morgoth, unico caso, è
+    stato unificato a un valore condiviso).
   - **VERTICALE → `transform`/nudge (`translateY`).** Ogni alzata/abbassata si fa col
     nudge, che sposta **solo quell'icona** senza toccare le vicine né il layout della
     riga. È l'**unico** strumento capace di farlo: un `margin` verticale in flex
