@@ -511,14 +511,18 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    ottico simmetrico accettato. Solo sulle card. */
 .rank-name .rank-flags .si-morgoth { margin-left:0.01em; margin-right:-0.06em; }
 /* Corone dei Re (Alto Re dei Noldor, Re Supremo, Re Supremo in carica):
-   correzione OTTICA solo sulle CARD (non in legenda). Alzate di 0.078em
-   (= 3px misurati su screenshot a DPR 1.5, cioe 2px CSS) per centrarle sulla
-   mezzana virtuale delle maiuscole, e portate a sinistra di 0.026em (= 1px
-   @DPR 1.5). Via transform: sposta SOLO la corona, senza intaccare il layout
-   ne la posizione degli altri badge. Scoped a .rank-name .rank-flags. */
+   correzione OTTICA solo sulle CARD (non in legenda), ora tutta a MARGIN (niente
+   piu nudge/transform sulle card, richiesta utente). Effetto invariato:
+   - alzate di 0.078em (centrate sulla mezzana virtuale delle maiuscole) via la
+     coppia margin-top:-0.078 / margin-bottom:0.078 (somma nulla -> la riga non
+     cambia altezza; con align-items:center la corona sale di 0.078em);
+   - portate a sinistra di 0.056em (0.03 di gap + 0.026 di spostamento) con
+     margin-right:0.026 che compensa lo spostamento cosi i badge seguenti NON si
+     muovono (restano spostati solo dei -0.03 di gap, come prima).
+   Scoped a .rank-name .rank-flags. */
 .rank-name .rank-flags .si-renoldor,
 .rank-name .rank-flags .si-resupremo,
-.rank-name .rank-flags .si-refinarfin { transform:translate(-0.026em,-0.078em); margin-left:-0.03em; }
+.rank-name .rank-flags .si-refinarfin { margin:-0.078em 0.026em 0.078em -0.056em; }
 /* Le stesse corone nella LEGENDA del Pannello (solo ReNoldor e ReSupremo:
    la terza, ReFinarfin, non e in legenda): orizzontale invariato, alzate di
    0.02em via transform (sposta SOLO l'icona, non il layout ne il resto). */
@@ -2227,7 +2231,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.18</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
