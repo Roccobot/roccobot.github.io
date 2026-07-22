@@ -1948,11 +1948,19 @@ separate e intoccabili.
   più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
   uniforme, la larghezza segue in proporzione. La dimensione della figura la
   governa l'utente disegnando dentro il canvas 256px.
-- **Un solo meccanismo di correzione (convenzione).** Le rifiniture della singola
-  icona si fanno sempre con la stessa logica: `margin` (sx/dx) per il **gap
-  orizzontale**, `transform` per il **nudge ottico** (verticale e
-  micro-orizzontale, senza spostare i vicini). Correzioni ad-hoc/ottiche, dipendono
-  dall'aspetto di ogni icona e da quelle ai lati.
+- **Un solo meccanismo di correzione, con un DEFAULT (convenzione).** Le rifiniture
+  della singola icona usano due strumenti: `margin` (sx/dx) e `transform`.
+  - **Default: quando l'utente NON specifica, si usa `margin`.** Il margine sposta
+    l'icona **e tutte quelle che la seguono** (regola il **gap orizzontale**): è il
+    metodo sottinteso per una richiesta di spaziatura.
+  - **`transform` = nudge ottico, solo su richiesta ESPLICITA.** Sposta **solo
+    quell'icona** (verticale e micro-orizzontale) **senza toccare le vicine**: si
+    applica quando l'utente lo chiede a parole (dice 'nudge' o equivalente).
+  Correzioni ad-hoc/ottiche, dipendono dall'aspetto di ogni icona e da quelle ai
+  lati. (Nota: la regola universale 'Posizionamenti assoluti e mirati' di
+  `Roccobot.md` preferisce il `transform` per SPOSTARE un elemento senza toccare i
+  vicini; qui, nel contesto della SPAZIATURA della fila di icone, il default è
+  invece il `margin`, che è proprio ciò che regola i gap.)
 - **I due motori di layout NON si fondono.** Desktop: `.rank-name` è `inline-flex`
   e i badge sono suoi flex-item via `display:contents`. Mobile: `.rank-name` è a
   blocco e i badge stanno in `.rank-flags` `inline-flex`. Sono la logica di
