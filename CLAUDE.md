@@ -1952,29 +1952,31 @@ separate e intoccabili.
   più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
   uniforme, la larghezza segue in proporzione. La dimensione della figura la
   governa l'utente disegnando dentro il canvas 256px.
-- **Due strumenti di correzione, con un DEFAULT (convenzione).** Le rifiniture
-  della singola icona usano **solo due** strumenti: `margin` (sx/dx) e `transform`.
-  Non esiste un terzo tipo: le eventuali differenze desktop/mobile sono lo **stesso**
-  `margin` con valori diversi in media query, non un meccanismo a sé (e dalla v11.17
-  non ce ne sono più: Morgoth, unico caso, è stato unificato a un valore condiviso).
-  - **Default: quando l'utente NON specifica, si usa `margin`.** Il margine sposta
-    l'icona **e tutte quelle che la seguono** (regola il **gap orizzontale**): è il
-    metodo sottinteso per una richiesta di spaziatura.
-  - **`transform` = nudge ottico, solo su richiesta ESPLICITA.** Sposta **solo
-    quell'icona** (verticale e micro-orizzontale) **senza toccare le vicine**: si
-    applica quando l'utente lo chiede a parole (dice 'nudge' o equivalente). È
-    l'**unico** strumento capace di alzare/abbassare una singola icona senza
-    spostare le vicine (un `margin` verticale in flex sposterebbe l'allineamento
-    della riga): per questo `margin` e `nudge` non sono riducibili a uno solo.
-    Dalla v11.18 il nudge **NON è più usato sulle card** per le correzioni
-    discrezionali: le corone dei Re, che lo usavano, sono state convertite a `margin`
-    (coppia `margin-top/-bottom` per l'alzata verticale + `margin-left/-right` con
-    compensazione per lo spostamento orizzontale della sola corona; desktop
-    pixel-identico, mobile scarto ~0.42px accettato). Il nudge resta in **legenda**
-    (corone, Helcaraxë, Ritorno) e come **posizionamento intrinseco degli anelli**
-    (`.si-vilya/nenya/narya/nove/sette`, `transform:translateY`, regola GLOBALE
-    card+legenda che allinea la *fascia* dell'anello agli altri cerchi: non è un
-    ritocco discrezionale, non confonderlo con le correzioni di spaziatura).
+- **Due strumenti di correzione, divisi per ASSE (convenzione, dalla v11.19).**
+  Le rifiniture della singola icona usano **solo due** strumenti, ognuno per il
+  proprio asse:
+  - **ORIZZONTALE → `margin` (sx/dx).** Ogni spostamento/gap orizzontale si fa con
+    `margin`. Il margine sposta l'icona **e tutte quelle che la seguono** (regola il
+    gap); per spostare la sola icona senza muovere le seguenti si usa una coppia
+    `margin-left`/`margin-right` che si compensa. Le eventuali differenze
+    desktop/mobile sono lo **stesso** `margin` con valori diversi in media query,
+    non un meccanismo a sé (e dalla v11.17 non ce ne sono più: Morgoth, unico caso,
+    è stato unificato a un valore condiviso).
+  - **VERTICALE → `transform`/nudge (`translateY`).** Ogni alzata/abbassata si fa col
+    nudge, che sposta **solo quell'icona** senza toccare le vicine né il layout della
+    riga. È l'**unico** strumento capace di farlo: un `margin` verticale in flex
+    sposterebbe l'allineamento della riga. Per questo i due strumenti **non sono
+    riducibili a uno solo** — sono complementari, uno per asse.
+  ⚠️ Storia: la v11.18 aveva erroneamente convertito a `margin` **tutto** il nudge
+  delle corone dei Re, **inclusa l'alzata verticale**; corretto nella v11.19
+  ripristinando `transform:translateY` per il verticale e tenendo il `margin` solo
+  per l'orizzontale (l'intento dell'utente era eliminare i nudge **orizzontali**, non
+  quelli verticali). Le corone sulle card usano ora `transform:translateY(-0.078em)`
+  (verticale) + `margin-left:-0.056em; margin-right:0.026em` (orizzontale, con
+  compensazione così i badge seguenti non si muovono). Il nudge verticale è usato
+  anche in **legenda** (corone, Helcaraxë, Ritorno) e come **posizionamento
+  intrinseco degli anelli** (`.si-vilya/nenya/narya/nove/sette`, `translateY`, regola
+  GLOBALE card+legenda che allinea la *fascia* dell'anello agli altri cerchi).
   Correzioni ad-hoc/ottiche, dipendono dall'aspetto di ogni icona e da quelle ai
   lati. (Nota: la regola universale 'Posizionamenti assoluti e mirati' di
   `Roccobot.md` preferisce il `transform` per SPOSTARE un elemento senza toccare i
