@@ -548,18 +548,17 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 /* Posizione verticale degli anelli in LEGENDA (richiesta utente, ritocchi per
    gradi). Tutto scoped a .ctrl-legend-row: NON tocca le card (là il verticale
    arriva dall'unità bi-ringelven / dalle regole globali). Ultimo aggiustamento:
-   Ultimo aggiustamento: Unico giù 0.01em, gli altri 5 giù 0.02em. Valori finali
-   in em puro:
-   - Elfici (Vilya/Nenya/Narya): -0.06em
+   Valori finali (impostazione assoluta, em puro):
+   - Elfici (Vilya/Nenya/Narya): -0.04em
    - Unico: +0.03em
-   - Nove / Sette: +0.008em
+   - Nove / Sette: +0.01em
    Specificità (0,2,0) > le regole globali .si-* (0,1,0). */
 .ctrl-legend-row .si-vilya,
 .ctrl-legend-row .si-nenya,
-.ctrl-legend-row .si-narya { transform:translateY(-0.06em); }
+.ctrl-legend-row .si-narya { transform:translateY(-0.04em); }
 .ctrl-legend-row .si-unico { transform:translateY(0.03em); }
 .ctrl-legend-row .si-nove,
-.ctrl-legend-row .si-sette { transform:translateY(0.008em); }
+.ctrl-legend-row .si-sette { transform:translateY(0.01em); }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -2267,7 +2266,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.90</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.91</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
