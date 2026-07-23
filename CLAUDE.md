@@ -744,9 +744,12 @@ gruppo = cambiare una terna.
 - **Distanziamento simbolo genere: rifinito in v8.81.** Il margine extra della
   v8.80 (0.28/0.3em) era troppo (gap ~15px); ridotto (desktop `0.07em`, mobile
   `0.06em`) → gap ~10px, tra il precedente 8.3px e il passo badge 11.3px.
-  Allineamento **verticale** dei cerchi (anelli + genere) sul centro-cap del nome
-  **invariato**: ♂/anelli condividono il centro esatto, ♀ tiene il suo
-  `translateY(.15em)` storico che porta il *cerchio* alla stessa quota.
+  Allineamento **verticale** dei cerchi (anelli + genere) sul centro-cap del nome:
+  ♂ (`.genere-svg--m`) `transform:translate(.006em,-0.076em)` (dalla v11.41 alzato
+  di 0.01em rispetto al precedente -0.066em, richiesta utente), ♀ tiene il suo
+  `translateY(.15em)` storico che porta il *cerchio* alla stessa quota. Il simbolo
+  di genere NON è un'unità dell'editor micro-aggiustamenti (resta governato da
+  questo CSS); nell'anteprima dell'editor è mostrato solo come riferimento.
   - **`Femmina.png` ritagliata ai lati (dalla v8.82).** Il PNG aveva ~30px di
     trasparente per lato (27% orizzontale) → il ♀ aveva spazio fantasma. Ritagliato
     L/R (versione fornita dall'utente, 180×252, non a filo) e larghezza del box
@@ -2051,8 +2054,14 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   campi (slider + input corto, senza hint) + '**Reset unità**' (ripristina l'ultimo
   salvato `BADGE_ADJUST_SAVED`); a **destra** le **anteprime impilate** (tema scuro
   sopra, chiaro sotto, un po' ingrandite) su 3 schede reali che portano il badge.
-  L'icona in modifica è marcata da una **freccina** (caret `.ba-pv-sel::after`,
-  theme-aware) sotto il badge, non da un box. In basso la **Tabella riepilogo SEMPRE
+  Ogni riga d'anteprima ha una **linea di mezzo rossa tratteggiata (1px)** che passa
+  esattamente a metà del **maiuscoletto** del nome (`--mid`, misurata a runtime col
+  font Cinzel via canvas: `placeMidlines`), riferimento per l'allineamento ottico;
+  disegnata **sotto** le icone (`z-index:-1` + `.ba-pane{isolation:isolate}`). In coda
+  a ogni riga è mostrato anche il **simbolo di genere** (♂/♀) come riferimento — NON
+  è un'unità dell'editor (resta governato dal suo CSS `.genere-svg`). L'icona in
+  modifica è marcata da una **freccina** (caret `.ba-pv-sel::after`, theme-aware,
+  oro su scuro / vermiglio su chiaro) sotto il badge, non da un box. In basso la **Tabella riepilogo SEMPRE
   visibile** (niente toggle), scrollevole (tutte le unità × 4 valori; aggiornata
   in-place con `refreshTableRow` durante il drag per non perdere lo scroll). Footer
   con **Annulla** (ripristina `BADGE_ADJUST_SAVED` e chiude) e **Salva** (commit,
