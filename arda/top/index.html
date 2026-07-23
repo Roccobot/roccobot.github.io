@@ -444,6 +444,13 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-name .rank-flags .status-icon { width:auto; height:0.92em; }
 /* Partenza per l'Ovest presunta (dedotta, non attestata): icona semitrasparente */
 .status-icon.si-dim { opacity:0.5; }
+/* Immagine badge o simbolo di genere che NON carica (cache vecchia dopo un cambio
+   di formato, path errato): il placeholder del browser (glifo + testo alt)
+   erediterebbe il corpo grande del nome (grosso come il titolo). La si riduce a un
+   segnaposto minuscolo — font-size:0 nasconde il testo alt (che resta nel DOM per
+   gli screen reader) e un box fisso 14px mostra solo il piccolo glifo di immagine
+   rotta. Classe messa da un listener 'error' (vedi lo script). Solo sulle card. */
+.rank-name .rank-flags img.badge-broken { font-size:0 !important; width:14px !important; height:14px !important; margin:0 1px !important; transform:none !important; }
 /* Icone PNG normalizzate: i fattori replicano la resa esatta dei vecchi
    SVG letterboxati nel box 0.92em. Le icone già bilanciate in file
    (Mappa, Aman, Silmaril) usano il box pieno. Le icone con oggetto
@@ -2230,7 +2237,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.70</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2958,7 +2965,14 @@ var BADGE_ADJUST_UNITS = [
   { id:'king_high_now',it:'Re in carica',         en:'Reigning King',        members:['king_high_now'] },
   { id:'onering',      it:'Unico Anello',         en:'One Ring',             members:['onering'] },
   { id:'ringelven',    it:'Anelli degli Elfi',    en:'Elven Rings',          members:['vilya','nenya','narya'], grp:3 },
-  { id:'ringdm',       it:'Altri Anelli del Potere', en:'Other Rings of Power', members:['menring','sette'], grp:2 }
+  { id:'ringdm',       it:'Altri Anelli del Potere', en:'Other Rings of Power', members:['menring','sette'], grp:2 },
+  // Simboli di genere (dalla v11.70): unità a sé, dimensioni BASE proprie (non
+  // 0.92em: sc le scala mantenendo l'aspetto). Regolabili come i badge, ma il
+  // rendering sulla card è il simbolo ♂/♀ aggiunto in renderList (genereSym), non
+  // in buildStatus. members = chiave-marcatore (non un flag dei dati): il match
+  // per-genere è gestito a parte (samples/renderList).
+  { id:'male',         it:'Maschio',              en:'Male',                 members:['male'] },
+  { id:'female',       it:'Femmina',              en:'Female',               members:['female'] }
 ];
 // badge key → id unità (per assegnare bi-<id> in buildStatus e per l'anteprima).
 var BADGE_UNIT = (function(){ var m = {}; BADGE_ADJUST_UNITS.forEach(function(u){ u.members.forEach(function(k){ m[k] = u.id; }); }); return m; })();
@@ -2974,8 +2988,16 @@ var BADGE_ADJUST_FALLBACK = {
   drago:{ml:-0.05,mr:0,ny:0,sc:1}, balrog:{ml:-0.05,mr:0,ny:0,sc:1},
   king_std:{ml:-0.056,mr:0,ny:-0.078,sc:1}, king_high:{ml:-0.056,mr:0,ny:-0.078,sc:1},
   king_high_now:{ml:-0.056,mr:0,ny:-0.078,sc:1}, onering:{ml:-0.02,mr:-0.02,ny:0,sc:1},
-  ringelven:{ml:-0.02,mr:-0.02,ny:-0.067,sc:1}, ringdm:{ml:-0.02,mr:-0.02,ny:-0.032,sc:1}
+  ringelven:{ml:-0.02,mr:-0.02,ny:-0.067,sc:1}, ringdm:{ml:-0.02,mr:-0.02,ny:-0.032,sc:1},
+  // Genere: seed = resa ATTUALE del CSS statico .genere-svg--m/f (nessun cambio
+  // visivo). male ml 0.076 = separazione 0.07 + la vecchia X translate 0.006 (ora
+  // margine, a cascata); ny = la vecchia translateY per-simbolo (-0.076 / +0.15).
+  male:{ml:0.076,mr:0,ny:-0.076,sc:1}, female:{ml:0.07,mr:0,ny:0.15,sc:1}
 };
+// Dimensioni base (em) dei simboli di genere (dal CSS .genere-svg--m/f): sc le
+// scala mantenendo l'aspetto (male quadrato, female più stretta e alta). Usate sia
+// dall'iniezione delle regole sia dall'anteprima dell'editor.
+var GENDER_BASE = { male:{ w:0.721, h:0.721 }, female:{ w:0.603, h:0.844 } };
 // Normalizza una voce {ml,mr,ny,sc}: numeri validi, scale > 0 (default 1).
 function baNorm(o){
   o = o || {};
@@ -2997,15 +3019,34 @@ function injectBadgeAdjustRules(){
   var old = document.getElementById('badge-adjust-rules'); if (old) old.remove();
   var css = BADGE_ADJUST_UNITS.map(function(u){
     var v = BADGE_ADJUST[u.id] || baNorm(BADGE_ADJUST_FALLBACK[u.id]);
-    return '.rank-name .rank-flags .bi-' + u.id + '{' +
-      'margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;' +
-      'transform:translateY(' + v.ny + 'em);' +
+    var pos = 'margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em);';
+    // Simboli di genere: dimensioni BASE proprie (l'aspetto va mantenuto), sc le
+    // scala. Le regole .bi-male/.bi-female scavalcano .genere-svg--m/f e la
+    // separazione statica (pari specificità, sorgente più in basso) SOLO sulle card.
+    var gb = GENDER_BASE[u.id];
+    if (gb) return '.rank-name .rank-flags .bi-' + u.id + '{' + pos +
+      'width:calc(' + gb.w + 'em * ' + v.sc + ');height:calc(' + gb.h + 'em * ' + v.sc + ')}';
+    return '.rank-name .rank-flags .bi-' + u.id + '{' + pos +
       'height:calc(0.92em * ' + v.sc + ');width:auto}';
   }).join('');
   var s = document.createElement('style'); s.id = 'badge-adjust-rules'; s.textContent = css;
   document.head.appendChild(s);
 }
 injectBadgeAdjustRules();
+
+// Immagini badge / simbolo di genere che non caricano (es. cache vecchia dopo un
+// cambio di formato, path errato): senza intervento il browser mostra il proprio
+// placeholder (glifo + testo alt) EREDITANDO il corpo grande del nome — grosso come
+// il titolo. Un listener in CAPTURE (gli eventi 'error' NON fanno bubbling) marca
+// l'img fallita con .badge-broken → il CSS la riduce a un segnaposto minuscolo.
+// Copre anche le img inserite dopo (renderList), perché l'evento scatta a ogni
+// caricamento fallito. L'attributo alt resta (accessibilità: solo la resa è ridotta).
+document.addEventListener('error', function(e){
+  var t = e.target;
+  if (t && t.tagName === 'IMG' && typeof t.className === 'string' && /\b(?:status-icon|genere-svg)\b/.test(t.className)) {
+    t.classList.add('badge-broken');
+  }
+}, true);
 
 var ICON_LABEL = {
   it: {
@@ -3306,7 +3347,10 @@ function renderList() {
     var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
     var genere = p.genere || 'm';
     var gl = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
-    var genereSym = genere === 'f' ? GENDER_ICON.f.split('%L%').join(gl.f) : genere === 'm' ? GENDER_ICON.m.split('%L%').join(gl.m) : '';
+    // Classe di unità bi-male/bi-female sul simbolo ♂/♀: aggancio ai
+    // micro-aggiustamenti (dalla v11.70), come i bi-<id> dei badge in buildStatus.
+    var genereSym = genere === 'f' ? GENDER_ICON.f.split('%L%').join(gl.f).replace('genere-svg--f', 'genere-svg--f bi-female')
+                  : genere === 'm' ? GENDER_ICON.m.split('%L%').join(gl.m).replace('genere-svg--m', 'genere-svg--m bi-male') : '';
     // Badge 'Ainu' per Valar/Maiar via isAinu() (fonte unica con categoria()),
     // Balrog INCLUSI: mostrano 'Ainu' come primo badge (tipoStr costruito prima
     // dei segmenti di p.tipo), poi 'Maia decaduto'/'Balrog'. Lúthien esclusa.
@@ -6428,7 +6472,17 @@ function showBadgeAdjustEditor(initState){
     if (td.length >= 5){ td[1].textContent = f(v.ml); td[2].textContent = f(v.mr); td[3].textContent = f(v.ny); td[4].textContent = v.sc.toFixed(2) + '×'; }
   }
 
-  function samples(u){ var out = []; for (var i = 0; i < dati.length && out.length < 3; i++){ var p = dati[i]; if (u.members.some(function(k){ return p[k]; })) out.push(p); } return out; }
+  function samples(u){
+    var out = [], i, p;
+    // Unità di genere: campioni per genere (non per un flag dei dati). Default 'm'.
+    if (u.id === 'male' || u.id === 'female'){
+      var g = u.id === 'male' ? 'm' : 'f';
+      for (i = 0; i < dati.length && out.length < 3; i++){ p = dati[i]; if ((p.genere === 'f' ? 'f' : 'm') === g) out.push(p); }
+      return out;
+    }
+    for (i = 0; i < dati.length && out.length < 3; i++){ p = dati[i]; if (u.members.some(function(k){ return p[k]; })) out.push(p); }
+    return out;
+  }
   function iconFile(p, k){ if (k === 'istari'){ var a = ISTARI_ICON[p.nome]; return 'icons/' + ((a && a[0]) || 'Bianco.webp'); } var m = /src="([^"]+)"/.exec(BADGE_ICON[k] || ''); return m ? m[1] : ('icons/' + k + '.webp'); }
   function nmOf(p){ return it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); }
   function renderPane(pane){
@@ -6440,9 +6494,14 @@ function showBadgeAdjustEditor(initState){
         var img = '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
         return selc ? '<span class="ba-pv-sel">' + img + '</span>' : img;
       }).join('');
-      // Simbolo di genere in coda (come sulla card), solo di riferimento: NON è
-      // un'unità dell'editor (resta governato dal suo CSS .genere-svg--m/f).
-      var gsym = (p.genere === 'f' ? GENDER_ICON.f : GENDER_ICON.m).split('%L%').join('');
+      // Simbolo di genere in coda (come sulla card): ORA è un'unità regolabile
+      // (bi-male/bi-female). Reso coi valori LIVE della sua unità (dimensioni base
+      // proprie, non 0.92em) ed evidenziato dalla freccia quando è quello selezionato.
+      var gid = (p.genere === 'f') ? 'female' : 'male';
+      var gv = BADGE_ADJUST[gid], gb = GENDER_BASE[gid];
+      var gsym = (p.genere === 'f' ? GENDER_ICON.f : GENDER_ICON.m).split('%L%').join('')
+        .replace('<img ', '<img style="width:calc(' + gb.w + 'em * ' + gv.sc + ');height:calc(' + gb.h + 'em * ' + gv.sc + ');margin-left:' + gv.ml + 'em;margin-right:' + gv.mr + 'em;transform:translateY(' + gv.ny + 'em)" ');
+      if (cur === gid) gsym = '<span class="ba-pv-sel">' + gsym + '</span>';
       return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + gsym + '</span></div>';
     }).join('');
     placeMidlines(pane);

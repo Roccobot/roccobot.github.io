@@ -747,9 +747,13 @@ gruppo = cambiare una terna.
   Allineamento **verticale** dei cerchi (anelli + genere) sul centro-cap del nome:
   ♂ (`.genere-svg--m`) `transform:translate(.006em,-0.076em)` (dalla v11.41 alzato
   di 0.01em rispetto al precedente -0.066em, richiesta utente), ♀ tiene il suo
-  `translateY(.15em)` storico che porta il *cerchio* alla stessa quota. Il simbolo
-  di genere NON è un'unità dell'editor micro-aggiustamenti (resta governato da
-  questo CSS); nell'anteprima dell'editor è mostrato solo come riferimento.
+  `translateY(.15em)` storico che porta il *cerchio* alla stessa quota. ⚠️ **Dalla
+  v11.70 il simbolo di genere È un'unità dell'editor micro-aggiustamenti**
+  (`male`/`female`): SULLE CARD la posizione/dimensione arriva dalle regole iniettate
+  `.bi-male`/`.bi-female` (seed = questi valori, nessun cambio visivo; la X-translate
+  0.006em del ♂ e la separazione sono ora nel `margin-left` dell'unità, a cascata).
+  Il CSS `.genere-svg--m/f` qui resta come **base/fallback** (e vale ancora in
+  legenda). Vedi 'Editor Micro-aggiustamenti'.
   - **`Femmina.png` ritagliata ai lati (dalla v8.82).** Il PNG aveva ~30px di
     trasparente per lato (27% orizzontale) → il ♀ aveva spazio fantasma. Ritagliato
     L/R (versione fornita dall'utente, 180×252, non a filo) e larghezza del box
@@ -2000,6 +2004,16 @@ separate e intoccabili.
   diverse: Unico `0.707em`, Nove/Sette `0.738em`, Aratar `0.823em`, anelli
   `0.893em`, corone/Istari `0.934em`, le altre `0.92em`); dalla v11.14 tutte a
   `0.92em` (scelta 'A1' dell'utente: alcune icone crescono di conseguenza).
+- **Segnaposto per immagine badge/genere che NON carica (dalla v11.70).** Un badge o
+  simbolo di genere il cui file non si carica (es. cache vecchia dopo un cambio di
+  formato, path errato) mostrerebbe il placeholder del browser (glifo + testo `alt`)
+  **ereditando il corpo grande del nome** — grosso come il titolo (segnalato
+  dall'utente durante la migrazione WebP, prima dell'hard-refresh). Un listener
+  `error` in **capture** (gli eventi `error` non fanno bubbling) marca l'`<img>`
+  fallita (`.status-icon`/`.genere-svg`) con la classe **`.badge-broken`**; il CSS
+  scoped alle card la riduce a un **segnaposto 14×14px con `font-size:0`** (nasconde
+  il testo `alt`, che **resta nel DOM** per gli screen reader). Copre anche le img
+  inserite dopo dal `renderList`.
 
 ### 🎚️ Editor 'Micro-aggiustamenti icone badge' (admin, dalla v11.33)
 
@@ -2009,12 +2023,28 @@ e **scale** di ogni icona-badge, con anteprima live su schede reali nei due temi
 a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4° pulsante
 'Micro-aggiustamenti icone badge'** (`showBadgeAdjustEditor`).
 
-- **Unità regolabili (`BADGE_ADJUST_UNITS`, 20).** Ogni unità = una icona singola
-  oppure un GRUPPO a variante-colore con **un solo controllo** condiviso: **Istari**
-  (5), **Navi** (Aman/Est/Valinor, 3), **Anelli elfici** (Vilya/Nenya/Narya, 3),
+- **Unità regolabili (`BADGE_ADJUST_UNITS`, 22 dalla v11.70).** Ogni unità = una icona
+  singola oppure un GRUPPO a variante-colore con **un solo controllo** condiviso:
+  **Istari** (5), **Navi** (Aman/Est/Valinor, 3), **Anelli elfici** (Vilya/Nenya/Narya, 3),
   **Nove/Sette** (2). Tutte le altre sono singole, **drago e balrog inclusi e
   separati** (immagini diverse, non varianti colore, benché condividano la classe
   `si-demon`). Le 3 corone (`king_std`/`king_high`/`king_high_now`) restano singole.
+  - **Simboli di genere `Maschio`/`Femmina` come unità (dalla v11.70, richiesta
+    utente).** Le ultime due unità (`male`/`female`) regolano i simboli ♂/♀ (prima
+    non modificabili dall'editor). Deroga UNICA al modello di sizing: NON usano
+    `height:0.92em; width:auto` ma **dimensioni base proprie** (`GENDER_BASE`:
+    male 0.721×0.721em, female 0.603×0.844em, dal CSS `.genere-svg--m/f`) che `sc`
+    scala mantenendo l'aspetto. Il seed di `BADGE_ADJUST_FALLBACK` riproduce esatto
+    il CSS statico (nessun cambio visivo): `male` ml 0.076 (= separazione 0.07 + la
+    vecchia X-translate 0.006, ora margine a cascata) ny −0.076; `female` ml 0.07 ny
+    +0.15. Le regole `.bi-male`/`.bi-female` (iniettate da `injectBadgeAdjustRules`,
+    ramo `GENDER_BASE`) scavalcano `.genere-svg--m/f` e la separazione statica (pari
+    specificità, sorgente più in basso) **solo sulle card**; i nudge di gruppo
+    (desktop `top:-0.03em`, mobile container `translateY`) restano. La classe
+    `bi-male`/`bi-female` è messa in `renderList` sul `genereSym` (non in
+    `buildStatus`). ⚠️ La separazione mobile passa da 0.06 a 0.07em (unico valore
+    ml, +0.01em ≈ 0.16px: impercettibile). La **legenda** (`.leg-gender`) non è
+    toccata (scope diverso).
   ⚠️ Le **etichette** dei pulsanti (`it`/`en` in `BADGE_ADJUST_UNITS`) sono nomi di
   DISPLAY dell'editor, **scollegati** da nomi di file/classe, ridefiniti dall'utente
   (v11.36): p.es. Ritorno→**Mandos**, Sopravvissuto→**Quarta Era**, Navi
@@ -2059,8 +2089,10 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   esattamente a metà del **maiuscoletto** del nome (`--mid`, misurata a runtime col
   font Cinzel via canvas: `placeMidlines`), riferimento per l'allineamento ottico;
   disegnata **sotto** le icone (`z-index:-1` + `.ba-pane{isolation:isolate}`). In coda
-  a ogni riga è mostrato anche il **simbolo di genere** (♂/♀) come riferimento — NON
-  è un'unità dell'editor (resta governato dal suo CSS `.genere-svg`). L'icona in
+  a ogni riga è mostrato anche il **simbolo di genere** (♂/♀): **dalla v11.70 è una
+  vera unità** (`male`/`female`), reso coi valori live della sua unità (dimensioni
+  base proprie); i campioni sono scelti per genere (`samples` filtra `p.genere`) e la
+  freccina lo evidenzia quando è l'unità selezionata. L'icona in
   modifica è marcata da una **freccina** (caret `.ba-pv-sel::after`, theme-aware,
   oro su scuro / vermiglio su chiaro) sotto il badge, non da un box. In basso la **Tabella riepilogo SEMPRE
   visibile** (niente toggle), scrollevole (tutte le unità × 4 valori; aggiornata
