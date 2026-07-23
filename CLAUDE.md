@@ -2012,6 +2012,12 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   **Nove/Sette** (2). Tutte le altre sono singole, **drago e balrog inclusi e
   separati** (immagini diverse, non varianti colore, benché condividano la classe
   `si-demon`). Le 3 corone (`king_std`/`king_high`/`king_high_now`) restano singole.
+  ⚠️ Le **etichette** dei pulsanti (`it`/`en` in `BADGE_ADJUST_UNITS`) sono nomi di
+  DISPLAY dell'editor, **scollegati** da nomi di file/classe, ridefiniti dall'utente
+  (v11.36): p.es. Ritorno→**Mandos**, Sopravvissuto→**Quarta Era**, Navi
+  Aman/Est/Valinor→**Navi (Blu/Viola/Verde)**, corone→**Alto Re/Re Supremo/Re in
+  carica**, anelli elfici→**Anelli degli Elfi**, Nove/Sette→**Altri Anelli del
+  Potere**. Cambiarle non tocca né i badge né la logica: solo il testo del selettore.
 - **4 parametri per unità:** `ml`/`mr` (margin orizzontale, **a cascata** — vedi la
   convenzione per asse, niente compensazioni), `ny` (nudge verticale via
   `transform:translateY`), `sc` (**scale** = moltiplicatore d'altezza:
