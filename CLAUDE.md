@@ -1998,6 +1998,65 @@ separate e intoccabili.
   `0.893em`, corone/Istari `0.934em`, le altre `0.92em`); dalla v11.14 tutte a
   `0.92em` (scelta 'A1' dell'utente: alcune icone crescono di conseguenza).
 
+### 🎚️ Editor 'Micro-aggiustamenti icone badge' (admin, dalla v11.33)
+
+Editor admin visuale per regolare `margin-left`, `margin-right`, **nudge verticale**
+e **scale** di ogni icona-badge, con anteprima live su schede reali nei due temi.
+**Riguarda SOLO le card**; la legenda del Pannello NON è toccata (quella si modifica
+a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4° pulsante
+'Micro-aggiustamenti icone badge'** (`showBadgeAdjustEditor`).
+
+- **Unità regolabili (`BADGE_ADJUST_UNITS`, 20).** Ogni unità = una icona singola
+  oppure un GRUPPO a variante-colore con **un solo controllo** condiviso: **Istari**
+  (5), **Navi** (Aman/Est/Valinor, 3), **Anelli elfici** (Vilya/Nenya/Narya, 3),
+  **Nove/Sette** (2). Tutte le altre sono singole, **drago e balrog inclusi e
+  separati** (immagini diverse, non varianti colore, benché condividano la classe
+  `si-demon`). Le 3 corone (`king_std`/`king_high`/`king_high_now`) restano singole.
+- **4 parametri per unità:** `ml`/`mr` (margin orizzontale, **a cascata** — vedi la
+  convenzione per asse, niente compensazioni), `ny` (nudge verticale via
+  `transform:translateY`), `sc` (**scale** = moltiplicatore d'altezza:
+  `height:calc(0.92em * sc)`, `width:auto`; cambiando l'altezza cambia anche
+  l'ingombro orizzontale → coerente col modello 'caratteri consecutivi'. Non tocca
+  il PNG: è l'equivalente a runtime di rimpicciolire il contenuto e ripaddare/
+  ritagliare il canvas).
+- **Identità per-unità `bi-<id>` sulle card.** In `buildStatus` (NON in `ICON_SVG`:
+  così la legenda resta intatta) ogni `<img>` badge riceve la classe di unità
+  `bi-<id>` (via la mappa `BADGE_UNIT`, badge-key→unità; copre anche le 5 icone
+  Istari). Le regole `.rank-name .rank-flags .bi-<id>{margin…;transform:translateY;
+  height:calc(0.92em*sc);width:auto}` sono **iniettate a runtime** da
+  `injectBadgeAdjustRules()` e **scavalcano** il CSS statico per-icona (stessa
+  specificità, sorgente più in basso). Ⓘ La legenda non ha le `bi-*` scoped alle
+  card, quindi le sue icone restano governate dal CSS statico (`si-*`,
+  transform globali degli anelli): indipendente dalle card.
+- **Config data-driven + fallback seed-once (scelta utente, opzione b).** Fonte
+  della verità: **`var badgeAdjust`** in `dati.js` (scritta dal Worker), se assente/
+  invalida si usa **`BADGE_ADJUST_FALLBACK`** in `index.html`, seminato coi valori
+  ATTUALI di ogni unità (le trasformazioni già fatte restano come valore
+  modificabile). `BADGE_ADJUST` = merge (unità mancanti → fallback). L'iniezione gira
+  sempre al load (il fallback vive in `index.html`), quindi il rendering è garantito
+  anche senza `badgeAdjust` in `dati.js`; il primo salvataggio la scrive.
+  ⚠️ Seed dei gruppi con valori misti: **Navi** seminato `ml -0.05` (Aman/Valinor;
+  `est` era -0.04 → +0.01em, accettato col raggruppamento); **Anelli elfici** `ny
+  -0.067` (equivalente em a desktop del vecchio `translateY(calc(-.106em+1px))`, il
+  +1px viewport-dipendente è stato sciolto in em).
+- **Editor (`showBadgeAdjustEditor`), stile ADMIN MINIMALE** (`fab-modal-box`, vedi
+  la regola modali sotto). Selettore a chip (con `×N` sui gruppi), 4 slider+input,
+  interruttore **Tabella riepilogo** (tutte le unità × 4 valori), **anteprima live**
+  in due pannelli affiancati (tema chiaro/scuro, colori concreti) su 3 schede reali
+  che portano il badge; **'Reset unità'** ripristina l'ultimo salvato
+  (`BADGE_ADJUST_SAVED`). Modifica `BADGE_ADJUST` live + re-inietta (le card dietro
+  si aggiornano); **L** ricostruisce (etichette), **T** no (la modale si ricolora da
+  sé e l'anteprima mostra già entrambi i temi). `.ba-fval` è theme-aware (oro su
+  scuro, teal su chiaro) per l'AA. axe 0 (pagina + editor) e W3C 0/0 verificati
+  (tutto il CSS/DOM dell'editor è iniettato a runtime, quindi invisibile al Nu).
+- **Salvataggio:** `saveBadgeAdjustToRepo` → `doCommit(msg, dati, null, false,
+  BADGE_ADJUST)` → il Worker (**rev 12**) scrive `var badgeAdjust` in `dati.js` e
+  **bumpa +0.01** (NON keepVersion). Un salvataggio che non invia `badgeAdjust`
+  (contenuti/colori) lo **preserva** (`readBadgeAdjust`); `validBadgeAdjust` rifiuta
+  config malformate (400 `bad-badgeadjust`). Per aggiungere una futura icona basta
+  una voce in `BADGE_ADJUST_UNITS` + `BADGE_ADJUST_FALLBACK`: compare da sé
+  nell'editor.
+
 - **Ottimizzazione immagini: SOLO lossless, mai lossy (regola dell'utente,
   2026-07-14).** Sulle immagini caricate dall'utente è ammessa **esclusivamente**
   l'ottimizzazione a **impatto zero sui pixel**: rimozione di metadati e
@@ -2048,6 +2107,21 @@ separate e intoccabili.
   / `.info-note-box` / `.res-modal-inner` (private delle proprietà di box:
   larghezza/scroll li gestisce il guscio). Le **altre** `.fab-modal-*` (password,
   trivio riordino, conferma campi) restano invariate: non sono 'note'.
+- **Regola stile modali: UTENTE = colorato, ADMIN = minimale (istruzione
+  dell'utente, 2026-07-23).** Discrimine per PUBBLICO, non per contenuto: ogni modale
+  che un **utente/visitatore** può vedere usa il guscio **colorato** (bordo doppio
+  cardcolor + × tondo animato, `buildStdModal` o la scheda personaggio); ogni modale
+  **admin** usa il guscio **minimale** (`fab-modal-box`, bordo tenue, × piccolo).
+  Stato conforme (audit v11.33): **utente/colorate** = scheda personaggio
+  (`openModal`), Risorse (`openResourcesModal`), Note (`openNoteViewer`), Info
+  (`showInfoNote`); **admin/minimali** = password (`showPasswordModal`), bivio
+  (`showAdminChoiceModal`), editor colori (`showColorEditor`), statistiche
+  (`showColorStats`), micro-aggiustamenti (`showBadgeAdjustEditor`), editor
+  personaggi (`showAdminEditor`). ⚠️ **Borderline non deciso:** le modali di
+  **riordino** (`showDesktopReorderModal`/`showActionChoiceModal`) sono minimali ma
+  tecnicamente visibili a un visitatore (drag desktop frictionless + Esporta);
+  lasciate minimali finché l'utente non decide diversamente. L'`openImageViewer`
+  (visualizzatore mappe) è un overlay a sé (`imgv-*`), fuori da questa dicotomia.
 - **Backdrop uniforme (dalla v8.76).** Tutti i modali che usano `.modal-backdrop`
   (scheda, note, risorse, info) condividono lo stesso velo sfocato: **chiaro** su
   tema chiaro (`rgba(216,220,228,0.62)`, prima era scuro anche in chiaro),
