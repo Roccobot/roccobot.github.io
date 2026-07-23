@@ -2230,7 +2230,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.33</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2926,6 +2926,87 @@ var ISTARI_ICON = {
   'Gandalf': ['Grigio.png','Bianco.png'], 'Saruman': ['Bianco.png'], 'Radagast': ['Bruno.png'],
   'Alatar': ['Blu1.png'], 'Pallando': ['Blu2.png']
 };
+
+// ─── Micro-aggiustamenti icone-badge (editor admin, dalla v11.33) ────────────
+// UNITÀ regolabili: alcune icone a variante-colore condividono UN solo controllo
+// (istari ×5, navi ×3, anelli elfici ×3, Nove/Sette ×2); tutte le altre sono
+// singole (drago e balrog INCLUSI, benché condividano la classe si-demon). Ogni
+// unità ha 4 valori: ml/mr (margin orizzontale, a cascata), ny (nudge verticale,
+// transform), sc (scale = moltiplicatore d'altezza, cambia anche l'ingombro
+// orizzontale → coerente col modello 'caratteri consecutivi'). Sulle card ogni
+// <img> badge riceve la classe di unità `bi-<id>` (in buildStatus, NON in
+// ICON_SVG: così la LEGENDA resta intatta). Le regole vengono INIETTATE a runtime
+// da badgeAdjust (dati.js) o dal fallback seed-once qui sotto, e scavalcano il
+// CSS statico per-icona (che resta come rete di sicurezza).
+var BADGE_ADJUST_UNITS = [
+  { id:'aratar',       it:'Aratar',               en:'Aratar',               members:['aratar'] },
+  { id:'calaquende',   it:'Calaquendë',           en:'Calaquendi',           members:['calaquende'] },
+  { id:'silmaril',     it:'Silmaril',             en:'Silmaril',             members:['silmaril'] },
+  { id:'incarnazione', it:'Ritorno',              en:'Return',               members:['incarnazione'] },
+  { id:'helcaraxe',    it:'Helcaraxë',            en:'Helcaraxë',            members:['helcaraxe'] },
+  { id:'morgoth',      it:'Morgoth (Fingolfin)',  en:'Morgoth (Fingolfin)',  members:['morgoth'] },
+  { id:'guerradira',   it:"Guerra d'Ira",         en:'War of Wrath',         members:['guerradira'] },
+  { id:'suicidio',     it:'Suicidio',             en:'Suicide',              members:['suicidio'] },
+  { id:'fellowship',   it:'Compagnia',            en:'Fellowship',           members:['fellowship'] },
+  { id:'istari',       it:'Istari',               en:'Istari',               members:['istari'], grp:5 },
+  { id:'survivor',     it:'Sopravvissuto',        en:'Survivor',             members:['survivor'] },
+  { id:'navi',         it:'Navi (Aman/Est/Valinor)', en:'Ships (Aman/East/Valinor)', members:['est','west','envoy'], grp:3 },
+  { id:'drago',        it:'Drago',                en:'Dragon',               members:['drago'] },
+  { id:'balrog',       it:'Balrog',               en:'Balrog',               members:['balrog'] },
+  { id:'king_std',     it:'Corona · Alto Re',     en:'Crown · King',         members:['king_std'] },
+  { id:'king_high',    it:'Corona · Re Supremo',  en:'Crown · High King',    members:['king_high'] },
+  { id:'king_high_now',it:'Corona · Re in carica',en:'Crown · Reigning King',members:['king_high_now'] },
+  { id:'onering',      it:'Unico Anello',         en:'One Ring',             members:['onering'] },
+  { id:'ringelven',    it:'Anelli elfici (Vilya/Nenya/Narya)', en:'Elven Rings (Vilya/Nenya/Narya)', members:['vilya','nenya','narya'], grp:3 },
+  { id:'ringdm',       it:'Anelli Nove/Sette',    en:'Nine/Seven Rings',     members:['menring','sette'], grp:2 }
+];
+// badge key → id unità (per assegnare bi-<id> in buildStatus e per l'anteprima).
+var BADGE_UNIT = (function(){ var m = {}; BADGE_ADJUST_UNITS.forEach(function(u){ u.members.forEach(function(k){ m[k] = u.id; }); }); return m; })();
+// Fallback seed-once: i valori ATTUALI (dal CSS statico) per ogni unità. Restano
+// come default per le voci future prive del campo e come rete se dati.js manca.
+var BADGE_ADJUST_FALLBACK = {
+  aratar:{ml:0,mr:0,ny:0,sc:1}, calaquende:{ml:0.10,mr:-0.06,ny:0,sc:1},
+  silmaril:{ml:-0.05,mr:0,ny:0,sc:1}, incarnazione:{ml:-0.05,mr:0,ny:0,sc:1},
+  helcaraxe:{ml:-0.02,mr:-0.07,ny:0,sc:1}, morgoth:{ml:0.01,mr:-0.06,ny:0,sc:1},
+  guerradira:{ml:-0.05,mr:0,ny:0,sc:1}, suicidio:{ml:-0.05,mr:0,ny:0,sc:1},
+  fellowship:{ml:0,mr:0,ny:0,sc:1}, istari:{ml:-0.05,mr:-0.05,ny:0,sc:1},
+  survivor:{ml:0,mr:0,ny:0,sc:1}, navi:{ml:-0.05,mr:0,ny:0,sc:1},
+  drago:{ml:-0.05,mr:0,ny:0,sc:1}, balrog:{ml:-0.05,mr:0,ny:0,sc:1},
+  king_std:{ml:-0.056,mr:0,ny:-0.078,sc:1}, king_high:{ml:-0.056,mr:0,ny:-0.078,sc:1},
+  king_high_now:{ml:-0.056,mr:0,ny:-0.078,sc:1}, onering:{ml:-0.02,mr:-0.02,ny:0,sc:1},
+  ringelven:{ml:-0.02,mr:-0.02,ny:-0.067,sc:1}, ringdm:{ml:-0.02,mr:-0.02,ny:-0.032,sc:1}
+};
+// Normalizza una voce {ml,mr,ny,sc}: numeri validi, scale > 0 (default 1).
+function baNorm(o){
+  o = o || {};
+  var n = function(x,d){ x = parseFloat(x); return isFinite(x) ? x : d; };
+  return { ml:n(o.ml,0), mr:n(o.mr,0), ny:n(o.ny,0), sc:(function(){ var s=n(o.sc,1); return s>0?s:1; })() };
+}
+// Config attiva: badgeAdjust da dati.js se valido, altrimenti il fallback. Le
+// unità mancanti nel salvataggio ripiegano sul fallback (voce per voce).
+var BADGE_ADJUST = (function(){
+  var out = {};
+  var src = (typeof badgeAdjust !== 'undefined' && badgeAdjust && typeof badgeAdjust === 'object') ? badgeAdjust : {};
+  BADGE_ADJUST_UNITS.forEach(function(u){ out[u.id] = baNorm(src[u.id] || BADGE_ADJUST_FALLBACK[u.id]); });
+  return out;
+})();
+// Inietta (o re-inietta) le regole per-unità, scoped alle CARD (.rank-name
+// .rank-flags .bi-<id>): margin orizzontale + nudge verticale + altezza scalata.
+// Sorgente più in basso del CSS statico → lo scavalca (fallback preservato).
+function injectBadgeAdjustRules(){
+  var old = document.getElementById('badge-adjust-rules'); if (old) old.remove();
+  var css = BADGE_ADJUST_UNITS.map(function(u){
+    var v = BADGE_ADJUST[u.id] || baNorm(BADGE_ADJUST_FALLBACK[u.id]);
+    return '.rank-name .rank-flags .bi-' + u.id + '{' +
+      'margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;' +
+      'transform:translateY(' + v.ny + 'em);' +
+      'height:calc(0.92em * ' + v.sc + ');width:auto}';
+  }).join('');
+  var s = document.createElement('style'); s.id = 'badge-adjust-rules'; s.textContent = css;
+  document.head.appendChild(s);
+}
+injectBadgeAdjustRules();
+
 var ICON_LABEL = {
   it: {
     aratar:  "Aratar: i più grandi e potenti degli Ainur",
@@ -3032,6 +3113,11 @@ function buildStatus(p) {
     }
     var svg = tpl.split('%L%').join(label);
     if (dim) svg = svg.replace('status-icon', 'status-icon si-dim');
+    // Classe di UNITÀ bi-<id> su ogni <img> del badge (anche le varianti Istari):
+    // aggancio per i micro-aggiustamenti, solo sulle card (la legenda non passa
+    // di qui). split/join così copre tutte le icone di un badge multi-immagine.
+    var unit = BADGE_UNIT[k];
+    if (unit) svg = svg.split('status-icon').join('status-icon bi-' + unit);
     return svg;
   }).join('');
 }
@@ -5384,7 +5470,7 @@ async function translateText(text, from, to) {
   }
 }
 
-async function doCommit(msg, payload, cardColors, keepVersion) {
+async function doCommit(msg, payload, cardColors, keepVersion, badgeAdjustCfg) {
   // payload opzionale: consente di committare una copia senza aver ancora
   // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
   // cardColors opzionale: config colori editabile (Fase 2). Se passata, il Worker
@@ -5398,7 +5484,7 @@ async function doCommit(msg, payload, cardColors, keepVersion) {
     const res = await fetch(proxyUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}, keepVersion ? { keepVersion: true } : {}))
+      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}, keepVersion ? { keepVersion: true } : {}, badgeAdjustCfg ? { badgeAdjust: badgeAdjustCfg } : {}))
     });
     let r = {};
     try { r = await res.json(); } catch (e) {}
@@ -6125,7 +6211,11 @@ function showAdminChoiceModal() {
   var b3 = document.createElement('button'); b3.className = 'fab-modal-confirm';
   b3.textContent = it ? 'Statistiche' : 'Stats';
   b3.onclick = function(){ close(); showColorStats(); };
-  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3);
+  // Micro-aggiustamenti icone-badge (dalla v11.33): margin/nudge/scale per icona.
+  var b4 = document.createElement('button'); b4.className = 'fab-modal-confirm';
+  b4.textContent = it ? 'Micro-aggiustamenti icone badge' : 'Badge-icon micro-tuning';
+  b4.onclick = function(){ close(); showBadgeAdjustEditor(); };
+  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3); box.appendChild(b4);
 }
 
 // ── Editor colori: colore per personaggio e per famiglia ────────────────────
@@ -6150,6 +6240,203 @@ var CARDCOLORS_SAVED = JSON.parse(JSON.stringify(CARDCOLORS.fam));
 // cardcolor riassegnati) + la config CARDCOLORS, SENZA bumpare la versione
 // (keepVersion). Ritorna la Promise di doCommit.
 function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
+// Salvataggio dei micro-aggiustamenti icone-badge: committa dati + badgeAdjust,
+// bumpando la versione (+0.01) come i salvataggi admin di contenuti (NON come i
+// colori, che usano keepVersion). Il Worker scrive `var badgeAdjust` in dati.js.
+function saveBadgeAdjustToRepo(msg){ return doCommit(msg, dati, null, false, BADGE_ADJUST); }
+// Snapshot dell'ultimo stato SALVATO dei micro-aggiustamenti (rete 'reset unità').
+var BADGE_ADJUST_SAVED = JSON.parse(JSON.stringify(BADGE_ADJUST));
+function baEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function baInjectEditorCss(){
+  if (document.getElementById('ba-editor-css')) return;
+  var css = [
+    '.ba-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 0.7rem;}',
+    '.ba-chip{position:relative;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid rgba(128,128,128,0.35);border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:0.8rem;cursor:pointer;white-space:nowrap;}',
+    '.ba-chip:hover{border-color:rgba(128,128,128,0.6);}',
+    '.ba-chip.on{border-color:#c8a24a;box-shadow:inset 0 0 0 1px #c8a24a;background:rgba(200,162,74,0.14);}',
+    '.ba-grp{font-size:0.62rem;font-weight:700;background:#c8a24a;color:#1a1a1a;border-radius:20px;padding:0 5px;}',
+    '.ba-selhead{font-size:0.86rem;margin:0 0 0.7rem;}',
+    '.ba-fields{display:flex;flex-direction:column;gap:0.7rem;}',
+    '.ba-ftop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px;}',
+    '.ba-fname{font-size:0.8rem;font-weight:600;}',
+    '.ba-fhint{font-size:0.68rem;opacity:0.55;font-weight:400;margin-left:2px;}',
+    '.ba-fval{font-size:0.82rem;font-weight:700;color:#c8a24a;font-family:ui-monospace,monospace;flex:none;}',
+    'html[data-theme="light"] .ba-fval{color:#1f5562;}',
+    '.ba-fline{display:flex;align-items:center;gap:10px;}',
+    '.ba-fline input[type=range]{flex:1;min-width:0;}',
+    '.ba-num{width:70px;flex:none;padding:4px 6px;border:1px solid rgba(128,128,128,0.35);border-radius:6px;background:transparent;color:inherit;font-family:ui-monospace,monospace;font-size:0.78rem;text-align:right;}',
+    '.ba-reset{margin-top:0.5rem;font-size:0.74rem;background:none;border:none;color:inherit;opacity:0.7;cursor:pointer;text-decoration:underline;padding:0;}',
+    '.ba-reset:hover{opacity:1;}',
+    '.ba-switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:0.8rem;margin:0.9rem 0 0;user-select:none;}',
+    '.ba-track{width:33px;height:18px;border-radius:20px;background:rgba(128,128,128,0.4);position:relative;flex:none;transition:0.16s;}',
+    '.ba-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:0.16s;box-shadow:0 1px 2px rgba(0,0,0,0.35);}',
+    '.ba-switch.on .ba-track{background:#c8a24a;}',
+    '.ba-switch.on .ba-knob{left:17px;}',
+    '.ba-tablewrap{display:none;margin-top:0.6rem;border:1px solid rgba(128,128,128,0.3);border-radius:9px;overflow:auto;max-height:230px;}',
+    '.ba-tablewrap.show{display:block;}',
+    '.ba-table{width:100%;border-collapse:collapse;font-size:0.74rem;}',
+    '.ba-table th,.ba-table td{padding:5px 9px;text-align:right;border-bottom:1px solid rgba(128,128,128,0.22);white-space:nowrap;font-variant-numeric:tabular-nums;}',
+    '.ba-table th:first-child,.ba-table td:first-child{text-align:left;}',
+    '.ba-table thead th{position:sticky;top:0;background:inherit;font-size:0.66rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;}',
+    '.ba-table tbody tr{cursor:pointer;}',
+    '.ba-table tbody tr:hover td,.ba-table tbody tr.on td{background:rgba(200,162,74,0.14);}',
+    '.ba-lbl{font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.55;font-weight:600;margin:1.1rem 0 0.5rem;}',
+    '.ba-pvgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}',
+    '@media (max-width:520px){.ba-pvgrid{grid-template-columns:1fr;}}',
+    '.ba-pane{border-radius:10px;padding:11px 13px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;}',
+    '.ba-pane.dark{background:#242424;color:#e9e7e1;}',
+    '.ba-pane.light{background:#f1f1f1;color:#1d1d1d;}',
+    '.ba-pv-row{display:flex;align-items:center;gap:8px;padding:6px 0;min-width:0;}',
+    '.ba-pv-row+.ba-pv-row{border-top:1px solid rgba(128,128,128,0.2);}',
+    '.ba-pv-name{font-family:Cinzel,Georgia,serif;font-size:1.05rem;font-weight:600;flex:none;}',
+    '.ba-pv-badges{display:inline-flex;align-items:center;font-size:20px;min-width:0;}',
+    '.ba-pv-ico{width:auto;object-fit:contain;vertical-align:middle;}',
+    '.ba-pv-ico.sel{outline:2px solid #c8a24a;outline-offset:1px;border-radius:3px;}',
+    '.ba-pv-empty{font-size:0.8rem;opacity:0.6;padding:0.4rem 0;}',
+    '.ba-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:1.1rem;}',
+    '.ba-foothint{font-size:0.72rem;opacity:0.6;}',
+    '.ba-kbd{font-family:ui-monospace,monospace;font-size:0.66rem;border:1px solid rgba(128,128,128,0.4);border-radius:3px;padding:0 4px;}',
+    '.ba-save{margin-left:auto;flex:none;width:auto;}'
+  ].join('');
+  var s = document.createElement('style'); s.id = 'ba-editor-css'; s.textContent = css; document.head.appendChild(s);
+}
+// Editor admin dei micro-aggiustamenti icone-badge (dalla v11.33). Stile ADMIN
+// MINIMALE (fab-modal-box). Modifica BADGE_ADJUST live e re-inietta le regole
+// (le card dietro si aggiornano); anteprima su schede reali nei due temi. Salva
+// = commit di dati + badgeAdjust (+0.01). L: ricostruisce (etichette); T: no
+// (la modale si ricolora da sé, l'anteprima mostra già entrambi i temi).
+function showBadgeAdjustEditor(initState){
+  if (document.getElementById('fab-modal')) return;
+  baInjectEditorCss();
+  var it = currentLang === 'it';
+  var cur = (initState && initState.cur) || 'helcaraxe';
+  var myL;
+  var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '720px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
+  overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
+  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
+
+  var title = document.createElement('p'); title.style.cssText = 'font-weight:600;margin:0 0 0.1rem;'; title.textContent = it ? 'Micro-aggiustamenti icone badge' : 'Badge-icon micro-tuning';
+  var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.76rem;opacity:0.65;margin:0 0 0.7rem;'; sub.textContent = it ? 'Solo card · il Pannello non è toccato' : 'Cards only · the Panel is untouched';
+  box.appendChild(title); box.appendChild(sub);
+
+  function unitOf(id){ for (var i = 0; i < BADGE_ADJUST_UNITS.length; i++) if (BADGE_ADJUST_UNITS[i].id === id) return BADGE_ADJUST_UNITS[i]; return BADGE_ADJUST_UNITS[0]; }
+
+  var chipWrap = document.createElement('div'); chipWrap.className = 'ba-chips';
+  BADGE_ADJUST_UNITS.forEach(function(u){
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'ba-chip' + (u.id === cur ? ' on' : ''); b.dataset.id = u.id;
+    b.textContent = it ? u.it : u.en;
+    if (u.grp){ var g = document.createElement('span'); g.className = 'ba-grp'; g.textContent = '×' + u.grp; b.appendChild(g); }
+    b.onclick = function(){ cur = u.id; sync(); };
+    chipWrap.appendChild(b);
+  });
+  box.appendChild(chipWrap);
+
+  var selHead = document.createElement('p'); selHead.className = 'ba-selhead'; box.appendChild(selHead);
+
+  var fieldsWrap = document.createElement('div'); fieldsWrap.className = 'ba-fields'; box.appendChild(fieldsWrap);
+  var FIELDS = [
+    { k:'ml', lab:'margin-left',    hint: it ? 'orizzontale →' : 'horizontal →', min:-0.2, max:0.2, step:0.005 },
+    { k:'mr', lab:'margin-right',   hint: it ? 'orizzontale →' : 'horizontal →', min:-0.2, max:0.2, step:0.005 },
+    { k:'ny', lab: it ? 'nudge verticale' : 'vertical nudge', hint: it ? "solo l'icona" : 'icon only', min:-0.2, max:0.2, step:0.005 },
+    { k:'sc', lab:'scale',          hint: it ? 'zoom contenuto' : 'content zoom', min:0.7, max:1.3, step:0.01 }
+  ];
+  var ctrls = {};
+  FIELDS.forEach(function(f){
+    var row = document.createElement('div'); row.className = 'ba-field';
+    var top = document.createElement('div'); top.className = 'ba-ftop';
+    var nm = document.createElement('span'); nm.className = 'ba-fname'; nm.innerHTML = baEsc(f.lab) + ' <span class="ba-fhint">' + baEsc(f.hint) + '</span>';
+    var val = document.createElement('span'); val.className = 'ba-fval';
+    top.appendChild(nm); top.appendChild(val);
+    var line = document.createElement('div'); line.className = 'ba-fline';
+    var rng = document.createElement('input'); rng.type = 'range'; rng.min = f.min; rng.max = f.max; rng.step = f.step; rng.setAttribute('aria-label', f.lab);
+    var num = document.createElement('input'); num.type = 'text'; num.inputMode = 'decimal'; num.className = 'ba-num'; num.setAttribute('aria-label', f.lab + (it ? ' valore' : ' value'));
+    line.appendChild(rng); line.appendChild(num);
+    row.appendChild(top); row.appendChild(line); fieldsWrap.appendChild(row);
+    ctrls[f.k] = { rng:rng, num:num, val:val };
+    function commit(x){ if (!isFinite(x)) return; if (f.k === 'sc' && x <= 0) x = 0.01; BADGE_ADJUST[cur][f.k] = x; injectBadgeAdjustRules(); showVal(f.k); renderPreview(); }
+    rng.addEventListener('input', function(){ commit(parseFloat(rng.value)); });
+    num.addEventListener('change', function(){ commit(parseFloat((num.value || '').replace(',', '.'))); });
+  });
+  var resetBtn = document.createElement('button'); resetBtn.type = 'button'; resetBtn.className = 'ba-reset';
+  resetBtn.textContent = it ? '↺ Reset unità (ultimo salvato)' : '↺ Reset unit (last saved)';
+  resetBtn.onclick = function(){ BADGE_ADJUST[cur] = baNorm(BADGE_ADJUST_SAVED[cur] || BADGE_ADJUST_FALLBACK[cur]); injectBadgeAdjustRules(); sync(); };
+  fieldsWrap.appendChild(resetBtn);
+
+  function fmtV(k){ var v = BADGE_ADJUST[cur][k]; if (k === 'sc') return v.toFixed(2) + '×'; return (v < 0 ? '−' : '') + Math.abs(v).toFixed(3) + 'em'; }
+  function showVal(k){ var c = ctrls[k]; var v = BADGE_ADJUST[cur][k]; c.rng.value = v; c.num.value = (k === 'sc') ? v.toFixed(2) : v.toFixed(3); c.val.textContent = fmtV(k); }
+
+  var tsw = document.createElement('label'); tsw.className = 'ba-switch';
+  tsw.innerHTML = '<span class="ba-track"><span class="ba-knob"></span></span> ' + (it ? 'Tabella riepilogo (tutte le icone)' : 'Summary table (all icons)');
+  var tblWrap = document.createElement('div'); tblWrap.className = 'ba-tablewrap';
+  tblWrap.tabIndex = 0; tblWrap.setAttribute('aria-label', it ? 'Tabella riepilogo valori icone' : 'Icon values summary table');
+  tsw.onclick = function(){ tsw.classList.toggle('on'); tblWrap.classList.toggle('show'); if (tblWrap.classList.contains('show')) buildTable(); };
+  box.appendChild(tsw); box.appendChild(tblWrap);
+
+  var pvLbl = document.createElement('p'); pvLbl.className = 'ba-lbl'; pvLbl.textContent = it ? 'Anteprima live · schede reali col badge selezionato' : 'Live preview · real cards with the selected badge';
+  var pvGrid = document.createElement('div'); pvGrid.className = 'ba-pvgrid';
+  var paneD = document.createElement('div'); paneD.className = 'ba-pane dark';
+  var paneL = document.createElement('div'); paneL.className = 'ba-pane light';
+  pvGrid.appendChild(paneD); pvGrid.appendChild(paneL);
+  box.appendChild(pvLbl); box.appendChild(pvGrid);
+
+  var footer = document.createElement('div'); footer.className = 'ba-foot';
+  var fhint = document.createElement('span'); fhint.className = 'ba-foothint';
+  fhint.innerHTML = '<span class="ba-kbd">L</span> ' + (it ? 'lingua' : 'lang') + ' · <span class="ba-kbd">T</span> ' + (it ? 'tema' : 'theme');
+  var save = document.createElement('button'); save.className = 'fab-modal-confirm ba-save'; save.textContent = it ? 'Salva  (versione +0.01)' : 'Save  (version +0.01)';
+  save.onclick = function(){ withBtn(save, saveBadgeAdjustToRepo(it ? 'icone badge: micro-aggiustamenti' : 'badge icons: micro-tuning')); };
+  footer.appendChild(fhint); footer.appendChild(save); box.appendChild(footer);
+
+  function buildTable(){
+    var f = function(x){ return (x < 0 ? '−' : '') + Math.abs(x).toFixed(3); };
+    var rows = BADGE_ADJUST_UNITS.map(function(u){
+      var v = BADGE_ADJUST[u.id];
+      return '<tr data-id="' + u.id + '"' + (u.id === cur ? ' class="on"' : '') + '><td>' + baEsc(it ? u.it : u.en) + (u.grp ? ' <span style="opacity:.5">×' + u.grp + '</span>' : '') + '</td><td>' + f(v.ml) + '</td><td>' + f(v.mr) + '</td><td>' + f(v.ny) + '</td><td>' + v.sc.toFixed(2) + '×</td></tr>';
+    }).join('');
+    tblWrap.innerHTML = '<table class="ba-table"><thead><tr><th>' + (it ? 'Icona / gruppo' : 'Icon / group') + '</th><th>ml</th><th>mr</th><th>nudge</th><th>scale</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    Array.prototype.forEach.call(tblWrap.querySelectorAll('tbody tr'), function(tr){ tr.onclick = function(){ cur = tr.dataset.id; sync(); }; });
+  }
+
+  function samples(u){ var out = []; for (var i = 0; i < dati.length && out.length < 3; i++){ var p = dati[i]; if (u.members.some(function(k){ return p[k]; })) out.push(p); } return out; }
+  function iconFile(p, k){ if (k === 'istari'){ var a = ISTARI_ICON[p.nome]; return 'icons/' + ((a && a[0]) || 'Bianco.png'); } var m = /src="([^"]+)"/.exec(ICON_SVG[k] || ''); return m ? m[1] : ('icons/' + k + '.png'); }
+  function nmOf(p){ return it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); }
+  function renderPane(pane){
+    var u = unitOf(cur); var ss = samples(u);
+    if (!ss.length){ pane.innerHTML = '<div class="ba-pv-empty">' + (it ? 'Nessuna scheda con questo badge' : 'No card with this badge') + '</div>'; return; }
+    pane.innerHTML = ss.map(function(p){
+      var badges = ICON_ORDER.filter(function(k){ return p[k]; }).map(function(k){
+        var uid = BADGE_UNIT[k]; var v = uid ? BADGE_ADJUST[uid] : { ml:0, mr:0, ny:0, sc:1 }; var selc = (uid === cur);
+        return '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico' + (selc ? ' sel' : '') + '" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
+      }).join('');
+      return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + '</span></div>';
+    }).join('');
+  }
+  function renderPreview(){ renderPane(paneD); renderPane(paneL); }
+
+  function sync(){
+    Array.prototype.forEach.call(chipWrap.children, function(c){ c.classList.toggle('on', c.dataset.id === cur); });
+    var u = unitOf(cur);
+    selHead.innerHTML = '<b>' + baEsc(it ? u.it : u.en) + '</b> · ' + (u.grp ? (it ? ('Gruppo · ' + u.grp + ' icone, stessi valori') : ('Group · ' + u.grp + ' icons, shared values')) : (it ? 'Icona singola' : 'Single icon'));
+    ['ml','mr','ny','sc'].forEach(showVal);
+    renderPreview();
+    if (tblWrap.classList.contains('show')) Array.prototype.forEach.call(tblWrap.querySelectorAll('tbody tr'), function(tr){ tr.classList.toggle('on', tr.dataset.id === cur); });
+  }
+
+  function withBtn(btn, promise){
+    btn.disabled = true; btn.style.opacity = '0.4';
+    promise.then(function(res){
+      if (res.ok){ BADGE_ADJUST_SAVED = JSON.parse(JSON.stringify(BADGE_ADJUST)); showToast(it ? '✓ Salvato' : '✓ Saved', false); }
+      else { showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true); }
+    }).finally(function(){ btn.disabled = false; btn.style.opacity = ''; });
+  }
+
+  function rebuild(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var st = { cur: cur }; close(); showBadgeAdjustEditor(st); }
+  myL = rebuild; langRefresh = myL;
+
+  sync();
+}
 
 // Statistiche: modale (dal bivio admin 'Area admin' → 'Statistiche') con 3 viste
 // (tab): FAMIGLIE (colore), CATEGORIE (le 9 razze), TIPI (le etichette type-*).
