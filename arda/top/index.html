@@ -1132,6 +1132,11 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
+/* +0.04em di spazio extra tra l'Unico (1ª) e Vilya (2ª leg-ring) SOLO nella riga
+   anelli della legenda (richiesta utente): la 2ª leg-ring ha già margin-left
+   0.22rem, qui + 0.04em. Esclude la riga Istari (stessa classe ctrl-legend-rings).
+   Specificità (0,4,0) > la regola sopra (0,3,0). */
+.ctrl-legend-rings:not(.ctrl-legend-istari) .leg-ring:nth-child(2) { margin-left:calc(0.22rem + 0.04em); }
 .ctrl-legend-rings .leg-ring { display:inline-flex; align-items:center; gap:0.22rem; }
 .ctrl-legend-rings .leg-ring img { margin-left:0; }
 /* La prima icona-anello (Unico, .707em) è più stretta dello slot .leg-ico
@@ -2251,7 +2256,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4520,16 +4525,18 @@ function controlPanelHTML() {
         return;
       }
       if (k === 'onering') {
-        // Tutti gli Anelli in un'unica riga (Unico, Vilya, Nenya, Narya, Nove),
-        // in coda alla legenda. I singoli tooltip restano quelli di ICON_LABEL.
+        // Tutti gli Anelli in un'unica riga, in coda alla legenda. Ordine SOLO
+        // di legenda: Unico, Vilya, Nenya, Narya, Sette, Nove (Nove dopo Sette,
+        // richiesta utente; ICON_ORDER delle card resta menring→sette). I singoli
+        // tooltip restano quelli di ICON_LABEL.
         var ringsTxt = lang === 'it' ? 'Portatore di uno degli Anelli del Potere' : 'Bearer of one of the Rings of Power';
         s += legRow('rings', '<span class="leg-cluster">'
            + '<span class="leg-ring">' + BADGE_ICON['onering'].split('%L%').join(IL['onering']) + '</span>'
            + '<span class="leg-ring">' + BADGE_ICON['vilya'].split('%L%').join(IL['vilya']) + '</span>'
            + '<span class="leg-ring">' + BADGE_ICON['nenya'].split('%L%').join(IL['nenya']) + '</span>'
            + '<span class="leg-ring">' + BADGE_ICON['narya'].split('%L%').join(IL['narya']) + '</span>'
-           + '<span class="leg-ring">' + BADGE_ICON['menring'].split('%L%').join(IL['menring']) + '</span>'
            + '<span class="leg-ring">' + BADGE_ICON['sette'].split('%L%').join(IL['sette']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['menring'].split('%L%').join(IL['menring']) + '</span>'
            + '</span><span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
         return;
       }
