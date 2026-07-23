@@ -2230,7 +2230,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.36</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.37</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6282,10 +6282,10 @@ function baInjectEditorCss(){
     '.ba-pvgrid{display:flex;flex-direction:column;gap:10px;}',
     // Anteprima a dimensione REALE (font 1.5rem, badge 0.92em, gap 0.32em come
     // sulla pagina): senza il gap i badge si ammucchiavano/sovrapponevano.
-    '.ba-pane{border-radius:10px;padding:13px 16px 18px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;}',
+    '.ba-pane{border-radius:10px;padding:11px 16px 14px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;}',
     '.ba-pane.dark{background:#242424;color:#e9e7e1;--ba-arw:#ffd24d;}',
     '.ba-pane.light{background:#f1f1f1;color:#1d1d1d;--ba-arw:#d2401e;}',
-    '.ba-pv-row{display:flex;align-items:center;gap:0.32em;padding:10px 0;min-width:0;font-size:1.5rem;}',
+    '.ba-pv-row{display:flex;align-items:center;gap:0.32em;padding:8px 0;min-width:0;font-size:1.5rem;}',
     '.ba-pv-row+.ba-pv-row{border-top:1px solid rgba(128,128,128,0.2);}',
     '.ba-pv-name{font-family:Cinzel,Georgia,serif;font-size:1em;font-weight:600;flex:none;letter-spacing:0.02em;}',
     '.ba-pv-badges{display:inline-flex;align-items:center;gap:0.32em;font-size:1em;min-width:0;}',
@@ -6296,8 +6296,9 @@ function baInjectEditorCss(){
     '.ba-pv-sel::before{content:"";position:absolute;left:50%;bottom:-15px;transform:translateX(-50%);width:3px;height:6px;border-radius:1px;background:var(--ba-arw,#ffd24d);}',
     '.ba-pv-sel::after{content:"";position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid var(--ba-arw,#ffd24d);}',
     '.ba-pv-empty{font-size:0.8rem;opacity:0.6;padding:0.4rem 0;}',
-    // Tabella riepilogo SEMPRE visibile in basso, scrollevole (piu alta).
-    '.ba-tablewrap{margin-top:1rem;border:1px solid rgba(128,128,128,0.3);border-radius:9px;overflow:auto;max-height:340px;}',
+    // Tabella riepilogo SEMPRE visibile in basso: riempie lo spazio residuo della
+    // modale (flex:1) e scorre da sola; la modale non scrolla (niente doppio scroll).
+    '.ba-tablewrap{flex:1 1 auto;min-height:0;margin-top:0.8rem;border:1px solid rgba(128,128,128,0.3);border-radius:9px;overflow:auto;}',
     '.ba-table{width:100%;border-collapse:collapse;font-size:0.74rem;}',
     '.ba-table th,.ba-table td{padding:5px 9px;text-align:right;border-bottom:1px solid rgba(128,128,128,0.22);white-space:nowrap;font-variant-numeric:tabular-nums;}',
     '.ba-table th:first-child,.ba-table td:first-child{text-align:left;}',
@@ -6323,7 +6324,9 @@ function showBadgeAdjustEditor(initState){
   var cur = (initState && initState.cur) || 'helcaraxe';
   var myL;
   var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '840px'; box.style.maxHeight = '92vh'; box.style.overflowY = 'auto';
+  // La modale NON scrolla: è un flex-column ad altezza max; solo la tabella (flex:1)
+  // scorre internamente, così footer e controlli restano sempre visibili (un solo scroll).
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '840px'; box.style.maxHeight = '92vh'; box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.overflow = 'hidden';
   overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
