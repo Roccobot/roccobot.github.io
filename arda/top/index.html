@@ -1351,7 +1351,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 /* PNG al vivo e centrati: dimensioni e offset replicano la resa precedente
    (cerchi riallineati alla 'o' minuscola). Femmina: canvas 220x256 (deroga
    verticale), larghezza proporzionata. */
-.genere-svg--m { width:.721em; height:.721em; transform:translate(.006em,-0.066em); }
+.genere-svg--m { width:.721em; height:.721em; transform:translate(.006em,-0.076em); }
 .genere-svg--f { width:.603em; height:.844em; transform:translateY(.15em); }
 /* Risalita ottica del blocco icone della riga nome su DESKTOP (corona, anelli,
    simboli di genere): il gruppo cadeva troppo in basso rispetto alle maiuscole,
@@ -2230,7 +2230,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.41</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6282,11 +6282,16 @@ function baInjectEditorCss(){
     '.ba-pvgrid{display:flex;flex-direction:column;gap:10px;}',
     // Anteprima a dimensione REALE (font 1.5rem, badge 0.92em, gap 0.32em come
     // sulla pagina): senza il gap i badge si ammucchiavano/sovrapponevano.
-    '.ba-pane{border-radius:10px;padding:11px 16px 14px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;}',
+    '.ba-pane{border-radius:10px;padding:11px 16px 14px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;isolation:isolate;}',
     '.ba-pane.dark{background:#242424;color:#e9e7e1;--ba-arw:#ffd24d;}',
     '.ba-pane.light{background:#f1f1f1;color:#1d1d1d;--ba-arw:#d2401e;}',
-    '.ba-pv-row{display:flex;align-items:center;gap:0.32em;padding:8px 0;min-width:0;font-size:1.5rem;}',
+    '.ba-pv-row{position:relative;display:flex;align-items:center;gap:0.32em;padding:8px 0;min-width:0;font-size:1.5rem;}',
     '.ba-pv-row+.ba-pv-row{border-top:1px solid rgba(128,128,128,0.2);}',
+    // Linea di mezzo rossa tratteggiata (1px) a metà del MAIUSCOLETTO del nome
+    // (--mid calcolata a runtime): riferimento per allineare otticamente le icone.
+    '.ba-pv-row::after{content:"";position:absolute;left:0;right:0;top:var(--mid,50%);height:0;border-top:1px dashed #e02424;pointer-events:none;z-index:-1;}',
+    // Simbolo di genere in coda all\'anteprima (staccato come sulla card).
+    '.ba-pv-badges .genere-svg{margin-left:0.22em;}',
     '.ba-pv-name{font-family:Cinzel,Georgia,serif;font-size:1em;font-weight:600;flex:none;letter-spacing:0.02em;}',
     '.ba-pv-badges{display:inline-flex;align-items:center;gap:0.32em;font-size:1em;min-width:0;}',
     '.ba-pv-ico{width:auto;object-fit:contain;vertical-align:middle;}',
@@ -6433,8 +6438,31 @@ function showBadgeAdjustEditor(initState){
         var img = '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
         return selc ? '<span class="ba-pv-sel">' + img + '</span>' : img;
       }).join('');
-      return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + '</span></div>';
+      // Simbolo di genere in coda (come sulla card), solo di riferimento: NON è
+      // un'unità dell'editor (resta governato dal suo CSS .genere-svg--m/f).
+      var gsym = (p.genere === 'f' ? GENERE_SVG.f : GENERE_SVG.m).split('%L%').join('');
+      return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + gsym + '</span></div>';
     }).join('');
+    placeMidlines(pane);
+  }
+  // Posiziona la linea di mezzo (--mid) a metà del MAIUSCOLETTO del nome: misura
+  // a runtime col font reale (Cinzel rende le minuscole come piccole maiuscole).
+  var _baCv;
+  function placeMidlines(pane){
+    Array.prototype.forEach.call(pane.querySelectorAll('.ba-pv-row'), function(row){
+      var nm = row.querySelector('.ba-pv-name'); if (!nm) return;
+      var cs = getComputedStyle(nm); var fs = parseFloat(cs.fontSize);
+      var lh = (cs.lineHeight === 'normal') ? fs * 1.2 : parseFloat(cs.lineHeight);
+      _baCv = _baCv || document.createElement('canvas').getContext('2d');
+      _baCv.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
+      var m = _baCv.measureText('a');
+      var asc = m.actualBoundingBoxAscent || fs * 0.66;
+      var fAsc = m.fontBoundingBoxAscent || fs * 0.8, fDesc = m.fontBoundingBoxDescent || fs * 0.2;
+      var baselineFromTop = (lh - (fAsc + fDesc)) / 2 + fAsc;
+      var capCenterFromTop = baselineFromTop - asc / 2;
+      var nmR = nm.getBoundingClientRect(), rowR = row.getBoundingClientRect();
+      row.style.setProperty('--mid', ((nmR.top - rowR.top) + capCenterFromTop).toFixed(1) + 'px');
+    });
   }
   function renderPreview(){ renderPane(paneD); renderPane(paneL); }
 
