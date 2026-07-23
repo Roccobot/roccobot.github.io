@@ -545,14 +545,21 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    ora separati: Ritorno 0.02em sopra la linea, Helcaraxe 0.01em sotto. */
 .ctrl-legend-row .si-incarnazione { transform:translateY(-0.02em); }
 .ctrl-legend-row .si-helcaraxe { transform:translateY(0.01em); }
-/* Anelli degli Elfi (Vilya/Nenya/Narya) in LEGENDA: alzati di 0.06em rispetto al
-   valore globale (base -0.05em → -0.11em), richiesta utente. Tutto in em puro
-   (il vecchio +1px è stato sciolto: -.166em+1px ≈ -0.11em a 18.26px). Scoped a
-   .ctrl-legend-row: NON tocca le card (là il verticale arriva dall'unità
-   bi-ringelven). Specificità (0,2,0) > globale .si-vilya (0,1,0). */
+/* Posizione verticale degli anelli in LEGENDA (richiesta utente, ritocchi per
+   gradi). Tutto scoped a .ctrl-legend-row: NON tocca le card (là il verticale
+   arriva dall'unità bi-ringelven / dalle regole globali). Ultimo aggiustamento:
+   i 3 Elfici giù di 0.03em (era -0.11em → -0.08em) e tutti e 6 giù di altri 0.02em
+   (già incluso qui). Valori finali in em puro:
+   - Elfici (Vilya/Nenya/Narya): -0.08em  (globale -0.05em, poi giù)
+   - Unico: +0.02em                        (globale 0, poi giù 0.02em)
+   - Nove / Sette: -0.012em                (globale -0.032em, poi giù 0.02em)
+   Specificità (0,2,0) > le regole globali .si-* (0,1,0). */
 .ctrl-legend-row .si-vilya,
 .ctrl-legend-row .si-nenya,
-.ctrl-legend-row .si-narya { transform:translateY(-0.11em); }
+.ctrl-legend-row .si-narya { transform:translateY(-0.08em); }
+.ctrl-legend-row .si-unico { transform:translateY(0.02em); }
+.ctrl-legend-row .si-nove,
+.ctrl-legend-row .si-sette { transform:translateY(-0.012em); }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
@@ -2260,7 +2267,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.88</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.89</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
