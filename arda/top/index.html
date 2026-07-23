@@ -464,7 +464,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .si-incarnazione { width:.92em; height:.92em; }
 /* Guerra d'Ira (spade). Canvas 240x256 (compensazione ottica dell'utente):
    larghezza proporzionata = 240/256 * .92em. Il badge suicidio (fiore reciso,
-   Morte.png) è quadrato 256x256 e usa il box .status-icon di default. */
+   Morte.webp) è quadrato 256x256 e usa il box .status-icon di default. */
 .si-ira { width:.863em; height:.92em; }
 /* Morgoth (guerriero corazzato, easter-egg su Fingolfin): PNG su canvas
    quadrato standard 256x256 (padding trasparente CONSERVATO, voluto
@@ -482,7 +482,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 .rank-name .rank-flags .si-demon { margin-left:-0.05em; }
 /* Badge Est (nave verso Est): correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-est { margin-left:-0.04em; }
-/* Badge suicidio (Morte.png): correzione spaziatura a sinistra, solo sulle card. */
+/* Badge suicidio (Morte.webp): correzione spaziatura a sinistra, solo sulle card. */
 .rank-name .rank-flags .si-morte { margin-left:-0.05em; }
 /* Navi Aman (west) e Valinor (envoy): correzione spaziatura a sinistra, solo card. */
 .rank-name .rank-flags .si-aman,
@@ -2182,8 +2182,8 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 //  - langSwitchMobile: il tasto cambio lingua in alto a destra, SOLO su
 //    mobile. Spento per un'interfaccia mobile più pulita; la lingua resta
 //    cambiabile dal Pannello del FAB. Su desktop è sempre visibile.
-//  - oneRing: variante dell'Unico Anello, 'A' (icons/Unico.png, attiva) o
-//    'B' (icons/Unico_B.png, design precedente). Due file in cartella: per
+//  - oneRing: variante dell'Unico Anello, 'A' (icons/Unico.webp, attiva) o
+//    'B' (icons/Unico_B.webp, design precedente). Due file in cartella: per
 //    alternare il design basta cambiare questo valore.
 //  - istariFiveIcons: la RIGA DI LEGENDA degli Istari con le 5 icone dei maghi
 //    in fila (Saruman, Gandalf, Radagast, Alatar, Pallando). Spento (dalla
@@ -2230,7 +2230,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.44</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.60</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2264,7 +2264,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
         <div class="modal-name" id="modal-name" role="heading" aria-level="2"></div>
         <a class="modal-tg" id="modal-tg" href="https://tolkiengateway.net/" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          <img src="icons/TolkienGateway.png" alt="">
+          <img src="icons/TolkienGateway.webp" alt="">
         </a>
       </div>
       <div class="modal-source" id="modal-source"></div>
@@ -2860,32 +2860,32 @@ function familyOf(p) {
 // Icone badge: PNG 256x256 normalizzati (oggetto al vivo, centrato) in
 // arda/top/icons/, nomi da legenda ITA. La resa identica agli SVG di
 // prima è garantita dalle classi si-* (fattori di scala) nel CSS.
-var ICON_SVG = {
-  aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.png\" title=\"%L%\" alt=\"%L%\">",
-  silmaril:   "<img class=\"status-icon si-silmaril\" src=\"icons/Silmaril.png\" title=\"%L%\" alt=\"%L%\">",
-  helcaraxe:  "<img class=\"status-icon si-helcaraxe\" src=\"icons/Helcaraxe.png\" title=\"%L%\" alt=\"%L%\">",
-  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.png\" title=\"%L%\" alt=\"%L%\">",
-  fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.png\" title=\"%L%\" alt=\"%L%\">",
-  king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.png\" title=\"%L%\" alt=\"%L%\">",
-  king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.png\" title=\"%L%\" alt=\"%L%\">",
-  king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.png\" title=\"%L%\" alt=\"%L%\">",
-  survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.png\" title=\"%L%\" alt=\"%L%\">",
-  west:       "<img class=\"status-icon si-aman\" src=\"icons/Aman.png\" title=\"%L%\" alt=\"%L%\">",
-  envoy:      "<img class=\"status-icon si-valinor\" src=\"icons/Valinor.png\" title=\"%L%\" alt=\"%L%\">",
-  onering:    "<img class=\"status-icon si-unico\" src=\"icons/" + (FEATURES.oneRing === 'B' ? 'Unico_B.png' : 'Unico.png') + "\" title=\"%L%\" alt=\"%L%\">",
-  vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.png\" title=\"%L%\" alt=\"%L%\">",
-  nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.png\" title=\"%L%\" alt=\"%L%\">",
-  narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.png\" title=\"%L%\" alt=\"%L%\">",
-  menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.png\" title=\"%L%\" alt=\"%L%\">",
-  sette:      "<img class=\"status-icon si-sette\" src=\"icons/Sette.png\" title=\"%L%\" alt=\"%L%\">",
-  incarnazione: "<img class=\"status-icon si-incarnazione\" src=\"icons/Ritorno.png\" title=\"%L%\" alt=\"%L%\">",
-  est:        "<img class=\"status-icon si-est\" src=\"icons/Est.png\" title=\"%L%\" alt=\"%L%\">",
-  drago:      "<img class=\"status-icon si-demon\" src=\"icons/Drago.png\" title=\"%L%\" alt=\"%L%\">",
-  balrog:     "<img class=\"status-icon si-demon\" src=\"icons/Balrog.png\" title=\"%L%\" alt=\"%L%\">",
-  morgoth:    "<img class=\"status-icon si-morgoth\" src=\"icons/Morgoth.png\" title=\"%L%\" alt=\"%L%\">",
-  calaquende: "<img class=\"status-icon si-calaquende\" src=\"icons/Calaquendi.png\" title=\"%L%\" alt=\"%L%\">",
-  guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.png\" title=\"%L%\" alt=\"%L%\">",
-  suicidio:   "<img class=\"status-icon si-morte\" src=\"icons/Morte.png\" title=\"%L%\" alt=\"%L%\">"
+var BADGE_ICON = {
+  aratar:     "<img class=\"status-icon si-aratar\" src=\"icons/Aratar.webp\" title=\"%L%\" alt=\"%L%\">",
+  silmaril:   "<img class=\"status-icon si-silmaril\" src=\"icons/Silmaril.webp\" title=\"%L%\" alt=\"%L%\">",
+  helcaraxe:  "<img class=\"status-icon si-helcaraxe\" src=\"icons/Helcaraxe.webp\" title=\"%L%\" alt=\"%L%\">",
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Bianco.webp\" title=\"%L%\" alt=\"%L%\">",
+  fellowship: "<img class=\"status-icon si-hobbit\" src=\"icons/Hobbit.webp\" title=\"%L%\" alt=\"%L%\">",
+  king_high:  "<img class=\"status-icon si-resupremo\" src=\"icons/ReSupremo.webp\" title=\"%L%\" alt=\"%L%\">",
+  king_high_now: "<img class=\"status-icon si-refinarfin\" src=\"icons/ReFinarfin.webp\" title=\"%L%\" alt=\"%L%\">",
+  king_std:   "<img class=\"status-icon si-renoldor\" src=\"icons/ReNoldor.webp\" title=\"%L%\" alt=\"%L%\">",
+  survivor:   "<img class=\"status-icon\" src=\"icons/Mappa.webp\" title=\"%L%\" alt=\"%L%\">",
+  west:       "<img class=\"status-icon si-aman\" src=\"icons/Aman.webp\" title=\"%L%\" alt=\"%L%\">",
+  envoy:      "<img class=\"status-icon si-valinor\" src=\"icons/Valinor.webp\" title=\"%L%\" alt=\"%L%\">",
+  onering:    "<img class=\"status-icon si-unico\" src=\"icons/" + (FEATURES.oneRing === 'B' ? 'Unico_B.webp' : 'Unico.webp') + "\" title=\"%L%\" alt=\"%L%\">",
+  vilya:      "<img class=\"status-icon si-vilya\" src=\"icons/Vilya.webp\" title=\"%L%\" alt=\"%L%\">",
+  nenya:      "<img class=\"status-icon si-nenya\" src=\"icons/Nenya.webp\" title=\"%L%\" alt=\"%L%\">",
+  narya:      "<img class=\"status-icon si-narya\" src=\"icons/Narya.webp\" title=\"%L%\" alt=\"%L%\">",
+  menring:    "<img class=\"status-icon si-nove\" src=\"icons/Nove.webp\" title=\"%L%\" alt=\"%L%\">",
+  sette:      "<img class=\"status-icon si-sette\" src=\"icons/Sette.webp\" title=\"%L%\" alt=\"%L%\">",
+  incarnazione: "<img class=\"status-icon si-incarnazione\" src=\"icons/Ritorno.webp\" title=\"%L%\" alt=\"%L%\">",
+  est:        "<img class=\"status-icon si-est\" src=\"icons/Est.webp\" title=\"%L%\" alt=\"%L%\">",
+  drago:      "<img class=\"status-icon si-demon\" src=\"icons/Drago.webp\" title=\"%L%\" alt=\"%L%\">",
+  balrog:     "<img class=\"status-icon si-demon\" src=\"icons/Balrog.webp\" title=\"%L%\" alt=\"%L%\">",
+  morgoth:    "<img class=\"status-icon si-morgoth\" src=\"icons/Morgoth.webp\" title=\"%L%\" alt=\"%L%\">",
+  calaquende: "<img class=\"status-icon si-calaquende\" src=\"icons/Calaquendi.webp\" title=\"%L%\" alt=\"%L%\">",
+  guerradira: "<img class=\"status-icon si-ira\" src=\"icons/Ira.webp\" title=\"%L%\" alt=\"%L%\">",
+  suicidio:   "<img class=\"status-icon si-morte\" src=\"icons/Morte.webp\" title=\"%L%\" alt=\"%L%\">"
 };
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
 // lista, per la legenda del Pannello e per la griglia dell'editor admin. In
@@ -2913,18 +2913,18 @@ var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
 // emblema dell'ordine (in lista invece c'è un'icona per ciascun mago). Il
 // Fellowship (Hobbit) non ha più variante: una sola icona, come tutte le altre.
-var ICON_LEGENDA = {
+var BADGE_KEY = {
   // Icona singola della riga di legenda Istari a flag spento (FEATURES.istari-
   // FiveIcons=false): Gandalf grigio, il mago più iconico. La riga a 5 icone
   // (flag ON) la costruisce a parte buildLegend.
-  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Grigio.png\" title=\"%L%\" alt=\"%L%\">"
+  istari:     "<img class=\"status-icon si-istari\" src=\"icons/Grigio.webp\" title=\"%L%\" alt=\"%L%\">"
 };
 // Istari in lista: una o piu' icone per mago (colore dell'ordine/veste).
 // Gandalf e' l'unico con due icone (Grigio poi Bianco): fu sia il Grigio
 // sia il Bianco.
 var ISTARI_ICON = {
-  'Gandalf': ['Grigio.png','Bianco.png'], 'Saruman': ['Bianco.png'], 'Radagast': ['Bruno.png'],
-  'Alatar': ['Blu1.png'], 'Pallando': ['Blu2.png']
+  'Gandalf': ['Grigio.webp','Bianco.webp'], 'Saruman': ['Bianco.webp'], 'Radagast': ['Bruno.webp'],
+  'Alatar': ['Blu1.webp'], 'Pallando': ['Blu2.webp']
 };
 
 // ─── Micro-aggiustamenti icone-badge (editor admin, dalla v11.33) ────────────
@@ -2935,7 +2935,7 @@ var ISTARI_ICON = {
 // transform), sc (scale = moltiplicatore d'altezza, cambia anche l'ingombro
 // orizzontale → coerente col modello 'caratteri consecutivi'). Sulle card ogni
 // <img> badge riceve la classe di unità `bi-<id>` (in buildStatus, NON in
-// ICON_SVG: così la LEGENDA resta intatta). Le regole vengono INIETTATE a runtime
+// BADGE_ICON: così la LEGENDA resta intatta). Le regole vengono INIETTATE a runtime
 // da badgeAdjust (dati.js) o dal fallback seed-once qui sotto, e scavalcano il
 // CSS statico per-icona (che resta come rete di sicurezza).
 var BADGE_ADJUST_UNITS = [
@@ -3104,7 +3104,7 @@ function buildStatus(p) {
     var dim = p[k] === 'presunto';
     var ov = ICON_LABEL_OVERRIDE[p.nome] && ICON_LABEL_OVERRIDE[p.nome][k];
     var label = ov ? (ov[currentLang] || ov.it) : L[k];
-    var tpl = ICON_SVG[k];
+    var tpl = BADGE_ICON[k];
     // Istari: in lista un'icona dedicata per ciascun mago (Gandalf ne ha due)
     if (k === 'istari' && ISTARI_ICON[p.nome]) {
       tpl = ISTARI_ICON[p.nome].map(function(f){
@@ -3213,9 +3213,9 @@ var GENDER_LABEL = {
   it: { m: 'Maschio', f: 'Femmina' },
   en: { m: 'Male', f: 'Female' }
 };
-var GENERE_SVG = {
-  f: '<img class="genere-svg genere-svg--f" src="icons/Femmina.png" title="%L%" alt="%L%">',
-  m: '<img class="genere-svg genere-svg--m" src="icons/Maschio.png" title="%L%" alt="%L%">'
+var GENDER_ICON = {
+  f: '<img class="genere-svg genere-svg--f" src="icons/Femmina.webp" title="%L%" alt="%L%">',
+  m: '<img class="genere-svg genere-svg--m" src="icons/Maschio.webp" title="%L%" alt="%L%">'
 };
 
 // Predicato di visibilità UNICO (filtri categoria + interruttore Apocrifi):
@@ -3306,7 +3306,7 @@ function renderList() {
     var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
     var genere = p.genere || 'm';
     var gl = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
-    var genereSym = genere === 'f' ? GENERE_SVG.f.split('%L%').join(gl.f) : genere === 'm' ? GENERE_SVG.m.split('%L%').join(gl.m) : '';
+    var genereSym = genere === 'f' ? GENDER_ICON.f.split('%L%').join(gl.f) : genere === 'm' ? GENDER_ICON.m.split('%L%').join(gl.m) : '';
     // Badge 'Ainu' per Valar/Maiar via isAinu() (fonte unica con categoria()),
     // Balrog INCLUSI: mostrano 'Ainu' come primo badge (tipoStr costruito prima
     // dei segmenti di p.tipo), poi 'Maia decaduto'/'Balrog'. Lúthien esclusa.
@@ -4374,7 +4374,7 @@ function controlPanelHTML() {
         // in fila (come gli Anelli): Saruman, Gandalf, Radagast, Alatar, Pallando
         // (un'icona per mago, dal colore della veste/ordine). A flag spento la
         // riga cade nel ramo generico (icona singola Gandalf grigio + testo).
-        var wiz = [['Bianco.png','Saruman'],['Grigio.png','Gandalf'],['Bruno.png','Radagast'],['Blu1.png','Alatar'],['Blu2.png','Pallando']];
+        var wiz = [['Bianco.webp','Saruman'],['Grigio.webp','Gandalf'],['Bruno.webp','Radagast'],['Blu1.webp','Alatar'],['Blu2.webp','Pallando']];
         s += legRow('istari', '<span class="leg-cluster">' + wiz.map(function(w){
           return '<span class="leg-ring"><img class="status-icon si-istari" src="icons/' + w[0] + '" title="' + w[1] + '" alt="' + w[1] + '"></span>';
         }).join('') + '</span><span>' + IL['istari'] + '</span>', 'ctrl-legend-rings ctrl-legend-istari');
@@ -4389,27 +4389,27 @@ function controlPanelHTML() {
         // invariati per non rompere la convenzione 'Re Supremo vs Alto Re'.
         var reNoldorTxt = lang === 'it' ? 'Alto Re dei Noldor' : 'King of the Noldor';
         var reSupremoTxt = lang === 'it' ? 'Re Supremo (Aman)' : 'High King (Aman)';
-        s += legRow('king_high', '<span class="leg-ico">' + ICON_SVG['king_std'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + reNoldorTxt + '</span>'
-           + '<span class="leg-group leg-group--king">' + ICON_SVG['king_high'].split('%L%').join('') + '<span>' + reSupremoTxt + '</span></span>');
+        s += legRow('king_high', '<span class="leg-ico">' + BADGE_ICON['king_std'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + reNoldorTxt + '</span>'
+           + '<span class="leg-group leg-group--king">' + BADGE_ICON['king_high'].split('%L%').join('') + '<span>' + reSupremoTxt + '</span></span>');
         return;
       }
       if (k === 'west') {
         var westTxt = lang === 'it' ? 'Attraversò il Mare' : 'Crossed the Sea';
         var envoyTxt = lang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-        s += legRow('west', '<span class="leg-ico">' + ICON_SVG['west'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + westTxt + '</span>'
-           + '<span class="leg-group leg-group--aman">' + ICON_SVG['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
+        s += legRow('west', '<span class="leg-ico">' + BADGE_ICON['west'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + westTxt + '</span>'
+           + '<span class="leg-group leg-group--aman">' + BADGE_ICON['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
         return;
       }
       if (k === 'est') {
         // In legenda l'etichetta breve resta concisa (il tooltip esteso della
         // card è più lungo, 'su una nave degli Elfi...'): qui testo dedicato.
         var estLeg = lang === 'it' ? 'Veleggiò verso est da Aman alla Terra di Mezzo' : 'Sailed eastwards from Aman to Middle-earth';
-        s += legRow('est', '<span class="leg-ico">' + ICON_SVG['est'].split('%L%').join('') + '</span><span>' + estLeg + '</span>');
+        s += legRow('est', '<span class="leg-ico">' + BADGE_ICON['est'].split('%L%').join('') + '</span><span>' + estLeg + '</span>');
         return;
       }
       if (k === 'drago') {
-        s += legRow('drago', '<span class="leg-ico">' + ICON_SVG['drago'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + IL['drago'] + '</span>'
-           + '<span class="leg-group leg-group--balrog">' + ICON_SVG['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
+        s += legRow('drago', '<span class="leg-ico">' + BADGE_ICON['drago'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + IL['drago'] + '</span>'
+           + '<span class="leg-group leg-group--balrog">' + BADGE_ICON['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
         return;
       }
       if (k === 'onering') {
@@ -4417,22 +4417,22 @@ function controlPanelHTML() {
         // in coda alla legenda. I singoli tooltip restano quelli di ICON_LABEL.
         var ringsTxt = lang === 'it' ? 'Portatore di uno degli Anelli del Potere' : 'Bearer of one of the Rings of Power';
         s += legRow('rings', '<span class="leg-cluster">'
-           + '<span class="leg-ring">' + ICON_SVG['onering'].split('%L%').join(IL['onering']) + '</span>'
-           + '<span class="leg-ring">' + ICON_SVG['vilya'].split('%L%').join(IL['vilya']) + '</span>'
-           + '<span class="leg-ring">' + ICON_SVG['nenya'].split('%L%').join(IL['nenya']) + '</span>'
-           + '<span class="leg-ring">' + ICON_SVG['narya'].split('%L%').join(IL['narya']) + '</span>'
-           + '<span class="leg-ring">' + ICON_SVG['menring'].split('%L%').join(IL['menring']) + '</span>'
-           + '<span class="leg-ring">' + ICON_SVG['sette'].split('%L%').join(IL['sette']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['onering'].split('%L%').join(IL['onering']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['vilya'].split('%L%').join(IL['vilya']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['nenya'].split('%L%').join(IL['nenya']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['narya'].split('%L%').join(IL['narya']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['menring'].split('%L%').join(IL['menring']) + '</span>'
+           + '<span class="leg-ring">' + BADGE_ICON['sette'].split('%L%').join(IL['sette']) + '</span>'
            + '</span><span>' + ringsTxt + '</span>', 'ctrl-legend-rings');
         return;
       }
-      s += legRow(k, '<span class="leg-ico">' + (ICON_LEGENDA[k] || ICON_SVG[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
+      s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
     });
     if (FEATURES.genderLegendPill) {
       var GLb = GENDER_LABEL[lang] || GENDER_LABEL.it;
       s += '<div class="leg-gender">'
-         + '<span class="leg-g-half">' + GENERE_SVG.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
-         + '<span class="leg-g-half">' + GENERE_SVG.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
+         + '<span class="leg-g-half">' + GENDER_ICON.m.split('%L%').join('') + '<span>' + GLb.m + '</span></span>'
+         + '<span class="leg-g-half">' + GENDER_ICON.f.split('%L%').join('') + '<span>' + GLb.f + '</span></span>'
          + '</div>';
     }
     return s;
@@ -5949,7 +5949,7 @@ function showAdminEditor() {
       chk.id = 'ae-' + i + '-flag-' + k;
       chk.checked = !!p[k];
       const iconEl = document.createElement('span');
-      iconEl.innerHTML = ICON_SVG[k].split('%L%').join('');
+      iconEl.innerHTML = BADGE_ICON[k].split('%L%').join('');
       lbl.appendChild(chk); lbl.appendChild(iconEl);
       flagsRow.appendChild(lbl);
     });
@@ -6429,7 +6429,7 @@ function showBadgeAdjustEditor(initState){
   }
 
   function samples(u){ var out = []; for (var i = 0; i < dati.length && out.length < 3; i++){ var p = dati[i]; if (u.members.some(function(k){ return p[k]; })) out.push(p); } return out; }
-  function iconFile(p, k){ if (k === 'istari'){ var a = ISTARI_ICON[p.nome]; return 'icons/' + ((a && a[0]) || 'Bianco.png'); } var m = /src="([^"]+)"/.exec(ICON_SVG[k] || ''); return m ? m[1] : ('icons/' + k + '.png'); }
+  function iconFile(p, k){ if (k === 'istari'){ var a = ISTARI_ICON[p.nome]; return 'icons/' + ((a && a[0]) || 'Bianco.webp'); } var m = /src="([^"]+)"/.exec(BADGE_ICON[k] || ''); return m ? m[1] : ('icons/' + k + '.webp'); }
   function nmOf(p){ return it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); }
   function renderPane(pane){
     var u = unitOf(cur); var ss = samples(u);
@@ -6442,7 +6442,7 @@ function showBadgeAdjustEditor(initState){
       }).join('');
       // Simbolo di genere in coda (come sulla card), solo di riferimento: NON è
       // un'unità dell'editor (resta governato dal suo CSS .genere-svg--m/f).
-      var gsym = (p.genere === 'f' ? GENERE_SVG.f : GENERE_SVG.m).split('%L%').join('');
+      var gsym = (p.genere === 'f' ? GENDER_ICON.f : GENDER_ICON.m).split('%L%').join('');
       return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + gsym + '</span></div>';
     }).join('');
     placeMidlines(pane);
