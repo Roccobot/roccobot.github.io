@@ -2052,7 +2052,8 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   la regola modali sotto). Layout (redesign v11.35 su mockup dell'utente): selettore
   a chip in alto (con `×N` sui gruppi); poi **due colonne** — a **sinistra** i 4
   campi (slider + input corto, senza hint) + '**Reset unità**' (ripristina l'ultimo
-  salvato `BADGE_ADJUST_SAVED`); a **destra** le **anteprime impilate** (tema scuro
+  salvato `BADGE_ADJUST_SAVED` per tutti e 4 i valori; un **doppio clic sul singolo
+  slider** riporta invece SOLO quel valore all'ultimo salvato); a **destra** le **anteprime impilate** (tema scuro
   sopra, chiaro sotto, un po' ingrandite) su 3 schede reali che portano il badge.
   Ogni riga d'anteprima ha una **linea di mezzo rossa tratteggiata (1px)** che passa
   esattamente a metà del **maiuscoletto** del nome (`--mid`, misurata a runtime col
