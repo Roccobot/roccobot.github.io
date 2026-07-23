@@ -545,21 +545,25 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    ora separati: Ritorno 0.02em sopra la linea, Helcaraxe 0.01em sotto. */
 .ctrl-legend-row .si-incarnazione { transform:translateY(-0.02em); }
 .ctrl-legend-row .si-helcaraxe { transform:translateY(0.01em); }
-/* Anelli degli Elfi (Vilya/Nenya/Narya) in LEGENDA: alzati di ulteriori 0.06em
-   rispetto al valore globale (-.106em → -.166em, +1px invariato), richiesta
-   utente. Scoped a .ctrl-legend-row: NON tocca le card (là il verticale arriva
-   dall'unità bi-ringelven). Specificità (0,2,0) > globale .si-vilya (0,1,0). */
+/* Anelli degli Elfi (Vilya/Nenya/Narya) in LEGENDA: alzati di 0.06em rispetto al
+   valore globale (base -0.05em → -0.11em), richiesta utente. Tutto in em puro
+   (il vecchio +1px è stato sciolto: -.166em+1px ≈ -0.11em a 18.26px). Scoped a
+   .ctrl-legend-row: NON tocca le card (là il verticale arriva dall'unità
+   bi-ringelven). Specificità (0,2,0) > globale .si-vilya (0,1,0). */
 .ctrl-legend-row .si-vilya,
 .ctrl-legend-row .si-nenya,
-.ctrl-legend-row .si-narya { transform:translateY(calc(-.166em + 1px)); }
+.ctrl-legend-row .si-narya { transform:translateY(-0.11em); }
 /* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
    (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
    non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
-   cerchi dei simboli di genere); +1px di rifinitura percettiva, a occhio sul
-   sito reale. Misure scelte per resa IDENTICA ai vecchi anelli (Ø ~.624em). */
-.si-vilya { width:.680em; height:.893em; transform:translateY(calc(-.106em + 1px)); }
-.si-nenya { width:.680em; height:.893em; transform:translateY(calc(-.106em + 1px)); }
-.si-narya { width:.680em; height:.893em; transform:translateY(calc(-.106em + 1px)); }
+   cerchi dei simboli di genere). Valore in em puro (era calc(-.106em + 1px);
+   il +1px 'di rifinitura percettiva' è stato sciolto in em ≈ -0.05em a 18.26px,
+   così nessun pixel assoluto resta sulle icone-badge). Base ora scavalcata in
+   entrambi i contesti (card: bi-ringelven; legenda: .ctrl-legend-row .si-*), resta
+   come fallback. Misure scelte per resa IDENTICA ai vecchi anelli (Ø ~.624em). */
+.si-vilya { width:.680em; height:.893em; transform:translateY(-0.05em); }
+.si-nenya { width:.680em; height:.893em; transform:translateY(-0.05em); }
+.si-narya { width:.680em; height:.893em; transform:translateY(-0.05em); }
 /* Anello degli Uomini (i Nove / Nazgûl): gemma in alto, tondo sotto. Canvas
    234x256, tondo (Ø esterno ~216px) centrato a (~116,139): risalita di
    ~.032em così è il tondo, non la gemma, ad allinearsi agli altri cerchi
@@ -2256,7 +2260,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.87</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.88</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
