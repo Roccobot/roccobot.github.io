@@ -302,6 +302,13 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   gap: 0.32em;
 }
 .rank-name-text { cursor:pointer; transition:color 0.2s; }
+/* Linee mediane di allineamento (tasto '.', ADMIN-only, dalla v11.80): una riga
+   rossa tratteggiata per card, a metà del maiuscoletto del nome (--mid misurato a
+   runtime col font reale, come nell'editor micro-aggiustamenti). Inerte finché
+   .show-midlines non è sul contenitore (toggle solo dopo il login admin). Disegnata
+   SOTTO il contenuto della card (isolation + z-index:-1), poco invasiva. */
+#rank-list.show-midlines .rank-item { isolation:isolate; }
+#rank-list.show-midlines .rank-item::after { content:""; position:absolute; left:0; right:0; top:var(--mid,50%); height:0; border-top:1px dashed #e02424; pointer-events:none; z-index:-1; }
 /* #2 — Etichette (tipi) e icone raggruppate. Il DOM emette l'ordine di resa
    mobile (nome → icone → etichette), perché su mobile la riga è in flusso
    inline (vedi media query max-width:480px) e lì l'ordine visivo può venire
@@ -2237,7 +2244,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.70</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.80</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2520,6 +2527,27 @@ document.addEventListener('keydown', function(e) {
       || document.getElementById('res-modal') || document.getElementById('stats-modal')) return;
   e.preventDefault();
   toggleControlPanel();
+});
+
+// Tasto '.' (punto): mostra/nasconde le linee mediane di allineamento sulle card
+// (ADMIN-only, dalla v11.80). Guardie come per 'P' PIÙ il login: niente
+// modificatori, adminPassword presente (si spegne da sé al refresh), nessun campo
+// di testo, niente admin/riordino, nessuna modale né Pannello aperti.
+document.addEventListener('keydown', function(e) {
+  if (e.key !== '.') return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (!adminPassword) return; // solo dopo il login admin
+  if (document.documentElement.classList.contains('admin-open')) return;
+  if (typeof reorderMode !== 'undefined' && reorderMode) return;
+  var tgt = e.target;
+  if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.tagName === 'SELECT' || tgt.isContentEditable)) return;
+  var bd = document.getElementById('modal-backdrop'), pnl = document.getElementById('ctrl-panel');
+  if ((bd && bd.classList.contains('active')) || document.getElementById('imgv')
+      || document.getElementById('fab-modal') || document.getElementById('note-modal')
+      || document.getElementById('res-modal') || document.getElementById('stats-modal')
+      || (pnl && pnl.classList.contains('open'))) return;
+  e.preventDefault();
+  toggleCardMidlines();
 });
 
 
@@ -3620,7 +3648,35 @@ function reflowApoLabels() {
     if (t.right > p.left - 4 && t.left < p.right && t.top < p.bottom && t.bottom > p.top) it.classList.add('apo-wrap');
   }
 }
-function reflowRows() { tightenNames(); optimizeBipartite(); reflowApoLabels(); }
+// Linee mediane di allineamento sulla pagina reale (tasto '.', ADMIN-only, dalla
+// v11.80): una riga tratteggiata a metà del maiuscoletto del nome di ogni card, per
+// giudicare l'allineamento ottico delle icone-badge come nell'editor. Attiva solo
+// dopo il login (adminPassword in memoria → si spegne da sé al refresh). --mid
+// misurato col font reale via canvas (stessa logica di placeMidlines dell'editor).
+var midlinesOn = false, _mlCv;
+function placeCardMidlines() {
+  var items = document.querySelectorAll('#rank-list .rank-item');
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i], nm = item.querySelector('.rank-name-text'); if (!nm) continue;
+    var cs = getComputedStyle(nm), fs = parseFloat(cs.fontSize);
+    var lh = (cs.lineHeight === 'normal') ? fs * 1.2 : parseFloat(cs.lineHeight);
+    _mlCv = _mlCv || document.createElement('canvas').getContext('2d');
+    _mlCv.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
+    var m = _mlCv.measureText('a');
+    var asc = m.actualBoundingBoxAscent || fs * 0.66;
+    var fAsc = m.fontBoundingBoxAscent || fs * 0.8, fDesc = m.fontBoundingBoxDescent || fs * 0.2;
+    var capCenterFromTop = ((lh - (fAsc + fDesc)) / 2 + fAsc) - asc / 2;
+    var nmR = nm.getBoundingClientRect(), itR = item.getBoundingClientRect();
+    item.style.setProperty('--mid', ((nmR.top - itR.top) + capCenterFromTop).toFixed(1) + 'px');
+  }
+}
+function toggleCardMidlines() {
+  var list = document.getElementById('rank-list'); if (!list) return;
+  midlinesOn = !midlinesOn;
+  list.classList.toggle('show-midlines', midlinesOn);
+  if (midlinesOn) placeCardMidlines();
+}
+function reflowRows() { tightenNames(); optimizeBipartite(); reflowApoLabels(); if (midlinesOn) placeCardMidlines(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);

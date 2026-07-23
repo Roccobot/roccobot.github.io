@@ -1534,6 +1534,21 @@ specifico del dataset):
       NON è possibile da una pagina web (Fn non genera eventi; Win/Super è
       riservato all'OS: menu Start / vista Attività non prevenibili): non
       riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
+    - **. (punto, ADMIN-only, dalla v11.80)**: mostra/nasconde le **linee mediane
+      di allineamento** sulle card — la stessa riga rossa tratteggiata dell'editor
+      micro-aggiustamenti, ma **sulla pagina reale**, una per personaggio, a metà
+      del maiuscoletto del nome (riferimento per l'allineamento ottico delle
+      icone-badge). Toggle a ogni pressione. **Attiva solo dopo il login admin**
+      (`adminPassword` in memoria): si **spegne da sé al refresh** (la password non
+      è persistita), che è proprio il comportamento voluto. Guardie come per `P`
+      (niente modificatori/campi di testo/admin/riordino/overlay) **più** Pannello
+      chiuso e login fatto. Implementazione: `toggleCardMidlines`/`placeCardMidlines`
+      (mette la property `--mid` per card, misurata col font reale via canvas come
+      `placeMidlines` dell'editor), classe `.show-midlines` su `#rank-list`, riga
+      via `::after` disegnata SOTTO il contenuto (`isolation:isolate` + `z-index:-1`);
+      la re-misura è agganciata a `reflowRows` (renderList/resize/font-load), quindi
+      le linee restano allineate a ogni ridisegno. Vale per **tutte** le card
+      visibili (leggero: solo un overlay CSS per card).
 - **`oneRing`** (non un on/off ma un **selettore di variante**): icona
   dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
