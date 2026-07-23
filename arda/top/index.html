@@ -2230,7 +2230,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.34</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.35</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6258,46 +6258,45 @@ function baInjectEditorCss(){
     '.ba-chip.on{border-color:#c8a24a;box-shadow:inset 0 0 0 1px #c8a24a;background:rgba(200,162,74,0.14);}',
     '.ba-grp{font-size:0.62rem;font-weight:700;background:#c8a24a;color:#1a1a1a;border-radius:20px;padding:0 5px;}',
     '.ba-selhead{font-size:0.86rem;margin:0 0 0.7rem;}',
-    '.ba-fields{display:flex;flex-direction:column;gap:0.7rem;}',
+    // Corpo: campi a SINISTRA (colonna stretta), anteprime a DESTRA (impilate).
+    '.ba-body{display:grid;grid-template-columns:270px minmax(0,1fr);gap:20px;align-items:start;}',
+    '@media (max-width:640px){.ba-body{grid-template-columns:1fr;}}',
+    '.ba-fields{display:flex;flex-direction:column;gap:0.65rem;}',
     '.ba-ftop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px;}',
-    '.ba-fname{font-size:0.8rem;font-weight:600;}',
-    '.ba-fhint{font-size:0.68rem;opacity:0.55;font-weight:400;margin-left:2px;}',
+    '.ba-fname{font-size:0.82rem;font-weight:600;}',
     '.ba-fval{font-size:0.82rem;font-weight:700;color:#c8a24a;font-family:ui-monospace,monospace;flex:none;}',
     'html[data-theme="light"] .ba-fval{color:#1f5562;}',
-    '.ba-fline{display:flex;align-items:center;gap:10px;}',
+    '.ba-fline{display:flex;align-items:center;gap:9px;}',
     '.ba-fline input[type=range]{flex:1;min-width:0;}',
-    '.ba-num{width:70px;flex:none;padding:4px 6px;border:1px solid rgba(128,128,128,0.35);border-radius:6px;background:transparent;color:inherit;font-family:ui-monospace,monospace;font-size:0.78rem;text-align:right;}',
-    '.ba-reset{margin-top:0.5rem;font-size:0.74rem;background:none;border:none;color:inherit;opacity:0.7;cursor:pointer;text-decoration:underline;padding:0;}',
+    // Input numerico corto.
+    '.ba-num{width:64px;flex:none;padding:4px 6px;border:1px solid rgba(128,128,128,0.35);border-radius:6px;background:transparent;color:inherit;font-family:ui-monospace,monospace;font-size:0.78rem;text-align:right;}',
+    '.ba-reset{margin-top:0.55rem;font-size:0.74rem;background:none;border:none;color:inherit;opacity:0.7;cursor:pointer;text-decoration:underline;padding:0;}',
     '.ba-reset:hover{opacity:1;}',
-    '.ba-switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:0.8rem;margin:0.9rem 0 0;user-select:none;}',
-    '.ba-track{width:33px;height:18px;border-radius:20px;background:rgba(128,128,128,0.4);position:relative;flex:none;transition:0.16s;}',
-    '.ba-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:0.16s;box-shadow:0 1px 2px rgba(0,0,0,0.35);}',
-    '.ba-switch.on .ba-track{background:#c8a24a;}',
-    '.ba-switch.on .ba-knob{left:17px;}',
-    '.ba-tablewrap{display:none;margin-top:0.6rem;border:1px solid rgba(128,128,128,0.3);border-radius:9px;overflow:auto;max-height:230px;}',
-    '.ba-tablewrap.show{display:block;}',
+    // Anteprime impilate (scuro sopra, chiaro sotto), un po piu grandi.
+    '.ba-pvgrid{display:flex;flex-direction:column;gap:10px;}',
+    '.ba-pane{border-radius:10px;padding:12px 15px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;}',
+    '.ba-pane.dark{background:#242424;color:#e9e7e1;}',
+    '.ba-pane.light{background:#f1f1f1;color:#1d1d1d;}',
+    '.ba-pv-row{display:flex;align-items:center;gap:10px;padding:7px 0;min-width:0;}',
+    '.ba-pv-row+.ba-pv-row{border-top:1px solid rgba(128,128,128,0.2);}',
+    '.ba-pv-name{font-family:Cinzel,Georgia,serif;font-size:1.16rem;font-weight:600;flex:none;}',
+    '.ba-pv-badges{display:inline-flex;align-items:center;font-size:26px;min-width:0;}',
+    '.ba-pv-ico{width:auto;object-fit:contain;vertical-align:middle;}',
+    // Indicatore SEMPLICE dell icona in modifica: una freccina (caret) sotto.
+    '.ba-pv-sel{position:relative;display:inline-flex;align-items:center;}',
+    '.ba-pv-sel::after{content:"";position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:5px solid #c8a24a;}',
+    'html[data-theme="light"] .ba-pv-sel::after{border-bottom-color:#1f5562;}',
+    '.ba-pv-empty{font-size:0.8rem;opacity:0.6;padding:0.4rem 0;}',
+    // Tabella riepilogo SEMPRE visibile in basso, scrollevole.
+    '.ba-tablewrap{margin-top:1rem;border:1px solid rgba(128,128,128,0.3);border-radius:9px;overflow:auto;max-height:200px;}',
     '.ba-table{width:100%;border-collapse:collapse;font-size:0.74rem;}',
     '.ba-table th,.ba-table td{padding:5px 9px;text-align:right;border-bottom:1px solid rgba(128,128,128,0.22);white-space:nowrap;font-variant-numeric:tabular-nums;}',
     '.ba-table th:first-child,.ba-table td:first-child{text-align:left;}',
     '.ba-table thead th{position:sticky;top:0;background:inherit;font-size:0.66rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;}',
     '.ba-table tbody tr{cursor:pointer;}',
     '.ba-table tbody tr:hover td,.ba-table tbody tr.on td{background:rgba(200,162,74,0.14);}',
-    '.ba-lbl{font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.55;font-weight:600;margin:1.1rem 0 0.5rem;}',
-    '.ba-pvgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}',
-    '@media (max-width:520px){.ba-pvgrid{grid-template-columns:1fr;}}',
-    '.ba-pane{border-radius:10px;padding:11px 13px;border:1px solid rgba(128,128,128,0.28);min-width:0;overflow:hidden;}',
-    '.ba-pane.dark{background:#242424;color:#e9e7e1;}',
-    '.ba-pane.light{background:#f1f1f1;color:#1d1d1d;}',
-    '.ba-pv-row{display:flex;align-items:center;gap:8px;padding:6px 0;min-width:0;}',
-    '.ba-pv-row+.ba-pv-row{border-top:1px solid rgba(128,128,128,0.2);}',
-    '.ba-pv-name{font-family:Cinzel,Georgia,serif;font-size:1.05rem;font-weight:600;flex:none;}',
-    '.ba-pv-badges{display:inline-flex;align-items:center;font-size:20px;min-width:0;}',
-    '.ba-pv-ico{width:auto;object-fit:contain;vertical-align:middle;}',
-    '.ba-pv-ico.sel{outline:2px solid #c8a24a;outline-offset:1px;border-radius:3px;}',
-    '.ba-pv-empty{font-size:0.8rem;opacity:0.6;padding:0.4rem 0;}',
     '.ba-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:1.1rem;}',
-    '.ba-foothint{font-size:0.72rem;opacity:0.6;}',
-    '.ba-kbd{font-family:ui-monospace,monospace;font-size:0.66rem;border:1px solid rgba(128,128,128,0.4);border-radius:3px;padding:0 4px;}',
+    '.ba-cancel{flex:none;width:auto;}',
     '.ba-save{margin-left:auto;flex:none;width:auto;}'
   ].join('');
   var s = document.createElement('style'); s.id = 'ba-editor-css'; s.textContent = css; document.head.appendChild(s);
@@ -6314,15 +6313,14 @@ function showBadgeAdjustEditor(initState){
   var cur = (initState && initState.cur) || 'helcaraxe';
   var myL;
   var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '720px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '840px'; box.style.maxHeight = '92vh'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
 
-  var title = document.createElement('p'); title.style.cssText = 'font-weight:600;margin:0 0 0.1rem;'; title.textContent = it ? 'Micro-aggiustamenti icone badge' : 'Badge-icon micro-tuning';
-  var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.76rem;opacity:0.65;margin:0 0 0.7rem;'; sub.textContent = it ? 'Solo card · il Pannello non è toccato' : 'Cards only · the Panel is untouched';
-  box.appendChild(title); box.appendChild(sub);
+  var title = document.createElement('p'); title.style.cssText = 'font-weight:600;margin:0 0 0.7rem;'; title.textContent = it ? 'Micro-aggiustamenti delle icone badge' : 'Badge-icon micro-tuning';
+  box.appendChild(title);
 
   function unitOf(id){ for (var i = 0; i < BADGE_ADJUST_UNITS.length; i++) if (BADGE_ADJUST_UNITS[i].id === id) return BADGE_ADJUST_UNITS[i]; return BADGE_ADJUST_UNITS[0]; }
 
@@ -6338,18 +6336,23 @@ function showBadgeAdjustEditor(initState){
 
   var selHead = document.createElement('p'); selHead.className = 'ba-selhead'; box.appendChild(selHead);
 
-  var fieldsWrap = document.createElement('div'); fieldsWrap.className = 'ba-fields'; box.appendChild(fieldsWrap);
+  // Corpo a due colonne: campi a SINISTRA, anteprime a DESTRA (impilate).
+  var body = document.createElement('div'); body.className = 'ba-body';
+  var left = document.createElement('div'); var right = document.createElement('div');
+  body.appendChild(left); body.appendChild(right); box.appendChild(body);
+
+  var fieldsWrap = document.createElement('div'); fieldsWrap.className = 'ba-fields'; left.appendChild(fieldsWrap);
   var FIELDS = [
-    { k:'ml', lab:'margin-left',    hint: it ? 'orizzontale →' : 'horizontal →', min:-0.2, max:0.2, step:0.005 },
-    { k:'mr', lab:'margin-right',   hint: it ? 'orizzontale →' : 'horizontal →', min:-0.2, max:0.2, step:0.005 },
-    { k:'ny', lab: it ? 'nudge verticale' : 'vertical nudge', hint: it ? "solo l'icona" : 'icon only', min:-0.2, max:0.2, step:0.005 },
-    { k:'sc', lab:'scale',          hint: it ? 'zoom contenuto' : 'content zoom', min:0.7, max:1.3, step:0.01 }
+    { k:'ml', lab:'margin-left',  min:-0.2, max:0.2, step:0.005 },
+    { k:'mr', lab:'margin-right', min:-0.2, max:0.2, step:0.005 },
+    { k:'ny', lab: it ? 'nudge verticale' : 'vertical nudge', min:-0.2, max:0.2, step:0.005 },
+    { k:'sc', lab:'scale',        min:0.7, max:1.3, step:0.01 }
   ];
   var ctrls = {};
   FIELDS.forEach(function(f){
     var row = document.createElement('div'); row.className = 'ba-field';
     var top = document.createElement('div'); top.className = 'ba-ftop';
-    var nm = document.createElement('span'); nm.className = 'ba-fname'; nm.innerHTML = baEsc(f.lab) + ' <span class="ba-fhint">' + baEsc(f.hint) + '</span>';
+    var nm = document.createElement('span'); nm.className = 'ba-fname'; nm.textContent = f.lab;
     var val = document.createElement('span'); val.className = 'ba-fval';
     top.appendChild(nm); top.appendChild(val);
     var line = document.createElement('div'); line.className = 'ba-fline';
@@ -6358,7 +6361,7 @@ function showBadgeAdjustEditor(initState){
     line.appendChild(rng); line.appendChild(num);
     row.appendChild(top); row.appendChild(line); fieldsWrap.appendChild(row);
     ctrls[f.k] = { rng:rng, num:num, val:val };
-    function commit(x){ if (!isFinite(x)) return; if (f.k === 'sc' && x <= 0) x = 0.01; BADGE_ADJUST[cur][f.k] = x; injectBadgeAdjustRules(); showVal(f.k); renderPreview(); }
+    function commit(x){ if (!isFinite(x)) return; if (f.k === 'sc' && x <= 0) x = 0.01; BADGE_ADJUST[cur][f.k] = x; injectBadgeAdjustRules(); showVal(f.k); renderPreview(); refreshTableRow(); }
     rng.addEventListener('input', function(){ commit(parseFloat(rng.value)); });
     num.addEventListener('change', function(){ commit(parseFloat((num.value || '').replace(',', '.'))); });
   });
@@ -6370,26 +6373,22 @@ function showBadgeAdjustEditor(initState){
   function fmtV(k){ var v = BADGE_ADJUST[cur][k]; if (k === 'sc') return v.toFixed(2) + '×'; return (v < 0 ? '−' : '') + Math.abs(v).toFixed(3) + 'em'; }
   function showVal(k){ var c = ctrls[k]; var v = BADGE_ADJUST[cur][k]; c.rng.value = v; c.num.value = (k === 'sc') ? v.toFixed(2) : v.toFixed(3); c.val.textContent = fmtV(k); }
 
-  var tsw = document.createElement('label'); tsw.className = 'ba-switch';
-  tsw.innerHTML = '<span class="ba-track"><span class="ba-knob"></span></span> ' + (it ? 'Tabella riepilogo (tutte le icone)' : 'Summary table (all icons)');
-  var tblWrap = document.createElement('div'); tblWrap.className = 'ba-tablewrap';
-  tblWrap.tabIndex = 0; tblWrap.setAttribute('aria-label', it ? 'Tabella riepilogo valori icone' : 'Icon values summary table');
-  tsw.onclick = function(){ tsw.classList.toggle('on'); tblWrap.classList.toggle('show'); if (tblWrap.classList.contains('show')) buildTable(); };
-  box.appendChild(tsw); box.appendChild(tblWrap);
-
-  var pvLbl = document.createElement('p'); pvLbl.className = 'ba-lbl'; pvLbl.textContent = it ? 'Anteprima live · schede reali col badge selezionato' : 'Live preview · real cards with the selected badge';
   var pvGrid = document.createElement('div'); pvGrid.className = 'ba-pvgrid';
   var paneD = document.createElement('div'); paneD.className = 'ba-pane dark';
   var paneL = document.createElement('div'); paneL.className = 'ba-pane light';
-  pvGrid.appendChild(paneD); pvGrid.appendChild(paneL);
-  box.appendChild(pvLbl); box.appendChild(pvGrid);
+  pvGrid.appendChild(paneD); pvGrid.appendChild(paneL); right.appendChild(pvGrid);
+
+  // Tabella riepilogo SEMPRE visibile in basso (niente toggle), scrollevole.
+  var tblWrap = document.createElement('div'); tblWrap.className = 'ba-tablewrap';
+  tblWrap.tabIndex = 0; tblWrap.setAttribute('aria-label', it ? 'Tabella riepilogo valori icone' : 'Icon values summary table');
+  box.appendChild(tblWrap);
 
   var footer = document.createElement('div'); footer.className = 'ba-foot';
-  var fhint = document.createElement('span'); fhint.className = 'ba-foothint';
-  fhint.innerHTML = '<span class="ba-kbd">L</span> ' + (it ? 'lingua' : 'lang') + ' · <span class="ba-kbd">T</span> ' + (it ? 'tema' : 'theme');
-  var save = document.createElement('button'); save.className = 'fab-modal-confirm ba-save'; save.textContent = it ? 'Salva  (versione +0.01)' : 'Save  (version +0.01)';
-  save.onclick = function(){ withBtn(save, saveBadgeAdjustToRepo(it ? 'icone badge: micro-aggiustamenti' : 'badge icons: micro-tuning')); };
-  footer.appendChild(fhint); footer.appendChild(save); box.appendChild(footer);
+  var cancel = document.createElement('button'); cancel.className = 'fab-modal-confirm ba-cancel'; cancel.textContent = it ? 'Annulla' : 'Cancel';
+  cancel.onclick = function(){ BADGE_ADJUST = JSON.parse(JSON.stringify(BADGE_ADJUST_SAVED)); injectBadgeAdjustRules(); close(); };
+  var save = document.createElement('button'); save.className = 'fab-modal-confirm ba-save'; save.textContent = it ? 'Salva' : 'Save';
+  save.onclick = function(){ withBtn(save, saveBadgeAdjustToRepo(it ? 'icone badge: micro-aggiustamenti' : 'badge icons: micro-tuning'), function(){ close(); }); };
+  footer.appendChild(cancel); footer.appendChild(save); box.appendChild(footer);
 
   function buildTable(){
     var f = function(x){ return (x < 0 ? '−' : '') + Math.abs(x).toFixed(3); };
@@ -6399,6 +6398,14 @@ function showBadgeAdjustEditor(initState){
     }).join('');
     tblWrap.innerHTML = '<table class="ba-table"><thead><tr><th>' + (it ? 'Icona / gruppo' : 'Icon / group') + '</th><th>ml</th><th>mr</th><th>nudge</th><th>scale</th></tr></thead><tbody>' + rows + '</tbody></table>';
     Array.prototype.forEach.call(tblWrap.querySelectorAll('tbody tr'), function(tr){ tr.onclick = function(){ cur = tr.dataset.id; sync(); }; });
+  }
+  // Aggiorna in-place le celle della riga dell'unità corrente (senza rifare la
+  // tabella → non resetta lo scroll durante il trascinamento degli slider).
+  function refreshTableRow(){
+    var tr = tblWrap.querySelector('tbody tr[data-id="' + cur + '"]'); if (!tr) return;
+    var v = BADGE_ADJUST[cur]; var f = function(x){ return (x < 0 ? '−' : '') + Math.abs(x).toFixed(3); };
+    var td = tr.querySelectorAll('td');
+    if (td.length >= 5){ td[1].textContent = f(v.ml); td[2].textContent = f(v.mr); td[3].textContent = f(v.ny); td[4].textContent = v.sc.toFixed(2) + '×'; }
   }
 
   function samples(u){ var out = []; for (var i = 0; i < dati.length && out.length < 3; i++){ var p = dati[i]; if (u.members.some(function(k){ return p[k]; })) out.push(p); } return out; }
@@ -6410,7 +6417,8 @@ function showBadgeAdjustEditor(initState){
     pane.innerHTML = ss.map(function(p){
       var badges = ICON_ORDER.filter(function(k){ return p[k]; }).map(function(k){
         var uid = BADGE_UNIT[k]; var v = uid ? BADGE_ADJUST[uid] : { ml:0, mr:0, ny:0, sc:1 }; var selc = (uid === cur);
-        return '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico' + (selc ? ' sel' : '') + '" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
+        var img = '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
+        return selc ? '<span class="ba-pv-sel">' + img + '</span>' : img;
       }).join('');
       return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + '</span></div>';
     }).join('');
@@ -6423,13 +6431,13 @@ function showBadgeAdjustEditor(initState){
     selHead.innerHTML = '<b>' + baEsc(it ? u.it : u.en) + '</b> · ' + (u.grp ? (it ? ('Gruppo · ' + u.grp + ' icone, stessi valori') : ('Group · ' + u.grp + ' icons, shared values')) : (it ? 'Icona singola' : 'Single icon'));
     ['ml','mr','ny','sc'].forEach(showVal);
     renderPreview();
-    if (tblWrap.classList.contains('show')) Array.prototype.forEach.call(tblWrap.querySelectorAll('tbody tr'), function(tr){ tr.classList.toggle('on', tr.dataset.id === cur); });
+    buildTable();
   }
 
-  function withBtn(btn, promise){
+  function withBtn(btn, promise, onOk){
     btn.disabled = true; btn.style.opacity = '0.4';
     promise.then(function(res){
-      if (res.ok){ BADGE_ADJUST_SAVED = JSON.parse(JSON.stringify(BADGE_ADJUST)); showToast(it ? '✓ Salvato' : '✓ Saved', false); }
+      if (res.ok){ BADGE_ADJUST_SAVED = JSON.parse(JSON.stringify(BADGE_ADJUST)); showToast(it ? '✓ Salvato' : '✓ Saved', false); if (onOk) onOk(); }
       else { showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true); }
     }).finally(function(){ btn.disabled = false; btn.style.opacity = ''; });
   }

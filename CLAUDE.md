@@ -2040,15 +2040,21 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   -0.067` (equivalente em a desktop del vecchio `translateY(calc(-.106em+1px))`, il
   +1px viewport-dipendente è stato sciolto in em).
 - **Editor (`showBadgeAdjustEditor`), stile ADMIN MINIMALE** (`fab-modal-box`, vedi
-  la regola modali sotto). Selettore a chip (con `×N` sui gruppi), 4 slider+input,
-  interruttore **Tabella riepilogo** (tutte le unità × 4 valori), **anteprima live**
-  in due pannelli affiancati (tema chiaro/scuro, colori concreti) su 3 schede reali
-  che portano il badge; **'Reset unità'** ripristina l'ultimo salvato
-  (`BADGE_ADJUST_SAVED`). Modifica `BADGE_ADJUST` live + re-inietta (le card dietro
-  si aggiornano); **L** ricostruisce (etichette), **T** no (la modale si ricolora da
-  sé e l'anteprima mostra già entrambi i temi). `.ba-fval` è theme-aware (oro su
-  scuro, teal su chiaro) per l'AA. axe 0 (pagina + editor) e W3C 0/0 verificati
-  (tutto il CSS/DOM dell'editor è iniettato a runtime, quindi invisibile al Nu).
+  la regola modali sotto). Layout (redesign v11.35 su mockup dell'utente): selettore
+  a chip in alto (con `×N` sui gruppi); poi **due colonne** — a **sinistra** i 4
+  campi (slider + input corto, senza hint) + '**Reset unità**' (ripristina l'ultimo
+  salvato `BADGE_ADJUST_SAVED`); a **destra** le **anteprime impilate** (tema scuro
+  sopra, chiaro sotto, un po' ingrandite) su 3 schede reali che portano il badge.
+  L'icona in modifica è marcata da una **freccina** (caret `.ba-pv-sel::after`,
+  theme-aware) sotto il badge, non da un box. In basso la **Tabella riepilogo SEMPRE
+  visibile** (niente toggle), scrollevole (tutte le unità × 4 valori; aggiornata
+  in-place con `refreshTableRow` durante il drag per non perdere lo scroll). Footer
+  con **Annulla** (ripristina `BADGE_ADJUST_SAVED` e chiude) e **Salva** (commit,
+  chiude in caso di successo). Modifica `BADGE_ADJUST` live + re-inietta (le card
+  dietro si aggiornano); **L** ricostruisce (etichette), **T** no (la modale si
+  ricolora da sé e l'anteprima mostra già entrambi i temi). `.ba-fval` è theme-aware
+  (oro su scuro, teal su chiaro) per l'AA. axe 0 (pagina + editor) e W3C 0/0
+  verificati (tutto il CSS/DOM dell'editor è iniettato a runtime, invisibile al Nu).
 - **Salvataggio:** `saveBadgeAdjustToRepo` → `doCommit(msg, dati, null, false,
   BADGE_ADJUST)` → il Worker (**rev 12**) scrive `var badgeAdjust` in `dati.js` e
   **bumpa +0.01** (NON keepVersion). Un salvataggio che non invia `badgeAdjust`
