@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.11.1
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini.
+// @version      2.12.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages).
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -25,6 +25,7 @@
   const HOME_SENZA_SCROLL  = true;  // home: niente scorrimento verticale (resta solo logo + ricerca)
   const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer"), banner app, promo estensione
   const NASCONDI_ADS_SIDEBAR = true; // SERP: card pubblicitarie (colonna destra + annunci in-line)
+  const NASCONDI_FASCIA_IMMAGINI = true; // SERP web: la fascia "Immagini <query>" (anteprime inline)
   const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant ufficiale (home + SERP)
   const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = logo ufficiale integrato nello script
   // — Immagini —
@@ -144,6 +145,12 @@
       // (marcatore semantico stabile, non una classe auto-generata). CSS puro: zero JS,
       // nessun rischio per l'anti-bot. NON tocca i risultati veri (che non hanno adResult).
       '[data-testid="adResult"]{display:none!important}'
+    );
+    if (NASCONDI_FASCIA_IMMAGINI) regole.push(
+      // Fascia "Immagini <query>" (anteprime inline) nella SERP web: contenitore stabile
+      // data-testid="sectionImages". Solo FUORI dalla tab Immagini (dove i risultati sono voluti);
+      // la tab Immagini della navbar e' un altro elemento (imagesNavItem) e non viene toccata.
+      'html:not(.qr-tab-images) [data-testid="sectionImages"]{display:none!important}'
     );
     if (regole.length) {
       const style = document.createElement('style');
