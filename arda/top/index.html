@@ -2266,7 +2266,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.97</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3675,22 +3675,56 @@ function reflowApoLabels() {
 // giudicare l'allineamento ottico delle icone-badge come nell'editor. Attiva solo
 // dopo il login (adminPassword in memoria → si spegne da sé al refresh). --mid
 // misurato col font reale via canvas (stessa logica di placeMidlines dell'editor).
-var midlinesOn = false, _mlCv;
-function placeCardMidlines() {
-  var items = document.querySelectorAll('#rank-list .rank-item');
-  for (var i = 0; i < items.length; i++) {
-    var item = items[i], nm = item.querySelector('.rank-name-text'); if (!nm) continue;
+var midlinesOn = false;
+// Posiziona --mid (centro verticale del MAIUSCOLETTO del nome) su una lista di
+// {host, nm}. Metodo ROBUSTO e verificato a pixel su molti nomi (la vecchia
+// formula col half-leading cadeva ~0.85px troppo in basso):
+//  1) baseline REALE della prima riga = uno strut inline-block a altezza 0 con
+//     vertical-align:baseline (il suo box 0-height siede esattamente sulla
+//     baseline che il layout usa per quella riga) → getBoundingClientRect().top;
+//  2) il maiuscoletto poggia sulla baseline, quindi il suo centro geometrico =
+//     baseline − actualBoundingBoxAscent('n')/2 (altezza del glifo small-cap).
+// Batch: prima inserisce TUTTI gli strut, poi legge le rect (un solo reflow),
+// poi rimuove tutti gli strut → niente 356 reflow forzati a ogni ridisegno.
+// Offset del CENTRO del maiuscoletto sopra la baseline, come FRAZIONE del
+// font-size, misurato a PIXEL ad alta risoluzione (256px) sul font reale e messo
+// in cache per (peso|famiglia). Scale-invariant: measureText dava sub-pixel
+// diversi a dimensioni diverse (es. ~0.5px di scarto a 24px nell'editor); un
+// rapporto misurato a 256px azzera la quantizzazione. Il maiuscoletto poggia
+// sulla baseline, quindi centro = baseline − ratio·fontSize.
+var _scRatio = {};
+function smallCapRatio(weight, family) {
+  var key = weight + '|' + family;
+  if (_scRatio[key] != null) return _scRatio[key];
+  var C = 256, cv = document.createElement('canvas'); cv.width = 384; cv.height = 512;
+  var x = cv.getContext('2d'); x.fillStyle = '#000'; x.textBaseline = 'alphabetic';
+  x.font = weight + ' ' + C + 'px ' + family;
+  var by = 340; x.fillText('n', 24, by); // 'n' small-cap: cima piatta, poggia sulla baseline
+  var d = x.getImageData(0, 0, cv.width, cv.height).data, w = cv.width, h = cv.height, top = null, bot = null;
+  for (var yy = 0; yy < h; yy++) { for (var xx = 0; xx < w; xx++) { if (d[(yy * w + xx) * 4 + 3] > 40) { if (top === null) top = yy; bot = yy; break; } } }
+  var ratio = (top === null) ? 0.254 : (by - (top + bot) / 2) / C;
+  _scRatio[key] = ratio; return ratio;
+}
+function placeMidlinesFor(pairs) {
+  var recs = [];
+  pairs.forEach(function(pr) {
+    var nm = pr.nm; if (!nm) return;
     var cs = getComputedStyle(nm), fs = parseFloat(cs.fontSize);
-    var lh = (cs.lineHeight === 'normal') ? fs * 1.2 : parseFloat(cs.lineHeight);
-    _mlCv = _mlCv || document.createElement('canvas').getContext('2d');
-    _mlCv.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
-    var m = _mlCv.measureText('a');
-    var asc = m.actualBoundingBoxAscent || fs * 0.66;
-    var fAsc = m.fontBoundingBoxAscent || fs * 0.8, fDesc = m.fontBoundingBoxDescent || fs * 0.2;
-    var capCenterFromTop = ((lh - (fAsc + fDesc)) / 2 + fAsc) - asc / 2;
-    var nmR = nm.getBoundingClientRect(), itR = item.getBoundingClientRect();
-    item.style.setProperty('--mid', ((nmR.top - itR.top) + capCenterFromTop).toFixed(1) + 'px');
-  }
+    var off = smallCapRatio(cs.fontWeight, cs.fontFamily) * fs;
+    var strut = document.createElement('span');
+    strut.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline;';
+    nm.insertBefore(strut, nm.firstChild);
+    recs.push({ host: pr.host, nm: nm, strut: strut, off: off });
+  });
+  recs.forEach(function(r) { r.baseY = r.strut.getBoundingClientRect().top; r.hostTop = r.host.getBoundingClientRect().top; });
+  recs.forEach(function(r) { r.nm.removeChild(r.strut); r.host.style.setProperty('--mid', (r.baseY - r.off - r.hostTop).toFixed(1) + 'px'); });
+}
+function placeCardMidlines() {
+  var pairs = [];
+  document.querySelectorAll('#rank-list .rank-item').forEach(function(item) {
+    pairs.push({ host: item, nm: item.querySelector('.rank-name-text') });
+  });
+  placeMidlinesFor(pairs);
 }
 function toggleCardMidlines() {
   var list = document.getElementById('rank-list'); if (!list) return;
@@ -6586,24 +6620,15 @@ function showBadgeAdjustEditor(initState){
     }).join('');
     placeMidlines(pane);
   }
-  // Posiziona la linea di mezzo (--mid) a metà del MAIUSCOLETTO del nome: misura
-  // a runtime col font reale (Cinzel rende le minuscole come piccole maiuscole).
-  var _baCv;
+  // Posiziona la linea di mezzo (--mid) a metà del MAIUSCOLETTO del nome, con lo
+  // stesso metodo robusto delle card (baseline reale via strut + measureText('n')):
+  // vedi placeMidlinesFor. Riferimento SOLIDO e coerente tra editor e pagina.
   function placeMidlines(pane){
+    var pairs = [];
     Array.prototype.forEach.call(pane.querySelectorAll('.ba-pv-row'), function(row){
-      var nm = row.querySelector('.ba-pv-name'); if (!nm) return;
-      var cs = getComputedStyle(nm); var fs = parseFloat(cs.fontSize);
-      var lh = (cs.lineHeight === 'normal') ? fs * 1.2 : parseFloat(cs.lineHeight);
-      _baCv = _baCv || document.createElement('canvas').getContext('2d');
-      _baCv.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
-      var m = _baCv.measureText('a');
-      var asc = m.actualBoundingBoxAscent || fs * 0.66;
-      var fAsc = m.fontBoundingBoxAscent || fs * 0.8, fDesc = m.fontBoundingBoxDescent || fs * 0.2;
-      var baselineFromTop = (lh - (fAsc + fDesc)) / 2 + fAsc;
-      var capCenterFromTop = baselineFromTop - asc / 2;
-      var nmR = nm.getBoundingClientRect(), rowR = row.getBoundingClientRect();
-      row.style.setProperty('--mid', ((nmR.top - rowR.top) + capCenterFromTop).toFixed(1) + 'px');
+      pairs.push({ host: row, nm: row.querySelector('.ba-pv-name') });
     });
+    placeMidlinesFor(pairs);
   }
   function renderPreview(){ renderPane(paneD); renderPane(paneL); }
 
