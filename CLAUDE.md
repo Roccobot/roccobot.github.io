@@ -1543,12 +1543,26 @@ specifico del dataset):
       è persistita), che è proprio il comportamento voluto. Guardie come per `P`
       (niente modificatori/campi di testo/admin/riordino/overlay) **più** Pannello
       chiuso e login fatto. Implementazione: `toggleCardMidlines`/`placeCardMidlines`
-      (mette la property `--mid` per card, misurata col font reale via canvas come
-      `placeMidlines` dell'editor), classe `.show-midlines` su `#rank-list`, riga
-      via `::after` disegnata SOTTO il contenuto (`isolation:isolate` + `z-index:-1`);
-      la re-misura è agganciata a `reflowRows` (renderList/resize/font-load), quindi
-      le linee restano allineate a ogni ridisegno. Vale per **tutte** le card
-      visibili (leggero: solo un overlay CSS per card).
+      (mette la property `--mid` per card), classe `.show-midlines` su `#rank-list`,
+      riga via `::after` disegnata SOTTO il contenuto (`isolation:isolate` +
+      `z-index:-1`); la re-misura è agganciata a `reflowRows` (renderList/resize/
+      font-load), quindi le linee restano allineate a ogni ridisegno. Vale per
+      **tutte** le card visibili (leggero: solo un overlay CSS per card).
+      - **Misura ROBUSTA del centro maiuscoletto (`placeMidlinesFor`, dalla v11.98).**
+        Helper condiviso da pagina ed editor (riferimento SOLIDO e coerente). Due
+        pezzi: (1) **baseline reale della prima riga** = uno *strut* `inline-block`
+        a altezza 0 con `vertical-align:baseline` inserito in testa al nome (il suo
+        box 0-height siede esattamente sulla baseline del layout) →
+        `getBoundingClientRect().top`; (2) **centro maiuscoletto** = baseline −
+        `smallCapRatio·fontSize`, dove `smallCapRatio` è l'offset del centro sopra la
+        baseline come frazione del corpo, misurato a **pixel a 256px** sul font reale
+        (una 'n' small-cap) e messo in **cache per (peso\|famiglia)** →
+        scale-invariant. Batch (tutti gli strut, poi le rect in un solo reflow, poi
+        rimozione) per non forzare 356 reflow a ogni ridisegno. ⚠️ Storico: fino alla
+        v11.97 si usava una formula con `fontBoundingBox`/half-leading che cadeva
+        **~0.85px troppo in basso** (segnalato dall'utente) e `measureText` dava
+        sub-pixel diversi a dimensioni diverse (~0.5px nell'editor a 24px); il nuovo
+        metodo è verificato a pixel (errore ~0) su molti nomi, pagina ed editor.
 - **`oneRing`** (non un on/off ma un **selettore di variante**): icona
   dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
   `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
