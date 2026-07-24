@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.8.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale.
+// @version      2.9.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -32,6 +32,12 @@
   // false = lo apre nella scheda corrente.
   const APRI_IN_NUOVA_SCHEDA = true;
   const IMMAGINI_DIRETTE = true;    // false = disattiva del tutto il modulo immagini (solo pulizia)
+  // -- Ricerca web --
+  // Riscrive i link dei risultati per saltare il redirect di tracking di Qwant
+  // (fdn.qwant.com/v3/r/), che con l'anti-tracking attivo da' ERR_TUNNEL_CONNECTION_FAILED.
+  // SPERIMENTALE: agisce sulla ricerca WEB, il contesto in cui i listener storicamente
+  // irritavano l'anti-bot (403). Se tornano i 403, mettere questo flag a false.
+  const BYPASS_REDIRECT_WEB = true;
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 1 — Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
@@ -524,5 +530,74 @@
     setInterval(function () {
       if (location.href !== ultimoHref) { ultimoHref = location.href; sincronizza(); }
     }, 600);
+  })();
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  MODULO 3 -- Bypass del redirect di tracking sui risultati web (SPERIMENTALE)
+  // ═══════════════════════════════════════════════════════════════════════
+  // Qwant instrada i clic sui risultati da fdn.qwant.com/v3/r/?u=<cifrato>: con
+  // l'anti-tracking attivo quel dominio e' bloccato → ERR_TUNNEL_CONNECTION_FAILED.
+  // Il param u= e' cifrato (non decodificabile), ma la destinazione reale e' nello
+  // STATO REACT del risultato: al pointerdown la si legge e si riscrive l'href (piu'
+  // la rimozione dell'attributo ping) puntando dritto al sito. ZERO chiamate di rete,
+  // ZERO patch di fetch/XHR/history: solo lettura di oggetti JS e riscrittura di un href.
+  // ⚠️ Agisce sulla ricerca WEB, dove i listener storicamente irritavano l'anti-bot di
+  // Qwant (403, vedi MODULO 2). Per questo: UN SOLO listener passivo (pointerdown),
+  // NIENTE observer, tutto in try/catch, e dietro il flag BYPASS_REDIRECT_WEB. Se
+  // dovessero tornare i 403, basta spegnere il flag. La whitelist ABP resta la rete
+  // di sicurezza (i clic funzionano comunque, ma col tracking).
+  (function bypassRedirectWeb() {
+    if (!BYPASS_REDIRECT_WEB) return;
+
+    function fiberDi(node) {
+      let keys;
+      try { keys = Object.getOwnPropertyNames(node); } catch (e) { return null; }
+      for (const k of keys) {
+        if (k.indexOf('__reactFiber$') === 0 || k.indexOf('__reactInternalInstance$') === 0) return node[k];
+      }
+      return null;
+    }
+    const URL_KEYS = ['url', 'href', 'link', 'permalink', 'source', 'sourceUrl', 'targetUrl', 'destinationUrl'];
+    const IMG_EXT = /\.(?:jpe?g|png|gif|webp|avif|svg|ico|bmp)(?:[?#]|$)/i;
+    function destNonValida(u) {
+      // scarta qwant/bing (redirect e miniature), favicon e immagini: non sono la destinazione
+      return /\/\/[^/]*qwant\.com\//i.test(u) || /\/\/[^/]*bing\.net\//i.test(u) ||
+             /favicon/i.test(u) || IMG_EXT.test(u);
+    }
+    function trovaDest(o, prof, visti) {
+      if (!o || typeof o !== 'object' || prof > 8 || o.nodeType) return '';
+      if (visti.has(o)) return '';
+      visti.add(o);
+      if (visti.size > 4000) return '';
+      for (const k of URL_KEYS) {
+        const v = o[k];
+        if (typeof v === 'string' && /^https?:\/\//i.test(v) && !destNonValida(v)) return v;
+      }
+      const vals = Array.isArray(o) ? o : Object.values(o);
+      for (const v of vals) {
+        if (v && typeof v === 'object') { const r = trovaDest(v, prof + 1, visti); if (r) return r; }
+      }
+      return '';
+    }
+    function reindirizza(a) {
+      if (!a || a.dataset.rbdr) return;   // gia' riscritto
+      let f = fiberDi(a), dest = '';
+      for (let c = 0; c < 24 && f && !dest; c++, f = f.return) {
+        const p = f.memoizedProps;
+        if (p && typeof p === 'object') dest = trovaDest(p, 0, new Set());
+      }
+      if (dest) { a.href = dest; a.removeAttribute('ping'); a.dataset.rbdr = '1'; }
+      // se la destinazione non e' ricavabile: nessuna modifica → clic normale (whitelist)
+    }
+    // pointerdown (capture) scatta PRIMA di click/contextmenu/navigazione, cosi' l'href
+    // riscritto vale anche per tasto centrale e "apri in nuova scheda". Non tocca l'evento.
+    document.addEventListener('pointerdown', function (e) {
+      try {
+        const t = e.target instanceof Element ? e.target : null;
+        if (!t || !t.closest) return;
+        const a = t.closest('a[href*="/v3/r/"], a[href*="fdn.qwant.com"]');
+        if (a) reindirizza(a);
+      } catch (err) { /* mai disturbare la pagina ne' l'anti-bot */ }
+    }, true);
   })();
 })();
