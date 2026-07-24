@@ -817,6 +817,11 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
    proprio :focus-visible, quindi l'accessibilita da tastiera resta intatta e lo
    scroll da tastiera continua a funzionare. */
 #ctrl-panel:focus, #ctrl-panel:focus-visible { outline:none; }
+/* Il FAB (tasto del Pannello, un <button>): cliccandolo resta focusato e alla prima
+   pressione di un tasto il browser mostra il proprio anello di focus (il bordo blu
+   attorno al tondo). Come per il Pannello lo togliamo (e' rumore, non un vero aiuto
+   di navigazione): il Pannello resta apribile da tastiera anche col tasto 'P'. */
+#ctrl-fab:focus, #ctrl-fab:focus-visible { outline:none; }
 .ctrl-panel.open { opacity:1; visibility:visible; transform:translateY(0) scale(1); }
 /* Chiusura desktop (popover): fade out puro sul posto (niente transform,
    vedi nota nella regola). Su mobile vince la .closing del media query
@@ -2271,7 +2276,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.03</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.04</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
