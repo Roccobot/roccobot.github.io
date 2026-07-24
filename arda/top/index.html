@@ -308,7 +308,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    .show-midlines non è sul contenitore (toggle solo dopo il login admin). Disegnata
    SOTTO il contenuto della card (isolation + z-index:-1), poco invasiva. */
 #rank-list.show-midlines .rank-item { isolation:isolate; }
-#rank-list.show-midlines .rank-item::after { content:""; position:absolute; left:0; right:0; top:var(--mid,50%); height:0; border-top:1px dashed #e02424; pointer-events:none; z-index:-1; }
+#rank-list.show-midlines .rank-item::after { content:""; position:absolute; left:0; right:0; top:var(--mid,50%); height:1px; transform:translateY(-50%); background:repeating-linear-gradient(to right,#e02424 0 6px,transparent 6px 10px); pointer-events:none; z-index:-1; }
 /* #2 — Etichette (tipi) e icone raggruppate. Il DOM emette l'ordine di resa
    mobile (nome → icone → etichette), perché su mobile la riga è in flusso
    inline (vedi media query max-width:480px) e lì l'ordine visivo può venire
@@ -2266,7 +2266,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v11.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v11.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6447,7 +6447,7 @@ function baInjectEditorCss(){
     '.ba-pv-row+.ba-pv-row{border-top:1px solid rgba(128,128,128,0.2);}',
     // Linea di mezzo rossa tratteggiata (1px) a metà del MAIUSCOLETTO del nome
     // (--mid calcolata a runtime): riferimento per allineare otticamente le icone.
-    '.ba-pv-row::after{content:"";position:absolute;left:0;right:0;top:var(--mid,50%);height:0;border-top:1px dashed #e02424;pointer-events:none;z-index:-1;}',
+    '.ba-pv-row::after{content:"";position:absolute;left:0;right:0;top:var(--mid,50%);height:1px;transform:translateY(-50%);background:repeating-linear-gradient(to right,#e02424 0 6px,transparent 6px 10px);pointer-events:none;z-index:-1;}',
     // Simbolo di genere in coda all\'anteprima (staccato come sulla card).
     '.ba-pv-badges .genere-svg{margin-left:0.22em;}',
     '.ba-pv-name{font-family:Cinzel,Georgia,serif;font-size:1em;font-weight:600;flex:none;letter-spacing:0.02em;}',

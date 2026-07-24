@@ -1548,6 +1548,13 @@ specifico del dataset):
       `z-index:-1`); la re-misura è agganciata a `reflowRows` (renderList/resize/
       font-load), quindi le linee restano allineate a ogni ridisegno. Vale per
       **tutte** le card visibili (leggero: solo un overlay CSS per card).
+      - **Resa della riga: `height:1px` + `transform:translateY(-50%)` (dalla v11.99),
+        NON `border-top`.** Un `border-top:1px` si disegna 0.5px SOTTO `top:var(--mid)`
+        e a DPR alto lo snapping del bordo lo spostava in modo non lineare (misurato:
+        la linea cadeva ~0.5px troppo in basso pur con `--mid` giusto). Una riga
+        `height:1px` centrata via `translateY(-50%)` (tratteggio con
+        `repeating-linear-gradient`) si centra invece esatta su `--mid` (verificato
+        a pixel su font reale: ~0.1px). Stessa resa in editor e pagina.
       - **Misura ROBUSTA del centro maiuscoletto (`placeMidlinesFor`, dalla v11.98).**
         Helper condiviso da pagina ed editor (riferimento SOLIDO e coerente). Due
         pezzi: (1) **baseline reale della prima riga** = uno *strut* `inline-block`
