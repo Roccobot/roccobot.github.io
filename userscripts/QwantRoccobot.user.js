@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.11.0
+// @version      2.11.1
 // @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -55,27 +55,48 @@
     if (!FORZA_PARAMETRI) return;
     const PARAM_WEB = { theme: '-1', l: 'it', b: '1', t: 'web', llm: '0', s: '0', hc: '0', hti: '0' };
     const PARAM_IMG = { theme: '-1', l: 'it', b: '1', t: 'images', llm: '0', size: 'large', license: 'all', imagetype: 'all', s: '0', hc: '0', hti: '0', locale: 'en_US' };
-    function forza() {
+    function tabDi(u) { return u.searchParams.get('t') === 'images' ? 'images' : 'web'; }
+    function conforme(u, tab) {
+      const v = tab === 'images' ? PARAM_IMG : PARAM_WEB;
+      for (const k in v) if (u.searchParams.get(k) !== v[k]) return false;
+      return true;
+    }
+    function target(u, q, tab) {
+      const v = tab === 'images' ? PARAM_IMG : PARAM_WEB;
+      const nsp = new URLSearchParams();
+      for (const k in v) nsp.set(k, v[k]);
+      nsp.set('q', q);
+      return u.origin + u.pathname + '?' + nsp.toString();
+    }
+    // A ogni CARICAMENTO/REFRESH: se l'URL non e' ai parametri di default, li ripristina.
+    // Cosi' il refresh riporta sempre ai default; le modifiche via Filtri valgono finche'
+    // non si ricarica. Anti-loop a tempo: non riforza a raffica (se Qwant rialterasse i
+    // parametri dopo il replace).
+    (function alCaricamento() {
       let u; try { u = new URL(location.href); } catch (e) { return; }
       const q = u.searchParams.get('q');
-      if (!q) return;                              // non e' una pagina di ricerca (nessuna query)
-      const tab = u.searchParams.get('t') === 'images' ? 'images' : 'web';
-      const key = tab + '|' + q;
-      let last = null; try { last = sessionStorage.getItem('qr-fp'); } catch (e) { /* no storage */ }
-      if (last === key) return;                    // gia' gestito (q,tab): lascia i Filtri, niente loop
-      try { sessionStorage.setItem('qr-fp', key); } catch (e) { /* no storage */ } // segna PRIMA del replace
-      const voluti = tab === 'images' ? PARAM_IMG : PARAM_WEB;
-      const nsp = new URLSearchParams();
-      for (const k in voluti) nsp.set(k, voluti[k]);
-      nsp.set('q', q);
-      const target = u.origin + u.pathname + '?' + nsp.toString();
-      if (target !== location.href) location.replace(target);
-    }
-    forza();
-    // Cambio tab / nuova ricerca via SPA: rileva il cambio URL e riforza (guardia anti-loop sopra).
-    let ultimo = location.href;
+      if (!q || conforme(u, tabDi(u))) return;
+      let ts = 0; try { ts = +sessionStorage.getItem('qr-fp-ts') || 0; } catch (e) { /* no storage */ }
+      if (Date.now() - ts < 2000) return;
+      try { sessionStorage.setItem('qr-fp-ts', String(Date.now())); } catch (e) { /* no storage */ }
+      const t = target(u, q, tabDi(u));
+      if (t !== location.href) location.replace(t);
+    })();
+    // NAVIGAZIONE SPA: forza i default solo su CAMBIO TAB o NUOVA RICERCA (tab|query cambia);
+    // sugli aggiustamenti via Filtri (stessa tab+query) lascia le scelte dell'utente.
+    let prev; try { const u0 = new URL(location.href); prev = tabDi(u0) + '|' + (u0.searchParams.get('q') || ''); } catch (e) { prev = ''; }
+    let ultimoHref = location.href;
     setInterval(function () {
-      if (location.href !== ultimo) { ultimo = location.href; forza(); }
+      if (location.href === ultimoHref) return;
+      ultimoHref = location.href;
+      let u; try { u = new URL(location.href); } catch (e) { return; }
+      const q = u.searchParams.get('q');
+      const cur = q ? (tabDi(u) + '|' + q) : '';
+      if (q && cur !== prev) {                      // cambio tab / nuova ricerca -> forza i default
+        prev = cur;
+        const t = target(u, q, tabDi(u));
+        if (t !== location.href) location.replace(t);
+      } else { prev = cur; }                         // stessa tab+query = aggiustamento Filtri -> lascia
     }, 500);
   })();
 
