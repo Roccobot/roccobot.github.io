@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.9.2
+// @version         2.9.3
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///): sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI).
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -62,14 +62,14 @@
       'background:transparent!important;cursor:pointer;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}' +
     // Riquadro unico (pill) in alto a sinistra: formato, peso, dimensioni e zoom su UNA sola riga.
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
-      'color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;padding:.5rem 1.15rem .5rem 2.65rem;' +
+      'color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;padding:.5rem 1.15rem .5rem 2rem;' +
       'position:fixed;top:1rem;left:1rem;z-index:10;display:flex;align-items:center;gap:.85rem;white-space:nowrap;' +
       'opacity:1;user-select:none;pointer-events:none}' +
-    // Tasto tondo DENTRO la pill, a SINISTRA (position:absolute → fuori dal flusso, così NON alza MAI
-    // la pill: l'altezza resta quella del testo, che con text-box-trim è compatta). La pill riserva lo
-    // spazio col padding-left. Niente bordo, distinto solo dal fondo tenue; cliccabile (pointer-events:auto)
-    // benche' la pill no. Contenuto: solo "1:1" piccolo, centrato.
-    '#dv-scalemode{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;' +
+    // Tasto tondo DENTRO la pill, INCASTRATO nel semicerchio sinistro (left piccolo → quasi concentrico
+    // con la curvatura). position:absolute → fuori dal flusso, così NON alza MAI la pill (l'altezza resta
+    // quella del testo, compatta per text-box-trim). La pill riserva lo spazio col padding-left. Niente
+    // bordo, distinto solo dal fondo tenue; cliccabile (pointer-events:auto) benche' la pill no. Solo "1:1".
+    '#dv-scalemode{position:absolute;left:.3rem;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;' +
       'width:1.15em;height:1.15em;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;' +
       'display:flex;align-items:center;justify-content:center;text-shadow:1px 1px 2px #444;outline:none;-webkit-tap-highlight-color:transparent}' +
     '#dv-scalemode .dv-sm-ratio{font-size:.5em;font-weight:700;letter-spacing:.01em;line-height:1}' +
