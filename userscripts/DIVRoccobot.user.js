@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.6.0
+// @version         2.7.0
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///): sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -145,6 +145,10 @@
     function apply() {
       img.style.setProperty('width', (natW * scale) + 'px', 'important');
       img.style.setProperty('height', (natH * scale) + 'px', 'important');
+      // Dal 100% in su (dimensione reale o oltre): pixel netti 1:1 (nearest-neighbor), nitidi
+      // anche a DPR frazionari e a blocchi quando si ingrandisce. Sotto l'adattato (downscaling)
+      // resta l'interpolazione liscia, che in riduzione evita l'aliasing.
+      img.style.setProperty('image-rendering', scale >= realScale - 1e-6 ? 'pixelated' : 'auto', 'important');
       aggiornaZoom();
     }
 
