@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.10.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra.
+// @version      2.11.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -38,6 +38,46 @@
   // SPERIMENTALE: agisce sulla ricerca WEB, il contesto in cui i listener storicamente
   // irritavano l'anti-bot (403). Se tornano i 403, mettere questo flag a false.
   const BYPASS_REDIRECT_WEB = true;
+  // -- Parametri di ricerca fissi --
+  // Forza i parametri preferiti a ogni nuova ricerca / cambio tab (Web e Immagini hanno
+  // set diversi). NON tocca gli aggiustamenti fatti via il pannello Filtri (stessa query
+  // nella stessa tab). false = disattiva del tutto.
+  const FORZA_PARAMETRI = true;
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  MODULO 0 -- Parametri di ricerca fissi e forzati (Web / Immagini)
+  // ═══════════════════════════════════════════════════════════════════════
+  // Forza i parametri preferiti a ogni NUOVA ricerca o CAMBIO TAB, differenziati per tab.
+  // La guardia "tab|query" in sessionStorage evita sia il loop di reload sia la
+  // sovrascrittura delle scelte fatte via Filtri (stessa query+tab => non riforza).
+  // E' solo navigazione (location.replace): nessuna patch di fetch/XHR/history.
+  (function forzaParametri() {
+    if (!FORZA_PARAMETRI) return;
+    const PARAM_WEB = { theme: '-1', l: 'it', b: '1', t: 'web', llm: '0', s: '0', hc: '0', hti: '0' };
+    const PARAM_IMG = { theme: '-1', l: 'it', b: '1', t: 'images', llm: '0', size: 'large', license: 'all', imagetype: 'all', s: '0', hc: '0', hti: '0', locale: 'en_US' };
+    function forza() {
+      let u; try { u = new URL(location.href); } catch (e) { return; }
+      const q = u.searchParams.get('q');
+      if (!q) return;                              // non e' una pagina di ricerca (nessuna query)
+      const tab = u.searchParams.get('t') === 'images' ? 'images' : 'web';
+      const key = tab + '|' + q;
+      let last = null; try { last = sessionStorage.getItem('qr-fp'); } catch (e) { /* no storage */ }
+      if (last === key) return;                    // gia' gestito (q,tab): lascia i Filtri, niente loop
+      try { sessionStorage.setItem('qr-fp', key); } catch (e) { /* no storage */ } // segna PRIMA del replace
+      const voluti = tab === 'images' ? PARAM_IMG : PARAM_WEB;
+      const nsp = new URLSearchParams();
+      for (const k in voluti) nsp.set(k, voluti[k]);
+      nsp.set('q', q);
+      const target = u.origin + u.pathname + '?' + nsp.toString();
+      if (target !== location.href) location.replace(target);
+    }
+    forza();
+    // Cambio tab / nuova ricerca via SPA: rileva il cambio URL e riforza (guardia anti-loop sopra).
+    let ultimo = location.href;
+    setInterval(function () {
+      if (location.href !== ultimo) { ultimo = location.href; forza(); }
+    }, 500);
+  })();
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 1 — Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
@@ -46,6 +86,12 @@
   // le classi CSS di Qwant sono auto-generate e cambiano a ogni deploy.
   // Questo modulo è solo CSS + DOM: non fa richieste di rete, non tocca l'API.
   (function pulizia() {
+    // Classe sull'<html> per la tab corrente: serve al CSS per mostrare il tasto Filtri
+    // SOLO nella scheda Immagini (vedi NASCONDI_OPZIONI). Impostata subito, prima del CSS.
+    function suImmagini() { try { return new URLSearchParams(location.search).get('t') === 'images'; } catch (e) { return false; } }
+    function aggiornaClasseTab() { document.documentElement.classList.toggle('qr-tab-images', suImmagini()); }
+    aggiornaClasseTab();
+
     // ── CSS iniettato subito, così non c'è sfarfallio (run-at document-start) ──
     const regole = [];
     if (NASCONDI_SIDEBAR) regole.push(
@@ -64,7 +110,9 @@
       'a[href*="chrome.google.com/webstore"],a[href*="chromewebstore.google.com"]{display:none!important}'
     );
     if (NASCONDI_OPZIONI) regole.push(
-      '[data-testid="toggleFiltersButton"]{display:none!important}',
+      // Tasto "Filtri": nascosto SOLO fuori dalla scheda Immagini; nelle Immagini resta
+      // visibile per scegliere le opzioni (dimensione, colore, tipo, licenza, data).
+      'html:not(.qr-tab-images) [data-testid="toggleFiltersButton"]{display:none!important}',
       '[data-testid="localeDropdown"],[data-testid="freshnessDropdown"]{display:none!important}'
     );
     if (NASCONDI_ADS_SIDEBAR) regole.push(
@@ -174,7 +222,7 @@
       }
     }
 
-    function applica() { sistemaDoodle(); nascondiPromo(); nascondiBannerEstensione(); nascondiAdsSidebar(); }
+    function applica() { aggiornaClasseTab(); sistemaDoodle(); nascondiPromo(); nascondiBannerEstensione(); nascondiAdsSidebar(); }
 
     // La home è una SPA: doodle e card compaiono dopo il primo render → si osserva.
     function avvio() {
