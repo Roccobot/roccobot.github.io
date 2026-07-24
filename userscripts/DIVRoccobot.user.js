@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.9.4
+// @version         2.9.5
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///): sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI).
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -72,7 +72,10 @@
     '#dv-scalemode{position:absolute;left:.3rem;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;' +
       'width:1.15em;height:1.15em;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;' +
       'display:flex;align-items:center;justify-content:center;text-shadow:1px 1px 2px #444;outline:none;-webkit-tap-highlight-color:transparent}' +
-    '#dv-scalemode .dv-sm-ratio{font-size:.82em;line-height:1;opacity:.75}' +
+    // Il glifo "◨" non si centra bene (ink box dei caratteri geometrici disallineato, dipende dal
+    // font). Lo disegno con CSS: quadrato bordato con metà destra piena = centrato perfetto ovunque.
+    '#dv-scalemode .dv-sm-ratio{width:.62em;height:.62em;box-sizing:border-box;border:1px solid currentColor;' +
+      'border-radius:1.5px;background:linear-gradient(90deg,transparent 0 50%,currentColor 50% 100%);opacity:.75}' +
     // Solo hover: nessuno stato "premuto"/attivo persistente. Il tondo ha sempre lo stesso aspetto;
     // la modalità corrente si legge dall'immagine (piccola=fisico / grande=logico) e dal tooltip.
     '#dv-scalemode:hover{background:rgba(255,255,255,0.2)}' +
@@ -240,7 +243,7 @@
     btnScale = document.createElement('div');
     btnScale.id = 'dv-scalemode';
     btnScale.setAttribute('role', 'button');
-    btnScale.innerHTML = '<span class="dv-sm-ratio">◨</span>';
+    btnScale.innerHTML = '<span class="dv-sm-ratio"></span>';
     const pill = boxEl();
     pill.insertBefore(btnScale, pill.firstChild);
     btnScale.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleScaleMode(); btnScale.blur(); });
