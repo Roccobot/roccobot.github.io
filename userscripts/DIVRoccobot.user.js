@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.8.0
+// @version         2.9.0
 // @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///): sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI).
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -12,6 +12,8 @@
 // @run-at          document-idle
 // @grant           GM_addStyle
 // @grant           GM_xmlhttpRequest
+// @grant           GM_getValue
+// @grant           GM_setValue
 // @updateURL       https://roccobot.github.io/userscripts/DIVRoccobot.user.js
 // @downloadURL     https://roccobot.github.io/userscripts/DIVRoccobot.user.js
 // ==/UserScript==
@@ -58,26 +60,27 @@
       'touch-action:none;-ms-touch-action:none;overscroll-behavior:contain}' +
     '#dv-wrap>img{display:block;flex:0 0 auto;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;' +
       'background:transparent!important;cursor:pointer;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}' +
-    // Barra in alto a sinistra (stessa spaziatura dal bordo): pill info + tasto modalità scala.
-    // Il posizionamento sta sul contenitore; i figli sono in flusso (pill non cliccabile, tasto sì).
-    '#dv-topbar{position:fixed;top:1rem;left:1rem;z-index:10;display:flex;align-items:center;gap:.5rem;pointer-events:none}' +
-    // Riquadro unico (pill): formato, peso, dimensioni e zoom su UNA sola riga (zoom sempre visibile).
+    // Riquadro unico (pill) in alto a sinistra: formato, peso, dimensioni e zoom su UNA sola riga.
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
-      'color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;padding:.5rem 1.15rem;' +
-      'display:flex;align-items:center;gap:.85rem;white-space:nowrap;opacity:1;user-select:none;pointer-events:none}' +
-    // Tasto tondo (a destra della pill): commuta 100% fisico <-> logico. Cliccabile anche se la barra no.
-    '#dv-scalemode{pointer-events:auto;cursor:pointer;flex:0 0 auto;width:1.9em;height:1.9em;border-radius:50%;' +
-      'background:#000000b8;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;' +
-      'text-shadow:1px 1px 2px #444;border:1px solid rgba(255,255,255,0.25)}' +
-    '#dv-scalemode .dv-sm-ratio{font-size:.6em;font-weight:700;letter-spacing:.02em}' +
-    '#dv-scalemode .dv-sm-arrow{font-size:.72em;line-height:.7;margin-top:.02em}' +
-    '#dv-scalemode:hover{background:#000000d0}' +
-    '#dv-scalemode.dv-scalemode--log{color:#ffd76a;border-color:rgba(255,215,106,0.6)}' +
+      'color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;padding:.5rem 1.15rem .5rem 2.4rem;' +
+      'position:fixed;top:1rem;left:1rem;z-index:10;display:flex;align-items:center;gap:.85rem;white-space:nowrap;' +
+      'opacity:1;user-select:none;pointer-events:none}' +
+    // Tasto tondo DENTRO la pill, a SINISTRA (position:absolute → fuori dal flusso, così NON alza MAI
+    // la pill: l'altezza resta quella del testo, che con text-box-trim è compatta). La pill riserva lo
+    // spazio col padding-left. Niente bordo, distinto solo dal fondo tenue; cliccabile (pointer-events:auto)
+    // benche' la pill no. Contenuto: solo "1:1" piccolo, centrato.
+    '#dv-scalemode{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;' +
+      'width:1.15em;height:1.15em;border-radius:50%;background:rgba(255,255,255,0.16);color:#fff;' +
+      'display:flex;align-items:center;justify-content:center;text-shadow:1px 1px 2px #444;outline:none;-webkit-tap-highlight-color:transparent}' +
+    '#dv-scalemode .dv-sm-ratio{font-size:.5em;font-weight:700;letter-spacing:.01em;line-height:1}' +
+    // Solo hover: nessuno stato "premuto"/attivo persistente. Il tondo ha sempre lo stesso aspetto;
+    // la modalità corrente si legge dall'immagine (piccola=fisico / grande=logico) e dal tooltip.
+    '#dv-scalemode:hover{background:rgba(255,255,255,0.3)}' +
     // Centratura verticale OTTICA senza hack: si ritaglia il box del testo alle metriche
     // cap-height/baseline (text-box-trim), così il testo è centrato davvero nel contenitore
     // a prescindere dall'asimmetria ascender/descender del font. Dove non è supportato
     // (browser vecchi) resta il semplice align-items:center: nessun peggioramento.
-    '.image-info>*{text-box-trim:trim-both;text-box-edge:cap alphabetic;transform:translateY(' + OVERLAY_NUDGE_Y + 'px)}' +
+    '.image-info>b,.image-info>span{text-box-trim:trim-both;text-box-edge:cap alphabetic;transform:translateY(' + OVERLAY_NUDGE_Y + 'px)}' +
     '.ii-ext,.ii-zoom{font-weight:700}'
   );
 
@@ -93,14 +96,9 @@
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(d)) + ' <strong>' + u[i] + '</strong>';
   }
-  // Barra in alto a sinistra: contiene la pill info e (a destra) il tasto modalità scala.
-  function topbarEl() {
-    let t = document.getElementById('dv-topbar');
-    if (!t) { t = document.createElement('div'); t.id = 'dv-topbar'; (document.body || document.documentElement).appendChild(t); }
-    return t;
-  }
   // Riquadro unico (pill). Struttura fissa a span, riempiti separatamente:
   // ext + peso + dimensioni da updateInfo, zoom da aggiornaZoom (senza collisioni).
+  // Il tasto scala viene poi inserito come PRIMO figlio (a sinistra di tutto) in avvio().
   function boxEl() {
     let b = document.getElementById('dv-info');
     if (!b) {
@@ -108,7 +106,7 @@
       b.id = 'dv-info';
       b.className = 'image-info';
       b.innerHTML = '<b class="ii-ext"></b><span class="ii-size"></span><span class="ii-dim"></span><b class="ii-zoom"></b>';
-      topbarEl().appendChild(b);
+      (document.body || document.documentElement).appendChild(b);
     }
     return b;
   }
@@ -146,7 +144,9 @@
     // Modalità del "100%/reale": 'phys' = 1 px immagine → 1 px FISICO (default, fedele al pannello);
     // 'log' = 1 px immagine → 1 px LOGICO (CSS), come il viewer nativo (su HiDPI appare piu' grande).
     // Il tasto tondo le commuta; realScale/logR sono ricalcolati al cambio (quindi let, non const).
-    let scaleMode = 'phys';
+    // Preferenza fisico/logico MEMORIZZATA (globale, cross-dominio, via storage Tampermonkey).
+    function leggiScaleMode() { try { return GM_getValue('dv-scale-mode', 'phys') === 'log' ? 'log' : 'phys'; } catch (e) { return 'phys'; } }
+    let scaleMode = leggiScaleMode();
     let realScale = scaleMode === 'phys' ? 1 / dpr : 1;
     let logR = Math.log(realScale);   // 100% = dimensione reale, in scala logaritmica
     function fitScale() { return Math.min(wrap.clientWidth / natW, wrap.clientHeight / natH); }
@@ -214,13 +214,12 @@
     }
     function vaiFit() { scale = fitDisplay(); isFit = true; apply(); zoomL = Math.log(scale); }
 
-    // ── Tasto tondo (a destra della pill): commuta il "100%/reale" fisico <-> logico ──
+    // ── Tasto tondo (dentro la pill, a sinistra): commuta il "100%/reale" fisico <-> logico ──
     let btnScale = null;
     function aggiornaScaleBtn() {
       if (!btnScale) return;
-      const phys = scaleMode === 'phys';
-      btnScale.classList.toggle('dv-scalemode--log', !phys);
-      btnScale.title = phys
+      // Il tondo NON cambia aspetto in base allo stato (nessuno stato "premuto"): solo il tooltip.
+      btnScale.title = scaleMode === 'phys'
         ? 'Reale = pixel FISICI: 1 px immagine = 1 px dello schermo (fedele; ' + dpr + 'x su questo display). Clic: passa a pixel logici.'
         : 'Reale = pixel LOGICI: 1 px immagine = 1 px CSS (piu\' grande sugli schermi HiDPI). Clic: torna a pixel fisici.';
     }
@@ -228,19 +227,21 @@
       scaleMode = (scaleMode === 'phys') ? 'log' : 'phys';
       realScale = scaleMode === 'phys' ? 1 / dpr : 1;
       logR = Math.log(realScale);
+      try { GM_setValue('dv-scale-mode', scaleMode); } catch (e) { /* storage non disponibile: pazienza */ }
       vaiFit();               // ri-adatta alla nuova definizione di "reale"
       aggiornaScaleBtn();
     }
 
     apply();
 
-    // creato DOPO la pill così, nel flex della barra, il tasto sta a DESTRA della striscia info
+    // Inserito come PRIMO figlio della pill → sta a SINISTRA di tutto il resto.
     btnScale = document.createElement('div');
     btnScale.id = 'dv-scalemode';
     btnScale.setAttribute('role', 'button');
-    btnScale.innerHTML = '<span class="dv-sm-ratio">1:1</span><span class="dv-sm-arrow">↔</span>';
-    topbarEl().appendChild(btnScale);
-    btnScale.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleScaleMode(); });
+    btnScale.innerHTML = '<span class="dv-sm-ratio">1:1</span>';
+    const pill = boxEl();
+    pill.insertBefore(btnScale, pill.firstChild);
+    btnScale.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleScaleMode(); btnScale.blur(); });
     aggiornaScaleBtn();
 
     // ── CLIC (desktop): alterna adattato ↔ reale ──────────────────────────
