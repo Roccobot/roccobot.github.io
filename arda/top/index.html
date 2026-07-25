@@ -54,21 +54,37 @@
    scrollbar-gutter:stable da solo non bastava (non sopravvive a overflow:hidden,
    complice overflow-x:hidden su body che sposta lo scroller). */
 html { scroll-behavior:smooth; overflow-y:scroll; }
-/* MODALITÀ INGRANDITA (dalla v12.14): equivalente in-pagina dello zoom del browser
-   al 140%, che l'utente ha trovato ottimo per la leggibilità su desktop. Si usa la
+/* MODALITÀ INGRANDITA (dalla v12.14; fattore 1.3 dalla v12.24): equivalente
+   in-pagina dello zoom del browser, per la leggibilità su desktop. Si usa la
    proprietà `zoom` e NON un ingrandimento del font-size di root: `zoom` scala TUTTO
    in modo uniforme (anche i valori pinnati in px, come il passo 31.5px delle righe
    del Pannello), quindi gli allineamenti restano intatti; scalare il solo font-size
-   invece li romperebbe (testo +40% ma passo fermo a 31.5px). Verificato: nessuno
-   scroll orizzontale da 320px a 1440px, modali e tasti fissi dentro il viewport.
-   Il fattore vive QUI e in ZOOM_BIG_FACTOR (JS), tenuti allineati. */
-html.zoom-big { zoom:1.4; }
+   invece li romperebbe (testo più grande ma passo fermo a 31.5px). Verificato:
+   nessuno scroll orizzontale da 320px a 1600px, modali e tasti fissi dentro il
+   viewport. Il fattore vive QUI e in ZOOM_BIG_FACTOR (JS), tenuti allineati.
+   Storico: 1.4 (140%) nella v12.14, portato a 1.3 su richiesta dell'utente. */
+html.zoom-big { zoom:1.3; }
+/* VIGNETTATURA (effetto 'vig' del pannello Feature flag, dalla v12.24): alone
+   radiale appena percettibile ai bordi, per dare profondità a un fondo altrimenti
+   perfettamente piatto. È un LIVELLO DI SFONDO del body (non un elemento
+   sovrapposto): niente nuovi nodi, nessun problema di impilamento, e con
+   background-attachment:fixed l'alone resta ancorato al viewport durante lo
+   scorrimento. Le card, che hanno un fondo proprio, ci restano sopra. In tema
+   chiaro il velo è molto più leggero (su fondo chiaro basta molto meno). */
+html.fx-vig body { background-image:radial-gradient(125% 92% at 50% 0, transparent 38%, rgba(0,0,0,0.34) 100%); background-attachment:fixed; }
+html.fx-vig[data-theme="light"] body { background-image:radial-gradient(125% 92% at 50% 0, transparent 38%, rgba(40,44,60,0.13) 100%); background-attachment:fixed; }
 body {
   /* Sfondo pagina NEUTRO (dalla v8.72): il colore lo portano le card (cardcolor),
      quindi il fondo pagina non è più blu-inchiostro ma un grigio neutro (default
      = tema scuro #262626; override chiaro #F5F5F5 sotto). Token invariati: titolo,
      pannello, pulsanti restano com'erano. */
   background: #262626;
+  /* VIGNETTATURA (dalla v12.24): alone radiale appena percettibile ai bordi, per
+     dare profondità a un fondo altrimenti perfettamente piatto. È un LIVELLO DI
+     SFONDO del body (non un elemento sovrapposto): niente nuovi nodi, nessun
+     problema di impilamento, e con background-attachment:fixed l'alone resta
+     ancorato al viewport durante lo scorrimento. Le card, che hanno un fondo
+     proprio, ci restano sopra naturalmente. */
   color: var(--parchment);
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 17px;
@@ -311,6 +327,13 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   gap: 0.32em;
 }
 .rank-name-text { cursor:pointer; transition:color 0.2s; }
+/* NOMI INCISI (dalla v12.24): ombra tipografica impercettibile sul nome. In tema
+   CHIARO è un letterpress (lume bianco sotto + velo scuro sopra: il nome sembra
+   stampato nella carta); in SCURO un semplice stacco morbido. Non tocca misure né
+   a-capo (il text-shadow non entra nel layout), quindi tightenNames resta valido.
+   Coerente col titolone, che l'alone ce l'ha già. */
+html.fx-press .rank-name { text-shadow:0 1px 2px rgba(0,0,0,0.5); }
+html.fx-press[data-theme="light"] .rank-name { text-shadow:0 1px 0 rgba(255,255,255,0.9),0 -1px 1px rgba(20,24,40,0.11); }
 /* Linee mediane di allineamento (tasto '.', ADMIN-only, dalla v11.80): una riga
    rossa tratteggiata per card, a metà del maiuscoletto del nome (--mid misurato a
    runtime col font reale, come nell'editor micro-aggiustamenti). Inerte finché
@@ -374,7 +397,10 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   font-family:'EB Garamond',serif;
   font-size:clamp(0.73rem,1.7vw,0.86rem);
   color:var(--parchment-dim);
-  opacity:0.72;
+  /* 0.80 (era 0.72, dalla v12.24): è la riga più piccola e tenue della card
+     (~13.8px), quindi l'anello debole della leggibilità; +8 punti di opacità si
+     sentono molto e non alterano la gerarchia visiva. */
+  opacity:0.80;
   letter-spacing:0.01em;
   line-height:1.4;
   margin-top:0.05rem;
@@ -649,8 +675,34 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   background:rgb(111,116,130);
   border:0 !important; box-shadow:none !important; text-shadow:none !important;
   padding:0; margin:0; border-radius:0; pointer-events:none; z-index:1;
+  /* Transizione per l'ACCENSIONE al passaggio del mouse (dalla v12.24): il bagliore
+     nella tinta di famiglia è iniettato via JS (usa rgba(var(--ccrgb),…), che il Nu
+     non parsa) e deve vincere sul box-shadow:none qui sopra. */
+  transition:box-shadow 0.24s ease-out;
 }
 .rank-item.vis-top .rank-strip { width:8px; }
+/* BORDI IN DISSOLVENZA (dalla v12.24): la lista sfuma invece di troncarsi netta in
+   cima e in fondo (prima card che emerge dalla testata, ultima che sfuma verso il
+   footer). Tarata bassa (26px) per non slavare la prima card. In STAMPA si azzera:
+   su carta un bordo sfumato sarebbe solo un difetto. */
+html.fx-fade #rank-list { -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 26px,#000 calc(100% - 26px),transparent 100%); mask-image:linear-gradient(to bottom,transparent 0,#000 26px,#000 calc(100% - 26px),transparent 100%); }
+/* PODIO METALLICO (dalla v12.24): i numeri 1-2-3 riempiti da un gradiente
+   metallico (oro/argento/bronzo) col testo trasparente, come il titolone. Le classi
+   vis-1/2/3 le assegna renderList (l'ordine DOM è quello visibile, filtri inclusi).
+   L'ARGENTO ha più fermate (lume/ombra/lume) perché a 2 sole fermate sembrava un
+   numero normale in mezzo agli altri (richiesta dell'utente). Il glow grigio base
+   di .rank-num si spegne qui: con testo trasparente intorbidirebbe il metallo. */
+html.fx-podium .rank-item.vis-1 .rank-num,
+html.fx-podium .rank-item.vis-2 .rank-num,
+html.fx-podium .rank-item.vis-3 .rank-num { -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:none; }
+html.fx-podium .rank-item.vis-1 .rank-num { background-image:linear-gradient(168deg,#fdf3d4 4%,#e6c979 26%,#a67c34 62%,#d8b25c 84%,#8c6526 100%); }
+html.fx-podium .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#ffffff 2%,#dfe5ec 14%,#9aa1ab 34%,#6b7280 46%,#fbfdff 58%,#aeb5bf 72%,#7b8290 86%,#565c66 100%); }
+html.fx-podium .rank-item.vis-3 .rank-num { background-image:linear-gradient(168deg,#f4d3b4 4%,#d79a63 26%,#9c6435 62%,#c98a55 84%,#7d4a22 100%); }
+/* Podio in tema CHIARO: stessi metalli ma scuriti, per restare leggibili su #F5F5F5
+   (testo grande: soglia AA 3:1). L'argento resta il più 'lavorato' delle tre. */
+html.fx-podium[data-theme="light"] .rank-item.vis-1 .rank-num { background-image:linear-gradient(168deg,#c9a047 4%,#8a6420 34%,#6a4c14 70%,#a8802f 100%); }
+html.fx-podium[data-theme="light"] .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#b6bdc7 2%,#7b8290 16%,#3a3f47 38%,#9aa1ab 52%,#4a4f57 74%,#282c32 100%); }
+html.fx-podium[data-theme="light"] .rank-item.vis-3 .rank-num { background-image:linear-gradient(168deg,#b8783f 4%,#8a5526 34%,#69401d 70%,#a36a3c 100%); }
 /* NB: sfondo card e bordino usano rgba(var(--ccrgb),alpha). Il Nu Html Checker
    non sa parsare var() dentro rgba() (falso errore 'getType() null'), perciò
    quelle 5 regole sono INIETTATE via JS (vedi injectCardColorRules), non qui.
@@ -742,17 +794,6 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
    della barra mobile. */
 .ctrl-icon-btn.ctrl-share-done,
 .ctrl-bottombar .ctrl-icon-btn.ctrl-share-done { background:var(--gold); border-color:var(--gold-bright); color:var(--ink); }
-/* Tasto 'modalità ingrandita' ACCESA: fondo e bordo in tinta di stato (come il
-   riordino attivo), ma il TESTO resta il colore normale del tasto. ⚠️ Non usare
-   var(--gold) per il testo: in tema scuro quel token è NEUTRALIZZATO a grigio
-   (dalla v8.79) e su questo fondo dava 2.85:1 (axe lo bocciava). Col testo normale
-   il contrasto resta AA e lo stato si legge da fondo + bordo + aria-pressed. Il 2°
-   selettore vince sulla regola .ctrl-bottombar .ctrl-lang-btn della barra mobile. */
-.ctrl-zoom-btn[aria-pressed="true"],
-.ctrl-bottombar .ctrl-zoom-btn[aria-pressed="true"] { background:rgba(210,178,92,0.22); border-color:rgba(210,178,92,0.75); }
-.ctrl-zoom-btn[aria-pressed="true"]:hover { background:rgba(210,178,92,0.34); border-color:rgba(224,194,108,0.95); }
-html[data-theme="light"] .ctrl-zoom-btn[aria-pressed="true"],
-html[data-theme="light"] .ctrl-bottombar .ctrl-zoom-btn[aria-pressed="true"] { background:rgba(31,85,98,0.16); border-color:rgba(31,85,98,0.75); }
 .ctrl-cat-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
 .ctrl-cat-head .ctrl-h { margin:0; display:inline-grid; justify-items:start; align-items:center; }
 /* Testata categorie a larghezza costante fra le lingue (grid-stack): impedisce
@@ -1683,7 +1724,7 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
   header, footer, .lang-switch, .jump-fabs, #ctrl-fab, #ctrl-panel, #ctrl-backdrop,
   .fab-container, #fab-modal, .modal-backdrop, #arda-toast { display:none !important; }
   .drag-handle { display:none !important; }
-  #rank-list { margin:0 !important; padding:0 !important; max-width:none !important; }
+  #rank-list { margin:0 !important; padding:0 !important; max-width:none !important; -webkit-mask-image:none !important; mask-image:none !important; }
   .rank-item { break-inside:avoid; page-break-inside:avoid; box-shadow:none !important; margin:0.18rem 0 !important; }
   * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   @page { margin:1.1cm 1.1cm 1.3cm; }
@@ -2274,6 +2315,11 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   if (!FEATURES.langSwitchMobile) document.documentElement.classList.add('no-langswitch-mobile');
   // Tondo dei tasti salto su mobile: acceso solo col flag (default = solo freccine).
   if (FEATURES.jumpMobileCircle) document.documentElement.classList.add('jump-mobile-circle');
+  // Modalità ingrandita: unica preferenza PERSISTITA (dalla v12.24). Si riapplica
+  // qui, il più presto possibile, per non mostrare un lampo di pagina a dimensione
+  // normale. La chiave è la stessa usata da toggleZoomMode (ZOOM_LS_KEY, definita
+  // più sotto: qui si usa la stringa letterale perché questo blocco gira prima).
+  try { if (localStorage.getItem('arda-zoom-big') === '1') document.documentElement.classList.add('zoom-big'); } catch (e) {}
 })();
 // Animazione 'piega' del glifo di chiusura del pannello: usa la proprietà CSS
 // 'd' su <path> (SVG 2). E' valida, ma il validatore W3C Nu non la riconosce
@@ -2296,7 +2342,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.14</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.24</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2367,6 +2413,34 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
   })();
   throw new Error('dati.js non caricato');
 }
+
+// ── Feature flag dell'ASPETTO del sito (dalla v12.24) ────────────────────────
+// Interruttori per gli effetti grafici e per la modalità ingrandita, validi per
+// TUTTI i visitatori. Vivono nei dati (`var siteFlags` in dati.js, scritto dal
+// Worker come cardColors/badgeAdjust) e si governano dal pannello 'Feature flag'
+// dell'area admin. Se il dato manca o è malformato si usano i default qui sotto.
+// Ogni flag acceso mette una classe su <html>; tutte le regole CSS degli effetti
+// sono scoped a quella classe, quindi a flag spento l'effetto non esiste.
+var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
+var SITE_FLAGS_DEFAULT = { zoomBig:false, glow:true, press:true, vig:true, fade:true, podium:true };
+// flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
+// in localStorage) la scavalca, perché riguarda solo chi guarda, non il sito.
+var SITE_FLAG_CLASS = { glow:'fx-glow', press:'fx-press', vig:'fx-vig', fade:'fx-fade', podium:'fx-podium' };
+var SITE_FLAGS = (function(){
+  var out = {}, src = (typeof siteFlags !== 'undefined' && siteFlags && typeof siteFlags === 'object') ? siteFlags : {};
+  Object.keys(SITE_FLAGS_DEFAULT).forEach(function(k){
+    out[k] = (typeof src[k] === 'boolean') ? src[k] : SITE_FLAGS_DEFAULT[k];
+  });
+  return out;
+})();
+function applySiteFlags() {
+  var r = document.documentElement;
+  Object.keys(SITE_FLAG_CLASS).forEach(function(k){ r.classList.toggle(SITE_FLAG_CLASS[k], !!SITE_FLAGS[k]); });
+  // Zoom: vince la scelta personale se c'è ('1'/'0' espliciti), altrimenti il sito.
+  var mine = LS.getItem(ZOOM_LS_KEY);
+  r.classList.toggle('zoom-big', mine === null ? !!SITE_FLAGS.zoomBig : mine === '1');
+}
+applySiteFlags();
 
 var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
 
@@ -2822,6 +2896,16 @@ function ccAaText(fg, bg, target) {
     '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
     'html[data-theme="light"] .rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.05)!important}',
     'html[data-theme="light"] .rank-item[class*="cc-"]:hover,html[data-theme="light"] .rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.11)!important}',
+    // ── ACCENSIONE della striscia al passaggio del mouse (dalla v12.24) ───────
+    // La striscia diffonde la propria tinta di famiglia dentro la card: due strati
+    // (uno stretto + uno molto ampio) per una sfumatura morbida, a bassa opacità
+    // (scelta dell'utente: 'più sfumato e leggermente meno opaco'). NIENTE
+    // sollevamento né ombra sulla card: le card restano 'virtuali', non schede
+    // fisiche. !important + specificità (0,2,0) per battere .rank-strip{box-shadow:
+    // none!important}. Il bagliore verso sinistra è tagliato dall'overflow:hidden
+    // della card: resta la diffusione verso l'interno, che è quella che conta.
+    'html.fx-glow .rank-item:hover .rank-strip,html.fx-glow .rank-item:focus-within .rank-strip{box-shadow:0 0 10px rgba(var(--ccrgb,111,116,130),0.40),0 0 28px 7px rgba(var(--ccrgb,111,116,130),0.24)!important}',
+    'html.fx-glow[data-theme="light"] .rank-item:hover .rank-strip,html.fx-glow[data-theme="light"] .rank-item:focus-within .rank-strip{box-shadow:0 0 10px rgba(var(--ccrgb,111,116,130),0.32),0 0 28px 7px rgba(var(--ccrgb,111,116,130),0.18)!important}',
     // ── Accento cardcolor sulla SCHEDA personaggio (dalla v8.77) ──────────────
     // La .modal della scheda riceve cc-<fam> da openModal. BORDI (decorativi):
     // sempre col colore famiglia, in entrambi i temi. TESTI/ICONE (rank, source,
@@ -3526,7 +3610,10 @@ function renderList() {
         riga2 = '<span class="rank-subtitle">' + joinBipartite(altParts) + '</span>';
       }
     }
-    var classes = 'rank-item' + (isVisTop ? ' vis-top' : '');
+    // vis-1/2/3 (dalla v12.24): posizione esatta sul podio, per i numeri metallici
+    // (oro/argento/bronzo). visN è il numero d'ordine tra i VISIBILI, quindi il
+    // podio segue i filtri attivi, come lo spessore 8px della striscia.
+    var classes = 'rank-item' + (isVisTop ? ' vis-top vis-' + visN : '');
     // Classe 'Esseri crepuscolari' (card scura, .divine.morgoth): i villain per
     // nome + Balrog/Draghi per tipo, più (dalla v7.59) Osservatore nell'Acqua,
     // Vecchio Uomo Salice e Guardiani di Cirith Ungol (spostati qui da Entità
@@ -4412,22 +4499,9 @@ function controlPanelHTML() {
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var MOON = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
   var LINK_ICON = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
-  // Tasto 'modalità ingrandita': glifo tipografico 'A+' invece di un'icona SVG
-  // (dice da sé di cosa si tratta ed è indipendente dalla lingua). Riusa lo stile
-  // del tasto lingua (quadrato di testo, dimensionato in toolbar e barra mobile) e
-  // aggiunge .ctrl-zoom-btn come aggancio proprio; lo stato sta in aria-pressed.
-  var ZOOM_BTN = function(lbl, on){
-    return '<button class="ctrl-lang-btn ctrl-zoom-btn" aria-pressed="' + (on ? 'true' : 'false')
-      + '" aria-label="' + lbl + '" title="' + lbl + '">A+</button>';
-  };
   var shareLbl = currentLang === 'it' ? 'Copia il link alla vista corrente (categorie attive)' : 'Copy a link to the current view (active categories)';
   var themeLbl = isLight ? (currentLang==='it'?'Passa al tema scuro':'Switch to dark theme') : (currentLang==='it'?'Passa al tema chiaro':'Switch to light theme');
   var langLbl = currentLang === 'it' ? 'Visualizza in inglese' : 'View in Italian';
-  // Modalità ingrandita (zoom 140%): etichetta che dice cosa fa il click, come per
-  // il tema (l'azione, non lo stato). Lo stato lo porta aria-pressed sul pulsante.
-  var zoomOn = document.documentElement.classList.contains('zoom-big');
-  var zoomLbl = zoomOn ? (currentLang === 'it' ? 'Torna alla dimensione normale' : 'Back to normal size')
-                       : (currentLang === 'it' ? 'Ingrandisci i testi' : 'Enlarge the text');
   // Tasto Info (cerchio + i, stile Feather): dalla v5.79 apre la modale unica
   // 'Risorse e note' (non più direttamente la nota sulle traduzioni, che ora è
   // una voce di quella modale). Bilingue.
@@ -4470,7 +4544,6 @@ function controlPanelHTML() {
      +   infoBtn
      +   '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +   '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
-     +   ZOOM_BTN(zoomLbl, zoomOn)
      +   '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      + '</span>'
      + '</div>';
@@ -4676,7 +4749,6 @@ function controlPanelHTML() {
      +     infoBtn
      +     '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
-     +     ZOOM_BTN(zoomLbl, zoomOn)
      +     '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      +   '</span>'
      +   '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9 12 15 18 9"/></svg></button>'
@@ -4815,14 +4887,8 @@ function wireControlPanel() {
   });
   var close = document.getElementById('ctrl-close');
   if (close) close.addEventListener('click', toggleControlPanel);
-  // :not(.ctrl-zoom-btn) — il tasto 'modalità ingrandita' riusa lo STILE del tasto
-  // lingua (stessa classe), ma non deve cambiare lingua: ha il suo handler sotto.
-  panel.querySelectorAll('.ctrl-lang-btn:not(.ctrl-zoom-btn)').forEach(function(b){
+  panel.querySelectorAll('.ctrl-lang-btn').forEach(function(b){
     b.addEventListener('click', function(){ setLang(currentLang === 'it' ? 'en' : 'it'); });
-  });
-  // Modalità ingrandita: due istanze (toolbar desktop / barra mobile).
-  panel.querySelectorAll('.ctrl-zoom-btn').forEach(function(btn){
-    btn.addEventListener('click', toggleZoomMode);
   });
   // Il numero di versione del pannello (mobile) porta dritto all'editor admin
   // (parola d'ordine se non già sbloccato), esattamente come il badge in testata
@@ -5202,26 +5268,30 @@ function toggleControlPanel(skipSheetAnim) {
 }
 
 // Fattore della modalità ingrandita: tenuto allineato alla regola CSS
-// html.zoom-big{zoom:1.4}. Serve a JS solo per documentazione/riferimento: le
+// html.zoom-big{zoom:1.3}. Serve a JS solo per documentazione/riferimento: le
 // misure a runtime rilevano lo zoom da sole (vedi placeMidlinesFor).
-var ZOOM_BIG_FACTOR = 1.4;
-// Modalità ingrandita (dalla v12.14): 140% dell'intera pagina via la proprietà
+var ZOOM_BIG_FACTOR = 1.3;
+// Modalità ingrandita (dalla v12.14): 130% dell'intera pagina via la proprietà
 // `zoom` su <html>, cioè l'equivalente dello zoom del browser (scala TUTTO in modo
-// uniforme, px pinnati inclusi, quindi gli allineamenti restano intatti). NON
-// persistente, come tema e lingua: al ricaricamento si torna alla dimensione
-// normale. Aggiorna aria-pressed e le etichette dei due tasti (toolbar desktop e
-// barra mobile) e rimisura le righe (a-capo dei nomi, linee mediane).
+// uniforme, px pinnati inclusi, quindi gli allineamenti restano intatti).
+//
+// DUE LIVELLI, distinti per volontà dell'utente (v12.24):
+//  1) DEFAULT DI SITO — il flag `zoomBig` del pannello 'Feature flag' (admin):
+//     vale per TUTTI i visitatori, vive nei dati (siteFlags in dati.js);
+//  2) PREFERENZA PERSONALE — il tasto `Z`: vale SOLO su questo browser, NON tocca
+//     il sito, e si ricorda in localStorage (chiave arda-zoom-big).
+// La personale, se impostata, SCAVALCA il default di sito (per questo si salva
+// '1'/'0' espliciti: la chiave assente significa 'segui il sito', non 'spento').
+// Il ripristino avviene il più presto possibile (blocco iniziale) per non mostrare
+// un lampo di pagina alla dimensione sbagliata.
 function toggleZoomMode() {
   var on = document.documentElement.classList.toggle('zoom-big');
-  var it = currentLang === 'it';
-  var lbl = on ? (it ? 'Torna alla dimensione normale' : 'Back to normal size')
-               : (it ? 'Ingrandisci i testi' : 'Enlarge the text');
-  document.querySelectorAll('.ctrl-zoom-btn').forEach(function(b){
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    b.setAttribute('aria-label', lbl); b.setAttribute('title', lbl);
-  });
+  LS.setItem(ZOOM_LS_KEY, on ? '1' : '0');
   // Le misure dipendono dalla scala: rifà a-capo 'smart' e linee mediane.
   if (typeof reflowRows === 'function') reflowRows();
+  showToast(currentLang === 'it'
+    ? (on ? '🔎 Testi ingranditi (solo per te)' : '🔎 Dimensione normale (solo per te)')
+    : (on ? '🔎 Enlarged text (only for you)' : '🔎 Normal size (only for you)'), false);
 }
 
 // #3 — toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)
@@ -5719,7 +5789,7 @@ async function translateText(text, from, to) {
   }
 }
 
-async function doCommit(msg, payload, cardColors, keepVersion, badgeAdjustCfg) {
+async function doCommit(msg, payload, cardColors, keepVersion, badgeAdjustCfg, siteFlagsCfg) {
   // payload opzionale: consente di committare una copia senza aver ancora
   // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
   // cardColors opzionale: config colori editabile (Fase 2). Se passata, il Worker
@@ -5733,7 +5803,7 @@ async function doCommit(msg, payload, cardColors, keepVersion, badgeAdjustCfg) {
     const res = await fetch(proxyUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}, keepVersion ? { keepVersion: true } : {}, badgeAdjustCfg ? { badgeAdjust: badgeAdjustCfg } : {}))
+      body: JSON.stringify(Object.assign({ action: 'commit', password: adminPassword, dati: data, message: msg || 'admin: aggiorna' }, cardColors ? { cardColors: cardColors } : {}, keepVersion ? { keepVersion: true } : {}, badgeAdjustCfg ? { badgeAdjust: badgeAdjustCfg } : {}, siteFlagsCfg ? { siteFlags: siteFlagsCfg } : {}))
     });
     let r = {};
     try { r = await res.json(); } catch (e) {}
@@ -6437,6 +6507,91 @@ function openAdminGate() {
 // Sostituisce l'ingresso diretto nell'editor: si sceglie tra 'Modifica
 // personaggi' (editor esistente) e 'Modifica colori' (pannello colori, Fase 1 =
 // Modifica mirata del singolo personaggio; funzioni di famiglia in Fase 2).
+// ── Pannello 'Feature flag' (admin, dalla v12.24) ────────────────────────────
+// Controllo dell'ASPETTO del sito per TUTTI i visitatori: modalità ingrandita +
+// i 5 effetti grafici. Salva `siteFlags` in dati.js via il Worker (e bumpa +0.01,
+// come i micro-aggiustamenti: è una modifica che tutti vedono).
+function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, false, null, SITE_FLAGS); }
+var SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS));
+// Voci del pannello, nell'ordine di presentazione. `k` = chiave in SITE_FLAGS.
+var SITE_FLAG_ITEMS = [
+  { k:'zoomBig', it:'Modalità ingrandita (130%)', en:'Enlarged mode (130%)',
+    nit:'Ingrandisce tutto il sito per tutti i visitatori. Il tasto Z resta una scelta personale di chi guarda e scavalca questa.',
+    nen:'Enlarges the whole site for every visitor. The Z key stays a personal choice and overrides this.' },
+  { k:'glow', it:'Accensione della striscia', en:'Strip glow',
+    nit:'Al passaggio del mouse la striscia diffonde la tinta della famiglia dentro la card.',
+    nen:'On hover the strip diffuses its family colour into the card.' },
+  { k:'press', it:'Nomi incisi', en:'Letterpress names',
+    nit:'Ombra tipografica impercettibile sui nomi (letterpress in tema chiaro).',
+    nen:'Barely perceptible type shadow on names (letterpress in light theme).' },
+  { k:'vig', it:'Vignettatura', en:'Vignette',
+    nit:'Alone radiale ai bordi del fondo: dà profondità.', nen:'Radial glow at the edges of the ground: adds depth.' },
+  { k:'fade', it:'Bordi lista in dissolvenza', en:'Fading list edges',
+    nit:'La lista sfuma invece di troncarsi in cima e in fondo.', nen:'The list fades instead of being cut at top and bottom.' },
+  { k:'podium', it:'Podio metallico', en:'Metallic podium',
+    nit:'I numeri 1-2-3 in oro, argento e bronzo.', nen:'Numbers 1-2-3 in gold, silver and bronze.' }
+];
+function showSiteFlagsEditor(initState){
+  if (document.getElementById('fab-modal')) return;
+  var it = currentLang === 'it', myL;
+  var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  var box = document.createElement('div'); box.className = 'fab-modal-box';
+  box.style.maxWidth = '460px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
+  overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
+  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
+  var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
+  t.textContent = it ? 'Feature flag' : 'Feature flags'; box.appendChild(t);
+  var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 1rem;';
+  sub.textContent = it ? "Aspetto del sito: vale per tutti i visitatori." : 'Site appearance: applies to every visitor.';
+  box.appendChild(sub);
+  // Una riga per flag: checkbox + nome + nota. Il cambio si applica SUBITO (le card
+  // dietro si aggiornano), così si valuta l'effetto prima di salvare.
+  SITE_FLAG_ITEMS.forEach(function(f){
+    var row = document.createElement('label');
+    row.style.cssText = 'display:grid;grid-template-columns:auto 1fr;gap:0.55rem;align-items:start;margin:0 0 0.85rem;cursor:pointer;';
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!SITE_FLAGS[f.k];
+    cb.style.cssText = 'margin:0.25rem 0 0;width:1rem;height:1rem;flex:none;cursor:pointer;';
+    cb.addEventListener('change', function(){ SITE_FLAGS[f.k] = cb.checked; applySiteFlags(); reflowRows(); });
+    var txt = document.createElement('span');
+    var nm = document.createElement('span'); nm.style.cssText = 'display:block;font-size:0.92rem;font-weight:600;';
+    nm.textContent = it ? f.it : f.en;
+    var nt = document.createElement('span'); nt.style.cssText = 'display:block;font-size:0.76rem;opacity:0.66;line-height:1.35;margin-top:0.1rem;';
+    nt.textContent = it ? f.nit : f.nen;
+    txt.appendChild(nm); txt.appendChild(nt);
+    row.appendChild(cb); row.appendChild(txt); box.appendChild(row);
+  });
+  // Avviso se la preferenza personale di zoom (tasto Z) sta scavalcando il flag:
+  // senza, sembrerebbe che l'interruttore 'non funzioni'.
+  var mine = LS.getItem(ZOOM_LS_KEY);
+  if (mine !== null) {
+    var warn = document.createElement('p');
+    warn.style.cssText = 'font-size:0.76rem;opacity:0.8;margin:0 0 0.9rem;padding:0.5rem 0.6rem;border-left:2px solid rgba(200,162,74,0.8);';
+    warn.textContent = it
+      ? ('Nota: su questo browser hai una preferenza personale di zoom (' + (mine === '1' ? 'ingrandito' : 'normale') + ', tasto Z), che scavalca il flag qui sopra. Gli altri visitatori vedono il flag.')
+      : ('Note: on this browser you have a personal zoom preference (' + (mine === '1' ? 'enlarged' : 'normal') + ', Z key) which overrides the flag above. Other visitors see the flag.');
+    box.appendChild(warn);
+  }
+  var foot = document.createElement('div'); foot.style.cssText = 'display:flex;gap:10px;margin-top:1.1rem;';
+  var cancel = document.createElement('button'); cancel.className = 'fab-modal-confirm';
+  cancel.style.cssText = 'width:auto;flex:1;margin-top:0;'; cancel.textContent = it ? 'Annulla' : 'Cancel';
+  cancel.onclick = function(){ SITE_FLAGS = JSON.parse(JSON.stringify(SITE_FLAGS_SAVED)); applySiteFlags(); reflowRows(); close(); };
+  var save = document.createElement('button'); save.className = 'fab-modal-confirm';
+  save.style.cssText = 'width:auto;flex:1;margin-top:0;'; save.textContent = it ? 'Salva' : 'Save';
+  save.onclick = function(){
+    save.disabled = true; save.style.opacity = '0.4';
+    saveSiteFlagsToRepo(it ? 'aspetto: feature flag' : 'appearance: feature flags').then(function(res){
+      if (res.ok){ SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS)); showToast(it ? '✓ Salvato' : '✓ Saved', false); close(); }
+      else showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true);
+    }).finally(function(){ save.disabled = false; save.style.opacity = ''; });
+  };
+  foot.appendChild(cancel); foot.appendChild(save); box.appendChild(foot);
+  // L (lingua): ricostruisce conservando lo stato corrente dei flag (non salvati).
+  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } close(); showSiteFlagsEditor(); };
+  langRefresh = myL;
+}
+
 function showAdminChoiceModal() {
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it';
@@ -6466,7 +6621,12 @@ function showAdminChoiceModal() {
   // riga2 icone badge.
   b4.innerHTML = it ? 'Micro-aggiustamenti<br>icone badge' : 'Badge-icon<br>micro-tuning';
   b4.onclick = function(){ close(); showBadgeAdjustEditor(); };
-  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3); box.appendChild(b4);
+  // Feature flag (dalla v12.24): pannello di controllo dell'ASPETTO del sito
+  // (effetti grafici + modalità ingrandita) valido per tutti i visitatori.
+  var b5 = document.createElement('button'); b5.className = 'fab-modal-confirm';
+  b5.textContent = it ? 'Feature flag' : 'Feature flags';
+  b5.onclick = function(){ close(); showSiteFlagsEditor(); };
+  box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3); box.appendChild(b4); box.appendChild(b5);
 }
 
 // ── Editor colori: colore per personaggio e per famiglia ────────────────────

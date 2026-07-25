@@ -85,7 +85,7 @@ async function safeEqual(a, b) {
 // voce JSON per riga, così i diff su GitHub restano leggibili (per-personaggio)
 // e il file è coerente con la serializzazione usata a mano. Entrambe le var
 // restano globali per il sito.
-function buildDatiFile(dati, version, cardColors, badgeAdjust) {
+function buildDatiFile(dati, version, cardColors, badgeAdjust, siteFlags) {
   var head = 'var datiVersion = "' + version + '";\n';
   // Config colori editabile (Fase 2): se presente, emessa come `var cardColors`
   // su UNA riga (JSON.stringify non produce newline) SUBITO dopo datiVersion, così
@@ -98,6 +98,11 @@ function buildDatiFile(dati, version, cardColors, badgeAdjust) {
   // dopo cardColors. Assente = riga omessa (il sito usa il fallback seed-once).
   if (badgeAdjust && typeof badgeAdjust === 'object') {
     head += 'var badgeAdjust = ' + JSON.stringify(badgeAdjust) + ';\n';
+  }
+  // Feature flag dell'aspetto (dalla v12.24): `var siteFlags` su UNA riga dopo
+  // badgeAdjust. Assente = riga omessa (il sito usa i default interni).
+  if (siteFlags && typeof siteFlags === 'object') {
+    head += 'var siteFlags = ' + JSON.stringify(siteFlags) + ';\n';
   }
   return head +
     'var dati = [\n' +
@@ -120,6 +125,22 @@ function readBadgeAdjust(src) {
   var m = /var\s+badgeAdjust\s*=\s*(\{[^\n]*\})\s*;/.exec(src || '');
   if (!m) return null;
   try { var o = JSON.parse(m[1]); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : null; } catch (e) { return null; }
+}
+
+// Estrae `var siteFlags = {...};` (una riga) dal sorgente, per PRESERVARLO quando
+// un salvataggio (contenuti, colori, micro-aggiustamenti) non lo invia.
+function readSiteFlags(src) {
+  var m = /var\s+siteFlags\s*=\s*(\{[^\n]*\})\s*;/.exec(src || '');
+  if (!m) return null;
+  try { var o = JSON.parse(m[1]); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : null; } catch (e) { return null; }
+}
+
+// Validazione di forma: mappa chiave → booleano (max 40 chiavi).
+function validSiteFlags(sf) {
+  if (!sf || typeof sf !== 'object' || Array.isArray(sf)) return false;
+  var keys = Object.keys(sf);
+  if (keys.length < 1 || keys.length > 40) return false;
+  return keys.every(function (k) { return typeof sf[k] === 'boolean'; });
 }
 
 // Validazione di forma: mappa unità → {ml,mr,ny,sc} tutti numeri finiti (sc>0).
@@ -259,7 +280,7 @@ export default {
     // 'rl' = presenza del binding del Durable Object di rate limiting.
     // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
     // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 12, rl: !!env.RL_DO }, 405, ch);
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 13, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
@@ -302,6 +323,9 @@ export default {
       // errore esplicito che scrivere/preservare una config corrotta.
       if (body.cardColors !== undefined && !validCardColors(body.cardColors)) {
         return json({ ok: false, error: 'bad-cardcolors' }, 400, ch);
+      }
+      if (body.siteFlags !== undefined && !validSiteFlags(body.siteFlags)) {
+        return json({ ok: false, error: 'bad-siteflags' }, 400, ch);
       }
       if (body.badgeAdjust !== undefined && !validBadgeAdjust(body.badgeAdjust)) {
         return json({ ok: false, error: 'bad-badgeadjust' }, 400, ch);
@@ -352,7 +376,8 @@ export default {
           // altrimenti PRESERVA quelli nel file (un salvataggio che non li tocca
           // non deve cancellarli).
           const ba = body.badgeAdjust !== undefined ? body.badgeAdjust : readBadgeAdjust(oldSrc);
-          const upd = buildDatiFile(body.dati, newVersion, cc, ba);
+          const sf = body.siteFlags !== undefined ? body.siteFlags : readSiteFlags(oldSrc);
+          const upd = buildDatiFile(body.dati, newVersion, cc, ba, sf);
           if (upd.length > DATI_MAX_BYTES) return json({ ok: false, error: 'dati-too-big' }, 400, ch);
           const put = await fetchT(GH_API, {
             method: 'PUT',
