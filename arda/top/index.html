@@ -2349,7 +2349,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.28</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.29</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5299,8 +5299,8 @@ function toggleZoomMode() {
   // Le misure dipendono dalla scala: rifà a-capo 'smart' e linee mediane.
   if (typeof reflowRows === 'function') reflowRows();
   showToast(currentLang === 'it'
-    ? (on ? '🔎 Testi ingranditi (solo per te)' : '🔎 Dimensione normale (solo per te)')
-    : (on ? '🔎 Enlarged text (only for you)' : '🔎 Normal size (only for you)'), false);
+    ? (on ? 'Vista ingrandita (solo per te)' : 'Vista normale (solo per te)')
+    : (on ? 'Larger size (just for you)' : 'Standard size (just for you)'), false, '\uD83D\uDD0D');
 }
 
 // #3 — toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)
@@ -5719,7 +5719,7 @@ function onPointerUp() {
   showFAB();
 }
 
-function showToast(msg, isError) {
+function showToast(msg, isError, icon) {
   var t = document.getElementById('arda-toast');
   if (!t) {
     t = document.createElement('div');
@@ -5730,7 +5730,22 @@ function showToast(msg, isError) {
     t.style.cssText = 'position:fixed;bottom:3.5rem;right:5.6rem;transform:translateY(50%);z-index:600;padding:0.45rem 0.9rem;border-radius:6px;font-family:system-ui,-apple-system,sans-serif;font-size:0.82rem;font-weight:600;max-width:280px;pointer-events:none;transition:opacity 0.4s;';
     document.body.appendChild(t);
   }
-  t.textContent = msg;
+  // Icona opzionale come span PROPRIO (non dentro il testo): così si può allineare
+  // verticalmente al testo, cosa impossibile con l'emoji dentro textContent. Si usa
+  // sempre textContent (mai innerHTML): a showToast arrivano anche messaggi dinamici
+  // (es. il motivo di errore restituito dal Worker).
+  t.textContent = '';
+  if (icon) {
+    var ic = document.createElement('span');
+    ic.textContent = icon;
+    // Le emoji siedono un filo basse rispetto al maiuscoletto del testo: si alzano
+    // di 0.06em e si distanziano di 0.42em (misurato sul mockup dell'utente).
+    ic.style.cssText = 'display:inline-block;margin-right:0.42em;transform:translateY(-0.06em);';
+    t.appendChild(ic);
+    var tx = document.createElement('span'); tx.textContent = msg; t.appendChild(tx);
+  } else {
+    t.textContent = msg;
+  }
   t.style.background = isError ? 'rgba(160,20,30,0.92)' : 'rgba(20,100,50,0.92)';
   t.style.color = '#fff';
   t.style.border = isError ? '1px solid rgba(255,80,80,0.7)' : '1px solid rgba(60,210,100,0.7)';
