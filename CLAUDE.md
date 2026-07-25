@@ -287,13 +287,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     macchina del riordino restano nel codice, non più richiamate dal tap
     versione, per un eventuale ripristino futuro del riordino su mobile.
 
-## 🔎 Modalità ingrandita (dalla v12.14)
+## 🔎 Modalità ingrandita (dalla v12.14; 130% dalla v12.24)
 
-Ingrandimento del sito al **140%**, per la leggibilità su desktop (richiesta
-dell'utente, che aveva verificato come lo zoom del browser a quel valore renda
-ottimi i testi lasciando gli allineamenti perfetti).
+Ingrandimento del sito al **130%**, per la leggibilità su desktop (l'utente era
+partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
 
-- **Meccanismo: `html.zoom-big { zoom:1.4 }`** — la proprietà `zoom`, non un
+- **Meccanismo: `html.zoom-big { zoom:1.3 }`** — la proprietà `zoom`, non un
   ingrandimento del `font-size` di root. ⚠️ **La differenza è sostanziale e
   misurata:** `zoom` scala TUTTO in modo uniforme, **inclusi i valori pinnati in
   px** (il passo `31.5px` delle righe del Pannello, `min-height:21px` dello slot
@@ -303,18 +302,23 @@ ottimi i testi lasciando gli allineamenti perfetti).
 - Il fattore vive in **due punti da tenere allineati**: la regola CSS e la costante
   JS `ZOOM_BIG_FACTOR` (quest'ultima solo di riferimento: le misure a runtime
   rilevano lo zoom da sé).
-- **Non persistente**, come tema e lingua: al ricaricamento si torna alla
-  dimensione normale.
-- **Comandi:** il tasto **`A+`** nel Pannello (toolbar su desktop, barra inferiore
-  su mobile, accanto a tema/lingua/condividi) e la scorciatoia **`Z`**. Il tasto
-  riusa lo **stile** del tasto lingua (`.ctrl-lang-btn`) più l'aggancio proprio
-  `.ctrl-zoom-btn`; lo stato sta in `aria-pressed`. ⚠️ Per questo il wiring della
-  lingua è `.ctrl-lang-btn:not(.ctrl-zoom-btn)`: senza l'esclusione il tasto
-  ingrandimento cambierebbe anche la lingua.
-- **Stato acceso: fondo e bordo in tinta, testo NON colorato.** ⚠️ Non usare
-  `var(--gold)` per il testo del tasto: in tema scuro quel token è
-  **neutralizzato a grigio** (dalla v8.79) e su quel fondo dava **2.85:1** (axe lo
-  bocciava). Lo stato si legge da fondo + bordo + `aria-pressed`.
+- **DUE LIVELLI, da non confondere** (impianto voluto dall'utente, v12.24):
+  1. **default di SITO** — il flag `zoomBig` del pannello 'Feature flag' (admin):
+     vale per **tutti i visitatori**, vive nei dati (`siteFlags` in `dati.js`);
+  2. **preferenza PERSONALE** — il tasto **`Z`**: vale solo su quel browser, **non
+     tocca il sito**, si ricorda in `localStorage` (`arda-zoom-big`) e **scavalca**
+     il default di sito. Si salvano `'1'`/`'0'` **espliciti**: chiave assente =
+     'segui il sito', non 'spento'. Un toast conferma che vale 'solo per te'.
+  `applySiteFlags()` applica la regola: `mine === null ? flag di sito : mine === '1'`.
+- ⚠️ **Nessun pulsante nel Pannello** (rimosso nella v12.24 su richiesta
+  dell'utente): lo zoom si comanda col tasto `Z` (personale) o dal pannello Feature
+  flag (sito). Storico: la v12.14 aveva un tasto `A+` in toolbar e barra mobile.
+- **Ripristino in due fasi** (la `dati.js` si carica DOPO il blocco iniziale):
+  1. blocco iniziale in testa allo script — riapplica solo la **preferenza
+     personale**, il più presto possibile, per non mostrare un lampo alla
+     dimensione sbagliata;
+  2. `applySiteFlags()` subito dopo il caricamento di `dati.js` — ricalcola con il
+     flag di sito. Gira prima del `renderList`, quindi non si vede sfarfallio.
 - **Linee mediane sotto zoom (`placeMidlinesFor`).** Attenzione alle unità:
   `getBoundingClientRect` dà px **già scalati**, mentre `off` (ratio × font-size
   computato) è in px di layout **non** scalati, e `--mid` viene riapplicata dentro
@@ -327,6 +331,57 @@ ottimi i testi lasciando gli allineamenti perfetti).
   elementi fissi (FAB, tasti salto) dentro il viewport, axe **0** in entrambi i temi
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
+
+## ✨ Feature flag dell'aspetto (dalla v12.24)
+
+Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
+la modalità ingrandita e i 5 effetti grafici. Accesso: tap sulla versione → sblocco
+→ bivio 'Area admin' → **5° pulsante 'Feature flag'** (`showSiteFlagsEditor`, stile
+admin minimale).
+
+- **Dove vivono i flag:** `var siteFlags` in `dati.js`, scritto dal Worker esattamente
+  come `cardColors` e `badgeAdjust` (una riga JSON dopo `badgeAdjust`). A runtime
+  `SITE_FLAGS` = i flag salvati validi, altrimenti `SITE_FLAGS_DEFAULT`
+  (`zoomBig:false`, gli altri 5 `true`). Un salvataggio che **non** invia `siteFlags`
+  lo **preserva** (`readSiteFlags`); `validSiteFlags` rifiuta config malformate (400
+  `bad-siteflags`). Worker **rev 13**.
+- **Meccanismo: una classe su `<html>` per flag** (`SITE_FLAG_CLASS`), applicata da
+  `applySiteFlags()`. ⚠️ **Tutte** le regole CSS degli effetti sono scoped a quella
+  classe (`html.fx-glow …`, `html.fx-vig body`, ecc.): a flag spento l'effetto **non
+  esiste**, non è solo invisibile. Aggiungendo un effetto nuovo, scoparlo così.
+- **I 5 effetti** (mockup approvato dall'utente: 'stanno benissimo anche tutti
+  insieme'), tutti a **costo zero sul layout** (nessuno sposta il contenuto):
+  1. **`glow` — accensione della striscia** (`fx-glow`): al passaggio del mouse la
+     striscia diffonde la tinta di famiglia dentro la card, su due strati (10px +
+     28px/7px di sfumatura) a bassa opacità. ⚠️ **Niente sollevamento né ombra sulla
+     card**: l'utente vuole le card **'virtuali', non schede fisiche** (il lift del
+     mockup è stato scartato apposta). Regole **iniettate** in
+     `injectCardColorRules` perché usano `rgba(var(--ccrgb),…)` (il Nu non parsa
+     `var()` dentro `rgba()`), con `!important` per battere il
+     `.rank-strip{box-shadow:none!important}` di base. Il bagliore verso sinistra è
+     tagliato dall'`overflow:hidden` della card: resta la diffusione interna.
+  2. **`press` — nomi incisi** (`fx-press`): letterpress in tema chiaro (lume bianco
+     sotto + velo scuro sopra), stacco morbido in scuro.
+  3. **`vig` — vignettatura** (`fx-vig`): alone radiale come **livello di sfondo del
+     body** (`background-image` + `background-attachment:fixed`), non un elemento
+     sovrapposto: niente nodi nuovi né problemi di impilamento.
+  4. **`fade` — bordi lista in dissolvenza** (`fx-fade`): `mask-image` su
+     `#rank-list`, 26px. Azzerata in `@media print` (su carta sarebbe un difetto).
+  5. **`podium` — podio metallico** (`fx-podium`): numeri 1-2-3 con gradiente
+     oro/argento/bronzo (`background-clip:text` + `color:transparent`, come il
+     titolone) e `text-shadow:none` (il glow grigio base di `.rank-num`
+     intorbidirebbe il metallo). Le classi **`vis-1/2/3`** le assegna `renderList`
+     accanto a `vis-top`, quindi il podio **segue i filtri attivi**. ⚠️ L'**argento**
+     ha molte fermate (lume/ombra/lume) perché a 2 sole fermate 'sembrava un numero
+     normale' (richiesta dell'utente); tema chiaro con metalli scuriti per l'AA.
+     ⚠️ Misurando il colore dopo un cambio di flag si legge ancora `transparent`: è
+     la `transition:color 0.35s` di `.rank-num`, non un bug (attendere ~400ms).
+- **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, false, null,
+  SITE_FLAGS)` → il Worker scrive `siteFlags` e **bumpa +0.01** (è una modifica che
+  vedono tutti). `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Le checkbox
+  applicano l'effetto **subito** (anteprima live sulle card dietro).
+- Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**:
+  altrimenti il flag `zoomBig` sembrerebbe non funzionare.
 
 ## 🔐 Admin e segreti
 
@@ -355,8 +410,9 @@ ottimi i testi lasciando gli allineamenti perfetti).
     Object dà un conteggio affidabile. Storia in PR #294-#302.
   - **Spia di salute del Worker:** un `GET` (o qualunque non-POST) risponde
     `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del
-    codice attiva (utile per verificare che una ridistribuzione via Git sia
-    andata a buon fine, non altrimenti ispezionabile senza dashboard), `rl`
+    codice attiva (**13** dalla v12.24, che ha aggiunto `siteFlags`; utile per
+    verificare che una ridistribuzione via Git sia andata a buon fine, non
+    altrimenti ispezionabile senza dashboard), `rl`
     se il binding `RL_DO` è presente. Nessun segreto esposto. Bump di `rev`
     a ogni modifica sostanziale del Worker.
 
@@ -478,7 +534,7 @@ gruppo = cambiare una terna.
   - **Bivio admin + editor colori (dalla v9.17; titolo e 3ª voce dalla v10.18).**
     Il tap sulla versione (badge, `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON
     va più dritto all'editor: `openAdminGate` apre `showAdminChoiceModal`, la
-    modale **'Area admin'** con tre tasti: **Modifica personaggi** →
+    modale **'Area admin'** con cinque tasti (dalla v12.24): **Modifica personaggi** →
     `showAdminEditor` / **Modifica colori** → `showColorEditor` / **Statistiche**
     → `showColorStats` (le stats non riguardano più solo i colori, quindi vivono
     qui, non nell'editor colori; ogni tasto chiude il bivio e apre la sua modale
@@ -730,6 +786,11 @@ gruppo = cambiare una terna.
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
+- **Opacità della riga Info a 0.80 (dalla v12.24, era 0.72).** `.rank-desc` è la
+  riga più piccola e tenue della card (~13.8px): era l'anello debole della
+  leggibilità (rilevato misurando i corpi di tutti i testi). +8 punti di opacità si
+  sentono molto e non alterano la gerarchia visiva. Indipendente dalla modalità
+  ingrandita.
 - **Peso del testo UNIFORME nei due temi (400, dalla v9.93, scelta utente).**
   Prima il tema chiaro usava `font-weight:500` su `body`/`p`/`.intro`/`.subtitle`/
   footer/testi delle schede (per 'ingrassare' il testo su fondo chiaro), mentre lo
@@ -944,6 +1005,12 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   in `index.html` tra i marker `/*DS*/ … /*DE*/` (riga unica da ~361 KB, ~69% del
   file, diff illeggibili e a ridosso del limite 1 MB della Contents API);
   separato in v10.13.3 per diff leggibili e margine sul limite.
+- **Dati di configurazione accanto alle voci.** Oltre a `datiVersion` e all'array
+  `dati`, il file può contenere tre config su UNA riga ciascuna, tutte scritte dal
+  Worker e tutte **preservate** dai salvataggi che non le inviano: `cardColors`
+  (colori delle famiglie), `badgeAdjust` (micro-aggiustamenti icone) e `siteFlags`
+  (Feature flag dell'aspetto, dalla v12.24). Ognuna ha lettore + validatore nel
+  Worker e un fallback interno nel client.
 - **Serializzazione: prima riga `var datiVersion = "X.Y.Z";`, poi una voce JSON
   per riga** (`var datiVersion = "...";\nvar dati = [\n{...},\n{...}\n];`), così
   i diff su GitHub sono per-personaggio. Stessa identica forma sia a mano sia
@@ -1576,8 +1643,10 @@ specifico del dataset):
       riservato all'OS: menu Start / vista Attività non prevenibili): non
       riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
     - **Z (tasto nudo, dalla v12.14)**: accende/spegne la **modalità ingrandita**
-      (vedi la sezione dedicata). Stesse guardie di `T`/`L` (quindi attivo anche con
-      una scheda aperta), listener nello stesso blocco.
+      *per chi guarda* — è una **preferenza personale**, non tocca il sito: si
+      memorizza in `localStorage` (`arda-zoom-big`) e **scavalca** il flag di sito
+      (vedi 'Modalità ingrandita'). Un toast conferma che vale 'solo per te'. Stesse
+      guardie di `T`/`L` (quindi attivo anche con una scheda aperta).
     - **. (punto, ADMIN-only, dalla v11.80)**: mostra/nasconde le **linee mediane
       di allineamento** sulle card — la stessa riga rossa tratteggiata dell'editor
       micro-aggiustamenti, ma **sulla pagina reale**, una per personaggio, a metà
@@ -2259,7 +2328,8 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   (`openModal`), Risorse (`openResourcesModal`), Note (`openNoteViewer`), Info
   (`showInfoNote`); **admin/minimali** = password (`showPasswordModal`), bivio
   (`showAdminChoiceModal`), editor colori (`showColorEditor`), statistiche
-  (`showColorStats`), micro-aggiustamenti (`showBadgeAdjustEditor`), editor
+  (`showColorStats`), micro-aggiustamenti (`showBadgeAdjustEditor`), Feature flag
+  (`showSiteFlagsEditor`), editor
   personaggi (`showAdminEditor`). Le modali di **riordino**
   (`showDesktopReorderModal`/`showActionChoiceModal`) **restano MINIMALI** (decisione
   dell'utente, 2026-07-23): sono modali di servizio che si attivano solo per cose
