@@ -352,8 +352,9 @@ admin minimale).
 - **I 5 effetti** (mockup approvato dall'utente: 'stanno benissimo anche tutti
   insieme'), tutti a **costo zero sul layout** (nessuno sposta il contenuto):
   1. **`glow` — accensione della striscia** (`fx-glow`): al passaggio del mouse la
-     striscia diffonde la tinta di famiglia dentro la card, su due strati (10px +
-     28px/7px di sfumatura) a bassa opacità. ⚠️ **Niente sollevamento né ombra sulla
+     striscia diffonde la tinta di famiglia dentro la card, su due strati (12px +
+     34px/10px di sfumatura; opacità 0.62/0.36 in scuro, 0.50/0.26 in chiaro —
+     rinforzate nella v12.27 perché la prima taratura 'si vedeva pochissimo'). ⚠️ **Niente sollevamento né ombra sulla
      card**: l'utente vuole le card **'virtuali', non schede fisiche** (il lift del
      mockup è stato scartato apposta). Regole **iniettate** in
      `injectCardColorRules` perché usano `rgba(var(--ccrgb),…)` (il Nu non parsa
@@ -376,9 +377,12 @@ admin minimale).
      normale' (richiesta dell'utente); tema chiaro con metalli scuriti per l'AA.
      ⚠️ Misurando il colore dopo un cambio di flag si legge ancora `transparent`: è
      la `transition:color 0.35s` di `.rank-num`, non un bug (attendere ~400ms).
-- **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, false, null,
-  SITE_FLAGS)` → il Worker scrive `siteFlags` e **bumpa +0.01** (è una modifica che
-  vedono tutti). `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Le checkbox
+- **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, true, null,
+  SITE_FLAGS)` → il Worker scrive `siteFlags` **senza bumpare la versione**
+  (`keepVersion:true`, come i salvataggi colore: richiesta dell'utente dalla v12.27,
+  accendere un effetto non è una modifica di contenuto). Il controllo di freschezza
+  resta affidabile perché si basa sul confronto dei ref git, non sul numero.
+  `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Le checkbox
   applicano l'effetto **subito** (anteprima live sulle card dietro).
 - Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**:
   altrimenti il flag `zoomBig` sembrerebbe non funzionare.
@@ -1925,7 +1929,11 @@ specifico del dataset):
   - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon),
     Fram (Scatha), Bard (Smaug). Azaghâl ferì soltanto Glaurung.
   - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
-    Gandalf (Flagello di Durin). **Tuor escluso**: uccide Balrog solo ne
+    Gandalf (Flagello di Durin). **Ecthelion ha un tooltip dedicato** (dalla v12.27,
+    via `ICON_LABEL_OVERRIDE`): 'Uccise Gothmog, signore dei Balrog' / 'Slew Gothmog,
+    Lord of the Balrogs', perché non uccise un Balrog qualunque ma il loro signore.
+    ⚠️ La voce di Ecthelion in `ICON_LABEL_OVERRIDE` ne ha già una per `calaquende`:
+    le chiavi convivono nello stesso oggetto, non sostituirla. **Tuor escluso**: uccide Balrog solo ne
     'Il libro dei racconti perduti II' (la Caduta di Gondolin, versione
     superata del Legendarium).
   - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin. Rimosso in v7.09

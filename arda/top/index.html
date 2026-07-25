@@ -2342,7 +2342,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.24</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2904,8 +2904,8 @@ function ccAaText(fg, bg, target) {
     // fisiche. !important + specificità (0,2,0) per battere .rank-strip{box-shadow:
     // none!important}. Il bagliore verso sinistra è tagliato dall'overflow:hidden
     // della card: resta la diffusione verso l'interno, che è quella che conta.
-    'html.fx-glow .rank-item:hover .rank-strip,html.fx-glow .rank-item:focus-within .rank-strip{box-shadow:0 0 10px rgba(var(--ccrgb,111,116,130),0.40),0 0 28px 7px rgba(var(--ccrgb,111,116,130),0.24)!important}',
-    'html.fx-glow[data-theme="light"] .rank-item:hover .rank-strip,html.fx-glow[data-theme="light"] .rank-item:focus-within .rank-strip{box-shadow:0 0 10px rgba(var(--ccrgb,111,116,130),0.32),0 0 28px 7px rgba(var(--ccrgb,111,116,130),0.18)!important}',
+    'html.fx-glow .rank-item:hover .rank-strip,html.fx-glow .rank-item:focus-within .rank-strip{box-shadow:0 0 12px rgba(var(--ccrgb,111,116,130),0.62),0 0 34px 10px rgba(var(--ccrgb,111,116,130),0.36)!important}',
+    'html.fx-glow[data-theme="light"] .rank-item:hover .rank-strip,html.fx-glow[data-theme="light"] .rank-item:focus-within .rank-strip{box-shadow:0 0 12px rgba(var(--ccrgb,111,116,130),0.50),0 0 34px 10px rgba(var(--ccrgb,111,116,130),0.26)!important}',
     // ── Accento cardcolor sulla SCHEDA personaggio (dalla v8.77) ──────────────
     // La .modal della scheda riceve cc-<fam> da openModal. BORDI (decorativi):
     // sempre col colore famiglia, in entrambi i temi. TESTI/ICONE (rank, source,
@@ -3293,7 +3293,9 @@ var ICON_LABEL_OVERRIDE = {
   'Ingwion': { west: AMAN_DEDOTTO },
   'Lindir': { west: AMAN_DEDOTTO },
   'Thingol': { calaquende: { it:'Calaquendë: vide la Luce dei Due Alberi come ambasciatore con Oromë (unico Sinda tra i Calaquendi)', en:'Calaquendë: beheld the Light of the Two Trees as an ambassador with Oromë (the only Sinda among the Calaquendi)' } },
-  'Ecthelion': { calaquende: CALAQUENDE_DEDOTTO },
+  // Ecthelion uccise GOTHMOG, il signore dei Balrog: non 'un Balrog' qualunque.
+  'Ecthelion': { calaquende: CALAQUENDE_DEDOTTO,
+    balrog: { it:'Uccise Gothmog, signore dei Balrog', en:'Slew Gothmog, Lord of the Balrogs' } },
   'Gildor Inglorion': { calaquende: CALAQUENDE_DEDOTTO },
   'Gwindor': { calaquende: CALAQUENDE_DEDOTTO },
   'Gelmir': { calaquende: CALAQUENDE_DEDOTTO },
@@ -6509,9 +6511,13 @@ function openAdminGate() {
 // Modifica mirata del singolo personaggio; funzioni di famiglia in Fase 2).
 // ── Pannello 'Feature flag' (admin, dalla v12.24) ────────────────────────────
 // Controllo dell'ASPETTO del sito per TUTTI i visitatori: modalità ingrandita +
-// i 5 effetti grafici. Salva `siteFlags` in dati.js via il Worker (e bumpa +0.01,
-// come i micro-aggiustamenti: è una modifica che tutti vedono).
-function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, false, null, SITE_FLAGS); }
+// i 5 effetti grafici. Salva `siteFlags` in dati.js via il Worker, SENZA bumpare
+// la versione (vedi saveSiteFlagsToRepo).
+// keepVersion:true (richiesta utente, v12.27): accendere/spegnere un effetto non
+// e' una modifica di contenuto, quindi NON bumpa datiVersion (come i salvataggi
+// colore). Il controllo di freschezza resta affidabile: si basa sul confronto dei
+// ref git, non sul numero.
+function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, true, null, SITE_FLAGS); }
 var SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS));
 // Voci del pannello, nell'ordine di presentazione. `k` = chiave in SITE_FLAGS.
 var SITE_FLAG_ITEMS = [
