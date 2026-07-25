@@ -2350,7 +2350,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.41</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2439,7 +2439,7 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
-  glow:{ on:true, amp:34, int:0.62, out:false, all:false },
+  glow:{ on:true, amp:34, int:0.62, out:false, aura:0, all:false },
   spot:{ on:true, r:170, int:0.09 },
   press:true, vig:true, podium:true
 };
@@ -2449,7 +2449,7 @@ var SITE_FLAGS_DEFAULT = {
 // schiarirebbe troppo il fondo della card e i testi più tenui scenderebbero sotto
 // soglia in tema scuro (vedi nota nel pannello).
 var FX_RANGE = {
-  glow:{ amp:[10,60], int:[0.1,1] },
+  glow:{ amp:[10,60], int:[0.1,1], aura:[0,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] }
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
@@ -2519,16 +2519,29 @@ function fxGlowInner(cfg, light, cc){
   return '0 0 ' + tight + 'px rgba(' + cc + ',' + fxR2(i) + '),' +
          '0 0 ' + amp + 'px ' + spread + 'px rgba(' + cc + ',' + fxR2(i * (light ? 0.52 : 0.58)) + ')';
 }
-// Bagliore ESTERNO: ombra PROPRIA della card, che l'overflow:hidden della card NON
-// taglia (taglia solo i figli, striscia inclusa). Spread negativo pari a metà del
-// blur: così il bagliore esce SOLO dal lato sinistro e non disegna un contorno
-// luminoso attorno al perimetro. Le opacità sono più alte di quelle interne perché
-// con lo spread negativo si vede solo la coda della sfumatura.
+// Bagliore ESTERNO: ombre PROPRIE della card, che l'overflow:hidden della card NON
+// taglia (taglia solo i figli, striscia inclusa). Due strati indipendenti:
+//  • `out` — la fuga dal bordo SINISTRO: spread negativo pari al blur meno un
+//    residuo, così la sfumatura esce solo da sinistra. Fino alla v12.40 il blur
+//    era 2b con spread -b: a manopole alte la coda gaussiana traboccava su tutto
+//    il perimetro (l'alone notato dall'utente); ora il blur è 1.6b e il perimetro
+//    resta pulito, perché l'alone perimetrale è diventato una manopola a sé;
+//  • `aura` — l'ALONE INTORNO alla card (tutto il perimetro), regolabile
+//    separatamente (0 = spento): blur derivato dall'ampiezza, nessun offset.
 function fxGlowOuter(cfg, light, cc){
   cc = cc || FX_CC;
-  var b = Math.max(4, Math.round(cfg.amp * 0.32));
-  var i = Math.min(1, cfg.int * (light ? 1.12 : 1.45));
-  return '-' + b + 'px 0 ' + (b * 2) + 'px -' + b + 'px rgba(' + cc + ',' + fxR2(i) + ')';
+  var parts = [];
+  if (cfg.out) {
+    var b = Math.max(4, Math.round(cfg.amp * 0.32));
+    var i = Math.min(1, cfg.int * (light ? 1.12 : 1.45));
+    parts.push('-' + b + 'px 0 ' + Math.round(b * 1.6) + 'px -' + b + 'px rgba(' + cc + ',' + fxR2(i) + ')');
+  }
+  if (cfg.aura > 0) {
+    var ab = Math.max(6, Math.round(cfg.amp * 0.6));
+    var ai = light ? cfg.aura * 0.75 : cfg.aura;
+    parts.push('0 0 ' + ab + 'px rgba(' + cc + ',' + fxR2(ai) + ')');
+  }
+  return parts.join(',');
 }
 // Riflettore: alone bianco molto sfumato centrato sul puntatore (--spx/--spy,
 // aggiornate da spotFlush). In tema CHIARO serve più opacità: la card è già quasi
@@ -2551,7 +2564,7 @@ function injectFxRules(){
     [false, true].forEach(function(light){
       var base = 'html.fx-glow' + (light ? '[data-theme="light"]' : '');
       css.push(fxSel(base, g.all, ' .rank-strip') + '{box-shadow:' + fxGlowInner(g, light) + '!important}');
-      if (g.out) css.push(fxSel(base, g.all, '') + '{box-shadow:' + fxGlowOuter(g, light) + '}');
+      if (g.out || g.aura > 0) css.push(fxSel(base, g.all, '') + '{box-shadow:' + fxGlowOuter(g, light) + '}');
     });
   }
   if (flagOn('spot')) {
@@ -6733,6 +6746,9 @@ var FX_KNOBS = {
     { p:'out', t:'bool', it:'Anche fuori dalla card', en:'Outside the card too',
       nit:'Spento, il bagliore resta dentro la card. Acceso, esce anche dal bordo sinistro.',
       nen:'Off, the glow stays inside the card. On, it also escapes past the left edge.' },
+    { p:'aura', t:'num', step:0.02, it:'Alone intorno alla card', en:'Halo around the card',
+      nit:'Bagliore uniforme su tutto il perimetro della card. A zero è spento.',
+      nen:'Even glow around the whole card perimeter. Zero means off.' },
     { p:'all', t:'bool', it:'Su tutte le card', en:'On every card',
       nit:'Spento, si accende solo la card sotto il puntatore. Acceso, tutte le card restano accese.',
       nen:'Off, only the card under the pointer lights up. On, every card stays lit.' }
@@ -6761,10 +6777,12 @@ function injectFxEditorCss(){
   var st = document.createElement('style'); st.id = 'fx-ed-css';
   st.textContent = [
     '.fxp-wrap{display:grid;gap:0.45rem;margin:0.15rem 0 0.2rem}',
-    '.fxp-pane{position:relative;border-radius:8px;padding:0.85rem 0.7rem;display:flex;flex-direction:column;gap:0.45rem;overflow:hidden}',
+    // Padding sinistro abbondante (v12.41): le sfumature lunghe del bagliore
+    // esterno e dell'alone escono dalla card e senza respiro venivano tagliate
+    // dall'overflow:hidden del riquadro.
+    '.fxp-pane{position:relative;border-radius:8px;padding:0.85rem 1.2rem 0.85rem 1.7rem;display:flex;flex-direction:column;gap:0.55rem;overflow:hidden}',
     '.fxp-pane.d{background:#262626;color:#d2d2d2}',
     '.fxp-pane.l{background:#F5F5F5;color:#373737}',
-    '.fxp-tag{position:absolute;top:0.3rem;right:0.5rem;font-size:0.56rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;opacity:0.45}',
     '.fxp-card{position:relative;display:grid;grid-template-columns:24px 1fr;align-items:center;gap:0.7rem;',
     'padding:0.45rem 0.6rem 0.45rem 0.3rem;border-radius:4px;border:1px solid rgba(104,144,168,0.15);',
     'overflow:hidden;isolation:isolate;transition:background 0.2s,box-shadow 0.2s}',
@@ -6826,14 +6844,15 @@ function showFxConfigEditor(key, onDone){
                        : 'Changes show immediately below and on the cards behind.';
   box.appendChild(sub);
 
-  // ── anteprima: due riquadri (scuro/chiaro), due card ciascuno ──────────────
+  // ── anteprima: due riquadri (CHIARO per primo, richiesta utente v12.41), due
+  // card ciascuno, SENZA etichette tema (rimosse in v12.41: superflue). Le card
+  // sono rese SEMPRE in stato hover (fondo acceso, bagliori attivi): senza, le
+  // modifiche agli slider non si vedrebbero in tempo reale. Il riflettore parte
+  // centrato (fallback 50%/50%) e segue il puntatore quando ci passi sopra.
   var cards = [];
   var wrap = document.createElement('div'); wrap.className = 'fxp-wrap';
-  [false, true].forEach(function(light){
+  [true, false].forEach(function(light){
     var pane = document.createElement('div'); pane.className = 'fxp-pane ' + (light ? 'l' : 'd');
-    var tag = document.createElement('span'); tag.className = 'fxp-tag';
-    tag.textContent = it ? (light ? 'Chiaro' : 'Scuro') : (light ? 'Light' : 'Dark');
-    pane.appendChild(tag);
     [1, 2].forEach(function(n){
       var c = document.createElement('div'); c.className = 'fxp-card';
       var strip = document.createElement('span'); strip.className = 'fxp-strip';
@@ -6843,12 +6862,10 @@ function showFxConfigEditor(key, onDone){
       var nm = document.createElement('span'); nm.className = 'fxp-name';
       nm.textContent = n === 1 ? 'Fëanor' : 'Fingolfin';
       var ds = document.createElement('span'); ds.className = 'fxp-desc';
-      ds.textContent = it ? 'Passa il puntatore su questa card' : 'Move the pointer over this card';
+      ds.textContent = it ? 'Anteprima in stato hover' : 'Hover-state preview';
       body.appendChild(nm); body.appendChild(ds);
       c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
-      var rec = { el:c, strip:strip, spot:spot, light:light, hot:false };
-      c.addEventListener('pointerenter', function(){ rec.hot = true; paint(); });
-      c.addEventListener('pointerleave', function(){ rec.hot = false; paint(); });
+      var rec = { el:c, strip:strip, spot:spot, light:light };
       // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
       // valutarlo senza uscire dalla modale.
       c.addEventListener('pointermove', function(e){
@@ -6866,13 +6883,13 @@ function showFxConfigEditor(key, onDone){
     var g = SITE_FLAGS.glow, s = SITE_FLAGS.spot;
     cards.forEach(function(rec){
       var cc = fxPreviewCc(rec.light);
-      rec.el.style.background = 'rgba(' + cc + ',' + (rec.light ? (rec.hot ? 0.11 : 0.05) : (rec.hot ? 0.18 : 0.10)) + ')';
+      rec.el.style.background = 'rgba(' + cc + ',' + (rec.light ? 0.11 : 0.18) + ')';
       rec.strip.style.background = 'rgba(' + cc + ',0.85)';
-      var on = flagOn('glow') && (g.all === true || rec.hot);
+      var on = flagOn('glow');
       rec.strip.style.boxShadow = on ? fxGlowInner(g, rec.light, cc) : 'none';
-      rec.el.style.boxShadow = (on && g.out) ? fxGlowOuter(g, rec.light, cc) : 'none';
+      rec.el.style.boxShadow = (on && (g.out || g.aura > 0)) ? fxGlowOuter(g, rec.light, cc) : 'none';
       rec.spot.style.background = fxSpotBg(s, rec.light);
-      rec.spot.style.opacity = (flagOn('spot') && rec.hot) ? '1' : '0';
+      rec.spot.style.opacity = flagOn('spot') ? '1' : '0';
     });
   }
 
