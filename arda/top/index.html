@@ -2356,7 +2356,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.42</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2501,12 +2501,22 @@ function applySiteFlags() {
   // Bagliore su TUTTE le card invece che solo su quella attiva: classe a parte,
   // così le regole iniettate cambiano solo il selettore e non la formula.
   r.classList.toggle('fx-glow-all', flagOn('glow') && SITE_FLAGS.glow.all === true);
-  // Zoom: vince la scelta personale se c'è ('1'/'0' espliciti), altrimenti il sito.
+  // Zoom: vince la scelta personale se c'è ('1'/'0' espliciti), altrimenti il
+  // sito. ⚠️ Il flag di SITO è DESKTOP/TABLET-only (v12.43, scelta dell'utente):
+  // sui telefoni (≤480px) la Modalità XL di sito NON si applica; lì la XL si
+  // ottiene solo con la preferenza personale (tap lungo sul FAB, o un eventuale
+  // tasto Z con tastiera collegata). La preferenza personale vale ovunque.
   var mine = LS.getItem(ZOOM_LS_KEY);
-  r.classList.toggle('zoom-big', mine === null ? !!SITE_FLAGS.zoomBig : mine === '1');
+  var siteZoom = !!SITE_FLAGS.zoomBig && !ZOOM_PHONE_MQ.matches;
+  r.classList.toggle('zoom-big', mine === null ? siteZoom : mine === '1');
   injectFxRules();
   wireSpotlight();
 }
+// Al varco della soglia telefono (resize/rotazione) lo zoom di sito va
+// ricalcolato: il listener sul matchMedia scatta SOLO all'attraversamento,
+// niente lavoro a ogni resize.
+var ZOOM_PHONE_MQ = window.matchMedia('(max-width:480px)');
+if (ZOOM_PHONE_MQ.addEventListener) ZOOM_PHONE_MQ.addEventListener('change', function(){ applySiteFlags(); });
 
 // ── Effetti PARAMETRICI: bagliore della striscia e riflettore ────────────────
 // Le regole vivono qui (iniettate a runtime) e non nel <style> statico, per due
@@ -5530,7 +5540,38 @@ function buildControlPanel() {
   fab.id = 'ctrl-fab'; fab.className = 'fab-btn ctrl-fab';
   fab.setAttribute('aria-label', 'Filtri e legenda');
   fab.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 605.87"><path fill="currentColor" d="M448.76 422.32c-29.8-11.97-57.74-37.2-84.81-61.64-15.46-13.96-31.13-28.1-47.64-40.17 39.83-22.19 62.96-60.22 62.96-108.78 0-24.9-7.25-47.1-21.53-66.06h43.09c3.29 0 6.11-1.9 6.69-4.5l9.45-42.54c.75-3.34-2.46-6.41-6.69-6.41h-151.3V5.23c0-3.3-3.42-5.78-7.08-5.13l-53.98 9.54c-2.77.49-4.76 2.63-4.76 5.13v77.45H51.17c-3.29 0-6.11 1.9-6.69 4.5l-9.45 42.54c-.75 3.34 2.46 6.41 6.69 6.41h52.54c-14.28 18.96-21.53 41.16-21.53 66.06 0 48.56 23.12 86.59 62.96 108.78-16.51 12.07-32.18 26.21-47.64 40.17-27.07 24.44-55.02 49.67-84.81 61.64-2.68 1.08-3.93 3.83-2.85 6.24l18.73 41.64c1.15 2.56 4.48 3.79 7.33 2.69 41.45-16 75.57-46.8 105.8-74.1 21.2-19.14 41.62-37.57 60.9-47.94v1.13c-.05.42-.07.85-.07 1.29 0 10.58.05 20.46.07 29.71v16.51c-.22 53.37-19.53 105.39-55.38 148.36-1.45 1.73-2.83 3.3-4.03 4.61-1.83 1.99-2.28 4.71-1.15 7.08 3.7 7.78 13.09 28.66 19.63 41.12 2.98 5.68 7.79 7.29 13.07 1.87 19.51-18.77 43.18-45.97 62.13-82.31 26.48-50.81 31.04-85.68 31.57-123.18v-.19c.09-6.66.06-13.4 0-20.33v-25.6c19.24 10.38 39.62 28.78 60.76 47.87 30.24 27.3 64.36 58.1 105.8 74.1 2.86 1.1 6.18-.13 7.33-2.69l18.73-41.64c1.09-2.41-.17-5.16-2.85-6.24M193.15 283.79c-38.08-9.1-58.62-33.88-58.62-72.03 0-26.83 13.89-46.26 42.46-59.42 5.36-2.47 10.83-4.52 16.16-6.22zm65.83-.04V146.16c5.28 1.7 10.7 3.73 16.02 6.18 28.57 13.16 42.46 32.59 42.46 59.42 0 38.11-20.49 62.87-58.48 72Z"/></svg>';
-  fab.addEventListener('click', toggleControlPanel);
+  // ── Tap LUNGO sul FAB = scorciatoia 'SEGRETA' della Modalità XL (v12.43) ────
+  // Controparte mobile del tasto Z: ~500ms di pressione commutano la PREFERENZA
+  // PERSONALE di zoom (localStorage, stessa chiave e stesso toggleZoomMode del
+  // tasto Z; il toast fa da feedback del gesto riuscito). SOLO input touch
+  // (pointerType): col mouse un click 'lento' non deve scattare — su desktop c'è
+  // già Z. Il gesto è volutamente non scopribile, come il tap sulla versione.
+  var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
+  var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
+  fab.addEventListener('pointerdown', function(e){
+    if (e.pointerType !== 'touch') return;
+    lpFired = false; lpX = e.clientX; lpY = e.clientY;
+    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; toggleZoomMode(); }, 500);
+  });
+  fab.addEventListener('pointerup', lpCancel);
+  fab.addEventListener('pointercancel', lpCancel);
+  // Tolleranza ~8px: il dito trema (annullare al primo pointermove renderebbe il
+  // gesto frustrante), ma uno spostamento vero è intenzione di scorrere.
+  fab.addEventListener('pointermove', function(e){
+    if (lpTimer && Math.hypot(e.clientX - lpX, e.clientY - lpY) > 8) lpCancel();
+  });
+  // A gesto riuscito il browser emette comunque il click al rilascio: va
+  // consumato UNA volta, altrimenti si aprirebbe anche il Pannello.
+  fab.addEventListener('click', function(e){
+    if (lpFired) { lpFired = false; e.preventDefault(); return; }
+    toggleControlPanel();
+  });
+  // Su Android il long press aprirebbe il menu contestuale interrompendo il
+  // gesto; callout/selezione iOS soppressi inline (invisibile al Nu).
+  fab.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  fab.style.webkitTouchCallout = 'none';
+  fab.style.webkitUserSelect = 'none'; fab.style.userSelect = 'none';
+  fab.style.touchAction = 'manipulation';
   // Pulizia delle classi di animazione a fine corsa (così sono ri-attivabili).
   panel.addEventListener('animationend', function(e){ if (e.target === panel && (e.animationName === 'ctrl-sheet-close' || e.animationName === 'ctrl-pop-fade')) panel.classList.remove('closing'); });
   fab.addEventListener('animationend', function(e){ if (e.animationName === 'fab-grow') fab.classList.remove('fab-grow'); });  // fab-tap resta (tiene 0.92 a Pannello aperto); lo toglie toggleControlPanel
@@ -6746,8 +6787,8 @@ var SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS));
 // note sono voluti e resi da white-space:pre-line): non riformularli.
 var SITE_FLAG_ITEMS = [
   { k:'zoomBig', it:'Modalità XL', en:'XL Mode',
-    nit:'Ingrandisce l\'interfaccia del sito.\nGli utenti possono sovrascrivere l\'impostazione premendo Z.',
-    nen:'Magnifies the site interface.\nUsers can override this setting by pressing Z.' },
+    nit:'Ingrandisce l\'interfaccia del sito (telefoni esclusi).\nScelta personale: tasto Z su desktop, tap lungo sul FAB su mobile.',
+    nen:'Magnifies the site interface (phones excluded).\nPersonal override: Z key on desktop, long-press on the FAB on mobile.' },
   { k:'glow', it:'Bagliore della striscia colorata', en:'Strip glow', cfg:true,
     nit:'La striscia diffonde la tinta tutto intorno.\nRegolabili: ampiezza, opacità, intensità, posizione, top/tutti.',
     nen:'The strip diffuses its color all around.\nAdjustable parameters: spread, opacity, intensity, position, top/all.' },
