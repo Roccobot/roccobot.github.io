@@ -329,7 +329,10 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   2. **preferenza PERSONALE** — il tasto **`Z`**: vale solo su quel browser, **non
      tocca il sito**, si ricorda in `localStorage` (`arda-zoom-big`) e **scavalca**
      il default di sito. Si salvano `'1'`/`'0'` **espliciti**: chiave assente =
-     'segui il sito', non 'spento'. Un toast conferma che vale 'solo per te'.
+     'segui il sito', non 'spento'. Toast di conferma (testi dell'utente, v12.40):
+     **'Modalità XL' / 'Modalità normale'** (EN 'XL Mode' / 'Standard mode');
+     storico: fino alla v12.39 dicevano 'Vista ingrandita/normale (solo per te)'.
+     In UI la voce del pannello si chiama **'Modalità XL' / 'XL Mode'** (v12.40).
   `applySiteFlags()` applica la regola: `mine === null ? flag di sito : mine === '1'`.
 - ⚠️ **Nessun pulsante nel Pannello** (rimosso nella v12.24 su richiesta
   dell'utente): lo zoom si comanda col tasto `Z` (personale) o dal pannello Feature
@@ -435,11 +438,18 @@ admin minimale).
     v12.39** su richiesta dell'utente, sostituito dal riflettore. Non
     reintrodurlo; un eventuale `"fade"` residuo in `siteFlags` è ignorato da
     `normSiteFlags`.
-- **Sotto-modale di regolazione (`showFxConfigEditor(key)`, dalla v12.39).** Nel
-  pannello gli effetti regolabili NON hanno la checkbox: hanno un'**icona a due
-  cursori verticali** (fader, `FX_SLIDERS_SVG`, monocromatica `currentColor` —
-  disegno scelto dall'utente) + una pastiglia di stato Attivo/Spento accanto al
-  nome. Il click apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
+- **Sotto-modale di regolazione (`showFxConfigEditor(key)`, dalla v12.39; layout
+  riga UNIFORME dalla v12.40).** Nel pannello OGNI effetto ha la **checkbox**
+  acceso/spento a sinistra (anche i regolabili: su flag a oggetto tocca solo
+  `.on`, le manopole restano); i regolabili hanno IN PIÙ l'**icona a due cursori
+  verticali** sul **lato destro** della riga (fader, `FX_SLIDERS_SVG`,
+  monocromatica `currentColor` — disegno scelto dall'utente). Storico: nella
+  v12.39 i regolabili NON avevano la checkbox ma una pastiglia di stato
+  Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
+  dell'utente). I **testi del pannello sono riscritti dall'utente** (v12.40),
+  **a-capo inclusi** (`\n` nelle note, resi con `white-space:pre-line`): non
+  riformularli. Al ritorno dalla sotto-modale la checkbox si riallinea
+  (callback `onDone`). Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
   minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
   **anteprima dinamica** su card finte nei DUE temi affiancati (fondi e struttura
@@ -1739,8 +1749,23 @@ specifico del dataset):
     - **Z (tasto nudo, dalla v12.14)**: accende/spegne la **modalità ingrandita**
       *per chi guarda* — è una **preferenza personale**, non tocca il sito: si
       memorizza in `localStorage` (`arda-zoom-big`) e **scavalca** il flag di sito
-      (vedi 'Modalità ingrandita'). Un toast conferma che vale 'solo per te'. Stesse
-      guardie di `T`/`L` (quindi attivo anche con una scheda aperta).
+      (vedi 'Modalità ingrandita'). Toast di conferma 'Modalità XL' / 'Modalità
+      normale' (v12.40). ⚠️ **Dalla v12.40 le guardie di `Z` sono quelle di `P`**
+      (solo a modali chiuse), NON più quelle di `T`/`L`: pur agendo lo zoom su
+      tutto, il tasto non deve scattare 'sotto' una modale aperta.
+    - **Politica dei tasti nudi nelle modali (regola dell'utente, v12.40).**
+      **`T` (tema) e `L` (lingua) funzionano in TUTTE le modali**, con le sole
+      eccezioni già documentate (campo di testo attivo; editor colori: rebuild
+      solo su L, vedi le sezioni dedicate). **`P` e `Z` solo a modali chiuse.**
+      La guardia campi blocca solo dove si SCRIVE: `TEXTAREA`, `SELECT`,
+      `contentEditable` e `INPUT` testuali — checkbox/radio/range/button/color
+      NON bloccano (dopo un click su una checkbox il focus resta lì e L/T devono
+      continuare a rispondere). Le modali che si RICOSTRUISCONO su L registrano
+      `langRefresh`; se una modale sta SOPRA un'altra (es. `#fx-modal` sul
+      pannello Feature flag), conserva l'hook precedente (`prevL`), su L
+      ricostruisce PRIMA il livello sotto e poi sé stessa, e alla chiusura
+      RIPRISTINA `prevL` (azzerarlo lascerebbe il livello sotto senza L).
+      Anti-jitter: ogni rebuild conserva lo stato (scroll, tab, selezioni).
     - **. (punto, ADMIN-only, dalla v11.80)**: mostra/nasconde le **linee mediane
       di allineamento** sulle card — la stessa riga rossa tratteggiata dell'editor
       micro-aggiustamenti, ma **sulla pagina reale**, una per personaggio, a metà
