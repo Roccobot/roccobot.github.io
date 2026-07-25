@@ -160,6 +160,27 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   attendere il push successivo. Se anche i push freschi falliscono
   ininterrottamente oltre le ~12 ore: ticket al supporto GitHub (solo il
   proprietario del repo può aprirlo).
+  - **Anatomia del blocco (episodio 2026-07-25, diagnosi a dati).** Un run
+    **sano** ha **3 job** — `build` → `report-build-status` → `deploy` — e dura
+    **~20 secondi** in tutto: è il metro di paragone. Nel degrado il guasto sta
+    **prima del deploy**, nell'assegnazione dei job ai runner, e si manifesta in
+    due modi: il job `build` **parte e si impianta** (misurato: 2 minuti prima di
+    essere ucciso, contro gli 8 secondi normali), oppure il run finisce
+    **`startup_failure` con 0 job** (mai avviato). Diagnosi rapida: chiedere i
+    job del run — `total_count: 0` significa run fantasma, non lentezza.
+  - ⚠️ **I run `queued` vecchissimi NON sono la causa.** In coda restano per
+    sempre i cadaveri degli episodi passati (nel 2026-07-25 se ne contavano 15,
+    i più vecchi del **2025-11-28**, altri del 3-6 luglio): GitHub non li
+    ripulisce e non li lascia cancellare (`409 Cannot cancel a workflow re-run
+    that has not yet queued`). **Non bloccano nulla**: la prova è che centinaia
+    di deploy sono riusciti con quei run già in coda (il 2026-07-25 ne sono
+    passati 6 tra le 10:34 e le 12:04, poi il dispatch si è rotto alle 12:13).
+    Non perdere tempo a cancellarli.
+  - **Cosa NON smuove il blocco** (verificato il 2026-07-25): il `rerun` (201 ma
+    0 job, anche su un run in `startup_failure`); il **cambio della sorgente
+    Pages** nelle impostazioni del repo (da 'Deploy from a branch' a 'GitHub
+    Actions' e ritorno) — **non genera alcun run**. L'unica cosa che crea un run
+    è un **push su `master`** (evento `dynamic`).
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
