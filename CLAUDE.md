@@ -360,8 +360,15 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
 
 Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
 la modalità ingrandita e i 5 effetti grafici. Accesso: tap sulla versione → sblocco
-→ bivio 'Area admin' → **5° pulsante 'Feature flag'** (`showSiteFlagsEditor`, stile
-admin minimale).
+→ bivio 'Area admin' → **5° pulsante 'Pannello di controllo'** (`showSiteFlagsEditor`,
+stile admin minimale). ⚠️ **Nome in UI: 'Pannello di controllo' / 'Control panel'
+(dalla v12.42, deciso dall'utente; prima 'Feature flag')** — titolo, bottone del
+bivio, hint della sotto-modale e messaggio di commit ('aspetto: pannello di
+controllo'). Il nome INTERNO (`siteFlags`, questa sezione, `FEATURES` che è altra
+cosa) resta invariato. Da non confondere col 'Pannello' del FAB (visitatori).
+Sottotitolo: 'Le impostazioni valgono per tutti i visitatori.'; la nota in basso
+sulla preferenza personale di zoom è testo dell'utente (v12.42), con la variante
+normale/XL secondo la preferenza attiva.
 
 - **Dove vivono i flag:** `var siteFlags` in `dati.js`, scritto dal Worker esattamente
   come `cardColors` e `badgeAdjust` (una riga JSON dopo `badgeAdjust`). A runtime
@@ -370,8 +377,9 @@ admin minimale).
   lo **preserva** (`readSiteFlags`); `validSiteFlags` rifiuta config malformate (400
   `bad-siteflags`). Worker **rev 14**.
 - **Due forme di flag (dalla v12.39).** Un flag è un **booleano** (effetto solo
-  on/off: `press`, `vig`, `podium`, `zoomBig`) **oppure un oggetto piatto**
-  `{on:bool, ...manopole}` (effetto **regolabile**: `glow`, `spot`).
+  on/off: `press`, `podium`, `zoomBig`) **oppure un oggetto piatto**
+  `{on:bool, ...manopole}` (effetto **regolabile**: `glow`, `spot` e, dalla
+  v12.42, `vig`).
   `normSiteFlags()` normalizza qualunque input: la vecchia forma booleana di un
   effetto regolabile resta accettata (vale come solo interruttore, manopole ai
   default), i numeri fuori scala sono riportati nei limiti **`FX_RANGE`** (unica
@@ -385,19 +393,26 @@ admin minimale).
   esiste**, non è solo invisibile. Aggiungendo un effetto nuovo, scoparlo così.
   Gli effetti REGOLABILI hanno le regole in **`injectFxRules()`** (`<style id=
   "fx-dyn">`, ri-iniettato a ogni modifica): le FORMULE (`fxGlowInner`,
-  `fxGlowOuter`, `fxSpotBg`) sono condivise con l'anteprima della sotto-modale,
-  così anteprima e pagina non possono divergere. `applySiteFlags` chiama anche
+  `fxGlowOuter`, `fxSpotBg`, `fxVigBg`) sono condivise con l'anteprima della
+  sotto-modale, così anteprima e pagina non possono divergere. `applySiteFlags` chiama anche
   `injectFxRules` + `wireSpotlight`.
 - **I 5 effetti** (mockup approvato dall'utente: 'stanno benissimo anche tutti
   insieme'), tutti a **costo zero sul layout** (nessuno sposta il contenuto):
-  1. **`glow` — accensione della striscia** (`fx-glow`, REGOLABILE): la striscia
+  1. **`glow` — bagliore della striscia colorata** (`fx-glow`, REGOLABILE; label
+     UI IT dalla v12.42, prima 'Accensione della striscia'): la striscia
      diffonde la tinta di famiglia dentro la card su due strati derivati dalle
      manopole. Manopole: `amp` (ampiezza sfumatura, 10-60px), `int` (intensità,
-     0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `aura` (**alone
-     intorno alla card**, tutto il perimetro, 0-0.6 con 0 = spento; dalla v12.41),
-     `all` (**tutte** le card accese invece della sola card attiva → classe extra
-     `fx-glow-all`).
+     0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `oamp`/`oint`
+     (**ampiezza e opacità PROPRIE del bagliore esterno**, dalla v12.42: prima
+     derivate da amp/int; i default 11px/0.9 riproducono la resa precedente),
+     `aura` (**alone intorno alla card**, tutto il perimetro, 0-0.6 con 0 =
+     spento; dalla v12.41), `all` (**tutte** le card accese invece della sola
+     card attiva → classe extra `fx-glow-all`).
      Default = la taratura v12.27 (34px, 0.62, solo dentro, aura 0, solo card attiva).
+     ⚠️ **Il numero di posizione sta SOPRA il bagliore** (dalla v12.42):
+     `.rank-num` ha `position:relative; z-index:2` perché la sfumatura interna
+     (box-shadow della striscia, z-index:1) passava sopra le cifre e velava i
+     metalli del podio (segnalato dall'utente ad ampiezze alte). Non rimuoverlo.
      ⚠️ **Niente sollevamento né ombra grigia sulla card**: card **'virtuali', non
      schede fisiche** (il lift del mockup è stato scartato apposta). Il bagliore
      interno è tagliato a sinistra dall'`overflow:hidden` della card; quello
@@ -427,9 +442,15 @@ admin minimale).
      `::before` è scavalcato dalla regola iniettata (sorgente più in basso).
   3. **`press` — nomi incisi** (`fx-press`): letterpress in tema chiaro (lume bianco
      sotto + velo scuro sopra), stacco morbido in scuro.
-  4. **`vig` — vignettatura** (`fx-vig`): alone radiale come **livello di sfondo del
-     body** (`background-image` + `background-attachment:fixed`), non un elemento
-     sovrapposto: niente nodi nuovi né problemi di impilamento.
+  4. **`vig` — vignettatura** (`fx-vig`, REGOLABILE dalla v12.42): alone radiale
+     come **livello di sfondo del body** (`background-image` +
+     `background-attachment:fixed`), non un elemento sovrapposto: niente nodi
+     nuovi né problemi di impilamento. Manopole: `int` (intensità 0.05-0.6) e
+     `start` (inizio della sfumatura 20-70%); in chiaro alpha ×0.38 e tinta
+     ardesia. Le regole vivono in `injectFxRules` (`fxVigBg`); le vecchie regole
+     statiche sono state RIMOSSE dal CSS (i default le riproducono: 0.34/38%).
+     Nell'anteprima della sotto-modale la vignetta è applicata al FONDO dei due
+     riquadri (card a riposo).
   5. **`podium` — podio metallico** (`fx-podium`): numeri 1-2-3 con gradiente
      oro/argento/bronzo (`background-clip:text` + `color:transparent`, come il
      titolone) e `text-shadow:none` (il glow grigio base di `.rank-num`
@@ -452,7 +473,8 @@ admin minimale).
   monocromatica `currentColor` — disegno scelto dall'utente). Storico: nella
   v12.39 i regolabili NON avevano la checkbox ma una pastiglia di stato
   Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
-  dell'utente). I **testi del pannello sono riscritti dall'utente** (v12.40),
+  dell'utente). I **testi del pannello sono riscritti dall'utente** (v12.40; nota
+  della Modalità XL ritoccata in v12.42: 'Ingrandisce l'interfaccia del sito.'),
   **a-capo inclusi** (`\n` nelle note, resi con `white-space:pre-line`): non
   riformularli. Al ritorno dalla sotto-modale la checkbox si riallinea
   (callback `onDone`). Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
