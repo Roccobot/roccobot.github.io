@@ -338,8 +338,9 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    stampato nella carta); in SCURO un semplice stacco morbido. Non tocca misure né
    a-capo (il text-shadow non entra nel layout), quindi tightenNames resta valido.
    Coerente col titolone, che l'alone ce l'ha già. */
-html.fx-press .rank-name { text-shadow:0 1px 2px rgba(0,0,0,0.5); }
-html.fx-press[data-theme="light"] .rank-name { text-shadow:0 1px 0 rgba(255,255,255,0.9),0 -1px 1px rgba(20,24,40,0.11); }
+/* NOMI INCISI (fx-press): dalla v12.53 le regole sono INIETTATE da injectFxRules
+   (l'effetto è regolabile: si sceglie se incidere il Nome, le etichette tipo o
+   entrambi); le formule vivono in fxPressShadow, condivise con l'anteprima. */
 /* Linee mediane di allineamento (tasto '.', ADMIN-only, dalla v11.80): una riga
    rossa tratteggiata per card, a metà del maiuscoletto del nome (--mid misurato a
    runtime col font reale, come nell'editor micro-aggiustamenti). Inerte finché
@@ -697,24 +698,11 @@ html.fx-press[data-theme="light"] .rank-name { text-shadow:0 1px 0 rgba(255,255,
    L'ARGENTO ha più fermate (lume/ombra/lume) perché a 2 sole fermate sembrava un
    numero normale in mezzo agli altri (richiesta dell'utente). Il glow grigio base
    di .rank-num si spegne qui: con testo trasparente intorbidirebbe il metallo. */
-html.fx-podium .rank-item.vis-1 .rank-num,
-html.fx-podium .rank-item.vis-2 .rank-num,
-html.fx-podium .rank-item.vis-3 .rank-num { -webkit-background-clip:text; background-clip:text; color:transparent;
-  /* Ombreggiatura leggera (dalla v12.28, richiesta utente): un filo di rilievo
-     sotto il metallo. È un'ombra DIREZIONALE stretta, non il glow diffuso della
-     regola base .rank-num (quello intorbidiva il metallo, per questo era spento). */
-  text-shadow:0 1px 2px rgba(0,0,0,0.6); }
-html[data-theme="light"].fx-podium .rank-item.vis-1 .rank-num,
-html[data-theme="light"].fx-podium .rank-item.vis-2 .rank-num,
-html[data-theme="light"].fx-podium .rank-item.vis-3 .rank-num { text-shadow:0 1px 1px rgba(0,0,0,0.30); }
-html.fx-podium .rank-item.vis-1 .rank-num { background-image:linear-gradient(168deg,#fdf3d4 4%,#e6c979 26%,#a67c34 62%,#d8b25c 84%,#8c6526 100%); }
-html.fx-podium .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#ffffff 2%,#f2f5f9 14%,#c8ced7 34%,#9ba3ae 46%,#ffffff 58%,#dae0e8 72%,#b2b9c4 86%,#8d949f 100%); }
-html.fx-podium .rank-item.vis-3 .rank-num { background-image:linear-gradient(168deg,#f4d3b4 4%,#d79a63 26%,#9c6435 62%,#c98a55 84%,#7d4a22 100%); }
-/* Podio in tema CHIARO: stessi metalli ma scuriti, per restare leggibili su #F5F5F5
-   (testo grande: soglia AA 3:1). L'argento resta il più 'lavorato' delle tre. */
-html.fx-podium[data-theme="light"] .rank-item.vis-1 .rank-num { background-image:linear-gradient(168deg,#c9a047 4%,#8a6420 34%,#6a4c14 70%,#a8802f 100%); }
-html.fx-podium[data-theme="light"] .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#ccd2da 2%,#8d94a1 16%,#484e57 38%,#b0b7c1 52%,#575d66 74%,#343a42 100%); }
-html.fx-podium[data-theme="light"] .rank-item.vis-3 .rank-num { background-image:linear-gradient(168deg,#b8783f 4%,#8a5526 34%,#69401d 70%,#a36a3c 100%); }
+/* Dalla v12.53 TUTTE le regole del podio (clip, gradienti, ombra, filtro) sono
+   INIETTATE da injectFxRules: l'effetto è regolabile (intensità del metallo =
+   contrast, luminosità = brightness) e i gradienti vivono in PODIUM_GRADS,
+   fonte unica condivisa con l'anteprima. In tema chiaro i metalli v12.28-52
+   erano stati scuriti troppo (segnalato dall'utente): riequilibrati. */
 /* NB: sfondo card e bordino usano rgba(var(--ccrgb),alpha). Il Nu Html Checker
    non sa parsare var() dentro rgba() (falso errore 'getType() null'), perciò
    quelle 5 regole sono INIETTATE via JS (vedi injectCardColorRules), non qui.
@@ -2356,7 +2344,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.53</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2442,7 +2430,15 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // La forma booleana resta accettata anche per gli effetti regolabili: è quella
 // salvata fino alla v12.38 e vale come 'solo interruttore' (le manopole prendono i
 // default). Così un file dati vecchio continua a funzionare senza migrazione.
+// ⚠️ CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente): ogni effetto ha DUE
+// configurazioni indipendenti — DESKTOP (chiave base, es. `glow`) e MOBILE
+// (suffisso `_m`, es. `glow_m`, viewport ≤768px). Le chiavi `_m` restano PIATTE
+// (bool o oggetto di manopole): il Worker rev 14 le valida già, nessun cambio di
+// Worker né rischio di race di deploy. Se una `_m` manca nel salvato, viene
+// SEMINATA come copia della desktop (comportamento identico finché l'admin non
+// differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
 var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
+var FX_EFFECTS = ['glow','spot','press','vig','podium']; // effetti per-piattaforma
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
   // glow: oamp/oint (v12.42) = ampiezza e opacità PROPRIE del bagliore esterno
@@ -2453,7 +2449,12 @@ var SITE_FLAGS_DEFAULT = {
   // vig (v12.42): intensità + inizio della sfumatura; default = le vecchie
   // regole statiche (alpha 0.34 scuro / derivata ×0.38 in chiaro; start 38%).
   vig:{ on:true, int:0.34, start:38 },
-  press:true, podium:true
+  // press (v12.53): quali parti incidere (name = Nome, lab = etichette tipo;
+  // entrambe = il comportamento storico, dove l'ombra si ereditava).
+  press:{ on:true, name:true, lab:true },
+  // podium (v12.53): int = intensità del metallo (contrast), lum = luminosità
+  // (brightness); 1/1 = resa neutra (nessun filtro percepibile).
+  podium:{ on:true, int:1, lum:1 }
 };
 // Limiti delle manopole numeriche. Servono a DUE cose: tarare gli slider della
 // sotto-modale e RIPULIRE un valore assurdo arrivato dal file dati (o da una mano
@@ -2463,7 +2464,8 @@ var SITE_FLAGS_DEFAULT = {
 var FX_RANGE = {
   glow:{ amp:[10,60], int:[0.1,1], oamp:[4,40], oint:[0.1,1], aura:[0,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
-  vig:{ int:[0.05,0.6], start:[20,70] }
+  vig:{ int:[0.05,0.6], start:[20,70] },
+  podium:{ int:[0.6,1.6], lum:[0.6,1.4] }
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
 // in localStorage) la scavalca, perché riguarda solo chi guarda, non il sito.
@@ -2473,34 +2475,53 @@ function fxClamp(k, p, v){
   if (typeof v !== 'number' || !isFinite(v)) return def;
   return r ? Math.min(r[1], Math.max(r[0], v)) : v;
 }
+// Normalizza UNA config di effetto (base o _m): accetta booleano legacy (= solo
+// interruttore), oggetto parziale (manopole mancanti → default), valori fuori
+// scala (clamp su FX_RANGE). `k` è sempre la chiave BASE (senza _m).
+function normFxEffect(k, v){
+  var def = SITE_FLAGS_DEFAULT[k];
+  var obj = (v && typeof v === 'object') ? v : {};
+  var legacyOn = (typeof v === 'boolean') ? v : null;
+  var o = {};
+  Object.keys(def).forEach(function(p){
+    var sv = obj[p];
+    if (typeof def[p] === 'boolean') {
+      if (p === 'on' && legacyOn !== null) o[p] = legacyOn;
+      else o[p] = (typeof sv === 'boolean') ? sv : def[p];
+    } else o[p] = fxClamp(k, p, sv);
+  });
+  return o;
+}
 function normSiteFlags(src){
-  var out = {};
   src = (src && typeof src === 'object') ? src : {};
-  Object.keys(SITE_FLAGS_DEFAULT).forEach(function(k){
-    var def = SITE_FLAGS_DEFAULT[k], v = src[k];
-    if (typeof def === 'boolean') { out[k] = (typeof v === 'boolean') ? v : def; return; }
-    var obj = (v && typeof v === 'object') ? v : {};
-    var legacyOn = (typeof v === 'boolean') ? v : null; // forma vecchia: solo on/off
-    out[k] = {};
-    Object.keys(def).forEach(function(p){
-      var sv = obj[p];
-      if (typeof def[p] === 'boolean') {
-        if (p === 'on' && legacyOn !== null) out[k][p] = legacyOn;
-        else out[k][p] = (typeof sv === 'boolean') ? sv : def[p];
-      } else out[k][p] = fxClamp(k, p, sv);
-    });
+  var out = { zoomBig: (typeof src.zoomBig === 'boolean') ? src.zoomBig : SITE_FLAGS_DEFAULT.zoomBig };
+  FX_EFFECTS.forEach(function(k){
+    out[k] = normFxEffect(k, src[k]);
+    out[k + '_m'] = (src[k + '_m'] !== undefined)
+      ? normFxEffect(k, src[k + '_m'])
+      : JSON.parse(JSON.stringify(out[k])); // seed dalla desktop
   });
   return out;
 }
 var SITE_FLAGS = normSiteFlags(typeof siteFlags !== 'undefined' ? siteFlags : null);
-// Un flag è 'acceso' se booleano true oppure oggetto con on !== false.
-function flagOn(k){ var v = SITE_FLAGS[k]; return (v && typeof v === 'object') ? v.on !== false : !!v; }
+// Config ATTIVA di un effetto: la variante mobile sotto i 768px, altrimenti la
+// desktop. È l'UNICO accesso giusto per il rendering (fxCfg/flagOn); l'accesso
+// diretto SITE_FLAGS[k] è riservato agli editor (che scelgono la variante a mano).
+var FX_MOBILE_MQ = window.matchMedia('(max-width:768px)');
+if (FX_MOBILE_MQ.addEventListener) FX_MOBILE_MQ.addEventListener('change', function(){ applySiteFlags(); });
+function fxCfg(k){ return FX_MOBILE_MQ.matches ? SITE_FLAGS[k + '_m'] : SITE_FLAGS[k]; }
+// Un flag è 'acceso' se booleano true oppure oggetto con on !== false (valutato
+// sulla config attiva per piattaforma; zoomBig non ha variante).
+function flagOn(k){
+  var v = (k === 'zoomBig') ? SITE_FLAGS[k] : fxCfg(k);
+  return (v && typeof v === 'object') ? v.on !== false : !!v;
+}
 function applySiteFlags() {
   var r = document.documentElement;
   Object.keys(SITE_FLAG_CLASS).forEach(function(k){ r.classList.toggle(SITE_FLAG_CLASS[k], flagOn(k)); });
   // Bagliore su TUTTE le card invece che solo su quella attiva: classe a parte,
   // così le regole iniettate cambiano solo il selettore e non la formula.
-  r.classList.toggle('fx-glow-all', flagOn('glow') && SITE_FLAGS.glow.all === true);
+  r.classList.toggle('fx-glow-all', flagOn('glow') && fxCfg('glow').all === true);
   // Zoom: vince la scelta personale se c'è ('1'/'0' espliciti), altrimenti il
   // sito. ⚠️ Il flag di SITO è DESKTOP/TABLET-only (v12.43, scelta dell'utente):
   // sui telefoni (≤480px) la Modalità XL di sito NON si applica; lì la XL si
@@ -2585,23 +2606,76 @@ function fxSpotBg(cfg, light){
   return 'radial-gradient(circle ' + Math.round(cfg.r) + 'px at var(--spx,50%) var(--spy,50%),' +
          'rgba(255,255,255,' + fxR2(a) + ') 0%,rgba(255,255,255,' + fxR2(a * 0.42) + ') 38%,rgba(255,255,255,0) 72%)';
 }
+// Nomi incisi: ombra tipografica del Nome (letterpress in chiaro). Le etichette
+// tipo sono FIGLIE di .rank-name, quindi l'ombra si eredita: la scelta Nome/
+// etichette si ottiene applicando la regola al genitore e, se serve, azzerandola
+// sulle figlie (o viceversa). Formula condivisa con l'anteprima.
+function fxPressShadow(light){
+  return light ? '0 1px 0 rgba(255,255,255,0.9),0 -1px 1px rgba(20,24,40,0.11)'
+               : '0 1px 2px rgba(0,0,0,0.5)';
+}
+// Podio metallico: gradienti per metallo e tema — FONTE UNICA (pagina via
+// injectFxRules, anteprima via inline). In tema chiaro riequilibrati in v12.53
+// (i valori v12.28-52 erano troppo scuri, segnalato dall'utente): fermate chiare
+// per il lustro + fermate scure come ancore di leggibilità (testo grande, 3:1).
+var PODIUM_GRADS = {
+  1: { dark:'linear-gradient(168deg,#fdf3d4 4%,#e6c979 26%,#a67c34 62%,#d8b25c 84%,#8c6526 100%)',
+       light:'linear-gradient(168deg,#e8c15e 4%,#c89a34 30%,#8a6420 62%,#d9b254 84%,#7a5817 100%)' },
+  2: { dark:'linear-gradient(168deg,#ffffff 2%,#f2f5f9 14%,#c8ced7 34%,#9ba3ae 46%,#ffffff 58%,#dae0e8 72%,#b2b9c4 86%,#8d949f 100%)',
+       light:'linear-gradient(168deg,#e8ecf1 2%,#a9b1bd 16%,#5d646e 38%,#d0d6de 52%,#6f7883 74%,#454b54 100%)' },
+  3: { dark:'linear-gradient(168deg,#f4d3b4 4%,#d79a63 26%,#9c6435 62%,#c98a55 84%,#7d4a22 100%)',
+       light:'linear-gradient(168deg,#d99a5b 4%,#b5763a 30%,#7d4e20 62%,#cc8d4f 84%,#6d431b 100%)' }
+};
+// Filtro del podio dalle manopole: contrast = 'intensità del metallo' (aumenta lo
+// stacco tra lumi e ombre del gradiente), brightness = luminosità complessiva.
+function fxPodiumFilter(cfg){ return 'contrast(' + fxR2(cfg.int) + ') brightness(' + fxR2(cfg.lum) + ')'; }
 function fxSel(base, all, tail){
   return all ? base + ' .rank-item' + tail
              : base + ' .rank-item:hover' + tail + ',' + base + ' .rank-item:focus-within' + tail;
 }
 function injectFxRules(){
-  var css = [], g = SITE_FLAGS.glow, s = SITE_FLAGS.spot, v = SITE_FLAGS.vig;
+  // Config ATTIVE per piattaforma (desktop o _m): le regole in pagina seguono
+  // sempre fxCfg; gli editor scrivono sulla variante scelta e la pagina cambia
+  // solo se quella variante è la piattaforma corrente.
+  var css = [], g = fxCfg('glow'), s = fxCfg('spot'), v = fxCfg('vig'), pr = fxCfg('press'), po = fxCfg('podium');
   if (flagOn('vig')) {
     css.push('html.fx-vig body{background-image:' + fxVigBg(v, false) + ';background-attachment:fixed}');
     css.push('html.fx-vig[data-theme="light"] body{background-image:' + fxVigBg(v, true) + ';background-attachment:fixed}');
+  }
+  if (flagOn('press')) {
+    // name → ombra sul Nome (le etichette la erediterebbero: se lab è spento, si
+    // azzera sulle figlie); solo lab → ombra sulle sole etichette.
+    [false, true].forEach(function(light){
+      var base = 'html.fx-press' + (light ? '[data-theme="light"]' : '');
+      if (pr.name) {
+        css.push(base + ' .rank-name{text-shadow:' + fxPressShadow(light) + '}');
+        if (!pr.lab) css.push(base + ' .rank-name .rank-tipi{text-shadow:none}');
+      } else if (pr.lab) {
+        css.push(base + ' .rank-name .rank-tipi{text-shadow:' + fxPressShadow(light) + '}');
+      }
+    });
+  }
+  if (flagOn('podium')) {
+    // Clip + niente glow grigio (intorbidirebbe il metallo) + ombra direzionale:
+    // 0.6 su scuro, più tenue su chiaro (la 0.6 era parte del 'MOLTO scuri').
+    // ⚠️ La regola CHIARA ripete clip e color:transparent: la regola dei numeri
+    // in tinta famiglia (injectCardColorRules, v12.53) ha specificità (0,4,1)
+    // come la clip condivisa e viene DOPO nel documento; senza la ripetizione a
+    // specificità (0,5,1) il podio in chiaro mostrerebbe la tinta, non il metallo.
+    css.push('html.fx-podium .rank-item.vis-1 .rank-num,html.fx-podium .rank-item.vis-2 .rank-num,html.fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 2px rgba(0,0,0,0.6);filter:' + fxPodiumFilter(po) + '}');
+    css.push('html[data-theme="light"].fx-podium .rank-item.vis-1 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-2 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 1px rgba(0,0,0,0.22)}');
+    [1, 2, 3].forEach(function(n){
+      css.push('html.fx-podium .rank-item.vis-' + n + ' .rank-num{background-image:' + PODIUM_GRADS[n].dark + '}');
+      css.push('html.fx-podium[data-theme="light"] .rank-item.vis-' + n + ' .rank-num{background-image:' + PODIUM_GRADS[n].light + '}');
+    });
   }
   if (flagOn('glow')) {
     // Prima le regole del tema scuro, poi quelle del chiaro: queste ultime hanno
     // specificità più alta (html.fx-glow[data-theme="light"]) e stanno più in basso.
     [false, true].forEach(function(light){
       var base = 'html.fx-glow' + (light ? '[data-theme="light"]' : '');
-      css.push(fxSel(base, g.all, ' .rank-strip') + '{box-shadow:' + fxGlowInner(g, light) + '!important}');
-      if (g.out || g.aura > 0) css.push(fxSel(base, g.all, '') + '{box-shadow:' + fxGlowOuter(g, light) + '}');
+      css.push(fxSel(base, g.all === true, ' .rank-strip') + '{box-shadow:' + fxGlowInner(g, light) + '!important}');
+      if (g.out || g.aura > 0) css.push(fxSel(base, g.all === true, '') + '{box-shadow:' + fxGlowOuter(g, light) + '}');
     });
   }
   if (flagOn('spot')) {
@@ -3108,6 +3182,15 @@ function ccAaText(fg, bg, target) {
 (function injectCardColorRules(){
   var css = [
     '.rank-strip{background:rgba(var(--ccrgb,111,116,130),0.85)!important}',
+    // ── Numero di posizione nella TINTA della card (dalla v12.53, richiesta
+    // utente: il grigio 'cupo' stonava col resto ormai colorato). Versione
+    // CONTRASTATA della tinta famiglia: in tema scuro schiarita (mix verso il
+    // bianco), in chiaro scurita (mix verso il nero). La prima dichiarazione è
+    // il fallback per i browser senza color-mix (tinta piena). I numeri del
+    // PODIO non sono toccati: le regole fx-podium (specificità più alta) mettono
+    // color:transparent + gradiente metallico.
+    '.rank-item[class*="cc-"] .rank-num{color:rgba(var(--ccrgb),1);color:color-mix(in srgb, rgb(var(--ccrgb)) 82%, #fff 18%)}',
+    'html[data-theme="light"] .rank-item[class*="cc-"] .rank-num{color:rgba(var(--ccrgb),1);color:color-mix(in srgb, rgb(var(--ccrgb)) 70%, #000 30%)}',
     '.rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.10)!important}',
     '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
     'html[data-theme="light"] .rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.05)!important}',
@@ -6795,13 +6878,13 @@ var SITE_FLAG_ITEMS = [
   { k:'spot', it:'Riflettore sul puntatore', en:'Pointer spotlight', cfg:true,
     nit:'Un alone bianco molto sfumato schiarisce la card dove passa\nil puntatore, restando al suo interno.',
     nen:'A very soft white glow lightens the card where the pointer hovers,\nremaining contained within its borders.' },
-  { k:'press', it:'Nomi incisi', en:'Engraved names',
+  { k:'press', it:'Nomi incisi', en:'Engraved names', cfg:true,
     nit:'Leggera ombra tipografica sui nomi (letterpress su tema chiaro).',
     nen:'Subtle typographic shadow on the names (letterpress on light theme).' },
   { k:'vig', it:'Vignettatura', en:'Vignetting', cfg:true,
     nit:'Alone radiale ai bordi del fondo per conferire profondità.',
     nen:'Radial halo at the edges of the background to add depth.' },
-  { k:'podium', it:'Podio metallico', en:'Metallic podium',
+  { k:'podium', it:'Podio metallico', en:'Metallic podium', cfg:true,
     nit:'Numeri 1-2-3 in effetto oro, argento e bronzo.',
     nen:'Numbers 1-2-3 with gold, silver, and bronze effects.' }
 ];
@@ -6837,6 +6920,18 @@ var FX_KNOBS = {
     { p:'start', t:'num', step:1, unit:'%', it:'Inizio della sfumatura', en:'Fade start',
       nit:'Più basso = la sfumatura parte prima e copre più sfondo.',
       nen:'Lower = the fade starts earlier and covers more background.' }
+  ],
+  press: [
+    { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
+    { p:'name', t:'bool', it:'Sul Nome', en:'On the Name' },
+    { p:'lab', t:'bool', it:'Sulle etichette tipo', en:'On the type labels' }
+  ],
+  podium: [
+    { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
+    { p:'int', t:'num', step:0.02, it:'Intensità del metallo', en:'Metal intensity',
+      nit:'Aumenta lo stacco tra lumi e ombre del gradiente.',
+      nen:'Raises the contrast between the gradient highlights and shadows.' },
+    { p:'lum', t:'num', step:0.02, it:'Luminosità', en:'Brightness' }
   ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
@@ -6874,6 +6969,8 @@ function injectFxEditorCss(){
     'padding:0;background:none;border:1px solid rgba(140,145,160,0.4);border-radius:6px;color:inherit;',
     'cursor:pointer;opacity:0.75;transition:opacity 0.15s,border-color 0.15s}',
     '.fx-gear:hover{opacity:1;border-color:rgba(140,145,160,0.75)}',
+    '.fxp-pill{display:inline-block;font-size:0.5em;font-weight:400;letter-spacing:0.03em;',
+    'border:1px solid;border-radius:3px;padding:0 5px;margin-left:0.5em;vertical-align:0.25em;white-space:nowrap}',
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
     '.fxk-row .fxk-lbl{font-size:0.84rem;font-weight:600}',
     '.fxk-row .fxk-val{font-size:0.78rem;font-variant-numeric:tabular-nums;opacity:0.75;min-width:3.2em;text-align:right}',
@@ -6892,12 +6989,19 @@ function fxPreviewCc(light){
 }
 // ── Sotto-modale di regolazione di un effetto (dalla v12.39) ─────────────────
 // Stile admin MINIMALE (fab-modal-box), overlay a parte (#fx-modal) così sta SOPRA
-// il pannello Feature flag che resta aperto sotto, come le statistiche sull'editor
-// colori. L'anteprima usa le stesse funzioni-formula delle regole iniettate.
-function showFxConfigEditor(key, onDone){
+// il pannello che resta aperto sotto, come le statistiche sull'editor colori.
+// L'anteprima usa le stesse funzioni-formula delle regole iniettate.
+// `sfx` (v12.53) = variante in modifica: '' desktop, '_m' mobile. Tutte le
+// letture/scritture passano da SITE_FLAGS[key+sfx]; la pagina dietro cambia solo
+// se la variante è quella della piattaforma corrente (injectFxRules usa fxCfg).
+function showFxConfigEditor(key, sfx, onDone){
   if (document.getElementById('fx-modal')) return;
   var it = currentLang === 'it', myL, item = null;
-  // Catena degli hook lingua: questa modale sta SOPRA il pannello Feature flag,
+  sfx = sfx || '';
+  var vk = key + sfx;                                  // chiave della variante
+  var V = function(k){ return SITE_FLAGS[k + sfx]; };  // config di variante
+  var vOn = function(k){ return V(k).on !== false; };  // 'acceso' nella variante
+  // Catena degli hook lingua: questa modale sta SOPRA il pannello di controllo,
   // che ha già registrato il suo langRefresh. Lo si conserva (prevL) e lo si
   // RIPRISTINA alla chiusura — azzerarlo lascerebbe il pannello sotto senza L.
   var prevL = langRefresh;
@@ -6916,7 +7020,7 @@ function showFxConfigEditor(key, onDone){
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×';
   cl.onclick = close; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.02rem;margin:0 0 0.2rem;';
-  t.textContent = it ? item.it : item.en; box.appendChild(t);
+  t.textContent = (it ? item.it : item.en) + ' — ' + (sfx ? 'Mobile' : 'Desktop'); box.appendChild(t);
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.9rem;';
   sub.textContent = it ? 'Le modifiche si vedono subito qui sotto e sulle card dietro.'
                        : 'Changes show immediately below and on the cards behind.';
@@ -6939,14 +7043,24 @@ function showFxConfigEditor(key, onDone){
       var c = document.createElement('div'); c.className = 'fxp-card';
       var strip = document.createElement('span'); strip.className = 'fxp-strip';
       var spot = document.createElement('span'); spot.className = 'fxp-spot';
-      var num = document.createElement('span'); num.className = 'fxp-num'; num.textContent = String(n);
+      // Nell'editor del podio la seconda card mostra il 3 (bronzo): con due sole
+      // card si coprono il metallo più chiaro e quello più scuro; l'argento si
+      // giudica sulle card vere dietro.
+      var num = document.createElement('span'); num.className = 'fxp-num';
+      num.textContent = String(key === 'podium' && n === 2 ? 3 : n);
       var body = document.createElement('span');
       var nm = document.createElement('span'); nm.className = 'fxp-name';
       nm.textContent = n === 1 ? 'Fëanor' : 'Fingolfin';
+      // Pill etichetta-tipo finta: serve all'editor dei Nomi incisi (l'incisione
+      // può riguardare Nome ed etichette separatamente, v12.53).
+      var pill = document.createElement('span'); pill.className = 'fxp-pill';
+      pill.textContent = 'Noldo';
+      nm.appendChild(pill);
       var ds = document.createElement('span'); ds.className = 'fxp-desc';
       body.appendChild(nm); body.appendChild(ds);
       c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
-      var rec = { el:c, strip:strip, spot:spot, desc:ds, light:light, first:(n === 1) };
+      var rec = { el:c, strip:strip, spot:spot, num:num, name:nm, pill:pill, desc:ds,
+                  light:light, first:(n === 1), metal:(key === 'podium' && n === 2 ? 3 : n) };
       // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
       // valutarlo senza uscire dalla modale.
       c.addEventListener('pointermove', function(e){
@@ -6961,9 +7075,11 @@ function showFxConfigEditor(key, onDone){
   box.appendChild(wrap);
 
   function paint(){
-    var g = SITE_FLAGS.glow, s = SITE_FLAGS.spot, v = SITE_FLAGS.vig;
+    // Tutte le config dalla VARIANTE in modifica (V), non dalla piattaforma
+    // corrente: aprendo la tab Mobile da desktop l'anteprima mostra la mobile.
+    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium');
     panes.forEach(function(pn){
-      pn.el.style.backgroundImage = (key === 'vig' && flagOn('vig')) ? fxVigBg(v, pn.light) : 'none';
+      pn.el.style.backgroundImage = (key === 'vig' && vOn('vig')) ? fxVigBg(v, pn.light) : 'none';
     });
     cards.forEach(function(rec){
       var cc = fxPreviewCc(rec.light);
@@ -6971,15 +7087,38 @@ function showFxConfigEditor(key, onDone){
       var hot = key === 'glow' ? (g.all === true || rec.first) : key === 'spot';
       rec.el.style.background = 'rgba(' + cc + ',' + (rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10)) + ')';
       rec.strip.style.background = 'rgba(' + cc + ',0.85)';
-      var gOn = flagOn('glow') && hot;
+      var gOn = vOn('glow') && hot;
       rec.strip.style.boxShadow = gOn ? fxGlowInner(g, rec.light, cc) : 'none';
       rec.el.style.boxShadow = (gOn && (g.out || g.aura > 0)) ? fxGlowOuter(g, rec.light, cc) : 'none';
       rec.spot.style.background = fxSpotBg(s, rec.light);
-      rec.spot.style.opacity = (key === 'spot' && flagOn('spot')) ? '1' : '0';
+      rec.spot.style.opacity = (key === 'spot' && vOn('spot')) ? '1' : '0';
+      // Nomi incisi: stessa formula delle regole iniettate, per Nome/etichette.
+      var press = vOn('press');
+      rec.name.style.textShadow = (press && pr.name) ? fxPressShadow(rec.light) : 'none';
+      rec.pill.style.textShadow = (press && pr.lab) ? fxPressShadow(rec.light) : 'none';
+      rec.pill.style.color = 'rgba(' + cc + ',1)';
+      rec.pill.style.borderColor = 'rgba(' + cc + ',0.8)';
+      rec.pill.style.background = 'rgba(' + cc + ',' + (rec.light ? 0.10 : 0.26) + ')';
+      // Numero: metallo del podio nell'editor del podio, altrimenti la tinta
+      // famiglia contrastata (come in pagina, v12.53).
+      if (key === 'podium' && vOn('podium')) {
+        rec.num.style.backgroundImage = PODIUM_GRADS[rec.metal][rec.light ? 'light' : 'dark'];
+        rec.num.style.webkitBackgroundClip = 'text';
+        rec.num.style.backgroundClip = 'text';
+        rec.num.style.color = 'transparent';
+        rec.num.style.textShadow = rec.light ? '0 1px 1px rgba(0,0,0,0.22)' : '0 1px 2px rgba(0,0,0,0.6)';
+        rec.num.style.filter = fxPodiumFilter(po);
+      } else {
+        rec.num.style.backgroundImage = 'none';
+        rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
+        rec.num.style.textShadow = 'none'; rec.num.style.filter = 'none';
+        rec.num.style.color = 'color-mix(in srgb, rgb(' + cc + ') ' + (rec.light ? '70%, #000 30%' : '82%, #fff 18%') + ')';
+      }
       rec.desc.textContent = key === 'spot'
         ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
-        : hot ? (it ? 'Card attiva (hover)' : 'Active card (hover)')
-              : (it ? 'Card a riposo' : 'Resting card');
+        : key === 'glow'
+          ? (hot ? (it ? 'Card attiva (hover)' : 'Active card (hover)') : (it ? 'Card a riposo' : 'Resting card'))
+          : (it ? 'Anteprima' : 'Preview');
     });
   }
 
@@ -6992,11 +7131,11 @@ function showFxConfigEditor(key, onDone){
     row.appendChild(lbl);
     if (kn.t === 'bool') {
       var cb = document.createElement('input'); cb.type = 'checkbox';
-      cb.checked = SITE_FLAGS[key][kn.p] === true;
+      cb.checked = SITE_FLAGS[vk][kn.p] === true;
       cb.style.cssText = 'width:1rem;height:1rem;margin:0;cursor:pointer;';
-      var id = 'fxk-' + key + '-' + kn.p; cb.id = id; lbl.setAttribute('for', id);
+      var id = 'fxk-' + vk + '-' + kn.p; cb.id = id; lbl.setAttribute('for', id);
       cb.addEventListener('change', function(){
-        SITE_FLAGS[key][kn.p] = cb.checked;
+        SITE_FLAGS[vk][kn.p] = cb.checked;
         applySiteFlags(); paint();
       });
       row.appendChild(cb);
@@ -7005,14 +7144,14 @@ function showFxConfigEditor(key, onDone){
       var val = document.createElement('span'); val.className = 'fxk-val';
       var sl = document.createElement('input'); sl.type = 'range';
       sl.min = String(rng[0]); sl.max = String(rng[1]); sl.step = String(kn.step);
-      sl.value = String(SITE_FLAGS[key][kn.p]);
+      sl.value = String(SITE_FLAGS[vk][kn.p]);
       sl.setAttribute('aria-label', it ? kn.it : kn.en);
       var show = function(){
-        val.textContent = kn.unit ? (Math.round(SITE_FLAGS[key][kn.p]) + kn.unit)
-                                  : fxR2(SITE_FLAGS[key][kn.p]).toFixed(2);
+        val.textContent = kn.unit ? (Math.round(SITE_FLAGS[vk][kn.p]) + kn.unit)
+                                  : fxR2(SITE_FLAGS[vk][kn.p]).toFixed(2);
       };
       sl.addEventListener('input', function(){
-        SITE_FLAGS[key][kn.p] = fxClamp(key, kn.p, parseFloat(sl.value));
+        SITE_FLAGS[vk][kn.p] = fxClamp(key, kn.p, parseFloat(sl.value));
         show(); injectFxRules(); paint();
       });
       show(); row.appendChild(val); row.appendChild(sl);
@@ -7032,8 +7171,8 @@ function showFxConfigEditor(key, onDone){
   rst.title = it ? 'Riporta questo effetto all’ultimo valore salvato sul repo'
                  : 'Restore this effect to the last value saved to the repo';
   rst.onclick = function(){
-    SITE_FLAGS[key] = normSiteFlags(SITE_FLAGS_SAVED)[key];
-    applySiteFlags(); close(); showFxConfigEditor(key, onDone);
+    SITE_FLAGS[vk] = normSiteFlags(SITE_FLAGS_SAVED)[vk];
+    applySiteFlags(); close(); showFxConfigEditor(key, sfx, onDone);
   };
   var ok = document.createElement('button'); ok.className = 'fab-modal-confirm';
   ok.style.cssText = 'width:auto;flex:1;margin-top:0;'; ok.textContent = it ? 'Chiudi' : 'Close';
@@ -7052,7 +7191,7 @@ function showFxConfigEditor(key, onDone){
     if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = prevL; return; }
     overlay.remove();
     if (typeof prevL === 'function') prevL();
-    showFxConfigEditor(key, onDone);
+    showFxConfigEditor(key, sfx, onDone);
   };
   langRefresh = myL;
 }
@@ -7074,56 +7213,108 @@ function showSiteFlagsEditor(initState){
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 1rem;';
   sub.textContent = it ? 'Le impostazioni valgono per tutti i visitatori.' : 'Settings apply to every visitor.';
   box.appendChild(sub);
+  // ── CONFIG PER-PIATTAFORMA (v12.53, richiesta utente) ──────────────────────
+  // Da DESKTOP: due tab in alto, 'Desktop' e 'Mobile', per governare le due
+  // varianti separatamente. Da MOBILE (≤768px): niente tab, si governa SOLO la
+  // parte mobile; per risparmiare spazio verticale le righe sono compatte
+  // (checkbox + nome + fader, senza note descrittive). La voce Modalità XL vive
+  // nella sola tab Desktop (per la regola v12.43 il flag è desktop/tablet-only).
+  var isMob = isMobileViewport();
+  var tab = isMob ? 'm' : ((initState && initState.tab) || 'd');
+  var tabsBar = null, tabBtns = {};
+  if (!isMob) {
+    tabsBar = document.createElement('div');
+    tabsBar.style.cssText = 'display:flex;gap:8px;margin:0 0 1rem;';
+    [['d', 'Desktop'], ['m', 'Mobile']].forEach(function(td){
+      var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'fab-modal-confirm';
+      tb.style.cssText = 'width:auto;flex:1;margin-top:0;padding:0.4rem 0;';
+      tb.textContent = td[1];
+      tb.setAttribute('aria-pressed', String(tab === td[0]));
+      tb.onclick = function(){ if (tab !== td[0]) { tab = td[0]; syncTabs(); renderRows(); } };
+      tabBtns[td[0]] = tb; tabsBar.appendChild(tb);
+    });
+    box.appendChild(tabsBar);
+  }
+  function syncTabs(){
+    if (!tabsBar) return;
+    Object.keys(tabBtns).forEach(function(k){
+      var on = tab === k;
+      tabBtns[k].setAttribute('aria-pressed', String(on));
+      tabBtns[k].style.opacity = on ? '1' : '0.45';
+    });
+  }
+  syncTabs();
   // Una riga per flag, LAYOUT UNIFORME (richiesta utente, v12.40): checkbox
   // acceso/spento a sinistra per TUTTI gli effetti; per quelli REGOLABILI (f.cfg)
   // in più l'icona a due cursori sul LATO DESTRO della riga, che apre la
-  // sotto-modale. Il cambio si applica SUBITO (le card dietro si aggiornano),
-  // così si valuta l'effetto prima di salvare.
-  SITE_FLAG_ITEMS.forEach(function(f){
-    var row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:start;margin:0 0 0.85rem;';
-    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = flagOn(f.k);
-    cb.id = 'sf-' + f.k;
-    cb.style.cssText = 'margin:0.25rem 0 0;width:1rem;height:1rem;flex:none;cursor:pointer;';
-    cb.addEventListener('change', function(){
-      // Flag a oggetto: si tocca solo l'interruttore, le manopole restano.
-      if (SITE_FLAGS[f.k] && typeof SITE_FLAGS[f.k] === 'object') SITE_FLAGS[f.k].on = cb.checked;
-      else SITE_FLAGS[f.k] = cb.checked;
-      applySiteFlags(); reflowRows();
+  // sotto-modale. Il cambio si applica SUBITO (le card dietro si aggiornano, se
+  // la variante in modifica è quella della piattaforma corrente).
+  var rowsBox = document.createElement('div');
+  box.appendChild(rowsBox);
+  function renderRows(){
+    rowsBox.textContent = '';
+    var sfx = tab === 'm' ? '_m' : '';
+    SITE_FLAG_ITEMS.forEach(function(f){
+      if (f.k === 'zoomBig' && tab === 'm') return; // XL: solo nella tab Desktop
+      var vk = (f.k === 'zoomBig') ? f.k : f.k + sfx;
+      var row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:' + (isMob ? 'center' : 'start') + ';margin:0 0 ' + (isMob ? '0.55rem' : '0.85rem') + ';';
+      var cb = document.createElement('input'); cb.type = 'checkbox';
+      cb.checked = (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') ? SITE_FLAGS[vk].on !== false : !!SITE_FLAGS[vk];
+      cb.id = 'sf-' + vk;
+      cb.style.cssText = 'margin:' + (isMob ? '0' : '0.25rem 0 0') + ';width:1rem;height:1rem;flex:none;cursor:pointer;';
+      cb.addEventListener('change', function(){
+        // Flag a oggetto: si tocca solo l'interruttore, le manopole restano.
+        if (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') SITE_FLAGS[vk].on = cb.checked;
+        else SITE_FLAGS[vk] = cb.checked;
+        applySiteFlags(); reflowRows();
+      });
+      var txt = document.createElement('label'); txt.setAttribute('for', cb.id);
+      txt.style.cssText = 'cursor:pointer;';
+      var nm = document.createElement('span'); nm.style.cssText = 'display:block;font-size:0.92rem;font-weight:600;';
+      nm.textContent = it ? f.it : f.en;
+      txt.appendChild(nm);
+      // Su mobile le note descrittive si OMETTONO (richiesta utente, v12.53:
+      // risparmio di spazio verticale). Gli a-capo delle note sono voluti.
+      if (!isMob) {
+        var nt = document.createElement('span'); nt.style.cssText = 'display:block;font-size:0.76rem;opacity:0.66;line-height:1.35;margin-top:0.1rem;white-space:pre-line;';
+        nt.textContent = it ? f.nit : f.nen;
+        txt.appendChild(nt);
+      }
+      row.appendChild(cb); row.appendChild(txt);
+      if (f.cfg) {
+        var gear = document.createElement('button'); gear.type = 'button'; gear.className = 'fx-gear';
+        gear.innerHTML = FX_SLIDERS_SVG;
+        gear.setAttribute('aria-label', (it ? 'Regola: ' : 'Adjust: ') + (it ? f.it : f.en));
+        gear.title = it ? 'Regolazioni' : 'Settings';
+        gear.onclick = function(){
+          // Al ritorno la checkbox si riallinea: nella sotto-modale c'è lo stesso
+          // interruttore ('Effetto attivo') e può essere stato cambiato lì.
+          showFxConfigEditor(f.k, sfx, function(){
+            cb.checked = SITE_FLAGS[vk].on !== false; reflowRows();
+          });
+        };
+        row.appendChild(gear);
+      }
+      rowsBox.appendChild(row);
     });
-    var txt = document.createElement('label'); txt.setAttribute('for', cb.id);
-    txt.style.cssText = 'cursor:pointer;';
-    var nm = document.createElement('span'); nm.style.cssText = 'display:block;font-size:0.92rem;font-weight:600;';
-    nm.textContent = it ? f.it : f.en;
-    // white-space:pre-line: gli a-capo delle note sono voluti dall'utente.
-    var nt = document.createElement('span'); nt.style.cssText = 'display:block;font-size:0.76rem;opacity:0.66;line-height:1.35;margin-top:0.1rem;white-space:pre-line;';
-    nt.textContent = it ? f.nit : f.nen;
-    txt.appendChild(nm); txt.appendChild(nt);
-    row.appendChild(cb); row.appendChild(txt);
-    if (f.cfg) {
-      var gear = document.createElement('button'); gear.type = 'button'; gear.className = 'fx-gear';
-      gear.innerHTML = FX_SLIDERS_SVG;
-      gear.setAttribute('aria-label', (it ? 'Regola: ' : 'Adjust: ') + (it ? f.it : f.en));
-      gear.title = it ? 'Regolazioni' : 'Settings';
-      gear.onclick = function(){
-        // Al ritorno la checkbox si riallinea: nella sotto-modale c'è lo stesso
-        // interruttore ('Effetto attivo') e può essere stato cambiato lì.
-        showFxConfigEditor(f.k, function(){ cb.checked = flagOn(f.k); reflowRows(); });
-      };
-      row.appendChild(gear);
-    }
-    box.appendChild(row);
-  });
-  // Avviso se la preferenza personale di zoom (tasto Z) sta scavalcando il flag:
-  // senza, sembrerebbe che l'interruttore 'non funzioni'.
+  }
+  renderRows();
+  // Avviso se la preferenza personale di zoom sta scavalcando il flag: senza,
+  // sembrerebbe che l'interruttore 'non funzioni'. Su mobile la versione BREVE
+  // dell'utente (v12.53), su desktop quella estesa (v12.42).
   var mine = LS.getItem(ZOOM_LS_KEY);
   if (mine !== null) {
     var warn = document.createElement('p');
     warn.style.cssText = 'font-size:0.76rem;opacity:0.8;margin:0 0 0.9rem;padding:0.5rem 0.6rem;border-left:2px solid rgba(200,162,74,0.8);';
-    // Testo dell'utente (v12.42), con la variante normale/XL secondo la preferenza.
-    warn.textContent = it
-      ? ('Nota: la tua preferenza personale di zoom (' + (mine === '1' ? 'XL' : 'normale') + ', tasto Z) scavalca l\'impostazione della Modalità XL. Gli altri visitatori vedranno inizialmente il sito con la Modalità XL attiva o non attiva secondo le tue impostazioni.')
-      : ('Note: your personal zoom preference (' + (mine === '1' ? 'XL' : 'standard') + ', Z key) overrides the XL Mode setting. Other visitors will initially see the site with XL Mode on or off according to your settings.');
+    var xl = mine === '1';
+    warn.textContent = isMob
+      ? (it
+        ? ('La tua preferenza personale di dimensione UI (' + (xl ? 'XL' : 'normale') + ', tasto Z o tocco lungo sul FAB) ha la precedenza sull\'impostazione globale.')
+        : ('Your personal UI size preference (' + (xl ? 'XL' : 'standard') + ', Z key or long-press on the FAB) takes precedence over the global setting.'))
+      : (it
+        ? ('Nota: la tua preferenza personale di zoom (' + (xl ? 'XL' : 'normale') + ', tasto Z) scavalca l\'impostazione della Modalità XL. Gli altri visitatori vedranno inizialmente il sito con la Modalità XL attiva o non attiva secondo le tue impostazioni.')
+        : ('Note: your personal zoom preference (' + (xl ? 'XL' : 'standard') + ', Z key) overrides the XL Mode setting. Other visitors will initially see the site with XL Mode on or off according to your settings.'));
     box.appendChild(warn);
   }
   var foot = document.createElement('div'); foot.style.cssText = 'display:flex;gap:10px;margin-top:1.1rem;';
@@ -7146,7 +7337,7 @@ function showSiteFlagsEditor(initState){
   if (initState && initState.scroll) box.scrollTop = initState.scroll;
   // L: ricostruisce nella nuova lingua conservando lo scroll (anti-jitter); lo
   // stato dei flag non salvati vive in SITE_FLAGS, globale, quindi non si perde.
-  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; close(); showSiteFlagsEditor({ scroll: sc }); };
+  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; close(); showSiteFlagsEditor({ scroll: sc, tab: tab }); };
   langRefresh = myL;
 }
 

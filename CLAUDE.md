@@ -377,10 +377,27 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
 
-## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39)
+## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39; config per-piattaforma dalla v12.53)
 
 Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
-la modalità ingrandita e i 5 effetti grafici. Accesso: tap sulla versione → sblocco
+la modalità ingrandita e i 5 effetti grafici.
+- **CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente).** Ogni effetto ha DUE
+  configurazioni indipendenti: **desktop** (chiave base, es. `glow`) e **mobile**
+  (suffisso **`_m`**, es. `glow_m`, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al
+  varco). Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
+  già** (nessun cambio di Worker, niente race di deploy). Se una `_m` manca nel
+  salvato viene **seminata come copia della desktop** (comportamento invariato
+  finché l'admin non differenzia). `zoomBig` resta UNICO (regola v12.43:
+  desktop/tablet-only). Accessori: **`fxCfg(k)`** = config attiva per piattaforma
+  (l'unico accesso giusto per il rendering; `flagOn` lo usa), accesso diretto
+  `SITE_FLAGS[k]`/`SITE_FLAGS[k+'_m']` riservato agli editor. **UI:** da desktop
+  il pannello ha **due tab 'Desktop'/'Mobile'** in alto (la voce Modalità XL vive
+  solo nella tab Desktop); da mobile **niente tab**, si governa SOLO la parte
+  mobile, righe **compatte** (checkbox + nome + fader, note descrittive omesse per
+  spazio, richiesta utente) e **nota breve** in basso (testo dell'utente, con
+  variante normale/XL). La sotto-modale riceve la variante (`showFxConfigEditor(key,
+  sfx, onDone)`) e nel titolo indica '— Desktop'/'— Mobile'; modificare la variante
+  NON attiva cambia nulla in pagina (le regole iniettate seguono `fxCfg`). Accesso: tap sulla versione → sblocco
 → bivio 'Area admin' → **5° pulsante 'Pannello di controllo'** (`showSiteFlagsEditor`,
 stile admin minimale). ⚠️ **Nome in UI: 'Pannello di controllo' / 'Control panel'
 (dalla v12.42, deciso dall'utente; prima 'Feature flag')** — titolo, bottone del
@@ -461,8 +478,13 @@ normale/XL secondo la preferenza attiva.
      offsetWidth` (stessa lezione delle linee mediane). In `@media print` il
      `::before` è nascosto. In tema chiaro il `display:none` statico del
      `::before` è scavalcato dalla regola iniettata (sorgente più in basso).
-  3. **`press` — nomi incisi** (`fx-press`): letterpress in tema chiaro (lume bianco
-     sotto + velo scuro sopra), stacco morbido in scuro.
+  3. **`press` — nomi incisi** (`fx-press`, REGOLABILE dalla v12.53): letterpress
+     in tema chiaro (lume bianco sotto + velo scuro sopra), stacco morbido in
+     scuro. Manopole: `name` (sul Nome) e `lab` (sulle etichette tipo) — le
+     etichette sono FIGLIE di `.rank-name` e l'ombra si eredita, quindi le
+     combinazioni si ottengono azzerandola sulle figlie (o applicandola solo a
+     loro). Regole in `injectFxRules` (formula `fxPressShadow`); le statiche sono
+     state rimosse dal CSS.
   4. **`vig` — vignettatura** (`fx-vig`, REGOLABILE dalla v12.42): alone radiale
      come **livello di sfondo del body** (`background-image` +
      `background-attachment:fixed`), non un elemento sovrapposto: niente nodi
@@ -472,13 +494,24 @@ normale/XL secondo la preferenza attiva.
      statiche sono state RIMOSSE dal CSS (i default le riproducono: 0.34/38%).
      Nell'anteprima della sotto-modale la vignetta è applicata al FONDO dei due
      riquadri (card a riposo).
-  5. **`podium` — podio metallico** (`fx-podium`): numeri 1-2-3 con gradiente
-     oro/argento/bronzo (`background-clip:text` + `color:transparent`, come il
-     titolone) e `text-shadow:none` (il glow grigio base di `.rank-num`
-     intorbidirebbe il metallo). Le classi **`vis-1/2/3`** le assegna `renderList`
+  5. **`podium` — podio metallico** (`fx-podium`, REGOLABILE dalla v12.53): numeri
+     1-2-3 con gradiente oro/argento/bronzo (`background-clip:text` +
+     `color:transparent`, come il titolone) e `text-shadow:none` (il glow grigio
+     base di `.rank-num` intorbidirebbe il metallo). Manopole: `int` (intensità del
+     metallo = `contrast`) e `lum` (luminosità = `brightness`), applicate con un
+     `filter` iniettato; 1/1 = resa neutra. Dalla v12.53 TUTTE le regole del podio
+     (clip, gradienti, ombra, filtro) sono INIETTATE da `injectFxRules` e i
+     gradienti vivono in **`PODIUM_GRADS`** (fonte unica con l'anteprima); i
+     metalli del tema CHIARO sono stati **riequilibrati** (quelli v12.28-52 erano
+     troppo scuri, segnalato dall'utente) e l'ombra chiara è scesa a 0.22.
+     ⚠️ La regola chiara iniettata RIPETE `color:transparent` + clip a specificità
+     (0,5,1): la regola dei numeri in tinta famiglia (v12.53) ha (0,4,1) come la
+     clip condivisa e viene dopo nel documento — senza la ripetizione il podio in
+     chiaro mostrerebbe la tinta famiglia, non il metallo.
+     Le classi **`vis-1/2/3`** le assegna `renderList`
      accanto a `vis-top`, quindi il podio **segue i filtri attivi**. ⚠️ L'**argento**
      ha molte fermate (lume/ombra/lume) perché a 2 sole fermate 'sembrava un numero
-     normale' (richiesta dell'utente); tema chiaro con metalli scuriti per l'AA.
+     normale' (richiesta dell'utente).
      ⚠️ Misurando il colore dopo un cambio di flag si legge ancora `transparent`: è
      la `transition:color 0.35s` di `.rank-num`, non un bug (attendere ~400ms).
   - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto
@@ -944,6 +977,13 @@ gruppo = cambiare una terna.
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
+- **Numero di posizione nella TINTA della card (dalla v12.53, scelta utente: il
+  grigio 'cupo' stonava col sito ormai colorato).** Regole INIETTATE in
+  `injectCardColorRules`: `color-mix` della terna `--ccrgb` — in tema scuro
+  schiarita (82% tinta + 18% bianco), in chiaro scurita (70% + 30% nero) — con
+  prima dichiarazione `rgba(var(--ccrgb),1)` come fallback per browser senza
+  `color-mix`. I numeri del PODIO non sono toccati (le regole fx-podium hanno
+  specificità maggiore; vedi l'avvertenza nella sezione podio). axe 0 verificato.
 - **Opacità della riga Info a 0.80 (dalla v12.24, era 0.72).** `.rank-desc` è la
   riga più piccola e tenue della card (~13.8px): era l'anello debole della
   leggibilità (rilevato misurando i corpi di tutti i testi). +8 punti di opacità si
