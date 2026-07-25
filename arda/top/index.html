@@ -694,14 +694,21 @@ html.fx-fade #rank-list { -webkit-mask-image:linear-gradient(to bottom,transpare
    di .rank-num si spegne qui: con testo trasparente intorbidirebbe il metallo. */
 html.fx-podium .rank-item.vis-1 .rank-num,
 html.fx-podium .rank-item.vis-2 .rank-num,
-html.fx-podium .rank-item.vis-3 .rank-num { -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:none; }
+html.fx-podium .rank-item.vis-3 .rank-num { -webkit-background-clip:text; background-clip:text; color:transparent;
+  /* Ombreggiatura leggera (dalla v12.28, richiesta utente): un filo di rilievo
+     sotto il metallo. È un'ombra DIREZIONALE stretta, non il glow diffuso della
+     regola base .rank-num (quello intorbidiva il metallo, per questo era spento). */
+  text-shadow:0 1px 2px rgba(0,0,0,0.6); }
+html[data-theme="light"].fx-podium .rank-item.vis-1 .rank-num,
+html[data-theme="light"].fx-podium .rank-item.vis-2 .rank-num,
+html[data-theme="light"].fx-podium .rank-item.vis-3 .rank-num { text-shadow:0 1px 1px rgba(0,0,0,0.30); }
 html.fx-podium .rank-item.vis-1 .rank-num { background-image:linear-gradient(168deg,#fdf3d4 4%,#e6c979 26%,#a67c34 62%,#d8b25c 84%,#8c6526 100%); }
-html.fx-podium .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#ffffff 2%,#dfe5ec 14%,#9aa1ab 34%,#6b7280 46%,#fbfdff 58%,#aeb5bf 72%,#7b8290 86%,#565c66 100%); }
+html.fx-podium .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#ffffff 2%,#f2f5f9 14%,#c8ced7 34%,#9ba3ae 46%,#ffffff 58%,#dae0e8 72%,#b2b9c4 86%,#8d949f 100%); }
 html.fx-podium .rank-item.vis-3 .rank-num { background-image:linear-gradient(168deg,#f4d3b4 4%,#d79a63 26%,#9c6435 62%,#c98a55 84%,#7d4a22 100%); }
 /* Podio in tema CHIARO: stessi metalli ma scuriti, per restare leggibili su #F5F5F5
    (testo grande: soglia AA 3:1). L'argento resta il più 'lavorato' delle tre. */
 html.fx-podium[data-theme="light"] .rank-item.vis-1 .rank-num { background-image:linear-gradient(168deg,#c9a047 4%,#8a6420 34%,#6a4c14 70%,#a8802f 100%); }
-html.fx-podium[data-theme="light"] .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#b6bdc7 2%,#7b8290 16%,#3a3f47 38%,#9aa1ab 52%,#4a4f57 74%,#282c32 100%); }
+html.fx-podium[data-theme="light"] .rank-item.vis-2 .rank-num { background-image:linear-gradient(168deg,#ccd2da 2%,#8d94a1 16%,#484e57 38%,#b0b7c1 52%,#575d66 74%,#343a42 100%); }
 html.fx-podium[data-theme="light"] .rank-item.vis-3 .rank-num { background-image:linear-gradient(168deg,#b8783f 4%,#8a5526 34%,#69401d 70%,#a36a3c 100%); }
 /* NB: sfondo card e bordino usano rgba(var(--ccrgb),alpha). Il Nu Html Checker
    non sa parsare var() dentro rgba() (falso errore 'getType() null'), perciò
@@ -2342,7 +2349,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.27</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.28</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
