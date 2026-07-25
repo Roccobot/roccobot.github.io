@@ -353,7 +353,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
 
-## ✨ Feature flag dell'aspetto (dalla v12.24)
+## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39)
 
 Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
 la modalità ingrandita e i 5 effetti grafici. Accesso: tap sulla versione → sblocco
@@ -363,32 +363,64 @@ admin minimale).
 - **Dove vivono i flag:** `var siteFlags` in `dati.js`, scritto dal Worker esattamente
   come `cardColors` e `badgeAdjust` (una riga JSON dopo `badgeAdjust`). A runtime
   `SITE_FLAGS` = i flag salvati validi, altrimenti `SITE_FLAGS_DEFAULT`
-  (`zoomBig:false`, gli altri 5 `true`). Un salvataggio che **non** invia `siteFlags`
+  (`zoomBig:false`, gli altri 5 accesi). Un salvataggio che **non** invia `siteFlags`
   lo **preserva** (`readSiteFlags`); `validSiteFlags` rifiuta config malformate (400
-  `bad-siteflags`). Worker **rev 13**.
+  `bad-siteflags`). Worker **rev 14**.
+- **Due forme di flag (dalla v12.39).** Un flag è un **booleano** (effetto solo
+  on/off: `press`, `vig`, `podium`, `zoomBig`) **oppure un oggetto piatto**
+  `{on:bool, ...manopole}` (effetto **regolabile**: `glow`, `spot`).
+  `normSiteFlags()` normalizza qualunque input: la vecchia forma booleana di un
+  effetto regolabile resta accettata (vale come solo interruttore, manopole ai
+  default), i numeri fuori scala sono riportati nei limiti **`FX_RANGE`** (unica
+  fonte per slider e clamp), le chiavi ignote scartate. `flagOn(k)` è l'unico modo
+  giusto di chiedere 'è acceso?' (copre entrambe le forme). ⚠️ Nel ripristinare
+  `SITE_FLAGS` da `SITE_FLAGS_SAVED` passare SEMPRE da `normSiteFlags` (lo snapshot
+  può venire da un file dati vecchio, coi booleani).
 - **Meccanismo: una classe su `<html>` per flag** (`SITE_FLAG_CLASS`), applicata da
   `applySiteFlags()`. ⚠️ **Tutte** le regole CSS degli effetti sono scoped a quella
   classe (`html.fx-glow …`, `html.fx-vig body`, ecc.): a flag spento l'effetto **non
   esiste**, non è solo invisibile. Aggiungendo un effetto nuovo, scoparlo così.
+  Gli effetti REGOLABILI hanno le regole in **`injectFxRules()`** (`<style id=
+  "fx-dyn">`, ri-iniettato a ogni modifica): le FORMULE (`fxGlowInner`,
+  `fxGlowOuter`, `fxSpotBg`) sono condivise con l'anteprima della sotto-modale,
+  così anteprima e pagina non possono divergere. `applySiteFlags` chiama anche
+  `injectFxRules` + `wireSpotlight`.
 - **I 5 effetti** (mockup approvato dall'utente: 'stanno benissimo anche tutti
   insieme'), tutti a **costo zero sul layout** (nessuno sposta il contenuto):
-  1. **`glow` — accensione della striscia** (`fx-glow`): al passaggio del mouse la
-     striscia diffonde la tinta di famiglia dentro la card, su due strati (12px +
-     34px/10px di sfumatura; opacità 0.62/0.36 in scuro, 0.50/0.26 in chiaro —
-     rinforzate nella v12.27 perché la prima taratura 'si vedeva pochissimo'). ⚠️ **Niente sollevamento né ombra sulla
-     card**: l'utente vuole le card **'virtuali', non schede fisiche** (il lift del
-     mockup è stato scartato apposta). Regole **iniettate** in
-     `injectCardColorRules` perché usano `rgba(var(--ccrgb),…)` (il Nu non parsa
-     `var()` dentro `rgba()`), con `!important` per battere il
-     `.rank-strip{box-shadow:none!important}` di base. Il bagliore verso sinistra è
-     tagliato dall'`overflow:hidden` della card: resta la diffusione interna.
-  2. **`press` — nomi incisi** (`fx-press`): letterpress in tema chiaro (lume bianco
+  1. **`glow` — accensione della striscia** (`fx-glow`, REGOLABILE): la striscia
+     diffonde la tinta di famiglia dentro la card su due strati derivati dalle
+     manopole. Manopole: `amp` (ampiezza sfumatura, 10-60px), `int` (intensità,
+     0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `all` (**tutte**
+     le card accese invece della sola card attiva → classe extra `fx-glow-all`).
+     Default = la taratura v12.27 (34px, 0.62, solo dentro, solo card attiva).
+     ⚠️ **Niente sollevamento né ombra grigia sulla card**: card **'virtuali', non
+     schede fisiche** (il lift del mockup è stato scartato apposta). Il bagliore
+     interno è tagliato a sinistra dall'`overflow:hidden` della card; quello
+     ESTERNO (`out`) è un'ombra PROPRIA della card (l'overflow taglia solo i
+     figli), con **spread negativo = metà del blur** così esce SOLO dal lato
+     sinistro senza disegnare un contorno luminoso attorno al perimetro (il primo
+     tentativo senza spread avvolgeva tutta la card: effetto neon, scartato).
+  2. **`spot` — riflettore sul puntatore** (`fx-spot`, REGOLABILE, dalla v12.39):
+     alone bianco molto sfumato che schiarisce la card sotto il puntatore e lo
+     SEGUE, confinato dentro la card. Manopole: `r` (raggio 70-300px), `int`
+     (intensità 0.02-0.12; il tetto è il valore verificato con axe: 0 violazioni
+     anche al massimo, hover incluso). Implementazione: RIUSA `.rank-item::before`
+     (il vecchio velo statico di hover, stesso fade opacity 0→1) con
+     `radial-gradient(circle r at var(--spx) var(--spy))`; `z-index:-1` +
+     `isolation:isolate` sulla card lo tengono sopra il fondo e SOTTO i testi.
+     Il tema CHIARO usa opacità ~3× (int*3, cap 0.5): su fondo quasi bianco lo
+     stesso valore sarebbe invisibile, e lì schiarire ALZA il contrasto del testo
+     scuro. Inseguimento: UN listener `pointermove` delegato su `#rank-list`
+     (`wireSpotlight`), coalescente via rAF, che aggiorna solo `--spx/--spy` (mai
+     la stringa del gradiente); sotto zoom si divide per `z = rect.width/
+     offsetWidth` (stessa lezione delle linee mediane). In `@media print` il
+     `::before` è nascosto. In tema chiaro il `display:none` statico del
+     `::before` è scavalcato dalla regola iniettata (sorgente più in basso).
+  3. **`press` — nomi incisi** (`fx-press`): letterpress in tema chiaro (lume bianco
      sotto + velo scuro sopra), stacco morbido in scuro.
-  3. **`vig` — vignettatura** (`fx-vig`): alone radiale come **livello di sfondo del
+  4. **`vig` — vignettatura** (`fx-vig`): alone radiale come **livello di sfondo del
      body** (`background-image` + `background-attachment:fixed`), non un elemento
      sovrapposto: niente nodi nuovi né problemi di impilamento.
-  4. **`fade` — bordi lista in dissolvenza** (`fx-fade`): `mask-image` su
-     `#rank-list`, 26px. Azzerata in `@media print` (su carta sarebbe un difetto).
   5. **`podium` — podio metallico** (`fx-podium`): numeri 1-2-3 con gradiente
      oro/argento/bronzo (`background-clip:text` + `color:transparent`, come il
      titolone) e `text-shadow:none` (il glow grigio base di `.rank-num`
@@ -398,13 +430,37 @@ admin minimale).
      normale' (richiesta dell'utente); tema chiaro con metalli scuriti per l'AA.
      ⚠️ Misurando il colore dopo un cambio di flag si legge ancora `transparent`: è
      la `transition:color 0.35s` di `.rank-num`, non un bug (attendere ~400ms).
+  - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto
+    della v12.24 (`mask-image` su `#rank-list`), **eliminato del tutto nella
+    v12.39** su richiesta dell'utente, sostituito dal riflettore. Non
+    reintrodurlo; un eventuale `"fade"` residuo in `siteFlags` è ignorato da
+    `normSiteFlags`.
+- **Sotto-modale di regolazione (`showFxConfigEditor(key)`, dalla v12.39).** Nel
+  pannello gli effetti regolabili NON hanno la checkbox: hanno un'**icona a due
+  cursori verticali** (fader, `FX_SLIDERS_SVG`, monocromatica `currentColor` —
+  disegno scelto dall'utente) + una pastiglia di stato Attivo/Spento accanto al
+  nome. Il click apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
+  minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
+  sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
+  **anteprima dinamica** su card finte nei DUE temi affiancati (fondi e struttura
+  reali; il riflettore segue il puntatore ANCHE nell'anteprima; colori da
+  `CARDCOLORS`, terne concrete via il 3° parametro `cc` delle formule). Ogni
+  modifica si applica SUBITO anche alle card vere dietro. Piè: 'Ultimo salvato'
+  (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e riapre) e 'Chiudi'; il
+  salvataggio resta SOLO nel pannello Feature flag. Esc chiude `#fx-modal` PRIMA
+  del `#fab-modal` sotto (ramo dedicato nell'handler Escape); `#fx-modal` è nelle
+  guardie dei tasti `P` e `.`. Il CSS dell'editor è iniettato
+  (`injectFxEditorCss`), invisibile al Nu.
 - **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, true, null,
   SITE_FLAGS)` → il Worker scrive `siteFlags` **senza bumpare la versione**
   (`keepVersion:true`, come i salvataggi colore: richiesta dell'utente dalla v12.27,
   accendere un effetto non è una modifica di contenuto). Il controllo di freschezza
   resta affidabile perché si basa sul confronto dei ref git, non sul numero.
-  `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Le checkbox
-  applicano l'effetto **subito** (anteprima live sulle card dietro).
+  `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Checkbox e manopole
+  applicano l'effetto **subito** (anteprima live sulle card dietro). Il Worker
+  (rev 14) valida anche la forma a oggetto: booleano O oggetto piatto di
+  booleani/numeri finiti/stringhe ≤32 char, max 12 manopole per effetto (controlla
+  la FORMA; i limiti veri li applica il client con `FX_RANGE`).
 - Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**:
   altrimenti il flag `zoomBig` sembrerebbe non funzionare.
 - ⚠️ **Go-live di una release che tocca sito E Worker: aspettare la spia `rev`.**
@@ -447,7 +503,8 @@ admin minimale).
     Object dà un conteggio affidabile. Storia in PR #294-#302.
   - **Spia di salute del Worker:** un `GET` (o qualunque non-POST) risponde
     `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del
-    codice attiva (**13** dalla v12.24, che ha aggiunto `siteFlags`; utile per
+    codice attiva (**14** dalla v12.39, che ha esteso `validSiteFlags` ai flag
+    a oggetto; 13 dalla v12.24, che aveva aggiunto `siteFlags`; utile per
     verificare che una ridistribuzione via Git sia andata a buon fine, non
     altrimenti ispezionabile senza dashboard), `rl`
     se il binding `RL_DO` è presente. Nessun segreto esposto. Bump di `rev`

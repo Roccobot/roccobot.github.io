@@ -135,12 +135,28 @@ function readSiteFlags(src) {
   try { var o = JSON.parse(m[1]); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : null; } catch (e) { return null; }
 }
 
-// Validazione di forma: mappa chiave → booleano (max 40 chiavi).
+// Validazione di forma: mappa chiave → booleano (effetto senza regolazioni) OPPURE
+// oggetto PIATTO di manopole (effetto regolabile, dalla v12.39: {on, ampiezza,
+// intensità, ...}). Valori ammessi dentro l'oggetto: booleani, numeri finiti e
+// stringhe brevi; niente annidamento più profondo, niente array. Max 40 chiavi
+// esterne e 12 manopole per effetto: il client tiene comunque i valori nei limiti di
+// FX_RANGE, qui si controlla solo la FORMA (il Worker non conosce gli effetti).
 function validSiteFlags(sf) {
   if (!sf || typeof sf !== 'object' || Array.isArray(sf)) return false;
   var keys = Object.keys(sf);
   if (keys.length < 1 || keys.length > 40) return false;
-  return keys.every(function (k) { return typeof sf[k] === 'boolean'; });
+  var leaf = function (v) {
+    return typeof v === 'boolean'
+      || (typeof v === 'number' && isFinite(v))
+      || (typeof v === 'string' && v.length <= 32);
+  };
+  return keys.every(function (k) {
+    var v = sf[k];
+    if (leaf(v)) return true;
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+    var ps = Object.keys(v);
+    return ps.length >= 1 && ps.length <= 12 && ps.every(function (p) { return leaf(v[p]); });
+  });
 }
 
 // Validazione di forma: mappa unità → {ml,mr,ny,sc} tutti numeri finiti (sc>0).
@@ -280,7 +296,7 @@ export default {
     // 'rl' = presenza del binding del Durable Object di rate limiting.
     // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
     // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 13, rl: !!env.RL_DO }, 405, ch);
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 14, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
