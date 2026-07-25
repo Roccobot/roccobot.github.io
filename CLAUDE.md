@@ -393,16 +393,22 @@ admin minimale).
   1. **`glow` — accensione della striscia** (`fx-glow`, REGOLABILE): la striscia
      diffonde la tinta di famiglia dentro la card su due strati derivati dalle
      manopole. Manopole: `amp` (ampiezza sfumatura, 10-60px), `int` (intensità,
-     0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `all` (**tutte**
-     le card accese invece della sola card attiva → classe extra `fx-glow-all`).
-     Default = la taratura v12.27 (34px, 0.62, solo dentro, solo card attiva).
+     0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `aura` (**alone
+     intorno alla card**, tutto il perimetro, 0-0.6 con 0 = spento; dalla v12.41),
+     `all` (**tutte** le card accese invece della sola card attiva → classe extra
+     `fx-glow-all`).
+     Default = la taratura v12.27 (34px, 0.62, solo dentro, aura 0, solo card attiva).
      ⚠️ **Niente sollevamento né ombra grigia sulla card**: card **'virtuali', non
      schede fisiche** (il lift del mockup è stato scartato apposta). Il bagliore
      interno è tagliato a sinistra dall'`overflow:hidden` della card; quello
-     ESTERNO (`out`) è un'ombra PROPRIA della card (l'overflow taglia solo i
-     figli), con **spread negativo = metà del blur** così esce SOLO dal lato
+     ESTERNO (`out`) e l'ALONE (`aura`) sono ombre PROPRIE della card (l'overflow
+     taglia solo i figli). `out` ha **spread negativo** così esce SOLO dal lato
      sinistro senza disegnare un contorno luminoso attorno al perimetro (il primo
      tentativo senza spread avvolgeva tutta la card: effetto neon, scartato).
+     Storico `out`: fino alla v12.40 il blur era `2b` con spread `-b` e ad ampiezze
+     alte la coda gaussiana traboccava comunque sul perimetro (notato dall'utente,
+     a cui piaceva: da lì è nata `aura` come manopola separata); dalla v12.41 il
+     blur di `out` è `1.6b` e il perimetro resta pulito.
   2. **`spot` — riflettore sul puntatore** (`fx-spot`, REGOLABILE, dalla v12.39):
      alone bianco molto sfumato che schiarisce la card sotto il puntatore e lo
      SEGUE, confinato dentro la card. Manopole: `r` (raggio 70-300px), `int`
@@ -454,7 +460,12 @@ admin minimale).
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
   **anteprima dinamica** su card finte nei DUE temi affiancati (fondi e struttura
   reali; il riflettore segue il puntatore ANCHE nell'anteprima; colori da
-  `CARDCOLORS`, terne concrete via il 3° parametro `cc` delle formule). Ogni
+  `CARDCOLORS`, terne concrete via il 3° parametro `cc` delle formule). Regole
+  dell'anteprima (richieste utente, v12.41): **tema CHIARO per primo** (come le
+  altre anteprime del progetto), **niente etichette 'Scuro'/'Chiaro'**, card rese
+  **SEMPRE in stato hover** (fondo acceso e bagliori attivi, altrimenti gli slider
+  non si vedrebbero in tempo reale) e **padding sinistro abbondante** nel riquadro
+  (le sfumature lunghe di `out`/`aura` escono dalla card e venivano tagliate). Ogni
   modifica si applica SUBITO anche alle card vere dietro. Piè: 'Ultimo salvato'
   (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e riapre) e 'Chiudi'; il
   salvataggio resta SOLO nel pannello Feature flag. Esc chiude `#fx-modal` PRIMA
