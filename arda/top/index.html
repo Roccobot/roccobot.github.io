@@ -54,6 +54,15 @@
    scrollbar-gutter:stable da solo non bastava (non sopravvive a overflow:hidden,
    complice overflow-x:hidden su body che sposta lo scroller). */
 html { scroll-behavior:smooth; overflow-y:scroll; }
+/* MODALITÀ INGRANDITA (dalla v12.14): equivalente in-pagina dello zoom del browser
+   al 140%, che l'utente ha trovato ottimo per la leggibilità su desktop. Si usa la
+   proprietà `zoom` e NON un ingrandimento del font-size di root: `zoom` scala TUTTO
+   in modo uniforme (anche i valori pinnati in px, come il passo 31.5px delle righe
+   del Pannello), quindi gli allineamenti restano intatti; scalare il solo font-size
+   invece li romperebbe (testo +40% ma passo fermo a 31.5px). Verificato: nessuno
+   scroll orizzontale da 320px a 1440px, modali e tasti fissi dentro il viewport.
+   Il fattore vive QUI e in ZOOM_BIG_FACTOR (JS), tenuti allineati. */
+html.zoom-big { zoom:1.4; }
 body {
   /* Sfondo pagina NEUTRO (dalla v8.72): il colore lo portano le card (cardcolor),
      quindi il fondo pagina non è più blu-inchiostro ma un grigio neutro (default
@@ -733,6 +742,17 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
    della barra mobile. */
 .ctrl-icon-btn.ctrl-share-done,
 .ctrl-bottombar .ctrl-icon-btn.ctrl-share-done { background:var(--gold); border-color:var(--gold-bright); color:var(--ink); }
+/* Tasto 'modalità ingrandita' ACCESA: fondo e bordo in tinta di stato (come il
+   riordino attivo), ma il TESTO resta il colore normale del tasto. ⚠️ Non usare
+   var(--gold) per il testo: in tema scuro quel token è NEUTRALIZZATO a grigio
+   (dalla v8.79) e su questo fondo dava 2.85:1 (axe lo bocciava). Col testo normale
+   il contrasto resta AA e lo stato si legge da fondo + bordo + aria-pressed. Il 2°
+   selettore vince sulla regola .ctrl-bottombar .ctrl-lang-btn della barra mobile. */
+.ctrl-zoom-btn[aria-pressed="true"],
+.ctrl-bottombar .ctrl-zoom-btn[aria-pressed="true"] { background:rgba(210,178,92,0.22); border-color:rgba(210,178,92,0.75); }
+.ctrl-zoom-btn[aria-pressed="true"]:hover { background:rgba(210,178,92,0.34); border-color:rgba(224,194,108,0.95); }
+html[data-theme="light"] .ctrl-zoom-btn[aria-pressed="true"],
+html[data-theme="light"] .ctrl-bottombar .ctrl-zoom-btn[aria-pressed="true"] { background:rgba(31,85,98,0.16); border-color:rgba(31,85,98,0.75); }
 .ctrl-cat-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
 .ctrl-cat-head .ctrl-h { margin:0; display:inline-grid; justify-items:start; align-items:center; }
 /* Testata categorie a larghezza costante fra le lingue (grid-stack): impedisce
@@ -2276,7 +2296,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.04</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.14</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2535,7 +2555,7 @@ document.addEventListener('keydown', function(e) {
 // per ricaricarla nella nuova lingua, T perche' il tema si ricolora via CSS.
 document.addEventListener('keydown', function(e) {
   var k = e.key.toLowerCase();
-  if (k !== 'p' && k !== 'l' && k !== 't') return;
+  if (k !== 'p' && k !== 'l' && k !== 't' && k !== 'z') return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
   if (typeof reorderMode !== 'undefined' && reorderMode) return;
@@ -2550,6 +2570,11 @@ document.addEventListener('keydown', function(e) {
   if (k === 'l') {
     e.preventDefault();
     setLang(currentLang === 'it' ? 'en' : 'it');
+    return;
+  }
+  if (k === 'z') { // modalità ingrandita (come T e L: attivo anche con una scheda aperta)
+    e.preventDefault();
+    toggleZoomMode();
     return;
   }
   // k === 'p': col Pannello dietro un overlay il toggle non avrebbe senso.
@@ -3727,7 +3752,19 @@ function placeMidlinesFor(pairs) {
     recs.push({ host: pr.host, nm: nm, strut: strut, off: off });
   });
   recs.forEach(function(r) { r.baseY = r.strut.getBoundingClientRect().top; r.hostTop = r.host.getBoundingClientRect().top; });
-  recs.forEach(function(r) { r.nm.removeChild(r.strut); r.host.style.setProperty('--mid', (r.baseY - r.off - r.hostTop).toFixed(1) + 'px'); });
+  // Correzione per la MODALITÀ INGRANDITA (zoom su <html>). Attenzione alle unità:
+  // getBoundingClientRect dà px GIÀ scalati dallo zoom, mentre `off` (= ratio x
+  // font-size computato) è in px di layout NON scalati; --mid viene poi riapplicata
+  // dentro il contesto zoomato. Quindi si divide per il fattore SOLO la differenza
+  // ricavata dai rect, e si sottrae `off` dopo: mid = (baseY-hostTop)/z - off.
+  // Il fattore si rileva da sé (rect/offsetWidth), così vale per qualunque zoom.
+  var z = 1;
+  for (var i = 0; i < recs.length; i++) {
+    var ow = recs[i].host.offsetWidth;
+    if (ow > 0) { z = recs[i].host.getBoundingClientRect().width / ow; break; }
+  }
+  if (!(z > 0.1)) z = 1;
+  recs.forEach(function(r) { r.nm.removeChild(r.strut); r.host.style.setProperty('--mid', ((r.baseY - r.hostTop) / z - r.off).toFixed(1) + 'px'); });
 }
 function placeCardMidlines() {
   var pairs = [];
@@ -4375,9 +4412,22 @@ function controlPanelHTML() {
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var MOON = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
   var LINK_ICON = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+  // Tasto 'modalità ingrandita': glifo tipografico 'A+' invece di un'icona SVG
+  // (dice da sé di cosa si tratta ed è indipendente dalla lingua). Riusa lo stile
+  // del tasto lingua (quadrato di testo, dimensionato in toolbar e barra mobile) e
+  // aggiunge .ctrl-zoom-btn come aggancio proprio; lo stato sta in aria-pressed.
+  var ZOOM_BTN = function(lbl, on){
+    return '<button class="ctrl-lang-btn ctrl-zoom-btn" aria-pressed="' + (on ? 'true' : 'false')
+      + '" aria-label="' + lbl + '" title="' + lbl + '">A+</button>';
+  };
   var shareLbl = currentLang === 'it' ? 'Copia il link alla vista corrente (categorie attive)' : 'Copy a link to the current view (active categories)';
   var themeLbl = isLight ? (currentLang==='it'?'Passa al tema scuro':'Switch to dark theme') : (currentLang==='it'?'Passa al tema chiaro':'Switch to light theme');
   var langLbl = currentLang === 'it' ? 'Visualizza in inglese' : 'View in Italian';
+  // Modalità ingrandita (zoom 140%): etichetta che dice cosa fa il click, come per
+  // il tema (l'azione, non lo stato). Lo stato lo porta aria-pressed sul pulsante.
+  var zoomOn = document.documentElement.classList.contains('zoom-big');
+  var zoomLbl = zoomOn ? (currentLang === 'it' ? 'Torna alla dimensione normale' : 'Back to normal size')
+                       : (currentLang === 'it' ? 'Ingrandisci i testi' : 'Enlarge the text');
   // Tasto Info (cerchio + i, stile Feather): dalla v5.79 apre la modale unica
   // 'Risorse e note' (non più direttamente la nota sulle traduzioni, che ora è
   // una voce di quella modale). Bilingue.
@@ -4420,6 +4470,7 @@ function controlPanelHTML() {
      +   infoBtn
      +   '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +   '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
+     +   ZOOM_BTN(zoomLbl, zoomOn)
      +   '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      + '</span>'
      + '</div>';
@@ -4625,6 +4676,7 @@ function controlPanelHTML() {
      +     infoBtn
      +     '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
      +     '<button class="ctrl-icon-btn ctrl-theme-btn" aria-label="' + themeLbl + '" title="' + themeLbl + '">' + (isLight ? MOON : SUN) + '</button>'
+     +     ZOOM_BTN(zoomLbl, zoomOn)
      +     '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + LINK_ICON + '</button>'
      +   '</span>'
      +   '<button class="ctrl-sheet-close" id="ctrl-close" aria-label="' + T.close + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9 12 15 18 9"/></svg></button>'
@@ -4763,8 +4815,14 @@ function wireControlPanel() {
   });
   var close = document.getElementById('ctrl-close');
   if (close) close.addEventListener('click', toggleControlPanel);
-  panel.querySelectorAll('.ctrl-lang-btn').forEach(function(b){
+  // :not(.ctrl-zoom-btn) — il tasto 'modalità ingrandita' riusa lo STILE del tasto
+  // lingua (stessa classe), ma non deve cambiare lingua: ha il suo handler sotto.
+  panel.querySelectorAll('.ctrl-lang-btn:not(.ctrl-zoom-btn)').forEach(function(b){
     b.addEventListener('click', function(){ setLang(currentLang === 'it' ? 'en' : 'it'); });
+  });
+  // Modalità ingrandita: due istanze (toolbar desktop / barra mobile).
+  panel.querySelectorAll('.ctrl-zoom-btn').forEach(function(btn){
+    btn.addEventListener('click', toggleZoomMode);
   });
   // Il numero di versione del pannello (mobile) porta dritto all'editor admin
   // (parola d'ordine se non già sbloccato), esattamente come il badge in testata
@@ -5141,6 +5199,29 @@ function toggleControlPanel(skipSheetAnim) {
       hint.classList.remove('play'); void hint.offsetWidth; hint.classList.add('play');
     }, 250);
   }
+}
+
+// Fattore della modalità ingrandita: tenuto allineato alla regola CSS
+// html.zoom-big{zoom:1.4}. Serve a JS solo per documentazione/riferimento: le
+// misure a runtime rilevano lo zoom da sole (vedi placeMidlinesFor).
+var ZOOM_BIG_FACTOR = 1.4;
+// Modalità ingrandita (dalla v12.14): 140% dell'intera pagina via la proprietà
+// `zoom` su <html>, cioè l'equivalente dello zoom del browser (scala TUTTO in modo
+// uniforme, px pinnati inclusi, quindi gli allineamenti restano intatti). NON
+// persistente, come tema e lingua: al ricaricamento si torna alla dimensione
+// normale. Aggiorna aria-pressed e le etichette dei due tasti (toolbar desktop e
+// barra mobile) e rimisura le righe (a-capo dei nomi, linee mediane).
+function toggleZoomMode() {
+  var on = document.documentElement.classList.toggle('zoom-big');
+  var it = currentLang === 'it';
+  var lbl = on ? (it ? 'Torna alla dimensione normale' : 'Back to normal size')
+               : (it ? 'Ingrandisci i testi' : 'Enlarge the text');
+  document.querySelectorAll('.ctrl-zoom-btn').forEach(function(b){
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.setAttribute('aria-label', lbl); b.setAttribute('title', lbl);
+  });
+  // Le misure dipendono dalla scala: rifà a-capo 'smart' e linee mediane.
+  if (typeof reflowRows === 'function') reflowRows();
 }
 
 // #3 — toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)

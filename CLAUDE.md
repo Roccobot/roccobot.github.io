@@ -287,6 +287,47 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     macchina del riordino restano nel codice, non più richiamate dal tap
     versione, per un eventuale ripristino futuro del riordino su mobile.
 
+## 🔎 Modalità ingrandita (dalla v12.14)
+
+Ingrandimento del sito al **140%**, per la leggibilità su desktop (richiesta
+dell'utente, che aveva verificato come lo zoom del browser a quel valore renda
+ottimi i testi lasciando gli allineamenti perfetti).
+
+- **Meccanismo: `html.zoom-big { zoom:1.4 }`** — la proprietà `zoom`, non un
+  ingrandimento del `font-size` di root. ⚠️ **La differenza è sostanziale e
+  misurata:** `zoom` scala TUTTO in modo uniforme, **inclusi i valori pinnati in
+  px** (il passo `31.5px` delle righe del Pannello, `min-height:21px` dello slot
+  tag, i filetti da 1px), quindi gli allineamenti restano intatti; scalare il solo
+  `font-size` invece li **rompe** (testo +40% ma passo fermo a 31.5px). Non
+  reintrodurre la variante font-size.
+- Il fattore vive in **due punti da tenere allineati**: la regola CSS e la costante
+  JS `ZOOM_BIG_FACTOR` (quest'ultima solo di riferimento: le misure a runtime
+  rilevano lo zoom da sé).
+- **Non persistente**, come tema e lingua: al ricaricamento si torna alla
+  dimensione normale.
+- **Comandi:** il tasto **`A+`** nel Pannello (toolbar su desktop, barra inferiore
+  su mobile, accanto a tema/lingua/condividi) e la scorciatoia **`Z`**. Il tasto
+  riusa lo **stile** del tasto lingua (`.ctrl-lang-btn`) più l'aggancio proprio
+  `.ctrl-zoom-btn`; lo stato sta in `aria-pressed`. ⚠️ Per questo il wiring della
+  lingua è `.ctrl-lang-btn:not(.ctrl-zoom-btn)`: senza l'esclusione il tasto
+  ingrandimento cambierebbe anche la lingua.
+- **Stato acceso: fondo e bordo in tinta, testo NON colorato.** ⚠️ Non usare
+  `var(--gold)` per il testo del tasto: in tema scuro quel token è
+  **neutralizzato a grigio** (dalla v8.79) e su quel fondo dava **2.85:1** (axe lo
+  bocciava). Lo stato si legge da fondo + bordo + `aria-pressed`.
+- **Linee mediane sotto zoom (`placeMidlinesFor`).** Attenzione alle unità:
+  `getBoundingClientRect` dà px **già scalati**, mentre `off` (ratio × font-size
+  computato) è in px di layout **non** scalati, e `--mid` viene riapplicata dentro
+  il contesto zoomato. Formula corretta: **`mid = (baseY − hostTop)/z − off`** (si
+  divide SOLO la differenza dai rect). Il fattore `z` si rileva da sé come
+  `rect.width / offsetWidth`, quindi vale per qualunque zoom futuro. Resta un
+  residuo sub-pixel (~0.5px) in modalità ingrandita, ininfluente: è uno strumento
+  admin, e in modalità normale la misura è esatta.
+- **Verificato:** nessuno scroll orizzontale da **320px a 1600px**, modali e
+  elementi fissi (FAB, tasti salto) dentro il viewport, axe **0** in entrambi i temi
+  con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
+  nel CSS statico).
+
 ## 🔐 Admin e segreti
 
 - **La parola d'ordine admin è validata SOLO lato server** dal Cloudflare
@@ -1534,6 +1575,9 @@ specifico del dataset):
       NON è possibile da una pagina web (Fn non genera eventi; Win/Super è
       riservato all'OS: menu Start / vista Attività non prevenibili): non
       riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
+    - **Z (tasto nudo, dalla v12.14)**: accende/spegne la **modalità ingrandita**
+      (vedi la sezione dedicata). Stesse guardie di `T`/`L` (quindi attivo anche con
+      una scheda aperta), listener nello stesso blocco.
     - **. (punto, ADMIN-only, dalla v11.80)**: mostra/nasconde le **linee mediane
       di allineamento** sulle card — la stessa riga rossa tratteggiata dell'editor
       micro-aggiustamenti, ma **sulla pagina reale**, una per personaggio, a metà
