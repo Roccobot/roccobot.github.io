@@ -382,6 +382,18 @@ admin minimale).
   applicano l'effetto **subito** (anteprima live sulle card dietro).
 - Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**:
   altrimenti il flag `zoomBig` sembrerebbe non funzionare.
+- ⚠️ **Go-live di una release che tocca sito E Worker: aspettare la spia `rev`.**
+  Sito (GitHub Pages) e Worker (Cloudflare Workers Builds) si ridistribuiscono
+  dallo **stesso push su `master`** ma su infrastrutture diverse, con tempi
+  diversi. Finché il Worker è alla revisione **precedente**, un salvataggio dal
+  pannello **sembra riuscire** ma la config nuova **non viene scritta** (il Worker
+  vecchio ignora il campo che non conosce — e, se una config era già stata
+  salvata, la **perde**, non conoscendone il lettore). Perciò: dopo il merge,
+  prima di salvare dal pannello, verificare la revisione attiva con un `GET` al
+  Worker (`{ok:false,error:'method',rev:N,rl:bool}`) e attendere il numero atteso.
+  Nota: il commento 'Deployment successful' del bot Cloudflare su una PR è la
+  build del **branch**, NON la promozione in produzione: fa fede solo la spia
+  `rev`. Verificato il 2026-07-25: a PR aperta la produzione era ancora `rev 12`.
 
 ## 🔐 Admin e segreti
 
