@@ -2350,7 +2350,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.39</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2793,8 +2793,13 @@ document.addEventListener('keydown', function(e) {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
   if (typeof reorderMode !== 'undefined' && reorderMode) return;
+  // Guardia sui campi: blocca solo dove si SCRIVE (campi di testo, textarea,
+  // select, contentEditable). Checkbox, radio, range e bottoni NON bloccano:
+  // dopo un click su una checkbox del pannello Feature flag il focus resta lì,
+  // e L/T devono continuare a funzionare (regola dell'utente, v12.40).
   var tgt = e.target;
-  if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.tagName === 'SELECT' || tgt.isContentEditable)) return;
+  if (tgt && (tgt.tagName === 'TEXTAREA' || tgt.tagName === 'SELECT' || tgt.isContentEditable)) return;
+  if (tgt && tgt.tagName === 'INPUT' && !/^(checkbox|radio|range|button|color)$/.test((tgt.type || 'text').toLowerCase())) return;
   if (k === 't') {
     e.preventDefault();
     toggleTheme();
@@ -2806,18 +2811,17 @@ document.addEventListener('keydown', function(e) {
     setLang(currentLang === 'it' ? 'en' : 'it');
     return;
   }
-  if (k === 'z') { // modalità ingrandita (come T e L: attivo anche con una scheda aperta)
-    e.preventDefault();
-    toggleZoomMode();
-    return;
-  }
-  // k === 'p': col Pannello dietro un overlay il toggle non avrebbe senso.
+  // k === 'p' o 'z': SOLO a modali chiuse (regola dell'utente, v12.40). P perché
+  // col Pannello dietro un overlay il toggle non avrebbe senso; Z perché, pur
+  // agendo lo zoom su tutto, non deve scattare 'sotto' una modale aperta.
+  // T e L invece restano attivi in tutte le modali (eccezioni documentate).
   var bd = document.getElementById('modal-backdrop');
   if ((bd && bd.classList.contains('active')) || document.getElementById('imgv')
       || document.getElementById('fab-modal') || document.getElementById('note-modal')
       || document.getElementById('res-modal') || document.getElementById('stats-modal')
       || document.getElementById('fx-modal')) return;
   e.preventDefault();
+  if (k === 'z') { toggleZoomMode(); return; }
   toggleControlPanel();
 });
 
@@ -5451,9 +5455,11 @@ function toggleZoomMode() {
   LS.setItem(ZOOM_LS_KEY, on ? '1' : '0');
   // Le misure dipendono dalla scala: rifà a-capo 'smart' e linee mediane.
   if (typeof reflowRows === 'function') reflowRows();
+  // Testi dei toast riscritti dall'utente (v12.40): 'Modalit\u00E0 XL' come la voce
+  // del pannello Feature flag (era 'Vista ingrandita (solo per te)').
   showToast(currentLang === 'it'
-    ? (on ? 'Vista ingrandita (solo per te)' : 'Vista normale (solo per te)')
-    : (on ? 'Larger size (just for you)' : 'Standard size (just for you)'), false, '\uD83D\uDD0D');
+    ? (on ? 'Modalit\u00E0 XL' : 'Modalit\u00E0 normale')
+    : (on ? 'XL Mode' : 'Standard mode'), false, '\uD83D\uDD0D');
 }
 
 // #3 — toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)
@@ -6695,23 +6701,27 @@ function openAdminGate() {
 function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, true, null, SITE_FLAGS); }
 var SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS));
 // Voci del pannello, nell'ordine di presentazione. `k` = chiave in SITE_FLAGS.
+// Testi RISCRITTI DALL'UTENTE (2026-07-25, v12.40), a-capo inclusi (i \n nelle
+// note sono voluti e resi da white-space:pre-line): non riformularli.
 var SITE_FLAG_ITEMS = [
-  { k:'zoomBig', it:'Modalità ingrandita (130%)', en:'Enlarged mode (130%)',
-    nit:'Ingrandisce tutto il sito per tutti i visitatori. Il tasto Z resta una scelta personale di chi guarda e scavalca questa.',
-    nen:'Enlarges the whole site for every visitor. The Z key stays a personal choice and overrides this.' },
+  { k:'zoomBig', it:'Modalità XL', en:'XL Mode',
+    nit:'Ingrandisce tutto il sito per tutti i visitatori.\nGli utenti possono sovrascrivere l\'impostazione premendo Z.',
+    nen:'Magnifies the entire site for all visitors.\nUsers can override this setting by pressing Z.' },
   { k:'glow', it:'Accensione della striscia', en:'Strip glow', cfg:true,
-    nit:'La striscia diffonde la tinta della famiglia dentro la card. Regolabili: ampiezza, intensità, dentro/fuori, quali card.',
-    nen:'The strip diffuses its family colour into the card. Adjustable: spread, intensity, inside/outside, which cards.' },
-  { k:'spot', it:'Riflettore sul puntatore', en:'Cursor spotlight', cfg:true,
-    nit:'Un alone bianco molto sfumato schiarisce la card dove passa il puntatore, e lo segue restando dentro la card.',
-    nen:'A very soft white glow lightens the card under the pointer and follows it, staying inside the card.' },
-  { k:'press', it:'Nomi incisi', en:'Letterpress names',
-    nit:'Ombra tipografica impercettibile sui nomi (letterpress in tema chiaro).',
-    nen:'Barely perceptible type shadow on names (letterpress in light theme).' },
-  { k:'vig', it:'Vignettatura', en:'Vignette',
-    nit:'Alone radiale ai bordi del fondo: dà profondità.', nen:'Radial glow at the edges of the ground: adds depth.' },
+    nit:'La striscia diffonde la tinta tutto intorno.\nRegolabili: ampiezza, opacità, intensità, posizione, top/tutti.',
+    nen:'The strip diffuses its color all around.\nAdjustable parameters: spread, opacity, intensity, position, top/all.' },
+  { k:'spot', it:'Riflettore sul puntatore', en:'Pointer spotlight', cfg:true,
+    nit:'Un alone bianco molto sfumato schiarisce la card dove passa\nil puntatore, restando al suo interno.',
+    nen:'A very soft white glow lightens the card where the pointer hovers,\nremaining contained within its borders.' },
+  { k:'press', it:'Nomi incisi', en:'Engraved names',
+    nit:'Leggera ombra tipografica sui nomi (letterpress su tema chiaro).',
+    nen:'Subtle typographic shadow on the names (letterpress on light theme).' },
+  { k:'vig', it:'Vignettatura', en:'Vignetting',
+    nit:'Alone radiale ai bordi del fondo per conferire profondità.',
+    nen:'Radial halo at the edges of the background to add depth.' },
   { k:'podium', it:'Podio metallico', en:'Metallic podium',
-    nit:'I numeri 1-2-3 in oro, argento e bronzo.', nen:'Numbers 1-2-3 in gold, silver and bronze.' }
+    nit:'Numeri 1-2-3 in effetto oro, argento e bronzo.',
+    nen:'Numbers 1-2-3 with gold, silver, and bronze effects.' }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -6768,8 +6778,6 @@ function injectFxEditorCss(){
     'padding:0;background:none;border:1px solid rgba(140,145,160,0.4);border-radius:6px;color:inherit;',
     'cursor:pointer;opacity:0.75;transition:opacity 0.15s,border-color 0.15s}',
     '.fx-gear:hover{opacity:1;border-color:rgba(140,145,160,0.75)}',
-    '.fx-chip{display:inline-block;font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;',
-    'border:1px solid currentColor;border-radius:99px;padding:0 0.4rem;margin-left:0.4rem;opacity:0.6;vertical-align:0.08em}',
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
     '.fxk-row .fxk-lbl{font-size:0.84rem;font-weight:600}',
     '.fxk-row .fxk-val{font-size:0.78rem;font-variant-numeric:tabular-nums;opacity:0.75;min-width:3.2em;text-align:right}',
@@ -6793,6 +6801,10 @@ function fxPreviewCc(light){
 function showFxConfigEditor(key, onDone){
   if (document.getElementById('fx-modal')) return;
   var it = currentLang === 'it', myL, item = null;
+  // Catena degli hook lingua: questa modale sta SOPRA il pannello Feature flag,
+  // che ha già registrato il suo langRefresh. Lo si conserva (prevL) e lo si
+  // RIPRISTINA alla chiusura — azzerarlo lascerebbe il pannello sotto senza L.
+  var prevL = langRefresh;
   SITE_FLAG_ITEMS.forEach(function(f){ if (f.k === key) item = f; });
   if (!item) return;
   injectFxEditorCss();
@@ -6801,7 +6813,7 @@ function showFxConfigEditor(key, onDone){
   box.style.maxWidth = '440px'; box.style.maxHeight = '92vh'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
   var close = function(){
-    overlay.remove(); if (langRefresh === myL) langRefresh = null;
+    overlay.remove(); if (langRefresh === myL) langRefresh = prevL;
     if (typeof onDone === 'function') onDone();
   };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
@@ -6925,16 +6937,22 @@ function showFxConfigEditor(key, onDone){
   hint.textContent = it ? 'Per rendere le modifiche definitive, salva dal pannello Feature flag.'
                         : 'To make changes permanent, save from the Feature flags panel.';
   box.appendChild(hint);
+  // L a modale aperta: prima si ricostruisce il PANNELLO sotto nella nuova lingua
+  // (prevL, il suo hook), poi questa sotto-modale sopra di lui. Senza il passo
+  // intermedio il pannello resterebbe nella lingua vecchia dietro la sotto-modale
+  // aggiornata. Le manopole non si perdono: vivono in SITE_FLAGS, globale.
   myL = function(){
-    if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; }
-    overlay.remove(); showFxConfigEditor(key, onDone);
+    if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = prevL; return; }
+    overlay.remove();
+    if (typeof prevL === 'function') prevL();
+    showFxConfigEditor(key, onDone);
   };
   langRefresh = myL;
 }
 function showSiteFlagsEditor(initState){
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it', myL;
-  injectFxEditorCss(); // .fx-gear / .fx-chip delle righe regolabili
+  injectFxEditorCss(); // .fx-gear delle righe regolabili
   var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   box.style.maxWidth = '460px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
@@ -6947,40 +6965,45 @@ function showSiteFlagsEditor(initState){
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 1rem;';
   sub.textContent = it ? "Aspetto del sito: vale per tutti i visitatori." : 'Site appearance: applies to every visitor.';
   box.appendChild(sub);
-  // Una riga per flag. Effetti SEMPLICI: checkbox. Effetti REGOLABILI (f.cfg, dalla
-  // v12.39): icona 'levette di controllo' che apre la sotto-modale, dove vive anche
-  // l'interruttore; qui accanto al nome resta una pastiglia con lo stato, per
-  // leggerlo a colpo d'occhio senza aprire. Il cambio si applica SUBITO (le card
-  // dietro si aggiornano), così si valuta l'effetto prima di salvare.
+  // Una riga per flag, LAYOUT UNIFORME (richiesta utente, v12.40): checkbox
+  // acceso/spento a sinistra per TUTTI gli effetti; per quelli REGOLABILI (f.cfg)
+  // in più l'icona a due cursori sul LATO DESTRO della riga, che apre la
+  // sotto-modale. Il cambio si applica SUBITO (le card dietro si aggiornano),
+  // così si valuta l'effetto prima di salvare.
   SITE_FLAG_ITEMS.forEach(function(f){
-    var row = document.createElement(f.cfg ? 'div' : 'label');
-    row.style.cssText = 'display:grid;grid-template-columns:auto 1fr;gap:0.55rem;align-items:start;margin:0 0 0.85rem;'
-      + (f.cfg ? '' : 'cursor:pointer;');
-    var ctl, chip = null;
-    if (f.cfg) {
-      ctl = document.createElement('button'); ctl.type = 'button'; ctl.className = 'fx-gear';
-      ctl.innerHTML = FX_SLIDERS_SVG;
-      ctl.setAttribute('aria-label', (it ? 'Regola: ' : 'Adjust: ') + (it ? f.it : f.en));
-      ctl.title = it ? 'Regolazioni' : 'Settings';
-      chip = document.createElement('span'); chip.className = 'fx-chip';
-      var setChip = function(){
-        chip.textContent = flagOn(f.k) ? (it ? 'Attivo' : 'On') : (it ? 'Spento' : 'Off');
-      };
-      setChip();
-      ctl.onclick = function(){ showFxConfigEditor(f.k, function(){ setChip(); reflowRows(); }); };
-    } else {
-      ctl = document.createElement('input'); ctl.type = 'checkbox'; ctl.checked = flagOn(f.k);
-      ctl.style.cssText = 'margin:0.25rem 0 0;width:1rem;height:1rem;flex:none;cursor:pointer;';
-      ctl.addEventListener('change', function(){ SITE_FLAGS[f.k] = ctl.checked; applySiteFlags(); reflowRows(); });
-    }
-    var txt = document.createElement('span');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:start;margin:0 0 0.85rem;';
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = flagOn(f.k);
+    cb.id = 'sf-' + f.k;
+    cb.style.cssText = 'margin:0.25rem 0 0;width:1rem;height:1rem;flex:none;cursor:pointer;';
+    cb.addEventListener('change', function(){
+      // Flag a oggetto: si tocca solo l'interruttore, le manopole restano.
+      if (SITE_FLAGS[f.k] && typeof SITE_FLAGS[f.k] === 'object') SITE_FLAGS[f.k].on = cb.checked;
+      else SITE_FLAGS[f.k] = cb.checked;
+      applySiteFlags(); reflowRows();
+    });
+    var txt = document.createElement('label'); txt.setAttribute('for', cb.id);
+    txt.style.cssText = 'cursor:pointer;';
     var nm = document.createElement('span'); nm.style.cssText = 'display:block;font-size:0.92rem;font-weight:600;';
     nm.textContent = it ? f.it : f.en;
-    if (chip) nm.appendChild(chip);
-    var nt = document.createElement('span'); nt.style.cssText = 'display:block;font-size:0.76rem;opacity:0.66;line-height:1.35;margin-top:0.1rem;';
+    // white-space:pre-line: gli a-capo delle note sono voluti dall'utente.
+    var nt = document.createElement('span'); nt.style.cssText = 'display:block;font-size:0.76rem;opacity:0.66;line-height:1.35;margin-top:0.1rem;white-space:pre-line;';
     nt.textContent = it ? f.nit : f.nen;
     txt.appendChild(nm); txt.appendChild(nt);
-    row.appendChild(ctl); row.appendChild(txt); box.appendChild(row);
+    row.appendChild(cb); row.appendChild(txt);
+    if (f.cfg) {
+      var gear = document.createElement('button'); gear.type = 'button'; gear.className = 'fx-gear';
+      gear.innerHTML = FX_SLIDERS_SVG;
+      gear.setAttribute('aria-label', (it ? 'Regola: ' : 'Adjust: ') + (it ? f.it : f.en));
+      gear.title = it ? 'Regolazioni' : 'Settings';
+      gear.onclick = function(){
+        // Al ritorno la checkbox si riallinea: nella sotto-modale c'è lo stesso
+        // interruttore ('Effetto attivo') e può essere stato cambiato lì.
+        showFxConfigEditor(f.k, function(){ cb.checked = flagOn(f.k); reflowRows(); });
+      };
+      row.appendChild(gear);
+    }
+    box.appendChild(row);
   });
   // Avviso se la preferenza personale di zoom (tasto Z) sta scavalcando il flag:
   // senza, sembrerebbe che l'interruttore 'non funzioni'.
@@ -7010,8 +7033,10 @@ function showSiteFlagsEditor(initState){
     }).finally(function(){ save.disabled = false; save.style.opacity = ''; });
   };
   foot.appendChild(cancel); foot.appendChild(save); box.appendChild(foot);
-  // L (lingua): ricostruisce conservando lo stato corrente dei flag (non salvati).
-  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } close(); showSiteFlagsEditor(); };
+  if (initState && initState.scroll) box.scrollTop = initState.scroll;
+  // L: ricostruisce nella nuova lingua conservando lo scroll (anti-jitter); lo
+  // stato dei flag non salvati vive in SITE_FLAGS, globale, quindi non si perde.
+  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; close(); showSiteFlagsEditor({ scroll: sc }); };
   langRefresh = myL;
 }
 
