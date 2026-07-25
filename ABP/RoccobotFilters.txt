@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-07-09
+! Last updated: 2026-07-25
 
 *ads.js
 *pagead.js
@@ -538,6 +538,7 @@ yogablogfit.com##.qc-cmp2-container
 ||quantserve.com^
 ||hotjar.com^
 ||appsflyer.com^
+||appsflyersdk.com^
 ||branch.io^
 ||metrika.yandex.ru^
 
