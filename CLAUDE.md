@@ -324,19 +324,40 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   JS `ZOOM_BIG_FACTOR` (quest'ultima solo di riferimento: le misure a runtime
   rilevano lo zoom da sé).
 - **DUE LIVELLI, da non confondere** (impianto voluto dall'utente, v12.24):
-  1. **default di SITO** — il flag `zoomBig` del pannello 'Feature flag' (admin):
-     vale per **tutti i visitatori**, vive nei dati (`siteFlags` in `dati.js`);
-  2. **preferenza PERSONALE** — il tasto **`Z`**: vale solo su quel browser, **non
-     tocca il sito**, si ricorda in `localStorage` (`arda-zoom-big`) e **scavalca**
-     il default di sito. Si salvano `'1'`/`'0'` **espliciti**: chiave assente =
+  1. **default di SITO** — il flag `zoomBig` del pannello 'Pannello di controllo'
+     (admin): vive nei dati (`siteFlags` in `dati.js`) e vale per i visitatori
+     **desktop/tablet**. ⚠️ **Sui TELEFONI (≤480px) NON si applica** (v12.43,
+     scelta dell'utente: la XL è 'destinata al desktop'): `applySiteFlags` lo
+     spegne quando `ZOOM_PHONE_MQ` (matchMedia 480px) è attiva, con ricalcolo
+     automatico al varco della soglia (listener `change`, niente lavoro a ogni
+     resize);
+  2. **preferenza PERSONALE** — **tasto `Z`** su desktop, **TAP LUNGO SUL FAB**
+     su mobile (v12.43): vale solo su quel browser, **non tocca il sito**, si
+     ricorda in `localStorage` (`arda-zoom-big`) e **scavalca** il default di
+     sito (nei due sensi, anche sui telefoni: è così che un telefono può stare
+     in XL). Si salvano `'1'`/`'0'` **espliciti**: chiave assente =
      'segui il sito', non 'spento'. Toast di conferma (testi dell'utente, v12.40):
      **'Modalità XL' / 'Modalità normale'** (EN 'XL Mode' / 'Standard mode');
      storico: fino alla v12.39 dicevano 'Vista ingrandita/normale (solo per te)'.
      In UI la voce del pannello si chiama **'Modalità XL' / 'XL Mode'** (v12.40).
-  `applySiteFlags()` applica la regola: `mine === null ? flag di sito : mine === '1'`.
+  `applySiteFlags()` applica la regola:
+  `mine === null ? (flag di sito && !telefono) : mine === '1'`.
 - ⚠️ **Nessun pulsante nel Pannello** (rimosso nella v12.24 su richiesta
-  dell'utente): lo zoom si comanda col tasto `Z` (personale) o dal pannello Feature
-  flag (sito). Storico: la v12.14 aveva un tasto `A+` in toolbar e barra mobile.
+  dell'utente): lo zoom si comanda col tasto `Z` (personale), col tap lungo sul
+  FAB (personale, mobile) o dal Pannello di controllo (sito). Storico: la v12.14
+  aveva un tasto `A+` in toolbar e barra mobile.
+- **Tap LUNGO sul FAB = scorciatoia 'SEGRETA' mobile (dalla v12.43).** ~500ms di
+  pressione sul FAB del Pannello commutano la preferenza personale
+  (`toggleZoomMode`, stesso toast del tasto Z come feedback). Dettagli
+  implementativi da non rompere: SOLO input touch (`e.pointerType === 'touch'`:
+  col mouse un click lento non deve scattare, su desktop c'è Z); tolleranza di
+  movimento ~8px (il dito trema; oltre = intenzione di scorrere → annulla);
+  a gesto riuscito il **click al rilascio è consumato una volta** (flag
+  `lpFired`, altrimenti si aprirebbe anche il Pannello); `contextmenu`
+  preventato e callout/selezione iOS soppressi **inline sul solo FAB**
+  (`webkitTouchCallout`/`userSelect`/`touchAction`, invisibili al Nu). Il gesto
+  è volutamente NON scopribile (come il tap sulla versione); la nota della
+  Modalità XL nel Pannello di controllo lo documenta per l'admin.
 - **Ripristino in due fasi** (la `dati.js` si carica DOPO il blocco iniziale):
   1. blocco iniziale in testa allo script — riapplica solo la **preferenza
      personale**, il più presto possibile, per non mostrare un lampo alla
