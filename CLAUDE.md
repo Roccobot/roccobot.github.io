@@ -3003,6 +3003,16 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   **nome del file** `.js` e il **titolo** (`@name`) da assegnare. Non deciderli
   in autonomia: attendere la risposta prima di creare il file. (Vale per i nuovi
   script; per gli aggiornamenti di script esistenti si mantengono nome e titolo.)
+- **Icona di DEFAULT per ogni userscript (istruzione dell'utente, 2026-07-26):
+  sempre la stessa, `userscripts/Roccobot.png`.** Va messa nell'intestazione di
+  ogni script, nuovo o esistente, senza chiedere:
+
+  ```js
+  // @icon https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
+  ```
+
+  Si usa il raw di GitHub (non il dominio Pages) perché è il riferimento già
+  adottato da tutti gli script. Un'icona diversa solo se l'utente la chiede.
 - **Link di installazione a fine lavoro / dopo OGNI go-live (regola rafforzata
   dall'utente, 2026-07-16).** Ogni volta che crei o **aggiorni** uno userscript,
   **dopo il go-live** ri-invia **sempre** nel messaggio finale il link da cui
