@@ -4,6 +4,15 @@ Script personali per il browser, gestiti dall'estensione
 [Tampermonkey](https://www.tampermonkey.net/). Essendo ospitati su
 GitHub Pages, si installano (e si aggiornano) direttamente dal loro URL.
 
+> **Icona di default.** Tutti gli userscript del repo usano la stessa icona
+> (`Roccobot.png`, in questa cartella), dichiarata nell'intestazione con:
+>
+> ```js
+> // @icon https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
+> ```
+>
+> Vale anche per ogni script nuovo, salvo richiesta diversa.
+
 ## Qwant Roccobot
 
 **File:** `QwantRoccobot.user.js` · **Titolo (`@name`):** `Qwant Roccobot`
@@ -350,3 +359,76 @@ const ZOOM_SENS = 0.0015;  // sensibilità dello zoom con ctrl+rotella
 > lo zoom-clic nativo è a livello di motore e non del tutto sopprimibile via JS: lo
 > script impone comunque la propria dimensione (con `!important`) e gestisce clic/zoom,
 > ma se noti conflitti su un browser specifico segnalamelo e affino.
+
+
+## ENF Roccobot
+
+**File:** `ENFRoccobot.user.js` (titolo `@name`: **ENF Roccobot**)
+
+Su `enf-cmnf.cc` ed `enfhub.com` aggiunge in basso a destra un tasto
+**"⬇︎ Download"** che scarica il video della pagina. Il tasto compare solo
+quando una sorgente c'è davvero (i post di sole foto non lo mostrano) e, se la
+pagina contiene **più video**, apre un elenco per scegliere quale scaricare.
+
+I due siti usano **player diversi**, quindi lo script li riconosce tutti:
+
+| Dove | Player | Cosa scarica |
+|---|---|---|
+| enf-cmnf.cc | `<video><source src="....mp4">` (video.js) | MP4 diretto |
+| enf-cmnf.cc | `<video><source src="....m3u8">` (HLS self-hosted) | segmenti uniti in `.ts` |
+| enf-cmnf.cc | `<video src="....mp4">` (blocco video di WordPress) | MP4 diretto |
+| enfhub.com | hls.js su `cdn.enfhub.site/videos/<id>/master.m3u8` | variante migliore, unita in `.ts` |
+
+Come trova la sorgente, in ordine di fiducia: **1)** una spia di rete installata
+a `document-start` annota gli URL `.m3u8`/`.mp4` che la pagina richiede davvero
+(indispensabile su enfhub, dove hls.js passa al `<video>` un `blob:` e l'URL non
+è nel DOM); **2)** il DOM (`<video>` e `<source>`); **3)** su enfhub l'**id del
+poster** (`thumbnails/<id>/`), da cui si ricava `videos/<id>/master.m3u8`;
+**4)** una scansione del testo della pagina. enfhub è una SPA: al cambio di
+indirizzo la spia si azzera, così non si scarica il video precedente.
+
+**HLS.** Legge la master playlist e sceglie la variante a banda **massima**, poi
+scarica i segmenti (5 alla volta, 3 ritentativi ciascuno) mantenendo l'ordine e
+li unisce in un unico file **`.ts`** (i segmenti sono MPEG-TS: concatenarli dà
+un flusso valido, verificato pacchetto per pacchetto). Se un giorno il flusso
+fosse cifrato **AES-128**, la decifratura è già implementata (chiave dalla
+playlist, IV esplicito o dedotto dal numero di sequenza). Il `.ts` si guarda con
+VLC; per riportarlo a MP4 senza ricodifica: `ffmpeg -i video.ts -c copy video.mp4`.
+
+**MP4.** Prima un assaggio dei primi byte per intercettare subito un rifiuto del
+CDN (altrimenti si salverebbe la pagina d'errore rinominata `.mp4`), poi
+`GM_download` (scrive su disco, nessun limite di memoria) e, se il gestore non
+inoltrasse le intestazioni, un ripiego che scarica in memoria e salva il blob.
+
+> **Vincolo del CDN (misurato il 2026-07-26).** `cdn.enf-cmnf.cc` risponde
+> **403** agli MP4 se la richiesta non ha **insieme** il `Referer` del sito e
+> `Sec-Fetch-Dest: video`. Verificato per esclusione: col solo `Referer` 403, col
+> solo `Sec-Fetch-Dest` 403, con `Dest` diverso da `video` 403. Ne segue che
+> **aprire l'MP4 in una scheda nuova non funziona** (la navigazione manda
+> `Dest: document`): il file va preso dallo script, che quelle intestazioni le
+> manda. I `.m3u8` e i `.ts` passano comunque.
+
+Avanzamento (percentuale, MB e barra) sul tasto stesso; un **secondo clic
+annulla** lo scaricamento in corso. Il nome del file è il titolo del post
+(`Titolo.mp4` o `Titolo.ts`, con `(2)`, `(3)`… quando i video sono più d'uno).
+
+### Personalizzazione
+
+```js
+const SALVA_CON_DIALOGO  = true;  // MP4: true = chiede dove salvare, false = scarica diretto
+const SEGMENTI_PARALLELI = 5;     // HLS: quanti segmenti scaricare insieme
+const TENTATIVI_SEGMENTO = 3;     // HLS: ritentativi per singolo segmento
+const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha piu' varianti
+```
+
+### Installazione
+
+1. Installare Tampermonkey (se non c'è già).
+2. Aprire: <https://roccobot.github.io/userscripts/ENFRoccobot.user.js>
+3. Premere **Installa** e concedere i permessi richiesti (`GM_download`,
+   `GM_xmlhttpRequest`) per scaricare i file.
+
+> **Nota:** i player embedded di terze parti in `<iframe>` non sono coperti (lo
+> script gira solo nella pagina principale, `@noframes`). Nei post esaminati non
+> ce ne sono: gli unici iframe presenti sono pubblicità e widget Jetpack. Se ne
+> comparisse uno, segnalami la pagina e lo aggiungo.
