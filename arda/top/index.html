@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.07</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.17</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7357,6 +7357,9 @@ function injectFxEditorCss(){
     // vengono comunque costruiti e dipinti (paint() lavora su elementi nascosti
     // senza errori), così il cambio di telaio a metà modifica non ha casi speciali.
     '.fab-modal-overlay.fxdock .fxp-wrap{display:none}',
+    // Micro-aggiustamenti in dock: campi e anteprime si impilano (il corpo a due
+    // colonne è pensato per la modale da 840px, nella colonna da 560 non ci sta).
+    '.fab-modal-overlay.fxdock .ba-body{grid-template-columns:1fr;gap:14px}',
     '.fab-modal-overlay.fxdock .fab-modal-box{width:100%;max-width:none;height:100%;',
     'max-height:none;margin:0;border-radius:0;border:0;box-shadow:none}',
     '.fxk-row.fxk-off,.fxk-sec.fxk-off{opacity:0.5}',
@@ -7401,10 +7404,14 @@ function fxPreviewCc(light){
 //     viewport sotto zoom XL non scattano (lezione v12.65).
 //  3. Spostare la pagina col margine NON fa scattare `resize`: reflowRows va
 //     chiamata a mano all'aggancio e allo sgancio.
-var DOCK_MIN_W = 1060; // px di LAYOUT (clientWidth): sotto zoom XL si riduce da
-                       // sé, quindi un'unica soglia serve normale e XL.
-function dockAvailable(){
-  return document.documentElement.clientWidth >= DOCK_MIN_W;
+// Soglia = larghezza colonna + ~660px di pagina, in px di LAYOUT. ⚠️ MISURATO:
+// `clientWidth` NON si riduce sotto `zoom` (resta la larghezza della finestra),
+// quindi il fattore XL va diviso a mano — è già esposto in --zoomf (1 o 1.3).
+// La colonna ha larghezza PER-EDITOR (v13.17): Pannello di controllo 400,
+// editor colori 480, micro-aggiustamenti 560 (i loro contenuti sono più larghi).
+function dockAvailable(colw){
+  var z = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zoomf')) || 1;
+  return document.documentElement.clientWidth / z >= (colw || 400) + 660;
 }
 // Scudo per i CLICK (scelta utente): la pagina a destra risponde a scroll e
 // hover ma i click sono spenti — niente schede, admin o Pannello sopra
@@ -7414,8 +7421,9 @@ var DOCK_SHIELD = null;
 // true durante un rebuild TECNICO (cambio lingua, cambio telaio al resize): la
 // chiusura non è una chiusura dell'utente e NON deve ripristinare i flag.
 var DOCK_RELAYOUT = false;
-function dockEngage(){
+function dockEngage(colw){
   document.documentElement.classList.add('fx-dock');
+  if (colw) document.documentElement.style.setProperty('--dockw', colw + 'px');
   if (!DOCK_SHIELD) {
     DOCK_SHIELD = function(e){
       if (e.target && e.target.closest && e.target.closest('#fab-modal, #fx-modal, .jump-fabs, .lang-switch')) return;
@@ -7427,6 +7435,7 @@ function dockEngage(){
 }
 function dockRelease(){
   document.documentElement.classList.remove('fx-dock');
+  document.documentElement.style.removeProperty('--dockw');
   if (DOCK_SHIELD) { document.removeEventListener('click', DOCK_SHIELD, true); DOCK_SHIELD = null; }
   reflowRows();
 }
@@ -7920,6 +7929,9 @@ function showSiteFlagsEditor(initState){
         if (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') SITE_FLAGS[vk].on = cb.checked;
         else SITE_FLAGS[vk] = cb.checked;
         applySiteFlags(); reflowRows();
+        // Il flag XL cambia lo zoom (e quindi la soglia del dock) SENZA un
+        // resize: si ripassa dal ricalcolo del telaio (no-op negli altri casi).
+        if (typeof onRs === 'function') onRs();
       });
       // Solo il nome: le didascalie sono state tolte ovunque (v12.64, richiesta
       // utente); il pannello è una lista pulita di interruttori.
@@ -8132,12 +8144,38 @@ function showBadgeAdjustEditor(initState){
   var it = currentLang === 'it';
   var cur = (initState && initState.cur) || 'helcaraxe';
   var myL;
-  var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  injectFxEditorCss(); // CSS del dock: serve anche aprendo QUESTO editor per primo
+  var docked = dockAvailable(560);
+  var overlay = document.createElement('div'); overlay.id = 'fab-modal';
+  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
   // La modale NON scrolla: è un flex-column ad altezza max; solo la tabella (flex:1)
   // scorre internamente, così footer e controlli restano sempre visibili (un solo scroll).
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '840px'; box.style.maxHeight = 'calc(92vh / var(--zoomf, 1))'; box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.overflow = 'hidden';
-  overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
-  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
+  var box = document.createElement('div'); box.className = 'fab-modal-box';
+  if (!docked) { box.style.maxWidth = '840px'; box.style.maxHeight = 'calc(92vh / var(--zoomf, 1))'; }
+  box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.overflow = 'hidden';
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  if (docked) dockEngage(560); else lockPageScroll(true);
+  var onRs;
+  var close = function(){
+    overlay.remove();
+    window.removeEventListener('resize', onRs);
+    if (docked) {
+      dockRelease();
+      // Chiusura senza salvataggio = ultimo salvato (stessa via dell'Annulla).
+      if (!DOCK_RELAYOUT) { BADGE_ADJUST = JSON.parse(JSON.stringify(BADGE_ADJUST_SAVED)); injectBadgeAdjustRules(); }
+    } else lockPageScroll(false);
+    if (langRefresh === myL) langRefresh = null;
+  };
+  onRs = function(){
+    clearTimeout(onRs._t);
+    onRs._t = setTimeout(function(){
+      if (!document.body.contains(overlay)) return;
+      if (dockAvailable(560) === docked) return;
+      DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false;
+      showBadgeAdjustEditor({ cur: cur });
+    }, 180);
+  };
+  window.addEventListener('resize', onRs);
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
 
@@ -8295,7 +8333,7 @@ function showBadgeAdjustEditor(initState){
     }).finally(function(){ btn.disabled = false; btn.style.opacity = ''; });
   }
 
-  function rebuild(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var st = { cur: cur }; close(); showBadgeAdjustEditor(st); }
+  function rebuild(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var st = { cur: cur }; DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false; showBadgeAdjustEditor(st); }
   myL = rebuild; langRefresh = myL;
 
   sync();
@@ -8470,12 +8508,61 @@ function showColorEditor(initState) {
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it';
   var curTab = 'f', famSelectEl = null, myEdL; // tab + select famiglia + hook lingua (rebuild solo su L)
+  injectFxEditorCss(); // il CSS del dock vive lì: serve anche aprendo QUESTO editor per primo
+  var docked = dockAvailable(480);
   var overlay = document.createElement('div');
-  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '620px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
+  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
+  var box = document.createElement('div'); box.className = 'fab-modal-box';
+  if (!docked) { box.style.maxWidth = '620px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; }
+  box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
-  lockPageScroll(true);
-  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh===myEdL) langRefresh=null; };
+  if (docked) dockEngage(480); else lockPageScroll(true);
+  // ── Anteprime LIVE della vista divisa e loro ripristini ──────────────────────
+  // ⚠️ I salvataggi inviano TUTTO (dati + cardColors): un'anteprima non salvata
+  // NON deve vivere negli oggetti che un salvataggio d'altro porterebbe con sé.
+  // • FAMIGLIE: il colore in prova sta in CARDCOLORS.fam (serve alla pagina), ma
+  //   la famiglia che si ABBANDONA (cambio famiglia/tab) torna all'ultimo salvato:
+  //   così 'Salva colore' su B non committa mai la prova non salvata di A.
+  //   Dopo un salvataggio riuscito SAVED è sincronizzato e il ripristino è un no-op.
+  // • PERSONAGGIO: l'anteprima è SOLO DOM (mai p.cardrgb): si replica ciò che
+  //   renderList fa per le voci custom (classe cc-custom + terne inline) sulla
+  //   card vera, e si ripristina com'era. Il dato lo scrive solo 'Salva sul repo'.
+  var dockFamPending = null, dockCharPending = null;
+  function revertFamPending(){
+    if (!dockFamPending) return;
+    var f = dockFamPending; dockFamPending = null;
+    if (CARDCOLORS_SAVED[f]) CARDCOLORS.fam[f] = JSON.parse(JSON.stringify(CARDCOLORS_SAVED[f]));
+    reinjectFamilyColors();
+  }
+  function revertCharPreview(){
+    if (!dockCharPending) return;
+    var c = dockCharPending; dockCharPending = null;
+    // Se renderList è girato nel frattempo (salvataggio, rimozione) il nodo è
+    // stato sostituito da uno già corretto: non c'è nulla da ripristinare.
+    if (c.el && document.body.contains(c.el)) { c.el.className = c.cls; c.el.style.cssText = c.css; }
+  }
+  var onRs;
+  var close = function(){
+    overlay.remove();
+    window.removeEventListener('resize', onRs);
+    revertCharPreview(); // solo DOM: si ripulisce anche nei rebuild tecnici
+    if (docked) {
+      dockRelease();
+      if (!DOCK_RELAYOUT) { CARDCOLORS.fam = JSON.parse(JSON.stringify(CARDCOLORS_SAVED)); reinjectFamilyColors(); }
+    } else lockPageScroll(false);
+    if (langRefresh===myEdL) langRefresh=null;
+  };
+  onRs = function(){
+    clearTimeout(onRs._t);
+    onRs._t = setTimeout(function(){
+      if (!document.body.contains(overlay)) return;
+      if (dockAvailable(480) === docked) return;
+      var st = { tab: curTab, fam: (curTab==='f' && famSelectEl) ? famSelectEl.value : null, scroll: box.scrollTop };
+      DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false;
+      showColorEditor(st);
+    }, 180);
+  };
+  window.addEventListener('resize', onRs);
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
   box.appendChild(cl);
@@ -8489,6 +8576,7 @@ function showColorEditor(initState) {
   tMirata.textContent = it ? 'Personaggio' : 'Character';
   tFam.textContent = it ? 'Famiglie' : 'Families';
   function setTab(which){
+    revertFamPending(); revertCharPreview();
     curTab = which;
     tMirata.style.opacity = which === 'm' ? '1' : '0.5';
     tFam.style.opacity = which === 'f' ? '1' : '0.5';
@@ -8519,7 +8607,7 @@ function showColorEditor(initState) {
   function rebuildEditor(){
     if (!document.body.contains(overlay)) { if (langRefresh===myEdL) langRefresh=null; return; }
     var st = { tab: curTab, fam: (curTab==='f' && famSelectEl) ? famSelectEl.value : null, scroll: box.scrollTop };
-    close(); showColorEditor(st);
+    DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false; showColorEditor(st);
   }
   myEdL = rebuildEditor;
   langRefresh = myEdL;
@@ -8574,7 +8662,21 @@ function showColorEditor(initState) {
     // Controllo condiviso: scegli un colore, le varianti tema si derivano da sé
     // e l'anteprima mostra card + scheda nei due temi in tempo reale.
     var ctrl = buildColorControl(curDark, curLight, name.textContent, sampleTipo);
-    function apply(){ var g = ctrl.get(); p.cardrgb = { dark: g.dark, light: g.light }; renderList(); setFamLine(); }
+    if (docked) {
+      revertCharPreview(); // si lascia pulito il personaggio precedente
+      var liveCard = document.querySelector('.rank-item[data-idx="' + i + '"]');
+      if (liveCard) liveCard.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      ctrl.hook = function(g){
+        if (!liveCard || !document.body.contains(liveCard)) return;
+        if (!dockCharPending) dockCharPending = { el: liveCard, cls: liveCard.className, css: liveCard.style.cssText };
+        // Stessa resa di renderList per le voci custom: classe cc-custom al posto
+        // della famiglia + terne per-tema inline (le regole iniettate mappano --ccrgb).
+        liveCard.className = dockCharPending.cls.replace(/\bcc-[a-z-]+\b/g, '') + ' cc-custom';
+        liveCard.style.setProperty('--ccdark', ccHexToTriplet(g.dark));
+        liveCard.style.setProperty('--cclight', ccHexToTriplet(g.light));
+      };
+    }
+    function apply(){ var g = ctrl.get(); dockCharPending = null; p.cardrgb = { dark: g.dark, light: g.light }; renderList(); setFamLine(); }
     var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ apply(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + (p.nome||p.nome_en))); }, true);
     panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(ctrl.el);
     if (isCustom) panel.appendChild(mkBtn(it ? 'Rimuovi colore individuale' : 'Remove individual colour', function(){ delete p.cardrgb; renderList(); showToast(it?'✓ Torna alla famiglia':'✓ Back to family', false); selectChar(i, panel); }));
@@ -8594,11 +8696,17 @@ function showColorEditor(initState) {
   }
   function famCount(fam){ var n = 0; for (var i = 0; i < dati.length; i++) if (familyOf(dati[i]) === fam) n++; return n; }
   function buildFamPanel(fam, panel){
+    revertFamPending(); // la famiglia che si abbandona torna all'ultimo salvato
     panel.innerHTML = '';
     // 1) Colore: si sceglie UN colore, le due varianti tema sono derivate in
     // automatico (AA-safe) e mostrate in anteprima. Titolo 'Colore' e tasto sono
     // dentro il controllo condiviso.
     var ctrl = buildColorControl(ccFamHex(fam,'dark'), ccFamHex(fam,'light'), fam, fam);
+    if (docked) ctrl.hook = function(g){
+      dockFamPending = fam;
+      CARDCOLORS.fam[fam] = { dark: g.dark, light: g.light };
+      reinjectFamilyColors(); // tutte le card della famiglia si aggiornano in pagina
+    };
     // Rete di sicurezza: ultimo colore SALVATO (clic per ripristinare), allineato
     // a DESTRA. 'Salvato' = committato, non l'anteprima.
     var saved = CARDCOLORS_SAVED[fam] || CARDCOLORS.fam[fam] || { dark:'#9098a8', light:'#9098a8' };
@@ -8733,18 +8841,23 @@ function showColorEditor(initState) {
       swLight.sw.style.background = state.light; swLight.hx.textContent = state.light;
       swDark.sw.style.background = state.dark; swDark.hx.textContent = state.dark;
       renderPreview(prevWrap, state.dark, state.light, sampleName, sampleTipo);
+      // Gancio dell'anteprima live (vista divisa): si aggancia DOPO la
+      // costruzione, quindi la prima update() non lo chiama mai.
+      if (api && api.hook) api.hook({ dark: state.dark, light: state.light });
     }
     function applyBase(hex, syncHex){ var pr = ccDerivePair(hex); state.dark = pr.dark; state.light = pr.light; baseInput.value = hex; baseSw.style.background = hex; if (syncHex) hexInput.value = hex; update(); }
     baseInput.addEventListener('input', function(){ applyBase(baseInput.value, true); });
     hexInput.addEventListener('input', function(){ var v = hexInput.value.trim(); if (v && v.charAt(0) !== '#') v = '#' + v; if (/^#[0-9a-fA-F]{6}$/.test(v)) applyBase(v.toLowerCase(), false); });
     hexInput.addEventListener('blur', function(){ hexInput.value = baseInput.value; });
-    update();
-    wrap.appendChild(topRow); wrap.appendChild(labRow); wrap.appendChild(prevWrap);
-    return {
+    var api = {
       el: wrap,
+      hook: null, // onChange dell'anteprima live (dock); anche il ripristino 'ultimo salvato' passa da qui via set()
       get: function(){ return { dark: state.dark, light: state.light }; },
       set: function(d, l){ state.dark = d; state.light = l; baseInput.value = ccTheme() === 'light' ? l : d; baseSw.style.background = baseInput.value; hexInput.value = baseInput.value; update(); }
     };
+    update();
+    wrap.appendChild(topRow); wrap.appendChild(labRow); wrap.appendChild(prevWrap);
+    return api;
   }
 
   // Helper UI condivisi
