@@ -454,6 +454,14 @@ normale/XL secondo la preferenza attiva.
      `aura` (**alone intorno alla card**, tutto il perimetro, 0-0.6 con 0 =
      spento; dalla v12.41), `all` (**tutte** le card accese invece della sola
      card attiva → classe extra `fx-glow-all`).
+     ⚠️ **Etichetta di `aura`: 'Aura attorno alla card'/'Aura around the card'
+     (dalla v12.75).** Diceva 'Alone intorno alla card', che **collideva** col nome
+     dell'effetto `vig`, rinominato 'Alone sfumato' in v12.64: due cose diverse con
+     la stessa parola nello stesso pannello. Stessa passata: la manopola `r` del
+     riflettore è **'Raggio del riflettore'/'Spotlight radius'** (diceva 'Raggio
+     dell'alone' — terza collisione sulla stessa parola). Regola: **'alone' è
+     riservato a `vig`**; l'aura della card e il raggio del riflettore si nominano
+     con la propria parola.
      Default = la taratura v12.27 (34px, 0.62, solo dentro, aura 0, solo card attiva).
      ⚠️ **Il numero di posizione sta SOPRA il bagliore** (dalla v12.42):
      `.rank-num` ha `position:relative; z-index:2` perché la sfumatura interna
@@ -554,8 +562,22 @@ normale/XL secondo la preferenza attiva.
   Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
   dell'utente). ⚠️ **NOMI E ORDINE delle voci (v12.64, decisi dall'utente):**
   Modalità XL, **Bagliore**, **Numeri colorati**, **Riflettore**, **Incisione**,
-  **Alone sfumato**, **Oro, argento e bronzo** — etichette brevi, di una parola
-  dove possibile; 'Numeri colorati' sta subito dopo 'Bagliore'. ⚠️ **Le didascalie
+  **Alone sfumato**, **Effetto podio** — etichette brevi, di una parola
+  dove possibile; 'Numeri colorati' sta subito dopo 'Bagliore'. L'ultima voce si
+  chiamava 'Oro, argento e bronzo' fino alla v12.74: **accorciata in 'Effetto
+  podio'/'Podium effect' nella v12.75** su richiesta dell'utente, perché a **320px
+  in Modalità XL** era l'unica etichetta a spezzarsi su tre righe (le righe della
+  lista devono restare tutte alte uguali). Vale la regola generale: le etichette
+  del pannello si scelgono corte perché devono stare su **una riga** anche nel caso
+  peggiore (telefono strettissimo × zoom 1.3): a **320px in XL** la colonna della
+  label è larga **132px**, e un'etichetta che va a capo raddoppia l'altezza della
+  riga. ⚠️ **La verifica va fatta in ENTRAMBE le lingue**: l'italiano che ci sta non
+  garantisce l'inglese. Nella stessa v12.75 l'EN **'Coloured numbers'** era l'ultimo
+  a sforare (2 righe) ed è diventato **'Number tint'** (99.9px; scartato 'Tinted
+  numbers', 125.8px su 132 = margine troppo sottile, e il solo 'Numbers', che si
+  leggerebbe come 'mostra i numeri' invece di 'tinta dei numeri'). L'italiano
+  'Numeri colorati' resta quello scelto dall'utente. Le misure vanno prese **col
+  font reale** (vedi 'Misure tipografiche'). ⚠️ **Le didascalie
   descrittive sono state RIMOSSE ovunque** (c'erano su desktop fino alla v12.63):
   l'utente le ha giudicate superflue, il pannello è una lista pulita di
   interruttori. Non reintrodurle. In fondo resta **solo l'avviso breve** sulla
@@ -600,6 +622,22 @@ normale/XL secondo la preferenza attiva.
   di WCAG 1.4.11). Le note delle manopole sono collegate al controllo con
   `aria-describedby`. Misurato dopo il fix: outline 4.24:1 scuro / 5.84:1 chiaro,
   tab inattiva 7.22:1 / 7.85:1, axe 0.
+- **Bersagli di tocco da 24px nel pannello (WCAG 2.2, criterio 2.5.8; v12.75).**
+  Gli slider delle manopole erano alti **16px** e le checkbox native lo sono per
+  costruzione: sotto il minimo di 24×24px. Correzione senza toccare l'aspetto —
+  `input[type=range]` ha `height:24px` (il track resta disegnato com'era, cresce solo
+  la zona sensibile) e le **label** di riga/manopola sono `display:flex;
+  align-items:center; min-height:24px`, così l'etichetta cliccabile forma col
+  quadratino un bersaglio conforme. Misurato: righe 31px, fader 35px, slider 31px.
+- ⚠️ **Fondo di riferimento della pill nell'anteprima: si COMPONE, non si stima
+  (fix v12.75).** Il testo della pill-tipo è reso AA con `ccAaText(tinta, fondo)`, ma
+  il fondo va composto per davvero su **tre strati** — riquadro d'anteprima → card
+  (con l'alpha dello stato **hot** corrente, non quello a riposo) → velo della pill.
+  La v12.64 lo stimava sul solo riquadro a card ferma: nell'editor del **bagliore**,
+  dove le card sono rese accese, lo scarto bastava a scendere sotto soglia (axe:
+  4.35:1 in scuro e 4.19:1 in chiaro, su testo da 9.4px). Regola generale: quando un
+  colore si posa su strati semitrasparenti sovrapposti, il fondo per il calcolo AA si
+  ottiene applicando gli `over` uno per uno, mai con una scorciatoia a un solo strato.
 - **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, true, null,
   SITE_FLAGS)` → il Worker scrive `siteFlags` **senza bumpare la versione**
   (`keepVersion:true`, come i salvataggi colore: richiesta dell'utente dalla v12.27,
@@ -1876,6 +1914,38 @@ specifico del dataset):
   spente di default): altrimenti i badge di quelle categorie non vengono testati
   (storico: il fix contrasto v10.4.2 mancò aquila/balrog/ent proprio per questo).
 
+## 🔬 Misure tipografiche: servire i font REALI ai test (scoperto il 2026-07-26)
+
+⚠️ **Nell'ambiente Claude Code le webfont NON si caricano**: il foglio
+`fonts.googleapis.com/css2?...` in testa a `index.html` risponde
+**`ERR_CONNECTION_RESET`** (l'aggancio del browser di test non passa dal proxy
+HTTPS come `curl`). Il browser ripiega su **Georgia** e ogni misura di larghezza,
+a-capo o altezza di riga è **di un altro font**. È esattamente la trappola
+dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
+
+- ⚠️ **`document.fonts.check()` MENTE**: risponde `true` anche senza alcun font
+  caricato (dice solo che *qualcosa* può rendere quel testo). L'unica spia
+  affidabile è **`document.fonts.size`** (0 = nessuna webfont) o il conto degli
+  elementi con `status === 'loaded'`.
+- **Come servirli davvero** (aggancio riutilizzabile in
+  `scratchpad/realfont.js`): 1) scaricare il CSS con `curl` + UA da browser
+  (passa dal proxy) e i `.woff2` che referenzia; 2) riscrivere i `src` sugli URL
+  locali; 3) servire repo e font via `python3 -m http.server` (il `file://` non va:
+  i font da `file://` sono bloccati); 4) in Playwright dirottare la richiesta con
+  `page.route('**://fonts.googleapis.com/**', …fulfill(css))`. Verifica: `n:28`
+  facce dichiarate, ≥9 `loaded`, famiglie `Cinzel`/`Cinzel Decorative`/`EB
+  Garamond`.
+- **Cosa cambia e cosa no.** Dipendono dal font: larghezze, a-capo, conteggio
+  righe, ottica delle icone. NON dipendono: la validazione **W3C** e i contrasti
+  di **axe** (i rapporti si calcolano sui colori, e le soglie sul `font-size`
+  computato, indipendente dalla famiglia). Quindi un audit di contrasto resta
+  valido anche coi fallback; una misura di **layout** no.
+- **Caso reale (v12.75).** Col fallback l'etichetta EN 'Coloured numbers' pareva
+  spezzarsi su 3 righe, col font reale su 2: la conclusione operativa non
+  cambiava, ma il numero sì. Il conteggio giusto delle righe si fa coi rettangoli
+  del contenuto (`Range.getClientRects()`, righe distinte = `top` distinti), non
+  dividendo l'altezza per la `line-height`.
+
 ## 🚩 Feature flag (elementi disattivati, ma non rimossi)
 
 - Oggetto **`FEATURES`** in testa allo script di `arda/top/index.html`:
@@ -2646,6 +2716,32 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   scheda aperta va fatto in un tema NATIVO (aprire già in quel tema): cambiare
   tema a scheda aperta è uno scenario non raggiungibile dall'utente (il toggle
   vive nel Pannello, coperto dalla scheda) e in test dà falsi rilievi transitori.
+  - **Estensione agli elementi FUORI da header/main/footer (dalla v12.75).**
+    Inertizzare quei tre non basta: il FAB del Pannello, i tasti salto, il cambio
+    lingua e il FAB del riordino stanno **fuori** e col `Tab` si raggiungevano
+    attraverso il velo (misurato in v12.65: dal 18° `Tab` il focus finiva su 'Filtri
+    e legenda' e 'Vai in cima'). L'elenco vive in **`BG_INERT_EXTRA`**
+    (`#ctrl-fab`, `.jump-fabs`, `.lang-switch`, `.fab-container`, `#ctrl-panel`).
+    ⚠️ **Si applica SOLO quando è aperta una MODALE**, non col solo Pannello, e la
+    ragione decisiva è che in elenco c'è **`#ctrl-panel` stesso**: lo stesso
+    `lockPageScroll` serve il Pannello e i modali, quindi applicarlo sempre
+    renderebbe inerte il Pannello proprio mentre lo si usa (da qui la guardia
+    `anyModalOpen()` su `MODAL_OPEN_SEL`). Col solo Pannello aperto resta focusabile
+    anche il FAB, che **da tastiera** lo richiude; col mouse si clicca invece
+    `#ctrl-backdrop`, che a `z-index:205` copre il FAB. In **uscita** l'elenco extra si ripulisce sempre, senza
+    condizioni: un `inert` rimasto appeso renderebbe il FAB inservibile. Per la stessa
+    ragione `setBgInert(true)` gira **prima** della guardia anti-doppio-lock di
+    `lockPageScroll` (una modale aperta sopra il Pannello, già bloccato, uscirebbe
+    subito e lascerebbe il FAB focusabile dietro il velo).
+  - **Focus trap vero (dalla v12.75).** L'`inert` impedisce di entrare nei controlli
+    dietro il velo, ma dall'ultimo elemento della modale il `Tab` uscirebbe comunque
+    verso la **chrome del browser**. Un listener `keydown` sul `Tab` chiude il cerchio
+    (dall'ultimo al primo e, con `Shift`, viceversa) agendo **solo sulla modale più in
+    alto**: `topModalEl()` prende l'ultima in **ordine di documento**, che coincide con
+    l'ordine di apertura, così le modali annidate (`#fx-modal` sopra `#fab-modal`)
+    funzionano da sé. I focusabili si filtrano per visibilità
+    (`offsetWidth`/`offsetHeight`), altrimenti il giro si incastrerebbe sui controlli
+    delle tab non attive. Verificato: 40 `Tab` consecutivi, 0 fughe.
 - **Formato rimandi interni (dalla v8.75).** Sia il rimando **personaggio→nota**
   (`.modal-noteref`) sia i **nota→nota** (`.note-seealso`) usano
   `Leggi anche → <strong>Titolo</strong>` / `See also → ...`: prefisso normale,

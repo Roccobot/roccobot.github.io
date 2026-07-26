@@ -2357,7 +2357,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.65</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.75</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2813,18 +2813,43 @@ var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it'
 // scendevano sotto 4.5:1 su fondo-card chiaro: falso positivo da contenuto velato).
 // Il modale (fratello di questi) resta attivo. Agganciato a lockPageScroll, il
 // choke point condiviso da tutti i modali.
+// Elementi FUORI da header/main/footer che restano focusabili dietro il velo di
+// una modale: il FAB del Pannello, i tasti salto, il cambio lingua e il FAB del
+// riordino. Fino alla v12.65 col Tab si arrivava a loro attraverso il velo
+// (misurato: dal 18° Tab il focus uscisse dalla modale e finisse su 'Filtri e
+// legenda' e 'Vai in cima'). ⚠️ Si rendono inerti SOLO quando è aperta una
+// MODALE, e la ragione decisiva è che in elenco c'è #ctrl-panel STESSO: lo
+// stesso lockPageScroll serve il Pannello e i modali, quindi applicarlo sempre
+// renderebbe inerte il Pannello proprio mentre lo si usa. Col solo Pannello
+// aperto resta focusabile anche il FAB, che da tastiera lo richiude (col mouse
+// ci si clicca sopra #ctrl-backdrop, z-index 205).
+var BG_INERT_EXTRA = ['#ctrl-fab', '.jump-fabs', '.lang-switch', '.fab-container', '#ctrl-panel'];
+var MODAL_OPEN_SEL = '#fab-modal, #fx-modal, #stats-modal, #note-modal, #res-modal, #imgv, .dyn-modal';
+function anyModalOpen() {
+  if (document.querySelector(MODAL_OPEN_SEL)) return true;
+  var bd = document.getElementById('modal-backdrop');
+  return !!(bd && bd.classList.contains('active'));
+}
 function setBgInert(on) {
-  ['header', 'main', 'footer'].forEach(function(sel){
-    var el = document.querySelector(sel); if (!el) return;
-    if (on) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); }
-    else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }
+  var sels = ['header', 'main', 'footer'];
+  // In uscita si ripulisce SEMPRE anche l'elenco extra (se restasse un `inert`
+  // appeso, il FAB diventerebbe inservibile).
+  var withExtra = !on || anyModalOpen();
+  sels.concat(withExtra ? BG_INERT_EXTRA : []).forEach(function(sel){
+    document.querySelectorAll(sel).forEach(function(el){
+      if (on) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); }
+      else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }
+    });
   });
 }
 function lockPageScroll(on) {
   var html = document.documentElement;
   if (on) {
-    if (html.style.overflow === 'hidden') return;
+    // setBgInert PRIMA della guardia anti-doppio-lock: una modale che si apre
+    // sopra il Pannello (già bloccato) uscirebbe subito e lascerebbe il FAB
+    // focusabile dietro il velo.
     setBgInert(true);
+    if (html.style.overflow === 'hidden') return;
     var sbw = window.innerWidth - html.clientWidth;
     html.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
@@ -2843,6 +2868,31 @@ function lockPageScroll(on) {
     setBgInert(false);
   }
 }
+
+// ── Focus trap: il Tab gira DENTRO la modale in cima (dalla v12.75) ─────────
+// L'`inert` dello sfondo impedisce di raggiungere i controlli dietro il velo, ma
+// dall'ultimo elemento il Tab uscirebbe comunque verso la chrome del browser.
+// Qui si chiude il cerchio: dall'ultimo si torna al primo e viceversa. Agisce
+// SOLO sulla modale più in alto (fx-modal sopra fab-modal, ecc.), così le modali
+// annidate si comportano bene.
+var FOCUSABLE_SEL = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+function topModalEl() {
+  var all = document.querySelectorAll(MODAL_OPEN_SEL);
+  if (all.length) return all[all.length - 1]; // ordine di documento = ordine di apertura
+  var bd = document.getElementById('modal-backdrop');
+  return (bd && bd.classList.contains('active')) ? bd : null;
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Tab') return;
+  var top = topModalEl(); if (!top) return;
+  var f = Array.prototype.filter.call(top.querySelectorAll(FOCUSABLE_SEL), function(el){
+    return el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement;
+  });
+  if (!f.length) return;
+  var first = f[0], last = f[f.length - 1], inside = top.contains(document.activeElement);
+  if (e.shiftKey && (!inside || document.activeElement === first)) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && (!inside || document.activeElement === last)) { e.preventDefault(); first.focus(); }
+});
 
 // ── Numero di versione ────────────────────────────────────────────────
 // Fonte unica: `var datiVersion` in dati.js, incrementato (patch) dal Worker
@@ -6927,18 +6977,26 @@ function openAdminGate() {
 function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, true, null, SITE_FLAGS); }
 var SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS));
 // Voci del pannello, nell'ordine di presentazione. `k` = chiave in SITE_FLAGS.
-// ⚠️ NOMI E ORDINE decisi dall'utente (v12.64): etichette brevi di UNA parola dove
-// possibile, 'Numeri colorati' subito dopo 'Bagliore'. Le didascalie descrittive
+// ⚠️ NOMI E ORDINE decisi dall'utente (v12.64; 'Effetto podio' dalla v12.75, che
+// accorcia 'Oro, argento e bronzo': a 320px in Modalità XL andava su due righe e
+// rompeva il ritmo della lista): etichette brevi, 'Numeri colorati' dopo 'Bagliore'. Le didascalie descrittive
 // sono state RIMOSSE (prima c'erano su desktop): l'utente le ha giudicate
 // superflue, il pannello resta una lista pulita di interruttori. Non reintrodurle.
+// ⚠️ Il caso peggiore per la LUNGHEZZA è 320px × Modalità XL: là la colonna della
+// label è larga 132px e ogni etichetta deve starci su UNA riga (una che va a capo
+// raddoppia l'altezza della riga e spezza il ritmo). Misurato col font reale:
+// 'Numeri colorati' 1 riga, ma l'inglese 'Coloured numbers' ne prendeva 2 → reso
+// 'Number tint' (99.9px, contro i 125.8px di 'Tinted numbers', troppo al limite).
+// Non allungare queste etichette senza rimisurare a 320px in XL, in ENTRAMBE le
+// lingue: l'italiano che sta su una riga non garantisce che ci stia l'inglese.
 var SITE_FLAG_ITEMS = [
   { k:'zoomBig', it:'Modalità XL', en:'XL Mode' },
   { k:'glow', it:'Bagliore', en:'Glow', cfg:true },
-  { k:'nums', it:'Numeri colorati', en:'Coloured numbers', cfg:true },
+  { k:'nums', it:'Numeri colorati', en:'Number tint', cfg:true },
   { k:'spot', it:'Riflettore', en:'Spotlight', cfg:true },
   { k:'press', it:'Incisione', en:'Engraving', cfg:true },
   { k:'vig', it:'Alone sfumato', en:'Soft halo', cfg:true },
-  { k:'podium', it:'Oro, argento e bronzo', en:'Gold, silver and bronze', cfg:true }
+  { k:'podium', it:'Effetto podio', en:'Podium effect', cfg:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -6952,7 +7010,7 @@ var FX_KNOBS = {
       nen:'Off, the glow stays inside the card. On, it also escapes past the left edge.' },
     { p:'oamp', t:'num', step:1, unit:'px', it:'Ampiezza del bagliore esterno', en:'Outer glow spread' },
     { p:'oint', t:'num', step:0.02, it:'Opacità del bagliore esterno', en:'Outer glow opacity' },
-    { p:'aura', t:'num', step:0.02, it:'Alone intorno alla card', en:'Halo around the card',
+    { p:'aura', t:'num', step:0.02, it:'Aura attorno alla card', en:'Aura around the card',
       nit:'Bagliore uniforme su tutto il perimetro della card. A zero è spento.',
       nen:'Even glow around the whole card perimeter. Zero means off.' },
     { p:'all', t:'bool', it:'Su tutte le card', en:'On every card',
@@ -6961,7 +7019,7 @@ var FX_KNOBS = {
   ],
   spot: [
     { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
-    { p:'r', t:'num', step:5, unit:'px', it:'Raggio dell’alone', en:'Glow radius' },
+    { p:'r', t:'num', step:5, unit:'px', it:'Raggio del riflettore', en:'Spotlight radius' },
     { p:'int', t:'num', step:0.01, it:'Intensità', en:'Intensity',
       nit:'Il massimo è il valore verificato AA: oltre, in tema scuro i testi più tenui scenderebbero sotto soglia.',
       nen:'The maximum is the AA-verified value: beyond it, the faintest texts would drop below threshold in dark theme.' }
@@ -7057,7 +7115,10 @@ function injectFxEditorCss(){
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
     '.fxk-row .fxk-lbl{font-size:0.84rem;font-weight:600}',
     '.fxk-row .fxk-val{font-size:0.78rem;font-variant-numeric:tabular-nums;opacity:0.75;min-width:3.2em;text-align:right}',
-    '.fxk-row input[type=range]{grid-column:1/3;width:100%;margin:0}',
+    // height:24px (v12.75): l'area di TOCCO dello slider era alta 16px, sotto i
+    // 24px minimi di WCAG 2.2 (2.5.8). Il track resta visivamente com'era, cresce
+    // solo la zona sensibile.
+    '.fxk-row input[type=range]{grid-column:1/3;width:100%;height:24px;margin:0}',
     '.fxk-row .fxk-note{grid-column:1/3;font-size:0.72rem;opacity:0.62;line-height:1.35;margin:-0.15rem 0 0}'
   ].join('');
   document.head.appendChild(st);
@@ -7186,12 +7247,20 @@ function showFxConfigEditor(key, sfx, onDone){
       var numPress = (press && pr.num) ? fxPressShadow(rec.light) : 'none';
       // Testo della pill reso AA con l'helper del progetto (v12.64): la tinta
       // piena sul proprio fondo velato dava 3.38:1 su un corpo di ~8px, sotto la
-      // soglia 4.5:1 del testo piccolo (rilevato da axe). Il fondo di riferimento
-      // è la tinta velata composta sul fondo del riquadro.
-      var pillBgHex = ccTripletToHex(cc.split(',').map(function(v, i){
-        var base = rec.light ? [245,245,245] : [38,38,38], a = rec.light ? 0.10 : 0.26;
-        return Math.round(+v * a + base[i] * (1 - a));
-      }).join(','));
+      // soglia 4.5:1 del testo piccolo (rilevato da axe). ⚠️ Il fondo va composto
+      // per DAVVERO su tre strati — riquadro, card (con l'alpha dello stato hot
+      // corrente) e velo della pill — non stimato sul solo riquadro: nella v12.64
+      // lo stimavo a card ferma e nell'editor del bagliore, dove le card sono
+      // accese, il conto risultava sbagliato di quanto bastava a restare sotto
+      // soglia (4.19:1 / 4.35:1, rilevati da axe).
+      var pillBgHex = (function(){
+        var t = cc.split(',').map(Number);
+        var base = rec.light ? [245,245,245] : [38,38,38];
+        var cardA = rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10);
+        var pillA = rec.light ? 0.10 : 0.26;
+        var over = function(a, alpha, b){ return a.map(function(v, i){ return v * alpha + b[i] * (1 - alpha); }); };
+        return ccTripletToHex(over(t, pillA, over(t, cardA, base)).map(Math.round).join(','));
+      })();
       rec.pill.style.color = ccAaText(ccTripletToHex(cc), pillBgHex, 4.5);
       rec.pill.style.borderColor = 'rgba(' + cc + ',0.8)';
       rec.pill.style.background = 'rgba(' + cc + ',' + (rec.light ? 0.10 : 0.26) + ')';
@@ -7266,6 +7335,7 @@ function showFxConfigEditor(key, sfx, onDone){
     var row = document.createElement('div'); row.className = 'fxk-row';
     var lbl = document.createElement('label'); lbl.className = 'fxk-lbl';
     lbl.textContent = it ? kn.it : kn.en;
+    lbl.style.cssText = 'display:flex;align-items:center;min-height:24px;cursor:pointer;';
     row.appendChild(lbl);
     if (kn.t === 'bool') {
       var cb = document.createElement('input'); cb.type = 'checkbox';
@@ -7419,8 +7489,11 @@ function showSiteFlagsEditor(initState){
       });
       // Solo il nome: le didascalie sono state tolte ovunque (v12.64, richiesta
       // utente); il pannello è una lista pulita di interruttori.
+      // La label copre l'intera colonna centrale ed è alta almeno 24px: insieme
+      // alla checkbox forma un bersaglio conforme a WCAG 2.2 (2.5.8) anche dove
+      // la casella nativa resta di 16px (v12.75).
       var txt = document.createElement('label'); txt.setAttribute('for', cb.id);
-      txt.style.cssText = 'cursor:pointer;font-size:0.92rem;font-weight:600;';
+      txt.style.cssText = 'cursor:pointer;font-size:0.92rem;font-weight:600;display:flex;align-items:center;min-height:24px;';
       txt.textContent = it ? f.it : f.en;
       row.appendChild(cb); row.appendChild(txt);
       if (f.cfg) {
