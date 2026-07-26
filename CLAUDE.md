@@ -377,7 +377,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
 
-## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39; config per-piattaforma dalla v12.53)
+## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39; config per-piattaforma dalla v12.53; manopole per tema dalla v12.85)
 
 Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
 la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sotto).
@@ -385,7 +385,13 @@ la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sot
   configurazioni indipendenti: **desktop** (chiave base, es. `glow`) e **mobile**
   (suffisso **`_m`**, es. `glow_m`, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al
   varco). Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
-  già** (nessun cambio di Worker, niente race di deploy). Se una `_m` manca nel
+  già** (nessun cambio di Worker, niente race di deploy). ⚠️ Questo trucco ha però
+  un limite scoperto nella v12.85: il Worker accettava **max 12 manopole per
+  effetto**, e il bagliore per-tema a due lati ne richiede **22**. Il tetto è
+  passato a **40** nella **rev 15**: la FORMA validata non cambia (chiavi piatte),
+  cambia solo quante ne stanno in un effetto. Contare le manopole PRIMA di
+  progettare un effetto nuovo: superare il tetto costringe a toccare il Worker, e
+  con esso arriva la race di deploy sito/Worker. Se una `_m` manca nel
   salvato viene **seminata come copia della desktop** (comportamento invariato
   finché l'admin non differenzia). `zoomBig` resta UNICO (regola v12.43:
   desktop/tablet-only). Accessori: **`fxCfg(k)`** = config attiva per piattaforma
@@ -420,11 +426,31 @@ normale/XL secondo la preferenza attiva.
   `SITE_FLAGS` = i flag salvati validi, altrimenti `SITE_FLAGS_DEFAULT`
   (`zoomBig:false`, gli altri 5 accesi). Un salvataggio che **non** invia `siteFlags`
   lo **preserva** (`readSiteFlags`); `validSiteFlags` rifiuta config malformate (400
-  `bad-siteflags`). Worker **rev 14**.
+  `bad-siteflags`). Worker **rev 15** (era 14 fino alla v12.75).
+- **MANOPOLE PER TEMA (dalla v12.63 per `nums`, estese a `glow` e `podium` nella
+  v12.85).** Una manopola può valere per un solo tema: nel descrittore porta
+  `th:'d'` (scuro) o `th:'l'` (chiaro), e la chiave nei dati prende il **suffisso
+  `_d`/`_l`** (`amp_d`, `amp_l`). È **ortogonale** alle chiavi `_m` per-piattaforma:
+  il suffisso di tema sta nel nome della MANOPOLA, quello di piattaforma nel nome
+  dell'EFFETTO (`glow_m.amp_l` = sfumatura interna, mobile, tema chiaro).
+  ⚠️ **Quando una manopola diventa per-tema, il fattore di tema va TOLTO dalla
+  formula.** Fino alla v12.75 le formule del bagliore applicavano moltiplicatori
+  fissi al chiaro (`int` ×0.8, `oint` ×0.77, `aura` ×0.75) e il podio nessuno; ora
+  il valore del tema chiaro lo decide l'admin e i **default lo riproducono**. Se si
+  lasciasse anche il fattore, si moltiplicherebbe due volte. L'accesso giusto è
+  **`fxTh(cfg, 'amp', light)`**, mai `cfg.amp`.
+  - **Migrazione delle config già salvate: obbligatoria** (`FX_LEGACY` +
+    `fxMigrateLegacy`, chiamata da `normFxEffect`). Una config vecchia ha `amp` e
+    non `amp_d`: senza migrazione il normalizzatore ripiegherebbe sul **default**,
+    buttando via la taratura dell'utente (caso reale: `amp:60` sarebbe tornato a
+    34). La mappa dice chiave nuova → [chiave vecchia, fattore], e i fattori dei
+    `_l` sono quelli che le formule applicavano prima: così **dopo la migrazione la
+    resa è identica al pixel**, ma diventa modificabile. Verificato misurando la
+    `box-shadow` computata di una striscia vera nei due temi.
 - **Due forme di flag (dalla v12.39).** Un flag è un **booleano** (effetto solo
-  on/off: `press`, `podium`, `zoomBig`) **oppure un oggetto piatto**
-  `{on:bool, ...manopole}` (effetto **regolabile**: `glow`, `spot` e, dalla
-  v12.42, `vig`).
+  on/off: `press`, `zoomBig`) **oppure un oggetto piatto**
+  `{on:bool, ...manopole}` (effetto **regolabile**: `glow`, `spot`, `vig` dalla
+  v12.42, `press`/`podium` dalla v12.53, `nums` dalla v12.63).
   `normSiteFlags()` normalizza qualunque input: la vecchia forma booleana di un
   effetto regolabile resta accettata (vale come solo interruttore, manopole ai
   default), i numeri fuori scala sono riportati nei limiti **`FX_RANGE`** (unica
@@ -447,13 +473,29 @@ normale/XL secondo la preferenza attiva.
   1. **`glow` — bagliore** (`fx-glow`, REGOLABILE; label UI **'Bagliore'/'Glow'**
      dalla v12.64, prima 'Bagliore della striscia colorata'): la striscia
      diffonde la tinta di famiglia dentro la card su due strati derivati dalle
-     manopole. Manopole: `amp` (ampiezza sfumatura, 10-60px), `int` (intensità,
-     0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `oamp`/`oint`
-     (**ampiezza e opacità PROPRIE del bagliore esterno**, dalla v12.42: prima
-     derivate da amp/int; i default 11px/0.9 riproducono la resa precedente),
-     `aura` (**alone intorno alla card**, tutto il perimetro, 0-0.6 con 0 =
-     spento; dalla v12.41), `all` (**tutte** le card accese invece della sola
-     card attiva → classe extra `fx-glow-all`).
+     manopole. ⚠️ **Dalla v12.85 le manopole numeriche sono PER TEMA** (suffisso
+     `_d`/`_l`, vedi 'Manopole per tema') **e esistono anche per il lato DESTRO**
+     (prefisso `r`): 22 in tutto. Elenco, per parte:
+     - **interno sinistro**: `amp` (sfumatura, 10-60px), `int` (opacità, 0.1-1);
+     - **esterno sinistro**: `out` (bool: il bagliore esce dal bordo sinistro),
+       `oamp`/`oint` (**ampiezza e opacità PROPRIE**, dalla v12.42: prima derivate
+       da amp/int; i default 11px/0.9 riproducono la resa precedente);
+     - **intorno alla card**: `aura` (alone su tutto il perimetro, 0-0.6, 0 =
+       spento; dalla v12.41);
+     - **a destra** (dalla v12.85): `ron` (bool, default **false**) + `ramp`/`rint`
+       (interno) e `roamp`/`roint` (esterno);
+     - **non per tema**: `all` (**tutte** le card accese invece della sola card
+       attiva → classe extra `fx-glow-all`).
+     ⚠️ **Il bagliore INTERNO destro è fatto con ombre `inset` della CARD**, non
+     con una seconda striscia: a destra non c'è nulla da cui far partire il
+     bagliore, i due pseudo-elementi della card sono già occupati (`::before` =
+     riflettore, `::after` = linee mediane admin) e l'`inset` è tagliato dal
+     `border-radius` senza aggiungere nodi né toccare il layout. Vive nella stessa
+     lista `box-shadow` delle ombre proprie (fughe e aura), composta in
+     `injectFxRules` e — con la stessa logica — nell'anteprima. La **fuga** destra
+     è invece simmetrica alla sinistra: stesso disegno con l'offset invertito.
+     ⚠️ **A destra NON c'è una striscia colorata**: solo il bagliore (scelta
+     dell'utente, v12.85).
      ⚠️ **Etichetta di `aura`: 'Aura attorno alla card'/'Aura around the card'
      (dalla v12.75).** Diceva 'Alone intorno alla card', che **collideva** col nome
      dell'effetto `vig`, rinominato 'Alone sfumato' in v12.64: due cose diverse con
@@ -529,7 +571,12 @@ normale/XL secondo la preferenza attiva.
      `color:transparent`, come il titolone) e `text-shadow:none` (il glow grigio
      base di `.rank-num` intorbidirebbe il metallo). Manopole: `int` (intensità del
      metallo = `contrast`) e `lum` (luminosità = `brightness`), applicate con un
-     `filter` iniettato; 1/1 = resa neutra. Dalla v12.53 TUTTE le regole del podio
+     `filter` iniettato; 1/1 = resa neutra. ⚠️ **PER TEMA dalla v12.85**
+     (`int_d`/`int_l`/`lum_d`/`lum_l`): i metalli hanno gradienti diversi nei due
+     temi, quindi una sola coppia non poteva servirli entrambi — è la ragione per
+     cui l'utente teneva l'effetto **spento**. La regola CHIARA iniettata **ripete
+     il `filter`**: senza ripeterlo, il tema chiaro eredita quello scuro.
+     Dalla v12.53 TUTTE le regole del podio
      (clip, gradienti, ombra, filtro) sono INIETTATE da `injectFxRules` e i
      gradienti vivono in **`PODIUM_GRADS`** (fonte unica con l'anteprima); i
      metalli del tema CHIARO sono stati **riequilibrati** (quelli v12.28-52 erano
@@ -542,6 +589,12 @@ normale/XL secondo la preferenza attiva.
      accanto a `vis-top`, quindi il podio **segue i filtri attivi**. ⚠️ L'**argento**
      ha molte fermate (lume/ombra/lume) perché a 2 sole fermate 'sembrava un numero
      normale' (richiesta dell'utente).
+     ⚠️ **Anteprima: numeri 1 e 2, ORO e ARGENTO** (v12.85, richiesta dell'utente;
+     fino alla v12.75 erano 1 e 3, oro e bronzo). L'argento è quello che più ha
+     bisogno d'occhio, avendo molte fermate perché a due sole 'sembrava un numero
+     normale'. Negli altri editor le card d'anteprima usano invece le posizioni 4 e
+     5, FUORI dal podio, altrimenti l'anteprima mentirebbe (vedi la nota sulla
+     sotto-modale).
      ⚠️ **Misurando il colore subito dopo un cambio di flag si legge un valore
      INTERMEDIO** (o `transparent`): è la `transition:color 0.35s` di `.rank-num`,
      non un bug — attendere ~400-600ms. Trappola in cui si ricade facilmente: nella
@@ -584,14 +637,37 @@ normale/XL secondo la preferenza attiva.
   preferenza personale di zoom, ora identico su desktop e mobile (la versione
   lunga di desktop è stata abbandonata con le didascalie). Storico: i testi
   descrittivi erano stati riscritti dall'utente in v12.40 e ritoccati in v12.42. Al ritorno dalla sotto-modale la checkbox si riallinea
-  (callback `onDone`). Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
+  (callback `onDone`). ⚠️ **Le voci del BAGLIORE sono raggruppate in SEZIONI**
+  (v12.85, struttura e testi dell'utente): erano un elenco piatto di otto voci in cui
+  non si capiva quale sfumatura riguardasse quale parte. Un descrittore con
+  **`sec:true`** è un'**intestazione**, non una manopola (classe `.fxk-sec`:
+  maiuscoletto spaziato con filetto sopra). Ordine: *Effetto attivo*, *Su tutte le
+  card*, poi **Interno** (Sfumatura, Opacità), **Esterno** (Anche fuori dalla card,
+  Sfumatura, Opacità), **Intorno alla card** (Intensità), **A destra** (Bagliore
+  anche a destra, Sfumatura/Opacità interna, Sfumatura/Opacità esterna). Le
+  etichette dentro una sezione sono volutamente **generiche e ripetute** ('Sfumatura',
+  'Opacità'): è la sezione a disambiguarle, e nomi lunghi tipo 'Ampiezza del bagliore
+  esterno' erano proprio ciò che rendeva l'elenco confuso.
+  Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
   minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
-  **anteprima dinamica** su card finte nei DUE temi affiancati (fondi e struttura
-  reali; il riflettore segue il puntatore ANCHE nell'anteprima; colori da
-  `CARDCOLORS`, terne concrete via il 3° parametro `cc` delle formule). Regole
-  dell'anteprima (richieste utente, v12.41): **tema CHIARO per primo** (come le
-  altre anteprime del progetto), **niente etichette 'Scuro'/'Chiaro'**, card rese
+  **anteprima dinamica** su card finte (fondi e struttura reali; il riflettore segue
+  il puntatore ANCHE nell'anteprima; colori da `CARDCOLORS`, terne concrete via il 3°
+  parametro `cc` delle formule).
+  ⚠️ **QUANTI riquadri (regola della v12.85, richiesta dell'utente).** Se l'effetto
+  ha manopole **per tema** (`glow`, `nums`, `podium`) si mostra **UN SOLO riquadro**,
+  quello del tema in modifica, che **cambia con la tab**: si vede ciò che si sta
+  modificando e si risparmia spazio verticale (misurato: blocco anteprima da 373px a
+  182px). Se invece la config è **unica per i due temi** (`spot`, `press`, `vig`)
+  restano **DUE riquadri**, perché lì un solo valore serve entrambi i temi e va
+  controllato su entrambi. Corollario: l'evidenziazione **`.fxp-edit`** della v12.64
+  **non è più applicata** (col riquadro singolo non c'è nulla da distinguere); le sue
+  regole restano nel CSS come base per un eventuale ritorno alla vista doppia.
+  `buildPanes()` ricostruisce i riquadri al cambio di tab, quindi `knobs`/`hasTh`/
+  `kTheme` vanno calcolati PRIMA di disegnare l'anteprima.
+  Regole dell'anteprima (richieste utente, v12.41), valide quando i riquadri sono
+  due: **tema CHIARO per primo** (come le altre anteprime del progetto),
+  **niente etichette 'Scuro'/'Chiaro'**, card rese
   **SEMPRE in stato hover** (fondo acceso e bagliori attivi, altrimenti gli slider
   non si vedrebbero in tempo reale) e **padding sinistro abbondante** nel riquadro
   (le sfumature lunghe di `out`/`aura` escono dalla card e venivano tagliate). Ogni
@@ -622,6 +698,30 @@ normale/XL secondo la preferenza attiva.
   di WCAG 1.4.11). Le note delle manopole sono collegate al controllo con
   `aria-describedby`. Misurato dopo il fix: outline 4.24:1 scuro / 5.84:1 chiaro,
   tab inattiva 7.22:1 / 7.85:1, axe 0.
+- **Tasti salto: rivelati dal focus da tastiera (v12.85).** `.jump-fabs` sta a
+  `opacity:0` a riposo, ma i suoi 4 tasti restano nell'ordine di tabulazione: col
+  `Tab` il focus ci finiva sopra mentre sono **invisibili** (misurato: al 367° `Tab`
+  il focus è su 'Vai in cima' con opacità effettiva 0, dentro il viewport, e l'anello
+  di focus non si vede perché il genitore è trasparente). È il criterio **focus
+  visibile** di WCAG (2.4.7), che axe non intercetta. Fix: `.jump-fabs:focus-within`
+  li rivela e `.jump-fab:focus-visible` porta il tasto a piena opacità come l'hover.
+  ⚠️ **Serve `!important`**: la dissolvenza (`showJumpFabsTemporarily`) pilota il
+  contenitore con uno stile **inline**, che batte il foglio; col `!important` il
+  focus vince anche sul timer da 3s che scade mentre si tabula, e appena il focus
+  esce torna a valere l'inline. Scelta di merito: **rivelarli** invece di toglierli
+  dall'ordine di tabulazione, perché servono proprio a chi naviga senza mouse.
+  Verificato: `Enter` scorre ancora in cima, e a modale aperta restano inerti.
+- **Segno di spunta MINIMALE (v12.85, richiesta dell'utente).** Le checkbox del
+  pannello e delle sotto-modali non usano più il disegno nativo (pesante e diverso su
+  ogni sistema): `appearance:none` + quadrato stondato + spunta disegnata in
+  `::after` (due lati di un rettangolo ruotati di 45°, il modo classico di ottenerla
+  senza SVG né font). ⚠️ Tre vincoli da non rompere: il bersaglio di tocco resta la
+  **label da 24px** (regola qui sotto, non la casella, che è ~16px); il **focus da
+  tastiera** ha un anello proprio, perché con `appearance:none` quello nativo
+  spariva insieme al disegno; il segno bianco sul fondo acceso resta ben sopra il
+  3:1 di WCAG 1.4.11. `accent-color` non basterebbe: cambia la tinta, non la forma.
+  Le regole vivono in `injectFxEditorCss` (invisibile al Nu) e sono scoped a
+  `#fx-modal`/`#fab-modal`, quindi le checkbox dell'editor personaggi non cambiano.
 - **Bersagli di tocco da 24px nel pannello (WCAG 2.2, criterio 2.5.8; v12.75).**
   Gli slider delle manopole erano alti **16px** e le checkbox native lo sono per
   costruzione: sotto il minimo di 24×24px. Correzione senza toccare l'aspetto —
@@ -645,9 +745,10 @@ normale/XL secondo la preferenza attiva.
   resta affidabile perché si basa sul confronto dei ref git, non sul numero.
   `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Checkbox e manopole
   applicano l'effetto **subito** (anteprima live sulle card dietro). Il Worker
-  (rev 14) valida anche la forma a oggetto: booleano O oggetto piatto di
-  booleani/numeri finiti/stringhe ≤32 char, max 12 manopole per effetto (controlla
-  la FORMA; i limiti veri li applica il client con `FX_RANGE`).
+  (rev 15) valida anche la forma a oggetto: booleano O oggetto piatto di
+  booleani/numeri finiti/stringhe ≤32 char, max **40** manopole per effetto (era 12
+  fino alla rev 14; controlla la FORMA, i limiti veri li applica il client con
+  `FX_RANGE`).
 - Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**:
   altrimenti il flag `zoomBig` sembrerebbe non funzionare.
 - ⚠️ **Go-live di una release che tocca sito E Worker: aspettare la spia `rev`.**
@@ -690,7 +791,8 @@ normale/XL secondo la preferenza attiva.
     Object dà un conteggio affidabile. Storia in PR #294-#302.
   - **Spia di salute del Worker:** un `GET` (o qualunque non-POST) risponde
     `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del
-    codice attiva (**14** dalla v12.39, che ha esteso `validSiteFlags` ai flag
+    codice attiva (**15** dalla v12.85, che ha alzato a 40 il tetto delle manopole
+    per effetto; 14 dalla v12.39, che ha esteso `validSiteFlags` ai flag
     a oggetto; 13 dalla v12.24, che aveva aggiunto `siteFlags`; utile per
     verificare che una ridistribuzione via Git sia andata a buon fine, non
     altrimenti ispezionabile senza dashboard), `rl`

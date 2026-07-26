@@ -1920,13 +1920,28 @@ html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.
 html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+/* A riposo il contenitore è a opacità 0 ma i 4 tasti restano nell'ordine di
+   tabulazione: col Tab il focus ci finiva sopra mentre sono INVISIBILI (misurato:
+   al 367° Tab il focus è su 'Vai in cima' con opacità effettiva 0, dentro il
+   viewport, e l'anello di focus non si vede perché il genitore è trasparente).
+   È il criterio 'focus visibile' di WCAG (2.4.7). Rivelarli al focus da tastiera
+   è meglio che toglierli dall'ordine di tabulazione: così restano utilizzabili
+   proprio da chi naviga senza mouse, che è il loro pubblico naturale.
+   ⚠️ Serve !important: la dissolvenza (showJumpFabsTemporarily) pilota questo
+   contenitore con uno stile INLINE (`style.opacity='0'`), che batte qualunque
+   regola del foglio. Col !important il focus vince anche sul timer da 3s che
+   scade mentre si sta tabulando, e appena il focus esce torna a valere l'inline. */
+.jump-fabs:focus-within { opacity:1 !important; pointer-events:auto !important; }
 /* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
    al FAB principale (opacità 0.82). L'opacità di riposo 0.5 sta sul SINGOLO
    tasto (non sul contenitore), così l'hover illumina solo il tasto sotto il
    puntatore; su mobile diventano solo freccine a piena opacità (media query in
    fondo). Il contenitore gestisce solo il fade di comparsa (opacity 0->1). */
 .jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0.5;transition:filter 0.15s,background 0.15s,opacity 0.15s; }
-.jump-fab:hover { filter:brightness(1.1); opacity:1; }
+/* :focus-visible accanto a :hover — il tasto a fuoco da tastiera va a piena
+   opacità come quello sotto il puntatore: a 0.5 (l'opacità di riposo su desktop,
+   v9.58) anche l'anello di focus risulterebbe smorzato. */
+.jump-fab:hover, .jump-fab:focus-visible { filter:brightness(1.1); opacity:1; }
 .jump-fab svg { width:1.05rem;height:1.05rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 /* Padding destro quando le maniglie di trascinamento sono visibili */
 #rank-list.has-handles .rank-content { padding-right:2.6rem; }
@@ -2357,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.75</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.85</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2454,10 +2469,22 @@ var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom 
 var FX_EFFECTS = ['glow','spot','press','vig','podium','nums']; // effetti per-piattaforma
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
-  // glow: oamp/oint (v12.42) = ampiezza e opacità PROPRIE del bagliore esterno
-  // sinistro (prima derivate da amp/int: 34*0.32≈11 e 0.62*1.45≈0.9, che sono i
-  // default, così una config salvata prima della v12.42 rende identica).
-  glow:{ on:true, amp:34, int:0.62, out:false, oamp:11, oint:0.9, aura:0, all:false },
+  // glow: dalla v12.76 le manopole numeriche sono PER TEMA (suffisso _d/_l) e
+  // esistono anche per il lato DESTRO (prefisso r). Le chiavi restano PIATTE, coi
+  // suffissi nel nome, così il Worker continua a validarne solo la forma.
+  // • sinistra interno: amp (sfumatura) / int (opacità)
+  // • sinistra esterno: oamp / oint, attivo con `out`
+  // • intorno alla card: aura (0 = spento)
+  // • destra: ron (attivo) + ramp/rint (interno) e roamp/roint (esterno)
+  // I default _l riproducono i fattori di tema che fino alla v12.75 erano fissi
+  // nelle formule (int ×0.8, oint ×0.77, aura ×0.75): così chi non tocca nulla
+  // vede esattamente la resa di prima, ma ora può cambiarla.
+  glow:{ on:true, all:false, out:false, ron:false,
+         amp_d:34, amp_l:34, int_d:0.62, int_l:0.5,
+         oamp_d:11, oamp_l:11, oint_d:0.9, oint_l:0.69,
+         aura_d:0, aura_l:0,
+         ramp_d:34, ramp_l:34, rint_d:0.62, rint_l:0.5,
+         roamp_d:11, roamp_l:11, roint_d:0.9, roint_l:0.69 },
   spot:{ on:true, r:170, int:0.09 },
   // vig (v12.42): intensità + inizio della sfumatura; default = le vecchie
   // regole statiche (alpha 0.34 scuro / derivata ×0.38 in chiaro; start 38%).
@@ -2469,8 +2496,11 @@ var SITE_FLAGS_DEFAULT = {
   // ha già salvato senza quella chiave.
   press:{ on:true, name:true, lab:true, num:false },
   // podium (v12.53): int = intensità del metallo (contrast), lum = luminosità
-  // (brightness); 1/1 = resa neutra (nessun filtro percepibile).
-  podium:{ on:true, int:1, lum:1 },
+  // (brightness); 1/1 = resa neutra (nessun filtro percepibile). Dalla v12.76
+  // sono PER TEMA (_d/_l): i metalli hanno gradienti diversi nei due temi, quindi
+  // la stessa coppia contrasto/luminosità non poteva servirli entrambi bene
+  // (motivo per cui l'utente teneva l'effetto spento).
+  podium:{ on:true, int_d:1, int_l:1, lum_d:1, lum_l:1 },
   // nums (v12.63): colore del numero di posizione, derivato dalla tinta della
   // card in OKLCH. `uni` = luminosità UNIFORME per tutte le famiglie (alla L di
   // riferimento) invece della luminosità propria di ogni tinta; `dsat`/`dlum` =
@@ -2484,10 +2514,14 @@ var SITE_FLAGS_DEFAULT = {
 // schiarirebbe troppo il fondo della card e i testi più tenui scenderebbero sotto
 // soglia in tema scuro (vedi nota nel pannello).
 var FX_RANGE = {
-  glow:{ amp:[10,60], int:[0.1,1], oamp:[4,40], oint:[0.1,1], aura:[0,0.6] },
+  glow:{ amp_d:[10,60], amp_l:[10,60], int_d:[0.1,1], int_l:[0.1,1],
+         oamp_d:[4,40], oamp_l:[4,40], oint_d:[0.1,1], oint_l:[0.1,1],
+         aura_d:[0,0.6], aura_l:[0,0.6],
+         ramp_d:[10,60], ramp_l:[10,60], rint_d:[0.1,1], rint_l:[0.1,1],
+         roamp_d:[4,40], roamp_l:[4,40], roint_d:[0.1,1], roint_l:[0.1,1] },
   spot:{ r:[70,300], int:[0.02,0.12] },
   vig:{ int:[0.05,0.6], start:[20,70] },
-  podium:{ int:[0.6,1.6], lum:[0.6,1.4] },
+  podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4] },
   // ⚠️ I limiti delle L di `nums` NON sono estetici ma di ACCESSIBILITÀ: sono i
   // valori misurati su tutte le 15 famiglie, a qualunque cromia, oltre i quali il
   // numero scenderebbe sotto 3:1 sul fondo della card (soglia AA per il testo
@@ -2504,12 +2538,48 @@ function fxClamp(k, p, v){
   if (typeof v !== 'number' || !isFinite(v)) return def;
   return r ? Math.min(r[1], Math.max(r[0], v)) : v;
 }
+// Manopole diventate PER TEMA nella v12.76: mappa chiave nuova → [chiave vecchia,
+// fattore]. Serve a non perdere le config gia' salvate: chi aveva `amp:60` deve
+// ritrovare 60 in entrambi i temi, non il default 34. I fattori dei _l sono quelli
+// che fino alla v12.75 le formule applicavano fisse al tema chiaro (int ×0.8,
+// oint ×0.77, aura ×0.75), cosi' la resa dopo la migrazione e' IDENTICA a prima.
+// Il lato DESTRO si semina dal sinistro: e' spento per default (`ron:false`), ma
+// accendendolo si ottiene subito una resa simmetrica invece di valori casuali.
+var FX_LEGACY = {
+  glow: {
+    amp_d:['amp',1],    amp_l:['amp',1],
+    int_d:['int',1],    int_l:['int',0.8],
+    oamp_d:['oamp',1],  oamp_l:['oamp',1],
+    oint_d:['oint',1],  oint_l:['oint',0.77],
+    aura_d:['aura',1],  aura_l:['aura',0.75],
+    ramp_d:['amp',1],   ramp_l:['amp',1],
+    rint_d:['int',1],   rint_l:['int',0.8],
+    roamp_d:['oamp',1], roamp_l:['oamp',1],
+    roint_d:['oint',1], roint_l:['oint',0.77]
+  },
+  podium: {
+    int_d:['int',1], int_l:['int',1],
+    lum_d:['lum',1], lum_l:['lum',1]
+  }
+};
+// Se la config salvata porta la chiave VECCHIA e non quella nuova, la traduce.
+// Non tocca nient'altro: una config gia' nel formato nuovo passa indenne.
+function fxMigrateLegacy(k, obj){
+  var map = FX_LEGACY[k];
+  if (!map) return obj;
+  Object.keys(map).forEach(function(nk){
+    if (obj[nk] !== undefined) return;
+    var src = map[nk][0], f = map[nk][1];
+    if (typeof obj[src] === 'number' && isFinite(obj[src])) obj[nk] = obj[src] * f;
+  });
+  return obj;
+}
 // Normalizza UNA config di effetto (base o _m): accetta booleano legacy (= solo
 // interruttore), oggetto parziale (manopole mancanti → default), valori fuori
 // scala (clamp su FX_RANGE). `k` è sempre la chiave BASE (senza _m).
 function normFxEffect(k, v){
   var def = SITE_FLAGS_DEFAULT[k];
-  var obj = (v && typeof v === 'object') ? v : {};
+  var obj = (v && typeof v === 'object') ? fxMigrateLegacy(k, JSON.parse(JSON.stringify(v))) : {};
   var legacyOn = (typeof v === 'boolean') ? v : null;
   var o = {};
   Object.keys(def).forEach(function(p){
@@ -2583,14 +2653,35 @@ function fxR2(n){ return Math.round(n * 100) / 100; }
 // `cc` = terna RGB: di norma var(--ccrgb) per le regole di pagina, una terna
 // CONCRETA per l'anteprima della sotto-modale (dove non esiste una card con la sua
 // famiglia da cui ereditarla).
-function fxGlowInner(cfg, light, cc){
+// Manopola del TEMA corrente (dalla v12.76): `fxTh(cfg,'amp',light)` legge amp_l
+// in chiaro e amp_d in scuro. ⚠️ Da qui in poi le formule NON applicano più
+// fattori di tema fissi (erano int ×0.8, oint ×0.77, aura ×0.75): il valore del
+// tema chiaro lo decide l'admin, e i default lo riproducono. Se si reintroducesse
+// un fattore, si moltiplicherebbe due volte.
+function fxTh(cfg, base, light){ return cfg[base + (light ? '_l' : '_d')]; }
+function fxGlowInner(cfg, light, cc, side){
   cc = cc || FX_CC;
-  var amp = Math.round(cfg.amp);
-  var i = light ? cfg.int * 0.8 : cfg.int;
+  var pre = (side === 'r') ? 'r' : '';
+  var amp = Math.round(fxTh(cfg, pre + 'amp', light));
+  var i = fxTh(cfg, pre + 'int', light);
   var tight = Math.max(4, Math.round(amp * 0.35));
   var spread = Math.max(3, Math.round(amp * 0.3));
   return '0 0 ' + tight + 'px rgba(' + cc + ',' + fxR2(i) + '),' +
          '0 0 ' + amp + 'px ' + spread + 'px rgba(' + cc + ',' + fxR2(i * (light ? 0.52 : 0.58)) + ')';
+}
+// Bagliore INTERNO del lato DESTRO (dalla v12.76). A destra non c'e' una striscia
+// da cui far partire il bagliore, quindi si usano ombre `inset` della card stessa:
+// entrano dal bordo destro e le taglia il border-radius della card, senza aggiungere
+// nodi né toccare il layout. I due pseudo-elementi della card sono già occupati
+// (::before = riflettore, ::after = linee mediane admin), per questo `inset`.
+function fxGlowInnerRight(cfg, light, cc){
+  cc = cc || FX_CC;
+  var amp = Math.round(fxTh(cfg, 'ramp', light));
+  var i = fxTh(cfg, 'rint', light);
+  var tight = Math.max(4, Math.round(amp * 0.35));
+  var spread = Math.max(3, Math.round(amp * 0.3));
+  return 'inset -' + tight + 'px 0 ' + tight + 'px calc(-1 * ' + tight + 'px) rgba(' + cc + ',' + fxR2(i) + '),' +
+         'inset -' + spread + 'px 0 ' + amp + 'px calc(-1 * ' + spread + 'px) rgba(' + cc + ',' + fxR2(i * (light ? 0.52 : 0.58)) + ')';
 }
 // Bagliore ESTERNO: ombre PROPRIE della card, che l'overflow:hidden della card NON
 // taglia (taglia solo i figli, striscia inclusa). Due strati indipendenti:
@@ -2606,15 +2697,22 @@ function fxGlowOuter(cfg, light, cc){
   var parts = [];
   if (cfg.out) {
     // Ampiezza e opacità PROPRIE (oamp/oint, v12.42), non più derivate dal
-    // bagliore interno: i due si regolano in modo indipendente.
-    var b = Math.max(4, Math.round(cfg.oamp));
-    var i = Math.min(1, light ? cfg.oint * 0.77 : cfg.oint);
+    // bagliore interno: i due si regolano in modo indipendente. Per tema dalla v12.76.
+    var b = Math.max(4, Math.round(fxTh(cfg, 'oamp', light)));
+    var i = Math.min(1, fxTh(cfg, 'oint', light));
     parts.push('-' + b + 'px 0 ' + Math.round(b * 1.6) + 'px -' + b + 'px rgba(' + cc + ',' + fxR2(i) + ')');
   }
-  if (cfg.aura > 0) {
-    var ab = Math.max(6, Math.round(cfg.amp * 0.6));
-    var ai = light ? cfg.aura * 0.75 : cfg.aura;
-    parts.push('0 0 ' + ab + 'px rgba(' + cc + ',' + fxR2(ai) + ')');
+  // Fuga dal bordo DESTRO (v12.76): stesso disegno del sinistro con l'offset
+  // invertito, così esce solo da destra (spread negativo pari al blur).
+  if (cfg.ron) {
+    var rb = Math.max(4, Math.round(fxTh(cfg, 'roamp', light)));
+    var ri = Math.min(1, fxTh(cfg, 'roint', light));
+    parts.push(rb + 'px 0 ' + Math.round(rb * 1.6) + 'px -' + rb + 'px rgba(' + cc + ',' + fxR2(ri) + ')');
+  }
+  var aura = fxTh(cfg, 'aura', light);
+  if (aura > 0) {
+    var ab = Math.max(6, Math.round(fxTh(cfg, 'amp', light) * 0.6));
+    parts.push('0 0 ' + ab + 'px rgba(' + cc + ',' + fxR2(aura) + ')');
   }
   return parts.join(',');
 }
@@ -2657,7 +2755,11 @@ var PODIUM_GRADS = {
 };
 // Filtro del podio dalle manopole: contrast = 'intensità del metallo' (aumenta lo
 // stacco tra lumi e ombre del gradiente), brightness = luminosità complessiva.
-function fxPodiumFilter(cfg){ return 'contrast(' + fxR2(cfg.int) + ') brightness(' + fxR2(cfg.lum) + ')'; }
+// Per TEMA dalla v12.76: i metalli hanno gradienti diversi in chiaro e scuro,
+// quindi la stessa coppia contrasto/luminosità non poteva servirli entrambi.
+function fxPodiumFilter(cfg, light){
+  return 'contrast(' + fxR2(fxTh(cfg, 'int', light)) + ') brightness(' + fxR2(fxTh(cfg, 'lum', light)) + ')';
+}
 // Colore del NUMERO di posizione, derivato dalla tinta della card in OKLCH
 // (v12.63). Si usa la sintassi RELATIVA `oklch(from <colore> L C H)`: si riscrive
 // la cromia (× sat) e, se `uni`, la luminosità (alla L di riferimento), lasciando
@@ -2718,8 +2820,10 @@ function injectFxRules(){
     // in tinta famiglia (injectCardColorRules, v12.53) ha specificità (0,4,1)
     // come la clip condivisa e viene DOPO nel documento; senza la ripetizione a
     // specificità (0,5,1) il podio in chiaro mostrerebbe la tinta, non il metallo.
-    css.push('html.fx-podium .rank-item.vis-1 .rank-num,html.fx-podium .rank-item.vis-2 .rank-num,html.fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 2px rgba(0,0,0,0.6);filter:' + fxPodiumFilter(po) + '}');
-    css.push('html[data-theme="light"].fx-podium .rank-item.vis-1 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-2 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 1px rgba(0,0,0,0.22)}');
+    css.push('html.fx-podium .rank-item.vis-1 .rank-num,html.fx-podium .rank-item.vis-2 .rank-num,html.fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 2px rgba(0,0,0,0.6);filter:' + fxPodiumFilter(po, false) + '}');
+    // ⚠️ La regola chiara RIPETE il filtro (v12.76): contrasto e luminosità sono
+    // per tema, e senza ripeterlo qui il tema chiaro erediterebbe quello scuro.
+    css.push('html[data-theme="light"].fx-podium .rank-item.vis-1 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-2 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 1px rgba(0,0,0,0.22);filter:' + fxPodiumFilter(po, true) + '}');
     [1, 2, 3].forEach(function(n){
       css.push('html.fx-podium .rank-item.vis-' + n + ' .rank-num{background-image:' + PODIUM_GRADS[n].dark + '}');
       css.push('html.fx-podium[data-theme="light"] .rank-item.vis-' + n + ' .rank-num{background-image:' + PODIUM_GRADS[n].light + '}');
@@ -2731,7 +2835,14 @@ function injectFxRules(){
     [false, true].forEach(function(light){
       var base = 'html.fx-glow' + (light ? '[data-theme="light"]' : '');
       css.push(fxSel(base, g.all === true, ' .rank-strip') + '{box-shadow:' + fxGlowInner(g, light) + '!important}');
-      if (g.out || g.aura > 0) css.push(fxSel(base, g.all === true, '') + '{box-shadow:' + fxGlowOuter(g, light) + '}');
+      // Ombre PROPRIE della card: fuga sinistra (`out`), fuga destra (`ron`),
+      // alone perimetrale (`aura`) e — dalla v12.76 — il bagliore INTERNO destro,
+      // che è `inset` e quindi vive nella stessa lista.
+      var own = [];
+      if (g.out || g.ron || fxTh(g, 'aura', light) > 0) own.push(fxGlowOuter(g, light));
+      if (g.ron) own.push(fxGlowInnerRight(g, light));
+      own = own.filter(function(x){ return !!x; });
+      if (own.length) css.push(fxSel(base, g.all === true, '') + '{box-shadow:' + own.join(',') + '}');
     });
   }
   if (flagOn('spot')) {
@@ -7001,21 +7112,48 @@ var SITE_FLAG_ITEMS = [
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
 var FX_KNOBS = {
+  // ⚠️ Le voci del bagliore sono organizzate in SEZIONI (v12.76, struttura e testi
+  // dell'utente): erano un elenco piatto di otto voci in cui non si capiva quale
+  // sfumatura riguardasse quale parte. Una voce con `sec` e' un'INTESTAZIONE, non
+  // una manopola. Le manopole numeriche portano `th` ('d'/'l'), quindi la
+  // sotto-modale mostra le tab Chiaro/Scuro e ogni tab filtra le proprie.
   glow: [
     { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
-    { p:'amp', t:'num', step:1, unit:'px', it:'Ampiezza della sfumatura', en:'Spread width' },
-    { p:'int', t:'num', step:0.02, it:'Intensità', en:'Intensity' },
+    { p:'all', t:'bool', it:'Su tutte le card', en:'On every card',
+      nit:'Spento, si accende solo la card sotto il puntatore. Acceso, tutte le card restano accese.',
+      nen:'Off, only the card under the pointer lights up. On, every card stays lit.' },
+    { sec:true, it:'Interno', en:'Inner' },
+    { p:'amp_d', t:'num', step:1, unit:'px', th:'d', it:'Sfumatura', en:'Spread' },
+    { p:'amp_l', t:'num', step:1, unit:'px', th:'l', it:'Sfumatura', en:'Spread' },
+    { p:'int_d', t:'num', step:0.02, th:'d', it:'Opacità', en:'Opacity' },
+    { p:'int_l', t:'num', step:0.02, th:'l', it:'Opacità', en:'Opacity' },
+    { sec:true, it:'Esterno', en:'Outer' },
     { p:'out', t:'bool', it:'Anche fuori dalla card', en:'Outside the card too',
       nit:'Spento, il bagliore resta dentro la card. Acceso, esce anche dal bordo sinistro.',
       nen:'Off, the glow stays inside the card. On, it also escapes past the left edge.' },
-    { p:'oamp', t:'num', step:1, unit:'px', it:'Ampiezza del bagliore esterno', en:'Outer glow spread' },
-    { p:'oint', t:'num', step:0.02, it:'Opacità del bagliore esterno', en:'Outer glow opacity' },
-    { p:'aura', t:'num', step:0.02, it:'Aura attorno alla card', en:'Aura around the card',
+    { p:'oamp_d', t:'num', step:1, unit:'px', th:'d', it:'Sfumatura', en:'Spread' },
+    { p:'oamp_l', t:'num', step:1, unit:'px', th:'l', it:'Sfumatura', en:'Spread' },
+    { p:'oint_d', t:'num', step:0.02, th:'d', it:'Opacità', en:'Opacity' },
+    { p:'oint_l', t:'num', step:0.02, th:'l', it:'Opacità', en:'Opacity' },
+    { sec:true, it:'Intorno alla card', en:'Around the card' },
+    { p:'aura_d', t:'num', step:0.02, th:'d', it:'Intensità', en:'Intensity',
       nit:'Bagliore uniforme su tutto il perimetro della card. A zero è spento.',
       nen:'Even glow around the whole card perimeter. Zero means off.' },
-    { p:'all', t:'bool', it:'Su tutte le card', en:'On every card',
-      nit:'Spento, si accende solo la card sotto il puntatore. Acceso, tutte le card restano accese.',
-      nen:'Off, only the card under the pointer lights up. On, every card stays lit.' }
+    { p:'aura_l', t:'num', step:0.02, th:'l', it:'Intensità', en:'Intensity',
+      nit:'Bagliore uniforme su tutto il perimetro della card. A zero è spento.',
+      nen:'Even glow around the whole card perimeter. Zero means off.' },
+    { sec:true, it:'A destra', en:'On the right' },
+    { p:'ron', t:'bool', it:'Bagliore anche a destra', en:'Glow on the right too',
+      nit:'Lo stesso bagliore del lato sinistro, con parametri propri. A destra non c\'è una striscia colorata: solo il bagliore.',
+      nen:'The same glow as the left side, with its own settings. There is no coloured strip on the right: the glow only.' },
+    { p:'ramp_d', t:'num', step:1, unit:'px', th:'d', it:'Sfumatura interna', en:'Inner spread' },
+    { p:'ramp_l', t:'num', step:1, unit:'px', th:'l', it:'Sfumatura interna', en:'Inner spread' },
+    { p:'rint_d', t:'num', step:0.02, th:'d', it:'Opacità interna', en:'Inner opacity' },
+    { p:'rint_l', t:'num', step:0.02, th:'l', it:'Opacità interna', en:'Inner opacity' },
+    { p:'roamp_d', t:'num', step:1, unit:'px', th:'d', it:'Sfumatura esterna', en:'Outer spread' },
+    { p:'roamp_l', t:'num', step:1, unit:'px', th:'l', it:'Sfumatura esterna', en:'Outer spread' },
+    { p:'roint_d', t:'num', step:0.02, th:'d', it:'Opacità esterna', en:'Outer opacity' },
+    { p:'roint_l', t:'num', step:0.02, th:'l', it:'Opacità esterna', en:'Outer opacity' }
   ],
   spot: [
     { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
@@ -7039,12 +7177,18 @@ var FX_KNOBS = {
       nit:'I primi tre conservano l\'ombra del podio, quando è attivo.',
       nen:'The top three keep the podium shadow when it is on.' }
   ],
+  // Per TEMA dalla v12.76: i metalli hanno gradienti diversi nei due temi, quindi
+  // una sola coppia contrasto/luminosità non poteva servirli entrambi.
   podium: [
     { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
-    { p:'int', t:'num', step:0.02, it:'Intensità del metallo', en:'Metal intensity',
+    { p:'int_d', t:'num', step:0.02, th:'d', it:'Intensità del metallo', en:'Metal intensity',
       nit:'Aumenta lo stacco tra lumi e ombre del gradiente.',
       nen:'Raises the contrast between the gradient highlights and shadows.' },
-    { p:'lum', t:'num', step:0.02, it:'Luminosità', en:'Brightness' }
+    { p:'lum_d', t:'num', step:0.02, th:'d', it:'Luminosità', en:'Brightness' },
+    { p:'int_l', t:'num', step:0.02, th:'l', it:'Intensità del metallo', en:'Metal intensity',
+      nit:'Aumenta lo stacco tra lumi e ombre del gradiente.',
+      nen:'Raises the contrast between the gradient highlights and shadows.' },
+    { p:'lum_l', t:'num', step:0.02, th:'l', it:'Luminosità', en:'Brightness' }
   ],
   // `th` = manopola valida solo per un TEMA ('d' scuro, 'l' chiaro): la
   // sotto-modale mostra le tab Chiaro/Scuro e filtra le righe. Senza `th` la
@@ -7086,13 +7230,11 @@ function injectFxEditorCss(){
     '.fxp-pane{position:relative;border-radius:8px;padding:0.85rem 1.2rem 0.85rem 1.7rem;display:flex;flex-direction:column;gap:0.55rem;overflow:hidden}',
     '.fxp-pane.d{background:#262626;color:#d2d2d2}',
     '.fxp-pane.l{background:#F5F5F5;color:#373737}',
-    // Riquadro del tema IN MODIFICA (v12.64, mockup dell'utente): solo contorno
-    // accento, NIENTE ombreggiatura. L'outline non occupa spazio, quindi i due
-    // riquadri non si spostano quando l'evidenziazione passa dall'uno all'altro.
+    // ⚠️ `.fxp-edit` (evidenziazione del riquadro in modifica, v12.64-12.75) NON è
+    // più applicata dalla v12.76: con le manopole per tema si mostra un solo
+    // riquadro, quello che si sta modificando, quindi non c'è nulla da distinguere.
+    // Le regole restano come base per un eventuale ritorno alla vista doppia.
     '.fxp-pane{outline:2px solid transparent;outline-offset:2px;transition:outline-color 0.2s}',
-    // Colore per TEMA (v12.65): l'azzurro chiaro dava 2.88:1 sul fondo chiaro
-    // della modale, sotto il 3:1 richiesto da WCAG 1.4.11 per gli elementi non
-    // testuali (l'anello è l'unico segnale visivo del riquadro in modifica).
     '.fxp-pane.fxp-edit{outline-color:rgba(90,140,220,0.95)}',
     'html[data-theme="light"] .fxp-pane.fxp-edit{outline-color:rgba(28,84,170,0.95)}',
     '.fxp-card{position:relative;display:grid;grid-template-columns:24px 1fr;align-items:center;gap:0.7rem;',
@@ -7112,6 +7254,36 @@ function injectFxEditorCss(){
     // la soglia di contrasto per il testo piccolo.
     '.fxp-pill{display:inline-block;font-size:0.62em;font-weight:400;letter-spacing:0.03em;',
     'border:1px solid;border-radius:3px;padding:0 5px;margin-left:0.5em;vertical-align:0.25em;white-space:nowrap}',
+    // Intestazione di sezione (v12.76): titoletto che raggruppa le manopole di una
+    // parte del bagliore. Piccola, in maiuscoletto spaziato e con un filetto
+    // sopra, così separa senza pesare; opacità 0.85 per restare sopra la soglia
+    // di contrasto del testo piccolo.
+    '.fxk-sec{margin:1rem 0 0.5rem;padding-top:0.5rem;border-top:1px solid rgba(140,145,160,0.28);',
+    'font-size:0.7rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;opacity:0.85}',
+    '.fxk-sec:first-child{margin-top:0;padding-top:0;border-top:0}',
+    // Spunta MINIMALE (v12.76, richiesta utente): la casella nativa ha un segno
+    // pesante e diverso su ogni sistema. Qui è un quadrato stondato con una spunta
+    // disegnata in ::after (due lati di un rettangolo ruotati di 45°, il modo
+    // classico di ottenere un segno di spunta pulito senza SVG né font).
+    // Vincoli rispettati: il bersaglio di tocco resta la label da 24px (v12.75),
+    // il focus da tastiera resta visibile (outline proprio) e il contrasto del
+    // segno sul fondo acceso è ampiamente sopra il 3:1 richiesto per gli elementi
+    // non testuali. `accent-color` non basterebbe: cambia la tinta, non la forma.
+    '#fx-modal input[type=checkbox],#fab-modal input[type=checkbox]{appearance:none;-webkit-appearance:none;',
+    'position:relative;flex:none;width:1.05rem;height:1.05rem;margin:0;border-radius:4px;cursor:pointer;',
+    'border:1.5px solid rgba(140,145,160,0.75);background:transparent;transition:background 0.15s,border-color 0.15s}',
+    '#fx-modal input[type=checkbox]:hover,#fab-modal input[type=checkbox]:hover{border-color:rgba(160,180,205,0.95)}',
+    '#fx-modal input[type=checkbox]:checked,#fab-modal input[type=checkbox]:checked{',
+    'background:rgba(122,166,205,0.95);border-color:rgba(122,166,205,0.95)}',
+    'html[data-theme="light"] #fx-modal input[type=checkbox]:checked,html[data-theme="light"] #fab-modal input[type=checkbox]:checked{',
+    'background:rgba(31,85,98,0.95);border-color:rgba(31,85,98,0.95)}',
+    '#fx-modal input[type=checkbox]:checked::after,#fab-modal input[type=checkbox]:checked::after{content:"";position:absolute;',
+    'left:50%;top:47%;width:0.3rem;height:0.56rem;border:solid #fff;border-width:0 2px 2px 0;',
+    'transform:translate(-50%,-50%) rotate(45deg)}',
+    // Focus da tastiera: anello proprio, perché con appearance:none quello nativo
+    // sparisce insieme al disegno della casella.
+    '#fx-modal input[type=checkbox]:focus-visible,#fab-modal input[type=checkbox]:focus-visible{',
+    'outline:2px solid rgba(154,192,216,0.95);outline-offset:2px}',
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
     '.fxk-row .fxk-lbl{font-size:0.84rem;font-weight:600}',
     '.fxk-row .fxk-val{font-size:0.78rem;font-variant-numeric:tabular-nums;opacity:0.75;min-width:3.2em;text-align:right}',
@@ -7170,7 +7342,14 @@ function showFxConfigEditor(key, sfx, onDone){
                        : 'Changes show immediately below and on the cards behind.';
   box.appendChild(sub);
 
-  // ── anteprima: due riquadri (CHIARO per primo, richiesta utente v12.41), due
+  // ── anteprima. ⚠️ QUANTI riquadri (v12.76, richiesta utente): se l'effetto ha
+  // manopole PER TEMA si mostra UN SOLO riquadro, quello del tema in modifica, che
+  // cambia con la tab — si vede ciò che si sta modificando e si risparmia spazio
+  // verticale. Se invece la config è UNICA per i due temi (riflettore, incisione,
+  // alone) restano DUE riquadri, perché lì un solo valore serve entrambi i temi e
+  // va controllato su entrambi. Col riquadro singolo l'evidenziazione .fxp-edit
+  // della v12.64 non serve più: non c'è nulla da distinguere.
+  // Ordine, quando sono due: CHIARO per primo (richiesta utente v12.41), due
   // card ciascuno, SENZA etichette tema (rimosse in v12.41: superflue). Stato
   // delle card PER EFFETTO (v12.42, richiesta utente):
   //  • bagliore — solo la PRIMA card è 'in hover' (così si vede la differenza
@@ -7179,23 +7358,31 @@ function showFxConfigEditor(key, sfx, onDone){
   //    50%/50%, e segue il puntatore quando ci passi sopra);
   //  • vignettatura — card a riposo, l'effetto sta sul FONDO dei riquadri.
   var cards = [], panes = [];
+  // Manopole e tab servono già qui: da esse dipende QUANTI riquadri disegnare.
+  var knobs = FX_KNOBS[key] || [];
+  var hasTh = knobs.some(function(kn){ return kn.th; });
+  var kTheme = (document.documentElement.getAttribute('data-theme') === 'light') ? 'l' : 'd';
   var wrap = document.createElement('div'); wrap.className = 'fxp-wrap';
-  [true, false].forEach(function(light){
+  var buildPanes = function(){
+  wrap.textContent = ''; cards.length = 0; panes.length = 0;
+  (hasTh ? [kTheme === 'l'] : [true, false]).forEach(function(light){
     var pane = document.createElement('div'); pane.className = 'fxp-pane ' + (light ? 'l' : 'd');
     panes.push({ el:pane, light:light });
     [1, 2].forEach(function(n){
       var c = document.createElement('div'); c.className = 'fxp-card';
       var strip = document.createElement('span'); strip.className = 'fxp-strip';
       var spot = document.createElement('span'); spot.className = 'fxp-spot';
-      // Numeri delle card d'anteprima. Nell'editor del PODIO sono 1 e 3 (oro e
-      // bronzo: con due card si coprono il metallo più chiaro e il più scuro,
-      // l'argento si giudica sulle card vere dietro). In TUTTI gli altri editor
-      // sono posizioni FUORI dal podio (4 e 5): altrimenti l'anteprima mentirebbe
-      // — mostrerebbe p.es. l'incisione sui numeri 1-2, che in pagina il podio
-      // esclude avendo specificità maggiore (rilievo della verifica v12.64).
+      // Numeri delle card d'anteprima. Nell'editor del PODIO sono 1 e 2, ORO e
+      // ARGENTO (v12.76, richiesta utente; fino alla v12.75 erano 1 e 3, oro e
+      // bronzo). L'argento è quello che più ha bisogno d'occhio: ha molte fermate
+      // perché a due sole 'sembrava un numero normale', quindi è giusto sia in
+      // anteprima. In TUTTI gli altri editor sono posizioni FUORI dal podio (4 e
+      // 5): altrimenti l'anteprima mentirebbe — mostrerebbe p.es. l'incisione sui
+      // numeri 1-2, che in pagina il podio esclude avendo specificità maggiore
+      // (rilievo della verifica v12.64).
       var podEd = (key === 'podium');
       var num = document.createElement('span'); num.className = 'fxp-num';
-      num.textContent = String(podEd ? (n === 1 ? 1 : 3) : (n === 1 ? 4 : 5));
+      num.textContent = String(podEd ? n : (n === 1 ? 4 : 5));
       var body = document.createElement('span');
       var nm = document.createElement('span'); nm.className = 'fxp-name';
       nm.textContent = n === 1 ? 'Fëanor' : 'Fingolfin';
@@ -7208,7 +7395,7 @@ function showFxConfigEditor(key, sfx, onDone){
       body.appendChild(nm); body.appendChild(ds);
       c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
       var rec = { el:c, strip:strip, spot:spot, num:num, name:nm, pill:pill, desc:ds,
-                  light:light, first:(n === 1), metal:(n === 1 ? 1 : 3), podEd:podEd };
+                  light:light, first:(n === 1), metal:n, podEd:podEd };
       // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
       // valutarlo senza uscire dalla modale.
       c.addEventListener('pointermove', function(e){
@@ -7220,6 +7407,8 @@ function showFxConfigEditor(key, sfx, onDone){
     });
     wrap.appendChild(pane);
   });
+  };
+  buildPanes();
   box.appendChild(wrap);
 
   function paint(){
@@ -7237,7 +7426,13 @@ function showFxConfigEditor(key, sfx, onDone){
       rec.strip.style.background = 'rgba(' + cc + ',0.85)';
       var gOn = vOn('glow') && hot;
       rec.strip.style.boxShadow = gOn ? fxGlowInner(g, rec.light, cc) : 'none';
-      rec.el.style.boxShadow = (gOn && (g.out || g.aura > 0)) ? fxGlowOuter(g, rec.light, cc) : 'none';
+      // Stessa composizione delle regole di pagina: fughe/alone (ombre proprie) e
+      // bagliore interno DESTRO (inset) vivono nella stessa lista box-shadow.
+      var own = [];
+      if (gOn && (g.out || g.ron || fxTh(g, 'aura', rec.light) > 0)) own.push(fxGlowOuter(g, rec.light, cc));
+      if (gOn && g.ron) own.push(fxGlowInnerRight(g, rec.light, cc));
+      own = own.filter(function(x){ return !!x; });
+      rec.el.style.boxShadow = own.length ? own.join(',') : 'none';
       rec.spot.style.background = fxSpotBg(s, rec.light);
       rec.spot.style.opacity = (key === 'spot' && vOn('spot')) ? '1' : '0';
       // Nomi incisi: stessa formula delle regole iniettate, per Nome/etichette.
@@ -7272,7 +7467,7 @@ function showFxConfigEditor(key, sfx, onDone){
         rec.num.style.backgroundClip = 'text';
         rec.num.style.color = 'transparent';
         rec.num.style.textShadow = rec.light ? '0 1px 1px rgba(0,0,0,0.22)' : '0 1px 2px rgba(0,0,0,0.6)';
-        rec.num.style.filter = fxPodiumFilter(po);
+        rec.num.style.filter = fxPodiumFilter(po, rec.light);
       } else {
         rec.num.style.backgroundImage = 'none';
         rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
@@ -7294,11 +7489,8 @@ function showFxConfigEditor(key, sfx, onDone){
   // ── manopole ───────────────────────────────────────────────────────────────
   // Se l'effetto ha manopole PER TEMA (`th`), in testa compaiono due tab
   // Chiaro/Scuro (v12.63, richiesta utente per 'Colore dei numeri'): si edita un
-  // tema alla volta, mentre l'anteprima mostra sempre entrambi i riquadri, così
-  // l'altro tema resta sotto controllo. Le manopole senza `th` sono condivise.
-  var knobs = FX_KNOBS[key] || [];
-  var hasTh = knobs.some(function(kn){ return kn.th; });
-  var kTheme = (document.documentElement.getAttribute('data-theme') === 'light') ? 'l' : 'd';
+  // tema alla volta e, dalla v12.76, l'anteprima mostra SOLO quel tema. Le
+  // manopole senza `th` sono condivise dai due temi.
   var knobsBox = document.createElement('div');
   if (hasTh) {
     var thBar = document.createElement('div');
@@ -7308,7 +7500,12 @@ function showFxConfigEditor(key, sfx, onDone){
       var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'fab-modal-confirm';
       tb.style.cssText = 'width:auto;flex:1;margin-top:0;padding:0.38rem 0;';
       tb.textContent = td[1];
-      tb.onclick = function(){ if (kTheme !== td[0]) { kTheme = td[0]; syncTh(); renderKnobs(); } };
+      // Cambiando tab si RICOSTRUISCE anche il riquadro d'anteprima (v12.76):
+      // ne esiste uno solo e deve mostrare il tema che si sta modificando.
+      tb.onclick = function(){
+        if (kTheme === td[0]) return;
+        kTheme = td[0]; syncTh(); renderKnobs(); buildPanes(); paint();
+      };
       thBtns[td[0]] = tb; thBar.appendChild(tb);
     });
     var syncTh = function(){
@@ -7321,8 +7518,8 @@ function showFxConfigEditor(key, sfx, onDone){
         thBtns[k].style.opacity = on ? '1' : '0.78';
         thBtns[k].style.borderColor = on ? 'rgba(154,192,216,0.9)' : '';
       });
-      // Evidenzia il riquadro d'anteprima del tema che si sta modificando.
-      panes.forEach(function(pn){ pn.el.classList.toggle('fxp-edit', (pn.light ? 'l' : 'd') === kTheme); });
+      // Niente più evidenziazione del riquadro (v12.76): col tema singolo il
+      // riquadro visibile È quello in modifica, non c'è nulla da distinguere.
     };
     // Le tab vanno SOPRA l'anteprima (v12.64): il nesso 'tab selezionata →
     // riquadro evidenziato' si legge solo se il comando precede l'effetto.
@@ -7332,6 +7529,13 @@ function showFxConfigEditor(key, sfx, onDone){
   function renderKnobs(){
   knobsBox.textContent = '';
   knobs.filter(function(kn){ return !kn.th || kn.th === kTheme; }).forEach(function(kn){
+    // Intestazione di sezione (v12.76): non è una manopola, solo un titoletto che
+    // dice a quale parte del bagliore appartengono le voci che seguono.
+    if (kn.sec) {
+      var h = document.createElement('p'); h.className = 'fxk-sec';
+      h.textContent = it ? kn.it : kn.en;
+      knobsBox.appendChild(h); return;
+    }
     var row = document.createElement('div'); row.className = 'fxk-row';
     var lbl = document.createElement('label'); lbl.className = 'fxk-lbl';
     lbl.textContent = it ? kn.it : kn.en;

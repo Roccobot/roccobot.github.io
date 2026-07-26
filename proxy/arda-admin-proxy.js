@@ -139,8 +139,12 @@ function readSiteFlags(src) {
 // oggetto PIATTO di manopole (effetto regolabile, dalla v12.39: {on, ampiezza,
 // intensità, ...}). Valori ammessi dentro l'oggetto: booleani, numeri finiti e
 // stringhe brevi; niente annidamento più profondo, niente array. Max 40 chiavi
-// esterne e 12 manopole per effetto: il client tiene comunque i valori nei limiti di
+// esterne e 40 manopole per effetto: il client tiene comunque i valori nei limiti di
 // FX_RANGE, qui si controlla solo la FORMA (il Worker non conosce gli effetti).
+// ⚠️ Il tetto delle manopole era 12 fino alla rev 14: alzato a 40 nella rev 15,
+// perché il bagliore per-tema e a due lati (v12.76) arriva a 22 manopole. Le chiavi
+// restano PIATTE, coi suffissi di tema (_d/_l) dentro il nome: così la forma che
+// questo Worker valida non cambia, cambia solo quante ne stanno in un effetto.
 function validSiteFlags(sf) {
   if (!sf || typeof sf !== 'object' || Array.isArray(sf)) return false;
   var keys = Object.keys(sf);
@@ -155,7 +159,7 @@ function validSiteFlags(sf) {
     if (leaf(v)) return true;
     if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
     var ps = Object.keys(v);
-    return ps.length >= 1 && ps.length <= 12 && ps.every(function (p) { return leaf(v[p]); });
+    return ps.length >= 1 && ps.length <= 40 && ps.every(function (p) { return leaf(v[p]); });
   });
 }
 
@@ -296,7 +300,7 @@ export default {
     // 'rl' = presenza del binding del Durable Object di rate limiting.
     // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
     // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 14, rl: !!env.RL_DO }, 405, ch);
+    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 15, rl: !!env.RL_DO }, 405, ch);
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
