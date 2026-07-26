@@ -1835,6 +1835,15 @@ specifico del dataset):
   **parentesi**; l'em-dash solo quando risulta davvero migliore o più elegante.
   (Bonifica non retroattiva: gli em-dash già presenti restano finché non si
   decide di rivederli.)
+  - ⚠️ **Nei testi dell'INTERFACCIA l'em-dash non si usa MAI: trattino breve `-`**
+    (regola dell'utente, 2026-07-26: 'non resisti proprio alla tentazione di
+    inserire 'sto em-dash'). Vale per titoli di modale, toast, etichette, `alt` e
+    meta: la priorità 'virgole o parentesi' dei testi narrativi lì non si applica,
+    perché sono stringhe brevi dove il separatore è un trattino e basta. Bonificati
+    in v12.96 i quattro casi allora presenti: il titolo delle sotto-modali
+    (`Bagliore - Desktop`), il titolo dell'editor admin, il toast di sessione
+    scaduta e l'`og:image:alt`. Controllo: cercare `—` nel file **dentro le
+    stringhe** di codice, non nei commenti (dove resta legittimo).
 - **Ellissi:** tre punti `...` (mai il carattere unico `…`).
 - **Maiuscola iniziale:** ogni campo-riga mostrato nella card — `descrizione`,
   `nomi_alternativi`, `appellativi` (IT ed EN) — **inizia con la maiuscola**,
