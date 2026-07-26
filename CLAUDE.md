@@ -380,7 +380,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
 ## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39; config per-piattaforma dalla v12.53)
 
 Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
-la modalità ingrandita e i 5 effetti grafici.
+la modalità ingrandita e i 6 effetti grafici.
 - **CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente).** Ogni effetto ha DUE
   configurazioni indipendenti: **desktop** (chiave base, es. `glow`) e **mobile**
   (suffisso **`_m`**, es. `glow_m`, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al
@@ -396,7 +396,10 @@ la modalità ingrandita e i 5 effetti grafici.
   mobile, righe **compatte** (checkbox + nome + fader, note descrittive omesse per
   spazio, richiesta utente) e **nota breve** in basso (testo dell'utente, con
   variante normale/XL). La sotto-modale riceve la variante (`showFxConfigEditor(key,
-  sfx, onDone)`) e nel titolo indica '— Desktop'/'— Mobile'; modificare la variante
+  sfx, onDone)`) e nel titolo indica '— Desktop'/'— Mobile'; se l'effetto ha
+  manopole **per TEMA** (proprietà `th:'d'`/`th:'l'` in `FX_KNOBS`, oggi solo
+  `nums`) compaiono in più due **tab Chiaro/Scuro** che filtrano le righe, mentre
+  l'anteprima continua a mostrare entrambi i riquadri (v12.63, richiesta utente); modificare la variante
   NON attiva cambia nulla in pagina (le regole iniettate seguono `fxCfg`). Accesso: tap sulla versione → sblocco
 → bivio 'Area admin' → **5° pulsante 'Pannello di controllo'** (`showSiteFlagsEditor`,
 stile admin minimale). ⚠️ **Nome in UI: 'Pannello di controllo' / 'Control panel'
@@ -434,8 +437,9 @@ normale/XL secondo la preferenza attiva.
   `fxGlowOuter`, `fxSpotBg`, `fxVigBg`) sono condivise con l'anteprima della
   sotto-modale, così anteprima e pagina non possono divergere. `applySiteFlags` chiama anche
   `injectFxRules` + `wireSpotlight`.
-- **I 5 effetti** (mockup approvato dall'utente: 'stanno benissimo anche tutti
-  insieme'), tutti a **costo zero sul layout** (nessuno sposta il contenuto):
+- **Gli effetti** (i primi 5 da un mockup approvato dall'utente: 'stanno benissimo
+  anche tutti insieme'; il 6°, `nums`, dalla v12.63), tutti a **costo zero sul
+  layout** (nessuno sposta il contenuto):
   1. **`glow` — bagliore della striscia colorata** (`fx-glow`, REGOLABILE; label
      UI IT dalla v12.42, prima 'Accensione della striscia'): la striscia
      diffonde la tinta di famiglia dentro la card su due strati derivati dalle
@@ -512,8 +516,11 @@ normale/XL secondo la preferenza attiva.
      accanto a `vis-top`, quindi il podio **segue i filtri attivi**. ⚠️ L'**argento**
      ha molte fermate (lume/ombra/lume) perché a 2 sole fermate 'sembrava un numero
      normale' (richiesta dell'utente).
-     ⚠️ Misurando il colore dopo un cambio di flag si legge ancora `transparent`: è
-     la `transition:color 0.35s` di `.rank-num`, non un bug (attendere ~400ms).
+     ⚠️ **Misurando il colore subito dopo un cambio di flag si legge un valore
+     INTERMEDIO** (o `transparent`): è la `transition:color 0.35s` di `.rank-num`,
+     non un bug — attendere ~400-600ms. Trappola in cui si ricade facilmente: nella
+     v12.63 ha fatto sembrare che `nums` scavalcasse il podio, mentre la cascata
+     era corretta.
   - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto
     della v12.24 (`mask-image` su `#rank-list`), **eliminato del tutto nella
     v12.39** su richiesta dell'utente, sostituito dal riflettore. Non
@@ -977,21 +984,40 @@ gruppo = cambiare una terna.
 - **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
-- **Numero di posizione nella TINTA della card (dalla v12.53, scelta utente: il
-  grigio 'cupo' stonava col sito ormai colorato).** Regole INIETTATE in
-  `injectCardColorRules`: `color-mix` della terna `--ccrgb`. ⚠️ **Dalla v12.54 il
-  secondo colore è `var(--name)`**, il grigio del nome, NON più bianco/nero:
-  desaturare e avvicinarsi alla luminosità del nome diventano lo stesso gesto, e
-  il numero segue il token (che il tema chiaro ridefinisce da sé: `#d2d2d2`
-  scuro / `#373737` chiaro), senza doppioni da tenere allineati. Tarature: tema
-  SCURO **35% tinta + 65% grigio** (scelta dell'utente su mockup: la tinta piena
-  'grida', a metà strada compete ancora col nome); tema CHIARO **70% tinta + 30%
-  nero** (in attesa di taratura analoga). ⚠️ **Nessun fallback esplicito**: se
-  `color-mix` non è supportato la dichiarazione cade e vale la regola base
-  `.rank-num{color:var(--name)}` — cioè la resa pre-v12.53, grigia ma corretta e
-  AA-safe. Contrasti misurati in scuro: **6.4-6.9:1** (soglia 3:1, testo grande).
-  I numeri del PODIO non sono toccati (le regole fx-podium hanno specificità
-  maggiore; vedi l'avvertenza nella sezione podio). axe 0 verificato.
+- **Numero di posizione nella TINTA della card** (dalla v12.53; effetto
+  REGOLABILE `nums` dalla v12.63, voce 'Colore dei numeri' del Pannello di
+  controllo). Scelta utente: il grigio 'cupo' stonava col sito ormai colorato.
+  ⚠️ **Dalla v12.63 il colore si costruisce in OKLCH con la sintassi RELATIVA**,
+  non più mescolando un grigio:
+  `oklch(from rgb(var(--ccrgb)) <L> calc(c * <sat>) h)` — si riscrive la cromia
+  (e, se `uni`, la luminosità) lasciando la TINTA intatta. **Perché:** desaturare
+  *a luminosità costante* è impossibile mescolando un grigio fisso (nero, 66% o
+  altro), che tira sempre il colore verso la luminosità di quel grigio; in OKLCH
+  la `L` resta identica al millesimo (misurato). Le regole vivono in
+  `injectFxRules` (formula `fxNumColor`), scoped a `html.fx-nums`.
+  - **Manopole:** `uni` (luminosità UNIFORME per tutte le famiglie alla L di
+    riferimento, invece della luminosità propria di ogni tinta), `dsat`/`dlum`
+    per il tema SCURO e `lsat`/`llum` per il CHIARO. Tarature dell'utente:
+    **cromia 15%**, **L 0.66** in scuro; in chiaro **L 0.60** (vedi sotto).
+  - ⚠️ **I limiti di `dlum`/`llum` in `FX_RANGE` sono di ACCESSIBILITÀ, non
+    estetici**: misurati su tutte le 15 famiglie a qualunque cromia, sono i valori
+    oltre i quali il numero scende sotto 3:1 (soglia AA del testo grande) sul
+    fondo della card. In SCURO serve L **alta** (min **0.66** = 3.70:1), in CHIARO
+    L **bassa** (max **0.60** = 3.18:1) — per questo i due temi NON possono avere
+    la stessa L, e la L 0.66 chiesta dall'utente in chiaro darebbe 2.65:1. Così il
+    range stesso garantisce l'AA e gli slider non possono rompere il contrasto.
+    Non allargarli senza rimisurare.
+  - **Nessun fallback esplicito**: se `oklch(from …)` non è supportato la
+    dichiarazione cade e vale la regola base `.rank-num{color:var(--name)}` — la
+    resa storica, grigia ma corretta e AA-safe.
+  - Contrasti misurati in pagina: **4.16-4.31:1** in scuro, **3.36-3.39:1** in
+    chiaro. axe 0 verificato nei due temi.
+  - ⚠️ **`nums` e `podium` hanno la STESSA specificità** ((0,4,1) in scuro,
+    (0,5,1) in chiaro): il podio vince solo perché `injectFxRules` emette le sue
+    regole **DOPO** quelle di `nums`. Non invertire l'ordine dei blocchi, o i
+    numeri 1-2-3 perderebbero il metallo (il colore opaco coprirebbe il gradiente).
+  - Storico: v12.53 `color-mix` con bianco/nero; v12.54 `color-mix` con
+    `var(--name)` (35% tinta in scuro).
 - **Opacità della riga Info a 0.80 (dalla v12.24, era 0.72).** `.rank-desc` è la
   riga più piccola e tenue della card (~13.8px): era l'anello debole della
   leggibilità (rilevato misurando i corpi di tutti i testi). +8 punti di opacità si

@@ -2344,7 +2344,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.54</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2438,7 +2438,7 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // SEMINATA come copia della desktop (comportamento identico finché l'admin non
 // differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
 var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
-var FX_EFFECTS = ['glow','spot','press','vig','podium']; // effetti per-piattaforma
+var FX_EFFECTS = ['glow','spot','press','vig','podium','nums']; // effetti per-piattaforma
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
   // glow: oamp/oint (v12.42) = ampiezza e opacità PROPRIE del bagliore esterno
@@ -2454,7 +2454,13 @@ var SITE_FLAGS_DEFAULT = {
   press:{ on:true, name:true, lab:true },
   // podium (v12.53): int = intensità del metallo (contrast), lum = luminosità
   // (brightness); 1/1 = resa neutra (nessun filtro percepibile).
-  podium:{ on:true, int:1, lum:1 }
+  podium:{ on:true, int:1, lum:1 },
+  // nums (v12.63): colore del numero di posizione, derivato dalla tinta della
+  // card in OKLCH. `uni` = luminosità UNIFORME per tutte le famiglie (alla L di
+  // riferimento) invece della luminosità propria di ogni tinta; `dsat`/`dlum` =
+  // cromia conservata e L di riferimento in tema SCURO, `lsat`/`llum` in CHIARO
+  // (valori distinti perché su fondo chiaro una L alta perde contrasto).
+  nums:{ on:true, uni:true, dsat:0.15, dlum:0.66, lsat:0.15, llum:0.6 }
 };
 // Limiti delle manopole numeriche. Servono a DUE cose: tarare gli slider della
 // sotto-modale e RIPULIRE un valore assurdo arrivato dal file dati (o da una mano
@@ -2465,11 +2471,18 @@ var FX_RANGE = {
   glow:{ amp:[10,60], int:[0.1,1], oamp:[4,40], oint:[0.1,1], aura:[0,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
   vig:{ int:[0.05,0.6], start:[20,70] },
-  podium:{ int:[0.6,1.6], lum:[0.6,1.4] }
+  podium:{ int:[0.6,1.6], lum:[0.6,1.4] },
+  // ⚠️ I limiti delle L di `nums` NON sono estetici ma di ACCESSIBILITÀ: sono i
+  // valori misurati su tutte le 15 famiglie, a qualunque cromia, oltre i quali il
+  // numero scenderebbe sotto 3:1 sul fondo della card (soglia AA per il testo
+  // grande). In scuro serve L ALTA (min 0.66 = 3.70:1), in chiaro L BASSA
+  // (max 0.60 = 3.18:1): così il range stesso garantisce l'AA e l'admin non può
+  // rompere il contrasto muovendo gli slider. Non allargarli senza rimisurare.
+  nums:{ dsat:[0,1], dlum:[0.66,0.95], lsat:[0,1], llum:[0.3,0.6] }
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
 // in localStorage) la scavalca, perché riguarda solo chi guarda, non il sito.
-var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium' };
+var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums' };
 function fxClamp(k, p, v){
   var def = SITE_FLAGS_DEFAULT[k][p], r = FX_RANGE[k] && FX_RANGE[k][p];
   if (typeof v !== 'number' || !isFinite(v)) return def;
@@ -2629,6 +2642,20 @@ var PODIUM_GRADS = {
 // Filtro del podio dalle manopole: contrast = 'intensità del metallo' (aumenta lo
 // stacco tra lumi e ombre del gradiente), brightness = luminosità complessiva.
 function fxPodiumFilter(cfg){ return 'contrast(' + fxR2(cfg.int) + ') brightness(' + fxR2(cfg.lum) + ')'; }
+// Colore del NUMERO di posizione, derivato dalla tinta della card in OKLCH
+// (v12.63). Si usa la sintassi RELATIVA `oklch(from <colore> L C H)`: si riscrive
+// la cromia (× sat) e, se `uni`, la luminosità (alla L di riferimento), lasciando
+// la TINTA intatta. È l'unico modo di desaturare a luminosità costante: mescolare
+// un grigio fisso — nero, 66% o altro — tira sempre il colore verso la luminosità
+// di quel grigio. Verificato: al variare della cromia la L resta identica al
+// millesimo. `cc` = terna concreta per l'anteprima, altrimenti var(--ccrgb).
+// Se il browser non conosce `oklch(from …)` la dichiarazione cade e vale la regola
+// base .rank-num{color:var(--name)}: la resa storica, grigia e AA-safe.
+function fxNumColor(cfg, light, cc){
+  var sat = light ? cfg.lsat : cfg.dsat;
+  var L = cfg.uni ? String(fxR2(light ? cfg.llum : cfg.dlum)) : 'l';
+  return 'oklch(from rgb(' + (cc || 'var(--ccrgb,111,116,130)') + ') ' + L + ' calc(c * ' + fxR2(sat) + ') h)';
+}
 function fxSel(base, all, tail){
   return all ? base + ' .rank-item' + tail
              : base + ' .rank-item:hover' + tail + ',' + base + ' .rank-item:focus-within' + tail;
@@ -2637,7 +2664,14 @@ function injectFxRules(){
   // Config ATTIVE per piattaforma (desktop o _m): le regole in pagina seguono
   // sempre fxCfg; gli editor scrivono sulla variante scelta e la pagina cambia
   // solo se quella variante è la piattaforma corrente.
-  var css = [], g = fxCfg('glow'), s = fxCfg('spot'), v = fxCfg('vig'), pr = fxCfg('press'), po = fxCfg('podium');
+  var css = [], g = fxCfg('glow'), s = fxCfg('spot'), v = fxCfg('vig'), pr = fxCfg('press'),
+      po = fxCfg('podium'), nu = fxCfg('nums');
+  if (flagOn('nums')) {
+    // Specificità (0,3,0) come le altre regole cardcolor: le regole del PODIO
+    // (0,4,1 / 0,5,1) restano più forti, quindi i numeri 1-2-3 tengono il metallo.
+    css.push('html.fx-nums .rank-item[class*="cc-"] .rank-num{color:' + fxNumColor(nu, false) + '}');
+    css.push('html.fx-nums[data-theme="light"] .rank-item[class*="cc-"] .rank-num{color:' + fxNumColor(nu, true) + '}');
+  }
   if (flagOn('vig')) {
     css.push('html.fx-vig body{background-image:' + fxVigBg(v, false) + ';background-attachment:fixed}');
     css.push('html.fx-vig[data-theme="light"] body{background-image:' + fxVigBg(v, true) + ';background-attachment:fixed}');
@@ -3182,19 +3216,10 @@ function ccAaText(fg, bg, target) {
 (function injectCardColorRules(){
   var css = [
     '.rank-strip{background:rgba(var(--ccrgb,111,116,130),0.85)!important}',
-    // ── Numero di posizione nella TINTA della card (dalla v12.53, richiesta
-    // utente: il grigio 'cupo' stonava col resto ormai colorato). ⚠️ Dalla v12.54
-    // il secondo colore della miscela NON è più bianco/nero ma **var(--name)**, il
-    // grigio del nome: così desaturare e avvicinarsi alla luminosità del nome sono
-    // lo stesso gesto, e il numero segue il token (che il tema chiaro ridefinisce
-    // da sé, #d2d2d2 scuro / #373737 chiaro). In tema SCURO la tinta pesa di più,
-    // quindi ne resta il 35% (taratura scelta dall'utente su mockup); in chiaro
-    // resta la scurita 70% + nero, in attesa della taratura.
-    // Nessun fallback esplicito: se color-mix non è supportato la dichiarazione
-    // cade e vale la regola base .rank-num{color:var(--name)}, cioè la resa
-    // pre-v12.53 — grigia ma corretta e AA-safe.
-    '.rank-item[class*="cc-"] .rank-num{color:color-mix(in srgb, rgb(var(--ccrgb)) 35%, var(--name))}',
-    'html[data-theme="light"] .rank-item[class*="cc-"] .rank-num{color:rgba(var(--ccrgb),1);color:color-mix(in srgb, rgb(var(--ccrgb)) 70%, #000 30%)}',
+    // NB: il colore del NUMERO di posizione stava qui fino alla v12.54 (miscela
+    // con var(--name) via color-mix). Dalla v12.63 è un effetto REGOLABILE del
+    // Pannello di controllo ('Colore dei numeri') e vive in injectFxRules, che si
+    // ri-inietta a ogni modifica delle manopole; qui resterebbe congelato.
     '.rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.10)!important}',
     '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
     'html[data-theme="light"] .rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.05)!important}',
@@ -6890,7 +6915,10 @@ var SITE_FLAG_ITEMS = [
     nen:'Radial halo at the edges of the background to add depth.' },
   { k:'podium', it:'Podio metallico', en:'Metallic podium', cfg:true,
     nit:'Numeri 1-2-3 in effetto oro, argento e bronzo.',
-    nen:'Numbers 1-2-3 with gold, silver, and bronze effects.' }
+    nen:'Numbers 1-2-3 with gold, silver, and bronze effects.' },
+  { k:'nums', it:'Colore dei numeri', en:'Number colour', cfg:true,
+    nit:'I numeri di posizione prendono la tinta della card, desaturata.\nRegolabili per tema: cromia e luminosità.',
+    nen:'Rank numbers take the card tint, desaturated.\nAdjustable per theme: chroma and lightness.' }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -6936,6 +6964,23 @@ var FX_KNOBS = {
       nit:'Aumenta lo stacco tra lumi e ombre del gradiente.',
       nen:'Raises the contrast between the gradient highlights and shadows.' },
     { p:'lum', t:'num', step:0.02, it:'Luminosità', en:'Brightness' }
+  ],
+  // `th` = manopola valida solo per un TEMA ('d' scuro, 'l' chiaro): la
+  // sotto-modale mostra le tab Chiaro/Scuro e filtra le righe. Senza `th` la
+  // manopola è condivisa dai due temi (interruttore e luminosità uniforme).
+  nums: [
+    { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
+    { p:'uni', t:'bool', it:'Luminosità uniforme', en:'Uniform lightness',
+      nit:'Acceso, tutti i numeri hanno la stessa luminosità e si distinguono solo per tinta. Spento, ognuno conserva la luminosità della propria tinta.',
+      nen:'On, every number shares one lightness and differs only in hue. Off, each keeps the lightness of its own tint.' },
+    { p:'dsat', t:'num', step:0.05, th:'d', it:'Cromia conservata', en:'Chroma kept' },
+    { p:'dlum', t:'num', step:0.01, th:'d', it:'Luminosità di riferimento', en:'Reference lightness',
+      nit:'Il minimo è il valore verificato AA: sotto, in tema scuro il numero scenderebbe sotto 3:1 sul fondo della card.',
+      nen:'The minimum is the AA-verified value: below it the number would drop under 3:1 on the card background in dark theme.' },
+    { p:'lsat', t:'num', step:0.05, th:'l', it:'Cromia conservata', en:'Chroma kept' },
+    { p:'llum', t:'num', step:0.01, th:'l', it:'Luminosità di riferimento', en:'Reference lightness',
+      nit:'Il massimo è il valore verificato AA: sopra, su fondo chiaro il numero scenderebbe sotto 3:1.',
+      nen:'The maximum is the AA-verified value: above it the number would drop under 3:1 on a light background.' }
   ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
@@ -7081,7 +7126,7 @@ function showFxConfigEditor(key, sfx, onDone){
   function paint(){
     // Tutte le config dalla VARIANTE in modifica (V), non dalla piattaforma
     // corrente: aprendo la tab Mobile da desktop l'anteprima mostra la mobile.
-    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium');
+    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'), nu = V('nums');
     panes.forEach(function(pn){
       pn.el.style.backgroundImage = (key === 'vig' && vOn('vig')) ? fxVigBg(v, pn.light) : 'none';
     });
@@ -7116,9 +7161,11 @@ function showFxConfigEditor(key, sfx, onDone){
         rec.num.style.backgroundImage = 'none';
         rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
         rec.num.style.textShadow = 'none'; rec.num.style.filter = 'none';
-        // Stessa miscela della pagina (v12.54): il grigio del nome è concreto
-        // perché nell'anteprima i due temi convivono e var(--name) non varrebbe.
-        rec.num.style.color = 'color-mix(in srgb, rgb(' + cc + ') ' + (rec.light ? '70%, #373737 30%' : '35%, #d2d2d2 65%') + ')';
+        // Stessa formula della pagina (v12.63), con la terna CONCRETA: qui i due
+        // temi convivono, quindi var(--ccrgb) non varrebbe. A effetto spento vale
+        // il grigio del nome del tema, come fa la regola base in pagina.
+        rec.num.style.color = vOn('nums') ? fxNumColor(nu, rec.light, cc)
+                                          : (rec.light ? '#373737' : '#d2d2d2');
       }
       rec.desc.textContent = key === 'spot'
         ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
@@ -7129,8 +7176,38 @@ function showFxConfigEditor(key, sfx, onDone){
   }
 
   // ── manopole ───────────────────────────────────────────────────────────────
+  // Se l'effetto ha manopole PER TEMA (`th`), in testa compaiono due tab
+  // Chiaro/Scuro (v12.63, richiesta utente per 'Colore dei numeri'): si edita un
+  // tema alla volta, mentre l'anteprima mostra sempre entrambi i riquadri, così
+  // l'altro tema resta sotto controllo. Le manopole senza `th` sono condivise.
   var knobs = FX_KNOBS[key] || [];
-  knobs.forEach(function(kn){
+  var hasTh = knobs.some(function(kn){ return kn.th; });
+  var kTheme = (document.documentElement.getAttribute('data-theme') === 'light') ? 'l' : 'd';
+  var knobsBox = document.createElement('div');
+  if (hasTh) {
+    var thBar = document.createElement('div');
+    thBar.style.cssText = 'display:flex;gap:8px;margin:0 0 0.9rem;';
+    var thBtns = {};
+    [['l', it ? 'Tema chiaro' : 'Light theme'], ['d', it ? 'Tema scuro' : 'Dark theme']].forEach(function(td){
+      var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'fab-modal-confirm';
+      tb.style.cssText = 'width:auto;flex:1;margin-top:0;padding:0.38rem 0;';
+      tb.textContent = td[1];
+      tb.onclick = function(){ if (kTheme !== td[0]) { kTheme = td[0]; syncTh(); renderKnobs(); } };
+      thBtns[td[0]] = tb; thBar.appendChild(tb);
+    });
+    var syncTh = function(){
+      Object.keys(thBtns).forEach(function(k){
+        var on = kTheme === k;
+        thBtns[k].setAttribute('aria-pressed', String(on));
+        thBtns[k].style.opacity = on ? '1' : '0.45';
+      });
+    };
+    syncTh(); box.appendChild(thBar);
+  }
+  box.appendChild(knobsBox);
+  function renderKnobs(){
+  knobsBox.textContent = '';
+  knobs.filter(function(kn){ return !kn.th || kn.th === kTheme; }).forEach(function(kn){
     var row = document.createElement('div'); row.className = 'fxk-row';
     var lbl = document.createElement('label'); lbl.className = 'fxk-lbl';
     lbl.textContent = it ? kn.it : kn.en;
@@ -7166,8 +7243,10 @@ function showFxConfigEditor(key, sfx, onDone){
       var nt = document.createElement('p'); nt.className = 'fxk-note';
       nt.textContent = it ? kn.nit : kn.nen; row.appendChild(nt);
     }
-    box.appendChild(row);
+    knobsBox.appendChild(row);
   });
+  }
+  renderKnobs();
   paint();
 
   var foot = document.createElement('div'); foot.style.cssText = 'display:flex;gap:10px;margin-top:0.9rem;';
