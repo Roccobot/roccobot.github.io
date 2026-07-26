@@ -64,6 +64,13 @@ html { scroll-behavior:smooth; overflow-y:scroll; }
    viewport. Il fattore vive QUI e in ZOOM_BIG_FACTOR (JS), tenuti allineati.
    Storico: 1.4 (140%) nella v12.14, portato a 1.3 su richiesta dell'utente. */
 html.zoom-big { zoom:1.3; }
+/* Fattore di zoom esposto al CSS (dalla v12.65). Serve ai tetti in `vh` delle
+   modali admin: le unità viewport risolvono in px di LAYOUT, ma con zoom:1.3
+   l'elemento ne occupa 1.3× visivamente, quindi un `max-height:92vh` non
+   scattava mai e la modale sforava lo schermo — con il tasto di chiusura fuori
+   dal viewport, quindi incliccabile. Si scrive `calc(92vh / var(--zoomf,1))`. */
+html { --zoomf:1; }
+html.zoom-big { --zoomf:1.3; }
 /* VIGNETTATURA (effetto 'vig' del pannello Feature flag, dalla v12.24): alone
    radiale appena percettibile ai bordi, per dare profondità a un fondo altrimenti
    perfettamente piatto. È un LIVELLO DI SFONDO del body (non un elemento
@@ -1669,8 +1676,14 @@ body.is-dragging .rank-item * { pointer-events:none; }
 .fab-btn:hover { background:rgba(80,130,210,0.88);border-color:rgba(180,215,255,0.9);transform:scale(1.08); }
 .fab-btn svg { width:1.35rem;height:1.35rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 .fab-btn.fab-unlocked { border-color:rgba(90,200,110,0.55);background:rgba(30,80,50,0.45); }
-.fab-modal-overlay { position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;overscroll-behavior:contain; }
-.fab-modal-box { background:#252525;border:1px solid rgba(160,160,160,0.28);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
+/* align-items:flex-start + margin:auto sul box (dalla v12.65) invece di
+   align-items:center: con la centratura flex, se il contenuto supera l'altezza
+   disponibile l'eccedenza esce dai DUE lati e la parte alta diventa
+   irraggiungibile (difetto noto di flexbox, qui rendeva incliccabile il tasto di
+   chiusura). Con i margini automatici la centratura è identica quando il
+   contenuto ci sta, ma in eccedenza il box parte dall'alto e l'overlay scorre. */
+.fab-modal-overlay { position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;overscroll-behavior:contain; }
+.fab-modal-box { background:#252525;border:1px solid rgba(160,160,160,0.28);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;margin:auto;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
 .fab-modal-box p { margin:0 0 0.9rem;font-size:0.82rem;color:var(--parchment);opacity:0.65;line-height:1.4; }
 .fab-modal-box input[type=password], .fab-modal-box input[type=text] { width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;background:rgba(0,0,0,0.4);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-size:0.9rem;outline:none;transition:border-color 0.15s; }
 .fab-modal-box input[type=password]:focus, .fab-modal-box input[type=text]:focus { border-color:rgba(154,192,216,0.8); }
@@ -2344,7 +2357,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.64</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.65</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2449,11 +2462,11 @@ var SITE_FLAGS_DEFAULT = {
   // vig (v12.42): intensità + inizio della sfumatura; default = le vecchie
   // regole statiche (alpha 0.34 scuro / derivata ×0.38 in chiaro; start 38%).
   vig:{ on:true, int:0.34, start:38 },
-  // press (v12.53): quali parti incidere (name = Nome, lab = etichette tipo;
-  // entrambe = il comportamento storico, dove l'ombra si ereditava).
-  // press: quali parti incidere — name = Nome, lab = etichette tipo, num = numeri
-  // di classifica (v12.64). Il default di `num` è false: è un'aggiunta, non deve
-  // cambiare la resa di chi ha già salvato senza quella chiave.
+  // press: quali parti incidere — name = Nome (v12.53), lab = etichette tipo
+  // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
+  // comportamento storico, dove l'ombra del Nome si ereditava sulle etichette.
+  // Il default di `num` è false: è un'aggiunta, non deve cambiare la resa di chi
+  // ha già salvato senza quella chiave.
   press:{ on:true, name:true, lab:true, num:false },
   // podium (v12.53): int = intensità del metallo (contrast), lum = luminosità
   // (brightness); 1/1 = resa neutra (nessun filtro percepibile).
@@ -2690,10 +2703,12 @@ function injectFxRules(){
       } else if (pr.lab) {
         css.push(base + ' .rank-name .rank-tipi{text-shadow:' + fxPressShadow(light) + '}');
       }
-      // Numeri di classifica: specificità (0,2,1), volutamente PIÙ BASSA delle
-      // regole del podio (0,4,1 / 0,5,1), così i primi tre conservano la loro
-      // ombra metallica dedicata e l'incisione vale dal quarto in giù.
-      if (pr.num) css.push(base + ' .rank-num{text-shadow:' + fxPressShadow(light) + '}');
+      // Numeri di classifica: specificità (0,3,1) in scuro e (0,4,1) in chiaro,
+      // volutamente PIÙ BASSA delle regole del podio ((0,4,1) e (0,5,1)), così i
+      // primi tre conservano la loro ombra metallica dedicata e l'incisione vale
+      // dal quarto in giù. Lo scope `.rank-item` non è decorativo: tiene la regola
+      // dentro le card, come tutte le altre di fx-dyn.
+      if (pr.num) css.push(base + ' .rank-item .rank-num{text-shadow:' + fxPressShadow(light) + '}');
     });
   }
   if (flagOn('podium')) {
@@ -6963,7 +6978,7 @@ var FX_KNOBS = {
     { p:'name', t:'bool', it:'Sul Nome', en:'On the Name' },
     { p:'lab', t:'bool', it:'Sulle etichette tipo', en:'On the type labels' },
     { p:'num', t:'bool', it:'Sui numeri di classifica', en:'On the rank numbers',
-      nit:'I primi tre conservano l’ombra del podio, quando è attivo.',
+      nit:'I primi tre conservano l\'ombra del podio, quando è attivo.',
       nen:'The top three keep the podium shadow when it is on.' }
   ],
   podium: [
@@ -7017,7 +7032,11 @@ function injectFxEditorCss(){
     // accento, NIENTE ombreggiatura. L'outline non occupa spazio, quindi i due
     // riquadri non si spostano quando l'evidenziazione passa dall'uno all'altro.
     '.fxp-pane{outline:2px solid transparent;outline-offset:2px;transition:outline-color 0.2s}',
+    // Colore per TEMA (v12.65): l'azzurro chiaro dava 2.88:1 sul fondo chiaro
+    // della modale, sotto il 3:1 richiesto da WCAG 1.4.11 per gli elementi non
+    // testuali (l'anello è l'unico segnale visivo del riquadro in modifica).
     '.fxp-pane.fxp-edit{outline-color:rgba(90,140,220,0.95)}',
+    'html[data-theme="light"] .fxp-pane.fxp-edit{outline-color:rgba(28,84,170,0.95)}',
     '.fxp-card{position:relative;display:grid;grid-template-columns:24px 1fr;align-items:center;gap:0.7rem;',
     'padding:0.45rem 0.6rem 0.45rem 0.3rem;border-radius:4px;border:1px solid rgba(104,144,168,0.15);',
     'overflow:hidden;isolation:isolate;transition:background 0.2s,box-shadow 0.2s}',
@@ -7074,7 +7093,7 @@ function showFxConfigEditor(key, sfx, onDone){
   injectFxEditorCss();
   var overlay = document.createElement('div'); overlay.id = 'fx-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
-  box.style.maxWidth = '440px'; box.style.maxHeight = '92vh'; box.style.overflowY = 'auto';
+  box.style.maxWidth = '440px'; box.style.maxHeight = 'calc(92vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
   var close = function(){
     overlay.remove(); if (langRefresh === myL) langRefresh = prevL;
@@ -7128,7 +7147,7 @@ function showFxConfigEditor(key, sfx, onDone){
       body.appendChild(nm); body.appendChild(ds);
       c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
       var rec = { el:c, strip:strip, spot:spot, num:num, name:nm, pill:pill, desc:ds,
-                  light:light, first:(n === 1), metal:(n === 1 ? 1 : 3) };
+                  light:light, first:(n === 1), metal:(n === 1 ? 1 : 3), podEd:podEd };
       // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
       // valutarlo senza uscire dalla modale.
       c.addEventListener('pointermove', function(e){
@@ -7227,7 +7246,11 @@ function showFxConfigEditor(key, sfx, onDone){
       Object.keys(thBtns).forEach(function(k){
         var on = kTheme === k;
         thBtns[k].setAttribute('aria-pressed', String(on));
-        thBtns[k].style.opacity = on ? '1' : '0.45';
+        // 0.78 e non 0.45 (v12.65): a 0.45 il testo della tab inattiva scendeva a
+        // 2.85:1 in chiaro / 3.47:1 in scuro, sotto la soglia 4.5:1 del testo
+        // normale. La tab attiva si distingue dal BORDO accento, non dal velo.
+        thBtns[k].style.opacity = on ? '1' : '0.78';
+        thBtns[k].style.borderColor = on ? 'rgba(154,192,216,0.9)' : '';
       });
       // Evidenzia il riquadro d'anteprima del tema che si sta modificando.
       panes.forEach(function(pn){ pn.el.classList.toggle('fxp-edit', (pn.light ? 'l' : 'd') === kTheme); });
@@ -7273,7 +7296,14 @@ function showFxConfigEditor(key, sfx, onDone){
     }
     if (kn.nit) {
       var nt = document.createElement('p'); nt.className = 'fxk-note';
-      nt.textContent = it ? kn.nit : kn.nen; row.appendChild(nt);
+      nt.textContent = it ? kn.nit : kn.nen;
+      // La nota è la DESCRIZIONE del controllo: senza aria-describedby resterebbe
+      // un paragrafo fratello, che gli screen reader non annunciano col controllo
+      // (v12.65). Vale per le note di tutte le manopole, non solo delle nuove.
+      nt.id = 'fxk-note-' + vk + '-' + kn.p;
+      var ctl = row.querySelector('input');
+      if (ctl) ctl.setAttribute('aria-describedby', nt.id);
+      row.appendChild(nt);
     }
     knobsBox.appendChild(row);
   });
@@ -7318,7 +7348,7 @@ function showSiteFlagsEditor(initState){
   injectFxEditorCss(); // .fx-gear delle righe regolabili
   var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   var box = document.createElement('div'); box.className = 'fab-modal-box';
-  box.style.maxWidth = '460px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
+  box.style.maxWidth = '460px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
@@ -7333,9 +7363,9 @@ function showSiteFlagsEditor(initState){
   // ── CONFIG PER-PIATTAFORMA (v12.53, richiesta utente) ──────────────────────
   // Da DESKTOP: due tab in alto, 'Desktop' e 'Mobile', per governare le due
   // varianti separatamente. Da MOBILE (≤768px): niente tab, si governa SOLO la
-  // parte mobile; per risparmiare spazio verticale le righe sono compatte
-  // (checkbox + nome + fader, senza note descrittive). La voce Modalità XL vive
-  // nella sola tab Desktop (per la regola v12.43 il flag è desktop/tablet-only).
+  // parte mobile. La voce Modalità XL vive nella sola tab Desktop (per la regola
+  // v12.43 il flag è desktop/tablet-only). ⚠️ Dalla v12.64 le righe sono compatte
+  // e senza didascalie su TUTTE le piattaforme, non solo su mobile.
   var isMob = isMobileViewport();
   var tab = isMob ? 'm' : ((initState && initState.tab) || 'd');
   var tabsBar = null, tabBtns = {};
@@ -7357,7 +7387,8 @@ function showSiteFlagsEditor(initState){
     Object.keys(tabBtns).forEach(function(k){
       var on = tab === k;
       tabBtns[k].setAttribute('aria-pressed', String(on));
-      tabBtns[k].style.opacity = on ? '1' : '0.45';
+      tabBtns[k].style.opacity = on ? '1' : '0.78'; // vedi nota sulle tab tema
+      tabBtns[k].style.borderColor = on ? 'rgba(154,192,216,0.9)' : '';
     });
   }
   syncTabs();
@@ -7411,8 +7442,7 @@ function showSiteFlagsEditor(initState){
   }
   renderRows();
   // Avviso se la preferenza personale di zoom sta scavalcando il flag: senza,
-  // sembrerebbe che l'interruttore 'non funzioni'. Su mobile la versione BREVE
-  // dell'utente (v12.53), su desktop quella estesa (v12.42).
+  // sembrerebbe che l'interruttore 'non funzioni'.
   var mine = LS.getItem(ZOOM_LS_KEY);
   if (mine !== null) {
     var warn = document.createElement('p');
@@ -7597,7 +7627,7 @@ function showBadgeAdjustEditor(initState){
   var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
   // La modale NON scrolla: è un flex-column ad altezza max; solo la tabella (flex:1)
   // scorre internamente, così footer e controlli restano sempre visibili (un solo scroll).
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '840px'; box.style.maxHeight = '92vh'; box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.overflow = 'hidden';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '840px'; box.style.maxHeight = 'calc(92vh / var(--zoomf, 1))'; box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.overflow = 'hidden';
   overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
@@ -7772,7 +7802,7 @@ function showColorStats(initState) {
   var it = currentLang === 'it';
   var curTab = 'fam', myStatsL, myStatsT; // tab attiva + hook lingua/tema (per rebuild)
   var ov = document.createElement('div'); ov.id = 'stats-modal'; ov.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '660px'; box.style.maxHeight = '88vh'; box.style.overflowY = 'auto';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '660px'; box.style.maxHeight = 'calc(88vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
   ov.appendChild(box); document.body.appendChild(ov);
   lockPageScroll(true);
   var close = function(){ ov.remove(); lockPageScroll(false); if (langRefresh===myStatsL) langRefresh=null; if (themeRefresh===myStatsT) themeRefresh=null; };
@@ -7934,7 +7964,7 @@ function showColorEditor(initState) {
   var curTab = 'f', famSelectEl = null, myEdL; // tab + select famiglia + hook lingua (rebuild solo su L)
   var overlay = document.createElement('div');
   overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
-  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '620px'; box.style.maxHeight = '90vh'; box.style.overflowY = 'auto';
+  var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '620px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
   var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh===myEdL) langRefresh=null; };

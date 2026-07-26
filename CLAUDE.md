@@ -393,9 +393,9 @@ la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sot
   `SITE_FLAGS[k]`/`SITE_FLAGS[k+'_m']` riservato agli editor. **UI:** da desktop
   il pannello ha **due tab 'Desktop'/'Mobile'** in alto (la voce Modalità XL vive
   solo nella tab Desktop); da mobile **niente tab**, si governa SOLO la parte
-  mobile, righe **compatte** (checkbox + nome + fader, note descrittive omesse per
-  spazio, richiesta utente) e **nota breve** in basso (testo dell'utente, con
-  variante normale/XL). La sotto-modale riceve la variante (`showFxConfigEditor(key,
+  mobile. ⚠️ Dalla v12.64 le righe sono **compatte e senza didascalie su TUTTE le
+  piattaforme** e in basso c'è **solo l'avviso breve**, identico su desktop e
+  mobile (con variante normale/XL). La sotto-modale riceve la variante (`showFxConfigEditor(key,
   sfx, onDone)`) e nel titolo indica '— Desktop'/'— Mobile'; se l'effetto ha
   manopole **per TEMA** (proprietà `th:'d'`/`th:'l'` in `FX_KNOBS`, oggi solo
   `nums`) compaiono in più due **tab Chiaro/Scuro** che filtrano le righe, mentre
@@ -444,8 +444,8 @@ normale/XL secondo la preferenza attiva.
 - **Gli effetti** (i primi 5 da un mockup approvato dall'utente: 'stanno benissimo
   anche tutti insieme'; il 6°, `nums`, dalla v12.63), tutti a **costo zero sul
   layout** (nessuno sposta il contenuto):
-  1. **`glow` — bagliore della striscia colorata** (`fx-glow`, REGOLABILE; label
-     UI IT dalla v12.42, prima 'Accensione della striscia'): la striscia
+  1. **`glow` — bagliore** (`fx-glow`, REGOLABILE; label UI **'Bagliore'/'Glow'**
+     dalla v12.64, prima 'Bagliore della striscia colorata'): la striscia
      diffonde la tinta di famiglia dentro la card su due strati derivati dalle
      manopole. Manopole: `amp` (ampiezza sfumatura, 10-60px), `int` (intensità,
      0.1-1), `out` (bagliore **anche fuori** dal bordo sinistro), `oamp`/`oint`
@@ -493,7 +493,8 @@ normale/XL secondo la preferenza attiva.
      offsetWidth` (stessa lezione delle linee mediane). In `@media print` il
      `::before` è nascosto. In tema chiaro il `display:none` statico del
      `::before` è scavalcato dalla regola iniettata (sorgente più in basso).
-  3. **`press` — nomi incisi** (`fx-press`, REGOLABILE dalla v12.53): letterpress
+  3. **`press` — incisione** (`fx-press`, REGOLABILE dalla v12.53; label UI
+     **'Incisione'/'Engraving'** dalla v12.64): letterpress
      in tema chiaro (lume bianco sotto + velo scuro sopra), stacco morbido in
      scuro. Manopole: `name` (sul Nome), `lab` (sulle etichette tipo) e, dalla
      v12.64, **`num`** (sui numeri di classifica, default `false` per non cambiare
@@ -504,7 +505,8 @@ normale/XL secondo la preferenza attiva.
      primi tre conservano l'ombra metallica dedicata e l'incisione vale dal quarto
      in giù. Regole in `injectFxRules` (formula `fxPressShadow`); le statiche sono
      state rimosse dal CSS.
-  4. **`vig` — vignettatura** (`fx-vig`, REGOLABILE dalla v12.42): alone radiale
+  4. **`vig` — vignettatura** (`fx-vig`, REGOLABILE dalla v12.42; label UI
+     **'Alone sfumato'/'Soft halo'** dalla v12.64): alone radiale
      come **livello di sfondo del body** (`background-image` +
      `background-attachment:fixed`), non un elemento sovrapposto: niente nodi
      nuovi né problemi di impilamento. Manopole: `int` (intensità 0.05-0.6) e
@@ -513,7 +515,8 @@ normale/XL secondo la preferenza attiva.
      statiche sono state RIMOSSE dal CSS (i default le riproducono: 0.34/38%).
      Nell'anteprima della sotto-modale la vignetta è applicata al FONDO dei due
      riquadri (card a riposo).
-  5. **`podium` — podio metallico** (`fx-podium`, REGOLABILE dalla v12.53): numeri
+  5. **`podium` — podio metallico** (`fx-podium`, REGOLABILE dalla v12.53; label UI
+     **'Oro, argento e bronzo'/'Gold, silver and bronze'** dalla v12.64): numeri
      1-2-3 con gradiente oro/argento/bronzo (`background-clip:text` +
      `color:transparent`, come il titolone) e `text-shadow:none` (il glow grigio
      base di `.rank-num` intorbidirebbe il metallo). Manopole: `int` (intensità del
@@ -576,6 +579,27 @@ normale/XL secondo la preferenza attiva.
   del `#fab-modal` sotto (ramo dedicato nell'handler Escape); `#fx-modal` è nelle
   guardie dei tasti `P` e `.`. Il CSS dell'editor è iniettato
   (`injectFxEditorCss`), invisibile al Nu.
+- ⚠️ **Tetti in `vh` delle modali admin e Modalità XL (fix v12.65).** Le unità
+  viewport risolvono in px di **layout**: con `html.zoom-big{zoom:1.3}` la modale
+  ne occupa 1.3× **visivamente**, quindi un `max-height:92vh` non scattava mai e
+  la modale sforava lo schermo **col tasto × fuori dal viewport, incliccabile**
+  (misurato: × a −23px e −60px a 1280×720 in XL). Due correttivi:
+  1. il fattore è esposto al CSS (`html{--zoomf:1}` / `html.zoom-big{--zoomf:1.3}`)
+     e tutti i tetti si scrivono `calc(<N>vh / var(--zoomf, 1))`;
+  2. `.fab-modal-overlay` è `align-items:flex-start` + `overflow-y:auto` con
+     `margin:auto` sul box, invece di `align-items:center`: con la centratura flex
+     l'eccedenza esce dai DUE lati e la parte alta è irraggiungibile (difetto noto
+     di flexbox), coi margini automatici la centratura resta identica quando il
+     contenuto ci sta. Verificato: gap sopra/sotto uguali al pixel su tutte le
+     modali, × sempre cliccabile a 1024/1280/1440/390px con e senza XL.
+- **Contrasto dei controlli del pannello (v12.65).** Le tab (Desktop/Mobile e
+  Chiaro/Scuro) marcano l'inattiva con **opacità 0.78**, non 0.45: a 0.45 il testo
+  scendeva a 2.85:1 in chiaro e 3.47:1 in scuro, sotto la soglia 4.5:1 del testo
+  normale; l'attiva si distingue dal **bordo accento**. L'outline `.fxp-edit` ha un
+  colore **per tema** (l'azzurro chiaro dava 2.88:1 sul fondo chiaro, sotto il 3:1
+  di WCAG 1.4.11). Le note delle manopole sono collegate al controllo con
+  `aria-describedby`. Misurato dopo il fix: outline 4.24:1 scuro / 5.84:1 chiaro,
+  tab inattiva 7.22:1 / 7.85:1, axe 0.
 - **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, true, null,
   SITE_FLAGS)` → il Worker scrive `siteFlags` **senza bumpare la versione**
   (`keepVersion:true`, come i salvataggi colore: richiesta dell'utente dalla v12.27,
@@ -1006,8 +1030,8 @@ gruppo = cambiare una terna.
   **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
 - **Numero di posizione nella TINTA della card** (dalla v12.53; effetto
-  REGOLABILE `nums` dalla v12.63, voce 'Colore dei numeri' del Pannello di
-  controllo). Scelta utente: il grigio 'cupo' stonava col sito ormai colorato.
+  REGOLABILE `nums` dalla v12.63, voce **'Numeri colorati'** del Pannello di
+  controllo, rinominata in v12.64). Scelta utente: il grigio 'cupo' stonava col sito ormai colorato.
   ⚠️ **Dalla v12.63 il colore si costruisce in OKLCH con la sintassi RELATIVA**,
   non più mescolando un grigio:
   `oklch(from rgb(var(--ccrgb)) <L> calc(c * <sat>) h)` — si riscrive la cromia
