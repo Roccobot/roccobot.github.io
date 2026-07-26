@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.9.5
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///): sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato ↔ reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI).
+// @version         2.10.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -45,12 +45,96 @@
   // senza toccare nulla.
   if ((document.contentType || '').indexOf('image/') !== 0) return;
 
+  // ── Documenti XML (SVG) ───────────────────────────────────────────────
+  // Una pagina PNG/JPEG e' un documento HTML costruito dal browser: c'e' un
+  // <body> e dentro un <img>. Una pagina SVG NO: e' un documento XML la cui
+  // radice e' il <svg> stesso, senza body e senza img. Due conseguenze:
+  //  1. document.createElement() in un documento XML crea elementi SENZA
+  //     namespace, che NON vengono resi: servono createElementNS(XHTML, ...);
+  //  2. GM_addStyle crea il suo <style> allo stesso modo, quindi li' non
+  //     applicherebbe nulla: il foglio va inserito a mano, con namespace.
+  const XHTML = 'http://www.w3.org/1999/xhtml';
+  const eSvg = document.contentType === 'image/svg+xml';
+  function creaEl(tag) { return eSvg ? document.createElementNS(XHTML, tag) : document.createElement(tag); }
+  function aggiungiCss(css) {
+    if (!eSvg) { GM_addStyle(css); return; }
+    const st = creaEl('style');
+    st.textContent = css;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  // Dimensione "reale" di un SVG: non e' sempre scritta nel file, quindi si
+  // cerca in ordine di attendibilita'. Il browser NON aiuta (un <img> con un
+  // SVG privo di misure riporta 300x150, o 90x150 applicando il rapporto del
+  // viewBox all'altezza di default: numeri inventati, misurati).
+  function svgUnitaPx(v) {
+    const m = /^\s*([+-]?[\d.]+)\s*(px|pt|pc|cm|mm|in|q|em|ex|rem|%)?\s*$/i.exec(v || '');
+    if (!m) return 0;
+    const u = (m[2] || 'px').toLowerCase();
+    // le unita' relative non danno una dimensione intrinseca: si passa al viewBox
+    if (u === '%' || u === 'em' || u === 'ex' || u === 'rem') return 0;
+    const k = { px: 1, pt: 96 / 72, pc: 16, in: 96, cm: 96 / 2.54, mm: 96 / 25.4, q: 96 / 25.4 / 4 }[u] || 1;
+    return parseFloat(m[1]) * k;
+  }
+  function misuraSvg(svg) {
+    let w = svgUnitaPx(svg.getAttribute('width')), h = svgUnitaPx(svg.getAttribute('height'));
+    const vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+    const vbOk = vb.length === 4 && vb[2] > 0 && vb[3] > 0;
+    // 1) attributi width/height in unita' assolute (il caso normale)
+    if (w > 0 && h > 0) return { w: Math.round(w), h: Math.round(h) };
+    // 1b) uno solo dei due: l'altro si ricava dal rapporto del viewBox
+    if (vbOk && w > 0) return { w: Math.round(w), h: Math.round(w * vb[3] / vb[2]) };
+    if (vbOk && h > 0) return { w: Math.round(h * vb[2] / vb[3]), h: Math.round(h) };
+    // 2) il viewBox da' l'area di disegno dichiarata
+    if (vbOk) return { w: Math.round(vb[2]), h: Math.round(vb[3]) };
+    // 3) niente misure: si prende l'ingombro del disegno, ORIGINE INCLUSA
+    //    (x+larghezza), altrimenti un disegno spostato verrebbe tagliato
+    try {
+      const bb = svg.getBBox();
+      if (bb && bb.width > 0 && bb.height > 0) {
+        return { w: Math.max(1, Math.ceil(bb.x + bb.width)), h: Math.max(1, Math.ceil(bb.y + bb.height)) };
+      }
+    } catch (e) {}
+    return { w: 300, h: 150 };   // default del browser per un SVG senza misure
+  }
+
+  // Trasforma la pagina SVG in un documento con <body>, riusando lo STESSO
+  // <svg> gia' analizzato dal browser (niente seconda richiesta, e resta
+  // vettoriale: ridimensionandolo si ridisegna nitido a qualunque ingrandimento).
+  // Restituisce l'elemento da visualizzare, oppure null se qualcosa va storto
+  // (in quel caso lo script si ferma e la pagina resta quella nativa).
+  let svgMedia = null, svgNat = null;
+  if (eSvg) {
+    try {
+      const radice = document.documentElement;
+      // Se la radice non e' davvero un <svg> il file non e' stato analizzato come
+      // tale (tipico: errore di sintassi XML, il browser mostra la sua pagina di
+      // errore). Meglio non toccare nulla.
+      if (!radice || radice.namespaceURI !== 'http://www.w3.org/2000/svg') return;
+      svgNat = misuraSvg(radice);
+      // Senza viewBox il disegno NON si scala: ridimensionare il <svg> allargherebbe
+      // solo l'area visibile. Gliene diamo uno pari alla dimensione reale trovata.
+      if (!/^\s*[-\d.]+[\s,]+[-\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*$/.test(radice.getAttribute('viewBox') || '')) {
+        radice.setAttribute('viewBox', '0 0 ' + svgNat.w + ' ' + svgNat.h);
+      }
+      radice.removeAttribute('width');
+      radice.removeAttribute('height');
+      const html = creaEl('html'), head = creaEl('head'), body = creaEl('body');
+      html.appendChild(head); html.appendChild(body);
+      document.replaceChild(html, radice);
+      body.appendChild(radice);
+      svgMedia = radice;
+    } catch (e) {
+      return;   // trasformazione non riuscita: meglio la resa nativa che una pagina rotta
+    }
+  }
+
   if (THEME === 'system') {
     THEME = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
   }
   const grid = THEME === 'light' ? ['#DDD', '#EEE'] : ['#333', '#222'];
 
-  GM_addStyle(
+  aggiungiCss(
     'html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden}' +
     'body{background-attachment:fixed;background-position:0 0,10px 10px;background-size:20px 20px;' +
       'background-image:linear-gradient(45deg,' + grid[0] + ' 25%,transparent 25%,transparent 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%),' +
@@ -58,7 +142,7 @@
     // contenitore scrollabile che riempie la vista; touch-action:none così i gesti touch li gestiamo noi
     '#dv-wrap{position:fixed;inset:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;' +
       'touch-action:none;-ms-touch-action:none;overscroll-behavior:contain}' +
-    '#dv-wrap>img{display:block;flex:0 0 auto;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;' +
+    '#dv-wrap>img,#dv-wrap>svg{display:block;flex:0 0 auto;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;' +
       'background:transparent!important;cursor:pointer;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}' +
     // Riquadro unico (pill) in alto a sinistra: formato, peso, dimensioni e zoom su UNA sola riga.
     '.image-info{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
@@ -87,17 +171,17 @@
     '.ii-ext,.ii-zoom{font-weight:700}'
   );
 
-  // SVG: la "dimensione reale" in pixel non è definita come per le raster → lascio il comportamento nativo.
-  if (document.contentType === 'image/svg+xml') return;
-
   // ── Info overlay (formato / dimensioni / peso) ────────────────────────
-  const imageInfo = { ext: '', size: '', dimensions: '' };
+  // NB: niente innerHTML. In un documento XML (SVG) il frammento verrebbe
+  // analizzato dal parser XML e i figli finirebbero senza namespace, quindi
+  // invisibili: gli elementi si creano uno per uno con creaEl().
+  const imageInfo = { ext: '', size: null, dimensions: '' };
   function formatBytes(bytes, dec) {
-    if (!bytes) return '0 Bytes';
+    if (!bytes) return null;
     const k = 1024, d = dec < 0 ? 0 : (dec || 2);
     const u = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(d)) + ' <strong>' + u[i] + '</strong>';
+    return { n: parseFloat((bytes / Math.pow(k, i)).toFixed(d)), u: u[i] };
   }
   // Riquadro unico (pill). Struttura fissa a span, riempiti separatamente:
   // ext + peso + dimensioni da updateInfo, zoom da aggiornaZoom (senza collisioni).
@@ -105,10 +189,14 @@
   function boxEl() {
     let b = document.getElementById('dv-info');
     if (!b) {
-      b = document.createElement('div');
+      b = creaEl('div');
       b.id = 'dv-info';
-      b.className = 'image-info';
-      b.innerHTML = '<b class="ii-ext"></b><span class="ii-size"></span><span class="ii-dim"></span><b class="ii-zoom"></b>';
+      b.setAttribute('class', 'image-info');
+      [['b', 'ii-ext'], ['span', 'ii-size'], ['span', 'ii-dim'], ['b', 'ii-zoom']].forEach(function (v) {
+        const e = creaEl(v[0]);
+        e.setAttribute('class', v[1]);
+        b.appendChild(e);
+      });
       (document.body || document.documentElement).appendChild(b);
     }
     return b;
@@ -117,24 +205,36 @@
     const b = boxEl();
     b.querySelector('.ii-ext').textContent = (imageInfo.ext || '').toUpperCase();
     const sz = b.querySelector('.ii-size');
-    if (imageInfo.size) { sz.innerHTML = imageInfo.size; sz.style.display = ''; }
-    else { sz.textContent = ''; sz.style.display = 'none'; }   // niente peso: niente doppio gap
+    sz.textContent = '';
+    if (imageInfo.size) {
+      sz.appendChild(document.createTextNode(imageInfo.size.n + ' '));
+      const u = creaEl('strong');
+      u.textContent = imageInfo.size.u;
+      sz.appendChild(u);
+      sz.style.display = '';
+    } else {
+      sz.style.display = 'none';   // niente peso: niente doppio gap
+    }
     b.querySelector('.ii-dim').textContent = imageInfo.dimensions || '';
   }
   let ext = document.contentType.split('/')[1] || '';
   if (ext === 'x-icon' || ext === 'vnd.microsoft.icon') ext = 'ico';
+  if (ext === 'svg+xml') ext = 'svg';
   imageInfo.ext = ext;
 
   // ── Visualizzatore ────────────────────────────────────────────────────
+  // Lavora indifferentemente su <img> (raster) o <svg> (vettoriale): cambia
+  // solo da dove arriva la dimensione reale e il fatto che il vettoriale non
+  // va mai reso "a pixel netti".
   function avvio() {
-    const img = document.querySelector('img');
+    const img = svgMedia || document.querySelector('img');
     if (!img) return;
-    if (!img.naturalWidth) { img.addEventListener('load', avvio, { once: true }); return; }
+    if (!svgMedia && !img.naturalWidth) { img.addEventListener('load', avvio, { once: true }); return; }
 
     // Avvolgo l'immagine in un contenitore scrollabile sotto il mio controllo.
     let wrap = document.getElementById('dv-wrap');
     if (!wrap) {
-      wrap = document.createElement('div');
+      wrap = creaEl('div');
       wrap.id = 'dv-wrap';
       img.parentNode.insertBefore(wrap, img);
       wrap.appendChild(img);
@@ -142,7 +242,7 @@
     img.draggable = false;
     img.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
-    const natW = img.naturalWidth, natH = img.naturalHeight;
+    const natW = svgNat ? svgNat.w : img.naturalWidth, natH = svgNat ? svgNat.h : img.naturalHeight;
     const dpr = window.devicePixelRatio || 1;
     // Modalità del "100%/reale": 'phys' = 1 px immagine → 1 px FISICO (default, fedele al pannello);
     // 'log' = 1 px immagine → 1 px LOGICO (CSS), come il viewer nativo (su HiDPI appare piu' grande).
@@ -171,7 +271,10 @@
       // 100% è già un ingrandimento (1 px immagine = dpr px fisici): lì pixelated darebbe blocchi
       // scalettati (bug: a 100% logico pixelloso, a 97% liscio), quindi si usa sempre 'auto'
       // (interpolazione liscia). Anche in fisica, sotto l'adattato (downscaling) resta 'auto'.
-      img.style.setProperty('image-rendering', (scaleMode === 'phys' && scale >= realScale - 1e-6) ? 'pixelated' : 'auto', 'important');
+      // Sul vettoriale MAI: non ci sono pixel da mostrare, l'SVG si ridisegna nitido a ogni misura
+      // (e 'pixelated' sgranerebbe le eventuali immagini raster incorporate).
+      img.style.setProperty('image-rendering',
+        (!svgMedia && scaleMode === 'phys' && scale >= realScale - 1e-6) ? 'pixelated' : 'auto', 'important');
       aggiornaZoom();
     }
 
@@ -240,10 +343,12 @@
     apply();
 
     // Inserito come PRIMO figlio della pill → sta a SINISTRA di tutto il resto.
-    btnScale = document.createElement('div');
+    btnScale = creaEl('div');
     btnScale.id = 'dv-scalemode';
     btnScale.setAttribute('role', 'button');
-    btnScale.innerHTML = '<span class="dv-sm-ratio"></span>';
+    const glifo = creaEl('span');
+    glifo.setAttribute('class', 'dv-sm-ratio');
+    btnScale.appendChild(glifo);
     const pill = boxEl();
     pill.insertBefore(btnScale, pill.firstChild);
     btnScale.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleScaleMode(); btnScale.blur(); });
