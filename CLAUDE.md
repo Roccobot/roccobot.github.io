@@ -380,7 +380,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
 ## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39; config per-piattaforma dalla v12.53)
 
 Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
-la modalità ingrandita e i 6 effetti grafici.
+la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sotto).
 - **CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente).** Ogni effetto ha DUE
   configurazioni indipendenti: **desktop** (chiave base, es. `glow`) e **mobile**
   (suffisso **`_m`**, es. `glow_m`, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al
@@ -399,7 +399,11 @@ la modalità ingrandita e i 6 effetti grafici.
   sfx, onDone)`) e nel titolo indica '— Desktop'/'— Mobile'; se l'effetto ha
   manopole **per TEMA** (proprietà `th:'d'`/`th:'l'` in `FX_KNOBS`, oggi solo
   `nums`) compaiono in più due **tab Chiaro/Scuro** che filtrano le righe, mentre
-  l'anteprima continua a mostrare entrambi i riquadri (v12.63, richiesta utente); modificare la variante
+  l'anteprima continua a mostrare entrambi i riquadri (v12.63, richiesta utente).
+  Dalla v12.64 il riquadro del tema **in modifica** è evidenziato dalla classe
+  **`.fxp-edit`**: solo un `outline` accento, **niente ombreggiatura** (mockup
+  dell'utente). Si usa `outline` e non `border` apposta — non occupa spazio,
+  quindi cambiando tab l'evidenziazione si sposta senza muovere i riquadri; modificare la variante
   NON attiva cambia nulla in pagina (le regole iniettate seguono `fxCfg`). Accesso: tap sulla versione → sblocco
 → bivio 'Area admin' → **5° pulsante 'Pannello di controllo'** (`showSiteFlagsEditor`,
 stile admin minimale). ⚠️ **Nome in UI: 'Pannello di controllo' / 'Control panel'
@@ -466,9 +470,16 @@ normale/XL secondo la preferenza attiva.
      alte la coda gaussiana traboccava comunque sul perimetro (notato dall'utente,
      a cui piaceva: da lì è nata `aura` come manopola separata); dalla v12.41 il
      blur di `out` è `1.6b` e il perimetro resta pulito.
-  2. **`spot` — riflettore sul puntatore** (`fx-spot`, REGOLABILE, dalla v12.39):
-     alone bianco molto sfumato che schiarisce la card sotto il puntatore e lo
-     SEGUE, confinato dentro la card. Manopole: `r` (raggio 70-300px), `int`
+  2. **`spot` — riflettore** (`fx-spot`, REGOLABILE, dalla v12.39; in UI solo
+     'Riflettore' dalla v12.64): alone bianco molto sfumato che schiarisce la card
+     sotto il puntatore e lo SEGUE, confinato dentro la card.
+     ⚠️ **Dalla v12.64 esiste SOLO dove esiste un puntatore vero**: tutte le regole
+     stanno dentro `@media (hover:hover) and (pointer:fine)` e `wireSpotlight` non
+     aggancia il listener se `SPOT_HOVER_MQ` non combacia (con listener `change`
+     per i cambi a caldo). Il gate è sulla **capacità**, non sulla larghezza: un
+     tablet con mouse lo ha, un portatile touch no. Motivo (domanda dell'utente):
+     su touch l'hover non c'è, quindi l'effetto non si vedrebbe mai ma il
+     `pointermove` continuerebbe a lavorare a ogni frame durante lo scroll. Manopole: `r` (raggio 70-300px), `int`
      (intensità 0.02-0.12; il tetto è il valore verificato con axe: 0 violazioni
      anche al massimo, hover incluso). Implementazione: RIUSA `.rank-item::before`
      (il vecchio velo statico di hover, stesso fade opacity 0→1) con
@@ -484,10 +495,14 @@ normale/XL secondo la preferenza attiva.
      `::before` è scavalcato dalla regola iniettata (sorgente più in basso).
   3. **`press` — nomi incisi** (`fx-press`, REGOLABILE dalla v12.53): letterpress
      in tema chiaro (lume bianco sotto + velo scuro sopra), stacco morbido in
-     scuro. Manopole: `name` (sul Nome) e `lab` (sulle etichette tipo) — le
-     etichette sono FIGLIE di `.rank-name` e l'ombra si eredita, quindi le
-     combinazioni si ottengono azzerandola sulle figlie (o applicandola solo a
-     loro). Regole in `injectFxRules` (formula `fxPressShadow`); le statiche sono
+     scuro. Manopole: `name` (sul Nome), `lab` (sulle etichette tipo) e, dalla
+     v12.64, **`num`** (sui numeri di classifica, default `false` per non cambiare
+     la resa di chi ha già salvato) — le etichette sono FIGLIE di `.rank-name` e
+     l'ombra si eredita, quindi le combinazioni si ottengono azzerandola sulle
+     figlie (o applicandola solo a loro). ⚠️ La regola di `num` è volutamente a
+     specificità BASSA (0,2,1), sotto quella del podio (0,4,1 / 0,5,1): così i
+     primi tre conservano l'ombra metallica dedicata e l'incisione vale dal quarto
+     in giù. Regole in `injectFxRules` (formula `fxPressShadow`); le statiche sono
      state rimosse dal CSS.
   4. **`vig` — vignettatura** (`fx-vig`, REGOLABILE dalla v12.42): alone radiale
      come **livello di sfondo del body** (`background-image` +
@@ -534,10 +549,16 @@ normale/XL secondo la preferenza attiva.
   monocromatica `currentColor` — disegno scelto dall'utente). Storico: nella
   v12.39 i regolabili NON avevano la checkbox ma una pastiglia di stato
   Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
-  dell'utente). I **testi del pannello sono riscritti dall'utente** (v12.40; nota
-  della Modalità XL ritoccata in v12.42: 'Ingrandisce l'interfaccia del sito.'),
-  **a-capo inclusi** (`\n` nelle note, resi con `white-space:pre-line`): non
-  riformularli. Al ritorno dalla sotto-modale la checkbox si riallinea
+  dell'utente). ⚠️ **NOMI E ORDINE delle voci (v12.64, decisi dall'utente):**
+  Modalità XL, **Bagliore**, **Numeri colorati**, **Riflettore**, **Incisione**,
+  **Alone sfumato**, **Oro, argento e bronzo** — etichette brevi, di una parola
+  dove possibile; 'Numeri colorati' sta subito dopo 'Bagliore'. ⚠️ **Le didascalie
+  descrittive sono state RIMOSSE ovunque** (c'erano su desktop fino alla v12.63):
+  l'utente le ha giudicate superflue, il pannello è una lista pulita di
+  interruttori. Non reintrodurle. In fondo resta **solo l'avviso breve** sulla
+  preferenza personale di zoom, ora identico su desktop e mobile (la versione
+  lunga di desktop è stata abbandonata con le didascalie). Storico: i testi
+  descrittivi erano stati riscritti dall'utente in v12.40 e ritoccati in v12.42. Al ritorno dalla sotto-modale la checkbox si riallinea
   (callback `onDone`). Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
   minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +

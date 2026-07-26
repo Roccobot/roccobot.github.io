@@ -2344,7 +2344,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.63</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.64</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2451,7 +2451,10 @@ var SITE_FLAGS_DEFAULT = {
   vig:{ on:true, int:0.34, start:38 },
   // press (v12.53): quali parti incidere (name = Nome, lab = etichette tipo;
   // entrambe = il comportamento storico, dove l'ombra si ereditava).
-  press:{ on:true, name:true, lab:true },
+  // press: quali parti incidere — name = Nome, lab = etichette tipo, num = numeri
+  // di classifica (v12.64). Il default di `num` è false: è un'aggiunta, non deve
+  // cambiare la resa di chi ha già salvato senza quella chiave.
+  press:{ on:true, name:true, lab:true, num:false },
   // podium (v12.53): int = intensità del metallo (contrast), lum = luminosità
   // (brightness); 1/1 = resa neutra (nessun filtro percepibile).
   podium:{ on:true, int:1, lum:1 },
@@ -2687,6 +2690,10 @@ function injectFxRules(){
       } else if (pr.lab) {
         css.push(base + ' .rank-name .rank-tipi{text-shadow:' + fxPressShadow(light) + '}');
       }
+      // Numeri di classifica: specificità (0,2,1), volutamente PIÙ BASSA delle
+      // regole del podio (0,4,1 / 0,5,1), così i primi tre conservano la loro
+      // ombra metallica dedicata e l'incisione vale dal quarto in giù.
+      if (pr.num) css.push(base + ' .rank-num{text-shadow:' + fxPressShadow(light) + '}');
     });
   }
   if (flagOn('podium')) {
@@ -2718,11 +2725,17 @@ function injectFxRules(){
     // lo sostituisce invece di aggiungere un nodo per card. z-index:-1 +
     // isolation:isolate lo mettono SOPRA il fondo della card e SOTTO il testo (come
     // le linee mediane): un velo bianco sopra il testo lo slaverebbe.
-    css.push('html.fx-spot .rank-item{isolation:isolate}');
+    // ⚠️ TUTTO dentro @media (hover:hover) and (pointer:fine) (v12.64): un effetto
+    // che insegue il puntatore non ha senso dove il puntatore non c'è. Il gate è
+    // sulla CAPACITÀ, non sulla larghezza: un tablet con mouse lo avrà, un desktop
+    // touch no. Su touch l'effetto quindi non esiste proprio, e `wireSpotlight`
+    // nemmeno aggancia il listener (niente lavoro a ogni frame durante lo scroll).
+    var inner = ['html.fx-spot .rank-item{isolation:isolate}'];
     [false, true].forEach(function(light){
       var base = 'html.fx-spot' + (light ? '[data-theme="light"]' : '');
-      css.push(base + ' .rank-item::before{display:block;z-index:-1;background:' + fxSpotBg(s, light) + '}');
+      inner.push(base + ' .rank-item::before{display:block;z-index:-1;background:' + fxSpotBg(s, light) + '}');
     });
+    css.push('@media (hover:hover) and (pointer:fine){' + inner.join('') + '}');
   }
   var st = document.getElementById('fx-dyn');
   if (!st) { st = document.createElement('style'); st.id = 'fx-dyn'; document.head.appendChild(st); }
@@ -2749,10 +2762,14 @@ function spotMove(e){
   spotEl = el; spotCX = e.clientX; spotCY = e.clientY;
   if (!spotRAF) spotRAF = requestAnimationFrame(spotFlush);
 }
+var SPOT_HOVER_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
+if (SPOT_HOVER_MQ.addEventListener) SPOT_HOVER_MQ.addEventListener('change', function(){ wireSpotlight(); });
 function wireSpotlight(){
   var list = document.getElementById('rank-list');
   if (!list) return;
-  var want = flagOn('spot');
+  // Solo dove esiste un puntatore vero: le regole CSS sono nella stessa media
+  // query, quindi su touch il listener non avrebbe nulla da illuminare.
+  var want = flagOn('spot') && SPOT_HOVER_MQ.matches;
   if (want === spotWired) return;
   if (want) list.addEventListener('pointermove', spotMove, { passive:true });
   else list.removeEventListener('pointermove', spotMove);
@@ -6895,30 +6912,18 @@ function openAdminGate() {
 function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, true, null, SITE_FLAGS); }
 var SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS));
 // Voci del pannello, nell'ordine di presentazione. `k` = chiave in SITE_FLAGS.
-// Testi RISCRITTI DALL'UTENTE (2026-07-25, v12.40), a-capo inclusi (i \n nelle
-// note sono voluti e resi da white-space:pre-line): non riformularli.
+// ⚠️ NOMI E ORDINE decisi dall'utente (v12.64): etichette brevi di UNA parola dove
+// possibile, 'Numeri colorati' subito dopo 'Bagliore'. Le didascalie descrittive
+// sono state RIMOSSE (prima c'erano su desktop): l'utente le ha giudicate
+// superflue, il pannello resta una lista pulita di interruttori. Non reintrodurle.
 var SITE_FLAG_ITEMS = [
-  { k:'zoomBig', it:'Modalità XL', en:'XL Mode',
-    nit:'Ingrandisce l\'interfaccia del sito (telefoni esclusi).\nScelta personale: tasto Z su desktop, tap lungo sul FAB su mobile.',
-    nen:'Magnifies the site interface (phones excluded).\nPersonal override: Z key on desktop, long-press on the FAB on mobile.' },
-  { k:'glow', it:'Bagliore della striscia colorata', en:'Strip glow', cfg:true,
-    nit:'La striscia diffonde la tinta tutto intorno.\nRegolabili: ampiezza, opacità, intensità, posizione, top/tutti.',
-    nen:'The strip diffuses its color all around.\nAdjustable parameters: spread, opacity, intensity, position, top/all.' },
-  { k:'spot', it:'Riflettore sul puntatore', en:'Pointer spotlight', cfg:true,
-    nit:'Un alone bianco molto sfumato schiarisce la card dove passa\nil puntatore, restando al suo interno.',
-    nen:'A very soft white glow lightens the card where the pointer hovers,\nremaining contained within its borders.' },
-  { k:'press', it:'Nomi incisi', en:'Engraved names', cfg:true,
-    nit:'Leggera ombra tipografica sui nomi (letterpress su tema chiaro).',
-    nen:'Subtle typographic shadow on the names (letterpress on light theme).' },
-  { k:'vig', it:'Vignettatura', en:'Vignetting', cfg:true,
-    nit:'Alone radiale ai bordi del fondo per conferire profondità.',
-    nen:'Radial halo at the edges of the background to add depth.' },
-  { k:'podium', it:'Podio metallico', en:'Metallic podium', cfg:true,
-    nit:'Numeri 1-2-3 in effetto oro, argento e bronzo.',
-    nen:'Numbers 1-2-3 with gold, silver, and bronze effects.' },
-  { k:'nums', it:'Colore dei numeri', en:'Number colour', cfg:true,
-    nit:'I numeri di posizione prendono la tinta della card, desaturata.\nRegolabili per tema: cromia e luminosità.',
-    nen:'Rank numbers take the card tint, desaturated.\nAdjustable per theme: chroma and lightness.' }
+  { k:'zoomBig', it:'Modalità XL', en:'XL Mode' },
+  { k:'glow', it:'Bagliore', en:'Glow', cfg:true },
+  { k:'nums', it:'Numeri colorati', en:'Coloured numbers', cfg:true },
+  { k:'spot', it:'Riflettore', en:'Spotlight', cfg:true },
+  { k:'press', it:'Incisione', en:'Engraving', cfg:true },
+  { k:'vig', it:'Alone sfumato', en:'Soft halo', cfg:true },
+  { k:'podium', it:'Oro, argento e bronzo', en:'Gold, silver and bronze', cfg:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -6956,7 +6961,10 @@ var FX_KNOBS = {
   press: [
     { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
     { p:'name', t:'bool', it:'Sul Nome', en:'On the Name' },
-    { p:'lab', t:'bool', it:'Sulle etichette tipo', en:'On the type labels' }
+    { p:'lab', t:'bool', it:'Sulle etichette tipo', en:'On the type labels' },
+    { p:'num', t:'bool', it:'Sui numeri di classifica', en:'On the rank numbers',
+      nit:'I primi tre conservano l’ombra del podio, quando è attivo.',
+      nen:'The top three keep the podium shadow when it is on.' }
   ],
   podium: [
     { p:'on', t:'bool', it:'Effetto attivo', en:'Effect on' },
@@ -7005,6 +7013,11 @@ function injectFxEditorCss(){
     '.fxp-pane{position:relative;border-radius:8px;padding:0.85rem 1.2rem 0.85rem 1.7rem;display:flex;flex-direction:column;gap:0.55rem;overflow:hidden}',
     '.fxp-pane.d{background:#262626;color:#d2d2d2}',
     '.fxp-pane.l{background:#F5F5F5;color:#373737}',
+    // Riquadro del tema IN MODIFICA (v12.64, mockup dell'utente): solo contorno
+    // accento, NIENTE ombreggiatura. L'outline non occupa spazio, quindi i due
+    // riquadri non si spostano quando l'evidenziazione passa dall'uno all'altro.
+    '.fxp-pane{outline:2px solid transparent;outline-offset:2px;transition:outline-color 0.2s}',
+    '.fxp-pane.fxp-edit{outline-color:rgba(90,140,220,0.95)}',
     '.fxp-card{position:relative;display:grid;grid-template-columns:24px 1fr;align-items:center;gap:0.7rem;',
     'padding:0.45rem 0.6rem 0.45rem 0.3rem;border-radius:4px;border:1px solid rgba(104,144,168,0.15);',
     'overflow:hidden;isolation:isolate;transition:background 0.2s,box-shadow 0.2s}',
@@ -7018,7 +7031,9 @@ function injectFxEditorCss(){
     'padding:0;background:none;border:1px solid rgba(140,145,160,0.4);border-radius:6px;color:inherit;',
     'cursor:pointer;opacity:0.75;transition:opacity 0.15s,border-color 0.15s}',
     '.fx-gear:hover{opacity:1;border-color:rgba(140,145,160,0.75)}',
-    '.fxp-pill{display:inline-block;font-size:0.5em;font-weight:400;letter-spacing:0.03em;',
+    // 0.62em (non 0.5): a 0.5em il corpo scendeva a ~7.6px, illeggibile e sotto
+    // la soglia di contrasto per il testo piccolo.
+    '.fxp-pill{display:inline-block;font-size:0.62em;font-weight:400;letter-spacing:0.03em;',
     'border:1px solid;border-radius:3px;padding:0 5px;margin-left:0.5em;vertical-align:0.25em;white-space:nowrap}',
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
     '.fxk-row .fxk-lbl{font-size:0.84rem;font-weight:600}',
@@ -7092,11 +7107,15 @@ function showFxConfigEditor(key, sfx, onDone){
       var c = document.createElement('div'); c.className = 'fxp-card';
       var strip = document.createElement('span'); strip.className = 'fxp-strip';
       var spot = document.createElement('span'); spot.className = 'fxp-spot';
-      // Nell'editor del podio la seconda card mostra il 3 (bronzo): con due sole
-      // card si coprono il metallo più chiaro e quello più scuro; l'argento si
-      // giudica sulle card vere dietro.
+      // Numeri delle card d'anteprima. Nell'editor del PODIO sono 1 e 3 (oro e
+      // bronzo: con due card si coprono il metallo più chiaro e il più scuro,
+      // l'argento si giudica sulle card vere dietro). In TUTTI gli altri editor
+      // sono posizioni FUORI dal podio (4 e 5): altrimenti l'anteprima mentirebbe
+      // — mostrerebbe p.es. l'incisione sui numeri 1-2, che in pagina il podio
+      // esclude avendo specificità maggiore (rilievo della verifica v12.64).
+      var podEd = (key === 'podium');
       var num = document.createElement('span'); num.className = 'fxp-num';
-      num.textContent = String(key === 'podium' && n === 2 ? 3 : n);
+      num.textContent = String(podEd ? (n === 1 ? 1 : 3) : (n === 1 ? 4 : 5));
       var body = document.createElement('span');
       var nm = document.createElement('span'); nm.className = 'fxp-name';
       nm.textContent = n === 1 ? 'Fëanor' : 'Fingolfin';
@@ -7109,7 +7128,7 @@ function showFxConfigEditor(key, sfx, onDone){
       body.appendChild(nm); body.appendChild(ds);
       c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
       var rec = { el:c, strip:strip, spot:spot, num:num, name:nm, pill:pill, desc:ds,
-                  light:light, first:(n === 1), metal:(key === 'podium' && n === 2 ? 3 : n) };
+                  light:light, first:(n === 1), metal:(n === 1 ? 1 : 3) };
       // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
       // valutarlo senza uscire dalla modale.
       c.addEventListener('pointermove', function(e){
@@ -7145,7 +7164,16 @@ function showFxConfigEditor(key, sfx, onDone){
       var press = vOn('press');
       rec.name.style.textShadow = (press && pr.name) ? fxPressShadow(rec.light) : 'none';
       rec.pill.style.textShadow = (press && pr.lab) ? fxPressShadow(rec.light) : 'none';
-      rec.pill.style.color = 'rgba(' + cc + ',1)';
+      var numPress = (press && pr.num) ? fxPressShadow(rec.light) : 'none';
+      // Testo della pill reso AA con l'helper del progetto (v12.64): la tinta
+      // piena sul proprio fondo velato dava 3.38:1 su un corpo di ~8px, sotto la
+      // soglia 4.5:1 del testo piccolo (rilevato da axe). Il fondo di riferimento
+      // è la tinta velata composta sul fondo del riquadro.
+      var pillBgHex = ccTripletToHex(cc.split(',').map(function(v, i){
+        var base = rec.light ? [245,245,245] : [38,38,38], a = rec.light ? 0.10 : 0.26;
+        return Math.round(+v * a + base[i] * (1 - a));
+      }).join(','));
+      rec.pill.style.color = ccAaText(ccTripletToHex(cc), pillBgHex, 4.5);
       rec.pill.style.borderColor = 'rgba(' + cc + ',0.8)';
       rec.pill.style.background = 'rgba(' + cc + ',' + (rec.light ? 0.10 : 0.26) + ')';
       // Numero: metallo del podio nell'editor del podio, altrimenti la tinta
@@ -7160,7 +7188,7 @@ function showFxConfigEditor(key, sfx, onDone){
       } else {
         rec.num.style.backgroundImage = 'none';
         rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
-        rec.num.style.textShadow = 'none'; rec.num.style.filter = 'none';
+        rec.num.style.textShadow = numPress; rec.num.style.filter = 'none';
         // Stessa formula della pagina (v12.63), con la terna CONCRETA: qui i due
         // temi convivono, quindi var(--ccrgb) non varrebbe. A effetto spento vale
         // il grigio del nome del tema, come fa la regola base in pagina.
@@ -7201,8 +7229,12 @@ function showFxConfigEditor(key, sfx, onDone){
         thBtns[k].setAttribute('aria-pressed', String(on));
         thBtns[k].style.opacity = on ? '1' : '0.45';
       });
+      // Evidenzia il riquadro d'anteprima del tema che si sta modificando.
+      panes.forEach(function(pn){ pn.el.classList.toggle('fxp-edit', (pn.light ? 'l' : 'd') === kTheme); });
     };
-    syncTh(); box.appendChild(thBar);
+    // Le tab vanno SOPRA l'anteprima (v12.64): il nesso 'tab selezionata →
+    // riquadro evidenziato' si legge solo se il comando precede l'effetto.
+    syncTh(); box.insertBefore(thBar, wrap);
   }
   box.appendChild(knobsBox);
   function renderKnobs(){
@@ -7343,29 +7375,22 @@ function showSiteFlagsEditor(initState){
       if (f.k === 'zoomBig' && tab === 'm') return; // XL: solo nella tab Desktop
       var vk = (f.k === 'zoomBig') ? f.k : f.k + sfx;
       var row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:' + (isMob ? 'center' : 'start') + ';margin:0 0 ' + (isMob ? '0.55rem' : '0.85rem') + ';';
+      row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:center;margin:0 0 0.62rem;';
       var cb = document.createElement('input'); cb.type = 'checkbox';
       cb.checked = (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') ? SITE_FLAGS[vk].on !== false : !!SITE_FLAGS[vk];
       cb.id = 'sf-' + vk;
-      cb.style.cssText = 'margin:' + (isMob ? '0' : '0.25rem 0 0') + ';width:1rem;height:1rem;flex:none;cursor:pointer;';
+      cb.style.cssText = 'margin:0;width:1rem;height:1rem;flex:none;cursor:pointer;';
       cb.addEventListener('change', function(){
         // Flag a oggetto: si tocca solo l'interruttore, le manopole restano.
         if (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') SITE_FLAGS[vk].on = cb.checked;
         else SITE_FLAGS[vk] = cb.checked;
         applySiteFlags(); reflowRows();
       });
+      // Solo il nome: le didascalie sono state tolte ovunque (v12.64, richiesta
+      // utente); il pannello è una lista pulita di interruttori.
       var txt = document.createElement('label'); txt.setAttribute('for', cb.id);
-      txt.style.cssText = 'cursor:pointer;';
-      var nm = document.createElement('span'); nm.style.cssText = 'display:block;font-size:0.92rem;font-weight:600;';
-      nm.textContent = it ? f.it : f.en;
-      txt.appendChild(nm);
-      // Su mobile le note descrittive si OMETTONO (richiesta utente, v12.53:
-      // risparmio di spazio verticale). Gli a-capo delle note sono voluti.
-      if (!isMob) {
-        var nt = document.createElement('span'); nt.style.cssText = 'display:block;font-size:0.76rem;opacity:0.66;line-height:1.35;margin-top:0.1rem;white-space:pre-line;';
-        nt.textContent = it ? f.nit : f.nen;
-        txt.appendChild(nt);
-      }
+      txt.style.cssText = 'cursor:pointer;font-size:0.92rem;font-weight:600;';
+      txt.textContent = it ? f.it : f.en;
       row.appendChild(cb); row.appendChild(txt);
       if (f.cfg) {
         var gear = document.createElement('button'); gear.type = 'button'; gear.className = 'fx-gear';
@@ -7392,14 +7417,12 @@ function showSiteFlagsEditor(initState){
   if (mine !== null) {
     var warn = document.createElement('p');
     warn.style.cssText = 'font-size:0.76rem;opacity:0.8;margin:0 0 0.9rem;padding:0.5rem 0.6rem;border-left:2px solid rgba(200,162,74,0.8);';
+    // Avviso BREVE su entrambe le piattaforme (v12.64): la versione lunga di
+    // desktop è stata abbandonata insieme alle didascalie.
     var xl = mine === '1';
-    warn.textContent = isMob
-      ? (it
-        ? ('La tua preferenza personale di dimensione UI (' + (xl ? 'XL' : 'normale') + ', tasto Z o tocco lungo sul FAB) ha la precedenza sull\'impostazione globale.')
-        : ('Your personal UI size preference (' + (xl ? 'XL' : 'standard') + ', Z key or long-press on the FAB) takes precedence over the global setting.'))
-      : (it
-        ? ('Nota: la tua preferenza personale di zoom (' + (xl ? 'XL' : 'normale') + ', tasto Z) scavalca l\'impostazione della Modalità XL. Gli altri visitatori vedranno inizialmente il sito con la Modalità XL attiva o non attiva secondo le tue impostazioni.')
-        : ('Note: your personal zoom preference (' + (xl ? 'XL' : 'standard') + ', Z key) overrides the XL Mode setting. Other visitors will initially see the site with XL Mode on or off according to your settings.'));
+    warn.textContent = it
+      ? ('La tua preferenza personale di dimensione UI (' + (xl ? 'XL' : 'normale') + ', tasto Z o tocco lungo sul FAB) ha la precedenza sull\'impostazione globale.')
+      : ('Your personal UI size preference (' + (xl ? 'XL' : 'standard') + ', Z key or long-press on the FAB) takes precedence over the global setting.');
     box.appendChild(warn);
   }
   var foot = document.createElement('div'); foot.style.cssText = 'display:flex;gap:10px;margin-top:1.1rem;';
