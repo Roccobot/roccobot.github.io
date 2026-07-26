@@ -252,6 +252,19 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     `d` (animazione del glifo di chiusura) è valida ma non riconosciuta dal Nu
     Checker, perciò è iniettata via JS e non nel `<style>` statico (vedi il
     commento `ctrl-close-bend`): non reintrodurla nel CSS o tornano 4 errori.
+    - **Utile ma NON imprescindibile (regola dell'utente, 2026-07-26).** Se il
+      test non si può eseguire (rate limit 429 del validatore, servizio giù o
+      qualunque altro impedimento), **NON rimandare il go-live e NON lasciare
+      retry in background**: si procede, annotando il salto, e il controllo si
+      recupera al **prossimo aggiornamento** del sito, se il validatore è tornato
+      disponibile. Il vincolo 0/0 resta pieno quando il test GIRA: l'eccezione
+      riguarda solo la sua indisponibilità. Evidenza sostitutiva utile quando si
+      salta: il **diff della porzione NON-JS** (fuori dai blocchi `<script>`)
+      rispetto all'ultima versione validata 0/0 — se cambia solo il numero del
+      badge o testo di attributi, il rischio è nullo, perché il Nu non ispeziona
+      JS e CSS iniettato. (Contesto: 2026-07-26, rate limit per l'intera giornata
+      dopo le validazioni delle release del mattino; v12.95, v13.06-13.17 andate
+      live con questa prova.)
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
