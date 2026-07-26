@@ -1,11 +1,16 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-07-24
+! Last updated: 2026-07-26
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
 ! $document,important              : fiducia totale alla pagina (cosmetiche e scriptlet).
 ! $document,subdocument,important  : come sopra ma anche quando il dominio e' in iframe
 !                                    (widget di pagamento/verifica: Stripe e simili).
+! $stealth,important               : disattiva la Modalita' Stealth solo su quel dominio
+!                                    (user agent, header, referrer e cookie restano
+!                                    intatti). Serve ai siti dietro un bot manager
+!                                    (Akamai e simili) che rispondono 403 Access Denied
+!                                    quando la richiesta risulta alterata.
 ! Doppia riga = banche, pagamenti, finanza, assicurazioni, PA/identita'.
 
 @@||192.168.1.2^$important
@@ -16,6 +21,14 @@
 @@||agos.it^$document,important
 @@||agosweb.it^$important
 @@||agosweb.it^$document,important
+! Alamo (Enterprise Holdings): dietro bot manager Akamai, che risponde 403 Access
+! Denied se la richiesta e' alterata. Serve anche l'esenzione dalla Stealth.
+@@||alamo.com^$important
+@@||alamo.com^$document,important
+@@||alamo.com^$stealth,important
+@@||alamo.it^$important
+@@||alamo.it^$document,important
+@@||alamo.it^$stealth,important
 @@||animeworld.ac^$important
 @@||aruba.it^$important
 @@||aruba.it^$document,important
