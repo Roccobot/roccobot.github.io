@@ -473,53 +473,63 @@ normale/XL secondo la preferenza attiva.
   1. **`glow` — bagliore** (`fx-glow`, REGOLABILE; label UI **'Bagliore'/'Glow'**
      dalla v12.64, prima 'Bagliore della striscia colorata'): la striscia
      diffonde la tinta di famiglia dentro la card su due strati derivati dalle
-     manopole. ⚠️ **Dalla v12.85 le manopole numeriche sono PER TEMA** (suffisso
-     `_d`/`_l`, vedi 'Manopole per tema') **e esistono anche per il lato DESTRO**
-     (prefisso `r`): 22 in tutto. Elenco, per parte:
-     - **interno sinistro**: `amp` (sfumatura, 10-60px), `int` (opacità, 0.1-1);
-     - **esterno sinistro**: `out` (bool: il bagliore esce dal bordo sinistro),
-       `oamp`/`oint` (**ampiezza e opacità PROPRIE**, dalla v12.42: prima derivate
-       da amp/int; i default 11px/0.9 riproducono la resa precedente);
-     - **intorno alla card**: `aura` (alone su tutto il perimetro, 0-0.6, 0 =
-       spento; dalla v12.41);
-     - **a destra** (dalla v12.85): `ron` (bool, default **false**) + `ramp`/`rint`
-       (interno) e `roamp`/`roint` (esterno);
-     - **non per tema**: `all` (**tutte** le card accese invece della sola card
-       attiva → classe extra `fx-glow-all`).
-     ⚠️ **Il bagliore INTERNO destro è fatto con ombre `inset` della CARD**, non
-     con una seconda striscia: a destra non c'è nulla da cui far partire il
-     bagliore, i due pseudo-elementi della card sono già occupati (`::before` =
-     riflettore, `::after` = linee mediane admin) e l'`inset` è tagliato dal
-     `border-radius` senza aggiungere nodi né toccare il layout. Vive nella stessa
-     lista `box-shadow` delle ombre proprie (fughe e aura), composta in
-     `injectFxRules` e — con la stessa logica — nell'anteprima. La **fuga** destra
-     è invece simmetrica alla sinistra: stesso disegno con l'offset invertito.
-     ⚠️ **A destra NON c'è una striscia colorata**: solo il bagliore (scelta
-     dell'utente, v12.85).
-     ⚠️ **Etichetta di `aura`: 'Aura attorno alla card'/'Aura around the card'
-     (dalla v12.75).** Diceva 'Alone intorno alla card', che **collideva** col nome
-     dell'effetto `vig`, rinominato 'Alone sfumato' in v12.64: due cose diverse con
-     la stessa parola nello stesso pannello. Stessa passata: la manopola `r` del
-     riflettore è **'Raggio del riflettore'/'Spotlight radius'** (diceva 'Raggio
-     dell'alone' — terza collisione sulla stessa parola). Regola: **'alone' è
-     riservato a `vig`**; l'aura della card e il raggio del riflettore si nominano
-     con la propria parola.
-     Default = la taratura v12.27 (34px, 0.62, solo dentro, aura 0, solo card attiva).
+     manopole. ⚠️ **RISTRUTTURATO nella v12.95** su richiesta dell'utente: le
+     manopole numeriche **non sono più per-lato** ('non ha senso un'impostazione
+     asimmetrica'), sinistra e destra condividono le stesse, e il lato destro resta
+     separato solo come **accensione**. 18 manopole, per tema (`_d`/`_l`).
+     - **Quattro caselle di POSIZIONE**, che dicono DOVE va il bagliore e governano
+       le tre sezioni di manopole: **`pl`** a sinistra (interno, dalla striscia),
+       **`pr`** a destra (interno, ombre `inset`), **`ps`** ai lati (esterno: esce
+       FUORI dalla card, dai lati che `pl`/`pr` hanno acceso), **`pa`** intorno alla
+       card (alone perimetrale). ⚠️ `ps` **è** la vecchia casella 'Anche fuori dalla
+       card', che l'utente non capiva ('se è esterno, è ovvio che va fuori'): il suo
+       vero significato era 'accendi il bagliore esterno', e come 'Ai lati' dentro
+       il gruppo Posizione si legge da sé.
+     - **Sezione INTERNO**: `amp` (sfumatura 10-60px), `int` (opacità 0.1-1).
+     - **Sezione ESTERNO**: `oamp` (sfumatura 4-40px), `oint` (opacità).
+     - **Sezione INTORNO ALLA CARD**: `aamp` (sfumatura 6-60px) e `aint` (opacità
+       0.05-0.6). ⚠️ `aamp` è NUOVA nella v12.95: fino alla v12.85 la sfumatura
+       dell'alone non era regolabile ma **derivata** da quella interna (`amp × 0.6`)
+       — un residuo di quando interno ed esterno condividevano una manopola, che
+       rendeva 'Intensità' l'unica voce di quella sezione. La migrazione copia quel
+       calcolo, quindi la resa di chi aveva l'alone acceso non cambia.
+     - **`all`** (non per tema): tutte le card accese invece della sola card attiva
+       → classe extra `fx-glow-all`.
+     ⚠️ **LISTA DI OMBRE A LUNGHEZZA E ORDINE FISSI (fix del 'lampo', v12.95).**
+     Le parti spente NON si omettono: si emettono con **alpha 0**, tenendo la loro
+     geometria e la loro posizione. Motivo, misurato: il browser interpola le
+     `box-shadow` **per posizione**, quindi togliendo o aggiungendo una voce le altre
+     slittano e si trasformano l'una nell'altra. Con solo l'alone acceso la card
+     aveva 1 ombra; accendendo 'Ai lati' ne aveva 2, e in transizione l'ALONE si
+     morfava nella fuga sinistra mentre un alone nuovo **ricresceva da zero**
+     (misurato: `0 0 7.9px` a 30ms, 31px a 70ms, 36px a 120ms). Da qui il lampo che
+     l'utente vedeva su una manopola che non c'entrava. Ordine fisso: **fuga
+     sinistra, fuga destra, alone**, poi l'interno destro `inset` in coda (un'ombra
+     `inset` non può interpolare con una normale). Vale sia in pagina sia
+     nell'anteprima: se l'anteprima omettesse le voci spente avrebbe il lampo che la
+     pagina non ha più, ed è proprio lì che l'utente lo vedeva.
+     ⚠️ **Il bagliore INTERNO destro è fatto con ombre `inset` della CARD**, non con
+     una seconda striscia: a destra non c'è nulla da cui far partire il bagliore, i
+     due pseudo-elementi della card sono già occupati (`::before` = riflettore,
+     `::after` = linee mediane admin) e l'`inset` è tagliato dal `border-radius`
+     senza aggiungere nodi né toccare il layout. **A destra NON c'è una striscia
+     colorata**: solo il bagliore (scelta dell'utente, v12.85).
      ⚠️ **Il numero di posizione sta SOPRA il bagliore** (dalla v12.42):
      `.rank-num` ha `position:relative; z-index:2` perché la sfumatura interna
      (box-shadow della striscia, z-index:1) passava sopra le cifre e velava i
      metalli del podio (segnalato dall'utente ad ampiezze alte). Non rimuoverlo.
      ⚠️ **Niente sollevamento né ombra grigia sulla card**: card **'virtuali', non
      schede fisiche** (il lift del mockup è stato scartato apposta). Il bagliore
-     interno è tagliato a sinistra dall'`overflow:hidden` della card; quello
-     ESTERNO (`out`) e l'ALONE (`aura`) sono ombre PROPRIE della card (l'overflow
-     taglia solo i figli). `out` ha **spread negativo** così esce SOLO dal lato
-     sinistro senza disegnare un contorno luminoso attorno al perimetro (il primo
-     tentativo senza spread avvolgeva tutta la card: effetto neon, scartato).
-     Storico `out`: fino alla v12.40 il blur era `2b` con spread `-b` e ad ampiezze
-     alte la coda gaussiana traboccava comunque sul perimetro (notato dall'utente,
-     a cui piaceva: da lì è nata `aura` come manopola separata); dalla v12.41 il
-     blur di `out` è `1.6b` e il perimetro resta pulito.
+     interno è tagliato a sinistra dall'`overflow:hidden` della card; quelli
+     ESTERNI e l'ALONE sono ombre PROPRIE della card (l'overflow taglia solo i
+     figli). Le fughe hanno **spread negativo** così escono SOLO dal proprio lato
+     senza disegnare un contorno luminoso attorno al perimetro (il primo tentativo
+     senza spread avvolgeva tutta la card: effetto neon, scartato). Storico: fino
+     alla v12.40 il blur era `2b` con spread `-b` e ad ampiezze alte la coda
+     gaussiana traboccava comunque sul perimetro (notato dall'utente, a cui piaceva:
+     da lì è nata l'aura come manopola separata); dalla v12.41 il blur è `1.6b` e il
+     perimetro resta pulito.
+
   2. **`spot` — riflettore** (`fx-spot`, REGOLABILE, dalla v12.39; in UI solo
      'Riflettore' dalla v12.64): alone bianco molto sfumato che schiarisce la card
      sotto il puntatore e lo SEGUE, confinato dentro la card.
@@ -711,6 +721,37 @@ normale/XL secondo la preferenza attiva.
   esce torna a valere l'inline. Scelta di merito: **rivelarli** invece di toglierli
   dall'ordine di tabulazione, perché servono proprio a chi naviga senza mouse.
   Verificato: `Enter` scorre ancora in cima, e a modale aperta restano inerti.
+- **`Attiva` / `Enable`, non più 'Effetto attivo' (v12.95, richiesta dell'utente):**
+  vale per TUTTI e sei gli effetti, è la prima voce di ogni sotto-modale.
+- **Le caselle DISABILITANO le impostazioni che governano (v12.95, richiesta
+  dell'utente).** Ogni voce può portare un campo **`dep`**; `depOk()` lo valuta a
+  ogni `renderKnobs` (che ora rigira anche a ogni click su una casella, non solo al
+  cambio di tab) e la riga spenta prende la classe **`.fxk-off`** (opacità 0.5) coi
+  controlli `disabled`. Condizioni: `'on'` = l'interruttore dell'effetto spegne tutto
+  il resto; per il bagliore `'inner'` = almeno un lato interno acceso, `'outer'` =
+  'Ai lati' acceso **e** almeno un lato da cui uscire, `'around'` = 'Intorno alla
+  card' acceso. ⚠️ L'opacità della riga spenta resta **0.5 e non meno**: sotto, il
+  testo scenderebbe fuori soglia di contrasto, e un controllo disabilitato va
+  comunque letto.
+- **Anteprima FISSA in alto (v12.95, richiesta dell'utente; globale, non solo XL).**
+  `.fxp-wrap` è `position:sticky; top:0` e resta in vista mentre si scorre fino alle
+  manopole in fondo: senza, in Modalità XL si regolava alla cieca. Ha un **fondo
+  opaco** col colore della modale, altrimenti le righe che le passano sotto si
+  vedrebbero in trasparenza. ⚠️ **Lo scorrimento è passato a un contenitore INTERNO**
+  (`.fx-scroll`): col box come area di scorrimento, il tasto `×` — che è
+  `position:absolute` dentro il box — scorreva via col contenuto e diventava
+  irraggiungibile (misurato: dopo aver scorso in fondo era fuori dal viewport). Ora
+  il box è `flex` in colonna e non scorre, quindi `×` resta ancorato in alto e il
+  piè di pagina in basso.
+- **Respiro DINAMICO del riquadro d'anteprima, solo per il bagliore (v12.95).**
+  È l'unico effetto che disegna FUORI dalla card, e l'anteprima lo **tagliava**
+  (segnalato dall'utente con uno screenshot). Un padding fisso non basta, perché
+  quanto esce dipende dalle manopole: `paint()` calcola quanto arriva davvero — la
+  fuga sfuma per `oamp × 1.6`, l'alone per `aamp` — e riserva quello spazio, con un
+  tetto a 56px (oltre, la coda della sfumatura è comunque invisibile e la modale
+  diventerebbe enorme). Misurato: 26px con solo l'interno, 54px alla fuga massima.
+  Gli altri effetti restano compatti (classe `.fxp-airy` solo sul bagliore): lo
+  spazio in più sarebbe soltanto vuoto.
 - **Segno di spunta MINIMALE (v12.85, richiesta dell'utente).** Le checkbox del
   pannello e delle sotto-modali non usano più il disegno nativo (pesante e diverso su
   ogni sistema): `appearance:none` + quadrato stondato + spunta disegnata in
