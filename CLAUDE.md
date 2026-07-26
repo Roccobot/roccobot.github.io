@@ -850,6 +850,15 @@ seconda tappa sullo stesso telaio.
   lezione v12.65); e spostare la pagina col margine **non fa scattare `resize`** →
   `reflowRows()` va chiamata a mano in `dockEngage`/`dockRelease` (a-capo dei nomi
   e righe bipartite si rimisurano).
+- **In dock le anteprime su card finte SPARISCONO (v13.07, richiesta utente):**
+  con la pagina vera accanto sono ridondanti. Nascoste via CSS
+  (`.fxdock .fxp-wrap{display:none}`) e basta: i riquadri vengono comunque
+  costruiti e dipinti (`paint()` lavora su elementi nascosti senza errori), così
+  il cambio di telaio a metà modifica non ha casi speciali e sotto soglia
+  ricompaiono da sé. Il sottotitolo della sotto-modale segue la modalità: in dock
+  'Le modifiche si vedono subito sulla pagina accanto.', in modale il testo
+  storico. Le tab Chiaro/Scuro restano anche in dock (scelgono QUALI manopole si
+  editano; per vedere l'altro tema in pagina c'è il tasto T).
 - Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu):
   la porzione statica della pagina non cambia.
 - Verificato (batteria dedicata, font reali, config utente con XL di sito attivo):
