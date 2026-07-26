@@ -327,6 +327,26 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   o pinch da trackpad su desktop, **pinch-to-zoom** su mobile — agisce **solo
   sull'immagine del visualizzatore** e **non** applica lo zoom di pagina (rotella non-ctrl
   = scroll/pan; `touch-action:none` per catturare il pinch).
+- **Anche gli SVG (dalla 2.10), e restano vettoriali.** Prima erano esclusi di
+  proposito. Una pagina SVG non è fatta come una pagina PNG: è un documento **XML**
+  la cui radice è il `<svg>` stesso, **senza `<body>` e senza `<img>`** (ed è il motivo
+  per cui gli elementi vanno creati con `createElementNS`, altrimenti finiscono senza
+  namespace e non vengono resi). Lo script ricostruisce la pagina attorno al `<svg>`
+  **già analizzato dal browser**, senza riscaricarlo: ingrandendo, il disegno **si
+  ridisegna nitido** a qualunque livello (verificato fino al 1200%), e le eventuali
+  immagini raster incorporate non vengono mai sgranate (`image-rendering` resta `auto`).
+  Animazioni, `<style>` e `<script>` interni continuano a funzionare.
+  - **Dimensione "reale" di un SVG**, che spesso nel file non c'è: si cerca in ordine
+    negli attributi `width`/`height` (unità assolute, anche `pt`/`cm`/`mm`/`in`), poi
+    nel **`viewBox`**, poi nell'**ingombro del disegno** (`getBBox()`, origine inclusa
+    così niente viene tagliato), infine il default `300×150`. Il browser da solo non
+    aiuta: un `<img>` con un SVG privo di misure riporta `300×150`, o `90×150`
+    applicando il rapporto del `viewBox` all'altezza di default (numeri inventati,
+    misurati). Se manca il `viewBox` gliene viene dato uno pari alla dimensione
+    trovata, altrimenti ridimensionare allargherebbe l'area visibile senza scalare
+    il disegno.
+  - Se il file ha un **errore di sintassi XML** il browser mostra la propria pagina
+    d'errore: lì lo script non interviene (riconosce che la radice non è un `<svg>`).
 
 ### Personalizzazione
 
