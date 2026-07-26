@@ -979,11 +979,19 @@ gruppo = cambiare una terna.
   (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
 - **Numero di posizione nella TINTA della card (dalla v12.53, scelta utente: il
   grigio 'cupo' stonava col sito ormai colorato).** Regole INIETTATE in
-  `injectCardColorRules`: `color-mix` della terna `--ccrgb` — in tema scuro
-  schiarita (82% tinta + 18% bianco), in chiaro scurita (70% + 30% nero) — con
-  prima dichiarazione `rgba(var(--ccrgb),1)` come fallback per browser senza
-  `color-mix`. I numeri del PODIO non sono toccati (le regole fx-podium hanno
-  specificità maggiore; vedi l'avvertenza nella sezione podio). axe 0 verificato.
+  `injectCardColorRules`: `color-mix` della terna `--ccrgb`. ⚠️ **Dalla v12.54 il
+  secondo colore è `var(--name)`**, il grigio del nome, NON più bianco/nero:
+  desaturare e avvicinarsi alla luminosità del nome diventano lo stesso gesto, e
+  il numero segue il token (che il tema chiaro ridefinisce da sé: `#d2d2d2`
+  scuro / `#373737` chiaro), senza doppioni da tenere allineati. Tarature: tema
+  SCURO **35% tinta + 65% grigio** (scelta dell'utente su mockup: la tinta piena
+  'grida', a metà strada compete ancora col nome); tema CHIARO **70% tinta + 30%
+  nero** (in attesa di taratura analoga). ⚠️ **Nessun fallback esplicito**: se
+  `color-mix` non è supportato la dichiarazione cade e vale la regola base
+  `.rank-num{color:var(--name)}` — cioè la resa pre-v12.53, grigia ma corretta e
+  AA-safe. Contrasti misurati in scuro: **6.4-6.9:1** (soglia 3:1, testo grande).
+  I numeri del PODIO non sono toccati (le regole fx-podium hanno specificità
+  maggiore; vedi l'avvertenza nella sezione podio). axe 0 verificato.
 - **Opacità della riga Info a 0.80 (dalla v12.24, era 0.72).** `.rank-desc` è la
   riga più piccola e tenue della card (~13.8px): era l'anello debole della
   leggibilità (rilevato misurando i corpi di tutti i testi). +8 punti di opacità si
