@@ -698,6 +698,19 @@ normale/XL secondo la preferenza attiva.
   di WCAG 1.4.11). Le note delle manopole sono collegate al controllo con
   `aria-describedby`. Misurato dopo il fix: outline 4.24:1 scuro / 5.84:1 chiaro,
   tab inattiva 7.22:1 / 7.85:1, axe 0.
+- **Tasti salto: rivelati dal focus da tastiera (v12.85).** `.jump-fabs` sta a
+  `opacity:0` a riposo, ma i suoi 4 tasti restano nell'ordine di tabulazione: col
+  `Tab` il focus ci finiva sopra mentre sono **invisibili** (misurato: al 367° `Tab`
+  il focus è su 'Vai in cima' con opacità effettiva 0, dentro il viewport, e l'anello
+  di focus non si vede perché il genitore è trasparente). È il criterio **focus
+  visibile** di WCAG (2.4.7), che axe non intercetta. Fix: `.jump-fabs:focus-within`
+  li rivela e `.jump-fab:focus-visible` porta il tasto a piena opacità come l'hover.
+  ⚠️ **Serve `!important`**: la dissolvenza (`showJumpFabsTemporarily`) pilota il
+  contenitore con uno stile **inline**, che batte il foglio; col `!important` il
+  focus vince anche sul timer da 3s che scade mentre si tabula, e appena il focus
+  esce torna a valere l'inline. Scelta di merito: **rivelarli** invece di toglierli
+  dall'ordine di tabulazione, perché servono proprio a chi naviga senza mouse.
+  Verificato: `Enter` scorre ancora in cima, e a modale aperta restano inerti.
 - **Segno di spunta MINIMALE (v12.85, richiesta dell'utente).** Le checkbox del
   pannello e delle sotto-modali non usano più il disegno nativo (pesante e diverso su
   ogni sistema): `appearance:none` + quadrato stondato + spunta disegnata in

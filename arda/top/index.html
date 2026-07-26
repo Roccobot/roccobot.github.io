@@ -1920,13 +1920,28 @@ html[data-theme="light"] .admin-search-backdrop { background:rgba(214,221,233,0.
 html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* Salti inizio/fine: sempre in DOM, invisibili finché non c'è scroll/trascinamento */
 .jump-fabs { display:flex; flex-direction:column; gap:0.3rem; position:fixed; right:2rem; bottom:2rem; z-index:160; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+/* A riposo il contenitore è a opacità 0 ma i 4 tasti restano nell'ordine di
+   tabulazione: col Tab il focus ci finiva sopra mentre sono INVISIBILI (misurato:
+   al 367° Tab il focus è su 'Vai in cima' con opacità effettiva 0, dentro il
+   viewport, e l'anello di focus non si vede perché il genitore è trasparente).
+   È il criterio 'focus visibile' di WCAG (2.4.7). Rivelarli al focus da tastiera
+   è meglio che toglierli dall'ordine di tabulazione: così restano utilizzabili
+   proprio da chi naviga senza mouse, che è il loro pubblico naturale.
+   ⚠️ Serve !important: la dissolvenza (showJumpFabsTemporarily) pilota questo
+   contenitore con uno stile INLINE (`style.opacity='0'`), che batte qualunque
+   regola del foglio. Col !important il focus vince anche sul timer da 3s che
+   scade mentre si sta tabulando, e appena il focus esce torna a valere l'inline. */
+.jump-fabs:focus-within { opacity:1 !important; pointer-events:auto !important; }
 /* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
    al FAB principale (opacità 0.82). L'opacità di riposo 0.5 sta sul SINGOLO
    tasto (non sul contenitore), così l'hover illumina solo il tasto sotto il
    puntatore; su mobile diventano solo freccine a piena opacità (media query in
    fondo). Il contenitore gestisce solo il fade di comparsa (opacity 0->1). */
 .jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0.5;transition:filter 0.15s,background 0.15s,opacity 0.15s; }
-.jump-fab:hover { filter:brightness(1.1); opacity:1; }
+/* :focus-visible accanto a :hover — il tasto a fuoco da tastiera va a piena
+   opacità come quello sotto il puntatore: a 0.5 (l'opacità di riposo su desktop,
+   v9.58) anche l'anello di focus risulterebbe smorzato. */
+.jump-fab:hover, .jump-fab:focus-visible { filter:brightness(1.1); opacity:1; }
 .jump-fab svg { width:1.05rem;height:1.05rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
 /* Padding destro quando le maniglie di trascinamento sono visibili */
 #rank-list.has-handles .rank-content { padding-right:2.6rem; }
