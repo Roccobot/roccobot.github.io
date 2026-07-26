@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://roccobot.github.io/arda/top/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Arda Top — l'Occhio di Sauron in un anello di fuoco">
+<meta property="og:image:alt" content="Arda Top - l'Occhio di Sauron in un anello di fuoco">
 <meta property="og:locale" content="it_IT">
 <meta property="og:locale:alternate" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.95</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6357,7 +6357,7 @@ function doSave(btn) {
   doCommit('classifica: aggiorna ordine').then(res => {
     if (!res.ok) {
       var msg = res.reason || 'errore sconosciuto';
-      if (msg === 'no-auth') msg = 'sessione scaduta — sblocca di nuovo';
+      if (msg === 'no-auth') msg = 'sessione scaduta - sblocca di nuovo';
       showToast('✗ Salvataggio fallito: ' + msg, true);
     } else {
       showToast('✓ Classifica salvata', false);
@@ -6591,7 +6591,7 @@ function showAdminEditor() {
   header.className = 'admin-header';
   const title = document.createElement('div');
   title.className = 'admin-title';
-  title.textContent = 'Admin — Modifica testi';
+  title.textContent = 'Admin - Modifica testi';
   const btnWrap = document.createElement('div');
   btnWrap.className = 'admin-btn-wrap';
   const backBtn = document.createElement('button');
@@ -7408,7 +7408,7 @@ function showFxConfigEditor(key, sfx, onDone){
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×';
   cl.onclick = close; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.02rem;margin:0 0 0.2rem;';
-  t.textContent = (it ? item.it : item.en) + ' — ' + (sfx ? 'Mobile' : 'Desktop');
+  t.textContent = (it ? item.it : item.en) + ' - ' + (sfx ? 'Mobile' : 'Desktop');
   box.appendChild(scroller); scroller.appendChild(t);
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.9rem;';
   sub.textContent = it ? 'Le modifiche si vedono subito qui sotto e sulle card dietro.'
