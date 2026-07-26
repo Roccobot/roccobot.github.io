@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.10.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno.
+// @version         2.11.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -103,7 +103,7 @@
   // vettoriale: ridimensionandolo si ridisegna nitido a qualunque ingrandimento).
   // Restituisce l'elemento da visualizzare, oppure null se qualcosa va storto
   // (in quel caso lo script si ferma e la pagina resta quella nativa).
-  let svgMedia = null, svgNat = null;
+  let svgMedia = null, svgNat = null, svgAttrOrig = null;
   if (eSvg) {
     try {
       const radice = document.documentElement;
@@ -112,6 +112,15 @@
       // errore). Meglio non toccare nulla.
       if (!radice || radice.namespaceURI !== 'http://www.w3.org/2000/svg') return;
       svgNat = misuraSvg(radice);
+      // Le misure dichiarate nel file si annotano PRIMA di toccarle (sono tre
+      // stringhe, nessun costo): servono al pannello di scaricamento per
+      // restituire un SVG ripulito che differisca dall'originale SOLO per le
+      // rimozioni, senza aggiungere misure che il file non aveva.
+      svgAttrOrig = {
+        w: radice.getAttribute('width'),
+        h: radice.getAttribute('height'),
+        vb: radice.getAttribute('viewBox')
+      };
       // Senza viewBox il disegno NON si scala: ridimensionare il <svg> allargherebbe
       // solo l'area visibile. Gliene diamo uno pari alla dimensione reale trovata.
       if (!/^\s*[-\d.]+[\s,]+[-\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*$/.test(radice.getAttribute('viewBox') || '')) {
@@ -163,6 +172,17 @@
     // Solo hover: nessuno stato "premuto"/attivo persistente. Il tondo ha sempre lo stesso aspetto;
     // la modalità corrente si legge dall'immagine (piccola=fisico / grande=logico) e dal tooltip.
     '#dv-scalemode:hover{background:rgba(255,255,255,0.2)}' +
+    '#dv-scalemode:focus-visible,#dv-download:focus-visible{outline:2px solid #fff;outline-offset:2px}' +
+    // Gemello speculare nel semicerchio DESTRO, solo sulle pagine SVG: apre il pannello
+    // di scaricamento. Stesse regole del tondo sinistro (assoluto, quindi non alza la pill).
+    '#dv-download{position:absolute;right:.3rem;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;' +
+      'width:1.15em;height:1.15em;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;' +
+      'display:flex;align-items:center;justify-content:center;outline:none;-webkit-tap-highlight-color:transparent}' +
+    // area sensibile allargata a ~30px senza cambiare il disegno (bersaglio di tocco)
+    '#dv-scalemode::before,#dv-download::before{content:"";position:absolute;left:-.35em;right:-.35em;top:-.35em;bottom:-.35em;border-radius:50%}' +
+    '#dv-download:hover{background:rgba(255,255,255,0.2)}' +
+    '#dv-download svg{width:.72em;height:.72em;display:block;opacity:.85;pointer-events:none}' +
+    '.image-info.dv-has-dl{padding-right:2rem}' +
     // Centratura verticale OTTICA senza hack: si ritaglia il box del testo alle metriche
     // cap-height/baseline (text-box-trim), così il testo è centrato davvero nel contenitore
     // a prescindere dall'asimmetria ascender/descender del font. Dove non è supportato
@@ -351,14 +371,25 @@
     btnScale.appendChild(glifo);
     const pill = boxEl();
     pill.insertBefore(btnScale, pill.firstChild);
+    btnScale.setAttribute('tabindex', '0');   // altrimenti il tondo non si raggiunge col Tab
     btnScale.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleScaleMode(); btnScale.blur(); });
+    btnScale.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleScaleMode(); }
+    });
     aggiornaScaleBtn();
+
+    // ── Pannello "Scarica" (solo SVG): vedi in fondo, tutto a richiesta ────
+    var pannelloAperto = false;   // letto dal gestore del clic qui sotto
+    var chiudiPannello = function () {};
 
     // ── CLIC (desktop): alterna adattato ↔ reale ──────────────────────────
     let daGesture = false;
     wrap.addEventListener('click', function (e) {
       if (e.button !== 0 || e.ctrlKey || e.metaKey) return;
       if (daGesture) { daGesture = false; return; }  // era la coda di un pinch: ignora
+      // col pannello aperto il clic "fuori" lo chiude e basta: non deve anche
+      // far scattare l'alternanza adattato/reale sotto di esso
+      if (pannelloAperto) { e.preventDefault(); e.stopImmediatePropagation(); chiudiPannello(false); return; }
       e.preventDefault(); e.stopImmediatePropagation();
       if (isFit) zoomTo(realScale, e.clientX, e.clientY);  // fit → reale (100%), centrato sul clic
       else vaiFit();                                        // qualsiasi altro stato → adattato
@@ -405,14 +436,555 @@
     // ── Info: dimensioni reali + peso del file ────────────────────────────
     imageInfo.dimensions = natW + '×' + natH;
     updateInfo();
+    // I byte scaricati qui servono gia' al peso; si TENGONO da parte (senza
+    // decodificarli) perche' il pannello di scaricamento possa offrire il file
+    // originale senza una seconda richiesta. Nessun lavoro in piu' al caricamento.
+    var byteOriginali = null;
     try {
       GM_xmlhttpRequest({
         method: 'GET', url: location.href, responseType: 'arraybuffer',
         onload: function (r) {
-          if (r.response && r.response.byteLength) { imageInfo.size = formatBytes(r.response.byteLength); updateInfo(); }
+          if (r.response && r.response.byteLength) {
+            byteOriginali = r.response;
+            imageInfo.size = formatBytes(r.response.byteLength);
+            updateInfo();
+          }
         }
       });
     } catch (e) { /* peso non disponibile: pazienza */ }
+
+    if (!eSvg) return;
+
+    // ═══════════════════════════════════════════════════════════════════
+    //  PANNELLO "SCARICA" (solo SVG): esporta in PNG a un DPI scelto,
+    //  oppure salva l'SVG ripulito dai metadati.
+    // ═══════════════════════════════════════════════════════════════════
+    // ⚠️ TUTTO E' A RICHIESTA: al caricamento della pagina si crea SOLO il
+    // tondo nella pill. Il pannello, il suo foglio di stile e la pulizia
+    // dell'SVG (che scandisce l'intero albero) nascono al primo clic, cosi'
+    // aprire un SVG non costa nulla piu' di prima.
+
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    const DPI_PRESET = [96, 150, 300, 600];
+    const DPI_MIN = 12, DPI_MAX = 2400;
+    // Limiti del canvas MISURATI su Chromium: oltre, il canvas non solleva
+    // eccezioni, resta semplicemente vuoto. Vanno quindi previsti, non intercettati.
+    const CANVAS_LATO_MAX = 65535, CANVAS_AREA_MAX = 268435456;
+    // Tetto pratico: 268 Mpx vorrebbero circa 1 GB di memoria solo per il canvas.
+    const MPX_MAX = 80e6;
+
+    // Tondo "scarica" nel semicerchio destro. L'icona e' una freccia in giu' su
+    // una base, disegnata in SVG (niente glifi: si centrano male, come il "1:1").
+    const btnDl = creaEl('div');
+    btnDl.id = 'dv-download';
+    btnDl.setAttribute('role', 'button');
+    btnDl.setAttribute('tabindex', '0');
+    btnDl.setAttribute('aria-haspopup', 'dialog');
+    btnDl.setAttribute('aria-expanded', 'false');
+    btnDl.title = 'Scarica: PNG alla risoluzione che vuoi, oppure SVG ripulito';
+    btnDl.setAttribute('aria-label', btnDl.title);
+    const ico = document.createElementNS(SVGNS, 'svg');
+    ico.setAttribute('viewBox', '0 0 24 24');
+    ico.setAttribute('fill', 'none');
+    ico.setAttribute('stroke', 'currentColor');
+    ico.setAttribute('stroke-width', '2.4');
+    ico.setAttribute('stroke-linecap', 'round');
+    ico.setAttribute('stroke-linejoin', 'round');
+    ico.setAttribute('aria-hidden', 'true');
+    const tratto = document.createElementNS(SVGNS, 'path');
+    tratto.setAttribute('d', 'M12 3v11m0 0 4.2-4.2M12 14l-4.2-4.2M4 19h16');
+    ico.appendChild(tratto);
+    btnDl.appendChild(ico);
+    pill.setAttribute('class', 'image-info dv-has-dl');
+    pill.appendChild(btnDl);
+
+    var pan = null;                       // il pannello: creato al primo clic
+
+    // ── Calcoli (nessun disegno, si possono chiamare a ogni tasto premuto) ──
+    // 1 px CSS = 1/96 di pollice: e' la definizione del CSS, verificata misurando
+    // in pagina un riquadro di 1in (96 px, indipendente dal devicePixelRatio).
+    function pxPerDpi(dpi) {
+      return { w: Math.max(1, Math.round(natW * dpi / 96)), h: Math.max(1, Math.round(natH * dpi / 96)) };
+    }
+    function dpiMassimo() {
+      const perArea = Math.sqrt(Math.min(CANVAS_AREA_MAX, MPX_MAX) / (natW * natH)) * 96;
+      const perLato = Math.min(CANVAS_LATO_MAX / natW, CANVAS_LATO_MAX / natH) * 96;
+      return Math.max(DPI_MIN, Math.floor(Math.min(DPI_MAX, perArea, perLato)));
+    }
+    function numIt(n, dec) { return n.toFixed(dec).replace('.', ','); }
+    function peso(b) { return b >= 1048576 ? numIt(b / 1048576, 1) + ' MB' : numIt(b / 1024, 1) + ' KB'; }
+    function nomeBase() {
+      var n = 'immagine';
+      try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'immagine'; } catch (e) {}
+      return n.replace(/\.svgz?$/i, '') || 'immagine';
+    }
+    function salvaFile(blob, nome) {
+      const u = URL.createObjectURL(blob);
+      const a = creaEl('a');
+      a.setAttribute('href', u);
+      a.setAttribute('download', nome);
+      (document.body || document.documentElement).appendChild(a);
+      a.click();
+      if (a.parentNode) a.parentNode.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(u); }, 30000);
+    }
+
+    // ── Pulizia dell'SVG ────────────────────────────────────────────────
+    // Si lavora su un CLONE del <svg> vivo, mai sul testo del file: il DOM che
+    // il browser ha gia' analizzato e' ben formato per costruzione, ha le entita'
+    // (&ns_ai; e simili) gia' risolte e non porta con se' prologo, DOCTYPE e
+    // commenti esterni, che spariscono gratis alla serializzazione. Una pulizia
+    // a espressioni regolari sul testo, invece, sui file con DOCTYPE ed entita'
+    // produce XML che non si apre piu'.
+    // La lista dei namespace e' quella di SVGO (plugins/_collections.js).
+    const NS_EDITOR = [
+      'http://creativecommons.org/ns#',
+      'http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd',
+      'http://krita.org/namespaces/svg/krita',
+      'http://ns.adobe.com/AdobeIllustrator/10.0/',
+      'http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/',
+      'http://ns.adobe.com/Extensibility/1.0/',
+      'http://ns.adobe.com/Flows/1.0/',
+      'http://ns.adobe.com/GenericCustomNamespace/1.0/',
+      'http://ns.adobe.com/Graphs/1.0/',
+      'http://ns.adobe.com/ImageReplacement/1.0/',
+      'http://ns.adobe.com/SaveForWeb/1.0/',
+      'http://ns.adobe.com/Variables/1.0/',
+      'http://ns.adobe.com/XPath/1.0/',
+      'http://purl.org/dc/elements/1.1/',
+      'http://schemas.microsoft.com/visio/2003/SVGExtensions/',
+      'http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd',
+      'http://taptrix.com/vectorillustrator/svg_extensions',
+      'http://www.bohemiancoding.com/sketch/ns',
+      'http://www.figma.com/figma/ns',
+      'http://www.inkscape.org/namespaces/inkscape',
+      'http://www.serif.com/',
+      'http://www.vector.evaxdesign.sk',
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+      'https://boxy-svg.com'
+    ];
+    const NS_XMLNS = 'http://www.w3.org/2000/xmlns/';
+    function eDiEditor(ns) { return !!ns && NS_EDITOR.indexOf(ns) !== -1; }
+
+    function svgRipulito() {
+      const c = svgMedia.cloneNode(true);
+      c.removeAttribute('style');
+      // Il visualizzatore ha tolto width/height (e a volte aggiunto un viewBox)
+      // per governare lo zoom: nel file salvato si rimette ESATTAMENTE quello che
+      // c'era scritto nell'originale. Un file ripulito deve differire dal suo
+      // originale solo per cio' che gli e' stato TOLTO, mai per qualcosa in piu':
+      // scrivere "800" dove l'autore aveva messo "100%" cambierebbe come l'SVG si
+      // comporta dentro una pagina.
+      const o = svgAttrOrig || {};
+      if (o.w != null) c.setAttribute('width', o.w); else c.removeAttribute('width');
+      if (o.h != null) c.setAttribute('height', o.h); else c.removeAttribute('height');
+      if (o.vb != null) c.setAttribute('viewBox', o.vb); else c.removeAttribute('viewBox');
+
+      // 1) commenti (SVGO conserva quelli che iniziano con "!", di solito licenze)
+      const cam = document.createTreeWalker(c, NodeFilter.SHOW_COMMENT);
+      const comm = [];
+      while (cam.nextNode()) comm.push(cam.currentNode);
+      comm.forEach(function (n) { if (!/^!/.test(n.data) && n.parentNode) n.parentNode.removeChild(n); });
+
+      const tutti = function () { return [c].concat([].slice.call(c.querySelectorAll('*'))); };
+
+      // 2) <metadata> e 3) <desc> vuoti o generati dall'editor (regola di SVGO)
+      [].slice.call(c.querySelectorAll('metadata')).forEach(function (e) { e.parentNode.removeChild(e); });
+      [].slice.call(c.querySelectorAll('desc')).forEach(function (e) {
+        const t = (e.textContent || '').trim();
+        if (!t || /^(Created with|Created using)/i.test(t)) e.parentNode.removeChild(e);
+      });
+
+      // 4) elementi in namespace di editor: qui sta il grosso del risparmio,
+      //    perche' comprende <i:pgf>, i dati vettoriali proprietari di Illustrator
+      //    (nel corpus di prova valgono da soli un quarto dei byte totali)
+      tutti().forEach(function (e) {
+        if (e !== c && eDiEditor(e.namespaceURI) && e.parentNode) e.parentNode.removeChild(e);
+      });
+
+      // 5) <foreignObject> rimasti vuoti (l'involucro di quei dati). NON si tocca
+      //    lo <switch> che li contiene, ne' i suoi requiredExtensions: e' lui a
+      //    far scegliere al browser il ramo col disegno vero.
+      [].slice.call(c.querySelectorAll('foreignObject')).forEach(function (e) {
+        if (!e.children.length && !(e.textContent || '').trim()) e.parentNode.removeChild(e);
+      });
+
+      // 6) attributi in namespace di editor, e le loro dichiarazioni xmlns
+      tutti().forEach(function (e) {
+        [].slice.call(e.attributes).forEach(function (a) {
+          if (a.namespaceURI === NS_XMLNS && eDiEditor(a.value)) e.removeAttributeNode(a);
+          else if (eDiEditor(a.namespaceURI)) e.removeAttributeNode(a);
+        });
+      });
+
+      // 7) dichiarazioni xmlns rimaste inutilizzate: PER ULTIME, dopo il punto 6,
+      //    altrimenti si conserverebbero prefissi che nel frattempo sono spariti
+      const usati = {};
+      tutti().forEach(function (e) {
+        if (e.prefix) usati[e.prefix] = 1;
+        [].slice.call(e.attributes).forEach(function (a) { if (a.prefix && a.prefix !== 'xmlns') usati[a.prefix] = 1; });
+      });
+      [].slice.call(c.attributes).forEach(function (a) {
+        if (a.namespaceURI === NS_XMLNS && a.localName !== 'xmlns' && !usati[a.localName]) c.removeAttributeNode(a);
+      });
+
+      return new XMLSerializer().serializeToString(c);
+    }
+
+    function xmlValido(t) {
+      try {
+        const d = new DOMParser().parseFromString(t, 'image/svg+xml');
+        return !d.getElementsByTagName('parsererror').length &&
+               d.documentElement && d.documentElement.localName === 'svg';
+      } catch (e) { return false; }
+    }
+
+    // ── Esportazione in PNG ─────────────────────────────────────────────
+    // Si rasterizza da un clone del <svg> vivo passato per un blob: costruito in
+    // pagina. Due ragioni misurate: puntare l'URL della pagina SPORCHEREBBE il
+    // canvas (toBlob darebbe SecurityError), e i <foreignObject> di Illustrator
+    // fanno lo stesso effetto, quindi si tolgono prima.
+    function sorgentePerRaster(w, h) {
+      const c = svgMedia.cloneNode(true);
+      const fo = c.querySelectorAll('foreignObject');
+      for (var i = fo.length - 1; i >= 0; i--) fo[i].parentNode.removeChild(fo[i]);
+      c.removeAttribute('style');
+      c.setAttribute('width', String(w));
+      c.setAttribute('height', String(h));
+      return new XMLSerializer().serializeToString(c);
+    }
+
+    // Il canvas non scrive il DPI nel file: senza questo chunk un PNG "a 254 DPI"
+    // sarebbe solo un'immagine piu' grande, e ogni programma di grafica la
+    // leggerebbe come 96 DPI. Il pHYs va subito dopo l'IHDR; se ce n'e' gia' uno
+    // si sostituisce, non si duplica.
+    function crc32(buf, da, a) {
+      var t = crc32.tab;
+      if (!t) {
+        t = crc32.tab = new Uint32Array(256);
+        for (var n = 0; n < 256; n++) {
+          var c = n;
+          for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+          t[n] = c >>> 0;
+        }
+      }
+      var x = 0xFFFFFFFF;
+      for (var i = da; i < a; i++) x = t[(x ^ buf[i]) & 0xFF] ^ (x >>> 8);
+      return (x ^ 0xFFFFFFFF) >>> 0;
+    }
+    function pngConDpi(arrayBuffer, dpi) {
+      const src = new Uint8Array(arrayBuffer);
+      const firma = [137, 80, 78, 71, 13, 10, 26, 10];
+      for (var i = 0; i < 8; i++) if (src[i] !== firma[i]) return arrayBuffer;   // non e' un PNG: lascio com'e'
+      const u32 = function (o) { return ((src[o] << 24) | (src[o + 1] << 16) | (src[o + 2] << 8) | src[o + 3]) >>> 0; };
+      var off = 8, fineIhdr = -1, physOff = -1, physTot = 0;
+      while (off + 8 <= src.length) {
+        const len = u32(off);
+        const tipo = String.fromCharCode(src[off + 4], src[off + 5], src[off + 6], src[off + 7]);
+        const tot = 12 + len;
+        if (tipo === 'IHDR') fineIhdr = off + tot;
+        else if (tipo === 'pHYs') { physOff = off; physTot = tot; }
+        off += tot;
+        if (tipo === 'IEND') break;
+      }
+      if (fineIhdr < 0) return arrayBuffer;
+      const ppm = Math.round(dpi / 0.0254);          // pixel per metro: 1 pollice = 0,0254 m
+      const ch = new Uint8Array(21);                 // 4 lunghezza + 4 tipo + 9 dati + 4 CRC
+      const dv = new DataView(ch.buffer);
+      dv.setUint32(0, 9);
+      ch.set([0x70, 0x48, 0x59, 0x73], 4);           // "pHYs"
+      dv.setUint32(8, ppm); dv.setUint32(12, ppm);
+      ch[16] = 1;                                    // unita' di misura: il metro
+      dv.setUint32(17, crc32(ch, 4, 17));            // CRC su tipo + dati
+      const pezzi = [src.subarray(0, fineIhdr), ch];
+      if (physOff >= fineIhdr) {
+        pezzi.push(src.subarray(fineIhdr, physOff), src.subarray(physOff + physTot));
+      } else {
+        pezzi.push(src.subarray(fineIhdr));
+      }
+      var n = 0;
+      pezzi.forEach(function (p) { n += p.length; });
+      const out = new Uint8Array(n);
+      var q = 0;
+      pezzi.forEach(function (p) { out.set(p, q); q += p.length; });
+      return out.buffer;
+    }
+
+    // ── Costruzione del pannello (una volta sola, al primo clic) ────────
+    function creaPannello() {
+      if (pan) return pan;
+      aggiungiCss(
+        '#dv-dl{position:fixed;z-index:11;box-sizing:border-box;' +
+          'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
+          'font-size:13px;line-height:1.35;color:#fff;background:#000000d9;border-radius:14px;padding:.85rem .9rem;' +
+          'width:270px;max-width:calc(100vw - 2rem);overflow:auto;pointer-events:auto;touch-action:pan-y;' +
+          'user-select:none;-webkit-user-select:none;box-shadow:0 6px 24px rgba(0,0,0,.45)}' +
+        '#dv-dl[hidden]{display:none}' +
+        '.dv-dl-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.62;margin:0 0 .45rem}' +
+        '.dv-dl-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}' +
+        '#dv-dpi{width:4.4em;min-height:28px;box-sizing:border-box;font:inherit;color:#fff;text-align:center;' +
+          'background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:.15rem .3rem}' +
+        '#dv-dpi::-webkit-inner-spin-button,#dv-dpi::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}' +
+        '.dv-dl-unit{opacity:.62}' +
+        '.dv-dl-chips{display:flex;gap:.35rem;margin-top:.45rem}' +
+        '.dv-chip{min-height:28px;min-width:34px;box-sizing:border-box;font:inherit;font-size:12px;color:#fff;cursor:pointer;' +
+          'background:rgba(255,255,255,.1);border:0;border-radius:8px;padding:.2rem .45rem}' +
+        '.dv-chip:hover{background:rgba(255,255,255,.2)}' +
+        '.dv-chip[aria-pressed="true"]{background:rgba(255,255,255,.28)}' +
+        '.dv-dl-prev{margin:.5rem 0 .1rem;font-variant-numeric:tabular-nums}' +
+        '.dv-dl-sub{opacity:.62;font-size:12px}' +
+        '.dv-dl-warn{color:#ffcf6b;opacity:1}' +
+        '.dv-dl-opt{display:flex;align-items:center;gap:.4rem;margin-top:.5rem;font-size:12px;opacity:.82;cursor:pointer;min-height:24px}' +
+        '.dv-go{display:block;width:100%;min-height:32px;margin-top:.6rem;font:inherit;color:#fff;cursor:pointer;' +
+          'background:rgba(255,255,255,.16);border:0;border-radius:10px;padding:.35rem .5rem}' +
+        '.dv-go:hover{background:rgba(255,255,255,.26)}' +
+        '.dv-go[disabled]{opacity:.45;cursor:default}' +
+        '.dv-sep{border:0;border-top:1px solid rgba(255,255,255,.14);margin:.85rem 0}' +
+        '.dv-ghost{display:block;width:100%;min-height:28px;margin-top:.35rem;font:inherit;font-size:12px;' +
+          'color:#fff;opacity:.62;cursor:pointer;background:none;border:0;padding:.2rem;text-align:center}' +
+        '.dv-ghost:hover{opacity:1}' +
+        '#dv-dl input:focus-visible,#dv-dl button:focus-visible{outline:2px solid #fff;outline-offset:1px;opacity:1}'
+      );
+
+      function nodo(tag, cls, testo) {
+        const e = creaEl(tag);
+        if (cls) e.setAttribute('class', cls);
+        if (testo != null) e.textContent = testo;
+        return e;
+      }
+
+      pan = creaEl('div');
+      pan.id = 'dv-dl';
+      pan.setAttribute('role', 'dialog');
+      pan.setAttribute('aria-label', 'Scarica immagine');
+      pan.hidden = true;
+      btnDl.setAttribute('aria-controls', 'dv-dl');
+
+      // ── sezione PNG ──
+      pan.appendChild(nodo('div', 'dv-dl-h', 'PNG'));
+      const riga = nodo('div', 'dv-dl-row');
+      const inDpi = creaEl('input');
+      inDpi.id = 'dv-dpi';
+      inDpi.setAttribute('type', 'number');
+      inDpi.setAttribute('min', String(DPI_MIN));
+      inDpi.setAttribute('max', String(DPI_MAX));
+      inDpi.setAttribute('step', '1');
+      inDpi.setAttribute('inputmode', 'numeric');
+      inDpi.setAttribute('aria-label', 'Risoluzione in DPI');
+      inDpi.title = 'Risoluzione in DPI (da ' + DPI_MIN + ' a ' + DPI_MAX + ')';
+      riga.appendChild(inDpi);
+      riga.appendChild(nodo('span', 'dv-dl-unit', 'DPI'));
+      pan.appendChild(riga);
+
+      const rigaChip = nodo('div', 'dv-dl-chips');
+      const chips = [];
+      DPI_PRESET.forEach(function (d) {
+        const c = nodo('button', 'dv-chip', String(d));
+        c.setAttribute('type', 'button');
+        c.setAttribute('aria-label', 'Imposta ' + d + ' DPI');
+        c.setAttribute('aria-pressed', 'false');
+        c.addEventListener('click', function () { inDpi.value = String(d); aggiornaPng(); inDpi.focus(); });
+        chips.push(c);
+        rigaChip.appendChild(c);
+      });
+      pan.appendChild(rigaChip);
+
+      const prevPx = nodo('div', 'dv-dl-prev', '');
+      const prevSub = nodo('div', 'dv-dl-sub', '');
+      pan.appendChild(prevPx);
+      pan.appendChild(prevSub);
+
+      const optSfondo = nodo('label', 'dv-dl-opt');
+      const chkSfondo = creaEl('input');
+      chkSfondo.setAttribute('type', 'checkbox');
+      optSfondo.appendChild(chkSfondo);
+      optSfondo.appendChild(document.createTextNode('Sfondo bianco invece che trasparente'));
+      pan.appendChild(optSfondo);
+
+      const goPng = nodo('button', 'dv-go', 'Scarica PNG');
+      goPng.setAttribute('type', 'button');
+      pan.appendChild(goPng);
+
+      pan.appendChild(nodo('hr', 'dv-sep'));
+
+      // ── sezione SVG ──
+      pan.appendChild(nodo('div', 'dv-dl-h', 'SVG'));
+      const svgInfo = nodo('div', 'dv-dl-prev', '');
+      const svgSub = nodo('div', 'dv-dl-sub', 'Toglie metadati, XMP e roba di Illustrator o Inkscape. La geometria non si tocca.');
+      pan.appendChild(svgInfo);
+      pan.appendChild(svgSub);
+      const goSvg = nodo('button', 'dv-go', 'Scarica SVG ripulito');
+      goSvg.setAttribute('type', 'button');
+      pan.appendChild(goSvg);
+      const goOrig = nodo('button', 'dv-ghost', 'Scarica originale');
+      goOrig.setAttribute('type', 'button');
+      pan.appendChild(goOrig);
+
+      (document.body || document.documentElement).appendChild(pan);
+
+      // ── anteprima in tempo reale del PNG ──
+      function dpiDigitato() {
+        var v = parseInt(inDpi.value, 10);
+        if (!isFinite(v)) v = 96;
+        return Math.max(DPI_MIN, v);
+      }
+      function dpiEffettivo() { return Math.min(dpiDigitato(), dpiMassimo()); }
+      function aggiornaPng() {
+        const dpi = dpiDigitato(), max = dpiMassimo(), troppo = dpi > max;
+        const d = pxPerDpi(troppo ? max : dpi);
+        prevPx.textContent = d.w + ' × ' + d.h + ' px';
+        if (troppo) {
+          prevSub.textContent = 'Massimo ' + max + ' DPI per questa immagine';
+          prevSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
+        } else {
+          // i centimetri NON dipendono dal DPI: e' la stessa carta, stampata piu' o meno fitta
+          prevSub.textContent = numIt(natW / 96 * 2.54, 1) + ' × ' + numIt(natH / 96 * 2.54, 1) + ' cm a ' + dpi + ' DPI';
+          prevSub.setAttribute('class', 'dv-dl-sub');
+        }
+        chips.forEach(function (c, i) { c.setAttribute('aria-pressed', DPI_PRESET[i] === dpi ? 'true' : 'false'); });
+      }
+      function avviso(t) {
+        prevSub.textContent = t;
+        prevSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
+      }
+      function occupato(on) {
+        goPng.disabled = on;
+        goPng.textContent = on ? 'Attendere…' : 'Scarica PNG';
+      }
+
+      function scaricaPng() {
+        if (goPng.disabled) return;
+        const dpi = dpiEffettivo();
+        const d = pxPerDpi(dpi);
+        const testo = sorgentePerRaster(d.w, d.h);
+        occupato(true);
+        const url = URL.createObjectURL(new Blob([testo], { type: 'image/svg+xml;charset=utf-8' }));
+        const im = new Image();
+        im.onerror = function () { URL.revokeObjectURL(url); occupato(false); avviso('Questo SVG non si lascia rasterizzare'); };
+        im.onload = function () {
+          URL.revokeObjectURL(url);
+          try {
+            const cv = creaEl('canvas');
+            cv.width = d.w; cv.height = d.h;
+            if (cv.width !== d.w || cv.height !== d.h) throw new Error('misura rifiutata');
+            const g = cv.getContext('2d');
+            if (!g) throw new Error('niente contesto 2d');
+            // sonda: oltre i limiti il canvas non solleva errori, resta vuoto
+            g.fillStyle = '#ff00ff'; g.fillRect(0, 0, 1, 1);
+            if (g.getImageData(0, 0, 1, 1).data[3] === 0) throw new Error('canvas troppo grande');
+            g.clearRect(0, 0, 1, 1);
+            if (chkSfondo.checked) { g.fillStyle = '#ffffff'; g.fillRect(0, 0, d.w, d.h); }
+            g.drawImage(im, 0, 0, d.w, d.h);
+            cv.toBlob(function (b) {
+              if (!b) { occupato(false); avviso('Immagine troppo grande per il browser'); return; }
+              b.arrayBuffer().then(function (ab) {
+                occupato(false);
+                try { GM_setValue('dv-png-dpi', String(dpi)); } catch (e) {}
+                salvaFile(new Blob([pngConDpi(ab, dpi)], { type: 'image/png' }),
+                          nomeBase() + (dpi === 96 ? '' : '@' + dpi + 'dpi') + '.png');
+                cv.width = cv.height = 0;     // libera subito i 4 byte per pixel
+                chiudi(true);
+              });
+            }, 'image/png');
+          } catch (e) {
+            occupato(false);
+            avviso(e && e.name === 'SecurityError'
+              ? 'PNG impossibile: l\'SVG contiene risorse esterne'
+              : 'PNG non riuscito (' + ((e && e.message) || 'errore') + ')');
+          }
+        };
+        im.src = url;
+      }
+
+      // ── la pulizia gira SOLO ora, all'apertura del pannello ──
+      var svgPulito = null;
+      function preparaSvg() {
+        const pesoOrig = byteOriginali ? byteOriginali.byteLength : 0;
+        goOrig.disabled = !byteOriginali;
+        goOrig.textContent = byteOriginali ? 'Scarica originale (' + peso(pesoOrig) + ')' : 'Originale non disponibile';
+        var t = null;
+        try { t = svgRipulito(); } catch (e) { t = null; }
+        if (!t || !xmlValido(t)) {
+          svgPulito = null;
+          goSvg.disabled = true;
+          svgInfo.textContent = 'Pulizia non applicabile a questo file';
+          return;
+        }
+        svgPulito = t;
+        goSvg.disabled = false;
+        const pul = new Blob([t]).size;
+        const rif = pesoOrig || new Blob([new XMLSerializer().serializeToString(svgMedia)]).size;
+        const perc = Math.round((1 - pul / rif) * 100);
+        svgInfo.textContent = peso(rif) + ' → ' + peso(pul) + (perc > 0 ? '  (-' + perc + '%)' : '  (già al minimo)');
+      }
+
+      goPng.addEventListener('click', scaricaPng);
+      inDpi.addEventListener('input', aggiornaPng);
+      inDpi.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); scaricaPng(); } });
+      goSvg.addEventListener('click', function () {
+        if (!svgPulito) return;
+        salvaFile(new Blob([svgPulito], { type: 'image/svg+xml;charset=utf-8' }), nomeBase() + '.min.svg');
+        chiudi(true);
+      });
+      goOrig.addEventListener('click', function () {
+        if (!byteOriginali) return;
+        salvaFile(new Blob([byteOriginali], { type: 'image/svg+xml;charset=utf-8' }), nomeBase() + '.svg');
+        chiudi(true);
+      });
+      // ctrl+rotella sul pannello: qui il gestore di wrap non arriva, quindi
+      // senza questa riga zoomerebbe la PAGINA
+      pan.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+
+      pan.__dv = { aggiornaPng: aggiornaPng, preparaSvg: preparaSvg, inDpi: inDpi };
+      return pan;
+    }
+
+    // ── apertura, chiusura, posizionamento ──────────────────────────────
+    function posizionaPannello() {
+      const r = pill.getBoundingClientRect();
+      const top = r.bottom + 8;
+      // il pannello sta SEMPRE sotto la pill, che non deve mai coprire: su vista
+      // bassa si accorcia e scorre al proprio interno
+      pan.style.maxHeight = Math.max(120, window.innerHeight - top - 8) + 'px';
+      var left = r.left;
+      const pw = pan.offsetWidth;
+      if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+      if (left < 8) left = 8;
+      pan.style.left = Math.round(left) + 'px';
+      pan.style.top = Math.round(top) + 'px';
+    }
+    function apri() {
+      creaPannello();
+      var dpiIniziale = 96;
+      try { dpiIniziale = parseInt(GM_getValue('dv-png-dpi', '96'), 10) || 96; } catch (e) {}
+      pan.__dv.inDpi.value = String(dpiIniziale);
+      pannelloAperto = true;
+      pan.hidden = false;
+      btnDl.setAttribute('aria-expanded', 'true');
+      pan.__dv.aggiornaPng();
+      pan.__dv.preparaSvg();          // la pulizia gira qui, non prima
+      posizionaPannello();
+      pan.__dv.inDpi.focus();
+      pan.__dv.inDpi.select();
+    }
+    function chiudi(tornaAlTasto) {
+      if (!pan) return;
+      pannelloAperto = false;
+      pan.hidden = true;
+      btnDl.setAttribute('aria-expanded', 'false');
+      if (tornaAlTasto) btnDl.focus();
+    }
+    chiudiPannello = chiudi;
+    function commuta() { pannelloAperto ? chiudi(true) : apri(); }
+
+    btnDl.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); commuta(); });
+    btnDl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); commuta(); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && pannelloAperto) { e.preventDefault(); e.stopPropagation(); chiudi(true); }
+    }, true);
+    window.addEventListener('resize', function () { if (pannelloAperto) posizionaPannello(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
