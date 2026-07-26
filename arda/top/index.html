@@ -2344,7 +2344,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.53</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v12.54</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3183,13 +3183,17 @@ function ccAaText(fg, bg, target) {
   var css = [
     '.rank-strip{background:rgba(var(--ccrgb,111,116,130),0.85)!important}',
     // ── Numero di posizione nella TINTA della card (dalla v12.53, richiesta
-    // utente: il grigio 'cupo' stonava col resto ormai colorato). Versione
-    // CONTRASTATA della tinta famiglia: in tema scuro schiarita (mix verso il
-    // bianco), in chiaro scurita (mix verso il nero). La prima dichiarazione è
-    // il fallback per i browser senza color-mix (tinta piena). I numeri del
-    // PODIO non sono toccati: le regole fx-podium (specificità più alta) mettono
-    // color:transparent + gradiente metallico.
-    '.rank-item[class*="cc-"] .rank-num{color:rgba(var(--ccrgb),1);color:color-mix(in srgb, rgb(var(--ccrgb)) 82%, #fff 18%)}',
+    // utente: il grigio 'cupo' stonava col resto ormai colorato). ⚠️ Dalla v12.54
+    // il secondo colore della miscela NON è più bianco/nero ma **var(--name)**, il
+    // grigio del nome: così desaturare e avvicinarsi alla luminosità del nome sono
+    // lo stesso gesto, e il numero segue il token (che il tema chiaro ridefinisce
+    // da sé, #d2d2d2 scuro / #373737 chiaro). In tema SCURO la tinta pesa di più,
+    // quindi ne resta il 35% (taratura scelta dall'utente su mockup); in chiaro
+    // resta la scurita 70% + nero, in attesa della taratura.
+    // Nessun fallback esplicito: se color-mix non è supportato la dichiarazione
+    // cade e vale la regola base .rank-num{color:var(--name)}, cioè la resa
+    // pre-v12.53 — grigia ma corretta e AA-safe.
+    '.rank-item[class*="cc-"] .rank-num{color:color-mix(in srgb, rgb(var(--ccrgb)) 35%, var(--name))}',
     'html[data-theme="light"] .rank-item[class*="cc-"] .rank-num{color:rgba(var(--ccrgb),1);color:color-mix(in srgb, rgb(var(--ccrgb)) 70%, #000 30%)}',
     '.rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.10)!important}',
     '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
@@ -7112,7 +7116,9 @@ function showFxConfigEditor(key, sfx, onDone){
         rec.num.style.backgroundImage = 'none';
         rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
         rec.num.style.textShadow = 'none'; rec.num.style.filter = 'none';
-        rec.num.style.color = 'color-mix(in srgb, rgb(' + cc + ') ' + (rec.light ? '70%, #000 30%' : '82%, #fff 18%') + ')';
+        // Stessa miscela della pagina (v12.54): il grigio del nome è concreto
+        // perché nell'anteprima i due temi convivono e var(--name) non varrebbe.
+        rec.num.style.color = 'color-mix(in srgb, rgb(' + cc + ') ' + (rec.light ? '70%, #373737 30%' : '35%, #d2d2d2 65%') + ')';
       }
       rec.desc.textContent = key === 'spot'
         ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
