@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v12.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.06</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7344,6 +7344,16 @@ function injectFxEditorCss(){
     // le impostazioni non si applicano. Semitrasparente e non modificabile — ma
     // l'opacità resta 0.5 e non meno: sotto, il testo scenderebbe fuori soglia di
     // contrasto anche per un controllo disabilitato, che va comunque letto.
+    // Vista divisa: la colonna a sinistra e la pagina spostata a destra. La
+    // larghezza vive in --dockw; il filetto verticale è il bordo della colonna.
+    'html.fx-dock{--dockw:400px}',
+    'html.fx-dock body{margin-left:var(--dockw)}',
+    '.fab-modal-overlay.fxdock{right:auto;width:var(--dockw);background:transparent;',
+    'backdrop-filter:none;-webkit-backdrop-filter:none;align-items:stretch;',
+    'justify-content:flex-start;overflow:hidden;padding:0;',
+    'border-right:1px solid rgba(128,144,160,0.45);box-shadow:8px 0 22px rgba(0,0,0,0.22)}',
+    '.fab-modal-overlay.fxdock .fab-modal-box{width:100%;max-width:none;height:100%;',
+    'max-height:none;margin:0;border-radius:0;border:0;box-shadow:none}',
     '.fxk-row.fxk-off,.fxk-sec.fxk-off{opacity:0.5}',
     '.fxk-row.fxk-off input,.fxk-row.fxk-off label{cursor:not-allowed}',
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
@@ -7372,6 +7382,50 @@ function fxPreviewCc(light){
 // `sfx` (v12.53) = variante in modifica: '' desktop, '_m' mobile. Tutte le
 // letture/scritture passano da SITE_FLAGS[key+sfx]; la pagina dietro cambia solo
 // se la variante è quella della piattaforma corrente (injectFxRules usa fxCfg).
+// ── VISTA DIVISA / dock (dalla v13.06, richiesta utente) ─────────────────────
+// Su desktop largo gli editor dell'ASPETTO non aprono una modale: si ancorano in
+// una COLONNA a sinistra e la pagina VERA, spostata a destra, fa da anteprima
+// dinamica (stesso DOM: fedeltà garantita, nessun doppio stato). Sotto la soglia
+// si resta alla modale di sempre (fallback), e un ridimensionamento a metà
+// modifica commuta il telaio conservando lo stato.
+// ⚠️ Tre scelte strutturali da non rompere:
+//  1. NIENTE lockPageScroll in dock: la pagina deve restare VIVA (scroll + hover,
+//     senza hover non si vedono bagliore e riflettore). Il congelamento
+//     inert/focus-trap resta per le modali normali.
+//  2. La colonna è dimensionata con inset (top/bottom:0), MAI in vh: le unità
+//     viewport sotto zoom XL non scattano (lezione v12.65).
+//  3. Spostare la pagina col margine NON fa scattare `resize`: reflowRows va
+//     chiamata a mano all'aggancio e allo sgancio.
+var DOCK_MIN_W = 1060; // px di LAYOUT (clientWidth): sotto zoom XL si riduce da
+                       // sé, quindi un'unica soglia serve normale e XL.
+function dockAvailable(){
+  return document.documentElement.clientWidth >= DOCK_MIN_W;
+}
+// Scudo per i CLICK (scelta utente): la pagina a destra risponde a scroll e
+// hover ma i click sono spenti — niente schede, admin o Pannello sopra
+// l'editing. Consentiti: le colonne stesse, i tasti salto (solo scroll) e il
+// cambio lingua (equivale al tasto L, attivo nelle modali).
+var DOCK_SHIELD = null;
+// true durante un rebuild TECNICO (cambio lingua, cambio telaio al resize): la
+// chiusura non è una chiusura dell'utente e NON deve ripristinare i flag.
+var DOCK_RELAYOUT = false;
+function dockEngage(){
+  document.documentElement.classList.add('fx-dock');
+  if (!DOCK_SHIELD) {
+    DOCK_SHIELD = function(e){
+      if (e.target && e.target.closest && e.target.closest('#fab-modal, #fx-modal, .jump-fabs, .lang-switch')) return;
+      e.preventDefault(); e.stopPropagation();
+    };
+    document.addEventListener('click', DOCK_SHIELD, true);
+  }
+  reflowRows();
+}
+function dockRelease(){
+  document.documentElement.classList.remove('fx-dock');
+  if (DOCK_SHIELD) { document.removeEventListener('click', DOCK_SHIELD, true); DOCK_SHIELD = null; }
+  reflowRows();
+}
+
 function showFxConfigEditor(key, sfx, onDone){
   if (document.getElementById('fx-modal')) return;
   var it = currentLang === 'it', myL, item = null;
@@ -7386,7 +7440,12 @@ function showFxConfigEditor(key, sfx, onDone){
   SITE_FLAG_ITEMS.forEach(function(f){ if (f.k === key) item = f; });
   if (!item) return;
   injectFxEditorCss();
-  var overlay = document.createElement('div'); overlay.id = 'fx-modal'; overlay.className = 'fab-modal-overlay';
+  // In vista divisa la sotto-modale non si apre SOPRA la pagina: si impila
+  // nella stessa colonna del Pannello (stessa geometria, dipinta sopra), così
+  // 'entrare' in un effetto e 'uscirne' resta un movimento della sola colonna.
+  var docked = document.documentElement.classList.contains('fx-dock');
+  var overlay = document.createElement('div'); overlay.id = 'fx-modal';
+  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   // ⚠️ Lo scorrimento sta in un contenitore INTERNO, non sul box (v12.95). Col box
   // come area di scorrimento, il tasto × — che è `position:absolute` dentro il box —
@@ -7394,7 +7453,7 @@ function showFxConfigEditor(key, sfx, onDone){
   // aver scorso in fondo era fuori dal viewport). Spostando lo scorrimento dentro,
   // il × resta ancorato al box e l'anteprima `position:sticky` si appiccica al bordo
   // alto dello scroller.
-  box.style.maxWidth = '440px'; box.style.maxHeight = 'calc(92vh / var(--zoomf, 1))';
+  if (!docked) { box.style.maxWidth = '440px'; box.style.maxHeight = 'calc(92vh / var(--zoomf, 1))'; }
   box.style.overflow = 'hidden'; box.style.display = 'flex'; box.style.flexDirection = 'column';
   overlay.appendChild(box); document.body.appendChild(overlay);
   var scroller = document.createElement('div');
@@ -7404,6 +7463,9 @@ function showFxConfigEditor(key, sfx, onDone){
     overlay.remove(); if (langRefresh === myL) langRefresh = prevL;
     if (typeof onDone === 'function') onDone();
   };
+  // Ganci per il cambio di telaio a metà modifica (resize): il Pannello li usa
+  // per chiudere e riaprire la sotto-modale conservando effetto e piattaforma.
+  overlay._fxKey = key; overlay._fxSfx = sfx; overlay._fxClose = close;
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×';
   cl.onclick = close; box.appendChild(cl);
@@ -7734,11 +7796,57 @@ function showSiteFlagsEditor(initState){
   if (document.getElementById('fab-modal')) return;
   var it = currentLang === 'it', myL;
   injectFxEditorCss(); // .fx-gear delle righe regolabili
-  var overlay = document.createElement('div'); overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay';
+  // Vista divisa se c'è spazio (colonna ~400px + pagina ≥ ~660px di layout);
+  // sotto soglia, la modale di sempre. La scelta è fatta QUI, all'apertura: il
+  // cambio a metà strada lo gestisce il listener di resize più sotto.
+  var docked = dockAvailable();
+  var overlay = document.createElement('div'); overlay.id = 'fab-modal';
+  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
-  box.style.maxWidth = '460px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
-  overlay.appendChild(box); document.body.appendChild(overlay); lockPageScroll(true);
-  var close = function(){ overlay.remove(); lockPageScroll(false); if (langRefresh === myL) langRefresh = null; };
+  if (!docked) { box.style.maxWidth = '460px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; }
+  box.style.overflowY = 'auto';
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  // In dock NIENTE lockPageScroll: la pagina è l'anteprima e deve restare viva.
+  if (docked) dockEngage(); else lockPageScroll(true);
+  var onRs;
+  var close = function(){
+    overlay.remove();
+    window.removeEventListener('resize', onRs);
+    if (docked) {
+      dockRelease();
+      // 'Torna al punto di partenza se non si salva' (scelta utente): chiudere
+      // la colonna senza salvare ripristina l'ultimo salvato. Dopo un
+      // salvataggio riuscito SITE_FLAGS_SAVED è già sincronizzato, quindi il
+      // ripristino è un no-op. Saltato nei rebuild tecnici (DOCK_RELAYOUT).
+      if (!DOCK_RELAYOUT) { SITE_FLAGS = normSiteFlags(SITE_FLAGS_SAVED); applySiteFlags(); reflowRows(); }
+    } else lockPageScroll(false);
+    if (langRefresh === myL) langRefresh = null;
+  };
+  // Cambio di telaio a metà modifica: se la soglia viene attraversata, chiudi e
+  // riapri nello stesso stato (tab, scroll, sotto-modale aperta). Le regolazioni
+  // non salvate vivono in SITE_FLAGS, globale: sopravvivono da sé.
+  onRs = function(){
+    clearTimeout(onRs._t);
+    onRs._t = setTimeout(function(){
+      if (!document.body.contains(overlay)) return;
+      if (dockAvailable() === docked) return;
+      var st = { scroll: box.scrollTop, tab: tab };
+      var fx = document.getElementById('fx-modal');
+      var fxSt = fx ? { key: fx._fxKey, sfx: fx._fxSfx } : null;
+      DOCK_RELAYOUT = true;
+      if (fx) fx._fxClose();
+      close();
+      DOCK_RELAYOUT = false;
+      showSiteFlagsEditor(st);
+      if (fxSt) {
+        var pn = document.getElementById('fab-modal');
+        showFxConfigEditor(fxSt.key, fxSt.sfx, function(){
+          if (pn && pn._renderRows) pn._renderRows(); // risincronizza le checkbox
+        });
+      }
+    }, 180);
+  };
+  window.addEventListener('resize', onRs);
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
@@ -7832,6 +7940,7 @@ function showSiteFlagsEditor(initState){
     });
   }
   renderRows();
+  overlay._renderRows = renderRows; // usato dal cambio di telaio (onRs)
   // Avviso se la preferenza personale di zoom sta scavalcando il flag: senza,
   // sembrerebbe che l'interruttore 'non funzioni'.
   var mine = LS.getItem(ZOOM_LS_KEY);
@@ -7866,7 +7975,7 @@ function showSiteFlagsEditor(initState){
   if (initState && initState.scroll) box.scrollTop = initState.scroll;
   // L: ricostruisce nella nuova lingua conservando lo scroll (anti-jitter); lo
   // stato dei flag non salvati vive in SITE_FLAGS, globale, quindi non si perde.
-  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; close(); showSiteFlagsEditor({ scroll: sc, tab: tab }); };
+  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false; showSiteFlagsEditor({ scroll: sc, tab: tab }); };
   langRefresh = myL;
 }
 

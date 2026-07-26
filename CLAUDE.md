@@ -805,6 +805,60 @@ normale/XL secondo la preferenza attiva.
   build del **branch**, NON la promozione in produzione: fa fede solo la spia
   `rev`. Verificato il 2026-07-25: a PR aperta la produzione era ancora `rev 12`.
 
+## 🪟 Vista divisa degli editor dell'aspetto (dock, dalla v13.06)
+
+Su desktop largo il **Pannello di controllo** (e le sue sotto-modali effetti) non
+apre una modale: si ancora in una **colonna a sinistra** (`--dockw:400px`, filetto
+verticale sul bordo) e la **pagina vera**, spostata a destra col margine del body,
+fa da anteprima dinamica. Stesso DOM, nessun doppio stato: fedeltà garantita.
+Richiesta e impianto dell'utente ('il sito stesso è l'anteprima'); prima tappa =
+telaio + Pannello di controllo; editor colori e micro-aggiustamenti previsti come
+seconda tappa sullo stesso telaio.
+
+- **Soglia e fallback.** `dockAvailable()` = `document.documentElement.clientWidth
+  >= 1060` (px di **layout**: sotto zoom XL il clientWidth si riduce da sé, quindi
+  un'unica soglia serve modalità normale e XL). Sotto soglia si apre la modale di
+  sempre; un **resize a metà modifica** commuta il telaio conservando tab, scroll,
+  sotto-modale aperta e regolazioni non salvate (vivono in `SITE_FLAGS`, globale).
+- ⚠️ **In dock NIENTE `lockPageScroll`**: la pagina è l'anteprima e deve restare
+  VIVA — scroll e hover (senza hover non si vedono bagliore e riflettore). Il
+  congelamento inert/focus-trap resta per le modali normali. Il focus trap del
+  `Tab` però FUNZIONA anche in dock (verificato: 30 Tab, 0 fughe) perché agisce su
+  `topModalEl`, non su `lockPageScroll`; T e L restano attivi (regola dei tasti
+  nudi).
+- **Click spenti fuori dalle colonne (scelta utente).** `DOCK_SHIELD`, un listener
+  `click` in capture: la pagina risponde a scroll e hover ma i click non aprono
+  nulla (schede, admin, Pannello del FAB). **Consentiti**: le colonne stesse, i
+  tasti salto (solo scroll) e il cambio lingua (equivale al tasto L). Lo scudo si
+  rimuove SEMPRE alla chiusura.
+- **'Torna al punto di partenza se non si salva' (scelta utente).** Chiudere la
+  colonna (×, Esc, click fuori) ripristina `normSiteFlags(SITE_FLAGS_SAVED)`. Dopo
+  un salvataggio riuscito lo snapshot è già sincronizzato → il ripristino è un
+  no-op. ⚠️ **`DOCK_RELAYOUT`**: nei rebuild TECNICI (tasto L, cambio di telaio al
+  resize) la chiusura non è una chiusura dell'utente e NON deve ripristinare —
+  senza questo flag, un semplice cambio lingua butterebbe via le regolazioni non
+  salvate. NB: nella modale (sotto soglia) la chiusura senza salvare NON
+  ripristina, come sempre: la scelta dell'utente riguardava la vista divisa.
+- **Sotto-modali impilate nella colonna.** In dock `showFxConfigEditor` prende la
+  stessa classe `fxdock` e si dipinge SOPRA il pannello, stessa geometria:
+  'entrare' in un effetto e 'uscirne' è un movimento della sola colonna. I ganci
+  `overlay._fxKey/_fxSfx/_fxClose` e `overlay._renderRows` (sul pannello) servono
+  al cambio di telaio per chiudere e riaprire la sotto-modale risincronizzando le
+  checkbox.
+- ⚠️ **Due trappole note già applicate**: la colonna è dimensionata con **inset**
+  (`top:0;bottom:0`), MAI in `vh` (sotto zoom XL le unità viewport non scattano,
+  lezione v12.65); e spostare la pagina col margine **non fa scattare `resize`** →
+  `reflowRows()` va chiamata a mano in `dockEngage`/`dockRelease` (a-capo dei nomi
+  e righe bipartite si rimisurano).
+- Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu):
+  la porzione statica della pagina non cambia.
+- Verificato (batteria dedicata, font reali, config utente con XL di sito attivo):
+  telaio sotto zoom 1.3 (colonna 400px layout = 520 visivi), hover che accende il
+  bagliore sulla card vera, click sul nome spento in dock e vivo dopo la chiusura,
+  Esc che chiude prima la sotto-modale poi la colonna col ripristino, resize
+  1400→900→1400 con stato conservato, axe 0 su 2 temi × 2 zoom (pannello ancorato
+  a 1280px), 0 errori JS.
+
 ## 🔐 Admin e segreti
 
 - **La parola d'ordine admin è validata SOLO lato server** dal Cloudflare
