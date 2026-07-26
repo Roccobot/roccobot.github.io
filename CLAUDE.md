@@ -811,15 +811,43 @@ Su desktop largo il **Pannello di controllo** (e le sue sotto-modali effetti) no
 apre una modale: si ancora in una **colonna a sinistra** (`--dockw:400px`, filetto
 verticale sul bordo) e la **pagina vera**, spostata a destra col margine del body,
 fa da anteprima dinamica. Stesso DOM, nessun doppio stato: fedeltà garantita.
-Richiesta e impianto dell'utente ('il sito stesso è l'anteprima'); prima tappa =
-telaio + Pannello di controllo; editor colori e micro-aggiustamenti previsti come
-seconda tappa sullo stesso telaio.
+Richiesta e impianto dell'utente ('il sito stesso è l'anteprima'); prima tappa
+(v13.06) = telaio + Pannello di controllo; **seconda tappa (v13.17)** = editor
+colori e micro-aggiustamenti sullo stesso telaio.
 
-- **Soglia e fallback.** `dockAvailable()` = `document.documentElement.clientWidth
-  >= 1060` (px di **layout**: sotto zoom XL il clientWidth si riduce da sé, quindi
-  un'unica soglia serve modalità normale e XL). Sotto soglia si apre la modale di
-  sempre; un **resize a metà modifica** commuta il telaio conservando tab, scroll,
-  sotto-modale aperta e regolazioni non salvate (vivono in `SITE_FLAGS`, globale).
+- **Editor colori in dock (v13.17).** Colonna 480px. Le due tab diventano LIVE:
+  in **Famiglie** la scelta del colore (picker o campo HEX) applica subito
+  `CARDCOLORS.fam` + reinject alla pagina; in **Personaggio** l'anteprima è
+  **SOLO DOM** — si replica sulla card vera ciò che `renderList` fa per le voci
+  custom (classe `cc-custom` + terne inline), e alla selezione la pagina **scorre
+  fino alla card**. ⚠️ Ragione della differenza: i salvataggi inviano TUTTO
+  (`dati` + `cardColors`), quindi un'anteprima non salvata non deve vivere negli
+  oggetti che un salvataggio d'altro porterebbe con sé — mai toccare `p.cardrgb`
+  in anteprima, e la famiglia che si ABBANDONA (cambio famiglia/tab) torna
+  all'ultimo salvato prima di proseguire. Il gancio è **`ctrl.hook`** su
+  `buildColorControl` (chiamato da `update()`, mai alla costruzione); anche il
+  ripristino 'ultimo salvato' vi passa, quindi aggiorna la pagina. Le anteprime
+  interne (mini-card + mini-scheda) RESTANO anche in dock: la mini-scheda non è
+  ridondante, perché in dock le schede vere non si aprono (click spenti).
+- **Micro-aggiustamenti in dock (v13.17).** Colonna 560px; il corpo a due colonne
+  si impila (`.fxdock .ba-body{grid-template-columns:1fr}`: era pensato per la
+  modale da 840px). Chiusura senza salvataggio = ultimo salvato (stessa via del
+  suo Annulla). Le anteprime interne RESTANO: mostrano campioni scelti col badge
+  in modifica e la linea mediana rossa, che la pagina non garantisce (il badge
+  selezionato può non essere nel viewport).
+- I due editor chiamano `injectFxEditorCss()` in testa: il CSS del dock vive lì
+  e deve esserci anche quando si apre uno di LORO per primo.
+
+- **Soglia e fallback.** `dockAvailable(colw)` = `clientWidth / zoom >= colw + 660`,
+  con la larghezza di colonna PER-EDITOR (Pannello di controllo 400, colori 480,
+  micro-aggiustamenti 560; il fattore vive in `--dockw`, impostato da `dockEngage`).
+  ⚠️ **MISURATO (2026-07-26): `clientWidth` NON si riduce sotto `zoom`** — resta la
+  larghezza della finestra — quindi il fattore XL va diviso a mano (`--zoomf`).
+  La v13.06/13.07 assumeva il contrario: corretto nella v13.17. Il flag XL commutato
+  DAL pannello è l'unico modo di cambiare zoom a colonna aperta (Z è guardato dalle
+  modali): il suo change handler ripassa dal ricalcolo del telaio. Sotto soglia si
+  apre la modale di sempre; un **resize a metà modifica** commuta il telaio
+  conservando tab, scroll, sotto-modale aperta e regolazioni non salvate.
 - ⚠️ **In dock NIENTE `lockPageScroll`**: la pagina è l'anteprima e deve restare
   VIVA — scroll e hover (senza hover non si vedono bagliore e riflettore). Il
   congelamento inert/focus-trap resta per le modali normali. Il focus trap del
