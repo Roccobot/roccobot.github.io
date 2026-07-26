@@ -347,6 +347,48 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     il disegno.
   - Se il file ha un **errore di sintassi XML** il browser mostra la propria pagina
     d'errore: lì lo script non interviene (riconosce che la radice non è un `<svg>`).
+- **Scaricare, solo sulle pagine SVG (dalla 2.11).** Nella pill compare un **secondo
+  tondo, a destra**, speculare a quello `1:1`: apre un pannello con due sezioni.
+  - **PNG a un DPI a scelta.** Campo del DPI con quattro valori pronti (96, 150, 300,
+    600) e **anteprima in tempo reale** dei pixel che si otterranno (`254 DPI` su un
+    SVG 640×360 dà `1693 × 953 px`), più la dimensione fisica in centimetri, che non
+    dipende dal DPI perché la decide il vettore. Il DPI viene **scritto dentro il file**
+    (chunk `pHYs`): senza, un PNG "a 254 DPI" sarebbe solo un'immagine più grande e
+    ogni programma di grafica la leggerebbe come 96 DPI. Casella opzionale per lo
+    **sfondo bianco** invece che trasparente, comoda per la stampa. Il valore usato
+    l'ultima volta si ricorda.
+    - Il tetto massimo di DPI è calcolato **prima** e mostrato se lo si supera: oltre i
+      limiti del canvas Chromium non solleva alcun errore, restituisce semplicemente
+      un'immagine vuota, quindi non si può intercettare dopo.
+    - È rasterizzazione vettoriale vera, non un ingrandimento: misurato sul bordo di un
+      cerchio, la sfumatura resta di **1 pixel** sia a 96 sia a 254 DPI (un ingrandimento
+      ne darebbe circa 3).
+  - **SVG ripulito.** Toglie prologo, DOCTYPE con le entità, commenti del programma
+    che l'ha esportato, `<metadata>` con XMP e RDF, `<desc>` generati, elementi e
+    attributi nei namespace degli editor (la lista è quella di SVGO) e le dichiarazioni
+    `xmlns` rimaste inutilizzate. Il pannello mostra quanto si risparmia prima di
+    scaricare (su un export di Illustrator: `15,2 KB → 0,5 KB`, cioè -96%, perché i dati
+    vettoriali proprietari `<i:pgf>` sono il grosso del file). C'è anche il tasto per
+    scaricare l'**originale** intatto.
+    - **La geometria non si tocca**, di proposito: è la parte che sposta i pixel. Il file
+      ripulito differisce dall'originale **solo per ciò che gli è stato tolto**, quindi
+      conserva anche `width`/`height` così come li aveva (scrivere `800` dove l'autore
+      aveva messo `100%` cambierebbe come l'SVG si comporta dentro una pagina).
+      Verificato su **39 file**, molti dei quali export reali di Illustrator, Inkscape,
+      Sketch e Figma: **0 pixel di differenza** rispetto agli originali.
+    - Non si toccano `<switch>`, `requiredExtensions`, `<style>`, `<title>` e gli `id`:
+      sono le cose che, rimosse, rompono davvero il disegno o l'accessibilità.
+- **Tutto il lavoro avviene al clic.** Aprire un SVG non costa niente più di prima: al
+  caricamento nasce solo il tondo. Il pannello, il suo foglio di stile e la scansione
+  dell'albero per la pulizia partono la prima volta che lo si apre.
+
+> **Perché non SVGO vero.** Il bundle browser di SVGO è un modulo ES da 890 KB, e
+> `@require` di Tampermonkey esegue script classici: si prende un `SyntaxError` e basta
+> (provato). Andrebbe caricato a mano, e peserebbe su ogni pagina. In più il suo
+> `preset-default` include `removeViewBox`, che su questo stesso visualizzatore
+> **romperebbe lo zoom** (senza `viewBox` l'SVG non scala più), e riscrive i tracciati:
+> misurato, cambia i pixel su 25 file su 33. La pulizia locale fa il lavoro che serve in
+> **1,7 ms** invece di 40, senza dipendenze e senza toccare il disegno.
 
 ### Personalizzazione
 
