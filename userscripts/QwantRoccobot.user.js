@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.12.1
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages). Il forcing dei parametri aspetta il cookie anti-bot prima di ricaricare: a browser appena aperto quel cookie non c'e' ancora e ricaricare abortiva la sfida di DataDome, con Qwant che rispondeva 403 alla prima ricerca per una trentina di secondi.
+// @version      2.13.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages). Il forcing dei parametri NON ricarica la primissima pagina Qwant dopo una pausa lunga (riavvio del browser, scheda nuova dopo ore): due caricamenti completi a distanza di un istante su una sessione appena nata sono cio' che faceva rispondere 403 a DataDome per una trentina di secondi. Si perde il forcing su una sola ricerca, quella d'apertura; da li' in poi tutto come prima. In piu' il forcing aspetta comunque il cookie anti-bot prima di ricaricare.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -48,6 +48,10 @@
   // (vedi la nota nel MODULO 0). 0 = nessuna attesa, cioe' il comportamento che
   // causava il 403 alla prima ricerca dopo l'apertura del browser.
   const ATTESA_ANTIBOT = 8000;
+  // Quanto a lungo una visita a Qwant tiene "calda" la sessione anti-bot. Entro
+  // questo tempo il forcing dei parametri si fa come sempre; oltre, la primissima
+  // pagina non viene ricaricata (vedi la nota nel MODULO 0).
+  const FRESCHEZZA_SESSIONE = 30 * 60 * 1000;   // 30 minuti
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 0 -- Parametri di ricerca fissi e forzati (Web / Immagini)
@@ -102,6 +106,34 @@
         else if (Date.now() > scadenza) { clearInterval(tic); }
       }, 200);
     }
+
+    // ⚠️ SECONDA CORREZIONE (2026-07-27). Aspettare il cookie NON e' bastato: il 403
+    // tornava, con un sintomo nuovo e rivelatore, cioe' la SERP che compariva e poi
+    // spariva. Quindi la prima pagina si caricava benissimo ed era il RICARICAMENTO a
+    // farsi rifiutare: due caricamenti completi a distanza di un istante, su una
+    // sessione appena nata, sono esattamente cio' che un anti-bot considera sospetto.
+    // Non c'e' un'attesa che lo renda sicuro: l'unica cosa che funziona e' NON
+    // ricaricare la primissima pagina Qwant dopo una pausa lunga (riavvio del browser,
+    // scheda nuova dopo ore). Si segna l'ora dell'ultima visita riuscita in
+    // localStorage: se e' recente la sessione anti-bot e' calda e il forcing va fatto
+    // come sempre, altrimenti si lascia stare per QUESTA volta. Si perde il forcing su
+    // una sola ricerca, quella d'apertura; da li' in poi tutto come prima.
+    // ⚠️ Si legge UNA VOLTA SOLA, adesso, prima che qualunque cosa segni la visita:
+    // se la pagina fosse gia' caricata (iniezione tardiva del gestore, pagina dalla
+    // cache) il marcatore verrebbe scritto subito e la sessione appena nata
+    // sembrerebbe calda, che e' esattamente il caso da evitare.
+    const eraCalda = (function () {
+      try { return Date.now() - (+localStorage.getItem('qr-visita') || 0) < FRESCHEZZA_SESSIONE; }
+      catch (e) { return false; }
+    })();
+    function segnaVisita() {
+      try { localStorage.setItem('qr-visita', String(Date.now())); } catch (e) {}
+    }
+    // si segna a pagina caricata, non prima: una pagina che non arriva in fondo non
+    // deve far credere che la sessione sia calda
+    if (document.readyState === 'complete') segnaVisita();
+    else window.addEventListener('load', segnaVisita);
+    setInterval(segnaVisita, 60000);   // finche' si resta su Qwant, la visita resta fresca
     // A ogni CARICAMENTO/REFRESH: se l'URL non e' ai parametri di default, li ripristina.
     // Cosi' il refresh riporta sempre ai default; le modifiche via Filtri valgono finche'
     // non si ricarica. Anti-loop a tempo: non riforza a raffica (se Qwant rialterasse i
@@ -110,6 +142,8 @@
       let u; try { u = new URL(location.href); } catch (e) { return; }
       const q = u.searchParams.get('q');
       if (!q || conforme(u, tabDi(u))) return;
+      // prima pagina dopo una pausa lunga: NON si ricarica (vedi la nota sopra)
+      if (!eraCalda) return;
       let ts = 0; try { ts = +sessionStorage.getItem('qr-fp-ts') || 0; } catch (e) { /* no storage */ }
       if (Date.now() - ts < 2000) return;
       const partenza = location.href;
