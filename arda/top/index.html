@@ -417,12 +417,34 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   color:var(--parchment-dim);
   /* 0.80 (era 0.72, dalla v12.24): è la riga più piccola e tenue della card
      (~13.8px), quindi l'anello debole della leggibilità; +8 punti di opacità si
-     sentono molto e non alterano la gerarchia visiva. */
+     sentono molto e non alterano la gerarchia visiva.
+     ⚠️ In tema SCURO colore e opacità sono scavalcati (vedi la regola AA più
+     avanti): lì servivano numeri diversi per stare sopra 4.5:1. */
   opacity:0.80;
   letter-spacing:0.01em;
   line-height:1.4;
   margin-top:0.05rem;
 }
+/* ── CONTRASTO AA DELLE DUE RIGHE TENUI, tema SCURO (v14.12, misurato). ───────
+   `Info | genitori` (.rank-desc, 13.8px) e `Nomi | Titoli` (.rank-subtitle,
+   16.5px) erano #aeaeae a opacità 0.80 e 0.75: sul fondo colorato della card
+   stavano SOTTO 4.5:1 su tutte e 16 le famiglie, già a riposo (minimo misurato
+   3.35:1, e 2.79:1 col puntatore sopra). Non se ne era mai accorto nessuno perché
+   axe, sulle card, rinuncia a determinare il fondo (i pseudo-elementi) e
+   classifica tutto come `incomplete`: la verifica è stata fatta sui pixel.
+   Ora #c0c0c0 a opacità PIENA: 4.95:1 sul caso peggiore (dwarf, la tinta più
+   chiara) e 5.7:1 a riposo. Il Nome resta #d2d2d2 a 25.6px, quindi la gerarchia
+   visiva regge: la differenza la fanno corpo e peso, non più la penombra.
+   ⚠️ Le due parti (`.bp-b`, il corsivo di genealogia e titoli) NON possono restare
+   più scure: la loro mescola col grigio d'accento dava #a1a1a1 = 3.19:1. Prendono
+   lo stesso #c0c0c0; a distinguerle basta il CORSIVO, che il commento della regola
+   bipartita già indica come discriminante di riserva.
+   Il tema CHIARO non è toccato: lì era già tutto sopra soglia (minimo 4.96:1). */
+html[data-theme="dark"] .rank-desc,
+html[data-theme="dark"] .rank-subtitle { color:#c0c0c0; opacity:1; }
+html[data-theme="dark"] .rank-desc .bp-b,
+html[data-theme="dark"] .rank-subtitle .bp-b,
+html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 
 /* A capo ottimizzato delle righe bipartite (vedi optimizeBipartite): quando
    la parte 2 (genealogia o titoli) andrebbe a capo lasciando una testa breve
@@ -2534,7 +2556,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.11</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2737,7 +2759,13 @@ var FX_RANGE = {
   // card (il velo del riflettore) rinuncia a determinare il fondo e classifica TUTTI
   // i nodi come `incomplete` - misurato: 2714 incompleti, 0 valutati, in qualunque
   // configurazione. La verifica va fatta a calcolo (vedi scratchpad/hovaa2.js).
-  hov:{ op_d:[0.05,0.26], op_l:[0.03,0.18], sat_d:[0,1.8], sat_l:[0,1.8],
+  // ⚠️ Il tetto di `op_d` è 0.20 e non di più: MISURATO (v14.12) è il punto oltre il
+  // quale le due righe tenui della card, ora #c0c0c0, scendono sotto 4.5:1 sulla
+  // famiglia dalla tinta più chiara (dwarf). A 0.20 restano a 4.65:1, a 0.26
+  // scenderebbero a 3.86:1. Il default (0.18) dà 4.95:1. Alle combinazioni estreme
+  // di luminosità (lum 1.3) il margine si consuma comunque - da qui la nota sullo
+  // slider - ma la sola opacità non può più rompere l'AA.
+  hov:{ op_d:[0.05,0.20], op_l:[0.03,0.18], sat_d:[0,1.8], sat_l:[0,1.8],
         lum_d:[0.7,1.3], lum_l:[0.7,1.3] }
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
