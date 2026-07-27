@@ -1567,29 +1567,42 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    scompari/riappari può essere fastidioso, basterebbe una dissolvenza
    velocissima'). Qui il box NON si muove - sarebbe un saltello inutile, la modale
    nuova prende il posto della vecchia.
-   ⚠️ La modale che ENTRA dissolve SOPRA quella che esce, che resta dipinta e piena
-   fino alla fine (v14.00). Storia dei due tentativi precedenti: nella v13.86
-   dissolvevano entrambe e il fondo SFARFALLAVA, perché due veli semitrasparenti
-   sovrapposti compongono MENO di uno pieno (0.92 e 0.92 danno 0.9936, ma a metà
-   strada 0.46 e 0.46 danno 0.71); nella v13.97 la vecchia usciva all'istante e
-   restava un lampo in cui non c'era NESSUNA finestra e si intravedevano le card
-   dietro il velo. La regola che risolve entrambi: chi esce non si tocca (velo
-   pieno, box fermo, solo inerte), chi entra sale sopra e dissolve. Così il velo
-   composito parte da 0.92 e SALE - non scende mai - e una finestra è sempre in
-   scena. `z-index:201` serve perché l'ordine di pittura segue il DOM: la scheda
-   `#modal-backdrop` è statica in pagina e finirebbe SOTTO una nota appena creata. */
-.modal-backdrop.xfade { z-index:201; transition:opacity 0.08s linear,visibility 0.08s !important; }
+   ⚠️ REGOLA (v14.10, dopo tre tentativi): **in scena c'è sempre UN SOLO velo, e
+   sempre pieno**. La modale che entra porta il velo (istantaneo, nessuna
+   transizione); quella che esce lo PERDE e tiene il solo box, che le passa sopra e
+   dissolve. Nessun fotogramma senza finestra, e il fondo dietro non cambia mai.
+   Storia degli errori, tutti misurati:
+   • v13.86 - dissolvevano entrambe: due veli semitrasparenti sovrapposti compongono
+     MENO di uno pieno (0.92 e 0.92 danno 0.9936, ma a metà strada 0.46 e 0.46 danno
+     0.71), quindi la pagina dietro si SCHIARIVA a metà passaggio;
+   • v13.97 - la vecchia usciva all'istante: velo fermo, ma restava un lampo con
+     NESSUNA finestra e le card intraviste;
+   • v14.00 - la vecchia restava piena e la nuova dissolveva sopra: niente buco, ma
+     per 130ms i due veli si sommavano e il fondo si SCURIVA (in tema chiaro molto:
+     da 0.62 a 0.856, cioè la pagina dietro dal 38% al 14% di trasmissione). Era lo
+     sfarfallio che l'utente vedeva ancora.
+   `z-index` 201 (chi entra) e 202 (chi esce) mettono i piani nell'ordine giusto a
+   prescindere dal DOM: la scheda `#modal-backdrop` è statica in pagina e altrimenti
+   finirebbe sotto una nota appena creata. */
+.modal-backdrop.xfade { z-index:201; transition:none !important; }
 .modal-backdrop.xfade .modal { transition:none !important; transform:none !important; }
-/* Dissolvenza del contenuto. `animation` e non `transition`: parte da sé alla
-   comparsa, senza dover intercalare un reflow fra la classe e `.active`. */
-@keyframes modal-xfade-in { from { opacity:0; } to { opacity:1; } }
-.modal-backdrop.xfade.active .modal { animation:modal-xfade-in 0.08s linear; }
-/* Chi ESCE durante un passaggio: resta piena e visibile (anche senza `.active`, che
-   viene tolto subito perché è il flag di stato) e diventa inerte. Il nodo si rimuove
-   a dissolvenza finita. */
-.modal-backdrop.xout { transition:none !important; opacity:1 !important; visibility:visible !important; pointer-events:none !important; }
-.modal-backdrop.xout .modal { transition:none !important; transform:none !important; animation:none !important; }
-@media (prefers-reduced-motion:reduce) { .modal-backdrop.xfade.active .modal { animation:none; } }
+/* Chi ESCE durante un passaggio: **perde il velo** e tiene il solo BOX, che passa
+   SOPRA la modale nuova e dissolve. Così in scena c'è sempre UN velo solo - quello
+   della modale che entra, pieno dal primo fotogramma - e una finestra sempre
+   presente. `backdrop-filter:none` è obbligatorio: la sfocatura di chi esce
+   sfocherebbe il contenuto di chi entra, che ora le sta sotto. */
+.modal-backdrop.xout { transition:none !important; opacity:1 !important; visibility:visible !important;
+  pointer-events:none !important; z-index:202; background:transparent !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+@keyframes modal-xfade-out { from { opacity:1; } to { opacity:0; } }
+/* ⚠️ `box-shadow:none` è parte del fix: il box della modale porta un alone diffuso
+   (60px e 120px) e, stando ora SOPRA il velo, il suo alone si sommava a quello della
+   modale sotto. Misurato sui fotogrammi: la fascia fuori dalla modale schiariva da
+   17.7 a 25.6 di luminanza per ~80ms - era il residuo di sfarfallio in tema scuro.
+   L'alone lo disegna la modale che ENTRA, una volta sola. */
+.modal-backdrop.xout .modal { transition:none !important; transform:none !important;
+  box-shadow:none !important; animation:modal-xfade-out 0.08s linear both; }
+@media (prefers-reduced-motion:reduce) { .modal-backdrop.xout .modal { animation:none; opacity:0; } }
 /* Niente barre di scorrimento nel sistema-modale (scelta coerente col
    Pannello): su mobile comparivano DUE barre (quella interna del .modal-body e
    quella esterna del .modal-backdrop, che su mobile può scorrere per via del
@@ -2521,7 +2534,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.00</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.10</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2615,7 +2628,13 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // SEMINATA come copia della desktop (comportamento identico finché l'admin non
 // differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
 var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
-var FX_EFFECTS = ['glow','spot','press','vig','podium','nums']; // effetti per-piattaforma
+var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov']; // effetti regolabili
+// Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
+// `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
+// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Il riflettore dalla
+// v13.18, il colore al passaggio dalla v14.10: governano entrambi la resa sotto il
+// PUNTATORE, che su touch non esiste, quindi una variante mobile non avrebbe senso.
+var FX_UNI = { spot:true, hov:true };
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
   // glow: dalla v12.76 le manopole numeriche sono PER TEMA (suffisso _d/_l) e
@@ -2673,7 +2692,15 @@ var SITE_FLAGS_DEFAULT = {
   // riferimento) invece della luminosità propria di ogni tinta; `dsat`/`dlum` =
   // cromia conservata e L di riferimento in tema SCURO, `lsat`/`llum` in CHIARO
   // (valori distinti perché su fondo chiaro una L alta perde contrasto).
-  nums:{ on:true, uni:true, dsat:0.15, dlum:0.66, lsat:0.15, llum:0.6 }
+  nums:{ on:true, uni:true, dsat:0.15, dlum:0.66, lsat:0.15, llum:0.6 },
+  // hov (v14.10, richiesta dell'utente): fondo della card al PASSAGGIO del
+  // puntatore. Tre manopole per tema — opacità del velo di tinta, saturazione e
+  // luminosità della tinta stessa. I default riproducono ESATTAMENTE le vecchie
+  // regole statiche (alpha 0.18 scuro / 0.11 chiaro, tinta intatta): a 1/1 la
+  // formula OKLCH restituisce lo stesso colore, quindi chi non tocca nulla non
+  // vede alcun cambiamento. Config UNICA per i due dispositivi (come il
+  // riflettore): governa la resa sotto il puntatore.
+  hov:{ on:true, op_d:0.18, op_l:0.11, sat_d:1, sat_l:1, lum_d:1, lum_l:1 }
 };
 // Limiti delle manopole numeriche. Servono a DUE cose: tarare gli slider della
 // sotto-modale e RIPULIRE un valore assurdo arrivato dal file dati (o da una mano
@@ -2699,11 +2726,23 @@ var FX_RANGE = {
   // grande). In scuro serve L ALTA (min 0.66 = 3.70:1), in chiaro L BASSA
   // (max 0.60 = 3.18:1): così il range stesso garantisce l'AA e l'admin non può
   // rompere il contrasto muovendo gli slider. Non allargarli senza rimisurare.
-  nums:{ dsat:[0,1], dlum:[0.66,0.95], lsat:[0,1], llum:[0.3,0.6] }
+  nums:{ dsat:[0,1], dlum:[0.66,0.95], lsat:[0,1], llum:[0.3,0.6] },
+  // ⚠️ I limiti di `hov` sono PRUDENTI per una ragione di leggibilità: il fondo al
+  // passaggio è quello su cui si leggono Nome, Info, nomi/titoli e le etichette
+  // tipo. Alzando l'opacità in tema SCURO il fondo si schiarisce e i testi chiari
+  // perdono contrasto; in CHIARO è il contrario. I tetti stanno volutamente VICINI
+  // ai valori storici (0.18 e 0.11, che sono i default): danno margine in entrambi
+  // i sensi senza spingersi lontano da una resa già collaudata.
+  // ⚠️ Qui axe NON è di aiuto e non va usato come prova: con un `::before` sulla
+  // card (il velo del riflettore) rinuncia a determinare il fondo e classifica TUTTI
+  // i nodi come `incomplete` - misurato: 2714 incompleti, 0 valutati, in qualunque
+  // configurazione. La verifica va fatta a calcolo (vedi scratchpad/hovaa2.js).
+  hov:{ op_d:[0.05,0.26], op_l:[0.03,0.18], sat_d:[0,1.8], sat_l:[0,1.8],
+        lum_d:[0.7,1.3], lum_l:[0.7,1.3] }
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
 // in localStorage) la scavalca, perché riguarda solo chi guarda, non il sito.
-var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums' };
+var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums', hov:'fx-hov' };
 function fxClamp(k, p, v){
   var def = SITE_FLAGS_DEFAULT[k][p], r = FX_RANGE[k] && FX_RANGE[k][p];
   if (typeof v !== 'number' || !isFinite(v)) return def;
@@ -2814,7 +2853,7 @@ if (FX_MOBILE_MQ.addEventListener) FX_MOBILE_MQ.addEventListener('change', funct
 // è un effetto da puntatore, il 'mobile' non c'entra con lui — la sua config è
 // UNICA e vale ovunque esista un puntatore, anche nelle finestre strette. Un
 // eventuale `spot_m` residuo nei dati salvati resta ignorato.
-function fxCfg(k){ return (k !== 'spot' && FX_MOBILE_MQ.matches) ? SITE_FLAGS[k + '_m'] : SITE_FLAGS[k]; }
+function fxCfg(k){ return (!FX_UNI[k] && FX_MOBILE_MQ.matches) ? SITE_FLAGS[k + '_m'] : SITE_FLAGS[k]; }
 // Un flag è 'acceso' se booleano true oppure oggetto con on !== false (valutato
 // sulla config attiva per piattaforma; zoomBig non ha variante).
 function flagOn(k){
@@ -3070,6 +3109,55 @@ function fxNumColor(cfg, light, cc){
   var L = cfg.uni ? String(fxR2(light ? cfg.llum : cfg.dlum)) : 'l';
   return 'oklch(from rgb(' + (cc || 'var(--ccrgb,111,116,130)') + ') ' + L + ' calc(c * ' + fxR2(sat) + ') h)';
 }
+// Fondo della card al PASSAGGIO del puntatore (v14.10). Stessa tecnica di
+// fxNumColor: sintassi RELATIVA di OKLCH sulla tinta di famiglia, di cui si
+// riscrivono luminosità (× lum) e cromia (× sat) lasciando la TINTA intatta;
+// l'alpha è l'opacità del velo. ⚠️ A lum=1 e sat=1 il risultato è ESATTAMENTE la
+// tinta di partenza, quindi i default riproducono il vecchio
+// rgba(var(--ccrgb), 0.18|0.11) senza scostamenti. Se il browser non conosce la
+// sintassi relativa la dichiarazione cade e vale la regola storica di
+// injectCardColorRules: la resa di sempre, già verificata AA.
+// ⚠️ IL RISULTATO VA RIPORTATO IN sRGB con `rgb(from … r g b / alpha)`, non lasciato
+// in `oklch()`. Misurato: un colore SEMITRASPARENTE dichiarato in `oklch()` resta
+// tale nel valore calcolato e Chromium lo compone in **oklab**, non in sRGB, quindi
+// il fondo della card risultava diverso dal vecchio `rgba()` fino a 6/255 su un
+// canale (rohir, tinta satura al bordo di gamut) pur con le manopole a 1. Passando
+// da `rgb(from …)` la composizione torna in sRGB e il round-trip è esatto a
+// ~0.01/255. Il colore OPACO invece non ha questo problema: per quello `fxNumColor`
+// può restare in oklch.
+function fxHovBg(cfg, light, cc){
+  return 'rgb(from oklch(from rgb(' + (cc || 'var(--ccrgb,111,116,130)') + ')'
+       + ' calc(l * ' + fxR2(fxTh(cfg, 'lum', light)) + ')'
+       + ' calc(c * ' + fxR2(fxTh(cfg, 'sat', light)) + ') h)'
+       + ' r g b / ' + fxR2(fxTh(cfg, 'op', light)) + ')';
+}
+// Equivalente in JS della riscrittura OKLCH qui sopra: serve SOLO a comporre il
+// fondo di riferimento per l'AA del testo della pill nell'anteprima (la resa la fa
+// il CSS, con la stringa di fxHovBg, così non possono divergere). Matrici OKLab
+// standard: sRGB→lineare→LMS→cubica→OKLab, si scala L e la cromia, e ritorno.
+function ccOklchAdjust(triplet, lum, sat){
+  var v = String(triplet).split(',').map(function(x){ return Math.min(255, Math.max(0, +x)) / 255; });
+  var lin = v.map(function(c){ return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+  var cb = function(x){ return Math.cbrt(x); };
+  var l_ = cb(0.4122214708 * lin[0] + 0.5363325363 * lin[1] + 0.0514459929 * lin[2]);
+  var m_ = cb(0.2119034982 * lin[0] + 0.6806995451 * lin[1] + 0.1073969566 * lin[2]);
+  var s_ = cb(0.0883024619 * lin[0] + 0.2817188376 * lin[1] + 0.6299787005 * lin[2]);
+  var L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  var A = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  var B = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+  L = Math.max(0, L * lum); A *= sat; B *= sat;   // L × luminosità, cromia × saturazione
+  var l2 = Math.pow(L + 0.3963377774 * A + 0.2158037573 * B, 3);
+  var m2 = Math.pow(L - 0.1055613458 * A - 0.0638541728 * B, 3);
+  var s2 = Math.pow(L - 0.0894841775 * A - 1.2914855480 * B, 3);
+  var out = [ 4.0767416621 * l2 - 3.3077115913 * m2 + 0.2309699292 * s2,
+             -1.2684380046 * l2 + 2.6097574011 * m2 - 0.3413193965 * s2,
+             -0.0041960863 * l2 - 0.7034186147 * m2 + 1.7076147010 * s2 ];
+  return out.map(function(c){
+    c = Math.min(1, Math.max(0, c));
+    c = c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+    return Math.round(c * 255);
+  }).join(',');
+}
 function fxSel(base, all, tail){
   return all ? base + ' .rank-item' + tail
              : base + ' .rank-item:hover' + tail + ',' + base + ' .rank-item:focus-within' + tail;
@@ -3079,7 +3167,14 @@ function injectFxRules(){
   // sempre fxCfg; gli editor scrivono sulla variante scelta e la pagina cambia
   // solo se quella variante è la piattaforma corrente.
   var css = [], g = fxCfg('glow'), s = fxCfg('spot'), v = fxCfg('vig'), pr = fxCfg('press'),
-      po = fxCfg('podium'), nu = fxCfg('nums');
+      po = fxCfg('podium'), nu = fxCfg('nums'), hv = fxCfg('hov');
+  if (flagOn('hov')) {
+    // Specificità (0,4,1) in scuro e (0,5,1) in chiaro: battono le regole di
+    // injectCardColorRules ((0,3,0) e (0,3,1)), che restano il fallback storico se
+    // il flag è spento o se `oklch(from …)` non è supportato.
+    css.push('html.fx-hov .rank-item[class*="cc-"]:hover,html.fx-hov .rank-item[class*="cc-"]:focus-within{background:' + fxHovBg(hv, false) + '!important}');
+    css.push('html.fx-hov[data-theme="light"] .rank-item[class*="cc-"]:hover,html.fx-hov[data-theme="light"] .rank-item[class*="cc-"]:focus-within{background:' + fxHovBg(hv, true) + '!important}');
+  }
   if (flagOn('nums')) {
     // Specificità (0,3,0) come le altre regole cardcolor: le regole del PODIO
     // (0,4,1 / 0,5,1) restano più forti, quindi i numeri 1-2-3 tengono il metallo.
@@ -4970,13 +5065,24 @@ function modalXfadeMark(bd){
 // (0.08s), così chi esce sparisce solo quando chi entra è già pieno.
 var MODAL_XOUT_MS = 130;
 // Marca la modale che ESCE in un passaggio, quando il suo nodo VIVE in pagina (la
-// scheda personaggio): resta dipinta e piena, inerte, finché la nuova non è entrata.
-// Senza questo, tolto `.active` la scheda spariva subito e restava un lampo con le
-// card visibili dietro il velo (segnalato dall'utente sulla v13.97).
+// scheda personaggio): perde il velo e tiene il solo box, che dissolve sopra la
+// modale nuova. Senza questo, tolto `.active` la scheda spariva subito e restava un
+// lampo con le card visibili dietro il velo (segnalato dall'utente sulla v13.97).
 function modalXfadeOut(bd){
   if (!bd) return;
   bd.classList.add('xout');
-  setTimeout(function(){ bd.classList.remove('xout'); }, MODAL_XOUT_MS);
+  setTimeout(function(){
+    // ⚠️ Togliere `.xout` da sola faceva RICOMPARIRE il velo: senza quella classe la
+    // scheda torna a valere la sua transizione (opacity 0.2s) e, non essendo più
+    // `.active`, sfumava da 1 a 0 - un SECONDO velo sopra quello della nota, quindi
+    // il fondo si scuriva e tornava (misurato: 226.2 → 218.7 → 226.2 in tema chiaro,
+    // 17.7 → 16.4 → 17.7 in scuro). Con `.no-anim` + un reflow lo stato nascosto si
+    // fissa di scatto, e togliendo `.no-anim` non cambia più nessun valore.
+    bd.classList.add('no-anim');
+    bd.classList.remove('xout');
+    void bd.offsetWidth;
+    bd.classList.remove('no-anim');
+  }, MODAL_XOUT_MS);
 }
 function activateStdModal(bd) {
   document.body.appendChild(bd); void bd.offsetWidth;
@@ -4999,10 +5105,10 @@ function dismissStdModal(bd, mode) {
   bd._out = true;
   bd.removeAttribute('id'); bd.classList.remove('dyn-modal');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  // 'fast' = passaggio a un'altra modale: la vecchia NON si dissolve e non sparisce
-  // subito (v14.00). Resta piena e inerte per MODAL_XOUT_MS, mentre la nuova le
-  // dissolve SOPRA: così il velo composito non scende mai (era lo sfarfallio della
-  // v13.86) e non esiste un fotogramma senza finestra (era il lampo della v13.97).
+  // 'fast' = passaggio a un'altra modale: la vecchia perde il VELO e tiene il solo
+  // box, che dissolve SOPRA la nuova (v14.10). Così il velo in scena è sempre uno e
+  // sempre pieno - né schiarito (v13.86) né raddoppiato (v14.00) - e non esiste un
+  // fotogramma senza finestra (v13.97). Il nodo esce dopo MODAL_XOUT_MS.
   if (mode === 'fast') {
     modalXfadeWindow(); bd.classList.add('xout');
     setTimeout(function(){ bd.remove(); }, MODAL_XOUT_MS);
@@ -7538,7 +7644,12 @@ var SITE_FLAG_ITEMS = [
   { k:'spot', it:'Riflettore', en:'Spotlight', cfg:true, noMob:true }, // config unica: mai nella tab Mobile (v13.18)
   { k:'press', it:'Incisione', en:'Engraving', cfg:true },
   { k:'vig', it:'Alone sfumato', en:'Soft halo', cfg:true },
-  { k:'podium', it:'Effetto podio', en:'Podium effect', cfg:true }
+  { k:'podium', it:'Effetto podio', en:'Podium effect', cfg:true },
+  // ⚠️ Etichetta CORTA per forza: la colonna della label è 132px a 320px in
+  // Modalità XL, e 'Colore al passaggio' misura 147px col font reale (andrebbe a
+  // capo raddoppiando l'altezza della riga). 'Al passaggio' sta in 96px, 'Hover
+  // color' in 92px. Config unica per i due dispositivi, come il riflettore.
+  { k:'hov', it:'Al passaggio', en:'Hover color', cfg:true, noMob:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -7662,6 +7773,25 @@ var FX_KNOBS = {
     { p:'llum', t:'num', step:0.01, th:'l', dep:'on', it:'Luminosità di riferimento', en:'Reference lightness',
       nit:'Il massimo è il valore verificato AA: sopra, su fondo chiaro il numero scenderebbe sotto 3:1.',
       nen:'The maximum is the AA-verified value: above it the number would drop under 3:1 on a light background.' }
+  ],
+  // hov (v14.10): fondo della card sotto il puntatore. Le tre manopole sono per
+  // TEMA, nell'ordine chiesto dall'utente (opacità, saturazione, luminosità).
+  hov: [
+    { p:'on', t:'bool', it:'Attiva', en:'Enable' },
+    { p:'op_d', t:'num', step:0.01, th:'d', dep:'on', it:'Opacità', en:'Opacity',
+      nit:'Quanto si accende il fondo della card sotto il puntatore. Alzandola, i testi più tenui perdono contrasto: il valore consigliato è il predefinito.',
+      nen:'How much the card background lights up under the pointer. Raising it costs contrast on the faintest texts: the default is the recommended value.' },
+    { p:'sat_d', t:'num', step:0.05, th:'d', dep:'on', it:'Saturazione', en:'Saturation',
+      nit:'Quanto è carica la tinta di famiglia. A zero il fondo diventa grigio.',
+      nen:'How rich the family tint is. At zero the background turns grey.' },
+    { p:'lum_d', t:'num', step:0.02, th:'d', dep:'on', it:'Luminosità', en:'Brightness' },
+    { p:'op_l', t:'num', step:0.01, th:'l', dep:'on', it:'Opacità', en:'Opacity',
+      nit:'Quanto si accende il fondo della card sotto il puntatore. Alzandola, i testi più tenui perdono contrasto: il valore consigliato è il predefinito.',
+      nen:'How much the card background lights up under the pointer. Raising it costs contrast on the faintest texts: the default is the recommended value.' },
+    { p:'sat_l', t:'num', step:0.05, th:'l', dep:'on', it:'Saturazione', en:'Saturation',
+      nit:'Quanto è carica la tinta di famiglia. A zero il fondo diventa grigio.',
+      nen:'How rich the family tint is. At zero the background turns grey.' },
+    { p:'lum_l', t:'num', step:0.02, th:'l', dep:'on', it:'Luminosità', en:'Brightness' }
   ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
@@ -8010,7 +8140,7 @@ function fxPreviewBlock(o){
   function paint(){
     // Tutte le config dalla VARIANTE in modifica (V), non dalla piattaforma
     // corrente: aprendo la tab Mobile da desktop l'anteprima mostra la mobile.
-    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'), nu = V('nums');
+    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'), nu = V('nums'), hv = V('hov');
     panes.forEach(function(pn){
       pn.el.style.backgroundImage = ((key === 'vig' || all) && vOn('vig')) ? fxVigBg(v, pn.light) : 'none';
       // ⚠️ Respiro DINAMICO nell'editor del bagliore (v12.95). Un padding fisso non
@@ -8030,8 +8160,27 @@ function fxPreviewBlock(o){
     cards.forEach(function(rec){
       var cc = fxPreviewCc(rec.light);
       // 'hot' = la card è resa in stato hover (fondo acceso, bagliori attivi).
-      var hot = all ? true : (key === 'glow' ? (g.all === true || rec.first) : key === 'spot');
-      rec.el.style.background = 'rgba(' + cc + ',' + (rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10)) + ')';
+      // Nell'editor 'Al passaggio' si mostra UNA card accesa e una a riposo: è il
+      // confronto che serve, essendo l'effetto proprio la differenza fra i due stati.
+      // ⚠️ Per 'hov' la condizione è SOLO `rec.first`: riusare quella del bagliore
+      // significherebbe ereditarne la manopola 'Su tutte le card', che con `all`
+      // acceso rende accese entrambe le card - e l'anteprima perderebbe proprio il
+      // confronto acceso/a riposo che serve a regolare questo effetto.
+      var hot = all ? true
+        : key === 'hov' ? rec.first
+        : key === 'glow' ? (g.all === true || rec.first)
+        : key === 'spot';
+      // Fondo della card: a card accesa e con l'effetto attivo vale la formula
+      // condivisa con la pagina (stessa stringa CSS, così non possono divergere);
+      // altrimenti gli alpha storici.
+      var hovOn = hot && vOn('hov');
+      var cardA = rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10);
+      var cardTint = cc;
+      if (hovOn) {
+        cardA = fxTh(hv, 'op', rec.light);
+        cardTint = ccOklchAdjust(cc, fxTh(hv, 'lum', rec.light), fxTh(hv, 'sat', rec.light));
+      }
+      rec.el.style.background = hovOn ? fxHovBg(hv, rec.light, cc) : 'rgba(' + cc + ',' + cardA + ')';
       rec.strip.style.background = 'rgba(' + cc + ',0.85)';
       var gOn = vOn('glow') && hot;
       rec.strip.style.boxShadow = (gOn && g.pl) ? fxGlowInner(g, rec.light, cc) : 'none';
@@ -8056,10 +8205,13 @@ function fxPreviewBlock(o){
       // lo stimavo a card ferma e nell'editor del bagliore, dove le card sono
       // accese, il conto risultava sbagliato di quanto bastava a restare sotto
       // soglia (4.19:1 / 4.35:1, rilevati da axe).
+      // ⚠️ Con l'effetto 'Al passaggio' attivo lo strato della card non è più la
+      // tinta pura a un alpha noto: è la tinta riscritta in OKLCH. Si compone con
+      // `cardTint`/`cardA` calcolati sopra, o il conto AA sarebbe su un fondo che
+      // non esiste (stessa lezione della v12.75, un passo più in là).
       var pillBgHex = (function(){
-        var t = cc.split(',').map(Number);
+        var t = cardTint.split(',').map(Number);
         var base = rec.light ? [245,245,245] : [38,38,38];
-        var cardA = rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10);
         var pillA = rec.light ? 0.10 : 0.26;
         var over = function(a, alpha, b){ return a.map(function(v, i){ return v * alpha + b[i] * (1 - alpha); }); };
         return ccTripletToHex(over(t, pillA, over(t, cardA, base)).map(Math.round).join(','));
@@ -8088,7 +8240,7 @@ function fxPreviewBlock(o){
       }
       rec.desc.textContent = (key === 'spot' || (all && vOn('spot')))
         ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
-        : key === 'glow'
+        : (key === 'glow' || key === 'hov')
           ? (hot ? (it ? 'Card attiva (hover)' : 'Active card (hover)') : (it ? 'Card a riposo' : 'Resting card'))
           : (it ? 'Anteprima' : 'Preview');
     });
