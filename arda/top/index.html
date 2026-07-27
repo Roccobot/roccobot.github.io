@@ -707,7 +707,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    di .rank-num si spegne qui: con testo trasparente intorbidirebbe il metallo. */
 /* Dalla v12.53 TUTTE le regole del podio (clip, gradienti, ombra, filtro) sono
    INIETTATE da injectFxRules: l'effetto è regolabile (intensità del metallo =
-   contrast, luminosità = brightness) e i gradienti vivono in PODIUM_GRADS,
+   contrast, luminosità = brightness) e i gradienti li genera fxPodiumGrad (v13.28),
    fonte unica condivisa con l'anteprima. In tema chiaro i metalli v12.28-52
    erano stati scuriti troppo (segnalato dall'utente): riequilibrati. */
 /* NB: sfondo card e bordino usano rgba(var(--ccrgb),alpha). Il Nu Html Checker
@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.18</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.28</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2513,7 +2513,11 @@ var SITE_FLAGS_DEFAULT = {
   // sono PER TEMA (_d/_l): i metalli hanno gradienti diversi nei due temi, quindi
   // la stessa coppia contrasto/luminosità non poteva servirli entrambi bene
   // (motivo per cui l'utente teneva l'effetto spento).
-  podium:{ on:true, int_d:1, int_l:1, lum_d:1, lum_l:1 },
+  // I default di sat/top/rifl riproducono la 'proposta A' del mockup (scelta
+  // utente): trio coerente col lampo. L'asimmetria storica (lampo solo
+  // sull'argento) non è riproducibile con manopole condivise, per costruzione.
+  podium:{ on:true, int_d:1, int_l:1, lum_d:1, lum_l:1,
+           sat_d:1, sat_l:1, top_d:0.7, top_l:0.7, rifl_d:0.8, rifl_l:0.8 },
   // nums (v12.63): colore del numero di posizione, derivato dalla tinta della
   // card in OKLCH. `uni` = luminosità UNIFORME per tutte le famiglie (alla L di
   // riferimento) invece della luminosità propria di ogni tinta; `dsat`/`dlum` =
@@ -2532,7 +2536,9 @@ var FX_RANGE = {
          aamp_d:[6,60], aamp_l:[6,60], aint_d:[0.05,0.6], aint_l:[0.05,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
   vig:{ int:[0.05,0.6], start:[20,70] },
-  podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4] },
+  podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4],
+           sat_d:[0.3,1.5], sat_l:[0.3,1.5], top_d:[0,1], top_l:[0,1],
+           rifl_d:[0,1], rifl_l:[0,1] },
   // ⚠️ I limiti delle L di `nums` NON sono estetici ma di ACCESSIBILITÀ: sono i
   // valori misurati su tutte le 15 famiglie, a qualunque cromia, oltre i quali il
   // numero scenderebbe sotto 3:1 sul fondo della card (soglia AA per il testo
@@ -2792,14 +2798,55 @@ function fxPressShadow(light){
 // injectFxRules, anteprima via inline). In tema chiaro riequilibrati in v12.53
 // (i valori v12.28-52 erano troppo scuri, segnalato dall'utente): fermate chiare
 // per il lustro + fermate scure come ancore di leggibilità (testo grande, 3:1).
-var PODIUM_GRADS = {
-  1: { dark:'linear-gradient(168deg,#fdf3d4 4%,#e6c979 26%,#a67c34 62%,#d8b25c 84%,#8c6526 100%)',
-       light:'linear-gradient(168deg,#e8c15e 4%,#c89a34 30%,#8a6420 62%,#d9b254 84%,#7a5817 100%)' },
-  2: { dark:'linear-gradient(168deg,#ffffff 2%,#f2f5f9 14%,#c8ced7 34%,#9ba3ae 46%,#ffffff 58%,#dae0e8 72%,#b2b9c4 86%,#8d949f 100%)',
-       light:'linear-gradient(168deg,#e8ecf1 2%,#a9b1bd 16%,#5d646e 38%,#d0d6de 52%,#6f7883 74%,#454b54 100%)' },
-  3: { dark:'linear-gradient(168deg,#f4d3b4 4%,#d79a63 26%,#9c6435 62%,#c98a55 84%,#7d4a22 100%)',
-       light:'linear-gradient(168deg,#d99a5b 4%,#b5763a 30%,#7d4e20 62%,#cc8d4f 84%,#6d431b 100%)' }
+// ── PODIO PARAMETRICO (v13.28, richiesta utente) ──────────────────────────────
+// I tre gradienti non sono più scritti a mano: li genera fxPodiumGrad da una
+// IDENTITÀ fissa per metallo (tinta, saturazione base, scheletro di luminosità,
+// derivati dalla 'proposta A' del mockup approvato) più tre manopole CONDIVISE
+// dal trio — condizione posta dall'utente: controlli unici e stili sempre
+// coerenti, garantito per costruzione (una sola formula, tre tinte).
+//  • `rifl` (riflesso): lampo speculare a metà corsa — la banda che prima aveva
+//    solo l'argento. La saturazione del lampo SALE con la manopola, in modo
+//    PROPORZIONALE alla saturazione propria del metallo: i metalli caldi hanno
+//    riflessi caldi, il quasi-grigio resta quasi-grigio (una spinta assoluta
+//    rendeva blu il lampo dell'argento chiaro: misurato e scartato).
+//  • `top` (bordo luminoso): il bordo chiaro in cima al glifo, stessa logica.
+//  • `sat` (saturazione): moltiplica la saturazione base (B del mockup ≈ sat
+//    alta; C ≈ top alto). A manopole a zero i metalli degradano a versioni
+//    piatte ma corrette.
+// L'ultima fermata (ancora scura) NON dipende dalle manopole: tiene la
+// definizione del bordo del glifo e il contrasto AA ai livelli storici.
+var PODIUM_IDENT = {
+  1: { h:44,
+       d:{ s:0.70, L:[0.66,0.45,0.45,0.43,0.61,0.35], topMax:0.92, flashMax:0.92 },
+       l:{ s:0.66, L:[0.63,0.46,0.32,0.33,0.59,0.25], topMax:0.84, flashMax:0.84 } },
+  2: { h:215,
+       d:{ s:0.13, L:[0.90,0.70,0.66,0.72,0.86,0.59], topMax:1.00, flashMax:1.00 },
+       l:{ s:0.10, L:[0.70,0.39,0.38,0.44,0.83,0.30], topMax:0.95, flashMax:0.86 } },
+  3: { h:27,
+       d:{ s:0.55, L:[0.64,0.43,0.43,0.36,0.57,0.31], topMax:0.88, flashMax:0.88 },
+       l:{ s:0.58, L:[0.61,0.44,0.31,0.34,0.54,0.24], topMax:0.82, flashMax:0.82 } }
 };
+// Ruoli delle 7 fermate: bordo in cima, lume, corpo, LAMPO, ombra, ripresa, ancora.
+var PODIUM_POS = [3, 18, 40, 54, 70, 86, 100];
+function fxPodiumGrad(n, cfg, light){
+  var idn = PODIUM_IDENT[n][light ? 'l' : 'd'], h = PODIUM_IDENT[n].h / 360;
+  var s0 = Math.min(1, idn.s * fxTh(cfg, 'sat', light));
+  var top = fxTh(cfg, 'top', light), rifl = fxTh(cfg, 'rifl', light);
+  var L = idn.L;
+  function lerp(a, b, t){ return a + (b - a) * t; }
+  var st = [
+    [Math.min(1, s0 * (1 + 1.8 * top)), lerp(L[0], idn.topMax, top)],
+    [s0, L[0]],
+    [s0, L[1]],
+    [Math.min(1, s0 * (1 + 2.2 * rifl)), lerp(L[2], idn.flashMax, rifl)],
+    [s0, L[3]],
+    [s0, L[4]],
+    [s0, L[5]]
+  ];
+  return 'linear-gradient(168deg,' + st.map(function(q, i){
+    return ccHslToHex(h, q[0], q[1]) + ' ' + PODIUM_POS[i] + '%';
+  }).join(',') + ')';
+}
 // Filtro del podio dalle manopole: contrast = 'intensità del metallo' (aumenta lo
 // stacco tra lumi e ombre del gradiente), brightness = luminosità complessiva.
 // Per TEMA dalla v12.76: i metalli hanno gradienti diversi in chiaro e scuro,
@@ -2872,8 +2919,8 @@ function injectFxRules(){
     // per tema, e senza ripeterlo qui il tema chiaro erediterebbe quello scuro.
     css.push('html[data-theme="light"].fx-podium .rank-item.vis-1 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-2 .rank-num,html[data-theme="light"].fx-podium .rank-item.vis-3 .rank-num{-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 1px rgba(0,0,0,0.22);filter:' + fxPodiumFilter(po, true) + '}');
     [1, 2, 3].forEach(function(n){
-      css.push('html.fx-podium .rank-item.vis-' + n + ' .rank-num{background-image:' + PODIUM_GRADS[n].dark + '}');
-      css.push('html.fx-podium[data-theme="light"] .rank-item.vis-' + n + ' .rank-num{background-image:' + PODIUM_GRADS[n].light + '}');
+      css.push('html.fx-podium .rank-item.vis-' + n + ' .rank-num{background-image:' + fxPodiumGrad(n, po, false) + '}');
+      css.push('html.fx-podium[data-theme="light"] .rank-item.vis-' + n + ' .rank-num{background-image:' + fxPodiumGrad(n, po, true) + '}');
     });
   }
   if (flagOn('glow')) {
@@ -7229,10 +7276,22 @@ var FX_KNOBS = {
       nit:'Aumenta lo stacco tra lumi e ombre del gradiente.',
       nen:'Raises the contrast between the gradient highlights and shadows.' },
     { p:'lum_d', t:'num', step:0.02, th:'d', dep:'on', it:'Luminosità', en:'Brightness' },
+    { p:'rifl_d', t:'num', step:0.02, th:'d', dep:'on', it:'Riflesso', en:'Glint',
+      nit:'Il lampo speculare a metà del numero, uguale per i tre metalli.',
+      nen:'The specular flash across the digit, shared by all three metals.' },
+    { p:'top_d', t:'num', step:0.02, th:'d', dep:'on', it:'Bordo luminoso', en:'Edge light',
+      nit:'Il bordo chiaro in cima al glifo.', nen:'The bright edge at the top of the glyph.' },
+    { p:'sat_d', t:'num', step:0.02, th:'d', dep:'on', it:'Saturazione', en:'Saturation' },
     { p:'int_l', t:'num', step:0.02, th:'l', dep:'on', it:'Intensità del metallo', en:'Metal intensity',
       nit:'Aumenta lo stacco tra lumi e ombre del gradiente.',
       nen:'Raises the contrast between the gradient highlights and shadows.' },
-    { p:'lum_l', t:'num', step:0.02, th:'l', dep:'on', it:'Luminosità', en:'Brightness' }
+    { p:'lum_l', t:'num', step:0.02, th:'l', dep:'on', it:'Luminosità', en:'Brightness' },
+    { p:'rifl_l', t:'num', step:0.02, th:'l', dep:'on', it:'Riflesso', en:'Glint',
+      nit:'Il lampo speculare a metà del numero, uguale per i tre metalli.',
+      nen:'The specular flash across the digit, shared by all three metals.' },
+    { p:'top_l', t:'num', step:0.02, th:'l', dep:'on', it:'Bordo luminoso', en:'Edge light',
+      nit:'Il bordo chiaro in cima al glifo.', nen:'The bright edge at the top of the glyph.' },
+    { p:'sat_l', t:'num', step:0.02, th:'l', dep:'on', it:'Saturazione', en:'Saturation' }
   ],
   // `th` = manopola valida solo per un TEMA ('d' scuro, 'l' chiaro): la
   // sotto-modale mostra le tab Chiaro/Scuro e filtra le righe. Senza `th` la
@@ -7636,7 +7695,7 @@ function showFxConfigEditor(key, sfx, onDone){
       // Numero: metallo del podio nell'editor del podio, altrimenti la tinta
       // famiglia contrastata (come in pagina, v12.53).
       if (key === 'podium' && vOn('podium')) {
-        rec.num.style.backgroundImage = PODIUM_GRADS[rec.metal][rec.light ? 'light' : 'dark'];
+        rec.num.style.backgroundImage = fxPodiumGrad(rec.metal, po, rec.light);
         rec.num.style.webkitBackgroundClip = 'text';
         rec.num.style.backgroundClip = 'text';
         rec.num.style.color = 'transparent';
