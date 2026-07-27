@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.14.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse.
+// @version         2.15.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto M lo accende e lo spegne.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -209,6 +209,20 @@
     // (browser vecchi) resta il semplice align-items:center: nessun peggioramento.
     '.image-info>b,.image-info>span{text-box-trim:trim-both;text-box-edge:cap alphabetic;transform:translateY(' + OVERLAY_NUDGE_Y + 'px)}' +
     '.ii-ext,.ii-zoom{font-weight:700}' +
+    // Trascinamento: la manina compare SOLO quando c'e' davvero da spostarsi
+    '#dv-wrap.dv-pan>img,#dv-wrap.dv-pan>svg{cursor:grab}' +
+    '#dv-wrap.dv-trascina>img,#dv-wrap.dv-trascina>svg{cursor:grabbing}' +
+    // Navigatore in alto a destra: vista d'insieme + riquadro della parte a schermo
+    '#dv-mini{position:fixed;top:1rem;right:1rem;z-index:11;display:none;padding:4px;border-radius:8px;' +
+      'background:#000000b8;box-shadow:0 2px 10px rgba(0,0,0,.45);cursor:pointer;' +
+      'user-select:none;-webkit-user-select:none;touch-action:none}' +
+    '#dv-mini .dv-mini-box{position:relative;overflow:hidden;border-radius:4px;' +
+      'background-position:0 0,5px 5px;background-size:10px 10px;' +
+      'background-image:linear-gradient(45deg,' + grid[0] + ' 25%,transparent 25%,transparent 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%),' +
+      'linear-gradient(45deg,' + grid[0] + ' 25%,' + grid[1] + ' 25%,' + grid[1] + ' 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%)}' +
+    '#dv-mini img,#dv-mini svg{display:block;width:100%;height:100%;pointer-events:none}' +
+    '#dv-mini .dv-mini-rett{position:absolute;box-sizing:border-box;border:2px solid #FF4E4E;' +
+      'pointer-events:none;border-radius:2px}' +
     // messaggio momentaneo in basso (conferma del verso della rotella)
     '#dv-toast{position:fixed;left:50%;bottom:2rem;transform:translateX(-50%);z-index:12;pointer-events:none;' +
       'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
@@ -326,6 +340,7 @@
       img.style.setProperty('image-rendering',
         (!svgMedia && scaleMode === 'phys' && scale >= realScale - 1e-6) ? 'pixelated' : 'auto', 'important');
       aggiornaZoom();
+      aggiornaNavigatore();
     }
 
     // Livello di zoom, SEMPRE visibile, nella stessa riga del riquadro info.
@@ -417,6 +432,9 @@
     wrap.addEventListener('click', function (e) {
       if (e.button !== 0 || e.ctrlKey || e.metaKey) return;
       if (daGesture) { daGesture = false; return; }  // era la coda di un pinch: ignora
+      // era la coda di un TRASCINAMENTO: il dito/mouse si e' mosso, quindi non
+      // e' un clic e non deve alternare adattato/reale
+      if (hoTrascinato) { hoTrascinato = false; e.preventDefault(); e.stopImmediatePropagation(); return; }
       // col pannello aperto il clic "fuori" lo chiude e basta: non deve anche
       // far scattare l'alternanza adattato/reale sotto di esso
       if (pannelloAperto) { e.preventDefault(); e.stopImmediatePropagation(); chiudiPannello(false); return; }
@@ -580,6 +598,155 @@
     }, { passive: false });
     wrap.addEventListener('touchend', function (e) { if (e.touches.length < 2) d0 = 0; }, { passive: true });
 
+    // ═══════════════════════════════════════════════════════════════════
+    //  SPOSTARSI DENTRO UN'IMMAGINE PIU' GRANDE DELLA VISTA
+    // ═══════════════════════════════════════════════════════════════════
+    // ⚠️ Il "niente trascinamento" era una scelta di progetto, non una
+    // dimenticanza: la rotella scorreva e bastava. Dalla 2.15 la rotella
+    // zooma, quindi quel presupposto e' caduto e il trascinamento serve.
+
+    function eccedeVista() {
+      return wrap.scrollWidth > wrap.clientWidth + 1 || wrap.scrollHeight > wrap.clientHeight + 1;
+    }
+    var trascin = null, hoTrascinato = false, ditaGiu = 0;
+
+    function aggiornaCursore() {
+      wrap.classList.toggle('dv-pan', eccedeVista());
+      wrap.classList.toggle('dv-trascina', !!trascin);
+    }
+
+    wrap.addEventListener('pointerdown', function (e) {
+      ditaGiu++;
+      if (ditaGiu > 1) { trascin = null; aggiornaCursore(); return; }   // due dita: e' un pinch
+      if (e.button !== 0 || !eccedeVista()) return;
+      trascin = { x: e.clientX, y: e.clientY, sl: wrap.scrollLeft, st: wrap.scrollTop, id: e.pointerId };
+      hoTrascinato = false;
+      try { wrap.setPointerCapture(e.pointerId); } catch (err) {}
+      aggiornaCursore();
+    });
+    wrap.addEventListener('pointermove', function (e) {
+      if (!trascin || e.pointerId !== trascin.id) return;
+      const dx = e.clientX - trascin.x, dy = e.clientY - trascin.y;
+      // soglia: sotto i 4px e' un clic con la mano ferma, non un trascinamento
+      if (!hoTrascinato && Math.abs(dx) + Math.abs(dy) < 4) return;
+      hoTrascinato = true;
+      e.preventDefault();
+      wrap.scrollLeft = trascin.sl - dx;
+      wrap.scrollTop = trascin.st - dy;
+    });
+    function fineTrascinamento(e) {
+      ditaGiu = Math.max(0, ditaGiu - 1);
+      if (!trascin || (e && e.pointerId !== trascin.id)) return;
+      try { wrap.releasePointerCapture(trascin.id); } catch (err) {}
+      trascin = null;
+      aggiornaCursore();
+    }
+    wrap.addEventListener('pointerup', fineTrascinamento);
+    wrap.addEventListener('pointercancel', fineTrascinamento);
+
+    // ── Navigatore (minimappa) in alto a destra ────────────────────────
+    // Compare da se' quando l'immagine esce dalla vista, cioe' quando c'e'
+    // davvero qualcosa da navigare. Si costruisce al primo bisogno.
+    const MINI_LATO = 190;               // lato massimo della vista d'insieme
+    var mini = null, miniBox = null, miniRett = null, miniVisibile = false;
+    var navigatoreAcceso = true;
+    try { navigatoreAcceso = GM_getValue('dv-minimappa', '1') !== '0'; } catch (e) {}
+
+    function creaNavigatore() {
+      if (mini) return;
+      const largo = natW >= natH;
+      const mw = Math.round(largo ? MINI_LATO : MINI_LATO * natW / natH);
+      const mh = Math.round(largo ? MINI_LATO * natH / natW : MINI_LATO);
+      mini = creaEl('div');
+      mini.id = 'dv-mini';
+      mini.title = 'Navigatore: trascina il riquadro per spostarti (tasto M per nasconderlo)';
+      miniBox = creaEl('div');
+      miniBox.setAttribute('class', 'dv-mini-box');
+      miniBox.style.width = mw + 'px';
+      miniBox.style.height = mh + 'px';
+      // vista d'insieme: per il vettoriale un clone (esatto anche senza misure
+      // dichiarate), per il raster lo stesso file, che e' gia' nella cache
+      if (svgMedia) {
+        const c = svgMedia.cloneNode(true);
+        c.removeAttribute('style');
+        c.setAttribute('width', String(mw));
+        c.setAttribute('height', String(mh));
+        miniBox.appendChild(c);
+      } else {
+        const im = creaEl('img');
+        im.setAttribute('src', location.href);
+        im.setAttribute('alt', '');
+        miniBox.appendChild(im);
+      }
+      miniRett = creaEl('div');
+      miniRett.setAttribute('class', 'dv-mini-rett');
+      miniBox.appendChild(miniRett);
+      mini.appendChild(miniBox);
+      (document.body || document.documentElement).appendChild(mini);
+
+      // clic e trascinamento sulla minimappa: la vista segue il puntatore
+      var trascinaMini = false;
+      function portaVista(e) {
+        const r = miniBox.getBoundingClientRect();
+        const fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+        const fy = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+        wrap.scrollLeft = fx * natW * scale - wrap.clientWidth / 2;
+        wrap.scrollTop = fy * natH * scale - wrap.clientHeight / 2;
+        aggiornaNavigatore();
+      }
+      mini.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        trascinaMini = true;
+        try { mini.setPointerCapture(e.pointerId); } catch (err) {}
+        portaVista(e);
+      });
+      mini.addEventListener('pointermove', function (e) {
+        if (!trascinaMini) return;
+        e.preventDefault(); e.stopPropagation();
+        portaVista(e);
+      });
+      function fineMini(e) {
+        if (!trascinaMini) return;
+        trascinaMini = false;
+        try { mini.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+      mini.addEventListener('pointerup', fineMini);
+      mini.addEventListener('pointercancel', fineMini);
+      // il clic sulla minimappa non deve arrivare sotto (alternanza adattato/reale)
+      mini.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); }, true);
+      mini.addEventListener('wheel', function (e) { e.stopPropagation(); }, { capture: true });
+    }
+
+    function aggiornaNavigatore() {
+      const serve = navigatoreAcceso && eccedeVista();
+      if (!serve) {
+        if (mini && miniVisibile) { mini.style.display = 'none'; miniVisibile = false; }
+        aggiornaCursore();
+        return;
+      }
+      creaNavigatore();
+      if (!miniVisibile) { mini.style.display = 'block'; miniVisibile = true; }
+      const iw = natW * scale, ih = natH * scale;
+      const vw = wrap.clientWidth, vh = wrap.clientHeight;
+      const r = miniBox.getBoundingClientRect();
+      // quanta parte dell'immagine si vede, e da dove comincia
+      const fw = Math.min(1, vw / iw), fh = Math.min(1, vh / ih);
+      const fx = iw > vw ? Math.max(0, Math.min(1 - fw, wrap.scrollLeft / iw)) : 0;
+      const fy = ih > vh ? Math.max(0, Math.min(1 - fh, wrap.scrollTop / ih)) : 0;
+      miniRett.style.left = (fx * r.width) + 'px';
+      miniRett.style.top = (fy * r.height) + 'px';
+      miniRett.style.width = (fw * r.width) + 'px';
+      miniRett.style.height = (fh * r.height) + 'px';
+      aggiornaCursore();
+    }
+
+    // lo scorrimento (barre, trascinamento, shift+rotella) muove il riquadro rosso
+    var attesaFrame = 0;
+    wrap.addEventListener('scroll', function () {
+      if (attesaFrame) return;
+      attesaFrame = requestAnimationFrame(function () { attesaFrame = 0; aggiornaNavigatore(); });
+    }, { passive: true });
+
     // ── Tasto I: inverte il verso della rotella, e la scelta resta memorizzata ──
     function toast(testo) {
       let t = document.getElementById('dv-toast');
@@ -597,6 +764,14 @@
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.key === 'm' || e.key === 'M') {         // navigatore acceso/spento
+        e.preventDefault();
+        navigatoreAcceso = !navigatoreAcceso;
+        try { GM_setValue('dv-minimappa', navigatoreAcceso ? '1' : '0'); } catch (err) {}
+        aggiornaNavigatore();
+        toast(navigatoreAcceso ? 'Navigatore acceso' : 'Navigatore spento');
+        return;
+      }
       if (e.key !== 'i' && e.key !== 'I') return;
       e.preventDefault();
       versoInvertito = !versoInvertito;

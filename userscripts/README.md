@@ -345,8 +345,23 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   spazio della scheda (`contain`), ma **non supera mai la dimensione reale** — dove
   "reale" significa **1:1 con i pixel fisici** (DPR ignorato: su schermi HiDPI la
   dimensione reale in CSS px è `larghezza naturale / devicePixelRatio`).
-- **Niente drag/move.** L'immagine non si trascina; quando è ingrandita oltre la vista
-  si scorre (rotella/trackpad/barre), non si trascina.
+- **Trascinamento per spostarsi (dalla 2.15).** Quando l'ingrandimento porta l'immagine
+  oltre la vista si trascina con il mouse (o con un dito) per spostare la visuale, e il
+  cursore diventa una manina. Compare **solo** quando c'è davvero da spostarsi.
+  - Storico: fino alla 2.14 il trascinamento era **escluso di proposito**, perché la
+    rotella scorreva e bastava. Dalla 2.12 la rotella zooma, quindi quel presupposto è
+    caduto.
+  - Un trascinamento **non** fa scattare l'alternanza adattato/reale del clic: sotto i
+    4px di movimento è un clic, sopra è un trascinamento.
+  - **Shift+rotella** e le barre restano comunque disponibili.
+- **Navigatore (dalla 2.15).** In alto a destra compare una vista d'insieme dell'immagine
+  con un **riquadro rosso** (`#FF4E4E`) che segna la porzione a schermo e lo segue mentre
+  ci si sposta. Ci si può **cliccare e trascinare dentro** per saltare altrove: il punto
+  toccato finisce al centro della vista. Appare solo quando l'immagine eccede la vista, e
+  il tasto **`M`** lo accende o lo spegne, con la scelta memorizzata.
+  - La vista d'insieme è il file stesso (già in cache) per le immagini raster, e un clone
+    del `<svg>` per i vettoriali, così le proporzioni restano esatte anche quando l'SVG
+    non dichiara le proprie misure. Si costruisce al primo bisogno, non al caricamento.
 - **Clic (desktop) = alterna** tra **adattato** e **reale (100%)**, centrando sul punto
   cliccato.
 - **Zoom solo sull'immagine (override totale).** Qualsiasi gesto di zoom — **ctrl+rotella**
