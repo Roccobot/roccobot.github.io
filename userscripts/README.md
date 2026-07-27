@@ -354,14 +354,15 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - Un trascinamento **non** fa scattare l'alternanza adattato/reale del clic: sotto i
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
-- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio, con le
-  cose che servono qui e che il browser non offre:
-  - **Zoom**: adatta alla vista, 100%, 200%, 400% (centrati sul punto cliccato).
-  - **Copia**: l'immagine come PNG, l'indirizzo e, sugli SVG, **il vettoriale vero**
-    (`image/svg+xml`, che gli appunti accettano: verificato).
-  - **Salva**: l'immagine, e sugli SVG le due voci del pannello (esporta PNG a un DPI,
-    salva l'SVG ripulito).
-  - **Vista**: navigatore acceso o spento, verso della rotella, stampa.
+- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di otto
+  voci: **Copia immagine**, **Copia URL immagine**, **Salva immagine**, separatore,
+  **Adatta alla vista**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
+  cliccato). L'elenco è identico su raster e su SVG; cambia il **contenuto** di due voci:
+  - sugli SVG **Copia immagine** produce un raster a **72 DPI**, perché un vettoriale
+    pixel propri non ne ha. Vale la convenzione del pannello di esportazione
+    (`px = misura nominale × DPI / 96`), quindi un SVG 640×360 finisce negli appunti a
+    480×270. Si cambia con la costante `DPI_COPIA`.
+  - sugli SVG **Salva immagine** salva il file originale intatto.
   - ⚠️ **Un menu proprio sostituisce quello del browser**, non si affianca, e quello
     nativo non è richiamabile da JavaScript: si perde **"Ispeziona"**, che non è
     reimpiazzabile. Via di fuga: **`shift` + tasto destro** lascia passare il menu del
