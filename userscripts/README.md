@@ -355,7 +355,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
 - **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di otto
-  voci: **Copia immagine**, **Copia URL immagine**, **Salva immagine**, separatore,
+  voci: **Copia immagine**, **Copia URL immagine**, **Salva immagine...**, separatore,
   **Adatta alla vista**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
   cliccato). L'elenco è identico su raster e su SVG; cambia il **contenuto** di due voci:
   - sugli SVG **Copia immagine** produce un raster a **96 DPI**, cioè alla risoluzione
@@ -363,7 +363,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     pannello di esportazione (`px = misura nominale × DPI / 96`), quindi la copia è 1:1
     con la dimensione nominale: un SVG 640×360 si copia a 640×360. Si cambia con la
     costante `DPI_COPIA`.
-  - sugli SVG **Salva immagine** salva il file originale intatto.
+  - sugli SVG **Salva immagine...** salva il file originale intatto.
   - ⚠️ **Un menu proprio sostituisce quello del browser**, non si affianca, e quello
     nativo non è richiamabile da JavaScript: si perde **"Ispeziona"**, che non è
     reimpiazzabile. Via di fuga: **`shift` + tasto destro** lascia passare il menu del
