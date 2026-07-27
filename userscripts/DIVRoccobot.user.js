@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.17.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio (zoom, copia immagine o SVG o indirizzo, salva, esporta, navigatore, verso della rotella, stampa); SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito.
+// @version         2.17.1
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio, con otto voci: copia immagine, copia URL immagine, salva immagine, poi adatta alla vista, 100%, 200% e 400%. Sugli SVG la copia e' un raster a 72 DPI e il salvataggio da' il file originale. SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -56,6 +56,11 @@
   // percepibile. Le tappe troppo vicine si saltano.
   const SALTO_MIN_SU = 0.05;   // ingrandendo: almeno +5%
   const SALTO_MIN_GIU = 0.02;  // rimpicciolendo: almeno -2%
+  // — Menu del tasto destro —
+  // Risoluzione della copia negli appunti di un SVG, che di pixel propri non ne ha.
+  // Stessa convenzione del pannello di esportazione: px = misura nominale x DPI / 96
+  // (1 px CSS = 1/96 di pollice). A 72 DPI un SVG 640x360 diventa quindi 480x270.
+  const DPI_COPIA = 72;
   // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
   // scelta resta memorizzata (globale, come la modalita' del tondo 1:1).
   const ROTELLA_SU_INGRANDISCE = true;
@@ -845,12 +850,16 @@
     var menuEl = null, menuVoci = [], menuSel = -1;
 
     async function bloboPng() {
+      // Un raster ha i suoi pixel e si copia com'e'; un SVG no, quindi lo si
+      // rasterizza alla risoluzione scelta (DPI_COPIA).
+      const w = svgMedia ? Math.max(1, Math.round(natW * DPI_COPIA / 96)) : natW;
+      const h = svgMedia ? Math.max(1, Math.round(natH * DPI_COPIA / 96)) : natH;
       const cv = creaEl('canvas');
-      cv.width = natW; cv.height = natH;
+      cv.width = w; cv.height = h;
       const g = cv.getContext('2d');
       if (svgMedia) {
         if (!azioniSvg) throw new Error('sorgente non pronta');
-        const url = URL.createObjectURL(new Blob([azioniSvg.perRaster(natW, natH)], { type: 'image/svg+xml;charset=utf-8' }));
+        const url = URL.createObjectURL(new Blob([azioniSvg.perRaster(w, h)], { type: 'image/svg+xml;charset=utf-8' }));
         try {
           const im = await new Promise(function (ris, rif) {
             const i = new Image();
@@ -858,10 +867,10 @@
             i.onerror = function () { rif(new Error('SVG non rasterizzabile')); };
             i.src = url;
           });
-          g.drawImage(im, 0, 0, natW, natH);
+          g.drawImage(im, 0, 0, w, h);
         } finally { URL.revokeObjectURL(url); }
       } else {
-        g.drawImage(img, 0, 0, natW, natH);
+        g.drawImage(img, 0, 0, w, h);
       }
       return await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
     }
@@ -884,14 +893,6 @@
         } catch (e2) {}
         toast('Copia non riuscita: ' + ((e && e.name) || 'errore'));
       }
-    }
-
-    async function copiaSvg() {
-      try {
-        const t = azioniSvg ? azioniSvg.sorgente() : new XMLSerializer().serializeToString(svgMedia);
-        await navigator.clipboard.write([new ClipboardItem({ 'image/svg+xml': new Blob([t], { type: 'image/svg+xml' }) })]);
-        toast('SVG copiato');
-      } catch (e) { toast('Copia non riuscita: ' + ((e && e.name) || 'errore')); }
     }
 
     function copiaIndirizzo() {
@@ -926,40 +927,20 @@
       }
     }
 
-    function commutaNavigatore() {
-      navigatoreAcceso = !navigatoreAcceso;
-      try { GM_setValue('dv-minimappa', navigatoreAcceso ? '1' : '0'); } catch (e) {}
-      aggiornaNavigatore();
-      toast(navigatoreAcceso ? 'Navigatore acceso' : 'Navigatore spento');
-    }
-    function commutaVersoRotella() {
-      versoInvertito = !versoInvertito;
-      try { GM_setValue('dv-wheel-invert', versoInvertito ? '1' : '0'); } catch (e) {}
-      toast((ROTELLA_SU_INGRANDISCE !== versoInvertito) ? 'Rotella in su: ingrandisce' : 'Rotella in su: rimpicciolisce');
-    }
-
+    // Elenco voluto dall'utente: solo queste, in quest'ordine. Sugli SVG cambia
+    // il CONTENUTO di due voci (copia raster a DPI_COPIA, salva il file originale),
+    // non l'elenco: il menu resta identico ovunque.
     function vociDelMenu(x, y) {
-      const v = [
+      return [
+        { t: 'Copia immagine', f: copiaImmagine },
+        { t: 'Copia URL immagine', f: copiaIndirizzo },
+        { t: 'Salva immagine', f: salvaImmagine },
+        { sep: true },
         { t: 'Adatta alla vista', f: vaiFit },
         { t: '100%', f: function () { zoomTo(realScale, x, y); } },
         { t: '200%', f: function () { zoomTo(realScale * 2, x, y); } },
-        { t: '400%', f: function () { zoomTo(realScale * 4, x, y); } },
-        { sep: true },
-        { t: 'Copia immagine', f: copiaImmagine }
+        { t: '400%', f: function () { zoomTo(realScale * 4, x, y); } }
       ];
-      if (svgMedia) v.push({ t: 'Copia come SVG', f: copiaSvg });
-      v.push({ t: 'Copia indirizzo', f: copiaIndirizzo });
-      v.push({ sep: true });
-      v.push({ t: 'Salva immagine…', f: salvaImmagine });
-      if (svgMedia && azioniSvg) {
-        v.push({ t: 'Esporta PNG a DPI…', f: azioniSvg.apriPannello });
-        v.push({ t: 'Salva SVG ripulito', f: azioniSvg.salvaRipulito });
-      }
-      v.push({ sep: true });
-      v.push({ t: navigatoreAcceso ? 'Nascondi navigatore' : 'Mostra navigatore', k: 'N', f: commutaNavigatore });
-      v.push({ t: 'Inverti verso della rotella', k: 'I', f: commutaVersoRotella });
-      v.push({ t: 'Stampa…', f: function () { window.print(); } });
-      return v;
     }
 
     function chiudiMenu() {
@@ -1561,23 +1542,10 @@
     chiudiPannello = chiudi;
     function commuta() { pannelloAperto ? chiudi(true) : apri(); }
 
-    // Ganci per il menu del tasto destro: le voci degli SVG passano di qui,
-    // cosi' il menu (che vive anche sulle pagine raster) non deve conoscere
-    // i dettagli di questa sezione.
-    azioniSvg = {
-      apriPannello: apri,
-      perRaster: sorgentePerRaster,
-      sorgente: function () {
-        if (byteOriginali) { try { return new TextDecoder('utf-8').decode(byteOriginali); } catch (e) {} }
-        return new XMLSerializer().serializeToString(svgMedia);
-      },
-      salvaRipulito: function () {
-        var t = null;
-        try { t = svgRipulito(); } catch (e) { t = null; }
-        if (!t || !xmlValido(t)) { toast('Pulizia non applicabile a questo file'); return; }
-        salvaFile(new Blob([t], { type: 'image/svg+xml;charset=utf-8' }), nomeBase() + '.min.svg');
-      }
-    };
+    // Gancio per il menu del tasto destro: la voce "Copia immagine" deve poter
+    // rasterizzare l'SVG, ma il menu vive anche sulle pagine raster e non deve
+    // conoscere i dettagli di questa sezione.
+    azioniSvg = { perRaster: sorgentePerRaster };
 
     btnDl.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); commuta(); });
     btnDl.addEventListener('keydown', function (e) {
