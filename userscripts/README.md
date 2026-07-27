@@ -384,11 +384,21 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     piccola ampiezza vista su quel mouse è uno scatto, e gli eventi uniti dal browser ne
     sono multipli interi. Misurato su entrambi i casi: un tic da 360 e uno da 120 valgono
     tutti e due **un passo**, e un evento da 720 ne vale due.
-  - **Passo: 1,1×** (`100 → 110 → 121 → 133 → 146 → 161 → 177 → 195 → 214 …`).
-  - **Tappe fisse, in alternativa.** Riempiendo `TAPPE_ZOOM` con un elenco di percentuali
-    la rotella salta di tappa in tappa invece di moltiplicare, per esempio
-    `[25, 50, 75, 100, 120, 130, 150, 180, 200, 220, 250, 300, 350, 400]`. Oltre gli
-    estremi dell'elenco riprende il passo geometrico, così i limiti restano raggiungibili.
+  - **Scala di valori tondi (dalla 2.16).** Le tappe sono `… 75, 80, 90, 100, 110, 125,
+    140, 150, 165, 180, 200, 225, 250, 275, 300, 325, 350, 400 …`: numeri leggibili invece
+    dei 121,2% e 194,9% che produce una moltiplicazione. Sono costruite per **imitare
+    l'andamento dell'1,1×**, scegliendo fra i candidati entro il 6% dal bersaglio ideale il
+    numero più rotondo. Risultato misurato: sopra il 10% i rapporti stanno tutti fra
+    **1,06 e 1,17** (media 1,10) e servono gli stessi **14 scatti** dell'1,1× puro per
+    andare dal 100% al 400%, con un'irregolarità di 0,05 contro 0,20 di una scala scelta
+    a mano. Oltre gli estremi dell'elenco riprende il passo geometrico `PASSO_ROTELLA`,
+    così i limiti (2% e 4000%) restano raggiungibili.
+  - **Scarto minimo, per non sprecare un tic.** Partendo da un valore fuori scala (per
+    esempio 199%, raggiunto col pinch) la tappa successiva sarebbe 200%: un tic che non
+    cambia nulla di percepibile. Le tappe troppo vicine si **saltano**: serve almeno
+    **+5%** ingrandendo e almeno **−2%** rimpicciolendo. Misurato: da 191% si va a 225%,
+    da 190% a 200%; scendendo, da 204% si va a 180%, da 205% a 200%.
+  - Per tornare al passo geometrico basta svuotare `TAPPE_ZOOM`.
   - **Limiti più larghi (dalla 2.13):** dal **2%** al **4000%** (prima 10% e 1200%), con
     un tetto di sicurezza sul lato in pixel perché oltre una certa misura il browser
     fatica a disegnare l'elemento.
@@ -479,7 +489,9 @@ const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
 const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
 const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, trackpad scorre) | 'sempre' | 'mai'
 const PASSO_ROTELLA = 1.1;   // quanto ingrandisce un singolo scatto di rotella
-const TAPPE_ZOOM = [];       // se non vuoto: tappe fisse in % invece del passo geometrico
+const TAPPE_ZOOM = [2, 3, …, 100, 110, 125, 140, …, 4000];  // tappe tonde; vuoto = passo geometrico
+const SALTO_MIN_SU = 0.05;   // ingrandendo, salta le tappe a meno del +5%
+const SALTO_MIN_GIU = 0.02;  // rimpicciolendo, salta le tappe a meno del -2%
 const ROTELLA_SU_INGRANDISCE = true;  // verso predefinito (si inverte al volo col tasto I)
 ```
 
