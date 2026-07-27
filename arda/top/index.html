@@ -1773,15 +1773,12 @@ html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(1
 /* Nota 'Traduzione italiana': stessa larghezza e dimensione-testo del viewer
    delle altre note (.note-viewer-box), per uniformità (era 440px e 0.82rem). */
 .info-note-box { text-align:left; line-height:1.55; }
-.info-note-box h3 { font-family:'Cinzel',serif; font-size:1.15rem; letter-spacing:0.04em; color:#c0b69a; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
-html[data-theme="light"] .info-note-box h3 { color:#445d64; }
+.info-note-box h3 { font-family:'Cinzel',serif; font-size:1.15rem; letter-spacing:0.04em; color:var(--note-acc); margin:0 0 .9em; padding:0 1.4em; text-align:center; }
 .info-note-box p { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.55; margin:0 0 .8em; }
 .info-note-box ul { list-style:none; margin:0 0 0.9em; padding:0; }
 .info-note-box li { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.5; margin:0 0 0.5em; padding-left:0.95rem; position:relative; }
-.info-note-box li::before { content:'\203A'; position:absolute; left:0; color:#c0b69a; opacity:0.85; }
-html[data-theme="light"] .info-note-box li::before { color:#445d64; }
-.info-note-box li strong { color:#c0b69a; font-weight:700; }
-html[data-theme="light"] .info-note-box li strong { color:#445d64; }
+.info-note-box li::before { content:'\203A'; position:absolute; left:0; color:var(--note-acc); opacity:0.85; }
+.info-note-box li strong { color:var(--note-acc); font-weight:700; }
 .info-note-box .info-note-final { display:flex; align-items:center; gap:0.55rem; margin:0.75rem 0 0; padding:0.6rem 0.8rem; border-radius:10px; background:rgba(150,25,40,0.16); border:1px solid rgba(205,70,80,0.42); color:var(--parchment); opacity:1; font-style:normal; font-weight:normal; line-height:1.35; }
 .info-note-box .info-note-ico { flex:none; display:inline-flex; }
 .info-note-box .info-note-ico svg { width:1.2rem; height:1.2rem; stroke:#e06b6b; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -2322,25 +2319,28 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 /* Contenuto nota: sta dentro .modal-body (che gestisce scroll e dimensioni del
    guscio standard, dalla v8.76). Qui restano solo tipografia e allineamento. */
 .note-viewer-box { text-align:left; line-height:1.55; }
-/* Titolo e struttura delle note: accento di SISTEMA (v13.96, richiesta utente),
-   la stessa tinta di `.crest` e del link del footer - grigio virato verso il colore
-   del FAB del tema. Qui non c'è un personaggio da cui prendere la tinta: quella la
-   portano i nomi cliccabili (`.note-charlink`) e il rimando della scheda.
-   Contrasti sul fondo della modale: 7.59:1 in scuro, 6.37:1 in chiaro. */
-.note-viewer-box h3 { color:#c0b69a; font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
-html[data-theme="light"] .note-viewer-box h3 { color:#445d64; }
+/* ── UN ACCENTO PER MODALE, deciso dalla PROVENIENZA (v13.96, scelta dell'utente).
+   `--note-acc` è la tinta di tutti gli accenti di struttura della modale. Vale
+   l'accento GLOBALE del tema (#c6ad66 / #2e5461, indicati dall'utente: 6.99:1 e
+   7.47:1 sul fondo delle modali); se però la modale è stata aperta da un
+   personaggio, `openNoteViewer` scrive sull'overlay `--macc-d`/`--macc-l` con la
+   sua tinta di famiglia e l'accento diventa quello, per tutta la lettura.
+   ⚠️ Due proprietà, una per tema, perché il tasto `T` NON ricostruisce la nota
+   aperta: un solo valore sarebbe sbagliato nell'altro tema. Un solo livello di
+   intensità (scelta dell'utente): la gerarchia la fanno corpo e peso. */
+.modal-backdrop { --note-acc:var(--macc-d,#c6ad66); }
+html[data-theme="light"] .modal-backdrop { --note-acc:var(--macc-l,#2e5461); }
+.note-viewer-box h3 { color:var(--note-acc); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
 /* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
    conferma: stessa dimensione e pienezza dell'elenco (font-size/opacity/colore
    ereditati dal box). Vale per tutte le note, presenti e future. */
 .note-viewer-box p { margin:0 0 .8em; font-size:inherit; line-height:inherit; opacity:1; color:inherit; }
 html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
-.note-viewer-box .note-h { font-weight:700; color:#c0b69a; margin:1.15em 0 .35em; }
-html[data-theme="light"] .note-viewer-box .note-h { color:#445d64; }
+.note-viewer-box .note-h { font-weight:700; color:var(--note-acc); margin:1.15em 0 .35em; }
 .note-viewer-box .note-src { opacity:.72; margin:.1em 0 .4em; }
 .note-viewer-box ul { margin:.2em 0 0; padding:0; list-style:none; }
 .note-viewer-box li { margin:.55em 0; position:relative; padding-left:1.1em; }
-.note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:#c0b69a; }
-html[data-theme="light"] .note-viewer-box li::before { color:#445d64; }
+.note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:var(--note-acc); }
 .note-viewer-box .note-sub { margin:.25em 0 .25em .4em; position:relative; padding-left:1em; }
 .note-viewer-box .note-sub::before { content:'–'; position:absolute; left:0; color:var(--gold-bright); }
 /* Liste numerate (le tre unioni della tradizione): numeri, niente pallino. */
@@ -2361,10 +2361,9 @@ html[data-theme="light"] .note-charlink { color:var(--nl-l,var(--gold-bright)); 
 .note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:currentColor; outline:none; }
 /* Rimando 'Leggi anche' in fondo a una nota, verso una nota correlata. */
 .note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; }
-/* Rimando nota -> nota: accento di SISTEMA come i titoli (v13.96). La tinta di
-   famiglia qui non si applica - punta a una nota, non a un personaggio. */
-.note-notelink { color:#c0b69a; font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
-html[data-theme="light"] .note-notelink { color:#445d64; }
+/* Rimando nota -> nota: l'accento della modale (v13.96), quindi eredita anche la
+   provenienza - passando di nota in nota la tinta del personaggio non si perde. */
+.note-notelink { color:var(--note-acc); font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
 .note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:currentColor; outline:none; }
 /* Modale risorse: guscio standard (.modal + .modal-body, dalla v8.76). Il menu
    di bottoni è raccolto in .res-modal-inner, largo al massimo ~340px e centrato
@@ -2375,8 +2374,7 @@ html[data-theme="light"] .note-notelink { color:#445d64; }
    della modale, cioè 0.01 sotto la soglia 4.5:1 del testo normale (rilevato da
    axe, difetto preesistente sanato nella v13.86). Un filo più chiaro basta e
    la resa non cambia a occhio; in tema chiaro il token era già ampiamente AA. */
-.res-modal-title { font-family:'Cinzel',serif; color:#c0b69a; font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
-html[data-theme="light"] .res-modal-title { color:#445d64; }
+.res-modal-title { font-family:'Cinzel',serif; color:var(--note-acc); font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
 /* Secondo titolo di sezione ('Note editoriali') dentro la modale unica: stacco
    dal blocco di bottoni precedente. */
 .res-modal-inner .res-modal-section { margin-top:1.15rem; }
@@ -4720,7 +4718,8 @@ function openModal(idx, instant) {
       var refLink = refEl.querySelector('.modal-noteref-link');
       // Anche questo è un passaggio (scheda -> nota): si apre la finestra di
       // dissolvenza rapida a mano, perché qui closeModal non ha modalReturn.
-      var goNote = function() { modalReturn = null; modalXfadeWindow(); modalXfadeMark(document.getElementById('modal-backdrop')); closeModal(); noteReturn = function(){ openModal(idx); }; openNoteViewer(linkedNote); };
+      // La nota si apre DA questa scheda: la provenienza è questo personaggio.
+      var goNote = function() { NOTE_ACC_IDX = idx; modalReturn = null; modalXfadeWindow(); modalXfadeMark(document.getElementById('modal-backdrop')); closeModal(); noteReturn = function(){ openModal(idx); }; openNoteViewer(linkedNote); };
       refLink.onclick = goNote;
       refLink.onkeydown = function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goNote(); } };
     } else {
@@ -4926,6 +4925,7 @@ function dismissStdModal(bd, mode) {
 
 function openResourcesModal() {
   if (document.getElementById('res-modal')) return;
+  NOTE_ACC_IDX = null; // aperta dal footer o dall'Info: accento globale del tema
   var m = buildStdModal('res-modal'); var bd = m.backdrop;
   var box = document.createElement('div'); box.className = 'std-modal-inner res-modal-inner'; m.body.appendChild(box);
   activateStdModal(bd); lockPageScroll(true);
@@ -5227,14 +5227,36 @@ function noteCharIndex() {
 // Sostituisce i marcatori #{Testo|NomeDati}# con pulsanti cliccabili (o
 // grassetto semplice se il nome non è in classifica). Il testo statico è
 // d'autore (nessun input utente); l'unico dato dinamico è l'indice intero.
-// Tinta di un nome cliccabile: quella della sua famiglia colore, resa AA sul
-// fondo della modale (#252525 / #F4F4F4, gli stessi della scheda). Si calcolano
-// ENTRAMBI i temi perché il tasto T non ricostruisce la nota aperta.
+// Tinta di un nome cliccabile: quella della famiglia di DESTINAZIONE (dove porta
+// il link), **desaturata al 55%** e poi resa AA sul fondo della modale (scelta
+// dell'utente sul confronto a quattro gradi: la famiglia si riconosce ancora, ma
+// con sei tinte in una pagina di testo il colpo d'occhio resta quieto).
+// La desaturazione è puramente estetica: `ccAaText` viene applicata DOPO, quindi
+// il contrasto resta sopra 4.5:1 a qualunque grado. Si calcolano ENTRAMBI i temi
+// perché il tasto `T` non ricostruisce la nota aperta.
+var NOTE_TINT_SAT = 0.55;
+// Personaggio di PROVENIENZA della modale informativa: se una nota è stata aperta
+// dalla scheda di qualcuno, i suoi accenti prendono la tinta di quella famiglia e
+// la tengono anche passando di nota in nota (la provenienza non cambia). null =
+// aperta dalle Note o dalle Risorse: vale l'accento globale del tema.
+var NOTE_ACC_IDX = null;
+// Scrive sull'overlay le due tinte dell'accento (una per tema): la nota le legge
+// via --note-acc. Senza provenienza non si scrive nulla e valgono i default del CSS.
+function noteAccentVars(bd) {
+  if (NOTE_ACC_IDX === null || !dati[NOTE_ACC_IDX]) return;
+  var pers = dati[NOTE_ACC_IDX], fam = familyOf(pers);
+  var pair = (fam === 'custom') ? customPair(pers) : null;
+  var hd = pair ? ccTripletToHex(pair.dark) : ccFamHex(fam, 'dark');
+  var hl = pair ? ccTripletToHex(pair.light) : ccFamHex(fam, 'light');
+  bd.style.setProperty('--macc-d', ccAaText(hd, '#252525', 4.5));
+  bd.style.setProperty('--macc-l', ccAaText(hl, '#F4F4F4', 4.5));
+}
 function noteCharTint(p) {
   var fam = familyOf(p), pair = (fam === 'custom') ? customPair(p) : null;
   var hd = pair ? ccTripletToHex(pair.dark) : ccFamHex(fam, 'dark');
   var hl = pair ? ccTripletToHex(pair.light) : ccFamHex(fam, 'light');
-  return '--nl-d:' + ccAaText(hd, '#252525', 4.5) + ';--nl-l:' + ccAaText(hl, '#F4F4F4', 4.5);
+  var soft = function(hex){ var h = ccHexToHsl(hex); return ccHslToHex(h[0], h[1] * NOTE_TINT_SAT, h[2]); };
+  return '--nl-d:' + ccAaText(soft(hd), '#252525', 4.5) + ';--nl-l:' + ccAaText(soft(hl), '#F4F4F4', 4.5);
 }
 function renderNoteBodyHtml(html) {
   var idx = noteCharIndex();
@@ -5252,6 +5274,7 @@ function openNoteViewer(note) {
   if (document.getElementById('note-modal')) return;
   var m = buildStdModal('note-modal'); var ov = m.backdrop;
   var box = document.createElement('div'); box.className = 'note-viewer-box'; m.body.appendChild(box);
+  noteAccentVars(ov); // accento della provenienza, se c'è
   activateStdModal(ov); lockPageScroll(true);
   // keep=true: transizione verso un'altra modale (scheda o altra nota) → non
   // sbloccare lo scroll né innescare noteReturn (la destinazione se ne occupa).
@@ -6049,6 +6072,7 @@ var INFO_NOTE_HTML_EN =
   + '</div>';
 function showInfoNote() {
   if (document.getElementById('fab-modal')) return;
+  NOTE_ACC_IDX = null; // nessuna provenienza: accento globale del tema
   // Guscio-modale standard (come note/risorse): id 'fab-modal' mantenuto per le
   // guardie 'overlay aperto' e gli handler Escape che lo cercano per id.
   var m = buildStdModal('fab-modal'); var overlay = m.backdrop;
