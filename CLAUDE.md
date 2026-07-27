@@ -549,7 +549,14 @@ normale/XL secondo la preferenza attiva.
      ⚠️ **Dalla v12.64 esiste SOLO dove esiste un puntatore vero**: tutte le regole
      stanno dentro `@media (hover:hover) and (pointer:fine)` e `wireSpotlight` non
      aggancia il listener se `SPOT_HOVER_MQ` non combacia (con listener `change`
-     per i cambi a caldo). Il gate è sulla **capacità**, non sulla larghezza: un
+     per i cambi a caldo).
+     ⚠️ **Dalla v13.18 NON ha la variante `_m`** (richiesta utente: 'togliamo
+     direttamente il riflettore da mobile'): la config è **UNICA** — `fxCfg('spot')`
+     bypassa `FX_MOBILE_MQ` — e vale ovunque esista un puntatore, incluse le
+     finestre strette (<768px) su desktop. La voce sparisce dalla tab Mobile e dal
+     pannello aperto da mobile (flag `noMob` in `SITE_FLAG_ITEMS`, come `zoomBig`);
+     il titolo della sua sotto-modale non porta il suffisso di piattaforma. Un
+     eventuale `spot_m` residuo nei dati salvati resta ignorato (e innocuo). Il gate è sulla **capacità**, non sulla larghezza: un
      tablet con mouse lo ha, un portatile touch no. Motivo (domanda dell'utente):
      su touch l'hover non c'è, quindi l'effetto non si vedrebbe mai ma il
      `pointermove` continuerebbe a lavorare a ogni frame durante lo scroll. Manopole: `r` (raggio 70-300px), `int`
