@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.15.1
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne.
+// @version         2.16.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -39,12 +39,23 @@
   const ROTELLA_ZOOM = 'auto';
   const PASSO_ROTELLA = 1.1;   // quanto ingrandisce UN singolo scatto (1.1 = +10%:
                                // 100 → 110 → 121 → 133 → 146 → 161 → 177 → 194 → …)
-  // In alternativa al passo geometrico qui sopra: un elenco di TAPPE FISSE, in
-  // percentuale della dimensione reale. Se non e' vuoto, la rotella salta di tappa
-  // in tappa; oltre gli estremi dell'elenco riprende il passo geometrico, cosi' si
-  // arriva comunque ai limiti. Da provare, per esempio:
-  //   const TAPPE_ZOOM = [25, 50, 75, 100, 120, 130, 150, 180, 200, 220, 250, 300, 350, 400];
-  const TAPPE_ZOOM = [];
+  // TAPPE FISSE, in percentuale della dimensione reale: la rotella salta di tappa in
+  // tappa invece di moltiplicare, cosi' i valori sono TONDI (120% invece di 121,2%).
+  // Costruite per imitare l'andamento dell'1,1x scegliendo, fra i candidati entro il
+  // 6% dal bersaglio ideale, il numero piu' rotondo: sopra il 10% i rapporti stanno
+  // tutti fra 1,06 e 1,17 (media 1,10) e servono gli stessi 14 scatti dell'1,1x puro
+  // per andare dal 100% al 400%. Elenco vuoto = passo geometrico PASSO_ROTELLA.
+  // Oltre gli estremi dell'elenco riprende comunque il passo geometrico.
+  const TAPPE_ZOOM = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 23, 25,
+    27, 30, 35, 40, 45, 50, 55, 60, 70, 75, 80, 90, 100, 110, 125, 140, 150, 165, 180,
+    200, 225, 250, 275, 300, 325, 350, 400, 450, 500, 550, 600, 650, 700, 800, 900, 1000,
+    1100, 1200, 1300, 1500, 1650, 1800, 2000, 2200, 2500, 2800, 3000, 3300, 3500, 4000];
+  // SCARTO MINIMO fra il valore attuale e la tappa in cui si atterra. Serve quando si
+  // parte da un valore "fuori scala" (l'adattamento alla finestra, che e' un numero
+  // qualsiasi): senza, dal 199% un tic porterebbe al 200%, cioe' non farebbe nulla di
+  // percepibile. Le tappe troppo vicine si saltano.
+  const SALTO_MIN_SU = 0.05;   // ingrandendo: almeno +5%
+  const SALTO_MIN_GIU = 0.02;  // rimpicciolendo: almeno -2%
   // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
   // scelta resta memorizzata (globale, come la modalita' del tondo 1:1).
   const ROTELLA_SU_INGRANDISCE = true;
@@ -516,10 +527,14 @@
     function unPasso(s, su) {
       if (TAPPE_ZOOM.length) {
         const p = s / realScale * 100;
+        // la tappa deve stare abbastanza lontano da dove siamo, altrimenti il tic
+        // sarebbe impercettibile (il caso del 199% che diventa 200%)
         if (su) {
-          for (let i = 0; i < TAPPE_ZOOM.length; i++) if (TAPPE_ZOOM[i] > p + 0.01) return realScale * TAPPE_ZOOM[i] / 100;
+          const soglia = p * (1 + SALTO_MIN_SU);
+          for (let i = 0; i < TAPPE_ZOOM.length; i++) if (TAPPE_ZOOM[i] >= soglia) return realScale * TAPPE_ZOOM[i] / 100;
         } else {
-          for (let j = TAPPE_ZOOM.length - 1; j >= 0; j--) if (TAPPE_ZOOM[j] < p - 0.01) return realScale * TAPPE_ZOOM[j] / 100;
+          const soglia = p * (1 - SALTO_MIN_GIU);
+          for (let j = TAPPE_ZOOM.length - 1; j >= 0; j--) if (TAPPE_ZOOM[j] <= soglia) return realScale * TAPPE_ZOOM[j] / 100;
         }
         // fuori dall'elenco: si prosegue col passo geometrico, cosi' i limiti restano raggiungibili
       }
