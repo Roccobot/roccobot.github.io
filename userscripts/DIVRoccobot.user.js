@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.16.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile.
+// @version         2.17.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio (zoom, copia immagine o SVG o indirizzo, salva, esporta, navigatore, verso della rotella, stampa); SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -234,6 +234,17 @@
     '#dv-mini img,#dv-mini svg{display:block;width:100%;height:100%;pointer-events:none}' +
     '#dv-mini .dv-mini-rett{position:absolute;box-sizing:border-box;border:2px solid #FF4E4E;' +
       'pointer-events:none;border-radius:2px}' +
+    // Menu del tasto destro
+    '#dv-menu{position:fixed;z-index:13;min-width:210px;padding:5px;border-radius:10px;' +
+      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
+      'font-size:13px;line-height:1.3;color:#fff;background:#000000e0;box-shadow:0 8px 28px rgba(0,0,0,.5);' +
+      'user-select:none;-webkit-user-select:none}' +
+    '#dv-menu[hidden]{display:none}' +
+    '#dv-menu .dv-mv{display:flex;align-items:center;justify-content:space-between;gap:1.2rem;' +
+      'padding:7px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}' +
+    '#dv-menu .dv-mv:hover,#dv-menu .dv-mv.dv-sel{background:rgba(255,255,255,.16)}' +
+    '#dv-menu .dv-mv-tasto{opacity:.45;font-size:12px}' +
+    '#dv-menu .dv-msep{height:1px;margin:5px 8px;background:rgba(255,255,255,.14)}' +
     // messaggio momentaneo in basso (conferma del verso della rotella)
     '#dv-toast{position:fixed;left:50%;bottom:2rem;transform:translateX(-50%);z-index:12;pointer-events:none;' +
       'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
@@ -821,6 +832,211 @@
       });
     } catch (e) { /* peso non disponibile: pazienza */ }
 
+    // ═══════════════════════════════════════════════════════════════════
+    //  MENU DEL TASTO DESTRO
+    // ═══════════════════════════════════════════════════════════════════
+    // ⚠️ Un menu proprio SOSTITUISCE quello del browser: non si affianca, e
+    // quello nativo non si puo' richiamare da JavaScript. Si perde quindi
+    // "Ispeziona", che non e' reimpiazzabile. Via di fuga: SHIFT + tasto destro
+    // lascia passare il menu del browser.
+    // Le voci degli SVG sono riempite piu' sotto (azioniSvg): il menu si
+    // costruisce al primo clic destro, quando ormai ci sono.
+    var azioniSvg = null;
+    var menuEl = null, menuVoci = [], menuSel = -1;
+
+    async function bloboPng() {
+      const cv = creaEl('canvas');
+      cv.width = natW; cv.height = natH;
+      const g = cv.getContext('2d');
+      if (svgMedia) {
+        if (!azioniSvg) throw new Error('sorgente non pronta');
+        const url = URL.createObjectURL(new Blob([azioniSvg.perRaster(natW, natH)], { type: 'image/svg+xml;charset=utf-8' }));
+        try {
+          const im = await new Promise(function (ris, rif) {
+            const i = new Image();
+            i.onload = function () { ris(i); };
+            i.onerror = function () { rif(new Error('SVG non rasterizzabile')); };
+            i.src = url;
+          });
+          g.drawImage(im, 0, 0, natW, natH);
+        } finally { URL.revokeObjectURL(url); }
+      } else {
+        g.drawImage(img, 0, 0, natW, natH);
+      }
+      return await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
+    }
+
+    async function copiaImmagine() {
+      try {
+        // il blob si passa come PROMESSA: cosi' il permesso del clic non scade
+        // mentre si disegna, che e' il motivo per cui la copia a volte fallisce
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': bloboPng() })]);
+        toast('Immagine copiata');
+      } catch (e) {
+        // ripiego: se il file e' gia' un PNG si copiano i byte cosi' come sono
+        // (utile quando il canvas e' "sporco", per esempio sui file locali)
+        try {
+          if (byteOriginali && /png/i.test(document.contentType)) {
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([byteOriginali], { type: 'image/png' }) })]);
+            toast('Immagine copiata');
+            return;
+          }
+        } catch (e2) {}
+        toast('Copia non riuscita: ' + ((e && e.name) || 'errore'));
+      }
+    }
+
+    async function copiaSvg() {
+      try {
+        const t = azioniSvg ? azioniSvg.sorgente() : new XMLSerializer().serializeToString(svgMedia);
+        await navigator.clipboard.write([new ClipboardItem({ 'image/svg+xml': new Blob([t], { type: 'image/svg+xml' }) })]);
+        toast('SVG copiato');
+      } catch (e) { toast('Copia non riuscita: ' + ((e && e.name) || 'errore')); }
+    }
+
+    function copiaIndirizzo() {
+      try { navigator.clipboard.writeText(location.href).then(function () { toast('Indirizzo copiato'); }); }
+      catch (e) { toast('Copia non riuscita'); }
+    }
+
+    function nomeFileImmagine() {
+      var n = 'immagine';
+      try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'immagine'; } catch (e) {}
+      if (!/\.[a-z0-9]{2,5}$/i.test(n)) n += '.' + (imageInfo.ext || 'img');
+      return n;
+    }
+    function salvaImmagine() {
+      const nome = nomeFileImmagine();
+      if (svgMedia && byteOriginali) {
+        const a = creaEl('a');
+        const u = URL.createObjectURL(new Blob([byteOriginali], { type: 'image/svg+xml' }));
+        a.setAttribute('href', u); a.setAttribute('download', nome);
+        (document.body || document.documentElement).appendChild(a);
+        a.click(); if (a.parentNode) a.parentNode.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(u); }, 30000);
+        return;
+      }
+      try {
+        GM_download({ url: location.href, name: nome, saveAs: true, headers: { Referer: location.href } });
+      } catch (e) {
+        const a = creaEl('a');
+        a.setAttribute('href', location.href); a.setAttribute('download', nome);
+        (document.body || document.documentElement).appendChild(a);
+        a.click(); if (a.parentNode) a.parentNode.removeChild(a);
+      }
+    }
+
+    function commutaNavigatore() {
+      navigatoreAcceso = !navigatoreAcceso;
+      try { GM_setValue('dv-minimappa', navigatoreAcceso ? '1' : '0'); } catch (e) {}
+      aggiornaNavigatore();
+      toast(navigatoreAcceso ? 'Navigatore acceso' : 'Navigatore spento');
+    }
+    function commutaVersoRotella() {
+      versoInvertito = !versoInvertito;
+      try { GM_setValue('dv-wheel-invert', versoInvertito ? '1' : '0'); } catch (e) {}
+      toast((ROTELLA_SU_INGRANDISCE !== versoInvertito) ? 'Rotella in su: ingrandisce' : 'Rotella in su: rimpicciolisce');
+    }
+
+    function vociDelMenu(x, y) {
+      const v = [
+        { t: 'Adatta alla vista', f: vaiFit },
+        { t: '100%', f: function () { zoomTo(realScale, x, y); } },
+        { t: '200%', f: function () { zoomTo(realScale * 2, x, y); } },
+        { t: '400%', f: function () { zoomTo(realScale * 4, x, y); } },
+        { sep: true },
+        { t: 'Copia immagine', f: copiaImmagine }
+      ];
+      if (svgMedia) v.push({ t: 'Copia come SVG', f: copiaSvg });
+      v.push({ t: 'Copia indirizzo', f: copiaIndirizzo });
+      v.push({ sep: true });
+      v.push({ t: 'Salva immagine…', f: salvaImmagine });
+      if (svgMedia && azioniSvg) {
+        v.push({ t: 'Esporta PNG a DPI…', f: azioniSvg.apriPannello });
+        v.push({ t: 'Salva SVG ripulito', f: azioniSvg.salvaRipulito });
+      }
+      v.push({ sep: true });
+      v.push({ t: navigatoreAcceso ? 'Nascondi navigatore' : 'Mostra navigatore', k: 'N', f: commutaNavigatore });
+      v.push({ t: 'Inverti verso della rotella', k: 'I', f: commutaVersoRotella });
+      v.push({ t: 'Stampa…', f: function () { window.print(); } });
+      return v;
+    }
+
+    function chiudiMenu() {
+      if (menuEl) { menuEl.hidden = true; menuSel = -1; }
+    }
+    function apriMenu(x, y) {
+      if (!menuEl) {
+        menuEl = creaEl('div');
+        menuEl.id = 'dv-menu';
+        menuEl.setAttribute('role', 'menu');
+        (document.body || document.documentElement).appendChild(menuEl);
+        menuEl.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+      }
+      while (menuEl.firstChild) menuEl.removeChild(menuEl.firstChild);
+      menuVoci = [];
+      vociDelMenu(x, y).forEach(function (v) {
+        if (v.sep) {
+          const s = creaEl('div');
+          s.setAttribute('class', 'dv-msep');
+          menuEl.appendChild(s);
+          return;
+        }
+        const r = creaEl('div');
+        r.setAttribute('class', 'dv-mv');
+        r.setAttribute('role', 'menuitem');
+        r.setAttribute('tabindex', '-1');
+        const et = creaEl('span');
+        et.textContent = v.t;
+        r.appendChild(et);
+        if (v.k) {
+          const k = creaEl('span');
+          k.setAttribute('class', 'dv-mv-tasto');
+          k.textContent = v.k;
+          r.appendChild(k);
+        }
+        r.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); chiudiMenu(); v.f(); });
+        r.addEventListener('mouseenter', function () { evidenzia(menuVoci.indexOf(r)); });
+        menuVoci.push(r);
+        menuEl.appendChild(r);
+      });
+      menuEl.hidden = false;
+      menuSel = -1;
+      // se non ci sta, si ribalta invece di uscire dallo schermo
+      const w = menuEl.offsetWidth, h = menuEl.offsetHeight;
+      menuEl.style.left = Math.max(4, Math.min(x, window.innerWidth - w - 4)) + 'px';
+      menuEl.style.top = Math.max(4, (y + h > window.innerHeight - 4) ? y - h : y) + 'px';
+    }
+    function evidenzia(i) {
+      menuVoci.forEach(function (r, j) { r.classList.toggle('dv-sel', j === i); });
+      menuSel = i;
+    }
+
+    document.addEventListener('contextmenu', function (e) {
+      if (e.shiftKey) return;                     // via di fuga: menu del browser
+      if (e.target && e.target.closest && e.target.closest('#dv-dl')) return;  // nel pannello serve quello nativo
+      e.preventDefault();
+      apriMenu(e.clientX, e.clientY);
+    });
+    document.addEventListener('pointerdown', function (e) {
+      if (menuEl && !menuEl.hidden && !(e.target && e.target.closest && e.target.closest('#dv-menu'))) chiudiMenu();
+    }, true);
+    document.addEventListener('keydown', function (e) {
+      if (!menuEl || menuEl.hidden) return;
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); chiudiMenu(); return; }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const d = e.key === 'ArrowDown' ? 1 : -1;
+        evidenzia((menuSel + d + menuVoci.length + (menuSel < 0 && d < 0 ? 1 : 0)) % menuVoci.length);
+        if (menuVoci[menuSel]) menuVoci[menuSel].focus();
+      } else if (e.key === 'Enter' && menuSel >= 0) {
+        e.preventDefault();
+        menuVoci[menuSel].click();
+      }
+    }, true);
+    window.addEventListener('blur', chiudiMenu);
+    wrap.addEventListener('scroll', chiudiMenu, { passive: true });
+
     if (!eSvg) return;
 
     // ═══════════════════════════════════════════════════════════════════
@@ -1344,6 +1560,24 @@
     }
     chiudiPannello = chiudi;
     function commuta() { pannelloAperto ? chiudi(true) : apri(); }
+
+    // Ganci per il menu del tasto destro: le voci degli SVG passano di qui,
+    // cosi' il menu (che vive anche sulle pagine raster) non deve conoscere
+    // i dettagli di questa sezione.
+    azioniSvg = {
+      apriPannello: apri,
+      perRaster: sorgentePerRaster,
+      sorgente: function () {
+        if (byteOriginali) { try { return new TextDecoder('utf-8').decode(byteOriginali); } catch (e) {} }
+        return new XMLSerializer().serializeToString(svgMedia);
+      },
+      salvaRipulito: function () {
+        var t = null;
+        try { t = svgRipulito(); } catch (e) { t = null; }
+        if (!t || !xmlValido(t)) { toast('Pulizia non applicabile a questo file'); return; }
+        salvaFile(new Blob([t], { type: 'image/svg+xml;charset=utf-8' }), nomeBase() + '.min.svg');
+      }
+    };
 
     btnDl.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); commuta(); });
     btnDl.addEventListener('keydown', function (e) {
