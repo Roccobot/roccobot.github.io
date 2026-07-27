@@ -1538,7 +1538,13 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 
 .modal-backdrop {
   position:fixed; inset:0;
-  background:rgba(5,7,16,0.92);
+  /* VELO NEUTRO (v13.99, richiesta dell'utente). Era rgba(5,7,16,0.92), un blu
+     notte: contro un velo freddo il fondo GRIGIO PURO della modale (#252525)
+     sembrava giallo - contrasto simultaneo, non un colore davvero caldo (misurato:
+     delta RGB del fondo modale = 0). Togliendo la tinta al velo l'illusione
+     scompare. rgb(7,7,7) è il grigio a PARI luminanza relativa del vecchio blu
+     (0.00213 contro 0.00222): la pagina dietro resta scura come prima. */
+  background:rgba(7,7,7,0.92);
   backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   z-index:200;
   display:flex; align-items:center; justify-content:center;
@@ -2196,7 +2202,10 @@ html[data-theme="light"] .rank-title {
 /* Backdrop uniforme (dalla v8.76): CHIARO su tema chiaro (prima era un velo
    scuro anche in chiaro). Vale per tutti i modali che usano .modal-backdrop
    (scheda, note, risorse, info). */
-html[data-theme="light"] .modal-backdrop { background: rgba(216,220,228,0.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+/* Velo neutro anche in chiaro (v13.99): era rgba(216,220,228,0.62), freddo, e
+   l'illusione era la stessa a rovescio (fondo modale #F4F4F4 apparentemente caldo).
+   rgb(220,220,220) è il grigio a pari luminanza relativa (0.7157 contro 0.7139). */
+html[data-theme="light"] .modal-backdrop { background: rgba(220,220,220,0.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 html[data-theme="light"] .modal {
     background: #F4F4F4;
     border: 2px solid #4a7090;
@@ -2497,7 +2506,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.99</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

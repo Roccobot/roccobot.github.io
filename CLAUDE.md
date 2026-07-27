@@ -3308,10 +3308,28 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   dell'utente, 2026-07-23): sono modali di servizio che si attivano solo per cose
   'in un certo senso' da admin, quindi valgono come admin. L'`openImageViewer`
   (visualizzatore mappe) è un overlay a sé (`imgv-*`), fuori da questa dicotomia.
-- **Backdrop uniforme (dalla v8.76).** Tutti i modali che usano `.modal-backdrop`
-  (scheda, note, risorse, info) condividono lo stesso velo sfocato: **chiaro** su
-  tema chiaro (`rgba(216,220,228,0.62)`, prima era scuro anche in chiaro),
-  **scuro** su tema scuro (`rgba(5,7,16,0.92)`).
+- **Backdrop uniforme (dalla v8.76) e NEUTRO (dalla v13.99).** Tutti i modali che
+  usano `.modal-backdrop` (scheda, note, risorse, info) condividono lo stesso velo
+  sfocato: **chiaro** su tema chiaro (`rgba(220,220,220,0.62)`, prima era scuro
+  anche in chiaro), **scuro** su tema scuro (`rgba(7,7,7,0.92)`).
+  - ⚠️ **Il velo NON ha tinta, e la ragione è un'illusione ottica misurata.** Fino
+    alla v13.98 era `rgba(5,7,16,0.92)` (blu notte) in scuro e `rgba(216,220,228,
+    0.62)` (freddo) in chiaro. Contro un velo freddo il fondo della modale - che è
+    **grigio puro** (`#252525` / `#F4F4F4`, delta RGB **0**, verificato) - appariva
+    **giallo**: contrasto simultaneo, non un colore davvero caldo. L'utente lo
+    segnalò due volte come 'le modali sono gialle' e la v13.97 ci cascò
+    desaturando gli ACCENTI (poi ripristinati nella v13.98); la causa era il velo,
+    e l'ha individuata l'utente stesso ('il contrasto tra il velo blu notte, che mi
+    sembrava grigio, faceva apparire giallo lo sfondo delle modali'). I due grigi
+    sono a **PARI luminanza relativa** dei vecchi valori (0.00213 contro 0.00222 in
+    scuro, 0.7157 contro 0.7139 in chiaro), quindi la pagina dietro resta scura (o
+    chiara) esattamente come prima.
+  - **Restano tinti, di proposito o per inerzia, altri veli** (non toccati dalla
+    v13.99, da valutare se il problema si ripresenta): `.fab-modal-overlay` in
+    tema chiaro (`rgba(180,195,215,0.5)`, delta **35**: il più tinto di tutti),
+    `.imgv-overlay` (`rgba(3,5,12,0.95)`), `.admin-search-backdrop` nei due temi.
+    Il velo del Pannello (`.ctrl-backdrop`, `rgba(0,0,0,0.4)`) e quello admin in
+    scuro (`rgba(0,0,0,0.38)`) sono già neutri.
 - **Contenuto di sfondo INERTE a modale aperto (dalla v10.06).** `lockPageScroll`
   (il choke point condiviso da TUTTI i modali) marca `header`, `main` e `footer`
   con **`inert` + `aria-hidden`** quando un modale si apre, e li ripristina alla
