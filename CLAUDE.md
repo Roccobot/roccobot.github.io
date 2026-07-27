@@ -635,7 +635,15 @@ normale/XL secondo la preferenza attiva.
      larghezza FISSA, 49%-59% della corsa, sempre presente — la manopola governa
      solo quanto è SFUMATO il suo bordo, rampa da 9 punti a ~0.5. ⚠️ La v13.38
      stringeva la rampa attorno a una fermata singola, quindi a nitidezza bassa
-     si assottigliava la sagoma stessa: non era l'idea dell'utente, non tornarci). Condizione posta
+     si assottigliava la sagoma stessa: non era l'idea dell'utente, non tornarci) e
+     **`tamp`** ('Ampiezza del bordo'/'Edge width', dalla v13.75, richiesta
+     dell'utente): dove FINISCE il bordo luminoso, in punti della corsa logica del
+     glifo (8-34, default **18** = il valore storico, quindi chi non la tocca vede
+     esattamente la resa di prima — verificato pixel-identico sui tre metalli nei due
+     temi). Si muove SOLO la fermata di fine: il picco resta ancorato alla cima e il
+     tetto sta sotto la fermata del corpo (40), così il bordo non lo invade. È il
+     complemento di `top`, che dice quanto il bordo è CHIARO, non quanto è spesso.
+     Condizione posta
      dall'utente: controlli unici e stili sempre coerenti — garantito per
      costruzione, una formula sola e tre tinte.
      Regole da non rompere:
