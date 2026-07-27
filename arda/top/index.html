@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.28</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.38</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2517,7 +2517,8 @@ var SITE_FLAGS_DEFAULT = {
   // utente): trio coerente col lampo. L'asimmetria storica (lampo solo
   // sull'argento) non è riproducibile con manopole condivise, per costruzione.
   podium:{ on:true, int_d:1, int_l:1, lum_d:1, lum_l:1,
-           sat_d:1, sat_l:1, top_d:0.7, top_l:0.7, rifl_d:0.8, rifl_l:0.8 },
+           sat_d:1, sat_l:1, top_d:0.7, top_l:0.7, rifl_d:0.8, rifl_l:0.8,
+           crisp_d:0, crisp_l:0 },
   // nums (v12.63): colore del numero di posizione, derivato dalla tinta della
   // card in OKLCH. `uni` = luminosità UNIFORME per tutte le famiglie (alla L di
   // riferimento) invece della luminosità propria di ogni tinta; `dsat`/`dlum` =
@@ -2538,7 +2539,7 @@ var FX_RANGE = {
   vig:{ int:[0.05,0.6], start:[20,70] },
   podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4],
            sat_d:[0.3,1.5], sat_l:[0.3,1.5], top_d:[0,1], top_l:[0,1],
-           rifl_d:[0,1], rifl_l:[0,1] },
+           rifl_d:[0,1], rifl_l:[0,1], crisp_d:[0,1], crisp_l:[0,1] },
   // ⚠️ I limiti delle L di `nums` NON sono estetici ma di ACCESSIBILITÀ: sono i
   // valori misurati su tutte le 15 famiglie, a qualunque cromia, oltre i quali il
   // numero scenderebbe sotto 3:1 sul fondo della card (soglia AA per il testo
@@ -2834,17 +2835,28 @@ function fxPodiumGrad(n, cfg, light){
   var top = fxTh(cfg, 'top', light), rifl = fxTh(cfg, 'rifl', light);
   var L = idn.L;
   function lerp(a, b, t){ return a + (b - a) * t; }
+  // Nitidezza del riflesso (v13.38): governa QUANTO E' LARGA la rampa attorno al
+  // lampo. Il lampo sta al 54%; due fermate coi colori dei vicini (corpo e ombra)
+  // gli si stringono addosso al crescere di `crisp`: a 0 coincidono con le
+  // fermate dei vicini (40% e 70%, resa identica alla v13.28, sfumatura morbida),
+  // a 1 gli stanno a ±3 punti e il lampo diventa una banda stretta e decisa, da
+  // metallo lucido.
+  var cr = fxTh(cfg, 'crisp', light);
+  var pre = 54 - (14 - 11 * cr), post = 54 + (16 - 13 * cr);
+  var corpo = [s0, L[1]], ombra = [s0, L[3]];
   var st = [
-    [Math.min(1, s0 * (1 + 1.8 * top)), lerp(L[0], idn.topMax, top)],
-    [s0, L[0]],
-    [s0, L[1]],
-    [Math.min(1, s0 * (1 + 2.2 * rifl)), lerp(L[2], idn.flashMax, rifl)],
-    [s0, L[3]],
-    [s0, L[4]],
-    [s0, L[5]]
+    [[Math.min(1, s0 * (1 + 1.8 * top)), lerp(L[0], idn.topMax, top)], 3],
+    [[s0, L[0]], 18],
+    [corpo, 40],
+    [corpo, pre],
+    [[Math.min(1, s0 * (1 + 2.2 * rifl)), lerp(L[2], idn.flashMax, rifl)], 54],
+    [ombra, post],
+    [ombra, 70],
+    [[s0, L[4]], 86],
+    [[s0, L[5]], 100]
   ];
-  return 'linear-gradient(168deg,' + st.map(function(q, i){
-    return ccHslToHex(h, q[0], q[1]) + ' ' + PODIUM_POS[i] + '%';
+  return 'linear-gradient(168deg,' + st.map(function(q){
+    return ccHslToHex(h, q[0][0], q[0][1]) + ' ' + Math.round(q[1]) + '%';
   }).join(',') + ')';
 }
 // Filtro del podio dalle manopole: contrast = 'intensità del metallo' (aumenta lo
@@ -7279,6 +7291,9 @@ var FX_KNOBS = {
     { p:'rifl_d', t:'num', step:0.02, th:'d', dep:'on', it:'Riflesso', en:'Glint',
       nit:'Il lampo speculare a metà del numero, uguale per i tre metalli.',
       nen:'The specular flash across the digit, shared by all three metals.' },
+    { p:'crisp_d', t:'num', step:0.02, th:'d', dep:'on', it:'Nitidezza del riflesso', en:'Glint sharpness',
+      nit:'A zero il lampo sfuma morbido; al massimo è una banda stretta e decisa, da metallo lucido.',
+      nen:'At zero the flash fades softly; at full it is a narrow, crisp band, like polished metal.' },
     { p:'top_d', t:'num', step:0.02, th:'d', dep:'on', it:'Bordo luminoso', en:'Edge light',
       nit:'Il bordo chiaro in cima al glifo.', nen:'The bright edge at the top of the glyph.' },
     { p:'sat_d', t:'num', step:0.02, th:'d', dep:'on', it:'Saturazione', en:'Saturation' },
@@ -7289,6 +7304,9 @@ var FX_KNOBS = {
     { p:'rifl_l', t:'num', step:0.02, th:'l', dep:'on', it:'Riflesso', en:'Glint',
       nit:'Il lampo speculare a metà del numero, uguale per i tre metalli.',
       nen:'The specular flash across the digit, shared by all three metals.' },
+    { p:'crisp_l', t:'num', step:0.02, th:'l', dep:'on', it:'Nitidezza del riflesso', en:'Glint sharpness',
+      nit:'A zero il lampo sfuma morbido; al massimo è una banda stretta e decisa, da metallo lucido.',
+      nen:'At zero the flash fades softly; at full it is a narrow, crisp band, like polished metal.' },
     { p:'top_l', t:'num', step:0.02, th:'l', dep:'on', it:'Bordo luminoso', en:'Edge light',
       nit:'Il bordo chiaro in cima al glifo.', nen:'The bright edge at the top of the glyph.' },
     { p:'sat_l', t:'num', step:0.02, th:'l', dep:'on', it:'Saturazione', en:'Saturation' }
@@ -7820,6 +7838,17 @@ function showFxConfigEditor(key, sfx, onDone){
       };
       sl.addEventListener('input', function(){
         SITE_FLAGS[vk][kn.p] = fxClamp(key, kn.p, parseFloat(sl.value));
+        show(); injectFxRules(); paint();
+      });
+      // Doppio clic sul pallino = valore PREDEFINITO della manopola (v13.38,
+      // richiesta utente; vale per OGNI slider di OGNI effetto). Il default vive
+      // in SITE_FLAGS_DEFAULT sotto la chiave BASE dell'effetto: le varianti _m
+      // e le chiavi per-tema condividono il default della chiave omonima.
+      sl.addEventListener('dblclick', function(){
+        var dEff = SITE_FLAGS_DEFAULT[key];
+        var dv = dEff ? dEff[kn.p] : undefined;
+        if (typeof dv !== 'number') return;
+        SITE_FLAGS[vk][kn.p] = dv; sl.value = String(dv);
         show(); injectFxRules(); paint();
       });
       show(); row.appendChild(val); row.appendChild(sl);

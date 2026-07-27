@@ -626,8 +626,12 @@ normale/XL secondo la preferenza attiva.
      fermate, derivati dalla 'proposta A' del mockup approvato) più tre manopole
      **CONDIVISE dal trio**, per tema: **`rifl`** (il lampo speculare a metà glifo,
      quello che prima aveva solo l'argento), **`top`** (bordo luminoso in cima),
-     **`sat`** (saturazione). Condizione posta dall'utente: controlli unici e stili
-     sempre coerenti — garantito per costruzione, una formula sola e tre tinte.
+     **`sat`** (saturazione), **`crisp`** (nitidezza del riflesso, dalla v13.38: a 0
+     il lampo sfuma morbido tra le fermate dei vicini — resa identica alla v13.28 —,
+     a 1 due fermate coi colori di corpo e ombra gli si stringono a ±3 punti e il
+     lampo diventa una banda stretta da metallo lucido). Condizione posta
+     dall'utente: controlli unici e stili sempre coerenti — garantito per
+     costruzione, una formula sola e tre tinte.
      Regole da non rompere:
      - la **saturazione dei riflessi SALE con la manopola ma in proporzione alla
        saturazione propria del metallo** (`s0 × (1 + k·manopola)`): i metalli caldi
@@ -703,6 +707,10 @@ normale/XL secondo la preferenza attiva.
   etichette dentro una sezione sono volutamente **generiche e ripetute** ('Sfumatura',
   'Opacità'): è la sezione a disambiguarle, e nomi lunghi tipo 'Ampiezza del bagliore
   esterno' erano proprio ciò che rendeva l'elenco confuso.
+  ⚠️ **Doppio clic sul pallino di uno slider = valore PREDEFINITO** della manopola
+  (v13.38, richiesta utente): vale per OGNI slider di OGNI effetto, il default si
+  legge da `SITE_FLAGS_DEFAULT` sotto la chiave base (le varianti `_m` e per-tema
+  condividono il default della chiave omonima).
   Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
   minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
