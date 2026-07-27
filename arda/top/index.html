@@ -2418,7 +2418,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.65</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.75</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2564,7 +2564,7 @@ var SITE_FLAGS_DEFAULT = {
   // sull'argento) non è riproducibile con manopole condivise, per costruzione.
   podium:{ on:true, int_d:1, int_l:1, lum_d:1, lum_l:1,
            sat_d:1, sat_l:1, top_d:0.7, top_l:0.7, rifl_d:0.8, rifl_l:0.8,
-           crisp_d:0, crisp_l:0 },
+           crisp_d:0, crisp_l:0, tamp_d:18, tamp_l:18 },
   // nums (v12.63): colore del numero di posizione, derivato dalla tinta della
   // card in OKLCH. `uni` = luminosità UNIFORME per tutte le famiglie (alla L di
   // riferimento) invece della luminosità propria di ogni tinta; `dsat`/`dlum` =
@@ -2585,7 +2585,11 @@ var FX_RANGE = {
   vig:{ int:[0.05,0.6], start:[20,70] },
   podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4],
            sat_d:[0.3,1.5], sat_l:[0.3,1.5], top_d:[0,1], top_l:[0,1],
-           rifl_d:[0,1], rifl_l:[0,1], crisp_d:[0,1], crisp_l:[0,1] },
+           rifl_d:[0,1], rifl_l:[0,1], crisp_d:[0,1], crisp_l:[0,1],
+           // Ampiezza del bordo luminoso: dove FINISCE, in punti della corsa
+           // logica del glifo. Il tetto sta sotto la fermata del corpo (40) così
+           // il bordo non lo invade; il minimo tiene una riga sottile ma visibile.
+           tamp_d:[8,34], tamp_l:[8,34] },
   // ⚠️ I limiti delle L di `nums` NON sono estetici ma di ACCESSIBILITÀ: sono i
   // valori misurati su tutte le 15 famiglie, a qualunque cromia, oltre i quali il
   // numero scenderebbe sotto 3:1 sul fondo della card (soglia AA per il testo
@@ -2874,6 +2878,8 @@ var PODIUM_IDENT = {
        l:{ s:0.58, L:[0.61,0.44,0.31,0.34,0.54,0.24], topMax:0.82, flashMax:0.82 } }
 };
 // Ruoli delle 7 fermate: bordo in cima, lume, corpo, LAMPO, ombra, ripresa, ancora.
+// La seconda (fine del bordo luminoso) non è più fissa: la governa la manopola
+// 'Ampiezza del bordo' (`tamp`, default 18 = il valore storico).
 var PODIUM_POS = [3, 18, 40, 54, 70, 86, 100];
 // Fascia della corsa del gradiente che il glifo intercetta davvero (misurata a
 // bande nette, v13.45): fuori da qui le fermate non toccano un solo pixel della
@@ -2905,9 +2911,13 @@ function fxPodiumGrad(n, cfg, light, glyph){
   var w = 9 - 8.5 * cr;
   var lampo = [Math.min(1, s0 * (1 + 2.2 * rifl)), lerp(L[2], idn.flashMax, rifl)];
   var corpo = [s0, L[1]], ombra = [s0, L[3]];
+  // Ampiezza del bordo luminoso (v13.75, richiesta utente): `top` dice quanto è
+  // CHIARO il bordo, questa quanto SCENDE lungo il glifo prima di tornare al lume
+  // normale. Si muove solo la fermata di fine: il picco resta ancorato alla cima.
+  var tw = Math.min(36, fxTh(cfg, 'tamp', light));
   var st = [
     [[Math.min(1, s0 * (1 + 1.8 * top)), lerp(L[0], idn.topMax, top)], 3],
-    [[s0, L[0]], 18],
+    [[s0, L[0]], tw],
     [corpo, 40],
     [corpo, 49 - w],
     [lampo, 49],
@@ -7373,6 +7383,9 @@ var FX_KNOBS = {
       nen:'How soft the glint edge is: zero is feathered, full is sharp. The shape itself never shrinks.' },
     { p:'top_d', t:'num', step:0.02, th:'d', dep:'on', it:'Bordo luminoso', en:'Edge light',
       nit:'Il bordo chiaro in cima al glifo.', nen:'The bright edge at the top of the glyph.' },
+    { p:'tamp_d', t:'num', step:1, unit:'%', th:'d', dep:'on', it:'Ampiezza del bordo', en:'Edge width',
+      nit:'Quanto scende il bordo luminoso dalla cima del numero.',
+      nen:'How far the bright edge reaches down from the top of the digit.' },
     { p:'sat_d', t:'num', step:0.02, th:'d', dep:'on', it:'Saturazione', en:'Saturation',
       nit:'Quanto è carica la tinta del metallo (il Contrasto regola invece lo stacco tra chiaro e scuro).',
       nen:'How rich the metal tint is (Contrast controls the light-dark separation instead).' },
@@ -7388,6 +7401,9 @@ var FX_KNOBS = {
       nen:'How soft the glint edge is: zero is feathered, full is sharp. The shape itself never shrinks.' },
     { p:'top_l', t:'num', step:0.02, th:'l', dep:'on', it:'Bordo luminoso', en:'Edge light',
       nit:'Il bordo chiaro in cima al glifo.', nen:'The bright edge at the top of the glyph.' },
+    { p:'tamp_l', t:'num', step:1, unit:'%', th:'l', dep:'on', it:'Ampiezza del bordo', en:'Edge width',
+      nit:'Quanto scende il bordo luminoso dalla cima del numero.',
+      nen:'How far the bright edge reaches down from the top of the digit.' },
     { p:'sat_l', t:'num', step:0.02, th:'l', dep:'on', it:'Saturazione', en:'Saturation',
       nit:'Quanto è carica la tinta del metallo (il Contrasto regola invece lo stacco tra chiaro e scuro).',
       nen:'How rich the metal tint is (Contrast controls the light-dark separation instead).' }
