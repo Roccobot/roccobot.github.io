@@ -354,6 +354,21 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - Un trascinamento **non** fa scattare l'alternanza adattato/reale del clic: sotto i
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
+- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio, con le
+  cose che servono qui e che il browser non offre:
+  - **Zoom**: adatta alla vista, 100%, 200%, 400% (centrati sul punto cliccato).
+  - **Copia**: l'immagine come PNG, l'indirizzo e, sugli SVG, **il vettoriale vero**
+    (`image/svg+xml`, che gli appunti accettano: verificato).
+  - **Salva**: l'immagine, e sugli SVG le due voci del pannello (esporta PNG a un DPI,
+    salva l'SVG ripulito).
+  - **Vista**: navigatore acceso o spento, verso della rotella, stampa.
+  - ⚠️ **Un menu proprio sostituisce quello del browser**, non si affianca, e quello
+    nativo non è richiamabile da JavaScript: si perde **"Ispeziona"**, che non è
+    reimpiazzabile. Via di fuga: **`shift` + tasto destro** lascia passare il menu del
+    browser. Dentro il pannello di scaricamento il menu nativo resta sempre, perché lì
+    serve per i campi di testo.
+  - Si usa anche da tastiera (frecce, Invio, Esc) e si costruisce al primo clic destro,
+    non al caricamento.
 - **Navigatore (dalla 2.15).** In alto a destra compare una vista d'insieme dell'immagine
   con un **riquadro rosso** (`#FF4E4E`) che segna la porzione a schermo e lo segue mentre
   ci si sposta. Ci si può **cliccare e trascinare dentro** per saltare altrove: il punto
