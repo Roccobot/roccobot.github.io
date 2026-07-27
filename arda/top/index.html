@@ -1702,16 +1702,34 @@ body.is-dragging .rank-item * { pointer-events:none; }
    scorre da sinistra l'intera colonna e il box non si anima.
    `.no-anim` la sopprime nei rebuild tecnici (vedi dockRebuild): un cambio lingua o
    un 'Ultimo salvato' non devono far lampeggiare la colonna. */
+/* Ingresso e uscita sono la STESSA cosa al rovescio, e rapidi (v13.76, richiesta
+   utente): identica geometria (10px di salita, scala 0.985; in vista divisa 16px
+   di slittamento laterale), curve speculari (ease-out entrando, ease-in uscendo) e
+   durate brevi. Cambiando una durata va cambiata anche la gemella. */
 @keyframes fab-modal-in { from { opacity:0; } to { opacity:1; } }
-@keyframes fab-box-in { from { opacity:0; transform:translateY(12px) scale(0.985); } to { opacity:1; transform:none; } }
+@keyframes fab-box-in { from { opacity:0; transform:translateY(10px) scale(0.985); } to { opacity:1; transform:none; } }
 @keyframes fab-dock-in { from { opacity:0; transform:translateX(-16px); } to { opacity:1; transform:none; } }
-.fab-modal-overlay { animation:fab-modal-in 0.22s ease-out both; }
-.fab-modal-box { animation:fab-box-in 0.32s cubic-bezier(0.34,1.4,0.64,1) both; }
-.fab-modal-overlay.fxdock { animation:fab-dock-in 0.26s cubic-bezier(0.22,1,0.36,1) both; }
+.fab-modal-overlay { animation:fab-modal-in 0.15s ease-out both; }
+.fab-modal-box { animation:fab-box-in 0.2s cubic-bezier(0.34,1.3,0.64,1) both; }
+.fab-modal-overlay.fxdock { animation:fab-dock-in 0.18s cubic-bezier(0.22,1,0.36,1) both; }
 .fab-modal-overlay.fxdock .fab-modal-box { animation:none; }
 .fab-modal-overlay.no-anim, .fab-modal-overlay.no-anim .fab-modal-box { animation:none; }
+/* Uscita (v13.76, richiesta utente: 'la chiusura è veramente improvvisa'). La
+   classe .fab-out la avvia e il nodo si rimuove a fine animazione (fabDismiss).
+   ⚠️ In vista divisa la larghezza della colonna va CONGELATA inline prima di
+   animare: `dockRelease()` gira subito e porta via `--dockw`, quindi la regola
+   `width:var(--dockw)` cadrebbe e il box in uscita si allargherebbe a tutta pagina
+   (vedi fabDismiss). */
+@keyframes fab-modal-out { from { opacity:1; } to { opacity:0; } }
+@keyframes fab-box-out { from { opacity:1; transform:none; } to { opacity:0; transform:translateY(10px) scale(0.985); } }
+@keyframes fab-dock-out { from { opacity:1; transform:none; } to { opacity:0; transform:translateX(-16px); } }
+.fab-modal-overlay.fab-out { animation:fab-modal-out 0.13s ease-in both; pointer-events:none; }
+.fab-modal-overlay.fab-out .fab-modal-box { animation:fab-box-out 0.17s ease-in both; }
+.fab-modal-overlay.fxdock.fab-out { animation:fab-dock-out 0.16s ease-in both; }
+.fab-modal-overlay.fxdock.fab-out .fab-modal-box { animation:none; }
 @media (prefers-reduced-motion:reduce) {
   .fab-modal-overlay, .fab-modal-box, .fab-modal-overlay.fxdock { animation:none; }
+  .fab-modal-overlay.fab-out, .fab-modal-overlay.fab-out .fab-modal-box { animation:none; }
 }
 .fab-modal-box p { margin:0 0 0.9rem;font-size:0.82rem;color:var(--parchment);opacity:0.65;line-height:1.4; }
 .fab-modal-box input[type=password], .fab-modal-box input[type=text] { width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;background:rgba(0,0,0,0.4);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-size:0.9rem;outline:none;transition:border-color 0.15s; }
@@ -2418,7 +2436,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.75</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.76</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5805,7 +5823,7 @@ function confirmDiscardReorder(){
   var box = document.createElement('div'); box.className = 'fab-modal-box fmb-discard';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
-  function dismiss(){ overlay.remove(); lockPageScroll(false); }
+  function dismiss(){ fabDismiss(overlay); lockPageScroll(false); }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; box.appendChild(cl);
   var q = document.createElement('div'); q.className = 'fab-modal-charname';
@@ -5827,7 +5845,7 @@ function showDesktopReorderModal(){
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
-  function dismiss(){ overlay.remove(); lockPageScroll(false); }
+  function dismiss(){ fabDismiss(overlay); lockPageScroll(false); }
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; showDesktopReorderModal(); };
   function mkBtn(label, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : ''); b.textContent = label; b.onclick = fn; return b; }
@@ -5851,7 +5869,7 @@ function showActionChoiceModal() {
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true); // blocca lo scroll del contenuto sotto
-  function dismiss(){ overlay.remove(); lockPageScroll(false); }
+  function dismiss(){ fabDismiss(overlay); lockPageScroll(false); }
   langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; showActionChoiceModal(); };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
   function mkClose(){ var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = dismiss; return cl; }
@@ -6598,7 +6616,7 @@ function showPasswordModal(promptText, onSuccess, extra) {
   overlay.appendChild(box);
   document.body.appendChild(overlay);
   lockPageScroll(true); // blocca lo scroll del contenuto sotto
-  const closePw = () => { overlay.remove(); lockPageScroll(false); };
+  const closePw = () => { fabDismiss(overlay); lockPageScroll(false); };
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closePw(); });
 
   function buildStep1() {
@@ -6718,7 +6736,7 @@ function showFieldGapModal(charName, fieldLabel, lang) {
     inp.type = 'text'; inp.value = '';
     var btn = document.createElement('button');
     btn.className = 'fab-modal-confirm is-primary'; btn.textContent = 'Conferma';
-    function done(){ var v = inp.value; ov.remove(); resolve(v); }
+    function done(){ var v = inp.value; fabDismiss(ov); resolve(v); }
     btn.onclick = done;
     inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); done(); } });
     box.appendChild(h); box.appendChild(p); box.appendChild(inp); box.appendChild(btn);
@@ -7636,6 +7654,29 @@ var DOCK_RELAYOUT = false;
 // `finally` evita che una riapertura andata male lasci il flag acceso a sabotare
 // la chiusura successiva. Va avvolta anche la RIAPERTURA, non solo la chiusura.
 function dockRebuild(fn){ DOCK_RELAYOUT = true; try { fn(); } finally { DOCK_RELAYOUT = false; } }
+// Chiusura MORBIDA di una modale admin (v13.76). Sostituisce `overlay.remove()`
+// nelle chiusure vere: il nodo resta per la durata della dissolvenza e sparisce da
+// sé. ⚠️ L'`id` si toglie SUBITO, per due ragioni: le funzioni che aprono un editor
+// si autoproteggono con `if (document.getElementById('fab-modal')) return`, e
+// `MODAL_OPEN_SEL` (focus trap, inert, tasti nudi) ragiona sugli id — un fantasma
+// con l'id ancora addosso bloccherebbe una riapertura immediata e terrebbe la
+// pagina inerte. Uscita IMMEDIATA in vista divisa (è un cambio di layout, non una
+// modale che sparisce), nei rebuild tecnici e con moto ridotto.
+function fabDismiss(el){
+  if (!el || el._out) { if (el) el.remove(); return; }
+  el._out = true;
+  el.removeAttribute('id');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if (DOCK_RELAYOUT || reduce) { el.remove(); return; }
+  // Vista divisa: `dockRelease()` gira subito dopo e porta via `--dockw`, da cui
+  // dipende la larghezza della colonna. Si fissa in px prima di animare, o l'uscita
+  // si allargherebbe a tutta pagina.
+  if (el.classList.contains('fxdock')) el.style.width = el.getBoundingClientRect().width + 'px';
+  el.classList.add('fab-out');
+  var done = function(){ el.remove(); };
+  el.addEventListener('animationend', done, { once: true });
+  setTimeout(done, 320); // rete di sicurezza se l'animazione non parte
+}
 function dockEngage(colw){
   document.documentElement.classList.add('fx-dock');
   if (colw) document.documentElement.style.setProperty('--dockw', colw + 'px');
@@ -7877,7 +7918,7 @@ function showFxConfigEditor(key, sfx, onDone){
   scroller.className = 'fx-scroll';
   scroller.style.cssText = 'overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1 1 auto;margin:0 -0.2rem;padding:0 0.2rem;';
   var close = function(){
-    overlay.remove(); if (langRefresh === myL) langRefresh = prevL;
+    fabDismiss(overlay); if (langRefresh === myL) langRefresh = prevL;
     // In dock la tab tema può aver commutato il tema del SITO: alla chiusura si
     // torna a quello d'apertura (rebuild tecnici esclusi), coerente col 'torna
     // al punto di partenza' della vista divisa. La baseline si azzera solo qui,
@@ -8130,7 +8171,7 @@ function showSiteFlagsEditor(initState){
   if (docked) dockEngage(); else lockPageScroll(true);
   var onRs;
   var close = function(){
-    overlay.remove();
+    fabDismiss(overlay);
     window.removeEventListener('resize', onRs);
     if (docked) {
       dockRelease();
@@ -8340,7 +8381,7 @@ function showAdminChoiceModal() {
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   overlay.appendChild(box); document.body.appendChild(overlay);
   lockPageScroll(true);
-  var close = function(){ overlay.remove(); lockPageScroll(false); };
+  var close = function(){ fabDismiss(overlay); lockPageScroll(false); };
   overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close;
   var t = document.createElement('p'); t.textContent = it ? 'Area admin' : 'Admin area';
@@ -8490,7 +8531,7 @@ function showBadgeAdjustEditor(initState){
   if (docked) dockEngage(560); else lockPageScroll(true);
   var onRs;
   var close = function(){
-    overlay.remove();
+    fabDismiss(overlay);
     window.removeEventListener('resize', onRs);
     if (docked) {
       dockRelease();
@@ -8686,7 +8727,7 @@ function showColorStats(initState) {
   var box = document.createElement('div'); box.className = 'fab-modal-box'; box.style.maxWidth = '660px'; box.style.maxHeight = 'calc(88vh / var(--zoomf, 1))'; box.style.overflowY = 'auto';
   ov.appendChild(box); document.body.appendChild(ov);
   lockPageScroll(true);
-  var close = function(){ ov.remove(); lockPageScroll(false); if (langRefresh===myStatsL) langRefresh=null; if (themeRefresh===myStatsT) themeRefresh=null; };
+  var close = function(){ fabDismiss(ov); lockPageScroll(false); if (langRefresh===myStatsL) langRefresh=null; if (themeRefresh===myStatsT) themeRefresh=null; };
   ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
   var h = document.createElement('p'); h.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.5rem;';
@@ -8878,7 +8919,7 @@ function showColorEditor(initState) {
   }
   var onRs;
   var close = function(){
-    overlay.remove();
+    fabDismiss(overlay);
     window.removeEventListener('resize', onRs);
     revertCharPreview(); // solo DOM: si ripulisce anche nei rebuild tecnici
     if (docked) {
