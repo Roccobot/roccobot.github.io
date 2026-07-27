@@ -627,9 +627,10 @@ normale/XL secondo la preferenza attiva.
      **CONDIVISE dal trio**, per tema: **`rifl`** (il lampo speculare a metà glifo,
      quello che prima aveva solo l'argento), **`top`** (bordo luminoso in cima),
      **`sat`** (saturazione: quanto è CARICA la tinta — da non confondere con
-     `int`/Intensità, che è un `filter:contrast()` sul risultato e regola lo
-     STACCO chiaro/scuro; il contrast alza anche la cromia percepita, da qui la
-     confusione possibile), **`crisp`** (nitidezza del riflesso, dalla v13.38;
+     `int`, in UI **'Contrasto'/'Contrast'** dalla v13.42, prima 'Intensità del
+     metallo': è un `filter:contrast()` sul risultato e regola lo STACCO
+     chiaro/scuro; il contrast alza anche la cromia percepita, da qui la
+     confusione che ha portato al rinomino), **`crisp`** (nitidezza del riflesso, dalla v13.38;
      **semantica corretta nella v13.40**: la SAGOMA del riflesso è una banda a
      larghezza FISSA, 49%-59% della corsa, sempre presente — la manopola governa
      solo quanto è SFUMATO il suo bordo, rampa da 9 punti a ~0.5. ⚠️ La v13.38
