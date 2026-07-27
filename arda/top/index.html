@@ -1692,6 +1692,27 @@ body.is-dragging .rank-item * { pointer-events:none; }
    contenuto ci sta, ma in eccedenza il box parte dall'alto e l'overlay scorre. */
 .fab-modal-overlay { position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;overscroll-behavior:contain; }
 .fab-modal-box { background:#252525;border:1px solid rgba(160,160,160,0.28);border-radius:12px;padding:1.5rem 1.8rem;max-width:280px;width:90%;position:relative;margin:auto;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px); }
+/* Apertura MORBIDA delle modali admin (v13.55, richiesta utente: 'la sua
+   apparizione è improvvisa e istantanea, fastidiosa a confronto con le altre
+   modali'). Le modali utente dissolvono col velo e sollevano il box (.modal-backdrop
+   / .modal, transizioni su .active); qui gli overlay nascono già visibili perché
+   sono creati al volo, quindi la morbidezza si ottiene con una `animation` che parte
+   da sé alla comparsa - nessun secondo passaggio da orchestrare in JS.
+   In DOCK il box occupa l'intera colonna: sollevarlo sarebbe fuori luogo, quindi lì
+   scorre da sinistra l'intera colonna e il box non si anima.
+   `.no-anim` la sopprime nei rebuild tecnici (vedi dockRebuild): un cambio lingua o
+   un 'Ultimo salvato' non devono far lampeggiare la colonna. */
+@keyframes fab-modal-in { from { opacity:0; } to { opacity:1; } }
+@keyframes fab-box-in { from { opacity:0; transform:translateY(12px) scale(0.985); } to { opacity:1; transform:none; } }
+@keyframes fab-dock-in { from { opacity:0; transform:translateX(-16px); } to { opacity:1; transform:none; } }
+.fab-modal-overlay { animation:fab-modal-in 0.22s ease-out both; }
+.fab-modal-box { animation:fab-box-in 0.32s cubic-bezier(0.34,1.4,0.64,1) both; }
+.fab-modal-overlay.fxdock { animation:fab-dock-in 0.26s cubic-bezier(0.22,1,0.36,1) both; }
+.fab-modal-overlay.fxdock .fab-modal-box { animation:none; }
+.fab-modal-overlay.no-anim, .fab-modal-overlay.no-anim .fab-modal-box { animation:none; }
+@media (prefers-reduced-motion:reduce) {
+  .fab-modal-overlay, .fab-modal-box, .fab-modal-overlay.fxdock { animation:none; }
+}
 .fab-modal-box p { margin:0 0 0.9rem;font-size:0.82rem;color:var(--parchment);opacity:0.65;line-height:1.4; }
 .fab-modal-box input[type=password], .fab-modal-box input[type=text] { width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;background:rgba(0,0,0,0.4);border:1px solid rgba(104,144,168,0.4);border-radius:6px;color:var(--parchment);font-size:0.9rem;outline:none;transition:border-color 0.15s; }
 .fab-modal-box input[type=password]:focus, .fab-modal-box input[type=text]:focus { border-color:rgba(154,192,216,0.8); }
@@ -2397,7 +2418,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.45</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.55</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7497,7 +7518,12 @@ function injectFxEditorCss(){
     // l'anteprima è la pagina vera accanto. Si nasconde via CSS e basta — i pannelli
     // vengono comunque costruiti e dipinti (paint() lavora su elementi nascosti
     // senza errori), così il cambio di telaio a metà modifica non ha casi speciali.
-    '.fab-modal-overlay.fxdock .fxp-wrap{display:none}',
+    // ⚠️ ECCEZIONE: la variante MOBILE (v13.55, segnalata dall'utente). La pagina
+    // accanto è la versione DESKTOP, quindi mentre si regolano i parametri mobile
+    // non fa da anteprima a nulla e si resterebbe senza alcun riscontro. Lì i
+    // riquadri restano visibili, gli stessi che si vedono nella modale-fallback:
+    // `paint()` legge già la variante in modifica (V), non la piattaforma corrente.
+    '.fab-modal-overlay.fxdock:not(.fxdock-mob) .fxp-wrap{display:none}',
     // Micro-aggiustamenti in dock: campi e anteprime si impilano (il corpo a due
     // colonne è pensato per la modale da 840px, nella colonna da 560 non ci sta).
     '.fab-modal-overlay.fxdock .ba-body{grid-template-columns:1fr;gap:14px}',
@@ -7588,6 +7614,12 @@ var DOCK_SHIELD = null;
 // true durante un rebuild TECNICO (cambio lingua, cambio telaio al resize): la
 // chiusura non è una chiusura dell'utente e NON deve ripristinare i flag.
 var DOCK_RELAYOUT = false;
+// Un rebuild tecnico chiude e riapre un editor senza che sia l'utente a uscirne:
+// il flag spegne i ripristini della chiusura E l'animazione d'ingresso (che a ogni
+// cambio lingua, reset o cambio di telaio farebbe lampeggiare la colonna). Il
+// `finally` evita che una riapertura andata male lasci il flag acceso a sabotare
+// la chiusura successiva. Va avvolta anche la RIAPERTURA, non solo la chiusura.
+function dockRebuild(fn){ DOCK_RELAYOUT = true; try { fn(); } finally { DOCK_RELAYOUT = false; } }
 function dockEngage(colw){
   document.documentElement.classList.add('fx-dock');
   if (colw) document.documentElement.style.setProperty('--dockw', colw + 'px');
@@ -7633,7 +7665,8 @@ function showFxConfigEditor(key, sfx, onDone){
   var themeAtOpen = FX_THEME0 || document.documentElement.getAttribute('data-theme');
   FX_THEME0 = themeAtOpen;
   var overlay = document.createElement('div'); overlay.id = 'fx-modal';
-  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
+  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '')
+    + (docked && sfx ? ' fxdock-mob' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   // ⚠️ Lo scorrimento sta in un contenitore INTERNO, non sul box (v12.95). Col box
   // come area di scorrimento, il tasto × — che è `position:absolute` dentro il box —
@@ -7667,7 +7700,10 @@ function showFxConfigEditor(key, sfx, onDone){
   t.textContent = (it ? item.it : item.en) + (item.noMob ? '' : ' - ' + (sfx ? 'Mobile' : 'Desktop'));
   box.appendChild(scroller); scroller.appendChild(t);
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.9rem;';
-  sub.textContent = docked
+  sub.textContent = (docked && sfx)
+    ? (it ? 'La pagina accanto è la versione desktop: le modifiche mobile si vedono qui sotto.'
+          : 'The page beside is the desktop version: mobile changes show below.')
+    : docked
     ? (it ? 'Le modifiche si vedono subito sulla pagina accanto.'
           : 'Changes show immediately on the page beside.')
     : (it ? 'Le modifiche si vedono subito qui sotto e sulle card dietro.'
@@ -7991,8 +8027,7 @@ function showFxConfigEditor(key, sfx, onDone){
     // d'apertura azzerando la baseline FX_THEME0, e la tab tornerebbe con lui
     // (v13.43). Qui si resettano SOLO i valori: tema e tab restano dove sono.
     applySiteFlags();
-    DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false;
-    showFxConfigEditor(key, sfx, onDone);
+    dockRebuild(function(){ close(); showFxConfigEditor(key, sfx, onDone); });
   };
   var ok = document.createElement('button'); ok.className = 'fab-modal-confirm';
   ok.style.cssText = 'width:auto;flex:1;margin-top:0;'; ok.textContent = it ? 'Chiudi' : 'Close';
@@ -8024,7 +8059,7 @@ function showSiteFlagsEditor(initState){
   // cambio a metà strada lo gestisce il listener di resize più sotto.
   var docked = dockAvailable();
   var overlay = document.createElement('div'); overlay.id = 'fab-modal';
-  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
+  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   if (!docked) { box.style.maxWidth = '460px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; }
   box.style.overflowY = 'auto';
@@ -8056,17 +8091,17 @@ function showSiteFlagsEditor(initState){
       var st = { scroll: box.scrollTop, tab: tab };
       var fx = document.getElementById('fx-modal');
       var fxSt = fx ? { key: fx._fxKey, sfx: fx._fxSfx } : null;
-      DOCK_RELAYOUT = true;
-      if (fx) fx._fxClose();
-      close();
-      DOCK_RELAYOUT = false;
-      showSiteFlagsEditor(st);
-      if (fxSt) {
-        var pn = document.getElementById('fab-modal');
-        showFxConfigEditor(fxSt.key, fxSt.sfx, function(){
-          if (pn && pn._renderRows) pn._renderRows(); // risincronizza le checkbox
-        });
-      }
+      dockRebuild(function(){
+        if (fx) fx._fxClose();
+        close();
+        showSiteFlagsEditor(st);
+        if (fxSt) {
+          var pn = document.getElementById('fab-modal');
+          showFxConfigEditor(fxSt.key, fxSt.sfx, function(){
+            if (pn && pn._renderRows) pn._renderRows(); // risincronizza le checkbox
+          });
+        }
+      });
     }, 180);
   };
   window.addEventListener('resize', onRs);
@@ -8201,7 +8236,7 @@ function showSiteFlagsEditor(initState){
   if (initState && initState.scroll) box.scrollTop = initState.scroll;
   // L: ricostruisce nella nuova lingua conservando lo scroll (anti-jitter); lo
   // stato dei flag non salvati vive in SITE_FLAGS, globale, quindi non si perde.
-  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false; showSiteFlagsEditor({ scroll: sc, tab: tab }); };
+  myL = function(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var sc = box.scrollTop; dockRebuild(function(){ close(); showSiteFlagsEditor({ scroll: sc, tab: tab }); }); };
   langRefresh = myL;
 }
 
@@ -8353,7 +8388,7 @@ function showBadgeAdjustEditor(initState){
   injectFxEditorCss(); // CSS del dock: serve anche aprendo QUESTO editor per primo
   var docked = dockAvailable(560);
   var overlay = document.createElement('div'); overlay.id = 'fab-modal';
-  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
+  overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
   // La modale NON scrolla: è un flex-column ad altezza max; solo la tabella (flex:1)
   // scorre internamente, così footer e controlli restano sempre visibili (un solo scroll).
   var box = document.createElement('div'); box.className = 'fab-modal-box';
@@ -8377,8 +8412,7 @@ function showBadgeAdjustEditor(initState){
     onRs._t = setTimeout(function(){
       if (!document.body.contains(overlay)) return;
       if (dockAvailable(560) === docked) return;
-      DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false;
-      showBadgeAdjustEditor({ cur: cur });
+      dockRebuild(function(){ close(); showBadgeAdjustEditor({ cur: cur }); });
     }, 180);
   };
   window.addEventListener('resize', onRs);
@@ -8542,7 +8576,7 @@ function showBadgeAdjustEditor(initState){
     }).finally(function(){ btn.disabled = false; btn.style.opacity = ''; });
   }
 
-  function rebuild(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var st = { cur: cur }; DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false; showBadgeAdjustEditor(st); }
+  function rebuild(){ if (!document.body.contains(overlay)){ if (langRefresh === myL) langRefresh = null; return; } var st = { cur: cur }; dockRebuild(function(){ close(); showBadgeAdjustEditor(st); }); }
   myL = rebuild; langRefresh = myL;
 
   sync();
@@ -8720,7 +8754,7 @@ function showColorEditor(initState) {
   injectFxEditorCss(); // il CSS del dock vive lì: serve anche aprendo QUESTO editor per primo
   var docked = dockAvailable(480);
   var overlay = document.createElement('div');
-  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
+  overlay.id = 'fab-modal'; overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   if (!docked) { box.style.maxWidth = '620px'; box.style.maxHeight = 'calc(90vh / var(--zoomf, 1))'; }
   box.style.overflowY = 'auto';
@@ -8767,8 +8801,7 @@ function showColorEditor(initState) {
       if (!document.body.contains(overlay)) return;
       if (dockAvailable(480) === docked) return;
       var st = { tab: curTab, fam: (curTab==='f' && famSelectEl) ? famSelectEl.value : null, scroll: box.scrollTop };
-      DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false;
-      showColorEditor(st);
+      dockRebuild(function(){ close(); showColorEditor(st); });
     }, 180);
   };
   window.addEventListener('resize', onRs);
@@ -8816,7 +8849,7 @@ function showColorEditor(initState) {
   function rebuildEditor(){
     if (!document.body.contains(overlay)) { if (langRefresh===myEdL) langRefresh=null; return; }
     var st = { tab: curTab, fam: (curTab==='f' && famSelectEl) ? famSelectEl.value : null, scroll: box.scrollTop };
-    DOCK_RELAYOUT = true; close(); DOCK_RELAYOUT = false; showColorEditor(st);
+    dockRebuild(function(){ close(); showColorEditor(st); });
   }
   myEdL = rebuildEditor;
   langRefresh = myEdL;

@@ -1029,8 +1029,36 @@ colori e micro-aggiustamenti sullo stesso telaio.
   'Le modifiche si vedono subito sulla pagina accanto.', in modale il testo
   storico. Le tab Chiaro/Scuro restano anche in dock (scelgono QUALI manopole si
   editano; per vedere l'altro tema in pagina c'è il tasto T).
+  - ⚠️ **ECCEZIONE: con la variante MOBILE l'anteprima RESTA anche in dock (v13.55,
+    segnalata dall'utente).** La pagina accanto è la versione **desktop**: mentre si
+    regolano i parametri `_m` non fa da anteprima a nulla, e senza i riquadri si
+    lavorava alla cieca. Selettore: `.fxdock:not(.fxdock-mob) .fxp-wrap{display:none}`,
+    con la classe **`fxdock-mob`** sull'overlay quando `docked && sfx`. Non serviva
+    altro perché `paint()` legge già la config dalla **variante in modifica** (`V`),
+    non dalla piattaforma corrente. Il sottotitolo diventa 'La pagina accanto è la
+    versione desktop: le modifiche mobile si vedono qui sotto.'. NB: il **Pannello**
+    non ha una propria anteprima (non l'ha mai avuta, nemmeno in modale): l'anteprima
+    vive solo nelle sotto-modali degli effetti.
 - Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu):
-  la porzione statica della pagina non cambia.
+  la porzione statica della pagina non cambia. **Unica eccezione:** l'animazione
+  d'ingresso delle modali admin (v13.55) sta nel CSS statico, perché riguarda tutte
+  le `.fab-modal-*`, non solo il dock.
+- **Apertura MORBIDA delle modali admin (v13.55, richiesta utente: 'la sua
+  apparizione è improvvisa e istantanea').** Le modali utente dissolvono il velo e
+  sollevano il box con **transizioni** pilotate dalla classe `.active`; le admin sono
+  create al volo e nascono già visibili, quindi lì la morbidezza si ottiene con una
+  **`animation`**, che parte da sé alla comparsa e non richiede un secondo passaggio
+  in JS. Tre keyframe: `fab-modal-in` (velo), `fab-box-in` (box che sale di 12px con
+  un filo di rimbalzo) e `fab-dock-in` (in **vista divisa** entra da sinistra
+  l'intera colonna e il box NON si anima: sollevare una colonna a piena altezza
+  sarebbe fuori luogo). `@media (prefers-reduced-motion:reduce)` le spegne tutte.
+  - ⚠️ **I rebuild TECNICI non devono animare**, o un cambio lingua, un 'Ultimo
+    salvato' o un cambio di telaio farebbero lampeggiare la colonna. L'overlay nasce
+    con la classe **`.no-anim`** quando `DOCK_RELAYOUT` è attivo, e per questo il
+    flag ora avvolge **anche la riapertura**, non solo la chiusura: i sette punti di
+    rebuild passano dall'helper **`dockRebuild(fn)`**, che lo alza, esegue e lo
+    riabbassa in `finally` (una riapertura andata male non lascia il flag acceso a
+    sabotare la chiusura successiva). Chi aggiunge un nuovo rebuild usi l'helper.
 - Verificato (batteria dedicata, font reali, config utente con XL di sito attivo):
   telaio sotto zoom 1.3 (colonna 400px layout = 520 visivi), hover che accende il
   bagliore sulla card vera, click sul nome spento in dock e vivo dopo la chiusura,
