@@ -700,6 +700,41 @@ normale/XL secondo la preferenza attiva.
      non un bug — attendere ~400-600ms. Trappola in cui si ricade facilmente: nella
      v12.63 ha fatto sembrare che `nums` scavalcasse il podio, mentre la cascata
      era corretta.
+  7. **`hov` — colore al passaggio** (`fx-hov`, REGOLABILE, dalla v14.10, richiesta
+     dell'utente; label UI **'Al passaggio'/'Hover color'**): il fondo della card
+     **sotto il puntatore**. Tre manopole **per tema** (`_d`/`_l`), nell'ordine
+     chiesto: **`op`** (opacità del velo di tinta), **`sat`** (saturazione della
+     tinta) e **`lum`** (luminosità). Formula **`fxHovBg`**, sintassi RELATIVA di
+     OKLCH come `fxNumColor`: si riscrivono L e cromia della tinta di famiglia
+     lasciando intatta la TINTA. **Config UNICA per i due dispositivi** (`FX_UNI`,
+     come il riflettore): governa la resa sotto il puntatore.
+     - ⚠️ **Il risultato va riportato in sRGB** con `rgb(from … r g b / alpha)`, non
+       lasciato in `oklch()`. Misurato: un colore **semitrasparente** dichiarato in
+       `oklch()` resta tale nel valore calcolato e Chromium lo compone in **oklab**,
+       non in sRGB, quindi il fondo risultava diverso dal vecchio `rgba()` fino a
+       **6/255** su un canale (rohir, tinta satura al bordo di gamut) pur con le
+       manopole a 1. Con `rgb(from …)` la composizione torna in sRGB e il round-trip
+       è esatto a ~0.01/255: verificato su tutte e 16 le tinte nei due temi, scarto
+       **0**, quindi i default riproducono la resa storica al pixel. Il colore
+       OPACO non ha questo problema: `fxNumColor` può restare in oklch.
+     - I **default** sono gli alpha storici (**0.18** scuro / **0.11** chiaro) con
+       tinta intatta: chi non tocca nulla non vede alcun cambiamento.
+     - ⚠️ **I limiti sono PRUDENTI, e axe qui NON serve come prova.** Con un
+       `::before` sulla card (il velo del riflettore) axe rinuncia a determinare il
+       fondo e classifica **tutti** i nodi come `incomplete` - misurato: **2714
+       incompleti, 0 valutati**, in qualunque configurazione e anche a riflettore
+       spento (restano `::before`/`::after` statici). Quindi la verifica del
+       contrasto sulle card va fatta **a calcolo** (`scratchpad/hovaa2.js`), e i
+       tetti (`op_d` 0.26, `op_l` 0.18) stanno volutamente vicini ai default.
+     - Nell'**anteprima** una card è accesa e una a riposo: è il confronto che serve
+       a regolare l'effetto. ⚠️ La condizione è `rec.first` e NON quella del
+       bagliore: riusarla significherebbe ereditarne la manopola 'Su tutte le card',
+       che con `all` acceso rende accese entrambe e fa perdere il confronto.
+     - Il fondo di riferimento per l'AA del testo della pill nell'anteprima si
+       compone con la tinta **riscritta** (`ccOklchAdjust`, equivalente JS della
+       formula) e l'opacità configurata: con l'effetto attivo lo strato della card non
+       è più la tinta pura a un alpha noto (stessa lezione della v12.75, un passo più
+       in là).
   - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto
     della v12.24 (`mask-image` su `#rank-list`), **eliminato del tutto nella
     v12.39** su richiesta dell'utente, sostituito dal riflettore. Non
@@ -713,9 +748,10 @@ normale/XL secondo la preferenza attiva.
   monocromatica `currentColor` — disegno scelto dall'utente). Storico: nella
   v12.39 i regolabili NON avevano la checkbox ma una pastiglia di stato
   Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
-  dell'utente). ⚠️ **NOMI E ORDINE delle voci (v12.64, decisi dall'utente):**
+  dell'utente). ⚠️ **NOMI E ORDINE delle voci (v12.64, decisi dall'utente;
+  'Al passaggio' aggiunto in coda nella v14.10):**
   Modalità XL, **Bagliore**, **Numeri colorati**, **Riflettore**, **Incisione**,
-  **Alone sfumato**, **Effetto podio** — etichette brevi, di una parola
+  **Alone sfumato**, **Effetto podio**, **Al passaggio** — etichette brevi, di una parola
   dove possibile; 'Numeri colorati' sta subito dopo 'Bagliore'. L'ultima voce si
   chiamava 'Oro, argento e bronzo' fino alla v12.74: **accorciata in 'Effetto
   podio'/'Podium effect' nella v12.75** su richiesta dell'utente, perché a **320px
@@ -724,7 +760,9 @@ normale/XL secondo la preferenza attiva.
   del pannello si scelgono corte perché devono stare su **una riga** anche nel caso
   peggiore (telefono strettissimo × zoom 1.3): a **320px in XL** la colonna della
   label è larga **132px**, e un'etichetta che va a capo raddoppia l'altezza della
-  riga. ⚠️ **La verifica va fatta in ENTRAMBE le lingue**: l'italiano che ci sta non
+  riga. Caso v14.10: **'Colore al passaggio'** misura **147.2px** col font reale e
+  andrebbe a capo, quindi la voce si chiama **'Al passaggio'** (96px; EN 'Hover
+  color', 91.6px). ⚠️ **La verifica va fatta in ENTRAMBE le lingue**: l'italiano che ci sta non
   garantisce l'inglese. Nella stessa v12.75 l'EN **'Coloured numbers'** era l'ultimo
   a sforare (2 righe) ed è diventato **'Number tint'** (99.9px; scartato 'Tinted
   numbers', 125.8px su 132 = margine troppo sottile, e il solo 'Numbers', che si
@@ -3204,8 +3242,27 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
       scheda → nota di ritorno (`modalReturn`), Risorse → mappa e Risorse → nota,
       Info → Risorse. I **rebuild di lingua** usano invece `'now'`: via subito,
       niente dissolvenza, perché la stessa modale viene ricostruita nell'istante.
-    - ⚠️ **CHI ENTRA DISSOLVE SOPRA CHI ESCE, e chi esce non si tocca (v14.00).**
-      Regola definitiva, dopo due tentativi sbagliati in direzioni opposte:
+    - ⚠️ **UN SOLO VELO IN SCENA, E SEMPRE PIENO (v14.10, regola definitiva).** Chi
+      ENTRA porta il velo (istantaneo, nessuna transizione); chi ESCE lo **perde** e
+      tiene il solo box, che le passa **sopra** e dissolve in 0.08s
+      (`@keyframes modal-xfade-out`). Così non c'è mai un fotogramma senza finestra e
+      il fondo dietro non cambia di un'unità. Tre dettagli indispensabili, tutti
+      scoperti misurando:
+      1. **`box-shadow:none` sul box che esce.** Il box porta un alone diffuso (60 e
+         120px) e, stando sopra il velo, il suo alone si SOMMAVA a quello della
+         modale sotto: la fascia fuori dalla modale schiariva da **17.7 a 25.6** di
+         luminanza per ~80ms. L'alone lo disegna una volta sola chi entra.
+      2. **`backdrop-filter:none` sul box che esce**, o la sua sfocatura sfoca il
+         contenuto di chi entra, che ora le sta sotto.
+      3. **Togliere `.xout` va fatto con `.no-anim` + un reflow.** Senza, la scheda
+         torna a valere la sua transizione (`opacity 0.2s`) e - non essendo più
+         `.active` - il suo velo **ricompariva** per poi sfumare: un secondo velo
+         sopra quello della nota, quindi il fondo si scuriva e tornava (misurato:
+         226.2 → 218.7 → 226.2 in tema chiaro, 17.7 → 16.4 → 17.7 in scuro).
+      Verificato al fotogramma su 4 passaggi × 2 temi: **0 frame senza finestra** e
+      escursione del velo **0.00-0.30** su una luminanza di 17.7 (scuro) e 226.2
+      (chiaro); prima del fix era 7.4-9.3.
+    - Storia dei tre tentativi sbagliati, utile per non ripeterli:
       1. **v13.86** - dissolvevano entrambe e il fondo **SFARFALLAVA**. Causa
          misurata: due veli semitrasparenti sovrapposti compongono **MENO** di uno
          pieno (`0.92` su `0.92` dà 0.9936, ma a metà strada `0.46` su `0.46` dà
@@ -3216,29 +3273,24 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
          cui scompare il velo, sfarfalla la finestra appena chiusa e si vedono le
          card sottostanti'). Misurato coi fotogrammi reali (CDP screencast): 1-2
          frame con la luminanza del solo velo (**8** su 54 al centro del box).
-      3. **v14.00** - chi esce resta **dipinto, pieno e fermo** (classe **`.xout`**:
-         `opacity:1`/`visibility:visible` forzati anche senza `.active`, che è il
-         flag di stato e va via subito, più `pointer-events:none`), e chi entra
-         **sale sopra e dissolve** (`.xfade`: velo 0→1 e box 0→1 in 0.08s). Il velo
-         composito così **parte da 0.92 e SALE**, non scende mai, e una finestra è
-         sempre in scena. Verificato coi fotogrammi: **0 frame** sotto la luminanza
-         del box, su tutti e quattro i passaggi (nota→scheda, scheda→nota,
-         nota→nota, scheda→nota collegata).
-      - ⚠️ **`z-index:201` su `.xfade` è indispensabile**: a pari `z-index` l'ordine
-        di pittura segue il DOM, e la scheda `#modal-backdrop` è **statica in
-        pagina**, quindi finirebbe SOTTO una nota appena creata - la dissolvenza
-        sarebbe invisibile e il passaggio tornerebbe uno scatto.
+      3. **v14.00** - chi esce restava **dipinto e pieno**, velo compreso, e chi
+         entrava dissolveva sopra: niente buco, ma per 130ms i **due veli si
+         sommavano** e il fondo si SCURIVA. In tema chiaro molto (velo 0.62: da 0.62
+         a 0.856 di composito, cioè la pagina dietro dal 38% al 14% di trasmissione).
+         Era lo sfarfallio che l'utente segnalava ancora.
+      - ⚠️ **Gli `z-index` sono indispensabili**: a pari `z-index` l'ordine di pittura
+        segue il DOM, e la scheda `#modal-backdrop` è **statica in pagina**, quindi
+        finirebbe SOTTO una nota appena creata. Chi entra sta a **201**, chi esce a
+        **202**, così i piani sono giusti in entrambi i versi.
       - Chi esce si rimuove (o perde `.xout`) dopo **`MODAL_XOUT_MS` = 130ms**, un
-        filo più della dissolvenza d'ingresso. Due punti di uscita: i nodi
-        **dinamici** in `dismissStdModal(bd,'fast')`, la **scheda** - il cui nodo
-        vive sempre in pagina - via **`modalXfadeOut(bd)`** (in `goNote` e in
-        `closeModal` quando c'è `modalReturn`). `openModal` toglie un `.xout`
-        residuo, o riaprendo subito la scheda resterebbe inerte per 130ms.
-    - La dissolvenza del **contenuto** è `@keyframes modal-xfade-in` (0.08s) sul box
-      che entra. È un'`animation` e non una `transition` apposta - parte da sé alla
-      comparsa, senza dover intercalare un reflow fra la classe `.xfade` e `.active`
-      (col `transition` il browser calcolerebbe solo lo stato finale e non animerebbe
-      nulla). Spenta da `prefers-reduced-motion`.
+        filo più della dissolvenza. Due punti di uscita: i nodi **dinamici** in
+        `dismissStdModal(bd,'fast')`, la **scheda** - il cui nodo vive sempre in
+        pagina - via **`modalXfadeOut(bd)`** (in `goNote` e in `closeModal` quando c'è
+        `modalReturn`). `openModal` toglie un `.xout` residuo, o riaprendo subito la
+        scheda resterebbe inerte per 130ms.
+      - L'animazione è una `animation` e non una `transition` apposta: parte da sé
+        alla comparsa della classe, senza dover intercalare un reflow. Spenta da
+        `prefers-reduced-motion`.
     - ⚠️ **Come si verifica un passaggio: coi FOTOGRAMMI, non col DOM.** Una sonda su
       `getComputedStyle` non vede la **pittura** e diceva 'nessun buco' mentre
       l'utente vedeva il lampo. Lo strumento è `scratchpad/frames.js`: CDP
