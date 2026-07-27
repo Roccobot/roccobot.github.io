@@ -3190,8 +3190,49 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   - Il **visualizzatore mappe** (`#imgv`) ha un impianto proprio e non è toccato.
   - Sanato nella stessa release un difetto **preesistente** di contrasto: i titoli
     di sezione di Risorse (`.res-modal-title`) davano **4.49:1** sul fondo scuro,
-    un centesimo sotto la soglia 4.5:1. Ora hanno un colore proprio in scuro
-    (`#909090`); in chiaro restano sul token, già ampiamente AA.
+    un centesimo sotto la soglia 4.5:1 (nella v13.96 sono passati all'accento della
+    modale, vedi sotto).
+  - **Durate: 0.2s per TUTTO** (v13.96, scelta dell'utente): velo, box e colonna, in
+    entrata e in uscita, modali utente e admin. Unica eccezione voluta il cross-fade
+    dei **passaggi**, che resta a 0.08s ('velocissima').
+- **UN ACCENTO PER MODALE, deciso dalla PROVENIENZA (v13.96, scelte dell'utente su
+  mockup a confronto).** La neutralizzazione della v8.79 aveva reso grigi tutti gli
+  accenti delle modali informative, perché passavano dai token `--gold*` - che,
+  nonostante il nome, erano **azzurri** (`#9ac0d8` scuro / `#4a7090` chiaro,
+  verificato in git: non erano né oro né la tinta del personaggio). Il colore è
+  tornato con questo modello:
+  - **La modale ha UN accento**, in `--note-acc`: la tinta della **famiglia del
+    personaggio da cui si è arrivati**, altrimenti l'**accento globale del tema**
+    (`#c6ad66` scuro / `#2e5461` chiaro, indicati dall'utente: 6.99:1 e 7.47:1 sul
+    fondo delle modali). Lo prendono titolo, titoletti, pallini degli elenchi e il
+    rimando nota → nota; e per lo stesso principio Info e Risorse, che non hanno
+    provenienza, stanno sempre sul globale.
+  - **Un solo livello di intensità** (scelta dell'utente): la gerarchia la fanno
+    corpo e peso del testo. ⚠️ Sotto il 75% di opacità il tema chiaro scende a
+    4.04:1, fuori soglia: se un domani serve più stacco, agire sul peso.
+  - **La provenienza vive in `NOTE_ACC_IDX`** (indice del personaggio) e la scrive
+    chi apre la nota da una scheda (`goNote`, il rimando 'Leggi anche'); `Risorse` e
+    `Info` la azzerano, la chiusura vera della nota pure. `noteAccentVars(bd)` scrive
+    sull'overlay **`--macc-d`/`--macc-l`**, due tinte già rese AA, e il CSS mappa
+    `--note-acc` su quella del tema corrente. ⚠️ Due proprietà e non una perché il
+    tasto `T` **non** ricostruisce la nota aperta. Passando di nota in nota la
+    provenienza NON cambia: l'accento del personaggio resta per tutta la lettura.
+  - **I nomi cliccabili sono l'eccezione**: prendono la tinta della famiglia di
+    **destinazione** (dove porta il link), **desaturata al 55%** in HSL. Scelta
+    dell'utente su un confronto a quattro gradi (accento unico / 100% / 55% / 30%)
+    fatto sulla nota dei Mezzelfi, che cita 18 personaggi di 6 famiglie: al 55% la
+    famiglia si riconosce ancora ma con sei tinte in una pagina il colpo d'occhio
+    resta quieto; al 30% Noldor e Mezzelfi diventavano indistinguibili. Il fattore
+    vive in **`NOTE_TINT_SAT`**. ⚠️ La desaturazione è puramente estetica perché
+    `ccAaText` è applicata DOPO: il contrasto resta sopra 4.5:1 a qualunque grado
+    (misurato: minimo 4.51:1 in scuro, 4.52:1 in chiaro).
+  - **Nella SCHEDA** il rimando 'Leggi anche' (`.modal-noteref-link`) usa la stessa
+    `--cctext` degli altri accenti: era l'unico rimasto grigio, mentre POSIZIONE,
+    fonte e × sono in tinta dalla v8.77. La sua regola vive tra le **iniettate**
+    (`injectCardColorRules`) perché usa `rgba(var(--cctext),1)`, forma che il Nu non
+    sa parsare nel CSS statico.
+  - axe **0 violazioni WCAG** su Risorse, nota globale, nota da scheda, scheda e
+    Info, nei due temi.
 - **Regola stile modali: UTENTE = colorato, ADMIN = minimale (istruzione
   dell'utente, 2026-07-23).** Discrimine per PUBBLICO, non per contenuto: ogni modale
   che un **utente/visitatore** può vedere usa il guscio **colorato** (bordo doppio
