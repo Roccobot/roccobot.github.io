@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-07-26
+! Last updated: 2026-07-27
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -176,6 +176,11 @@
 @@||poste.it^$document,important
 @@||prima.it^$important
 @@||prima.it^$document,important
+! Qwant: sta dietro DataDome, che al primo caricamento di una sessione (quello senza
+! cookie) esamina la richiesta a fondo e risponde 403 se la trova alterata. La Stealth
+! altera user agent, header, referrer e durata dei cookie: e' la stessa famiglia del
+! caso alamo.com.
+@@||qwant.com^$stealth,important
 @@||raiplaysound.it^$document,subdocument,important
 @@||ranker.com^$important
 @@||recaptcha.net^$document,subdocument,important
