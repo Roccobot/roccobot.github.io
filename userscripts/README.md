@@ -353,6 +353,26 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   o pinch da trackpad su desktop, **pinch-to-zoom** su mobile — agisce **solo
   sull'immagine del visualizzatore** e **non** applica lo zoom di pagina (rotella non-ctrl
   = scroll/pan; `touch-action:none` per catturare il pinch).
+- **Rotella del mouse = zoom a scatti (dalla 2.12).** Con un mouse la rotella è il
+  comando naturale dello zoom: ogni scatto vale **1,4×**, applicato **subito**, senza
+  inerzia né attriti. Salendo o scendendo ci si **aggancia esattamente al 100%** invece
+  di scavalcarlo per un pelo, e lo scatto successivo prosegue oltre senza impuntarsi
+  (dal fit al 100% bastano 2-3 scatti).
+  - **Il trackpad continua a scorrere.** I due casi si distinguono dalla forma
+    dell'evento: un vero scatto di rotella manda un delta grande, intero e senza
+    componente orizzontale, il trackpad manda tanti delta piccoli e frazionari. Così lo
+    stesso computer va bene sia col trackpad sia col mouse in ufficio, senza cambiare
+    impostazione. Se un mouse a scorrimento libero non venisse riconosciuto, c'è
+    `ROTELLA_ZOOM = 'sempre'` (e `'mai'` per tornare al comportamento storico).
+  - **Shift+rotella** scorre l'immagine anche col mouse: serve perché qui il
+    trascinamento non c'è per scelta, e con la rotella occupata dallo zoom resterebbero
+    solo le barre di scorrimento.
+  - **Tasto `I`**: inverte il verso (predefinito: rotella in su ingrandisce). Un
+    messaggio momentaneo conferma il verso scelto, che viene **memorizzato** (come la
+    modalità del tondo `1:1`) e sopravvive sia al ricaricamento sia agli aggiornamenti
+    dello script, a differenza di una costante modificata a mano nel file.
+  - **`ctrl`+rotella e il pinch** restano lo zoom continuo di prima, con il fermo
+    morbido al 100%: non è cambiato nulla per chi li usa.
 - **Anche gli SVG (dalla 2.10), e restano vettoriali.** Prima erano esclusi di
   proposito. Una pagina SVG non è fatta come una pagina PNG: è un documento **XML**
   la cui radice è il `<svg>` stesso, **senza `<body>` e senza `<img>`** (ed è il motivo
@@ -419,9 +439,12 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
 ### Personalizzazione
 
 ```js
-let THEME = 'dark';        // 'system' | 'dark' | 'light' (sfondo a scacchi)
-const ZOOM_MAX_MULT = 12;  // zoom massimo = N× la dimensione reale
-const ZOOM_SENS = 0.0015;  // sensibilità dello zoom con ctrl+rotella
+let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
+const ZOOM_MAX_MULT = 12;    // zoom massimo = N× la dimensione reale
+const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
+const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, trackpad scorre) | 'sempre' | 'mai'
+const PASSO_ROTELLA = 1.4;   // quanto ingrandisce un singolo scatto di rotella
+const ROTELLA_SU_INGRANDISCE = true;  // verso predefinito (si inverte al volo col tasto I)
 ```
 
 ### Installazione
