@@ -354,7 +354,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - Un trascinamento **non** fa scattare l'alternanza adattato/reale del clic: sotto i
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
-- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di otto
+- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di sette
   voci: **Copia immagine**, **Copia URL immagine**, **Salva immagine...**, separatore,
   **Adatta alla vista**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
   cliccato). L'elenco è identico su raster e su SVG; cambia il **contenuto** di due voci:
