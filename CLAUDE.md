@@ -3190,8 +3190,37 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   - Il **visualizzatore mappe** (`#imgv`) ha un impianto proprio e non è toccato.
   - Sanato nella stessa release un difetto **preesistente** di contrasto: i titoli
     di sezione di Risorse (`.res-modal-title`) davano **4.49:1** sul fondo scuro,
-    un centesimo sotto la soglia 4.5:1. Ora hanno un colore proprio in scuro
-    (`#909090`); in chiaro restano sul token, già ampiamente AA.
+    un centesimo sotto la soglia 4.5:1 (nella v13.96 sono passati all'accento di
+    sistema, vedi sotto).
+  - **Durate: 0.2s per TUTTO** (v13.96, scelta dell'utente): velo, box e colonna, in
+    entrata e in uscita, modali utente e admin. Unica eccezione voluta il cross-fade
+    dei **passaggi**, che resta a 0.08s ('velocissima').
+- **Colore dei testi di struttura nelle modali informative (v13.96, richiesta
+  dell'utente: 'il colore non era solo un abbellimento, era fondamentale per la
+  leggibilità').** La neutralizzazione della v8.79 aveva reso grigi tutti gli accenti
+  perché passavano dai token `--gold*` - che, nonostante il nome, erano **azzurri**
+  (`#9ac0d8` scuro / `#4a7090` chiaro, verificato in git). Ripristinato il colore con
+  un criterio: **in tinta dove una tinta esiste, accento di sistema dove non esiste.**
+  - **In tinta di FAMIGLIA:** il rimando 'Leggi anche' della scheda
+    (`.modal-noteref-link`, che era l'unico accento della scheda rimasto grigio
+    mentre POSIZIONE, fonte e × sono in tinta dalla v8.77) usa la stessa `--cctext`,
+    quindi la stessa garanzia AA; e i **nomi cliccabili nelle note**
+    (`.note-charlink`) prendono la tinta della **propria** famiglia colore.
+    - ⚠️ I nomi ricevono **due** terne inline (`--nl-d`/`--nl-l`), già rese AA sul
+      fondo della modale (`#252525`/`#F4F4F4`) da `ccAaText`: servono entrambe perché
+      il tasto `T` **non** ricostruisce la nota aperta, quindi un colore calcolato
+      per un solo tema sarebbe sbagliato nell'altro. Stesso schema delle card
+      `custom`. Helper: `noteCharTint(p)`.
+    - ⚠️ La regola del rimando della scheda vive tra le **iniettate**
+      (`injectCardColorRules`): usa `rgba(var(--cctext),1)`, forma che il Nu non sa
+      parsare nel CSS statico (limite noto).
+  - **Accento di SISTEMA** (grigio virato verso il colore del FAB del tema, come
+    `.crest` e il link del footer dalla v8.82: `#c0b69a` scuro / `#445d64` chiaro)
+    per ciò che non appartiene a un personaggio: titolo e titoletti delle note
+    (`h3`, `.note-h`, `li::before`), rimando **nota → nota** (`.note-notelink`),
+    titoli di Info e i titoli di sezione di Risorse. Contrasti misurati sul fondo
+    della modale: **7.59:1** in scuro, **6.37:1** in chiaro; axe 0 su scheda, nota,
+    Risorse e Info nei due temi.
 - **Regola stile modali: UTENTE = colorato, ADMIN = minimale (istruzione
   dell'utente, 2026-07-23).** Discrimine per PUBBLICO, non per contenuto: ogni modale
   che un **utente/visitatore** può vedere usa il guscio **colorato** (bordo doppio

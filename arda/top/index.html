@@ -1543,7 +1543,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   /* Uniformato alle modali admin (v13.86, richiesta utente): stesso movimento in
      entrata e in uscita, e rapido. La `visibility` va allineata al velo, o la
      modale resterebbe visibile (o nascosta) fuori tempo. */
-  transition:opacity 0.15s,visibility 0.15s;
+  transition:opacity 0.2s,visibility 0.2s;
   overflow-y:auto;
 }
 
@@ -1721,9 +1721,9 @@ body.is-dragging .rank-item * { pointer-events:none; }
 @keyframes fab-modal-in { from { opacity:0; } to { opacity:1; } }
 @keyframes fab-box-in { from { opacity:0; transform:translateY(10px) scale(0.985); } to { opacity:1; transform:none; } }
 @keyframes fab-dock-in { from { opacity:0; transform:translateX(-16px); } to { opacity:1; transform:none; } }
-.fab-modal-overlay { animation:fab-modal-in 0.15s ease-out both; }
+.fab-modal-overlay { animation:fab-modal-in 0.2s ease-out both; }
 .fab-modal-box { animation:fab-box-in 0.2s cubic-bezier(0.34,1.3,0.64,1) both; }
-.fab-modal-overlay.fxdock { animation:fab-dock-in 0.18s cubic-bezier(0.22,1,0.36,1) both; }
+.fab-modal-overlay.fxdock { animation:fab-dock-in 0.2s cubic-bezier(0.22,1,0.36,1) both; }
 .fab-modal-overlay.fxdock .fab-modal-box { animation:none; }
 .fab-modal-overlay.no-anim, .fab-modal-overlay.no-anim .fab-modal-box { animation:none; }
 /* Uscita (v13.76, richiesta utente: 'la chiusura è veramente improvvisa'). La
@@ -1735,9 +1735,9 @@ body.is-dragging .rank-item * { pointer-events:none; }
 @keyframes fab-modal-out { from { opacity:1; } to { opacity:0; } }
 @keyframes fab-box-out { from { opacity:1; transform:none; } to { opacity:0; transform:translateY(10px) scale(0.985); } }
 @keyframes fab-dock-out { from { opacity:1; transform:none; } to { opacity:0; transform:translateX(-16px); } }
-.fab-modal-overlay.fab-out { animation:fab-modal-out 0.13s ease-in both; pointer-events:none; }
-.fab-modal-overlay.fab-out .fab-modal-box { animation:fab-box-out 0.17s ease-in both; }
-.fab-modal-overlay.fxdock.fab-out { animation:fab-dock-out 0.16s ease-in both; }
+.fab-modal-overlay.fab-out { animation:fab-modal-out 0.2s ease-in both; pointer-events:none; }
+.fab-modal-overlay.fab-out .fab-modal-box { animation:fab-box-out 0.2s ease-in both; }
+.fab-modal-overlay.fxdock.fab-out { animation:fab-dock-out 0.2s ease-in both; }
 .fab-modal-overlay.fxdock.fab-out .fab-modal-box { animation:none; }
 @media (prefers-reduced-motion:reduce) {
   .fab-modal-overlay, .fab-modal-box, .fab-modal-overlay.fxdock { animation:none; }
@@ -1773,12 +1773,15 @@ html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(1
 /* Nota 'Traduzione italiana': stessa larghezza e dimensione-testo del viewer
    delle altre note (.note-viewer-box), per uniformità (era 440px e 0.82rem). */
 .info-note-box { text-align:left; line-height:1.55; }
-.info-note-box h3 { font-family:'Cinzel',serif; font-size:1.15rem; letter-spacing:0.04em; color:var(--gold-bright); margin:0 0 .9em; padding:0 1.4em; text-align:center; }
+.info-note-box h3 { font-family:'Cinzel',serif; font-size:1.15rem; letter-spacing:0.04em; color:#c0b69a; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
+html[data-theme="light"] .info-note-box h3 { color:#445d64; }
 .info-note-box p { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.55; margin:0 0 .8em; }
 .info-note-box ul { list-style:none; margin:0 0 0.9em; padding:0; }
 .info-note-box li { font-size:inherit; color:var(--parchment); opacity:1; line-height:1.5; margin:0 0 0.5em; padding-left:0.95rem; position:relative; }
-.info-note-box li::before { content:'\203A'; position:absolute; left:0; color:var(--gold); opacity:0.85; }
-.info-note-box li strong { color:var(--gold-bright); font-weight:700; }
+.info-note-box li::before { content:'\203A'; position:absolute; left:0; color:#c0b69a; opacity:0.85; }
+html[data-theme="light"] .info-note-box li::before { color:#445d64; }
+.info-note-box li strong { color:#c0b69a; font-weight:700; }
+html[data-theme="light"] .info-note-box li strong { color:#445d64; }
 .info-note-box .info-note-final { display:flex; align-items:center; gap:0.55rem; margin:0.75rem 0 0; padding:0.6rem 0.8rem; border-radius:10px; background:rgba(150,25,40,0.16); border:1px solid rgba(205,70,80,0.42); color:var(--parchment); opacity:1; font-style:normal; font-weight:normal; line-height:1.35; }
 .info-note-box .info-note-ico { flex:none; display:inline-flex; }
 .info-note-box .info-note-ico svg { width:1.2rem; height:1.2rem; stroke:#e06b6b; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -2319,17 +2322,25 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 /* Contenuto nota: sta dentro .modal-body (che gestisce scroll e dimensioni del
    guscio standard, dalla v8.76). Qui restano solo tipografia e allineamento. */
 .note-viewer-box { text-align:left; line-height:1.55; }
-.note-viewer-box h3 { color:var(--gold-bright); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
+/* Titolo e struttura delle note: accento di SISTEMA (v13.96, richiesta utente),
+   la stessa tinta di `.crest` e del link del footer - grigio virato verso il colore
+   del FAB del tema. Qui non c'è un personaggio da cui prendere la tinta: quella la
+   portano i nomi cliccabili (`.note-charlink`) e il rimando della scheda.
+   Contrasti sul fondo della modale: 7.59:1 in scuro, 6.37:1 in chiaro. */
+.note-viewer-box h3 { color:#c0b69a; font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
+html[data-theme="light"] .note-viewer-box h3 { color:#445d64; }
 /* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
    conferma: stessa dimensione e pienezza dell'elenco (font-size/opacity/colore
    ereditati dal box). Vale per tutte le note, presenti e future. */
 .note-viewer-box p { margin:0 0 .8em; font-size:inherit; line-height:inherit; opacity:1; color:inherit; }
 html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
-.note-viewer-box .note-h { font-weight:700; color:var(--gold-bright); margin:1.15em 0 .35em; }
+.note-viewer-box .note-h { font-weight:700; color:#c0b69a; margin:1.15em 0 .35em; }
+html[data-theme="light"] .note-viewer-box .note-h { color:#445d64; }
 .note-viewer-box .note-src { opacity:.72; margin:.1em 0 .4em; }
 .note-viewer-box ul { margin:.2em 0 0; padding:0; list-style:none; }
 .note-viewer-box li { margin:.55em 0; position:relative; padding-left:1.1em; }
-.note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:var(--gold-bright); }
+.note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:#c0b69a; }
+html[data-theme="light"] .note-viewer-box li::before { color:#445d64; }
 .note-viewer-box .note-sub { margin:.25em 0 .25em .4em; position:relative; padding-left:1em; }
 .note-viewer-box .note-sub::before { content:'–'; position:absolute; left:0; color:var(--gold-bright); }
 /* Liste numerate (le tre unioni della tradizione): numeri, niente pallino. */
@@ -2340,12 +2351,21 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .modal-noteref { margin-top:1.1em; line-height:1.5; }
 .modal-noteref-link { cursor:pointer; color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
 .modal-noteref-link:hover, .modal-noteref-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
-.note-charlink { display:inline; background:none; border:none; padding:0; margin:0; font:inherit; font-weight:700; color:var(--gold-bright); cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
-.note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
+/* Nomi cliccabili nelle note: ognuno nella tinta della PROPRIA famiglia colore
+   (v13.96, richiesta dell'utente). Le due terne arrivano inline dallo span
+   (`--nl-d` / `--nl-l`), già rese AA sul fondo della modale: servono entrambe
+   perché il tasto T non ricostruisce la nota. Il grigio resta come fallback se
+   un nome non ha famiglia (nome non in classifica: lì è <strong>, non un link). */
+.note-charlink { display:inline; background:none; border:none; padding:0; margin:0; font:inherit; font-weight:700; color:var(--nl-d,var(--gold-bright)); cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
+html[data-theme="light"] .note-charlink { color:var(--nl-l,var(--gold-bright)); }
+.note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:currentColor; outline:none; }
 /* Rimando 'Leggi anche' in fondo a una nota, verso una nota correlata. */
 .note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; }
-.note-notelink { color:var(--gold-bright); font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
-.note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
+/* Rimando nota -> nota: accento di SISTEMA come i titoli (v13.96). La tinta di
+   famiglia qui non si applica - punta a una nota, non a un personaggio. */
+.note-notelink { color:#c0b69a; font-weight:700; cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
+html[data-theme="light"] .note-notelink { color:#445d64; }
+.note-notelink:hover, .note-notelink:focus-visible { border-bottom-color:currentColor; outline:none; }
 /* Modale risorse: guscio standard (.modal + .modal-body, dalla v8.76). Il menu
    di bottoni è raccolto in .res-modal-inner, largo al massimo ~340px e centrato
    nel body (che è largo quanto la scheda personaggio). */
@@ -2355,8 +2375,8 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
    della modale, cioè 0.01 sotto la soglia 4.5:1 del testo normale (rilevato da
    axe, difetto preesistente sanato nella v13.86). Un filo più chiaro basta e
    la resa non cambia a occhio; in tema chiaro il token era già ampiamente AA. */
-.res-modal-title { font-family:'Cinzel',serif; color:#909090; font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
-html[data-theme="light"] .res-modal-title { color:var(--gold); }
+.res-modal-title { font-family:'Cinzel',serif; color:#c0b69a; font-size:.9rem; letter-spacing:.08em; margin:0 0 .5rem; text-align:center; }
+html[data-theme="light"] .res-modal-title { color:#445d64; }
 /* Secondo titolo di sezione ('Note editoriali') dentro la modale unica: stacco
    dal blocco di bottoni precedente. */
 .res-modal-inner .res-modal-section { margin-top:1.15rem; }
@@ -2453,7 +2473,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.86</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3660,6 +3680,11 @@ function ccAaText(fg, bg, target) {
     '.modal[class*="cc-"] .modal-rank{color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
     '.modal[class*="cc-"] .modal-source{color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
     '.modal[class*="cc-"] .modal-close{border-color:rgba(var(--ccrgb),0.9)!important;color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
+    // Rimando 'Leggi anche -> nota' (v13.96, richiesta dell'utente): era l'unico
+    // accento della scheda rimasto grigio, mentre POSIZIONE, fonte e × sono in
+    // tinta famiglia dalla v8.77. Stessa --cctext, quindi stessa garanzia AA.
+    '.modal[class*="cc-"] .modal-noteref-link{color:rgba(var(--cctext,var(--ccrgb)),1)}',
+    '.modal[class*="cc-"] .modal-noteref-link:hover,.modal[class*="cc-"] .modal-noteref-link:focus-visible{border-bottom-color:rgba(var(--cctext,var(--ccrgb)),1)}',
     '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}',
     // Picker colore arrotondati (editor colori): i <input type=color> nativi non
     // rispettano border-radius sullo swatch interno; qui si stilano i pseudo
@@ -4896,7 +4921,7 @@ function dismissStdModal(bd, mode) {
   var fast = mode === 'fast';
   if (fast) { modalXfadeWindow(); bd.classList.add('xfade'); }
   bd.classList.remove('active');
-  setTimeout(function(){ bd.remove(); }, fast ? 110 : 220);
+  setTimeout(function(){ bd.remove(); }, fast ? 110 : 260); // oltre i 200ms di transizione
 }
 
 function openResourcesModal() {
@@ -5202,6 +5227,15 @@ function noteCharIndex() {
 // Sostituisce i marcatori #{Testo|NomeDati}# con pulsanti cliccabili (o
 // grassetto semplice se il nome non è in classifica). Il testo statico è
 // d'autore (nessun input utente); l'unico dato dinamico è l'indice intero.
+// Tinta di un nome cliccabile: quella della sua famiglia colore, resa AA sul
+// fondo della modale (#252525 / #F4F4F4, gli stessi della scheda). Si calcolano
+// ENTRAMBI i temi perché il tasto T non ricostruisce la nota aperta.
+function noteCharTint(p) {
+  var fam = familyOf(p), pair = (fam === 'custom') ? customPair(p) : null;
+  var hd = pair ? ccTripletToHex(pair.dark) : ccFamHex(fam, 'dark');
+  var hl = pair ? ccTripletToHex(pair.light) : ccFamHex(fam, 'light');
+  return '--nl-d:' + ccAaText(hd, '#252525', 4.5) + ';--nl-l:' + ccAaText(hl, '#F4F4F4', 4.5);
+}
 function renderNoteBodyHtml(html) {
   var idx = noteCharIndex();
   return html.replace(/#\{([^}|]+)(?:\|([^}]+))?\}#/g, function(_, disp, look) {
@@ -5209,7 +5243,8 @@ function renderNoteBodyHtml(html) {
     if (i === undefined) return '<strong>' + disp + '</strong>';
     // <span> (non <button>): inline puro, così la punteggiatura seguente non
     // va mai a capo da sola (un button è inline-block e crea un break-point).
-    return '<span class="note-charlink" role="button" tabindex="0" data-idx="' + i + '">' + disp + '</span>';
+    return '<span class="note-charlink" role="button" tabindex="0" data-idx="' + i + '"'
+         + ' style="' + noteCharTint(dati[i]) + '">' + disp + '</span>';
   });
 }
 
