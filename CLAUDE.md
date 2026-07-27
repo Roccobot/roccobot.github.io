@@ -707,10 +707,22 @@ normale/XL secondo la preferenza attiva.
   etichette dentro una sezione sono volutamente **generiche e ripetute** ('Sfumatura',
   'Opacità'): è la sezione a disambiguarle, e nomi lunghi tipo 'Ampiezza del bagliore
   esterno' erano proprio ciò che rendeva l'elenco confuso.
-  ⚠️ **Doppio clic sul pallino di uno slider = valore PREDEFINITO** della manopola
-  (v13.38, richiesta utente): vale per OGNI slider di OGNI effetto, il default si
-  legge da `SITE_FLAGS_DEFAULT` sotto la chiave base (le varianti `_m` e per-tema
-  condividono il default della chiave omonima).
+  ⚠️ **Doppio clic su uno slider = valore PREDEFINITO** della manopola (v13.38;
+  dalla v13.39 vale su **TUTTO** lo slider, binario compreso): per OGNI slider di
+  OGNI effetto, il default si legge da `SITE_FLAGS_DEFAULT` sotto la chiave base
+  (le varianti `_m` e per-tema condividono il default della chiave omonima).
+  ⚠️ **Slider 'solo pallino' (v13.39, richiesta utente).** Il range nativo SALTA
+  al punto cliccato sul binario: sgradito. L'helper condiviso **`fxGuardSlider`**
+  (usato dalle manopole degli effetti E dai micro-aggiustamenti) al `pointerdown`
+  stima la posizione del pallino (`ratio × (larghezza − pallino)`, diametro ≈
+  altezza del controllo; rect e clientX sono entrambi in px visivi, quindi la
+  stima regge sotto zoom XL) e, se il puntatore è lontano, **blocca l'azione
+  nativa**: il valore si cambia solo trascinando il pallino, da tastiera o dal
+  campo numerico (dove c'è). Il doppio clic/tocco sul binario fa il reset ed è
+  rilevato **a mano coi timestamp**: il `preventDefault` può sopprimere il click
+  sintetico, quindi lì il `dblclick` nativo non è affidabile. Nei
+  micro-aggiustamenti il reset resta 'ultimo salvato' (la convenzione di quell'
+  editor), negli effetti è il predefinito.
   Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
   minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
