@@ -1036,9 +1036,34 @@ colori e micro-aggiustamenti sullo stesso telaio.
     con la classe **`fxdock-mob`** sull'overlay quando `docked && sfx`. Non serviva
     altro perché `paint()` legge già la config dalla **variante in modifica** (`V`),
     non dalla piattaforma corrente. Il sottotitolo diventa 'La pagina accanto è la
-    versione desktop: le modifiche mobile si vedono qui sotto.'. NB: il **Pannello**
-    non ha una propria anteprima (non l'ha mai avuta, nemmeno in modale): l'anteprima
-    vive solo nelle sotto-modali degli effetti.
+    versione desktop: le modifiche mobile si vedono qui sotto.'.
+- **Anteprima anche nel PANNELLO, solo in tab Mobile (v13.65, richiesta utente).**
+  Prima l'anteprima viveva solo nelle sotto-modali, quindi accendere e spegnere gli
+  interruttori dalla lista in tab Mobile era un lavoro alla cieca (la pagina è
+  desktop, sia in vista divisa sia dietro la modale). Ora in cima al Pannello, sotto
+  le tab, compare la stessa anteprima in modalità **PANORAMICA**.
+  - Il blocco è **CONDIVISO**, non una copia: `fxPreviewBlock(o)` è l'estrazione del
+    codice che stava dentro `showFxConfigEditor` (`o.key` = effetto in modifica, `''`
+    = panoramica; `o.sfx` = variante; `o.lights` = **funzione** che dice quali
+    riquadri disegnare, perché la sotto-modale la rivaluta a ogni cambio di tab
+    tema). Due implementazioni divergerebbero, come per le formule dell'aspetto.
+    Verificato che l'estrazione non cambia nulla: le 12 anteprime delle sotto-modali
+    (6 effetti × 2 temi) sono **identiche al pixel** prima e dopo.
+  - In panoramica: **un** riquadro (tema corrente), **tutte** le card rese accese -
+    altrimenti bagliore e riflettore non si vedrebbero - e numeri **1 e 5**, il primo
+    per il metallo del podio, il secondo (fuori podio) per la tinta dei numeri.
+  - ⚠️ **Gli effetti che quella variante non ha vanno esclusi**: il riflettore è
+    `noMob`, in tab Mobile non compare nemmeno nella lista, quindi in panoramica
+    mobile resta spento (altrimenti l'anteprima mentirebbe e il suo invito 'Muovi il
+    puntatore qui' sarebbe un invito a nulla). E la sua config è **UNICA** dalla
+    v13.18: `V(k)` non applica il suffisso alle chiavi `noMob`, come fa `fxCfg` in
+    pagina - senza questo, chiedere `spot_m` restituiva `undefined` e le formule ci
+    morivano sopra (misurato: errore JS con `spot_m` assente dai dati).
+  - La classe **`fxdock-mob`** serve ora a DUE cose: scavalca la regola che in vista
+    divisa nasconde le anteprime, e marca la colonna in cui si lavora sul mobile. Nel
+    Pannello si aggiunge e si toglie al cambio tab (l'overlay non viene ricreato).
+  - Da **mobile** il Pannello non ha tab e la pagina è già quella giusta: lì il
+    blocco non viene nemmeno creato.
 - Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu):
   la porzione statica della pagina non cambia. **Unica eccezione:** l'animazione
   d'ingresso delle modali admin (v13.55) sta nel CSS statico, perché riguarda tutte
