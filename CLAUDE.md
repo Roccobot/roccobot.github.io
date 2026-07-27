@@ -474,7 +474,7 @@ normale/XL secondo la preferenza attiva.
 - **Meccanismo: una classe su `<html>` per flag** (`SITE_FLAG_CLASS`), applicata da
   `applySiteFlags()`. ⚠️ **Tutte** le regole CSS degli effetti sono scoped a quella
   classe (`html.fx-glow …`, `html.fx-vig body`, ecc.): a flag spento l'effetto **non
-  esiste**, non è solo invisibile. Aggiungendo un effetto nuovo, scoparlo così.
+  esiste**, non è solo invisibile. Aggiungendo un effetto nuovo, delimitarlo allo stesso modo.
   Gli effetti REGOLABILI hanno le regole in **`injectFxRules()`** (`<style id=
   "fx-dyn">`, ri-iniettato a ogni modifica): le FORMULE (`fxGlowInner`,
   `fxGlowOuter`, `fxSpotBg`, `fxVigBg`) sono condivise con l'anteprima della
@@ -948,6 +948,20 @@ colori e micro-aggiustamenti sullo stesso telaio.
   lezione v12.65); e spostare la pagina col margine **non fa scattare `resize`** →
   `reflowRows()` va chiamata a mano in `dockEngage`/`dockRelease` (a-capo dei nomi
   e righe bipartite si rimisurano).
+- **La tab del tema commuta il TEMA DEL SITO, solo in dock (v13.41, richiesta
+  utente: 'se modifico le impostazioni del tema scuro, il sito deve passare al
+  tema scuro').** In vista divisa l'anteprima è la pagina: scegliere 'Tema
+  scuro' fa `toggleTheme()` se serve, e alla **chiusura vera** della sotto-modale
+  il tema torna a quello d'apertura. La baseline vive in **`FX_THEME0`**
+  (globale) perché deve sopravvivere ai rebuild TECNICI (tasto L, cambio di
+  telaio al resize), che chiudono e riaprono l'editor: senza, la riapertura
+  scambierebbe il tema della tab per la baseline e alla chiusura il sito
+  resterebbe scuro (successo al primo giro, corretto prima del rilascio). Si
+  azzera solo alla chiusura vera. In MODALE (sotto soglia) la tab NON tocca il
+  tema: lì l'anteprima interna segue già la tab. Il 'top del top' chiesto
+  dall'utente (solo il contenuto scuro, pannello chiaro) NON è praticabile a
+  costo sano: tutto il CSS del tema è vincolato a `data-theme` sulla radice,
+  non circoscrivibile a un sottoalbero.
 - **In dock le anteprime su card finte SPARISCONO (v13.07, richiesta utente):**
   con la pagina vera accanto sono ridondanti. Nascoste via CSS
   (`.fxdock .fxp-wrap{display:none}`) e basta: i riquadri vengono comunque

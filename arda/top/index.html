@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.40</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.41</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7555,6 +7555,7 @@ function dockRelease(){
   reflowRows();
 }
 
+var FX_THEME0 = null; // baseline del tema per la sotto-modale effetti (vedi sotto)
 function showFxConfigEditor(key, sfx, onDone){
   if (document.getElementById('fx-modal')) return;
   var it = currentLang === 'it', myL, item = null;
@@ -7573,6 +7574,12 @@ function showFxConfigEditor(key, sfx, onDone){
   // nella stessa colonna del Pannello (stessa geometria, dipinta sopra), così
   // 'entrare' in un effetto e 'uscirne' resta un movimento della sola colonna.
   var docked = document.documentElement.classList.contains('fx-dock');
+  // Tema del sito all'apertura VERA della sotto-modale. Vive in FX_THEME0 (globale)
+  // perché deve SOPRAVVIVERE ai rebuild tecnici (tasto L, cambio di telaio al
+  // resize), che chiudono e riaprono l'editor: senza, la riapertura scambierebbe
+  // il tema della tab per la baseline e alla chiusura il sito resterebbe scuro.
+  var themeAtOpen = FX_THEME0 || document.documentElement.getAttribute('data-theme');
+  FX_THEME0 = themeAtOpen;
   var overlay = document.createElement('div'); overlay.id = 'fx-modal';
   overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
@@ -7590,6 +7597,12 @@ function showFxConfigEditor(key, sfx, onDone){
   scroller.style.cssText = 'overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1 1 auto;margin:0 -0.2rem;padding:0 0.2rem;';
   var close = function(){
     overlay.remove(); if (langRefresh === myL) langRefresh = prevL;
+    // In dock la tab tema può aver commutato il tema del SITO: alla chiusura si
+    // torna a quello d'apertura (rebuild tecnici esclusi), coerente col 'torna
+    // al punto di partenza' della vista divisa. La baseline si azzera solo qui,
+    // alla chiusura VERA: i rebuild tecnici la conservano.
+    if (docked && !DOCK_RELAYOUT && themeAtOpen && document.documentElement.getAttribute('data-theme') !== themeAtOpen) toggleTheme();
+    if (!DOCK_RELAYOUT) FX_THEME0 = null;
     if (typeof onDone === 'function') onDone();
   };
   // Ganci per il cambio di telaio a metà modifica (resize): il Pannello li usa
@@ -7790,6 +7803,13 @@ function showFxConfigEditor(key, sfx, onDone){
       tb.onclick = function(){
         if (kTheme === td[0]) return;
         kTheme = td[0]; syncTh(); renderKnobs(); buildPanes(); paint();
+        // In vista divisa l'anteprima è la pagina: scegliere 'Tema scuro' DEVE
+        // mostrare il sito scuro, o si regola alla cieca (richiesta utente,
+        // v13.41). Solo in dock: in modale l'anteprima interna segue già la tab.
+        if (docked) {
+          var want = kTheme === 'l' ? 'light' : 'dark';
+          if (document.documentElement.getAttribute('data-theme') !== want) toggleTheme();
+        }
       };
       thBtns[td[0]] = tb; thBar.appendChild(tb);
     });
