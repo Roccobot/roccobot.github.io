@@ -1622,17 +1622,23 @@ gruppo = cambiare una terna.
     (era `#486d8c`); aggiunta un'**ombra leggera neutra** al titolone in **tema
     chiaro** (prima `text-shadow:none`; ora l'equivalente 'in chiaro' del glow
     scuro, grigia).
-  - **Accento verso il colore del FAB (dalla v8.82, entrambi i temi).** `.crest`
-    'ROCCOBOT PRESENTS' (testo + ✦) e il link footer 'Risorse e note'
-    (`#footer-links` + `#res-link`) prendono un grigio **virato verso il colore
-    del FAB del tema** (il resto della testata/footer resta neutro):
-    - **Tema SCURO → CALDO** (FAB oro `#CAAB59`): crest `#b4a98d`, link/✦
-      `#c0b69a` (~34%). Contrasti 6.5-7.6.
-    - **Tema CHIARO → FREDDO** (FAB teal `#1f5562`): crest/link/✦ `#445d64`
-      (~40%). Virando verso un colore scuro il contrasto **sale** (~6:1), AA
-      ampiamente ok. Storico: nato come esperimento caldo solo-scuro in v8.81
-      (15% verso #d2b25c), poi saturato ed esteso al chiaro (verso il rispettivo
-      FAB) in v8.82 su richiesta dell'utente.
+  - **Accento verso il colore del FAB (dalla v8.82, entrambi i temi).** Il link
+    footer 'Risorse e note' (`#footer-links` + `#res-link`) prende un grigio
+    **virato verso il colore del FAB del tema** (il resto della testata/footer
+    resta neutro):
+    - **Tema SCURO → CALDO** (FAB oro `#CAAB59`): link/✦ `#c0b69a` (~34%).
+    - **Tema CHIARO → FREDDO** (FAB teal `#1f5562`): link/✦ `#445d64` (~40%).
+      Virando verso un colore scuro il contrasto **sale** (~6:1), AA ampiamente
+      ok. Storico: nato come esperimento caldo solo-scuro in v8.81 (15% verso
+      #d2b25c), poi saturato ed esteso al chiaro (verso il rispettivo FAB) in
+      v8.82 su richiesta dell'utente.
+    - ⚠️ **Il CREST 'Roccobot presenta' NON è più virato: è NEUTRO nei due temi**
+      (v14.00, richiesta dell'utente). Testo e i due ✦ usano grigi a **pari
+      luminanza relativa** dei virati che sostituiscono, quindi i contrasti non si
+      muovono: scuro `#aaaaaa` (era `#b4a98d`, 6.49 → 6.51) e `#b6b6b6` per i ✦ (era
+      `#c0b69a`, 7.49 → 7.46); chiaro `#595959` per entrambi (era `#445d64`, 6.43 →
+      6.43). Il link del footer, che condivideva gli stessi hex, **resta virato**:
+      sono regole separate.
 - **Distanziamento simbolo genere: rifinito in v8.81.** Il margine extra della
   v8.80 (0.28/0.3em) era troppo (gap ~15px); ridotto (desktop `0.07em`, mobile
   `0.06em`) → gap ~10px, tra il precedente 8.3px e il passo badge 11.3px.
@@ -3198,23 +3204,47 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
       scheda → nota di ritorno (`modalReturn`), Risorse → mappa e Risorse → nota,
       Info → Risorse. I **rebuild di lingua** usano invece `'now'`: via subito,
       niente dissolvenza, perché la stessa modale viene ricostruita nell'istante.
-    - ⚠️ **IL VELO NON SI TOCCA: resta pieno per tutto il passaggio (fix v13.97).**
-      La v13.86 lo faceva dissolvere in 0.08s su entrambe le modali e l'utente
-      vedeva uno **sfarfallio** ('il passaggio da una modale all'altra è pessima').
-      Causa misurata: due veli semitrasparenti sovrapposti compongono **MENO** di
-      uno pieno - `0.92` su `0.92` dà 0.9936, ma a metà strada `0.46` su `0.46` dà
-      **0.71** - quindi a mezzo passaggio la pagina dietro si SCHIARIVA e poi
-      tornava scura. Ora `.xfade` mette `transition:none` sul velo, la vecchia
-      modale esce **all'istante** (`dismissStdModal` in modo `'fast'` fa `remove()`
-      subito, senza timer) e la nuova entra col velo già pieno: chi apre subentra
-      **nello stesso tick**, quindi non esiste un fotogramma senza velo. Verificato
-      campionando frame per frame: velo composito **fisso a 0.92**, mai due
-      `.modal-backdrop` visibili insieme.
-    - A dissolvere è il solo **CONTENUTO**: `@keyframes modal-xfade-in` (0.1s) sul
-      box della modale che entra. È un'`animation` e non una `transition` apposta -
-      parte da sé alla comparsa, senza dover intercalare un reflow fra la classe
-      `.xfade` e `.active` (col `transition` il browser calcolerebbe solo lo stato
-      finale e non animerebbe nulla). Spenta da `prefers-reduced-motion`.
+    - ⚠️ **CHI ENTRA DISSOLVE SOPRA CHI ESCE, e chi esce non si tocca (v14.00).**
+      Regola definitiva, dopo due tentativi sbagliati in direzioni opposte:
+      1. **v13.86** - dissolvevano entrambe e il fondo **SFARFALLAVA**. Causa
+         misurata: due veli semitrasparenti sovrapposti compongono **MENO** di uno
+         pieno (`0.92` su `0.92` dà 0.9936, ma a metà strada `0.46` su `0.46` dà
+         **0.71**), quindi a mezzo passaggio la pagina dietro si SCHIARIVA.
+      2. **v13.97** - la vecchia usciva all'istante e la nuova entrava col velo già
+         pieno: il velo non si muoveva più, ma restava un **lampo senza NESSUNA
+         finestra**, con le card intraviste dietro il velo ('c'è un piccolo flash in
+         cui scompare il velo, sfarfalla la finestra appena chiusa e si vedono le
+         card sottostanti'). Misurato coi fotogrammi reali (CDP screencast): 1-2
+         frame con la luminanza del solo velo (**8** su 54 al centro del box).
+      3. **v14.00** - chi esce resta **dipinto, pieno e fermo** (classe **`.xout`**:
+         `opacity:1`/`visibility:visible` forzati anche senza `.active`, che è il
+         flag di stato e va via subito, più `pointer-events:none`), e chi entra
+         **sale sopra e dissolve** (`.xfade`: velo 0→1 e box 0→1 in 0.08s). Il velo
+         composito così **parte da 0.92 e SALE**, non scende mai, e una finestra è
+         sempre in scena. Verificato coi fotogrammi: **0 frame** sotto la luminanza
+         del box, su tutti e quattro i passaggi (nota→scheda, scheda→nota,
+         nota→nota, scheda→nota collegata).
+      - ⚠️ **`z-index:201` su `.xfade` è indispensabile**: a pari `z-index` l'ordine
+        di pittura segue il DOM, e la scheda `#modal-backdrop` è **statica in
+        pagina**, quindi finirebbe SOTTO una nota appena creata - la dissolvenza
+        sarebbe invisibile e il passaggio tornerebbe uno scatto.
+      - Chi esce si rimuove (o perde `.xout`) dopo **`MODAL_XOUT_MS` = 130ms**, un
+        filo più della dissolvenza d'ingresso. Due punti di uscita: i nodi
+        **dinamici** in `dismissStdModal(bd,'fast')`, la **scheda** - il cui nodo
+        vive sempre in pagina - via **`modalXfadeOut(bd)`** (in `goNote` e in
+        `closeModal` quando c'è `modalReturn`). `openModal` toglie un `.xout`
+        residuo, o riaprendo subito la scheda resterebbe inerte per 130ms.
+    - La dissolvenza del **contenuto** è `@keyframes modal-xfade-in` (0.08s) sul box
+      che entra. È un'`animation` e non una `transition` apposta - parte da sé alla
+      comparsa, senza dover intercalare un reflow fra la classe `.xfade` e `.active`
+      (col `transition` il browser calcolerebbe solo lo stato finale e non animerebbe
+      nulla). Spenta da `prefers-reduced-motion`.
+    - ⚠️ **Come si verifica un passaggio: coi FOTOGRAMMI, non col DOM.** Una sonda su
+      `getComputedStyle` non vede la **pittura** e diceva 'nessun buco' mentre
+      l'utente vedeva il lampo. Lo strumento è `scratchpad/frames.js`: CDP
+      `Page.startScreencast`, un file per frame col tempo nel nome, poi si misura la
+      **luminanza media al centro** del box (col box in scena ~48-54, col solo velo
+      ~8: la differenza è netta e non lascia dubbi).
     - Storico: il caso 'si arriva da una nota' esisteva già come `instant` +
       `.no-anim`, cioè un **salto secco**; la v13.86 lo sostituisce con la
       dissolvenza rapida. `.no-anim` resta per usi tecnici.
