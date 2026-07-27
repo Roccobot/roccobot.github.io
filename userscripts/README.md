@@ -107,6 +107,32 @@ modificare i valori → salvare (Ctrl+S).
     dovessero far scattare l'anti-bot lì, si può disattivare del tutto il modulo
     con `IMMAGINI_DIRETTE = false` (la pulizia resta).
 
+### Avvio a freddo e anti-bot (correzione 2.12.1)
+
+Qwant sta dietro **DataDome**. A browser appena aperto il cookie `datadome` non
+c'è ancora e la pagina sta risolvendo la sua sfida JavaScript per ottenerlo: un
+`location.replace` in quel momento **abortisce la pagina a metà**, la sfida non
+arriva in fondo e l'API risponde **403** (*"Qwant è momentaneamente non
+disponibile"*) per una trentina di secondi. Poi la sfida riesce, il cookie si
+posa e tutto il resto della giornata fila liscio, perché i ricaricamenti
+successivi trovano il cookie già lì.
+
+Colpiva **solo la prima ricerca dopo l'avvio del browser**, e la ragione è che
+la guardia anti-loop del forcing vive in `sessionStorage`, che a browser appena
+aperto è vuoto. Confermato per esclusione: disattivando lo script il 403 spariva.
+
+Ora il forcing immediato si fa **solo se il cookie c'è già** (il caso normale:
+nessun ritardo, nessuno sfarfallio); altrimenti si **aspetta** che arrivi, e se
+non arriva entro `ATTESA_ANTIBOT` (8 secondi) si rinuncia per quella volta:
+meglio una ricerca coi parametri di Qwant che una ricerca che non parte.
+Misurato su una pagina di prova, con il cookie iniettato dopo 2,5 secondi:
+
+| | prima | dopo |
+|---|---|---|
+| cookie già presente | ricarica a ~70 ms | ricarica a ~127 ms (invariato) |
+| cookie dopo 2,5 s | ricarica a ~68 ms, **a metà sfida** | ricarica a ~2677 ms, **a sfida finita** |
+| cookie mai | ricarica a ~48 ms | **nessuna ricarica** |
+
 ### Limiti noti
 
 - Se Qwant cambia gli attributi stabili su cui ci si aggancia (`data-testid`,
