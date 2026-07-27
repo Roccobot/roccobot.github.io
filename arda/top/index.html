@@ -870,7 +870,10 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   /* overscroll-behavior:contain — a fine corsa il gesto NON si incatena
      alla pagina sotto (su mobile scorreva la classifica dietro il pannello) */
   max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
-  background:rgba(42,41,36,0.94); border:1px solid rgba(136,133,126,0.4); border-radius:14px;
+  /* Fondo caldo con la SATURAZIONE DIMEZZATA (v13.98, richiesta dell'utente: 'può
+     restare un vago sentore di tinta gialla'): era rgba(42,41,36) = HSL 50deg 7.7%
+     15.3%, ora 3.85% di saturazione a luminosita' identica. */
+  background:rgba(41,40,38,0.94); border:1px solid rgba(136,133,126,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow:0 12px 48px rgba(0,0,0,0.5);
   opacity:0; visibility:hidden; transform:translateY(14px) scale(0.96); transform-origin:bottom left; transition:opacity 0.18s ease, transform 0.34s cubic-bezier(0.22,1,0.36,1), visibility 0.34s;
@@ -2333,20 +2336,19 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 .note-viewer-box { text-align:left; line-height:1.55; }
 /* ── UN ACCENTO PER MODALE, deciso dalla PROVENIENZA (v13.96, scelta dell'utente).
    `--note-acc` è la tinta di tutti gli accenti di struttura della modale. Vale
-   l'accento GLOBALE del tema; se però la modale è stata aperta da un
-   personaggio, `openNoteViewer` scrive sull'overlay `--macc-d`/`--macc-l` con la
-   sua tinta di famiglia e l'accento diventa quello, per tutta la lettura.
+   l'accento GLOBALE del tema (#c6ad66 scuro - l'oro del FAB - / #2e5461 chiaro,
+   indicati dall'utente: 6.99:1 e 7.47:1 sul fondo delle modali); se però la modale
+   è stata aperta da un personaggio, `openNoteViewer` scrive sull'overlay
+   `--macc-d`/`--macc-l` con la sua tinta di famiglia e l'accento diventa quello,
+   per tutta la lettura.
    ⚠️ Due proprietà, una per tema, perché il tasto `T` NON ricostruisce la nota
    aperta: un solo valore sarebbe sbagliato nell'altro tema. Un solo livello di
    intensità (scelta dell'utente): la gerarchia la fanno corpo e peso.
-   ⚠️ L'accento globale SCURO è GRIGIO (v13.97, richiesta dell'utente: 'in tema
-   scuro le modali sono davvero GIALLE: togli del tutto la saturazione, lasciando
-   la luminosità inalterata'). #afafaf è il grigio a PARI luminanza relativa del
-   vecchio #c6ad66 (0.4287 contro 0.4285), quindi il contrasto sul fondo della
-   modale non si muove: 6.99:1 prima e dopo - stesso metodo della
-   neutralizzazione della v8.79. Il chiaro resta il teal #2e5461 (7.45:1) scelto
-   dall'utente: la segnalazione riguardava il solo tema scuro. */
-.modal-backdrop { --note-acc:var(--macc-d,#afafaf); }
+   ⚠️ NON desaturare questo accento: la v13.97 l'aveva reso grigio leggendo male un
+   'le modali sono gialle' che si riferiva allo SFONDO, e l'utente ha chiesto di
+   rimetterlo. Titoli, titoletti e collegamenti che non sono personaggi stanno
+   sull'oro del tema. */
+.modal-backdrop { --note-acc:var(--macc-d,#c6ad66); }
 html[data-theme="light"] .modal-backdrop { --note-acc:var(--macc-l,#2e5461); }
 .note-viewer-box h3 { color:var(--note-acc); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
 /* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
@@ -2365,10 +2367,16 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-viewer-box ol { margin:.3em 0 .3em .6em; padding-left:1.4em; list-style:decimal; }
 .note-viewer-box ol > li { margin:.3em 0; padding-left:.2em; }
 .note-viewer-box ol > li::before { content:none; }
-/* Rimando interno dalla scheda di un personaggio alla sua nota editoriale */
+/* Rimando interno dalla scheda di un personaggio alla sua nota editoriale.
+   'Leggi anche →' resta nel colore normale del testo, il TITOLO è in grassetto e in
+   tinta (v13.98, richiesta dell'utente): il rimando è il titolo, il prefisso lo
+   introduce. Resta cliccabile tutta la riga; sottolineatura e anello di focus
+   vivono sul titolo, così l'indicatore di focus è ben visibile. */
 .modal-noteref { margin-top:1.1em; line-height:1.5; }
-.modal-noteref-link { cursor:pointer; color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
-.modal-noteref-link:hover, .modal-noteref-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
+.modal-noteref-link { cursor:pointer; }
+.modal-noteref-link:focus-visible { outline:none; }
+.modal-noteref-link strong { color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
+.modal-noteref-link:hover strong, .modal-noteref-link:focus-visible strong { border-bottom-color:currentColor; }
 /* Nomi cliccabili nelle note: ognuno nella tinta della PROPRIA famiglia colore
    (v13.96, richiesta dell'utente). Le due terne arrivano inline dallo span
    (`--nl-d` / `--nl-l`), già rese AA sul fondo della modale: servono entrambe
@@ -2489,7 +2497,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.97</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.98</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3699,8 +3707,9 @@ function ccAaText(fg, bg, target) {
     // Rimando 'Leggi anche -> nota' (v13.96, richiesta dell'utente): era l'unico
     // accento della scheda rimasto grigio, mentre POSIZIONE, fonte e × sono in
     // tinta famiglia dalla v8.77. Stessa --cctext, quindi stessa garanzia AA.
-    '.modal[class*="cc-"] .modal-noteref-link{color:rgba(var(--cctext,var(--ccrgb)),1)}',
-    '.modal[class*="cc-"] .modal-noteref-link:hover,.modal[class*="cc-"] .modal-noteref-link:focus-visible{border-bottom-color:rgba(var(--cctext,var(--ccrgb)),1)}',
+    // ⚠️ Dalla v13.98 la tinta va sul SOLO titolo: il prefisso 'Leggi anche →'
+    // resta nel colore del testo (la sottolineatura segue con currentColor).
+    '.modal[class*="cc-"] .modal-noteref-link strong{color:rgba(var(--cctext,var(--ccrgb)),1)}',
     '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}',
     // Picker colore arrotondati (editor colori): i <input type=color> nativi non
     // rispettano border-radius sullo swatch interno; qui si stilano i pseudo
@@ -4743,7 +4752,12 @@ function openModal(idx, instant) {
     if (linkedNote) {
       var refLbl = lang === 'it' ? 'Leggi anche' : 'See also';
       var refTitle = lang === 'it' ? linkedNote.titleIt : linkedNote.titleEn;
-      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0">' + escapeHtml(refLbl) + ' &rarr; <strong>' + escapeHtml(refTitle) + '</strong></span>';
+      // 'Leggi anche →' nel colore normale del testo, il TITOLO in grassetto e in
+      // tinta (v13.98, richiesta dell'utente): è il titolo il rimando, il prefisso
+      // è solo un'introduzione. Nelle note (`.note-seealso`) il prefisso stava già
+      // fuori dal link; qui era dentro, quindi si colorava anche lui.
+      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0"><span class="nr-pre">'
+        + escapeHtml(refLbl) + ' &rarr;</span> <strong>' + escapeHtml(refTitle) + '</strong></span>';
       refEl.hidden = false;
       var refLink = refEl.querySelector('.modal-noteref-link');
       // Anche questo è un passaggio (scheda -> nota): si apre la finestra di
