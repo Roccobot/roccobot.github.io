@@ -2372,7 +2372,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.38</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.39</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7471,6 +7471,32 @@ function fxPreviewCc(light){
 // `sfx` (v12.53) = variante in modifica: '' desktop, '_m' mobile. Tutte le
 // letture/scritture passano da SITE_FLAGS[key+sfx]; la pagina dietro cambia solo
 // se la variante è quella della piattaforma corrente (injectFxRules usa fxCfg).
+// ── Slider 'solo pallino' (v13.39, richiesta utente) ──────────────────────────
+// Il range nativo SALTA al punto cliccato sul binario; qui il valore si cambia
+// solo trascinando il pallino (o da tastiera, o dal campo numerico dove c'è).
+// Al pointerdown si stima dove sta il pallino: se il puntatore è lontano si
+// blocca l'azione nativa. Il doppio clic/tocco sul BINARIO vale come quello sul
+// pallino (reset), ma è rilevato a mano coi timestamp: il preventDefault può
+// sopprimere il click sintetico, quindi il dblclick nativo lì non è affidabile.
+// rect e clientX sono entrambi in px visivi: la stima regge anche sotto zoom XL.
+function fxGuardSlider(sl, onDbl){
+  var lastTap = 0;
+  sl.addEventListener('pointerdown', function(e){
+    if (sl.disabled || !isFinite(e.clientX)) return;
+    var r = sl.getBoundingClientRect();
+    var min = parseFloat(sl.min) || 0, max = parseFloat(sl.max);
+    var span = (max - min) || 1;
+    var ratio = Math.min(1, Math.max(0, (parseFloat(sl.value) - min) / span));
+    var thumb = Math.min(r.height, 28); // il diametro del pallino ~ l'altezza del controllo
+    var cx = r.left + thumb / 2 + ratio * (r.width - thumb);
+    var tol = Math.max(12, thumb * 0.55) * (e.pointerType === 'touch' ? 1.5 : 1);
+    if (Math.abs(e.clientX - cx) <= tol) return; // sul pallino: trascinamento nativo
+    e.preventDefault();
+    if (e.timeStamp - lastTap < 400) { lastTap = 0; if (onDbl) onDbl(); }
+    else lastTap = e.timeStamp;
+  });
+}
+
 // ── VISTA DIVISA / dock (dalla v13.06, richiesta utente) ─────────────────────
 // Su desktop largo gli editor dell'ASPETTO non aprono una modale: si ancorano in
 // una COLONNA a sinistra e la pagina VERA, spostata a destra, fa da anteprima
@@ -7840,17 +7866,19 @@ function showFxConfigEditor(key, sfx, onDone){
         SITE_FLAGS[vk][kn.p] = fxClamp(key, kn.p, parseFloat(sl.value));
         show(); injectFxRules(); paint();
       });
-      // Doppio clic sul pallino = valore PREDEFINITO della manopola (v13.38,
-      // richiesta utente; vale per OGNI slider di OGNI effetto). Il default vive
-      // in SITE_FLAGS_DEFAULT sotto la chiave BASE dell'effetto: le varianti _m
+      // Doppio clic = valore PREDEFINITO della manopola (v13.38; su TUTTO lo
+      // slider, binario compreso, dalla v13.39). Il default vive in
+      // SITE_FLAGS_DEFAULT sotto la chiave BASE dell'effetto: le varianti _m
       // e le chiavi per-tema condividono il default della chiave omonima.
-      sl.addEventListener('dblclick', function(){
+      var toDefault = function(){
         var dEff = SITE_FLAGS_DEFAULT[key];
         var dv = dEff ? dEff[kn.p] : undefined;
         if (typeof dv !== 'number') return;
         SITE_FLAGS[vk][kn.p] = dv; sl.value = String(dv);
         show(); injectFxRules(); paint();
-      });
+      };
+      sl.addEventListener('dblclick', toDefault);
+      fxGuardSlider(sl, toDefault);
       show(); row.appendChild(val); row.appendChild(sl);
     }
     if (kn.nit) {
@@ -8316,8 +8344,11 @@ function showBadgeAdjustEditor(initState){
     function commit(x){ if (!isFinite(x)) return; if (f.k === 'sc' && x <= 0) x = 0.01; BADGE_ADJUST[cur][f.k] = x; injectBadgeAdjustRules(); showVal(f.k); renderPreview(); refreshTableRow(); }
     rng.addEventListener('input', function(){ commit(parseFloat(rng.value)); });
     num.addEventListener('change', function(){ commit(parseFloat((num.value || '').replace(',', '.'))); });
-    // Doppio clic sullo slider: riporta SOLO questo valore all'ultimo salvato.
-    rng.addEventListener('dblclick', function(){ var sv = BADGE_ADJUST_SAVED[cur] || BADGE_ADJUST_FALLBACK[cur]; commit(baNorm(sv)[f.k]); });
+    // Doppio clic sullo slider (binario compreso, v13.39): riporta SOLO questo
+    // valore all'ultimo salvato - la convenzione di reset di QUESTO editor.
+    var toSaved = function(){ var sv = BADGE_ADJUST_SAVED[cur] || BADGE_ADJUST_FALLBACK[cur]; commit(baNorm(sv)[f.k]); };
+    rng.addEventListener('dblclick', toSaved);
+    fxGuardSlider(rng, toSaved);
   });
   var resetBtn = document.createElement('button'); resetBtn.type = 'button'; resetBtn.className = 'ba-reset';
   resetBtn.textContent = it ? '↺ Reset unità (ultimo salvato)' : '↺ Reset unit (last saved)';
