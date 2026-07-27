@@ -1092,6 +1092,30 @@ colori e micro-aggiustamenti sullo stesso telaio.
     rebuild passano dall'helper **`dockRebuild(fn)`**, che lo alza, esegue e lo
     riabbassa in `finally` (una riapertura andata male non lascia il flag acceso a
     sabotare la chiusura successiva). Chi aggiunge un nuovo rebuild usi l'helper.
+  - **Chiusura = apertura A RITROSO, e più rapida (v13.76, richiesta dell'utente:
+    'anche la chiusura è veramente improvvisa').** Le due animazioni sono una coppia
+    speculare: stessa geometria (10px di salita e scala 0.985 per il box; 16px di
+    slittamento laterale per la colonna in vista divisa) e curve opposte - `ease-out`
+    entrando, `ease-in` uscendo. Durate: velo 0.15/0.13s, box 0.2/0.17s, colonna
+    0.18/0.16s. **Cambiando una durata va cambiata la gemella.**
+    - L'uscita la avvia **`fabDismiss(el)`**, che sostituisce `overlay.remove()` in
+      tutte le chiusure vere (le 12 modali admin): mette la classe `.fab-out` e
+      rimuove il nodo su `animationend`, con un `setTimeout` di riserva se
+      l'animazione non parte. Rimozione immediata nei rebuild tecnici e con moto
+      ridotto. ⚠️ Il resto del `close()` (dockRelease, sblocco dello scroll,
+      ripristini, hook lingua) continua a girare SUBITO: è logica di stato, non
+      visiva.
+    - ⚠️ **L'`id` si toglie all'istante**, prima di animare. Due ragioni misurate: le
+      funzioni che aprono un editor si autoproteggono con `if
+      (document.getElementById('fab-modal')) return`, quindi un fantasma con l'id
+      addosso **bloccherebbe una riapertura immediata** (i rebuild tecnici chiudono e
+      riaprono nello stesso tick); e `MODAL_OPEN_SEL` ragiona sugli id, quindi la
+      pagina resterebbe inerte e i tasti nudi zitti per tutta la dissolvenza.
+    - ⚠️ **In vista divisa la larghezza della colonna va CONGELATA inline** prima di
+      animare: `dockRelease()` gira subito e porta via `--dockw`, da cui dipende
+      `width:var(--dockw)`; senza il congelamento la regola cade e il box in uscita
+      si allarga a tutta pagina. Verificato frame per frame: 400px stabili per tutta
+      l'uscita.
 - Verificato (batteria dedicata, font reali, config utente con XL di sito attivo):
   telaio sotto zoom 1.3 (colonna 400px layout = 520 visivi), hover che accende il
   bagliore sulla card vera, click sul nome spento in dock e vivo dopo la chiusura,
