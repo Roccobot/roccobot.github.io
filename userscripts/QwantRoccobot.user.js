@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.12.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages).
+// @version      2.12.1
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages). Il forcing dei parametri aspetta il cookie anti-bot prima di ricaricare: a browser appena aperto quel cookie non c'e' ancora e ricaricare abortiva la sfida di DataDome, con Qwant che rispondeva 403 alla prima ricerca per una trentina di secondi.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -44,6 +44,10 @@
   // set diversi). NON tocca gli aggiustamenti fatti via il pannello Filtri (stessa query
   // nella stessa tab). false = disattiva del tutto.
   const FORZA_PARAMETRI = true;
+  // Millisecondi di attesa del cookie anti-bot prima di ricaricare, all'avvio a freddo
+  // (vedi la nota nel MODULO 0). 0 = nessuna attesa, cioe' il comportamento che
+  // causava il 403 alla prima ricerca dopo l'apertura del browser.
+  const ATTESA_ANTIBOT = 8000;
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 0 -- Parametri di ricerca fissi e forzati (Web / Immagini)
@@ -69,6 +73,35 @@
       nsp.set('q', q);
       return u.origin + u.pathname + '?' + nsp.toString();
     }
+
+    // ⚠️ AVVIO A FREDDO E ANTI-BOT (correzione del 2026-07-27, difetto misurato).
+    // Qwant sta dietro DataDome. A browser appena aperto il cookie "datadome" non
+    // c'e' ancora e la pagina sta risolvendo la sua sfida JavaScript per ottenerlo.
+    // Un location.replace in quel momento ABORTISCE la pagina a meta': la sfida non
+    // arriva in fondo, l'API risponde 403 e Qwant sembra irraggiungibile per una
+    // trentina di secondi ("Qwant e' momentaneamente non disponibile"). Poi la sfida
+    // riesce, il cookie si posa e per tutto il resto della sessione fila tutto, e
+    // infatti i ricaricamenti successivi sono innocui: il cookie ormai c'e'.
+    // Il difetto colpiva SOLO la prima ricerca dopo l'avvio perche' la guardia
+    // anti-loop vive in sessionStorage, che a browser appena aperto e' vuoto.
+    // Confermato dall'utente: disattivando lo script il 403 sparisce.
+    // Rimedio: il forcing immediato si fa solo se il cookie c'e' GIA' (il caso
+    // normale, nessun ritardo e nessuno sfarfallio); altrimenti si aspetta che
+    // arrivi, e se non arriva entro il tempo massimo si rinuncia per questa volta.
+    // Meglio una ricerca coi parametri di Qwant che una ricerca che non parte.
+    function cookieAntibot() {
+      try { return /(^|;\s*)datadome=/.test(document.cookie); } catch (e) { return false; }
+    }
+    function quandoSicuro(fai) {
+      if (cookieAntibot()) { fai(); return; }
+      const scadenza = Date.now() + ATTESA_ANTIBOT;
+      const tic = setInterval(function () {
+        // si aspetta anche che il documento non sia piu' in fase di analisi: cosi'
+        // il ricaricamento non si sovrappone mai al caricamento in corso
+        if (cookieAntibot() && document.readyState !== 'loading') { clearInterval(tic); fai(); }
+        else if (Date.now() > scadenza) { clearInterval(tic); }
+      }, 200);
+    }
     // A ogni CARICAMENTO/REFRESH: se l'URL non e' ai parametri di default, li ripristina.
     // Cosi' il refresh riporta sempre ai default; le modifiche via Filtri valgono finche'
     // non si ricarica. Anti-loop a tempo: non riforza a raffica (se Qwant rialterasse i
@@ -79,9 +112,17 @@
       if (!q || conforme(u, tabDi(u))) return;
       let ts = 0; try { ts = +sessionStorage.getItem('qr-fp-ts') || 0; } catch (e) { /* no storage */ }
       if (Date.now() - ts < 2000) return;
-      try { sessionStorage.setItem('qr-fp-ts', String(Date.now())); } catch (e) { /* no storage */ }
-      const t = target(u, q, tabDi(u));
-      if (t !== location.href) location.replace(t);
+      const partenza = location.href;
+      quandoSicuro(function () {
+        // l'attesa puo' durare qualche secondo: si ricontrolla tutto al momento buono
+        if (location.href !== partenza) return;      // l'utente ha gia' cambiato ricerca
+        let v; try { v = new URL(location.href); } catch (e) { return; }
+        const q2 = v.searchParams.get('q');
+        if (!q2 || conforme(v, tabDi(v))) return;
+        try { sessionStorage.setItem('qr-fp-ts', String(Date.now())); } catch (e) { /* no storage */ }
+        const t = target(v, q2, tabDi(v));
+        if (t !== location.href) location.replace(t);
+      });
     })();
     // NAVIGAZIONE SPA: forza i default solo su CAMBIO TAB o NUOVA RICERCA (tab|query cambia);
     // sugli aggiustamenti via Filtri (stessa tab+query) lascia le scelte dell'utente.
@@ -95,8 +136,12 @@
       const cur = q ? (tabDi(u) + '|' + q) : '';
       if (q && cur !== prev) {                      // cambio tab / nuova ricerca -> forza i default
         prev = cur;
-        const t = target(u, q, tabDi(u));
-        if (t !== location.href) location.replace(t);
+        const partenza = location.href;
+        quandoSicuro(function () {                   // stessa cautela dell'avvio a freddo
+          if (location.href !== partenza) return;
+          const t = target(u, q, tabDi(u));
+          if (t !== location.href) location.replace(t);
+        });
       } else { prev = cur; }                         // stessa tab+query = aggiustamento Filtri -> lascia
     }, 500);
   })();
