@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.11.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'.
+// @version         2.12.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -28,6 +28,19 @@
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
+  // — Rotella del mouse —
+  // Cosa fa la rotella NUDA (senza ctrl):
+  //   'auto'   = zoom se l'evento e' un vero SCATTO di rotella, scorrimento se e' un
+  //              trackpad a due dita. Cosi' lo stesso computer va bene in entrambi i
+  //              casi, senza cambiare impostazione fra casa e ufficio.
+  //   'sempre' = zoom comunque, anche col trackpad (che pero' cosi' non scorre piu')
+  //   'mai'    = comportamento storico: scorre, e lo zoom resta su ctrl+rotella e pinch
+  const ROTELLA_ZOOM = 'auto';
+  const PASSO_ROTELLA = 1.4;   // quanto ingrandisce UN singolo scatto (1.4 = +40%, deciso
+                               // per la reattivita': dal fit al 100% bastano 2-3 scatti)
+  // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
+  // scelta resta memorizzata (globale, come la modalita' del tondo 1:1).
+  const ROTELLA_SU_INGRANDISCE = true;
   const OVERLAY_NUDGE_Y = 0;   // px: micro-compensazione verticale opzionale del testo dell'overlay.
                                // Dopo text-box-trim resta solo un residuo SUB-PIXEL di arrotondamento
                                // del rendering, che dipende dallo ZOOM DI PAGINA del browser (es. a
@@ -188,7 +201,13 @@
     // a prescindere dall'asimmetria ascender/descender del font. Dove non è supportato
     // (browser vecchi) resta il semplice align-items:center: nessun peggioramento.
     '.image-info>b,.image-info>span{text-box-trim:trim-both;text-box-edge:cap alphabetic;transform:translateY(' + OVERLAY_NUDGE_Y + 'px)}' +
-    '.ii-ext,.ii-zoom{font-weight:700}'
+    '.ii-ext,.ii-zoom{font-weight:700}' +
+    // messaggio momentaneo in basso (conferma del verso della rotella)
+    '#dv-toast{position:fixed;left:50%;bottom:2rem;transform:translateX(-50%);z-index:12;pointer-events:none;' +
+      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
+      'font-size:13px;color:#fff;background:#000000b8;text-shadow:1px 1px 2px #444;border-radius:999px;' +
+      'padding:.5rem 1.1rem;white-space:nowrap;opacity:0;transition:opacity .18s}' +
+    '#dv-toast.dv-on{opacity:1}'
   );
 
   // ── Info overlay (formato / dimensioni / peso) ────────────────────────
@@ -397,9 +416,53 @@
     // sopprime lo zoom-click nativo dell'image viewer (dove intercettabile)
     wrap.addEventListener('dblclick', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
 
-    // ── ROTELLA: ctrl+rotella = zoom immagine (override zoom PAGINA); rotella normale = scroll ──
+    // ── ROTELLA NUDA = zoom a scatti (mouse), scorrimento (trackpad) ──────
+    // Con un mouse la rotella e' il comando naturale dello zoom; con un trackpad
+    // le due dita servono invece a scorrere l'immagine ingrandita, visto che qui
+    // il trascinamento non c'e' per scelta. Si distinguono i due casi: un vero
+    // scatto di rotella manda un delta GRANDE, intero e senza componente
+    // orizzontale, mentre il trackpad manda tanti delta piccoli e frazionari,
+    // spesso con deltaX diverso da zero.
+    function eScattoDiRotella(e) {
+      if (e.deltaMode !== 0) return true;          // righe o pagine: e' una rotella
+      return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
+    }
+    function rotellaZooma(e) {
+      if (ROTELLA_ZOOM === 'mai') return false;
+      if (ROTELLA_ZOOM === 'sempre') return true;
+      return eScattoDiRotella(e);
+    }
+    // Zoom a passo FISSO: reattivo, senza inerzia e senza attriti. Se il passo
+    // scavalca la dimensione reale ci si ferma esattamente sul 100%, cosi' il
+    // valore "giusto" non si salta mai per un pelo; lo scatto dopo prosegue oltre
+    // (nessun impuntamento, a differenza della zona morta del gesto continuo).
+    function passoZoom(fattore, fx, fy) {
+      var nuova = clamp(scale * fattore);
+      if ((scale < realScale && nuova > realScale) || (scale > realScale && nuova < realScale)) nuova = realScale;
+      if (Math.abs(nuova - scale) < 1e-9) return;
+      applicaScala(nuova, fx, fy);
+      zoomL = Math.log(scale);            // il gesto continuo riparte da qui
+    }
+    let versoInvertito = false;
+    try { versoInvertito = GM_getValue('dv-wheel-invert', '0') === '1'; } catch (e) {}
+
+    // ── ROTELLA: ctrl+rotella = zoom continuo (pinch da trackpad) ─────────
     wrap.addEventListener('wheel', function (e) {
-      if (!e.ctrlKey) return;             // scroll normale → pan dell'immagine ingrandita
+      if (!e.ctrlKey) {
+        // shift+rotella = scorrimento verticale: con un mouse, dove la rotella
+        // ormai zooma, resta il modo di spostare un'immagine piu' grande della vista
+        if (e.shiftKey && rotellaZooma(e)) {
+          e.preventDefault();
+          wrap.scrollTop += e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+          return;
+        }
+        if (!rotellaZooma(e)) return;      // trackpad: resta lo scorrimento nativo
+        e.preventDefault();
+        const versoSu = e.deltaY < 0;
+        const ingrandisce = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? versoSu : !versoSu;
+        passoZoom(ingrandisce ? PASSO_ROTELLA : 1 / PASSO_ROTELLA, e.clientX, e.clientY);
+        return;
+      }
       e.preventDefault();                  // blocca lo zoom di pagina
       // Normalizzo l'unità di deltaY (righe/pagine → px) così la sensibilità è coerente
       // tra trackpad (px, gesti piccoli) e rotella del mouse (a scatti).
@@ -426,6 +489,31 @@
       }
     }, { passive: false });
     wrap.addEventListener('touchend', function (e) { if (e.touches.length < 2) d0 = 0; }, { passive: true });
+
+    // ── Tasto I: inverte il verso della rotella, e la scelta resta memorizzata ──
+    function toast(testo) {
+      let t = document.getElementById('dv-toast');
+      if (!t) {
+        t = creaEl('div');
+        t.id = 'dv-toast';
+        (document.body || document.documentElement).appendChild(t);
+      }
+      t.textContent = testo;
+      t.setAttribute('class', 'dv-on');
+      clearTimeout(toast.tempo);
+      toast.tempo = setTimeout(function () { t.setAttribute('class', ''); }, 1600);
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.key !== 'i' && e.key !== 'I') return;
+      e.preventDefault();
+      versoInvertito = !versoInvertito;
+      try { GM_setValue('dv-wheel-invert', versoInvertito ? '1' : '0'); } catch (err) {}
+      const suIngrandisce = (ROTELLA_SU_INGRANDISCE !== versoInvertito);
+      toast(suIngrandisce ? 'Rotella in su: ingrandisce' : 'Rotella in su: rimpicciolisce');
+    });
 
     // ── Resize: se sto mostrando "adattato", ri-adatta; comunque ri-limita ──
     window.addEventListener('resize', function () {
