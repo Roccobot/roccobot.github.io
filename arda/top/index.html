@@ -2534,7 +2534,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.10</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.11</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5267,7 +5267,17 @@ function openImageViewer(src, titleIt, titleEn) {
     }
   }
   stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
-  function close() { ov.remove(); lockPageScroll(false); document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit); if (imgvReturn) { var r = imgvReturn; imgvReturn = null; r(); } }
+  // Anche il ritorno alle Risorse è un PASSAGGIO (v14.11): il visualizzatore si
+  // rimuove all'istante, quindi senza la finestra di dissolvenza rapida la modale
+  // Risorse entrerebbe col suo velo che sfuma da zero - e per quei ~200ms si
+  // vedrebbe la pagina nuda. Lo scroll resta bloccato: lo riblocca la destinazione.
+  function close() {
+    var back = !!imgvReturn;
+    if (back) modalXfadeWindow();
+    ov.remove(); if (!back) lockPageScroll(false);
+    document.removeEventListener('keydown', onKey); window.removeEventListener('resize', fit);
+    if (imgvReturn) { var r = imgvReturn; imgvReturn = null; r(); }
+  }
   function onKey(e) { if (e.key === 'Escape') close(); }
   var itL = currentLang === 'it';
   bar.appendChild(ttl);
@@ -5476,11 +5486,18 @@ function openNoteViewer(note) {
   // keep=true: transizione verso un'altra modale (scheda o altra nota) → non
   // sbloccare lo scroll né innescare noteReturn (la destinazione se ne occupa).
   function dismiss(keep) {
-    // keep = si passa a un'altra modale: dissolvenza velocissima (vedi
-    // dismissStdModal), così i due veli non si sommano e non c'è saltello.
-    dismissStdModal(ov, keep ? 'fast' : null); document.removeEventListener('keydown', onKey);
+    // ⚠️ Una chiusura che RITORNA da dove si è arrivati (`noteReturn`: la scheda del
+    // personaggio, o la modale Risorse) è a tutti gli effetti un PASSAGGIO, non una
+    // chiusura (v14.11, segnalato dall'utente: 'apri Eärendil, clicca sulla nota, poi
+    // chiudi → sfarfallio assicurato'). Trattandola come una chiusura, la nota usciva
+    // con la dissolvenza piena MENTRE la destinazione entrava con la sua: due veli che
+    // sfumano insieme, cioè esattamente il difetto della v13.86. E lo scroll non va
+    // sbloccato: ci pensa la destinazione, che lo riblocca subito (uno sblocca-riblocca
+    // fa comparire e sparire la barra di scorrimento).
+    var back = !keep && !!noteReturn;
+    dismissStdModal(ov, (keep || back) ? 'fast' : null); document.removeEventListener('keydown', onKey);
     if (keep) return;
-    lockPageScroll(false);
+    if (!back) lockPageScroll(false);
     if (noteReturn) { var r = noteReturn; noteReturn = null; r(); }
   }
   function onKey(e) { if (e.key === 'Escape') dismiss(); }
@@ -8504,10 +8521,26 @@ function showFxConfigEditor(key, sfx, onDone){
     applySiteFlags();
     dockRebuild(function(){ close(); showFxConfigEditor(key, sfx, onDone); });
   };
+  // 'Predefiniti' (v14.11, richiesta dell'utente): riporta l'effetto ai valori
+  // STANDARD, cioè quelli con cui è nato - la resa 'attuale' da cui si parte a
+  // sperimentare. Complementare a 'Ultimo salvato', che riporta a ciò che sta sul
+  // repo: dopo un salvataggio i due coincidono, prima no. Il doppio clic su un
+  // singolo slider fa già la stessa cosa per la SUA manopola (v13.38): questo la fa
+  // per tutte, interruttore compreso.
+  var def = document.createElement('button'); def.className = 'fab-modal-confirm';
+  def.style.cssText = 'width:auto;flex:1;margin-top:0;';
+  def.textContent = it ? 'Predefiniti' : 'Defaults';
+  def.title = it ? 'Riporta questo effetto ai valori standard del sito'
+                 : 'Restore this effect to the site default values';
+  def.onclick = function(){
+    SITE_FLAGS[vk] = normFxEffect(key, SITE_FLAGS_DEFAULT[key]);
+    applySiteFlags();
+    dockRebuild(function(){ close(); showFxConfigEditor(key, sfx, onDone); });
+  };
   var ok = document.createElement('button'); ok.className = 'fab-modal-confirm';
   ok.style.cssText = 'width:auto;flex:1;margin-top:0;'; ok.textContent = it ? 'Chiudi' : 'Close';
   ok.onclick = close;
-  foot.appendChild(rst); foot.appendChild(ok); box.appendChild(foot);
+  foot.appendChild(rst); foot.appendChild(def); foot.appendChild(ok); box.appendChild(foot);
   var hint = document.createElement('p');
   hint.style.cssText = 'font-size:0.72rem;opacity:0.6;margin:0.7rem 0 0;';
   hint.textContent = it ? 'Per rendere le modifiche definitive, salva dal Pannello di controllo.'
