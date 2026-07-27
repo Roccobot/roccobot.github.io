@@ -358,7 +358,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   con un **riquadro rosso** (`#FF4E4E`) che segna la porzione a schermo e lo segue mentre
   ci si sposta. Ci si può **cliccare e trascinare dentro** per saltare altrove: il punto
   toccato finisce al centro della vista. Appare solo quando l'immagine eccede la vista, e
-  il tasto **`M`** lo accende o lo spegne, con la scelta memorizzata.
+  il tasto **`N`** (come Navigatore) lo accende o lo spegne, con la scelta memorizzata.
   - La vista d'insieme è il file stesso (già in cache) per le immagini raster, e un clone
     del `<svg>` per i vettoriali, così le proporzioni restano esatte anche quando l'SVG
     non dichiara le proprie misure. Si costruisce al primo bisogno, non al caricamento.
