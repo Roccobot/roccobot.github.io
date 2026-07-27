@@ -963,6 +963,16 @@ colori e micro-aggiustamenti sullo stesso telaio.
   dall'utente (solo il contenuto scuro, pannello chiaro) NON è praticabile a
   costo sano: tutto il CSS del tema è vincolato a `data-theme` sulla radice,
   non circoscrivibile a un sottoalbero.
+  - ⚠️ **Anche 'Ultimo salvato' è un rebuild TECNICO (fix v13.43).** Il pulsante
+    ripristina i valori e poi chiude+riapre la sotto-modale: quella chiusura va
+    avvolta in `DOCK_RELAYOUT = true/false` (stesso schema di L e del resize),
+    altrimenti `close()` la tratta come chiusura vera — in dock riporta il sito
+    al tema d'apertura, azzera `FX_THEME0` e la riapertura rideriva la tab dal
+    tema tornato indietro (segnalato dall'utente: 'mi riporta all'inizio
+    tornando anche al tema chiaro'). Col flag si resettano SOLO i valori: tema,
+    tab e baseline restano; la chiusura vera successiva ripristina comunque il
+    tema d'apertura. Vale per ogni futura via che chiude+riapre l'editor senza
+    che sia l'utente a uscirne.
 - **In dock le anteprime su card finte SPARISCONO (v13.07, richiesta utente):**
   con la pagina vera accanto sono ridondanti. Nascoste via CSS
   (`.fxdock .fxp-wrap{display:none}`) e basta: i riquadri vengono comunque
