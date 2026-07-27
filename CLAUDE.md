@@ -726,21 +726,13 @@ normale/XL secondo la preferenza attiva.
        spento (restano `::before`/`::after` statici). Quindi la verifica del
        contrasto sulle card va fatta **a calcolo** (`scratchpad/hovaa2.js`), e i
        tetti (`op_d` 0.26, `op_l` 0.18) stanno volutamente vicini ai default.
-     - ⚠️ **DIFETTO PREESISTENTE ACCERTATO (misura del 2026-07-27, non ancora
-       sanato).** Poiché axe non valutava quei nodi, il contrasto dei testi delle card
-       non era mai stato verificato davvero. Misurato coi pixel reali (fondo card
-       campionato dallo screenshot, testo composto con la sua opacità efficace), in
-       **tema SCURO** le due righe più tenui - `.rank-desc` (Info, 13.8px, opacità
-       0.80) e `.rank-subtitle` (nomi\|titoli, 16.5px, opacità 0.75), entrambe
-       `#aeaeae` - stanno **sotto 4.5:1 su TUTTE e 16 le famiglie, già a riposo**:
-       minimo **3.35:1** a riposo e **2.79:1** al passaggio (dwarf, la tinta più
-       chiara). In tema CHIARO invece tutto regge (minimo 5.28 / 4.96). Il problema
-       **non** è dell'effetto `hov`, che a valori di default riproduce la resa
-       storica: è del colore di quelle due righe. Per sanarlo servirebbe portarle a
-       **opacità piena** e a **`#c0c0c0`** (4.53:1 anche al passaggio sul caso
-       peggiore); con l'attuale `#aeaeae` a opacità piena si arriva a 4.68 a riposo ma
-       solo a 3.72 al passaggio. È una scelta di GERARCHIA VISIVA (oggi l'Info è
-       deliberatamente tenue), quindi va decisa dall'utente.
+     - ⚠️ **Il tetto di `op_d` è 0.20 per una ragione MISURATA**, non estetica: oltre
+       quel punto le due righe tenui della card (vedi la voce sotto) scendono sotto
+       4.5:1 sulla famiglia dalla tinta più chiara. A 0.20 restano a **4.65:1**, a
+       0.26 scenderebbero a **3.86:1**; il default 0.18 dà **4.95:1**. Alle
+       combinazioni estreme di luminosità (`lum` 1.3) il margine si consuma comunque
+       (4.41:1) - da qui la nota sullo slider - ma la SOLA opacità non può più
+       rompere l'AA. Non alzarlo senza rimisurare le due righe.
      - Nell'**anteprima** una card è accesa e una a riposo: è il confronto che serve
        a regolare l'effetto. ⚠️ La condizione è `rec.first` e NON quella del
        bagliore: riusarla significherebbe ereditarne la manopola 'Su tutte le card',
@@ -1645,7 +1637,30 @@ gruppo = cambiare una terna.
   riga più piccola e tenue della card (~13.8px): era l'anello debole della
   leggibilità (rilevato misurando i corpi di tutti i testi). +8 punti di opacità si
   sentono molto e non alterano la gerarchia visiva. Indipendente dalla modalità
-  ingrandita.
+  ingrandita. ⚠️ **In tema SCURO questi valori sono SCAVALCATI dalla v14.12**: vedi
+  la voce qui sotto.
+- **⚠️ CONTRASTO AA DELLE DUE RIGHE TENUI, tema SCURO (v14.12, misurato e sanato).**
+  `Info | genitori` (`.rank-desc`, 13.8px) e `Nomi | Titoli` (`.rank-subtitle`,
+  16.5px) erano **`#aeaeae` a opacità 0.80 e 0.75**: sul fondo colorato della card
+  stavano **sotto 4.5:1 su TUTTE e 16 le famiglie, già a riposo** - minimo misurato
+  **3.35:1** a riposo e **2.79:1** col puntatore sopra (dwarf, la tinta più chiara).
+  Ora sono **`#c0c0c0` a opacità PIENA**: minimo **5.71:1** a riposo e **4.53:1** al
+  passaggio, 0 misure sotto soglia su 47 (Nome, Info, Nomi\|Titoli e Fonte × 16
+  famiglie). Il tema CHIARO **non è toccato** (era già conforme, minimo 4.96:1):
+  verificato pixel-identico prima/dopo.
+  - ⚠️ **Perché non se n'era accorto nessuno: axe, sulle card, NON valuta.** Con un
+    `::before`/`::after` sull'elemento rinuncia a determinare il fondo e classifica
+    tutto come **`incomplete`** - misurato: **2714 incompleti, 0 valutati**, in
+    qualunque configurazione. Gli 'axe 0 violazioni' storici sulle card erano quindi
+    vacui. La verifica va fatta **sui pixel** (`scratchpad/aacard.js`: fondo
+    campionato dallo screenshot, testo composto con la sua opacità efficace).
+  - ⚠️ **Anche `.bp-b`** (il corsivo di genealogia e titoli) è stato allineato: la sua
+    mescola col grigio d'accento dava **`#a1a1a1` = 3.19:1**. Prende lo stesso
+    `#c0c0c0`; a distinguerlo dalla parte 1 basta il **CORSIVO**, che il commento
+    della regola bipartita già indicava come discriminante di riserva.
+  - La **gerarchia visiva** regge perché il Nome resta `#d2d2d2` a 25.6px: la
+    differenza la fanno corpo e peso, non più la penombra. ⚠️ Non schiarire le due
+    righe oltre `#cfcfcf`, o si avvicinano troppo al Nome.
 - **Peso del testo UNIFORME nei due temi (400, dalla v9.93, scelta utente).**
   Prima il tema chiaro usava `font-weight:500` su `body`/`p`/`.intro`/`.subtitle`/
   footer/testi delle schede (per 'ingrassare' il testo su fondo chiaro), mentre lo
