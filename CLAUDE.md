@@ -726,6 +726,21 @@ normale/XL secondo la preferenza attiva.
        spento (restano `::before`/`::after` statici). Quindi la verifica del
        contrasto sulle card va fatta **a calcolo** (`scratchpad/hovaa2.js`), e i
        tetti (`op_d` 0.26, `op_l` 0.18) stanno volutamente vicini ai default.
+     - ⚠️ **DIFETTO PREESISTENTE ACCERTATO (misura del 2026-07-27, non ancora
+       sanato).** Poiché axe non valutava quei nodi, il contrasto dei testi delle card
+       non era mai stato verificato davvero. Misurato coi pixel reali (fondo card
+       campionato dallo screenshot, testo composto con la sua opacità efficace), in
+       **tema SCURO** le due righe più tenui - `.rank-desc` (Info, 13.8px, opacità
+       0.80) e `.rank-subtitle` (nomi\|titoli, 16.5px, opacità 0.75), entrambe
+       `#aeaeae` - stanno **sotto 4.5:1 su TUTTE e 16 le famiglie, già a riposo**:
+       minimo **3.35:1** a riposo e **2.79:1** al passaggio (dwarf, la tinta più
+       chiara). In tema CHIARO invece tutto regge (minimo 5.28 / 4.96). Il problema
+       **non** è dell'effetto `hov`, che a valori di default riproduce la resa
+       storica: è del colore di quelle due righe. Per sanarlo servirebbe portarle a
+       **opacità piena** e a **`#c0c0c0`** (4.53:1 anche al passaggio sul caso
+       peggiore); con l'attuale `#aeaeae` a opacità piena si arriva a 4.68 a riposo ma
+       solo a 3.72 al passaggio. È una scelta di GERARCHIA VISIVA (oggi l'Info è
+       deliberatamente tenue), quindi va decisa dall'utente.
      - Nell'**anteprima** una card è accesa e una a riposo: è il confronto che serve
        a regolare l'effetto. ⚠️ La condizione è `rec.first` e NON quella del
        bagliore: riusarla significherebbe ereditarne la manopola 'Su tutte le card',
@@ -825,9 +840,21 @@ normale/XL secondo la preferenza attiva.
   **SEMPRE in stato hover** (fondo acceso e bagliori attivi, altrimenti gli slider
   non si vedrebbero in tempo reale) e **padding sinistro abbondante** nel riquadro
   (le sfumature lunghe di `out`/`aura` escono dalla card e venivano tagliate). Ogni
-  modifica si applica SUBITO anche alle card vere dietro. Piè: 'Ultimo salvato'
-  (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e riapre) e 'Chiudi'; il
-  salvataggio resta SOLO nel pannello Feature flag. Esc chiude `#fx-modal` PRIMA
+  modifica si applica SUBITO anche alle card vere dietro. Piè a **tre tasti** (dalla
+  v14.11): 'Ultimo salvato' (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e
+  riapre), **'Predefiniti'/'Defaults'** e 'Chiudi'; il salvataggio resta SOLO nel
+  pannello Feature flag.
+  - **'Predefiniti'** (v14.11, richiesta dell'utente: 'un tasto che ripristini il
+    valore standard, ovvero quello attuale, per tornare ai valori correnti in
+    qualsiasi momento dopo aver sperimentato') riporta l'effetto a
+    `normFxEffect(key, SITE_FLAGS_DEFAULT[key])`. È **complementare** a 'Ultimo
+    salvato': quello riporta a ciò che sta sul repo, questo alla resa con cui
+    l'effetto è nato - dopo un salvataggio coincidono, prima no. Il **doppio clic su
+    un singolo slider** fa già lo stesso per la SUA manopola (v13.38): il tasto lo fa
+    per tutte, interruttore compreso. Vale per **tutti e 7** gli effetti regolabili
+    (un solo piè condiviso) e tocca solo l'effetto in modifica. Passa da
+    `dockRebuild`, come 'Ultimo salvato': è un rebuild TECNICO, quindi in vista divisa
+    non riporta il sito al tema d'apertura. Esc chiude `#fx-modal` PRIMA
   del `#fab-modal` sotto (ramo dedicato nell'handler Escape); `#fx-modal` è nelle
   guardie dei tasti `P` e `.`. Il CSS dell'editor è iniettato
   (`injectFxEditorCss`), invisibile al Nu.
@@ -3242,6 +3269,19 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
       scheda → nota di ritorno (`modalReturn`), Risorse → mappa e Risorse → nota,
       Info → Risorse. I **rebuild di lingua** usano invece `'now'`: via subito,
       niente dissolvenza, perché la stessa modale viene ricostruita nell'istante.
+    - ⚠️ **Anche una CHIUSURA che RITORNA è un passaggio (fix v14.11).** Il tasto
+      `×` di una nota aperta da una scheda (o da Risorse) non chiude: **ritorna**
+      là da dove si è arrivati (`noteReturn`), e lo stesso vale per il
+      visualizzatore mappe (`imgvReturn`). Trattandoli come chiusure vere, la nota
+      usciva con la dissolvenza PIENA mentre la destinazione entrava con la sua -
+      due veli che sfumano insieme, cioè di nuovo il difetto della v13.86.
+      Segnalato dall'utente col percorso esatto: 'apri Eärendil, clicca sulla nota
+      *Mezzelfi tra la vita e la morte*, poi chiudi → sfarfallio assicurato'.
+      Misurato in tema chiaro: la fascia fuori dalla modale schiariva da 226.2 a
+      **229.4**; dopo il fix **0.00** di escursione. Il criterio è in `dismiss`:
+      `var back = !keep && !!noteReturn` → modo `'fast'`. E in quel caso **lo scroll
+      NON si sblocca**: lo riblocca la destinazione, e uno sblocca-riblocca fa
+      comparire e sparire la barra di scorrimento.
     - ⚠️ **UN SOLO VELO IN SCENA, E SEMPRE PIENO (v14.10, regola definitiva).** Chi
       ENTRA porta il velo (istantaneo, nessuna transizione); chi ESCE lo **perde** e
       tiene il solo box, che le passa **sopra** e dissolve in 0.08s
