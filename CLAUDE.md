@@ -833,7 +833,27 @@ normale/XL secondo la preferenza attiva.
   spariva insieme al disegno; il segno bianco sul fondo acceso resta ben sopra il
   3:1 di WCAG 1.4.11. `accent-color` non basterebbe: cambia la tinta, non la forma.
   Le regole vivono in `injectFxEditorCss` (invisibile al Nu) e sono scoped a
-  `#fx-modal`/`#fab-modal`, quindi le checkbox dell'editor personaggi non cambiano.
+  `#fx-modal`/`#fab-modal`.
+  - **Esteso a TUTTO il sito nella v13.44 (richiesta dell'utente: 'mi riferivo a
+    tutti quelli del sito, ma principalmente a quelli del pannello').** La v12.85
+    aveva cambiato solo le modali degli effetti; restavano fuori le **caselle delle
+    categorie nel Pannello** (`.ctrl-chk`, che disegnava il segno col glifo
+    **`content:'✓'` di EB Garamond** - grazie e code curve, l'opposto del 'dritto'
+    chiesto) e quelle dei **badge nell'editor personaggi** (`.admin-flag-chk input`,
+    caselle **native** con `accent-color`: il segno lo disegnava il sistema
+    operativo, quindi diverso su ogni browser). Ora tutte e tre le famiglie usano lo
+    stesso `::after` geometrico. Queste due regole vivono nel **CSS statico** (non in
+    `injectFxEditorCss`), perciò le vede il Nu: scritte in **longhand**
+    (`border-style`/`border-color`/`border-width`), non con lo shorthand `border`
+    senza width, per non introdurre forme insolite nel foglio validato.
+  - ⚠️ **Fondo e colore del segno restano quelli storici** dove già c'erano
+    (`--gold` / `--ink` nel Pannello e in admin, bianco su accento nelle modali):
+    cambia solo la FORMA, così i contrasti già verificati non si muovono (misurati
+    dopo il cambio: 5.81:1 in scuro, 6.57:1 in chiaro).
+  - ⚠️ **Nell'editor personaggi i margini della casella restano quelli dell'UA**:
+    azzerarli stringerebbe la griglia dei 22 badge, tarata su quelle spaziature.
+    Verificato al pixel che nulla si sposta (pannello, righe categoria, riga badge e
+    posizione delle caselle identiche a prima della modifica).
 - **Bersagli di tocco da 24px nel pannello (WCAG 2.2, criterio 2.5.8; v12.75).**
   Gli slider delle manopole erano alti **16px** e le checkbox native lo sono per
   costruzione: sotto il minimo di 24×24px. Correzione senza toccare l'aspetto —

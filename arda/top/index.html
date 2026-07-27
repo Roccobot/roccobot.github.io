@@ -1089,9 +1089,17 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
   flex-shrink:0; position:relative; transition:background 0.15s,border-color 0.15s;
 }
 .ctrl-row input:checked + .ctrl-chk { background:var(--gold); border-color:var(--gold-bright); }
+/* Segno di spunta GEOMETRICO (v13.44, richiesta utente: 'dritto, senza parti
+   appuntite o curve'), lo stesso delle modali (v12.85): due lati di un
+   rettangolo ruotati di 45°, estremità tagliate nette e angolo a spigolo vivo.
+   Prima era il glifo '✓' di EB Garamond, che ha grazie e code curve. Fondo e
+   colore restano quelli storici (--gold / --ink): cambia solo la FORMA, quindi
+   il contrasto già verificato nei due temi non si muove. */
 .ctrl-row input:checked + .ctrl-chk::after {
-  content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-size:0.72rem; color:var(--ink); font-weight:bold;
+  content:''; position:absolute; left:50%; top:47%;
+  width:0.3rem; height:0.56rem;
+  border-style:solid; border-color:var(--ink); border-width:0 2px 2px 0;
+  transform:translate(-50%,-50%) rotate(45deg);
 }
 /* Etichetta di categoria SPENTA: attenuata (segnale visivo). In tema scuro
    0.55 (era 0.45, sotto la soglia AA: contrasto 3.99 su bg scuro; 0.55 = 5.37,
@@ -1785,7 +1793,24 @@ html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#arda-t
 .admin-mono-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1.4rem; }
 .admin-flags-row { display:flex;flex-wrap:wrap;gap:0.5rem 0.9rem;padding:0.6rem 0 0.2rem;margin-top:0.5rem;border-top:1px solid rgba(104,144,168,0.15); }
 .admin-flag-chk { display:flex;align-items:center;gap:0.3rem;cursor:pointer; }
-.admin-flag-chk input { width:15px;height:15px;accent-color:var(--gold);cursor:pointer;flex-shrink:0; }
+/* Caselle dei badge nell'editor personaggi: stesso segno geometrico del Pannello
+   e delle modali (v13.44). Erano le caselle NATIVE con `accent-color`, quindi il
+   segno lo disegnava il sistema operativo (pesante e diverso su ognuno).
+   ⚠️ I margini restano quelli dell'UA: azzerarli stringerebbe la griglia dei 22
+   badge, che è tarata su quelle spaziature. Il focus da tastiera ha un anello
+   proprio, perché con appearance:none quello nativo sparisce col disegno. */
+.admin-flag-chk input { width:15px;height:15px;cursor:pointer;flex-shrink:0;
+  appearance:none;-webkit-appearance:none;position:relative;border-radius:4px;
+  border:1.5px solid rgba(154,192,216,0.6);background:transparent;
+  transition:background 0.15s,border-color 0.15s; }
+.admin-flag-chk input:hover { border-color:rgba(154,192,216,0.95); }
+.admin-flag-chk input:checked { background:var(--gold);border-color:var(--gold-bright); }
+.admin-flag-chk input:checked::after {
+  content:'';position:absolute;left:50%;top:47%;
+  width:0.26rem;height:0.5rem;
+  border-style:solid;border-color:var(--ink);border-width:0 2px 2px 0;
+  transform:translate(-50%,-50%) rotate(45deg); }
+.admin-flag-chk input:focus-visible { outline:2px solid var(--gold-bright);outline-offset:2px; }
 .admin-flag-chk img { font-size:1.467rem; } /* 1.35rem / 0.92em */
 /* Editor admin: qui i badge sono icona-soltanto (niente testo), quindi l'allineamento
    non segue la pagina vera. Le .status-icon sono inline-block+vertical-align:middle
@@ -2372,7 +2397,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.44</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
