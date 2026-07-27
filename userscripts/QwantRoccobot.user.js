@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.13.0
-// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages). Il forcing dei parametri NON ricarica la primissima pagina Qwant dopo una pausa lunga (riavvio del browser, scheda nuova dopo ore): due caricamenti completi a distanza di un istante su una sessione appena nata sono cio' che faceva rispondere 403 a DataDome per una trentina di secondi. Si perde il forcing su una sola ricerca, quella d'apertura; da li' in poi tutto come prima. In piu' il forcing aspetta comunque il cookie anti-bot prima di ricaricare.
+// @version      2.14.0
+// @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages). Il forcing dei parametri NON ricarica la primissima pagina Qwant dopo una pausa lunga (riavvio del browser, scheda nuova dopo ore): due caricamenti completi a distanza di un istante su una sessione appena nata sono cio' che faceva rispondere 403 a DataDome per una trentina di secondi. Si perde il forcing su una sola ricerca, quella d'apertura; da li' in poi tutto come prima. In piu' il forcing aspetta comunque il cookie anti-bot prima di ricaricare. Dalla 2.14, siccome il 403 restava anche senza ricaricamento, a sessione FREDDA lo script non tocca NIENTE (niente CSS, niente nascondimenti, niente ascoltatori) finche' il cookie anti-bot non c'e': l'ipotesi e' che DataDome esamini a fondo solo la prima pagina senza cookie, e una pagina gia' manipolata somigli a una pagina pilotata. Si perde la pulizia dell'interfaccia per un secondo o due, sulla sola prima pagina.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -52,6 +52,46 @@
   // questo tempo il forcing dei parametri si fa come sempre; oltre, la primissima
   // pagina non viene ricaricata (vedi la nota nel MODULO 0).
   const FRESCHEZZA_SESSIONE = 30 * 60 * 1000;   // 30 minuti
+  // A sessione FREDDA lo script non tocca niente finche' non c'e' il cookie anti-bot
+  // (vedi la nota GATE piu' sotto). false = comportamento di prima.
+  const PAUSA_A_FREDDO = true;
+  const PAUSA_MAX = 12000;      // millisecondi: oltre, si parte comunque
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  GATE ANTI-BOT: a sessione fredda lo script aspetta prima di agire
+  // ═══════════════════════════════════════════════════════════════════════
+  // ⚠️ TERZA CORREZIONE (2026-07-27), dopo due diagnosi sbagliate. Le prime due
+  // incolpavano il ricaricamento dei parametri: prima perche' abortiva la pagina,
+  // poi perche' erano due caricamenti ravvicinati. Tolto il ricaricamento, il 403
+  // e' rimasto (l'utente non vede piu' nemmeno il lampo della SERP), quindi la
+  // causa e' un'altra e non ha senso continuare a indovinare quale modulo sia.
+  // L'ipotesi che regge tutte le osservazioni: DataDome esamina a fondo SOLO la
+  // prima pagina di una sessione, quella senza cookie, mentre le successive le
+  // lascia passare sulla fiducia del cookie. Se in quel momento lo script sta gia'
+  // iniettando CSS, nascondendo elementi e installando ascoltatori globali, la
+  // pagina somiglia a una pagina pilotata.
+  // Rimedio generale invece che per tentativi: a sessione fredda non si tocca
+  // NIENTE finche' il cookie non c'e'. Si perde la pulizia dell'interfaccia per
+  // un secondo o due, sulla sola prima pagina; tutto il resto resta invariato.
+  function cookieAntibot() {
+    try { return /(^|;\s*)datadome=/.test(document.cookie); } catch (e) { return false; }
+  }
+  // ⚠️ Si legge UNA VOLTA SOLA, adesso, prima che qualunque cosa segni la visita:
+  // se la pagina fosse gia' caricata (iniezione tardiva del gestore, pagina dalla
+  // cache) il marcatore verrebbe scritto subito e la sessione appena nata
+  // sembrerebbe calda, che e' esattamente il caso da evitare.
+  const eraCalda = (function () {
+    try { return Date.now() - (+localStorage.getItem('qr-visita') || 0) < FRESCHEZZA_SESSIONE; }
+    catch (e) { return false; }
+  })();
+  function segnaVisita() {
+    try { localStorage.setItem('qr-visita', String(Date.now())); } catch (e) {}
+  }
+  // si segna a pagina caricata, non prima: una pagina che non arriva in fondo non
+  // deve far credere che la sessione sia calda
+  if (document.readyState === 'complete') segnaVisita();
+  else window.addEventListener('load', segnaVisita);
+  setInterval(segnaVisita, 60000);   // finche' si resta su Qwant, la visita resta fresca
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 0 -- Parametri di ricerca fissi e forzati (Web / Immagini)
@@ -60,7 +100,7 @@
   // La guardia "tab|query" in sessionStorage evita sia il loop di reload sia la
   // sovrascrittura delle scelte fatte via Filtri (stessa query+tab => non riforza).
   // E' solo navigazione (location.replace): nessuna patch di fetch/XHR/history.
-  (function forzaParametri() {
+  function forzaParametri() {
     if (!FORZA_PARAMETRI) return;
     const PARAM_WEB = { theme: '-1', l: 'it', b: '1', t: 'web', llm: '0', s: '0', hc: '0', hti: '0' };
     const PARAM_IMG = { theme: '-1', l: 'it', b: '1', t: 'images', llm: '0', size: 'large', license: 'all', imagetype: 'all', s: '0', hc: '0', hti: '0', locale: 'en_US' };
@@ -93,9 +133,6 @@
     // normale, nessun ritardo e nessuno sfarfallio); altrimenti si aspetta che
     // arrivi, e se non arriva entro il tempo massimo si rinuncia per questa volta.
     // Meglio una ricerca coi parametri di Qwant che una ricerca che non parte.
-    function cookieAntibot() {
-      try { return /(^|;\s*)datadome=/.test(document.cookie); } catch (e) { return false; }
-    }
     function quandoSicuro(fai) {
       if (cookieAntibot()) { fai(); return; }
       const scadenza = Date.now() + ATTESA_ANTIBOT;
@@ -118,22 +155,6 @@
     // localStorage: se e' recente la sessione anti-bot e' calda e il forcing va fatto
     // come sempre, altrimenti si lascia stare per QUESTA volta. Si perde il forcing su
     // una sola ricerca, quella d'apertura; da li' in poi tutto come prima.
-    // ⚠️ Si legge UNA VOLTA SOLA, adesso, prima che qualunque cosa segni la visita:
-    // se la pagina fosse gia' caricata (iniezione tardiva del gestore, pagina dalla
-    // cache) il marcatore verrebbe scritto subito e la sessione appena nata
-    // sembrerebbe calda, che e' esattamente il caso da evitare.
-    const eraCalda = (function () {
-      try { return Date.now() - (+localStorage.getItem('qr-visita') || 0) < FRESCHEZZA_SESSIONE; }
-      catch (e) { return false; }
-    })();
-    function segnaVisita() {
-      try { localStorage.setItem('qr-visita', String(Date.now())); } catch (e) {}
-    }
-    // si segna a pagina caricata, non prima: una pagina che non arriva in fondo non
-    // deve far credere che la sessione sia calda
-    if (document.readyState === 'complete') segnaVisita();
-    else window.addEventListener('load', segnaVisita);
-    setInterval(segnaVisita, 60000);   // finche' si resta su Qwant, la visita resta fresca
     // A ogni CARICAMENTO/REFRESH: se l'URL non e' ai parametri di default, li ripristina.
     // Cosi' il refresh riporta sempre ai default; le modifiche via Filtri valgono finche'
     // non si ricarica. Anti-loop a tempo: non riforza a raffica (se Qwant rialterasse i
@@ -178,7 +199,7 @@
         });
       } else { prev = cur; }                         // stessa tab+query = aggiustamento Filtri -> lascia
     }, 500);
-  })();
+  }
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 1 — Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
@@ -186,7 +207,7 @@
   // Tutti gli agganci sono attributi STABILI (data-testid, aria-label, title):
   // le classi CSS di Qwant sono auto-generate e cambiano a ogni deploy.
   // Questo modulo è solo CSS + DOM: non fa richieste di rete, non tocca l'API.
-  (function pulizia() {
+  function pulizia() {
     // Classe sull'<html> per la tab corrente: serve al CSS per mostrare il tasto Filtri
     // SOLO nella scheda Immagini (vedi NASCONDI_OPZIONI). Impostata subito, prima del CSS.
     function suImmagini() { try { return new URLSearchParams(location.search).get('t') === 'images'; } catch (e) { return false; } }
@@ -340,7 +361,7 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
     else avvio();
-  })();
+  }
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 2 — Immagini: il clic apre subito il file originale
@@ -366,7 +387,7 @@
   // risultati (thumbnail → media), 2) URL della miniatura (proxy thumbr legacy),
   // 3) eventuale JSON nell'HTML. Se non si ricava, il clic resta quello di Qwant
   // (apre l'anteprima): degrada, non rompe.
-  (function immaginiDirette() {
+  function immaginiDirette() {
     if (!IMMAGINI_DIRETTE) return;
 
     // Memoria miniatura → originale (popolata solo da dati DOM/HTML, mai da rete)
@@ -689,7 +710,7 @@
     setInterval(function () {
       if (location.href !== ultimoHref) { ultimoHref = location.href; sincronizza(); }
     }, 600);
-  })();
+  }
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 3 -- Bypass del redirect di tracking sui risultati web (SPERIMENTALE)
@@ -705,7 +726,7 @@
   // NIENTE observer, tutto in try/catch, e dietro il flag BYPASS_REDIRECT_WEB. Se
   // dovessero tornare i 403, basta spegnere il flag. La whitelist ABP resta la rete
   // di sicurezza (i clic funzionano comunque, ma col tracking).
-  (function bypassRedirectWeb() {
+  function bypassRedirectWeb() {
     if (!BYPASS_REDIRECT_WEB) return;
 
     function fiberDi(node) {
@@ -758,5 +779,21 @@
         if (a) reindirizza(a);
       } catch (err) { /* mai disturbare la pagina ne' l'anti-bot */ }
     }, true);
-  })();
+  }
+
+  // ── Avvio: subito se la sessione e' calda, altrimenti si aspetta il cookie ──
+  function avvia() {
+    forzaParametri();
+    pulizia();
+    immaginiDirette();
+    bypassRedirectWeb();
+  }
+  if (!PAUSA_A_FREDDO || eraCalda || cookieAntibot()) {
+    avvia();
+  } else {
+    const scadenza = Date.now() + PAUSA_MAX;
+    const tic = setInterval(function () {
+      if (cookieAntibot() || Date.now() > scadenza) { clearInterval(tic); avvia(); }
+    }, 150);
+  }
 })();
