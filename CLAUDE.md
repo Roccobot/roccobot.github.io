@@ -1267,10 +1267,24 @@ gruppo = cambiare una terna.
     sulla card; le regole **iniettate** `.cc-custom{--ccrgb:var(--ccdark,…)}` +
     `html[data-theme="light"] .cc-custom{--ccrgb:var(--cclight,…)}` mappano
     `--ccrgb` sulla terna del tema (card e striscia la ereditano). `.cc-custom`
-    nel CSS statico è solo un fallback neutro. **Scheda:** per le voci `custom`
-    `openModal` usa l'accento neutro **`man`** (un colore arbitrario non è
-    garantito AA-safe sui testi della modale; sulla card sfondo/striscia a bassa
-    opacità è sempre sicuro). Salvataggio via `saveColorsToRepo` (`keepVersion`:
+    nel CSS statico è solo un fallback neutro. **Scheda: dalla v13.97 le voci
+    `custom` tengono il PROPRIO colore anche lì** (`setModalAccent`, estratta da
+    `openModal`, mette `cc-custom` + le due terne inline esattamente come
+    `renderList`). ⚠️ Fino alla v13.96 ripiegavano sull'accento neutro **`man`** -
+    un grigio-azzurro - per una cautela della v9.17: un colore arbitrario non era
+    garantito AA-safe sui testi della modale. Quella cautela è **obsoleta dalla
+    v9.62**: `--cctext` passa QUALUNQUE tinta per `ccAaText`, che le garantisce il
+    4.5:1 (misurato dopo il cambio: 4.54-10.31:1 sulle 4 voci custom nei due temi).
+    Segnalato dall'utente su Lúthien ('come mai ha questo colore così chiaro e
+    azzurro, diverso dal suo?'): le voci col colore individuale sono **4** (Melkor,
+    Tom Bombadil, Baccador, Lúthien) e la loro scheda mostrava il grigio di `man`.
+    - ⚠️ **`setModalAccent` va richiamata anche al cambio di TEMA a scheda aperta**
+      (tasto `T`, che dalla v12.40 funziona in tutte le modali): `--cctext` è
+      calcolata sul fondo di UN tema, quindi restava quella dell'altro e poteva
+      cadere fuori soglia. Difetto **preesistente e generale** (valeva per ogni
+      famiglia, non solo le custom), sanato nella stessa v13.97 con una chiamata in
+      `toggleTheme`. Le terne `--ccdark`/`--cclight` seguono il tema da sé.
+    Salvataggio via `saveColorsToRepo` (`keepVersion`:
     NON bumpa la versione, come gli altri salvataggi colore; il Worker serializza
     `cardrgb` oggetto come JSON, round-trip pulito).
   - **Bivio admin + editor colori (dalla v9.17; titolo e 3ª voce dalla v10.18).**
@@ -3172,7 +3186,7 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
     terrebbe 'aperti' (pagina inerte, tasti nudi zitti, riapertura bloccata).
   - **PASSAGGIO fra due modali: dissolvenza velocissima e NIENTE movimento**
     (richiesta utente: 'il movimento scompari/riappari può essere fastidioso').
-    Classe **`.xfade`**: velo 0.08s lineare, box senza transizione. Il passaggio si
+    Classe **`.xfade`**: box senza transizione né movimento. Il passaggio si
     marca in UN punto solo - chi chiude in modo `'fast'` chiama
     **`modalXfadeWindow()`**, che apre una finestra di 220ms in cui anche
     l'**apertura** della modale successiva eredita la dissolvenza rapida
@@ -3184,6 +3198,23 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
       scheda → nota di ritorno (`modalReturn`), Risorse → mappa e Risorse → nota,
       Info → Risorse. I **rebuild di lingua** usano invece `'now'`: via subito,
       niente dissolvenza, perché la stessa modale viene ricostruita nell'istante.
+    - ⚠️ **IL VELO NON SI TOCCA: resta pieno per tutto il passaggio (fix v13.97).**
+      La v13.86 lo faceva dissolvere in 0.08s su entrambe le modali e l'utente
+      vedeva uno **sfarfallio** ('il passaggio da una modale all'altra è pessima').
+      Causa misurata: due veli semitrasparenti sovrapposti compongono **MENO** di
+      uno pieno - `0.92` su `0.92` dà 0.9936, ma a metà strada `0.46` su `0.46` dà
+      **0.71** - quindi a mezzo passaggio la pagina dietro si SCHIARIVA e poi
+      tornava scura. Ora `.xfade` mette `transition:none` sul velo, la vecchia
+      modale esce **all'istante** (`dismissStdModal` in modo `'fast'` fa `remove()`
+      subito, senza timer) e la nuova entra col velo già pieno: chi apre subentra
+      **nello stesso tick**, quindi non esiste un fotogramma senza velo. Verificato
+      campionando frame per frame: velo composito **fisso a 0.92**, mai due
+      `.modal-backdrop` visibili insieme.
+    - A dissolvere è il solo **CONTENUTO**: `@keyframes modal-xfade-in` (0.1s) sul
+      box della modale che entra. È un'`animation` e non una `transition` apposta -
+      parte da sé alla comparsa, senza dover intercalare un reflow fra la classe
+      `.xfade` e `.active` (col `transition` il browser calcolerebbe solo lo stato
+      finale e non animerebbe nulla). Spenta da `prefers-reduced-motion`.
     - Storico: il caso 'si arriva da una nota' esisteva già come `instant` +
       `.no-anim`, cioè un **salto secco**; la v13.86 lo sostituisce con la
       dissolvenza rapida. `.no-anim` resta per usi tecnici.
@@ -3203,10 +3234,19 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   tornato con questo modello:
   - **La modale ha UN accento**, in `--note-acc`: la tinta della **famiglia del
     personaggio da cui si è arrivati**, altrimenti l'**accento globale del tema**
-    (`#c6ad66` scuro / `#2e5461` chiaro, indicati dall'utente: 6.99:1 e 7.47:1 sul
-    fondo delle modali). Lo prendono titolo, titoletti, pallini degli elenchi e il
+    (**`#afafaf` scuro** dalla v13.97 / `#2e5461` chiaro, 6.99:1 e 7.45:1 sul fondo
+    delle modali). Lo prendono titolo, titoletti, pallini degli elenchi e il
     rimando nota → nota; e per lo stesso principio Info e Risorse, che non hanno
     provenienza, stanno sempre sul globale.
+    - ⚠️ **L'accento globale SCURO è GRIGIO** (v13.97, richiesta dell'utente: 'in
+      tema scuro le modali sono davvero GIALLE: togli del tutto la saturazione,
+      lasciando la luminosità inalterata'). `#afafaf` è il grigio a **PARI luminanza
+      relativa** del `#c6ad66` che l'utente stesso aveva indicato nella v13.96
+      (0.4287 contro 0.4285), quindi il contrasto non si muove: **6.99:1 prima e
+      dopo**. È lo stesso metodo della neutralizzazione della v8.79. Il **chiaro
+      resta il teal `#2e5461`**: la segnalazione riguardava il solo tema scuro, e lì
+      la saturazione è modesta (36% HSL su un fondo chiaro). Le tinte dei
+      **personaggi** non sono toccate: il grigio vale solo dove non c'è provenienza.
   - **Un solo livello di intensità** (scelta dell'utente): la gerarchia la fanno
     corpo e peso del testo. ⚠️ Sotto il 75% di opacità il tema chiaro scende a
     4.04:1, fuori soglia: se un domani serve più stacco, agire sul peso.

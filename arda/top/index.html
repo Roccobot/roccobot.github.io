@@ -1553,9 +1553,21 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 /* PASSAGGIO fra due modali (v13.86, richiesta utente: 'il movimento
    scompari/riappari può essere fastidioso, basterebbe una dissolvenza
    velocissima'). Qui il box NON si muove - sarebbe un saltello inutile, la modale
-   nuova prende il posto della vecchia - e il velo dissolve in un lampo. */
-.modal-backdrop.xfade { transition:opacity 0.08s linear,visibility 0.08s !important; }
+   nuova prende il posto della vecchia.
+   ⚠️ Il VELO non si tocca: resta pieno per tutto il passaggio (v13.97, segnalato
+   dall'utente: 'il passaggio da una modale all'altra sfarfalla'). Farlo dissolvere
+   era la causa: due veli semitrasparenti sovrapposti compongono MENO di uno pieno
+   (0.92 e 0.92 danno 0.9936, ma a metà strada 0.46 e 0.46 danno 0.71), quindi a
+   metà del passaggio la pagina dietro si SCHIARIVA e poi tornava scura. Ora la
+   vecchia esce all'istante e la nuova entra col velo già pieno: il fondo non
+   cambia mai, e a dissolvere è solo il CONTENUTO. */
+.modal-backdrop.xfade { transition:none !important; }
 .modal-backdrop.xfade .modal { transition:none !important; transform:none !important; }
+/* Dissolvenza del solo contenuto. `animation` e non `transition`: parte da sé alla
+   comparsa, senza dover intercalare un reflow fra la classe e `.active`. */
+@keyframes modal-xfade-in { from { opacity:0; } to { opacity:1; } }
+.modal-backdrop.xfade.active .modal { animation:modal-xfade-in 0.1s linear; }
+@media (prefers-reduced-motion:reduce) { .modal-backdrop.xfade.active .modal { animation:none; } }
 /* Niente barre di scorrimento nel sistema-modale (scelta coerente col
    Pannello): su mobile comparivano DUE barre (quella interna del .modal-body e
    quella esterna del .modal-backdrop, che su mobile può scorrere per via del
@@ -2321,14 +2333,20 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
 .note-viewer-box { text-align:left; line-height:1.55; }
 /* ── UN ACCENTO PER MODALE, deciso dalla PROVENIENZA (v13.96, scelta dell'utente).
    `--note-acc` è la tinta di tutti gli accenti di struttura della modale. Vale
-   l'accento GLOBALE del tema (#c6ad66 / #2e5461, indicati dall'utente: 6.99:1 e
-   7.47:1 sul fondo delle modali); se però la modale è stata aperta da un
+   l'accento GLOBALE del tema; se però la modale è stata aperta da un
    personaggio, `openNoteViewer` scrive sull'overlay `--macc-d`/`--macc-l` con la
    sua tinta di famiglia e l'accento diventa quello, per tutta la lettura.
    ⚠️ Due proprietà, una per tema, perché il tasto `T` NON ricostruisce la nota
    aperta: un solo valore sarebbe sbagliato nell'altro tema. Un solo livello di
-   intensità (scelta dell'utente): la gerarchia la fanno corpo e peso. */
-.modal-backdrop { --note-acc:var(--macc-d,#c6ad66); }
+   intensità (scelta dell'utente): la gerarchia la fanno corpo e peso.
+   ⚠️ L'accento globale SCURO è GRIGIO (v13.97, richiesta dell'utente: 'in tema
+   scuro le modali sono davvero GIALLE: togli del tutto la saturazione, lasciando
+   la luminosità inalterata'). #afafaf è il grigio a PARI luminanza relativa del
+   vecchio #c6ad66 (0.4287 contro 0.4285), quindi il contrasto sul fondo della
+   modale non si muove: 6.99:1 prima e dopo - stesso metodo della
+   neutralizzazione della v8.79. Il chiaro resta il teal #2e5461 (7.45:1) scelto
+   dall'utente: la segnalazione riguardava il solo tema scuro. */
+.modal-backdrop { --note-acc:var(--macc-d,#afafaf); }
 html[data-theme="light"] .modal-backdrop { --note-acc:var(--macc-l,#2e5461); }
 .note-viewer-box h3 { color:var(--note-acc); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
 /* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
@@ -2471,7 +2489,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.96</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.97</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4660,28 +4678,40 @@ function stepVisible(from, dir) {
   return null;
 }
 
+// Accento cardcolor della SCHEDA: la .modal eredita la famiglia della card
+// (cc-<fam>), da cui derivano bordo/filetto/rank/source/chiudi (dalla v8.77).
+// Le voci 'custom' (colore individuale) tengono il PROPRIO colore anche qui
+// (v13.97, segnalato dall'utente: 'come mai Lúthien ha questo colore così chiaro e
+// azzurro, diverso dal suo?'). Fino alla v13.96 ripiegavano sull'accento neutro
+// 'man' - un grigio-azzurro - per una cautela della v9.17: un colore arbitrario
+// non era garantito AA-safe sui testi della modale. ⚠️ Quella cautela è obsoleta
+// dalla v9.62: `--cctext` passa QUALUNQUE tinta per `ccAaText`, che le garantisce
+// il 4.5:1. Come la card, la scheda prende `cc-custom` + le due terne inline, e le
+// regole iniettate `.cc-custom` mappano `--ccrgb` sul tema.
+// ⚠️ Va richiamata anche al cambio di TEMA a scheda aperta (tasto `T`): --cctext è
+// calcolata sul fondo di UN tema, quindi restava del tema sbagliato.
+function setModalAccent(p) {
+  var modalEl = document.querySelector('#modal-backdrop > .modal');
+  if (!modalEl || !p) return;
+  var mf = familyOf(p), cp = (mf === 'custom') ? customPair(p) : null;
+  modalEl.className = 'modal cc-' + mf;
+  modalEl.style.setProperty('--ccdark', cp ? cp.dark : '');
+  modalEl.style.setProperty('--cclight', cp ? cp.light : '');
+  // Colore-testo AA (v9.62): tinta della famiglia, resa contrastata sul fondo
+  // modale del tema. I BORDI restano col colore famiglia (--ccrgb); i TESTI
+  // (rank/source/close) usano --cctext = versione AA-safe (o il colore stesso
+  // se già a contrasto). Rimpiazza la vecchia lista-oro statica.
+  var th = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  var famHex = cp ? ccTripletToHex(cp[th])
+                  : ((CARDCOLORS.fam[mf] && CARDCOLORS.fam[mf][th]) ? CARDCOLORS.fam[mf][th] : '#9098a8');
+  modalEl.style.setProperty('--cctext', ccHexToTriplet(ccAaText(famHex, th === 'light' ? '#F4F4F4' : '#252525', 4.5)));
+}
+
 function openModal(idx, instant) {
   currentIdx = idx;
   var p = dati[idx];
   var lang = currentLang;
-  // Accento cardcolor: la .modal eredita la famiglia della card (cc-<fam>), da
-  // cui derivano bordo/filetto/rank/source/chiudi (dalla v8.77). Reset+set a
-  // ogni apertura; le modali note/risorse non hanno cc-<fam> e restano gold.
-  var modalEl = document.querySelector('#modal-backdrop > .modal');
-  // Le voci 'custom' (colore individuale) usano l'accento neutro 'man' sulla
-  // scheda: un colore arbitrario non e' garantito AA-safe sui testi della modale,
-  // mentre sulla card (sfondo/striscia a bassa opacita') e' sempre sicuro.
-  if (modalEl) {
-    var mf = familyOf(p); if (mf === 'custom') mf = 'man'; modalEl.className = 'modal cc-' + mf;
-    // Colore-testo AA (v9.62): tinta della famiglia, resa contrastata sul fondo
-    // modale del tema. I BORDI restano col colore famiglia (--ccrgb); i TESTI
-    // (rank/source/close) usano --cctext = versione AA-safe (o il colore stesso
-    // se già a contrasto). Rimpiazza la vecchia lista-oro statica.
-    var _th = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-    var _famHex = (CARDCOLORS.fam[mf] && CARDCOLORS.fam[mf][_th]) ? CARDCOLORS.fam[mf][_th] : '#9098a8';
-    var _bg = _th === 'light' ? '#F4F4F4' : '#252525';
-    modalEl.style.setProperty('--cctext', ccHexToTriplet(ccAaText(_famHex, _bg, 4.5)));
-  }
+  setModalAccent(p);
   var nome = lang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
   var fonte = lang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
   var info = lang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || '');
@@ -4915,12 +4945,16 @@ function dismissStdModal(bd, mode) {
   bd._out = true;
   bd.removeAttribute('id'); bd.classList.remove('dyn-modal');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  // 'fast' = passaggio a un'altra modale: la vecchia esce SUBITO (v13.97). Farla
+  // dissolvere significava tenere in pagina due veli semitrasparenti sovrapposti,
+  // che a metà strada schiariscono il fondo: era lo sfarfallio segnalato. Chi apre
+  // subentra nello stesso tick, quindi non c'è un fotogramma senza velo; la
+  // dissolvenza la fa il CONTENUTO della modale nuova (modalXfadeWindow).
+  if (mode === 'fast') { modalXfadeWindow(); bd.remove(); return; }
   if (mode === 'now' || mode === true || reduce) { bd.remove(); return; }
   bd.style.pointerEvents = 'none';
-  var fast = mode === 'fast';
-  if (fast) { modalXfadeWindow(); bd.classList.add('xfade'); }
   bd.classList.remove('active');
-  setTimeout(function(){ bd.remove(); }, fast ? 110 : 260); // oltre i 200ms di transizione
+  setTimeout(function(){ bd.remove(); }, 260); // oltre i 200ms di transizione
 }
 
 function openResourcesModal() {
@@ -6161,6 +6195,9 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   var m = document.querySelector('meta[name="theme-color"]');
   if (m) m.setAttribute('content', next === 'light' ? '#ebebef' : '#060a14');
+  // Scheda aperta: l'accento va ricalcolato sul fondo del NUOVO tema (--cctext è
+  // AA su un fondo solo), altrimenti resta la tinta dell'altro tema.
+  if (currentIdx !== null && dati[currentIdx]) setModalAccent(dati[currentIdx]);
   // Una modale aperta che dipende dal tema (editor colori/statistiche) si
   // ricostruisce nel nuovo tema, conservando tab/scroll (anti-jitter).
   if (typeof themeRefresh === 'function') themeRefresh();
