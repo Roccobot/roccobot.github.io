@@ -2418,7 +2418,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.55</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.65</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7639,6 +7639,186 @@ function dockRelease(){
   reflowRows();
 }
 
+// ── Anteprima su card finte, blocco CONDIVISO (v13.65) ───────────────────────
+// Nata dentro la sotto-modale degli effetti, estratta perché ora la usa anche il
+// PANNELLO: nella tab Mobile la pagina accanto è la versione desktop, quindi gli
+// interruttori agirebbero alla cieca (richiesta utente). Una sola implementazione:
+// due copie divergerebbero, ed è la stessa ragione per cui le formule dell'aspetto
+// sono condivise fra anteprima e pagina.
+//   o.key     effetto in modifica; '' = PANORAMICA (il Pannello: nessun effetto
+//             singolo, si mostra l'insieme di quelli accesi)
+//   o.sfx     variante: '' desktop, '_m' mobile
+//   o.lights  funzione che dice quali riquadri disegnare (true = tema chiaro):
+//             è una funzione e non un array perché la sotto-modale la rivaluta a
+//             ogni cambio di tab tema.
+// Ritorna { el, build, paint }. In PANORAMICA tutte le card sono rese ACCESE (o
+// bagliore e riflettore non si vedrebbero) e i numeri sono 1 e 5: il primo mostra
+// il metallo del podio, il secondo - fuori dal podio, come nelle altre anteprime -
+// la tinta dei numeri normali.
+function fxPreviewBlock(o){
+  var it = currentLang === 'it';
+  var key = o.key, sfx = o.sfx || '', all = !o.key;
+  // ⚠️ Il riflettore ha config UNICA dalla v13.18: il suffisso di piattaforma non
+  // si applica e un eventuale `spot_m` residuo nei dati va ignorato, esattamente
+  // come fa `fxCfg` in pagina. Senza questo, chiedere la variante `_m` di una
+  // config unica restituiva `undefined` e le formule ci morivano sopra.
+  var uni = {};
+  SITE_FLAG_ITEMS.forEach(function(f){ if (f.noMob) uni[f.k] = true; });
+  var V = function(k){ return SITE_FLAGS[k + (uni[k] ? '' : sfx)]; };
+  // ⚠️ In PANORAMICA si escludono gli effetti che quella variante NON ha: il
+  // riflettore è `noMob` (config unica dalla v13.18) e nella tab Mobile non compare
+  // nemmeno nella lista, quindi mostrarlo nell'anteprima mobile sarebbe una bugia -
+  // e il suo invito 'Muovi il puntatore qui' un invito a nulla.
+  // La config si legge con tolleranza: una variante può mancare del tutto (p.es.
+  // uno `spot_m` mai seminato), e leggerne `.on` alla cieca sarebbe un errore.
+  var vOn = function(k){
+    if (all && sfx && uni[k]) return false;
+    var c = V(k); return !!c && c.on !== false;
+  };
+  var cards = [], panes = [];
+  var wrap = document.createElement('div'); wrap.className = 'fxp-wrap';
+  var buildPanes = function(){
+  wrap.textContent = ''; cards.length = 0; panes.length = 0;
+  o.lights().forEach(function(light){
+    // ⚠️ Respiro EXTRA solo per il bagliore (v12.95, richiesta dell'utente): è
+    // l'unico effetto che disegna FUORI dalla card (fughe e alone), e col padding
+    // ordinario l'anteprima lo tagliava — quindi non si capiva che effetto facesse.
+    // Gli altri effetti restano compatti: lo spazio in più sarebbe solo vuoto.
+    var pane = document.createElement('div');
+    pane.className = 'fxp-pane ' + (light ? 'l' : 'd')
+      + ((key === 'glow' || (all && vOn('glow'))) ? ' fxp-airy' : '');
+    panes.push({ el:pane, light:light });
+    [1, 2].forEach(function(n){
+      var c = document.createElement('div'); c.className = 'fxp-card';
+      // (il respiro extra del riquadro per il bagliore è sulla classe del pane)
+      var strip = document.createElement('span'); strip.className = 'fxp-strip';
+      var spot = document.createElement('span'); spot.className = 'fxp-spot';
+      // Numeri delle card d'anteprima. Nell'editor del PODIO sono 1 e 2, ORO e
+      // ARGENTO (v12.76, richiesta utente; fino alla v12.75 erano 1 e 3, oro e
+      // bronzo). L'argento è quello che più ha bisogno d'occhio: ha molte fermate
+      // perché a due sole 'sembrava un numero normale', quindi è giusto sia in
+      // anteprima. In TUTTI gli altri editor sono posizioni FUORI dal podio (4 e
+      // 5): altrimenti l'anteprima mentirebbe — mostrerebbe p.es. l'incisione sui
+      // numeri 1-2, che in pagina il podio esclude avendo specificità maggiore
+      // (rilievo della verifica v12.64).
+      var podEd = (key === 'podium') || (all && n === 1);
+      var num = document.createElement('span'); num.className = 'fxp-num';
+      num.textContent = String(podEd ? n : (n === 1 ? 4 : 5));
+      var body = document.createElement('span');
+      var nm = document.createElement('span'); nm.className = 'fxp-name';
+      nm.textContent = n === 1 ? 'Fëanor' : 'Fingolfin';
+      // Pill etichetta-tipo finta: serve all'editor dei Nomi incisi (l'incisione
+      // può riguardare Nome ed etichette separatamente, v12.53).
+      var pill = document.createElement('span'); pill.className = 'fxp-pill';
+      pill.textContent = 'Noldo';
+      nm.appendChild(pill);
+      var ds = document.createElement('span'); ds.className = 'fxp-desc';
+      body.appendChild(nm); body.appendChild(ds);
+      c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
+      var rec = { el:c, strip:strip, spot:spot, num:num, name:nm, pill:pill, desc:ds,
+                  light:light, first:(n === 1), metal:n, podEd:podEd };
+      // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
+      // valutarlo senza uscire dalla modale.
+      c.addEventListener('pointermove', function(e){
+        var r = c.getBoundingClientRect();
+        spot.style.setProperty('--spx', (e.clientX - r.left) + 'px');
+        spot.style.setProperty('--spy', (e.clientY - r.top) + 'px');
+      });
+      cards.push(rec); pane.appendChild(c);
+    });
+    wrap.appendChild(pane);
+  });
+  };
+
+  function paint(){
+    // Tutte le config dalla VARIANTE in modifica (V), non dalla piattaforma
+    // corrente: aprendo la tab Mobile da desktop l'anteprima mostra la mobile.
+    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'), nu = V('nums');
+    panes.forEach(function(pn){
+      pn.el.style.backgroundImage = ((key === 'vig' || all) && vOn('vig')) ? fxVigBg(v, pn.light) : 'none';
+      // ⚠️ Respiro DINAMICO nell'editor del bagliore (v12.95). Un padding fisso non
+      // può bastare: quanto il bagliore esce dalla card dipende dalle manopole, e
+      // l'utente aveva segnalato che l'anteprima lo tagliava. Qui si calcola quanto
+      // arriva davvero — la fuga esterna sfuma per oamp×1.6, l'alone per aamp — e si
+      // riserva quello spazio, con un tetto perché la modale non diventi enorme
+      // (oltre ~56px la coda della sfumatura è comunque invisibile).
+      if (key === 'glow' || (all && vOn('glow'))) {
+        var reach = 0;
+        if (g.ps && (g.pl || g.pr)) reach = Math.max(reach, fxTh(g, 'oamp', pn.light) * 1.6);
+        if (g.pa) reach = Math.max(reach, fxTh(g, 'aamp', pn.light));
+        var pad = Math.min(56, Math.max(26, Math.round(reach * 0.85)));
+        pn.el.style.padding = Math.round(pad * 0.72) + 'px ' + pad + 'px';
+      }
+    });
+    cards.forEach(function(rec){
+      var cc = fxPreviewCc(rec.light);
+      // 'hot' = la card è resa in stato hover (fondo acceso, bagliori attivi).
+      var hot = all ? true : (key === 'glow' ? (g.all === true || rec.first) : key === 'spot');
+      rec.el.style.background = 'rgba(' + cc + ',' + (rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10)) + ')';
+      rec.strip.style.background = 'rgba(' + cc + ',0.85)';
+      var gOn = vOn('glow') && hot;
+      rec.strip.style.boxShadow = (gOn && g.pl) ? fxGlowInner(g, rec.light, cc) : 'none';
+      // Stessa composizione delle regole di pagina, lista completa inclusa: se
+      // l'anteprima omettesse le voci spente, avrebbe il 'lampo' che la pagina non
+      // ha più (ed è proprio nell'anteprima che l'utente lo vedeva).
+      rec.el.style.boxShadow = gOn
+        ? (fxGlowOuter(g, rec.light, cc) + ',' + fxGlowInnerRight(g, rec.light, cc, g.pr))
+        : 'none';
+      rec.spot.style.background = fxSpotBg(s, rec.light);
+      rec.spot.style.opacity = ((key === 'spot' || all) && vOn('spot')) ? '1' : '0';
+      // Nomi incisi: stessa formula delle regole iniettate, per Nome/etichette.
+      var press = vOn('press');
+      rec.name.style.textShadow = (press && pr.name) ? fxPressShadow(rec.light) : 'none';
+      rec.pill.style.textShadow = (press && pr.lab) ? fxPressShadow(rec.light) : 'none';
+      var numPress = (press && pr.num) ? fxPressShadow(rec.light) : 'none';
+      // Testo della pill reso AA con l'helper del progetto (v12.64): la tinta
+      // piena sul proprio fondo velato dava 3.38:1 su un corpo di ~8px, sotto la
+      // soglia 4.5:1 del testo piccolo (rilevato da axe). ⚠️ Il fondo va composto
+      // per DAVVERO su tre strati — riquadro, card (con l'alpha dello stato hot
+      // corrente) e velo della pill — non stimato sul solo riquadro: nella v12.64
+      // lo stimavo a card ferma e nell'editor del bagliore, dove le card sono
+      // accese, il conto risultava sbagliato di quanto bastava a restare sotto
+      // soglia (4.19:1 / 4.35:1, rilevati da axe).
+      var pillBgHex = (function(){
+        var t = cc.split(',').map(Number);
+        var base = rec.light ? [245,245,245] : [38,38,38];
+        var cardA = rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10);
+        var pillA = rec.light ? 0.10 : 0.26;
+        var over = function(a, alpha, b){ return a.map(function(v, i){ return v * alpha + b[i] * (1 - alpha); }); };
+        return ccTripletToHex(over(t, pillA, over(t, cardA, base)).map(Math.round).join(','));
+      })();
+      rec.pill.style.color = ccAaText(ccTripletToHex(cc), pillBgHex, 4.5);
+      rec.pill.style.borderColor = 'rgba(' + cc + ',0.8)';
+      rec.pill.style.background = 'rgba(' + cc + ',' + (rec.light ? 0.10 : 0.26) + ')';
+      // Numero: metallo del podio nell'editor del podio, altrimenti la tinta
+      // famiglia contrastata (come in pagina, v12.53).
+      if (rec.podEd && vOn('podium')) {
+        rec.num.style.backgroundImage = fxPodiumGrad(rec.metal, po, rec.light, PODIUM_GLYPH_FXP);
+        rec.num.style.webkitBackgroundClip = 'text';
+        rec.num.style.backgroundClip = 'text';
+        rec.num.style.color = 'transparent';
+        rec.num.style.textShadow = rec.light ? '0 1px 1px rgba(0,0,0,0.22)' : '0 1px 2px rgba(0,0,0,0.6)';
+        rec.num.style.filter = fxPodiumFilter(po, rec.light);
+      } else {
+        rec.num.style.backgroundImage = 'none';
+        rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
+        rec.num.style.textShadow = numPress; rec.num.style.filter = 'none';
+        // Stessa formula della pagina (v12.63), con la terna CONCRETA: qui i due
+        // temi convivono, quindi var(--ccrgb) non varrebbe. A effetto spento vale
+        // il grigio del nome del tema, come fa la regola base in pagina.
+        rec.num.style.color = vOn('nums') ? fxNumColor(nu, rec.light, cc)
+                                          : (rec.light ? '#373737' : '#d2d2d2');
+      }
+      rec.desc.textContent = (key === 'spot' || (all && vOn('spot')))
+        ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
+        : key === 'glow'
+          ? (hot ? (it ? 'Card attiva (hover)' : 'Active card (hover)') : (it ? 'Card a riposo' : 'Resting card'))
+          : (it ? 'Anteprima' : 'Preview');
+    });
+  }
+  return { el: wrap, build: buildPanes, paint: paint };
+}
+
 var FX_THEME0 = null; // baseline del tema per la sotto-modale effetti (vedi sotto)
 function showFxConfigEditor(key, sfx, onDone){
   if (document.getElementById('fx-modal')) return;
@@ -7725,152 +7905,18 @@ function showFxConfigEditor(key, sfx, onDone){
   //  • riflettore — entrambe accese, alone visibile (parte centrato, fallback
   //    50%/50%, e segue il puntatore quando ci passi sopra);
   //  • vignettatura — card a riposo, l'effetto sta sul FONDO dei riquadri.
-  var cards = [], panes = [];
   // Manopole e tab servono già qui: da esse dipende QUANTI riquadri disegnare.
   var knobs = FX_KNOBS[key] || [];
   var hasTh = knobs.some(function(kn){ return kn.th; });
   var kTheme = (document.documentElement.getAttribute('data-theme') === 'light') ? 'l' : 'd';
-  var wrap = document.createElement('div'); wrap.className = 'fxp-wrap';
-  var buildPanes = function(){
-  wrap.textContent = ''; cards.length = 0; panes.length = 0;
-  (hasTh ? [kTheme === 'l'] : [true, false]).forEach(function(light){
-    // ⚠️ Respiro EXTRA solo per il bagliore (v12.95, richiesta dell'utente): è
-    // l'unico effetto che disegna FUORI dalla card (fughe e alone), e col padding
-    // ordinario l'anteprima lo tagliava — quindi non si capiva che effetto facesse.
-    // Gli altri effetti restano compatti: lo spazio in più sarebbe solo vuoto.
-    var pane = document.createElement('div');
-    pane.className = 'fxp-pane ' + (light ? 'l' : 'd') + (key === 'glow' ? ' fxp-airy' : '');
-    panes.push({ el:pane, light:light });
-    [1, 2].forEach(function(n){
-      var c = document.createElement('div'); c.className = 'fxp-card';
-      // (il respiro extra del riquadro per il bagliore è sulla classe del pane)
-      var strip = document.createElement('span'); strip.className = 'fxp-strip';
-      var spot = document.createElement('span'); spot.className = 'fxp-spot';
-      // Numeri delle card d'anteprima. Nell'editor del PODIO sono 1 e 2, ORO e
-      // ARGENTO (v12.76, richiesta utente; fino alla v12.75 erano 1 e 3, oro e
-      // bronzo). L'argento è quello che più ha bisogno d'occhio: ha molte fermate
-      // perché a due sole 'sembrava un numero normale', quindi è giusto sia in
-      // anteprima. In TUTTI gli altri editor sono posizioni FUORI dal podio (4 e
-      // 5): altrimenti l'anteprima mentirebbe — mostrerebbe p.es. l'incisione sui
-      // numeri 1-2, che in pagina il podio esclude avendo specificità maggiore
-      // (rilievo della verifica v12.64).
-      var podEd = (key === 'podium');
-      var num = document.createElement('span'); num.className = 'fxp-num';
-      num.textContent = String(podEd ? n : (n === 1 ? 4 : 5));
-      var body = document.createElement('span');
-      var nm = document.createElement('span'); nm.className = 'fxp-name';
-      nm.textContent = n === 1 ? 'Fëanor' : 'Fingolfin';
-      // Pill etichetta-tipo finta: serve all'editor dei Nomi incisi (l'incisione
-      // può riguardare Nome ed etichette separatamente, v12.53).
-      var pill = document.createElement('span'); pill.className = 'fxp-pill';
-      pill.textContent = 'Noldo';
-      nm.appendChild(pill);
-      var ds = document.createElement('span'); ds.className = 'fxp-desc';
-      body.appendChild(nm); body.appendChild(ds);
-      c.appendChild(strip); c.appendChild(spot); c.appendChild(num); c.appendChild(body);
-      var rec = { el:c, strip:strip, spot:spot, num:num, name:nm, pill:pill, desc:ds,
-                  light:light, first:(n === 1), metal:n, podEd:podEd };
-      // Il riflettore segue il puntatore anche NELL'ANTEPRIMA: è l'unico modo di
-      // valutarlo senza uscire dalla modale.
-      c.addEventListener('pointermove', function(e){
-        var r = c.getBoundingClientRect();
-        spot.style.setProperty('--spx', (e.clientX - r.left) + 'px');
-        spot.style.setProperty('--spy', (e.clientY - r.top) + 'px');
-      });
-      cards.push(rec); pane.appendChild(c);
-    });
-    wrap.appendChild(pane);
-  });
-  };
+  // Anteprima dal blocco condiviso col Pannello (v13.65): `lights` è una funzione
+  // perché il cambio di tab tema la rivaluta.
+  var PV = fxPreviewBlock({ key: key, sfx: sfx, lights: function(){
+    return hasTh ? [kTheme === 'l'] : [true, false];
+  } });
+  var wrap = PV.el, buildPanes = PV.build, paint = PV.paint;
   buildPanes();
   scroller.appendChild(wrap);
-
-  function paint(){
-    // Tutte le config dalla VARIANTE in modifica (V), non dalla piattaforma
-    // corrente: aprendo la tab Mobile da desktop l'anteprima mostra la mobile.
-    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'), nu = V('nums');
-    panes.forEach(function(pn){
-      pn.el.style.backgroundImage = (key === 'vig' && vOn('vig')) ? fxVigBg(v, pn.light) : 'none';
-      // ⚠️ Respiro DINAMICO nell'editor del bagliore (v12.95). Un padding fisso non
-      // può bastare: quanto il bagliore esce dalla card dipende dalle manopole, e
-      // l'utente aveva segnalato che l'anteprima lo tagliava. Qui si calcola quanto
-      // arriva davvero — la fuga esterna sfuma per oamp×1.6, l'alone per aamp — e si
-      // riserva quello spazio, con un tetto perché la modale non diventi enorme
-      // (oltre ~56px la coda della sfumatura è comunque invisibile).
-      if (key === 'glow') {
-        var reach = 0;
-        if (g.ps && (g.pl || g.pr)) reach = Math.max(reach, fxTh(g, 'oamp', pn.light) * 1.6);
-        if (g.pa) reach = Math.max(reach, fxTh(g, 'aamp', pn.light));
-        var pad = Math.min(56, Math.max(26, Math.round(reach * 0.85)));
-        pn.el.style.padding = Math.round(pad * 0.72) + 'px ' + pad + 'px';
-      }
-    });
-    cards.forEach(function(rec){
-      var cc = fxPreviewCc(rec.light);
-      // 'hot' = la card è resa in stato hover (fondo acceso, bagliori attivi).
-      var hot = key === 'glow' ? (g.all === true || rec.first) : key === 'spot';
-      rec.el.style.background = 'rgba(' + cc + ',' + (rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10)) + ')';
-      rec.strip.style.background = 'rgba(' + cc + ',0.85)';
-      var gOn = vOn('glow') && hot;
-      rec.strip.style.boxShadow = (gOn && g.pl) ? fxGlowInner(g, rec.light, cc) : 'none';
-      // Stessa composizione delle regole di pagina, lista completa inclusa: se
-      // l'anteprima omettesse le voci spente, avrebbe il 'lampo' che la pagina non
-      // ha più (ed è proprio nell'anteprima che l'utente lo vedeva).
-      rec.el.style.boxShadow = gOn
-        ? (fxGlowOuter(g, rec.light, cc) + ',' + fxGlowInnerRight(g, rec.light, cc, g.pr))
-        : 'none';
-      rec.spot.style.background = fxSpotBg(s, rec.light);
-      rec.spot.style.opacity = (key === 'spot' && vOn('spot')) ? '1' : '0';
-      // Nomi incisi: stessa formula delle regole iniettate, per Nome/etichette.
-      var press = vOn('press');
-      rec.name.style.textShadow = (press && pr.name) ? fxPressShadow(rec.light) : 'none';
-      rec.pill.style.textShadow = (press && pr.lab) ? fxPressShadow(rec.light) : 'none';
-      var numPress = (press && pr.num) ? fxPressShadow(rec.light) : 'none';
-      // Testo della pill reso AA con l'helper del progetto (v12.64): la tinta
-      // piena sul proprio fondo velato dava 3.38:1 su un corpo di ~8px, sotto la
-      // soglia 4.5:1 del testo piccolo (rilevato da axe). ⚠️ Il fondo va composto
-      // per DAVVERO su tre strati — riquadro, card (con l'alpha dello stato hot
-      // corrente) e velo della pill — non stimato sul solo riquadro: nella v12.64
-      // lo stimavo a card ferma e nell'editor del bagliore, dove le card sono
-      // accese, il conto risultava sbagliato di quanto bastava a restare sotto
-      // soglia (4.19:1 / 4.35:1, rilevati da axe).
-      var pillBgHex = (function(){
-        var t = cc.split(',').map(Number);
-        var base = rec.light ? [245,245,245] : [38,38,38];
-        var cardA = rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10);
-        var pillA = rec.light ? 0.10 : 0.26;
-        var over = function(a, alpha, b){ return a.map(function(v, i){ return v * alpha + b[i] * (1 - alpha); }); };
-        return ccTripletToHex(over(t, pillA, over(t, cardA, base)).map(Math.round).join(','));
-      })();
-      rec.pill.style.color = ccAaText(ccTripletToHex(cc), pillBgHex, 4.5);
-      rec.pill.style.borderColor = 'rgba(' + cc + ',0.8)';
-      rec.pill.style.background = 'rgba(' + cc + ',' + (rec.light ? 0.10 : 0.26) + ')';
-      // Numero: metallo del podio nell'editor del podio, altrimenti la tinta
-      // famiglia contrastata (come in pagina, v12.53).
-      if (key === 'podium' && vOn('podium')) {
-        rec.num.style.backgroundImage = fxPodiumGrad(rec.metal, po, rec.light, PODIUM_GLYPH_FXP);
-        rec.num.style.webkitBackgroundClip = 'text';
-        rec.num.style.backgroundClip = 'text';
-        rec.num.style.color = 'transparent';
-        rec.num.style.textShadow = rec.light ? '0 1px 1px rgba(0,0,0,0.22)' : '0 1px 2px rgba(0,0,0,0.6)';
-        rec.num.style.filter = fxPodiumFilter(po, rec.light);
-      } else {
-        rec.num.style.backgroundImage = 'none';
-        rec.num.style.webkitBackgroundClip = ''; rec.num.style.backgroundClip = '';
-        rec.num.style.textShadow = numPress; rec.num.style.filter = 'none';
-        // Stessa formula della pagina (v12.63), con la terna CONCRETA: qui i due
-        // temi convivono, quindi var(--ccrgb) non varrebbe. A effetto spento vale
-        // il grigio del nome del tema, come fa la regola base in pagina.
-        rec.num.style.color = vOn('nums') ? fxNumColor(nu, rec.light, cc)
-                                          : (rec.light ? '#373737' : '#d2d2d2');
-      }
-      rec.desc.textContent = key === 'spot'
-        ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
-        : key === 'glow'
-          ? (hot ? (it ? 'Card attiva (hover)' : 'Active card (hover)') : (it ? 'Card a riposo' : 'Resting card'))
-          : (it ? 'Anteprima' : 'Preview');
-    });
-  }
 
   // ── manopole ───────────────────────────────────────────────────────────────
   // Se l'effetto ha manopole PER TEMA (`th`), in testa compaiono due tab
@@ -8131,10 +8177,34 @@ function showSiteFlagsEditor(initState){
       tb.style.cssText = 'width:auto;flex:1;margin-top:0;padding:0.4rem 0;';
       tb.textContent = td[1];
       tb.setAttribute('aria-pressed', String(tab === td[0]));
-      tb.onclick = function(){ if (tab !== td[0]) { tab = td[0]; syncTabs(); renderRows(); } };
+      tb.onclick = function(){ if (tab !== td[0]) { tab = td[0]; syncTabs(); renderRows(); syncPreview(); } };
       tabBtns[td[0]] = tb; tabsBar.appendChild(tb);
     });
     box.appendChild(tabsBar);
+  }
+  // ── Anteprima della variante MOBILE nel Pannello (v13.65, richiesta utente) ──
+  // In tab Mobile la pagina (che è desktop, sia in vista divisa sia dietro la
+  // modale) non mostra nulla di ciò che si sta cambiando: accendere e spegnere gli
+  // interruttori era un lavoro alla cieca. Qui compare la stessa anteprima delle
+  // sotto-modali - blocco CONDIVISO, non una copia - in modalità PANORAMICA: un
+  // riquadro nel tema corrente, tutte le card accese, numeri 1 e 5 (metallo del
+  // podio e tinta dei numeri normali). Solo da desktop: da mobile il Pannello non
+  // ha tab e la pagina è già quella giusta.
+  var PVM = null;
+  if (!isMob) {
+    PVM = fxPreviewBlock({ key: '', sfx: '_m', lights: function(){
+      return [document.documentElement.getAttribute('data-theme') === 'light'];
+    } });
+    box.appendChild(PVM.el);
+  }
+  // La classe fxdock-mob serve DUE volte: scavalca la regola che in vista divisa
+  // nasconde le anteprime, e dice 'in questa colonna si sta lavorando sul mobile'.
+  function syncPreview(){
+    if (!PVM) return;
+    var on = tab === 'm';
+    PVM.el.style.display = on ? '' : 'none';
+    overlay.classList.toggle('fxdock-mob', on);
+    if (on) { PVM.build(); PVM.paint(); }
   }
   function syncTabs(){
     if (!tabsBar) return;
@@ -8170,6 +8240,10 @@ function showSiteFlagsEditor(initState){
         if (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') SITE_FLAGS[vk].on = cb.checked;
         else SITE_FLAGS[vk] = cb.checked;
         applySiteFlags(); reflowRows();
+        // In tab Mobile la pagina non cambia: il riscontro è l'anteprima qui sopra.
+        // Si RICOSTRUISCE (non solo ridipinge) perché il respiro del riquadro e la
+        // classe .fxp-airy dipendono da quali effetti sono accesi.
+        if (PVM && tab === 'm') { PVM.build(); PVM.paint(); }
         // Il flag XL cambia lo zoom (e quindi la soglia del dock) SENZA un
         // resize: si ripassa dal ricalcolo del telaio (no-op negli altri casi).
         if (typeof onRs === 'function') onRs();
@@ -8193,6 +8267,7 @@ function showSiteFlagsEditor(initState){
           // interruttore ('Effetto attivo') e può essere stato cambiato lì.
           showFxConfigEditor(f.k, sfx, function(){
             cb.checked = SITE_FLAGS[vk].on !== false; reflowRows();
+            if (PVM && tab === 'm') { PVM.build(); PVM.paint(); }
           });
         };
         row.appendChild(gear);
@@ -8201,7 +8276,8 @@ function showSiteFlagsEditor(initState){
     });
   }
   renderRows();
-  overlay._renderRows = renderRows; // usato dal cambio di telaio (onRs)
+  syncPreview();
+  overlay._renderRows = function(){ renderRows(); syncPreview(); }; // cambio di telaio (onRs)
   // Avviso se la preferenza personale di zoom sta scavalcando il flag: senza,
   // sembrerebbe che l'interruttore 'non funzioni'.
   var mine = LS.getItem(ZOOM_LS_KEY);
