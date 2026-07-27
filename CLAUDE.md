@@ -3234,19 +3234,29 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   tornato con questo modello:
   - **La modale ha UN accento**, in `--note-acc`: la tinta della **famiglia del
     personaggio da cui si è arrivati**, altrimenti l'**accento globale del tema**
-    (**`#afafaf` scuro** dalla v13.97 / `#2e5461` chiaro, 6.99:1 e 7.45:1 sul fondo
-    delle modali). Lo prendono titolo, titoletti, pallini degli elenchi e il
-    rimando nota → nota; e per lo stesso principio Info e Risorse, che non hanno
-    provenienza, stanno sempre sul globale.
-    - ⚠️ **L'accento globale SCURO è GRIGIO** (v13.97, richiesta dell'utente: 'in
-      tema scuro le modali sono davvero GIALLE: togli del tutto la saturazione,
-      lasciando la luminosità inalterata'). `#afafaf` è il grigio a **PARI luminanza
-      relativa** del `#c6ad66` che l'utente stesso aveva indicato nella v13.96
-      (0.4287 contro 0.4285), quindi il contrasto non si muove: **6.99:1 prima e
-      dopo**. È lo stesso metodo della neutralizzazione della v8.79. Il **chiaro
-      resta il teal `#2e5461`**: la segnalazione riguardava il solo tema scuro, e lì
-      la saturazione è modesta (36% HSL su un fondo chiaro). Le tinte dei
-      **personaggi** non sono toccate: il grigio vale solo dove non c'è provenienza.
+    (`#c6ad66` scuro - l'oro del FAB - / `#2e5461` chiaro, indicati dall'utente:
+    6.99:1 e 7.47:1 sul fondo delle modali). Lo prendono titolo, titoletti, pallini
+    degli elenchi e il rimando nota → nota; e per lo stesso principio Info e
+    Risorse, che non hanno provenienza, stanno sempre sul globale.
+    - ⚠️ **NON desaturare questo accento.** La v13.97 l'aveva reso grigio
+      (`#afafaf`, pari luminanza) leggendo «in tema scuro le modali sono davvero
+      GIALLE» come riferito ai TESTI; l'utente intendeva lo **SFONDO** e ha chiesto
+      di rimetterlo: «Titolo, sottotitoli, note collegate e tutti gli altri
+      collegamenti (in sostanza: qualsiasi cosa cliccabile che non è un personaggio)
+      deve rimanere del colore di accento del tema (il solito giallo del FAB)».
+      Ripristinato nella **v13.98**. Regola generale che ne esce: in queste modali
+      **tutto ciò che non è un personaggio sta sull'oro del tema**, i personaggi
+      sulla propria tinta.
+    - **Gli SFONDI, misurati** (utile la prossima volta che si parla di 'giallo').
+      In tema scuro l'unica superficie ampia con una tinta CALDA è il fondo del
+      **Pannello** del FAB (`.ctrl-panel`); gli sfondi delle modali sono grigio puro
+      (`#252525`, delta RGB **0**) e il velo (`.modal-backdrop`,
+      `rgba(5,7,16,0.92)`) è leggermente **BLU**, non giallo. Il fondo del Pannello
+      è passato a **`rgba(41,40,38,0.94)`** nella v13.98 (richiesta dell'utente:
+      saturazione **dimezzata**, 'può restare un vago sentore di tinta gialla'): era
+      `rgba(42,41,36)` = HSL 50° **7.7%** 15.3%, ora **3.85%** con luminosità
+      identica. Il fondo del Pannello in tema CHIARO
+      (`rgba(245,247,247,0.97)`, appena freddo) non è stato toccato.
   - **Un solo livello di intensità** (scelta dell'utente): la gerarchia la fanno
     corpo e peso del testo. ⚠️ Sotto il 75% di opacità il tema chiaro scende a
     4.04:1, fuori soglia: se un domani serve più stacco, agire sul peso.
@@ -3271,6 +3281,15 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
     fonte e × sono in tinta dalla v8.77. La sua regola vive tra le **iniettate**
     (`injectCardColorRules`) perché usa `rgba(var(--cctext),1)`, forma che il Nu non
     sa parsare nel CSS statico.
+    - ⚠️ **In tinta va SOLO il titolo, non il prefisso** (v13.98, richiesta
+      dell'utente: 'nota in grassetto e colorata; `Leggi anche` / `See also`, invece,
+      colore normale del testo'). Il prefisso vive in uno `<span class="nr-pre">` e
+      la regola iniettata colora `.modal-noteref-link strong`. Nelle NOTE
+      (`.note-seealso`) il prefisso stava già **fuori** dal link, quindi lì non c'era
+      nulla da correggere: la differenza nasceva dal fatto che nella scheda l'intera
+      stringa era dentro lo span cliccabile. Cliccabile resta tutta la riga;
+      sottolineatura e indicatore di focus stanno sul titolo (`currentColor`), così
+      il focus resta visibile senza `outline` proprio.
   - axe **0 violazioni WCAG** su Risorse, nota globale, nota da scheda, scheda e
     Info, nei due temi.
 - **Regola stile modali: UTENTE = colorato, ADMIN = minimale (istruzione
