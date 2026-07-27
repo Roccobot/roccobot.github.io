@@ -360,10 +360,20 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   (dal fit al 100% bastano 2-3 scatti).
   - **Uno scatto di zoom per ogni scatto della rotella (dalla 2.13).** Girando in fretta
     il browser **unisce** più scatti in un solo evento: contarne uno soltanto ne faceva
-    perdere per strada. Ora si contano davvero, leggendo `wheelDeltaY`, che per la
-    rotella vera è sempre un multiplo di 120 (uno scatto = 120). Un evento da tre scatti
-    vale esattamente `1,4³`, misurato. Le **frazioni** avanzate restano in cassa per
-    l'evento successivo, così anche le rotelle a passo fine non perdono nulla.
+    perdere per strada. Ora si contano davvero. Le **frazioni** avanzate restano in cassa
+    per l'evento successivo, così anche le rotelle a passo fine non perdono nulla.
+  - ⚠️ **Quanto vale "uno scatto" non è universale (dalla 2.14).** La convenzione dice
+    120 di `wheelDeltaY` per scatto, ma con l'accelerazione di sistema **un solo tic
+    fisico può valerne 360**: dandolo per scontato si contavano tre passi per un tic
+    solo, e dal 100% si finiva di botto al 274%. Ora l'unità si **impara**: la più
+    piccola ampiezza vista su quel mouse è uno scatto, e gli eventi uniti dal browser ne
+    sono multipli interi. Misurato su entrambi i casi: un tic da 360 e uno da 120 valgono
+    tutti e due **un passo**, e un evento da 720 ne vale due.
+  - **Passo: 1,1×** (`100 → 110 → 121 → 133 → 146 → 161 → 177 → 195 → 214 …`).
+  - **Tappe fisse, in alternativa.** Riempiendo `TAPPE_ZOOM` con un elenco di percentuali
+    la rotella salta di tappa in tappa invece di moltiplicare, per esempio
+    `[25, 50, 75, 100, 120, 130, 150, 180, 200, 220, 250, 300, 350, 400]`. Oltre gli
+    estremi dell'elenco riprende il passo geometrico, così i limiti restano raggiungibili.
   - **Limiti più larghi (dalla 2.13):** dal **2%** al **4000%** (prima 10% e 1200%), con
     un tetto di sicurezza sul lato in pixel perché oltre una certa misura il browser
     fatica a disegnare l'elemento.
@@ -453,7 +463,8 @@ const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale
 const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
 const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
 const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, trackpad scorre) | 'sempre' | 'mai'
-const PASSO_ROTELLA = 1.4;   // quanto ingrandisce un singolo scatto di rotella
+const PASSO_ROTELLA = 1.1;   // quanto ingrandisce un singolo scatto di rotella
+const TAPPE_ZOOM = [];       // se non vuoto: tappe fisse in % invece del passo geometrico
 const ROTELLA_SU_INGRANDISCE = true;  // verso predefinito (si inverte al volo col tasto I)
 ```
 
