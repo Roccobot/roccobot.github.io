@@ -107,31 +107,28 @@ modificare i valori → salvare (Ctrl+S).
     dovessero far scattare l'anti-bot lì, si può disattivare del tutto il modulo
     con `IMMAGINI_DIRETTE = false` (la pulizia resta).
 
-### Avvio a freddo e anti-bot (correzione 2.12.1)
+### Il 403 all'avvio: non era lo script
 
-Qwant sta dietro **DataDome**. A browser appena aperto il cookie `datadome` non
-c'è ancora e la pagina sta risolvendo la sua sfida JavaScript per ottenerlo: un
-`location.replace` in quel momento **abortisce la pagina a metà**, la sfida non
-arriva in fondo e l'API risponde **403** (*"Qwant è momentaneamente non
-disponibile"*) per una trentina di secondi. Poi la sfida riesce, il cookie si
-posa e tutto il resto della giornata fila liscio, perché i ricaricamenti
-successivi trovano il cookie già lì.
+Per un certo periodo la **prima ricerca dopo l'avvio del browser** dava
+*"Qwant è momentaneamente non disponibile (HTTP 403)"* per una trentina di secondi,
+poi tutto funzionava per il resto della giornata. Sono state tentate tre correzioni
+nello script (attendere il cookie anti-bot, non ricaricare la prima pagina, non toccare
+la pagina finché la sessione non è calda): **nessuna era la cura giusta**, perché il
+problema non era nello script. Rimuovendolo del tutto, il 403 restava.
 
-Colpiva **solo la prima ricerca dopo l'avvio del browser**, e la ragione è che
-la guardia anti-loop del forcing vive in `sessionStorage`, che a browser appena
-aperto è vuoto. Confermato per esclusione: disattivando lo script il 403 spariva.
+La causa è **AdGuard**: Qwant sta dietro DataDome, che al primo caricamento di una
+sessione mostra una schermata *"Verifica del dispositivo"* ed esamina la richiesta a
+fondo, respingendola se la trova alterata. La Modalità Stealth altera user agent,
+header, referrer e durata dei cookie. Con AdGuard in pausa la verifica passa e la
+ricerca funziona.
 
-Ora il forcing immediato si fa **solo se il cookie c'è già** (il caso normale:
-nessun ritardo, nessuno sfarfallio); altrimenti si **aspetta** che arrivi, e se
-non arriva entro `ATTESA_ANTIBOT` (8 secondi) si rinuncia per quella volta:
-meglio una ricerca coi parametri di Qwant che una ricerca che non parte.
-Misurato su una pagina di prova, con il cookie iniettato dopo 2,5 secondi:
+Rimedio, nella whitelist ABP e non qui: `@@||qwant.com^$stealth,important`. È la stessa
+famiglia del caso `alamo.com`.
 
-| | prima | dopo |
-|---|---|---|
-| cookie già presente | ricarica a ~70 ms | ricarica a ~127 ms (invariato) |
-| cookie dopo 2,5 s | ricarica a ~68 ms, **a metà sfida** | ricarica a ~2677 ms, **a sfida finita** |
-| cookie mai | ricarica a ~48 ms | **nessuna ricarica** |
+⚠️ **Lezione da ricordare**: un test iniziale sembrava incolpare lo script (disattivandolo
+il 403 spariva) e ha mandato la diagnosi fuori strada per tre giri. Prima di modificare il
+codice conviene sempre escludere l'ambiente, cioè provare con l'estensione di blocco
+del tutto disattivata.
 
 ### Limiti noti
 
