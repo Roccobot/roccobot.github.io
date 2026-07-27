@@ -358,6 +358,15 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   inerzia né attriti. Salendo o scendendo ci si **aggancia esattamente al 100%** invece
   di scavalcarlo per un pelo, e lo scatto successivo prosegue oltre senza impuntarsi
   (dal fit al 100% bastano 2-3 scatti).
+  - **Uno scatto di zoom per ogni scatto della rotella (dalla 2.13).** Girando in fretta
+    il browser **unisce** più scatti in un solo evento: contarne uno soltanto ne faceva
+    perdere per strada. Ora si contano davvero, leggendo `wheelDeltaY`, che per la
+    rotella vera è sempre un multiplo di 120 (uno scatto = 120). Un evento da tre scatti
+    vale esattamente `1,4³`, misurato. Le **frazioni** avanzate restano in cassa per
+    l'evento successivo, così anche le rotelle a passo fine non perdono nulla.
+  - **Limiti più larghi (dalla 2.13):** dal **2%** al **4000%** (prima 10% e 1200%), con
+    un tetto di sicurezza sul lato in pixel perché oltre una certa misura il browser
+    fatica a disegnare l'elemento.
   - **Il trackpad continua a scorrere.** I due casi si distinguono dalla forma
     dell'evento: un vero scatto di rotella manda un delta grande, intero e senza
     componente orizzontale, il trackpad manda tanti delta piccoli e frazionari. Così lo
@@ -440,7 +449,8 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
 
 ```js
 let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
-const ZOOM_MAX_MULT = 12;    // zoom massimo = N× la dimensione reale
+const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale
+const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
 const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
 const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, trackpad scorre) | 'sempre' | 'mai'
 const PASSO_ROTELLA = 1.4;   // quanto ingrandisce un singolo scatto di rotella

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.12.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata.
+// @version         2.13.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Niente drag/move. Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%).
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -23,8 +23,9 @@
 
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
-  const ZOOM_MAX_MULT = 12;    // zoom massimo = N× la dimensione reale (1:1)
-  const ZOOM_MIN_MULT = 0.1;   // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
+  const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale (1:1)
+  const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
+  const LATO_MAX_PX = 32000;   // tetto di sicurezza: oltre, il browser fatica a disegnare l'elemento
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
@@ -296,7 +297,11 @@
     // Limite basso: si può rimpicciolire sotto l'adattato (fino a ZOOM_MIN_MULT del reale),
     // senza però mai alzare l'adattato se l'immagine è enorme (fit già sotto quel minimo).
     function minScale() { return Math.min(realScale * ZOOM_MIN_MULT, fitDisplay()); }
-    function clamp(s) { return Math.max(minScale(), Math.min(s, realScale * ZOOM_MAX_MULT)); }
+    // tetto: N volte il reale, ma senza mai chiedere al browser un elemento assurdo
+    function maxScale() {
+      return Math.min(realScale * ZOOM_MAX_MULT, LATO_MAX_PX / Math.max(natW, natH));
+    }
+    function clamp(s) { return Math.max(minScale(), Math.min(s, maxScale())); }
 
     let scale = fitDisplay();
     let isFit = true;
@@ -423,9 +428,39 @@
     // scatto di rotella manda un delta GRANDE, intero e senza componente
     // orizzontale, mentre il trackpad manda tanti delta piccoli e frazionari,
     // spesso con deltaX diverso da zero.
+    // La firma piu' affidabile in Chromium e' wheelDeltaY: per la rotella vera e'
+    // SEMPRE un multiplo di 120 (uno scatto = 120), mentre il trackpad manda
+    // valori qualsiasi. Il controllo sull'ampiezza resta come rete di sicurezza
+    // per i browser che wheelDeltaY non ce l'hanno.
+    function scattiGrezzi(e) {
+      const wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
+      if (wd && wd % 120 === 0) return wd / 120;
+      if (e.deltaMode === 1) return Math.abs(e.deltaY) / 3;     // righe: 3 righe = uno scatto
+      if (e.deltaMode === 2) return Math.abs(e.deltaY);         // pagine
+      return Math.abs(e.deltaY) / 100;                          // pixel
+    }
     function eScattoDiRotella(e) {
       if (e.deltaMode !== 0) return true;          // righe o pagine: e' una rotella
+      const wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
+      if (wd && wd % 120 === 0 && e.deltaX === 0) return true;
       return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
+    }
+    // UNO SCATTO DI ZOOM PER OGNI SCATTO DELLA ROTELLA. Girando in fretta il
+    // browser UNISCE piu' scatti in un solo evento: contarne uno soltanto ne
+    // farebbe perdere per strada. Qui si contano davvero, e l'eventuale frazione
+    // avanzata resta in cassa per l'evento successivo, cosi' non si perde nulla
+    // nemmeno con le rotelle a passo fine.
+    let accScatti = 0, ultimoScatto = 0;
+    function scattiInteri(e) {
+      const ora = Date.now();
+      if (ora - ultimoScatto > 600) accScatti = 0;   // serie nuova: si riparte puliti
+      ultimoScatto = ora;
+      const verso = e.deltaY < 0 ? 1 : -1;
+      if (accScatti !== 0 && (accScatti > 0) !== (verso > 0)) accScatti = 0;  // cambio di verso
+      accScatti += verso * scattiGrezzi(e);
+      const interi = accScatti > 0 ? Math.floor(accScatti) : Math.ceil(accScatti);
+      accScatti -= interi;
+      return interi;
     }
     function rotellaZooma(e) {
       if (ROTELLA_ZOOM === 'mai') return false;
@@ -437,9 +472,20 @@
     // valore "giusto" non si salta mai per un pelo; lo scatto dopo prosegue oltre
     // (nessun impuntamento, a differenza della zona morta del gesto continuo).
     function passoZoom(fattore, fx, fy) {
-      var nuova = clamp(scale * fattore);
-      if ((scale < realScale && nuova > realScale) || (scale > realScale && nuova < realScale)) nuova = realScale;
-      if (Math.abs(nuova - scale) < 1e-9) return;
+      const nuova = clamp(scale * fattore);
+      // ⚠️ "gia' sul fermo" va inteso con tolleranza, non con l'uguaglianza esatta.
+      // Dopo un giro di divisioni e moltiplicazioni la scala del 100% vale
+      // 0.9999999999999998, non 1: senza questa tolleranza ogni scatto successivo
+      // riagganciava al 100% e poi SCARTAVA il risultato perche' la differenza era
+      // infinitesima, quindi non si passava mai oltre (difetto misurato: dopo essere
+      // scesi sotto il 100% si restava inchiodati li', e solo un clic sbloccava).
+      const sulFermo = Math.abs(scale - realScale) < 1e-9;
+      if (!sulFermo && ((scale < realScale && nuova > realScale) || (scale > realScale && nuova < realScale))) {
+        applicaScala(realScale, fx, fy);   // atterra ESATTO sul 100%: e' il fermo che si vuole
+        zoomL = Math.log(scale);
+        return;
+      }
+      if (Math.abs(nuova - scale) < 1e-9) return;   // gia' al limite: niente da fare
       applicaScala(nuova, fx, fy);
       zoomL = Math.log(scale);            // il gesto continuo riparte da qui
     }
@@ -458,9 +504,12 @@
         }
         if (!rotellaZooma(e)) return;      // trackpad: resta lo scorrimento nativo
         e.preventDefault();
-        const versoSu = e.deltaY < 0;
+        const n = scattiInteri(e);
+        if (!n) return;                    // solo una frazione: resta in cassa
+        const versoSu = n > 0;
         const ingrandisce = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? versoSu : !versoSu;
-        passoZoom(ingrandisce ? PASSO_ROTELLA : 1 / PASSO_ROTELLA, e.clientX, e.clientY);
+        const passo = ingrandisce ? PASSO_ROTELLA : 1 / PASSO_ROTELLA;
+        passoZoom(Math.pow(passo, Math.abs(n)), e.clientX, e.clientY);
         return;
       }
       e.preventDefault();                  // blocca lo zoom di pagina
