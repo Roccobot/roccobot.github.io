@@ -358,10 +358,11 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   voci: **Copia immagine**, **Copia URL immagine**, **Salva immagine**, separatore,
   **Adatta alla vista**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
   cliccato). L'elenco è identico su raster e su SVG; cambia il **contenuto** di due voci:
-  - sugli SVG **Copia immagine** produce un raster a **72 DPI**, perché un vettoriale
-    pixel propri non ne ha. Vale la convenzione del pannello di esportazione
-    (`px = misura nominale × DPI / 96`), quindi un SVG 640×360 finisce negli appunti a
-    480×270. Si cambia con la costante `DPI_COPIA`.
+  - sugli SVG **Copia immagine** produce un raster a **96 DPI**, cioè alla risoluzione
+    dello schermo, perché un vettoriale pixel propri non ne ha. Vale la convenzione del
+    pannello di esportazione (`px = misura nominale × DPI / 96`), quindi la copia è 1:1
+    con la dimensione nominale: un SVG 640×360 si copia a 640×360. Si cambia con la
+    costante `DPI_COPIA`.
   - sugli SVG **Salva immagine** salva il file originale intatto.
   - ⚠️ **Un menu proprio sostituisce quello del browser**, non si affianca, e quello
     nativo non è richiamabile da JavaScript: si perde **"Ispeziona"**, che non è
