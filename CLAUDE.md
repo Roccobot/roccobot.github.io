@@ -653,7 +653,34 @@ normale/XL secondo la preferenza attiva.
        l'utente ('sì, va benissimo'). B e C del mockup ≈ sat alta / top alto.
      - la taratura si rifà OFFLINE con `scratchpad/tune_podium.py` (stessa formula
        in Python): confrontare le fermate coi valori attesi prima di toccare
-       `PODIUM_IDENT`.
+       `PODIUM_IDENT`. ⚠️ Dalla v13.45 lo script va aggiornato con la rimappatura
+       qui sotto, altrimenti confronta percentuali che non sono quelle emesse.
+     - ⚠️ **LE POSIZIONI DELLE FERMATE SONO LOGICHE, NON REALI: si rimappano sulla
+       fascia che il glifo intercetta davvero (fix v13.45).** Le percentuali di un
+       gradiente corrono sul **box del numero**, che è molto più largo della cifra
+       (`.rank-num` misura 76×32.8px con testo **centrato**) e più alto di essa;
+       con l'angolo a **168deg** la cifra intercetta solo il **tratto centrale**
+       della corsa. Misurato applicando al numero 20 bande nette da 5% e contando
+       i pixel per banda: arriva sul glifo solo il **20%-76%**. Conseguenza del
+       bug: il **bordo luminoso** (fermate al 3% e 18%) e l'**ancora scura finale**
+       (86%-100%) cadevano FUORI dal glifo, quindi la manopola 'Bordo luminoso' non
+       produceva **alcun** cambiamento visibile (segnalato dall'utente; misurato:
+       0 pixel diversi tra `top` 0 e 1) e l'ancora non teneva alcun bordo. Ora
+       `fxPodiumGrad` rimappa 0-100 logico su **`PODIUM_GLYPH`** = [20, 76], con
+       **un decimale** perché la rampa più netta della nitidezza (0.5 punti logici)
+       sopravviva alla contrazione.
+       - La fascia misurata è **stabile**: identica a 1280px, in Modalità XL e a
+         390px, e per tutti e tre i metalli — box del numero e cifra scalano
+         insieme, quindi una costante basta e non serve misurare a runtime.
+       - ⚠️ **L'anteprima ha una fascia PROPRIA** (`PODIUM_GLYPH_FXP` = [25, 80]):
+         le card finte usano `.fxp-num`, box 24×16.8px, proporzionato diversamente,
+         quindi il glifo vi intercetta un altro tratto. Con la sola fascia della
+         pagina il bordo luminoso sarebbe rimasto invisibile **nell'anteprima**,
+         cioè proprio dove si regola sotto la soglia del dock. Due fasce e una
+         formula sola: è questo che tiene anteprima e pagina sulla stessa resa.
+       - Se un domani cambia la geometria del numero (larghezza del box, allineamento,
+         angolo del gradiente), le fasce vanno **rimisurate** col metodo delle bande:
+         è l'unica prova diretta di quale tratto arriva sull'inchiostro.
      ⚠️ **Anteprima: numeri 1 e 2, ORO e ARGENTO** (v12.85, richiesta dell'utente;
      fino alla v12.75 erano 1 e 3, oro e bronzo). L'argento è quello che più ha
      bisogno d'occhio, avendo molte fermate perché a due sole 'sembrava un numero

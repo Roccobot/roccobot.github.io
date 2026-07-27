@@ -2397,7 +2397,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v13.44</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v13.45</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2854,7 +2854,19 @@ var PODIUM_IDENT = {
 };
 // Ruoli delle 7 fermate: bordo in cima, lume, corpo, LAMPO, ombra, ripresa, ancora.
 var PODIUM_POS = [3, 18, 40, 54, 70, 86, 100];
-function fxPodiumGrad(n, cfg, light){
+// Fascia della corsa del gradiente che il glifo intercetta davvero (misurata a
+// bande nette, v13.45): fuori da qui le fermate non toccano un solo pixel della
+// cifra. Vedi la nota in fondo a fxPodiumGrad. Estremo alto a 76 e non 75: un
+// filo di margine perché l'antialias del bordo inferiore prenda l'ancora scura.
+var PODIUM_GLYPH = [20, 76];
+// La stessa fascia per le card FINTE dell'anteprima: lì il numero vive in un box
+// di 24x16.8px (`.fxp-num`), più stretto e proporzionato diversamente da quello
+// della pagina, quindi il glifo intercetta un tratto diverso della corsa (misurato:
+// 25%-80%). Con la sola fascia della pagina il bordo luminoso sarebbe rimasto
+// invisibile NELL'ANTEPRIMA, cioè proprio dove si regola sotto soglia di dock.
+// Due fasce, una formula: è ciò che tiene anteprima e pagina sulla stessa resa.
+var PODIUM_GLYPH_FXP = [25, 80];
+function fxPodiumGrad(n, cfg, light, glyph){
   var idn = PODIUM_IDENT[n][light ? 'l' : 'd'], h = PODIUM_IDENT[n].h / 360;
   var s0 = Math.min(1, idn.s * fxTh(cfg, 'sat', light));
   var top = fxTh(cfg, 'top', light), rifl = fxTh(cfg, 'rifl', light);
@@ -2884,8 +2896,23 @@ function fxPodiumGrad(n, cfg, light){
     [[s0, L[4]], 86],
     [[s0, L[5]], 100]
   ];
+  // ⚠️ RIMAPPATURA SULLA FASCIA UTILE (v13.45, bug segnalato dall'utente: 'il bordo
+  // luminoso non lo vedo, né noto cambiamenti mentre sposto lo slider').
+  // Le posizioni sopra sono LOGICHE (0 = cima del glifo, 100 = base), ma le
+  // percentuali di un gradiente corrono sul BOX del numero, che è molto più largo
+  // della cifra (76x32.8px con testo centrato) e più alto di essa; con l'angolo a
+  // 168deg il glifo intercetta solo il TRATTO CENTRALE della corsa. Misurato con
+  // 20 bande nette da 5%: la cifra riceve solo il ~20%-75%, quindi il bordo
+  // luminoso (fermate al 3% e 18%) e l'ancora scura finale (86%-100%) cadevano
+  // FUORI dal glifo - invisibili per costruzione, non troppo sottili. La fascia
+  // misurata è stabile: identica a 1280px, in Modalità XL e a 390px, e per tutti
+  // e tre i metalli (il box del numero e la cifra scalano insieme). Si rimappa
+  // 0-100 logico su GLYPH_A-GLYPH_B, con un decimale perché la rampa più netta
+  // della nitidezza (0.5 punti logici) sopravviva alla contrazione.
+  var g = glyph || PODIUM_GLYPH;
   return 'linear-gradient(168deg,' + st.map(function(q){
-    return ccHslToHex(h, q[0][0], q[0][1]) + ' ' + Math.round(q[1]) + '%';
+    var pos = g[0] + q[1] * (g[1] - g[0]) / 100;
+    return ccHslToHex(h, q[0][0], q[0][1]) + ' ' + (Math.round(pos * 10) / 10) + '%';
   }).join(',') + ')';
 }
 // Filtro del podio dalle manopole: contrast = 'intensità del metallo' (aumenta lo
@@ -7785,7 +7812,7 @@ function showFxConfigEditor(key, sfx, onDone){
       // Numero: metallo del podio nell'editor del podio, altrimenti la tinta
       // famiglia contrastata (come in pagina, v12.53).
       if (key === 'podium' && vOn('podium')) {
-        rec.num.style.backgroundImage = fxPodiumGrad(rec.metal, po, rec.light);
+        rec.num.style.backgroundImage = fxPodiumGrad(rec.metal, po, rec.light, PODIUM_GLYPH_FXP);
         rec.num.style.webkitBackgroundClip = 'text';
         rec.num.style.backgroundClip = 'text';
         rec.num.style.color = 'transparent';
