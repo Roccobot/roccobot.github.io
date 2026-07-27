@@ -626,10 +626,15 @@ normale/XL secondo la preferenza attiva.
      fermate, derivati dalla 'proposta A' del mockup approvato) più tre manopole
      **CONDIVISE dal trio**, per tema: **`rifl`** (il lampo speculare a metà glifo,
      quello che prima aveva solo l'argento), **`top`** (bordo luminoso in cima),
-     **`sat`** (saturazione), **`crisp`** (nitidezza del riflesso, dalla v13.38: a 0
-     il lampo sfuma morbido tra le fermate dei vicini — resa identica alla v13.28 —,
-     a 1 due fermate coi colori di corpo e ombra gli si stringono a ±3 punti e il
-     lampo diventa una banda stretta da metallo lucido). Condizione posta
+     **`sat`** (saturazione: quanto è CARICA la tinta — da non confondere con
+     `int`/Intensità, che è un `filter:contrast()` sul risultato e regola lo
+     STACCO chiaro/scuro; il contrast alza anche la cromia percepita, da qui la
+     confusione possibile), **`crisp`** (nitidezza del riflesso, dalla v13.38;
+     **semantica corretta nella v13.40**: la SAGOMA del riflesso è una banda a
+     larghezza FISSA, 49%-59% della corsa, sempre presente — la manopola governa
+     solo quanto è SFUMATO il suo bordo, rampa da 9 punti a ~0.5. ⚠️ La v13.38
+     stringeva la rampa attorno a una fermata singola, quindi a nitidezza bassa
+     si assottigliava la sagoma stessa: non era l'idea dell'utente, non tornarci). Condizione posta
      dall'utente: controlli unici e stili sempre coerenti — garantito per
      costruzione, una formula sola e tre tinte.
      Regole da non rompere:
