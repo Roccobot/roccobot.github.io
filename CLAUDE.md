@@ -3155,6 +3155,43 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   / `.info-note-box` / `.res-modal-inner` (private delle proprietà di box:
   larghezza/scroll li gestisce il guscio). Le **altre** `.fab-modal-*` (password,
   trivio riordino, conferma campi) restano invariate: non sono 'note'.
+- **TUTTE le modali entrano ed escono con lo stesso movimento (v13.86, richiesta
+  utente).** L'impianto tecnico resta doppio - le utente hanno **transizioni**
+  pilotate da `.active`, le admin **animazioni** (nascono già visibili) - ma
+  geometria, curve e durate sono le stesse: 10px di salita, scala 0.985, `ease-out`
+  entrando e `ease-in` uscendo, velo 0.15s e box 0.2s. Le modali utente venivano da
+  20px/0.96 in 0.3-0.4s: erano più lente e più mosse delle admin.
+  - **La scheda personaggio aveva già l'uscita animata** (vive sempre nel DOM,
+    quindi bastava togliere `.active`, e c'è la cura di sbloccare lo scroll a
+    dissolvenza finita). Le modali **dinamiche** (Note, Risorse, Info) invece
+    venivano distrutte con `remove()` e sparivano di colpo: ora passano da
+    **`dismissStdModal(bd, mode)`**, che toglie `.active` e rimuove il nodo a
+    transizione finita.
+  - ⚠️ **Id e classe `dyn-modal` si togliono SUBITO**, come l'`id` per le admin:
+    `MODAL_OPEN_SEL` e `scrollLockNeeded` ragionano su quelli, e un fantasma li
+    terrebbe 'aperti' (pagina inerte, tasti nudi zitti, riapertura bloccata).
+  - **PASSAGGIO fra due modali: dissolvenza velocissima e NIENTE movimento**
+    (richiesta utente: 'il movimento scompari/riappari può essere fastidioso').
+    Classe **`.xfade`**: velo 0.08s lineare, box senza transizione. Il passaggio si
+    marca in UN punto solo - chi chiude in modo `'fast'` chiama
+    **`modalXfadeWindow()`**, che apre una finestra di 220ms in cui anche
+    l'**apertura** della modale successiva eredita la dissolvenza rapida
+    (`activateStdModal` e `openModal` leggono `MODAL_XFADE`). Così non serve
+    passare un flag a ognuno dei punti che aprono. La classe si **ritira** dopo
+    160ms, o la chiusura vera successiva erediterebbe la dissolvenza da passaggio.
+    - Sono passaggi: nota → scheda e nota → nota (`keep`), scheda → nota
+      (`goNote`, che marca a mano perché lì `closeModal` non ha `modalReturn`),
+      scheda → nota di ritorno (`modalReturn`), Risorse → mappa e Risorse → nota,
+      Info → Risorse. I **rebuild di lingua** usano invece `'now'`: via subito,
+      niente dissolvenza, perché la stessa modale viene ricostruita nell'istante.
+    - Storico: il caso 'si arriva da una nota' esisteva già come `instant` +
+      `.no-anim`, cioè un **salto secco**; la v13.86 lo sostituisce con la
+      dissolvenza rapida. `.no-anim` resta per usi tecnici.
+  - Il **visualizzatore mappe** (`#imgv`) ha un impianto proprio e non è toccato.
+  - Sanato nella stessa release un difetto **preesistente** di contrasto: i titoli
+    di sezione di Risorse (`.res-modal-title`) davano **4.49:1** sul fondo scuro,
+    un centesimo sotto la soglia 4.5:1. Ora hanno un colore proprio in scuro
+    (`#909090`); in chiaro restano sul token, già ampiamente AA.
 - **Regola stile modali: UTENTE = colorato, ADMIN = minimale (istruzione
   dell'utente, 2026-07-23).** Discrimine per PUBBLICO, non per contenuto: ogni modale
   che un **utente/visitatore** può vedere usa il guscio **colorato** (bordo doppio
