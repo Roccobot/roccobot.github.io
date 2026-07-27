@@ -595,7 +595,8 @@ normale/XL secondo la preferenza attiva.
      statiche sono state RIMOSSE dal CSS (i default le riproducono: 0.34/38%).
      Nell'anteprima della sotto-modale la vignetta è applicata al FONDO dei due
      riquadri (card a riposo).
-  5. **`podium` — podio metallico** (`fx-podium`, REGOLABILE dalla v12.53; label UI
+  5. **`podium` — podio metallico** (`fx-podium`, REGOLABILE dalla v12.53;
+     **PARAMETRICO dalla v13.28**; label UI
      **'Oro, argento e bronzo'/'Gold, silver and bronze'** dalla v12.64): numeri
      1-2-3 con gradiente oro/argento/bronzo (`background-clip:text` +
      `color:transparent`, come il titolone) e `text-shadow:none` (il glow grigio
@@ -619,6 +620,30 @@ normale/XL secondo la preferenza attiva.
      accanto a `vis-top`, quindi il podio **segue i filtri attivi**. ⚠️ L'**argento**
      ha molte fermate (lume/ombra/lume) perché a 2 sole fermate 'sembrava un numero
      normale' (richiesta dell'utente).
+     ⚠️ **PODIO PARAMETRICO (v13.28, richiesta utente).** I tre gradienti non sono
+     più scritti a mano: li genera **`fxPodiumGrad`** da un'**identità** fissa per
+     metallo (`PODIUM_IDENT`: tinta, saturazione base, scheletro di luminosità a 7
+     fermate, derivati dalla 'proposta A' del mockup approvato) più tre manopole
+     **CONDIVISE dal trio**, per tema: **`rifl`** (il lampo speculare a metà glifo,
+     quello che prima aveva solo l'argento), **`top`** (bordo luminoso in cima),
+     **`sat`** (saturazione). Condizione posta dall'utente: controlli unici e stili
+     sempre coerenti — garantito per costruzione, una formula sola e tre tinte.
+     Regole da non rompere:
+     - la **saturazione dei riflessi SALE con la manopola ma in proporzione alla
+       saturazione propria del metallo** (`s0 × (1 + k·manopola)`): i metalli caldi
+       hanno riflessi caldi, il quasi-grigio resta quasi-grigio. Una spinta
+       assoluta rendeva BLU il lampo dell'argento chiaro; abbassarla (primo
+       tentativo) sporcava di grigio i lampi caldi — entrambe scartate dai numeri.
+     - l'**ultima fermata (ancora scura) NON dipende dalle manopole**: tiene la
+       definizione del bordo del glifo e il contrasto ai livelli storici (ancore ≈
+       identiche ai vecchi gradienti, misurate).
+     - i **default** (`sat 1, top 0.7, rifl 0.8`) riproducono la proposta A: il
+       trio coerente col lampo. L'asimmetria storica (lampo solo sull'argento) non
+       è riproducibile con manopole condivise, per costruzione — deciso con
+       l'utente ('sì, va benissimo'). B e C del mockup ≈ sat alta / top alto.
+     - la taratura si rifà OFFLINE con `scratchpad/tune_podium.py` (stessa formula
+       in Python): confrontare le fermate coi valori attesi prima di toccare
+       `PODIUM_IDENT`.
      ⚠️ **Anteprima: numeri 1 e 2, ORO e ARGENTO** (v12.85, richiesta dell'utente;
      fino alla v12.75 erano 1 e 3, oro e bronzo). L'argento è quello che più ha
      bisogno d'occhio, avendo molte fermate perché a due sole 'sembrava un numero
