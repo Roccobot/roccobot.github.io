@@ -342,6 +342,14 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   spazio della scheda (`contain`), ma **non supera mai la dimensione reale** — dove
   "reale" significa **1:1 con i pixel fisici** (DPR ignorato: su schermi HiDPI la
   dimensione reale in CSS px è `larghezza naturale / devicePixelRatio`).
+  - **Tasto `A`: adatta anche ingrandendo (dalla 2.18).** Con l'opzione accesa
+    l'adattamento vale in **entrambi i versi**: anche una figura che sta tutta nella
+    vista viene portata a **riempirla**, e il clic torna a essere un'alternanza vera
+    (riempi-vista ↔ 1:1). Da spenta vige il criterio originale, quindi su un'immagine
+    piccola il clic non ha nulla da alternare. Si commuta al volo, la scelta è
+    **memorizzata** e il valore di partenza è la costante `ADATTA_INGRANDENDO`.
+  - Il **tetto di zoom** vale in ogni caso: un'icona di 16×16 px si ferma al 4000% (640
+    px) invece di pretendere l'ingrandimento assurdo che riempirebbe lo schermo.
 - **Trascinamento per spostarsi (dalla 2.15).** Quando l'ingrandimento porta l'immagine
   oltre la vista si trascina con il mouse (o con un dito) per spostare la visuale, e il
   cursore diventa una manina. Compare **solo** quando c'è davvero da spostarsi.
@@ -507,7 +515,29 @@ const TAPPE_ZOOM = [2, 3, …, 100, 110, 125, 140, …, 4000];  // tappe tonde; 
 const SALTO_MIN_SU = 0.05;   // ingrandendo, salta le tappe a meno del +5%
 const SALTO_MIN_GIU = 0.02;  // rimpicciolendo, salta le tappe a meno del -2%
 const ROTELLA_SU_INGRANDISCE = true;  // verso predefinito (si inverte al volo col tasto I)
+const ADATTA_INGRANDENDO = false;     // false = non superare mai il reale | true = adatta anche
+                                      // ingrandendo (si commuta al volo col tasto A)
 ```
+
+### Tasti
+
+| Tasto | Effetto |
+| --- | --- |
+| **`A`** | adattamento: solo rimpicciolendo (predefinito) ↔ anche ingrandendo |
+| **`I`** | inverte il verso della rotella |
+| **`N`** | accende e spegne il navigatore |
+| **`Esc`** | chiude il pannello di scaricamento o il menu del tasto destro |
+| **`⇧` + tasto destro** | lascia passare il menu del browser |
+
+Le tre scelte (`A`, `I`, `N`) sono **memorizzate** e valgono per tutte le pagine-immagine.
+Nessun tasto scatta mentre si scrive in un campo.
+
+> ⚠️ **Il controllo "sto scrivendo in un campo?" va fatto senza badare al
+> MAIUSCOLO/minuscolo.** Una pagina SVG è un documento **XML**, e in XML `tagName`
+> conserva il caso originale (`'input'`), mentre in HTML è sempre maiuscolo (`'INPUT'`).
+> Confrontando col solo `'INPUT'` i tasti nudi scattavano mentre si digitava nel campo
+> DPI del pannello di esportazione — che vive proprio sulle pagine SVG. Corretto nella
+> 2.18.
 
 ### Installazione
 
