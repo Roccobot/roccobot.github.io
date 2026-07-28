@@ -269,6 +269,11 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
       quindi l'arretrato delle release andate live con la prova sostitutiva è chiuso.
       Il blocco era durato dal 26 al 28: se ricapita, vale sempre la stessa regola -
       si procede e si recupera al primo aggiornamento utile.
+      - **Andamento a intermittenza, anche nello stesso giorno** (2026-07-28): la
+        v14.22 e la v14.23 hanno validato 0/0, la **v14.33** poche ore dopo ha trovato
+        di nuovo la **challenge Cloudflare** ('Just a moment...'). Non è un rate limit
+        da esaurimento: va e viene. Nel dubbio, tentare sempre - costa un `curl` - e
+        se risponde la challenge passare subito alla prova sostitutiva senza retry.
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
@@ -731,13 +736,42 @@ normale/XL secondo la preferenza attiva.
      non un bug — attendere ~400-600ms. Trappola in cui si ricade facilmente: nella
      v12.63 ha fatto sembrare che `nums` scavalcasse il podio, mentre la cascata
      era corretta.
-  7. **`hov` — colore al passaggio** (`fx-hov`, REGOLABILE, dalla v14.10, richiesta
-     dell'utente; label UI **'Al passaggio'/'Hover color'**): il fondo della card
-     **sotto il puntatore**. Tre manopole **per tema** (`_d`/`_l`), nell'ordine
-     chiesto: **`op`** (opacità del velo di tinta), **`sat`** (saturazione della
-     tinta) e **`lum`** (luminosità). Formula **`fxHovBg`**, sintassi RELATIVA di
-     OKLCH come `fxNumColor`: si riscrivono L e cromia della tinta di famiglia
-     lasciando intatta la TINTA.
+  7. **`hov` — colore delle schede** (`fx-hov`, REGOLABILE, dalla v14.10, richiesta
+     dell'utente; label UI **'Colore schede'/'Card color'** dalla v14.33): il fondo
+     **e il contorno** della card
+     - ⚠️ **NOME: 'Colore schede'/'Card color' dalla v14.33** (richiesta dell'utente).
+       Storico: 'Colore al passaggio' (147px, mai usata perché va a capo) → 'Al
+       passaggio' (v14.10) → 'Colore schede', perché con la manopola del contorno
+       l'effetto governa **la cosa** (il colore della scheda) e non più solo il gesto.
+       Misure col font reale a 320px in XL: 'Colore schede' **91.6px**, 'Card color'
+       **69.7px**, colonna **102px** → una riga entrambe; scartata 'Colore delle
+       schede' (125.1px, va a capo). ⚠️ La colonna misura **102px**, non i 132px che
+       questa nota riportava da release più vecchie: rimisurarla prima di scegliere
+       un'etichetta nuova. La chiave interna resta `hov` (come `siteFlags`).
+     - ⚠️ **`bd` — 'Contorno più nitido'/'Sharper border' (v14.33, richiesta
+       dell'utente): sì/no e nient'altro** ('senza opacità intermedia o altro'), non
+       per tema, seconda voce subito dopo 'Attiva'. **Il contorno cambiava da SEMPRE**
+       al passaggio, per regole **statiche** che nessun flag governava (misurato:
+       `rgba(104,144,168,0.15)` → `rgba(200,202,210,0.45)` in scuro,
+       `rgba(80,110,150,0.22)` → `rgba(60,95,150,0.55)` in chiaro). Ora:
+       - **acceso** non si emette nulla, vale il CSS statico - quindi il default
+         `true` riproduce la resa storica al pixel;
+       - **spento** (o effetto spento) una regola iniettata riporta il `border-color`
+         del `:hover` a quello di RIPOSO. Basta l'`!important`: **nessuna** regola
+         statica del bordo ce l'ha, quindi vince anche sulle vecchie regole di Classe
+         a qualunque specificità (per il FONDO serviva invece `html:not(.fx-hov)`,
+         perché lì la base cardcolor è `!important`).
+       - i quattro valori vivono in **`HOV_BORDER`**, fonte unica con l'anteprima:
+         toccando il CSS statico del bordo, aggiornarli.
+       - ⚠️ Il **bordo sinistro** non si muove in nessun caso (verificato): lo forza a
+         1px tenue la regola `!important` della v8.72, e l'identità la dà la striscia.
+       - ⚠️ **L'anteprima non mostrava affatto il contorno** (restava sempre quello di
+         riposo): senza allinearla, la manopola non avrebbe avuto riscontro.
+     - **Il FONDO** della card sotto il puntatore: tre manopole **per tema**
+       (`_d`/`_l`), nell'ordine chiesto - **`op`** (opacità del velo di tinta),
+       **`sat`** (saturazione della tinta) e **`lum`** (luminosità). Formula
+       **`fxHovBg`**, sintassi RELATIVA di OKLCH come `fxNumColor`: si riscrivono L e
+       cromia della tinta di famiglia lasciando intatta la TINTA.
      - ⚠️ **SU MOBILE L'EFFETTO ESISTE, e vale da SELEZIONE della card (v14.22,
        segnalato dall'utente).** Nella v14.10 era stato dato per assente ('sotto il
        puntatore', config unica come il riflettore): sbagliato. Misurato in un
@@ -845,9 +879,9 @@ normale/XL secondo la preferenza attiva.
   v12.39 i regolabili NON avevano la checkbox ma una pastiglia di stato
   Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
   dell'utente). ⚠️ **NOMI E ORDINE delle voci (v12.64, decisi dall'utente;
-  'Al passaggio' aggiunto in coda nella v14.10):**
+  ultima voce aggiunta in coda nella v14.10, rinominata nella v14.33):**
   Modalità XL, **Bagliore**, **Numeri colorati**, **Riflettore**, **Incisione**,
-  **Alone sfumato**, **Effetto podio**, **Al passaggio** — etichette brevi, di una parola
+  **Alone sfumato**, **Effetto podio**, **Colore schede** — etichette brevi, di una parola
   dove possibile; 'Numeri colorati' sta subito dopo 'Bagliore'. L'ultima voce si
   chiamava 'Oro, argento e bronzo' fino alla v12.74: **accorciata in 'Effetto
   podio'/'Podium effect' nella v12.75** su richiesta dell'utente, perché a **320px
@@ -855,10 +889,12 @@ normale/XL secondo la preferenza attiva.
   lista devono restare tutte alte uguali). Vale la regola generale: le etichette
   del pannello si scelgono corte perché devono stare su **una riga** anche nel caso
   peggiore (telefono strettissimo × zoom 1.3): a **320px in XL** la colonna della
-  label è larga **132px**, e un'etichetta che va a capo raddoppia l'altezza della
+  label è larga **102px** (rimisurata col font reale il 2026-07-28; questa nota
+  riportava 132px, valore di release più vecchie: **rimisurare** prima di scegliere
+  un'etichetta nuova), e un'etichetta che va a capo raddoppia l'altezza della
   riga. Caso v14.10: **'Colore al passaggio'** misura **147.2px** col font reale e
-  andrebbe a capo, quindi la voce si chiama **'Al passaggio'** (96px; EN 'Hover
-  color', 91.6px). ⚠️ **La verifica va fatta in ENTRAMBE le lingue**: l'italiano che ci sta non
+  andrebbe a capo; nella v14.33 la voce è diventata **'Colore schede'** (91.6px; EN
+  'Card color', 69.7px), scartata 'Colore delle schede' (125.1px). ⚠️ **La verifica va fatta in ENTRAMBE le lingue**: l'italiano che ci sta non
   garantisce l'inglese. Nella stessa v12.75 l'EN **'Coloured numbers'** era l'ultimo
   a sforare (2 righe) ed è diventato **'Number tint'** (99.9px; scartato 'Tinted
   numbers', 125.8px su 132 = margine troppo sottile, e il solo 'Numbers', che si
