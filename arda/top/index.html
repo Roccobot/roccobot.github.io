@@ -2583,7 +2583,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.53</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.54</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2927,20 +2927,25 @@ function normFxEffect(k, v){
       if (p === 'on' && legacyOn !== null) o[p] = legacyOn;
       else o[p] = (typeof sv === 'boolean') ? sv : def[p];
     } else if (typeof def[p] === 'string') {
-      // Manopola a SCELTE (tipo `sel`, v14.43): il valore è una stringa e vale solo
-      // se è fra le voci ammesse (`opts` del descrittore), altrimenti si ricade sul
-      // default. Serve perché il file dati è modificabile a mano e il Worker valida
-      // la FORMA (stringa ≤32 char), non l'insieme dei valori.
-      o[p] = fxSelOk(k, p, sv) ? sv : def[p];
+      // Manopole a STRINGA, di due tipi: `sel` (scelta fra voci) e `col` (colore hex).
+      // ⚠️ Vanno distinte: trattarle tutte come scelte fa ricadere i COLORI sul
+      // default, cioè butta via la taratura dell'utente (difetto della v14.53: il
+      // file conservava #ffc524 e il sito mostrava #ffffff). Il controllo serve
+      // perché il file dati è modificabile a mano e il Worker valida la FORMA
+      // (stringa ≤32 char), non il contenuto.
+      o[p] = fxStrOk(k, p, sv) ? sv : def[p];
     } else o[p] = fxClamp(k, p, sv);
   });
   return o;
 }
-// Il valore è una delle scelte ammesse per quella manopola? Legge FX_SEL (definita
-// sopra i default) e MAI FX_KNOBS: vedi la nota lì sopra.
-function fxSelOk(k, p, v){
+// Una manopola a stringa è valida? Se la chiave è elencata in FX_SEL è una SCELTA e
+// vale solo un valore dell'elenco; altrimenti è un COLORE e vale un hex a 6 cifre.
+// ⚠️ Legge FX_SEL (definita sopra i default) e MAI FX_KNOBS: vedi la nota lì sopra.
+function fxStrOk(k, p, v){
   if (typeof v !== 'string') return false;
-  return (((FX_SEL[k] || {})[p]) || []).some(function(o){ return o[0] === v; });
+  var opts = (FX_SEL[k] || {})[p];
+  if (opts) return opts.some(function(o){ return o[0] === v; });
+  return /^#[0-9a-fA-F]{6}$/.test(v);
 }
 function normSiteFlags(src){
   src = (src && typeof src === 'object') ? src : {};

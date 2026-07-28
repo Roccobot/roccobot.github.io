@@ -950,6 +950,15 @@ normale/XL secondo la preferenza attiva.
        sopra `var SITE_FLAGS`, e un test che non salva la config non lo scopre.
        `FX_KNOBS` costruisce le sue `opts` da `FX_SEL` con **`fxSelOpts`**, così la
        fonte resta una sola.
+       - ⚠️ **Le manopole a stringa sono DUE tipi e vanno distinte** (secondo fix, in
+         v14.54): `sel` vale solo se il valore è nell'elenco, `col` se è un **hex a 6
+         cifre**. Il controllo unico trattava tutto come scelta, quindi i COLORI
+         ricadevano sul default: il file conservava `#ffc524` e il sito mostrava
+         `#ffffff`, cioè la taratura dell'utente veniva buttata via a ogni
+         caricamento. L'unica funzione è ora **`fxStrOk`**: se la chiave è elencata in
+         `FX_SEL` è una scelta, altrimenti è un colore. Verificato che la config reale
+         arriva intatta fino alla regola CSS (la tinta si cerca **URL-encodata**,
+         `255%2C197%2C36`: sta dentro il data URI dell'SVG).
      - **Due tipi di manopola NUOVI**, introdotti con questo effetto e riusabili:
        **`sel`** (scelta fra voci: `<select>`, valore stringa, elenco in `opts`; un
        valore fuori elenco ricade sul default via **`fxSelOk`**) e **`col`** (colore:
