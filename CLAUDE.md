@@ -264,7 +264,11 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
       badge o testo di attributi, il rischio è nullo, perché il Nu non ispeziona
       JS e CSS iniettato. (Contesto: 2026-07-26, rate limit per l'intera giornata
       dopo le validazioni delle release del mattino; v12.95, v13.06-13.17 andate
-      live con questa prova.)
+      live con questa prova.) **Recuperato il 2026-07-28** (v14.22): il validatore è
+      tornato a rispondere e `arda/top/index.html` è **0/0** (`{"messages":[]}`),
+      quindi l'arretrato delle release andate live con la prova sostitutiva è chiuso.
+      Il blocco era durato dal 26 al 28: se ricapita, vale sempre la stessa regola -
+      si procede e si recupera al primo aggiornamento utile.
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
@@ -397,7 +401,11 @@ la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sot
 - **CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente).** Ogni effetto ha DUE
   configurazioni indipendenti: **desktop** (chiave base, es. `glow`) e **mobile**
   (suffisso **`_m`**, es. `glow_m`, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al
-  varco). Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
+  varco). ⚠️ **Un'eccezione al discriminante, dalla v14.22:** gli effetti elencati in
+  **`FX_PTR`** (oggi il solo `hov`) scelgono la variante dalla **capacità del
+  puntatore** (`FX_PTR_MQ`) invece che dalla larghezza, perché governano la resa
+  sotto il puntatore - vedi la voce di `hov` per il perché i 768px lì sbaglierebbero
+  in entrambi i sensi. Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
   già** (nessun cambio di Worker, niente race di deploy). ⚠️ Questo trucco ha però
   un limite scoperto nella v12.85: il Worker accettava **max 12 manopole per
   effetto**, e il bagliore per-tema a due lati ne richiede **22**. Il tetto è
@@ -548,8 +556,11 @@ normale/XL secondo la preferenza attiva.
      sotto il puntatore e lo SEGUE, confinato dentro la card.
      ⚠️ **Dalla v12.64 esiste SOLO dove esiste un puntatore vero**: tutte le regole
      stanno dentro `@media (hover:hover) and (pointer:fine)` e `wireSpotlight` non
-     aggancia il listener se `SPOT_HOVER_MQ` non combacia (con listener `change`
-     per i cambi a caldo).
+     aggancia il listener se **`FX_PTR_MQ`** non combacia (con listener `change`
+     per i cambi a caldo). ⚠️ Quella costante si chiamava `SPOT_HOVER_MQ` finché il
+     riflettore era il solo a usarla: dalla v14.22 la condivide con `hov` (vedi
+     `FX_PTR`), quindi vive accanto a `fxCfg` e il suo unico listener rilancia
+     `applySiteFlags`, che chiama anche `wireSpotlight`.
      ⚠️ **Dalla v13.18 NON ha la variante `_m`** (richiesta utente: 'togliamo
      direttamente il riflettore da mobile'): la config è **UNICA** — `fxCfg('spot')`
      bypassa `FX_MOBILE_MQ` — e vale ovunque esista un puntatore, incluse le
@@ -706,8 +717,53 @@ normale/XL secondo la preferenza attiva.
      chiesto: **`op`** (opacità del velo di tinta), **`sat`** (saturazione della
      tinta) e **`lum`** (luminosità). Formula **`fxHovBg`**, sintassi RELATIVA di
      OKLCH come `fxNumColor`: si riscrivono L e cromia della tinta di famiglia
-     lasciando intatta la TINTA. **Config UNICA per i due dispositivi** (`FX_UNI`,
-     come il riflettore): governa la resa sotto il puntatore.
+     lasciando intatta la TINTA.
+     - ⚠️ **SU MOBILE L'EFFETTO ESISTE, e vale da SELEZIONE della card (v14.22,
+       segnalato dall'utente).** Nella v14.10 era stato dato per assente ('sotto il
+       puntatore', config unica come il riflettore): sbagliato. Misurato in un
+       contesto touch (`hover:hover` **false**, `pointer:fine` **false**): il tap
+       applica `:hover` e lo lascia **APPICCICATO a tempo indeterminato** - resta
+       dopo 1,7s e persino dopo uno scorrimento, e si sposta solo tappando un'altra
+       card. Non è un difetto del sito ma il comportamento dei browser touch, e vale
+       dalla v8.72 (quando il fondo hover è diventato una funzione del sistema
+       cardcolor), non dall'introduzione dell'effetto. Perciò `hov` **ha la sua
+       variante** (`hov_m`) e nel Pannello compare anche nella **tab Mobile**; il
+       riflettore resta il solo `FX_UNI`/`noMob`, perché lì senza puntatore non c'è
+       proprio nulla da mostrare.
+     - ⚠️ **La variante si scegle dalla CAPACITÀ del puntatore, non dalla larghezza**
+       (mappa **`FX_PTR`**, scelta dell'utente): `fxCfg` usa `FX_PTR_MQ`
+       (`(hover:hover) and (pointer:fine)`) invece di `FX_MOBILE_MQ`. Motivo: una
+       finestra desktop **stretta** ha il mouse e deve tenere la config desktop, un
+       **tablet touch largo** non lo ha e deve prendere quella touch - col criterio
+       dei 768px sarebbero invertiti entrambi. È lo stesso ragionamento con cui il
+       riflettore è gatato sulla capacità. `FX_PTR_MQ` è la ex `SPOT_HOVER_MQ`,
+       rinominata perché ora la condividono due effetti e spostata sopra `fxCfg`, che
+       è il suo primo lettore; il suo listener rilancia `applySiteFlags`, che
+       ri-inietta le regole **e** richiama `wireSpotlight` (un solo aggancio per due
+       usi). Verificato sui quattro casi: desktop 1400px e 700px → desktop, telefono
+       390px e tablet touch 1100px → touch.
+       - **Caso limite noto, mitigato:** un admin su finestra **stretta col mouse**
+         apre il Pannello in modalità mobile (nessuna tab) e quindi regola `hov_m`
+         mentre in pagina è attiva la desktop. Lo salva il fatto che sotto soglia
+         l'**anteprima su card finte** è visibile e mostra la **variante in
+         modifica**, quindi non si lavora alla cieca.
+     - ⚠️ **L'INTERRUTTORE GOVERNA DAVVERO (v14.22): spegnerlo NON basta e non
+       bastava.** Il cambio di fondo al passaggio è una funzione **base** del sistema
+       cardcolor (`injectCardColorRules`: 0.18 scuro / 0.11 chiaro) e `hov` la
+       scavalca: misurato, a effetto spento il tap dava ancora `alpha 0.11`. Ora
+       `injectFxRules` ha un **ramo spento** che riporta ATTIVAMENTE il `:hover` al
+       fondo di **riposo** (0.10/0.05), scoped `html:not(.fx-hov)` per battere la
+       base ((0,4,1) contro (0,3,1) in scuro, (0,5,1) contro (0,4,1) in chiaro) e con
+       `!important` per le statiche. ⚠️ **Non si può semplicemente TOGLIERE la
+       regola**: sotto quella cardcolor ci sono ancora le vecchie regole di **Classe**
+       (`.divine:hover` e compagnia), mute solo grazie a quell'`!important` - senza
+       riscrittura riemergerebbero le tinte storiche. Verificato: 16 famiglie × 2
+       temi, **0** cambiano fondo al passaggio a effetto spento.
+     - ⚠️ **Il `:focus-within` NON è governato dall'interruttore e resta acceso.** Il
+       nome della card è `role="button" tabindex="0"`, quindi quel fondo è il suo
+       indicatore di **focus da tastiera** (WCAG 2.4.7): non può dipendere da un
+       effetto estetico. Su touch è ininfluente, che è proprio il caso in cui si
+       spegne l'effetto.
      - ⚠️ **Il risultato va riportato in sRGB** con `rgb(from … r g b / alpha)`, non
        lasciato in `oklch()`. Misurato: un colore **semitrasparente** dichiarato in
        `oklch()` resta tale nel valore calcolato e Chromium lo compone in **oklab**,
@@ -737,6 +793,13 @@ normale/XL secondo la preferenza attiva.
        a regolare l'effetto. ⚠️ La condizione è `rec.first` e NON quella del
        bagliore: riusarla significherebbe ereditarne la manopola 'Su tutte le card',
        che con `all` acceso rende accese entrambe e fa perdere il confronto.
+       - ⚠️ **A effetto spento l'anteprima resta sull'alpha di RIPOSO anche sulla card
+         'hot'** (v14.22): dacché l'interruttore governa davvero, alzarla a 0.18/0.11
+         sarebbe una bugia. Gli altri effetti legati allo stato hover (bagliore,
+         riflettore) restano invece pilotati da `hot`, che è il loro stato.
+       - Nella variante **touch** la didascalia diventa **'Card toccata'/'Tapped
+         card'** invece di 'Card attiva (hover)': là non c'è alcun passaggio, la card
+         è selezionata.
      - Il fondo di riferimento per l'AA del testo della pill nell'anteprima si
        compone con la tinta **riscritta** (`ccOklchAdjust`, equivalente JS della
        formula) e l'opacità configurata: con l'effetto attivo lo strato della card non
