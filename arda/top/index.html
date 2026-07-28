@@ -2556,7 +2556,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.33</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2650,13 +2650,13 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // SEMINATA come copia della desktop (comportamento identico finché l'admin non
 // differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
 var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
-var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov']; // effetti regolabili
+var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
 // SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Solo il riflettore
 // (dalla v13.18): l'alone segue il puntatore, e senza puntatore non c'è nulla da
 // mostrare né da regolare.
-var FX_UNI = { spot:true };
+var FX_UNI = { spot:true, pat:true };
 // ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
 // dalla larghezza (v14.22, scelta dell'utente). `hov` è il fondo della card sotto
 // il puntatore: su touch l'effetto ESISTE — misurato, il tap applica `:hover` e lo
@@ -2701,6 +2701,13 @@ var SITE_FLAGS_DEFAULT = {
   // vig (v12.42): intensità + inizio della sfumatura; default = le vecchie
   // regole statiche (alpha 0.34 scuro / derivata ×0.38 in chiaro; start 38%).
   vig:{ on:true, int:0.34, start:38 },
+  // pat (v14.43, richiesta dell'utente): trama elfica sul fondo della pagina, in
+  // sovrimpressione. ⚠️ Default SPENTO - e' l'unico effetto che nasce spento, perche'
+  // aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello quando
+  // l'utente decide. `mot` e' una manopola a SCELTE (vedi il tipo `sel`): 'stars' =
+  // stella a otto punte di Varda, 'mallorn' = foglia di Lothlorien.
+  pat:{ on:false, mot:'stars', area:'edge', c_d:'#ffffff', op_d:0.055,
+        c_l:'#000000', op_l:0.05, sc:1, fade:120 },
   // press: quali parti incidere — name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
   // comportamento storico, dove l'ombra del Nome si ereditava sulle etichette.
@@ -2749,6 +2756,10 @@ var FX_RANGE = {
          aamp_d:[6,60], aamp_l:[6,60], aint_d:[0.05,0.6], aint_l:[0.05,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
   vig:{ int:[0.05,0.6], start:[20,70] },
+  // I tetti dell'opacita' sono PRUDENTI: la trama passa anche DENTRO le card, che
+  // sono semitrasparenti, quindi finisce sotto i testi. Verificato a calcolo il
+  // contrasto delle due righe tenui col tetto attivo (vedi la nota in CLAUDE.md).
+  pat:{ op_d:[0.02,0.10], op_l:[0.02,0.09], sc:[0.6,1.8], fade:[0,260] },
   podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4],
            sat_d:[0.3,1.5], sat_l:[0.3,1.5], top_d:[0,1], top_l:[0,1],
            rifl_d:[0,1], rifl_l:[0,1], crisp_d:[0,1], crisp_l:[0,1],
@@ -2784,7 +2795,7 @@ var FX_RANGE = {
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
 // in localStorage) la scavalca, perché riguarda solo chi guarda, non il sito.
-var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums', hov:'fx-hov' };
+var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums', hov:'fx-hov', pat:'fx-pat' };
 function fxClamp(k, p, v){
   var def = SITE_FLAGS_DEFAULT[k][p], r = FX_RANGE[k] && FX_RANGE[k][p];
   if (typeof v !== 'number' || !isFinite(v)) return def;
@@ -2870,9 +2881,26 @@ function normFxEffect(k, v){
     if (typeof def[p] === 'boolean') {
       if (p === 'on' && legacyOn !== null) o[p] = legacyOn;
       else o[p] = (typeof sv === 'boolean') ? sv : def[p];
+    } else if (typeof def[p] === 'string') {
+      // Manopola a SCELTE (tipo `sel`, v14.43): il valore è una stringa e vale solo
+      // se è fra le voci ammesse (`opts` del descrittore), altrimenti si ricade sul
+      // default. Serve perché il file dati è modificabile a mano e il Worker valida
+      // la FORMA (stringa ≤32 char), non l'insieme dei valori.
+      o[p] = fxSelOk(k, p, sv) ? sv : def[p];
     } else o[p] = fxClamp(k, p, sv);
   });
   return o;
+}
+// Il valore è una delle scelte ammesse per quella manopola?
+function fxSelOk(k, p, v){
+  if (typeof v !== 'string') return false;
+  var ks = FX_KNOBS[k] || [];
+  for (var i = 0; i < ks.length; i++) {
+    if (ks[i].p === p && ks[i].t === 'sel') {
+      return (ks[i].opts || []).some(function(o){ return o.v === v; });
+    }
+  }
+  return false;
 }
 function normSiteFlags(src){
   src = (src && typeof src === 'object') ? src : {};
@@ -2897,6 +2925,13 @@ if (FX_MOBILE_MQ.addEventListener) FX_MOBILE_MQ.addEventListener('change', funct
 // rilancia `applySiteFlags`, che ri-inietta le regole E richiama `wireSpotlight`:
 // così un cambio di capacità a caldo (schermo touch collegato/scollegato, DevTools)
 // ricalcola sia le config sia l'aggancio del riflettore.
+// Larghezza massima della colonna delle schede (`.scroll`), e quindi la soglia
+// oltre la quale resta sfondo libero ai suoi lati: è lì che la trama ha senso.
+// ⚠️ NON si usa FX_MOBILE_MQ (768px): fra 768 e 920 la colonna riempie già tutta la
+// finestra e la trama non avrebbe dove stare (misurato: a 800px il margine è 0).
+var PAT_COL = 920;
+var PAT_ROOM_MQ = window.matchMedia('(min-width:' + PAT_COL + 'px)');
+if (PAT_ROOM_MQ.addEventListener) PAT_ROOM_MQ.addEventListener('change', function(){ applySiteFlags(); });
 var FX_PTR_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
 if (FX_PTR_MQ.addEventListener) FX_PTR_MQ.addEventListener('change', function(){ applySiteFlags(); });
 // ⚠️ `spot` NON ha la variante mobile (v13.18, richiesta utente): il riflettore
@@ -2942,6 +2977,12 @@ function flagOn(k){
 function applySiteFlags() {
   var r = document.documentElement;
   Object.keys(SITE_FLAG_CLASS).forEach(function(k){ r.classList.toggle(SITE_FLAG_CLASS[k], flagOn(k)); });
+  // ⚠️ La trama è DESKTOP-ONLY (v14.43, scelta dell'utente): su mobile le schede
+  // prendono tutta la larghezza, quindi non resterebbe sfondo su cui vederla. La
+  // soglia è la larghezza della COLONNA (PAT_COL), non i 768px di FX_MOBILE_MQ:
+  // fra i due valori il margine laterale è già zero. Sotto soglia la classe si
+  // toglie del tutto, così non si paga nemmeno il disegno.
+  if (!PAT_ROOM_MQ.matches) r.classList.remove(SITE_FLAG_CLASS.pat);
   // Bagliore su TUTTE le card invece che solo su quella attiva: classe a parte,
   // così le regole iniettate cambiano solo il selettore e non la formula.
   r.classList.toggle('fx-glow-all', flagOn('glow') && fxCfg('glow').all === true);
@@ -2971,6 +3012,9 @@ if (ZOOM_PHONE_MQ.addEventListener) ZOOM_PHONE_MQ.addEventListener('change', fun
 // divergere da ciò che si vede in pagina.
 var FX_CC = 'var(--ccrgb,111,116,130)';
 function fxR2(n){ return Math.round(n * 100) / 100; }
+// Tre decimali: le opacità della trama hanno passo 0.005, che a due decimali si
+// arrotonderebbe (0.055 → 0.06) e lo slider sembrerebbe saltare.
+function fxR3(n){ return Math.round(n * 1000) / 1000; }
 // Bagliore INTERNO: due strati derivati dalle due manopole — uno stretto e
 // aderente alla striscia, uno ampio e tenue. Con i default (amp 34, int 0.62)
 // riproduce esattamente la taratura della v12.27.
@@ -3040,6 +3084,73 @@ function fxGlowOuter(cfg, light, cc){
   return '-' + b + 'px 0 ' + Math.round(b * 1.6) + 'px -' + b + 'px rgba(' + cc + ',' + fxR2(bl) + '),' +
          b + 'px 0 ' + Math.round(b * 1.6) + 'px -' + b + 'px rgba(' + cc + ',' + fxR2(br) + '),' +
          '0 0 ' + ab + 'px rgba(' + cc + ',' + fxR2(ai) + ')';
+}
+// ── Trama di fondo (`pat`, v14.43) ──────────────────────────────────────────────
+// Due motivi elfici, disegnati come SVG e serviti come data URI: nessun file da
+// scaricare, nessuna richiesta di rete, e la scala/opacità restano parametriche.
+// ⚠️ I motivi sono deliberatamente NON narrativi: una stella a otto punte (l'emblema
+// elfico per eccellenza) e una foglia di mallorn. Niente Albero Bianco (è Gondor,
+// quindi Uomini) e niente tengwar, che a inventarli si scrive una sciocchezza.
+// La geometria del tile è pensata per RIPETERSI senza cuciture visibili: gli
+// elementi sui bordi sono duplicati a coordinate opposte.
+var PAT_TILE = {
+  stars: { w: 200, h: 200 },
+  mallorn: { w: 160, h: 160 }
+};
+// Stella a otto punte a raggi nudi: quattro punte lunghe (cardinali) e quattro
+// corte (diagonali), che è la resa classica dell'emblema.
+function patStar(cx, cy, r, r2){
+  var d = '';
+  for (var i = 0; i < 8; i++) {
+    var a = Math.PI / 4 * i, l = (i % 2 === 0) ? r : r2;
+    d += 'M' + cx + ' ' + cy + 'L' + fxR2(cx + Math.sin(a) * l) + ' ' + fxR2(cy - Math.cos(a) * l);
+  }
+  return d;
+}
+function patSvg(mot, col, w){
+  var t = PAT_TILE[mot] || PAT_TILE.stars, g;
+  if (mot === 'mallorn') {
+    // foglia lanceolata + nervature + picciolo ricurvo, in maglia diagonale
+    var foglia = '<path d="M0 -17C7 -9 7 4 0 15C-7 4-7 -9 0 -17Z"/><path d="M0 -14V12"/>' +
+                 '<path d="M0 -6 5 -1M0 -6-5 -1M0 2 4 6M0 2-4 6"/><path d="M0 15C0 20-3 23-7 24"/>';
+    g = '<g transform="translate(40 40)">' + foglia + '</g>' +
+        '<g transform="translate(120 120) rotate(180)">' + foglia + '</g>' +
+        '<circle cx="120" cy="40" r="1.6"/><circle cx="40" cy="120" r="1.6"/>';
+  } else {
+    g = '<path d="' + patStar(50, 50, 15, 8) + '"/><path d="' + patStar(150, 150, 15, 8) + '"/>' +
+        '<path d="' + patStar(150, 50, 7, 4) + '"/><path d="' + patStar(50, 150, 7, 4) + '"/>' +
+        '<g fill="' + col + '" stroke="none"><circle cx="100" cy="100" r="1.5"/>' +
+        '<circle cx="0" cy="100" r="1.5"/><circle cx="200" cy="100" r="1.5"/>' +
+        '<circle cx="100" cy="0" r="1.5"/><circle cx="100" cy="200" r="1.5"/></g>';
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + t.w + '" height="' + t.h +
+         '" viewBox="0 0 ' + t.w + ' ' + t.h + '"><g fill="none" stroke="' + col +
+         '" stroke-width="' + w + '" stroke-linecap="round">' + g + '</g></svg>';
+}
+// Livello di sfondo: `url(data:…)`. Il colore porta l'opacità dentro di sé, così
+// l'unico parametro CSS residuo è la dimensione. Tinta e opacità sono manopole
+// separate e PER TEMA: la stessa tinta rende in modo diverso sui due fondi.
+function fxPatBg(cfg, light){
+  var t = ccHexToTriplet(light ? cfg.c_l : cfg.c_d) || (light ? '0,0,0' : '255,255,255');
+  var col = 'rgba(' + t + ',' + fxR3(light ? cfg.op_l : cfg.op_d) + ')';
+  return 'url("data:image/svg+xml,' + encodeURIComponent(patSvg(cfg.mot, col, 1.05)) + '")';
+}
+// Maschera della modalità 'Solo sullo sfondo': la trama è piena ai bordi della
+// finestra e si dissolve prima di incontrare la colonna delle schede, che resta
+// pulita. La colonna è `.scroll`, larga al massimo PAT_COL px e centrata, quindi le
+// fermate si calcolano da `50%` con `calc` e valgono a ogni larghezza: se la
+// finestra è più stretta della colonna il gradiente degenera e la trama non si
+// vede, che è esattamente il comportamento voluto (niente trama dove non c'è posto).
+function fxPatMask(cfg){
+  var f = Math.max(0, Math.round(cfg.fade)), h = PAT_COL / 2;
+  return 'linear-gradient(to right,#000 0,#000 calc(50% - ' + (h + f) + 'px),' +
+         'transparent calc(50% - ' + h + 'px),transparent calc(50% + ' + h + 'px),' +
+         '#000 calc(50% + ' + (h + f) + 'px),#000 100%)';
+}
+// Dimensione del tile in px, scalata dalla manopola.
+function fxPatSize(cfg){
+  var t = PAT_TILE[cfg.mot] || PAT_TILE.stars;
+  return Math.round(t.w * cfg.sc) + 'px ' + Math.round(t.h * cfg.sc) + 'px';
 }
 // Vignettatura (REGOLABILE dalla v12.42): livello di sfondo del body, radial dal
 // basso. In chiaro l'alpha scende (×0.38) e la tinta è ardesia invece di nero,
@@ -3253,7 +3364,29 @@ function injectFxRules(){
   // sempre fxCfg; gli editor scrivono sulla variante scelta e la pagina cambia
   // solo se quella variante è la piattaforma corrente.
   var css = [], g = fxCfg('glow'), s = fxCfg('spot'), v = fxCfg('vig'), pr = fxCfg('press'),
-      po = fxCfg('podium'), nu = fxCfg('nums'), hv = fxCfg('hov');
+      po = fxCfg('podium'), nu = fxCfg('nums'), hv = fxCfg('hov'), pt = fxCfg('pat');
+  if (flagOn('pat')) {
+    // ── Trama di fondo (v14.43) ───────────────────────────────────────────────
+    // Vive su `body::after`, NON nel `background-image` del body: là c'è già la
+    // vignettatura, e sovrapporre due livelli nella stessa dichiarazione avrebbe
+    // legato i due effetti (liste di size/repeat/attachment da tenere allineate a
+    // quali flag sono accesi). Con lo pseudo-elemento restano indipendenti.
+    // ⚠️ Nota storica da non dimenticare: un `body::before` fisso c'era, e fu
+    // RIMOSSO nella v8.74 per due difetti. (1) La sua base OPACA copriva il fondo
+    // neutro: qui non esiste alcuna base, solo la trama trasparente. (2) Essendo
+    // fisso e alto quanto il viewport, su mobile non seguiva la barra dinamica del
+    // browser e lasciava una linea di giunzione: qui l'effetto è desktop-only, e
+    // la trama non ha un bordo visibile da cui possa nascere una linea.
+    var pm = ['content:""', 'position:fixed', 'inset:0', 'z-index:-1',
+              'pointer-events:none', 'background-image:' + fxPatBg(pt, false),
+              'background-size:' + fxPatSize(pt), 'background-repeat:repeat'];
+    if (pt.area === 'edge') {
+      var mk = fxPatMask(pt);
+      pm.push('-webkit-mask-image:' + mk, 'mask-image:' + mk);
+    }
+    css.push('html.fx-pat body::after{' + pm.join(';') + '}');
+    css.push('html.fx-pat[data-theme="light"] body::after{background-image:' + fxPatBg(pt, true) + '}');
+  }
   if (flagOn('hov')) {
     // Specificità (0,4,1) in scuro e (0,5,1) in chiaro: battono le regole di
     // injectCardColorRules ((0,3,0) e (0,3,1)), che restano il fallback storico se
@@ -7788,7 +7921,12 @@ var SITE_FLAG_ITEMS = [
   // ⚠️ Dalla v14.22 la voce c'è ANCHE nella tab Mobile: su touch l'effetto esiste e
   // vale da selezione al tocco (vedi FX_PTR), quindi la variante si tara a parte;
   // il discriminante però è il puntatore, non la larghezza.
-  { k:'hov', it:'Colore schede', en:'Card color', cfg:true }
+  { k:'hov', it:'Colore schede', en:'Card color', cfg:true },
+  // ⚠️ 'Trama'/'Pattern' e non 'Trama di fondo': quest'ultima misura 101.4px su 102
+  // di colonna (320px in XL, font reale), un margine troppo sottile per fidarsi.
+  // `noMob` perché l'effetto è desktop-only, come il riflettore ma per un'altra
+  // ragione: là manca il puntatore, qui manca lo sfondo su cui vedere la trama.
+  { k:'pat', it:'Trama', en:'Pattern', cfg:true, noMob:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -7937,6 +8075,37 @@ var FX_KNOBS = {
       nit:'Quanto è carica la tinta di famiglia. A zero il fondo diventa grigio.',
       nen:'How rich the family tint is. At zero the background turns grey.' },
     { p:'lum_l', t:'num', step:0.02, th:'l', dep:'on', it:'Luminosità', en:'Brightness' }
+  ],
+  // Trama di fondo (v14.43). Due manopole di tipo NUOVO: `sel` (scelta fra voci) e
+  // `col` (colore hex). Colore e opacità sono separati apposta - la tinta si scegle
+  // col selettore di sistema, l'opacità con lo slider, che è l'unica delle due a
+  // dover restare in un intervallo prudente.
+  pat: [
+    { p:'on', t:'bool', it:'Attiva', en:'Enable' },
+    { p:'mot', t:'sel', dep:'on', it:'Motivo', en:'Motif', opts:[
+        { v:'stars', it:'Stelle di Varda', en:'Stars of Varda' },
+        { v:'mallorn', it:'Mallorn', en:'Mallorn' } ],
+      nit:'La stella a otto punte degli Elfi, oppure la foglia di Lothlórien.',
+      nen:'The eight-pointed Elven star, or the leaf of Lothlórien.' },
+    { p:'area', t:'sel', dep:'on', it:'Dove', en:'Where', opts:[
+        { v:'edge', it:'Solo sullo sfondo', en:'Background only' },
+        { v:'all', it:'Dappertutto', en:'Everywhere' } ],
+      nit:'\'Solo sullo sfondo\' tiene la trama fuori dalla colonna delle schede, che le passa sopra pulita; \'Dappertutto\' la lascia anche dietro le schede, che sono semitrasparenti.',
+      nen:'\'Background only\' keeps the pattern outside the card column; \'Everywhere\' lets it show through the cards, which are semi-transparent.' },
+    { p:'fade', t:'num', step:10, unit:'px', dep:'edge', it:'Sfumatura', en:'Fade',
+      nit:'Quanto la trama si dissolve prima di incontrare la colonna delle schede.',
+      nen:'How far the pattern fades out before it meets the card column.' },
+    { p:'c_d', t:'col', th:'d', dep:'on', it:'Colore', en:'Colour' },
+    { p:'op_d', t:'num', step:0.005, th:'d', dep:'on', it:'Opacità', en:'Opacity',
+      nit:'Molto bassa per scelta: la trama deve restare un\'ombra, non un disegno.',
+      nen:'Deliberately very low: the pattern should stay a shadow, not a drawing.' },
+    { p:'c_l', t:'col', th:'l', dep:'on', it:'Colore', en:'Colour' },
+    { p:'op_l', t:'num', step:0.005, th:'l', dep:'on', it:'Opacità', en:'Opacity',
+      nit:'Molto bassa per scelta: la trama deve restare un\'ombra, non un disegno.',
+      nen:'Deliberately very low: the pattern should stay a shadow, not a drawing.' },
+    { p:'sc', t:'num', step:0.05, dep:'on', it:'Dimensione', en:'Size',
+      nit:'Quanto è grande il motivo. Valori alti lo rendono più rado.',
+      nen:'How large the motif is. Higher values make it sparser.' }
   ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
@@ -8066,6 +8235,12 @@ function injectFxEditorCss(){
     '.fxk-row{display:grid;grid-template-columns:1fr auto;gap:0.3rem 0.6rem;align-items:center;margin:0 0 0.6rem}',
     '.fxk-row .fxk-lbl{font-size:0.84rem;font-weight:600}',
     '.fxk-row .fxk-val{font-size:0.78rem;font-variant-numeric:tabular-nums;opacity:0.75;min-width:3.2em;text-align:right}',
+    // Manopole a scelte e colore (v14.43). Il bersaglio resta ≥24px (WCAG 2.5.8)
+    // come per slider e caselle; il `<select>` eredita il font della modale.
+    '.fxk-row .fxk-sel{font:inherit;font-size:0.8rem;padding:0.15rem 0.3rem;min-height:24px;',
+    'background:rgba(128,144,160,0.12);color:inherit;border:1px solid rgba(128,144,160,0.4);border-radius:4px;cursor:pointer}',
+    '.fxk-row .fxk-col{width:44px;height:24px;padding:0;border:1px solid rgba(128,144,160,0.4);',
+    'border-radius:4px;background:none;cursor:pointer}',
     // height:24px (v12.75): l'area di TOCCO dello slider era alta 16px, sotto i
     // 24px minimi di WCAG 2.2 (2.5.8). Il track resta visivamente com'era, cresce
     // solo la zona sensibile.
@@ -8290,9 +8465,22 @@ function fxPreviewBlock(o){
   function paint(){
     // Tutte le config dalla VARIANTE in modifica (V), non dalla piattaforma
     // corrente: aprendo la tab Mobile da desktop l'anteprima mostra la mobile.
-    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'), nu = V('nums'), hv = V('hov');
+    var g = V('glow'), s = V('spot'), v = V('vig'), pr = V('press'), po = V('podium'),
+        nu = V('nums'), hv = V('hov'), pt = V('pat');
     panes.forEach(function(pn){
-      pn.el.style.backgroundImage = ((key === 'vig' || all) && vOn('vig')) ? fxVigBg(v, pn.light) : 'none';
+      // Fondo del riquadro: vignetta e/o trama, gli unici due effetti che vivono
+      // sul FONDO e non sulle card. ⚠️ Se ci sono entrambi si impilano in una sola
+      // dichiarazione, con la vignetta SOPRA (primo livello) come in pagina: così
+      // smorza la trama ai bordi invece di essere smorzata da lei. La modalità
+      // 'Solo sullo sfondo' non si può riprodurre qui - il riquadro non ha una
+      // colonna di schede da scansare - quindi l'anteprima mostra sempre il motivo,
+      // ed è il sottotitolo a dire dove finirà davvero (vedi la nota nel pannello).
+      var bg = [], bs = [], br = [];
+      if ((key === 'vig' || all) && vOn('vig')) { bg.push(fxVigBg(v, pn.light)); bs.push('auto'); br.push('no-repeat'); }
+      if ((key === 'pat' || all) && vOn('pat')) { bg.push(fxPatBg(pt, pn.light)); bs.push(fxPatSize(pt)); br.push('repeat'); }
+      pn.el.style.backgroundImage = bg.length ? bg.join(',') : 'none';
+      pn.el.style.backgroundSize = bs.length ? bs.join(',') : '';
+      pn.el.style.backgroundRepeat = br.length ? br.join(',') : '';
       // ⚠️ Respiro DINAMICO nell'editor del bagliore (v12.95). Un padding fisso non
       // può bastare: quanto il bagliore esce dalla card dipende dalle manopole, e
       // l'utente aveva segnalato che l'anteprima lo tagliava. Qui si calcola quanto
@@ -8587,6 +8775,9 @@ function showFxConfigEditor(key, sfx, onDone){
     if (d === 'inner') return c.pl === true || c.pr === true;
     if (d === 'outer') return c.ps === true && (c.pl === true || c.pr === true);
     if (d === 'around') return c.pa === true;
+    // Trama: la sfumatura esiste solo quando la trama è confinata allo sfondo
+    // vuoto; 'dappertutto' non ha alcun bordo da sfumare.
+    if (d === 'edge') return c.area === 'edge';
     return true;
   }
   function renderKnobs(){
@@ -8618,6 +8809,41 @@ function showFxConfigEditor(key, sfx, onDone){
         applySiteFlags(); paint(); renderKnobs();
       });
       row.appendChild(cb);
+    } else if (kn.t === 'sel') {
+      // Manopola a SCELTE (v14.43): un `<select>` con le voci di `kn.opts`. Il
+      // valore salvato è la stringa `v`; le etichette sono bilingui come tutto il
+      // resto. Dopo il cambio si ridisegna l'elenco, perché una scelta può
+      // governare le dipendenze di altre righe (vedi `dep:'edge'`).
+      var se = document.createElement('select');
+      se.className = 'fxk-sel';
+      se.setAttribute('aria-label', it ? kn.it : kn.en);
+      (kn.opts || []).forEach(function(o){
+        var op = document.createElement('option');
+        op.value = o.v; op.textContent = it ? o.it : o.en;
+        se.appendChild(op);
+      });
+      se.value = SITE_FLAGS[vk][kn.p];
+      if (!live) se.disabled = true;
+      var sid = 'fxk-' + vk + '-' + kn.p; se.id = sid; lbl.setAttribute('for', sid);
+      se.addEventListener('change', function(){
+        SITE_FLAGS[vk][kn.p] = se.value;
+        applySiteFlags(); paint(); renderKnobs();
+      });
+      row.appendChild(se);
+    } else if (kn.t === 'col') {
+      // Manopola COLORE (v14.43): `<input type=color>`, il valore salvato è un hex
+      // `#rrggbb` (il Worker valida le stringhe ≤32 char, quindi passa così com'è).
+      // L'opacità sta in una manopola a parte: qui si scegle solo la TINTA.
+      var ci = document.createElement('input'); ci.type = 'color';
+      ci.value = SITE_FLAGS[vk][kn.p];
+      ci.className = 'fxk-col';
+      var cid = 'fxk-' + vk + '-' + kn.p; ci.id = cid; lbl.setAttribute('for', cid);
+      if (!live) ci.disabled = true;
+      ci.addEventListener('input', function(){
+        SITE_FLAGS[vk][kn.p] = ci.value;
+        injectFxRules(); paint();
+      });
+      row.appendChild(ci);
     } else {
       var rng = FX_RANGE[key][kn.p] || [0, 1];
       var val = document.createElement('span'); val.className = 'fxk-val';
