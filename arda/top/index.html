@@ -154,7 +154,13 @@ header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
    distanzierebbero troppo le due righe), ma l'area sensibile della versione resta
    ≥24px come vuole WCAG 2.5.8 - verificata, non stimata. */
 .home-link { padding: 0.55rem 0.8rem 0.1rem; }
-.version-badge { padding: 0.1rem 0.8rem 0.5rem; margin-left: 0.3em; }
+/* ⚠️ Allineamento ottico della 'v' con la 'r' di roccobot.me (richiesta dell'utente,
+   v14.55): a padding identici l'INCHIOSTRO non parte allo stesso x, perché ogni glifo
+   ha un margine laterale proprio nel font. Misurato a 4× sul font reale: la 'v'
+   partiva 0.5px più a sinistra della 'r' (identico nei due temi), e si recupera con
+   0.05em - relativo, così regge anche in Modalità XL. Rimisurare se cambia il font o
+   il corpo del testo. */
+.version-badge { padding: 0.1rem 0.8rem 0.5rem; margin-left: 0.05em; }
 /* La 'v' un filo più piccola del numero (richiesta dell'utente). */
 .vb-v { font-size: 0.86em; }
 /* Dissolvenza RAPIDA (0.12s) del numero al primo pixel di scorrimento: deve essere
@@ -2583,7 +2589,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.54</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.55</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
