@@ -405,7 +405,27 @@ la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sot
   **`FX_PTR`** (oggi il solo `hov`) scelgono la variante dalla **capacità del
   puntatore** (`FX_PTR_MQ`) invece che dalla larghezza, perché governano la resa
   sotto il puntatore - vedi la voce di `hov` per il perché i 768px lì sbaglierebbero
-  in entrambi i sensi. Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
+  in entrambi i sensi.
+  - ⚠️ **DUE CRITERI, UNA SOLA COPPIA DI TAB: come si evita il fraintendimento
+    (v14.23, segnalato dall'utente).** Con due criteri conviventi, ogni dispositivo
+    'a metà' fa divergere la variante che si REGOLA da quella che si VEDE: su una
+    finestra desktop **stretta col mouse** il Pannello (senza tab, sotto i 768px)
+    regolava `_m` mentre in pagina valeva la desktop di `hov`; su un **tablet touch
+    largo** è il caso simmetrico, con la tab Desktop che non ha riscontro in pagina.
+    Tre rimedi, che insieme chiudono entrambi i casi:
+    1. **Senza tab il suffisso è PER-RIGA** e vale la variante ATTIVA
+       (**`fxActiveSfx(k)`**, estratta da `fxCfg` come fonte unica): così su desktop
+       stretto `hov` regola la desktop e gli altri la mobile, e la regola diventa una
+       frase sola - *quello che regoli è quello che vedi*. Da telefono nulla cambia
+       (i due criteri concordano). ⚠️ Il pannello **senza tab** non è più 'il pannello
+       mobile': non assumerlo mai più nel codice.
+    2. **Con le tab, un avviso in fondo** dice quali voci non seguono la tab scelta:
+       generale se sono tutte ('Stai regolando la versione mobile...'), **per voce**
+       se solo alcune (il caso del tablet touch). ⚠️ NON sta sulle tab - nessuna
+       delle due sarebbe 'quella che vedi', essendo la variante attiva **per
+       effetto** - né sulle righe, che restano una lista pulita di interruttori
+       (regola v12.64).
+    3. **L'anteprima su card finte segue lo stesso criterio** (vedi `fxdock-alt`). Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
   già** (nessun cambio di Worker, niente race di deploy). ⚠️ Questo trucco ha però
   un limite scoperto nella v12.85: il Worker accettava **max 12 manopole per
   effetto**, e il bagliore per-tema a due lati ne richiede **22**. Il tetto è
@@ -742,11 +762,17 @@ normale/XL secondo la preferenza attiva.
        ri-inietta le regole **e** richiama `wireSpotlight` (un solo aggancio per due
        usi). Verificato sui quattro casi: desktop 1400px e 700px → desktop, telefono
        390px e tablet touch 1100px → touch.
-       - **Caso limite noto, mitigato:** un admin su finestra **stretta col mouse**
-         apre il Pannello in modalità mobile (nessuna tab) e quindi regola `hov_m`
-         mentre in pagina è attiva la desktop. Lo salva il fatto che sotto soglia
-         l'**anteprima su card finte** è visibile e mostra la **variante in
-         modifica**, quindi non si lavora alla cieca.
+       - ⚠️ **RISOLTO nella v14.23** il caso limite dell'admin su finestra **stretta
+         col mouse**, che apriva il Pannello in modalità mobile (nessuna tab) e
+         regolava `hov_m` mentre in pagina era attiva la desktop: ora il pannello
+         senza tab regola la variante ATTIVA riga per riga (vedi 'DUE CRITERI, UNA
+         SOLA COPPIA DI TAB' nella sezione della config per-piattaforma).
+     - ⚠️ **In UI le sue varianti si chiamano 'Col mouse'/'A tocco'** ('Pointer'/
+       'Touch'), non Desktop/Mobile (**`fxVarLabel`**, v14.23, scelta dell'utente):
+       è l'asse reale su cui si dividono, e chiamarle come le altre era proprio
+       l'approssimazione che generava il dubbio. Vale nel titolo della sotto-modale e
+       nei suoi testi; le **tab del Pannello** restano Desktop/Mobile, perché
+       governano tutti gli effetti insieme.
      - ⚠️ **L'INTERRUTTORE GOVERNA DAVVERO (v14.22): spegnerlo NON basta e non
        bastava.** Il cambio di fondo al passaggio è una funzione **base** del sistema
        cardcolor (`injectCardColorRules`: 0.18 scuro / 0.11 chiaro) e `hov` la
@@ -1157,14 +1183,22 @@ colori e micro-aggiustamenti sullo stesso telaio.
   'Le modifiche si vedono subito sulla pagina accanto.', in modale il testo
   storico. Le tab Chiaro/Scuro restano anche in dock (scelgono QUALI manopole si
   editano; per vedere l'altro tema in pagina c'è il tasto T).
-  - ⚠️ **ECCEZIONE: con la variante MOBILE l'anteprima RESTA anche in dock (v13.55,
-    segnalata dall'utente).** La pagina accanto è la versione **desktop**: mentre si
-    regolano i parametri `_m` non fa da anteprima a nulla, e senza i riquadri si
-    lavorava alla cieca. Selettore: `.fxdock:not(.fxdock-mob) .fxp-wrap{display:none}`,
-    con la classe **`fxdock-mob`** sull'overlay quando `docked && sfx`. Non serviva
-    altro perché `paint()` legge già la config dalla **variante in modifica** (`V`),
-    non dalla piattaforma corrente. Il sottotitolo diventa 'La pagina accanto è la
-    versione desktop: le modifiche mobile si vedono qui sotto.'.
+  - ⚠️ **ECCEZIONE: quando la variante in modifica NON è quella ATTIVA, l'anteprima
+    RESTA anche in dock (v13.55, segnalata dall'utente; criterio generalizzato nella
+    v14.23).** Lì la pagina accanto mostra l'altra variante, quindi non fa da
+    anteprima a nulla e senza i riquadri si lavorava alla cieca. Selettore:
+    `.fxdock:not(.fxdock-alt) .fxp-wrap{display:none}`, con la classe **`fxdock-alt`**
+    sull'overlay quando `docked && sfx !== fxActiveSfx(key)`. Non serve altro perché
+    `paint()` legge già la config dalla **variante in modifica** (`V`), non dalla
+    piattaforma corrente. Il sottotitolo lo dice: 'La pagina accanto mostra la
+    versione <attiva>: le modifiche a <in modifica> si vedono qui sotto.'.
+    - ⚠️ La classe si chiamava **`fxdock-mob`** e la condizione era `docked && sfx`:
+      giusta solo sui desktop. Su un **tablet touch** è il caso opposto - la pagina
+      mostra la variante touch di `hov`, e a lavorare alla cieca è la tab **Desktop**.
+    - ⚠️ **Nel PANNELLO la condizione resta la TAB** (`tab === 'm'`), non
+      `fxActiveSfx`: la panoramica copre TUTTI gli effetti insieme, e la variante
+      attiva è **per-effetto**. Il caso per-effetto lo serve la sotto-modale, che sa
+      di quale effetto si tratta; nel pannello lo copre l'avviso in fondo.
 - **Anteprima anche nel PANNELLO, solo in tab Mobile (v13.65, richiesta utente).**
   Prima l'anteprima viveva solo nelle sotto-modali, quindi accendere e spegnere gli
   interruttori dalla lista in tab Mobile era un lavoro alla cieca (la pagina è
@@ -1187,11 +1221,14 @@ colori e micro-aggiustamenti sullo stesso telaio.
     v13.18: `V(k)` non applica il suffisso alle chiavi `noMob`, come fa `fxCfg` in
     pagina - senza questo, chiedere `spot_m` restituiva `undefined` e le formule ci
     morivano sopra (misurato: errore JS con `spot_m` assente dai dati).
-  - La classe **`fxdock-mob`** serve ora a DUE cose: scavalca la regola che in vista
-    divisa nasconde le anteprime, e marca la colonna in cui si lavora sul mobile. Nel
-    Pannello si aggiunge e si toglie al cambio tab (l'overlay non viene ricreato).
+  - La classe **`fxdock-alt`** (ex `fxdock-mob`, v14.23) serve a DUE cose: scavalca la
+    regola che in vista divisa nasconde le anteprime, e marca la colonna in cui si
+    lavora su una variante che la pagina NON mostra. Nel Pannello si aggiunge e si
+    toglie al cambio tab (l'overlay non viene ricreato).
   - Da **mobile** il Pannello non ha tab e la pagina è già quella giusta: lì il
-    blocco non viene nemmeno creato.
+    blocco non viene nemmeno creato. ⚠️ Dalla v14.23 vale anche per una finestra
+    **desktop stretta**, dove il pannello senza tab regola comunque la variante
+    attiva riga per riga.
 - Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu):
   la porzione statica della pagina non cambia. **Unica eccezione:** l'animazione
   d'ingresso delle modali admin (v13.55) sta nel CSS statico, perché riguarda tutte
