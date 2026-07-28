@@ -2743,14 +2743,35 @@ specifico del dataset):
     spunta della checkbox. Il passaggio del puntatore non transita in nessun verso.
   - Lo strumento è `scratchpad/hoverperf.js` (CDP `Tracing`, somma di
     `Paint`/`RasterTask`/`Commit`/`UpdateLayoutTree`/`PrePaint`).
-- ⚠️ **Tablet con mouse: l'hover del Pannello funziona, le media query no.** In un
-  contesto touch `(hover:hover)`, `(pointer:fine)` e `(any-hover:hover)` sono **false**
-  anche con un mouse collegato (misurato in emulazione), ma le regole `:hover` del
-  Pannello **non sono gatate** su quelle media query, quindi si applicano comunque -
-  verificato, il fondo cambia sotto il puntatore. Se su un tablet reale l'hover pare
-  assente, i sospetti sono il browser che non manda gli eventi di puntatore, oppure il
-  fatto che l'effetto è **molto tenue** (in tema chiaro `rgba(58,88,120,0.10)` su fondo
-  quasi bianco): prima di cercare un difetto, provare ad alzare quell'opacità.
+- ⚠️⚠️ **TABLET CON MOUSE: quel browser NON fa hover, e questo spiega tutto insieme**
+  (accertato dall'utente su dispositivo reale, 2026-07-28). Due segnalazioni che
+  sembravano distinte - «nel Pannello non c'è il mouseover» e «il Colore schede si
+  comporta come su mobile: nessun hover al passaggio, e la scheda cliccata resta
+  colorata finché non ne clicco un'altra» - sono **lo stesso fatto**: su quel tablet il
+  browser non entra mai nello stato `:hover` col movimento del mouse; lo applica **al
+  clic** e lo lascia **appiccicato**, esattamente come fa col tap.
+  - Le regole `:hover` del Pannello **non sono gatate** su `(hover:hover)`, quindi non è
+    il nostro CSS a spegnerle: è il browser che non produce l'evento. ⚠️ **L'emulazione
+    NON riproduce il caso**: in un contesto touch di Chromium `(hover:hover)` è `false`
+    ma `:hover` si applica comunque al movimento del mouse (misurato). Quindi questo
+    comportamento si accerta solo sul dispositivo vero.
+  - ⚠️ **Corollario che raddrizza il ragionamento su `FX_PTR`:** il discriminante di
+    `hov` (e il gate del riflettore) **non chiede 'c'è un mouse?' ma 'questo browser fa
+    hover?'** - ed è la domanda giusta. Là il browser risponde no e si comporta
+    coerentemente, quindi applicare la variante **'A tocco'** è corretto: sembra un
+    paradosso ('col mouse mi dà la versione touch') e invece è il criterio che funziona.
+    Un discriminante basato sull'hardware darebbe la variante 'Col mouse' a un browser
+    che l'hover non lo fa.
+  - Misurato in quel contesto: `fxActiveSfx('hov')` = `_m`, config applicata `hov_m`;
+    il **riflettore non si aggancia** (stesso gate); bagliore, incisione ecc. usano le
+    `_m` per la soglia dei 768px. E il Pannello, non avendo tab a quella larghezza,
+    regola **la variante attiva riga per riga** (meccanismo v14.23), quindi da quel
+    tablet la voce 'Colore schede' modifica proprio `hov_m`: quello che si regola è
+    quello che si vede.
+  - ⚠️ Conseguenza pratica da ricordare: su quel dispositivo **non si vede la taratura
+    desktop**. Se le due varianti divergono (nel salvato: `hov` ha `bd:false`, op
+    0.12/0.09, sat 1.25/1.1; `hov_m` ha `bd:true`, op 0.18/0.11, sat/lum 1) la resa è
+    diversa, e non è un difetto.
 - ⚠️ **Il Pannello ha DUE layout e UNA sola soglia: 768px** (assestato nella v14.67,
   difetto segnalato dall'utente da un tablet in verticale). Sopra i 768px due colonne
   affiancate; da 768px in giù la **bottom-sheet a colonna singola**, sempre.
