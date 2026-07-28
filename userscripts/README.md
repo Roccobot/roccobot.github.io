@@ -344,10 +344,25 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   dimensione reale in CSS px è `larghezza naturale / devicePixelRatio`).
   - **Tasto `A`: adatta anche ingrandendo (dalla 2.18).** Con l'opzione accesa
     l'adattamento vale in **entrambi i versi**: anche una figura che sta tutta nella
-    vista viene portata a **riempirla**, e il clic torna a essere un'alternanza vera
+    vista può essere portata a **riempirla**, e il clic torna a essere un'alternanza vera
     (riempi-vista ↔ 1:1). Da spenta vige il criterio originale, quindi su un'immagine
     piccola il clic non ha nulla da alternare. Si commuta al volo, la scelta è
     **memorizzata** e il valore di partenza è la costante `ADATTA_INGRANDENDO`.
+  - ⚠️ **L'ingrandimento è sempre SU RICHIESTA (dalla 2.18.1).** Un'immagine più piccola
+    della vista si apre **a 1:1** anche con l'opzione accesa: è il **clic** (o la voce
+    *Adatta alla vista* del menu) a chiedere il riempimento. Non lo chiede nemmeno il
+    tasto `A`, che si limita a cambiare cosa farà il clic, né un **allargamento della
+    finestra** che faccia entrare per intero un'immagine prima troppo grande. Un
+    riempimento già chiesto, invece, **segue** la finestra che si ridimensiona.
+    - Chi a 1:1 **eccederebbe** la vista si apre **adattato**, come sempre: lì il
+      comportamento predefinito non cambia.
+    - Nel codice le due misure sono distinte: `fitDisplay()` è l'adattamento **chiesto**
+      (può ingrandire), `fitSenzaCrescere()` quello dei riadattamenti **automatici**.
+    - ⚠️ Da qui la regola su `isFit`: significa «sto mostrando l'adattato **che il clic
+      darebbe**», non «sono arrivato qui adattando», e va **ricalcolato** a ogni cambio di
+      scala, opzione o vista (`scalaEAdattata()`). Assumendolo vero dopo un riadattamento
+      automatico a 1:1, il clic si credeva già sull'adattato e il riempimento diventava
+      irraggiungibile.
   - Il **tetto di zoom** vale in ogni caso: un'icona di 16×16 px si ferma al 4000% (640
     px) invece di pretendere l'ingrandimento assurdo che riempirebbe lo schermo.
 - **Trascinamento per spostarsi (dalla 2.15).** Quando l'ingrandimento porta l'immagine
@@ -523,7 +538,7 @@ const ADATTA_INGRANDENDO = false;     // false = non superare mai il reale | tru
 
 | Tasto | Effetto |
 | --- | --- |
-| **`A`** | adattamento: solo rimpicciolendo (predefinito) ↔ anche ingrandendo |
+| **`A`** | adattamento: solo rimpicciolendo (predefinito) ↔ anche ingrandendo, **su richiesta** (il tasto non ingrandisce da sé: lo chiede il clic) |
 | **`I`** | inverte il verso della rotella |
 | **`N`** | accende e spegne il navigatore |
 | **`Esc`** | chiude il pannello di scaricamento o il menu del tasto destro |
