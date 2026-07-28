@@ -2556,7 +2556,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.22</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2901,11 +2901,35 @@ if (FX_PTR_MQ.addEventListener) FX_PTR_MQ.addEventListener('change', function(){
 // è un effetto da puntatore, il 'mobile' non c'entra con lui — la sua config è
 // UNICA e vale ovunque esista un puntatore, anche nelle finestre strette. Un
 // eventuale `spot_m` residuo nei dati salvati resta ignorato.
-function fxCfg(k){
-  if (FX_UNI[k]) return SITE_FLAGS[k];
+// Suffisso della variante ATTIVA su questo dispositivo: '' (desktop) o '_m'.
+// ⚠️ Fonte UNICA, condivisa fra il rendering (`fxCfg`) e gli EDITOR: il Pannello
+// senza tab lo usa per regolare, riga per riga, la variante che si sta davvero
+// vedendo (v14.23). Prima forzava '_m' per tutti, e su una finestra desktop
+// stretta col mouse si finiva a regolare la variante touch di `hov` mentre in
+// pagina valeva la desktop: si toccava una cosa e se ne vedeva un'altra.
+function fxActiveSfx(k){
+  if (FX_UNI[k]) return '';
   // `FX_PTR`: variante per CAPACITÀ del puntatore (v14.22); gli altri per larghezza.
   var mob = FX_PTR[k] ? !FX_PTR_MQ.matches : FX_MOBILE_MQ.matches;
-  return mob ? SITE_FLAGS[k + '_m'] : SITE_FLAGS[k];
+  return mob ? '_m' : '';
+}
+function fxCfg(k){ return SITE_FLAGS[k + fxActiveSfx(k)]; }
+// Nome della VARIANTE nei testi dell'admin. ⚠️ Per gli effetti in `FX_PTR` le due
+// varianti non si dividono per dimensione dello schermo ma per presenza del
+// puntatore: 'Desktop'/'Mobile' sarebbe un'approssimazione, ed è proprio quella che
+// generava il fraintendimento (v14.23, scelta dell'utente). Le TAB del Pannello
+// restano Desktop/Mobile, perché governano tutti gli effetti insieme.
+function fxVarLabel(k, mob, it){
+  if (FX_PTR[k]) return mob ? (it ? 'A tocco' : 'Touch') : (it ? 'Col mouse' : 'Pointer');
+  return mob ? 'Mobile' : 'Desktop';
+}
+// Elenco in italiano corrente: 'A', 'A e B', 'A, B e C' (l'inglese si accontenta
+// delle virgole, come già fa il resto dei testi admin). Apici DRITTI, come da
+// convenzione tipografica del progetto.
+function fxListaIt(a){
+  var q = a.map(function(s){ return "'" + s + "'"; });
+  if (q.length < 2) return q[0];
+  return q.slice(0, -1).join(', ') + ' e ' + q[q.length - 1];
 }
 // Un flag è 'acceso' se booleano true oppure oggetto con on !== false (valutato
 // sulla config attiva per piattaforma; zoomBig non ha variante).
@@ -7992,12 +8016,15 @@ function injectFxEditorCss(){
     // l'anteprima è la pagina vera accanto. Si nasconde via CSS e basta — i pannelli
     // vengono comunque costruiti e dipinti (paint() lavora su elementi nascosti
     // senza errori), così il cambio di telaio a metà modifica non ha casi speciali.
-    // ⚠️ ECCEZIONE: la variante MOBILE (v13.55, segnalata dall'utente). La pagina
-    // accanto è la versione DESKTOP, quindi mentre si regolano i parametri mobile
-    // non fa da anteprima a nulla e si resterebbe senza alcun riscontro. Lì i
-    // riquadri restano visibili, gli stessi che si vedono nella modale-fallback:
-    // `paint()` legge già la variante in modifica (V), non la piattaforma corrente.
-    '.fab-modal-overlay.fxdock:not(.fxdock-mob) .fxp-wrap{display:none}',
+    // ⚠️ ECCEZIONE: quando la variante in modifica NON è quella attiva su questo
+    // dispositivo (v13.55, segnalata dall'utente; criterio generalizzato nella
+    // v14.23). La pagina accanto mostra l'altra variante, quindi non fa da anteprima
+    // a nulla e si resterebbe senza riscontro; lì i riquadri restano visibili, gli
+    // stessi della modale-fallback (`paint()` legge già la variante in modifica).
+    // La classe si chiamava `fxdock-mob` finché il caso era solo 'sto regolando il
+    // mobile da un desktop': su un TABLET TOUCH è il contrario, ed è la tab Desktop
+    // a non avere riscontro in pagina - da qui il nome neutro `fxdock-alt`.
+    '.fab-modal-overlay.fxdock:not(.fxdock-alt) .fxp-wrap{display:none}',
     // Micro-aggiustamenti in dock: campi e anteprime si impilano (il corpo a due
     // colonne è pensato per la modale da 840px, nella colonna da 560 non ci sta).
     '.fab-modal-overlay.fxdock .ba-body{grid-template-columns:1fr;gap:14px}',
@@ -8373,9 +8400,19 @@ function showFxConfigEditor(key, sfx, onDone){
   // il tema della tab per la baseline e alla chiusura il sito resterebbe scuro.
   var themeAtOpen = FX_THEME0 || document.documentElement.getAttribute('data-theme');
   FX_THEME0 = themeAtOpen;
+  // ⚠️ La variante in modifica è quella ATTIVA su questo dispositivo? (v14.23)
+  // Se non lo è, la pagina non mostra ciò che si sta cambiando e il riscontro sono
+  // le card finte, che vanno tenute visibili anche in vista divisa. Il criterio
+  // GENERALIZZA quello della v13.55 ('con la variante mobile l'anteprima resta,
+  // perché la pagina accanto è desktop'): quella era un'approssimazione giusta solo
+  // sui desktop, mentre su un TABLET TOUCH è il caso opposto - là la pagina mostra
+  // la variante touch e a lavorare alla cieca è la tab Desktop.
+  var altrove = !item.noMob && sfx !== fxActiveSfx(key);
+  var attivaLbl = fxVarLabel(key, !!fxActiveSfx(key), it);
+  var inModifLbl = fxVarLabel(key, !!sfx, it);
   var overlay = document.createElement('div'); overlay.id = 'fx-modal';
   overlay.className = 'fab-modal-overlay' + (docked ? ' fxdock' : '')
-    + (docked && sfx ? ' fxdock-mob' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
+    + (docked && altrove ? ' fxdock-alt' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   // ⚠️ Lo scorrimento sta in un contenitore INTERNO, non sul box (v12.95). Col box
   // come area di scorrimento, il tasto × — che è `position:absolute` dentro il box —
@@ -8406,15 +8443,18 @@ function showFxConfigEditor(key, sfx, onDone){
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×';
   cl.onclick = close; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.02rem;margin:0 0 0.2rem;';
-  t.textContent = (it ? item.it : item.en) + (item.noMob ? '' : ' - ' + (sfx ? 'Mobile' : 'Desktop'));
+  t.textContent = (it ? item.it : item.en) + (item.noMob ? '' : ' - ' + fxVarLabel(key, !!sfx, it));
   box.appendChild(scroller); scroller.appendChild(t);
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.9rem;';
-  sub.textContent = (docked && sfx)
-    ? (it ? 'La pagina accanto è la versione desktop: le modifiche mobile si vedono qui sotto.'
-          : 'The page beside is the desktop version: mobile changes show below.')
+  sub.textContent = (docked && altrove)
+    ? (it ? 'La pagina accanto mostra la versione ' + attivaLbl.toLowerCase() + ': le modifiche a \'' + inModifLbl + '\' si vedono qui sotto.'
+          : 'The page beside shows the ' + attivaLbl.toLowerCase() + ' version: \'' + inModifLbl + '\' changes show below.')
     : docked
     ? (it ? 'Le modifiche si vedono subito sulla pagina accanto.'
           : 'Changes show immediately on the page beside.')
+    : altrove
+    ? (it ? 'Su questo schermo è attiva la versione ' + attivaLbl.toLowerCase() + ': le modifiche a \'' + inModifLbl + '\' si vedono qui sotto.'
+          : 'This screen uses the ' + attivaLbl.toLowerCase() + ' version: \'' + inModifLbl + '\' changes show below.')
     : (it ? 'Le modifiche si vedono subito qui sotto e sulle card dietro.'
           : 'Changes show immediately below and on the cards behind.');
   scroller.appendChild(sub);
@@ -8722,7 +8762,7 @@ function showSiteFlagsEditor(initState){
       tb.style.cssText = 'width:auto;flex:1;margin-top:0;padding:0.4rem 0;';
       tb.textContent = td[1];
       tb.setAttribute('aria-pressed', String(tab === td[0]));
-      tb.onclick = function(){ if (tab !== td[0]) { tab = td[0]; syncTabs(); renderRows(); syncPreview(); } };
+      tb.onclick = function(){ if (tab !== td[0]) { tab = td[0]; syncTabs(); renderRows(); syncPreview(); syncVarWarn(); } };
       tabBtns[td[0]] = tb; tabsBar.appendChild(tb);
     });
     box.appendChild(tabsBar);
@@ -8742,13 +8782,18 @@ function showSiteFlagsEditor(initState){
     } });
     box.appendChild(PVM.el);
   }
-  // La classe fxdock-mob serve DUE volte: scavalca la regola che in vista divisa
-  // nasconde le anteprime, e dice 'in questa colonna si sta lavorando sul mobile'.
+  // La classe `fxdock-alt` serve DUE volte: scavalca la regola che in vista divisa
+  // nasconde le anteprime, e dice 'in questa colonna si lavora su una variante che
+  // la pagina non mostra'. ⚠️ Qui la condizione resta la TAB e non `fxActiveSfx`,
+  // perché la panoramica copre TUTTI gli effetti insieme e la variante attiva è
+  // per-effetto: da un desktop la tab Mobile non mostra nulla di ciò che si vede in
+  // pagina, che è il caso per cui l'anteprima esiste. Il caso per-effetto è servito
+  // dalla sotto-modale, che sa di quale effetto si tratta.
   function syncPreview(){
     if (!PVM) return;
     var on = tab === 'm';
     PVM.el.style.display = on ? '' : 'none';
-    overlay.classList.toggle('fxdock-mob', on);
+    overlay.classList.toggle('fxdock-alt', on);
     if (on) { PVM.build(); PVM.paint(); }
   }
   function syncTabs(){
@@ -8770,9 +8815,13 @@ function showSiteFlagsEditor(initState){
   box.appendChild(rowsBox);
   function renderRows(){
     rowsBox.textContent = '';
-    var sfx = tab === 'm' ? '_m' : '';
     SITE_FLAG_ITEMS.forEach(function(f){
       if ((f.k === 'zoomBig' || f.noMob) && tab === 'm') return; // XL e Riflettore: solo nella tab Desktop
+      // ⚠️ Senza tab il suffisso è PER-RIGA e vale la variante ATTIVA (v14.23): i
+      // due criteri (larghezza per cinque effetti, puntatore per quelli in FX_PTR)
+      // possono dare risposte diverse sullo stesso dispositivo, e un suffisso unico
+      // ne avrebbe sbagliata almeno una. Con le tab decide la tab, come sempre.
+      var sfx = isMob ? fxActiveSfx(f.k) : (tab === 'm' ? '_m' : '');
       var vk = (f.k === 'zoomBig') ? f.k : f.k + sfx;
       var row = document.createElement('div');
       row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:center;margin:0 0 0.62rem;';
@@ -8820,9 +8869,37 @@ function showSiteFlagsEditor(initState){
       rowsBox.appendChild(row);
     });
   }
+  // ── Avviso 'stai regolando una versione che qui non si vede' (v14.23) ────────
+  // Serve solo QUANDO CI SONO LE TAB: senza tab il pannello regola già la variante
+  // attiva riga per riga, quindi non c'è nulla da avvertire. ⚠️ Le voci in mismatch
+  // si contano una per una, perché i due criteri (larghezza / puntatore) possono
+  // dividere la lista: su un tablet touch, in tab Desktop, l'unica voce senza
+  // riscontro in pagina è quella in FX_PTR. Per questo l'avviso NON sta sulle tab
+  // (nessuna delle due sarebbe 'quella che vedi') né sulle righe (la lista va tenuta
+  // pulita, regola della v12.64), ma qui in fondo, accanto all'avviso dello zoom.
+  var varWarn = document.createElement('p');
+  varWarn.style.cssText = 'font-size:0.76rem;opacity:0.8;margin:0 0 0.9rem;padding:0.5rem 0.6rem;border-left:2px solid rgba(200,162,74,0.8);';
+  box.appendChild(varWarn);
+  function syncVarWarn(){
+    var tutte = [], fuori = [];
+    if (!isMob) SITE_FLAG_ITEMS.forEach(function(f){
+      if (f.k === 'zoomBig' || f.noMob) return;
+      tutte.push(f);
+      if ((tab === 'm' ? '_m' : '') !== fxActiveSfx(f.k)) fuori.push(it ? f.it : f.en);
+    });
+    varWarn.style.display = fuori.length ? '' : 'none';
+    if (!fuori.length) return;
+    var lbl = (tab === 'm' ? (it ? 'mobile' : 'mobile') : (it ? 'desktop' : 'desktop'));
+    varWarn.textContent = (fuori.length === tutte.length)
+      ? (it ? 'Stai regolando la versione ' + lbl + ': su questo schermo è attiva l\'altra, quindi il riscontro è l\'anteprima qui sopra e non la pagina.'
+            : 'You are editing the ' + lbl + ' version: this screen uses the other one, so the preview above is the reference, not the page.')
+      : (it ? 'Su questo schermo ' + fxListaIt(fuori) + ' non segue questa tab: le modifiche si vedono nell\'anteprima della voce, non in pagina.'
+            : 'On this screen ' + fuori.join(', ') + ' does not follow this tab: changes show in that item\'s own preview, not on the page.');
+  }
   renderRows();
   syncPreview();
-  overlay._renderRows = function(){ renderRows(); syncPreview(); }; // cambio di telaio (onRs)
+  syncVarWarn();
+  overlay._renderRows = function(){ renderRows(); syncPreview(); syncVarWarn(); }; // cambio di telaio (onRs)
   // Avviso se la preferenza personale di zoom sta scavalcando il flag: senza,
   // sembrerebbe che l'interruttore 'non funzioni'.
   var mine = LS.getItem(ZOOM_LS_KEY);
