@@ -2589,7 +2589,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.55</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.65</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2710,8 +2710,9 @@ var FX_PTR = { hov:true };
 // `fxSelOpts`, così la fonte resta una sola.
 var FX_SEL = {
   pat: {
-    mot:  [['stars', 'Stelle di Varda', 'Stars of Varda'], ['mallorn', 'Mallorn', 'Mallorn']],
-    area: [['edge', 'Solo sullo sfondo', 'Background only'], ['all', 'Dappertutto', 'Everywhere']]
+    mot: [['stars', 'Stelle di Varda', 'Stars of Varda'], ['mallorn', 'Mallorn', 'Mallorn'],
+          ['loz', 'Losanghe', 'Lozenges'], ['seme', 'Campo di stelle', 'Star field'],
+          ['weave', 'Intreccio', 'Interlace'], ['banner', 'Vessillo', 'Banner']]
   }
 };
 function fxSelOpts(k, p){
@@ -2755,9 +2756,12 @@ var SITE_FLAGS_DEFAULT = {
   // pat (v14.43, richiesta dell'utente): trama elfica sul fondo della pagina, in
   // sovrimpressione. ⚠️ Default SPENTO - e' l'unico effetto che nasce spento, perche'
   // aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello quando
-  // l'utente decide. `mot` e' una manopola a SCELTE (vedi il tipo `sel`): 'stars' =
-  // stella a otto punte di Varda, 'mallorn' = foglia di Lothlorien.
-  pat:{ on:false, mot:'stars', area:'edge', c_d:'#ffffff', op_d:0.055,
+  // l'utente decide. `mot` e' una manopola a SCELTE (vedi il tipo `sel`): sei motivi,
+  // dalle stelle di Varda alle due reti intrecciate (vedi PAT_TILE).
+  // ⚠️ Dalla v14.65 NON esiste piu' la scelta 'Dove' (`area`): la trama sta SEMPRE
+  // fuori dalla colonna delle schede e fuori dalla testata, quindi la sfumatura vale
+  // sempre e un eventuale `area` residuo nei dati salvati e' ignorato.
+  pat:{ on:false, mot:'stars', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
   // press: quali parti incidere — name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
@@ -2807,10 +2811,13 @@ var FX_RANGE = {
          aamp_d:[6,60], aamp_l:[6,60], aint_d:[0.05,0.6], aint_l:[0.05,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
   vig:{ int:[0.05,0.6], start:[20,70] },
-  // I tetti dell'opacita' sono PRUDENTI: la trama passa anche DENTRO le card, che
-  // sono semitrasparenti, quindi finisce sotto i testi. Verificato a calcolo il
-  // contrasto delle due righe tenui col tetto attivo (vedi la nota in CLAUDE.md).
-  pat:{ op_d:[0.02,0.10], op_l:[0.02,0.09], sc:[0.6,1.8], fade:[0,260] },
+  // ⚠️ I tetti dell'opacita' sono stati ALZATI nella v14.65 (0.10/0.09 -> 0.34/0.30):
+  // il vincolo vecchio nasceva dalla modalita' 'Dappertutto', in cui la trama passava
+  // DENTRO le card semitrasparenti e finiva sotto i testi. Tolta quella modalita', la
+  // trama vive solo nei margini laterali, dove non c'e' testo di contenuto. Restano
+  // sopra di lei i soli elementi FISSI (roccobot.me, cambio lingua, tasti salto, FAB):
+  // il tetto e' quello verificato a calcolo su di loro (vedi la nota in CLAUDE.md).
+  pat:{ op_d:[0.02,0.34], op_l:[0.02,0.30], sc:[0.6,1.8], fade:[0,260] },
   podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4],
            sat_d:[0.3,1.5], sat_l:[0.3,1.5], top_d:[0,1], top_l:[0,1],
            rifl_d:[0,1], rifl_l:[0,1], crisp_d:[0,1], crisp_l:[0,1],
@@ -3047,6 +3054,9 @@ function applySiteFlags() {
   r.classList.toggle('zoom-big', mine === null ? siteZoom : mine === '1');
   injectFxRules();
   wireSpotlight();
+  // La fascia sgombra della trama si rimisura da zero: la classe può essere appena
+  // comparsa (a effetto spento `syncPatTop` esce subito) e lo zoom può essere cambiato.
+  patTopLast = -1; syncPatTop();
 }
 // Al varco della soglia telefono (resize/rotazione) lo zoom di sito va
 // ricalcolato: il listener sul matchMedia scatta SOLO all'attraversamento,
@@ -3137,16 +3147,29 @@ function fxGlowOuter(cfg, light, cc){
          '0 0 ' + ab + 'px rgba(' + cc + ',' + fxR2(ai) + ')';
 }
 // ── Trama di fondo (`pat`, v14.43) ──────────────────────────────────────────────
-// Due motivi elfici, disegnati come SVG e serviti come data URI: nessun file da
-// scaricare, nessuna richiesta di rete, e la scala/opacità restano parametriche.
-// ⚠️ I motivi sono deliberatamente NON narrativi: una stella a otto punte (l'emblema
-// elfico per eccellenza) e una foglia di mallorn. Niente Albero Bianco (è Gondor,
-// quindi Uomini) e niente tengwar, che a inventarli si scrive una sciocchezza.
+// Motivi disegnati come SVG e serviti come data URI: nessun file da scaricare,
+// nessuna richiesta di rete, e scala/opacità restano parametriche.
+// ⚠️ I motivi sono deliberatamente NON narrativi: geometria e grammatica araldica,
+// mai un emblema attribuito a un personaggio preciso. Gli emblemi araldici disegnati
+// da J.R.R. Tolkien esistono davvero, ma ricostruirli a memoria produrrebbe
+// inesattezze; una stella, un rombo o un rosone non affermano nulla di falso.
+// Niente Albero Bianco (è Gondor, quindi Uomini) e niente tengwar, che a inventarli
+// si scrive una sciocchezza.
+// ⚠️ Volutamente NON incluso l'esagramma (due triangoli compenetrati): benché sia una
+// figura araldica legittima, si legge inequivocabilmente come Stella di David, cioè un
+// simbolo religioso e politico estraneo al Legendarium (scartato dall'utente per questa
+// stessa ragione, 2026-07-28). Scartati anche l'ottagramma a contorno e il rosone
+// isolato: erano figure AFFIANCATE e facevano 'scaglie di pesce'. Da qui la regola per i
+// motivi futuri: il disegno deve essere una RETE CONNESSA, non una figura ripetuta.
 // La geometria del tile è pensata per RIPETERSI senza cuciture visibili: gli
 // elementi sui bordi sono duplicati a coordinate opposte.
 var PAT_TILE = {
   stars: { w: 200, h: 200 },
-  mallorn: { w: 160, h: 160 }
+  mallorn: { w: 160, h: 160 },
+  loz: { w: 150, h: 150 },
+  seme: { w: 140, h: 140 },
+  weave: { w: 180, h: 180 },
+  banner: { w: 200, h: 200 }
 };
 // Stella a otto punte a raggi nudi: quattro punte lunghe (cardinali) e quattro
 // corte (diagonali), che è la resa classica dell'emblema.
@@ -3158,9 +3181,109 @@ function patStar(cx, cy, r, r2){
   }
   return d;
 }
+// Losanga (rombo): la cornice che nell'araldica racchiude le figure femminili.
+function patRomb(cx, cy, r){
+  return 'M' + cx + ' ' + (cy - r) + 'L' + (cx + r) + ' ' + cy +
+         'L' + cx + ' ' + (cy + r) + 'L' + (cx - r) + ' ' + cy + 'Z';
+}
+// ── Motivi INTRECCIATI (v14.65) ─────────────────────────────────────────────────
+// Sono reti CONNESSE, non figure affiancate: le linee proseguono da un tile all'altro
+// con la stessa tangente, quindi non si legge la cucitura e non fa l'effetto 'scaglie
+// di pesce'. È la grammatica dei vessilli delle Case elfiche indicata dall'utente:
+// losanga come cornice, rosone al centro, elementi sinuosi fra le maglie.
+// Rosone: n petali a mandorla fra i raggi r0 e r1, ognuno due archi quadratici
+// speculari (il modo più corto di ottenere una mandorla senza scrivere il path a mano).
+function patRose(cx, cy, r0, r1, n, sp){
+  var d = '';
+  for (var i = 0; i < n; i++) {
+    var a = 2 * Math.PI * i / n + (sp || 0), s = 0.42;
+    var x0 = cx + Math.sin(a) * r0, y0 = cy - Math.cos(a) * r0;
+    var x1 = cx + Math.sin(a) * r1, y1 = cy - Math.cos(a) * r1;
+    var px = Math.cos(a) * (r1 - r0) * s, py = Math.sin(a) * (r1 - r0) * s;
+    var mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+    d += 'M' + fxR2(x0) + ' ' + fxR2(y0) +
+         'Q' + fxR2(mx + px) + ' ' + fxR2(my + py) + ' ' + fxR2(x1) + ' ' + fxR2(y1) +
+         'Q' + fxR2(mx - px) + ' ' + fxR2(my - py) + ' ' + fxR2(x0) + ' ' + fxR2(y0);
+  }
+  return d;
+}
+// Raggi nudi fra r0 e r1 (i raggi lunghi del rosone dei vessilli).
+function patRays(cx, cy, r0, r1, n, sp){
+  var d = '';
+  for (var i = 0; i < n; i++) {
+    var a = 2 * Math.PI * i / n + (sp || 0);
+    d += 'M' + fxR2(cx + Math.sin(a) * r0) + ' ' + fxR2(cy - Math.cos(a) * r0) +
+         'L' + fxR2(cx + Math.sin(a) * r1) + ' ' + fxR2(cy - Math.cos(a) * r1);
+  }
+  return d;
+}
+// Mandorla fra due punti: due archi speculari. Concatenate vertice a vertice formano
+// una catena continua, che è ciò che dà il senso di intreccio.
+function patLens(x0, y0, x1, y1, b){
+  var mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  var dx = x1 - x0, dy = y1 - y0, L = Math.sqrt(dx * dx + dy * dy) || 1;
+  var nx = -dy / L * b * 2, ny = dx / L * b * 2;
+  return 'M' + x0 + ' ' + y0 + 'Q' + fxR2(mx + nx) + ' ' + fxR2(my + ny) + ' ' + x1 + ' ' + y1 +
+         'Q' + fxR2(mx - nx) + ' ' + fxR2(my - ny) + ' ' + x0 + ' ' + y0;
+}
+// Stellina a quattro raggi lunghi e quattro corti: l'unità del campo seminato.
+function patCross(cx, cy, r){
+  var q = fxR2(r * 0.4);
+  return 'M' + cx + ' ' + (cy - r) + 'L' + cx + ' ' + (cy + r) +
+         'M' + (cx - r) + ' ' + cy + 'L' + (cx + r) + ' ' + cy +
+         'M' + fxR2(cx - q) + ' ' + fxR2(cy - q) + 'L' + fxR2(cx + q) + ' ' + fxR2(cy + q) +
+         'M' + fxR2(cx + q) + ' ' + fxR2(cy - q) + 'L' + fxR2(cx - q) + ' ' + fxR2(cy + q);
+}
 function patSvg(mot, col, w){
   var t = PAT_TILE[mot] || PAT_TILE.stars, g;
-  if (mot === 'mallorn') {
+  // I punti negli interstizi vanno PIENI, quindi in un gruppo proprio: il gruppo
+  // esterno è `fill:none` perché tutto il resto è disegno a contorno.
+  function dots(pts, r){
+    return '<g fill="' + col + '" stroke="none">' + pts.map(function(p){
+      return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (p[2] || r) + '"/>';
+    }).join('') + '</g>';
+  }
+  if (mot === 'weave') {
+    // Reticolo OGIVALE: i lati della maglia sono a doppia curva e nei punti medi dei
+    // bordi del tile si incontrano con tangente VERTICALE, quindi la rete prosegue
+    // senza spigoli. Un lato + le sue tre riflessioni chiudono la maglia.
+    var og = 'M0 90C0 54 45 45 90 0';
+    g = ['', 'translate(180 0) scale(-1 1)', 'translate(0 180) scale(1 -1)',
+         'translate(180 180) scale(-1 -1)'].map(function(tr){
+           return '<path d="' + og + '"' + (tr ? ' transform="' + tr + '"' : '') + '/>';
+         }).join('') +
+        '<path d="' + patRose(90, 90, 7, 30, 8) + '"/>' +
+        '<path d="' + patRose(90, 90, 30, 38, 8, Math.PI / 8) + '"/>' +
+        '<path d="' + patRose(0, 0, 4, 15, 4, Math.PI / 4) + '"/>' +
+        '<path d="' + patRose(180, 0, 4, 15, 4, Math.PI / 4) + '"/>' +
+        '<path d="' + patRose(0, 180, 4, 15, 4, Math.PI / 4) + '"/>' +
+        '<path d="' + patRose(180, 180, 4, 15, 4, Math.PI / 4) + '"/>' +
+        dots([[90, 90, 2.1], [90, 0, 1.8], [90, 180, 1.8], [0, 90, 1.8], [180, 90, 1.8]], 1.8);
+  } else if (mot === 'banner') {
+    // Il più araldico: cornice di MANDORLE che si toccano ai vertici della losanga
+    // (catena continua) e, dentro, il rosone raggiato dei vessilli.
+    var cor = [[100, 0, 200, 100], [200, 100, 100, 200], [100, 200, 0, 100], [0, 100, 100, 0]]
+      .map(function(p){ return patLens(p[0], p[1], p[2], p[3], 9); }).join('');
+    g = '<path d="' + cor + '"/><circle cx="100" cy="100" r="34"/>' +
+        '<path d="' + patRose(100, 100, 9, 27, 8) + '"/>' +
+        '<path d="' + patRays(100, 100, 34, 46, 8, Math.PI / 8) + '"/>' +
+        '<path d="' + patRomb(0, 0, 22) + '"/><path d="' + patRomb(200, 0, 22) + '"/>' +
+        '<path d="' + patRomb(0, 200, 22) + '"/><path d="' + patRomb(200, 200, 22) + '"/>' +
+        '<path d="' + patRose(0, 0, 3, 12, 4, Math.PI / 4) + '"/>' +
+        '<path d="' + patRose(200, 0, 3, 12, 4, Math.PI / 4) + '"/>' +
+        '<path d="' + patRose(0, 200, 3, 12, 4, Math.PI / 4) + '"/>' +
+        '<path d="' + patRose(200, 200, 3, 12, 4, Math.PI / 4) + '"/>' +
+        dots([[100, 100, 2.4]], 2.4);
+  } else if (mot === 'loz') {
+    g = '<path d="' + patRomb(75, 75, 34) + '"/><path d="' + patRomb(75, 75, 20) + '"/>' +
+        '<path d="' + patRomb(0, 0, 12) + '"/><path d="' + patRomb(150, 0, 12) + '"/>' +
+        '<path d="' + patRomb(0, 150, 12) + '"/><path d="' + patRomb(150, 150, 12) + '"/>' +
+        dots([[75, 75, 2], [75, 48], [102, 75], [75, 102], [48, 75]], 1.5);
+  } else if (mot === 'seme') {
+    g = '<path d="' + patCross(35, 35, 11) + '"/><path d="' + patCross(105, 105, 11) + '"/>' +
+        '<path d="' + patCross(105, 35, 5) + '"/><path d="' + patCross(35, 105, 5) + '"/>' +
+        dots([[70, 70], [0, 70], [140, 70], [70, 0], [70, 140]], 1.4);
+  } else if (mot === 'mallorn') {
     // foglia lanceolata + nervature + picciolo ricurvo, in maglia diagonale
     var foglia = '<path d="M0 -17C7 -9 7 4 0 15C-7 4-7 -9 0 -17Z"/><path d="M0 -14V12"/>' +
                  '<path d="M0 -6 5 -1M0 -6-5 -1M0 2 4 6M0 2-4 6"/><path d="M0 15C0 20-3 23-7 24"/>';
@@ -3176,7 +3299,8 @@ function patSvg(mot, col, w){
   }
   return '<svg xmlns="http://www.w3.org/2000/svg" width="' + t.w + '" height="' + t.h +
          '" viewBox="0 0 ' + t.w + ' ' + t.h + '"><g fill="none" stroke="' + col +
-         '" stroke-width="' + w + '" stroke-linecap="round">' + g + '</g></svg>';
+         '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round">' +
+         g + '</g></svg>';
 }
 // Livello di sfondo: `url(data:…)`. Il colore porta l'opacità dentro di sé, così
 // l'unico parametro CSS residuo è la dimensione. Tinta e opacità sono manopole
@@ -3186,18 +3310,66 @@ function fxPatBg(cfg, light){
   var col = 'rgba(' + t + ',' + fxR3(light ? cfg.op_l : cfg.op_d) + ')';
   return 'url("data:image/svg+xml,' + encodeURIComponent(patSvg(cfg.mot, col, 1.05)) + '")';
 }
-// Maschera della modalità 'Solo sullo sfondo': la trama è piena ai bordi della
-// finestra e si dissolve prima di incontrare la colonna delle schede, che resta
-// pulita. La colonna è `.scroll`, larga al massimo PAT_COL px e centrata, quindi le
-// fermate si calcolano da `50%` con `calc` e valgono a ogni larghezza: se la
-// finestra è più stretta della colonna il gradiente degenera e la trama non si
-// vede, che è esattamente il comportamento voluto (niente trama dove non c'è posto).
+// ⚠️ MASCHERA A DUE ASSI (dalla v14.65, richiesta dell'utente: 'le card e la testata
+// devono essere sempre sgombri'). Due gradienti sovrapposti con `mask-composite:
+// intersect`, cioè la trama compare solo dove ENTRAMBI sono opachi:
+//  • ORIZZONTALE — trasparente sulla colonna delle schede (`.scroll`, larga al massimo
+//    PAT_COL px e centrata), con la sfumatura ai suoi due lati. Le fermate si calcolano
+//    da `50%` con `calc`, quindi valgono a ogni larghezza; se la finestra è più stretta
+//    della colonna il gradiente degenera e la trama non si vede, che è il comportamento
+//    voluto (niente trama dove non c'è posto).
+//  • VERTICALE — trasparente in cima, con la sfumatura che entra subito sotto. Il
+//    limite è dinamico e vive nella custom property `--pat-t`, scritta da
+//    `syncPatTop()`; il fallback 340px serve solo al primo dipinto.
 function fxPatMask(cfg){
   var f = Math.max(0, Math.round(cfg.fade)), h = PAT_COL / 2;
-  return 'linear-gradient(to right,#000 0,#000 calc(50% - ' + (h + f) + 'px),' +
-         'transparent calc(50% - ' + h + 'px),transparent calc(50% + ' + h + 'px),' +
-         '#000 calc(50% + ' + (h + f) + 'px),#000 100%)';
+  var mx = 'linear-gradient(to right,#000 0,#000 calc(50% - ' + (h + f) + 'px),' +
+           'transparent calc(50% - ' + h + 'px),transparent calc(50% + ' + h + 'px),' +
+           '#000 calc(50% + ' + (h + f) + 'px),#000 100%)';
+  var t = 'var(--pat-t,340px)';
+  var my = 'linear-gradient(to bottom,transparent 0,transparent ' + t + ',' +
+           '#000 calc(' + t + ' + ' + f + 'px),#000 100%)';
+  return mx + ',' + my;
 }
+// ⚠️ DOVE FINISCE la fascia sgombra in cima (`--pat-t`), in px di LAYOUT. È il MASSIMO
+// fra due cose, e servono entrambe:
+//  • il bordo inferiore della TESTATA finché è in vista (richiesta dell'utente: la
+//    testata sempre sgombra). Scorre via con la pagina, quindi il valore cala;
+//  • una banda FISSA di PAT_TOPBAR px, che non scende mai. Serve ai controlli
+//    `position:fixed` che restano in alto - `roccobot.me` e il cambio lingua - i quali
+//    scorrendo finirebbero sopra la trama. ⚠️ Il loro colore è tarato ESATTAMENTE su
+//    4.5:1 (vedi il commento di `.home-link`): margine ZERO, quindi qualunque velo
+//    dietro di loro li porterebbe sotto soglia. Tenendoli fuori dalla trama, il tetto
+//    dell'opacità torna una scelta estetica e non un vincolo di accessibilità.
+// La trama resta perciò ancorata al VIEWPORT (`position:fixed`), come la vignettatura.
+var PAT_TOPBAR = 56;
+var patTopLast = -1, patTopRaf = 0;
+function syncPatTop(){
+  var r = document.documentElement;
+  if (!r.classList.contains(SITE_FLAG_CLASS.pat)) return;   // a effetto spento, costo zero
+  var h = document.querySelector('header'), t = PAT_TOPBAR;
+  if (h && h.offsetHeight) {
+    // ⚠️ `getBoundingClientRect` dà px VISIVI: sotto Modalità XL va diviso per lo zoom,
+    // che si rileva da sé come rapporto rect/offset (stessa lezione delle mediane).
+    var rc = h.getBoundingClientRect();
+    var z = h.offsetWidth ? (rc.width / h.offsetWidth) : 1;
+    t = Math.max(PAT_TOPBAR, rc.bottom / (z || 1));
+  }
+  t = Math.round(t);
+  if (t === patTopLast) return;                             // il DOM si tocca al varco
+  patTopLast = t;
+  r.style.setProperty('--pat-t', t + 'px');
+}
+// Coalescenza a rAF: durante lo scorrimento si scrive una sola property per frame.
+function queuePatTop(){
+  if (patTopRaf) return;
+  patTopRaf = requestAnimationFrame(function(){ patTopRaf = 0; syncPatTop(); });
+}
+window.addEventListener('scroll', queuePatTop, { passive: true });
+(function(){
+  var h = document.querySelector('header');
+  if (h && window.ResizeObserver) { try { new ResizeObserver(queuePatTop).observe(h); } catch (e) {} }
+})();
 // Dimensione del tile in px, scalata dalla manopola.
 function fxPatSize(cfg){
   var t = PAT_TILE[cfg.mot] || PAT_TILE.stars;
@@ -3428,13 +3600,15 @@ function injectFxRules(){
     // fisso e alto quanto il viewport, su mobile non seguiva la barra dinamica del
     // browser e lasciava una linea di giunzione: qui l'effetto è desktop-only, e
     // la trama non ha un bordo visibile da cui possa nascere una linea.
+    var mk = fxPatMask(pt);
     var pm = ['content:""', 'position:fixed', 'inset:0', 'z-index:-1',
               'pointer-events:none', 'background-image:' + fxPatBg(pt, false),
-              'background-size:' + fxPatSize(pt), 'background-repeat:repeat'];
-    if (pt.area === 'edge') {
-      var mk = fxPatMask(pt);
-      pm.push('-webkit-mask-image:' + mk, 'mask-image:' + mk);
-    }
+              'background-size:' + fxPatSize(pt), 'background-repeat:repeat',
+              // L'ordine conta: il webkit prefissato PRIMA, lo standard DOPO, così i
+              // browser moderni finiscono su `intersect` e i vecchi WebKit hanno
+              // almeno `source-in` (che è la stessa cosa con l'altro vocabolario).
+              '-webkit-mask-image:' + mk, '-webkit-mask-composite:source-in',
+              'mask-image:' + mk, 'mask-composite:intersect'];
     css.push('html.fx-pat body::after{' + pm.join(';') + '}');
     css.push('html.fx-pat[data-theme="light"] body::after{background-image:' + fxPatBg(pt, true) + '}');
   }
@@ -8156,27 +8330,19 @@ var FX_KNOBS = {
   ],
   // Trama di fondo (v14.43). Due manopole di tipo NUOVO: `sel` (scelta fra voci) e
   // `col` (colore hex). Colore e opacità sono separati apposta - la tinta si scegle
-  // col selettore di sistema, l'opacità con lo slider, che è l'unica delle due a
-  // dover restare in un intervallo prudente.
+  // col selettore di sistema, l'opacità con lo slider.
   pat: [
     { p:'on', t:'bool', it:'Attiva', en:'Enable' },
     { p:'mot', t:'sel', dep:'on', it:'Motivo', en:'Motif', opts:fxSelOpts('pat', 'mot'),
-      nit:'La stella a otto punte degli Elfi, oppure la foglia di Lothlórien.',
-      nen:'The eight-pointed Elven star, or the leaf of Lothlórien.' },
-    { p:'area', t:'sel', dep:'on', it:'Dove', en:'Where', opts:fxSelOpts('pat', 'area'),
-      nit:'\'Solo sullo sfondo\' tiene la trama fuori dalla colonna delle schede, che le passa sopra pulita; \'Dappertutto\' la lascia anche dietro le schede, che sono semitrasparenti.',
-      nen:'\'Background only\' keeps the pattern outside the card column; \'Everywhere\' lets it show through the cards, which are semi-transparent.' },
-    { p:'fade', t:'num', step:10, unit:'px', dep:'edge', it:'Sfumatura', en:'Fade',
-      nit:'Quanto la trama si dissolve prima di incontrare la colonna delle schede.',
-      nen:'How far the pattern fades out before it meets the card column.' },
+      nit:'Stelle e foglia di Lothlórien, figure araldiche, reti intrecciate.',
+      nen:'Stars and the leaf of Lothlórien, heraldic figures, interlaced nets.' },
+    { p:'fade', t:'num', step:10, unit:'px', dep:'on', it:'Sfumatura', en:'Fade',
+      nit:'Quanto la trama si dissolve prima di incontrare la colonna delle schede e la testata, che restano sempre sgombre.',
+      nen:'How far the pattern fades out before it meets the card column and the header, which always stay clear.' },
     { p:'c_d', t:'col', th:'d', dep:'on', it:'Colore', en:'Colour' },
-    { p:'op_d', t:'num', step:0.005, th:'d', dep:'on', it:'Opacità', en:'Opacity',
-      nit:'Molto bassa per scelta: la trama deve restare un\'ombra, non un disegno.',
-      nen:'Deliberately very low: the pattern should stay a shadow, not a drawing.' },
+    { p:'op_d', t:'num', step:0.005, th:'d', dep:'on', it:'Opacità', en:'Opacity' },
     { p:'c_l', t:'col', th:'l', dep:'on', it:'Colore', en:'Colour' },
-    { p:'op_l', t:'num', step:0.005, th:'l', dep:'on', it:'Opacità', en:'Opacity',
-      nit:'Molto bassa per scelta: la trama deve restare un\'ombra, non un disegno.',
-      nen:'Deliberately very low: the pattern should stay a shadow, not a drawing.' },
+    { p:'op_l', t:'num', step:0.005, th:'l', dep:'on', it:'Opacità', en:'Opacity' },
     { p:'sc', t:'num', step:0.05, dep:'on', it:'Dimensione', en:'Size',
       nit:'Quanto è grande il motivo. Valori alti lo rendono più rado.',
       nen:'How large the motif is. Higher values make it sparser.' }
@@ -8545,10 +8711,11 @@ function fxPreviewBlock(o){
       // Fondo del riquadro: vignetta e/o trama, gli unici due effetti che vivono
       // sul FONDO e non sulle card. ⚠️ Se ci sono entrambi si impilano in una sola
       // dichiarazione, con la vignetta SOPRA (primo livello) come in pagina: così
-      // smorza la trama ai bordi invece di essere smorzata da lei. La modalità
-      // 'Solo sullo sfondo' non si può riprodurre qui - il riquadro non ha una
-      // colonna di schede da scansare - quindi l'anteprima mostra sempre il motivo,
-      // ed è il sottotitolo a dire dove finirà davvero (vedi la nota nel pannello).
+      // smorza la trama ai bordi invece di essere smorzata da lei. Il CONFINAMENTO
+      // della trama (fuori dalla colonna delle schede e fuori dalla testata) non si
+      // può riprodurre qui - il riquadro non ha né una colonna né una testata da
+      // scansare - quindi l'anteprima mostra il motivo dappertutto, ed è la nota
+      // della manopola 'Sfumatura' a dire dove finirà davvero.
       var bg = [], bs = [], br = [];
       if ((key === 'vig' || all) && vOn('vig')) { bg.push(fxVigBg(v, pn.light)); bs.push('auto'); br.push('no-repeat'); }
       if ((key === 'pat' || all) && vOn('pat')) { bg.push(fxPatBg(pt, pn.light)); bs.push(fxPatSize(pt)); br.push('repeat'); }
@@ -8849,9 +9016,6 @@ function showFxConfigEditor(key, sfx, onDone){
     if (d === 'inner') return c.pl === true || c.pr === true;
     if (d === 'outer') return c.ps === true && (c.pl === true || c.pr === true);
     if (d === 'around') return c.pa === true;
-    // Trama: la sfumatura esiste solo quando la trama è confinata allo sfondo
-    // vuoto; 'dappertutto' non ha alcun bordo da sfumare.
-    if (d === 'edge') return c.area === 'edge';
     return true;
   }
   function renderKnobs(){
@@ -8970,7 +9134,7 @@ function showFxConfigEditor(key, sfx, onDone){
   var rst = document.createElement('button'); rst.className = 'fab-modal-confirm';
   rst.style.cssText = 'width:auto;flex:1;margin-top:0;';
   rst.textContent = it ? 'Ultimo salvato' : 'Last saved';
-  rst.title = it ? 'Riporta questo effetto all’ultimo valore salvato sul repo'
+  rst.title = it ? 'Riporta questo effetto all\'ultimo valore salvato sul repo'
                  : 'Restore this effect to the last value saved to the repo';
   rst.onclick = function(){
     SITE_FLAGS[vk] = normSiteFlags(SITE_FLAGS_SAVED)[vk];

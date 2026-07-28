@@ -274,6 +274,8 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
         di nuovo la **challenge Cloudflare** ('Just a moment...'). Non è un rate limit
         da esaurimento: va e viene. Nel dubbio, tentare sempre - costa un `curl` - e
         se risponde la challenge passare subito alla prova sostitutiva senza retry.
+        Anche la **v14.65** ha trovato la challenge ed è andata live con la prova
+        sostitutiva: fuori dai `<script>` cambiava **solo il numero del badge**.
 - **Angolo in alto a sinistra: `roccobot.me` sopra, versione sotto (v14.53, mockup
   dell'utente).** Il blocco `.brand-corner` è **incolonnato**: in cima alla pagina si
   vedono entrambi; **appena si scorre** il numero **dissolve in 0.12s** e resta il solo
@@ -897,25 +899,80 @@ normale/XL secondo la preferenza attiva.
      dell'utente; label UI **'Trama'/'Pattern'**): un motivo elfico ripetuto sullo
      sfondo della pagina, tenuissimo. È l'**unico effetto che nasce SPENTO**, perché
      aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello.
-     - **Due motivi**, disegnati come SVG e serviti come **data URI** (nessun file,
-       nessuna richiesta di rete, tile sotto 1 KB): **`stars`** = stella a otto punte
-       di Varda a raggi nudi con puntini nelle maglie, **`mallorn`** = foglia di
-       Lothlórien con nervature e picciolo, in maglia diagonale. Geometrie in
-       `patSvg`/`patStar`, dimensioni in **`PAT_TILE`**.
+     - **SEI motivi** (dalla v14.65; due alla v14.43), disegnati come SVG e serviti come
+       **data URI** (nessun file, nessuna richiesta di rete, tile sotto 1 KB).
+       Geometrie in `patSvg` + gli helper `patStar`/`patRomb`/`patCross`/`patRose`/
+       `patRays`/`patLens`, dimensioni in **`PAT_TILE`**:
+       **`stars`** ('Stelle di Varda') stella a otto punte a raggi nudi; **`mallorn`**
+       foglia di Lothlórien con nervature, in maglia diagonale; **`loz`** ('Losanghe')
+       rombi concentrici con punti sulle diagonali; **`seme`** ('Campo di stelle')
+       stelline in maglia sfalsata, il più rarefatto; **`weave`** ('Intreccio')
+       reticolo OGIVALE con rosone a otto petali nelle maglie; **`banner`**
+       ('Vessillo') cornice di mandorle con rosone raggiato.
        - ⚠️ **I motivi sono deliberatamente NON narrativi.** Il riferimento che
          l'utente aveva portato conteneva l'**Albero Bianco** (che è Gondor, quindi
          Uomini) e l'iscrizione dell'**Unico Anello** in tengwar (che è Sauron):
          nessuno dei due è elfico. E i tengwar non si inventano: a scriverli a caso
          si mette in pagina una sciocchezza, contro la regola della verifica delle
-         fonti. Una stella e una foglia non affermano nulla di falso.
-     - **DOVE** (manopola `area`): **'Solo sullo sfondo'** tiene la trama fuori dalla
-       colonna delle schede (la resa del mockup dell'utente), **'Dappertutto'** la
-       lascia anche dietro le schede, che essendo semitrasparenti la mostrano.
-       - Il confinamento è una **`mask-image` a gradiente** (`fxPatMask`): piena ai
-         bordi della finestra, trasparente sotto la colonna, con una **sfumatura**
-         regolabile (`fade`) in mezzo. Le fermate si calcolano da `50%` con `calc`
-         sulla metà di **`PAT_COL`** (920px, la `max-width` di `.scroll`), quindi
-         valgono a ogni larghezza senza misure a runtime.
+         fonti. Una stella, un rombo o un rosone non affermano nulla di falso. Per la
+         stessa ragione non si ricostruiscono gli **emblemi araldici** disegnati da
+         J.R.R. Tolkien (esistono, in *Pictures by J.R.R. Tolkien*): a memoria si
+         produrrebbero inesattezze. Si prende solo la loro **grammatica** - losanga
+         come cornice, rosone al centro, punti negli interstizi.
+       - ⚠️ **REGOLA PER I MOTIVI FUTURI: il disegno deve essere una RETE CONNESSA**,
+         non una figura ripetuta (v14.65, richiesta dell'utente: 'qualcosa di più
+         intrecciato e continuo, che non sembri troppo un incrocio di scaglie di
+         pesce'). Concretamente: le linee devono proseguire da un tile all'altro **con
+         la stessa tangente**, così la cucitura non si legge. In `weave` i lati
+         ogivali della maglia si incontrano nei punti medi dei bordi con tangente
+         **verticale**; in `banner` le mandorle si toccano ai vertici della losanga.
+         Scartati per il difetto opposto (figure affiancate) un ottagramma a contorno
+         e un rosone isolato.
+       - ⚠️ **Scartato l'ESAGRAMMA** (due triangoli compenetrati): benché sia una
+         figura araldica legittima, si legge inequivocabilmente come Stella di David,
+         cioè un simbolo religioso e politico estraneo al Legendarium. Deciso
+         dall'utente, 2026-07-28 ('mi ricorda lo stato sionista'): non riproporlo.
+     - ⚠️ **DOVE: non si scegle più (dalla v14.65, richiesta dell'utente).** La manopola
+       `area` ('Solo sullo sfondo' / 'Dappertutto') è stata **RIMOSSA**: la trama non
+       passa MAI sopra o sotto le schede né sulla testata. Un eventuale `area` residuo
+       nei dati salvati è ignorato (chiave ignota, scartata da `normSiteFlags`).
+       Il confinamento è una **maschera a DUE ASSI** (`fxPatMask`), due gradienti con
+       **`mask-composite: intersect`**: la trama compare solo dove entrambi sono opachi.
+       - **ORIZZONTALE** — trasparente sulla colonna delle schede, con la sfumatura
+         (`fade`) ai suoi due lati. Le fermate si calcolano da `50%` con `calc` sulla
+         metà di **`PAT_COL`** (920px, la `max-width` di `.scroll`), quindi valgono a
+         ogni larghezza senza misure a runtime; se la finestra è più stretta della
+         colonna il gradiente degenera e la trama non si vede, che è il comportamento
+         voluto.
+       - **VERTICALE** — trasparente in cima, fin dove dice la custom property
+         **`--pat-t`**, poi la stessa sfumatura. Il valore lo scrive **`syncPatTop()`**
+         ed è il **MASSIMO** fra due cose, e servono entrambe:
+         1. il **bordo inferiore della testata** finché è in vista (la richiesta
+            letterale dell'utente). Scorre via con la pagina, quindi il valore cala;
+         2. una **banda FISSA di `PAT_TOPBAR` = 56px**, che non scende mai. ⚠️ Serve ai
+            controlli `position:fixed` che restano in alto - **`roccobot.me`** e il
+            **cambio lingua** - i quali scorrendo finirebbero sopra la trama. Il loro
+            colore è tarato **ESATTAMENTE** su 4.5:1 a `opacity:0.7` (lo dice il
+            commento di `.home-link`): **margine ZERO**, quindi qualunque velo dietro di
+            loro li porta sotto soglia. Misurato: al vecchio tetto 0.10 scendevano a
+            4.53:1 in scuro e **4.45:1** in chiaro, cioè già fuori. Tenendoli fuori
+            dalla trama, il tetto dell'opacità torna una scelta estetica e non un
+            vincolo di accessibilità.
+       - ⚠️ **Perciò la trama resta ancorata al VIEWPORT** (`position:fixed`, come la
+         vignettatura) e `--pat-t` si aggiorna sullo **scorrimento**, coalescente a rAF
+         (`queuePatTop`) e con scrittura solo al varco (`patTopLast`). A effetto spento
+         `syncPatTop` esce subito: costo zero, e la property non viene nemmeno scritta.
+         Un `ResizeObserver` sulla testata copre a-capo del titolo, cambio lingua e
+         Modalità XL. ⚠️ `getBoundingClientRect` dà px **visivi**: sotto XL va diviso
+         per lo zoom, rilevato da sé come `rect.width / offsetWidth` (stessa lezione
+         delle linee mediane). Verificato: 56px di **layout** con e senza XL.
+         - ⚠️ **Tentata e scartata la trama ancorata al DOCUMENTO** (`position:absolute`
+           + `body{position:relative}`): la maschera diventa statica e non costa nulla a
+           ogni frame, ma la banda sgombra in cima segue il documento e quindi **non può
+           proteggere i controlli fissi**, che è il vincolo decisivo. Nota tecnica se un
+           domani serve: funziona (il fondo del body si PROPAGA alla canvas, quindi resta
+           sotto a uno strato con `z-index:-1`) e nessun altro elemento assoluto del sito
+           cambia contenitore.
      - **Vive su `body::after`**, NON nel `background-image` del body: là c'è già la
        vignettatura, e impilare i due nella stessa dichiarazione avrebbe legato gli
        effetti (liste di `background-size`/`repeat`/`attachment` da tenere allineate
@@ -934,15 +991,23 @@ normale/XL secondo la preferenza attiva.
        `applySiteFlags` toglie la classe, così non si paga nemmeno il disegno.
      - **Colore e opacità sono manopole SEPARATE e per tema** (`c_d`/`op_d`,
        `c_l`/`op_l`): la tinta si scegle col selettore di sistema, l'opacità con uno
-       slider, che è l'unica delle due a dover restare in un intervallo prudente.
-     - ⚠️ **I tetti di opacità sono MISURATI, non estetici.** La trama passa dietro le
-       schede, quindi finisce sotto i testi. Verificato **a calcolo** nel caso
-       peggiore (testo esattamente sopra una linea del motivo, modalità
-       'Dappertutto', opacità al tetto), componendo gli strati uno per uno - pagina →
-       trama → fondo scheda → testo: **minimo 4.66:1 in scuro e 4.91:1 in chiaro** su
-       47 misure. ⚠️ Anche qui **axe non serve come prova** (sulle card rinuncia a
-       determinare il fondo: vedi la nota di `hov`); lo strumento è
-       `scratchpad/pat/aa.js`.
+       slider.
+     - ⚠️ **TETTI DI OPACITÀ ALZATI nella v14.65: 0.10/0.09 → 0.34/0.30** (richiesta
+       dell'utente: 'più range di opacità'). I vecchi tetti erano **misurati**, ma sul
+       caso della modalità 'Dappertutto', in cui la trama passava DENTRO le card
+       semitrasparenti e finiva sotto i testi (allora: minimo 4.66:1 in scuro e 4.91:1
+       in chiaro su 47 misure, con `scratchpad/pat/aa.js`). Tolta quella modalità, nei
+       margini laterali **non c'è testo di contenuto**: il footer sta entro 500px
+       centrati, quindi dentro la colonna sgombra. Restano solo i controlli **fissi**,
+       che la banda in cima protegge (vedi sopra) - e i **tasti salto**, che a riposo
+       stanno a 1.6:1 **da sempre e senza trama** (opacità 0.5 per scelta, piena
+       all'hover/focus): misurato, la trama non li peggiora, li schiarisce appena
+       (1.63:1 a op 0.10, 1.74:1 a 0.20). Lo strumento è `scratchpad/pat/aa4.js`, che
+       cerca per ogni controllo il massimo `op` che tiene 4.5:1.
+       - ⚠️ **Rimisurare se cambia il colore o l'opacità di `.home-link`, `.lang-switch`
+         o l'altezza della banda.** E ⚠️ **axe non serve come prova sulle card** (rinuncia
+         a determinare il fondo: vedi la nota di `hov`); axe **0 violazioni** è stato
+         comunque verificato coi tetti attivi nei due temi.
      - ⚠️⚠️ **I VALORI AMMESSI DELLE SCELTE VIVONO IN `FX_SEL`, SOPRA I DEFAULT, MAI
        IN `FX_KNOBS`** (fix v14.53, difetto arrivato in PRODUZIONE). `var SITE_FLAGS =
        normSiteFlags(...)` gira **durante il parsing** dello script, quando `FX_KNOBS`
@@ -971,11 +1036,11 @@ normale/XL secondo la preferenza attiva.
        `<input type=color>`, valore hex). Il **Worker rev 15 non cambia**: valida già
        le stringhe ≤32 char, e `siteFlags` resta a 19 chiavi su 40 ammesse - quindi
        nessuna race di deploy sito/Worker.
-     - ⚠️ **Nell'anteprima su card finte la modalità 'Solo sullo sfondo' NON è
-       riproducibile** (il riquadro non ha una colonna di schede da scansare): là si
-       mostra sempre il motivo, ed è la nota della manopola a dire dove finirà. Se
-       nel riquadro ci sono trama E vignetta, si impilano con la vignetta SOPRA, come
-       in pagina.
+     - ⚠️ **Nell'anteprima su card finte il CONFINAMENTO non è riproducibile** (il
+       riquadro non ha né una colonna di schede né una testata da scansare): là si
+       mostra il motivo dappertutto, ed è la nota della manopola 'Sfumatura' a dire dove
+       finirà. Se nel riquadro ci sono trama E vignetta, si impilano con la vignetta
+       SOPRA, come in pagina.
      - Verificato che col default (spento) la pagina è **identica al pixel** alla
        v14.33 nei due temi. ⚠️ Quel confronto va fatto con **moto ridotto** e con
        tasti salto e FAB nascosti: le animazioni di comparsa e il timer da 3s dei
