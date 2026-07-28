@@ -3461,12 +3461,22 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
     sono a **PARI luminanza relativa** dei vecchi valori (0.00213 contro 0.00222 in
     scuro, 0.7157 contro 0.7139 in chiaro), quindi la pagina dietro resta scura (o
     chiara) esattamente come prima.
-  - **Restano tinti, di proposito o per inerzia, altri veli** (non toccati dalla
-    v13.99, da valutare se il problema si ripresenta): `.fab-modal-overlay` in
-    tema chiaro (`rgba(180,195,215,0.5)`, delta **35**: il più tinto di tutti),
-    `.imgv-overlay` (`rgba(3,5,12,0.95)`), `.admin-search-backdrop` nei due temi.
+  - ⚠️ **Gli altri tre veli RESTANO TINTI: deciso dall'utente il 2026-07-28, non
+    riproporlo.** Sono `.fab-modal-overlay` in tema chiaro
+    (`rgba(180,195,215,0.5)`, delta RGB **35**: il più tinto di tutti, vale per
+    tutte le modali admin), `.imgv-overlay` (`rgba(3,5,12,0.95)`, delta 9) e
+    `.admin-search-backdrop` (`rgba(8,12,24,0.4)` scuro / `rgba(214,221,233,0.5)`
+    chiaro, delta 16 e 19). La v13.99 li aveva lasciati fuori 'da valutare se il
+    problema si ripresenta': la valutazione è stata fatta mostrando all'utente il
+    confronto grafico attuale↔neutro (grigi a pari luminanza:
+    `rgba(194,194,194,0.5)`, `rgba(5,5,5,0.95)`, `rgba(12,12,12,0.4)` /
+    `rgba(220,220,220,0.5)`), e la risposta è stata 'possono restare come sono'.
     Il velo del Pannello (`.ctrl-backdrop`, `rgba(0,0,0,0.4)`) e quello admin in
-    scuro (`rgba(0,0,0,0.38)`) sono già neutri.
+    scuro (`rgba(0,0,0,0.38)`) erano già neutri.
+    - Nota per un eventuale ritorno sul tema: l'overlay della **ricerca admin**
+      non si apre da script (né col pulsante lente né col tasto `f` dentro
+      `showAdminEditor`), quindi va confrontato per campioni di colore calcolati,
+      non per screenshot.
 - **Contenuto di sfondo INERTE a modale aperto (dalla v10.06).** `lockPageScroll`
   (il choke point condiviso da TUTTI i modali) marca `header`, `main` e `footer`
   con **`inert` + `aria-hidden`** quando un modale si apre, e li ripristina alla
