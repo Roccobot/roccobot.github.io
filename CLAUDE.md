@@ -286,6 +286,12 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   - Sfumato, il numero prende `pointer-events:none`: **cliccabile solo in cima**, come
     chiesto. La specificità `html.scrolled .version-badge` (0,2,1) batte
     `.version-badge:hover` (0,2,0), quindi non riappare col puntatore sopra.
+  - ⚠️ **La `v` è allineata OTTICAMENTE alla `r` di roccobot.me** (v14.55, richiesta
+    dell'utente): a padding identici l'inchiostro non parte allo stesso x, perché ogni
+    glifo ha un margine laterale proprio nel font. Misurato a 4× sul font reale: la `v`
+    partiva **0.5px** più a sinistra (identico nei due temi), recuperati con
+    `margin-left:0.05em` - relativo, così regge anche in Modalità XL. Verificato dopo:
+    scarto **0.00px**. Se cambia il font o il corpo del testo, va rimisurato.
   - La **`v`** vive in uno `<span class="vb-v">` a `0.86em`. ⚠️ Perciò
     `setVersionBadge` ricompone il badge **a nodi** (`createElement` +
     `createTextNode`) e non con `textContent`, che butterebbe via lo span; niente
