@@ -2556,7 +2556,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.23</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.33</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2734,7 +2734,9 @@ var SITE_FLAGS_DEFAULT = {
   // il `:hover` resta appiccicato e l'effetto vale da selezione della card. Il
   // default vale per entrambe le varianti (`_m` seminata dalla desktop), quindi
   // l'aggiunta della variante non cambia da sé la resa di nessuno.
-  hov:{ on:true, op_d:0.18, op_l:0.11, sat_d:1, sat_l:1, lum_d:1, lum_l:1 }
+  // `bd` (v14.33): il contorno più nitido al passaggio. Default `true` perché è ciò
+  // che il CSS statico fa da sempre - chi non tocca nulla non vede alcun cambiamento.
+  hov:{ on:true, bd:true, op_d:0.18, op_l:0.11, sat_d:1, sat_l:1, lum_d:1, lum_l:1 }
 };
 // Limiti delle manopole numeriche. Servono a DUE cose: tarare gli slider della
 // sotto-modale e RIPULIRE un valore assurdo arrivato dal file dati (o da una mano
@@ -3239,6 +3241,13 @@ function fxSel(base, all, tail){
   return all ? base + ' .rank-item' + tail
              : base + ' .rank-item:hover' + tail + ',' + base + ' .rank-item:focus-within' + tail;
 }
+// Contorno della card: valori STORICI del CSS statico, per tema. `dark`/`light` sono
+// quelli di RIPOSO (`.rank-item` e il suo gemello chiaro), `dark_on`/`light_on` quelli
+// che il CSS applica al passaggio. Vivono qui perché li usano due punti che devono
+// concordare: la regola che ANNULLA il cambio quando la manopola `bd` è spenta, e
+// l'anteprima su card finte. ⚠️ Toccando i valori nel CSS statico, aggiornarli qui.
+var HOV_BORDER = { dark:'rgba(104,144,168,0.15)', light:'rgba(80,110,150,0.22)',
+                   dark_on:'rgba(200,202,210,0.45)', light_on:'rgba(60,95,150,0.55)' };
 function injectFxRules(){
   // Config ATTIVE per piattaforma (desktop o _m): le regole in pagina seguono
   // sempre fxCfg; gli editor scrivono sulla variante scelta e la pagina cambia
@@ -3267,6 +3276,17 @@ function injectFxRules(){
     // estetico. Su touch è ininfluente, che è il caso per cui si spegne l'effetto.
     css.push('html:not(.fx-hov) .rank-item[class*="cc-"]:hover{background:rgba(var(--ccrgb,111,116,130),0.10)!important}');
     css.push('html:not(.fx-hov)[data-theme="light"] .rank-item[class*="cc-"]:hover{background:rgba(var(--ccrgb,111,116,130),0.05)!important}');
+  }
+  // ── Contorno della card al passaggio (manopola `bd`, v14.33) ─────────────────
+  // ⚠️ Anche il CONTORNO cambia da sempre al passaggio, per regole STATICHE che
+  // nessun flag governava (misurato: 0.15 → 0.45 in scuro, 0.22 → 0.55 in chiaro).
+  // Acceso non c'è nulla da emettere - vale il CSS statico; SPENTO si riporta il
+  // `:hover` al contorno di riposo. Basta l'`!important`: nessuna regola statica del
+  // bordo ce l'ha, quindi vince anche sulle vecchie regole di Classe, a qualunque
+  // specificità. Il `:focus-within` NON è toccato (indicatore di focus, come il fondo).
+  if (!flagOn('hov') || hv.bd === false) {
+    css.push('.rank-item[class*="cc-"]:hover{border-color:' + HOV_BORDER.dark + '!important}');
+    css.push('html[data-theme="light"] .rank-item[class*="cc-"]:hover{border-color:' + HOV_BORDER.light + '!important}');
   }
   if (flagOn('nums')) {
     // Specificità (0,3,0) come le altre regole cardcolor: le regole del PODIO
@@ -7757,13 +7777,18 @@ var SITE_FLAG_ITEMS = [
   { k:'press', it:'Incisione', en:'Engraving', cfg:true },
   { k:'vig', it:'Alone sfumato', en:'Soft halo', cfg:true },
   { k:'podium', it:'Effetto podio', en:'Podium effect', cfg:true },
-  // ⚠️ Etichetta CORTA per forza: la colonna della label è 132px a 320px in
-  // Modalità XL, e 'Colore al passaggio' misura 147px col font reale (andrebbe a
-  // capo raddoppiando l'altezza della riga). 'Al passaggio' sta in 96px, 'Hover
-  // color' in 92px. ⚠️ Dalla v14.22 la voce c'è ANCHE nella tab Mobile: su touch
-  // l'effetto esiste e vale da selezione al tocco (vedi FX_PTR), quindi la variante
-  // si tara a parte; il discriminante però è il puntatore, non la larghezza.
-  { k:'hov', it:'Al passaggio', en:'Hover color', cfg:true }
+  // ⚠️ Etichetta CORTA per forza: la colonna della label misura **102px** a 320px in
+  // Modalità XL (rimisurata col font reale il 2026-07-28; la nota diceva 132px, che
+  // era il valore prima delle rifiniture del pannello) e ogni etichetta deve starci
+  // su UNA riga. Misure attuali: 'Colore schede' 91.6px, 'Card color' 69.7px - una
+  // riga entrambe. Scartata 'Colore delle schede' (125.1px, va a capo). Storico dei
+  // nomi: 'Colore al passaggio' (147px, mai usata) → 'Al passaggio' (79.9px, v14.10)
+  // → **'Colore schede'** dalla v14.33, su richiesta dell'utente: ora l'effetto
+  // governa il fondo E il contorno, quindi il nome dice la cosa, non il gesto.
+  // ⚠️ Dalla v14.22 la voce c'è ANCHE nella tab Mobile: su touch l'effetto esiste e
+  // vale da selezione al tocco (vedi FX_PTR), quindi la variante si tara a parte;
+  // il discriminante però è il puntatore, non la larghezza.
+  { k:'hov', it:'Colore schede', en:'Card color', cfg:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -7892,6 +7917,12 @@ var FX_KNOBS = {
   // TEMA, nell'ordine chiesto dall'utente (opacità, saturazione, luminosità).
   hov: [
     { p:'on', t:'bool', it:'Attiva', en:'Enable' },
+    // Contorno: sì/no e nient'altro (richiesta dell'utente, v14.33 - 'senza opacità
+    // intermedia o altro'), NON per tema, perché i due valori storici sono già
+    // tarati sui rispettivi fondi. Vale al passaggio del puntatore E al tap.
+    { p:'bd', t:'bool', dep:'on', it:'Contorno più nitido', en:'Sharper border',
+      nit:'Al passaggio (o al tocco) il contorno della card si fa più netto. Spento, il contorno non cambia mai.',
+      nen:'On hover (or tap) the card border gets crisper. Off, the border never changes.' },
     { p:'op_d', t:'num', step:0.01, th:'d', dep:'on', it:'Opacità', en:'Opacity',
       nit:'Quanto si accende il fondo della card sotto il puntatore. Alzandola, i testi più tenui perdono contrasto: il valore consigliato è il predefinito.',
       nen:'How much the card background lights up under the pointer. Raising it costs contrast on the faintest texts: the default is the recommended value.' },
@@ -8304,6 +8335,12 @@ function fxPreviewBlock(o){
         cardTint = ccOklchAdjust(cc, fxTh(hv, 'lum', rec.light), fxTh(hv, 'sat', rec.light));
       }
       rec.el.style.background = hovOn ? fxHovBg(hv, rec.light, cc) : 'rgba(' + cc + ',' + cardA + ')';
+      // Contorno (v14.33): l'anteprima non lo mostrava affatto, restava sempre quello
+      // di riposo - quindi la manopola `bd` non avrebbe avuto riscontro. Si accende
+      // sulla card 'hot' solo con effetto E manopola accesi, come in pagina.
+      rec.el.style.borderColor = (hovOn && V('hov') && V('hov').bd !== false)
+        ? (rec.light ? HOV_BORDER.light_on : HOV_BORDER.dark_on)
+        : (rec.light ? HOV_BORDER.light : HOV_BORDER.dark);
       rec.strip.style.background = 'rgba(' + cc + ',0.85)';
       var gOn = vOn('glow') && hot;
       rec.strip.style.boxShadow = (gOn && g.pl) ? fxGlowInner(g, rec.light, cc) : 'none';
