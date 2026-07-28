@@ -865,11 +865,85 @@ normale/XL secondo la preferenza attiva.
        formula) e l'opacità configurata: con l'effetto attivo lo strato della card non
        è più la tinta pura a un alpha noto (stessa lezione della v12.75, un passo più
        in là).
+  8. **`pat` — trama di fondo** (`fx-pat`, REGOLABILE, dalla v14.43, richiesta
+     dell'utente; label UI **'Trama'/'Pattern'**): un motivo elfico ripetuto sullo
+     sfondo della pagina, tenuissimo. È l'**unico effetto che nasce SPENTO**, perché
+     aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello.
+     - **Due motivi**, disegnati come SVG e serviti come **data URI** (nessun file,
+       nessuna richiesta di rete, tile sotto 1 KB): **`stars`** = stella a otto punte
+       di Varda a raggi nudi con puntini nelle maglie, **`mallorn`** = foglia di
+       Lothlórien con nervature e picciolo, in maglia diagonale. Geometrie in
+       `patSvg`/`patStar`, dimensioni in **`PAT_TILE`**.
+       - ⚠️ **I motivi sono deliberatamente NON narrativi.** Il riferimento che
+         l'utente aveva portato conteneva l'**Albero Bianco** (che è Gondor, quindi
+         Uomini) e l'iscrizione dell'**Unico Anello** in tengwar (che è Sauron):
+         nessuno dei due è elfico. E i tengwar non si inventano: a scriverli a caso
+         si mette in pagina una sciocchezza, contro la regola della verifica delle
+         fonti. Una stella e una foglia non affermano nulla di falso.
+     - **DOVE** (manopola `area`): **'Solo sullo sfondo'** tiene la trama fuori dalla
+       colonna delle schede (la resa del mockup dell'utente), **'Dappertutto'** la
+       lascia anche dietro le schede, che essendo semitrasparenti la mostrano.
+       - Il confinamento è una **`mask-image` a gradiente** (`fxPatMask`): piena ai
+         bordi della finestra, trasparente sotto la colonna, con una **sfumatura**
+         regolabile (`fade`) in mezzo. Le fermate si calcolano da `50%` con `calc`
+         sulla metà di **`PAT_COL`** (920px, la `max-width` di `.scroll`), quindi
+         valgono a ogni larghezza senza misure a runtime.
+     - **Vive su `body::after`**, NON nel `background-image` del body: là c'è già la
+       vignettatura, e impilare i due nella stessa dichiarazione avrebbe legato gli
+       effetti (liste di `background-size`/`repeat`/`attachment` da tenere allineate
+       a quali flag sono accesi). Con lo pseudo-elemento restano indipendenti.
+       - ⚠️ **Nota storica da non dimenticare:** un `body::before` fisso c'era, e fu
+         **RIMOSSO nella v8.74** per due difetti. (1) La sua base OPACA copriva il
+         fondo neutro del body: qui non esiste alcuna base, solo la trama
+         trasparente. (2) Essendo fisso e alto quanto il viewport, su mobile non
+         seguiva la barra dinamica del browser e lasciava una linea di giunzione:
+         qui l'effetto è desktop-only e non ha bordi visibili da cui nasca una linea.
+     - ⚠️ **DESKTOP-ONLY** (scelta dell'utente: su mobile le schede prendono tutta la
+       larghezza e non resterebbe sfondo su cui vederla). Quindi `noMob` + `FX_UNI`
+       come il riflettore, ma la soglia è **`PAT_ROOM_MQ` = `(min-width:920px)`** e
+       **non** i 768px di `FX_MOBILE_MQ`: fra i due valori il margine laterale è già
+       zero (misurato: a 800px la colonna riempie tutta la finestra). Sotto soglia
+       `applySiteFlags` toglie la classe, così non si paga nemmeno il disegno.
+     - **Colore e opacità sono manopole SEPARATE e per tema** (`c_d`/`op_d`,
+       `c_l`/`op_l`): la tinta si scegle col selettore di sistema, l'opacità con uno
+       slider, che è l'unica delle due a dover restare in un intervallo prudente.
+     - ⚠️ **I tetti di opacità sono MISURATI, non estetici.** La trama passa dietro le
+       schede, quindi finisce sotto i testi. Verificato **a calcolo** nel caso
+       peggiore (testo esattamente sopra una linea del motivo, modalità
+       'Dappertutto', opacità al tetto), componendo gli strati uno per uno - pagina →
+       trama → fondo scheda → testo: **minimo 4.66:1 in scuro e 4.91:1 in chiaro** su
+       47 misure. ⚠️ Anche qui **axe non serve come prova** (sulle card rinuncia a
+       determinare il fondo: vedi la nota di `hov`); lo strumento è
+       `scratchpad/pat/aa.js`.
+     - **Due tipi di manopola NUOVI**, introdotti con questo effetto e riusabili:
+       **`sel`** (scelta fra voci: `<select>`, valore stringa, elenco in `opts`; un
+       valore fuori elenco ricade sul default via **`fxSelOk`**) e **`col`** (colore:
+       `<input type=color>`, valore hex). Il **Worker rev 15 non cambia**: valida già
+       le stringhe ≤32 char, e `siteFlags` resta a 19 chiavi su 40 ammesse - quindi
+       nessuna race di deploy sito/Worker.
+     - ⚠️ **Nell'anteprima su card finte la modalità 'Solo sullo sfondo' NON è
+       riproducibile** (il riquadro non ha una colonna di schede da scansare): là si
+       mostra sempre il motivo, ed è la nota della manopola a dire dove finirà. Se
+       nel riquadro ci sono trama E vignetta, si impilano con la vignetta SOPRA, come
+       in pagina.
+     - Verificato che col default (spento) la pagina è **identica al pixel** alla
+       v14.33 nei due temi. ⚠️ Quel confronto va fatto con **moto ridotto** e con
+       tasti salto e FAB nascosti: le animazioni di comparsa e il timer da 3s dei
+       tasti salto rendono l'istantanea casuale (misurato: due screenshot della
+       STESSA versione davano hash diversi in tema chiaro).
+- ⚠️ **NEI TEST, i valori degli effetti si impostano SEMPRE esplicitamente.** La
+  config salvata è quella dell'**utente** e cambia quando lui usa il pannello: un
+  test che si affida ai default misura la sua taratura, non il comportamento del
+  codice. Caso reale (2026-07-28): dopo un salvataggio admin la batteria della v14.33
+  segnalava due falsi FAIL sull'anteprima del contorno, perché nel salvato `hov.bd`
+  era passato a `false` col mouse (e restava `true` a tocco). Prima di dare la caccia
+  a una regressione, leggere `var siteFlags` in `dati.js`.
   - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto
     della v12.24 (`mask-image` su `#rank-list`), **eliminato del tutto nella
     v12.39** su richiesta dell'utente, sostituito dal riflettore. Non
     reintrodurlo; un eventuale `"fade"` residuo in `siteFlags` è ignorato da
-    `normSiteFlags`.
+    `normSiteFlags`. ⚠️ Da non confondere con la manopola `fade` della **trama**
+    (v14.43), che è l'ampiezza della sfumatura ai lati della colonna.
 - **Sotto-modale di regolazione (`showFxConfigEditor(key)`, dalla v12.39; layout
   riga UNIFORME dalla v12.40).** Nel pannello OGNI effetto ha la **checkbox**
   acceso/spento a sinistra (anche i regolabili: su flag a oggetto tocca solo
