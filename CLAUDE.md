@@ -2697,6 +2697,39 @@ specifico del dataset):
   non serviva più. Le righe categoria e legenda condividono il passo verticale
   esplicito di 31.5px (righe in fase, deriva azzerata).
 
+- ⚠️ **Il Pannello ha DUE layout e UNA sola soglia: 768px** (assestato nella v14.67,
+  difetto segnalato dall'utente da un tablet in verticale). Sopra i 768px due colonne
+  affiancate; da 768px in giù la **bottom-sheet a colonna singola**, sempre.
+  - **RIMOSSO nella v14.67 il ramo `@media (min-width:640px) and (max-width:768px)`**
+    che dentro la sheet metteva il contenuto a due colonne. Non era una soglia da
+    ritarare: quel layout **non ci sta in nessun punto del suo stesso intervallo**. La
+    legenda ha righe a capo vietato e chiede ~515px, la colonna delle categorie ~250px
+    col tasto SOLO, più 24px di gap = **~790px minimo**, cioè più del tetto di 768px del
+    ramo. Misurato col font reale in entrambe le lingue: a **768px** (il caso migliore)
+    l'etichetta più lunga sforava ancora di **63px** sotto i tasti SOLO e il tasto TUTTI
+    entrava nella legenda per **71px**; a 640px si arrivava a 127 e 135px.
+  - **Perché nessuno se n'era accorto:** fra 640 e 768px non passa nessun telefono, e il
+    ramo è diventato insufficiente col TEMPO - le etichette delle categorie sono state
+    allungate (v10.79, nomi per esteso: `Edain e Númenóreani`, `Esseri
+    arcani/primordiali`) e la legenda si è arricchita. Lezione: un layout tarato su una
+    fascia di viewport che nessun dispositivo comune occupa non si accorge di rompersi.
+  - ⚠️ **Ma la colonna singola, oltre i telefoni, non deve STIRARSI.** Nella sheet
+    `.ctrl-cols` è `width:100%` (anti-jitter: a larghezza piena il bordo sinistro resta
+    fisso al cambio lingua), e sopra i ~600px questo spingeva i tasti SOLO/TUTTI a
+    centinaia di px dalle etichette - il vuoto che il ramo a due colonne voleva evitare.
+    Rimedio: fra **481 e 768px** il blocco prende `max-width:23rem` e si centra.
+    - ⚠️ **La larghezza è una COSTANTE, non `fit-content`**: provato, e con `fit-content`
+      il blocco **slitta di 5px** al cambio lingua, perché la legenda misura 334px in IT
+      e 324px in EN (le riserve `leg-measure` non azzerano lo scarto al pixel) ed è
+      centrato. 23rem = 368px = 34px di margine sulla riga più larga. ⚠️ Se la legenda si
+      allunga, RIMISURARE.
+    - ⚠️ **Sotto i 481px non si tocca**: sui telefoni la larghezza piena è già la misura
+      naturale, e intervenire lì rimetterebbe in gioco lo scivolamento orizzontale.
+  - Verificato: **33/33** su 390/480/500/600/640/720/768px in entrambe le lingue (nessuna
+    sovrapposizione, nessuno scorrimento orizzontale, blocco immobile al cambio lingua),
+    Pannello **identico al pixel** a 390px e a 1400px, axe **0** a 600/720/768px nei due
+    temi. Lo strumento è `scratchpad/tabfix.js`.
+
 - **Elfi senza stirpe attestata: etichetta `Elfo`, colore 'suggerito'.**
   Erestor e Lindir non hanno stirpe attestata dalle fonti: l'etichetta resta
   `Elfo`/`Elfa` (niente invenzioni), ma il COLORE via `tipo_color` suggerisce
