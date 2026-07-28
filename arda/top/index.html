@@ -2556,7 +2556,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.12</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <span class="version-badge">v14.22</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2653,10 +2653,19 @@ var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom 
 var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
-// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Il riflettore dalla
-// v13.18, il colore al passaggio dalla v14.10: governano entrambi la resa sotto il
-// PUNTATORE, che su touch non esiste, quindi una variante mobile non avrebbe senso.
-var FX_UNI = { spot:true, hov:true };
+// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Solo il riflettore
+// (dalla v13.18): l'alone segue il puntatore, e senza puntatore non c'è nulla da
+// mostrare né da regolare.
+var FX_UNI = { spot:true };
+// ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
+// dalla larghezza (v14.22, scelta dell'utente). `hov` è il fondo della card sotto
+// il puntatore: su touch l'effetto ESISTE — misurato, il tap applica `:hover` e lo
+// lascia APPICCICATO finché non si tocca un'altra card, quindi vale da selezione —
+// ma è un'altra cosa dal passaggio del mouse e va tarata a parte. Il discriminante
+// giusto è però `(hover:hover) and (pointer:fine)`, NON i 768px degli altri
+// effetti: una finestra desktop stretta ha il mouse e deve tenere la config
+// desktop, un tablet touch largo non lo ha e deve prendere quella touch.
+var FX_PTR = { hov:true };
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
   // glow: dalla v12.76 le manopole numeriche sono PER TEMA (suffisso _d/_l) e
@@ -2720,8 +2729,11 @@ var SITE_FLAGS_DEFAULT = {
   // luminosità della tinta stessa. I default riproducono ESATTAMENTE le vecchie
   // regole statiche (alpha 0.18 scuro / 0.11 chiaro, tinta intatta): a 1/1 la
   // formula OKLCH restituisce lo stesso colore, quindi chi non tocca nulla non
-  // vede alcun cambiamento. Config UNICA per i due dispositivi (come il
-  // riflettore): governa la resa sotto il puntatore.
+  // vede alcun cambiamento. ⚠️ Dalla v14.22 ha una variante TOUCH a sé (`hov_m`,
+  // scelta per capacità del puntatore: vedi FX_PTR), perché sui dispositivi a tocco
+  // il `:hover` resta appiccicato e l'effetto vale da selezione della card. Il
+  // default vale per entrambe le varianti (`_m` seminata dalla desktop), quindi
+  // l'aggiunta della variante non cambia da sé la resa di nessuno.
   hov:{ on:true, op_d:0.18, op_l:0.11, sat_d:1, sat_l:1, lum_d:1, lum_l:1 }
 };
 // Limiti delle manopole numeriche. Servono a DUE cose: tarare gli slider della
@@ -2877,11 +2889,24 @@ var SITE_FLAGS = normSiteFlags(typeof siteFlags !== 'undefined' ? siteFlags : nu
 // diretto SITE_FLAGS[k] è riservato agli editor (che scelgono la variante a mano).
 var FX_MOBILE_MQ = window.matchMedia('(max-width:768px)');
 if (FX_MOBILE_MQ.addEventListener) FX_MOBILE_MQ.addEventListener('change', function(){ applySiteFlags(); });
+// Esiste un puntatore VERO (mouse/trackpad)? Discriminante degli effetti in
+// `FX_PTR` e gate del riflettore, che senza puntatore non si aggancia nemmeno.
+// Sta qui, sopra `fxCfg`, perché è `fxCfg` il suo primo lettore. Il listener
+// rilancia `applySiteFlags`, che ri-inietta le regole E richiama `wireSpotlight`:
+// così un cambio di capacità a caldo (schermo touch collegato/scollegato, DevTools)
+// ricalcola sia le config sia l'aggancio del riflettore.
+var FX_PTR_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
+if (FX_PTR_MQ.addEventListener) FX_PTR_MQ.addEventListener('change', function(){ applySiteFlags(); });
 // ⚠️ `spot` NON ha la variante mobile (v13.18, richiesta utente): il riflettore
 // è un effetto da puntatore, il 'mobile' non c'entra con lui — la sua config è
 // UNICA e vale ovunque esista un puntatore, anche nelle finestre strette. Un
 // eventuale `spot_m` residuo nei dati salvati resta ignorato.
-function fxCfg(k){ return (!FX_UNI[k] && FX_MOBILE_MQ.matches) ? SITE_FLAGS[k + '_m'] : SITE_FLAGS[k]; }
+function fxCfg(k){
+  if (FX_UNI[k]) return SITE_FLAGS[k];
+  // `FX_PTR`: variante per CAPACITÀ del puntatore (v14.22); gli altri per larghezza.
+  var mob = FX_PTR[k] ? !FX_PTR_MQ.matches : FX_MOBILE_MQ.matches;
+  return mob ? SITE_FLAGS[k + '_m'] : SITE_FLAGS[k];
+}
 // Un flag è 'acceso' se booleano true oppure oggetto con on !== false (valutato
 // sulla config attiva per piattaforma; zoomBig non ha variante).
 function flagOn(k){
@@ -3199,9 +3224,25 @@ function injectFxRules(){
   if (flagOn('hov')) {
     // Specificità (0,4,1) in scuro e (0,5,1) in chiaro: battono le regole di
     // injectCardColorRules ((0,3,0) e (0,3,1)), che restano il fallback storico se
-    // il flag è spento o se `oklch(from …)` non è supportato.
+    // `oklch(from …)` non è supportato.
     css.push('html.fx-hov .rank-item[class*="cc-"]:hover,html.fx-hov .rank-item[class*="cc-"]:focus-within{background:' + fxHovBg(hv, false) + '!important}');
     css.push('html.fx-hov[data-theme="light"] .rank-item[class*="cc-"]:hover,html.fx-hov[data-theme="light"] .rank-item[class*="cc-"]:focus-within{background:' + fxHovBg(hv, true) + '!important}');
+  } else {
+    // ⚠️ A EFFETTO SPENTO IL FONDO NON DEVE CAMBIARE AL PASSAGGIO (v14.22, scelta
+    // dell'utente): serve una regola ATTIVA che riporti il `:hover` al fondo di
+    // RIPOSO, perché spegnere il flag da solo non basta. Il cambio di fondo è una
+    // funzione BASE del sistema cardcolor (`injectCardColorRules`, 0.18/0.11) e
+    // sotto di essa ci sono ancora le vecchie regole di Classe (`.divine:hover` e
+    // compagnia, oggi mute solo grazie all'`!important` di quelle cardcolor):
+    // togliendo la regola invece di riscriverla, riemergerebbero le tinte storiche.
+    // Serve `html:not(.fx-hov)` per battere la base ((0,4,1) contro (0,3,1) in
+    // scuro, (0,5,1) contro (0,4,1) in chiaro) e l'`!important` per le statiche.
+    // ⚠️ Il `:focus-within` NON è toccato e resta acceso al valore storico: il nome
+    // della card è `role="button" tabindex="0"`, quindi quel fondo è il suo
+    // indicatore di FOCUS da tastiera (WCAG 2.4.7) e non dipende da un effetto
+    // estetico. Su touch è ininfluente, che è il caso per cui si spegne l'effetto.
+    css.push('html:not(.fx-hov) .rank-item[class*="cc-"]:hover{background:rgba(var(--ccrgb,111,116,130),0.10)!important}');
+    css.push('html:not(.fx-hov)[data-theme="light"] .rank-item[class*="cc-"]:hover{background:rgba(var(--ccrgb,111,116,130),0.05)!important}');
   }
   if (flagOn('nums')) {
     // Specificità (0,3,0) come le altre regole cardcolor: le regole del PODIO
@@ -3307,14 +3348,16 @@ function spotMove(e){
   spotEl = el; spotCX = e.clientX; spotCY = e.clientY;
   if (!spotRAF) spotRAF = requestAnimationFrame(spotFlush);
 }
-var SPOT_HOVER_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
-if (SPOT_HOVER_MQ.addEventListener) SPOT_HOVER_MQ.addEventListener('change', function(){ wireSpotlight(); });
+// La media query del puntatore vive accanto a `fxCfg` (si chiamava SPOT_HOVER_MQ
+// finché il riflettore era il solo a usarla; dalla v14.22 la condivide con `hov`,
+// da cui il nome neutro) e il suo listener rilancia `applySiteFlags`, che chiama
+// anche questa: qui non serve un secondo aggancio.
 function wireSpotlight(){
   var list = document.getElementById('rank-list');
   if (!list) return;
   // Solo dove esiste un puntatore vero: le regole CSS sono nella stessa media
   // query, quindi su touch il listener non avrebbe nulla da illuminare.
-  var want = flagOn('spot') && SPOT_HOVER_MQ.matches;
+  var want = flagOn('spot') && FX_PTR_MQ.matches;
   if (want === spotWired) return;
   if (want) list.addEventListener('pointermove', spotMove, { passive:true });
   else list.removeEventListener('pointermove', spotMove);
@@ -7693,8 +7736,10 @@ var SITE_FLAG_ITEMS = [
   // ⚠️ Etichetta CORTA per forza: la colonna della label è 132px a 320px in
   // Modalità XL, e 'Colore al passaggio' misura 147px col font reale (andrebbe a
   // capo raddoppiando l'altezza della riga). 'Al passaggio' sta in 96px, 'Hover
-  // color' in 92px. Config unica per i due dispositivi, come il riflettore.
-  { k:'hov', it:'Al passaggio', en:'Hover color', cfg:true, noMob:true }
+  // color' in 92px. ⚠️ Dalla v14.22 la voce c'è ANCHE nella tab Mobile: su touch
+  // l'effetto esiste e vale da selezione al tocco (vedi FX_PTR), quindi la variante
+  // si tara a parte; il discriminante però è il puntatore, non la larghezza.
+  { k:'hov', it:'Al passaggio', en:'Hover color', cfg:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -8120,7 +8165,9 @@ function fxPreviewBlock(o){
   // ⚠️ In PANORAMICA si escludono gli effetti che quella variante NON ha: il
   // riflettore è `noMob` (config unica dalla v13.18) e nella tab Mobile non compare
   // nemmeno nella lista, quindi mostrarlo nell'anteprima mobile sarebbe una bugia -
-  // e il suo invito 'Muovi il puntatore qui' un invito a nulla.
+  // e il suo invito 'Muovi il puntatore qui' un invito a nulla. 'Al passaggio' era
+  // nello stesso caso fino alla v14.21; dalla v14.22 ha la sua variante touch e
+  // quindi compare regolarmente anche nella panoramica mobile.
   // La config si legge con tolleranza: una variante può mancare del tutto (p.es.
   // uno `spot_m` mai seminato), e leggerne `.on` alla cieca sarebbe un errore.
   var vOn = function(k){
@@ -8216,10 +8263,14 @@ function fxPreviewBlock(o){
         : key === 'glow' ? (g.all === true || rec.first)
         : key === 'spot';
       // Fondo della card: a card accesa e con l'effetto attivo vale la formula
-      // condivisa con la pagina (stessa stringa CSS, così non possono divergere);
-      // altrimenti gli alpha storici.
+      // condivisa con la pagina (stessa stringa CSS, così non possono divergere).
+      // ⚠️ A effetto SPENTO si resta sull'alpha di RIPOSO anche sulla card 'hot'
+      // (v14.22): dacché l'interruttore governa davvero, in pagina il fondo non
+      // cambia più al passaggio, e alzarlo qui a 0.18/0.11 sarebbe una bugia. Gli
+      // altri effetti legati allo stato hover (bagliore, riflettore) restano invece
+      // pilotati da `hot`, che è il loro stato, non il fondo di questo.
       var hovOn = hot && vOn('hov');
-      var cardA = rec.light ? (hot ? 0.11 : 0.05) : (hot ? 0.18 : 0.10);
+      var cardA = rec.light ? 0.05 : 0.10;
       var cardTint = cc;
       if (hovOn) {
         cardA = fxTh(hv, 'op', rec.light);
@@ -8286,7 +8337,11 @@ function fxPreviewBlock(o){
       rec.desc.textContent = (key === 'spot' || (all && vOn('spot')))
         ? (it ? 'Muovi il puntatore qui' : 'Move the pointer here')
         : (key === 'glow' || key === 'hov')
-          ? (hot ? (it ? 'Card attiva (hover)' : 'Active card (hover)') : (it ? 'Card a riposo' : 'Resting card'))
+          // Nella variante touch di 'Al passaggio' non c'è alcun passaggio: il tap
+          // applica `:hover` e lo lascia appiccicato, quindi la card è SELEZIONATA.
+          ? (hot ? ((key === 'hov' && sfx) ? (it ? 'Card toccata' : 'Tapped card')
+                                          : (it ? 'Card attiva (hover)' : 'Active card (hover)'))
+                 : (it ? 'Card a riposo' : 'Resting card'))
           : (it ? 'Anteprima' : 'Preview');
     });
   }
