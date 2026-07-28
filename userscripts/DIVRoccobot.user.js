@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.17.4
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio, con sette voci: copia immagine, copia URL immagine, salva immagine..., poi adatta alla vista, 100%, 200% e 400%. Sugli SVG la copia e' un raster a 96 DPI (1:1 con la dimensione nominale) e il salvataggio da' il file originale. SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito.
+// @version         2.18.0
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio, con sette voci: copia immagine, copia URL immagine, salva immagine..., poi adatta alla vista, 100%, 200% e 400%. Sugli SVG la copia e' un raster a 96 DPI (1:1 con la dimensione nominale) e il salvataggio da' il file originale. SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito. Dalla 2.18 il tasto A commuta il MODO DI ADATTARE: normalmente l'immagine si adatta alla vista ma non supera mai la dimensione reale (quindi una figura piccola resta a 1:1 e il clic non ha nulla da alternare); premendo A si adatta anche INGRANDENDO, cosi' anche una figura minuta riempie la vista e il clic alterna sempre fra riempi-vista e 1:1. La scelta resta memorizzata e il tetto di zoom vale comunque, percio' un'icona di pochi pixel si ferma prima dell'assurdo. Sempre nella 2.18, i tasti nudi non scattano piu' mentre si scrive nel campo DPI di una pagina SVG: la' il documento e' XML e il nome del tag arriva in minuscolo, caso che il controllo non copriva.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -65,6 +65,13 @@
   // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
   // scelta resta memorizzata (globale, come la modalita' del tondo 1:1).
   const ROTELLA_SU_INGRANDISCE = true;
+  // — Adattamento alla vista —
+  // false = criterio originale: l'immagine si adatta ma non supera MAI la dimensione
+  //         reale, quindi una figura piu' piccola della vista resta a 1:1;
+  // true  = si adatta anche INGRANDENDO, cioe' una figura piccola viene portata a
+  //         riempire la vista.
+  // Si commuta al volo col tasto A e la scelta resta memorizzata.
+  const ADATTA_INGRANDENDO = false;
   const OVERLAY_NUDGE_Y = 0;   // px: micro-compensazione verticale opzionale del testo dell'overlay.
                                // Dopo text-box-trim resta solo un residuo SUB-PIXEL di arrotondamento
                                // del rendering, che dipende dallo ZOOM DI PAGINA del browser (es. a
@@ -341,7 +348,20 @@
     let realScale = scaleMode === 'phys' ? 1 / dpr : 1;
     let logR = Math.log(realScale);   // 100% = dimensione reale, in scala logaritmica
     function fitScale() { return Math.min(wrap.clientWidth / natW, wrap.clientHeight / natH); }
-    function fitDisplay() { return Math.min(fitScale(), realScale); }   // adatta, ma mai oltre il reale
+    // DUE MODI DI ADATTARE, commutabili col tasto A e memorizzati:
+    //  - senza ingrandire (predefinito, il criterio originale): l'immagine si adatta
+    //    alla vista ma non supera MAI la dimensione reale, quindi una figura piccola
+    //    resta a 1:1 e il clic non ha nulla da alternare;
+    //  - ingrandendo: anche una figura che sta tutta nella vista viene portata a
+    //    riempirla, cosi' il clic alterna sempre fra "riempi lo schermo" e 1:1.
+    // Il tetto di maxScale() vale in ogni caso: su un'icona minuscola l'adattamento
+    // chiederebbe altrimenti ingrandimenti assurdi.
+    let ingrandisciPerAdattare = false;
+    try { ingrandisciPerAdattare = GM_getValue('dv-fit-grow', ADATTA_INGRANDENDO ? '1' : '0') === '1'; } catch (e) {}
+    function fitDisplay() {
+      const f = fitScale();
+      return ingrandisciPerAdattare ? Math.min(f, maxScale()) : Math.min(f, realScale);
+    }
     // Limite basso: si può rimpicciolire sotto l'adattato (fino a ZOOM_MIN_MULT del reale),
     // senza però mai alzare l'adattato se l'immagine è enorme (fit già sotto quel minimo).
     function minScale() { return Math.min(realScale * ZOOM_MIN_MULT, fitDisplay()); }
@@ -795,7 +815,23 @@
     document.addEventListener('keydown', function (e) {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const t = e.target;
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      // ATTENZIONE al confronto MAIUSCOLO/minuscolo: in una pagina SVG il documento e'
+      // XML, e li' tagName conserva il caso originale ('input'), mentre in HTML e'
+      // sempre maiuscolo ('INPUT'). Confrontando col solo 'INPUT' i tasti nudi
+      // scattavano mentre si scriveva nel campo DPI del pannello di esportazione.
+      const nomeTag = t && t.tagName ? String(t.tagName).toUpperCase() : '';
+      if (nomeTag === 'INPUT' || nomeTag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+      if (e.key === 'a' || e.key === 'A') {         // adattamento: ingrandisce o no
+        e.preventDefault();
+        ingrandisciPerAdattare = !ingrandisciPerAdattare;
+        try { GM_setValue('dv-fit-grow', ingrandisciPerAdattare ? '1' : '0'); } catch (err) {}
+        // se si sta guardando l'adattato il cambio si vede subito; altrimenti si
+        // ri-limita la scala corrente, perche' i confini si sono spostati
+        if (isFit) vaiFit();
+        else { scale = clamp(scale); apply(); }
+        toast(ingrandisciPerAdattare ? 'Adatta anche ingrandendo' : 'Adatta senza ingrandire');
+        return;
+      }
       if (e.key === 'n' || e.key === 'N') {         // navigatore acceso/spento
         e.preventDefault();
         navigatoreAcceso = !navigatoreAcceso;
