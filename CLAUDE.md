@@ -966,6 +966,25 @@ normale/XL secondo la preferenza attiva.
          Modalità XL. ⚠️ `getBoundingClientRect` dà px **visivi**: sotto XL va diviso
          per lo zoom, rilevato da sé come `rect.width / offsetWidth` (stessa lezione
          delle linee mediane). Verificato: 56px di **layout** con e senza XL.
+       - ⚠️ **IN VISTA DIVISA il box dello strato si stringe all'area del CONTENUTO**
+         (fix v14.66, segnalato dall'utente). In dock la pagina è spostata a destra
+         (`body{margin-left:var(--dockw)}`), quindi la colonna delle schede non è più
+         centrata sul viewport: il `50%` della maschera puntava 200px troppo a sinistra
+         e la trama finiva **sopra le schede**, con margini asimmetrici che rendevano
+         l'anteprima inaffidabile (ed è la pagina, in dock, a fare da anteprima). Rimedio
+         dichiarativo, una riga: `html.fx-pat.fx-dock body::after{left:var(--dockw,0px)}`
+         — stringendo il box, `50%` torna a significare 'centro di dove vive la pagina' e
+         la formula non si tocca. Verificato: centro maschera = centro colonna al pixel,
+         **0** pixel diversi sulle schede, confini a 461/462px dal centro.
+         - ⚠️ **COME SI MISURA la presenza della trama** (lezione della stessa release):
+           il confronto A/B va fatto fra trama **visibile e invisibile** (opacità a 0)
+           tenendo la classe `fx-pat` ATTIVA, **non** fra effetto acceso e spento. Motivo
+           misurato: `body::after` è `position:fixed` con `z-index:-1` e la sua sola
+           presenza cambia il modo in cui il browser compone la pagina, quindi
+           l'antialiasing di testi ed emoji si muove in punti isolati (33k pixel diversi,
+           max 162, con la trama del tutto invisibile). Sulle MEDIE di un rettangolo il
+           rumore si annulla, sui MASSIMI no: con l'accensione come discriminante il test
+           dà falsi allarmi, e infatti li ha dati.
          - ⚠️ **Tentata e scartata la trama ancorata al DOCUMENTO** (`position:absolute`
            + `body{position:relative}`): la maschera diventa statica e non costa nulla a
            ogni frame, ma la banda sgombra in cima segue il documento e quindi **non può

@@ -2589,7 +2589,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.65</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.66</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3610,6 +3610,15 @@ function injectFxRules(){
               '-webkit-mask-image:' + mk, '-webkit-mask-composite:source-in',
               'mask-image:' + mk, 'mask-composite:intersect'];
     css.push('html.fx-pat body::after{' + pm.join(';') + '}');
+    // ⚠️ VISTA DIVISA (fix v14.66, segnalato dall'utente). In dock la pagina è spostata
+    // a destra (`body{margin-left:var(--dockw)}`), quindi la colonna delle schede NON è
+    // più centrata sul viewport ma sull'area a destra del pannello. Lo strato della
+    // trama è `position:fixed` sul viewport, dunque il `50%` della maschera puntava 200px
+    // troppo a sinistra e la trama finiva SOPRA le schede - proprio ciò che la v14.65
+    // doveva impedire - con margini asimmetrici che rendevano l'anteprima inaffidabile.
+    // Rimedio dichiarativo: si stringe il BOX dello strato all'area del contenuto, così
+    // `50%` torna a significare 'centro di dove vive la pagina' senza toccare la formula.
+    css.push('html.fx-pat.fx-dock body::after{left:var(--dockw,0px)}');
     css.push('html.fx-pat[data-theme="light"] body::after{background-image:' + fxPatBg(pt, true) + '}');
   }
   if (flagOn('hov')) {
