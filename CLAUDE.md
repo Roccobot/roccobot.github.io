@@ -1526,6 +1526,35 @@ colori e micro-aggiustamenti sullo stesso telaio.
 
 ## 🔐 Admin e segreti
 
+- **Selezione del testo e tasto destro SPENTI per i visitatori, attivi per l'admin**
+  (dalla v14.77, richiesta dell'utente). Una classe **`no-pick`** su `<html>`, messa
+  all'avvio e **tolta dallo sblocco admin** (`setPickLock(false)` in
+  `showPasswordModal`); una sessione scaduta (401) la rimette.
+  - Tre pezzi: `user-select:none` nel CSS sotto quella classe, un listener
+    **`contextmenu`** e uno **`copy`/`cut`**, entrambi in **capture** su `document`
+    (così arrivano prima di ogni altro gestore, comprese le modali).
+  - ⚠️ **I CAMPI DI TESTO sono SEMPRE esenti**, anche da visitatore: senza
+    l'eccezione (`input, textarea, select, [contenteditable]`) la modale della parola
+    d'ordine diventa inutilizzabile - niente selezione e niente incolla dal menu
+    contestuale. Il bersaglio di `copy` può non essere un elemento, da cui il
+    controllo su `closest` in `pickInField`.
+  - ⚠️ **`user-select` si EREDITA, quindi il `none` sul body non basta** dove una
+    regola lo dichiara sull'elemento: **`.rank-item`** è un `<button>` resettato e
+    porta un `user-select:text` esplicito (i bottoni nascono `none` nell'UA), quindi
+    va spento in modo altrettanto esplicito. Misurato: senza quella riga il Nome
+    restava selezionabile mentre l'Info no.
+  - ⚠️ **`-webkit-touch-callout`** (sopprime il menu del tap lungo su iOS) è
+    **INIETTATA a runtime**, non nel CSS statico: nel progetto quella proprietà è
+    sempre stata tenuta fuori dal foglio che il Nu ispeziona (finora inline sul solo
+    FAB) e il gate della release è 0 errori **e** 0 warning.
+  - ⚠️ **È un DETERRENTE, non una protezione**, e va detto: il testo sta comunque nel
+    sorgente della pagina e resta leggibile da 'visualizza sorgente', dagli strumenti
+    per sviluppatori o con JavaScript disattivato.
+  - Verificato che non rompe nulla: scheda personaggio, Risorse e note, **pan del
+    visualizzatore mappe**, tap lungo sul FAB (Modalità XL) e Pannello identico al
+    pixel. ⚠️ Nel visualizzatore mappe il tasto destro è bloccato come altrove,
+    quindi da visitatore non si fa 'salva immagine': è una conseguenza voluta della
+    richiesta, non una dimenticanza.
 - **La parola d'ordine admin è validata SOLO lato server** dal Cloudflare
   Worker (secret `ADMIN_PASSWORD`): non deve mai comparire nel sorgente
   del sito, né in chiaro né in base64 (la vecchia `atob(...)` è stata
@@ -2697,6 +2726,31 @@ specifico del dataset):
   non serviva più. Le righe categoria e legenda condividono il passo verticale
   esplicito di 31.5px (righe in fase, deriva azzerata).
 
+- ⚠️ **L'hover delle righe del Pannello NON transita** (dalla v14.77, segnalato
+  dall'utente: 'l'hover lagga sempre più di quanto sembrerebbe naturale'). Non era la
+  macchina: era una dissolvenza di 0.15s **nostra**, in entrata e in uscita. Misurato:
+  il fondo raggiungeva il valore pieno **171ms** dopo l'ingresso del puntatore, in 7
+  passi intermedi - su una lista di interruttori quel ritardo si legge come risposta
+  lenta. E costava: passando il puntatore su dieci righe di legenda, il tracing di
+  Chrome dava **253ms** di rendering su 2s di movimento (12,6% del tempo), scesi a
+  **62ms** (4,1%) togliendo la transizione: un fattore 4, perché ogni riga veniva
+  ripitturata per ~9 frame a ogni entrata e altrettanti a ogni uscita.
+  - ⚠️ **NON erano la sfocatura né l'ombra del Pannello**, che è la prima cosa a cui si
+    pensa: misurato, 253ms contro 254 togliendo il `backdrop-filter` e 246 togliendo il
+    `box-shadow`. Prima di sospettare il blur, contare i frame delle transizioni.
+  - La dissolvenza **resta dove è un cambio di STATO**: l'accensione del filtro badge
+    (`.ctrl-legend-row.on`, con la `transition` dichiarata sullo stato di arrivo) e la
+    spunta della checkbox. Il passaggio del puntatore non transita in nessun verso.
+  - Lo strumento è `scratchpad/hoverperf.js` (CDP `Tracing`, somma di
+    `Paint`/`RasterTask`/`Commit`/`UpdateLayoutTree`/`PrePaint`).
+- ⚠️ **Tablet con mouse: l'hover del Pannello funziona, le media query no.** In un
+  contesto touch `(hover:hover)`, `(pointer:fine)` e `(any-hover:hover)` sono **false**
+  anche con un mouse collegato (misurato in emulazione), ma le regole `:hover` del
+  Pannello **non sono gatate** su quelle media query, quindi si applicano comunque -
+  verificato, il fondo cambia sotto il puntatore. Se su un tablet reale l'hover pare
+  assente, i sospetti sono il browser che non manda gli eventi di puntatore, oppure il
+  fatto che l'effetto è **molto tenue** (in tema chiaro `rgba(58,88,120,0.10)` su fondo
+  quasi bianco): prima di cercare un difetto, provare ad alzare quell'opacità.
 - ⚠️ **Il Pannello ha DUE layout e UNA sola soglia: 768px** (assestato nella v14.67,
   difetto segnalato dall'utente da un tablet in verticale). Sopra i 768px due colonne
   affiancate; da 768px in giù la **bottom-sheet a colonna singola**, sempre.
