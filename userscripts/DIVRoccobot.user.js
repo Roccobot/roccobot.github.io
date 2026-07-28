@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.18.0
-// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio, con sette voci: copia immagine, copia URL immagine, salva immagine..., poi adatta alla vista, 100%, 200% e 400%. Sugli SVG la copia e' un raster a 96 DPI (1:1 con la dimensione nominale) e il salvataggio da' il file originale. SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito. Dalla 2.18 il tasto A commuta il MODO DI ADATTARE: normalmente l'immagine si adatta alla vista ma non supera mai la dimensione reale (quindi una figura piccola resta a 1:1 e il clic non ha nulla da alternare); premendo A si adatta anche INGRANDENDO, cosi' anche una figura minuta riempie la vista e il clic alterna sempre fra riempi-vista e 1:1. La scelta resta memorizzata e il tetto di zoom vale comunque, percio' un'icona di pochi pixel si ferma prima dell'assurdo. Sempre nella 2.18, i tasti nudi non scattano piu' mentre si scrive nel campo DPI di una pagina SVG: la' il documento e' XML e il nome del tag arriva in minuscolo, caso che il controllo non copriva.
+// @version         2.18.1
+// @description     Visualizzatore d'immagini "decente" per le pagine-immagine del browser (anche file locali file:///) e, dalla 2.10, anche per gli SVG: sfondo a scacchi, info (formato/dimensioni/peso), immagine SEMPRE adattata alla vista ma mai oltre la dimensione reale (1:1 con i pixel fisici, DPR ignorato). Desktop: clic = alterna adattato <-> reale. Desktop+mobile: lo zoom (ctrl+rotella / pinch) agisce SOLO sull'immagine, mai sullo zoom di pagina. Un unico riquadro in alto a sinistra mostra formato, peso, dimensioni e livello di zoom (sempre visibile) su una sola riga; lo zoom si aggancia al 100% (dimensione reale) con un fermo, ed e' possibile rimpicciolire sotto l'adattato. Un tasto tondo commuta il 100% tra pixel fisici (fedele al pannello) e pixel logici (CSS, piu' grande su schermi HiDPI). Gli SVG restano vettoriali: ingranditi si ridisegnano nitidi, e la dimensione "reale" si ricava da width/height, dal viewBox o dall'ingombro del disegno. Dalla 2.11, sulle pagine SVG, un secondo tondo apre un pannello per SCARICARE: esportazione in PNG a un DPI a scelta (con anteprima in tempo reale dei pixel e dei centimetri, DPI scritto nel file, sfondo bianco opzionale) oppure l'SVG ripulito da metadati, XMP e roba di Illustrator o Inkscape, senza toccare la geometria. Tutto il lavoro avviene solo al clic: aprire un SVG non costa nulla in piu'. Dalla 2.12 la ROTELLA NUDA del mouse zooma a scatti (1,4x per scatto, immediato, con aggancio esatto al 100%), mentre il trackpad continua a scorrere: i due casi si distinguono dalla forma dell'evento. Shift+rotella scorre anche col mouse; il tasto I inverte il verso della rotella e la scelta resta memorizzata. Dalla 2.13 vale UNO scatto di zoom per ogni scatto della rotella anche quando il browser ne unisce piu' d'uno in un solo evento, le frazioni si sommano invece di perdersi, e i limiti sono piu' larghi (dal 2% al 4000%). Dalla 2.14 il passo e' 1,1x e l'ampiezza di uno scatto si IMPARA dal mouse in uso, perche' non e' universale: con l'accelerazione di sistema un solo tic fisico puo' valere 360 di wheelDeltaY invece di 120, e dandolo per scontato si contavano tre passi per un tic solo. In alternativa al passo geometrico c'e' TAPPE_ZOOM, un elenco di tappe fisse. Dalla 2.15, quando l'ingrandimento porta l'immagine oltre la vista, si puo' TRASCINARE per spostarsi (il 'niente trascinamento' delle versioni precedenti era una scelta che aveva senso finche' la rotella scorreva) e in alto a destra compare un NAVIGATORE con la vista d'insieme e un riquadro rosso che segna la parte a schermo; ci si puo' anche cliccare e trascinare dentro. Il tasto N lo accende e lo spegne. Dalla 2.16 lo zoom di rotella usa una SCALA DI VALORI TONDI (100, 110, 125, 140, 150, 165, 180, 200, 225 ...) costruita per imitare l'andamento dell'1,1x: sopra il 10% i rapporti stanno fra 1,06 e 1,17 e servono gli stessi 14 scatti per andare dal 100% al 400%. Le tappe troppo vicine al valore attuale si saltano (almeno +5% ingrandendo, almeno -2% rimpicciolendo), cosi' partendo da un valore fuori scala non si spreca un tic per un cambiamento impercettibile. Dalla 2.17 il tasto destro apre un MENU proprio, con sette voci: copia immagine, copia URL immagine, salva immagine..., poi adatta alla vista, 100%, 200% e 400%. Sugli SVG la copia e' un raster a 96 DPI (1:1 con la dimensione nominale) e il salvataggio da' il file originale. SHIFT + tasto destro lascia passare il menu del browser, che altrimenti sarebbe sostituito. Dalla 2.18 il tasto A commuta il MODO DI ADATTARE: normalmente l'immagine si adatta alla vista ma non supera mai la dimensione reale (quindi una figura piccola resta a 1:1 e il clic non ha nulla da alternare); con A acceso anche una figura minuta puo' essere portata a riempire la vista, e il clic alterna fra riempi-vista e 1:1. L'INGRANDIMENTO E' SEMPRE SU RICHIESTA (dalla 2.18.1): un'immagine piu' piccola della vista si apre a 1:1 anche con l'opzione accesa, ed e' il clic a chiedere il riempimento; nemmeno allargando la finestra si ingrandisce da se'. Chi invece a 1:1 eccederebbe la vista si apre adattato, come sempre. La scelta resta memorizzata e il tetto di zoom vale comunque, percio' un'icona di pochi pixel si ferma prima dell'assurdo. Sempre nella 2.18, i tasti nudi non scattano piu' mentre si scrive nel campo DPI di una pagina SVG: la' il documento e' XML e il nome del tag arriva in minuscolo, caso che il controllo non copriva.
 // @author          Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -352,12 +352,18 @@
     //  - senza ingrandire (predefinito, il criterio originale): l'immagine si adatta
     //    alla vista ma non supera MAI la dimensione reale, quindi una figura piccola
     //    resta a 1:1 e il clic non ha nulla da alternare;
-    //  - ingrandendo: anche una figura che sta tutta nella vista viene portata a
+    //  - ingrandendo: anche una figura che sta tutta nella vista puo' essere portata a
     //    riempirla, cosi' il clic alterna sempre fra "riempi lo schermo" e 1:1.
+    // ⚠️ L'INGRANDIMENTO E' SEMPRE SU RICHIESTA, mai spontaneo: chi apre un'immagine piu'
+    // piccola della vista la vede a 1:1 anche con l'opzione accesa, ed e' il CLIC (o la
+    // voce "Adatta alla vista" del menu) a chiedere il riempimento. Per questo esistono
+    // due misure di adattamento: fitDisplay() e' quella CHIESTA, fitSenzaCrescere()
+    // quella dei riadattamenti automatici (apertura, ridimensionamento della finestra).
     // Il tetto di maxScale() vale in ogni caso: su un'icona minuscola l'adattamento
     // chiederebbe altrimenti ingrandimenti assurdi.
     let ingrandisciPerAdattare = false;
     try { ingrandisciPerAdattare = GM_getValue('dv-fit-grow', ADATTA_INGRANDENDO ? '1' : '0') === '1'; } catch (e) {}
+    function fitSenzaCrescere() { return Math.min(fitScale(), realScale); }
     function fitDisplay() {
       const f = fitScale();
       return ingrandisciPerAdattare ? Math.min(f, maxScale()) : Math.min(f, realScale);
@@ -371,8 +377,18 @@
     }
     function clamp(s) { return Math.max(minScale(), Math.min(s, maxScale())); }
 
-    let scale = fitDisplay();
-    let isFit = true;
+    // Stato di partenza: adattato SOLO se c'e' davvero da rimpicciolire. Un'immagine piu'
+    // piccola della vista si apre a 1:1 anche con l'ingrandimento acceso (che si chiede
+    // col clic); una piu' grande si apre adattata, come sempre.
+    let scale = fitScale() < realScale ? fitDisplay() : realScale;
+    // ⚠️ isFit significa "sto mostrando l'adattato CHE IL CLIC DAREBBE", non "sono
+    // arrivato qui adattando": e' da questo che il clic capisce se ha qualcosa da
+    // alternare. Percio' si RICALCOLA ogni volta che cambia la scala, l'opzione di
+    // ingrandimento o la vista, e non si assume mai vero solo perche' si e' adattato.
+    // Senza, dopo un riadattamento automatico a 1:1 (finestra allargata) il clic
+    // credeva di essere gia' sull'adattato e non riusciva a chiedere il riempimento.
+    function scalaEAdattata() { return Math.abs(scale - fitDisplay()) < 0.0005; }
+    let isFit = scalaEAdattata();
     let zoomL = Math.log(scale);   // posizione di zoom "desiderata" (log), separata dal fermo al 100%
 
     function apply() {
@@ -405,7 +421,7 @@
       const px = r.width ? (fx - r.left) / r.width : 0.5;
       const py = r.height ? (fy - r.top) / r.height : 0.5;
       scale = nuova;
-      isFit = Math.abs(scale - fitDisplay()) < 0.0005;
+      isFit = scalaEAdattata();
       apply();
       const r2 = img.getBoundingClientRect();
       wrap.scrollLeft += (r2.left + px * r2.width) - fx;
@@ -433,7 +449,18 @@
       zoomL = Ldes;
       applicaScala(clamp(scalaConDetent(Ldes)), fx, fy);
     }
-    function vaiFit() { scale = fitDisplay(); isFit = true; apply(); zoomL = Math.log(scale); }
+    // vaiFit(chiesto): con `chiesto === false` e' un riadattamento AUTOMATICO (finestra
+    // ridimensionata, cambio di definizione del "reale") e li' non si ingrandisce da se',
+    // perche' l'ingrandimento per adattare lo chiede il clic. Tutti gli altri richiami
+    // (clic, voce di menu, tasto A) nascono da un gesto esplicito e possono ingrandire.
+    function vaiFit(chiesto) {
+      scale = (chiesto === false) ? fitSenzaCrescere() : fitDisplay();
+      isFit = scalaEAdattata();   // con `false` puo' NON coincidere: vedi scalaEAdattata
+      apply(); zoomL = Math.log(scale);
+    }
+    // L'adattamento in corso e' un INGRANDIMENTO? Ci si arriva solo chiedendolo, quindi
+    // e' la spia che dice se un riadattamento automatico deve conservarlo.
+    function fitEIngrandito() { return isFit && scale > realScale + 0.0005; }
 
     // ── Tasto tondo (dentro la pill, a sinistra): commuta il "100%/reale" fisico <-> logico ──
     let btnScale = null;
@@ -445,11 +472,13 @@
         : 'Reale = pixel LOGICI: 1 px immagine = 1 px CSS (piu\' grande sugli schermi HiDPI). Clic: torna a pixel fisici.';
     }
     function toggleScaleMode() {
+      const eraIngrandito = fitEIngrandito();   // da leggere PRIMA che "reale" cambi
       scaleMode = (scaleMode === 'phys') ? 'log' : 'phys';
       realScale = scaleMode === 'phys' ? 1 / dpr : 1;
       logR = Math.log(realScale);
       try { GM_setValue('dv-scale-mode', scaleMode); } catch (e) { /* storage non disponibile: pazienza */ }
-      vaiFit();               // ri-adatta alla nuova definizione di "reale"
+      vaiFit(eraIngrandito);  // ri-adatta alla nuova definizione di "reale", senza
+                              // inventare un ingrandimento che non era stato chiesto
       aggiornaScaleBtn();
     }
 
@@ -825,10 +854,16 @@
         e.preventDefault();
         ingrandisciPerAdattare = !ingrandisciPerAdattare;
         try { GM_setValue('dv-fit-grow', ingrandisciPerAdattare ? '1' : '0'); } catch (err) {}
-        // se si sta guardando l'adattato il cambio si vede subito; altrimenti si
-        // ri-limita la scala corrente, perche' i confini si sono spostati
-        if (isFit) vaiFit();
-        else { scale = clamp(scale); apply(); }
+        // Il tasto NON ingrandisce da se': cambia solo cosa fara' il clic. Riporta invece
+        // sull'adattato quando questo si e' RIMPICCIOLITO (opzione spenta mentre si stava
+        // riempiendo la vista), perche' quella scala non e' piu' un adattamento. Negli
+        // altri casi si resta dove si e', ri-limitando: i confini si sono spostati.
+        if (isFit && scale > fitDisplay() + 0.0005) vaiFit();
+        else {
+          scale = clamp(scale);
+          isFit = scalaEAdattata();   // il clic dev'essere pronto col nuovo criterio
+          apply();
+        }
         toast(ingrandisciPerAdattare ? 'Adatta anche ingrandendo' : 'Adatta senza ingrandire');
         return;
       }
@@ -850,8 +885,11 @@
 
     // ── Resize: se sto mostrando "adattato", ri-adatta; comunque ri-limita ──
     window.addEventListener('resize', function () {
-      if (isFit) vaiFit();
-      else { scale = clamp(scale); apply(); }
+      // allargando la finestra un'immagine prima piu' grande della vista puo' entrarci
+      // tutta: ri-adattarla NON deve ingrandirla, se quell'ingrandimento non era stato
+      // chiesto. Se invece si stava gia' riempiendo la vista, il riempimento si conserva.
+      if (isFit) vaiFit(fitEIngrandito());
+      else { scale = clamp(scale); isFit = scalaEAdattata(); apply(); }
     });
 
     // ── Info: dimensioni reali + peso del file ────────────────────────────
