@@ -114,12 +114,26 @@ body {
 
 header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
 
+/* Angolo in alto a sinistra (impianto v14.53, mockup dell'utente): `roccobot.me`
+   SOPRA e il numero di versione SOTTO, incolonnati. In cima alla pagina si vedono
+   entrambi; appena si scorre il numero DISSOLVE e resta il solo `roccobot.me`,
+   fisso nell'angolo come il cambio lingua a destra.
+   ⚠️ Il blocco è `fixed` solo da >768px, esattamente come `.lang-switch`: su mobile
+   la colonna delle schede occupa tutta la larghezza, quindi un testo fisso a
+   sinistra le passerebbe sopra (è la stessa ragione per cui là il cambio lingua è
+   nascosto). Su mobile resta `absolute` e scorre via con la testata. */
 .brand-corner {
   position: absolute;
   top: 0.9rem;
   left: 0.7rem;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+}
+@media (min-width: 769px) {
+  /* z-index 50 = quello del cambio lingua: stesso piano, sopra le schede.
+     In modalità admin l'intero <header> è display:none, quindi sparisce da sé. */
+  .brand-corner { position: fixed; z-index: 50; }
 }
 .version-badge, .home-link {
   font-family: 'Cinzel', serif;
@@ -136,7 +150,20 @@ header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
   padding: 0.6rem 0.8rem;
   text-decoration: none;
 }
-.home-link { padding-left: 0; }
+/* Incolonnati: i padding verticali si dimezzano (in linea erano 0.6rem e in colonna
+   distanzierebbero troppo le due righe), ma l'area sensibile della versione resta
+   ≥24px come vuole WCAG 2.5.8 - verificata, non stimata. */
+.home-link { padding: 0.55rem 0.8rem 0.1rem; }
+.version-badge { padding: 0.1rem 0.8rem 0.5rem; margin-left: 0.3em; }
+/* La 'v' un filo più piccola del numero (richiesta dell'utente). */
+.vb-v { font-size: 0.86em; }
+/* Dissolvenza RAPIDA (0.12s) del numero al primo pixel di scorrimento: deve essere
+   già finita nell'istante in cui il blocco fisso comincia a sovrapporsi al
+   contenuto che sale, così non si vede mai un incrocio a metà.
+   Specificità (0,2,1) contro (0,2,0) di `.version-badge:hover`: vince senza
+   `!important`, quindi anche col puntatore sopra il numero resta sfumato. */
+.version-badge { transition: opacity 0.12s linear; }
+html.scrolled .version-badge { opacity: 0; pointer-events: none; }
 .version-badge:hover, .home-link:hover { opacity: 1; }
 html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: #333333; }
 
@@ -2556,7 +2583,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <span class="version-badge">v14.43</span><a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.53</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2666,6 +2693,24 @@ var FX_UNI = { spot:true, pat:true };
 // effetti: una finestra desktop stretta ha il mouse e deve tenere la config
 // desktop, un tablet touch largo non lo ha e deve prendere quella touch.
 var FX_PTR = { hov:true };
+// ⚠️ Valori ammessi (e loro etichette) delle manopole a SCELTE. Vivono QUI, sopra i
+// default, e NON dentro FX_KNOBS: `var SITE_FLAGS = normSiteFlags(...)` gira durante
+// il parsing dello script, quando FX_KNOBS - che sta un migliaio di righe piu' in
+// basso - e' ancora `undefined`. Leggerlo da lì fa un TypeError che interrompe il
+// caricamento e lascia la classifica VUOTA (accaduto in produzione il 2026-07-28: il
+// difetto era invisibile finche' `pat` non era nel file dati, perche' con un valore
+// `undefined` la funzione usciova prima di toccare FX_KNOBS; si e' manifestato al
+// primo salvataggio dal pannello). `FX_KNOBS` costruisce le sue `opts` da qui con
+// `fxSelOpts`, così la fonte resta una sola.
+var FX_SEL = {
+  pat: {
+    mot:  [['stars', 'Stelle di Varda', 'Stars of Varda'], ['mallorn', 'Mallorn', 'Mallorn']],
+    area: [['edge', 'Solo sullo sfondo', 'Background only'], ['all', 'Dappertutto', 'Everywhere']]
+  }
+};
+function fxSelOpts(k, p){
+  return (((FX_SEL[k] || {})[p]) || []).map(function(o){ return { v:o[0], it:o[1], en:o[2] }; });
+}
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
   // glow: dalla v12.76 le manopole numeriche sono PER TEMA (suffisso _d/_l) e
@@ -2891,16 +2936,11 @@ function normFxEffect(k, v){
   });
   return o;
 }
-// Il valore è una delle scelte ammesse per quella manopola?
+// Il valore è una delle scelte ammesse per quella manopola? Legge FX_SEL (definita
+// sopra i default) e MAI FX_KNOBS: vedi la nota lì sopra.
 function fxSelOk(k, p, v){
   if (typeof v !== 'string') return false;
-  var ks = FX_KNOBS[k] || [];
-  for (var i = 0; i < ks.length; i++) {
-    if (ks[i].p === p && ks[i].t === 'sel') {
-      return (ks[i].opts || []).some(function(o){ return o.v === v; });
-    }
-  }
-  return false;
+  return (((FX_SEL[k] || {})[p]) || []).some(function(o){ return o[0] === v; });
 }
 function normSiteFlags(src){
   src = (src && typeof src === 'object') ? src : {};
@@ -3654,7 +3694,17 @@ document.addEventListener('keydown', function(e) {
 function setVersionBadge(v) {
   if (!v) return;
   var badge = document.querySelector('.version-badge');
-  if (badge) badge.textContent = 'v' + v;
+  if (badge) {
+    // ⚠️ La 'v' vive in uno <span> a sé (più piccola, richiesta dell'utente v14.53),
+    // quindi il badge si ricompone a NODI e non con textContent, che la butterebbe
+    // via. Niente innerHTML: la regola del progetto vale anche per un valore
+    // controllato come questo. Gli specchi del Pannello leggono `textContent` del
+    // badge, che concatena i due nodi e resta 'v14.53': continuano a funzionare.
+    badge.textContent = '';
+    var vs = document.createElement('span'); vs.className = 'vb-v'; vs.textContent = 'v';
+    badge.appendChild(vs);
+    badge.appendChild(document.createTextNode(v));
+  }
   // Specchi della versione nel Pannello: barra mobile (#ctrl-ver) e toolbar
   // desktop (#ctrl-ver-desk). Esistono solo a pannello già costruito.
   ['ctrl-ver', 'ctrl-ver-desk'].forEach(function(id){
@@ -3663,6 +3713,23 @@ function setVersionBadge(v) {
   });
 }
 if (typeof datiVersion === 'string') setVersionBadge(datiVersion);
+// ── Il numero di versione vive SOLO in cima alla pagina (v14.53, richiesta utente) ──
+// Una classe su <html> segna 'non sei più in cima': il CSS dissolve il numero in
+// 0.12s e lo rende non cliccabile, mentre `roccobot.me` resta nell'angolo. La soglia
+// è ≤1px, la stessa dei tasti salto (`showJumpFabsTemporarily`), così i due
+// comportamenti scattano insieme. ⚠️ Listener a sé e non agganciato a quella
+// funzione, che esce prima in più casi (tasti non ancora costruiti, FAB di riordino
+// aperto) e si porterebbe dietro il numero. Il DOM si tocca SOLO al varco della
+// soglia, non a ogni evento: `brandAtTop` ricorda lo stato.
+var brandAtTop = null;
+function syncBrandCorner(){
+  var atTop = window.scrollY <= 1;
+  if (atTop === brandAtTop) return;
+  brandAtTop = atTop;
+  document.documentElement.classList.toggle('scrolled', !atTop);
+}
+syncBrandCorner();
+window.addEventListener('scroll', syncBrandCorner, { passive: true });
 
 var i18n = {
   it: {
@@ -8082,14 +8149,10 @@ var FX_KNOBS = {
   // dover restare in un intervallo prudente.
   pat: [
     { p:'on', t:'bool', it:'Attiva', en:'Enable' },
-    { p:'mot', t:'sel', dep:'on', it:'Motivo', en:'Motif', opts:[
-        { v:'stars', it:'Stelle di Varda', en:'Stars of Varda' },
-        { v:'mallorn', it:'Mallorn', en:'Mallorn' } ],
+    { p:'mot', t:'sel', dep:'on', it:'Motivo', en:'Motif', opts:fxSelOpts('pat', 'mot'),
       nit:'La stella a otto punte degli Elfi, oppure la foglia di Lothlórien.',
       nen:'The eight-pointed Elven star, or the leaf of Lothlórien.' },
-    { p:'area', t:'sel', dep:'on', it:'Dove', en:'Where', opts:[
-        { v:'edge', it:'Solo sullo sfondo', en:'Background only' },
-        { v:'all', it:'Dappertutto', en:'Everywhere' } ],
+    { p:'area', t:'sel', dep:'on', it:'Dove', en:'Where', opts:fxSelOpts('pat', 'area'),
       nit:'\'Solo sullo sfondo\' tiene la trama fuori dalla colonna delle schede, che le passa sopra pulita; \'Dappertutto\' la lascia anche dietro le schede, che sono semitrasparenti.',
       nen:'\'Background only\' keeps the pattern outside the card column; \'Everywhere\' lets it show through the cards, which are semi-transparent.' },
     { p:'fade', t:'num', step:10, unit:'px', dep:'edge', it:'Sfumatura', en:'Fade',

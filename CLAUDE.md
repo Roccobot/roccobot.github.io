@@ -274,6 +274,28 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
         di nuovo la **challenge Cloudflare** ('Just a moment...'). Non è un rate limit
         da esaurimento: va e viene. Nel dubbio, tentare sempre - costa un `curl` - e
         se risponde la challenge passare subito alla prova sostitutiva senza retry.
+- **Angolo in alto a sinistra: `roccobot.me` sopra, versione sotto (v14.53, mockup
+  dell'utente).** Il blocco `.brand-corner` è **incolonnato**: in cima alla pagina si
+  vedono entrambi; **appena si scorre** il numero **dissolve in 0.12s** e resta il solo
+  `roccobot.me`, **fisso** nell'angolo come il cambio lingua a destra.
+  - Una classe **`html.scrolled`** (soglia `scrollY <= 1`, la stessa dei tasti salto)
+    governa la dissolvenza; il DOM si tocca solo al varco, non a ogni evento. Il
+    listener è **a sé** e non agganciato a `showJumpFabsTemporarily`, che esce prima in
+    più casi (tasti non ancora costruiti, FAB di riordino aperto) e si porterebbe
+    dietro il numero.
+  - Sfumato, il numero prende `pointer-events:none`: **cliccabile solo in cima**, come
+    chiesto. La specificità `html.scrolled .version-badge` (0,2,1) batte
+    `.version-badge:hover` (0,2,0), quindi non riappare col puntatore sopra.
+  - La **`v`** vive in uno `<span class="vb-v">` a `0.86em`. ⚠️ Perciò
+    `setVersionBadge` ricompone il badge **a nodi** (`createElement` +
+    `createTextNode`) e non con `textContent`, che butterebbe via lo span; niente
+    `innerHTML`, come da regola. Gli specchi del Pannello leggono `textContent` del
+    badge, che concatena i due nodi e resta `v14.53`: continuano a funzionare.
+  - ⚠️ **`position:fixed` solo da >768px**, come `.lang-switch`: su mobile la colonna
+    delle schede occupa tutta la larghezza e un testo fisso a sinistra le passerebbe
+    sopra (è la stessa ragione per cui là il cambio lingua è nascosto). E su mobile il
+    **badge versione è nascosto da sempre** (`display:none` nella media query, l'admin
+    si apre dal numero nel Pannello), quindi là non cambia nulla.
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
@@ -915,6 +937,19 @@ normale/XL secondo la preferenza attiva.
        47 misure. ⚠️ Anche qui **axe non serve come prova** (sulle card rinuncia a
        determinare il fondo: vedi la nota di `hov`); lo strumento è
        `scratchpad/pat/aa.js`.
+     - ⚠️⚠️ **I VALORI AMMESSI DELLE SCELTE VIVONO IN `FX_SEL`, SOPRA I DEFAULT, MAI
+       IN `FX_KNOBS`** (fix v14.53, difetto arrivato in PRODUZIONE). `var SITE_FLAGS =
+       normSiteFlags(...)` gira **durante il parsing** dello script, quando `FX_KNOBS`
+       - che sta un migliaio di righe più in basso - è ancora `undefined`: leggerlo da
+       lì fa un TypeError che interrompe il caricamento e lascia la **classifica
+       VUOTA** (misurato: 0 card su 360). Il difetto era **invisibile finché `pat` non
+       era nel file dati**, perché con un valore `undefined` la funzione usciva prima
+       di toccare `FX_KNOBS`: si è manifestato al **primo salvataggio dal pannello**,
+       cioè su un sito già pubblicato e apparentemente sano. Lezione generale: una
+       funzione chiamata dalla normalizzazione può leggere SOLO ciò che è definito
+       sopra `var SITE_FLAGS`, e un test che non salva la config non lo scopre.
+       `FX_KNOBS` costruisce le sue `opts` da `FX_SEL` con **`fxSelOpts`**, così la
+       fonte resta una sola.
      - **Due tipi di manopola NUOVI**, introdotti con questo effetto e riusabili:
        **`sel`** (scelta fra voci: `<select>`, valore stringa, elenco in `opts`; un
        valore fuori elenco ricade sul default via **`fxSelOk`**) e **`col`** (colore:
