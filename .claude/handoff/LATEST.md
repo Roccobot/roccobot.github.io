@@ -5,7 +5,7 @@
 - **'I Grandi di Arda'**: locale, badge e **LIVE** tutti su **v14.80**; albero pulito;
   `0 dietro / 0 avanti` rispetto a `origin/master`. Nessun deploy in volo.
 - **Worker** `arda-admin-proxy`: **rev 15**, `rl:true`. Non toccato in questa sessione.
-- `CLAUDE.md` è a **~36.600 parole** dopo una prima potatura (era 42.001); le regole
+- `CLAUDE.md` è a **~36.300 parole** dopo una prima potatura (era 42.001); le regole
   universali sono a **`Roccobot.md` v1.47.2**.
 - ⚠️ La sessione nuova ha **entrambi i repo agganciati nativamente**
   (`roccobot.github.io` e `tools`): non serve `add_repo`, che qui rispondeva sempre
@@ -19,18 +19,15 @@
    struttura *com'è fatto / trappole / estetica / decisioni*. ⚠️ Viveva nello scratchpad e
    **non esiste più**: va rifatto dalla sezione attuale. Stima sul file: **da ~36.600 a
    13.000-15.000 parole**; si accorciano meno canone, tipografia e workflow.
-2. **Togliere gli elenchi di portatori dei badge**: si ricavano con un grep su `dati.js`.
-   Tenere il criterio e le **esclusioni motivate** (Ingwë fuori da `est`, Aragorn e Arwen
-   senza `suicidio`, i tre solo-HoME che NON sono apocrifi).
-3. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
+2. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
    con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
    sposta due volte la stessa roba.
-4. **Skill `/desc`**: pronta ma solo come file consegnato in chat (202 righe), non nel
+3. **Skill `/desc`**: pronta ma solo come file consegnato in chat (202 righe), non nel
    repo. Va scritta in `tools` come `.claude/skills/desc/SKILL.md` (ora si può
    direttamente: il Worker accetta solo `rules/` e `workers/`), più una nota nel
    `CLAUDE.md` di `tools`, che non esiste ancora: solo con `/desc` invocata i suoi
    operatori scavalcano quelli di `Roccobot.md`.
-5. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
+4. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
    Raccomandazione già data: **non** estrarle sui numeri di oggi.
 
 ## Andato live in questa sessione
@@ -47,8 +44,9 @@
 - **Criterio di manutenzione del `CLAUDE.md`**: si scrive il perché, non il come, perché
   il codice è commentato e si legge → `CLAUDE.md` § '🪶 Come si mantiene questo file', che
   contiene anche le cinque famiglie che restano e le cronache ridotte ad accenno.
-- **I tetti di accessibilità per-manopola non si elencano più**, resta il vincolo generico
-  WCAG AA → `CLAUDE.md` § 'Nuovi personaggi e canone', prima voce.
+- **Vincolo WCAG AA generico** al posto dei tetti per-manopola → `CLAUDE.md` § 'Nuovi
+  personaggi e canone', prima voce. Cinque punti già ripuliti, e **già tolti** gli elenchi di
+  portatori dei badge: di quelli restano solo criterio ed esclusioni motivate.
 - **La scrittura via Worker non ha dry-run**: non si sonda mai su un percorso reale, e si
   tiene una copia locale integra prima di ogni POST → `Roccobot.md` v1.47.2.
 - Bump `+0.1` e `+1.0` ammettono l'arrotondamento al decimale o all'intero successivo
