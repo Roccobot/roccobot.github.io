@@ -47,9 +47,25 @@
      prima e dopo, e per ognuno scomparso controllare con un `grep` che non esista più in
      `arda/top/index.html`. Controllare anche che l'elenco delle sezioni `##` resti identico:
      è così che si scopre uno splice che ha troncato il file.
-2. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
-   con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
-   sposta due volte la stessa roba.
+2. **Split per progetto.** ⚠️ **Dopo** la potatura, o si sposta due volte la stessa roba.
+   - **Criterio del taglio**: in root restano le regole **trasversali** (protocollo di avvio,
+     scala di priorità, non derogabili, lingua di risposta, artefatti, modello, git e go-live,
+     manutenzione del file) più un **indice** di tre righe che dice quale sottocartella ha il
+     suo. Tutto ciò che parla di UN solo progetto scende nella sua cartella.
+   - **I cinque destinatari e cosa ereditano**: `arda/top/CLAUDE.md` prende la parte grossa
+     (aspetto, dati, canone, badge, asset, note); `ABP/`, `userscripts/`, `RoccobotOS/` e
+     `proxy/` prendono le sezioni omonime, che sono già brevi e autosufficienti.
+   - ⚠️ **Le convenzioni sono diverse per progetto** e nel travaso non si mescolano: solo
+     'I Grandi di Arda' ha la versione `x.xx` e il deploy da attendere; le liste AdBlock hanno
+     l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
+     installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
+   - **Primo passo**: elencare le sezioni `##` del `CLAUDE.md` potato e assegnare a ciascuna
+     una destinazione, prima di spostare una riga. Il vocabolario e il glossario servono solo
+     ad Arda Top, quindi scendono con lui.
+   - **Come si verifica**: la somma delle parole dei file nuovi più la root deve tornare al
+     totale di partenza (nulla perso nel trasloco), e nessuna sezione deve comparire in due
+     posti. ⚠️ Un `CLAUDE.md` di sottocartella si carica **solo** quando si legge un file di
+     quella cartella: quindi una regola che serve sempre non può finire là.
 3. **Skill `/desc`: già creata dall'utente, resta solo da VERIFICARE.** Vive in `tools` come
    `.claude/skills/desc/SKILL.md`, operativa, con un paio di sue correzioni: **non va
    riscritta né ricreata.** Da controllare: il frontmatter (`name`, `description`), che la
@@ -78,6 +94,9 @@
      non costa quasi nulla: la regola 'caricato non vuol dire attivo' basta a governarla.
    - **Il precedente in senso opposto è `/desc`**, che invece è giusto sia una skill proprio
      perché ha operatori suoi che scavalcano gli omonimi.
+   - **Primo passo**: rileggere le tre sezioni e chiedersi, per ciascuna, se contiene
+     istruzioni che **cambiano il senso** di regole sempre valide. Se la risposta è no per
+     tutte e tre, la valutazione è chiusa e si scrive che è stata fatta.
    - **Cosa farebbe cambiare la risposta**: se una delle tre riacquistasse operatori che
      scavalcano regole sempre valide (il criterio decisivo), se crescesse fino a pesare più
      del blocco che governa, o se `Roccobot.md` diventasse ingestibile. ⚠️ Oggi il file ha un
@@ -85,6 +104,10 @@
    - Se si decide di estrarne una, il modello è la `/desc`: la `description` del frontmatter
      deve dire che vale **solo se invocata**, e in cima al corpo va la dichiarazione di quali
      regole omonime scavalca e cosa resta come `Roccobot.md` lo definisce.
+   - **Come si verifica la decisione**: qualunque sia l'esito, va scritto **dove** (in
+     `Roccobot.md` se si estrae, altrimenti una riga che dice che la valutazione è stata
+     fatta e perché no), o alla prossima sessione si rifà da capo. Se si estrae, la prova è
+     che `Roccobot.md` letto da solo non contenga più istruzioni che valgono a intermittenza.
 
 ## Andato live in questa sessione
 

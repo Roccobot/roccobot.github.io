@@ -30,6 +30,34 @@ Un handoff che diventa un archivio parallelo invecchia e mente. Se una cosa è
 nell'handoff ma non in `CLAUDE.md`, o è volatile (e va bene) o è un travaso mancato da
 sanare subito.
 
+## ⚠️ Regola n. 2: il brief si scrive per una sessione VERGINE
+
+Chi legge non ha visto la chat, non ha lo scratchpad e non sa niente di quello che si è
+deciso. Quindi ogni voce in sospeso deve permettergli di **fare il lavoro bene senza
+chiedere nulla**, e la regola n. 1 non è una scusa per scrivere poco: il rimando al file
+di regole copre il *criterio*, non i dati operativi.
+
+**Prova di sufficienza.** Per ogni voce in sospeso, controlla che ci sia tutto questo:
+
+1. **L'obiettivo**, non il racconto di come ci si è arrivati.
+2. **Il criterio o la decisione che lo governa**, col puntatore esatto (`CLAUDE.md § ...`).
+   Se il criterio è stato dettato dall'utente e conta la formulazione, si riporta.
+3. **I numeri già misurati**, con la versione o la data a cui si riferiscono: sono lavoro
+   già fatto, e senza di essi chi arriva lo rifà.
+4. **Cosa è già stato fatto e NON va rifatto**, detto in modo esplicito. È la voce che si
+   dimentica più spesso, ed è quella che fa perdere più tempo.
+5. **Il primo passo concreto**: un comando, un file, una funzione.
+6. **Come si verifica** il risultato, se la verifica non è ovvia.
+
+⚠️ **Una raccomandazione senza le sue ragioni è un verdetto**, e chi arriva ha due sole
+strade: accettarla a scatola chiusa o rifare tutto il lavoro. Entrambe sbagliate. Se in
+sessione si è concluso 'non farlo', il brief dice **perché**, e **cosa farebbe cambiare la
+risposta**: così la valutazione è rifacibile invece di essere un dogma.
+
+⚠️ **Lo scratchpad muore con la sessione.** Se una voce dipende da un file che vive là
+(un campione, uno script, una misura), il brief lo dichiara: o quel file diventa
+committato, o si scrive che va rifatto e a che cosa serviva.
+
 ## 🧩 Repository, progetto, sessione: tre cose diverse
 
 Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
@@ -116,14 +144,14 @@ poi la frase pronta da incollare nella sessione nuova:
 
 ## Modello del file
 
-Ordina le sezioni come servono a chi arriva, non come sono andate le cose. **Ogni
-sezione ha un tetto**: se sfora, o stai travasando male (passo 2) o stai raccontando la
-sessione invece di consegnarla.
+Ordina le sezioni come servono a chi arriva, non come sono andate le cose. Le sezioni
+**di contorno hanno un tetto**: se sforano, o stai travasando male (passo 2) o stai
+raccontando la sessione invece di consegnarla.
 
-⚠️ **Unica deroga al tetto: quando l'utente chiede espressamente che una consegna sia
-riportata alla lettera**, perché il lavoro va fatto esattamente come stabilito. In quel
-caso la voce si allunga, ma resta un **promemoria operativo**: l'autorità è comunque il
-file di regole, e la voce lo dichiara. Chi rilegge un brief così NON lo accorci.
+⚠️ **`In sospeso` NON ha un tetto**, e non è una svista: là il rischio non è scrivere
+troppo ma scrivere troppo poco. Vale la **prova di sufficienza** della regola n. 2, e la
+lunghezza è quella che serve. Chi rilegge un brief così **non lo accorcia**: una voce
+densa di dati non è prolissità, è il lavoro già fatto che non va perso.
 
 ```markdown
 # Handoff - AAAA-MM-GG
@@ -133,10 +161,12 @@ file di regole, e la voce lo dichiara. Chi rilegge un brief così NON lo accorci
 e LIVE, ultimo commit, branch, albero pulito o no, deploy in volo, `rev` del Worker se
 toccato. Numeri, non impressioni.
 
-## In sospeso                                [max 10 righe - LA PIU' IMPORTANTE]
-Cosa era in corso e **il punto esatto** in cui si è fermato. Per ogni voce: il file e
-la riga o la funzione, più il **primo comando o passo concreto** per ripartire. Se non
-c'è niente in sospeso, scrivi 'niente' e non inventare lavoro.
+## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]
+Cosa era in corso e **il punto esatto** in cui si è fermato. Ogni voce passa la prova di
+sufficienza della regola n. 2: obiettivo, criterio col puntatore, numeri già misurati,
+cosa non va rifatto, primo passo concreto, come si verifica. Se le voci hanno un ordine
+obbligato, **dirlo**. Se non c'è niente in sospeso, scrivi 'niente' e non inventare
+lavoro.
 
 ## Andato live in questa sessione             [max 8 righe]
 Una riga per versione: `v14.77 - hover istantaneo nel Pannello, selezione spenta per i
