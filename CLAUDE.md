@@ -231,8 +231,10 @@ un'esclusione è indistinguibile da una dimenticanza.
 orientarsi (dove vive una cosa, chi è la fonte unica, qual è l'accesso giusto), non il suo
 funzionamento. Nel dubbio fra la regola e la sua dimostrazione, si tiene la regola.
 
-**La forma di una sezione potata**, approvata dall'utente sul campione degli effetti: quattro
-blocchi in quest'ordine, e nulla fuori da essi.
+**La forma di una sezione potata.** ⚠️ Questa struttura **non è una decisione dell'utente**:
+è come Claude ha organizzato il campione degli effetti, e l'utente non l'ha né chiesta né
+respinta. Vale come default ragionevole, non come vincolo, e la si può cambiare senza
+chiedere niente. Quattro blocchi in quest'ordine:
 
 1. **Com'è fatto**, l'essenziale: dove vive il dato, qual è la fonte unica, qual è l'accesso
    giusto. Nomi di funzione come puntatori, senza spiegare cosa fanno dentro.
