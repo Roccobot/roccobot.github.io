@@ -1777,588 +1777,314 @@ colori e micro-aggiustamenti sullo stesso telaio.
 
 ## 🧭 Vocabolario strutturale (Tipo, Categoria, Classe, Badge)
 
-Termini interni **ufficiali** per parlare degli elementi strutturali di ogni
-voce (distinti dal glossario dei contenuti qui sotto, che nomina i campi
-testuali). Fissati dall'utente per comunicare in fretta:
+Termini interni **ufficiali** per parlare degli elementi strutturali di ogni voce
+(distinti dal glossario dei contenuti qui sotto, che nomina i campi testuali).
+Fissati dall'utente per comunicare in fretta:
 
-- **`Tipo`**: riguarda l'**etichetta** colorata sulla riga del nome (campo
-  `tipo`, resa `.rank-tipi` / `.type-*`). Es. `Vala`, `Sinda`, `Hobbit`,
-  `Troll`. Dettagli in 'Etichette tipo'.
-- **`Categoria`**: la **razza in senso esteso**, ed è il **filtro di
-  visualizzazione principale** della pagina. Sono le 9 voci di `CATS` (ainu,
-  arcane, elf, adan, man, dwarf, hobbit, orc, animal); la determina la funzione
-  `categoria()` e governa il Pannello categorie e i permalink.
-- **`Classe`**: concetto **storico** (fino alla v8.71) che definiva lo **sfondo
-  della card** in 5 gruppi. ⚠️ **Dalla v8.72 lo sfondo della card NON dipende più
-  dalla Classe** ma dalla **famiglia `cardcolor`** (vedi 'Colore card (sistema
-  cardcolor)'), stesso asse che colora il bordino sinistro: entrambi derivano da
-  una terna `--ccrgb`. Le 5 Classi sotto restano descritte come **memoria
-  storica** e perché i nomi CSS (`.divine`, `.divine.morgoth`, `.divine.bombadil`,
-  `.animale`) **sono ancora assegnati nel DOM** da `renderList` (via
-  `darkBg`/`p.divino`/`isEntEagle`/`categoria`), ma le loro **regole di sfondo non
-  hanno più effetto**: le sovrascrivono le regole `.rank-item[class*="cc-"]` con
-  `!important` (vedi 'Colore card (sistema cardcolor)'). Restano vive solo per
-  compatibilità/eventuale ripristino. Erano **cinque** (dalla v7.59):
-  - **`Esseri crepuscolari`** (alias `crepuscolari`): corrotti, malvagi,
-    crepuscolari, creature dell'ombra. Card scura. CSS `.rank-item.divine.morgoth`,
-    assegnata da `darkBg` in `renderList` (per nome: Melkor, Morgoth, Ungoliant,
-    Shelob, Thuringwethil, Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl,
-    **Osservatore nell'Acqua**, **Vecchio Uomo Salice**, **Guardiani di Cirith
-    Ungol**; più chiunque abbia `tipo` Balrog o Drago). 17 voci alla v7.59
-    (dalla v7.59 i 3 in grassetto, spostati qui dalle Entità angeliche).
-  - **`Entità angeliche`** (alias `angelici`): angelici, spirituali, divini. Card
-    oro. CSS `.rank-item.divine`, assegnata da `p.divino` (gli Ainur/Valar/Maiar).
-    31 voci alla v7.59.
-  - **`Creature primordiali`** (alias `primordiali`): arcani, ancestrali,
-    primordiali. Card verde. CSS `.rank-item.divine.bombadil`: **Tom Bombadil**,
-    **tutti gli Ent** e **tutte le Grandi Aquile**. 11 voci alla v7.59.
-  - **`Umani e umanoidi`** (alias `umanoidi`): umanoidi, umani, normali, ordinari,
-    ecc. Card base (nessuna classe `divine`). CSS `.rank-item` semplice: Elfi,
-    Uomini, Nani, Hobbit non-cattivi, e in genere tutto il resto. 277 voci alla
-    v7.59.
-  - **`Animali`** (alias `animali`, dalla v7.59): **coincide al 100% con la
-    Categoria `animal`** (cavalli, pony, corvi, cani). Sfondo **TAUPE (grigio
-    caldo) molto tenue** (dalla v7.69; prima era un tan che, attenuato, virava
-    all'oro degli Angelici), NON una variante `.divine`. CSS `.rank-item.animale`,
-    assegnata in `renderList` quando `categoria(p) === 'animal'` (ramo `else if`
-    dopo il blocco `.divine`). 20 voci alla v7.59. In tema chiaro l'etichetta
-    `.type-beast` è scurita (compensazione contrasto, vedi 'Etichette tipo').
+- **`Tipo`**: l'**etichetta** colorata sulla riga del nome (campo `tipo`, resa
+  `.rank-tipi` / `.type-*`). Es. `Vala`, `Sinda`, `Hobbit`, `Troll`. Dettagli in
+  'Etichette tipo'.
+- **`Categoria`**: la **razza in senso esteso**, ed è il **filtro di visualizzazione
+  principale** della pagina. Le 9 voci di `CATS` (ainu, arcane, elf, adan, man,
+  dwarf, hobbit, orc, animal); la determina `categoria()` e governa il Pannello
+  categorie e i permalink.
+- **`Classe`**: concetto **storico** (fino alla v8.71) che definiva lo sfondo della
+  card in 5 gruppi. ⚠️ **Dalla v8.72 lo sfondo NON dipende più dalla Classe** ma
+  dalla famiglia `cardcolor`, e le regole di sfondo delle Classi **non hanno più
+  effetto**: le sovrascrivono le `.rank-item[class*="cc-"]` con `!important`.
+  - ⚠️ **Ma i nomi CSS sono ancora assegnati nel DOM** da `renderList`
+    (`.divine`, `.divine.morgoth`, `.divine.bombadil`, `.animale`, via
+    `darkBg`/`p.divino`/`isEntEagle`/`categoria`): non sono codice morto da
+    rimuovere, restano per compatibilità e per un eventuale ripristino.
+  - L'unica parte **ancora viva** è l'elenco di nomi degli **Esseri crepuscolari**,
+    perché `isDarkBg(p)` lo usa per forzare la famiglia `demon`: Melkor, Morgoth,
+    Ungoliant, Shelob, Thuringwethil, Draugluin, Carcharoth, Re-stregone/Angmar,
+    Khamûl, Osservatore nell'Acqua, Vecchio Uomo Salice, Guardiani di Cirith Ungol,
+    più chiunque abbia `tipo` Balrog o Drago.
+  - Le altre quattro erano: Entità angeliche (`.divine`, gli Ainur), Creature
+    primordiali (`.divine.bombadil`: Tom Bombadil, tutti gli Ent, tutte le Grandi
+    Aquile), Umani e umanoidi (nessuna classe), Animali (`.animale`, che **coincide
+    al 100% con la Categoria `animal`**).
 - **`Badge`**: le icone-status di merito/evento accanto al nome (chiavi in
-  `ICON_ORDER`, es. `aratar`, `calaquende`, `silmaril`, `helcaraxe`...). Criteri
-  in 'Criteri editoriali dei badge'.
+  `ICON_ORDER`: `aratar`, `calaquende`, `silmaril`, `helcaraxe`...). Criteri in
+  'Criteri editoriali dei badge'.
 
-`Tipo`, `Categoria` e `Classe` sono **assi indipendenti**: p.es. Melkor e Manwë
-hanno la stessa **Categoria** (`ainu`) ma **Tipo** diverso (`Vala decaduto` vs
-`Vala`) e **Classe** diversa (`Esseri crepuscolari` vs `Entità angeliche`).
-Unica sovrapposizione totale: la Classe **Animali** ≡ Categoria `animal`.
+`Tipo`, `Categoria` e `Classe` sono **assi indipendenti**: Melkor e Manwë hanno la
+stessa Categoria (`ainu`) ma Tipo diverso (`Vala decaduto` vs `Vala`) e Classe
+diversa. Unica sovrapposizione totale: Classe **Animali** ≡ Categoria `animal`.
 
 ### 🎨 Colore card (sistema cardcolor, dalla v8.72)
 
-Rifacimento del colore delle card deciso dall'utente: **sfondo card e bordino
-sinistro derivano dalla stessa 'famiglia colore'** (`cardcolor`), non più dalla
-Classe (sfondo) né dal `currentColor` dell'etichetta tipo (bordino). Le ~33
-classi-etichetta `.type-*` sono **consolidate in 11 famiglie**. Vantaggio: una
-sola terna RGB per famiglia governa sfondo + bordino, e ricolorare un intero
-gruppo = cambiare una terna.
+**Sfondo card e bordino sinistro derivano dalla stessa 'famiglia colore'**
+(`cardcolor`), non più dalla Classe né dal `currentColor` dell'etichetta tipo. Le
+~33 classi-etichetta `.type-*` sono consolidate in poche famiglie: una sola terna
+RGB per famiglia governa sfondo e bordino, quindi ricolorare un intero gruppo vuol
+dire cambiare una terna.
 
-- **Nomi famiglia = nomi di GRUPPO, non di colore (dalla v8.73, scelta
-  dell'utente).** Le famiglie prendono il nome della **stirpe/categoria
-  dominante** (inglese, singolare, senza accenti), NON il colore: così se un
-  domani si cambiano drasticamente le tinte i nomi non 'mentono'. Storico: alla
-  v8.72 erano nominate col colore (`blue`, `teal`, `green`...); rinominate in
-  v8.73 (`noldo`, `sinda`, `maia`...).
-- **Famiglia per personaggio.** In `renderList`, dopo aver calcolato `stripClass`
-  (vedi sotto), `var cardFam = p.cardcolor || CARDCOLOR_OF[stripClass] ||
-  'man'`. Alla card si aggiunge la classe `cc-<famiglia>` (es. `cc-noldo`).
-  Override per-voce col campo dati **`p.cardcolor`** (stringa nome-famiglia) se si
-  vuole forzare un gruppo diverso da quello mappato dal tipo.
-  - **SEEDING v8.94: `cardcolor` è ora scritto ESPLICITAMENTE su TUTTE le 356
-    voci** (scelta dell'utente: 'il colore va scritto e memorizzato per
-    personaggio con riferimento alle famiglie colore per l'eventuale cambio in
-    batch'). Ogni voce di `dati.js` porta il campo `"cardcolor": "<famiglia>"`
-    (es. `"demon"`, `"noldo"`), col **NOME della famiglia** (non la terna RGB):
-    così la tinta di un intero gruppo si cambia in **un punto solo** (la terna
-    `--ccrgb` di `.cc-<fam>` nel CSS), mentre l'appartenenza per-voce resta
-    stabile e **scollegata dal `tipo`**. I valori seminati coincidono con quelli
-    che la derivazione produceva (nessun cambiamento visivo su IT; corregge in
-    più i 5 colori EN sbagliati, vedi sotto). La derivazione
-    (`isDarkBg`→`demon` > `CARDCOLOR_OF[stripClass]` > `man`) **resta come
-    fallback** per le voci FUTURE prive del campo (`familyOf`/`renderList`
-    leggono `p.cardcolor` per primo). Per cambiare la famiglia di una voce
-    esistente si edita direttamente il suo `cardcolor` (l'editor admin conserva
-    il campo come ogni altra chiave; il Worker pure).
-  - **Colore INDIVIDUALE per voce + famiglia `custom` (Modifica mirata, dalla
-    v9.17, Fase 1).** Campo dati **`p.cardrgb`**: colore su misura per la singola
-    voce, che **vince su tutto** in `familyOf` (prima di `cardcolor`/derivazione)
-    e mette la voce nella famiglia speciale **`custom`**. La `custom` **conta** le
-    voci ma è **isolata dal batch** (ogni voce tiene il proprio colore: NON si
-    ricolora a gruppo). **Formato PER-TEMA (dalla v9.73):** `p.cardrgb` è un
-    **oggetto `{dark:"#hex", light:"#hex"}`** (due colori, uno per tema); una
-    **stringa singola** (`"#hex"` o legacy `"R,G,B"`) resta accettata e vale come
-    *stesso colore nei due temi*. L'helper **`customPair(p)`** normalizza entrambe
-    le forme in `{dark, light}` (terne `R,G,B`), o `null` se non c'è colore
-    valido; un lato mancante ripiega sull'altro. `validCardRgb(s)` resta per le
-    stringhe, ma i punti che contano (`familyOf`, `renderList`, 'Sposta per
-    tipo', conteggi) usano `customPair`. Resa: `renderList` aggiunge la classe
-    `cc-custom` e le **due terne inline** `style="--ccdark:R,G,B;--cclight:R,G,B"`
-    sulla card; le regole **iniettate** `.cc-custom{--ccrgb:var(--ccdark,…)}` +
-    `html[data-theme="light"] .cc-custom{--ccrgb:var(--cclight,…)}` mappano
-    `--ccrgb` sulla terna del tema (card e striscia la ereditano). `.cc-custom`
-    nel CSS statico è solo un fallback neutro. **Scheda: dalla v13.97 le voci
-    `custom` tengono il PROPRIO colore anche lì** (`setModalAccent`, estratta da
-    `openModal`, mette `cc-custom` + le due terne inline esattamente come
-    `renderList`). ⚠️ Fino alla v13.96 ripiegavano sull'accento neutro **`man`** -
-    un grigio-azzurro - per una cautela della v9.17: un colore arbitrario non era
-    garantito AA-safe sui testi della modale. Quella cautela è **obsoleta dalla
-    v9.62**: `--cctext` passa QUALUNQUE tinta per `ccAaText`, che le garantisce il
-    4.5:1 (misurato dopo il cambio: 4.54-10.31:1 sulle 4 voci custom nei due temi).
-    Segnalato dall'utente su Lúthien ('come mai ha questo colore così chiaro e
-    azzurro, diverso dal suo?'): le voci col colore individuale sono **4** (Melkor,
-    Tom Bombadil, Baccador, Lúthien) e la loro scheda mostrava il grigio di `man`.
-    - ⚠️ **`setModalAccent` va richiamata anche al cambio di TEMA a scheda aperta**
-      (tasto `T`, che dalla v12.40 funziona in tutte le modali): `--cctext` è
-      calcolata sul fondo di UN tema, quindi restava quella dell'altro e poteva
-      cadere fuori soglia. Difetto **preesistente e generale** (valeva per ogni
-      famiglia, non solo le custom), sanato nella stessa v13.97 con una chiamata in
-      `toggleTheme`. Le terne `--ccdark`/`--cclight` seguono il tema da sé.
-    Salvataggio via `saveColorsToRepo` (`keepVersion`:
-    NON bumpa la versione, come gli altri salvataggi colore; il Worker serializza
-    `cardrgb` oggetto come JSON, round-trip pulito).
-  - **Bivio admin + editor colori (dalla v9.17; titolo e 3ª voce dalla v10.18).**
-    Il tap sulla versione (badge, `ctrl-ver`, `ctrl-ver-desk`) dopo lo sblocco NON
-    va più dritto all'editor: `openAdminGate` apre `showAdminChoiceModal`, la
-    modale **'Area admin'** con cinque tasti (dalla v12.24): **Modifica personaggi** →
-    `showAdminEditor` / **Modifica colori** → `showColorEditor` / **Statistiche**
-    → `showColorStats` (le stats non riguardano più solo i colori, quindi vivono
-    qui, non nell'editor colori; ogni tasto chiude il bivio e apre la sua modale
-    standalone). La
-    **Modifica mirata** (tab **'Personaggio'**) di `showColorEditor`: ricerca
-    per nome → selezione → **controllo colore condiviso** `buildColorControl`
-    (vedi sotto) → Rimuovi colore individuale / Salva sul repo (setta
-    `cardrgb={dark,light}` + `renderList`). Dalla v9.27 `showColorEditor` ha
-    **due modalità** (tab): **Personaggio** e **Famiglie** (Fase 2, vedi sotto).
-  - **Controllo colore condiviso `buildColorControl` + anteprima live (dalla
-    v9.83, scelta dell'utente).** UNICO controllo usato sia da **Personaggio**
-    sia da **Famiglie**: un solo tasto **'Scegli colore'** apre il `<input
-    type=color>`; alla scelta le **due varianti tema (Chiaro/Scuro) si derivano
-    da sé** (`ccDerivePair`) e restano in **sola lettura** (niente più picker
-    per-tema editabili né tasto 'Auto': l'automazione garantisce colori sensati e
-    AA-safe e semplifica la UI). Accanto, un'**anteprima in tempo reale**
-    (`renderPreview`) mostra, per **ENTRAMBI i temi** affiancati, tutti gli
-    elementi che il colore definisce: mini-**card** (sfondo + striscia + nome +
-    etichetta tipo) e mini-**scheda** (bordo famiglia + testo AA-safe via
-    `ccAaText`/`--cctext` + filetto fonte), così si valuta il colore **prima** di
-    confermare. Colori concreti (nessun `var()`, mai visto dal Nu perché creati a
-    runtime). La modale è allargata (`max-width:620px`, `overflow-y:auto`). I
-    colori di partenza (`initDark`/`initLight`) restano mostrati finché non si
-    sceglie un nuovo colore, così **aprire+salvare non altera un colore
-    intoccato**. Storico: fino alla v9.82 c'erano due picker Chiaro/Scuro
-    editabili + tasto 'Auto' (v9.73) o, prima ancora (fino alla v9.72), un solo
-    picker con colore unico nei due temi (Fase 1, v9.17).
-  - **Modale statistiche `showColorStats` (dalla v10.06; 3 viste dalla v10.16).**
-    Un **link in calce** all'editor colori ('📊 Statistiche') apre una
-    modale (overlay `#stats-modal`, sopra l'editor) con **3 tab**: **Famiglie**
-    (per famiglia colore: due swatch chiaro/scuro + barra nella tinta del tema),
-    **Categorie** (le 9 `CATS` via `categoria()`, etichette `CAT_LABEL`, barra in
-    accento uniforme) e **Tipi** (le etichette `type-*`: swatch + barra nel COLORE
-    reale dell'etichetta, letto dal CSS a runtime con un elemento-sonda; una voce
-    con più etichette conta in più tipi, quindi il totale etichette > N voci).
-    Ogni riga: nome, barra proporzionale, conteggio e percentuale, ordinate per
-    numerosità; in testa il totale. Legge `dati` + `CARDCOLORS` + i colori-etichetta
-    **al volo a ogni apertura**, quindi rispecchia in tempo reale ogni modifica a
-    colori/dataset. Non tocca `lockPageScroll` (già attivo per l'editor sotto).
-    - **Colonna nome allargata + nomi PER ESTESO (dalla v10.79).** `statRow`
-      accetta `o.nameW` (larghezza colonna nome desiderata su desktop): la tab
-      **Categorie** usa `212px` e mostra le etichette **complete** di `CAT_LABEL`
-      (rimossa la vecchia mappa `SHORT` che accorciava `Edain`/`Esseri arcani`:
-      ora `Edain e Númenóreani`, `Esseri arcani/primordiali`), la tab **Tipi** e i
-      dettagli-categoria usano `172px` (ci sta `Creature dell'Ombra`); `famView`
-      resta a `108px`. Box allargato a `660px`.
-      - **Colonna nome RESPONSIVE (anti-overflow mobile).** La `.fab-modal-box`
-        è `width:90%` senza override mobile: una colonna nome fissa a 212/172px
-        sforerebbe il box sui telefoni (barre collassate + scrollbar interna). Per
-        questo `nameW` è **ricalcolata al build** limitandola allo spazio davvero
-        disponibile (riservando swatch, conteggio, gap e una **barra min 24px** via
-        `minmax(24px,1fr)`): stesso valore per tutte le righe a un dato viewport →
-        barre **incolonnate**; e il nome **va a capo** (`overflow-wrap:anywhere`,
-        niente ellissi) quando la colonna si stringe, quindi resta leggibile per
-        intero anche su mobile. Verificato: 0 overflow a 320/375/390/414px (barre
-        42-49px, allineate), nomi interi su desktop, axe 0 su entrambe le tab.
-  - **Scorciatoie L (lingua) e T (tema) DENTRO editor colori e statistiche
-    (dalla v10.79).** Le modali `showColorEditor` e `showColorStats` NON impostano
-    `html.admin-open` (lo fa solo l'editor personaggi), quindi i tasti nudi
-    `L`/`T` ci arrivano già; ora vi si RICOSTRUISCONO nel nuovo lingua/tema
-    conservando lo stato (anti-jitter). Meccanismo: globale **`themeRefresh`**
-    (gemello di `langRefresh`, chiamato da `toggleTheme`).
-    - **Statistiche**: registra `langRefresh`+`themeRefresh` a un rebuild che salva
-      **tab + scroll**, chiude e riapre (`showColorStats(initState)`) leggendo i
-      colori nel tema corrente. La drill-down torna alla vista base della tab
-      (transitoria). Esc ora la chiude (ramo `#stats-modal` nell'handler Escape) e
-      `#stats-modal` è nella guardia del tasto `P`.
-    - **Editor colori**: rebuild **solo su L** (i testi cambiano),
-      `showColorEditor(initState)` conserva **tab + famiglia selezionata + scroll**.
-      Su **T NON ricostruisce**: la modale si ricolora da sé via CSS e l'anteprima
-      mostra già ENTRAMBI i temi affiancati, quindi un rebuild sul tema sarebbe
-      inutile e perderebbe un eventuale **colore scelto ma non salvato** (vive solo
-      nello stato locale del controllo). ⚠️ Un rebuild su L resetta comunque un
-      colore non salvato: normale, si usa l'anteprima dual-tema per confrontare.
-    - Gli hook si azzerano alla chiusura solo se ancora propri (confronto identità);
-      il callback async di 'Rinomina e salva' chiama `close()` **solo se l'overlay è
-      ancora agganciato** (`document.body.contains`), per non sbloccare lo scroll di
-      un editor già ricostruito da un L in volo durante il commit.
-    - Accessibilità: `aria-label` su `<select>` famiglia/tipo, `input`
-      colore/ricerca/rinomina; anteprima con testo pill-tipo reso AA sul fondo card
-      miscelato. axe 0 su editor e stats (entrambi i temi e tab).
-  - **Formato colore HEX `#rrggbb` (dalla v9.27, scelta dell'utente).** Tutti i
-    colori dei dati sono hex: il campo individuale **`p.cardrgb`** e le terne di
-    famiglia. Helper `cardTriplet(v)` converte hex→`R,G,B` per la `--ccrgb`
-    (tollera ancora il vecchio `R,G,B`). I `<input type=color>` danno hex nativo.
-  - **Config colori data-driven + Fase 2 (dalla v9.27).** Le famiglie e la mappa
-    `tipo→famiglia` non vivono più solo in CSS/JS statici ma in un **dato
-    editabile**, così l'editor colori le modifica salvando solo `dati.js`.
-    - **`var cardColors = { fam:{}, map:{} }`** (opzionale in `dati.js`, scritto
-      dal Worker): `fam` = `famiglia → {dark:"#hex", light:"#hex"}`; `map` =
-      `type-* → famiglia` (l'ex `CARDCOLOR_OF`). A runtime `CARDCOLORS` = quella
-      salvata se valida, altrimenti il **fallback** interno `CARDCOLORS_FALLBACK`
-      (= i valori storici, identici al CSS statico). `familyOf` legge
-      `CARDCOLORS.map`; `injectCardColorRules` inietta le `.cc-<fam>{--ccrgb:…}`
-      dalla config (scavalcano il CSS statico, che resta fallback);
-      `reinjectFamilyColors()` le ri-inietta dopo un'anteprima.
-    - **Worker esteso (rev 10):** `buildDatiFile(dati, version, cardColors)`
-      emette `var cardColors = {…};` (una riga) dopo `datiVersion`;
-      `readCardColors(src)` lo rilegge; un salvataggio che **non** invia
-      `cardColors` (es. editor personaggi) **preserva** quello esistente;
-      `validCardColors` rifiuta config malformate (400 `bad-cardcolors`).
-      `doCommit(msg, payload, cardColors)` lo invia; il redeploy è automatico.
-    - **Le tre funzioni di famiglia** (tab Famiglie): **imposta colore** (via il
-      controllo condiviso `buildColorControl`, dalla v9.83 → `CARDCOLORS.fam[fam]`
-      + reinject; una **rete 'ultimo salvato'** con due quadratini ripristina il
-      colore committato), **rinomina**
-      (nuova chiave: aggiorna `fam`, `map` e in **batch** il `cardcolor` di tutte
-      le voci della famiglia; le `custom` restano intatte), **sposta per tipo**
-      (scegli un `type-*` → `CARDCOLORS.map[tipo]=fam` e riassegna `cardcolor`
-      alle voci con `stripClassOf(p)===tipo` non-custom). `stripClassOf(p)` è
-      estratta da `familyOf`. Ogni operazione salva con `saveColorsToRepo` (dati
-      + `cardColors`). L'AA della **scheda** per i testi è ora **dinamico** (vedi
-      `--cctext`, dalla v9.62): qualunque colore famiglia (anche nuovo/rinominato)
-      resta leggibile senza gestione manuale.
-    - **Derivazione automatica delle varianti tema (dalla v9.48; unico
-      meccanismo dalla v9.83).** Da UN colore scelto (tasto 'Scegli colore'),
-      `ccDerivePair` tiene la **tinta** (HSL) e genera la variante **scura**
-      (L=0.62, pop su fondo scuro) e la **chiara** (L=0.42, sat +5%, contrasto su
-      fondo chiaro). Dalla v9.83 questa derivazione è l'**unico** modo di
-      impostare le due varianti: i valori tema sono **in sola lettura** (niente
-      più rifinitura manuale né tasto 'Auto'). Helper `ccHexToHsl`/`ccHslToHex`.
-      Sfondo card e striscia restano sempre AA-safe (bassa opacità); il **testo
-      della scheda** è reso AA in automatico dal meccanismo `--cctext` (v9.62,
-      vedi sotto).
-    - **AA dinamico del testo scheda (`--cctext`, dalla v9.62).** Chiude il
-      vecchio 'limite noto' della lista-oro statica. All'apertura della scheda,
-      `openModal` calcola un **colore-testo AA** per rank/source/chiudi:
-      `ccAaText(coloreFamiglia, fondoModale, 4.5)` tiene la **tinta** e ne
-      aggiusta la luminosità (scurisce su fondo chiaro `#eeeef4`, schiarisce su
-      scuro `#0a0f20`) finché il contrasto raggiunge 4.5:1; se il colore è già AA
-      resta invariato. Il risultato (terna) va nella property inline **`--cctext`**
-      sulla `.modal`; le regole testo usano `rgba(var(--cctext,var(--ccrgb)),1)`,
-      i **bordi** restano su `--ccrgb` (decorativi). Helper `ccRelLum`/`ccContrast`.
-      Vale per ogni famiglia (anche nuova/rinominata) in **entrambi** i temi; la
-      vecchia regola statica `:not(.cc-...)` che ripiegava a oro è stata **rimossa**.
-      Verificato axe: 0 violazioni di contrasto su tutte le famiglie, chiaro e scuro.
-    - **Rete di sicurezza 'ultimo colore salvato' (dalla v9.37).** Snapshot
-      globale **`CARDCOLORS_SAVED`** (copia profonda di `CARDCOLORS.fam` al load,
-      risincronizzata dopo ogni salvataggio colore riuscito). Nel tab Famiglie,
-      due **quadrati cliccabili** mostrano l'ultimo colore SALVATO (scuro/chiaro)
-      della famiglia; un clic lo ripristina come corrente (`CARDCOLORS.fam` +
-      reinject). Così si sperimenta un colore nuovo sapendo di poter tornare
-      all'ultimo salvato. 'Salvato' = committato in `dati.js`, non l'anteprima.
-    - **Salvataggi colore SENZA bump di versione (dalla v9.37, scelta utente).**
-      `saveColorsToRepo` passa `keepVersion:true` a `doCommit`; il Worker (rev 11)
-      con `body.keepVersion===true` **ri-emette la versione corrente** invece di
-      bumparla (+0.01). Ritoccare i colori va live subito ma NON gonfia
-      `datiVersion` né il badge. Vale per Mirata e Famiglie. (Gli altri salvataggi
-      admin (contenuti, riordino) continuano a bumpare +0.01.) Il controllo di
-      freschezza basato sul confronto dei ref git resta affidabile comunque.
-  - **Fix 'type-class lingua-dipendente' (v8.94, classe del bug Mezzelfi).**
-    Prima del seeding, un audit `familyOf` in ENTRAMBE le lingue ha trovato **5
-    voci** la cui famiglia divergeva IT↔EN perché una parola-chiave era nel
-    `tipo` IT ma non nel `tipo_en`: **Beregond**/**Ioreth** (`Gondoriano/a` →
-    `numenorean` in IT, `of Gondor` → `man` in EN) e **Rata**/**Zanna**/**Lupo**
-    (`Cane` → `beast` in IT, `Dog` → `man` in EN). Corretto in `tipoClass`:
-    la regola Gondor matcha ora il prefisso **`gondor`** (non `gondorian`, così
-    copre anche `of Gondor`) e la lista animali include **`dog`**. Dopo il fix,
-    0 divergenze IT↔EN su tutte le 356 (stessa natura del fix `half-el` dei
-    Mezzelfi in v8.84). Il seeding usa i valori IT canonici (ora == EN).
-- **`stripClass` (invariato dalla logica del bordino).** Si raccoglie l'ordine
-  delle classi-etichetta (`badgeClasses`, incluso `type-ainu` se presente);
-  `stripClass` = **2ª** se ≥2 etichette, altrimenti la 1ª (fallback
-  `type-fallback`). **Eccezione 'prima etichetta'**: se la 1ª è `type-noldo`
-  **oppure `type-half-elf`** (dalla v8.72), si usa quella. Così Noldor (→ `noldo`)
-  e Mezzelfi (→ `half-elf` dalla v8.75) tengono la famiglia della 1ª etichetta
-  anche col badge `Ainu`/eredità come 2ª.
-- **`CARDCOLOR_OF`** (mappa subito dopo `tipoClass`): `.type-* → famiglia`. **Grande
-  ri-raggruppamento nella v8.83** (scelta utente): spostati vari gruppi, rinominate
-  3 famiglie e creata `numenorean`. Le **13** famiglie e i loro membri (`.type-*`):
-  - **`noldo`**: noldor.
-  - **`half-elf`** (dalla v8.75): mezzelfo (7 Peredhil). Petrolio-cyan (light
-    `#1E5462` = 30,84,98; dark 58,160,186). ⚠️ `tipoClass` matcha **`half-el`**
-    (non `half-elf`): la resa EN dei Peredhil non è uniforme (Elladan/Elrohir/Arwen
-    usano `Half-elven`, che NON contiene `half-elf` per via della `v`); col prefisso
-    `half-el` tutti e 7 restano `half-elf` in **entrambe le lingue** (fix v8.84,
-    prima in EN i 3 cadevano su `noldo`/`highman` dalla 2ª etichetta).
-  - **`sinda`**: sindar, teleri, vanyar, falmar, aquila.
-  - **`maia`**: maia, ent, bombadil (spiriti buoni/naturali).
-  - **`rohir`**: rohirrim, uominicomuni, eotheod.
-  - **`other`** (arancio, era `hobbit`; rinominata in v8.83): hobbit, **nano**
-    (i Nani spostati qui dalla vecchia `dwarf`).
-  - **`highman`** (oro, era `dwarf`; rinominata in v8.83): **hador**, **beor**,
-    **haleth** (le Case degli Edain; i Nani NON sono più qui).
-  - **`numenorean`** (era `westman`, rosa spento; **rinominata `numenorean` nella
-    v10.79** su richiesta dell'utente): **dunadan**, **numenorean** (gli Uomini
-    dell'Ovest / Dúnedain-Númenóreani) **+ i 5 draghi e i 2 balrog** spostati qui
-    dall'utente (v10.62, override per-voce `cardcolor`); tinta attuale rossa
-    (`#eb5151` scuro / `#c41212` chiaro). ⚠️ **I nomi delle famiglie colore NON
-    hanno mai caratteri accentati** (inglese, minuscolo, senza accenti): per questo
-    `westman` → `numenorean`, non `númenórean`. Storico: la sezione qui sopra
-    descrive lo stato v8.83; il config attuale (`cardColors` in `dati.js`,
-    data-driven) è divergente (famiglie `adan`, `dwarf`, `hobbit`, `shadow`,
-    `vanya`, ecc.): fa fede sempre `CARDCOLORS`, non questo elenco storico.
-  - **`demon`** (rosso, era `numenorean`; rinominata in v8.83): **drago**,
-    **lupo**, **balrog**, **più tutta la Classe 'Esseri crepuscolari'** (override
-    per nome via `isDarkBg`, vedi sotto: Melkor, Ungoliant, Shelob, Thuringwethil,
-    Draugluin, Carcharoth, Re-stregone/Angmar, Khamûl, Osservatore nell'Acqua,
-    Vecchio Uomo Salice, Guardiani di Cirith Ungol) **+ ragno** (dalla v8.83).
-  - **`vala`**: vala, valie (troll e maia-dark spostati a `orc`, ragno a `demon`).
-  - **`orc`**: orco, oscurita, misterioso, morgoth, **troll**, **maia-dark**.
-  - **`beast`**: bestia, gollum.
-  - **`man`**: generico (fallback; lupo spostato a `demon`).
-- **Override 'Classe crepuscolari → demon' (dalla v8.83).** La Classe **Esseri
-  crepuscolari** (funzione condivisa **`isDarkBg(p)`**: regex per nome + tipo
-  Balrog/Drago) forza la famiglia a **`demon`** in `familyOf`, PRIMA della mappa
-  per-tipo. Copre i crepuscolari il cui tipo mapperebbe altrove (Melkor/`morgoth`,
-  Shelob/`ragno`, Thuringwethil/`oscurità`, ...); draghi, lupi e balrog ci
-  arrivano comunque via `CARDCOLOR_OF`. `familyOf` è ora la fonte UNICA (usata sia
-  da `renderList` per bordino/sfondo sia dalla scheda per l'accento): ordine
-  `p.cardcolor` > `isDarkBg → demon` > `CARDCOLOR_OF[stripClass]` > `man`.
+- ⚠️ **La fonte di verità delle famiglie è `var cardColors` in `dati.js`**, letta a
+  runtime in `CARDCOLORS` (`fam` = famiglia → `{dark,light}` in hex; `map` =
+  `type-*` → famiglia). Il fallback interno `CARDCOLORS_FALLBACK` vale solo se il
+  dato manca o è invalido (la mappa tipo → famiglia si chiama ancora `CARDCOLOR_OF`
+  nel codice: è la `map` della config). **Non esiste un elenco di famiglie da tenere aggiornato in
+  questo file**: l'admin le crea, rinomina e sposta dall'editor colori, quindi
+  qualunque elenco scritto qui invecchierebbe in un salvataggio. Per sapere quali
+  famiglie esistono oggi si guarda `dati.js`.
+- **Nomi di famiglia = nomi di GRUPPO, non di colore** (v8.73): prendono il nome
+  della stirpe dominante (inglese, singolare), non della tinta, così se le tinte
+  cambiano i nomi non mentono. ⚠️ **Mai caratteri accentati** (`numenorean`, non
+  `númenórean`). I nomi restano **misti per costruzione** (una famiglia può
+  raccogliere Hobbit e Nani): è il raggruppamento voluto dall'utente, non un difetto
+  tassonomico.
+- **Ordine di risoluzione in `familyOf(p)`**, che è la fonte UNICA usata sia da
+  `renderList` (sfondo e bordino) sia dalla scheda (accento):
+  `p.cardrgb` (colore individuale → famiglia `custom`) > `isDarkBg(p)` → `demon` >
+  `p.cardcolor` > `CARDCOLORS.map[stripClass]` > `man`.
+- **`cardcolor` è scritto esplicitamente su tutte le voci** (seeding v8.94, scelta
+  dell'utente: 'il colore va scritto e memorizzato per personaggio'). L'appartenenza
+  per-voce è quindi **stabile e scollegata dal `tipo`**; la derivazione dal tipo
+  resta solo come fallback per le voci future prive del campo.
+- **`stripClass`**: si raccoglie l'ordine delle classi-etichetta (`badgeClasses`,
+  incluso `type-ainu`); `stripClass` = la **2ª** se ce ne sono almeno due, altrimenti
+  la 1ª (fallback `type-fallback`). **Eccezione 'prima etichetta'**: se la 1ª è
+  `type-noldo` o `type-half-elf`, si usa quella, così Noldor e Mezzelfi tengono la
+  famiglia della 1ª anche col badge `Ainu` come 2ª.
 
-  ⚠️ I nomi sono **di gruppo, non tassonomici** e alcune famiglie restano miste
-  (es. `other` = Hobbit + Nani + Casa di Haleth; `orc` = Orchi + Troll + Maia
-  oscuri; `demon` = draghi/balrog/lupi + crepuscolari vari). È il ri-raggruppamento
-  voluto dall'utente.
-- **Meccanismo colore: una terna `--ccrgb` per famiglia, per tema.** Ogni classe
-  `.cc-<fam>` definisce la custom property `--ccrgb` (terna `R,G,B`) nel `<style>`
-  statico; c'è un blocco **default = tema SCURO** e un override
-  `html[data-theme="light"] .cc-*` col valore **chiaro** (necessario: la stessa
-  tinta rende diversamente sui due fondi, vedi sotto). Sfondo card =
-  `rgba(var(--ccrgb),0.05)` in chiaro / `0.10` in scuro; hover `0.11`/`0.18`;
-  **bordino** = `rgba(var(--ccrgb),0.85)`. Terne scure/chiare bilanciate e
-  approvate dall'utente (noldo 91,123,240 / 47,79,208; sinda 43,184,166 /
-  21,158,143; maia 82,185,95 / 58,154,69; rohir 159,182,65 / 138,154,42; **other**
-  224,138,58 / 210,118,15; **highman** 216,178,60 / 199,148,19; **demon** 224,89,106
-  / 196,34,51; vala 222,90,142 / 194,31,110; orc 160,107,224 / 122,63,206;
-  beast 179,148,104 / 150,117,74; man 144,152,168 / 111,116,130;
-  half-elf 58,160,186 / 30,84,98; **numenorean** 198,138,152 / 160,92,112). ⚠️ Nei
-  rinomini v8.83 il **colore è rimasto legato alla classe rinominata** (other =
-  ex-hobbit arancio, highman = ex-dwarf oro, demon = ex-numenorean rosso); i
-  membri sono cambiati, i valori RGB no.
-- ⚠️ **W3C: le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
-  (`injectCardColorRules`, IIFE subito dopo `CARDCOLOR_OF`). Il Nu Html Checker
-  non sa parsare `var()` dentro `rgba()` (falso errore 'getType() null'), quindi
-  quelle 5 regole (sfondo card ×4 + bordino) non stanno nel `<style>` statico ma
-  in un `<style>` creato a runtime, come la proprietà `d` (ctrl-close-bend). Le
-  **terne `--ccrgb` restano statiche** (il Nu le valida). **Non reintrodurre**
-  quelle 5 regole nel CSS statico o tornano 5 errori W3C.
-- **Bordino: striscia assoluta, non un vero bordo.** `<span class="rank-strip">`
-  (fuori dal flusso) eredita `--ccrgb` dalla card `.cc-<fam>` e fa
-  `background:rgba(var(--ccrgb),0.85)`. Il `border-left` di layout è neutralizzato
-  a **1px uniforme** come gli altri lati (`!important` sopra le regole di Classe,
-  dark + light). Fallback statico `rgb(111,116,130)` se `--ccrgb` mancasse.
-- **Spessore: 4px normali, 8px per le 3 in cima** (`.rank-item.vis-top
-  .rank-strip { width:8px }`). Essendo la striscia **assoluta**, il cambio di
-  spessore **non sposta di un pixel** il contenuto (verificato: `contentLeft`
-  identico per podio e non-podio, in entrambi i temi).
-- **Sfondo pagina neutralizzato.** Col nuovo colore card, il `body` è neutro:
-  **#262626** (scuro, dalla v8.78; era #303030) / **#F5F5F5** (chiaro), non più il fondo pergamena caldo
-  (`var(--ink-deep)`), così le tinte famiglia non litigano con lo sfondo.
-- **Numero di posizione nella TINTA della card** (dalla v12.53; effetto
-  REGOLABILE `nums` dalla v12.63, voce **'Numeri colorati'** del Pannello di
-  controllo, rinominata in v12.64). Scelta utente: il grigio 'cupo' stonava col sito ormai colorato.
-  ⚠️ **Dalla v12.63 il colore si costruisce in OKLCH con la sintassi RELATIVA**,
-  non più mescolando un grigio:
-  `oklch(from rgb(var(--ccrgb)) <L> calc(c * <sat>) h)`: si riscrive la cromia
-  (e, se `uni`, la luminosità) lasciando la TINTA intatta. **Perché:** desaturare
-  *a luminosità costante* è impossibile mescolando un grigio fisso (nero, 66% o
-  altro), che tira sempre il colore verso la luminosità di quel grigio; in OKLCH
-  la `L` resta identica al millesimo (misurato). Le regole vivono in
-  `injectFxRules` (formula `fxNumColor`), scoped a `html.fx-nums`.
-  - **Manopole:** `uni` (luminosità UNIFORME per tutte le famiglie alla L di
-    riferimento, invece della luminosità propria di ogni tinta), `dsat`/`dlum`
-    per il tema SCURO e `lsat`/`llum` per il CHIARO. Tarature dell'utente:
-    **cromia 15%**, **L 0.66** in scuro; in chiaro **L 0.60** (vedi sotto).
-  - ⚠️ **I limiti di `dlum`/`llum` in `FX_RANGE` sono di ACCESSIBILITÀ, non
-    estetici**: misurati su tutte le 15 famiglie a qualunque cromia, sono i valori
-    oltre i quali il numero scende sotto 3:1 (soglia AA del testo grande) sul
-    fondo della card. In SCURO serve L **alta** (min **0.66** = 3.70:1), in CHIARO
-    L **bassa** (max **0.60** = 3.18:1): per questo i due temi NON possono avere
-    la stessa L, e la L 0.66 chiesta dall'utente in chiaro darebbe 2.65:1. Così il
-    range stesso garantisce l'AA e gli slider non possono rompere il contrasto.
-    Non allargarli senza rimisurare.
-  - **Nessun fallback esplicito**: se `oklch(from …)` non è supportato la
-    dichiarazione cade e vale la regola base `.rank-num{color:var(--name)}`: la
-    resa storica, grigia ma corretta e AA-safe.
-  - Contrasti misurati in pagina: **4.16-4.31:1** in scuro, **3.36-3.39:1** in
-    chiaro. axe 0 verificato nei due temi.
-  - ⚠️ **`nums` e `podium` hanno la STESSA specificità** ((0,4,1) in scuro,
-    (0,5,1) in chiaro): il podio vince solo perché `injectFxRules` emette le sue
-    regole **DOPO** quelle di `nums`. Non invertire l'ordine dei blocchi, o i
-    numeri 1-2-3 perderebbero il metallo (il colore opaco coprirebbe il gradiente).
-  - Storico: v12.53 `color-mix` con bianco/nero; v12.54 `color-mix` con
-    `var(--name)` (35% tinta in scuro).
-- **Opacità della riga Info a 0.80 (dalla v12.24, era 0.72).** `.rank-desc` è la
-  riga più piccola e tenue della card (~13.8px): era l'anello debole della
-  leggibilità (rilevato misurando i corpi di tutti i testi). +8 punti di opacità si
-  sentono molto e non alterano la gerarchia visiva. Indipendente dalla modalità
-  ingrandita. ⚠️ **In tema SCURO questi valori sono SCAVALCATI dalla v14.12**: vedi
-  la voce qui sotto.
-- **⚠️ CONTRASTO AA DELLE DUE RIGHE TENUI, tema SCURO (v14.12, misurato e sanato).**
-  `Info | genitori` (`.rank-desc`, 13.8px) e `Nomi | Titoli` (`.rank-subtitle`,
-  16.5px) erano **`#aeaeae` a opacità 0.80 e 0.75**: sul fondo colorato della card
-  stavano **sotto 4.5:1 su TUTTE e 16 le famiglie, già a riposo** - minimo misurato
-  **3.35:1** a riposo e **2.79:1** col puntatore sopra (dwarf, la tinta più chiara).
-  Ora sono **`#c0c0c0` a opacità PIENA**: minimo **5.71:1** a riposo e **4.53:1** al
-  passaggio, 0 misure sotto soglia su 47 (Nome, Info, Nomi\|Titoli e Fonte × 16
-  famiglie). Il tema CHIARO **non è toccato** (era già conforme, minimo 4.96:1):
-  verificato pixel-identico prima/dopo.
-  - ⚠️ **Perché non se n'era accorto nessuno: axe, sulle card, NON valuta.** Con un
+#### ⚠️ Trappola: la famiglia può divergere fra italiano e inglese
+
+`tipoClass` deduce la classe-etichetta da **parole chiave del `tipo`**, e se una
+parola esiste in un campo e non nell'altro la stessa voce cade in due famiglie
+diverse nelle due lingue. È accaduto due volte:
+
+- **Mezzelfi** (fix v8.84): la resa EN dei Peredhil non è uniforme
+  (`Half-elven` non contiene `half-elf`, per via della `v`), quindi il match è sul
+  prefisso **`half-el`**.
+- **5 voci** (fix v8.94): `Gondoriano` → `numenorean` in IT ma `of Gondor` → `man` in
+  EN (Beregond, Ioreth); `Cane` → `beast` in IT ma `Dog` → `man` in EN (Rata, Zanna,
+  Lupo). Corretto matchando il prefisso `gondor` e aggiungendo `dog`.
+
+⚠️ **Quindi ogni modifica a `tipoClass` va verificata in ENTRAMBE le lingue**,
+confrontando `familyOf` voce per voce: è l'unico modo di accorgersene.
+
+#### Colore individuale per voce (famiglia `custom`)
+
+- Campo **`p.cardrgb`**: colore su misura per la singola voce, che vince su tutto e
+  la mette nella famiglia speciale **`custom`**. La `custom` conta le voci ma è
+  **isolata dal batch**: ogni voce tiene il proprio colore e non si ricolora a
+  gruppo.
+- **Formato per-tema** (v9.73): un oggetto `{dark:"#hex", light:"#hex"}`; una stringa
+  singola resta accettata e vale come stesso colore nei due temi. **`customPair(p)`**
+  normalizza entrambe le forme (un lato mancante ripiega sull'altro) ed è la funzione
+  che i punti importanti devono usare: `familyOf`, `renderList`, 'Sposta per tipo',
+  conteggi.
+- **Resa**: `renderList` aggiunge `cc-custom` e le due terne inline
+  `--ccdark`/`--cclight`; due regole iniettate mappano `--ccrgb` sulla terna del tema.
+  `.cc-custom` nel CSS statico è solo un fallback neutro.
+- **Anche la scheda tiene il colore individuale** (v13.97): `setModalAccent`, estratta
+  da `openModal`, mette `cc-custom` e le terne inline come fa `renderList`. ⚠️ Fino
+  alla v13.96 quelle voci ripiegavano sull'accento neutro `man` per una cautela della
+  v9.17 (un colore arbitrario non era garantito AA-safe), **resa obsoleta dalla v9.62**
+  dal meccanismo `--cctext`. Segnalato dall'utente su Lúthien; le voci con colore
+  individuale sono 4 (Melkor, Tom Bombadil, Baccador, Lúthien).
+- ⚠️ **`setModalAccent` va richiamata anche al cambio di TEMA a scheda aperta** (tasto
+  `T`): `--cctext` è calcolata sul fondo di UN tema, quindi resterebbe quella
+  dell'altro e potrebbe cadere fuori soglia. Difetto **preesistente e generale**, non
+  solo delle custom, sanato nella v13.97 con una chiamata in `toggleTheme`.
+
+#### Meccanismo colore e vincoli da non rompere
+
+- Ogni `.cc-<fam>` definisce la custom property **`--ccrgb`** (terna `R,G,B`): un
+  blocco default = **tema scuro** e un override `html[data-theme="light"]` col valore
+  **chiaro**, perché la stessa tinta rende diversamente sui due fondi.
+- **Opacità**: sfondo card `0.05` in chiaro / `0.10` in scuro; al passaggio
+  `0.11`/`0.18`; **bordino** `0.85`. Sono i valori base del sistema, ed è da questi
+  che l'effetto 'Colore schede' prende i propri default.
+- ⚠️⚠️ **Le 5 regole `rgba(var(--ccrgb),alpha)` sono INIETTATE via JS**
+  (`injectCardColorRules`). Il Nu Html Checker non sa parsare `var()` dentro `rgba()`
+  e produce un falso errore, quindi quelle regole (sfondo card ×4 + bordino) non
+  stanno nel `<style>` statico. Le **terne `--ccrgb` restano statiche**, quelle il Nu
+  le valida. **Non reintrodurre le 5 regole nel CSS statico**, o tornano 5 errori W3C.
+- **Il bordino è una striscia assoluta, non un bordo**: `<span class="rank-strip">`
+  eredita `--ccrgb` dalla card. Il `border-left` di layout è neutralizzato a 1px
+  uniforme come gli altri lati (con `!important`, che sta sopra le vecchie regole di
+  Classe). Fallback statico `rgb(111,116,130)` se `--ccrgb` mancasse.
+- **Spessore 4px, 8px per le tre in cima.** Essendo assoluta, il cambio di spessore
+  **non sposta di un pixel** il contenuto (verificato: `contentLeft` identico fra
+  podio e non-podio, nei due temi).
+- **Sfondo pagina neutro**: `#262626` scuro / `#F5F5F5` chiaro, non più il fondo
+  pergamena caldo, così le tinte di famiglia non litigano con lo sfondo.
+
+#### Editor colori, statistiche e rete di sicurezza
+
+- **Accesso**: tap sulla versione → sblocco → bivio 'Area admin' (`showAdminChoiceModal`)
+  → Modifica colori (`showColorEditor`). L'editor ha due tab, **Personaggio** (colore individuale) e **Famiglie**.
+- **Un solo controllo colore** (`buildColorControl`, v9.83): il tasto 'Scegli colore'
+  apre l'`<input type=color>` e da quel colore **`ccDerivePair`** deriva da sé le due
+  varianti di tema (scura L=0.62, chiara L=0.42 con saturazione +5%), che restano in
+  **sola lettura**. Accanto, un'anteprima in tempo reale mostra per **entrambi i temi**
+  mini-card e mini-scheda con tutti gli elementi che il colore definisce
+  (`renderPreview`).
+  - ⚠️ I colori di partenza restano mostrati finché non se ne scegle uno nuovo, così
+    **aprire e salvare non altera un colore intoccato**.
+- **Rete 'ultimo colore salvato'** (v9.37): lo snapshot globale `CARDCOLORS_SAVED`
+  (copia profonda al load, risincronizzata dopo ogni salvataggio riuscito) alimenta
+  due quadratini cliccabili che ripristinano il colore **committato**. 'Salvato'
+  significa in `dati.js`, non l'anteprima.
+- **Le tre funzioni di famiglia**: imposta colore, **rinomina** (aggiorna `fam`, `map`
+  e in batch il `cardcolor` di tutte le voci della famiglia, lasciando intatte le
+  `custom`) e **sposta per tipo** (riassegna il `cardcolor` alle voci con quel
+  `stripClassOf(p)`, non-custom).
+- **Salvataggi colore SENZA bump di versione** (v9.37, scelta dell'utente):
+  `saveColorsToRepo` passa `keepVersion:true` e il Worker ri-emette la versione
+  corrente. Ritoccare i colori va live subito ma non gonfia `datiVersion`. Il
+  controllo di freschezza regge perché si basa sul confronto dei ref git, non sul
+  numero.
+- **Statistiche** (`showColorStats`): tre tab, Famiglie, Categorie e Tipi, ognuna con
+  nome, barra proporzionale, conteggio e percentuale. Legge dati e colori **al volo a
+  ogni apertura**, quindi rispecchia le modifiche in tempo reale. Una voce con più
+  etichette conta in più Tipi, quindi il totale delle etichette supera il numero di
+  voci.
+  - ⚠️ **La colonna del nome è RESPONSIVE, e non per estetica**: una larghezza fissa
+    sforerebbe il box sui telefoni. `nameW` si ricalcola al build sullo spazio
+    davvero disponibile, riservando swatch, conteggio, gap e una **barra minima di
+    24px** (`minmax(24px,1fr)`); il nome va a capo invece di troncare. Verificato: 0
+    overflow a 320/375/390/414px, barre incolonnate, axe 0.
+- ⚠️ **`L` e `T` funzionano dentro editor colori e statistiche**, che non impostano
+  `html.admin-open`. Le statistiche si ricostruiscono su entrambi conservando tab e
+  scroll; l'**editor colori si ricostruisce solo su `L`**, perché su `T` si ricolora
+  da sé e l'anteprima mostra già i due temi: un rebuild sul tema **perderebbe un
+  colore scelto e non salvato**, che vive solo nello stato locale del controllo.
+  Meccanismo: le globali `langRefresh` e `themeRefresh` (la seconda chiamata da
+  `toggleTheme`). Gli hook si azzerano alla chiusura solo se ancora propri, e il
+  callback async di 'Rinomina e salva' chiude solo se l'overlay è ancora agganciato,
+  per non sbloccare lo scroll di un editor già ricostruito da un `L` in volo.
+
+#### AA dinamico del testo della scheda (`--cctext`, dalla v9.62)
+
+All'apertura della scheda, `openModal` calcola un colore-testo AA per posizione,
+fonte e tasto di chiusura: **`ccAaText(colore famiglia, fondo modale, 4.5)`** tiene la
+**tinta** e ne aggiusta la luminosità (scurisce su fondo chiaro, schiarisce su scuro)
+finché il contrasto raggiunge 4.5:1; se il colore è già conforme resta invariato. Il
+risultato va nella property inline `--cctext` sulla `.modal`.
+
+- I **testi** usano `rgba(var(--cctext,var(--ccrgb)),1)`, i **bordi** restano su
+  `--ccrgb` perché sono decorativi.
+- Vale per **ogni** famiglia, anche nuova o rinominata, nei due temi: è ciò che rende
+  inutile qualunque lista di famiglie 'safe' scritta a mano. La vecchia regola statica
+  che ripiegava all'oro è stata rimossa.
+- **Il fondo di riferimento è `#252525` / `#F4F4F4`**, cioè quello reale delle modali
+  (v9.93): se cambia il fondo, va cambiato anche qui e nella mini-scheda
+  dell'anteprima.
+- Verificato con axe a schede aperte: 0 violazioni di contrasto su tutte le famiglie,
+  nei due temi.
+
+#### Accento cardcolor sulla scheda (dalla v8.77)
+
+La `.modal` eredita la famiglia della card (`openModal` le assegna `cc-<fam>` via
+`familyOf`, la stessa funzione di `renderList`):
+
+- **Bordi** (decorativi): sempre col colore di famiglia, nei due temi: bordo della
+  modale, doppio bordo, filetto della fonte, bordo sinistro della citazione.
+- **Testi e icone**: colore di famiglia reso AA dal meccanismo `--cctext` qui sopra.
+  Nome e bottone Tolkien Gateway restano invariati.
+- ⚠️ Anche queste regole sono **iniettate**, per lo stesso limite del Nu su `var()`
+  dentro `rgba()`.
+
+### 🔢 Numero di posizione nella tinta della card
+
+Effetto **`nums`** ('Numeri colorati' nel Pannello di controllo). Scelta dell'utente:
+il grigio 'cupo' stonava col sito ormai colorato.
+
+- ⚠️ **Il colore si costruisce in OKLCH con la sintassi RELATIVA**:
+  `oklch(from rgb(var(--ccrgb)) <L> calc(c * <sat>) h)`, cioè si riscrivono cromia e
+  luminosità **lasciando intatta la tinta**. Formula `fxNumColor` in `injectFxRules`,
+  regole scoped a `html.fx-nums`. **Perché non `color-mix`**: desaturare *a
+  luminosità costante* è impossibile mescolando un grigio fisso, che tira sempre il
+  colore verso la luminosità di quel grigio; in OKLCH la `L` resta identica al
+  millesimo (misurato).
+- **Manopole**: `uni` (luminosità uniforme per tutte le famiglie invece di quella
+  propria di ogni tinta), `dsat`/`dlum` per lo scuro, `lsat`/`llum` per il chiaro.
+  Taratura dell'utente: cromia 15%, L 0.66 in scuro, L 0.60 in chiaro.
+- ⚠️⚠️ **I limiti di `dlum` e `llum` sono di ACCESSIBILITÀ, non estetici**: misurati su
+  tutte le famiglie a qualunque cromia, sono i valori oltre i quali il numero scende
+  sotto 3:1 (soglia del testo grande) sul fondo della card. In **scuro** serve L
+  **alta** (min 0.66 = 3.70:1), in **chiaro** L **bassa** (max 0.60 = 3.18:1): per
+  questo i due temi non possono avere la stessa L, e la L 0.66 in chiaro darebbe
+  2.65:1. Il range stesso garantisce l'AA. **Non allargarlo senza rimisurare.**
+- **Nessun fallback esplicito**: se `oklch(from ...)` non è supportato la dichiarazione
+  cade e vale la regola base `.rank-num{color:var(--name)}`, cioè la resa storica
+  grigia, corretta e AA-safe.
+- ⚠️ **`nums` e `podium` hanno la stessa specificità**: il podio vince solo perché
+  `injectFxRules` emette le sue regole **dopo**. Non invertire l'ordine dei blocchi, o
+  i numeri 1-2-3 perdono il metallo.
+- Contrasti misurati in pagina: 4.16-4.31:1 in scuro, 3.36-3.39:1 in chiaro, axe 0.
+
+### 🌓 Contrasto e peso dei testi della card
+
+- **Le due righe tenui, tema SCURO** (`Info | genitori` = `.rank-desc`, 13.8px, e
+  `Nomi | Titoli` = `.rank-subtitle`, 16.5px): erano `#aeaeae` a opacità 0.80 e 0.75 e stavano **sotto 4.5:1 su tutte e 16
+  le famiglie, già a riposo** (minimo 3.35:1 a riposo, 2.79:1 col puntatore sopra).
+  Ora **`#c0c0c0` a opacità piena**: minimo 5.71:1 a riposo e 4.53:1 al passaggio, 0
+  misure sotto soglia su 47. Il tema chiaro non è toccato (era già conforme, minimo
+  4.96:1).
+  - ⚠️⚠️ **Perché nessuno se n'era accorto: axe, sulle card, NON valuta.** Con un
     `::before`/`::after` sull'elemento rinuncia a determinare il fondo e classifica
-    tutto come **`incomplete`** - misurato: **2714 incompleti, 0 valutati**, in
-    qualunque configurazione. Gli 'axe 0 violazioni' storici sulle card erano quindi
-    vacui. La verifica va fatta **sui pixel** (`scratchpad/aacard.js`: fondo
-    campionato dallo screenshot, testo composto con la sua opacità efficace).
-  - ⚠️ **Anche `.bp-b`** (il corsivo di genealogia e titoli) è stato allineato: la sua
-    mescola col grigio d'accento dava **`#a1a1a1` = 3.19:1**. Prende lo stesso
-    `#c0c0c0`; a distinguerlo dalla parte 1 basta il **CORSIVO**, che il commento
-    della regola bipartita già indicava come discriminante di riserva.
-  - La **gerarchia visiva** regge perché il Nome resta `#d2d2d2` a 25.6px: la
-    differenza la fanno corpo e peso, non più la penombra. ⚠️ Non schiarire le due
-    righe oltre `#cfcfcf`, o si avvicinano troppo al Nome.
-- **Peso del testo UNIFORME nei due temi (400, dalla v9.93, scelta utente).**
-  Prima il tema chiaro usava `font-weight:500` su `body`/`p`/`.intro`/`.subtitle`/
-  footer/testi delle schede (per 'ingrassare' il testo su fondo chiaro), mentre lo
-  scuro era 400. Il peso maggiore era più largo e cambiava gli **a-capo**: l'intro
-  dell'header e le righe delle schede andavano a capo diversamente al cambio tema
-  (una riga in più in chiaro). Portati **tutti a 400** in entrambi i temi: resa e
-  wrap identici, contrasto in chiaro ampiamente AA. (La salvaguardia anti-jitter
-  `.leg-measure{font-weight:500}` della legenda resta: innocua, riserva larghezza.)
-- **Fondo delle MODALI = colore neutro del tema (dalla v9.93, scelta utente).**
-  Tutte le modali seguono lo sfondo principale del tema, non più l'azzurrino/blu-
-  ardesia: **`.modal`** (schede personaggio + note/risorse/info, che condividono il
-  guscio) e **`.fab-modal-box`** (password, conferme, editor colori, trivio) hanno
-  fondo **#252525** (scuro) / **#F4F4F4** (chiaro). Il bordo delle `.fab-modal-box` è
-  neutralizzato (grigio tenue); la `.modal` scheda tiene il **bordo accento
-  cardcolor** (famiglia) e il velo `.modal-backdrop` resta sfocato invariato. Anche
-  lo sfondo del box **citazione** (`.modal-quote`) è neutralizzato (era azzurrino:
-  `rgba(255,255,255,0.05)` scuro / `rgba(0,0,0,0.05)` chiaro; il bordino sinistro
-  resta l'accento cardcolor). ⚠️ Il
-  fondo di riferimento per l'AA del testo scheda (`--cctext` via `ccAaText` in
-  `openModal`) è stato aggiornato di conseguenza a **#252525 / #F4F4F4** (era
-  #0a0f20 / #eeeef4); idem il fondo della mini-scheda nell'anteprima
-  `renderPreview` dell'editor colori.
-- **Testi e accenti NEUTRALIZZATI (dalla v8.79, scelta utente).** I colori di
-  testo/accento ardesia (token `--parchment`, `--parchment-dim`, `--gold`,
-  `--gold-bright`, `--gold-deep`, `--name`, `--name-hover` in **entrambi** i temi;
-  più gli hardcoded di header/footer/titolo: badge versione, `roccobot.me`,
-  `.crest` 'ROCCOBOT PRESENTS', sottotitolo, `.subtitle-note`, `.intro`/`.intro-cta`,
-  separatore `.flourish`, link footer, `.lang-switch`, glow del titolone e glow
-  hover del nome) sono stati portati a **grigio a saturazione 0**. Metodo:
-  **grigio a PARI LUMINANZA relativa** del colore originale → i rapporti di
-  contrasto restano identici (axe invariato, 0 violazioni). Il **titolone** tiene
-  il gradiente e il glow (effetto sul font invariato) ma in **grigio/argento**, non
-  più blu. **NON toccati:** etichette tipo (`.type-*`), famiglie `cardcolor`
-  (`--ccrgb`), simboli di genere (PNG), e i fondali/tint del Pannello e dei bordi
-  modale (rgba(104,144,168,…) a bassa opacità: sono sfondi/bordi di controlli, non
-  'testi'). `--ink`/`--ink-deep` (fondali scuri) restano.
-  - **Rifiniture v8.81:** neutralizzati anche i **tasti salto ↑/↓** (`.jump-fab`,
-    erano blu/teal in entrambi i temi) e il link footer chiaro `#res-link`
-    (era `#486d8c`); aggiunta un'**ombra leggera neutra** al titolone in **tema
-    chiaro** (prima `text-shadow:none`; ora l'equivalente 'in chiaro' del glow
-    scuro, grigia).
-  - **Accento verso il colore del FAB (dalla v8.82, entrambi i temi).** Il link
-    footer 'Risorse e note' (`#footer-links` + `#res-link`) prende un grigio
-    **virato verso il colore del FAB del tema** (il resto della testata/footer
-    resta neutro):
-    - **Tema SCURO → CALDO** (FAB oro `#CAAB59`): link/✦ `#c0b69a` (~34%).
-    - **Tema CHIARO → FREDDO** (FAB teal `#1f5562`): link/✦ `#445d64` (~40%).
-      Virando verso un colore scuro il contrasto **sale** (~6:1), AA ampiamente
-      ok. Storico: nato come esperimento caldo solo-scuro in v8.81 (15% verso
-      #d2b25c), poi saturato ed esteso al chiaro (verso il rispettivo FAB) in
-      v8.82 su richiesta dell'utente.
-    - ⚠️ **Il CREST 'Roccobot presenta' NON è più virato: è NEUTRO nei due temi**
-      (v14.00, richiesta dell'utente). Testo e i due ✦ usano grigi a **pari
-      luminanza relativa** dei virati che sostituiscono, quindi i contrasti non si
-      muovono: scuro `#aaaaaa` (era `#b4a98d`, 6.49 → 6.51) e `#b6b6b6` per i ✦ (era
-      `#c0b69a`, 7.49 → 7.46); chiaro `#595959` per entrambi (era `#445d64`, 6.43 →
-      6.43). Il link del footer, che condivideva gli stessi hex, **resta virato**:
-      sono regole separate.
-- **Distanziamento simbolo genere: rifinito in v8.81.** Il margine extra della
-  v8.80 (0.28/0.3em) era troppo (gap ~15px); ridotto (desktop `0.07em`, mobile
-  `0.06em`) → gap ~10px, tra il precedente 8.3px e il passo badge 11.3px.
-  Allineamento **verticale** dei cerchi (anelli + genere) sul centro-cap del nome:
-  ♂ (`.genere-svg--m`) `transform:translate(.006em,-0.076em)` (dalla v11.41 alzato
-  di 0.01em rispetto al precedente -0.066em, richiesta utente), ♀ tiene il suo
-  `translateY(.15em)` storico che porta il *cerchio* alla stessa quota. ⚠️ **Dalla
-  v11.70 il simbolo di genere È un'unità dell'editor micro-aggiustamenti**
-  (`male`/`female`): SULLE CARD la posizione/dimensione arriva dalle regole iniettate
-  `.bi-male`/`.bi-female` (seed = questi valori, nessun cambio visivo; la X-translate
-  0.006em del ♂ e la separazione sono ora nel `margin-left` dell'unità, a cascata).
-  Il CSS `.genere-svg--m/f` qui resta come **base/fallback** (e vale ancora in
-  legenda). Vedi 'Editor Micro-aggiustamenti'.
-  - **`Femmina.png` ritagliata ai lati (dalla v8.82).** Il PNG aveva ~30px di
-    trasparente per lato (27% orizzontale) → il ♀ aveva spazio fantasma. Ritagliato
-    L/R (versione fornita dall'utente, 180×252, non a filo) e larghezza del box
-    adattata al nuovo aspetto (`.genere-svg--f { width:.603em }`, era `.725em`);
-    **altezza `.844em` e `translateY(.15em)` invariati** → allineamento verticale
-    identico, il ♀ solo più stretto/vicino. `Maschio.png` non toccato.
-- **Titolone `#title`.** Il gradiente ornato della testata
-  (`background-clip:text`) e il suo glow restano come effetto. La tinta:
-  - **Fill ORO in tema SCURO (dalla v9.93, scelta utente):** gradiente
-    `linear-gradient(180deg,#efe0b8,#a67c34)` (champagne caldo → oro medio,
-    'Variante A' di un confronto a 3). Sostituisce il grigio/argento neutralizzato
-    (v8.79) SOLO sul titolo: testi e accenti restano neutri. AA testo grande
-    verificato (punto più scuro `#a67c34` su `#262626` ≈ 4.0:1, sopra 3:1). Storico:
-    i token `--parchment`/`--gold` (usati prima nel gradiente) erano neutralizzati e
-    per giunta storicamente blu/argento, mai oro: l'oro della v9.93 è nuovo, non un
-    ripristino.
-  - **Fill teal chiaro in tema chiaro (dalla v9.07).** Il gradiente del titolo in
-    chiaro è passato dal charcoal quasi nero (`#141414→#565656`) a un **teal chiaro
-    e tenue** in famiglia col FAB: `linear-gradient(180deg,#34707f,#66909a)`. Il
-    **fondo** (`#66909a`) è il punto più chiaro: contrasto **3.20:1** su `#F5F5F5`,
-    sopra la soglia AA per il testo grande (3:1). ⚠️ Non schiarire oltre il fondo o
-    il titolo scende sotto soglia. Solo il tema chiaro; lo scuro resta grigio/argento.
-  - **Effetto 'alone teal soffuso' in tema chiaro (dalla v9.93, scelta utente su
-    mockup a 5 varianti).** Sostituisce l'ombra grigia 'C doppia profondità'
-    (v9.05): ora `filter: drop-shadow(0 2px 3px rgba(0,0,0,.18)) drop-shadow(0 0
-    14px rgba(52,112,127,.38))` (uno stacco scuro ravvicinato + un alone tenue
-    nella tinta del FAB attorno ai glifi). Via **`filter`** (non `text-shadow`):
-    con `background-clip:text` l'alone deve seguire la forma reale delle lettere.
-    Solo tema chiaro; decorativo, non tocca il contrasto del fill. Le altre
-    varianti scartate erano: letterpress inciso, contorno+profondità, metallico.
-  - **Fix 'glifi tagliati in basso' (dalla v9.05).** Con `background-clip:text` il
-    gradiente riempie il testo solo entro il **box di riga**; con `line-height:0.95`
-    gli **svolazzi bassi di Cinzel Decorative** (code di G/R/A) uscivano dal box e
-    restavano trasparenti (parevano 'tagliati', in **entrambi** i temi). Fix sul
-    selettore base `h1`: `padding-bottom:0.14em` estende il box di riempimento
-    verso il basso e li copre, con `margin-bottom:calc(1rem - 0.14em)` a
-    compensare (spazio sotto invariato). Il bug è specifico del **font reale**
-    (Cinzel Decorative): coi fallback serif non si riproduce.
-- **Accento cardcolor sulla SCHEDA personaggio (dalla v8.77).** La `.modal` della
-  scheda eredita la famiglia della card: `openModal` le assegna `cc-<fam>` (via
-  la funzione pura **`familyOf(p)`**, stessa logica di `renderList`). Da lì
-  derivano gli accenti oggi in `--gold`:
-  - **BORDI (decorativi): sempre col colore famiglia**, in entrambi i temi:
-    bordo `.modal`, doppio bordo `::before`, filetto `.modal-source`
-    (`border-bottom`), bordo sinistro `.modal-quote`.
-  - **TESTI/ICONE (`.modal-rank` 'POSIZIONE', testo `.modal-source`, tasto
-    `.modal-close`): colore famiglia reso AA in automatico (dalla v9.62).** Non
-    più una lista fissa: `openModal` calcola `--cctext` = `ccAaText(colore
-    famiglia, fondo modale, 4.5)`: tiene la **tinta** e la scurisce (chiaro) o
-    schiarisce (scuro) finché regge 4.5:1, o la lascia com'è se già AA. I testi
-    usano `rgba(var(--cctext,var(--ccrgb)),1)`; i bordi restano `--ccrgb`. Vale per
-    ogni famiglia (anche nuova/rinominata), entrambi i temi. Storico: fino alla
-    v9.61 le famiglie non-AA in chiaro (`sinda, maia, rohir, other, highman,
-    numenorean, beast, man`) ripiegavano a **gold** via un override statico
-    `:not(.cc-...)`, ora **rimosso**. Nome (`.modal-name`) e bottone TG
-    (`.modal-tg`) restano invariati.
-  - ⚠️ Le regole `rgba(var(--ccrgb),…)`/`rgba(var(--cctext),…)` della scheda sono
-    **iniettate via JS** (`injectCardColorRules`) come le altre cardcolor (limite
-    Nu su `var()` in `rgba()`); `--cctext` è impostata inline da `openModal`.
-    Verificato con axe (schede aperte, famiglie safe e non): 0 violazioni in
-    entrambi i temi.
+    tutto come `incomplete` (misurato: 2714 incompleti, 0 valutati, in qualunque
+    configurazione). Gli 'axe 0 violazioni' storici sulle card erano quindi vacui: la
+    verifica va fatta **sui pixel** (`scratchpad/aacard.js`): fondo campionato dallo
+    screenshot, testo composto con la sua opacità efficace.
+  - Anche **`.bp-b`** (il corsivo di genealogia e titoli) prende `#c0c0c0`: la sua
+    mescola dava `#a1a1a1` = 3.19:1. A distinguerlo dalla prima parte basta il
+    **corsivo**.
+  - ⚠️ **Non schiarire le due righe oltre `#cfcfcf`**, o si avvicinano troppo al Nome
+    (`#d2d2d2` a 25.6px). La gerarchia la fanno corpo e peso, non la penombra.
+- **Peso 400 in entrambi i temi.** Il tema chiaro usava 500 per 'ingrassare' il testo,
+  ma il peso maggiore è più largo e **cambiava gli a-capo**: l'intro e le righe delle
+  schede andavano a capo diversamente al cambio tema. Portati tutti a 400: resa e wrap
+  identici, contrasto in chiaro ampiamente conforme.
 
-Storico del bordino (fino alla v8.71): dalla v7.69 il colore veniva dal
-`currentColor` dell'etichetta tipo (`background:currentColor` a opacità 0.8, la
-classe `.type-*` posata sulla striscia); prima ancora dipendeva dalla Classe. La
-logica di scelta `stripClass` (2ª etichetta, eccezione Noldor) è la stessa,
-cambia solo come se ne ricava il colore (ora via famiglia/`--ccrgb`).
+### 🎭 Colori neutralizzati di testata, footer e modali
+
+- **Fondo delle modali = colore neutro del tema**: `#252525` scuro / `#F4F4F4` chiaro,
+  per la scheda personaggio, per le note e per le modali admin. Il bordo delle admin è
+  grigio tenue; la scheda tiene il **bordo accento cardcolor**. Anche il box citazione
+  è neutro, col solo bordino sinistro in tinta.
+- **Testi e accenti neutralizzati** (v8.79): tutti i colori di testo e accento sono
+  grigi a **saturazione 0**, ottenuti col metodo del **grigio a pari luminanza
+  relativa** dell'originale, così i rapporti di contrasto non si muovono e axe resta
+  invariato.
+  - **Non toccati**: etichette tipo, famiglie `cardcolor`, simboli di genere, e i
+    fondali o bordi dei controlli a bassa opacità, che sono sfondi e non 'testi'.
+  - ⚠️ **Il crest 'Roccobot presenta' è NEUTRO nei due temi** (v14.00): grigi a pari
+    luminanza dei virati che sostituiscono, quindi i contrasti restano (6.51 e 7.46 in
+    scuro, 6.43 in chiaro). Il **link del footer**, che condivideva gli stessi hex,
+    **resta virato**: sono regole separate.
+  - **Il link 'Risorse e note' è virato verso il colore del FAB del tema**: caldo su
+    scuro (`#c0b69a`), freddo su chiaro (`#445d64`). Virando verso un colore scuro il
+    contrasto sale a ~6:1.
+- **Titolone `#title`**: tiene gradiente e alone come effetto, con tinte diverse per
+  tema.
+  - **Scuro: oro**, `linear-gradient(180deg,#efe0b8,#a67c34)`. Il punto più scuro dà
+    ~4.0:1 su `#262626`, sopra la soglia 3:1 del testo grande.
+  - **Chiaro: teal tenue**, `linear-gradient(180deg,#34707f,#66909a)`, in famiglia col
+    FAB. ⚠️ Il **fondo `#66909a` è il punto più chiaro e dà 3.20:1**: non schiarirlo,
+    o il titolo scende sotto soglia.
+  - **Alone teal soffuso in tema chiaro**, via `filter: drop-shadow(...)` e **non**
+    `text-shadow`: con `background-clip:text` l'alone deve seguire la forma reale
+    delle lettere. Scartate: letterpress inciso, contorno con profondità, metallico.
+  - ⚠️ **Fix 'glifi tagliati in basso'**: con `background-clip:text` il gradiente
+    riempie solo entro il box di riga, e con `line-height:0.95` gli svolazzi bassi di
+    Cinzel Decorative uscivano e restavano trasparenti. Rimedio sul selettore base:
+    `padding-bottom:0.14em` estende il box, con `margin-bottom` a compensare. ⚠️ Il
+    difetto è **specifico del font reale**: coi fallback serif non si riproduce.
+- **Simbolo di genere**: gap ~10px dal cluster dei badge (desktop `margin-left:0.07em`,
+  mobile `0.06em`), con i cerchi allineati al centro-maiuscoletto del nome. ⚠️ **Dalla
+  v11.70 il genere è un'unità dell'editor micro-aggiustamenti** (`male`/`female`):
+  sulle card posizione e dimensione arrivano dalle regole iniettate `.bi-male`/
+  `.bi-female`, e il CSS `.genere-svg--m/f` resta come base e per la legenda. Le
+  misure si cambiano da là, non qui.
+  - `Femmina.png` è ritagliata ai lati (aveva ~27% di trasparente orizzontale, che
+    dava al ♀ spazio fantasma): larghezza del box `0.603em`, altezza e allineamento
+    verticale invariati.
 
 ## 🗒️ Glossario dei contenuti (nomi colloquiali)
 
