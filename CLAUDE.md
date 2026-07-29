@@ -2483,14 +2483,18 @@ dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
   caricato (dice solo che *qualcosa* può rendere quel testo). L'unica spia
   affidabile è **`document.fonts.size`** (0 = nessuna webfont) o il conto degli
   elementi con `status === 'loaded'`.
-- **Come servirli davvero** (aggancio riutilizzabile in
-  `scratchpad/realfont.js`): 1) scaricare il CSS con `curl` + UA da browser
-  (passa dal proxy) e i `.woff2` che referenzia; 2) riscrivere i `src` sugli URL
-  locali; 3) servire repo e font via `python3 -m http.server` (il `file://` non va:
-  i font da `file://` sono bloccati); 4) in Playwright dirottare la richiesta con
-  `page.route('**://fonts.googleapis.com/**', …fulfill(css))`. Verifica: `n:28`
-  facce dichiarate, ≥9 `loaded`, famiglie `Cinzel`/`Cinzel Decorative`/`EB
-  Garamond`.
+- **L'aggancio è COMMITTATO, non da riscrivere ogni volta: `.claude/scripts/realfont.js`**
+  (sotto una cartella col punto, quindi Pages non lo pubblica). Fa tutto da sé: scarica il
+  CSS di Google Fonts e i `.woff2` con `curl` + UA da browser, li mette in cache fuori dal
+  repo, serve repo e font via HTTP, e con `attach(page)` dirotta la richiesta del browser
+  sui file locali. `ready(page)` è la spia: attesi **n 28**, ≥9 `loaded`, famiglie
+  `Cinzel`/`Cinzel Decorative`/`EB Garamond`.
+  - ⚠️ Serve **HTTP**: i font da `file://` sono bloccati dal browser.
+  - ⚠️ **`chromium.launch()` nudo falla**, perché il pacchetto `playwright` che si installa
+    si aspetta una build di Chromium diversa da quella preinstallata in `/opt/pw-browsers`.
+    Si passa `executablePath: rf.chromiumPath()`, che la risolve da sé.
+  - ⚠️ Se cambiano le famiglie di font del sito, va riallineata la costante `GF` dello
+    script, che ricopia l'URL di `index.html`.
 - **Cosa cambia e cosa no.** Dipendono dal font: larghezze, a-capo, conteggio
   righe, ottica delle icone. NON dipendono: la validazione **W3C** e i contrasti
   di **axe** (i rapporti si calcolano sui colori, e le soglie sul `font-size`
