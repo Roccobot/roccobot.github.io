@@ -1915,7 +1915,8 @@ editor sono **admin-only, dietro parola d'ordine** (il riordino la chiede entran
   **spenti** e NON sono persistite; l'URL le scavalca **solo all'avvio**, quindi riaprire il
   link riproduce la vista e toglierlo torna ai default: è il parametro a rendere il link
   idempotente. Forme lette dal loader:
-  - **`?x`** = **tutte le categorie** attive, la vista più condivisa.
+  - **`?x`** = **tutte le categorie** attive, la vista più condivisa (es.
+    `https://roccobot.github.io/arda/top/?x`).
   - **`?<bitmask>`** = un carattere `0/1` per categoria nell'**ordine fisso di `CATS`** (ainu,
     arcane, elf, adan, man, dwarf, hobbit, orc, animal), con un **10° bit** opzionale per gli
     **Apocrifi**. Es. `?101` = ainu+elf, `?1000000001` = sola ainu + apocrifi. Gli **zeri
