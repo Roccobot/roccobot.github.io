@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LotRWiki Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.0.2
+// @version      1.0.3
 // @description  Lightens Fandom's LotR wiki (lotr.fandom.com): drops the huge background image and keeps it from loading at all, then hides the ads, the right rail, the featured video and Fandom's oversized global footer. Wiki content is left alone (article, infobox, contents, categories, images). CSS only, no network request.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -67,7 +67,7 @@
   );
 
   if (NASCONDI_FOOTER_GLOBALE) regole.push(
-    // il footer GLOBALE di Fandom ("Explore properties"/"Follow us"…): cruft.
+    // il footer GLOBALE di Fandom ("Explore properties"/"Follow us"...): cruft.
     // Il footer della PAGINA wiki (categorie, licenza CC-BY-SA) è un altro
     // elemento e NON viene toccato.
     '.global-footer { display: none !important; }'

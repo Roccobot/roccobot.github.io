@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.18.3
+// @version         2.19.0
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -38,7 +38,7 @@
   //   'mai'    = comportamento storico: scorre, e lo zoom resta su ctrl+rotella e pinch
   const ROTELLA_ZOOM = 'auto';
   const PASSO_ROTELLA = 1.1;   // quanto ingrandisce UN singolo scatto (1.1 = +10%:
-                               // 100 → 110 → 121 → 133 → 146 → 161 → 177 → 194 → …)
+                               // 100 → 110 → 121 → 133 → 146 → 161 → 177 → 194 → ...)
   // TAPPE FISSE, in percentuale della dimensione reale: la rotella salta di tappa in
   // tappa invece di moltiplicare, cosi' i valori sono TONDI (120% invece di 121,2%).
   // Costruite per imitare l'andamento dell'1,1x scegliendo, fra i candidati entro il
@@ -468,8 +468,8 @@
       if (!btnScale) return;
       // Il tondo NON cambia aspetto in base allo stato (nessuno stato "premuto"): solo il tooltip.
       btnScale.title = scaleMode === 'phys'
-        ? 'Reale = pixel FISICI: 1 px immagine = 1 px dello schermo (fedele; ' + dpr + 'x su questo display). Clic: passa a pixel logici.'
-        : 'Reale = pixel LOGICI: 1 px immagine = 1 px CSS (piu\' grande sugli schermi HiDPI). Clic: torna a pixel fisici.';
+        ? 'Real = PHYSICAL pixels: 1 image px = 1 screen px (faithful; ' + dpr + 'x on this display). Click for logical pixels.'
+        : 'Real = LOGICAL pixels: 1 image px = 1 CSS px (larger on HiDPI screens). Click to go back to physical pixels.';
     }
     function toggleScaleMode() {
       const eraIngrandito = fitEIngrandito();   // da leggere PRIMA che "reale" cambi
@@ -740,7 +740,7 @@
       const mh = Math.round(largo ? MINI_LATO * natH / natW : MINI_LATO);
       mini = creaEl('div');
       mini.id = 'dv-mini';
-      mini.title = 'Navigatore: trascina il riquadro per spostarti (tasto N per nasconderlo)';
+      mini.title = 'Navigator: drag the box to move around (press N to hide it)';
       miniBox = creaEl('div');
       miniBox.setAttribute('class', 'dv-mini-box');
       miniBox.style.width = mw + 'px';
@@ -864,7 +864,7 @@
           isFit = scalaEAdattata();   // il clic dev'essere pronto col nuovo criterio
           apply();
         }
-        toast(ingrandisciPerAdattare ? 'Adatta anche ingrandendo' : 'Adatta senza ingrandire');
+        toast(ingrandisciPerAdattare ? 'Fit, enlarging if needed' : 'Fit without enlarging');
         return;
       }
       if (e.key === 'n' || e.key === 'N') {         // navigatore acceso/spento
@@ -872,7 +872,7 @@
         navigatoreAcceso = !navigatoreAcceso;
         try { GM_setValue('dv-minimappa', navigatoreAcceso ? '1' : '0'); } catch (err) {}
         aggiornaNavigatore();
-        toast(navigatoreAcceso ? 'Navigatore acceso' : 'Navigatore spento');
+        toast(navigatoreAcceso ? 'Navigator on' : 'Navigator off');
         return;
       }
       if (e.key !== 'i' && e.key !== 'I') return;
@@ -880,7 +880,7 @@
       versoInvertito = !versoInvertito;
       try { GM_setValue('dv-wheel-invert', versoInvertito ? '1' : '0'); } catch (err) {}
       const suIngrandisce = (ROTELLA_SU_INGRANDISCE !== versoInvertito);
-      toast(suIngrandisce ? 'Rotella in su: ingrandisce' : 'Rotella in su: rimpicciolisce');
+      toast(suIngrandisce ? 'Wheel up: zoom in' : 'Wheel up: zoom out');
     });
 
     // ── Resize: se sto mostrando "adattato", ri-adatta; comunque ri-limita ──
@@ -933,13 +933,13 @@
       cv.width = w; cv.height = h;
       const g = cv.getContext('2d');
       if (svgMedia) {
-        if (!azioniSvg) throw new Error('sorgente non pronta');
+        if (!azioniSvg) throw new Error('source not ready');
         const url = URL.createObjectURL(new Blob([azioniSvg.perRaster(w, h)], { type: 'image/svg+xml;charset=utf-8' }));
         try {
           const im = await new Promise(function (ris, rif) {
             const i = new Image();
             i.onload = function () { ris(i); };
-            i.onerror = function () { rif(new Error('SVG non rasterizzabile')); };
+            i.onerror = function () { rif(new Error('SVG cannot be rasterized')); };
             i.src = url;
           });
           g.drawImage(im, 0, 0, w, h);
@@ -955,29 +955,29 @@
         // il blob si passa come PROMESSA: cosi' il permesso del clic non scade
         // mentre si disegna, che e' il motivo per cui la copia a volte fallisce
         await navigator.clipboard.write([new ClipboardItem({ 'image/png': bloboPng() })]);
-        toast('Immagine copiata');
+        toast('Image copied');
       } catch (e) {
         // ripiego: se il file e' gia' un PNG si copiano i byte cosi' come sono
         // (utile quando il canvas e' "sporco", per esempio sui file locali)
         try {
           if (byteOriginali && /png/i.test(document.contentType)) {
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([byteOriginali], { type: 'image/png' }) })]);
-            toast('Immagine copiata');
+            toast('Image copied');
             return;
           }
         } catch (e2) {}
-        toast('Copia non riuscita: ' + ((e && e.name) || 'errore'));
+        toast('Copy failed: ' + ((e && e.name) || 'error'));
       }
     }
 
     function copiaIndirizzo() {
-      try { navigator.clipboard.writeText(location.href).then(function () { toast('Indirizzo copiato'); }); }
-      catch (e) { toast('Copia non riuscita'); }
+      try { navigator.clipboard.writeText(location.href).then(function () { toast('URL copied'); }); }
+      catch (e) { toast('Copy failed'); }
     }
 
     function nomeFileImmagine() {
-      var n = 'immagine';
-      try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'immagine'; } catch (e) {}
+      var n = 'image';
+      try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'image'; } catch (e) {}
       if (!/\.[a-z0-9]{2,5}$/i.test(n)) n += '.' + (imageInfo.ext || 'img');
       return n;
     }
@@ -1007,11 +1007,11 @@
     // non l'elenco: il menu resta identico ovunque.
     function vociDelMenu(x, y) {
       return [
-        { t: 'Copia immagine', f: copiaImmagine },
-        { t: 'Copia URL immagine', f: copiaIndirizzo },
-        { t: 'Salva immagine...', f: salvaImmagine },
+        { t: 'Copy image', f: copiaImmagine },
+        { t: 'Copy image URL', f: copiaIndirizzo },
+        { t: 'Save image...', f: salvaImmagine },
         { sep: true },
-        { t: 'Adatta alla vista', f: vaiFit },
+        { t: 'Fit to view', f: vaiFit },
         { t: '100%', f: function () { zoomTo(realScale, x, y); } },
         { t: '200%', f: function () { zoomTo(realScale * 2, x, y); } },
         { t: '400%', f: function () { zoomTo(realScale * 4, x, y); } }
@@ -1121,7 +1121,7 @@
     btnDl.setAttribute('tabindex', '0');
     btnDl.setAttribute('aria-haspopup', 'dialog');
     btnDl.setAttribute('aria-expanded', 'false');
-    btnDl.title = 'Scarica: PNG alla risoluzione che vuoi, oppure SVG ripulito';
+    btnDl.title = 'Download: PNG at any resolution, or a cleaned-up SVG';
     btnDl.setAttribute('aria-label', btnDl.title);
     const ico = document.createElementNS(SVGNS, 'svg');
     ico.setAttribute('viewBox', '0 0 24 24');
@@ -1151,12 +1151,13 @@
       const perLato = Math.min(CANVAS_LATO_MAX / natW, CANVAS_LATO_MAX / natH) * 96;
       return Math.max(DPI_MIN, Math.floor(Math.min(DPI_MAX, perArea, perLato)));
     }
-    function numIt(n, dec) { return n.toFixed(dec).replace('.', ','); }
-    function peso(b) { return b >= 1048576 ? numIt(b / 1048576, 1) + ' MB' : numIt(b / 1024, 1) + ' KB'; }
+    // Punto decimale, coerente con la UI in inglese (era la virgola italiana).
+    function num(n, dec) { return n.toFixed(dec); }
+    function peso(b) { return b >= 1048576 ? num(b / 1048576, 1) + ' MB' : num(b / 1024, 1) + ' KB'; }
     function nomeBase() {
-      var n = 'immagine';
-      try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'immagine'; } catch (e) {}
-      return n.replace(/\.svgz?$/i, '') || 'immagine';
+      var n = 'image';
+      try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'image'; } catch (e) {}
+      return n.replace(/\.svgz?$/i, '') || 'image';
     }
     function salvaFile(blob, nome) {
       const u = URL.createObjectURL(blob);
@@ -1396,7 +1397,7 @@
       pan = creaEl('div');
       pan.id = 'dv-dl';
       pan.setAttribute('role', 'dialog');
-      pan.setAttribute('aria-label', 'Scarica immagine');
+      pan.setAttribute('aria-label', 'Download image');
       pan.hidden = true;
       btnDl.setAttribute('aria-controls', 'dv-dl');
 
@@ -1410,8 +1411,8 @@
       inDpi.setAttribute('max', String(DPI_MAX));
       inDpi.setAttribute('step', '1');
       inDpi.setAttribute('inputmode', 'numeric');
-      inDpi.setAttribute('aria-label', 'Risoluzione in DPI');
-      inDpi.title = 'Risoluzione in DPI (da ' + DPI_MIN + ' a ' + DPI_MAX + ')';
+      inDpi.setAttribute('aria-label', 'Resolution in DPI');
+      inDpi.title = 'Resolution in DPI (from ' + DPI_MIN + ' to ' + DPI_MAX + ')';
       riga.appendChild(inDpi);
       riga.appendChild(nodo('span', 'dv-dl-unit', 'DPI'));
       pan.appendChild(riga);
@@ -1438,10 +1439,10 @@
       const chkSfondo = creaEl('input');
       chkSfondo.setAttribute('type', 'checkbox');
       optSfondo.appendChild(chkSfondo);
-      optSfondo.appendChild(document.createTextNode('Sfondo bianco invece che trasparente'));
+      optSfondo.appendChild(document.createTextNode('White background instead of transparent'));
       pan.appendChild(optSfondo);
 
-      const goPng = nodo('button', 'dv-go', 'Scarica PNG');
+      const goPng = nodo('button', 'dv-go', 'Download PNG');
       goPng.setAttribute('type', 'button');
       pan.appendChild(goPng);
 
@@ -1450,13 +1451,13 @@
       // ── sezione SVG ──
       pan.appendChild(nodo('div', 'dv-dl-h', 'SVG'));
       const svgInfo = nodo('div', 'dv-dl-prev', '');
-      const svgSub = nodo('div', 'dv-dl-sub', 'Toglie metadati, XMP e roba di Illustrator o Inkscape. La geometria non si tocca.');
+      const svgSub = nodo('div', 'dv-dl-sub', 'Strips metadata, XMP and Illustrator or Inkscape leftovers. The geometry is left alone.');
       pan.appendChild(svgInfo);
       pan.appendChild(svgSub);
-      const goSvg = nodo('button', 'dv-go', 'Scarica SVG ripulito');
+      const goSvg = nodo('button', 'dv-go', 'Download cleaned SVG');
       goSvg.setAttribute('type', 'button');
       pan.appendChild(goSvg);
-      const goOrig = nodo('button', 'dv-ghost', 'Scarica originale');
+      const goOrig = nodo('button', 'dv-ghost', 'Download original');
       goOrig.setAttribute('type', 'button');
       pan.appendChild(goOrig);
 
@@ -1474,11 +1475,11 @@
         const d = pxPerDpi(troppo ? max : dpi);
         prevPx.textContent = d.w + ' × ' + d.h + ' px';
         if (troppo) {
-          prevSub.textContent = 'Massimo ' + max + ' DPI per questa immagine';
+          prevSub.textContent = 'At most ' + max + ' DPI for this image';
           prevSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
         } else {
           // i centimetri NON dipendono dal DPI: e' la stessa carta, stampata piu' o meno fitta
-          prevSub.textContent = numIt(natW / 96 * 2.54, 1) + ' × ' + numIt(natH / 96 * 2.54, 1) + ' cm a ' + dpi + ' DPI';
+          prevSub.textContent = num(natW / 96 * 2.54, 1) + ' × ' + num(natH / 96 * 2.54, 1) + ' cm at ' + dpi + ' DPI';
           prevSub.setAttribute('class', 'dv-dl-sub');
         }
         chips.forEach(function (c, i) { c.setAttribute('aria-pressed', DPI_PRESET[i] === dpi ? 'true' : 'false'); });
@@ -1489,7 +1490,7 @@
       }
       function occupato(on) {
         goPng.disabled = on;
-        goPng.textContent = on ? 'Attendere...' : 'Scarica PNG';
+        goPng.textContent = on ? 'Please wait...' : 'Download PNG';
       }
 
       function scaricaPng() {
@@ -1500,7 +1501,7 @@
         occupato(true);
         const url = URL.createObjectURL(new Blob([testo], { type: 'image/svg+xml;charset=utf-8' }));
         const im = new Image();
-        im.onerror = function () { URL.revokeObjectURL(url); occupato(false); avviso('Questo SVG non si lascia rasterizzare'); };
+        im.onerror = function () { URL.revokeObjectURL(url); occupato(false); avviso('This SVG cannot be rasterized'); };
         im.onload = function () {
           URL.revokeObjectURL(url);
           try {
@@ -1516,7 +1517,7 @@
             if (chkSfondo.checked) { g.fillStyle = '#ffffff'; g.fillRect(0, 0, d.w, d.h); }
             g.drawImage(im, 0, 0, d.w, d.h);
             cv.toBlob(function (b) {
-              if (!b) { occupato(false); avviso('Immagine troppo grande per il browser'); return; }
+              if (!b) { occupato(false); avviso('Image too large for the browser'); return; }
               b.arrayBuffer().then(function (ab) {
                 occupato(false);
                 try { GM_setValue('dv-png-dpi', String(dpi)); } catch (e) {}
@@ -1529,8 +1530,8 @@
           } catch (e) {
             occupato(false);
             avviso(e && e.name === 'SecurityError'
-              ? 'PNG impossibile: l\'SVG contiene risorse esterne'
-              : 'PNG non riuscito (' + ((e && e.message) || 'errore') + ')');
+              ? 'PNG not possible: the SVG contains external resources'
+              : 'PNG failed (' + ((e && e.message) || 'error') + ')');
           }
         };
         im.src = url;
@@ -1541,13 +1542,13 @@
       function preparaSvg() {
         const pesoOrig = byteOriginali ? byteOriginali.byteLength : 0;
         goOrig.disabled = !byteOriginali;
-        goOrig.textContent = byteOriginali ? 'Scarica originale (' + peso(pesoOrig) + ')' : 'Originale non disponibile';
+        goOrig.textContent = byteOriginali ? 'Download original (' + peso(pesoOrig) + ')' : 'Original not available';
         var t = null;
         try { t = svgRipulito(); } catch (e) { t = null; }
         if (!t || !xmlValido(t)) {
           svgPulito = null;
           goSvg.disabled = true;
-          svgInfo.textContent = 'Pulizia non applicabile a questo file';
+          svgInfo.textContent = 'Nothing to clean in this file';
           return;
         }
         svgPulito = t;
@@ -1555,7 +1556,7 @@
         const pul = new Blob([t]).size;
         const rif = pesoOrig || new Blob([new XMLSerializer().serializeToString(svgMedia)]).size;
         const perc = Math.round((1 - pul / rif) * 100);
-        svgInfo.textContent = peso(rif) + ' → ' + peso(pul) + (perc > 0 ? '  (-' + perc + '%)' : '  (già al minimo)');
+        svgInfo.textContent = peso(rif) + ' → ' + peso(pul) + (perc > 0 ? '  (-' + perc + '%)' : '  (already minimal)');
       }
 
       goPng.addEventListener('click', scaricaPng);

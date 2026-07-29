@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.8.2
+// @version      1.9.0
 // @description  On pornhub.com: keeps the site in English and Worldwide by rewriting the lang=en and overwriteCCVal=world cookies on every load (PH resets them to Italian now and then), and redirects the language subdomains (it.pornhub.com and so on) to www.pornhub.com so titles are never translated. Adds an always-visible download button at the bottom right: highest MP4 quality available; progress on the button; second click cancels; file named '[Channel] Title.mp4'; source read at runtime from flashvars/mediaDefinitions.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -261,10 +261,10 @@
     dlHandle = null;
     dlAttivo = false;
     if (btn) {
-      btn.textContent = '✖︎ annullato';
+      btn.textContent = '✖︎ cancelled';
       sfondo(btn, '#d0021b');
       setTimeout(function () {
-        if (!dlAttivo) { btn.textContent = '⬇️ Scarica video'; sfondo(btn, SFONDO_BASE); }
+        if (!dlAttivo) { btn.textContent = '⬇️ Download video'; sfondo(btn, SFONDO_BASE); }
       }, 3500);
     }
   }
@@ -274,18 +274,18 @@
     if (dlAttivo) { annullaDownload(btn); return; }
 
     dlAttivo = true; dlAnnullato = false; dlHandle = null;
-    const testo0 = '⬇️ Scarica video';
+    const testo0 = '⬇️ Download video';
     // NB: il tasto resta cliccabile (non disabled) così un altro clic annulla.
-    if (btn) { btn.title = 'Clic di nuovo per annullare'; btn.textContent = '⏳ Cerco qualità…'; }
+    if (btn) { btn.title = 'Click again to cancel'; btn.textContent = '⏳ Finding quality...'; }
     try {
       const q = await qualitaDisponibili();
       if (dlAnnullato) return;
       if (!q.mp4.length) {
         if (q.hls.length) {
-          alert('PH Roccobot: questo video è disponibile solo in HLS (streaming a segmenti .m3u8), non come file MP4 diretto.\n' +
-                'Il download diretto MP4 non è possibile per questo video. (Dimmelo se vuoi che aggiunga il download HLS con unione dei segmenti.)');
+          alert('PH Roccobot: this video is only available as HLS (.m3u8 segmented stream), not as a direct MP4 file.\n' +
+                'A direct MP4 download is not possible here. (Ask for HLS support with segment joining if you need it.)');
         } else {
-          alert('PH Roccobot: non ho trovato la sorgente video in questa pagina (struttura cambiata?). Fammi sapere e la aggiorno.');
+          alert('PH Roccobot: no video source found on this page (did the markup change?). Report it and the script will be updated.');
         }
         return;
       }
@@ -300,17 +300,17 @@
         if (dlAnnullato) return; // l'errore è l'abort volontario: nessun ripiego
         // ripiego: apri l'URL così l'utente può salvarlo a mano
         window.open(best.url, '_blank', 'noopener');
-        if (btn) { btn.textContent = '↗︎ aperto'; sfondo(btn, '#d0021b'); }
+        if (btn) { btn.textContent = '↗︎ opened'; sfondo(btn, '#d0021b'); }
       }
     } catch (e) {
       if (dlAnnullato) return;
-      alert('PH Roccobot: errore nel preparare il download.\n' + (e && e.message ? e.message : e));
-      if (btn) { btn.textContent = '⚠️ Errore'; sfondo(btn, '#d0021b'); }
+      alert('PH Roccobot: could not prepare the download.\n' + (e && e.message ? e.message : e));
+      if (btn) { btn.textContent = '⚠️ Error'; sfondo(btn, '#d0021b'); }
     } finally {
       const eraAnnullato = dlAnnullato;
       dlAttivo = false; dlHandle = null;
       if (btn) {
-        btn.title = 'Scarica il video alla qualità massima disponibile';
+        btn.title = 'Download the video at the highest quality available';
         if (!eraAnnullato) setTimeout(function () {
           if (!dlAttivo) { btn.textContent = testo0; sfondo(btn, SFONDO_BASE); }
         }, 8000);
@@ -327,8 +327,8 @@
       const b = document.createElement('button');
       b.id = 'rb-ph-dl';
       b.type = 'button';
-      b.textContent = '⬇️ Scarica video';
-      b.title = 'Scarica il video alla qualità massima disponibile';
+      b.textContent = '⬇️ Download video';
+      b.title = 'Download the video at the highest quality available';
       // stili con !important: il CSS di PornHub non può nasconderlo/spostarlo
       const st = {
         'position': 'fixed', 'bottom': '16px', 'right': '16px', 'z-index': '2147483647',
@@ -355,12 +355,12 @@
   // PH è in parte una SPA: il pulsante va (ri)messo quando compare un video.
   function avvio() {
     aggiungiPulsante();
-    // PH è una SPA e a volte ricostruisce il DOM: si riprova con l'observer…
+    // PH è una SPA e a volte ricostruisce il DOM: si riprova con l'observer...
     try {
       new MutationObserver(function () { aggiungiPulsante(); })
         .observe(document.documentElement, { subtree: true, childList: true });
     } catch (e) {}
-    // …e con una rete di sicurezza a intervalli (finché il pulsante non c'è).
+    // ...e con una rete di sicurezza a intervalli (finché il pulsante non c'è).
     let n = 0;
     const iv = setInterval(function () {
       aggiungiPulsante();
@@ -370,7 +370,7 @@
   }
 
   if (typeof GM_registerMenuCommand !== 'undefined') {
-    GM_registerMenuCommand('Scarica il video (qualità massima)', function () { scarica(document.getElementById('rb-ph-dl')); });
+    GM_registerMenuCommand('Download the video (highest quality)', function () { scarica(document.getElementById('rb-ph-dl')); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);

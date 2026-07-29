@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Fapopedia Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.1.3
+// @version      1.2.0
 // @description  Adds a button to fapopedia.net that downloads every image of a gallery at full resolution, packed into one ZIP. Originals are derived from the thumbnail URLs (the 't_' prefix is dropped) and fetched with GM_xmlhttpRequest; the ZIP comes from a small built-in writer (store method, no dependency: JSZip stalled while compressing inside the sandbox). Nothing is uploaded: downloads only.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -171,7 +171,7 @@
       await forzaLazyLoad();
     }
     const lista = raccogliUrl();
-    if (!lista.length) { alert('Fapopedia+: nessuna immagine di galleria trovata in questa pagina.'); return; }
+    if (!lista.length) { alert('Fapopedia+: no gallery image found on this page.'); return; }
 
     inCorso = true;
     const testoIniziale = btn.textContent;
@@ -179,7 +179,7 @@
     try {
       await forzaLazyLoad();
       const dati = await scaricaTutte(lista, function (fatti, tot) {
-        btn.textContent = '⬇️ ' + fatti + '/' + tot + '…';
+        btn.textContent = '⬇️ ' + fatti + '/' + tot + '...';
       });
 
       const files = [];
@@ -194,9 +194,9 @@
         files.push({ name: nome, data: new Uint8Array(buf) });
       });
 
-      if (!files.length) { alert('Fapopedia+: nessuna immagine scaricata (tutte fallite).'); return; }
+      if (!files.length) { alert('Fapopedia+: no image downloaded (all of them failed).'); return; }
 
-      btn.textContent = '📦 Creo ZIP…';
+      btn.textContent = '📦 Building ZIP...';
       await sleep(0); // lascia ridipingere il pulsante prima del lavoro sincrono
       const zipBytes = creaZipStore(files);
       const zipBlob = new Blob([zipBytes], { type: 'application/zip' });
@@ -213,7 +213,7 @@
       btn.textContent = '✅ ' + aggiunte + (falliti ? (' / ' + falliti + ' ✗') : '');
       setTimeout(function () { btn.textContent = testoIniziale; }, 5000);
     } catch (e) {
-      alert('Fapopedia+: errore durante il download.\n' + (e && e.message ? e.message : e));
+      alert('Fapopedia+: download error.\n' + (e && e.message ? e.message : e));
       btn.textContent = testoIniziale;
     } finally {
       inCorso = false;
@@ -228,17 +228,17 @@
     const b = document.createElement('button');
     b.id = 'rb-fap-dl';
     b.type = 'button';
-    b.textContent = '⬇️ Scarica galleria (' + n + ') - ZIP';
-    b.title = 'Scarica tutte le immagini della galleria in alta risoluzione, in un unico ZIP';
+    b.textContent = '⬇️ Download gallery (' + n + ') - ZIP';
+    b.title = 'Download every gallery image in high resolution, in a single ZIP';
     stile(b);
     b.addEventListener('click', function () { avvia(b); });
     document.body.appendChild(b);
   }
 
   if (typeof GM_registerMenuCommand !== 'undefined') {
-    GM_registerMenuCommand('Scarica galleria (ZIP)', function () {
+    GM_registerMenuCommand('Download gallery (ZIP)', function () {
       const b = document.getElementById('rb-fap-dl');
-      if (b) avvia(b); else alert('Fapopedia+: apri una pagina-galleria.');
+      if (b) avvia(b); else alert('Fapopedia+: open a gallery page.');
     });
   }
 
@@ -249,7 +249,7 @@
     const b = document.getElementById('rb-fap-dl');
     if (b && !inCorso) {
       const n = raccogliUrl().length;
-      if (n) b.textContent = '⬇️ Scarica galleria (' + n + ') - ZIP';
+      if (n) b.textContent = '⬇️ Download gallery (' + n + ') - ZIP';
     }
   }
   tick();

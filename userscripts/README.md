@@ -158,7 +158,7 @@ Tutto-in-uno per `nsfwalbum.com` (unisce e sostituisce *NSFWAlbum Enhancer* +
   la lente d'ingrandimento (`.magnify-lens`). *(Quando l'immagine manca davvero
   il sito serve un JPEG placeholder da `/missed.php`: lì non c'è nulla da
   recuperare, non è un'esca.)*
-- **Pagina album (`/album/<id>`):** pulsante flottante **«⬇️ Scarica set (ZIP)»**
+- **Pagina album (`/album/<id>`):** pulsante flottante **«⬇️ Download set (ZIP)»**
   che scarica **tutte** le immagini del set a **piena risoluzione** in un unico
   **ZIP**, nominato **`[studio] - [modella] - [titolo].zip`** (ricavato dalla
   pagina). Full-res da imx.to (thumb `//image.imx.to/u/t/…` → file
@@ -190,7 +190,7 @@ const TIMEOUT_MS     = 60000;  // pagina album: timeout per immagine
 **File:** `FapopediaRoccobot.user.js` · **Titolo (`@name`):** `Fapopedia Roccobot`
 
 Su `fapopedia.net`, nelle pagine-galleria, aggiunge un pulsante flottante
-**"⬇️ Scarica galleria (N) - ZIP"** che con un clic scarica **tutte** le immagini
+**"⬇️ Download gallery (N) - ZIP"** che con un clic scarica **tutte** le immagini
 in **alta risoluzione** e le impacchetta in un unico file **ZIP** (nominato come
 la galleria, es. `gabi-summers-nude-leaks.zip`).
 
@@ -299,7 +299,7 @@ Su `pornhub.com` fa due cose:
    **`www.pornhub.com`** conservando percorso e query (`location.replace`): coi
    cookie giusti `www.` "tiene". Guardia anti-loop a tempo (se PH rimbalzasse, non
    insiste, ma non resta bloccata).
-2. **Tasto "⬇️ Scarica video"** in basso a destra (sempre visibile): scarica il
+2. **Tasto "⬇️ Download video"** in basso a destra (sempre visibile): scarica il
    file alla **qualità massima**. Legge a runtime l'oggetto `flashvars_<viewkey>` e
    le sue `mediaDefinitions`, **espande** le definizioni "remote" (`get_media`) e
    sceglie l'**MP4** con la qualità più alta; il download va su disco via
@@ -350,7 +350,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     **memorizzata** e il valore di partenza è la costante `ADATTA_INGRANDENDO`.
   - ⚠️ **L'ingrandimento è sempre SU RICHIESTA (dalla 2.18.1).** Un'immagine più piccola
     della vista si apre **a 1:1** anche con l'opzione accesa: è il **clic** (o la voce
-    *Adatta alla vista* del menu) a chiedere il riempimento. Non lo chiede nemmeno il
+    *Fit to view* del menu) a chiedere il riempimento. Non lo chiede nemmeno il
     tasto `A`, che si limita a cambiare cosa farà il clic, né un **allargamento della
     finestra** che faccia entrare per intero un'immagine prima troppo grande. Un
     riempimento già chiesto, invece, **segue** la finestra che si ridimensiona.
@@ -375,15 +375,15 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
 - **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di sette
-  voci: **Copia immagine**, **Copia URL immagine**, **Salva immagine...**, separatore,
-  **Adatta alla vista**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
+  voci: **Copy image**, **Copy image URL**, **Save image...**, separatore,
+  **Fit to view**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
   cliccato). L'elenco è identico su raster e su SVG; cambia il **contenuto** di due voci:
-  - sugli SVG **Copia immagine** produce un raster a **96 DPI**, cioè alla risoluzione
+  - sugli SVG **Copy image** produce un raster a **96 DPI**, cioè alla risoluzione
     dello schermo, perché un vettoriale pixel propri non ne ha. Vale la convenzione del
     pannello di esportazione (`px = misura nominale × DPI / 96`), quindi la copia è 1:1
     con la dimensione nominale: un SVG 640×360 si copia a 640×360. Si cambia con la
     costante `DPI_COPIA`.
-  - sugli SVG **Salva immagine...** salva il file originale intatto.
+  - sugli SVG **Save image...** salva il file originale intatto.
   - ⚠️ **Un menu proprio sostituisce quello del browser**, non si affianca, e quello
     nativo non è richiamabile da JavaScript: si perde **"Ispeziona"**, che non è
     reimpiazzabile. Via di fuga: **`shift` + tasto destro** lascia passare il menu del

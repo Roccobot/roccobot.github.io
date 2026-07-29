@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.15.2
+// @version      2.16.0
 // @description  Declutters Qwant and opens image results on the original file. Home page and results page: the official logo instead of event doodles; no left sidebar, footer, promo cards, options/filters button or ads (in-line data-testid adResult and right column); fixed search parameters per tab; the Filters button shown on image search; no image preview strip on web search; and, behind an experimental flag, result links rewritten to skip the fdn.qwant.com tracking redirect. Image search: a click opens the original file, taken from the React state already in the page or else from the thumbnail URL, which matters now that Qwant serves Bing thumbnails that cannot be reversed; when neither works, the click is left untouched. That module makes no network request and runs only on the Images tab, because its global listeners on web search used to trip Qwant's anti-bot (403).
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -561,7 +561,7 @@
           a.rel = 'noopener';
           if (APRI_IN_NUOVA_SCHEDA) a.target = '_blank';
         }
-        if (!img.title) img.title = "Clic: apre l'immagine originale";
+        if (!img.title) img.title = 'Click: opens the original image';
       }
     }
 
