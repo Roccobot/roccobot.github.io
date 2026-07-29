@@ -67,7 +67,7 @@ html.zoom-big { zoom:1.3; }
 /* Fattore di zoom esposto al CSS (dalla v12.65). Serve ai tetti in `vh` delle
    modali admin: le unità viewport risolvono in px di LAYOUT, ma con zoom:1.3
    l'elemento ne occupa 1.3× visivamente, quindi un `max-height:92vh` non
-   scattava mai e la modale sforava lo schermo — con il tasto di chiusura fuori
+   scattava mai e la modale sforava lo schermo, col tasto di chiusura fuori
    dal viewport, quindi incliccabile. Si scrive `calc(92vh / var(--zoomf,1))`. */
 html { --zoomf:1; }
 html.zoom-big { --zoomf:1.3; }
@@ -358,7 +358,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 
 .rank-item:hover::before { opacity:1; }
 
-/* #2 — il numero non cambia colore al passaggio del mouse */
+/* #2: il numero non cambia colore al passaggio del mouse */
 
 .rank-item:hover .rank-name,.rank-item:focus-within .rank-name { color:var(--name); }
 
@@ -416,7 +416,7 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    etichette solo perché le pill hanno sfondo molto tenue (~10%) e la lasciano
    trasparire; le lettere del nome, opache, la nascondono del tutto. È resa corretta
    (dietro), non un bug di z-index. */
-/* #2 — Etichette (tipi) e icone raggruppate. Il DOM emette l'ordine di resa
+/* #2: Etichette (tipi) e icone raggruppate. Il DOM emette l'ordine di resa
    mobile (nome → icone → etichette), perché su mobile la riga è in flusso
    inline (vedi media query max-width:480px) e lì l'ordine visivo può venire
    solo dal DOM. Su desktop/tablet display:contents rende i figli flex item di
@@ -586,7 +586,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 /* Immagine badge o simbolo di genere che NON carica (cache vecchia dopo un cambio
    di formato, path errato): il placeholder del browser (glifo + testo alt)
    erediterebbe il corpo grande del nome (grosso come il titolo). La si riduce a un
-   segnaposto minuscolo — font-size:0 nasconde il testo alt (che resta nel DOM per
+   segnaposto minuscolo: font-size:0 nasconde il testo alt (che resta nel DOM per
    gli screen reader) e un box fisso 14px mostra solo il piccolo glifo di immagine
    rotta. Classe messa da un listener 'error' (vedi lo script). Solo sulle card. */
 .rank-name .rank-flags img.badge-broken { font-size:0 !important; width:14px !important; height:14px !important; margin:0 1px !important; transform:none !important; }
@@ -713,8 +713,8 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    resa di si-nove per allineare il tondo agli altri anelli della riga. */
 .si-sette { width:.675em; height:.738em; transform:translateY(-.032em); }
 
-/* ── CARD DEGLI ESSERI SUPERIORI — lieve dominante dorata ── */
-/* #2 — card speciali: tinta lievissima, bordo identitario a sinistra; hover e numero ereditano lo stile sobrio delle card normali */
+/* ── CARD DEGLI ESSERI SUPERIORI: lieve dominante dorata ── */
+/* #2: card speciali: tinta lievissima, bordo identitario a sinistra; hover e numero ereditano lo stile sobrio delle card normali */
 .rank-item.divine {
   background:linear-gradient(90deg,rgba(120,92,20,0.06) 0%,rgba(120,92,20,0.02) 100%);
   border:1px solid rgba(104,144,168,0.15);
@@ -945,7 +945,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 .ctrl-solo.cat-locked { opacity:0.35; pointer-events:none; }
 .ctrl-panel {
   position:fixed; z-index:210; bottom:6rem; left:2rem; width:max-content; min-width:280px; max-width:calc(100vw - 4rem);
-  /* overscroll-behavior:contain — a fine corsa il gesto NON si incatena
+  /* overscroll-behavior:contain: a fine corsa il gesto NON si incatena
      alla pagina sotto (su mobile scorreva la classifica dietro il pannello) */
   max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
   /* Fondo caldo con la SATURAZIONE DIMEZZATA (v13.98, richiesta dell'utente: 'può
@@ -1322,7 +1322,7 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    'High King of the Noldor' del vecchio Re 'in carica'), 8.5em v7.29-7.45. */
 .ctrl-legend-row .leg-lbl-col,
 .ctrl-legend-row .leg-lbl-king { width:7.7em; flex:none; white-space:nowrap; }
-/* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...' — coppie icona+nome */
+/* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...', coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
 /* +0.04em di spazio extra tra l'Unico (1ª) e Vilya (2ª leg-ring) SOLO nella riga
@@ -1605,14 +1605,14 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      del passo 11px tra badge). Solo desktop; su mobile sotto. */
   .rank-name > .rank-flags .genere-svg { margin-left:0.07em; }
 }
-/* ELFI — tonalità blu/celeste */
+/* ELFI: tonalità blu/celeste */
 .type-noldo      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
 .type-vanya      { background:rgba(0,155,200,0.28); border:1px solid rgba(24,232,255,0.8); color:#18e8ff; }
 .type-teler, .type-sinda { background:rgba(9,146,133,0.28); border:1px solid rgba(77,230,204,0.8); color:#4de6cc; }
 .type-falma      { background:rgba(9,120,150,0.30); border:1px solid rgba(69,216,238,0.8); color:#45d8ee; }
-/* MEZZELFI — indaco stellare */
+/* MEZZELFI: indaco stellare */
 .type-half-elf    { background:rgba(11,112,174,0.28); border:1px solid rgba(94,214,250,0.8); color:#5ed6fa; }
-/* UOMINI — rosso/vermiglio/ocra rossa */
+/* UOMINI: rosso/vermiglio/ocra rossa */
 .type-numenorean  { background:rgba(204,0,34,0.27); border:1px solid rgba(255,66,97,0.8); color:#ff4261; }
 .type-hador       { background:rgba(204,92,0,0.27); border:1px solid rgba(255,149,61,0.8); color:#ff953d; }
 .type-beor        { background:rgba(204,27,0,0.27); border:1px solid rgba(255,87,61,0.8); color:#ff573d; }
@@ -1620,16 +1620,16 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 .type-rohir    { background:rgba(124,184,20,0.27); border:1px solid rgba(170,231,65,0.8); color:#aae741; }
 .type-dunadan     { background:rgba(190,14,46,0.27); border:1px solid rgba(226,83,109,0.8); color:#e2536d; }
 .type-eotheod     { background:rgba(204,156,0,0.27); border:1px solid rgba(235,179,0,0.8); color:#ebb300; }
-/* NANI — ambra/oro */
+/* NANI: ambra/oro */
 .type-dwarf        { background:rgba(195,135,0,0.3); border:1px solid rgba(255,216,40,0.8); color:#ffd828; }
-/* ORCHI — viola */
+/* ORCHI: viola */
 .type-orc        { background:rgba(143,0,213,0.3); border:1px solid rgba(218,80,255,0.8); color:#da50ff; }
 .type-troll       { background:rgba(199,60,205,0.3); border:1px solid rgba(237,131,224,0.8); color:#ed83e0; }
-/* HOBBIT — giallo/ocra */
+/* HOBBIT: giallo/ocra */
 .type-hobbit      { background:rgba(215,108,0,0.3); border:1px solid rgba(255,168,56,0.8); color:#ffa838; }
-/* AQUILE — turchese */
+/* AQUILE: turchese */
 .type-eagle      { background:rgba(0,190,188,0.28); border:1px solid rgba(24,255,248,0.8); color:#18fff8; }
-/* ENT — verde */
+/* ENT: verde */
 .type-ent         { background:rgba(14,132,61,0.30); border:1px solid rgba(68,206,107,0.8); color:#44ce6b; }
 /* AINUR/ISTARI */
 .type-maia        { background:rgba(6,195,0,0.28); border:1px solid rgba(91,255,65,0.8); color:#5bff41; }
@@ -1637,7 +1637,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 .type-ainu       { background:rgba(0,43,205,0.30); border:1px solid rgba(107,159,255,0.8); color:#6b9fff; }
 .type-mystery  { background:rgba(73,34,126,0.30); border:1px solid rgba(200,168,255,0.8); color:#c8a8ff; }
 .type-northman { background:rgba(136,149,55,0.27); border:1px solid rgba(174,186,99,0.8); color:#aeba63; }
-/* ESSERI SUPERIORI — rosa/magenta per Valar e Valier */
+/* ESSERI SUPERIORI: rosa/magenta per Valar e Valier */
 .type-vala, .type-valie { background:rgba(101,4,56,0.44); border:1px solid rgba(253,139,212,0.8); color:#fd8bd4; text-shadow:0 0 8px rgba(220,100,180,0.35); }
 .type-darkmaia   { background:rgba(132,0,81,0.36); border:1px solid rgba(255,81,187,0.8); color:#ff51bb; }
 .type-balrog      { background:rgba(177,44,0,0.42); border:1px solid rgba(255,112,56,0.8); color:#ff7038; }
@@ -1645,7 +1645,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 .type-spider, .type-shadow { background:rgba(120,72,210,0.28); border:1px solid rgba(170,129,236,0.8); color:#aa81ec; }
 .type-wolf        { background:rgba(69,77,95,0.38); border:1px solid rgba(195,205,223,0.8); color:#c3cddf; }
 .type-beast      { background:rgba(134,95,28,0.32); border:1px solid rgba(240,206,122,0.8); color:#f0ce7a; }
-/* COLORI A PARTE — Morgoth e Tom Bombadil */
+/* COLORI A PARTE: Morgoth e Tom Bombadil */
 .type-morgoth     { background:rgba(37,29,55,0.62); border:1px solid rgba(166,145,204,0.8); color:#a691cc; }
 .type-spirit    { background:rgba(30,90,20,0.42); border:1px solid rgba(132,234,80,0.8); color:#84ea50; }
 
@@ -2170,7 +2170,7 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
    puntatore; su mobile diventano solo freccine a piena opacità (media query in
    fondo). Il contenitore gestisce solo il fade di comparsa (opacity 0->1). */
 .jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0.5;transition:filter 0.15s,background 0.15s,opacity 0.15s; }
-/* :focus-visible accanto a :hover — il tasto a fuoco da tastiera va a piena
+/* :focus-visible accanto a :hover, il tasto a fuoco da tastiera va a piena
    opacità come quello sotto il puntatore: a 0.5 (l'opacità di riposo su desktop,
    v9.58) anche l'anello di focus risulterebbe smorzato. */
 .jump-fab:hover, .jump-fab:focus-visible { filter:brightness(1.1); opacity:1; }
@@ -2297,7 +2297,7 @@ html[data-theme="light"] .rank-num {
     text-shadow: none;
     font-weight: 900;
   }
-/* #2 — il numero non cambia colore al passaggio del mouse */
+/* #2: il numero non cambia colore al passaggio del mouse */
 
 html[data-theme="light"] .rank-item.divine {
     background: rgba(251,245,224,0.16);
@@ -2329,7 +2329,7 @@ html[data-theme="light"] .leg-gender .leg-g-half:first-child { border-right-colo
 html[data-theme="light"] .rank-name {
     font-weight: 700;
   }
-/* #4 — hover nome gestito da var(--name-hover) */
+/* #4: hover nome gestito da var(--name-hover) */
 html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
 html[data-theme="light"] .rank-title {
     color: #2e2e2e;
@@ -2643,7 +2643,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.77</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.78</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2730,7 +2730,7 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // salvata fino alla v12.38 e vale come 'solo interruttore' (le manopole prendono i
 // default). Così un file dati vecchio continua a funzionare senza migrazione.
 // ⚠️ CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente): ogni effetto ha DUE
-// configurazioni indipendenti — DESKTOP (chiave base, es. `glow`) e MOBILE
+// configurazioni indipendenti: DESKTOP (chiave base, es. `glow`) e MOBILE
 // (suffisso `_m`, es. `glow_m`, viewport ≤768px). Le chiavi `_m` restano PIATTE
 // (bool o oggetto di manopole): il Worker rev 14 le valida già, nessun cambio di
 // Worker né rischio di race di deploy. Se una `_m` manca nel salvato, viene
@@ -2746,8 +2746,8 @@ var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat']; // e
 var FX_UNI = { spot:true, pat:true };
 // ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
 // dalla larghezza (v14.22, scelta dell'utente). `hov` è il fondo della card sotto
-// il puntatore: su touch l'effetto ESISTE — misurato, il tap applica `:hover` e lo
-// lascia APPICCICATO finché non si tocca un'altra card, quindi vale da selezione —
+// il puntatore: su touch l'effetto ESISTE. Misurato: il tap applica `:hover` e lo
+// lascia APPICCICATO finché non si tocca un'altra card, quindi vale da selezione,
 // ma è un'altra cosa dal passaggio del mouse e va tarata a parte. Il discriminante
 // giusto è però `(hover:hover) and (pointer:fine)`, NON i 768px degli altri
 // effetti: una finestra desktop stretta ha il mouse e deve tenere la config
@@ -2788,16 +2788,16 @@ var SITE_FLAGS_DEFAULT = {
   // numeriche NON sono più per-lato: sinistra e destra condividono le stesse
   // ('non ha senso un'impostazione asimmetrica'), e il lato destro resta separato
   // solo come ACCENSIONE. Quattro caselle di POSIZIONE dicono dove va il bagliore:
-  // • `pl` a sinistra  — bagliore INTERNO sul lato sinistro (dalla striscia);
-  // • `pr` a destra    — bagliore INTERNO sul lato destro (ombre inset);
-  // • `ps` ai lati     — bagliore ESTERNO, fuori dalla card; esce dai lati che
+  // • `pl` a sinistra:  bagliore INTERNO sul lato sinistro (dalla striscia);
+  // • `pr` a destra:    bagliore INTERNO sul lato destro (ombre inset);
+  // • `ps` ai lati:     bagliore ESTERNO, fuori dalla card; esce dai lati che
   //                      `pl`/`pr` hanno acceso (era la casella 'Anche fuori dalla
   //                      card', che non si capiva: è letteralmente questa);
-  // • `pa` intorno     — alone su tutto il perimetro (prima era 'aura > 0').
+  // • `pa` intorno:     alone su tutto il perimetro (prima era 'aura > 0').
   // Tre sezioni di manopole, tutte per tema: INTERNO (amp/int), ESTERNO
   // (oamp/oint) e INTORNO ALLA CARD (aamp/aint). ⚠️ `aamp` è NUOVA: fino alla
   // v12.85 la sfumatura dell'alone non era regolabile ma derivata da quella
-  // interna (amp × 0.6) — incoerenza rimasta da quando interno ed esterno
+  // interna (amp × 0.6): incoerenza rimasta da quando interno ed esterno
   // condividevano una manopola. I default la riproducono (34 × 0.6 ≈ 20).
   glow:{ on:true, all:false, pl:true, pr:false, ps:false, pa:false,
          amp_d:34, amp_l:34, int_d:0.62, int_l:0.5,
@@ -2817,7 +2817,7 @@ var SITE_FLAGS_DEFAULT = {
   // sempre e un eventuale `area` residuo nei dati salvati e' ignorato.
   pat:{ on:false, mot:'stars', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
-  // press: quali parti incidere — name = Nome (v12.53), lab = etichette tipo
+  // press: quali parti incidere, name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
   // comportamento storico, dove l'ombra del Nome si ereditava sulle etichette.
   // Il default di `num` è false: è un'aggiunta, non deve cambiare la resa di chi
@@ -2841,7 +2841,7 @@ var SITE_FLAGS_DEFAULT = {
   // (valori distinti perché su fondo chiaro una L alta perde contrasto).
   nums:{ on:true, uni:true, dsat:0.15, dlum:0.66, lsat:0.15, llum:0.6 },
   // hov (v14.10, richiesta dell'utente): fondo della card al PASSAGGIO del
-  // puntatore. Tre manopole per tema — opacità del velo di tinta, saturazione e
+  // puntatore. Tre manopole per tema: opacità del velo di tinta, saturazione e
   // luminosità della tinta stessa. I default riproducono ESATTAMENTE le vecchie
   // regole statiche (alpha 0.18 scuro / 0.11 chiaro, tinta intatta): a 1/1 la
   // formula OKLCH restituisce lo stesso colore, quindi chi non tocca nulla non
@@ -3047,7 +3047,7 @@ if (PAT_ROOM_MQ.addEventListener) PAT_ROOM_MQ.addEventListener('change', functio
 var FX_PTR_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
 if (FX_PTR_MQ.addEventListener) FX_PTR_MQ.addEventListener('change', function(){ applySiteFlags(); });
 // ⚠️ `spot` NON ha la variante mobile (v13.18, richiesta utente): il riflettore
-// è un effetto da puntatore, il 'mobile' non c'entra con lui — la sua config è
+// è un effetto da puntatore, il 'mobile' non c'entra con lui: la sua config è
 // UNICA e vale ovunque esista un puntatore, anche nelle finestre strette. Un
 // eventuale `spot_m` residuo nei dati salvati resta ignorato.
 // Suffisso della variante ATTIVA su questo dispositivo: '' (desktop) o '_m'.
@@ -3120,7 +3120,7 @@ if (ZOOM_PHONE_MQ.addEventListener) ZOOM_PHONE_MQ.addEventListener('change', fun
 
 // ── Effetti PARAMETRICI: bagliore della striscia e riflettore ────────────────
 // Le regole vivono qui (iniettate a runtime) e non nel <style> statico, per due
-// ragioni: usano rgba(var(--ccrgb),…) — che il Nu Checker non sa parsare — e
+// ragioni: usano rgba(var(--ccrgb),…), che il Nu Checker non sa parsare, e
 // dipendono dalle manopole, quindi si ri-iniettano a ogni modifica.
 // La FORMULA sta in un posto solo (fxGlowInner/fxGlowOuter/fxSpotBg): la usano sia
 // queste regole sia l'anteprima della sotto-modale, così l'anteprima non può
@@ -3130,7 +3130,7 @@ function fxR2(n){ return Math.round(n * 100) / 100; }
 // Tre decimali: le opacità della trama hanno passo 0.005, che a due decimali si
 // arrotonderebbe (0.055 → 0.06) e lo slider sembrerebbe saltare.
 function fxR3(n){ return Math.round(n * 1000) / 1000; }
-// Bagliore INTERNO: due strati derivati dalle due manopole — uno stretto e
+// Bagliore INTERNO: due strati derivati dalle due manopole, uno stretto e
 // aderente alla striscia, uno ampio e tenue. Con i default (amp 34, int 0.62)
 // riproduce esattamente la taratura della v12.27.
 // `cc` = terna RGB: di norma var(--ccrgb) per le regole di pagina, una terna
@@ -3167,12 +3167,12 @@ function fxGlowInnerRight(cfg, light, cc, on){
 }
 // Bagliore ESTERNO: ombre PROPRIE della card, che l'overflow:hidden della card NON
 // taglia (taglia solo i figli, striscia inclusa). Due strati indipendenti:
-//  • `out` — la fuga dal bordo SINISTRO: spread negativo pari al blur meno un
+//  • `out`: la fuga dal bordo SINISTRO, spread negativo pari al blur meno un
 //    residuo, così la sfumatura esce solo da sinistra. Fino alla v12.40 il blur
 //    era 2b con spread -b: a manopole alte la coda gaussiana traboccava su tutto
 //    il perimetro (l'alone notato dall'utente); ora il blur è 1.6b e il perimetro
 //    resta pulito, perché l'alone perimetrale è diventato una manopola a sé;
-//  • `aura` — l'ALONE INTORNO alla card (tutto il perimetro), regolabile
+//  • `aura`: l'ALONE INTORNO alla card (tutto il perimetro), regolabile
 //    separatamente (0 = spento): blur derivato dall'ampiezza, nessun offset.
 // ⚠️ LISTA DI OMBRE A LUNGHEZZA E ORDINE FISSI (fix del 'lampo', v12.95).
 // Le parti spente NON si omettono: si emettono con alpha 0, mantenendo la loro
@@ -3367,12 +3367,12 @@ function fxPatBg(cfg, light){
 // ⚠️ MASCHERA A DUE ASSI (dalla v14.65, richiesta dell'utente: 'le card e la testata
 // devono essere sempre sgombri'). Due gradienti sovrapposti con `mask-composite:
 // intersect`, cioè la trama compare solo dove ENTRAMBI sono opachi:
-//  • ORIZZONTALE — trasparente sulla colonna delle schede (`.scroll`, larga al massimo
+//  • ORIZZONTALE: trasparente sulla colonna delle schede (`.scroll`, larga al massimo
 //    PAT_COL px e centrata), con la sfumatura ai suoi due lati. Le fermate si calcolano
 //    da `50%` con `calc`, quindi valgono a ogni larghezza; se la finestra è più stretta
 //    della colonna il gradiente degenera e la trama non si vede, che è il comportamento
 //    voluto (niente trama dove non c'è posto).
-//  • VERTICALE — trasparente in cima, con la sfumatura che entra subito sotto. Il
+//  • VERTICALE: trasparente in cima, con la sfumatura che entra subito sotto. Il
 //    limite è dinamico e vive nella custom property `--pat-t`, scritta da
 //    `syncPatTop()`; il fallback 340px serve solo al primo dipinto.
 function fxPatMask(cfg){
@@ -3454,7 +3454,7 @@ function fxPressShadow(light){
   return light ? '0 1px 0 rgba(255,255,255,0.9),0 -1px 1px rgba(20,24,40,0.11)'
                : '0 1px 2px rgba(0,0,0,0.5)';
 }
-// Podio metallico: gradienti per metallo e tema — FONTE UNICA (pagina via
+// Podio metallico: gradienti per metallo e tema, FONTE UNICA (pagina via
 // injectFxRules, anteprima via inline). In tema chiaro riequilibrati in v12.53
 // (i valori v12.28-52 erano troppo scuri, segnalato dall'utente): fermate chiare
 // per il lustro + fermate scure come ancore di leggibilità (testo grande, 3:1).
@@ -3462,9 +3462,9 @@ function fxPressShadow(light){
 // I tre gradienti non sono più scritti a mano: li genera fxPodiumGrad da una
 // IDENTITÀ fissa per metallo (tinta, saturazione base, scheletro di luminosità,
 // derivati dalla 'proposta A' del mockup approvato) più tre manopole CONDIVISE
-// dal trio — condizione posta dall'utente: controlli unici e stili sempre
+// dal trio, condizione posta dall'utente: controlli unici e stili sempre
 // coerenti, garantito per costruzione (una sola formula, tre tinte).
-//  • `rifl` (riflesso): lampo speculare a metà corsa — la banda che prima aveva
+//  • `rifl` (riflesso): lampo speculare a metà corsa, la banda che prima aveva
 //    solo l'argento. La saturazione del lampo SALE con la manopola, in modo
 //    PROPORZIONALE alla saturazione propria del metallo: i metalli caldi hanno
 //    riflessi caldi, il quasi-grigio resta quasi-grigio (una spinta assoluta
@@ -3511,7 +3511,7 @@ function fxPodiumGrad(n, cfg, light, glyph){
   // Nitidezza del riflesso (semantica corretta nella v13.40 su richiesta
   // dell'utente): la SAGOMA del riflesso è una banda a larghezza FISSA
   // (49%-59% della corsa, sempre presente); la manopola governa solo quanto è
-  // SFUMATO il suo bordo — rampa da 9 punti (morbida) a ~mezzo punto (netta).
+  // SFUMATO il suo bordo: rampa da 9 punti (morbida) a ~mezzo punto (netta).
   // ⚠️ Storico: nella v13.38 la manopola stringeva la rampa attorno a una
   // fermata SINGOLA (54%), quindi a nitidezza bassa si assottigliava la sagoma
   // stessa: non era l'idea dell'utente ('la nitidezza era quanto è sfumato il
@@ -3566,7 +3566,7 @@ function fxPodiumFilter(cfg, light){
 // (v12.63). Si usa la sintassi RELATIVA `oklch(from <colore> L C H)`: si riscrive
 // la cromia (× sat) e, se `uni`, la luminosità (alla L di riferimento), lasciando
 // la TINTA intatta. È l'unico modo di desaturare a luminosità costante: mescolare
-// un grigio fisso — nero, 66% o altro — tira sempre il colore verso la luminosità
+// un grigio fisso (nero, 66% o altro) tira sempre il colore verso la luminosità
 // di quel grigio. Verificato: al variare della cromia la L resta identica al
 // millesimo. `cc` = terna concreta per l'anteprima, altrimenti var(--ccrgb).
 // Se il browser non conosce `oklch(from …)` la dichiarazione cade e vale la regola
@@ -4719,7 +4719,7 @@ injectBadgeAdjustRules();
 
 // Immagini badge / simbolo di genere che non caricano (es. cache vecchia dopo un
 // cambio di formato, path errato): senza intervento il browser mostra il proprio
-// placeholder (glifo + testo alt) EREDITANDO il corpo grande del nome — grosso come
+// placeholder (glifo + testo alt) EREDITANDO il corpo grande del nome: grosso come
 // il titolo. Un listener in CAPTURE (gli eventi 'error' NON fanno bubbling) marca
 // l'img fallita con .badge-broken → il CSS la riduce a un segnaposto minuscolo.
 // Copre anche le img inserite dopo (renderList), perché l'evento scatta a ogni
@@ -4794,7 +4794,7 @@ var ICON_LABEL = {
 // (badge 'west' al 50%): Radagast, Glorfindel, Erestor, Lindir.
 var AMAN_DEDOTTO = { it:'Approdò nelle Terre Imperiture (dedotto, non attestato dalle fonti canoniche)', en:'Reached the Undying Lands (inferred, not canonically confirmed)' };
 // Calaquendë 'presunto' (badge al 50%): Esuli dei Noldor il cui luogo di nascita
-// non è attestato — sono Calaquendi solo se nati in Aman prima dell'oscuramento
+// non è attestato: sono Calaquendi solo se nati in Aman prima dell'oscuramento
 // degli Alberi (lettura standard, non confermata dalle fonti).
 var CALAQUENDE_DEDOTTO = { it:'Calaquendë presunto: Esule dei Noldor, la nascita in Aman non è attestata dalle fonti', en:'Presumed Calaquendë: a Noldorin Exile whose birth in Aman is not attested by the sources' };
 var ICON_LABEL_OVERRIDE = {
@@ -5632,7 +5632,7 @@ document.addEventListener('keydown', function(e) {
 // Note, Risorse e Info riusano lo stesso guscio della scheda personaggio:
 // backdrop sfocato (chiaro su tema chiaro, scuro su scuro), .modal con doppio
 // bordo (::before), tasto di chiusura TONDO animato (.modal-close, glifo × SVG)
-// e .modal-body scrollabile — lo scroll vive nel body, che è clippato dal
+// e .modal-body scrollabile: lo scroll vive nel body, che è clippato dal
 // border-radius di .modal (overflow:hidden), quindi la barra non tocca mai
 // l'angolo stondato (era il difetto delle vecchie .fab-modal). La classe
 // 'dyn-modal' distingue questi overlay dinamici dalla scheda (#modal-backdrop),
@@ -6168,7 +6168,7 @@ function controlPanelHTML() {
   var T = CTRL_I18N[currentLang], CL = CAT_LABEL[currentLang], IL = ICON_LABEL[currentLang];
   var CLo = CAT_LABEL[currentLang === 'it' ? 'en' : 'it']; // etichette nell'altra lingua (segnaposto di larghezza)
   var h = '<div class="ctrl-sheet-head"><div class="ctrl-sheet-grab"></div></div>';
-  // Toggle tema (sole/luna) — non persistente
+  // Toggle tema (sole/luna): non persistente
   var isLight = document.documentElement.getAttribute('data-theme') === 'light';
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var MOON = '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
@@ -6182,7 +6182,7 @@ function controlPanelHTML() {
   var INFO_ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
   var infoLbl = currentLang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var infoBtn = '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>';
-  // Tasto Riordina (↑↓) — SOLO toolbar desktop, a sinistra di Info. Entra in
+  // Tasto Riordina (↑↓): SOLO toolbar desktop, a sinistra di Info. Entra in
   // modalità riordino forzando Apocrifi + tutte le categorie (la classifica è
   // assoluta) e mostra le maniglie. In riordino diventa × (scarta modifiche,
   // con conferma). 'Tutti' resta separato (tocca solo le categorie).
@@ -6545,7 +6545,7 @@ function wireControlPanel() {
     apoBtn.addEventListener('click', doApo);
     apoBtn.addEventListener('touchend', doApo);
   }
-  // Tasto Riordina/Scarta (↑↓ / ×) — solo desktop. Fuori dal riordino entra in
+  // Tasto Riordina/Scarta (↑↓ / ×): solo desktop. Fuori dal riordino entra in
   // modalità riordino (enterReorder forza Apocrifi + categorie); in riordino
   // chiede conferma e scarta la bozza-ordine (chiavi arda-ranking-*) + reload.
   panel.querySelectorAll('.ctrl-reorder-btn').forEach(function(btn){
@@ -6951,9 +6951,9 @@ var ZOOM_BIG_FACTOR = 1.3;
 // uniforme, px pinnati inclusi, quindi gli allineamenti restano intatti).
 //
 // DUE LIVELLI, distinti per volontà dell'utente (v12.24):
-//  1) DEFAULT DI SITO — il flag `zoomBig` del pannello 'Feature flag' (admin):
+//  1) DEFAULT DI SITO: il flag `zoomBig` del pannello 'Feature flag' (admin):
 //     vale per TUTTI i visitatori, vive nei dati (siteFlags in dati.js);
-//  2) PREFERENZA PERSONALE — il tasto `Z`: vale SOLO su questo browser, NON tocca
+//  2) PREFERENZA PERSONALE: il tasto `Z`, che vale SOLO su questo browser, NON tocca
 //     il sito, e si ricorda in localStorage (chiave arda-zoom-big).
 // La personale, se impostata, SCAVALCA il default di sito (per questo si salva
 // '1'/'0' espliciti: la chiave assente significa 'segui il sito', non 'spento').
@@ -6971,7 +6971,7 @@ function toggleZoomMode() {
     : (on ? 'XL Mode' : 'Standard mode'), false, '\uD83D\uDD0D');
 }
 
-// #3 — toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)
+// #3: toggle tema chiaro/scuro (non persistente: al ricaricamento torna al tema di sistema)
 function toggleTheme() {
   var cur = document.documentElement.getAttribute('data-theme');
   var next = cur === 'light' ? 'dark' : 'light';
@@ -7006,7 +7006,7 @@ function buildControlPanel() {
   // Controparte mobile del tasto Z: ~500ms di pressione commutano la PREFERENZA
   // PERSONALE di zoom (localStorage, stessa chiave e stesso toggleZoomMode del
   // tasto Z; il toast fa da feedback del gesto riuscito). SOLO input touch
-  // (pointerType): col mouse un click 'lento' non deve scattare — su desktop c'è
+  // (pointerType): col mouse un click 'lento' non deve scattare, su desktop c'è
   // già Z. Il gesto è volutamente non scopribile, come il tap sulla versione.
   var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
   var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
@@ -7752,7 +7752,7 @@ function showAdminEditor() {
     // Campi "dimenticati": un lato compilato e l'altro COMPLETAMENTE VUOTO.
     // (Storico: fino a v10.13.5 si considerava "vuoto" ogni lato ≤3 caratteri,
     // ma questo dava falsi positivi su traduzioni corte valide come Elf/Orc/Man
-    // — 12 occorrenze — col rischio di cancellarle confermando vuoto. Ora il
+    // (12 occorrenze), col rischio di cancellarle confermando vuoto. Ora il
     // gap scatta solo se un lato è vuoto: il lato 'miss' è sempre quello vuoto,
     // quindi nessun dato valido può essere cancellato.) La traduzione automatica
     // al salvataggio è stata rimossa: ora si chiede conferma (vedi
@@ -8546,7 +8546,7 @@ function injectFxEditorCss(){
     '#fx-modal input[type=checkbox]:focus-visible,#fab-modal input[type=checkbox]:focus-visible{',
     'outline:2px solid rgba(154,192,216,0.95);outline-offset:2px}',
     // Riga o sezione SPENTA (v12.95): la sua casella di controllo è spenta, quindi
-    // le impostazioni non si applicano. Semitrasparente e non modificabile — ma
+    // le impostazioni non si applicano. Semitrasparente e non modificabile, ma
     // l'opacità resta 0.5 e non meno: sotto, il testo scenderebbe fuori soglia di
     // contrasto anche per un controllo disabilitato, che va comunque letto.
     // Vista divisa: la colonna a sinistra e la pagina spostata a destra. La
@@ -8558,7 +8558,7 @@ function injectFxEditorCss(){
     'justify-content:flex-start;overflow:hidden;padding:0;',
     'border-right:1px solid rgba(128,144,160,0.45);box-shadow:8px 0 22px rgba(0,0,0,0.22)}',
     // In dock l'anteprima su card finte è RIDONDANTE (richiesta utente, v13.07):
-    // l'anteprima è la pagina vera accanto. Si nasconde via CSS e basta — i pannelli
+    // l'anteprima è la pagina vera accanto. Si nasconde via CSS e basta: i pannelli
     // vengono comunque costruiti e dipinti (paint() lavora su elementi nascosti
     // senza errori), così il cambio di telaio a metà modifica non ha casi speciali.
     // ⚠️ ECCEZIONE: quando la variante in modifica NON è quella attiva su questo
@@ -8651,7 +8651,7 @@ function fxGuardSlider(sl, onDbl){
 //     chiamata a mano all'aggancio e allo sgancio.
 // Soglia = larghezza colonna + ~660px di pagina, in px di LAYOUT. ⚠️ MISURATO:
 // `clientWidth` NON si riduce sotto `zoom` (resta la larghezza della finestra),
-// quindi il fattore XL va diviso a mano — è già esposto in --zoomf (1 o 1.3).
+// quindi il fattore XL va diviso a mano: è già esposto in --zoomf (1 o 1.3).
 // La colonna ha larghezza PER-EDITOR (v13.17): Pannello di controllo 400,
 // editor colori 480, micro-aggiustamenti 560 (i loro contenuti sono più larghi).
 function dockAvailable(colw){
@@ -8659,7 +8659,7 @@ function dockAvailable(colw){
   return document.documentElement.clientWidth / z >= (colw || 400) + 660;
 }
 // Scudo per i CLICK (scelta utente): la pagina a destra risponde a scroll e
-// hover ma i click sono spenti — niente schede, admin o Pannello sopra
+// hover ma i click sono spenti: niente schede, admin o Pannello sopra
 // l'editing. Consentiti: le colonne stesse, i tasti salto (solo scroll) e il
 // cambio lingua (equivale al tasto L, attivo nelle modali).
 var DOCK_SHIELD = null;
@@ -8676,7 +8676,7 @@ function dockRebuild(fn){ DOCK_RELAYOUT = true; try { fn(); } finally { DOCK_REL
 // nelle chiusure vere: il nodo resta per la durata della dissolvenza e sparisce da
 // sé. ⚠️ L'`id` si toglie SUBITO, per due ragioni: le funzioni che aprono un editor
 // si autoproteggono con `if (document.getElementById('fab-modal')) return`, e
-// `MODAL_OPEN_SEL` (focus trap, inert, tasti nudi) ragiona sugli id — un fantasma
+// `MODAL_OPEN_SEL` (focus trap, inert, tasti nudi) ragiona sugli id: un fantasma
 // con l'id ancora addosso bloccherebbe una riapertura immediata e terrebbe la
 // pagina inerte. Uscita IMMEDIATA in vista divisa (è un cambio di layout, non una
 // modale che sparisce), nei rebuild tecnici e con moto ridotto.
@@ -8759,7 +8759,7 @@ function fxPreviewBlock(o){
   o.lights().forEach(function(light){
     // ⚠️ Respiro EXTRA solo per il bagliore (v12.95, richiesta dell'utente): è
     // l'unico effetto che disegna FUORI dalla card (fughe e alone), e col padding
-    // ordinario l'anteprima lo tagliava — quindi non si capiva che effetto facesse.
+    // ordinario l'anteprima lo tagliava, quindi non si capiva che effetto facesse.
     // Gli altri effetti restano compatti: lo spazio in più sarebbe solo vuoto.
     var pane = document.createElement('div');
     pane.className = 'fxp-pane ' + (light ? 'l' : 'd')
@@ -8775,7 +8775,7 @@ function fxPreviewBlock(o){
       // bronzo). L'argento è quello che più ha bisogno d'occhio: ha molte fermate
       // perché a due sole 'sembrava un numero normale', quindi è giusto sia in
       // anteprima. In TUTTI gli altri editor sono posizioni FUORI dal podio (4 e
-      // 5): altrimenti l'anteprima mentirebbe — mostrerebbe p.es. l'incisione sui
+      // 5): altrimenti l'anteprima mentirebbe, mostrerebbe p.es. l'incisione sui
       // numeri 1-2, che in pagina il podio esclude avendo specificità maggiore
       // (rilievo della verifica v12.64).
       var podEd = (key === 'podium') || (all && n === 1);
@@ -8830,7 +8830,7 @@ function fxPreviewBlock(o){
       // ⚠️ Respiro DINAMICO nell'editor del bagliore (v12.95). Un padding fisso non
       // può bastare: quanto il bagliore esce dalla card dipende dalle manopole, e
       // l'utente aveva segnalato che l'anteprima lo tagliava. Qui si calcola quanto
-      // arriva davvero — la fuga esterna sfuma per oamp×1.6, l'alone per aamp — e si
+      // arriva davvero (la fuga esterna sfuma per oamp×1.6, l'alone per aamp) e si
       // riserva quello spazio, con un tetto perché la modale non diventi enorme
       // (oltre ~56px la coda della sfumatura è comunque invisibile).
       if (key === 'glow' || (all && vOn('glow'))) {
@@ -8894,8 +8894,8 @@ function fxPreviewBlock(o){
       // Testo della pill reso AA con l'helper del progetto (v12.64): la tinta
       // piena sul proprio fondo velato dava 3.38:1 su un corpo di ~8px, sotto la
       // soglia 4.5:1 del testo piccolo (rilevato da axe). ⚠️ Il fondo va composto
-      // per DAVVERO su tre strati — riquadro, card (con l'alpha dello stato hot
-      // corrente) e velo della pill — non stimato sul solo riquadro: nella v12.64
+      // per DAVVERO su tre strati (riquadro, card con l'alpha dello stato hot
+      // corrente, e velo della pill), non stimato sul solo riquadro: nella v12.64
       // lo stimavo a card ferma e nell'editor del bagliore, dove le card sono
       // accese, il conto risultava sbagliato di quanto bastava a restare sotto
       // soglia (4.19:1 / 4.35:1, rilevati da axe).
@@ -8956,7 +8956,7 @@ function showFxConfigEditor(key, sfx, onDone){
   var vOn = function(k){ return V(k).on !== false; };  // 'acceso' nella variante
   // Catena degli hook lingua: questa modale sta SOPRA il pannello di controllo,
   // che ha già registrato il suo langRefresh. Lo si conserva (prevL) e lo si
-  // RIPRISTINA alla chiusura — azzerarlo lascerebbe il pannello sotto senza L.
+  // RIPRISTINA alla chiusura: azzerarlo lascerebbe il pannello sotto senza L.
   var prevL = langRefresh;
   SITE_FLAG_ITEMS.forEach(function(f){ if (f.k === key) item = f; });
   if (!item) return;
@@ -8986,7 +8986,7 @@ function showFxConfigEditor(key, sfx, onDone){
     + (docked && altrove ? ' fxdock-alt' : '') + (DOCK_RELAYOUT ? ' no-anim' : '');
   var box = document.createElement('div'); box.className = 'fab-modal-box';
   // ⚠️ Lo scorrimento sta in un contenitore INTERNO, non sul box (v12.95). Col box
-  // come area di scorrimento, il tasto × — che è `position:absolute` dentro il box —
+  // come area di scorrimento, il tasto ×, che è `position:absolute` dentro il box,
   // scorreva via insieme al contenuto e diventava irraggiungibile (misurato: dopo
   // aver scorso in fondo era fuori dal viewport). Spostando lo scorrimento dentro,
   // il × resta ancorato al box e l'anteprima `position:sticky` si appiccica al bordo
@@ -9032,7 +9032,7 @@ function showFxConfigEditor(key, sfx, onDone){
 
   // ── anteprima. ⚠️ QUANTI riquadri (v12.76, richiesta utente): se l'effetto ha
   // manopole PER TEMA si mostra UN SOLO riquadro, quello del tema in modifica, che
-  // cambia con la tab — si vede ciò che si sta modificando e si risparmia spazio
+  // cambia con la tab: si vede ciò che si sta modificando e si risparmia spazio
   // verticale. Se invece la config è UNICA per i due temi (riflettore, incisione,
   // alone) restano DUE riquadri, perché lì un solo valore serve entrambi i temi e
   // va controllato su entrambi. Col riquadro singolo l'evidenziazione .fxp-edit
@@ -9040,11 +9040,11 @@ function showFxConfigEditor(key, sfx, onDone){
   // Ordine, quando sono due: CHIARO per primo (richiesta utente v12.41), due
   // card ciascuno, SENZA etichette tema (rimosse in v12.41: superflue). Stato
   // delle card PER EFFETTO (v12.42, richiesta utente):
-  //  • bagliore — solo la PRIMA card è 'in hover' (così si vede la differenza
+  //  • bagliore: solo la PRIMA card è 'in hover' (così si vede la differenza
   //    off/on); entrambe accese solo con 'Su tutte le card';
-  //  • riflettore — entrambe accese, alone visibile (parte centrato, fallback
+  //  • riflettore: entrambe accese, alone visibile (parte centrato, fallback
   //    50%/50%, e segue il puntatore quando ci passi sopra);
-  //  • vignettatura — card a riposo, l'effetto sta sul FONDO dei riquadri.
+  //  • vignettatura: card a riposo, l'effetto sta sul FONDO dei riquadri.
   // Manopole e tab servono già qui: da esse dipende QUANTI riquadri disegnare.
   var knobs = FX_KNOBS[key] || [];
   var hasTh = knobs.some(function(kn){ return kn.th; });
@@ -9109,10 +9109,10 @@ function showFxConfigEditor(key, sfx, onDone){
   // riga si spegne (semitrasparente e non modificabile), richiesta dell'utente
   // v12.95. Le condizioni riguardano i booleani della config, quindi si rivalutano
   // a ogni renderKnobs (che parte a ogni click su una casella).
-  //  • 'on'     — l'interruttore dell'effetto: spegne tutto il resto;
-  //  • 'inner'  — almeno un lato interno acceso;
-  //  • 'outer'  — 'Ai lati' acceso E almeno un lato da cui uscire;
-  //  • 'around' — 'Intorno alla card' acceso.
+  //  • 'on':     l'interruttore dell'effetto: spegne tutto il resto;
+  //  • 'inner':  almeno un lato interno acceso;
+  //  • 'outer':  'Ai lati' acceso E almeno un lato da cui uscire;
+  //  • 'around': 'Intorno alla card' acceso.
   function depOk(d){
     var c = SITE_FLAGS[vk];
     if (!d) return true;

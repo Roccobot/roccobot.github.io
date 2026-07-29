@@ -2637,17 +2637,29 @@ specifico del dataset):
     `dati.js` (con priorità a virgole e parentesi) e la bonifica 'non retroattiva'.
     Era ormai lettera morta: `dati.js` ne contiene **zero**. La dicitura però
     bastava a farlo riapparire altrove, quindi è stata rimossa.
-  - **Bonifica del 2026-07-28.** Ripuliti `CLAUDE.md` (106 casi), `proxy/README.md`,
-    `userscripts/README.md` e i commenti dei quattro userscript che ne avevano;
-    corretta l'unica **etichetta di UI** ancora fuori norma (il tasto galleria di
-    `FapopediaRoccobot`, `... - ZIP`). Restano ~79 casi nei **commenti** di
-    `arda/top/index.html`, che non raggiungono alcun output: si ripuliscono
-    passando, e nei commenti nuovi si usa il trattino breve.
-  - Controllo, sui file di codice: cercare `—` **dentro le stringhe** per le
-    etichette di UI (mai ammesso) e nei commenti per la bonifica progressiva. Le
-    sole occorrenze **legittime** sono quelle in cui si parla del carattere stesso,
-    come questa regola, e quelle dentro **espressioni regolari** che devono
-    riconoscerlo nel testo di un sito remoto (p.es. `NSFWARoccobot`).
+  - **Bonifica del 2026-07-28/29, COMPLETA: nel repo non ne resta nessuno** salvo i
+    tre casi essenziali (vedi il punto sotto). Ripuliti `CLAUDE.md` (106 casi),
+    `proxy/README.md`, `userscripts/README.md`, il sorgente del Worker e il suo
+    `wrangler.toml`, i commenti dei quattro userscript che ne avevano, l'unica
+    **etichetta di UI** fuori norma (il tasto galleria di `FapopediaRoccobot`,
+    `... - ZIP`), i **79 commenti di `arda/top/index.html`** e le **sei pagine in
+    `artifacts/`** (titoli ed etichette col trattino breve, la prosa con la
+    punteggiatura giusta). Il controllo è una riga: `git ls-files | while read f; do
+    grep -c '—' "$f"; done`, e deve dare 0 dappertutto tranne quei tre.
+    - Nei commenti nuovi si usa il **trattino breve**, e nei marcatori di sezione lo
+      stile di casa è `// ── Titolo ──` (box drawing), non il trattino lungo.
+  - **Le sole tre occorrenze legittime nel repo** (istruzione dell'utente,
+    2026-07-29: 'va tenuto solo dove è assolutamente essenziale'): questa regola, che
+    per dire di non usarlo deve nominarlo, e le due **tabelle dei caratteri** di
+    RoccobotOS (`index.html`, `Caratteri.html`), che ne documentano la scorciatoia di
+    tastiera. Legittime anche, per necessità tecnica, le **espressioni regolari** che
+    devono riconoscerlo nel testo di un sito remoto (p.es. `NSFWARoccobot`).
+  - ⚠️ **L'EN-DASH `–` resta ammesso negli intervalli d'anno** (vedi il punto
+    'Trattini' qui sopra: `1954–55`, `2758–59`): il divieto totale riguarda l'em-dash,
+    e va letto insieme a quella regola, non contro di essa. È il carattere **corto**:
+    nell'intervallo l'em-dash non entra comunque. La bonifica non ha toccato un solo
+    intervallo d'anno (verificato: si scrivono senza spazi attorno al segno, quindi
+    non ricadono nei casi sostituiti).
 - **Ellissi:** tre punti `...` (mai il carattere unico `…`).
 - **Maiuscola iniziale:** ogni campo-riga mostrato nella card, cioè `descrizione`,
   `nomi_alternativi` e `appellativi` (IT ed EN), **inizia con la maiuscola**,
