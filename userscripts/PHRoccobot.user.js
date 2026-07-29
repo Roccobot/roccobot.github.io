@@ -36,7 +36,7 @@
   // PH ogni tanto (al login) li ripristina su it → qui li RISCRIVIAMO a ogni
   // caricamento (document-start, prima delle richieste), così non può più
   // riportarti in italiano. In più, se sei atterrato su un sottodominio-lingua
-  // (it/de/fr...), si reindirizza a www conservando percorso/query — ora coi
+  // (it/de/fr...), si reindirizza a www conservando percorso/query: ora coi
   // cookie giusti www "tiene".
   function impostaPreferenze() {
     if (!FORZA_INTERNAZIONALE) return;
@@ -71,7 +71,7 @@
   if (forzaInternazionale()) return;
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  2) TASTO "Scarica video" — qualità massima
+  //  2) TASTO "Scarica video": qualità massima
   // ═══════════════════════════════════════════════════════════════════════
   // La pagina video espone un oggetto globale flashvars_<viewkey> con
   // "mediaDefinitions": ogni voce ha format (mp4/hls), quality e videoUrl.
@@ -85,7 +85,7 @@
     return !!document.querySelector('#player, .mgp_container, [id^="player"] video, video');
   }
 
-  // flashvars: prima dall'oggetto globale (unsafeWindow), poi — se non si trova —
+  // flashvars: prima dall'oggetto globale (unsafeWindow), poi, se non si trova,
   // parsando il testo degli <script> (più robusto: non dipende dall'enumerazione
   // di window né dal timing di definizione della variabile).
   function flashvars() {

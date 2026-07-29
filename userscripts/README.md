@@ -80,7 +80,7 @@ modificare i valori → salvare (Ctrl+S).
   ufficiale incorporato.
 - **Immagini** (approccio *senza rete*, e dalla v2.7.0 *solo sulla scheda
   Immagini*): il modulo immagini **non fa nessuna chiamata di rete e non tocca
-  `fetch`/`XHR`**. Ricava l'URL originale **solo dal DOM** — in particolare
+  `fetch`/`XHR`**. Ricava l'URL originale **solo dal DOM**: in particolare
   decodificando l'URL della miniatura (`s*.qwant.com/thumbr/...`, che in molte
   versioni incapsula l'indirizzo sorgente) e da eventuali dati già presenti
   nell'HTML; al clic apre l'originale e riscrive i link della griglia (così
@@ -102,7 +102,7 @@ modificare i valori → salvare (Ctrl+S).
     web non ha più alcun aggancio del modulo.
   - **Limite**: se una versione di Qwant non incapsula l'originale nell'URL della
     miniatura, l'apertura diretta non agisce (clic normale). In quel caso serve un
-    esempio di URL miniatura per capire se è recuperabile in altro modo — sempre
+    esempio di URL miniatura per capire se è recuperabile in altro modo, sempre
     senza chiamate di rete. E se anche i soli listener sulla scheda Immagini
     dovessero far scattare l'anti-bot lì, si può disattivare del tutto il modulo
     con `IMMAGINI_DIRETTE = false` (la pulizia resta).
@@ -190,18 +190,18 @@ const TIMEOUT_MS     = 60000;  // pagina album: timeout per immagine
 **File:** `FapopediaRoccobot.user.js` · **Titolo (`@name`):** `Fapopedia Roccobot`
 
 Su `fapopedia.net`, nelle pagine-galleria, aggiunge un pulsante flottante
-**"⬇️ Scarica galleria (N) — ZIP"** che con un clic scarica **tutte** le immagini
+**"⬇️ Scarica galleria (N) - ZIP"** che con un clic scarica **tutte** le immagini
 in **alta risoluzione** e le impacchetta in un unico file **ZIP** (nominato come
 la galleria, es. `gabi-summers-nude-leaks.zip`).
 
 Come funziona: le miniature del sito sono URL tipo
 `…/photos/g/a/<slug>/1000//t_0001.jpg` (≈7 KB); l'alta risoluzione è lo **stesso
-URL senza il prefisso `t_`** (`…/1000//0001.jpg`, ≈200 KB — è la risoluzione
+URL senza il prefisso `t_`** (`…/1000//0001.jpg`, ≈200 KB: è la risoluzione
 massima disponibile sul sito). Lo script scorre la pagina per forzare il
 lazy-load, raccoglie le immagini della galleria (esclude gli avatar), scarica gli
 originali via `GM_xmlhttpRequest` come `ArrayBuffer` (con barra di avanzamento sul
 pulsante) e li impacchetta in uno **ZIP creato da un writer interno** (metodo
-*store*, senza compressione — le JPEG sono già compresse). I file nello ZIP
+*store*, senza compressione: le JPEG sono già compresse). I file nello ZIP
 mantengono la numerazione originale (`0001.jpg`, `0002.jpg`…). Nessun dato lascia
 il sito: solo download.
 
@@ -242,16 +242,16 @@ leggibilità** della wiki. Solo CSS, nessuna richiesta di rete.
 
 Cosa nasconde (tutto attivabile/disattivabile dai flag in cima):
 
-- `NASCONDI_SFONDO` — l'immagine di sfondo del tema + l'hero dell'header di
+- `NASCONDI_SFONDO`: l'immagine di sfondo del tema + l'hero dell'header di
   community (obiettivo principale).
-- `NASCONDI_ADS` — gli slot pubblicitari residui (il blocco vero delle richieste
+- `NASCONDI_ADS`: gli slot pubblicitari residui (il blocco vero delle richieste
   lo fa già AdGuard a livello di rete; qui si tolgono i placeholder).
-- `NASCONDI_RAIL` — la **colonna destra** (pubblicità, "Fan Feed", consigliati) e
+- `NASCONDI_RAIL`: la **colonna destra** (pubblicità, "Fan Feed", consigliati) e
   allarga l'articolo a tutta la larghezza.
-- `NASCONDI_VIDEO` — il player video "in evidenza"/autoplay.
-- `NASCONDI_FOOTER_GLOBALE` — il footer gigante di Fandom ("Explore
+- `NASCONDI_VIDEO`: il player video "in evidenza"/autoplay.
+- `NASCONDI_FOOTER_GLOBALE`: il footer gigante di Fandom ("Explore
   properties"…). Il footer della **pagina** wiki (categorie, licenza) resta.
-- `NASCONDI_STICKY` — la barra che si appiccica in alto allo scroll (default
+- `NASCONDI_STICKY`: la barra che si appiccica in alto allo scroll (default
   **off**: la tiene, serve alla navigazione).
 
 **Non tocca** articolo, infobox, indice (TOC), categorie, immagini dell'articolo,
@@ -296,7 +296,7 @@ Su `pornhub.com` fa due cose:
    **riscrive a ogni caricamento** (a `document-start`, prima delle richieste), così
    non può più riportarti in italiano. In più, se sei atterrato su un
    sottodominio-lingua (2 lettere, es. `it`/`de`/`fr`/`es`…), reindirizza a
-   **`www.pornhub.com`** conservando percorso e query (`location.replace`) — coi
+   **`www.pornhub.com`** conservando percorso e query (`location.replace`): coi
    cookie giusti `www.` "tiene". Guardia anti-loop a tempo (se PH rimbalzasse, non
    insiste, ma non resta bloccata).
 2. **Tasto "⬇️ Scarica video"** in basso a destra (sempre visibile): scarica il
@@ -305,7 +305,7 @@ Su `pornhub.com` fa due cose:
    sceglie l'**MP4** con la qualità più alta; il download va su disco via
    `GM_download`, con **avanzamento sul tasto** (percentuale + barra) e
    **clic-per-annullare** durante lo scaricamento. **Nome file:**
-   `[Nome canale] Titolo.mp4` — canale tra **parentesi quadre letterali**. Se il
+   `[Nome canale] Titolo.mp4`: canale tra **parentesi quadre letterali**. Se il
    video è **solo HLS** (streaming a segmenti), avvisa che il download MP4 diretto
    non è possibile.
 
@@ -339,7 +339,7 @@ Migliora le **pagine-immagine del browser** (quando apri direttamente un file im
 peso**, e soprattutto un comportamento di visualizzazione controllato:
 
 - **Adattamento alla vista, mai oltre il reale.** L'immagine è sempre adattata allo
-  spazio della scheda (`contain`), ma **non supera mai la dimensione reale** — dove
+  spazio della scheda (`contain`), ma **non supera mai la dimensione reale**, dove
   "reale" significa **1:1 con i pixel fisici** (DPR ignorato: su schermi HiDPI la
   dimensione reale in CSS px è `larghezza naturale / devicePixelRatio`).
   - **Tasto `A`: adatta anche ingrandendo (dalla 2.18).** Con l'opzione accesa
@@ -401,8 +401,8 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     non dichiara le proprie misure. Si costruisce al primo bisogno, non al caricamento.
 - **Clic (desktop) = alterna** tra **adattato** e **reale (100%)**, centrando sul punto
   cliccato.
-- **Zoom solo sull'immagine (override totale).** Qualsiasi gesto di zoom — **ctrl+rotella**
-  o pinch da trackpad su desktop, **pinch-to-zoom** su mobile — agisce **solo
+- **Zoom solo sull'immagine (override totale).** Qualsiasi gesto di zoom (**ctrl+rotella**
+  o pinch da trackpad su desktop, **pinch-to-zoom** su mobile) agisce **solo
   sull'immagine del visualizzatore** e **non** applica lo zoom di pagina (rotella non-ctrl
   = scroll/pan; `touch-action:none` per catturare il pinch).
 - **Rotella del mouse = zoom a scatti (dalla 2.12).** Con un mouse la rotella è il
@@ -551,7 +551,7 @@ Nessun tasto scatta mentre si scrive in un campo.
 > MAIUSCOLO/minuscolo.** Una pagina SVG è un documento **XML**, e in XML `tagName`
 > conserva il caso originale (`'input'`), mentre in HTML è sempre maiuscolo (`'INPUT'`).
 > Confrontando col solo `'INPUT'` i tasti nudi scattavano mentre si digitava nel campo
-> DPI del pannello di esportazione — che vive proprio sulle pagine SVG. Corretto nella
+> DPI del pannello di esportazione, che vive proprio sulle pagine SVG. Corretto nella
 > 2.18.
 
 ### Installazione

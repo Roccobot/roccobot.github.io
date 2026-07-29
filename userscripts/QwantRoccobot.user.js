@@ -18,7 +18,7 @@
   'use strict';
 
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
-  // — Pulizia dell'interfaccia —
+  // ── Pulizia dell'interfaccia ──
   const NASCONDI_SIDEBAR   = true;  // barra a sinistra (Search / Junior / Shadow Drive) + toggle menu
   const NASCONDI_OPZIONI   = true;  // SERP: tasto "Filtri"/opzioni e relativi menu (regione, periodo)
   const NASCONDI_FOOTER    = true;  // piè di pagina (l'intero elemento <footer>)
@@ -28,7 +28,7 @@
   const NASCONDI_FASCIA_IMMAGINI = true; // SERP web: la fascia "Immagini <query>" (anteprime inline)
   const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant ufficiale (home + SERP)
   const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = logo ufficiale integrato nello script
-  // — Immagini —
+  // ── Immagini ──
   // true  = il clic su una miniatura apre l'originale in una NUOVA scheda (consigliato);
   // false = lo apre nella scheda corrente.
   const APRI_IN_NUOVA_SCHEDA = true;
@@ -102,7 +102,7 @@
   })();
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  MODULO 1 — Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
+  //  MODULO 1. Pulizia: Qwant nudo e crudo (logo + barra di ricerca)
   // ═══════════════════════════════════════════════════════════════════════
   // Tutti gli agganci sono attributi STABILI (data-testid, aria-label, title):
   // le classi CSS di Qwant sono auto-generate e cambiano a ogni deploy.
@@ -264,7 +264,7 @@
   })();
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  MODULO 2 — Immagini: il clic apre subito il file originale
+  //  MODULO 2. Immagini: il clic apre subito il file originale
   // ═══════════════════════════════════════════════════════════════════════
   // ⚠️ STORIA (perché è fatto così, e cosa NON rifare):
   //   v2.4 → rimpiazzava window.fetch / XMLHttpRequest per leggere i risultati

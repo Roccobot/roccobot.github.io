@@ -1,10 +1,10 @@
-# Proxy admin sicuro — Cloudflare Worker
+# Proxy admin sicuro: Cloudflare Worker
 
 Questo Worker custodisce il **GitHub PAT** e la **parola d'ordine admin** come
 secret lato server, così non compaiono più nel codice pubblico del sito.
 
-Il browser manda la password al Worker; il Worker la valida e — solo se
-corretta — esegue il commit su GitHub col PAT. Se qualcuno legge il sorgente
+Il browser manda la password al Worker; il Worker la valida e, solo se
+corretta, esegue il commit su GitHub col PAT. Se qualcuno legge il sorgente
 del sito, **non trova alcuna credenziale**.
 
 ## Cosa ti serve
@@ -16,7 +16,7 @@ del sito, **non trova alcuna credenziale**.
    - (niente altro: meno permessi = meno danni in caso di abuso)
    - Crealo qui: https://github.com/settings/tokens?type=beta
 
-## Deploy con Wrangler (CLI) — consigliato
+## Deploy con Wrangler (CLI), consigliato
 
 ```bash
 # 1. Installa Wrangler (una volta)
@@ -70,8 +70,8 @@ riporto, es. 1.99 → 2.00), sul vecchio SemVer `x.y.z` fa **+0.0.1**. La versio
 
 > **Deploy automatico.** Il repo ha una *Git integration* di Cloudflare
 > (Workers Builds, vedi `wrangler.toml`): a ogni push il Worker viene
-> ricostruito e ridistribuito **da solo** appena il commit arriva su `master`
-> — lo confermano i commenti di deploy del bot `cloudflare-workers-and-pages`
+> ricostruito e ridistribuito **da solo** appena il commit arriva su `master`:
+> lo confermano i commenti di deploy del bot `cloudflare-workers-and-pages`
 > sulle PR. Quindi una modifica ad `arda-admin-proxy.js` non richiede
 > `wrangler deploy` manuale (che resta come fallback). Nella breve finestra in
 > cui il nuovo Worker non fosse ancora attivo, l'auto-bump non parte ma il sito
@@ -95,12 +95,12 @@ curl -s -X POST https://arda-admin-proxy.<sub>.workers.dev \
 
 ## Rotazione / revoca
 
-- Cambiare PAT: `wrangler secret put GITHUB_PAT` (o dashboard) — nessun deploy del sito.
+- Cambiare PAT: `wrangler secret put GITHUB_PAT` (o dashboard): nessun deploy del sito.
 - Cambiare parola d'ordine: `wrangler secret put ADMIN_PASSWORD`.
 - In caso di abuso sospetto: revoca il PAT su GitHub e rigenera. Il sito resta
   intatto perché non ha mai contenuto la credenziale.
 
-## Sicurezza — note
+## Sicurezza: note
 
 - Il PAT non è mai esposto: vive solo come secret del Worker.
 - La parola d'ordine è validata server-side con confronto a tempo costante e

@@ -29,7 +29,7 @@
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
-  // — Rotella del mouse —
+  // ── Rotella del mouse ──
   // Cosa fa la rotella NUDA (senza ctrl):
   //   'auto'   = zoom se l'evento e' un vero SCATTO di rotella, scorrimento se e' un
   //              trackpad a due dita. Cosi' lo stesso computer va bene in entrambi i
@@ -56,7 +56,7 @@
   // percepibile. Le tappe troppo vicine si saltano.
   const SALTO_MIN_SU = 0.05;   // ingrandendo: almeno +5%
   const SALTO_MIN_GIU = 0.02;  // rimpicciolendo: almeno -2%
-  // — Menu del tasto destro —
+  // ── Menu del tasto destro ──
   // Risoluzione della copia negli appunti di un SVG, che di pixel propri non ne ha.
   // Stessa convenzione del pannello di esportazione: px = misura nominale x DPI / 96
   // (1 px CSS = 1/96 di pollice). A 96 DPI, cioe' la risoluzione dello schermo, la
@@ -65,7 +65,7 @@
   // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
   // scelta resta memorizzata (globale, come la modalita' del tondo 1:1).
   const ROTELLA_SU_INGRANDISCE = true;
-  // — Adattamento alla vista —
+  // ── Adattamento alla vista ──
   // false = criterio originale: l'immagine si adatta ma non supera MAI la dimensione
   //         reale, quindi una figura piu' piccola della vista resta a 1:1;
   // true  = si adatta anche INGRANDENDO, cioe' una figura piccola viene portata a
