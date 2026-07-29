@@ -48,13 +48,12 @@
 2. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
    con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
    sposta due volte la stessa roba.
-3. **Skill `/desc`: creata dall'utente e operativa**, in `tools` come
-   `.claude/skills/desc/SKILL.md`, con un paio di sue correzioni. ⚠️ **Non verificata**: da
-   questa sessione non era leggibile, perché il Worker `rules-proxy` ammette solo `rules/` e
-   `workers/` **anche in lettura**. Con `tools` agganciato si legge direttamente. Da
-   controllare: il frontmatter (`name`, `description`), che la description dica che vale solo
-   se invocata, e che gli operatori dichiarino di scavalcare quelli omonimi di `Roccobot.md`.
-   Manca ancora la nota nel `CLAUDE.md` di `tools`, che **non esiste**.
+3. **Skill `/desc`: già creata dall'utente, resta solo da VERIFICARE.** Vive in `tools` come
+   `.claude/skills/desc/SKILL.md`, operativa, con un paio di sue correzioni: **non va
+   riscritta né ricreata.** Da controllare: il frontmatter (`name`, `description`), che la
+   description dica che vale solo se invocata, e che gli operatori dichiarino di scavalcare
+   quelli omonimi di `Roccobot.md`. Manca ancora la nota nel `CLAUDE.md` di `tools`, che
+   **non esiste**.
 4. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
    Raccomandazione già data: **non** estrarle sui numeri di oggi.
 
