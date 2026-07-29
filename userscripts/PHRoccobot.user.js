@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.8.1
-// @description  Su pornhub.com: mantiene lingua inglese/Paese Worldwide riscrivendo a ogni caricamento i cookie lang=en e overwriteCCVal=world (PH ogni tanto li ripristina su it), e reindirizza il sottodominio-lingua (es. it.pornhub.com) a www.pornhub.com così i titoli NON vengono tradotti. Aggiunge in basso a destra un tasto "⬇️ Scarica video" (sempre visibile) che scarica il file MP4 alla qualità massima, con avanzamento sul tasto e clic-per-annullare. Nome file: "[Nome canale] Titolo.mp4". Sorgente ricavata a runtime da flashvars/mediaDefinitions.
+// @version      1.8.2
+// @description  On pornhub.com: keeps the site in English and Worldwide by rewriting the lang=en and overwriteCCVal=world cookies on every load (PH resets them to Italian now and then), and redirects the language subdomains (it.pornhub.com and so on) to www.pornhub.com so titles are never translated. Adds an always-visible download button at the bottom right: highest MP4 quality available; progress on the button; second click cancels; file named '[Channel] Title.mp4'; source read at runtime from flashvars/mediaDefinitions.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://*.pornhub.com/*
