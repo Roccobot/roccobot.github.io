@@ -24,10 +24,18 @@
      cioè il PERCHÉ; non si scrive ciò che il codice dice da sé, cioè il COME*, perché il
      sorgente è commentato e si legge. Aggiunta sua: la documentazione degli effetti non deve
      essere né reversibile né ricordata, e all'occorrenza si ricava dal codice.
-   - **Restano** trappole, tentativi scartati, linee guida estetiche, decisioni dell'utente e
-     scelte di canone o editoriali, modalità di lavoro e vocabolario. **Vanno via** meccanica
-     interna, range delle manopole, cronologia, conferme post-fix, e ogni elenco ricavabile con
-     un grep. Delle misure si tiene quella **scartata**, non quella accettata.
+   - **Le cinque famiglie che restano, nella formulazione approvata dall'utente:**
+     1. **le trappole**: come si misura una cosa e come NON si misura, cosa uno strumento non
+        vede, quale prova non fa fede;
+     2. **i tentativi scartati**, con la ragione, così nessuno li ripropone;
+     3. **le linee guida estetiche**: allineamento ottico, anti-jitter, misure col font reale;
+     4. **le decisioni dell'utente**, compresi i suoi *no*, e le **scelte di canone o
+        editoriali**;
+     5. **le modalità di lavoro** con l'utente, più il **vocabolario** condiviso.
+   - **Vanno via** meccanica interna, range delle manopole, cronologia delle release, conferme
+     post-fix, e ogni elenco ricavabile con un grep. ⚠️ Delle misure si tiene quella
+     **scartata**, non quella accettata: il valore in uso sta nel codice e si rilegge, quello
+     scartato no.
    - **Campione approvato**: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**).
      ⚠️ Viveva nello scratchpad e **non esiste più**: va rifatto dalla sezione attuale, che è
      ancora quella lunga. Stima sul file: **da 35.346 a 13.000-15.000 parole**, cioè un altro
