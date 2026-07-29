@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto: in lettura carica anche le regole universali, quelle di sviluppo e il canone tolkieniano. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati.
+description: Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto: in lettura esegue prima il protocollo di avvio del CLAUDE.md, poi il brief. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati.
 ---
 
 # Passaggio di consegne fra sessioni
@@ -20,8 +20,9 @@ skill copre esattamente quel salto, e nient'altro.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
-Tutto ciò che vale **oltre** la prossima sessione va in `CLAUDE.md` (o in
-`rules/Roccobot.md` via Worker, se universale) **prima** di scrivere l'handoff.
+Tutto ciò che vale **oltre** la prossima sessione va in `CLAUDE.md` (o, se la portata
+è universale, nel file di regole che `CLAUDE.md` indica) **prima** di scrivere
+l'handoff.
 Nell'handoff resta solo lo **stato volatile**: cosa è in corso, dove ci si è fermati, cosa
 non è ancora verificato.
 
@@ -36,7 +37,7 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
 - **Repository** = `Roccobot/roccobot.github.io`: uno solo, con un solo `master` e un
   solo `CLAUDE.md`, che raccoglie le regole di **tutti** i progetti ospitati.
 - **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
-  root (regola universale in `Roccobot.md`, sezione 'Terminologia'). Qui vivono:
+  root (convenzione registrata nelle regole universali). Qui vivono:
   `arda/top/` = **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre),
   `ABP/` = **Regole AdBlock**, `userscripts/` = gli **userscript**, `RoccobotOS/` = la
   **guida di riferimento**, `proxy/` = il **Worker** di amministrazione.
@@ -155,31 +156,15 @@ Gli script dello scratchpad che servono e che non esistono più (vedi in fondo).
 Questo modo **è** l'avvio di sessione: non si riprende un lavoro in corso senza avere
 in testa le regole, altrimenti si ricomincia dagli errori già fatti.
 
-### 0. Leggi le regole PRIMA dell'handoff
+### 0. Esegui il protocollo di avvio del `CLAUDE.md`
 
-Nell'ordine, tutte per intero:
+`CLAUDE.md` si carica da sé ed è l'**hub**: la sua 'Regola n. 1' dice quali file di
+regole caricare, in che ordine, come leggerli e cosa chiedere all'utente. Si segue
+quello, senza che questa skill ripeta l'elenco: sarebbe una seconda fonte di verità,
+cioè esattamente ciò che la regola n. 1 di questa skill vieta.
 
-1. **`CLAUDE.md`** di questo repo (regole dei progetti che ospita);
-2. **`rules/Roccobot.md`** - regole universali di collaborazione;
-3. **`rules/Development.md`** - regole di sviluppo (⚠️ `CLAUDE.md` deroga a parecchi
-   suoi punti: l'elenco è nella sua 'Regola n. 1');
-4. **`rules/JRRT.md`** - canone tolkieniano, indispensabile per ogni tocco ai contenuti
-   di 'I Grandi di Arda';
-5. **`rules/Prompts.md`** - revisione dei prompt generativi: non si applica da sé, ma va
-   saputo che esiste.
-
-I quattro file di `rules/` vivono in `Roccobot/tools` e si leggono **in grezzo**
-(`curl` con UA da browser sul Worker `rules-proxy`, oppure `add_repo`), **mai** con un
-fetch che riassume. Verifica anti-riassunto: devono comparire l'intestazione e la riga
-`> **Versione**:`.
-
-```bash
-UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'
-for f in Roccobot Development JRRT Prompts; do
-  curl -sS -A "$UA" "https://rules-proxy.roccobot-b90.workers.dev/rules/$f.md" -o "/tmp/$f.md"
-  echo "$f: $(wc -c < /tmp/$f.md) byte - $(grep -m1 'Versione' /tmp/$f.md)"
-done
-```
+Quindi: prima il protocollo di avvio (compresa la domanda di rito all'utente), poi
+l'handoff.
 
 ### 1. Poi l'handoff, e verificalo
 
