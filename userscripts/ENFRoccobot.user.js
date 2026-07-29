@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Su enf-cmnf.cc ed enfhub.com aggiunge in basso a destra un tasto "Download" che scarica il video della pagina. Gestisce tutti i player usati dai due siti: MP4 diretto (<source> o <video src>), HLS self-hosted su cdn.enf-cmnf.cc e HLS di enfhub (cdn.enfhub.site/videos/<id>/master.m3u8, letto dal player o dedotto dal poster). I flussi HLS vengono scaricati segmento per segmento e uniti in un unico file .ts. Avanzamento sul tasto, clic per annullare, elenco di scelta quando la pagina contiene piu' video.
-// @author       Roccobot
+// @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://enf-cmnf.cc/*
 // @match        https://www.enf-cmnf.cc/*

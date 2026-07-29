@@ -16,13 +16,27 @@
   le applica per intero.
 - Il canone tolkieniano universale (priorità delle fonti, versioni ammesse,
   acronimi, divieti) vive in `rules/JRRT.md`, stesso repo.
+- Le regole di **sviluppo** (autonomia e conferme, igiene del codice, versione
+  visibile, validazione del markup) vivono in `rules/Development.md`, stesso repo:
+  valgono per il sito di questo repo, ma questo `CLAUDE.md` ha priorità più alta e
+  **deroga già** su parecchi punti (vedi la nota qui sotto).
+- Le regole di **revisione dei prompt** generativi vivono in `rules/Prompts.md`,
+  stesso repo. ⚠️ **Non si applicano da sé**: si attivano solo quando l'utente le
+  invoca esplicitamente (di norma con il suo snippet `snippets/Onboarding-prompts.md`),
+  e in quel caso i loro operatori **scavalcano** quelli omonimi di `Roccobot.md`
+  (info media, traduzioni). Per il lavoro ordinario su questo repo non entrano in
+  gioco, ma vanno lette per sapere che esistono e cosa coprono.
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
+  - <https://rules-proxy.roccobot-b90.workers.dev/rules/Development.md>
+  - <https://rules-proxy.roccobot-b90.workers.dev/rules/Prompts.md>
 
   In alternativa, finché il repo è pubblico, i raw GitHub:
   - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
   - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/JRRT.md>
+  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Development.md>
+  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Prompts.md>
 - **Leggi sempre in grezzo, mai con un fetch che riassume**: strumenti tipo
   `WebFetch` sintetizzano i file lunghi e restituiscono un riassunto al posto
   del testo reale. Usa `curl` con UA da browser (o l'aggancio del repo +
@@ -38,6 +52,26 @@
   variabile d'ambiente `RULES_PASSWORD`. Protocollo completo (formato POST,
   User-Agent da browser, bump SemVer) nella sezione 'Worker `rules-proxy`' di
   `Roccobot.md`.
+- ⚠️ **Dove questo `CLAUDE.md` deroga a `rules/Development.md`.** Non sono
+  dimenticanze: sono il modo di lavorare consolidato di questo repo, e la scala di
+  priorità qui sotto dà ragione a questo file. Da sapere prima di applicare
+  `Development.md` alla lettera:
+  - **Niente Prospect né piano operativo prima di ogni ciclo o deploy**: qui vale il
+    **go-live automatico** (vedi 'Branch, allineamento e push'), e la conferma
+    preventiva si chiede solo per le modifiche pesanti o strutturali.
+  - **Niente snapshot (tag git) dopo ogni rilascio** e **nessun Report post-rilascio
+    dopo ogni release maggiore**: qui un bump `+1.0` è frequente e non è un evento di
+    programma; l'archivio è la storia git.
+  - **Gate W3C**: non a ogni release, ma solo ai bump **+0.1 e +1.0**, e 'utile ma non
+    imprescindibile' se il validatore non risponde (vedi '🔢 Versione del sito').
+  - **Versione**: schema custom `x.xx`, che è un override dichiarato del SemVer.
+  - **Lingua della UI**: il sito è bilingue IT/EN con l'italiano come lingua primaria,
+    non 'tutto in inglese di default'.
+  - **Footer**: quello del sito è il suo, non la nota fissa 'vibes ✦ ...'.
+
+  Resta invece pienamente valido tutto il resto: rigore tecnico, igiene del codice
+  (niente codice morto), conferma esplicita per le operazioni ad alto impatto,
+  versione sempre verificabile nella UI.
 
 ## ⚖️ Priorità in caso di conflitto
 
@@ -47,8 +81,11 @@ Dalla più forte alla più debole:
    su tutto; se durature, vanno poi registrate nel file giusto.
 2. **Questo `CLAUDE.md`**: prevale per tutto ciò che è specifico del
    progetto.
-3. **`rules/Roccobot.md`** (con `rules/JRRT.md` per il canone): la base
-   universale, vale per tutto il resto.
+3. **I file di regole più specifici** di `Roccobot/tools`: `rules/JRRT.md` per il
+   canone, `rules/Development.md` per lo sviluppo, `rules/Prompts.md` per la
+   revisione dei prompt (solo quando è attivata). Essendo più specifici, fra loro e
+   `Roccobot.md` vincono loro.
+4. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto.
 
 Le regole nuove di portata generale vanno in `rules/Roccobot.md` secondo il
 protocollo 'Aggiungi alle regole' definito lì, non qui.
@@ -4110,6 +4147,18 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
 
   Si usa il raw di GitHub (non il dominio Pages) perché è il riferimento già
   adottato da tutti gli script. Un'icona diversa solo se l'utente la chiede.
+- **Intestazione: `@author` e lingua** (applicazione delle regole universali, sezione
+  'Codice e artefatti generati' di `Roccobot.md`, dal 2026-07-29):
+  - `@author` è sempre **`Rocco Casadei, a.k.a. Roccobot`**, mai il solo 'Roccobot'
+    (allineati tutti e 7 gli script, con bump di patch, il 2026-07-29);
+  - `@description` e i **commenti nel codice** si scrivono in **inglese**. ⚠️ **Non
+    retroattivo**: le descrizioni italiane esistenti (sette su sette, alcune molto
+    lunghe) restano come sono finché l'utente non chiede di tradurle. Vale per i
+    campi nuovi e per le parti che si riscrivono.
+  - `@name` resta quello deciso dall'utente, in qualunque lingua.
+- **Versione: bump SemVer a ogni commit che tocca lo script** (`patch` per i fix e le
+  correzioni di commenti, `minor` per le funzioni nuove). Senza bump Tampermonkey non
+  scarica l'aggiornamento, quindi il link di installazione sarebbe inutile.
 - **Link di installazione a fine lavoro / dopo OGNI go-live (regola rafforzata
   dall'utente, 2026-07-16).** Ogni volta che crei o **aggiorni** uno userscript,
   **dopo il go-live** ri-invia **sempre** nel messaggio finale il link da cui
