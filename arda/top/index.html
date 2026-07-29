@@ -2643,7 +2643,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.79</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.80</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -8619,20 +8619,59 @@ function fxPreviewCc(light){
 // rect e clientX sono entrambi in px visivi: la stima regge anche sotto zoom XL.
 function fxGuardSlider(sl, onDbl){
   var lastTap = 0;
-  sl.addEventListener('pointerdown', function(e){
-    if (sl.disabled || !isFinite(e.clientX)) return;
+  // Valore da ripristinare mentre il gesto è bloccato (null = nessun blocco).
+  var v0 = null;
+  // Il puntatore è sul pallino? Si stima la sua posizione dal valore corrente: il
+  // diametro è ~ l'altezza del controllo, e la corsa utile è larghezza − diametro.
+  // rect e clientX sono entrambi in px VISIVI, quindi la stima regge sotto zoom XL.
+  function sulPallino(x, touch){
     var r = sl.getBoundingClientRect();
     var min = parseFloat(sl.min) || 0, max = parseFloat(sl.max);
-    var span = (max - min) || 1;
-    var ratio = Math.min(1, Math.max(0, (parseFloat(sl.value) - min) / span));
-    var thumb = Math.min(r.height, 28); // il diametro del pallino ~ l'altezza del controllo
+    var ratio = Math.min(1, Math.max(0, (parseFloat(sl.value) - min) / ((max - min) || 1)));
+    var thumb = Math.min(r.height, 28);
     var cx = r.left + thumb / 2 + ratio * (r.width - thumb);
-    var tol = Math.max(12, thumb * 0.55) * (e.pointerType === 'touch' ? 1.5 : 1);
-    if (Math.abs(e.clientX - cx) <= tol) return; // sul pallino: trascinamento nativo
+    return Math.abs(x - cx) <= Math.max(12, thumb * 0.55) * (touch ? 1.5 : 1);
+  }
+  function blocca(){ if (v0 === null) v0 = sl.value; }
+  function libera(){ v0 = null; }
+  sl.addEventListener('pointerdown', function(e){
+    // ⚠️ Ogni gesto NUOVO parte libero: se un `touchend` non fosse arrivato (gesto
+    // interrotto dal browser), un blocco rimasto appeso renderebbe lo slider inerte
+    // per sempre. Su un dispositivo reale sarebbe peggio del difetto che si corregge.
+    libera();
+    if (sl.disabled || !isFinite(e.clientX)) return;
+    if (sulPallino(e.clientX, e.pointerType === 'touch')) return; // trascinamento nativo
     e.preventDefault();
-    if (e.timeStamp - lastTap < 400) { lastTap = 0; if (onDbl) onDbl(); }
+    blocca();
+    if (e.timeStamp - lastTap < 400) { lastTap = 0; libera(); if (onDbl) onDbl(); }
     else lastTap = e.timeStamp;
   });
+  // ⚠️ SU TOUCH `preventDefault` sul solo `pointerdown` NON basta (segnalato
+  // dall'utente su dispositivo reale, v14.80): certi browser cambiano il valore
+  // dalla gestione nativa del tocco, che quel preventDefault non annulla. E
+  // l'emulazione NON riproduce il caso: in Chromium con `hasTouch` il guard
+  // sembrava tenere. Da qui due difese in più, indipendenti dal percorso degli
+  // eventi:
+  //  1. `touchstart` NON passivo, dove il preventDefault è quello documentato per
+  //     sopprimere il comportamento nativo del tocco;
+  //  2. rete di sicurezza VERA: mentre il gesto è bloccato, ogni `input` viene
+  //     annullato in CAPTURE (valore ripristinato + stopImmediatePropagation), così
+  //     il listener della manopola non lo vede nemmeno. Funziona anche se il
+  //     browser ignora del tutto il preventDefault.
+  sl.addEventListener('touchstart', function(e){
+    libera();                                   // stessa cautela del pointerdown
+    if (sl.disabled || !e.touches || !e.touches.length) return;
+    if (sulPallino(e.touches[0].clientX, true)) return;
+    e.preventDefault();
+    blocca();
+  }, { passive: false });
+  sl.addEventListener('input', function(e){
+    if (v0 === null) return;
+    sl.value = v0;              // il tocco sul binario non muove niente
+    e.stopImmediatePropagation();
+  }, true);
+  ['pointerup', 'pointercancel', 'touchend', 'touchcancel', 'lostpointercapture']
+    .forEach(function(ev){ sl.addEventListener(ev, libera); });
 }
 
 // ── VISTA DIVISA / dock (dalla v13.06, richiesta utente) ─────────────────────
@@ -9256,9 +9295,13 @@ function showFxConfigEditor(key, sfx, onDone){
   // repo: dopo un salvataggio i due coincidono, prima no. Il doppio clic su un
   // singolo slider fa già la stessa cosa per la SUA manopola (v13.38): questo la fa
   // per tutte, interruttore compreso.
+  // ⚠️ ETICHETTA 'Azzera'/'Reset' dalla v14.80 (segnalato dall'utente): 'Predefiniti'
+  // stava dentro il pulsante a pelo. Misurato col font reale a 390px: spazio utile
+  // 88,5px, 'Predefiniti' 87,3 (1,2px di margine), 'Azzera' 54,3. Scartata
+  // 'Standard' (75,1: ci sta, ma dice uno stato dove le altre due dicono un'azione).
   var def = document.createElement('button'); def.className = 'fab-modal-confirm';
   def.style.cssText = 'width:auto;flex:1;margin-top:0;';
-  def.textContent = it ? 'Predefiniti' : 'Defaults';
+  def.textContent = it ? 'Azzera' : 'Reset';
   def.title = it ? 'Riporta questo effetto ai valori standard del sito'
                  : 'Restore this effect to the site default values';
   def.onclick = function(){

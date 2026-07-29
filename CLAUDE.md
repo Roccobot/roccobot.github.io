@@ -21,10 +21,12 @@ sessione:
 
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
-2. Poi si fa la **domanda di rito**, una sola volta per sessione: *quali altri file
-   carico?* Le opzioni sono **due**: `rules/JRRT.md` (canone tolkieniano) e
-   `rules/Prompts.md` (revisione dei prompt).
-   Si usa lo strumento di domanda a scelta multipla e **si attende la risposta**
+2. Poi si fa la **domanda di rito**, una sola volta per sessione: *carico anche
+   `rules/JRRT.md`?* (il canone tolkieniano). ⚠️ Dal 2026-07-29 è **l'unico file
+   opzionale rimasto**: `Development.md` e `Prompts.md` sono stati assorbiti in
+   `Roccobot.md`, che si carica sempre. Se un domani ne nascono altri, si aggiungono
+   qui come opzioni.
+   Si usa lo strumento di domanda e **si attende la risposta**
    prima di iniziare il lavoro: l'utente ha detto esplicitamente che il ritardo di
    un giro non è un problema, perché si paga una volta sola.
    - Fra le opzioni va sempre offerto un **'carica sempre tutti'** (regola
@@ -43,12 +45,11 @@ sessione:
   chiede** e si caricano **solo i due file principali**, in quest'ordine di
   priorità: **questo `CLAUDE.md`** e **`rules/Roccobot.md`**. Gli altri si leggono
   solo se il compito li tocca davvero.
-- ⚠️ **Caricato non vuol dire attivo.** Vale per ogni file esterno che può essere
-  caricato o no: il caricamento mette il testo a disposizione, l'**attivazione** è
-  un'altra cosa e la decide la regola del file stesso. Oggi il caso è
-  `rules/Prompts.md`, che si applica **solo quando l'utente lo invoca**: leggerlo
-  non lo mette in vigore. Se un file futuro avrà lo stesso comportamento, va detto
-  qui accanto.
+- ⚠️ **Caricato non vuol dire attivo.** Il caricamento mette il testo a disposizione,
+  l'**attivazione** è un'altra cosa e la decide la regola stessa. Vale per i file
+  esterni opzionali **e per le sezioni modali** di un file che si carica sempre: oggi
+  il caso è **'🎛️ Revisione dei prompt'** in `Roccobot.md`, che si applica
+  **solo quando l'utente la invoca**. Leggerla non la mette in vigore.
 
 ### 🗂️ Che cosa contiene ciascun file
 
@@ -63,13 +64,15 @@ sessione:
   file resta in piedi come rimando, per non lasciare un 404 a chi lo cerca. Criterio
   della fusione, dell'utente: **si unisce ciò che è sempre vero, si tiene separato ciò
   che è modale.**
-- **`rules/Prompts.md`**: revisione dei prompt generativi. Si attiva **solo su
-  richiesta dell'utente**; i suoi operatori scavalcano quelli omonimi di
-  `Roccobot.md` (info media, traduzioni).
+- ⚠️ **`rules/Prompts.md` NON esiste più** (2026-07-29): l'utente ne ha ridotto il
+  contenuto alle voci ancora utili e le ha fatte confluire in `Roccobot.md`, sezione
+  '🎛️ Revisione dei prompt'. La fusione è diventata sicura perché la riduzione
+  ha **eliminato gli operatori** che scavalcavano quelli di 'Traduzioni e revisioni':
+  erano l'unica cosa che rendeva quel file modale nel **meccanismo** e non solo
+  nell'uso. Resta in piedi come rimando.
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
-  - <https://rules-proxy.roccobot-b90.workers.dev/rules/Prompts.md>
 
   ⚠️ **I raw GitHub NON funzionano più** (verificato il 2026-07-29:
   `raw.githubusercontent.com/Roccobot/tools/...` risponde 404 sia su `main` sia su
@@ -138,14 +141,17 @@ Dalla più forte alla più debole:
      (Orodreth figlio di Angrod, Celeborn senza `Teleporno`, l'elenco degli
      apocrifi). Un audit che applichi `JRRT.md` alla lettera le segnalerà come
      errori: non lo sono, e la scala è ciò che lo stabilisce.
-4. **`rules/Prompts.md`**: la revisione dei prompt, **solo quando è attivata**. È una
-   **modalità**, non un livello: i suoi operatori sostituiscono quelli omonimi della
-   sezione 'Traduzioni e revisioni' di `Roccobot.md`.
-5. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto. ⚠️ Dal
-   2026-07-29 contiene anche le **regole di sviluppo**, che prima stavano in un file a
-   sé: quindi non sono più un livello sopra di lui, sono una sua sezione, e i conflitti
-   che la scala risolveva sono ora **eccezioni dichiarate** nel testo (la lingua dei
-   prodotti software è scritta come eccezione dentro la regola sulla lingua).
+4. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto.
+   - ⚠️ Dal 2026-07-29 contiene anche le **regole di sviluppo** e la **revisione dei
+     prompt**, che prima stavano in due file a sé. Quindi non sono più livelli sopra di
+     lui: sono sue sezioni, e i conflitti che la scala risolveva sono diventati
+     **eccezioni dichiarate** nel testo (la lingua dei prodotti software è scritta come
+     eccezione dentro la regola sulla lingua; il formato di output della revisione
+     prompt dichiara di sostituire quello delle traduzioni quando la modalità è
+     attiva).
+   - La scala è così tornata a **tre soli livelli sotto la sessione**, che è il segno
+     che le fusioni hanno funzionato: meno file, meno gerarchia, più eccezioni scritte
+     dove servono.
 
 ### ⚠️ La specificità vale per DOMINIO, non in assoluto
 
@@ -1206,6 +1212,20 @@ normale/XL secondo la preferenza attiva.
        tasti salto e FAB nascosti: le animazioni di comparsa e il timer da 3s dei
        tasti salto rendono l'istantanea casuale (misurato: due screenshot della
        STESSA versione davano hash diversi in tema chiaro).
+- ⚠️ **CASO CHIUSO, non è un difetto: 'ho spento un effetto su mobile e l'ho trovato
+  spento anche su desktop'** (segnalato dall'utente il 2026-07-29 sul podio). Il
+  Pannello scrive **sempre e solo** la variante giusta: verificato in due modi.
+  - **Sui dati**: il salvataggio admin da mobile (`f034190`) ha cambiato **solo**
+    `podium_m`, e `podium` (desktop) risultava **già spento dal 28**, molti commit
+    prima. Il modo di accertarlo è ricostruire la storia delle due chiavi con
+    `git show <commit>:arda/top/dati.js` su una decina di commit: è l'unica prova
+    diretta di che cosa ha scritto un salvataggio.
+  - **Dal vivo**: aprendo il Pannello a 390px, a 700px col mouse e a 1400px, la
+    checkbox tocca `podium_m` nei primi due casi e `podium` nel terzo, mai entrambe.
+  - **Perché l'equivoco è legittimo**: il Pannello non mostra in alcun modo lo stato
+    dell'ALTRA variante, quindi trovare un effetto spento su desktop non si distingue
+    da 'l'ho appena spento io da mobile'. Se ricapita, guardare i dati prima di
+    cercare un difetto nel codice.
 - ⚠️ **NEI TEST, i valori degli effetti si impostano SEMPRE esplicitamente.** La
   config salvata è quella dell'**utente** e cambia quando lui usa il pannello: un
   test che si affida ai default misura la sua taratura, non il comportamento del
@@ -1283,6 +1303,26 @@ normale/XL secondo la preferenza attiva.
   sintetico, quindi lì il `dblclick` nativo non è affidabile. Nei
   micro-aggiustamenti il reset resta 'ultimo salvato' (la convenzione di quell'
   editor), negli effetti è il predefinito.
+  - ⚠️⚠️ **SU TOUCH REALE il solo `preventDefault` sul `pointerdown` NON basta**
+    (segnalato dall'utente, v14.80): certi browser cambiano il valore dalla gestione
+    nativa del tocco, che quel `preventDefault` non annulla, e il tocco sul binario
+    tornava a impostare il valore. Tre difese, indipendenti fra loro:
+    1. un `touchstart` **NON passivo** con `preventDefault`, che è la via documentata
+       per sopprimere il comportamento nativo del tocco;
+    2. la rete vera: mentre il gesto è bloccato, ogni `input` viene **annullato in
+       CAPTURE** (valore ripristinato + `stopImmediatePropagation`), così il listener
+       della manopola non lo vede nemmeno. Funziona **anche se il browser ignora del
+       tutto il `preventDefault`**, che è il punto;
+    3. ogni gesto nuovo parte da `libera()`: se un `touchend` non arrivasse (gesto
+       interrotto dal browser), un blocco appeso renderebbe lo slider inerte per
+       sempre, cioè peggio del difetto da correggere.
+  - ⚠️ **L'EMULAZIONE NON RIPRODUCE il caso**: in Chromium con `hasTouch` il guard
+    vecchio sembrava tenere. E il **trascinamento del pallino non è verificabile
+    affatto** in emulazione: gli eventi touch sintetici (anche via CDP
+    `Input.dispatchTouchEvent`) non pilotano il drag nativo di un `input[type=range]`,
+    quindi il test fallisce **identico prima e dopo** la modifica. Prima di dare la
+    colpa a una modifica, rifare la stessa prova sulla versione precedente: è così che
+    si distingue il difetto dall'artefatto.
   Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
   minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
   sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
@@ -1308,8 +1348,14 @@ normale/XL secondo la preferenza attiva.
   (le sfumature lunghe di `out`/`aura` escono dalla card e venivano tagliate). Ogni
   modifica si applica SUBITO anche alle card vere dietro. Piè a **tre tasti** (dalla
   v14.11): 'Ultimo salvato' (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e
-  riapre), **'Predefiniti'/'Defaults'** e 'Chiudi'; il salvataggio resta SOLO nel
+  riapre), **'Azzera'/'Reset'** e 'Chiudi'; il salvataggio resta SOLO nel
   pannello Feature flag.
+  - ⚠️ **Si chiamava 'Predefiniti'/'Defaults' fino alla v14.79** (segnalato dall'utente:
+    'sta nel pulsante a pelo'). Misurato col font reale a 390px: nel tasto lo spazio
+    utile è **88,5px** e 'Predefiniti' ne occupava **87,3**, cioè 1,2px di margine.
+    'Azzera' sta a **54,3px**. Scartata 'Standard' (75,1px: ci sta, ma dice uno STATO
+    dove gli altri due tasti dicono un'AZIONE). ⚠️ 'Ultimo salvato' sta su due righe
+    da sempre e va bene così: è il tasto più largo e non si accorcia.
   - **'Predefiniti'** (v14.11, richiesta dell'utente: 'un tasto che ripristini il
     valore standard, ovvero quello attuale, per tornare ai valori correnti in
     qualsiasi momento dopo aver sperimentato') riporta l'effetto a
