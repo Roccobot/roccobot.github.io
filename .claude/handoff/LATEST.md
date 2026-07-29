@@ -52,8 +52,17 @@
    `.claude/skills/desc/SKILL.md`, operativa, con un paio di sue correzioni: **non va
    riscritta né ricreata.** Da controllare: il frontmatter (`name`, `description`), che la
    description dica che vale solo se invocata, e che gli operatori dichiarino di scavalcare
-   quelli omonimi di `Roccobot.md`. Manca ancora la nota nel `CLAUDE.md` di `tools`, che
-   **non esiste**.
+   quelli omonimi di `Roccobot.md`.
+   - **Manca il `CLAUDE.md` di `tools`, che non esiste**, e la richiesta dell'utente era
+     precisa: *scrivi SOLO* che gli operatori della skill valgono in override **unicamente
+     quando `/desc` è invocata*. Quindi il file nasce con quella nota e nient'altro: non è
+     l'occasione per documentare il repo `tools`.
+   - Contenuto della nota: gli operatori definiti nella skill (`>`, `^`, `^^`, `=`, `\` e
+     `/`) **scavalcano quelli omonimi** di `Roccobot.md`, sezioni 'Traduzioni e revisioni' e
+     '🎛️ Revisione dei prompt', **solo a skill invocata**; fuori da lì non si applicano, e
+     tutto ciò che la skill non copre (lingua, caratteri, formato, tono) resta come
+     `Roccobot.md` lo definisce. È l'applicazione della regola 'caricato non vuol dire
+     attivo' del `CLAUDE.md` di questo repo.
 4. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
    Raccomandazione già data: **non** estrarle sui numeri di oggi.
 
