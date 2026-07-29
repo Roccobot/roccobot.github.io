@@ -4151,11 +4151,24 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   'Codice e artefatti generati' di `Roccobot.md`, dal 2026-07-29):
   - `@author` è sempre **`Rocco Casadei, a.k.a. Roccobot`**, mai il solo 'Roccobot'
     (allineati tutti e 7 gli script, con bump di patch, il 2026-07-29);
-  - `@description` e i **commenti nel codice** si scrivono in **inglese**. ⚠️ **Non
-    retroattivo**: le descrizioni italiane esistenti (sette su sette, alcune molto
-    lunghe) restano come sono finché l'utente non chiede di tradurle. Vale per i
-    campi nuovi e per le parti che si riscrivono.
+  - `@description` e i **commenti nel codice** si scrivono in **inglese**. Le sette
+    descrizioni sono state **tradotte e accorciate** il 2026-07-29 (richiesta
+    dell'utente: 'già che ci siamo rendiamole più brevi e schematiche'), quindi la
+    non-retroattività della regola universale oggi riguarda solo i **commenti**, che
+    restano in italiano finché non si riscrive quella parte.
+  - **Descrizione: massimo ~300 parole, limite morbido** (regola universale
+    dell'utente, 2026-07-29). Dopo la potatura la più lunga è DIV con **132** parole,
+    le altre stanno fra 47 e 140, quindi nessuna sfora. ⚠️ Il dettaglio tecnico va
+    nel `README.md` di `userscripts/`, non nel metadato: la vecchia descrizione di DIV
+    era di **743 parole** e ripeteva la storia versione per versione ('dalla 2.10',
+    'dalla 2.12'...), cioè un changelog travestito da descrizione, mentre il README
+    già la documenta in una sezione di 249 righe.
   - `@name` resta quello deciso dall'utente, in qualunque lingua.
+  - ⚠️ **Le etichette dei pulsanti in pagina sono ancora in italiano** ('⬇️ Scarica
+    video', '⬇️ Scarica galleria', '⬇️ Scarica set (ZIP)'; ENF fa eccezione con
+    '⬇︎ Download'). Non sono state toccate: tradurre la UI è una scelta a sé, da
+    chiedere all'utente. Nelle descrizioni si citano quindi **per funzione**, non con
+    un'etichetta tradotta che in pagina non esiste.
 - **Versione: bump SemVer a ogni commit che tocca lo script** (`patch` per i fix e le
   correzioni di commenti, `minor` per le funzioni nuove). Senza bump Tampermonkey non
   scarica l'aggiornamento, quindi il link di installazione sarebbe inutile.
