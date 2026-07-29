@@ -722,8 +722,7 @@ condividono le stesse, e il lato destro resta separato solo come **accensione**.
 
 **2. `spot`: riflettore** (`fx-spot`, 'Riflettore'). Alone bianco molto sfumato che
 schiarisce la card sotto il puntatore e lo SEGUE, confinato dentro la card. Riusa
-`.rank-item::before`, il vecchio velo statico di hover. Manopole `r` (raggio) e `int`, il cui
-**tetto 0.12 è il valore verificato con axe**: 0 violazioni anche al massimo, hover incluso.
+`.rank-item::before`, il vecchio velo statico di hover. Manopole `r` (raggio) e `int`.
 
 - ⚠️ **Esiste SOLO dove esiste un puntatore vero**: le regole stanno dentro `@media
   (hover:hover) and (pointer:fine)` e `wireSpotlight` non aggancia il listener se
@@ -899,12 +898,6 @@ podio **segue i filtri attivi**.
   come `incomplete` (2714 incompleti, 0 valutati, in qualunque configurazione e anche a
   riflettore spento). La verifica del contrasto sulle card va fatta **a calcolo**
   (`scratchpad/hovaa2.js`).
-- ⚠️ **Il tetto di `op_d` è 0.20 per una ragione MISURATA**, non estetica: oltre quel punto le
-  due righe tenui della card scendono sotto 4.5:1 sulla famiglia dalla tinta più chiara. A
-  0.20 restano a **4.65:1**, a 0.26 scenderebbero a **3.86:1**, il default 0.18 dà
-  **4.95:1**. Alle combinazioni estreme di luminosità (`lum` 1.3) il margine si consuma
-  comunque (4.41:1), ma la SOLA opacità non può più rompere l'AA. Non alzarlo senza
-  rimisurare le due righe.
 - Nell'**anteprima** una card è accesa e una a riposo: è il confronto che serve a regolare
   l'effetto. ⚠️ La condizione è `rec.first` e NON quella del bagliore: riusarla
   significherebbe ereditarne la manopola 'Su tutte le card', che con `all` acceso rende accese
@@ -1003,17 +996,12 @@ qualcosa che il sito non ha mai avuto.
   valori il margine laterale è già zero (a 800px la colonna riempie tutta la finestra). Sotto
   soglia `applySiteFlags` toglie la classe, così non si paga nemmeno il disegno.
 - **Colore e opacità sono manopole SEPARATE e per tema** (`c_d`/`op_d`, `c_l`/`op_l`).
-  ⚠️ **TETTI DI OPACITÀ 0.34/0.30**, alzati dai vecchi 0.10/0.09 ('più range di opacità',
-  utente). I vecchi tetti erano **misurati**, ma sul caso della modalità 'Dappertutto', in cui
-  la trama passava DENTRO le card semitrasparenti e finiva sotto i testi. Tolta quella
-  modalità, nei margini laterali **non c'è testo di contenuto**: il footer sta entro 500px
-  centrati, dunque dentro la colonna sgombra. Restano solo i controlli **fissi**, che la banda
-  in cima protegge, e i **tasti salto**, che a riposo stanno a 1.6:1 **da sempre e senza
-  trama** (opacità 0.5 per scelta, piena all'hover e al focus): misurato, la trama non li
-  peggiora, li schiarisce appena. Lo strumento è `scratchpad/pat/aa4.js`, che cerca per ogni
-  controllo il massimo `op` che tiene 4.5:1. ⚠️ **Rimisurare se cambia il colore o l'opacità
-  di `.home-link`, `.lang-switch` o l'altezza della banda**; e ⚠️ **axe non serve come prova
-  sulle card** (vedi la nota di `hov`).
+  ⚠️ **I tetti di opacità si sono potuti ALZARE** ('più range di opacità', utente) perché la
+  modalità 'Dappertutto', in cui la trama passava dentro le card e finiva sotto i testi, è
+  stata rimossa: nei margini laterali non c'è testo di contenuto, e i soli controlli a rischio
+  sono quelli **fissi**, protetti dalla banda in cima. ⚠️ **Rimisurare se cambia il colore o
+  l'opacità di `.home-link`, `.lang-switch` o l'altezza della banda**: lo strumento è
+  `scratchpad/pat/aa4.js`, che cerca per ogni controllo il massimo `op` che tiene 4.5:1.
 - ⚠️ **Nell'anteprima su card finte il CONFINAMENTO non è riproducibile** (il riquadro non ha
   né una colonna di schede né una testata da scansare): là si mostra il motivo dappertutto, ed
   è la nota della manopola 'Sfumatura' a dire dove finirà. Se nel riquadro ci sono trama E
@@ -1713,12 +1701,10 @@ il grigio 'cupo' stonava col sito ormai colorato.
 - **Manopole**: `uni` (luminosità uniforme per tutte le famiglie invece di quella
   propria di ogni tinta), `dsat`/`dlum` per lo scuro, `lsat`/`llum` per il chiaro.
   Taratura dell'utente: cromia 15%, L 0.66 in scuro, L 0.60 in chiaro.
-- ⚠️⚠️ **I limiti di `dlum` e `llum` sono di ACCESSIBILITÀ, non estetici**: misurati su
-  tutte le famiglie a qualunque cromia, sono i valori oltre i quali il numero scende
-  sotto 3:1 (soglia del testo grande) sul fondo della card. In **scuro** serve L
-  **alta** (min 0.66 = 3.70:1), in **chiaro** L **bassa** (max 0.60 = 3.18:1): per
-  questo i due temi non possono avere la stessa L, e la L 0.66 in chiaro darebbe
-  2.65:1. Il range stesso garantisce l'AA. **Non allargarlo senza rimisurare.**
+- ⚠️⚠️ **I limiti di `dlum` e `llum` sono di ACCESSIBILITÀ, non estetici**, e il range stesso
+  garantisce la soglia del testo grande: in **scuro** serve L **alta**, in **chiaro** L
+  **bassa**, quindi i due temi **non possono condividere** la stessa luminosità. Non
+  allargarlo senza rimisurare.
 - **Nessun fallback esplicito**: se `oklch(from ...)` non è supportato la dichiarazione
   cade e vale la regola base `.rank-num{color:var(--name)}`, cioè la resa storica
   grigia, corretta e AA-safe.
@@ -2001,12 +1987,8 @@ sugli Apocrifi.
   `grid-column:11/13` su desktop), liberati togliendo il Re 'in carica' dai badge admin. Al
   salvataggio imposta o rimuove `p.apocrifo`, preservando un'eventuale stringa-fonte; il
   Worker conserva il campo come ogni altra chiave.
-- **Voci flaggate `apocrifo` (18):** da *I popoli della Terra di Mezzo* (HoME XII)
-  **Eldalótë**, **Findis**, **Írimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**; da *La
-  guerra dei gioielli* (HoME XI) i primi Elfi destatisi a Cuiviénen **Imin/Iminyë**,
-  **Tata/Tatië**, **Enel/Enelyë** e gli Uomini delle *Wanderings of Húrin* **Manthor**,
-  **Hardang**, **Asgon**, **Avranc**, **Hundar**; da *L'anello di Morgoth* (HoME X)
-  **Andreth**.
+- **Voci flaggate `apocrifo`: 18**, attestate solo in HoME X, XI e XII (chi sono lo dice il
+  campo `apocrifo` in `dati.js`).
   - ⚠️ **NON apocrifi benché solo-HoME**, per esplicita scelta dell'utente: **Argon**
     (Arakáno), **Anairë** ed **Elenwë**, caso della regola «note tardive = canone» come
     Gil-galad figlio di Orodreth (dati voluti da J.R.R. Tolkien, non ripensamenti). Elenwë
@@ -2669,7 +2651,7 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
   (Radagast, Glorfindel, Erestor, Lindir) usano il tooltip comune `AMAN_DEDOTTO`.
 - **Badge Ambasciatori** (chiave `envoy`, la nave degli Anni degli Alberi): marca il
   **viaggio primordiale degli ambasciatori degli Eldar con Oromë**, evento unico nella
-  storia di Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come gruppo
+  storia di Arda. In legenda compare **solo come gruppo
   secondario della riga Aman** (senza parentesi), 'Attraversò il Mare / Al seguito di
   Oromë'; il tooltip resta la frase estesa e l'eccezionalità dell'evento non va spiegata in
   pagina.
@@ -2695,11 +2677,10 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
     verticali restano vicini ma **senza sovrapporsi**, che era il difetto da cui tutto è
     partito.
 - **Badge Helcaraxë** (chiave `helcaraxe`): 'Attraversò i ghiacci dell'Helcaraxë'. In
-  `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`**. Portatori da canone
-  (*Silmarillion*, 'Della fuga dei Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril,
-  Finrod, Angrod, Aegnor, Galadriel, Orodreth (figlio di Angrod, nato a Valinor, giunto con
-  l'oste di Fingolfin). NON lo attraversarono i Fëanoriani, giunti con le navi, né Finarfin,
-  tornato a Valinor. **Elenwë** (sposa di Turgon, madre di Idril) porta il badge a **opacità
+  `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`**. Criterio dal canone
+  (*Silmarillion*, 'Della fuga dei Noldor'): l'oste di Fingolfin, **Orodreth incluso** perché
+  qui è figlio di Angrod, nato a Valinor. ⚠️ NON lo attraversarono i **Fëanoriani**, giunti con
+  le navi, né **Finarfin**, tornato a Valinor. **Elenwë** (sposa di Turgon, madre di Idril) porta il badge a **opacità
   50%** ma con **etichetta dedicata**: 'Morì nella traversata dell'Helcaraxë'. È l'unica Elfa
   con nome noto a perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
   traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo* (HoME XII), che ne
@@ -2713,24 +2694,21 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
 - **Cinque badge aggiunti insieme (v3.93, decisioni dell'utente).** L'ordine di
   resa/legenda/admin vive in `ICON_ORDER` (righe condivise in legenda: Re+In carica,
   Aman+Oromë+Est, Drago+Balrog, Vilya+Nenya+Narya):
-  - **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos', SOLO Elfi): Glorfindel,
-    Finrod, Míriel (quest'ultima da HoME X, caso 'note tardive'). **Lúthien esclusa** per
-    scelta dell'utente: il suo è un caso a parte (rinascita completa con natura diversa,
-    mortale), non una reincarnazione. Beren fuori per definizione (Uomo).
-  - **`est`** ('Attraversò il Mare verso Est', criterio: traversata IN NAVE dalle Terre
-    Imperiture alla Terra di Mezzo): Eönwë e Finarfin (Guerra d'Ira, traghettati dai Teleri,
-    Silm cap. 24), Ingwion (idem, alla guida dei Vanyar), Glorfindel, i 5 Istari, Fëanor e i
-    suoi 7 figli (navi di Losgar). **Ingwë escluso**: la sua partecipazione alla Guerra d'Ira
-    non è attestata (i testi nominano il figlio Ingwion) e il viaggio degli ambasciatori non
-    avvenne in nave, perché le navi non esistevano.
-  - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon), Fram (Scatha),
-    Bard (Smaug). Azaghâl ferì soltanto Glaurung.
-  - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog), Gandalf (Flagello di
-    Durin). **Ecthelion ha un tooltip dedicato**: 'Uccise Gothmog, signore dei Balrog',
-    perché non uccise un Balrog qualunque ma il loro signore. ⚠️ La voce di Ecthelion in
-    `ICON_LABEL_OVERRIDE` ne ha già una per `calaquende`: le chiavi convivono nello stesso
-    oggetto, non sostituirla. **Tuor escluso**: uccide Balrog solo ne 'Il libro dei racconti
-    perduti II', versione superata del Legendarium.
+  - **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos', SOLO Elfi). **Míriel** vi
+    rientra da HoME X, caso 'note tardive'. **Lúthien esclusa** per scelta dell'utente: il suo
+    è un caso a parte (rinascita completa con natura diversa, mortale), non una
+    reincarnazione. Beren fuori per definizione, è un Uomo.
+  - **`est`**: criterio 'traversata IN NAVE dalle Terre Imperiture alla Terra di Mezzo',
+    quindi la Guerra d'Ira (traghettati dai Teleri, Silm cap. 24), i 5 Istari e le navi di
+    Losgar. ⚠️ **Ingwë escluso**: la sua partecipazione alla Guerra d'Ira non è attestata (i
+    testi nominano il figlio Ingwion) e il viaggio degli ambasciatori non avvenne in nave,
+    perché le navi non esistevano.
+  - **`drago`** ('Uccise un Drago'). ⚠️ **Azaghâl escluso**: ferì soltanto Glaurung.
+  - **`balrog`** ('Uccise un Balrog'). **Ecthelion ha un tooltip dedicato**: 'Uccise Gothmog,
+    signore dei Balrog', perché non uccise un Balrog qualunque ma il loro signore. ⚠️ La sua
+    voce in `ICON_LABEL_OVERRIDE` ne ha già una per `calaquende`: le chiavi convivono nello
+    stesso oggetto, non sostituirla. ⚠️ **Tuor escluso**: uccide Balrog solo ne 'Il libro dei
+    racconti perduti II', versione superata del Legendarium.
   - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin, come **EASTER EGG**. Appare
     **solo sulla sua card**, NON in legenda (skip in `buildLegend`) né nella griglia admin
     (skip nella generazione checkbox; il valore è comunque preservato al salvataggio, perché
@@ -2754,11 +2732,10 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
 - **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via grep sulle
   fonti.** In legenda `guerradira` sta dopo `balrog` e `suicidio` prima di `fellowship`;
   portatori con `p.suicidio`/`p.guerradira` = `true`:
-  - **`suicidio`** ('Si tolse la vita', icona `Teschio.png`): **7** voci: Túrin (spada
-    Gurthang), Nienor (nel Teiglin), Húrin (nel mare occidentale, 'si dice'), Maedhros
-    (voragine di fuoco), Denethor II (rogo), Míriel Serindë (abbandono volontario della vita,
-    primo trapasso in Aman: caso atipico ma voluto), Aerin (rogo della sala di Brodda:
-    attestazione **implicita**, non verbatim, tenuta per scelta dell'utente).
+  - **`suicidio`** ('Si tolse la vita'): **7** voci, di cui tre da giustificare: **Húrin** (nel
+    mare occidentale, e le fonti dicono 'si dice'), **Míriel Serindë** (abbandono volontario della vita, primo trapasso in Aman:
+    caso atipico ma voluto) e **Aerin** (rogo della sala di Brodda, attestazione **implicita**
+    e non verbatim, tenuta per scelta dell'utente).
     - **Distinzione (decisione utente): 'togliersi la vita' ≠ 'rendere la vita'.** Il badge
       marca il **gesto estremo** (violenza, disperazione, rogo), quindi ne restano **esclusi**
       i mortali che *si lasciano andare* alla morte per non subire il degrado della vecchiaia,
@@ -2769,11 +2746,9 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
       **Maglor** (getta il Silmaril e vaga: nel Silm pubblicato non si uccide, e il 'took his
       own life' è solo HoME IV, riferito a Maidros = Maedhros), **Saeros** e **Amroth** (morti
       accidentali, non deliberate).
-  - **`guerradira`** ('Combattè nella Guerra d'Ira', icona `Ira.png`): **5** voci, **solo la
-    schiera attaccante dei Valar**: **Eönwë** (comandante), **Finarfin** (guidò i Noldor di
-    Valinor), **Ingwion** (guidò i Vanyar, HoME IV-V), **Eärendil** (uccise Ancalagon nella
-    battaglia aerea), **Thorondor** (capitano delle Aquile). **Definizione (scelta editoriale
-    soggettiva dell'utente):** 'combattere' la Guerra d'Ira è un'azione **attiva**, mentre chi
+  - **`guerradira`** ('Combattè nella Guerra d'Ira'): **5** voci, **solo la schiera attaccante
+    dei Valar** (Ingwion vi rientra da HoME IV-V). **Definizione (scelta editoriale soggettiva
+    dell'utente):** 'combattere' la Guerra d'Ira è un'azione **attiva**, mentre chi
     si *difendeva* dall'armata di Valinor faceva una cosa diversa → **Melkor e Ancalagon
     esclusi** benché presenti alla battaglia. **Esclusi per attestazione** (Silm cap. 24:
     'among them went none of those Elves who had dwelt... in the Hither Lands'): Gil-galad,
@@ -2832,18 +2807,14 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
   dell'oscuramento). In `ICON_ORDER` sta **subito prima di `silmaril`**, così i due badge
   della Luce sono vicini e gli Alberi vengono prima dei loro frutti; riga di legenda propria.
   **46 portatori**:
-  - **41 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion, Indis, Elenwë,
-    Findis, Írimë, Elemmírë, Ilwen, Amarië); i **Teleri di Aman/Falmari** (Olwë, Eärwen); i
-    **Noldor nati o vissuti in Aman** (Finwë, Míriel, Fëanor, Fingolfin, Finarfin, Anairë,
-    Mahtan, Nerdanel, **Rúmil il Noldo, NON il Silvano omonimo**, Maedhros, Maglor, Celegorm,
-    Caranthir, Curufin, Amrod, Amras, Fingon, Turgon, Aredhel, Argon, Finrod, Angrod, Aegnor,
-    Eldalótë, Galadriel, Celebrimbor, Idril, Orodreth, Glorfindel); e **Thingol**, unico
-    Sinda, con **tooltip dedicato**: vide gli Alberi come ambasciatore con Oromë, 'non
-    annoverato tra i Moriquendi'.
-  - **5 al 50%** (`calaquende:'presunto'`, tooltip condiviso `CALAQUENDE_DEDOTTO`):
-    **Ecthelion, Gildor Inglorion, Gwindor, Gelmir, Edrahil**, Calaquendi solo sull'assunto
-    'Esule nato in Aman', luogo di nascita non attestato dalle fonti. Glorfindel invece è
-    **certo**: nato a Valinor, scritto tardo di J.R.R. Tolkien.
+  - **41 al 100%**: i **Vanyar**, i **Teleri di Aman** e i **Noldor nati o vissuti in Aman**.
+    ⚠️ Fra i Rúmil vale **il Noldo, NON il Silvano omonimo**. E **Thingol** è l'unico Sinda,
+    con **tooltip dedicato**: vide gli Alberi come ambasciatore con Oromë, 'non annoverato tra
+    i Moriquendi'.
+  - **5 al 50%** (`calaquende:'presunto'`, tooltip condiviso `CALAQUENDE_DEDOTTO`): Calaquendi
+    solo sull'assunto 'Esule nato in Aman', luogo di nascita non attestato dalle fonti.
+    ⚠️ **Glorfindel** invece è **certo**, non dedotto: nato a Valinor, scritto tardo di J.R.R.
+    Tolkien.
   - ⚠️ **`Celeborn` ESCLUSO** benché altre liste lo contino tra i Calaquendi: quello presume
     la versione *Teleporno*, che il progetto ha scartato (vedi 'Celeborn: NON si usa
     Teleporno'). Il nostro Celeborn è **Sinda della Terra di Mezzo**: non vide gli Alberi.
