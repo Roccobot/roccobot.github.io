@@ -17,15 +17,15 @@ skill copre esattamente quel salto, e nient'altro.
 | `/handoff` | nella sessione che sta **finendo** | scrive `.claude/handoff/LATEST.md` e lo pubblica |
 | `/handoff leggi` | in una sessione **nuova** | legge il file, lo VERIFICA contro il repo, propone il primo passo |
 
-## ⚠️ Regola n. 1: il handoff non è una seconda fonte di verità
+## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
 Tutto ciò che vale **oltre** la prossima sessione va in `CLAUDE.md` (o in
-`rules/Roccobot.md` via Worker, se universale) **prima** di scrivere il handoff. Nel
-handoff resta solo lo **stato volatile**: cosa è in corso, dove ci si è fermati, cosa
+`rules/Roccobot.md` via Worker, se universale) **prima** di scrivere l'handoff.
+Nell'handoff resta solo lo **stato volatile**: cosa è in corso, dove ci si è fermati, cosa
 non è ancora verificato.
 
-Un handoff che diventa un archivio parallelo invecchia e mente. Se una cosa è nel
-handoff ma non in `CLAUDE.md`, o è volatile (e va bene) o è un travaso mancato da
+Un handoff che diventa un archivio parallelo invecchia e mente. Se una cosa è
+nell'handoff ma non in `CLAUDE.md`, o è volatile (e va bene) o è un travaso mancato da
 sanare subito.
 
 ---
@@ -46,7 +46,7 @@ curl -sS "https://roccobot.github.io/arda/top/dati.js" | head -1   # versione LI
 
 Il primo numero di `rev-list` è quanti commit si è dietro: se è >0 sono arrivati
 salvataggi admin. Se la versione live è più bassa di quella locale, il deploy Pages è
-ancora in volo (o inceppato): va scritto nel handoff, non dato per fatto. Se la
+ancora in volo (o inceppato): va scritto nell'handoff, non dato per fatto. Se la
 sessione ha toccato il Worker, riporta anche la spia `rev` (un `GET` al Worker).
 
 ### 2. Travasa il durevole in `CLAUDE.md` PRIMA di scrivere
@@ -63,8 +63,8 @@ progetto contano come durevoli:
 - un **tentativo scartato** e la ragione, così nessuno lo ripropone;
 - un **rinomino in UI**, un nome interno, un numero di `rev` del Worker.
 
-Quello che travasi va con il **numero di versione** a cui risale. Fatto questo, il
-handoff può restare corto.
+Quello che travasi va con il **numero di versione** a cui risale. Fatto questo,
+l'handoff può restare corto.
 
 ### 3. Scrivi il file
 
@@ -135,13 +135,13 @@ Gli script dello scratchpad che servono e che non esistono più (vedi in fondo).
    **`siteFlags` in `dati.js`** (l'utente ha usato il Pannello). Dove il file e la
    realtà divergono vince la realtà: dillo e correggi il file.
 3. Riassumi all'utente in **5 righe**.
-4. Proponi **un** primo passo concreto, quello del handoff se ancora valido.
-5. Non riaprire indagini già chiuse: se il handoff dice che una cosa è stata misurata,
+4. Proponi **un** primo passo concreto, quello dell'handoff se ancora valido.
+5. Non riaprire indagini già chiuse: se l'handoff dice che una cosa è stata misurata,
    la misura sta in `CLAUDE.md`.
 
 ---
 
-## Cosa NON mettere nel handoff
+## Cosa NON mettere nell'handoff
 
 - La cronaca della sessione, i tentativi intermedi, i dialoghi.
 - Regole, misure e decisioni durevoli: stanno in `CLAUDE.md` (passo 2). Qui al massimo
@@ -155,8 +155,8 @@ Gli script dello scratchpad che servono e che non esistono più (vedi in fondo).
 `CLAUDE.md` rimanda a parecchi script di verifica (`scratchpad/realfont.js` per servire
 i font reali, `scratchpad/tabfix.js`, `scratchpad/hoverperf.js`, `scratchpad/aacard.js`,
 `scratchpad/pat/aa4.js`, `scratchpad/tune_podium.py`...). **Lo scratchpad non sopravvive
-alla sessione**: in una sessione nuova quei file non esistono e vanno riscritti. Nel
-handoff elenca solo quelli che servono al lavoro in sospeso, dicendo a che cosa
+alla sessione**: in una sessione nuova quei file non esistono e vanno riscritti.
+Nell'handoff elenca solo quelli che servono al lavoro in sospeso, dicendo a che cosa
 servono, così chi arriva li rifà mirati invece di scoprirlo a metà strada.
 
 Il primo da rifare è quasi sempre **l'aggancio dei font reali**: senza quello ogni

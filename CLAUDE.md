@@ -130,10 +130,10 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   «Unverified» ogni commit nel range `origin/<branch>..HEAD` il cui committer
   non sia `noreply@anthropic.com`. Lo squash-merge crea un merge-commit con
   committer `GitHub <noreply@github.com>`: su GitHub.com è **già "Verified"**
-  (firmato dalla web-flow key di GitHub), ma il hook lo legge come estraneo
+  (firmato dalla web-flow key di GitHub), ma l'hook lo legge come estraneo
   perché il branch `claude/*` resta «dietro» rispetto a `master`. Riallineando
   il branch remoto, quel range si svuota e l'avviso (falso positivo) sparisce.
-  Il hook vive in `~/.claude` (ambiente effimero): modificarlo non
+  L'hook vive in `~/.claude` (ambiente effimero): modificarlo non
   persisterebbe tra sessioni, perciò si agisce sul workflow.
 - **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta
   a pubblicare: serve che il workflow `pages build and deployment` di GitHub
@@ -2391,7 +2391,7 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     è saltata se `p.apocrifo && !showApocrifi`. La classifica è **identica** ma
     più lunga quando l'interruttore è ON (le posizioni non cambiano).
   - **Card dedicata:** classe `.rank-item.apocrifo`: sfondo grigio molto tenue,
-    bordo sinistro grigio, **opacità 0.8** (piena al hover/focus). In alto a
+    bordo sinistro grigio, **opacità 0.8** (piena all'hover/focus). In alto a
     destra una **pill `.pill-home`** contornata (distinta dalle etichette tipo):
     dice **'Solo HoME' / 'HoME-only'** (o 'Solo <fonte>' se `apocrifo` è una
     stringa). La parola **'Apocrifo' compare SOLO nell'etichetta
