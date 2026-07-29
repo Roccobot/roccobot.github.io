@@ -120,6 +120,11 @@ Ordina le sezioni come servono a chi arriva, non come sono andate le cose. **Ogn
 sezione ha un tetto**: se sfora, o stai travasando male (passo 2) o stai raccontando la
 sessione invece di consegnarla.
 
+⚠️ **Unica deroga al tetto: quando l'utente chiede espressamente che una consegna sia
+riportata alla lettera**, perché il lavoro va fatto esattamente come stabilito. In quel
+caso la voce si allunga, ma resta un **promemoria operativo**: l'autorità è comunque il
+file di regole, e la voce lo dichiara. Chi rilegge un brief così NON lo accorci.
+
 ```markdown
 # Handoff - AAAA-MM-GG
 

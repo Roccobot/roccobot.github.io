@@ -14,21 +14,39 @@
 
 ## In sospeso
 
-1. **Potatura PROFONDA del `CLAUDE.md`**, la cosa principale. Criterio e taxonomia stanno
-   in `CLAUDE.md` § '🪶 Come si mantiene questo file': si legge quello, non si reinventa.
-   Campione approvato: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**), con la
-   struttura *com'è fatto / trappole / estetica / decisioni*. ⚠️ Viveva nello scratchpad e
-   **non esiste più**: va rifatto dalla sezione attuale. Stima sul file: **da 35.346 a
-   13.000-15.000 parole**, cioè un altro **-60%**; si accorciano meno canone, tipografia e
-   workflow, che sono le parti che il codice non contiene.
+1. **Potatura PROFONDA del `CLAUDE.md`**, la cosa principale, e ⚠️ **le quattro voci si fanno
+   nell'ordine in cui sono elencate** (richiesta dell'utente).
+   - **L'autorità è `CLAUDE.md` § '🪶 Come si mantiene questo file'**: si legge quello per
+     intero prima di toccare una riga, perché contiene il criterio, le cinque famiglie che
+     restano, cosa va via e la forma dei quattro blocchi. Quanto segue è solo il promemoria
+     operativo, non una seconda fonte.
+   - **Criterio, come l'ha enunciato l'utente:** *si scrive qui ciò che nel codice non c'è,
+     cioè il PERCHÉ; non si scrive ciò che il codice dice da sé, cioè il COME*, perché il
+     sorgente è commentato e si legge. Aggiunta sua: la documentazione degli effetti non deve
+     essere né reversibile né ricordata, e all'occorrenza si ricava dal codice.
+   - **Restano** trappole, tentativi scartati, linee guida estetiche, decisioni dell'utente e
+     scelte di canone o editoriali, modalità di lavoro e vocabolario. **Vanno via** meccanica
+     interna, range delle manopole, cronologia, conferme post-fix, e ogni elenco ricavabile con
+     un grep. Delle misure si tiene quella **scartata**, non quella accettata.
+   - **Campione approvato**: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**).
+     ⚠️ Viveva nello scratchpad e **non esiste più**: va rifatto dalla sezione attuale, che è
+     ancora quella lunga. Stima sul file: **da 35.346 a 13.000-15.000 parole**, cioè un altro
+     **-60%**; si accorciano meno canone, tipografia e workflow, che sono le parti che il
+     codice non contiene.
+   - **Verifica del taglio**, la stessa già usata: estrarre gli identificatori fra backtick
+     prima e dopo, e per ognuno scomparso controllare con un `grep` che non esista più in
+     `arda/top/index.html`. Controllare anche che l'elenco delle sezioni `##` resti identico:
+     è così che si scopre uno splice che ha troncato il file.
 2. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
    con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
    sposta due volte la stessa roba.
-3. **Skill `/desc`**: pronta ma solo come file consegnato in chat (202 righe), non nel
-   repo. Va scritta in `tools` come `.claude/skills/desc/SKILL.md` (ora si può
-   direttamente: il Worker accetta solo `rules/` e `workers/`), più una nota nel
-   `CLAUDE.md` di `tools`, che non esiste ancora: solo con `/desc` invocata i suoi
-   operatori scavalcano quelli di `Roccobot.md`.
+3. **Skill `/desc`: creata dall'utente e operativa**, in `tools` come
+   `.claude/skills/desc/SKILL.md`, con un paio di sue correzioni. ⚠️ **Non verificata**: da
+   questa sessione non era leggibile, perché il Worker `rules-proxy` ammette solo `rules/` e
+   `workers/` **anche in lettura**. Con `tools` agganciato si legge direttamente. Da
+   controllare: il frontmatter (`name`, `description`), che la description dica che vale solo
+   se invocata, e che gli operatori dichiarino di scavalcare quelli omonimi di `Roccobot.md`.
+   Manca ancora la nota nel `CLAUDE.md` di `tools`, che **non esiste**.
 4. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
    Raccomandazione già data: **non** estrarle sui numeri di oggi.
 
