@@ -18,7 +18,7 @@
    nell'ordine in cui sono elencate** (richiesta dell'utente).
    - **L'autorità è `CLAUDE.md` § '🪶 Come si mantiene questo file'**: si legge quello per
      intero prima di toccare una riga, perché contiene il criterio, le cinque famiglie che
-     restano, cosa va via e una forma suggerita per le sezioni. Quanto segue è solo il promemoria
+     restano, cosa va via e la forma dei quattro blocchi. Quanto segue è solo il promemoria
      operativo, non una seconda fonte.
    - **Criterio, come l'ha enunciato l'utente:** *si scrive qui ciò che nel codice non c'è,
      cioè il PERCHÉ; non si scrive ciò che il codice dice da sé, cioè il COME*, perché il
@@ -36,9 +36,9 @@
      post-fix, e ogni elenco ricavabile con un grep. ⚠️ Delle misure si tiene quella
      **scartata**, non quella accettata: il valore in uso sta nel codice e si rilegge, quello
      scartato no.
-   - **Campione**: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**). ⚠️ L'utente ha
-     approvato la **profondità** del taglio, non la struttura interna in quattro blocchi, che
-     è una scelta di Claude e si può cambiare.
+   - **Campione**: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**). L'utente ha
+     approvato sia la **profondità** del taglio sia la **forma dei quattro blocchi**, che ora
+     vale come regola e sta nel `CLAUDE.md`.
      ⚠️ Viveva nello scratchpad e **non esiste più**: va rifatto dalla sezione attuale, che è
      ancora quella lunga. Stima sul file: **da 35.346 a 13.000-15.000 parole**, cioè un altro
      **-60%**; si accorciano meno canone, tipografia e workflow, che sono le parti che il
