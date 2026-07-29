@@ -59,17 +59,17 @@ sessione:
   dove scriverne una nuova.
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
-- ⚠️ **`rules/Development.md` NON esiste più** (2026-07-29): assorbito in
-  `Roccobot.md`, sezione '🏗️ Sviluppo software', dopo aver tolto le ridondanze. Il
-  file resta in piedi come rimando, per non lasciare un 404 a chi lo cerca. Criterio
-  della fusione, dell'utente: **si unisce ciò che è sempre vero, si tiene separato ciò
-  che è modale.**
-- ⚠️ **`rules/Prompts.md` NON esiste più** (2026-07-29): l'utente ne ha ridotto il
-  contenuto alle voci ancora utili e le ha fatte confluire in `Roccobot.md`, sezione
-  '🎛️ Revisione dei prompt'. La fusione è diventata sicura perché la riduzione
-  ha **eliminato gli operatori** che scavalcavano quelli di 'Traduzioni e revisioni':
-  erano l'unica cosa che rendeva quel file modale nel **meccanismo** e non solo
-  nell'uso. Resta in piedi come rimando.
+- ⚠️ **`rules/Development.md` e `rules/Prompts.md` NON esistono più** (2026-07-29):
+  **cancellati dal repo dall'utente**, non lasciati come rimando. Un `curl` sui loro URL
+  risponde 404, e non è un guasto del Worker: non cercarli e non ricrearli.
+  - `Development.md` è stato assorbito in `Roccobot.md`, sezione '🏗️ Sviluppo software',
+    dopo aver tolto le ridondanze. Criterio della fusione, dell'utente: **si unisce ciò
+    che è sempre vero, si tiene separato ciò che è modale.**
+  - `Prompts.md` è stato ridotto dall'utente alle voci ancora utili, confluite in
+    `Roccobot.md`, sezione '🎛️ Revisione dei prompt'. La fusione è diventata sicura
+    perché la riduzione ha **eliminato gli operatori** che scavalcavano quelli di
+    'Traduzioni e revisioni': erano l'unica cosa che rendeva quel file modale nel
+    **meccanismo** e non solo nell'uso.
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
