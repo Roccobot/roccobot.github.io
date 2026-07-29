@@ -1020,7 +1020,7 @@ normale/XL secondo la preferenza attiva.
        centrati, quindi dentro la colonna sgombra. Restano solo i controlli **fissi**,
        che la banda in cima protegge (vedi sopra) - e i **tasti salto**, che a riposo
        stanno a 1.6:1 **da sempre e senza trama** (opacità 0.5 per scelta, piena
-       all'hover/focus): misurato, la trama non li peggiora, li schiarisce appena
+       all'hover e al focus): misurato, la trama non li peggiora, li schiarisce appena
        (1.63:1 a op 0.10, 1.74:1 a 0.20). Lo strumento è `scratchpad/pat/aa4.js`, che
        cerca per ogni controllo il massimo `op` che tiene 4.5:1.
        - ⚠️ **Rimisurare se cambia il colore o l'opacità di `.home-link`, `.lang-switch`
@@ -2391,7 +2391,7 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
     è saltata se `p.apocrifo && !showApocrifi`. La classifica è **identica** ma
     più lunga quando l'interruttore è ON (le posizioni non cambiano).
   - **Card dedicata:** classe `.rank-item.apocrifo`: sfondo grigio molto tenue,
-    bordo sinistro grigio, **opacità 0.8** (piena all'hover/focus). In alto a
+    bordo sinistro grigio, **opacità 0.8** (piena all'hover e al focus). In alto a
     destra una **pill `.pill-home`** contornata (distinta dalle etichette tipo):
     dice **'Solo HoME' / 'HoME-only'** (o 'Solo <fonte>' se `apocrifo` è una
     stringa). La parola **'Apocrifo' compare SOLO nell'etichetta
