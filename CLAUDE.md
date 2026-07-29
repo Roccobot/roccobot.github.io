@@ -1,4 +1,4 @@
-# CLAUDE.md: regole del progetto 'I Grandi di Arda'
+# CLAUDE.md: regole del repo roccobot.github.io
 
 > **Cos'è questo file.** Le regole specifiche del repository
 > `Roccobot/roccobot.github.io`. Il repo ospita **più di un progetto** (per
@@ -356,8 +356,8 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   decimali (es. `1.00`, `1.07`, `2.13`); override di progetto del SemVer
   universale. Bump a ogni commit che tocca il sito, per entità della modifica:
   - secondaria/minore: **+0.01**;
-  - aggiunta di funzionalità (o simile): **+0.1**;
-  - modifica sostanziale (nuova release): **+1.0**.
+  - aggiunta di funzionalità (o simile): **+0.1** o incremento fino al primo decimale successivo;
+  - modifica sostanziale (nuova release): **+1.0** o incremento fino al numero intero successivo.
 
   Aritmetica a due decimali con riporto (1.99 → 2.00, 9.99 → 10.00). Lo schema
   `x.xx` **succede** al vecchio SemVer `x.y.z` (storia fino a v10.21.1): per
