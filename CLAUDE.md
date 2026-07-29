@@ -282,52 +282,33 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
   il branch remoto, quel range si svuota e l'avviso (falso positivo) sparisce.
   L'hook vive in `~/.claude` (ambiente effimero): modificarlo non
   persisterebbe tra sessioni, perciò si agisce sul workflow.
-- **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta
-  a pubblicare: serve che il workflow `pages build and deployment` di GitHub
-  vada a buon fine. Se fallisce con `Deployment failed, try again later`
-  (errore transitorio della piattaforma, il build dell'artefatto riesce) si
-  rilancia il job (`rerun_failed_jobs`); ma se il rilancio resta **appeso in
-  coda** con stati incoerenti (`queued` + `Cannot cancel` + `already running`),
-  non insistere sui rerun: **un nuovo push su `master`** (via PR ordinaria)
-  crea un run nuovo di zecca che riparte su infrastruttura fresca. Attenzione:
-  durante il degrado i rerun possono diventare **fantasma**: accettati (201)
-  ma mai davvero accodati, e da lì né annullabili (`Cannot cancel a workflow
-  re-run that has not yet queued`) né riavviabili (`already running`); non
-  farsi ingannare, contano solo i run creati da un push. Verifica di
-  pubblicazione avvenuta: `curl` su
-  `https://roccobot.github.io/arda/top/dati.js` e confronto di `datiVersion`
-  con l'attesa (caso reale: v3.42 e v3.43 rimaste non pubblicate il
-  2026-07-03, sito fermo alla v3.41: oltre 4 ore di blocco, 4 deploy falliti
-  e 2 rerun fantasma, con la pagina di stato GitHub sempre verde; questi
-  disservizi a raggio ristretto non vi compaiono, cfr. deploy-pages issue
-  418). Il disservizio può essere **intermittente per giorni** (2026-07-03/04:
-  fallimenti a macchia di leopardo per oltre 24 ore, con deploy riusciti in
-  mezzo; caso v3.70 rimasta indietro ~9 ore, rerun fantasma per tutta la
-  notte): finché i push freschi pubblicano, non è un blocco totale e basta
-  attendere il push successivo. Se anche i push freschi falliscono
-  ininterrottamente oltre le ~12 ore: ticket al supporto GitHub (solo il
-  proprietario del repo può aprirlo).
-  - **Anatomia del blocco (episodio 2026-07-25, diagnosi a dati).** Un run
-    **sano** ha **3 job** (`build` → `report-build-status` → `deploy`) e dura
-    **~20 secondi** in tutto: è il metro di paragone. Nel degrado il guasto sta
-    **prima del deploy**, nell'assegnazione dei job ai runner, e si manifesta in
-    due modi: il job `build` **parte e si impianta** (misurato: 2 minuti prima di
-    essere ucciso, contro gli 8 secondi normali), oppure il run finisce
-    **`startup_failure` con 0 job** (mai avviato). Diagnosi rapida: chiedere i
-    job del run: `total_count: 0` significa run fantasma, non lentezza.
-  - ⚠️ **I run `queued` vecchissimi NON sono la causa.** In coda restano per
-    sempre i cadaveri degli episodi passati (nel 2026-07-25 se ne contavano 15,
-    i più vecchi del **2025-11-28**, altri del 3-6 luglio): GitHub non li
-    ripulisce e non li lascia cancellare (`409 Cannot cancel a workflow re-run
-    that has not yet queued`). **Non bloccano nulla**: la prova è che centinaia
-    di deploy sono riusciti con quei run già in coda (il 2026-07-25 ne sono
-    passati 6 tra le 10:34 e le 12:04, poi il dispatch si è rotto alle 12:13).
-    Non perdere tempo a cancellarli.
-  - **Cosa NON smuove il blocco** (verificato il 2026-07-25): il `rerun` (201 ma
-    0 job, anche su un run in `startup_failure`); il **cambio della sorgente
-    Pages** nelle impostazioni del repo (da 'Deploy from a branch' a 'GitHub
-    Actions' e ritorno): **non genera alcun run**. L'unica cosa che crea un run
-    è un **push su `master`** (evento `dynamic`).
+- **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta a pubblicare:
+  serve che il workflow `pages build and deployment` vada a buon fine. Se fallisce con
+  `Deployment failed, try again later` (errore transitorio della piattaforma: il build
+  dell'artefatto riesce) si rilancia il job (`rerun_failed_jobs`); ma se il rilancio resta
+  **appeso in coda** con stati incoerenti (`queued` + `Cannot cancel` + `already running`), non
+  insistere: **un nuovo push su `master`** (via PR ordinaria) crea un run nuovo di zecca su
+  infrastruttura fresca.
+  - ⚠️ **I rerun possono essere FANTASMA**: accettati (201) ma mai davvero accodati, e da lì né
+    annullabili né riavviabili. Contano solo i run creati da un push (evento `dynamic`); il
+    `rerun` e il **cambio della sorgente Pages** nelle impostazioni del repo non ne generano
+    alcuno.
+  - **Diagnosi rapida a dati.** Un run **sano** ha **3 job** (`build` →
+    `report-build-status` → `deploy`) e dura **~20 secondi** in tutto: è il metro di paragone.
+    Nel degrado il guasto sta **prima del deploy**, nell'assegnazione dei job ai runner: il job
+    `build` parte e si impianta, oppure il run finisce **`startup_failure` con 0 job**. Chiedere
+    i job del run: `total_count: 0` significa run fantasma, non lentezza.
+  - ⚠️ **I run `queued` vecchissimi NON sono la causa.** In coda restano per sempre i cadaveri
+    degli episodi passati, che GitHub non ripulisce e non lascia cancellare: **non bloccano
+    nulla**, ed è provato dal fatto che centinaia di deploy sono riusciti con quei run già in
+    coda. Non perdere tempo a cancellarli.
+  - **Verifica di pubblicazione avvenuta:** `curl` su
+    `https://roccobot.github.io/arda/top/dati.js` e confronto di `datiVersion` con l'attesa.
+  - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
+    pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
+    cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e
+    basta attendere il push successivo. Se anche i push freschi falliscono ininterrottamente
+    oltre le ~12 ore, ticket al supporto GitHub, che solo il proprietario del repo può aprire.
 - **Controllo di freschezza del progetto** (il passo successivo al pull
   obbligatorio previsto dalla regola universale):
 
@@ -399,58 +380,44 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
     `d` (animazione del glifo di chiusura) è valida ma non riconosciuta dal Nu
     Checker, perciò è iniettata via JS e non nel `<style>` statico (vedi il
     commento `ctrl-close-bend`): non reintrodurla nel CSS o tornano 4 errori.
-    - **Utile ma NON imprescindibile (regola dell'utente, 2026-07-26).** Se il
-      test non si può eseguire (rate limit 429 del validatore, servizio giù o
-      qualunque altro impedimento), **NON rimandare il go-live e NON lasciare
-      retry in background**: si procede, annotando il salto, e il controllo si
-      recupera al **prossimo aggiornamento** del sito, se il validatore è tornato
-      disponibile. Il vincolo 0/0 resta pieno quando il test GIRA: l'eccezione
-      riguarda solo la sua indisponibilità. Evidenza sostitutiva utile quando si
-      salta: il **diff della porzione NON-JS** (fuori dai blocchi `<script>`)
-      rispetto all'ultima versione validata 0/0: se cambia solo il numero del
-      badge o testo di attributi, il rischio è nullo, perché il Nu non ispeziona
-      JS e CSS iniettato. (Contesto: 2026-07-26, rate limit per l'intera giornata
-      dopo le validazioni delle release del mattino; v12.95, v13.06-13.17 andate
-      live con questa prova.) **Recuperato il 2026-07-28** (v14.22): il validatore è
-      tornato a rispondere e `arda/top/index.html` è **0/0** (`{"messages":[]}`),
-      quindi l'arretrato delle release andate live con la prova sostitutiva è chiuso.
-      Il blocco era durato dal 26 al 28: se ricapita, vale sempre la stessa regola -
-      si procede e si recupera al primo aggiornamento utile.
-      - **Andamento a intermittenza, anche nello stesso giorno** (2026-07-28): la
-        v14.22 e la v14.23 hanno validato 0/0, la **v14.33** poche ore dopo ha trovato
-        di nuovo la **challenge Cloudflare** ('Just a moment...'). Non è un rate limit
-        da esaurimento: va e viene. Nel dubbio, tentare sempre - costa un `curl` - e
-        se risponde la challenge passare subito alla prova sostitutiva senza retry.
-        Anche la **v14.65** ha trovato la challenge ed è andata live con la prova
-        sostitutiva: fuori dai `<script>` cambiava **solo il numero del badge**.
-- **Angolo in alto a sinistra: `roccobot.me` sopra, versione sotto (v14.53, mockup
-  dell'utente).** Il blocco `.brand-corner` è **incolonnato**: in cima alla pagina si
-  vedono entrambi; **appena si scorre** il numero **dissolve in 0.12s** e resta il solo
-  `roccobot.me`, **fisso** nell'angolo come il cambio lingua a destra.
-  - Una classe **`html.scrolled`** (soglia `scrollY <= 1`, la stessa dei tasti salto)
-    governa la dissolvenza; il DOM si tocca solo al varco, non a ogni evento. Il
-    listener è **a sé** e non agganciato a `showJumpFabsTemporarily`, che esce prima in
-    più casi (tasti non ancora costruiti, FAB di riordino aperto) e si porterebbe
-    dietro il numero.
-  - Sfumato, il numero prende `pointer-events:none`: **cliccabile solo in cima**, come
-    chiesto. La specificità `html.scrolled .version-badge` (0,2,1) batte
-    `.version-badge:hover` (0,2,0), quindi non riappare col puntatore sopra.
-  - ⚠️ **La `v` è allineata OTTICAMENTE alla `r` di roccobot.me** (v14.55, richiesta
-    dell'utente): a padding identici l'inchiostro non parte allo stesso x, perché ogni
-    glifo ha un margine laterale proprio nel font. Misurato a 4× sul font reale: la `v`
-    partiva **0.5px** più a sinistra (identico nei due temi), recuperati con
-    `margin-left:0.05em` - relativo, così regge anche in Modalità XL. Verificato dopo:
-    scarto **0.00px**. Se cambia il font o il corpo del testo, va rimisurato.
-  - La **`v`** vive in uno `<span class="vb-v">` a `0.86em`. ⚠️ Perciò
-    `setVersionBadge` ricompone il badge **a nodi** (`createElement` +
-    `createTextNode`) e non con `textContent`, che butterebbe via lo span; niente
-    `innerHTML`, come da regola. Gli specchi del Pannello leggono `textContent` del
-    badge, che concatena i due nodi e resta `v14.53`: continuano a funzionare.
-  - ⚠️ **`position:fixed` solo da >768px**, come `.lang-switch`: su mobile la colonna
-    delle schede occupa tutta la larghezza e un testo fisso a sinistra le passerebbe
-    sopra (è la stessa ragione per cui là il cambio lingua è nascosto). E su mobile il
-    **badge versione è nascosto da sempre** (`display:none` nella media query, l'admin
-    si apre dal numero nel Pannello), quindi là non cambia nulla.
+    - **Utile ma NON imprescindibile (regola dell'utente).** Se il test non si può eseguire
+      (rate limit 429, challenge Cloudflare 'Just a moment...', servizio giù o qualunque altro
+      impedimento), **NON rimandare il go-live e NON lasciare retry in background**: si
+      procede, annotando il salto, e il controllo si recupera al **prossimo aggiornamento** del
+      sito. Il vincolo 0/0 resta pieno quando il test GIRA: l'eccezione riguarda solo la sua
+      indisponibilità.
+      - **Evidenza sostitutiva** quando si salta: il **diff della porzione NON-JS** (fuori dai
+        blocchi `<script>`) rispetto all'ultima versione validata 0/0. Se cambia solo il numero
+        del badge o testo di attributi il rischio è nullo, perché il Nu non ispeziona JS e CSS
+        iniettato.
+      - ⚠️ **L'indisponibilità va e viene, anche nello stesso giorno**: non è un rate limit da
+        esaurimento. Nel dubbio tentare sempre, costa un `curl`, e se risponde la challenge
+        passare subito alla prova sostitutiva senza retry.
+- **Angolo in alto a sinistra: `roccobot.me` sopra, versione sotto** (mockup dell'utente). Il
+  blocco `.brand-corner` è **incolonnato**: in cima alla pagina si vedono entrambi; **appena si
+  scorre** il numero **dissolve in 0.12s** e resta il solo `roccobot.me`, **fisso** nell'angolo
+  come il cambio lingua a destra.
+  - Una classe **`html.scrolled`** (soglia `scrollY <= 1`, la stessa dei tasti salto) governa la
+    dissolvenza, e il DOM si tocca solo al varco. ⚠️ Il listener è **a sé** e non agganciato a
+    `showJumpFabsTemporarily`, che esce prima in più casi (tasti non ancora costruiti, FAB di
+    riordino aperto) e si porterebbe dietro il numero.
+  - Sfumato, il numero prende `pointer-events:none`: **cliccabile solo in cima**, come chiesto.
+    La specificità `html.scrolled .version-badge` (0,2,1) batte `.version-badge:hover` (0,2,0),
+    quindi non riappare col puntatore sopra.
+  - ⚠️ **La `v` è allineata OTTICAMENTE alla `r` di roccobot.me** (richiesta dell'utente): a
+    padding identici l'inchiostro non parte allo stesso x, perché ogni glifo ha un margine
+    laterale proprio nel font. Misurato a 4× sul font reale, la `v` partiva **0.5px** più a
+    sinistra (identico nei due temi), recuperati con `margin-left:0.05em`, relativo così regge
+    anche in Modalità XL. Se cambia il font o il corpo del testo, va rimisurato.
+  - ⚠️ La **`v`** vive in uno `<span class="vb-v">` a `0.86em`, perciò `setVersionBadge`
+    ricompone il badge **a nodi** (`createElement` + `createTextNode`) e non con `textContent`,
+    che butterebbe via lo span; niente `innerHTML`, come da regola. Gli specchi del Pannello
+    leggono `textContent` del badge, che concatena i due nodi: continuano a funzionare.
+  - ⚠️ **`position:fixed` solo da >768px**, come `.lang-switch`: su mobile la colonna delle
+    schede occupa tutta la larghezza e un testo fisso a sinistra le passerebbe sopra, che è la
+    stessa ragione per cui là il cambio lingua è nascosto. E su mobile il **badge versione è
+    nascosto da sempre** (`display:none` nella media query; l'admin si apre dal numero nel
+    Pannello), quindi là non cambia nulla.
 - **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
   Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
   caricamento di `dati.js`) e la scrive nel badge della testata
@@ -576,1140 +543,851 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
 
-## ✨ Feature flag dell'aspetto (dalla v12.24; effetti regolabili dalla v12.39; config per-piattaforma dalla v12.53; manopole per tema dalla v12.85)
+## ✨ Feature flag dell'aspetto (Pannello di controllo, dalla v12.24)
 
-Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**:
-la modalità ingrandita e i 6 effetti grafici (nomi UI nella nota sui testi, sotto).
-- **CONFIG PER-PIATTAFORMA (dalla v12.53, richiesta utente).** Ogni effetto ha DUE
-  configurazioni indipendenti: **desktop** (chiave base, es. `glow`) e **mobile**
-  (suffisso **`_m`**, es. `glow_m`, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al
-  varco). ⚠️ **Un'eccezione al discriminante, dalla v14.22:** gli effetti elencati in
-  **`FX_PTR`** (oggi il solo `hov`) scelgono la variante dalla **capacità del
-  puntatore** (`FX_PTR_MQ`) invece che dalla larghezza, perché governano la resa
-  sotto il puntatore - vedi la voce di `hov` per il perché i 768px lì sbaglierebbero
-  in entrambi i sensi.
-  - ⚠️ **DUE CRITERI, UNA SOLA COPPIA DI TAB: come si evita il fraintendimento
-    (v14.23, segnalato dall'utente).** Con due criteri conviventi, ogni dispositivo
-    'a metà' fa divergere la variante che si REGOLA da quella che si VEDE: su una
-    finestra desktop **stretta col mouse** il Pannello (senza tab, sotto i 768px)
-    regolava `_m` mentre in pagina valeva la desktop di `hov`; su un **tablet touch
-    largo** è il caso simmetrico, con la tab Desktop che non ha riscontro in pagina.
-    Tre rimedi, che insieme chiudono entrambi i casi:
-    1. **Senza tab il suffisso è PER-RIGA** e vale la variante ATTIVA
-       (**`fxActiveSfx(k)`**, estratta da `fxCfg` come fonte unica): così su desktop
-       stretto `hov` regola la desktop e gli altri la mobile, e la regola diventa una
-       frase sola - *quello che regoli è quello che vedi*. Da telefono nulla cambia
-       (i due criteri concordano). ⚠️ Il pannello **senza tab** non è più 'il pannello
-       mobile': non assumerlo mai più nel codice.
-    2. **Con le tab, un avviso in fondo** dice quali voci non seguono la tab scelta:
-       generale se sono tutte ('Stai regolando la versione mobile...'), **per voce**
-       se solo alcune (il caso del tablet touch). ⚠️ NON sta sulle tab - nessuna
-       delle due sarebbe 'quella che vedi', essendo la variante attiva **per
-       effetto** - né sulle righe, che restano una lista pulita di interruttori
-       (regola v12.64).
-    3. **L'anteprima su card finte segue lo stesso criterio** (vedi `fxdock-alt`). Le chiavi `_m` sono PIATTE come le altre: il **Worker rev 14 le valida
-  già** (nessun cambio di Worker, niente race di deploy). ⚠️ Questo trucco ha però
-  un limite scoperto nella v12.85: il Worker accettava **max 12 manopole per
-  effetto**, e il bagliore per-tema a due lati ne richiede **22**. Il tetto è
-  passato a **40** nella **rev 15**: la FORMA validata non cambia (chiavi piatte),
-  cambia solo quante ne stanno in un effetto. Contare le manopole PRIMA di
-  progettare un effetto nuovo: superare il tetto costringe a toccare il Worker, e
-  con esso arriva la race di deploy sito/Worker. Se una `_m` manca nel
-  salvato viene **seminata come copia della desktop** (comportamento invariato
-  finché l'admin non differenzia). `zoomBig` resta UNICO (regola v12.43:
-  desktop/tablet-only). Accessori: **`fxCfg(k)`** = config attiva per piattaforma
-  (l'unico accesso giusto per il rendering; `flagOn` lo usa), accesso diretto
-  `SITE_FLAGS[k]`/`SITE_FLAGS[k+'_m']` riservato agli editor. **UI:** da desktop
-  il pannello ha **due tab 'Desktop'/'Mobile'** in alto (la voce Modalità XL vive
-  solo nella tab Desktop); da mobile **niente tab**, si governa SOLO la parte
-  mobile. ⚠️ Dalla v12.64 le righe sono **compatte e senza didascalie su TUTTE le
-  piattaforme** e in basso c'è **solo l'avviso breve**, identico su desktop e
-  mobile (con variante normale/XL). La sotto-modale riceve la variante (`showFxConfigEditor(key,
-  sfx, onDone)`) e nel titolo indica '- Desktop'/'- Mobile'; se l'effetto ha
-  manopole **per TEMA** (proprietà `th:'d'`/`th:'l'` in `FX_KNOBS`, oggi solo
-  `nums`) compaiono in più due **tab Chiaro/Scuro** che filtrano le righe, mentre
-  l'anteprima continua a mostrare entrambi i riquadri (v12.63, richiesta utente).
-  Dalla v12.64 il riquadro del tema **in modifica** è evidenziato dalla classe
-  **`.fxp-edit`**: solo un `outline` accento, **niente ombreggiatura** (mockup
-  dell'utente). Si usa `outline` e non `border` apposta: non occupa spazio,
-  quindi cambiando tab l'evidenziazione si sposta senza muovere i riquadri; modificare la variante
-  NON attiva cambia nulla in pagina (le regole iniettate seguono `fxCfg`). Accesso: tap sulla versione → sblocco
-→ bivio 'Area admin' → **5° pulsante 'Pannello di controllo'** (`showSiteFlagsEditor`,
-stile admin minimale). ⚠️ **Nome in UI: 'Pannello di controllo' / 'Control panel'
-(dalla v12.42, deciso dall'utente; prima 'Feature flag')**: titolo, bottone del
-bivio, hint della sotto-modale e messaggio di commit ('aspetto: pannello di
-controllo'). Il nome INTERNO (`siteFlags`, questa sezione, `FEATURES` che è altra
-cosa) resta invariato. Da non confondere col 'Pannello' del FAB (visitatori).
-Sottotitolo: 'Le impostazioni valgono per tutti i visitatori.'; la nota in basso
-sulla preferenza personale di zoom è testo dell'utente (v12.42), con la variante
-normale/XL secondo la preferenza attiva.
+Pannello di controllo **dell'aspetto del sito**, valido per **tutti i visitatori**: la
+modalità ingrandita e gli 8 effetti grafici, tutti a **costo zero sul layout**.
 
-- **Dove vivono i flag:** `var siteFlags` in `dati.js`, scritto dal Worker esattamente
-  come `cardColors` e `badgeAdjust` (una riga JSON dopo `badgeAdjust`). A runtime
-  `SITE_FLAGS` = i flag salvati validi, altrimenti `SITE_FLAGS_DEFAULT`
-  (`zoomBig:false`, gli altri 5 accesi). Un salvataggio che **non** invia `siteFlags`
-  lo **preserva** (`readSiteFlags`); `validSiteFlags` rifiuta config malformate (400
-  `bad-siteflags`). Worker **rev 15** (era 14 fino alla v12.75).
-- **MANOPOLE PER TEMA (dalla v12.63 per `nums`, estese a `glow` e `podium` nella
-  v12.85).** Una manopola può valere per un solo tema: nel descrittore porta
-  `th:'d'` (scuro) o `th:'l'` (chiaro), e la chiave nei dati prende il **suffisso
-  `_d`/`_l`** (`amp_d`, `amp_l`). È **ortogonale** alle chiavi `_m` per-piattaforma:
-  il suffisso di tema sta nel nome della MANOPOLA, quello di piattaforma nel nome
-  dell'EFFETTO (`glow_m.amp_l` = sfumatura interna, mobile, tema chiaro).
-  ⚠️ **Quando una manopola diventa per-tema, il fattore di tema va TOLTO dalla
-  formula.** Fino alla v12.75 le formule del bagliore applicavano moltiplicatori
-  fissi al chiaro (`int` ×0.8, `oint` ×0.77, `aura` ×0.75) e il podio nessuno; ora
-  il valore del tema chiaro lo decide l'admin e i **default lo riproducono**. Se si
-  lasciasse anche il fattore, si moltiplicherebbe due volte. L'accesso giusto è
-  **`fxTh(cfg, 'amp', light)`**, mai `cfg.amp`.
-  - **Migrazione delle config già salvate: obbligatoria** (`FX_LEGACY` +
-    `fxMigrateLegacy`, chiamata da `normFxEffect`). Una config vecchia ha `amp` e
-    non `amp_d`: senza migrazione il normalizzatore ripiegherebbe sul **default**,
-    buttando via la taratura dell'utente (caso reale: `amp:60` sarebbe tornato a
-    34). La mappa dice chiave nuova → [chiave vecchia, fattore], e i fattori dei
-    `_l` sono quelli che le formule applicavano prima: così **dopo la migrazione la
-    resa è identica al pixel**, ma diventa modificabile. Verificato misurando la
-    `box-shadow` computata di una striscia vera nei due temi.
-- **Due forme di flag (dalla v12.39).** Un flag è un **booleano** (effetto solo
-  on/off: `press`, `zoomBig`) **oppure un oggetto piatto**
-  `{on:bool, ...manopole}` (effetto **regolabile**: `glow`, `spot`, `vig` dalla
-  v12.42, `press`/`podium` dalla v12.53, `nums` dalla v12.63).
-  `normSiteFlags()` normalizza qualunque input: la vecchia forma booleana di un
-  effetto regolabile resta accettata (vale come solo interruttore, manopole ai
-  default), i numeri fuori scala sono riportati nei limiti **`FX_RANGE`** (unica
-  fonte per slider e clamp), le chiavi ignote scartate. `flagOn(k)` è l'unico modo
-  giusto di chiedere 'è acceso?' (copre entrambe le forme). ⚠️ Nel ripristinare
-  `SITE_FLAGS` da `SITE_FLAGS_SAVED` passare SEMPRE da `normSiteFlags` (lo snapshot
-  può venire da un file dati vecchio, coi booleani).
-- **Meccanismo: una classe su `<html>` per flag** (`SITE_FLAG_CLASS`), applicata da
-  `applySiteFlags()`. ⚠️ **Tutte** le regole CSS degli effetti sono scoped a quella
-  classe (`html.fx-glow …`, `html.fx-vig body`, ecc.): a flag spento l'effetto **non
-  esiste**, non è solo invisibile. Aggiungendo un effetto nuovo, delimitarlo allo stesso modo.
-  Gli effetti REGOLABILI hanno le regole in **`injectFxRules()`** (`<style id=
-  "fx-dyn">`, ri-iniettato a ogni modifica): le FORMULE (`fxGlowInner`,
-  `fxGlowOuter`, `fxSpotBg`, `fxVigBg`) sono condivise con l'anteprima della
-  sotto-modale, così anteprima e pagina non possono divergere. `applySiteFlags` chiama anche
-  `injectFxRules` + `wireSpotlight`.
-- **Gli effetti** (i primi 5 da un mockup approvato dall'utente: 'stanno benissimo
-  anche tutti insieme'; il 6°, `nums`, dalla v12.63), tutti a **costo zero sul
-  layout** (nessuno sposta il contenuto):
-  1. **`glow`: bagliore** (`fx-glow`, REGOLABILE; label UI **'Bagliore'/'Glow'**
-     dalla v12.64, prima 'Bagliore della striscia colorata'): la striscia
-     diffonde la tinta di famiglia dentro la card su due strati derivati dalle
-     manopole. ⚠️ **RISTRUTTURATO nella v12.95** su richiesta dell'utente: le
-     manopole numeriche **non sono più per-lato** ('non ha senso un'impostazione
-     asimmetrica'), sinistra e destra condividono le stesse, e il lato destro resta
-     separato solo come **accensione**. 18 manopole, per tema (`_d`/`_l`).
-     - **Quattro caselle di POSIZIONE**, che dicono DOVE va il bagliore e governano
-       le tre sezioni di manopole: **`pl`** a sinistra (interno, dalla striscia),
-       **`pr`** a destra (interno, ombre `inset`), **`ps`** ai lati (esterno: esce
-       FUORI dalla card, dai lati che `pl`/`pr` hanno acceso), **`pa`** intorno alla
-       card (alone perimetrale). ⚠️ `ps` **è** la vecchia casella 'Anche fuori dalla
-       card', che l'utente non capiva ('se è esterno, è ovvio che va fuori'): il suo
-       vero significato era 'accendi il bagliore esterno', e come 'Ai lati' dentro
-       il gruppo Posizione si legge da sé.
-     - **Sezione INTERNO**: `amp` (sfumatura 10-60px), `int` (opacità 0.1-1).
-     - **Sezione ESTERNO**: `oamp` (sfumatura 4-40px), `oint` (opacità).
-     - **Sezione INTORNO ALLA CARD**: `aamp` (sfumatura 6-60px) e `aint` (opacità
-       0.05-0.6). ⚠️ `aamp` è NUOVA nella v12.95: fino alla v12.85 la sfumatura
-       dell'alone non era regolabile ma **derivata** da quella interna (`amp × 0.6`),
-       un residuo di quando interno ed esterno condividevano una manopola, che
-       rendeva 'Intensità' l'unica voce di quella sezione. La migrazione copia quel
-       calcolo, quindi la resa di chi aveva l'alone acceso non cambia.
-     - **`all`** (non per tema): tutte le card accese invece della sola card attiva
-       → classe extra `fx-glow-all`.
-     ⚠️ **LISTA DI OMBRE A LUNGHEZZA E ORDINE FISSI (fix del 'lampo', v12.95).**
-     Le parti spente NON si omettono: si emettono con **alpha 0**, tenendo la loro
-     geometria e la loro posizione. Motivo, misurato: il browser interpola le
-     `box-shadow` **per posizione**, quindi togliendo o aggiungendo una voce le altre
-     slittano e si trasformano l'una nell'altra. Con solo l'alone acceso la card
-     aveva 1 ombra; accendendo 'Ai lati' ne aveva 2, e in transizione l'ALONE si
-     morfava nella fuga sinistra mentre un alone nuovo **ricresceva da zero**
-     (misurato: `0 0 7.9px` a 30ms, 31px a 70ms, 36px a 120ms). Da qui il lampo che
-     l'utente vedeva su una manopola che non c'entrava. Ordine fisso: **fuga
-     sinistra, fuga destra, alone**, poi l'interno destro `inset` in coda (un'ombra
-     `inset` non può interpolare con una normale). Vale sia in pagina sia
-     nell'anteprima: se l'anteprima omettesse le voci spente avrebbe il lampo che la
-     pagina non ha più, ed è proprio lì che l'utente lo vedeva.
-     ⚠️ **Il bagliore INTERNO destro è fatto con ombre `inset` della CARD**, non con
-     una seconda striscia: a destra non c'è nulla da cui far partire il bagliore, i
-     due pseudo-elementi della card sono già occupati (`::before` = riflettore,
-     `::after` = linee mediane admin) e l'`inset` è tagliato dal `border-radius`
-     senza aggiungere nodi né toccare il layout. **A destra NON c'è una striscia
-     colorata**: solo il bagliore (scelta dell'utente, v12.85).
-     ⚠️ **Il numero di posizione sta SOPRA il bagliore** (dalla v12.42):
-     `.rank-num` ha `position:relative; z-index:2` perché la sfumatura interna
-     (box-shadow della striscia, z-index:1) passava sopra le cifre e velava i
-     metalli del podio (segnalato dall'utente ad ampiezze alte). Non rimuoverlo.
-     ⚠️ **Niente sollevamento né ombra grigia sulla card**: card **'virtuali', non
-     schede fisiche** (il lift del mockup è stato scartato apposta). Il bagliore
-     interno è tagliato a sinistra dall'`overflow:hidden` della card; quelli
-     ESTERNI e l'ALONE sono ombre PROPRIE della card (l'overflow taglia solo i
-     figli). Le fughe hanno **spread negativo** così escono SOLO dal proprio lato
-     senza disegnare un contorno luminoso attorno al perimetro (il primo tentativo
-     senza spread avvolgeva tutta la card: effetto neon, scartato). Storico: fino
-     alla v12.40 il blur era `2b` con spread `-b` e ad ampiezze alte la coda
-     gaussiana traboccava comunque sul perimetro (notato dall'utente, a cui piaceva:
-     da lì è nata l'aura come manopola separata); dalla v12.41 il blur è `1.6b` e il
-     perimetro resta pulito.
+**Accesso:** tap sulla versione → sblocco → bivio 'Area admin' → **5° pulsante 'Pannello di
+controllo'** (`showSiteFlagsEditor`, stile admin minimale). ⚠️ **Nome in UI: 'Pannello di
+controllo' / 'Control panel'** (deciso dall'utente; prima 'Feature flag'), nel titolo, nel
+bivio, negli hint e nel messaggio di commit ('aspetto: pannello di controllo'). Il nome
+INTERNO (`siteFlags`, e `FEATURES` che è altra cosa) resta invariato; da non confondere col
+'Pannello' del FAB, che è dei visitatori.
 
-  2. **`spot`: riflettore** (`fx-spot`, REGOLABILE, dalla v12.39; in UI solo
-     'Riflettore' dalla v12.64): alone bianco molto sfumato che schiarisce la card
-     sotto il puntatore e lo SEGUE, confinato dentro la card.
-     ⚠️ **Dalla v12.64 esiste SOLO dove esiste un puntatore vero**: tutte le regole
-     stanno dentro `@media (hover:hover) and (pointer:fine)` e `wireSpotlight` non
-     aggancia il listener se **`FX_PTR_MQ`** non combacia (con listener `change`
-     per i cambi a caldo). ⚠️ Quella costante si chiamava `SPOT_HOVER_MQ` finché il
-     riflettore era il solo a usarla: dalla v14.22 la condivide con `hov` (vedi
-     `FX_PTR`), quindi vive accanto a `fxCfg` e il suo unico listener rilancia
-     `applySiteFlags`, che chiama anche `wireSpotlight`.
-     ⚠️ **Dalla v13.18 NON ha la variante `_m`** (richiesta utente: 'togliamo
-     direttamente il riflettore da mobile'): la config è **UNICA** (`fxCfg('spot')`
-     bypassa `FX_MOBILE_MQ`) e vale ovunque esista un puntatore, incluse le
-     finestre strette (<768px) su desktop. La voce sparisce dalla tab Mobile e dal
-     pannello aperto da mobile (flag `noMob` in `SITE_FLAG_ITEMS`, come `zoomBig`);
-     il titolo della sua sotto-modale non porta il suffisso di piattaforma. Un
-     eventuale `spot_m` residuo nei dati salvati resta ignorato (e innocuo). Il gate è sulla **capacità**, non sulla larghezza: un
-     tablet con mouse lo ha, un portatile touch no. Motivo (domanda dell'utente):
-     su touch l'hover non c'è, quindi l'effetto non si vedrebbe mai ma il
-     `pointermove` continuerebbe a lavorare a ogni frame durante lo scroll. Manopole: `r` (raggio 70-300px), `int`
-     (intensità 0.02-0.12; il tetto è il valore verificato con axe: 0 violazioni
-     anche al massimo, hover incluso). Implementazione: RIUSA `.rank-item::before`
-     (il vecchio velo statico di hover, stesso fade opacity 0→1) con
-     `radial-gradient(circle r at var(--spx) var(--spy))`; `z-index:-1` +
-     `isolation:isolate` sulla card lo tengono sopra il fondo e SOTTO i testi.
-     Il tema CHIARO usa opacità ~3× (int*3, cap 0.5): su fondo quasi bianco lo
-     stesso valore sarebbe invisibile, e lì schiarire ALZA il contrasto del testo
-     scuro. Inseguimento: UN listener `pointermove` delegato su `#rank-list`
-     (`wireSpotlight`), coalescente via rAF, che aggiorna solo `--spx/--spy` (mai
-     la stringa del gradiente); sotto zoom si divide per `z = rect.width/
-     offsetWidth` (stessa lezione delle linee mediane). In `@media print` il
-     `::before` è nascosto. In tema chiaro il `display:none` statico del
-     `::before` è scavalcato dalla regola iniettata (sorgente più in basso).
-  3. **`press`: incisione** (`fx-press`, REGOLABILE dalla v12.53; label UI
-     **'Incisione'/'Engraving'** dalla v12.64): letterpress
-     in tema chiaro (lume bianco sotto + velo scuro sopra), stacco morbido in
-     scuro. Manopole: `name` (sul Nome), `lab` (sulle etichette tipo) e, dalla
-     v12.64, **`num`** (sui numeri di classifica, default `false` per non cambiare
-     la resa di chi ha già salvato): le etichette sono FIGLIE di `.rank-name` e
-     l'ombra si eredita, quindi le combinazioni si ottengono azzerandola sulle
-     figlie (o applicandola solo a loro). ⚠️ La regola di `num` è volutamente a
-     specificità BASSA (0,2,1), sotto quella del podio (0,4,1 / 0,5,1): così i
-     primi tre conservano l'ombra metallica dedicata e l'incisione vale dal quarto
-     in giù. Regole in `injectFxRules` (formula `fxPressShadow`); le statiche sono
-     state rimosse dal CSS.
-  4. **`vig`: vignettatura** (`fx-vig`, REGOLABILE dalla v12.42; label UI
-     **'Alone sfumato'/'Soft halo'** dalla v12.64): alone radiale
-     come **livello di sfondo del body** (`background-image` +
-     `background-attachment:fixed`), non un elemento sovrapposto: niente nodi
-     nuovi né problemi di impilamento. Manopole: `int` (intensità 0.05-0.6) e
-     `start` (inizio della sfumatura 20-70%); in chiaro alpha ×0.38 e tinta
-     ardesia. Le regole vivono in `injectFxRules` (`fxVigBg`); le vecchie regole
-     statiche sono state RIMOSSE dal CSS (i default le riproducono: 0.34/38%).
-     Nell'anteprima della sotto-modale la vignetta è applicata al FONDO dei due
-     riquadri (card a riposo).
-  5. **`podium`: podio metallico** (`fx-podium`, REGOLABILE dalla v12.53;
-     **PARAMETRICO dalla v13.28**; label UI
-     **'Oro, argento e bronzo'/'Gold, silver and bronze'** dalla v12.64): numeri
-     1-2-3 con gradiente oro/argento/bronzo (`background-clip:text` +
-     `color:transparent`, come il titolone) e `text-shadow:none` (il glow grigio
-     base di `.rank-num` intorbidirebbe il metallo). Manopole: `int` (intensità del
-     metallo = `contrast`) e `lum` (luminosità = `brightness`), applicate con un
-     `filter` iniettato; 1/1 = resa neutra. ⚠️ **PER TEMA dalla v12.85**
-     (`int_d`/`int_l`/`lum_d`/`lum_l`): i metalli hanno gradienti diversi nei due
-     temi, quindi una sola coppia non poteva servirli entrambi: è la ragione per
-     cui l'utente teneva l'effetto **spento**. La regola CHIARA iniettata **ripete
-     il `filter`**: senza ripeterlo, il tema chiaro eredita quello scuro.
-     Dalla v12.53 TUTTE le regole del podio
-     (clip, gradienti, ombra, filtro) sono INIETTATE da `injectFxRules` e i
-     gradienti vivono in **`PODIUM_GRADS`** (fonte unica con l'anteprima); i
-     metalli del tema CHIARO sono stati **riequilibrati** (quelli v12.28-52 erano
-     troppo scuri, segnalato dall'utente) e l'ombra chiara è scesa a 0.22.
-     ⚠️ La regola chiara iniettata RIPETE `color:transparent` + clip a specificità
-     (0,5,1): la regola dei numeri in tinta famiglia (v12.53) ha (0,4,1) come la
-     clip condivisa e viene dopo nel documento: senza la ripetizione il podio in
-     chiaro mostrerebbe la tinta famiglia, non il metallo.
-     Le classi **`vis-1/2/3`** le assegna `renderList`
-     accanto a `vis-top`, quindi il podio **segue i filtri attivi**. ⚠️ L'**argento**
-     ha molte fermate (lume/ombra/lume) perché a 2 sole fermate 'sembrava un numero
-     normale' (richiesta dell'utente).
-     ⚠️ **PODIO PARAMETRICO (v13.28, richiesta utente).** I tre gradienti non sono
-     più scritti a mano: li genera **`fxPodiumGrad`** da un'**identità** fissa per
-     metallo (`PODIUM_IDENT`: tinta, saturazione base, scheletro di luminosità a 7
-     fermate, derivati dalla 'proposta A' del mockup approvato) più tre manopole
-     **CONDIVISE dal trio**, per tema: **`rifl`** (il lampo speculare a metà glifo,
-     quello che prima aveva solo l'argento), **`top`** (bordo luminoso in cima),
-     **`sat`** (saturazione: quanto è CARICA la tinta, da non confondere con
-     `int`, in UI **'Contrasto'/'Contrast'** dalla v13.42, prima 'Intensità del
-     metallo': è un `filter:contrast()` sul risultato e regola lo STACCO
-     chiaro/scuro; il contrast alza anche la cromia percepita, da qui la
-     confusione che ha portato al rinomino), **`crisp`** (nitidezza del riflesso, dalla v13.38;
-     **semantica corretta nella v13.40**: la SAGOMA del riflesso è una banda a
-     larghezza FISSA, 49%-59% della corsa, sempre presente: la manopola governa
-     solo quanto è SFUMATO il suo bordo, rampa da 9 punti a ~0.5. ⚠️ La v13.38
-     stringeva la rampa attorno a una fermata singola, quindi a nitidezza bassa
-     si assottigliava la sagoma stessa: non era l'idea dell'utente, non tornarci) e
-     **`tamp`** ('Ampiezza del bordo'/'Edge width', dalla v13.75, richiesta
-     dell'utente): dove FINISCE il bordo luminoso, in punti della corsa logica del
-     glifo (8-34, default **18** = il valore storico, quindi chi non la tocca vede
-     esattamente la resa di prima: verificato pixel-identico sui tre metalli nei due
-     temi). Si muove SOLO la fermata di fine: il picco resta ancorato alla cima e il
-     tetto sta sotto la fermata del corpo (40), così il bordo non lo invade. È il
-     complemento di `top`, che dice quanto il bordo è CHIARO, non quanto è spesso.
-     Condizione posta
-     dall'utente: controlli unici e stili sempre coerenti, garantito per
-     costruzione, una formula sola e tre tinte.
-     Regole da non rompere:
-     - la **saturazione dei riflessi SALE con la manopola ma in proporzione alla
-       saturazione propria del metallo** (`s0 × (1 + k·manopola)`): i metalli caldi
-       hanno riflessi caldi, il quasi-grigio resta quasi-grigio. Una spinta
-       assoluta rendeva BLU il lampo dell'argento chiaro; abbassarla (primo
-       tentativo) sporcava di grigio i lampi caldi: entrambe scartate dai numeri.
-     - l'**ultima fermata (ancora scura) NON dipende dalle manopole**: tiene la
-       definizione del bordo del glifo e il contrasto ai livelli storici (ancore ≈
-       identiche ai vecchi gradienti, misurate).
-     - i **default** (`sat 1, top 0.7, rifl 0.8`) riproducono la proposta A: il
-       trio coerente col lampo. L'asimmetria storica (lampo solo sull'argento) non
-       è riproducibile con manopole condivise, per costruzione, deciso con
-       l'utente ('sì, va benissimo'). B e C del mockup ≈ sat alta / top alto.
-     - la taratura si rifà OFFLINE con `scratchpad/tune_podium.py` (stessa formula
-       in Python): confrontare le fermate coi valori attesi prima di toccare
-       `PODIUM_IDENT`. ⚠️ Dalla v13.45 lo script va aggiornato con la rimappatura
-       qui sotto, altrimenti confronta percentuali che non sono quelle emesse.
-     - ⚠️ **LE POSIZIONI DELLE FERMATE SONO LOGICHE, NON REALI: si rimappano sulla
-       fascia che il glifo intercetta davvero (fix v13.45).** Le percentuali di un
-       gradiente corrono sul **box del numero**, che è molto più largo della cifra
-       (`.rank-num` misura 76×32.8px con testo **centrato**) e più alto di essa;
-       con l'angolo a **168deg** la cifra intercetta solo il **tratto centrale**
-       della corsa. Misurato applicando al numero 20 bande nette da 5% e contando
-       i pixel per banda: arriva sul glifo solo il **20%-76%**. Conseguenza del
-       bug: il **bordo luminoso** (fermate al 3% e 18%) e l'**ancora scura finale**
-       (86%-100%) cadevano FUORI dal glifo, quindi la manopola 'Bordo luminoso' non
-       produceva **alcun** cambiamento visibile (segnalato dall'utente; misurato:
-       0 pixel diversi tra `top` 0 e 1) e l'ancora non teneva alcun bordo. Ora
-       `fxPodiumGrad` rimappa 0-100 logico su **`PODIUM_GLYPH`** = [20, 76], con
-       **un decimale** perché la rampa più netta della nitidezza (0.5 punti logici)
-       sopravviva alla contrazione.
-       - La fascia misurata è **stabile**: identica a 1280px, in Modalità XL e a
-         390px, e per tutti e tre i metalli: box del numero e cifra scalano
-         insieme, quindi una costante basta e non serve misurare a runtime.
-       - ⚠️ **L'anteprima ha una fascia PROPRIA** (`PODIUM_GLYPH_FXP` = [25, 80]):
-         le card finte usano `.fxp-num`, box 24×16.8px, proporzionato diversamente,
-         quindi il glifo vi intercetta un altro tratto. Con la sola fascia della
-         pagina il bordo luminoso sarebbe rimasto invisibile **nell'anteprima**,
-         cioè proprio dove si regola sotto la soglia del dock. Due fasce e una
-         formula sola: è questo che tiene anteprima e pagina sulla stessa resa.
-       - Se un domani cambia la geometria del numero (larghezza del box, allineamento,
-         angolo del gradiente), le fasce vanno **rimisurate** col metodo delle bande:
-         è l'unica prova diretta di quale tratto arriva sull'inchiostro.
-     ⚠️ **Anteprima: numeri 1 e 2, ORO e ARGENTO** (v12.85, richiesta dell'utente;
-     fino alla v12.75 erano 1 e 3, oro e bronzo). L'argento è quello che più ha
-     bisogno d'occhio, avendo molte fermate perché a due sole 'sembrava un numero
-     normale'. Negli altri editor le card d'anteprima usano invece le posizioni 4 e
-     5, FUORI dal podio, altrimenti l'anteprima mentirebbe (vedi la nota sulla
-     sotto-modale).
-     ⚠️ **Misurando il colore subito dopo un cambio di flag si legge un valore
-     INTERMEDIO** (o `transparent`): è la `transition:color 0.35s` di `.rank-num`,
-     non un bug: attendere ~400-600ms. Trappola in cui si ricade facilmente: nella
-     v12.63 ha fatto sembrare che `nums` scavalcasse il podio, mentre la cascata
-     era corretta.
-  7. **`hov`: colore delle schede** (`fx-hov`, REGOLABILE, dalla v14.10, richiesta
-     dell'utente; label UI **'Colore schede'/'Card color'** dalla v14.33): il fondo
-     **e il contorno** della card
-     - ⚠️ **NOME: 'Colore schede'/'Card color' dalla v14.33** (richiesta dell'utente).
-       Storico: 'Colore al passaggio' (147px, mai usata perché va a capo) → 'Al
-       passaggio' (v14.10) → 'Colore schede', perché con la manopola del contorno
-       l'effetto governa **la cosa** (il colore della scheda) e non più solo il gesto.
-       Misure col font reale a 320px in XL: 'Colore schede' **91.6px**, 'Card color'
-       **69.7px**, colonna **102px** → una riga entrambe; scartata 'Colore delle
-       schede' (125.1px, va a capo). ⚠️ La colonna misura **102px**, non i 132px che
-       questa nota riportava da release più vecchie: rimisurarla prima di scegliere
-       un'etichetta nuova. La chiave interna resta `hov` (come `siteFlags`).
-     - ⚠️ **`bd`: 'Contorno più nitido'/'Sharper border' (v14.33, richiesta
-       dell'utente): sì/no e nient'altro** ('senza opacità intermedia o altro'), non
-       per tema, seconda voce subito dopo 'Attiva'. **Il contorno cambiava da SEMPRE**
-       al passaggio, per regole **statiche** che nessun flag governava (misurato:
-       `rgba(104,144,168,0.15)` → `rgba(200,202,210,0.45)` in scuro,
-       `rgba(80,110,150,0.22)` → `rgba(60,95,150,0.55)` in chiaro). Ora:
-       - **acceso** non si emette nulla, vale il CSS statico - quindi il default
-         `true` riproduce la resa storica al pixel;
-       - **spento** (o effetto spento) una regola iniettata riporta il `border-color`
-         del `:hover` a quello di RIPOSO. Basta l'`!important`: **nessuna** regola
-         statica del bordo ce l'ha, quindi vince anche sulle vecchie regole di Classe
-         a qualunque specificità (per il FONDO serviva invece `html:not(.fx-hov)`,
-         perché lì la base cardcolor è `!important`).
-       - i quattro valori vivono in **`HOV_BORDER`**, fonte unica con l'anteprima:
-         toccando il CSS statico del bordo, aggiornarli.
-       - ⚠️ Il **bordo sinistro** non si muove in nessun caso (verificato): lo forza a
-         1px tenue la regola `!important` della v8.72, e l'identità la dà la striscia.
-       - ⚠️ **L'anteprima non mostrava affatto il contorno** (restava sempre quello di
-         riposo): senza allinearla, la manopola non avrebbe avuto riscontro.
-     - **Il FONDO** della card sotto il puntatore: tre manopole **per tema**
-       (`_d`/`_l`), nell'ordine chiesto - **`op`** (opacità del velo di tinta),
-       **`sat`** (saturazione della tinta) e **`lum`** (luminosità). Formula
-       **`fxHovBg`**, sintassi RELATIVA di OKLCH come `fxNumColor`: si riscrivono L e
-       cromia della tinta di famiglia lasciando intatta la TINTA.
-     - ⚠️ **SU MOBILE L'EFFETTO ESISTE, e vale da SELEZIONE della card (v14.22,
-       segnalato dall'utente).** Nella v14.10 era stato dato per assente ('sotto il
-       puntatore', config unica come il riflettore): sbagliato. Misurato in un
-       contesto touch (`hover:hover` **false**, `pointer:fine` **false**): il tap
-       applica `:hover` e lo lascia **APPICCICATO a tempo indeterminato** - resta
-       dopo 1,7s e persino dopo uno scorrimento, e si sposta solo tappando un'altra
-       card. Non è un difetto del sito ma il comportamento dei browser touch, e vale
-       dalla v8.72 (quando il fondo hover è diventato una funzione del sistema
-       cardcolor), non dall'introduzione dell'effetto. Perciò `hov` **ha la sua
-       variante** (`hov_m`) e nel Pannello compare anche nella **tab Mobile**; il
-       riflettore resta il solo `FX_UNI`/`noMob`, perché lì senza puntatore non c'è
-       proprio nulla da mostrare.
-     - ⚠️ **La variante si scegle dalla CAPACITÀ del puntatore, non dalla larghezza**
-       (mappa **`FX_PTR`**, scelta dell'utente): `fxCfg` usa `FX_PTR_MQ`
-       (`(hover:hover) and (pointer:fine)`) invece di `FX_MOBILE_MQ`. Motivo: una
-       finestra desktop **stretta** ha il mouse e deve tenere la config desktop, un
-       **tablet touch largo** non lo ha e deve prendere quella touch - col criterio
-       dei 768px sarebbero invertiti entrambi. È lo stesso ragionamento con cui il
-       riflettore è gatato sulla capacità. `FX_PTR_MQ` è la ex `SPOT_HOVER_MQ`,
-       rinominata perché ora la condividono due effetti e spostata sopra `fxCfg`, che
-       è il suo primo lettore; il suo listener rilancia `applySiteFlags`, che
-       ri-inietta le regole **e** richiama `wireSpotlight` (un solo aggancio per due
-       usi). Verificato sui quattro casi: desktop 1400px e 700px → desktop, telefono
-       390px e tablet touch 1100px → touch.
-       - ⚠️ **RISOLTO nella v14.23** il caso limite dell'admin su finestra **stretta
-         col mouse**, che apriva il Pannello in modalità mobile (nessuna tab) e
-         regolava `hov_m` mentre in pagina era attiva la desktop: ora il pannello
-         senza tab regola la variante ATTIVA riga per riga (vedi 'DUE CRITERI, UNA
-         SOLA COPPIA DI TAB' nella sezione della config per-piattaforma).
-     - ⚠️ **In UI le sue varianti si chiamano 'Col mouse'/'A tocco'** ('Pointer'/
-       'Touch'), non Desktop/Mobile (**`fxVarLabel`**, v14.23, scelta dell'utente):
-       è l'asse reale su cui si dividono, e chiamarle come le altre era proprio
-       l'approssimazione che generava il dubbio. Vale nel titolo della sotto-modale e
-       nei suoi testi; le **tab del Pannello** restano Desktop/Mobile, perché
-       governano tutti gli effetti insieme.
-     - ⚠️ **L'INTERRUTTORE GOVERNA DAVVERO (v14.22): spegnerlo NON basta e non
-       bastava.** Il cambio di fondo al passaggio è una funzione **base** del sistema
-       cardcolor (`injectCardColorRules`: 0.18 scuro / 0.11 chiaro) e `hov` la
-       scavalca: misurato, a effetto spento il tap dava ancora `alpha 0.11`. Ora
-       `injectFxRules` ha un **ramo spento** che riporta ATTIVAMENTE il `:hover` al
-       fondo di **riposo** (0.10/0.05), scoped `html:not(.fx-hov)` per battere la
-       base ((0,4,1) contro (0,3,1) in scuro, (0,5,1) contro (0,4,1) in chiaro) e con
-       `!important` per le statiche. ⚠️ **Non si può semplicemente TOGLIERE la
-       regola**: sotto quella cardcolor ci sono ancora le vecchie regole di **Classe**
-       (`.divine:hover` e compagnia), mute solo grazie a quell'`!important` - senza
-       riscrittura riemergerebbero le tinte storiche. Verificato: 16 famiglie × 2
-       temi, **0** cambiano fondo al passaggio a effetto spento.
-     - ⚠️ **Il `:focus-within` NON è governato dall'interruttore e resta acceso.** Il
-       nome della card è `role="button" tabindex="0"`, quindi quel fondo è il suo
-       indicatore di **focus da tastiera** (WCAG 2.4.7): non può dipendere da un
-       effetto estetico. Su touch è ininfluente, che è proprio il caso in cui si
-       spegne l'effetto.
-     - ⚠️ **Il risultato va riportato in sRGB** con `rgb(from … r g b / alpha)`, non
-       lasciato in `oklch()`. Misurato: un colore **semitrasparente** dichiarato in
-       `oklch()` resta tale nel valore calcolato e Chromium lo compone in **oklab**,
-       non in sRGB, quindi il fondo risultava diverso dal vecchio `rgba()` fino a
-       **6/255** su un canale (rohir, tinta satura al bordo di gamut) pur con le
-       manopole a 1. Con `rgb(from …)` la composizione torna in sRGB e il round-trip
-       è esatto a ~0.01/255: verificato su tutte e 16 le tinte nei due temi, scarto
-       **0**, quindi i default riproducono la resa storica al pixel. Il colore
-       OPACO non ha questo problema: `fxNumColor` può restare in oklch.
-     - I **default** sono gli alpha storici (**0.18** scuro / **0.11** chiaro) con
-       tinta intatta: chi non tocca nulla non vede alcun cambiamento.
-     - ⚠️ **I limiti sono PRUDENTI, e axe qui NON serve come prova.** Con un
-       `::before` sulla card (il velo del riflettore) axe rinuncia a determinare il
-       fondo e classifica **tutti** i nodi come `incomplete` - misurato: **2714
-       incompleti, 0 valutati**, in qualunque configurazione e anche a riflettore
-       spento (restano `::before`/`::after` statici). Quindi la verifica del
-       contrasto sulle card va fatta **a calcolo** (`scratchpad/hovaa2.js`), e i
-       tetti (`op_d` 0.26, `op_l` 0.18) stanno volutamente vicini ai default.
-     - ⚠️ **Il tetto di `op_d` è 0.20 per una ragione MISURATA**, non estetica: oltre
-       quel punto le due righe tenui della card (vedi la voce sotto) scendono sotto
-       4.5:1 sulla famiglia dalla tinta più chiara. A 0.20 restano a **4.65:1**, a
-       0.26 scenderebbero a **3.86:1**; il default 0.18 dà **4.95:1**. Alle
-       combinazioni estreme di luminosità (`lum` 1.3) il margine si consuma comunque
-       (4.41:1) - da qui la nota sullo slider - ma la SOLA opacità non può più
-       rompere l'AA. Non alzarlo senza rimisurare le due righe.
-     - Nell'**anteprima** una card è accesa e una a riposo: è il confronto che serve
-       a regolare l'effetto. ⚠️ La condizione è `rec.first` e NON quella del
-       bagliore: riusarla significherebbe ereditarne la manopola 'Su tutte le card',
-       che con `all` acceso rende accese entrambe e fa perdere il confronto.
-       - ⚠️ **A effetto spento l'anteprima resta sull'alpha di RIPOSO anche sulla card
-         'hot'** (v14.22): dacché l'interruttore governa davvero, alzarla a 0.18/0.11
-         sarebbe una bugia. Gli altri effetti legati allo stato hover (bagliore,
-         riflettore) restano invece pilotati da `hot`, che è il loro stato.
-       - Nella variante **touch** la didascalia diventa **'Card toccata'/'Tapped
-         card'** invece di 'Card attiva (hover)': là non c'è alcun passaggio, la card
-         è selezionata.
-     - Il fondo di riferimento per l'AA del testo della pill nell'anteprima si
-       compone con la tinta **riscritta** (`ccOklchAdjust`, equivalente JS della
-       formula) e l'opacità configurata: con l'effetto attivo lo strato della card non
-       è più la tinta pura a un alpha noto (stessa lezione della v12.75, un passo più
-       in là).
-  8. **`pat`: trama di fondo** (`fx-pat`, REGOLABILE, dalla v14.43, richiesta
-     dell'utente; label UI **'Trama'/'Pattern'**): un motivo elfico ripetuto sullo
-     sfondo della pagina, tenuissimo. È l'**unico effetto che nasce SPENTO**, perché
-     aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello.
-     - **SEI motivi** (dalla v14.65; due alla v14.43), disegnati come SVG e serviti come
-       **data URI** (nessun file, nessuna richiesta di rete, tile sotto 1 KB).
-       Geometrie in `patSvg` + gli helper `patStar`/`patRomb`/`patCross`/`patRose`/
-       `patRays`/`patLens`, dimensioni in **`PAT_TILE`**:
-       **`stars`** ('Stelle di Varda') stella a otto punte a raggi nudi; **`mallorn`**
-       foglia di Lothlórien con nervature, in maglia diagonale; **`loz`** ('Losanghe')
-       rombi concentrici con punti sulle diagonali; **`seme`** ('Campo di stelle')
-       stelline in maglia sfalsata, il più rarefatto; **`weave`** ('Intreccio')
-       reticolo OGIVALE con rosone a otto petali nelle maglie; **`banner`**
-       ('Vessillo') cornice di mandorle con rosone raggiato.
-       - ⚠️ **I motivi sono deliberatamente NON narrativi.** Il riferimento che
-         l'utente aveva portato conteneva l'**Albero Bianco** (che è Gondor, quindi
-         Uomini) e l'iscrizione dell'**Unico Anello** in tengwar (che è Sauron):
-         nessuno dei due è elfico. E i tengwar non si inventano: a scriverli a caso
-         si mette in pagina una sciocchezza, contro la regola della verifica delle
-         fonti. Una stella, un rombo o un rosone non affermano nulla di falso. Per la
-         stessa ragione non si ricostruiscono gli **emblemi araldici** disegnati da
-         J.R.R. Tolkien (esistono, in *Pictures by J.R.R. Tolkien*): a memoria si
-         produrrebbero inesattezze. Si prende solo la loro **grammatica** - losanga
-         come cornice, rosone al centro, punti negli interstizi.
-       - ⚠️ **REGOLA PER I MOTIVI FUTURI: il disegno deve essere una RETE CONNESSA**,
-         non una figura ripetuta (v14.65, richiesta dell'utente: 'qualcosa di più
-         intrecciato e continuo, che non sembri troppo un incrocio di scaglie di
-         pesce'). Concretamente: le linee devono proseguire da un tile all'altro **con
-         la stessa tangente**, così la cucitura non si legge. In `weave` i lati
-         ogivali della maglia si incontrano nei punti medi dei bordi con tangente
-         **verticale**; in `banner` le mandorle si toccano ai vertici della losanga.
-         Scartati per il difetto opposto (figure affiancate) un ottagramma a contorno
-         e un rosone isolato.
-       - ⚠️ **Scartato l'ESAGRAMMA** (due triangoli compenetrati): benché sia una
-         figura araldica legittima, si legge inequivocabilmente come Stella di David,
-         cioè un simbolo religioso e politico estraneo al Legendarium. Deciso
-         dall'utente, 2026-07-28 ('mi ricorda lo stato sionista'): non riproporlo.
-     - ⚠️ **DOVE: non si scegle più (dalla v14.65, richiesta dell'utente).** La manopola
-       `area` ('Solo sullo sfondo' / 'Dappertutto') è stata **RIMOSSA**: la trama non
-       passa MAI sopra o sotto le schede né sulla testata. Un eventuale `area` residuo
-       nei dati salvati è ignorato (chiave ignota, scartata da `normSiteFlags`).
-       Il confinamento è una **maschera a DUE ASSI** (`fxPatMask`), due gradienti con
-       **`mask-composite: intersect`**: la trama compare solo dove entrambi sono opachi.
-       - **ORIZZONTALE**: trasparente sulla colonna delle schede, con la sfumatura
-         (`fade`) ai suoi due lati. Le fermate si calcolano da `50%` con `calc` sulla
-         metà di **`PAT_COL`** (920px, la `max-width` di `.scroll`), quindi valgono a
-         ogni larghezza senza misure a runtime; se la finestra è più stretta della
-         colonna il gradiente degenera e la trama non si vede, che è il comportamento
-         voluto.
-       - **VERTICALE**: trasparente in cima, fin dove dice la custom property
-         **`--pat-t`**, poi la stessa sfumatura. Il valore lo scrive **`syncPatTop()`**
-         ed è il **MASSIMO** fra due cose, e servono entrambe:
-         1. il **bordo inferiore della testata** finché è in vista (la richiesta
-            letterale dell'utente). Scorre via con la pagina, quindi il valore cala;
-         2. una **banda FISSA di `PAT_TOPBAR` = 56px**, che non scende mai. ⚠️ Serve ai
-            controlli `position:fixed` che restano in alto - **`roccobot.me`** e il
-            **cambio lingua** - i quali scorrendo finirebbero sopra la trama. Il loro
-            colore è tarato **ESATTAMENTE** su 4.5:1 a `opacity:0.7` (lo dice il
-            commento di `.home-link`): **margine ZERO**, quindi qualunque velo dietro di
-            loro li porta sotto soglia. Misurato: al vecchio tetto 0.10 scendevano a
-            4.53:1 in scuro e **4.45:1** in chiaro, cioè già fuori. Tenendoli fuori
-            dalla trama, il tetto dell'opacità torna una scelta estetica e non un
-            vincolo di accessibilità.
-       - ⚠️ **Perciò la trama resta ancorata al VIEWPORT** (`position:fixed`, come la
-         vignettatura) e `--pat-t` si aggiorna sullo **scorrimento**, coalescente a rAF
-         (`queuePatTop`) e con scrittura solo al varco (`patTopLast`). A effetto spento
-         `syncPatTop` esce subito: costo zero, e la property non viene nemmeno scritta.
-         Un `ResizeObserver` sulla testata copre a-capo del titolo, cambio lingua e
-         Modalità XL. ⚠️ `getBoundingClientRect` dà px **visivi**: sotto XL va diviso
-         per lo zoom, rilevato da sé come `rect.width / offsetWidth` (stessa lezione
-         delle linee mediane). Verificato: 56px di **layout** con e senza XL.
-       - ⚠️ **IN VISTA DIVISA il box dello strato si stringe all'area del CONTENUTO**
-         (fix v14.66, segnalato dall'utente). In dock la pagina è spostata a destra
-         (`body{margin-left:var(--dockw)}`), quindi la colonna delle schede non è più
-         centrata sul viewport: il `50%` della maschera puntava 200px troppo a sinistra
-         e la trama finiva **sopra le schede**, con margini asimmetrici che rendevano
-         l'anteprima inaffidabile (ed è la pagina, in dock, a fare da anteprima). Rimedio
-         dichiarativo, una riga: `html.fx-pat.fx-dock body::after{left:var(--dockw,0px)}`.
-         Stringendo il box, `50%` torna a significare 'centro di dove vive la pagina' e
-         la formula non si tocca. Verificato: centro maschera = centro colonna al pixel,
-         **0** pixel diversi sulle schede, confini a 461/462px dal centro.
-         - ⚠️ **COME SI MISURA la presenza della trama** (lezione della stessa release):
-           il confronto A/B va fatto fra trama **visibile e invisibile** (opacità a 0)
-           tenendo la classe `fx-pat` ATTIVA, **non** fra effetto acceso e spento. Motivo
-           misurato: `body::after` è `position:fixed` con `z-index:-1` e la sua sola
-           presenza cambia il modo in cui il browser compone la pagina, quindi
-           l'antialiasing di testi ed emoji si muove in punti isolati (33k pixel diversi,
-           max 162, con la trama del tutto invisibile). Sulle MEDIE di un rettangolo il
-           rumore si annulla, sui MASSIMI no: con l'accensione come discriminante il test
-           dà falsi allarmi, e infatti li ha dati.
-         - ⚠️ **Tentata e scartata la trama ancorata al DOCUMENTO** (`position:absolute`
-           + `body{position:relative}`): la maschera diventa statica e non costa nulla a
-           ogni frame, ma la banda sgombra in cima segue il documento e quindi **non può
-           proteggere i controlli fissi**, che è il vincolo decisivo. Nota tecnica se un
-           domani serve: funziona (il fondo del body si PROPAGA alla canvas, quindi resta
-           sotto a uno strato con `z-index:-1`) e nessun altro elemento assoluto del sito
-           cambia contenitore.
-     - **Vive su `body::after`**, NON nel `background-image` del body: là c'è già la
-       vignettatura, e impilare i due nella stessa dichiarazione avrebbe legato gli
-       effetti (liste di `background-size`/`repeat`/`attachment` da tenere allineate
-       a quali flag sono accesi). Con lo pseudo-elemento restano indipendenti.
-       - ⚠️ **Nota storica da non dimenticare:** un `body::before` fisso c'era, e fu
-         **RIMOSSO nella v8.74** per due difetti. (1) La sua base OPACA copriva il
-         fondo neutro del body: qui non esiste alcuna base, solo la trama
-         trasparente. (2) Essendo fisso e alto quanto il viewport, su mobile non
-         seguiva la barra dinamica del browser e lasciava una linea di giunzione:
-         qui l'effetto è desktop-only e non ha bordi visibili da cui nasca una linea.
-     - ⚠️ **DESKTOP-ONLY** (scelta dell'utente: su mobile le schede prendono tutta la
-       larghezza e non resterebbe sfondo su cui vederla). Quindi `noMob` + `FX_UNI`
-       come il riflettore, ma la soglia è **`PAT_ROOM_MQ` = `(min-width:920px)`** e
-       **non** i 768px di `FX_MOBILE_MQ`: fra i due valori il margine laterale è già
-       zero (misurato: a 800px la colonna riempie tutta la finestra). Sotto soglia
-       `applySiteFlags` toglie la classe, così non si paga nemmeno il disegno.
-     - **Colore e opacità sono manopole SEPARATE e per tema** (`c_d`/`op_d`,
-       `c_l`/`op_l`): la tinta si scegle col selettore di sistema, l'opacità con uno
-       slider.
-     - ⚠️ **TETTI DI OPACITÀ ALZATI nella v14.65: 0.10/0.09 → 0.34/0.30** (richiesta
-       dell'utente: 'più range di opacità'). I vecchi tetti erano **misurati**, ma sul
-       caso della modalità 'Dappertutto', in cui la trama passava DENTRO le card
-       semitrasparenti e finiva sotto i testi (allora: minimo 4.66:1 in scuro e 4.91:1
-       in chiaro su 47 misure, con `scratchpad/pat/aa.js`). Tolta quella modalità, nei
-       margini laterali **non c'è testo di contenuto**: il footer sta entro 500px
-       centrati, quindi dentro la colonna sgombra. Restano solo i controlli **fissi**,
-       che la banda in cima protegge (vedi sopra) - e i **tasti salto**, che a riposo
-       stanno a 1.6:1 **da sempre e senza trama** (opacità 0.5 per scelta, piena
-       all'hover e al focus): misurato, la trama non li peggiora, li schiarisce appena
-       (1.63:1 a op 0.10, 1.74:1 a 0.20). Lo strumento è `scratchpad/pat/aa4.js`, che
-       cerca per ogni controllo il massimo `op` che tiene 4.5:1.
-       - ⚠️ **Rimisurare se cambia il colore o l'opacità di `.home-link`, `.lang-switch`
-         o l'altezza della banda.** E ⚠️ **axe non serve come prova sulle card** (rinuncia
-         a determinare il fondo: vedi la nota di `hov`); axe **0 violazioni** è stato
-         comunque verificato coi tetti attivi nei due temi.
-     - ⚠️⚠️ **I VALORI AMMESSI DELLE SCELTE VIVONO IN `FX_SEL`, SOPRA I DEFAULT, MAI
-       IN `FX_KNOBS`** (fix v14.53, difetto arrivato in PRODUZIONE). `var SITE_FLAGS =
-       normSiteFlags(...)` gira **durante il parsing** dello script, quando `FX_KNOBS`
-       - che sta un migliaio di righe più in basso - è ancora `undefined`: leggerlo da
-       lì fa un TypeError che interrompe il caricamento e lascia la **classifica
-       VUOTA** (misurato: 0 card su 360). Il difetto era **invisibile finché `pat` non
-       era nel file dati**, perché con un valore `undefined` la funzione usciva prima
-       di toccare `FX_KNOBS`: si è manifestato al **primo salvataggio dal pannello**,
-       cioè su un sito già pubblicato e apparentemente sano. Lezione generale: una
-       funzione chiamata dalla normalizzazione può leggere SOLO ciò che è definito
-       sopra `var SITE_FLAGS`, e un test che non salva la config non lo scopre.
-       `FX_KNOBS` costruisce le sue `opts` da `FX_SEL` con **`fxSelOpts`**, così la
-       fonte resta una sola.
-       - ⚠️ **Le manopole a stringa sono DUE tipi e vanno distinte** (secondo fix, in
-         v14.54): `sel` vale solo se il valore è nell'elenco, `col` se è un **hex a 6
-         cifre**. Il controllo unico trattava tutto come scelta, quindi i COLORI
-         ricadevano sul default: il file conservava `#ffc524` e il sito mostrava
-         `#ffffff`, cioè la taratura dell'utente veniva buttata via a ogni
-         caricamento. L'unica funzione è ora **`fxStrOk`**: se la chiave è elencata in
-         `FX_SEL` è una scelta, altrimenti è un colore. Verificato che la config reale
-         arriva intatta fino alla regola CSS (la tinta si cerca **URL-encodata**,
-         `255%2C197%2C36`: sta dentro il data URI dell'SVG).
-     - **Due tipi di manopola NUOVI**, introdotti con questo effetto e riusabili:
-       **`sel`** (scelta fra voci: `<select>`, valore stringa, elenco in `opts`; un
-       valore fuori elenco ricade sul default via **`fxSelOk`**) e **`col`** (colore:
-       `<input type=color>`, valore hex). Il **Worker rev 15 non cambia**: valida già
-       le stringhe ≤32 char, e `siteFlags` resta a 19 chiavi su 40 ammesse - quindi
-       nessuna race di deploy sito/Worker.
-     - ⚠️ **Nell'anteprima su card finte il CONFINAMENTO non è riproducibile** (il
-       riquadro non ha né una colonna di schede né una testata da scansare): là si
-       mostra il motivo dappertutto, ed è la nota della manopola 'Sfumatura' a dire dove
-       finirà. Se nel riquadro ci sono trama E vignetta, si impilano con la vignetta
-       SOPRA, come in pagina.
-     - Verificato che col default (spento) la pagina è **identica al pixel** alla
-       v14.33 nei due temi. ⚠️ Quel confronto va fatto con **moto ridotto** e con
-       tasti salto e FAB nascosti: le animazioni di comparsa e il timer da 3s dei
-       tasti salto rendono l'istantanea casuale (misurato: due screenshot della
-       STESSA versione davano hash diversi in tema chiaro).
-- ⚠️ **CASO CHIUSO, non è un difetto: 'ho spento un effetto su mobile e l'ho trovato
-  spento anche su desktop'** (segnalato dall'utente il 2026-07-29 sul podio). Il
-  Pannello scrive **sempre e solo** la variante giusta: verificato in due modi.
-  - **Sui dati**: il salvataggio admin da mobile (`f034190`) ha cambiato **solo**
-    `podium_m`, e `podium` (desktop) risultava **già spento dal 28**, molti commit
-    prima. Il modo di accertarlo è ricostruire la storia delle due chiavi con
-    `git show <commit>:arda/top/dati.js` su una decina di commit: è l'unica prova
-    diretta di che cosa ha scritto un salvataggio.
-  - **Dal vivo**: aprendo il Pannello a 390px, a 700px col mouse e a 1400px, la
-    checkbox tocca `podium_m` nei primi due casi e `podium` nel terzo, mai entrambe.
-  - **Perché l'equivoco è legittimo**: il Pannello non mostra in alcun modo lo stato
-    dell'ALTRA variante, quindi trovare un effetto spento su desktop non si distingue
-    da 'l'ho appena spento io da mobile'. Se ricapita, guardare i dati prima di
-    cercare un difetto nel codice.
-- ⚠️ **NEI TEST, i valori degli effetti si impostano SEMPRE esplicitamente.** La
-  config salvata è quella dell'**utente** e cambia quando lui usa il pannello: un
-  test che si affida ai default misura la sua taratura, non il comportamento del
-  codice. Caso reale (2026-07-28): dopo un salvataggio admin la batteria della v14.33
-  segnalava due falsi FAIL sull'anteprima del contorno, perché nel salvato `hov.bd`
-  era passato a `false` col mouse (e restava `true` a tocco). Prima di dare la caccia
-  a una regressione, leggere `var siteFlags` in `dati.js`.
-  - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto
-    della v12.24 (`mask-image` su `#rank-list`), **eliminato del tutto nella
-    v12.39** su richiesta dell'utente, sostituito dal riflettore. Non
-    reintrodurlo; un eventuale `"fade"` residuo in `siteFlags` è ignorato da
-    `normSiteFlags`. ⚠️ Da non confondere con la manopola `fade` della **trama**
-    (v14.43), che è l'ampiezza della sfumatura ai lati della colonna.
-- **Sotto-modale di regolazione (`showFxConfigEditor(key)`, dalla v12.39; layout
-  riga UNIFORME dalla v12.40).** Nel pannello OGNI effetto ha la **checkbox**
-  acceso/spento a sinistra (anche i regolabili: su flag a oggetto tocca solo
-  `.on`, le manopole restano); i regolabili hanno IN PIÙ l'**icona a due cursori
-  verticali** sul **lato destro** della riga (fader, `FX_SLIDERS_SVG`,
-  monocromatica `currentColor`, disegno scelto dall'utente). Storico: nella
-  v12.39 i regolabili NON avevano la checkbox ma una pastiglia di stato
-  Attivo/Spento (`.fx-chip`, rimossa in v12.40 per uniformità, mockup
-  dell'utente). ⚠️ **NOMI E ORDINE delle voci (v12.64, decisi dall'utente;
-  ultima voce aggiunta in coda nella v14.10, rinominata nella v14.33):**
-  Modalità XL, **Bagliore**, **Numeri colorati**, **Riflettore**, **Incisione**,
-  **Alone sfumato**, **Effetto podio**, **Colore schede**: etichette brevi, di una parola
-  dove possibile; 'Numeri colorati' sta subito dopo 'Bagliore'. L'ultima voce si
-  chiamava 'Oro, argento e bronzo' fino alla v12.74: **accorciata in 'Effetto
-  podio'/'Podium effect' nella v12.75** su richiesta dell'utente, perché a **320px
-  in Modalità XL** era l'unica etichetta a spezzarsi su tre righe (le righe della
-  lista devono restare tutte alte uguali). Vale la regola generale: le etichette
-  del pannello si scelgono corte perché devono stare su **una riga** anche nel caso
-  peggiore (telefono strettissimo × zoom 1.3): a **320px in XL** la colonna della
-  label è larga **102px** (rimisurata col font reale il 2026-07-28; questa nota
-  riportava 132px, valore di release più vecchie: **rimisurare** prima di scegliere
-  un'etichetta nuova), e un'etichetta che va a capo raddoppia l'altezza della
-  riga. Caso v14.10: **'Colore al passaggio'** misura **147.2px** col font reale e
-  andrebbe a capo; nella v14.33 la voce è diventata **'Colore schede'** (91.6px; EN
-  'Card color', 69.7px), scartata 'Colore delle schede' (125.1px). ⚠️ **La verifica va fatta in ENTRAMBE le lingue**: l'italiano che ci sta non
-  garantisce l'inglese. Nella stessa v12.75 l'EN **'Coloured numbers'** era l'ultimo
-  a sforare (2 righe) ed è diventato **'Number tint'** (99.9px; scartato 'Tinted
-  numbers', 125.8px su 132 = margine troppo sottile, e il solo 'Numbers', che si
-  leggerebbe come 'mostra i numeri' invece di 'tinta dei numeri'). L'italiano
-  'Numeri colorati' resta quello scelto dall'utente. Le misure vanno prese **col
-  font reale** (vedi 'Misure tipografiche'). ⚠️ **Le didascalie
-  descrittive sono state RIMOSSE ovunque** (c'erano su desktop fino alla v12.63):
-  l'utente le ha giudicate superflue, il pannello è una lista pulita di
-  interruttori. Non reintrodurle. In fondo resta **solo l'avviso breve** sulla
-  preferenza personale di zoom, ora identico su desktop e mobile (la versione
-  lunga di desktop è stata abbandonata con le didascalie). Storico: i testi
-  descrittivi erano stati riscritti dall'utente in v12.40 e ritoccati in v12.42. Al ritorno dalla sotto-modale la checkbox si riallinea
-  (callback `onDone`). ⚠️ **Le voci del BAGLIORE sono raggruppate in SEZIONI**
-  (v12.85, struttura e testi dell'utente): erano un elenco piatto di otto voci in cui
-  non si capiva quale sfumatura riguardasse quale parte. Un descrittore con
-  **`sec:true`** è un'**intestazione**, non una manopola (classe `.fxk-sec`:
-  maiuscoletto spaziato con filetto sopra). Ordine: *Effetto attivo*, *Su tutte le
-  card*, poi **Interno** (Sfumatura, Opacità), **Esterno** (Anche fuori dalla card,
-  Sfumatura, Opacità), **Intorno alla card** (Intensità), **A destra** (Bagliore
-  anche a destra, Sfumatura/Opacità interna, Sfumatura/Opacità esterna). Le
-  etichette dentro una sezione sono volutamente **generiche e ripetute** ('Sfumatura',
-  'Opacità'): è la sezione a disambiguarle, e nomi lunghi tipo 'Ampiezza del bagliore
-  esterno' erano proprio ciò che rendeva l'elenco confuso.
-  ⚠️ **Doppio clic su uno slider = valore PREDEFINITO** della manopola (v13.38;
-  dalla v13.39 vale su **TUTTO** lo slider, binario compreso): per OGNI slider di
-  OGNI effetto, il default si legge da `SITE_FLAGS_DEFAULT` sotto la chiave base
-  (le varianti `_m` e per-tema condividono il default della chiave omonima).
-  ⚠️ **Slider 'solo pallino' (v13.39, richiesta utente).** Il range nativo SALTA
-  al punto cliccato sul binario: sgradito. L'helper condiviso **`fxGuardSlider`**
-  (usato dalle manopole degli effetti E dai micro-aggiustamenti) al `pointerdown`
-  stima la posizione del pallino (`ratio × (larghezza − pallino)`, diametro ≈
-  altezza del controllo; rect e clientX sono entrambi in px visivi, quindi la
-  stima regge sotto zoom XL) e, se il puntatore è lontano, **blocca l'azione
-  nativa**: il valore si cambia solo trascinando il pallino, da tastiera o dal
-  campo numerico (dove c'è). Il doppio clic/tocco sul binario fa il reset ed è
-  rilevato **a mano coi timestamp**: il `preventDefault` può sopprimere il click
-  sintetico, quindi lì il `dblclick` nativo non è affidabile. Nei
-  micro-aggiustamenti il reset resta 'ultimo salvato' (la convenzione di quell'
-  editor), negli effetti è il predefinito.
-  - ⚠️⚠️ **SU TOUCH REALE il solo `preventDefault` sul `pointerdown` NON basta**
-    (segnalato dall'utente, v14.80): certi browser cambiano il valore dalla gestione
-    nativa del tocco, che quel `preventDefault` non annulla, e il tocco sul binario
-    tornava a impostare il valore. Tre difese, indipendenti fra loro:
-    1. un `touchstart` **NON passivo** con `preventDefault`, che è la via documentata
-       per sopprimere il comportamento nativo del tocco;
-    2. la rete vera: mentre il gesto è bloccato, ogni `input` viene **annullato in
-       CAPTURE** (valore ripristinato + `stopImmediatePropagation`), così il listener
-       della manopola non lo vede nemmeno. Funziona **anche se il browser ignora del
-       tutto il `preventDefault`**, che è il punto;
-    3. ogni gesto nuovo parte da `libera()`: se un `touchend` non arrivasse (gesto
-       interrotto dal browser), un blocco appeso renderebbe lo slider inerte per
-       sempre, cioè peggio del difetto da correggere.
-  - ⚠️ **L'EMULAZIONE NON RIPRODUCE il caso**: in Chromium con `hasTouch` il guard
-    vecchio sembrava tenere. E il **trascinamento del pallino non è verificabile
-    affatto** in emulazione: gli eventi touch sintetici (anche via CDP
-    `Input.dispatchTouchEvent`) non pilotano il drag nativo di un `input[type=range]`,
-    quindi il test fallisce **identico prima e dopo** la modifica. Prima di dare la
-    colpa a una modifica, rifare la stessa prova sulla versione precedente: è così che
-    si distingue il difetto dall'artefatto.
-  Il click sull'icona apre la sotto-modale (overlay a sé **`#fx-modal`**, stile admin
-  minimale, SOPRA il pannello che resta aperto sotto, come le statistiche
-  sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
-  **anteprima dinamica** su card finte (fondi e struttura reali; il riflettore segue
-  il puntatore ANCHE nell'anteprima; colori da `CARDCOLORS`, terne concrete via il 3°
-  parametro `cc` delle formule).
-  ⚠️ **QUANTI riquadri (regola della v12.85, richiesta dell'utente).** Se l'effetto
-  ha manopole **per tema** (`glow`, `nums`, `podium`) si mostra **UN SOLO riquadro**,
-  quello del tema in modifica, che **cambia con la tab**: si vede ciò che si sta
-  modificando e si risparmia spazio verticale (misurato: blocco anteprima da 373px a
-  182px). Se invece la config è **unica per i due temi** (`spot`, `press`, `vig`)
-  restano **DUE riquadri**, perché lì un solo valore serve entrambi i temi e va
-  controllato su entrambi. Corollario: l'evidenziazione **`.fxp-edit`** della v12.64
-  **non è più applicata** (col riquadro singolo non c'è nulla da distinguere); le sue
-  regole restano nel CSS come base per un eventuale ritorno alla vista doppia.
-  `buildPanes()` ricostruisce i riquadri al cambio di tab, quindi `knobs`/`hasTh`/
-  `kTheme` vanno calcolati PRIMA di disegnare l'anteprima.
-  Regole dell'anteprima (richieste utente, v12.41), valide quando i riquadri sono
-  due: **tema CHIARO per primo** (come le altre anteprime del progetto),
-  **niente etichette 'Scuro'/'Chiaro'**, card rese
-  **SEMPRE in stato hover** (fondo acceso e bagliori attivi, altrimenti gli slider
-  non si vedrebbero in tempo reale) e **padding sinistro abbondante** nel riquadro
-  (le sfumature lunghe di `out`/`aura` escono dalla card e venivano tagliate). Ogni
-  modifica si applica SUBITO anche alle card vere dietro. Piè a **tre tasti** (dalla
-  v14.11): 'Ultimo salvato' (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e
-  riapre), **'Azzera'/'Reset'** e 'Chiudi'; il salvataggio resta SOLO nel
-  pannello Feature flag.
-  - ⚠️ **Si chiamava 'Predefiniti'/'Defaults' fino alla v14.79** (segnalato dall'utente:
-    'sta nel pulsante a pelo'). Misurato col font reale a 390px: nel tasto lo spazio
-    utile è **88,5px** e 'Predefiniti' ne occupava **87,3**, cioè 1,2px di margine.
-    'Azzera' sta a **54,3px**. Scartata 'Standard' (75,1px: ci sta, ma dice uno STATO
-    dove gli altri due tasti dicono un'AZIONE). ⚠️ 'Ultimo salvato' sta su due righe
-    da sempre e va bene così: è il tasto più largo e non si accorcia.
-  - **'Predefiniti'** (v14.11, richiesta dell'utente: 'un tasto che ripristini il
-    valore standard, ovvero quello attuale, per tornare ai valori correnti in
-    qualsiasi momento dopo aver sperimentato') riporta l'effetto a
-    `normFxEffect(key, SITE_FLAGS_DEFAULT[key])`. È **complementare** a 'Ultimo
-    salvato': quello riporta a ciò che sta sul repo, questo alla resa con cui
-    l'effetto è nato - dopo un salvataggio coincidono, prima no. Il **doppio clic su
-    un singolo slider** fa già lo stesso per la SUA manopola (v13.38): il tasto lo fa
-    per tutte, interruttore compreso. Vale per **tutti e 7** gli effetti regolabili
-    (un solo piè condiviso) e tocca solo l'effetto in modifica. Passa da
-    `dockRebuild`, come 'Ultimo salvato': è un rebuild TECNICO, quindi in vista divisa
-    non riporta il sito al tema d'apertura. Esc chiude `#fx-modal` PRIMA
-  del `#fab-modal` sotto (ramo dedicato nell'handler Escape); `#fx-modal` è nelle
-  guardie dei tasti `P` e `.`. Il CSS dell'editor è iniettato
-  (`injectFxEditorCss`), invisibile al Nu.
-- ⚠️ **Tetti in `vh` delle modali admin e Modalità XL (fix v12.65).** Le unità
-  viewport risolvono in px di **layout**: con `html.zoom-big{zoom:1.3}` la modale
-  ne occupa 1.3× **visivamente**, quindi un `max-height:92vh` non scattava mai e
-  la modale sforava lo schermo **col tasto × fuori dal viewport, incliccabile**
-  (misurato: × a −23px e −60px a 1280×720 in XL). Due correttivi:
-  1. il fattore è esposto al CSS (`html{--zoomf:1}` / `html.zoom-big{--zoomf:1.3}`)
-     e tutti i tetti si scrivono `calc(<N>vh / var(--zoomf, 1))`;
-  2. `.fab-modal-overlay` è `align-items:flex-start` + `overflow-y:auto` con
-     `margin:auto` sul box, invece di `align-items:center`: con la centratura flex
-     l'eccedenza esce dai DUE lati e la parte alta è irraggiungibile (difetto noto
-     di flexbox), coi margini automatici la centratura resta identica quando il
-     contenuto ci sta. Verificato: gap sopra/sotto uguali al pixel su tutte le
-     modali, × sempre cliccabile a 1024/1280/1440/390px con e senza XL.
-- **Contrasto dei controlli del pannello (v12.65).** Le tab (Desktop/Mobile e
-  Chiaro/Scuro) marcano l'inattiva con **opacità 0.78**, non 0.45: a 0.45 il testo
-  scendeva a 2.85:1 in chiaro e 3.47:1 in scuro, sotto la soglia 4.5:1 del testo
-  normale; l'attiva si distingue dal **bordo accento**. L'outline `.fxp-edit` ha un
-  colore **per tema** (l'azzurro chiaro dava 2.88:1 sul fondo chiaro, sotto il 3:1
-  di WCAG 1.4.11). Le note delle manopole sono collegate al controllo con
-  `aria-describedby`. Misurato dopo il fix: outline 4.24:1 scuro / 5.84:1 chiaro,
-  tab inattiva 7.22:1 / 7.85:1, axe 0.
-- **Tasti salto: rivelati dal focus da tastiera (v12.85).** `.jump-fabs` sta a
-  `opacity:0` a riposo, ma i suoi 4 tasti restano nell'ordine di tabulazione: col
-  `Tab` il focus ci finiva sopra mentre sono **invisibili** (misurato: al 367° `Tab`
-  il focus è su 'Vai in cima' con opacità effettiva 0, dentro il viewport, e l'anello
-  di focus non si vede perché il genitore è trasparente). È il criterio **focus
-  visibile** di WCAG (2.4.7), che axe non intercetta. Fix: `.jump-fabs:focus-within`
-  li rivela e `.jump-fab:focus-visible` porta il tasto a piena opacità come l'hover.
-  ⚠️ **Serve `!important`**: la dissolvenza (`showJumpFabsTemporarily`) pilota il
-  contenitore con uno stile **inline**, che batte il foglio; col `!important` il
-  focus vince anche sul timer da 3s che scade mentre si tabula, e appena il focus
-  esce torna a valere l'inline. Scelta di merito: **rivelarli** invece di toglierli
-  dall'ordine di tabulazione, perché servono proprio a chi naviga senza mouse.
-  Verificato: `Enter` scorre ancora in cima, e a modale aperta restano inerti.
-- **`Attiva` / `Enable`, non più 'Effetto attivo' (v12.95, richiesta dell'utente):**
-  vale per TUTTI e sei gli effetti, è la prima voce di ogni sotto-modale.
-- **Le caselle DISABILITANO le impostazioni che governano (v12.95, richiesta
-  dell'utente).** Ogni voce può portare un campo **`dep`**; `depOk()` lo valuta a
-  ogni `renderKnobs` (che ora rigira anche a ogni click su una casella, non solo al
-  cambio di tab) e la riga spenta prende la classe **`.fxk-off`** (opacità 0.5) coi
-  controlli `disabled`. Condizioni: `'on'` = l'interruttore dell'effetto spegne tutto
-  il resto; per il bagliore `'inner'` = almeno un lato interno acceso, `'outer'` =
-  'Ai lati' acceso **e** almeno un lato da cui uscire, `'around'` = 'Intorno alla
-  card' acceso. ⚠️ L'opacità della riga spenta resta **0.5 e non meno**: sotto, il
-  testo scenderebbe fuori soglia di contrasto, e un controllo disabilitato va
-  comunque letto.
-- **Anteprima FISSA in alto (v12.95, richiesta dell'utente; globale, non solo XL).**
-  `.fxp-wrap` è `position:sticky; top:0` e resta in vista mentre si scorre fino alle
-  manopole in fondo: senza, in Modalità XL si regolava alla cieca. Ha un **fondo
-  opaco** col colore della modale, altrimenti le righe che le passano sotto si
-  vedrebbero in trasparenza. ⚠️ **Lo scorrimento è passato a un contenitore INTERNO**
-  (`.fx-scroll`): col box come area di scorrimento, il tasto `×`, che è
-  `position:absolute` dentro il box, scorreva via col contenuto e diventava
-  irraggiungibile (misurato: dopo aver scorso in fondo era fuori dal viewport). Ora
-  il box è `flex` in colonna e non scorre, quindi `×` resta ancorato in alto e il
-  piè di pagina in basso.
-- **Respiro DINAMICO del riquadro d'anteprima, solo per il bagliore (v12.95).**
-  È l'unico effetto che disegna FUORI dalla card, e l'anteprima lo **tagliava**
-  (segnalato dall'utente con uno screenshot). Un padding fisso non basta, perché
-  quanto esce dipende dalle manopole: `paint()` calcola quanto arriva davvero (la
-  fuga sfuma per `oamp × 1.6`, l'alone per `aamp`) e riserva quello spazio, con un
-  tetto a 56px (oltre, la coda della sfumatura è comunque invisibile e la modale
-  diventerebbe enorme). Misurato: 26px con solo l'interno, 54px alla fuga massima.
-  Gli altri effetti restano compatti (classe `.fxp-airy` solo sul bagliore): lo
-  spazio in più sarebbe soltanto vuoto.
-- **Segno di spunta MINIMALE (v12.85, richiesta dell'utente).** Le checkbox del
-  pannello e delle sotto-modali non usano più il disegno nativo (pesante e diverso su
-  ogni sistema): `appearance:none` + quadrato stondato + spunta disegnata in
-  `::after` (due lati di un rettangolo ruotati di 45°, il modo classico di ottenerla
-  senza SVG né font). ⚠️ Tre vincoli da non rompere: il bersaglio di tocco resta la
-  **label da 24px** (regola qui sotto, non la casella, che è ~16px); il **focus da
-  tastiera** ha un anello proprio, perché con `appearance:none` quello nativo
-  spariva insieme al disegno; il segno bianco sul fondo acceso resta ben sopra il
-  3:1 di WCAG 1.4.11. `accent-color` non basterebbe: cambia la tinta, non la forma.
-  Le regole vivono in `injectFxEditorCss` (invisibile al Nu) e sono scoped a
-  `#fx-modal`/`#fab-modal`.
-  - **Esteso a TUTTO il sito nella v13.44 (richiesta dell'utente: 'mi riferivo a
-    tutti quelli del sito, ma principalmente a quelli del pannello').** La v12.85
-    aveva cambiato solo le modali degli effetti; restavano fuori le **caselle delle
-    categorie nel Pannello** (`.ctrl-chk`, che disegnava il segno col glifo
-    **`content:'✓'` di EB Garamond** - grazie e code curve, l'opposto del 'dritto'
-    chiesto) e quelle dei **badge nell'editor personaggi** (`.admin-flag-chk input`,
-    caselle **native** con `accent-color`: il segno lo disegnava il sistema
-    operativo, quindi diverso su ogni browser). Ora tutte e tre le famiglie usano lo
-    stesso `::after` geometrico. Queste due regole vivono nel **CSS statico** (non in
-    `injectFxEditorCss`), perciò le vede il Nu: scritte in **longhand**
-    (`border-style`/`border-color`/`border-width`), non con lo shorthand `border`
-    senza width, per non introdurre forme insolite nel foglio validato.
-  - ⚠️ **Fondo e colore del segno restano quelli storici** dove già c'erano
-    (`--gold` / `--ink` nel Pannello e in admin, bianco su accento nelle modali):
-    cambia solo la FORMA, così i contrasti già verificati non si muovono (misurati
-    dopo il cambio: 5.81:1 in scuro, 6.57:1 in chiaro).
-  - ⚠️ **Nell'editor personaggi i margini della casella restano quelli dell'UA**:
-    azzerarli stringerebbe la griglia dei 22 badge, tarata su quelle spaziature.
-    Verificato al pixel che nulla si sposta (pannello, righe categoria, riga badge e
-    posizione delle caselle identiche a prima della modifica).
-- **Bersagli di tocco da 24px nel pannello (WCAG 2.2, criterio 2.5.8; v12.75).**
-  Gli slider delle manopole erano alti **16px** e le checkbox native lo sono per
-  costruzione: sotto il minimo di 24×24px. Correzione senza toccare l'aspetto:
-  `input[type=range]` ha `height:24px` (il track resta disegnato com'era, cresce solo
-  la zona sensibile) e le **label** di riga/manopola sono `display:flex;
-  align-items:center; min-height:24px`, così l'etichetta cliccabile forma col
-  quadratino un bersaglio conforme. Misurato: righe 31px, fader 35px, slider 31px.
-- ⚠️ **Fondo di riferimento della pill nell'anteprima: si COMPONE, non si stima
-  (fix v12.75).** Il testo della pill-tipo è reso AA con `ccAaText(tinta, fondo)`, ma
-  il fondo va composto per davvero su **tre strati**: riquadro d'anteprima → card
-  (con l'alpha dello stato **hot** corrente, non quello a riposo) → velo della pill.
-  La v12.64 lo stimava sul solo riquadro a card ferma: nell'editor del **bagliore**,
-  dove le card sono rese accese, lo scarto bastava a scendere sotto soglia (axe:
-  4.35:1 in scuro e 4.19:1 in chiaro, su testo da 9.4px). Regola generale: quando un
-  colore si posa su strati semitrasparenti sovrapposti, il fondo per il calcolo AA si
-  ottiene applicando gli `over` uno per uno, mai con una scorciatoia a un solo strato.
-- **Salvataggio:** `saveSiteFlagsToRepo` → `doCommit(msg, dati, null, true, null,
-  SITE_FLAGS)` → il Worker scrive `siteFlags` **senza bumpare la versione**
-  (`keepVersion:true`, come i salvataggi colore: richiesta dell'utente dalla v12.27,
-  accendere un effetto non è una modifica di contenuto). Il controllo di freschezza
-  resta affidabile perché si basa sul confronto dei ref git, non sul numero.
-  `SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Checkbox e manopole
-  applicano l'effetto **subito** (anteprima live sulle card dietro). Il Worker
-  (rev 15) valida anche la forma a oggetto: booleano O oggetto piatto di
-  booleani/numeri finiti/stringhe ≤32 char, max **40** manopole per effetto (era 12
-  fino alla rev 14; controlla la FORMA, i limiti veri li applica il client con
-  `FX_RANGE`).
-- Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**:
-  altrimenti il flag `zoomBig` sembrerebbe non funzionare.
-- ⚠️ **Go-live di una release che tocca sito E Worker: aspettare la spia `rev`.**
-  Sito (GitHub Pages) e Worker (Cloudflare Workers Builds) si ridistribuiscono
-  dallo **stesso push su `master`** ma su infrastrutture diverse, con tempi
-  diversi. Finché il Worker è alla revisione **precedente**, un salvataggio dal
-  pannello **sembra riuscire** ma la config nuova **non viene scritta** (il Worker
-  vecchio ignora il campo che non conosce e, se una config era già stata
-  salvata, la **perde**, non conoscendone il lettore). Perciò: dopo il merge,
-  prima di salvare dal pannello, verificare la revisione attiva con un `GET` al
-  Worker (`{ok:false,error:'method',rev:N,rl:bool}`) e attendere il numero atteso.
-  Nota: il commento 'Deployment successful' del bot Cloudflare su una PR è la
-  build del **branch**, NON la promozione in produzione: fa fede solo la spia
-  `rev`. Verificato il 2026-07-25: a PR aperta la produzione era ancora `rev 12`.
+**Dove vivono i flag:** `var siteFlags` in `dati.js`, scritto dal Worker come `cardColors` e
+`badgeAdjust`. A runtime `SITE_FLAGS` = i flag salvati validi, altrimenti
+`SITE_FLAGS_DEFAULT` (`zoomBig` e `pat` spenti, gli altri accesi). Un salvataggio che **non**
+invia `siteFlags` lo **preserva** (`readSiteFlags`); `validSiteFlags` rifiuta config
+malformate (400 `bad-siteflags`). Worker **rev 15**.
+
+### Config per-piattaforma (chiavi `_m`)
+
+Ogni effetto ha DUE configurazioni indipendenti: **desktop** (chiave base) e **mobile**
+(suffisso **`_m`**, viewport ≤768px = `FX_MOBILE_MQ`, ricalcolo al varco). Le chiavi `_m`
+sono PIATTE come le altre, quindi il Worker le valida senza modifiche; una `_m` mancante è
+**seminata come copia della desktop**. `zoomBig` resta UNICO (desktop/tablet-only).
+**`fxCfg(k)`** è l'unico accesso giusto per il rendering (`flagOn` lo usa); l'accesso diretto
+`SITE_FLAGS[k]`/`SITE_FLAGS[k+'_m']` è riservato agli editor.
+
+- ⚠️ **Eccezione al discriminante:** gli effetti in **`FX_PTR`** (oggi il solo `hov`)
+  scelgono la variante dalla **capacità del puntatore** (`FX_PTR_MQ`) e non dalla larghezza,
+  perché governano la resa sotto il puntatore. Vedi la voce di `hov`.
+- ⚠️ **TETTO DI 40 MANOPOLE PER EFFETTO** (Worker rev 15; era 12 fino alla rev 14, e il
+  bagliore per-tema a due lati ne richiede 22). Contarle PRIMA di progettare un effetto
+  nuovo: superare il tetto costringe a toccare il Worker, e con esso arriva la race di
+  deploy sito/Worker.
+- ⚠️ **DUE CRITERI, UNA SOLA COPPIA DI TAB** (segnalato dall'utente). Con due criteri
+  conviventi, ogni dispositivo 'a metà' fa divergere la variante che si REGOLA da quella che
+  si VEDE: una finestra desktop **stretta col mouse** regolava `_m` mentre in pagina valeva
+  la desktop di `hov`; un **tablet touch largo** è il caso simmetrico. Tre rimedi:
+  1. **senza tab il suffisso è PER-RIGA** e vale la variante ATTIVA (**`fxActiveSfx(k)`**,
+     estratta da `fxCfg` come fonte unica): *quello che regoli è quello che vedi*. ⚠️ Il
+     pannello **senza tab** non è 'il pannello mobile': non assumerlo nel codice;
+  2. **con le tab, un avviso in fondo** dice quali voci non seguono la tab scelta: generale
+     se sono tutte, **per voce** se solo alcune. ⚠️ NON sta sulle tab (nessuna delle due
+     sarebbe 'quella che vedi', essendo la variante attiva **per effetto**) né sulle righe,
+     che restano una lista pulita di interruttori;
+  3. **l'anteprima su card finte segue lo stesso criterio** (classe `fxdock-alt`).
+- **UI:** da desktop **due tab 'Desktop'/'Mobile'** (Modalità XL vive solo nella tab
+  Desktop); da mobile niente tab. La sotto-modale riceve la variante e la indica nel titolo;
+  modificare la variante NON attiva non cambia nulla in pagina, perché le regole iniettate
+  seguono `fxCfg`.
+
+### Manopole per tema (`_d`/`_l`)
+
+Una manopola può valere per un solo tema: nel descrittore porta `th:'d'`/`th:'l'` e la chiave
+nei dati prende il **suffisso `_d`/`_l`**. È **ortogonale** alle chiavi `_m`: il suffisso di
+tema sta nel nome della MANOPOLA, quello di piattaforma nel nome dell'EFFETTO
+(`glow_m.amp_l`). L'accesso giusto è **`fxTh(cfg, 'amp', light)`**, mai `cfg.amp`.
+
+- ⚠️ **Quando una manopola diventa per-tema, il fattore di tema va TOLTO dalla formula**, o
+  si moltiplicherebbe due volte: le formule del bagliore applicavano moltiplicatori fissi al
+  chiaro (`int` ×0.8, `oint` ×0.77, `aura` ×0.75) e il podio nessuno; ora il valore lo decide
+  l'admin e i **default lo riproducono**.
+- **Migrazione delle config salvate: obbligatoria** (`FX_LEGACY` + `fxMigrateLegacy`,
+  chiamata da `normFxEffect`). Una config vecchia ha `amp` e non `amp_d`: senza migrazione il
+  normalizzatore ripiegherebbe sul **default**, buttando via la taratura dell'utente
+  (`amp:60` sarebbe tornato a 34). La mappa dice chiave nuova → [chiave vecchia, fattore], e
+  i fattori dei `_l` sono quelli che le formule applicavano prima: dopo la migrazione la resa
+  è **identica al pixel**, ma diventa modificabile.
+
+### Forme del flag e meccanismo
+
+- **Due forme.** Un flag è un **booleano** (solo on/off: `zoomBig`) **oppure un oggetto
+  piatto** `{on:bool, ...manopole}`. `normSiteFlags()` normalizza qualunque input: la vecchia
+  forma booleana di un effetto regolabile resta accettata (solo interruttore, manopole ai
+  default), i numeri fuori scala rientrano nei limiti **`FX_RANGE`** (unica fonte per slider
+  e clamp, quindi le scale NON si duplicano qui), le chiavi ignote sono scartate. `flagOn(k)`
+  è l'unico modo giusto di chiedere 'è acceso?'. ⚠️ Nel ripristinare `SITE_FLAGS` da
+  `SITE_FLAGS_SAVED` passare SEMPRE da `normSiteFlags`: lo snapshot può venire da un file
+  dati vecchio.
+- **Una classe su `<html>` per flag** (`SITE_FLAG_CLASS`), applicata da `applySiteFlags()`,
+  che chiama anche `injectFxRules` + `wireSpotlight`. ⚠️ **Tutte** le regole CSS degli
+  effetti sono scoped a quella classe: a flag spento l'effetto **non esiste**, non è solo
+  invisibile; un effetto nuovo va delimitato allo stesso modo. Gli effetti regolabili hanno
+  le regole in **`injectFxRules()`** (`<style id="fx-dyn">`, ri-iniettato a ogni modifica), e
+  le FORMULE (`fxGlowInner`, `fxGlowOuter`, `fxSpotBg`, `fxVigBg`) sono condivise con
+  l'anteprima, così anteprima e pagina non possono divergere.
+- ⚠️⚠️ **I VALORI AMMESSI DELLE MANOPOLE A SCELTA VIVONO IN `FX_SEL`, SOPRA I DEFAULT, MAI
+  IN `FX_KNOBS`** (difetto arrivato in PRODUZIONE, corretto in v14.53). `var SITE_FLAGS =
+  normSiteFlags(...)` gira **durante il parsing**, quando `FX_KNOBS` (mille righe più in
+  basso) è ancora `undefined`: leggerlo da lì fa un TypeError che interrompe il caricamento e
+  lascia la **classifica VUOTA**. Era invisibile finché `pat` non era nel file dati, perché
+  con un valore `undefined` la funzione usciva prima: si è manifestato al **primo salvataggio
+  dal pannello**, su un sito già pubblicato e apparentemente sano. Lezione: una funzione
+  chiamata dalla normalizzazione può leggere SOLO ciò che è definito sopra `var SITE_FLAGS`,
+  e un test che non salva la config non lo scopre. `FX_KNOBS` costruisce le sue `opts` da
+  `FX_SEL` con **`fxSelOpts`**, così la fonte resta una sola.
+- ⚠️ **Le manopole a stringa sono DUE tipi e vanno distinte**: **`sel`** (scelta fra voci,
+  elenco in `opts`, fuori elenco → default) vale solo se il valore è nell'elenco, **`col`**
+  (`<input type=color>`) se è un hex a 6 cifre. Il controllo unico trattava tutto come
+  scelta, quindi i COLORI ricadevano sul default: il file conservava `#ffc524` e il sito
+  mostrava `#ffffff`. L'unica funzione è ora **`fxStrOk`**.
+
+### Gli effetti
+
+**1. `glow`: bagliore** (`fx-glow`, 'Bagliore'/'Glow'). La striscia diffonde la tinta di
+famiglia dentro la card su due strati derivati dalle manopole. Le manopole numeriche **non
+sono per-lato** ('non ha senso un'impostazione asimmetrica', utente): sinistra e destra
+condividono le stesse, e il lato destro resta separato solo come **accensione**.
+
+- **Quattro caselle di POSIZIONE**, che governano le tre sezioni di manopole: **`pl`** a
+  sinistra (interno, dalla striscia), **`pr`** a destra (interno, ombre `inset`), **`ps`** ai
+  lati (esterno: esce FUORI dalla card, dai lati che `pl`/`pr` hanno acceso), **`pa`**
+  intorno alla card (alone perimetrale). Le manopole si dividono in **INTERNO** (`amp`,
+  `int`), **ESTERNO** (`oamp`, `oint`), **INTORNO ALLA CARD** (`aamp`, `aint`), più **`all`**
+  (non per tema) = tutte le card accese invece della sola card attiva, classe extra
+  `fx-glow-all`.
+  - ⚠️ `ps` **è** la vecchia casella 'Anche fuori dalla card', che l'utente non capiva ('se
+    è esterno, è ovvio che va fuori').
+  - ⚠️ Fino alla v12.85 `aamp` non esisteva e la sfumatura dell'alone era **derivata** da
+    quella interna (`amp × 0.6`): la migrazione copia quel calcolo, quindi chi aveva l'alone
+    acceso non vede alcun cambiamento.
+- ⚠️ **LISTA DI OMBRE A LUNGHEZZA E ORDINE FISSI (fix del 'lampo').** Le parti spente NON si
+  omettono: si emettono con **alpha 0**, tenendo geometria e posizione. Il browser interpola
+  le `box-shadow` **per posizione**, quindi togliendo o aggiungendo una voce le altre slittano
+  e si trasformano l'una nell'altra: l'ALONE si morfava nella fuga sinistra mentre un alone
+  nuovo ricresceva da zero, e il lampo si vedeva muovendo una manopola che non c'entrava.
+  Ordine fisso: **fuga sinistra, fuga destra, alone**, poi l'interno destro `inset` in coda,
+  perché un'ombra `inset` non può interpolare con una normale. Vale sia in pagina sia
+  nell'anteprima: se l'anteprima omettesse le voci spente avrebbe il lampo che la pagina non
+  ha più, ed è proprio lì che l'utente lo vedeva.
+- ⚠️ **Il bagliore INTERNO destro è fatto con ombre `inset` della CARD**, non con una seconda
+  striscia: a destra non c'è nulla da cui farlo partire, i due pseudo-elementi della card sono
+  già occupati (`::before` = riflettore, `::after` = linee mediane admin) e l'`inset` è
+  tagliato dal `border-radius` senza aggiungere nodi. **A destra NON c'è una striscia
+  colorata**: solo il bagliore (scelta dell'utente).
+- ⚠️ **Il numero di posizione sta SOPRA il bagliore** (`.rank-num` è `position:relative;
+  z-index:2`), perché la sfumatura interna passava sopra le cifre e velava i metalli del
+  podio. Non rimuoverlo.
+- ⚠️ **Niente sollevamento né ombra grigia sulla card**: card **'virtuali', non schede
+  fisiche**, e il lift del mockup è stato scartato apposta. Il bagliore interno è tagliato a
+  sinistra dall'`overflow:hidden`; quelli ESTERNI e l'ALONE sono ombre PROPRIE della card,
+  perché l'overflow taglia solo i figli. Le fughe hanno **spread negativo** così escono SOLO
+  dal proprio lato: senza spread avvolgevano tutta la card (effetto neon, scartato). E il
+  blur è **`1.6b`**, non `2b`: a `2b` con spread `-b` la coda gaussiana traboccava sul
+  perimetro ad ampiezze alte, e da lì è nata l'aura come manopola separata.
+
+**2. `spot`: riflettore** (`fx-spot`, 'Riflettore'). Alone bianco molto sfumato che
+schiarisce la card sotto il puntatore e lo SEGUE, confinato dentro la card. Riusa
+`.rank-item::before`, il vecchio velo statico di hover. Manopole `r` (raggio) e `int`, il cui
+**tetto 0.12 è il valore verificato con axe**: 0 violazioni anche al massimo, hover incluso.
+
+- ⚠️ **Esiste SOLO dove esiste un puntatore vero**: le regole stanno dentro `@media
+  (hover:hover) and (pointer:fine)` e `wireSpotlight` non aggancia il listener se
+  **`FX_PTR_MQ`** non combacia. Il gate è sulla **capacità**, non sulla larghezza: un tablet
+  con mouse lo ha, un portatile touch no. Motivo: su touch l'hover non c'è, quindi l'effetto
+  non si vedrebbe mai ma il `pointermove` continuerebbe a lavorare a ogni frame durante lo
+  scroll. `FX_PTR_MQ` è la ex `SPOT_HOVER_MQ`, rinominata perché ora la condividono due
+  effetti; il suo unico listener rilancia `applySiteFlags`.
+- ⚠️ **NON ha la variante `_m`** ('togliamo direttamente il riflettore da mobile', utente):
+  la config è **UNICA** (`fxCfg('spot')` bypassa `FX_MOBILE_MQ`) e vale ovunque esista un
+  puntatore, incluse le finestre strette su desktop. La voce sparisce dalla tab Mobile e dal
+  pannello aperto da mobile (flag `noMob` in `SITE_FLAG_ITEMS`, come `zoomBig`) e il titolo
+  della sua sotto-modale non porta il suffisso; un `spot_m` residuo nei dati è ignorato.
+- Il tema CHIARO usa opacità ~3× (cap 0.5): su fondo quasi bianco lo stesso valore sarebbe
+  invisibile, e lì schiarire ALZA il contrasto del testo scuro. ⚠️ Inseguimento con UN
+  listener `pointermove` delegato su `#rank-list`, coalescente via rAF, che aggiorna solo
+  `--spx/--spy` e mai la stringa del gradiente; sotto zoom si divide per `z =
+  rect.width/offsetWidth`.
+
+**3. `press`: incisione** (`fx-press`, 'Incisione'/'Engraving'): letterpress in tema chiaro
+(lume bianco sotto + velo scuro sopra), stacco morbido in scuro. Manopole `name`, `lab` e
+`num`, quest'ultima con default `false` per non cambiare la resa di chi ha già salvato. Le
+etichette sono FIGLIE di `.rank-name` e l'ombra si eredita, quindi le combinazioni si
+ottengono azzerandola sulle figlie. ⚠️ La regola di `num` è volutamente a specificità BASSA,
+sotto quella del podio: così i primi tre conservano l'ombra metallica dedicata e l'incisione
+vale dal quarto in giù. Regole in `injectFxRules` (formula `fxPressShadow`).
+
+**4. `vig`: vignettatura** (`fx-vig`, 'Alone sfumato'/'Soft halo'): alone radiale come
+**livello di sfondo del body** (`background-image` + `background-attachment:fixed`) e non un
+elemento sovrapposto, così non serve alcun nodo nuovo e non ci sono problemi di impilamento.
+Manopole `int` e `start`; in chiaro alpha ×0.38 e tinta ardesia. Le vecchie regole statiche
+sono state RIMOSSE dal CSS e i default le riproducono (0.34/38%). Nell'anteprima è applicata
+al FONDO dei due riquadri.
+
+**5. `podium`: podio metallico** (`fx-podium`, 'Effetto podio'/'Podium effect'): numeri 1-2-3
+con gradiente oro/argento/bronzo (`background-clip:text` + `color:transparent`, come il
+titolone) e `text-shadow:none`, perché il glow grigio base di `.rank-num` intorbidirebbe il
+metallo. Le classi **`vis-1/2/3`** le assegna `renderList` accanto a `vis-top`, quindi il
+podio **segue i filtri attivi**.
+
+- Manopole `int` (**'Contrasto'/'Contrast'** in UI: è un `filter:contrast()` sul risultato e
+  regola lo STACCO chiaro/scuro; si chiamava 'Intensità del metallo', ma il contrast alza
+  anche la cromia percepita e il nome confondeva) e `lum` (`brightness`); 1/1 = resa neutra.
+  ⚠️ **PER TEMA** (`int_d`/`int_l`/`lum_d`/`lum_l`): i metalli hanno gradienti diversi nei due
+  temi, quindi una sola coppia non
+  poteva servirli entrambi, ed è la ragione per cui l'utente teneva l'effetto **spento**.
+- ⚠️ La regola CHIARA iniettata **ripete il `filter`** e ripete anche `color:transparent` +
+  clip: senza la ripetizione il tema chiaro erediterebbe il filtro scuro e mostrerebbe la
+  tinta famiglia, la cui regola ha la stessa specificità della clip condivisa e viene dopo
+  nel documento.
+- ⚠️ L'**argento** ha molte fermate (lume/ombra/lume) perché a 2 sole 'sembrava un numero
+  normale' (utente). I metalli del tema CHIARO sono stati riequilibrati: quelli della
+  v12.28-52 erano troppo scuri.
+- ⚠️ **PODIO PARAMETRICO.** I tre gradienti li genera **`fxPodiumGrad`** da un'**identità**
+  fissa per metallo (`PODIUM_IDENT`: tinta, saturazione base, scheletro di luminosità a 7
+  fermate, dalla 'proposta A' del mockup approvato) più manopole **CONDIVISE dal trio**, per
+  tema: **`rifl`** (il lampo speculare a metà glifo), **`top`** (il bordo luminoso in cima),
+  **`sat`** (la saturazione, quanto è CARICA la tinta, da non confondere con `int`),
+  **`crisp`** e **`tamp`**. Condizione posta dall'utente: controlli unici e stili sempre
+  coerenti, garantito per costruzione, una formula sola e tre tinte.
+  - **`crisp`** nitidezza del riflesso: la SAGOMA è una banda a larghezza FISSA (49%-59%
+    della corsa, sempre presente) e la manopola governa solo quanto è SFUMATO il suo bordo.
+    ⚠️ La v13.38 stringeva la rampa attorno a una fermata singola, quindi a nitidezza bassa
+    si assottigliava la sagoma stessa: non era l'idea dell'utente, non tornarci.
+  - **`tamp`** ('Ampiezza del bordo'/'Edge width'): dove FINISCE il bordo luminoso, in punti
+    della corsa logica del glifo, col default **18** = il valore storico, quindi chi non la
+    tocca vede la resa di prima (verificato pixel-identico). Si muove SOLO la fermata di
+    fine: il picco resta ancorato alla cima e il tetto sta sotto la fermata del corpo, così
+    il bordo non lo invade. È il complemento di `top`, che dice quanto il bordo è CHIARO, non
+    quanto è spesso.
+  - Regole da non rompere: la **saturazione dei riflessi SALE con la manopola ma in
+    proporzione alla saturazione propria del metallo** (`s0 × (1 + k·manopola)`), così i
+    metalli caldi hanno riflessi caldi e il quasi-grigio resta quasi-grigio (una spinta
+    assoluta rendeva BLU il lampo dell'argento chiaro; abbassarla sporcava di grigio i lampi
+    caldi: entrambe scartate dai numeri); l'**ultima fermata, ancora scura, NON dipende dalle
+    manopole**, perché tiene la definizione del bordo del glifo e il contrasto ai livelli
+    storici; i **default** (`sat 1, top 0.7, rifl 0.8`) riproducono la proposta A, e
+    l'asimmetria storica (lampo solo sull'argento) non è riproducibile con manopole
+    condivise, per costruzione, deciso con l'utente ('sì, va benissimo'). La taratura si rifà
+    OFFLINE con `scratchpad/tune_podium.py` (stessa formula in Python), confrontando le
+    fermate coi valori attesi prima di toccare `PODIUM_IDENT`. ⚠️ Lo script va aggiornato con
+    la rimappatura qui sotto, altrimenti confronta percentuali che non sono quelle emesse.
+  - ⚠️⚠️ **LE POSIZIONI DELLE FERMATE SONO LOGICHE, NON REALI: si rimappano sulla fascia che
+    il glifo intercetta davvero.** Le percentuali di un gradiente corrono sul **box del
+    numero**, molto più largo della cifra (76×32.8px, testo **centrato**) e più alto di essa;
+    con l'angolo a 168deg la cifra intercetta solo il tratto centrale. Misurato applicando al
+    numero 20 bande nette da 5% e contando i pixel per banda: arriva sul glifo solo il
+    **20%-76%**. Il bug corretto in v13.45: il **bordo luminoso** (fermate al 3% e 18%) e
+    l'**ancora scura finale** (86%-100%) cadevano FUORI dal glifo, quindi la manopola 'Bordo
+    luminoso' non produceva **alcun** cambiamento visibile (0 pixel diversi tra `top` 0 e 1).
+    Ora `fxPodiumGrad` rimappa 0-100 logico su **`PODIUM_GLYPH`** = [20, 76], con **un
+    decimale** perché la rampa più netta della nitidezza sopravviva alla contrazione.
+    - La fascia è **stabile**: identica a 1280px, in Modalità XL e a 390px, e per tutti e tre
+      i metalli, quindi una costante basta e non serve misurare a runtime.
+    - ⚠️ **L'anteprima ha una fascia PROPRIA** (`PODIUM_GLYPH_FXP` = [25, 80]): le card finte
+      usano `.fxp-num`, proporzionato diversamente. Con la sola fascia della pagina il bordo
+      luminoso sarebbe rimasto invisibile **nell'anteprima**, cioè proprio dove si regola
+      sotto la soglia del dock.
+    - Se cambia la geometria del numero (larghezza del box, allineamento, angolo del
+      gradiente), le fasce vanno **rimisurate col metodo delle bande**: è l'unica prova
+      diretta di quale tratto arriva sull'inchiostro.
+  - ⚠️ **Anteprima: numeri 1 e 2, ORO e ARGENTO** (utente): l'argento è quello che più ha
+    bisogno d'occhio. Negli altri editor le card d'anteprima usano invece le posizioni 4 e 5,
+    FUORI dal podio, altrimenti l'anteprima mentirebbe.
+  - ⚠️ **Misurando il colore subito dopo un cambio di flag si legge un valore INTERMEDIO** (o
+    `transparent`): è la `transition:color 0.35s` di `.rank-num`, non un bug, e va atteso
+    ~400-600ms. Trappola in cui si ricade facilmente: ha fatto sembrare che `nums` scavalcasse
+    il podio, mentre la cascata era corretta.
+
+**6. `nums`: numeri colorati.** Vedi '🔢 Numero di posizione nella tinta della card'.
+
+**7. `hov`: colore delle schede** (`fx-hov`): il fondo **e il contorno** della card. Label UI
+**'Colore schede'/'Card color'**; la chiave interna resta `hov`.
+
+- ⚠️ **NOME.** 'Colore al passaggio' (**147.2px** col font reale, mai usata perché va a capo)
+  → 'Al passaggio' → **'Colore schede'**, perché con la manopola del contorno l'effetto
+  governa **la cosa** e non più solo il gesto. Scartata anche 'Colore delle schede'
+  (**125.1px**), su una colonna larga **102px**.
+- ⚠️ **`bd`: 'Contorno più nitido'/'Sharper border': sì/no e nient'altro** ('senza opacità
+  intermedia o altro'), non per tema, seconda voce subito dopo 'Attiva'. **Il contorno
+  cambiava da SEMPRE** al passaggio, per regole **statiche** che nessun flag governava. Ora:
+  **acceso** non si emette nulla e vale il CSS statico, quindi il default `true` riproduce la
+  resa storica al pixel; **spento**, una regola iniettata riporta il `border-color` del
+  `:hover` a quello di RIPOSO, e basta l'`!important` perché **nessuna** regola statica del
+  bordo ce l'ha (per il FONDO serviva invece `html:not(.fx-hov)`, dato che lì la base
+  cardcolor è `!important`). I quattro valori vivono in **`HOV_BORDER`**, fonte unica con
+  l'anteprima: toccando il CSS statico del bordo, aggiornarli.
+  - ⚠️ Il **bordo sinistro** non si muove in nessun caso: lo forza a 1px tenue la regola
+    `!important` della v8.72, e l'identità la dà la striscia.
+  - ⚠️ **L'anteprima non mostrava affatto il contorno** (restava sempre quello di riposo):
+    senza allinearla, la manopola non avrebbe avuto riscontro.
+- **Il FONDO** ha tre manopole **per tema**, nell'ordine chiesto: **`op`** (opacità del velo
+  di tinta), **`sat`** e **`lum`**. Formula **`fxHovBg`**, sintassi RELATIVA di OKLCH come
+  `fxNumColor`: si riscrivono L e cromia della tinta di famiglia lasciando intatta la TINTA. I
+  **default** sono gli alpha storici (0.18 scuro / 0.11 chiaro) con tinta intatta, quindi chi
+  non tocca nulla non vede alcun cambiamento.
+- ⚠️ **SU MOBILE L'EFFETTO ESISTE, e vale da SELEZIONE della card** (segnalato dall'utente;
+  nella v14.10 era stato dato per assente, sbagliato). Misurato in un contesto touch: il tap
+  applica `:hover` e lo lascia **APPICCICATO a tempo indeterminato**, anche dopo uno
+  scorrimento, e si sposta solo tappando un'altra card. Non è un difetto del sito ma il
+  comportamento dei browser touch, e vale dalla v8.72, da quando il fondo hover è una
+  funzione del sistema cardcolor. Perciò `hov` **ha la sua variante** (`hov_m`) e compare
+  anche nella **tab Mobile**; il riflettore resta il solo `FX_UNI`/`noMob`, perché lì senza
+  puntatore non c'è nulla da mostrare.
+- ⚠️ **La variante si sceglie dalla CAPACITÀ del puntatore, non dalla larghezza** (mappa
+  **`FX_PTR`**, scelta dell'utente): una finestra desktop **stretta** ha il mouse e deve
+  tenere la config desktop, mentre un **tablet touch largo** non lo ha e deve prendere quella
+  touch: col criterio dei 768px sarebbero invertiti entrambi. Verificato sui quattro casi
+  (desktop 1400px e 700px → desktop; telefono 390px e tablet touch 1100px → touch).
+- ⚠️ **In UI le sue varianti si chiamano 'Col mouse'/'A tocco'** ('Pointer'/'Touch'), non
+  Desktop/Mobile (**`fxVarLabel`**, scelta dell'utente): è l'asse reale su cui si dividono.
+  Vale nella sotto-modale; le **tab del Pannello** restano Desktop/Mobile, perché governano
+  tutti gli effetti insieme.
+- ⚠️ **L'INTERRUTTORE GOVERNA DAVVERO: spegnerlo NON basta e non bastava.** Il cambio di
+  fondo al passaggio è una funzione **base** del sistema cardcolor (`injectCardColorRules`) e
+  `hov` la scavalca: a effetto spento il tap dava ancora `alpha 0.11`. Ora `injectFxRules` ha
+  un **ramo spento** che riporta ATTIVAMENTE il `:hover` al fondo di **riposo**, scoped
+  `html:not(.fx-hov)` per battere la base e con `!important` per le statiche. ⚠️ **Non si può
+  semplicemente TOGLIERE la regola**: sotto quella cardcolor ci sono ancora le vecchie regole
+  di **Classe** (`.divine:hover` e compagnia), mute solo grazie a quell'`!important`.
+  Verificato: 16 famiglie × 2 temi, **0** cambiano fondo al passaggio a effetto spento.
+- ⚠️ **Il `:focus-within` NON è governato dall'interruttore e resta acceso.** Il nome della
+  card è `role="button" tabindex="0"`, quindi quel fondo è il suo indicatore di **focus da
+  tastiera** (WCAG 2.4.7): non può dipendere da un effetto estetico.
+- ⚠️ **Il risultato va riportato in sRGB** con `rgb(from … r g b / alpha)`, non lasciato in
+  `oklch()`: un colore **semitrasparente** dichiarato in `oklch()` resta tale nel valore
+  calcolato e Chromium lo compone in **oklab**, quindi il fondo risultava diverso dal vecchio
+  `rgba()` fino a **6/255** su un canale (rohir, tinta satura al bordo di gamut) pur con le
+  manopole a 1. Con `rgb(from …)` il round-trip è esatto a ~0.01/255 su tutte e 16 le tinte
+  nei due temi. Il colore OPACO non ha questo problema: `fxNumColor` può restare in oklch.
+- ⚠️ **I limiti sono PRUDENTI, e axe qui NON serve come prova.** Con un `::before` sulla card
+  (il velo del riflettore) axe rinuncia a determinare il fondo e classifica **tutti** i nodi
+  come `incomplete` (2714 incompleti, 0 valutati, in qualunque configurazione e anche a
+  riflettore spento). La verifica del contrasto sulle card va fatta **a calcolo**
+  (`scratchpad/hovaa2.js`).
+- ⚠️ **Il tetto di `op_d` è 0.20 per una ragione MISURATA**, non estetica: oltre quel punto le
+  due righe tenui della card scendono sotto 4.5:1 sulla famiglia dalla tinta più chiara. A
+  0.20 restano a **4.65:1**, a 0.26 scenderebbero a **3.86:1**, il default 0.18 dà
+  **4.95:1**. Alle combinazioni estreme di luminosità (`lum` 1.3) il margine si consuma
+  comunque (4.41:1), ma la SOLA opacità non può più rompere l'AA. Non alzarlo senza
+  rimisurare le due righe.
+- Nell'**anteprima** una card è accesa e una a riposo: è il confronto che serve a regolare
+  l'effetto. ⚠️ La condizione è `rec.first` e NON quella del bagliore: riusarla
+  significherebbe ereditarne la manopola 'Su tutte le card', che con `all` acceso rende accese
+  entrambe e fa perdere il confronto. ⚠️ **A effetto spento l'anteprima resta sull'alpha di
+  RIPOSO anche sulla card 'hot'**: dacché l'interruttore governa davvero, alzarla sarebbe una
+  bugia; gli altri effetti legati all'hover restano invece pilotati da `hot`. Nella variante
+  **touch** la didascalia diventa **'Card toccata'/'Tapped card'**: là non c'è alcun
+  passaggio, la card è selezionata. Il fondo di riferimento per l'AA del testo della pill si
+  compone con la tinta **riscritta** (`ccOklchAdjust`, equivalente JS della formula) e
+  l'opacità configurata, perché con l'effetto attivo lo strato della card non è più la tinta
+  pura a un alpha noto.
+
+**8. `pat`: trama di fondo** (`fx-pat`, 'Trama'/'Pattern'): un motivo elfico ripetuto sullo
+sfondo della pagina, tenuissimo. È l'**unico effetto che nasce SPENTO**, perché aggiunge
+qualcosa che il sito non ha mai avuto.
+
+- **SEI motivi** (`stars`, `mallorn`, `loz`, `seme`, `weave`, `banner`), disegnati come SVG e
+  serviti come **data URI**: nessun file, nessuna richiesta di rete, tile sotto 1 KB.
+  Geometrie in `patSvg` + gli helper `patStar`/`patRomb`/`patCross`/`patRose`/`patRays`/
+  `patLens`, dimensioni in `PAT_TILE`.
+  - ⚠️ **I motivi sono deliberatamente NON narrativi.** Il riferimento che l'utente aveva
+    portato conteneva l'**Albero Bianco** (che è Gondor, quindi Uomini) e l'iscrizione
+    dell'**Unico Anello** in tengwar (che è Sauron): nessuno dei due è elfico. E i tengwar non
+    si inventano: a scriverli a caso si mette in pagina una sciocchezza, contro la regola della
+    verifica delle fonti. Una stella, un rombo o un rosone non affermano nulla di falso. Per
+    la stessa ragione non si ricostruiscono gli **emblemi araldici** disegnati da J.R.R.
+    Tolkien (esistono, in *Pictures by J.R.R. Tolkien*): a memoria si produrrebbero
+    inesattezze. Si prende solo la loro **grammatica**: losanga come cornice, rosone al
+    centro, punti negli interstizi.
+  - ⚠️ **REGOLA PER I MOTIVI FUTURI: il disegno deve essere una RETE CONNESSA**, non una
+    figura ripetuta ('qualcosa di più intrecciato e continuo, che non sembri troppo un
+    incrocio di scaglie di pesce', utente). Le linee devono proseguire da un tile all'altro
+    **con la stessa tangente**, così la cucitura non si legge. Scartati per il difetto opposto
+    (figure affiancate) un ottagramma a contorno e un rosone isolato.
+  - ⚠️ **Scartato l'ESAGRAMMA** (due triangoli compenetrati): benché sia una figura araldica
+    legittima, si legge inequivocabilmente come Stella di David, cioè un simbolo religioso e
+    politico estraneo al Legendarium. Deciso dall'utente: non riproporlo.
+- ⚠️ **DOVE: non si sceglie.** La manopola `area` ('Solo sullo sfondo' / 'Dappertutto') è
+  stata **RIMOSSA** su richiesta dell'utente: la trama non passa MAI sopra o sotto le schede
+  né sulla testata (un `area` residuo nei dati è ignorato da `normSiteFlags`). Il confinamento
+  è una **maschera a DUE ASSI** (`fxPatMask`), due gradienti con **`mask-composite:
+  intersect`**: la trama compare solo dove entrambi sono opachi.
+  - **ORIZZONTALE**: trasparente sulla colonna delle schede, con la sfumatura (`fade`) ai suoi
+    due lati. Le fermate si calcolano da `50%` con `calc` sulla metà di **`PAT_COL`** (920px,
+    la `max-width` di `.scroll`), quindi valgono a ogni larghezza senza misure a runtime; se
+    la finestra è più stretta della colonna il gradiente degenera e la trama non si vede, che
+    è il comportamento voluto.
+  - **VERTICALE**: trasparente in cima fin dove dice **`--pat-t`**, poi la stessa sfumatura.
+    Il valore lo scrive **`syncPatTop()`** ed è il **MASSIMO** fra due cose, e servono
+    entrambe: (1) il **bordo inferiore della testata** finché è in vista (la richiesta
+    letterale dell'utente), che scorre via con la pagina; (2) una **banda FISSA di
+    `PAT_TOPBAR` = 56px**, che non scende mai. ⚠️ La banda serve ai controlli `position:fixed`
+    che restano in alto (**`roccobot.me`** e il **cambio lingua**), i quali scorrendo
+    finirebbero sopra la trama: il loro colore è tarato **ESATTAMENTE** su 4.5:1 a
+    `opacity:0.7`, quindi **margine ZERO** e qualunque velo dietro di loro li porta sotto
+    soglia (al vecchio tetto 0.10 scendevano a 4.53:1 in scuro e **4.45:1** in chiaro, cioè
+    già fuori). Tenendoli fuori dalla trama, il tetto dell'opacità torna una scelta estetica e
+    non un vincolo di accessibilità.
+  - ⚠️ **Perciò la trama resta ancorata al VIEWPORT** (`position:fixed`, come la
+    vignettatura) e `--pat-t` si aggiorna sullo **scorrimento**, coalescente a rAF
+    (`queuePatTop`) e con scrittura solo al varco (`patTopLast`); a effetto spento `syncPatTop` esce subito. Un `ResizeObserver`
+    sulla testata copre a-capo del titolo, cambio lingua e Modalità XL. ⚠️
+    `getBoundingClientRect` dà px **visivi**: sotto XL va diviso per lo zoom, rilevato come
+    `rect.width / offsetWidth`.
+  - ⚠️ **IN VISTA DIVISA il box dello strato si stringe all'area del CONTENUTO** (segnalato
+    dall'utente). In dock la pagina è spostata a destra (`body{margin-left:var(--dockw)}`),
+    quindi la colonna delle schede non è più centrata sul viewport: il `50%` della maschera
+    puntava 200px troppo a sinistra e la trama finiva **sopra le schede**, con margini
+    asimmetrici che rendevano inaffidabile l'anteprima, che in dock è la pagina stessa.
+    Rimedio dichiarativo, una riga:
+    `html.fx-pat.fx-dock body::after{left:var(--dockw,0px)}`. Stringendo il box, `50%` torna a
+    significare 'centro di dove vive la pagina' e la formula non si tocca.
+  - ⚠️ **COME SI MISURA la presenza della trama**: il confronto A/B va fatto fra trama
+    **visibile e invisibile** (opacità a 0) tenendo la classe `fx-pat` ATTIVA, **non** fra
+    effetto acceso e spento. `body::after` è `position:fixed` con `z-index:-1` e la sua sola
+    presenza cambia il modo in cui il browser compone la pagina, quindi l'antialiasing di
+    testi ed emoji si muove in punti isolati (33k pixel diversi, max 162, con la trama del
+    tutto invisibile). Sulle MEDIE di un rettangolo il rumore si annulla, sui MASSIMI no: con
+    l'accensione come discriminante il test dà falsi allarmi, e infatti li ha dati.
+  - ⚠️ **Tentata e scartata la trama ancorata al DOCUMENTO** (`position:absolute` +
+    `body{position:relative}`): la maschera diventa statica e non costa nulla a ogni frame, ma
+    la banda sgombra in cima segue il documento e quindi **non può proteggere i controlli
+    fissi**, che è il vincolo decisivo. Nota tecnica se un domani serve: funziona, perché il
+    fondo del body si PROPAGA alla canvas e resta sotto a uno strato con `z-index:-1`, e
+    nessun altro elemento assoluto del sito cambia contenitore.
+- **Vive su `body::after`**, NON nel `background-image` del body: là c'è già la vignettatura,
+  e impilare i due nella stessa dichiarazione avrebbe legato gli effetti (liste di
+  `background-size`/`repeat`/`attachment` da tenere allineate a quali flag sono accesi). ⚠️ Un
+  `body::before` fisso c'era e fu **RIMOSSO nella v8.74** per due difetti, entrambi assenti
+  qui: la sua base OPACA copriva il fondo neutro del body (qui non c'è alcuna base, solo la
+  trama trasparente) ed essendo alto quanto il viewport, su mobile non seguiva la barra
+  dinamica del browser e lasciava una linea di giunzione (qui l'effetto è desktop-only).
+- ⚠️ **DESKTOP-ONLY** (su mobile le schede prendono tutta la larghezza e non resterebbe
+  sfondo su cui vederla). Quindi `noMob` + `FX_UNI` come il riflettore, ma la soglia è
+  **`PAT_ROOM_MQ` = `(min-width:920px)`** e **non** i 768px di `FX_MOBILE_MQ`: fra i due
+  valori il margine laterale è già zero (a 800px la colonna riempie tutta la finestra). Sotto
+  soglia `applySiteFlags` toglie la classe, così non si paga nemmeno il disegno.
+- **Colore e opacità sono manopole SEPARATE e per tema** (`c_d`/`op_d`, `c_l`/`op_l`).
+  ⚠️ **TETTI DI OPACITÀ 0.34/0.30**, alzati dai vecchi 0.10/0.09 ('più range di opacità',
+  utente). I vecchi tetti erano **misurati**, ma sul caso della modalità 'Dappertutto', in cui
+  la trama passava DENTRO le card semitrasparenti e finiva sotto i testi. Tolta quella
+  modalità, nei margini laterali **non c'è testo di contenuto**: il footer sta entro 500px
+  centrati, dunque dentro la colonna sgombra. Restano solo i controlli **fissi**, che la banda
+  in cima protegge, e i **tasti salto**, che a riposo stanno a 1.6:1 **da sempre e senza
+  trama** (opacità 0.5 per scelta, piena all'hover e al focus): misurato, la trama non li
+  peggiora, li schiarisce appena. Lo strumento è `scratchpad/pat/aa4.js`, che cerca per ogni
+  controllo il massimo `op` che tiene 4.5:1. ⚠️ **Rimisurare se cambia il colore o l'opacità
+  di `.home-link`, `.lang-switch` o l'altezza della banda**; e ⚠️ **axe non serve come prova
+  sulle card** (vedi la nota di `hov`).
+- ⚠️ **Nell'anteprima su card finte il CONFINAMENTO non è riproducibile** (il riquadro non ha
+  né una colonna di schede né una testata da scansare): là si mostra il motivo dappertutto, ed
+  è la nota della manopola 'Sfumatura' a dire dove finirà. Se nel riquadro ci sono trama E
+  vignetta, si impilano con la vignetta SOPRA, come in pagina.
+- Verificato che col default (spento) la pagina è **identica al pixel** alla v14.33 nei due
+  temi. ⚠️ Quel confronto va fatto con **moto ridotto** e con tasti salto e FAB nascosti: le
+  animazioni di comparsa e il timer da 3s dei tasti salto rendono l'istantanea casuale (due
+  screenshot della STESSA versione davano hash diversi in tema chiaro).
+
+### Trappole di verifica e casi chiusi
+
+- ⚠️ **CASO CHIUSO, non è un difetto: 'ho spento un effetto su mobile e l'ho trovato spento
+  anche su desktop'** (segnalato dall'utente sul podio). Il Pannello scrive **sempre e solo**
+  la variante giusta, verificato in due modi: **sui dati**, il salvataggio admin da mobile
+  (`f034190`) ha cambiato **solo** `podium_m` mentre `podium` risultava già spento molti commit
+  prima (si accerta ricostruendo la storia delle due chiavi con `git show
+  <commit>:arda/top/dati.js`, l'unica prova diretta di che cosa ha scritto un salvataggio);
+  **dal vivo**, la checkbox tocca `podium_m` a 390px e a 700px col mouse, `podium` a 1400px,
+  mai entrambe. **Perché l'equivoco è legittimo**: il Pannello non mostra in alcun modo lo
+  stato dell'ALTRA variante. Se ricapita, guardare i dati prima di cercare un difetto nel
+  codice.
+- ⚠️ **NEI TEST, i valori degli effetti si impostano SEMPRE esplicitamente.** La config
+  salvata è quella dell'**utente** e cambia quando lui usa il pannello: un test che si affida
+  ai default misura la sua taratura, non il comportamento del codice. La batteria della v14.33
+  segnalava due falsi FAIL sull'anteprima del contorno, perché nel salvato `hov.bd` era
+  passato a `false` col mouse. Prima di dare la caccia a una regressione, leggere `var
+  siteFlags` in `dati.js`.
+- ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**: era il 4° effetto della v12.24
+  (`mask-image` su `#rank-list`), eliminato su richiesta dell'utente e sostituito dal
+  riflettore. Non reintrodurlo; un `"fade"` residuo in `siteFlags` è ignorato da
+  `normSiteFlags`. ⚠️ Da non confondere con la manopola `fade` della **trama**.
+
+### Il Pannello: righe, etichette, checkbox
+
+- OGNI effetto ha la **checkbox** acceso/spento a sinistra (anche i regolabili: su flag a
+  oggetto tocca solo `.on`, le manopole restano); i regolabili hanno IN PIÙ l'**icona a due
+  cursori verticali** sul **lato destro** della riga (fader, `FX_SLIDERS_SVG`, disegno scelto
+  dall'utente), che apre la sotto-modale.
+- ⚠️ **NOMI E ORDINE delle voci** (decisi dall'utente): Modalità XL, **Bagliore**, **Numeri
+  colorati**, **Riflettore**, **Incisione**, **Alone sfumato**, **Effetto podio**, **Colore
+  schede**, **Trama**. Etichette brevi, di una parola dove possibile.
+- ⚠️ **Le etichette devono stare su UNA riga nel caso peggiore** (telefono strettissimo ×
+  zoom 1.3): a **320px in XL** la colonna della label è larga **102px** (rimisurata col font
+  reale il 2026-07-28; questa nota riportava 132px, valore di release più vecchie:
+  **rimisurare** prima di scegliere un'etichetta nuova), e un'etichetta che va a capo raddoppia
+  l'altezza della riga, mentre le righe devono restare tutte alte uguali. Da qui i due
+  rinomini: 'Oro, argento e bronzo' si spezzava su tre righe → **'Effetto podio'**; 'Colore al
+  passaggio' → **'Colore schede'**. ⚠️ **La verifica va fatta in ENTRAMBE le lingue**:
+  l'italiano che ci sta non garantisce l'inglese. L'EN 'Coloured numbers' sforava ed è
+  diventato **'Number tint'**; scartati 'Tinted numbers' (125.8px, margine troppo sottile) e
+  il solo 'Numbers', che si leggerebbe come 'mostra i numeri' invece di 'tinta dei numeri',
+  mentre l'italiano 'Numeri colorati' resta quello scelto dall'utente. Le misure vanno prese
+  **col font reale** (vedi 'Misure tipografiche').
+- ⚠️ **Le didascalie descrittive sono state RIMOSSE ovunque**: l'utente le ha giudicate
+  superflue, il pannello è una lista pulita di interruttori. Non reintrodurle. In fondo resta
+  **solo l'avviso breve** sulla preferenza personale di zoom, identico su desktop e mobile.
+- **Anteprima anche nel PANNELLO, solo in tab Mobile** (richiesta utente): prima accendere e
+  spegnere gli interruttori in tab Mobile era un lavoro alla cieca, perché la pagina è desktop
+  sia in vista divisa sia dietro la modale. Ora in cima al Pannello compare la stessa
+  anteprima in modalità **PANORAMICA**: **un** riquadro (tema corrente), **tutte** le card
+  rese accese (altrimenti bagliore e riflettore non si vedrebbero) e numeri **1 e 5**, il
+  primo per il metallo del podio, il secondo (fuori podio) per la tinta dei numeri.
+  - Il blocco è **CONDIVISO**, non una copia: `fxPreviewBlock(o)` è l'estrazione del codice
+    che stava dentro `showFxConfigEditor` (`o.key` = effetto in modifica, `''` = panoramica;
+    `o.sfx` = variante; `o.lights` = **funzione** che dice quali riquadri disegnare, perché la
+    sotto-modale la rivaluta a ogni cambio di tab tema). Due implementazioni divergerebbero,
+    come per le formule dell'aspetto; verificato che l'estrazione lascia le anteprime
+    **identiche al pixel**.
+  - ⚠️ **Gli effetti che quella variante non ha vanno esclusi**: il riflettore è `noMob`,
+    quindi in panoramica mobile resta spento, altrimenti l'anteprima mentirebbe e il suo
+    invito 'Muovi il puntatore qui' sarebbe un invito a nulla. E la sua config è **UNICA**:
+    `V(k)` non applica il suffisso alle chiavi `noMob`, come fa `fxCfg` in pagina; senza
+    questo, chiedere `spot_m` restituiva `undefined` e le formule ci morivano sopra.
+  - ⚠️ **Nel PANNELLO la condizione della classe `fxdock-alt` resta la TAB** (`tab === 'm'`),
+    non `fxActiveSfx`: la panoramica copre TUTTI gli effetti insieme, e la variante attiva è
+    **per-effetto**. Il caso per-effetto lo serve la sotto-modale, che sa di quale effetto si
+    tratta; nel pannello lo copre l'avviso in fondo.
+  - Da **mobile**, e anche da una finestra **desktop stretta**, il Pannello non ha tab e la
+    pagina è già quella giusta: lì il blocco non viene nemmeno creato.
+- **Segno di spunta MINIMALE** (richiesta dell'utente). Le checkbox non usano il disegno
+  nativo, pesante e diverso su ogni sistema: `appearance:none` + quadrato stondato + spunta
+  disegnata in `::after` (due lati di un rettangolo ruotati di 45°). ⚠️ Tre vincoli da non
+  rompere: il bersaglio di tocco resta la **label da 24px** (non la casella, che è ~16px); il
+  **focus da tastiera** ha un anello proprio, perché con `appearance:none` quello nativo
+  spariva insieme al disegno; il segno bianco sul fondo acceso resta ben sopra il 3:1 di WCAG
+  1.4.11. `accent-color` non basterebbe: cambia la tinta, non la forma.
+  - **Esteso a TUTTO il sito** ('mi riferivo a tutti quelli del sito, ma principalmente a
+    quelli del pannello'), quindi anche alle **caselle delle categorie nel Pannello**
+    (`.ctrl-chk`, che disegnava il segno col glifo `content:'✓'` di EB Garamond, grazie e code
+    curve, l'opposto del 'dritto' chiesto) e a quelle dei **badge nell'editor personaggi**
+    (`.admin-flag-chk input`, native con `accent-color`, quindi diverse su ogni browser).
+    ⚠️ Queste due regole vivono nel **CSS statico** e non in `injectFxEditorCss`, perciò le
+    vede il Nu: scritte in **longhand** (`border-style`/`border-color`/`border-width`), non
+    con lo shorthand `border` senza width, per non introdurre forme insolite nel foglio
+    validato.
+  - ⚠️ **Fondo e colore del segno restano quelli storici** dove già c'erano (`--gold` /
+    `--ink` nel Pannello e in admin, bianco su accento nelle modali): cambia solo la FORMA,
+    così i contrasti già verificati non si muovono.
+  - ⚠️ **Nell'editor personaggi i margini della casella restano quelli dell'UA**: azzerarli
+    stringerebbe la griglia dei 22 badge, tarata su quelle spaziature.
+- **Bersagli di tocco da 24px** (WCAG 2.2, criterio 2.5.8): gli slider erano alti 16px e le
+  checkbox native lo sono per costruzione. Correzione senza toccare l'aspetto:
+  `input[type=range]` ha `height:24px`, dove il track resta disegnato com'era e cresce solo la
+  zona sensibile, e le **label** di riga/manopola sono `display:flex; align-items:center;
+  min-height:24px`.
+- **Contrasto dei controlli.** Le tab (Desktop/Mobile e Chiaro/Scuro) marcano l'inattiva con
+  **opacità 0.78**, non 0.45: a 0.45 il testo scendeva a 2.85:1 in chiaro e 3.47:1 in scuro,
+  sotto la soglia 4.5:1, e l'attiva si distingue dal **bordo accento**. L'outline `.fxp-edit`
+  ha un colore **per tema**, perché l'azzurro chiaro dava 2.88:1 sul fondo chiaro, sotto il
+  3:1 di WCAG 1.4.11. Le note delle manopole sono collegate al controllo con
+  `aria-describedby`.
+- **Tasti salto: rivelati dal focus da tastiera.** `.jump-fabs` sta a `opacity:0` a riposo ma
+  i suoi 4 tasti restano nell'ordine di tabulazione, e col `Tab` il focus ci finiva sopra
+  mentre sono **invisibili**, senza che l'anello di focus si veda perché il genitore è
+  trasparente: è il criterio **focus visibile** di WCAG (2.4.7), che axe non intercetta. Fix:
+  `.jump-fabs:focus-within` li rivela e `.jump-fab:focus-visible` porta il tasto a piena
+  opacità come l'hover. ⚠️ **Serve `!important`**: la dissolvenza
+  (`showJumpFabsTemporarily`) pilota il contenitore con uno stile **inline**, che batte il
+  foglio; col `!important` il focus vince anche sul timer da 3s che scade mentre si tabula, e
+  appena il focus esce torna a valere l'inline. Scelta di merito: **rivelarli** invece di
+  toglierli dall'ordine di tabulazione, perché servono proprio a chi naviga senza mouse.
+
+### Sotto-modale di regolazione (`showFxConfigEditor`)
+
+Overlay a sé **`#fx-modal`**, stile admin minimale, SOPRA il pannello che resta aperto sotto
+(come le statistiche sull'editor colori): interruttore + slider (da `FX_KNOBS`/`FX_RANGE`) +
+**anteprima dinamica** su card finte, con fondi e struttura reali, il riflettore che segue il
+puntatore ANCHE nell'anteprima e i colori da `CARDCOLORS` (terne concrete via il 3° parametro
+`cc` delle formule). Ogni modifica si applica SUBITO anche alle card vere dietro. Esc chiude
+`#fx-modal` PRIMA del `#fab-modal` sotto (ramo dedicato nell'handler Escape); `#fx-modal` è
+nelle guardie dei tasti `P` e `.`; il CSS è iniettato (`injectFxEditorCss`), invisibile al Nu.
+
+- **`Attiva` / `Enable`**, non 'Effetto attivo' (richiesta dell'utente): prima voce di ogni
+  sotto-modale.
+- ⚠️ **Le voci del BAGLIORE sono raggruppate in SEZIONI** (struttura e testi dell'utente):
+  erano un elenco piatto di otto voci in cui non si capiva quale sfumatura riguardasse quale
+  parte. Un descrittore con **`sec:true`** è un'**intestazione**, non una manopola (classe
+  `.fxk-sec`). Le etichette dentro una sezione sono volutamente **generiche e ripetute**
+  ('Sfumatura', 'Opacità'): è la sezione a disambiguarle, e nomi lunghi tipo 'Ampiezza del
+  bagliore esterno' erano proprio ciò che rendeva l'elenco confuso.
+- **Le caselle DISABILITANO le impostazioni che governano** (richiesta dell'utente). Ogni
+  voce può portare un campo **`dep`**; `depOk()` lo valuta a ogni `renderKnobs` (che rigira
+  anche a ogni click su una casella, non solo al cambio di tab) e la riga spenta prende la
+  classe **`.fxk-off`** coi controlli `disabled`. Condizioni: `'on'` = l'interruttore
+  dell'effetto spegne tutto il resto; per il bagliore `'inner'` = almeno un lato interno
+  acceso, `'outer'` = 'Ai lati' acceso **e** almeno un lato da cui uscire, `'around'` =
+  'Intorno alla card' acceso. ⚠️ L'opacità della riga spenta resta **0.5 e non meno**: sotto,
+  il testo scenderebbe fuori soglia di contrasto, e un controllo disabilitato va comunque
+  letto.
+- ⚠️ **QUANTI riquadri d'anteprima.** Se l'effetto ha manopole **per tema** si mostra **UN
+  SOLO riquadro**, quello del tema in modifica, che **cambia con la tab**: si vede ciò che si
+  sta modificando e si risparmia spazio verticale (blocco anteprima da 373px a 182px). Se
+  invece la config è **unica per i due temi** (`spot`, `press`, `vig`) restano **DUE
+  riquadri**, perché lì un solo valore serve entrambi i temi e va controllato su entrambi.
+  Corollario: l'evidenziazione **`.fxp-edit`** del riquadro in modifica **non è più
+  applicata**, e le sue regole restano nel CSS come base per un eventuale ritorno alla vista
+  doppia. `buildPanes()` ricostruisce i riquadri al cambio di tab, quindi
+  `knobs`/`hasTh`/`kTheme` vanno calcolati PRIMA di disegnare l'anteprima.
+- Regole dell'anteprima **quando i riquadri sono due** (richieste dell'utente): **tema CHIARO
+  per primo** (come le altre anteprime del progetto), **niente etichette 'Scuro'/'Chiaro'**,
+  card rese **SEMPRE in stato hover** (altrimenti gli slider non si vedrebbero in tempo reale)
+  e **padding sinistro abbondante**, perché le sfumature lunghe escono dalla card e venivano
+  tagliate.
+- **Anteprima FISSA in alto** (richiesta dell'utente; globale, non solo XL). `.fxp-wrap` è
+  `position:sticky; top:0` e resta in vista mentre si scorre fino alle manopole in fondo:
+  senza, in Modalità XL si regolava alla cieca. Ha un **fondo opaco** col colore della modale,
+  altrimenti le righe che le passano sotto si vedrebbero in trasparenza. ⚠️ **Lo scorrimento
+  è passato a un contenitore INTERNO** (`.fx-scroll`): col box come area di scorrimento, il
+  tasto `×`, che è `position:absolute` dentro il box, scorreva via col contenuto e diventava
+  irraggiungibile. Ora il box è `flex` in colonna e non scorre.
+- **Respiro DINAMICO del riquadro d'anteprima, solo per il bagliore.** È l'unico effetto che
+  disegna FUORI dalla card, e l'anteprima lo **tagliava** (segnalato dall'utente con uno
+  screenshot). Un padding fisso non basta, perché quanto esce dipende dalle manopole:
+  `paint()` calcola quanto arriva davvero (la fuga sfuma per `oamp × 1.6`, l'alone per `aamp`)
+  e riserva quello spazio, con un tetto a 56px, oltre il quale la coda della sfumatura è
+  comunque invisibile e la modale diventerebbe enorme. Classe `.fxp-airy` solo sul bagliore.
+- **Piè a tre tasti**: 'Ultimo salvato' (ripristina `normSiteFlags(SITE_FLAGS_SAVED)[key]` e
+  riapre), **'Azzera'/'Reset'** e 'Chiudi'; il salvataggio resta SOLO nel pannello.
+  - **'Azzera'** riporta l'effetto a `normFxEffect(key, SITE_FLAGS_DEFAULT[key])`. È
+    **complementare** a 'Ultimo salvato': quello riporta a ciò che sta sul repo, questo alla
+    resa con cui l'effetto è nato (dopo un salvataggio coincidono, prima no). Richiesta
+    dell'utente: 'un tasto che ripristini il valore standard... per tornare ai valori correnti
+    in qualsiasi momento dopo aver sperimentato'. Il **doppio clic su un singolo slider** fa
+    lo stesso per la SUA manopola: il tasto lo fa per tutte, interruttore compreso. Passa da
+    `dockRebuild`, come 'Ultimo salvato': è un rebuild TECNICO, quindi in vista divisa non
+    riporta il sito al tema d'apertura.
+  - ⚠️ Si chiamava **'Predefiniti'/'Defaults'** fino alla v14.79 ('sta nel pulsante a pelo').
+    Col font reale a 390px lo spazio utile nel tasto è **88,5px** e 'Predefiniti' ne occupava
+    **87,3**, cioè 1,2px di margine. Scartata anche 'Standard' (75,1px: ci sta, ma dice uno
+    STATO dove gli altri due tasti dicono un'AZIONE). ⚠️ 'Ultimo salvato' sta su due righe da
+    sempre e va bene così.
+- ⚠️ **Doppio clic su uno slider = valore PREDEFINITO** della manopola, su **TUTTO** lo
+  slider, binario compreso: per OGNI slider di OGNI effetto il default si legge da
+  `SITE_FLAGS_DEFAULT` sotto la chiave base, e le varianti `_m` e per-tema condividono il
+  default della chiave omonima.
+- ⚠️ **Slider 'solo pallino'** (richiesta utente): il range nativo SALTA al punto cliccato sul
+  binario, e questo è sgradito. L'helper condiviso **`fxGuardSlider`** (usato dalle manopole
+  degli effetti E dai micro-aggiustamenti) al `pointerdown` stima la posizione del pallino
+  (`ratio × (larghezza − pallino)`, diametro ≈ altezza del controllo; rect e clientX sono
+  entrambi in px visivi, quindi la stima regge sotto zoom XL) e, se il puntatore è lontano,
+  **blocca l'azione nativa**: il valore si cambia solo trascinando il pallino, da tastiera o
+  dal campo numerico. Il doppio clic/tocco sul binario fa il reset ed è rilevato **a mano coi
+  timestamp**, perché il `preventDefault` può sopprimere il click sintetico e lì il `dblclick`
+  nativo non è affidabile. Nei micro-aggiustamenti il reset resta 'ultimo salvato' (la
+  convenzione di quell'editor), negli effetti è il predefinito.
+  - ⚠️⚠️ **SU TOUCH REALE il solo `preventDefault` sul `pointerdown` NON basta** (segnalato
+    dall'utente, v14.80): certi browser cambiano il valore dalla gestione nativa del tocco,
+    che quel `preventDefault` non annulla. Tre difese, indipendenti fra loro: (1) un
+    `touchstart` **NON passivo** con `preventDefault`, la via documentata per sopprimere il
+    comportamento nativo del tocco; (2) la rete vera, cioè ogni `input` **annullato in
+    CAPTURE** mentre il gesto è bloccato (valore ripristinato + `stopImmediatePropagation`),
+    così il listener della manopola non lo vede nemmeno, e funziona **anche se il browser
+    ignora del tutto il `preventDefault`**, che è il punto; (3) ogni gesto nuovo parte da
+    `libera()`, perché se un `touchend` non arrivasse un blocco appeso renderebbe lo slider
+    inerte per sempre, cioè peggio del difetto da correggere.
+  - ⚠️ **L'EMULAZIONE NON RIPRODUCE il caso**: in Chromium con `hasTouch` il guard vecchio
+    sembrava tenere, e il **trascinamento del pallino non è verificabile affatto**, perché gli
+    eventi touch sintetici (anche via CDP `Input.dispatchTouchEvent`) non pilotano il drag
+    nativo di un `input[type=range]` e il test fallisce **identico prima e dopo** la modifica.
+    Prima di dare la colpa a una modifica, rifare la stessa prova sulla versione precedente: è
+    così che si distingue il difetto dall'artefatto.
+- ⚠️ **Tetti in `vh` delle modali admin e Modalità XL.** Le unità viewport risolvono in px di
+  **layout**: con `html.zoom-big{zoom:1.3}` la modale ne occupa 1.3× **visivamente**, quindi
+  un `max-height:92vh` non scattava mai e la modale sforava lo schermo **col tasto × fuori dal
+  viewport, incliccabile**. Due correttivi: il fattore è esposto al CSS (`html{--zoomf:1}` /
+  `html.zoom-big{--zoomf:1.3}`) e tutti i tetti si scrivono `calc(<N>vh / var(--zoomf, 1))`;
+  e `.fab-modal-overlay` è `align-items:flex-start` + `overflow-y:auto` con `margin:auto` sul
+  box invece di `align-items:center`, perché con la centratura flex l'eccedenza esce dai DUE
+  lati e la parte alta è irraggiungibile (difetto noto di flexbox), mentre coi margini
+  automatici la centratura resta identica quando il contenuto ci sta.
+- ⚠️ **Fondo di riferimento della pill nell'anteprima: si COMPONE, non si stima.** Il testo
+  della pill-tipo è reso AA con `ccAaText(tinta, fondo)`, ma il fondo va composto per davvero
+  su **tre strati**: riquadro d'anteprima → card (con l'alpha dello stato **hot** corrente,
+  non quello a riposo) → velo della pill. La v12.64 lo stimava sul solo riquadro a card ferma:
+  nell'editor del **bagliore**, dove le card sono rese accese, lo scarto bastava a scendere
+  sotto soglia. Regola generale: quando un colore si posa su strati semitrasparenti
+  sovrapposti, il fondo per il calcolo AA si ottiene applicando gli `over` uno per uno, mai
+  con una scorciatoia a un solo strato.
+
+### Salvataggio
+
+`saveSiteFlagsToRepo` → `doCommit(msg, dati, null, true, null, SITE_FLAGS)` → il Worker scrive
+`siteFlags` **senza bumpare la versione** (`keepVersion:true`, come i salvataggi colore:
+richiesta dell'utente, accendere un effetto non è una modifica di contenuto). Il controllo di
+freschezza resta affidabile perché si basa sul confronto dei ref git, non sul numero.
+`SITE_FLAGS_SAVED` è lo snapshot per 'Annulla'. Il Worker (rev 15) valida anche la forma a
+oggetto: booleano O oggetto piatto di booleani/numeri finiti/stringhe ≤32 char, max **40**
+manopole per effetto; controlla la FORMA, i limiti veri li applica il client con `FX_RANGE`.
+Se una **preferenza personale di zoom** è attiva, il pannello lo **avvisa**: altrimenti il
+flag `zoomBig` sembrerebbe non funzionare.
+
+⚠️ **Go-live di una release che tocca sito E Worker: aspettare la spia `rev`.** Sito (GitHub
+Pages) e Worker (Cloudflare Workers Builds) si ridistribuiscono dallo **stesso push su
+`master`** ma su infrastrutture diverse, con tempi diversi. Finché il Worker è alla revisione
+**precedente**, un salvataggio dal pannello **sembra riuscire** ma la config nuova **non viene
+scritta**: il Worker vecchio ignora il campo che non conosce e, se una config era già stata
+salvata, la **perde**, non conoscendone il lettore. Perciò dopo il merge, prima di salvare dal
+pannello, verificare la revisione attiva con un `GET` al Worker
+(`{ok:false,error:'method',rev:N,rl:bool}`) e attendere il numero atteso. ⚠️ Il commento
+'Deployment successful' del bot Cloudflare su una PR è la build del **branch**, NON la
+promozione in produzione: fa fede solo la spia `rev`.
 
 ## 🪟 Vista divisa degli editor dell'aspetto (dock, dalla v13.06)
 
-Su desktop largo il **Pannello di controllo** (e le sue sotto-modali effetti) non
-apre una modale: si ancora in una **colonna a sinistra** (`--dockw:400px`, filetto
-verticale sul bordo) e la **pagina vera**, spostata a destra col margine del body,
-fa da anteprima dinamica. Stesso DOM, nessun doppio stato: fedeltà garantita.
-Richiesta e impianto dell'utente ('il sito stesso è l'anteprima'); prima tappa
-(v13.06) = telaio + Pannello di controllo; **seconda tappa (v13.17)** = editor
-colori e micro-aggiustamenti sullo stesso telaio.
+Su desktop largo il **Pannello di controllo** (e le sue sotto-modali effetti) non apre una
+modale: si ancora in una **colonna a sinistra** (`--dockw`, filetto verticale sul bordo) e la
+**pagina vera**, spostata a destra col margine del body, fa da anteprima dinamica. Stesso DOM,
+nessun doppio stato: fedeltà garantita. Richiesta e impianto dell'utente ('il sito stesso è
+l'anteprima'). Sullo stesso telaio vivono anche l'editor colori e i micro-aggiustamenti.
 
-- **Editor colori in dock (v13.17).** Colonna 480px. Le due tab diventano LIVE:
-  in **Famiglie** la scelta del colore (picker o campo HEX) applica subito
-  `CARDCOLORS.fam` + reinject alla pagina; in **Personaggio** l'anteprima è
-  **SOLO DOM**: si replica sulla card vera ciò che `renderList` fa per le voci
-  custom (classe `cc-custom` + terne inline), e alla selezione la pagina **scorre
-  fino alla card**. ⚠️ Ragione della differenza: i salvataggi inviano TUTTO
-  (`dati` + `cardColors`), quindi un'anteprima non salvata non deve vivere negli
-  oggetti che un salvataggio d'altro porterebbe con sé: mai toccare `p.cardrgb`
-  in anteprima, e la famiglia che si ABBANDONA (cambio famiglia/tab) torna
-  all'ultimo salvato prima di proseguire. Il gancio è **`ctrl.hook`** su
-  `buildColorControl` (chiamato da `update()`, mai alla costruzione); anche il
-  ripristino 'ultimo salvato' vi passa, quindi aggiorna la pagina. Le anteprime
-  interne (mini-card + mini-scheda) RESTANO anche in dock: la mini-scheda non è
-  ridondante, perché in dock le schede vere non si aprono (click spenti).
-- **Micro-aggiustamenti in dock (v13.17).** Colonna 560px; il corpo a due colonne
-  si impila (`.fxdock .ba-body{grid-template-columns:1fr}`: era pensato per la
-  modale da 840px). Chiusura senza salvataggio = ultimo salvato (stessa via del
-  suo Annulla). Le anteprime interne RESTANO: mostrano campioni scelti col badge
-  in modifica e la linea mediana rossa, che la pagina non garantisce (il badge
-  selezionato può non essere nel viewport).
-- I due editor chiamano `injectFxEditorCss()` in testa: il CSS del dock vive lì
-  e deve esserci anche quando si apre uno di LORO per primo.
-
-- **Soglia e fallback.** `dockAvailable(colw)` = `clientWidth / zoom >= colw + 660`,
-  con la larghezza di colonna PER-EDITOR (Pannello di controllo 400, colori 480,
-  micro-aggiustamenti 560; il fattore vive in `--dockw`, impostato da `dockEngage`).
-  ⚠️ **MISURATO (2026-07-26): `clientWidth` NON si riduce sotto `zoom`**: resta la
-  larghezza della finestra, quindi il fattore XL va diviso a mano (`--zoomf`).
-  La v13.06/13.07 assumeva il contrario: corretto nella v13.17. Il flag XL commutato
-  DAL pannello è l'unico modo di cambiare zoom a colonna aperta (Z è guardato dalle
-  modali): il suo change handler ripassa dal ricalcolo del telaio. Sotto soglia si
-  apre la modale di sempre; un **resize a metà modifica** commuta il telaio
-  conservando tab, scroll, sotto-modale aperta e regolazioni non salvate.
-- ⚠️ **In dock NIENTE `lockPageScroll`**: la pagina è l'anteprima e deve restare
-  VIVA: scroll e hover (senza hover non si vedono bagliore e riflettore). Il
-  congelamento inert/focus-trap resta per le modali normali. Il focus trap del
-  `Tab` però FUNZIONA anche in dock (verificato: 30 Tab, 0 fughe) perché agisce su
-  `topModalEl`, non su `lockPageScroll`; T e L restano attivi (regola dei tasti
-  nudi).
-- **Click spenti fuori dalle colonne (scelta utente).** `DOCK_SHIELD`, un listener
-  `click` in capture: la pagina risponde a scroll e hover ma i click non aprono
-  nulla (schede, admin, Pannello del FAB). **Consentiti**: le colonne stesse, i
-  tasti salto (solo scroll) e il cambio lingua (equivale al tasto L). Lo scudo si
-  rimuove SEMPRE alla chiusura.
-- **'Torna al punto di partenza se non si salva' (scelta utente).** Chiudere la
-  colonna (×, Esc, click fuori) ripristina `normSiteFlags(SITE_FLAGS_SAVED)`. Dopo
-  un salvataggio riuscito lo snapshot è già sincronizzato → il ripristino è un
-  no-op. ⚠️ **`DOCK_RELAYOUT`**: nei rebuild TECNICI (tasto L, cambio di telaio al
-  resize) la chiusura non è una chiusura dell'utente e NON deve ripristinare:
-  senza questo flag, un semplice cambio lingua butterebbe via le regolazioni non
-  salvate. NB: nella modale (sotto soglia) la chiusura senza salvare NON
-  ripristina, come sempre: la scelta dell'utente riguardava la vista divisa.
-- **Sotto-modali impilate nella colonna.** In dock `showFxConfigEditor` prende la
-  stessa classe `fxdock` e si dipinge SOPRA il pannello, stessa geometria:
-  'entrare' in un effetto e 'uscirne' è un movimento della sola colonna. I ganci
-  `overlay._fxKey/_fxSfx/_fxClose` e `overlay._renderRows` (sul pannello) servono
-  al cambio di telaio per chiudere e riaprire la sotto-modale risincronizzando le
-  checkbox.
+- **Soglia e fallback.** `dockAvailable(colw)` = `clientWidth / zoom >= colw + 660`, con la
+  larghezza di colonna PER-EDITOR (Pannello di controllo 400px, colori 480, micro-aggiustamenti
+  560; il valore vive in `--dockw`, impostato da `dockEngage`). Sotto soglia si apre la modale
+  di sempre, e un **resize a metà modifica** commuta il telaio conservando tab, scroll,
+  sotto-modale aperta e regolazioni non salvate.
+  - ⚠️ **MISURATO: `clientWidth` NON si riduce sotto `zoom`**, resta la larghezza della
+    finestra, quindi il fattore XL va diviso a mano (`--zoomf`). La v13.06 assumeva il
+    contrario. Il flag XL commutato DAL pannello è l'unico modo di cambiare zoom a colonna
+    aperta (`Z` è guardato dalle modali) e il suo change handler ripassa dal ricalcolo del
+    telaio.
 - ⚠️ **Due trappole note già applicate**: la colonna è dimensionata con **inset**
-  (`top:0;bottom:0`), MAI in `vh` (sotto zoom XL le unità viewport non scattano,
-  lezione v12.65); e spostare la pagina col margine **non fa scattare `resize`** →
-  `reflowRows()` va chiamata a mano in `dockEngage`/`dockRelease` (a-capo dei nomi
-  e righe bipartite si rimisurano).
-- **La tab del tema commuta il TEMA DEL SITO, solo in dock (v13.41, richiesta
-  utente: 'se modifico le impostazioni del tema scuro, il sito deve passare al
-  tema scuro').** In vista divisa l'anteprima è la pagina: scegliere 'Tema
-  scuro' fa `toggleTheme()` se serve, e alla **chiusura vera** della sotto-modale
-  il tema torna a quello d'apertura. La baseline vive in **`FX_THEME0`**
-  (globale) perché deve sopravvivere ai rebuild TECNICI (tasto L, cambio di
-  telaio al resize), che chiudono e riaprono l'editor: senza, la riapertura
-  scambierebbe il tema della tab per la baseline e alla chiusura il sito
-  resterebbe scuro (successo al primo giro, corretto prima del rilascio). Si
-  azzera solo alla chiusura vera. In MODALE (sotto soglia) la tab NON tocca il
-  tema: lì l'anteprima interna segue già la tab. Il 'top del top' chiesto
-  dall'utente (solo il contenuto scuro, pannello chiaro) NON è praticabile a
-  costo sano: tutto il CSS del tema è vincolato a `data-theme` sulla radice,
-  non circoscrivibile a un sottoalbero.
-  - ⚠️ **Anche 'Ultimo salvato' è un rebuild TECNICO (fix v13.43).** Il pulsante
-    ripristina i valori e poi chiude+riapre la sotto-modale: quella chiusura va
-    avvolta in `DOCK_RELAYOUT = true/false` (stesso schema di L e del resize),
-    altrimenti `close()` la tratta come chiusura vera: in dock riporta il sito
-    al tema d'apertura, azzera `FX_THEME0` e la riapertura rideriva la tab dal
-    tema tornato indietro (segnalato dall'utente: 'mi riporta all'inizio
-    tornando anche al tema chiaro'). Col flag si resettano SOLO i valori: tema,
-    tab e baseline restano; la chiusura vera successiva ripristina comunque il
-    tema d'apertura. Vale per ogni futura via che chiude+riapre l'editor senza
-    che sia l'utente a uscirne.
-- **In dock le anteprime su card finte SPARISCONO (v13.07, richiesta utente):**
-  con la pagina vera accanto sono ridondanti. Nascoste via CSS
-  (`.fxdock .fxp-wrap{display:none}`) e basta: i riquadri vengono comunque
-  costruiti e dipinti (`paint()` lavora su elementi nascosti senza errori), così
-  il cambio di telaio a metà modifica non ha casi speciali e sotto soglia
-  ricompaiono da sé. Il sottotitolo della sotto-modale segue la modalità: in dock
-  'Le modifiche si vedono subito sulla pagina accanto.', in modale il testo
-  storico. Le tab Chiaro/Scuro restano anche in dock (scelgono QUALI manopole si
-  editano; per vedere l'altro tema in pagina c'è il tasto T).
-  - ⚠️ **ECCEZIONE: quando la variante in modifica NON è quella ATTIVA, l'anteprima
-    RESTA anche in dock (v13.55, segnalata dall'utente; criterio generalizzato nella
-    v14.23).** Lì la pagina accanto mostra l'altra variante, quindi non fa da
-    anteprima a nulla e senza i riquadri si lavorava alla cieca. Selettore:
+  (`top:0;bottom:0`), MAI in `vh`, perché sotto zoom XL le unità viewport non scattano; e
+  spostare la pagina col margine **non fa scattare `resize`**, quindi `reflowRows()` va
+  chiamata a mano in `dockEngage`/`dockRelease` (a-capo dei nomi e righe bipartite si
+  rimisurano).
+- ⚠️ **In dock NIENTE `lockPageScroll`**: la pagina è l'anteprima e deve restare VIVA, con
+  scroll e hover, perché senza hover non si vedono bagliore e riflettore. Il congelamento
+  inert/focus-trap resta per le modali normali. Il focus trap del `Tab` però FUNZIONA anche in
+  dock, perché agisce su `topModalEl` e non su `lockPageScroll`; `T` e `L` restano attivi
+  (regola dei tasti nudi).
+- **Click spenti fuori dalle colonne (scelta utente).** `DOCK_SHIELD`, un listener `click` in
+  capture: la pagina risponde a scroll e hover ma i click non aprono nulla (schede, admin,
+  Pannello del FAB). **Consentiti**: le colonne stesse, i tasti salto (solo scroll) e il cambio
+  lingua, che equivale al tasto `L`. ⚠️ Lo scudo si rimuove SEMPRE alla chiusura.
+- **'Torna al punto di partenza se non si salva' (scelta utente).** Chiudere la colonna (×,
+  Esc, click fuori) ripristina `normSiteFlags(SITE_FLAGS_SAVED)`; dopo un salvataggio riuscito
+  lo snapshot è già sincronizzato, quindi il ripristino è un no-op. ⚠️ **`DOCK_RELAYOUT`**: nei
+  rebuild TECNICI (tasto `L`, cambio di telaio al resize, 'Ultimo salvato') la chiusura non è
+  una chiusura dell'utente e NON deve ripristinare, altrimenti un semplice cambio lingua
+  butterebbe via le regolazioni non salvate. NB: nella modale, sotto soglia, la chiusura senza
+  salvare NON ripristina, come sempre: la scelta dell'utente riguardava la vista divisa.
+- **Sotto-modali impilate nella colonna.** In dock `showFxConfigEditor` prende la stessa classe
+  `fxdock` e si dipinge SOPRA il pannello, con la stessa geometria: 'entrare' in un effetto e
+  'uscirne' è un movimento della sola colonna. I ganci `overlay._fxKey/_fxSfx/_fxClose` e
+  `overlay._renderRows` (sul pannello) servono al cambio di telaio per chiudere e riaprire la
+  sotto-modale risincronizzando le checkbox.
+- **Editor colori in dock.** Colonna 480px, e le due tab diventano LIVE: in **Famiglie** la
+  scelta del colore (picker o campo HEX) applica subito `CARDCOLORS.fam` + reinject alla
+  pagina; in **Personaggio** l'anteprima è **SOLO DOM**, cioè si replica sulla card vera ciò
+  che `renderList` fa per le voci custom (classe `cc-custom` + terne inline), e alla selezione
+  la pagina **scorre fino alla card**.
+  - ⚠️ **Ragione della differenza:** i salvataggi inviano TUTTO (`dati` + `cardColors`), quindi
+    un'anteprima non salvata non deve vivere negli oggetti che un salvataggio d'altro
+    porterebbe con sé. Mai toccare `p.cardrgb` in anteprima, e la famiglia che si ABBANDONA
+    (cambio famiglia o tab) torna all'ultimo salvato prima di proseguire. Il gancio è
+    **`ctrl.hook`** su `buildColorControl`, chiamato da `update()` e mai alla costruzione;
+    anche il ripristino 'ultimo salvato' vi passa, quindi aggiorna la pagina.
+  - Le anteprime interne (mini-card + mini-scheda) RESTANO anche in dock: la mini-scheda non è
+    ridondante, perché in dock le schede vere non si aprono, avendo i click spenti.
+- **Micro-aggiustamenti in dock.** Colonna 560px; il corpo a due colonne si impila
+  (`.fxdock .ba-body{grid-template-columns:1fr}`, era pensato per la modale da 840px).
+  Chiusura senza salvataggio = ultimo salvato, la stessa via del suo Annulla. Le anteprime
+  interne RESTANO: mostrano campioni scelti col badge in modifica e la linea mediana rossa, che
+  la pagina non garantisce, perché il badge selezionato può non essere nel viewport.
+- ⚠️ I due editor chiamano **`injectFxEditorCss()`** in testa: il CSS del dock vive lì e deve
+  esserci anche quando si apre uno di LORO per primo.
+- **La tab del tema commuta il TEMA DEL SITO, solo in dock** (richiesta utente: 'se modifico
+  le impostazioni del tema scuro, il sito deve passare al tema scuro'). In vista divisa
+  l'anteprima è la pagina: scegliere 'Tema scuro' fa `toggleTheme()` se serve, e alla
+  **chiusura vera** della sotto-modale il tema torna a quello d'apertura. ⚠️ La baseline vive
+  in **`FX_THEME0`** (globale) perché deve sopravvivere ai rebuild TECNICI, che chiudono e
+  riaprono l'editor: senza, la riapertura scambierebbe il tema della tab per la baseline e alla
+  chiusura il sito resterebbe scuro. Si azzera solo alla chiusura vera. In MODALE, sotto
+  soglia, la tab NON tocca il tema, perché lì l'anteprima interna segue già la tab.
+  - Il 'top del top' chiesto dall'utente (solo il contenuto scuro, pannello chiaro) NON è
+    praticabile a costo sano: tutto il CSS del tema è vincolato a `data-theme` sulla radice, non
+    circoscrivibile a un sottoalbero.
+  - ⚠️ **Anche 'Ultimo salvato' è un rebuild TECNICO.** Il pulsante ripristina i valori e poi
+    chiude e riapre la sotto-modale: quella chiusura va avvolta in `DOCK_RELAYOUT`, altrimenti
+    `close()` la tratta come chiusura vera, riporta il sito al tema d'apertura, azzera
+    `FX_THEME0` e la riapertura rideriva la tab dal tema tornato indietro (segnalato
+    dall'utente: 'mi riporta all'inizio tornando anche al tema chiaro'). Vale per ogni futura
+    via che chiude e riapre l'editor senza che sia l'utente a uscirne.
+- **In dock le anteprime su card finte SPARISCONO** (richiesta utente): con la pagina vera
+  accanto sono ridondanti. Nascoste via CSS e basta: i riquadri vengono comunque costruiti e
+  dipinti (`paint()` lavora su elementi nascosti senza errori), così il cambio di telaio a metà
+  modifica non ha casi speciali e sotto soglia ricompaiono da sé. Il sottotitolo della
+  sotto-modale segue la modalità: in dock 'Le modifiche si vedono subito sulla pagina
+  accanto.', in modale il testo storico. Le tab Chiaro/Scuro restano anche in dock, perché
+  scelgono QUALI manopole si editano; per vedere l'altro tema in pagina c'è il tasto `T`.
+  - ⚠️ **ECCEZIONE: quando la variante in modifica NON è quella ATTIVA, l'anteprima RESTA anche
+    in dock** (segnalata dall'utente). Lì la pagina accanto mostra l'altra variante, quindi non
+    fa da anteprima a nulla e senza i riquadri si lavora alla cieca. Selettore:
     `.fxdock:not(.fxdock-alt) .fxp-wrap{display:none}`, con la classe **`fxdock-alt`**
-    sull'overlay quando `docked && sfx !== fxActiveSfx(key)`. Non serve altro perché
-    `paint()` legge già la config dalla **variante in modifica** (`V`), non dalla
-    piattaforma corrente. Il sottotitolo lo dice: 'La pagina accanto mostra la
-    versione <attiva>: le modifiche a <in modifica> si vedono qui sotto.'.
-    - ⚠️ La classe si chiamava **`fxdock-mob`** e la condizione era `docked && sfx`:
-      giusta solo sui desktop. Su un **tablet touch** è il caso opposto - la pagina
-      mostra la variante touch di `hov`, e a lavorare alla cieca è la tab **Desktop**.
-    - ⚠️ **Nel PANNELLO la condizione resta la TAB** (`tab === 'm'`), non
-      `fxActiveSfx`: la panoramica copre TUTTI gli effetti insieme, e la variante
-      attiva è **per-effetto**. Il caso per-effetto lo serve la sotto-modale, che sa
-      di quale effetto si tratta; nel pannello lo copre l'avviso in fondo.
-- **Anteprima anche nel PANNELLO, solo in tab Mobile (v13.65, richiesta utente).**
-  Prima l'anteprima viveva solo nelle sotto-modali, quindi accendere e spegnere gli
-  interruttori dalla lista in tab Mobile era un lavoro alla cieca (la pagina è
-  desktop, sia in vista divisa sia dietro la modale). Ora in cima al Pannello, sotto
-  le tab, compare la stessa anteprima in modalità **PANORAMICA**.
-  - Il blocco è **CONDIVISO**, non una copia: `fxPreviewBlock(o)` è l'estrazione del
-    codice che stava dentro `showFxConfigEditor` (`o.key` = effetto in modifica, `''`
-    = panoramica; `o.sfx` = variante; `o.lights` = **funzione** che dice quali
-    riquadri disegnare, perché la sotto-modale la rivaluta a ogni cambio di tab
-    tema). Due implementazioni divergerebbero, come per le formule dell'aspetto.
-    Verificato che l'estrazione non cambia nulla: le 12 anteprime delle sotto-modali
-    (6 effetti × 2 temi) sono **identiche al pixel** prima e dopo.
-  - In panoramica: **un** riquadro (tema corrente), **tutte** le card rese accese -
-    altrimenti bagliore e riflettore non si vedrebbero - e numeri **1 e 5**, il primo
-    per il metallo del podio, il secondo (fuori podio) per la tinta dei numeri.
-  - ⚠️ **Gli effetti che quella variante non ha vanno esclusi**: il riflettore è
-    `noMob`, in tab Mobile non compare nemmeno nella lista, quindi in panoramica
-    mobile resta spento (altrimenti l'anteprima mentirebbe e il suo invito 'Muovi il
-    puntatore qui' sarebbe un invito a nulla). E la sua config è **UNICA** dalla
-    v13.18: `V(k)` non applica il suffisso alle chiavi `noMob`, come fa `fxCfg` in
-    pagina - senza questo, chiedere `spot_m` restituiva `undefined` e le formule ci
-    morivano sopra (misurato: errore JS con `spot_m` assente dai dati).
-  - La classe **`fxdock-alt`** (ex `fxdock-mob`, v14.23) serve a DUE cose: scavalca la
-    regola che in vista divisa nasconde le anteprime, e marca la colonna in cui si
-    lavora su una variante che la pagina NON mostra. Nel Pannello si aggiunge e si
-    toglie al cambio tab (l'overlay non viene ricreato).
-  - Da **mobile** il Pannello non ha tab e la pagina è già quella giusta: lì il
-    blocco non viene nemmeno creato. ⚠️ Dalla v14.23 vale anche per una finestra
-    **desktop stretta**, dove il pannello senza tab regola comunque la variante
-    attiva riga per riga.
-- Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu):
-  la porzione statica della pagina non cambia. **Unica eccezione:** l'animazione
-  d'ingresso delle modali admin (v13.55) sta nel CSS statico, perché riguarda tutte
-  le `.fab-modal-*`, non solo il dock.
-- **Apertura MORBIDA delle modali admin (v13.55, richiesta utente: 'la sua
-  apparizione è improvvisa e istantanea').** Le modali utente dissolvono il velo e
-  sollevano il box con **transizioni** pilotate dalla classe `.active`; le admin sono
-  create al volo e nascono già visibili, quindi lì la morbidezza si ottiene con una
-  **`animation`**, che parte da sé alla comparsa e non richiede un secondo passaggio
-  in JS. Tre keyframe: `fab-modal-in` (velo), `fab-box-in` (box che sale di 12px con
-  un filo di rimbalzo) e `fab-dock-in` (in **vista divisa** entra da sinistra
-  l'intera colonna e il box NON si anima: sollevare una colonna a piena altezza
-  sarebbe fuori luogo). `@media (prefers-reduced-motion:reduce)` le spegne tutte.
-  - ⚠️ **I rebuild TECNICI non devono animare**, o un cambio lingua, un 'Ultimo
-    salvato' o un cambio di telaio farebbero lampeggiare la colonna. L'overlay nasce
-    con la classe **`.no-anim`** quando `DOCK_RELAYOUT` è attivo, e per questo il
-    flag ora avvolge **anche la riapertura**, non solo la chiusura: i sette punti di
-    rebuild passano dall'helper **`dockRebuild(fn)`**, che lo alza, esegue e lo
-    riabbassa in `finally` (una riapertura andata male non lascia il flag acceso a
-    sabotare la chiusura successiva). Chi aggiunge un nuovo rebuild usi l'helper.
-  - **Chiusura = apertura A RITROSO, e più rapida (v13.76, richiesta dell'utente:
-    'anche la chiusura è veramente improvvisa').** Le due animazioni sono una coppia
-    speculare: stessa geometria (10px di salita e scala 0.985 per il box; 16px di
-    slittamento laterale per la colonna in vista divisa) e curve opposte - `ease-out`
-    entrando, `ease-in` uscendo. Durate: velo 0.15/0.13s, box 0.2/0.17s, colonna
-    0.18/0.16s. **Cambiando una durata va cambiata la gemella.**
-    - L'uscita la avvia **`fabDismiss(el)`**, che sostituisce `overlay.remove()` in
-      tutte le chiusure vere (le 12 modali admin): mette la classe `.fab-out` e
-      rimuove il nodo su `animationend`, con un `setTimeout` di riserva se
-      l'animazione non parte. Rimozione immediata nei rebuild tecnici e con moto
-      ridotto. ⚠️ Il resto del `close()` (dockRelease, sblocco dello scroll,
-      ripristini, hook lingua) continua a girare SUBITO: è logica di stato, non
-      visiva.
-    - ⚠️ **L'`id` si toglie all'istante**, prima di animare. Due ragioni misurate: le
-      funzioni che aprono un editor si autoproteggono con `if
-      (document.getElementById('fab-modal')) return`, quindi un fantasma con l'id
-      addosso **bloccherebbe una riapertura immediata** (i rebuild tecnici chiudono e
-      riaprono nello stesso tick); e `MODAL_OPEN_SEL` ragiona sugli id, quindi la
-      pagina resterebbe inerte e i tasti nudi zitti per tutta la dissolvenza.
-    - ⚠️ **In vista divisa la larghezza della colonna va CONGELATA inline** prima di
-      animare: `dockRelease()` gira subito e porta via `--dockw`, da cui dipende
-      `width:var(--dockw)`; senza il congelamento la regola cade e il box in uscita
-      si allarga a tutta pagina. Verificato frame per frame: 400px stabili per tutta
-      l'uscita.
-- Verificato (batteria dedicata, font reali, config utente con XL di sito attivo):
-  telaio sotto zoom 1.3 (colonna 400px layout = 520 visivi), hover che accende il
-  bagliore sulla card vera, click sul nome spento in dock e vivo dopo la chiusura,
-  Esc che chiude prima la sotto-modale poi la colonna col ripristino, resize
-  1400→900→1400 con stato conservato, axe 0 su 2 temi × 2 zoom (pannello ancorato
-  a 1280px), 0 errori JS.
+    sull'overlay quando `docked && sfx !== fxActiveSfx(key)`. Non serve altro, perché `paint()`
+    legge già la config dalla **variante in modifica** (`V`) e non dalla piattaforma corrente.
+    Il sottotitolo lo dice: 'La pagina accanto mostra la versione <attiva>: le modifiche a <in
+    modifica> si vedono qui sotto.'.
+    - ⚠️ La condizione non può essere `docked && sfx` (com'era quando la classe si chiamava
+      `fxdock-mob`): sarebbe giusta solo sui desktop, mentre su un **tablet touch** è il caso
+      opposto, perché la pagina mostra la variante touch di `hov` e a lavorare alla cieca è la
+      tab **Desktop**.
+  - L'**anteprima panoramica nel Pannello** usa la stessa classe `fxdock-alt`, che lì serve a
+    due cose: scavalcare la regola che in vista divisa nasconde le anteprime, e marcare la
+    colonna in cui si lavora su una variante che la pagina NON mostra. Nel Pannello si aggiunge
+    e si toglie al cambio tab, senza ricreare l'overlay; il resto è nella sezione 'Feature flag
+    dell'aspetto'.
+- Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu), quindi la
+  porzione statica della pagina non cambia. **Unica eccezione:** l'animazione d'ingresso delle
+  modali admin sta nel CSS statico, perché riguarda tutte le `.fab-modal-*` e non solo il dock.
+
+### Apertura e chiusura delle modali admin
+
+Le modali utente dissolvono il velo e sollevano il box con **transizioni** pilotate da
+`.active`; le admin sono create al volo e nascono già visibili, quindi lì la morbidezza si
+ottiene con una **`animation`**, che parte da sé alla comparsa e non richiede un secondo
+passaggio in JS. Tre keyframe: `fab-modal-in` (velo), `fab-box-in` (box che sale) e
+`fab-dock-in` (in **vista divisa** entra da sinistra l'intera colonna e il box NON si anima,
+perché sollevare una colonna a piena altezza sarebbe fuori luogo).
+`@media (prefers-reduced-motion:reduce)` le spegne tutte.
+
+- **Chiusura = apertura A RITROSO** (richiesta dell'utente: 'anche la chiusura è veramente
+  improvvisa'). Le due animazioni sono una coppia speculare: stessa geometria (10px di salita e
+  scala 0.985 per il box; 16px di slittamento laterale per la colonna) e curve opposte,
+  `ease-out` entrando e `ease-in` uscendo. ⚠️ **Cambiando una durata va cambiata la gemella.**
+- L'uscita la avvia **`fabDismiss(el)`**, che sostituisce `overlay.remove()` in tutte le
+  chiusure vere: mette la classe `.fab-out` e rimuove il nodo su `animationend`, con un
+  `setTimeout` di riserva se l'animazione non parte. Rimozione immediata nei rebuild tecnici e
+  con moto ridotto. ⚠️ Il resto del `close()` (dockRelease, sblocco dello scroll, ripristini,
+  hook lingua) continua a girare SUBITO: è logica di stato, non visiva.
+- ⚠️ **I rebuild TECNICI non devono animare**, o un cambio lingua, un 'Ultimo salvato' o un
+  cambio di telaio farebbero lampeggiare la colonna. L'overlay nasce con la classe
+  **`.no-anim`** quando `DOCK_RELAYOUT` è attivo, e per questo il flag avvolge **anche la
+  riapertura** e non solo la chiusura: i punti di rebuild passano dall'helper
+  **`dockRebuild(fn)`**, che lo alza, esegue e lo riabbassa in `finally`, così una riapertura
+  andata male non lascia il flag acceso a sabotare la chiusura successiva. Chi aggiunge un
+  nuovo rebuild usi l'helper.
+- ⚠️ **L'`id` si toglie all'istante**, prima di animare. Due ragioni: le funzioni che aprono un
+  editor si autoproteggono con `if (document.getElementById('fab-modal')) return`, quindi un
+  fantasma con l'id addosso **bloccherebbe una riapertura immediata** (i rebuild tecnici
+  chiudono e riaprono nello stesso tick); e `MODAL_OPEN_SEL` ragiona sugli id, quindi la pagina
+  resterebbe inerte e i tasti nudi zitti per tutta la dissolvenza.
+- ⚠️ **In vista divisa la larghezza della colonna va CONGELATA inline** prima di animare:
+  `dockRelease()` gira subito e porta via `--dockw`, da cui dipende `width:var(--dockw)`, e
+  senza il congelamento la regola cade e il box in uscita si allarga a tutta pagina.
 
 ## 🔐 Admin e segreti
 
@@ -2160,364 +1838,281 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
 
 ## 🗃️ Struttura dati
 
-- **L'array `dati` vive in un file dedicato: `arda/top/dati.js`** (`var dati =
-  [...]`), caricato da `index.html` con `<script src="dati.js"></script>` posto
-  **prima** dello script principale (sincrono e bloccante: `dati` è globale e
-  definita prima che il resto giri). Storico: fino a v10.13.2 l'array era inline
-  in `index.html` tra i marker `/*DS*/ … /*DE*/` (riga unica da ~361 KB, ~69% del
-  file, diff illeggibili e a ridosso del limite 1 MB della Contents API);
-  separato in v10.13.3 per diff leggibili e margine sul limite.
-- **Dati di configurazione accanto alle voci.** Oltre a `datiVersion` e all'array
-  `dati`, il file può contenere tre config su UNA riga ciascuna, tutte scritte dal
-  Worker e tutte **preservate** dai salvataggi che non le inviano: `cardColors`
-  (colori delle famiglie), `badgeAdjust` (micro-aggiustamenti icone) e `siteFlags`
-  (Feature flag dell'aspetto, dalla v12.24). Ognuna ha lettore + validatore nel
-  Worker e un fallback interno nel client.
-- **Serializzazione: prima riga `var datiVersion = "X.Y.Z";`, poi una voce JSON
-  per riga** (`var datiVersion = "...";\nvar dati = [\n{...},\n{...}\n];`), così
-  i diff su GitHub sono per-personaggio. Stessa identica forma sia a mano sia
-  dal Worker → i commit admin restano puliti. (`datiVersion` è la fonte unica
-  della versione del sito, vedi '🔢 Versione del sito'.)
-- Il salvataggio passa dal **proxy Cloudflare Worker**
-  (`proxy/arda-admin-proxy.js`): il browser invia solo `dati` + parola
-  d'ordine; il Worker valida, prende lo SHA di `dati.js` con un GET (dal cui
-  contenuto legge anche `datiVersion`, per incrementarne la patch) e
-  **riscrive l'intero file** (`buildDatiFile`, che riemette `datiVersion`
-  bumpata) con un PUT (Contents API, SHA: race-safe). Niente più marker né
-  read-modify-write dell'HTML.
-  **Attenzione:** `FILE_PATH` del Worker punta a `arda/top/dati.js`; se si
-  rinomina/sposta il file dati, va riallineato nel Worker (che poi si
-  ridistribuisce da sé via la Git integration di Cloudflare, vedi '🔢 Versione
-  del sito').
-- `doCommit()` nel client fa `POST proxyUrl()` con
-  `{action:'commit', password, dati, message}`. L'URL del Worker è in
-  `ADMIN_PROXY_URL_DEFAULT` (non segreto), overridabile dal campo 'Proxy'
-  dell'editor admin (`localStorage`, chiave `arda-proxy-url`).
-- La parola d'ordine sta solo in memoria (`adminPassword`) per la durata
-  della sessione; mai persistita. Deploy e gestione secret:
-  `proxy/README.md`.
-- **Riordino card e manopole.** Il drag-and-drop richiede tutte le categorie
-  visibili (`enableDragDrop`). Su **desktop** le manopole appaiono subito in
-  quel caso. Su **mobile** il riordino è **disattivato dalla v10.19.0**: il tap
-  sul numero di versione va dritto all'editor admin (vedi '🔢 Versione del
-  sito'), non c'è più un punto d'accesso al riordino. La **modalità riordino**
-  (`reorderMode`) e la modale `showActionChoiceModal` (storico punto d'accesso
-  mobile: due tasti 'Riordina' / 'Modifica contenuti') **restano nel codice**
-  ma non sono più richiamate, pronte per un eventuale ripristino. Motivo della
-  rimozione: su mobile il riordino si attivava ma **non si poteva salvare**.
-  Sia riordino sia editor sono **admin-only, dietro parola d'ordine** (il
-  riordino la chiede entrando, `enterReorder`).
-  ⚠️ **Omonimi in classifica** (Galdor ×3, Rúmil ×2): l'ordine (bozza locale e
-  `DATI_SERVER_ORDER`) è memorizzato come lista di NOMI; la risoluzione
-  nome→voce deve passare da `orderByNames` (coda per nome: la n-esima
-  occorrenza prende la n-esima voce omonima), MAI da `find()`. Storico: il
-  salvataggio riordino v2.00 (2026-06-20, commit `d8815b0b`) risolveva con
-  `find()` e collassò gli omonimi: duplicò il Galdor Uomo e il Rúmil Noldo
-  perdendo il Galdor dei Porti e il Rúmil Silvano; scoperto e riparato in
-  v3.63 (voci ripristinate dalla storia git, bug corretto).
-  In riordino, 'Chiudi modalità ordinamento' apre nella stessa modale un
-  trivio (ogni tasto con sottotitolo esplicativo): **Conferma** (commit
-  permanente sul repo via `doSave`, poi esce), **Chiudi** (tiene le modifiche
-  come bozza locale in `localStorage` ed esce, 'continua a modificare') e
-  **Scarta** (svuota `localStorage` e ripristina l'ordine del server da
-  `DATI_SERVER_ORDER`, lo snapshot HTML catturato prima della bozza). L'ordine
-  vive in `localStorage` (`arda-ranking-v4-{lang}`), applicato al load; il solo
-  trascinamento resta in memoria finché non si sceglie Conferma o Chiudi.
-  Entrando nel riordino: attiva tutte le categorie, chiude il pannello, mostra
-  le manopole. Scopo: di default le card sfruttano tutta la larghezza (niente
-  padding per le manopole). **Su desktop** il riordino resta frictionless
-  (manopole dirette, niente password per trascinare); il **FAB flottante** ha
-  'Esporta' (tasto icona-only, senza etichetta di testo: scelta deliberata,
-  non reintrodurla) + un tasto che apre il trivio desktop
-  (`showDesktopReorderModal`,
-  senza sottotitoli): 'Salva' apre la modale password (con ripiego 'Esporta'
-  per i visitatori, `showPasswordModal(.,.,extra)`), 'Chiudi' e 'Ripristina'
-  come su mobile. Il FAB flottante è **rimosso su mobile** (`showFAB` esce se
-  `isMobileViewport()`; il vecchio doppione `isMobileView` è stato unificato
-  nella bonifica v3.80).
-- **Export PDF (`doExport`).** Stampa nativa del browser ottimizzata per la
-  carta: forza il tema chiaro (già leggibile su bianco), avvolge `#rank-list`
-  in una tabella (`buildPrintLayout`) il cui `<thead>` (`display:table-header-group`)
-  ripete `roccobot.me` / 'I Grandi di Arda' su **ogni** pagina senza
-  sovrapporsi, `@media print` nasconde la chrome e mette `break-inside:avoid`
-  sulle card (mai tagliate tra pagine A4). Ripristino del DOM/tema su
-  `afterprint`. Nessuna dipendenza esterna.
-- **'Resources and maps' (footer).** In fondo alla pagina, tra i due `✦`
-  decorativi, il **solo testo** `Resources and maps` è cliccabile (`#res-link`,
-  i ✦ restano non interattivi) e apre `openResourcesModal` (riusa lo stile
-  `fab-modal-*`): un elenco di voci **bilingui** (🇮🇹/🇬🇧 simultanee). Ogni voce
-  apre `openImageViewer(src, titolo)`, un **visualizzatore immagini zoomabile**
-  costruito ad hoc (overlay `.imgv-*`, z-index 500): fit-to-screen all'apertura,
-  zoom con rotella/pinch/doppio-clic e pulsanti +/−/↺, pan in trascinamento
-  (pointer events), chiusura con ✕/Esc/click sul backdrop. Le immagini stanno
-  in **`arda/res/`** (path assoluti `/arda/res/...`). Voci attuali: *Il Grande
-  Viaggio degli Elfi* (`Journey.png`) e *Suddivisioni dei popoli degli Elfi* /
-  *Sundering of the Firstborn* (`Sundering.png`). Per aggiungerne altre basta
-  una riga `item(it, en, '/arda/res/FILE.png')` in `openResourcesModal`.
-- **Permalink della vista: forma BARE (dalla v1.60).** La query è
-  **direttamente il token**, senza `cat=`. Le categorie attive (`filterState`)
-  si inizializzano al load con Ainur, Arcani e Animali **spenti** e NON sono
-  persistite; l'URL le scavalca **solo all'avvio** (lo stato non è salvato →
-  riaprire il link riproduce la vista, toglierlo torna ai default; è il
-  parametro a rendere il link idempotente). Forme bare lette dal loader:
-  - **`?x`** = **tutte le categorie** attive (la vista più condivisa). Es.
-    `https://roccobot.github.io/arda/top/?x`.
-  - **`?<bitmask>`** = un carattere `0/1` per categoria nell'**ordine fisso di
-    `CATS`** (ainu, arcane, elf, adan, man, dwarf, hobbit, orc, animal), con un
-    **10° bit** opzionale per gli **Apocrifi**. Es. `?1` = sola ainu, `?101` =
-    ainu+elf, `?1111111111` = tutto + apocrifi, `?1000000001` = sola ainu +
-    apocrifi. Gli **zeri finali si omettono** (i bit mancanti valgono 0). Una
-    maschera tutta-zero non accende nulla (restano i default). È la forma
-    generata da `buildShareUrl`.
-- **Forme LEGACY ancora lette** (retro-compatibilità, non più emesse):
-  `?cat=x` / `?cat=2` / `?tutte` / `?all` = tutte le categorie; `?cat=<bitmask>`
-  (9 bit, vecchia forma senza 10° bit); `?cat=k1,k2,…` = lista di chiavi tra
-  `CATS` (chiavi ignote scartate; `ainur` **aliasata** a `ainu`, così i link
-  storici `?cat=ainur,…` restano validi); `?a=1` = apocrifi ON. Il loader
-  distingue le forme al volo: prima `?x`, poi bare-bitmask `/^[01]{1,10}$/`,
-  poi i parametri `tutte`/`all`/`cat`, infine `a=1` per gli apocrifi.
-- **Tasto 'copia link' (`buildShareUrl`).** Nel Pannello un tasto icona-catena
-  (`.ctrl-share-btn`; su **desktop** a destra del cambio-lingua nella toolbar,
-  su **mobile** nel gruppo centrato con tema/lingua della barra inferiore) copia
-  l'URL della **vista corrente**: `?x` se tutte le categorie sono attive e gli
-  apocrifi spenti; **nessun parametro** se è la vista di default (snapshot
-  `FILTER_DEFAULT`) con apocrifi spenti; altrimenti il bitmask bare (9 bit
-  categorie + 10° bit apocrifi, zeri finali omessi). Conferma visiva (✓ + tinta
-  oro, `.ctrl-share-done`) e ripiego `execCommand` fuori dai contesti sicuri.
-- **Catalogo esteso «Apocrifi» (dalla v1.60).** Un **interruttore** nel
-  Pannello (`.ctrl-apo`, nella `ctrl-cat-head`, **a destra di 'Categorie' e a
-  sinistra di 'Tutti'**) mostra/nasconde i personaggi del **catalogo esteso**:
-  voci attestate **solo nella HoME/NoME** (extra-canon). **Non è una categoria**
-  (non entra in `CATS` né nel conteggio del bitmask categorie): è una
-  visibilità a sé, governata dalla variabile globale `showApocrifi` (default
-  **OFF**) e dal **10° bit** del permalink bare. Il tasto **'Tutti'**
-  (`ctrl-reset`) agisce **solo sulle categorie**, mai sugli Apocrifi.
-  - **Label 'Apocrifi' sempre visibile (fix v7.69).** L'etichetta accanto
-    all'interruttore usa `color:var(--parchment)` (colore testo, corretto in
-    entrambi i temi grazie all'inversione dei token in chiaro) a opacità 0.72 da
-    spenta. C'era un override `html[data-theme="light"] .apo-lbl {
-    color:var(--ink) }` che in chiaro rendeva la parola **invisibile** (in chiaro
-    `--ink` è il colore di SFONDO chiaro): rimosso. La parola resta leggibile
-    anche a interruttore spento (richiesta dell'utente: più corretto in UI).
-  - **Flag dati: `apocrifo`** sulla voce. `true` (o una stringa-fonte, es.
-    `"HoME"`/`"NoME"`, usata per il testo della pill). In `renderList` la voce
-    è saltata se `p.apocrifo && !showApocrifi`. La classifica è **identica** ma
-    più lunga quando l'interruttore è ON (le posizioni non cambiano).
-  - **Card dedicata:** classe `.rank-item.apocrifo`: sfondo grigio molto tenue,
-    bordo sinistro grigio, **opacità 0.8** (piena all'hover e al focus). In alto a
-    destra una **pill `.pill-home`** contornata (distinta dalle etichette tipo):
-    dice **'Solo HoME' / 'HoME-only'** (o 'Solo <fonte>' se `apocrifo` è una
-    stringa). La parola **'Apocrifo' compare SOLO nell'etichetta
-    dell'interruttore** del Pannello (qualifica una *fonte*, non un personaggio):
-    mai nella card, mai nei testi delle voci.
-    - **Compensazione contrasto (solo tema chiaro, dalla v3.82):** la velatura
-      0.8 sbiadisce le etichette tipo e la pill sotto la soglia AA; nel CSS
-      c'è un blocco di override scoped `.rank-item.apocrifo .type-*` (7 classi
-      + pill + nota) con colori più scuri del minimo necessario perché il
-      colore percepito DOPO la velatura superi 4.7:1 (bordo = RGB testo @0.8).
-      ⚠️ Se una futura voce apocrifa avrà un `tipo` non coperto, aggiungere lì
-      la compensazione corrispondente (e verificare con axe a pagina assestata:
-      l'audit va lanciato DOPO l'animazione di comparsa delle card, ~2 s,
-      altrimenti segnala centinaia di falsi positivi da opacità transitoria).
-  - **Editor admin:** checkbox **'Apocrifo'** (`ae-<i>-apocrifo`, testo 'Apocrifo'
-    dalla v7.29, prima 'Fonte apocrifa') **dentro** la griglia dei flag-badge,
-    nei **due spazi a destra della seconda riga** (`.admin-apo-chk`,
-    `grid-column:11/13` su desktop), liberati dalla v7.29 togliendo il Re 'in
-    carica' (`king_high_now`) dai badge admin (22 badge → riga2 fino a col10 →
-    slot 11-12 per l'apo). Al salvataggio imposta/rimuove `p.apocrifo`
-    (preservando un'eventuale stringa-fonte). Il Worker conserva il campo come
-    ogni altra chiave (nessuna modifica al Worker).
-  - **Voci flaggate `apocrifo` (18, tutte attestate solo in HoME/NoME):**
-    - *I popoli della Terra di Mezzo* (HoME XII): **Eldalótë**, **Findis**,
-      **Írimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**.
-    - *La guerra dei gioielli* (HoME XI): i primi Elfi destatisi a Cuiviénen
-      **Imin/Iminyë**, **Tata/Tatië**, **Enel/Enelyë**; e gli Uomini delle
-      *Wanderings of Húrin* **Manthor**, **Hardang**, **Asgon**, **Avranc**,
-      **Hundar**.
-    - *L'anello di Morgoth* (HoME X): **Andreth** (l'Athrabeth).
-    - **NON apocrifi benché solo-HoME** (tutti *I popoli della Terra di Mezzo*,
-      HoME XII), per esplicita scelta dell'utente: caso della regola «note
-      tardive = canone» (come Gil-galad figlio di Orodreth, dati voluti da JRRT,
-      non ripensamenti): **Argon** (Arakáno), **Anairë** ed **Elenwë**. Elenwë
-      mantiene comunque il badge Helcaraxë al 50%. (**Eldalótë**, dello stesso
-      volume, resta invece apocrifa per scelta editoriale.)
-- **Riga del nome su mobile.** Solo mobile (≤480px), l'ordine è invertito
-  rispetto al desktop: `nome → icone` (status + genere, in blocco inscindibile)
-  poi le **etichette tipo** (`.rank-tipi`). Regola di resa (dalla v3.42): la
-  riga è in **flusso inline**, non flex: le etichette **non vanno mai a capo
-  forzato**: proseguono sulla stessa riga di testo dopo l'ultima parola del
-  nome (se il nome occupa due righe, l'etichetta segue in coda alla seconda) e
-  vanno a capo solo per reale mancanza di spazio. Comportamento:
-  - **card ordinarie**: etichette in coda al nome se ci stanno, altrimenti a
-    capo (wrap inline naturale, etichetta per etichetta);
-  - **card apocrife** (con la pill 'Solo HoME' in alto a destra): le etichette
-    vanno **sempre a capo** (`.rank-item.apocrifo .rank-name > .rank-tipi {
-    display:block }`), per non collidere con la pill.
+- **L'array `dati` vive in un file dedicato: `arda/top/dati.js`** (`var dati = [...]`),
+  caricato da `index.html` con `<script src="dati.js"></script>` posto **prima** dello script
+  principale: sincrono e bloccante, così `dati` è globale e definita prima che il resto giri.
+- **Dati di configurazione accanto alle voci.** Oltre a `datiVersion` e all'array `dati`, il
+  file può contenere tre config su UNA riga ciascuna, tutte scritte dal Worker e tutte
+  **preservate** dai salvataggi che non le inviano: `cardColors` (colori delle famiglie),
+  `badgeAdjust` (micro-aggiustamenti icone) e `siteFlags` (aspetto). Ognuna ha lettore +
+  validatore nel Worker e un fallback interno nel client.
+- **Serializzazione: prima riga `var datiVersion = "X.Y.Z";`, poi una voce JSON per riga**,
+  così i diff su GitHub sono per-personaggio. Stessa identica forma sia a mano sia dal Worker
+  → i commit admin restano puliti.
+- Il salvataggio passa dal **proxy Cloudflare Worker** (`proxy/arda-admin-proxy.js`): il
+  browser invia solo `dati` + parola d'ordine; il Worker valida, prende lo SHA di `dati.js`
+  con un GET (dal cui contenuto legge anche `datiVersion`, per bumparla) e **riscrive l'intero
+  file** (`buildDatiFile`) con un PUT (Contents API, SHA: race-safe). ⚠️ **`FILE_PATH` del
+  Worker punta a `arda/top/dati.js`**: se si rinomina o sposta il file dati, va riallineato
+  nel Worker.
+- `doCommit()` nel client fa `POST proxyUrl()` con `{action:'commit', password, dati,
+  message}`. L'URL del Worker è in `ADMIN_PROXY_URL_DEFAULT` (non segreto), overridabile dal
+  campo 'Proxy' dell'editor admin (`localStorage`, chiave `arda-proxy-url`). La parola
+  d'ordine sta solo in memoria (`adminPassword`) per la durata della sessione, mai persistita;
+  deploy e gestione secret in `proxy/README.md`.
 
-  Implementazione: il DOM emette l'ordine di resa mobile
-  (`nome → .rank-flags → .rank-tipi`), perché nel flusso inline l'ordine visivo
-  può venire solo dal DOM; su **desktop/tablet** (>480px) `display:contents` fa
-  dei figli i flex item di `.rank-name` e due regole `order` ripristinano la
-  resa storica `nome → etichette → icone` (desktop invariato). Le icone non si
+### Riordino delle card
+
+Il drag-and-drop richiede tutte le categorie visibili (`enableDragDrop`), e su **desktop** le
+manopole appaiono subito in quel caso. Su **mobile** il riordino è **disattivato**: il tap sul
+numero di versione va dritto all'editor admin, e non c'è più un punto d'accesso al riordino,
+perché su mobile si attivava ma **non si poteva salvare**. La **modalità riordino**
+(`reorderMode`) e la modale `showActionChoiceModal` (storico punto d'accesso mobile) **restano
+nel codice** ma non sono più richiamate, pronte per un eventuale ripristino. Sia riordino sia
+editor sono **admin-only, dietro parola d'ordine** (il riordino la chiede entrando,
+`enterReorder`).
+
+- ⚠️⚠️ **Omonimi in classifica** (Galdor ×3, Rúmil ×2): l'ordine (bozza locale e
+  `DATI_SERVER_ORDER`) è memorizzato come lista di NOMI, quindi la risoluzione nome→voce deve
+  passare da `orderByNames` (coda per nome: la n-esima occorrenza prende la n-esima voce
+  omonima), **MAI da `find()`**. Il salvataggio riordino della v2.00 risolveva con `find()` e
+  **collassò gli omonimi**, duplicando il Galdor Uomo e il Rúmil Noldo e perdendo il Galdor
+  dei Porti e il Rúmil Silvano (voci ripristinate dalla storia git in v3.63).
+- In riordino, 'Chiudi modalità ordinamento' apre nella stessa modale un trivio, ogni tasto
+  con sottotitolo esplicativo: **Conferma** (commit permanente sul repo via `doSave`, poi
+  esce), **Chiudi** (tiene le modifiche come bozza locale in `localStorage` ed esce) e
+  **Scarta** (svuota `localStorage` e ripristina l'ordine del server da `DATI_SERVER_ORDER`,
+  lo snapshot catturato prima della bozza). L'ordine vive in `localStorage`
+  (`arda-ranking-v4-{lang}`), applicato al load; il solo trascinamento resta in memoria finché
+  non si sceglie Conferma o Chiudi. Entrando nel riordino si attivano tutte le categorie, si
+  chiude il pannello e compaiono le manopole: di default le card sfruttano tutta la larghezza,
+  senza padding per le manopole.
+- **Su desktop** il riordino resta frictionless (manopole dirette, niente password per
+  trascinare); il **FAB flottante** ha 'Esporta' (tasto icona-only, **senza etichetta di
+  testo: scelta deliberata, non reintrodurla**) più un tasto che apre il trivio desktop
+  (`showDesktopReorderModal`, senza sottotitoli), dove 'Salva' apre la modale password con
+  ripiego 'Esporta' per i visitatori. Il FAB flottante è **rimosso su mobile** (`showFAB` esce
+  se `isMobileViewport()`).
+
+### Export, risorse, permalink
+
+- **Export PDF (`doExport`).** Stampa nativa del browser ottimizzata per la carta: forza il
+  tema chiaro, avvolge `#rank-list` in una tabella (`buildPrintLayout`) il cui `<thead>`
+  (`display:table-header-group`) ripete `roccobot.me` / 'I Grandi di Arda' su **ogni** pagina
+  senza sovrapporsi, e `@media print` nasconde la chrome e mette `break-inside:avoid` sulle
+  card, che così non sono mai tagliate tra pagine A4. Ripristino del DOM e del tema su
+  `afterprint`. Nessuna dipendenza esterna.
+- **'Resources and maps' (footer).** Tra i due `✦` decorativi il **solo testo** è cliccabile
+  (`#res-link`, i ✦ restano non interattivi) e apre `openResourcesModal`: un elenco di voci
+  **bilingui** (🇮🇹/🇬🇧 simultanee). Ogni voce apre `openImageViewer(src, titolo)`, un
+  **visualizzatore immagini zoomabile** costruito ad hoc (overlay `.imgv-*`, z-index 500):
+  fit-to-screen all'apertura, zoom con rotella/pinch/doppio-clic e pulsanti +/−/↺, pan in
+  trascinamento, chiusura con ✕/Esc/click sul backdrop. Le immagini stanno in **`arda/res/`**
+  (path assoluti). Per aggiungerne altre basta una riga `item(it, en,
+  '/arda/res/FILE.png')`.
+- **Permalink della vista: forma BARE.** La query è **direttamente il token**, senza `cat=`.
+  Le categorie attive (`filterState`) si inizializzano al load con Ainur, Arcani e Animali
+  **spenti** e NON sono persistite; l'URL le scavalca **solo all'avvio**, quindi riaprire il
+  link riproduce la vista e toglierlo torna ai default: è il parametro a rendere il link
+  idempotente. Forme lette dal loader:
+  - **`?x`** = **tutte le categorie** attive, la vista più condivisa.
+  - **`?<bitmask>`** = un carattere `0/1` per categoria nell'**ordine fisso di `CATS`** (ainu,
+    arcane, elf, adan, man, dwarf, hobbit, orc, animal), con un **10° bit** opzionale per gli
+    **Apocrifi**. Es. `?101` = ainu+elf, `?1000000001` = sola ainu + apocrifi. Gli **zeri
+    finali si omettono**, e una maschera tutta-zero non accende nulla (restano i default). È
+    la forma generata da `buildShareUrl`.
+  - **Forme LEGACY ancora lette** (retro-compatibilità, non più emesse): `?cat=x` / `?cat=2` /
+    `?tutte` / `?all` = tutte le categorie; `?cat=<bitmask>` a 9 bit; `?cat=k1,k2,…` = lista
+    di chiavi tra `CATS`, con le ignote scartate e `ainur` **aliasata** a `ainu` così i link
+    storici restano validi; `?a=1` = apocrifi ON. Il loader distingue le forme al volo: prima
+    `?x`, poi bare-bitmask `/^[01]{1,10}$/`, poi `tutte`/`all`/`cat`, infine `a=1`.
+- **Tasto 'copia link' (`buildShareUrl`).** Nel Pannello un tasto icona-catena
+  (`.ctrl-share-btn`; su desktop a destra del cambio-lingua nella toolbar, su mobile nel
+  gruppo centrato della barra inferiore) copia l'URL della **vista corrente**: `?x` se tutte
+  le categorie sono attive e gli apocrifi spenti; **nessun parametro** se è la vista di
+  default (snapshot `FILTER_DEFAULT`) con apocrifi spenti; altrimenti il bitmask bare.
+  Conferma visiva (✓ + tinta oro, `.ctrl-share-done`) e ripiego `execCommand` fuori dai
+  contesti sicuri.
+
+### Catalogo esteso «Apocrifi»
+
+Un **interruttore** nel Pannello (`.ctrl-apo`, nella `ctrl-cat-head`, **a destra di
+'Categorie' e a sinistra di 'Tutti'**) mostra o nasconde le voci attestate **solo nella
+HoME/NoME**. ⚠️ **Non è una categoria** (non entra in `CATS` né nel conteggio del bitmask
+categorie): è una visibilità a sé, governata da `showApocrifi` (default **OFF**) e dal **10°
+bit** del permalink. Il tasto **'Tutti'** (`ctrl-reset`) agisce **solo sulle categorie**, mai
+sugli Apocrifi.
+
+- **Flag dati: `apocrifo`** sulla voce, `true` o una stringa-fonte (`"HoME"`/`"NoME"`, usata
+  per il testo della pill). In `renderList` la voce è saltata se `p.apocrifo &&
+  !showApocrifi`. La classifica è **identica** ma più lunga quando l'interruttore è ON: le
+  posizioni non cambiano.
+- **Card dedicata:** classe `.rank-item.apocrifo`, sfondo grigio molto tenue, bordo sinistro
+  grigio, **opacità 0.8** (piena all'hover e al focus). In alto a destra una **pill
+  `.pill-home`** contornata, distinta dalle etichette tipo, che dice **'Solo HoME' /
+  'HoME-only'** (o 'Solo <fonte>'). ⚠️ La parola **'Apocrifo' compare SOLO nell'etichetta
+  dell'interruttore** del Pannello, perché qualifica una *fonte* e non un personaggio: mai
+  nella card, mai nei testi delle voci.
+  - ⚠️ **Compensazione contrasto, solo tema chiaro:** la velatura 0.8 sbiadisce le etichette
+    tipo e la pill sotto la soglia AA, quindi nel CSS c'è un blocco di override scoped
+    `.rank-item.apocrifo .type-*` (7 classi + pill + nota) con colori più scuri del minimo
+    necessario, perché il colore percepito DOPO la velatura superi 4.7:1. Se una futura voce
+    apocrifa avrà un `tipo` non coperto, aggiungere lì la compensazione corrispondente.
+  - ⚠️ **L'audit axe va lanciato a pagina assestata**, DOPO l'animazione di comparsa delle
+    card (~2s), altrimenti segnala centinaia di falsi positivi da opacità transitoria.
+  - ⚠️ **La label 'Apocrifi' resta leggibile anche a interruttore spento** (richiesta
+    dell'utente: più corretto in UI): usa `color:var(--parchment)` a opacità 0.72. C'era un
+    override per il tema chiaro su `--ink` che in chiaro rendeva la parola **invisibile**,
+    perché lì `--ink` è il colore di SFONDO: rimosso.
+- **Editor admin:** checkbox **'Apocrifo'** (`ae-<i>-apocrifo`) **dentro** la griglia dei
+  flag-badge, nei **due spazi a destra della seconda riga** (`.admin-apo-chk`,
+  `grid-column:11/13` su desktop), liberati togliendo il Re 'in carica' dai badge admin. Al
+  salvataggio imposta o rimuove `p.apocrifo`, preservando un'eventuale stringa-fonte; il
+  Worker conserva il campo come ogni altra chiave.
+- **Voci flaggate `apocrifo` (18):** da *I popoli della Terra di Mezzo* (HoME XII)
+  **Eldalótë**, **Findis**, **Írimë** (Lalwen), **Tal-Elmar**, **Hazad**, **Buldar**; da *La
+  guerra dei gioielli* (HoME XI) i primi Elfi destatisi a Cuiviénen **Imin/Iminyë**,
+  **Tata/Tatië**, **Enel/Enelyë** e gli Uomini delle *Wanderings of Húrin* **Manthor**,
+  **Hardang**, **Asgon**, **Avranc**, **Hundar**; da *L'anello di Morgoth* (HoME X)
+  **Andreth**.
+  - ⚠️ **NON apocrifi benché solo-HoME**, per esplicita scelta dell'utente: **Argon**
+    (Arakáno), **Anairë** ed **Elenwë**, caso della regola «note tardive = canone» come
+    Gil-galad figlio di Orodreth (dati voluti da J.R.R. Tolkien, non ripensamenti). Elenwë
+    mantiene comunque il badge Helcaraxë al 50%. **Eldalótë**, dello stesso volume, resta
+    invece apocrifa per scelta editoriale.
+
+### Riga del nome e a-capo
+
+**Su mobile (≤480px) l'ordine è invertito** rispetto al desktop: `nome → icone` (status +
+genere, in blocco inscindibile) poi le **etichette tipo** (`.rank-tipi`). ⚠️ La riga è in
+**flusso inline, non flex**: le etichette **non vanno mai a capo forzato**, proseguono sulla
+stessa riga di testo dopo l'ultima parola del nome (se il nome occupa due righe, l'etichetta
+segue in coda alla seconda) e vanno a capo solo per reale mancanza di spazio. Il motivo del
+passaggio all'inline: con un flex container, quando il *nome* andava a capo il suo box
+occupava tutta la larghezza e spingeva l'etichetta su una riga nuova anche con spazio libero
+dopo l'ultima parola.
+
+- **Card apocrife** (con la pill in alto a destra): le etichette vanno **sempre a capo**
+  (`.rank-item.apocrifo .rank-name > .rank-tipi { display:block }`), per non collidere con la
+  pill. ⚠️ Quella regola vale SOLO per loro: applicata a tutte le card mandava a capo le
+  etichette anche dove c'era spazio.
+- Implementazione: il DOM emette l'ordine di resa **mobile** (`nome → .rank-flags →
+  .rank-tipi`), perché nel flusso inline l'ordine visivo può venire solo dal DOM; su
+  **desktop/tablet** (>480px) `display:contents` fa dei figli i flex item di `.rank-name` e
+  due regole `order` ripristinano la resa storica `nome → etichette → icone`. Le icone non si
   spezzano mai su due righe (blocco `inline-flex nowrap`).
-  - **Compattazione mirata `.name-tight` (dalla v3.43).** La funzione
-    `tightenNames` (chiamata a fine `renderList`, al resize e al caricamento
-    dei font) conta le righe occupate da nome+icone+etichette e, se sono più
-    di una, prova la classe `.name-tight` (solo spaziature più strette:
-    `letter-spacing` 0.03→0.006em, margini/gap ridotti; **mai** il corpo del
-    font), tenendola SOLO se fa guadagnare una riga intera. Copre i casi che
-    'per un pelo' sforano l'optimum (es. `Guardiani di Cirith Ungol`,
-    `Re-stregone di Angmar` a certe larghezze); il recupero è ~3%: oltre, la
-    riga in più è spazio davvero mancante, non spreco. Dinamica per necessità:
-    quali card sforano dipende da viewport e font del dispositivo.
-  Storico: (1) per un breve periodo il `flex-basis:100%` era applicato a
-  *tutte* le card → etichette a capo anche dove c'era spazio (es. Ingwë),
-  ristretto agli apocrifi; (2) fino alla v3.41 la riga era un flex container:
-  quando il *nome* andava a capo, il suo box occupava tutta la larghezza e
-  spingeva l'etichetta su una riga nuova anche con spazio libero dopo l'ultima
-  parola (caso 'Guardiani di Cirith Ungol'): da qui il passaggio al flusso
-  inline.
-- **A capo ottimizzato delle righe bipartite (dalla v4.25).** Le due righe
-  `info | genealogia` (`.rank-desc`) e `nomi | titoli` (`.rank-subtitle`)
-  sono emesse con le parti in span misurabili (`joinBipartite`: `.bp-a`,
-  `.bp-sep`, `.bp-b`). La funzione `optimizeBipartite` (in `reflowRows` con
-  `tightenNames`: a fine `renderList`, al resize, al load dei font) evita la
-  'testa vedova' (es. `... | Figlia` a fine riga e il resto sotto): se la
-  riga va a capo, prova la classe `.bp-break` (parte 2 `display:block`,
-  separatore `|` nascosto) e la tiene SOLO se non aumenta il numero totale
-  di righe (a parità di righe preferisce l'a-capo pieno, semanticamente più
-  pulito). Non è tutto-o-niente in assoluto: una parte 2 più lunga di una
-  riga continua a spezzarsi al suo interno; e se la parte 2 rientra in coda
-  a una parte 1 lunga senza costo, resta il wrap naturale col `|`. Vale su
-  desktop e mobile (decisione misurata per card e viewport).
-- **Campi opzionali `padre_en`/`madre_en` (dalla v4.29)**: forma inglese del
-  nome del genitore, presente SOLO dove diverge dall'italiana (cognomi hobbit
-  tradotti: Tuc/Took, Brandibuck/Brandybuck, Bolgeri/Bolger, Eglantina/Eglantine,
-  e i «di/of»: Boromir di Ladros, Finduilas di Dol Amroth). Il render usa
-  `padre_en || padre` in inglese (idem madre); campo assente = nome identico
-  nelle due lingue. L'editor admin non li espone (li preserva al salvataggio,
-  lavorando su copia profonda): si modificano dal repo.
-- **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway,
-  presente solo dove diverge dal nome inglese (disambigue o titoli
-  diversi, es. `Gothmog (balrog)`, `Treebeard`, `Durin's Bane`). Il
-  bottone nella modale costruisce l'URL con `tg`, in mancanza con
+- **Compattazione mirata `.name-tight`.** `tightenNames` (a fine `renderList`, al resize e al
+  caricamento dei font) conta le righe occupate da nome+icone+etichette e, se sono più di una,
+  prova la classe `.name-tight` (solo spaziature più strette: `letter-spacing` 0.03→0.006em,
+  margini e gap ridotti; **mai** il corpo del font), tenendola SOLO se fa guadagnare una riga
+  intera. Copre i casi che 'per un pelo' sforano (es. `Guardiani di Cirith Ungol`,
+  `Re-stregone di Angmar` a certe larghezze); il recupero è ~3%, oltre il quale la riga in più
+  è spazio davvero mancante e non spreco. È dinamica per necessità: quali card sforano dipende
+  da viewport e font del dispositivo.
+- **A capo ottimizzato delle righe bipartite.** Le due righe `info | genealogia`
+  (`.rank-desc`) e `nomi | titoli` (`.rank-subtitle`) sono emesse con le parti in span
+  misurabili (`joinBipartite`: `.bp-a`, `.bp-sep`, `.bp-b`). `optimizeBipartite` (in
+  `reflowRows` con `tightenNames`) evita la 'testa vedova', cioè `... | Figlia` a fine riga e
+  il resto sotto: se la riga va a capo prova la classe `.bp-break` (parte 2 `display:block`,
+  separatore `|` nascosto) e la tiene SOLO se non aumenta il numero totale di righe, e a
+  parità di righe preferisce l'a-capo pieno, semanticamente più pulito. Non è tutto-o-niente:
+  una parte 2 più lunga di una riga continua a spezzarsi al suo interno, e se rientra in coda
+  a una parte 1 lunga senza costo resta il wrap naturale col `|`.
+
+### Campi delle voci
+
+- **Campi opzionali `padre_en`/`madre_en`**: forma inglese del nome del genitore, presente
+  SOLO dove diverge dall'italiana (cognomi hobbit tradotti: Tuc/Took, Brandibuck/Brandybuck,
+  Bolgeri/Bolger, Eglantina/Eglantine, e i «di/of»: Boromir di Ladros, Finduilas di Dol
+  Amroth). Il render usa `padre_en || padre` in inglese, idem madre; campo assente = nome
+  identico nelle due lingue. ⚠️ L'editor admin non li espone ma li **preserva** al
+  salvataggio, lavorando su copia profonda: si modificano dal repo.
+- **Campo opzionale `tg`**: titolo esatto della voce su Tolkien Gateway, presente solo dove
+  diverge dal nome inglese (disambigue o titoli diversi, es. `Gothmog (balrog)`, `Treebeard`,
+  `Durin's Bane`). Il bottone nella modale costruisce l'URL con `tg`, in mancanza con
   `nome_en`, in mancanza con `nome`.
-- **Nome identico in ITA ed ENG: compilare ENTRAMBI i campi** (`nome` e
-  `nome_en`) con lo stesso valore (es. `Fangorn` / `Fangorn`). Il fallback di
-  resa (`p.nome || p.nome_en` in italiano, `p.nome_en || p.nome` in inglese)
-  resta come rete di sicurezza, ma i due campi vanno comunque riempiti entrambi.
-  Valori diversi solo quando il nome italiano differisce davvero dall'inglese
-  (es. `Baccador` / `Goldberry`, `Ombromanto` / `Shadowfax`, `Faggiosso` /
-  `Beechbone`).
-  - Storico: fino a v10.4.x valeva la regola opposta (solo `nome_en`, `nome`
-    vuoto, affidandosi al fallback). Invertita su richiesta dell'utente.
-- **Dedup delle aggiunte in blocco: sempre PER-LINGUA, mai per-voce.** Quando si
-  applicano aggiunte massive ai campi bilingui (`nomi_alternativi`/`appellativi`
-  e i rispettivi `_en`), la deduplica va valutata **separatamente** per l'italiano
-  e per l'inglese. Le due lingue possono divergere: lo stesso valore EN può essere
-  già presente mentre l'IT è diverso (o viceversa). Una dedup che scarta l'intera
-  aggiunta quando coincide UNA sola lingua butta via il miglioramento nell'altra.
-  Es. (fix v4.91): per Eldarion l'EN `King of the Reunited Kingdom` era già
-  presente, ma l'IT proposto `Re del Reame Unificato` differiva dall'esistente
-  `Re del Reame Unito`; una dedup per-voce lo scartò, lasciando la resa vecchia.
-  Regola: aggiungi il valore di una lingua se in quella lingua è realmente nuovo,
-  a prescindere dall'altra.
-  - **Asimmetrie bilingui legittime (non segnalarle negli audit):** un campo può
-    essere compilato in UNA sola lingua quando il dato esiste solo lì. Caso
-    accertato: **Will Piedebianco**, soprannome EN `Flourdumpling` senza
-    equivalente IT perché la traduzione italiana l'ha soppresso (verificato
-    dall'utente, 2026-07-11). Caso inverso (DUE rese in una sola lingua, da
-    tenere entrambe): **Halfast Gamgee**, `nomi_alternativi` IT `Al, Hal`: sono
-    le due rese italiane del soprannome in due edizioni del SdA (pre e post
-    revisione S.T.I.); l'utente le vuole entrambe. NON è un anglicismo residuo
-    da bonificare (2026-07-13). Analogo caso **solo-ITA**: **Círdan**,
-    `nomi_alternativi` IT `il Carpentiere, il Fabbricante di Navi`: due rese
-    del titolo 'Shipwright' da edizioni diverse, tenute entrambe e in
-    quest'ordine; l'EN resta il solo `the Shipwright` (2026-07-13).
-- **Due campi, due ruoli (riga sotto il nome).** La riga mostra
-  `nomi_alternativi` e, dopo un ` | `, `appellativi` (il separatore ` | `
-  compare solo se entrambe le parti ci sono):
-  - **`nomi_alternativi` = NOMI** (a sinistra del `|`): nomi alternativi
-    ufficiali **e** soprannomi/epiteti noti (anche non ufficiali), tutti
-    insieme; preferibilmente i nomi ufficiali per primi (il **vero nome** in
-    testa, se c'è). Es. `Il Gioielliere di Gondolin` (epiteto), `Cúthalion
-    (Arcoforte)`, `il Bianco`.
-  - **`appellativi` = TITOLI** (a destra del `|`): cariche e titoli, es.
-    `Erede di...`, `Principe`, `Re`, `Capitano`, `Signore di...`.
-  - **Notazione abbreviata (convenzione di dialogo).** Per indicare a parole la
-    struttura delle due righe della card si può scrivere indifferentemente
-    `descrizione breve | genealogia` ⤶ `nomi alternativi / appellativi | titoli`
-    **oppure** la forma corta `info | genitori` ⤶ `nomi | titoli`, a
-    prescindere da come si chiamino davvero i campi nella struttura dati
-    (`genitori` ↔ `genealogia` resa da `padre`/`madre`,
-    `nomi` ↔ `nomi_alternativi`, `titoli` ↔ `appellativi`; `info` e
-    `descrizione` coincidono coi campi dalla v3.64). È solo un modo più
-    rapido di riferirsi ai campi quando se ne discute.
-- **Nomi alternativi: mai ripetere il nome principale** (`nomi_alternativi` /
-  `nomi_alternativi_en`). Si tiene solo l'epiteto nudo: `Saruman il Bianco` →
-  `Il Bianco`, `Finwë Noldóran` → `Noldóran`, `Míriel Serindë` → `Serindë`,
-  `Galdor dei Porti` → `Dei Porti`, ecc. (incluse le forme `{Nome} {epiteto}`
-  con preposizione). Regola dell'utente, applicata in blocco dalla v10.20.0.
-- **Nome vero in grassetto tra gli alternativi (lingua madre).** Tra i
-  `nomi_alternativi(_en)`, la forma nella **lingua madre** del personaggio va in
-  `**grassetto**` (`**Nome**`): è il vero nome, mentre il nome d'uso (in altra
-  lingua) equivale a una traduzione/appellativo. Per gli Elfi col nome d'uso
-  **sindarin**: in grassetto la forma **quenya** (Noldor) o **telerin** (Teleri).
-  Stesso trattamento per un nome originario coperto da un epiteto (`**Mairon**`
-  per Sauron, `**Artanis**` per Galadriel, `**Elwë**` per Thingol). Scelta
-  definitiva dell'utente (criterio B): la *traduzione* di un nome è equiparata a
-  un appellativo, quindi è la forma in lingua madre a essere evidenziata.
-  Applicata in blocco (dalla v1.38) a Fëanor, Fingolfin, Finarfin, Fingon,
-  Turgon, Maedhros, Maglor, Celebrimbor, Finrod, Orodreth, Glorfindel, Celegorm,
-  Caranthir, Curufin, Amrod, Amras, Idril, Aredhel ed Elros (`Elerossë`). Il
-  render converte `**...**` in grassetto (`processAlt`).
-  - **Celeborn: NON si usa `Teleporno`.** `Teleporno` (telerin) sarebbe il vero
-    nome solo nella linea narrativa in cui Celeborn è un Elfo di Valinor: una
-    versione **scartata dal progetto** perché genera una catena di incoerenze
-    che J.R.R. Tolkien stesso non ha mai risolto. Per 'I Grandi di Arda' vale la
-    **versione Sindarin** di Celeborn: è un Elfo della Terra di Mezzo, signore
-    del Doriath e parente di Thingol. Perciò `Teleporno` **non va aggiunto** tra
-    i nomi alternativi, e Celeborn **non rientra** tra i casi di grassetto in
-    lingua madre. (Storico: la v1.38 lo aveva erroneamente incluso.)
-- **Editor admin: doppio campo nome.** Dalla v10.13.6 la riga nome dell'editor
-  ha due campi affiancati, **Nome** (`nome`, IT, bandiera 🇮🇹) e **Nome EN**
-  (`nome_en`, bandiera 🇬🇧), entrambi pre-compilati e salvati. Prima c'era un
-  solo campo (modificava solo `nome`): `nome_en` non era gestibile da UI e le
-  bandierine ai lati erano fuorvianti. Ora i nomi tradotti (Baccador/Goldberry,
-  Faggiosso/Beechbone, ecc.) si impostano direttamente dall'editor.
-- **Editor admin: ordine campi e 'Titoli e onorificenze'.** Il campo
-  `appellativi` nell'editor è **rinominato 'Titoli e onorificenze'** (IT/EN) e
-  **spostato subito sotto i 'Nomi alternativi'** (non più nella griglia bilingue
-  con tipo/descrizione/info), così la coppia NOMI ↔ TITOLI della riga sotto il
-  nome resta unita. Gli `id` dei campi (`ae-<i>-appellativi`,
-  `ae-<i>-appellativi_en`) e la chiave dati (`appellativi`) **non cambiano**: è
-  solo posizione+etichetta. Il controllo dei campi dimenticati copre anche
-  questa coppia (label 'Titoli e onorificenze').
-- **Editor admin: indicatore 'campo modificato' (sessione corrente).** Ogni
-  input/textarea memorizza all'apertura il valore di partenza
-  (`dataset.orig`); a ogni digitazione, se il valore differisce, il wrapper
-  `.admin-field` riceve la classe `.admin-modified` (rimossa se si torna
-  all'originale). Il CSS la rende con **bordo/anello arancio + etichetta accesa**
-  (varianti tema scuro/chiaro), per ritrovare a colpo d'occhio i campi toccati e
-  rivederli prima di salvare. Riguarda **solo i campi testo** (non le
-  checkbox-flag). È puramente client/visivo: niente nei dati salvati.
-- **Salvataggio editor admin: controllo campi dimenticati.** Per ogni coppia
-  bilingue (incluso `nome`), se al salvataggio un lato è compilato e l'altro è
-  **completamente vuoto**, parte una **modale di conferma sequenziale** (una per
-  occorrenza): titolo col nome del personaggio, testo `Specifica il contenuto di
-  [campo] in [l'altra lingua], o lascialo vuoto`, campo di testo, tasto
-  'Conferma'. Testo digitato → inserito tale e quale; **vuoto** → sul `nome`
-  copia identica dalla controparte, su tutto il resto resta vuoto (il lato
-  `miss` è sempre quello già vuoto, quindi **nessun dato valido può essere
-  cancellato**). Non retroattivo (vale solo per i salvataggi futuri).
-  - Storico: fino a v10.13.5 la soglia era "un lato >3 caratteri e l'altro ≤3"
-    (≤3 = spazzatura da scartare). Dava falsi positivi su traduzioni corte ma
-    valide (`Elf`/`Orc`/`Man`, 12 occorrenze) che, confermate vuote, venivano
-    cancellate. Cambiata in "scatta solo se un lato è vuoto" su richiesta
-    dell'utente.
-  - La **traduzione automatica IT↔EN** al salvataggio è stata rimossa; il tasto
-    manuale '⇄ Traduci' è dietro `FEATURES.adminTranslate` (oggi `false`,
-    riattivabile).
+- **Nome identico in ITA ed ENG: compilare ENTRAMBI i campi** (`nome` e `nome_en`) con lo
+  stesso valore. Il fallback di resa (`p.nome || p.nome_en` in italiano e viceversa) resta
+  come rete di sicurezza, ma i due campi vanno comunque riempiti entrambi. Valori diversi solo
+  quando il nome italiano differisce davvero dall'inglese (`Baccador` / `Goldberry`,
+  `Ombromanto` / `Shadowfax`). ⚠️ Fino alla v10.4.x valeva la regola opposta (solo `nome_en`,
+  affidandosi al fallback): invertita su richiesta dell'utente.
+- **Dedup delle aggiunte in blocco: sempre PER-LINGUA, mai per-voce.** Quando si applicano
+  aggiunte massive ai campi bilingui (`nomi_alternativi`/`appellativi` e i rispettivi `_en`),
+  la deduplica va valutata **separatamente** per l'italiano e per l'inglese, perché le due
+  lingue possono divergere: lo stesso valore EN può essere già presente mentre l'IT è diverso.
+  Una dedup che scarta l'intera aggiunta quando coincide UNA sola lingua butta via il
+  miglioramento nell'altra (caso reale: per Eldarion l'EN era già presente, quindi l'IT
+  proposto fu scartato lasciando la resa vecchia). Regola: aggiungi il valore di una lingua se
+  in quella lingua è realmente nuovo, a prescindere dall'altra.
+  - ⚠️ **Asimmetrie bilingui legittime (non segnalarle negli audit):** un campo può essere
+    compilato in UNA sola lingua quando il dato esiste solo lì. **Will Piedebianco**,
+    soprannome EN `Flourdumpling` senza equivalente IT perché la traduzione italiana l'ha
+    soppresso. Caso inverso, DUE rese in una sola lingua da tenere entrambe: **Halfast
+    Gamgee**, IT `Al, Hal`, le due rese del soprannome in due edizioni del SdA (pre e post
+    revisione S.T.I.), che l'utente vuole entrambe e NON è un anglicismo residuo da bonificare;
+    e **Círdan**, IT `il Carpentiere, il Fabbricante di Navi`, due rese di 'Shipwright' da
+    edizioni diverse, tenute entrambe e in quest'ordine, mentre l'EN resta il solo `the
+    Shipwright`.
+- **Due campi, due ruoli (riga sotto il nome).** La riga mostra `nomi_alternativi` e, dopo un
+  ` | `, `appellativi`; il separatore compare solo se entrambe le parti ci sono.
+  - **`nomi_alternativi` = NOMI** (a sinistra del `|`): nomi alternativi ufficiali **e**
+    soprannomi/epiteti noti, anche non ufficiali, tutti insieme; preferibilmente i nomi
+    ufficiali per primi, col **vero nome** in testa se c'è.
+  - **`appellativi` = TITOLI** (a destra del `|`): cariche e titoli (`Erede di...`,
+    `Principe`, `Signore di...`).
+  - **Notazione abbreviata (convenzione di dialogo).** Per indicare a parole la struttura
+    delle due righe si può scrivere indifferentemente `descrizione breve | genealogia` ⤶ `nomi
+    alternativi / appellativi | titoli` **oppure** la forma corta `info | genitori` ⤶ `nomi |
+    titoli`, a prescindere da come si chiamino i campi nella struttura dati.
+- **Nomi alternativi: mai ripetere il nome principale.** Si tiene solo l'epiteto nudo:
+  `Saruman il Bianco` → `Il Bianco`, `Finwë Noldóran` → `Noldóran`, `Míriel Serindë` →
+  `Serindë`, `Galdor dei Porti` → `Dei Porti`, incluse le forme `{Nome} {epiteto}` con
+  preposizione. Regola dell'utente, applicata in blocco.
+- **Nome vero in grassetto tra gli alternativi (lingua madre).** Tra i `nomi_alternativi(_en)`
+  la forma nella **lingua madre** del personaggio va in `**grassetto**`: è il vero nome,
+  mentre il nome d'uso in altra lingua equivale a una traduzione o a un appellativo. Per gli
+  Elfi col nome d'uso **sindarin** va in grassetto la forma **quenya** (Noldor) o **telerin**
+  (Teleri), e lo stesso trattamento vale per un nome originario coperto da un epiteto
+  (`**Mairon**` per Sauron, `**Artanis**` per Galadriel, `**Elwë**` per Thingol). Scelta
+  definitiva dell'utente (criterio B): la *traduzione* di un nome è equiparata a un
+  appellativo, quindi è la forma in lingua madre a essere evidenziata. Il render converte
+  `**...**` in grassetto (`processAlt`).
+  - ⚠️ **Celeborn: NON si usa `Teleporno`.** Sarebbe il vero nome solo nella linea narrativa
+    in cui Celeborn è un Elfo di Valinor, versione **scartata dal progetto** perché genera una
+    catena di incoerenze che J.R.R. Tolkien stesso non ha mai risolto. Per 'I Grandi di Arda'
+    vale la **versione Sindarin**: è un Elfo della Terra di Mezzo, signore del Doriath e
+    parente di Thingol. Perciò `Teleporno` **non va aggiunto** tra i nomi alternativi, e
+    Celeborn **non rientra** tra i casi di grassetto in lingua madre.
+
+### Editor admin
+
+- **Doppio campo nome:** la riga nome ha due campi affiancati, **Nome** (`nome`, IT, 🇮🇹) e
+  **Nome EN** (`nome_en`, 🇬🇧), entrambi pre-compilati e salvati. Prima c'era un solo campo, che
+  modificava solo `nome`: `nome_en` non era gestibile da UI e le bandierine ai lati erano
+  fuorvianti.
+- **'Titoli e onorificenze'.** Il campo `appellativi` è **rinominato così** in UI (IT/EN) e
+  **spostato subito sotto i 'Nomi alternativi'**, non più nella griglia bilingue con
+  tipo/descrizione/info, così la coppia NOMI ↔ TITOLI della riga sotto il nome resta unita.
+  ⚠️ Gli `id` dei campi (`ae-<i>-appellativi(_en)`) e la chiave dati **non cambiano**: è solo
+  posizione ed etichetta. Il controllo dei campi dimenticati copre anche questa coppia.
+- **Indicatore 'campo modificato' (sessione corrente).** Ogni input/textarea memorizza
+  all'apertura il valore di partenza (`dataset.orig`); a ogni digitazione, se il valore
+  differisce, il wrapper `.admin-field` riceve la classe `.admin-modified`, rimossa se si
+  torna all'originale. Il CSS la rende con **bordo/anello arancio + etichetta accesa**, per
+  ritrovare a colpo d'occhio i campi toccati e rivederli prima di salvare. Riguarda **solo i
+  campi testo**, non le checkbox-flag, ed è puramente client/visivo: niente nei dati salvati.
+- **Salvataggio: controllo campi dimenticati.** Per ogni coppia bilingue (incluso `nome`), se
+  al salvataggio un lato è compilato e l'altro è **completamente vuoto**, parte una **modale di
+  conferma sequenziale** (una per occorrenza) col nome del personaggio, il testo `Specifica il
+  contenuto di [campo] in [l'altra lingua], o lascialo vuoto`, un campo di testo e 'Conferma'.
+  Testo digitato → inserito tale e quale; **vuoto** → sul `nome` copia identica dalla
+  controparte, su tutto il resto resta vuoto. ⚠️ Il lato mancante è sempre quello già vuoto,
+  quindi **nessun dato valido può essere cancellato**: la soglia precedente ('un lato >3
+  caratteri e l'altro ≤3') dava falsi positivi su traduzioni corte ma valide (`Elf`, `Orc`,
+  `Man`) che, confermate vuote, venivano cancellate.
+- La **traduzione automatica IT↔EN** al salvataggio è stata rimossa; il tasto manuale '⇄
+  Traduci' è dietro `FEATURES.adminTranslate` (oggi `false`, riattivabile).
 
 ## ✒️ Convenzioni tipografiche dei dati (`dati.js`)
 
@@ -2535,44 +2130,30 @@ specifico del dataset):
   nella `fonte` (es. `1954–55`), ma legittimo anche nei testi quando esprime
   un intervallo di anni (es. `2758–59` nella descrizione di Helm; chiarimento
   2026-07-11).
-- ⚠️⚠️ **L'EM-DASH NON SI USA MAI, DA NESSUNA PARTE** (regola dell'utente,
-  ribadita il 2026-07-28: 'non devi usare 'sto carattere: l'ho chiesto migliaia di
-  volte'). Vale per **tutto**: i campi di `dati.js`, i testi dell'interfaccia, le
-  note e la documentazione, i messaggi di commit e il corpo delle PR, e le
-  **risposte in chat**, dove è l'errore che ricorre più spesso. Al suo posto: due
-  punti se introduce una spiegazione, virgole o parentesi se è un inciso, punto
-  fermo se separa due frasi. La regola universale corrispondente sta nella sezione
-  'Caratteri' di `rules/Roccobot.md` ('vietati in ogni output', zero tolleranza):
-  qui è ripetuta perché **questo file ha priorità più alta**, e finché conteneva
-  un'eccezione la scappatoia restava aperta.
-  - ⚠️ **Non esiste più alcuna eccezione 'testi narrativi'.** Fino al 2026-07-28
-    questa sezione dichiarava l'em-dash **ammesso** negli incisi dei campi di
-    `dati.js` (con priorità a virgole e parentesi) e la bonifica 'non retroattiva'.
-    Era ormai lettera morta: `dati.js` ne contiene **zero**. La dicitura però
-    bastava a farlo riapparire altrove, quindi è stata rimossa.
-  - **Bonifica del 2026-07-28/29, COMPLETA: nel repo non ne resta nessuno** salvo i
-    tre casi essenziali (vedi il punto sotto). Ripuliti `CLAUDE.md` (106 casi),
-    `proxy/README.md`, `userscripts/README.md`, il sorgente del Worker e il suo
-    `wrangler.toml`, i commenti dei quattro userscript che ne avevano, l'unica
-    **etichetta di UI** fuori norma (il tasto galleria di `FapopediaRoccobot`,
-    `... - ZIP`), i **79 commenti di `arda/top/index.html`** e le **sei pagine in
-    `artifacts/`** (titoli ed etichette col trattino breve, la prosa con la
-    punteggiatura giusta). Il controllo è una riga: `git ls-files | while read f; do
-    grep -c '—' "$f"; done`, e deve dare 0 dappertutto tranne quei tre.
-    - Nei commenti nuovi si usa il **trattino breve**, e nei marcatori di sezione lo
-      stile di casa è `// ── Titolo ──` (box drawing), non il trattino lungo.
-  - **Le sole tre occorrenze legittime nel repo** (istruzione dell'utente,
-    2026-07-29: 'va tenuto solo dove è assolutamente essenziale'): questa regola, che
-    per dire di non usarlo deve nominarlo, e le due **tabelle dei caratteri** di
-    RoccobotOS (`index.html`, `Caratteri.html`), che ne documentano la scorciatoia di
-    tastiera. Legittime anche, per necessità tecnica, le **espressioni regolari** che
-    devono riconoscerlo nel testo di un sito remoto (p.es. `NSFWARoccobot`).
-  - ⚠️ **L'EN-DASH `–` resta ammesso negli intervalli d'anno** (vedi il punto
-    'Trattini' qui sopra: `1954–55`, `2758–59`): il divieto totale riguarda l'em-dash,
-    e va letto insieme a quella regola, non contro di essa. È il carattere **corto**:
-    nell'intervallo l'em-dash non entra comunque. La bonifica non ha toccato un solo
-    intervallo d'anno (verificato: si scrivono senza spazi attorno al segno, quindi
-    non ricadono nei casi sostituiti).
+- ⚠️⚠️ **L'EM-DASH NON SI USA MAI, DA NESSUNA PARTE** (regola dell'utente, ribadita il
+  2026-07-28: 'non devi usare 'sto carattere: l'ho chiesto migliaia di volte'). Vale per
+  **tutto**: i campi di `dati.js`, i testi dell'interfaccia, le note e la documentazione, i
+  messaggi di commit e il corpo delle PR, e le **risposte in chat**, dove è l'errore che
+  ricorre più spesso. Al suo posto: due punti se introduce una spiegazione, virgole o
+  parentesi se è un inciso, punto fermo se separa due frasi. La regola universale
+  corrispondente sta nella sezione 'Caratteri' di `rules/Roccobot.md` ('vietati in ogni
+  output', zero tolleranza): qui è ripetuta perché **questo file ha priorità più alta**.
+  - ⚠️ **Non esiste più alcuna eccezione 'testi narrativi'**, e non va reintrodotta: finché
+    questa sezione dichiarava l'em-dash ammesso negli incisi di `dati.js`, quella dicitura
+    bastava a farlo riapparire altrove.
+  - **Il repo è bonificato: non ne resta nessuno** salvo i tre casi essenziali qui sotto. Il
+    controllo è una riga e deve dare 0 dappertutto: `git ls-files | while read f; do grep -c
+    '—' "$f"; done`. Nei commenti nuovi si usa il **trattino breve**, e nei marcatori di
+    sezione lo stile di casa è `// ── Titolo ──` (box drawing), non il trattino lungo.
+  - **Le sole tre occorrenze legittime** (istruzione dell'utente: 'va tenuto solo dove è
+    assolutamente essenziale'): questa regola, che per dire di non usarlo deve nominarlo, e le
+    due **tabelle dei caratteri** di RoccobotOS (`index.html`, `Caratteri.html`), che ne
+    documentano la scorciatoia di tastiera. Legittime anche, per necessità tecnica, le
+    **espressioni regolari** che devono riconoscerlo nel testo di un sito remoto.
+  - ⚠️ **L'EN-DASH `–` resta ammesso negli intervalli d'anno** (vedi 'Trattini' qui sopra:
+    `1954–55`): il divieto totale riguarda l'em-dash, e va letto insieme a quella regola, non
+    contro di essa. Gli intervalli si scrivono senza spazi attorno al segno, quindi non
+    ricadono nei casi da sostituire.
 - **Ellissi:** tre punti `...` (mai il carattere unico `…`).
 - **Maiuscola iniziale:** ogni campo-riga mostrato nella card, cioè `descrizione`,
   `nomi_alternativi` e `appellativi` (IT ed EN), **inizia con la maiuscola**,
@@ -2795,72 +2376,49 @@ specifico del dataset):
 - **Posizioni in classifica.** Claude può decidere autonomamente dove collocare
   i nuovi personaggi; a fine lavoro **riferire sempre le loro posizioni** in
   classifica, calcolate **con tutte le categorie attive**.
-- **Secondo audit semantico multi-agente (2026-07-13, dalla v6.92).** Passata su
-  tutte le 355 voci (coerenza IT↔EN, canone, tipografia, resa STI), ogni rilievo
-  grep-verificato sulle fonti locali; 35 rilievi, applicato il taglio deciso
-  dall'utente. **Decisioni 'da non ri-segnalare':**
-  - **Nomi alternativi tenuti perché attestati in PE17** (Parma Eldalamberon 17,
-    p.56, ora fonte ammessa): **`Gaerdil`** (Eärendil), **`Elerondo`** (Elrond,
-    via il patronimico *Elerondiel* di Arwen), **`Laicolassë`** (Legolas, da
-    *laic-olasse* 'green-foliage'). Un audit che non peschi PE17 li segnalerà
-    come non attestati: NON lo sono.
-  - **Éomund 'Primo Maresciallo del Mark'**: resa ITA ufficiale tenuta di
-    proposito, benché le fonti usino 'chief/Sommo Maresciallo del Mark' (scelta
-    dell'utente, 'la abbracciamo così com'è').
-  - **Berúthiel `Donna (Númenóreana Nera?)`**: il `?` è voluto perché la
-    confidenza dell'utente sulla stirpe è alta (pur senza ufficialità); si tiene
-    la forma con `?`. Diverso dal Re-Stregone, ridotto a `Uomo` in v7.20.
-- **Audit bilingue del 2026-07-05 (v4.30).** Passata multi-agente su tutte le
-  310 voci (qualità EN, italiano residuo, coerenza IT↔EN, canone, convenzioni
-  campi, UI). Applicato subito il sottoinsieme certo (12 fix: italiano nei campi
-  `_en`, inglese rotto, refusi, badge Helcaraxë di Celeborn rimosso, `Aracáno`
-  tolto da Fingolfin perché è il nome di Argon). **Restano in sospeso, per
-  decisione editoriale dell'utente**. **Risolti in v4.41 (decisioni utente):**
-  (a) le citazioni IT/EN disallineate riallineate allo stesso passo verbatim:
-  Denethor II e Celebrimbor e Shelob (nuovo testo IT), Oropher (nuovo
-  `citazione_en` verbatim), Carc (nuovo IT = battuta di Roäc); (c) `Pietraforata`
-  **confermato** come resa IT voluta di Michel Delving. **Corrispondenza:**
-  `Michel Delving` = **Pietraforata** (località, di fatto la 'capitale' della
-  Contea); la carica `Sindaco di Pietraforata` = `Mayor of Michel Delving`, ed è
-  **sinonimo** di `Sindaco della Contea`.
-- **Epiteti dell'audit: decisioni utente (v4.43).** RIMOSSI perché non
-  attestati: Isildur 'Tagliatore dell'Anello', Balin 'il Più Anziano', Helm
-  'il Difensore', Bilbo 'il Ritrovatore dell'Anello'. CORRETTO: Arwen
-  'Stella della Sera' (inventato) → **'Stella del Vespro'** (traduzione di
-  Evenstar, a sua volta di Undómiel). TENUTI apposta: **Imrahil 'il Bello'**
-  (verbatim, SdA Libro V cap. 6, è attestato), **Bilbo 'il Magnifico'**
-  (epiteto dato da Thranduil nominandolo Amico degli Elfi, fine dello Hobbit),
-  Arwen 'Gioiello degli Elfi'. (I nomi apocrifi di Alatar 'Haimenar' e
-  Pallando 'Palacendo', qui inizialmente tenuti, sono stati poi RIMOSSI in
-  v5.59 su richiesta dell'utente, dentro una bonifica più ampia di nomi e
-  titoli non attestati o ridondanti.)
-- **Bandobras → Brandobras (v4.41).** In italiano il nome è `Brandobras Tuc`
-  (con la R; l'inglese resta `Bandobras Took`). Il soprannome `Bullroarer` ha
-  **due rese ITA attestate**, entrambe tenute: `Ruggitoro, Ruggibrante`. Il
-  monte degli Orchi è `Monte Gram` (mai `Monte Gramma`, forma errata da fandom).
+- **Esiti degli audit dei contenuti: decisioni 'da non ri-segnalare'.** Il dataset è passato
+  per due audit semantici multi-agente su tutte le voci (coerenza IT↔EN, canone, tipografia,
+  resa STI), ogni rilievo grep-verificato sulle fonti locali. Quello che ne è uscito e che un
+  audit futuro **segnalerà di nuovo a torto**:
+  - **Nomi alternativi attestati in PE17** (Parma Eldalamberon 17, p.56, ora fonte ammessa):
+    **`Gaerdil`** (Eärendil), **`Elerondo`** (Elrond, via il patronimico *Elerondiel* di Arwen),
+    **`Laicolassë`** (Legolas, da *laic-olasse* 'green-foliage'). Un audit che non peschi PE17 li
+    dirà non attestati: NON lo sono.
+  - **Éomund 'Primo Maresciallo del Mark'**: resa ITA ufficiale tenuta di proposito, benché le
+    fonti usino 'chief/Sommo Maresciallo del Mark' (scelta dell'utente, 'la abbracciamo così
+    com'è').
+  - **Berúthiel `Donna (Númenóreana Nera?)`**: il `?` è voluto, perché la confidenza dell'utente
+    sulla stirpe è alta pur senza ufficialità. Diverso dal Re-Stregone, ridotto a `Uomo`.
+  - **`Pietraforata`** è la resa IT voluta di `Michel Delving`, di fatto la 'capitale' della
+    Contea; la carica `Sindaco di Pietraforata` = `Mayor of Michel Delving`, ed è **sinonimo**
+    di `Sindaco della Contea`.
+  - **Epiteti: rimossi perché non attestati** Isildur 'Tagliatore dell'Anello', Balin 'il Più
+    Anziano', Helm 'il Difensore', Bilbo 'il Ritrovatore dell'Anello', più i nomi apocrifi di
+    Alatar 'Haimenar' e Pallando 'Palacendo'. **Corretto:** Arwen 'Stella della Sera'
+    (inventato) → **'Stella del Vespro'**, traduzione di Evenstar, a sua volta di Undómiel.
+    **Tenuti apposta:** **Imrahil 'il Bello'** (verbatim, SdA Libro V cap. 6), **Bilbo 'il
+    Magnifico'** (epiteto dato da Thranduil nominandolo Amico degli Elfi, fine dello Hobbit) e
+    Arwen 'Gioiello degli Elfi'.
+- **Bandobras → Brandobras.** In italiano il nome è `Brandobras Tuc`, con la R, mentre l'inglese
+  resta `Bandobras Took`. Il soprannome `Bullroarer` ha **due rese ITA attestate**, entrambe
+  tenute: `Ruggitoro, Ruggibrante`. Il monte degli Orchi è `Monte Gram`, mai `Monte Gramma`,
+  forma errata da fandom.
 - **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
   (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
   ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
   Uomo Salice, etichettato 'Spirito della foresta') restano in `divini`.
-- **Schede (card) di Ent, Aquile e Vecchio Uomo Salice (dalla v7.19, scelte
-  dell'utente).** Riguarda la **card** (classe `.rank-item.divine*`: sfondo,
-  bordo sinistro, hover), NON l'etichetta tipo. Assegnata in `renderList` (non da
-  dati): **tutti gli Ent** (`p.tipo === 'Ent'`: Fangorn, Bregalad, Fladrif,
-  Faggiosso, Finglas, Fimbrethil) e **tutte le Grandi Aquile** (`p.tipo ===
-  'Grande Aquila'`: Thorondor, Gwaihir, Meneldor, Landroval) prendono la **scheda
-  verde delle Creature primordiali** (`.divine.bombadil`, la Classe di Tom
-  Bombadil). ⚠️ **Dalla v7.59** il **Vecchio Uomo Salice**, l'**Osservatore
-  nell'Acqua** e i **Guardiani di Cirith Ungol** NON sono più Entità angeliche
-  (card oro): spostati agli **Esseri crepuscolari** (card scura `.divine.morgoth`,
-  via `darkBg`) come creature crepuscolari/dell'ombra; rimosso il vecchio ramo
-  `isForestSpirit`.
-  Le **etichette tipo** restano ai colori automatici (`type-ent`, `type-eagle`;
-  il Vecchio Uomo Salice tiene `type-spirit`): NON si toccano. ⚠️ Storia: nelle
-  v7.16-7.18 avevo erroneamente cambiato le *etichette* (`tipo_color`) invece
-  delle *schede*; etichette ripristinate e schede corrette in v7.19. Fimbrethil:
-  dalla v7.18 il `tipo` è normalizzato da 'Entessa'/'Entwife' a **'Ent'**
-  (`genere:f` invariato), così rientra nel match `tipo === 'Ent'`. Contrasto AA
-  verificato con axe (tutte le categorie attive) in entrambi i temi.
+- **Schede (card) di Ent, Aquile e Vecchio Uomo Salice** (scelte dell'utente). ⚠️ Riguarda la
+  **card** (classe `.rank-item.divine*`: sfondo, bordo sinistro, hover) e **NON l'etichetta
+  tipo**, che resta ai colori automatici (`type-ent`, `type-eagle`, `type-spirit`) e non si
+  tocca: è l'errore in cui si è già caduti una volta, cambiando le *etichette* invece delle
+  *schede*. L'assegnazione avviene in `renderList`, non dai dati.
+  - **Tutti gli Ent** (`p.tipo === 'Ent'`) e **tutte le Grandi Aquile** (`p.tipo === 'Grande
+    Aquila'`) prendono la **scheda verde delle Creature primordiali** (`.divine.bombadil`, la
+    Classe di Tom Bombadil). ⚠️ Per Fimbrethil il `tipo` è normalizzato da 'Entessa'/'Entwife' a
+    **'Ent'** (`genere:f` invariato), così rientra nel match.
+  - Il **Vecchio Uomo Salice**, l'**Osservatore nell'Acqua** e i **Guardiani di Cirith Ungol**
+    NON sono Entità angeliche (card oro): stanno fra gli **Esseri crepuscolari** (card scura
+    `.divine.morgoth`, via `darkBg`).
 - **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria
   'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
   interna invariata), la cui **legenda recita 'Orchi e Troll' / 'Orcs &
@@ -2908,152 +2466,114 @@ dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
 
 ## 🚩 Feature flag (elementi disattivati, ma non rimossi)
 
-- Oggetto **`FEATURES`** in testa allo script di `arda/top/index.html`:
-  interruttori per spegnere elementi senza cancellarli dal codice (`false`
-  = spento, `true` = attivo; per riattivare basta il flag, niente altre
-  modifiche). Non sono bug né codice morto: sono scelte deliberate, elencate
-  qui apposta.
-- **`genderLegendPill`** (spento): la pill 'Maschio | Femmina' in fondo alla
-  legenda del Pannello. Disattivata per risparmiare spazio e lasciare
-  implicita un'informazione ovvia (quasi tutti i personaggi hanno un genere
-  convenzionale). Da riaccendere se nasceranno funzioni collegate al genere
-  (es. filtri). Attenzione: i **simboli di genere nelle card** (riga del
-  nome) NON dipendono dal flag, li gestisce `renderList` e restano sempre.
-- **`langSwitchMobile`** (spento): il tasto cambio lingua in alto a destra,
-  **solo su mobile** (classe `no-langswitch-mobile` su `<html>`, applicata
-  dall'head, + media query `max-width:768px`). Scopo: interfaccia mobile più
-  pulita; la lingua si cambia comunque dal Pannello del FAB. Su **desktop**
-  il tasto resta sempre visibile.
-  - **Fluttuante su desktop + scorciatoie da tastiera (dalla v4.41).**
-    `.lang-switch` è `position:fixed` (z-index 50): resta in alto a destra anche
-    scorrendo. In modalità admin sparisce da sé, perché `html.admin-open`
-    nasconde l'intero `<header>` che lo contiene. Un unico listener `keydown`
-    (con `preventDefault` = override dell'azione predefinita del browser)
-    gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate quando
-    `html.admin-open`:
-    - **Ctrl+L** (su Mac è `⌃L`, col tasto Control, non Command): commuta IT↔EN
-      all'istante; se una scheda (modale) è aperta, dalla v4.78 `setLang`
-      **ricarica anche la modale** nella nuova lingua (prima cambiava solo la
-      pagina sotto).
-    - **Ctrl (o Cmd) + Freccia Su / Giù** (dalla v4.78): vai in cima / in fondo
-      alla pagina. **Istantaneo** (dalla v4.97): `pageScrollTo(target, false)`;
-      i **tasti flottanti** invece scorrono in modo **fluido** (vedi sotto).
-      La funzione `pageScrollTo` è a scope globale dalla v4.89. ⚠️ Su
-      **macOS** `⌃↑`/`⌃↓` sono riservati dal sistema (Mission Control / App
-      Exposé) e non arrivano al browser: lì funziona `⌘↑`/`⌘↓` (il listener
-      accetta sia Ctrl sia Cmd). Su Windows/Linux funziona `Ctrl`.
-    - **P (tasto nudo, dalla v6.11)**: apre/chiude il Pannello, come un click
-      sul FAB (listener a parte, stesso file). Guardie: niente modificatori,
-      niente campi di testo/admin/riordino, nessun overlay aperto. Storia: la
-      richiesta originaria era catturare **Fn** (macOS) o **Win/Super**, ma
-      NON è possibile da una pagina web (Fn non genera eventi; Win/Super è
-      riservato all'OS: menu Start / vista Attività non prevenibili): non
-      riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
-    - **Z (tasto nudo, dalla v12.14)**: accende/spegne la **modalità ingrandita**
-      *per chi guarda*, è una **preferenza personale**, non tocca il sito: si
-      memorizza in `localStorage` (`arda-zoom-big`) e **scavalca** il flag di sito
-      (vedi 'Modalità ingrandita'). Toast di conferma 'Modalità XL' / 'Modalità
-      normale' (v12.40). ⚠️ **Dalla v12.40 le guardie di `Z` sono quelle di `P`**
-      (solo a modali chiuse), NON più quelle di `T`/`L`: pur agendo lo zoom su
-      tutto, il tasto non deve scattare 'sotto' una modale aperta.
-    - **Politica dei tasti nudi nelle modali (regola dell'utente, v12.40).**
-      **`T` (tema) e `L` (lingua) funzionano in TUTTE le modali**, con le sole
-      eccezioni già documentate (campo di testo attivo; editor colori: rebuild
-      solo su L, vedi le sezioni dedicate). **`P` e `Z` solo a modali chiuse.**
-      La guardia campi blocca solo dove si SCRIVE: `TEXTAREA`, `SELECT`,
-      `contentEditable` e `INPUT` testuali; checkbox/radio/range/button/color
-      NON bloccano (dopo un click su una checkbox il focus resta lì e L/T devono
-      continuare a rispondere). Le modali che si RICOSTRUISCONO su L registrano
-      `langRefresh`; se una modale sta SOPRA un'altra (es. `#fx-modal` sul
-      pannello Feature flag), conserva l'hook precedente (`prevL`), su L
-      ricostruisce PRIMA il livello sotto e poi sé stessa, e alla chiusura
-      RIPRISTINA `prevL` (azzerarlo lascerebbe il livello sotto senza L).
-      Anti-jitter: ogni rebuild conserva lo stato (scroll, tab, selezioni).
-    - **. (punto, ADMIN-only, dalla v11.80)**: mostra/nasconde le **linee mediane
-      di allineamento** sulle card: la stessa riga rossa tratteggiata dell'editor
-      micro-aggiustamenti, ma **sulla pagina reale**, una per personaggio, a metà
-      del maiuscoletto del nome (riferimento per l'allineamento ottico delle
-      icone-badge). Toggle a ogni pressione. **Attiva solo dopo il login admin**
-      (`adminPassword` in memoria): si **spegne da sé al refresh** (la password non
-      è persistita), che è proprio il comportamento voluto. Guardie come per `P`
-      (niente modificatori/campi di testo/admin/riordino/overlay) **più** Pannello
-      chiuso e login fatto. Implementazione: `toggleCardMidlines`/`placeCardMidlines`
-      (mette la property `--mid` per card), classe `.show-midlines` su `#rank-list`,
-      riga via `::after` disegnata SOTTO il contenuto (`isolation:isolate` +
-      `z-index:-1`); la re-misura è agganciata a `reflowRows` (renderList/resize/
-      font-load), quindi le linee restano allineate a ogni ridisegno. Vale per
-      **tutte** le card visibili (leggero: solo un overlay CSS per card).
-      - **Resa della riga: `height:1px` + `transform:translateY(-50%)` (dalla v11.99),
-        NON `border-top`.** Un `border-top:1px` si disegna 0.5px SOTTO `top:var(--mid)`
-        e a DPR alto lo snapping del bordo lo spostava in modo non lineare (misurato:
-        la linea cadeva ~0.5px troppo in basso pur con `--mid` giusto). Una riga
-        `height:1px` centrata via `translateY(-50%)` (tratteggio con
-        `repeating-linear-gradient`) si centra invece esatta su `--mid` (verificato
-        a pixel su font reale: ~0.1px). Stessa resa in editor e pagina.
-      - **Misura ROBUSTA del centro maiuscoletto (`placeMidlinesFor`, dalla v11.98).**
-        Helper condiviso da pagina ed editor (riferimento SOLIDO e coerente). Due
-        pezzi: (1) **baseline reale della prima riga** = uno *strut* `inline-block`
-        a altezza 0 con `vertical-align:baseline` inserito in testa al nome (il suo
-        box 0-height siede esattamente sulla baseline del layout) →
-        `getBoundingClientRect().top`; (2) **centro maiuscoletto** = baseline −
-        `smallCapRatio·fontSize`, dove `smallCapRatio` è l'offset del centro sopra la
-        baseline come frazione del corpo, misurato a **pixel a 256px** sul font reale
-        (una 'n' small-cap) e messo in **cache per (peso\|famiglia)** →
-        scale-invariant. Batch (tutti gli strut, poi le rect in un solo reflow, poi
-        rimozione) per non forzare 356 reflow a ogni ridisegno. ⚠️ Storico: fino alla
-        v11.97 si usava una formula con `fontBoundingBox`/half-leading che cadeva
-        **~0.85px troppo in basso** (segnalato dall'utente) e `measureText` dava
-        sub-pixel diversi a dimensioni diverse (~0.5px nell'editor a 24px); il nuovo
-        metodo è verificato a pixel (errore ~0) su molti nomi, pagina ed editor.
-- **`oneRing`** (non un on/off ma un **selettore di variante**): icona
-  dell'Unico Anello, `'A'` (`icons/Unico.png`, attiva: design con contorno) o
-  `'B'` (`icons/Unico_B.png`, design precedente senza contorno). Entrambi i
-  file restano in cartella apposta: per alternare basta cambiare il valore,
-  niente altro. `BADGE_ICON.onering` costruisce il `src` dal flag.
-- **`adminTranslate`** (spento): traduzione automatica IT↔EN nell'editor admin
-  (tasto manuale '⇄ Traduci' per coppia bilingue). Spenta su richiesta
-  dell'utente in favore della modale di conferma dei campi dimenticati (vedi
-  'Struttura dati'). Riattivabile mettendo il flag a `true`.
-- **`istariFiveIcons`** (spento, dalla v7.30): la **riga di legenda** Istari con
-  le **5 icone** dei maghi in fila (Saruman, Gandalf, Radagast, Alatar,
-  Pallando). Spento = riga normale a icona singola (Gandalf grigio) + testo. A
-  `true` ripristina la fila di 5 icone (`.leg-cluster`), niente altre modifiche.
-  Riguarda **solo la legenda**; sulle card le icone-badge per-mago
-  (`ISTARI_ICON`, Gandalf grigio+bianco ecc.) restano sempre. Vedi 'Badge
-  Istari'. Storia: 5-icone in legenda dalla v7.23 (con una lunga saga di
-  spaziatura), riportata a icona singola in v7.30 (era nata come flag).
-- **`jumpMobileCircle`** (spento, dalla v9.04): il **tondo** dei tasti salto
-  pagina (`.jump-fab`) su **mobile**. Spento = su mobile restano **solo le
-  freccine** (sfondo/bordo trasparenti, glifo con leggera `drop-shadow` per la
-  leggibilità), più discrete. A `true` aggiunge la classe `html.jump-mobile-circle`
-  che ripristina il **cerchio velato (versione B)** su mobile (sfondo grigio a
-  bassissima opacità + `backdrop-filter`), utile se le sole freccine non fossero
-  abbastanza usabili. Riguarda **solo mobile**. Su **desktop** i tasti hanno
-  sempre il tondo **in tinta col FAB** (versione A: oro su scuro `rgba(210,178,92,0.82)`,
-  teal su chiaro `rgba(31,85,98,0.9)`, `backdrop-filter:blur`, glifo `#3a2808`/bianco;
-  hover `brightness`). Il blocco CSS mobile sta **dopo** l'override chiaro del
-  `.jump-fab` apposta (stessa specificità, sorgente più in basso → vince senza
-  `!important`). Storico: fino alla v8.94 i tasti erano grigi neutri identici su
-  desktop e mobile.
-  - **Opacità di riposo 50% e hover PER-TASTO (dalla v9.58).** Su desktop
-    l'opacità di riposo 0.5 e l'hover a piena opacità (`.jump-fab`/`.jump-fab:hover`)
-    stanno sul **singolo tasto**, NON sul contenitore: così l'hover illumina solo
-    il tasto sotto il puntatore (prima `.jump-fabs:hover` accendeva entrambi). Il
-    contenitore `.jump-fabs` gestisce solo il fade di comparsa (opacity 0→1, messo
-    a 1 da `showJumpFabsTemporarily`); su mobile i tasti restano a piena opacità.
-- **Scorrimento di pagina: NON è più un flag (dalla v4.97).** La funzione
-  condivisa `pageScrollTo(target, smooth)` ha due modi **fissi**, uno per tipo
-  di comando (scelta dell'utente):
-  - **Tasti flottanti** ↑/↓ e Pagina su/giù (`buildJumpFabs`): `smooth:true` =
-    animazione **veloce ma fluida** (easing quintico ease-out: parte rapida e
-    decelera a fine corsa, effetto inerzia). Vale su desktop e mobile.
-  - **Scorciatoie** Ctrl/Cmd+Freccia: `smooth:false` = **salto istantaneo**.
+Oggetto **`FEATURES`** in testa allo script di `arda/top/index.html`: interruttori per spegnere
+elementi senza cancellarli dal codice (`false` = spento, `true` = attivo; per riattivare basta
+il flag, niente altre modifiche). ⚠️ **Non sono bug né codice morto**: sono scelte deliberate,
+elencate qui apposta.
 
-  Nota tecnica: il ramo istantaneo forza `scroll-behavior:auto` perché il CSS
-  globale `html{scroll-behavior:smooth}` altrimenti animerebbe anche il semplice
-  set di `scrollTop`. (Storico: fino alla v4.96 esisteva il flag
-  `FEATURES.smoothScroll`, che governava un unico comportamento condiviso da
-  entrambi; rimosso quando l'utente ha voluto i due modi distinti.)
+- **`genderLegendPill`** (spento): la pill 'Maschio | Femmina' in fondo alla legenda del
+  Pannello, disattivata per risparmiare spazio e lasciare implicita un'informazione ovvia. Da
+  riaccendere se nasceranno funzioni collegate al genere (es. filtri). ⚠️ I **simboli di genere
+  nelle card** NON dipendono dal flag: li gestisce `renderList` e restano sempre.
+- **`langSwitchMobile`** (spento): il tasto cambio lingua in alto a destra, **solo su mobile**
+  (classe `no-langswitch-mobile` su `<html>`, applicata dall'head, + media query
+  `max-width:768px`). Scopo: interfaccia mobile più pulita, e la lingua si cambia comunque dal
+  Pannello del FAB. Su **desktop** il tasto resta sempre visibile.
+- **`oneRing`** (non un on/off ma un **selettore di variante**): icona dell'Unico Anello, `'A'`
+  (design con contorno, attiva) o `'B'` (design precedente senza contorno). Entrambi i file
+  restano in cartella apposta: per alternare basta cambiare il valore.
+  `BADGE_ICON.onering` costruisce il `src` dal flag.
+- **`adminTranslate`** (spento): traduzione automatica IT↔EN nell'editor admin, con tasto
+  manuale '⇄ Traduci' per coppia bilingue. Spenta su richiesta dell'utente in favore della
+  modale di conferma dei campi dimenticati.
+- **`istariFiveIcons`** (spento): la **riga di legenda** Istari con le **5 icone** dei maghi in
+  fila. Spento = riga normale a icona singola (Gandalf grigio) + testo. Riguarda **solo la
+  legenda**: sulle card le icone-badge per-mago restano sempre (vedi 'Badge Istari' per i
+  vincoli di spaziatura se si riaccende).
+- **`jumpMobileCircle`** (spento): il **tondo** dei tasti salto pagina (`.jump-fab`) su
+  **mobile**. Spento = restano **solo le freccine** (sfondo e bordo trasparenti, glifo con
+  leggera `drop-shadow` per la leggibilità), più discrete; a `true` la classe
+  `html.jump-mobile-circle` ripristina il cerchio velato, utile se le sole freccine non fossero
+  abbastanza usabili. Riguarda **solo mobile**: su **desktop** i tasti hanno sempre il tondo in
+  tinta col FAB (oro su scuro, teal su chiaro, `backdrop-filter:blur`, hover `brightness`).
+  ⚠️ Il blocco CSS mobile sta **dopo** l'override chiaro del `.jump-fab` apposta: stessa
+  specificità, sorgente più in basso, quindi vince senza `!important`.
+  - ⚠️ **Opacità di riposo 0.5 e hover PER-TASTO.** Stanno sul **singolo tasto**
+    (`.jump-fab`/`.jump-fab:hover`), NON sul contenitore, così l'hover illumina solo il tasto
+    sotto il puntatore: con `.jump-fabs:hover` si accendevano entrambi. Il contenitore
+    `.jump-fabs` gestisce solo il fade di comparsa (opacity 0→1, messo a 1 da
+    `showJumpFabsTemporarily`); su mobile i tasti restano a piena opacità.
+- **Scorrimento di pagina: NON è un flag.** La funzione condivisa `pageScrollTo(target,
+  smooth)` ha due modi **fissi**, uno per tipo di comando (scelta dell'utente): i **tasti
+  flottanti** ↑/↓ e Pagina su/giù (`buildJumpFabs`) usano `smooth:true`, cioè un'animazione
+  veloce ma fluida (easing quintico ease-out, effetto inerzia), su desktop e mobile; le
+  **scorciatoie** Ctrl/Cmd+Freccia usano `smooth:false`, cioè il **salto istantaneo**. ⚠️ Il
+  ramo istantaneo forza `scroll-behavior:auto`, perché il CSS globale
+  `html{scroll-behavior:smooth}` altrimenti animerebbe anche il semplice set di `scrollTop`.
+
+### ⌨️ Scorciatoie da tastiera
+
+`.lang-switch` è `position:fixed` (z-index 50), quindi resta in alto a destra anche scorrendo;
+in modalità admin sparisce da sé, perché `html.admin-open` nasconde l'intero `<header>` che lo
+contiene. Un unico listener `keydown`, con `preventDefault` per scavalcare l'azione predefinita
+del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate quando
+`html.admin-open`.
+
+- **Ctrl+L** (su Mac `⌃L`, col tasto Control, non Command): commuta IT↔EN all'istante; se una
+  scheda è aperta, `setLang` **ricarica anche la modale** nella nuova lingua.
+- **Ctrl (o Cmd) + Freccia Su / Giù**: vai in cima o in fondo alla pagina, **istantaneo**.
+  ⚠️ Su **macOS** `⌃↑`/`⌃↓` sono riservati dal sistema (Mission Control / App Exposé) e non
+  arrivano al browser: lì funziona `⌘↑`/`⌘↓`, e il listener accetta sia Ctrl sia Cmd.
+- **`P` (tasto nudo)**: apre e chiude il Pannello, come un click sul FAB. Guardie: niente
+  modificatori, niente campi di testo, admin o riordino, nessun overlay aperto. ⚠️ La richiesta
+  originaria era catturare **Fn** (macOS) o **Win/Super**, ma NON è possibile da una pagina web
+  (Fn non genera eventi; Win/Super è riservato all'OS e menu Start o vista Attività non sono
+  prevenibili): non riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
+- **`Z` (tasto nudo)**: accende e spegne la **modalità ingrandita** per chi guarda. È una
+  **preferenza personale**, non tocca il sito: si memorizza in `localStorage`
+  (`arda-zoom-big`) e **scavalca** il flag di sito. ⚠️ Le guardie di `Z` sono quelle di `P`
+  (solo a modali chiuse) e NON quelle di `T`/`L`: pur agendo lo zoom su tutto, il tasto non
+  deve scattare 'sotto' una modale aperta.
+- **Politica dei tasti nudi nelle modali (regola dell'utente).** **`T` (tema) e `L` (lingua)
+  funzionano in TUTTE le modali**, con le sole eccezioni già documentate (campo di testo
+  attivo; editor colori, che si ricostruisce solo su `L`). **`P` e `Z` solo a modali chiuse.**
+  - ⚠️ La guardia campi blocca solo dove si SCRIVE: `TEXTAREA`, `SELECT`, `contentEditable` e
+    `INPUT` testuali; checkbox, radio, range, button e color NON bloccano, perché dopo un click
+    su una checkbox il focus resta lì e `L`/`T` devono continuare a rispondere.
+  - Le modali che si RICOSTRUISCONO su `L` registrano `langRefresh`. ⚠️ Se una modale sta SOPRA
+    un'altra (es. `#fx-modal` sul Pannello di controllo) conserva l'hook precedente (`prevL`),
+    su `L` ricostruisce PRIMA il livello sotto e poi sé stessa, e alla chiusura **ripristina**
+    `prevL`: azzerarlo lascerebbe il livello sotto senza `L`. Anti-jitter: ogni rebuild conserva
+    lo stato (scroll, tab, selezioni).
+- **`.` (punto, ADMIN-only)**: mostra e nasconde le **linee mediane di allineamento** sulle
+  card, cioè la stessa riga rossa tratteggiata dell'editor micro-aggiustamenti ma **sulla pagina
+  reale**, una per personaggio, a metà del maiuscoletto del nome. **Attiva solo dopo il login
+  admin** (`adminPassword` in memoria), quindi si **spegne da sé al refresh**, che è il
+  comportamento voluto. Guardie come per `P`, **più** Pannello chiuso e login fatto.
+  Implementazione: `toggleCardMidlines`/`placeCardMidlines` (mette la property `--mid` per
+  card), classe `.show-midlines` su `#rank-list`, riga via `::after` disegnata SOTTO il
+  contenuto (`isolation:isolate` + `z-index:-1`); la re-misura è agganciata a `reflowRows`,
+  quindi le linee restano allineate a ogni ridisegno.
+  - ⚠️ **Resa della riga: `height:1px` + `transform:translateY(-50%)`, NON `border-top`.** Un
+    `border-top:1px` si disegna 0.5px SOTTO `top:var(--mid)` e a DPR alto lo snapping del bordo
+    lo spostava in modo non lineare, facendo cadere la linea ~0.5px troppo in basso pur con
+    `--mid` giusto. Una riga `height:1px` centrata via `translateY(-50%)` (tratteggio con
+    `repeating-linear-gradient`) si centra invece esatta su `--mid`, verificato a pixel sul font
+    reale. Stessa resa in editor e pagina.
+  - ⚠️ **Misura ROBUSTA del centro maiuscoletto (`placeMidlinesFor`)**, helper condiviso da
+    pagina ed editor. Due pezzi: la **baseline reale della prima riga**, ottenuta con uno
+    *strut* `inline-block` ad altezza 0 con `vertical-align:baseline` inserito in testa al nome
+    (il suo box 0-height siede esattamente sulla baseline del layout, e se ne prende il
+    `getBoundingClientRect().top`); e il **centro maiuscoletto** = baseline −
+    `smallCapRatio·fontSize`, dove `smallCapRatio` è l'offset del centro sopra la baseline come
+    frazione del corpo, misurato a **pixel a 256px** sul font reale (una 'n' small-cap) e messo
+    in **cache per (peso|famiglia)**, quindi scale-invariant. Si lavora in batch (tutti gli
+    strut, poi le rect in un solo reflow, poi la rimozione) per non forzare 356 reflow a ogni
+    ridisegno.
+    - ⚠️ **Tentativi scartati:** una formula con `fontBoundingBox`/half-leading cadeva ~0.85px
+      troppo in basso, e `measureText` dava sub-pixel diversi a dimensioni diverse (~0.5px
+      nell'editor a 24px). Il metodo attuale è verificato a pixel, con errore ~0, su molti nomi,
+      in pagina e nell'editor.
 
 ## 🎨 Etichette tipo (colori e bordo)
 
@@ -3093,876 +2613,634 @@ dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
 
 ## 🏅 Criteri editoriali dei badge
 
-- **Badge Aman** (legenda: 'Attraversò il Mare', dalla v7.21; tooltip esteso in lista:
-  'Salpò per l'Ovest e approdò nelle Terre Imperiture'): segna la
-  **partenza individuale e definitiva** verso Aman di chi si era stabilito
-  nella Terra-di-Mezzo (il congedo del crepuscolo degli Elfi e affini).
-  **Escluse** le migrazioni primordiali degli Anni degli Alberi: viaggio
-  degli ambasciatori con Oromë e Grande Viaggio. Il criterio è volutamente
-  NON spiegato nella legenda della pagina (semplicità).
-  Casi decisi dall'utente: Finwë, Thingol e Ingwë senza badge; Melian,
-  Eärendil, Elwing, Tuor e Idril lo tengono. **Eönwë tiene il badge** (per il
-  momento, decisione utente 2026-07-11) benché Maia nativo di Aman: un audit
-  canonico ne aveva proposto la rimozione (il criterio parla di chi si era
-  stabilito nella Terra di Mezzo), respinta. Il valore `'presunto'` rende
-  l'icona al **50%** (`si-dim`).
-- **Il badge semitrasparente è scollegato dall'idea di 'presunto'.** Il 50% è
-  solo un segnale visivo di 'stato a sé': **nessun** suffisso `(presunto)`
-  automatico nel tooltip (rimosso da `buildStatus`). Il significato va dato
-  caso per caso in `ICON_LABEL_OVERRIDE`; se non si è certi di cosa scrivere,
-  **chiedere all'utente**. Le partenze per l'Ovest dedotte ma non attestate
-  (Radagast, Glorfindel, Erestor, Lindir) usano il tooltip comune
-  `AMAN_DEDOTTO`: 'Approdò nelle Terre Imperiture (dedotto, non attestato dalle
-  fonti canoniche)' / 'Reached the Undying Lands (inferred, not canonically
-  confirmed)'.
-- **Badge Ambasciatori** (chiave `envoy`, `icons/Valinor.png`: la nave
-  degli Anni degli Alberi): marca il **viaggio primordiale degli ambasciatori
-  degli Eldar con Oromë** (Anni degli Alberi), evento unico nella storia di
-  Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come
-  gruppo secondario della riga Aman** (senza parentesi), 'Attraversò il
-  Mare / Al seguito di Oromë', stesso schema della riga dei Re
-  ('Re Supremo dei Noldor / In carica'); il tooltip resta la frase
-  estesa e l'eccezionalità dell'evento non va spiegata in pagina.
-- **Convenzione titoli 'Re Supremo' vs 'Alto Re' (dalla v7.15).** In inglese
-  è sempre **High King** (i traduttori del Legendarium non l'hanno reso in modo
-  uniforme); in italiano il progetto distingue: **Re Supremo** = governa su
-  TUTTO il suo popolo, su qualunque sponda del Mare; **Alto Re** = nella Terra
-  di Mezzo. Perciò in EN i due si **collassano** in un solo 'High King': è una
-  **asimmetria bilingue legittima** (Fëanor: IT `Re Supremo dei Noldor, Alto Re
-  dei Noldor`, EN il solo `High King of the Noldor`). Allineati in v7.15:
-  legenda `king_std` IT `Alto Re dei Noldor a est del Mare` (EN `east of the
-  Sea`); titoli di **Finarfin** (`Re Supremo dei Noldor`), **Ingwë** (`Re
-  Supremo di tutti gli Elfi`), **Gil-galad** (`Alto Re dei Noldor, ...`),
-  **Fëanor** (i due titoli sopra). I badge `king_high`=Re Supremo,
-  `king_std`=Alto Re seguono la stessa logica.
-- **Badge Istari** (chiave `istari`): in lista una o più icone per mago, dal
-  colore della veste/ordine (`Bianco.png` Saruman, `Bruno.png` Radagast,
-  `Blu1.png` Alatar, `Blu2.png` Pallando; mappa `ISTARI_ICON`, i cui valori
-  sono array). **Gandalf è l'unico con due icone**, `Grigio.png` poi
-  `Bianco.png`: fu sia il Grigio sia il Bianco. Questo vale per le **CARD**
-  (`buildStatus` via `ISTARI_ICON`), sempre.
-  - **RIGA DI LEGENDA: normale a icona singola (dalla v7.30), la 5-icone è ora
-    un feature flag SPENTO.** La riga di legenda Istari è tornata **normale**:
-    una sola icona (**Gandalf grigio**, `BADGE_KEY.istari` = `Grigio.png`) +
-    testo, come le altre righe, e **spostata prima della Compagnia** (in
-    `ICON_ORDER`, `istari` è ora subito prima di `fellowship`). La **variante a
-    5 icone** (Saruman, Gandalf, Radagast, Alatar, Pallando in fila) è
-    conservata dietro **`FEATURES.istariFiveIcons`** (default `false`): a `true`
-    torna la riga a 5 icone col cluster (ramo `k === 'istari' &&
-    FEATURES.istariFiveIcons` in `buildLegend`), niente altre modifiche. Motivo:
-    era nata come feature flag fin dall'inizio (l'utente ha aspettato a dirlo).
-    Il paragrafo sotto descrive lo **stato a 5 icone** (flag ON), tenuto per
-    memoria e per l'eventuale riaccensione.
-  - **[Flag ON] In legenda (dalla v7.23) i
-  5 maghi sono in fila** (come gli Anelli), nell'ordine Saruman (`Bianco`),
-  Gandalf (`Grigio`), Radagast (`Bruno`), Alatar (`Blu1`), Pallando (`Blu2`),
-  ognuno col proprio nome come tooltip (caso `k === 'istari'` in `buildLegend`;
-  `BADGE_KEY.istari` non è più usato). La riga Istari è stata spostata al
-  **penultimo posto**, subito prima degli Anelli. Le icone delle righe
-  multi-icona (Istari e Anelli) sono avvolte in un `.leg-cluster` a larghezza
-  **fissa** così il testo delle due righe parte dallo stesso x (allineamento
-  esatto, IT ed EN). **Larghezza cluster `6.40em` (dalla v7.28):** era `8em`,
-  troppo largo → il testo partiva ~18px dopo l'ultima icona ('molto più in là').
-  Ridotto perché il gap icona→testo pareggi le righe a icona singola (~10.7px:
-  ~2.7px interni al cluster + gli 8px del `gap:0.5rem` di riga). Entrambe le
-  righe (Istari e Anelli) finiscono le icone allo stesso x (~442px), quindi il
-  cluster fisso le mantiene incolonnate. **Spaziatura Istari (v7.27):** i PNG dei maghi sono stati
-  **RITAGLIATI** (rimosso il ~16% di trasparente per lato: ora 174×256,
-  verticali). In legenda si dimensionano per **altezza** (`.ctrl-legend-istari
-  .si-istari { width:auto }`) → il box avvolge stretto la figura, così bastano
-  **gap positivi** per averli vicini ma **distinti, senza sovrapposizione dei
-  PNG** (era l'overlap a dare il 'rotto'). **Gap `0.30rem` (dalla v7.28):** era
-  `0.16rem`, troppo stretto → c-t-c 14.1px; portato a `0.30rem` per un c-t-c
-  ~16.4px, cioè **allineato agli Anelli** (~16px, che l'utente non contestava).
-  L'utente misura in 'suoi pixel' (screenshot retina, **fattore ~2**): il suo
-  '+4.75 px per gap, +19 totali' = ~+2.3px css/gap. Gli **Anelli** invariati
-  (gap `0.22rem`). Le **card NON cambiano**: là il box resta quadrato con
-  `object-fit:contain` (la figura verticale riempie l'altezza, resa identica a
-  prima). Il primo mago (Saruman) ha un nudge (`0.13rem`) per allineare la riga
-  all'Unico. Storico: v7.23 ammucchiate, v7.25 troppo spaziate, v7.26 fan
-  sovrapposto (dava 'PNG uno sull'altro'), v7.27 ritaglio + gap positivo, v7.28
-  gap allargato ad allinearsi agli Anelli + cluster ristretto (testo vicino).
-- **Badge Helcaraxë** (chiave `helcaraxe`, `icons/Helcaraxe.png`): 'Attraversò
-  i ghiacci dell'Helcaraxë' (icona iceberg). In `ICON_ORDER` sta al **3° posto,
-  subito dopo `silmaril`** (prima di `istari`). **PNG ritagliata: 224×215
-  (dalla v7.48, aspetto ~1.042).** Storia del disegno: fino alla v7.47 era un
-  iceberg stilizzato a faccette (con contorno per il tema chiaro); in v7.48
-  sostituito, su scelta dell'utente, con un iceberg a picchi affilati e base +
-  riflesso azzurro (la 'Proposta 4' tra quattro varianti confrontate). L'icona
-  si rende `object-fit:contain` in un box quadrato: con aspetto ~1.042 (poco più
-  larga che alta) riempie ~100% della larghezza. Ogni nuova icona va **ritagliata
-  al contenuto** (bbox alpha, lossless RGBA, nessuna quantizzazione, vedi
-  'Ottimizzazione immagini') così riempie il box come le altre badge. Storia
-  della vecchia arte a faccette: originale 234×256; v7.28 ritaglio → 202×229;
-  v7.30 → 202×214 (~0.944), rimossa la punta subacquea sottile che allungava il
-  canvas senza aggiungere larghezza. Portatori tra
-  i 159, da canone (*Silmarillion*, 'Della fuga dei
-  Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril, Finrod, Angrod, Aegnor,
-  Galadriel, Orodreth (figlio di Angrod, nato a Valinor, giunto con l'oste di
-  Fingolfin). NON lo attraversarono i Fëanoriani (giunsero con le navi) né
-  Finarfin (tornò indietro a Valinor). **Elenwë** (sposa di Turgon, madre di
-  Idril) porta il badge a **opacità 50%** (valore `'presunto'`, che dà il
-  50%), ma con **etichetta dedicata** nel tooltip: 'Morì nella traversata
-  dell'Helcaraxë' (via `ICON_LABEL_OVERRIDE`): è l'unica Elfa con nome noto a
-  perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
-  traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo*
-  (HoME XII, J.R.R. Tolkien, 1996), che ne attesta nome e stirpe Vanya.
-- **Badge Aratar di Melkor al 50%** (chiave `aratar`, valore `'presunto'`):
-  Melkor è l'unico Aratar a opacità dimezzata, con **etichetta dedicata** nel
-  tooltip (via `ICON_LABEL_OVERRIDE`, chiave `'Melkor'` = il `nome` della voce):
-  IT 'Non più annoverato tra gli Aratar dopo la sua ribellione', EN 'No longer
-  counted among the Aratar after his rebellion'. Motivo: dopo la caduta
-  'Melkor non è più annoverato tra i Valar' (*Valaquenta*), dunque nemmeno tra
-  gli Aratar; il dimezzamento segna questo status conteso, non un dato presunto.
-  (Storico: l'override era erroneamente su chiave `'Morgoth'`, che non combacia
-  col `nome` `Melkor`, perciò non scattava e si vedeva il default '(presunto)'.)
-
-- **Cinque badge aggiunti insieme (v3.93, decisioni dell'utente).** L'ordine
-  di resa/legenda/admin vive in `ICON_ORDER` (righe condivise in legenda:
-  Re+In carica, Aman+Oromë+Est, Drago+Balrog, Vilya+Nenya+Narya):
-  - **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos', SOLO Elfi):
-    Glorfindel, Finrod, Míriel (quest'ultima da HoME X, caso 'note tardive').
-    **Lúthien esclusa** per scelta dell'utente: il suo è un caso a parte
-    (rinascita completa con natura diversa, mortale), non una reincarnazione.
-    Beren fuori per definizione (Uomo).
-  - **`est`** ('Attraversò il Mare verso Est', criterio: traversata IN NAVE
-    dalle Terre Imperiture alla Terra di Mezzo): Eönwë e Finarfin (Guerra
-    d'Ira, traghettati dai Teleri, Silm cap. 24), Ingwion (idem, alla guida
-    dei Vanyar), Glorfindel (ritorno nella TE), i 5 Istari, Fëanor e i suoi
-    7 figli (navi di Losgar). **Ingwë escluso**: la sua partecipazione alla
-    Guerra d'Ira non è attestata (i testi nominano il figlio Ingwion) e il
-    viaggio degli ambasciatori non avvenne in nave (le navi non esistevano).
-  - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon),
-    Fram (Scatha), Bard (Smaug). Azaghâl ferì soltanto Glaurung.
-  - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog),
-    Gandalf (Flagello di Durin). **Ecthelion ha un tooltip dedicato** (dalla v12.27,
-    via `ICON_LABEL_OVERRIDE`): 'Uccise Gothmog, signore dei Balrog' / 'Slew Gothmog,
-    Lord of the Balrogs', perché non uccise un Balrog qualunque ma il loro signore.
-    ⚠️ La voce di Ecthelion in `ICON_LABEL_OVERRIDE` ne ha già una per `calaquende`:
-    le chiavi convivono nello stesso oggetto, non sostituirla. **Tuor escluso**: uccide Balrog solo ne
-    'Il libro dei racconti perduti II' (la Caduta di Gondolin, versione
-    superata del Legendarium).
-  - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin. Rimosso in v7.09
-    per far posto a `calaquende`, poi **ri-introdotto in v7.23 come EASTER EGG**
-    (icona nuova `icons/Morgoth.png`, guerriero corazzato): appare **solo sulla
-    card di Fingolfin**, NON in legenda (skip in `buildLegend`) né nella griglia
-    admin (skip nella generazione checkbox; il valore è comunque preservato al
-    salvataggio perché la checkbox è assente). In `ICON_ORDER` sta **subito dopo
-    `helcaraxe`**. Tooltip (via `ICON_LABEL`, unico portatore): IT 'Sfidò Morgoth
-    a duello e lo ferì sette volte: una delle più grandi imprese della storia di
-    Arda.' / EN 'He challenged Morgoth to single combat and wounded him seven
-    times: one of the greatest deeds in the history of Arda.'. Non è in
-    `BADGE_ROWS` (non filtrabile). Restano intatte le feature omonime ma distinte:
-    la classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via
-    `darkBg`) e l'etichetta tipo `.type-morgoth` ('vala decaduto'). **Dalla v10.45
-    la PNG è la nuova arte fornita dall'utente (guerriero con elmo cornuto e
-    Grond), canvas 236x256 (padding trasparente CONSERVATO su richiesta), e
-    `.si-morgoth` ha box `width:.848em; height:.92em` (= aspetto 236/256, così
-    l'immagine riempie il box senza letterbox). Poiché il badge esiste su UN solo
-    personaggio (Fingolfin), il margine è tarato otticamente, ma con **un solo
-    valore condiviso** tra i due layout (`margin-left:0.01em; margin-right:-0.06em`,
-    solo sulle card): niente più regole per-viewport, così le correzioni delle
-    icone-badge restano ai soli due meccanismi `margin` + `nudge`. Storico: fino
-    alla v11.16 c'erano due regole per-device misurate inchiostro-a-inchiostro
-    (`optic.js`): DESKTOP `margin-right:-0.11em; margin-left:-0.05em` (gap verso
-    la corona ~12.6px vs ~9-10 degli altri), MOBILE `margin-left:0.07em` (gap verso
-    l'Helcaraxe ~3.6px vs ~5.5); unificate nella v11.17 accettando un piccolo scarto
-    ottico simmetrico. Storico immagine: dalla v8.80 alla v10.42 ritagliata
-    al contenuto (215x237) con box `.835em`; in v10.43 una prima nuova arte
-    256x256 quadrata con box `.92em`, sostituita in v10.45.**
-- **Distanziamento del simbolo di genere (dalla v8.80).** Il simbolo ♂/♀
-  (`.genere-svg`, PNG) è staccato dal cluster dei badge di merito con un margine
-  sinistro extra (desktop `margin-left:0.28em` → gap ~15px vs ~11px tra badge;
-  mobile `0.3em` oltre al gap flex): prima 'toccava' l'ultimo badge (~8px). È un
-  gruppo a sé (stato anagrafico, non merito), quindi va otticamente separato.
-  - **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede
-    ~70 portatori su 306, troppo diffuso per un badge 'eccezionale'. Non
-    riproporlo (l'icona Morte.png è stata rimossa, recuperabile da git).
-- **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via
-  grep sulle fonti.** In legenda: `guerradira` **dopo** `balrog` (era dopo
-  `morgoth`, rimosso in v7.09), `suicidio`
-  **prima** di `fellowship`; portatori (`p.suicidio`/`p.guerradira` = `true`):
-  - **`suicidio`** ('Si tolse la vita', icona `Teschio.png`, teschio con lacrima
-    di sangue): **7** voci:
-    Túrin (spada Gurthang), Nienor (nel Teiglin), Húrin (nel mare occidentale,
-    'si dice'), Maedhros (voragine di fuoco), Denethor II (rogo), Míriel Serindë
-    (abbandono volontario della vita, primo trapasso in Aman: caso atipico ma
-    voluto), Aerin (rogo della sala di Brodda: attestazione **implicita**, non
-    verbatim, tenuta per scelta dell'utente).
-    - **Distinzione (audit 2026-07-13, decisione utente): 'togliersi la vita' ≠
-      'rendere la vita'.** Il badge marca il **gesto estremo** (violenza,
-      disperazione, rogo). Ne restano **esclusi** i mortali che *si lasciano
-      andare* alla morte per non subire il degrado della vecchiaia (Dono degli
-      Uomini, alla maniera dei re di Númenor): **Aragorn II** (depone la vita
-      nella Casa dei Re) e **Arwen** (si corica a Cerin Amroth) NON hanno il
-      badge. **Míriel** è l'unica eccezione a-là-suicidio perché è un'**Elfa**
-      che rinuncia alla vita in Aman, atto innaturale per la sua stirpe. Altri
-      esclusi verificati: **Elwing** (si getta in mare ma Ulmo la salva, non
-      muore), **Maglor** (getta il Silmaril e vaga: nel Silm pubblicato non si
-      uccide; il 'took his own life' è solo HoME IV, riferito a Maidros =
-      Maedhros), **Saeros** e **Amroth** (morti accidentali, non deliberate).
-  - **`guerradira`** ('Combattè nella Guerra d'Ira', icona `Ira.png`, spade
-    incrociate): **5** voci, **solo la schiera attaccante dei Valar**: **Eönwë**
-    (comandante), **Finarfin** (guidò i Noldor di Valinor), **Ingwion** (guidò i
-    Vanyar, HoME IV-V), **Eärendil** (uccise Ancalagon nella battaglia aerea),
-    **Thorondor** (capitano delle Aquile). **Definizione (scelta editoriale
-    soggettiva dell'utente, v6.66):** 'combattere' la Guerra d'Ira è un'azione
-    **attiva**; chi si *difendeva* dall'armata di Valinor (in un certo senso
-    *subiva*) faceva una cosa diversa → **Melkor e Ancalagon esclusi** benché
-    presenti alla battaglia. **Esclusi per attestazione** (Silm cap. 24: 'among
-    them went none of those Elves who had dwelt... in the Hither Lands'):
-    Gil-galad, Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la
-    schiera; Maedhros e Maglor vennero *dopo* la guerra, per i Silmaril.
-- **Riga Re unica + Re 'in carica' come easter egg da card (dalla v7.29).** Il
-  badge `king_high_now` (icona `ReFinarfin.png`, il Re 'in carica') è stato
-  **tolto da legenda e admin** e reso **card-only come Morgoth**: resta in
-  `ICON_ORDER` (quindi `buildStatus` lo disegna sulla **card di Finarfin** col
-  suo tooltip `ICON_LABEL`), ma è **saltato** in `buildLegend` (skip list) e
-  nella griglia admin (skip nella generazione checkbox **e** nel loop di
-  salvataggio, così il valore su Finarfin è preservato). Al suo posto una
-  **riga Re unica** a due colonne: `ReNoldor` (`king_std`) 'Alto Re dei
-  Noldor' / 'King of the Noldor' + `ReSupremo` (`king_high`) 'Re Supremo
-  (Aman)' / 'High King (Aman)'. ⚠️ Le diciture di legenda sono **testo inline**
-  in `buildLegend` (ramo `k === 'king_high'`, che salta anche `king_std`): i
-  **tooltip delle card** (`ICON_LABEL` di `king_high`='Re Supremo dei Noldor',
-  `king_std`='Alto Re dei Noldor a est del Mare') **NON cambiano**, per non
-  rompere la convenzione 'Re Supremo vs Alto Re'. **Filtro:**
-  `BADGE_ROWS.king_high = ['king_high','king_high_now','king_std']` (unica riga
-  'Re'; la vecchia `king_std` è stata rimossa da BADGE_ROWS): attivarla accende
-  tutti e 7 i Re **incluso Finarfin** (il Re mancante dalla legenda).
-- **Allineamento seconde icone delle righe a due colonne (dalla v7.23, colonna
-  ristretta v7.29).** Le tre righe legenda a due colonne (west+envoy,
-  drago+balrog, e dalla v7.29 la riga Re unica) hanno la prima colonna a
-  **larghezza fissa unica** (`.leg-lbl-col` e `.leg-lbl-king`, ora un solo
-  blocco CSS), così le tre seconde icone (Valinor, Balrog, Re Supremo) sono
-  incolonnate allo stesso x e restano immobili al cambio lingua (anti-jitter).
-  **Larghezza `8.5em` (dalla v7.29):** era `10.05em`, tarata sul lunghissimo
-  `High King of the Noldor` (~126.6px) del vecchio Re 'in carica'; tolto quello,
-  la più lunga tra le 6 stringhe col1 IT/EN è `Alto Re dei Noldor` (~98.5px),
-  quindi la colonna si è potuta **stringere** (8.5em = 108.8px, ~8px di respiro
-  + tolleranza font, con `nowrap` anti-wrap) **azzerando il 'buco enorme'** tra
-  etichetta e seconda icona (~20px recuperati). Effetto: seconde icone vicine
-  al testo, sempre incolonnate.
-- **Tutti gli Anelli in un'unica riga di legenda (v6.63).** L'Unico, i Tre
-  degli Elfi (Vilya, Nenya, Narya) e i Nove non hanno più tre righe separate:
-  una sola riga **in coda** alla legenda mostra le 5 icone in orizzontale
-  (ordine `Unico, Vilya, Nenya, Narya, Nove`) con didascalia unica **'Portatore
-  di uno degli Anelli del Potere'**. I **tooltip dei singoli anelli restano
-  inalterati** (ciascuno il proprio, da `ICON_LABEL`); il filtro badge di quella
-  riga (`BADGE_ROWS.rings`) accende chiunque porti un anello qualsiasi. La riga
-  è resa dal caso `k === 'onering'` in legenda (che salta `vilya/nenya/narya/
-  menring`); su card ed editor l'ordine segue `ICON_ORDER`.
-  - **Sesto anello: badge `sette` (Sette Anelli dei Nani, dalla v10.61).** Aggiunto
-    in coda alla riga anelli (icona `icons/Sette.png`, 234×256, stesso canvas/bbox di
-    `Nove.png` → classe `.si-sette` = copia di `.si-nove`; equidistante da Nove via
-    il `margin-left:0.22rem` della riga). Tooltip: IT 'Portatore di uno dei Sette
-    Anelli dei Nani', EN 'Bearer of one of the Seven Rings of the Dwarves'. In
-    `ICON_ORDER` dopo `menring`, in `BADGE_ROWS.rings` e nella skip-list della
-    legenda. **Portatori (2):** **Durin III** (primo, l'anello capofila della
-    stirpe di Durin, per tradizione nanica donato dagli Elfi-fabbri e non da Sauron)
-    e **Thráin II** (ultimo, glielo strappò Sauron a Dol Guldur). NB: 'unico anello
-    NOTO dei Nani', non l'Unico.
-- **Ingwion e Ilwen (aggiunti in v3.93).** `Ingwion` (dopo Finwë) NON è
-  apocrifo benché assente dal Silmarillion pubblicato: Christopher Tolkien
-  riconobbe che l'omissione fu un errore del padre (HoME IV, pp. 196-7),
-  caso 'note tardive = canone'. `Ilwen`, sposa di Ingwë e madre di Ingwion
-  (dopo Míriel), è attestata solo in NoME → `apocrifo:"NoME"` (pill 'Solo
-  NoME'). La genealogia Ingwë+Ilwen di Ingwion viene da NoME.
-  - **Anche la genealogia di Indis (padre Ingwë, madre Ilwen) viene da NoME**
-    ('Ingwë married... his first child (Indis) was born in 2181'), stessa
-    famiglia di scelte: NON è un errore da correggere. Il Silmarillion
-    pubblicato dice solo 'parente stretta d'Ingwë' e la Shibboleth la fa
-    sorella o nipote: un audit canonico che non peschi NoME la segnalerà come
-    sbagliata (successo il 2026-07-11, correzione respinta).
-  - **Ordinale dei figli di Finarfin: Angrod = SECONDO, Aegnor = TERZO** (dalla
-    v6.87, decisione dell'utente). Coerente con la scelta del progetto di fare
-    di **Orodreth un figlio di Angrod** (non di Finarfin, caso 'note tardive =
-    canone' come Gil-galad): tolto Orodreth dai figli di Finarfin, i maschi
-    sono Finrod (1°), Angrod (2°), Aegnor (3°). ⚠️ Un audit sul Silmarillion
-    pubblicato (dove Orodreth È figlio di Finarfin, quindi Angrod 3° e Aegnor
-    4°) li segnalerà come sbagliati: NON è un errore, è la conseguenza
-    coerente della genealogia adottata (segnalato dal RAG Antigravity come
-    'incoerenza interna', corretto proprio perché tale).
-- **Badge `calaquende` (aggiunto in v7.09, al posto di `morgoth`).** 'Calaquendë:
-  vide la Luce dei Due Alberi di Valinor': gli Elfi della Luce, chi vide di
-  persona la luce dei Due Alberi (visse o soggiornò in Aman prima
-  dell'oscuramento). Icona `icons/Calaquendi.png` (fornita dall'utente). In
-  `ICON_ORDER` sta **subito prima di `silmaril`** (i due badge della Luce
-  vicini; dalla v7.13 l'ordine è Calaquendi→Silmaril: gli Alberi vengono prima
-  dei loro frutti); riga di legenda propria. **46 portatori** nel dataset:
-  - **41 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion,
-    Indis, Elenwë, Findis, Írimë, Elemmírë, Ilwen, **Amarië**: aggiunta in
-    v7.10, prima di Finduilas: personaggio canonico sfuggito, Vanya amata di
-    Finrod rimasta in Valinor, Silmarillion); i **Teleri di Aman/Falmari**
-    (Olwë, Eärwen); i **Noldor nati/vissuti in Aman** (Finwë, Míriel, Fëanor,
-    Fingolfin, Finarfin, Anairë, Mahtan, Nerdanel, **Rúmil il Noldo, NON il
-    Silvano omonimo**, Maedhros, Maglor, Celegorm, Caranthir, Curufin, Amrod,
-    Amras, Fingon, Turgon, Aredhel, Argon, Finrod, Angrod, Aegnor, Eldalótë,
-    Galadriel, Celebrimbor, Idril, Orodreth, Glorfindel); e **Thingol**: unico
-    Sinda, con **tooltip dedicato** (`ICON_LABEL_OVERRIDE`): vide gli Alberi come
-    ambasciatore con Oromë, 'non annoverato tra i Moriquendi'.
+- **Badge Aman** (legenda 'Attraversò il Mare'; tooltip esteso in lista 'Salpò per l'Ovest
+  e approdò nelle Terre Imperiture'): segna la **partenza individuale e definitiva** verso
+  Aman di chi si era stabilito nella Terra di Mezzo. **Escluse** le migrazioni primordiali
+  degli Anni degli Alberi: viaggio degli ambasciatori con Oromë e Grande Viaggio. Il
+  criterio è volutamente NON spiegato nella legenda della pagina (semplicità). Casi decisi
+  dall'utente: Finwë, Thingol e Ingwë senza badge; Melian, Eärendil, Elwing, Tuor e Idril lo
+  tengono. **Eönwë tiene il badge** (per il momento, decisione utente) benché Maia nativo di
+  Aman: un audit canonico ne aveva proposto la rimozione, respinta.
+- **Il badge semitrasparente è scollegato dall'idea di 'presunto'.** Il valore `'presunto'`
+  rende l'icona al **50%** (`si-dim`), che è solo un segnale visivo di 'stato a sé':
+  **nessun** suffisso `(presunto)` automatico nel tooltip (rimosso da `buildStatus`). Il
+  significato va dato caso per caso in `ICON_LABEL_OVERRIDE`; se non si è certi di cosa
+  scrivere, **chiedere all'utente**. Le partenze per l'Ovest dedotte ma non attestate
+  (Radagast, Glorfindel, Erestor, Lindir) usano il tooltip comune `AMAN_DEDOTTO`.
+- **Badge Ambasciatori** (chiave `envoy`, la nave degli Anni degli Alberi): marca il
+  **viaggio primordiale degli ambasciatori degli Eldar con Oromë**, evento unico nella
+  storia di Arda. Portatori: Finwë, Thingol, Ingwë. In legenda compare **solo come gruppo
+  secondario della riga Aman** (senza parentesi), 'Attraversò il Mare / Al seguito di
+  Oromë'; il tooltip resta la frase estesa e l'eccezionalità dell'evento non va spiegata in
+  pagina.
+- **Convenzione titoli 'Re Supremo' vs 'Alto Re'.** In inglese è sempre **High King** (i
+  traduttori del Legendarium non l'hanno reso in modo uniforme); in italiano il progetto
+  distingue: **Re Supremo** = governa su TUTTO il suo popolo, su qualunque sponda del Mare;
+  **Alto Re** = nella Terra di Mezzo. Perciò in EN i due si **collassano** in un solo 'High
+  King': è una **asimmetria bilingue legittima** (Fëanor: IT `Re Supremo dei Noldor, Alto Re
+  dei Noldor`, EN il solo `High King of the Noldor`). I badge `king_high` = Re Supremo,
+  `king_std` = Alto Re seguono la stessa logica.
+- **Badge Istari** (chiave `istari`): sulle **card** una o più icone per mago, dal colore
+  della veste (`Bianco` Saruman, `Bruno` Radagast, `Blu1` Alatar, `Blu2` Pallando; mappa
+  `ISTARI_ICON`, i cui valori sono array). **Gandalf è l'unico con due icone**, `Grigio` poi
+  `Bianco`: fu sia il Grigio sia il Bianco.
+  - **Riga di legenda: normale, a icona singola** (Gandalf grigio) + testo, come le altre, e
+    collocata subito prima della Compagnia in `ICON_ORDER`. La variante a **5 icone in fila**
+    (Saruman, Gandalf, Radagast, Alatar, Pallando, ognuno col proprio nome come tooltip) è
+    conservata dietro **`FEATURES.istariFiveIcons`**, default `false`: a `true` torna il
+    cluster, niente altre modifiche. Era nata come feature flag fin dall'inizio.
+    ⚠️ Se si riaccende, i vincoli tarati allora sono: cluster a larghezza **fissa** (`6.40em`)
+    perché il testo delle righe multi-icona parta dallo stesso x delle righe a icona singola;
+    gap **positivo** (`0.30rem`) e dimensionamento per **altezza** (`width:auto`) così i PNG
+    verticali restano vicini ma **senza sovrapporsi**, che era il difetto da cui tutto è
+    partito.
+- **Badge Helcaraxë** (chiave `helcaraxe`): 'Attraversò i ghiacci dell'Helcaraxë'. In
+  `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`**. Portatori da canone
+  (*Silmarillion*, 'Della fuga dei Noldor'): Fingolfin, Fingon, Turgon, Aredhel, Idril,
+  Finrod, Angrod, Aegnor, Galadriel, Orodreth (figlio di Angrod, nato a Valinor, giunto con
+  l'oste di Fingolfin). NON lo attraversarono i Fëanoriani, giunti con le navi, né Finarfin,
+  tornato a Valinor. **Elenwë** (sposa di Turgon, madre di Idril) porta il badge a **opacità
+  50%** ma con **etichetta dedicata**: 'Morì nella traversata dell'Helcaraxë'. È l'unica Elfa
+  con nome noto a perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
+  traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo* (HoME XII), che ne
+  attesta nome e stirpe Vanya.
+- **Badge Aratar di Melkor al 50%** (`aratar: 'presunto'`): Melkor è l'unico Aratar a opacità
+  dimezzata, con **etichetta dedicata** in `ICON_LABEL_OVERRIDE` sotto la chiave `'Melkor'`
+  (che è il `nome` della voce: sotto `'Morgoth'` non scatterebbe): 'Non più annoverato tra
+  gli Aratar dopo la sua ribellione'. Dopo la caduta 'Melkor non è più annoverato tra i
+  Valar' (*Valaquenta*), dunque nemmeno tra gli Aratar: il dimezzamento segna questo status
+  conteso, non un dato presunto.
+- **Cinque badge aggiunti insieme (v3.93, decisioni dell'utente).** L'ordine di
+  resa/legenda/admin vive in `ICON_ORDER` (righe condivise in legenda: Re+In carica,
+  Aman+Oromë+Est, Drago+Balrog, Vilya+Nenya+Narya):
+  - **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos', SOLO Elfi): Glorfindel,
+    Finrod, Míriel (quest'ultima da HoME X, caso 'note tardive'). **Lúthien esclusa** per
+    scelta dell'utente: il suo è un caso a parte (rinascita completa con natura diversa,
+    mortale), non una reincarnazione. Beren fuori per definizione (Uomo).
+  - **`est`** ('Attraversò il Mare verso Est', criterio: traversata IN NAVE dalle Terre
+    Imperiture alla Terra di Mezzo): Eönwë e Finarfin (Guerra d'Ira, traghettati dai Teleri,
+    Silm cap. 24), Ingwion (idem, alla guida dei Vanyar), Glorfindel, i 5 Istari, Fëanor e i
+    suoi 7 figli (navi di Losgar). **Ingwë escluso**: la sua partecipazione alla Guerra d'Ira
+    non è attestata (i testi nominano il figlio Ingwion) e il viaggio degli ambasciatori non
+    avvenne in nave, perché le navi non esistevano.
+  - **`drago`** ('Uccise un Drago'): Túrin (Glaurung), Eärendil (Ancalagon), Fram (Scatha),
+    Bard (Smaug). Azaghâl ferì soltanto Glaurung.
+  - **`balrog`** ('Uccise un Balrog'): Glorfindel, Ecthelion (Gothmog), Gandalf (Flagello di
+    Durin). **Ecthelion ha un tooltip dedicato**: 'Uccise Gothmog, signore dei Balrog',
+    perché non uccise un Balrog qualunque ma il loro signore. ⚠️ La voce di Ecthelion in
+    `ICON_LABEL_OVERRIDE` ne ha già una per `calaquende`: le chiavi convivono nello stesso
+    oggetto, non sostituirla. **Tuor escluso**: uccide Balrog solo ne 'Il libro dei racconti
+    perduti II', versione superata del Legendarium.
+  - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin, come **EASTER EGG**. Appare
+    **solo sulla sua card**, NON in legenda (skip in `buildLegend`) né nella griglia admin
+    (skip nella generazione checkbox; il valore è comunque preservato al salvataggio, perché
+    la checkbox è assente), e non è in `BADGE_ROWS`, quindi non è filtrabile. In `ICON_ORDER`
+    sta subito dopo `helcaraxe`. ⚠️ Restano intatte le feature omonime ma **distinte**: la
+    classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via `darkBg`) e
+    l'etichetta tipo `.type-morgoth` ('vala decaduto'). La PNG conserva il **padding
+    trasparente** su richiesta dell'utente, e `.si-morgoth` ha un box di aspetto pari a
+    quello del canvas così l'immagine lo riempie senza letterbox. ⚠️ Il margine ottico è **un
+    solo valore condiviso** fra i due layout (`margin-left:0.01em; margin-right:-0.06em`,
+    solo sulle card): fino alla v11.16 c'erano due regole per-device, unificate nella v11.17
+    accettando un piccolo scarto simmetrico, così le correzioni delle icone-badge restano ai
+    soli due meccanismi `margin` + `nudge`.
+- **Distanziamento del simbolo di genere.** Il simbolo ♂/♀ (`.genere-svg`) è staccato dal
+  cluster dei badge di merito con un margine sinistro extra (desktop `0.28em` → gap ~15px
+  contro ~11px tra badge; mobile `0.3em` oltre al gap flex): prima 'toccava' l'ultimo badge.
+  È un gruppo a sé, stato anagrafico e non merito, quindi va otticamente separato.
+- **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede ~70 portatori su
+  306, troppo diffuso per un badge 'eccezionale'. Non riproporlo (l'icona `Morte.png` è stata
+  rimossa, recuperabile da git).
+- **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via grep sulle
+  fonti.** In legenda `guerradira` sta dopo `balrog` e `suicidio` prima di `fellowship`;
+  portatori con `p.suicidio`/`p.guerradira` = `true`:
+  - **`suicidio`** ('Si tolse la vita', icona `Teschio.png`): **7** voci: Túrin (spada
+    Gurthang), Nienor (nel Teiglin), Húrin (nel mare occidentale, 'si dice'), Maedhros
+    (voragine di fuoco), Denethor II (rogo), Míriel Serindë (abbandono volontario della vita,
+    primo trapasso in Aman: caso atipico ma voluto), Aerin (rogo della sala di Brodda:
+    attestazione **implicita**, non verbatim, tenuta per scelta dell'utente).
+    - **Distinzione (decisione utente): 'togliersi la vita' ≠ 'rendere la vita'.** Il badge
+      marca il **gesto estremo** (violenza, disperazione, rogo), quindi ne restano **esclusi**
+      i mortali che *si lasciano andare* alla morte per non subire il degrado della vecchiaia,
+      alla maniera dei re di Númenor: **Aragorn II** (depone la vita nella Casa dei Re) e
+      **Arwen** (si corica a Cerin Amroth) NON hanno il badge. **Míriel** è l'unica eccezione
+      perché è un'**Elfa** che rinuncia alla vita in Aman, atto innaturale per la sua stirpe.
+      Altri esclusi verificati: **Elwing** (si getta in mare ma Ulmo la salva, non muore),
+      **Maglor** (getta il Silmaril e vaga: nel Silm pubblicato non si uccide, e il 'took his
+      own life' è solo HoME IV, riferito a Maidros = Maedhros), **Saeros** e **Amroth** (morti
+      accidentali, non deliberate).
+  - **`guerradira`** ('Combattè nella Guerra d'Ira', icona `Ira.png`): **5** voci, **solo la
+    schiera attaccante dei Valar**: **Eönwë** (comandante), **Finarfin** (guidò i Noldor di
+    Valinor), **Ingwion** (guidò i Vanyar, HoME IV-V), **Eärendil** (uccise Ancalagon nella
+    battaglia aerea), **Thorondor** (capitano delle Aquile). **Definizione (scelta editoriale
+    soggettiva dell'utente):** 'combattere' la Guerra d'Ira è un'azione **attiva**, mentre chi
+    si *difendeva* dall'armata di Valinor faceva una cosa diversa → **Melkor e Ancalagon
+    esclusi** benché presenti alla battaglia. **Esclusi per attestazione** (Silm cap. 24:
+    'among them went none of those Elves who had dwelt... in the Hither Lands'): Gil-galad,
+    Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la schiera, e Maedhros e Maglor
+    vennero *dopo* la guerra, per i Silmaril.
+- **Riga Re unica + Re 'in carica' come easter egg da card.** Il badge `king_high_now` (icona
+  `ReFinarfin.png`) è **card-only come Morgoth**: resta in `ICON_ORDER`, quindi `buildStatus`
+  lo disegna sulla **card di Finarfin** col suo tooltip, ma è **saltato** in `buildLegend` e
+  nella griglia admin (skip nella generazione checkbox **e** nel loop di salvataggio, così il
+  valore su Finarfin è preservato). Al suo posto una **riga Re unica** a due colonne:
+  `ReNoldor` (`king_std`) 'Alto Re dei Noldor' + `ReSupremo` (`king_high`) 'Re Supremo
+  (Aman)'. ⚠️ Quelle diciture di
+  legenda sono **testo inline** in `buildLegend` (ramo `k === 'king_high'`, che salta anche
+  `king_std`): i **tooltip delle card** in `ICON_LABEL` **NON cambiano**, per non rompere la
+  convenzione 'Re Supremo vs Alto Re'. **Filtro:** `BADGE_ROWS.king_high =
+  ['king_high','king_high_now','king_std']`, unica riga 'Re', e attivarla accende tutti e 7 i
+  Re **incluso Finarfin**, il Re mancante dalla legenda.
+- **Allineamento seconde icone delle righe a due colonne.** Le tre righe legenda a due
+  colonne (west+envoy, drago+balrog, riga Re unica) hanno la prima colonna a **larghezza
+  fissa unica** (`.leg-lbl-col` e `.leg-lbl-king`, un solo blocco CSS), così le tre seconde
+  icone sono incolonnate allo stesso x e restano immobili al cambio lingua (anti-jitter).
+  ⚠️ **Larghezza `8.5em`** = la più lunga fra le 6 stringhe di colonna 1 in IT ed EN (`Alto
+  Re dei Noldor`, ~98.5px) più respiro e tolleranza font, con `nowrap` anti-wrap: era
+  `10.05em`, tarata sul `High King of the Noldor` del vecchio Re 'in carica', e lasciava un
+  buco di ~20px fra etichetta e seconda icona. Se cambiano quelle stringhe, rimisurare.
+- **Tutti gli Anelli in un'unica riga di legenda.** L'Unico, i Tre degli Elfi (Vilya, Nenya,
+  Narya), i Nove e i Sette stanno su una sola riga **in coda** alla legenda, con didascalia
+  unica **'Portatore di uno degli Anelli del Potere'**. I **tooltip dei singoli anelli
+  restano inalterati** (ciascuno il proprio, da `ICON_LABEL`); il filtro `BADGE_ROWS.rings`
+  accende chiunque porti un anello qualsiasi. La riga è resa dal caso `k === 'onering'` in
+  legenda, che salta `vilya/nenya/narya/menring/sette`; su card ed editor l'ordine segue
+  `ICON_ORDER`.
+  - **Badge `sette`** (Sette Anelli dei Nani, icona `icons/Sette.png`, stesso canvas/bbox di
+    `Nove.png` → `.si-sette` = copia di `.si-nove`). Tooltip: 'Portatore di uno dei Sette
+    Anelli dei Nani'. **Portatori (2): Durin III** (il primo, l'anello capofila della stirpe
+    di Durin, per tradizione nanica donato dagli Elfi-fabbri e non da Sauron) e **Thráin II**
+    (l'ultimo, glielo strappò Sauron a Dol Guldur). NB: 'unico anello NOTO dei Nani', non
+    l'Unico.
+- **Ingwion e Ilwen.** `Ingwion` NON è apocrifo benché assente dal Silmarillion pubblicato:
+  Christopher Tolkien riconobbe che l'omissione fu un errore del padre (HoME IV, pp. 196-7),
+  caso 'note tardive = canone'. `Ilwen`, sposa di Ingwë e madre di Ingwion, è attestata solo
+  in NoME → `apocrifo:"NoME"`.
+  - ⚠️ **Anche la genealogia di Indis (padre Ingwë, madre Ilwen) viene da NoME** ('Ingwë
+    married... his first child (Indis) was born in 2181'), stessa famiglia di scelte: NON è
+    un errore da correggere. Il Silmarillion pubblicato dice solo 'parente stretta d'Ingwë' e
+    la Shibboleth la fa sorella o nipote, quindi un audit che non peschi NoME la segnalerà
+    come sbagliata (successo, correzione respinta).
+  - ⚠️ **Ordinale dei figli di Finarfin: Angrod = SECONDO, Aegnor = TERZO** (decisione
+    dell'utente), coerente con la scelta del progetto di fare di **Orodreth un figlio di
+    Angrod** (caso 'note tardive = canone' come Gil-galad): tolto Orodreth dai figli di
+    Finarfin, i maschi sono Finrod (1°), Angrod (2°), Aegnor (3°). Un audit sul Silmarillion
+    pubblicato, dove Orodreth È figlio di Finarfin, li segnalerà come sbagliati: NON è un
+    errore, è la conseguenza coerente della genealogia adottata.
+- **Badge `calaquende`.** 'Calaquendë: vide la Luce dei Due Alberi di Valinor': gli Elfi
+  della Luce, chi vide di persona la luce dei Due Alberi (visse o soggiornò in Aman prima
+  dell'oscuramento). In `ICON_ORDER` sta **subito prima di `silmaril`**, così i due badge
+  della Luce sono vicini e gli Alberi vengono prima dei loro frutti; riga di legenda propria.
+  **46 portatori**:
+  - **41 al 100%** (`calaquende:true`): tutti i **Vanyar** (Ingwë, Ingwion, Indis, Elenwë,
+    Findis, Írimë, Elemmírë, Ilwen, Amarië); i **Teleri di Aman/Falmari** (Olwë, Eärwen); i
+    **Noldor nati o vissuti in Aman** (Finwë, Míriel, Fëanor, Fingolfin, Finarfin, Anairë,
+    Mahtan, Nerdanel, **Rúmil il Noldo, NON il Silvano omonimo**, Maedhros, Maglor, Celegorm,
+    Caranthir, Curufin, Amrod, Amras, Fingon, Turgon, Aredhel, Argon, Finrod, Angrod, Aegnor,
+    Eldalótë, Galadriel, Celebrimbor, Idril, Orodreth, Glorfindel); e **Thingol**, unico
+    Sinda, con **tooltip dedicato**: vide gli Alberi come ambasciatore con Oromë, 'non
+    annoverato tra i Moriquendi'.
   - **5 al 50%** (`calaquende:'presunto'`, tooltip condiviso `CALAQUENDE_DEDOTTO`):
-    **Ecthelion, Gildor Inglorion, Gwindor, Gelmir, Edrahil**: Calaquendi solo
-    sull'assunto 'Esule nato in Aman', luogo di nascita non attestato dalle
-    fonti (Glorfindel invece è **certo**: nato a Valinor, scritto tardo di JRRT).
-  - **`Celeborn` ESCLUSO** benché Gemini (e la versione *Teleporno*) lo conti tra
-    i Calaquendi: il progetto ha scartato quella linea (vedi 'Celeborn: NON si usa
-    Teleporno'), il nostro Celeborn è **Sinda della Terra di Mezzo**, non vide gli
-    Alberi. (**`Amarië`**, nella lista di Gemini, all'inizio mancava dal dataset:
-    aggiunta in v7.10.)
-  - Storia: analisi utente↔Claude del 2026-07-14, rifinita contro una lista di
-    Gemini (a cui il progetto ha aggiunto Thingol, Elemmírë, Anairë, Ilwen,
-    Eldalótë e da cui ha tolto Celeborn).
+    **Ecthelion, Gildor Inglorion, Gwindor, Gelmir, Edrahil**, Calaquendi solo sull'assunto
+    'Esule nato in Aman', luogo di nascita non attestato dalle fonti. Glorfindel invece è
+    **certo**: nato a Valinor, scritto tardo di J.R.R. Tolkien.
+  - ⚠️ **`Celeborn` ESCLUSO** benché altre liste lo contino tra i Calaquendi: quello presume
+    la versione *Teleporno*, che il progetto ha scartato (vedi 'Celeborn: NON si usa
+    Teleporno'). Il nostro Celeborn è **Sinda della Terra di Mezzo**: non vide gli Alberi.
 
 ## 🧹 Asset del progetto
 
-### 🖼️ Rendering delle icone-badge sulle card (dalla v11.14)
+### 🖼️ Rendering delle icone-badge sulle card
 
-Modello unico deciso dall'utente per le icone-badge nella riga del nome. **NON**
-tocca la legenda, né il wrapping/posizionamento di nomi ed etichette (a-capo
-'smart', `tightenNames`, `optimizeBipartite`, ...): quelle logiche restano
-separate e intoccabili.
+Modello unico deciso dall'utente per le icone-badge nella riga del nome. ⚠️ **NON** tocca la
+legenda, né il wrapping o il posizionamento di nomi ed etichette (a-capo 'smart',
+`tightenNames`, `optimizeBipartite`): quelle logiche restano separate e intoccabili.
 
-- **Icone as-is** (regola universale, cfr. `Roccobot.md`): niente ritaglio,
-  niente spostamento dei pixel nel canvas. Si disegnano su canvas alto 256px e si
-  usano tali e quali; il padding trasparente attorno al disegno è voluto.
-- **Altezza UNIFORME, larghezza AUTOMATICA.** Sulla card ogni icona-badge ha
-  `height:0.92em` (~22-23px) e `width:auto` (proporzionale all'aspetto nativo):
-  regola scoped `.rank-name .rank-flags .status-icon { width:auto; height:0.92em }`,
-  che scavalca eventuali classi di larghezza per-icona SOLO sulle card e lascia la
-  **legenda intatta** (stesse classi `.si-*`, ma fuori da quel selettore). Niente
-  più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
-  uniforme, la larghezza segue in proporzione. La dimensione della figura la
-  governa l'utente disegnando dentro il canvas 256px.
-- **Due strumenti di correzione, divisi per ASSE (convenzione, dalla v11.19).**
-  Le rifiniture della singola icona usano **solo due** strumenti, ognuno per il
-  proprio asse:
-  - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA (modello 'caratteri
-    consecutivi').** Le icone-badge si comportano come **caratteri consecutivi** di
-    una riga: modificare spaziatura/margine di UNA propaga i movimenti **a cascata
-    verso destra** (l'icona e tutte quelle che la seguono si spostano), mentre **a
-    sinistra nulla si muove**
-    (le icone precedenti restano dove sono, ed è anche il comportamento naturale di
-    `margin` su un flex item). **Niente compensazioni** (coppie
-    `margin-left`/`margin-right` di segno opposto pensate per isolare il movimento su
-    una sola icona senza spostare le seguenti): è vietato, regola universale
-    dell'utente (2026-07-22, vedi `Roccobot.md`). Le eventuali differenze
-    desktop/mobile sono lo **stesso** `margin` con valori diversi in media query, non
-    un meccanismo a sé (e dalla v11.17 non ce ne sono più: Morgoth, unico caso, è
-    stato unificato a un valore condiviso).
-  - **VERTICALE → `transform`/nudge (`translateY`).** Ogni alzata/abbassata si fa col
-    nudge, che sposta **solo quell'icona** senza toccare le vicine né il layout della
-    riga. È l'**unico** strumento capace di farlo: un `margin` verticale in flex
-    sposterebbe l'allineamento della riga. Per questo i due strumenti **non sono
-    riducibili a uno solo**: sono complementari, uno per asse.
-  ⚠️ Storia: la v11.18 aveva erroneamente convertito a `margin` **tutto** il nudge
-  delle corone dei Re, **inclusa l'alzata verticale**; corretto nella v11.19
-  ripristinando `transform:translateY` per il verticale e tenendo il `margin` solo
-  per l'orizzontale (l'intento dell'utente era eliminare i nudge **orizzontali**, non
-  quelli verticali). Le corone sulle card usano ora `transform:translateY(-0.078em)`
-  (verticale) + `margin-left:-0.056em` (orizzontale, a cascata; la compensazione
-  `margin-right:0.026em` è stata RIMOSSA nella v11.20). Il nudge verticale è usato
-  anche in **legenda** (corone, Helcaraxë, Ritorno) e come **posizionamento
-  intrinseco degli anelli** (`.si-vilya/nenya/narya/nove/sette`, `translateY`, regola
-  GLOBALE card+legenda che allinea la *fascia* dell'anello agli altri cerchi).
-  Correzioni ad-hoc/ottiche, dipendono dall'aspetto di ogni icona e da quelle ai
-  lati. (Nota: la regola universale 'Posizionamenti assoluti e mirati' di
-  `Roccobot.md` preferisce il `transform` per SPOSTARE un elemento senza toccare i
-  vicini; qui, nel contesto della SPAZIATURA della fila di icone, il default è
-  invece il `margin`, che è proprio ciò che regola i gap.)
-- **I due motori di layout NON si fondono.** Desktop: `.rank-name` è `inline-flex`
-  e i badge sono suoi flex-item via `display:contents`. Mobile: `.rank-name` è a
-  blocco e i badge stanno in `.rank-flags` `inline-flex`. Sono la logica di
-  wrapping e **non vanno toccati**: la coerenza desktop/mobile si cerca a livello
-  di convenzione delle correzioni, non fondendo i motori.
-- **Storico**: fino alla v11.04 le icone avevano box su misura per-icona (altezze
-  diverse: Unico `0.707em`, Nove/Sette `0.738em`, Aratar `0.823em`, anelli
-  `0.893em`, corone/Istari `0.934em`, le altre `0.92em`); dalla v11.14 tutte a
-  `0.92em` (scelta 'A1' dell'utente: alcune icone crescono di conseguenza).
-- **Segnaposto per immagine badge/genere che NON carica (dalla v11.70).** Un badge o
-  simbolo di genere il cui file non si carica (es. cache vecchia dopo un cambio di
-  formato, path errato) mostrerebbe il placeholder del browser (glifo + testo `alt`)
-  **ereditando il corpo grande del nome**: grosso come il titolo (segnalato
-  dall'utente durante la migrazione WebP, prima dell'hard-refresh). Un listener
-  `error` in **capture** (gli eventi `error` non fanno bubbling) marca l'`<img>`
-  fallita (`.status-icon`/`.genere-svg`) con la classe **`.badge-broken`**; il CSS
-  scoped alle card la riduce a un **segnaposto 14×14px con `font-size:0`** (nasconde
-  il testo `alt`, che **resta nel DOM** per gli screen reader). Copre anche le img
-  inserite dopo dal `renderList`.
+- **Icone as-is** (regola universale, cfr. `Roccobot.md`): niente ritaglio, niente spostamento
+  dei pixel nel canvas. Si disegnano su canvas alto 256px e si usano tali e quali; il padding
+  trasparente attorno al disegno è voluto.
+- **Altezza UNIFORME, larghezza AUTOMATICA.** Sulla card ogni icona-badge ha `height:0.92em`
+  (~22-23px) e `width:auto`, proporzionale all'aspetto nativo: regola scoped `.rank-name
+  .rank-flags .status-icon`, che scavalca eventuali classi di larghezza per-icona SOLO sulle
+  card e lascia la **legenda intatta** (stesse classi `.si-*`, ma fuori da quel selettore).
+  Niente più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
+  uniforme, la larghezza segue in proporzione, e la dimensione della figura la governa l'utente
+  disegnando dentro il canvas.
+- **Due strumenti di correzione, divisi per ASSE (convenzione).** Le rifiniture della singola
+  icona usano **solo due** strumenti, ognuno per il proprio asse:
+  - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA (modello 'caratteri consecutivi').** Le
+    icone-badge si comportano come **caratteri consecutivi** di una riga: modificare il margine
+    di UNA propaga i movimenti **a cascata verso destra** (l'icona e tutte quelle che la
+    seguono si spostano), mentre **a sinistra nulla si muove**, che è anche il comportamento
+    naturale di `margin` su un flex item. ⚠️ **Niente compensazioni**, cioè coppie
+    `margin-left`/`margin-right` di segno opposto per isolare il movimento su una sola icona:
+    è vietato, regola universale dell'utente. Le eventuali differenze desktop/mobile sono lo
+    **stesso** `margin` con valori diversi in media query, non un meccanismo a sé, e oggi non
+    ce ne sono più.
+  - **VERTICALE → `transform`/nudge (`translateY`).** Ogni alzata o abbassata si fa col nudge,
+    che sposta **solo quell'icona** senza toccare le vicine né il layout della riga. È
+    l'**unico** strumento capace di farlo, perché un `margin` verticale in flex sposterebbe
+    l'allineamento della riga: per questo i due strumenti **non sono riducibili a uno solo**.
+  - ⚠️ La v11.18 aveva convertito a `margin` **tutto** il nudge delle corone, **inclusa
+    l'alzata verticale**: l'intento dell'utente era eliminare i nudge **orizzontali**, non
+    quelli verticali. Il nudge verticale è usato anche in **legenda** (corone, Helcaraxë,
+    Ritorno) e come **posizionamento intrinseco degli anelli**
+    (`.si-vilya/nenya/narya/nove/sette`, regola GLOBALE card+legenda che allinea la *fascia*
+    dell'anello agli altri cerchi).
+  - Nota: la regola universale 'Posizionamenti assoluti e mirati' di `Roccobot.md` preferisce
+    il `transform` per SPOSTARE un elemento senza toccare i vicini; qui, nel contesto della
+    SPAZIATURA della fila di icone, il default è invece il `margin`, che è proprio ciò che
+    regola i gap.
+- ⚠️ **I due motori di layout NON si fondono.** Desktop: `.rank-name` è `inline-flex` e i badge
+  sono suoi flex-item via `display:contents`. Mobile: `.rank-name` è a blocco e i badge stanno
+  in `.rank-flags` `inline-flex`. Sono la logica di wrapping e **non vanno toccati**: la
+  coerenza desktop/mobile si cerca a livello di convenzione delle correzioni, non fondendo i
+  motori.
+- **Segnaposto per immagine badge/genere che NON carica.** Un badge o simbolo di genere il cui
+  file non si carica (cache vecchia dopo un cambio di formato, path errato) mostrerebbe il
+  placeholder del browser (glifo + testo `alt`) **ereditando il corpo grande del nome**, quindi
+  grosso come il titolo. Un listener `error` in **capture** (gli eventi `error` non fanno
+  bubbling) marca l'`<img>` fallita con la classe **`.badge-broken`**, e il CSS scoped alle card
+  la riduce a un **segnaposto 14×14px con `font-size:0`**, che nasconde il testo `alt` lasciandolo
+  però **nel DOM** per gli screen reader. Copre anche le img inserite dopo dal `renderList`.
 
-### 🎚️ Editor 'Micro-aggiustamenti icone badge' (admin, dalla v11.33)
+### 🎚️ Editor 'Micro-aggiustamenti icone badge' (admin)
 
-Editor admin visuale per regolare `margin-left`, `margin-right`, **nudge verticale**
-e **scale** di ogni icona-badge, con anteprima live su schede reali nei due temi.
-**Riguarda SOLO le card**; la legenda del Pannello NON è toccata (quella si modifica
-a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4° pulsante
-'Micro-aggiustamenti icone badge'** (`showBadgeAdjustEditor`).
+Editor admin visuale per regolare `margin-left`, `margin-right`, **nudge verticale** e
+**scale** di ogni icona-badge, con anteprima live su schede reali nei due temi. ⚠️ **Riguarda
+SOLO le card**: la legenda del Pannello NON è toccata, e si modifica a mano. Accesso: tap sulla
+versione → sblocco → bivio 'Area admin' → **4° pulsante** (`showBadgeAdjustEditor`).
 
-- **Unità regolabili (`BADGE_ADJUST_UNITS`, 22 dalla v11.70).** Ogni unità = una icona
-  singola oppure un GRUPPO a variante-colore con **un solo controllo** condiviso:
-  **Istari** (5), **Navi** (Aman/Est/Valinor, 3), **Anelli elfici** (Vilya/Nenya/Narya, 3),
-  **Nove/Sette** (2). Tutte le altre sono singole, **drago e balrog inclusi e
-  separati** (immagini diverse, non varianti colore, benché condividano la classe
-  `si-demon`). Le 3 corone (`king_std`/`king_high`/`king_high_now`) restano singole.
-  - **Simboli di genere `Maschio`/`Femmina` come unità (dalla v11.70, richiesta
-    utente).** Le ultime due unità (`male`/`female`) regolano i simboli ♂/♀ (prima
-    non modificabili dall'editor). Deroga UNICA al modello di sizing: NON usano
-    `height:0.92em; width:auto` ma **dimensioni base proprie** (`GENDER_BASE`:
-    male 0.721×0.721em, female 0.603×0.844em, dal CSS `.genere-svg--m/f`) che `sc`
-    scala mantenendo l'aspetto. Il seed di `BADGE_ADJUST_FALLBACK` riproduce esatto
-    il CSS statico (nessun cambio visivo): `male` ml 0.076 (= separazione 0.07 + la
-    vecchia X-translate 0.006, ora margine a cascata) ny −0.076; `female` ml 0.07 ny
-    +0.15. Le regole `.bi-male`/`.bi-female` (iniettate da `injectBadgeAdjustRules`,
-    ramo `GENDER_BASE`) scavalcano `.genere-svg--m/f` e la separazione statica (pari
-    specificità, sorgente più in basso) **solo sulle card**; i nudge di gruppo
-    (desktop `top:-0.03em`, mobile container `translateY`) restano. La classe
-    `bi-male`/`bi-female` è messa in `renderList` sul `genereSym` (non in
-    `buildStatus`). ⚠️ La separazione mobile passa da 0.06 a 0.07em (unico valore
-    ml, +0.01em ≈ 0.16px: impercettibile). La **legenda** (`.leg-gender`) non è
-    toccata (scope diverso).
-  ⚠️ Le **etichette** dei pulsanti (`it`/`en` in `BADGE_ADJUST_UNITS`) sono nomi di
-  DISPLAY dell'editor, **scollegati** da nomi di file/classe, ridefiniti dall'utente
-  (v11.36): p.es. Ritorno→**Mandos**, Sopravvissuto→**Quarta Era**, Navi
-  Aman/Est/Valinor→**Navi (Blu/Viola/Verde)**, corone→**Alto Re/Re Supremo/Re in
-  carica**, anelli elfici→**Anelli degli Elfi**, Nove/Sette→**Altri Anelli del
-  Potere**. Cambiarle non tocca né i badge né la logica: solo il testo del selettore.
-- **4 parametri per unità:** `ml`/`mr` (margin orizzontale, **a cascata**, vedi la
-  convenzione per asse, niente compensazioni), `ny` (nudge verticale via
-  `transform:translateY`), `sc` (**scale** = moltiplicatore d'altezza:
-  `height:calc(0.92em * sc)`, `width:auto`; cambiando l'altezza cambia anche
-  l'ingombro orizzontale → coerente col modello 'caratteri consecutivi'. Non tocca
-  il PNG: è l'equivalente a runtime di rimpicciolire il contenuto e ripaddare/
-  ritagliare il canvas).
-- **Identità per-unità `bi-<id>` sulle card.** In `buildStatus` (NON in `BADGE_ICON`:
-  così la legenda resta intatta) ogni `<img>` badge riceve la classe di unità
-  `bi-<id>` (via la mappa `BADGE_UNIT`, badge-key→unità; copre anche le 5 icone
-  Istari). Le regole `.rank-name .rank-flags .bi-<id>{margin…;transform:translateY;
-  height:calc(0.92em*sc);width:auto}` sono **iniettate a runtime** da
-  `injectBadgeAdjustRules()` e **scavalcano** il CSS statico per-icona (stessa
-  specificità, sorgente più in basso). Ⓘ La legenda non ha le `bi-*` scoped alle
-  card, quindi le sue icone restano governate dal CSS statico (`si-*`,
-  transform globali degli anelli): indipendente dalle card.
-- **Config data-driven + fallback seed-once (scelta utente, opzione b).** Fonte
-  della verità: **`var badgeAdjust`** in `dati.js` (scritta dal Worker), se assente/
-  invalida si usa **`BADGE_ADJUST_FALLBACK`** in `index.html`, seminato coi valori
-  ATTUALI di ogni unità (le trasformazioni già fatte restano come valore
-  modificabile). `BADGE_ADJUST` = merge (unità mancanti → fallback). L'iniezione gira
-  sempre al load (il fallback vive in `index.html`), quindi il rendering è garantito
-  anche senza `badgeAdjust` in `dati.js`; il primo salvataggio la scrive.
-  ⚠️ Seed dei gruppi con valori misti: **Navi** seminato `ml -0.05` (Aman/Valinor;
-  `est` era -0.04 → +0.01em, accettato col raggruppamento); **Anelli elfici** `ny
-  -0.067` (equivalente em a desktop del vecchio `translateY(calc(-.106em+1px))`, il
-  +1px viewport-dipendente è stato sciolto in em).
-- **Editor (`showBadgeAdjustEditor`), stile ADMIN MINIMALE** (`fab-modal-box`, vedi
-  la regola modali sotto). Layout (redesign v11.35 su mockup dell'utente): selettore
-  a chip in alto (con `×N` sui gruppi); poi **due colonne**: a **sinistra** i 4
-  campi (slider + input corto, senza hint) + '**Reset unità**' (ripristina l'ultimo
-  salvato `BADGE_ADJUST_SAVED` per tutti e 4 i valori; un **doppio clic sul singolo
-  slider** riporta invece SOLO quel valore all'ultimo salvato); a **destra** le **anteprime impilate** (tema scuro
-  sopra, chiaro sotto, un po' ingrandite) su 3 schede reali che portano il badge.
-  Ogni riga d'anteprima ha una **linea di mezzo rossa tratteggiata (1px)** che passa
-  esattamente a metà del **maiuscoletto** del nome (`--mid`, misurata a runtime col
-  font Cinzel via canvas: `placeMidlines`), riferimento per l'allineamento ottico;
-  disegnata **sotto** le icone (`z-index:-1` + `.ba-pane{isolation:isolate}`). In coda
-  a ogni riga è mostrato anche il **simbolo di genere** (♂/♀): **dalla v11.70 è una
-  vera unità** (`male`/`female`), reso coi valori live della sua unità (dimensioni
-  base proprie); i campioni sono scelti per genere (`samples` filtra `p.genere`) e la
-  freccina lo evidenzia quando è l'unità selezionata. L'icona in
-  modifica è marcata da una **freccina** (caret `.ba-pv-sel::after`, theme-aware,
-  oro su scuro / vermiglio su chiaro) sotto il badge, non da un box. In basso la **Tabella riepilogo SEMPRE
-  visibile** (niente toggle), scrollevole (tutte le unità × 4 valori; aggiornata
-  in-place con `refreshTableRow` durante il drag per non perdere lo scroll). Footer
-  con **Annulla** (ripristina `BADGE_ADJUST_SAVED` e chiude) e **Salva** (commit,
-  chiude in caso di successo). Modifica `BADGE_ADJUST` live + re-inietta (le card
-  dietro si aggiornano); **L** ricostruisce (etichette), **T** no (la modale si
-  ricolora da sé e l'anteprima mostra già entrambi i temi). `.ba-fval` è theme-aware
-  (oro su scuro, teal su chiaro) per l'AA. axe 0 (pagina + editor) e W3C 0/0
-  verificati (tutto il CSS/DOM dell'editor è iniettato a runtime, invisibile al Nu).
-- **Salvataggio:** `saveBadgeAdjustToRepo` → `doCommit(msg, dati, null, false,
-  BADGE_ADJUST)` → il Worker (**rev 12**) scrive `var badgeAdjust` in `dati.js` e
-  **bumpa +0.01** (NON keepVersion). Un salvataggio che non invia `badgeAdjust`
-  (contenuti/colori) lo **preserva** (`readBadgeAdjust`); `validBadgeAdjust` rifiuta
-  config malformate (400 `bad-badgeadjust`). Per aggiungere una futura icona basta
-  una voce in `BADGE_ADJUST_UNITS` + `BADGE_ADJUST_FALLBACK`: compare da sé
+- **Unità regolabili (`BADGE_ADJUST_UNITS`, 22).** Ogni unità è una icona singola oppure un
+  GRUPPO a variante-colore con **un solo controllo** condiviso: **Istari** (5), **Navi**
+  (Aman/Est/Valinor), **Anelli elfici** (Vilya/Nenya/Narya), **Nove/Sette**. Tutte le altre
+  sono singole, **drago e balrog inclusi e separati** (immagini diverse, non varianti colore,
+  benché condividano la classe `si-demon`), e le 3 corone restano singole.
+  - ⚠️ Le **etichette** dei pulsanti (`it`/`en` in `BADGE_ADJUST_UNITS`) sono nomi di DISPLAY
+    dell'editor, **scollegati** da nomi di file e di classe, ridefiniti dall'utente (p.es.
+    Ritorno→**Mandos**, Sopravvissuto→**Quarta Era**, Nove/Sette→**Altri Anelli del Potere**).
+    Cambiarle non tocca né i badge né la logica: solo il testo del selettore.
+  - **Simboli di genere `male`/`female` come unità** (richiesta utente): regolano i simboli
+    ♂/♀, prima non modificabili. ⚠️ **Deroga UNICA al modello di sizing**: NON usano
+    `height:0.92em; width:auto` ma **dimensioni base proprie** (`GENDER_BASE`, dal CSS
+    `.genere-svg--m/f`) che `sc` scala mantenendo l'aspetto. Il seed di
+    `BADGE_ADJUST_FALLBACK` riproduce esatto il CSS statico, quindi nessun cambio visivo. Le
+    regole `.bi-male`/`.bi-female` (iniettate da `injectBadgeAdjustRules`, ramo `GENDER_BASE`)
+    scavalcano `.genere-svg--m/f` e la separazione statica **solo sulle card**, a pari
+    specificità e sorgente più in basso; i nudge di gruppo restano. La classe è messa in
+    `renderList` sul `genereSym`, non in `buildStatus`, e la **legenda** (`.leg-gender`) non è
+    toccata.
+- **4 parametri per unità:** `ml`/`mr` (margin orizzontale, **a cascata**, niente
+  compensazioni), `ny` (nudge verticale via `transform:translateY`) e `sc` (**scale** =
+  moltiplicatore d'altezza, `height:calc(0.92em * sc)` con `width:auto`; cambiando l'altezza
+  cambia anche l'ingombro orizzontale, coerente col modello 'caratteri consecutivi'). ⚠️ `sc`
+  non tocca il PNG: è l'equivalente a runtime di rimpicciolire il contenuto e ripaddare il
+  canvas.
+- **Identità per-unità `bi-<id>` sulle card.** In `buildStatus` (NON in `BADGE_ICON`, così la
+  legenda resta intatta) ogni `<img>` badge riceve la classe di unità `bi-<id>` via la mappa
+  `BADGE_UNIT` (badge-key → unità, copre anche le 5 icone Istari). Le regole `.rank-name
+  .rank-flags .bi-<id>{...}` sono **iniettate a runtime** da `injectBadgeAdjustRules()` e
+  **scavalcano** il CSS statico per-icona (stessa specificità, sorgente più in basso). La
+  legenda non ha le `bi-*` scoped alle card, quindi le sue icone restano governate dal CSS
+  statico: è indipendente dalle card.
+- **Config data-driven + fallback seed-once** (scelta utente). Fonte della verità **`var
+  badgeAdjust`** in `dati.js`, scritta dal Worker; se assente o invalida si usa
+  **`BADGE_ADJUST_FALLBACK`** in `index.html`, seminato coi valori ATTUALI di ogni unità, così
+  le trasformazioni già fatte restano come valore modificabile. `BADGE_ADJUST` è il merge dei
+  due (unità mancanti → fallback). ⚠️ L'iniezione gira sempre al load, perché il fallback vive
+  in `index.html`: il rendering è garantito anche senza `badgeAdjust` in `dati.js`, e il primo
+  salvataggio la scrive.
+  - ⚠️ Nel seed dei gruppi con valori misti si è scelto un valore unico: **Navi** `ml -0.05`
+    (`est` era -0.04, quindi +0.01em accettato col raggruppamento); **Anelli elfici** `ny
+    -0.067`, l'equivalente em a desktop del vecchio `translateY(calc(-.106em+1px))`, con il
+    +1px viewport-dipendente sciolto in em.
+- **Editor, stile ADMIN MINIMALE** (`fab-modal-box`). Layout da mockup dell'utente: selettore a
+  chip in alto (con `×N` sui gruppi); poi **due colonne**, a sinistra i 4 campi (slider + input
+  corto, senza hint) e '**Reset unità**' (ripristina l'ultimo salvato `BADGE_ADJUST_SAVED` per
+  tutti e 4 i valori, mentre un **doppio clic sul singolo slider** riporta SOLO quel valore
+  all'ultimo salvato), a destra le **anteprime impilate** (tema scuro sopra, chiaro sotto, un
+  po' ingrandite) su 3 schede reali che portano il badge. In basso la **tabella riepilogo SEMPRE
+  visibile** (niente toggle), scrollevole, aggiornata in-place con `refreshTableRow` durante il
+  drag per non perdere lo scroll. Footer con **Annulla** (ripristina `BADGE_ADJUST_SAVED` e
+  chiude) e **Salva**.
+  - Ogni riga d'anteprima ha una **linea di mezzo rossa tratteggiata (1px)** che passa
+    esattamente a metà del **maiuscoletto** del nome (`--mid`, misurata a runtime col font
+    reale: `placeMidlines`), riferimento per l'allineamento ottico, disegnata **sotto** le icone
+    (`z-index:-1` + `.ba-pane{isolation:isolate}`). L'icona in modifica è marcata da una
+    **freccina** (`.ba-pv-sel::after`, theme-aware) sotto il badge, non da un box.
+  - In coda a ogni riga è mostrato anche il **simbolo di genere**, reso coi valori live della
+    sua unità; i campioni sono scelti per genere (`samples` filtra `p.genere`) e la freccina lo
+    evidenzia quando è l'unità selezionata.
+  - Modifica `BADGE_ADJUST` live e re-inietta, quindi le card dietro si aggiornano. **`L`**
+    ricostruisce l'editor (etichette), **`T`** no, perché la modale si ricolora da sé e
+    l'anteprima mostra già entrambi i temi. `.ba-fval` è theme-aware per l'AA.
+- **Salvataggio:** `saveBadgeAdjustToRepo` → `doCommit(msg, dati, null, false, BADGE_ADJUST)`
+  → il Worker scrive `var badgeAdjust` in `dati.js` e **bumpa +0.01** (NON keepVersion). Un
+  salvataggio che non invia `badgeAdjust` lo **preserva** (`readBadgeAdjust`);
+  `validBadgeAdjust` rifiuta config malformate (400 `bad-badgeadjust`). Per aggiungere una
+  futura icona basta una voce in `BADGE_ADJUST_UNITS` + `BADGE_ADJUST_FALLBACK`: compare da sé
   nell'editor.
 
-- **Ottimizzazione immagini: lossless o WebP 'visually lossless' (regola
-  dell'utente; il lossy PNG a palette resta VIETATO).** Due strade ammesse:
-  1. **Ricompressione lossless** a impatto zero sui pixel (metadati + `optipng`/
-     `zopflipng`): non cambia un solo pixel.
-  2. **Conversione a WebP 'visually lossless'** (dalla v11.60, scelta dell'utente):
-     WebP **non** è a palette (nessun limite di 256 colori) e il suo lossy è
-     DCT-based, quindi **non** produce il banding a scalini della quantizzazione a
-     palette. Ammesso **q85** (o qualità simile) se il risultato è visivamente
-     indistinguibile (verificare a occhio le icone coi gradienti: vele, anelli).
-     Le **icone badge** (`arda/top/icons/`) sono state migrate a `.webp` q85 in
-     v11.60 (1902K→399K, −80%); i PNG originali sono conservati in
-     **`arda/top/icons_png/`** (backup, non referenziati). I riferimenti nel codice
-     usano `icons/X.webp`.
-  ⚠️ Resta **VIETATA la quantizzazione a palette** (`PIL .quantize()`, `pngquant`,
-  riduzione colori ≤256) e ogni passo che produca **banding/posterizzazione**: su
-  sfumature morbide (gradienti di vele, corpi, cieli) si vede. Errore storico: le
-  navi elfiche (Aman/Est/Valinor) quantizzate a 256 colori in v7.30 avevano banding
-  evidente; ripristinate in v7.42. Se un nuovo PNG fornito dall'utente va
-  alleggerito, la via preferita è WebP visually-lossless (o lossless); nel dubbio
-  sul risultato, **verificare a occhio** prima di committare. Vale per icone/badge e
-  immagini del sito; NON vale per le eccezioni qui sotto (visualizzatore, favicon,
-  che restano PNG intatti).
-- **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/`
-  (mappe e risorse aperte da `openImageViewer`) non vanno mai modificati,
-  ridimensionati, compressi od ottimizzati, per nessun motivo: sono materiale
-  da consultazione a piena qualità. Regola esplicita dell'utente (2026-07-04).
-  Anche `favicon.png` e le altre immagini esistenti restano come sono, salvo
-  sua richiesta esplicita.
+### 🗜️ Ottimizzazione immagini
 
-- A ogni **main release** (bump minor o major) verificare che tutti gli
-  asset del progetto siano stati bonificati secondo la regola universale;
-  se si trova materiale non bonificato, ripulirlo prima di rilasciare.
-- Riferimenti storici di consulenza estetica del progetto: colori troppo
-  saturi rispetto agli altri badge (caso Maia #f2dbda/#fe8b96/#c83056);
-  dettagli SVG troppo fini per la dimensione reale di ~22 px (spilla
-  della Compagnia, occhio di Sauron).
+**Lossless o WebP 'visually lossless'** (regola dell'utente; il lossy PNG a palette resta
+VIETATO). Due strade ammesse: **ricompressione lossless** a impatto zero sui pixel (metadati +
+`optipng`/`zopflipng`), oppure **conversione a WebP 'visually lossless'** a **q85** o qualità
+simile, se il risultato è visivamente indistinguibile (verificare a occhio le icone coi
+gradienti: vele, anelli). WebP **non** è a palette, quindi non ha il limite dei 256 colori, e
+il suo lossy è DCT-based, quindi **non** produce il banding a scalini della quantizzazione.
+
+- Le **icone badge** (`arda/top/icons/`) sono migrate a `.webp` q85 (1902K→399K, −80%); i PNG
+  originali sono conservati in **`arda/top/icons_png/`** come backup, non referenziati, e i
+  riferimenti nel codice usano `icons/X.webp`.
+- ⚠️ Resta **VIETATA la quantizzazione a palette** (`PIL .quantize()`, `pngquant`, riduzione
+  colori ≤256) e ogni passo che produca **banding o posterizzazione**: su sfumature morbide
+  (gradienti di vele, corpi, cieli) si vede. Errore storico da non rifare: le navi elfiche
+  quantizzate a 256 colori avevano banding evidente e sono state ripristinate. Nel dubbio sul
+  risultato, **verificare a occhio** prima di committare.
+- ⚠️ **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/` (mappe e
+  risorse aperte da `openImageViewer`) non vanno mai modificati, ridimensionati, compressi od
+  ottimizzati, per nessun motivo: sono materiale da consultazione a piena qualità. Regola
+  esplicita dell'utente. Anche `favicon.png` e le altre immagini esistenti restano come sono,
+  salvo sua richiesta esplicita.
+- A ogni **main release** (bump minor o major) verificare che tutti gli asset siano stati
+  bonificati secondo la regola universale; se si trova materiale non bonificato, ripulirlo
+  prima di rilasciare.
+- Riferimenti storici di consulenza estetica: colori troppo saturi rispetto agli altri badge
+  (caso Maia) e dettagli SVG troppo fini per la dimensione reale di ~22px (spilla della
+  Compagnia, occhio di Sauron).
 
 ## 📝 Note e Note editoriali (modale 'Risorse e note')
 
-- **Cosa sono.** Approfondimenti bilingui raccolti in **un'unica modale**
-  ('Risorse e note' / 'Resources and notes'), raggiungibile da **due accessi**:
-  il link nel footer e il tasto Info. Ogni voce è un **pulsante** (stile
-  `fab-modal-confirm`) che apre un **viewer testuale** bilingue.
-- **Guscio-modale STANDARD condiviso (dalla v8.76).** Note, Risorse e Info
-  (`openNoteViewer`, `openResourcesModal`, `showInfoNote`) NON usano più il
-  vecchio guscio `.fab-modal-box` (bordo al vivo, × piccolo, scroll che rovinava
-  l'angolo stondato): riusano lo **stesso guscio della scheda personaggio** via
-  l'helper **`buildStdModal(id)`** + `activateStdModal`: `.modal-backdrop`
-  sfocato, `.modal` con **doppio bordo** (`::before`), **tasto di chiusura tondo
-  animato** (`.modal-close`, glifo × SVG, rotazione 90° all'hover), e
-  `.modal-body` scrollabile. Lo scroll vive nel `.modal-body`, clippato dal
-  `border-radius` di `.modal` (`overflow:hidden`), quindi **la barra non tocca
-  mai l'angolo** (era il difetto delle `.fab-modal`). Gli overlay dinamici hanno
-  la classe **`dyn-modal`** (li distingue da `#modal-backdrop` in
-  `scrollLockNeeded`; gli handler Escape/`closeTop` cercano `.modal-close,
-  .fab-modal-close`). Il contenuto tipografico resta nelle classi `.note-viewer-box`
-  / `.info-note-box` / `.res-modal-inner` (private delle proprietà di box:
-  larghezza/scroll li gestisce il guscio). Le **altre** `.fab-modal-*` (password,
-  trivio riordino, conferma campi) restano invariate: non sono 'note'.
-- **TUTTE le modali entrano ed escono con lo stesso movimento (v13.86, richiesta
-  utente).** L'impianto tecnico resta doppio - le utente hanno **transizioni**
-  pilotate da `.active`, le admin **animazioni** (nascono già visibili) - ma
-  geometria, curve e durate sono le stesse: 10px di salita, scala 0.985, `ease-out`
-  entrando e `ease-in` uscendo, velo 0.15s e box 0.2s. Le modali utente venivano da
-  20px/0.96 in 0.3-0.4s: erano più lente e più mosse delle admin.
-  - **La scheda personaggio aveva già l'uscita animata** (vive sempre nel DOM,
-    quindi bastava togliere `.active`, e c'è la cura di sbloccare lo scroll a
-    dissolvenza finita). Le modali **dinamiche** (Note, Risorse, Info) invece
-    venivano distrutte con `remove()` e sparivano di colpo: ora passano da
-    **`dismissStdModal(bd, mode)`**, che toglie `.active` e rimuove il nodo a
-    transizione finita.
-  - ⚠️ **Id e classe `dyn-modal` si togliono SUBITO**, come l'`id` per le admin:
-    `MODAL_OPEN_SEL` e `scrollLockNeeded` ragionano su quelli, e un fantasma li
-    terrebbe 'aperti' (pagina inerte, tasti nudi zitti, riapertura bloccata).
-  - **PASSAGGIO fra due modali: dissolvenza velocissima e NIENTE movimento**
-    (richiesta utente: 'il movimento scompari/riappari può essere fastidioso').
-    Classe **`.xfade`**: box senza transizione né movimento. Il passaggio si
-    marca in UN punto solo - chi chiude in modo `'fast'` chiama
-    **`modalXfadeWindow()`**, che apre una finestra di 220ms in cui anche
-    l'**apertura** della modale successiva eredita la dissolvenza rapida
-    (`activateStdModal` e `openModal` leggono `MODAL_XFADE`). Così non serve
-    passare un flag a ognuno dei punti che aprono. La classe si **ritira** dopo
-    160ms, o la chiusura vera successiva erediterebbe la dissolvenza da passaggio.
-    - Sono passaggi: nota → scheda e nota → nota (`keep`), scheda → nota
-      (`goNote`, che marca a mano perché lì `closeModal` non ha `modalReturn`),
-      scheda → nota di ritorno (`modalReturn`), Risorse → mappa e Risorse → nota,
-      Info → Risorse. I **rebuild di lingua** usano invece `'now'`: via subito,
-      niente dissolvenza, perché la stessa modale viene ricostruita nell'istante.
-    - ⚠️ **Anche una CHIUSURA che RITORNA è un passaggio (fix v14.11).** Il tasto
-      `×` di una nota aperta da una scheda (o da Risorse) non chiude: **ritorna**
-      là da dove si è arrivati (`noteReturn`), e lo stesso vale per il
-      visualizzatore mappe (`imgvReturn`). Trattandoli come chiusure vere, la nota
-      usciva con la dissolvenza PIENA mentre la destinazione entrava con la sua -
-      due veli che sfumano insieme, cioè di nuovo il difetto della v13.86.
-      Segnalato dall'utente col percorso esatto: 'apri Eärendil, clicca sulla nota
-      *Mezzelfi tra la vita e la morte*, poi chiudi → sfarfallio assicurato'.
-      Misurato in tema chiaro: la fascia fuori dalla modale schiariva da 226.2 a
-      **229.4**; dopo il fix **0.00** di escursione. Il criterio è in `dismiss`:
-      `var back = !keep && !!noteReturn` → modo `'fast'`. E in quel caso **lo scroll
-      NON si sblocca**: lo riblocca la destinazione, e uno sblocca-riblocca fa
-      comparire e sparire la barra di scorrimento.
-    - ⚠️ **UN SOLO VELO IN SCENA, E SEMPRE PIENO (v14.10, regola definitiva).** Chi
-      ENTRA porta il velo (istantaneo, nessuna transizione); chi ESCE lo **perde** e
-      tiene il solo box, che le passa **sopra** e dissolve in 0.08s
-      (`@keyframes modal-xfade-out`). Così non c'è mai un fotogramma senza finestra e
-      il fondo dietro non cambia di un'unità. Tre dettagli indispensabili, tutti
-      scoperti misurando:
-      1. **`box-shadow:none` sul box che esce.** Il box porta un alone diffuso (60 e
-         120px) e, stando sopra il velo, il suo alone si SOMMAVA a quello della
-         modale sotto: la fascia fuori dalla modale schiariva da **17.7 a 25.6** di
-         luminanza per ~80ms. L'alone lo disegna una volta sola chi entra.
-      2. **`backdrop-filter:none` sul box che esce**, o la sua sfocatura sfoca il
-         contenuto di chi entra, che ora le sta sotto.
-      3. **Togliere `.xout` va fatto con `.no-anim` + un reflow.** Senza, la scheda
-         torna a valere la sua transizione (`opacity 0.2s`) e - non essendo più
-         `.active` - il suo velo **ricompariva** per poi sfumare: un secondo velo
-         sopra quello della nota, quindi il fondo si scuriva e tornava (misurato:
-         226.2 → 218.7 → 226.2 in tema chiaro, 17.7 → 16.4 → 17.7 in scuro).
-      Verificato al fotogramma su 4 passaggi × 2 temi: **0 frame senza finestra** e
-      escursione del velo **0.00-0.30** su una luminanza di 17.7 (scuro) e 226.2
-      (chiaro); prima del fix era 7.4-9.3.
-    - Storia dei tre tentativi sbagliati, utile per non ripeterli:
-      1. **v13.86** - dissolvevano entrambe e il fondo **SFARFALLAVA**. Causa
-         misurata: due veli semitrasparenti sovrapposti compongono **MENO** di uno
-         pieno (`0.92` su `0.92` dà 0.9936, ma a metà strada `0.46` su `0.46` dà
-         **0.71**), quindi a mezzo passaggio la pagina dietro si SCHIARIVA.
-      2. **v13.97** - la vecchia usciva all'istante e la nuova entrava col velo già
-         pieno: il velo non si muoveva più, ma restava un **lampo senza NESSUNA
-         finestra**, con le card intraviste dietro il velo ('c'è un piccolo flash in
-         cui scompare il velo, sfarfalla la finestra appena chiusa e si vedono le
-         card sottostanti'). Misurato coi fotogrammi reali (CDP screencast): 1-2
-         frame con la luminanza del solo velo (**8** su 54 al centro del box).
-      3. **v14.00** - chi esce restava **dipinto e pieno**, velo compreso, e chi
-         entrava dissolveva sopra: niente buco, ma per 130ms i **due veli si
-         sommavano** e il fondo si SCURIVA. In tema chiaro molto (velo 0.62: da 0.62
-         a 0.856 di composito, cioè la pagina dietro dal 38% al 14% di trasmissione).
-         Era lo sfarfallio che l'utente segnalava ancora.
-      - ⚠️ **Gli `z-index` sono indispensabili**: a pari `z-index` l'ordine di pittura
-        segue il DOM, e la scheda `#modal-backdrop` è **statica in pagina**, quindi
-        finirebbe SOTTO una nota appena creata. Chi entra sta a **201**, chi esce a
-        **202**, così i piani sono giusti in entrambi i versi.
-      - Chi esce si rimuove (o perde `.xout`) dopo **`MODAL_XOUT_MS` = 130ms**, un
-        filo più della dissolvenza. Due punti di uscita: i nodi **dinamici** in
-        `dismissStdModal(bd,'fast')`, la **scheda** - il cui nodo vive sempre in
-        pagina - via **`modalXfadeOut(bd)`** (in `goNote` e in `closeModal` quando c'è
-        `modalReturn`). `openModal` toglie un `.xout` residuo, o riaprendo subito la
-        scheda resterebbe inerte per 130ms.
-      - L'animazione è una `animation` e non una `transition` apposta: parte da sé
-        alla comparsa della classe, senza dover intercalare un reflow. Spenta da
-        `prefers-reduced-motion`.
-    - ⚠️ **Come si verifica un passaggio: coi FOTOGRAMMI, non col DOM.** Una sonda su
-      `getComputedStyle` non vede la **pittura** e diceva 'nessun buco' mentre
-      l'utente vedeva il lampo. Lo strumento è `scratchpad/frames.js`: CDP
-      `Page.startScreencast`, un file per frame col tempo nel nome, poi si misura la
-      **luminanza media al centro** del box (col box in scena ~48-54, col solo velo
-      ~8: la differenza è netta e non lascia dubbi).
-    - Storico: il caso 'si arriva da una nota' esisteva già come `instant` +
-      `.no-anim`, cioè un **salto secco**; la v13.86 lo sostituisce con la
-      dissolvenza rapida. `.no-anim` resta per usi tecnici.
-  - Il **visualizzatore mappe** (`#imgv`) ha un impianto proprio e non è toccato.
-  - Sanato nella stessa release un difetto **preesistente** di contrasto: i titoli
-    di sezione di Risorse (`.res-modal-title`) davano **4.49:1** sul fondo scuro,
-    un centesimo sotto la soglia 4.5:1 (nella v13.96 sono passati all'accento della
-    modale, vedi sotto).
-  - **Durate: 0.2s per TUTTO** (v13.96, scelta dell'utente): velo, box e colonna, in
-    entrata e in uscita, modali utente e admin. Unica eccezione voluta il cross-fade
-    dei **passaggi**, che resta a 0.08s ('velocissima').
-- **UN ACCENTO PER MODALE, deciso dalla PROVENIENZA (v13.96, scelte dell'utente su
-  mockup a confronto).** La neutralizzazione della v8.79 aveva reso grigi tutti gli
-  accenti delle modali informative, perché passavano dai token `--gold*` - che,
-  nonostante il nome, erano **azzurri** (`#9ac0d8` scuro / `#4a7090` chiaro,
-  verificato in git: non erano né oro né la tinta del personaggio). Il colore è
-  tornato con questo modello:
-  - **La modale ha UN accento**, in `--note-acc`: la tinta della **famiglia del
-    personaggio da cui si è arrivati**, altrimenti l'**accento globale del tema**
-    (`#c6ad66` scuro - l'oro del FAB - / `#2e5461` chiaro, indicati dall'utente:
-    6.99:1 e 7.47:1 sul fondo delle modali). Lo prendono titolo, titoletti, pallini
-    degli elenchi e il rimando nota → nota; e per lo stesso principio Info e
-    Risorse, che non hanno provenienza, stanno sempre sul globale.
-    - ⚠️ **NON desaturare questo accento.** La v13.97 l'aveva reso grigio
-      (`#afafaf`, pari luminanza) leggendo «in tema scuro le modali sono davvero
-      GIALLE» come riferito ai TESTI; l'utente intendeva lo **SFONDO** e ha chiesto
-      di rimetterlo: «Titolo, sottotitoli, note collegate e tutti gli altri
-      collegamenti (in sostanza: qualsiasi cosa cliccabile che non è un personaggio)
-      deve rimanere del colore di accento del tema (il solito giallo del FAB)».
-      Ripristinato nella **v13.98**. Regola generale che ne esce: in queste modali
-      **tutto ciò che non è un personaggio sta sull'oro del tema**, i personaggi
-      sulla propria tinta.
-    - **Gli SFONDI, misurati** (utile la prossima volta che si parla di 'giallo').
-      In tema scuro l'unica superficie ampia con una tinta CALDA è il fondo del
-      **Pannello** del FAB (`.ctrl-panel`); gli sfondi delle modali sono grigio puro
-      (`#252525`, delta RGB **0**) e il velo (`.modal-backdrop`,
-      `rgba(5,7,16,0.92)`) è leggermente **BLU**, non giallo. Il fondo del Pannello
-      è passato a **`rgba(41,40,38,0.94)`** nella v13.98 (richiesta dell'utente:
-      saturazione **dimezzata**, 'può restare un vago sentore di tinta gialla'): era
-      `rgba(42,41,36)` = HSL 50° **7.7%** 15.3%, ora **3.85%** con luminosità
-      identica. Il fondo del Pannello in tema CHIARO
-      (`rgba(245,247,247,0.97)`, appena freddo) non è stato toccato.
-  - **Un solo livello di intensità** (scelta dell'utente): la gerarchia la fanno
-    corpo e peso del testo. ⚠️ Sotto il 75% di opacità il tema chiaro scende a
-    4.04:1, fuori soglia: se un domani serve più stacco, agire sul peso.
-  - **La provenienza vive in `NOTE_ACC_IDX`** (indice del personaggio) e la scrive
-    chi apre la nota da una scheda (`goNote`, il rimando 'Leggi anche'); `Risorse` e
-    `Info` la azzerano, la chiusura vera della nota pure. `noteAccentVars(bd)` scrive
-    sull'overlay **`--macc-d`/`--macc-l`**, due tinte già rese AA, e il CSS mappa
-    `--note-acc` su quella del tema corrente. ⚠️ Due proprietà e non una perché il
-    tasto `T` **non** ricostruisce la nota aperta. Passando di nota in nota la
-    provenienza NON cambia: l'accento del personaggio resta per tutta la lettura.
-  - **I nomi cliccabili sono l'eccezione**: prendono la tinta della famiglia di
-    **destinazione** (dove porta il link), **desaturata al 55%** in HSL. Scelta
-    dell'utente su un confronto a quattro gradi (accento unico / 100% / 55% / 30%)
-    fatto sulla nota dei Mezzelfi, che cita 18 personaggi di 6 famiglie: al 55% la
-    famiglia si riconosce ancora ma con sei tinte in una pagina il colpo d'occhio
-    resta quieto; al 30% Noldor e Mezzelfi diventavano indistinguibili. Il fattore
-    vive in **`NOTE_TINT_SAT`**. ⚠️ La desaturazione è puramente estetica perché
-    `ccAaText` è applicata DOPO: il contrasto resta sopra 4.5:1 a qualunque grado
-    (misurato: minimo 4.51:1 in scuro, 4.52:1 in chiaro).
-  - **Nella SCHEDA** il rimando 'Leggi anche' (`.modal-noteref-link`) usa la stessa
-    `--cctext` degli altri accenti: era l'unico rimasto grigio, mentre POSIZIONE,
-    fonte e × sono in tinta dalla v8.77. La sua regola vive tra le **iniettate**
-    (`injectCardColorRules`) perché usa `rgba(var(--cctext),1)`, forma che il Nu non
-    sa parsare nel CSS statico.
-    - ⚠️ **In tinta va SOLO il titolo, non il prefisso** (v13.98, richiesta
-      dell'utente: 'nota in grassetto e colorata; `Leggi anche` / `See also`, invece,
-      colore normale del testo'). Il prefisso vive in uno `<span class="nr-pre">` e
-      la regola iniettata colora `.modal-noteref-link strong`. Nelle NOTE
-      (`.note-seealso`) il prefisso stava già **fuori** dal link, quindi lì non c'era
-      nulla da correggere: la differenza nasceva dal fatto che nella scheda l'intera
-      stringa era dentro lo span cliccabile. Cliccabile resta tutta la riga;
-      sottolineatura e indicatore di focus stanno sul titolo (`currentColor`), così
-      il focus resta visibile senza `outline` proprio.
-  - axe **0 violazioni WCAG** su Risorse, nota globale, nota da scheda, scheda e
-    Info, nei due temi.
-- **Regola stile modali: UTENTE = colorato, ADMIN = minimale (istruzione
-  dell'utente, 2026-07-23).** Discrimine per PUBBLICO, non per contenuto: ogni modale
-  che un **utente/visitatore** può vedere usa il guscio **colorato** (bordo doppio
-  cardcolor + × tondo animato, `buildStdModal` o la scheda personaggio); ogni modale
-  **admin** usa il guscio **minimale** (`fab-modal-box`, bordo tenue, × piccolo).
-  Stato conforme (audit v11.33): **utente/colorate** = scheda personaggio
-  (`openModal`), Risorse (`openResourcesModal`), Note (`openNoteViewer`), Info
-  (`showInfoNote`); **admin/minimali** = password (`showPasswordModal`), bivio
-  (`showAdminChoiceModal`), editor colori (`showColorEditor`), statistiche
-  (`showColorStats`), micro-aggiustamenti (`showBadgeAdjustEditor`), Feature flag
-  (`showSiteFlagsEditor`), editor
-  personaggi (`showAdminEditor`). Le modali di **riordino**
+- **Cosa sono.** Approfondimenti bilingui raccolti in **un'unica modale** ('Risorse e note' /
+  'Resources and notes'), raggiungibile da **due accessi**: il link nel footer e il tasto
+  Info. Ogni voce è un **pulsante** che apre un **viewer testuale** bilingue.
+- **Guscio-modale STANDARD condiviso.** Note, Risorse e Info (`openNoteViewer`,
+  `openResourcesModal`, `showInfoNote`) usano lo **stesso guscio della scheda personaggio**
+  via l'helper **`buildStdModal(id)`** + `activateStdModal`: `.modal-backdrop` sfocato,
+  `.modal` con **doppio bordo** (`::before`), **tasto di chiusura tondo animato**
+  (`.modal-close`) e `.modal-body` scrollabile. ⚠️ Lo scroll vive nel `.modal-body`, clippato
+  dal `border-radius` di `.modal` (`overflow:hidden`), quindi **la barra non tocca mai
+  l'angolo**: era il difetto del vecchio guscio `.fab-modal-box`. Gli overlay dinamici hanno
+  la classe **`dyn-modal`**, che li distingue da `#modal-backdrop` in `scrollLockNeeded`; gli
+  handler Escape/`closeTop` cercano `.modal-close, .fab-modal-close`. Il contenuto tipografico
+  resta nelle classi `.note-viewer-box` / `.info-note-box` / `.res-modal-inner`, private
+  delle proprietà di box, perché larghezza e scroll li gestisce il guscio. Le **altre**
+  `.fab-modal-*` (password, trivio riordino, conferma campi) restano invariate: non sono
+  'note'.
+- **Regola stile modali: UTENTE = colorato, ADMIN = minimale** (istruzione dell'utente).
+  Discrimine per PUBBLICO, non per contenuto: ogni modale che un **utente/visitatore** può
+  vedere usa il guscio **colorato** (bordo doppio cardcolor + × tondo animato, `buildStdModal`
+  o la scheda personaggio); ogni modale **admin** usa il guscio **minimale**
+  (`fab-modal-box`, bordo tenue, × piccolo). Le modali di **riordino**
   (`showDesktopReorderModal`/`showActionChoiceModal`) **restano MINIMALI** (decisione
-  dell'utente, 2026-07-23): sono modali di servizio che si attivano solo per cose
-  'in un certo senso' da admin, quindi valgono come admin. L'`openImageViewer`
-  (visualizzatore mappe) è un overlay a sé (`imgv-*`), fuori da questa dicotomia.
-- **Backdrop uniforme (dalla v8.76) e NEUTRO (dalla v13.99).** Tutti i modali che
-  usano `.modal-backdrop` (scheda, note, risorse, info) condividono lo stesso velo
-  sfocato: **chiaro** su tema chiaro (`rgba(220,220,220,0.62)`, prima era scuro
-  anche in chiaro), **scuro** su tema scuro (`rgba(7,7,7,0.92)`).
-  - ⚠️ **Il velo NON ha tinta, e la ragione è un'illusione ottica misurata.** Fino
-    alla v13.98 era `rgba(5,7,16,0.92)` (blu notte) in scuro e `rgba(216,220,228,
-    0.62)` (freddo) in chiaro. Contro un velo freddo il fondo della modale - che è
-    **grigio puro** (`#252525` / `#F4F4F4`, delta RGB **0**, verificato) - appariva
-    **giallo**: contrasto simultaneo, non un colore davvero caldo. L'utente lo
-    segnalò due volte come 'le modali sono gialle' e la v13.97 ci cascò
-    desaturando gli ACCENTI (poi ripristinati nella v13.98); la causa era il velo,
-    e l'ha individuata l'utente stesso ('il contrasto tra il velo blu notte, che mi
-    sembrava grigio, faceva apparire giallo lo sfondo delle modali'). I due grigi
-    sono a **PARI luminanza relativa** dei vecchi valori (0.00213 contro 0.00222 in
-    scuro, 0.7157 contro 0.7139 in chiaro), quindi la pagina dietro resta scura (o
-    chiara) esattamente come prima.
-  - ⚠️ **Gli altri tre veli RESTANO TINTI: deciso dall'utente il 2026-07-28, non
-    riproporlo.** Sono `.fab-modal-overlay` in tema chiaro
-    (`rgba(180,195,215,0.5)`, delta RGB **35**: il più tinto di tutti, vale per
-    tutte le modali admin), `.imgv-overlay` (`rgba(3,5,12,0.95)`, delta 9) e
-    `.admin-search-backdrop` (`rgba(8,12,24,0.4)` scuro / `rgba(214,221,233,0.5)`
-    chiaro, delta 16 e 19). La v13.99 li aveva lasciati fuori 'da valutare se il
-    problema si ripresenta': la valutazione è stata fatta mostrando all'utente il
-    confronto grafico attuale↔neutro (grigi a pari luminanza:
-    `rgba(194,194,194,0.5)`, `rgba(5,5,5,0.95)`, `rgba(12,12,12,0.4)` /
-    `rgba(220,220,220,0.5)`), e la risposta è stata 'possono restare come sono'.
-    Il velo del Pannello (`.ctrl-backdrop`, `rgba(0,0,0,0.4)`) e quello admin in
-    scuro (`rgba(0,0,0,0.38)`) erano già neutri.
-    - Nota per un eventuale ritorno sul tema: l'overlay della **ricerca admin**
-      non si apre da script (né col pulsante lente né col tasto `f` dentro
-      `showAdminEditor`), quindi va confrontato per campioni di colore calcolati,
-      non per screenshot.
-- **Contenuto di sfondo INERTE a modale aperto (dalla v10.06).** `lockPageScroll`
-  (il choke point condiviso da TUTTI i modali) marca `header`, `main` e `footer`
-  con **`inert` + `aria-hidden`** quando un modale si apre, e li ripristina alla
-  chiusura (via `setBgInert`). Doppio scopo: **focus-trap/accessibilità** (il
-  contenuto velato non è focusabile né letto dagli screen reader) e **axe pulito**
-  (i testi tenui delle card sotto il velo scendevano sotto 4.5:1 su fondo-card
-  chiaro: falso positivo da contenuto velato, ora ignorato perché aria-hidden). Il
-  modale (fratello di header/main/footer) resta attivo. NB: l'audit axe con una
-  scheda aperta va fatto in un tema NATIVO (aprire già in quel tema): cambiare
-  tema a scheda aperta è uno scenario non raggiungibile dall'utente (il toggle
-  vive nel Pannello, coperto dalla scheda) e in test dà falsi rilievi transitori.
-  - **Estensione agli elementi FUORI da header/main/footer (dalla v12.75).**
-    Inertizzare quei tre non basta: il FAB del Pannello, i tasti salto, il cambio
-    lingua e il FAB del riordino stanno **fuori** e col `Tab` si raggiungevano
-    attraverso il velo (misurato in v12.65: dal 18° `Tab` il focus finiva su 'Filtri
-    e legenda' e 'Vai in cima'). L'elenco vive in **`BG_INERT_EXTRA`**
-    (`#ctrl-fab`, `.jump-fabs`, `.lang-switch`, `.fab-container`, `#ctrl-panel`).
-    ⚠️ **Si applica SOLO quando è aperta una MODALE**, non col solo Pannello, e la
-    ragione decisiva è che in elenco c'è **`#ctrl-panel` stesso**: lo stesso
-    `lockPageScroll` serve il Pannello e i modali, quindi applicarlo sempre
-    renderebbe inerte il Pannello proprio mentre lo si usa (da qui la guardia
-    `anyModalOpen()` su `MODAL_OPEN_SEL`). Col solo Pannello aperto resta focusabile
-    anche il FAB, che **da tastiera** lo richiude; col mouse si clicca invece
-    `#ctrl-backdrop`, che a `z-index:205` copre il FAB. In **uscita** l'elenco extra si ripulisce sempre, senza
-    condizioni: un `inert` rimasto appeso renderebbe il FAB inservibile. Per la stessa
-    ragione `setBgInert(true)` gira **prima** della guardia anti-doppio-lock di
-    `lockPageScroll` (una modale aperta sopra il Pannello, già bloccato, uscirebbe
-    subito e lascerebbe il FAB focusabile dietro il velo).
-  - **Focus trap vero (dalla v12.75).** L'`inert` impedisce di entrare nei controlli
-    dietro il velo, ma dall'ultimo elemento della modale il `Tab` uscirebbe comunque
-    verso la **chrome del browser**. Un listener `keydown` sul `Tab` chiude il cerchio
-    (dall'ultimo al primo e, con `Shift`, viceversa) agendo **solo sulla modale più in
-    alto**: `topModalEl()` prende l'ultima in **ordine di documento**, che coincide con
-    l'ordine di apertura, così le modali annidate (`#fx-modal` sopra `#fab-modal`)
-    funzionano da sé. I focusabili si filtrano per visibilità
-    (`offsetWidth`/`offsetHeight`), altrimenti il giro si incastrerebbe sui controlli
-    delle tab non attive. Verificato: 40 `Tab` consecutivi, 0 fughe.
-- **Formato rimandi interni (dalla v8.75).** Sia il rimando **personaggio→nota**
-  (`.modal-noteref`) sia i **nota→nota** (`.note-seealso`) usano
-  `Leggi anche → <strong>Titolo</strong>` / `See also → ...`: prefisso normale,
-  **titolo in grassetto**, tutto linkato e **allineato a sinistra** (dalla v8.78;
-  per un breve tratto in v8.75 erano centrati, poi riportati a sinistra su
-  richiesta dell'utente).
-- **Tre sezioni nella modale** (dalla v6.50, `openResourcesModal`), nell'ordine:
-  1. **Risorse**: le due mappe (viewer immagini) + la mappa interattiva
-     esterna. Non sono note (non stanno in `EDITORIAL_NOTES`).
-  2. **Note** ('Notes'): note di **pura lore in-universe**, che spiegano il
-     mondo (es. Glorfindel e il 'ritorno' degli Elfi, Unioni miste e Mezzelfi).
-  3. **Note editoriali** ('Editorial notes'): le **scelte editoriali** e il
-     **modo in cui la pagina presenta i dati** (es. Traduzione italiana in
-     testa, Celeborn, Badge dei personaggi).
-  - **Discrimine (regola dell'utente, 2026-07-12):** una nota che spiega
-    *puramente la lore* del mondo va in **Note**; una nota che riguarda le
-    *scelte dell'utente* o *come il sito rende i dati* va in **Note editoriali**.
-- **Dove vivono.** Array **`EDITORIAL_NOTES`** in testa alla logica del footer
-  in `arda/top/index.html`, appena dopo `openResourcesModal` (che disegna la
-  modale); il viewer è `openNoteViewer`. Aggiungere una nota = aggiungere un
-  oggetto all'array; pulsante e viewer si generano da soli. Ogni oggetto ha:
-  `titleIt`/`titleEn` (titolo pieno), `shortIt`/`shortEn` (etichetta **breve per
-  mobile**, obbligatoria), **`cat`** (`'lore'` = sezione Note, `'editorial'` =
-  sezione Note editoriali; il rendering filtra per categoria), `bodyIt`/`bodyEn`
-  (HTML). Storico: fino alla v5.79 le note stavano in una modale a sé
-  (`openNotesModal`, poi rimossa); fuse nella modale unica; la terza sezione
-  (Note vs Note editoriali) è della v6.50.
-- **Protocollo quando l'utente passa una NUOVA nota** (regola durevole,
-  2026-07-08): aggiungere la voce/pulsante e **formattare il contenuto sul
-  modello della nota dei Mezzelfi**. In dettaglio:
-  - **Personaggi in grassetto e cliccabili:** avvolgere i nomi nel marcatore
-    **`#{Nome}#`** (o `#{Testo mostrato|NomeDati}#` quando il nome in classifica
-    differisce, es. `#{Aragorn|Aragorn II}#`, `#{Finrod Felagund|Finrod}#`).
-    `renderNoteBodyHtml` li rende come `span.note-charlink` (grassetto oro,
-    cliccabili, accessibili da tastiera) che aprono la scheda via `openModal`;
-    se il nome non è in classifica, ripiega su grassetto semplice. Convenzione
-    (dalla v5.67, scelta dell'utente): marcare **tutte le occorrenze** di
-    ciascun personaggio (più comodo per la consultazione, ed evita elenchi o
-    coppie in cui solo alcuni nomi risultano cliccabili), **tranne** i nomi
-    dentro i **titoletti** (`.note-h`), che restano testo piano. Storico: fino
-    alla v5.66 valeva 'solo la prima occorrenza'.
-  - **Opere citate come fonte in CORSIVO:** i titoli delle opere vanno in
-    `<em>` (es. `<em>Il Silmarillion</em>`, `<em>Morgoth's Ring</em>`). Le righe
+  dell'utente): sono modali di servizio che si attivano solo per cose 'in un certo senso' da
+  admin, quindi valgono come admin. L'`openImageViewer` (visualizzatore mappe) è un overlay a
+  sé (`imgv-*`), fuori da questa dicotomia.
+
+### Movimento di apertura e chiusura
+
+**TUTTE le modali entrano ed escono con lo stesso movimento** (richiesta utente). L'impianto
+tecnico resta doppio - le utente hanno **transizioni** pilotate da `.active`, le admin
+**animazioni**, perché nascono già visibili - ma geometria, curve e durate sono le stesse:
+10px di salita, scala 0.985, `ease-out` entrando e `ease-in` uscendo, e **0.2s per TUTTO**
+(velo, box e colonna, in entrata e in uscita, utente e admin; scelta dell'utente). Unica
+eccezione voluta il cross-fade dei **passaggi**, a 0.08s ('velocissima').
+
+- Le modali **dinamiche** (Note, Risorse, Info) venivano distrutte con `remove()` e sparivano
+  di colpo: ora passano da **`dismissStdModal(bd, mode)`**, che toglie `.active` e rimuove il
+  nodo a transizione finita. La scheda personaggio vive sempre nel DOM, quindi le basta
+  perdere `.active`, con la cura di sbloccare lo scroll a dissolvenza finita.
+- ⚠️ **Id e classe `dyn-modal` si togliono SUBITO**, come l'`id` per le admin:
+  `MODAL_OPEN_SEL` e `scrollLockNeeded` ragionano su quelli, e un fantasma li terrebbe
+  'aperti' (pagina inerte, tasti nudi zitti, riapertura bloccata).
+- **PASSAGGIO fra due modali: dissolvenza velocissima e NIENTE movimento** (richiesta utente:
+  'il movimento scompari/riappari può essere fastidioso'). Classe **`.xfade`**: box senza
+  transizione né movimento. Il passaggio si marca in UN punto solo: chi chiude in modo
+  `'fast'` chiama **`modalXfadeWindow()`**, che apre una finestra di 220ms in cui anche
+  l'**apertura** della modale successiva eredita la dissolvenza rapida (`activateStdModal` e
+  `openModal` leggono `MODAL_XFADE`), così non serve passare un flag a ognuno dei punti che
+  aprono. La classe si **ritira** dopo 160ms, o la chiusura vera successiva erediterebbe la
+  dissolvenza da passaggio.
+  - Sono passaggi: nota → scheda e nota → nota (`keep`), scheda → nota (`goNote`, che marca a
+    mano perché lì `closeModal` non ha `modalReturn`), scheda → nota di ritorno
+    (`modalReturn`), Risorse → mappa e Risorse → nota, Info → Risorse. I **rebuild di lingua**
+    usano invece `'now'`: via subito, niente dissolvenza, perché la stessa modale viene
+    ricostruita nell'istante.
+  - ⚠️ **Anche una CHIUSURA che RITORNA è un passaggio.** Il tasto `×` di una nota aperta da
+    una scheda (o da Risorse) non chiude: **ritorna** là da dove si è arrivati
+    (`noteReturn`), e lo stesso vale per il visualizzatore mappe (`imgvReturn`). Trattandoli
+    come chiusure vere, la nota usciva con la dissolvenza PIENA mentre la destinazione entrava
+    con la sua, cioè due veli che sfumano insieme. Il criterio è in `dismiss`: `var back =
+    !keep && !!noteReturn` → modo `'fast'`. ⚠️ E in quel caso **lo scroll NON si sblocca**: lo
+    riblocca la destinazione, e uno sblocca-riblocca fa comparire e sparire la barra di
+    scorrimento.
+  - ⚠️ **UN SOLO VELO IN SCENA, E SEMPRE PIENO (regola definitiva).** Chi ENTRA porta il velo
+    (istantaneo, nessuna transizione); chi ESCE lo **perde** e tiene il solo box, che le passa
+    **sopra** e dissolve in 0.08s (`@keyframes modal-xfade-out`). Così non c'è mai un
+    fotogramma senza finestra e il fondo dietro non cambia di un'unità. Tre dettagli
+    indispensabili, tutti scoperti misurando:
+    1. **`box-shadow:none` sul box che esce.** Il box porta un alone diffuso e, stando sopra
+       il velo, il suo alone si SOMMAVA a quello della modale sotto (la fascia fuori dalla
+       modale schiariva da 17.7 a 25.6 di luminanza per ~80ms). L'alone lo disegna una volta
+       sola chi entra.
+    2. **`backdrop-filter:none` sul box che esce**, o la sua sfocatura sfoca il contenuto di
+       chi entra, che ora le sta sotto.
+    3. **Togliere `.xout` va fatto con `.no-anim` + un reflow.** Senza, la scheda torna a
+       valere la sua transizione e, non essendo più `.active`, il suo velo **ricompariva** per
+       poi sfumare: un secondo velo sopra quello della nota, quindi il fondo si scuriva e
+       tornava.
+    - ⚠️ **Gli `z-index` sono indispensabili**: a pari `z-index` l'ordine di pittura segue il
+      DOM, e la scheda `#modal-backdrop` è **statica in pagina**, quindi finirebbe SOTTO una
+      nota appena creata. Chi entra sta a **201**, chi esce a **202**, così i piani sono
+      giusti in entrambi i versi.
+    - Chi esce si rimuove (o perde `.xout`) dopo **`MODAL_XOUT_MS` = 130ms**, un filo più
+      della dissolvenza. Due punti di uscita: i nodi **dinamici** in
+      `dismissStdModal(bd,'fast')` e la **scheda**, il cui nodo vive sempre in pagina, via
+      **`modalXfadeOut(bd)`** (in `goNote` e in `closeModal` quando c'è `modalReturn`).
+      ⚠️ `openModal` toglie un `.xout` residuo, o riaprendo subito la scheda resterebbe
+      inerte per 130ms.
+    - L'animazione è una `animation` e non una `transition` apposta: parte da sé alla comparsa
+      della classe, senza dover intercalare un reflow. Spenta da `prefers-reduced-motion`.
+  - **I tre tentativi sbagliati, in breve, per non ripeterli:** dissolvere ENTRAMBE le
+    modali fa sfarfallare il fondo (due veli semitrasparenti sovrapposti compongono MENO di
+    uno pieno: a metà strada `0.46` su `0.46` dà 0.71, quindi la pagina dietro si schiarisce);
+    togliere di colpo la vecchia lascia un lampo **senza nessuna finestra**, con le card
+    intraviste dietro il velo; lasciare la vecchia **dipinta e piena**, velo compreso, somma i
+    due veli e scurisce il fondo. Solo la regola qui sopra evita tutti e tre.
+  - ⚠️ **Come si verifica un passaggio: coi FOTOGRAMMI, non col DOM.** Una sonda su
+    `getComputedStyle` non vede la **pittura** e diceva 'nessun buco' mentre l'utente vedeva
+    il lampo. Lo strumento è `scratchpad/frames.js`: CDP `Page.startScreencast`, un file per
+    frame col tempo nel nome, poi si misura la **luminanza media al centro** del box (col box
+    in scena ~48-54, col solo velo ~8: la differenza è netta e non lascia dubbi).
+  - Il **visualizzatore mappe** (`#imgv`) ha un impianto proprio e non è toccato.
+
+### Accento delle modali informative
+
+**UN ACCENTO PER MODALE, deciso dalla PROVENIENZA** (scelte dell'utente su mockup a
+confronto). La neutralizzazione della v8.79 aveva reso grigi tutti gli accenti, perché
+passavano dai token `--gold*` che, nonostante il nome, erano **azzurri** e non l'oro né la
+tinta del personaggio. Il colore è tornato con questo modello:
+
+- **La modale ha UN accento**, in `--note-acc`: la tinta della **famiglia del personaggio da
+  cui si è arrivati**, altrimenti l'**accento globale del tema** (`#c6ad66` scuro, l'oro del
+  FAB, / `#2e5461` chiaro, indicati dall'utente: 6.99:1 e 7.47:1 sul fondo delle modali). Lo
+  prendono titolo, titoletti, pallini degli elenchi e il rimando nota → nota; e per lo stesso
+  principio Info e Risorse, che non hanno provenienza, stanno sempre sul globale.
+- ⚠️ **NON desaturare questo accento.** La v13.97 l'aveva reso grigio leggendo «in tema scuro
+  le modali sono davvero GIALLE» come riferito ai TESTI, mentre l'utente intendeva lo
+  **SFONDO**, e ha chiesto di rimetterlo: «Titolo, sottotitoli, note collegate e tutti gli
+  altri collegamenti (in sostanza: qualsiasi cosa cliccabile che non è un personaggio) deve
+  rimanere del colore di accento del tema (il solito giallo del FAB)». Regola generale che ne
+  esce: in queste modali **tutto ciò che non è un personaggio sta sull'oro del tema**, i
+  personaggi sulla propria tinta.
+- **Gli SFONDI, misurati** (utile la prossima volta che si parla di 'giallo'). In tema scuro
+  l'unica superficie ampia con una tinta CALDA è il fondo del **Pannello** del FAB
+  (`.ctrl-panel`); gli sfondi delle modali sono grigio puro (`#252525`, delta RGB **0**). Il
+  fondo del Pannello è **`rgba(41,40,38,0.94)`**, cioè la saturazione **dimezzata** rispetto
+  al vecchio `rgba(42,41,36)` a luminosità identica (richiesta dell'utente: 'può restare un
+  vago sentore di tinta gialla'); quello in tema CHIARO, appena freddo, non è stato toccato.
+- **Un solo livello di intensità** (scelta dell'utente): la gerarchia la fanno corpo e peso
+  del testo. ⚠️ Sotto il 75% di opacità il tema chiaro scende a 4.04:1, fuori soglia: se un
+  domani serve più stacco, agire sul peso.
+- **La provenienza vive in `NOTE_ACC_IDX`** (indice del personaggio) e la scrive chi apre la
+  nota da una scheda (`goNote`, il rimando 'Leggi anche'); `Risorse` e `Info` la azzerano, la
+  chiusura vera della nota pure. `noteAccentVars(bd)` scrive sull'overlay
+  **`--macc-d`/`--macc-l`**, due tinte già rese AA, e il CSS mappa `--note-acc` su quella del
+  tema corrente. ⚠️ Due proprietà e non una perché il tasto `T` **non** ricostruisce la nota
+  aperta. Passando di nota in nota la provenienza NON cambia: l'accento del personaggio resta
+  per tutta la lettura.
+- **I nomi cliccabili sono l'eccezione**: prendono la tinta della famiglia di **destinazione**
+  (dove porta il link), **desaturata al 55%** in HSL (fattore in **`NOTE_TINT_SAT`**). Scelta
+  dell'utente su un confronto a quattro gradi (accento unico / 100% / 55% / 30%) fatto sulla
+  nota dei Mezzelfi, che cita 18 personaggi di 6 famiglie: al 55% la famiglia si riconosce
+  ancora ma con sei tinte in una pagina il colpo d'occhio resta quieto, mentre al 30% Noldor e
+  Mezzelfi diventavano indistinguibili. ⚠️ La desaturazione è puramente estetica perché
+  `ccAaText` è applicata DOPO: il contrasto resta sopra 4.5:1 a qualunque grado.
+- **Nella SCHEDA** il rimando 'Leggi anche' (`.modal-noteref-link`) usa la stessa `--cctext`
+  degli altri accenti: era l'unico rimasto grigio, mentre POSIZIONE, fonte e × sono in tinta
+  dalla v8.77. ⚠️ La sua regola vive tra le **iniettate** (`injectCardColorRules`) perché usa
+  `rgba(var(--cctext),1)`, forma che il Nu non sa parsare nel CSS statico.
+  - ⚠️ **In tinta va SOLO il titolo, non il prefisso** (richiesta dell'utente: 'nota in
+    grassetto e colorata; `Leggi anche` / `See also`, invece, colore normale del testo'). Il
+    prefisso vive in uno `<span class="nr-pre">` e la regola iniettata colora
+    `.modal-noteref-link strong`. Nelle NOTE (`.note-seealso`) il prefisso stava già **fuori**
+    dal link, quindi lì non c'era nulla da correggere: la differenza nasceva dal fatto che
+    nella scheda l'intera stringa era dentro lo span cliccabile. Cliccabile resta tutta la
+    riga; sottolineatura e indicatore di focus stanno sul titolo (`currentColor`), così il
+    focus resta visibile senza `outline` proprio.
+- **Formato rimandi interni.** Sia il rimando **personaggio→nota** (`.modal-noteref`) sia i
+  **nota→nota** (`.note-seealso`) usano `Leggi anche → <strong>Titolo</strong>` / `See also →
+  ...`: prefisso normale, **titolo in grassetto**, tutto linkato e **allineato a sinistra**
+  (per un breve tratto erano centrati, poi riportati a sinistra su richiesta dell'utente).
+
+### Backdrop
+
+**Uniforme e NEUTRO.** Tutti i modali che usano `.modal-backdrop` (scheda, note, risorse,
+info) condividono lo stesso velo sfocato: **chiaro** su tema chiaro
+(`rgba(220,220,220,0.62)`; prima era scuro anche in chiaro), **scuro** su tema scuro
+(`rgba(7,7,7,0.92)`).
+
+- ⚠️ **Il velo NON ha tinta, e la ragione è un'illusione ottica misurata.** Prima era blu
+  notte in scuro e freddo in chiaro. Contro un velo freddo il fondo della modale, che è
+  **grigio puro** (`#252525` / `#F4F4F4`, delta RGB **0**, verificato), appariva **giallo**:
+  contrasto simultaneo, non un colore davvero caldo. L'utente lo segnalò due volte come 'le
+  modali sono gialle' e la v13.97 ci cascò desaturando gli ACCENTI, poi ripristinati; la causa
+  era il velo, e l'ha individuata l'utente stesso ('il contrasto tra il velo blu notte, che mi
+  sembrava grigio, faceva apparire giallo lo sfondo delle modali'). I due grigi sono a **PARI
+  luminanza relativa** dei vecchi valori, quindi la pagina dietro resta scura (o chiara)
+  esattamente come prima.
+- ⚠️ **Gli altri tre veli RESTANO TINTI: deciso dall'utente il 2026-07-28, non riproporlo.**
+  Sono `.fab-modal-overlay` in tema chiaro (`rgba(180,195,215,0.5)`, delta RGB **35**: il più
+  tinto di tutti, e vale per tutte le modali admin), `.imgv-overlay` (delta 9) e
+  `.admin-search-backdrop` (delta 16 e 19). La valutazione è stata fatta mostrando all'utente
+  il confronto grafico attuale↔neutro coi grigi a pari luminanza, e la risposta è stata
+  'possono restare come sono'. Il velo del Pannello (`.ctrl-backdrop`) e quello admin in scuro
+  erano già neutri.
+  - Nota per un eventuale ritorno sul tema: l'overlay della **ricerca admin** non si apre da
+    script (né col pulsante lente né col tasto `f` dentro `showAdminEditor`), quindi va
+    confrontato per campioni di colore calcolati, non per screenshot.
+
+### Contenuto di sfondo inerte e focus trap
+
+**Contenuto di sfondo INERTE a modale aperto.** `lockPageScroll`, il choke point condiviso da
+TUTTI i modali, marca `header`, `main` e `footer` con **`inert` + `aria-hidden`** quando un
+modale si apre e li ripristina alla chiusura (via `setBgInert`). Doppio scopo:
+**focus-trap/accessibilità**, perché il contenuto velato non è focusabile né letto dagli
+screen reader, e **axe pulito**, perché i testi tenui delle card sotto il velo scendevano
+sotto 4.5:1 su fondo-card chiaro, falso positivo da contenuto velato. Il modale, fratello di
+header/main/footer, resta attivo.
+
+- ⚠️ **L'audit axe con una scheda aperta va fatto in un tema NATIVO** (aprire già in quel
+  tema): cambiare tema a scheda aperta è uno scenario non raggiungibile dall'utente, perché il
+  toggle vive nel Pannello, coperto dalla scheda, e in test dà falsi rilievi transitori.
+- **Estensione agli elementi FUORI da header/main/footer.** Inertizzare quei tre non basta: il
+  FAB del Pannello, i tasti salto, il cambio lingua e il FAB del riordino stanno **fuori** e
+  col `Tab` si raggiungevano attraverso il velo (misurato: dal 18° `Tab` il focus finiva su
+  'Filtri e legenda' e 'Vai in cima'). L'elenco vive in **`BG_INERT_EXTRA`** (`#ctrl-fab`,
+  `.jump-fabs`, `.lang-switch`, `.fab-container`, `#ctrl-panel`).
+  - ⚠️ **Si applica SOLO quando è aperta una MODALE**, non col solo Pannello, e la ragione
+    decisiva è che in elenco c'è **`#ctrl-panel` stesso**: lo stesso `lockPageScroll` serve il
+    Pannello e i modali, quindi applicarlo sempre renderebbe inerte il Pannello proprio mentre
+    lo si usa (da qui la guardia `anyModalOpen()` su `MODAL_OPEN_SEL`). Col solo Pannello
+    aperto resta focusabile anche il FAB, che **da tastiera** lo richiude; col mouse si clicca
+    invece `#ctrl-backdrop`, che a `z-index:205` copre il FAB.
+  - ⚠️ In **uscita** l'elenco extra si ripulisce sempre, senza condizioni: un `inert` rimasto
+    appeso renderebbe il FAB inservibile. Per la stessa ragione `setBgInert(true)` gira
+    **prima** della guardia anti-doppio-lock di `lockPageScroll`, altrimenti una modale aperta
+    sopra il Pannello, già bloccato, uscirebbe subito e lascerebbe il FAB focusabile dietro il
+    velo.
+- **Focus trap vero.** L'`inert` impedisce di entrare nei controlli dietro il velo, ma
+  dall'ultimo elemento della modale il `Tab` uscirebbe comunque verso la **chrome del
+  browser**. Un listener `keydown` sul `Tab` chiude il cerchio (dall'ultimo al primo e, con
+  `Shift`, viceversa) agendo **solo sulla modale più in alto**: `topModalEl()` prende l'ultima
+  in **ordine di documento**, che coincide con l'ordine di apertura, così le modali annidate
+  (`#fx-modal` sopra `#fab-modal`) funzionano da sé. ⚠️ I focusabili si filtrano per
+  visibilità (`offsetWidth`/`offsetHeight`), altrimenti il giro si incastrerebbe sui controlli
+  delle tab non attive.
+
+### Contenuto delle note
+
+- **Tre sezioni nella modale** (`openResourcesModal`), nell'ordine: **Risorse** (le due mappe
+  nel viewer immagini + la mappa interattiva esterna; non sono note e non stanno in
+  `EDITORIAL_NOTES`), **Note** ('Notes': note di **pura lore in-universe**, che spiegano il
+  mondo) e **Note editoriali** ('Editorial notes': le **scelte editoriali** e il **modo in cui
+  la pagina presenta i dati**).
+  - **Discrimine (regola dell'utente):** una nota che spiega *puramente la lore* del mondo va
+    in **Note**; una nota che riguarda le *scelte dell'utente* o *come il sito rende i dati*
+    va in **Note editoriali**.
+- **Dove vivono.** Array **`EDITORIAL_NOTES`** in testa alla logica del footer in
+  `arda/top/index.html`, appena dopo `openResourcesModal`; il viewer è `openNoteViewer`.
+  Aggiungere una nota = aggiungere un oggetto all'array, e pulsante e viewer si generano da
+  soli. Ogni oggetto ha `titleIt`/`titleEn` (titolo pieno), `shortIt`/`shortEn` (etichetta
+  **breve per mobile**, obbligatoria), **`cat`** (`'lore'` o `'editorial'`, e il rendering
+  filtra per categoria) e `bodyIt`/`bodyEn` (HTML).
+- **Protocollo quando l'utente passa una NUOVA nota** (regola durevole): aggiungere la
+  voce/pulsante e **formattare il contenuto sul modello della nota dei Mezzelfi**:
+  - **Personaggi in grassetto e cliccabili:** avvolgere i nomi nel marcatore **`#{Nome}#`** (o
+    `#{Testo mostrato|NomeDati}#` quando il nome in classifica differisce, es.
+    `#{Aragorn|Aragorn II}#`). `renderNoteBodyHtml` li rende come `span.note-charlink`
+    (grassetto, cliccabili, accessibili da tastiera) che aprono la scheda via `openModal`; se
+    il nome non è in classifica, ripiega su grassetto semplice. Convenzione dell'utente:
+    marcare **tutte le occorrenze** di ciascun personaggio (più comodo per la consultazione, ed
+    evita elenchi in cui solo alcuni nomi risultano cliccabili), **tranne** i nomi dentro i
+    **titoletti** (`.note-h`), che restano testo piano.
+  - **Opere citate come fonte in CORSIVO:** i titoli delle opere vanno in `<em>`, e le righe
     fonte usano `<div class="note-src">(Fonte: <em>...</em>)</div>`.
-  - **Struttura e spaziature:** titoletti di sezione con
-    `<div class="note-h">...</div>`, paragrafi in `<p>`, spaziature per
-    leggibilità e pulizia. **L'inglese deve rispecchiare l'italiano**:
-    stesse spaziature, stessi a-capo, stessa struttura (stessi titoletti e
-    stesso ordine di paragrafi/fonti).
+  - **Struttura e spaziature:** titoletti di sezione con `<div class="note-h">...</div>`,
+    paragrafi in `<p>`. ⚠️ **L'inglese deve rispecchiare l'italiano**: stesse spaziature,
+    stessi a-capo, stessa struttura (stessi titoletti e stesso ordine di paragrafi e fonti).
   - **Tipografia:** apici **dritti** e niente em-dash, come per `dati.js`.
-- **Dimensione del testo (dalla v5.31):** i paragrafi del viewer sono forzati
-  alla stessa dimensione/pienezza dell'elenco (17px, opacità piena) perché
-  altrimenti erediterebbero il `font-size:0.82rem`/`opacity:0.65` di
-  `.fab-modal-box p`; l'override `.note-viewer-box p` (con gemello per il tema
-  chiaro) vale per **tutte** le note. Il box del viewer è a larghezza adattiva
-  con tetto massimo (`min(760px,92vw)`).
-- **Doppia collocazione ammessa.** Una nota può vivere sia qui sia altrove: la
-  nota 'Ascendenza e origine di Celeborn' è replicata nel viewer **e** in calce
-  alla `descrizione` di Celeborn (scelta dell'utente).
+- ⚠️ **Dimensione del testo:** i paragrafi del viewer sono forzati alla stessa
+  dimensione/pienezza dell'elenco (17px, opacità piena), perché altrimenti erediterebbero il
+  `font-size:0.82rem`/`opacity:0.65` di `.fab-modal-box p`; l'override `.note-viewer-box p`
+  (con gemello per il tema chiaro) vale per **tutte** le note. Il box del viewer è a larghezza
+  adattiva con tetto massimo (`min(760px,92vw)`).
+- **Doppia collocazione ammessa.** Una nota può vivere sia qui sia altrove: 'Ascendenza e
+  origine di Celeborn' è replicata nel viewer **e** in calce alla `descrizione` di Celeborn
+  (scelta dell'utente).
+- axe **0 violazioni WCAG** su Risorse, nota globale, nota da scheda, scheda e Info, nei due
+  temi.
 
 ## 🛡️ Progetto '/ABP': Regole AdBlock (Roccobot ABP)
 
