@@ -1,55 +1,67 @@
-# Handoff - 2026-07-29
+# Handoff - 2026-07-29 (sera)
 
 ## Stato
 
-- Locale, badge e **LIVE** allineati su **v14.78**; albero pulito; branch di lavoro
-  `claude/review-claude-md-docs-wpog9s`, 0 avanti / 0 dietro `origin/master`.
-- Worker `arda-admin-proxy`: **rev 15**, `rl:true`.
-- ⚠️ Gli ultimi due commit (`befce93` #830 e `26d50d9` #831, bonifica em-dash) **non
-  vengono dalla chat che ha scritto questo handoff**: probabile sessione parallela. Il
-  repo puo' essere avanti rispetto a cio' che una chat ricorda: fidarsi dei ref.
+- **'I Grandi di Arda'**: locale, badge e **LIVE** tutti su **v14.80**; albero pulito;
+  `0 dietro / 0 avanti` rispetto a `origin/master`. Nessun deploy in volo.
+- **Worker** `arda-admin-proxy`: **rev 15**, `rl:true`. Non toccato in questa sessione.
+- `CLAUDE.md` è a **~36.600 parole** dopo una prima potatura (era 42.001); le regole
+  universali sono a **`Roccobot.md` v1.47.2**.
+- ⚠️ La sessione nuova ha **entrambi i repo agganciati nativamente**
+  (`roccobot.github.io` e `tools`): non serve `add_repo`, che qui rispondeva sempre
+  'requires approval'.
 
 ## In sospeso
 
-Niente di interrotto. Due cose OFFERTE all'utente e non richieste, da riprendere solo
-se le chiede:
-
-1. **Hover del Pannello troppo tenue su tablet**: in tema chiaro il fondo al passaggio
-   e' `rgba(58,88,120,0.10)` su fondo quasi bianco. Offerto di alzarlo, nessun valore
-   deciso. Regola in `index.html`, `html[data-theme="light"] .ctrl-legend-row:hover`.
-2. **Evidenziazione appiccicata dopo il tap** su tablet/telefono (`hov`): offerto di
-   attenuarla, ma su mobile la scelta v14.22 e' di TENERLA, letta come 'scheda
-   selezionata'. Non toccare senza mandato esplicito.
+1. **Potatura PROFONDA del `CLAUDE.md`**, la cosa principale. Criterio e taxonomia stanno
+   in `CLAUDE.md` § '🪶 Come si mantiene questo file': si legge quello, non si reinventa.
+   Campione approvato: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**), con la
+   struttura *com'è fatto / trappole / estetica / decisioni*. ⚠️ Viveva nello scratchpad e
+   **non esiste più**: va rifatto dalla sezione attuale. Stima sul file: **da ~36.600 a
+   13.000-15.000 parole**; si accorciano meno canone, tipografia e workflow.
+2. **Togliere gli elenchi di portatori dei badge**: si ricavano con un grep su `dati.js`.
+   Tenere il criterio e le **esclusioni motivate** (Ingwë fuori da `est`, Aragorn e Arwen
+   senza `suicidio`, i tre solo-HoME che NON sono apocrifi).
+3. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
+   con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
+   sposta due volte la stessa roba.
+4. **Skill `/desc`**: pronta ma solo come file consegnato in chat (202 righe), non nel
+   repo. Va scritta in `tools` come `.claude/skills/desc/SKILL.md` (ora si può
+   direttamente: il Worker accetta solo `rules/` e `workers/`), più una nota nel
+   `CLAUDE.md` di `tools`, che non esiste ancora: solo con `/desc` invocata i suoi
+   operatori scavalcano quelli di `Roccobot.md`.
+5. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
+   Raccomandazione già data: **non** estrarle sui numeri di oggi.
 
 ## Andato live in questa sessione
 
-- `v14.65` trama sempre fuori da schede e testata (maschera a due assi), opacita' fino
-  a 0.34/0.30, motivi `weave` (Intreccio) e `banner` (Vessillo).
-- `v14.66` in vista divisa la maschera della trama segue l'area del contenuto.
-- `v14.67` Pannello a colonna singola sotto i 769px, compatto sui tablet.
-- `v14.77` hover del Pannello istantaneo; selezione e tasto destro spenti per i
-  visitatori, attivi per l'admin.
-- `rules/Roccobot.md` **v1.36.0**: i controlli si chiamano 'anti-regressione'.
+- `v14.80` - etichetta 'Azzera' al posto di 'Predefiniti', guard dello slider che tiene
+  anche su touch reale, caso podio chiuso come non-difetto.
+- Sola documentazione, nessun bump: `Development.md` e `Prompts.md` assorbiti in
+  `Roccobot.md` e poi cancellati dall'utente, protocollo di avvio e scala di priorità
+  riscritti, prima potatura del `CLAUDE.md` (-14%), correzione dei riferimenti ai due file
+  cancellati.
 
 ## Decisioni dell'utente
 
-- Trame: tenere Losanghe, Campo di stelle, Intreccio, Vessillo; scartati ottagramma,
-  rosone e **esagramma** (Stella di David). `CLAUDE.md` voce `pat`.
-- Nuovi motivi: devono essere una **rete connessa**, non figure affiancate. Idem.
-- Selezione e tasto destro spenti per i soli visitatori. `CLAUDE.md` sez. Admin.
-- Lessico: 'anti-regressione', mai 'regressione'. `rules/Roccobot.md`.
+- **Criterio di manutenzione del `CLAUDE.md`**: si scrive il perché, non il come, perché
+  il codice è commentato e si legge → `CLAUDE.md` § '🪶 Come si mantiene questo file', che
+  contiene anche le cinque famiglie che restano e le cronache ridotte ad accenno.
+- **I tetti di accessibilità per-manopola non si elencano più**, resta il vincolo generico
+  WCAG AA → `CLAUDE.md` § 'Nuovi personaggi e canone', prima voce.
+- **La scrittura via Worker non ha dry-run**: non si sonda mai su un percorso reale, e si
+  tiene una copia locale integra prima di ogni POST → `Roccobot.md` v1.47.2.
+- Bump `+0.1` e `+1.0` ammettono l'arrotondamento al decimale o all'intero successivo
+  (fatto dall'utente stesso) → `CLAUDE.md` § 'Versione del sito'.
 
 ## Verifiche arretrate
 
-- **Gate W3C HTML** saltato su v14.65, v14.66, v14.67 e v14.77: challenge Cloudflare
-  ('Just a moment...') sia sul Nu sia sul validatore CSS. Prova sostitutiva usata: diff
-  della porzione non-JS + regole nuove accettate dal parser del browser. Da recuperare
-  al primo aggiornamento in cui il validatore risponde.
+- **Gate W3C**: non eseguito per la v14.80, challenge Cloudflare. Prova sostitutiva usata:
+  fuori dai blocchi `<script>` cambiava solo il numero del badge. Da recuperare al primo
+  aggiornamento del sito in cui il validatore risponda.
 
 ## Strumenti da rifare
 
-Servono solo se si riprende una delle due voci in sospeso:
-
-- `scratchpad/realfont.js` (aggancio dei font reali: **sempre il primo**);
-- `scratchpad/hoverperf.js` (costo dell'hover via CDP `Tracing`);
-- `scratchpad/tabfix.js` (Pannello a 390-768px, due lingue, sovrapposizioni e jitter).
+- `scratchpad/realfont.js` (aggancio dei font reali): serve **prima** di qualunque misura
+  di larghezza o a-capo, in particolare sulle etichette del Pannello.
+- Nessun altro serve al lavoro in sospeso, che è di sola documentazione.
