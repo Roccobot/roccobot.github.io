@@ -4164,11 +4164,27 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
     'dalla 2.12'...), cioè un changelog travestito da descrizione, mentre il README
     già la documenta in una sezione di 249 righe.
   - `@name` resta quello deciso dall'utente, in qualunque lingua.
-  - ⚠️ **Le etichette dei pulsanti in pagina sono ancora in italiano** ('⬇️ Scarica
-    video', '⬇️ Scarica galleria', '⬇️ Scarica set (ZIP)'; ENF fa eccezione con
-    '⬇︎ Download'). Non sono state toccate: tradurre la UI è una scelta a sé, da
-    chiedere all'utente. Nelle descrizioni si citano quindi **per funzione**, non con
-    un'etichetta tradotta che in pagina non esiste.
+  - **Anche la UI è in inglese** (decisione dell'utente, 2026-07-29): pulsanti,
+    tooltip, voci del menu contestuale, avvisi, `alert` e comandi del menu di
+    Tampermonkey. Vale per tutti e 7. Da qui in avanti uno script nuovo nasce con la
+    UI in inglese, come vuole `rules/Development.md`.
+    - ⚠️ **I messaggi degli oggetti `Error` fanno parte della UI**, non sono
+      diagnostica interna: in ENF il testo dell'errore finisce dentro l'`alert`
+      ('download failed' + il messaggio), quindi va tradotto anche lui. Un censimento
+      che guardi solo `textContent` e `title` **li salta**: nella passata del
+      2026-07-29 ne sono emersi 7 solo con una scansione delle stringhe letterali che
+      contengono parole italiane.
+    - ⚠️ **Con la UI in inglese il separatore decimale diventa il punto.** In DIV la
+      funzione si chiamava `numIt` e metteva la virgola italiana ('21,0 × 29,7 cm'):
+      in un pannello inglese era mezza traduzione. Rinominata `num`, senza il
+      `replace`. Vale anche per i pesi ('1.4 MB').
+    - ⚠️ **Il nome del file salvato è UI**: il fallback di DIV era `immagine`, ora
+      `image`.
+    - ⚠️ **Il `README.md` cita le etichette in 8 punti** (`⬇️ Download set (ZIP)`,
+      le voci del menu contestuale, ecc.): allineato nella stessa release, altrimenti
+      la documentazione mente. Il file resta in **italiano** (è già mono-lingua, vedi
+      la regola universale sulla lingua della documentazione): cambiano solo i nomi
+      citati, non la prosa.
 - **Versione: bump SemVer a ogni commit che tocca lo script** (`patch` per i fix e le
   correzioni di commenti, `minor` per le funzioni nuove). Senza bump Tampermonkey non
   scarica l'aggiornamento, quindi il link di installazione sarebbe inutile.

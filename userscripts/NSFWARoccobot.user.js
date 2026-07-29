@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NSFWA Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.0.2
+// @version      1.1.0
 // @description  All-in-one for nsfwalbum.com. Photo pages (/photo/): the real image becomes clickable again, so open-image and save-image reach the actual imx.to file; #zoom is forced visible and on top, and the SVG and lens decoys over it are neutralized, hidden #zoom included. Album pages (/album/): a button downloads the whole set at full resolution as one ZIP, named '[studio] - [model] - [title].zip'. Replaces NSFWAlbum Enhancer and NSFWGallery.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -37,7 +37,7 @@
   // ma spesso è NASCOSTA (class="hide") mentre il plugin magnify mostra l'immagine
   // e uno script di protezione (hl.js) sovrappone un <svg> VUOTO grande quanto la
   // foto che ruba il tasto destro: "apri immagine" restituisce quell'SVG
-  // serializzato (data:image/svg+xml…). Fix: forziamo #zoom VISIBILE, cliccabile e
+  // serializzato (data:image/svg+xml...). Fix: forziamo #zoom VISIBILE, cliccabile e
   // in cima, e neutralizziamo (pointer-events:none) le esche sovrapposte → il menu
   // contestuale cade sull'immagine vera. NB: /missed.php restituisce un JPEG
   // placeholder quando l'immagine manca davvero (in quel caso non c'è nulla da
@@ -224,12 +224,12 @@
     async function avvia(btn) {
       if (inCorso) return;
       const lista = urlPienaRisoluzione();
-      if (!lista.length) { alert('NSFWAlbum+: nessuna immagine trovata in questa pagina.'); return; }
+      if (!lista.length) { alert('NSFWAlbum+: no image found on this page.'); return; }
       inCorso = true;
       const testo0 = btn ? btn.textContent : '';
       if (btn) btn.disabled = true;
       try {
-        const res = await scaricaTutte(lista, function (fatti, tot) { if (btn) btn.textContent = '⬇️ ' + fatti + '/' + tot + '…'; });
+        const res = await scaricaTutte(lista, function (fatti, tot) { if (btn) btn.textContent = '⬇️ ' + fatti + '/' + tot + '...'; });
         const larg = String(lista.length).length < 3 ? 3 : String(lista.length).length;
         const files = []; let n = 0;
         for (let i = 0; i < lista.length; i++) {
@@ -238,8 +238,8 @@
           files.push({ name: String(i + 1).padStart(larg, '0') + estensione(lista[i]), data: new Uint8Array(buf) });
           n++;
         }
-        if (!files.length) { alert('NSFWAlbum+: nessuna immagine scaricata (tutte fallite).'); return; }
-        if (btn) btn.textContent = '📦 Creo ZIP…';
+        if (!files.length) { alert('NSFWAlbum+: no image downloaded (all of them failed).'); return; }
+        if (btn) btn.textContent = '📦 Building ZIP...';
         await sleep(0);
         const zipBytes = creaZipStore(files);
         const blob = new Blob([zipBytes], { type: 'application/zip' });
@@ -248,10 +248,10 @@
         a.download = nomeZip();
         document.body.appendChild(a); a.click();
         setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
-        if (btn) btn.textContent = '✅ ' + n + '/' + lista.length + (n < lista.length ? ' (alcune ko)' : '');
+        if (btn) btn.textContent = '✅ ' + n + '/' + lista.length + (n < lista.length ? ' (some failed)' : '');
       } catch (e) {
-        if (btn) btn.textContent = '⚠️ Errore';
-        alert('NSFWAlbum+: errore durante il download.\n' + (e && e.message ? e.message : e));
+        if (btn) btn.textContent = '⚠️ Error';
+        alert('NSFWAlbum+: download error.\n' + (e && e.message ? e.message : e));
       } finally {
         inCorso = false;
         if (btn) { btn.disabled = false; setTimeout(function () { if (!inCorso) btn.textContent = testo0; }, 6000); }
@@ -264,8 +264,8 @@
       const b = document.createElement('button');
       b.id = 'rb-nsfwplus';
       b.type = 'button';
-      b.textContent = '⬇️ Scarica set (ZIP)';
-      b.title = 'Scarica tutte le immagini del set a piena risoluzione in uno ZIP\n(nome: "studio - modella - titolo.zip", ricavato dalla pagina).';
+      b.textContent = '⬇️ Download set (ZIP)';
+      b.title = 'Download every image of the set at full resolution in one ZIP\n(name: "studio - model - title.zip", taken from the page).';
       Object.assign(b.style, {
         position: 'fixed', zIndex: '2147483647', bottom: '16px', right: '16px',
         padding: '10px 14px', borderRadius: '999px', border: 'none',
@@ -280,7 +280,7 @@
     }
 
     if (typeof GM_registerMenuCommand !== 'undefined') {
-      GM_registerMenuCommand('Scarica il set in ZIP (piena risoluzione)', function () { avvia(document.getElementById('rb-nsfwplus')); });
+      GM_registerMenuCommand('Download the set as ZIP (full resolution)', function () { avvia(document.getElementById('rb-nsfwplus')); });
     }
     // le thumbnail compaiono col caricamento → riprova con l'observer
     function setup() {

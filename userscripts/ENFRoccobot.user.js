@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.0.2
+// @version      1.1.0
 // @description  Adds a Download button to enf-cmnf.cc and enfhub.com that saves the page's video. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. Progress on the button, second click cancels, picker when the page holds more than one video.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -438,7 +438,7 @@
         },
         onload: function (r) {
           if (r.status < 200 || r.status >= 300) { rifiuta(new Error('HTTP ' + r.status)); return; }
-          mostra(btn, '💾 Salvo…');
+          mostra(btn, '💾 Saving...');
           salvaBlob(r.response, nome);
           risolvi();
         },
@@ -450,12 +450,12 @@
   }
 
   async function scaricaMp4(url, nome, btn) {
-    mostra(btn, '⏳ Verifico…');
+    mostra(btn, '⏳ Checking...');
     var prova = await provaSorgente(url);
     if (!prova.ok) {
-      throw new Error('il CDN ha rifiutato la richiesta (HTTP ' + (prova.stato || '?') + ').\n' +
-                      'Di solito significa che il gestore di userscript non sta inoltrando\n' +
-                      'le intestazioni Referer e Sec-Fetch-Dest, che qui sono obbligatorie.');
+      throw new Error('the CDN refused the request (HTTP ' + (prova.stato || '?') + ').\n' +
+                      'That usually means the userscript manager is not forwarding the\n' +
+                      'Referer and Sec-Fetch-Dest headers, which are required here.');
     }
     mostra(btn, '⬇︎ 0%');
     try {
@@ -469,7 +469,7 @@
   // HLS: playlist, poi i segmenti in parallelo mantenendo l'ordine, poi un solo
   // file .ts (i segmenti sono MPEG-TS: concatenarli da' un flusso valido).
   async function scaricaHls(url, nome, btn) {
-    mostra(btn, '⏳ Playlist…');
+    mostra(btn, '⏳ Playlist...');
     var testo = await chiedi(url);
     if (/#EXT-X-STREAM-INF/i.test(testo)) {
       var v = scegliVariante(testo, url);
@@ -479,9 +479,9 @@
     }
     var pl = leggiPlaylist(testo, url);
     var segs = pl.segmenti;
-    if (!segs.length) throw new Error('playlist senza segmenti');
+    if (!segs.length) throw new Error('playlist with no segments');
     if (pl.cifrata && segs[0].chiave && segs[0].chiave.metodo !== 'AES-128') {
-      throw new Error('flusso cifrato con ' + segs[0].chiave.metodo + ', non gestito');
+      throw new Error('stream encrypted with ' + segs[0].chiave.metodo + ', not supported');
     }
 
     var parti = new Array(segs.length), prossimo = 0, fatti = 0, byte = 0;
@@ -489,7 +489,7 @@
     async function unSegmento(s) {
       var ultimo = null;
       for (var t = 0; t < TENTATIVI_SEGMENTO; t++) {
-        if (annullato) throw new Error('annullato');
+        if (annullato) throw new Error('cancelled');
         try {
           var buf = await chiedi(s.url, 'arraybuffer');
           if (s.chiave && s.chiave.metodo === 'AES-128') buf = await decifra(buf, s.chiave, s.seq);
@@ -499,7 +499,7 @@
           await new Promise(function (r) { setTimeout(r, 400 * (t + 1)); });
         }
       }
-      throw ultimo || new Error('segmento non scaricato');
+      throw ultimo || new Error('segment not downloaded');
     }
 
     async function operaio() {
@@ -519,9 +519,9 @@
     var operai = [];
     for (var i = 0; i < Math.min(SEGMENTI_PARALLELI, segs.length); i++) operai.push(operaio());
     await Promise.all(operai);
-    if (annullato) throw new Error('annullato');
+    if (annullato) throw new Error('cancelled');
 
-    mostra(btn, '💾 Salvo…');
+    mostra(btn, '💾 Saving...');
     salvaBlob(new Blob(parti, { type: 'video/mp2t' }), nome);
   }
 
@@ -530,32 +530,32 @@
     try { if (manoGM && manoGM.abort) manoGM.abort(); } catch (e) {}
     manoGM = null;
     inCorso = false;
-    mostra(btn, '✖︎ annullato', COLORE_KO);
+    mostra(btn, '✖︎ cancelled', COLORE_KO);
     setTimeout(function () { if (!inCorso) riposo(btn); }, 3000);
   }
 
   function riposo(btn) {
     if (!btn) return;
-    btn.title = 'Scarica il video di questa pagina';
+    btn.title = 'Download the video on this page';
     mostra(btn, '⬇︎ Download', COLORE_BASE);
   }
 
   async function scarica(url, indice, totale, btn) {
     if (inCorso) { annulla(btn); return; }
     inCorso = true; annullato = false; manoGM = null;
-    if (btn) btn.title = 'Clic di nuovo per annullare';
+    if (btn) btn.title = 'Click again to cancel';
     var nome = nomeFile(url, indice, totale);
     try {
       if (eHls(url)) await scaricaHls(url, nome, btn);
       else await scaricaMp4(url, nome, btn);
       if (annullato) return;
-      mostra(btn, '✅ Fatto', COLORE_OK);
+      mostra(btn, '✅ Done', COLORE_OK);
       setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
     } catch (e) {
       if (annullato) return;
       var msg = (e && e.message) ? e.message : String(e);
-      mostra(btn, '⚠️ Errore', COLORE_KO);
-      alert('ENF Roccobot: scaricamento non riuscito.\n' + msg + '\n\nSorgente:\n' + url);
+      mostra(btn, '⚠️ Error', COLORE_KO);
+      alert('ENF Roccobot: download failed.\n' + msg + '\n\nSource:\n' + url);
       setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
     } finally {
       inCorso = false; manoGM = null;
@@ -613,7 +613,7 @@
       'font': '400 13px/1.35 system-ui, -apple-system, sans-serif'
     });
     var t = document.createElement('div');
-    t.textContent = lista.length + ' video in questa pagina:';
+    t.textContent = lista.length + ' videos on this page:';
     stile(t, { 'padding': '6px 8px 8px', 'opacity': '0.7', 'font-weight': '700' });
     m.appendChild(t);
     lista.forEach(function (url, i) {
@@ -645,8 +645,8 @@
     if (document.getElementById(ID_ELENCO)) { chiudiElenco(); return; }
     var lista = fonti();
     if (!lista.length) {
-      alert('ENF Roccobot: in questa pagina non ho trovato nessun video.\n' +
-            'Se il player c\'e\', fallo partire un istante e riprova (cosi\' la sorgente viene rilevata).');
+      alert('ENF Roccobot: no video found on this page.\n' +
+            'If the player is there, start it for a moment and try again, so the source gets detected.');
       return;
     }
     if (lista.length === 1) scarica(lista[0], 0, 1, btn);
@@ -696,7 +696,7 @@
   }
 
   if (typeof GM_registerMenuCommand !== 'undefined') {
-    GM_registerMenuCommand('Scarica il video di questa pagina', function () {
+    GM_registerMenuCommand('Download the video on this page', function () {
       alClic(document.getElementById(ID_TASTO) || creaTasto());
     });
   }
