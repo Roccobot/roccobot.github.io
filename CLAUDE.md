@@ -22,8 +22,8 @@ sessione:
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
 2. Poi si fa la **domanda di rito**, una sola volta per sessione: *quali altri file
-   carico?* Le opzioni sono `rules/JRRT.md` (canone tolkieniano),
-   `rules/Development.md` (sviluppo) e `rules/Prompts.md` (revisione dei prompt).
+   carico?* Le opzioni sono **due**: `rules/JRRT.md` (canone tolkieniano) e
+   `rules/Prompts.md` (revisione dei prompt).
    Si usa lo strumento di domanda a scelta multipla e **si attende la risposta**
    prima di iniziare il lavoro: l'utente ha detto esplicitamente che il ritardo di
    un giro non è un problema, perché si paga una volta sola.
@@ -53,20 +53,22 @@ sessione:
 ### 🗂️ Che cosa contiene ciascun file
 
 - **`rules/Roccobot.md`**: tutte le regole universali di collaborazione (lingua,
-  caratteri, formato, git, test, grafica, sicurezza).
+  caratteri, formato, git, test, **sviluppo software**, grafica, sicurezza). Ha in
+  testa un **indice delle sezioni**: si guarda quello per sapere dove sta una cosa e
+  dove scriverne una nuova.
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
-- **`rules/Development.md`**: sviluppo di app, software e servizi web (Prospect e
-  Report post-rilascio, autonomia e conferme, igiene del codice, versione
-  verificabile, footer). ⚠️ Questo `CLAUDE.md` **deroga** a parecchi suoi punti:
-  elenco più sotto.
+- ⚠️ **`rules/Development.md` NON esiste più** (2026-07-29): assorbito in
+  `Roccobot.md`, sezione '🏗️ Sviluppo software', dopo aver tolto le ridondanze. Il
+  file resta in piedi come rimando, per non lasciare un 404 a chi lo cerca. Criterio
+  della fusione, dell'utente: **si unisce ciò che è sempre vero, si tiene separato ciò
+  che è modale.**
 - **`rules/Prompts.md`**: revisione dei prompt generativi. Si attiva **solo su
   richiesta dell'utente**; i suoi operatori scavalcano quelli omonimi di
   `Roccobot.md` (info media, traduzioni).
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
-  - <https://rules-proxy.roccobot-b90.workers.dev/rules/Development.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Prompts.md>
 
   ⚠️ **I raw GitHub NON funzionano più** (verificato il 2026-07-29:
@@ -88,10 +90,11 @@ sessione:
   variabile d'ambiente `RULES_PASSWORD`. Protocollo completo (formato POST,
   User-Agent da browser, bump SemVer) nella sezione 'Worker `rules-proxy`' di
   `Roccobot.md`.
-- ⚠️ **Dove questo `CLAUDE.md` deroga a `rules/Development.md`.** Non sono
+- ⚠️ **Dove questo `CLAUDE.md` deroga alle regole di sviluppo** (`Roccobot.md`,
+  sezione '🏗️ Sviluppo software'). Non sono
   dimenticanze: sono il modo di lavorare consolidato di questo repo, e la scala di
-  priorità qui sotto dà ragione a questo file. Da sapere prima di applicare
-  `Development.md` alla lettera:
+  priorità qui sotto dà ragione a questo file. Da sapere prima di applicare quella
+  sezione alla lettera:
   - **Niente Prospect né piano operativo prima di ogni ciclo o deploy**: qui vale il
     **go-live automatico** (vedi 'Branch, allineamento e push'), e la conferma
     preventiva si chiede solo per le modifiche pesanti o strutturali.
@@ -101,7 +104,7 @@ sessione:
   - **Gate W3C**: non a ogni release, ma solo ai bump **+0.1 e +1.0**, e 'utile ma non
     imprescindibile' se il validatore non risponde (vedi '🔢 Versione del sito').
     ⚠️ Questa deroga vale verso **`Roccobot.md`**, sezione 'Test e verifiche', che dal
-    2026-07-29 è la fonte unica del gate: `Development.md` non lo ripete più.
+    2026-07-29 è la fonte unica del gate in tutte le regole.
   - **Versione**: schema custom `x.xx`, che è un override dichiarato del SemVer.
   - **Lingua della UI**: il sito è bilingue IT/EN con l'italiano come lingua primaria,
     non 'tutto in inglese di default'.
@@ -135,9 +138,14 @@ Dalla più forte alla più debole:
      (Orodreth figlio di Angrod, Celeborn senza `Teleporno`, l'elenco degli
      apocrifi). Un audit che applichi `JRRT.md` alla lettera le segnalerà come
      errori: non lo sono, e la scala è ciò che lo stabilisce.
-4. **`rules/Development.md`**: le regole di sviluppo.
-5. **`rules/Prompts.md`**: la revisione dei prompt, **solo quando è attivata**.
-6. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto.
+4. **`rules/Prompts.md`**: la revisione dei prompt, **solo quando è attivata**. È una
+   **modalità**, non un livello: i suoi operatori sostituiscono quelli omonimi della
+   sezione 'Traduzioni e revisioni' di `Roccobot.md`.
+5. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto. ⚠️ Dal
+   2026-07-29 contiene anche le **regole di sviluppo**, che prima stavano in un file a
+   sé: quindi non sono più un livello sopra di lui, sono una sua sezione, e i conflitti
+   che la scala risolveva sono ora **eccezioni dichiarate** nel testo (la lingua dei
+   prodotti software è scritta come eccezione dentro la regola sulla lingua).
 
 ### ⚠️ La specificità vale per DOMINIO, non in assoluto
 
@@ -145,13 +153,19 @@ Un file più specifico vince **dove parla**. Il suo **silenzio non è una deroga
 fuori dal suo dominio non dice nulla, quindi non c'è alcun conflitto da risolvere e
 vale la base universale.
 
-Detto al contrario, perché è l'errore facile: 'Development.md sopra Roccobot.md'
-**non** significa 'quando scrivo codice ignoro le regole universali'. Significa solo
-che, sulle materie di cui `Development.md` si occupa davvero, la sua versione vince.
-Il caso reale: `Development.md` chiede la UI in inglese di default e `Roccobot.md`
-tutto l'output in italiano; il conflitto esiste **solo** sui testi di interfaccia, e
-lì vince il primo (con la deroga di questo file per il sito, vedi sotto). Sulla lingua
-della chat, dei commit e delle note non c'è alcun conflitto: vale `Roccobot.md`.
+Detto al contrario, perché è l'errore facile: 'JRRT.md sopra Roccobot.md' **non**
+significa 'quando parlo di Tolkien ignoro le regole universali'. `JRRT.md` parla di
+fonti, edizioni e attestazioni: sul canone la sua versione vince, ma sui caratteri
+tipografici, sulla lingua o sul workflow git non dice nulla, quindi là non c'è alcun
+conflitto e vale `Roccobot.md`.
+
+⚠️ **Un conflitto risolto per bene non ha più bisogno della scala.** Il caso storico
+era 'UI in inglese di default' contro 'tutto l'output in italiano': due file diversi
+che la scala teneva separati. Dal 2026-07-29 stanno nello stesso file e la
+contraddizione è stata **riscritta come eccezione esplicita**: l'italiano riguarda la
+comunicazione, la lingua dei prodotti la decide 'Sviluppo software'. Questa è la forma
+preferibile: la scala serve quando due regole restano davvero in tensione, non come
+scusa per lasciarne due che si contraddicono.
 
 ### 🔒 Regole NON derogabili a nessun livello
 
@@ -172,7 +186,7 @@ può allentarle. Questo è l'indice, la formulazione completa sta dove indicato.
 | Niente **compensazioni** (coppie `margin` di segno opposto per isolare un movimento) | `Roccobot.md`, 'Grafica' |
 | **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
 | Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, 'Test e verifiche' |
-| **Conferma esplicita** per le operazioni ad alto impatto | `Development.md` + qui, go-live |
+| **Conferma esplicita** per le operazioni ad alto impatto | `Roccobot.md`, 'Automazione e interazioni' + qui, go-live |
 
 ⚠️ Se un file più specifico sembra contraddire una di queste, non è una deroga: è un
 difetto di quel file, da segnalare all'utente.
@@ -4257,7 +4271,7 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
   - **Anche la UI è in inglese** (decisione dell'utente, 2026-07-29): pulsanti,
     tooltip, voci del menu contestuale, avvisi, `alert` e comandi del menu di
     Tampermonkey. Vale per tutti e 7. Da qui in avanti uno script nuovo nasce con la
-    UI in inglese, come vuole `rules/Development.md`.
+    UI in inglese, come vuole `Roccobot.md`, sezione '🏗️ Sviluppo software'.
     - ⚠️ **I messaggi degli oggetti `Error` fanno parte della UI**, non sono
       diagnostica interna: in ENF il testo dell'errore finisce dentro l'`alert`
       ('download failed' + il messaggio), quindi va tradotto anche lui. Un censimento
