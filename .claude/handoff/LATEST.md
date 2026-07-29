@@ -43,6 +43,8 @@
      ancora quella lunga. Stima sul file: **da 35.346 a 13.000-15.000 parole**, cioè un altro
      **-60%**; si accorciano meno canone, tipografia e workflow, che sono le parti che il
      codice non contiene.
+   - **Primo passo**: si parte dalla sezione più grossa, gli effetti, che è anche quella su cui
+     il campione è stato approvato; poi a scendere per dimensione.
    - **Verifica del taglio**, la stessa già usata: estrarre gli identificatori fra backtick
      prima e dopo, e per ognuno scomparso controllare con un `grep` che non esista più in
      `arda/top/index.html`. Controllare anche che l'elenco delle sezioni `##` resti identico:
@@ -68,9 +70,11 @@
      quella cartella: quindi una regola che serve sempre non può finire là.
 3. **Skill `/desc`: già creata dall'utente, resta solo da VERIFICARE.** Vive in `tools` come
    `.claude/skills/desc/SKILL.md`, operativa, con un paio di sue correzioni: **non va
-   riscritta né ricreata.** Da controllare: il frontmatter (`name`, `description`), che la
-   description dica che vale solo se invocata, e che gli operatori dichiarino di scavalcare
-   quelli omonimi di `Roccobot.md`.
+   riscritta né ricreata.**
+   - **Primo passo e verifica** (è un controllo di pochi minuti): leggere il file e
+     accertare il frontmatter (`name`, `description`), che la `description` dica che vale
+     **solo se invocata**, e che in cima al corpo sia dichiarato quali operatori omonimi di
+     `Roccobot.md` scavalca e cosa resta come `Roccobot.md` lo definisce.
    - **Manca il `CLAUDE.md` di `tools`, che non esiste**, e la richiesta dell'utente era
      precisa: *scrivi SOLO* che gli operatori della skill valgono in override **unicamente
      quando `/desc` è invocata*. Quindi il file nasce con quella nota e nient'altro: non è
