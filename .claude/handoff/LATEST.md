@@ -65,8 +65,26 @@
      tutto ciò che la skill non copre (lingua, caratteri, formato, tono) resta come
      `Roccobot.md` lo definisce. È l'applicazione della regola 'caricato non vuol dire
      attivo' del `CLAUDE.md` di questo repo.
-4. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
-   Raccomandazione già data: **non** estrarle sui numeri di oggi.
+4. **Sezioni modali di `Roccobot.md` (v1.47.2, 11.783 parole): valutare se estrarle in
+   skill.** 'Modale' = si applica **solo quando l'utente la invoca**, non sempre. Sono tre:
+   🧹 **Bonifica e ottimizzazione degli asset** 830 parole, 🔁 **Traduzioni e revisioni** 609,
+   🎛️ **Revisione dei prompt** 388: in tutto **1.827 parole, il 15,5%** del file.
+   - **Raccomandazione già data all'utente: NON estrarle**, e la ragione è meccanica, non di
+     volume. Ciò che rendeva `Prompts.md` davvero modale erano i suoi **operatori che
+     scavalcavano** quelli di 'Traduzioni e revisioni': una skill serve quando un blocco
+     **cambia il significato** di regole che valgono sempre, perché allora leggerlo e non
+     applicarlo è ambiguo. Quegli operatori l'utente li ha rimossi, quindi le tre sezioni
+     restano modali **nell'uso** ma non nel meccanismo, e una sezione letta e non applicata
+     non costa quasi nulla: la regola 'caricato non vuol dire attivo' basta a governarla.
+   - **Il precedente in senso opposto è `/desc`**, che invece è giusto sia una skill proprio
+     perché ha operatori suoi che scavalcano gli omonimi.
+   - **Cosa farebbe cambiare la risposta**: se una delle tre riacquistasse operatori che
+     scavalcano regole sempre valide (il criterio decisivo), se crescesse fino a pesare più
+     del blocco che governa, o se `Roccobot.md` diventasse ingestibile. ⚠️ Oggi il file ha un
+     **indice delle sezioni** in testa, che è il rimedio scelto al posto della frammentazione.
+   - Se si decide di estrarne una, il modello è la `/desc`: la `description` del frontmatter
+     deve dire che vale **solo se invocata**, e in cima al corpo va la dichiarazione di quali
+     regole omonime scavalca e cosa resta come `Roccobot.md` lo definisce.
 
 ## Andato live in questa sessione
 
