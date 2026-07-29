@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.15.0
+// @version      2.15.1
 // @description  Ripulisce Qwant in home e SERP (doodle/veste d'evento → logo ufficiale, via sidebar, footer, card promozionali, pubblicità nella colonna risultati e tasto opzioni/filtri) e, nella ricerca immagini, apre il clic direttamente sul file originale. Il modulo immagini NON fa NESSUNA chiamata di rete e si attiva SOLO sulla scheda Immagini (i suoi listener globali, se attivi sulla ricerca web, facevano scattare l'anti-bot di Qwant → 403). Ricava l'originale dai dati gia' caricati nella pagina (stato dell'app React) e, in subordine, dall'URL della miniatura; utile ora che Qwant serve miniature Bing (tse.mm.bing.net) non reversibili. Se non ci riesce, lascia il clic normale. Sulla ricerca web (sperimentale, dietro flag) riscrive i link dei risultati per saltare il redirect di tracking (fdn.qwant.com), leggendo la destinazione reale dallo stato React. Nasconde anche gli annunci in-line (contenitore data-testid adResult) oltre a quelli della colonna destra. Forza parametri di ricerca fissi differenziati per tab (Web/Immagini) a ogni nuova ricerca o cambio tab, e mostra il tasto Filtri nella scheda Immagini. Nella ricerca web nasconde la fascia di anteprime immagini (sectionImages).
-// @author       Roccobot
+// @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
 // @match        https://qwant.com/*
@@ -320,7 +320,7 @@
         try { if (/%3a/i.test(v)) v = decodeURIComponent(v); } catch (e) { /* ignora */ }
         if (/^https?:\/\/./i.test(v) && !/\/thumbr\//.test(v)) return v;
       }
-      // 2) http annidato nel path/query (decodifica fino a 3 volte)
+      // 2) http annidato nel path / nella query (decodifica fino a 3 volte)
       let s = u;
       for (let i = 0; i < 3; i++) {
         let dec = s;

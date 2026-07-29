@@ -1,13 +1,14 @@
 ---
 name: handoff
-description: Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati.
+description: Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto: in lettura carica anche le regole universali, quelle di sviluppo e il canone tolkieniano. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati.
 ---
 
 # Passaggio di consegne fra sessioni
 
 Le sessioni di questo repo sono **effimere**: il container si ricicla, lo scratchpad
-sparisce e la chat non passa alla sessione dopo. Una sessione nuova sa tutto ciò che
-sta in `CLAUDE.md` e in `rules/`, e **niente** di ciò che è appena successo. Questa
+sparisce e la chat non passa alla sessione dopo. Una sessione nuova ha in automatico
+solo il `CLAUDE.md` del repo (le regole universali stanno in un altro repo e vanno
+lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa
 skill copre esattamente quel salto, e nient'altro.
 
 **Due modi.**
@@ -27,6 +28,28 @@ non è ancora verificato.
 Un handoff che diventa un archivio parallelo invecchia e mente. Se una cosa è
 nell'handoff ma non in `CLAUDE.md`, o è volatile (e va bene) o è un travaso mancato da
 sanare subito.
+
+## 🧩 Repository, progetto, sessione: tre cose diverse
+
+Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
+
+- **Repository** = `Roccobot/roccobot.github.io`: uno solo, con un solo `master` e un
+  solo `CLAUDE.md`, che raccoglie le regole di **tutti** i progetti che ospita.
+- **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
+  root (regola universale in `Roccobot.md`, sezione 'Terminologia'). Qui vivono:
+  `arda/top/` = **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre),
+  `ABP/` = **Regole AdBlock**, `userscripts/` = gli **userscript**, `RoccobotOS/` = la
+  **guida di riferimento**, `proxy/` = il **Worker** di amministrazione.
+  ⚠️ Ogni progetto ha convenzioni proprie: solo 'I Grandi di Arda' ha un numero di
+  versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
+  `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
+  installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
+- **Sessione** = questa chat e questo container: **effimera**, ed è ciò che l'handoff
+  serve a superare.
+
+Conseguenza pratica: **il brief dice sempre di quale progetto parla.** 'Versione
+14.79' senza dire 'I Grandi di Arda' è ambiguo, e una sessione nuova non può indovinare
+quale delle cinque convenzioni applicare.
 
 ---
 
@@ -100,8 +123,9 @@ sessione invece di consegnarla.
 # Handoff - AAAA-MM-GG
 
 ## Stato                                     [max 6 righe]
-Versione locale e LIVE, ultimo commit, branch, albero pulito o no, deploy in volo,
-`rev` del Worker se toccato. Numeri, non impressioni.
+**Progetto** di cui si parla (vedi 'Repository, progetto, sessione'), versione locale
+e LIVE, ultimo commit, branch, albero pulito o no, deploy in volo, `rev` del Worker se
+toccato. Numeri, non impressioni.
 
 ## In sospeso                                [max 10 righe - LA PIU' IMPORTANTE]
 Cosa era in corso e **il punto esatto** in cui si è fermato. Per ogni voce: il file e
@@ -128,16 +152,53 @@ Gli script dello scratchpad che servono e che non esistono più (vedi in fondo).
 
 ## Modo LETTURA (`/handoff leggi`)
 
+Questo modo **è** l'avvio di sessione: non si riprende un lavoro in corso senza avere
+in testa le regole, altrimenti si ricomincia dagli errori già fatti.
+
+### 0. Leggi le regole PRIMA dell'handoff
+
+Nell'ordine, tutte per intero:
+
+1. **`CLAUDE.md`** di questo repo (regole dei progetti che ospita);
+2. **`rules/Roccobot.md`** - regole universali di collaborazione;
+3. **`rules/Development.md`** - regole di sviluppo (⚠️ `CLAUDE.md` ci deroga su
+   parecchi punti: l'elenco è nella sua 'Regola n. 1');
+4. **`rules/JRRT.md`** - canone tolkieniano, indispensabile per ogni tocco ai contenuti
+   di 'I Grandi di Arda';
+5. **`rules/Prompts.md`** - revisione dei prompt generativi: non si applica da sé, ma va
+   saputo che esiste.
+
+I quattro file di `rules/` vivono in `Roccobot/tools` e si leggono **in grezzo**
+(`curl` con UA da browser sul Worker `rules-proxy`, oppure `add_repo`), **mai** con un
+fetch che riassume. Verifica anti-riassunto: devono comparire l'intestazione e la riga
+`> **Versione**:`.
+
+```bash
+UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'
+for f in Roccobot Development JRRT Prompts; do
+  curl -sS -A "$UA" "https://rules-proxy.roccobot-b90.workers.dev/rules/$f.md" -o "/tmp/$f.md"
+  echo "$f: $(wc -c < /tmp/$f.md) byte - $(grep -m1 'Versione' /tmp/$f.md)"
+done
+```
+
+### 1. Poi l'handoff, e verificalo
+
 1. Leggi `.claude/handoff/LATEST.md`.
 2. ⚠️ **Verificalo contro la realtà prima di fidarti.** Il file è una fotografia e può
-   essere vecchio di giorni: rifai i comandi del passo 1 e confronta. Possono essere
-   cambiati **la versione live** (deploy arrivato dopo), **i ref** (salvataggi admin) e
-   **`siteFlags` in `dati.js`** (l'utente ha usato il Pannello). Dove il file e la
-   realtà divergono vince la realtà: dillo e correggi il file.
-3. Riassumi all'utente in **5 righe**.
+   essere vecchio di giorni: rifai i comandi del passo 1 del modo scrittura e confronta.
+   Possono essere cambiati **la versione live** (deploy arrivato dopo), **i ref**
+   (salvataggi admin) e **`siteFlags` in `dati.js`** (l'utente ha usato il Pannello).
+   Dove il file e la realtà divergono vince la realtà: dillo e correggi il file.
+3. Riassumi all'utente in **5 righe**, e chiudi confermando in una riga che terminologia,
+   procedure e vincoli dei file di regole sono chiari (o chiedendo quel che non lo è:
+   meglio una domanda ora che un errore dopo).
 4. Proponi **un** primo passo concreto, quello dell'handoff se ancora valido.
 5. Non riaprire indagini già chiuse: se l'handoff dice che una cosa è stata misurata,
    la misura sta in `CLAUDE.md`.
+
+⚠️ **Nelle richieste di consenso agli strumenti offri sempre l'opzione 'Consenti
+sempre'** quando è disponibile: l'utente lavora a lungo su questo repo e non vuole
+autorizzare lo stesso comando a ogni chiamata.
 
 ---
 
