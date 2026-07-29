@@ -63,7 +63,7 @@ sessione:
   **cancellati dal repo dall'utente**, non lasciati come rimando. Un `curl` sui loro URL
   risponde 404, e non è un guasto del Worker: non cercarli e non ricrearli.
   - `Development.md` è stato assorbito in `Roccobot.md`, sezione '🏗️ Sviluppo software',
-    dopo aver tolto le ridondanze. Criterio della fusione, dell'utente: **si unisce ciò
+    al netto delle ridondanze. Criterio della fusione, dell'utente: **si unisce ciò
     che è sempre vero, si tiene separato ciò che è modale.**
   - `Prompts.md` è stato ridotto dall'utente alle voci ancora utili, confluite in
     `Roccobot.md`, sezione '🎛️ Revisione dei prompt'. La fusione è diventata sicura
