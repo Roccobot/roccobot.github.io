@@ -231,6 +231,22 @@ un'esclusione è indistinguibile da una dimenticanza.
 orientarsi (dove vive una cosa, chi è la fonte unica, qual è l'accesso giusto), non il suo
 funzionamento. Nel dubbio fra la regola e la sua dimostrazione, si tiene la regola.
 
+**La forma di una sezione potata**, approvata dall'utente sul campione degli effetti: quattro
+blocchi in quest'ordine, e nulla fuori da essi.
+
+1. **Com'è fatto**, l'essenziale: dove vive il dato, qual è la fonte unica, qual è l'accesso
+   giusto. Nomi di funzione come puntatori, senza spiegare cosa fanno dentro.
+2. **⚠️ Trappole**, che è il blocco più grosso e giustamente: è la ragione per cui la sezione
+   esiste.
+3. **🎨 Estetica e vincoli**: allineamento ottico, anti-jitter, e i valori che non si toccano
+   con la ragione per cui non si toccano.
+4. **Decisioni dell'utente da non ridiscutere**, coi suoi *no*.
+
+⚠️ **Delle misure si tiene quella SCARTATA, non quella accettata.** Il valore in uso sta nel
+codice e si rilegge; quello scartato no, e senza la nota qualcuno lo riprova. Esempio: delle
+etichette del Pannello resta scritto che 'Colore al passaggio' misurava 147.2px su una colonna
+di 102 e quindi andava a capo, non quanto misura quella che ci sta.
+
 ## 🏷️ Identità del progetto
 
 - **Nome: 'I Grandi di Arda'.** 'Grimorio' è terminologia morta (sopravvive
