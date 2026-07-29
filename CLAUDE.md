@@ -400,127 +400,76 @@ di 102 e quindi andava a capo, non quanto misura quella che ci sta.
 
 ## 🔢 Versione del sito
 
-- **Versione: schema custom `x.xx` (dalla v1.00).** Formato: intero + due cifre
-  decimali (es. `1.00`, `1.07`, `2.13`); override di progetto del SemVer
-  universale. Bump a ogni commit che tocca il sito, per entità della modifica:
-  - secondaria/minore: **+0.01**;
-  - aggiunta di funzionalità (o simile): **+0.1** o incremento fino al primo decimale successivo;
-  - modifica sostanziale (nuova release): **+1.0** o incremento fino al numero intero successivo.
+**Com'è fatto.** **Fonte unica: `var datiVersion` in testa a `arda/top/dati.js`.** Il sito la legge
+a runtime (`setVersionBadge`) e la scrive nel badge della testata; gli specchi nel Pannello la
+**ereditano dal badge**. Il numero scritto a mano nel badge HTML resta **solo come fallback** se
+`dati.js` non carica. ⚠️ **Mai reintrodurre un secondo numero hardcoded 'vivo' altrove**: storico,
+il pannello restò fermo a v5.11.0 per mesi.
 
-  Aritmetica a due decimali con riporto (1.99 → 2.00, 9.99 → 10.00). Lo schema
-  `x.xx` **succede** al vecchio SemVer `x.y.z` (storia fino a v10.21.1): per
-  convenzione di lettura ogni `x.xx` è da intendersi successivo a ogni `x.y.z`
-  (1.00 viene dopo 10.21.1). Nessun codice confronta le versioni per ordine
-  (solo l'uguaglianza badge↔datiVersion dei guard), quindi la convenzione vale
-  per gli umani; **nessun prefisso `r`** (romperebbe quei guard).
-  - **Gate W3C a ogni release da +0.1 in su (regola dell'utente, 2026-07-14;
-    esteso a 0 warning il 2026-07-14).** Per ogni release con bump **+0.1 o
-    +1.0** (funzionalità o release maggiore, NON i +0.01 di rifinitura), **prima
-    di aprire la PR** rifare il test **W3C Nu Html Checker** su **tutte le pagine
-    modificate** in quella release e portarle a **0 errori E 0 warning**
-    (pulizia totale voluta dall'utente: non solo `type:"error"`, ma anche i
-    messaggi `type:"info"` con `subType:"warning"`). Comando (per ogni file
-    toccato): `curl -sS -H "Content-Type: text/html; charset=utf-8" -H
-    "User-Agent: Mozilla/5.0" --data-binary @PAGINA.html
-    "https://validator.w3.org/nu/?out=json"`, poi contare sia gli `error` sia i
-    `subType:"warning"` (entrambi devono essere 0). Vale per ogni pagina HTML del
-    sito toccata (non solo `arda/top/index.html`). Nota tecnica: la proprietà CSS
-    `d` (animazione del glifo di chiusura) è valida ma non riconosciuta dal Nu
-    Checker, perciò è iniettata via JS e non nel `<style>` statico (vedi il
-    commento `ctrl-close-bend`): non reintrodurla nel CSS o tornano 4 errori.
-    - **Utile ma NON imprescindibile (regola dell'utente).** Se il test non si può eseguire
-      (rate limit 429, challenge Cloudflare 'Just a moment...', servizio giù o qualunque altro
-      impedimento), **NON rimandare il go-live e NON lasciare retry in background**: si
-      procede, annotando il salto, e il controllo si recupera al **prossimo aggiornamento** del
-      sito. Il vincolo 0/0 resta pieno quando il test GIRA: l'eccezione riguarda solo la sua
-      indisponibilità.
-      - **Evidenza sostitutiva** quando si salta: il **diff della porzione NON-JS** (fuori dai
-        blocchi `<script>`) rispetto all'ultima versione validata 0/0. Se cambia solo il numero
-        del badge o testo di attributi il rischio è nullo, perché il Nu non ispeziona JS e CSS
-        iniettato.
-      - ⚠️ **L'indisponibilità va e viene, anche nello stesso giorno**: non è un rate limit da
-        esaurimento. Nel dubbio tentare sempre, costa un `curl`, e se risponde la challenge
-        passare subito alla prova sostitutiva senza retry.
-- **Angolo in alto a sinistra: `roccobot.me` sopra, versione sotto** (mockup dell'utente). Il
-  blocco `.brand-corner` è **incolonnato**: in cima alla pagina si vedono entrambi; **appena si
-  scorre** il numero **dissolve in 0.12s** e resta il solo `roccobot.me`, **fisso** nell'angolo
-  come il cambio lingua a destra.
-  - Una classe **`html.scrolled`** (soglia `scrollY <= 1`, la stessa dei tasti salto) governa la
-    dissolvenza, e il DOM si tocca solo al varco. ⚠️ Il listener è **a sé** e non agganciato a
-    `showJumpFabsTemporarily`, che esce prima in più casi (tasti non ancora costruiti, FAB di
-    riordino aperto) e si porterebbe dietro il numero.
-  - Sfumato, il numero prende `pointer-events:none`: **cliccabile solo in cima**, come chiesto.
-    La specificità `html.scrolled .version-badge` (0,2,1) batte `.version-badge:hover` (0,2,0),
-    quindi non riappare col puntatore sopra.
-  - ⚠️ **La `v` è allineata OTTICAMENTE alla `r` di roccobot.me** (richiesta dell'utente): a
-    padding identici l'inchiostro non parte allo stesso x, perché ogni glifo ha un margine
-    laterale proprio nel font. Misurato a 4× sul font reale, la `v` partiva **0.5px** più a
-    sinistra (identico nei due temi), recuperati con `margin-left:0.05em`, relativo così regge
-    anche in Modalità XL. Se cambia il font o il corpo del testo, va rimisurato.
-  - ⚠️ La **`v`** vive in uno `<span class="vb-v">` a `0.86em`, perciò `setVersionBadge`
-    ricompone il badge **a nodi** (`createElement` + `createTextNode`) e non con `textContent`,
-    che butterebbe via lo span; niente `innerHTML`, come da regola. Gli specchi del Pannello
-    leggono `textContent` del badge, che concatena i due nodi: continuano a funzionare.
-  - ⚠️ **`position:fixed` solo da >768px**, come `.lang-switch`: su mobile la colonna delle
-    schede occupa tutta la larghezza e un testo fisso a sinistra le passerebbe sopra, che è la
-    stessa ragione per cui là il cambio lingua è nascosto. E su mobile il **badge versione è
-    nascosto da sempre** (`display:none` nella media query; l'admin si apre dal numero nel
-    Pannello), quindi là non cambia nulla.
-- **Fonte unica del numero: `var datiVersion` in testa a `arda/top/dati.js`.**
-  Il sito la legge a runtime (`setVersionBadge` in `index.html`, subito dopo il
-  caricamento di `dati.js`) e la scrive nel badge della testata
-  (`.version-badge`); gli specchi nel Pannello la ereditano dal badge: su
-  **mobile** il numero nella barra inferiore (`.ctrl-ver`), su **desktop** il
-  numero in alto a sinistra nella toolbar (`.ctrl-ver-desk`). Il numero scritto
-  a mano nel badge HTML resta **solo come fallback** se `dati.js` non carica.
-  Mai reintrodurre un secondo numero hardcoded "vivo" altrove (storico: pannello
-  fermo a v5.11.0 per mesi).
-  - **Bump a mano (commit di codice):** modificare `datiVersion` in `dati.js`
-    (ed eventualmente allineare il fallback nel badge, cosmetico). Storico: fino
-    a v10.13.x il numero "vivo" stava nel badge di `index.html`; spostato in
-    `dati.js` in v10.14.0 perché il Worker possa incrementarlo.
-    - **Salvaguardia (due livelli, in `.claude/settings.json`):** confronta il
-      numero del badge HTML con `datiVersion` e segnala se differiscono.
-      1) **SessionStart**, avviso a inizio sessione (silenzioso se allineati):
-         intercetta un disallineamento già finito su `master`.
-      2) **PreToolUse su `Bash`**, proattivo: se il comando contiene
-         `git commit` e i due numeri non coincidono, **blocca il commit**
-         (exit 2, messaggio restituito a Claude). Permissivo in ogni altro caso
-         (commit non coinvolto, file assenti, numeri allineati).
-      Le salvaguardie intercettano solo il disallineamento; **non** decidono
-      l'entità del bump (+0.01 / +0.1 / +1.0 resta scelta manuale e contestuale).
-  - **Bump automatico (salvataggi admin):** a OGNI commit dell'editor admin il
-    Worker legge `datiVersion` dal `dati.js` corrente e applica l'incremento
-    **minore (+0.01)** con riporto, riscrivendola in testa al file, e la
-    restituisce nella risposta JSON (`version`) così il client aggiorna subito il
-    badge senza reload. Il Worker è **bi-formato**: gestisce sia `x.xx` (+0.01)
-    sia il legacy `x.y.z` (+0.0.1), per non rompere la transizione. Effetto: la
-    versione sale a ogni salvataggio admin (incluse le conferme di riordino) e
-    diventa di fatto un contatore di revisioni dei contenuti: le due cifre
-    decimali crescono in fretta, mentre +0.1/+1.0 restano decise solo dai commit
-    di codice. Prima (fino a v10.13.x) i salvataggi admin NON
-    bumpavano: la versione restava identica, rendendo le modifiche admin
-    invisibili al controllo di freschezza basato sul numero (vedi sopra il
-    confronto dei ref come verifica affidabile). Il codice del Worker si
-    ridistribuisce **da sé** via la Git integration di Cloudflare (Workers
-    Builds, `proxy/wrangler.toml`) a ogni push su `master`; `wrangler deploy`
-    resta solo come fallback manuale.
-- Il numero di versione è anche **l'accesso all'area admin**. Dalla v10.19.0
-  **tutti** i punti d'accesso si comportano allo stesso modo: click → **dritto
-  all'editor admin** (`showAdminEditor`, con `showPasswordModal` se non già
-  sbloccato):
-  - **Badge in testata** (`.version-badge`);
-  - **versione del Pannello desktop** (`.ctrl-ver-desk`, in alto a sinistra
-    nella toolbar): chiude prima il pannello;
-  - **versione del Pannello mobile** (`.ctrl-ver`, barra inferiore): chiude
-    prima il pannello.
-  - Storico: fino alla v10.18.x il tap sulla versione **mobile** apriva un
-    bivio modale (`showActionChoiceModal`: Riordina / Modifica contenuti). Su
-    richiesta dell'utente il bivio è stato rimosso perché su mobile il riordino
-    si attivava ma **non si poteva salvare** (problema di flusso): ora
-    l'ordinamento card è **desktop-only**. `showActionChoiceModal` e tutta la
-    macchina del riordino restano nel codice, non più richiamate dal tap
-    versione, per un eventuale ripristino futuro del riordino su mobile.
+**Schema custom `x.xx`** (intero + due decimali), override di progetto del SemVer universale, con
+riporto a due decimali. Bump per entità: **+0,01** secondaria, **+0,1** funzionalità, **+1,0**
+release maggiore, e i due maggiori ammettono l'arrotondamento al decimale o all'intero successivo.
+Lo schema **succede** al vecchio `x.y.z`: per convenzione di lettura ogni `x.xx` è successivo a ogni
+`x.y.z`. Nessun codice confronta le versioni per ordine (solo l'uguaglianza badge↔`datiVersion` nei
+guard), quindi la convenzione vale per gli umani; ⚠️ **nessun prefisso `r`**, che romperebbe quei
+guard.
+
+**Il numero è anche l'accesso all'area admin**: da ogni punto (badge in testata, versione del
+Pannello desktop e mobile) il click porta **dritto all'editor**, chiudendo prima il pannello dove
+serve.
+
+### ⚠️ Gate W3C
+
+- **A ogni release da +0,1 in su** (non ai +0,01 di rifinitura), **prima di aprire la PR**: Nu Html
+  Checker su **tutte le pagine modificate**, a **0 errori E 0 warning**. La pulizia totale è voluta
+  dall'utente: non solo i messaggi di errore, ma anche gli `info` con `subType:"warning"`.
+- **Utile ma NON imprescindibile.** Se il test non si può eseguire (429, challenge Cloudflare,
+  servizio giù), **non si rimanda il go-live e non si lasciano retry in background**: si procede
+  annotando il salto, e il controllo si recupera al **prossimo aggiornamento**. Il vincolo 0/0 resta
+  pieno quando il test **gira**.
+  - **Evidenza sostitutiva** quando si salta: il **diff della porzione NON-JS** rispetto all'ultima
+    versione validata 0/0. Se cambia solo il numero del badge il rischio è nullo, perché il Nu non
+    ispeziona JS e CSS iniettato.
+  - ⚠️ **L'indisponibilità va e viene, anche nello stesso giorno**: non è un rate limit da
+    esaurimento. Nel dubbio **tentare sempre**, costa un `curl`, e alla challenge passare subito
+    alla prova sostitutiva **senza retry**.
+- ⚠️ La proprietà CSS `d` dell'animazione del glifo di chiusura è valida ma **non riconosciuta dal
+  Nu**, perciò è iniettata via JS: **non reintrodurla nel CSS statico** o tornano 4 errori.
+
+### ⚠️ Trappole
+
+- ⚠️ **Il numero di versione da solo non basta come spia di freschezza.** I salvataggi admin
+  bumpano, quindi il numero cambia, ma per sapere **se e di quanto** si è indietro serve il
+  confronto dei ref col remoto. Caso reale: un commit admin toccò solo `dati.js` lasciando la
+  versione dov'era, e il solo `grep` non l'avrebbe colto.
+- ⚠️ **Le salvaguardie in `.claude/settings.json` intercettano solo il DISALLINEAMENTO** fra badge e
+  `datiVersion` (avviso a inizio sessione, e blocco del commit se differiscono): **non** decidono
+  l'entità del bump, che resta scelta manuale e contestuale.
+- ⚠️ **La `v` del badge è allineata OTTICAMENTE alla `r` di roccobot.me**: a padding identici
+  l'inchiostro non parte allo stesso x, perché ogni glifo ha un margine laterale proprio nel font.
+  Misurato a 4× **sul font reale**, partiva 0,5px più a sinistra, identico nei due temi. **Se cambia
+  il font o il corpo del testo, va rimisurato.**
+- ⚠️ La `v` vive in uno span a corpo ridotto, perciò `setVersionBadge` ricompone il badge **a nodi**
+  e non con `textContent`, che butterebbe via lo span; **niente `innerHTML`**, come da regola. Gli
+  specchi del Pannello leggono il `textContent`, che concatena i due nodi: continuano a funzionare.
+- ⚠️ **Il badge è `position:fixed` solo sopra i 768px**, come il cambio lingua: su mobile la colonna
+  delle schede occupa tutta la larghezza e un testo fisso a sinistra le passerebbe sopra. Su mobile
+  il badge è **nascosto da sempre**, e l'admin si apre dal numero nel Pannello.
+- ⚠️ **Scorrendo, il numero dissolve e prende `pointer-events:none`**: è cliccabile **solo in
+  cima**, come chiesto. Il listener è **a sé** e non agganciato a quello dei tasti salto, che esce
+  prima in più casi e si porterebbe dietro il numero.
+
+### Decisioni dell'utente da non ridiscutere
+
+- **`roccobot.me` sopra, versione sotto**, incolonnati nell'angolo (mockup dell'utente): in cima si
+  vedono entrambi, appena si scorre resta il solo `roccobot.me`, fisso.
+- **I salvataggi admin bumpano di +0,01** dalla v10.14.0, quindi la versione è di fatto un contatore
+  di revisioni dei contenuti, mentre +0,1 e +1,0 restano decisi solo dai commit di codice. Il Worker
+  è **bi-formato** (gestisce anche il legacy `x.y.z`) per non rompere la transizione.
+- **Il bivio modale sul tap della versione mobile è stato RIMOSSO**, perché su mobile il riordino si
+  attivava ma non si poteva salvare: ora tutti i punti d'accesso vanno dritti all'editor.
+- Il codice del Worker si ridistribuisce **da sé** a ogni push su `master` via la Git integration di
+  Cloudflare; `wrangler deploy` resta solo come fallback manuale.
 
 ## 🔎 Modalità ingrandita (dalla v12.14; 130% dalla v12.24)
 
@@ -839,147 +788,84 @@ compaiono nella tab Mobile.
 
 ## 🪟 Vista divisa degli editor dell'aspetto (dock, dalla v13.06)
 
-Su desktop largo il **Pannello di controllo** (e le sue sotto-modali effetti) non apre una
-modale: si ancora in una **colonna a sinistra** (`--dockw`, filetto verticale sul bordo) e la
-**pagina vera**, spostata a destra col margine del body, fa da anteprima dinamica. Stesso DOM,
-nessun doppio stato: fedeltà garantita. Richiesta e impianto dell'utente ('il sito stesso è
-l'anteprima'). Sullo stesso telaio vivono anche l'editor colori e i micro-aggiustamenti.
+**Com'è fatto.** Su desktop largo gli editor dell'aspetto non aprono una modale: si ancorano in una
+**colonna a sinistra** e la **pagina vera**, spostata a destra col margine del body, fa da
+anteprima dinamica. Stesso DOM, nessun doppio stato, fedeltà garantita. Impianto voluto
+dall'utente: **'il sito stesso è l'anteprima'**. Sullo stesso telaio vivono il Pannello di
+controllo con le sue sotto-modali, l'editor colori e i micro-aggiustamenti, ognuno con la **propria
+larghezza di colonna**; sotto soglia si apre la modale di sempre, e un **resize a metà modifica**
+commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non salvate.
 
-- **Soglia e fallback.** `dockAvailable(colw)` = `clientWidth / zoom >= colw + 660`, con la
-  larghezza di colonna PER-EDITOR (Pannello di controllo 400px, colori 480, micro-aggiustamenti
-  560; il valore vive in `--dockw`, impostato da `dockEngage`). Sotto soglia si apre la modale
-  di sempre, e un **resize a metà modifica** commuta il telaio conservando tab, scroll,
-  sotto-modale aperta e regolazioni non salvate.
-  - ⚠️ **MISURATO: `clientWidth` NON si riduce sotto `zoom`**, resta la larghezza della
-    finestra, quindi il fattore XL va diviso a mano (`--zoomf`). La v13.06 assumeva il
-    contrario. Il flag XL commutato DAL pannello è l'unico modo di cambiare zoom a colonna
-    aperta (`Z` è guardato dalle modali) e il suo change handler ripassa dal ricalcolo del
-    telaio.
-- ⚠️ **Due trappole note già applicate**: la colonna è dimensionata con **inset**
-  (`top:0;bottom:0`), MAI in `vh`, perché sotto zoom XL le unità viewport non scattano; e
-  spostare la pagina col margine **non fa scattare `resize`**, quindi `reflowRows()` va
-  chiamata a mano in `dockEngage`/`dockRelease` (a-capo dei nomi e righe bipartite si
-  rimisurano).
-- ⚠️ **In dock NIENTE `lockPageScroll`**: la pagina è l'anteprima e deve restare VIVA, con
-  scroll e hover, perché senza hover non si vedono bagliore e riflettore. Il congelamento
-  inert/focus-trap resta per le modali normali. Il focus trap del `Tab` però FUNZIONA anche in
-  dock, perché agisce su `topModalEl` e non su `lockPageScroll`; `T` e `L` restano attivi
-  (regola dei tasti nudi).
-- **Click spenti fuori dalle colonne (scelta utente).** `DOCK_SHIELD`, un listener `click` in
-  capture: la pagina risponde a scroll e hover ma i click non aprono nulla (schede, admin,
-  Pannello del FAB). **Consentiti**: le colonne stesse, i tasti salto (solo scroll) e il cambio
-  lingua, che equivale al tasto `L`. ⚠️ Lo scudo si rimuove SEMPRE alla chiusura.
-- **'Torna al punto di partenza se non si salva' (scelta utente).** Chiudere la colonna (×,
-  Esc, click fuori) ripristina `normSiteFlags(SITE_FLAGS_SAVED)`; dopo un salvataggio riuscito
-  lo snapshot è già sincronizzato, quindi il ripristino è un no-op. ⚠️ **`DOCK_RELAYOUT`**: nei
-  rebuild TECNICI (tasto `L`, cambio di telaio al resize, 'Ultimo salvato') la chiusura non è
-  una chiusura dell'utente e NON deve ripristinare, altrimenti un semplice cambio lingua
-  butterebbe via le regolazioni non salvate. NB: nella modale, sotto soglia, la chiusura senza
-  salvare NON ripristina, come sempre: la scelta dell'utente riguardava la vista divisa.
-- **Sotto-modali impilate nella colonna.** In dock `showFxConfigEditor` prende la stessa classe
-  `fxdock` e si dipinge SOPRA il pannello, con la stessa geometria: 'entrare' in un effetto e
-  'uscirne' è un movimento della sola colonna. I ganci `overlay._fxKey/_fxSfx/_fxClose` e
-  `overlay._renderRows` (sul pannello) servono al cambio di telaio per chiudere e riaprire la
-  sotto-modale risincronizzando le checkbox.
-- **Editor colori in dock.** Colonna 480px, e le due tab diventano LIVE: in **Famiglie** la
-  scelta del colore (picker o campo HEX) applica subito `CARDCOLORS.fam` + reinject alla
-  pagina; in **Personaggio** l'anteprima è **SOLO DOM**, cioè si replica sulla card vera ciò
-  che `renderList` fa per le voci custom (classe `cc-custom` + terne inline), e alla selezione
-  la pagina **scorre fino alla card**.
-  - ⚠️ **Ragione della differenza:** i salvataggi inviano TUTTO (`dati` + `cardColors`), quindi
-    un'anteprima non salvata non deve vivere negli oggetti che un salvataggio d'altro
-    porterebbe con sé. Mai toccare `p.cardrgb` in anteprima, e la famiglia che si ABBANDONA
-    (cambio famiglia o tab) torna all'ultimo salvato prima di proseguire. Il gancio è
-    **`ctrl.hook`** su `buildColorControl`, chiamato da `update()` e mai alla costruzione;
-    anche il ripristino 'ultimo salvato' vi passa, quindi aggiorna la pagina.
-  - Le anteprime interne (mini-card + mini-scheda) RESTANO anche in dock: la mini-scheda non è
-    ridondante, perché in dock le schede vere non si aprono, avendo i click spenti.
-- **Micro-aggiustamenti in dock.** Colonna 560px; il corpo a due colonne si impila
-  (`.fxdock .ba-body{grid-template-columns:1fr}`, era pensato per la modale da 840px).
-  Chiusura senza salvataggio = ultimo salvato, la stessa via del suo Annulla. Le anteprime
-  interne RESTANO: mostrano campioni scelti col badge in modifica e la linea mediana rossa, che
-  la pagina non garantisce, perché il badge selezionato può non essere nel viewport.
-- ⚠️ I due editor chiamano **`injectFxEditorCss()`** in testa: il CSS del dock vive lì e deve
-  esserci anche quando si apre uno di LORO per primo.
-- **La tab del tema commuta il TEMA DEL SITO, solo in dock** (richiesta utente: 'se modifico
-  le impostazioni del tema scuro, il sito deve passare al tema scuro'). In vista divisa
-  l'anteprima è la pagina: scegliere 'Tema scuro' fa `toggleTheme()` se serve, e alla
-  **chiusura vera** della sotto-modale il tema torna a quello d'apertura. ⚠️ La baseline vive
-  in **`FX_THEME0`** (globale) perché deve sopravvivere ai rebuild TECNICI, che chiudono e
-  riaprono l'editor: senza, la riapertura scambierebbe il tema della tab per la baseline e alla
-  chiusura il sito resterebbe scuro. Si azzera solo alla chiusura vera. In MODALE, sotto
-  soglia, la tab NON tocca il tema, perché lì l'anteprima interna segue già la tab.
-  - Il 'top del top' chiesto dall'utente (solo il contenuto scuro, pannello chiaro) NON è
-    praticabile a costo sano: tutto il CSS del tema è vincolato a `data-theme` sulla radice, non
-    circoscrivibile a un sottoalbero.
-  - ⚠️ **Anche 'Ultimo salvato' è un rebuild TECNICO.** Il pulsante ripristina i valori e poi
-    chiude e riapre la sotto-modale: quella chiusura va avvolta in `DOCK_RELAYOUT`, altrimenti
-    `close()` la tratta come chiusura vera, riporta il sito al tema d'apertura, azzera
-    `FX_THEME0` e la riapertura rideriva la tab dal tema tornato indietro (segnalato
-    dall'utente: 'mi riporta all'inizio tornando anche al tema chiaro'). Vale per ogni futura
-    via che chiude e riapre l'editor senza che sia l'utente a uscirne.
-- **In dock le anteprime su card finte SPARISCONO** (richiesta utente): con la pagina vera
-  accanto sono ridondanti. Nascoste via CSS e basta: i riquadri vengono comunque costruiti e
-  dipinti (`paint()` lavora su elementi nascosti senza errori), così il cambio di telaio a metà
-  modifica non ha casi speciali e sotto soglia ricompaiono da sé. Il sottotitolo della
-  sotto-modale segue la modalità: in dock 'Le modifiche si vedono subito sulla pagina
-  accanto.', in modale il testo storico. Le tab Chiaro/Scuro restano anche in dock, perché
-  scelgono QUALI manopole si editano; per vedere l'altro tema in pagina c'è il tasto `T`.
-  - ⚠️ **ECCEZIONE: quando la variante in modifica NON è quella ATTIVA, l'anteprima RESTA anche
-    in dock** (segnalata dall'utente). Lì la pagina accanto mostra l'altra variante, quindi non
-    fa da anteprima a nulla e senza i riquadri si lavora alla cieca. Selettore:
-    `.fxdock:not(.fxdock-alt) .fxp-wrap{display:none}`, con la classe **`fxdock-alt`**
-    sull'overlay quando `docked && sfx !== fxActiveSfx(key)`. Non serve altro, perché `paint()`
-    legge già la config dalla **variante in modifica** (`V`) e non dalla piattaforma corrente.
-    Il sottotitolo lo dice: 'La pagina accanto mostra la versione <attiva>: le modifiche a <in
-    modifica> si vedono qui sotto.'.
-    - ⚠️ La condizione non può essere `docked && sfx` (com'era quando la classe si chiamava
-      `fxdock-mob`): sarebbe giusta solo sui desktop, mentre su un **tablet touch** è il caso
-      opposto, perché la pagina mostra la variante touch di `hov` e a lavorare alla cieca è la
-      tab **Desktop**.
-  - L'**anteprima panoramica nel Pannello** usa la stessa classe `fxdock-alt`, che lì serve a
-    due cose: scavalcare la regola che in vista divisa nasconde le anteprime, e marcare la
-    colonna in cui si lavora su una variante che la pagina NON mostra. Nel Pannello si aggiunge
-    e si toglie al cambio tab, senza ricreare l'overlay; il resto è nella sezione 'Feature flag
-    dell'aspetto'.
-- Tutto il CSS del dock vive in `injectFxEditorCss` (runtime, invisibile al Nu), quindi la
-  porzione statica della pagina non cambia. **Unica eccezione:** l'animazione d'ingresso delle
-  modali admin sta nel CSS statico, perché riguarda tutte le `.fab-modal-*` e non solo il dock.
+### ⚠️ Trappole
 
-### Apertura e chiusura delle modali admin
+- ⚠️ **MISURATO: `clientWidth` NON si riduce sotto `zoom`**, resta la larghezza della finestra,
+  quindi il fattore della Modalità XL va diviso **a mano** nel calcolo della soglia. La prima
+  versione assumeva il contrario.
+- ⚠️ **La colonna si dimensiona con gli inset (`top`/`bottom`), MAI in `vh`**, perché sotto zoom XL
+  le unità viewport non scattano.
+- ⚠️ **Spostare la pagina col margine non fa scattare `resize`**, quindi il ricalcolo delle righe va
+  chiamato **a mano** all'apertura e alla chiusura, o a-capo dei nomi e righe bipartite restano
+  misurati sulla larghezza vecchia.
+- ⚠️ **In dock NIENTE blocco dello scroll**: la pagina è l'anteprima e deve restare **viva**, con
+  scroll e hover, perché senza hover non si vedono bagliore e riflettore. Il congelamento resta per
+  le modali normali. Il **focus trap del `Tab` funziona anche in dock**, perché agisce sulla modale
+  più in alto e non sul blocco dello scroll.
+- ⚠️ **Lo scudo dei click si rimuove SEMPRE alla chiusura**: è un listener in capture che spegne i
+  click sulla pagina (consentiti solo colonne, tasti salto e cambio lingua), e lasciarlo appeso
+  renderebbe il sito inerte.
+- ⚠️⚠️ **I rebuild TECNICI non devono ripristinare né animare.** Tasto `L`, cambio di telaio al
+  resize e 'Ultimo salvato' **non sono chiusure dell'utente**: senza il flag apposito un semplice
+  cambio lingua butterebbe via le regolazioni non salvate. I punti di rebuild passano da un helper
+  che alza il flag e lo riabbassa in `finally`.
+  - ⚠️ **Anche 'Ultimo salvato' è un rebuild tecnico**: ripristina i valori e poi chiude e riapre,
+    e senza il flag quella chiusura riporta il sito al tema d'apertura e la riapertura rideriva la
+    tab dal tema tornato indietro ('mi riporta all'inizio tornando anche al tema chiaro'). Vale per
+    **ogni futura via** che chiude e riapre l'editor senza che sia l'utente a uscirne.
+- ⚠️ **La baseline del tema è una GLOBALE**, perché deve sopravvivere ai rebuild tecnici: senza, la
+  riapertura scambierebbe il tema della tab per la baseline e alla chiusura il sito resterebbe
+  scuro. Si azzera solo alla **chiusura vera**.
+- ⚠️ **In vista divisa la larghezza della colonna va CONGELATA inline prima di animare**: il
+  rilascio del dock gira subito e porta via la variabile da cui la larghezza dipende, quindi senza
+  congelamento il box in uscita si allarga a tutta pagina.
+- ⚠️ **I due editor chiamano l'iniezione del CSS del dock in testa**, perché quel CSS deve esserci
+  anche quando si apre **uno di loro** per primo.
+- ⚠️ **Nella modale, sotto soglia, la chiusura senza salvare NON ripristina**, come è sempre stato:
+  la scelta 'torna al punto di partenza' riguardava la **vista divisa**. E là la tab del tema **non
+  tocca il tema del sito**, perché l'anteprima interna segue già la tab.
 
-Le modali utente dissolvono il velo e sollevano il box con **transizioni** pilotate da
-`.active`; le admin sono create al volo e nascono già visibili, quindi lì la morbidezza si
-ottiene con una **`animation`**, che parte da sé alla comparsa e non richiede un secondo
-passaggio in JS. Tre keyframe: `fab-modal-in` (velo), `fab-box-in` (box che sale) e
-`fab-dock-in` (in **vista divisa** entra da sinistra l'intera colonna e il box NON si anima,
-perché sollevare una colonna a piena altezza sarebbe fuori luogo).
-`@media (prefers-reduced-motion:reduce)` le spegne tutte.
+### 🎨 Estetica e vincoli
 
-- **Chiusura = apertura A RITROSO** (richiesta dell'utente: 'anche la chiusura è veramente
-  improvvisa'). Le due animazioni sono una coppia speculare: stessa geometria (10px di salita e
-  scala 0.985 per il box; 16px di slittamento laterale per la colonna) e curve opposte,
-  `ease-out` entrando e `ease-in` uscendo. ⚠️ **Cambiando una durata va cambiata la gemella.**
-- L'uscita la avvia **`fabDismiss(el)`**, che sostituisce `overlay.remove()` in tutte le
-  chiusure vere: mette la classe `.fab-out` e rimuove il nodo su `animationend`, con un
-  `setTimeout` di riserva se l'animazione non parte. Rimozione immediata nei rebuild tecnici e
-  con moto ridotto. ⚠️ Il resto del `close()` (dockRelease, sblocco dello scroll, ripristini,
-  hook lingua) continua a girare SUBITO: è logica di stato, non visiva.
-- ⚠️ **I rebuild TECNICI non devono animare**, o un cambio lingua, un 'Ultimo salvato' o un
-  cambio di telaio farebbero lampeggiare la colonna. L'overlay nasce con la classe
-  **`.no-anim`** quando `DOCK_RELAYOUT` è attivo, e per questo il flag avvolge **anche la
-  riapertura** e non solo la chiusura: i punti di rebuild passano dall'helper
-  **`dockRebuild(fn)`**, che lo alza, esegue e lo riabbassa in `finally`, così una riapertura
-  andata male non lascia il flag acceso a sabotare la chiusura successiva. Chi aggiunge un
-  nuovo rebuild usi l'helper.
-- ⚠️ **L'`id` si toglie all'istante**, prima di animare. Due ragioni: le funzioni che aprono un
-  editor si autoproteggono con `if (document.getElementById('fab-modal')) return`, quindi un
-  fantasma con l'id addosso **bloccherebbe una riapertura immediata** (i rebuild tecnici
-  chiudono e riaprono nello stesso tick); e `MODAL_OPEN_SEL` ragiona sugli id, quindi la pagina
-  resterebbe inerte e i tasti nudi zitti per tutta la dissolvenza.
-- ⚠️ **In vista divisa la larghezza della colonna va CONGELATA inline** prima di animare:
-  `dockRelease()` gira subito e porta via `--dockw`, da cui dipende `width:var(--dockw)`, e
-  senza il congelamento la regola cade e il box in uscita si allarga a tutta pagina.
+- **In dock le anteprime su card finte SPARISCONO** (richiesta dell'utente): con la pagina vera
+  accanto sono ridondanti. Sono nascoste via CSS e non smontate, così il cambio di telaio a metà
+  modifica non ha casi speciali e sotto soglia ricompaiono da sé.
+  - ⚠️ **ECCEZIONE: se la variante in modifica non è quella ATTIVA, l'anteprima RESTA anche in
+    dock**, perché lì la pagina accanto mostra l'altra variante e senza i riquadri si lavora alla
+    cieca. ⚠️ La condizione **non può essere 'siamo in dock e la variante è mobile'**: sarebbe
+    giusta solo sui desktop, mentre su un **tablet touch** è il caso opposto, ed è la tab Desktop a
+    lavorare alla cieca.
+- **Le anteprime interne dell'editor colori e dei micro-aggiustamenti RESTANO anche in dock**: la
+  mini-scheda non è ridondante, perché in dock le schede vere non si aprono (i click sono spenti),
+  e i micro-aggiustamenti mostrano campioni scelti col badge in modifica e la linea mediana rossa,
+  che la pagina non garantisce perché il badge può non essere nel viewport.
+- **In dock la colonna entra da sinistra e il box NON si anima**: sollevare una colonna a piena
+  altezza sarebbe fuori luogo.
+- Il corpo a due colonne dei micro-aggiustamenti **si impila** in dock, perché era pensato per una
+  modale molto più larga.
+
+### Decisioni dell'utente da non ridiscutere
+
+- **Click spenti fuori dalle colonne**: la pagina risponde a scroll e hover, ma i click non aprono
+  nulla. Consentiti i tasti salto (solo scroll) e il cambio lingua, che equivale al tasto `L`.
+- **'Torna al punto di partenza se non si salva'**: chiudere la colonna ripristina l'ultimo
+  salvato. Dopo un salvataggio riuscito è un no-op, perché lo snapshot è già sincronizzato.
+- **La tab del tema commuta il TEMA DEL SITO, solo in dock** ('se modifico le impostazioni del tema
+  scuro, il sito deve passare al tema scuro'), e alla chiusura vera il tema torna a quello
+  d'apertura.
+- ⚠️ Il **'top del top'** che aveva chiesto (solo il contenuto scuro, pannello chiaro) **non è
+  praticabile a costo sano**: tutto il CSS del tema è vincolato all'attributo sulla radice e non è
+  circoscrivibile a un sottoalbero.
+- **Le tab Chiaro/Scuro restano anche in dock**, perché scelgono **quali manopole si editano**; per
+  vedere l'altro tema in pagina c'è il tasto `T`.
 
 ## 🔐 Admin e segreti
 
@@ -1401,329 +1287,192 @@ sessione. Deploy e secret in `proxy/README.md`.
 
 ## ✒️ Convenzioni tipografiche dei dati (`dati.js`)
 
-Stile uniforme per **tutti** i campi testuali delle voci, deciso dall'utente e
-applicato in blocco con la bonifica della v1.84 (le regole universali, p.es.
-l'apostrofo dritto in `Roccobot.md`, restano invariate; questo è lo standard
-specifico del dataset):
+Stile uniforme per **tutti** i campi testuali delle voci, deciso dall'utente. Le regole universali
+(p.es. l'apostrofo dritto) restano quelle di `Roccobot.md`: questo è lo standard specifico del
+dataset.
 
-- **Virgolette: sempre apice dritto `'`.** Ogni tipo di virgoletta (caporali
-  `«»`, doppie curve `“”`, doppie dritte `"`) si rende con l'apice dritto
-  singolo `'`, sia per le citazioni (`citazione`) sia per glosse/incisi interni.
-  Mai `«»`, mai virgolette curve, mai doppie.
-- **Apostrofi: sempre dritti `'`** (mai i curvi `’`/`‘`).
-- **Trattini:** `–` (en-dash) **solo negli intervalli d'anno**: tipicamente
-  nella `fonte` (es. `1954–55`), ma legittimo anche nei testi quando esprime
-  un intervallo di anni (es. `2758–59` nella descrizione di Helm; chiarimento
-  2026-07-11).
-- ⚠️⚠️ **L'EM-DASH NON SI USA MAI, DA NESSUNA PARTE** (regola dell'utente, ribadita il
-  2026-07-28: 'non devi usare 'sto carattere: l'ho chiesto migliaia di volte'). Vale per
-  **tutto**: i campi di `dati.js`, i testi dell'interfaccia, le note e la documentazione, i
-  messaggi di commit e il corpo delle PR, e le **risposte in chat**, dove è l'errore che
-  ricorre più spesso. Al suo posto: due punti se introduce una spiegazione, virgole o
-  parentesi se è un inciso, punto fermo se separa due frasi. La regola universale
-  corrispondente sta nella sezione 'Caratteri' di `rules/Roccobot.md` ('vietati in ogni
-  output', zero tolleranza): qui è ripetuta perché **questo file ha priorità più alta**.
-  - ⚠️ **Non esiste più alcuna eccezione 'testi narrativi'**, e non va reintrodotta: finché
-    questa sezione dichiarava l'em-dash ammesso negli incisi di `dati.js`, quella dicitura
-    bastava a farlo riapparire altrove.
-  - **Il repo è bonificato: non ne resta nessuno** salvo i tre casi essenziali qui sotto. Il
-    controllo è una riga e deve dare 0 dappertutto: `git ls-files | while read f; do grep -c
-    '—' "$f"; done`. Nei commenti nuovi si usa il **trattino breve**, e nei marcatori di
-    sezione lo stile di casa è `// ── Titolo ──` (box drawing), non il trattino lungo.
-  - **Le sole tre occorrenze legittime** (istruzione dell'utente: 'va tenuto solo dove è
-    assolutamente essenziale'): questa regola, che per dire di non usarlo deve nominarlo, e le
-    due **tabelle dei caratteri** di RoccobotOS (`index.html`, `Caratteri.html`), che ne
-    documentano la scorciatoia di tastiera. Legittime anche, per necessità tecnica, le
-    **espressioni regolari** che devono riconoscerlo nel testo di un sito remoto.
-  - ⚠️ **L'EN-DASH `–` resta ammesso negli intervalli d'anno** (vedi 'Trattini' qui sopra:
-    `1954–55`): il divieto totale riguarda l'em-dash, e va letto insieme a quella regola, non
-    contro di essa. Gli intervalli si scrivono senza spazi attorno al segno, quindi non
-    ricadono nei casi da sostituire.
-- **Ellissi:** tre punti `...` (mai il carattere unico `…`).
-- **Maiuscola iniziale:** ogni campo-riga mostrato nella card, cioè `descrizione`,
-  `nomi_alternativi` e `appellativi` (IT ed EN), **inizia con la maiuscola**,
-  anche gli epiteti nudi (`Il Bianco`, `L'Alto`, `Il Vecchio`, `The Old`). Vale
-  per la prima lettera della riga; gli elementi successivi di un elenco separato
-  da virgola seguono le regole normali.
-- **Nomi comuni di creatura in minuscolo se discorsivi (`drago`/`dragon`, ecc.).**
-  Quando la parola è usata come nome comune nel testo corrente va **minuscola**
-  in entrambe le lingue (`Misterioso drago...`, `a mysterious dragon...`); la
-  maiuscola resta solo per: inizio riga/frase, nomi propri (`Elmo-di-Drago` =
-  Dragon-helm, `Drago Verde` = Green Dragon), titoli/epiteti (`Padre dei Draghi`
-  = Father of Dragons, `Uccisore del Drago`) e composti propri EN (`Dragon-helm`,
-  `Dragon-sickness`). Verificato in blocco su tutti i draghi (2026-07-20): l'EN
-  già coerente; corretto il solo refuso IT `Misterioso Drago`→`drago` (Gostir).
-- **Toponimo 'Terra di Mezzo' con l'articolo:** in italiano si scrive sempre
-  **'nella Terra di Mezzo'** (e 'della/alla/dalla Terra di Mezzo'), **mai** la
-  forma nuda 'in Terra di Mezzo'. Regola dell'utente (2026-07-06), applicata in
-  blocco al dataset (Finarfin, Galadriel, Círdan). Vale per ogni campo IT; l'EN
-  resta 'in Middle-earth'.
-- **'Legendarium' sempre con l'iniziale maiuscola.** Il termine (il corpus
-  mitologico di J.R.R. Tolkien) si scrive **'Legendarium'**, mai 'legendarium',
-  in ogni campo, in entrambe le lingue e anche nelle note editoriali. Regola
-  dell'utente (2026-07-10), applicata in blocco a `dati.js` (16 occorrenze) e
-  alle note in `index.html`. È anche regola universale di canone: vedi
-  `rules/JRRT.md`.
-- **Toponimo 'Nargothrond': regno (con articolo) vs città (senza).**
-  Nargothrond è al tempo stesso il **regno** e la sua **capitale**: l'articolo
-  dipende dal senso, da ricavare **dal contesto caso per caso**.
-  - **Regno → con articolo** (in italiano prende l'articolo come i nomi di
-    regno): titoli di sovrano/nobiliare (`Re/Principe/Principessa/Signore del
-    Nargothrond`), genitivi riferiti al regno (`popolo/saccheggio/tesoro/fedeli
-    del Nargothrond`) e i locativi che indicano lo stare/muoversi entro il
-    regno (`nel Nargothrond`, `sul Nargothrond`, `cacciato dal Nargothrond`).
-  - **Città → senza articolo** (si comporta come ogni nome di città):
-    raggiungere/portare fisicamente il luogo (`a Nargothrond`, `portò a
-    Nargothrond`), le sue rovine (`rovine di Nargothrond`) e la città come
-    soggetto/oggetto di saccheggio o caduta (`Saccheggiò Nargothrond`,
-    `Nargothrond fu saccheggiata`, `Nargothrond cadde`: concordanza al
-    **femminile**, 'la città'). NB: senza articolo il participio torna
-    femminile (`saccheggiata`, non `saccheggiato`).
-  - **EN invariato:** l'inglese non prende mai articolo (`of/to/at/from
-    Nargothrond`), in entrambi i sensi.
-  - Regola dell'utente (2026-07-12), applicata in blocco al dataset (bonifica
-    v6.37→v6.39). È il primo toponimo del progetto con articolo dipendente dal
-    contesto; la difficoltà è proprio distinguere ogni volta regno da città.
+- **Virgolette: sempre apice dritto `'`.** Ogni tipo di virgoletta (caporali, doppie curve, doppie
+  dritte) si rende con l'apice dritto **singolo**, sia nelle citazioni sia nelle glosse interne.
+- **Apostrofi: sempre dritti `'`**, mai i curvi.
+- **Ellissi:** tre punti `...`, mai il carattere unico `…`.
+- **Trattini:** l'en-dash `–` **solo negli intervalli d'anno**, tipicamente nella `fonte` (es.
+  `1954–55`) ma legittimo anche nei testi quando esprime un intervallo (es. `2758–59`), scritto
+  **senza spazi** attorno al segno.
+- ⚠️⚠️ **L'EM-DASH NON SI USA MAI, DA NESSUNA PARTE** ('non devi usare 'sto carattere: l'ho chiesto
+  migliaia di volte'). Vale per **tutto**: i campi di `dati.js`, i testi dell'interfaccia, le note
+  e la documentazione, i messaggi di commit e i corpi delle PR, e le **risposte in chat**, dove è
+  l'errore che ricorre più spesso. Al suo posto: **due punti** se introduce una spiegazione,
+  **virgole o parentesi** se è un inciso, **punto fermo** se separa due frasi. La regola universale
+  sta in `Roccobot.md`, sezione 'Caratteri', a tolleranza zero: qui è ripetuta perché **questo file
+  ha priorità più alta**.
+  - ⚠️ **Non esiste più alcuna eccezione 'testi narrativi', e non va reintrodotta**: finché questa
+    sezione dichiarava l'em-dash ammesso negli incisi di `dati.js`, quella dicitura bastava a
+    farlo riapparire **altrove**, chat compresa.
+  - **Il repo è bonificato.** Il controllo è una riga e deve dare 0 dappertutto:
+    `git ls-files | while read f; do grep -c '—' "$f"; done`. Nei commenti si usa il **trattino
+    breve**, e nei marcatori di sezione lo stile di casa è `// ── Titolo ──` (box drawing).
+  - **Le sole occorrenze legittime**: questa regola, che per dire di non usarlo deve nominarlo; le
+    due **tabelle dei caratteri** di RoccobotOS, che ne documentano la scorciatoia di tastiera; e
+    per necessità tecnica le **espressioni regolari** che devono riconoscerlo in un testo remoto.
+- **Maiuscola iniziale** su ogni campo-riga mostrato nella card (`descrizione`,
+  `nomi_alternativi`, `appellativi`, IT ed EN), anche sugli epiteti nudi (`Il Bianco`, `L'Alto`,
+  `The Old`). Vale per la prima lettera della riga; gli elementi successivi di un elenco seguono
+  le regole normali.
+- **Nomi comuni di creatura in minuscolo se discorsivi** (`drago`/`dragon`), in entrambe le
+  lingue. Maiuscola solo per: inizio riga o frase, nomi propri (`Elmo-di-Drago`, `Drago Verde`),
+  titoli ed epiteti (`Padre dei Draghi`, `Uccisore del Drago`) e composti propri EN
+  (`Dragon-helm`, `Dragon-sickness`).
+- **Toponimo 'Terra di Mezzo' con l'articolo:** in italiano sempre **'nella Terra di Mezzo'** (e
+  della/alla/dalla), **mai** la forma nuda 'in Terra di Mezzo'. L'EN resta 'in Middle-earth'.
+- **'Legendarium' sempre con l'iniziale maiuscola**, in ogni campo, in entrambe le lingue e anche
+  nelle note editoriali. È anche regola universale di canone: vedi `JRRT.md`.
+- **Toponimo 'Nargothrond': regno (con articolo) vs città (senza)**, e il senso si ricava **dal
+  contesto caso per caso**. È il primo toponimo del progetto con articolo dipendente dal contesto,
+  e la difficoltà è proprio distinguere ogni volta i due sensi.
+  - **Regno → con articolo**: titoli di sovrano (`Re/Principe/Signore del Nargothrond`), genitivi
+    riferiti al regno (`popolo/tesoro/fedeli del Nargothrond`) e i locativi dello stare o muoversi
+    entro il regno (`nel`, `sul`, `cacciato dal`).
+  - **Città → senza articolo**: raggiungere o portare fisicamente il luogo (`a Nargothrond`), le
+    sue rovine, e la città come soggetto o oggetto di saccheggio o caduta, con concordanza al
+    **femminile** ('la città'): `Nargothrond fu saccheggiata`, `Nargothrond cadde`. ⚠️ Senza
+    articolo il participio torna femminile.
+  - **EN invariato:** l'inglese non prende mai articolo, in entrambi i sensi.
 
-- **Filtri badge (dalla v4.05).** Ogni riga della legenda del Pannello è un
-  interruttore (`BADGE_ROWS`: le righe raggruppate filtrano l'unione dei loro
-  badge): selezioni multiple in **unione**, incrociate con le categorie
-  attive dentro `isVisibile`. Non persistito, **ignorato dagli URL
-  condivisi**, azzerato entrando nel riordino; incrocio senza risultati →
-  messaggio `.rank-empty`.
-  - **Filtro a risultati 0: impedito (dalla v7.40; logica corretta e scossina
-    dalla v7.43).** Una riga-badge il cui badge non ha **alcun portatore nelle
-    categorie attive** viene **disabilitata**: `badgeRowNoMembersInCats(row)` in
-    `buildLegend` le mette la classe `.leg-disabled` (attenuata, `aria-disabled`).
-    Resta **cliccabile**: il clic non filtra, fa solo una **scossina**
-    (`.leg-shake`, keyframe CSS; `shakeRow`/`activateBadgeRow` in
-    `wireControlPanel`) come feedback 'non selezionabile'. Si riabilita da sé al
-    cambio categorie (la legenda si ricostruisce a ogni `applyFilter`). Le righe
-    già **attive** non sono mai disabilitate (si possono sempre spegnere). Resta
-    anche un **guard** in `toggleBadgeRow` (`visibleCountWithBadgeSet` == 0 →
-    nessun effetto) come rete di sicurezza per il toggle-off che svuoterebbe.
-    ⚠️ **Bug corretto in v7.43:** la prima versione usava `badgeRowWouldEmpty`
-    ('accenderla svuoterebbe il totale?'), sbagliato coi badge in **UNIONE**:
-    con un altro badge già attivo, aggiungerne uno non svuota mai (l'insieme
-    cresce), così dopo un filtro TUTTE le righe prima spente 'riapparivano'
-    attivabili (segnalato: Solo Animali → filtro Compagnia → tutte le righe di
-    nuovo attive). Il criterio giusto è per-riga sulle categorie, indipendente
-    dagli altri badge. Con la disabilitazione il messaggio `.rank-empty` resta
-    solo un fallback teorico.
-    ⚠️ **Potatura al cambio categoria (fix v7.45):** un filtro badge già ATTIVO
-    che, cambiando le categorie, non ha più portatori nelle categorie attive
-    va DISATTIVATO da sé. `pruneBadgeFilter()` (chiamata in testa a `applyFilter`)
-    rimuove da `badgeFilter` le righe senza portatori (via `rowHasMembersInCats`,
-    base condivisa con la disabilitazione). Senza, il filtro restava bloccato
-    dando lista vuota e non lo si riusciva più a togglare (segnalato: Tutti +
-    apocrifi, filtro Calaquendi, poi Solo Hobbit → lista vuota bloccata).
-  - Sotto le Categorie c'è lo **slot del tag**
-  (`.ctrl-tag-slot`): a filtro attivo mostra il **tag** `× N badge attivi`
-  (centrato sui due assi, il click azzera); a filtro spento resta **vuoto ma
-  riserva l'altezza del tag** (`min-height:21px` su desktop, dalla v7.29), così
-  il tag compare/sparisce **in-place senza reflow** e il blocco Categorie non si
-  sposta. Storico: fino alla v7.28 lo slot a filtro spento ospitava un
-  **suggerimento in corsivo** (`.ctrl-badge-hint`, 'Scegli uno o più badge...')
-  messo solo per **riempire il vuoto** della colonna sinistra; rimosso in v7.29
-  (ridondante e sotto la soglia AA di contrasto in tema chiaro) quando la
-  legenda, persa una riga per la riga Re unica, si è accorciata e il riempitivo
-  non serviva più. Le righe categoria e legenda condividono il passo verticale
-  esplicito di 31.5px (righe in fase, deriva azzerata).
+### Filtri badge del Pannello
 
-- ⚠️ **L'hover delle righe del Pannello NON transita** (dalla v14.77, segnalato
-  dall'utente: 'l'hover lagga sempre più di quanto sembrerebbe naturale'). Non era la
-  macchina: era una dissolvenza di 0.15s **nostra**, in entrata e in uscita. Misurato:
-  il fondo raggiungeva il valore pieno **171ms** dopo l'ingresso del puntatore, in 7
-  passi intermedi - su una lista di interruttori quel ritardo si legge come risposta
-  lenta. E costava: passando il puntatore su dieci righe di legenda, il tracing di
-  Chrome dava **253ms** di rendering su 2s di movimento (12,6% del tempo), scesi a
-  **62ms** (4,1%) togliendo la transizione: un fattore 4, perché ogni riga veniva
-  ripitturata per ~9 frame a ogni entrata e altrettanti a ogni uscita.
-  - ⚠️ **NON erano la sfocatura né l'ombra del Pannello**, che è la prima cosa a cui si
-    pensa: misurato, 253ms contro 254 togliendo il `backdrop-filter` e 246 togliendo il
-    `box-shadow`. Prima di sospettare il blur, contare i frame delle transizioni.
-  - La dissolvenza **resta dove è un cambio di STATO**: l'accensione del filtro badge
-    (`.ctrl-legend-row.on`, con la `transition` dichiarata sullo stato di arrivo) e la
-    spunta della checkbox. Il passaggio del puntatore non transita in nessun verso.
-  - Lo strumento è `scratchpad/hoverperf.js` (CDP `Tracing`, somma di
-    `Paint`/`RasterTask`/`Commit`/`UpdateLayoutTree`/`PrePaint`).
-- ⚠️⚠️ **TABLET CON MOUSE: quel browser NON fa hover, e questo spiega tutto insieme**
-  (accertato dall'utente su dispositivo reale, 2026-07-28). Due segnalazioni che
-  sembravano distinte - «nel Pannello non c'è il mouseover» e «il Colore schede si
-  comporta come su mobile: nessun hover al passaggio, e la scheda cliccata resta
-  colorata finché non ne clicco un'altra» - sono **lo stesso fatto**: su quel tablet il
-  browser non entra mai nello stato `:hover` col movimento del mouse; lo applica **al
-  clic** e lo lascia **appiccicato**, esattamente come fa col tap.
-  - Le regole `:hover` del Pannello **non sono gatate** su `(hover:hover)`, quindi non è
-    il nostro CSS a spegnerle: è il browser che non produce l'evento. ⚠️ **L'emulazione
-    NON riproduce il caso**: in un contesto touch di Chromium `(hover:hover)` è `false`
-    ma `:hover` si applica comunque al movimento del mouse (misurato). Quindi questo
-    comportamento si accerta solo sul dispositivo vero.
-  - ⚠️ **Corollario che raddrizza il ragionamento su `FX_PTR`:** il discriminante di
-    `hov` (e il gate del riflettore) **non chiede 'c'è un mouse?' ma 'questo browser fa
-    hover?'** - ed è la domanda giusta. Là il browser risponde no e si comporta
-    coerentemente, quindi applicare la variante **'A tocco'** è corretto: sembra un
-    paradosso ('col mouse mi dà la versione touch') e invece è il criterio che funziona.
-    Un discriminante basato sull'hardware darebbe la variante 'Col mouse' a un browser
-    che l'hover non lo fa.
-  - Misurato in quel contesto: `fxActiveSfx('hov')` = `_m`, config applicata `hov_m`;
-    il **riflettore non si aggancia** (stesso gate); bagliore, incisione ecc. usano le
-    `_m` per la soglia dei 768px. E il Pannello, non avendo tab a quella larghezza,
-    regola **la variante attiva riga per riga** (meccanismo v14.23), quindi da quel
-    tablet la voce 'Colore schede' modifica proprio `hov_m`: quello che si regola è
-    quello che si vede.
-  - ⚠️ Conseguenza pratica da ricordare: su quel dispositivo **non si vede la taratura
-    desktop**. Se le due varianti divergono (nel salvato: `hov` ha `bd:false`, op
-    0.12/0.09, sat 1.25/1.1; `hov_m` ha `bd:true`, op 0.18/0.11, sat/lum 1) la resa è
-    diversa, e non è un difetto.
-- ⚠️ **Il Pannello ha DUE layout e UNA sola soglia: 768px** (assestato nella v14.67,
-  difetto segnalato dall'utente da un tablet in verticale). Sopra i 768px due colonne
-  affiancate; da 768px in giù la **bottom-sheet a colonna singola**, sempre.
-  - **RIMOSSO nella v14.67 il ramo `@media (min-width:640px) and (max-width:768px)`**
-    che dentro la sheet metteva il contenuto a due colonne. Non era una soglia da
-    ritarare: quel layout **non ci sta in nessun punto del suo stesso intervallo**. La
-    legenda ha righe a capo vietato e chiede ~515px, la colonna delle categorie ~250px
-    col tasto SOLO, più 24px di gap = **~790px minimo**, cioè più del tetto di 768px del
-    ramo. Misurato col font reale in entrambe le lingue: a **768px** (il caso migliore)
-    l'etichetta più lunga sforava ancora di **63px** sotto i tasti SOLO e il tasto TUTTI
-    entrava nella legenda per **71px**; a 640px si arrivava a 127 e 135px.
-  - **Perché nessuno se n'era accorto:** fra 640 e 768px non passa nessun telefono, e il
-    ramo è diventato insufficiente col TEMPO - le etichette delle categorie sono state
-    allungate (v10.79, nomi per esteso: `Edain e Númenóreani`, `Esseri
-    arcani/primordiali`) e la legenda si è arricchita. Lezione: un layout tarato su una
-    fascia di viewport che nessun dispositivo comune occupa non si accorge di rompersi.
-  - ⚠️ **Ma la colonna singola, oltre i telefoni, non deve STIRARSI.** Nella sheet
-    `.ctrl-cols` è `width:100%` (anti-jitter: a larghezza piena il bordo sinistro resta
-    fisso al cambio lingua), e sopra i ~600px questo spingeva i tasti SOLO/TUTTI a
-    centinaia di px dalle etichette - il vuoto che il ramo a due colonne voleva evitare.
-    Rimedio: fra **481 e 768px** il blocco prende `max-width:23rem` e si centra.
-    - ⚠️ **La larghezza è una COSTANTE, non `fit-content`**: provato, e con `fit-content`
-      il blocco **slitta di 5px** al cambio lingua, perché la legenda misura 334px in IT
-      e 324px in EN (le riserve `leg-measure` non azzerano lo scarto al pixel) ed è
-      centrato. 23rem = 368px = 34px di margine sulla riga più larga. ⚠️ Se la legenda si
-      allunga, RIMISURARE.
-    - ⚠️ **Sotto i 481px non si tocca**: sui telefoni la larghezza piena è già la misura
-      naturale, e intervenire lì rimetterebbe in gioco lo scivolamento orizzontale.
-  - Verificato: **33/33** su 390/480/500/600/640/720/768px in entrambe le lingue (nessuna
-    sovrapposizione, nessuno scorrimento orizzontale, blocco immobile al cambio lingua),
-    Pannello **identico al pixel** a 390px e a 1400px, axe **0** a 600/720/768px nei due
-    temi. Lo strumento è `scratchpad/tabfix.js`.
+Ogni riga della legenda è un interruttore, le selezioni multiple valgono in **unione** e si
+incrociano con le categorie attive. Non persistiti, ignorati dagli URL condivisi, azzerati
+entrando nel riordino. Un tag sotto le Categorie dice quanti badge sono attivi e il click lo
+azzera.
 
-- **Elfi senza stirpe attestata: etichetta `Elfo`, colore 'suggerito'.**
-  Erestor e Lindir non hanno stirpe attestata dalle fonti: l'etichetta resta
-  `Elfo`/`Elfa` (niente invenzioni), ma il COLORE via `tipo_color` suggerisce
-  l'appartenenza più probabile, per scelta dell'utente: **Erestor** →
-  `type-noldo`, **Lindir** → `type-sinda` (ramo Teleri). Non sono anomalie
-  da ripulire: gli override sono deliberati.
-  - **Re-Stregone di Angmar: etichetta `Uomo`, colore númenóreano 'suggerito'
-    (dalla v7.20).** Stessa logica: la stirpe non è accertata, quindi l'etichetta
-    è il semplice `Uomo`/`Man` (non più `Uomo (Númenóreano?)`), ma `tipo_color`
-    `type-numenorean|` tiene il colore rosso dei Númenóreani come indizio (il 2º
-    segmento `Spettro dell'Anello` resta auto = `type-shadow`). Il `?` era stato
-    tolto perché allargava l'etichetta e rompeva la riga singola di nome+badge.
-    ⚠️ Diverso da **Berúthiel** `Donna (Númenóreana Nera?)`, dove il `?` resta
-    voluto: lì la confidenza dell'utente sulla stirpe è più alta (pur senza
-    ufficialità), quindi si tiene la forma con `?`. Non uniformare i due casi.
+- ⚠️ **Una riga senza portatori nelle categorie attive è DISABILITATA ma resta cliccabile**: il
+  clic non filtra e fa solo una **scossina** come feedback. Le righe già **attive** non sono mai
+  disabilitate, perché si devono poter spegnere.
+- ⚠️ Il criterio giusto è **per-riga sulle categorie attive**, non 'accenderla svuoterebbe il
+  totale?': coi badge in unione aggiungerne uno non svuota mai, e col criterio sbagliato dopo un
+  filtro tutte le righe prima spente 'riapparivano' attivabili. Col criterio giusto il messaggio
+  di lista vuota resta un fallback teorico.
+- ⚠️ **Al cambio di categoria un filtro attivo che perde i portatori va POTATO da sé**, o la lista
+  resta vuota e il filtro non si riesce più a togliere.
+
+### Hover e layout del Pannello
+
+- ⚠️ **L'hover delle righe NON transita** ('l'hover lagga sempre più di quanto sembrerebbe
+  naturale'). Non era la macchina: era una dissolvenza **nostra** di 0,15s in entrata e in uscita,
+  col fondo che arrivava a valore pieno **171ms** dopo l'ingresso del puntatore, in 7 passi. E
+  costava: passando su dieci righe, **253ms** di rendering su 2s di movimento (12,6%), scesi a
+  **62ms** (4,1%) togliendola.
+  - ⚠️ **NON erano la sfocatura né l'ombra del Pannello**, che è la prima cosa a cui si pensa:
+    misurato, 253ms contro 254 togliendo il `backdrop-filter` e 246 togliendo il `box-shadow`.
+    **Prima di sospettare il blur, contare i frame delle transizioni.** Lo strumento è
+    `scratchpad/hoverperf.js`.
+  - La dissolvenza **resta dove è un cambio di STATO** (accensione di un filtro badge, spunta di
+    una checkbox); il passaggio del puntatore non transita in nessun verso.
+- ⚠️ **DUE layout e UNA sola soglia: 768px.** Sopra, due colonne affiancate; da 768px in giù la
+  bottom-sheet a colonna singola, sempre.
+  - **Rimosso il ramo intermedio 640-768px** che dentro la sheet metteva due colonne: non era una
+    soglia da ritarare, quel layout **non ci sta in nessun punto del suo stesso intervallo**
+    (chiede ~790px minimo, più del suo tetto di 768). Misurato col font reale in entrambe le
+    lingue: a **768px**, il caso migliore, l'etichetta più lunga sforava di **63px** e il tasto
+    TUTTI entrava nella legenda per **71px**.
+  - **Perché nessuno se n'era accorto:** fra 640 e 768px non passa nessun telefono, e il ramo è
+    diventato insufficiente **col tempo**, quando le etichette delle categorie sono state
+    allungate e la legenda si è arricchita. Lezione: un layout tarato su una fascia di viewport
+    che nessun dispositivo comune occupa **non si accorge di rompersi**.
+  - ⚠️ **Ma la colonna singola, oltre i telefoni, non deve STIRARSI**, o i tasti SOLO e TUTTI
+    finiscono a centinaia di px dalle etichette. Fra 481 e 768px il blocco prende una larghezza
+    massima e si centra. ⚠️ **La larghezza è una COSTANTE, non `fit-content`**: provato, e con
+    `fit-content` il blocco **slitta di 5px** al cambio lingua, perché la legenda misura 334px in
+    IT e 324px in EN. **Se la legenda si allunga, rimisurare.**
+  - ⚠️ **Sotto i 481px non si tocca**: sui telefoni la larghezza piena è già la misura naturale, e
+    intervenire lì rimetterebbe in gioco lo scivolamento orizzontale. Lo strumento è
+    `scratchpad/tabfix.js`.
+- ⚠️ Per il caso **tablet con mouse**, che spiega insieme l'assenza di hover nel Pannello e la
+  variante 'A tocco' del Colore schede, vedi la sezione del Pannello di controllo: è lo stesso
+  fatto, e la nota vive là.
+
+### Elfi ed etichette senza stirpe attestata
+
+- **Erestor e Lindir**: la stirpe non è attestata, quindi l'etichetta resta `Elfo`/`Elfa` (niente
+  invenzioni), ma il **colore** suggerisce l'appartenenza più probabile, per scelta dell'utente.
+  Non sono anomalie da ripulire: gli override sono **deliberati**.
+- **Re-Stregone di Angmar**: stessa logica, etichetta `Uomo`/`Man` e colore númenóreano come
+  indizio. Il `?` della vecchia forma è stato tolto perché allargava l'etichetta e rompeva la riga
+  singola di nome e badge.
+- ⚠️ **Diverso da Berúthiel** `Donna (Númenóreana Nera?)`, dove il `?` **resta voluto**, perché lì
+  la confidenza dell'utente sulla stirpe è più alta pur senza ufficialità: **non uniformare i due
+  casi.**
 
 ## 📚 Nuovi personaggi e canone
 
-- **'La nuova ombra' (*The New Shadow*, HoME XII) è esclusa da Arda Top.** Il
-  seguito del *Signore degli Anelli* ambientato nella Quarta Era è appena
-  abbozzato (poche pagine, abbandonato da J.R.R. Tolkien): i suoi personaggi
-  (p.es. Saelon, Borlas) **non vanno inseriti** in classifica. Decisione
-  dell'utente (2026-07-10); Saelon, aggiunto in v5.54, è stato rimosso in v5.55.
-- **Verifica delle fonti sempre.** Per ogni personaggio nuovo o modificato,
-  verificare le fonti e **non scrivere nulla di incerto** (vale per testi,
-  citazioni, genealogie, tipi e anche per icone/badge). Le citazioni devono
-  essere verbatim dalle edizioni ammesse (`rules/JRRT.md`); se un dato non è
-  attestato, ometterlo o segnalarlo, mai inventarlo. **Alla peggio, chiedere.**
-- **Verifica alla lettera SEMPRE tramite grep sulle fonti scaricabili** (regola
-  universale, `rules/JRRT.md` sez. 'Verifica alla lettera'). Ogni conferma su
-  citazioni verbatim, correttezza di un nome proprio, dato attribuito a una
-  fonte o simili si produce **tramite** una ricerca di stringa/grep concreta
-  sulle fonti scaricabili elencate in `JRRT.md`, **mai a memoria** (né su TG né
-  su conoscenza pregressa). Mirata → task singolo; ampia/sistematica → ricerca
-  multi-agente con report finale, **previa conferma** dell'utente. Bacino: quello
-  indicato dall'utente; se non indicato, **tutte** le fonti nell'ordine del
-  canone. Ricerca **a prova di diacritici, in due passaggi**: prima la forma
-  esatta (`Helcaraxë`), poi, solo se non trova, la forma ripulita (`helcaraxe`),
-  perché la stessa parola può avere due grafie legittime tra edizioni (es.
-  `Númenóreano` nel Silmarillion vs `Numenoreano` nel SdA).
-- **Ogni audit dei contenuti DEVE includere la conformità dei nomi propri alla
-  resa STI**, come dimensione a sé. Un nome inglese lasciato in un campo IT (es.
-  `Pippin`→`Pipino`, `Brandybuck`→`Brandibuck`, `Dale`→`la Valle`) NON è un
-  errore di grammatica né di canone e sfugge a un audit di sola qualità del
-  testo: va confrontato voce per voce con le corrispondenze in `JRRT.md` (e con
-  TP/STI per i casi non elencati). Scansione minima: per ogni campo italiano
-  (`nome`, `nomi_alternativi`, `appellativi`, `info`, `descrizione`, `padre`,
-  `madre`) controllare che non resti alcun toponimo/nome anglofono con resa STI
-  nota. Vale anche per i controlli automatici (grep dei nomi anglofoni).
-- **Posizioni in classifica.** Claude può decidere autonomamente dove collocare
-  i nuovi personaggi; a fine lavoro **riferire sempre le loro posizioni** in
-  classifica, calcolate **con tutte le categorie attive**.
-- **Esiti degli audit dei contenuti: decisioni 'da non ri-segnalare'.** Il dataset è passato
-  per due audit semantici multi-agente su tutte le voci (coerenza IT↔EN, canone, tipografia,
-  resa STI), ogni rilievo grep-verificato sulle fonti locali. Quello che ne è uscito e che un
-  audit futuro **segnalerà di nuovo a torto**:
-  - **Nomi alternativi attestati in PE17** (Parma Eldalamberon 17, p.56, ora fonte ammessa):
-    **`Gaerdil`** (Eärendil), **`Elerondo`** (Elrond, via il patronimico *Elerondiel* di Arwen),
-    **`Laicolassë`** (Legolas, da *laic-olasse* 'green-foliage'). Un audit che non peschi PE17 li
-    dirà non attestati: NON lo sono.
-  - **Éomund 'Primo Maresciallo del Mark'**: resa ITA ufficiale tenuta di proposito, benché le
-    fonti usino 'chief/Sommo Maresciallo del Mark' (scelta dell'utente, 'la abbracciamo così
-    com'è').
-  - **Berúthiel `Donna (Númenóreana Nera?)`**: il `?` è voluto, perché la confidenza dell'utente
-    sulla stirpe è alta pur senza ufficialità. Diverso dal Re-Stregone, ridotto a `Uomo`.
-  - **`Pietraforata`** è la resa IT voluta di `Michel Delving`, di fatto la 'capitale' della
-    Contea; la carica `Sindaco di Pietraforata` = `Mayor of Michel Delving`, ed è **sinonimo**
-    di `Sindaco della Contea`.
-  - **Epiteti: rimossi perché non attestati** Isildur 'Tagliatore dell'Anello', Balin 'il Più
-    Anziano', Helm 'il Difensore', Bilbo 'il Ritrovatore dell'Anello', più i nomi apocrifi di
-    Alatar 'Haimenar' e Pallando 'Palacendo'. **Corretto:** Arwen 'Stella della Sera'
-    (inventato) → **'Stella del Vespro'**, traduzione di Evenstar, a sua volta di Undómiel.
-    **Tenuti apposta:** **Imrahil 'il Bello'** (verbatim, SdA Libro V cap. 6), **Bilbo 'il
-    Magnifico'** (epiteto dato da Thranduil nominandolo Amico degli Elfi, fine dello Hobbit) e
-    Arwen 'Gioiello degli Elfi'.
-- **Bandobras → Brandobras.** In italiano il nome è `Brandobras Tuc`, con la R, mentre l'inglese
-  resta `Bandobras Took`. Il soprannome `Bullroarer` ha **due rese ITA attestate**, entrambe
-  tenute: `Ruggitoro, Ruggibrante`. Il monte degli Orchi è `Monte Gram`, mai `Monte Gramma`,
-  forma errata da fandom.
-- **Ent e Ucorni NON sono animali**: vanno tra gli esseri arcani/semi-divini
-  (categoria `divini`). Gli Ent ci finiscono già dal fallback di `categoria()`
-  ("forze ancestrali residue"). Casi-limite editoriali (es. il Vecchio
-  Uomo Salice, etichettato 'Spirito della foresta') restano in `divini`.
-- **Schede (card) di Ent, Aquile e Vecchio Uomo Salice** (scelte dell'utente). ⚠️ Riguarda la
-  **card** (classe `.rank-item.divine*`: sfondo, bordo sinistro, hover) e **NON l'etichetta
-  tipo**, che resta ai colori automatici (`type-ent`, `type-eagle`, `type-spirit`) e non si
-  tocca: è l'errore in cui si è già caduti una volta, cambiando le *etichette* invece delle
-  *schede*. L'assegnazione avviene in `renderList`, non dai dati.
-  - **Tutti gli Ent** (`p.tipo === 'Ent'`) e **tutte le Grandi Aquile** (`p.tipo === 'Grande
-    Aquila'`) prendono la **scheda verde delle Creature primordiali** (`.divine.bombadil`, la
-    Classe di Tom Bombadil). ⚠️ Per Fimbrethil il `tipo` è normalizzato da 'Entessa'/'Entwife' a
-    **'Ent'** (`genere:f` invariato), così rientra nel match.
-  - Il **Vecchio Uomo Salice**, l'**Osservatore nell'Acqua** e i **Guardiani di Cirith Ungol**
-    NON sono Entità angeliche (card oro): stanno fra gli **Esseri crepuscolari** (card scura
-    `.divine.morgoth`, via `darkBg`).
-- **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria
-  'mostri'; per scelta dell'utente stanno nella categoria `orc` (chiave
-  interna invariata), la cui **legenda recita 'Orchi e Troll' / 'Orcs &
-  Trolls'** (`CAT_LABEL`). Il `tipo` resta 'Troll' col suo colore-badge
-  dedicato (`type-troll`, vedi 'Etichette tipo'); `categoria()` mappa
-  `troll → orc`. La decisione è di **merito canonico/editoriale**, non dettata
-  dalla visibilità di default (cfr. regola universale 'Correttezza e canone
-  prima della funzionalità').
-- ⚠️ **L'accessibilità WCAG AA è un vincolo permanente del sito** (istruzione dell'utente,
-  2026-07-29): qualunque modifica alla grafica, ai colori o alle opacità deve restare conforme,
-  e i valori tarati su quella soglia non si alzano senza rimisurare. Questa è la formulazione
-  che vale: i tetti per-manopola misurati uno per uno **non** vanno più elencati qui, perché il
-  sito è vicino alla sua forma definitiva e quell'elenco costava più di quanto rendesse.
-  - ⚠️ Dove misurare NON è banale la nota resta, perché è una trappola e non un numero: **axe
-    non valuta il contrasto sulle card** (con un `::before` sull'elemento rinuncia a
-    determinare il fondo e classifica tutto come `incomplete`), quindi là la verifica si fa **a
-    calcolo sui pixel**.
-- **Test di accessibilità con TUTTE le categorie attive.** L'audit `axe-core` va eseguito dopo
-  aver attivato tutte le categorie (`divini` e `animali` sono spente di default): altrimenti i
-  badge di quelle categorie non vengono testati.
+- ⚠️ **Verifica delle fonti sempre, e alla lettera TRAMITE grep.** Per ogni voce nuova o modificata
+  si verificano le fonti e **non si scrive nulla di incerto** (testi, citazioni, genealogie, tipi,
+  badge). Ogni conferma si produce **tramite una ricerca di stringa concreta** sulle fonti
+  scaricabili elencate in `JRRT.md`, **mai a memoria**, né su Tolkien Gateway né su conoscenza
+  pregressa. Mirata → task singolo; ampia o sistematica → ricerca multi-agente con report, **previa
+  conferma** dell'utente. Se un dato non è attestato si omette o si segnala, mai lo si inventa:
+  **alla peggio, chiedere.**
+  - **Ricerca a prova di diacritici, in DUE passaggi**: prima la forma esatta (`Helcaraxë`), poi,
+    **solo se non trova**, la forma ripulita (`helcaraxe`), perché la stessa parola può avere due
+    grafie legittime fra edizioni (`Númenóreano` nel Silmarillion contro `Numenoreano` nel SdA).
+- ⚠️ **Ogni audit dei contenuti DEVE includere la conformità dei nomi propri alla resa STI**, come
+  dimensione a sé. Un nome inglese lasciato in un campo italiano (`Pippin`→`Pipino`,
+  `Brandybuck`→`Brandibuck`, `Dale`→`la Conca`) **non è** un errore di grammatica né di canone, e
+  sfugge a un audit di sola qualità del testo: va confrontato voce per voce con le corrispondenze in
+  `JRRT.md`, e con TP/STI per i casi non elencati. Vale anche per i controlli automatici.
+- **Posizioni in classifica.** Claude può decidere autonomamente dove collocare le voci nuove, e a
+  fine lavoro **riferisce sempre le loro posizioni**, calcolate **con tutte le categorie attive**.
+- ⚠️ **L'accessibilità WCAG AA è un vincolo permanente del sito**: qualunque modifica a grafica,
+  colori o opacità deve restare conforme, e i valori tarati su quella soglia non si alzano senza
+  rimisurare.
+  - ⚠️ Dove misurare **non** è banale la nota resta, perché è una trappola e non un numero: **axe non
+    valuta il contrasto sulle card**, quindi là la verifica si fa **a calcolo sui pixel**.
+- ⚠️ **L'audit axe va eseguito con TUTTE le categorie attive**, perché due sono spente di default e
+  altrimenti i badge di quelle categorie non vengono testati.
+
+### Scelte di canone da non ridiscutere
+
+- **'La nuova ombra' (*The New Shadow*, HoME XII) è ESCLUSA dal progetto.** Il seguito ambientato
+  nella Quarta Era è appena abbozzato e fu abbandonato da J.R.R. Tolkien: i suoi personaggi **non
+  vanno inseriti**. Una voce aggiunta per errore è già stata rimossa.
+- **Ent e Ucorni NON sono animali**: vanno fra gli esseri arcani e semi-divini, e i casi-limite
+  editoriali (il Vecchio Uomo Salice, 'Spirito della foresta') restano là.
+- **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria 'mostri', quindi per
+  scelta dell'utente stanno nella categoria degli Orchi, la cui legenda recita **'Orchi e Troll'**.
+  La decisione è di **merito canonico ed editoriale**, non dettata dalla visibilità di default.
+- **Schede di Ent, Aquile e Vecchio Uomo Salice.** ⚠️ Riguarda la **card** (sfondo, bordo, hover) e
+  **NON l'etichetta tipo**, che resta ai colori automatici: è l'errore in cui si è già caduti una
+  volta, cambiando le **etichette** invece delle **schede**. Tutti gli Ent e tutte le Grandi Aquile
+  prendono la scheda verde delle Creature primordiali; il Vecchio Uomo Salice, l'Osservatore
+  nell'Acqua e i Guardiani di Cirith Ungol stanno fra gli **Esseri crepuscolari** e **non** sono
+  Entità angeliche. ⚠️ Per Fimbrethil il `tipo` è normalizzato a 'Ent' (genere invariato), così
+  rientra nel match.
+- ⚠️ **Ordinale dei figli di Finarfin: Angrod SECONDO, Aegnor TERZO**, conseguenza coerente della
+  scelta di fare di **Orodreth un figlio di Angrod** (caso 'note tardive = canone'). Un audit sul
+  Silmarillion pubblicato li segnalerà come sbagliati: **non lo sono.**
+- ⚠️ **Anche la genealogia di Indis (padre Ingwë, madre Ilwen) viene da NoME**: non è un errore da
+  correggere, ed è già stata respinta una correzione in questo senso.
+- **Bandobras → Brandobras** (con la R) in italiano, mentre l'inglese resta `Bandobras Took`. Il
+  soprannome ha **due rese ITA attestate**, tenute entrambe. Il monte degli Orchi è **Monte Gram**,
+  mai 'Monte Gramma', forma errata da fandom.
+
+### ⚠️ Esiti degli audit: cose che un audit futuro segnalerà DI NUOVO a torto
+
+Il dataset è passato per due audit semantici multi-agente su tutte le voci, ogni rilievo verificato
+via grep sulle fonti locali. Quello che ne è uscito:
+
+- **Nomi alternativi attestati in PE17** (ora fonte ammessa): `Gaerdil` per Eärendil, `Elerondo`
+  per Elrond, `Laicolassë` per Legolas. Un audit che non peschi PE17 li dirà non attestati: **lo
+  sono**.
+- **Éomund 'Primo Maresciallo del Mark'**: resa ITA ufficiale tenuta di proposito, benché le fonti
+  usino 'chief/Sommo Maresciallo' ('la abbracciamo così com'è').
+- **`Pietraforata`** è la resa IT voluta di `Michel Delving`, di fatto la 'capitale' della Contea, e
+  `Sindaco di Pietraforata` è **sinonimo** di `Sindaco della Contea`.
+- **Epiteti rimossi perché non attestati**: Isildur 'Tagliatore dell'Anello', Balin 'il Più
+  Anziano', Helm 'il Difensore', Bilbo 'il Ritrovatore dell'Anello', più i nomi apocrifi di Alatar e
+  Pallando. **Corretto** Arwen 'Stella della Sera' (inventato) in **'Stella del Vespro'**, che
+  traduce Evenstar. **Tenuti apposta:** Imrahil 'il Bello' (verbatim, SdA V.6), Bilbo 'il
+  Magnifico' (epiteto di Thranduil, fine dello Hobbit) e Arwen 'Gioiello degli Elfi'.
 
 ## 🔬 Misure tipografiche: servire i font REALI ai test (scoperto il 2026-07-26)
 
@@ -1764,113 +1513,76 @@ dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
 ## 🚩 Feature flag (elementi disattivati, ma non rimossi)
 
 Oggetto **`FEATURES`** in testa allo script di `arda/top/index.html`: interruttori per spegnere
-elementi senza cancellarli dal codice (`false` = spento, `true` = attivo; per riattivare basta
-il flag, niente altre modifiche). ⚠️ **Non sono bug né codice morto**: sono scelte deliberate,
-elencate qui apposta.
+elementi senza cancellarli. ⚠️ **Non sono bug né codice morto**, sono scelte deliberate, ed è per
+questo che stanno elencate qui.
 
-- **`genderLegendPill`** (spento): la pill 'Maschio | Femmina' in fondo alla legenda del
-  Pannello, disattivata per risparmiare spazio e lasciare implicita un'informazione ovvia. Da
-  riaccendere se nasceranno funzioni collegate al genere (es. filtri). ⚠️ I **simboli di genere
-  nelle card** NON dipendono dal flag: li gestisce `renderList` e restano sempre.
-- **`langSwitchMobile`** (spento): il tasto cambio lingua in alto a destra, **solo su mobile**
-  (classe `no-langswitch-mobile` su `<html>`, applicata dall'head, + media query
-  `max-width:768px`). Scopo: interfaccia mobile più pulita, e la lingua si cambia comunque dal
-  Pannello del FAB. Su **desktop** il tasto resta sempre visibile.
-- **`oneRing`** (non un on/off ma un **selettore di variante**): icona dell'Unico Anello, `'A'`
-  (design con contorno, attiva) o `'B'` (design precedente senza contorno). Entrambi i file
-  restano in cartella apposta: per alternare basta cambiare il valore.
-  `BADGE_ICON.onering` costruisce il `src` dal flag.
-- **`adminTranslate`** (spento): traduzione automatica IT↔EN nell'editor admin, con tasto
-  manuale '⇄ Traduci' per coppia bilingue. Spenta su richiesta dell'utente in favore della
-  modale di conferma dei campi dimenticati.
-- **`istariFiveIcons`** (spento): la **riga di legenda** Istari con le **5 icone** dei maghi in
-  fila. Spento = riga normale a icona singola (Gandalf grigio) + testo. Riguarda **solo la
-  legenda**: sulle card le icone-badge per-mago restano sempre (vedi 'Badge Istari' per i
-  vincoli di spaziatura se si riaccende).
-- **`jumpMobileCircle`** (spento): il **tondo** dei tasti salto pagina (`.jump-fab`) su
-  **mobile**. Spento = restano **solo le freccine** (sfondo e bordo trasparenti, glifo con
-  leggera `drop-shadow` per la leggibilità), più discrete; a `true` la classe
-  `html.jump-mobile-circle` ripristina il cerchio velato, utile se le sole freccine non fossero
-  abbastanza usabili. Riguarda **solo mobile**: su **desktop** i tasti hanno sempre il tondo in
-  tinta col FAB (oro su scuro, teal su chiaro, `backdrop-filter:blur`, hover `brightness`).
-  ⚠️ Il blocco CSS mobile sta **dopo** l'override chiaro del `.jump-fab` apposta: stessa
-  specificità, sorgente più in basso, quindi vince senza `!important`.
-  - ⚠️ **Opacità di riposo 0.5 e hover PER-TASTO.** Stanno sul **singolo tasto**
-    (`.jump-fab`/`.jump-fab:hover`), NON sul contenitore, così l'hover illumina solo il tasto
-    sotto il puntatore: con `.jump-fabs:hover` si accendevano entrambi. Il contenitore
-    `.jump-fabs` gestisce solo il fade di comparsa (opacity 0→1, messo a 1 da
-    `showJumpFabsTemporarily`); su mobile i tasti restano a piena opacità.
-- **Scorrimento di pagina: NON è un flag.** La funzione condivisa `pageScrollTo(target,
-  smooth)` ha due modi **fissi**, uno per tipo di comando (scelta dell'utente): i **tasti
-  flottanti** ↑/↓ e Pagina su/giù (`buildJumpFabs`) usano `smooth:true`, cioè un'animazione
-  veloce ma fluida (easing quintico ease-out, effetto inerzia), su desktop e mobile; le
-  **scorciatoie** Ctrl/Cmd+Freccia usano `smooth:false`, cioè il **salto istantaneo**. ⚠️ Il
-  ramo istantaneo forza `scroll-behavior:auto`, perché il CSS globale
-  `html{scroll-behavior:smooth}` altrimenti animerebbe anche il semplice set di `scrollTop`.
+- **`genderLegendPill`** (spento): la pill 'Maschio | Femmina' in fondo alla legenda, spenta per
+  risparmiare spazio e lasciare implicita un'informazione ovvia. Da riaccendere se nasceranno
+  funzioni collegate al genere. ⚠️ I **simboli di genere nelle card** non dipendono dal flag e
+  restano sempre.
+- **`langSwitchMobile`** (spento): il cambio lingua in alto a destra **solo su mobile**, per
+  un'interfaccia più pulita, dato che la lingua si cambia comunque dal Pannello. Su **desktop** il
+  tasto resta sempre visibile.
+- **`oneRing`**: non un on/off ma un **selettore di variante** per l'icona dell'Unico Anello, con
+  contorno o senza. Entrambi i file restano in cartella apposta.
+- **`adminTranslate`** (spento): traduzione automatica IT↔EN nell'editor admin, spenta su richiesta
+  dell'utente in favore della modale di conferma dei campi dimenticati.
+- **`istariFiveIcons`** (spento): la **riga di legenda** Istari con le 5 icone in fila; spento resta
+  la riga normale a icona singola. Riguarda **solo la legenda**: sulle card le icone per-mago
+  restano sempre.
+- **`jumpMobileCircle`** (spento): il **tondo** dei tasti salto su **mobile**, dove restano le sole
+  freccine, più discrete. A `true` torna il cerchio velato, se le freccine non bastassero. Su
+  **desktop** il tondo c'è sempre. ⚠️ Il blocco CSS mobile sta **dopo** l'override chiaro apposta:
+  stessa specificità, sorgente più in basso, quindi vince senza `!important`.
+  - ⚠️ **Opacità di riposo e hover stanno sul SINGOLO tasto**, non sul contenitore, così l'hover
+    illumina solo il tasto sotto il puntatore: sul contenitore si accendevano entrambi.
+- ⚠️ **Lo scorrimento di pagina NON è un flag**: la funzione condivisa ha due modi **fissi**, uno per
+  tipo di comando (scelta dell'utente). I **tasti flottanti** scorrono con animazione fluida, le
+  **scorciatoie da tastiera** fanno il **salto istantaneo**. ⚠️ Il ramo istantaneo deve forzare
+  `scroll-behavior:auto`, o il CSS globale animerebbe anche un semplice set di `scrollTop`.
 
 ### ⌨️ Scorciatoie da tastiera
 
-`.lang-switch` è `position:fixed` (z-index 50), quindi resta in alto a destra anche scorrendo;
-in modalità admin sparisce da sé, perché `html.admin-open` nasconde l'intero `<header>` che lo
-contiene. Un unico listener `keydown`, con `preventDefault` per scavalcare l'azione predefinita
-del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate quando
-`html.admin-open`.
+Un unico listener, con `preventDefault` per scavalcare l'azione del browser; tutte le scorciatoie con
+modificatore sono disattivate in modalità admin.
 
-- **Ctrl+L** (su Mac `⌃L`, col tasto Control, non Command): commuta IT↔EN all'istante; se una
-  scheda è aperta, `setLang` **ricarica anche la modale** nella nuova lingua.
-- **Ctrl (o Cmd) + Freccia Su / Giù**: vai in cima o in fondo alla pagina, **istantaneo**.
-  ⚠️ Su **macOS** `⌃↑`/`⌃↓` sono riservati dal sistema (Mission Control / App Exposé) e non
-  arrivano al browser: lì funziona `⌘↑`/`⌘↓`, e il listener accetta sia Ctrl sia Cmd.
-- **`P` (tasto nudo)**: apre e chiude il Pannello, come un click sul FAB. Guardie: niente
-  modificatori, niente campi di testo, admin o riordino, nessun overlay aperto. ⚠️ La richiesta
-  originaria era catturare **Fn** (macOS) o **Win/Super**, ma NON è possibile da una pagina web
-  (Fn non genera eventi; Win/Super è riservato all'OS e menu Start o vista Attività non sono
-  prevenibili): non riprovarci, si è ripiegato apposta su un tasto lettera stile YouTube.
-- **`Z` (tasto nudo)**: accende e spegne la **modalità ingrandita** per chi guarda. È una
-  **preferenza personale**, non tocca il sito: si memorizza in `localStorage`
-  (`arda-zoom-big`) e **scavalca** il flag di sito. ⚠️ Le guardie di `Z` sono quelle di `P`
-  (solo a modali chiuse) e NON quelle di `T`/`L`: pur agendo lo zoom su tutto, il tasto non
-  deve scattare 'sotto' una modale aperta.
-- **Politica dei tasti nudi nelle modali (regola dell'utente).** **`T` (tema) e `L` (lingua)
-  funzionano in TUTTE le modali**, con le sole eccezioni già documentate (campo di testo
-  attivo; editor colori, che si ricostruisce solo su `L`). **`P` e `Z` solo a modali chiuse.**
-  - ⚠️ La guardia campi blocca solo dove si SCRIVE: `TEXTAREA`, `SELECT`, `contentEditable` e
-    `INPUT` testuali; checkbox, radio, range, button e color NON bloccano, perché dopo un click
-    su una checkbox il focus resta lì e `L`/`T` devono continuare a rispondere.
-  - Le modali che si RICOSTRUISCONO su `L` registrano `langRefresh`. ⚠️ Se una modale sta SOPRA
-    un'altra (es. `#fx-modal` sul Pannello di controllo) conserva l'hook precedente (`prevL`),
-    su `L` ricostruisce PRIMA il livello sotto e poi sé stessa, e alla chiusura **ripristina**
-    `prevL`: azzerarlo lascerebbe il livello sotto senza `L`. Anti-jitter: ogni rebuild conserva
-    lo stato (scroll, tab, selezioni).
-- **`.` (punto, ADMIN-only)**: mostra e nasconde le **linee mediane di allineamento** sulle
-  card, cioè la stessa riga rossa tratteggiata dell'editor micro-aggiustamenti ma **sulla pagina
-  reale**, una per personaggio, a metà del maiuscoletto del nome. **Attiva solo dopo il login
-  admin** (`adminPassword` in memoria), quindi si **spegne da sé al refresh**, che è il
-  comportamento voluto. Guardie come per `P`, **più** Pannello chiuso e login fatto.
-  Implementazione: `toggleCardMidlines`/`placeCardMidlines` (mette la property `--mid` per
-  card), classe `.show-midlines` su `#rank-list`, riga via `::after` disegnata SOTTO il
-  contenuto (`isolation:isolate` + `z-index:-1`); la re-misura è agganciata a `reflowRows`,
-  quindi le linee restano allineate a ogni ridisegno.
-  - ⚠️ **Resa della riga: `height:1px` + `transform:translateY(-50%)`, NON `border-top`.** Un
-    `border-top:1px` si disegna 0.5px SOTTO `top:var(--mid)` e a DPR alto lo snapping del bordo
-    lo spostava in modo non lineare, facendo cadere la linea ~0.5px troppo in basso pur con
-    `--mid` giusto. Una riga `height:1px` centrata via `translateY(-50%)` (tratteggio con
-    `repeating-linear-gradient`) si centra invece esatta su `--mid`, verificato a pixel sul font
-    reale. Stessa resa in editor e pagina.
-  - ⚠️ **Misura ROBUSTA del centro maiuscoletto (`placeMidlinesFor`)**, helper condiviso da
-    pagina ed editor. Due pezzi: la **baseline reale della prima riga**, ottenuta con uno
-    *strut* `inline-block` ad altezza 0 con `vertical-align:baseline` inserito in testa al nome
-    (il suo box 0-height siede esattamente sulla baseline del layout, e se ne prende il
-    `getBoundingClientRect().top`); e il **centro maiuscoletto** = baseline −
-    `smallCapRatio·fontSize`, dove `smallCapRatio` è l'offset del centro sopra la baseline come
-    frazione del corpo, misurato a **pixel a 256px** sul font reale (una 'n' small-cap) e messo
-    in **cache per (peso|famiglia)**, quindi scale-invariant. Si lavora in batch (tutti gli
-    strut, poi le rect in un solo reflow, poi la rimozione) per non forzare 356 reflow a ogni
-    ridisegno.
-    - ⚠️ **Tentativi scartati:** una formula con `fontBoundingBox`/half-leading cadeva ~0.85px
-      troppo in basso, e `measureText` dava sub-pixel diversi a dimensioni diverse (~0.5px
-      nell'editor a 24px). Il metodo attuale è verificato a pixel, con errore ~0, su molti nomi,
-      in pagina e nell'editor.
+- **Ctrl+L**: commuta IT↔EN all'istante, e se una scheda è aperta **ricarica anche la modale** nella
+  nuova lingua.
+- **Ctrl (o Cmd) + Freccia Su/Giù**: in cima o in fondo, istantaneo. ⚠️ Su **macOS** `⌃↑`/`⌃↓` sono
+  riservati dal sistema e non arrivano al browser: lì funziona `⌘↑`/`⌘↓`, e il listener accetta
+  entrambi.
+- **`P`** (tasto nudo): apre e chiude il Pannello. ⚠️ La richiesta originaria era catturare **Fn** o
+  **Win/Super**, ma **non è possibile da una pagina web** (Fn non genera eventi, Win/Super è
+  riservato all'OS e il menu di sistema non è prevenibile): **non riprovarci**, si è ripiegato su un
+  tasto lettera in stile YouTube.
+- **`Z`** (tasto nudo): Modalità XL come **preferenza personale**, che non tocca il sito.
+- **`.`** (punto, **admin-only**): mostra e nasconde le **linee mediane** sulle card, la stessa riga
+  rossa dell'editor micro-aggiustamenti ma sulla pagina reale. Attiva solo dopo il login, quindi si
+  **spegne da sé al refresh**, che è il comportamento voluto.
+- ⚠️ **Politica dei tasti nudi nelle modali** (regola dell'utente): **`T` e `L` funzionano in TUTTE
+  le modali**, con le eccezioni documentate (campo di testo attivo; editor colori solo su `L`).
+  **`P` e `Z` solo a modali chiuse.**
+  - ⚠️ La guardia dei campi blocca **solo dove si scrive**: checkbox, radio, range, button e color
+    **non** bloccano, perché dopo un click su una checkbox il focus resta lì e `L`/`T` devono
+    continuare a rispondere.
+  - ⚠️ Se una modale sta **sopra** un'altra, conserva l'hook di lingua precedente, su `L`
+    ricostruisce **prima il livello sotto** e poi sé stessa, e alla chiusura lo **ripristina**:
+    azzerarlo lascerebbe il livello sotto senza `L`. Ogni rebuild conserva scroll, tab e selezioni.
+
+### ⚠️ Trappole delle linee mediane
+
+- ⚠️ **La riga si disegna con `height:1px` + `translateY(-50%)`, NON con `border-top`**: un bordo si
+  disegna mezzo pixel sotto la coordinata e a DPR alto lo snapping lo spostava in modo non lineare,
+  facendo cadere la linea ~0,5px troppo in basso **pur con la coordinata giusta**.
+- ⚠️ **La misura del centro maiuscoletto è robusta perché usa uno *strut***: un `inline-block` ad
+  altezza 0 con `vertical-align:baseline` inserito in testa al nome siede **esattamente** sulla
+  baseline del layout. Il centro è poi la baseline meno una frazione del corpo, misurata **a pixel
+  sul font reale** e messa in cache per peso e famiglia, quindi scale-invariant. Si lavora in
+  **batch** (tutti gli strut, poi le rect in un solo reflow, poi la rimozione) per non forzare
+  centinaia di reflow a ogni ridisegno.
+  - ⚠️ **Tentativi scartati:** una formula con `fontBoundingBox` e half-leading cadeva ~0,85px
+    troppo in basso, e `measureText` dava sub-pixel diversi a dimensioni diverse. Il metodo attuale
+    è verificato a pixel, con errore ~0, in pagina e nell'editor.
 
 ## 🎨 Etichette tipo (colori e bordo)
 
@@ -1910,351 +1622,209 @@ del browser, gestisce le scorciatoie con **Ctrl (o Cmd)**, tutte disattivate qua
 
 ## 🏅 Criteri editoriali dei badge
 
-- **Badge Aman** (legenda 'Attraversò il Mare'; tooltip esteso in lista 'Salpò per l'Ovest
-  e approdò nelle Terre Imperiture'): segna la **partenza individuale e definitiva** verso
-  Aman di chi si era stabilito nella Terra di Mezzo. **Escluse** le migrazioni primordiali
-  degli Anni degli Alberi: viaggio degli ambasciatori con Oromë e Grande Viaggio. Il
-  criterio è volutamente NON spiegato nella legenda della pagina (semplicità). Casi decisi
-  dall'utente: Finwë, Thingol e Ingwë senza badge; Melian, Eärendil, Elwing, Tuor e Idril lo
-  tengono. **Eönwë tiene il badge** (per il momento, decisione utente) benché Maia nativo di
-  Aman: un audit canonico ne aveva proposto la rimozione, respinta.
-- **Il badge semitrasparente è scollegato dall'idea di 'presunto'.** Il valore `'presunto'`
-  rende l'icona al **50%** (`si-dim`), che è solo un segnale visivo di 'stato a sé':
-  **nessun** suffisso `(presunto)` automatico nel tooltip (rimosso da `buildStatus`). Il
-  significato va dato caso per caso in `ICON_LABEL_OVERRIDE`; se non si è certi di cosa
-  scrivere, **chiedere all'utente**. Le partenze per l'Ovest dedotte ma non attestate
-  (Radagast, Glorfindel, Erestor, Lindir) usano il tooltip comune `AMAN_DEDOTTO`.
-- **Badge Ambasciatori** (chiave `envoy`, la nave degli Anni degli Alberi): marca il
-  **viaggio primordiale degli ambasciatori degli Eldar con Oromë**, evento unico nella
-  storia di Arda. In legenda compare **solo come gruppo
-  secondario della riga Aman** (senza parentesi), 'Attraversò il Mare / Al seguito di
-  Oromë'; il tooltip resta la frase estesa e l'eccezionalità dell'evento non va spiegata in
-  pagina.
-- **Convenzione titoli 'Re Supremo' vs 'Alto Re'.** In inglese è sempre **High King** (i
-  traduttori del Legendarium non l'hanno reso in modo uniforme); in italiano il progetto
-  distingue: **Re Supremo** = governa su TUTTO il suo popolo, su qualunque sponda del Mare;
-  **Alto Re** = nella Terra di Mezzo. Perciò in EN i due si **collassano** in un solo 'High
-  King': è una **asimmetria bilingue legittima** (Fëanor: IT `Re Supremo dei Noldor, Alto Re
-  dei Noldor`, EN il solo `High King of the Noldor`). I badge `king_high` = Re Supremo,
-  `king_std` = Alto Re seguono la stessa logica.
-- **Badge Istari** (chiave `istari`): sulle **card** una o più icone per mago, dal colore
-  della veste (`Bianco` Saruman, `Bruno` Radagast, `Blu1` Alatar, `Blu2` Pallando; mappa
-  `ISTARI_ICON`, i cui valori sono array). **Gandalf è l'unico con due icone**, `Grigio` poi
-  `Bianco`: fu sia il Grigio sia il Bianco.
-  - **Riga di legenda: normale, a icona singola** (Gandalf grigio) + testo, come le altre, e
-    collocata subito prima della Compagnia in `ICON_ORDER`. La variante a **5 icone in fila**
-    (Saruman, Gandalf, Radagast, Alatar, Pallando, ognuno col proprio nome come tooltip) è
-    conservata dietro **`FEATURES.istariFiveIcons`**, default `false`: a `true` torna il
-    cluster, niente altre modifiche. Era nata come feature flag fin dall'inizio.
-    ⚠️ Se si riaccende, i vincoli tarati allora sono: cluster a larghezza **fissa** (`6.40em`)
-    perché il testo delle righe multi-icona parta dallo stesso x delle righe a icona singola;
-    gap **positivo** (`0.30rem`) e dimensionamento per **altezza** (`width:auto`) così i PNG
-    verticali restano vicini ma **senza sovrapporsi**, che era il difetto da cui tutto è
-    partito.
-- **Badge Helcaraxë** (chiave `helcaraxe`): 'Attraversò i ghiacci dell'Helcaraxë'. In
-  `ICON_ORDER` sta al **3° posto, subito dopo `silmaril`**. Criterio dal canone
-  (*Silmarillion*, 'Della fuga dei Noldor'): l'oste di Fingolfin, **Orodreth incluso** perché
-  qui è figlio di Angrod, nato a Valinor. ⚠️ NON lo attraversarono i **Fëanoriani**, giunti con
-  le navi, né **Finarfin**, tornato a Valinor. **Elenwë** (sposa di Turgon, madre di Idril) porta il badge a **opacità
-  50%** ma con **etichetta dedicata**: 'Morì nella traversata dell'Helcaraxë'. È l'unica Elfa
-  con nome noto a perire nei ghiacci, e qui il dimezzamento segna la morte *durante* la
-  traversata, non un dato presunto. Fonte: *I popoli della Terra di Mezzo* (HoME XII), che ne
-  attesta nome e stirpe Vanya.
-- **Badge Aratar di Melkor al 50%** (`aratar: 'presunto'`): Melkor è l'unico Aratar a opacità
-  dimezzata, con **etichetta dedicata** in `ICON_LABEL_OVERRIDE` sotto la chiave `'Melkor'`
-  (che è il `nome` della voce: sotto `'Morgoth'` non scatterebbe): 'Non più annoverato tra
-  gli Aratar dopo la sua ribellione'. Dopo la caduta 'Melkor non è più annoverato tra i
-  Valar' (*Valaquenta*), dunque nemmeno tra gli Aratar: il dimezzamento segna questo status
-  conteso, non un dato presunto.
-- **Cinque badge aggiunti insieme (v3.93, decisioni dell'utente).** L'ordine di
-  resa/legenda/admin vive in `ICON_ORDER` (righe condivise in legenda: Re+In carica,
-  Aman+Oromë+Est, Drago+Balrog, Vilya+Nenya+Narya):
-  - **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos', SOLO Elfi). **Míriel** vi
-    rientra da HoME X, caso 'note tardive'. **Lúthien esclusa** per scelta dell'utente: il suo
-    è un caso a parte (rinascita completa con natura diversa, mortale), non una
-    reincarnazione. Beren fuori per definizione, è un Uomo.
-  - **`est`**: criterio 'traversata IN NAVE dalle Terre Imperiture alla Terra di Mezzo',
-    quindi la Guerra d'Ira (traghettati dai Teleri, Silm cap. 24), i 5 Istari e le navi di
-    Losgar. ⚠️ **Ingwë escluso**: la sua partecipazione alla Guerra d'Ira non è attestata (i
-    testi nominano il figlio Ingwion) e il viaggio degli ambasciatori non avvenne in nave,
-    perché le navi non esistevano.
-  - **`drago`** ('Uccise un Drago'). ⚠️ **Azaghâl escluso**: ferì soltanto Glaurung.
-  - **`balrog`** ('Uccise un Balrog'). **Ecthelion ha un tooltip dedicato**: 'Uccise Gothmog,
-    signore dei Balrog', perché non uccise un Balrog qualunque ma il loro signore. ⚠️ La sua
-    voce in `ICON_LABEL_OVERRIDE` ne ha già una per `calaquende`: le chiavi convivono nello
-    stesso oggetto, non sostituirla. ⚠️ **Tuor escluso**: uccide Balrog solo ne 'Il libro dei
-    racconti perduti II', versione superata del Legendarium.
-  - **`morgoth`** ('Sfidò Morgoth a duello'): SOLO Fingolfin, come **EASTER EGG**. Appare
-    **solo sulla sua card**, NON in legenda (skip in `buildLegend`) né nella griglia admin
-    (skip nella generazione checkbox; il valore è comunque preservato al salvataggio, perché
-    la checkbox è assente), e non è in `BADGE_ROWS`, quindi non è filtrabile. In `ICON_ORDER`
-    sta subito dopo `helcaraxe`. ⚠️ Restano intatte le feature omonime ma **distinte**: la
-    classe card `.rank-item.divine.morgoth` (sfondo scuro dei villain, via `darkBg`) e
-    l'etichetta tipo `.type-morgoth` ('vala decaduto'). La PNG conserva il **padding
-    trasparente** su richiesta dell'utente, e `.si-morgoth` ha un box di aspetto pari a
-    quello del canvas così l'immagine lo riempie senza letterbox. ⚠️ Il margine ottico è **un
-    solo valore condiviso** fra i due layout (`margin-left:0.01em; margin-right:-0.06em`,
-    solo sulle card): fino alla v11.16 c'erano due regole per-device, unificate nella v11.17
-    accettando un piccolo scarto simmetrico, così le correzioni delle icone-badge restano ai
-    soli due meccanismi `margin` + `nudge`.
-- **Distanziamento del simbolo di genere.** Il simbolo ♂/♀ (`.genere-svg`) è staccato dal
-  cluster dei badge di merito con un margine sinistro extra (desktop `0.28em` → gap ~15px
-  contro ~11px tra badge; mobile `0.3em` oltre al gap flex): prima 'toccava' l'ultimo badge.
-  È un gruppo a sé, stato anagrafico e non merito, quindi va otticamente separato.
-- **Badge 'morì in battaglia' BOCCIATO** (2026-07-04): il conteggio diede ~70 portatori su
-  306, troppo diffuso per un badge 'eccezionale'. Non riproporlo (l'icona `Morte.png` è stata
-  rimossa, recuperabile da git).
-- **Due badge aggiunti insieme (v6.63, decisioni dell'utente), verificati via grep sulle
-  fonti.** In legenda `guerradira` sta dopo `balrog` e `suicidio` prima di `fellowship`;
-  portatori con `p.suicidio`/`p.guerradira` = `true`:
-  - **`suicidio`** ('Si tolse la vita'): **7** voci, di cui tre da giustificare: **Húrin** (nel
-    mare occidentale, e le fonti dicono 'si dice'), **Míriel Serindë** (abbandono volontario della vita, primo trapasso in Aman:
-    caso atipico ma voluto) e **Aerin** (rogo della sala di Brodda, attestazione **implicita**
-    e non verbatim, tenuta per scelta dell'utente).
-    - **Distinzione (decisione utente): 'togliersi la vita' ≠ 'rendere la vita'.** Il badge
-      marca il **gesto estremo** (violenza, disperazione, rogo), quindi ne restano **esclusi**
-      i mortali che *si lasciano andare* alla morte per non subire il degrado della vecchiaia,
-      alla maniera dei re di Númenor: **Aragorn II** (depone la vita nella Casa dei Re) e
-      **Arwen** (si corica a Cerin Amroth) NON hanno il badge. **Míriel** è l'unica eccezione
-      perché è un'**Elfa** che rinuncia alla vita in Aman, atto innaturale per la sua stirpe.
-      Altri esclusi verificati: **Elwing** (si getta in mare ma Ulmo la salva, non muore),
-      **Maglor** (getta il Silmaril e vaga: nel Silm pubblicato non si uccide, e il 'took his
-      own life' è solo HoME IV, riferito a Maidros = Maedhros), **Saeros** e **Amroth** (morti
-      accidentali, non deliberate).
-  - **`guerradira`** ('Combattè nella Guerra d'Ira'): **5** voci, **solo la schiera attaccante
-    dei Valar** (Ingwion vi rientra da HoME IV-V). **Definizione (scelta editoriale soggettiva
-    dell'utente):** 'combattere' la Guerra d'Ira è un'azione **attiva**, mentre chi
-    si *difendeva* dall'armata di Valinor faceva una cosa diversa → **Melkor e Ancalagon
-    esclusi** benché presenti alla battaglia. **Esclusi per attestazione** (Silm cap. 24:
-    'among them went none of those Elves who had dwelt... in the Hither Lands'): Gil-galad,
-    Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la schiera, e Maedhros e Maglor
-    vennero *dopo* la guerra, per i Silmaril.
-- **Riga Re unica + Re 'in carica' come easter egg da card.** Il badge `king_high_now` (icona
-  `ReFinarfin.png`) è **card-only come Morgoth**: resta in `ICON_ORDER`, quindi `buildStatus`
-  lo disegna sulla **card di Finarfin** col suo tooltip, ma è **saltato** in `buildLegend` e
-  nella griglia admin (skip nella generazione checkbox **e** nel loop di salvataggio, così il
-  valore su Finarfin è preservato). Al suo posto una **riga Re unica** a due colonne:
-  `ReNoldor` (`king_std`) 'Alto Re dei Noldor' + `ReSupremo` (`king_high`) 'Re Supremo
-  (Aman)'. ⚠️ Quelle diciture di
-  legenda sono **testo inline** in `buildLegend` (ramo `k === 'king_high'`, che salta anche
-  `king_std`): i **tooltip delle card** in `ICON_LABEL` **NON cambiano**, per non rompere la
-  convenzione 'Re Supremo vs Alto Re'. **Filtro:** `BADGE_ROWS.king_high =
-  ['king_high','king_high_now','king_std']`, unica riga 'Re', e attivarla accende tutti e 7 i
-  Re **incluso Finarfin**, il Re mancante dalla legenda.
-- **Allineamento seconde icone delle righe a due colonne.** Le tre righe legenda a due
-  colonne (west+envoy, drago+balrog, riga Re unica) hanno la prima colonna a **larghezza
-  fissa unica** (`.leg-lbl-col` e `.leg-lbl-king`, un solo blocco CSS), così le tre seconde
-  icone sono incolonnate allo stesso x e restano immobili al cambio lingua (anti-jitter).
-  ⚠️ **Larghezza `8.5em`** = la più lunga fra le 6 stringhe di colonna 1 in IT ed EN (`Alto
-  Re dei Noldor`, ~98.5px) più respiro e tolleranza font, con `nowrap` anti-wrap: era
-  `10.05em`, tarata sul `High King of the Noldor` del vecchio Re 'in carica', e lasciava un
-  buco di ~20px fra etichetta e seconda icona. Se cambiano quelle stringhe, rimisurare.
-- **Tutti gli Anelli in un'unica riga di legenda.** L'Unico, i Tre degli Elfi (Vilya, Nenya,
-  Narya), i Nove e i Sette stanno su una sola riga **in coda** alla legenda, con didascalia
-  unica **'Portatore di uno degli Anelli del Potere'**. I **tooltip dei singoli anelli
-  restano inalterati** (ciascuno il proprio, da `ICON_LABEL`); il filtro `BADGE_ROWS.rings`
-  accende chiunque porti un anello qualsiasi. La riga è resa dal caso `k === 'onering'` in
-  legenda, che salta `vilya/nenya/narya/menring/sette`; su card ed editor l'ordine segue
-  `ICON_ORDER`.
-  - **Badge `sette`** (Sette Anelli dei Nani, icona `icons/Sette.png`, stesso canvas/bbox di
-    `Nove.png` → `.si-sette` = copia di `.si-nove`). Tooltip: 'Portatore di uno dei Sette
-    Anelli dei Nani'. **Portatori (2): Durin III** (il primo, l'anello capofila della stirpe
-    di Durin, per tradizione nanica donato dagli Elfi-fabbri e non da Sauron) e **Thráin II**
-    (l'ultimo, glielo strappò Sauron a Dol Guldur). NB: 'unico anello NOTO dei Nani', non
-    l'Unico.
-- **Ingwion e Ilwen.** `Ingwion` NON è apocrifo benché assente dal Silmarillion pubblicato:
-  Christopher Tolkien riconobbe che l'omissione fu un errore del padre (HoME IV, pp. 196-7),
-  caso 'note tardive = canone'. `Ilwen`, sposa di Ingwë e madre di Ingwion, è attestata solo
-  in NoME → `apocrifo:"NoME"`.
-  - ⚠️ **Anche la genealogia di Indis (padre Ingwë, madre Ilwen) viene da NoME** ('Ingwë
-    married... his first child (Indis) was born in 2181'), stessa famiglia di scelte: NON è
-    un errore da correggere. Il Silmarillion pubblicato dice solo 'parente stretta d'Ingwë' e
-    la Shibboleth la fa sorella o nipote, quindi un audit che non peschi NoME la segnalerà
-    come sbagliata (successo, correzione respinta).
-  - ⚠️ **Ordinale dei figli di Finarfin: Angrod = SECONDO, Aegnor = TERZO** (decisione
-    dell'utente), coerente con la scelta del progetto di fare di **Orodreth un figlio di
-    Angrod** (caso 'note tardive = canone' come Gil-galad): tolto Orodreth dai figli di
-    Finarfin, i maschi sono Finrod (1°), Angrod (2°), Aegnor (3°). Un audit sul Silmarillion
-    pubblicato, dove Orodreth È figlio di Finarfin, li segnalerà come sbagliati: NON è un
-    errore, è la conseguenza coerente della genealogia adottata.
-- **Badge `calaquende`.** 'Calaquendë: vide la Luce dei Due Alberi di Valinor': gli Elfi
-  della Luce, chi vide di persona la luce dei Due Alberi (visse o soggiornò in Aman prima
-  dell'oscuramento). In `ICON_ORDER` sta **subito prima di `silmaril`**, così i due badge
-  della Luce sono vicini e gli Alberi vengono prima dei loro frutti; riga di legenda propria.
-  **46 portatori**:
-  - **41 al 100%**: i **Vanyar**, i **Teleri di Aman** e i **Noldor nati o vissuti in Aman**.
-    ⚠️ Fra i Rúmil vale **il Noldo, NON il Silvano omonimo**. E **Thingol** è l'unico Sinda,
-    con **tooltip dedicato**: vide gli Alberi come ambasciatore con Oromë, 'non annoverato tra
-    i Moriquendi'.
-  - **5 al 50%** (`calaquende:'presunto'`, tooltip condiviso `CALAQUENDE_DEDOTTO`): Calaquendi
-    solo sull'assunto 'Esule nato in Aman', luogo di nascita non attestato dalle fonti.
-    ⚠️ **Glorfindel** invece è **certo**, non dedotto: nato a Valinor, scritto tardo di J.R.R.
-    Tolkien.
-  - ⚠️ **`Celeborn` ESCLUSO** benché altre liste lo contino tra i Calaquendi: quello presume
-    la versione *Teleporno*, che il progetto ha scartato (vedi 'Celeborn: NON si usa
-    Teleporno'). Il nostro Celeborn è **Sinda della Terra di Mezzo**: non vide gli Alberi.
+L'ordine di resa, di legenda e dell'editor vive in **`ICON_ORDER`**; i raggruppamenti di filtro in
+**`BADGE_ROWS`**. Chi porta un badge lo dicono i dati: qui stanno **i criteri e le esclusioni
+motivate**, perché nei dati un'esclusione è indistinguibile da una dimenticanza.
+
+### I criteri
+
+- **Aman** ('Attraversò il Mare'): segna la **partenza individuale e definitiva** verso Aman di
+  chi si era stabilito nella Terra di Mezzo. **Escluse le migrazioni primordiali** degli Anni degli
+  Alberi (viaggio degli ambasciatori con Oromë e Grande Viaggio). Il criterio è volutamente **NON
+  spiegato in legenda**, per semplicità. Casi decisi dall'utente: **Finwë, Thingol e Ingwë senza
+  badge**; Melian, Eärendil, Elwing, Tuor e Idril lo tengono. **Eönwë lo tiene** benché Maia nativo
+  di Aman: un audit canonico ne aveva proposto la rimozione, **respinta**.
+- **Ambasciatori** (`envoy`): il **viaggio primordiale degli ambasciatori degli Eldar con Oromë**,
+  evento unico. In legenda compare solo come gruppo secondario della riga Aman, e l'eccezionalità
+  dell'evento **non va spiegata in pagina**.
+- **Helcaraxë**: l'oste di Fingolfin, **Orodreth incluso** perché qui è figlio di Angrod, nato a
+  Valinor. ⚠️ **NON** lo attraversarono i **Fëanoriani**, giunti con le navi, né **Finarfin**,
+  tornato a Valinor. **Elenwë** lo porta al 50% con **etichetta dedicata** ('Morì nella traversata
+  dell'Helcaraxë'): è l'unica Elfa con nome noto a perire nei ghiacci, e lì il dimezzamento segna
+  la **morte durante** la traversata, non un dato presunto.
+- **`incarnazione`** ('Riebbe il corpo dopo le Aule di Mandos'), **solo Elfi**. **Míriel** vi
+  rientra per una nota tardiva. ⚠️ **Lúthien esclusa** per scelta dell'utente: il suo è un caso a
+  parte (rinascita completa con natura diversa, mortale), non una reincarnazione. Beren fuori per
+  definizione, è un Uomo.
+- **`est`**: **traversata IN NAVE** dalle Terre Imperiture alla Terra di Mezzo, quindi la Guerra
+  d'Ira, i 5 Istari e le navi di Losgar. ⚠️ **Ingwë escluso**: la sua partecipazione alla Guerra
+  d'Ira non è attestata (i testi nominano il figlio Ingwion) e il viaggio degli ambasciatori non
+  avvenne in nave, perché **le navi non esistevano**.
+- **`drago`** ('Uccise un Drago'). ⚠️ **Azaghâl escluso**: ferì soltanto Glaurung.
+- **`balrog`** ('Uccise un Balrog'). **Ecthelion ha un tooltip dedicato** ('Uccise Gothmog, signore
+  dei Balrog'), perché non uccise un Balrog qualunque ma il loro signore. ⚠️ **Tuor escluso**:
+  uccide Balrog solo ne 'Il libro dei racconti perduti II', versione superata del Legendarium.
+- **`suicidio`** ('Si tolse la vita'). ⚠️ **Distinzione dell'utente: 'togliersi la vita' ≠ 'rendere
+  la vita'.** Il badge marca il **gesto estremo** (violenza, disperazione, rogo), quindi ne restano
+  **esclusi** i mortali che *si lasciano andare* alla morte alla maniera dei re di Númenor:
+  **Aragorn II** e **Arwen** non lo hanno. **Míriel** è l'unica eccezione, perché è un'**Elfa** che
+  rinuncia alla vita in Aman, atto innaturale per la sua stirpe. Casi da giustificare: **Húrin**
+  (le fonti dicono 'si dice') e **Aerin** (attestazione **implicita**, tenuta per scelta
+  dell'utente). Esclusi verificati: **Elwing** (Ulmo la salva, non muore), **Maglor** (nel Silm
+  pubblicato non si uccide; il 'took his own life' è solo HoME IV e riferito a Maedhros),
+  **Saeros** e **Amroth** (morti accidentali, non deliberate).
+- **`guerradira`** ('Combattè nella Guerra d'Ira'): **solo la schiera attaccante dei Valar**.
+  ⚠️ **Definizione soggettiva dell'utente:** 'combattere' la Guerra d'Ira è un'azione **attiva**,
+  mentre chi si *difendeva* dall'armata di Valinor faceva un'altra cosa, quindi **Melkor e
+  Ancalagon sono esclusi** benché presenti alla battaglia. **Esclusi per attestazione** (Silm cap.
+  24, 'among them went none of those Elves who had dwelt... in the Hither Lands'): Gil-galad,
+  Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la schiera, e Maedhros e Maglor
+  vennero **dopo** la guerra, per i Silmaril.
+- **`calaquende`** ('vide la Luce dei Due Alberi'): chi vide di persona gli Alberi, cioè visse o
+  soggiornò in Aman prima dell'oscuramento. Sta **subito prima di `silmaril`**, così i due badge
+  della Luce sono vicini e gli Alberi vengono prima dei loro frutti. ⚠️ Fra i Rúmil vale **il
+  Noldo, non il Silvano omonimo**. **Thingol** è l'unico Sinda, con **tooltip dedicato** (vide gli
+  Alberi come ambasciatore, 'non annoverato tra i Moriquendi'). I portatori al 50% sono Calaquendi
+  solo sull'assunto 'Esule nato in Aman', col luogo di nascita non attestato; ⚠️ **Glorfindel è
+  invece CERTO**, non dedotto. ⚠️ **`Celeborn` ESCLUSO** benché altre liste lo contino: quello
+  presume la versione *Teleporno*, scartata dal progetto, e il nostro Celeborn è Sinda della Terra
+  di Mezzo.
+- **`aratar` di Melkor al 50%**, con etichetta dedicata sotto la chiave del suo `nome` e non
+  dell'epiteto: dopo la caduta 'Melkor non è più annoverato tra i Valar' (*Valaquenta*), dunque
+  nemmeno tra gli Aratar. Il dimezzamento segna questo **status conteso**, non un dato presunto.
+- **`sette`** (Sette Anelli dei Nani): **Durin III**, il primo, l'anello capofila della stirpe di
+  Durin, per tradizione dei Nani donato dagli Elfi-fabbri e non da Sauron, e **Thráin II**,
+  l'ultimo, a cui Sauron lo strappò a Dol Guldur. NB: 'unico anello **noto** dei Nani', non l'Unico.
+- **Ingwion NON è apocrifo** benché assente dal Silmarillion pubblicato: Christopher Tolkien
+  riconobbe che l'omissione fu un errore del padre, caso 'note tardive = canone'. **Ilwen**, sposa
+  di Ingwë, è attestata solo in NoME.
+- ⚠️ **Convenzione titoli 'Re Supremo' vs 'Alto Re'.** In inglese è sempre **High King**; in
+  italiano il progetto distingue: **Re Supremo** governa su tutto il suo popolo su qualunque sponda
+  del Mare, **Alto Re** nella Terra di Mezzo. Perciò in EN i due si **collassano**, ed è
+  un'**asimmetria bilingue legittima**. I badge seguono la stessa logica.
+
+### ⚠️ Trappole
+
+- ⚠️ **Il badge semitrasparente è SCOLLEGATO dall'idea di 'presunto'.** Rende l'icona al 50% ed è
+  solo un segnale di 'stato a sé': **nessun** suffisso automatico nel tooltip. Il significato va
+  dato caso per caso, e **se non si è certi di cosa scrivere si chiede all'utente**.
+- ⚠️ **Due badge sono card-only, come EASTER EGG**: `morgoth` (solo Fingolfin) e il Re 'in carica'
+  (solo Finarfin). Restano in `ICON_ORDER`, quindi si disegnano sulla card col loro tooltip, ma
+  sono **saltati in legenda e nella griglia admin**, e non sono filtrabili. ⚠️ Il valore va
+  **preservato al salvataggio** proprio perché la checkbox è assente.
+- ⚠️ **`morgoth` badge, `.type-morgoth` etichetta e `.divine.morgoth` sfondo sono TRE cose
+  distinte** che condividono il nome: non confonderle.
+- ⚠️ **La riga Re della legenda è testo INLINE**, e i **tooltip delle card non cambiano**, per non
+  rompere la convenzione 'Re Supremo vs Alto Re'. Il filtro di quella riga accende tutti i Re,
+  **incluso** quello mancante dalla legenda.
+- ⚠️ **I tooltip dei singoli anelli restano distinti** anche se in legenda gli Anelli stanno su una
+  riga sola con didascalia unica.
+- ⚠️ Una voce può avere **più chiavi** nello stesso oggetto di override dei tooltip (Ecthelion ne
+  ha due): aggiungendone una **non sostituire** quella che c'è.
+
+### 🎨 Estetica e vincoli
+
+- **Allineamento delle seconde icone nelle righe a due colonne**: la prima colonna ha una
+  **larghezza fissa unica**, così le seconde icone sono incolonnate allo stesso x e restano
+  immobili al cambio lingua. ⚠️ Il valore è la **più lunga fra le 6 stringhe** di colonna 1 in IT
+  ed EN, più respiro: era tarato su una stringa più lunga ormai rimossa e lasciava un buco di
+  ~20px fra etichetta e icona. **Se cambiano quelle stringhe, rimisurare.**
+- **Il simbolo di genere è staccato dal cluster dei badge** con un margine extra: prima 'toccava'
+  l'ultimo badge, ed è un gruppo a sé.
+- ⚠️ **Se si riaccende la legenda Istari a 5 icone**, i vincoli tarati allora sono: cluster a
+  larghezza **fissa** perché il testo delle righe multi-icona parta dallo stesso x delle altre, gap
+  **positivo** e dimensionamento **per altezza**, così i PNG verticali restano vicini **senza
+  sovrapporsi**, che era il difetto da cui tutto era partito.
+- **Gandalf è l'unico Istar con due icone**, Grigio poi Bianco: fu sia l'uno sia l'altro.
+
+### Decisioni dell'utente da non ridiscutere
+
+- **Badge 'morì in battaglia': BOCCIATO.** Il conteggio diede ~70 portatori su 306, troppo diffuso
+  per un badge 'eccezionale'. **Non riproporlo**; l'icona è stata rimossa e resta recuperabile da
+  git.
+- **Tutti gli Anelli su un'unica riga di legenda in coda**, con didascalia unica 'Portatore di uno
+  degli Anelli del Potere'.
+- **Riga Re unica a due colonne** al posto del Re 'in carica', che è diventato easter egg.
+- La PNG di `morgoth` **conserva il padding trasparente** su sua richiesta, e il box è di aspetto
+  pari al canvas così l'immagine lo riempie senza letterbox.
 
 ## 🧹 Asset del progetto
 
 ### 🖼️ Rendering delle icone-badge sulle card
 
-Modello unico deciso dall'utente per le icone-badge nella riga del nome. ⚠️ **NON** tocca la
-legenda, né il wrapping o il posizionamento di nomi ed etichette (a-capo 'smart',
-`tightenNames`, `optimizeBipartite`): quelle logiche restano separate e intoccabili.
+**Com'è fatto.** Modello unico deciso dall'utente: le icone si disegnano su un canvas alto 256px e
+si usano **as-is**, col padding trasparente che l'autore ha lasciato; sulla card hanno **altezza
+uniforme e larghezza automatica**, con una regola scoped che scavalca le classi per-icona **solo
+sulle card**. ⚠️ **NON tocca la legenda**, né il wrapping di nomi ed etichette: quelle logiche
+restano separate e intoccabili.
 
-- **Icone as-is** (regola universale, cfr. `Roccobot.md`): niente ritaglio, niente spostamento
-  dei pixel nel canvas. Si disegnano su canvas alto 256px e si usano tali e quali; il padding
-  trasparente attorno al disegno è voluto.
-- **Altezza UNIFORME, larghezza AUTOMATICA.** Sulla card ogni icona-badge ha `height:0.92em`
-  (~22-23px) e `width:auto`, proporzionale all'aspetto nativo: regola scoped `.rank-name
-  .rank-flags .status-icon`, che scavalca eventuali classi di larghezza per-icona SOLO sulle
-  card e lascia la **legenda intatta** (stesse classi `.si-*`, ma fuori da quel selettore).
-  Niente più box su misura per 'normalizzare' la dimensione ottica: conta solo l'altezza
-  uniforme, la larghezza segue in proporzione, e la dimensione della figura la governa l'utente
-  disegnando dentro il canvas.
-- **Due strumenti di correzione, divisi per ASSE (convenzione).** Le rifiniture della singola
-  icona usano **solo due** strumenti, ognuno per il proprio asse:
-  - **ORIZZONTALE → `margin` (sx/dx), SEMPRE A CASCATA (modello 'caratteri consecutivi').** Le
-    icone-badge si comportano come **caratteri consecutivi** di una riga: modificare il margine
-    di UNA propaga i movimenti **a cascata verso destra** (l'icona e tutte quelle che la
-    seguono si spostano), mentre **a sinistra nulla si muove**, che è anche il comportamento
-    naturale di `margin` su un flex item. ⚠️ **Niente compensazioni**, cioè coppie
-    `margin-left`/`margin-right` di segno opposto per isolare il movimento su una sola icona:
-    è vietato, regola universale dell'utente. Le eventuali differenze desktop/mobile sono lo
-    **stesso** `margin` con valori diversi in media query, non un meccanismo a sé, e oggi non
-    ce ne sono più.
-  - **VERTICALE → `transform`/nudge (`translateY`).** Ogni alzata o abbassata si fa col nudge,
-    che sposta **solo quell'icona** senza toccare le vicine né il layout della riga. È
-    l'**unico** strumento capace di farlo, perché un `margin` verticale in flex sposterebbe
-    l'allineamento della riga: per questo i due strumenti **non sono riducibili a uno solo**.
-  - ⚠️ La v11.18 aveva convertito a `margin` **tutto** il nudge delle corone, **inclusa
-    l'alzata verticale**: l'intento dell'utente era eliminare i nudge **orizzontali**, non
-    quelli verticali. Il nudge verticale è usato anche in **legenda** (corone, Helcaraxë,
-    Ritorno) e come **posizionamento intrinseco degli anelli**
-    (`.si-vilya/nenya/narya/nove/sette`, regola GLOBALE card+legenda che allinea la *fascia*
-    dell'anello agli altri cerchi).
-  - Nota: la regola universale 'Posizionamenti assoluti e mirati' di `Roccobot.md` preferisce
-    il `transform` per SPOSTARE un elemento senza toccare i vicini; qui, nel contesto della
-    SPAZIATURA della fila di icone, il default è invece il `margin`, che è proprio ciò che
-    regola i gap.
-- ⚠️ **I due motori di layout NON si fondono.** Desktop: `.rank-name` è `inline-flex` e i badge
-  sono suoi flex-item via `display:contents`. Mobile: `.rank-name` è a blocco e i badge stanno
-  in `.rank-flags` `inline-flex`. Sono la logica di wrapping e **non vanno toccati**: la
-  coerenza desktop/mobile si cerca a livello di convenzione delle correzioni, non fondendo i
-  motori.
-- **Segnaposto per immagine badge/genere che NON carica.** Un badge o simbolo di genere il cui
-  file non si carica (cache vecchia dopo un cambio di formato, path errato) mostrerebbe il
-  placeholder del browser (glifo + testo `alt`) **ereditando il corpo grande del nome**, quindi
-  grosso come il titolo. Un listener `error` in **capture** (gli eventi `error` non fanno
-  bubbling) marca l'`<img>` fallita con la classe **`.badge-broken`**, e il CSS scoped alle card
-  la riduce a un **segnaposto 14×14px con `font-size:0`**, che nasconde il testo `alt` lasciandolo
-  però **nel DOM** per gli screen reader. Copre anche le img inserite dopo dal `renderList`.
+- **Due strumenti di correzione, divisi per ASSE, ed è una convenzione.**
+  - **ORIZZONTALE → `margin`, SEMPRE A CASCATA** (modello 'caratteri consecutivi'): modificare il
+    margine di una icona sposta lei e tutte quelle che la **seguono**, mentre **a sinistra nulla si
+    muove**. ⚠️ **Vietate le compensazioni**, cioè le coppie `margin-left`/`margin-right` di segno
+    opposto per isolare il movimento su una sola icona.
+  - **VERTICALE → nudge (`translateY`)**: sposta **solo** quell'icona senza toccare le vicine né il
+    layout della riga, ed è l'**unico** strumento capace di farlo, perché un margine verticale in
+    flex sposterebbe l'allineamento dell'intera riga.
+  - ⚠️ I due **non sono riducibili a uno solo**. Una release convertì a `margin` **tutto** il nudge
+    delle corone, **inclusa l'alzata verticale**: l'intento dell'utente era eliminare i nudge
+    **orizzontali**. Il nudge verticale serve ancora in legenda e come posizionamento intrinseco
+    degli anelli, che allinea la **fascia** dell'anello agli altri cerchi.
+  - Nota: la regola universale preferisce il `transform` per spostare un elemento senza toccare i
+    vicini; qui, nel contesto della **spaziatura** di una fila di icone, il default è il `margin`,
+    che è proprio ciò che regola i gap.
+- ⚠️ **I due motori di layout NON si fondono**: desktop a flex con `display:contents`, mobile a
+  blocco col contenitore delle icone in `inline-flex`. Sono la logica di wrapping, e la coerenza fra
+  i due si cerca a livello di **convenzione delle correzioni**, non fondendo i motori.
+- **Segnaposto per un'immagine che NON carica.** Un badge il cui file manca mostrerebbe il
+  placeholder del browser **ereditando il corpo grande del nome**, quindi grosso come il titolo. Un
+  listener `error` in **capture** (gli eventi `error` non fanno bubbling) lo marca, e il CSS lo
+  riduce a un quadratino con `font-size:0`, che **nasconde il testo `alt` lasciandolo nel DOM** per
+  gli screen reader.
 
 ### 🎚️ Editor 'Micro-aggiustamenti icone badge' (admin)
 
-Editor admin visuale per regolare `margin-left`, `margin-right`, **nudge verticale** e
-**scale** di ogni icona-badge, con anteprima live su schede reali nei due temi. ⚠️ **Riguarda
-SOLO le card**: la legenda del Pannello NON è toccata, e si modifica a mano. Accesso: tap sulla
-versione → sblocco → bivio 'Area admin' → **4° pulsante** (`showBadgeAdjustEditor`).
+**Com'è fatto.** Regola margini, nudge verticale e **scala** di ogni unità (icona singola o gruppo a
+variante-colore con un solo controllo), con anteprima live su schede reali nei due temi. ⚠️
+**Riguarda SOLO le card**: la legenda del Pannello non è toccata e si modifica a mano. La fonte di
+verità è **`var badgeAdjust`** in `dati.js`, con fallback seminato **coi valori attuali** in
+`index.html`, così le trasformazioni già fatte restano come valore modificabile; l'iniezione gira
+**sempre** al load, perché il fallback vive nel client. Per aggiungere una futura icona bastano una
+voce nell'elenco delle unità e una nel fallback: compare da sé nell'editor.
 
-- **Unità regolabili (`BADGE_ADJUST_UNITS`, 22).** Ogni unità è una icona singola oppure un
-  GRUPPO a variante-colore con **un solo controllo** condiviso: **Istari** (5), **Navi**
-  (Aman/Est/Valinor), **Anelli elfici** (Vilya/Nenya/Narya), **Nove/Sette**. Tutte le altre
-  sono singole, **drago e balrog inclusi e separati** (immagini diverse, non varianti colore,
-  benché condividano la classe `si-demon`), e le 3 corone restano singole.
-  - ⚠️ Le **etichette** dei pulsanti (`it`/`en` in `BADGE_ADJUST_UNITS`) sono nomi di DISPLAY
-    dell'editor, **scollegati** da nomi di file e di classe, ridefiniti dall'utente (p.es.
-    Ritorno→**Mandos**, Sopravvissuto→**Quarta Era**, Nove/Sette→**Altri Anelli del Potere**).
-    Cambiarle non tocca né i badge né la logica: solo il testo del selettore.
-  - **Simboli di genere `male`/`female` come unità** (richiesta utente): regolano i simboli
-    ♂/♀, prima non modificabili. ⚠️ **Deroga UNICA al modello di sizing**: NON usano
-    `height:0.92em; width:auto` ma **dimensioni base proprie** (`GENDER_BASE`, dal CSS
-    `.genere-svg--m/f`) che `sc` scala mantenendo l'aspetto. Il seed di
-    `BADGE_ADJUST_FALLBACK` riproduce esatto il CSS statico, quindi nessun cambio visivo. Le
-    regole `.bi-male`/`.bi-female` (iniettate da `injectBadgeAdjustRules`, ramo `GENDER_BASE`)
-    scavalcano `.genere-svg--m/f` e la separazione statica **solo sulle card**, a pari
-    specificità e sorgente più in basso; i nudge di gruppo restano. La classe è messa in
-    `renderList` sul `genereSym`, non in `buildStatus`, e la **legenda** (`.leg-gender`) non è
-    toccata.
-- **4 parametri per unità:** `ml`/`mr` (margin orizzontale, **a cascata**, niente
-  compensazioni), `ny` (nudge verticale via `transform:translateY`) e `sc` (**scale** =
-  moltiplicatore d'altezza, `height:calc(0.92em * sc)` con `width:auto`; cambiando l'altezza
-  cambia anche l'ingombro orizzontale, coerente col modello 'caratteri consecutivi'). ⚠️ `sc`
-  non tocca il PNG: è l'equivalente a runtime di rimpicciolire il contenuto e ripaddare il
-  canvas.
-- **Identità per-unità `bi-<id>` sulle card.** In `buildStatus` (NON in `BADGE_ICON`, così la
-  legenda resta intatta) ogni `<img>` badge riceve la classe di unità `bi-<id>` via la mappa
-  `BADGE_UNIT` (badge-key → unità, copre anche le 5 icone Istari). Le regole `.rank-name
-  .rank-flags .bi-<id>{...}` sono **iniettate a runtime** da `injectBadgeAdjustRules()` e
-  **scavalcano** il CSS statico per-icona (stessa specificità, sorgente più in basso). La
-  legenda non ha le `bi-*` scoped alle card, quindi le sue icone restano governate dal CSS
-  statico: è indipendente dalle card.
-- **Config data-driven + fallback seed-once** (scelta utente). Fonte della verità **`var
-  badgeAdjust`** in `dati.js`, scritta dal Worker; se assente o invalida si usa
-  **`BADGE_ADJUST_FALLBACK`** in `index.html`, seminato coi valori ATTUALI di ogni unità, così
-  le trasformazioni già fatte restano come valore modificabile. `BADGE_ADJUST` è il merge dei
-  due (unità mancanti → fallback). ⚠️ L'iniezione gira sempre al load, perché il fallback vive
-  in `index.html`: il rendering è garantito anche senza `badgeAdjust` in `dati.js`, e il primo
-  salvataggio la scrive.
-  - ⚠️ Nel seed dei gruppi con valori misti si è scelto un valore unico: **Navi** `ml -0.05`
-    (`est` era -0.04, quindi +0.01em accettato col raggruppamento); **Anelli elfici** `ny
-    -0.067`, l'equivalente em a desktop del vecchio `translateY(calc(-.106em+1px))`, con il
-    +1px viewport-dipendente sciolto in em.
-- **Editor, stile ADMIN MINIMALE** (`fab-modal-box`). Layout da mockup dell'utente: selettore a
-  chip in alto (con `×N` sui gruppi); poi **due colonne**, a sinistra i 4 campi (slider + input
-  corto, senza hint) e '**Reset unità**' (ripristina l'ultimo salvato `BADGE_ADJUST_SAVED` per
-  tutti e 4 i valori, mentre un **doppio clic sul singolo slider** riporta SOLO quel valore
-  all'ultimo salvato), a destra le **anteprime impilate** (tema scuro sopra, chiaro sotto, un
-  po' ingrandite) su 3 schede reali che portano il badge. In basso la **tabella riepilogo SEMPRE
-  visibile** (niente toggle), scrollevole, aggiornata in-place con `refreshTableRow` durante il
-  drag per non perdere lo scroll. Footer con **Annulla** (ripristina `BADGE_ADJUST_SAVED` e
-  chiude) e **Salva**.
-  - Ogni riga d'anteprima ha una **linea di mezzo rossa tratteggiata (1px)** che passa
-    esattamente a metà del **maiuscoletto** del nome (`--mid`, misurata a runtime col font
-    reale: `placeMidlines`), riferimento per l'allineamento ottico, disegnata **sotto** le icone
-    (`z-index:-1` + `.ba-pane{isolation:isolate}`). L'icona in modifica è marcata da una
-    **freccina** (`.ba-pv-sel::after`, theme-aware) sotto il badge, non da un box.
-  - In coda a ogni riga è mostrato anche il **simbolo di genere**, reso coi valori live della
-    sua unità; i campioni sono scelti per genere (`samples` filtra `p.genere`) e la freccina lo
-    evidenzia quando è l'unità selezionata.
-  - Modifica `BADGE_ADJUST` live e re-inietta, quindi le card dietro si aggiornano. **`L`**
-    ricostruisce l'editor (etichette), **`T`** no, perché la modale si ricolora da sé e
-    l'anteprima mostra già entrambi i temi. `.ba-fval` è theme-aware per l'AA.
-- **Salvataggio:** `saveBadgeAdjustToRepo` → `doCommit(msg, dati, null, false, BADGE_ADJUST)`
-  → il Worker scrive `var badgeAdjust` in `dati.js` e **bumpa +0.01** (NON keepVersion). Un
-  salvataggio che non invia `badgeAdjust` lo **preserva** (`readBadgeAdjust`);
-  `validBadgeAdjust` rifiuta config malformate (400 `bad-badgeadjust`). Per aggiungere una
-  futura icona basta una voce in `BADGE_ADJUST_UNITS` + `BADGE_ADJUST_FALLBACK`: compare da sé
-  nell'editor.
+- ⚠️ **Le etichette dei pulsanti sono nomi di DISPLAY**, scollegati da nomi di file e di classe e
+  ridefiniti dall'utente: cambiarle non tocca né i badge né la logica.
+- ⚠️ **I simboli di genere sono l'UNICA deroga al modello di sizing**: non usano altezza uniforme e
+  larghezza auto, ma **dimensioni base proprie** che la scala moltiplica mantenendo l'aspetto. Il
+  seed riproduce esatto il CSS statico, quindi nessun cambio visivo; la classe è messa dal render
+  della lista e la **legenda non è toccata**.
+- ⚠️ Nel seed dei **gruppi con valori misti** si è scelto un valore unico, accettando scarti minimi
+  (una nave guadagna 0.01em, e il vecchio `+1px` viewport-dipendente degli anelli è stato sciolto in
+  em).
+- **La scala non tocca il PNG**: è l'equivalente a runtime di rimpicciolire il contenuto e
+  ripaddare il canvas. Cambiando l'altezza cambia anche l'ingombro orizzontale, coerente col modello
+  'caratteri consecutivi'.
+- **Nell'anteprima la linea mediana rossa passa a metà del maiuscoletto** del nome ed è il
+  riferimento per l'allineamento ottico, disegnata **sotto** le icone; l'icona in modifica è marcata
+  da una **freccina**, non da un box. La tabella riepilogo resta **sempre visibile** e si aggiorna
+  in-place durante il drag, per non perdere lo scroll.
+- **`L` ricostruisce l'editor** (le etichette), **`T` no**, perché la modale si ricolora da sé e
+  l'anteprima mostra già entrambi i temi.
+- **Il salvataggio bumpa** (+0,01), a differenza di colori e flag: qui si toccano le icone, che sono
+  contenuto.
 
 ### 🗜️ Ottimizzazione immagini
 
-**Lossless o WebP 'visually lossless'** (regola dell'utente; il lossy PNG a palette resta
-VIETATO). Due strade ammesse: **ricompressione lossless** a impatto zero sui pixel (metadati +
-`optipng`/`zopflipng`), oppure **conversione a WebP 'visually lossless'** a **q85** o qualità
-simile, se il risultato è visivamente indistinguibile (verificare a occhio le icone coi
-gradienti: vele, anelli). WebP **non** è a palette, quindi non ha il limite dei 256 colori, e
-il suo lossy è DCT-based, quindi **non** produce il banding a scalini della quantizzazione.
+**Due strade ammesse:** ricompressione **lossless** a impatto zero sui pixel, oppure conversione a
+**WebP 'visually lossless'** a q85 o simile, se il risultato è visivamente indistinguibile. WebP non
+è a palette, quindi non ha il limite dei 256 colori, e il suo lossy è DCT-based, quindi **non**
+produce il banding a scalini della quantizzazione. Le icone badge sono migrate a WebP (-80%), coi
+PNG originali conservati come backup non referenziato.
 
-- Le **icone badge** (`arda/top/icons/`) sono migrate a `.webp` q85 (1902K→399K, −80%); i PNG
-  originali sono conservati in **`arda/top/icons_png/`** come backup, non referenziati, e i
-  riferimenti nel codice usano `icons/X.webp`.
-- ⚠️ Resta **VIETATA la quantizzazione a palette** (`PIL .quantize()`, `pngquant`, riduzione
-  colori ≤256) e ogni passo che produca **banding o posterizzazione**: su sfumature morbide
-  (gradienti di vele, corpi, cieli) si vede. Errore storico da non rifare: le navi elfiche
-  quantizzate a 256 colori avevano banding evidente e sono state ripristinate. Nel dubbio sul
-  risultato, **verificare a occhio** prima di committare.
-- ⚠️ **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/` (mappe e
-  risorse aperte da `openImageViewer`) non vanno mai modificati, ridimensionati, compressi od
-  ottimizzati, per nessun motivo: sono materiale da consultazione a piena qualità. Regola
-  esplicita dell'utente. Anche `favicon.png` e le altre immagini esistenti restano come sono,
-  salvo sua richiesta esplicita.
-- A ogni **main release** (bump minor o major) verificare che tutti gli asset siano stati
-  bonificati secondo la regola universale; se si trova materiale non bonificato, ripulirlo
-  prima di rilasciare.
-- Riferimenti storici di consulenza estetica: colori troppo saturi rispetto agli altri badge
-  (caso Maia) e dettagli SVG troppo fini per la dimensione reale di ~22px (spilla della
-  Compagnia, occhio di Sauron).
+- ⚠️⚠️ **La quantizzazione a palette è VIETATA** (`PIL .quantize()`, `pngquant`, riduzione colori
+  ≤256), come ogni passo che produca **banding o posterizzazione**: su sfumature morbide si vede.
+  Errore storico da non rifare: le navi elfiche quantizzate a 256 colori avevano banding evidente e
+  sono state ripristinate. Nel dubbio, **verificare a occhio** prima di committare, in particolare
+  le icone coi gradienti (vele, anelli).
+- ⚠️⚠️ **Le immagini del visualizzatore NON si toccano MAI.** I file in `arda/res/` non vanno
+  modificati, ridimensionati, compressi od ottimizzati **per nessun motivo**: sono materiale da
+  consultazione a piena qualità. Anche `favicon.png` e le altre immagini esistenti restano come
+  sono, salvo richiesta esplicita.
+- A ogni **main release** verificare che tutti gli asset siano stati bonificati secondo la regola
+  universale, e ripulire prima di rilasciare quello che non lo è.
+- Riferimenti storici di consulenza estetica: colori troppo saturi rispetto agli altri badge, e
+  dettagli SVG troppo fini per la dimensione reale di ~22px (la spilla della Compagnia, l'occhio di
+  Sauron).
 
 ## 📝 Note e Note editoriali (modale 'Risorse e note')
 
