@@ -34,7 +34,7 @@ sanare subito.
 Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
 
 - **Repository** = `Roccobot/roccobot.github.io`: uno solo, con un solo `master` e un
-  solo `CLAUDE.md`, che raccoglie le regole di **tutti** i progetti che ospita.
+  solo `CLAUDE.md`, che raccoglie le regole di **tutti** i progetti ospitati.
 - **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
   root (regola universale in `Roccobot.md`, sezione 'Terminologia'). Qui vivono:
   `arda/top/` = **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre),
@@ -44,8 +44,8 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
   `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
   installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
-- **Sessione** = questa chat e questo container: **effimera**, ed è ciò che l'handoff
-  serve a superare.
+- **Sessione** = questa chat e questo container: **effimera**. Il salto da una all'altra
+  è quello che l'handoff serve a superare.
 
 Conseguenza pratica: **il brief dice sempre di quale progetto parla.** 'Versione
 14.79' senza dire 'I Grandi di Arda' è ambiguo, e una sessione nuova non può indovinare
@@ -161,8 +161,8 @@ Nell'ordine, tutte per intero:
 
 1. **`CLAUDE.md`** di questo repo (regole dei progetti che ospita);
 2. **`rules/Roccobot.md`** - regole universali di collaborazione;
-3. **`rules/Development.md`** - regole di sviluppo (⚠️ `CLAUDE.md` ci deroga su
-   parecchi punti: l'elenco è nella sua 'Regola n. 1');
+3. **`rules/Development.md`** - regole di sviluppo (⚠️ `CLAUDE.md` deroga a parecchi
+   suoi punti: l'elenco è nella sua 'Regola n. 1');
 4. **`rules/JRRT.md`** - canone tolkieniano, indispensabile per ogni tocco ai contenuti
    di 'I Grandi di Arda';
 5. **`rules/Prompts.md`** - revisione dei prompt generativi: non si applica da sé, ma va
