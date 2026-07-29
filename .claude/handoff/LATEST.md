@@ -5,11 +5,12 @@
 - **'I Grandi di Arda'**: locale, badge e **LIVE** tutti su **v14.80**; albero pulito;
   `0 dietro / 0 avanti` rispetto a `origin/master`. Nessun deploy in volo.
 - **Worker** `arda-admin-proxy`: **rev 15**, `rl:true`. Non toccato in questa sessione.
-- `CLAUDE.md` è a **~36.300 parole** dopo una prima potatura (era 42.001); le regole
+- `CLAUDE.md` è a **35.346 parole** (`wc -w`), da 43.785 di partenza: **-19,3%**. Le regole
   universali sono a **`Roccobot.md` v1.47.2**.
-- ⚠️ La sessione nuova ha **entrambi i repo agganciati nativamente**
-  (`roccobot.github.io` e `tools`): non serve `add_repo`, che qui rispondeva sempre
-  'requires approval'.
+- ⚠️ `add_repo` in questa sessione rispondeva sempre 'requires approval', e l'allow-list in
+  `.claude/settings.json` non l'ha sbloccato a sessione avviata: potrebbe valere dal prossimo
+  avvio, **non verificato**. Se il repo serve ed è già agganciato nativamente, il problema non
+  si presenta.
 
 ## In sospeso
 
@@ -17,8 +18,9 @@
    in `CLAUDE.md` § '🪶 Come si mantiene questo file': si legge quello, non si reinventa.
    Campione approvato: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**), con la
    struttura *com'è fatto / trappole / estetica / decisioni*. ⚠️ Viveva nello scratchpad e
-   **non esiste più**: va rifatto dalla sezione attuale. Stima sul file: **da ~36.600 a
-   13.000-15.000 parole**; si accorciano meno canone, tipografia e workflow.
+   **non esiste più**: va rifatto dalla sezione attuale. Stima sul file: **da 35.346 a
+   13.000-15.000 parole**, cioè un altro **-60%**; si accorciano meno canone, tipografia e
+   workflow, che sono le parti che il codice non contiene.
 2. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
    con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
    sposta due volte la stessa roba.
