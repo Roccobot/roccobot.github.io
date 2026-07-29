@@ -48,7 +48,7 @@ sessione:
 - ⚠️ **Caricato non vuol dire attivo.** Il caricamento mette il testo a disposizione,
   l'**attivazione** è un'altra cosa e la decide la regola stessa. Vale per i file
   esterni opzionali **e per le sezioni modali** di un file che si carica sempre: oggi
-  il caso è **'🎛️ Revisione prompt generativi'** in `Roccobot.md`, che si applica
+  il caso è **'🎛️ Revisione dei prompt'** in `Roccobot.md`, che si applica
   **solo quando l'utente la invoca**. Leggerla non la mette in vigore.
 
 ### 🗂️ Che cosa contiene ciascun file
@@ -66,7 +66,7 @@ sessione:
   che è modale.**
 - ⚠️ **`rules/Prompts.md` NON esiste più** (2026-07-29): l'utente ne ha ridotto il
   contenuto alle voci ancora utili e le ha fatte confluire in `Roccobot.md`, sezione
-  '🎛️ Revisione prompt generativi'. La fusione è diventata sicura perché la riduzione
+  '🎛️ Revisione dei prompt'. La fusione è diventata sicura perché la riduzione
   ha **eliminato gli operatori** che scavalcavano quelli di 'Traduzioni e revisioni':
   erano l'unica cosa che rendeva quel file modale nel **meccanismo** e non solo
   nell'uso. Resta in piedi come rimando.
