@@ -19,7 +19,7 @@
 - Le regole di **sviluppo** (autonomia e conferme, igiene del codice, versione
   visibile, validazione del markup) vivono in `rules/Development.md`, stesso repo:
   valgono per il sito di questo repo, ma questo `CLAUDE.md` ha priorità più alta e
-  **deroga già** su parecchi punti (vedi la nota qui sotto).
+  **deroga già** a parecchi suoi punti (vedi la nota qui sotto).
 - Le regole di **revisione dei prompt** generativi vivono in `rules/Prompts.md`,
   stesso repo. ⚠️ **Non si applicano da sé**: si attivano solo quando l'utente le
   invoca esplicitamente (di norma con il suo snippet `snippets/Onboarding-prompts.md`),
@@ -4157,12 +4157,12 @@ a mano). Accesso: tap sulla versione → sblocco → bivio 'Area admin' → **4�
     non-retroattività della regola universale oggi riguarda solo i **commenti**, che
     restano in italiano finché non si riscrive quella parte.
   - **Descrizione: massimo ~300 parole, limite morbido** (regola universale
-    dell'utente, 2026-07-29). Dopo la potatura la più lunga è DIV con **132** parole,
+    dell'utente, 2026-07-29). Dopo la potatura la più lunga è quella di DIV, **132** parole,
     le altre stanno fra 47 e 140, quindi nessuna sfora. ⚠️ Il dettaglio tecnico va
     nel `README.md` di `userscripts/`, non nel metadato: la vecchia descrizione di DIV
     era di **743 parole** e ripeteva la storia versione per versione ('dalla 2.10',
     'dalla 2.12'...), cioè un changelog travestito da descrizione, mentre il README
-    già la documenta in una sezione di 249 righe.
+    documenta già tutto in una sezione di 249 righe.
   - `@name` resta quello deciso dall'utente, in qualunque lingua.
   - **Anche la UI è in inglese** (decisione dell'utente, 2026-07-29): pulsanti,
     tooltip, voci del menu contestuale, avvisi, `alert` e comandi del menu di
