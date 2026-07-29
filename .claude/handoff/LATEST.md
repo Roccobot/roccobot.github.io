@@ -88,6 +88,7 @@
 
 ## Strumenti da rifare
 
-- `scratchpad/realfont.js` (aggancio dei font reali): serve **prima** di qualunque misura
-  di larghezza o a-capo, in particolare sulle etichette del Pannello.
-- Nessun altro serve al lavoro in sospeso, che è di sola documentazione.
+- **Niente.** L'aggancio dei font reali, che era il primo da rifare ogni volta, è ora
+  committato in `.claude/scripts/realfont.js` e verificato: senza aggancio `n:0`, con
+  aggancio `n:28` e le tre famiglie. Gli altri script di verifica citati dal `CLAUDE.md`
+  restano effimeri, ma non servono al lavoro in sospeso, che è di sola documentazione.
