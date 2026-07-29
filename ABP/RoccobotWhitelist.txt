@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-07-27
+! Last updated: 2026-07-29
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -40,7 +40,12 @@
 @@||blizzard.com^$important
 @@||bonusx.it^$important
 @@||bonusx.it^$document,important
+! captcha-delivery.com: e' il dominio da cui DataDome serve la SFIDA ('Verifica del
+! dispositivo'), in un iframe (lo dichiara la CSP di Qwant, frame-src). Serve la forma
+! per iframe, e la Stealth non deve toccarla o la verifica non passa.
 @@||captcha-delivery.com^$important
+@@||captcha-delivery.com^$document,subdocument,important
+@@||captcha-delivery.com^$stealth,important
 @@||cardinalcommerce.com^$important
 @@||cardinalcommerce.com^$document,subdocument,important
 @@||cdn.cookielaw.org^$important
@@ -59,7 +64,19 @@
 @@||curve.com^$important
 @@||curve.com^$document,important
 @@||cutsy.net^$important
+! DataDome: bot manager usato da vari siti (Qwant fra questi). Aveva solo l'eccezione
+! di BLOCCO: serve anche quella dalla Stealth, altrimenti le sue richieste di
+! fingerprinting partono alterate e il punteggio della sessione resta insufficiente.
 @@||datadome.co^$important
+@@||datadome.co^$stealth,important
+! dd.qwant.com: e' il tag anti-bot di Qwant (`/tags.js`), servito in PRIMA PARTE ma
+! CNAME verso dd.qwant.com.first-party-js.datadome.co (misurato via DoH il
+! 2026-07-29). Con lo scoprimento dei CNAME la regola `||datadome.co^$third-party` di
+! EasyPrivacy e della Tracking Protection di AdGuard lo BLOCCA, e l'eccezione su
+! datadome.co non basta perche' la richiesta del browser e' a dd.qwant.com. Bloccato
+! il tag, la sessione non ottiene il cookie e Qwant risponde 403 alla prima ricerca.
+@@||dd.qwant.com^$important
+@@||dd.qwant.com^$stealth,important
 @@||deezer.com^$document,subdocument,important
 @@||developer.apple.com^$important
 @@||digicert.com^$important
@@ -176,10 +193,16 @@
 @@||poste.it^$document,important
 @@||prima.it^$important
 @@||prima.it^$document,important
-! Qwant: sta dietro DataDome, che al primo caricamento di una sessione (quello senza
-! cookie) esamina la richiesta a fondo e risponde 403 se la trova alterata. La Stealth
-! altera user agent, header, referrer e durata dei cookie: e' la stessa famiglia del
-! caso alamo.com.
+! Qwant: sta dietro DataDome. La sola esenzione dalla Stealth NON bastava, perche' il
+! problema e' di BLOCCO: il tag anti-bot vive su dd.qwant.com, che e' un CNAME verso
+! datadome.co (vedi il blocco dd.qwant.com qui sopra). Senza quel tag la sessione non
+! ottiene il cookie e la prima ricerca prende 403 per una trentina di secondi.
+! L'esenzione dalla Stealth resta comunque utile: la sfida esamina la richiesta a fondo.
+! NB: non si sblocca tutto qwant.com (`@@||qwant.com^$important`), che tirerebbe dentro
+! anche la sua telemetria (apm/k.qwant.com, /action/, /impression/): la regola mirata su
+! dd.qwant.com basta. Se un domani non bastasse, il passo successivo e' la fiducia
+! totale alla pagina, `@@||qwant.com^$document,important`, che pero' spegne anche le
+! cosmetiche e gli scriptlet sui risultati.
 @@||qwant.com^$stealth,important
 @@||raiplaysound.it^$document,subdocument,important
 @@||ranker.com^$important
