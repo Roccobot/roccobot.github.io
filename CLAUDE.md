@@ -9,34 +9,70 @@
 > sezione in fondo). Tutto ciò che non è specifico di questi progetti vive
 > nelle regole universali.
 
-## 📜 Regola n. 1: attingere alle regole universali
+## 📜 Regola n. 1: le regole universali e come si caricano
 
-- Tutte le regole universali di collaborazione vivono in
-  `rules/Roccobot.md` del repo `Roccobot/tools`: ogni sessione le legge e
-  le applica per intero.
-- Il canone tolkieniano universale (priorità delle fonti, versioni ammesse,
-  acronimi, divieti) vive in `rules/JRRT.md`, stesso repo.
-- Le regole di **sviluppo** (autonomia e conferme, igiene del codice, versione
-  visibile, validazione del markup) vivono in `rules/Development.md`, stesso repo:
-  valgono per il sito di questo repo, ma questo `CLAUDE.md` ha priorità più alta e
-  **deroga già** a parecchi suoi punti (vedi la nota qui sotto).
-- Le regole di **revisione dei prompt** generativi vivono in `rules/Prompts.md`,
-  stesso repo. ⚠️ **Non si applicano da sé**: si attivano solo quando l'utente le
-  invoca esplicitamente (di norma con il suo snippet `snippets/Onboarding-prompts.md`),
-  e in quel caso i loro operatori **scavalcano** quelli omonimi di `Roccobot.md`
-  (info media, traduzioni). Per il lavoro ordinario su questo repo non entrano in
-  gioco, ma vanno lette per sapere che esistono e cosa coprono.
+Questo `CLAUDE.md` è l'**hub**: è il solo file che si carica da sé a ogni sessione,
+quindi è da qui che parte tutto il resto (scelta dell'utente, 2026-07-29).
+
+### 🚀 Protocollo di avvio (dal 2026-07-29)
+
+I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
+sessione:
+
+1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
+   base universale e non è opzionale.
+2. Poi si fa la **domanda di rito**, una sola volta per sessione: *quali altri file
+   carico?* Le opzioni sono `rules/JRRT.md` (canone tolkieniano),
+   `rules/Development.md` (sviluppo) e `rules/Prompts.md` (revisione dei prompt).
+   Si usa lo strumento di domanda a scelta multipla e **si attende la risposta**
+   prima di iniziare il lavoro: l'utente ha detto esplicitamente che il ritardo di
+   un giro non è un problema, perché si paga una volta sola.
+   - Fra le opzioni va sempre offerto un **'carica sempre tutti'** (regola
+     universale 'Offrire sempre Consenti sempre'). ⚠️ Ma quella scelta **non
+     sopravvive alla sessione**, perché l'ambiente è effimero: per renderla durevole
+     va scritta qui, in questo file. Se l'utente la chiede, registrarla.
+3. **Dal momento del caricamento in poi, quei file sono regole consolidate e
+   condivise**: si dànno per scontate e ci si riferisce al loro contenuto senza
+   ri-chiedere e senza rileggerle a ogni turno.
+4. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
+   token (regola in `Roccobot.md`, sezione Worker `rules-proxy`): niente letture
+   parziali, niente ricostruzioni a memoria.
+
+- ⚠️ **Sessioni NON interattive** (Routine schedulate, trigger, sessioni svegliate
+  da un evento su una PR): non c'è nessuno che possa rispondere, quindi **non si
+  chiede** e si caricano **solo i due file principali**, in quest'ordine di
+  priorità: **questo `CLAUDE.md`** e **`rules/Roccobot.md`**. Gli altri si leggono
+  solo se il compito li tocca davvero.
+- ⚠️ **Caricato non vuol dire attivo.** Vale per ogni file esterno che può essere
+  caricato o no: il caricamento mette il testo a disposizione, l'**attivazione** è
+  un'altra cosa e la decide la regola del file stesso. Oggi il caso è
+  `rules/Prompts.md`, che si applica **solo quando l'utente lo invoca**: leggerlo
+  non lo mette in vigore. Se un file futuro avrà lo stesso comportamento, va detto
+  qui accanto.
+
+### 🗂️ Che cosa contiene ciascun file
+
+- **`rules/Roccobot.md`**: tutte le regole universali di collaborazione (lingua,
+  caratteri, formato, git, test, grafica, sicurezza).
+- **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
+  ammesse, acronimi, divieti, verifica alla lettera).
+- **`rules/Development.md`**: sviluppo di app, software e servizi web (Prospect e
+  Report post-rilascio, autonomia e conferme, igiene del codice, versione
+  verificabile, footer). ⚠️ Questo `CLAUDE.md` **deroga** a parecchi suoi punti:
+  elenco più sotto.
+- **`rules/Prompts.md`**: revisione dei prompt generativi. Si attiva **solo su
+  richiesta dell'utente**; i suoi operatori scavalcano quelli omonimi di
+  `Roccobot.md` (info media, traduzioni).
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Development.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Prompts.md>
 
-  In alternativa, finché il repo è pubblico, i raw GitHub:
-  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Roccobot.md>
-  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/JRRT.md>
-  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Development.md>
-  - <https://raw.githubusercontent.com/Roccobot/tools/main/rules/Prompts.md>
+  ⚠️ **I raw GitHub NON funzionano più** (verificato il 2026-07-29:
+  `raw.githubusercontent.com/Roccobot/tools/...` risponde 404 sia su `main` sia su
+  `master`, mentre il Worker risponde 200, e `github.com` di qui dà 403). Non
+  perderci tempo: **il Worker è l'unica via**.
 - **Leggi sempre in grezzo, mai con un fetch che riassume**: strumenti tipo
   `WebFetch` sintetizzano i file lunghi e restituiscono un riassunto al posto
   del testo reale. Usa `curl` con UA da browser (o l'aggancio del repo +
@@ -64,6 +100,8 @@
     programma; l'archivio è la storia git.
   - **Gate W3C**: non a ogni release, ma solo ai bump **+0.1 e +1.0**, e 'utile ma non
     imprescindibile' se il validatore non risponde (vedi '🔢 Versione del sito').
+    ⚠️ Questa deroga vale verso **`Roccobot.md`**, sezione 'Test e verifiche', che dal
+    2026-07-29 è la fonte unica del gate: `Development.md` non lo ripete più.
   - **Versione**: schema custom `x.xx`, che è un override dichiarato del SemVer.
   - **Lingua della UI**: il sito è bilingue IT/EN con l'italiano come lingua primaria,
     non 'tutto in inglese di default'.
@@ -75,17 +113,69 @@
 
 ## ⚖️ Priorità in caso di conflitto
 
+**Il principio** (formulato dall'utente, 2026-07-29): più una regola è **specifica**,
+più è alta la sua priorità, perché più si scende nel particolare più è probabile che
+serva un'eccezione. Al contrario, per ciò che è universale e non coperto dai casi
+specifici, si fa riferimento alle regole onnicomprensive. Quindi un file di regole
+**più universale ha priorità MINORE**: non è un declassamento, è la sua funzione di
+rete di sicurezza.
+
 Dalla più forte alla più debole:
 
-1. **Istruzioni esplicite dell'utente nella sessione corrente**: prevalgono
-   su tutto; se durature, vanno poi registrate nel file giusto.
-2. **Questo `CLAUDE.md`**: prevale per tutto ciò che è specifico del
-   progetto.
-3. **I file di regole più specifici** di `Roccobot/tools`: `rules/JRRT.md` per il
-   canone, `rules/Development.md` per lo sviluppo, `rules/Prompts.md` per la
-   revisione dei prompt (solo quando è attivata). Essendo più specifici, fra loro e
-   `Roccobot.md` vincono loro.
-4. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto.
+1. **Istruzioni esplicite dell'utente nella sessione corrente**: prevalgono su tutto;
+   se durature, vanno poi registrate nel file giusto.
+2. **Questo `CLAUDE.md`**: prevale per tutto ciò che è specifico del repo e dei
+   progetti che ospita.
+3. **`rules/JRRT.md`**: il canone. Sta qui, sopra i file di processo, perché è
+   un'autorità **sui fatti** (che cosa dicono le fonti), non sul modo di lavorare:
+   mettere una regola di processo sopra un fatto attestato sarebbe rovesciato. Nel
+   suo dominio ha la stessa autorevolezza di `Roccobot.md`, o più.
+   - ⚠️ Ma resta **sotto** questo `CLAUDE.md`, e non per gerarchia astratta: qui
+     vivono **scelte editoriali deliberate** che divergono dal canone pubblicato
+     (Orodreth figlio di Angrod, Celeborn senza `Teleporno`, l'elenco degli
+     apocrifi). Un audit che applichi `JRRT.md` alla lettera le segnalerà come
+     errori: non lo sono, e la scala è ciò che lo stabilisce.
+4. **`rules/Development.md`**: le regole di sviluppo.
+5. **`rules/Prompts.md`**: la revisione dei prompt, **solo quando è attivata**.
+6. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto.
+
+### ⚠️ La specificità vale per DOMINIO, non in assoluto
+
+Un file più specifico vince **dove parla**. Il suo **silenzio non è una deroga**:
+fuori dal suo dominio non dice nulla, quindi non c'è alcun conflitto da risolvere e
+vale la base universale.
+
+Detto al contrario, perché è l'errore facile: 'Development.md sopra Roccobot.md'
+**non** significa 'quando scrivo codice ignoro le regole universali'. Significa solo
+che, sulle materie di cui `Development.md` si occupa davvero, la sua versione vince.
+Il caso reale: `Development.md` chiede la UI in inglese di default e `Roccobot.md`
+tutto l'output in italiano; il conflitto esiste **solo** sui testi di interfaccia, e
+lì vince il primo (con la deroga di questo file per il sito, vedi sotto). Sulla lingua
+della chat, dei commit e delle note non c'è alcun conflitto: vale `Roccobot.md`.
+
+### 🔒 Regole NON derogabili a nessun livello
+
+Alcune regole non seguono la scala: valgono **sempre**, e nessun file più specifico
+può allentarle. Questo è l'indice, la formulazione completa sta dove indicato.
+
+| regola | dove vive |
+|---|---|
+| Parola d'ordine admin validata **solo lato server**; mai nel sorgente, nemmeno in base64 | qui, '🔐 Admin e segreti' |
+| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | qui, '🔐 Admin e segreti' |
+| `RULES_PASSWORD` letta a runtime e **mai stampata** né fatta transitare in chat | `Roccobot.md`, Worker `rules-proxy` |
+| Mai `innerHTML` | qui, e la nota di `setVersionBadge` |
+| **Em-dash mai**, in nessun output; apici dritti; `...` e non `…` | `Roccobot.md`, 'Caratteri' (ribadito qui) |
+| Comunicazione con l'utente **sempre in italiano** | qui, '🗣️ Lingua di risposta' |
+| Immagini di `/arda/res/` e `favicon.png`: **non si toccano mai** | qui, '🧹 Asset del progetto' |
+| Quantizzazione a palette **vietata** (banding) | qui, '🧹 Asset del progetto' |
+| Icone **as-is**: niente ritaglio, niente spostamento dei pixel nel canvas | `Roccobot.md`, 'Grafica' |
+| Niente **compensazioni** (coppie `margin` di segno opposto per isolare un movimento) | `Roccobot.md`, 'Grafica' |
+| **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
+| Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, 'Test e verifiche' |
+| **Conferma esplicita** per le operazioni ad alto impatto | `Development.md` + qui, go-live |
+
+⚠️ Se un file più specifico sembra contraddire una di queste, non è una deroga: è un
+difetto di quel file, da segnalare all'utente.
 
 Le regole nuove di portata generale vanno in `rules/Roccobot.md` secondo il
 protocollo 'Aggiungi alle regole' definito lì, non qui.
