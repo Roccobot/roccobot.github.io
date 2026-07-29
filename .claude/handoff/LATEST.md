@@ -13,31 +13,25 @@
 
 ## In sospeso
 
-1. **Potatura PROFONDA del `CLAUDE.md`**, la cosa principale. Criterio e taxonomia sono
-   già registrati in `CLAUDE.md` § '🪶 Come si mantiene questo file': si legge quello, non
-   si reinventa. Campione approvato dall'utente: la sezione degli effetti riscritta da
-   8.251 a 1.824 parole (**-78%**), con la struttura *com'è fatto / trappole / estetica /
-   decisioni*. ⚠️ Quel campione viveva nello **scratchpad e non esiste più**: va rifatto
-   dalla sezione attuale, che è ancora quella lunga. Stima sul file intero: **da ~36.600 a
-   13.000-15.000 parole**. Le sezioni che si accorciano meno sono canone, convenzioni
-   tipografiche e workflow, cioè quelle che il codice non contiene.
-2. **Togliere gli elenchi di portatori dei badge** (`est`, `suicidio`, `guerradira`,
-   `calaquende`, `helcaraxe`, voci apocrife): si ricavano con un grep su `dati.js`. Tenere
-   il criterio e le **esclusioni motivate** (Ingwë fuori da `est`, Aragorn e Arwen senza
-   `suicidio`, i tre solo-HoME che NON sono apocrifi).
-3. **Split per progetto**: togliere dal `CLAUDE.md` di root le parti specifiche e creare
-   `arda/top/CLAUDE.md`, `ABP/CLAUDE.md`, `userscripts/CLAUDE.md`,
-   `RoccobotOS/CLAUDE.md`, `proxy/CLAUDE.md`, lasciando in root le regole trasversali più
-   un indice. ⚠️ Da fare **dopo** la potatura, o si sposta due volte la stessa roba.
-4. **Skill `/desc`**: il testo è pronto ma esiste **solo come file consegnato all'utente in
-   chat** (202 righe), non nel repo. Va creata in `tools` come
-   `.claude/skills/desc/SKILL.md`; ora che `tools` è agganciato si scrive direttamente,
-   senza passare dal Worker (che accetta solo `rules/` e `workers/`). Poi una nota nel
-   `CLAUDE.md` di `tools`, che **non esiste ancora**: solo con `/desc` invocata i suoi
+1. **Potatura PROFONDA del `CLAUDE.md`**, la cosa principale. Criterio e taxonomia stanno
+   in `CLAUDE.md` § '🪶 Come si mantiene questo file': si legge quello, non si reinventa.
+   Campione approvato: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**), con la
+   struttura *com'è fatto / trappole / estetica / decisioni*. ⚠️ Viveva nello scratchpad e
+   **non esiste più**: va rifatto dalla sezione attuale. Stima sul file: **da ~36.600 a
+   13.000-15.000 parole**; si accorciano meno canone, tipografia e workflow.
+2. **Togliere gli elenchi di portatori dei badge**: si ricavano con un grep su `dati.js`.
+   Tenere il criterio e le **esclusioni motivate** (Ingwë fuori da `est`, Aragorn e Arwen
+   senza `suicidio`, i tre solo-HoME che NON sono apocrifi).
+3. **Split per progetto**: `arda/top/`, `ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`,
+   con in root le sole regole trasversali più un indice. ⚠️ **Dopo** la potatura, o si
+   sposta due volte la stessa roba.
+4. **Skill `/desc`**: pronta ma solo come file consegnato in chat (202 righe), non nel
+   repo. Va scritta in `tools` come `.claude/skills/desc/SKILL.md` (ora si può
+   direttamente: il Worker accetta solo `rules/` e `workers/`), più una nota nel
+   `CLAUDE.md` di `tools`, che non esiste ancora: solo con `/desc` invocata i suoi
    operatori scavalcano quelli di `Roccobot.md`.
-5. **Sezioni modali di `Roccobot.md`**: valutare se estrarle in skill (Bonifica asset 823
-   parole, Traduzioni 604, Revisione dei prompt 312, cioè il 15,1% del file).
-   Raccomandazione già data all'utente: **non** estrarle sui numeri di oggi.
+5. **Sezioni modali di `Roccobot.md`**: valutare l'estrazione in skill (15,1% del file).
+   Raccomandazione già data: **non** estrarle sui numeri di oggi.
 
 ## Andato live in questa sessione
 
@@ -51,16 +45,14 @@
 ## Decisioni dell'utente
 
 - **Criterio di manutenzione del `CLAUDE.md`**: si scrive il perché, non il come, perché
-  il codice è commentato e si legge → `CLAUDE.md` § '🪶 Come si mantiene questo file'.
+  il codice è commentato e si legge → `CLAUDE.md` § '🪶 Come si mantiene questo file', che
+  contiene anche le cinque famiglie che restano e le cronache ridotte ad accenno.
 - **I tetti di accessibilità per-manopola non si elencano più**, resta il vincolo generico
   WCAG AA → `CLAUDE.md` § 'Nuovi personaggi e canone', prima voce.
-- **Le cronache lunghe diventano un accenno di una riga**, quanto basta a non ripetere
-  l'errore ('taglia senza pietà') → implicito nel criterio sopra, già applicato.
 - **La scrittura via Worker non ha dry-run**: non si sonda mai su un percorso reale, e si
-  tiene una copia locale integra prima di ogni POST → `Roccobot.md` § Worker
-  `rules-proxy`, v1.47.2.
-- Bump `+0.1` e `+1.0` ammettono anche l'arrotondamento al decimale o all'intero
-  successivo (modifica fatta dall'utente stesso) → `CLAUDE.md` § 'Versione del sito'.
+  tiene una copia locale integra prima di ogni POST → `Roccobot.md` v1.47.2.
+- Bump `+0.1` e `+1.0` ammettono l'arrotondamento al decimale o all'intero successivo
+  (fatto dall'utente stesso) → `CLAUDE.md` § 'Versione del sito'.
 
 ## Verifiche arretrate
 
