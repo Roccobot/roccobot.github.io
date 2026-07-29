@@ -3,14 +3,17 @@
 ## Stato
 
 - **'I Grandi di Arda'**: locale, badge e **LIVE** tutti su **v14.80**; albero pulito;
-  `0 dietro / 0 avanti` rispetto a `origin/master`. Nessun deploy in volo.
-- **Worker** `arda-admin-proxy`: **rev 15**, `rl:true`. Non toccato in questa sessione.
-- `CLAUDE.md` è a **35.346 parole** (`wc -w`), da 43.785 di partenza: **-19,3%**. Le regole
-  universali sono a **`Roccobot.md` v1.47.2**.
-- ⚠️ `add_repo` in questa sessione rispondeva sempre 'requires approval', e l'allow-list in
-  `.claude/settings.json` non l'ha sbloccato a sessione avviata: potrebbe valere dal prossimo
-  avvio, **non verificato**. Se il repo serve ed è già agganciato nativamente, il problema non
-  si presenta.
+  `0 dietro / 0 avanti` rispetto a `origin/master`. Nessun deploy in volo. Ultimo commit
+  `10d440c`. **Riverificato il 2026-07-30: tutto confermato.**
+- **Worker** `arda-admin-proxy`: **rev 15**, `rl:true` (riverificato). Non toccato.
+- `CLAUDE.md` è a **35.576 parole** (`wc -w` del 2026-07-30), da 43.785 di partenza:
+  **-18,7%**. Regole universali a **`Roccobot.md` v1.47.2** (11.533 parole) e **`JRRT.md`
+  v1.23.0** (3.493).
+- ⚠️ `add_repo` rispondeva 'requires approval', e l'allow-list in `.claude/settings.json` non
+  l'ha sbloccato a sessione avviata. **Caso rientrato il 2026-07-30**: entrambi i repo erano
+  agganciati nativamente (`/home/user/roccobot.github.io` e `/home/user/tools`), quindi i file
+  di regole si leggono dal filesystem e `add_repo` non serve. Il dubbio resta aperto solo per
+  una sessione che non li abbia già entrambi.
 
 ## In sospeso
 
@@ -40,7 +43,7 @@
      approvato sia la **profondità** del taglio sia la **forma dei quattro blocchi**, che ora
      vale come regola e sta nel `CLAUDE.md`.
      ⚠️ Viveva nello scratchpad e **non esiste più**: va rifatto dalla sezione attuale, che è
-     ancora quella lunga. Stima sul file: **da 35.346 a 13.000-15.000 parole**, cioè un altro
+     ancora quella lunga. Stima sul file: **da 35.576 a 13.000-15.000 parole**, cioè un altro
      **-60%**; si accorciano meno canone, tipografia e workflow, che sono le parti che il
      codice non contiene.
    - **Primo passo**: si parte dalla sezione più grossa, gli effetti, che è anche quella su cui
@@ -68,23 +71,31 @@
      totale di partenza (nulla perso nel trasloco), e nessuna sezione deve comparire in due
      posti. ⚠️ Un `CLAUDE.md` di sottocartella si carica **solo** quando si legge un file di
      quella cartella: quindi una regola che serve sempre non può finire là.
-3. **Skill `/desc`: già creata dall'utente, resta solo da VERIFICARE.** Vive in `tools` come
-   `.claude/skills/desc/SKILL.md`, operativa, con un paio di sue correzioni: **non va
-   riscritta né ricreata.**
-   - **Primo passo e verifica** (è un controllo di pochi minuti): leggere il file e
-     accertare il frontmatter (`name`, `description`), che la `description` dica che vale
-     **solo se invocata**, e che in cima al corpo sia dichiarato quali operatori omonimi di
-     `Roccobot.md` scavalca e cosa resta come `Roccobot.md` lo definisce.
-   - **Manca il `CLAUDE.md` di `tools`, che non esiste**, e la richiesta dell'utente era
-     precisa: *scrivi SOLO* che gli operatori della skill valgono in override **unicamente
-     quando `/desc` è invocata*. Quindi il file nasce con quella nota e nient'altro: non è
-     l'occasione per documentare il repo `tools`.
-   - Contenuto della nota: gli operatori definiti nella skill (`>`, `^`, `^^`, `=`, `\` e
-     `/`) **scavalcano quelli omonimi** di `Roccobot.md`, sezioni 'Traduzioni e revisioni' e
-     '🎛️ Revisione dei prompt', **solo a skill invocata**; fuori da lì non si applicano, e
-     tutto ciò che la skill non copre (lingua, caratteri, formato, tono) resta come
-     `Roccobot.md` lo definisce. È l'applicazione della regola 'caricato non vuol dire
-     attivo' del `CLAUDE.md` di questo repo.
+3. **Skill `/desc`: VERIFICATA il 2026-07-30. Resta solo la nota nel `CLAUDE.md` di `tools`.**
+   La skill vive in `tools` come `.claude/skills/desc/SKILL.md`, è operativa e porta un paio di
+   correzioni dell'utente: **non va riscritta né ricreata.**
+   - **La verifica è FATTA e superata, non rifarla.** Il frontmatter ha `name` e `description`;
+     la `description` dice 'Invocala SOLO su richiesta esplicita dell'utente (`/desc`)... fuori
+     da lì non si applica e i suoi operatori non valgono'; e in cima al corpo è già dichiarato
+     che gli operatori `>`, `^`, `^^`, `=`, `\` e `/` scavalcano gli omonimi di `Roccobot.md`
+     ('Traduzioni e revisioni' e 'Revisione dei prompt') e che il resto (lingua della
+     conversazione, caratteri, formato, tono) resta come `Roccobot.md` lo definisce.
+   - ⚠️⚠️ **CORREZIONE al brief: il `CLAUDE.md` di `tools` ESISTE** (accertato il 2026-07-30).
+     Contiene già Regola n. 1, la scala di priorità a tre livelli, la denominazione di file e
+     cartelle e il branch principale `main`. Quindi la nota **si aggiunge** a un file esistente
+     e il file **non si crea**: cade il vincolo 'nasce con quella nota e nient'altro', mentre
+     resta pienamente valida la sostanza della richiesta dell'utente, cioè scrivere **SOLO** la
+     nota sugli operatori, senza farne l'occasione per documentare il repo `tools`.
+   - **Quel che manca davvero**: in quel `CLAUDE.md` non c'è alcuna menzione della skill
+     (`grep -in 'desc\|override\|operator'` non trova nulla). Contenuto della nota: gli
+     operatori definiti nella skill (`>`, `^`, `^^`, `=`, `\` e `/`) **scavalcano quelli
+     omonimi** di `Roccobot.md`, sezioni 'Traduzioni e revisioni' e '🎛️ Revisione dei prompt',
+     **solo a skill invocata**; fuori da lì non si applicano, e tutto ciò che la skill non
+     copre (lingua, caratteri, formato, tono) resta come `Roccobot.md` lo definisce. È
+     l'applicazione della regola 'caricato non vuol dire attivo' del `CLAUDE.md` di questo repo.
+   - **Primo passo**: una sola `Edit` su `/home/user/tools/CLAUDE.md`, con la nota collocata
+     dopo 'Regola n. 1' (è dove il file parla del rapporto con le regole universali). La skill
+     non si tocca, e il file di `tools` non prende nient'altro.
 4. **Sezioni modali di `Roccobot.md` (v1.47.2, 11.783 parole): valutare se estrarle in
    skill.** 'Modale' = si applica **solo quando l'utente la invoca**, non sempre. Sono tre:
    🧹 **Bonifica e ottimizzazione degli asset** 830 parole, 🔁 **Traduzioni e revisioni** 609,
