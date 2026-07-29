@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-07-25
+! Last updated: 2026-07-29
 
 *ads.js
 *pagead.js
@@ -546,7 +546,7 @@ yogablogfit.com##.qc-cmp2-container
 ! Le voci "nude" sparse sopra agiscono come regole DNS (telefono con AdGuard DNS);
 ! queste ||...^ bloccano anche col solo filtraggio di contenuto, cioe' sul desktop
 ! dove non usi AdGuard DNS. Coprono l'intera host-list del test (apici "puri" da
-! tracker collassati al dominio padre; domini condivisi — S3, social, OEM — col
+! tracker collassati al dominio padre; domini condivisi (S3, social, OEM) col
 ! solo sottodominio, per non bloccare il sito legittimo).
 ! Fonte: github.com/Turtlecute33/toolz -> src/d3host.adblock (ex d3ward).
 ! Hotjar (||hotjar.com^), Yandex Metrica (||metrika.yandex.ru^) e Google Analytics

@@ -1,10 +1,10 @@
 /**
- * Cloudflare Worker — proxy di commit sicuro per Arda Top
+ * Cloudflare Worker: proxy di commit sicuro per Arda Top
  * =================================================================
  *
  * Scopo: tenere il GitHub PAT (e la parola d'ordine admin) FUORI dal sito
  * pubblico. Il browser non possiede più alcuna credenziale: manda la password
- * al Worker, il Worker la valida lato server e — solo se corretta — esegue il
+ * al Worker, il Worker la valida lato server e, solo se corretta, esegue il
  * commit su GitHub usando il PAT custodito come secret.
  *
  * Secret da impostare (mai nel repo!):
@@ -439,7 +439,7 @@ export default {
         '- Usa SEMPRE le forme canoniche dei nomi propri nella lingua di destinazione, ' +
         'secondo le traduzioni storiche riviste dalla Società Tolkieniana Italiana ' +
         '(Il Signore degli Anelli: Alliata rev. Principe; Lo Hobbit: Jeronimidis Conte; ' +
-        'Il Silmarillion: Saba Sardi) — MAI le forme dell\'edizione Fatica o degli adattamenti a schermo. ' +
+        'Il Silmarillion: Saba Sardi). MAI le forme dell\'edizione Fatica o degli adattamenti a schermo. ' +
         'Esempi IT↔EN: Granburrone↔Rivendell, Pungolo↔Sting, Terra di Mezzo↔Middle-earth, ' +
         'la Contea↔the Shire, Monte Fato↔Mount Doom, Porti Grigi↔Grey Havens, Boscatetro↔Mirkwood, ' +
         'Samvise↔Samwise, Fosso di Helm↔Helm\'s Deep.\n' +

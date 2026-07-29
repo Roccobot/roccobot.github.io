@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Fapopedia Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.1.0
+// @version      1.1.1
 // @description  Su fapopedia.net aggiunge un pulsante per scaricare con un clic TUTTE le immagini della galleria in ALTA RISOLUZIONE, impacchettate in un unico file ZIP. Ricava l'originale dalla miniatura (toglie il prefisso "t_"); scarica via GM_xmlhttpRequest (ArrayBuffer). ZIP creato da un writer interno (metodo "store", nessuna dipendenza esterna: JSZip si bloccava in compressione nella sandbox). Nessun dato lascia il sito: solo download.
 // @author       Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -228,7 +228,7 @@
     const b = document.createElement('button');
     b.id = 'rb-fap-dl';
     b.type = 'button';
-    b.textContent = '⬇️ Scarica galleria (' + n + ') — ZIP';
+    b.textContent = '⬇️ Scarica galleria (' + n + ') - ZIP';
     b.title = 'Scarica tutte le immagini della galleria in alta risoluzione, in un unico ZIP';
     stile(b);
     b.addEventListener('click', function () { avvia(b); });
@@ -249,7 +249,7 @@
     const b = document.getElementById('rb-fap-dl');
     if (b && !inCorso) {
       const n = raccogliUrl().length;
-      if (n) b.textContent = '⬇️ Scarica galleria (' + n + ') — ZIP';
+      if (n) b.textContent = '⬇️ Scarica galleria (' + n + ') - ZIP';
     }
   }
   tick();
