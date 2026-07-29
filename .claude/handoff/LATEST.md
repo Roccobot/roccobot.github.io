@@ -17,112 +17,48 @@
 
 ## In sospeso
 
-1. **Potatura PROFONDA del `CLAUDE.md`**, la cosa principale, e ⚠️ **le quattro voci si fanno
-   nell'ordine in cui sono elencate** (richiesta dell'utente).
-   - **L'autorità è `CLAUDE.md` § '🪶 Come si mantiene questo file'**: si legge quello per
-     intero prima di toccare una riga, perché contiene il criterio, le cinque famiglie che
-     restano, cosa va via e la forma dei quattro blocchi. Quanto segue è solo il promemoria
-     operativo, non una seconda fonte.
-   - **Criterio, come l'ha enunciato l'utente:** *si scrive qui ciò che nel codice non c'è,
-     cioè il PERCHÉ; non si scrive ciò che il codice dice da sé, cioè il COME*, perché il
-     sorgente è commentato e si legge. Aggiunta sua: la documentazione degli effetti non deve
-     essere né reversibile né ricordata, e all'occorrenza si ricava dal codice.
-   - **Le cinque famiglie che restano, nella formulazione approvata dall'utente:**
-     1. **le trappole**: come si misura una cosa e come NON si misura, cosa uno strumento non
-        vede, quale prova non fa fede;
-     2. **i tentativi scartati**, con la ragione, così nessuno li ripropone;
-     3. **le linee guida estetiche**: allineamento ottico, anti-jitter, misure col font reale;
-     4. **le decisioni dell'utente**, compresi i suoi *no*, e le **scelte di canone o
-        editoriali**;
-     5. **le modalità di lavoro** con l'utente, più il **vocabolario** condiviso.
-   - **Vanno via** meccanica interna, range delle manopole, cronologia delle release, conferme
-     post-fix, e ogni elenco ricavabile con un grep. ⚠️ Delle misure si tiene quella
-     **scartata**, non quella accettata: il valore in uso sta nel codice e si rilegge, quello
-     scartato no.
-   - **Campione**: la sezione degli effetti da 8.251 a 1.824 parole (**-78%**). L'utente ha
-     approvato sia la **profondità** del taglio sia la **forma dei quattro blocchi**, che ora
-     vale come regola e sta nel `CLAUDE.md`.
-     ⚠️ Viveva nello scratchpad e **non esiste più**: va rifatto dalla sezione attuale, che è
-     ancora quella lunga. Stima sul file: **da 35.576 a 13.000-15.000 parole**, cioè un altro
-     **-60%**; si accorciano meno canone, tipografia e workflow, che sono le parti che il
-     codice non contiene.
-   - **Primo passo**: si parte dalla sezione più grossa, gli effetti, che è anche quella su cui
-     il campione è stato approvato; poi a scendere per dimensione.
-   - **Verifica del taglio**, la stessa già usata: estrarre gli identificatori fra backtick
-     prima e dopo, e per ognuno scomparso controllare con un `grep` che non esista più in
-     `arda/top/index.html`. Controllare anche che l'elenco delle sezioni `##` resti identico:
-     è così che si scopre uno splice che ha troncato il file.
-2. **Split per progetto.** ⚠️ **Dopo** la potatura, o si sposta due volte la stessa roba.
-   - **Criterio del taglio**: in root restano le regole **trasversali** (protocollo di avvio,
-     scala di priorità, non derogabili, lingua di risposta, artefatti, modello, git e go-live,
-     manutenzione del file) più un **indice** di tre righe che dice quale sottocartella ha il
-     suo. Tutto ciò che parla di UN solo progetto scende nella sua cartella.
-   - **I cinque destinatari e cosa ereditano**: `arda/top/CLAUDE.md` prende la parte grossa
-     (aspetto, dati, canone, badge, asset, note); `ABP/`, `userscripts/`, `RoccobotOS/` e
-     `proxy/` prendono le sezioni omonime, che sono già brevi e autosufficienti.
-   - ⚠️ **Le convenzioni sono diverse per progetto** e nel travaso non si mescolano: solo
-     'I Grandi di Arda' ha la versione `x.xx` e il deploy da attendere; le liste AdBlock hanno
-     l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
-     installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
-   - **Primo passo**: elencare le sezioni `##` del `CLAUDE.md` potato e assegnare a ciascuna
-     una destinazione, prima di spostare una riga. Il vocabolario e il glossario servono solo
-     ad Arda Top, quindi scendono con lui.
-   - **Come si verifica**: la somma delle parole dei file nuovi più la root deve tornare al
-     totale di partenza (nulla perso nel trasloco), e nessuna sezione deve comparire in due
-     posti. ⚠️ Un `CLAUDE.md` di sottocartella si carica **solo** quando si legge un file di
-     quella cartella: quindi una regola che serve sempre non può finire là.
-3. **Skill `/desc`: VERIFICATA il 2026-07-30. Resta solo la nota nel `CLAUDE.md` di `tools`.**
-   La skill vive in `tools` come `.claude/skills/desc/SKILL.md`, è operativa e porta un paio di
-   correzioni dell'utente: **non va riscritta né ricreata.**
-   - **La verifica è FATTA e superata, non rifarla.** Il frontmatter ha `name` e `description`;
-     la `description` dice 'Invocala SOLO su richiesta esplicita dell'utente (`/desc`)... fuori
-     da lì non si applica e i suoi operatori non valgono'; e in cima al corpo è già dichiarato
-     che gli operatori `>`, `^`, `^^`, `=`, `\` e `/` scavalcano gli omonimi di `Roccobot.md`
-     ('Traduzioni e revisioni' e 'Revisione dei prompt') e che il resto (lingua della
-     conversazione, caratteri, formato, tono) resta come `Roccobot.md` lo definisce.
-   - ⚠️⚠️ **CORREZIONE al brief: il `CLAUDE.md` di `tools` ESISTE** (accertato il 2026-07-30).
-     Contiene già Regola n. 1, la scala di priorità a tre livelli, la denominazione di file e
-     cartelle e il branch principale `main`. Quindi la nota **si aggiunge** a un file esistente
-     e il file **non si crea**: cade il vincolo 'nasce con quella nota e nient'altro', mentre
-     resta pienamente valida la sostanza della richiesta dell'utente, cioè scrivere **SOLO** la
-     nota sugli operatori, senza farne l'occasione per documentare il repo `tools`.
-   - **Quel che manca davvero**: in quel `CLAUDE.md` non c'è alcuna menzione della skill
-     (`grep -in 'desc\|override\|operator'` non trova nulla). Contenuto della nota: gli
-     operatori definiti nella skill (`>`, `^`, `^^`, `=`, `\` e `/`) **scavalcano quelli
-     omonimi** di `Roccobot.md`, sezioni 'Traduzioni e revisioni' e '🎛️ Revisione dei prompt',
-     **solo a skill invocata**; fuori da lì non si applicano, e tutto ciò che la skill non
-     copre (lingua, caratteri, formato, tono) resta come `Roccobot.md` lo definisce. È
-     l'applicazione della regola 'caricato non vuol dire attivo' del `CLAUDE.md` di questo repo.
-   - **Primo passo**: una sola `Edit` su `/home/user/tools/CLAUDE.md`, con la nota collocata
-     dopo 'Regola n. 1' (è dove il file parla del rapporto con le regole universali). La skill
-     non si tocca, e il file di `tools` non prende nient'altro.
-4. **Sezioni modali di `Roccobot.md` (v1.47.2, 11.783 parole): valutare se estrarle in
-   skill.** 'Modale' = si applica **solo quando l'utente la invoca**, non sempre. Sono tre:
-   🧹 **Bonifica e ottimizzazione degli asset** 830 parole, 🔁 **Traduzioni e revisioni** 609,
-   🎛️ **Revisione dei prompt** 388: in tutto **1.827 parole, il 15,5%** del file.
-   - **Raccomandazione già data all'utente: NON estrarle**, e la ragione è meccanica, non di
-     volume. Ciò che rendeva `Prompts.md` davvero modale erano i suoi **operatori che
-     scavalcavano** quelli di 'Traduzioni e revisioni': una skill serve quando un blocco
-     **cambia il significato** di regole che valgono sempre, perché allora leggerlo e non
-     applicarlo è ambiguo. Quegli operatori l'utente li ha rimossi, quindi le tre sezioni
-     restano modali **nell'uso** ma non nel meccanismo, e una sezione letta e non applicata
-     non costa quasi nulla: la regola 'caricato non vuol dire attivo' basta a governarla.
-   - **Il precedente in senso opposto è `/desc`**, che invece è giusto sia una skill proprio
-     perché ha operatori suoi che scavalcano gli omonimi.
-   - **Primo passo**: rileggere le tre sezioni e chiedersi, per ciascuna, se contiene
-     istruzioni che **cambiano il senso** di regole sempre valide. Se la risposta è no per
-     tutte e tre, la valutazione è chiusa e si scrive che è stata fatta.
-   - **Cosa farebbe cambiare la risposta**: se una delle tre riacquistasse operatori che
-     scavalcano regole sempre valide (il criterio decisivo), se crescesse fino a pesare più
-     del blocco che governa, o se `Roccobot.md` diventasse ingestibile. ⚠️ Oggi il file ha un
-     **indice delle sezioni** in testa, che è il rimedio scelto al posto della frammentazione.
-   - Se si decide di estrarne una, il modello è la `/desc`: la `description` del frontmatter
-     deve dire che vale **solo se invocata**, e in cima al corpo va la dichiarazione di quali
-     regole omonime scavalca e cosa resta come `Roccobot.md` lo definisce.
-   - **Come si verifica la decisione**: qualunque sia l'esito, va scritto **dove** (in
-     `Roccobot.md` se si estrae, altrimenti una riga che dice che la valutazione è stata
-     fatta e perché no), o alla prossima sessione si rifà da capo. Se si estrae, la prova è
-     che `Roccobot.md` letto da solo non contenga più istruzioni che valgono a intermittenza.
+⚠️ **Il lavoro delle quattro voci è FATTO ma vive su due PR APERTE, non mergiate**, perché
+sono modifiche strutturali e il go-live automatico non si applica: `roccobot.github.io#858`
+(potatura + split) e `Roccobot/tools#3` (nota `/desc` + valutazione modali). **Primo passo
+della prossima sessione: chiedere all'utente se mergiarle**, e se sì mergiare con squash e
+riallineare i branch. Finché restano aperte, il `CLAUDE.md` su `master` è ancora quello
+vecchio, monolitico.
+
+1. **Potatura del `CLAUDE.md`: fatta, con uno SCOSTAMENTO da valutare.** Il file è passato da
+   **35.576 a 22.840 parole (-36%)** con la forma dei quattro blocchi, e le undici sezioni
+   grosse sono scese in media del **-43%**.
+   - ⚠️ **Il campione approvato faceva -78% sulla sezione degli effetti, la passata reale si è
+     fermata a -63%.** Non ho inseguito il numero perché quella sezione ha accumulato trappole
+     **nuove** dopo la misura del campione (i valori a scelta letti prima della definizione,
+     il touch reale, il tablet con mouse), e il criterio protegge esattamente il blocco delle
+     trappole. **Domanda aperta per l'utente:** vuole la profondità piena, e in tal caso quali
+     trappole considera sacrificabili?
+   - **Sezioni NON ancora potate**, perché rendevano poco e sono già asciutte: glossario dei
+     contenuti (659), userscript (627), admin e segreti (616), RoccobotOS (417), misure
+     tipografiche (351), etichette tipo (336), ABP (327), più le trasversali di root.
+   - **Verifica usata, da riusare:** l'elenco delle sezioni `##` deve restare identico a ogni
+     passo (è il controllo anti-troncamento dello splice), e degli identificatori fra backtick
+     che escono si controlla che si ritrovino **nel codice** (204 su 232, i restanti sono forme
+     sintattiche composte). Lo splice è `scratchpad/splice.py`, **effimero**, 20 righe.
+2. **Split per progetto: fatto.** Sei file, `CLAUDE.md` di root (9 sezioni trasversali, 4.178
+   parole) più `arda/top/` (16, 17.448), `proxy/` (nuovo, 725), `userscripts/` (667),
+   `RoccobotOS/` (459), `ABP/` (377). Verificato: 33 sezioni, **nessuna in due posti**, e la
+   somma delle parole torna.
+   - **Due scelte di merito da conoscere**, perché non sono spostamenti: il **divieto
+     dell'em-dash è salito in root** (sezione 'Caratteri vietati'), perché un file di
+     sottocartella si carica solo leggendo un file di quella cartella e quella regola vale in
+     ogni output; **rate limiting e spia `rev`** sono scesi in `proxy/CLAUDE.md`, con un
+     rimando da `arda/top/`, per non avere due fonti di verità.
+   - ⚠️ **Da tenere d'occhio alla prima sessione dopo il merge:** che i `CLAUDE.md` di
+     sottocartella si carichino davvero quando si legge un file di quella cartella, e che in
+     root non manchi nulla di ciò che serve **sempre**. Se una regola trasversale risultasse
+     finita in `arda/top/`, va risalita.
+3. **Nota `/desc` nel `CLAUDE.md` di `tools`: fatta**, con la sola nota richiesta. La skill non
+   è stata toccata e la sua verifica risulta superata.
+4. **Valutazione sulle sezioni modali: fatta e SCRITTA** in `rules/Roccobot.md` (bump a
+   **1.47.3**), quindi non si rifà. Esito: **non si estraggono**, col residuo di meccanismo
+   dichiarato (la clausola che sostituisce il formato di output) e con l'elenco di cosa
+   farebbe cambiare la risposta.
 
 ## Andato live in questa sessione
 
@@ -148,9 +84,8 @@
 
 ## Verifiche arretrate
 
-- **Gate W3C**: non eseguito per la v14.80, challenge Cloudflare. Prova sostitutiva usata:
-  fuori dai blocchi `<script>` cambiava solo il numero del badge. Da recuperare al primo
-  aggiornamento del sito in cui il validatore risponda.
+- **Niente.** Il gate W3C arretrato della v14.80 è stato **recuperato il 2026-07-30**:
+  `arda/top/index.html` risponde `{"messages":[]}`, cioè **0 errori e 0 warning**.
 
 ## Strumenti da rifare
 
