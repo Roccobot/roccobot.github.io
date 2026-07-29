@@ -200,6 +200,37 @@ difetto di quel file, da segnalare all'utente.
 Le regole nuove di portata generale vanno in `rules/Roccobot.md` secondo il
 protocollo 'Aggiungi alle regole' definito lì, non qui.
 
+## 🪶 Come si mantiene questo file
+
+**Criterio unico (deciso dall'utente, 2026-07-29): si scrive qui ciò che nel codice non c'è,
+cioè il PERCHÉ. Non si scrive ciò che il codice dice da sé, cioè il COME.** Il sorgente è
+commentato e si legge: una spiegazione di meccanica che il codice contiene già è peso morto, e
+peso morto che invecchia.
+
+Quindi **restano** cinque famiglie di cose, e solo queste:
+
+1. **Le trappole**: come si misura una cosa e come NON si misura, che cosa uno strumento non
+   vede, quale prova non fa fede. Sono le note che risparmiano mezza sessione a chi viene dopo.
+2. **I tentativi scartati** con la ragione, così nessuno li ripropone.
+3. **Le linee guida estetiche**: allineamento ottico, anti-jitter, misure col font reale, e in
+   generale i criteri di gusto che l'utente ha fissato.
+4. **Le decisioni dell'utente**, compresi i suoi *no*, e le **scelte di canone o editoriali**:
+   non stanno nel codice e non stanno nei dati, stanno solo qui.
+5. **Le modalità di lavoro e di interazione** con l'utente, più il **vocabolario** condiviso
+   (Tipo / Categoria / Classe / Badge, `info | genitori` ⤶ `nomi | titoli`), che serve a
+   parlare in fretta.
+
+E **vanno via**: la meccanica interna (formule, selettori, specificità, ordini di ombre, nomi
+di classe), i range delle manopole, la cronologia delle release, le conferme post-fix, e
+**qualunque elenco ricavabile con un grep** su `dati.js` o su `index.html`. ⚠️ Il caso da
+tenere a mente sono gli **elenchi di portatori dei badge**: si ricavano dai dati, quindi non si
+scrivono qui, mentre il **criterio** e le **esclusioni motivate** sì, perché nei dati
+un'esclusione è indistinguibile da una dimenticanza.
+
+⚠️ **Le scelte strutturali si dicono, non si spiegano.** Basta la nota tecnica che permette di
+orientarsi (dove vive una cosa, chi è la fonte unica, qual è l'accesso giusto), non il suo
+funzionamento. Nel dubbio fra la regola e la sua dimostrazione, si tiene la regola.
+
 ## 🏷️ Identità del progetto
 
 - **Nome: 'I Grandi di Arda'.** 'Grimorio' è terminologia morta (sopravvive
@@ -2428,10 +2459,18 @@ specifico del dataset):
   `troll → orc`. La decisione è di **merito canonico/editoriale**, non dettata
   dalla visibilità di default (cfr. regola universale 'Correttezza e canone
   prima della funzionalità').
-- **Test di accessibilità con TUTTE le categorie attive.** L'audit `axe-core`
-  va eseguito dopo aver attivato tutte le categorie (`divini` e `animali` sono
-  spente di default): altrimenti i badge di quelle categorie non vengono testati
-  (storico: il fix contrasto v10.4.2 mancò aquila/balrog/ent proprio per questo).
+- ⚠️ **L'accessibilità WCAG AA è un vincolo permanente del sito** (istruzione dell'utente,
+  2026-07-29): qualunque modifica alla grafica, ai colori o alle opacità deve restare conforme,
+  e i valori tarati su quella soglia non si alzano senza rimisurare. Questa è la formulazione
+  che vale: i tetti per-manopola misurati uno per uno **non** vanno più elencati qui, perché il
+  sito è vicino alla sua forma definitiva e quell'elenco costava più di quanto rendesse.
+  - ⚠️ Dove misurare NON è banale la nota resta, perché è una trappola e non un numero: **axe
+    non valuta il contrasto sulle card** (con un `::before` sull'elemento rinuncia a
+    determinare il fondo e classifica tutto come `incomplete`), quindi là la verifica si fa **a
+    calcolo sui pixel**.
+- **Test di accessibilità con TUTTE le categorie attive.** L'audit `axe-core` va eseguito dopo
+  aver attivato tutte le categorie (`divini` e `animali` sono spente di default): altrimenti i
+  badge di quelle categorie non vengono testati.
 
 ## 🔬 Misure tipografiche: servire i font REALI ai test (scoperto il 2026-07-26)
 
