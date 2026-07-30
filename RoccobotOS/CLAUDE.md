@@ -33,9 +33,6 @@
   prime righe, e solo là. ⚠️ **Non in `index.html`**, che è un **export da markdown** e si
   rigenera: un commento messo là sparirebbe al primo export nuovo, cioè senza che nessuno se
   ne accorga. Il `.js` invece è codice di casa, scritto a mano.
-  - Il nome tecnico di quel commento è *banner* (è l'opzione con cui i minificatori lo
-    preservano in cima al file), ma nei nostri testi si dice **intestazione**: il gergo, se
-    non serve a lavorare, si traduce.
 - ⚠️ **Non è visibile agli utenti, e non deve diventarlo**: la guida non ha un badge di
   versione e non ne vuole uno. Il numero serve a noi per dire di quale incarnazione della
   guida si parla, e si legge nel sorgente o con un `curl`.
