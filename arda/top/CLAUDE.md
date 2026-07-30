@@ -93,7 +93,7 @@ serve.
 - Il codice del Worker si ridistribuisce **da sé** a ogni push su `master` via la Git integration di
   Cloudflare; `wrangler deploy` resta solo come fallback manuale.
 
-## 🔎 Modalità ingrandita (dalla v12.14; 130% dalla v12.24)
+## 🔎 Modalità ingrandita
 
 Ingrandimento del sito al **130%**, per la leggibilità su desktop (l'utente era
 partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
@@ -162,7 +162,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
 
-## ✨ Feature flag dell'aspetto (Pannello di controllo, dalla v12.24)
+## ✨ Feature flag dell'aspetto (Pannello di controllo)
 
 Pannello dell'**aspetto del sito**, valido per **tutti i visitatori**: la Modalità XL e 8
 effetti grafici, tutti a costo zero sul layout.
@@ -409,7 +409,7 @@ compaiono nella tab Mobile.
 - **Salvare i flag non bumpa la versione** ('accendere un effetto non è una modifica di
   contenuto'): il controllo di freschezza resta affidabile perché si basa sui ref git.
 
-## 🪟 Vista divisa degli editor dell'aspetto (dock, dalla v13.06)
+## 🪟 Vista divisa degli editor dell'aspetto (dock)
 
 **Com'è fatto.** Su desktop largo gli editor dell'aspetto non aprono una modale: si ancorano in una
 **colonna a sinistra** e la **pagina vera**, spostata a destra col margine del body, fa da
@@ -554,7 +554,7 @@ strutturali di una voce (il glossario dei contenuti, più sotto, nomina invece i
 Categoria ma Tipo e Classe diversi. Unica sovrapposizione totale: Classe **Animali** ≡ Categoria
 `animal`.
 
-### 🎨 Colore card (sistema cardcolor, dalla v8.72)
+### 🎨 Colore card (sistema cardcolor)
 
 **Com'è fatto.** Sfondo card e bordino sinistro derivano dalla stessa **famiglia colore**, non più
 dalla Classe: ~33 classi-etichetta sono consolidate in poche famiglie, quindi ricolorare un gruppo
@@ -1062,7 +1062,7 @@ via grep sulle fonti locali. Quello che ne è uscito:
   traduce Evenstar. **Tenuti apposta:** Imrahil 'il Bello' (verbatim, SdA V.6), Bilbo 'il
   Magnifico' (epiteto di Thranduil, fine dello Hobbit) e Arwen 'Gioiello degli Elfi'.
 
-## 🔬 Misure tipografiche: servire i font REALI ai test (scoperto il 2026-07-26)
+## 🔬 Misure tipografiche: servire i font REALI ai test
 
 **Riferimenti em del sito**, da riverificare al momento perché dipendono dal corpo del testo
 su cui si misura: desktop `1em ≈ 25.6px` CSS **sulla riga nome** della card, mobile
