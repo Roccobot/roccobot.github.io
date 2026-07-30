@@ -6,7 +6,7 @@ non trova nulla, o trova la cosa sbagliata, e nessuno se ne accorge finche' non
 rilegge tutto da capo. Un elenco scritto a mano sarebbe una seconda fonte di
 verita' che invecchia: qui i rimandi si CALCOLANO.
 
-Uso: python3 .claude/scripts/refcheck.py [-v]
+Uso: python3 .memo/scripts/refcheck.py [-v]
 Esce 1 se trova difetti, 0 se e' tutto in ordine. L'hook PreToolUse sui commit
 lo lancia da se': vedi .claude/settings.json.
 
@@ -45,7 +45,7 @@ RULEFILES = [
     SITO / "RoccobotOS/CLAUDE.md",
     SITO / "proxy/CLAUDE.md",
     SITO / ".claude/skills/handoff/SKILL.md",
-    SITO / ".claude/handoff/LATEST.md",
+    TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
     TOOLS / "rules/Roccobot.md",
     TOOLS / "rules/JRRT.md",
@@ -58,8 +58,6 @@ SKIP_PATHS = {
     # cancellati dall'utente il 2026-07-29, citati per dire che non esistono piu'
     "rules/Development.md",
     "rules/Prompts.md",
-    # percorso ipotetico di un piano non applicato (spostamento del brief)
-    ".memo/LATEST.md",
 }
 SKIP_PREFIXES = (
     "scratchpad/",  # strumenti effimeri: lo scratchpad non sopravvive alla sessione
@@ -137,7 +135,7 @@ def main():
                 if p in SKIP_PATHS or p.startswith(SKIP_PREFIXES):
                     continue
                 seen["path"] += 1
-                if not any((d / p).exists() for d in (base, SITO, TOOLS)):
+                if not any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent)):
                     bad_paths.append((f, n, p))
             for s in RE_SECT.findall(line):
                 if s in SKIP_SECTS:

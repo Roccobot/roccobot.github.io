@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto: in lettura esegue prima il protocollo di avvio del CLAUDE.md, poi il brief. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
+description: "Passaggio di consegne fra sessioni di lavoro su Roccobot/roccobot.github.io e Roccobot/tools: il brief e' unico e copre entrambi i repo, con una sezione di stato per ciascuno. Invocala nella sessione che sta finendo per scriverlo, oppure in una sessione nuova (`/handoff leggi`) per il giro completo di verifica ed evasione. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
 ---
 
 # Passaggio di consegne fra sessioni
@@ -11,11 +11,29 @@ solo il `CLAUDE.md` del repo (le regole universali stanno in un altro repo e van
 lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa
 skill copre esattamente quel salto, e nient'altro.
 
+⚠️ **Il brief e' TRANS-REPO** (richiesta dell'utente, 2026-07-30): il lavoro tocca di
+continuo **due** repo, `Roccobot/roccobot.github.io` e `Roccobot/tools`, dove vivono le
+regole universali. Quindi il brief e' **uno solo** e copre entrambi, con una sezione di stato
+per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo e' stato
+**scartato**: spezzerebbe il lavoro che li attraversa, che e' la norma e non l'eccezione.
+- **Dove vive**: in `Roccobot/tools`, `.memo/LATEST.md`, che e' il repo **trans-progetto**.
+  Entrambi i `CLAUDE.md` lo referenziano.
+- ⚠️ **E si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
+  `.memo/` come `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>. E'
+  la via per le sessioni che non hanno quel repo agganciato o hanno meno permessi (scelta
+  dell'utente, 2026-07-30), e la scrittura segue il protocollo 'Aggiungi alle regole' di
+  `Roccobot.md`. ⚠️ **Un GET che risponde 404 sotto un percorso ammesso significa 'file
+  assente'; un 404 su un percorso NON ammesso significa 'fuori whitelist'**: sono due cose
+  diverse e si distinguono guardando il prefisso.
+- ⚠️ **Questa skill invece vive nel repo del sito**, quindi una sessione che monta solo
+  `tools` non l'ha: il brief lo legge comunque (dal file o dal Worker), ma la procedura di
+  evasione non e' in scena, e allora si dichiara che le voci non sono state verificate.
+
 **Due modi.**
 
 | invocazione | dove | cosa fa |
 |---|---|---|
-| `/handoff` | nella sessione che sta **finendo** | scrive `.claude/handoff/LATEST.md` e lo pubblica |
+| `/handoff` | nella sessione che sta **finendo** | scrive `.memo/LATEST.md` di `Roccobot/tools` e lo pubblica |
 | `/handoff leggi` | in una sessione **nuova** | il giro completo: verifica il brief contro il repo, **evade** le voci provate, propone il primo passo |
 
 ⚠️ **Il modo lettura NON è l'interruttore che fa TROVARE il brief** (dal 2026-07-30): il brief
@@ -122,8 +140,10 @@ provato, si aggiunge ciò che è rimasto appeso, e il file resta la fotografia d
 
 Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
 
-- **Repository** = `Roccobot/roccobot.github.io`: uno solo, con un solo `master` e un
-  solo `CLAUDE.md`, che raccoglie le regole di **tutti** i progetti ospitati.
+- **Repository** = **due**: `Roccobot/roccobot.github.io` (branch `master`), che ospita i
+  cinque progetti qui sotto e le regole trasversali, e `Roccobot/tools` (branch `main`), che
+  ospita le regole **universali** (`rules/`) e i sorgenti dei Worker. Ognuno ha il suo
+  `CLAUDE.md`; il brief copre entrambi.
 - **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
   root (convenzione registrata nelle regole universali). Qui vivono:
   `arda/top/` = **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre),
@@ -187,7 +207,7 @@ travasato, perché chi lo segue non trova nulla o trova la cosa sbagliata.
 
 ### 3. Scrivi il file
 
-`mkdir -p .claude/handoff`, poi scrivi `.claude/handoff/LATEST.md` col modello qui
+In `Roccobot/tools`: `mkdir -p .memo`, poi scrivi `.memo/LATEST.md` col modello qui
 sotto. **Un solo file, sovrascritto**: l'archivio è la storia git, non una cartella di
 copie. Sta sotto una cartella con il punto, quindi GitHub Pages non lo pubblica.
 
@@ -223,10 +243,11 @@ densa di dati non è prolissità, è il lavoro già fatto che non va perso.
 ```markdown
 # Handoff - AAAA-MM-GG
 
-## Stato                                     [max 6 righe]
-**Progetto** di cui si parla (vedi 'Repository, progetto, sessione'), versione locale
-e LIVE, ultimo commit, branch, albero pulito o no, deploy in volo, `rev` del Worker se
-toccato. Numeri, non impressioni.
+## Stato                              [max 6 righe PER REPO]
+Un blocco per **repo**, e dentro il **progetto** di cui si parla (vedi 'Repository,
+progetto, sessione'): versione locale e LIVE, ultimo commit, branch, albero pulito o no,
+deploy in volo, `rev` del Worker se toccato. Per `tools`: la versione dei file di regole e
+se il Worker `rules-proxy` la serve gia'. Numeri, non impressioni.
 
 ## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]
 Cosa era in corso e **il punto esatto** in cui si è fermato. Solo cose **aperte**: quelle
@@ -281,7 +302,7 @@ protocollo **non** copre: verifica ed evasione.
 
 ### 1. Poi l'handoff, e verificalo
 
-1. Leggi `.claude/handoff/LATEST.md`.
+1. Leggi `.memo/LATEST.md` di `Roccobot/tools`, dal file o dal Worker.
 2. ⚠️ **Verificalo contro la realtà prima di fidarti.** Il file è una fotografia e può
    essere vecchio di giorni: rifai i comandi del passo 1 del modo scrittura e confronta.
    Possono essere cambiati **la versione live** (deploy arrivato dopo), **i ref**
@@ -328,7 +349,7 @@ sessione nuova quei file non esistono e vanno riscritti. Nell'handoff elenca sol
 che servono al lavoro in sospeso, dicendo a che cosa servono, così chi arriva li rifà
 mirati invece di scoprirlo a metà strada.
 
-⚠️ **L'aggancio dei font reali NON è più fra questi**: vive in `.claude/scripts/realfont.js`,
+⚠️ **L'aggancio dei font reali NON è più fra questi**: vive in `.memo/scripts/realfont.js`,
 committato, e senza di esso ogni misura di larghezza, a-capo o allineamento ottico sarebbe
 di un altro font. Se una voce lo dà per perduto, è vecchia. Lo stesso vale per qualunque
 altro script: se serve più di una volta, la risposta non è elencarlo qui, è committarlo.

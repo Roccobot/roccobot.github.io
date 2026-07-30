@@ -66,7 +66,8 @@ sessione:
      universale 'Offrire sempre Consenti sempre' (`Roccobot.md`, § '⚙️ Automazione e
      interazioni'), non una dimenticanza: la scelta vale per la sessione in corso, e
      la domanda si rifà ogni volta.
-3. **Si legge il brief di consegna** (`.claude/handoff/LATEST.md`): è lo stato
+3. **Si legge il brief di consegna**, che vive in `Roccobot/tools`, `.memo/LATEST.md`,
+   perché è **trans-repo** e quel repo è il trans-progetto: è lo stato
    volatile lasciato dalla sessione precedente, e può contenere lavoro in sospeso da
    eseguire **prima** di ogni altra cosa. ⚠️ La procedura completa (verificarlo contro
    il repo, evadere le voci, cancellare quelle provate) vive nella skill `handoff`,
@@ -75,6 +76,10 @@ sessione:
    Storico che lo motiva: fino al 2026-07-30 l'unico rimando in questo file viveva
    dentro una nota su una verifica in corso, e chiudendo quella verifica il rimando è
    sparito con lei.
+   - ⚠️ **Si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
+     `.memo/` come già `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>.
+     È la via che copre le sessioni **senza** `Roccobot/tools` agganciato, o con meno
+     permessi: senza di essa il brief sarebbe invisibile proprio a chi ne ha più bisogno.
 4. **Dal momento del caricamento in poi, quei file sono regole consolidate e
    condivise**: si dànno per scontate e ci si riferisce al loro contenuto senza
    ri-chiedere e senza rileggerle a ogni turno.
@@ -402,11 +407,11 @@ poi divergerebbe.
 - **I quattro controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
   nelle righe aggiunte, e i **riferimenti incrociati** dei file di regole, verificati da
-  `.claude/scripts/refcheck.py` (committato, e controlla anche i file di `Roccobot/tools`
+  `.memo/scripts/refcheck.py` (committato, e controlla anche i file di `Roccobot/tools`
   quando il repo è agganciato). ⚠️ Criterio, whitelist e trappole del verificatore vivono in
   `Roccobot.md` § '📥 Protocollo Aggiungi alle regole': qui basta sapere che esiste, che si
   calcola invece di essere scritto a mano, e che blocca il commit.
-  - ⚠️ **Gli script di `.claude/scripts/` si lanciano come comando SINGOLO e con percorso
+  - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
     interazioni'), quindi un `cp x y && python3 script` chiede l'autorizzazione per il `cp` e
