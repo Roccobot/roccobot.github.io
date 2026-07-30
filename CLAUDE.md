@@ -215,6 +215,7 @@ può allentarle. Questo è l'indice, la formulazione completa sta dove indicato.
 | **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
 | Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, 'Test e verifiche' |
 | **Conferma esplicita** per le operazioni ad alto impatto | `Roccobot.md`, 'Automazione e interazioni' + qui, go-live |
+| **Allineamento al remoto prima di toccare un file**, col confronto dei ref: nessun progetto può allentarlo | `Roccobot.md`, 'Workflow git e versioni' |
 
 ⚠️ Se un file più specifico sembra contraddire una di queste, non è una deroga: è un
 difetto di quel file, da segnalare all'utente.
@@ -421,23 +422,14 @@ ha priorità più alta**.
     cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e
     basta attendere il push successivo. Se anche i push freschi falliscono ininterrottamente
     oltre le ~12 ore, ticket al supporto GitHub, che solo il proprietario del repo può aprire.
-- **Controllo di freschezza prima di lavorare** (il passo successivo al pull obbligatorio
-  previsto dalla regola universale). Il **confronto dei ref col remoto** è trasversale e
-  vale per ogni progetto:
-
-  ```bash
-  git fetch origin master \
-    && git rev-list --left-right --count origin/master...HEAD
-  ```
-
-  Il primo numero è quanti commit si è **dietro** a `origin/master`: se è >0 ci sono commit
-  da prendere e si allinea **prima** di toccare qualsiasi file. ⚠️ Il rischio qui è concreto
-  e non teorico, perché l'editor admin di 'I Grandi di Arda' committa direttamente su
-  GitHub via API, quindi `master` si muove anche senza che nessuna sessione lo tocchi.
-  - ⚠️ **Il controllo specifico del progetto è un passo IN PIÙ, non un'alternativa**, e vive
-    nel `CLAUDE.md` del progetto: per 'I Grandi di Arda' è in
-    [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔢 Versione del sito', perché legge il
-    badge e `datiVersion`, che sono suoi.
+- ⚠️ **Allineamento al remoto prima di toccare un file: la regola vive in `Roccobot.md`**
+  ('Workflow git e versioni') ed è **non derogabile**, col confronto dei ref come comando.
+  Qui si aggiunge solo perché **questo repo è il caso peggiore**: l'editor admin di 'I Grandi
+  di Arda' committa via API, quindi `master` si muove anche quando nessuna sessione lo tocca,
+  e più sessioni possono lavorarci in parallelo.
+  - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
+    'I Grandi di Arda' vive in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔢 Versione del
+    sito', perché legge il badge e `datiVersion`, che sono suoi.
 - Il **SessionStart hook** standard (regola universale) è già configurato
   in `.claude/settings.json` di questo repo.
 - **Salvaguardie anti-conflitto coi salvataggi admin** (in `.claude/settings.json`).
