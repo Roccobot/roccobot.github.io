@@ -65,9 +65,12 @@ RULEFILES = [
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
 SKIP_PATHS = {
-    # cancellati dall'utente il 2026-07-29, citati per dire che non esistono più
-    "rules/Development.md",
-    "rules/Prompts.md",
+    # cancellati dall'utente, citati per dire che non esistono più: e' una categoria, non un
+    # elenco di casi. Un file che non c'e' PIU' si nomina, perche' senza il suo nome la nota
+    # che spiega la sua assenza non si puo' nemmeno scrivere.
+    "rules/Development.md",       # 2026-07-29
+    "rules/Prompts.md",           # 2026-07-29
+    "RoccobotOS/Da fare.txt",     # 2026-07-30, residuo vecchio: non si ricrea
 }
 SKIP_PREFIXES = (
     "scratchpad/",  # strumenti effimeri: lo scratchpad non sopravvive alla sessione
@@ -145,7 +148,12 @@ INTRO_SORGENTE = SITO / ".claude/skills/handoff/SKILL.md"
 INTRO_COPIA = TOOLS / ".memo/LATEST.md"
 
 RE_MDLINK = re.compile(r"\[[^\]]*\]\(([^)#][^)]*)\)")
-RE_PATH = re.compile(r"`([\w./-]+/[\w.-]+\.(?:md|js|json|txt|py|css|html|toml))`")
+# ⚠️ Il nome del file ammette gli SPAZI, e non e' pignoleria: fino al 2026-07-30 non li
+# ammetteva, e il rimando a `RoccobotOS/Da fare.txt` non e' mai stato controllato. Quando
+# l'utente ha cancellato quel file, il verificatore ha risposto 'tutto in ordine' con un
+# rimando morto in casa. Un controllo che non copre un caso non lo dichiara: dice che va tutto
+# bene, ed e' il modo peggiore di fallire.
+RE_PATH = re.compile(r"`([\w./-]+/[\w.-]+(?: [\w.-]+)*\.(?:md|js|json|txt|py|css|html|toml))`")
 RE_SECT = re.compile(r"(?:§|sezione|sezioni)\s*'([^']{4,})'")
 RE_HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*$")
 # un titolo non deve contenere niente che cambi: date ISO o numeri di versione
