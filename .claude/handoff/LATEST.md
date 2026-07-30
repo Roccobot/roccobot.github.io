@@ -3,25 +3,30 @@
 ## Stato
 
 - **'I Grandi di Arda'**: locale, badge e **LIVE** tutti su **v14.80**; albero pulito, `0/0`
-  con `origin/master` (`7b3c2fc`), nessun deploy in volo, gate W3C a **0 errori e 0 warning**.
+  con `origin/master` (`70ab660`), nessun deploy in volo, gate W3C a **0 errori e 0 warning**.
 - **Worker** `arda-admin-proxy`: **rev 15**, `rl:true` (riverificato ora). Non toccato.
-- **Regole in sei file**, **22.787** parole (root 3.572, `arda/top/` 17.036, `proxy/` 701,
+- **Regole in sei file**, **22.879** parole (root 3.653, `arda/top/` 17.047, `proxy/` 701,
   `userscripts/` 655, `RoccobotOS/` 450, `ABP/` 373), da 43.785 di partenza: **-48%**;
   universali a `Roccobot.md` **v1.51.0** e `JRRT.md` v1.23.0.
 
 ## In sospeso
 
-⚠️⚠️ **UNA VOCE SOLA, E VA ESEGUITA COME PRIMISSIMA COSA DELLA SESSIONE**, prima di leggere
-o aprire qualunque file: qualsiasi lettura precedente **inquina l'esito** e costringe a
-rimandare la prova a un'altra sessione ancora.
+⚠️⚠️ **DUE VOCI, ENTRAMBE ALL'AVVIO E IN QUEST'ORDINE.** La n. 1 va eseguita come **primissima
+cosa**, prima di leggere o aprire qualunque file del sito: qualsiasi lettura precedente
+**inquina l'esito** e costringe a rimandare la prova a un'altra sessione ancora. La n. 2 non
+la disturba, e la sua prova si raccoglie **da sé** nel momento in cui apri questo file.
+
+⚠️ **Leggere QUESTO file non inquina niente, non esitare per quello**: sta in `.claude/`, non
+in `arda/top/`, quindi non può portare in scena il `CLAUDE.md` che la sonda della voce n. 1
+cerca.
 
 ### 1. I `CLAUDE.md` di sottocartella si caricano davvero? (test da fare all'avvio)
 
 **Obiettivo.** Il 2026-07-29 il `CLAUDE.md` di root è stato spezzato in **sei file**: in root
-sono rimaste le regole trasversali, e 17.036 parole sono scese in `arda/top/CLAUDE.md` più
+sono rimaste le regole trasversali, e 17.047 parole sono scese in `arda/top/CLAUDE.md` più
 quattro file minori (`ABP/`, `userscripts/`, `RoccobotOS/`, `proxy/`). Tutto lo split poggia
 su un'assunzione **mai verificata**: che un `CLAUDE.md` di sottocartella venga caricato fra le
-istruzioni quando si lavora in quella cartella. Se l'assunzione è falsa, quelle 17.036 parole
+istruzioni quando si lavora in quella cartella. Se l'assunzione è falsa, quelle 17.047 parole
 sono **invisibili** a ogni sessione, e con esse le regole su effetti, dati, canone, badge, note
 e asset del sito.
 
@@ -48,11 +53,11 @@ test da una sessione che abbia creato il file: darebbe lo stesso risultato ambig
    quelle regole non le legge nessuno. Non è un'emergenza (vedi la rete di sicurezza qui
    sotto), ma va deciso con l'utente fra due strade:
    - **A. Risalire tutto in root**: `arda/top/CLAUDE.md` torna dentro il file principale, che
-     tornerebbe a ~20.600 parole. Costo: si perde il beneficio dello split.
+     tornerebbe a ~20.700 parole. Costo: si perde il beneficio dello split.
    - **B. Tenere lo split e fidarsi della lettura esplicita**: le regole restano dove sono e
      si leggono a mano quando si lavora su quel progetto, come già prescrive root. Costo: una
      lettura in più per sessione, e la disciplina di non dimenticarla.
-   - **Parere di chi scrive: B.** Il costo è una lettura, mentre A rimette 17.036 parole in un
+   - **Parere di chi scrive: B.** Il costo è una lettura, mentre A rimette 17.047 parole in un
      file che si carica sempre, cioè paga contesto a ogni sessione anche quando si lavora su
      ABP o sugli userscript. Ma è una decisione dell'utente, non da prendere da soli.
 
@@ -74,6 +79,81 @@ se l'assunzione è confermata, in root si toglie la marcatura 'non è un fatto v
 scrive che è accertata, con la data e con quale dei due meccanismi vale; se è smentita, si
 applica la scelta dell'utente e si aggiorna la stessa sezione. In entrambi i casi la voce si
 **cancella** da qui (regola n. 3).
+
+### 2. Perché questo brief chiede il permesso a ogni accesso? (si osserva da sé, all'avvio)
+
+**Obiettivo.** Accedere a `LATEST.md` in lettura e scrittura **senza un prompt di
+autorizzazione a ogni chiamata**: richiesta esplicita dell'utente, 2026-07-30, *'Vorrei che
+accedessi liberamente'*. Il prompt che vede lui dice, verbatim: *'Claude requested permissions
+to edit /home/user/roccobot.github.io/.claude/handoff/LATEST.md which is a sensitive file'*.
+Non è un fastidio estetico: è la skill `handoff` che, per funzionare, deve poter riscrivere il
+brief **a ogni voce evasa** (regola n. 3, 'quando si cancella: nel momento in cui la prova
+esiste'), quindi molte volte per sessione.
+
+**Cosa è già stato fatto e NON va rifatto.** In `.claude/settings.json` ci sono già **sette**
+regole di permesso sul solo brief, aggiunte il 2026-07-30 (PR `#865`, commit `829587c`):
+`Read/Edit/Write(.claude/handoff/**)`, `Read/Edit/Write(.claude/handoff/LATEST.md)` e
+`Edit(/home/user/roccobot.github.io/.claude/handoff/LATEST.md)`. Sono le **tre forme** che
+possono agganciare un file (glob, percorso relativo esatto, percorso assoluto), quindi non
+aggiungerne un'ottava a tentativi: se il prompt torna, la strada è la diagnosi qui sotto.
+
+**Le tre cause possibili, e come si distinguono.** ⚠️ La prova **non va cercata**: il primo
+accesso a questo file, quello che stai facendo adesso, **è** il test.
+
+1. **Le regole di permesso si leggono all'AVVIO della sessione.** Le sette regole sono state
+   committate a sessione già in corso, quindi là non potevano valere, e il prompt ricomparso
+   dopo averle scritte è coerente con questa spiegazione. **Come si distingue:** tu sei una
+   sessione **nuova**, avviata dopo `829587c`, quindi le regole erano già sul disco quando ti
+   sei avviata. **Se aprendo il brief non è comparso nessun prompt, la causa era questa, la
+   voce è chiusa e si cancella.**
+2. **Il pattern non aggancia il file.** **Come si distingue:** il prompt compare, ma il suo
+   testo lamenta un **permesso mancante** e nomina il percorso senza qualificarlo. Poco
+   probabile, con tre forme già coperte, e in ogni caso si accerta prima di agire: l'utente può
+   guardare `/permissions` e dire se le sette regole risultano **caricate**. Se ci sono e il
+   prompt resta, non è questa: è la 3.
+3. **I file sotto `.claude/` sono sensibili PER COSTRUZIONE.** La protezione sta **a monte**
+   dell'elenco `allow`, perché quella cartella contiene la configurazione dell'agente (le
+   impostazioni, gli hook, le skill), e un agente che si autorizza da sé a riscriverla è
+   esattamente ciò che il meccanismo esiste per impedire. Nessuna permission rule la scavalca.
+   **Come si distingue:** il prompt compare **nonostante** le sette regole, e il suo testo dice
+   *'which is a sensitive file'*, cioè parla della **natura del file**, non di un permesso
+   mancante. È la lettura più probabile dei fatti noti.
+
+**Per il caso 3 la decisione è GIA' PRESA, non si chiede niente all'utente** (sua istruzione,
+2026-07-30): si **sposta il brief in `.memo/LATEST.md`**, cartella nuova in root del repo. Il
+nome è volutamente **generico** (*'potrei usarla eventualmente per altre skill che ne hanno
+bisogno'*), e non `.handoff` che era la proposta scartata. Resta una cartella col punto, quindi
+GitHub Pages continua a non pubblicarla: era il vincolo originale e non si perde.
+
+**Lo spostamento tocca cinque punti, nessuno opzionale** (regola dei riferimenti incrociati,
+`Roccobot.md` § '📥 Protocollo Aggiungi alle regole'):
+
+- `git mv .claude/handoff .memo`, così la storia del file resta attaccata.
+- `.claude/skills/handoff/SKILL.md`, **tre** occorrenze: la tabella dei due modi (riga
+  `/handoff`), il modo scrittura passo 3 (`mkdir -p` e il percorso), il modo lettura passo 1.1.
+- `.claude/settings.json`: le sette regole diventano `.memo/**` e `.memo/LATEST.md`. Verificato
+  che il prompt sia sparito, si possono **potare** alle tre che servono davvero.
+- `CLAUDE.md` di root, § '🗂️ I progetti e i loro file di regole': il rimando in fondo alla nota
+  sull'assunzione, oggi `(.claude/handoff/LATEST.md)`.
+- **Altro repo:** `Roccobot/tools`, `rules/Roccobot.md` § '⚙️ Automazione e interazioni', voce
+  'Una domanda rimasta senza risposta': cita il percorso fra parentesi. Va con **bump SemVer**,
+  come ogni modifica là.
+- ⚠️ La cartella `.claude/skills/handoff/` **non si rinomina**: la skill si chiama `handoff` e
+  continua a chiamarsi così, cambia solo **dove scrive**.
+
+**Se la causa è la 1 o la 2, tutta la parte sullo spostamento è irrilevante e la voce si
+cancella** (utente: *'se invece si risolve prima di arrivare al punto 3, questa parte sarà
+irrilevante e potrai eliminarla a verifica fatta'*). ⚠️ **Non spostare niente per prudenza:**
+senza la causa accertata sarebbe lavoro gratis su cinque punti e due repo, con un rimando
+stantio dietro ogni punto dimenticato.
+
+**Come si verifica di aver chiuso bene la voce.** Caso 1 o 2: basta il fatto osservato (nessun
+prompt), e la voce si cancella senza lasciare traccia, che è la regola n. 3. Caso 3, dopo lo
+spostamento: un `Edit` sul brief nel percorso nuovo che **non** apra il prompt, più un
+`git ls-files .memo` che lo trovi committato. ⚠️ **Se il prompt compare anche da `.memo/`**,
+allora la cartella non era la causa: si torna indietro (`git mv .memo .claude/handoff` più gli
+altri quattro punti) e si **riscrive** questa voce con quel dato, che è il più informativo dei
+tre, perché esclude l'unica spiegazione che restava.
 
 ## Andato live in questa sessione
 
@@ -105,5 +185,7 @@ applica la scelta dell'utente e si aggiorna la stessa sezione. In entrambi i cas
 
 ## Da decidere
 
-- **Niente.** ⚠️ Una decisione **potrebbe** nascere dal test qui sopra, ma solo se l'esito è
-  il passo 3: in quel caso le due strade sono già istruite, con parere e costi.
+- **Niente**, e **nessuna delle due voci in sospeso ne apre una**: la n. 2 ha la scelta
+  dell'utente già dentro, applicabile senza chiedere. Una decisione **potrebbe** nascere dalla
+  n. 1, ma solo se l'esito è il passo 3: in quel caso le due strade sono già istruite, con
+  parere e costi.
