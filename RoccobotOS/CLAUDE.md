@@ -16,9 +16,13 @@
   altrimenti i browser servono la copia vecchia. Il JS gestisce tema
   chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
   mobile e caricamento pigro.
-- **Cose da fare.** Il file `RoccobotOS/Da fare.txt` è la lista dei lavori
-  pendenti decisi dall'utente: leggerlo prima di proporre migliorie e
-  aggiornarlo quando una voce viene evasa.
+- ⚠️ **Non c'è una lista dei lavori pendenti, e non va ricreata.** Fino al 2026-07-30
+  esisteva un `Da fare.txt`, che l'utente ha **eliminato** perché era un residuo vecchio: delle
+  sue due voci una era già fatta da tempo (i nomi delle sezioni nell'ultimo segmento dell'URL,
+  cliccando l'indice laterale) e l'altra è rimandata a data da destinarsi (le iconcine da
+  rendere in SVG, che seguano il colore del testo in base al tema). Un lavoro pendente si porta
+  all'utente, non si archivia in un file che nessuno rilegge: è lo stesso difetto che aveva
+  fatto invecchiare gli snippet di `Roccobot/tools`.
 
 ### 🔢 Versione del progetto: interna e non visibile
 
