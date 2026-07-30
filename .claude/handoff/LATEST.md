@@ -1,95 +1,81 @@
-# Handoff - 2026-07-29 (sera)
+# Handoff - 2026-07-30
 
 ## Stato
 
-- **'I Grandi di Arda'**: locale, badge e **LIVE** tutti su **v14.80**; albero pulito;
-  `0 dietro / 0 avanti` rispetto a `origin/master`. Nessun deploy in volo. Ultimo commit
-  `10d440c`. **Riverificato il 2026-07-30: tutto confermato.**
-- **Worker** `arda-admin-proxy`: **rev 15**, `rl:true` (riverificato). Non toccato.
-- `CLAUDE.md` è a **35.576 parole** (`wc -w` del 2026-07-30), da 43.785 di partenza:
-  **-18,7%**. Regole universali a **`Roccobot.md` v1.47.2** (11.533 parole) e **`JRRT.md`
-  v1.23.0** (3.493).
-- ⚠️ `add_repo` rispondeva 'requires approval', e l'allow-list in `.claude/settings.json` non
-  l'ha sbloccato a sessione avviata. **Caso rientrato il 2026-07-30**: entrambi i repo erano
-  agganciati nativamente (`/home/user/roccobot.github.io` e `/home/user/tools`), quindi i file
-  di regole si leggono dal filesystem e `add_repo` non serve. Il dubbio resta aperto solo per
-  una sessione che non li abbia già entrambi.
+- **'I Grandi di Arda'**: locale, `dati.js` LIVE e badge su **v14.80**; albero pulito, `0/0`
+  con `origin/master` (`902ad0b`), nessun deploy in volo.
+- **Regole in sei file**, **23.091** parole in tutto (root 4.045, `arda/top/` 16.867,
+  `proxy/` 701, `userscripts/` 655, `RoccobotOS/` 450, `ABP/` 373), da 43.785 di partenza:
+  **-47%**. Universali a `Roccobot.md` **v1.47.6** e `JRRT.md` v1.23.0.
+- **Worker** `arda-admin-proxy`: **rev 15** dal brief precedente, non riverificata oggi.
 
 ## In sospeso
 
-⚠️ **Il lavoro delle quattro voci è FATTO ma vive su due PR APERTE, non mergiate**, perché
-sono modifiche strutturali e il go-live automatico non si applica: `roccobot.github.io#858`
-(potatura + split) e `Roccobot/tools#3` (nota `/desc` + valutazione modali). **Primo passo
-della prossima sessione: chiedere all'utente se mergiarle**, e se sì mergiare con squash e
-riallineare i branch. Finché restano aperte, il `CLAUDE.md` su `master` è ancora quello
-vecchio, monolitico.
+1. **Profondità della potatura: domanda aperta all'utente.** Sulla sezione degli effetti la
+   passata reale si è fermata a **-63%**, il campione che l'utente aveva approvato faceva
+   **-78%**. Lo scostamento è deliberato: quella sezione ha accumulato trappole **nuove**
+   dopo la misura del campione (valori a scelta letti prima della definizione, touch reale,
+   tablet con mouse) e il criterio protegge esattamente il blocco delle trappole.
+   - **Da chiedere**: vuole la profondità piena, e in tal caso quali trappole considera
+     sacrificabili? Criterio in `CLAUDE.md` § '🪶 Come si mantiene questo file'.
+   - **Verifica del taglio, da riusare**: l'elenco delle sezioni `##` deve restare identico a
+     ogni passo (è il controllo anti-troncamento dello splice), e degli identificatori fra
+     backtick che escono si controlla con un `grep` che si ritrovino **nel codice**. Lo splice
+     era `scratchpad/splice.py`, **effimero**, 20 righe.
+2. **Controllo post-split, mai eseguito.** Due cose: (a) che i `CLAUDE.md` di sottocartella si
+   carichino davvero quando si legge un file di quella cartella; (b) che in root non manchi
+   nulla di ciò che serve **sempre**. Una regola trasversale finita in `arda/top/` va risalita,
+   perché quel file non si carica se non si tocca la sua cartella.
+   - **Primo passo**: confrontare l'elenco delle sezioni (root 11, `arda/top/` 16) e chiedersi
+     per ognuna di `arda/top/` se serve anche fuori da lì.
+   - **Due scelte di merito già fatte, da non ridiscutere**: il divieto dell'em-dash è **in
+     root** (§ '✒️ Caratteri vietati') perché vale in ogni output; rate limiting e spia `rev`
+     stanno in `proxy/CLAUDE.md`, con un rimando da `arda/top/`, per non avere due fonti.
+3. **Nota `/desc` nel `CLAUDE.md` di `tools`: NON verificata, e da qui non è verificabile.**
+   L'utente dice che la nota c'è, ma la sua parola non fa prova più di quella di un'altra
+   sessione (regola sua, 2026-07-30, ora in `Roccobot.md` § 'Test e verifiche'): serve la
+   lettura del file. **Tre vie provate oggi, tutte chiuse**: Worker limitato a `rules/` e
+   `workers/` (404 = 'percorso non ammesso', non 'file assente'), `add_repo` 'requires
+   approval', strumento GitHub 'Access denied, allowed repositories: roccobot.github.io'.
+   - **Cosa verificare** da una sessione che abbia `tools`: che la nota esista e che dica solo
+     che gli operatori della skill scavalcano gli omonimi di `Roccobot.md` **a skill invocata**;
+     se `Roccobot/tools#3` è mergiata.
+   - **Poi una decisione, con l'istruttoria già fatta**: quella nota **non serve** al
+     funzionamento di `/desc`, perché è la skill stessa a dichiarare l'override. L'unico
+     rischio che copriva era la divergenza fra le due definizioni degli stessi simboli, e
+     **quel rischio è già coperto** dal rimando appena scritto in `Roccobot.md` v1.47.6, sopra
+     la tabella di 'Traduzioni e revisioni' (nomina anche il `^` di 'Arte, letteratura,
+     intrattenimento', che è l'altro punto di collisione). Quindi la nota in `tools` è
+     candidata a essere **tolta**, non allineata. ⚠️ La skill `/desc` l'ha scritta l'utente:
+     **non va riscritta né ricreata**.
 
-1. **Potatura del `CLAUDE.md`: fatta, con uno SCOSTAMENTO da valutare.** Il file è passato da
-   **35.576 a 22.840 parole (-36%)** con la forma dei quattro blocchi, e le undici sezioni
-   grosse sono scese in media del **-43%**.
-   - ⚠️ **Il campione approvato faceva -78% sulla sezione degli effetti, la passata reale si è
-     fermata a -63%.** Non ho inseguito il numero perché quella sezione ha accumulato trappole
-     **nuove** dopo la misura del campione (i valori a scelta letti prima della definizione,
-     il touch reale, il tablet con mouse), e il criterio protegge esattamente il blocco delle
-     trappole. **Domanda aperta per l'utente:** vuole la profondità piena, e in tal caso quali
-     trappole considera sacrificabili?
-   - **Sezioni NON ancora potate**, perché rendevano poco e sono già asciutte: glossario dei
-     contenuti (659), userscript (627), admin e segreti (616), RoccobotOS (417), misure
-     tipografiche (351), etichette tipo (336), ABP (327), più le trasversali di root.
-   - **Verifica usata, da riusare:** l'elenco delle sezioni `##` deve restare identico a ogni
-     passo (è il controllo anti-troncamento dello splice), e degli identificatori fra backtick
-     che escono si controlla che si ritrovino **nel codice** (204 su 232, i restanti sono forme
-     sintattiche composte). Lo splice è `scratchpad/splice.py`, **effimero**, 20 righe.
-2. **Split per progetto: fatto.** Sei file, `CLAUDE.md` di root (9 sezioni trasversali, 4.178
-   parole) più `arda/top/` (16, 17.448), `proxy/` (nuovo, 725), `userscripts/` (667),
-   `RoccobotOS/` (459), `ABP/` (377). Verificato: 33 sezioni, **nessuna in due posti**, e la
-   somma delle parole torna.
-   - **Due scelte di merito da conoscere**, perché non sono spostamenti: il **divieto
-     dell'em-dash è salito in root** (sezione 'Caratteri vietati'), perché un file di
-     sottocartella si carica solo leggendo un file di quella cartella e quella regola vale in
-     ogni output; **rate limiting e spia `rev`** sono scesi in `proxy/CLAUDE.md`, con un
-     rimando da `arda/top/`, per non avere due fonti di verità.
-   - ⚠️ **Da tenere d'occhio alla prima sessione dopo il merge:** che i `CLAUDE.md` di
-     sottocartella si carichino davvero quando si legge un file di quella cartella, e che in
-     root non manchi nulla di ciò che serve **sempre**. Se una regola trasversale risultasse
-     finita in `arda/top/`, va risalita.
-3. **Nota `/desc` nel `CLAUDE.md` di `tools`: fatta**, con la sola nota richiesta. La skill non
-   è stata toccata e la sua verifica risulta superata.
-4. **Valutazione sulle sezioni modali: fatta e SCRITTA** in `rules/Roccobot.md` (bump a
-   **1.47.3**), quindi non si rifà. Esito: **non si estraggono**, col residuo di meccanismo
-   dichiarato (la clausola che sostituisce il formato di output) e con l'elenco di cosa
-   farebbe cambiare la risposta.
+## Andato live (contesto recente)
 
-## Andato live in questa sessione
-
-- `v14.80` - etichetta 'Azzera' al posto di 'Predefiniti', guard dello slider che tiene
-  anche su touch reale, caso podio chiuso come non-difetto.
-- Sola documentazione, nessun bump: `Development.md` e `Prompts.md` assorbiti in
-  `Roccobot.md` e poi cancellati dall'utente, protocollo di avvio e scala di priorità
-  riscritti, prima potatura del `CLAUDE.md` (-14%), correzione dei riferimenti ai due file
-  cancellati.
+- `v14.80` - etichetta 'Azzera' al posto di 'Predefiniti', guard dello slider che tiene anche
+  su touch reale.
+- Sola documentazione, nessun bump: potatura del `CLAUDE.md` e split in sei file (`#858`),
+  skill `handoff` con le regole n. 2 e n. 3 (`#856` e seguito), valutazione delle sezioni
+  modali scritta in `Roccobot.md` v1.47.3.
 
 ## Decisioni dell'utente
 
-- **Criterio di manutenzione del `CLAUDE.md`**: si scrive il perché, non il come, perché
-  il codice è commentato e si legge → `CLAUDE.md` § '🪶 Come si mantiene questo file', che
-  contiene anche le cinque famiglie che restano e le cronache ridotte ad accenno.
-- **Vincolo WCAG AA generico** al posto dei tetti per-manopola → `CLAUDE.md` § 'Nuovi
-  personaggi e canone', prima voce. Cinque punti già ripuliti, e **già tolti** gli elenchi di
-  portatori dei badge: di quelli restano solo criterio ed esclusioni motivate.
-- **La scrittura via Worker non ha dry-run**: non si sonda mai su un percorso reale, e si
-  tiene una copia locale integra prima di ogni POST → `Roccobot.md` v1.47.2.
-- Bump `+0.1` e `+1.0` ammettono l'arrotondamento al decimale o all'intero successivo
-  (fatto dall'utente stesso) → `CLAUDE.md` § 'Versione del sito'.
+- **Una voce evasa si CANCELLA dal brief**, e solo dopo una prova diretta e inoppugnabile; se
+  la prova non è ottenibile, la voce resta riscritta a oggi → skill `handoff`, regola n. 3.
+- **Un'affermazione non è una verifica, nemmeno quella dell'utente** → `Roccobot.md`
+  § '🧪 Test e verifiche' (v1.47.7) e skill `handoff`, regola n. 3.
+- **Si ragiona e si scrive direttamente nella lingua di destinazione**: costruire la frase in
+  inglese e tradurla alla lettera è vietato → `Roccobot.md` § '💬 Stile di comunicazione'.
+- **Criterio di manutenzione** (il perché, non il come) e le cinque famiglie che restano →
+  root `CLAUDE.md` § '🪶 Come si mantiene questo file'.
 
 ## Verifiche arretrate
 
-- **Niente.** Il gate W3C arretrato della v14.80 è stato **recuperato il 2026-07-30**:
-  `arda/top/index.html` risponde `{"messages":[]}`, cioè **0 errori e 0 warning**.
+- **Gate W3C della v14.80.** Il brief precedente lo dava recuperato con `{"messages":[]}`, ma
+  oggi **non è riverificabile** (`validator.w3.org` risponde **403**, challenge Cloudflare) e
+  l'asserzione di un'altra sessione non fa prova: la voce resta. `arda/top/index.html` non
+  cambia dalla v14.80 (`37a5cc9`), quindi basta rifare il gate al primo momento in cui il
+  validatore risponde.
 
 ## Strumenti da rifare
 
-- **Niente.** L'aggancio dei font reali, che era il primo da rifare ogni volta, è ora
-  committato in `.claude/scripts/realfont.js` e verificato: senza aggancio `n:0`, con
-  aggancio `n:28` e le tre famiglie. Gli altri script di verifica citati dal `CLAUDE.md`
-  restano effimeri, ma non servono al lavoro in sospeso, che è di sola documentazione.
+- **Niente.**
