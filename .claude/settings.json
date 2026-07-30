@@ -10,8 +10,14 @@
       "Bash(curl:*)",
       "mcp__Claude_Code_Remote__add_repo",
       "mcp__Claude_Code_Remote__register_repo_root",
-      "Read(/.claude/handoff/**)",
-      "Edit(/.claude/handoff/**)"
+      "Read(/.memo/**)",
+      "Edit(/.memo/**)",
+      "Read(/CLAUDE.md)",
+      "Edit(/CLAUDE.md)",
+      "Read(/**/CLAUDE.md)",
+      "Edit(/**/CLAUDE.md)",
+      "Read(/.claude/**)",
+      "Edit(/.claude/**)"
     ]
   },
   "hooks": {
@@ -49,7 +55,7 @@
           },
           {
             "type": "command",
-            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.claude/scripts/refcheck.py\" ] || exit 0; OUT=$(python3 \"$R/.claude/scripts/refcheck.py\" 2>&1) || { printf 'Commit bloccato: riferimenti incrociati rotti nei file di regole. Un rimando che punta a una sezione inesistente e un errore silenzioso: chi lo segue non trova nulla.\\n%s\\n' \"$OUT\" >&2; exit 2; } ;; esac",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.memo/scripts/refcheck.py\" ] || exit 0; OUT=$(python3 \"$R/.memo/scripts/refcheck.py\" 2>&1) || { printf 'Commit bloccato: riferimenti incrociati rotti nei file di regole. Un rimando che punta a una sezione inesistente e un errore silenzioso: chi lo segue non trova nulla.\\n%s\\n' \"$OUT\" >&2; exit 2; } ;; esac",
             "timeout": 25,
             "statusMessage": "Controllo riferimenti incrociati (pre-commit)..."
           }

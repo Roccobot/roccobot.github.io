@@ -2,13 +2,13 @@
 """Verifica i riferimenti incrociati fra i file di regole dei due repo.
 
 Perche' esiste: i rimandi fra file di regole si rompono in silenzio. Chi li segue
-non trova nulla, o trova la cosa sbagliata, e nessuno se ne accorge finche' non
+non trova nulla, o trova la cosa sbagliata, e nessuno se ne accorge finché non
 rilegge tutto da capo. Un elenco scritto a mano sarebbe una seconda fonte di
-verita' che invecchia: qui i rimandi si CALCOLANO.
+verità che invecchia: qui i rimandi si CALCOLANO.
 
-Uso: python3 .claude/scripts/refcheck.py [-v]
-Esce 1 se trova difetti, 0 se e' tutto in ordine. L'hook PreToolUse sui commit
-lo lancia da se': vedi .claude/settings.json.
+Uso: python3 .memo/scripts/refcheck.py [-v]
+Esce 1 se trova difetti, 0 se è tutto in ordine. L'hook PreToolUse sui commit
+lo lancia da sé: vedi .claude/settings.json.
 
 Quattro controlli:
   1. link markdown relativi     -> il file bersaglio esiste?
@@ -16,10 +16,10 @@ Quattro controlli:
   3. rimandi a sezione per titolo -> quel titolo esiste in un file di regole?
   4. titoli VOLATILI              -> nessun titolo contiene date o versioni
 
-Il controllo 3 e' permissivo per scelta: verifica che il titolo esista da
+Il controllo 3 è permissivo per scelta: verifica che il titolo esista da
 qualche parte, non che il file citato sia quello giusto. Becca il caso peggiore,
 il rimando che non porta da nessuna parte, senza pretendere di risolvere la
-prosa. Il controllo 4 e' la prevenzione: un titolo con una data dentro cambia, e
+prosa. Il controllo 4 è la prevenzione: un titolo con una data dentro cambia, e
 ogni rimando che lo cita resta indietro (caso reale: il protocollo di avvio ha
 cambiato titolo due volte in un giorno).
 """
@@ -33,7 +33,7 @@ VERBOSE = "-v" in sys.argv
 
 # Root dei due repo, ricavate dalla posizione di questo file: mai percorsi
 # assoluti scritti a mano, e nessuna dipendenza dalla cwd, che negli ambienti
-# Claude Code puo' essere la cartella che contiene i repo.
+# Claude Code può essere la cartella che contiene i repo.
 SITO = Path(__file__).resolve().parents[2]
 TOOLS = SITO.parent / "tools"
 
@@ -45,7 +45,7 @@ RULEFILES = [
     SITO / "RoccobotOS/CLAUDE.md",
     SITO / "proxy/CLAUDE.md",
     SITO / ".claude/skills/handoff/SKILL.md",
-    SITO / ".claude/handoff/LATEST.md",
+    TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
     TOOLS / "rules/Roccobot.md",
     TOOLS / "rules/JRRT.md",
@@ -55,11 +55,9 @@ RULEFILES = [
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
 SKIP_PATHS = {
-    # cancellati dall'utente il 2026-07-29, citati per dire che non esistono piu'
+    # cancellati dall'utente il 2026-07-29, citati per dire che non esistono più
     "rules/Development.md",
     "rules/Prompts.md",
-    # percorso ipotetico di un piano non applicato (spostamento del brief)
-    ".memo/LATEST.md",
 }
 SKIP_PREFIXES = (
     "scratchpad/",  # strumenti effimeri: lo scratchpad non sopravvive alla sessione
@@ -69,7 +67,7 @@ SKIP_LINKS = {"URL"}  # l'esempio letterale [titolo](URL) nella regola sui link
 # per dire come si scrive un rimando bisogna scriverne uno finto, esattamente
 # come la regola sull'em-dash deve nominare l'em-dash.
 SKIP_SECTS = {"Titolo", "Titolo esatto"}
-# Il brief di consegna e' datato per definizione (il modello della skill handoff
+# Il brief di consegna è datato per definizione (il modello della skill handoff
 # prescrive '# Handoff - AAAA-MM-GG') e non ha sezioni che qualcuno citi come
 # ancora: il controllo sui titoli volatili non lo riguarda. I suoi RIMANDI si
 # controllano come tutti gli altri.
@@ -95,7 +93,7 @@ def variants(title):
     """Il titolo intero e le sue forme troncate, che i rimandi citano di norma.
 
     Un rimando abbrevia: 'Test e verifiche' per 'Test e verifiche (siti e app
-    web)'. E' legittimo e leggibile, quindi il controllo lo accetta invece di
+    web)'. È legittimo e leggibile, quindi il controllo lo accetta invece di
     imporre la citazione per esteso.
     """
     out = {norm(title)}
@@ -137,7 +135,7 @@ def main():
                 if p in SKIP_PATHS or p.startswith(SKIP_PREFIXES):
                     continue
                 seen["path"] += 1
-                if not any((d / p).exists() for d in (base, SITO, TOOLS)):
+                if not any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent)):
                     bad_paths.append((f, n, p))
             for s in RE_SECT.findall(line):
                 if s in SKIP_SECTS:
@@ -163,9 +161,9 @@ def main():
     report("link markdown a file inesistenti", bad_links,
            "correggi il percorso, o aggiungi l'eccezione a SKIP_PATHS se il file non deve esistere")
     report("titoli con dentro date o versioni", volatile,
-           "un titolo e' un identificatore: sposta data e versione nel corpo, o i rimandi lo perderanno")
+           "un titolo è un identificatore: sposta data e versione nel corpo, o i rimandi lo perderanno")
 
-    # ⚠️ Senza il repo sibling, un rimando ai suoi file non e' ROTTO: e' soltanto
+    # ⚠️ Senza il repo sibling, un rimando ai suoi file non è ROTTO: è soltanto
     # NON VERIFICABILE, e i due casi non si confondono (regola universale: un
     # errore che risponde 'non trovato' non prova un'assenza). Trattarli come
     # difetti bloccherebbe ogni commit nelle sessioni che montano un solo repo.
@@ -177,14 +175,14 @@ def main():
         bad_paths, bad_sects = [], []
     else:
         report("percorsi citati inesistenti", bad_paths,
-               "un file citato che non c'e' e' un rimando morto")
+               "un file citato che non c'e' è un rimando morto")
         report("rimandi a sezioni inesistenti", bad_sects,
                "il titolo citato non esiste in nessun file di regole: aggiornalo alla nuova collocazione")
 
     tot = sum(seen.values())
     rotti = len(bad_links) + len(bad_paths) + len(bad_sects) + len(volatile)
     if missing_repo:
-        print(f"\nNota: {TOOLS} non e' agganciato a questa sessione, quindi il controllo e' "
+        print(f"\nNota: {TOOLS} non è agganciato a questa sessione, quindi il controllo è "
               "PARZIALE: restano i link interni e i titoli, non i rimandi ai file di regole "
               "universali. Per il controllo completo, aggancia il repo.")
     if VERBOSE or rotti:

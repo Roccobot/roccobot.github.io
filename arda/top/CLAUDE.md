@@ -1081,7 +1081,7 @@ dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
   caricato (dice solo che *qualcosa* può rendere quel testo). L'unica spia
   affidabile è **`document.fonts.size`** (0 = nessuna webfont) o il conto degli
   elementi con `status === 'loaded'`.
-- **L'aggancio è COMMITTATO, non da riscrivere ogni volta: `.claude/scripts/realfont.js`**
+- **L'aggancio è COMMITTATO, non da riscrivere ogni volta: `.memo/scripts/realfont.js`**
   (sotto una cartella col punto, quindi Pages non lo pubblica). Fa tutto da sé: scarica il
   CSS di Google Fonts e i `.woff2` con `curl` + UA da browser, li mette in cache fuori dal
   repo, serve repo e font via HTTP, e con `attach(page)` dirotta la richiesta del browser
