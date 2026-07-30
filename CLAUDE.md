@@ -17,9 +17,16 @@
 | **RoccobotOS**, la guida di riferimento | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
 | **Worker di amministrazione** | `proxy/` | [`proxy/CLAUDE.md`](proxy/CLAUDE.md) |
 
-⚠️ **Un `CLAUDE.md` di sottocartella si carica SOLO quando si legge un file di quella
-cartella.** Quindi una regola che serve **sempre** non può vivere là: se è di portata
+⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**, senza dare per scontato
+che si sia caricato da sé: costa una lettura e rende il lavoro corretto in ogni caso. È la
+rete di sicurezza, e vale a prescindere da come funzioni il caricamento automatico.
+
+⚠️ **Un `CLAUDE.md` di sottocartella si carica quando si legge un file di quella cartella:
+questa però è un'ASSUNZIONE, non un fatto verificato** (al 2026-07-30). Vale comunque la
+conseguenza prudenziale: una regola che serve **sempre** non può vivere là. Se è di portata
 generale sta qui, se è universale sta in `rules/Roccobot.md`. Nel dubbio, questo file.
+- La verifica è in corso e vive nel brief di consegna (`.claude/handoff/LATEST.md`): finché
+  non è chiusa, la rete di sicurezza qui sopra è ciò che tiene.
 
 ⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: solo 'I Grandi di
 Arda' ha il numero di versione `x.xx` e un deploy da attendere; le liste AdBlock hanno
