@@ -166,6 +166,13 @@ progetto contano come durevoli:
 Quello che travasi va con il **numero di versione** a cui risale. Fatto questo,
 l'handoff può restare corto.
 
+⚠️ **Se il travaso sposta, riscrive o elimina una sezione, verifica anche che
+nessun altro punto la referenzi ancora come se stesse dov'era prima**: in questo
+`CLAUDE.md`, in un altro `CLAUDE.md` di progetto, in `Roccobot.md` o in `JRRT.md`.
+È la regola universale in `Roccobot.md`, sezione '📥 Protocollo Aggiungi alle
+regole': un riferimento rimasto stantio è un errore silenzioso quanto un dato non
+travasato, perché chi lo segue non trova nulla o trova la cosa sbagliata.
+
 ### 3. Scrivi il file
 
 `mkdir -p .claude/handoff`, poi scrivi `.claude/handoff/LATEST.md` col modello qui
@@ -259,6 +266,11 @@ l'handoff.
    Possono essere cambiati **la versione live** (deploy arrivato dopo), **i ref**
    (salvataggi admin) e **`siteFlags` in `dati.js`** (l'utente ha usato il Pannello).
    Dove il file e la realtà divergono vince la realtà: dillo e correggi il file.
+   ⚠️ Vale anche per i **riferimenti incrociati fra file di regole**: se un puntatore
+   citato dal brief (o incontrato lavorando) rimanda a una sezione che una modifica
+   successiva ha spostato, riscritto o eliminato, si corregge sul momento, non si
+   segnala soltanto (stessa regola di `Roccobot.md` citata al passo 2 del modo
+   scrittura).
 3. ⚠️ **Evadi il brief, non solo correggilo.** Per ogni voce in sospeso cerca la prova
    diretta che sia già stata fatta (regola n. 3): se c'è, **cancella la voce** e riscrivi
    il file; se manca, la voce resta ma riscritta a oggi. Vale anche per `Verifiche

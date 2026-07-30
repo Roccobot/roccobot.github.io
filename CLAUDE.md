@@ -148,14 +148,18 @@ Dalla più forte alla più debole:
 
 1. **Istruzioni esplicite dell'utente nella sessione corrente**: prevalgono su tutto;
    se durature, vanno poi registrate nel file giusto.
-2. **Questo `CLAUDE.md`**: prevale per tutto ciò che è specifico del repo e dei
-   progetti che ospita.
+2. **Il `CLAUDE.md` pertinente**: questo file di root per ciò che è **trasversale**
+   a tutti i progetti, quello della sottocartella (vedi la tabella in testa a
+   questo file) per ciò che è **specifico** di un progetto. Non competono fra
+   loro: vince quello che parla nel proprio dominio (vedi 'La specificità vale
+   per DOMINIO' più sotto).
 3. **`rules/JRRT.md`**: il canone. Sta qui, sopra i file di processo, perché è
    un'autorità **sui fatti** (che cosa dicono le fonti), non sul modo di lavorare:
    mettere una regola di processo sopra un fatto attestato sarebbe rovesciato. Nel
    suo dominio ha la stessa autorevolezza di `Roccobot.md`, o più.
-   - ⚠️ Ma resta **sotto** questo `CLAUDE.md`, e non per gerarchia astratta: qui
-     vivono **scelte editoriali deliberate** che divergono dal canone pubblicato
+   - ⚠️ Ma resta **sotto** [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), il solo
+     progetto a cui si applica, e non per gerarchia astratta: **là** vivono le
+     **scelte editoriali deliberate** che divergono dal canone pubblicato
      (Orodreth figlio di Angrod, Celeborn senza `Teleporno`, l'elenco degli
      apocrifi). Un audit che applichi `JRRT.md` alla lettera le segnalerà come
      errori: non lo sono, e la scala è ciò che lo stabilisce.
