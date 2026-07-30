@@ -33,19 +33,25 @@
             "type": "command",
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) BADGE=$(grep -oE 'vb-v\">v</span>[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*span>//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"Commit bloccato: versione disallineata, badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea i due numeri prima di committare.\" >&2; exit 2; fi ;; esac",
             "timeout": 15,
-            "statusMessage": "Controllo versione (pre-commit)…"
+            "statusMessage": "Controllo versione (pre-commit)..."
           },
           {
             "type": "command",
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) git fetch origin master --quiet 2>/dev/null; BEHIND=$(git rev-list --count HEAD..origin/master 2>/dev/null); if [ \"${BEHIND:-0}\" -gt 0 ]; then echo \"Commit bloccato: $BEHIND commit dietro origin/master (probabile salvataggio admin su dati.js). Riallinea a origin/master e riapplica prima di committare.\" >&2; exit 2; fi ;; esac",
             "timeout": 20,
-            "statusMessage": "Controllo freschezza vs origin/master…"
+            "statusMessage": "Controllo freschezza vs origin/master..."
           },
           {
             "type": "command",
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) if git diff --cached | python3 -c \"import sys; ls=[l for l in sys.stdin if l.startswith('+') and not l.startswith('+++')]; sys.exit(1 if any(chr(0x2014) in l for l in ls) else 0)\"; then :; else echo 'Commit bloccato: em-dash (trattino lungo) nelle righe aggiunte. Regola universale: mai em-dash, usa virgola, due punti o parentesi. (L en-dash resta ammesso solo negli intervalli d anno, es. 2758-59.)' >&2; exit 2; fi ;; esac",
             "timeout": 20,
-            "statusMessage": "Controllo em-dash (pre-commit)…"
+            "statusMessage": "Controllo em-dash (pre-commit)..."
+          },
+          {
+            "type": "command",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.claude/scripts/refcheck.py\" ] || exit 0; OUT=$(python3 \"$R/.claude/scripts/refcheck.py\" 2>&1) || { printf 'Commit bloccato: riferimenti incrociati rotti nei file di regole. Un rimando che punta a una sezione inesistente e un errore silenzioso: chi lo segue non trova nulla.\\n%s\\n' \"$OUT\" >&2; exit 2; } ;; esac",
+            "timeout": 25,
+            "statusMessage": "Controllo riferimenti incrociati (pre-commit)..."
           }
         ]
       }
@@ -58,13 +64,13 @@
             "type": "command",
             "command": "git fetch origin master --quiet 2>/dev/null; B=$(git symbolic-ref --short -q HEAD); if [ \"$B\" = master ] && git diff --quiet && git diff --cached --quiet; then git merge --ff-only origin/master --quiet 2>/dev/null && echo \"[SessionStart] ff a origin/master ($(git rev-parse --short HEAD))\" || echo \"[SessionStart] master diverge o ff impossibile: ref aggiornati, nessun reset\"; else echo \"[SessionStart] no auto-align (branch '$B' o modifiche locali): ref remoti aggiornati\"; fi",
             "timeout": 45,
-            "statusMessage": "Allineamento a origin/master…"
+            "statusMessage": "Allineamento a origin/master..."
           },
           {
             "type": "command",
             "command": "BADGE=$(grep -oE 'vb-v\">v</span>[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*span>//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"[SessionStart] versione disallineata: badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea prima di committare.\"; fi",
             "timeout": 15,
-            "statusMessage": "Controllo versione badge/dati.js…"
+            "statusMessage": "Controllo versione badge/dati.js..."
           }
         ]
       }
@@ -76,7 +82,7 @@
             "type": "command",
             "command": "git fetch origin master --quiet 2>/dev/null; B=$(git symbolic-ref --short -q HEAD); BEHIND=$(git rev-list --count HEAD..origin/master 2>/dev/null); AHEAD=$(git rev-list --count origin/master..HEAD 2>/dev/null); if [ \"${BEHIND:-0}\" -gt 0 ]; then if [ \"${AHEAD:-0}\" = 0 ] && git diff --quiet && git diff --cached --quiet; then git reset --hard origin/master 2>/dev/null && echo \"[turn] branch '$B' riallineato a origin/master ($(git rev-parse --short HEAD)): $BEHIND commit recuperati (probabile salvataggio admin).\"; else echo \"[turn] ATTENZIONE: $BEHIND commit dietro origin/master (ahead=$AHEAD o modifiche locali): riallinea a mano prima di lavorare su dati.js.\"; fi; fi",
             "timeout": 20,
-            "statusMessage": "Allineamento a origin/master…"
+            "statusMessage": "Allineamento a origin/master..."
           }
         ]
       }

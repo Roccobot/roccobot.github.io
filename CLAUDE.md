@@ -41,7 +41,7 @@ installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
 Questo `CLAUDE.md` è l'**hub**: è il solo file che si carica da sé a ogni sessione,
 quindi è da qui che parte tutto il resto (scelta dell'utente, 2026-07-29).
 
-### 🚀 Protocollo di avvio (dal 2026-07-29, ampliato il 2026-07-30)
+### 🚀 Protocollo di avvio
 
 I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
 sessione:
@@ -399,3 +399,10 @@ poi divergerebbe.
   2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
+- **I quattro controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
+  `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
+  nelle righe aggiunte, e i **riferimenti incrociati** dei file di regole, verificati da
+  `.claude/scripts/refcheck.py` (committato, e controlla anche i file di `Roccobot/tools`
+  quando il repo è agganciato). ⚠️ Criterio, whitelist e trappole del verificatore vivono in
+  `Roccobot.md` § '📥 Protocollo Aggiungi alle regole': qui basta sapere che esiste, che si
+  calcola invece di essere scritto a mano, e che blocca il commit.
