@@ -106,6 +106,12 @@ la voce sparisce e la sezione torna a `Niente`; committato lo script effimero, s
 **Quando si cancella**: nel momento in cui la prova esiste, non a fine sessione. Così, se
 la sessione muore prima di chiudere, il file resta comunque vero.
 
+⚠️ **Il rovescio della regola: una domanda senza risposta si AGGIUNGE.** Se in sessione si è
+chiesta una conferma o proposta una scelta e l'utente non ha risposto entro un turno di botta
+e risposta, la voce va scritta in `Da decidere` (regola universale in `Roccobot.md`,
+§ '⚙️ Automazione e interazioni'). Le due regole lavorano insieme: si cancella ciò che è
+provato, si aggiunge ciò che è rimasto appeso, e il file resta la fotografia dell'aperto.
+
 ## 🧩 Repository, progetto, sessione: tre cose diverse
 
 Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
@@ -239,6 +245,14 @@ verifica, la voce **si cancella** e resta `Niente`, senza il racconto (regola n.
 ## Strumenti da rifare                        [max 6 righe]
 Gli script dello scratchpad che servono e che non esistono più (vedi in fondo). Committato
 uno script, la sua voce **si cancella**.
+
+## Da decidere                            [senza tetto - NON sono cose da fare]
+Le domande poste all'utente e rimaste **senza risposta** entro un turno di botta e risposta:
+finiscono qui per non perdersi al cambio di sessione (regola universale in `Roccobot.md`,
+§ '⚙️ Automazione e interazioni'). Per ognuna: la domanda, le opzioni, il parere dato e le sue
+ragioni. ⚠️ Se il lavoro ha toccato un **altro repo**, la voce si scrive comunque qui,
+dichiarando di quale repo parla, perché il brief è uno solo. Risposta ottenuta → voce
+cancellata (regola n. 3).
 ```
 
 ---

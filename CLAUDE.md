@@ -62,11 +62,9 @@ sessione:
   chiede** e si caricano **solo i due file principali**, in quest'ordine di
   priorità: **questo `CLAUDE.md`** e **`rules/Roccobot.md`**. Gli altri si leggono
   solo se il compito li tocca davvero.
-- ⚠️ **Caricato non vuol dire attivo.** Il caricamento mette il testo a disposizione,
-  l'**attivazione** è un'altra cosa e la decide la regola stessa. Vale per i file
-  esterni opzionali **e per le sezioni modali** di un file che si carica sempre: oggi
-  il caso è **'🎛️ Revisione dei prompt'** in `Roccobot.md`, che si applica
-  **solo quando l'utente la invoca**. Leggerla non la mette in vigore.
+- ⚠️ **Caricato non vuol dire attivo**: regola universale, in `Roccobot.md` § '🗃️ File di
+  regole collegati'. Qui vale ricordare il caso concreto: **'🎛️ Revisione dei prompt'** di
+  `Roccobot.md` si applica solo quando l'utente la invoca, e caricarla non la mette in vigore.
 
 ### 🗂️ Che cosa contiene ciascun file
 
@@ -175,25 +173,16 @@ Dalla più forte alla più debole:
      che le fusioni hanno funzionato: meno file, meno gerarchia, più eccezioni scritte
      dove servono.
 
-### ⚠️ La specificità vale per DOMINIO, non in assoluto
+### ⚠️ Come si legge questa scala
 
-Un file più specifico vince **dove parla**. Il suo **silenzio non è una deroga**:
-fuori dal suo dominio non dice nulla, quindi non c'è alcun conflitto da risolvere e
-vale la base universale.
+I due principi generali (**la specificità vale per DOMINIO**, e **un conflitto risolto per
+bene non ha più bisogno della scala**) sono universali e vivono in `Roccobot.md`, § '🗃️ File
+di regole collegati' → '⚖️ Come si risolve un conflitto fra file di regole'. Qui resta solo
+la scala di **questo** repo, sopra.
 
-Detto al contrario, perché è l'errore facile: 'JRRT.md sopra Roccobot.md' **non**
-significa 'quando parlo di Tolkien ignoro le regole universali'. `JRRT.md` parla di
-fonti, edizioni e attestazioni: sul canone la sua versione vince, ma sui caratteri
-tipografici, sulla lingua o sul workflow git non dice nulla, quindi là non c'è alcun
-conflitto e vale `Roccobot.md`.
-
-⚠️ **Un conflitto risolto per bene non ha più bisogno della scala.** Il caso storico
-era 'UI in inglese di default' contro 'tutto l'output in italiano': due file diversi
-che la scala teneva separati. Dal 2026-07-29 stanno nello stesso file e la
-contraddizione è stata **riscritta come eccezione esplicita**: l'italiano riguarda la
-comunicazione, la lingua dei prodotti la decide 'Sviluppo software'. Questa è la forma
-preferibile: la scala serve quando due regole restano davvero in tensione, non come
-scusa per lasciarne due che si contraddicono.
+⚠️ L'errore facile, applicato al nostro caso: `JRRT.md` sopra `Roccobot.md` **non** significa
+'quando parlo di Tolkien ignoro le regole universali'. `JRRT.md` parla di fonti, edizioni e
+attestazioni; su caratteri, lingua e workflow git non dice nulla, e là vale `Roccobot.md`.
 
 ### 🔒 Regole NON derogabili a nessun livello
 
@@ -225,51 +214,14 @@ protocollo 'Aggiungi alle regole' definito lì, non qui.
 
 ## 🪶 Come si mantiene questo file
 
-**Criterio unico (deciso dall'utente, 2026-07-29): si scrive qui ciò che nel codice non c'è,
-cioè il PERCHÉ. Non si scrive ciò che il codice dice da sé, cioè il COME.** Il sorgente è
-commentato e si legge: una spiegazione di meccanica che il codice contiene già è peso morto, e
-peso morto che invecchia.
+⚠️ **Il criterio è UNIVERSALE e vive in `Roccobot.md`**, § '📥 Protocollo Aggiungi alle
+regole' → '🪶 Come si mantiene un file di regole' (promosso il 2026-07-30): si scrive il
+**perché**, non il **come**; le cinque famiglie che restano; la forma dei quattro blocchi; e
+che delle misure si tiene quella **scartata**. Vale per questo file come per ogni altro.
 
-Quindi **restano** cinque famiglie di cose, e solo queste:
-
-1. **Le trappole**: come si misura una cosa e come NON si misura, che cosa uno strumento non
-   vede, quale prova non fa fede. Sono le note che risparmiano mezza sessione a chi viene dopo.
-2. **I tentativi scartati** con la ragione, così nessuno li ripropone.
-3. **Le linee guida estetiche**: allineamento ottico, anti-jitter, misure col font reale, e in
-   generale i criteri di gusto che l'utente ha fissato.
-4. **Le decisioni dell'utente**, compresi i suoi *no*, e le **scelte di canone o editoriali**:
-   non stanno nel codice e non stanno nei dati, stanno solo qui.
-5. **Le modalità di lavoro e di interazione** con l'utente, più il **vocabolario** condiviso
-   (Tipo / Categoria / Classe / Badge, `info | genitori` ⤶ `nomi | titoli`), che serve a
-   parlare in fretta.
-
-E **vanno via**: la meccanica interna (formule, selettori, specificità, ordini di ombre, nomi
-di classe), i range delle manopole, la cronologia delle release, le conferme post-fix, e
-**qualunque elenco ricavabile con un grep** sui dati o sul codice del progetto. ⚠️ Il caso da
-tenere a mente sono gli **elenchi di portatori dei badge**: si ricavano dai dati, quindi non si
-scrivono qui, mentre il **criterio** e le **esclusioni motivate** sì, perché nei dati
-un'esclusione è indistinguibile da una dimenticanza.
-
-⚠️ **Le scelte strutturali si dicono, non si spiegano.** Basta la nota tecnica che permette di
-orientarsi (dove vive una cosa, chi è la fonte unica, qual è l'accesso giusto), non il suo
-funzionamento. Nel dubbio fra la regola e la sua dimostrazione, si tiene la regola.
-
-**La forma di una sezione potata** (approvata dall'utente il 2026-07-29: 'i blocchi vanno
-bene, aiutano a tenere le cose in ordine'). Quattro blocchi in quest'ordine, e nulla fuori
-da essi:
-
-1. **Com'è fatto**, l'essenziale: dove vive il dato, qual è la fonte unica, qual è l'accesso
-   giusto. Nomi di funzione come puntatori, senza spiegare cosa fanno dentro.
-2. **⚠️ Trappole**, che è il blocco più grosso e giustamente: è la ragione per cui la sezione
-   esiste.
-3. **🎨 Estetica e vincoli**: allineamento ottico, anti-jitter, e i valori che non si toccano
-   con la ragione per cui non si toccano.
-4. **Decisioni dell'utente da non ridiscutere**, coi suoi *no*.
-
-⚠️ **Delle misure si tiene quella SCARTATA, non quella accettata.** Il valore in uso sta nel
-codice e si rilegge; quello scartato no, e senza la nota qualcuno lo riprova. Esempio: delle
-etichette del Pannello resta scritto che 'Colore al passaggio' misurava 147.2px su una colonna
-di 102 e quindi andava a capo, non quanto misura quella che ci sta.
+- L'unica nota che resta locale: gli **elenchi di portatori dei badge** non si scrivono qui,
+  perché si ricavano da `dati.js`; il **criterio** e le **esclusioni motivate** sì, e stanno
+  in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🏅 Criteri editoriali dei badge'.
 
 ## 🏷️ Nomi dei progetti (terminologia condivisa)
 
@@ -289,8 +241,9 @@ non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
 
 ## 🤖 Modello da usare
 
-- Sempre **Claude Opus** (ultima versione disponibile), già forzato per tutto il repo in
-  `.claude/settings.json` (`"model": "opus"`). Non usare Sonnet o Haiku.
+⚠️ **Regola universale in `Roccobot.md`**, § '🤖 Modello da usare': sempre Claude Opus,
+l'ultima versione disponibile. Qui vale la parte tecnica: è **già forzato per tutto il repo**
+in `.claude/settings.json` (`"model": "opus"`), quindi non serve farlo a mano.
 
 ## 🗣️ Lingua di risposta
 
@@ -332,27 +285,21 @@ ha priorità più alta**.
 
 ## 🖼️ Artefatti
 
-- **Generazione di artefatti sempre autorizzata (istruzione durevole
-  dell'utente, 2026-07-16).** Quando un confronto visivo (mockup, schema,
-  proposta di UI, ecc.) è utile, generare l'artefatto **senza chiedere
-  conferma**: è pre-autorizzato. Restano privati finché l'utente non li
-  condivide.
+⚠️ **Regola universale in `Roccobot.md`**, § '💬 Stile di comunicazione' → 'Artefatti': la
+generazione è **sempre pre-autorizzata**, l'artefatto si fa senza chiedere conferma, e resta
+privato finché l'utente non lo condivide.
 
-## 📐 Misure in pixel → unità relative (istruzione durevole, 2026-07-20)
+## 📐 Misure in pixel → unità relative
 
-- **L'utente fornisce gli spostamenti/spaziature in pixel, ma vanno SEMPRE
-  convertiti in misure relative (`em` o simili) nel CSS.** I pixel dell'utente
-  sono 'suoi pixel' letti su uno screenshot: dipendono dalla densità/scaling
-  dello schermo su cui l'ha catturato (retina/HiDPI ⇒ un fattore, storicamente
-  ~2). Non applicarli mai come `px` grezzi.
-- **Nell'output riferire SEMPRE lo spostamento anche in misura relativa**
-  (es. 'su di 3px ≈ `-0.12em`'), così l'utente prende meglio le misure.
-- **Per convertire serve la densità dello schermo dello screenshot** (device
-  pixel ratio / modello del dispositivo / risoluzione fisica vs logica): se
-  l'utente NON la fornisce, **chiedergliela** prima di dare la conversione.
-- ⚠️ I **riferimenti em concreti** non sono universali: dipendono dal progetto e dal corpo
-  del testo su cui si misura. Quelli di 'I Grandi di Arda' stanno in
-  [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔬 Misure tipografiche'.
+⚠️ **La regola vive in `Roccobot.md`**, § '🎨 Grafica' → 'Misure UI web fornite dall'utente':
+i pixel che l'utente fornisce sono **device px** di uno screenshot, si dividono per il DPR
+(più alto sugli smartphone), si rimisurano sul DOM reale e si esprimono in **unità relative**,
+con la deroga ammessa nei casi difficili. Qui non se ne tiene una copia più corta, che prima o
+poi divergerebbe.
+
+- ⚠️ I **riferimenti em concreti** dipendono dal progetto e dal corpo del testo: quelli di
+  'I Grandi di Arda' stanno in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔬 Misure
+  tipografiche'.
 
 ## 🌿 Branch, allineamento e push
 
@@ -364,35 +311,17 @@ ha priorità più alta**.
   sessione è vincolata a un branch `claude/*`, aprire la PR e **mergiarla
   immediatamente**, squash). Non chiedere conferma per il go-live: è già
   autorizzato, vale come i comandi di via libera, applicato di default.
-  - **Eccezione: modifiche pesanti / significative / rischiose / strutturali.**
-    Qui il go-live automatico **non** si applica: aprire comunque la PR ma
-    **non mergiarla**, fermarsi e **chiedere conferma all'utente** prima di
-    andare live (presentando in breve cosa cambia e perché è delicato). Sono
-    'pesanti' p.es.: rifacimenti/refactor estesi, modifiche all'architettura o
-    al flusso dati di un progetto (`dati.js` e il Worker di 'I Grandi di Arda', uno
-    schema dati), interventi che
-    toccano segreti/admin/deploy, riscritture ampie o cambi che incidono su
-    molte voci o sull'intera UI. Nel dubbio sul peso di una modifica, trattarla
-    come pesante e chiedere. Le modifiche ordinarie (contenuti, fix puntuali,
-    ritocchi, documentazione) restano in go-live automatico.
-- **Dopo il go-live su branch `claude/*`: riallineare il branch al `master`.**
-  Concluso lo squash-merge, oltre al consueto `git reset --hard origin/master`
-  in locale, riportare anche il **branch remoto** `claude/*` su `master`:
-
-  ```bash
-  git fetch origin master && git reset --hard origin/master \
-    && git push --force-with-lease origin HEAD:<nome-branch-claude>
-  ```
-
-  Motivo: lo stop hook `~/.claude/stop-hook-git-check.sh` segnala come
-  «Unverified» ogni commit nel range `origin/<branch>..HEAD` il cui committer
-  non sia `noreply@anthropic.com`. Lo squash-merge crea un merge-commit con
-  committer `GitHub <noreply@github.com>`: su GitHub.com è **già "Verified"**
-  (firmato dalla web-flow key di GitHub), ma l'hook lo legge come estraneo
-  perché il branch `claude/*` resta «dietro» rispetto a `master`. Riallineando
-  il branch remoto, quel range si svuota e l'avviso (falso positivo) sparisce.
-  L'hook vive in `~/.claude` (ambiente effimero): modificarlo non
-  persisterebbe tra sessioni, perciò si agisce sul workflow.
+  - **Eccezione: le modifiche PESANTI.** Là il go-live automatico **non** si applica: si
+    apre comunque la PR ma **non si mergia**, si presenta in breve cosa cambia e perché è
+    delicato, e si **chiede conferma**. ⚠️ **Che cosa conta come pesante lo dice
+    `Roccobot.md`**, § '⚙️ Automazione e interazioni' (elenco universale, col principio 'nel
+    dubbio trattala come pesante'): qui basta sapere che in questo repo il flusso dati di 'I
+    Grandi di Arda' (`dati.js` e il Worker) rientra fra i casi pesanti.
+- **Dopo il go-live su branch `claude/*`: riallineare il branch**, remoto compreso.
+  ⚠️ **Regola universale in `Roccobot.md`**, § '🌿 Workflow git e versioni' (voce sullo
+  stop-hook), col comando e la ragione per cui riallineare il branch remoto **elimina la
+  causa** dell'avviso invece di farla interpretare ogni volta. Qui il branch principale è
+  `master`.
 - **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta a pubblicare:
   serve che il workflow `pages build and deployment` vada a buon fine. Se fallisce con
   `Deployment failed, try again later` (errore transitorio della piattaforma: il build

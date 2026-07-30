@@ -4,29 +4,16 @@
 
 - **'I Grandi di Arda'**: locale, `dati.js` LIVE e badge su **v14.80**; albero pulito, `0/0`
   con `origin/master` (`834f465`), nessun deploy in volo.
-- **Regole in sei file**, **23.436** parole (root 4.224, `arda/top/` 17.033, `proxy/` 701,
-  `userscripts/` 655, `RoccobotOS/` 450, `ABP/` 373), da 43.785 di partenza: **-46%**.
-  Universali a `Roccobot.md` **v1.48.0** e `JRRT.md` v1.23.0.
+- **Regole in sei file**, **22.787** parole (root 3.572, `arda/top/` 17.036, `proxy/` 701,
+  `userscripts/` 655, `RoccobotOS/` 450, `ABP/` 373), da 43.785 di partenza: **-48%**.
+  Universali a `Roccobot.md` **v1.51.0** (14.056 parole) e `JRRT.md` v1.23.0.
+  ⚠️ Root si è ridotto ancora perché **otto voci sono salite a universali**: quello che sembra
+  un taglio è in gran parte un trasloco in `Roccobot.md`.
 - **Worker** `arda-admin-proxy`: **rev 15** dal brief precedente, non riverificata oggi.
 
 ## In sospeso
 
-1. **Profondità della potatura: domanda aperta all'utente, con l'istruttoria fatta.** Sulla
-   sezione degli effetti la passata reale si è fermata a **-63%**, il campione approvato faceva
-   **-78%**. Lo scostamento è deliberato: quella sezione ha accumulato trappole **nuove** dopo
-   la misura del campione (valori a scelta letti prima della definizione, touch reale, tablet
-   con mouse) e il criterio protegge esattamente il blocco delle trappole.
-   - **Le 29 trappole sono già state divise in sei macro-blocchi** e presentate all'utente il
-     2026-07-30, per fargli scegliere cosa sacrificare: **B1** bug già occorsi in produzione,
-     **B2** comportamenti di piattaforma che l'emulazione non riproduce, **B3** vincoli di
-     accessibilità a margine zero, **B4** trappole di misurazione, **B5** meccanica CSS fine,
-     **B6** operative. **Parere dato**: comprimibili B5 e B6, da non toccare B1-B3. **Manca
-     solo la sua risposta**: il raggruppamento non va rifatto.
-   - **Verifica del taglio, da riusare**: l'elenco delle sezioni `##` deve restare identico a
-     ogni passo (è il controllo anti-troncamento dello splice), e degli identificatori fra
-     backtick che escono si controlla con un `grep` che si ritrovino **nel codice**. Lo splice
-     era `scratchpad/splice.py`, **effimero**, 20 righe.
-2. **Caricamento dei `CLAUDE.md` di sottocartella: NON verificato, e da dentro una sessione non
+1. **Caricamento dei `CLAUDE.md` di sottocartella: NON verificato, e da dentro una sessione non
    è verificabile.** Serve accertare che `arda/top/CLAUDE.md` (e gli altri quattro) si
    carichino davvero quando si legge un file di quella cartella: se non fosse così, tutto ciò
    che lo split ha spostato là sarebbe invisibile alle sessioni che non aprono quella cartella,
@@ -60,8 +47,20 @@
   v1.48.0 § '📥 Protocollo Aggiungi alle regole', e skill `handoff` (passo 2 di entrambi i modi).
 - **Si ragiona e si scrive direttamente nella lingua di destinazione**: costruire la frase in
   inglese e tradurla alla lettera è vietato → `Roccobot.md` § '💬 Stile di comunicazione'.
-- **Criterio di manutenzione** (il perché, non il come) e le cinque famiglie che restano →
-  root `CLAUDE.md` § '🪶 Come si mantiene questo file'.
+- **Criterio di manutenzione** (il perché, non il come), le cinque famiglie e i quattro
+  blocchi → **promosso a universale** il 2026-07-30: `Roccobot.md` § '📥 Protocollo Aggiungi
+  alle regole' → '🪶 Come si mantiene un file di regole'. In root resta il puntatore.
+- **Il taglio si decide sulla VOCE, non sul blocco tematico, e prima si misura**: se un gruppo
+  pesa il 2% del file, tagliarlo è cosmetico → `Roccobot.md`, stessa sezione.
+- **Otto voci promosse da root a universali** (2026-07-30, tutte confermate dall'utente):
+  criterio di manutenzione, 'caricato non vuol dire attivo', i due principi su come si legge
+  una scala di priorità, il riallineamento del branch `claude/*` (che ha sanato una divergenza:
+  `Roccobot.md` diceva 'ignora il falso positivo', root 'elimina la causa'), la
+  pre-autorizzazione degli artefatti, 'sempre Opus', e l'elenco di che cosa è una **modifica
+  pesante**. ⚠️ Del go-live è salita solo la **definizione** di pesante: l'**attivazione**
+  automatica resta una scelta di questo repo.
+- **Le misure in pixel NON sono state promosse ma DEDUPLICATE**: `Roccobot.md` § 'Grafica' le
+  copriva già e meglio, quindi in root resta il puntatore.
 
 ## Verifiche arretrate
 
@@ -71,13 +70,16 @@
 
 - **Niente.**
 
-## Da decidere (non è lavoro, è una scelta)
+## Da decidere
 
-- **La nota su `/desc` nel `CLAUDE.md` di `tools`: tenerla o toglierla.** Esiste ed è corretta
-  (verificata leggendo il file il 2026-07-30; `Roccobot/tools#3` è su `main` come `3b4a355`).
-  Una sessione parallela, che non aveva accesso a `tools`, ha proposto di **toglierla** perché
-  la skill già dichiara da sé il proprio override e il rischio di divergenza fra le due
-  definizioni degli stessi simboli è ora coperto dal rimando in `Roccobot.md` v1.47.6, sopra la
-  tabella di 'Traduzioni e revisioni'. **La proposta è ragionevole ma non è stata decisa
-  dall'utente**: finché non decide, la nota resta. ⚠️ La skill `/desc` l'ha scritta lui: **non
-  va riscritta né ricreata** in nessun caso.
+Domande poste all'utente e rimaste senza risposta entro un turno: stanno qui per non perdersi
+al cambio di sessione (regola universale in `Roccobot.md` § '⚙️ Automazione e interazioni').
+⚠️ **Non sono cose da fare**: nessuna si esegue senza che l'utente abbia scelto.
+
+1. **La nota su `/desc` nel `CLAUDE.md` di `tools`: tenerla o toglierla.** Esiste ed è corretta
+   (verificata leggendo il file il 2026-07-30; `Roccobot/tools#3` è su `main` come `3b4a355`).
+   Una sessione parallela, che non aveva accesso a `tools`, ha proposto di **toglierla** perché
+   la skill già dichiara da sé il proprio override e il rischio di divergenza fra le due
+   definizioni degli stessi simboli è ora coperto dal rimando in `Roccobot.md`, sopra la
+   tabella di 'Traduzioni e revisioni'. **Proposta ragionevole ma non decisa**: finché non
+   decide, la nota resta. ⚠️ La skill `/desc` l'ha scritta lui: **non va riscritta né ricreata**.
