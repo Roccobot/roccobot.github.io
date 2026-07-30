@@ -9,7 +9,10 @@
       "Bash(python3:*)",
       "Bash(curl:*)",
       "mcp__Claude_Code_Remote__add_repo",
-      "mcp__Claude_Code_Remote__register_repo_root"
+      "mcp__Claude_Code_Remote__register_repo_root",
+      "Read(.claude/handoff/**)",
+      "Edit(.claude/handoff/**)",
+      "Write(.claude/handoff/**)"
     ]
   },
   "hooks": {
@@ -29,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) BADGE=$(grep -oE 'version-badge\">v[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*v//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"Commit bloccato: versione disallineata, badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea i due numeri prima di committare.\" >&2; exit 2; fi ;; esac",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) BADGE=$(grep -oE 'vb-v\">v</span>[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*span>//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"Commit bloccato: versione disallineata, badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea i due numeri prima di committare.\" >&2; exit 2; fi ;; esac",
             "timeout": 15,
             "statusMessage": "Controllo versione (pre-commit)…"
           },
@@ -60,7 +63,7 @@
           },
           {
             "type": "command",
-            "command": "BADGE=$(grep -oE 'version-badge\">v[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*v//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"[SessionStart] versione disallineata: badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea prima di committare.\"; fi",
+            "command": "BADGE=$(grep -oE 'vb-v\">v</span>[0-9.]+' arda/top/index.html 2>/dev/null | head -1 | sed 's/.*span>//'); DV=$(grep -oE 'datiVersion = \"[0-9.]+' arda/top/dati.js 2>/dev/null | head -1 | sed 's/.*\"//'); if [ -n \"$BADGE\" ] && [ -n \"$DV\" ] && [ \"$BADGE\" != \"$DV\" ]; then echo \"[SessionStart] versione disallineata: badge v$BADGE != datiVersion $DV (fonte unica: dati.js). Allinea prima di committare.\"; fi",
             "timeout": 15,
             "statusMessage": "Controllo versione badge/dati.js…"
           }
