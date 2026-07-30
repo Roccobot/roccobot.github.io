@@ -306,9 +306,21 @@ ha priorità più alta**.
 - ⚠️ **Non esiste più alcuna eccezione 'testi narrativi', e non va reintrodotta**: finché questa
   sezione dichiarava l'em-dash ammesso negli incisi di `dati.js`, quella dicitura bastava a
   farlo riapparire **altrove**, chat compresa.
-- **Il repo è bonificato.** Il controllo è una riga e deve dare 0 dappertutto:
-  `git ls-files | while read f; do grep -c '—' "$f"; done`. Nei commenti si usa il **trattino
-  breve**, e nei marcatori di sezione lo stile di casa è `// ── Titolo ──` (box drawing).
+- **I due repo sono bonificati, e questa volta è una misura.** Censimento del 2026-07-30 su
+  **tutti** i file tracciati dei due repo, contando le occorrenze **fuori** dal codice inline
+  separatamente da quelle fra backtick: restano **soltanto** le eccezioni legittime, cioè le 4
+  di `rules/Roccobot.md` più 1 di questo file (la regola che per vietare il carattere deve
+  nominarlo, tutte fra backtick) e le 2 celle delle **tabelle dei caratteri** di RoccobotOS,
+  che ne documentano la scorciatoia. Trovati e corretti nella stessa passata: **11 em-dash in
+  `rules/JRRT.md`** e 1 nell'intestazione di `workers/rules-proxy.js`.
+  - ⚠️ **Il controllo a mano NON basta, e sapere perché evita di rifidarsi:**
+    `git ls-files | while read f; do grep -c '—' "$f"; done` gira dentro **un** repo e conta
+    **tutte** le occorrenze. Eseguito nel repo del sito dava 0 e sembrava una conferma, mentre
+    in `Roccobot/tools` nessuno l'aveva mai lanciato; e non distingue l'uso dalla citazione,
+    quindi su `Roccobot.md` darebbe 4 senza che ci sia niente da correggere. La misura
+    attendibile è quella del verificatore, che guarda il contesto.
+  - Nei commenti si usa il **trattino breve**, e nei marcatori di sezione lo stile di casa è
+    `// ── Titolo ──` (box drawing).
 - **Le sole occorrenze legittime**: questa regola, che per dire di non usarlo deve nominarlo; le
   due **tabelle dei caratteri** di RoccobotOS, che ne documentano la scorciatoia di tastiera; e
   per necessità tecnica le **espressioni regolari** che devono riconoscerlo in un testo remoto.
