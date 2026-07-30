@@ -41,37 +41,53 @@ installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
 Questo `CLAUDE.md` è l'**hub**: è il solo file che si carica da sé a ogni sessione,
 quindi è da qui che parte tutto il resto (scelta dell'utente, 2026-07-29).
 
-### 🚀 Protocollo di avvio (dal 2026-07-29)
+### 🚀 Protocollo di avvio (dal 2026-07-29, ampliato il 2026-07-30)
 
 I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
 sessione:
 
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
-2. Poi si fa la **domanda di rito**, una sola volta per sessione: *carico anche
-   `rules/JRRT.md`?* (il canone tolkieniano). ⚠️ Dal 2026-07-29 è **l'unico file
-   opzionale rimasto**: `Development.md` e `Prompts.md` sono stati assorbiti in
-   `Roccobot.md`, che si carica sempre. Se un domani ne nascono altri, si aggiungono
-   qui come opzioni.
-   Si usa lo strumento di domanda e **si attende la risposta**
-   prima di iniziare il lavoro: l'utente ha detto esplicitamente che il ritardo di
-   un giro non è un problema, perché si paga una volta sola.
-   - Fra le opzioni va sempre offerto un **'carica sempre tutti'** (regola
-     universale 'Offrire sempre Consenti sempre'). ⚠️ Ma quella scelta **non
-     sopravvive alla sessione**, perché l'ambiente è effimero: per renderla durevole
-     va scritta qui, in questo file. Se l'utente la chiede, registrarla.
-3. **Dal momento del caricamento in poi, quei file sono regole consolidate e
+2. Poi si fa **una sola chiamata** allo strumento di domanda, con **due** domande, e
+   **si attende la risposta** prima di iniziare il lavoro: l'utente ha detto
+   esplicitamente che il ritardo di un giro non è un problema, perché si paga una
+   volta sola.
+   - **`Carico anche rules/JRRT.md?`** (il canone tolkieniano). ⚠️ Dal 2026-07-29 è
+     **l'unico file di regole opzionale**: `Development.md` e `Prompts.md` sono stati
+     assorbiti in `Roccobot.md`, che si carica sempre. Se un domani ne nascono altri,
+     si aggiungono qui come opzioni.
+   - **`Quali CLAUDE.md di progetto leggo subito?`**, a **scelta multipla** fra i
+     cinque della tabella in testa a questo file (richiesta dell'utente, 2026-07-30).
+     Quelli che l'utente non sceglie **non** si leggono all'avvio: si leggono **al
+     volo** quando il lavoro entra nella loro cartella, che è esattamente la rete di
+     sicurezza già prescritta sopra.
+   - ⚠️⚠️ **In questa domanda NON si offre 'carica sempre tutti'** (istruzione
+     esplicita dell'utente, 2026-07-30). È una **deroga dichiarata** alla regola
+     universale 'Offrire sempre Consenti sempre' (`Roccobot.md`, § '⚙️ Automazione e
+     interazioni'), non una dimenticanza: la scelta vale per la sessione in corso, e
+     la domanda si rifà ogni volta.
+3. **Si legge il brief di consegna** (`.claude/handoff/LATEST.md`): è lo stato
+   volatile lasciato dalla sessione precedente, e può contenere lavoro in sospeso da
+   eseguire **prima** di ogni altra cosa. ⚠️ La procedura completa (verificarlo contro
+   il repo, evadere le voci, cancellare quelle provate) vive nella skill `handoff`,
+   modo lettura, e non si duplica qui: qui si dice soltanto che il brief **si legge
+   sempre**, perché il suo puntatore non può dipendere da una riga di passaggio.
+   Storico che lo motiva: fino al 2026-07-30 l'unico rimando in questo file viveva
+   dentro una nota su una verifica in corso, e chiudendo quella verifica il rimando è
+   sparito con lei.
+4. **Dal momento del caricamento in poi, quei file sono regole consolidate e
    condivise**: si dànno per scontate e ci si riferisce al loro contenuto senza
    ri-chiedere e senza rileggerle a ogni turno.
-4. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
+5. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
    token (regola in `Roccobot.md`, sezione Worker `rules-proxy`): niente letture
    parziali, niente ricostruzioni a memoria.
 
 - ⚠️ **Sessioni NON interattive** (Routine schedulate, trigger, sessioni svegliate
   da un evento su una PR): non c'è nessuno che possa rispondere, quindi **non si
-  chiede** e si caricano **solo i due file principali**, in quest'ordine di
-  priorità: **questo `CLAUDE.md`** e **`rules/Roccobot.md`**. Gli altri si leggono
-  solo se il compito li tocca davvero.
+  chiede niente**, né del canone né dei `CLAUDE.md` di progetto, e si caricano **solo
+  i due file principali**, in quest'ordine di priorità: **questo `CLAUDE.md`** e
+  **`rules/Roccobot.md`**. Gli altri si leggono solo se il compito li tocca davvero, e
+  il brief solo se il compito riguarda il lavoro lasciato in sospeso.
 - ⚠️ **Caricato non vuol dire attivo**: regola universale, in `Roccobot.md` § '🗃️ File di
   regole collegati'. Qui vale ricordare il caso concreto: **'🎛️ Revisione dei prompt'** di
   `Roccobot.md` si applica solo quando l'utente la invoca, e caricarla non la mette in vigore.
