@@ -264,9 +264,14 @@ I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in 
 **prima** che si apra un file di quel progetto: perciò il minimo indispensabile sta qui e
 non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
 
-- **Il sito è 'I Grandi di Arda'** (`arda/top/`). ⚠️ **'Grimorio' è terminologia morta**
-  (sopravvive solo in branch vecchi e commit storici): non usarla mai, né nei testi né
-  parlando con l'utente.
+- **Il sito ha TRE nomi equivalenti** (`arda/top/`): **'Arda Top'**, **'I Grandi di Arda'** e
+  **'Arda'** (istruzione dell'utente, 2026-07-30). Sono sinonimi, non un nome giusto e due
+  tollerati, e l'utente li alterna: nessuno dei tre va corretto. Le sfumature d'uso (nei testi
+  pubblicati resta il titolo per esteso, e 'Arda' da solo è ambiguo col mondo di cui il sito
+  parla) stanno in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § 'Come si chiama questo
+  progetto'.
+  - ⚠️ **'Grimorio' NON è un quarto sinonimo: è terminologia morta** (sopravvive solo in
+    branch vecchi e commit storici): non usarla mai, né nei testi né parlando con l'utente.
 - **Le liste AdBlock sono 'Roccobot ABP'** (`ABP/`), che l'utente chiama anche 'Regole
   AdBlock' o 'Regole Adguard'. I sinonimi colloquiali delle due liste (blocco ed eccezioni)
   stanno in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
@@ -409,13 +414,21 @@ poi divergerebbe.
   2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
-- **I quattro controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
+- **I cinque controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
-  nelle righe aggiunte, e i **riferimenti incrociati** dei file di regole, verificati da
-  `.memo/scripts/refcheck.py` (committato, e controlla anche i file di `Roccobot/tools`
-  quando il repo è agganciato). ⚠️ Criterio, whitelist e trappole del verificatore vivono in
-  `Roccobot.md` § '📥 Protocollo Aggiungi alle regole': qui basta sapere che esiste, che si
-  calcola invece di essere scritto a mano, e che blocca il commit.
+  nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i **caratteri del
+  messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
+  e controlla anche i file di `Roccobot/tools` quando il repo è agganciato). ⚠️ Criterio,
+  whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
+  regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
+  che bloccano il commit.
+  - ⚠️ **Il quinto guarda il MESSAGGIO, che nessuno guardava**: il controllo em-dash legge il
+    diff, quindi un carattere sbagliato nel messaggio di commit passava indisturbato. È nato
+    da un omografo (`U+0435`, la e cirillica) finito in un messaggio il 2026-07-29. Criterio
+    completo in `Roccobot.md` § '💬 Stile di comunicazione', voce sugli omografi.
+  - **Il verificatore fa sei controlli**, non più quattro: ai quattro sui rimandi si sono
+    aggiunti i **caratteri** dei file di regole e la **fedeltà del riquadro** del brief alla
+    sua sorgente nella skill `handoff`, che prima era una raccomandazione non verificabile.
   - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
