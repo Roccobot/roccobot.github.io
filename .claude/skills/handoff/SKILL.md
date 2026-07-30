@@ -58,6 +58,48 @@ risposta**: così la valutazione è rifacibile invece di essere un dogma.
 (un campione, uno script, una misura), il brief lo dichiara: o quel file diventa
 committato, o si scrive che va rifatto e a che cosa serviva.
 
+## ⚠️ Regola n. 3: una voce EVASA si cancella, non si annota come 'fatta'
+
+Il brief è la fotografia di ciò che è **ancora aperto**, non il registro di ciò che si è
+chiuso. Lo storico sta in git, che è già l'archivio e non invecchia. Una voce marcata
+'fatta' e lasciata lì è il difetto peggiore del formato: chi arriva deve rileggere e
+riverificare lavoro finito per capire che non lo riguarda, ed è esattamente il tempo che
+la skill esiste per risparmiare.
+
+Ogni voce ha **tre soli esiti** possibili, e nessuna può restare com'era:
+
+- **evasa** → si **cancella**, alle condizioni qui sotto;
+- **ancora aperta** → si **riscrive alla data di oggi**, non si lascia la formulazione
+  vecchia (le voci che invecchiano peggio sono quelle su fatti volatili: ref, PR aperta o
+  mergiata, versione live);
+- **diventata durevole** → si travasa in `CLAUDE.md` (regola n. 1) e si cancella da qui.
+
+**La cancellazione richiede una prova diretta, non un'affermazione.** Si cancella solo con
+un dato letto **adesso**: un commit sul branch di destinazione, un file che esiste, un
+numero di versione, l'uscita di un comando. ⚠️ **Non fanno prova**: che il brief stesso
+dica 'fatta' (è la fonte che si sta verificando, non il riscontro), il ricordo di averlo
+fatto, l'asserzione di un'altra sessione, e soprattutto una **PR aperta**, che non è una PR
+mergiata.
+
+⚠️ **Se la prova non è ottenibile ora, la voce NON si cancella**: si riscrive dicendo
+'fatta, ma non verificabile da qui' e **come** si verifica. Casi reali: il repo che
+servirebbe non è agganciato alla sessione, il validatore W3C è in challenge Cloudflare, il
+percorso è fuori dalla whitelist del Worker `rules-proxy` (dove un 404 significa 'percorso
+non ammesso', **non** 'file assente'). Cancellare su un'assenza di prova è peggio che
+lasciare la voce.
+
+⚠️ **Della voce evasa può restare un residuo vivo**, e allora resta **solo il residuo**:
+una domanda aperta all'utente, un controllo da fare alla prossima sessione. Non la cronaca
+di come è stata evasa, non i numeri che ormai stanno nel codice o in `CLAUDE.md`.
+
+**Vale per tutte le sezioni, non solo per `In sospeso`.** Recuperata la verifica arretrata,
+la voce sparisce e la sezione torna a `Niente`; committato lo script effimero, sparisce da
+`Strumenti da rifare`. ⚠️ Un `Niente` **seguito dal racconto** di come si è arrivati a
+'niente' è la stessa violazione con un'altra faccia.
+
+**Quando si cancella**: nel momento in cui la prova esiste, non a fine sessione. Così, se
+la sessione muore prima di chiudere, il file resta comunque vero.
+
 ## 🧩 Repository, progetto, sessione: tre cose diverse
 
 Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
@@ -162,11 +204,11 @@ e LIVE, ultimo commit, branch, albero pulito o no, deploy in volo, `rev` del Wor
 toccato. Numeri, non impressioni.
 
 ## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]
-Cosa era in corso e **il punto esatto** in cui si è fermato. Ogni voce passa la prova di
-sufficienza della regola n. 2: obiettivo, criterio col puntatore, numeri già misurati,
-cosa non va rifatto, primo passo concreto, come si verifica. Se le voci hanno un ordine
-obbligato, **dirlo**. Se non c'è niente in sospeso, scrivi 'niente' e non inventare
-lavoro.
+Cosa era in corso e **il punto esatto** in cui si è fermato. Solo cose **aperte**: quelle
+evase si cancellano (regola n. 3). Ogni voce passa la prova di sufficienza della regola
+n. 2: obiettivo, criterio col puntatore, numeri già misurati, cosa non va rifatto, primo
+passo concreto, come si verifica. Se le voci hanno un ordine obbligato, **dirlo**. Se non
+c'è niente in sospeso, scrivi 'niente' e non inventare lavoro.
 
 ## Andato live in questa sessione             [max 8 righe]
 Una riga per versione: `v14.77 - hover istantaneo nel Pannello, selezione spenta per i
@@ -178,10 +220,12 @@ con 'DA REGISTRARE' se il travaso non è stato possibile.
 
 ## Verifiche arretrate                        [max 5 righe]
 Quello che non si è potuto eseguire e va recuperato al prossimo aggiornamento: di
-norma il gate W3C in challenge Cloudflare, con la prova sostitutiva usata.
+norma il gate W3C in challenge Cloudflare, con la prova sostitutiva usata. Recuperata la
+verifica, la voce **si cancella** e resta `Niente`, senza il racconto (regola n. 3).
 
 ## Strumenti da rifare                        [max 6 righe]
-Gli script dello scratchpad che servono e che non esistono più (vedi in fondo).
+Gli script dello scratchpad che servono e che non esistono più (vedi in fondo). Committato
+uno script, la sua voce **si cancella**.
 ```
 
 ---
@@ -209,11 +253,16 @@ l'handoff.
    Possono essere cambiati **la versione live** (deploy arrivato dopo), **i ref**
    (salvataggi admin) e **`siteFlags` in `dati.js`** (l'utente ha usato il Pannello).
    Dove il file e la realtà divergono vince la realtà: dillo e correggi il file.
-3. Riassumi all'utente in **5 righe**, e chiudi confermando in una riga che terminologia,
+3. ⚠️ **Evadi il brief, non solo correggilo.** Per ogni voce in sospeso cerca la prova
+   diretta che sia già stata fatta (regola n. 3): se c'è, **cancella la voce** e riscrivi
+   il file; se manca, la voce resta ma riscritta a oggi. Vale anche per `Verifiche
+   arretrate` e `Strumenti da rifare`. Questo si fa **prima** di proporre il primo passo:
+   altrimenti il primo passo può essere lavoro già finito.
+4. Riassumi all'utente in **5 righe**, e chiudi confermando in una riga che terminologia,
    procedure e vincoli dei file di regole sono chiari (o chiedendo quel che non lo è:
    meglio una domanda ora che un errore dopo).
-4. Proponi **un** primo passo concreto, quello dell'handoff se ancora valido.
-5. Non riaprire indagini già chiuse: se l'handoff dice che una cosa è stata misurata,
+5. Proponi **un** primo passo concreto, quello dell'handoff se ancora valido.
+6. Non riaprire indagini già chiuse: se l'handoff dice che una cosa è stata misurata,
    la misura sta in `CLAUDE.md`.
 
 ⚠️ **Nelle richieste di consenso agli strumenti offri sempre l'opzione 'Consenti
@@ -233,13 +282,14 @@ autorizzare lo stesso comando a ogni chiamata.
 
 ## ⚠️ Nota sugli strumenti effimeri
 
-`CLAUDE.md` rimanda a parecchi script di verifica (`scratchpad/realfont.js` per servire
-i font reali, `scratchpad/tabfix.js`, `scratchpad/hoverperf.js`, `scratchpad/aacard.js`,
-`scratchpad/pat/aa4.js`, `scratchpad/tune_podium.py`...). **Lo scratchpad non sopravvive
-alla sessione**: in una sessione nuova quei file non esistono e vanno riscritti.
-Nell'handoff elenca solo quelli che servono al lavoro in sospeso, dicendo a che cosa
-servono, così chi arriva li rifà mirati invece di scoprirlo a metà strada.
+I file di regole rimandano a parecchi script di verifica (`scratchpad/tabfix.js`,
+`scratchpad/hoverperf.js`, `scratchpad/aacard.js`, `scratchpad/pat/aa4.js`,
+`scratchpad/tune_podium.py`...). **Lo scratchpad non sopravvive alla sessione**: in una
+sessione nuova quei file non esistono e vanno riscritti. Nell'handoff elenca solo quelli
+che servono al lavoro in sospeso, dicendo a che cosa servono, così chi arriva li rifà
+mirati invece di scoprirlo a metà strada.
 
-Il primo da rifare è quasi sempre **l'aggancio dei font reali**: senza quello ogni
-misura di larghezza, a-capo o allineamento ottico è di un altro font (regola
-universale, e in questo ambiente le webfont non si caricano da sé).
+⚠️ **L'aggancio dei font reali NON è più fra questi**: vive in `.claude/scripts/realfont.js`,
+committato, e senza di esso ogni misura di larghezza, a-capo o allineamento ottico sarebbe
+di un altro font. Se una voce lo dà per perduto, è vecchia. Lo stesso vale per qualunque
+altro script: se serve più di una volta, la risposta non è elencarlo qui, è committarlo.
