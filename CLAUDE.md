@@ -17,16 +17,19 @@
 | **RoccobotOS**, la guida di riferimento | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
 | **Worker di amministrazione** | `proxy/` | [`proxy/CLAUDE.md`](proxy/CLAUDE.md) |
 
-⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**, senza dare per scontato
-che si sia caricato da sé: costa una lettura e rende il lavoro corretto in ogni caso. È la
-rete di sicurezza, e vale a prescindere da come funzioni il caricamento automatico.
+⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
+il lavoro corretto in ogni caso.
 
-⚠️ **Un `CLAUDE.md` di sottocartella si carica quando si legge un file di quella cartella:
-questa però è un'ASSUNZIONE, non un fatto verificato** (al 2026-07-30). Vale comunque la
-conseguenza prudenziale: una regola che serve **sempre** non può vivere là. Se è di portata
-generale sta qui, se è universale sta in `rules/Roccobot.md`. Nel dubbio, questo file.
-- La verifica è in corso e vive nel brief di consegna (`.claude/handoff/LATEST.md`): finché
-  non è chiusa, la rete di sicurezza qui sopra è ciò che tiene.
+⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, dov'era
+un'assunzione su cui poggiava tutto lo split in sei file. All'avvio le istruzioni portano i
+**soli** `CLAUDE.md` di root; quello di una sottocartella compare nel momento in cui si legge
+un file di quella cartella.
+- **Perciò la lettura esplicita non è ridondanza**: chi lavora su un progetto senza aprire
+  nessuno dei suoi file (una discussione in chat, un file creato da zero) non ha le sue regole
+  in scena, ed è la lettura a portarle.
+- **Conseguenza prudenziale invariata**: una regola che serve **sempre** non può vivere là. Se
+  è di portata generale sta qui, se è universale sta in `rules/Roccobot.md`. Nel dubbio, questo
+  file.
 
 ⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: solo 'I Grandi di
 Arda' ha il numero di versione `x.xx` e un deploy da attendere; le liste AdBlock hanno
