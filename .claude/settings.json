@@ -10,6 +10,8 @@
       "Bash(curl:*)",
       "mcp__Claude_Code_Remote__add_repo",
       "mcp__Claude_Code_Remote__register_repo_root",
+      "mcp__Claude_Code_Remote__subscribe_pr_activity",
+      "mcp__Claude_Code_Remote__unsubscribe_pr_activity",
       "Read(/.memo/**)",
       "Edit(/.memo/**)",
       "Read(/CLAUDE.md)",
