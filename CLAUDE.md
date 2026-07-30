@@ -34,7 +34,11 @@ un file di quella cartella.
 ⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: solo 'I Grandi di
 Arda' ha il numero di versione `x.xx` e un deploy da attendere; le liste AdBlock hanno
 l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
-installazione da ripetere dopo ogni go-live; RoccobotOS non ha versione.
+installazione da ripetere dopo ogni go-live; **RoccobotOS ha una versione interna, `2.0`,
+che vive nel sorgente e non si mostra agli utenti** (dal 2026-07-30: dettagli in
+[`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'). ⚠️ Quindi
+'senza versione' non è più vero per nessuno dei cinque progetti: è solo diverso il posto
+in cui il numero vive, e per RoccobotOS quel posto **non** è l'interfaccia.
 
 ## 📜 Regola n. 1: le regole universali e come si caricano
 
@@ -376,7 +380,8 @@ poi divergerebbe.
   - **Verifica di pubblicazione avvenuta:** un `curl` sul file appena pubblicato, confrontando
     con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
     `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
-    l'header `! Last updated:`, per uno userscript il suo `@version`.
+    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS il
+    banner in testa a `RoccobotOS/RoccobotOS.js`.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
     pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
     cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e
@@ -418,3 +423,14 @@ poi divergerebbe.
     la chiede **ogni volta**, perché per le modifiche l'approvazione scade con la sessione.
     Il percorso assoluto serve in più: la `cwd` non è la radice del repo. Costo di averlo
     ignorato: 8 autorizzazioni chieste all'utente in una sola sessione.
+  - ⚠️ **Perché gli script stanno QUI e non in `Roccobot/tools`** (domanda dell'utente,
+    2026-07-30). Perché l'hook che li lancia deve trovarli **sempre**, e il repo sempre
+    presente è questo, dove vive l'hub delle regole: `tools` in molte sessioni non è
+    agganciato. Spostarli non eliminerebbe il degrado, lo **sposterebbe** sulle sessioni che
+    toccano di più i file di regole, che sono queste. `realfont.js` in più è **specifico** di
+    'I Grandi di Arda' (serve il sito su HTTP locale e si aspetta Cinzel ed EB Garamond): in
+    `tools` non avrebbe nemmeno un sito da servire.
+    - Il rovescio, che è la ragione per cui la domanda è legittima: `tools` lancia
+      `refcheck.py` **dal repo sibling**, quindi in una sessione che monta solo `tools` il
+      controllo non c'è. Da qui **lo dichiara** invece di saltare in silenzio, ed è il
+      minimo che si può fare senza duplicare lo script, che divergerebbe.

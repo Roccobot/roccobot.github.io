@@ -5,11 +5,14 @@
 // ogni misura di larghezza, a-capo o allineamento ottico e' di un ALTRO carattere. La
 // pagina si vede benissimo, per questo l'errore passa inosservato.
 //
-// Vive qui e non nello scratchpad perche' lo scratchpad muore con la sessione: sotto
-// `.claude/` GitHub Pages non lo pubblica.
+// Vive qui e non nello scratchpad perche' lo scratchpad muore con la sessione, e sotto
+// `.memo/` (cartella col punto) GitHub Pages non lo pubblica. ⚠️ Sta in QUESTO repo e non
+// in `Roccobot/tools` perche' e' specifico di 'I Grandi di Arda': serve questo sito e si
+// aspetta i suoi font. Il criterio sta nel `CLAUDE.md` di root, § 'Branch, allineamento e
+// push'.
 //
 // USO:
-//   const rf = require('./.claude/scripts/realfont');
+//   const rf = require('./.memo/scripts/realfont');
 //   const { url } = await rf.serve();              // scarica i font se serve + avvia il server
 //   const browser = await chromium.launch({ executablePath: rf.chromiumPath() });
 //   const page = await browser.newPage();

@@ -50,7 +50,13 @@ RULEFILES = [
     TOOLS / "rules/Roccobot.md",
     TOOLS / "rules/JRRT.md",
     TOOLS / ".claude/skills/desc/SKILL.md",
-]
+# Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollera'
+# in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
+# averne trovati DUE stantii nello stesso momento (uno rimandava a `rules/Prompts.md` e
+# l'altro a `rules/Development.md`, cancellati il giorno prima): fuori copertura, un
+# rimando morto la' non lo segnalava nessuno. Glob e non elenco: uno snippet nuovo entra
+# nel controllo da se', che e' l'unico modo perche' non si ripeta.
+] + sorted(TOOLS.glob("snippets/*.md"))
 
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
