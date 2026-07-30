@@ -58,6 +58,12 @@
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.memo/scripts/refcheck.py\" ] || exit 0; OUT=$(python3 \"$R/.memo/scripts/refcheck.py\" 2>&1) || { printf 'Commit bloccato: riferimenti incrociati rotti nei file di regole. Un rimando che punta a una sezione inesistente e un errore silenzioso: chi lo segue non trova nulla.\\n%s\\n' \"$OUT\" >&2; exit 2; } ;; esac",
             "timeout": 25,
             "statusMessage": "Controllo riferimenti incrociati (pre-commit)..."
+          },
+          {
+            "type": "command",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.memo/scripts/refcheck.py\" ] || exit 0; MSG=$(printf '%s' \"$IN\" | python3 -c 'import sys,json;print(json.load(sys.stdin).get(\"tool_input\",{}).get(\"command\",\"\"))'); OUT=$(printf '%s' \"$MSG\" | python3 \"$R/.memo/scripts/refcheck.py\" --text) || { printf 'Commit bloccato: caratteri fuori regola nel MESSAGGIO di commit (omografo, o carattere vietato fuori dal codice). Il controllo em-dash legge il diff, questo legge il messaggio: nessun altro lo guardava.\\n%s\\n' \"$OUT\" >&2; exit 2; } ;; esac",
+            "timeout": 20,
+            "statusMessage": "Controllo caratteri del messaggio (pre-commit)..."
           }
         ]
       }

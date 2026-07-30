@@ -25,10 +25,13 @@
 - **RoccobotOS è alla `2.0`** (istruzione dell'utente, 2026-07-30). Non è un numero nuovo:
   è la versione della guida, che fino a quel giorno non era scritta da nessuna parte, ed è il
   motivo per cui questo progetto risultava 'senza versione'.
-- **Dove vive: il banner in testa a `RoccobotOS/RoccobotOS.js`**, e solo là. ⚠️ **Non in
-  `index.html`**, che è un **export da markdown** e si rigenera: un commento messo là
-  sparirebbe al primo export nuovo, cioè senza che nessuno se ne accorga. Il `.js` invece è
-  codice di casa, scritto a mano.
+- **Dove vive: l'intestazione di `RoccobotOS/RoccobotOS.js`**, cioè il commento nelle sue
+  prime righe, e solo là. ⚠️ **Non in `index.html`**, che è un **export da markdown** e si
+  rigenera: un commento messo là sparirebbe al primo export nuovo, cioè senza che nessuno se
+  ne accorga. Il `.js` invece è codice di casa, scritto a mano.
+  - Il nome tecnico di quel commento è *banner* (è l'opzione con cui i minificatori lo
+    preservano in cima al file), ma nei nostri testi si dice **intestazione**: il gergo, se
+    non serve a lavorare, si traduce.
 - ⚠️ **Non è visibile agli utenti, e non deve diventarlo**: la guida non ha un badge di
   versione e non ne vuole uno. Il numero serve a noi per dire di quale incarnazione della
   guida si parla, e si legge nel sorgente o con un `curl`.
@@ -38,7 +41,8 @@
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
   (`RoccobotOS.css?v=4`, `RoccobotOS.js?v=6`) e serve a invalidare la cache dei browser. Si
   bumpa quando cambia **comportamento o resa**, non per un commento: un bump inutile fa
-  riscaricare a tutti un file identico. Per questo il banner è entrato senza toccare `?v=6`.
+  riscaricare a tutti un file identico. Per questo l'intestazione è entrata senza toccare
+  `?v=6`.
 - **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
   di Arda'): `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | head -c 30`.
 

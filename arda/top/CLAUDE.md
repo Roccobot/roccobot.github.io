@@ -7,6 +7,21 @@
 > derogabili, lingua, git e go-live) vivono nel `CLAUDE.md` di **root**, che si
 > carica sempre: quello resta l'hub, e questo file non lo sostituisce.
 
+## 🏷️ Come si chiama questo progetto
+
+**Tre nomi, tutti buoni e interscambiabili** (istruzione dell'utente, 2026-07-30): **'Arda
+Top'** (dalla cartella `arda/top/`), **'I Grandi di Arda'** (il titolo che si legge nel sito) e
+**'Arda'** e basta. Non c'è un nome corretto e due tollerati: sono sinonimi, e nessuno dei tre
+va corretto quando l'utente usa l'altro.
+
+- **Nei testi pubblicati** resta 'I Grandi di Arda', che è il titolo dell'opera: la libertà
+  riguarda il modo di **parlarne**, non l'intestazione del sito.
+- ⚠️ **'Arda' da solo è ambiguo per costruzione**, perché è anche il mondo di cui il sito
+  parla. Vale come nome del progetto quando il contesto è il lavoro ('metto mano ad Arda'),
+  non quando si parla di contenuti ('i Vala di Arda'). Nel dubbio, il contesto lo dice.
+- ⚠️ **'Grimorio' non è un quarto sinonimo**: è terminologia **morta**, sopravvive solo in
+  branch vecchi e commit storici, e non si usa mai (regola nel `CLAUDE.md` di root).
+
 ## 🔢 Versione del sito
 
 **Com'è fatto.** **Fonte unica: `var datiVersion` in testa a `arda/top/dati.js`.** Il sito la legge

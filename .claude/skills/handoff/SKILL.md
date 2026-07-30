@@ -153,7 +153,7 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
   `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
   installazione da ripetere dopo ogni go-live; RoccobotOS ha una versione **interna**, nel
-  banner di `RoccobotOS/RoccobotOS.js`, che non compare in pagina e non va messa nel badge
+  commento in testa a `RoccobotOS/RoccobotOS.js`, che non compare in pagina e non va messa nel badge
   di nessuno.
 - **Sessione** = questa chat e questo container: **effimera**. Il salto da una all'altra
   è quello che l'handoff serve a superare.
@@ -245,8 +245,14 @@ densa di dati non è prolissità, è il lavoro già fatto che non va perso.
 ⚠️ **Il file apre con un RIQUADRO di istruzioni** (`> ...`) che dice a chi arriva che cos'è il
 brief e che cosa farne: i cinque passi, i tre esiti di una voce, e che cosa fa prova. Serve alle
 sessioni in cui **questa skill non è in scena**, per esempio quelle che montano solo
-`Roccobot/tools`. ⚠️ **Riscrivendo il brief quel riquadro si CONSERVA verbatim**: è parte del
-formato, non contenuto della sessione. Aggiornalo solo se cambia una delle tre regole qui sopra.
+`Roccobot/tools`.
+
+⚠️⚠️ **Il testo del riquadro vive QUI, in fondo a questo file, fra due marcatori, ed è la sua
+sorgente unica**: nel brief se ne copia il blocco verbatim, marcatori compresi. Un controllo
+pre-commit (`.memo/scripts/refcheck.py`) confronta i due testi e **blocca il commit** se
+divergono. Quindi il riquadro si modifica **qui** e poi si ricopia là, mai il contrario: prima
+del 2026-07-30 questo punto conteneva un segnaposto e la fedeltà era una raccomandazione, cioè
+una cosa che nessuno poteva verificare.
 
 ```markdown
 # Handoff - AAAA-MM-GG
@@ -363,3 +369,47 @@ mirati invece di scoprirlo a metà strada.
 committato, e senza di esso ogni misura di larghezza, a-capo o allineamento ottico sarebbe
 di un altro font. Se una voce lo dà per perduto, è vecchia. Lo stesso vale per qualunque
 altro script: se serve più di una volta, la risposta non è elencarlo qui, è committarlo.
+
+---
+
+## Il riquadro fisso del brief (sorgente unica)
+
+Questo è il testo che `.memo/LATEST.md` porta in testa, e questa ne è la **sorgente**: si
+modifica qui, si ricopia là. Il blocco fra i marcatori si copia **per intero**, marcatori
+compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
+
+<!-- brief-intro:inizio -->
+> **Che cos'è questo file, e che cosa devi farne.** È lo **stato volatile** lasciato dalla
+> sessione precedente: cosa era in corso e dove si è fermato. È **unico e trans-repo**, copre
+> `Roccobot/roccobot.github.io` e `Roccobot/tools`, e vive in `Roccobot/tools`, `.memo/LATEST.md`
+> (leggibile e scrivibile anche via Worker:
+> <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>).
+>
+> **All'arrivo, in quest'ordine.**
+> 1. **Leggilo prima di ogni altra cosa**: le voci in sospeso possono avere la precedenza sul
+>    compito che ti è stato dato, e alcune dicono esplicitamente di essere eseguite per prime.
+> 2. **Verificalo contro la realtà prima di fidarti.** È una fotografia e può essere vecchia
+>    di giorni: ref git, versione pubblicata e dati possono essere cambiati. Dove il file e la
+>    realtà divergono, **vince la realtà**: dillo e correggi il file.
+> 3. **Evadi le voci, non limitarti a leggerle.** Per ognuna cerca la prova che sia già stata
+>    fatta. Ogni voce ha **tre soli esiti**: *evasa* -> si **cancella**; *ancora aperta* -> si
+>    **riscrive alla data di oggi**; *diventata durevole* -> si travasa nel file di regole giusto
+>    e si cancella da qui.
+> 4. **Per cancellare serve una prova letta adesso**: l'uscita di un comando, un file, un commit,
+>    un numero di versione. ⚠️ **Non fanno prova**: che questo file dica 'fatta' (è la fonte che
+>    stai verificando), il ricordo, l'asserzione di un'altra sessione, una PR **aperta** invece
+>    che mergiata, e **nemmeno la parola dell'utente**. Se la prova non è ottenibile ora, la
+>    voce **non si cancella**: si riscrive dicendo che manca e come si otterrebbe.
+> 5. **Questo file non è un archivio.** Tutto ciò che vale oltre la prossima sessione va nel
+>    `CLAUDE.md` del repo o nelle regole universali, **non qui**; qui resta solo l'aperto. E una
+>    domanda rimasta senza risposta si **aggiunge** in 'Da decidere', per non perderla.
+>
+> ⚠️ **La procedura completa vive nella skill `handoff`**, in `roccobot.github.io/.claude/skills/`,
+> e questo riquadro ne è il minimo operativo, non un sostituto. **Se la skill non è in scena**
+> (per esempio in una sessione che monta solo `Roccobot/tools`), i cinque punti qui sopra bastano
+> per lavorare bene: quello che non puoi fare, lo **dichiari** invece di ricostruirlo a memoria.
+> ⚠️ **Questo riquadro fa parte del formato del file**: chi riscrive il brief lo **conserva
+> verbatim, marcatori HTML compresi**. Non è un invito alla diligenza: la sua sorgente unica è
+> la skill `handoff` e un controllo pre-commit confronta i due testi, quindi un riquadro
+> modificato qui e non là blocca il commit.
+<!-- brief-intro:fine -->

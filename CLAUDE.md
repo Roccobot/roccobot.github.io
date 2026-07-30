@@ -264,9 +264,14 @@ I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in 
 **prima** che si apra un file di quel progetto: perciò il minimo indispensabile sta qui e
 non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
 
-- **Il sito è 'I Grandi di Arda'** (`arda/top/`). ⚠️ **'Grimorio' è terminologia morta**
-  (sopravvive solo in branch vecchi e commit storici): non usarla mai, né nei testi né
-  parlando con l'utente.
+- **Il sito ha TRE nomi equivalenti** (`arda/top/`): **'Arda Top'**, **'I Grandi di Arda'** e
+  **'Arda'** (istruzione dell'utente, 2026-07-30). Sono sinonimi, non un nome giusto e due
+  tollerati, e l'utente li alterna: nessuno dei tre va corretto. Le sfumature d'uso (nei testi
+  pubblicati resta il titolo per esteso, e 'Arda' da solo è ambiguo col mondo di cui il sito
+  parla) stanno in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § 'Come si chiama questo
+  progetto'.
+  - ⚠️ **'Grimorio' NON è un quarto sinonimo: è terminologia morta** (sopravvive solo in
+    branch vecchi e commit storici): non usarla mai, né nei testi né parlando con l'utente.
 - **Le liste AdBlock sono 'Roccobot ABP'** (`ABP/`), che l'utente chiama anche 'Regole
   AdBlock' o 'Regole Adguard'. I sinonimi colloquiali delle due liste (blocco ed eccezioni)
   stanno in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
@@ -301,9 +306,21 @@ ha priorità più alta**.
 - ⚠️ **Non esiste più alcuna eccezione 'testi narrativi', e non va reintrodotta**: finché questa
   sezione dichiarava l'em-dash ammesso negli incisi di `dati.js`, quella dicitura bastava a
   farlo riapparire **altrove**, chat compresa.
-- **Il repo è bonificato.** Il controllo è una riga e deve dare 0 dappertutto:
-  `git ls-files | while read f; do grep -c '—' "$f"; done`. Nei commenti si usa il **trattino
-  breve**, e nei marcatori di sezione lo stile di casa è `// ── Titolo ──` (box drawing).
+- **I due repo sono bonificati, e questa volta è una misura.** Censimento del 2026-07-30 su
+  **tutti** i file tracciati dei due repo, contando le occorrenze **fuori** dal codice inline
+  separatamente da quelle fra backtick: restano **soltanto** le eccezioni legittime, cioè le 4
+  di `rules/Roccobot.md` più 1 di questo file (la regola che per vietare il carattere deve
+  nominarlo, tutte fra backtick) e le 2 celle delle **tabelle dei caratteri** di RoccobotOS,
+  che ne documentano la scorciatoia. Trovati e corretti nella stessa passata: **11 em-dash in
+  `rules/JRRT.md`** e 1 nell'intestazione di `workers/rules-proxy.js`.
+  - ⚠️ **Il controllo a mano NON basta, e sapere perché evita di rifidarsi:**
+    `git ls-files | while read f; do grep -c '—' "$f"; done` gira dentro **un** repo e conta
+    **tutte** le occorrenze. Eseguito nel repo del sito dava 0 e sembrava una conferma, mentre
+    in `Roccobot/tools` nessuno l'aveva mai lanciato; e non distingue l'uso dalla citazione,
+    quindi su `Roccobot.md` darebbe 4 senza che ci sia niente da correggere. La misura
+    attendibile è quella del verificatore, che guarda il contesto.
+  - Nei commenti si usa il **trattino breve**, e nei marcatori di sezione lo stile di casa è
+    `// ── Titolo ──` (box drawing).
 - **Le sole occorrenze legittime**: questa regola, che per dire di non usarlo deve nominarlo; le
   due **tabelle dei caratteri** di RoccobotOS, che ne documentano la scorciatoia di tastiera; e
   per necessità tecnica le **espressioni regolari** che devono riconoscerlo in un testo remoto.
@@ -380,8 +397,8 @@ poi divergerebbe.
   - **Verifica di pubblicazione avvenuta:** un `curl` sul file appena pubblicato, confrontando
     con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
     `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
-    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS il
-    banner in testa a `RoccobotOS/RoccobotOS.js`.
+    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS
+    l'intestazione di `RoccobotOS/RoccobotOS.js`, cioè il commento nelle sue prime righe.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
     pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
     cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e
@@ -409,13 +426,21 @@ poi divergerebbe.
   2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
-- **I quattro controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
+- **I cinque controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
-  nelle righe aggiunte, e i **riferimenti incrociati** dei file di regole, verificati da
-  `.memo/scripts/refcheck.py` (committato, e controlla anche i file di `Roccobot/tools`
-  quando il repo è agganciato). ⚠️ Criterio, whitelist e trappole del verificatore vivono in
-  `Roccobot.md` § '📥 Protocollo Aggiungi alle regole': qui basta sapere che esiste, che si
-  calcola invece di essere scritto a mano, e che blocca il commit.
+  nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i **caratteri del
+  messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
+  e controlla anche i file di `Roccobot/tools` quando il repo è agganciato). ⚠️ Criterio,
+  whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
+  regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
+  che bloccano il commit.
+  - ⚠️ **Il quinto guarda il MESSAGGIO, che nessuno guardava**: il controllo em-dash legge il
+    diff, quindi un carattere sbagliato nel messaggio di commit passava indisturbato. È nato
+    da un omografo (`U+0435`, la e cirillica) finito in un messaggio il 2026-07-29. Criterio
+    completo in `Roccobot.md` § '💬 Stile di comunicazione', voce sugli omografi.
+  - **Il verificatore fa sei controlli**, non più quattro: ai quattro sui rimandi si sono
+    aggiunti i **caratteri** dei file di regole e la **fedeltà del riquadro** del brief alla
+    sua sorgente nella skill `handoff`, che prima era una raccomandazione non verificabile.
   - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
