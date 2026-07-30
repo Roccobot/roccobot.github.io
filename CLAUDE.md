@@ -385,8 +385,8 @@ poi divergerebbe.
   - **Verifica di pubblicazione avvenuta:** un `curl` sul file appena pubblicato, confrontando
     con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
     `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
-    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS il
-    banner in testa a `RoccobotOS/RoccobotOS.js`.
+    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS
+    l'intestazione di `RoccobotOS/RoccobotOS.js`, cioè il commento nelle sue prime righe.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
     pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
     cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e

@@ -153,7 +153,7 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
   `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
   installazione da ripetere dopo ogni go-live; RoccobotOS ha una versione **interna**, nel
-  banner di `RoccobotOS/RoccobotOS.js`, che non compare in pagina e non va messa nel badge
+  commento in testa a `RoccobotOS/RoccobotOS.js`, che non compare in pagina e non va messa nel badge
   di nessuno.
 - **Sessione** = questa chat e questo container: **effimera**. Il salto da una all'altra
   è quello che l'handoff serve a superare.
