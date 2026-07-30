@@ -204,10 +204,11 @@ compaiono nella tab Mobile.
   moltiplica due volte.
 - ⚠️ **Tetto di 40 manopole per effetto**: contarle **prima** di progettare un effetto nuovo,
   perché superarlo costringe a toccare il Worker, e con esso arriva la race di deploy.
-- ⚠️ **Go-live che tocca sito E Worker: aspettare la spia `rev`.** Finché il Worker è alla
-  revisione precedente un salvataggio **sembra riuscire**, la config nuova non viene scritta e
-  quella vecchia si **perde**. Il 'Deployment successful' del bot Cloudflare è la build del
-  **branch**, non la produzione: fa fede solo `rev`.
+- ⚠️ **Go-live che tocca sito E Worker: aspettare la spia `rev`** prima di salvare dal
+  pannello, o la config nuova non viene scritta e quella vecchia si perde. Regola completa,
+  col perché e con la trappola del bot Cloudflare, in
+  [`proxy/CLAUDE.md`](../../proxy/CLAUDE.md): là vive il Worker, e una seconda copia qui
+  potrebbe divergere.
 - ⚠️ **Due criteri conviventi e una sola coppia di tab**: la piattaforma si decide sulla
   larghezza, ma `FX_PTR` (oggi il solo `hov`) e il gate del riflettore sulla **capacità del
   puntatore**, quindi su un dispositivo 'a metà' la variante che si REGOLA divergeva da quella
