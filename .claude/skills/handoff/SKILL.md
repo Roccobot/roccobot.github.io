@@ -16,7 +16,13 @@ skill copre esattamente quel salto, e nient'altro.
 | invocazione | dove | cosa fa |
 |---|---|---|
 | `/handoff` | nella sessione che sta **finendo** | scrive `.claude/handoff/LATEST.md` e lo pubblica |
-| `/handoff leggi` | in una sessione **nuova** | legge il file, lo VERIFICA contro il repo, propone il primo passo |
+| `/handoff leggi` | in una sessione **nuova** | il giro completo: verifica il brief contro il repo, **evade** le voci provate, propone il primo passo |
+
+⚠️ **Il modo lettura NON è l'interruttore che fa TROVARE il brief** (dal 2026-07-30): il brief
+si legge **sempre** all'avvio, perché è un passo del protocollo nel `CLAUDE.md` di root. Quindi
+`/handoff leggi` non serve a scoprire che esiste: serve a chiedere il **giro completo** di
+verifica ed evasione descritto qui sotto, che la sola lettura non fa. ⚠️ Il modo **scrittura**
+non ha alcun automatismo equivalente: quello va invocato, o il brief non viene aggiornato.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 
@@ -269,8 +275,9 @@ regole caricare, in che ordine, come leggerli e cosa chiedere all'utente. Si seg
 quello, senza che questa skill ripeta l'elenco: sarebbe una seconda fonte di verità,
 cioè esattamente ciò che la regola n. 1 di questa skill vieta.
 
-Quindi: prima il protocollo di avvio (compresa la domanda di rito all'utente), poi
-l'handoff.
+Quindi: prima il protocollo di avvio (comprese le domande all'utente e la lettura del
+brief, che è già un suo passo), poi il resto di questo modo, che è la parte che il
+protocollo **non** copre: verifica ed evasione.
 
 ### 1. Poi l'handoff, e verificalo
 
