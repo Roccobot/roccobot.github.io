@@ -464,8 +464,13 @@ poi divergerebbe.
     commit sbagliato passa liscio (misurato il 2026-07-30 da una sessione vergine, che è la sola
     in cui la prova valga). La causa non sta negli hook: là la **radice di progetto** è la cartella
     che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
-    viene aperto e nessun hook viene registrato. **Cadono insieme anche le regole di permesso**,
-    che vivono nello stesso file.
+    viene aperto e nessun hook viene registrato.
+    - ⚠️⚠️ **Ma NON dedurne che i permessi siano rotti: l'utente NON ha visto alcun prompt** su
+      file, comandi e configurazione (sua risposta, 2026-07-30), e **un solo** prompt su uno
+      strumento MCP non elencato. Quelle due cose **convivono**, perché file e comandi li copre
+      la modalità di permessi della sessione: criterio completo, col test che discrimina, in
+      `Roccobot.md` § '⚙️ Automazione e interazioni'. Qui basta la conseguenza: **il difetto
+      pratico riguarda i soli hook**, e i permessi si giudicano sugli strumenti MCP.
     - **Le prove, perché non si torni a indagare da zero**: un `git commit` col messaggio
       contenente un omografo (`U+0435`) è passato con **exit 0**, mentre `refcheck.py --text` sullo
       stesso testo esce **1** e stampa il codepoint; e un `Write` non ha prodotto la riga
