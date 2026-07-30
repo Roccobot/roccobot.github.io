@@ -406,3 +406,10 @@ poi divergerebbe.
   quando il repo è agganciato). ⚠️ Criterio, whitelist e trappole del verificatore vivono in
   `Roccobot.md` § '📥 Protocollo Aggiungi alle regole': qui basta sapere che esiste, che si
   calcola invece di essere scritto a mano, e che blocca il commit.
+  - ⚠️ **Gli script di `.claude/scripts/` si lanciano come comando SINGOLO e con percorso
+    assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
+    **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
+    interazioni'), quindi un `cp x y && python3 script` chiede l'autorizzazione per il `cp` e
+    la chiede **ogni volta**, perché per le modifiche l'approvazione scade con la sessione.
+    Il percorso assoluto serve in più: la `cwd` non è la radice del repo. Costo di averlo
+    ignorato: 8 autorizzazioni chieste all'utente in una sola sessione.

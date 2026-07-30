@@ -11,7 +11,9 @@
       "mcp__Claude_Code_Remote__add_repo",
       "mcp__Claude_Code_Remote__register_repo_root",
       "Read(/.claude/handoff/**)",
-      "Edit(/.claude/handoff/**)"
+      "Edit(/.claude/handoff/**)",
+      "Read(/.claude/scripts/**)",
+      "Edit(/.claude/scripts/**)"
     ]
   },
   "hooks": {
