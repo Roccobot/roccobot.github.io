@@ -81,6 +81,12 @@ dica 'fatta' (è la fonte che si sta verificando, non il riscontro), il ricordo 
 fatto, l'asserzione di un'altra sessione, e soprattutto una **PR aperta**, che non è una PR
 mergiata.
 
+⚠️⚠️ **Nemmeno la parola dell'utente fa prova** (sua istruzione, 2026-07-30: *potrei
+sbagliare, i fatti vanno VERIFICATI*). Se dice che una cosa è stata fatta, quella è
+un'informazione preziosa che dice **dove guardare**, non il riscontro: la voce si cancella
+quando il dato è stato letto. È la regola universale 'un'affermazione non è una verifica'
+applicata al brief.
+
 ⚠️ **Se la prova non è ottenibile ora, la voce NON si cancella**: si riscrive dicendo
 'fatta, ma non verificabile da qui' e **come** si verifica. Casi reali: il repo che
 servirebbe non è agganciato alla sessione, il validatore W3C è in challenge Cloudflare, il
