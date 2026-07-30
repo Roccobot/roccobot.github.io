@@ -47,10 +47,23 @@ serve.
 
 ### ⚠️ Trappole
 
+- **Controllo di freschezza del progetto**, il passo in più dopo il confronto dei ref
+  previsto dal `CLAUDE.md` di root (che resta il primo e vale per ogni progetto):
+
+  ```bash
+  git pull origin master && grep -oE 'vb-v">v</span>[0-9.]+' arda/top/index.html | head -1
+  ```
+
+  Legge la versione dal badge: se dopo il pull risulta più vecchia dell'attesa, fermarsi e
+  investigare. ⚠️ Il pattern deve attraversare lo **span della `v`**: il vecchio
+  `version-badge">v[0-9.]+` non trova più nulla da quando la `v` vive in un elemento suo, e
+  un `grep` che non trova niente si legge come 'nessun disallineamento', cioè il falso
+  negativo peggiore.
 - ⚠️ **Il numero di versione da solo non basta come spia di freschezza.** I salvataggi admin
   bumpano, quindi il numero cambia, ma per sapere **se e di quanto** si è indietro serve il
-  confronto dei ref col remoto. Caso reale: un commit admin toccò solo `dati.js` lasciando la
-  versione dov'era, e il solo `grep` non l'avrebbe colto.
+  confronto dei ref col remoto. Caso reale: il commit admin `db3f453` ('modifica testi
+  personaggi') toccò solo `dati.js` lasciando la versione a `v10.13.6`, e il solo `grep` del
+  badge non l'avrebbe colto.
 - ⚠️ **Le salvaguardie in `.claude/settings.json` intercettano solo il DISALLINEAMENTO** fra badge e
   `datiVersion` (avviso a inizio sessione, e blocco del commit se differiscono): **non** decidono
   l'entità del bump, che resta scelta manuale e contestuale.
@@ -1049,6 +1062,12 @@ via grep sulle fonti locali. Quello che ne è uscito:
   Magnifico' (epiteto di Thranduil, fine dello Hobbit) e Arwen 'Gioiello degli Elfi'.
 
 ## 🔬 Misure tipografiche: servire i font REALI ai test (scoperto il 2026-07-26)
+
+**Riferimenti em del sito**, da riverificare al momento perché dipendono dal corpo del testo
+su cui si misura: desktop `1em ≈ 25.6px` CSS **sulla riga nome** della card, mobile
+`1em ≈ 16.19px`. La regola generale sulla conversione dei pixel forniti dall'utente (sono
+device px di uno screenshot, vanno resi in unità relative) sta nel `CLAUDE.md` di **root**,
+§ '📐 Misure in pixel'.
 
 ⚠️ **Nell'ambiente Claude Code le webfont NON si caricano**: il foglio
 `fonts.googleapis.com/css2?...` in testa a `index.html` risponde

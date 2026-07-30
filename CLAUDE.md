@@ -244,7 +244,7 @@ Quindi **restano** cinque famiglie di cose, e solo queste:
 
 E **vanno via**: la meccanica interna (formule, selettori, specificità, ordini di ombre, nomi
 di classe), i range delle manopole, la cronologia delle release, le conferme post-fix, e
-**qualunque elenco ricavabile con un grep** su `dati.js` o su `index.html`. ⚠️ Il caso da
+**qualunque elenco ricavabile con un grep** sui dati o sul codice del progetto. ⚠️ Il caso da
 tenere a mente sono gli **elenchi di portatori dei badge**: si ricavano dai dati, quindi non si
 scrivono qui, mentre il **criterio** e le **esclusioni motivate** sì, perché nei dati
 un'esclusione è indistinguibile da una dimenticanza.
@@ -270,17 +270,26 @@ codice e si rilegge; quello scartato no, e senza la nota qualcuno lo riprova. Es
 etichette del Pannello resta scritto che 'Colore al passaggio' misurava 147.2px su una colonna
 di 102 e quindi andava a capo, non quanto misura quella che ci sta.
 
-## 🏷️ Identità del progetto
+## 🏷️ Nomi dei progetti (terminologia condivisa)
 
-- **Nome: 'I Grandi di Arda'.** 'Grimorio' è terminologia morta (sopravvive
-  solo in branch vecchi e commit storici): non usarla mai, né nei testi né
+I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in chat
+**prima** che si apra un file di quel progetto: perciò il minimo indispensabile sta qui e
+non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
+
+- **Il sito è 'I Grandi di Arda'** (`arda/top/`). ⚠️ **'Grimorio' è terminologia morta**
+  (sopravvive solo in branch vecchi e commit storici): non usarla mai, né nei testi né
   parlando con l'utente.
+- **Le liste AdBlock sono 'Roccobot ABP'** (`ABP/`), che l'utente chiama anche 'Regole
+  AdBlock' o 'Regole Adguard'. I sinonimi colloquiali delle due liste (blocco ed eccezioni)
+  stanno in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
+  quale comando lo dice [`ABP/CLAUDE.md`](ABP/CLAUDE.md).
+- Gli altri tre progetti si chiamano col nome della loro cartella: **userscript**,
+  **RoccobotOS** (la guida di riferimento) e il **Worker di amministrazione** in `proxy/`.
 
 ## 🤖 Modello da usare
 
-- Sempre **Claude Opus** (ultima versione disponibile), già forzato a
-  livello di progetto in `.claude/settings.json` (`"model": "opus"`).
-  Non usare Sonnet o Haiku.
+- Sempre **Claude Opus** (ultima versione disponibile), già forzato per tutto il repo in
+  `.claude/settings.json` (`"model": "opus"`). Non usare Sonnet o Haiku.
 
 ## 🗣️ Lingua di risposta
 
@@ -340,8 +349,9 @@ ha priorità più alta**.
 - **Per convertire serve la densità dello schermo dello screenshot** (device
   pixel ratio / modello del dispositivo / risoluzione fisica vs logica): se
   l'utente NON la fornisce, **chiedergliela** prima di dare la conversione.
-  Riferimenti em: desktop `1em ≈ 25.6px` CSS sulla riga nome, mobile
-  `1em ≈ 16.19px` (verificare al momento).
+- ⚠️ I **riferimenti em concreti** non sono universali: dipendono dal progetto e dal corpo
+  del testo su cui si misura. Quelli di 'I Grandi di Arda' stanno in
+  [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔬 Misure tipografiche'.
 
 ## 🌿 Branch, allineamento e push
 
@@ -358,7 +368,8 @@ ha priorità più alta**.
     **non mergiarla**, fermarsi e **chiedere conferma all'utente** prima di
     andare live (presentando in breve cosa cambia e perché è delicato). Sono
     'pesanti' p.es.: rifacimenti/refactor estesi, modifiche all'architettura o
-    al flusso dati (`dati.js`, proxy/Worker, schema dati), interventi che
+    al flusso dati di un progetto (`dati.js` e il Worker di 'I Grandi di Arda', uno
+    schema dati), interventi che
     toccano segreti/admin/deploy, riscritture ampie o cambi che incidono su
     molte voci o sull'intera UI. Nel dubbio sul peso di una modifica, trattarla
     come pesante e chiedere. Le modifiche ordinarie (contenuti, fix puntuali,
@@ -401,39 +412,32 @@ ha priorità più alta**.
     degli episodi passati, che GitHub non ripulisce e non lascia cancellare: **non bloccano
     nulla**, ed è provato dal fatto che centinaia di deploy sono riusciti con quei run già in
     coda. Non perdere tempo a cancellarli.
-  - **Verifica di pubblicazione avvenuta:** `curl` su
-    `https://roccobot.github.io/arda/top/dati.js` e confronto di `datiVersion` con l'attesa.
+  - **Verifica di pubblicazione avvenuta:** un `curl` sul file appena pubblicato, confrontando
+    con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
+    `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
+    l'header `! Last updated:`, per uno userscript il suo `@version`.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
     pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
     cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e
     basta attendere il push successivo. Se anche i push freschi falliscono ininterrottamente
     oltre le ~12 ore, ticket al supporto GitHub, che solo il proprietario del repo può aprire.
-- **Controllo di freschezza del progetto** (il passo successivo al pull
-  obbligatorio previsto dalla regola universale):
+- **Controllo di freschezza prima di lavorare** (il passo successivo al pull obbligatorio
+  previsto dalla regola universale). Il **confronto dei ref col remoto** è trasversale e
+  vale per ogni progetto:
 
   ```bash
-  git pull origin master && grep -oE 'version-badge">v[0-9.]+' arda/top/index.html | head -1
+  git fetch origin master \
+    && git rev-list --left-right --count origin/master...HEAD
   ```
 
-  Il `grep` legge la versione del sito: se dopo il pull risulta più
-  vecchia dell'attesa, fermarsi e investigare. Qui il rischio di
-  disallineamento è concreto: l'editor admin del sito committa
-  direttamente su GitHub via API.
-  - **Il numero di versione da solo non basta come spia.** I salvataggi admin
-    committano `arda/top/dati.js` e dalla v10.14.0 **bumpano** (+0.01 via
-    Worker): il numero cambia, ma per sapere se e di quanto si è indietro serve
-    comunque il **confronto dei ref col remoto**, la verifica affidabile:
-
-    ```bash
-    git fetch origin master \
-      && git rev-list --left-right --count origin/master...HEAD
-    ```
-
-    Il primo numero è quanti commit si è **dietro** a `origin/master`: se è >0
-    ci sono modifiche admin (o altri commit) da prendere → allinearsi prima di
-    lavorare. Caso reale: il commit admin `db3f453` ('modifica testi
-    personaggi') toccò solo `dati.js`, lasciando la versione a `v10.13.6`; il
-    solo `grep` non l'avrebbe colto, il confronto dei ref sì.
+  Il primo numero è quanti commit si è **dietro** a `origin/master`: se è >0 ci sono commit
+  da prendere e si allinea **prima** di toccare qualsiasi file. ⚠️ Il rischio qui è concreto
+  e non teorico, perché l'editor admin di 'I Grandi di Arda' committa direttamente su
+  GitHub via API, quindi `master` si muove anche senza che nessuna sessione lo tocchi.
+  - ⚠️ **Il controllo specifico del progetto è un passo IN PIÙ, non un'alternativa**, e vive
+    nel `CLAUDE.md` del progetto: per 'I Grandi di Arda' è in
+    [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔢 Versione del sito', perché legge il
+    badge e `datiVersion`, che sono suoi.
 - Il **SessionStart hook** standard (regola universale) è già configurato
   in `.claude/settings.json` di questo repo.
 - **Salvaguardie anti-conflitto coi salvataggi admin** (in `.claude/settings.json`).
