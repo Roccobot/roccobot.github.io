@@ -426,7 +426,8 @@ poi divergerebbe.
   2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
-- **I cinque controlli pre-commit che BLOCCANO** (`.claude/settings.json`, hook
+- **I cinque controlli pre-commit**, che bloccano il commit **solo quando la configurazione
+  viene letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
   nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i **caratteri del
   messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
@@ -459,3 +460,27 @@ poi divergerebbe.
       `refcheck.py` **dal repo sibling**, quindi in una sessione che monta solo `tools` il
       controllo non c'è. Da qui **lo dichiara** invece di saltare in silenzio, ed è il
       minimo che si può fare senza duplicare lo script, che divergerebbe.
+  - ⚠️⚠️ **MA NON GIRANO AFFATTO quando la sessione monta i DUE repo affiancati**, e allora un
+    commit sbagliato passa liscio (misurato il 2026-07-30 da una sessione vergine, che è la sola
+    in cui la prova valga). La causa non sta negli hook: là la **radice di progetto** è la cartella
+    che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
+    viene aperto e nessun hook viene registrato. **Cadono insieme anche le regole di permesso**,
+    che vivono nello stesso file.
+    - **Le prove, perché non si torni a indagare da zero**: un `git commit` col messaggio
+      contenente un omografo (`U+0435`) è passato con **exit 0**, mentre `refcheck.py --text` sullo
+      stesso testo esce **1** e stampa il codepoint; e un `Write` non ha prodotto la riga
+      `[PreEdit]`, che l'hook su `Edit|Write` stampa **sempre**. Due spie indipendenti.
+    - ⚠️ **Non è la forma dei pattern dei permessi**, che resta quella giusta (`Roccobot.md`
+      § '⚙️ Automazione e interazioni'): il difetto è un livello più a monte, il file non si legge.
+      Chi trova ancora prompt di autorizzazione **non riscriva i permessi**: sono già corretti, ed
+      è un lavoro che una sessione ha già fatto per niente.
+    - **Il rimedio, finché la causa resta**: prima di ogni commit lanciare a mano i due controlli
+      che coprono i file di regole, come **comandi singoli** e con percorso assoluto,
+      `python3 <radice>/.memo/scripts/refcheck.py` e
+      `printf '%s' '<messaggio>' | python3 <radice>/.memo/scripts/refcheck.py --text`. Gli altri
+      tre restano scoperti, quindi versione e allineamento si guardano a occhio.
+    - ⚠️ **Come si verifica se un domani tornassero a girare**: solo da una **sessione nuova**
+      (la configurazione si legge all'avvio), con un `git commit --allow-empty` il cui messaggio
+      porti l'omografo **letterale nel comando**, perché gli hook ricevono la stringa del comando
+      e con una variabile di shell il carattere non lo vedrebbero, dando un falso negativo. Deve
+      uscire **2**; poi il commit vuoto si scarta con un `reset`.

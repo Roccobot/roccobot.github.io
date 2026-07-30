@@ -183,6 +183,14 @@ salvataggi admin. Se la versione live è più bassa di quella locale, il deploy 
 è ancora arrivato (o è inceppato): va scritto nell'handoff, non dato per fatto. Se la
 sessione ha toccato il Worker, riporta anche la spia `rev` (un `GET` al Worker).
 
+⚠️ **Nel brief si scrive l'ALLINEAMENTO, non l'ultimo commit** (scelta dell'utente,
+2026-07-30). L'hash dell'ultimo commit **nasce già vecchio** ogni volta che la sessione
+mergia qualcosa dopo aver scritto il brief, ed è successo in entrambi i repo nella consegna
+di quel giorno: il file diceva due hash che il remoto aveva già superato. Il dato che serve
+a chi arriva è **se il suo clone è allineato al remoto e di quanti commit**, che si misura
+col comando qui sopra e non invecchia. L'hash può restare **accanto**, dichiarato per quello
+che è: un riferimento, non lo stato.
+
 ### 2. Travasa il durevole in `CLAUDE.md` PRIMA di scrivere
 
 Ripassa la sessione e chiediti, per ogni cosa: *serve anche fra un mese?* In questo
@@ -261,8 +269,10 @@ una cosa che nessuno poteva verificare.
 
 ## Stato                              [max 6 righe PER REPO]
 Un blocco per **repo**, e dentro il **progetto** di cui si parla (vedi 'Repository,
-progetto, sessione'): versione locale e LIVE, ultimo commit, branch, albero pulito o no,
-deploy non ancora arrivato, `rev` del Worker se toccato. Per `tools`: la versione dei file di regole e
+progetto, sessione'): versione locale e LIVE, **se il clone è allineato al remoto e di quanti
+commit**, branch, albero pulito o no, deploy non ancora arrivato, `rev` del Worker se toccato.
+⚠️ L'ultimo commit **non** è lo stato (vedi il passo 1): l'hash si mette solo accanto
+all'allineamento, come riferimento. Per `tools`: la versione dei file di regole e
 se il Worker `rules-proxy` la serve già. Numeri, non impressioni.
 
 ## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]
