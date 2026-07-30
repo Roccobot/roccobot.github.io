@@ -6,7 +6,7 @@
   con `origin/master` (`902ad0b`), nessun deploy in volo.
 - **Regole in sei file**, **23.091** parole in tutto (root 4.045, `arda/top/` 16.867,
   `proxy/` 701, `userscripts/` 655, `RoccobotOS/` 450, `ABP/` 373), da 43.785 di partenza:
-  **-47%**. Universali a `Roccobot.md` **v1.47.3** e `JRRT.md` v1.23.0.
+  **-47%**. Universali a `Roccobot.md` **v1.47.6** e `JRRT.md` v1.23.0.
 - **Worker** `arda-admin-proxy`: **rev 15** dal brief precedente, non riverificata oggi.
 
 ## In sospeso
@@ -31,16 +31,23 @@
    - **Due scelte di merito già fatte, da non ridiscutere**: il divieto dell'em-dash è **in
      root** (§ '✒️ Caratteri vietati') perché vale in ogni output; rate limiting e spia `rev`
      stanno in `proxy/CLAUDE.md`, con un rimando da `arda/top/`, per non avere due fonti.
-3. **Nota `/desc` nel `CLAUDE.md` di `tools`: data per fatta, ma NON verificabile da qui.**
-   `tools` non è agganciato, e il Worker `rules-proxy` ammette solo `rules/` e `workers/`:
-   su `CLAUDE.md` e su `.claude/skills/desc/SKILL.md` risponde **404, che significa 'percorso
-   non ammesso' e non 'file assente'** (riprovato oggi, entrambi 404).
-   - **Come si verifica**, da una sessione che abbia `tools` nel filesystem: il file deve
-     contenere **solo** la nota che gli operatori della skill (`>`, `^`, `^^`, `=`, `\` e `/`)
-     scavalcano gli omonimi di `Roccobot.md` ('Traduzioni e revisioni', '🎛️ Revisione dei
-     prompt') **solo a skill invocata**, e che fuori da lì vale `Roccobot.md`. Controllare
-     anche se `Roccobot/tools#3` è stata mergiata. ⚠️ La skill `/desc` l'ha scritta l'utente:
-     **non va riscritta né ricreata**, la sua verifica risulta già superata.
+3. **Nota `/desc` nel `CLAUDE.md` di `tools`: NON verificata, e da qui non è verificabile.**
+   L'utente dice che la nota c'è, ma la sua parola non fa prova più di quella di un'altra
+   sessione (regola sua, 2026-07-30, ora in `Roccobot.md` § 'Test e verifiche'): serve la
+   lettura del file. **Tre vie provate oggi, tutte chiuse**: Worker limitato a `rules/` e
+   `workers/` (404 = 'percorso non ammesso', non 'file assente'), `add_repo` 'requires
+   approval', strumento GitHub 'Access denied, allowed repositories: roccobot.github.io'.
+   - **Cosa verificare** da una sessione che abbia `tools`: che la nota esista e che dica solo
+     che gli operatori della skill scavalcano gli omonimi di `Roccobot.md` **a skill invocata**;
+     se `Roccobot/tools#3` è mergiata.
+   - **Poi una decisione, con l'istruttoria già fatta**: quella nota **non serve** al
+     funzionamento di `/desc`, perché è la skill stessa a dichiarare l'override. L'unico
+     rischio che copriva era la divergenza fra le due definizioni degli stessi simboli, e
+     **quel rischio è già coperto** dal rimando appena scritto in `Roccobot.md` v1.47.6, sopra
+     la tabella di 'Traduzioni e revisioni' (nomina anche il `^` di 'Arte, letteratura,
+     intrattenimento', che è l'altro punto di collisione). Quindi la nota in `tools` è
+     candidata a essere **tolta**, non allineata. ⚠️ La skill `/desc` l'ha scritta l'utente:
+     **non va riscritta né ricreata**.
 
 ## Andato live (contesto recente)
 
@@ -54,12 +61,12 @@
 
 - **Una voce evasa si CANCELLA dal brief**, e solo dopo una prova diretta e inoppugnabile; se
   la prova non è ottenibile, la voce resta riscritta a oggi → skill `handoff`, regola n. 3.
+- **Un'affermazione non è una verifica, nemmeno quella dell'utente** → `Roccobot.md`
+  § '🧪 Test e verifiche' (v1.47.7) e skill `handoff`, regola n. 3.
+- **Si ragiona e si scrive direttamente nella lingua di destinazione**: costruire la frase in
+  inglese e tradurla alla lettera è vietato → `Roccobot.md` § '💬 Stile di comunicazione'.
 - **Criterio di manutenzione** (il perché, non il come) e le cinque famiglie che restano →
   root `CLAUDE.md` § '🪶 Come si mantiene questo file'.
-- **Vincolo WCAG AA generico** al posto dei tetti per-manopola → `arda/top/CLAUDE.md`
-  § '📚 Nuovi personaggi e canone'.
-- **La scrittura via Worker non ha dry-run**: non si sonda mai un percorso reale, e si tiene
-  una copia locale integra prima di ogni POST → `Roccobot.md`.
 
 ## Verifiche arretrate
 
