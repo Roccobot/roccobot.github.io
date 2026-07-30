@@ -465,12 +465,16 @@ poi divergerebbe.
     in cui la prova valga). La causa non sta negli hook: là la **radice di progetto** è la cartella
     che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
     viene aperto e nessun hook viene registrato.
-    - ⚠️⚠️ **Ma NON dedurne che i permessi siano rotti: l'utente NON ha visto alcun prompt** su
-      file, comandi e configurazione (sua risposta, 2026-07-30), e **un solo** prompt su uno
-      strumento MCP non elencato. Quelle due cose **convivono**, perché file e comandi li copre
-      la modalità di permessi della sessione: criterio completo, col test che discrimina, in
-      `Roccobot.md` § '⚙️ Automazione e interazioni'. Qui basta la conseguenza: **il difetto
-      pratico riguarda i soli hook**, e i permessi si giudicano sugli strumenti MCP.
+    - ⚠️⚠️ **Che il file non sia letto è provato anche dal TESTO di un prompt**, che è la prova
+      più diretta: la modifica di `.claude/settings.json` è stata chiesta all'utente con 'non
+      l'hai ancora concesso', mentre in quel file la regola `Edit(/.claude/**)` copre proprio
+      quel percorso. E il suo **'Consenti sempre' non è durato** un solo turno, perché il
+      consenso durevole vuole un file locale di progetto che qui non esiste.
+    - ⚠️ **Ma i prompt non piovono, e non aspettarsene a raffica**: su file, comandi e `git`
+      l'utente non ne ha visto **nessuno** (sua risposta, 2026-07-30), perché quelli li copre la
+      modalità di permessi della sessione. Quindi il difetto **pratico** riguarda i soli hook, e
+      l'assenza delle regole si vede in due soli punti: gli strumenti **MCP** e la modifica della
+      **configurazione**. Criterio completo in `Roccobot.md` § '⚙️ Automazione e interazioni'.
     - **Le prove, perché non si torni a indagare da zero**: un `git commit` col messaggio
       contenente un omografo (`U+0435`) è passato con **exit 0**, mentre `refcheck.py --text` sullo
       stesso testo esce **1** e stampa il codepoint; e un `Write` non ha prodotto la riga
