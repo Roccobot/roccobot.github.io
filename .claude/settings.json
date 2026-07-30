@@ -10,13 +10,8 @@
       "Bash(curl:*)",
       "mcp__Claude_Code_Remote__add_repo",
       "mcp__Claude_Code_Remote__register_repo_root",
-      "Read(.claude/handoff/**)",
-      "Edit(.claude/handoff/**)",
-      "Write(.claude/handoff/**)",
-      "Read(.claude/handoff/LATEST.md)",
-      "Edit(.claude/handoff/LATEST.md)",
-      "Write(.claude/handoff/LATEST.md)",
-      "Edit(/home/user/roccobot.github.io/.claude/handoff/LATEST.md)"
+      "Read(/.claude/handoff/**)",
+      "Edit(/.claude/handoff/**)"
     ]
   },
   "hooks": {
