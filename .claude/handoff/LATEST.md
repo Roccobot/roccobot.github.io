@@ -23,9 +23,16 @@
      `arda/top/CLAUDE.md` **è nato in quella stessa sessione** (creato dallo split poche ore
      prima), mentre il caricamento delle istruzioni di progetto avviene **all'avvio**. Una
      sessione che parte con il file già sul disco è il solo caso che decide.
-   - **Come chiuderla**: in una sessione **nuova**, aprire un file di `arda/top/` e verificare se
-     quel `CLAUDE.md` compare fra le istruzioni. Se non compare, le regole di `arda/top/` vanno
-     risalite in root, perché là non le leggerebbe nessuno.
+   - **Come chiuderla, in una sessione NUOVA e in un solo passo**: cercare fra le proprie
+     istruzioni caricate la stringa **`CLAUDE.md: 'I Grandi di Arda'`**, che è il titolo di quel
+     file e non compare in nessun altro. Se c'è, il meccanismo funziona; se non c'è nemmeno dopo
+     aver aperto un file di `arda/top/`, le regole di quella cartella **vanno risalite in root**,
+     perché là non le leggerebbe nessuno.
+   - ⚠️ **Indizio contrario, da tenere presente**: in questa sessione il sistema ha rilevato
+     **dinamicamente** le skill create dopo l'avvio ('New skills discovered...'), quindi un
+     watcher esiste. Che non abbia annunciato il `CLAUDE.md` nuovo può voler dire che per le
+     istruzioni di progetto il caricamento è solo all'avvio, oppure che le sottocartelle non
+     sono coperte: sono due cose diverse, e solo la prova in sessione nuova le distingue.
 
 ## Andato live (contesto recente)
 
@@ -62,6 +69,12 @@
   automatica resta una scelta di questo repo.
 - **Le misure in pixel NON sono state promosse ma DEDUPLICATE**: `Roccobot.md` § 'Grafica' le
   copriva già e meglio, quindi in root resta il puntatore.
+- **La nota su `/desc` in `tools/CLAUDE.md` RESTA, insieme al rimando in `Roccobot.md`**
+  (deciso il 2026-07-30): la sovrapposizione fra le due non è totale e non genera incongruenze,
+  quindi si tengono entrambe. Coprono lo stesso rischio da due lati: il rimando dice a chi legge
+  la tabella degli operatori che `/desc` la scavalca, la nota dice **cosa resta a `Roccobot.md`**
+  (lingua, caratteri, formato, tono), che il rimando non dice. ⚠️ Chi ne modifica una allinea
+  l'altra, come la nota stessa prescrive.
 
 ## Verifiche arretrate
 
@@ -73,14 +86,4 @@
 
 ## Da decidere
 
-Domande poste all'utente e rimaste senza risposta entro un turno: stanno qui per non perdersi
-al cambio di sessione (regola universale in `Roccobot.md` § '⚙️ Automazione e interazioni').
-⚠️ **Non sono cose da fare**: nessuna si esegue senza che l'utente abbia scelto.
-
-1. **La nota su `/desc` nel `CLAUDE.md` di `tools`: tenerla o toglierla.** Esiste ed è corretta
-   (verificata leggendo il file il 2026-07-30; `Roccobot/tools#3` è su `main` come `3b4a355`).
-   Una sessione parallela, che non aveva accesso a `tools`, ha proposto di **toglierla** perché
-   la skill già dichiara da sé il proprio override e il rischio di divergenza fra le due
-   definizioni degli stessi simboli è ora coperto dal rimando in `Roccobot.md`, sopra la
-   tabella di 'Traduzioni e revisioni'. **Proposta ragionevole ma non decisa**: finché non
-   decide, la nota resta. ⚠️ La skill `/desc` l'ha scritta lui: **non va riscritta né ricreata**.
+- **Niente.**
