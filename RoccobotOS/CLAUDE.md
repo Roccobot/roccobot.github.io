@@ -15,11 +15,32 @@
   cache-busting (`?v=N`): toccando quei due file va incrementato il numero,
   altrimenti i browser servono la copia vecchia. Il JS gestisce tema
   chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
-  mobile e caricamento pigro. **Nessun numero di versione del sito**: lo schema
-  `x.xx` riguarda solo `arda/top`, non questo progetto.
+  mobile e caricamento pigro.
 - **Cose da fare.** Il file `RoccobotOS/Da fare.txt` è la lista dei lavori
   pendenti decisi dall'utente: leggerlo prima di proporre migliorie e
   aggiornarlo quando una voce viene evasa.
+
+### 🔢 Versione del progetto: interna e non visibile
+
+- **RoccobotOS è alla `2.0`** (istruzione dell'utente, 2026-07-30). Non è un numero nuovo:
+  è la versione della guida, che fino a quel giorno non era scritta da nessuna parte, ed è il
+  motivo per cui questo progetto risultava 'senza versione'.
+- **Dove vive: il banner in testa a `RoccobotOS/RoccobotOS.js`**, e solo là. ⚠️ **Non in
+  `index.html`**, che è un **export da markdown** e si rigenera: un commento messo là
+  sparirebbe al primo export nuovo, cioè senza che nessuno se ne accorga. Il `.js` invece è
+  codice di casa, scritto a mano.
+- ⚠️ **Non è visibile agli utenti, e non deve diventarlo**: la guida non ha un badge di
+  versione e non ne vuole uno. Il numero serve a noi per dire di quale incarnazione della
+  guida si parla, e si legge nel sorgente o con un `curl`.
+- ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**, e non lo diventa: là il numero è parte
+  dell'interfaccia e sale a ogni rilascio, qui è un'etichetta ferma che cambia solo se cambia
+  l'impianto della guida. Nessun bump per una correzione o una tabella aggiornata.
+- ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
+  (`RoccobotOS.css?v=4`, `RoccobotOS.js?v=6`) e serve a invalidare la cache dei browser. Si
+  bumpa quando cambia **comportamento o resa**, non per un commento: un bump inutile fa
+  riscaricare a tutti un file identico. Per questo il banner è entrato senza toccare `?v=6`.
+- **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
+  di Arda'): `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | head -c 30`.
 
 ### 🌐 Tabelle dei servizi DNS
 
