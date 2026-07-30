@@ -179,8 +179,8 @@ curl -sS "https://roccobot.github.io/arda/top/dati.js" | head -1   # versione LI
 ```
 
 Il primo numero di `rev-list` è quanti commit si è dietro: se è >0 sono arrivati
-salvataggi admin. Se la versione live è più bassa di quella locale, il deploy Pages è
-ancora in volo (o inceppato): va scritto nell'handoff, non dato per fatto. Se la
+salvataggi admin. Se la versione live è più bassa di quella locale, il deploy Pages non
+è ancora arrivato (o è inceppato): va scritto nell'handoff, non dato per fatto. Se la
 sessione ha toccato il Worker, riporta anche la spia `rev` (un `GET` al Worker).
 
 ### 2. Travasa il durevole in `CLAUDE.md` PRIMA di scrivere
@@ -262,7 +262,7 @@ una cosa che nessuno poteva verificare.
 ## Stato                              [max 6 righe PER REPO]
 Un blocco per **repo**, e dentro il **progetto** di cui si parla (vedi 'Repository,
 progetto, sessione'): versione locale e LIVE, ultimo commit, branch, albero pulito o no,
-deploy in volo, `rev` del Worker se toccato. Per `tools`: la versione dei file di regole e
+deploy non ancora arrivato, `rev` del Worker se toccato. Per `tools`: la versione dei file di regole e
 se il Worker `rules-proxy` la serve già. Numeri, non impressioni.
 
 ## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]

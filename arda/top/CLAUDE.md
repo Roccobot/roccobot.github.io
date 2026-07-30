@@ -635,7 +635,7 @@ contenuto (verificato). Colore individuale per voce nel campo `p.cardrgb` (famig
   luminosità resta identica al millesimo (misurato), e per questo la formula dei numeri riscrive
   cromia e luminosità **lasciando intatta la tinta**.
 - ⚠️ **Il callback async di 'Rinomina e salva' chiude solo se l'overlay è ancora agganciato**, per
-  non sbloccare lo scroll di un editor già ricostruito da un `L` in volo.
+  non sbloccare lo scroll di un editor già ricostruito da un `L` ancora in corso.
 
 ### 🎨 Estetica e vincoli
 
