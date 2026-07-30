@@ -3,7 +3,7 @@
 ## Stato
 
 - **'I Grandi di Arda'**: locale, `dati.js` LIVE e badge su **v14.80**; albero pulito, `0/0`
-  con `origin/master` (`834f465`), nessun deploy in volo.
+  con `origin/master`, nessun deploy in volo. Gate W3C riverificato: `{"messages":[]}`.
 - **Regole in sei file**, **22.787** parole (root 3.572, `arda/top/` 17.036, `proxy/` 701,
   `userscripts/` 655, `RoccobotOS/` 450, `ABP/` 373), da 43.785 di partenza: **-48%**.
   Universali a `Roccobot.md` **v1.51.0** (14.056 parole) e `JRRT.md` v1.23.0.
@@ -13,18 +13,19 @@
 
 ## In sospeso
 
-1. **Caricamento dei `CLAUDE.md` di sottocartella: NON verificato, e da dentro una sessione non
-   è verificabile.** Serve accertare che `arda/top/CLAUDE.md` (e gli altri quattro) si
-   carichino davvero quando si legge un file di quella cartella: se non fosse così, tutto ciò
-   che lo split ha spostato là sarebbe invisibile alle sessioni che non aprono quella cartella,
-   e andrebbe risalito in root.
-   - **Come verificarlo**: aprire un file di `arda/top/` in una sessione nuova e controllare se
-     il contenuto di quel `CLAUDE.md` compare fra le istruzioni caricate. ⚠️ **Un indizio, non
-     una prova**: in questa sessione il `CLAUDE.md` di `Roccobot/tools` è comparso fra le
-     istruzioni, ma è il file di root di un **repo agganciato**, che è un caso diverso da una
-     **sottocartella**.
-   - **Il resto del controllo post-split è EVASO il 2026-07-30**: la rassegna delle sezioni di
-     root ha prodotto quattro correzioni, tutte live in `#861` e `#862`.
+1. **Caricamento dei `CLAUDE.md` di sottocartella: TENTATO il 2026-07-30, esito NON conclusivo.**
+   Serve accertare che `arda/top/CLAUDE.md` (e gli altri quattro) si carichino davvero quando si
+   legge un file di quella cartella: se non fosse così, tutto ciò che lo split ha spostato là
+   sarebbe invisibile alle sessioni che non aprono quella cartella, e andrebbe risalito in root.
+   - **Prova fatta**: `Read` su `arda/top/dati.js`, poi controllo se il contenuto di
+     `arda/top/CLAUDE.md` comparisse fra le istruzioni caricate. **Non è comparso.**
+   - ⚠️ **Ma il risultato NON prova che il meccanismo sia rotto**, e la ragione è precisa:
+     `arda/top/CLAUDE.md` **è nato in quella stessa sessione** (creato dallo split poche ore
+     prima), mentre il caricamento delle istruzioni di progetto avviene **all'avvio**. Una
+     sessione che parte con il file già sul disco è il solo caso che decide.
+   - **Come chiuderla**: in una sessione **nuova**, aprire un file di `arda/top/` e verificare se
+     quel `CLAUDE.md` compare fra le istruzioni. Se non compare, le regole di `arda/top/` vanno
+     risalite in root, perché là non le leggerebbe nessuno.
 
 ## Andato live (contesto recente)
 

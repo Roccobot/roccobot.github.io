@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto: in lettura esegue prima il protocollo di avvio del CLAUDE.md, poi il brief. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati.
+description: "Passaggio di consegne fra sessioni del repo Roccobot/roccobot.github.io. Invocala nella sessione che sta finendo per scrivere il brief di consegna, oppure in una sessione nuova (`/handoff leggi`) per riprendere il lavoro dove era rimasto: in lettura esegue prima il protocollo di avvio del CLAUDE.md, poi il brief. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
 ---
 
 # Passaggio di consegne fra sessioni

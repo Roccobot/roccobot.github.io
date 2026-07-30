@@ -262,9 +262,9 @@ compaiono nella tab Mobile.
   quella dell'utente e cambia quando lui usa il pannello, quindi un test che si affida ai
   default misura la sua taratura. Ha già prodotto due falsi FAIL: prima di dare la caccia a una
   regressione, leggere `var siteFlags`.
-- ⚠️ **axe NON serve come prova di contrasto sulle card**: con un `::before` sull'elemento
-  rinuncia a determinare il fondo e classifica tutto come `incomplete`. La verifica va fatta **a
-  calcolo sui pixel**.
+- ⚠️ **axe NON serve come prova di contrasto sulle card**, quindi qui i limiti delle manopole
+  sono prudenti per scelta: la ragione e il metodo di verifica stanno in '🧭 Vocabolario
+  strutturale' → '🎨 Colore card', voce sulle trappole, per non tenerne due copie.
 - ⚠️ **CASO CHIUSO, non è un difetto: 'spento su mobile, e lo trovo spento anche su desktop'.**
   Il Pannello scrive sempre e solo la variante giusta, accertato sui dati e dal vivo; l'equivoco
   è legittimo perché il Pannello non mostra lo stato dell'ALTRA variante. Se ricapita,
