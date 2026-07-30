@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Passaggio di consegne fra sessioni di lavoro su Roccobot/roccobot.github.io e Roccobot/tools: il brief e' unico e copre entrambi i repo, con una sezione di stato per ciascuno. Invocala nella sessione che sta finendo per scriverlo, oppure in una sessione nuova (`/handoff leggi`) per il giro completo di verifica ed evasione. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
+description: "Passaggio di consegne fra sessioni di lavoro su Roccobot/roccobot.github.io e Roccobot/tools: il brief è unico e copre entrambi i repo, con una sezione di stato per ciascuno. Invocala nella sessione che sta finendo per scriverlo, oppure in una sessione nuova (`/handoff leggi`) per il giro completo di verifica ed evasione. Usala quando l'utente parla di handoff, passaggio, consegna, chiusura della sessione, o di ripartire da dove si era arrivati."
 ---
 
 # Passaggio di consegne fra sessioni
@@ -11,15 +11,15 @@ solo il `CLAUDE.md` del repo (le regole universali stanno in un altro repo e van
 lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa
 skill copre esattamente quel salto, e nient'altro.
 
-⚠️ **Il brief e' TRANS-REPO** (richiesta dell'utente, 2026-07-30): il lavoro tocca di
+⚠️ **Il brief è TRANS-REPO** (richiesta dell'utente, 2026-07-30): il lavoro tocca di
 continuo **due** repo, `Roccobot/roccobot.github.io` e `Roccobot/tools`, dove vivono le
-regole universali. Quindi il brief e' **uno solo** e copre entrambi, con una sezione di stato
-per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo e' stato
-**scartato**: spezzerebbe il lavoro che li attraversa, che e' la norma e non l'eccezione.
-- **Dove vive**: in `Roccobot/tools`, `.memo/LATEST.md`, che e' il repo **trans-progetto**.
+regole universali. Quindi il brief è **uno solo** e copre entrambi, con una sezione di stato
+per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo è stato
+**scartato**: spezzerebbe il lavoro che li attraversa, che è la norma e non l'eccezione.
+- **Dove vive**: in `Roccobot/tools`, `.memo/LATEST.md`, che è il repo **trans-progetto**.
   Entrambi i `CLAUDE.md` lo referenziano.
 - ⚠️ **E si legge e si scrive anche via Worker `rules-proxy`**, che dal 2026-07-30 serve
-  `.memo/` come `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>. E'
+  `.memo/` come `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>. È
   la via per le sessioni che non hanno quel repo agganciato o hanno meno permessi (scelta
   dell'utente, 2026-07-30), e la scrittura segue il protocollo 'Aggiungi alle regole' di
   `Roccobot.md`. ⚠️ **Un GET che risponde 404 sotto un percorso ammesso significa 'file
@@ -27,7 +27,7 @@ per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo e' 
   diverse e si distinguono guardando il prefisso.
 - ⚠️ **Questa skill invece vive nel repo del sito**, quindi una sessione che monta solo
   `tools` non l'ha: il brief lo legge comunque (dal file o dal Worker), ma la procedura di
-  evasione non e' in scena, e allora si dichiara che le voci non sono state verificate.
+  evasione non è in scena, e allora si dichiara che le voci non sono state verificate.
 
 **Due modi.**
 
@@ -240,14 +240,22 @@ troppo ma scrivere troppo poco. Vale la **prova di sufficienza** della regola n.
 lunghezza è quella che serve. Chi rilegge un brief così **non lo accorcia**: una voce
 densa di dati non è prolissità, è il lavoro già fatto che non va perso.
 
+⚠️ **Il file apre con un RIQUADRO di istruzioni** (`> ...`) che dice a chi arriva che cos'è il
+brief e che cosa farne: i cinque passi, i tre esiti di una voce, e che cosa fa prova. Serve alle
+sessioni in cui **questa skill non è in scena**, per esempio quelle che montano solo
+`Roccobot/tools`. ⚠️ **Riscrivendo il brief quel riquadro si CONSERVA verbatim**: è parte del
+formato, non contenuto della sessione. Aggiornalo solo se cambia una delle tre regole qui sopra.
+
 ```markdown
 # Handoff - AAAA-MM-GG
+
+> [riquadro fisso di istruzioni: si riprende dal file precedente senza modifiche]
 
 ## Stato                              [max 6 righe PER REPO]
 Un blocco per **repo**, e dentro il **progetto** di cui si parla (vedi 'Repository,
 progetto, sessione'): versione locale e LIVE, ultimo commit, branch, albero pulito o no,
 deploy in volo, `rev` del Worker se toccato. Per `tools`: la versione dei file di regole e
-se il Worker `rules-proxy` la serve gia'. Numeri, non impressioni.
+se il Worker `rules-proxy` la serve già. Numeri, non impressioni.
 
 ## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]
 Cosa era in corso e **il punto esatto** in cui si è fermato. Solo cose **aperte**: quelle
