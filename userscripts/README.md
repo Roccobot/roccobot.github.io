@@ -547,7 +547,7 @@ const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella /
 const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, touch scorre) | 'sempre' | 'mai'
 const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
 const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può partire un gesto di dito
-const TOUCH_MEMORIA_MS = 1500; // per quanto una firma touch appena vista copre i gesti seguenti
+const TOUCH_MEMORIA_MS = 800;  // per quanto una firma touch appena vista copre i gesti seguenti
 const PASSO_ROTELLA = 1.1;   // quanto ingrandisce un singolo scatto di rotella
 const TAPPE_ZOOM = [2, 3, …, 100, 110, 125, 140, …, 4000];  // tappe tonde; vuoto = passo geometrico
 const SALTO_MIN_SU = 0.05;   // ingrandendo, salta le tappe a meno del +5%
