@@ -7,24 +7,23 @@ body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{wid
    x-height nominale del font e l'inchiostro reale della 'o', che sborda per overshoot. */
 .icon-png-svg{vertical-align:middle}
 
-/* Badge di versione, in alto e fisso: la versione di RoccobotOS e' visibile dal 2026-07-31,
-   quando l'utente ha stabilito che questo non e' documentazione ma un progetto a tutti gli
-   effetti. Deve stare in cima senza scorrere e senza smuovere il resto, percio' 'fixed':
-   e' fuori dal flusso, e nessun elemento della pagina cambia posizione di un pixel.
-   Sta a sinistra del pulsante del tema, non sotto: su desktop quello occupa i 34 px di
-   destra, e su mobile scende in basso, dove il badge non lo segue.
-   Sans serif esplicito e 'v' minuscola sono vincoli dell'utente, non stile libero: il corpo
-   del testo qui e' gia' sans, ma dichiararlo protegge il badge se un domani cambia.
-   NON copia l'opacity .65 dei toggle, e non e' una svista: quelli sono icone, questo e' TESTO
-   di 10 px, e a .55 su fondo chiaro axe-core bocciava il contrasto. Sobrio si ottiene col
-   grigio e col corpo piccolo, non rendendo illeggibile il numero. */
-.site-version{position:fixed;top:4px;right:56px;z-index:9999;
+/* Numero di versione: sta SOPRA il logo-titolo, allineato al pixel col suo bordo sinistro, e
+   NON e' fisso allo schermo: scorrendo esce di scena insieme alla testata (precisazione
+   dell'utente, 2026-07-31, dopo un primo giro che lo aveva fatto 'fixed' e sempre presente).
+   'absolute' dentro #markdown_content da' entrambe le cose: scorre col documento e sta fuori
+   dal flusso, quindi non sposta nulla. Il left:0 funziona in tutti i formati perche' il bordo
+   sinistro di #markdown_content coincide col bordo sinistro del logo (misurato: 370 px su
+   desktop, 24 px su mobile, identici per i due elementi), e l'inchiostro verde del carattere
+   parte dal primo pixel dell'immagine. Il bottom:100% lo appoggia esattamente sopra il
+   contenuto, nei 24 px di margine che restano liberi in entrambi i formati.
+   Niente pillola, niente sfondo, niente bordo: solo il numero, con la 'v' minuscola e il
+   carattere sans serif chiesti dall'utente. Il sans e' dichiarato anche se il corpo del testo
+   e' gia' sans, per proteggere il numero se un domani cambia. */
+#markdown_content{position:relative}
+.site-version{position:absolute;left:0;bottom:100%;
   font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
-  font-size:.625rem;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums;
-  padding:3px 8px;border:1px solid rgba(0,0,0,.15);border-radius:999px;
-  background:rgba(255,255,255,.72);backdrop-filter:blur(6px);color:#4a4a4a;opacity:.9;
-  transition:opacity .15s;-webkit-user-select:none;user-select:none;pointer-events:none}
+  font-size:.5625rem;line-height:1.4;letter-spacing:.02em;font-variant-numeric:tabular-nums;
+  color:#4a4a4a;opacity:.9;-webkit-user-select:none;user-select:none;pointer-events:none}
 .site-version:empty{display:none}
-html[data-theme=dark] .site-version{background:rgba(32,32,32,.95);border-color:#43b59e;color:#eaeaea}
-@media screen and (max-width:600px){.site-version{right:12px}}
+html[data-theme=dark] .site-version{color:#eaeaea}
 @media print{.site-version{display:none}}

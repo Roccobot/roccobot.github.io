@@ -35,7 +35,7 @@ un file di quella cartella.
 Arda' ha il numero di versione `x.xx` e un deploy da attendere; le liste AdBlock hanno
 l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
 installazione da ripetere dopo ogni go-live; **RoccobotOS ha una versione SemVer visibile in
-pagina**, in un badge fisso in alto (dettagli in
+pagina**, in cima e sopra il logo (dettagli in
 [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'). ⚠️ Quindi
 'senza versione' non è più vero per nessuno dei cinque progetti.
 - ⚠️ **Su RoccobotOS la regola è cambiata due volte in due giorni**, e conviene saperlo per non
