@@ -14,7 +14,7 @@
 | **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre) | `arda/top/` | [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md) |
 | **Regole AdBlock** ('Roccobot ABP') | `ABP/` | [`ABP/CLAUDE.md`](ABP/CLAUDE.md) |
 | **Userscript** | `userscripts/` | [`userscripts/CLAUDE.md`](userscripts/CLAUDE.md) |
-| **RoccobotOS**, la guida di riferimento | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
+| **RoccobotOS**, il sito di riferimento personale | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
 | **Worker di amministrazione** | `proxy/` | [`proxy/CLAUDE.md`](proxy/CLAUDE.md) |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
@@ -34,11 +34,15 @@ un file di quella cartella.
 ⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: solo 'I Grandi di
 Arda' ha il numero di versione `x.xx` e un deploy da attendere; le liste AdBlock hanno
 l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
-installazione da ripetere dopo ogni go-live; **RoccobotOS ha una versione interna, `2.0`,
-che vive nel sorgente e non si mostra agli utenti** (dal 2026-07-30: dettagli in
+installazione da ripetere dopo ogni go-live; **RoccobotOS ha una versione SemVer visibile in
+pagina**, in un badge fisso in alto (dettagli in
 [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'). ⚠️ Quindi
-'senza versione' non è più vero per nessuno dei cinque progetti: è solo diverso il posto
-in cui il numero vive, e per RoccobotOS quel posto **non** è l'interfaccia.
+'senza versione' non è più vero per nessuno dei cinque progetti.
+- ⚠️ **Su RoccobotOS la regola è cambiata due volte in due giorni**, e conviene saperlo per non
+  applicare la penultima: il 2026-07-30 il numero è nato **interno**, poi il 2026-07-31 l'utente
+  ha stabilito che quel progetto **conta come sito e non come documentazione**, e con la versione
+  visibile sono tornate valide le regole di versione degli altri progetti (bump a ogni commit sul
+  prodotto). Le note che lo dicono 'interno e non visibile' sono superate.
 
 ## 📜 Regola n. 1: le regole universali e come si caricano
 
@@ -277,7 +281,8 @@ non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
   stanno in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
   quale comando lo dice [`ABP/CLAUDE.md`](ABP/CLAUDE.md).
 - Gli altri tre progetti si chiamano col nome della loro cartella: **userscript**,
-  **RoccobotOS** (la guida di riferimento) e il **Worker di amministrazione** in `proxy/`.
+  **RoccobotOS** (il sito di riferimento personale, non 'la guida': vedi
+  [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md)) e il **Worker di amministrazione** in `proxy/`.
 
 ## 🤖 Modello da usare
 
@@ -397,8 +402,10 @@ poi divergerebbe.
   - **Verifica di pubblicazione avvenuta:** un `curl` sul file appena pubblicato, confrontando
     con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
     `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
-    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS
-    l'intestazione di `RoccobotOS/RoccobotOS.js`, cioè il commento nelle sue prime righe.
+    l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS la
+    costante `VERSIONE` di `RoccobotOS/RoccobotOS.js`. ⚠️ Per RoccobotOS **non** è più
+    l'intestazione di quel file: dal 2026-07-31 il commento non porta il numero, e un
+    `head -c 30` non mostrerebbe nulla facendo credere a un deploy mancato.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
     pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
     cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e

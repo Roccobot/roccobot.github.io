@@ -1,15 +1,24 @@
 # CLAUDE.md: RoccobotOS (`RoccobotOS/`)
 
-> **Cos'è questo file.** Le regole della **guida di riferimento** RoccobotOS
+> **Cos'è questo file.** Le regole del **sito** RoccobotOS
 > (<https://roccobot.github.io/RoccobotOS>). Si carica quando si legge un file di
 > qui; le regole trasversali stanno nel `CLAUDE.md` di **root**.
 
-## 🖥️ Progetto '/RoccobotOS': guida di riferimento
+## 🖥️ Progetto '/RoccobotOS': un sito, non documentazione
 
-- **Cos'è.** La guida di consultazione personale dell'utente in `RoccobotOS/`
+- **Cos'è.** Il sito di riferimento personale dell'utente in `RoccobotOS/`
   (<https://roccobot.github.io/RoccobotOS>): scorciatoie da tastiera, formati
   file, caratteri, servizi DNS e simili. Progetto a sé, distinto da 'I Grandi
   di Arda' e dalle 'Regole AdBlock'.
+- ⚠️⚠️ **Conta come PROGETTO, non come documentazione** (istruzione dell'utente,
+  2026-07-31): *questa pagina RoccobotOS non è una guida, è proprio un sito a tutti gli
+  effetti, anche se a pagina singola (con qualche sotto-pagina molto secondaria) che uso
+  come riferimento personale.* Non è una questione di parole: da questa qualifica dipende
+  quali regole si applicano, e la prima conseguenza è la **versione**, che è visibile e
+  segue il SemVer come gli altri progetti (vedi la sua sezione).
+  - ⚠️ Perciò **'guida' non è più il termine giusto** per chiamarlo, né in chat né nei
+    file di regole: sopravvive in qualche riga storica di questo file, dove racconta come
+    si pensava prima.
 - **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`,
   richiamati con cache-busting (`?v=N`): toccando quei due file va incrementato il numero,
   altrimenti i browser servono la copia vecchia. Il JS gestisce tema
@@ -133,58 +142,80 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   testo attorno non si sposta di un pixel. È la tecnica da riusare quando l'utente chiede
   un'icona più piccola, perché il vincolo di non muovere il layout resta.
 
-### 🔢 Versione del progetto: interna e non visibile
+### 🔢 Versione del progetto: VISIBILE in pagina
 
-- **RoccobotOS è alla `2.1`** (bump del 2026-07-31, chiesto dall'utente per il giro sulle
-  iconcine del testo). Il numero non è nato con la guida: fino al 2026-07-30 non era scritto
-  da nessuna parte, ed è il motivo per cui questo progetto risultava 'senza versione'.
-- **Dove vive: l'intestazione di `RoccobotOS/RoccobotOS.js`**, cioè il commento nelle sue
-  prime righe, e solo là.
-  - ⚠️ **La ragione originaria è decaduta, la scelta no.** Il numero stava nel `.js` perché
-    `index.html` era un export da markdown e un commento messo là sarebbe sparito al primo
-    export. Dal 2026-07-31 quel file si modifica a mano (vedi '🖥️ Progetto /RoccobotOS:
-    guida di riferimento'), quindi il rischio non c'è più: il numero resta nel `.js` perché
-    un solo posto è meglio di due, non perché l'altro sia insicuro.
-    - ⚠️ **L'intestazione stessa lo diceva al contrario fino al 2026-07-31**, dichiarando che
-      `index.html` 'si rigenera': corretta nello stesso commit del bump. È la lezione che vale
-      oltre il caso: quando una decisione decade, non basta registrarla qui, va corretto anche
-      il **testo che la ripete altrove**, o quel testo continua a insegnare la cosa falsa a chi
-      legge solo il sorgente.
-- ⚠️ **Come si bumpa: SemVer ridotto a due cifre, e il criterio è la GUIDA, non il codice.**
-  La versione risponde alla domanda 'di quale incarnazione della guida stiamo parlando', quindi
-  non segue le righe di codice toccate.
-  - **`+0.1`**: cambia l'impianto di un pezzo della guida. Sezioni nuove o rifatte, una
-    famiglia di elementi ridisegnata (il giro sulle iconcine, che ha portato la `2.1`), un
-    cambio di resa che si vede in tutta la pagina.
-  - **`+1.0`**: cambia l'impianto della guida **intera**. Un'altra impaginazione, un altro
-    modo di navigarla, la fine dell'export da markdown. Il passaggio alla `2.0` è di questa
-    famiglia, non del bump di comodo.
-  - **Nessun bump**: correzioni, una tabella aggiornata, una voce aggiunta a un elenco che
-    esiste già, un refuso, un commento. ⚠️ E vale anche per i lavori **grossi in righe ma
-    piccoli in impianto**: il metro è quanto cambia per chi **legge** la guida.
-  - ⚠️ **Il bump non è automatico e non si fa per iniziativa propria**: lo chiede l'utente,
-    perché è una scelta editoriale sua. Se un giro sembra averlo meritato, si propone.
-  - ⚠️ **Niente terza cifra, e nessun rapporto col `?v=N`**: sono due numeri che vivono in
-    posti diversi e si muovono per ragioni diverse (vedi la voce qui sotto).
-  - ⚠️ **Perché questa non è una deroga a `Roccobot.md`**, § '🌿 Workflow git e versioni'. Là il
-    bump a ogni commit sul prodotto, con patch/minor/major, è scritto **per i progetti con
-    versione visibile**, e questo non lo è: la sua regola sul bump non copre il caso, e questa
-    voce lo riempie invece di contraddirlo. Resta pienamente valida la parte che vale sempre,
-    cioè la **fonte unica** del numero: qui è l'intestazione del `.js`, mai duplicata.
-- ⚠️ **Non è visibile agli utenti, e non deve diventarlo**: la guida non ha un badge di
-  versione e non ne vuole uno. Il numero serve a noi per dire di quale incarnazione della
-  guida si parla, e si legge nel sorgente o con un `curl`.
-- ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**, e non lo diventa: là il numero è parte
-  dell'interfaccia e sale a **ogni** rilascio, qui sale solo quando cambia l'impianto della
-  guida, col criterio della voce precedente. Sono due convenzioni diverse per progetti diversi,
-  e mescolarle produce un numero che non dice niente.
+⚠️⚠️ **Dal 2026-07-31 la versione è visibile, e questo cambia il regime**, non solo il posto in
+cui il numero si legge. La ragione la dà l'utente, e va citata perché rovescia la premessa di
+tutte le note precedenti: *questa pagina RoccobotOS non è una guida, è proprio un sito a tutti
+gli effetti, anche se a pagina singola (con qualche sotto-pagina molto secondaria) che uso come
+riferimento personale. Quindi non conta come documentazione, conta come progetto.*
+- **Conseguenza diretta**: valgono le regole di versione degli **altri progetti**, cioè
+  `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
+  ritagliato quando il numero era interno.
+
+- **RoccobotOS è alla `2.2.0`**, mostrata in pagina come `v2.2.0`.
+  - **Perché tre cifre da qui in avanti**: con la versione visibile si applica il SemVer pieno
+    della regola universale, *patch* per le correzioni, *minor* per contenuto e funzioni,
+    *major* per i cambi strutturali. Le due cifre di prima erano il regime della versione
+    interna, ed è decaduto con essa: la `2.1` si legge come `2.1.0`, e l'aggiunta del badge,
+    che è una funzione nuova, la porta a `2.2.0`.
+  - ⚠️ **Bump a OGNI commit che tocca il prodotto**, come negli altri progetti, e non più solo
+    quando cambia l'impianto: quella soglia alta aveva senso finché il numero era un'etichetta
+    per noi. I commit che toccano **solo** questo file di regole non bumpano.
+
+- **Dove vive il numero: la costante `VERSIONE` in `RoccobotOS/RoccobotOS.js`**, e in nessun
+  altro posto. Il badge la legge a runtime.
+  - ⚠️ **Il commento in testa al `.js` NON porta più il numero**, di proposito: per due giorni
+    l'ha portato, e con il badge sarebbe diventato il **secondo** posto da tenere allineato.
+    La regola universale della fonte unica (`Roccobot.md`, stessa sezione) è esattamente questa,
+    e qui si applica alla lettera invece di essere aggirata con 'tanto sono due righe vicine'.
+  - **Il badge si scrive con `textContent`**, mai con `innerHTML`: regola non derogabile del
+    repo.
+  - ⚠️ **L'elemento in `index.html` nasce VUOTO** e il CSS lo nasconde con `:empty`. Così se il
+    JS non gira non compare un badge senza numero, che sarebbe peggio dell'assenza del badge.
+
+- 🎨 **Com'è fatto il badge, e perché così** (vincoli dell'utente: sobrio, non invadente, in
+  cima, che non scorra con la pagina, numero preceduto da `v` minuscola, carattere sans serif).
+  - **`position:fixed`** è ciò che soddisfa insieme 'in cima senza scorrere' e 'senza smuovere
+    altro': fuori dal flusso, quindi nessun elemento della pagina cambia posizione. Misurato:
+    **374 figli** di `#markdown_content`, **0 spostati**, e altezza della pagina identica al
+    pixel, su desktop e su mobile.
+  - **Sta a sinistra del pulsante del tema** (`top:4px; right:56px`), non sotto: su desktop
+    quello occupa i 34 px a destra, e su mobile scende in basso, dove il badge non lo segue.
+  - ⚠️⚠️ **La posizione l'ha decisa una misura, non l'occhio**, e il primo tentativo era
+    sbagliato: a `top:12px` e con un corpo più grande il badge **copriva la punta della foglia**
+    della mela del logo, 141 pixel di inchiostro su desktop e 179 su mobile. La prova è
+    ripetibile: si nasconde il badge, si fotografa l'area che occupava allargata di 2 px e si
+    contano i pixel diversi dallo sfondo. Deve uscire **0**, e con `top:4px` e corpo `.625rem`
+    escono 0 in tutti i casi provati (desktop chiaro, mobile chiaro, mobile scuro).
+    - **Che cosa se ne impara**: la sovrapposizione dei **box** non è la sovrapposizione
+      dell'**inchiostro**. Il box del logo è larghissimo e quasi vuoto a destra, quindi un test
+      sui rettangoli darebbe un falso allarme in una posizione buona, e questo test sui pixel
+      dice la verità in entrambe le direzioni.
+  - **Lingua visiva dei toggle di casa**: pillola, bordo tenue, sfondo semitrasparente con
+    `backdrop-filter`, `opacity` bassa, e in tema scuro il bordo verde acqua come gli altri.
+    Serve anche a leggerlo quando il contenuto gli scorre sotto.
+  - ⚠️ **'Sobrio' non vuol dire 'sbiadito', e c'è una misura che lo dimostra**: copiando
+    l'`opacity` bassa dei toggle su un testo di 10 px, axe-core **bocciava il contrasto** in
+    tema chiaro (grigio effettivo attorno a `#858585` su bianco). Il badge sta a `#4a4a4a` con
+    `opacity:.9` e passa nei due temi, restando discreto: la discrezione la danno il corpo
+    piccolo e il grigio, non l'illeggibilità. I toggle possono permettersela perché sono icone.
+  - **`pointer-events:none`**: non è un comando, quindi non deve intercettare clic né mostrare
+    un cursore che promette un'interazione che non c'è.
+  - **Non si stampa** (`@media print`): in un foglio stampato un badge fisso è solo un timbro
+    sopra il contenuto.
+
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
-  (`RoccobotOS.css?v=4`, `RoccobotOS.js?v=6`) e serve a invalidare la cache dei browser. Si
-  bumpa quando cambia **comportamento o resa**, non per un commento: un bump inutile fa
-  riscaricare a tutti un file identico. Per questo l'intestazione è entrata senza toccare
-  `?v=6`.
+  (`RoccobotOS.css?v=6`, `RoccobotOS.js?v=7`) e serve a invalidare la cache dei browser. Si
+  bumpa quando cambia **comportamento o resa**: col badge sono saliti entrambi, mentre due
+  giorni prima la sola correzione di un commento non li aveva toccati.
+- ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**: quello resta un override dichiarato del
+  SemVer, valido solo là. Qui, dal 2026-07-31, si sta sul SemVer universale.
 - **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
-  di Arda'): `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | head -c 30`.
+  di Arda'), che è cambiata insieme al resto:
+  `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | grep -o 'VERSIONE = "[^"]*"'`.
+  ⚠️ Non più `head -c 30` sul commento, che ora non contiene il numero: chi usa il comando
+  vecchio non vede nulla e crede che il deploy non sia passato.
 
 ### 🌐 Tabelle dei servizi DNS
 
