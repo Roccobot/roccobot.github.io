@@ -69,9 +69,14 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     invece di un `fill` scritto a mano. Il giro precedente le aveva disegnate come SVG a
     `#70aee7` fisso e l'utente le ha giudicate **pessime**: dopo due riscontri negativi sulla
     forma la strada è l'asset vero, non un terzo ridisegno. È la stessa lezione dello slider.
-  - ⚠️ **Le due misure in pagina sono DIVERSE di proposito** (16 px la vecchia, 20 px la nuova),
-    e non è una svista: nella vecchia il disegno riempie tutto il quadrato di 64 px, nella nuova
-    l'inchiostro sta in 51 px su 64. A pari `height` la freccia nuova sarebbe apparsa più
+  - ⚠️ **QUALE delle due è la nuova**, perché a occhio si sbaglia (correzione dell'utente,
+    2026-07-31): la **nuova** è quella col **tondo azzurro** attorno all'aeroplanino, la
+    **legacy** è la freccia verde acqua senza sfondo, e va mostrata comunque. Il primo giro le
+    aveva invertite, deducendo l'ordine dai nomi dei file caricati (`telegram1`, `telegram2`),
+    che non lo dicono: quando l'ordine conta, si chiede o si verifica, non si deduce.
+  - ⚠️ **Le due misure in pagina sono DIVERSE di proposito** (20 px la legacy, 16 px la nuova),
+    e non è una svista: nella nuova il disegno riempie tutto il quadrato di 64 px, nella legacy
+    l'inchiostro sta in 51 px su 64. A pari `height` la freccia legacy sarebbe apparsa più
     piccola di un quinto; con 20 px i due **inchiostri** misurano uguale.
 - 🎨 **Dove il ridisegno decide invece di copiare**, perché a 16 px la fedeltà letterale non
   paga: l'**occhio** e la **maschera di livello** sono in **negativo** come gli originali
