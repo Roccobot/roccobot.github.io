@@ -37,32 +37,41 @@
 ### 🖼️ Le iconcine del testo: SVG che seguono il colore
 
 **Com'è fatto.** Le icone dentro il testo (occhio della visibilità livello, maschera livello,
-slider diviso, area notifiche, invio messaggio, globo, Mission Control, ricarica del browser)
-sono **SVG inline** in `index.html`, con `fill="currentColor"` e classe `icon-png-svg`, quindi
-prendono il colore del testo in entrambi i temi. Prima erano PNG neri, che nel tema scuro
-diventavano quasi invisibili.
+slider diviso, area notifiche, globo, Mission Control, ricarica del browser) sono **SVG inline**
+in `index.html`, con `fill="currentColor"` e classe `icon-png-svg`, quindi prendono il colore del
+testo in entrambi i temi. Prima erano PNG neri, che nel tema scuro diventavano quasi invisibili.
+Le sole due che restano raster sono le **frecce di Telegram**, per la ragione scritta più sotto.
 
 - **Il vincolo che le governa** (istruzione dell'utente, 2026-07-31): la sostituzione deve
   essere **invisibile nel layout**, cioè non spostare il testo attorno. Perciò ogni SVG porta
   gli **stessi attributi** di larghezza e altezza dell'`<img>` che ha sostituito, e il
   `viewBox` ha le proporzioni del PNG originale: verificato a misura, **dimensioni identiche**
-  su tutte e otto, nei due temi.
+  su tutte e sette, nei due temi. Le due frecce di Telegram sono fuori da questo conto, perché
+  là il quadrato dell'asset detta la larghezza.
   - ⚠️ **L'ingombro non si tocca, la posizione verticale SI'**, ed è una precisazione dello
     stesso giorno: vedi '⚠️⚠️ ALLINEAMENTO VERTICALE' più sotto. Le due cose convivono, e il
     primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
 - ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` e `nano.png` sono
   **schermate**, e come vettori non hanno senso. Restano PNG.
-- ⚠️ **`icona4.png` non è referenziata da nessuna parte** (accertato con un grep su HTML, CSS
-  e JS): è una freccia di ricarica grigia, gemella di quella del browser. Non convertita e non
-  cancellata, in attesa di una decisione dell'utente.
-- ⚠️ **Le due frecce di Telegram sono l'ECCEZIONE al colore**: restano `#70aee7` fisso in
-  entrambi i temi (istruzione dell'utente, 2026-07-31), quindi non usano `currentColor` come
-  le altre. E sono **due**, la versione precedente e quella nuova del tasto invia, perché
-  Telegram l'ha cambiato: nel testo la frase dice **'clic su [vecchia] o [nuova]'**.
-  - ⚠️ **Nella freccia nuova l'incavo e la punta stanno sulla stessa linea orizzontale**, ed è
-    un requisito dell'utente, non un dettaglio: con l'incavo più alto della punta la forma
-    sembra storta. È **più larga** della vecchia (15 px contro 12, a pari altezza), ottenuto
-    schiacciando il `viewBox` invece di ingrandire l'icona.
+- ⚠️ **Le `icona*.png` sono rimaste ORFANE dalla conversione**, tutte e sette (accertato con un
+  grep su HTML, CSS e JS): nessuna è più referenziata, perché sei sono diventate SVG inline e
+  `icona6.png` è stata rimpiazzata dalle due PNG di Telegram qui sotto. `icona4.png` era orfana
+  già prima. Non cancellate, in attesa di una decisione dell'utente: la storia git le
+  conserverebbe comunque.
+- ⚠️⚠️ **Le due frecce di Telegram NON sono SVG: sono PNG prese dalla UI dell'app**
+  (`telegram_send_old.png` e `telegram_send_new.png`, decisione dell'utente del 2026-07-31,
+  che ha fornito i due file). Sono **due** perché Telegram ha cambiato il tasto invia: nel
+  testo la frase dice **'clic su [vecchia] o [nuova]'**.
+  - **Perché qui il PNG è la scelta GIUSTA e non un ripiego**: queste due icone devono restare
+    **identiche nei due temi** (non seguono il colore del testo), quindi l'unico vantaggio
+    dell'SVG, `currentColor`, qui non serve; e il colore esatto lo porta l'asset originale
+    invece di un `fill` scritto a mano. Il giro precedente le aveva disegnate come SVG a
+    `#70aee7` fisso e l'utente le ha giudicate **pessime**: dopo due riscontri negativi sulla
+    forma la strada è l'asset vero, non un terzo ridisegno. È la stessa lezione dello slider.
+  - ⚠️ **Le due misure in pagina sono DIVERSE di proposito** (16 px la vecchia, 20 px la nuova),
+    e non è una svista: nella vecchia il disegno riempie tutto il quadrato di 64 px, nella nuova
+    l'inchiostro sta in 51 px su 64. A pari `height` la freccia nuova sarebbe apparsa più
+    piccola di un quinto; con 20 px i due **inchiostri** misurano uguale.
 - 🎨 **Dove il ridisegno decide invece di copiare**, perché a 16 px la fedeltà letterale non
   paga: l'**occhio** e la **maschera di livello** sono in **negativo** come gli originali
   (sclera piena e iride vuoto, rettangolo pieno e tondo vuoto: ottenuto con `fill-rule`
@@ -94,6 +103,9 @@ diventavano quasi invisibili.
   forma: a livello di centrature e allineamenti si puo' e si deve migliorare*). La regola vive
   nel CSS di casa, `.icon-png-svg{vertical-align:middle}`, non negli attributi delle singole
   icone, così vale anche per quelle che verranno.
+  - **E vale per gli `<img>` come per gli `<svg>`**, che è la ragione per cui le due frecce
+    raster di Telegram non hanno avuto bisogno di niente: misurate nella stessa pagina, lo
+    scarto dal centro della `o` è **identico** a quello delle sette SVG.
   - **Perché `middle` è la risposta esatta e non un'approssimazione**: allinea il centro del box
     col centro della x-height, che è per definizione il centro di una lettera tonda minuscola.
   - **Il difetto che correggeva, misurato**: i PNG stavano sulla **baseline**, quindi ogni icona
