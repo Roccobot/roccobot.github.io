@@ -71,10 +71,10 @@
   aggiornamento, anche minore/patch: dopo ogni pubblicazione l'URL va ripetuto,
   senza eccezioni.
 
-## 🔬 La sonda della rotella (`SondaRotella.html`)
+## 🔬 La sonda dello scorrimento (`ScrollProbe.html`)
 
 Pagina di diagnostica di questa cartella, pubblicata come le altre
-(<https://roccobot.github.io/userscripts/SondaRotella.html>) e apribile anche da disco:
+(<https://roccobot.github.io/userscripts/ScrollProbe.html>) e apribile anche da disco:
 misura come un dispositivo di puntamento manda gli eventi di scorrimento e dichiara come
 'Decent Image Viewer' li interpreta. Nata il 2026-07-31 per un difetto del Magic Mouse 2 che
 senza misure non era diagnosticabile: quali numeri manda un dispositivo lo sa **solo chi ce
@@ -86,9 +86,13 @@ l'ha in mano**.
   al suo codice la `@version` a cui è allineata**: chi tocca il blocco 'ROTELLA NUDA' di
   `DIVRoccobot.user.js` aggiorna anche lei e quel numero. Non aggiornarla è peggio che non
   averla, perché una sonda che mente si crede.
-- ⚠️ **La UI è in ITALIANO**, per istruzione esplicita dell'utente (2026-07-31). È una
-  **deroga dichiarata** a `Roccobot.md` § '🏗️ Sviluppo software' (progetti semplici: solo
-  inglese), che vale per questo file e non si estende agli userscript, la cui UI resta in
-  inglese.
+- ⚠️ **La UI è in ITALIANO ma il NOME DEL FILE è in inglese**, per istruzione esplicita
+  dell'utente (2026-07-31): 'UI in italiano, ma nomi file di default in inglese'. La UI in
+  italiano è una **deroga dichiarata** a `Roccobot.md` § '🏗️ Sviluppo software' (progetti
+  semplici: solo inglese), che vale per questo file e non si estende agli userscript, la cui
+  UI resta in inglese; il nome in inglese è invece la regola generale, registrata là.
+  - ⚠️ Il file è nato `SondaRotella.html` e ha vissuto poche ore con quel nome: **l'URL
+    vecchio ora dà 404**, e se un giorno ricompare in un appunto o in un segnalibro, quello
+    è il motivo.
 - ⚠️ **Non è uno userscript**, quindi non ha `@version` propria né bump SemVer: il numero
   che porta in testa è quello **dello script che rispecchia**, e si muove con lui.
