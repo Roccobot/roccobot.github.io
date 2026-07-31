@@ -153,7 +153,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
   ritagliato quando il numero era interno.
 
-- **RoccobotOS è alla `2.2.1`**, mostrata in pagina come `v2.2.1`.
+- **RoccobotOS è alla `2.2.2`**, mostrata in pagina come `v2.2.2`.
   - **Perché tre cifre da qui in avanti**: con la versione visibile si applica il SemVer pieno
     della regola universale, *patch* per le correzioni, *minor* per contenuto e funzioni,
     *major* per i cambi strutturali. Le due cifre di prima erano il regime della versione
@@ -200,11 +200,20 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   - **Niente pillola, niente sfondo, niente bordo**, solo il numero: perciò il badge non
     condivide più la lingua visiva dei toggle, che era la scelta del primo giro quando stava
     sovrapposto al contenuto e aveva bisogno di uno sfondo per staccarsi.
-  - ⚠️ **'Sobrio' non vuol dire 'sbiadito', e c'è una misura che lo dimostra**: al primo giro,
-    copiando l'`opacity` bassa dei toggle su un testo piccolo, axe-core **bocciava il
-    contrasto** in tema chiaro (grigio effettivo attorno a `#858585` su bianco). Il numero sta a
-    `#4a4a4a` con `opacity:.9`, il colore che l'utente ha approvato, e passa nei due temi: la
-    discrezione la danno il corpo piccolo e il grigio, non l'illeggibilità.
+  - ⚠️⚠️ **`opacity:.4` in entrambi i temi, e il contrasto axe-core NON passa: è una deroga
+    VOLUTA.** L'ha chiesta l'utente il 2026-07-31, dopo aver visto il numero al 90%, e in questo
+    caso la sua istruzione esplicita prevale sul gate, che qui vale come segnalazione e non come
+    veto. ⚠️ Perciò **non alzarla** perché un audit la segnala: chi lo facesse annullerebbe una
+    scelta deliberata, e questa nota esiste per impedirlo.
+    - **Il conto, per sapere di quanto si deroga**: `#4a4a4a` al 40% su fondo chiaro dà un
+      grigio effettivo attorno a `#b6b6b6`, cioè circa **1,9:1** contro i 4,5:1 che il criterio
+      chiederebbe per un testo di quel corpo.
+    - **Perché è difendibile qui e non altrove**: il numero di versione non è contenuto da
+      leggere per usare il sito, e chi lo cerca sa dov'è. La stessa opacità su un testo della
+      pagina sarebbe un difetto vero.
+    - **Storia, che spiega perché la nota è doppia**: al primo giro l'`opacity` bassa era stata
+      copiata dai toggle **senza** che nessuno la chiedesse, e allora il gate aveva ragione: una
+      cosa è una deroga chiesta, un'altra è un difetto ereditato per imitazione.
   - **`pointer-events:none`**: non è un comando, quindi non deve intercettare clic né mostrare
     un cursore che promette un'interazione che non c'è. ⚠️ Serve **anche** perché il numero è
     appoggiato sopra il link del logo: senza, ne mangerebbe una porzione cliccabile.
@@ -218,9 +227,14 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     vuoto di quel logo un test sui rettangoli grida al lupo dove non c'è.
 
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
-  (`RoccobotOS.css?v=6`, `RoccobotOS.js?v=7`) e serve a invalidare la cache dei browser. Si
-  bumpa quando cambia **comportamento o resa**: col badge sono saliti entrambi, mentre due
-  giorni prima la sola correzione di un commento non li aveva toccati.
+  (`RoccobotOS.css?v=8`, `RoccobotOS.js?v=9`) e serve a invalidare la cache dei browser. Si
+  bumpa quando cambia **comportamento o resa**: col numero in pagina sono saliti entrambi,
+  mentre la sola correzione di un commento non li aveva toccati.
+  - ⚠️⚠️ **Ora il `.js` va bumpato a OGNI cambio di versione**, e questa è la trappola nuova
+    portata dal numero visibile: la costante `VERSIONE` vive là, quindi un browser con il `.js`
+    in cache continuerebbe a **scrivere in pagina il numero vecchio** anche a deploy riuscito, e
+    la sonda sul file grezzo direbbe che tutto è a posto. Sbagliato una volta il 2026-07-31,
+    bumpando il solo CSS e accorgendosene prima del merge.
 - ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**: quello resta un override dichiarato del
   SemVer, valido solo là. Qui, dal 2026-07-31, si sta sul SemVer universale.
 - **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
