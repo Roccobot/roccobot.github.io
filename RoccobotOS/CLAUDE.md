@@ -135,24 +135,49 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
 
 ### 🔢 Versione del progetto: interna e non visibile
 
-- **RoccobotOS è alla `2.0`** (istruzione dell'utente, 2026-07-30). Non è un numero nuovo:
-  è la versione della guida, che fino a quel giorno non era scritta da nessuna parte, ed è il
-  motivo per cui questo progetto risultava 'senza versione'.
+- **RoccobotOS è alla `2.1`** (bump del 2026-07-31, chiesto dall'utente per il giro sulle
+  iconcine del testo). Il numero non è nato con la guida: fino al 2026-07-30 non era scritto
+  da nessuna parte, ed è il motivo per cui questo progetto risultava 'senza versione'.
 - **Dove vive: l'intestazione di `RoccobotOS/RoccobotOS.js`**, cioè il commento nelle sue
   prime righe, e solo là.
   - ⚠️ **La ragione originaria è decaduta, la scelta no.** Il numero stava nel `.js` perché
     `index.html` era un export da markdown e un commento messo là sarebbe sparito al primo
     export. Dal 2026-07-31 quel file si modifica a mano (vedi '🖥️ Progetto /RoccobotOS:
     guida di riferimento'), quindi il rischio non c'è più: il numero resta nel `.js` perché
-    un solo posto è meglio di due, non perché l'altro sia insicuro. ⚠️ Registrato per non
-    lasciare in giro una motivazione falsa: chi la legge senza questa nota crede che
-    `index.html` si rigeneri ancora.
+    un solo posto è meglio di due, non perché l'altro sia insicuro.
+    - ⚠️ **L'intestazione stessa lo diceva al contrario fino al 2026-07-31**, dichiarando che
+      `index.html` 'si rigenera': corretta nello stesso commit del bump. È la lezione che vale
+      oltre il caso: quando una decisione decade, non basta registrarla qui, va corretto anche
+      il **testo che la ripete altrove**, o quel testo continua a insegnare la cosa falsa a chi
+      legge solo il sorgente.
+- ⚠️ **Come si bumpa: SemVer ridotto a due cifre, e il criterio è la GUIDA, non il codice.**
+  La versione risponde alla domanda 'di quale incarnazione della guida stiamo parlando', quindi
+  non segue le righe di codice toccate.
+  - **`+0.1`**: cambia l'impianto di un pezzo della guida. Sezioni nuove o rifatte, una
+    famiglia di elementi ridisegnata (il giro sulle iconcine, che ha portato la `2.1`), un
+    cambio di resa che si vede in tutta la pagina.
+  - **`+1.0`**: cambia l'impianto della guida **intera**. Un'altra impaginazione, un altro
+    modo di navigarla, la fine dell'export da markdown. Il passaggio alla `2.0` è di questa
+    famiglia, non del bump di comodo.
+  - **Nessun bump**: correzioni, una tabella aggiornata, una voce aggiunta a un elenco che
+    esiste già, un refuso, un commento. ⚠️ E vale anche per i lavori **grossi in righe ma
+    piccoli in impianto**: il metro è quanto cambia per chi **legge** la guida.
+  - ⚠️ **Il bump non è automatico e non si fa per iniziativa propria**: lo chiede l'utente,
+    perché è una scelta editoriale sua. Se un giro sembra averlo meritato, si propone.
+  - ⚠️ **Niente terza cifra, e nessun rapporto col `?v=N`**: sono due numeri che vivono in
+    posti diversi e si muovono per ragioni diverse (vedi la voce qui sotto).
+  - ⚠️ **Perché questa non è una deroga a `Roccobot.md`**, § '🌿 Workflow git e versioni'. Là il
+    bump a ogni commit sul prodotto, con patch/minor/major, è scritto **per i progetti con
+    versione visibile**, e questo non lo è: la sua regola sul bump non copre il caso, e questa
+    voce lo riempie invece di contraddirlo. Resta pienamente valida la parte che vale sempre,
+    cioè la **fonte unica** del numero: qui è l'intestazione del `.js`, mai duplicata.
 - ⚠️ **Non è visibile agli utenti, e non deve diventarlo**: la guida non ha un badge di
   versione e non ne vuole uno. Il numero serve a noi per dire di quale incarnazione della
   guida si parla, e si legge nel sorgente o con un `curl`.
 - ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**, e non lo diventa: là il numero è parte
-  dell'interfaccia e sale a ogni rilascio, qui è un'etichetta ferma che cambia solo se cambia
-  l'impianto della guida. Nessun bump per una correzione o una tabella aggiornata.
+  dell'interfaccia e sale a **ogni** rilascio, qui sale solo quando cambia l'impianto della
+  guida, col criterio della voce precedente. Sono due convenzioni diverse per progetti diversi,
+  e mescolarle produce un numero che non dice niente.
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
   (`RoccobotOS.css?v=4`, `RoccobotOS.js?v=6`) e serve a invalidare la cache dei browser. Si
   bumpa quando cambia **comportamento o resa**, non per un commento: un bump inutile fa
