@@ -13,7 +13,7 @@
   h2 { font-size: 1rem; margin: 1.25rem 0 .4rem; }
   p, li { margin: .3rem 0; }
   ol { margin: .3rem 0 .3rem 1.2rem; padding: 0; }
-  #pad { margin: 1rem 0; height: 38vh; min-height: 200px; overflow: auto;
+  #pad { margin: 1rem 0; height: 38vh; min-height: 200px; overflow: auto; touch-action: none;
          border: 2px dashed currentColor; border-radius: .5rem; opacity: .95;
          display: grid; place-items: start center; text-align: center; }
   #pad .riempi { height: 400vh; width: 1px; }
@@ -42,6 +42,9 @@ scatti dalla rotella, oppure scorrimento.</p>
       <b>colpo veloce in su</b>. Una pausa di mezzo secondo separa un gesto dal successivo.</li>
   <li>Premi <b>Riassunto</b>, poi <b>Copia</b>, e incolla il testo in chat.</li>
 </ol>
+<p class="nota">Dentro il riquadro il <b>pinch</b> (due dita che si allargano sul trackpad)
+non ingrandisce la pagina: viene catturato e misurato come gli altri gesti, e nel riassunto
+si riconosce dalla colonna <code>ctrl</code> degli eventi grezzi.</p>
 <p class="nota">Ripeti con gli altri dispositivi (trackpad, mouse a rotella, mouse a
 scorrimento touch) svuotando con <b>Azzera</b> fra un dispositivo e l'altro: le soglie del
 riconoscimento si tarano su queste misure. Un esito <b>MISTO</b> su un solo gesto e' un
@@ -67,12 +70,12 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   // visualizzatore davvero, non che cosa si suppone che faccia. Se quel blocco cambia,
   // questo va aggiornato con lui, altrimenti la sonda mente. La nota e' registrata anche
   // in userscripts/CLAUDE.md.
-  var RIF_VERSIONE = '2.20.0';
+  var RIF_VERSIONE = '2.20.1';
   var ROTELLA_ZOOM = 'auto';       // come nello script: 'auto' | 'scorri' | 'mai'
   var GESTO_PAUSA_MS = 400;
   var TOUCH_AVVIO_MAX = 20;
   var TOUCH_MEMORIA_MS = 800;
-  var ZOOM_SENS_TOUCH = 0.0015;    // zoom col dito: fattore = e^(px * questo)
+  var ZOOM_SENS_TOUCH = 0.0018;    // zoom col dito: fattore = e^(px * questo)
 
   var eventi = [];
   var grezzi = false;
@@ -96,8 +99,10 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
     var nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
     gestoUltimo = ora;
     if (firmaTouch(e)) touchVistoA = ora;
-    if (!nuovo && gestoDaRotella !== null) return gestoDaRotella;
-    if (firmaRotellaForte(e)) gestoDaRotella = true;
+    var forte = firmaRotellaForte(e);
+    if (forte) touchVistoA = -1e9;
+    if (!nuovo && gestoDaRotella !== null && !forte) return gestoDaRotella;
+    if (forte) gestoDaRotella = true;
     else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
     else gestoDaRotella = firmaRotellaDebole(e);
     return gestoDaRotella;
@@ -105,6 +110,7 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   var evDeciso = null, cmdCache = 'scorre';
   function comandoGesto(e) {
     if (ROTELLA_ZOOM === 'mai') return 'scorre';
+    if (!e.deltaY) return 'niente';       // solo orizzontale: non e' un comando di zoom
     if (e === evDeciso) return cmdCache;
     evDeciso = e;
     var daRotella = decidiGesto(e);
@@ -112,7 +118,13 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
     return cmdCache;
   }
 
+  // ⚠️ Il listener NON puo' essere passivo: il pinch da trackpad arriva come wheel con
+  // ctrlKey, e senza preventDefault il browser lo prende come zoom di PAGINA, che qui
+  // ingrandiva tutto a dismisura proprio mentre la sonda misurava (segnalato dall'utente il
+  // 2026-07-31). Si blocca il solo zoom di pagina: lo scorrimento nativo dentro il riquadro
+  // resta, perche' e' il riscontro visivo che il gesto e' arrivato.
   pad.addEventListener('wheel', function (e) {
+    if (e.ctrlKey) e.preventDefault();
     eventi.push({
       t: e.timeStamp,
       dy: e.deltaY,
@@ -123,7 +135,7 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
       cmd: comandoGesto(e)
     });
     document.getElementById('padmsg').textContent = eventi.length + ' eventi raccolti';
-  }, { passive: true });
+  }, { passive: false });
 
   function scrivi(testo) { esito.textContent = testo; }
 
@@ -169,7 +181,8 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
       var elenco = Object.keys(comandi);
       var modi = {};
       s.forEach(function (e) { modi[e.modo] = true; });
-      var nomi = { continuo: 'ZOOM continuo (dito)', scatti: 'ZOOM a scatti (rotella)', scorre: 'SCORRIMENTO' };
+      var nomi = { continuo: 'ZOOM continuo (dito)', scatti: 'ZOOM a scatti (rotella)',
+        scorre: 'SCORRIMENTO', niente: 'NIENTE (evento solo orizzontale)' };
       var letto = elenco.length === 1 ? nomi[elenco[0]]
         : 'MISTO (difetto): ' + elenco.map(function (k) { return nomi[k] + ' x' + comandi[k]; }).join(' + ');
       var pxTot = amp.reduce(function (a, b) { return a + b; }, 0);

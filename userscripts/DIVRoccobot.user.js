@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.20.0
+// @version         2.20.1
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -31,10 +31,11 @@
   // ZOOM_SENS: il pinch manda pochi px per gesto, un colpo di dito ne manda centinaia, e con
   // 0,015 un solo colpo misurato sul Magic Mouse dell'utente darebbe uno zoom di 39.000 volte.
   // Tarata sui quattro gesti reali della sonda (2026-07-31): un colpo veloce (circa 700 px in
-  // totale) fa 2,9x, un gesto lento (50-105 px) fa da +8% a +17%, e dal 100% al 400% ci si
+  // totale) fa 3,5x, un gesto lento (50-105 px) fa da +9% a +21%, e dal 100% al 400% ci si
   // arriva in poco piu' di un colpo. Scartati: 0,0008 (colpo veloce 1,7x, troppo pigro) e
-  // 0,0025 (5,8x, incontrollabile).
-  const ZOOM_SENS_TOUCH = 0.0015;
+  // 0,0025 (5,8x, incontrollabile). Alzata da 0,0015 a 0,0018 su richiesta dell'utente
+  // ('leggermente piu' sensibile, di poco') dopo la prova sul suo Magic Mouse.
+  const ZOOM_SENS_TOUCH = 0.0018;
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
   // ── Rotella del mouse e superfici touch ──
@@ -465,8 +466,16 @@
       const prev = zoomL;
       if ((prev <= logR - ZOOM_SNAP_STICK && Ldes >= logR + ZOOM_SNAP_STICK) ||
           (prev >= logR + ZOOM_SNAP_STICK && Ldes <= logR - ZOOM_SNAP_STICK)) Ldes = logR;
-      zoomL = Ldes;
-      applicaScala(clamp(scalaConDetent(Ldes)), fx, fy);
+      // ⚠️ La posizione desiderata si LIMITA ai valori che una scala ammessa puo' avere,
+      // altrimenti insistere contro il tetto la fa crescere all'infinito e per tornare
+      // indietro bisogna prima riconsumarla tutta a vuoto (difetto segnalato dall'utente e
+      // misurato: arrivati al 4000%, servivano 5.900 px di movimento, circa otto colpi di
+      // dito, prima che l'immagine ricominciasse a rimpicciolire). Lo scarto di
+      // ZOOM_SNAP_STICK e' quello che il fermo al 100% introduce fra posizione e scala:
+      // senza sommarlo, ai limiti la scala si fermerebbe un fermo prima del vero limite.
+      zoomL = Math.min(Math.max(Ldes, Math.log(minScale()) - ZOOM_SNAP_STICK),
+                       Math.log(maxScale()) + ZOOM_SNAP_STICK);
+      applicaScala(clamp(scalaConDetent(zoomL)), fx, fy);
     }
     // vaiFit(chiesto): con `chiesto === false` e' un riadattamento AUTOMATICO (finestra
     // ridimensionata, cambio di definizione del "reale") e li' non si ingrandisce da se',
@@ -625,12 +634,22 @@
       // CORSO invece non si ribalta mai, altrimenti si tornerebbe al comportamento misto
       // che questo blocco esiste per eliminare.
       if (firmaTouch(e)) touchVistoA = ora;
-      if (!nuovo && gestoDaRotella !== null) return gestoDaRotella;
+      // ⚠️⚠️ UN'ECCEZIONE al 'la decisione non si ribalta': la firma FORTE di rotella chiude
+      // il gesto in corso e ne apre uno suo, perche' altrimenti bastava girare la rotella
+      // entro GESTO_PAUSA_MS dall'ultimo evento del dito per vedersela trattare come un
+      // dito per tutta la girata, e la girata non scadeva mai (ogni tic rinnova
+      // gestoUltimo, quindi 'nuovo' restava falso all'infinito). Caso concreto: portatile
+      // con mouse esterno, la mano sinistra sul trackpad e la destra sul mouse, dove fra
+      // l'ultimo evento e il primo tic passano 50-300 ms. Non riapre il difetto del Magic
+      // Mouse, che quella firma non la produce mai (0 casi su 177 eventi misurati).
+      const forte = firmaRotellaForte(e);
+      if (forte) touchVistoA = -1e9;     // una prova di rotella cancella la memoria touch
+      if (!nuovo && gestoDaRotella !== null && !forte) return gestoDaRotella;
       // ⚠️ L'ordine di questi tre casi e' il cuore del blocco, e il secondo e' nato da un
       // difetto trovato PROVANDO la correzione con la sonda: se la memoria touch avesse
       // avuto la precedenza sulla firma forte, chi alterna trackpad e mouse si sarebbe
       // visto trattare la rotella come un dito per un secondo e mezzo dopo ogni gesto.
-      if (firmaRotellaForte(e)) gestoDaRotella = true;
+      if (forte) gestoDaRotella = true;
       else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
       else gestoDaRotella = firmaRotellaDebole(e);
       return gestoDaRotella;
@@ -728,6 +747,13 @@
           return;
         }
         if (cmd === 'scorre') return;      // se lo prende il browser, non si tocca nulla
+        // ⚠️ Un evento SENZA componente verticale non e' un comando di zoom: viene dalla
+        // rotella inclinabile o dalla rotellina del pollice. Senza questa uscita valeva
+        // uno scatto AL ROVESCIO (verso = deltaY < 0 ? 1 : -1 da' -1 per deltaY 0, e
+        // un'ampiezza nulla vale un intero scatto in scattiGrezzi), quindi lo zoom tornava
+        // indietro di una tappa per ogni evento orizzontale, e il preventDefault impediva
+        // anche lo scorrimento laterale che l'utente stava chiedendo.
+        if (!e.deltaY) return;
         e.preventDefault();
         // Segno del verso, comune ai due modi: +1 quando "in su" deve ingrandire.
         const segno = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? 1 : -1;

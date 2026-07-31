@@ -450,9 +450,12 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
       quella del pinch.** Il pinch manda pochi pixel per gesto, un colpo di dito ne manda
       centinaia: con la sensibilità del pinch (`0.015`) un colpo misurato sul Magic Mouse
       darebbe uno zoom di **39.000 volte**. Tarata sui quattro gesti reali della sonda: un
-      colpo veloce (circa 700 px) fa **2,9x**, un gesto lento (50-105 px) fa **da +8% a
-      +17%**, e dal 100% al 400% ci si arriva in poco più di un colpo. Scartati **0,0008**
+      colpo veloce (circa 700 px) fa **3,5x**, un gesto lento (50-105 px) fa **da +9% a
+      +21%**, e dal 100% al 400% ci si arriva in poco più di un colpo. Scartati **0,0008**
       (colpo veloce 1,7x, troppo pigro) e **0,0025** (5,8x, incontrollabile).
+      - Alzata da `0.0015` a `0.0018` nella **2.20.1**, su richiesta dell'utente dopo la
+        prova sul suo Magic Mouse: 'leggermente più sensibile, di poco'. Sul suo colpo
+        veloce misurato lo zoom passa dal 211% al 296%.
     - ⚠️ **Il fermo al 100% si sente anche col dito**: per staccarsi dal 100% servono circa
       **107 px** di movimento, quindi partendo esattamente dal 100% un gesto lento non
       muove nulla. Fuori dal fermo (per esempio con un'immagine grande aperta adattata al
@@ -460,6 +463,27 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
       30% all'86%. Chi lo volesse più morbido agisce su `ZOOM_SNAP_STICK`.
     - Chi preferisce il vecchio comportamento a due dita ha `ROTELLA_ZOOM = 'scorri'`: il
       dito scorre, la rotella zooma. Con `'mai'` non zooma nessuno dei due.
+  - ⚠️ **Il tetto dello zoom non si impunta più (corretto nella 2.20.1).** Arrivati al
+    massimo e insistendo, la **posizione desiderata** dello zoom continuava a crescere
+    mentre la scala era ferma al tetto: per tornare indietro bisognava prima riconsumarla
+    tutta a vuoto. Misurato: dal 4000% servivano **5.900 px** di movimento del dito, circa
+    otto colpi, prima che l'immagine ricominciasse a rimpicciolire; ora ne bastano **70**.
+    Vale anche per il pinch e per `ctrl` più rotella, che usano lo stesso meccanismo.
+  - ⚠️ **La rotella non viene più confusa col dito se la giri subito dopo (2.20.1).** Una
+    **firma forte** di rotella (unità a righe o pagine, `wheelDeltaY` multiplo di 120)
+    **chiude** il gesto in corso invece di esserne assorbita. Prima bastava girare la
+    rotella entro `GESTO_PAUSA_MS` dall'ultimo evento del dito per vedersi trattare tutta
+    la girata come un gesto di dito, e la girata **non scadeva mai**, perché ogni tic
+    rinnovava il conteggio della pausa. Caso concreto: portatile con mouse esterno, la mano
+    sinistra sul trackpad e la destra sul mouse, dove fra l'ultimo evento e il primo tic
+    passano 50-300 ms. Trovato da una verifica indipendente, non dall'uso.
+  - ⚠️ **Un evento solo orizzontale non è un comando di zoom (2.20.1).** Dalla rotella
+    inclinabile o dalla rotellina del pollice arrivano eventi con `deltaY` a zero: valevano
+    **uno scatto di zoom al rovescio** (il verso si ricava dal segno di `deltaY`, e per zero
+    dava 'giù'; un'ampiezza nulla valeva un intero scatto), quindi lo zoom tornava indietro
+    di una tappa per ogni evento laterale, e il `preventDefault` impediva anche lo
+    scorrimento orizzontale che si stava chiedendo. Ora quegli eventi si lasciano al
+    browser.
   - **Il dispositivo si riconosce per GESTO, non per evento (dalla 2.19.1).** Trackpad e
     Magic Mouse non mandano scatti: mandano una raffica continua di eventi che **parte
     piano** (il primo vale 1 px), accelera e lascia una coda di inerzia. Perciò il
@@ -567,7 +591,7 @@ let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
 const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale
 const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
 const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
-const ZOOM_SENS_TOUCH = 0.0015; // sensibilità dello zoom col dito (gesto nudo da superficie touch)
+const ZOOM_SENS_TOUCH = 0.0018; // sensibilità dello zoom col dito (gesto nudo da superficie touch)
 const ROTELLA_ZOOM = 'auto'; // gesto nudo: 'auto' (zoom sempre) | 'scorri' (il dito scorre) | 'mai'
 const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
 const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può partire un gesto di dito
@@ -640,7 +664,12 @@ Si scorre dentro il riquadro con un dispositivo per volta, si premono **Riassunt
 riconoscimento nella 2.19.1 e la sensibilità dello zoom col dito nella 2.20.0.
 
 - Un esito **`MISTO`** su un solo gesto è per definizione un difetto: vuol dire che lo
-  stesso movimento in parte scorre e in parte zooma.
+  stesso movimento fa due cose diverse.
+- ⚠️ **Il pinch è catturato (dalla 2.20.1).** Il listener non è più passivo e blocca lo zoom
+  di **pagina** sui gesti con `ctrl`: prima il pinch da trackpad sfuggiva alla pagina e il
+  browser ingrandiva tutto a dismisura proprio mentre la sonda misurava (segnalato
+  dall'utente). Lo scorrimento nativo dentro il riquadro resta, perché è il riscontro visivo
+  che il gesto è arrivato.
 - ⚠️ **La sonda RIPETE la logica di decisione dello userscript**, e dichiara in testa al
   suo codice la versione a cui è allineata: se quel blocco cambia, va aggiornata insieme,
   altrimenti riporta il falso invece di misurarlo. La nota è registrata anche in
