@@ -67,12 +67,24 @@ diventavano quasi invisibili.
   paga: l'**occhio** e la **maschera di livello** sono in **negativo** come gli originali
   (sclera piena e iride vuoto, rettangolo pieno e tondo vuoto: ottenuto con `fill-rule`
   `evenodd`, non con due forme sovrapposte, o il buco non sarebbe trasparente).
-  - ⚠️ **Lo slider diviso ha richiesto tre giri**, e la ragione vale per ogni icona minuscola:
-    le due forme sono **trapezi**, non triangoli, e quello che le faceva sembrare triangoli
-    era il **margine attorno al disegno**. Portandole dal 52% al **75%** della larghezza del
-    canvas, con la cima al **60%** della base, sono tornate trapezi anche a 16 px. Il **vuoto
-    centrale** vale 2,2 px alla misura d'uso, ed è un requisito dell'utente: si deve vedere
-    anche in piccolo.
+  - ⚠️⚠️ **Lo slider diviso l'ha DISEGNATO L'UTENTE**, dopo tre miei tentativi respinti, ed è
+    la sua versione quella in pagina: due forme a goccia con la punta in alto e la base
+    arrotondata. I miei tre giri sbagliavano sempre la stessa cosa, il **margine attorno al
+    disegno**, che a 16 px faceva leggere due triangoli stretti al posto di due trapezi.
+    - **Che cosa se ne impara, oltre al disegno**: quando il riscontro sulla forma torna due
+      volte, la strada giusta non è un quarto tentativo ma **chiedere l'asset all'utente**,
+      che è graphic designer. Il tempo speso in tre giri era tutto suo.
+    - Il **vuoto centrale** resta il requisito da non perdere: si deve vedere anche in piccolo,
+      e nella sua versione a 16 px si legge.
+    - ⚠️ **Il file arriva da Illustrator e va bonificato**: 42.706 byte diventano **424**
+      togliendo i metadati `aipgf`, il namespace `xmlns:i`, il commento Generator e l'`id`
+      autogenerato. Il `fill` fisso va portato a `currentColor`, o l'icona non segue più il
+      tema. Verifica obbligatoria dopo la bonifica: rendering del grezzo contro il bonificato,
+      differenza attesa **zero**.
+      - ⚠️⚠️ E quel confronto **può mentire**: la prima volta i due hash coincidevano perché
+        **nessuna** delle due immagini si era caricata (il server locale era caduto), quindi
+        stavo confrontando due placeholder di immagine rotta. Prima di fidarsi di un 'identici',
+        si guarda che l'immagine ci sia.
   - ⚠️ **Un'icona di 16 px si giudica sui PIXEL VERI, non sull'ingrandimento del vettore.** Si
     rende alla misura reale, si fa uno screenshot e si ingrandisce **quello**: è il solo modo
     di vedere se un vuoto di 2 px sopravvive all'antialiasing. Guardare l'SVG a 72 px dice se
