@@ -43,10 +43,13 @@ prendono il colore del testo in entrambi i temi. Prima erano PNG neri, che nel t
 diventavano quasi invisibili.
 
 - **Il vincolo che le governa** (istruzione dell'utente, 2026-07-31): la sostituzione deve
-  essere **invisibile nel layout**, cioè non spostare nulla. Perciò ogni SVG porta gli
-  **stessi attributi** di larghezza e altezza dell'`<img>` che ha sostituito, e il `viewBox`
-  ha le proporzioni del PNG originale. Verificato a misura: **0 px** di differenza di
-  posizione su tutte e otto, nei due temi.
+  essere **invisibile nel layout**, cioè non spostare il testo attorno. Perciò ogni SVG porta
+  gli **stessi attributi** di larghezza e altezza dell'`<img>` che ha sostituito, e il
+  `viewBox` ha le proporzioni del PNG originale: verificato a misura, **dimensioni identiche**
+  su tutte e otto, nei due temi.
+  - ⚠️ **L'ingombro non si tocca, la posizione verticale SI'**, ed è una precisazione dello
+    stesso giorno: vedi '⚠️⚠️ ALLINEAMENTO VERTICALE' più sotto. Le due cose convivono, e il
+    primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
 - ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` e `nano.png` sono
   **schermate**, e come vettori non hanno senso. Restano PNG.
 - ⚠️ **`icona4.png` non è referenziata da nessuna parte** (accertato con un grep su HTML, CSS
@@ -56,6 +59,10 @@ diventavano quasi invisibili.
   entrambi i temi (istruzione dell'utente, 2026-07-31), quindi non usano `currentColor` come
   le altre. E sono **due**, la versione precedente e quella nuova del tasto invia, perché
   Telegram l'ha cambiato: nel testo la frase dice **'clic su [vecchia] o [nuova]'**.
+  - ⚠️ **Nella freccia nuova l'incavo e la punta stanno sulla stessa linea orizzontale**, ed è
+    un requisito dell'utente, non un dettaglio: con l'incavo più alto della punta la forma
+    sembra storta. È **più larga** della vecchia (15 px contro 12, a pari altezza), ottenuto
+    schiacciando il `viewBox` invece di ingrandire l'icona.
 - 🎨 **Dove il ridisegno decide invece di copiare**, perché a 16 px la fedeltà letterale non
   paga: l'**occhio** e la **maschera di livello** sono in **negativo** come gli originali
   (sclera piena e iride vuoto, rettangolo pieno e tondo vuoto: ottenuto con `fill-rule`
@@ -70,6 +77,26 @@ diventavano quasi invisibili.
     rende alla misura reale, si fa uno screenshot e si ingrandisce **quello**: è il solo modo
     di vedere se un vuoto di 2 px sopravvive all'antialiasing. Guardare l'SVG a 72 px dice se
     il disegno è bello, non se si legge.
+- ⚠️⚠️ **ALLINEAMENTO VERTICALE: il centro dell'icona sta sul centro di una `o` minuscola**
+  (istruzione dell'utente, 2026-07-31: *avevo scritto di ricrearle uguali, ma intendevo nella
+  forma: a livello di centrature e allineamenti si puo' e si deve migliorare*). La regola vive
+  nel CSS di casa, `.icon-png-svg{vertical-align:middle}`, non negli attributi delle singole
+  icone, così vale anche per quelle che verranno.
+  - **Perché `middle` è la risposta esatta e non un'approssimazione**: allinea il centro del box
+    col centro della x-height, che è per definizione il centro di una lettera tonda minuscola.
+  - **Il difetto che correggeva, misurato**: i PNG stavano sulla **baseline**, quindi ogni icona
+    sedeva più alta del centro della `o`, e tanto più quanto più era grande (da **+1,4 px** per
+    la più bassa a **+5,5 px** per il globo). Dopo: **+0,23 px** uguale per tutte.
+  - ⚠️ Lo scarto residuo di 0,23 px **non è un errore di taratura**: è la differenza fra la
+    x-height **nominale** del font, su cui il browser centra, e l'inchiostro **reale** della
+    `o`, che sborda sopra e sotto perché è tonda. Azzerarlo vorrebbe un nudge frazionario, che
+    introdurrebbe sfocatura sui bordi: scartato, e l'utente lo sa.
+  - ⚠️ **Questo supera il vincolo dei 0 px di spostamento** che governava il primo giro: le
+    dimensioni restano identiche, la **posizione verticale cambia di proposito**. I due vincoli
+    sembrano in contrasto e non lo sono: 'non spostare il resto della riga' vale ancora, 'tenere
+    l'allineamento sbagliato dei PNG' no.
+  - ⚠️ **Toccando il CSS va bumpato il `?v=N`** (qui `v=4` -> `v=5`): cambia la resa, quindi
+    senza bump i browser servono la copia vecchia e l'allineamento resta quello di prima.
 - ⚠️ **Il globo è stato rimpicciolito senza toccare l'ingombro**, allargando il `viewBox` in
   modo proporzionale invece di ridurre `width`: così il disegno è più piccolo del 12% e il
   testo attorno non si sposta di un pixel. È la tecnica da riusare quando l'utente chiede
