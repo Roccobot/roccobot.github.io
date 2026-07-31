@@ -62,7 +62,8 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
 - ⚠️⚠️ **Le due frecce di Telegram NON sono SVG: sono PNG prese dalla UI dell'app**
   (`telegram_send_old.png` e `telegram_send_new.png`, decisione dell'utente del 2026-07-31,
   che ha fornito i due file). Sono **due** perché Telegram ha cambiato il tasto invia: nel
-  testo la frase dice **'clic su [vecchia] o [nuova]'**.
+  testo la frase dice **'clic su [nuova] o [vecchia]'**, in quest'ordine (istruzione
+  dell'utente, 2026-07-31): prima quella che si vede oggi nell'app, poi la legacy.
   - **Perché qui il PNG è la scelta GIUSTA e non un ripiego**: queste due icone devono restare
     **identiche nei due temi** (non seguono il colore del testo), quindi l'unico vantaggio
     dell'SVG, `currentColor`, qui non serve; e il colore esatto lo porta l'asset originale
