@@ -52,10 +52,28 @@ diventavano quasi invisibili.
 - ⚠️ **`icona4.png` non è referenziata da nessuna parte** (accertato con un grep su HTML, CSS
   e JS): è una freccia di ricarica grigia, gemella di quella del browser. Non convertita e non
   cancellata, in attesa di una decisione dell'utente.
-- 🎨 **Dove il ridisegno ha deciso invece di copiare**, perché a 16 px la fedeltà letterale
-  non paga: l'**occhio** era una mandorla piena su fondo scuro e diventa un contorno con la
-  pupilla piena; la **freccia di Messaggi** perde il blu di iMessage, perché ora prende il
-  colore del testo, che è ciò che l'utente ha chiesto.
+- ⚠️ **Le due frecce di Telegram sono l'ECCEZIONE al colore**: restano `#70aee7` fisso in
+  entrambi i temi (istruzione dell'utente, 2026-07-31), quindi non usano `currentColor` come
+  le altre. E sono **due**, la versione precedente e quella nuova del tasto invia, perché
+  Telegram l'ha cambiato: nel testo la frase dice **'clic su [vecchia] o [nuova]'**.
+- 🎨 **Dove il ridisegno decide invece di copiare**, perché a 16 px la fedeltà letterale non
+  paga: l'**occhio** e la **maschera di livello** sono in **negativo** come gli originali
+  (sclera piena e iride vuoto, rettangolo pieno e tondo vuoto: ottenuto con `fill-rule`
+  `evenodd`, non con due forme sovrapposte, o il buco non sarebbe trasparente).
+  - ⚠️ **Lo slider diviso ha richiesto tre giri**, e la ragione vale per ogni icona minuscola:
+    le due forme sono **trapezi**, non triangoli, e quello che le faceva sembrare triangoli
+    era il **margine attorno al disegno**. Portandole dal 52% al **75%** della larghezza del
+    canvas, con la cima al **60%** della base, sono tornate trapezi anche a 16 px. Il **vuoto
+    centrale** vale 2,2 px alla misura d'uso, ed è un requisito dell'utente: si deve vedere
+    anche in piccolo.
+  - ⚠️ **Un'icona di 16 px si giudica sui PIXEL VERI, non sull'ingrandimento del vettore.** Si
+    rende alla misura reale, si fa uno screenshot e si ingrandisce **quello**: è il solo modo
+    di vedere se un vuoto di 2 px sopravvive all'antialiasing. Guardare l'SVG a 72 px dice se
+    il disegno è bello, non se si legge.
+- ⚠️ **Il globo è stato rimpicciolito senza toccare l'ingombro**, allargando il `viewBox` in
+  modo proporzionale invece di ridurre `width`: così il disegno è più piccolo del 12% e il
+  testo attorno non si sposta di un pixel. È la tecnica da riusare quando l'utente chiede
+  un'icona più piccola, perché il vincolo di non muovere il layout resta.
 
 ### 🔢 Versione del progetto: interna e non visibile
 
