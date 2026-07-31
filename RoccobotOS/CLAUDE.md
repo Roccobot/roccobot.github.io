@@ -153,12 +153,13 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
   ritagliato quando il numero era interno.
 
-- **RoccobotOS è alla `2.2.0`**, mostrata in pagina come `v2.2.0`.
+- **RoccobotOS è alla `2.2.1`**, mostrata in pagina come `v2.2.1`.
   - **Perché tre cifre da qui in avanti**: con la versione visibile si applica il SemVer pieno
     della regola universale, *patch* per le correzioni, *minor* per contenuto e funzioni,
     *major* per i cambi strutturali. Le due cifre di prima erano il regime della versione
-    interna, ed è decaduto con essa: la `2.1` si legge come `2.1.0`, e l'aggiunta del badge,
-    che è una funzione nuova, la porta a `2.2.0`.
+    interna, ed è decaduto con essa: la `2.1` si legge come `2.1.0`, e l'aggiunta del numero in pagina,
+    che è una funzione nuova, l'ha portata a `2.2.0`. La `2.2.1` è la **patch** che ne ha
+    corretto posizione e resa su indicazione dell'utente: la funzione c'era già.
   - ⚠️ **Bump a OGNI commit che tocca il prodotto**, come negli altri progetti, e non più solo
     quando cambia l'impianto: quella soglia alta aveva senso finché il numero era un'etichetta
     per noi. I commit che toccano **solo** questo file di regole non bumpano.
@@ -174,36 +175,47 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   - ⚠️ **L'elemento in `index.html` nasce VUOTO** e il CSS lo nasconde con `:empty`. Così se il
     JS non gira non compare un badge senza numero, che sarebbe peggio dell'assenza del badge.
 
-- 🎨 **Com'è fatto il badge, e perché così** (vincoli dell'utente: sobrio, non invadente, in
-  cima, che non scorra con la pagina, numero preceduto da `v` minuscola, carattere sans serif).
-  - **`position:fixed`** è ciò che soddisfa insieme 'in cima senza scorrere' e 'senza smuovere
-    altro': fuori dal flusso, quindi nessun elemento della pagina cambia posizione. Misurato:
-    **374 figli** di `#markdown_content`, **0 spostati**, e altezza della pagina identica al
-    pixel, su desktop e su mobile.
-  - **Sta a sinistra del pulsante del tema** (`top:4px; right:56px`), non sotto: su desktop
-    quello occupa i 34 px a destra, e su mobile scende in basso, dove il badge non lo segue.
-  - ⚠️⚠️ **La posizione l'ha decisa una misura, non l'occhio**, e il primo tentativo era
-    sbagliato: a `top:12px` e con un corpo più grande il badge **copriva la punta della foglia**
-    della mela del logo, 141 pixel di inchiostro su desktop e 179 su mobile. La prova è
-    ripetibile: si nasconde il badge, si fotografa l'area che occupava allargata di 2 px e si
-    contano i pixel diversi dallo sfondo. Deve uscire **0**, e con `top:4px` e corpo `.625rem`
-    escono 0 in tutti i casi provati (desktop chiaro, mobile chiaro, mobile scuro).
-    - **Che cosa se ne impara**: la sovrapposizione dei **box** non è la sovrapposizione
-      dell'**inchiostro**. Il box del logo è larghissimo e quasi vuoto a destra, quindi un test
-      sui rettangoli darebbe un falso allarme in una posizione buona, e questo test sui pixel
-      dice la verità in entrambe le direzioni.
-  - **Lingua visiva dei toggle di casa**: pillola, bordo tenue, sfondo semitrasparente con
-    `backdrop-filter`, `opacity` bassa, e in tema scuro il bordo verde acqua come gli altri.
-    Serve anche a leggerlo quando il contenuto gli scorre sotto.
-  - ⚠️ **'Sobrio' non vuol dire 'sbiadito', e c'è una misura che lo dimostra**: copiando
-    l'`opacity` bassa dei toggle su un testo di 10 px, axe-core **bocciava il contrasto** in
-    tema chiaro (grigio effettivo attorno a `#858585` su bianco). Il badge sta a `#4a4a4a` con
-    `opacity:.9` e passa nei due temi, restando discreto: la discrezione la danno il corpo
-    piccolo e il grigio, non l'illeggibilità. I toggle possono permettersela perché sono icone.
+- 🎨 **Com'è fatto il numero in pagina, e perché così.** I vincoli sono tutti dell'utente, e la
+  seconda tornata (2026-07-31) ha corretto il primo tentativo: *visibile solo in cima; carattere
+  leggermente più piccolo; in alto a sinistra, sopra il logo-titolo, allineato al pixel con
+  l'inizio del logo verde; niente pillola, solo il numero; deve essere fisso e statico in quella
+  posizione: se scorro in basso non lo vedo più.*
+  - ⚠️⚠️ **'Fisso' voleva dire FERMO NEL DOCUMENTO, non incollato allo schermo**, ed è
+    l'equivoco che ha fatto sbagliare il primo giro: `position:fixed` lo teneva visibile per
+    tutta la pagina, mentre deve uscire di scena insieme alla testata. La resa giusta è
+    **`position:absolute`** dentro `#markdown_content`, che dà le due cose insieme: scorre col
+    documento e sta fuori dal flusso, quindi **non sposta nulla**. Misurato: **374 figli** di
+    `#markdown_content`, **0 spostati**, altezza della pagina identica al pixel su desktop e
+    mobile, e dopo 1500 px di scroll il numero è fuori dallo schermo.
+  - **`left:0; bottom:100%`**, e funziona in tutti i formati per una ragione misurata, non per
+    caso: il bordo sinistro di `#markdown_content` **coincide** con quello del logo (370 px su
+    desktop, 24 px su mobile, identici per i due elementi), e sopra il contenuto restano 24 px
+    liberi in entrambi i formati, dove il numero si appoggia.
+  - ⚠️ **L'allineamento col verde è verificato sull'INCHIOSTRO, non sui box**, che è il solo
+    modo di dire se è allineato 'al pixel': si fotografa la striscia che comprende numero e
+    logo, si cerca la prima colonna di inchiostro **pieno** di ciascuno (ignorando
+    l'antialiasing, che sborda a sinistra di un paio di colonne) e si confronta. Risultato:
+    **0,0 px a DPR 3**, 0,5 px a DPR 2, 1 px a DPR 1, cioè sempre entro **un pixel di
+    dispositivo**. Correggerlo con un `left` negativo peggiorerebbe gli altri DPR: scartato.
+  - **Niente pillola, niente sfondo, niente bordo**, solo il numero: perciò il badge non
+    condivide più la lingua visiva dei toggle, che era la scelta del primo giro quando stava
+    sovrapposto al contenuto e aveva bisogno di uno sfondo per staccarsi.
+  - ⚠️ **'Sobrio' non vuol dire 'sbiadito', e c'è una misura che lo dimostra**: al primo giro,
+    copiando l'`opacity` bassa dei toggle su un testo piccolo, axe-core **bocciava il
+    contrasto** in tema chiaro (grigio effettivo attorno a `#858585` su bianco). Il numero sta a
+    `#4a4a4a` con `opacity:.9`, il colore che l'utente ha approvato, e passa nei due temi: la
+    discrezione la danno il corpo piccolo e il grigio, non l'illeggibilità.
   - **`pointer-events:none`**: non è un comando, quindi non deve intercettare clic né mostrare
-    un cursore che promette un'interazione che non c'è.
-  - **Non si stampa** (`@media print`): in un foglio stampato un badge fisso è solo un timbro
-    sopra il contenuto.
+    un cursore che promette un'interazione che non c'è. ⚠️ Serve **anche** perché il numero è
+    appoggiato sopra il link del logo: senza, ne mangerebbe una porzione cliccabile.
+  - **Non si stampa** (`@media print`): su un foglio il numero di versione è rumore.
+  - ⚠️ **La posizione precedente resta scritta qui come lezione**: stava in alto a destra,
+    accanto al pulsante del tema, e a `top:12px` col corpo più grande **copriva la punta della
+    foglia** della mela del logo, 141 pixel di inchiostro su desktop e 179 su mobile. La prova
+    da rifare quando si sposta qualcosa lì: nascondere l'elemento, fotografare l'area che
+    occupava allargata di 2 px, contare i pixel diversi dallo sfondo, e pretendere **0**. La
+    sovrapposizione dei **box** non è quella dell'**inchiostro**, e sul box larghissimo e quasi
+    vuoto di quel logo un test sui rettangoli grida al lupo dove non c'è.
 
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
   (`RoccobotOS.css?v=6`, `RoccobotOS.js?v=7`) e serve a invalidare la cache dei browser. Si
