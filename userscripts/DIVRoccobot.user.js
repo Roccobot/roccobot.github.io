@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.19.0
+// @version         2.19.1
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -31,12 +31,18 @@
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
   // ── Rotella del mouse ──
   // Cosa fa la rotella NUDA (senza ctrl):
-  //   'auto'   = zoom se l'evento e' un vero SCATTO di rotella, scorrimento se e' un
-  //              trackpad a due dita. Cosi' lo stesso computer va bene in entrambi i
-  //              casi, senza cambiare impostazione fra casa e ufficio.
-  //   'sempre' = zoom comunque, anche col trackpad (che pero' cosi' non scorre piu')
+  //   'auto'   = zoom se il GESTO viene da una rotella, scorrimento se viene da una
+  //              superficie touch (trackpad, Magic Mouse). Cosi' lo stesso computer va
+  //              bene in entrambi i casi, senza cambiare impostazione fra casa e ufficio.
+  //   'sempre' = zoom comunque, anche da superficie touch (che pero' cosi' non scorre piu')
   //   'mai'    = comportamento storico: scorre, e lo zoom resta su ctrl+rotella e pinch
   const ROTELLA_ZOOM = 'auto';
+  // Soglie del riconoscimento del gesto (vedi la sezione ROTELLA NUDA piu' sotto).
+  const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
+  const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui puo' PARTIRE un gesto di dito
+  const TOUCH_MEMORIA_MS = 800;  // per quanto una firma touch appena vista copre i gesti seguenti
+                                 // (scartato 1500: una rotella priva di firma forte sarebbe
+                                 // restata muta per un secondo e mezzo dopo uno scorrimento)
   const PASSO_ROTELLA = 1.1;   // quanto ingrandisce UN singolo scatto (1.1 = +10%:
                                // 100 → 110 → 121 → 133 → 146 → 161 → 177 → 194 → ...)
   // TAPPE FISSE, in percentuale della dimensione reale: la rotella salta di tappa in
@@ -522,17 +528,30 @@
     // sopprime lo zoom-click nativo dell'image viewer (dove intercettabile)
     wrap.addEventListener('dblclick', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
 
-    // ── ROTELLA NUDA = zoom a scatti (mouse), scorrimento (trackpad) ──────
-    // Con un mouse la rotella e' il comando naturale dello zoom; con un trackpad
-    // le due dita servono invece a scorrere l'immagine ingrandita, visto che qui
-    // il trascinamento non c'e' per scelta. Si distinguono i due casi: un vero
-    // scatto di rotella manda un delta GRANDE, intero e senza componente
-    // orizzontale, mentre il trackpad manda tanti delta piccoli e frazionari,
-    // spesso con deltaX diverso da zero.
-    // La firma piu' affidabile in Chromium e' wheelDeltaY: per la rotella vera e'
-    // SEMPRE un multiplo di 120 (uno scatto = 120), mentre il trackpad manda
-    // valori qualsiasi. Il controllo sull'ampiezza resta come rete di sicurezza
-    // per i browser che wheelDeltaY non ce l'hanno.
+    // ── ROTELLA NUDA = zoom a scatti (mouse), scorrimento (superficie touch) ──
+    // Con un mouse la rotella e' il comando naturale dello zoom; con una superficie
+    // touch (trackpad, Magic Mouse) il dito serve invece a scorrere l'immagine
+    // ingrandita, visto che qui il trascinamento non c'e' per scelta.
+    // ⚠️⚠️ LA DECISIONE E' PER GESTO, NON PER EVENTO, e non e' un dettaglio: NESSUNA
+    // proprieta' del singolo evento distingue in modo affidabile una rotella da una
+    // superficie touch. Deciderlo evento per evento produceva il difetto peggiore
+    // possibile, cioe' UN SOLO gesto che scorre e zooma a tratti (misurato col Magic
+    // Mouse 2 dell'utente, Chrome 150 su macOS, sonda del 2026-07-31: un colpo veloce
+    // in su portava lo zoom dal 100% al 225%, uno in giu' al 35%, mentre i gesti lenti
+    // scorrevano correttamente).
+    // ⚠️ Le due firme che sembravano discriminanti NON lo sono, e le misure dicono
+    // perche': su 177 eventi del Magic Mouse, i deltaY erano interi 177 volte su 177
+    // (quindi "frazionario = touch" e' falso) e |wheelDeltaY| non era multiplo di 120
+    // nemmeno una volta (quindi quel ramo non scattava mai, e a decidere restava la
+    // sola rete di sicurezza sull'ampiezza >= 40). Il deltaX era zero in circa 9 casi
+    // su 10: con un dito solo il movimento e' piu' diritto che con due dita sul
+    // trackpad, ed e' per questo che il trackpad si salvava e il Magic Mouse no.
+    // La firma che regge e' l'AVVIO del gesto: una superficie touch parte sempre piano
+    // (il primo evento di tutti e quattro i gesti misurati valeva 1 px), poi accelera e
+    // lascia una coda di inerzia; una rotella parte subito con l'ampiezza di uno scatto.
+    // Percio' si decide sul PRIMO evento del gesto e la decisione si tiene fino alla
+    // pausa; in piu' la firma touch, quando si vede, resta in memoria per un attimo, cosi'
+    // un colpo brusco che partisse grande viene ricondotto al dispositivo giusto.
     // ⚠️ QUANTO VALE "UNO SCATTO" NON E' UNIVERSALE (misurato sul mouse dell'utente).
     // La convenzione dice 120 di wheelDeltaY per scatto, ma con l'accelerazione di
     // sistema un solo tic fisico puo' valerne 360. Dando per buono il 120 si
@@ -556,11 +575,51 @@
       const n = a / (unitaScatto || 120);
       return Math.min(n, 8);                                    // tetto di sicurezza
     }
-    function eScattoDiRotella(e) {
+    // Firma FORTE di rotella: unita' a righe o a pagine, oppure il multiplo esatto di 120
+    // di wheelDeltaY. Vale come prova, quindi scavalca la memoria touch: una superficie
+    // touch non la produce (0 casi su 177 eventi misurati col Magic Mouse).
+    function firmaRotellaForte(e) {
       if (e.deltaMode !== 0) return true;          // righe o pagine: e' una rotella
       const wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
-      if (wd && wd % 120 === 0 && e.deltaX === 0) return true;
+      return !!(wd && wd % 120 === 0 && e.deltaX === 0);
+    }
+    // Firma DEBOLE, di ripiego per i browser che wheelDeltaY non ce l'hanno: ampiezza da
+    // scatto e nessuna componente orizzontale. ⚠️ E' esattamente la regola che, applicata a
+    // OGNI evento, produceva il difetto del Magic Mouse: percio' qui la si interroga solo
+    // sul primo evento di un gesto, e solo quando nessuna firma touch e' recente.
+    function firmaRotellaDebole(e) {
       return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
+    }
+    // Un gesto di dito PARTE piano: e' questa la firma che regge (vedi il blocco sopra).
+    function firmaTouch(e) {
+      return e.deltaMode === 0 && Math.abs(e.deltaY) <= TOUCH_AVVIO_MAX;
+    }
+    // timeStamp e' monotono e piu' preciso di Date.now(); il fallback serve solo per gli
+    // eventi sintetici di certi gestori, che a volte non lo valorizzano.
+    function quandoEv(e) {
+      return (typeof e.timeStamp === 'number' && e.timeStamp > 0) ? e.timeStamp : Date.now();
+    }
+    let gestoUltimo = -1e9, gestoZooma = null, touchVistoA = -1e9;
+    function decidiGesto(e) {
+      const ora = quandoEv(e);
+      const nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
+      gestoUltimo = ora;
+      // ⚠️ La firma touch si registra SEMPRE, anche a gesto avviato: la coda di inerzia di
+      // un colpo brusco e' fatta di eventi piccoli, quindi il dispositivo si impara subito
+      // e il gesto successivo parte con la decisione giusta. La decisione del gesto IN
+      // CORSO invece non si ribalta mai, altrimenti si tornerebbe al comportamento misto
+      // che questo blocco esiste per eliminare.
+      if (firmaTouch(e)) touchVistoA = ora;
+      if (!nuovo && gestoZooma !== null) return gestoZooma;
+      // ⚠️ L'ordine di questi tre casi e' il cuore del blocco, e il secondo e' nato da un
+      // difetto trovato PROVANDO la correzione con la sonda: se la memoria touch avesse
+      // avuto la precedenza sulla firma forte, chi alterna trackpad e mouse si sarebbe
+      // visto ignorare la rotella per un secondo e mezzo dopo ogni scorrimento, cioe' la
+      // stessa casualita' apparente, spostata di un passo.
+      if (firmaRotellaForte(e)) gestoZooma = true;
+      else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoZooma = false;
+      else gestoZooma = firmaRotellaDebole(e);
+      return gestoZooma;
     }
     // UNO SCATTO DI ZOOM PER OGNI SCATTO DELLA ROTELLA. Girando in fretta il
     // browser UNISCE piu' scatti in un solo evento: contarne uno soltanto ne
@@ -579,10 +638,17 @@
       accScatti -= interi;
       return interi;
     }
+    // ⚠️ La cache sull'identita' dell'evento non e' un'ottimizzazione: il ramo di
+    // shift+rotella chiama questa funzione DUE volte per lo stesso evento, e senza cache
+    // il secondo giro conterebbe l'evento un'altra volta nella macchina a stati.
+    let evDeciso = null, decCache = false;
     function rotellaZooma(e) {
       if (ROTELLA_ZOOM === 'mai') return false;
       if (ROTELLA_ZOOM === 'sempre') return true;
-      return eScattoDiRotella(e);
+      if (e === evDeciso) return decCache;
+      evDeciso = e;
+      decCache = decidiGesto(e);
+      return decCache;
     }
     // Zoom a passo FISSO: reattivo, senza inerzia e senza attriti. Se il passo
     // scavalca la dimensione reale ci si ferma esattamente sul 100%, cosi' il
