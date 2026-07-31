@@ -70,3 +70,25 @@
   <https://roccobot.github.io/userscripts/NOME.user.js>). Vale per **qualsiasi**
   aggiornamento, anche minore/patch: dopo ogni pubblicazione l'URL va ripetuto,
   senza eccezioni.
+
+## 🔬 La sonda della rotella (`SondaRotella.html`)
+
+Pagina di diagnostica di questa cartella, pubblicata come le altre
+(<https://roccobot.github.io/userscripts/SondaRotella.html>) e apribile anche da disco:
+misura come un dispositivo di puntamento manda gli eventi di scorrimento e dichiara come
+'Decent Image Viewer' li interpreta. Nata il 2026-07-31 per un difetto del Magic Mouse 2 che
+senza misure non era diagnosticabile: quali numeri manda un dispositivo lo sa **solo chi ce
+l'ha in mano**.
+
+- ⚠️⚠️ **RIPETE la logica di decisione dello userscript, quindi ha una fonte di verità
+  duplicata per necessità**: se non copiasse quel codice non potrebbe dire che cosa fa il
+  visualizzatore, che è tutto il suo scopo. Il presidio è che la pagina **dichiara in testa
+  al suo codice la `@version` a cui è allineata**: chi tocca il blocco 'ROTELLA NUDA' di
+  `DIVRoccobot.user.js` aggiorna anche lei e quel numero. Non aggiornarla è peggio che non
+  averla, perché una sonda che mente si crede.
+- ⚠️ **La UI è in ITALIANO**, per istruzione esplicita dell'utente (2026-07-31). È una
+  **deroga dichiarata** a `Roccobot.md` § '🏗️ Sviluppo software' (progetti semplici: solo
+  inglese), che vale per questo file e non si estende agli userscript, la cui UI resta in
+  inglese.
+- ⚠️ **Non è uno userscript**, quindi non ha `@version` propria né bump SemVer: il numero
+  che porta in testa è quello **dello script che rispecchia**, e si muove con lui.

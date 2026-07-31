@@ -202,13 +202,14 @@ lazy-load, raccoglie le immagini della galleria (esclude gli avatar), scarica gl
 originali via `GM_xmlhttpRequest` come `ArrayBuffer` (con barra di avanzamento sul
 pulsante) e li impacchetta in uno **ZIP creato da un writer interno** (metodo
 *store*, senza compressione: le JPEG sono già compresse). I file nello ZIP
-mantengono la numerazione originale (`0001.jpg`, `0002.jpg`…). Nessun dato lascia
+mantengono la numerazione originale (`0001.jpg`, `0002.jpg`...). Nessun dato lascia
 il sito: solo download.
 
 > **Nota tecnica (dalla v1.1.0):** lo ZIP è generato da un piccolo writer
 > incorporato, **senza dipendenze esterne**. Le versioni 1.0.x usavano JSZip (via
 > `@require`), ma nella sandbox di Tampermonkey la sua `generateAsync` si bloccava
-> in fase di compressione (pulsante fermo su "Comprimo…"). Il writer *store* è
+> in fase di compressione (pulsante fermo sull'etichetta di avanzamento, oggi
+> `📦 Building ZIP...`). Il writer *store* è
 > sincrono, deterministico e verificato (`unzip -t` OK).
 
 ### Personalizzazione
@@ -250,7 +251,7 @@ Cosa nasconde (tutto attivabile/disattivabile dai flag in cima):
   allarga l'articolo a tutta la larghezza.
 - `NASCONDI_VIDEO`: il player video "in evidenza"/autoplay.
 - `NASCONDI_FOOTER_GLOBALE`: il footer gigante di Fandom ("Explore
-  properties"…). Il footer della **pagina** wiki (categorie, licenza) resta.
+  properties"...). Il footer della **pagina** wiki (categorie, licenza) resta.
 - `NASCONDI_STICKY`: la barra che si appiccica in alto allo scroll (default
   **off**: la tiene, serve alla navigazione).
 
@@ -295,7 +296,7 @@ Su `pornhub.com` fa due cose:
    Worldwide). PH ogni tanto (al login) li **ripristina** su `it`: lo script li
    **riscrive a ogni caricamento** (a `document-start`, prima delle richieste), così
    non può più riportarti in italiano. In più, se sei atterrato su un
-   sottodominio-lingua (2 lettere, es. `it`/`de`/`fr`/`es`…), reindirizza a
+   sottodominio-lingua (2 lettere, es. `it`/`de`/`fr`/`es`...), reindirizza a
    **`www.pornhub.com`** conservando percorso e query (`location.replace`): coi
    cookie giusti `www.` "tiene". Guardia anti-loop a tempo (se PH rimbalzasse, non
    insiste, ma non resta bloccata).
@@ -439,12 +440,31 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - **Limiti più larghi (dalla 2.13):** dal **2%** al **4000%** (prima 10% e 1200%), con
     un tetto di sicurezza sul lato in pixel perché oltre una certa misura il browser
     fatica a disegnare l'elemento.
-  - **Il trackpad continua a scorrere.** I due casi si distinguono dalla forma
-    dell'evento: un vero scatto di rotella manda un delta grande, intero e senza
-    componente orizzontale, il trackpad manda tanti delta piccoli e frazionari. Così lo
-    stesso computer va bene sia col trackpad sia col mouse in ufficio, senza cambiare
-    impostazione. Se un mouse a scorrimento libero non venisse riconosciuto, c'è
-    `ROTELLA_ZOOM = 'sempre'` (e `'mai'` per tornare al comportamento storico).
+  - **Le superfici touch continuano a scorrere, e dalla 2.19.1 si riconoscono per
+    GESTO.** Trackpad e mouse a scorrimento touch (Magic Mouse) non mandano scatti: mandano
+    una raffica continua di eventi che **parte piano** (il primo vale 1 px), accelera e
+    lascia una coda di inerzia. Perciò il dispositivo si riconosce **una volta per gesto**,
+    dall'ampiezza con cui il gesto parte, e la decisione **si tiene fino alla pausa**; la
+    firma touch, quando si vede, resta in memoria un attimo e copre anche il gesto
+    successivo, così un colpo brusco che partisse già ampio viene ricondotto al dispositivo
+    giusto. Le soglie sono `GESTO_PAUSA_MS`, `TOUCH_AVVIO_MAX` e `TOUCH_MEMORIA_MS`.
+    - ⚠️ **Perché non si decide più evento per evento (difetto corretto nella 2.19.1).**
+      La regola di prima chiedeva a ogni singolo evento 'sei uno scatto di rotella?',
+      rispondendo sì a `|deltaY| >= 40` senza componente orizzontale. Con un Magic Mouse 2
+      un colpo veloce **attraversa quella soglia a metà strada**: lo stesso gesto scorreva
+      nella parte lenta e zoomava nella parte veloce, in modo che all'uso sembrava casuale
+      (dipendeva dalla velocità del dito). Misurato: un colpo in su portava lo zoom dal
+      **100% al 225%**, uno in giù al **35%**.
+    - ⚠️ **Le due firme che sembravano discriminanti non lo sono**, e la misura lo dice:
+      su 177 eventi del Magic Mouse i `deltaY` erano interi **177 volte su 177** (quindi
+      'frazionario = touch' è falso) e `|wheelDeltaY|` non era multiplo di 120 **nemmeno
+      una volta** (quindi quel ramo non scattava mai). Il `deltaX` era zero in circa
+      **9 casi su 10**: con un dito solo il movimento è più diritto che con due dita sul
+      trackpad, ed è per questo che il trackpad si salvava e il Magic Mouse no.
+    - Le misure si rifanno con la **sonda** (`SondaRotella.html`, vedi sotto), che riporta
+      anche la decisione presa dal visualizzatore, gesto per gesto.
+    - Se un mouse a scorrimento libero non venisse riconosciuto, c'è
+      `ROTELLA_ZOOM = 'sempre'` (e `'mai'` per tornare al comportamento storico).
   - **Shift+rotella** scorre l'immagine anche col mouse: serve perché qui il
     trascinamento non c'è per scelta, e con la rotella occupata dallo zoom resterebbero
     solo le barre di scorrimento.
@@ -524,7 +544,10 @@ let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
 const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale
 const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
 const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
-const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, trackpad scorre) | 'sempre' | 'mai'
+const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, touch scorre) | 'sempre' | 'mai'
+const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
+const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può partire un gesto di dito
+const TOUCH_MEMORIA_MS = 1500; // per quanto una firma touch appena vista copre i gesti seguenti
 const PASSO_ROTELLA = 1.1;   // quanto ingrandisce un singolo scatto di rotella
 const TAPPE_ZOOM = [2, 3, …, 100, 110, 125, 140, …, 4000];  // tappe tonde; vuoto = passo geometrico
 const SALTO_MIN_SU = 0.05;   // ingrandendo, salta le tappe a meno del +5%
@@ -578,6 +601,26 @@ Nessun tasto scatta mentre si scrive in un campo.
 > script impone comunque la propria dimensione (con `!important`) e gestisce clic/zoom,
 > ma se noti conflitti su un browser specifico segnalamelo e affino.
 
+### La sonda della rotella
+
+**File:** `SondaRotella.html`, in questa stessa cartella. Si apre da
+<https://roccobot.github.io/userscripts/SondaRotella.html> oppure da disco con un doppio
+clic, e non richiede né Tampermonkey né un server locale.
+
+A che serve: misura **come il dispositivo di puntamento manda gli eventi di scorrimento**
+(ampiezza, verso, componente orizzontale, `wheelDeltaY`, cadenza in millisecondi) e dice,
+gesto per gesto, se il visualizzatore lo interpreta come **scorrimento** o come **zoom**.
+Si scorre dentro il riquadro con un dispositivo per volta, si premono **Riassunto** e
+**Copia**, e si incolla il testo in chat: è così che si sono tarate le soglie del
+riconoscimento nella 2.19.1.
+
+- Un esito **`MISTO`** su un solo gesto è per definizione un difetto: vuol dire che lo
+  stesso movimento in parte scorre e in parte zooma.
+- ⚠️ **La sonda RIPETE la logica di decisione dello userscript**, e dichiara in testa al
+  suo codice la versione a cui è allineata: se quel blocco cambia, va aggiornata insieme,
+  altrimenti riporta il falso invece di misurarlo. La nota è registrata anche in
+  `userscripts/CLAUDE.md`.
+
 
 ## ENF Roccobot
 
@@ -628,7 +671,7 @@ inoltrasse le intestazioni, un ripiego che scarica in memoria e salva il blob.
 
 Avanzamento (percentuale, MB e barra) sul tasto stesso; un **secondo clic
 annulla** lo scaricamento in corso. Il nome del file è il titolo del post
-(`Titolo.mp4` o `Titolo.ts`, con `(2)`, `(3)`… quando i video sono più d'uno).
+(`Titolo.mp4` o `Titolo.ts`, con `(2)`, `(3)`... quando i video sono più d'uno).
 
 ### Personalizzazione
 
