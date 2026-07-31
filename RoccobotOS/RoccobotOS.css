@@ -17,15 +17,17 @@ body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{wid
    parte dal primo pixel dell'immagine. Il bottom:100% lo appoggia esattamente sopra il
    contenuto, nei 24 px di margine che restano liberi in entrambi i formati.
    Niente pillola, niente sfondo, niente bordo: solo il numero, con la 'v' minuscola e il
-   carattere sans serif chiesti dall'utente. L'opacity .4 in entrambi i temi e' una richiesta
-   esplicita dell'utente del 2026-07-31: NON alzarla per far passare il contrasto axe-core, che
-   con questo valore boccia il tema chiaro. E' una deroga voluta, non un difetto da correggere. Il sans e' dichiarato anche se il corpo del testo
+   carattere sans serif chiesti dall'utente. L'opacita' e' DIVERSA nei due temi, .3 sul chiaro e
+   .25 sullo scuro (scelta dell'utente del 2026-07-31, su mockup a confronto): il fondo nero
+   abbassa gia' la resa percepita, quindi lo stesso valore darebbe due discrezioni diverse.
+   NON alzarle per far passare il contrasto axe-core, che con questi valori boccia entrambi i
+   temi: e' una deroga voluta, non un difetto da correggere. Il sans e' dichiarato anche se il corpo del testo
    e' gia' sans, per proteggere il numero se un domani cambia. */
 #markdown_content{position:relative}
 .site-version{position:absolute;left:0;bottom:100%;
   font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
   font-size:.5625rem;line-height:1.4;letter-spacing:.02em;font-variant-numeric:tabular-nums;
-  color:#4a4a4a;opacity:.4;-webkit-user-select:none;user-select:none;pointer-events:none}
+  color:#4a4a4a;opacity:.3;-webkit-user-select:none;user-select:none;pointer-events:none}
 .site-version:empty{display:none}
-html[data-theme=dark] .site-version{color:#eaeaea}
+html[data-theme=dark] .site-version{color:#eaeaea;opacity:.25}
 @media print{.site-version{display:none}}
