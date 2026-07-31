@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.19.1
+// @version         2.20.0
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -26,16 +26,29 @@
   const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale (1:1)
   const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
   const LATO_MAX_PX = 32000;   // tetto di sicurezza: oltre, il browser fatica a disegnare l'elemento
-  const ZOOM_SENS = 0.015;     // sensibilità dello zoom (ctrl+rotella / pinch da trackpad)
+  const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch da trackpad)
+  // Sensibilità dello zoom col DITO (gesto nudo da superficie touch). ⚠️ NON si puo' riusare
+  // ZOOM_SENS: il pinch manda pochi px per gesto, un colpo di dito ne manda centinaia, e con
+  // 0,015 un solo colpo misurato sul Magic Mouse dell'utente darebbe uno zoom di 39.000 volte.
+  // Tarata sui quattro gesti reali della sonda (2026-07-31): un colpo veloce (circa 700 px in
+  // totale) fa 2,9x, un gesto lento (50-105 px) fa da +8% a +17%, e dal 100% al 400% ci si
+  // arriva in poco piu' di un colpo. Scartati: 0,0008 (colpo veloce 1,7x, troppo pigro) e
+  // 0,0025 (5,8x, incontrollabile).
+  const ZOOM_SENS_TOUCH = 0.0015;
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
-  // ── Rotella del mouse ──
-  // Cosa fa la rotella NUDA (senza ctrl):
-  //   'auto'   = zoom se il GESTO viene da una rotella, scorrimento se viene da una
-  //              superficie touch (trackpad, Magic Mouse). Cosi' lo stesso computer va
-  //              bene in entrambi i casi, senza cambiare impostazione fra casa e ufficio.
-  //   'sempre' = zoom comunque, anche da superficie touch (che pero' cosi' non scorre piu')
-  //   'mai'    = comportamento storico: scorre, e lo zoom resta su ctrl+rotella e pinch
+  // ── Rotella del mouse e superfici touch ──
+  // Cosa fa il gesto NUDO (senza ctrl), sia dalla rotella sia dal dito:
+  //   'auto'   = ZOOM sempre, con la taratura giusta per ciascuno: a scatti tondi dalla
+  //              rotella, continuo e proporzionale al movimento dal dito (trackpad, Magic
+  //              Mouse). Per spostarsi nell'immagine c'e' il trascinamento.
+  //   'scorri' = il dito SCORRE l'immagine e la rotella zooma a scatti (comportamento
+  //              della 2.19.1, per chi preferisce lo scorrimento a due dita)
+  //   'mai'    = comportamento storico: tutto scorre, e lo zoom resta su ctrl+rotella e pinch
+  // ⚠️ Richiesta esplicita dell'utente (2026-07-31): il dito deve zoomare, esattamente come
+  // la rotella fisica, perche' per spostarsi c'e' gia' il trascinamento. La 2.19.1 aveva
+  // reso il comportamento COERENTE (scorre sempre) ma non era quello voluto: 'auto' quindi
+  // non significa piu' 'il touch scorre'.
   const ROTELLA_ZOOM = 'auto';
   // Soglie del riconoscimento del gesto (vedi la sezione ROTELLA NUDA piu' sotto).
   const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
@@ -599,7 +612,9 @@
     function quandoEv(e) {
       return (typeof e.timeStamp === 'number' && e.timeStamp > 0) ? e.timeStamp : Date.now();
     }
-    let gestoUltimo = -1e9, gestoZooma = null, touchVistoA = -1e9;
+    let gestoUltimo = -1e9, gestoDaRotella = null, touchVistoA = -1e9;
+    // Ritorna true se il gesto in corso viene da una ROTELLA, false se da una superficie
+    // touch. Che cosa farne (scatti, zoom continuo, scorrimento) lo decide comandoGesto.
     function decidiGesto(e) {
       const ora = quandoEv(e);
       const nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
@@ -610,16 +625,15 @@
       // CORSO invece non si ribalta mai, altrimenti si tornerebbe al comportamento misto
       // che questo blocco esiste per eliminare.
       if (firmaTouch(e)) touchVistoA = ora;
-      if (!nuovo && gestoZooma !== null) return gestoZooma;
+      if (!nuovo && gestoDaRotella !== null) return gestoDaRotella;
       // ⚠️ L'ordine di questi tre casi e' il cuore del blocco, e il secondo e' nato da un
       // difetto trovato PROVANDO la correzione con la sonda: se la memoria touch avesse
       // avuto la precedenza sulla firma forte, chi alterna trackpad e mouse si sarebbe
-      // visto ignorare la rotella per un secondo e mezzo dopo ogni scorrimento, cioe' la
-      // stessa casualita' apparente, spostata di un passo.
-      if (firmaRotellaForte(e)) gestoZooma = true;
-      else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoZooma = false;
-      else gestoZooma = firmaRotellaDebole(e);
-      return gestoZooma;
+      // visto trattare la rotella come un dito per un secondo e mezzo dopo ogni gesto.
+      if (firmaRotellaForte(e)) gestoDaRotella = true;
+      else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
+      else gestoDaRotella = firmaRotellaDebole(e);
+      return gestoDaRotella;
     }
     // UNO SCATTO DI ZOOM PER OGNI SCATTO DELLA ROTELLA. Girando in fretta il
     // browser UNISCE piu' scatti in un solo evento: contarne uno soltanto ne
@@ -638,17 +652,19 @@
       accScatti -= interi;
       return interi;
     }
+    // Che comando e' questo gesto: 'scatti' (zoom a tappe tonde, dalla rotella), 'continuo'
+    // (zoom proporzionale al movimento, dal dito) o 'scorre' (lo prende il browser).
     // ⚠️ La cache sull'identita' dell'evento non e' un'ottimizzazione: il ramo di
-    // shift+rotella chiama questa funzione DUE volte per lo stesso evento, e senza cache
+    // shift+rotella interroga questa funzione DUE volte per lo stesso evento, e senza cache
     // il secondo giro conterebbe l'evento un'altra volta nella macchina a stati.
-    let evDeciso = null, decCache = false;
-    function rotellaZooma(e) {
-      if (ROTELLA_ZOOM === 'mai') return false;
-      if (ROTELLA_ZOOM === 'sempre') return true;
-      if (e === evDeciso) return decCache;
+    let evDeciso = null, cmdCache = 'scorre';
+    function comandoGesto(e) {
+      if (ROTELLA_ZOOM === 'mai') return 'scorre';
+      if (e === evDeciso) return cmdCache;
       evDeciso = e;
-      decCache = decidiGesto(e);
-      return decCache;
+      const daRotella = decidiGesto(e);
+      cmdCache = daRotella ? 'scatti' : (ROTELLA_ZOOM === 'scorri' ? 'scorre' : 'continuo');
+      return cmdCache;
     }
     // Zoom a passo FISSO: reattivo, senza inerzia e senza attriti. Se il passo
     // scavalca la dimensione reale ci si ferma esattamente sul 100%, cosi' il
@@ -699,22 +715,37 @@
     let versoInvertito = false;
     try { versoInvertito = GM_getValue('dv-wheel-invert', '0') === '1'; } catch (e) {}
 
-    // ── ROTELLA: ctrl+rotella = zoom continuo (pinch da trackpad) ─────────
+    // ── GESTO NUDO = zoom; ctrl+gesto = zoom continuo (pinch da trackpad) ──
     wrap.addEventListener('wheel', function (e) {
       if (!e.ctrlKey) {
-        // shift+rotella = scorrimento verticale: con un mouse, dove la rotella
-        // ormai zooma, resta il modo di spostare un'immagine piu' grande della vista
-        if (e.shiftKey && rotellaZooma(e)) {
+        const cmd = comandoGesto(e);
+        // shift+gesto = scorrimento verticale: dove il gesto nudo zooma, resta il modo di
+        // spostare con la tastiera un'immagine piu' grande della vista (l'altro modo, e il
+        // principale, e' il trascinamento)
+        if (e.shiftKey && cmd !== 'scorre') {
           e.preventDefault();
           wrap.scrollTop += e.deltaY * (e.deltaMode === 1 ? 16 : 1);
           return;
         }
-        if (!rotellaZooma(e)) return;      // trackpad: resta lo scorrimento nativo
+        if (cmd === 'scorre') return;      // se lo prende il browser, non si tocca nulla
         e.preventDefault();
+        // Segno del verso, comune ai due modi: +1 quando "in su" deve ingrandire.
+        const segno = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? 1 : -1;
+        if (cmd === 'continuo') {
+          // Dito su una superficie touch: zoom proporzionale al movimento, senza scatti e
+          // senza tappe tonde, perche' il gesto e' continuo e le tappe lo farebbero
+          // sobbalzare. Il fermo al 100% lo mette zoomGesto, come per il pinch.
+          // ⚠️ Nessun ZOOM_STEP_CAP qui: taglierebbe proprio il colpo veloce, che deve
+          // restare il modo di fare molto zoom in fretta.
+          let dyT = e.deltaY;
+          if (e.deltaMode === 1) dyT *= 16;
+          else if (e.deltaMode === 2) dyT *= (wrap.clientHeight || 800);
+          zoomGesto(zoomL - segno * dyT * ZOOM_SENS_TOUCH, e.clientX, e.clientY);
+          return;
+        }
         const n = scattiInteri(e);
         if (!n) return;                    // solo una frazione: resta in cassa
-        const versoSu = n > 0;
-        const ingrandisce = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? versoSu : !versoSu;
+        const ingrandisce = segno > 0 ? (n > 0) : !(n > 0);
         passoZoom(scalaDopoScatti(ingrandisce ? Math.abs(n) : -Math.abs(n)), e.clientX, e.clientY);
         return;
       }

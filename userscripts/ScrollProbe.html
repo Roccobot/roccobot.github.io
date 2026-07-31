@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
-<title>Sonda della rotella</title>
+<title>Sonda dello scorrimento</title>
 <style>
   :root { color-scheme: dark light; }
   body { margin: 0 auto; padding: 1.25rem; max-width: 60rem;
@@ -30,9 +30,10 @@
 </head>
 <body>
 <main>
-<h1>Sonda della rotella</h1>
+<h1>Sonda dello scorrimento</h1>
 <p>Misura come il tuo dispositivo di puntamento manda gli eventi di scorrimento al browser,
-e dice come <b>Decent Image Viewer</b> li interpreta: scorrimento oppure zoom.</p>
+e dice come <b>Decent Image Viewer</b> li interpreta: zoom continuo col dito, zoom a
+scatti dalla rotella, oppure scorrimento.</p>
 
 <h2>Come si usa</h2>
 <ol>
@@ -43,7 +44,8 @@ e dice come <b>Decent Image Viewer</b> li interpreta: scorrimento oppure zoom.</
 </ol>
 <p class="nota">Ripeti con gli altri dispositivi (trackpad, mouse a rotella, mouse a
 scorrimento touch) svuotando con <b>Azzera</b> fra un dispositivo e l'altro: le soglie del
-riconoscimento si tarano su queste misure.</p>
+riconoscimento si tarano su queste misure. Un esito <b>MISTO</b> su un solo gesto e' un
+difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
 
 <div id="pad" tabindex="0"><div id="padmsg">scorri qui</div><div class="riempi"></div></div>
 
@@ -60,15 +62,17 @@ riconoscimento si tarano su queste misure.</p>
 (function () {
   'use strict';
 
-  // ⚠️ Le tre soglie e la funzione decidiGesto qui sotto sono la COPIA di quelle di
-  // DIVRoccobot.user.js 2.19.1 (blocco 'ROTELLA NUDA'): servono perche' la sonda dica
-  // che cosa fa il visualizzatore davvero, non che cosa si suppone che faccia. Se quel
-  // blocco cambia, questo va aggiornato con lui, altrimenti la sonda mente. La nota e'
-  // registrata anche in userscripts/CLAUDE.md.
-  var RIF_VERSIONE = '2.19.1';
+  // ⚠️ Le soglie e le funzioni qui sotto sono la COPIA di quelle di DIVRoccobot.user.js
+  // 2.20.0 (blocco 'ROTELLA NUDA'): servono perche' la sonda dica che cosa fa il
+  // visualizzatore davvero, non che cosa si suppone che faccia. Se quel blocco cambia,
+  // questo va aggiornato con lui, altrimenti la sonda mente. La nota e' registrata anche
+  // in userscripts/CLAUDE.md.
+  var RIF_VERSIONE = '2.20.0';
+  var ROTELLA_ZOOM = 'auto';       // come nello script: 'auto' | 'scorri' | 'mai'
   var GESTO_PAUSA_MS = 400;
   var TOUCH_AVVIO_MAX = 20;
   var TOUCH_MEMORIA_MS = 800;
+  var ZOOM_SENS_TOUCH = 0.0015;    // zoom col dito: fattore = e^(px * questo)
 
   var eventi = [];
   var grezzi = false;
@@ -86,17 +90,26 @@ riconoscimento si tarano su queste misure.</p>
   function firmaTouch(e) {
     return e.deltaMode === 0 && Math.abs(e.deltaY) <= TOUCH_AVVIO_MAX;
   }
-  var gestoUltimo = -1e9, gestoZooma = null, touchVistoA = -1e9;
+  var gestoUltimo = -1e9, gestoDaRotella = null, touchVistoA = -1e9;
   function decidiGesto(e) {
     var ora = e.timeStamp;
     var nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
     gestoUltimo = ora;
     if (firmaTouch(e)) touchVistoA = ora;
-    if (!nuovo && gestoZooma !== null) return gestoZooma;
-    if (firmaRotellaForte(e)) gestoZooma = true;
-    else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoZooma = false;
-    else gestoZooma = firmaRotellaDebole(e);
-    return gestoZooma;
+    if (!nuovo && gestoDaRotella !== null) return gestoDaRotella;
+    if (firmaRotellaForte(e)) gestoDaRotella = true;
+    else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
+    else gestoDaRotella = firmaRotellaDebole(e);
+    return gestoDaRotella;
+  }
+  var evDeciso = null, cmdCache = 'scorre';
+  function comandoGesto(e) {
+    if (ROTELLA_ZOOM === 'mai') return 'scorre';
+    if (e === evDeciso) return cmdCache;
+    evDeciso = e;
+    var daRotella = decidiGesto(e);
+    cmdCache = daRotella ? 'scatti' : (ROTELLA_ZOOM === 'scorri' ? 'scorre' : 'continuo');
+    return cmdCache;
   }
 
   pad.addEventListener('wheel', function (e) {
@@ -107,7 +120,7 @@ riconoscimento si tarano su queste misure.</p>
       wd: (typeof e.wheelDeltaY === 'number') ? e.wheelDeltaY : null,
       modo: e.deltaMode,
       ctrl: e.ctrlKey,
-      zoom: decidiGesto(e)
+      cmd: comandoGesto(e)
     });
     document.getElementById('padmsg').textContent = eventi.length + ' eventi raccolti';
   }, { passive: true });
@@ -151,10 +164,15 @@ riconoscimento si tarano su queste misure.</p>
       var frazionari = s.filter(function (e) { return e.dy !== Math.trunc(e.dy); }).length;
       var conDx = s.filter(function (e) { return e.dx !== 0; }).length;
       var mult120 = s.filter(function (e) { return e.wd && Math.abs(e.wd) % 120 === 0; }).length;
-      var zoomati = s.filter(function (e) { return e.zoom; }).length;
+      var comandi = {};
+      s.forEach(function (e) { comandi[e.cmd] = (comandi[e.cmd] || 0) + 1; });
+      var elenco = Object.keys(comandi);
       var modi = {};
       s.forEach(function (e) { modi[e.modo] = true; });
-      var letto = zoomati === 0 ? 'SCORRIMENTO' : (zoomati === s.length ? 'ZOOM' : 'MISTO (difetto)');
+      var nomi = { continuo: 'ZOOM continuo (dito)', scatti: 'ZOOM a scatti (rotella)', scorre: 'SCORRIMENTO' };
+      var letto = elenco.length === 1 ? nomi[elenco[0]]
+        : 'MISTO (difetto): ' + elenco.map(function (k) { return nomi[k] + ' x' + comandi[k]; }).join(' + ');
+      var pxTot = amp.reduce(function (a, b) { return a + b; }, 0);
       r.push('GESTO ' + (i + 1) + ': ' + s.length + ' eventi, verso ' + (s[0].dy < 0 ? 'su' : 'giu'));
       r.push('  deltaMode              : ' + Object.keys(modi).join(','));
       r.push('  primo |deltaY|         : ' + num(amp[0], 2));
@@ -167,7 +185,12 @@ riconoscimento si tarano su queste misure.</p>
         ? num(Math.min.apply(null, buchi), 1) + ' / ' + num(mediana(buchi), 1) + ' / ' + num(Math.max.apply(null, buchi), 1)
         : 'evento singolo'));
       r.push('  durata (ms)            : ' + num(s[s.length - 1].t - s[0].t, 1));
-      r.push('  IL VISUALIZZATORE FA   : ' + letto + ' (' + zoomati + '/' + s.length + ' eventi come rotella)');
+      r.push('  movimento totale (px)  : ' + num(pxTot, 0));
+      r.push('  IL VISUALIZZATORE FA   : ' + letto);
+      if (elenco.length === 1 && elenco[0] === 'continuo') {
+        r.push('  zoom prodotto dal gesto: ' + Math.exp(pxTot * ZOOM_SENS_TOUCH).toFixed(2) + 'x' +
+               '  (fuori dal fermo al 100%)');
+      }
       r.push('  sequenza deltaY        : ' + s.map(function (e) { return num(e.dy, 2); }).join(' '));
       r.push('');
     }
@@ -185,7 +208,7 @@ riconoscimento si tarano su queste misure.</p>
         String(e.wd === null ? 'n.d.' : e.wd).padEnd(13) +
         String(e.modo).padEnd(6) +
         (e.ctrl ? 'si  ' : 'no  ').padEnd(6) +
-        (e.zoom ? 'zoom' : 'scorre')
+        e.cmd
       );
     });
     return r.join('\n');
@@ -198,7 +221,8 @@ riconoscimento si tarano su queste misure.</p>
     grezzi = !grezzi; scrivi(grezzi ? listaGrezzi() : riassunto());
   });
   document.getElementById('btnAzzera').addEventListener('click', function () {
-    eventi = []; gestoUltimo = -1e9; gestoZooma = null; touchVistoA = -1e9;
+    eventi = []; gestoUltimo = -1e9; gestoDaRotella = null; touchVistoA = -1e9;
+    evDeciso = null; cmdCache = 'scorre';
     scrivi('Nessun dato.');
     document.getElementById('padmsg').textContent = 'scorri qui';
   });

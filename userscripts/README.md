@@ -152,7 +152,7 @@ Tutto-in-uno per `nsfwalbum.com` (unisce e sostituisce *NSFWAlbum Enhancer* +
   imx.to**, non sull'esca. La foto vera è in `<img id="zoom">` ma spesso è
   **nascosta** (`class="hide"`) mentre uno script di protezione (`hl.js`)
   sovrappone un `<svg>` **vuoto** grande quanto la foto che ruba il tasto destro
-  (→ `data:image/svg+xml…`). Lo script forza `#zoom` **visibile, cliccabile e in
+  (→ `data:image/svg+xml...`). Lo script forza `#zoom` **visibile, cliccabile e in
   cima** e **neutralizza** (`pointer-events:none`) le esche SVG/lente
   sovrapposte, così il menu contestuale cade sull'immagine reale. Nasconde anche
   la lente d'ingrandimento (`.magnify-lens`). *(Quando l'immagine manca davvero
@@ -161,8 +161,8 @@ Tutto-in-uno per `nsfwalbum.com` (unisce e sostituisce *NSFWAlbum Enhancer* +
 - **Pagina album (`/album/<id>`):** pulsante flottante **«⬇️ Download set (ZIP)»**
   che scarica **tutte** le immagini del set a **piena risoluzione** in un unico
   **ZIP**, nominato **`[studio] - [modella] - [titolo].zip`** (ricavato dalla
-  pagina). Full-res da imx.to (thumb `//image.imx.to/u/t/…` → file
-  `//i.imx.to/i/…`); ZIP creato da un **writer interno** (metodo *store*, nessuna
+  pagina). Full-res da imx.to (thumb `//image.imx.to/u/t/...` → file
+  `//i.imx.to/i/...`); ZIP creato da un **writer interno** (metodo *store*, nessuna
   dipendenza); file numerati in ordine d'album.
 
 ### Personalizzazione
@@ -195,8 +195,8 @@ in **alta risoluzione** e le impacchetta in un unico file **ZIP** (nominato come
 la galleria, es. `gabi-summers-nude-leaks.zip`).
 
 Come funziona: le miniature del sito sono URL tipo
-`…/photos/g/a/<slug>/1000//t_0001.jpg` (≈7 KB); l'alta risoluzione è lo **stesso
-URL senza il prefisso `t_`** (`…/1000//0001.jpg`, ≈200 KB: è la risoluzione
+`.../photos/g/a/<slug>/1000//t_0001.jpg` (≈7 KB); l'alta risoluzione è lo **stesso
+URL senza il prefisso `t_`** (`.../1000//0001.jpg`, ≈200 KB: è la risoluzione
 massima disponibile sul sito). Lo script scorre la pagina per forzare il
 lazy-load, raccoglie le immagini della galleria (esclude gli avatar), scarica gli
 originali via `GM_xmlhttpRequest` come `ArrayBuffer` (con barra di avanzamento sul
@@ -422,8 +422,8 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     piccola ampiezza vista su quel mouse è uno scatto, e gli eventi uniti dal browser ne
     sono multipli interi. Misurato su entrambi i casi: un tic da 360 e uno da 120 valgono
     tutti e due **un passo**, e un evento da 720 ne vale due.
-  - **Scala di valori tondi (dalla 2.16).** Le tappe sono `… 75, 80, 90, 100, 110, 125,
-    140, 150, 165, 180, 200, 225, 250, 275, 300, 325, 350, 400 …`: numeri leggibili invece
+  - **Scala di valori tondi (dalla 2.16).** Le tappe sono `... 75, 80, 90, 100, 110, 125,
+    140, 150, 165, 180, 200, 225, 250, 275, 300, 325, 350, 400 ...`: numeri leggibili invece
     dei 121,2% e 194,9% che produce una moltiplicazione. Sono costruite per **imitare
     l'andamento dell'1,1×**, scegliendo fra i candidati entro il 6% dal bersaglio ideale il
     numero più rotondo. Risultato misurato: sopra il 10% i rapporti stanno tutti fra
@@ -440,15 +440,38 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - **Limiti più larghi (dalla 2.13):** dal **2%** al **4000%** (prima 10% e 1200%), con
     un tetto di sicurezza sul lato in pixel perché oltre una certa misura il browser
     fatica a disegnare l'elemento.
-  - **Le superfici touch continuano a scorrere, e dalla 2.19.1 si riconoscono per
-    GESTO.** Trackpad e mouse a scorrimento touch (Magic Mouse) non mandano scatti: mandano
-    una raffica continua di eventi che **parte piano** (il primo vale 1 px), accelera e
-    lascia una coda di inerzia. Perciò il dispositivo si riconosce **una volta per gesto**,
-    dall'ampiezza con cui il gesto parte, e la decisione **si tiene fino alla pausa**; la
-    firma touch, quando si vede, resta in memoria un attimo e copre anche il gesto
-    successivo, così un colpo brusco che partisse già ampio viene ricondotto al dispositivo
-    giusto. Le soglie sono `GESTO_PAUSA_MS`, `TOUCH_AVVIO_MAX` e `TOUCH_MEMORIA_MS`.
+  - **Anche il DITO zooma (dalla 2.20.0), con la sua taratura.** Trackpad e mouse a
+    scorrimento touch (Magic Mouse) fanno **zoom continuo**, proporzionale al movimento;
+    la rotella fisica resta a **scatti tondi**. Per spostarsi nell'immagine c'è il
+    **trascinamento**, quindi al dito non serve scorrere. Richiesta esplicita dell'utente:
+    'esattamente come per i mouse con rotella fisica, voglio che il touch faccia sempre e
+    solo zoom in/out'.
+    - **La sensibilità del dito è una costante a sé, `ZOOM_SENS_TOUCH`, e non può essere
+      quella del pinch.** Il pinch manda pochi pixel per gesto, un colpo di dito ne manda
+      centinaia: con la sensibilità del pinch (`0.015`) un colpo misurato sul Magic Mouse
+      darebbe uno zoom di **39.000 volte**. Tarata sui quattro gesti reali della sonda: un
+      colpo veloce (circa 700 px) fa **2,9x**, un gesto lento (50-105 px) fa **da +8% a
+      +17%**, e dal 100% al 400% ci si arriva in poco più di un colpo. Scartati **0,0008**
+      (colpo veloce 1,7x, troppo pigro) e **0,0025** (5,8x, incontrollabile).
+    - ⚠️ **Il fermo al 100% si sente anche col dito**: per staccarsi dal 100% servono circa
+      **107 px** di movimento, quindi partendo esattamente dal 100% un gesto lento non
+      muove nulla. Fuori dal fermo (per esempio con un'immagine grande aperta adattata al
+      30%) lo stesso gesto agisce subito: 50 px portano dal 30% al 32%, un colpo veloce dal
+      30% all'86%. Chi lo volesse più morbido agisce su `ZOOM_SNAP_STICK`.
+    - Chi preferisce il vecchio comportamento a due dita ha `ROTELLA_ZOOM = 'scorri'`: il
+      dito scorre, la rotella zooma. Con `'mai'` non zooma nessuno dei due.
+  - **Il dispositivo si riconosce per GESTO, non per evento (dalla 2.19.1).** Trackpad e
+    Magic Mouse non mandano scatti: mandano una raffica continua di eventi che **parte
+    piano** (il primo vale 1 px), accelera e lascia una coda di inerzia. Perciò il
+    dispositivo si riconosce **una volta per gesto**, dall'ampiezza con cui il gesto parte,
+    e la decisione **si tiene fino alla pausa**; la firma touch, quando si vede, resta in
+    memoria un attimo e copre anche il gesto successivo, così un colpo brusco che partisse
+    già ampio viene ricondotto al dispositivo giusto. Le soglie sono `GESTO_PAUSA_MS`,
+    `TOUCH_AVVIO_MAX` e `TOUCH_MEMORIA_MS`.
     - ⚠️ **Perché non si decide più evento per evento (difetto corretto nella 2.19.1).**
+      ⚠️ Attenzione: la 2.19.1 rendeva il gesto del dito uno **scorrimento** coerente, e
+      quella non era la cosa voluta; dalla 2.20.0 il dito zooma. Il riconoscimento per
+      gesto resta, e serve a scegliere **quale taratura di zoom** applicare.
       La regola di prima chiedeva a ogni singolo evento 'sei uno scatto di rotella?',
       rispondendo sì a `|deltaY| >= 40` senza componente orizzontale. Con un Magic Mouse 2
       un colpo veloce **attraversa quella soglia a metà strada**: lo stesso gesto scorreva
@@ -461,7 +484,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
       una volta** (quindi quel ramo non scattava mai). Il `deltaX` era zero in circa
       **9 casi su 10**: con un dito solo il movimento è più diritto che con due dita sul
       trackpad, ed è per questo che il trackpad si salvava e il Magic Mouse no.
-    - Le misure si rifanno con la **sonda** (`SondaRotella.html`, vedi sotto), che riporta
+    - Le misure si rifanno con la **sonda** (`ScrollProbe.html`, vedi sotto), che riporta
       anche la decisione presa dal visualizzatore, gesto per gesto.
     - Se un mouse a scorrimento libero non venisse riconosciuto, c'è
       `ROTELLA_ZOOM = 'sempre'` (e `'mai'` per tornare al comportamento storico).
@@ -544,12 +567,13 @@ let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
 const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale
 const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
 const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
-const ROTELLA_ZOOM = 'auto'; // rotella nuda: 'auto' (mouse zooma, touch scorre) | 'sempre' | 'mai'
+const ZOOM_SENS_TOUCH = 0.0015; // sensibilità dello zoom col dito (gesto nudo da superficie touch)
+const ROTELLA_ZOOM = 'auto'; // gesto nudo: 'auto' (zoom sempre) | 'scorri' (il dito scorre) | 'mai'
 const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
 const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può partire un gesto di dito
 const TOUCH_MEMORIA_MS = 800;  // per quanto una firma touch appena vista copre i gesti seguenti
 const PASSO_ROTELLA = 1.1;   // quanto ingrandisce un singolo scatto di rotella
-const TAPPE_ZOOM = [2, 3, …, 100, 110, 125, 140, …, 4000];  // tappe tonde; vuoto = passo geometrico
+const TAPPE_ZOOM = [2, 3, ..., 100, 110, 125, 140, ..., 4000];  // tappe tonde; vuoto = passo geometrico
 const SALTO_MIN_SU = 0.05;   // ingrandendo, salta le tappe a meno del +5%
 const SALTO_MIN_GIU = 0.02;  // rimpicciolendo, salta le tappe a meno del -2%
 const ROTELLA_SU_INGRANDISCE = true;  // verso predefinito (si inverte al volo col tasto I)
@@ -601,18 +625,19 @@ Nessun tasto scatta mentre si scrive in un campo.
 > script impone comunque la propria dimensione (con `!important`) e gestisce clic/zoom,
 > ma se noti conflitti su un browser specifico segnalamelo e affino.
 
-### La sonda della rotella
+### La sonda dello scorrimento (`ScrollProbe.html`)
 
-**File:** `SondaRotella.html`, in questa stessa cartella. Si apre da
-<https://roccobot.github.io/userscripts/SondaRotella.html> oppure da disco con un doppio
+**File:** `ScrollProbe.html`, in questa stessa cartella. Si apre da
+<https://roccobot.github.io/userscripts/ScrollProbe.html> oppure da disco con un doppio
 clic, e non richiede né Tampermonkey né un server locale.
 
 A che serve: misura **come il dispositivo di puntamento manda gli eventi di scorrimento**
 (ampiezza, verso, componente orizzontale, `wheelDeltaY`, cadenza in millisecondi) e dice,
-gesto per gesto, se il visualizzatore lo interpreta come **scorrimento** o come **zoom**.
+gesto per gesto, quale comando ne ricava il visualizzatore: **zoom continuo** (dito),
+**zoom a scatti** (rotella) o **scorrimento**.
 Si scorre dentro il riquadro con un dispositivo per volta, si premono **Riassunto** e
 **Copia**, e si incolla il testo in chat: è così che si sono tarate le soglie del
-riconoscimento nella 2.19.1.
+riconoscimento nella 2.19.1 e la sensibilità dello zoom col dito nella 2.20.0.
 
 - Un esito **`MISTO`** su un solo gesto è per definizione un difetto: vuol dire che lo
   stesso movimento in parte scorre e in parte zooma.
