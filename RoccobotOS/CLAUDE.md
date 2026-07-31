@@ -227,9 +227,14 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     vuoto di quel logo un test sui rettangoli grida al lupo dove non c'è.
 
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
-  (`RoccobotOS.css?v=6`, `RoccobotOS.js?v=7`) e serve a invalidare la cache dei browser. Si
-  bumpa quando cambia **comportamento o resa**: col badge sono saliti entrambi, mentre due
-  giorni prima la sola correzione di un commento non li aveva toccati.
+  (`RoccobotOS.css?v=8`, `RoccobotOS.js?v=9`) e serve a invalidare la cache dei browser. Si
+  bumpa quando cambia **comportamento o resa**: col numero in pagina sono saliti entrambi,
+  mentre la sola correzione di un commento non li aveva toccati.
+  - ⚠️⚠️ **Ora il `.js` va bumpato a OGNI cambio di versione**, e questa è la trappola nuova
+    portata dal numero visibile: la costante `VERSIONE` vive là, quindi un browser con il `.js`
+    in cache continuerebbe a **scrivere in pagina il numero vecchio** anche a deploy riuscito, e
+    la sonda sul file grezzo direbbe che tutto è a posto. Sbagliato una volta il 2026-07-31,
+    bumpando il solo CSS e accorgendosene prima del merge.
 - ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**: quello resta un override dichiarato del
   SemVer, valido solo là. Qui, dal 2026-07-31, si sta sul SemVer universale.
 - **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
