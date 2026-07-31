@@ -153,7 +153,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
   ritagliato quando il numero era interno.
 
-- **RoccobotOS è alla `2.2.2`**, mostrata in pagina come `v2.2.2`.
+- **RoccobotOS è alla `2.2.3`**, mostrata in pagina come `v2.2.3`.
   - **Perché tre cifre da qui in avanti**: con la versione visibile si applica il SemVer pieno
     della regola universale, *patch* per le correzioni, *minor* per contenuto e funzioni,
     *major* per i cambi strutturali. Le due cifre di prima erano il regime della versione
@@ -200,14 +200,24 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   - **Niente pillola, niente sfondo, niente bordo**, solo il numero: perciò il badge non
     condivide più la lingua visiva dei toggle, che era la scelta del primo giro quando stava
     sovrapposto al contenuto e aveva bisogno di uno sfondo per staccarsi.
-  - ⚠️⚠️ **`opacity:.4` in entrambi i temi, e il contrasto axe-core NON passa: è una deroga
-    VOLUTA.** L'ha chiesta l'utente il 2026-07-31, dopo aver visto il numero al 90%, e in questo
-    caso la sua istruzione esplicita prevale sul gate, che qui vale come segnalazione e non come
-    veto. ⚠️ Perciò **non alzarla** perché un audit la segnala: chi lo facesse annullerebbe una
-    scelta deliberata, e questa nota esiste per impedirlo.
-    - **Il conto, per sapere di quanto si deroga**: `#4a4a4a` al 40% su fondo chiaro dà un
-      grigio effettivo attorno a `#b6b6b6`, cioè circa **1,9:1** contro i 4,5:1 che il criterio
-      chiederebbe per un testo di quel corpo.
+  - ⚠️⚠️ **L'opacità è DIVERSA nei due temi, `.3` sul chiaro e `.25` sullo scuro**, e il
+    contrasto axe-core **non passa** in nessuno dei due: è una deroga **voluta**. La scelta è
+    dell'utente, il 2026-07-31, su mockup a confronto, e la sua istruzione esplicita prevale sul
+    gate, che qui vale come segnalazione e non come veto. ⚠️ Perciò **non alzarle** perché un
+    audit le segnala: chi lo facesse annullerebbe una scelta deliberata, e questa nota esiste per
+    impedirlo.
+    - **Perché due valori e non uno**: il fondo nero abbassa già la resa percepita, quindi lo
+      stesso numero darebbe due discrezioni diverse. È la ragione per cui la prima stesura, con
+      `.4` uguale per entrambi, è stata rifatta.
+    - ⚠️ **Il mockup è servito a questo, e la via è ripetibile**: le varianti si mostrano
+      **iniettando l'opacità a runtime** nella pagina servita in locale, senza committare, e si
+      accompagnano col conto del contrasto. Chiedere all'utente 'preferisci 0.2 o 0.3?' a parole
+      non avrebbe deciso nulla: le due proposte partite da me (0,2 e 0,15) sono state corrette
+      **entrambe** guardando le immagini.
+    - **Il conto, per sapere di quanto si deroga**: `#4a4a4a` al 30% su fondo chiaro dà un grigio
+      effettivo attorno a `#c5c5c5`, cioè circa **1,6:1** contro i 4,5:1 che il criterio
+      chiederebbe per un testo di quel corpo; `#eaeaea` al 25% su `#121212` sta attorno a
+      **2,2:1**.
     - **Perché è difendibile qui e non altrove**: il numero di versione non è contenuto da
       leggere per usare il sito, e chi lo cerca sa dov'è. La stessa opacità su un testo della
       pagina sarebbe un difetto vero.
@@ -227,7 +237,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     vuoto di quel logo un test sui rettangoli grida al lupo dove non c'è.
 
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
-  (`RoccobotOS.css?v=8`, `RoccobotOS.js?v=9`) e serve a invalidare la cache dei browser. Si
+  (`RoccobotOS.css?v=9`, `RoccobotOS.js?v=10`) e serve a invalidare la cache dei browser. Si
   bumpa quando cambia **comportamento o resa**: col numero in pagina sono saliti entrambi,
   mentre la sola correzione di un commento non li aveva toccati.
   - ⚠️⚠️ **Ora il `.js` va bumpato a OGNI cambio di versione**, e questa è la trappola nuova
