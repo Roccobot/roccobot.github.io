@@ -10,19 +10,52 @@
   (<https://roccobot.github.io/RoccobotOS>): scorciatoie da tastiera, formati
   file, caratteri, servizi DNS e simili. Progetto a sé, distinto da 'I Grandi
   di Arda' e dalle 'Regole AdBlock'.
-- **Struttura.** Pagina unica `index.html` (documento lungo generato da
-  markdown) più `RoccobotOS.css` e `RoccobotOS.js`, richiamati con
-  cache-busting (`?v=N`): toccando quei due file va incrementato il numero,
+- **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`,
+  richiamati con cache-busting (`?v=N`): toccando quei due file va incrementato il numero,
   altrimenti i browser servono la copia vecchia. Il JS gestisce tema
   chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
   mobile e caricamento pigro.
+- ⚠️⚠️ **`index.html` NON si rigenera più da markdown: si modifica direttamente** (istruzione
+  dell'utente, 2026-07-31). Era nato come export, e la sua ragione di essere è caduta da sé:
+  *quel documento a pagina unica è diventato talmente complesso per un normale essere umano
+  che non lo gestisco più da markdown da esportare ogni volta; lo faccio modificare di volta
+  in volta a te o ad altri agenti AI.*
+  - **Conseguenza pratica**: si può scrivere dentro `index.html` senza timore che un export
+    successivo cancelli il lavoro. Prima era il contrario, ed è la ragione per cui certe
+    scelte (per esempio dove vive il numero di versione) evitavano quel file.
+  - ⚠️ Il rovescio: **non esiste più una fonte a monte**, quindi `index.html` **è** la fonte,
+    e un errore là non si recupera rigenerando. Vale la regola universale sull'allineamento
+    al remoto prima di toccarlo.
 - ⚠️ **Non c'è una lista dei lavori pendenti, e non va ricreata.** Fino al 2026-07-30
   esisteva un `Da fare.txt`, che l'utente ha **eliminato** perché era un residuo vecchio: delle
   sue due voci una era già fatta da tempo (i nomi delle sezioni nell'ultimo segmento dell'URL,
-  cliccando l'indice laterale) e l'altra è rimandata a data da destinarsi (le iconcine da
-  rendere in SVG, che seguano il colore del testo in base al tema). Un lavoro pendente si porta
-  all'utente, non si archivia in un file che nessuno rilegge: è lo stesso difetto che aveva
-  fatto invecchiare gli snippet di `Roccobot/tools`.
+  cliccando l'indice laterale) e l'altra, le iconcine da rendere in SVG, è stata chiusa il
+  2026-07-31 (vedi qui sotto). Un lavoro pendente si porta all'utente, non si archivia in un
+  file che nessuno rilegge: è lo stesso difetto che aveva fatto invecchiare gli snippet di
+  `Roccobot/tools`.
+
+### 🖼️ Le iconcine del testo: SVG che seguono il colore
+
+**Com'è fatto.** Le icone dentro il testo (occhio della visibilità livello, maschera livello,
+slider diviso, area notifiche, invio messaggio, globo, Mission Control, ricarica del browser)
+sono **SVG inline** in `index.html`, con `fill="currentColor"` e classe `icon-png-svg`, quindi
+prendono il colore del testo in entrambi i temi. Prima erano PNG neri, che nel tema scuro
+diventavano quasi invisibili.
+
+- **Il vincolo che le governa** (istruzione dell'utente, 2026-07-31): la sostituzione deve
+  essere **invisibile nel layout**, cioè non spostare nulla. Perciò ogni SVG porta gli
+  **stessi attributi** di larghezza e altezza dell'`<img>` che ha sostituito, e il `viewBox`
+  ha le proporzioni del PNG originale. Verificato a misura: **0 px** di differenza di
+  posizione su tutte e otto, nei due temi.
+- ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` e `nano.png` sono
+  **schermate**, e come vettori non hanno senso. Restano PNG.
+- ⚠️ **`icona4.png` non è referenziata da nessuna parte** (accertato con un grep su HTML, CSS
+  e JS): è una freccia di ricarica grigia, gemella di quella del browser. Non convertita e non
+  cancellata, in attesa di una decisione dell'utente.
+- 🎨 **Dove il ridisegno ha deciso invece di copiare**, perché a 16 px la fedeltà letterale
+  non paga: l'**occhio** era una mandorla piena su fondo scuro e diventa un contorno con la
+  pupilla piena; la **freccia di Messaggi** perde il blu di iMessage, perché ora prende il
+  colore del testo, che è ciò che l'utente ha chiesto.
 
 ### 🔢 Versione del progetto: interna e non visibile
 
@@ -30,9 +63,14 @@
   è la versione della guida, che fino a quel giorno non era scritta da nessuna parte, ed è il
   motivo per cui questo progetto risultava 'senza versione'.
 - **Dove vive: l'intestazione di `RoccobotOS/RoccobotOS.js`**, cioè il commento nelle sue
-  prime righe, e solo là. ⚠️ **Non in `index.html`**, che è un **export da markdown** e si
-  rigenera: un commento messo là sparirebbe al primo export nuovo, cioè senza che nessuno se
-  ne accorga. Il `.js` invece è codice di casa, scritto a mano.
+  prime righe, e solo là.
+  - ⚠️ **La ragione originaria è decaduta, la scelta no.** Il numero stava nel `.js` perché
+    `index.html` era un export da markdown e un commento messo là sarebbe sparito al primo
+    export. Dal 2026-07-31 quel file si modifica a mano (vedi '🖥️ Progetto /RoccobotOS:
+    guida di riferimento'), quindi il rischio non c'è più: il numero resta nel `.js` perché
+    un solo posto è meglio di due, non perché l'altro sia insicuro. ⚠️ Registrato per non
+    lasciare in giro una motivazione falsa: chi la legge senza questa nota crede che
+    `index.html` si rigeneri ancora.
 - ⚠️ **Non è visibile agli utenti, e non deve diventarlo**: la guida non ha un badge di
   versione e non ne vuole uno. Il numero serve a noi per dire di quale incarnazione della
   guida si parla, e si legge nel sorgente o con un `curl`.
