@@ -53,11 +53,12 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
 - ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` e `nano.png` sono
   **schermate**, e come vettori non hanno senso. Restano PNG.
-- ⚠️ **Le `icona*.png` sono rimaste ORFANE dalla conversione**, tutte e sette (accertato con un
-  grep su HTML, CSS e JS): nessuna è più referenziata, perché sei sono diventate SVG inline e
-  `icona6.png` è stata rimpiazzata dalle due PNG di Telegram qui sotto. `icona4.png` era orfana
-  già prima. Non cancellate, in attesa di una decisione dell'utente: la storia git le
-  conserverebbe comunque.
+- ⚠️ **Le `icona1.png` ... `icona7.png` NON esistono più**, cancellate dal repo il 2026-07-31 su
+  richiesta dell'utente: la conversione le aveva rese orfane tutte e sette (sei diventate SVG
+  inline, `icona6.png` rimpiazzata dalle due PNG di Telegram, e `icona4.png` era orfana già
+  prima). Non cercarle e non ricrearle; se serve vederle, stanno nella storia git. È anche il
+  motivo per cui le icone del testo **non si nominano più per numero**: quei nomi non
+  puntano a niente, e la sezione le chiama per quello che sono.
 - ⚠️⚠️ **Le due frecce di Telegram NON sono SVG: sono PNG prese dalla UI dell'app**
   (`telegram_send_old.png` e `telegram_send_new.png`, decisione dell'utente del 2026-07-31,
   che ha fornito i due file). Sono **due** perché Telegram ha cambiato il tasto invia: nel
