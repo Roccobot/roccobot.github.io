@@ -37,6 +37,12 @@
     agente. Questo file spiega le **decisioni** e la loro storia, il CSS le **implementa**, ma
     i numeri stanno là e non si riscrivono qui: è la stessa regola della fonte unica che vale
     per la versione.
+  - ⚠️ **Il LOGO in testata è SVG inline, e il file `RoccobotOS.svg` non esiste più** (2026-08-01).
+    Era un `<img>`, e un'immagine esterna il foglio di stile non la può ricolorare: in tema scuro
+    la sola parte grigia della scritta deve andare a `#DEDEDE`, il marchio verde no. Le due parti
+    portano `.logo-word` e `.logo-mark`, i colori stanno in `RoccobotOS.css`. Gli `id` che
+    l'export si portava dietro (`Header`, `R`, `O`, `B`...) sono stati tolti nel passaggio:
+    inline avrebbero potuto collidere con quelli della pagina.
   - **Le sotto-pagine seguono il tema del SISTEMA** (`prefers-color-scheme`) e si commutano
     col tasto `T`, senza memorizzare nulla: il tema scelto nella pagina principale non arriva
     fin là, perché nemmeno lei lo salva (scelta dell'utente, 2026-08-01, che ha chiesto il

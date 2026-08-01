@@ -187,3 +187,66 @@ html[data-theme=dark] .markdown-body h3{color:#e08a5a}
    fra i titoli, cosi' il verde resta SOLO ai link e la regola non ha eccezioni. */
 .markdown-body h4,.markdown-body h5,.markdown-body h6{color:#5c4a3d}
 html[data-theme=dark] .markdown-body h4,html[data-theme=dark] .markdown-body h5,html[data-theme=dark] .markdown-body h6{color:#d6c3b0}
+
+/* ── Logo in testata ──
+   Il logo e' SVG INLINE in index.html (prima era <img src="RoccobotOS.svg">, che il foglio di
+   stile non puo' ricolorare). Le due parti si vestono separatamente: la scritta segue il tema,
+   il marchio resta verde in entrambi. Le misure riproducono quelle che l'<img> aveva davvero,
+   misurate nel browser reale prima del cambio: 760 x 77,6 px in una colonna da 760. */
+.site-logo{display:block;width:781.9px;max-width:100%;height:auto}
+.site-logo .logo-word path{fill:#666}
+html[data-theme=dark] .site-logo .logo-word path{fill:#dedede}
+.site-logo .logo-mark path{fill:#43b59e}
+
+/* ── Riquadro del LaunchAgent (plist) ──
+   Era uno stile in linea, quindi il tema scuro non poteva raggiungerlo e il bordo restava
+   chiaro anche al buio. Le misure sono quelle di prima, spostate e basta. */
+.plist-box{font-family:monospace;padding:12px;border-radius:6px;border:1px solid #ddd;white-space:pre;overflow:auto}
+html[data-theme=dark] .plist-box{border-color:#3a3a3a}
+
+/* ── prefers-reduced-motion ──
+   Chi ha chiesto meno animazioni al sistema le perde tutte: lo scheletro di caricamento, la
+   comparsa delle immagini, le transizioni dei comandi fissi e lo scorrimento animato. Non si
+   azzerano le durate a 0s ma a .01ms, perche' una transizione di durata zero in certi browser
+   non emette l'evento 'transitionend' e chi lo aspetta resta appeso.
+   Lo scorrimento animato dei tasti su e giu' lo spegne anche il JS, che non passa dal CSS. */
+@media (prefers-reduced-motion:reduce){
+  *,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ── Celle con una riga vuota in coda ──
+   Sette celle tenevano l'altezza con un <br> seguito da uno spazio a larghezza zero (U+200B):
+   invisibile nel sorgente, si perde in un copia-incolla e un lettore di schermo lo puo'
+   annunciare. La riga in piu' vale esattamente una interlinea (21,6 px su un corpo di 14,4),
+   cioe' 1,5em, che si somma ai 6 px di riempimento gia' previsti dal tema: la resa e'
+   identica, misurata nel browser reale prima e dopo il cambio. */
+.markdown-body td.cell-extra-line{padding-bottom:calc(.375rem + 1.5em)}
+
+/* ── Comandi shell rientrati ──
+   Due righe della tabella adb erano rientrate con tre spazi unificatori piu' uno normale:
+   spaziatura fatta col contenuto, che si perde in un copia-incolla del comando. Il rientro
+   misurato era 16 px, che sommati ai 12 px di riempimento della cella fanno 1,75rem. */
+.markdown-body td.cmd-indent{padding-left:1.75rem}
+
+/* ── Link di salto al contenuto ──
+   Sta fuori schermo finche' non riceve il fuoco, e allora compare in alto a sinistra. Non si
+   nasconde con display:none ne' con visibility:hidden, che lo toglierebbero anche dal giro
+   del Tab, cioe' esattamente il contrario di quello che deve fare. */
+.skip-link{position:absolute;left:-9999px;top:0;z-index:1000;padding:.5rem 1rem;background:#fff;color:#1c7a68;border:2px solid #1c7a68;border-radius:0 0 6px 0;font-weight:600;text-decoration:none}
+.skip-link:focus{left:0}
+html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#43b59e}
+#markdown_content:focus{outline:none}
+
+/* ── Griglia 'Indice': bersagli da toccare ──
+   I quindici link erano riquadri inline alti 11 px, meno della meta' dei 24 px che le linee
+   guida chiedono a un bersaglio. Diventano blocchi che riempiono la cella: cresce solo
+   l'altezza della griglia, il testo e i colori restano quelli. */
+.markdown-body table.index-grid td{padding:0}
+.markdown-body table.index-grid td a{display:block;padding:.5rem .25rem}
+
+/* ── Link dentro i titoli ──
+   Un titolo che e' anche un link (le schede delle app rimandano all'App Store) era
+   indistinguibile da un titolo qualunque: stesso colore, stesso peso, nessun segno. Si
+   sottolinea invece di ricolorare, cosi' la scala 'ambra e ruggine' della Styleguide resta
+   intatta. Escluse le ancore invisibili dell'export, che non sono link per il lettore. */
+.markdown-body h1 a[href]:not(.anchor),.markdown-body h2 a[href]:not(.anchor),.markdown-body h3 a[href]:not(.anchor),.markdown-body h4 a[href]:not(.anchor),.markdown-body h5 a[href]:not(.anchor),.markdown-body h6 a[href]:not(.anchor){text-decoration:underline;text-decoration-thickness:from-font;text-underline-offset:.12em}
