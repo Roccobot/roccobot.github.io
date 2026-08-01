@@ -99,6 +99,10 @@ sessione:
    tre casi: *qualsiasi cosa succeda o stia per succedere non si deve perdere nulla di
    significativo*. La regola completa vive in `Roccobot.md`, § '⚙️ Automazione e interazioni'
    → '🚨 Non perdere niente', e la procedura nella skill `handoff`, modo scrittura.
+   - ⚠️ **Due preavvisi prima di compattare, al 60% e al 65%**, il secondo più insistente:
+     servono a te per **sospendere la regola** prima che scatti, come è già successo. Il
+     preavviso dichiara che la percentuale è una **stima** e chiede conferma, perché dal di
+     dentro non si legge con precisione.
    - **Il riassunto di una compattazione può accorciare, non può perdere voci aperte**: se
      una cosa da fare esiste solo nel riassunto, è già a rischio. Un hook `PreCompact` in
      `.claude/settings.json` lo ricorda a ogni compattazione e dice se il brief è di oggi,
