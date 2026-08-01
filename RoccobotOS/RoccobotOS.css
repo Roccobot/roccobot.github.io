@@ -252,17 +252,20 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    quindi non serve piu' escluderle dal selettore. */
 .markdown-body h1 a[href],.markdown-body h2 a[href],.markdown-body h3 a[href],.markdown-body h4 a[href],.markdown-body h5 a[href],.markdown-body h6 a[href]{text-decoration:underline;text-decoration-thickness:from-font;text-underline-offset:.12em}
 
-/* ── Disposizione dei comandi fissi su smartphone (2026-08-01) ──
-   A SINISTRA tema e indice, a DESTRA i due salti: prima l'indice stava a destra insieme ai
-   salti e a sinistra c'era lo switch delle tabelle, che l'utente non ha mai usato ed e' ora
-   dietro un feature flag in RoccobotOS.js. La riga qui sotto lo spegne anche quando il flag
-   fosse riacceso per errore in una pagina vecchia in cache.
+/* ── Comandi fissi spenti da un feature flag ──
+   ⚠️⚠️ L'attributo `hidden` da solo NON BASTA, ed e' un difetto che e' arrivato fino in
+   produzione (2026-08-01): `hidden` nasconde con una regola del foglio di stile del BROWSER,
+   e qui ogni comando dichiara il suo `display` (inline-flex o grid) in una regola d'autore,
+   che vince sempre. Il pulsante del tema restava percio' visibile con il suo flag gia' spento,
+   e il tasto dell'indice ci finiva sopra.
+   ⚠️ E la prova che non l'ha visto sbagliava proprio qui: leggeva la PROPRIETA' `hidden`
+   dell'elemento, che era `true` come atteso. Un comando spento si verifica sul `display`
+   CALCOLATO, mai sull'attributo.
+   Vale fuori da ogni media query, perche' il flag spegne il comando su tutti i formati.
    ⚠️ Il verso in cui un comando scivola via quando sparisce lo decide --hide-shift, che deve
    essere NEGATIVO per quelli di sinistra: col valore predefinito uscirebbero dal lato
    sbagliato, attraversando lo schermo. */
-@media screen and (max-width:600px) {
-  .tables-toggle[hidden]{display:none!important}
-}
+.theme-toggle[hidden],.tables-toggle[hidden],.toc-toggle[hidden],.scroll-toggle[hidden]{display:none!important}
 
 /* ── Cornice del titolo dopo un salto dall'indice ──
    Non e' un difetto del nostro CSS: tocbot, finito lo scorrimento, mette tabindex="-1" sul
