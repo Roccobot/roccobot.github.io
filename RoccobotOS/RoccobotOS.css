@@ -136,3 +136,32 @@ html[data-tables=cards] .markdown-body table td[data-label]::before{content:attr
 /* Il 'Link' di esempio nella tabella del markdown: era un <a href=""> che ricaricava la
    pagina e faceva perdere il segno. Ora e' uno span che ne imita solo l'aspetto. */
 .link-sample{color:#43b59e}
+
+/* ── Palette: correzioni di contrasto approvate dall'utente il 2026-08-01 ──
+   Le tre voci qui sotto vengono dal confronto a mockup (casi 1, 2 e 3 della proposta di
+   palette). Il criterio non e' 'far passare axe': e' che tre colori scelti guardando UN tema
+   solo non si leggono nell'altro. Percio' ogni riga cambia il colore di UN tema e lascia
+   intatto quello dove funzionava gia'.
+   ⚠️ Non toccano le due deroghe volute (numero di versione sopra il logo e pillola
+   dell'indice), che restano sotto soglia per scelta e sono documentate in CLAUDE.md. */
+
+/* 1. Link: sul bianco il verde acqua dava 2,51:1, cioe' poco piu' della meta' della soglia,
+      perche' era stato scelto sul fondo nero (dove da' 7,44:1 e resta com'e'). Il verde
+      nuovo e' lo stesso colore piu' profondo: stessa tonalita', luminosita' dimezzata. */
+.markdown-body a{color:#1c7a68}
+html[data-theme=dark] .markdown-body a{color:#43b59e}
+.link-sample{color:#1c7a68}
+html[data-theme=dark] .link-sample{color:#43b59e}
+
+/* 2. Voce attiva dell'indice: la pesca su fondo chiarissimo dava 1,64:1, il valore piu' basso
+      di tutta la pagina, e rendeva la voce attiva PIU' pallida di quelle inattive. Nel tema
+      scuro la stessa pesca da' 8,78:1 e non si tocca. Terracotta scelta dall'utente fra tre
+      proposte (variante A). L'!important e' obbligato: la regola che batte porta il suo. */
+.toc-list a.toc-link.is-active-link{color:#a8461f!important}
+html[data-theme=dark] .toc-list a.toc-link.is-active-link{color:#f7b59e!important}
+
+/* 3. Grassetti e corsivi nel tema scuro: 522 occorrenze a 3,33:1 dentro le tabelle, cioe'
+      proprio le parole messe in risalto erano le meno leggibili. Il rosa nuovo sta fra il
+      mattone di prima e il #f2c3d0 che il codice inline usa gia' nello stesso tema, quindi
+      il tema scuro guadagna una scala coerente invece di due rosa scollegati. */
+html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body strong{color:#e8909f}

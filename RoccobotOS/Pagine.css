@@ -30,7 +30,7 @@
   --pg-riga: #f8f8f8;
   --pg-intestazione: #f8f8f8;
   --pg-codice: #f8f8f8;
-  --pg-link: #4183c4;
+  --pg-link: #1c7a68;
   --pg-link-rotto: #c00;
 }
 
@@ -74,7 +74,7 @@ html[data-theme="light"] {
   --pg-riga: #f8f8f8;
   --pg-intestazione: #f8f8f8;
   --pg-codice: #f8f8f8;
-  --pg-link: #4183c4;
+  --pg-link: #1c7a68;
   --pg-link-rotto: #c00;
 }
 
