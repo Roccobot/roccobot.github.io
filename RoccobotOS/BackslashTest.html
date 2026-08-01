@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prova: chi si mangia un backslash</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      max-width: 44rem; margin: 0 auto; padding: 1.5rem; line-height: 1.5;
+      background: #feffff; color: #333;
+    }
+    @media (prefers-color-scheme: dark) { body { background: #121212; color: #eaeaea } }
+    h1 { font-size: 1.4rem }
+    .prova { font-size: 2rem; margin: .5rem 0; letter-spacing: .05em }
+    .esito { font-size: 1.1rem; font-weight: 700; padding: .5rem .75rem; border-radius: 8px; display: inline-block }
+    .due { background: #d8f0e8; color: #14503f }
+    .una { background: #f7d9d2; color: #7c2d12 }
+    @media (prefers-color-scheme: dark) {
+      .due { background: #14342b; color: #7fe0c4 } .una { background: #3a1e17; color: #ffab91 }
+    }
+    nav a {
+      display: inline-block; margin: .2rem .3rem .2rem 0; padding: .35rem .7rem;
+      border: 1px solid #43b59e; border-radius: 999px; text-decoration: none; color: #1c7a68;
+    }
+    @media (prefers-color-scheme: dark) { nav a { color: #43b59e } }
+    nav a.qui { background: #43b59e; color: #fff }
+    code { font-family: SFMono-Regular, Menlo, monospace; font-size: .85rem }
+    table { border-collapse: collapse; margin: 1rem 0 }
+    td { border: 1px solid #b9baba; padding: .4rem .8rem }
+  </style>
+</head>
+
+<body>
+  <h1>Chi si mangia un backslash</h1>
+  <p>Questa pagina serve a una cosa sola: capire quale script di RoccobotOS trasforma
+    <code>\\alt</code> in <code>\alt</code>. Apri i quattro casi qui sotto e guarda l'esito: dove diventa
+    <strong>una</strong> barra, il colpevole e' fra gli script caricati in quel caso.</p>
+
+  <nav>
+    <a href="?" id="n0">1. nessuno script</a>
+    <a href="?prism=1" id="n1">2. solo Prism</a>
+    <a href="?mathjax=1" id="n2">3. solo MathJax</a>
+    <a href="?prism=1&amp;mathjax=1&amp;fallback=1" id="n3">4. tutti, come la pagina vera</a>
+  </nav>
+
+  <table>
+    <tr>
+      <td style="text-align:right">\\alt</td>
+      <td style="text-align:left">⌥</td>
+    </tr>
+  </table>
+  <p class="prova" id="campione">\\alt</p>
+
+  <p id="esito"></p>
+  <p id="dettaglio" style="font-size:.9rem"></p>
+
+  <script>
+    // La lettura si fa DOPO il caricamento degli altri script, cosi' misura il DOM finale.
+    // Il conteggio guarda il testo vero (textContent), non il disegno del carattere: e' la
+    // distinzione che separa 'lo script ha riscritto il testo' da 'il font lo rende male'.
+    (function () {
+      var q = new URLSearchParams(location.search);
+      ['n0', 'n1', 'n2', 'n3'].forEach(function (id, i) {
+        var attivi = (q.get('prism') ? 1 : 0) + (q.get('mathjax') ? 2 : 0);
+        var atteso = [0, 1, 2, 3][i];
+        if (attivi === atteso) document.getElementById(id).className = 'qui';
+      });
+
+      function carica(src, poi) {
+        var s = document.createElement('script');
+        s.src = src; s.onload = poi; s.onerror = poi;
+        document.head.appendChild(s);
+      }
+      function misura() {
+        var t = document.getElementById('campione').textContent;
+        var n = (t.match(/\\/g) || []).length;
+        var e = document.getElementById('esito');
+        e.innerHTML = '';
+        var span = document.createElement('span');
+        span.className = 'esito ' + (n === 2 ? 'due' : 'una');
+        span.textContent = n === 2 ? 'DUE barre: qui il testo e\' intatto' : n + ' barra: qualcosa lo ha riscritto';
+        e.appendChild(span);
+        var d = document.getElementById('dettaglio');
+        d.textContent = 'testo letto dal DOM: ' + JSON.stringify(t) +
+          ' | codepoint: ' + [].map.call(t, function (c) { return c.codePointAt(0).toString(16) }).join(' ') +
+          ' | script attivi: ' + (q.get('prism') ? 'Prism ' : '') + (q.get('mathjax') ? 'MathJax ' : '') +
+          (q.get('fallback') ? 'fallback-CDN ' : '') + (location.search ? '' : 'nessuno');
+      }
+
+      var attese = 0;
+      function fatto() { if (--attese <= 0) setTimeout(misura, 2500) }
+
+      if (q.get('mathjax')) {
+        window.MathJax = { tex: { tags: 'ams', displayMath: [['\\[', '\\]']] } };
+        attese++;
+        carica('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js', fatto);
+      }
+      if (q.get('prism')) {
+        attese += 2;
+        carica('https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js', function () {
+          fatto();
+          carica('https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js', fatto);
+        });
+      }
+      if (!attese) setTimeout(misura, 800);
+    })();
+  </script>
+</body>
+
+</html>
