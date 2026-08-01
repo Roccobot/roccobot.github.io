@@ -24,8 +24,24 @@
   riferimento personale dell'utente, non un prodotto per un pubblico anglofono), e **non
   c'è il footer standard** con la nota 'vibes ✦': il numero di versione, che quel footer
   ospiterebbe, sta in cima per scelta dell'utente (vedi la sezione della versione).
-- **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`. Il JS
-  gestisce tema chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
+- **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`, quattro
+  **sotto-pagine** (`Characters.html`, `Formats.html`, `AdServers.html`, `BlendModes.html`) col
+  loro `Pages.css` e `Pages.js`, e la **styleguide** in `Styleguide.md`.
+  - ⚠️ **I nomi dei file sono in inglese dal 2026-08-01**, per la regola universale
+    (`Roccobot.md`, § 'Lingua di un progetto software'): le sotto-pagine si chiamavano
+    `Caratteri`, `Formati` e `Metodi di fusione`, e i vecchi indirizzi non rispondono più. I
+    **testi visibili restano in italiano**: sono due scelte indipendenti, e lo dice la regola.
+  - ⚠️⚠️ **La STYLEGUIDE è la fonte unica dei valori visivi** (colori, tipografia, superfici,
+    componenti): [`Styleguide.md`](Styleguide.md), pubblicata anche su
+    <https://roccobot.github.io/RoccobotOS/Styleguide.md> perché la si possa dare a un altro
+    agente. Questo file spiega le **decisioni** e la loro storia, il CSS le **implementa**, ma
+    i numeri stanno là e non si riscrivono qui: è la stessa regola della fonte unica che vale
+    per la versione.
+  - **Le sotto-pagine seguono il tema del SISTEMA** (`prefers-color-scheme`) e si commutano
+    col tasto `T`, senza memorizzare nulla: il tema scelto nella pagina principale non arriva
+    fin là, perché nemmeno lei lo salva (scelta dell'utente, 2026-08-01, che ha chiesto il
+    tasto e ha escluso il `localStorage`).
+  - Il JS gestisce tema chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
   mobile e caricamento pigro.
   - ⚠️⚠️ **Il cache-busting (`?v=N`) NON esiste più, e non va reintrodotto** (decisione
     dell'utente, 2026-08-01, su raccomandazione motivata da una misura). GitHub Pages
@@ -161,8 +177,12 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     per tutte sbaglierebbe proprio lui.
   - **La taratura in vigore** (valori dell'utente, in suoi pixel a DPR 2, tutti verso l'alto):
     globo 3, maschera livello 2, slider diviso 2, freccia Telegram legacy 2, occhio 1, freccia
-    Telegram nuova 1; **Mission Control e ricarica del browser restano dove sono**, approvati
-    così.
+    Telegram nuova 1, ricarica del browser 1 (aggiunta il 2026-08-01, quando l'utente ha
+    approvato la forma nuova e ha chiesto un pixel in su); **Mission Control resta dove sta**,
+    approvato così. Il logo Apple porta la sola regola generale, senza ottica.
+    - ⚠️ **Il posto dove questa taratura si legge davvero è il CSS**, non questo elenco: fra il
+      2026-08-01 e la 2.51 i due erano già divergenti sulla ricarica, e l'ha trovato un audit.
+      Se un domani divergono ancora, vince il CSS e questa riga si aggiorna.
   - **E vale per gli `<img>` come per gli `<svg>`**: le due frecce raster di Telegram usano lo
     stesso meccanismo delle SVG.
   - **Il difetto da cui tutto è partito, misurato**: i PNG originali stavano sulla **baseline**,
@@ -200,7 +220,11 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
   ritagliato quando il numero era interno.
 
-- **RoccobotOS è alla `2.31`**, mostrata in pagina come `v2.31`.
+- ⚠️ **Il numero corrente NON si scrive qui** (decisione dell'utente, 2026-08-01): si legge
+  dalla costante `VERSIONE` di `RoccobotOS/RoccobotOS.js`, che è la fonte unica, o dal sito
+  con la sonda in fondo a questa sezione. Un numero scritto anche qui sarebbe una riscrittura
+  in più a ogni bump, e nel frattempo mentirebbe: ha detto `2.31` per nove versioni, fino
+  alla `2.51`.
   - ⚠️⚠️ **Dal 2026-08-01 lo schema è SlimVer** (`x.xx`, il default dei progetti:
     `Roccobot.md`, § '🌿 Workflow git e versioni'), per scelta dell'utente contestuale alla
     promozione dello schema a default. **`2.30` succede a `2.2.3`** per la convenzione di
