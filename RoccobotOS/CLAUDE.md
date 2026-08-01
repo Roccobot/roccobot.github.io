@@ -25,10 +25,17 @@
   c'è il footer standard** con la nota 'vibes ✦': il numero di versione, che quel footer
   ospiterebbe, sta in cima per scelta dell'utente (vedi la sezione della versione).
 - **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`,
-  richiamati con cache-busting (`?v=N`): toccando quei due file va incrementato il numero,
-  altrimenti i browser servono la copia vecchia. Il JS gestisce tema
-  chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
-  mobile e caricamento pigro.
+  richiamati con **cache-busting** (`?v=N`, un numero per file). Il JS gestisce tema
+  chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su mobile e
+  caricamento pigro.
+  - **Quando si bumpa il `?v=N`**: quando la modifica al file **cambia comportamento o
+    resa**, altrimenti i browser servono la copia vecchia. Un ritocco che non cambia nulla
+    (un commento) **non** bumpa: farebbe solo riscaricare a tutti un file identico.
+  - ⚠️ **Il `?v=N` non è la versione del sito**, ma i due numeri si toccano in un punto: la
+    costante `VERSIONE` vive nel `.js`, quindi **ogni cambio di versione bumpa anche il
+    `?v=` del `.js`**, o un browser con quel file in cache scriverebbe in pagina il numero
+    vecchio a deploy riuscito, con la sonda sul file grezzo tutta verde (sbagliato una
+    volta il 2026-07-31, bumpando il solo CSS e accorgendosene prima del merge).
 - ⚠️⚠️ **`index.html` NON si rigenera più da markdown: si modifica direttamente** (istruzione
   dell'utente, 2026-07-31). Era nato come export, e la sua ragione di essere è caduta da sé:
   *quel documento a pagina unica è diventato talmente complesso per un normale essere umano
@@ -140,8 +147,9 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     dimensioni restano identiche, la **posizione verticale cambia di proposito**. I due vincoli
     sembrano in contrasto e non lo sono: 'non spostare il resto della riga' vale ancora, 'tenere
     l'allineamento sbagliato dei PNG' no.
-  - ⚠️ **Toccando il CSS va bumpato il `?v=N`** (qui `v=4` -> `v=5`): cambia la resa, quindi
-    senza bump i browser servono la copia vecchia e l'allineamento resta quello di prima.
+  - ⚠️ La modifica cambiava la resa, quindi ha richiesto il bump del `?v=N` del CSS
+    (regola in 'Struttura'): senza, i browser servivano la copia vecchia e l'allineamento
+    restava quello di prima.
 - ⚠️ **Il globo è stato rimpicciolito senza toccare l'ingombro**, allargando il `viewBox` in
   modo proporzionale invece di ridurre `width`: così il disegno è più piccolo del 12% e il
   testo attorno non si sposta di un pixel. È la tecnica da riusare quando l'utente chiede
@@ -242,15 +250,6 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     sovrapposizione dei **box** non è quella dell'**inchiostro**, e sul box larghissimo e quasi
     vuoto di quel logo un test sui rettangoli grida al lupo dove non c'è.
 
-- ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
-  (`RoccobotOS.css?v=9`, `RoccobotOS.js?v=11`) e serve a invalidare la cache dei browser. Si
-  bumpa quando cambia **comportamento o resa**: col numero in pagina sono saliti entrambi,
-  mentre la sola correzione di un commento non li aveva toccati.
-  - ⚠️⚠️ **Ora il `.js` va bumpato a OGNI cambio di versione**, e questa è la trappola nuova
-    portata dal numero visibile: la costante `VERSIONE` vive là, quindi un browser con il `.js`
-    in cache continuerebbe a **scrivere in pagina il numero vecchio** anche a deploy riuscito, e
-    la sonda sul file grezzo direbbe che tutto è a posto. Sbagliato una volta il 2026-07-31,
-    bumpando il solo CSS e accorgendosene prima del merge.
 - **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
   di Arda'), che è cambiata insieme al resto:
   `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | grep -o 'VERSIONE = "[^"]*"'`.
