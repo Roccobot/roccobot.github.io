@@ -2508,7 +2508,7 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-viewer-box li { margin:.55em 0; position:relative; padding-left:1.1em; }
 .note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:var(--note-acc); }
 .note-viewer-box .note-sub { margin:.25em 0 .25em .4em; position:relative; padding-left:1em; }
-.note-viewer-box .note-sub::before { content:'–'; position:absolute; left:0; color:var(--gold-bright); }
+.note-viewer-box .note-sub::before { content:'-'; position:absolute; left:0; color:var(--gold-bright); }
 /* Liste numerate (le tre unioni della tradizione): numeri, niente pallino. */
 .note-viewer-box ol { margin:.3em 0 .3em .6em; padding-left:1.4em; list-style:decimal; }
 .note-viewer-box ol > li { margin:.3em 0; padding-left:.2em; }
@@ -2643,7 +2643,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.80</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>14.81</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7174,8 +7174,8 @@ function showJumpFabsTemporarily() {
   var wrap = document.createElement('div');
   wrap.className = 'jump-fabs';
   jumpFabsWrap = wrap;
-  /* Glifi centrati nel viewBox 24×24: span verticale 8–16, centro 12
-     (le versioni precedenti erano sbilanciate: 5–13 e 11–19) */
+  /* Glifi centrati nel viewBox 24x24: span verticale 8-16, centro 12
+     (le versioni precedenti erano sbilanciate: 5-13 e 11-19) */
   var TOP = '<svg viewBox="0 0 24 24"><line x1="6" y1="8" x2="18" y2="8"/><polyline points="7 16 12 11 17 16"/></svg>';
   var BOT = '<svg viewBox="0 0 24 24"><line x1="6" y1="16" x2="18" y2="16"/><polyline points="7 8 12 13 17 8"/></svg>';
   var PGUP = '<svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg>';

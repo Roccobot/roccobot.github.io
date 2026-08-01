@@ -8,7 +8,7 @@
 // innerHTML (regola non derogabile). L'elemento in index.html nasce VUOTO: se questo script non
 // gira il CSS lo nasconde con :empty, invece di mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "2.2.3";
+  const VERSIONE = "2.30";
   const el = document.getElementById("siteVersion");
   if (el) el.textContent = "v" + VERSIONE;
 }();
