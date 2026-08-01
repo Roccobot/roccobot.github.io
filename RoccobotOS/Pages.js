@@ -34,3 +34,27 @@
     radice.setAttribute("data-theme", scuroAdesso() ? "light" : "dark");
   });
 })();
+
+/* ── FAB 'indietro' ──
+   Le sotto-pagine non avevano NESSUN modo di tornare a index.html: ci si arrivava da un link
+   e da li' restava solo il tasto indietro del browser, che non c'e' su tutte le tastiere e non
+   si vede. Il pulsante si crea da JS invece di scriverlo in quattro pagine: la fonte resta una
+   sola, come per il foglio di stile. Si compone con createElement e textContent, mai con
+   innerHTML (regola non derogabile). Se lo script non gira non compare, e la pagina resta
+   esattamente com'era: nessuna dipendenza nuova per il contenuto. */
+(function () {
+  if (document.querySelector(".pg-back")) return;
+  var a = document.createElement("a");
+  a.className = "pg-back";
+  a.href = "index.html";
+  a.setAttribute("aria-label", "Torna alla pagina principale di RoccobotOS");
+  a.title = "Torna alla pagina principale";
+  var g = document.createElement("span");
+  g.className = "pg-back-glyph";
+  g.setAttribute("aria-hidden", "true");
+  g.textContent = "←";
+  a.appendChild(g);
+  function metti() { document.body.insertBefore(a, document.body.firstChild); }
+  if (document.body) metti();
+  else document.addEventListener("DOMContentLoaded", metti);
+})();

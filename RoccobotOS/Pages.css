@@ -140,3 +140,41 @@ html[data-theme="dark"] img[src$=".jpg"] { opacity: .92 }
 }
 html[data-theme="light"] img[src$=".png"],
 html[data-theme="light"] img[src$=".jpg"] { opacity: 1 }
+
+/* ── FAB 'indietro' ──
+   Lo crea Pages.js e riporta a index.html, che dalle sotto-pagine era irraggiungibile.
+   Sta in alto a sinistra come ha chiesto l'utente; il corpo guadagna in cima lo spazio che
+   il pulsante occupa, altrimenti su schermo stretto coprirebbe il titolo. Bersaglio da
+   44 px, cioe' sopra il minimo delle linee guida, e colori dalle variabili del tema, cosi'
+   segue la media query e il tasto T senza regole doppie. */
+.pg-back {
+  position: fixed;
+  top: .75rem;
+  left: .75rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--pg-bordo);
+  background: var(--pg-fondo);
+  color: var(--pg-link);
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .18);
+}
+
+.pg-back:hover,
+.pg-back:focus {
+  border-color: var(--pg-link);
+}
+
+.pg-back-glyph {
+  font-size: 20px;
+  line-height: 1;
+}
+
+body {
+  padding-top: 4rem;
+}

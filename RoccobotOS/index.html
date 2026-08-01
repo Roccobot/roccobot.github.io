@@ -24,7 +24,6 @@
   <title>RoccobotOS</title>
   <script>(a => { let r, s, e, l = ["cdn.jsdelivr.net", "fastly.jsdelivr.net", "gcore.jsdelivr.net", "cdn.zenless.top", "testingcf.jsdelivr.net"], t = "//", i = l[0], n = Date.now(), o = "jsdelivr-auto-fallback", c = "/gh/PipecraftNet/jsdelivr-auto-fallback@main/empty.css?", f = e => e && e.includes(t + i), d = e => e.replace(t + i, t + r), m = window.setTimeout, u = a.querySelectorAll.bind(a), v = () => { let e, t; for (e of u('link[rel="stylesheet"]')) t = e.href, f(t) && !t.includes(c) && (e.href = d(t)); for (e of u("script")) { var r; t = e.src, f(t) && ((r = a.createElement("script")).src = d(t), e.defer = !0, e.src = "", e.before(r), e.remove()) } for (e of u("img")) t = e.src, f(t) && (e.src = "", e.src = d(t)); for (e of u("*[style]")) t = e.getAttribute("style"), f(t) && e.setAttribute("style", d(t)); for (e of u("style")) t = e.innerHTML, f(t) && (e.innerHTML = d(t)) }, b = () => { !e && s && r && (console.warn(i + " is not available. Use " + r), e = !0, m(v, 0), m(v, 20), setInterval(v, 500)) }, h = (() => { try { return Object.assign({}, JSON.parse(localStorage.getItem(o) || "{}")) } catch { return {} } })(), g = () => { h.time = n, h.failed = !1, h.fastNode = null; for (let t of l) ((e, t) => { let r, s = a.createElement("link"), l = e => { r && (clearTimeout(r), r = 0, e || (s.href = "data:text/css;base64,"), s.remove(), t(e)) }; r = m(l, 2e3), s.addEventListener("error", () => l(!1)), s.addEventListener("load", () => l(!0)), s.rel = "stylesheet", s.text = "text/css", s.href = e + c + n, a.head.insertAdjacentElement("afterbegin", s) })("https://" + t, e => { e || t !== i || (s = !0, h.failed = !0), e && !r && (r = t), e && !h.fastNode && (h.fastNode = t), b() }); m(() => { s && !r && (r = l[1], b()), localStorage.setItem(o, JSON.stringify(h)) }, 2100) }; if (h.time && n - h.time < 36e5 && h.failed && h.fastNode) s = !0, r = h.fastNode, b(), m(g, 1e3); else if (a.head) g(); else { let e = new MutationObserver(() => { a.head && (e.disconnect(), g()) }); e.observe(a, { childList: !0, subtree: !0 }) } })(document)</script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
   <script>(() => { var o, l, i, e, t; "undefined" != typeof Prism && "undefined" != typeof document && (o = [], l = {}, i = function () { }, Prism.plugins.toolbar = {}, e = Prism.plugins.toolbar.registerButton = function (e, n) { var t = "function" == typeof n ? n : function (e) { var t; return "function" == typeof n.onClick ? ((t = document.createElement("button")).type = "button", t.addEventListener("click", function () { n.onClick.call(this, e) })) : "string" == typeof n.url ? (t = document.createElement("a")).href = n.url : t = document.createElement("span"), n.className && t.classList.add(n.className), t.textContent = n.text, t }; e in l ? console.warn('There is a button with the key "' + e + '" registered already.') : o.push(l[e] = t) }, t = Prism.plugins.toolbar.hook = function (n) { var e, a, t = n.element.parentNode, r = n.element.classList; r.contains("language-mermaid") || r.contains("language-echarts") || r.contains("language-plantuml") || t && /pre/i.test(t.nodeName) && !t.parentNode.classList.contains("code-toolbar") && ((e = document.createElement("div")).classList.add("code-toolbar"), t.parentNode.insertBefore(e, t), e.appendChild(t), (a = document.createElement("div")).classList.add("toolbar"), r = o, (r = (t = (e => { for (; e;) { var t = e.getAttribute("data-toolbar-order"); if (null != t) return (t = t.trim()).length ? t.split(/\s*,\s*/g) : []; e = e.parentElement } })(n.element)) ? t.map(function (e) { return l[e] || i }) : r).forEach(function (e) { var t, e = e(n); e && ((t = document.createElement("div")).classList.add("toolbar-item"), t.appendChild(e), a.appendChild(t)) }), e.appendChild(a)) }, e("label", function (e) { var t = e.element.parentNode; if (t && /pre/i.test(t.nodeName) && t.hasAttribute("data-label")) { var n, a, r = t.getAttribute("data-label"); try { a = document.querySelector("template#" + r) } catch (e) { } return a ? n = a.content : (t.hasAttribute("data-url") ? (n = document.createElement("a")).href = t.getAttribute("data-url") : n = document.createElement("span"), n.textContent = r), n } }), Prism.hooks.add("complete", t)) })()</script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.css">
   <script
@@ -73,7 +72,7 @@
             <path d="M779.7 27.2c-.5.3-8.6 5-8.6 15.2 0 11.8 10.4 16 10.7 16.1-.1.2-1.7 5.7-5.5 11.3-3.4 4.9-7 9.8-12.4 9.8s-6.8-3.2-13.1-3.2-8.3 3.3-13.3 3.3-8.4-4.5-12.4-10.2c-4.6-6.5-8.3-16.8-8.3-26.4 0-15.5 10.1-23.8 20-23.8 5.3 0 9.6 3.4 13 3.4 3.3 0 8.1-3.7 14.1-3.7 2.3.3 10.4.5 15.8 8.2zM761 12.7c2.5-2.9 4.2-7 4.2-11.1 0-.6-.1-1.1-.2-1.6-4 .2-8.8 2.7-11.7 6-2.3 2.6-4.4 6.7-4.4 10.8 0 .6.1 1.3.2 1.4.2.1.7.1 1.1.1 3.6.1 8.2-2.3 10.8-5.6z"/>
           </g>
         </svg></a>
-      <h2><a id="indice" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indice</h2>
+      <h2>Indice</h2>
       <table class="index-grid">
         <tbody>
           <tr>
@@ -105,9 +104,8 @@
       </table>
       <p>Risorse utili<br><a href="Formats.html">Risoluzioni, schermi, standard video, dispositivi</a><br><a
           href="AdServers.html">Liste di filtri per sicurezza, privacy e blocco pubblicità</a><br><br></p>
-      <h1><a id="a-id-tastiera-tastiera-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Tastiera">TASTIERA</a></h1>
-      <h2><a id="tasti-di-macos" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tasti
+      <h1><a id="Tastiera">TASTIERA</a></h1>
+      <h2>Tasti
         di macOS</h2>
       <table>
         <thead>
@@ -169,8 +167,7 @@
           </tr>
         </tbody>
       </table>
-      <h3><a id="azioni-contestuali-per-i-campi-di-testo-riferimento-textedit" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Azioni contestuali per i campi di testo (riferimento: TextEdit)</h3>
+      <h3>Azioni contestuali per i campi di testo (riferimento: TextEdit)</h3>
       <table>
         <thead>
           <tr>
@@ -266,7 +263,7 @@
           </tr>
         </tbody>
       </table>
-      <h3><a id="tasti-funzione" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tasti
+      <h3>Tasti
         funzione</h3>
       <table>
         <thead>
@@ -285,11 +282,9 @@
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-scorciatoiesistema-scorciatoie-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="ScorciatoieSistema">SCORCIATOIE</a></h1>
-      <h1><a id="sistema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sistema</h1>
-      <h2><a id="a-comandi-globali-e-condivisi-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Comandi globali e condivisi</a></h2>
+      <h1><a id="ScorciatoieSistema">SCORCIATOIE</a></h1>
+      <h1>Sistema</h1>
+      <h2><a>Comandi globali e condivisi</a></h2>
       <ul>
         <li><strong>Scorrimento orizzontale</strong> con un mouse a rotella: <code>⇧</code> + scorrimento</li>
         <li><strong>Logout utente</strong>: <code>⇧⌘Q</code></li>
@@ -325,8 +320,7 @@
           <code>⌘</code>x6 <sup><a href="#Nota13">13</a></sup>
         </li>
       </ul>
-      <h2><a id="a-applicazioni-in-esecuzione-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Applicazioni in esecuzione</a></h2>
+      <h2><a>Applicazioni in esecuzione</a></h2>
       <ul>
         <li><strong>Sfoglia applicazioni aperte</strong> (avanti / indietro): <code>⌘⇥</code> <code>⇧⌘⇥</code> (sistema)
         </li>
@@ -341,8 +335,7 @@
           <code>1</code>
         </li>
       </ul>
-      <h2><a id="a-testo-e-selezione-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Testo e selezione</a></h2>
+      <h2><a>Testo e selezione</a></h2>
       <ul>
         <li><strong>Copia / Taglia / Incolla</strong>: <code>⌘C</code> <code>⌘X</code> <code>⌘V</code></li>
         <li><strong>Formato → Grassetto</strong>: <code>⌘B</code></li>
@@ -356,8 +349,7 @@
         </li>
         <li><strong>Seleziona testo in un'area specifica</strong>: <code>⌥</code> + clic e trascinamento</li>
       </ul>
-      <h2><a id="a-gestione-finestre-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Gestione finestre</a></h2>
+      <h2><a>Gestione finestre</a></h2>
       <ul>
         <li><strong>Sposta/ridimensiona la finestra attiva → metà sinistra dello schermo</strong>: <code>Fn⌃←</code>
         </li>
@@ -374,31 +366,27 @@
         <li><strong>Affianca le finestre: finestra attiva → metà inferiore dello schermo</strong>: <code>Fn⌃⇧↓</code>
         </li>
       </ul>
-      <h2><a id="a-spotlight-a-ricerca" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Spotlight</a> (Ricerca)</h2>
+      <h2><a>Spotlight</a> (Ricerca)</h2>
       <ul>
         <li><strong>Ricerca</strong>: <code>⌘␣</code></li>
         <li><strong>Zoom in delle immagini fino a 100% / Zoom out</strong>: <code>⌥</code> <sup><a
               href="#Nota4">4</a></sup> (tenere premuto)</li>
         <li><strong>Mostra percorso risultato</strong>: <code>⌘</code> (tenere premuto)</li>
       </ul>
-      <h2><a id="a-audio-e-video-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Audio e video</a></h2>
+      <h2><a>Audio e video</a></h2>
       <ul>
         <li><strong>Regolazione audio con bip</strong>: <code>⇧ Vol↑</code> <code>⇧ Vol↓</code></li>
         <li><strong>Regolazione fine audio</strong>: <code>⌥⇧ Vol↑</code> <code>⌥⇧ Vol↓</code></li>
         <li><strong>Regolazione fine luminosità</strong>: <code>⌥⇧ Lum↑</code> <code>⌥⇧ Lum↓</code></li>
       </ul>
-      <h2><a id="a-accessibilit%C3%A0-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Accessibilità</a></h2>
+      <h2><a>Accessibilità</a></h2>
       <ul>
         <li><strong>Mostra PiP</strong> (Picture-in-picture): <code>⌃⌥</code></li>
         <li><strong>Zoom in / out</strong>: <code>⌥⌘0</code> <code>⌥⌘-</code></li>
         <li><strong>Zoom in / out</strong>: <code>⌃</code> + Mouse ↑↓</li>
         <li><strong>Zoom cursore</strong>: <code>⌃⌥</code></li>
       </ul>
-      <h2><a id="a-href-file-systemapplicationsutilitiesscreenshot-app-screenshot-a-istantanea-schermo" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="file:////System/Applications/Utilities/Screenshot.app">Screenshot</a> (Istantanea schermo)</h2>
       <ul>
         <li><strong>Schermo intero</strong>: <code>⌘⇧3</code> (appunti: <code>⌃⌘⇧3</code>)</li>
@@ -408,21 +396,18 @@
         <li><strong>Touch Bar</strong>: <code>⌘⇧6</code> (appunti: <code>⌃⌘⇧6</code>)</li>
         <li><strong>Opzioni avanzate</strong>: <code>⌘⇧5</code></li>
       </ul>
-      <h2><a id="a-quick-look-a-anteprima-rapida" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Quick Look</a> (Anteprima rapida)</h2>
+      <h2><a>Quick Look</a> (Anteprima rapida)</h2>
       <ul>
         <li><strong>Apri / chiudi anteprima</strong>: <code>␣</code></li>
         <li><strong>Apri / chiudi anteprima a tutto schermo</strong>: <code>⌥␣</code></li>
         <li><strong>Zoom in delle immagini a 100% / Zoom out</strong>: <code>⌥</code></li>
       </ul>
-      <h2><a id="a-barra-dei-menu-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a>Barra dei menu</a></h2>
+      <h2><a>Barra dei menu</a></h2>
       <ul>
         <li><strong>Sposta un'icona</strong>: <code>⌘</code> + trascinamento</li>
         <li><strong>Modalità 'Non disturbare' on/off</strong>: <code>⌥</code> + clic sull'orologio di sistema</li>
       </ul>
-      <h2><a id="a-href-file-systemlibrarycoreservicesfinder-app-finder-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="file:////System/Library/CoreServices/Finder.app">Finder</a>
+      <h2><a href="file:////System/Library/CoreServices/Finder.app">Finder</a>
       </h2>
       <ul>
         <li><strong>Mostra / Nascondi Finder</strong>: <code>⌘'</code> <sup><a href="#Nota13">13</a></sup></li>
@@ -485,26 +470,21 @@
         <li><strong>Chiudi tutte le finestre e porta in secondo piano</strong>: <code>⌘Q</code> <sup><a
               href="#Nota13">13</a></sup></li>
       </ul>
-      <h2><a id="a-href-file-systemapplicationstextedit-app-textedit-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="file:////System/Applications/TextEdit.app">TextEdit</a>
+      <h2><a href="file:////System/Applications/TextEdit.app">TextEdit</a>
       </h2>
       <ul>
         <li><strong>Incolla e adegua lo stile</strong>: <code>⌘V</code> <sup><a href="#Nota3">3</a></sup></li>
       </ul>
       <h2><a
-          id="a-href-file-systemapplicationsutilitiesterminal-app-terminale-a-a-href-https-iterm2-com-target-blank-iterm-a-a-href-https-www-warp-dev-target-blank-warp-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="file:////System/Applications/Utilities/Terminal.app">Terminale</a> / <a href="https://iterm2.com/"
           target="_blank">iTerm</a> / <a href="https://www.warp.dev/" target="_blank">Warp</a></h2>
       <ul>
         <li><strong>Interrompi processo</strong>: <code>⌃C</code></li>
       </ul><br>
-      <h1><a id="a-id-scorciatoieapp-a-applicazioni" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="ScorciatoieApp"></a>Applicazioni</h1>
-      <h2><a id="a-href-https-creativecloud-adobe-com-target-blank-after-effects-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://creativecloud.adobe.com/"
+      <h1><a id="ScorciatoieApp"></a>Applicazioni</h1>
+      <h2><a href="https://creativecloud.adobe.com/"
           target="_blank">After Effects</a></h2>
-      <h3><a id="globali" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Globali</h3>
+      <h3>Globali</h3>
       <ul>
         <li><strong>Avvia / ferma anteprima con audio (dalla posizione del cursore)</strong>: <code>␣</code></li>
         <li><strong>Avvia / ferma anteprima con audio (dall'inizio)</strong>: <code>0 [NumPad]</code> <code>\</code>
@@ -514,14 +494,13 @@
               href="#NotaAE">*</a></sup></li>
         <li><strong>Chiudi progetto</strong>: <code>⌘W</code> <sup><a href="#NotaAE">*</a></sup></li>
       </ul>
-      <h3><a id="composizione" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Composizione</h3>
+      <h3>Composizione</h3>
       <ul>
         <li><strong>Zoom in / out</strong>: <code>.</code> <code>,</code></li>
         <li><strong>Zoom 200%</strong>: <code>&lt;</code></li>
         <li><strong>Adatta immagine</strong>: <code>⇧&lt;</code></li>
       </ul>
-      <h3><a id="timeline" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Timeline</h3>
+      <h3>Timeline</h3>
       <ul>
         <li><strong>Indietro / Avanti di un fotogramma</strong>: <code>⇞</code> <code>⇟</code> / <code>⌘←</code>
           <code>⌘→</code>
@@ -547,22 +526,20 @@
         </li>
         <li><strong>Nuova precomposizione con gli elementi selezionati</strong>: <code>⌘⇧C</code></li>
       </ul>
-      <h3><a id="pannelli" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pannelli</h3>
+      <h3>Pannelli</h3>
       <ul>
         <li><strong>Massimizza / ripristina il pannello attivo</strong>: <code>'</code></li>
       </ul>
       <p><a id="NotaAE"></a><sup>*</sup> Scorciatoie personalizzate tramite il profilo di scelte rapide
         <strong>Roccobot</strong>
       </p><br>
-      <h2><a id="a-href-https-creativecloud-adobe-com-target-blank-illustrator-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://creativecloud.adobe.com/"
+      <h2><a href="https://creativecloud.adobe.com/"
           target="_blank">Illustrator</a></h2>
       <ul>
         <li><strong>Vista wireframe on / off</strong>: <code>⌘Y</code></li>
         <li><strong>Crea maschera di ritaglio (due oggetti selezionati, maschera sopra)</strong>: <code>⌘7</code></li>
       </ul>
-      <h2><a id="a-href-https-creativecloud-adobe-com-target-blank-lightroom-classic-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://creativecloud.adobe.com/"
+      <h2><a href="https://creativecloud.adobe.com/"
           target="_blank">Lightroom Classic</a></h2>
       <ul>
         <li><strong>Info immagine (1 / 2 / off)</strong>: <code>I</code></li>
@@ -570,8 +547,7 @@
         <li><strong>Regolazione automatica parametro</strong>: <code>⇧</code> + doppio clic sul cursore dello slider
         </li>
       </ul>
-      <h2><a id="a-href-https-creativecloud-adobe-com-target-blank-photoshop-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://creativecloud.adobe.com/"
+      <h2><a href="https://creativecloud.adobe.com/"
           target="_blank">Photoshop</a></h2>
       <ul>
         <li><strong>Aumenta / diminuisci la dimensione del pennello</strong>: <code>⌃⌥→</code> <code>⌃⌥←</code></li>
@@ -830,21 +806,17 @@
       <p><strong>Extra</strong>: <a href="BlendModes.html"
           style="white-space:nowrap">Metodi di fusione</a><br><br></p>
       <h2><a
-          id="a-href-https-www-alfredapp-com-target-blank-alfred-a-a-href-https-www-raycast-com-target-blank-raycast-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://www.alfredapp.com/" target="_blank">Alfred</a> / <a href="https://www.raycast.com/"
           target="_blank">Raycast</a></h2>
       <ul>
         <li><strong>Attivazione (ricerca o comando)</strong>: <code>⌃␣</code></li>
       </ul>
-      <h2><a id="a-href-https-altcopy-net-target-blank-alt-c-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://altcopy.net/" target="_blank">Alt-C</a></h2>
+      <h2><a href="https://altcopy.net/" target="_blank">Alt-C</a></h2>
       <ul>
         <li><strong>Copia</strong>: <code>⌃⌥C</code></li>
         <li><strong>Incolla</strong>: <code>⌃⌥V</code></li>
       </ul>
-      <h2><a id="a-href-https-alt-tab-macos-netlify-app-target-blank-alttab-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://alt-tab-macos.netlify.app/"
+      <h2><a href="https://alt-tab-macos.netlify.app/"
           target="_blank">AltTab</a></h2>
       <ul>
         <li><strong>Sfoglia applicazioni aperte</strong> (avanti / indietro): <code>⌘⇥</code> <code>⌘\</code></li>
@@ -853,8 +825,6 @@
         </li>
       </ul>
       <h2><a
-          id="a-href-https-www-araxis-commerge-target-blank-araxis-merge-a-a-href-https-kaleidoscope-app-target-blank-kaleidoscope-a-a-href-https-www-perforce-comproductshelix-core-appsmerge-diff-tool-p4merge-target-blank-p4merge-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://www.araxis.com/merge/" target="_blank">Araxis Merge</a> / <a href="https://kaleidoscope.app/"
           target="_blank">Kaleidoscope</a> / <a
           href="https://www.perforce.com/products/helix-core-apps/merge-diff-tool-p4merge" target="_blank">P4Merge</a>
@@ -866,8 +836,6 @@
         </li>
       </ul>
       <h2><a
-          id="a-href-https-www-google-itchromeindex-html-target-blank-chrome-a-a-href-https-brave-comit-target-blank-brave-a-a-href-https-www-microsoft-comit-itedge-target-blank-edge-a-a-href-https-thorium-rocks-target-blank-thorium-a-a-href-https-vivaldi-com-target-blank-vivaldi-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://www.google.it/chrome/index.html" target="_blank">Chrome</a> / <a href="https://brave.com/it/"
           target="_blank">Brave</a> / <a href="https://www.microsoft.com/it-it/edge" target="_blank">Edge</a> / <a
           href="https://thorium.rocks/" target="_blank">Thorium</a> / <a href="https://vivaldi.com/"
@@ -908,16 +876,14 @@
         <li><strong>Riempi un campo login con le credenziali salvate</strong>: <code>⌘⇧L</code> <sup><a
               href="#Nota14">14</a></sup></li>
       </ul>
-      <h2><a id="a-href-https-clipy-app-com-target-blank-clipy-a-a-href-https-maccy-app-target-blank-maccy-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://clipy-app.com/" target="_blank">Clipy</a> / <a href="https://maccy.app/"
           target="_blank">Maccy</a></h2>
       <ul>
         <li><strong>Storico appunti</strong>: <code>⌃&lt;</code></li>
         <li><strong>Menu snippet</strong>: <code>⌃\</code>   /   <code>⌃</code> <code>⌃</code> (doppia pressione veloce)</li>
       </ul>
-      <h2><a id="a-href-https-apps-apple-comappcopy-em-clipboard-managerid876540291-target-blank-copy-em-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://apps.apple.com/app/copy-em-clipboard-manager/id876540291" target="_blank">Copy 'Em</a></h2>
       <ul>
         <li><strong>Storico appunti</strong> (lista 'Unstarred'): <code>⌃&lt;</code></li>
@@ -937,8 +903,7 @@
         <li><strong>HTML / Python / Misc</strong>: <code>⌃H</code></li>
         <li><strong>RegEx</strong>: <code>⌃Q</code></li>
       </ul>
-      <h2><a id="a-href-https-coteditor-com-target-blank-coteditor-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://coteditor.com/" target="_blank">CotEditor</a></h2>
+      <h2><a href="https://coteditor.com/" target="_blank">CotEditor</a></h2>
       <p>Predefinite e personalizzate attraverso il pannello 'Abbreviazioni' delle Preferenze</p>
       <table>
         <thead>
@@ -1199,15 +1164,12 @@
         <code>&lt;i&gt;&lt;&lt;&lt;SELECTION&gt;&gt;&gt;&lt;/i&gt;</code><br><br>
       </p>
       <h2><a
-          id="a-href-https-macpaw-comcleanmydrive-target-blank-cleanmydrive-a-a-href-https-apps-apple-comappfreespaceid457520846-target-blank-freespace-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://macpaw.com/cleanmydrive" target="_blank">CleanMyDrive</a> / <a
           href="https://apps.apple.com/app/freespace/id457520846" target="_blank">FreeSpace</a></h2>
       <ul>
         <li><strong>Disconnetti tutti i dischi e le unità esterne</strong>: <code>⌃⌘E</code></li>
       </ul>
-      <h2><a id="a-href-https-apps-apple-comappdisplay-maidid450063525-target-blank-display-maid-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://apps.apple.com/app/display-maid/id450063525" target="_blank">Display Maid</a></h2>
       <ul>
         <li><strong>Salva la posizione di tutte le finestre nel profilo in uso</strong>: <code>⌃⌘S</code></li>
@@ -1218,31 +1180,26 @@
         <li><strong>Cambia profilo</strong>: <code>⌃⌘⇥</code> (funziona come <code>⌘⇥</code> per scorrere tra le app
           aperte)</li>
       </ul>
-      <h2><a id="a-href-https-software-charliemonroe-netdownie-target-blank-downie-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://software.charliemonroe.net/downie/" target="_blank">Downie</a></h2>
       <ul>
         <li><strong>Estrazione guidata dall'utente</strong>: <code>⌘E</code></li>
         <li><strong>Avvio con pulizia della coda dei download</strong>: <code>⌥</code> + clic sull'icona dell'app</li>
       </ul>
       <h2><a
-          id="a-href-https-apps-apple-comappemojiseid1251416018-target-blank-emojise-a-a-href-https-matthewpalmer-netrocket-target-blank-rocket-a-a-href-https-ergonis-compopchar-target-blank-popchar-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://apps.apple.com/app/emojise/id1251416018" target="_blank">Emojise</a> / <a
           href="https://matthewpalmer.net/rocket/" target="_blank">Rocket</a> / <a href="https://ergonis.com/popchar"
           target="_blank">PopChar</a></h2>
       <ul>
         <li><strong>Mostra / nascondi pannello di selezione</strong>: <code>⌃⌫</code></li>
       </ul>
-      <h2><a id="a-href-https-ghosttile-kernelpanic-im-target-blank-ghosttile-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://ghosttile.kernelpanic.im/"
+      <h2><a href="https://ghosttile.kernelpanic.im/"
           target="_blank">GhostTile</a></h2>
       <ul>
         <li><strong>Sfoglia applicazioni nascoste in esecuzione</strong>: <code>⌘⇧*</code></li>
         <li><strong>Avvia / porta in primo piano qBittorrent</strong>: <code>⌘*</code></li>
       </ul>
-      <h2><a id="a-href-https-iina-io-target-blank-iina-a-a-href-https-movistprime-com-target-blank-movist-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://iina.io/"
+      <h2><a href="https://iina.io/"
           target="_blank">IINA</a> / <a href="https://movistprime.com/" target="_blank">Movist</a></h2>
       <ul>
         <li><strong>Play / Pausa</strong>: <code>␣</code></li>
@@ -1269,36 +1226,30 @@
         <li><strong>Mostra / nascondi playlist</strong>: <code>P</code></li>
         <li><strong>Inspector / Info file</strong>: <code>⌘\</code></li>
       </ul>
-      <h2><a id="a-href-https-iterm2-com-target-blank-iterm-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://iterm2.com/" target="_blank">iTerm</a></h2>
+      <h2><a href="https://iterm2.com/" target="_blank">iTerm</a></h2>
       <ul>
         <li><strong>Incolla e unisci le righe</strong>: clic con il tasto destro del mouse con il puntatore sulla
           finestra del terminale</li>
         <li><strong>Forza il download con gallery-dl</strong>: <code>⌃</code> + clic con il tasto destro</li>
         <li><strong>Aggiorna o installa gallery-dl</strong>: <code>⌥</code> + clic con il tasto destro</li>
       </ul>
-      <h2><a id="a-href-https-apps-apple-comitappkeyknockrid6478761835-target-blank-keyknockr-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://apps.apple.com/app/keyknockr/id6478761835" target="_blank">Keyknockr</a></h2>
       <ul>
         <li><strong>Avvia NeoFinder</strong>: <code>⌥</code> <code>⌥</code> (doppia pressione veloce)</li>
         <li><strong>Passa all'app attiva precedente</strong>: <code>⌘</code> <code>⌘</code> (doppia pressione veloce)</li>
       </ul>
-      <h2><a id="a-href-https-github-commarkedit-appmarkedit-target-blank-markedit-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://github.com/MarkEdit-app/MarkEdit" target="_blank">MarkEdit</a></h2>
       <ul>
         <li><strong>Stile testo → Codice</strong>: <code>⌘\</code> <sup><a href="#Nota3">3</a></sup></li>
       </ul>
-      <h2><a id="a-href-https-apps-apple-comitappmurasaki-epub-readerid430300762-target-blank-murasaki-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://apps.apple.com/app/murasaki-epub-reader/id430300762" target="_blank">Murasaki</a></h2>
       <ul>
         <li><strong>Indietro / Avanti</strong>: <code>⌘←</code> <code>⌘→</code> <sup><a href="#Nota3">3</a></sup></li>
       </ul>
       <h2><a
-          id="a-href-https-manytricks-comnamemangler-target-blank-name-mangler-a-a-href-https-renamer-com-target-blank-renamer-a-a-href-https-mrrsoftware-comnamechanger-target-blank-namechanger-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://manytricks.com/namemangler/" target="_blank">Name Mangler</a> / <a href="https://renamer.com/"
           target="_blank">Renamer</a> / <a href="https://mrrsoftware.com/namechanger/" target="_blank">NameChanger</a>
       </h2>
@@ -1308,43 +1259,36 @@
         <li><strong>Rinomina</strong>: <code>⌘⏎</code> <sup><a href="#Nota3">3</a></sup></li>
         <li><strong>Svuota la lista dei file</strong>: <code>⌘Ù</code> <sup><a href="#Nota3">3</a></sup></li>
       </ul>
-      <h2><a id="a-href-https-cdfinder-de-target-blank-neofinder-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://cdfinder.de/" target="_blank">NeoFinder</a></h2>
+      <h2><a href="https://cdfinder.de/" target="_blank">NeoFinder</a></h2>
       <ul>
         <li><strong>Copia nome</strong>: <code>⌘C</code> <sup><a href="#Nota3">3</a></sup></li>
         <li><strong>Copia percorso</strong>: <code>⌘⇧C</code> <sup><a href="#Nota3">3</a></sup></li>
         <li><strong>Ricerca rapida</strong>: <code>⌘F</code> <sup><a href="#Nota3">3</a></sup></li>
       </ul>
-      <h2><a id="a-href-https-pilotmoon-compopclip-target-blank-popclip-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://pilotmoon.com/popclip/" target="_blank">PopClip</a>
+      <h2><a href="https://pilotmoon.com/popclip/" target="_blank">PopClip</a>
       </h2>
       <ul>
         <li><strong>Mostra menu</strong>: <code>⇧Ì</code></li>
       </ul>
-      <h2><a id="a-href-https-www-zeroonetwenty-comprofind-target-blank-profind-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://www.zeroonetwenty.com/profind/" target="_blank">ProFind</a></h2>
       <ul>
         <li><strong>Cerca nella cartella attiva di Finder</strong>: <code>⌃F</code></li>
         <li><strong>Sposta gli elementi selezionati nel Cestino</strong>: <code>⌘Ù</code> <sup><a
               href="#Nota3">3</a></sup></li>
       </ul>
-      <h2><a id="a-href-https-apps-apple-comapppure-pasteid1611378436-target-blank-pure-paste-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://apps.apple.com/app/pure-paste/id1611378436" target="_blank">Pure Paste</a></h2>
       <ul>
         <li><strong>Copia testo con formattazione</strong>: <code>⌥</code> <code>⌘C</code> (in sequenza)</li>
       </ul>
-      <h2><a id="a-href-https-www-qbittorrent-org-target-blank-qbittorrent-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://www.qbittorrent.org/"
+      <h2><a href="https://www.qbittorrent.org/"
           target="_blank">qBittorrent</a></h2>
       <ul>
         <li><strong>Aggiungi collegamento torrent</strong> (link Magnet o hash): <code>⌘T</code> <sup><a
               href="#Nota3">3</a></sup></li>
       </ul>
       <h2><a
-          id="a-href-https-rectangleapp-compro-target-blank-rectangle-pro-a-a-href-https-rectangleapp-com-target-blank-rectangle-a-a-href-https-apps-apple-comappbettersnaptoolid417375580-target-blank-bettersnaptool-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://rectangleapp.com/pro/" target="_blank">Rectangle Pro</a> / <a href="https://rectangleapp.com/"
           target="_blank">Rectangle</a> / <a href="https://apps.apple.com/app/bettersnaptool/id417375580"
           target="_blank">BetterSnapTool</a></h2>
@@ -1438,22 +1382,18 @@
       </table>
       <p><a id="NotaBR"></a> * Cifre e operatori del tastierino numerico</p>
       <h2><a
-          id="a-href-https-www-telestream-netscreenflowoverview-htm-target-blank-screenflow-a-a-href-https-github-comlihaoyun6quickrecorder-target-blank-quickrecorder-a-a-href-https-www-anyrec-ioscreen-recorder-target-blank-anyrec-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://www.telestream.net/screenflow/overview.htm" target="_blank">ScreenFlow</a> / <a
           href="https://github.com/lihaoyun6/QuickRecorder" target="_blank">QuickRecorder</a> / <a
           href="https://www.anyrec.io/screen-recorder/" target="_blank">AnyRec</a></h2>
       <ul>
         <li><strong>Inizio / Fine registrazione</strong>: <code>⌃⌘2</code> / <code>⌃⌘9</code></li>
       </ul>
-      <h2><a id="a-href-https-shortmenu-commac-target-blank-short-menu-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://shortmenu.com/mac/" target="_blank">Short Menu</a>
+      <h2><a href="https://shortmenu.com/mac/" target="_blank">Short Menu</a>
       </h2>
       <ul>
         <li><strong>Accorcia il link negli appunti e copia link breve</strong>: <code>⌃⌘C</code></li>
       </ul>
-      <h2><a id="a-href-https-shottr-cc-target-blank-shottr-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://shottr.cc/" target="_blank">Shottr</a></h2>
+      <h2><a href="https://shottr.cc/" target="_blank">Shottr</a></h2>
       <ul>
         <li><strong>Cattura schermo intero</strong>: <code>⌘⇧3</code></li>
         <li><strong>Cattura area (seleziona)</strong>: <code>⌘⇧4</code></li>
@@ -1464,8 +1404,7 @@
         <li><strong>Cattura e riconosci il testo (copia)</strong>: <code>⌘⇧E</code></li>
         <li><strong>Mostra Shottr</strong>: <code>⌘0</code></li>
       </ul>
-      <h2><a id="a-href-https-macos-telegram-org-target-blank-telegram-a-versione-solo-mac" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://macos.telegram.org/"
+      <h2><a href="https://macos.telegram.org/"
           target="_blank">Telegram</a> (versione 'solo Mac')</h2>
       <ul>
         <li><strong>Scorciatoie</strong>: <code>⌘-</code></li>
@@ -1529,8 +1468,7 @@
           </tr>
         </tbody>
       </table>
-      <h2><a id="a-href-https-apps-apple-comapptext-workflowid1600520682-target-blank-text-workflow-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h2><a
           href="https://apps.apple.com/app/text-workflow/id1600520682" target="_blank">Text Workflow</a></h2>
       <ul>
         <li><strong>Esegui workflow / aggiorna</strong>: <code>⌘R</code>   /   <code>⌘⏎</code></li>
@@ -1541,16 +1479,13 @@
         <li><strong>Nuovo workflow</strong>: <code>⌘N</code></li>
       </ul>
       <h2><a
-          id="a-href-https-apps-apple-comitapptranslatium-traduttoreid6541750489-target-blank-translatium-a-a-href-os-filesmyna-zip-target-blank-myna-a"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
           href="https://apps.apple.com/it/app/translatium-traduttore/id6541750489" target="_blank">Translatium</a> / <a
           href="OS%20Files/Myna.zip" target="_blank">Myna</a></h2>
       <ul>
         <li><strong>Traduci il testo copiato</strong>: <code>⌃C</code></li>
         <li><strong>Copia la traduzione negli appunti</strong>: <code>⌥⇧C</code> / <code>⌃⇧C</code></li>
       </ul>
-      <h2><a id="a-href-https-vivaldi-com-target-blank-vivaldi-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://vivaldi.com/" target="_blank">Vivaldi</a></h2>
+      <h2><a href="https://vivaldi.com/" target="_blank">Vivaldi</a></h2>
       <p><a href="ShortcutsVivaldi.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
       <p>Gesti del mouse:</p>
       <table>
@@ -1611,14 +1546,11 @@
           </tr>
         </tbody>
       </table>
-      <h2><a id="a-href-https-www-videolan-orgvlc-target-blank-vlc-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://www.videolan.org/vlc/" target="_blank">VLC</a></h2>
+      <h2><a href="https://www.videolan.org/vlc/" target="_blank">VLC</a></h2>
       <p><a href="ShortcutsVLC.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
-      <h2><a id="a-href-https-theunarchiver-comxee-target-blank-xee-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://theunarchiver.com/xee" target="_blank">Xee</a></h2>
+      <h2><a href="https://theunarchiver.com/xee" target="_blank">Xee</a></h2>
       <p><a href="ShortcutsXee.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
-      <h2><a id="a-href-https-www-xnview-com-target-blank-xnview-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://www.xnview.com/" target="_blank">XnView</a></h2>
+      <h2><a href="https://www.xnview.com/" target="_blank">XnView</a></h2>
       <ul>
         <li><strong>Elimina</strong>: <code>⌘E</code> <sup><a href="#Nota3">3</a></sup></li>
         <li><strong>Rinomina</strong>: <code>⌘R</code> <sup><a href="#Nota3">3</a></sup></li>
@@ -1680,8 +1612,7 @@
           href="https://bitwarden.com/download/#downloads-web-browser" target="_blank"><strong>Bitwarden</strong></a>
         (più eventualmente l'<a href="https://bitwarden.com/download/#downloads-desktop" target="_blank">applicazione
           desktop</a> per l'autenticazione biometrica)</p><br>
-      <h2><a id="a-id-scorciatoiecustom-a-scorciatoie-personalizzate" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="ScorciatoieCustom"></a>Scorciatoie personalizzate</h2>
+      <h2><a id="ScorciatoieCustom"></a>Scorciatoie personalizzate</h2>
       <p><strong>Impostazioni di sistema</strong> → Tastiera → Abbreviazioni → Abbreviazioni app →
         <code>+</code><br>Digitare la funzione esattamente come appare nel menu, <strong>puntini di
         sospensione finali compresi</strong>: nei menu di macOS sono il carattere unico <code>…</code> e non tre punti
@@ -1721,10 +1652,8 @@
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-menuestesi-menu-estesi-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="MenuEstesi">MENU ESTESI</a></h1>
-      <h2><a id="opzioni-aggiuntive-dei-menu" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Opzioni aggiuntive dei menu</h2>
+      <h1><a id="MenuEstesi">MENU ESTESI</a></h1>
+      <h2>Opzioni aggiuntive dei menu</h2>
       <table>
         <thead>
           <tr>
@@ -1783,10 +1712,8 @@
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-applicazioni-applicazioni-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Applicazioni">APPLICAZIONI</a></h1>
-      <h2><a id="predefinite" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Predefinite</h2>
+      <h1><a id="Applicazioni">APPLICAZIONI</a></h1>
+      <h2>Predefinite</h2>
       <table>
         <thead>
           <tr>
@@ -1881,8 +1808,7 @@
           </tr>
         </tbody>
       </table><br>
-      <h2><a id="accesso-completo-al-disco" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Accesso completo al disco</h2>
+      <h2>Accesso completo al disco</h2>
       <table>
         <tbody>
           <tr>
@@ -1913,19 +1839,17 @@
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-impostazioni-impostazioni-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Impostazioni">IMPOSTAZIONI</a></h1>
-      <h2><a id="istantanea-schermo" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Istantanea Schermo</h2>
+      <h1><a id="Impostazioni">IMPOSTAZIONI</a></h1>
+      <h2>Istantanea Schermo</h2>
       <ul>
         <li><strong>Disattivare l'anteprima a comparsa e azzerare il ritardo di cattura</strong>:<br><code>⌘⇧5</code>
           per avviare la cattura → <code>Opzioni</code> → Togliere la spunta da <em>Mostra anteprima fluttuante</em>
         </li>
       </ul>
-      <h2><a id="chrome" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chrome</h2>
+      <h2>Chrome</h2>
       <ul>
       </ul>
-      <h2><a id="dropbox" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dropbox</h2>
+      <h2>Dropbox</h2>
       <ul>
         <li><strong>Disattivare l'integrazione con il menu contestuale di Finder</strong>:<br>Cancellare il file
           <code>DropboxHelperInstaller X.Y.tgz</code> dal
@@ -1933,11 +1857,9 @@
         </li>
       </ul><br>
       <hr>
-      <h1><a id="a-id-caratteri-caratteri-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Caratteri">CARATTERI</a></h1><img src="Keyboard.gif"
+      <h1><a id="Caratteri">CARATTERI</a></h1><img src="Keyboard.gif"
         alt="Schema tastiera estesa" loading="lazy">
-      <h2><a id="tastiera-estesa-ita" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Tastiera estesa ITA</h2>
+      <h2>Tastiera estesa ITA</h2>
       <table>
         <thead>
           <tr>
@@ -2311,10 +2233,8 @@
           </tr>
         </tbody>
       </table>
-      <h2><a id="a-href-caratteri-html-caratteri-speciali-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="Characters.html">Caratteri speciali</a></h2><br>
-      <h2><a id="sostituzione-testo" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Sostituzione testo</h2>
+      <h2><a href="Characters.html">Caratteri speciali</a></h2><br>
+      <h2>Sostituzione testo</h2>
       <p>(Impostazioni di sistema → Tastiera → Testo)</p>
       <table class="sost-table">
         <thead>
@@ -2489,8 +2409,7 @@
             <td style="text-align:left"></td>
           </tr>
         </table><br>
-      <h2><a id="caratteri-incompatibili-con-filesystem-microsoft-ntfs-exfat" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Caratteri incompatibili con filesystem Microsoft (NTFS, exFAT)</h2>
+      <h2>Caratteri incompatibili con filesystem Microsoft (NTFS, exFAT)</h2>
       <table>
         <thead>
           <tr>
@@ -2548,14 +2467,11 @@
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-percorsi-percorsi-variabili-avvio-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Percorsi">PERCORSI, VARIABILI, AVVIO</a></h1>
-      <h2><a id="a-id-notavar-a-variabili-di-sistema-sup%C2%A7-sup" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="NotaVar"></a>Variabili di sistema <sup>§</sup></h2>
+      <h1><a id="Percorsi">PERCORSI, VARIABILI, AVVIO</a></h1>
+      <h2><a id="NotaVar"></a>Variabili di sistema <sup>§</sup></h2>
       <p><code>/</code> = Radice del disco di sistema</p>
       <p><code>~</code> = Cartella Home (<code>/Users/&lt;nomeUtente&gt;</code>)</p><br>
-      <h2><a id="applicazioni-e-servizi-di-sistema" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Applicazioni e servizi di sistema</h2>
+      <h2>Applicazioni e servizi di sistema</h2>
       <pre><code class="language-plain_text">/System/Library/CoreServices/Finder.app
 /System/Library/CoreServices/Dock.app
 /System/Library/CoreServices/Spotlight.app
@@ -2563,10 +2479,9 @@
 /System/Library/CoreServices/ScreenSaverEngine.app
 /System/Library/CoreServices/Screen Time.app
 </code></pre><br>
-      <h2><a id="a-id-cloudstorage-percorsi-remoti-montati-su-finder-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="CloudStorage"></a>Percorsi remoti montati su Finder</h2>
+      <h2><a id="CloudStorage"></a>Percorsi remoti montati su Finder</h2>
       <p><code>~/Library/CloudStorage/</code></p><br>
-      <h2><a id="launchagent" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creare un
+      <h2>Creare un
         LaunchAgent per avviare un'app al login</h2>
       <ol>
         <li>Aprire un editor testuale e inserire il seguente codice:</li>
@@ -2592,8 +2507,7 @@
             elemento aggiunto all'avvio automatico)</p>
         </li>
       </ol><br>
-      <h2><a id="variabili-universali-dataora-unix" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Variabili universali Data/Ora (UNIX)</h2>
+      <h2>Variabili universali Data/Ora (UNIX)</h2>
       <table>
         <thead>
           <tr>
@@ -2686,8 +2600,7 @@
         </tbody>
       </table>
       <p><a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">Lista completa</a><br><br></p>
-      <h2><a id="cartelle-di-sistema-e-dell-utente" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Cartelle di sistema e dell'utente</h2>
+      <h2>Cartelle di sistema e dell'utente</h2>
       <ul>
         <li>
           <p><strong>Percorso PATH predefinito globale</strong> (scorciatoia: <code>/etc</code>)</p>
@@ -2777,8 +2690,7 @@
 </code></pre>
         </li>
       </ul>
-      <h2><a id="cartelle-adobe" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Cartelle Adobe</h2>
+      <h2>Cartelle Adobe</h2>
       <ul>
         <li>
           <p><strong>Impostazioni per tutti gli utenti</strong></p>
@@ -2809,17 +2721,15 @@
         </li>
       </ul><br>
       <hr>
-      <h1><a id="a-id-terminale-terminale-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Terminale">TERMINALE</a></h1>
-      <h2><a id="comandi-e-impostazioni-di-sistema" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Comandi e impostazioni di sistema</h2>
-      <h3><a id="analisi-file" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Analisi
+      <h1><a id="Terminale">TERMINALE</a></h1>
+      <h2>Comandi e impostazioni di sistema</h2>
+      <h3>Analisi
         file</h3>
       <p>• Analizzare l'header di un file per identificare il tipo:</p>
       <p><code class="language-plain_text">head -c 20 </code>[+ percorso e nome del file o trascinamento nella finestra
         del terminale]</p>
 
-      <h3><a id="processi-e-servizi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Processi e servizi</h3>
+      <h3>Processi e servizi</h3>
       <p>• Identificare quale processo tiene bloccato un disco montato:</p>
       <p><code class="language-plain_text">sudo lsof /Volumes/ </code>[+ trascinamento dell'icona del volume nella
         finestra del terminale]</p>
@@ -2835,8 +2745,7 @@
       <p>• Verificare che un agente di avvio sia attivo e caricato:<br>(se la seconda colonna dell'output è 0, è configurato correttamente):</p>
       <pre><code class="language-plain_text">launchctl list | grep &lt;nomePacchetto&gt;
 </code></pre>
-      <h3><a id="tastiera-e-testo" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Tastiera e testo</h3>
+      <h3>Tastiera e testo</h3>
       <p>• Attivare il selettore dei caratteri extra con la pressione lunga su un tasto fisico</p><img
         src="extrachar.png" alt="Caratteri extra" width="340">
       <pre><code class="language-plain_text">defaults write -g ApplePressAndHoldEnabled -bool true
@@ -2844,7 +2753,7 @@
       <p>• Disattivare il selettore dei caratteri extra (alternativa predefinita: ripetizione del tasto)</p>
       <pre><code class="language-plain_text">defaults write -g ApplePressAndHoldEnabled -bool false
 </code></pre>
-      <h3><a id="finder" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Finder</h3>
+      <h3>Finder</h3>
       <p>• Riavviare il Finder<br><sup>(* = richiesto dopo il comando)</sup></p>
       <pre><code class="language-plain_text">killall Finder
 </code></pre>
@@ -2873,8 +2782,7 @@ defaults write com.apple.finder _FXShowPosixPathInTitle -bool NO
 
 defaults write com.apple.finder CreateDesktop false
 </code></pre>
-      <h3><a id="applicazioni-e-script-a-id-notaf-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Applicazioni e script<a id="NotaFTop"></a></h3>
+      <h3>Applicazioni e script<a id="NotaFTop"></a></h3>
       <p>• <a id="Pacchetti">Trovare il nome univoco del pacchetto di un'applicazione (bundle ID):</a></p>
       <p>Conoscendo il nome dell'app:</p>
       <pre><code class="language-plain_text">osascript -e 'id of app &quot;&lt;nomeApp&gt;&quot;'
@@ -2887,12 +2795,12 @@ defaults write com.apple.finder CreateDesktop false
 </code></pre>
       <p>Per ripristinare il comportamento predefinito:</p>
       <pre><code class="language-plain_text">defaults delete &lt;nomePacchetto&gt; NSAppSleepDisabled
-</code></pre><h3><a id="gatekeeper" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GateKeeper</h3><p>• Permettere l'esecuzione di un'app non firmata (rimozione dalla Quarantena, richiede permessi admin):</p><pre><code class="language-plain_text">sudo xattr -rd com.apple.quarantine [+ trascinare l'app sul Terminale]
+</code></pre><h3>GateKeeper</h3><p>• Permettere l'esecuzione di un'app non firmata (rimozione dalla Quarantena, richiede permessi admin):</p><pre><code class="language-plain_text">sudo xattr -rd com.apple.quarantine [+ trascinare l'app sul Terminale]
 </code></pre><p>• Permettere l'esecuzione di un'app non firmata (rimozione della data di Quarantena):</p><pre><code class="language-plain_text">xattr -d com.apple.quarantine [+ trascinare l'app sul Terminale]
 </code></pre><p>• Abilitare 'Dovunque' come origine delle applicazioni consentite (fino a macOS 14; da macOS 15 Sequoia l'opzione e' stata rimossa e si passa da Impostazioni di sistema → Privacy e sicurezza → Apri comunque):</p><pre><code class="language-plain_text">sudo spctl --master-disable
 </code></pre><p>• Ripristinare l'impostazione predefinita delle origini consentite:</p><pre><code class="language-plain_text">sudo spctl --master-enable
 </code></pre>
-      <h3><a id="dock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dock</h3>
+      <h3>Dock</h3>
       <p>• Disattivare in modo permanente l'animazione ('rimbalzo') delle icone:</p>
       <pre><code class="language-plain_text">defaults write com.apple.dock no-bouncing -bool true
 </code></pre>
@@ -2905,8 +2813,7 @@ defaults write com.apple.finder CreateDesktop false
       <p>• Ripristinare il comportamento predefinito del Dock a scomparsa:</p>
       <pre><code class="language-plain_text">defaults delete com.apple.dock autohide-delay &amp;&amp; killall Dock
 </code></pre>
-      <h3><a id="a-href-https-en-wikipedia-orgwikishell-computing-target-blank-shell-di-sistema-a" class="anchor"
-          aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h3><a
           href="https://en.wikipedia.org/wiki/Shell_(computing)" target="_blank">Shell di sistema</a></h3>
       <p>• Cambiare l'interprete della linea di comando:</p>
       <p>Impostare <a href="https://zsh.sourceforge.io/" target="_blank">zsh</a> (Predefinito da macOS Catalina, 10.15)</p>
@@ -2915,8 +2822,7 @@ defaults write com.apple.finder CreateDesktop false
       <p>Impostare <a href="https://www.gnu.org/software/bash/" target="_blank">bash</a></p>
       <pre><code class="language-plain_text">/usr/bin/chsh -s /bin/bash
 </code></pre>
-      <h3><a id="a-href-https-brew-sh-target-blank-homebrew-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a href="https://brew.sh/" target="_blank">Homebrew</a></h3>
+      <h3><a href="https://brew.sh/" target="_blank">Homebrew</a></h3>
       <p>• Installare Homebrew:</p>
       <pre><code class="language-plain_text">/bin/bash -c &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&quot;
 </code></pre>
@@ -2926,19 +2832,16 @@ defaults write com.apple.finder CreateDesktop false
       <p>• Aggiornare tutti i pacchetti Homebrew installati</p>
       <pre><code class="language-plain_text">brew upgrade
 </code></pre><br>
-      <h2><a id="correzione-di-errori-manutenzione-e-pulizia" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Correzione di errori, manutenzione e pulizia</h2>
-      <h3><a id="Sistema-Terminale" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Sistema</h3>
+      <h2>Correzione di errori, manutenzione e pulizia</h2>
+      <h3>Sistema</h3>
       <p>• Pulizia della cache dei font:</p>
       <pre><code class="language-plain_text">sudo atsutil databases -remove
 </code></pre>
       <p>• Risolvere il conflitto dell'applicazione di posta predefinita:</p>
       <pre><code class="language-plain_text">/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -all local,system,user
 </code></pre>
-      <h2><a id="operazioni-avanzate-su-dischi-e-volumi" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Operazioni avanzate su dischi e volumi</h2>
-      <h3><a id="diskutil" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DiskUtil</h3>
+      <h2>Operazioni avanzate su dischi e volumi</h2>
+      <h3>DiskUtil</h3>
       <table>
         <thead>
           <tr>
@@ -3043,7 +2946,7 @@ defaults write com.apple.finder CreateDesktop false
           </tr>
         </tbody>
       </table>
-      <h4><a id="casistiche" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Casistiche
+      <h4>Casistiche
       </h4>
       <ul>
         <li><strong>Inizializzazione di un disco non riconosciuto o con errore 'Spazio insufficiente' di
@@ -3060,8 +2963,7 @@ defaults write com.apple.finder CreateDesktop false
       <p><code>diskutil unmountDisk force DiskName</code></p>
       <p><code>diskutil partitionDisk DiskName MBR &quot;MS-DOS FAT32&quot; &quot;MyDisk&quot; 100%</code></p>
       <br>
-      <h2><a id="chiusura-forzata-di-processi-applicazioni-e-servizi" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Chiusura forzata di processi (applicazioni e servizi)</h2>
+      <h2>Chiusura forzata di processi (applicazioni e servizi)</h2>
       <table>
         <thead>
           <tr>
@@ -3086,7 +2988,7 @@ defaults write com.apple.finder CreateDesktop false
         </tbody>
       </table><br>
       <p><a id="Comandi"></a></p>
-      <h2><a id="comandi-python" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comandi
+      <h2>Comandi
         Python</h2>
       <table>
         <thead>
@@ -3113,8 +3015,7 @@ defaults write com.apple.finder CreateDesktop false
           </tr>
         </tbody>
       </table><br>
-      <h2><a id="comandi-fastboot-e-adb-android-platform-tools" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Comandi Fastboot e ADB (Android Platform Tools)</h2>
+      <h2>Comandi Fastboot e ADB (Android Platform Tools)</h2>
       <p>Installazione: <code>brew install android-platform-tools</code></p>
       <p style="padding:16px;border:2px solid #b71e1e;border-radius:16px">⚠️ <mark><strong>ATTENZIONE!</strong></mark>
         ⚠️<br>Modificare le app di sistema tramite Platform Tools <em>alla prima accensione</em>, in modo da poter
@@ -3223,10 +3124,8 @@ defaults write com.apple.finder CreateDesktop false
         <strong>Google Foto</strong>:
         ...play.google.com/store/apps/details?id=<strong>com.google.android.apps.photos</strong>)
       </p><br>
-      <h1><a id="a-id-problemsolving-risoluzione-problemi-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="ProblemSolving">RISOLUZIONE PROBLEMI</a></h1>
-      <h2><a id="accesso-a-siti-web" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Accesso a siti Web</h2>
+      <h1><a id="ProblemSolving">RISOLUZIONE PROBLEMI</a></h1>
+      <h2>Accesso a siti Web</h2>
       <p><strong>Risoluzione del problema di accesso ad Instagram con errore 'CSRF token missing or incorrect'</strong>
       </p>
       <p>Dalla pagina di login di Instagram, aprire gli <strong>Strumenti Sviluppatore</strong> (<code>⌥⌘C</code> o
@@ -3235,24 +3134,21 @@ defaults write com.apple.finder CreateDesktop false
       <pre><code class="language-plain_text">	n=new Date;t=n.getTime();et=t+36E9;n.setTime(et);document.cookie='csrftoken='+document.body.innerHTML.split('csrf_token')[1].split('\\&quot;')[2]+';path=\;domain=.instagram.com;expires='+n.toUTCString();
 </code></pre>
       <p>e confermare con <strong>Invio</strong> (⏎).<br>Riprovare ad effettuare l'accesso.</p>
-      <h2><a id="disconnessione-dispositivi" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Disconnessione dispositivi</h2>
+      <h2>Disconnessione dispositivi</h2>
       <p><strong>Rimozione sicura di un dispositivo esterno tenuto impegnato da 'un processo' non specificato</strong>
       </p>
       <p>Aprire l'app di sistema <strong>Monitoraggio attività</strong>, cercare tra applicazioni e servizi attivi e
         verificare se l'errore persiste dopo la chiusura del processo <code>QuickLookUIService</code>. Si veda anche il
         comando <code>diskutil unmountDisk</code> (paragrafo <strong>Operazioni avanzate su dischi e volumi</strong> del
         capitolo <strong><a href="#Terminale">Terminale</a></strong>).</p>
-      <h2><a id="eliminazione-di-file-non-cancellabili" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Eliminazione di file 'non cancellabili'</h2>
+      <h2>Eliminazione di file 'non cancellabili'</h2>
       <p><strong>Eliminazione di file che Finder non può spostare nel Cestino perché tenuti impegnati da 'un processo'
           non specificato (o eliminazione definitiva dal Cestino se l'automatismo fallisce)</strong></p>
       <p>Aprire il <strong>Terminale</strong> e digitare <code>sudo rm -R</code> poi aggiungere uno spazio in
         coda.<br>Trascinare i file non cancellabili (selezionati dal Finder) sulla finestra del Terminale.<br>Inserire
         la password da amministratore e confermare con <strong>Invio</strong> (⏎).<br><strong>Attenzione:</strong> al trascinamento di una cartella, è cancellato ricorsivamente TUTTO il contenuto.</p><br>
       <hr>
-      <h1><a id="a-id-backup-backup-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Backup">BACKUP</a></h1>
+      <h1><a id="Backup">BACKUP</a></h1>
       <p>Elementi da escludere</p>
       <table>
         <thead>
@@ -3314,8 +3210,7 @@ defaults write com.apple.finder CreateDesktop false
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-installazione-installazione-di-macos-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Installazione">INSTALLAZIONE DI MACOS</a></h1>
+      <h1><a id="Installazione">INSTALLAZIONE DI MACOS</a></h1>
       <p><strong>INSTALLAZIONE 'PULITA'</strong></p>
       <ul>
         <li>
@@ -3345,10 +3240,8 @@ defaults write com.apple.finder CreateDesktop false
         </li>
       </ul><br>
       <hr>
-      <h1><a id="a-id-avvio-modalit%C3%80-di-avvio-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a><a id="Avvio">MODALITÀ DI AVVIO</a></h1>
-      <h2><a id="avvio-apple-silicon" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>Tenere premuto il tasto di accensione fino alla schermata
+      <h1><a id="Avvio">MODALITÀ DI AVVIO</a></h1>
+      <h2>Tenere premuto il tasto di accensione fino alla schermata
         'Caricamento opzioni di avvio'</h2>
       <table>
         <thead>
@@ -3400,7 +3293,7 @@ defaults write com.apple.finder CreateDesktop false
         </tbody>
       </table><br>
       <hr>
-      <h1><a id="a-id-dns-dns-a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
+      <h1><a
           id="DNS">DNS</a></h1>
       <table>
         <thead>

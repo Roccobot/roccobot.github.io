@@ -43,6 +43,36 @@
     portano `.logo-word` e `.logo-mark`, i colori stanno in `RoccobotOS.css`. Gli `id` che
     l'export si portava dietro (`Header`, `R`, `O`, `B`...) sono stati tolti nel passaggio:
     inline avrebbero potuto collidere con quelli della pagina.
+  - ⚠️⚠️ **Il CSS morto NON si pota tutto, e la parte rimasta è una scelta, non una dimenticanza**
+    (2026-08-01, potatura D1). Sono cadute le regole **impossibili**: residui di funzioni tolte
+    (MathJax, `.lazy-section`, `.mweb-charts`), il tema dei token di Prism e le sue righe
+    numerate (nessun blocco di codice della pagina usa un linguaggio che Prism sappia
+    colorare), e le regole di tocbot che la sua configurazione non può accendere
+    (`positionFixedSelector` è `null`, non esiste nessun contenitore `.toc`). Restano invece le
+    ~38 regole del **tema markdown vendorizzato** che aspettano solo del contenuto
+    (`blockquote`, `dl`, `figure`, `details`, `kbd`, liste di spunta, note a piè di pagina,
+    `h5`, `h6`, liste annidate): non sono codice morto, sono un foglio di stile che copre
+    costrutti che oggi la pagina non usa, e toglierle significherebbe che il giorno che
+    l'utente scrive una citazione questa esce senza stile.
+    - ⚠️ **Come si rifà la misura, perché a occhio si sbaglia**: si serve la cartella su HTTP
+      locale con **Prism scaricato in locale** (il browser di prova non ha rete, e senza Prism
+      `div.code-toolbar` e `pre[class*=language-]` sembrano morte mentre agganciano 55
+      elementi); si estraggono i selettori dal CSSOM e si provano in **otto stati combinati**
+      (desktop e mobile x chiaro e scuro, più cards e indice aperto, questi ultimi **accesi
+      col clic**, non scrivendo l'attributo a mano, o `td[data-label]` non esiste). Un solo
+      attributo per volta produce falsi positivi: le regole `[data-theme=dark][data-tables=cards]`
+      risultano morte se il tema scuro non è acceso insieme alle card.
+    - **Non si toccano** `.site-version:empty` e `.toc-version:empty`: sono morte **apposta**,
+      perché sono la rete di sicurezza per quando il JS non gira.
+  - **Le ancore invisibili dell'export sono state tolte** (2026-08-01, D2): 115 `<a class="anchor">`
+    con dentro uno `span.octicon` vuoto, 17,2 KB, con `id` da esportatore
+    (`a-id-tastiera-tastiera-a`) che **nessun link puntava**. Con loro sono cadute le cinque
+    regole CSS che le vestivano. ⚠️ **Restano le ancore fatte a mano** (`<a id="ScorciatoieApp"></a>`
+    e simili, comprese `CloudStorage` e `NotaFTop` che oggi nessuno punta): sono segnaposto
+    voluti, non residui, e i link dell'indice ci passano.
+  - **Le sotto-pagine hanno un FAB 'indietro' in alto a sinistra** (richiesta dell'utente,
+    2026-08-01): prima da lì non si tornava a `index.html` in nessun modo. Lo crea `Pages.js`
+    con `createElement` invece di scriverlo in quattro pagine, così la fonte resta una sola.
   - **Le sotto-pagine seguono il tema del SISTEMA** (`prefers-color-scheme`) e si commutano
     col tasto `T`, senza memorizzare nulla: il tema scelto nella pagina principale non arriva
     fin là, perché nemmeno lei lo salva (scelta dell'utente, 2026-08-01, che ha chiesto il
