@@ -36,7 +36,6 @@
   <script>window.MathJax = { tex: { tags: "ams", displayMath: [["\\[", "\\]"]] } }</script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
   <script>(() => { var n = { 647: (e, t, n) => { var l, o = []; void 0 !== (t = "function" == typeof (l = (e => { var t = !!(e && e.document && e.document.querySelector && e.addEventListener); if ("undefined" != typeof window || t) return t = n(563), e.tocbot = t })(void 0 === n.g && window || n.g)) ? l.apply(t, o) : l) && (e.exports = t) }, 563: (e, t, n) => { function l(i) { var s, a = [].forEach, c = [].some, d = document.body, u = !0, f = " "; function m(e) { var t = i.orderedList ? "ol" : "ul", t = document.createElement(t), n = i.listClass + f + i.extraListClasses; return e && (n = (n = n + f + i.collapsibleClass) + f + i.isCollapsedClass), t.setAttribute("class", n), t } function h(e, t) { e && e.className !== t && (e.className = t) } return { enableTocAnimation: function () { u = !0 }, disableTocAnimation: function (e) { e = e.target || e.srcElement; "string" == typeof e.className && -1 !== e.className.indexOf(i.linkClass) && (u = !1) }, render: function (e, t) { var n = m(!1); if (t.forEach(function (e) { !function t(e, n) { var l, o, r, n = n.appendChild((n = e, l = document.createElement("li"), o = document.createElement("a"), i.listItemClass && l.setAttribute("class", i.listItemClass), i.onClick && (o.onclick = i.onClick), i.includeTitleTags && o.setAttribute("title", n.textContent), i.includeHtml && n.childNodes.length ? a.call(n.childNodes, function (e) { o.appendChild(e.cloneNode(!0)) }) : o.textContent = n.textContent, o.setAttribute("href", i.basePath + "#" + n.id), o.setAttribute("class", i.linkClass + f + "node-name--" + n.nodeName + f + i.extraLinkClasses), l.appendChild(o), l)); e.children.length && (r = m(e.isCollapsed), e.children.forEach(function (e) { t(e, r) }), n.appendChild(r)) }(e, n) }), null !== (s = e || s)) return s.firstChild && s.removeChild(s.firstChild), 0 === t.length ? s : s.appendChild(n) }, updateToc: function (e) { var n = i.scrollContainer && document.querySelector(i.scrollContainer) ? document.querySelector(i.scrollContainer).scrollTop : document.documentElement.scrollTop || d.scrollTop; i.positionFixedSelector && (t = i.scrollContainer && document.querySelector(i.scrollContainer) ? document.querySelector(i.scrollContainer).scrollTop : document.documentElement.scrollTop || d.scrollTop, o = document.querySelector(i.positionFixedSelector), "auto" === i.fixedSidebarOffset && (i.fixedSidebarOffset = s.offsetTop), i.fixedSidebarOffset < t ? -1 === o.className.indexOf(i.positionFixedClass) && (o.className += f + i.positionFixedClass) : o.className = o.className.replace(f + i.positionFixedClass, "")); var l, t, o, r = e; u && null !== s && 0 < r.length && (c.call(r, function (e, t) { return function e(t) { var n = 0; return null !== t && (n = t.offsetTop, i.hasInnerContainers) && (n += e(t.offsetParent)), n }(e) > n + i.headingsOffset + 10 ? (l = r[0 === t ? t : t - 1], !0) : t === r.length - 1 ? (l = r[r.length - 1], !0) : void 0 }), s.querySelector("." + i.activeLinkClass) !== (t = s.querySelector("." + i.linkClass + ".node-name--" + l.nodeName + '[href="' + i.basePath + "#" + l.id.replace(/([ #;&,.+*~':"!^$[\]()=>|/\\@])/g, "\\$1") + '"]'))) && (o = s.querySelectorAll("." + i.linkClass), a.call(o, function (e) { h(e, e.className.replace(f + i.activeLinkClass, "")) }), e = s.querySelectorAll("." + i.listItemClass), a.call(e, function (e) { h(e, e.className.replace(f + i.activeListItemClass, "")) }), t && -1 === t.className.indexOf(i.activeLinkClass) && (t.className += f + i.activeLinkClass), (e = t && t.parentNode) && -1 === e.className.indexOf(i.activeListItemClass) && (e.className += f + i.activeListItemClass), e = s.querySelectorAll("." + i.listClass + "." + i.collapsibleClass), a.call(e, function (e) { -1 === e.className.indexOf(i.isCollapsedClass) && (e.className += f + i.isCollapsedClass) }), t && t.nextSibling && -1 !== t.nextSibling.className.indexOf(i.isCollapsedClass) && h(t.nextSibling, t.nextSibling.className.replace(f + i.isCollapsedClass, "")), function e(t) { return t && -1 !== t.className.indexOf(i.collapsibleClass) && -1 !== t.className.indexOf(i.isCollapsedClass) ? (h(t, t.className.replace(f + i.isCollapsedClass, "")), e(t.parentNode.parentNode)) : t }(t && t.parentNode.parentNode)) } } } n.r(t), n.d(t, { _buildHtml: () => d, _headingsArray: () => u, _options: () => h, _parseContent: () => i, _scrollListener: () => f, destroy: () => p, init: () => s, refresh: () => function (e) { p(), s(e || h) } }); let o = { tocSelector: ".js-toc", contentSelector: ".js-toc-content", headingSelector: "h1, h2, h3", ignoreSelector: ".js-toc-ignore", hasInnerContainers: !1, linkClass: "toc-link", extraLinkClasses: "", activeLinkClass: "is-active-link", listClass: "toc-list", extraListClasses: "", isCollapsedClass: "is-collapsed", collapsibleClass: "is-collapsible", listItemClass: "toc-list-item", activeListItemClass: "is-active-li", collapseDepth: 0, scrollSmooth: !0, scrollSmoothDuration: 420, scrollSmoothOffset: 0, scrollEndCallback: function (e) { }, headingsOffset: 1, throttleTimeout: 50, positionFixedSelector: null, positionFixedClass: "is-position-fixed", fixedSidebarOffset: "auto", includeHtml: !1, includeTitleTags: !1, onClick: function (e) { }, orderedList: !0, scrollContainer: null, skipRendering: !1, headingLabelCallback: !1, ignoreHiddenElements: !1, headingObjectCallback: null, basePath: "", disableTocScrollSync: !1, tocScrollOffset: 0 }; function r(d) { var u = d.duration, f = d.offset, m = location.hash ? h(location.href) : location.href; function h(e) { return e.slice(0, e.lastIndexOf("#")) } document.body.addEventListener("click", function (t) { var e, n, l, o, r, i, s, a; function c(e) { o = e - l, window.scrollTo(0, i.easing(o, r, s, a)), o < a ? requestAnimationFrame(c) : (window.scrollTo(0, r + s), "function" == typeof i.callback && i.callback()) } "a" !== (e = t.target).tagName.toLowerCase() || !(0 < e.hash.length || "#" === e.href.charAt(e.href.length - 1)) || h(e.href) !== m && h(e.href) + "#" !== m || -1 < t.target.className.indexOf("no-smooth-scroll") || "#" === t.target.href.charAt(t.target.href.length - 2) && "!" === t.target.href.charAt(t.target.href.length - 1) || -1 === t.target.className.indexOf(d.linkClass) || (e = t.target.hash, n = { duration: u, offset: f, callback: function () { var e = t.target.hash; (e = document.getElementById(e.substring(1))) && (/^(?:a|select|input|button|textarea)$/i.test(e.tagName) || (e.tabIndex = -1), e.focus()) } }, r = window.pageYOffset, i = { duration: n.duration, offset: n.offset || 0, callback: n.callback, easing: n.easing || function (e, t, n, l) { return (e /= l / 2) < 1 ? n / 2 * e * e + t : -n / 2 * (--e * (e - 2) - 1) + t } }, n = document.querySelector('[id="' + decodeURI(e).split("#").join("") + '"]') || document.querySelector('[id="' + e.split("#").join("") + '"]'), s = "string" == typeof e ? i.offset + (e ? n && n.getBoundingClientRect().top || 0 : -(document.documentElement.scrollTop || document.body.scrollTop)) : e, a = "function" == typeof i.duration ? i.duration(s) : i.duration, requestAnimationFrame(function (e) { c(l = e) })) }, !1) } let d, i, u, f, m, h = {}; function s(e) { function s(e) { return e[e.length - 1] } function a(e) { var t; return (t => { try { return t instanceof window.HTMLElement || t instanceof window.parent.HTMLElement } catch (e) { return t instanceof window.HTMLElement } })(e) ? !c.ignoreHiddenElements || e.offsetHeight && e.offsetParent ? (t = e.getAttribute("data-heading-label") || (c.headingLabelCallback ? String(c.headingLabelCallback(e.innerText)) : (e.innerText || e.textContent).trim()), t = { id: e.id, children: [], nodeName: e.nodeName, headingLevel: +e.nodeName.toUpperCase().replace("H", ""), textContent: t }, c.includeHtml && (t.childNodes = e.childNodes), c.headingObjectCallback ? c.headingObjectCallback(t, e) : t) : null : e } (h = function () { var t = {}; for (let e = 0; e < arguments.length; e++) { var n, l = arguments[e]; for (n in l) C.call(l, n) && (t[n] = l[n]) } return t }(o, e || {})).scrollSmooth && (h.duration = h.scrollSmoothDuration, h.offset = h.scrollSmoothOffset, r(h)), d = l(h), i = (c = h, t = [].reduce, { nestHeadingsArray: function (e) { return t.call(e, function (e, t) { t = a(t); if (t) { for (var n = e.nest, t, l = (t = a(t)).headingLevel, o = n, r = s(o), i = l - (r ? r.headingLevel : 0); 0 < i && (!(r = s(o)) || l !== r.headingLevel);)r && void 0 !== r.children && (o = r.children), i--; l >= c.collapseDepth && (t.isCollapsed = !0), o.push(t) } return e }, { nest: [] }) }, selectHeadings: function (e, t) { var n = t; c.ignoreSelector && (n = t.split(",").map(function (e) { return e.trim() + ":not(" + c.ignoreSelector + ")" })); try { return e.querySelectorAll(n) } catch (e) { return console.warn("Headers not found with selector: " + n), null } } }), p(); var c, t, e = (t => { try { return t.contentElement || document.querySelector(t.contentSelector) } catch (e) { return console.warn("Contents element not found: " + t.contentSelector), null } })(h); if (null !== e) { var n = S(h); if (null !== n && null !== (u = i.selectHeadings(e, h.headingSelector))) { e = i.nestHeadingsArray(u).nest; if (h.skipRendering) return this; d.render(n, e), (f = g(function (e) { d.updateToc(u), h.disableTocScrollSync || (t = h, (r = t.tocElement || document.querySelector(t.tocSelector)) && r.scrollHeight > r.clientHeight && (o = r.querySelector("." + t.activeListItemClass)) && (n = (i = r.scrollTop) + r.clientHeight, o = (l = o.offsetTop) + o.clientHeight, l < i + t.tocScrollOffset ? r.scrollTop -= i - l + t.tocScrollOffset : o > n - t.tocScrollOffset - 30 && (r.scrollTop += o - n + t.tocScrollOffset + 60))); var t, n, l, o, r, i = e && e.target && e.target.scrollingElement && 0 === e.target.scrollingElement.scrollTop; (e && (0 === e.eventPhase || null === e.currentTarget) || i) && (d.updateToc(u), h.scrollEndCallback) && h.scrollEndCallback(e) }, h.throttleTimeout))(), (h.scrollContainer && document.querySelector(h.scrollContainer) ? (document.querySelector(h.scrollContainer).addEventListener("scroll", f, !1), document.querySelector(h.scrollContainer)) : (document.addEventListener("scroll", f, !1), document)).addEventListener("resize", f, !1); let t = null; m = g(function (e) { h.scrollSmooth && d.disableTocAnimation(e), d.updateToc(u), t && clearTimeout(t), t = setTimeout(function () { d.enableTocAnimation() }, h.scrollSmoothDuration) }, h.throttleTimeout), (h.scrollContainer && document.querySelector(h.scrollContainer) ? document.querySelector(h.scrollContainer) : document).addEventListener("click", m, !1) } } } function p() { var e = S(h); null !== e && (h.skipRendering || e && (e.innerHTML = ""), h.scrollContainer && document.querySelector(h.scrollContainer) ? (document.querySelector(h.scrollContainer).removeEventListener("scroll", f, !1), document.querySelector(h.scrollContainer).removeEventListener("resize", f, !1), d && document.querySelector(h.scrollContainer).removeEventListener("click", m, !1)) : (document.removeEventListener("scroll", f, !1), document.removeEventListener("resize", f, !1), d && document.removeEventListener("click", m, !1))) } let C = Object.prototype.hasOwnProperty; function g(l, o, r) { let i, s; return o = o || 250, function () { let e = r || this, t = +new Date, n = arguments; i && t < i + o ? (clearTimeout(s), s = setTimeout(function () { i = t, l.apply(e, n) }, o)) : (i = t, l.apply(e, n)) } } function S(t) { try { return t.tocElement || document.querySelector(t.tocSelector) } catch (e) { return console.warn("TOC element not found: " + t.tocSelector), null } } } }, l = {}; function o(e) { var t = l[e]; return void 0 !== t || (t = l[e] = { exports: {} }, n[e](t, t.exports, o)), t.exports } o.d = (e, t) => { for (var n in t) o.o(t, n) && !o.o(e, n) && Object.defineProperty(e, n, { enumerable: !0, get: t[n] }) }, o.g = function () { if ("object" == typeof globalThis) return globalThis; try { return this || new Function("return this")() } catch (e) { if ("object" == typeof window) return window } }(), o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t), o.r = e => { "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(e, "__esModule", { value: !0 }) }, o(647) })()</script>
-  <script>document.addEventListener("DOMContentLoaded", e => { var t = document.getElementById("markdown_content").querySelectorAll("h1,h2,h3,h4,h5,h6"), o = 0; t.forEach(e => { var t = "mweb_tt_id_" + o; "" === e.id && (e.id = t), o++ }), tocbot.init({ tocSelector: "#mweb_toc_list_iid", contentSelector: "#markdown_content", headingSelector: "h1, h2, h3, h4, h5, h6", orderedList: !1, collapseDepth: 6, scrollEndCallback: function (e) { var t = document.querySelector("#mweb_toc_list_iid li.is-active-li"); document.querySelector("#mweb_toc_list_iid>ul>li:first-child").classList.contains("is-active-li") ? document.getElementById("mweb_toc_list_iid").scrollTop = 0 : "function" == typeof t.scrollIntoViewIfNeeded ? t.scrollIntoViewIfNeeded() : t.scrollIntoView(!0) } }) })</script>
 </head>
 
 <body>
@@ -54,13 +53,6 @@
           src="RoccobotOS.svg" alt="RoccobotOS"></a>
       <h2><a id="indice" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indice</h2>
       <table>
-        <thead>
-          <tr>
-            <th style="text-align:center"></th>
-            <th style="text-align:center"></th>
-            <th style="text-align:center"></th>
-          </tr>
-        </thead>
         <tbody>
           <tr>
             <td style="text-align:center"><strong><a href="#Tastiera">TASTIERA</a></strong></td>
@@ -89,7 +81,7 @@
           </tr>
         </tbody>
       </table>
-      <p>Risorse utili<br>\\ <a href="Formati.html">Risoluzioni, schermi, standard video, dispositivi</a><br>\\ <a
+      <p>Risorse utili<br><a href="Formati.html">Risoluzioni, schermi, standard video, dispositivi</a><br><a
           href="AdServers.html">Liste di filtri per sicurezza, privacy e blocco pubblicità</a><br><br></p>
       <h1><a id="a-id-tastiera-tastiera-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a id="Tastiera">TASTIERA</a></h1>
@@ -150,7 +142,7 @@
           <tr>
             <td style="text-align:center">⎋</td>
             <td style="text-align:left">Esc</td>
-            <td style="text-align:center"><svg width="16" viewBox="-4 -4.2 72 76.4" class="icon-png-svg ic-globe" role="img" aria-label="Globo"><g fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="32" cy="34" r="29"/><ellipse cx="32" cy="34" rx="11.5" ry="29"/><line x1="32" y1="5" x2="32" y2="63"/><line x1="3" y1="34" x2="61" y2="34"/><path d="M8.4 19.5c6.6 3.4 15 5.4 23.6 5.4s17-2 23.6-5.4"/><path d="M8.4 48.5c6.6-3.4 15-5.4 23.6-5.4s17 2 23.6 5.4"/></g></svg> fn</td>
+            <td style="text-align:center"><svg width="16" viewBox="-4 -4.2 72 76.4" class="icon-png-svg ic-globe" role="img" aria-label="Globo"><g fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="32" cy="34" r="29"/><ellipse cx="32" cy="34" rx="11.5" ry="29"/><line x1="32" y1="5" x2="32" y2="63"/><line x1="3" y1="34" x2="61" y2="34"/><path d="M8.4 19.5c6.6 3.4 15 5.4 23.6 5.4s17-2 23.6-5.4"/><path d="M8.4 48.5c6.6-3.4 15-5.4 23.6-5.4s17 2 23.6 5.4"/></svg> fn</td>
             <td style="text-align:left">Globo (Funzione)</td>
           </tr>
         </tbody>
@@ -302,7 +294,7 @@
               href="#Nota2">2</a></sup></li>
         <li><strong>Passa a tutto schermo / Ripristina finestra</strong>: <code>Fn F</code></li>
         <li><strong>Impostazioni → Audio/Video/Mission Control/altro</strong>: <code>⌥</code> + tasto multimediale</li>
-        <li><strong>Mostra Scrivania</strong>: <code>⌘</code> + <svg height="14" viewBox="0 0 128 70" class="icon-png-svg ic-mission" role="img" aria-label="Tasto Mission Control su F3"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><rect x="3.5" y="3.5" width="78" height="34" rx="4"/><rect x="31.5" y="45.5" width="50" height="21" rx="4"/><rect x="92.5" y="3.5" width="32" height="52" rx="4"/></g></svg>   (Tasto Mission Control su <code>F3</code>)</li>
+        <li><strong>Mostra Scrivania</strong>: <code>⌘</code> + <svg height="14" viewBox="0 0 128 70" class="icon-png-svg ic-mission" role="img" aria-label="Tasto Mission Control su F3"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><rect x="3.5" y="3.5" width="78" height="34" rx="4"/><rect x="31.5" y="45.5" width="50" height="21" rx="4"/><rect x="92.5" y="3.5" width="32" height="52" rx="4"/></svg>   (Tasto Mission Control su <code>F3</code>)</li>
         <li><strong>Navigazione senza mouse → passa alla finestra attiva o successiva</strong>: <code>⌥⇥</code></li>
         <li><strong>Navigazione senza mouse → menu contestuale</strong>: <code>⌃⏎</code></li>
         <li><strong>Copia codice colore del pixel selezionato</strong>: <code>⇧⌘C</code> <sup><a
@@ -817,8 +809,8 @@
         </tbody>
       </table>
       <p><a id="NotaPS"></a> * Può compromettere il funzionamento di <em>Vista corrente su nuovo livello</em></p>
-      <p><strong>Extra</strong>: <a href="https://roccobot.altervista.org/_altervista_ht/a/Metodi%20di%20fusione.html"
-          target="_blank" style="white-space:nowrap">Metodi di fusione</a><br><br></p>
+      <p><strong>Extra</strong>: <a href="Metodi%20di%20fusione.html"
+          style="white-space:nowrap">Metodi di fusione</a><br><br></p>
       <h2><a
           id="a-href-https-www-alfredapp-com-target-blank-alfred-a-a-href-https-www-raycast-com-target-blank-raycast-a"
           class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><a
@@ -1503,7 +1495,7 @@
             <td style="text-align:center"><code>⌘⇧U</code></td>
           </tr>
           <tr>
-            <td style="text-align:left"><a href="">Link</a></td>
+            <td style="text-align:left"><span class="link-sample">Link</span></td>
             <td style="text-align:center">[testo](URL)</td>
             <td style="text-align:center"><code>⌘U</code></td>
           </tr>
@@ -1541,7 +1533,7 @@
       </ul>
       <h2><a id="a-href-https-vivaldi-com-target-blank-vivaldi-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a href="https://vivaldi.com/" target="_blank">Vivaldi</a></h2>
-      <p>\\ <a href="ShortcutsVivaldi.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
+      <p><a href="ShortcutsVivaldi.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
       <p>Gesti del mouse:</p>
       <table>
         <thead>
@@ -1603,10 +1595,10 @@
       </table>
       <h2><a id="a-href-https-www-videolan-orgvlc-target-blank-vlc-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a href="https://www.videolan.org/vlc/" target="_blank">VLC</a></h2>
-      <p>\\ <a href="ShortcutsVLC.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
+      <p><a href="ShortcutsVLC.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
       <h2><a id="a-href-https-theunarchiver-comxee-target-blank-xee-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a href="https://theunarchiver.com/xee" target="_blank">Xee</a></h2>
-      <p>\\ <a href="ShortcutsXee.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
+      <p><a href="ShortcutsXee.png" target="_blank" rel="noopener noreferrer">Vedi tabella</a></p>
       <h2><a id="a-href-https-www-xnview-com-target-blank-xnview-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a href="https://www.xnview.com/" target="_blank">XnView</a></h2>
       <ul>
@@ -1872,12 +1864,6 @@
       <h2><a id="accesso-completo-al-disco" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Accesso completo al disco</h2>
       <table>
-        <thead>
-          <tr>
-            <th style="text-align:left"></th>
-            <th style="text-align:left"></th>
-          </tr>
-        </thead>
         <tbody>
           <tr>
             <td style="text-align:left"><strong>Archiviazione</strong></td>
@@ -2310,11 +2296,11 @@
         </tbody>
       </table>
       <h2><a id="a-href-caratteri-html-caratteri-speciali-a" class="anchor" aria-hidden="true"><span
-            class="octicon octicon-link"></span></a>\\ <a href="Caratteri.html">Caratteri speciali</a></h2><br>
+            class="octicon octicon-link"></span></a><a href="Caratteri.html">Caratteri speciali</a></h2><br>
       <h2><a id="sostituzione-testo" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Sostituzione testo</h2>
       <p>(Impostazioni di sistema → Tastiera → Testo)</p>
-      <table>
+      <table class="sost-table">
         <thead>
           <tr>
             <th style="text-align:right">Sostituisci</th>
@@ -2336,7 +2322,7 @@
           </tr>
           <tr>
             <td style="text-align:right">\\apple</td>
-            <td style="text-align:left"><svg viewBox="0 0 22.773 22.773" class="icon-png-svg ic-apple" fill="currentColor" role="img" aria-label="Logo Apple"><path d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573 c-0.108-1.583,0.506-2.694,1.25-3.561C13.292,0.879,14.557,0.16,15.769,0z"/><path d="M20.67,16.716c0,0.016,0,0.03,0,0.045c-0.455,1.378-1.104,2.559-1.896,3.655c-0.723,0.995-1.609,2.334-3.191,2.334 c-1.367,0-2.275-0.879-3.676-0.903c-1.482-0.024-2.297,0.735-3.652,0.926c-0.155,0-0.31,0-0.462,0 c-0.995-0.144-1.798-0.932-2.383-1.642c-1.725-2.098-3.058-4.808-3.306-8.276c0-0.34,0-0.679,0-1.019 c0.105-2.482,1.311-4.5,2.914-5.478c0.846-0.52,2.009-0.963,3.304-0.765c0.555,0.086,1.122,0.276,1.619,0.464 c0.471,0.181,1.06,0.502,1.618,0.485c0.378-0.011,0.754-0.208,1.135-0.347c1.116-0.403,2.21-0.865,3.652-0.648 c1.733,0.262,2.963,1.032,3.723,2.22c-1.466,0.933-2.625,2.339-2.427,4.74C17.818,14.688,19.086,15.964,20.67,16.716z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></svg></td>
+            <td style="text-align:left"><svg viewBox="0 0 22.773 22.773" class="icon-png-svg ic-apple" fill="currentColor" role="img" aria-label="Logo Apple"><path d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573 c-0.108-1.583,0.506-2.694,1.25-3.561C13.292,0.879,14.557,0.16,15.769,0z"/><path d="M20.67,16.716c0,0.016,0,0.03,0,0.045c-0.455,1.378-1.104,2.559-1.896,3.655c-0.723,0.995-1.609,2.334-3.191,2.334 c-1.367,0-2.275-0.879-3.676-0.903c-1.482-0.024-2.297,0.735-3.652,0.926c-0.155,0-0.31,0-0.462,0 c-0.995-0.144-1.798-0.932-2.383-1.642c-1.725-2.098-3.058-4.808-3.306-8.276c0-0.34,0-0.679,0-1.019 c0.105-2.482,1.311-4.5,2.914-5.478c0.846-0.52,2.009-0.963,3.304-0.765c0.555,0.086,1.122,0.276,1.619,0.464 c0.471,0.181,1.06,0.502,1.618,0.485c0.378-0.011,0.754-0.208,1.135-0.347c1.116-0.403,2.21-0.865,3.652-0.648 c1.733,0.262,2.963,1.032,3.723,2.22c-1.466,0.933-2.625,2.339-2.427,4.74C17.818,14.688,19.086,15.964,20.67,16.716z"/></svg></td>
             <td style="text-align:right">&lt;-</td>
             <td style="text-align:left">←</td>
             <td style="text-align:right">Aule</td>
@@ -2510,8 +2496,8 @@
           </tr>
           <tr>
             <td style="text-align:left">0x007C</td>
-            <td style="text-align:center">`</td>
-            <td style="text-align:left">`</td>
+            <td style="text-align:center"><code>&#124;</code></td>
+            <td style="text-align:left">barra verticale (pipe)</td>
           </tr>
           <tr>
             <td style="text-align:left">0x003F</td>
@@ -2884,11 +2870,11 @@ defaults write com.apple.finder CreateDesktop false
 </code></pre>
       <p>Per ripristinare il comportamento predefinito:</p>
       <pre><code class="language-plain_text">defaults delete &lt;nomePacchetto&gt; NSAppSleepDisabled
-</code></pre><!--<h3><a id="gatekeeper" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GateKeeper</h3><p>• Permettere l'esecuzione di un'app non firmata (rimozione dalla Quarantena, richiede permessi admin):</p><pre><code class="language-plain_text">sudo xattr -rd com.apple.quarantine [+ trascinare l'app sul Terminale]
+</code></pre><h3><a id="gatekeeper" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GateKeeper</h3><p>• Permettere l'esecuzione di un'app non firmata (rimozione dalla Quarantena, richiede permessi admin):</p><pre><code class="language-plain_text">sudo xattr -rd com.apple.quarantine [+ trascinare l'app sul Terminale]
 </code></pre><p>• Permettere l'esecuzione di un'app non firmata (rimozione della data di Quarantena):</p><pre><code class="language-plain_text">xattr -d com.apple.quarantine [+ trascinare l'app sul Terminale]
-</code></pre><p>• Abilitare 'Dovunque' come origine delle applicazioni consentite:</p><pre><code class="language-plain_text">sudo spctl - -master-disable
-</code></pre><p>• Ripristinare l'impostazione predefinita delle origini consentite:</p><pre><code class="language-plain_text">sudo spctl - -master-enable
-</code></pre>-->
+</code></pre><p>• Abilitare 'Dovunque' come origine delle applicazioni consentite (fino a macOS 14; da macOS 15 Sequoia l'opzione e' stata rimossa e si passa da Impostazioni di sistema → Privacy e sicurezza → Apri comunque):</p><pre><code class="language-plain_text">sudo spctl --master-disable
+</code></pre><p>• Ripristinare l'impostazione predefinita delle origini consentite:</p><pre><code class="language-plain_text">sudo spctl --master-enable
+</code></pre>
       <h3><a id="dock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dock</h3>
       <p>• Disattivare in modo permanente l'animazione ('rimbalzo') delle icone:</p>
       <pre><code class="language-plain_text">defaults write com.apple.dock no-bouncing -bool true
@@ -3056,7 +3042,7 @@ defaults write com.apple.finder CreateDesktop false
       <p><code>diskutil list</code></p>
       <p><code>diskutil unmountDisk force DiskName</code></p>
       <p><code>diskutil partitionDisk DiskName MBR &quot;MS-DOS FAT32&quot; &quot;MyDisk&quot; 100%</code></p>
-      <br><!--<h2><a id="aggiungere-cartelle-all-elenco-dei-percorsi-di-sistema-path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Aggiungere cartelle all'elenco dei percorsi di sistema ('PATH')</h2><p><code>echo $PATH</code> (mostra i percorsi attualmente attivi)<br>Il risultato sarà simile a <code>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</code> (percorsi separati da <code>:</code>)</p><p><code>cd</code> (torna alla cartella home)<br><code>ls -la</code> (mostra l'elenco dei contenuti della home, per verificare se è presente il file <a href="https://roccobot.altervista.org/_altervista_ht/a/zshrc" target="_blank"><code>.zshrc</code></a>)</p><ul><li>se il file non esiste,<br><br><code>touch .zshrc</code> (crea il file)<br><br><code>nano .zshrc</code> (apre l'editor per le modifiche)</li><li>se il file è già presente,<br><br><code>nano .zshrc</code> (apre l'editor per le modifiche)<br><br>Il file potrebbe avere due righe standard sotto commento:<br><br>in tal caso, dalla seconda va tolto il prefisso di commento in modo che diventi attiva</li></ul><p>Va aggiunta una riga per ogni percorso da aggiungere:<br><code>export PATH=$PATH:</code>+percorso</p><p><strong>Esempi</strong><br><sub><strong>Python</strong> (universale, incompatibile con alcuni script)</sub><br><code>export PATH=$PATH:/Library/Frameworks/Python.framework/Versions/Current/bin/</code><br><sub><strong>Python</strong> (versione specifica)</sub><br><code>export PATH=$PATH:/Library/Frameworks/Python.framework/Versions/3.10/bin/</code><br><sub><strong>FFMPEG</strong></sub><br><code>export PATH=$PATH:'~/Library/Application Support/FFmpegTools/'</code></p><p><code>⌃O</code> (salva il file: <code>⏎</code> per confermare <code>.zshrc</code>)<br><code>⌃X</code> (esce dall'editor)<br><code>source .zshrc</code> (forza il refresh della lista)</p><p>Per verificare che il percorso sia stato aggiunto correttamente,<br>ripetere il comando <code>echo $PATH</code>: il risultato dovrebbe avere in coda anche il percorso aggiunto.</p><img src="nano.png" alt="nano" loading="lazy"><br>-->
+      <br>
       <h2><a id="chiusura-forzata-di-processi-applicazioni-e-servizi" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a>Chiusura forzata di processi (applicazioni e servizi)</h2>
       <table>
@@ -3594,9 +3580,10 @@ defaults write com.apple.finder CreateDesktop false
     </svg></button> <button class="tables-toggle" id="tablesToggle" aria-label="Cambia visualizzazione tabelle"
     title="Tabelle: standard/card"><span id="tablesIcon">≡</span></button> <button class="toc-toggle" id="tocToggle"
     aria-label="Mostra indice" title="Indice (TOC)">☰</button> <button class="scroll-toggle scroll-top-toggle"
-    id="scrollTopToggle" aria-label="Vai all'inizio della pagina" title="Inizio pagina">↥</button> <button
-    class="scroll-toggle scroll-bottom-toggle" id="scrollBottomToggle" aria-label="Vai in fondo alla pagina"
-    title="Fine pagina">↧</button>
+    id="scrollTopToggle" aria-label="Vai all'inizio della pagina" title="Inizio pagina"><span
+      class="scroll-glyph">↥</span></button> <button class="scroll-toggle scroll-bottom-toggle"
+    id="scrollBottomToggle" aria-label="Vai in fondo alla pagina" title="Fine pagina"><span
+      class="scroll-glyph">↧</span></button>
   <script src="RoccobotOS.js"></script>
 </body>
 

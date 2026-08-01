@@ -82,3 +82,57 @@ html[data-theme=dark] .toc-version{background:#0f0f10;color:#9b9b9b}
 @media screen and (max-width:860px){.toc-version-row{display:none}}
 @media screen and (min-width:861px){.site-version{display:none}}
 @media print{.toc-version-row{display:none}}
+
+/* Tabella delle sostituzioni testo: si allarga fino al bordo del contenuto (richiesta
+   dell'utente, 2026-08-01), invece di restare stretta sul contenuto delle celle. Le tabelle
+   di questa pagina sono 'display:block' per poter scorrere in orizzontale sugli schermi
+   stretti: qui la si riporta a 'display:table' SOLO sopra i 700 px, dove lo spazio c'e'
+   davvero, cosi' sotto quella soglia lo scorrimento resta.
+   Le tre colonne 'con' (le pari) prendono un fondo grigio chiaro, che separa le coppie a
+   colpo d'occhio: si applica alle sole celle del corpo, perche' le intestazioni hanno gia'
+   un grigio proprio e un secondo tono le confonderebbe. */
+@media screen and (min-width:701px){.markdown-body table.sost-table{display:table;width:100%}}
+.markdown-body table.sost-table td:nth-child(2n){background-color:#ececec}
+html[data-theme=dark] .markdown-body table.sost-table td:nth-child(2n){background-color:#2a2a2a}
+
+/* Glifi dei tasti inizio e fine pagina: centratura ottica chiesta dall'utente (2026-08-01),
+   3 suoi pixel in alto per la freccia in su e 1 per quella in giu'. I suoi pixel sono a
+   DPR 2, quindi valgono 1,5 e 0,5 px CSS, cioe' .09375rem e .03125rem sul corpo di 16 px.
+   Il glifo sta in uno span apposta: il transform NON puo' stare sul bottone, che lo usa gia'
+   per la dissolvenza laterale (translateX), e il verticale si fa col transform e non col
+   margine, come vuole la regola universale. */
+.scroll-glyph{display:block;line-height:1}
+.scroll-top-toggle .scroll-glyph{transform:translateY(-.09375rem)}
+.scroll-bottom-toggle .scroll-glyph{transform:translateY(-.03125rem)}
+
+/* Il tasto dell'indice e' l'unico dei cinque comandi fissi che nella regola base non
+   dichiarava nessuna distanza dal fondo: ce l'aveva solo dentro la media query dei 600 px.
+   Il JS leggeva quel valore all'avvio e, su finestra larga, si portava a casa 'auto': dopo
+   una rotazione del telefono il tasto finiva a decine di migliaia di pixel fuori schermo.
+   Qui la distanza c'e' sempre; su desktop il tasto resta display:none, quindi non si vede
+   comunque. */
+.toc-toggle{bottom:calc(104px + env(safe-area-inset-bottom))}
+
+/* Pallini dell'indice: la regola che li toglieva pretendeva un antenato '.toc', che in pagina
+   non esiste (tocbot costruisce dentro #mweb_toc_list_iid). Non agganciava nulla, e l'indice
+   mostrava i tre livelli di pallino che quella regola voleva evitare. */
+#mweb_toc_list_iid li{list-style:none}
+
+/* Tema scuro: l'elenco delle intestazioni ricolorate copriva h1, h2, h4, h5 e h6 e saltava
+   l'h3, che restava dell'azzurro del tema chiaro (piu' spento del ciano degli h2 sopra e del
+   verde degli h4 sotto). Colore provvisorio in attesa della palette nuova. */
+html[data-theme=dark] .markdown-body h3{color:#3fb6db}
+
+/* Stampa: i comandi fissi non vanno sulla carta. Il foglio di stampa nascondeva gia' indice,
+   pillola e numero di versione, ma i cinque tondi restavano 'fixed' e finivano sul foglio
+   sopra il testo. */
+@media print{.theme-toggle,.tables-toggle,.toc-toggle,.scroll-toggle{display:none}}
+
+/* Vista a schede: l'etichetta di colonna si mostra dove il JS l'ha scritta, cioe' nelle sole
+   tabelle con piu' di due colonne. Prima il CSS dichiarava content:'' e display:none, quindi
+   buttava via il lavoro del JS e le tabelle larghe restavano senza intestazioni. */
+html[data-tables=cards] .markdown-body table td[data-label]::before{content:attr(data-label);display:block;font-size:10px;font-weight:600;opacity:.7;margin-bottom:2px}
+
+/* Il 'Link' di esempio nella tabella del markdown: era un <a href=""> che ricaricava la
+   pagina e faceva perdere il segno. Ora e' uno span che ne imita solo l'aspetto. */
+.link-sample{color:#43b59e}
