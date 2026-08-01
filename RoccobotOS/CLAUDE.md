@@ -102,6 +102,20 @@
     - **`⌘`/`Ctrl` + freccia su o giù** portano in cima e in fondo, con `preventDefault` sulla
       scorciatoia del browser (override voluto). Il salto da tastiera è **istantaneo** e quello
       dei pulsanti **fluido**, esattamente come su 'I Grandi di Arda'.
+  - ⚠️⚠️ **Un feature flag non si spegne con il solo attributo `hidden`, e questo difetto è
+    arrivato in produzione** (3.40, corretto in 3.41). `hidden` nasconde con una regola del
+    foglio di stile del **browser**, mentre qui ogni comando fisso dichiara il proprio
+    `display` (`inline-flex` o `grid`) in una regola **d'autore**, che vince sempre: il
+    pulsante del tema restava visibile col suo flag già spento, e il tasto dell'indice ci
+    finiva sopra. Serve una regola esplicita `[hidden]{display:none!important}` sui comandi,
+    **fuori** da ogni media query, perché il flag li spegne su tutti i formati.
+    - ⚠️⚠️ **E la verifica che non l'ha visto sbagliava proprio qui**: leggeva la **proprietà**
+      `hidden` dell'elemento, che era `true` come atteso, e dichiarava 'nascosto'. Un comando
+      spento si verifica sul **`display` calcolato**, mai sull'attributo. Vale come regola
+      generale per questo progetto: le prove guardano il risultato, non l'intenzione.
+    - Perché non era saltato fuori col pulsante delle tabelle, che ha lo stesso flag da prima:
+      là una riga `.tables-toggle[hidden]{display:none!important}` c'era, ma **dentro** la
+      media query dei 600 px, quindi copriva un caso solo per caso.
   - ⚠️ **Anche il pulsante del TEMA è dietro un feature flag spento** (`FLAG_TASTO_TEMA`,
     2026-08-01), e la ragione è quella della voce qui sopra: con l'indice aperto copriva il
     pannello, e fra i due comandi di sinistra era il sacrificabile. Il tema segue la preferenza
