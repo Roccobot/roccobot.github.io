@@ -41,6 +41,24 @@
     col tasto `T`, senza memorizzare nulla: il tema scelto nella pagina principale non arriva
     fin là, perché nemmeno lei lo salva (scelta dell'utente, 2026-08-01, che ha chiesto il
     tasto e ha escluso il `localStorage`).
+  - ⚠️⚠️ **MathJax NON c'è più, e non va rimesso alla leggera** (2026-08-01). Si mangiava un
+    backslash: nella tabella delle sostituzioni testo il sorgente contiene `\\alt` e in pagina
+    compariva `\alt`. La causa è il suo `FindTeX` con **`processEscapes`** (default `true`),
+    che compila il pattern `\\([\\$])` e tratta due barre rovesciate come l'escape di una.
+    - **Come si è trovato**, perché il metodo vale più del singolo caso: il difetto **non si
+      riproduce nell'ambiente di sviluppo**, dove gli script dai CDN non si inizializzano allo
+      stesso modo. È stato isolato con una pagina di prova temporanea che caricava gli script
+      **a scelta** col querystring e stampava il testo letto dal DOM **coi codepoint**: la
+      versione 'solo MathJax' dava `5c 61 6c 74`, cioè una barra sola. La pagina è stata
+      cancellata a caso chiuso.
+    - **Perché tolto e non configurato**: in pagina non c'è **nessuna** formula (zero
+      delimitatori `\[`, `\(`, `$$`, `\begin{`, verificato sul corpo senza script), quindi
+      `tex-chtml-full.js` scaricava **1,3 MB** a ogni visita per non fare niente. Toglierlo
+      risolve il difetto e rimuove codice morto, che è la stessa cosa detta due volte.
+    - ⚠️ **Se un domani servisse la matematica**: si rimette lo script, ma con
+      `tex: { processEscapes: false }`, o il difetto torna identico. E si controlla che nel
+      blocco resti l'avvio di Prism (`Prism.highlightAll`), che prima conviveva con la
+      configurazione di MathJax nella stessa riga.
   - Il JS gestisce tema chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
   mobile e caricamento pigro.
   - ⚠️⚠️ **Il cache-busting (`?v=N`) NON esiste più, e non va reintrodotto** (decisione
