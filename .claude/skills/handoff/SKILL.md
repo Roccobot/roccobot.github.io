@@ -54,6 +54,10 @@ e interazioni', e questi sono i tre momenti:
    aperte**: se una cosa da fare esiste solo nel riassunto, è già a rischio.
 3. **Alla chiusura della sessione**, che è il caso per cui questa skill è nata.
 
+⚠️ In tutti e tre i casi il brief porta anche l'elenco dei **riferimenti**, cioè le sigle
+lettera-numero, aperti e chiusi: vedi la sezione apposita del modello. È la cosa che un
+riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso al resto.
+
 ⚠️ **Un hook `PreCompact`** (in `.claude/settings.json` dei due repo) scatta a ogni
 compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
 e non va creduto tale**: non gira quando la sessione monta i due repo affiancati, e la' resta
@@ -315,6 +319,14 @@ verifica, la voce **si cancella** e resta `Niente`, senza il racconto (regola n.
 ## Strumenti da rifare                        [max 6 righe]
 Gli script dello scratchpad che servono e che non esistono più (vedi in fondo). Committato
 uno script, la sua voce **si cancella**.
+
+## Riferimenti in uso                     [una riga per sigla, aperti E chiusi]
+Le sigle lettera-numero con cui utente e sessione chiamano i punti di un lavoro (`A1`, `B12`,
+`C7`...). Ci vanno **tutte**, anche quelle già chiuse, perché sono un **vocabolario
+condiviso** e non voci di lavoro: se l'utente scrive 'torniamo su B3' e la sigla non significa
+più niente, la conversazione riparte da capo. Una riga ciascuna, con l'esito per le chiuse
+(`B7 - liste OISD morte, chiuso in 2.60`), mai il racconto. ⚠️ Se più giri di lavoro hanno
+usato le stesse lettere, dire **quale schema è in vigore** e dichiarare l'altro superato.
 
 ## Da decidere                            [senza tetto - NON sono cose da fare]
 Le domande poste all'utente e rimaste **senza risposta** entro un turno di botta e risposta:
