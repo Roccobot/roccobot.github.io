@@ -19,6 +19,11 @@
   - ⚠️ Perciò **'guida' non è più il termine giusto** per chiamarlo, né in chat né nei
     file di regole: sopravvive in qualche riga storica di questo file, dove racconta come
     si pensava prima.
+- ⚠️ **Deroghe dichiarate alle regole di sviluppo** (`Roccobot.md`, § '🏗️ Sviluppo
+  software'), che da progetto gli si applicano: la **lingua del sito è l'italiano** (è il
+  riferimento personale dell'utente, non un prodotto per un pubblico anglofono), e **non
+  c'è il footer standard** con la nota 'vibes ✦': il numero di versione, che quel footer
+  ospiterebbe, sta in cima per scelta dell'utente (vedi la sezione della versione).
 - **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`,
   richiamati con cache-busting (`?v=N`): toccando quei due file va incrementato il numero,
   altrimenti i browser servono la copia vecchia. Il JS gestisce tema
@@ -153,16 +158,17 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
   ritagliato quando il numero era interno.
 
-- **RoccobotOS è alla `2.2.3`**, mostrata in pagina come `v2.2.3`.
-  - **Perché tre cifre da qui in avanti**: con la versione visibile si applica il SemVer pieno
-    della regola universale, *patch* per le correzioni, *minor* per contenuto e funzioni,
-    *major* per i cambi strutturali. Le due cifre di prima erano il regime della versione
-    interna, ed è decaduto con essa: la `2.1` si legge come `2.1.0`, e l'aggiunta del numero in pagina,
-    che è una funzione nuova, l'ha portata a `2.2.0`. La `2.2.1` è la **patch** che ne ha
-    corretto posizione e resa su indicazione dell'utente: la funzione c'era già.
-  - ⚠️ **Bump a OGNI commit che tocca il prodotto**, come negli altri progetti, e non più solo
-    quando cambia l'impianto: quella soglia alta aveva senso finché il numero era un'etichetta
-    per noi. I commit che toccano **solo** questo file di regole non bumpano.
+- **RoccobotOS è alla `2.30`**, mostrata in pagina come `v2.30`.
+  - ⚠️⚠️ **Dal 2026-08-01 lo schema è SlimVer** (`x.xx`, il default dei progetti:
+    `Roccobot.md`, § '🌿 Workflow git e versioni'), per scelta dell'utente contestuale alla
+    promozione dello schema a default. **`2.30` succede a `2.2.3`** per la convenzione di
+    lettura dello schema: ogni `x.xx` è successivo a ogni `x.y.z`.
+  - **La storia in tre giorni**, da sapere per leggere i numeri vecchi: nato **interno** a
+    due cifre (`2.0`, `2.1`), poi **visibile e SemVer** (`2.2.0`...`2.2.3`), infine SlimVer.
+    Le note che parlano di 'tre cifre' o di regime SemVer sono superate.
+  - **Bump a OGNI commit che tocca il prodotto**, per entità (+0,01 secondaria, +0,1
+    funzionalità, +1,0 maggiore), come da regola universale. I commit che toccano **solo**
+    questo file di regole non bumpano.
 
 - **Dove vive il numero: la costante `VERSIONE` in `RoccobotOS/RoccobotOS.js`**, e in nessun
   altro posto. Il badge la legge a runtime.
@@ -237,7 +243,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     vuoto di quel logo un test sui rettangoli grida al lupo dove non c'è.
 
 - ⚠️ **Non confonderla col cache-busting `?v=N`**, che è un'altra cosa: quello è **per file**
-  (`RoccobotOS.css?v=9`, `RoccobotOS.js?v=10`) e serve a invalidare la cache dei browser. Si
+  (`RoccobotOS.css?v=9`, `RoccobotOS.js?v=11`) e serve a invalidare la cache dei browser. Si
   bumpa quando cambia **comportamento o resa**: col numero in pagina sono saliti entrambi,
   mentre la sola correzione di un commento non li aveva toccati.
   - ⚠️⚠️ **Ora il `.js` va bumpato a OGNI cambio di versione**, e questa è la trappola nuova
@@ -245,8 +251,6 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     in cache continuerebbe a **scrivere in pagina il numero vecchio** anche a deploy riuscito, e
     la sonda sul file grezzo direbbe che tutto è a posto. Sbagliato una volta il 2026-07-31,
     bumpando il solo CSS e accorgendosene prima del merge.
-- ⚠️ **Non è lo schema `x.xx` di 'I Grandi di Arda'**: quello resta un override dichiarato del
-  SemVer, valido solo là. Qui, dal 2026-07-31, si sta sul SemVer universale.
 - **Sonda di pubblicazione** di questo progetto (l'equivalente di `datiVersion` per 'I Grandi
   di Arda'), che è cambiata insieme al resto:
   `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | grep -o 'VERSIONE = "[^"]*"'`.

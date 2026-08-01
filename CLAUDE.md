@@ -31,18 +31,23 @@ un file di quella cartella.
   è di portata generale sta qui, se è universale sta in `rules/Roccobot.md`. Nel dubbio, questo
   file.
 
-⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: solo 'I Grandi di
-Arda' ha il numero di versione `x.xx` e un deploy da attendere; le liste AdBlock hanno
-l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
-installazione da ripetere dopo ogni go-live; **RoccobotOS ha una versione SemVer visibile in
-pagina**, in cima e sopra il logo (dettagli in
-[`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'). ⚠️ Quindi
-'senza versione' non è più vero per nessuno dei cinque progetti.
-- ⚠️ **Su RoccobotOS la regola è cambiata due volte in due giorni**, e conviene saperlo per non
-  applicare la penultima: il 2026-07-30 il numero è nato **interno**, poi il 2026-07-31 l'utente
-  ha stabilito che quel progetto **conta come sito e non come documentazione**, e con la versione
-  visibile sono tornate valide le regole di versione degli altri progetti (bump a ogni commit sul
-  prodotto). Le note che lo dicono 'interno e non visibile' sono superate.
+⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: 'I Grandi di Arda' e
+**RoccobotOS** seguono **SlimVer**, lo schema `x.xx` che dal 2026-08-01 è il default dei
+progetti (`Roccobot.md`, § '🌿 Workflow git e versioni'), il primo con la fonte in
+`datiVersion` e il badge in testata, il secondo col numero visibile in cima e sopra il logo
+(dettagli in [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'); le
+liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e
+il link di installazione da ripetere dopo ogni go-live. ⚠️ 'Senza versione' non è vero per
+nessuno dei cinque progetti.
+- ⚠️ Il **deploy Pages da attendere è UNICO e riguarda tutti i progetti del repo**: la
+  verifica di pubblicazione si fa con la sonda del progetto toccato (vedi '🌿 Branch,
+  allineamento e push').
+- ⚠️ **Su RoccobotOS la regola di versione è cambiata TRE volte in tre giorni**, e conviene
+  saperlo per non applicare una versione vecchia della regola: numero nato **interno** il
+  2026-07-30, **visibile e SemVer** il 2026-07-31 (quando l'utente ha stabilito che il
+  progetto **conta come sito e non come documentazione**), **SlimVer** dal 2026-08-01 con la
+  promozione dello schema a default. Le note che lo dicono 'interno' o 'a tre cifre' sono
+  superate.
 
 ## 📜 Regola n. 1: le regole universali e come si caricano
 
@@ -60,10 +65,9 @@ sessione:
    **si attende la risposta** prima di iniziare il lavoro: l'utente ha detto
    esplicitamente che il ritardo di un giro non è un problema, perché si paga una
    volta sola.
-   - **`Carico anche rules/JRRT.md?`** (il canone tolkieniano). ⚠️ Dal 2026-07-29 è
-     **l'unico file di regole opzionale**: `Development.md` e `Prompts.md` sono stati
-     assorbiti in `Roccobot.md`, che si carica sempre. Se un domani ne nascono altri,
-     si aggiungono qui come opzioni.
+   - **`Carico anche rules/JRRT.md?`** (il canone tolkieniano). ⚠️ È **l'unico file di
+     regole opzionale**: tutto il resto vive in `Roccobot.md`, che si carica sempre. Se
+     un domani ne nascono altri, si aggiungono qui come opzioni.
    - **`Quali CLAUDE.md di progetto leggo subito?`**, a **scelta multipla** fra i
      cinque della tabella in testa a questo file (richiesta dell'utente, 2026-07-30).
      Quelli che l'utente non sceglie **non** si leggono all'avvio: si leggono **al
@@ -113,31 +117,18 @@ sessione:
   dove scriverne una nuova.
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
-- ⚠️ **`rules/Development.md` e `rules/Prompts.md` NON esistono più** (2026-07-29):
-  **cancellati dal repo dall'utente**, non lasciati come rimando. Un `curl` sui loro URL
-  risponde 404, e non è un guasto del Worker: non cercarli e non ricrearli.
-  - `Development.md` è stato assorbito in `Roccobot.md`, sezione '🏗️ Sviluppo software',
-    al netto delle ridondanze. Criterio della fusione, dell'utente: **si unisce ciò
-    che è sempre vero, si tiene separato ciò che è modale.**
-  - `Prompts.md` è stato ridotto dall'utente alle voci ancora utili, confluite in
-    `Roccobot.md`, sezione '🎛️ Revisione dei prompt'. La fusione è diventata sicura
-    perché la riduzione ha **eliminato gli operatori** che scavalcavano quelli di
-    'Traduzioni e revisioni': erano l'unica cosa che rendeva quel file modale nel
-    **meccanismo** e non solo nell'uso.
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
 
-  ⚠️ **I raw GitHub NON funzionano più** (verificato il 2026-07-29:
-  `raw.githubusercontent.com/Roccobot/tools/...` risponde 404 sia su `main` sia su
-  `master`, mentre il Worker risponde 200, e `github.com` di qui dà 403). Non
-  perderci tempo: **il Worker è l'unica via**.
-- **Leggi sempre in grezzo, mai con un fetch che riassume**: strumenti tipo
-  `WebFetch` sintetizzano i file lunghi e restituiscono un riassunto al posto
-  del testo reale. Usa `curl` con UA da browser (o l'aggancio del repo +
-  lettura diretta), poi verifica che ci siano l'intestazione e la riga
-  `> **Versione**:`. Regola completa e motivazione nella sezione Worker
-  `rules-proxy` di `Roccobot.md`.
+  ⚠️ **I raw GitHub NON funzionano** (verificato il 2026-07-29 e riverificato il
+  2026-08-01: `raw.githubusercontent.com/Roccobot/tools/...` risponde 404 **con e senza
+  UA da browser**, su entrambi i branch, mentre il Worker risponde 200). Non perderci
+  tempo: **il Worker è l'unica via**, e questa nota è la fonte del fatto.
+- **Leggi sempre in grezzo, mai con un fetch che riassume**: qui solo il minimo che serve
+  PRIMA di aver letto le regole (`curl` con UA da browser, poi verificare che ci siano
+  l'intestazione e la riga `> **Versione**:`); regola completa e motivazione nella sezione
+  Worker `rules-proxy` di `Roccobot.md`, di cui questa non è una copia.
 - Se la sessione non ha accesso diretto a `Roccobot/tools`: tentare
   l'aggancio con lo strumento `add_repo`, altrimenti leggere dagli URL
   qui sopra. Per la **scrittura** senza accesso diretto c'è il Worker
@@ -158,15 +149,14 @@ sessione:
   - **Niente snapshot (tag git) dopo ogni rilascio** e **nessun Report post-rilascio
     dopo ogni release maggiore**: qui un bump `+1.0` è frequente e non è un evento di
     programma; l'archivio è la storia git.
-  - **Gate W3C**: non a ogni release, ma solo ai bump **+0.1 e +1.0**, e 'utile ma non
-    imprescindibile' se il validatore non risponde (vedi `arda/top/CLAUDE.md`, '🔢 Versione
-    del sito').
-    ⚠️ Questa deroga vale verso **`Roccobot.md`**, sezione 'Test e verifiche', che dal
-    2026-07-29 è la fonte unica del gate in tutte le regole.
-  - **Versione**: schema custom `x.xx`, che è un override dichiarato del SemVer.
-  - **Lingua della UI**: il sito è bilingue IT/EN con l'italiano come lingua primaria,
-    non 'tutto in inglese di default'.
-  - **Footer**: quello del sito è il suo, non la nota fissa 'vibes ✦ ...'.
+  - **Lingua della UI di 'I Grandi di Arda'**: bilingue IT/EN con l'italiano come lingua
+    primaria, non 'tutto in inglese di default'. (RoccobotOS dichiara la propria deroga di
+    lingua nel suo `CLAUDE.md`.)
+  - **Footer di 'I Grandi di Arda'**: quello del sito è il suo, non la nota fissa
+    'vibes ✦ ...'. (Anche qui RoccobotOS ha la sua deroga, dichiarata nel suo file.)
+  - Ⓘ Due deroghe storiche sono **decadute il 2026-08-01** diventando il default: lo schema
+    di versione `x.xx` è ora **SlimVer**, la regola universale, e il gate W3C 'alle minor,
+    se disponibile, senza bloccare' è scritto in `Roccobot.md` § 'Test e verifiche'.
 
   Resta invece pienamente valido tutto il resto: rigore tecnico, igiene del codice
   (niente codice morto), conferma esplicita per le operazioni ad alto impatto,
@@ -201,16 +191,11 @@ Dalla più forte alla più debole:
      apocrifi). Un audit che applichi `JRRT.md` alla lettera le segnalerà come
      errori: non lo sono, e la scala è ciò che lo stabilisce.
 4. **`rules/Roccobot.md`**: la base universale, vale per tutto il resto.
-   - ⚠️ Dal 2026-07-29 contiene anche le **regole di sviluppo** e la **revisione dei
-     prompt**, che prima stavano in due file a sé. Quindi non sono più livelli sopra di
-     lui: sono sue sezioni, e i conflitti che la scala risolveva sono diventati
-     **eccezioni dichiarate** nel testo (la lingua dei prodotti software è scritta come
-     eccezione dentro la regola sulla lingua; il formato di output della revisione
-     prompt dichiara di sostituire quello delle traduzioni quando la modalità è
-     attiva).
-   - La scala è così tornata a **tre soli livelli sotto la sessione**, che è il segno
-     che le fusioni hanno funzionato: meno file, meno gerarchia, più eccezioni scritte
-     dove servono.
+   - ⚠️ Contiene anche le **regole di sviluppo** e la **revisione dei prompt**: sono sue
+     sezioni, non livelli sopra di lui, e i loro conflitti sono **eccezioni dichiarate**
+     nel testo (la lingua dei prodotti software è scritta come eccezione dentro la regola
+     sulla lingua; il formato di output della revisione prompt dichiara di sostituire
+     quello delle traduzioni quando la modalità è attiva).
 
 ### ⚠️ Come si legge questa scala
 
@@ -244,6 +229,11 @@ può allentarle. Questo è l'indice, la formulazione completa sta dove indicato.
 | Una misura fatta senza i **font reali** non si spaccia per buona | `Roccobot.md`, 'Test e verifiche' |
 | **Conferma esplicita** per le operazioni ad alto impatto | `Roccobot.md`, 'Automazione e interazioni' + qui, go-live |
 | **Allineamento al remoto prima di toccare un file**, col confronto dei ref: nessun progetto può allentarlo | `Roccobot.md`, 'Workflow git e versioni' |
+
+- **'Mai `innerHTML`', formulazione completa**: il testo che finisce nel DOM si scrive con
+  `textContent` o componendo nodi, mai assegnando `innerHTML`, nemmeno per contenuto che
+  'sembra sicuro': è il canale classico delle iniezioni, e basta un dato inatteso a
+  trasformare una stringa in markup eseguito.
 
 ⚠️ Se un file più specifico sembra contraddire una di queste, non è una deroga: è un
 difetto di quel file, da segnalare all'utente.
@@ -334,9 +324,11 @@ ha priorità più alta**.
   (`...`), mai il carattere unico `…`. ⚠️ Valgono anche per il testo **che l'utente
   fornisce**: un carattere vietato ricevuto in input (p.es. l'apostrofo curvo
   dell'autocorrezione) va normalizzato, come in ogni altra circostanza.
-- ⚠️ **L'EN-DASH `–` resta ammesso negli intervalli d'anno** (`1954–55`), senza spazi
-  attorno al segno: il divieto totale riguarda l'em-dash, e va letto insieme a questa
-  eccezione, non contro di essa.
+- ⚠️ **Anche l'EN-DASH `–` è vietato ovunque, intervalli d'anno compresi** (dal
+  2026-08-01): che cosa significa 'vietato' per lui (niente verifiche apposite, ma
+  sostituzione con `-` dove lo si incontra) lo dice `Roccobot.md`, § 'Caratteri', che ora
+  contiene la regola intera. Il dataset di 'I Grandi di Arda' è stato bonificato quel
+  giorno (264 occorrenze di `1954–55` nelle fonti).
 - Le convenzioni tipografiche **specifiche del dataset** (maiuscola iniziale delle righe,
   nomi di creatura, toponimi con o senza articolo) stanno in `arda/top/CLAUDE.md`.
 
@@ -433,7 +425,7 @@ poi divergerebbe.
   2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
-- **I cinque controlli pre-commit**, che bloccano il commit **solo quando la configurazione
+- **I controlli pre-commit**, che bloccano il commit **solo quando la configurazione
   viene letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
   nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i **caratteri del
@@ -441,14 +433,16 @@ poi divergerebbe.
   e controlla anche i file di `Roccobot/tools` quando il repo è agganciato). ⚠️ Criterio,
   whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
   regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
-  che bloccano il commit.
-  - ⚠️ **Il quinto guarda il MESSAGGIO, che nessuno guardava**: il controllo em-dash legge il
-    diff, quindi un carattere sbagliato nel messaggio di commit passava indisturbato. È nato
-    da un omografo (`U+0435`, la e cirillica) finito in un messaggio il 2026-07-29. Criterio
-    completo in `Roccobot.md` § '💬 Stile di comunicazione', voce sugli omografi.
-  - **Il verificatore fa sei controlli**, non più quattro: ai quattro sui rimandi si sono
-    aggiunti i **caratteri** dei file di regole e la **fedeltà del riquadro** del brief alla
-    sua sorgente nella skill `handoff`, che prima era una raccomandazione non verificabile.
+  che bloccano il commit. ⚠️ **Quanti sono non si scrive**: l'elenco qui sopra è la sostanza,
+  e un numero andrebbe aggiornato a ogni ritocco della procedura, mentendo nel frattempo.
+  - ⚠️ **Il controllo sul MESSAGGIO esiste perché nessun altro lo guardava**: quello
+    dell'em-dash legge il diff, quindi un carattere sbagliato nel messaggio di commit passava
+    indisturbato. È nato da un omografo (`U+0435`, la e cirillica) finito in un messaggio il
+    2026-07-29. Criterio completo in `Roccobot.md` § '💬 Stile di comunicazione', voce sugli
+    omografi.
+  - **Il verificatore controlla anche** i **caratteri** dei file di regole e la **fedeltà del
+    riquadro** del brief alla sua sorgente nella skill `handoff`, che prima era una
+    raccomandazione non verificabile.
   - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
@@ -493,8 +487,8 @@ poi divergerebbe.
     - **Il rimedio, finché la causa resta**: prima di ogni commit lanciare a mano i due controlli
       che coprono i file di regole, come **comandi singoli** e con percorso assoluto,
       `python3 <radice>/.memo/scripts/refcheck.py` e
-      `printf '%s' '<messaggio>' | python3 <radice>/.memo/scripts/refcheck.py --text`. Gli altri
-      tre restano scoperti, quindi versione e allineamento si guardano a occhio.
+      `printf '%s' '<messaggio>' | python3 <radice>/.memo/scripts/refcheck.py --text`. Gli
+      altri restano scoperti, quindi versione e allineamento si guardano a occhio.
     - ⚠️ **Come si verifica se un domani tornassero a girare**: solo da una **sessione nuova**
       (la configurazione si legge all'avvio), con un `git commit --allow-empty` il cui messaggio
       porti l'omografo **letterale nel comando**, perché gli hook ricevono la stringa del comando

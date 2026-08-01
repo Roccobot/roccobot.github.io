@@ -56,20 +56,20 @@ RULEFILES = [
     TOOLS / ".claude/skills/desc/SKILL.md",
 # Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollera'
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
-# averne trovati DUE stantii nello stesso momento (uno rimandava a `rules/Prompts.md` e
-# l'altro a `rules/Development.md`, cancellati il giorno prima): fuori copertura, un
-# rimando morto la' non lo segnalava nessuno. Glob e non elenco: uno snippet nuovo entra
-# nel controllo da se', che e' l'unico modo perche' non si ripeta.
+# averne trovati DUE stantii nello stesso momento, entrambi con rimandi a file di regole
+# cancellati il giorno prima: fuori copertura, un rimando morto la' non lo segnalava
+# nessuno. Glob e non elenco: uno snippet nuovo entra nel controllo da se', che e' l'unico
+# modo perche' non si ripeta.
 ] + sorted(TOOLS.glob("snippets/*.md"))
 
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
 SKIP_PATHS = {
-    # cancellati dall'utente, citati per dire che non esistono più: e' una categoria, non un
-    # elenco di casi. Un file che non c'e' PIU' si nomina, perche' senza il suo nome la nota
-    # che spiega la sua assenza non si puo' nemmeno scrivere.
-    "rules/Development.md",       # 2026-07-29
-    "rules/Prompts.md",           # 2026-07-29
+    # file cancellati che una nota cita per dire che non esistono più: e' una categoria,
+    # non un elenco di casi. Un file che non c'e' PIU' si nomina, perche' senza il suo nome
+    # la nota che spiega la sua assenza non si puo' nemmeno scrivere. (2026-08-01: usciti
+    # dall'elenco i due file di regole cancellati il 2026-07-29, perche' l'utente ha voluto
+    # via anche le note che li citavano.)
     "RoccobotOS/Da fare.txt",     # 2026-07-30, residuo vecchio: non si ricrea
 }
 SKIP_PREFIXES = (
@@ -107,6 +107,7 @@ VOLATILE_SKIP = {"LATEST.md"}
 # leggibile. E' la regola che questo elenco impone ai file di testo, applicata al codice.
 VIETATI = {
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
+    "\u2013": "en-dash: usa il trattino breve, anche negli intervalli numerici (dal 2026-08-01)",
     "\u2026": "ellissi unicode: usa tre punti",
     "\u2018": "apice curvo di apertura: usa l'apice dritto",
     "\u2019": "apice curvo di chiusura: usa l'apice dritto",
@@ -200,6 +201,21 @@ def char_defects(text):
         for col, ch in enumerate(line, 1):
             if ch == "`" and not in_fence:
                 in_code = not in_code
+                continue
+            # Un '+' fra due lettere non e' mai legittimo fuori dal codice: e' un refuso di
+            # copia-incolla che prende il posto di un apostrofo (caso reale: 'dell+Aria' in
+            # JRRT.md, 2026-08-01). E' ASCII, quindi il filtro cp>=128 qui sotto non lo
+            # vedrebbe mai: va controllato prima.
+            if ch == "+" and not in_code:
+                prev = line[col - 2] if col >= 2 else ""
+                nxt = line[col] if col < len(line) else ""
+                # le scorciatoie da tastiera (Ctrl+L, Cmd+V...) sono '+' legittimi: si
+                # riconoscono dal modificatore alla sinistra, non si elencano i tasti
+                mod = re.search(r"(Ctrl|Cmd|Alt|Shift|Fn|Opt|Option|Win|Super|Meta)$",
+                                line[:col - 1])
+                if prev.isalpha() and nxt.isalpha() and not mod:
+                    out.append((n, col, ch, "'+' fra due lettere: refuso da copia-incolla, "
+                                            "probabile apostrofo mancato"))
                 continue
             cp = ord(ch)
             if cp < 128:

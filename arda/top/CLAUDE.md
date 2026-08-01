@@ -30,13 +30,12 @@ a runtime (`setVersionBadge`) e la scrive nel badge della testata; gli specchi n
 `dati.js` non carica. ⚠️ **Mai reintrodurre un secondo numero hardcoded 'vivo' altrove**: storico,
 il pannello restò fermo a v5.11.0 per mesi.
 
-**Schema custom `x.xx`** (intero + due decimali), override di progetto del SemVer universale, con
-riporto a due decimali. Bump per entità: **+0,01** secondaria, **+0,1** funzionalità, **+1,0**
-release maggiore, e i due maggiori ammettono l'arrotondamento al decimale o all'intero successivo.
-Lo schema **succede** al vecchio `x.y.z`: per convenzione di lettura ogni `x.xx` è successivo a ogni
-`x.y.z`. Nessun codice confronta le versioni per ordine (solo l'uguaglianza badge↔`datiVersion` nei
-guard), quindi la convenzione vale per gli umani; ⚠️ **nessun prefisso `r`**, che romperebbe quei
-guard.
+**Schema SlimVer `x.xx`**: nato qui e promosso il 2026-08-01 a **default universale dei
+progetti** col suo nome (regole di bump e convenzione di lettura in `Roccobot.md`,
+§ '🌿 Workflow git e versioni': +0,01 secondaria, +0,1 funzionalità, +1,0 maggiore, riporto a
+due decimali). Specifico di questo progetto: nessun codice confronta le versioni per ordine
+(solo l'uguaglianza badge↔`datiVersion` nei guard), e ⚠️ **nessun prefisso `r`**, che
+romperebbe quei guard.
 
 **Il numero è anche l'accesso all'area admin**: da ogni punto (badge in testata, versione del
 Pannello desktop e mobile) il click porta **dritto all'editor**, chiudendo prima il pannello dove
@@ -46,17 +45,13 @@ serve.
 
 - **A ogni release da +0,1 in su** (non ai +0,01 di rifinitura), **prima di aprire la PR**: Nu Html
   Checker su **tutte le pagine modificate**, a **0 errori E 0 warning**. La pulizia totale è voluta
-  dall'utente: non solo i messaggi di errore, ma anche gli `info` con `subType:"warning"`.
-- **Utile ma NON imprescindibile.** Se il test non si può eseguire (429, challenge Cloudflare,
-  servizio giù), **non si rimanda il go-live e non si lasciano retry in background**: si procede
-  annotando il salto, e il controllo si recupera al **prossimo aggiornamento**. Il vincolo 0/0 resta
-  pieno quando il test **gira**.
+  dall'utente: non solo i messaggi di errore, ma anche gli `info` con `subType:"warning"`. È
+  l'applicazione della regola universale (`Roccobot.md` § '🧪 Test e verifiche'): W3C alle minor
+  release, **se disponibile**, e l'impossibilità di portarlo a termine **non impedisce di
+  procedere**: si annota il salto e si recupera al giro successivo, senza retry in background.
   - **Evidenza sostitutiva** quando si salta: il **diff della porzione NON-JS** rispetto all'ultima
     versione validata 0/0. Se cambia solo il numero del badge il rischio è nullo, perché il Nu non
     ispeziona JS e CSS iniettato.
-  - ⚠️ **L'indisponibilità va e viene, anche nello stesso giorno**: non è un rate limit da
-    esaurimento. Nel dubbio **tentare sempre**, costa un `curl`, e alla challenge passare subito
-    alla prova sostitutiva **senza retry**.
 - ⚠️ La proprietà CSS `d` dell'animazione del glifo di chiusura è valida ma **non riconosciuta dal
   Nu**, perciò è iniettata via JS: **non reintrodurla nel CSS statico** o tornano 4 errori.
 
@@ -911,9 +906,11 @@ dataset.
   dritte) si rende con l'apice dritto **singolo**, sia nelle citazioni sia nelle glosse interne.
 - **Apostrofi: sempre dritti `'`**, mai i curvi.
 - **Ellissi:** tre punti `...`, mai il carattere unico `…`.
-- **Trattini:** l'en-dash `–` **solo negli intervalli d'anno**, tipicamente nella `fonte` (es.
-  `1954–55`) ma legittimo anche nei testi quando esprime un intervallo (es. `2758–59`), scritto
-  **senza spazi** attorno al segno.
+- **Trattini: sempre e solo il trattino breve `-`**, anche negli intervalli d'anno
+  (`1954-55`, senza spazi attorno al segno): dal 2026-08-01 l'en-dash `–` non ha più
+  eccezioni (regola universale in `Roccobot.md`, § 'Caratteri'). Il dataset è stato
+  bonificato quel giorno: 264 occorrenze di `1954–55` nelle fonti, più il trattino del
+  viewer delle note (`content` CSS), portate tutte a `-`.
 - ⚠️ **Em-dash, apici e ellissi: il divieto vive nel `CLAUDE.md` di ROOT**, sezione
   '✒️ Caratteri vietati', perché vale in ogni output e anche quando questo file non è
   caricato. Qui restano le sole convenzioni **del dataset**.

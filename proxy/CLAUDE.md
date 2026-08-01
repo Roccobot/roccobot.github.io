@@ -58,14 +58,11 @@ Dal contenuto legge anche la versione, per bumparla.
     perché Cloudflare sparge le richieste su isolate diversi. Solo il Durable
     Object dà un conteggio affidabile. Storia in PR #294-#302.
   - **Spia di salute del Worker:** un `GET` (o qualunque non-POST) risponde
-    `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del
-    codice attiva (**15** dalla v12.85, che ha alzato a 40 il tetto delle manopole
-    per effetto; 14 dalla v12.39, che ha esteso `validSiteFlags` ai flag
-    a oggetto; 13 dalla v12.24, che aveva aggiunto `siteFlags`; utile per
-    verificare che una ridistribuzione via Git sia andata a buon fine, non
-    altrimenti ispezionabile senza dashboard), `rl`
-    se il binding `RL_DO` è presente. Nessun segreto esposto. Bump di `rev`
-    a ogni modifica sostanziale del Worker.
+    `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del codice attiva
+    (serve a verificare che una ridistribuzione via Git sia andata a buon fine, non
+    altrimenti ispezionabile senza dashboard), `rl` se il binding `RL_DO` è presente.
+    Nessun segreto esposto. ⚠️ **Il valore corrente non si scrive qui**: si legge con un
+    GET, e una copia scritta mentirebbe al primo bump non registrato.
 - ⚠️⚠️ **Race di deploy fra sito e Worker.** Si ridistribuiscono dallo **stesso push** ma su
   infrastrutture diverse, con tempi diversi: finché il Worker è alla revisione precedente un
   salvataggio dal pannello **sembra riuscire** e invece la config nuova non viene scritta, e
