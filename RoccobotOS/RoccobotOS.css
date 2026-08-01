@@ -165,3 +165,25 @@ html[data-theme=dark] .toc-list a.toc-link.is-active-link{color:#f7b59e!importan
       mattone di prima e il #f2c3d0 che il codice inline usa gia' nello stesso tema, quindi
       il tema scuro guadagna una scala coerente invece di due rosa scollegati. */
 html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body strong{color:#e8909f}
+
+/* ── Scala dei titoli: variante 'ambra e ruggine' (scelta dell'utente, 2026-08-01) ──
+   Il principio, che vale piu' dei singoli valori: il VERDE e' l'azione (link e accenti), il
+   CALDO e' la struttura (titoli). Prima erano tre freddi vicini (verde acqua, ciano, azzurro)
+   che litigavano fra loro invece di fare gerarchia, perche' dicevano tutti 'guardami' senza
+   distinguersi per ruolo.
+   ⚠️ Nel tema CHIARO la gerarchia cromatica non esisteva affatto: misurato prima di questa
+   modifica, h1, h2, h3 e h4 erano tutti #0595bf, perche' l'ultima regola del foglio vinceva
+   su tutte le altre. Non e' una scala che si ritocca, e' una scala che si introduce.
+   I titoli cambiano in ENTRAMBI i temi: caldi di giorno e ciani di notte sarebbero due siti.
+   L'h1 e' neutro per scelta dell'utente (grigio, non piu' azzurro): il titolo di capitolo non
+   ha bisogno di colore per farsi vedere, e lascia il colore alla gerarchia sotto di lui. */
+.markdown-body h1{color:#333}
+html[data-theme=dark] .markdown-body h1{color:#f1f1f1}
+.markdown-body h2{color:#8f5300}
+html[data-theme=dark] .markdown-body h2{color:#e8a33d}
+.markdown-body h3{color:#9c4a12}
+html[data-theme=dark] .markdown-body h3{color:#e08a5a}
+/* h4, h5 e h6 in bruno neutro: l'utente ha scelto di togliere di mezzo anche l'ultimo verde
+   fra i titoli, cosi' il verde resta SOLO ai link e la regola non ha eccezioni. */
+.markdown-body h4,.markdown-body h5,.markdown-body h6{color:#5c4a3d}
+html[data-theme=dark] .markdown-body h4,html[data-theme=dark] .markdown-body h5,html[data-theme=dark] .markdown-body h6{color:#d6c3b0}

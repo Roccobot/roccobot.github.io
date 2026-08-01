@@ -105,6 +105,25 @@ VOLATILE_SKIP = {"LATEST.md"}
 # valgono entrambe: un file che vieta l'em-dash non deve contenerne uno (l'hook pre-commit sul
 # diff lo bloccherebbe, e ha ragione), e per gli invisibili il codepoint e' l'unica forma
 # leggibile. E' la regola che questo elenco impone ai file di testo, applicata al codice.
+# Parole italiane che si scrivono con l'ACCENTO e che finiscono spesso scritte con
+# l'apostrofo (`perche'` invece di `perché`), per contagio dai commenti del codice, che in
+# questi repo sono in ASCII. La lista e' CHIUSA di proposito: una regex generica su
+# 'vocale + apostrofo' colpirebbe gli apici di chiusura delle citazioni, trasformando
+# 'comando' in 'comandò. Meglio pochi casi certi che una regola che rompe il testo.
+ACCENTATE = {
+    "e": "è", "gia": "già", "piu": "più", "cosi": "così", "puo": "può", "pero": "però",
+    "perche": "perché", "poiche": "poiché", "finche": "finché", "benche": "benché",
+    "cioe": "cioè", "meta": "metà", "citta": "città", "cio": "ciò", "sara": "sarà",
+    "fara": "farà", "dara": "darà", "andra": "andrà", "avra": "avrà", "potra": "potrà",
+    "dovra": "dovrà", "liberta": "libertà", "verita": "verità", "identita": "identità",
+    "qualita": "qualità", "novita": "novità", "possibilita": "possibilità",
+    "attivita": "attività", "utilita": "utilità", "priorita": "priorità",
+    "modalita": "modalità", "specificita": "specificità", "luminosita": "luminosità",
+    "opacita": "opacità", "tonalita": "tonalità", "profondita": "profondità",
+    "pieta": "pietà",
+}
+RE_ACCENTATE = re.compile(r"\b(" + "|".join(ACCENTATE) + r")'(?=[\s,.;:)!?]|$)", re.I)
+
 VIETATI = {
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
     "\u2013": "en-dash: usa il trattino breve, anche negli intervalli numerici (dal 2026-08-01)",
@@ -183,6 +202,15 @@ def variants(title):
     return out
 
 
+def etichetta(ch):
+    """Come si nomina il reperto: per codepoint se e' un carattere, fra apici se e' una parola.
+
+    Serve perche' il controllo sugli accenti segnala una PAROLA (`perche'`), non un carattere,
+    e `ord()` su due lettere solleva un'eccezione: la prima versione del controllo e' morta
+    esattamente li'."""
+    return f"U+{ord(ch):04X} {ch!r}" if len(ch) == 1 else repr(ch)
+
+
 def char_defects(text):
     """Difetti di carattere in un testo: [(riga, colonna, carattere, motivo)].
 
@@ -241,6 +269,15 @@ def char_defects(text):
                 out.append((n, col, ch, f"segno combinante, {nome}: usa la forma precomposta"))
                 continue
             out.append((n, col, ch, f"carattere non previsto, {nome}: dichiaralo in SIMBOLI_OK se serve"))
+        if not in_fence:
+            # Accenti scritti con l'apostrofo: si guarda la riga senza i segmenti inline di
+            # codice, dove `e'` puo' essere codice legittimo (una stringa shell, per dire).
+            fuori = re.sub(r"`[^`]*`", "", line)
+            for m in RE_ACCENTATE.finditer(fuori):
+                sbagliata = m.group(0)
+                giusta = ACCENTATE[m.group(1).lower()]
+                out.append((n, line.find(sbagliata) + 1, sbagliata,
+                            f"accento scritto con l'apostrofo: si scrive '{giusta}'"))
     return out
 
 
@@ -302,7 +339,7 @@ def main_text():
         return 0
     print(f"\n!! caratteri fuori regola nel testo: {len(bad)}")
     for n, col, ch, motivo in bad:
-        print(f"   riga {n} colonna {col}: U+{ord(ch):04X} {ch!r} -> {motivo}")
+        print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
     return 1
 
 
@@ -330,7 +367,7 @@ def main():
     for f in present:
         base = f.parent
         for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8")):
-            bad_chars.append((f, n, f"U+{ord(ch):04X} {ch!r} -> {motivo}"))
+            bad_chars.append((f, n, f"{etichetta(ch)} -> {motivo}"))
         for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
             for url in RE_MDLINK.findall(line):
                 if url.startswith(("http://", "https://", "mailto:")) or url in SKIP_LINKS:
