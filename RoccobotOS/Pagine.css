@@ -1,0 +1,76 @@
+/* Pagine.css - tema scuro delle SOTTO-PAGINE di RoccobotOS
+   (Caratteri.html, Formati.html, AdServers.html, 'Metodi di fusione.html').
+
+   Perche' un file a parte e non le regole dentro ogni pagina: le quattro sotto-pagine sono
+   export vecchi con il foglio di stile scritto dentro l'head, e in due varianti diverse.
+   Duplicare il blocco scuro quattro volte avrebbe creato quattro fonti che prima o poi
+   divergono; qui la fonte e' una sola e le pagine la richiamano dopo il loro <style>, che e'
+   cio' che gli fa vincere il confronto a parita' di specificita'.
+
+   Perche' 'prefers-color-scheme' e non l'attributo data-theme della pagina principale: il
+   tema scelto col pulsante o col tasto T NON viene salvato da nessuna parte, vale per la
+   pagina aperta e basta. Le sotto-pagine quindi non hanno modo di sapere che cosa e' stato
+   scelto altrove, e l'unica preferenza che possono leggere e' quella del sistema. Se un
+   domani si vuole propagare anche la scelta manuale, la strada e' salvarla (localStorage) e
+   leggerla qui: sarebbe un cambio di comportamento anche per la pagina principale, che
+   smetterebbe di seguire il sistema dopo il primo clic.
+
+   I colori sono quelli del tema scuro di RoccobotOS.css, cosi' le cinque pagine si somigliano:
+   fondo #121212, testo #eaeaea, righe alterne #181818, intestazioni #262626, bordi #3a3a3a,
+   verde dei link #43b59e (sul fondo scuro da' 7,4:1, ampiamente a norma). */
+
+@media (prefers-color-scheme: dark) {
+  html { color-scheme: dark }
+
+  body {
+    background: #121212;
+    background-color: #121212;
+    color: #eaeaea;
+  }
+
+  h1, h2, h3, h4, h5, h6 { color: #eaeaea }
+  h2 { border-bottom-color: #3a3a3a }
+  h6, h6 tt, h6 code { color: #9b9b9b }
+
+  hr {
+    color: #3a3a3a;
+    background-color: #3a3a3a;
+    border-color: #3a3a3a;
+  }
+
+  a, a:visited { color: #43b59e }
+  a.absent { color: #ff8a8a }
+
+  table, th, td { border-color: #3a3a3a }
+  table tr {
+    border-top-color: #3a3a3a;
+    background-color: #121212;
+  }
+  table tr:nth-child(2n) { background-color: #181818 }
+  table tr th, th {
+    border-color: #3a3a3a;
+    background-color: #262626;
+  }
+  table tr td, td { border-color: #3a3a3a }
+
+  code, tt, pre, kbd {
+    background-color: #1c1c1c;
+    border-color: #3a3a3a;
+    color: #eaeaea;
+  }
+  pre code, pre tt { background: transparent }
+  .highlight pre, .highlight { background-color: #1c1c1c }
+
+  blockquote {
+    color: #b9baba;
+    border-left-color: #3a3a3a;
+  }
+
+  button, #ws, #message {
+    background-color: #262626;
+    border-color: #3a3a3a;
+    color: #eaeaea;
+  }
+
+  img[src$=".png"], img[src$=".jpg"] { opacity: .92 }
+}
