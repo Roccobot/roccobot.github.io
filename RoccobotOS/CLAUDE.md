@@ -58,7 +58,7 @@
 ### 🖼️ Le iconcine del testo: SVG che seguono il colore
 
 **Com'è fatto.** Le icone dentro il testo (occhio della visibilità livello, maschera livello,
-slider diviso, area notifiche, globo, Mission Control, ricarica del browser, logo Apple) sono **SVG inline**
+slider diviso, globo, Mission Control, ricarica del browser, logo Apple) sono **SVG inline**
 in `index.html`, con `fill="currentColor"` e classe `icon-png-svg`, quindi prendono il colore del
 testo in entrambi i temi. Prima erano PNG neri, che nel tema scuro diventavano quasi invisibili.
 Le sole due che restano raster sono le **frecce di Telegram**, per la ragione scritta più sotto.
@@ -74,6 +74,17 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
 - ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` e `nano.png` sono
   **schermate**, e come vettori non hanno senso. Restano PNG.
+- ⚠️ **L'icona dell'area notifiche NON esiste più** (2026-08-01): la voce 'Non disturbare'
+  della Barra dei menu diceva *clic su [icona]*, e l'utente l'ha riscritta in *clic
+  sull'orologio di sistema*, che nomina la cosa invece di disegnarla. Icona eliminata insieme
+  alla frase: non ricrearla.
+- **La ricarica del browser è ridisegnata sul modello di Chrome** (richiesta dell'utente,
+  2026-08-01: *leggermente più grande e più sottile*): tracciato di Material Symbols, arco
+  aperto con la punta triangolare, 17 px invece di 16.
+  - ⚠️ **Due tentativi scartati prima di arrivarci**, entrambi con la punta staccata dall'arco:
+    un arco con la punta a squadra disegnata da un secondo path, e la variante di Feather
+    `rotate-cw`, dove la polilinea forma un angolo retto che a 17 px si legge come una
+    parentesi, non come una freccia. Il tracciato buono è **uno solo e continuo**.
 - ⚠️ **Le `icona1.png` ... `icona7.png` NON esistono più**, cancellate dal repo il 2026-07-31 su
   richiesta dell'utente: la conversione le aveva rese orfane tutte e sette (sei diventate SVG
   inline, `icona6.png` rimpiazzata dalle due PNG di Telegram, e `icona4.png` era orfana già
@@ -150,9 +161,8 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     per tutte sbaglierebbe proprio lui.
   - **La taratura in vigore** (valori dell'utente, in suoi pixel a DPR 2, tutti verso l'alto):
     globo 3, maschera livello 2, slider diviso 2, freccia Telegram legacy 2, occhio 1, freccia
-    Telegram nuova 1; **Mission Control resta dov'è**, approvato così. ⚠️ **Area notifiche e
-    ricarica del browser non sono ancora state giudicate** e restano al centro della x-height:
-    non sono una dimenticanza del CSS.
+    Telegram nuova 1; **Mission Control e ricarica del browser restano dove sono**, approvati
+    così.
   - **E vale per gli `<img>` come per gli `<svg>`**: le due frecce raster di Telegram usano lo
     stesso meccanismo delle SVG.
   - **Il difetto da cui tutto è partito, misurato**: i PNG originali stavano sulla **baseline**,
@@ -227,10 +237,12 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     ad altezza zero**, che resta incollata in cima allo scroll e non occupa spazio nel flusso,
     quindi non sposta di un pixel l'indice. Misurato: dopo 600 px di scorrimento dell'indice la
     pillola è ferma.
-  - **Colori presi dal mockup**: fondo grigio tenue, testo del colore del fondo del riquadro
-    (in tema scuro la stessa relazione, con i grigi del tema). Il contrasto è bassissimo **per
-    scelta**, come per il numero su mobile: vale la stessa deroga scritta più sotto, e non si
-    alza perché un audit la segnala.
+  - **Colori scelti dall'utente** (2026-08-01, dopo il mockup): pillola **bianco puro** con
+    testo **`#9b9b9b`** sul tema chiaro. ⚠️ In tema scuro il bianco puro sarebbe un rettangolo
+    acceso in mezzo a un riquadro scuro, quindi là la pillola prende il nero corrispondente e
+    il **testo resta identico**: è il testo a dare l'identità, il fondo si adatta al tema.
+    Il contrasto (2,8:1) resta sotto la soglia **per scelta**, come per il numero su mobile:
+    vale la stessa deroga scritta più sotto, e non si alza perché un audit la segnala.
   - **Il numero resta scritto in un posto solo**, la costante `VERSIONE`: il JS la scrive in
     entrambi gli elementi, che nascono vuoti e col CSS `:empty` non compaiono se lo script non
     gira.
