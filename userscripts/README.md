@@ -288,7 +288,7 @@ const NASCONDI_STICKY         = false; // barra superiore sticky (default: tenut
 
 **File:** `PHRoccobot.user.js` (titolo `@name`: **PH Roccobot**)
 
-Su `pornhub.com` fa due cose:
+Su `pornhub.com` fa quattro cose:
 
 1. **Mantiene inglese/internazionale.** Dall'Italia PH carica `it.pornhub.com` e
    **traduce i titoli** (non dipende dalla lingua UI, ma dal Paese). Le preferenze
@@ -310,12 +310,37 @@ Su `pornhub.com` fa due cose:
    video è **solo HLS** (streaming a segmenti), avvisa che il download MP4 diretto
    non è possibile.
 
+3. **Pulisce la pagina** da tre fastidi (richiesta dell'utente, 2026-08-01): il
+   **popup di accesso Google** (One Tap, quello con 'Continua come...'), che viene
+   **tolto dal DOM** e non solo nascosto, perché finché resta montato ruba il fuoco da
+   tastiera; l'**invito sovrapposto al player** ('Click here to watch the full scene!');
+   e il **tasto dell'assistente AI** nella testata.
+   - ⚠️ **Due strategie diverse, e sapere quale è quale serve quando qualcosa smette di
+     funzionare.** Il popup di Google si becca per **selettore**, perché i suoi
+     identificativi sono quelli della libreria Google Identity Services e non cambiano col
+     sito. L'invito e il tasto AI si beccano per **testo**, perché le loro classi sono
+     generate e cambiano senza preavviso mentre la scritta resta.
+   - Il riquadro dell'invito si trova salendo dal nodo che porta la scritta fino al primo
+     antenato **posizionato**, con un tetto di quattro livelli: più su c'è il player, e
+     nasconderlo spegnerebbe il video.
+   - Sul tasto AI si richiede un testo **corto** che cominci per 'AI': senza il tetto di
+     lunghezza, un articolo che parla di AI sparirebbe insieme al tasto.
+4. **Ogni link a un altro video si apre in una scheda nuova** (`target="_blank"` più
+   `rel="noopener"`, obbligatorio o la scheda nuova può toccare quella che l'ha aperta).
+   Il link si riconosce dall'**indirizzo** e non dalla posizione, così vale per le
+   miniature, per i correlati e per i link nei commenti senza conoscere il markup di
+   ognuno. ⚠️ **`/video/search` è escluso**: è la pagina dei risultati, non un video, e
+   con un semplice `/video/` ci finiva dentro anche lei.
+
 ### Personalizzazione
 
 ```js
 const FORZA_INTERNAZIONALE = true; // it.pornhub.com (o altra lingua) → www.pornhub.com
 const SALVA_CON_DIALOGO    = true; // true = chiede dove salvare; false = scarica diretto
 ```
+
+Le tre pulizie del punto 3 si regolano dai loro riconoscitori, in testa alla sezione 2
+dello script: `RE_INVITO_VIDEO`, `RE_TASTO_AI` e `SEL_POPUP_GOOGLE`.
 
 ### Installazione
 

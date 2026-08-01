@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PH Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.9.0
-// @description  On pornhub.com: keeps the site in English and Worldwide by rewriting the lang=en and overwriteCCVal=world cookies on every load (PH resets them to Italian now and then), and redirects the language subdomains (it.pornhub.com and so on) to www.pornhub.com so titles are never translated. Adds an always-visible download button at the bottom right: highest MP4 quality available; progress on the button; second click cancels; file named '[Channel] Title.mp4'; source read at runtime from flashvars/mediaDefinitions.
+// @version      1.10.0
+// @description  On pornhub.com: keeps the site in English and Worldwide by rewriting the lang=en and overwriteCCVal=world cookies on every load (PH resets them to Italian now and then), and redirects the language subdomains (it.pornhub.com and so on) to www.pornhub.com so titles are never translated. Adds an always-visible download button at the bottom right: highest MP4 quality available; progress on the button; second click cancels; file named '[Channel] Title.mp4'; source read at runtime from flashvars/mediaDefinitions. Also cleans up the page: removes the Google sign-in popup, hides the 'Click here to watch the full scene' overlay on the player and the AI assistant button in the header, and makes every link to another video page open in a new tab.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://*.pornhub.com/*
@@ -71,7 +71,179 @@
   if (forzaInternazionale()) return;
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  2) TASTO "Scarica video": qualità massima
+  //  2) PULIZIA DELLA PAGINA: popup Google, invito sul video, tasto AI
+  // ═══════════════════════════════════════════════════════════════════════
+  // Tre fastidi diversi, un solo meccanismo: un foglio di stile iniettato subito
+  // (a document-start, cosi' non c'e' il lampo di roba che compare e sparisce) piu'
+  // un osservatore che ripassa a ogni mutazione, perche' PH e' in parte una SPA e
+  // ricostruisce pezzi di DOM di continuo.
+  //
+  // ⚠️ DUE STRATEGIE, e la differenza conta quando qualcosa smette di funzionare:
+  //  - il popup di Google si becca per SELETTORE, perche' i suoi identificativi sono
+  //    quelli della libreria Google Identity Services e non cambiano col sito;
+  //  - l'invito sul video e il tasto AI si beccano per TESTO, perche' le loro classi
+  //    sono generate e cambiano senza preavviso, mentre la scritta resta. Il testo e'
+  //    anche cio' che l'utente ha indicato negli screenshot, quindi e' il criterio
+  //    piu' fedele alla richiesta.
+  // ⚠️ PH blocca gli strumenti automatici, quindi questi selettori NON sono stati
+  // provati sul sito dal vivo: se uno non prende, e' li' che si guarda per primo.
+
+  const RE_INVITO_VIDEO = /click here to watch|watch the full scene|guarda la scena completa/i;
+  const RE_TASTO_AI = /^ai\b/i;
+
+  // Il popup di accesso Google (One Tap): la libreria lo monta sempre dentro un
+  // contenitore con questi identificativi, e dentro ci mette un iframe suo.
+  const SEL_POPUP_GOOGLE = [
+    '#credential_picker_container',
+    '#credential_picker_iframe',
+    'div[id^="credential_picker"]',
+    'iframe[src*="accounts.google.com/gsi"]',
+    'iframe[title*="Sign in with Google" i]',
+    'iframe[title*="Accedi con Google" i]'
+  ].join(',');
+
+  function iniettaStile() {
+    try {
+      if (document.getElementById('rb-ph-stile')) return;
+      const s = document.createElement('style');
+      s.id = 'rb-ph-stile';
+      // textContent e non innerHTML: regola non derogabile del repo.
+      s.textContent = SEL_POPUP_GOOGLE.split(',').join(',') +
+        '{display:none!important;visibility:hidden!important;pointer-events:none!important}' +
+        '.rb-ph-via{display:none!important;visibility:hidden!important;pointer-events:none!important}';
+      (document.head || document.documentElement).appendChild(s);
+    } catch (e) { /* mai rompere la pagina */ }
+  }
+
+  function viaDiQui(el) {
+    if (!el || el.classList.contains('rb-ph-via')) return;
+    el.classList.add('rb-ph-via');
+  }
+
+  // Il popup si toglie DAVVERO dal DOM, non solo si nasconde: finche' resta montato
+  // ruba il fuoco da tastiera e la libreria continua a lavorarci.
+  function viaPopupGoogle(radice) {
+    try {
+      const dentro = radice.querySelectorAll ? radice.querySelectorAll(SEL_POPUP_GOOGLE) : [];
+      for (const el of dentro) el.remove();
+      if (radice.matches && radice.matches(SEL_POPUP_GOOGLE)) radice.remove();
+      // Se la libreria e' gia' in pagina, le si chiede di chiudere: senza questo
+      // rimonterebbe il contenitore appena tolto.
+      const w = (typeof unsafeWindow !== 'undefined') ? unsafeWindow : window;
+      if (w.google && w.google.accounts && w.google.accounts.id && w.google.accounts.id.cancel) {
+        w.google.accounts.id.cancel();
+      }
+    } catch (e) { /* mai rompere la pagina */ }
+  }
+
+  // Testo dell'elemento SENZA quello dei figli: serve a trovare il nodo piu' piccolo
+  // che porta davvero la scritta, invece di beccare il contenitore di mezza pagina.
+  function testoProprio(el) {
+    let t = '';
+    for (const n of el.childNodes) if (n.nodeType === 3) t += n.nodeValue;
+    return t.trim();
+  }
+
+  // L'invito 'Click here to watch the full scene!' sta in una barretta sovrapposta al
+  // player. Si sale dal nodo col testo fino al primo antenato POSIZIONATO, che e' il
+  // riquadro da nascondere, con un tetto di quattro livelli: piu' su c'e' il player,
+  // e nasconderlo spegnerebbe il video.
+  function viaInvitoSulVideo(radice) {
+    try {
+      const nodi = radice.querySelectorAll ? radice.querySelectorAll('div,span,a,p,section') : [];
+      for (const el of nodi) {
+        if (el.classList.contains('rb-ph-via')) continue;
+        if (!RE_INVITO_VIDEO.test(testoProprio(el))) continue;
+        let bersaglio = el;
+        for (let i = 0; i < 4 && bersaglio.parentElement; i++) {
+          const pos = getComputedStyle(bersaglio).position;
+          if (pos === 'absolute' || pos === 'fixed') break;
+          bersaglio = bersaglio.parentElement;
+        }
+        viaDiQui(bersaglio);
+      }
+    } catch (e) { /* mai rompere la pagina */ }
+  }
+
+  // Il tasto dell'assistente AI nella testata. Si cerca solo dentro la testata e solo
+  // fra gli elementi cliccabili, e si vuole un testo CORTO che cominci per 'AI': senza
+  // il tetto di lunghezza, un articolo che parla di AI sparirebbe insieme al tasto.
+  function viaTastoAI(radice) {
+    try {
+      if (!radice.querySelectorAll) return;
+      const testate = document.querySelectorAll('header, #header, .headerWrapper, #headerWrapper, nav');
+      for (const testata of testate) {
+        for (const el of testata.querySelectorAll('a,button')) {
+          if (el.classList.contains('rb-ph-via')) continue;
+          const t = (el.textContent || '').trim();
+          if (t.length > 40 || !RE_TASTO_AI.test(t)) continue;
+          // Si nasconde il contenitore del tasto se e' un guscio che tiene solo lui,
+          // o resterebbe un buco con lo sfondo del bottone.
+          const p = el.parentElement;
+          viaDiQui(p && p.children.length === 1 ? p : el);
+        }
+      }
+    } catch (e) { /* mai rompere la pagina */ }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  3) OGNI LINK A UN ALTRO VIDEO SI APRE IN UNA SCHEDA NUOVA
+  // ═══════════════════════════════════════════════════════════════════════
+  // Si riconosce una pagina video dall'indirizzo, non dalla posizione del link: cosi'
+  // vale per le miniature, per i correlati e per i link dentro i commenti, senza dover
+  // conoscere il markup di ognuno. rel='noopener' e' obbligatorio: senza, la scheda
+  // nuova puo' toccare quella che l'ha aperta.
+  // ⚠️ '/video/search' NON e' un video ma la pagina dei risultati, e con un semplice
+  // '/video/' finiva anche lei in una scheda nuova: misurato su una pagina di prova.
+  const RE_LINK_VIDEO = /(?:\/view_video\.php|[?&]viewkey=|\/video\/(?!search\b))/i;
+
+  function inSchedaNuova(radice) {
+    try {
+      const link = radice.querySelectorAll ? radice.querySelectorAll('a[href]') : [];
+      for (const a of link) {
+        if (a.dataset.rbTab) continue;
+        if (!RE_LINK_VIDEO.test(a.getAttribute('href') || '')) continue;
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', (a.getAttribute('rel') ? a.getAttribute('rel') + ' ' : '') + 'noopener');
+        a.dataset.rbTab = '1';
+      }
+    } catch (e) { /* mai rompere la pagina */ }
+  }
+
+  // Un solo giro per tutte e quattro le pulizie, e un solo osservatore: quattro
+  // osservatori separati farebbero lo stesso lavoro quattro volte a ogni mutazione,
+  // e PH ne produce parecchie.
+  function passata(radice) {
+    const r = radice || document;
+    viaPopupGoogle(r);
+    viaInvitoSulVideo(r);
+    viaTastoAI(r);
+    inSchedaNuova(r);
+  }
+
+  function avviaPulizia() {
+    iniettaStile();
+    passata(document);
+    try {
+      new MutationObserver(function (mutazioni) {
+        iniettaStile();
+        for (const m of mutazioni) {
+          for (const n of m.addedNodes) if (n.nodeType === 1) passata(n);
+        }
+        // Il popup e il tasto AI possono comparire anche per un semplice cambio di
+        // attributo su nodi gia' in pagina, che non passa da addedNodes.
+        viaPopupGoogle(document);
+        viaTastoAI(document);
+      }).observe(document.documentElement, { subtree: true, childList: true });
+    } catch (e) { /* mai rompere la pagina */ }
+    document.addEventListener('DOMContentLoaded', function () { passata(document); });
+    window.addEventListener('load', function () { passata(document); });
+  }
+
+  avviaPulizia();
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  4) TASTO "Scarica video": qualità massima
   // ═══════════════════════════════════════════════════════════════════════
   // La pagina video espone un oggetto globale flashvars_<viewkey> con
   // "mediaDefinitions": ogni voce ha format (mp4/hls), quality e videoUrl.
