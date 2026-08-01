@@ -51,7 +51,7 @@
           },
           {
             "type": "command",
-            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) if git diff --cached | python3 -c \"import sys; ls=[l for l in sys.stdin if l.startswith('+') and not l.startswith('+++')]; sys.exit(1 if any(chr(0x2014) in l for l in ls) else 0)\"; then :; else echo 'Commit bloccato: em-dash (trattino lungo) nelle righe aggiunte. Regola universale: mai em-dash, usa virgola, due punti o parentesi. (L en-dash resta ammesso solo negli intervalli d anno, es. 2758-59.)' >&2; exit 2; fi ;; esac",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) if git diff --cached | python3 -c \"import sys; ls=[l for l in sys.stdin if l.startswith('+') and not l.startswith('+++')]; sys.exit(1 if any(chr(0x2014) in l or chr(0x2013) in l for l in ls) else 0)\"; then :; else echo 'Commit bloccato: trattino lungo (em-dash o en-dash) nelle righe aggiunte. Regola universale, tolleranza zero per entrambi: si usa il trattino breve, oppure virgola, due punti o parentesi. Vale anche negli intervalli numerici, es. 1954-55.' >&2; exit 2; fi ;; esac",
             "timeout": 20,
             "statusMessage": "Controllo em-dash (pre-commit)..."
           },
