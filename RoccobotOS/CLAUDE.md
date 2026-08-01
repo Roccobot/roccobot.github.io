@@ -70,6 +70,37 @@
     regole CSS che le vestivano. ⚠️ **Restano le ancore fatte a mano** (`<a id="ScorciatoieApp"></a>`
     e simili, comprese `CloudStorage` e `NotaFTop` che oggi nessuno punta): sono segnaposto
     voluti, non residui, e i link dell'indice ci passano.
+  - ⚠️⚠️ **I comandi fissi: dove stanno e QUANDO si vedono** (riscrittura del 2026-08-01, su
+    richiesta dell'utente). Su smartphone i due lati sono **l'esatto opposto** l'uno
+    dell'altro: a **sinistra** tema e indice, che si vedono quando la pagina sta **ferma** e
+    all'apertura; a **destra** inizio e fine pagina, che si vedono **mentre si scorre** e
+    spariscono dopo **3 secondi** di quiete. Su desktop non cambia niente: tema in alto a
+    destra e i due salti in basso a destra, sempre in vista.
+    - ⚠️ **Un solo temporizzatore per i due gruppi**, ed è la ragione per cui il comparire di
+      un lato coincide col sparire dell'altro, come l'utente ha chiesto. Con due orologi
+      basterebbero poche decine di millisecondi di deriva per vederli tutti e quattro insieme,
+      o nessuno.
+    - I due salti hanno **in più** la regola dei bordi, che vale sempre: 'vai in cima' non
+      compare quando si è già in cima, e viceversa.
+    - ⚠️ **Il verso in cui un comando scivola via lo decide `--hide-shift`**, che deve essere
+      **negativo** per quelli di sinistra: col valore predefinito uscirebbero dal lato
+      sbagliato attraversando lo schermo.
+    - ⚠️ **La distanza dal fondo del tasto indice è scritta DUE volte**, nella media query e in
+      una regola più in basso nel file: vince la seconda, a parità di specificità. Se si cambia
+      solo la prima, il tasto non si sposta e sembra un difetto della media query.
+    - **`⌘`/`Ctrl` + freccia su o giù** portano in cima e in fondo, con `preventDefault` sulla
+      scorciatoia del browser (override voluto). Il salto da tastiera è **istantaneo** e quello
+      dei pulsanti **fluido**, esattamente come su 'I Grandi di Arda'.
+  - ⚠️ **Lo switch fra tabelle standard e schede è dietro un FEATURE FLAG spento**
+    (`FLAG_SWITCH_TABELLE` in `RoccobotOS.js`, istruzione dell'utente 2026-08-01: non l'ha mai
+    usato). Il codice e il CSS delle schede **restano**: il lavoro di adattamento delle tabelle
+    strette è fatto, e rifarlo costerebbe caro. Per riaverlo basta rimettere il flag a `true`.
+  - ⚠️ **La cornice blu intorno a un titolo dopo un salto dall'indice NON era un difetto
+    nostro**: è tocbot che, finito lo scorrimento, mette `tabindex="-1"` sul titolo di arrivo e
+    gli dà il fuoco, e il browser ci disegna il suo anello. Tolta con un `outline:none` sui
+    titoli, e non costa accessibilità: il fuoco **resta** dov'è (il lettore di schermo riprende
+    dal punto giusto), e con `tabindex="-1"` col Tab su un titolo non ci si arriva mai, quindi
+    quell'anello non è l'indicatore di 'dove sono' di chi naviga da tastiera.
   - **Le sotto-pagine hanno un FAB 'indietro' in alto a sinistra** (richiesta dell'utente,
     2026-08-01): prima da lì non si tornava a `index.html` in nessun modo. Lo crea `Pages.js`
     con `createElement` invece di scriverlo in quattro pagine, così la fonte resta una sola.
