@@ -187,8 +187,8 @@ Entrambe sono **sotto la soglia di contrasto per scelta**: vedi la sezione 6.
 
 ## 5. Sotto-pagine
 
-Le quattro sotto-pagine (`Caratteri`, `Formati`, `AdServers`, `Metodi di fusione`) sono
-export vecchi con il foglio di stile scritto dentro l'head. Il tema lo dà `Pagine.css`, che
+Le quattro sotto-pagine (`Characters.html`, `Formats.html`, `AdServers.html`, `BlendModes.html`) sono
+export vecchi con il foglio di stile scritto dentro l'head. Il tema lo dà `Pages.css`, che
 ridefinisce **solo variabili**, e il tasto `T` lo commuta senza memorizzare nulla.
 
 Usano gli stessi token della pagina principale: fondo, testo, bordi, righe alterne, e il
@@ -226,7 +226,7 @@ audit le segnalerà ogni volta: la risposta è questa riga, non un ritocco.
 ## 8. Token in forma di CSS
 
 Il foglio di stile in vigore non usa ancora le variabili per la pagina principale (le usa
-`Pagine.css`). Questo blocco è la forma canonica dei token, utile a chi disegna qualcosa di
+`Pages.css`). Questo blocco è la forma canonica dei token, utile a chi disegna qualcosa di
 nuovo o vuole rifattorizzare il CSS senza cambiare l'aspetto.
 
 ```css

@@ -1,5 +1,5 @@
-/* Pagine.js - tasto T sulle SOTTO-PAGINE di RoccobotOS
-   (Caratteri.html, Formati.html, AdServers.html, 'Metodi di fusione.html').
+/* Pages.js - tasto T sulle SOTTO-PAGINE di RoccobotOS
+   (Characters.html, Formats.html, AdServers.html, 'BlendModes.html').
 
    Le sotto-pagine non hanno il pulsante del tema, che vive nella pagina principale: qui il
    tema si cambia solo col tasto T, come chiesto dall'utente il 2026-08-01.
@@ -9,7 +9,7 @@
    nella pagina principale non arriva fin qui, perche' nemmeno lei lo memorizza.
 
    Come funziona: finche' nessuno preme T non c'e' nessun attributo data-theme, quindi decide
-   la media query prefers-color-scheme di Pagine.css. Al primo T si scrive data-theme con il
+   la media query prefers-color-scheme di Pages.css. Al primo T si scrive data-theme con il
    verso opposto a quello che si sta vedendo, e da li' in poi vince l'attributo. Il tema di
    partenza si legge da matchMedia, non dall'attributo, o la prima pressione non farebbe
    nulla su un sistema in tema scuro.
