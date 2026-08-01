@@ -313,6 +313,27 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   ⚠️ Non più `head -c 30` sul commento, che ora non contiene il numero: chi usa il comando
   vecchio non vede nulla e crede che il deploy non sia passato.
 
+### 🎛️ Comandi e controlli fissi
+
+- **I due tasti di scorrimento stanno in basso a DESTRA su desktop** (richiesta dell'utente,
+  2026-08-01), con le distanze speculari a quelle di prima: 12 px dal bordo, 16 e 60 px dal
+  fondo.
+  - ⚠️ **Su mobile restano a SINISTRA, e non è una dimenticanza**: là in basso a destra
+    vivono già il cambio tema e l'interruttore delle tabelle, e spostarli li farebbe
+    sovrapporre.
+  - ⚠️ **La dissolvenza deve seguire il lato**, o il tasto scivola verso il centro dello
+    schermo invece che fuori. Il JS scriveva uno spostamento fisso di -16 px: ora scrive
+    `translateX(var(--hide-shift))` e il valore lo dà il CSS, positivo su desktop e negativo
+    su mobile. È il modo di tenere UNA logica per due lati, invece di due rami nel codice.
+- **Tasto `T`: cambia tema al volo** (richiesta dell'utente, 2026-08-01: *esattamente come in
+  Arda*). Tasto **nudo**, quindi vale dove c'è una tastiera.
+  - ⚠️ **Due guardie obbligatorie**, le stesse di 'I Grandi di Arda': si esce se è premuto un
+    **modificatore** (o si rubano le scorciatoie del browser) e se il focus è in un **campo di
+    testo** (o scrivere una 't' commuterebbe il tema).
+  - Riusa la funzione del pulsante, quindi eredita da sola il flag che per 1,5 secondi ignora
+    il cambio di tema di sistema: senza, una preferenza di sistema che scatta subito dopo
+    riporterebbe indietro il tema appena scelto.
+
 ### ⌨️ Tabella delle sostituzioni testo
 
 **Com'è fatto.** La tabella che in pagina sta sotto il titolo `Sostituzione testo` rispecchia
@@ -328,8 +349,19 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
 - ⚠️ **Niente caratteri dell'area privata Unicode**: il logo Apple era `U+F8FF` e ora è
   un'icona (vedi la sezione delle iconcine). Se una sostituzione nuova produce un glifo che
   esiste solo su una piattaforma, si applica lo stesso rimedio.
-- **Le stringhe di partenza vanno rese con `&lt;` e `&gt;`**, perché molte sono nella forma
-  `<cmd>`, `<esc>`, `<apple>`: senza le entità il browser le legge come tag e le cancella.
+- **Le abbreviazioni cominciano con una barra rovesciata** (`\cmd`, `\esc`, `\apple`), non
+  più con le parentesi angolari (scelta dell'utente, 2026-08-01). Il vantaggio pratico non è
+  estetico: `<cmd>` in HTML va scritto con le entità `&lt;` e `&gt;`, o il browser lo legge
+  come un tag e lo cancella; con la barra il problema non si pone.
+- **Tre coppie di colonne affiancate** invece di una lista di 58 righe (richiesta dell'utente,
+  2026-08-01), raggruppate **per somiglianza** e in ordine alfabetico dentro ciascuna: tasti e
+  simboli di sistema, segni ed emoji, testo e nomi con diacritici. Da 58 righe a 20, e la
+  larghezza sfruttata.
+- **Il plist per macOS si genera dalla tabella**, non si scrive a mano: le sostituzioni vivono
+  nella chiave `NSUserDictionaryReplacementItems` del dominio globale, come array di dizionari
+  con `on`, `replace` e `with`. ⚠️ Nel plist il logo Apple torna a essere il **carattere**
+  `U+F8FF`, perché là serve alla tastiera e non a un browser: l'icona SVG è una scelta della
+  pagina, non del sistema.
 
 ### 🌐 Tabelle dei servizi DNS
 
