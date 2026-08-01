@@ -24,18 +24,18 @@
   riferimento personale dell'utente, non un prodotto per un pubblico anglofono), e **non
   c'è il footer standard** con la nota 'vibes ✦': il numero di versione, che quel footer
   ospiterebbe, sta in cima per scelta dell'utente (vedi la sezione della versione).
-- **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`,
-  richiamati con **cache-busting** (`?v=N`, un numero per file). Il JS gestisce tema
-  chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su mobile e
-  caricamento pigro.
-  - **Quando si bumpa il `?v=N`**: quando la modifica al file **cambia comportamento o
-    resa**, altrimenti i browser servono la copia vecchia. Un ritocco che non cambia nulla
-    (un commento) **non** bumpa: farebbe solo riscaricare a tutti un file identico.
-  - ⚠️ **Il `?v=N` non è la versione del sito**, ma i due numeri si toccano in un punto: la
-    costante `VERSIONE` vive nel `.js`, quindi **ogni cambio di versione bumpa anche il
-    `?v=` del `.js`**, o un browser con quel file in cache scriverebbe in pagina il numero
-    vecchio a deploy riuscito, con la sonda sul file grezzo tutta verde (sbagliato una
-    volta il 2026-07-31, bumpando il solo CSS e accorgendosene prima del merge).
+- **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`. Il JS
+  gestisce tema chiaro/scuro, indice laterale (`tocbot`), resa delle tabelle come card su
+  mobile e caricamento pigro.
+  - ⚠️⚠️ **Il cache-busting (`?v=N`) NON esiste più, e non va reintrodotto** (decisione
+    dell'utente, 2026-08-01, su raccomandazione motivata da una misura). GitHub Pages
+    serve **tutto** con `cache-control: max-age=600` più ETag, HTML compreso: qualunque
+    copia in cache vive al massimo **10 minuti**, poi il browser rivalida da sé. Il `?v=N`
+    comprava solo la coerenza fra HTML e asset dentro quella finestra, al prezzo di una
+    contabilità manuale che aveva già prodotto un bump dimenticato e tre note di regole:
+    tolto, e con lui è decaduta anche la trappola della costante `VERSIONE` nel `.js`
+    (una versione appena cambiata può mostrarsi in pagina con 10 minuti di ritardo, e va
+    bene così).
 - ⚠️⚠️ **`index.html` NON si rigenera più da markdown: si modifica direttamente** (istruzione
   dell'utente, 2026-07-31). Era nato come export, e la sua ragione di essere è caduta da sé:
   *quel documento a pagina unica è diventato talmente complesso per un normale essere umano
@@ -147,9 +147,8 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     dimensioni restano identiche, la **posizione verticale cambia di proposito**. I due vincoli
     sembrano in contrasto e non lo sono: 'non spostare il resto della riga' vale ancora, 'tenere
     l'allineamento sbagliato dei PNG' no.
-  - ⚠️ La modifica cambiava la resa, quindi ha richiesto il bump del `?v=N` del CSS
-    (regola in 'Struttura'): senza, i browser servivano la copia vecchia e l'allineamento
-    restava quello di prima.
+  - Ⓘ All'epoca esisteva ancora il cache-busting (`?v=N`, tolto il 2026-08-01: vedi
+    'Struttura'), e quella modifica ne richiese il bump.
 - ⚠️ **Il globo è stato rimpicciolito senza toccare l'ingombro**, allargando il `viewBox` in
   modo proporzionale invece di ridurre `width`: così il disegno è più piccolo del 12% e il
   testo attorno non si sposta di un pixel. È la tecnica da riusare quando l'utente chiede
@@ -166,7 +165,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `Roccobot.md` § '🌿 Workflow git e versioni', **senza** l'eccezione che questo progetto si era
   ritagliato quando il numero era interno.
 
-- **RoccobotOS è alla `2.30`**, mostrata in pagina come `v2.30`.
+- **RoccobotOS è alla `2.31`**, mostrata in pagina come `v2.31`.
   - ⚠️⚠️ **Dal 2026-08-01 lo schema è SlimVer** (`x.xx`, il default dei progetti:
     `Roccobot.md`, § '🌿 Workflow git e versioni'), per scelta dell'utente contestuale alla
     promozione dello schema a default. **`2.30` succede a `2.2.3`** per la convenzione di
