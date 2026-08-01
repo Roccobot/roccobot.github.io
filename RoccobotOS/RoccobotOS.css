@@ -19,8 +19,7 @@ body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{wid
 .ic-tg-old{--nudge:-.0625em}  /* 2 px a DPR 2 */
 .ic-eye{--nudge:-.03125em}    /* 1 px a DPR 2 */
 .ic-tg-new{--nudge:-.03125em} /* 1 px a DPR 2 */
-/* ic-mission, ic-notify e ic-reload restano dove sono: la prima perche' l'utente l'ha
-   approvata cosi', le altre due perche' non le ha ancora giudicate. */
+/* ic-mission e ic-reload restano dove sono, approvate cosi' dall'utente. */
 /* Logo Apple: sostituisce il carattere U+F8FF, che si vede SOLO sui sistemi Apple (area
    privata Unicode) e altrove e' un quadratino vuoto. Altezza in em, cosi' scala col testo
    della cella; nudge alla sola regola generale (centro della maiuscola nel contesto a
@@ -60,16 +59,19 @@ html[data-theme=dark] .site-version{color:#eaeaea;opacity:.25}
    'absolute': scorrerebbe via col contenuto. Sta in una riga 'sticky' ad altezza zero, che
    resta incollata in cima allo scroll e non occupa spazio nel flusso, cosi' non sposta di un
    pixel le voci dell'indice.
-   Colori presi dal mockup: fondo grigio tenue, testo del colore del fondo del riquadro. Il
-   contrasto e' bassissimo per scelta dell'utente, come per il numero su mobile: axe lo boccia
-   e va bene cosi', NON alzarlo. */
+   Colori scelti dall'utente (2026-08-01, dopo il mockup): pillola BIANCO PURO con testo
+   #9b9b9b sul tema chiaro. In tema scuro il bianco puro sarebbe un rettangolo acceso in mezzo
+   a un riquadro scuro, quindi la pillola prende il nero corrispondente e il TESTO resta
+   identico: e' il testo a dare l'identita', il fondo si adatta al tema.
+   Il contrasto (2,8:1) resta sotto la soglia: e' voluto, come per il numero su mobile, e
+   axe lo boccia. NON alzarlo. */
 .toc-version-row{position:sticky;top:0;height:0;text-align:right;z-index:2;pointer-events:none}
 .toc-version{display:inline-block;margin:.4375rem .4375rem 0 0;padding:2px 6px;
   font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
   font-size:.5625rem;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums;
-  border-radius:999px;background:#e2e2e2;color:#f8f8f8;-webkit-user-select:none;user-select:none}
+  border-radius:999px;background:#fff;color:#9b9b9b;-webkit-user-select:none;user-select:none}
 .toc-version:empty{display:none}
-html[data-theme=dark] .toc-version{background:#3c3c40;color:#252528}
+html[data-theme=dark] .toc-version{background:#0f0f10;color:#9b9b9b}
 @media screen and (max-width:860px){.toc-version-row{display:none}}
 @media screen and (min-width:861px){.site-version{display:none}}
 @media print{.toc-version-row{display:none}}
