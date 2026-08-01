@@ -219,7 +219,7 @@ può allentarle. Questo è l'indice, la formulazione completa sta dove indicato.
 | `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `proxy/CLAUDE.md` e `arda/top/CLAUDE.md`, '🔐 Admin e segreti' |
 | `RULES_PASSWORD` letta a runtime e **mai stampata** né fatta transitare in chat | `Roccobot.md`, Worker `rules-proxy` |
 | Mai `innerHTML` | qui, e la nota di `setVersionBadge` in `arda/top/CLAUDE.md` |
-| **Em-dash mai**, in nessun output; apici dritti; `...` e non `…` | qui, '✒️ Caratteri vietati', e `Roccobot.md`, 'Caratteri' |
+| **Trattini lunghi mai** (em-dash ed en-dash), in nessun output; apici dritti; `...` e non `…` | qui, '✒️ Caratteri vietati', e `Roccobot.md`, 'Caratteri' |
 | Comunicazione con l'utente **sempre in italiano** | qui, '🗣️ Lingua di risposta' |
 | Immagini di `/arda/res/` e `favicon.png`: **non si toccano mai** | `arda/top/CLAUDE.md`, '🧹 Asset del progetto' |
 | Quantizzazione a palette **vietata** (banding) | `arda/top/CLAUDE.md`, '🧹 Asset del progetto' |
@@ -291,16 +291,21 @@ in `.claude/settings.json` (`"model": "opus"`), quindi non serve farlo a mano.
 
 ## ✒️ Caratteri vietati
 
-⚠️⚠️ **L'EM-DASH NON SI USA MAI, DA NESSUNA PARTE** ('non devi usare 'sto carattere: l'ho chiesto
-migliaia di volte'). Vale per **tutto**: i campi di `dati.js`, i testi dell'interfaccia, le note
-e la documentazione, i messaggi di commit e i corpi delle PR, e le **risposte in chat**, dove è
-l'errore che ricorre più spesso. Al suo posto: **due punti** se introduce una spiegazione,
-**virgole o parentesi** se è un inciso, **punto fermo** se separa due frasi. La regola universale
-sta in `Roccobot.md`, sezione 'Caratteri', a tolleranza zero: qui è ripetuta perché **questo file
-ha priorità più alta**.
-- ⚠️ **Non esiste più alcuna eccezione 'testi narrativi', e non va reintrodotta**: finché questa
-  sezione dichiarava l'em-dash ammesso negli incisi di `dati.js`, quella dicitura bastava a
-  farlo riapparire **altrove**, chat compresa.
+⚠️⚠️ **I TRATTINI LUNGHI NON SI USANO MAI, DA NESSUNA PARTE**: em-dash `—` ed en-dash `–`,
+stessa regola e stessa tolleranza zero per entrambi ('non devi usare 'sto carattere: l'ho
+chiesto migliaia di volte'; e l'unificazione dei due, 2026-08-01: *non mi piace avere due
+regole separate per due caratteri di cui voglio liberarmi ugualmente*). Vale per **tutto**: i
+campi di `dati.js`, i testi dell'interfaccia, le note e la documentazione, i messaggi di
+commit e i corpi delle PR, e le **risposte in chat**, dove è l'errore che ricorre più spesso.
+Al loro posto: **trattino breve** negli intervalli numerici (`1954-55`), **due punti** se
+introduce una spiegazione, **virgole o parentesi** se è un inciso, **punto fermo** se separa
+due frasi. La regola universale sta in `Roccobot.md`, sezione 'Caratteri': qui è ripetuta
+perché **questo file ha priorità più alta**.
+- ⚠️ **Le eccezioni cadute NON vanno reintrodotte**, ed erano due, entrambe vissute qui invece
+  che dentro la regola universale: l'em-dash 'ammesso nei testi narrativi' di `dati.js` (fino
+  al 2026-07-28) e l'en-dash 'ammesso negli intervalli d'anno' (fino al 2026-08-01). Tenere
+  un'eccezione in un file a priorità più alta **non circoscrive** il carattere: lo tiene vivo,
+  e da lì rientra dappertutto, chat compresa.
 - **I due repo sono bonificati, e questa volta è una misura.** Censimento del 2026-07-30 su
   **tutti** i file tracciati dei due repo, contando le occorrenze **fuori** dal codice inline
   separatamente da quelle fra backtick: restano **soltanto** le eccezioni legittime, cioè le 4
@@ -316,19 +321,19 @@ ha priorità più alta**.
     attendibile è quella del verificatore, che guarda il contesto.
   - Nei commenti si usa il **trattino breve**, e nei marcatori di sezione lo stile di casa è
     `// ── Titolo ──` (box drawing).
-- **Le sole occorrenze legittime**: questa regola, che per dire di non usarlo deve nominarlo; le
-  due **tabelle dei caratteri** di RoccobotOS, che ne documentano la scorciatoia di tastiera; e
-  per necessità tecnica le **espressioni regolari** che devono riconoscerlo in un testo remoto.
+- **Le sole occorrenze legittime**, uguali per i due caratteri: questa regola, che per dire di
+  non usarli deve nominarli; le **tabelle dei caratteri** di RoccobotOS, che ne documentano la
+  scorciatoia di tastiera; e per necessità tecnica le **espressioni regolari** che devono
+  riconoscerli in un testo remoto. In tutti i casi il carattere sta **fra backtick** o dentro
+  un blocco di codice, che è ciò che distingue il nominare dall'usare.
 
 - **Apici sempre dritti** (`'`), mai i curvi e mai le doppie; **ellissi** con tre punti
   (`...`), mai il carattere unico `…`. ⚠️ Valgono anche per il testo **che l'utente
   fornisce**: un carattere vietato ricevuto in input (p.es. l'apostrofo curvo
   dell'autocorrezione) va normalizzato, come in ogni altra circostanza.
-- ⚠️ **Anche l'EN-DASH `–` è vietato ovunque, intervalli d'anno compresi** (dal
-  2026-08-01): che cosa significa 'vietato' per lui (niente verifiche apposite, ma
-  sostituzione con `-` dove lo si incontra) lo dice `Roccobot.md`, § 'Caratteri', che ora
-  contiene la regola intera. Il dataset di 'I Grandi di Arda' è stato bonificato quel
-  giorno (264 occorrenze di `1954–55` nelle fonti).
+- **La bonifica dell'en-dash è del 2026-08-01**, quando è caduta la sua eccezione: 264
+  occorrenze di `1954-55` nelle fonti di 'I Grandi di Arda', più gli intervalli di `JRRT.md`
+  e pochi usi puntuativi. Da allora il presidio automatico li tratta come l'em-dash.
 - Le convenzioni tipografiche **specifiche del dataset** (maiuscola iniziale delle righe,
   nomi di creatura, toponimi con o senza articolo) stanno in `arda/top/CLAUDE.md`.
 
@@ -427,17 +432,17 @@ poi divergerebbe.
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
 - **I controlli pre-commit**, che bloccano il commit **solo quando la configurazione
   viene letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
-  `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, em-dash
-  nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i **caratteri del
-  messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
+  `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, **trattini
+  lunghi** nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i
+  **caratteri del messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
   e controlla anche i file di `Roccobot/tools` quando il repo è agganciato). ⚠️ Criterio,
   whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
   regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
   che bloccano il commit. ⚠️ **Quanti sono non si scrive**: l'elenco qui sopra è la sostanza,
   e un numero andrebbe aggiornato a ogni ritocco della procedura, mentendo nel frattempo.
-  - ⚠️ **Il controllo sul MESSAGGIO esiste perché nessun altro lo guardava**: quello
-    dell'em-dash legge il diff, quindi un carattere sbagliato nel messaggio di commit passava
-    indisturbato. È nato da un omografo (`U+0435`, la e cirillica) finito in un messaggio il
+  - ⚠️ **Il controllo sul MESSAGGIO esiste perché nessun altro lo guardava**: quello dei
+    trattini lunghi legge il diff, quindi un carattere sbagliato nel messaggio di commit
+    passava indisturbato. È nato da un omografo (`U+0435`, la e cirillica) finito in un messaggio il
     2026-07-29. Criterio completo in `Roccobot.md` § '💬 Stile di comunicazione', voce sugli
     omografi.
   - **Il verificatore controlla anche** i **caratteri** dei file di regole e la **fedeltà del
