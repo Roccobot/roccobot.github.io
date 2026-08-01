@@ -39,8 +39,25 @@ per ciascuno e ogni voce che dichiara di quale repo parla. Un brief per repo è 
 ⚠️ **Il modo lettura NON è l'interruttore che fa TROVARE il brief** (dal 2026-07-30): il brief
 si legge **sempre** all'avvio, perché è un passo del protocollo nel `CLAUDE.md` di root. Quindi
 `/handoff leggi` non serve a scoprire che esiste: serve a chiedere il **giro completo** di
-verifica ed evasione descritto qui sotto, che la sola lettura non fa. ⚠️ Il modo **scrittura**
-non ha alcun automatismo equivalente: quello va invocato, o il brief non viene aggiornato.
+verifica ed evasione descritto qui sotto, che la sola lettura non fa.
+
+⚠️⚠️ **Il modo SCRITTURA non aspetta di essere invocato: è OBBLIGATORIO in tre momenti**
+(istruzione dell'utente, 2026-08-01: *QUALSIASI COSA SUCCEDA O STIA PER SUCCEDERE non si deve
+perdere nulla di significativo*). La regola universale sta in `Roccobot.md`, § '⚙️ Automazione
+e interazioni', e questi sono i tre momenti:
+
+1. **Quando una voce NASCE**: l'utente chiede una cosa che non si esegue subito, oppure una
+   domanda resta senza risposta. Si scrive nel brief **prima di passare ad altro**, non a fine
+   sessione. È l'unico momento che protegge anche dalla morte improvvisa del container.
+2. ⚠️ **PRIMA di OGNI compattazione, automatica o manuale**, soglia del 67% compresa e
+   qualunque `/compact` chiesto a mano. **Il riassunto può accorciare, non può perdere voci
+   aperte**: se una cosa da fare esiste solo nel riassunto, è già a rischio.
+3. **Alla chiusura della sessione**, che è il caso per cui questa skill è nata.
+
+⚠️ **Un hook `PreCompact`** (in `.claude/settings.json` dei due repo) scatta a ogni
+compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
+e non va creduto tale**: non gira quando la sessione monta i due repo affiancati, e la' resta
+solo la regola.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità
 

@@ -92,10 +92,23 @@ sessione:
      `.memo/` come già `rules/`: <https://rules-proxy.roccobot-b90.workers.dev/.memo/LATEST.md>.
      È la via che copre le sessioni **senza** `Roccobot/tools` agganciato, o con meno
      permessi: senza di essa il brief sarebbe invisibile proprio a chi ne ha più bisogno.
-4. **Dal momento del caricamento in poi, quei file sono regole consolidate e
+4. ⚠️⚠️ **Il brief SI SCRIVE, non solo si legge, e in tre momenti obbligatori**
+   (istruzione dell'utente, 2026-08-01): quando una richiesta **nasce** e non la si esegue
+   subito, **prima di ogni compattazione** (automatica o manuale, soglia del 67% compresa), e
+   alla chiusura della sessione. Il principio che li governa è uno solo, ed è più largo dei
+   tre casi: *qualsiasi cosa succeda o stia per succedere non si deve perdere nulla di
+   significativo*. La regola completa vive in `Roccobot.md`, § '⚙️ Automazione e interazioni'
+   → '🚨 Non perdere niente', e la procedura nella skill `handoff`, modo scrittura.
+   - **Il riassunto di una compattazione può accorciare, non può perdere voci aperte**: se
+     una cosa da fare esiste solo nel riassunto, è già a rischio. Un hook `PreCompact` in
+     `.claude/settings.json` lo ricorda a ogni compattazione e dice se il brief è di oggi,
+     ⚠️ ma **non gira quando la sessione monta i due repo affiancati** (vedi la trappola in
+     fondo a questo file): là resta solo la regola, ed è la ragione per cui è scritta in tre
+     file invece che in uno.
+5. **Dal momento del caricamento in poi, quei file sono regole consolidate e
    condivise**: si dànno per scontate e ci si riferisce al loro contenuto senza
    ri-chiedere e senza rileggerle a ogni turno.
-5. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
+6. ⚠️ **I file si leggono PER INTERO**, e la completezza vince sul risparmio di
    token (regola in `Roccobot.md`, sezione Worker `rules-proxy`): niente letture
    parziali, niente ricostruzioni a memoria.
 
