@@ -1,76 +1,142 @@
-/* Pagine.css - tema scuro delle SOTTO-PAGINE di RoccobotOS
+/* Pagine.css - tema chiaro e scuro delle SOTTO-PAGINE di RoccobotOS
    (Caratteri.html, Formati.html, AdServers.html, 'Metodi di fusione.html').
 
    Perche' un file a parte e non le regole dentro ogni pagina: le quattro sotto-pagine sono
    export vecchi con il foglio di stile scritto dentro l'head, e in due varianti diverse.
-   Duplicare il blocco scuro quattro volte avrebbe creato quattro fonti che prima o poi
-   divergono; qui la fonte e' una sola e le pagine la richiamano dopo il loro <style>, che e'
-   cio' che gli fa vincere il confronto a parita' di specificita'.
+   Duplicare il blocco quattro volte avrebbe creato quattro fonti che prima o poi divergono;
+   qui la fonte e' una sola e le pagine la richiamano dopo il loro <style>, che e' cio' che
+   gli fa vincere il confronto a parita' di specificita'.
 
-   Perche' 'prefers-color-scheme' e non l'attributo data-theme della pagina principale: il
-   tema scelto col pulsante o col tasto T NON viene salvato da nessuna parte, vale per la
-   pagina aperta e basta. Le sotto-pagine quindi non hanno modo di sapere che cosa e' stato
-   scelto altrove, e l'unica preferenza che possono leggere e' quella del sistema. Se un
-   domani si vuole propagare anche la scelta manuale, la strada e' salvarla (localStorage) e
-   leggerla qui: sarebbe un cambio di comportamento anche per la pagina principale, che
-   smetterebbe di seguire il sistema dopo il primo clic.
+   DUE VIE PER IL TEMA, e nessuna delle due memorizza niente:
+   1. la preferenza del SISTEMA operativo (prefers-color-scheme), che e' quella con cui la
+      pagina si apre;
+   2. il tasto T, che scrive data-theme sull'elemento html e deve poter vincere sulla media
+      query in ENTRAMBI i versi (chiaro forzato su sistema scuro e viceversa).
+   Per tenerle insieme senza scrivere tre volte le stesse regole, i colori vivono in
+   variabili: la media query e i due data-theme ridefiniscono solo quelle, e le regole vere
+   stanno scritte una volta sola.
 
-   I colori sono quelli del tema scuro di RoccobotOS.css, cosi' le cinque pagine si somigliano:
-   fondo #121212, testo #eaeaea, righe alterne #181818, intestazioni #262626, bordi #3a3a3a,
-   verde dei link #43b59e (sul fondo scuro da' 7,4:1, ampiamente a norma). */
+   I valori sono quelli del tema scuro di RoccobotOS.css, cosi' le cinque pagine si
+   somigliano: fondo #121212, testo #eaeaea, righe alterne #181818, intestazioni #262626,
+   bordi #3a3a3a, verde dei link #43b59e (7,4:1 sul fondo scuro). */
+
+:root {
+  --pg-fondo: #fefefe;
+  --pg-testo: #333;
+  --pg-titolo: #000;
+  --pg-tenue: #777;
+  --pg-bordo: #ccc;
+  --pg-bordo-cella: #eaeaea;
+  --pg-riga: #f8f8f8;
+  --pg-intestazione: #f8f8f8;
+  --pg-codice: #f8f8f8;
+  --pg-link: #4183c4;
+  --pg-link-rotto: #c00;
+}
 
 @media (prefers-color-scheme: dark) {
-  html { color-scheme: dark }
-
-  body {
-    background: #121212;
-    background-color: #121212;
-    color: #eaeaea;
+  :root {
+    --pg-fondo: #121212;
+    --pg-testo: #eaeaea;
+    --pg-titolo: #eaeaea;
+    --pg-tenue: #9b9b9b;
+    --pg-bordo: #3a3a3a;
+    --pg-bordo-cella: #3a3a3a;
+    --pg-riga: #181818;
+    --pg-intestazione: #262626;
+    --pg-codice: #1c1c1c;
+    --pg-link: #43b59e;
+    --pg-link-rotto: #ff8a8a;
   }
+}
 
-  h1, h2, h3, h4, h5, h6 { color: #eaeaea }
-  h2 { border-bottom-color: #3a3a3a }
-  h6, h6 tt, h6 code { color: #9b9b9b }
+html[data-theme="dark"] {
+  --pg-fondo: #121212;
+  --pg-testo: #eaeaea;
+  --pg-titolo: #eaeaea;
+  --pg-tenue: #9b9b9b;
+  --pg-bordo: #3a3a3a;
+  --pg-bordo-cella: #3a3a3a;
+  --pg-riga: #181818;
+  --pg-intestazione: #262626;
+  --pg-codice: #1c1c1c;
+  --pg-link: #43b59e;
+  --pg-link-rotto: #ff8a8a;
+}
 
-  hr {
-    color: #3a3a3a;
-    background-color: #3a3a3a;
-    border-color: #3a3a3a;
-  }
+html[data-theme="light"] {
+  --pg-fondo: #fefefe;
+  --pg-testo: #333;
+  --pg-titolo: #000;
+  --pg-tenue: #777;
+  --pg-bordo: #ccc;
+  --pg-bordo-cella: #eaeaea;
+  --pg-riga: #f8f8f8;
+  --pg-intestazione: #f8f8f8;
+  --pg-codice: #f8f8f8;
+  --pg-link: #4183c4;
+  --pg-link-rotto: #c00;
+}
 
-  a, a:visited { color: #43b59e }
-  a.absent { color: #ff8a8a }
+html { color-scheme: light dark }
+html[data-theme="dark"] { color-scheme: dark }
+html[data-theme="light"] { color-scheme: light }
 
-  table, th, td { border-color: #3a3a3a }
-  table tr {
-    border-top-color: #3a3a3a;
-    background-color: #121212;
-  }
-  table tr:nth-child(2n) { background-color: #181818 }
-  table tr th, th {
-    border-color: #3a3a3a;
-    background-color: #262626;
-  }
-  table tr td, td { border-color: #3a3a3a }
+body {
+  background: var(--pg-fondo);
+  background-color: var(--pg-fondo);
+  color: var(--pg-testo);
+}
 
-  code, tt, pre, kbd {
-    background-color: #1c1c1c;
-    border-color: #3a3a3a;
-    color: #eaeaea;
-  }
-  pre code, pre tt { background: transparent }
-  .highlight pre, .highlight { background-color: #1c1c1c }
+h1, h2, h3, h4, h5, h6 { color: var(--pg-titolo) }
+h2 { border-bottom-color: var(--pg-bordo) }
+h6, h6 tt, h6 code { color: var(--pg-tenue) }
 
-  blockquote {
-    color: #b9baba;
-    border-left-color: #3a3a3a;
-  }
+hr {
+  color: var(--pg-bordo);
+  background-color: var(--pg-bordo);
+  border-color: var(--pg-bordo);
+}
 
-  button, #ws, #message {
-    background-color: #262626;
-    border-color: #3a3a3a;
-    color: #eaeaea;
-  }
+a, a:visited { color: var(--pg-link) }
+a.absent { color: var(--pg-link-rotto) }
 
+table, th, td { border-color: var(--pg-bordo-cella) }
+table tr {
+  border-top-color: var(--pg-bordo-cella);
+  background-color: var(--pg-fondo);
+}
+table tr:nth-child(2n) { background-color: var(--pg-riga) }
+table tr th, th {
+  border-color: var(--pg-bordo-cella);
+  background-color: var(--pg-intestazione);
+}
+table tr td, td { border-color: var(--pg-bordo-cella) }
+
+code, tt, pre, kbd {
+  background-color: var(--pg-codice);
+  border-color: var(--pg-bordo-cella);
+  color: var(--pg-testo);
+}
+pre code, pre tt { background: transparent }
+.highlight pre, .highlight { background-color: var(--pg-codice) }
+
+blockquote {
+  color: var(--pg-tenue);
+  border-left-color: var(--pg-bordo);
+}
+
+button, #ws, #message {
+  background-color: var(--pg-intestazione);
+  border-color: var(--pg-bordo);
+  color: var(--pg-testo);
+}
+
+/* Le schermate sono immagini a fondo chiaro: al buio abbagliano meno cosi'. */
+html[data-theme="dark"] img[src$=".png"],
+html[data-theme="dark"] img[src$=".jpg"] { opacity: .92 }
+@media (prefers-color-scheme: dark) {
   img[src$=".png"], img[src$=".jpg"] { opacity: .92 }
 }
+html[data-theme="light"] img[src$=".png"],
+html[data-theme="light"] img[src$=".jpg"] { opacity: 1 }
