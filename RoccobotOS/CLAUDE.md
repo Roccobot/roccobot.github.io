@@ -315,16 +315,21 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
 
 ### 🎛️ Comandi e controlli fissi
 
-- **I due tasti di scorrimento stanno in basso a DESTRA su desktop** (richiesta dell'utente,
-  2026-08-01), con le distanze speculari a quelle di prima: 12 px dal bordo, 16 e 60 px dal
-  fondo.
-  - ⚠️ **Su mobile restano a SINISTRA, e non è una dimenticanza**: là in basso a destra
-    vivono già il cambio tema e l'interruttore delle tabelle, e spostarli li farebbe
-    sovrapporre.
+- **I tasti inizio e fine pagina stanno a DESTRA in ENTRAMBI i formati** (richiesta
+  dell'utente, 2026-08-01): 12 px dal bordo su desktop, 16 su mobile, e 16 e 60 px dal fondo.
+  - ⚠️⚠️ **Su mobile ha comportato l'INVERSIONE COMPLETA dei due lati**, ed è la ragione per
+    cui la disposizione mobile non somiglia più a quella di prima: cambio tema e interruttore
+    delle tabelle sono passati a **sinistra**, indice e tasti di scorrimento a **destra**.
+    Il criterio è la **coerenza dei tasti di scorrimento fra i formati**, che l'utente ha
+    preferito alla continuità con la disposizione vecchia; spostare i soli tasti di
+    scorrimento li avrebbe fatti sovrapporre agli altri due (misurato).
   - ⚠️ **La dissolvenza deve seguire il lato**, o il tasto scivola verso il centro dello
-    schermo invece che fuori. Il JS scriveva uno spostamento fisso di -16 px: ora scrive
-    `translateX(var(--hide-shift))` e il valore lo dà il CSS, positivo su desktop e negativo
-    su mobile. È il modo di tenere UNA logica per due lati, invece di due rami nel codice.
+    schermo invece che fuori. Il JS scriveva uno spostamento fisso in **sette** punti: ora
+    scrive `translateX(var(--hide-shift))` e il valore lo dà il CSS, positivo per i tasti di
+    destra e negativo per quelli di sinistra. È il modo di tenere UNA logica per cinque tasti
+    su due lati, invece di un ramo per ciascuno.
+  - **Verifica da rifare se si tocca un tasto fisso**: misurare i cinque a metà pagina (dove
+    sono tutti visibili) e controllare che nessuna coppia si sovrapponga, nei due formati.
 - **Tasto `T`: cambia tema al volo** (richiesta dell'utente, 2026-08-01: *esattamente come in
   Arda*). Tasto **nudo**, quindi vale dove c'è una tastiera.
   - ⚠️ **Due guardie obbligatorie**, le stesse di 'I Grandi di Arda': si esce se è premuto un
@@ -349,10 +354,11 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
 - ⚠️ **Niente caratteri dell'area privata Unicode**: il logo Apple era `U+F8FF` e ora è
   un'icona (vedi la sezione delle iconcine). Se una sostituzione nuova produce un glifo che
   esiste solo su una piattaforma, si applica lo stesso rimedio.
-- **Le abbreviazioni cominciano con una barra rovesciata** (`\cmd`, `\esc`, `\apple`), non
-  più con le parentesi angolari (scelta dell'utente, 2026-08-01). Il vantaggio pratico non è
-  estetico: `<cmd>` in HTML va scritto con le entità `&lt;` e `&gt;`, o il browser lo legge
-  come un tag e lo cancella; con la barra il problema non si pone.
+- **Le abbreviazioni cominciano con DUE barre rovesciate** (`\\cmd`, `\\esc`,
+  `\\apple`), non più con le parentesi angolari (scelta dell'utente, 2026-08-01, che ha
+  precisato *letteralmente due backslash consecutivi* dopo un primo giro con una sola). Il
+  vantaggio pratico non è estetico: `<cmd>` in HTML va scritto con le entità `&lt;` e `&gt;`,
+  o il browser lo legge come un tag e lo cancella; con le barre il problema non si pone.
 - **Tre coppie di colonne affiancate** invece di una lista di 58 righe (richiesta dell'utente,
   2026-08-01), raggruppate **per somiglianza** e in ordine alfabetico dentro ciascuna: tasti e
   simboli di sistema, segni ed emoji, testo e nomi con diacritici. Da 58 righe a 20, e la
