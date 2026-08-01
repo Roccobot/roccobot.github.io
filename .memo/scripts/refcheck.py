@@ -209,11 +209,16 @@ def char_defects(text):
             if ch == "+" and not in_code:
                 prev = line[col - 2] if col >= 2 else ""
                 nxt = line[col] if col < len(line) else ""
-                # le scorciatoie da tastiera (Ctrl+L, Cmd+V...) sono '+' legittimi: si
-                # riconoscono dal modificatore alla sinistra, non si elencano i tasti
+                # Due forme legittime, che si riconoscono dal contesto invece di elencare i
+                # casi: le scorciatoie da tastiera (Ctrl+L, Cmd+V) dal modificatore a
+                # sinistra, e la notazione dei codepoint (U+0435), che queste stesse regole
+                # PRESCRIVONO per nominare un omografo. La seconda l'ha trovata il controllo
+                # segnalando 'U+F8FF' in un messaggio di commit: un verificatore che boccia
+                # la forma che le regole impongono e' rotto, non severo.
                 mod = re.search(r"(Ctrl|Cmd|Alt|Shift|Fn|Opt|Option|Win|Super|Meta)$",
                                 line[:col - 1])
-                if prev.isalpha() and nxt.isalpha() and not mod:
+                codepoint = prev == "U" and re.match(r"[0-9A-Fa-f]{4,6}\b", line[col:])
+                if prev.isalpha() and nxt.isalpha() and not mod and not codepoint:
                     out.append((n, col, ch, "'+' fra due lettere: refuso da copia-incolla, "
                                             "probabile apostrofo mancato"))
                 continue
