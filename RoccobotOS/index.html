@@ -20,8 +20,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-title" content="RoccobotOS">
-  <meta name="msapplication-TileColor" content="#43b59e">
-  <meta name="msapplication-TileImage" content="ms-icon-144x144.png">
   <meta name="theme-color" content="#43b59e">
   <title>RoccobotOS</title>
   <script>(a => { let r, s, e, l = ["cdn.jsdelivr.net", "fastly.jsdelivr.net", "gcore.jsdelivr.net", "cdn.zenless.top", "testingcf.jsdelivr.net"], t = "//", i = l[0], n = Date.now(), o = "jsdelivr-auto-fallback", c = "/gh/PipecraftNet/jsdelivr-auto-fallback@main/empty.css?", f = e => e && e.includes(t + i), d = e => e.replace(t + i, t + r), m = window.setTimeout, u = a.querySelectorAll.bind(a), v = () => { let e, t; for (e of u('link[rel="stylesheet"]')) t = e.href, f(t) && !t.includes(c) && (e.href = d(t)); for (e of u("script")) { var r; t = e.src, f(t) && ((r = a.createElement("script")).src = d(t), e.defer = !0, e.src = "", e.before(r), e.remove()) } for (e of u("img")) t = e.src, f(t) && (e.src = "", e.src = d(t)); for (e of u("*[style]")) t = e.getAttribute("style"), f(t) && e.setAttribute("style", d(t)); for (e of u("style")) t = e.innerHTML, f(t) && (e.innerHTML = d(t)) }, b = () => { !e && s && r && (console.warn(i + " is not available. Use " + r), e = !0, m(v, 0), m(v, 20), setInterval(v, 500)) }, h = (() => { try { return Object.assign({}, JSON.parse(localStorage.getItem(o) || "{}")) } catch { return {} } })(), g = () => { h.time = n, h.failed = !1, h.fastNode = null; for (let t of l) ((e, t) => { let r, s = a.createElement("link"), l = e => { r && (clearTimeout(r), r = 0, e || (s.href = "data:text/css;base64,"), s.remove(), t(e)) }; r = m(l, 2e3), s.addEventListener("error", () => l(!1)), s.addEventListener("load", () => l(!0)), s.rel = "stylesheet", s.text = "text/css", s.href = e + c + n, a.head.insertAdjacentElement("afterbegin", s) })("https://" + t, e => { e || t !== i || (s = !0, h.failed = !0), e && !r && (r = t), e && !h.fastNode && (h.fastNode = t), b() }); m(() => { s && !r && (r = l[1], b()), localStorage.setItem(o, JSON.stringify(h)) }, 2100) }; if (h.time && n - h.time < 36e5 && h.failed && h.fastNode) s = !0, r = h.fastNode, b(), m(g, 1e3); else if (a.head) g(); else { let e = new MutationObserver(() => { a.head && (e.disconnect(), g()) }); e.observe(a, { childList: !0, subtree: !0 }) } })(document)</script>
@@ -271,11 +269,11 @@
       <ul>
         <li><strong>Scorrimento orizzontale</strong> con un mouse a rotella: <code>⇧</code> + scorrimento</li>
         <li><strong>Logout utente</strong>: <code>⇧⌘Q</code></li>
-        <li><strong>Manda in stop</strong>: <code>⌃⇧⌽</code> <code>⌃⇧⏏</code> <sup><a href="#Nota1">1</a></sup></li>
-        <li><strong>Manda in standby</strong>: <code>⌘⌥⌽</code> <code>⌘⌥⏏</code></li>
+        <li><strong>Manda in stop</strong>: <code>⌃⇧⌽</code> <sup><a href="#Nota1">1</a></sup></li>
+        <li><strong>Manda in standby</strong>: <code>⌘⌥⌽</code></li>
         <li><strong>Blocca schermo</strong>: <code>⌃⌘Q</code></li>
-        <li><strong>Riavvia</strong>: <code>⌃⌘⌽</code> <code>⌃⌘⏏</code></li>
-        <li><strong>Spegni</strong>: <code>⌃⌘⌥⌽</code> <code>⌃⌘⌥⏏</code></li>
+        <li><strong>Riavvia</strong>: <code>⌃⌘⌽</code> <strong>ATTENZIONE: riavvio forzato senza possibilità di salvataggio</strong></li>
+        <li><strong>Spegni</strong>: <code>⌃⌘⌥⌽</code></li>
         <li><strong>Utility 'Forza chiusura applicazioni'</strong>: <code>⌘⌥⎋</code></li>
         <li><strong>Forza la chiusura dell'applicazione attiva</strong>: <code>⌘⌥⇧⎋</code></li>
         <li><strong>Passa alla barra dei menu</strong>: <code>⌃F2</code></li>
@@ -3106,9 +3104,9 @@ defaults write com.apple.finder CreateDesktop false
           target="_blank" style="white-space:nowrap">Play Services</a>) e <code>com.android.vending</code> (<a
           href="https://www.apkmirror.com/apk/google-inc/google-play-store/" target="_blank"
           style="white-space:nowrap">Play Store</a>). Per sicurezza, esportare ogni pacchetto app (apk) originale prima
-        di rimuoverlo. Salvare le impostazioni delle app principali <a href="https://aniyomi.org" target="_blank"
-          style="white-space:nowrap">Aniyomi</a>, <a href="https://github.com/NoName-exe/revanced-extended"
-          target="_blank" style="white-space:nowrap">YouTube RVX</a>, ecc.) e salvare file importanti (video,
+        di rimuoverlo. Salvare le impostazioni delle app principali (<a href="https://aniyomi.org" target="_blank"
+          style="white-space:nowrap">Aniyomi</a>, <a href="https://morphe.software"
+          target="_blank" style="white-space:nowrap">YouTube Morphe</a>, ecc.) e salvare file importanti (video,
         screenshot, backup di applicazioni 'offline', ecc.).
       </p>
       <table>
@@ -3315,8 +3313,8 @@ defaults write com.apple.finder CreateDesktop false
       </p>
       <ul>
         <li>
-          <p>Dopo il backup, riavviare il Mac tenendo premuto <code>⌥</code> e selezionare <strong>MacUSB</strong> come
-            unità di avvio</p>
+          <p>Dopo il backup, spegnere il Mac, poi tenere premuto il <strong>tasto di accensione</strong> fino alla
+            schermata 'Caricamento opzioni di avvio' e selezionare <strong>MacUSB</strong> come unità di avvio</p>
         </li>
         <li>
           <p>Avviare <strong>Utility Disco</strong> e inizializzare l'hard disk con filesystem Mac OS Esteso (Journaled)
@@ -3329,77 +3327,55 @@ defaults write com.apple.finder CreateDesktop false
       <hr>
       <h1><a id="a-id-avvio-modalit%C3%80-di-avvio-a" class="anchor" aria-hidden="true"><span
             class="octicon octicon-link"></span></a><a id="Avvio">MODALITÀ DI AVVIO</a></h1>
-      <h2><a
-          id="premere-la-combinazione-di-tasti-immediatamente-dopo-l-accensione-e-mantenere-premuto-fino-al-caricamento-del-sistema"
-          class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Premere la combinazione di
-        tasti immediatamente dopo l'accensione e mantenere premuto fino al caricamento del sistema</h2>
+      <h2><a id="avvio-apple-silicon" class="anchor" aria-hidden="true"><span
+            class="octicon octicon-link"></span></a>Tenere premuto il tasto di accensione fino alla schermata
+        'Caricamento opzioni di avvio'</h2>
       <table>
         <thead>
           <tr>
-            <th style="text-align:right">Tasto</th>
-            <th style="text-align:left">Tipo di avvio</th>
+            <th style="text-align:right">Cosa serve</th>
+            <th style="text-align:left">Come si fa</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="text-align:right"><code>⇧</code></td>
-            <td style="text-align:left">Modalità sicura</td>
+            <td style="text-align:right">Scelta del disco di avvio<br>(disco interno, drive USB, installer)</td>
+            <td style="text-align:left">Dalle opzioni di avvio, selezionare il volume e fare clic su
+              <strong>Continua</strong></td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>⌥</code></td>
-            <td style="text-align:left">Avvio con Startup Manager</td>
+            <td style="text-align:right">macOS Recovery</td>
+            <td style="text-align:left">Dalle opzioni di avvio, <strong>Opzioni</strong> &rarr;
+              <strong>Continua</strong></td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>C</code></td>
-            <td style="text-align:left">Avvio da disco o drive USB</td>
+            <td style="text-align:right">Modalità sicura</td>
+            <td style="text-align:left">Dalle opzioni di avvio, selezionare il disco, poi tenere premuto
+              <code>⇧</code> e fare clic su <strong>Continua in modalità sicura</strong></td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>D</code></td>
-            <td style="text-align:left">Diagnostica hardware</td>
+            <td style="text-align:right">Diagnostica hardware</td>
+            <td style="text-align:left">Dalle opzioni di avvio, <code>⌘D</code></td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>⌥D</code></td>
-            <td style="text-align:left">Diagnostica hardware remota</td>
+            <td style="text-align:right">Condivisione disco<br>(l'erede della modalità disco di destinazione)</td>
+            <td style="text-align:left">Da Recovery: <strong>Utility</strong> &rarr; <strong>Condividi disco</strong>,
+              e sull'altro Mac il volume compare nel Finder sotto <strong>Network</strong></td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>N</code></td>
-            <td style="text-align:left">Avvio da server NetBoot</td>
+            <td style="text-align:right">Modalità dettagliata o utente singolo</td>
+            <td style="text-align:left">Da Recovery, <strong>Utility</strong> &rarr; <strong>Terminale</strong>:
+              <code>nvram boot-args="-v"</code> oppure <code>-s</code></td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>⌥N</code></td>
-            <td style="text-align:left">Avvio da server NetBoot con immagine predefinita</td>
+            <td style="text-align:right">Reimpostare la NVRAM</td>
+            <td style="text-align:left">Non serve e non esiste come combinazione: su Apple Silicon il sistema la
+              verifica e la ripristina a ogni avvio</td>
           </tr>
           <tr>
-            <td style="text-align:right"><code>⌘R</code></td>
-            <td style="text-align:left">Avvio da macOS Recovery</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>⌥⌘R</code></td>
-            <td style="text-align:left">Avvio da macOS Recovery via Internet</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>⌥⌘PR</code></td>
-            <td style="text-align:left">(Fino al segnale acustico) Reimposta la NVRAM</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>⌘S</code></td>
-            <td style="text-align:left">Modalità utente singolo</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>T</code></td>
-            <td style="text-align:left">Modalità disco di destinazione</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>X</code></td>
-            <td style="text-align:left">Forza l'avvio da un disco di avvio macOS</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>⌘V</code></td>
-            <td style="text-align:left">Modalità dettagliata</td>
-          </tr>
-          <tr>
-            <td style="text-align:right"><code>⏏</code> <code>F12</code></td>
-            <td style="text-align:left">Espulsione dei supporti rimovibili<br>(anche clic del mouse o del trackpad)</td>
+            <td style="text-align:right">Ripristino del firmware (DFU)</td>
+            <td style="text-align:left">Con un secondo Mac e <strong>Apple Configurator</strong>, collegando i due
+              con un cavo USB-C dati</td>
           </tr>
         </tbody>
       </table><br>
