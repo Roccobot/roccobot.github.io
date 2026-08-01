@@ -58,7 +58,7 @@
 ### 🖼️ Le iconcine del testo: SVG che seguono il colore
 
 **Com'è fatto.** Le icone dentro il testo (occhio della visibilità livello, maschera livello,
-slider diviso, area notifiche, globo, Mission Control, ricarica del browser) sono **SVG inline**
+slider diviso, area notifiche, globo, Mission Control, ricarica del browser, logo Apple) sono **SVG inline**
 in `index.html`, con `fill="currentColor"` e classe `icon-png-svg`, quindi prendono il colore del
 testo in entrambi i temi. Prima erano PNG neri, che nel tema scuro diventavano quasi invisibili.
 Le sole due che restano raster sono le **frecce di Telegram**, per la ragione scritta più sotto.
@@ -126,29 +126,54 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     rende alla misura reale, si fa uno screenshot e si ingrandisce **quello**: è il solo modo
     di vedere se un vuoto di 2 px sopravvive all'antialiasing. Guardare l'SVG a 72 px dice se
     il disegno è bello, non se si legge.
-- ⚠️⚠️ **ALLINEAMENTO VERTICALE: il centro dell'icona sta sul centro di una `o` minuscola**
-  (istruzione dell'utente, 2026-07-31: *avevo scritto di ricrearle uguali, ma intendevo nella
-  forma: a livello di centrature e allineamenti si puo' e si deve migliorare*). La regola vive
-  nel CSS di casa, `.icon-png-svg{vertical-align:middle}`, non negli attributi delle singole
-  icone, così vale anche per quelle che verranno.
-  - **E vale per gli `<img>` come per gli `<svg>`**, che è la ragione per cui le due frecce
-    raster di Telegram non hanno avuto bisogno di niente: misurate nella stessa pagina, lo
-    scarto dal centro della `o` è **identico** a quello delle sette SVG.
-  - **Perché `middle` è la risposta esatta e non un'approssimazione**: allinea il centro del box
-    col centro della x-height, che è per definizione il centro di una lettera tonda minuscola.
-  - **Il difetto che correggeva, misurato**: i PNG stavano sulla **baseline**, quindi ogni icona
-    sedeva più alta del centro della `o`, e tanto più quanto più era grande (da **+1,4 px** per
-    la più bassa a **+5,5 px** per il globo). Dopo: **+0,23 px** uguale per tutte.
-  - ⚠️ Lo scarto residuo di 0,23 px **non è un errore di taratura**: è la differenza fra la
-    x-height **nominale** del font, su cui il browser centra, e l'inchiostro **reale** della
-    `o`, che sborda sopra e sotto perché è tonda. Azzerarlo vorrebbe un nudge frazionario, che
-    introdurrebbe sfocatura sui bordi: scartato, e l'utente lo sa.
+- ⚠️⚠️ **ALLINEAMENTO VERTICALE: il riferimento è il centro di una MAIUSCOLA, senza
+  overshoot** (criterio dell'utente, 2026-08-01: *una linea orizzontale immaginaria che taglia
+  a metà un carattere maiuscolo, es. E, B, D*). Vale per ogni icona **nuova**, PNG o SVG che
+  sia, e supera il criterio del giorno prima, che era il centro di una `o` minuscola.
+  - ⚠️ **Il criterio vecchio è SUPERATO, non affiancato**: chi trova in giro la nota sul centro
+    della `o` sta leggendo la versione del 2026-07-31. La differenza fra i due non è teorica: il
+    centro della maiuscola sta **più in alto** di (cap-height - x-height) / 2, che sul font di
+    casa vale **0,094em** nel testo a 16 px e **0,069em** nelle tabelle a 14,4 px.
+  - **Come si ottiene, in pratica.** `vertical-align:middle` allinea al centro della x-height:
+    da lì si alza l'icona di quella differenza con un `transform:translateY` negativo. Il
+    verticale si fa **col transform e non col margine**, come vuole la regola universale
+    (`Roccobot.md` § '🎨 Grafica'): sposta la sola icona senza toccare i vicini né l'altezza
+    della riga.
+  - ⚠️⚠️ **Il valore teorico NON basta: serve l'aggiustamento OTTICO, che lo dà l'utente.**
+    Dipende dalla forma del disegno (un'icona schiacciata, una piena, una a tratto sottile non
+    si leggono allineate allo stesso modo) e non si calcola: si chiede. Nel CSS ogni icona porta
+    perciò un `--nudge` che è la correzione **totale** rispetto al centro della x-height, con
+    dentro sia la regola sia l'ottica, e il commento dice quanti pixel dell'utente vale.
+  - ⚠️ **I pixel dell'utente sono a DPR 2 e vanno convertiti in em sul CONTESTO GIUSTO**: 1 px
+    suo = 0,5 px CSS, che nel testo a 16 px fa 0,03125em ma nelle tabelle a **14,4 px** fa
+    0,0347em. Il globo vive in una tabella, tutte le altre nel testo: usare lo stesso divisore
+    per tutte sbaglierebbe proprio lui.
+  - **La taratura in vigore** (valori dell'utente, in suoi pixel a DPR 2, tutti verso l'alto):
+    globo 3, maschera livello 2, slider diviso 2, freccia Telegram legacy 2, occhio 1, freccia
+    Telegram nuova 1; **Mission Control resta dov'è**, approvato così. ⚠️ **Area notifiche e
+    ricarica del browser non sono ancora state giudicate** e restano al centro della x-height:
+    non sono una dimenticanza del CSS.
+  - **E vale per gli `<img>` come per gli `<svg>`**: le due frecce raster di Telegram usano lo
+    stesso meccanismo delle SVG.
+  - **Il difetto da cui tutto è partito, misurato**: i PNG originali stavano sulla **baseline**,
+    quindi ogni icona sedeva tanto più alta quanto più era grande (da +1,4 px a +5,5 px). Il
+    problema non era il verso ma il fatto che lo scarto **dipendesse dalla dimensione**.
   - ⚠️ **Questo supera il vincolo dei 0 px di spostamento** che governava il primo giro: le
-    dimensioni restano identiche, la **posizione verticale cambia di proposito**. I due vincoli
-    sembrano in contrasto e non lo sono: 'non spostare il resto della riga' vale ancora, 'tenere
-    l'allineamento sbagliato dei PNG' no.
-  - Ⓘ All'epoca esisteva ancora il cache-busting (`?v=N`, tolto il 2026-08-01: vedi
-    'Struttura'), e quella modifica ne richiese il bump.
+    dimensioni restano identiche, la **posizione verticale cambia di proposito**.
+- ⚠️⚠️ **Il logo Apple è un'ICONA, non un carattere** (decisione dell'utente, 2026-08-01:
+  *non mi piace che quel carattere sia visibile solo su OS di Apple*). Nella tabella delle
+  sostituzioni testo stava come `U+F8FF`, che è nell'**area privata** Unicode: sui sistemi
+  Apple si vede, altrove è un quadratino vuoto. Ora è un SVG inline con `currentColor`, quindi
+  si vede ovunque e segue il tema.
+  - **L'asset l'ha fornito l'utente** ed è stato bonificato come sempre (1.375 byte a 1.022:
+    via dichiarazione XML, commento del generatore, `id`, `xmlns:xlink`, misure fisse e `fill`
+    nero), con la verifica obbligatoria: rendering del grezzo contro il bonificato, **hash
+    identici**.
+  - ⚠️ **Altezza in `em` e non in px**, a differenza delle altre icone: vive in una cella di
+    tabella, e in `em` scala col corpo di quella cella se un domani cambia.
+  - **Regola generale che se ne ricava**: un carattere che esiste **solo su una piattaforma**
+    non si usa in pagina, si sostituisce con un'icona. Vale per i simboli PUA di Apple come per
+    qualunque glifo non universale.
 - ⚠️ **Il globo è stato rimpicciolito senza toccare l'ingombro**, allargando il `viewBox` in
   modo proporzionale invece di ridurre `width`: così il disegno è più piccolo del 12% e il
   testo attorno non si sposta di un pixel. È la tecnica da riusare quando l'utente chiede
@@ -188,11 +213,32 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   - ⚠️ **L'elemento in `index.html` nasce VUOTO** e il CSS lo nasconde con `:empty`. Così se il
     JS non gira non compare un badge senza numero, che sarebbe peggio dell'assenza del badge.
 
-- 🎨 **Com'è fatto il numero in pagina, e perché così.** I vincoli sono tutti dell'utente, e la
-  seconda tornata (2026-07-31) ha corretto il primo tentativo: *visibile solo in cima; carattere
-  leggermente più piccolo; in alto a sinistra, sopra il logo-titolo, allineato al pixel con
-  l'inizio del logo verde; niente pillola, solo il numero; deve essere fisso e statico in quella
-  posizione: se scorro in basso non lo vedo più.*
+- ⚠️⚠️ **DUE RESE ALTERNATIVE, una per formato** (mockup dell'utente, 2026-08-01), e non
+  compaiono mai insieme:
+  - **desktop**: una **pillola** nell'angolo in alto a destra del riquadro dell'indice, che
+    resta **sempre a schermo** perché l'indice è fisso;
+  - **mobile**: il numero sopra il logo, quello descritto qui sotto, che scorre via con la
+    testata.
+  - **La soglia è 860 px**, cioè la stessa a cui l'indice sparisce: non è un valore nuovo da
+    tarare, ed è la ragione per cui le due rese si coprono a vicenda senza buchi. Fra 601 e
+    860 px non c'è indice, quindi là vale il numero sopra il logo.
+  - ⚠️ **La pillola NON può essere `absolute` dentro il riquadro**: quel riquadro ha lo
+    scorrimento interno, e la pillola scorrerebbe via con le voci. Sta in una riga **`sticky`
+    ad altezza zero**, che resta incollata in cima allo scroll e non occupa spazio nel flusso,
+    quindi non sposta di un pixel l'indice. Misurato: dopo 600 px di scorrimento dell'indice la
+    pillola è ferma.
+  - **Colori presi dal mockup**: fondo grigio tenue, testo del colore del fondo del riquadro
+    (in tema scuro la stessa relazione, con i grigi del tema). Il contrasto è bassissimo **per
+    scelta**, come per il numero su mobile: vale la stessa deroga scritta più sotto, e non si
+    alza perché un audit la segnala.
+  - **Il numero resta scritto in un posto solo**, la costante `VERSIONE`: il JS la scrive in
+    entrambi gli elementi, che nascono vuoti e col CSS `:empty` non compaiono se lo script non
+    gira.
+- 🎨 **Com'è fatto il numero sopra il logo (la resa MOBILE), e perché così.** I vincoli sono
+  tutti dell'utente, e la seconda tornata (2026-07-31) ha corretto il primo tentativo: *visibile
+  solo in cima; carattere leggermente più piccolo; in alto a sinistra, sopra il logo-titolo,
+  allineato al pixel con l'inizio del logo verde; niente pillola, solo il numero; deve essere
+  fisso e statico in quella posizione: se scorro in basso non lo vedo più.*
   - ⚠️⚠️ **'Fisso' voleva dire FERMO NEL DOCUMENTO, non incollato allo schermo**, ed è
     l'equivoco che ha fatto sbagliare il primo giro: `position:fixed` lo teneva visibile per
     tutta la pagina, mentre deve uscire di scena insieme alla testata. La resa giusta è
@@ -254,6 +300,24 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
   `curl -s https://roccobot.github.io/RoccobotOS/RoccobotOS.js | grep -o 'VERSIONE = "[^"]*"'`.
   ⚠️ Non più `head -c 30` sul commento, che ora non contiene il numero: chi usa il comando
   vecchio non vede nulla e crede che il deploy non sia passato.
+
+### ⌨️ Tabella delle sostituzioni testo
+
+**Com'è fatto.** La tabella che in pagina sta sotto il titolo `Sostituzione testo` rispecchia
+le sostituzioni configurate dall'utente in macOS (Impostazioni di sistema, Tastiera, Testo). Non è un
+contenuto redazionale: è il **dump di una sua configurazione**, e si aggiorna quando lui ne
+manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
+
+- ⚠️ **I caratteri vietati dalle regole si scrivono come ENTITÀ HTML**, non letterali: la riga
+  `hhhh` produce due em-dash, e `&mdash;&mdash;` rende in pagina esattamente lo stesso glifo
+  **senza** mettere il carattere nel sorgente. Così la pagina resta fedele alla configurazione
+  e il file non viola la regola dei trattini lunghi, che altrimenti bloccherebbe il commit.
+  È la via preferibile all'esenzione 'tabella di caratteri', perché non chiede deroghe.
+- ⚠️ **Niente caratteri dell'area privata Unicode**: il logo Apple era `U+F8FF` e ora è
+  un'icona (vedi la sezione delle iconcine). Se una sostituzione nuova produce un glifo che
+  esiste solo su una piattaforma, si applica lo stesso rimedio.
+- **Le stringhe di partenza vanno rese con `&lt;` e `&gt;`**, perché molte sono nella forma
+  `<cmd>`, `<esc>`, `<apple>`: senza le entità il browser le legge come tag e le cancella.
 
 ### 🌐 Tabelle dei servizi DNS
 
