@@ -70,18 +70,29 @@
     regole CSS che le vestivano. ⚠️ **Restano le ancore fatte a mano** (`<a id="ScorciatoieApp"></a>`
     e simili, comprese `CloudStorage` e `NotaFTop` che oggi nessuno punta): sono segnaposto
     voluti, non residui, e i link dell'indice ci passano.
-  - ⚠️⚠️ **I comandi fissi: dove stanno e QUANDO si vedono** (riscrittura del 2026-08-01, su
-    richiesta dell'utente). Su smartphone i due lati sono **l'esatto opposto** l'uno
-    dell'altro: a **sinistra** tema e indice, che si vedono quando la pagina sta **ferma** e
-    all'apertura; a **destra** inizio e fine pagina, che si vedono **mentre si scorre** e
-    spariscono dopo **3 secondi** di quiete. Su desktop non cambia niente: tema in alto a
-    destra e i due salti in basso a destra, sempre in vista.
-    - ⚠️ **Un solo temporizzatore per i due gruppi**, ed è la ragione per cui il comparire di
-      un lato coincide col sparire dell'altro, come l'utente ha chiesto. Con due orologi
-      basterebbero poche decine di millisecondi di deriva per vederli tutti e quattro insieme,
-      o nessuno.
-    - I due salti hanno **in più** la regola dei bordi, che vale sempre: 'vai in cima' non
-      compare quando si è già in cima, e viceversa.
+  - ⚠️⚠️ **I comandi fissi: dove stanno e QUANDO si vedono.** Su smartphone sono **tre**:
+    l'indice in basso a **sinistra** nell'angolo, inizio e fine pagina in basso a **destra**.
+    Si vedono tutti e tre **mentre si scorre** e spariscono dopo **3 secondi** di quiete. Su
+    desktop non cambia niente: i due salti in basso a destra, sempre in vista.
+    - Ognuno ha **in più** una condizione sua, e sono tutte e tre della stessa natura: si
+      nasconde il comando che in quel momento non porta da nessuna parte. 'Vai in cima' non
+      compare se si è già in cima, 'vai in fondo' se si è già in fondo, e **l'indice non
+      compare quando l'indice è già aperto**.
+    - ⚠️ **Le due funzioni che aprono e chiudono l'indice devono chiamare `aggiornaComandi()`**,
+      o il pulsante resta visibile sopra il pannello. Il difetto non si vede subito, perché il
+      primo scorrimento successivo rimette tutto a posto da solo: è il genere di cosa che passa
+      una prova frettolosa.
+    - ⚠️⚠️ **STORIA, perché il codice da solo non la racconta.** Fino al 2026-08-01 c'era anche
+      un gruppo di **sinistra** (tema più indice) visibile a pagina **ferma**, cioè l'esatto
+      opposto della destra, con **un solo temporizzatore** per i due gruppi perché il comparire
+      di un lato coincidesse col sparire dell'altro. L'idea era dell'utente e gli piaceva, ma si
+      scontrava con un fatto: **il pannello dell'indice arriva fino in fondo allo schermo**, e i
+      due tasti in quell'angolo gliene coprivano la parte bassa. Sacrificato il tasto del tema
+      (vedi il flag qui sotto) e passato l'indice alla regola di destra. Se un domani si vuole
+      riprovare la simmetria, il difetto da risolvere prima è quello.
+    - **Conseguenza voluta, non dimenticanza**: all'apertura della pagina su smartphone non si
+      vede **nessun** comando, indice compreso. Segue da 'appare allo scorrimento', che è come
+      l'utente l'ha chiesto.
     - ⚠️ **Il verso in cui un comando scivola via lo decide `--hide-shift`**, che deve essere
       **negativo** per quelli di sinistra: col valore predefinito uscirebbero dal lato
       sbagliato attraversando lo schermo.
@@ -91,6 +102,11 @@
     - **`⌘`/`Ctrl` + freccia su o giù** portano in cima e in fondo, con `preventDefault` sulla
       scorciatoia del browser (override voluto). Il salto da tastiera è **istantaneo** e quello
       dei pulsanti **fluido**, esattamente come su 'I Grandi di Arda'.
+  - ⚠️ **Anche il pulsante del TEMA è dietro un feature flag spento** (`FLAG_TASTO_TEMA`,
+    2026-08-01), e la ragione è quella della voce qui sopra: con l'indice aperto copriva il
+    pannello, e fra i due comandi di sinistra era il sacrificabile. Il tema segue la preferenza
+    del **sistema**, l'utente dice di non commutarlo quasi mai, e su desktop resta il tasto `T`.
+    Sparisce il bottone, non la funzione: la logica del tema è tutta al suo posto.
   - ⚠️ **Lo switch fra tabelle standard e schede è dietro un FEATURE FLAG spento**
     (`FLAG_SWITCH_TABELLE` in `RoccobotOS.js`, istruzione dell'utente 2026-08-01: non l'ha mai
     usato). Il codice e il CSS delle schede **restano**: il lavoro di adattamento delle tabelle

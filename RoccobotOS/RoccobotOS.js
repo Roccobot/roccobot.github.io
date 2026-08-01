@@ -10,7 +10,7 @@
 // index.html nascono VUOTI: se questo script non gira il CSS li nasconde con :empty, invece di
 // mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "3.30";
+  const VERSIONE = "3.40";
   // Due punti di resa, uno per formato: la pillola nell'angolo dell'indice su desktop,
   // il numero sopra il logo su mobile. A deciderlo e' il CSS, qui si scrivono entrambi.
   for (const id of ["siteVersion", "tocVersion"]) {
@@ -22,19 +22,23 @@
 // Riscritto in chiaro il 2026-08-01, prima era il minificato dell'export: la regola di
 // visibilita' e' cambiata abbastanza da rendere il rattoppo meno leggibile della riscrittura.
 //
-// DISPOSIZIONE su smartphone (richiesta dell'utente, 2026-08-01): a SINISTRA tema e indice,
-// a DESTRA inizio e fine pagina. Su desktop restano dov'erano: tema in alto a destra, i due
-// salti in basso a destra, l'indice non serve perche' la colonna laterale e' sempre in vista.
+// DISPOSIZIONE su smartphone: l'indice in basso a SINISTRA nell'angolo, inizio e fine pagina
+// in basso a DESTRA. Su desktop non cambia niente: i due salti in basso a destra, e l'indice
+// non serve perche' la colonna laterale e' sempre in vista.
 //
-// VISIBILITA' su smartphone, e i due lati sono l'esatto opposto l'uno dell'altro:
-//   - a sinistra si vede quando la pagina sta FERMA (e all'apertura), e sparisce appena si
-//     scorre;
-//   - a destra si vede mentre si SCORRE, e sparisce dopo 3 secondi di quiete.
-// Un solo temporizzatore governa i due gruppi, e per questo il comparire di un lato coincide
-// con lo sparire dell'altro: se fossero due, prima o poi divergerebbero di qualche decina di
-// millisecondi e si vedrebbero tutti e quattro insieme, o nessuno.
-// I due salti hanno in piu' la regola dei BORDI, che vale sempre: 'vai in cima' non compare
-// quando si e' gia' in cima, 'vai in fondo' quando si e' gia' in fondo.
+// VISIBILITA' su smartphone: tutti e tre si vedono mentre si SCORRE e spariscono dopo 3
+// secondi di quiete. Ognuno ha in piu' una condizione sua, e sono tutte e tre della stessa
+// natura: si nasconde il comando che in quel momento non porta da nessuna parte.
+//   - 'vai in cima' non compare se si e' gia' in cima, 'vai in fondo' se si e' gia' in fondo;
+//   - l'indice non compare quando l'indice e' gia' APERTO, e li' c'e' anche la ragione per
+//     cui l'utente ha chiesto il cambio: il pannello arriva fino in fondo allo schermo, e un
+//     tasto in quell'angolo gli copriva la parte bassa.
+//
+// ⚠️ STORIA, perche' il codice da solo non la racconta: fino al 2026-08-01 c'era anche un
+// gruppo di SINISTRA (tema piu' indice) visibile a pagina FERMA, cioe' l'esatto opposto della
+// destra. L'idea era buona ma si scontrava col pannello dell'indice; il tasto del tema e'
+// finito dietro un flag e l'indice e' passato di qua. Se un domani si vuole riprovare la
+// simmetria, il difetto da risolvere prima e' quello.
 !function () {
   const html = document.documentElement;
   const mqScuro = window.matchMedia("(prefers-color-scheme: dark)");
@@ -57,6 +61,13 @@
   // questo true, il pulsante e il CSS delle schede sono al loro posto. Non si cancella perche'
   // il lavoro di adattamento delle tabelle strette e' fatto e riaverlo costerebbe caro.
   const FLAG_SWITCH_TABELLE = false;
+
+  // ⚠️ FEATURE FLAG. Anche il pulsante del tema sparisce (istruzione dell'utente,
+  // 2026-08-01): con l'indice aperto i comandi di sinistra ne coprivano il fondo, e fra i
+  // due questo e' il sacrificabile, perche' il tema segue gia' la preferenza del SISTEMA e
+  // l'utente dice di non commutarlo quasi mai. La logica del tema resta tutta al suo posto,
+  // tasto `T` compreso: sparisce il bottone, non la funzione.
+  const FLAG_TASTO_TEMA = false;
 
   // Quiete richiesta prima di invertire i due gruppi. Vale in un verso e nell'altro.
   const QUIETE = 3000;
@@ -156,13 +167,26 @@
     }
   }
 
+  // Stessa sorte del pulsante delle tabelle: fuori dal giro del Tab e invisibile ai lettori
+  // di schermo, non solo nascosto al CSS.
+  if (!FLAG_TASTO_TEMA) {
+    tastoTema.hidden = true;
+    tastoTema.setAttribute("aria-hidden", "true");
+    tastoTema.setAttribute("tabindex", "-1");
+  }
+
   // ── Indice su smartphone ──
+  // ⚠️ Aprire o chiudere l'indice cambia anche la visibilita' del suo pulsante, quindi le due
+  // funzioni chiamano aggiornaComandi(): a indice aperto il pulsante se ne va, per non
+  // coprire il fondo del pannello. Se ci si dimentica la chiamata il difetto non si vede
+  // subito, perche' il primo scorrimento successivo rimette tutto a posto da solo.
   function chiudiIndice() {
     html.removeAttribute("data-mobile-toc");
     if (tastoIndice) {
       tastoIndice.setAttribute("aria-pressed", "false");
       tastoIndice.setAttribute("aria-expanded", "false");
     }
+    aggiornaComandi();
   }
   function commutaIndice() {
     if (!mqMobile.matches) return;
@@ -172,6 +196,7 @@
       tastoIndice.setAttribute("aria-pressed", "true");
       tastoIndice.setAttribute("aria-expanded", "true");
     }
+    aggiornaComandi();
   }
   if (tastoIndice) tastoIndice.addEventListener("click", ev => { ev.preventDefault(); commutaIndice() });
   if (listaIndice) listaIndice.addEventListener("click", ev => {
@@ -211,8 +236,12 @@
   if (tastoFondo) tastoFondo.addEventListener("click", () => vaiInFondo(true));
 
   // ── Visibilita' dei comandi ──
-  const SINISTRA = [tastoTema, tastoIndice];
-  const DESTRA = [tastoCima, tastoFondo];
+  // ⚠️ Il gruppo di SINISTRA non esiste piu' (2026-08-01). Era tema piu' indice, visibile a
+  // pagina ferma; ma quando l'indice si apre, il pannello arriva fino in fondo allo schermo e
+  // quei due tasti ne coprivano la parte bassa. Il tema e' sparito dietro un flag, e l'indice
+  // e' passato alla regola di destra: si vede mentre si SCORRE. In piu' sparisce a indice
+  // aperto, perche' li' non serve piu': le uniche mosse sensate sono toccare una voce o
+  // toccare fuori per chiudere.
 
   function mostra(el) {
     if (!el) return;
@@ -257,11 +286,12 @@
   function aggiornaComandi() {
     const bordi = aiBordi();
     if (mqMobile.matches) {
-      SINISTRA.forEach(el => inMovimento ? nascondi(el) : mostra(el));
+      const indiceAperto = html.getAttribute("data-mobile-toc") === "open";
+      if (tastoIndice) (inMovimento && !indiceAperto) ? mostra(tastoIndice) : nascondi(tastoIndice);
       if (tastoCima) (inMovimento && !bordi.inCima) ? mostra(tastoCima) : nascondi(tastoCima);
       if (tastoFondo) (inMovimento && !bordi.inFondo) ? mostra(tastoFondo) : nascondi(tastoFondo);
     } else {
-      mostra(tastoTema);
+      if (FLAG_TASTO_TEMA) mostra(tastoTema);
       bordi.inCima ? nascondi(tastoCima) : mostra(tastoCima);
       bordi.inFondo ? nascondi(tastoFondo) : mostra(tastoFondo);
     }
