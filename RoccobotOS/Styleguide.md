@@ -9,16 +9,31 @@
 > questo sito, incluso un agente: qui c'è tutto quello che serve senza doverlo dedurre dal
 > CSS minificato.
 >
-> **Versione della palette**: 1.0, 1 agosto 2026. Approvata dall'utente a mockup, caso per
+> **Versione della palette**: 1.1, 2 agosto 2026. Approvata dall'utente a mockup, caso per
 > caso, dopo la misura dei contrasti su tutti i colori in uso.
 
 ## 1. Il principio, prima dei valori
 
-**Il verde è l'azione. Il caldo è la struttura. Il neutro è il testo.**
+**Il verde è l'azione. I titoli sono la struttura. Il neutro è il testo.**
 
 Le tre famiglie non si contendono l'attenzione perché non dicono la stessa cosa: il verde
-segnala che qualcosa si può toccare (link, accenti, bordi dei comandi), il caldo dà la
-gerarchia del documento (titoli), il neutro porta il contenuto.
+segnala che qualcosa si può toccare (link, accenti, bordi dei comandi), i titoli dànno la
+gerarchia del documento, il neutro porta il contenuto.
+
+⚠️⚠️ **La famiglia dei titoli NON è più tutta calda, e la formulazione è cambiata per questo**
+(2026-08-02, scelta dell'utente su mockup). Fino alla 1.0 la regola diceva *il caldo è la
+struttura*, e l'`h2` ambra ne era il caso principale; ora l'`h2` è **teal** e quella frase
+sarebbe falsa. Non si è allentato il principio: quello che conta è che **l'azione abbia un
+colore suo e i titoli un altro**, e questo resta vero.
+- ⚠️ **Il vincolo che ne discende, e che va rispettato da qui in avanti**: un titolo freddo
+  deve stare **lontano dalla tinta dei link**. Il `#00727B` proposto per primo stava a 184
+  gradi contro i 169 del verde, con la stessa luminosità, e nel mockup il titolo sembrava un
+  link. Il valore scelto sta a **192 gradi**, 23 di scarto: è quel margine a tenere in piedi
+  la distinzione, non la famiglia di appartenenza.
+- ⚠️ **Punto APERTO, da non scambiare per una svista**: `h3` e `h4` sono rimasti caldi
+  (ruggine e bruno), quindi la scala oggi salta da freddo a caldo fra l'`h2` e l'`h3`. È un
+  cambio di temperatura invece di un gradino della stessa scala, e l'utente non si è ancora
+  pronunciato. Chi rimette mano ai titoli parta da qui.
 
 Questa regola è nata da un difetto reale, e conoscerlo evita di ricrearlo: fino alla
 versione 2.71 i titoli erano verde acqua, ciano e azzurro, cioè **tre freddi vicini** che
@@ -40,7 +55,7 @@ misurato sul fondo reale in cui quel colore vive, non su un bianco teorico.
 |---|---|---|---|---|---|
 | `testo` | corpo del documento | `#333` | 12,6:1 | `#eaeaea` | 15,9:1 |
 | `titolo-1` | titolo di capitolo, neutro per scelta | `#333` | 12,6:1 | `#f1f1f1` | 17,4:1 |
-| `titolo-2` | sezione, ambra | `#8f5300` | 6,16:1 | `#e8a33d` | 8,69:1 |
+| `titolo-2` | sezione, teal | `#0A6B84` | 6,08:1 | `#4fb3cc` | 7,72:1 |
 | `titolo-3` | sotto-sezione, ruggine | `#9c4a12` | 6,16:1 | `#e08a5a` | 7,09:1 |
 | `titolo-4` | livelli minori (h4, h5, h6), bruno neutro | `#5c4a3d` | 8,38:1 | `#d6c3b0` | 10,97:1 |
 | `testo-tenue` | note in calce, didascalie | `#555` | 7,5:1 | `#9b9b9b` | 6,3:1 |
@@ -233,7 +248,7 @@ nuovo o vuole rifattorizzare il CSS senza cambiare l'aspetto.
 :root {
   --testo: #333;
   --titolo-1: #333;
-  --titolo-2: #8f5300;
+  --titolo-2: #0A6B84;
   --titolo-3: #9c4a12;
   --titolo-4: #5c4a3d;
   --testo-tenue: #555;
@@ -255,7 +270,7 @@ nuovo o vuole rifattorizzare il CSS senza cambiare l'aspetto.
 html[data-theme="dark"] {
   --testo: #eaeaea;
   --titolo-1: #f1f1f1;
-  --titolo-2: #e8a33d;
+  --titolo-2: #4fb3cc;
   --titolo-3: #e08a5a;
   --titolo-4: #d6c3b0;
   --testo-tenue: #9b9b9b;
