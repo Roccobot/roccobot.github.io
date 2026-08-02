@@ -100,9 +100,13 @@
     e simili, comprese `CloudStorage` e `NotaFTop` che oggi nessuno punta): sono segnaposto
     voluti, non residui, e i link dell'indice ci passano.
   - ⚠️⚠️ **I comandi fissi: dove stanno e QUANDO si vedono.** Su smartphone sono **tre**:
-    l'indice in basso a **sinistra** nell'angolo, inizio e fine pagina in basso a **destra**.
-    Si vedono tutti e tre **mentre si scorre** e spariscono dopo **3 secondi** di quiete. Su
-    desktop non cambia niente: i due salti in basso a destra, sempre in vista.
+    l'indice in basso a **sinistra** nell'angolo, inizio e fine pagina in basso a **destra**. Su
+    desktop ci sono i soli due salti, in basso a destra.
+    - ⚠️ **La regola di visibilità è UNA SOLA per i due formati** (2026-08-02): si vedono
+      **mentre si scorre** e spariscono dopo **3 secondi** di quiete. Fino a quel giorno il
+      desktop aveva un ramo suo, coi due salti sempre in vista: erano due comportamenti da
+      ricordare invece di uno, e l'utente ha chiesto di unificarli. Oggi l'unica differenza fra
+      i formati è **quali** comandi esistono, non **quando** si vedono.
     - Ognuno ha **in più** una condizione sua, e sono tutte e tre della stessa natura: si
       nasconde il comando che in quel momento non porta da nessuna parte. 'Vai in cima' non
       compare se si è già in cima, 'vai in fondo' se si è già in fondo, e **l'indice non

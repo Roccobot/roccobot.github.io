@@ -10,7 +10,7 @@
 // index.html nascono VUOTI: se questo script non gira il CSS li nasconde con :empty, invece di
 // mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "3.50";
+  const VERSIONE = "3.60";
   // Due punti di resa, uno per formato: la pillola nell'angolo dell'indice su desktop,
   // il numero sopra il logo su mobile. A deciderlo e' il CSS, qui si scrivono entrambi.
   for (const id of ["siteVersion", "tocVersion"]) {
@@ -23,10 +23,11 @@
 // visibilita' e' cambiata abbastanza da rendere il rattoppo meno leggibile della riscrittura.
 //
 // DISPOSIZIONE su smartphone: l'indice in basso a SINISTRA nell'angolo, inizio e fine pagina
-// in basso a DESTRA. Su desktop non cambia niente: i due salti in basso a destra, e l'indice
-// non serve perche' la colonna laterale e' sempre in vista.
+// in basso a DESTRA. Su desktop ci sono i soli due salti, in basso a destra: l'indice non
+// serve perche' la colonna laterale e' sempre in vista.
 //
-// VISIBILITA' su smartphone: tutti e tre si vedono mentre si SCORRE e spariscono dopo 3
+// VISIBILITA', e la regola e' UNA SOLA per i due formati: si vedono mentre si SCORRE e
+// spariscono dopo 3
 // secondi di quiete. Ognuno ha in piu' una condizione sua, e sono tutte e tre della stessa
 // natura: si nasconde il comando che in quel momento non porta da nessuna parte.
 //   - 'vai in cima' non compare se si e' gia' in cima, 'vai in fondo' se si e' gia' in fondo;
@@ -279,28 +280,29 @@
     });
   }
 
-  // Vero mentre si scorre, falso dopo QUIETE millisecondi di fermo. Su desktop non serve:
-  // la' i comandi stanno sempre in vista.
+  // Vero mentre si scorre, falso dopo QUIETE millisecondi di fermo. Vale su tutti i formati.
   let inMovimento = false;
 
+  // ⚠️ La regola e' UNA SOLA per i due formati (richiesta dell'utente, 2026-08-02): anche su
+  // desktop i due salti si vedono solo mentre si scorre e se ne vanno dopo la quiete. Prima
+  // desktop aveva un ramo suo in cui restavano sempre in vista, e teneva in piedi due
+  // comportamenti da ricordare invece di uno.
   function aggiornaComandi() {
     const bordi = aiBordi();
-    if (mqMobile.matches) {
-      const indiceAperto = html.getAttribute("data-mobile-toc") === "open";
-      if (tastoIndice) (inMovimento && !indiceAperto) ? mostra(tastoIndice) : nascondi(tastoIndice);
-      if (tastoCima) (inMovimento && !bordi.inCima) ? mostra(tastoCima) : nascondi(tastoCima);
-      if (tastoFondo) (inMovimento && !bordi.inFondo) ? mostra(tastoFondo) : nascondi(tastoFondo);
-    } else {
-      if (FLAG_TASTO_TEMA) mostra(tastoTema);
-      bordi.inCima ? nascondi(tastoCima) : mostra(tastoCima);
-      bordi.inFondo ? nascondi(tastoFondo) : mostra(tastoFondo);
-    }
+    const indiceAperto = html.getAttribute("data-mobile-toc") === "open";
+    // Il tasto del tema, quando il suo flag e' acceso, non segue lo scorrimento: sta fermo
+    // dov'e'. Non e' un salto, e' un interruttore, e un interruttore che scompare si cerca.
+    if (FLAG_TASTO_TEMA) mostra(tastoTema);
+    // L'indice esiste solo su smartphone (su desktop e' display:none), quindi non serve
+    // distinguere il formato: lo stile in linea su un elemento nascosto non si vede.
+    if (tastoIndice) (inMovimento && !indiceAperto) ? mostra(tastoIndice) : nascondi(tastoIndice);
+    if (tastoCima) (inMovimento && !bordi.inCima) ? mostra(tastoCima) : nascondi(tastoCima);
+    if (tastoFondo) (inMovimento && !bordi.inFondo) ? mostra(tastoFondo) : nascondi(tastoFondo);
     sincronizzaTab();
   }
 
   let orologio = null;
   function segnalaScorrimento() {
-    if (!mqMobile.matches) { aggiornaComandi(); return; }
     inMovimento = true;
     aggiornaComandi();
     if (orologio !== null) clearTimeout(orologio);

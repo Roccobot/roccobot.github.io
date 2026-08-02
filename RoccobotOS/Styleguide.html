@@ -39,7 +39,7 @@
       padding-bottom: .3rem; border-bottom: 1px solid var(--pg-bordo);
       color: #0A6B84;
     }
-    h3 { font-size: 1.25rem; margin: 2rem 0 .5rem; color: #9c4a12; }
+    h3 { font-size: 1.25rem; margin: 2rem 0 .5rem; color: #3d6b72; }
     p, ul, ol { margin: 0 0 .75rem; }
     ul, ol { padding-left: 1.25rem; }
     li { margin-bottom: .35rem; }
@@ -51,11 +51,11 @@
     }
 
     html[data-theme="dark"] h2 { color: #4fb3cc; }
-    html[data-theme="dark"] h3 { color: #e08a5a; }
+    html[data-theme="dark"] h3 { color: #82c3cc; }
     html[data-theme="dark"] code { color: #f2c3d0; }
     @media (prefers-color-scheme: dark) {
       html:not([data-theme="light"]) h2 { color: #4fb3cc; }
-      html:not([data-theme="light"]) h3 { color: #e08a5a; }
+      html:not([data-theme="light"]) h3 { color: #82c3cc; }
       html:not([data-theme="light"]) code { color: #f2c3d0; }
     }
 
@@ -143,18 +143,18 @@
     }
     .t-h1 { font-size: 2em; font-weight: 600; }
     .t-h2 { font-size: 1.5rem; font-weight: 600; color: #0A6B84; }
-    .t-h3 { font-size: 1.25rem; font-weight: 600; color: #9c4a12; }
-    .t-h4 { font-size: 1rem; font-weight: 600; color: #5c4a3d; }
+    .t-h3 { font-size: 1.25rem; font-weight: 600; color: #3d6b72; }
+    .t-h4 { font-size: 1rem; font-weight: 600; color: #55636a; }
     .t-corpo { font-size: 1rem; }
     .t-tab { font-size: .9rem; }
     .t-ver { font-size: .5625rem; font-variant-numeric: tabular-nums; color: var(--pg-tenue); }
     html[data-theme="dark"] .t-h2 { color: #4fb3cc; }
-    html[data-theme="dark"] .t-h3 { color: #e08a5a; }
-    html[data-theme="dark"] .t-h4 { color: #d6c3b0; }
+    html[data-theme="dark"] .t-h3 { color: #82c3cc; }
+    html[data-theme="dark"] .t-h4 { color: #aebfc4; }
     @media (prefers-color-scheme: dark) {
       html:not([data-theme="light"]) .t-h2 { color: #4fb3cc; }
-      html:not([data-theme="light"]) .t-h3 { color: #e08a5a; }
-      html:not([data-theme="light"]) .t-h4 { color: #d6c3b0; }
+      html:not([data-theme="light"]) .t-h3 { color: #82c3cc; }
+      html:not([data-theme="light"]) .t-h4 { color: #aebfc4; }
     }
 
     /* ── Provino dei comandi fissi ──
@@ -185,7 +185,7 @@
 
   <p class="occhiello">RoccobotOS &middot; fonte unica dei valori visivi</p>
   <h1>Styleguide</h1>
-  <p class="sommario">Palette <strong>1.1</strong>, 2 agosto 2026. Approvata dall'utente a mockup,
+  <p class="sommario">Palette <strong>1.2</strong>, 2 agosto 2026. Approvata dall'utente a mockup,
     caso per caso, dopo la misura dei contrasti su tutti i colori in uso. Questa pagina
     <strong>mostra</strong> i colori invece di nominarli: ogni campione è disegnato sui due fondi
     veri del sito, perché un colore che regge su uno può crollare sull'altro.</p>
@@ -210,10 +210,13 @@
       con la stessa luminosità, e nel mockup il titolo sembrava un link. Il valore scelto sta a
       <strong>192 gradi</strong>, 23 di scarto: è quel margine a tenere in piedi la distinzione,
       non la famiglia di appartenenza.</p>
-    <p><strong>Punto aperto</strong>: <code>h3</code> e <code>h4</code> sono rimasti caldi, quindi
-      la scala salta da freddo a caldo fra l'<code>h2</code> e l'<code>h3</code>. È un cambio di
-      temperatura invece di un gradino, e l'utente non si è ancora pronunciato. Chi rimette mano
-      ai titoli parta da qui.</p>
+    <p><strong>La scala è tutta fredda dal 2 agosto 2026</strong>, e il modo in cui lo è conta:
+      <code>h2</code>, <code>h3</code> e <code>h4</code> hanno la <strong>stessa tinta</strong>,
+      circa 190 gradi, e a variare è quanto è accesa, con la saturazione che scende da 86 a 30 a
+      11. Il colore non cambia lato scendendo di livello: <strong>si ritira</strong>.</p>
+    <p>⚠️ Non è il difetto del 2.71 rifatto al contrario, ed è la distinzione da tenere ferma: là
+      i tre freddi erano tre <strong>tinte diverse</strong> che gridavano insieme senza dire chi
+      fosse chi. Una tinta sola a tre profondità è una scala; tre tinte vicine sono un rumore.</p>
   </div>
 
   <p>Questa regola è nata da un difetto reale, e conoscerlo evita di ricrearlo: fino alla versione
@@ -265,24 +268,24 @@
     </div>
     <div class="scheda">
       <div class="facce">
-        <div class="faccia chiara" style="color:#9c4a12">Titolo 3</div>
-        <div class="faccia scura" style="color:#e08a5a">Titolo 3</div>
+        <div class="faccia chiara" style="color:#3d6b72">Titolo 3</div>
+        <div class="faccia scura" style="color:#82c3cc">Titolo 3</div>
       </div>
       <div class="scheda-piede">
         <span class="scheda-nome">titolo-3</span>
-        <span class="scheda-ruolo">sotto-sezione, ruggine</span>
-        <span class="valori">#9c4a12 <span class="rapporto ok">6,16:1</span> &middot; #e08a5a <span class="rapporto ok">7,09:1</span></span>
+        <span class="scheda-ruolo">sotto-sezione, teal smorzato</span>
+        <span class="valori">#3d6b72 <span class="rapporto ok">5,91:1</span> &middot; #82c3cc <span class="rapporto ok">9,48:1</span></span>
       </div>
     </div>
     <div class="scheda">
       <div class="facce">
-        <div class="faccia chiara" style="color:#5c4a3d">Titolo 4</div>
-        <div class="faccia scura" style="color:#d6c3b0">Titolo 4</div>
+        <div class="faccia chiara" style="color:#55636a">Titolo 4</div>
+        <div class="faccia scura" style="color:#aebfc4">Titolo 4</div>
       </div>
       <div class="scheda-piede">
         <span class="scheda-nome">titolo-4</span>
-        <span class="scheda-ruolo">h4, h5, h6, bruno neutro</span>
-        <span class="valori">#5c4a3d <span class="rapporto ok">8,38:1</span> &middot; #d6c3b0 <span class="rapporto ok">10,97:1</span></span>
+        <span class="scheda-ruolo">h4, h5, h6, teal quasi neutro</span>
+        <span class="valori">#55636a <span class="rapporto ok">6,20:1</span> &middot; #aebfc4 <span class="rapporto ok">9,86:1</span></span>
       </div>
     </div>
     <div class="scheda">
@@ -543,15 +546,16 @@
   </div>
 
   <div class="avvertenza">
-    <p><strong>Quando si vedono, su smartphone</strong>: tutti e tre <strong>mentre si scorre</strong>,
-      e spariscono dopo <strong>3 secondi</strong> di quiete. Ognuno ha in più una condizione sua,
-      tutte della stessa natura: si nasconde il comando che in quel momento non porta da nessuna
-      parte. 'Vai in cima' non compare se si è già in cima, 'vai in fondo' se si è già in fondo, e
-      l'indice non compare quando l'indice è già aperto.</p>
-    <p><strong>Su desktop</strong> non c'è nessuna regola di comparsa: i due salti stanno sempre in
-      basso a destra, e l'indice non serve perché la colonna laterale è sempre in vista.
-      <code>&#8984;</code> o <code>Ctrl</code> con le frecce su e giù fanno gli stessi due salti,
-      istantanei invece che fluidi.</p>
+    <p><strong>Quando si vedono, e la regola è UNA SOLA per i due formati</strong>: si vedono
+      <strong>mentre si scorre</strong> e spariscono dopo <strong>3 secondi</strong> di quiete.
+      Ognuno ha in più una condizione sua, tutte della stessa natura: si nasconde il comando che in
+      quel momento non porta da nessuna parte. 'Vai in cima' non compare se si è già in cima, 'vai
+      in fondo' se si è già in fondo, e l'indice non compare quando l'indice è già aperto.</p>
+    <p>⚠️ Fino al 2 agosto 2026 il desktop aveva un comportamento suo, coi due salti sempre in
+      vista: due regole da ricordare invece di una. Ora l'unica differenza fra i formati è
+      <strong>quali</strong> comandi esistono, non <strong>quando</strong> si vedono.</p>
+    <p>Su desktop <code>&#8984;</code> o <code>Ctrl</code> con le frecce su e giù fanno gli stessi
+      due salti, istantanei invece che fluidi.</p>
   </div>
 
   <ul>
@@ -671,8 +675,8 @@
   --testo-tenue: #555;
   --titolo-1: #333;
   --titolo-2: #0A6B84;
-  --titolo-3: #9c4a12;
-  --titolo-4: #5c4a3d;
+  --titolo-3: #3d6b72;
+  --titolo-4: #55636a;
   --link: #1c7a68;
   --accento: #43b59e;
   --enfasi: #333;
@@ -693,8 +697,8 @@ html[data-theme="dark"] {
   --testo-tenue: #9b9b9b;
   --titolo-1: #f1f1f1;
   --titolo-2: #4fb3cc;
-  --titolo-3: #e08a5a;
-  --titolo-4: #d6c3b0;
+  --titolo-3: #82c3cc;
+  --titolo-4: #aebfc4;
   --link: #43b59e;
   --accento: #43b59e;
   --enfasi: #e8909f;

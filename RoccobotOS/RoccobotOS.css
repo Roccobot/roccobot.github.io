@@ -166,11 +166,10 @@ html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body str
    TITOLI sono la struttura. Prima erano tre freddi vicini (verde acqua, ciano, azzurro) che
    litigavano fra loro invece di fare gerarchia, perche' dicevano tutti 'guardami' senza
    distinguersi per ruolo.
-   ⚠️ Nata il 2026-08-01 come scala tutta calda ('ambra e ruggine'), non lo e' piu' dal
-   2026-08-02: l'h2 e' passato al teal per scelta dell'utente. Il vincolo che tiene in piedi
-   la distinzione non e' la temperatura ma la DISTANZA DI TINTA dal verde dei link, 23 gradi.
-   ⚠️ Resta APERTO che h3 e h4 sono ancora caldi, quindi fra h2 e h3 c'e' un salto di
-   temperatura invece di un gradino: vedi Styleguide.html, sezione del principio.
+   ⚠️ Nata il 2026-08-01 come scala tutta calda ('ambra e ruggine'), dal 2026-08-02 e' tutta
+   FREDDA: prima l'h2 e' passato al teal, poi h3 e h4 lo hanno seguito per chiudere il salto di
+   temperatura che si era aperto in mezzo. Il vincolo che tiene in piedi la distinzione dai
+   link non e' la temperatura ma la DISTANZA DI TINTA, 23 gradi. Vedi Styleguide.html.
    ⚠️ Nel tema CHIARO la gerarchia cromatica non esisteva affatto: misurato prima di questa
    modifica, h1, h2, h3 e h4 erano tutti #0595bf, perche' l'ultima regola del foglio vinceva
    su tutte le altre. Non e' una scala che si ritocca, e' una scala che si introduce.
@@ -192,12 +191,18 @@ html[data-theme=dark] .markdown-body h2{color:#4fb3cc}
    misurando i titoli dopo il cambio di colore: nessuno l'aveva mai guardata perche' il
    difetto stava nel BORDO mentre tutte le prove guardavano il TESTO. */
 html[data-theme=dark] .markdown-body h2{border-bottom-color:#2a2a2a}
-.markdown-body h3{color:#9c4a12}
-html[data-theme=dark] .markdown-body h3{color:#e08a5a}
+/* h3 e h4 nella stessa tinta dell'h2 dal 2026-08-02 (proposta A, scelta su mockup). Prima
+   erano caldi, ruggine e bruno, e fra h2 e h3 il colore non si smorzava: cambiava LATO, cosi'
+   il lettore leggeva un cambio di argomento dove c'e' solo un livello in meno.
+   ⚠️ Non e' il difetto del 2.71 al contrario: la' i tre freddi erano tre TINTE diverse che
+   gridavano insieme, qui la tinta e' una sola (circa 190 gradi) e a variare e' quanto e'
+   accesa: saturazione 86, poi 30, poi 11. Il colore non cambia lato, si ritira. */
+.markdown-body h3{color:#3d6b72}
+html[data-theme=dark] .markdown-body h3{color:#82c3cc}
 /* h4, h5 e h6 in bruno neutro: l'utente ha scelto di togliere di mezzo anche l'ultimo verde
    fra i titoli, cosi' il verde resta SOLO ai link e la regola non ha eccezioni. */
-.markdown-body h4,.markdown-body h5,.markdown-body h6{color:#5c4a3d}
-html[data-theme=dark] .markdown-body h4,html[data-theme=dark] .markdown-body h5,html[data-theme=dark] .markdown-body h6{color:#d6c3b0}
+.markdown-body h4,.markdown-body h5,.markdown-body h6{color:#55636a}
+html[data-theme=dark] .markdown-body h4,html[data-theme=dark] .markdown-body h5,html[data-theme=dark] .markdown-body h6{color:#aebfc4}
 
 /* ── Logo in testata ──
    Il logo e' SVG INLINE in index.html (prima era <img src="RoccobotOS.svg">, che il foglio di
