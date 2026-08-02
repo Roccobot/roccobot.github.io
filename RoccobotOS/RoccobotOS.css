@@ -170,7 +170,7 @@ html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body str
    2026-08-02: l'h2 e' passato al teal per scelta dell'utente. Il vincolo che tiene in piedi
    la distinzione non e' la temperatura ma la DISTANZA DI TINTA dal verde dei link, 23 gradi.
    ⚠️ Resta APERTO che h3 e h4 sono ancora caldi, quindi fra h2 e h3 c'e' un salto di
-   temperatura invece di un gradino: vedi Styleguide.md, sezione del principio.
+   temperatura invece di un gradino: vedi Styleguide.html, sezione del principio.
    ⚠️ Nel tema CHIARO la gerarchia cromatica non esisteva affatto: misurato prima di questa
    modifica, h1, h2, h3 e h4 erano tutti #0595bf, perche' l'ultima regola del foglio vinceva
    su tutte le altre. Non e' una scala che si ritocca, e' una scala che si introduce.
@@ -183,7 +183,7 @@ html[data-theme=dark] .markdown-body h1{color:#f1f1f1}
    che aveva proposto: quello sta a 184 gradi di tinta contro i 169 del verde dei link, con la
    stessa luminosita', e un titolo che somiglia a un link e' un difetto d'uso. Spostato a 192
    gradi, cioe' 23 di scarto invece di 15. La coppia e' obbligatoria: #0A6B84 sul fondo scuro
-   darebbe 3,08:1, sotto il minimo. Valori e contrasti in Styleguide.md. */
+   darebbe 3,08:1, sotto il minimo. Valori e contrasti in Styleguide.html. */
 .markdown-body h2{color:#0A6B84}
 html[data-theme=dark] .markdown-body h2{color:#4fb3cc}
 /* ⚠️ Il filo sotto h1 e h2 e' dichiarato UNA volta sola, chiaro, e il tema scuro lo

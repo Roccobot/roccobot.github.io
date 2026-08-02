@@ -26,17 +26,27 @@
   ospiterebbe, sta in cima per scelta dell'utente (vedi la sezione della versione).
 - **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`, quattro
   **sotto-pagine** (`Characters.html`, `Formats.html`, `AdServers.html`, `BlendModes.html`) col
-  loro `Pages.css` e `Pages.js`, e la **styleguide** in `Styleguide.md`.
+  loro `Pages.css` e `Pages.js`, e la **styleguide** in `Styleguide.html`.
   - ⚠️ **I nomi dei file sono in inglese dal 2026-08-01**, per la regola universale
     (`Roccobot.md`, § 'Lingua di un progetto software'): le sotto-pagine si chiamavano
     `Caratteri`, `Formati` e `Metodi di fusione`, e i vecchi indirizzi non rispondono più. I
     **testi visibili restano in italiano**: sono due scelte indipendenti, e lo dice la regola.
   - ⚠️⚠️ **La STYLEGUIDE è la fonte unica dei valori visivi** (colori, tipografia, superfici,
-    componenti): [`Styleguide.md`](Styleguide.md), pubblicata anche su
-    <https://roccobot.github.io/RoccobotOS/Styleguide.md> perché la si possa dare a un altro
+    componenti): [`Styleguide.html`](Styleguide.html), pubblicata anche su
+    <https://roccobot.github.io/RoccobotOS/Styleguide.html> perché la si possa dare a un altro
     agente. Questo file spiega le **decisioni** e la loro storia, il CSS le **implementa**, ma
     i numeri stanno là e non si riscrivono qui: è la stessa regola della fonte unica che vale
     per la versione.
+    - ⚠️ **Era un `.md` fino al 2026-08-02**, ed è diventata una **pagina**: l'utente l'ha
+      chiesta più visuale, e una tabella di codici esadecimali non fa vedere un colore. Adesso
+      ogni token è un campione disegnato **sui due fondi veri** del sito, affiancati, che è la
+      forma che rende impossibile ripetere il difetto storico di questo progetto, cioè scegliere
+      un colore guardando un tema solo. ⚠️ **Il vecchio indirizzo `Styleguide.md` non risponde
+      più.**
+    - ⚠️ I valori nei campioni sono **scritti a mano** e non letti da una variabile, ed è voluto:
+      una pagina che deve *far vedere* il colore che dichiara non può prenderlo da una fonte che
+      un giorno cambia senza che la tabella se ne accorga. Il prezzo è che un token si cambia in
+      due punti, il CSS del sito e questa pagina, **nello stesso commit**.
   - ⚠️ **Il LOGO in testata è SVG inline, e il file `RoccobotOS.svg` non esiste più** (2026-08-01).
     Era un `<img>`, e un'immagine esterna il foglio di stile non la può ricolorare: in tema scuro
     la sola parte grigia della scritta deve andare a `#DEDEDE`, il marchio verde no. Le due parti
