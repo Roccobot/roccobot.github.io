@@ -178,3 +178,10 @@ html[data-theme="light"] img[src$=".jpg"] { opacity: 1 }
 body {
   padding-top: 4rem;
 }
+
+/* Stessa ragione del FAB principale (vedi RoccobotOS.css, 'Evidenziazione del tocco'): su
+   Android il tocco disegna un rettangolo azzurro sul riquadro, che su un pulsante tondo si
+   vede come un quadrato. */
+.pg-back {
+  -webkit-tap-highlight-color: transparent;
+}

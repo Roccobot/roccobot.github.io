@@ -93,6 +93,13 @@
     - **Conseguenza voluta, non dimenticanza**: all'apertura della pagina su smartphone non si
       vede **nessun** comando, indice compreso. Segue da 'appare allo scorrimento', che è come
       l'utente l'ha chiesto.
+    - ⚠️ **L'evidenziazione del tocco si spegne a mano sui comandi** (`-webkit-tap-highlight-color`,
+      2026-08-01): su Android il browser disegna al tocco un rettangolo azzurro traslucido sul
+      **riquadro** dell'elemento, e siccome ignora il `border-radius`, su un comando tondo si
+      vede un **quadrato** che lo copre. Non è un `outline` né un `background`, quindi nessuna
+      delle due regole lo toglierebbe: serve proprio quella proprietà. Spenta sui comandi
+      fissi, sul link di salto, sulla griglia 'Indice' e sul FAB delle sotto-pagine; **lasciata
+      sui link del testo**, dove è un riscontro utile e non c'è nessun tondo da rovinare.
     - ⚠️ **Il verso in cui un comando scivola via lo decide `--hide-shift`**, che deve essere
       **negativo** per quelli di sinistra: col valore predefinito uscirebbero dal lato
       sbagliato attraversando lo schermo.

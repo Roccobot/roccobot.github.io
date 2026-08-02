@@ -276,3 +276,12 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    e non e' l'indicatore di 'dove sono' di chi naviga da tastiera. */
 .markdown-body h1:focus,.markdown-body h2:focus,.markdown-body h3:focus,
 .markdown-body h4:focus,.markdown-body h5:focus,.markdown-body h6:focus{outline:none}
+
+/* ── Evidenziazione del tocco ──
+   Su Android, al tocco, il browser disegna un rettangolo azzurro traslucido sul riquadro
+   dell'elemento: ignora il border-radius, quindi su un comando tondo si vede un QUADRATO che
+   lo copre per un istante. Si spegne solo cosi': non e' un outline ne' un background, e
+   nessuna delle due regole lo toccherebbe. Il riscontro visivo del tocco resta comunque,
+   perche' i comandi hanno gia' la loro transizione di opacita'. */
+.theme-toggle,.tables-toggle,.toc-toggle,.scroll-toggle,.skip-link,
+.markdown-body table.index-grid td a{-webkit-tap-highlight-color:transparent}
