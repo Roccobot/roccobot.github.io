@@ -47,6 +47,16 @@
       una pagina che deve *far vedere* il colore che dichiara non può prenderlo da una fonte che
       un giorno cambia senza che la tabella se ne accorga. Il prezzo è che un token si cambia in
       due punti, il CSS del sito e questa pagina, **nello stesso commit**.
+    - ⚠️ **Un contrasto si dichiara sul fondo REALE del componente, non su quello della pagina**:
+      il campione del codice inline diceva `4,89:1`, che è il rapporto di `#bc4a61` sul fondo
+      chiaro `#feffff`, mentre il codice sta sul grigio `#f7f8f8` e là vale `4,60:1` (corretto il
+      2026-08-02). Passa comunque il gate AA, ed è la ragione per cui l'errore poteva restare a
+      lungo: un numero sbagliato ma verde non lo segnala nessuno.
+  - **Codice inline a pillola: idea SCARTATA dall'utente** (2026-08-02), e si tiene la misura
+    scartata perché non la si riproponga. La proposta era riempire il riquadro dello stesso rosa
+    del testo e scrivere dentro in bianco: sul mockup, in un paragrafo denso, i molti `<code>`
+    diventano una **collana di etichette** che pesa più del testo che dovrebbero servire. Resta
+    il rosa sul grigio, cioè la forma leggera.
   - ⚠️ **Il LOGO in testata è SVG inline, e il file `RoccobotOS.svg` non esiste più** (2026-08-01).
     Era un `<img>`, e un'immagine esterna il foglio di stile non la può ricolorare: in tema scuro
     la sola parte grigia della scritta deve andare a `#DEDEDE`, il marchio verde no. Le due parti
