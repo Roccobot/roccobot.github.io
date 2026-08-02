@@ -87,6 +87,28 @@
       darebbero l'angolo tondo alla cella accanto. C'è una regola apposta, scritta sulla forma
       (`tbody tr:nth-last-child(2) td[rowspan="2"]`) e non sul caso che l'ha fatta nascere, che
       sono le frecce direzionali della tabella dei tasti.
+    - ⚠️⚠️ **E l'altra faccia dello stesso problema, sfuggita alla prima passata e vista
+      dall'utente**: nella riga **accorciata** dalla cella unita, l'ultima cella scritta non è
+      l'ultima **colonna**. La regola che toglie il tratto destro a `td:last-child` la colpisce
+      lo stesso, e sparisce il bordo fra quella cella e la cella unita che le sta a fianco (in
+      pagina: il buco a sinistra delle frecce, sotto `Esc`). Il rimedio è una **classe nel
+      markup**, `not-last-col`, non un selettore più furbo: il CSS non sa contare le colonne,
+      `:last-child` guarda i fratelli **scritti**, e una cella unita che arriva da sopra fra
+      quei fratelli non c'è.
+    - ⚠️ **Perché non l'aveva vista nessuna prova**: le misure guardavano la cella unita, che era
+      giusta, e la lettura d'insieme era uno screenshot dell'intera tabella, dove un tratto di
+      bordo mancante è un pelo di pixel. Un `rowspan` va verificato su **tutti e quattro** i
+      lati delle celle che tocca, comprese quelle che gli stanno accanto.
+    - **Il separatore verticale delle INTESTAZIONI era più scuro** (`#555`, tono dell'export) e
+      dal 2026-08-02 ha il grigio delle altre celle, perché l'utente l'ha visto e non gli
+      piaceva: *molto più netta e scura*. Con la cornice tonda quel filo sotto il titolo salta
+      all'occhio ancora di più. ⚠️ La dichiarazione è stata **corretta dov'era**, dentro il
+      blocco minificato dell'export, e non sovrascritta da una regola nuova: una dichiarazione
+      superata non è codice morto, e il censimento non la vedrebbe.
+    - **8 px è la misura di raggio del progetto**, non solo delle tabelle: dallo stesso giorno
+      ce l'ha anche il riquadro dell'indice laterale, che ne aveva 4 e affiancato alle tabelle
+      stonava. Sul cassetto a schermo intero degli smartphone resta 0, ed è voluto: là il
+      pannello è incollato ai tre lati e un angolo tondo mostrerebbe la pagina sotto.
     - ⚠️ **La styleguide ha il suo foglio inline, che vince su `Pages.css`**: la sua tabella
       d'esempio va aggiornata insieme al sito, o la pagina che descrive il componente lo mostra
       diverso da com'è. È lo stesso motivo per cui i campioni di colore si scrivono a mano.
