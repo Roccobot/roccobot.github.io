@@ -43,6 +43,25 @@
     portano `.logo-word` e `.logo-mark`, i colori stanno in `RoccobotOS.css`. Gli `id` che
     l'export si portava dietro (`Header`, `R`, `O`, `B`...) sono stati tolti nel passaggio:
     inline avrebbero potuto collidere con quelli della pagina.
+  - ⚠️⚠️ **Una dichiarazione SUPERATA non è una regola morta, e il censimento del CSS morto non
+    la vede** (scoperto il 2026-08-02, cambiando il colore degli h2). Il censimento conta gli
+    elementi che un selettore aggancia: una regola agganciata ma **sovrascritta** da un'altra
+    più in basso nel file risulta viva. Sotto la scala dei titoli c'era tutto uno strato
+    dell'export che coloriva h1-h6 di `#0595bf` e i titoli scuri di ciano: invisibile, perché le
+    regole nuove vincono, ma pronto a ingannare chi modifica la riga sbagliata. Tolte le sole
+    dichiarazioni di **colore**, tenendo `font-size`, riempimenti e bordi che stavano nelle
+    stesse regole.
+    - ⚠️ **Come si trova**: non con `querySelectorAll`, ma leggendo il **colore calcolato** di un
+      elemento per ogni livello e confrontandolo con quello che il foglio dichiara. Un valore
+      dichiarato che non compare mai nel calcolato è una dichiarazione superata.
+    - **La prova che la potatura non ha cambiato niente**: colore, corpo, bordo e riempimento dei
+      sei livelli misurati nel browser prima e dopo, nei due temi. Unica differenza, quella
+      voluta (vedi la voce del filo, qui sotto).
+  - ⚠️⚠️ **Il filo sotto l'h2 era quasi BIANCO nel tema scuro**, e nessuno se n'era accorto per
+    giorni (corretto in 3.46). Il bordo di h1 e h2 è dichiarato una volta sola, chiaro, e
+    l'elenco che lo ricolora al buio comprendeva h1, h4, h5 e h6 ma **non h2**: su fondo
+    `#121212` restava una riga `#e7e8e8`. Il motivo per cui è sopravvissuto è istruttivo: tutte
+    le prove sui titoli guardavano il **testo**, e il difetto stava nel **bordo**.
   - ⚠️⚠️ **Il CSS morto NON si pota tutto, e la parte rimasta è una scelta, non una dimenticanza**
     (2026-08-01, potatura D1). Sono cadute le regole **impossibili**: residui di funzioni tolte
     (MathJax, `.lazy-section`, `.mweb-charts`), il tema dei token di Prism e le sue righe
