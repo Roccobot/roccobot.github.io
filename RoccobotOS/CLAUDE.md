@@ -210,8 +210,13 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   - ⚠️ **L'ingombro non si tocca, la posizione verticale SI'**, ed è una precisazione dello
     stesso giorno: vedi '⚠️⚠️ ALLINEAMENTO VERTICALE' più sotto. Le due cose convivono, e il
     primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
-- ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` e `nano.png` sono
-  **schermate**, e come vettori non hanno senso. Restano PNG.
+- ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` è una **schermata**, e
+  come vettore non avrebbe senso. Resta PNG.
+  - Ⓘ Fino al 2026-08-01 questa voce nominava anche `nano.png`, che era l'altra schermata. Il
+    file **non esiste più**: è stato cancellato nella 2.60 insieme al capitolo su `PATH` e
+    `nano`, che l'utente aveva dichiarato superato (risposta C1 dell'audit). La riga è
+    sopravvissuta al file per una giornata, ed è il caso da tenere a mente: **una nota che
+    elenca asset invecchia in silenzio**, perché nessuno la rilegge quando ne cancella uno.
 - ⚠️ **L'icona dell'area notifiche NON esiste più** (2026-08-01): la voce 'Non disturbare'
   della Barra dei menu diceva *clic su [icona]*, e l'utente l'ha riscritta in *clic
   sull'orologio di sistema*, che nomina la cosa invece di disegnarla. Icona eliminata insieme
