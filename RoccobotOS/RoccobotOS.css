@@ -365,9 +365,17 @@ html[data-theme=dark] .markdown-body table td,html[data-theme=dark] .markdown-bo
    Il rimedio e' una classe nel markup e non un selettore piu' furbo, perche' il CSS non sa
    contare le colonne: `:last-child` guarda i fratelli scritti, e una cella unita che arriva da
    sopra fra quei fratelli non c'e'. Il selettore porta `tbody` apposta, per stare sopra la
-   regola che toglie il bordo, che ha la stessa specificita' senza. */
-.markdown-body table tbody td.not-last-col{border-right:1px solid #b9baba}
-html[data-theme=dark] .markdown-body table tbody td.not-last-col{border-right-color:#3a3a3a}
+   regola che toglie il bordo, che ha la stessa specificita' senza.
+   ⚠️ La stessa classe annulla anche l'ANGOLO TONDO in basso a destra, e non e' un di piu': la
+   regola dell'angolo guarda lo stesso `td:last-child`, quindi arrotondava la cella sbagliata e
+   si vedeva una rientranza curva accanto alla cella unita. Sono due sintomi di una causa sola,
+   e vanno tolti insieme o si torna a inseguirli uno per volta.
+   ⚠️ E la specificita' va contata, non indovinata: la regola dell'angolo e'
+   `tbody tr:last-child td:last-child`, cioe' 1 classe e 2 pseudo-classi, e batte un selettore
+   con la sola classe nuova. Il primo tentativo perdeva proprio qui e l'angolo restava tondo.
+   Per questo il selettore ripete `:last-child`, che gli fa superare quella somma. */
+.markdown-body table tbody tr td.not-last-col:last-child{border-right:1px solid #b9baba;border-bottom-right-radius:0}
+html[data-theme=dark] .markdown-body table tbody tr td.not-last-col:last-child{border-right-color:#3a3a3a}
 
 /* La vista a schede degli schermi stretti non e' piu' una tabella: ogni riga e' gia' una
    scheda con la sua cornice tonda, e la cornice della tabella le disegnerebbe intorno un
