@@ -166,11 +166,16 @@ html[data-theme=dark] .toc-list a.toc-link.is-active-link{color:#f7b59e!importan
       il tema scuro guadagna una scala coerente invece di due rosa scollegati. */
 html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body strong{color:#e8909f}
 
-/* ── Scala dei titoli: variante 'ambra e ruggine' (scelta dell'utente, 2026-08-01) ──
-   Il principio, che vale piu' dei singoli valori: il VERDE e' l'azione (link e accenti), il
-   CALDO e' la struttura (titoli). Prima erano tre freddi vicini (verde acqua, ciano, azzurro)
-   che litigavano fra loro invece di fare gerarchia, perche' dicevano tutti 'guardami' senza
+/* ── Scala dei titoli ──
+   Il principio, che vale piu' dei singoli valori: il VERDE e' l'azione (link e accenti), i
+   TITOLI sono la struttura. Prima erano tre freddi vicini (verde acqua, ciano, azzurro) che
+   litigavano fra loro invece di fare gerarchia, perche' dicevano tutti 'guardami' senza
    distinguersi per ruolo.
+   ⚠️ Nata il 2026-08-01 come scala tutta calda ('ambra e ruggine'), non lo e' piu' dal
+   2026-08-02: l'h2 e' passato al teal per scelta dell'utente. Il vincolo che tiene in piedi
+   la distinzione non e' la temperatura ma la DISTANZA DI TINTA dal verde dei link, 23 gradi.
+   ⚠️ Resta APERTO che h3 e h4 sono ancora caldi, quindi fra h2 e h3 c'e' un salto di
+   temperatura invece di un gradino: vedi Styleguide.md, sezione del principio.
    ⚠️ Nel tema CHIARO la gerarchia cromatica non esisteva affatto: misurato prima di questa
    modifica, h1, h2, h3 e h4 erano tutti #0595bf, perche' l'ultima regola del foglio vinceva
    su tutte le altre. Non e' una scala che si ritocca, e' una scala che si introduce.
@@ -179,8 +184,13 @@ html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body str
    ha bisogno di colore per farsi vedere, e lascia il colore alla gerarchia sotto di lui. */
 .markdown-body h1{color:#333}
 html[data-theme=dark] .markdown-body h1{color:#f1f1f1}
-.markdown-body h2{color:#8f5300}
-html[data-theme=dark] .markdown-body h2{color:#e8a33d}
+/* h2 in teal dal 2026-08-02, scelta dell'utente su mockup (variante C). Non e' il #00727B
+   che aveva proposto: quello sta a 184 gradi di tinta contro i 169 del verde dei link, con la
+   stessa luminosita', e un titolo che somiglia a un link e' un difetto d'uso. Spostato a 192
+   gradi, cioe' 23 di scarto invece di 15. La coppia e' obbligatoria: #0A6B84 sul fondo scuro
+   darebbe 3,08:1, sotto il minimo. Valori e contrasti in Styleguide.md. */
+.markdown-body h2{color:#0A6B84}
+html[data-theme=dark] .markdown-body h2{color:#4fb3cc}
 .markdown-body h3{color:#9c4a12}
 html[data-theme=dark] .markdown-body h3{color:#e08a5a}
 /* h4, h5 e h6 in bruno neutro: l'utente ha scelto di togliere di mezzo anche l'ultimo verde
@@ -247,8 +257,7 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
 /* ── Link dentro i titoli ──
    Un titolo che e' anche un link (le schede delle app rimandano all'App Store) era
    indistinguibile da un titolo qualunque: stesso colore, stesso peso, nessun segno. Si
-   sottolinea invece di ricolorare, cosi' la scala 'ambra e ruggine' della Styleguide resta
-   intatta. Le ancore invisibili dell'export non ci sono piu' (tolte con la potatura di D2),
+   sottolinea invece di ricolorare, cosi' la scala dei titoli della Styleguide resta intatta. Le ancore invisibili dell'export non ci sono piu' (tolte con la potatura di D2),
    quindi non serve piu' escluderle dal selettore. */
 .markdown-body h1 a[href],.markdown-body h2 a[href],.markdown-body h3 a[href],.markdown-body h4 a[href],.markdown-body h5 a[href],.markdown-body h6 a[href]{text-decoration:underline;text-decoration-thickness:from-font;text-underline-offset:.12em}
 
