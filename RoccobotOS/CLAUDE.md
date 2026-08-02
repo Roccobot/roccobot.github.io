@@ -95,10 +95,19 @@
       markup**, `not-last-col`, non un selettore più furbo: il CSS non sa contare le colonne,
       `:last-child` guarda i fratelli **scritti**, e una cella unita che arriva da sopra fra
       quei fratelli non c'è.
+    - ⚠️ **Sono DUE sintomi di una causa sola, e vanno tolti insieme**: oltre al bordo, la stessa
+      cella prendeva l'**angolo tondo** in basso a destra, perché anche quella regola guarda
+      `td:last-child`. Tolto solo il primo, l'utente ha visto la rientranza curva accanto alla
+      cella unita e ha dovuto segnalare una seconda volta.
+    - ⚠️ **La specificità si conta, non si indovina**: la regola dell'angolo è
+      `tbody tr:last-child td:last-child`, cioè 1 classe e 2 pseudo-classi, e batte un selettore
+      che aggiunge la sola classe nuova. Il primo tentativo perdeva esattamente lì, e la misura
+      diceva ancora `7px` mentre il CSS 'sembrava' giusto.
     - ⚠️ **Perché non l'aveva vista nessuna prova**: le misure guardavano la cella unita, che era
       giusta, e la lettura d'insieme era uno screenshot dell'intera tabella, dove un tratto di
       bordo mancante è un pelo di pixel. Un `rowspan` va verificato su **tutti e quattro** i
-      lati delle celle che tocca, comprese quelle che gli stanno accanto.
+      lati delle celle che tocca, comprese quelle che gli stanno accanto, e **bordi e raggi
+      insieme**: sono due proprietà che le stesse regole d'angolo governano.
     - **Il separatore verticale delle INTESTAZIONI era più scuro** (`#555`, tono dell'export) e
       dal 2026-08-02 ha il grigio delle altre celle, perché l'utente l'ha visto e non gli
       piaceva: *molto più netta e scura*. Con la cornice tonda quel filo sotto il titolo salta
