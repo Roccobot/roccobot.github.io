@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#43b59e">
+  <link rel="shortcut icon" href="favicon.ico">
+  <meta name="theme-color" content="#43b59e">
+  <title>Styleguide di RoccobotOS</title>
+
+  <link rel="stylesheet" href="Pages.css">
+
+  <style>
+    /* ── Styleguide, foglio proprio ──
+       Pages.css porta i token del tema e la commutazione col tasto T; qui c'e' solo cio' che
+       serve a questa pagina, cioe' i componenti che MOSTRANO i colori invece di nominarli.
+       ⚠️ I valori dei campioni sono scritti a mano, ed e' voluto: questa pagina deve far
+       vedere il colore che dichiara, quindi non puo' leggerlo da una variabile che un giorno
+       potrebbe cambiare senza che la tabella se ne accorga. Se un token cambia, si cambia
+       qui e nel CSS del sito nello stesso commit. */
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      margin: 0 auto;
+      max-width: 62rem;
+      padding: 4rem 1.25rem 5rem;
+    }
+
+    h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+    h1 { font-size: 2em; margin: 0 0 .25rem; }
+    h2 {
+      font-size: 1.5rem; margin: 3rem 0 .75rem;
+      padding-bottom: .3rem; border-bottom: 1px solid var(--pg-bordo);
+      color: #0A6B84;
+    }
+    h3 { font-size: 1.25rem; margin: 2rem 0 .5rem; color: #9c4a12; }
+    p, ul, ol { margin: 0 0 .75rem; }
+    ul, ol { padding-left: 1.25rem; }
+    li { margin-bottom: .35rem; }
+    a { color: var(--pg-link); }
+    code {
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 85%; padding: .2rem .4rem; border-radius: .1875rem;
+      background-color: var(--pg-codice); color: #bc4a61;
+    }
+
+    html[data-theme="dark"] h2 { color: #4fb3cc; }
+    html[data-theme="dark"] h3 { color: #e08a5a; }
+    html[data-theme="dark"] code { color: #f2c3d0; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) h2 { color: #4fb3cc; }
+      html:not([data-theme="light"]) h3 { color: #e08a5a; }
+      html:not([data-theme="light"]) code { color: #f2c3d0; }
+    }
+
+    .occhiello {
+      font-family: SFMono-Regular, Consolas, Menlo, monospace;
+      font-size: .6875rem; letter-spacing: .09em; text-transform: uppercase;
+      color: var(--pg-tenue); margin: 0 0 .35rem;
+    }
+    .sommario { color: var(--pg-tenue); max-width: 64ch; }
+
+    /* ── Il campione a due facce ──
+       Ogni token si vede su ENTRAMBI i fondi veri del sito, perche' un colore che va bene su
+       uno puo' crollare sull'altro: e' il difetto storico di questo progetto, e la scheda e'
+       fatta apposta per non poterlo piu' ripetere. */
+    .griglia {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      gap: .875rem;
+      margin: 0 0 1rem;
+    }
+    .scheda {
+      border: 1px solid var(--pg-bordo);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--pg-riga);
+    }
+    .facce { display: grid; grid-template-columns: 1fr 1fr; }
+    .faccia {
+      padding: .9rem .75rem;
+      font-size: 1.0625rem;
+      font-weight: 600;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .faccia.chiara { background: #feffff; }
+    .faccia.scura { background: #121212; }
+    .scheda-piede { padding: .55rem .75rem .65rem; display: flex; flex-direction: column; gap: .2rem; }
+    .scheda-nome { font-weight: 600; font-size: .9375rem; }
+    .scheda-ruolo { color: var(--pg-tenue); font-size: .8125rem; }
+    .valori {
+      display: flex; flex-wrap: wrap; gap: .25rem .6rem;
+      font-family: SFMono-Regular, Consolas, Menlo, monospace;
+      font-size: .75rem; font-variant-numeric: tabular-nums;
+      color: var(--pg-tenue);
+    }
+
+    /* Superfici: qui il colore E' il fondo, quindi il campione e' un rettangolo pieno */
+    .facce.piene .faccia { height: 3.25rem; padding: 0; }
+
+    .rapporto { font-weight: 600; }
+    .rapporto.ok { color: #1c7a68; }
+    .rapporto.deroga { color: #a8461f; }
+    html[data-theme="dark"] .rapporto.ok { color: #43b59e; }
+    html[data-theme="dark"] .rapporto.deroga { color: #f7b59e; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) .rapporto.ok { color: #43b59e; }
+      html:not([data-theme="light"]) .rapporto.deroga { color: #f7b59e; }
+    }
+
+    .avvertenza {
+      border-left: 3px solid #a8461f;
+      background: var(--pg-riga);
+      padding: .8rem 1rem;
+      margin: 1rem 0;
+    }
+    .avvertenza p { margin: 0; }
+    .avvertenza p + p { margin-top: .5rem; }
+    html[data-theme="dark"] .avvertenza { border-left-color: #f7b59e; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) .avvertenza { border-left-color: #f7b59e; }
+    }
+
+    .guscio { overflow-x: auto; margin: 0 0 1rem; }
+    table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+    th, td { border: 1px solid var(--pg-bordo); padding: .375rem .75rem; text-align: left; vertical-align: top; }
+    th { background: var(--pg-intestazione); font-weight: 600; }
+    tbody tr:nth-child(even) { background: var(--pg-riga); }
+
+    /* ── Provino tipografico ── */
+    .scala { display: flex; flex-direction: column; gap: .5rem; border: 1px solid var(--pg-bordo); border-radius: 6px; padding: 1rem 1.1rem; }
+    .scala-riga { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .scala-misura {
+      font-family: SFMono-Regular, Consolas, Menlo, monospace; font-size: .75rem;
+      color: var(--pg-tenue); min-width: 9rem; font-variant-numeric: tabular-nums;
+    }
+    .t-h1 { font-size: 2em; font-weight: 600; }
+    .t-h2 { font-size: 1.5rem; font-weight: 600; color: #0A6B84; }
+    .t-h3 { font-size: 1.25rem; font-weight: 600; color: #9c4a12; }
+    .t-h4 { font-size: 1rem; font-weight: 600; color: #5c4a3d; }
+    .t-corpo { font-size: 1rem; }
+    .t-tab { font-size: .9rem; }
+    .t-ver { font-size: .5625rem; font-variant-numeric: tabular-nums; color: var(--pg-tenue); }
+    html[data-theme="dark"] .t-h2 { color: #4fb3cc; }
+    html[data-theme="dark"] .t-h3 { color: #e08a5a; }
+    html[data-theme="dark"] .t-h4 { color: #d6c3b0; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) .t-h2 { color: #4fb3cc; }
+      html:not([data-theme="light"]) .t-h3 { color: #e08a5a; }
+      html:not([data-theme="light"]) .t-h4 { color: #d6c3b0; }
+    }
+
+    /* ── Provino dei comandi fissi ──
+       Sono cerchi veri, con le misure vere: 34 px, bordo, opacita' .65. Non e' decorazione,
+       e' il modo di accorgersi se un giorno la descrizione e il sito divergono. */
+    .comandi { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
+    .comando { display: flex; flex-direction: column; align-items: center; gap: .4rem; width: 7.5rem; }
+    .tondo {
+      width: 34px; height: 34px; border-radius: 999px;
+      display: grid; place-items: center;
+      border: 1px solid rgba(0,0,0,.15);
+      background: rgba(255,255,255,.6);
+      color: #222; font-size: 16px; opacity: .65;
+    }
+    html[data-theme="dark"] .tondo { background: rgba(32,32,32,.95); border-color: #43b59e; color: #eaeaea; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) .tondo { background: rgba(32,32,32,.95); border-color: #43b59e; color: #eaeaea; }
+    }
+    .comando-nome { font-size: .8125rem; text-align: center; }
+    .comando-dove { font-size: .75rem; color: var(--pg-tenue); text-align: center; }
+    .spento { opacity: .28; }
+
+    footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--pg-bordo); color: var(--pg-tenue); font-size: .875rem; }
+  </style>
+</head>
+
+<body>
+
+  <p class="occhiello">RoccobotOS &middot; fonte unica dei valori visivi</p>
+  <h1>Styleguide</h1>
+  <p class="sommario">Palette <strong>1.1</strong>, 2 agosto 2026. Approvata dall'utente a mockup,
+    caso per caso, dopo la misura dei contrasti su tutti i colori in uso. Questa pagina
+    <strong>mostra</strong> i colori invece di nominarli: ogni campione è disegnato sui due fondi
+    veri del sito, perché un colore che regge su uno può crollare sull'altro.</p>
+  <p class="sommario">Premi <code>T</code> per commutare il tema e vedere tutto nell'altra faccia.</p>
+
+  <h2>1. Il principio, prima dei valori</h2>
+
+  <p><strong>Il verde è l'azione. I titoli sono la struttura. Il neutro è il testo.</strong></p>
+
+  <p>Le tre famiglie non si contendono l'attenzione perché non dicono la stessa cosa: il verde
+    segnala che qualcosa si può toccare (link, accenti, bordi dei comandi), i titoli dànno la
+    gerarchia del documento, il neutro porta il contenuto.</p>
+
+  <div class="avvertenza">
+    <p><strong>La famiglia dei titoli non è più tutta calda, e la formulazione è cambiata per
+      questo.</strong> Fino alla palette 1.0 la regola diceva <em>il caldo è la struttura</em>, e
+      l'<code>h2</code> ambra ne era il caso principale; dal 2 agosto 2026 l'<code>h2</code> è teal
+      e quella frase sarebbe falsa. Non si è allentato il principio: quello che conta è che
+      l'azione abbia un colore suo e i titoli un altro, e questo resta vero.</p>
+    <p><strong>Il vincolo che ne discende</strong>: un titolo freddo deve stare lontano dalla tinta
+      dei link. Il <code>#00727B</code> proposto per primo stava a 184 gradi contro i 169 del verde,
+      con la stessa luminosità, e nel mockup il titolo sembrava un link. Il valore scelto sta a
+      <strong>192 gradi</strong>, 23 di scarto: è quel margine a tenere in piedi la distinzione,
+      non la famiglia di appartenenza.</p>
+    <p><strong>Punto aperto</strong>: <code>h3</code> e <code>h4</code> sono rimasti caldi, quindi
+      la scala salta da freddo a caldo fra l'<code>h2</code> e l'<code>h3</code>. È un cambio di
+      temperatura invece di un gradino, e l'utente non si è ancora pronunciato. Chi rimette mano
+      ai titoli parta da qui.</p>
+  </div>
+
+  <p>Questa regola è nata da un difetto reale, e conoscerlo evita di ricrearlo: fino alla versione
+    2.71 i titoli erano verde acqua, ciano e azzurro, cioè <strong>tre freddi vicini</strong> che
+    gridavano tutti 'guardami' senza distinguersi per ruolo, e nel tema chiaro erano perfino tutti
+    lo stesso azzurro. Non era una scala da ritoccare: era una scala che mancava.</p>
+
+  <p><strong>Corollario</strong>: un elemento nuovo prende il colore della famiglia del suo
+    <strong>ruolo</strong>, non quello che sta meglio nel punto in cui capita. Se serve un colore
+    che non c'è, si aggiunge alla famiglia giusta e si scrive qui.</p>
+
+  <h2>2. Token di colore</h2>
+
+  <h3>2.1 Testo e struttura</h3>
+
+  <div class="griglia">
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#333">Testo</div>
+        <div class="faccia scura" style="color:#eaeaea">Testo</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">testo</span>
+        <span class="scheda-ruolo">corpo del documento</span>
+        <span class="valori">#333 <span class="rapporto ok">12,6:1</span> &middot; #eaeaea <span class="rapporto ok">15,9:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#333">Titolo 1</div>
+        <div class="faccia scura" style="color:#f1f1f1">Titolo 1</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">titolo-1</span>
+        <span class="scheda-ruolo">capitolo, neutro per scelta</span>
+        <span class="valori">#333 <span class="rapporto ok">12,6:1</span> &middot; #f1f1f1 <span class="rapporto ok">17,4:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#0A6B84">Titolo 2</div>
+        <div class="faccia scura" style="color:#4fb3cc">Titolo 2</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">titolo-2</span>
+        <span class="scheda-ruolo">sezione, teal</span>
+        <span class="valori">#0A6B84 <span class="rapporto ok">6,08:1</span> &middot; #4fb3cc <span class="rapporto ok">7,72:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#9c4a12">Titolo 3</div>
+        <div class="faccia scura" style="color:#e08a5a">Titolo 3</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">titolo-3</span>
+        <span class="scheda-ruolo">sotto-sezione, ruggine</span>
+        <span class="valori">#9c4a12 <span class="rapporto ok">6,16:1</span> &middot; #e08a5a <span class="rapporto ok">7,09:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#5c4a3d">Titolo 4</div>
+        <div class="faccia scura" style="color:#d6c3b0">Titolo 4</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">titolo-4</span>
+        <span class="scheda-ruolo">h4, h5, h6, bruno neutro</span>
+        <span class="valori">#5c4a3d <span class="rapporto ok">8,38:1</span> &middot; #d6c3b0 <span class="rapporto ok">10,97:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#555">Tenue</div>
+        <div class="faccia scura" style="color:#9b9b9b">Tenue</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">testo-tenue</span>
+        <span class="scheda-ruolo">note in calce, didascalie</span>
+        <span class="valori">#555 <span class="rapporto ok">7,5:1</span> &middot; #9b9b9b <span class="rapporto ok">6,3:1</span></span>
+      </div>
+    </div>
+  </div>
+
+  <p>L'<strong>h1 è neutro di proposito</strong>: il titolo di capitolo è già grande e in
+    grassetto, non ha bisogno di colore per farsi vedere, e lasciandolo neutro il colore resta
+    disponibile per distinguere i livelli sotto di lui.</p>
+
+  <h3>2.2 Azione</h3>
+
+  <div class="griglia">
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#1c7a68;text-decoration:underline">Link</div>
+        <div class="faccia scura" style="color:#43b59e;text-decoration:underline">Link</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">link</span>
+        <span class="scheda-ruolo">collegamenti, anche nelle sotto-pagine</span>
+        <span class="valori">#1c7a68 <span class="rapporto ok">5,20:1</span> &middot; #43b59e <span class="rapporto ok">7,44:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce piene">
+        <div class="faccia chiara" style="background:#43b59e"></div>
+        <div class="faccia scura" style="background:#43b59e"></div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">accento</span>
+        <span class="scheda-ruolo">bordi dei comandi tondi, identità</span>
+        <span class="valori">#43b59e in entrambi i temi &middot; non è testo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="avvertenza">
+    <p>Il verde ha <strong>due valori, uno per tema</strong>, e non è una svista: <code>#43b59e</code>
+      è l'identità del sito e sul fondo scuro dà 7,44:1, ma sul bianco crolla a 2,51:1. Il verde
+      chiaro è lo stesso colore portato in profondità, stessa tonalità e luminosità dimezzata, non
+      un altro colore.</p>
+  </div>
+
+  <h3>2.3 Enfasi e codice</h3>
+
+  <div class="griglia">
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#333"><strong>Enfasi</strong></div>
+        <div class="faccia scura" style="color:#e8909f"><strong>Enfasi</strong></div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">enfasi</span>
+        <span class="scheda-ruolo">&lt;strong&gt; e &lt;em&gt;</span>
+        <span class="valori">#333 <span class="rapporto ok">12,6:1</span> &middot; #e8909f <span class="rapporto ok">6,92:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#bc4a61;background:#f7f8f8;font-family:SFMono-Regular,Menlo,monospace;font-size:.9rem">codice</div>
+        <div class="faccia scura" style="color:#f2c3d0;background:#1e1e1e;font-family:SFMono-Regular,Menlo,monospace;font-size:.9rem">codice</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">codice-inline</span>
+        <span class="scheda-ruolo">&lt;code&gt; dentro il testo</span>
+        <span class="valori">#bc4a61 <span class="rapporto ok">4,89:1</span> &middot; #f2c3d0 <span class="rapporto ok">10,7:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="color:#000"><span style="background:#ff0;padding:0 .3em">Evidenziato</span></div>
+        <div class="faccia scura" style="color:#000"><span style="background:#ff0;padding:0 .3em">Evidenziato</span></div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">evidenziato</span>
+        <span class="scheda-ruolo">&lt;mark&gt;</span>
+        <span class="valori">#000 su #ff0 <span class="rapporto ok">19,6:1</span> nei due temi</span>
+      </div>
+    </div>
+  </div>
+
+  <p>Il rosa dell'enfasi al buio e il rosa del codice inline sono <strong>la stessa famiglia a due
+    profondità</strong>: è la ragione per cui <code>#e8909f</code> è stato scelto al posto del
+    mattone <code>#bc4a61</code>, che con quel codice non c'entrava nulla e per giunta dava
+    3,33:1.</p>
+
+  <h3>2.4 Indice laterale</h3>
+
+  <div class="griglia">
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="background:#f8f8f8;color:#555">Voce</div>
+        <div class="faccia scura" style="background:#252528;color:#e5e5e5">Voce</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">toc-voce</span>
+        <span class="scheda-ruolo">voce non attiva, sul fondo dell'indice</span>
+        <span class="valori">#555 <span class="rapporto ok">7,3:1</span> &middot; #e5e5e5 <span class="rapporto ok">13,1:1</span></span>
+      </div>
+    </div>
+    <div class="scheda">
+      <div class="facce">
+        <div class="faccia chiara" style="background:#f8f8f8;color:#a8461f;font-weight:800">Voce attiva</div>
+        <div class="faccia scura" style="background:#252528;color:#f7b59e;font-weight:800">Voce attiva</div>
+      </div>
+      <div class="scheda-piede">
+        <span class="scheda-nome">toc-attiva</span>
+        <span class="scheda-ruolo">terracotta, sempre con peso 800</span>
+        <span class="valori">#a8461f <span class="rapporto ok">5,55:1</span> &middot; #f7b59e <span class="rapporto ok">8,78:1</span></span>
+      </div>
+    </div>
+  </div>
+
+  <p>La voce attiva è <strong>in grassetto 800</strong> oltre che colorata: il colore da solo non
+    deve portare un'informazione, e qui serve davvero, perché l'indice è lungo e la voce attiva va
+    trovata a colpo d'occhio.</p>
+
+  <h3>2.5 Superfici e bordi</h3>
+
+  <div class="griglia">
+    <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#feffff"></div><div class="faccia scura" style="background:#121212"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">fondo</span><span class="scheda-ruolo">pagina</span><span class="valori">#feffff &middot; #121212</span></div>
+    </div>
+    <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#f7f8f8"></div><div class="faccia scura" style="background:#181818"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">fondo-riga-alterna</span><span class="scheda-ruolo">riga pari delle tabelle</span><span class="valori">#f7f8f8 &middot; #181818</span></div>
+    </div>
+    <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#e7e8e8"></div><div class="faccia scura" style="background:#262626"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">fondo-intestazione</span><span class="scheda-ruolo">celle &lt;th&gt;</span><span class="valori">#e7e8e8 &middot; #262626</span></div>
+    </div>
+    <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#f7f8f8"></div><div class="faccia scura" style="background:#1e1e1e"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">fondo-codice</span><span class="scheda-ruolo">&lt;pre&gt; e &lt;code&gt;</span><span class="valori">#f7f8f8 &middot; #1e1e1e</span></div>
+    </div>
+    <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#b9baba"></div><div class="faccia scura" style="background:#3a3a3a"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">bordo</span><span class="scheda-ruolo">celle, righe orizzontali</span><span class="valori">#b9baba &middot; #3a3a3a</span></div>
+    </div>
+    <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#e1e2e2"></div><div class="faccia scura" style="background:#2a2a2a"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">bordo-tenue</span><span class="scheda-ruolo">separatori leggeri</span><span class="valori">#e1e2e2 &middot; #2a2a2a</span></div>
+    </div>
+  </div>
+
+  <div class="avvertenza">
+    <p>Le righe alterne delle tabelle sono <strong>invertite fra i due temi</strong>: nel chiaro la
+      riga pari è più scura del fondo, nello scuro è più chiara. Va tenuto presente quando si
+      calcola un contrasto, perché il fondo peggiore per il testo scuro è <code>#f7f8f8</code> e per
+      il testo chiaro è <code>#202020</code>.</p>
+  </div>
+
+  <h2>3. Tipografia</h2>
+
+  <div class="scala">
+    <div class="scala-riga"><span class="scala-misura">h1, 2em, peso 600</span><span class="t-h1">Tastiera</span></div>
+    <div class="scala-riga"><span class="scala-misura">h2, 1.5rem</span><span class="t-h2">Tasti di macOS</span></div>
+    <div class="scala-riga"><span class="scala-misura">h3, 1.25rem</span><span class="t-h3">Azioni contestuali</span></div>
+    <div class="scala-riga"><span class="scala-misura">h4, 1rem</span><span class="t-h4">Nota sui tastierini</span></div>
+    <div class="scala-riga"><span class="scala-misura">corpo, 1rem / 1.5</span><span class="t-corpo">Il modificatore si compone come nella pagina dei caratteri.</span></div>
+    <div class="scala-riga"><span class="scala-misura">tabelle, .9rem</span><span class="t-tab">Cella di tabella, 14,4 px</span></div>
+    <div class="scala-riga"><span class="scala-misura">versione, .5625rem</span><span class="t-ver">v3.46</span></div>
+  </div>
+
+  <ul>
+    <li><strong>Famiglia di testo</strong>: stack di sistema, <code>-apple-system,
+      BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif</code>, più le due famiglie
+      emoji. Nessun webfont, di proposito: il sito deve aprirsi subito e funzionare offline.</li>
+    <li><strong>Famiglia monospaziata</strong>: <code>SFMono-Regular, Consolas, 'Liberation Mono',
+      Menlo, monospace</code>, per codice, blocchi e tasti.</li>
+    <li><strong>Codice inline</strong>: 85% del contesto.</li>
+    <li>Il numero di versione usa <code>font-variant-numeric: tabular-nums</code>.</li>
+  </ul>
+
+  <div class="avvertenza">
+    <p><strong>I due contesti tipografici che contano per le misure relative</strong> sono 16 px
+      (testo corrente) e 14,4 px (celle di tabella). Un valore in <code>em</code> calcolato sul
+      contesto sbagliato sposta l'elemento di una frazione visibile: è già successo con le
+      icone.</p>
+  </div>
+
+  <h2>4. Componenti</h2>
+
+  <h3>4.1 Tabelle</h3>
+
+  <p>Sono l'ossatura del sito: quasi tutto il contenuto vive in tabella.</p>
+
+  <div class="guscio">
+    <table>
+      <thead><tr><th>Combinazione</th><th>Effetto</th><th>Dove</th></tr></thead>
+      <tbody>
+        <tr><td><code>&#8984;&#8679;4</code></td><td>Ritaglio di schermo</td><td>Sistema</td></tr>
+        <tr><td><code>&#8984;&#8997;M</code></td><td>Riduci tutte le finestre</td><td>Sistema</td></tr>
+        <tr><td><code>&#8963;&#8679;C</code></td><td>Sintassi CSS</td><td>CotEditor</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ul>
+    <li>Bordi su tutte le celle, <code>1px solid</code> col token <code>bordo</code>.</li>
+    <li>Intestazioni con fondo proprio, peso 600, <code>padding: .375rem .75rem</code>.</li>
+    <li>Righe alterne per la lettura orizzontale.</li>
+    <li>La tabella scorre in orizzontale (<code>display:block; overflow-x:auto</code>) sugli schermi
+      stretti, e dove sborda davvero riceve <code>tabindex="0"</code> per lo scorrimento da
+      tastiera.</li>
+    <li><strong>Eccezione dichiarata</strong>: la tabella delle sostituzioni testo è
+      <code>display:table; width:100%</code> sopra i 700 px, perché è a sei colonne strette e lo
+      spazio c'è. Le sue tre colonne 'con' hanno il fondo <code>#ececec</code> nel chiaro e
+      <code>#2a2a2a</code> nello scuro, che separa le coppie a colpo d'occhio.</li>
+    <li>Esiste una <strong>vista a schede</strong> (<code>data-tables="cards"</code>), oggi dietro
+      un feature flag spento: vedi la sezione dei comandi.</li>
+  </ul>
+
+  <h3>4.2 Comandi fissi</h3>
+
+  <p>Pulsanti tondi da 34 px, <code>border-radius: 999px</code>, fondo semitrasparente con
+    <code>backdrop-filter: blur(6px)</code>, opacità .65 che sale a 1 al passaggio del mouse.
+    L'evidenziazione del tocco di Android è spenta con
+    <code>-webkit-tap-highlight-color: transparent</code>, o su un tondo si vedrebbe un quadrato.</p>
+
+  <div class="comandi">
+    <div class="comando">
+      <div class="tondo">&#9776;</div>
+      <span class="comando-nome">Indice</span>
+      <span class="comando-dove">solo mobile, in basso a sinistra, 16 px</span>
+    </div>
+    <div class="comando">
+      <div class="tondo">&#8613;</div>
+      <span class="comando-nome">Inizio pagina</span>
+      <span class="comando-dove">a destra, 60 px dal fondo</span>
+    </div>
+    <div class="comando">
+      <div class="tondo">&#8615;</div>
+      <span class="comando-nome">Fine pagina</span>
+      <span class="comando-dove">a destra, 16 px dal fondo</span>
+    </div>
+    <div class="comando">
+      <div class="tondo spento">&#9728;</div>
+      <span class="comando-nome">Tema</span>
+      <span class="comando-dove">dietro feature flag spento</span>
+    </div>
+    <div class="comando">
+      <div class="tondo spento">&#8801;</div>
+      <span class="comando-nome">Vista tabelle</span>
+      <span class="comando-dove">dietro feature flag spento</span>
+    </div>
+  </div>
+
+  <div class="avvertenza">
+    <p><strong>Quando si vedono, su smartphone</strong>: tutti e tre <strong>mentre si scorre</strong>,
+      e spariscono dopo <strong>3 secondi</strong> di quiete. Ognuno ha in più una condizione sua,
+      tutte della stessa natura: si nasconde il comando che in quel momento non porta da nessuna
+      parte. 'Vai in cima' non compare se si è già in cima, 'vai in fondo' se si è già in fondo, e
+      l'indice non compare quando l'indice è già aperto.</p>
+    <p><strong>Su desktop</strong> non c'è nessuna regola di comparsa: i due salti stanno sempre in
+      basso a destra, e l'indice non serve perché la colonna laterale è sempre in vista.
+      <code>&#8984;</code> o <code>Ctrl</code> con le frecce su e giù fanno gli stessi due salti,
+      istantanei invece che fluidi.</p>
+  </div>
+
+  <ul>
+    <li>I glifi delle frecce portano una <strong>correzione ottica</strong> verso l'alto
+      (<code>.09375rem</code> per il tasto inizio, <code>.03125rem</code> per fine): il centro
+      geometrico del cerchio non è il centro percepito del glifo.</li>
+    <li>La dissolvenza allo scorrimento usa <code>translateX(var(--hide-shift))</code>, col valore
+      dato dal CSS: positivo per i tasti di destra, negativo per quelli di sinistra, così ogni tasto
+      esce dal <strong>suo</strong> lato invece di scivolare verso il centro.</li>
+    <li>Un comando invisibile esce anche dal giro del <code>Tab</code>: <code>opacity: 0</code> da
+      solo non lo toglie, e ci si finiva sopra senza vedere nulla.</li>
+  </ul>
+
+  <h3>4.3 Numero di versione: due rese, mai insieme</h3>
+
+  <div class="guscio">
+    <table>
+      <thead><tr><th>formato</th><th>dove</th><th>come</th></tr></thead>
+      <tbody>
+        <tr><td>desktop, oltre 860 px</td><td>pillola nell'angolo in alto a destra del riquadro dell'indice</td><td>fondo <code>#fff</code> / <code>#0f0f10</code>, testo <code>#9b9b9b</code>, riga <code>sticky</code> ad altezza zero</td></tr>
+        <tr><td>sotto gli 860 px</td><td>numero sopra il logo, allineato al suo bordo sinistro</td><td>nessun fondo, opacità .3 / .25</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>La soglia è la stessa a cui sparisce l'indice: le due rese si coprono a vicenda senza buchi.
+    Entrambe sono <strong>sotto la soglia di contrasto per scelta</strong>, vedi la sezione 6.</p>
+
+  <h3>4.4 Icone dentro il testo</h3>
+
+  <ul>
+    <li>SVG inline con <code>fill="currentColor"</code>, così seguono il tema. Le sole due raster
+      sono le frecce di Telegram, che devono restare identiche nei due temi.</li>
+    <li><strong>Allineamento verticale</strong>: il riferimento è il centro di una maiuscola senza
+      overshoot. Si parte da <code>vertical-align: middle</code>, che allinea al centro della
+      x-height, e si alza l'icona con un <code>transform: translateY</code> negativo, mai con un
+      margine.</li>
+    <li>Ogni icona porta un <code>--nudge</code> che è la correzione <strong>totale</strong>
+      rispetto al centro della x-height, aggiustamento ottico compreso. L'ottica non si calcola: si
+      chiede a chi guarda.</li>
+    <li>L'ingombro non si tocca mai: una sostituzione di icona non deve spostare il testo attorno
+      nemmeno di un pixel.</li>
+  </ul>
+
+  <h2>5. Sotto-pagine</h2>
+
+  <p>Le quattro sotto-pagine (<a href="Characters.html">Characters</a>,
+    <a href="Formats.html">Formats</a>, <a href="AdServers.html">AdServers</a>,
+    <a href="BlendModes.html">BlendModes</a>) sono export vecchi con il foglio di stile scritto
+    dentro l'head. Il tema lo dà <code>Pages.css</code>, che ridefinisce <strong>solo
+    variabili</strong>, e il tasto <code>T</code> lo commuta senza memorizzare nulla. Un FAB
+    'indietro' in alto a sinistra riporta alla pagina principale.</p>
+
+  <p>Usano gli stessi token della pagina principale: fondo, testo, bordi, righe alterne e il verde
+    dei link. <strong>Non hanno titoli colorati</strong>, quindi la scala dei titoli non le
+    riguarda.</p>
+
+  <h2>6. Accessibilità: soglie e deroghe</h2>
+
+  <ul>
+    <li><strong>Soglia</strong>: 4,5:1 per il testo corrente, 3:1 per i titoli grandi (da 24 px in
+      su, o 19 px in grassetto). Ogni colore nuovo si misura <strong>sul fondo peggiore in cui può
+      capitare</strong>, che per il testo scuro è <code>#f7f8f8</code> e per il testo chiaro è
+      <code>#202020</code>.</li>
+    <li><strong>Il colore non porta mai da solo un'informazione</strong>: dove distingue (voce
+      attiva dell'indice, enfasi) c'è sempre anche il peso o la posizione.</li>
+  </ul>
+
+  <div class="avvertenza">
+    <p><strong>Due deroghe volute, che non vanno 'corrette'.</strong></p>
+  </div>
+
+  <div class="guscio">
+    <table>
+      <thead><tr><th>elemento</th><th>contrasto</th><th>perché è ammessa</th></tr></thead>
+      <tbody>
+        <tr><td>numero di versione sopra il logo</td><td><span class="rapporto deroga">circa 1,6:1 e 2,2:1</span></td><td>scelta dell'utente su mockup a confronto: non è contenuto da leggere per usare il sito, e chi lo cerca sa dov'è</td></tr>
+        <tr><td>pillola della versione nell'indice</td><td><span class="rapporto deroga">2,8:1</span></td><td>stessa ragione</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Sono l'unico punto in cui il gate del contrasto vale come segnalazione e non come veto. Un
+    audit le segnalerà ogni volta: la risposta è questa riga, non un ritocco.</p>
+
+  <h2>7. Come si aggiunge un colore</h2>
+
+  <ol>
+    <li>Si stabilisce <strong>a quale famiglia appartiene</strong> per ruolo (azione, struttura,
+      testo).</li>
+    <li>Si sceglie il valore <strong>nei due temi</strong>, non in uno solo: il difetto storico di
+      questo sito è nato tutte le volte dallo stesso gesto, cioè scegliere guardando un tema e non
+      ricontrollare l'altro.</li>
+    <li>Si misura il contrasto <strong>sul fondo peggiore</strong> in cui quel colore capita.</li>
+    <li>Si controlla la <strong>distanza di tinta dai colori già in palette</strong> che possono
+      capitare vicini. Due volte su due, i difetti nati qui erano colori giusti messi accanto a un
+      colore troppo simile: l'h2 contro i link, e il rosa dei link contro il codice inline.</li>
+    <li>Se resta sotto soglia, o si corregge o diventa una <strong>deroga dichiarata</strong> nella
+      sezione 6, con la ragione. Non esiste la terza via del 'tanto non si vede'.</li>
+    <li>Si scrive qui, e solo dopo nel CSS.</li>
+  </ol>
+
+  <h2>8. Token in forma di CSS</h2>
+
+  <p>Blocco pronto da incollare, per un altro progetto o per un altro agente. I nomi sono quelli di
+    questa pagina, non quelli del CSS del sito, che è minificato e storicamente stratificato.</p>
+
+  <div class="guscio">
+<pre style="background:var(--pg-codice);border:1px solid var(--pg-bordo);border-radius:4px;padding:.75rem 1rem;overflow-x:auto;font-family:SFMono-Regular,Consolas,Menlo,monospace;font-size:.8125rem;line-height:1.5">:root {
+  --fondo: #feffff;
+  --fondo-riga-alterna: #f7f8f8;
+  --fondo-intestazione: #e7e8e8;
+  --fondo-codice: #f7f8f8;
+  --bordo: #b9baba;
+  --bordo-tenue: #e1e2e2;
+  --testo: #333;
+  --testo-tenue: #555;
+  --titolo-1: #333;
+  --titolo-2: #0A6B84;
+  --titolo-3: #9c4a12;
+  --titolo-4: #5c4a3d;
+  --link: #1c7a68;
+  --accento: #43b59e;
+  --enfasi: #333;
+  --codice-inline: #bc4a61;
+  --toc-fondo: #f8f8f8;
+  --toc-voce: #555;
+  --toc-attiva: #a8461f;
+}
+
+html[data-theme="dark"] {
+  --fondo: #121212;
+  --fondo-riga-alterna: #181818;
+  --fondo-intestazione: #262626;
+  --fondo-codice: #1e1e1e;
+  --bordo: #3a3a3a;
+  --bordo-tenue: #2a2a2a;
+  --testo: #eaeaea;
+  --testo-tenue: #9b9b9b;
+  --titolo-1: #f1f1f1;
+  --titolo-2: #4fb3cc;
+  --titolo-3: #e08a5a;
+  --titolo-4: #d6c3b0;
+  --link: #43b59e;
+  --accento: #43b59e;
+  --enfasi: #e8909f;
+  --codice-inline: #f2c3d0;
+  --toc-fondo: #252528;
+  --toc-voce: #e5e5e5;
+  --toc-attiva: #f7b59e;
+}</pre>
+  </div>
+
+  <footer>
+    <p>Fonte unica dei valori visivi di RoccobotOS. I contrasti sono rapporti WCAG 2.1 misurati sul
+      fondo reale in cui il colore vive, non su un bianco teorico. Le decisioni e la loro storia
+      stanno in <code>RoccobotOS/CLAUDE.md</code>; qui stanno i numeri.</p>
+  </footer>
+
+  <script src="Pages.js"></script>
+</body>
+
+</html>
