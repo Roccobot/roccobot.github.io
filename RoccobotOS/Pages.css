@@ -30,6 +30,7 @@
   --pg-riga: #f8f8f8;
   --pg-intestazione: #f8f8f8;
   --pg-codice: #f8f8f8;
+  --pg-cella-stretta: #ececec;
   --pg-link: #1c7a68;
   --pg-link-rotto: #c00;
 }
@@ -45,6 +46,7 @@
     --pg-riga: #181818;
     --pg-intestazione: #262626;
     --pg-codice: #1c1c1c;
+    --pg-cella-stretta: #2a2a2a;
     --pg-link: #43b59e;
     --pg-link-rotto: #ff8a8a;
   }
@@ -60,6 +62,7 @@ html[data-theme="dark"] {
   --pg-riga: #181818;
   --pg-intestazione: #262626;
   --pg-codice: #1c1c1c;
+  --pg-cella-stretta: #2a2a2a;
   --pg-link: #43b59e;
   --pg-link-rotto: #ff8a8a;
 }
@@ -74,6 +77,7 @@ html[data-theme="light"] {
   --pg-riga: #f8f8f8;
   --pg-intestazione: #f8f8f8;
   --pg-codice: #f8f8f8;
+  --pg-cella-stretta: #ececec;
   --pg-link: #1c7a68;
   --pg-link-rotto: #c00;
 }
@@ -112,6 +116,35 @@ table tr th, th {
   background-color: var(--pg-intestazione);
 }
 table tr td, td { border-color: var(--pg-bordo-cella) }
+
+/* Angoli stondati di 8 px, come sulla pagina principale (richiesta dell'utente, 2026-08-02).
+   Il perche' del modello separato e delle quattro celle d'angolo sta in RoccobotOS.css, e non
+   si ripete: qui cambiano solo i colori, che passano per le variabili.
+   ⚠️ Qui le tabelle NON sono 'display:block', quindi la via dell'overflow che ritaglia non
+   esisterebbe nemmeno: e' la ragione per cui la tecnica scelta e' quella delle celle. */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--pg-bordo-cella);
+  border-radius: 8px;
+}
+table tr th, table tr td, th, td {
+  border: 0;
+  border-right: 1px solid var(--pg-bordo-cella);
+  border-bottom: 1px solid var(--pg-bordo-cella);
+}
+table tr th:last-child, table tr td:last-child { border-right: 0 }
+table tr:last-child td { border-bottom: 0 }
+table thead tr:first-child th:first-child { border-top-left-radius: 7px }
+table thead tr:first-child th:last-child { border-top-right-radius: 7px }
+table tbody tr:last-child td:first-child { border-bottom-left-radius: 7px }
+table tbody tr:last-child td:last-child { border-bottom-right-radius: 7px }
+
+/* Colonne strette in grigio nelle tabelle a colonne ripetute: regola generale del progetto,
+   spiegata per esteso in RoccobotOS.css. Qui serve alle due tabelle dei caratteri, dove la
+   colonna stretta e' la SECONDA di ogni coppia (nome esteso, poi il glifo). */
+table.narrow-cols-odd td:nth-child(odd),
+table.narrow-cols-even td:nth-child(2n) { background-color: var(--pg-cella-stretta) }
 
 code, tt, pre, kbd {
   background-color: var(--pg-codice);

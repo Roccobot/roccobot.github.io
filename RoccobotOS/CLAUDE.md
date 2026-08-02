@@ -57,6 +57,39 @@
     del testo e scrivere dentro in bianco: sul mockup, in un paragrafo denso, i molti `<code>`
     diventano una **collana di etichette** che pesa più del testo che dovrebbero servire. Resta
     il rosa sul grigio, cioè la forma leggera.
+  - ⚠️⚠️ **Le tabelle a COLONNE RIPETUTE hanno la colonna stretta in grigio**: regola generale
+    voluta dall'utente il 2026-08-02, nata come caso singolo della tabella delle sostituzioni.
+    Quando una tabella ripete lo stesso gruppo di colonne per sfruttare la larghezza, la colonna
+    stretta di ogni coppia (il glifo, la sigla) prende il fondo grigio: separa le coppie senza
+    aggiungere un bordo, che a otto colonne sarebbe rumore. I valori stanno nella styleguide.
+    - ⚠️ **Le classi sono DUE e non una**, `narrow-cols-odd` e `narrow-cols-even`, perché la
+      colonna stretta **non sta sempre dallo stesso lato**: è la prima nelle tabelle dei tasti
+      (simbolo, poi il nome esteso) e la seconda in quelle dei caratteri e delle sostituzioni
+      (nome esteso, poi il glifo). Un solo `nth-child` avrebbe colorato la colonna sbagliata in
+      metà delle tabelle.
+    - ⚠️ Vivono in **due fogli**, `RoccobotOS.css` per la pagina principale e `Pages.css` per le
+      sotto-pagine, perché le due famiglie di pagine non condividono il foglio di stile.
+  - ⚠️⚠️ **Angoli stondati di 8 px: perché non è una riga di CSS.** Richiesta dell'utente del
+    2026-08-02. Un `border-radius` sulla tabella non fa niente finché il modello dei bordi è
+    `collapse`, perché lì la cornice esterna la disegnano le **celle**, che restano quadrate.
+    Serve il modello `separate`, la cornice sulla tabella, i soli tratti interni sulle celle e
+    il raggio sulle **quattro celle d'angolo**, che devono seguire la curva da sole.
+    - ⚠️ **Il raggio delle celle è 7 px, non 8**: la cornice sta fuori, e con lo stesso raggio si
+      vedrebbe un filo di fondo pagina fra bordo e cella.
+    - ⚠️ **La cornice ha imposto un cambio di LARGHEZZA, e non è un capriccio**: le tabelle della
+      pagina principale sono `display:block` per poter scorrere, quindi il blocco era largo il
+      100% mentre le celle dentro restano larghe quanto il contenuto. Finché nessuno disegnava il
+      bordo del blocco la differenza non si vedeva; disegnandolo, la cornice arrivava a fondo
+      pagina con le celle ferme a metà. Da qui `width:fit-content`, col `max-width:100%` che
+      tiene in piedi lo scorrimento.
+    - ⚠️ **Una cella unita a coppie che arriva in fondo** non sta nell'ultima riga, quindi le
+      regole d'angolo la mancano: le lascerebbero il tratto inferiore sopra la cornice e
+      darebbero l'angolo tondo alla cella accanto. C'è una regola apposta, scritta sulla forma
+      (`tbody tr:nth-last-child(2) td[rowspan="2"]`) e non sul caso che l'ha fatta nascere, che
+      sono le frecce direzionali della tabella dei tasti.
+    - ⚠️ **La styleguide ha il suo foglio inline, che vince su `Pages.css`**: la sua tabella
+      d'esempio va aggiornata insieme al sito, o la pagina che descrive il componente lo mostra
+      diverso da com'è. È lo stesso motivo per cui i campioni di colore si scrivono a mano.
   - ⚠️ **Il LOGO in testata è SVG inline, e il file `RoccobotOS.svg` non esiste più** (2026-08-01).
     Era un `<img>`, e un'immagine esterna il foglio di stile non la può ricolorare: in tema scuro
     la sola parte grigia della scritta deve andare a `#DEDEDE`, il marchio verde no. Le due parti
