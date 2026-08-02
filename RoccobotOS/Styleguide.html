@@ -128,11 +128,28 @@
       html:not([data-theme="light"]) .avvertenza { border-left-color: #f7b59e; }
     }
 
+    /* La tabella d'esempio deve essere la tabella VERA, angoli compresi: se qui restasse
+       quadrata mentre il sito e' stondato, la pagina mentirebbe proprio sul componente che
+       sta descrivendo. Percio' anche qui il modello e' 'separate' e le celle d'angolo hanno
+       il loro raggio. Il perche' della tecnica sta in RoccobotOS.css e non si ripete. */
     .guscio { overflow-x: auto; margin: 0 0 1rem; }
-    table { border-collapse: collapse; width: 100%; font-size: .9rem; }
-    th, td { border: 1px solid var(--pg-bordo); padding: .375rem .75rem; text-align: left; vertical-align: top; }
+    table {
+      border-collapse: separate; border-spacing: 0; width: 100%; font-size: .9rem;
+      border: 1px solid var(--pg-bordo); border-radius: 8px;
+    }
+    th, td {
+      border: 0; border-right: 1px solid var(--pg-bordo); border-bottom: 1px solid var(--pg-bordo);
+      padding: .375rem .75rem; text-align: left; vertical-align: top;
+    }
+    th:last-child, td:last-child { border-right: 0 }
+    tbody tr:last-child td { border-bottom: 0 }
+    thead tr:first-child th:first-child { border-top-left-radius: 7px }
+    thead tr:first-child th:last-child { border-top-right-radius: 7px }
+    tbody tr:last-child td:first-child { border-bottom-left-radius: 7px }
+    tbody tr:last-child td:last-child { border-bottom-right-radius: 7px }
     th { background: var(--pg-intestazione); font-weight: 600; }
     tbody tr:nth-child(even) { background: var(--pg-riga); }
+    table.narrow-cols-odd td:nth-child(odd) { background: var(--pg-cella-stretta) }
 
     /* ── Provino tipografico ── */
     .scala { display: flex; flex-direction: column; gap: .5rem; border: 1px solid var(--pg-bordo); border-radius: 6px; padding: 1rem 1.1rem; }
@@ -185,7 +202,7 @@
 
   <p class="occhiello">RoccobotOS &middot; fonte unica dei valori visivi</p>
   <h1>Styleguide</h1>
-  <p class="sommario">Palette <strong>1.2</strong>, 2 agosto 2026. Approvata dall'utente a mockup,
+  <p class="sommario">Palette <strong>1.3</strong>, 2 agosto 2026. Approvata dall'utente a mockup,
     caso per caso, dopo la misura dei contrasti su tutti i colori in uso. Questa pagina
     <strong>mostra</strong> i colori invece di nominarli: ogni campione è disegnato sui due fondi
     veri del sito, perché un colore che regge su uno può crollare sull'altro.</p>
@@ -433,6 +450,10 @@
       <div class="scheda-piede"><span class="scheda-nome">fondo-codice</span><span class="scheda-ruolo">&lt;pre&gt; e &lt;code&gt;</span><span class="valori">#f7f8f8 &middot; #1e1e1e</span></div>
     </div>
     <div class="scheda">
+      <div class="facce piene"><div class="faccia chiara" style="background:#ececec"></div><div class="faccia scura" style="background:#2a2a2a"></div></div>
+      <div class="scheda-piede"><span class="scheda-nome">fondo-colonna-stretta</span><span class="scheda-ruolo">colonna del glifo nelle tabelle a colonne ripetute</span><span class="valori">#ececec &middot; #2a2a2a</span></div>
+    </div>
+    <div class="scheda">
       <div class="facce piene"><div class="faccia chiara" style="background:#b9baba"></div><div class="faccia scura" style="background:#3a3a3a"></div></div>
       <div class="scheda-piede"><span class="scheda-nome">bordo</span><span class="scheda-ruolo">celle, righe orizzontali</span><span class="valori">#b9baba &middot; #3a3a3a</span></div>
     </div>
@@ -485,12 +506,11 @@
   <p>Sono l'ossatura del sito: quasi tutto il contenuto vive in tabella.</p>
 
   <div class="guscio">
-    <table>
-      <thead><tr><th>Combinazione</th><th>Effetto</th><th>Dove</th></tr></thead>
+    <table class="narrow-cols-odd">
+      <thead><tr><th>Combinazione</th><th>Effetto</th><th>Combinazione</th><th>Effetto</th></tr></thead>
       <tbody>
-        <tr><td><code>&#8984;&#8679;4</code></td><td>Ritaglio di schermo</td><td>Sistema</td></tr>
-        <tr><td><code>&#8984;&#8997;M</code></td><td>Riduci tutte le finestre</td><td>Sistema</td></tr>
-        <tr><td><code>&#8963;&#8679;C</code></td><td>Sintassi CSS</td><td>CotEditor</td></tr>
+        <tr><td><code>&#8984;&#8679;4</code></td><td>Ritaglio di schermo</td><td><code>&#8963;&#8679;C</code></td><td>Sintassi CSS</td></tr>
+        <tr><td><code>&#8984;&#8997;M</code></td><td>Riduci tutte le finestre</td><td><code>&#8984;&#8963;F</code></td><td>Schermo intero</td></tr>
       </tbody>
     </table>
   </div>
@@ -499,15 +519,26 @@
     <li>Bordi su tutte le celle, <code>1px solid</code> col token <code>bordo</code>.</li>
     <li>Intestazioni con fondo proprio, peso 600, <code>padding: .375rem .75rem</code>.</li>
     <li>Righe alterne per la lettura orizzontale.</li>
+    <li><strong>Angoli stondati di 8 px</strong> sulla cornice, e 7 px sulle quattro celle
+      d'angolo, che devono seguire la curva da sole: il modello dei bordi è
+      <code>separate</code>, perché con <code>collapse</code> la cornice la disegnano le celle e
+      il raggio non ha effetto.</li>
+    <li><strong>Colonne strette in grigio</strong> (<code>#ececec</code> nel chiaro,
+      <code>#2a2a2a</code> nello scuro): vale per ogni tabella che <strong>ripeta lo stesso
+      gruppo di colonne</strong> per sfruttare la larghezza. Il grigio va alla colonna del glifo
+      o della sigla, e dice dove finisce una coppia e comincia la successiva senza aggiungere un
+      bordo. Le classi sono due, <code>narrow-cols-odd</code> e <code>narrow-cols-even</code>,
+      perché la colonna stretta non sta sempre dallo stesso lato.</li>
     <li>La tabella scorre in orizzontale (<code>display:block; overflow-x:auto</code>) sugli schermi
       stretti, e dove sborda davvero riceve <code>tabindex="0"</code> per lo scorrimento da
-      tastiera.</li>
+      tastiera. La sua larghezza è <code>fit-content</code>: il blocco deve aderire alle celle, o
+      la cornice arriverebbe a fondo pagina con le celle ferme a metà.</li>
     <li><strong>Eccezione dichiarata</strong>: la tabella delle sostituzioni testo è
       <code>display:table; width:100%</code> sopra i 700 px, perché è a sei colonne strette e lo
-      spazio c'è. Le sue tre colonne 'con' hanno il fondo <code>#ececec</code> nel chiaro e
-      <code>#2a2a2a</code> nello scuro, che separa le coppie a colpo d'occhio.</li>
+      spazio c'è.</li>
     <li>Esiste una <strong>vista a schede</strong> (<code>data-tables="cards"</code>), oggi dietro
-      un feature flag spento: vedi la sezione dei comandi.</li>
+      un feature flag spento: vedi la sezione dei comandi. Là la cornice della tabella si spegne,
+      perché ogni riga è già una scheda con la sua.</li>
   </ul>
 
   <h3>4.2 Comandi fissi</h3>
@@ -669,6 +700,7 @@
   --fondo-riga-alterna: #f7f8f8;
   --fondo-intestazione: #e7e8e8;
   --fondo-codice: #f7f8f8;
+  --fondo-colonna-stretta: #ececec;
   --bordo: #b9baba;
   --bordo-tenue: #e1e2e2;
   --testo: #333;
@@ -691,6 +723,7 @@ html[data-theme="dark"] {
   --fondo-riga-alterna: #181818;
   --fondo-intestazione: #262626;
   --fondo-codice: #1e1e1e;
+  --fondo-colonna-stretta: #2a2a2a;
   --bordo: #3a3a3a;
   --bordo-tenue: #2a2a2a;
   --testo: #eaeaea;

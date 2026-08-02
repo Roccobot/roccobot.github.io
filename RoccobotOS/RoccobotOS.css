@@ -84,12 +84,25 @@ html[data-theme=dark] .toc-version{background:#0f0f10;color:#9b9b9b}@media scree
    di questa pagina sono 'display:block' per poter scorrere in orizzontale sugli schermi
    stretti: qui la si riporta a 'display:table' SOLO sopra i 700 px, dove lo spazio c'e'
    davvero, cosi' sotto quella soglia lo scorrimento resta.
-   Le tre colonne 'con' (le pari) prendono un fondo grigio chiaro, che separa le coppie a
-   colpo d'occhio: si applica alle sole celle del corpo, perche' le intestazioni hanno gia'
-   un grigio proprio e un secondo tono le confonderebbe. */
+   Il grigio delle sue colonne 'con' non e' piu' una regola di questa tabella: e' diventato la
+   regola generale delle colonne strette, poco piu' sotto. */
 @media screen and (min-width:701px){.markdown-body table.sost-table{display:table;width:100%}}
-.markdown-body table.sost-table td:nth-child(2n){background-color:#ececec}
-html[data-theme=dark] .markdown-body table.sost-table td:nth-child(2n){background-color:#2a2a2a}
+
+/* ── Colonne strette in grigio nelle tabelle a colonne ripetute ──
+   Regola generale voluta dall'utente (2026-08-02), nata come caso singolo della tabella delle
+   sostituzioni. Quando una tabella ripete lo stesso gruppo di colonne per sfruttare la
+   larghezza (simbolo/tasto, sostituisci/con, nome/carattere), la colonna STRETTA di ogni
+   coppia prende un fondo grigio: e' quella che porta un glifo o una sigla, e il grigio dice
+   dove finisce una coppia e comincia la successiva senza aggiungere nessun bordo.
+   ⚠️ Servono DUE classi e non un solo `nth-child`, perche' la colonna stretta non sta sempre
+   dallo stesso lato: e' la prima nelle tabelle dei tasti (simbolo, poi il nome esteso) e la
+   seconda in quelle delle sostituzioni e dei caratteri (il testo, poi il glifo).
+   Si applica alle sole celle del corpo: le intestazioni hanno gia' un grigio proprio, e un
+   secondo tono le confonderebbe. */
+.markdown-body table.narrow-cols-odd td:nth-child(odd),
+.markdown-body table.narrow-cols-even td:nth-child(2n){background-color:#ececec}
+html[data-theme=dark] .markdown-body table.narrow-cols-odd td:nth-child(odd),
+html[data-theme=dark] .markdown-body table.narrow-cols-even td:nth-child(2n){background-color:#2a2a2a}
 
 /* Glifi dei tasti inizio e fine pagina: centratura ottica chiesta dall'utente (2026-08-01),
    3 suoi pixel in alto per la freccia in su e 1 per quella in giu'. I suoi pixel sono a
@@ -258,7 +271,7 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    guida chiedono a un bersaglio. Diventano blocchi che riempiono la cella: cresce solo
    l'altezza della griglia, il testo e i colori restano quelli. */
 .markdown-body table.index-grid td{padding:0}
-.markdown-body table.index-grid td a{display:block;padding:.5rem .25rem}
+.markdown-body table.index-grid td a{display:block;padding:.75rem .9rem}
 
 /* ── Link dentro i titoli ──
    Un titolo che e' anche un link (le schede delle app rimandano all'App Store) era
@@ -300,3 +313,50 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    perche' i comandi hanno gia' la loro transizione di opacita'. */
 .theme-toggle,.tables-toggle,.toc-toggle,.scroll-toggle,.skip-link,
 .markdown-body table.index-grid td a{-webkit-tap-highlight-color:transparent}
+
+/* ── Angoli stondati delle tabelle ──
+   Richiesta dell'utente (2026-08-02): 8 px su tutte le tabelle.
+   ⚠️ Un `border-radius` sulla tabella NON basta con `border-collapse:collapse`, ed e' la
+   ragione per cui serve tutto questo blocco invece di una riga: nel modello collassato la
+   cornice esterna la disegnano le CELLE, che restano quadrate, e agli angoli si vedrebbe lo
+   squadro del bordo sotto la curva. Si passa percio' al modello separato: la cornice diventa
+   una proprieta' della tabella, e le celle tengono i soli tratti interni (destra e sotto).
+   ⚠️ La curva la seguono anche le QUATTRO CELLE D'ANGOLO, che prendono il loro raggio: e' la
+   via che non dipende da un contenitore che ritaglia. Fidarsi dell'`overflow:auto` che queste
+   tabelle hanno gia' funzionerebbe qui e non sulle sotto-pagine, dove le tabelle non sono
+   `display:block`, e su un elemento tabella l'overflow non e' garantito che ritagli.
+   Il raggio delle celle e' 7 px e non 8: la cornice sta fuori, e all'interno la curva ha un
+   pixel in meno di raggio, o si vedrebbe un filo di fondo pagina fra bordo e cella.
+   ⚠️ E la cornice ha imposto un cambio di larghezza, che va capito prima di rimetterci mano:
+   queste tabelle sono `display:block` per poter scorrere, e il blocco era largo il 100% mentre
+   le celle dentro restano larghe quanto il loro contenuto. Finche' nessuno disegnava il bordo
+   del blocco la differenza non si vedeva; disegnandolo, la cornice arrivava a fondo pagina con
+   le celle ferme a meta'. Percio' il blocco passa a `width:fit-content`, che lo fa aderire alle
+   celle: il `max-width:100%` che le tabelle hanno gia' tiene in piedi lo scorrimento.
+   ⚠️ Il separatore verticale delle intestazioni resta il suo grigio scuro (#555) e non quello
+   delle celle: e' un tono voluto, e una regola generica scritta dopo glielo porterebbe via. */
+.markdown-body table{border-collapse:separate;border-spacing:0;border:1px solid #b9baba;border-radius:8px;width:fit-content}
+html[data-tables=standard] .markdown-body table{width:fit-content}
+.markdown-body table td,.markdown-body table th{border:0;border-right:1px solid #b9baba;border-bottom:1px solid #b9baba}
+.markdown-body table th{border-right-color:#555}
+.markdown-body table td:last-child,.markdown-body table th:last-child{border-right:0}
+.markdown-body table tr:last-child td{border-bottom:0}
+.markdown-body table thead tr:first-child th:first-child{border-top-left-radius:7px}
+.markdown-body table thead tr:first-child th:last-child{border-top-right-radius:7px}
+.markdown-body table tbody tr:last-child td:first-child{border-bottom-left-radius:7px}
+.markdown-body table tbody tr:last-child td:last-child{border-bottom-right-radius:7px}
+html[data-theme=dark] .markdown-body table{border-color:#3a3a3a}
+html[data-theme=dark] .markdown-body table td,html[data-theme=dark] .markdown-body table th{border-right-color:#3a3a3a;border-bottom-color:#3a3a3a}
+
+/* Una cella unita a coppie che arriva IN FONDO alla tabella non sta nell'ultima riga, quindi
+   le due regole qui sopra la mancano: le lascerebbero il tratto inferiore (doppia linea sulla
+   cornice) e darebbero l'angolo tondo alla cella sbagliata, quella accanto. Nasce con le
+   frecce direzionali della tabella dei tasti (2026-08-02), ma la regola e' scritta per la
+   forma, non per quel caso. */
+.markdown-body table tbody tr:nth-last-child(2) td[rowspan="2"]{border-bottom:0}
+.markdown-body table tbody tr:nth-last-child(2) td[rowspan="2"]:last-child{border-bottom-right-radius:7px}
+
+/* La vista a schede degli schermi stretti non e' piu' una tabella: ogni riga e' gia' una
+   scheda con la sua cornice tonda, e la cornice della tabella le disegnerebbe intorno un
+   secondo riquadro vuoto. */
+html[data-tables=cards] .markdown-body table{border:0;border-radius:0}
