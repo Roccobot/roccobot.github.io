@@ -2404,13 +2404,13 @@
             <td style="text-align:right"></td>
             <td style="text-align:left"></td>
           </tr>
-        </table><br>
+        </table>
       <h3>Importare le sostituzioni da un file .plist</h3>
       <p>Il pannello non ha un comando di importazione: la via, anche su macOS 26, è il
         <strong>trascinamento</strong> del file sulla finestra, come descrive
         <a href="https://support.apple.com/guide/mac-help/back-up-and-share-text-replacements-on-mac-mchl2a7bd795/mac"
           target="_blank">la guida Apple</a>. Funziona, ma a due condizioni che la guida non
-        nomina, e senza le quali il file viene rifiutato <strong>in silenzio</strong>.</p>
+        nomina, e senza le quali il file è rifiutato <strong>in silenzio</strong>.</p>
       <ol>
         <li>Aprire <em>Impostazioni di sistema → Tastiera → Sostituzioni testo</em>.</li>
         <li>Trascinare il file dal Finder e rilasciarlo sulla finestra dell'elenco, poi
@@ -2424,7 +2424,7 @@
         (l'abbreviazione) e <code>phrase</code> (il testo che la sostituisce). Un plist con
         un'altra struttura, per esempio quello del dominio globale con la chiave
         <code>NSUserDictionaryReplacementItems</code> e le chiavi <code>on</code>,
-        <code>replace</code> e <code>with</code>, non viene importato.</p>
+        <code>replace</code> e <code>with</code>, non è importato.</p>
       <p><strong>Seconda condizione: XML valido.</strong> Le <code>&amp;</code> e i
         <code>&lt;</code> dentro i testi vanno scritti come <code>&amp;amp;</code> e
         <code>&amp;lt;</code>, in quest'ordine per non convertire due volte. Un errore di sintassi
@@ -2453,7 +2453,7 @@
         <code>killall cfprefsd</code> obbliga le applicazioni a rileggerlo senza chiudere la
         sessione.</p>
       <p><strong>Da terminale non si SCRIVE.</strong> Le voci aggiunte a mano nel dominio globale
-        vengono cancellate all'apertura del pannello: quello non è l'archivio, ma una copia in
+        sono cancellate all'apertura del pannello: quello non è l'archivio, ma una copia in
         vetrina. L'archivio vero è il database
         <code>~/Library/KeyboardServices/TextReplacements.db</code>, sincronizzato da CloudKit, e
         non ha un'interfaccia pubblica. Vale anche per
