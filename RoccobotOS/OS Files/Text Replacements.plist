@@ -4,6 +4,12 @@
 <array>
 	<dict>
 		<key>phrase</key>
+		<string>✦</string>
+		<key>shortcut</key>
+		<string>\\ai</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
 		<string>⌥</string>
 		<key>shortcut</key>
 		<string>\\alt</string>
@@ -46,7 +52,13 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>↵</string>
+		<string>ə</string>
+		<key>shortcut</key>
+		<string>\\e</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>⏎</string>
 		<key>shortcut</key>
 		<string>\\enter</string>
 	</dict>
@@ -60,7 +72,7 @@
 		<key>phrase</key>
 		<string>≡</string>
 		<key>shortcut</key>
-		<string>\\hamburger</string>
+		<string>\\ham</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
@@ -88,12 +100,6 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>ə</string>
-		<key>shortcut</key>
-		<string>\\schwa</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
 		<string>⇧</string>
 		<key>shortcut</key>
 		<string>\\shift</string>
@@ -102,7 +108,7 @@
 		<key>phrase</key>
 		<string>␣</string>
 		<key>shortcut</key>
-		<string>\\spacebar</string>
+		<string>\\space</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
@@ -136,12 +142,6 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>❤️</string>
-		<key>shortcut</key>
-		<string>&lt;3</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
 		<string>²</string>
 		<key>shortcut</key>
 		<string>^2</string>
@@ -156,13 +156,13 @@
 		<key>phrase</key>
 		<string>↑</string>
 		<key>shortcut</key>
-		<string>|^</string>
+		<string>-ì</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
 		<string>↓</string>
 		<key>shortcut</key>
-		<string>|v</string>
+		<string>-v</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
@@ -196,6 +196,24 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
+		<string>❤️</string>
+		<key>shortcut</key>
+		<string>&lt;3</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>⚠️</string>
+		<key>shortcut</key>
+		<string>\\alert</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>🅰️🅾️</string>
+		<key>shortcut</key>
+		<string>\\ao</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
 		<string>👋🏻</string>
 		<key>shortcut</key>
 		<string>\\bye</string>
@@ -214,27 +232,33 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
+		<string>🤔</string>
+		<key>shortcut</key>
+		<string>\\mmh</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>✅</string>
+		<key>shortcut</key>
+		<string>\\ok</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>✨</string>
+		<key>shortcut</key>
+		<string>\\spark</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
 		<string>🤌🏻</string>
 		<key>shortcut</key>
 		<string>\\what</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>🅰️🅾️</string>
+		<string>&#x2E3B;</string>
 		<key>shortcut</key>
-		<string>aaoo</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>✨</string>
-		<key>shortcut</key>
-		<string>ìì</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>🤔</string>
-		<key>shortcut</key>
-		<string>mmmh</string>
+		<string>\\-</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
@@ -298,12 +322,6 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>&#x2014;&#x2014;</string>
-		<key>shortcut</key>
-		<string>hhhh</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
 		<string>Lúthien</string>
 		<key>shortcut</key>
 		<string>Luthien</string>
@@ -313,6 +331,12 @@
 		<string>Manwë</string>
 		<key>shortcut</key>
 		<string>Manwe</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>né</string>
+		<key>shortcut</key>
+		<string>nè</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
@@ -349,6 +373,12 @@
 		<string>perché</string>
 		<key>shortcut</key>
 		<string>perchè</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>sé</string>
+		<key>shortcut</key>
+		<string>sè</string>
 	</dict>
 </array>
 </plist>

@@ -619,11 +619,15 @@ le sostituzioni configurate dall'utente in macOS (Impostazioni di sistema, Tasti
 contenuto redazionale: è il **dump di una sua configurazione**, e si aggiorna quando lui ne
 manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
 
-- ⚠️ **I caratteri vietati dalle regole si scrivono come ENTITÀ HTML**, non letterali: la riga
-  `hhhh` produce due em-dash, e `&mdash;&mdash;` rende in pagina esattamente lo stesso glifo
-  **senza** mettere il carattere nel sorgente. Così la pagina resta fedele alla configurazione
-  e il file non viola la regola dei trattini lunghi, che altrimenti bloccherebbe il commit.
-  È la via preferibile all'esenzione 'tabella di caratteri', perché non chiede deroghe.
+- ⚠️ **I caratteri vietati dalle regole si scrivono come ENTITÀ HTML**, non letterali: la
+  sostituzione `\\-` produce un tratto lungo tre em, e `&#x2E3B;` rende in pagina esattamente
+  lo stesso glifo **senza** mettere il carattere nel sorgente. Così la pagina resta fedele alla
+  configurazione e il file non viola la regola dei trattini lunghi, che altrimenti bloccherebbe
+  il commit. È la via preferibile all'esenzione 'tabella di caratteri', perché non chiede
+  deroghe.
+  - Ⓘ Fino al 2026-08-02 il caso era la riga `hhhh`, che produceva **due em-dash** scritti
+    `&mdash;&mdash;`: l'utente l'ha sostituita con `\\-` e il tratto unico. Il rimedio non
+    cambia, cambia solo il carattere a cui si applica.
 - ⚠️ **Niente caratteri dell'area privata Unicode**: il logo Apple era `U+F8FF` e ora è
   un'icona (vedi la sezione delle iconcine). Se una sostituzione nuova produce un glifo che
   esiste solo su una piattaforma, si applica lo stesso rimedio.
@@ -632,10 +636,19 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   precisato *letteralmente due backslash consecutivi* dopo un primo giro con una sola). Il
   vantaggio pratico non è estetico: `<cmd>` in HTML va scritto con le entità `&lt;` e `&gt;`,
   o il browser lo legge come un tag e lo cancella; con le barre il problema non si pone.
-- **Tre coppie di colonne affiancate** invece di una lista di 58 righe (richiesta dell'utente,
-  2026-08-01), raggruppate **per somiglianza** e in ordine alfabetico dentro ciascuna: tasti e
-  simboli di sistema, segni ed emoji, testo e nomi con diacritici. Da 58 righe a 20, e la
-  larghezza sfruttata.
+- **Tre coppie di colonne affiancate** invece di una lista lunga quanto le sostituzioni
+  (richiesta dell'utente, 2026-08-01), raggruppate **per somiglianza** e in ordine alfabetico
+  dentro ciascuna: tasti e simboli di sistema, segni ed emoji, testo e nomi con diacritici. Un
+  terzo delle righe, e la larghezza sfruttata.
+  - ⚠️ **Quante sono non si scrive qui**: si contano dalla tabella, e un numero fermo mentirebbe
+    al primo ritocco. È già successo: la nota diceva '58 righe' anche dopo che l'utente aveva
+    aggiunto e rinominato voci.
+  - **Il gruppo dei segni ha un ordine PROPRIO, non solo alfabetico** (istruzione dell'utente,
+    2026-08-02): prima i simboli e le frecce, poi le emoji, e il cuore è la **prima emoji**,
+    subito dopo le frecce. Dentro il blocco delle emoji si torna all'alfabetico.
+  - ⚠️ **Rinominare un'abbreviazione ne cambia la posizione**: l'ordine è alfabetico, quindi un
+    `\\schwa` che diventa `\\e` si sposta di dieci righe. Chi rinomina e lascia la riga dov'era
+    rompe l'ordine senza accorgersene, perché la tabella resta plausibile a occhio.
 - **Il file pronto vive in `OS Files/Text Replacements.plist`** ed è scaricabile dalla pagina
   (dal 2026-08-02). ⚠️ **Si RIGENERA dalla tabella quando la tabella cambia**, o le due cose
   divergono in silenzio: la tabella è la fonte, il file è il prodotto, e nessuno rilegge un
