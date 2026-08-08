@@ -636,6 +636,12 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   2026-08-01), raggruppate **per somiglianza** e in ordine alfabetico dentro ciascuna: tasti e
   simboli di sistema, segni ed emoji, testo e nomi con diacritici. Da 58 righe a 20, e la
   larghezza sfruttata.
+- **Il file pronto vive in `OS Files/Text Replacements.plist`** ed è scaricabile dalla pagina
+  (dal 2026-08-02). ⚠️ **Si RIGENERA dalla tabella quando la tabella cambia**, o le due cose
+  divergono in silenzio: la tabella è la fonte, il file è il prodotto, e nessuno rilegge un
+  allegato. Nel file i caratteri che le regole vietano e quelli dell'area privata stanno come
+  **riferimenti numerici** (`&#x2014;`, `&#xF8FF;`): l'XML li risolve nel glifo giusto e il file
+  tracciato resta pulito, che è la stessa soluzione già usata in pagina con le entità.
 - **Il plist per macOS si genera dalla tabella**, non si scrive a mano. ⚠️⚠️ **E il formato è
   quello dell'ESPORTAZIONE, non quello del dominio globale**: un array di dizionari con le due
   chiavi `shortcut` e `phrase`. La forma `NSUserDictionaryReplacementItems` con `on`, `replace` e
