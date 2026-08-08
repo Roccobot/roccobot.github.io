@@ -2406,27 +2406,57 @@
           </tr>
         </table><br>
       <h3>Importare le sostituzioni da un file .plist</h3>
-      <p>Il pannello delle sostituzioni non ha un comando di importazione: accetta il
-        <strong>trascinamento</strong>, ed è quella la via.</p>
+      <p>Il pannello non ha un comando di importazione: la via, anche su macOS 26, è il
+        <strong>trascinamento</strong> del file sulla finestra, come descrive
+        <a href="https://support.apple.com/guide/mac-help/back-up-and-share-text-replacements-on-mac-mchl2a7bd795/mac"
+          target="_blank">la guida Apple</a>. Funziona, ma a due condizioni che la guida non
+        nomina, e senza le quali il file viene rifiutato <strong>in silenzio</strong>.</p>
       <ol>
-        <li>Aprire <em>Impostazioni di sistema → Tastiera → Testo → Sostituzione testo</em>.</li>
-        <li>Trascinare il file <code>.plist</code> dal Finder dentro l'elenco.</li>
-        <li>Le voci si <strong>aggiungono</strong> a quelle già presenti: l'importazione non
-          sostituisce l'elenco, quindi eventuali doppioni vanno tolti a mano.</li>
+        <li>Aprire <em>Impostazioni di sistema → Tastiera → Sostituzioni testo</em>.</li>
+        <li>Trascinare il file dal Finder e rilasciarlo sulla finestra dell'elenco, poi
+          <em>Fine</em>.</li>
+        <li>Le voci si <strong>aggiungono</strong> a quelle già presenti: eventuali doppioni vanno
+          tolti a mano.</li>
       </ol>
-      <p>L'esportazione è la stessa operazione al contrario: si selezionano le voci nell'elenco e
-        si trascinano nel Finder, che ne ricava un file <code>.plist</code> (il nome dipende dalla
-        lingua del sistema).</p>
+      <p><strong>Prima condizione: la struttura del file.</strong> Il pannello accetta solo il
+        formato che produce esportando, cioè un <code>.plist</code> il cui elemento radice è un
+        <strong>array</strong> di dizionari con le due chiavi <code>shortcut</code>
+        (l'abbreviazione) e <code>phrase</code> (il testo che la sostituisce). Un plist con
+        un'altra struttura, per esempio quello del dominio globale con la chiave
+        <code>NSUserDictionaryReplacementItems</code> e le chiavi <code>on</code>,
+        <code>replace</code> e <code>with</code>, non viene importato.</p>
+      <p><strong>Seconda condizione: XML valido.</strong> Le <code>&amp;</code> e i
+        <code>&lt;</code> dentro i testi vanno scritti come <code>&amp;amp;</code> e
+        <code>&amp;lt;</code>, in quest'ordine per non convertire due volte. Un errore di sintassi
+        non produce nessun avviso.</p>
+      <p>⚠️ Il puntatore con il <strong>+</strong> non è una conferma: dice che la finestra accetta
+        un file, non che quel file è valido. Compare identico anche quando l'importazione non
+        avviene, ed è la ragione per cui il fallimento sembra un difetto del sistema.</p>
+      <p>Il modo sicuro di ottenere un file della forma giusta è <strong>esportarlo prima da
+          lì</strong>: si selezionano le voci nell'elenco (<code>⌘A</code> per tutte), si
+        trascinano sulla Scrivania, e si modifica il file ottenuto. Su macOS 26 si chiama
+        <code>property list.plist</code>; nelle versioni precedenti era
+        <code>Text Substitutions.plist</code>.</p>
+      <p><strong>Quanto è affidabile.</strong> Poco, oltre le poche decine di voci, e non per
+        colpa del file: un centinaio di voci passa quasi sempre, sull'ordine del migliaio
+        l'importazione diventa imprevedibile, e in alcuni casi <strong>azzera l'elenco</strong>
+        invece di aggiungersi. Conviene esportare una copia prima di ogni importazione. Se non
+        succede niente, chiudere e riaprire Impostazioni di sistema e riprovare: a volte cambia,
+        a volte no. Anche una sincronizzazione iCloud in corso può interferire.</p>
       <p>Le sostituzioni sono sincronizzate da iCloud: importarle su un Mac le porta agli altri
         dispositivi con lo stesso ID Apple, e cancellarle da uno le cancella da tutti.</p>
-      <p>Da terminale l'elenco in vigore si legge con
+      <p>Da terminale l'elenco in vigore si <strong>legge</strong> con
         <code>defaults read -g NSUserDictionaryReplacementItems</code>, e
         <code>killall cfprefsd</code> obbliga le applicazioni a rileggerlo senza chiudere la
         sessione.</p>
-      <p><strong>Da non usare</strong>: <code>defaults import -g &lt;file&gt;.plist</code>. Il
-        dominio globale non contiene le sole sostituzioni, ma tutte le preferenze condivise fra le
-        applicazioni, e quel comando lo <strong>sovrascrive per intero</strong>: quello che nel file
-        non compare va perso.</p>
+      <p><strong>Da terminale non si SCRIVE.</strong> Le voci aggiunte a mano nel dominio globale
+        vengono cancellate all'apertura del pannello: quello non è l'archivio, ma una copia in
+        vetrina. L'archivio vero è il database
+        <code>~/Library/KeyboardServices/TextReplacements.db</code>, sincronizzato da CloudKit, e
+        non ha un'interfaccia pubblica. Vale anche per
+        <code>defaults import -g &lt;file&gt;.plist</code>, che oltre a non funzionare
+        <strong>sovrascrive l'intero dominio globale</strong>, cioè tutte le preferenze condivise
+        fra le applicazioni: quello che nel file non compare va perso.</p>
       <h2>Caratteri incompatibili con filesystem Microsoft (NTFS, exFAT)</h2>
       <table>
         <thead>
