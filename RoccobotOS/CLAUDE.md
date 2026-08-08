@@ -636,11 +636,27 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   2026-08-01), raggruppate **per somiglianza** e in ordine alfabetico dentro ciascuna: tasti e
   simboli di sistema, segni ed emoji, testo e nomi con diacritici. Da 58 righe a 20, e la
   larghezza sfruttata.
-- **Il plist per macOS si genera dalla tabella**, non si scrive a mano: le sostituzioni vivono
-  nella chiave `NSUserDictionaryReplacementItems` del dominio globale, come array di dizionari
-  con `on`, `replace` e `with`. ⚠️ Nel plist il logo Apple torna a essere il **carattere**
-  `U+F8FF`, perché là serve alla tastiera e non a un browser: l'icona SVG è una scelta della
-  pagina, non del sistema.
+- **Il plist per macOS si genera dalla tabella**, non si scrive a mano. ⚠️⚠️ **E il formato è
+  quello dell'ESPORTAZIONE, non quello del dominio globale**: un array di dizionari con le due
+  chiavi `shortcut` e `phrase`. La forma `NSUserDictionaryReplacementItems` con `on`, `replace` e
+  `with` è la copia in vetrina nelle preferenze, **non** ciò che il pannello importa: un file
+  scritto così viene rifiutato in silenzio, e questo file l'ha detto sbagliato fino al
+  2026-08-02. ⚠️ Nel plist il logo Apple torna a essere il **carattere** `U+F8FF`, perché là
+  serve alla tastiera e non a un browser: l'icona SVG è una scelta della pagina, non del sistema.
+- ⚠️⚠️ **L'importazione è documentata da Apple ma è INAFFIDABILE**, e la pagina lo dice perché
+  chi la legge lo scoprirebbe comunque, ma dopo. Trovato il 2026-08-02, quando l'utente ha
+  riferito il sintomo esatto: *il puntatore col + sembra indicare un'azione valida, ma non viene
+  importato assolutamente nulla*.
+  - **Il `+` non è una conferma**: dice che la finestra accetta *un* file, non che *quel* file
+    è valido. È il segno che rende il fallimento indistinguibile da un difetto del sistema.
+  - **Due cause silenziose**: struttura sbagliata del plist (vedi sopra) e XML non valido
+    (`&` e `<` da scrivere come entità). Nessuna delle due produce un avviso.
+  - **E oltre le poche decine di voci non è questione di formato**: un centinaio passa quasi
+    sempre, sull'ordine del migliaio l'esito è imprevedibile e in alcuni casi **azzera
+    l'elenco**. Fonte: Adam Engst su TidBITS, 4 maggio 2026, dopo prove sistematiche.
+  - **Da terminale non si scrive**: le voci messe a mano nel dominio globale spariscono
+    all'apertura del pannello. L'archivio vero è `~/Library/KeyboardServices/TextReplacements.db`,
+    sincronizzato da CloudKit, senza interfaccia pubblica.
 
 ### 🌐 Tabelle dei servizi DNS
 
