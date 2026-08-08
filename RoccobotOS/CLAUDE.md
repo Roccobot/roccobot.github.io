@@ -646,11 +646,6 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   - **Il gruppo dei segni ha un ordine PROPRIO, non solo alfabetico** (istruzione dell'utente,
     2026-08-02): prima i simboli e le frecce, poi le emoji, e il cuore è la **prima emoji**,
     subito dopo le frecce. Dentro il blocco delle emoji si torna all'alfabetico.
-    - ⚠️ **L'alfabetico del blocco emoji non ha eccezioni**, e conviene saperlo perché per
-      mezz'ora ne ha avuta una: `\\nope` e `\\hum` erano finite in coda su richiesta ('in
-      fondo alla seconda colonna'), e l'utente ha poi chiarito che intendeva *dentro il gruppo
-      delle emoji*, con l'ordine alfabetico intatto. Nel dubbio su una posizione, l'ordine
-      vince: è la regola, e una deroga va detta due volte prima di crederci.
   - ⚠️ **Rinominare un'abbreviazione ne cambia la posizione**: l'ordine è alfabetico, quindi un
     `\\schwa` che diventa `\\e` si sposta di dieci righe. Chi rinomina e lascia la riga dov'era
     rompe l'ordine senza accorgersene, perché la tabella resta plausibile a occhio.
