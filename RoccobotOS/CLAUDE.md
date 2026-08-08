@@ -664,8 +664,12 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   serve alla tastiera e non a un browser: l'icona SVG è una scelta della pagina, non del sistema.
 - ⚠️⚠️ **L'importazione è documentata da Apple ma è INAFFIDABILE**, e la pagina lo dice perché
   chi la legge lo scoprirebbe comunque, ma dopo. Trovato il 2026-08-02, quando l'utente ha
-  riferito il sintomo esatto: *il puntatore col + sembra indicare un'azione valida, ma non viene
+  riferito il sintomo esatto: *il puntatore col + sembra indicare un'azione valida, ma non è
   importato assolutamente nulla*.
+  - ✅ **Ma col formato giusto funziona, ed è provato**: l'utente ha importato il file di
+    `OS Files/` su macOS 26.6, 63 voci in un colpo, senza errori. Quindi la causa del fallimento
+    era il formato, non il pannello, e la soglia oltre la quale l'importazione diventa
+    imprevedibile sta più in alto di 63.
   - **Il `+` non è una conferma**: dice che la finestra accetta *un* file, non che *quel* file
     è valido. È il segno che rende il fallimento indistinguibile da un difetto del sistema.
   - **Due cause silenziose**: struttura sbagliata del plist (vedi sopra) e XML non valido
