@@ -130,18 +130,6 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>→</string>
-		<key>shortcut</key>
-		<string>-&gt;</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>←</string>
-		<key>shortcut</key>
-		<string>&lt;-</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
 		<string>²</string>
 		<key>shortcut</key>
 		<string>^2</string>
@@ -253,6 +241,18 @@
 		<string>🤌🏻</string>
 		<key>shortcut</key>
 		<string>\\what</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>❌</string>
+		<key>shortcut</key>
+		<string>\\nope</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>🙏🏻</string>
+		<key>shortcut</key>
+		<string>\\hum</string>
 	</dict>
 	<dict>
 		<key>phrase</key>

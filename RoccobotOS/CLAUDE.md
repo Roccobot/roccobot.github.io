@@ -646,6 +646,11 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   - **Il gruppo dei segni ha un ordine PROPRIO, non solo alfabetico** (istruzione dell'utente,
     2026-08-02): prima i simboli e le frecce, poi le emoji, e il cuore è la **prima emoji**,
     subito dopo le frecce. Dentro il blocco delle emoji si torna all'alfabetico.
+    - ⚠️ **Con un'eccezione voluta in CODA**: le ultime due emoji (`\\nope` e `\\hum`) stanno
+      dove l'utente ha chiesto di metterle, cioè in fondo alla colonna, e **non** in ordine
+      alfabetico. È scritto qui perché una passata di riordino le rimetterebbe al loro posto
+      alfabetico disfando una scelta esplicita: se un domani vanno alfabetizzate, lo dice
+      l'utente.
   - ⚠️ **Rinominare un'abbreviazione ne cambia la posizione**: l'ordine è alfabetico, quindi un
     `\\schwa` che diventa `\\e` si sposta di dieci righe. Chi rinomina e lascia la riga dov'era
     rompe l'ordine senza accorgersene, perché la tabella resta plausibile a occhio.
