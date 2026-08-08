@@ -317,6 +317,21 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   - ⚠️ **L'ingombro non si tocca, la posizione verticale SI'**, ed è una precisazione dello
     stesso giorno: vedi '⚠️⚠️ ALLINEAMENTO VERTICALE' più sotto. Le due cose convivono, e il
     primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
+- ⚠️ **Il LOGO APPLE è l'eccezione al vincolo dell'ingombro**, ed è voluta: dal 2026-08-02 è
+  **cresciuto del 20%** (da `.78em` a `.936em`), perché accanto ai glifi della sua colonna nella
+  tabella delle sostituzioni si leggeva più piccolo di un'emoji. Non sostituisce un PNG ma il
+  carattere `U+F8FF`, quindi non ha un'immagine originale di cui rispettare le dimensioni: il suo
+  metro è **ottico**, non il layout.
+  - ⚠️ **L'allineamento orizzontale è APERTO, e la premessa da cui si parte è falsa**: in quella
+    colonna i glifi **non condividono alcun bordo destro**. Misurato l'inchiostro vero con le
+    metriche del canvas (`actualBoundingBoxRight`, non la scatola di layout), i bordi destri
+    stanno in un intervallo di **14 px**, da `♪` a `⌦`, perché ogni glifo ha la sua larghezza e
+    la colonna è allineata a sinistra. Non esiste quindi un bordo a cui allinearsi 'al pixel', e
+    lo spostamento sarà un valore ottico deciso dall'utente.
+  - ⚠️ **La misura giusta è l'INCHIOSTRO, non la scatola**: un `getBoundingClientRect` su un
+    glifo dà l'avanzamento del carattere, che comprende le spalle laterali e non dice dove
+    l'occhio vede finire il segno. Uno screenshot analizzato a pixel funziona ma è fragile
+    (bordi della cella e antialiasing entrano nel conto): il canvas dà il numero diretto.
 - ⚠️ **Non tutte le immagini del testo sono icone**: `extrachar.png` è una **schermata**, e
   come vettore non avrebbe senso. Resta PNG.
   - Ⓘ Fino al 2026-08-01 questa voce nominava anche `nano.png`, che era l'altra schermata. Il

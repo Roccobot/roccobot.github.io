@@ -2405,6 +2405,28 @@
             <td style="text-align:left"></td>
           </tr>
         </table><br>
+      <h3>Importare le sostituzioni da un file .plist</h3>
+      <p>Il pannello delle sostituzioni non ha un comando di importazione: accetta il
+        <strong>trascinamento</strong>, ed è quella la via.</p>
+      <ol>
+        <li>Aprire <em>Impostazioni di sistema → Tastiera → Testo → Sostituzione testo</em>.</li>
+        <li>Trascinare il file <code>.plist</code> dal Finder dentro l'elenco.</li>
+        <li>Le voci si <strong>aggiungono</strong> a quelle già presenti: l'importazione non
+          sostituisce l'elenco, quindi eventuali doppioni vanno tolti a mano.</li>
+      </ol>
+      <p>L'esportazione è la stessa operazione al contrario: si selezionano le voci nell'elenco e
+        si trascinano nel Finder, che ne ricava un file <code>.plist</code> (il nome dipende dalla
+        lingua del sistema).</p>
+      <p>Le sostituzioni sono sincronizzate da iCloud: importarle su un Mac le porta agli altri
+        dispositivi con lo stesso ID Apple, e cancellarle da uno le cancella da tutti.</p>
+      <p>Da terminale l'elenco in vigore si legge con
+        <code>defaults read -g NSUserDictionaryReplacementItems</code>, e
+        <code>killall cfprefsd</code> obbliga le applicazioni a rileggerlo senza chiudere la
+        sessione.</p>
+      <p><strong>Da non usare</strong>: <code>defaults import -g &lt;file&gt;.plist</code>. Il
+        dominio globale non contiene le sole sostituzioni, ma tutte le preferenze condivise fra le
+        applicazioni, e quel comando lo <strong>sovrascrive per intero</strong>: quello che nel file
+        non compare va perso.</p>
       <h2>Caratteri incompatibili con filesystem Microsoft (NTFS, exFAT)</h2>
       <table>
         <thead>

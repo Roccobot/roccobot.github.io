@@ -30,8 +30,17 @@ body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{wid
 /* Logo Apple: sostituisce il carattere U+F8FF, che si vede SOLO sui sistemi Apple (area
    privata Unicode) e altrove e' un quadratino vuoto. Altezza in em, cosi' scala col testo
    della cella; nudge alla sola regola generale (centro della maiuscola nel contesto a
-   14,4 px), in attesa dell'eventuale aggiustamento ottico dell'utente. */
-.ic-apple{height:.78em;width:auto;--nudge:-.0694em}
+   14,4 px).
+   ⚠️ L'altezza e' .936em dal 2026-08-02, cioe' il +20% chiesto dall'utente sul .78em di prima:
+   accanto ai glifi della stessa colonna la mela si leggeva piu' piccola di un'emoji. Il valore
+   e' scritto come prodotto e non arrotondato apposta, o si perde da dove viene.
+   ⚠️ L'allineamento ORIZZONTALE resta aperto, e la ragione va saputa prima di provare a
+   'sistemarlo': in quella colonna i glifi NON condividono alcun bordo destro. Misurato
+   l'inchiostro vero con le metriche del canvas, i bordi destri stanno in un intervallo di 14 px
+   (da 541,59 di ♪ a 555,59 di ⌦), perche' ogni glifo ha la sua larghezza e la colonna e'
+   allineata a sinistra. Non esiste quindi un bordo a cui allinearsi 'al pixel': lo spostamento
+   sara' un valore deciso dall'utente. */
+.ic-apple{height:.936em;width:auto;--nudge:-.0694em}
 
 /* Numero di versione: sta SOPRA il logo-titolo, allineato al pixel col suo bordo sinistro, e
    NON e' fisso allo schermo: scorrendo esce di scena insieme alla testata (precisazione
