@@ -646,7 +646,7 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   quello dell'ESPORTAZIONE, non quello del dominio globale**: un array di dizionari con le due
   chiavi `shortcut` e `phrase`. La forma `NSUserDictionaryReplacementItems` con `on`, `replace` e
   `with` è la copia in vetrina nelle preferenze, **non** ciò che il pannello importa: un file
-  scritto così viene rifiutato in silenzio, e questo file l'ha detto sbagliato fino al
+  scritto così è rifiutato in silenzio, e questo file l'ha detto sbagliato fino al
   2026-08-02. ⚠️ Nel plist il logo Apple torna a essere il **carattere** `U+F8FF`, perché là
   serve alla tastiera e non a un browser: l'icona SVG è una scelta della pagina, non del sistema.
 - ⚠️⚠️ **L'importazione è documentata da Apple ma è INAFFIDABILE**, e la pagina lo dice perché

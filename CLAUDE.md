@@ -459,7 +459,7 @@ poi divergerebbe.
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
 - **I controlli pre-commit**, che bloccano il commit **solo quando la configurazione
-  viene letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
+  è letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, **trattini
   lunghi** nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i
   **caratteri del messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
@@ -498,7 +498,7 @@ poi divergerebbe.
     commit sbagliato passa liscio (misurato il 2026-07-30 da una sessione vergine, che è la sola
     in cui la prova valga). La causa non sta negli hook: là la **radice di progetto** è la cartella
     che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
-    viene aperto e nessun hook viene registrato.
+    è aperto e nessun hook è registrato.
     - ⚠️⚠️ **Che il file non sia letto è provato anche dal TESTO di un prompt**, che è la prova
       più diretta: la modifica di `.claude/settings.json` è stata chiesta all'utente con 'non
       l'hai ancora concesso', mentre in quel file la regola `Edit(/.claude/**)` copre proprio
