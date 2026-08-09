@@ -446,7 +446,7 @@ twitter.com###layers > div.css-175oi2r.r-aqfbo4.r-zchlnj
 twitter.com###react-root > div.css-175oi2r.r-13awgt0
 udc.yahoo.com
 udcm.yahoo.com
-urbandictionary.com##div[class*="mobile_leaderboard:sticky"]
+urbandictionary.com##div[class*="mobile_leaderboard"]
 vault.bitwarden.com##.card.border-success.mb-4
 viper.to,vipergirls.to###basePopping
 waskucity.com##[src*="AsianSexDiaryBottom.gif"]
