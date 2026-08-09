@@ -1449,6 +1449,41 @@ interattiva esterna: non sono note e non stanno nell'array), **Note** (pura lore
 ⚠️ **Discrimine, regola dell'utente:** se spiega il **mondo** va in Note; se riguarda una **sua
 scelta** o **come il sito rende i dati** va in Note editoriali.
 
+### 🔗 Permalink di note e risorse
+
+**Com'è fatto** (dalla v14.92). Ogni nota, la nota sulla traduzione, le due mappe e la modale stessa hanno un
+**indirizzo proprio** in forma **bare**, come i permalink delle categorie: `?mezzelfi`,
+`?glorfindel`, `?celeborn`, `?badge`, `?traduzione`, `?viaggio`, `?suddivisioni`, `?risorse`.
+Aprire un overlay lo scrive nella barra degli indirizzi, chiuderlo restituisce l'URL della vista;
+arrivando da un link l'overlay si apre **sopra la pagina normale**, quindi chiudendolo si resta
+sul sito. La tabella **`SHARE_ROUTES`** è l'unica fonte, e si popola da sé dal campo `slug` delle
+note e da `RES_MAPS`: rendere condivisibile una nota nuova non chiede altro che quel campo.
+
+- **Perché bare e non `?note=`**: è la convenzione già in casa, e le due famiglie **non possono
+  collidere**, perché i token delle note sono parole e i bitmask delle categorie sono di sole
+  cifre. Un token sconosciuto cade nel ramo che ignora la query, cioè apre la vista di default.
+- ⚠️⚠️ **Chiudere l'overlay NON basta a ripulire l'indirizzo, e la causa è la trappola del tasto
+  Indietro** (misurato, non dedotto): quella impila una voce di cronologia all'apertura e la
+  **consuma con `history.back()`** alla chiusura, tornando a una voce il cui indirizzo era stato
+  riscritto col permalink mentre l'overlay era aperto. Da qui la risincronizzazione dentro il
+  `popstate` della trappola. Senza, in barra resta il link a una nota ormai chiusa.
+- ⚠️ **Il permalink si azzera anche nelle TRANSIZIONI**, non solo alle chiusure vere: la
+  destinazione riscrive il suo subito dopo se ne ha uno, e una nota che passa la mano alla scheda
+  di un personaggio (che permalink non ha) lascerebbe altrimenti un indirizzo sbagliato.
+- ⚠️ **Nel visualizzatore mappe il 'copia link' va PRIMA della X**, e non è estetica: il tasto
+  Indietro chiude quell'overlay cliccando l'**ultimo** `.imgv-btn` della barra.
+- **La lingua NON viaggia nel link** (scelta di default, in assenza di risposta dell'utente): il
+  link è uno solo per nota e chi lo riceve la legge nella propria lingua.
+- **Due vie per copiarlo, entrambe volute** (istruzione dell'utente, 2026-08-09): la barra degli
+  indirizzi e un **tasto discreto** nella nota aperta, perché sul telefono la barra è scomoda e
+  senza tasto la funzione resterebbe di fatto da desktop. Il tasto riusa `copyShareLink`, quindi
+  eredita la conferma visiva del 'copia link' del Pannello.
+  - **Discreto vuol dire contorno e non riempimento**, corpo piccolo, centrato sotto il titolo: è
+    un comando di servizio e non deve competere col testo della nota.
+  - ⚠️ **L'opacità è 0,88 e non 0,8**, ed è una misura: sul tema chiaro a 0,8 il contrasto era
+    **4,55:1**, cioè passava l'AA con un margine di due centesimi. A 0,88 sta a **5,53:1** in
+    chiaro e **5,75:1** in scuro.
+
 ### ⚠️ Trappole
 
 - ⚠️ **Lo scroll vive nel corpo della modale, clippato dal `border-radius`**, così la barra non
