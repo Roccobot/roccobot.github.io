@@ -60,7 +60,7 @@ riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso
 
 ⚠️ **Un hook `PreCompact`** (in `.claude/settings.json` dei due repo) scatta a ogni
 compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
-e non va creduto tale**: non gira quando la sessione monta i due repo affiancati, e la' resta
+e non va creduto tale**: non gira quando la sessione monta i due repo affiancati, e là resta
 solo la regola.
 
 ## ⚠️ Regola n. 1: l'handoff non è una seconda fonte di verità

@@ -121,6 +121,17 @@ ACCENTATE = {
     "modalita": "modalità", "specificita": "specificità", "luminosita": "luminosità",
     "opacita": "opacità", "tonalita": "tonalità", "profondita": "profondità",
     "pieta": "pietà",
+    # Aggiunte il 2026-08-02, dopo un `a se'` finito nel corpo di una PR: erano proprio le
+    # parole che l'errore preferisce, e non c'erano. Le quattro corte (se, ne, si, la) hanno un
+    # rischio di falso positivo che le altre non hanno, perche' possono chiudere una citazione
+    # ('rispondi si'): se un giorno il verificatore inciampa li', si riscrive la frase, non si
+    # toglie la parola dall'elenco.
+    "se": "sé", "ne": "né", "si": "sì", "la": "là", "li": "lì",
+    "velocita": "velocità", "capacita": "capacità", "necessita": "necessità",
+    "unita": "unità", "eta": "età", "complessita": "complessità",
+    "densita": "densità", "intensita": "intensità", "visibilita": "visibilità",
+    "affidabilita": "affidabilità", "compatibilita": "compatibilità",
+    "stabilita": "stabilità", "accessibilita": "accessibilità",
 }
 RE_ACCENTATE = re.compile(r"\b(" + "|".join(ACCENTATE) + r")'(?=[\s,.;:)!?]|$)", re.I)
 
