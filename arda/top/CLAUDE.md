@@ -1452,13 +1452,20 @@ scelta** o **come il sito rende i dati** va in Note editoriali.
 ### 🔗 Permalink di note e risorse
 
 **Com'è fatto** (dalla v14.92). Ogni nota, la nota sulla traduzione, le due mappe e la modale stessa hanno un
-**indirizzo proprio** in forma **bare**, come i permalink delle categorie: `?mezzelfi`,
-`?glorfindel`, `?celeborn`, `?badge`, `?traduzione`, `?viaggio`, `?suddivisioni`, `?risorse`.
+**indirizzo proprio** in forma **bare**, come i permalink delle categorie: `?res`, `?glorfindel`,
+`?peredhil`, `?celeborn`, `?badge`, `?ita`, `?eldar`, `?quendi`.
 Aprire un overlay lo scrive nella barra degli indirizzi, chiuderlo restituisce l'URL della vista;
 arrivando da un link l'overlay si apre **sopra la pagina normale**, quindi chiudendolo si resta
 sul sito. La tabella **`SHARE_ROUTES`** è l'unica fonte, e si popola da sé dal campo `slug` delle
 note e da `RES_MAPS`: rendere condivisibile una nota nuova non chiede altro che quel campo.
 
+- ⚠️⚠️ **Lo slug è UNO SOLO per nota, quindi la parola dev'essere UNIVERSALE** (istruzione
+  dell'utente, 2026-08-09): nomi propri (`glorfindel`, `celeborn`), termini elfici (`peredhil`,
+  `eldar`, `quendi`) o abbreviazioni internazionali (`res`, `ita`, `badge`). ⚠️ **Mai una parola
+  di una lingua sola**: un `?mezzelfi` su un link che serve anche i lettori inglesi sarebbe un
+  indirizzo che dichiara una lingua che il contenuto non ha, e un `?half-elven` avrebbe lo stesso
+  difetto rovesciato. La prima tornata li aveva italiani (`?risorse`, `?mezzelfi`, `?traduzione`,
+  `?viaggio`, `?suddivisioni`) ed è stata corretta il giorno stesso.
 - **Perché bare e non `?note=`**: è la convenzione già in casa, e le due famiglie **non possono
   collidere**, perché i token delle note sono parole e i bitmask delle categorie sono di sole
   cifre. Un token sconosciuto cade nel ramo che ignora la query, cioè apre la vista di default.
