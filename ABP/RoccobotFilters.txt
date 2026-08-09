@@ -300,7 +300,7 @@ corriere.it##[class*="bck-adblock"] > .adblock__container
 ! sia statico sia dinamico, ha className "textads banner-ads banner_ads ad-unit afs_ads
 ! ad-zone ad-space adsbox": basta una di queste classi per nasconderlo. Sono le classi
 ! VERE del sito (sostituiscono le .test-ad-unit inesistenti e il selettore composto
-! .adbox.banner_ads.adsbox che non combaciava). Domini espliciti perche' il wildcard
+! .adbox.banner_ads.adsbox che non combaciava). Domini espliciti perché il wildcard
 ! d3ward.* non sempre applica i cosmetici su mobile.
 d3ward.com,adblock.turtlecute.org,d3ward.*##.textads, .banner-ads, .banner_ads, .ad-unit, .afs_ads, .ad-zone, .ad-space, .adsbox
 data.mistat.india.xiaomi.com
@@ -544,13 +544,13 @@ yogablogfit.com##.qc-cmp2-container
 
 ! --- Copertura completa del test adblock Turtlecute/d3ward (filtraggio di CONTENUTO) ---
 ! Le voci "nude" sparse sopra agiscono come regole DNS (telefono con AdGuard DNS);
-! queste ||...^ bloccano anche col solo filtraggio di contenuto, cioe' sul desktop
+! queste ||...^ bloccano anche col solo filtraggio di contenuto, cioè sul desktop
 ! dove non usi AdGuard DNS. Coprono l'intera host-list del test (apici "puri" da
 ! tracker collassati al dominio padre; domini condivisi (S3, social, OEM) col
 ! solo sottodominio, per non bloccare il sito legittimo).
 ! Fonte: github.com/Turtlecute33/toolz -> src/d3host.adblock (ex d3ward).
 ! Hotjar (||hotjar.com^), Yandex Metrica (||metrika.yandex.ru^) e Google Analytics
-! (||google-analytics.com^) sono gia' coperti sopra.
+! (||google-analytics.com^) sono già coperti sopra.
 
 ! Ads
 ||adtago.s3.amazonaws.com^

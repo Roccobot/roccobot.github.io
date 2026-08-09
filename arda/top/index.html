@@ -223,8 +223,8 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
   letter-spacing: 0.1em;
   text-transform: uppercase;
   /* Anti-jitter (grid-stack): faccia visibile e span di misura sovrapposti in
-     un'unica cella; il measure e' fisso su 'EN' (caso peggiore in Cinzel, ci sta
-     anche 'IT'), cosi' la larghezza non cambia al cambio lingua. Testo centrato. */
+     un'unica cella; il measure è fisso su 'EN' (caso peggiore in Cinzel, ci sta
+     anche 'IT'), così la larghezza non cambia al cambio lingua. Testo centrato. */
   display: inline-grid;
   place-items: center;
 }
@@ -259,8 +259,8 @@ h1 {
   text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
   /* Fill ORO (tema scuro, scelta utente): gradiente champagne caldo -> oro medio
      (Variante A). Solo la tinta del titolo torna calda; testi e accenti restano
-     neutralizzati. Il tema chiaro mantiene il fill teal (regola light piu' sotto).
-     AA testo grande verificato (punto piu' scuro #a67c34 su #262626 >= 3:1). */
+     neutralizzati. Il tema chiaro mantiene il fill teal (regola light più sotto).
+     AA testo grande verificato (punto più scuro #a67c34 su #262626 >= 3:1). */
   background:linear-gradient(180deg,#efe0b8 0%,#a67c34 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   /* Con background-clip:text il gradiente riempie il testo solo entro il box di
@@ -503,23 +503,23 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    sulla prima riga, .bp-break la manda a capo per intero e nasconde il '|'. */
 .bp-break .bp-sep { display:none; }
 .bp-break .bp-b { display:block; }
-/* Separatore bipartito: barra verticale DISEGNATA (non il glifo '|' del font, cosi'
-   e' piu' spessa e con altezza controllata, e resta identica anche col fallback
+/* Separatore bipartito: barra verticale DISEGNATA (non il glifo '|' del font, così
+   è più spessa e con altezza controllata, e resta identica anche col fallback
    serif quando i Google Fonts sono bloccati). Altezza = cap-height + 2px@DPR1.5
-   (1.33px CSS): esattamente 2px piu' alta di una lettera maiuscola su entrambe le
-   righe (font-size diversi) grazie all'unita' 'cap'. Il translateY la centra sulla
+   (1.33px CSS): esattamente 2px più alta di una lettera maiuscola su entrambe le
+   righe (font-size diversi) grazie all'unità 'cap'. Il translateY la centra sulla
    banda cap (overshoot ~1px/lato). Il colore eredita da currentColor della riga. */
 .bp-bar {
   display:inline-block;
   width:1px;                    /* larghezza FISSA intera (non 0.1em): con una
                                    larghezza frazionaria (em) la barra cadeva a
                                    sub-pixel diversi da card a card e l'antialiasing
-                                   la rendeva ora piu' spessa ora piu' sottile. 1px
+                                   la rendeva ora più spessa ora più sottile. 1px
                                    intero viene agganciato netto alla griglia device
                                    a ogni DPR: spessore identico ovunque (deviazione
                                    misurata 0 a DPR 1/1.5/2), su entrambe le righe, e
-                                   piu' sottile (2px su mobile @2x diventavano 4px). */
-  height:0.654em;               /* fallback se l'unita' 'cap' non e' supportata */
+                                   più sottile (2px su mobile @2x diventavano 4px). */
+  height:0.654em;               /* fallback se l'unità 'cap' non è supportata */
   height:calc(1cap + 1.33px);
   margin:0 0.36em;
   background:currentColor;
@@ -539,7 +539,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 }
 /* Micro-correzione ottica: solo i due glifi parentesi '(' ')' delle etichette,
    alzati di 0.03em (contenuto e testo esterno invariati). Il wrapper .tpwrap tiene
-   testo+parentesi in flusso inline, cosi' lo spazio 'Elfo (' resta preservato. */
+   testo+parentesi in flusso inline, così lo spazio 'Elfo (' resta preservato. */
 .type-badge .tpwrap { display:inline; }
 .type-badge .tparen { display:inline-block; transform:translateY(-0.03em); }
 /* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
@@ -567,7 +567,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    rispetto alla base della riga nome (le maiuscole del Cinzel siedono in alto,
    percio' i badge centrati sul flex cadono percettivamente bassi). Solo
    trasformazione visiva: non tocca icone, nome, flusso o a-capo. Su <=480px
-   il nudge lo da gia' il translateY di .rank-tipi. */
+   il nudge lo da già il translateY di .rank-tipi. */
 @media (min-width:481px) {
   .rank-name .type-badge { transform:translateY(-2px); }
 }
@@ -578,7 +578,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 /* Icone dei badge SULLE CARD: altezza UNIFORME (0.92em), larghezza AUTOMATICA
    proporzionale all'aspetto nativo (regola dell'utente: canvas 256px in verticale
    scalato a ~22px, larghezza di conseguenza; le icone si usano as-is, senza
-   ritaglio). Scoped a .rank-name .rank-flags cosi' scavalca le classi di larghezza
+   ritaglio). Scoped a .rank-name .rank-flags così scavalca le classi di larghezza
    per-icona SOLO sulle card: la LEGENDA (stesse classi .si-*) resta intatta. */
 .rank-name .rank-flags .status-icon { width:auto; height:0.92em; }
 /* Partenza per l'Ovest presunta (dedotta, non attestata): icona semitrasparente */
@@ -803,8 +803,8 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 /* Famiglia speciale 'custom' (Modifica mirata): tiene insieme le voci con colore
    individuale. Le due terne per-tema arrivano INLINE dalla card
    (style="--ccdark:R,G,B;--cclight:R,G,B" da p.cardrgb {dark,light}); le regole
-   iniettate .cc-custom mappano --ccrgb sulla terna del tema. Questa e' solo un
-   fallback neutro se mancassero. NON e' modificabile a blocchi (voci isolate). */
+   iniettate .cc-custom mappano --ccrgb sulla terna del tema. Questa è solo un
+   fallback neutro se mancassero. NON è modificabile a blocchi (voci isolate). */
 .cc-custom{--ccrgb:144,152,168}
 html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
 html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
@@ -950,7 +950,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
   /* Fondo caldo con la SATURAZIONE DIMEZZATA (v13.98, richiesta dell'utente: 'può
      restare un vago sentore di tinta gialla'): era rgba(42,41,36) = HSL 50deg 7.7%
-     15.3%, ora 3.85% di saturazione a luminosita' identica. */
+     15.3%, ora 3.85% di saturazione a luminosità identica. */
   background:rgba(41,40,38,0.94); border:1px solid rgba(136,133,126,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow:0 12px 48px rgba(0,0,0,0.5);
@@ -968,7 +968,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 #ctrl-panel:focus, #ctrl-panel:focus-visible { outline:none; }
 /* Il FAB (tasto del Pannello, un <button>): cliccandolo resta focusato e alla prima
    pressione di un tasto il browser mostra il proprio anello di focus (il bordo blu
-   attorno al tondo). Come per il Pannello lo togliamo (e' rumore, non un vero aiuto
+   attorno al tondo). Come per il Pannello lo togliamo (è rumore, non un vero aiuto
    di navigazione): il Pannello resta apribile da tastiera anche col tasto 'P'. */
 #ctrl-fab:focus, #ctrl-fab:focus-visible { outline:none; }
 .ctrl-panel.open { opacity:1; visibility:visible; transform:translateY(0) scale(1); }
@@ -986,15 +986,15 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 }
 @media (min-width:769px) {
   /* su desktop lascia crescere il pannello fino allo spazio disponibile:
-     scorre solo se non ci sta tutto in altezza (barra di scorrimento gia'
+     scorre solo se non ci sta tutto in altezza (barra di scorrimento già
      nascosta a livello globale, vedi sopra) */
   .ctrl-panel { max-height:calc(100vh - 8rem); }
 }
-/* DESKTOP: il Pannello e' SEMPRE a due colonne (Categorie a sinistra, Legenda
+/* DESKTOP: il Pannello è SEMPRE a due colonne (Categorie a sinistra, Legenda
    a destra), a qualsiasi dimensione della finestra sopra la soglia mobile
    (>768px); sotto i 768px diventa la bottom-sheet verticale. La nota sui nomi
    sta in fondo alla colonna sinistra (riga 3, allineata al fondo): riempie lo
-   spazio sotto le Categorie. Se il Pannello e' piu' alto della finestra,
+   spazio sotto le Categorie. Se il Pannello è più alto della finestra,
    scorre (max-height + overflow). */
 @media (min-width:769px) {
   #ctrl-panel { display:grid; grid-template-columns:auto auto; column-gap:2rem; align-items:start; }
@@ -1002,7 +1002,7 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      Allineamenti ottici a elementi esistenti della colonna destra:
      - l'interruttore tema ha il bordo superiore allineato al top del testo
        'Legenda iconografie' (margin-top calibrato per ~1-2px di overshoot);
-     - la nota e' alzata di 5.45px (margin-bottom) cosi' la sua linea di base
+     - la nota è alzata di 5.45px (margin-bottom) così la sua linea di base
        coincide con quella dell'ultima riga di legenda. Valore misurato sulla
        baseline reale (inline-block vertical-align:baseline in contesto
        inline), non sul flex-row che falsava il rilievo.
@@ -1299,7 +1299,7 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    inline-flex così l'icona è centrata in verticale dal flexbox come la
    gemella, non dalla baseline del testo (che la spostava in basso di
    qualche pixel). Spaziature ricavate per matching visivo dal mockup
-   dell'utente (la 2a icona piu' vicina al testo che la precede). Il gap
+   dell'utente (la 2a icona più vicina al testo che la precede). Il gap
    interno differisce tra corona e nave perché i due PNG hanno whitespace
    interno diverso: serve un gap CSS minore per la nave a parità di resa. */
 .ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.12em; }
@@ -1491,7 +1491,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
      in basso */
   .ctrl-toolbar { display:none; }
-  /* piu' spazio tra l'ultima categoria e la Legenda */
+  /* più spazio tra l'ultima categoria e la Legenda */
   /* Mobile: poco stacco dopo le Categorie, così tag e legenda salgono
    (troppo vuoto segnalato dall'utente; su desktop comanda il layout a
    colonne, che azzera questo margine con margin:...0). */
@@ -1593,7 +1593,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 .genere-svg--f { width:.603em; height:.844em; transform:translateY(.15em); }
 /* Risalita ottica del blocco icone della riga nome su DESKTOP (corona, anelli,
    simboli di genere): il gruppo cadeva troppo in basso rispetto alle maiuscole,
-   come gia' accadeva su mobile (poi risolto). Qui si usa position:relative+top
+   come già accadeva su mobile (poi risolto). Qui si usa position:relative+top
    (non transform) per non entrare in conflitto con le transform per-icona di
    anelli e genere, che restano e mantengono l'allineamento interno. Solo
    >480px: su <=480px ci pensa il translateY del blocco .rank-flags. */
@@ -1920,12 +1920,12 @@ html[data-theme="light"] .fab-modal-confirm.is-pending:hover { background:rgba(1
 .fab-modal-confirm .fmc-main { display:block; }
 .fab-modal-confirm .fmc-sub { display:block;font-family:'EB Garamond',serif;font-weight:normal;font-size:0.64rem;letter-spacing:0.01em;text-transform:none;opacity:0.72;margin-top:0.15rem;line-height:1.2; }
 /* Modale di conferma scarto riordino: domanda centrata, pulsanti a due righe
-   piu' alti, No/Si in evidenza (grassetto, corpo maggiore) e sotto-riga tra
-   parentesi piu' piccola (eredita .fmc-sub). Scoped: non tocca le altre modali. */
+   più alti, No/Si in evidenza (grassetto, corpo maggiore) e sotto-riga tra
+   parentesi più piccola (eredita .fmc-sub). Scoped: non tocca le altre modali. */
 .fmb-discard .fab-modal-charname { text-align:center; }
 .fmb-discard .fab-modal-confirm { padding:0.72rem 0; }
 .fmb-discard .fmc-main { font-size:0.95rem; font-weight:700; }
-/* Modale Info (nota traduzioni, solo IT): box piu' largo e scrollabile, testo a sinistra. */
+/* Modale Info (nota traduzioni, solo IT): box più largo e scrollabile, testo a sinistra. */
 /* Nota 'Traduzione italiana': stessa larghezza e dimensione-testo del viewer
    delle altre note (.note-viewer-box), per uniformità (era 440px e 0.82rem). */
 .info-note-box { text-align:left; line-height:1.55; }
@@ -2070,15 +2070,15 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      l'allineamento del caso in-linea (vertical-align:middle è indipendente
      dall'interlinea). Giova anche ai nomi su due righe. */
   .rank-name { display:block; line-height:1.5; }
-  /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel e' tutto
+  /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel è tutto
      maiuscolo e siede in alto nella line-box, percio' le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
      alto l'intero blocco (icone + simbolo di genere) di .07em: gli allineamenti
-     interni restano intatti (anelli e genere hanno gia' i propri nudge). */
+     interni restano intatti (anelli e genere hanno già i propri nudge). */
   .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0; margin-right:0.4em; vertical-align:middle; transform:translateY(-0.07em); }
   .rank-name > .rank-flags:empty { display:none; }
   /* Gap nome->(icone o etichette) come margine di coda del nome: presente
-     anche quando .rank-flags e' vuoto (creature senza icone), e mai
+     anche quando .rank-flags è vuoto (creature senza icone), e mai
      indentante quando le etichette vanno a capo. */
   .rank-name > .rank-name-text { margin-right:0.32em; }
   .rank-name > .rank-flags .status-icon { margin-left:0; }
@@ -2239,7 +2239,7 @@ html[data-theme="light"] body {
   }
 /* Peso testo UNIFORME nei due temi (400), scelta utente: prima il tema chiaro
    usava font-weight:500 su body/p/intro/schede per 'ingrassare' il testo, ma il
-   peso maggiore era piu' largo e cambiava gli a-capo (l'intro e le schede
+   peso maggiore era più largo e cambiava gli a-capo (l'intro e le schede
    andavano a capo diversamente al cambio tema). Con 400 ovunque la resa e gli
    a-capo sono identici; il contrasto in chiaro resta ampiamente AA. */
 
@@ -2623,7 +2623,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   try { if (localStorage.getItem('arda-zoom-big') === '1') document.documentElement.classList.add('zoom-big'); } catch (e) {}
 })();
 // Animazione 'piega' del glifo di chiusura del pannello: usa la proprietà CSS
-// 'd' su <path> (SVG 2). E' valida, ma il validatore W3C Nu non la riconosce
+// 'd' su <path> (SVG 2). È valida, ma il validatore W3C Nu non la riconosce
 // (4 falsi positivi 'Property d doesn't exist'): perciò questo blocco è
 // iniettato via JS invece di stare nel <style> statico, così il file resta
 // W3C-pulito. Senza JS resta il chevron statico dell'attributo 'd' dell'SVG.
@@ -2755,11 +2755,11 @@ var FX_UNI = { spot:true, pat:true };
 var FX_PTR = { hov:true };
 // ⚠️ Valori ammessi (e loro etichette) delle manopole a SCELTE. Vivono QUI, sopra i
 // default, e NON dentro FX_KNOBS: `var SITE_FLAGS = normSiteFlags(...)` gira durante
-// il parsing dello script, quando FX_KNOBS - che sta un migliaio di righe piu' in
-// basso - e' ancora `undefined`. Leggerlo da lì fa un TypeError che interrompe il
+// il parsing dello script, quando FX_KNOBS - che sta un migliaio di righe più in
+// basso - è ancora `undefined`. Leggerlo da lì fa un TypeError che interrompe il
 // caricamento e lascia la classifica VUOTA (accaduto in produzione il 2026-07-28: il
-// difetto era invisibile finche' `pat` non era nel file dati, perche' con un valore
-// `undefined` la funzione usciova prima di toccare FX_KNOBS; si e' manifestato al
+// difetto era invisibile finché `pat` non era nel file dati, perché con un valore
+// `undefined` la funzione usciova prima di toccare FX_KNOBS; si è manifestato al
 // primo salvataggio dal pannello). `FX_KNOBS` costruisce le sue `opts` da qui con
 // `fxSelOpts`, così la fonte resta una sola.
 var FX_SEL = {
@@ -2808,13 +2808,13 @@ var SITE_FLAGS_DEFAULT = {
   // regole statiche (alpha 0.34 scuro / derivata ×0.38 in chiaro; start 38%).
   vig:{ on:true, int:0.34, start:38 },
   // pat (v14.43, richiesta dell'utente): trama elfica sul fondo della pagina, in
-  // sovrimpressione. ⚠️ Default SPENTO - e' l'unico effetto che nasce spento, perche'
+  // sovrimpressione. ⚠️ Default SPENTO - è l'unico effetto che nasce spento, perché
   // aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello quando
-  // l'utente decide. `mot` e' una manopola a SCELTE (vedi il tipo `sel`): sei motivi,
+  // l'utente decide. `mot` è una manopola a SCELTE (vedi il tipo `sel`): sei motivi,
   // dalle stelle di Varda alle due reti intrecciate (vedi PAT_TILE).
-  // ⚠️ Dalla v14.65 NON esiste piu' la scelta 'Dove' (`area`): la trama sta SEMPRE
+  // ⚠️ Dalla v14.65 NON esiste più la scelta 'Dove' (`area`): la trama sta SEMPRE
   // fuori dalla colonna delle schede e fuori dalla testata, quindi la sfumatura vale
-  // sempre e un eventuale `area` residuo nei dati salvati e' ignorato.
+  // sempre e un eventuale `area` residuo nei dati salvati è ignorato.
   pat:{ on:false, mot:'stars', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
   // press: quali parti incidere, name = Nome (v12.53), lab = etichette tipo
@@ -2865,12 +2865,12 @@ var FX_RANGE = {
          aamp_d:[6,60], aamp_l:[6,60], aint_d:[0.05,0.6], aint_l:[0.05,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
   vig:{ int:[0.05,0.6], start:[20,70] },
-  // ⚠️ I tetti dell'opacita' sono stati ALZATI nella v14.65 (0.10/0.09 -> 0.34/0.30):
-  // il vincolo vecchio nasceva dalla modalita' 'Dappertutto', in cui la trama passava
-  // DENTRO le card semitrasparenti e finiva sotto i testi. Tolta quella modalita', la
-  // trama vive solo nei margini laterali, dove non c'e' testo di contenuto. Restano
+  // ⚠️ I tetti dell'opacità sono stati ALZATI nella v14.65 (0.10/0.09 -> 0.34/0.30):
+  // il vincolo vecchio nasceva dalla modalità 'Dappertutto', in cui la trama passava
+  // DENTRO le card semitrasparenti e finiva sotto i testi. Tolta quella modalità, la
+  // trama vive solo nei margini laterali, dove non c'è testo di contenuto. Restano
   // sopra di lei i soli elementi FISSI (roccobot.me, cambio lingua, tasti salto, FAB):
-  // il tetto e' quello verificato a calcolo su di loro (vedi la nota in CLAUDE.md).
+  // il tetto è quello verificato a calcolo su di loro (vedi la nota in CLAUDE.md).
   pat:{ op_d:[0.02,0.34], op_l:[0.02,0.30], sc:[0.6,1.8], fade:[0,260] },
   podium:{ int_d:[0.6,1.6], int_l:[0.6,1.6], lum_d:[0.6,1.4], lum_l:[0.6,1.4],
            sat_d:[0.3,1.5], sat_l:[0.3,1.5], top_d:[0,1], top_l:[0,1],
@@ -2914,11 +2914,11 @@ function fxClamp(k, p, v){
   return r ? Math.min(r[1], Math.max(r[0], v)) : v;
 }
 // Manopole diventate PER TEMA nella v12.76: mappa chiave nuova → [chiave vecchia,
-// fattore]. Serve a non perdere le config gia' salvate: chi aveva `amp:60` deve
+// fattore]. Serve a non perdere le config già salvate: chi aveva `amp:60` deve
 // ritrovare 60 in entrambi i temi, non il default 34. I fattori dei _l sono quelli
 // che fino alla v12.75 le formule applicavano fisse al tema chiaro (int ×0.8,
-// oint ×0.77, aura ×0.75), cosi' la resa dopo la migrazione e' IDENTICA a prima.
-// Il lato DESTRO si semina dal sinistro: e' spento per default (`ron:false`), ma
+// oint ×0.77, aura ×0.75), così la resa dopo la migrazione è IDENTICA a prima.
+// Il lato DESTRO si semina dal sinistro: è spento per default (`ron:false`), ma
 // accendendolo si ottiene subito una resa simmetrica invece di valori casuali.
 var FX_LEGACY = {
   glow: {
@@ -2958,7 +2958,7 @@ function fxMigratePos(obj){
   return obj;
 }
 // Se la config salvata porta la chiave VECCHIA e non quella nuova, la traduce.
-// Non tocca nient'altro: una config gia' nel formato nuovo passa indenne.
+// Non tocca nient'altro: una config già nel formato nuovo passa indenne.
 // ⚠️ ORDINE: prima si traducono le chiavi, POI si ricavano i booleani di
 // posizione (che leggono anche i valori appena tradotti). Invertendolo, la pulizia
 // dell'alone a zero girerebbe su chiavi non ancora esistenti e non farebbe nulla.
@@ -3151,7 +3151,7 @@ function fxGlowInner(cfg, light, cc){
   return '0 0 ' + tight + 'px rgba(' + cc + ',' + fxR2(i) + '),' +
          '0 0 ' + amp + 'px ' + spread + 'px rgba(' + cc + ',' + fxR2(i * (light ? 0.52 : 0.58)) + ')';
 }
-// Bagliore INTERNO del lato DESTRO (dalla v12.76). A destra non c'e' una striscia
+// Bagliore INTERNO del lato DESTRO (dalla v12.76). A destra non c'è una striscia
 // da cui far partire il bagliore, quindi si usano ombre `inset` della card stessa:
 // entrano dal bordo destro e le taglia il border-radius della card, senza aggiungere
 // nodi né toccare il layout. I due pseudo-elementi della card sono già occupati
@@ -3844,10 +3844,10 @@ var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it'
 // PRIMA di nasconderla e compensarla con padding-right sul body, così la
 // larghezza utile del contenuto resta identica e le card non si muovono.
 // Guardia anti-doppio-lock: se già bloccato non rimisurare (sarebbe 0 -> shift).
-// Contenuto di sfondo INERTE quando un modale e' aperto: header, lista e footer
-// diventano `inert` + `aria-hidden` cosi' il contenuto velato dal backdrop non e'
-// focusabile ne' letto dagli screen reader (focus-trap, best practice ARIA), e
-// axe non ne valuta piu' il contrasto (i testi tenui delle card sotto il velo
+// Contenuto di sfondo INERTE quando un modale è aperto: header, lista e footer
+// diventano `inert` + `aria-hidden` così il contenuto velato dal backdrop non è
+// focusabile né letto dagli screen reader (focus-trap, best practice ARIA), e
+// axe non ne valuta più il contrasto (i testi tenui delle card sotto il velo
 // scendevano sotto 4.5:1 su fondo-card chiaro: falso positivo da contenuto velato).
 // Il modale (fratello di questi) resta attivo. Agganciato a lockPageScroll, il
 // choke point condiviso da tutti i modali.
@@ -4131,7 +4131,7 @@ document.addEventListener('keydown', function(e) {
 // Guardie comuni: niente modificatori, niente campi di testo, niente
 // admin/riordino. In piu, SOLO per P: nessun overlay aperto (li il FAB non
 // sarebbe comunque cliccabile). L e T restano attivi con una scheda aperta: L
-// per ricaricarla nella nuova lingua, T perche' il tema si ricolora via CSS.
+// per ricaricarla nella nuova lingua, T perché il tema si ricolora via CSS.
 document.addEventListener('keydown', function(e) {
   var k = e.key.toLowerCase();
   if (k !== 'p' && k !== 'l' && k !== 't' && k !== 'z') return;
@@ -4148,7 +4148,7 @@ document.addEventListener('keydown', function(e) {
   if (k === 't') {
     e.preventDefault();
     toggleTheme();
-    refreshControlPanel(); // aggiorna lo stato del tasto tema se il Pannello e' aperto
+    refreshControlPanel(); // aggiorna lo stato del tasto tema se il Pannello è aperto
     return;
   }
   if (k === 'l') {
@@ -4505,7 +4505,7 @@ function validCardRgb(s) { return cardTriplet(s) !== null; }
 //  - OGGETTO {dark,light} (nuovo): due hex/terne, uno per tema;
 //  - STRINGA singola (legacy): stesso colore in entrambi i temi.
 // Ritorna {dark,light} come TERNE 'R,G,B' (pronte per --ccdark/--cclight), o null
-// se non c'e' un colore individuale valido. Un lato mancante ripiega sull'altro.
+// se non c'è un colore individuale valido. Un lato mancante ripiega sull'altro.
 function customPair(p) {
   if (!p) return null;
   var v = p.cardrgb;
@@ -4609,8 +4609,8 @@ var BADGE_KEY = {
   // (flag ON) la costruisce a parte buildLegend.
   istari:     "<img class=\"status-icon si-istari\" src=\"icons/Grigio.webp\" title=\"%L%\" alt=\"%L%\">"
 };
-// Istari in lista: una o piu' icone per mago (colore dell'ordine/veste).
-// Gandalf e' l'unico con due icone (Grigio poi Bianco): fu sia il Grigio
+// Istari in lista: una o più icone per mago (colore dell'ordine/veste).
+// Gandalf è l'unico con due icone (Grigio poi Bianco): fu sia il Grigio
 // sia il Bianco.
 var ISTARI_ICON = {
   'Gandalf': ['Grigio.webp','Bianco.webp'], 'Saruman': ['Bianco.webp'], 'Radagast': ['Bruno.webp'],
@@ -5079,7 +5079,7 @@ function renderList() {
       }
       return '<span class="type-badge ' + segCls + '">' + displaySeg + '</span>';
     }).join('') : '';
-    // Colore del bordino sinistro = contorno dell'etichetta tipo; con piu'
+    // Colore del bordino sinistro = contorno dell'etichetta tipo; con più
     // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
     // Nessuna etichetta -> grigio generico.
     // Eccezione 'prima etichetta' (scelta dell'utente): se la PRIMA etichetta è
@@ -5168,7 +5168,7 @@ function renderList() {
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
-      // sul layout), colore dal contorno dell'etichetta tipo (2a se piu' d'una).
+      // sul layout), colore dal contorno dell'etichetta tipo (2a se più d'una).
       // Spessore 4px normali / 8px podio via CSS (.vis-top .rank-strip).
       '<span class="rank-strip" aria-hidden="true"></span>' + apoPill +
       '<span class="rank-num">' + visN + '</span>' +
@@ -5215,7 +5215,7 @@ function renderList() {
 }
 
 /* Compattazione mirata della riga nome. Conta le righe di testo occupate da
-   nome + icone + etichette; se sono piu' di una prova la classe .name-tight
+   nome + icone + etichette; se sono più di una prova la classe .name-tight
    (spaziature strette, vedi CSS) e la tiene SOLO se fa guadagnare una riga
    intera. Dipende da viewport e font: si ricalcola a ogni render, al resize
    e al caricamento dei font. Tre sole passate di layout (misura tutti,
@@ -7048,10 +7048,10 @@ function buildControlPanel() {
   scrollHint.setAttribute('aria-hidden', 'true');
   scrollHint.innerHTML = '<span class="csh-tail"></span><span class="csh-dot"></span>';
   document.body.appendChild(scrollHint);
-  // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet e'
-  // gia' in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
+  // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet è
+  // già in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
   // punto la segue e, oltre la soglia, la chiude; sotto soglia rientra. Se non
-  // si e' in cima, il gesto scorre normalmente il contenuto. La barretta in
+  // si è in cima, il gesto scorre normalmente il contenuto. La barretta in
   // alto resta solo come indicatore. Attaccato una volta sola (il pannello
   // persiste; si rigenera solo l'innerHTML).
   (function(){
@@ -8241,7 +8241,7 @@ function openAdminGate() {
 // i 5 effetti grafici. Salva `siteFlags` in dati.js via il Worker, SENZA bumpare
 // la versione (vedi saveSiteFlagsToRepo).
 // keepVersion:true (richiesta utente, v12.27): accendere/spegnere un effetto non
-// e' una modifica di contenuto, quindi NON bumpa datiVersion (come i salvataggi
+// è una modifica di contenuto, quindi NON bumpa datiVersion (come i salvataggi
 // colore). Il controllo di freschezza resta affidabile: si basa sul confronto dei
 // ref git, non sul numero.
 function saveSiteFlagsToRepo(msg){ return doCommit(msg, dati, null, true, null, SITE_FLAGS); }
@@ -8290,7 +8290,7 @@ var SITE_FLAG_ITEMS = [
 var FX_KNOBS = {
   // ⚠️ Le voci del bagliore sono organizzate in SEZIONI (v12.76, struttura e testi
   // dell'utente): erano un elenco piatto di otto voci in cui non si capiva quale
-  // sfumatura riguardasse quale parte. Una voce con `sec` e' un'INTESTAZIONE, non
+  // sfumatura riguardasse quale parte. Una voce con `sec` è un'INTESTAZIONE, non
   // una manopola. Le manopole numeriche portano `th` ('d'/'l'), quindi la
   // sotto-modale mostra le tab Chiaro/Scuro e ogni tab filtra le proprie.
   glow: [

@@ -51,7 +51,7 @@
   // Forza i parametri preferiti a ogni NUOVA ricerca o CAMBIO TAB, differenziati per tab.
   // La guardia "tab|query" in sessionStorage evita sia il loop di reload sia la
   // sovrascrittura delle scelte fatte via Filtri (stessa query+tab => non riforza).
-  // E' solo navigazione (location.replace): nessuna patch di fetch/XHR/history.
+  // È solo navigazione (location.replace): nessuna patch di fetch/XHR/history.
   (function forzaParametri() {
     if (!FORZA_PARAMETRI) return;
     const PARAM_WEB = { theme: '-1', l: 'it', b: '1', t: 'web', llm: '0', s: '0', hc: '0', hti: '0' };
@@ -69,8 +69,8 @@
       nsp.set('q', q);
       return u.origin + u.pathname + '?' + nsp.toString();
     }
-    // A ogni CARICAMENTO/REFRESH: se l'URL non e' ai parametri di default, li ripristina.
-    // Cosi' il refresh riporta sempre ai default; le modifiche via Filtri valgono finche'
+    // A ogni CARICAMENTO/REFRESH: se l'URL non è ai parametri di default, li ripristina.
+    // Così il refresh riporta sempre ai default; le modifiche via Filtri valgono finché
     // non si ricarica. Anti-loop a tempo: non riforza a raffica (se Qwant rialterasse i
     // parametri dopo il replace).
     (function alCaricamento() {
@@ -149,7 +149,7 @@
     if (NASCONDI_FASCIA_IMMAGINI) regole.push(
       // Fascia "Immagini <query>" (anteprime inline) nella SERP web: contenitore stabile
       // data-testid="sectionImages". Solo FUORI dalla tab Immagini (dove i risultati sono voluti);
-      // la tab Immagini della navbar e' un altro elemento (imagesNavItem) e non viene toccata.
+      // la tab Immagini della navbar è un altro elemento (imagesNavItem) e non viene toccata.
       'html:not(.qr-tab-images) [data-testid="sectionImages"]{display:none!important}'
     );
     if (regole.length) {
@@ -616,9 +616,9 @@
   //  MODULO 3 -- Bypass del redirect di tracking sui risultati web (SPERIMENTALE)
   // ═══════════════════════════════════════════════════════════════════════
   // Qwant instrada i clic sui risultati da fdn.qwant.com/v3/r/?u=<cifrato>: con
-  // l'anti-tracking attivo quel dominio e' bloccato → ERR_TUNNEL_CONNECTION_FAILED.
-  // Il param u= e' cifrato (non decodificabile), ma la destinazione reale e' nello
-  // STATO REACT del risultato: al pointerdown la si legge e si riscrive l'href (piu'
+  // l'anti-tracking attivo quel dominio è bloccato → ERR_TUNNEL_CONNECTION_FAILED.
+  // Il param u= è cifrato (non decodificabile), ma la destinazione reale è nello
+  // STATO REACT del risultato: al pointerdown la si legge e si riscrive l'href (più
   // la rimozione dell'attributo ping) puntando dritto al sito. ZERO chiamate di rete,
   // ZERO patch di fetch/XHR/history: solo lettura di oggetti JS e riscrittura di un href.
   // ⚠️ Agisce sulla ricerca WEB, dove i listener storicamente irritavano l'anti-bot di
@@ -660,16 +660,16 @@
       return '';
     }
     function reindirizza(a) {
-      if (!a || a.dataset.rbdr) return;   // gia' riscritto
+      if (!a || a.dataset.rbdr) return;   // già riscritto
       let f = fiberDi(a), dest = '';
       for (let c = 0; c < 24 && f && !dest; c++, f = f.return) {
         const p = f.memoizedProps;
         if (p && typeof p === 'object') dest = trovaDest(p, 0, new Set());
       }
       if (dest) { a.href = dest; a.removeAttribute('ping'); a.dataset.rbdr = '1'; }
-      // se la destinazione non e' ricavabile: nessuna modifica → clic normale (whitelist)
+      // se la destinazione non è ricavabile: nessuna modifica → clic normale (whitelist)
     }
-    // pointerdown (capture) scatta PRIMA di click/contextmenu/navigazione, cosi' l'href
+    // pointerdown (capture) scatta PRIMA di click/contextmenu/navigazione, così l'href
     // riscritto vale anche per tasto centrale e "apri in nuova scheda". Non tocca l'evento.
     document.addEventListener('pointerdown', function (e) {
       try {
@@ -677,7 +677,7 @@
         if (!t || !t.closest) return;
         const a = t.closest('a[href*="/v3/r/"], a[href*="fdn.qwant.com"]');
         if (a) reindirizza(a);
-      } catch (err) { /* mai disturbare la pagina ne' l'anti-bot */ }
+      } catch (err) { /* mai disturbare la pagina né l'anti-bot */ }
     }, true);
   })();
 })();

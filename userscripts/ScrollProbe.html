@@ -47,7 +47,7 @@ non ingrandisce la pagina: viene catturato e misurato come gli altri gesti, e ne
 si riconosce dalla colonna <code>ctrl</code> degli eventi grezzi.</p>
 <p class="nota">Ripeti con gli altri dispositivi (trackpad, mouse a rotella, mouse a
 scorrimento touch) svuotando con <b>Azzera</b> fra un dispositivo e l'altro: le soglie del
-riconoscimento si tarano su queste misure. Un esito <b>MISTO</b> su un solo gesto e' un
+riconoscimento si tarano su queste misure. Un esito <b>MISTO</b> su un solo gesto è un
 difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
 
 <div id="pad" tabindex="0"><div id="padmsg">scorri qui</div><div class="riempi"></div></div>
@@ -66,9 +66,9 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   'use strict';
 
   // ⚠️ Le soglie e le funzioni qui sotto sono la COPIA di quelle di DIVRoccobot.user.js
-  // 2.20.0 (blocco 'ROTELLA NUDA'): servono perche' la sonda dica che cosa fa il
+  // 2.20.0 (blocco 'ROTELLA NUDA'): servono perché la sonda dica che cosa fa il
   // visualizzatore davvero, non che cosa si suppone che faccia. Se quel blocco cambia,
-  // questo va aggiornato con lui, altrimenti la sonda mente. La nota e' registrata anche
+  // questo va aggiornato con lui, altrimenti la sonda mente. La nota è registrata anche
   // in userscripts/CLAUDE.md.
   var RIF_VERSIONE = '2.20.1';
   var ROTELLA_ZOOM = 'auto';       // come nello script: 'auto' | 'scorri' | 'mai'
@@ -110,7 +110,7 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   var evDeciso = null, cmdCache = 'scorre';
   function comandoGesto(e) {
     if (ROTELLA_ZOOM === 'mai') return 'scorre';
-    if (!e.deltaY) return 'niente';       // solo orizzontale: non e' un comando di zoom
+    if (!e.deltaY) return 'niente';       // solo orizzontale: non è un comando di zoom
     if (e === evDeciso) return cmdCache;
     evDeciso = e;
     var daRotella = decidiGesto(e);
@@ -118,11 +118,11 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
     return cmdCache;
   }
 
-  // ⚠️ Il listener NON puo' essere passivo: il pinch da trackpad arriva come wheel con
+  // ⚠️ Il listener NON può essere passivo: il pinch da trackpad arriva come wheel con
   // ctrlKey, e senza preventDefault il browser lo prende come zoom di PAGINA, che qui
   // ingrandiva tutto a dismisura proprio mentre la sonda misurava (segnalato dall'utente il
   // 2026-07-31). Si blocca il solo zoom di pagina: lo scorrimento nativo dentro il riquadro
-  // resta, perche' e' il riscontro visivo che il gesto e' arrivato.
+  // resta, perché è il riscontro visivo che il gesto è arrivato.
   pad.addEventListener('wheel', function (e) {
     if (e.ctrlKey) e.preventDefault();
     eventi.push({

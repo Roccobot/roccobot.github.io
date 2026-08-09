@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verifica i riferimenti incrociati fra i file di regole dei due repo.
 
-Perche' esiste: i rimandi fra file di regole si rompono in silenzio. Chi li segue
+Perché esiste: i rimandi fra file di regole si rompono in silenzio. Chi li segue
 non trova nulla, o trova la cosa sbagliata, e nessuno se ne accorge finché non
 rilegge tutto da capo. Un elenco scritto a mano sarebbe una seconda fonte di
 verità che invecchia: qui i rimandi si CALCOLANO.
@@ -57,18 +57,18 @@ RULEFILES = [
 # Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollera'
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
 # averne trovati DUE stantii nello stesso momento, entrambi con rimandi a file di regole
-# cancellati il giorno prima: fuori copertura, un rimando morto la' non lo segnalava
-# nessuno. Glob e non elenco: uno snippet nuovo entra nel controllo da se', che e' l'unico
-# modo perche' non si ripeta.
+# cancellati il giorno prima: fuori copertura, un rimando morto là non lo segnalava
+# nessuno. Glob e non elenco: uno snippet nuovo entra nel controllo da sé, che è l'unico
+# modo perché non si ripeta.
 ] + sorted(TOOLS.glob("snippets/*.md"))
 
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
 SKIP_PATHS = {
-    # file cancellati che una nota cita per dire che non esistono più: e' una categoria,
-    # non un elenco di casi. Un file che non c'e' PIU' si nomina, perche' senza il suo nome
-    # la nota che spiega la sua assenza non si puo' nemmeno scrivere. (2026-08-01: usciti
-    # dall'elenco i due file di regole cancellati il 2026-07-29, perche' l'utente ha voluto
+    # file cancellati che una nota cita per dire che non esistono più: è una categoria,
+    # non un elenco di casi. Un file che non c'è PIÙ si nomina, perché senza il suo nome
+    # la nota che spiega la sua assenza non si può nemmeno scrivere. (2026-08-01: usciti
+    # dall'elenco i due file di regole cancellati il 2026-07-29, perché l'utente ha voluto
     # via anche le note che li citavano.)
     "RoccobotOS/Da fare.txt",     # 2026-07-30, residuo vecchio: non si ricrea
 }
@@ -86,28 +86,28 @@ SKIP_SECTS = {"Titolo", "Titolo esatto"}
 # controllano come tutti gli altri.
 VOLATILE_SKIP = {"LATEST.md"}
 
-# ── Caratteri: che cosa e' ammesso, e perche' cosi' ──
+# ── Caratteri: che cosa è ammesso, e perché così ──
 # La lista dei caratteri VIETATI sarebbe infinita (gli omografi Unicode sono migliaia e
-# crescono a ogni versione), quindi si dichiara l'insieme AMMESSO, che nei nostri file e' gia'
+# crescono a ogni versione), quindi si dichiara l'insieme AMMESSO, che nei nostri file è già
 # piccolo per regola. Il criterio in tre righe:
-#   1. una LETTERA deve essere latina: qualunque lettera di un altro alfabeto e' un omografo
+#   1. una LETTERA deve essere latina: qualunque lettera di un altro alfabeto è un omografo
 #      o un errore di copia-incolla, e si vieta sempre, anche dentro il codice, dove un
-#      carattere sbagliato rompe il comando (caso reale: U+0435, la 'e' cirillica, finita in
+#      carattere sbagliato rompe il comando (caso reale: U+0435, la 'è cirillica, finita in
 #      un messaggio di commit il 2026-07-29 e invisibile a occhio).
 #   2. i caratteri tipograficamente vietati dalle nostre regole si vietano FUORI dal codice:
-#      dentro backtick o in un blocco di codice restano ammessi, perche' una regola che vieta
+#      dentro backtick o in un blocco di codice restano ammessi, perché una regola che vieta
 #      l'em-dash deve poterlo mostrare.
 #   3. i simboli (emoji, frecce, box drawing) passano per intervallo, non a uno a uno.
 # ⚠️ Corollario per chi scrive le regole: un omografo NON si incolla per nominarlo, si scrive
-# per codepoint (`U+0435`). Nel TESTO l'em-dash invece si incolla, perche' lo si riconosce a
+# per codepoint (`U+0435`). Nel TESTO l'em-dash invece si incolla, perché lo si riconosce a
 # vista; nel CODICE no, per la ragione scritta sotto.
 # ⚠️ Le chiavi si scrivono per CODEPOINT, non incollando il carattere, e per due ragioni che
 # valgono entrambe: un file che vieta l'em-dash non deve contenerne uno (l'hook pre-commit sul
-# diff lo bloccherebbe, e ha ragione), e per gli invisibili il codepoint e' l'unica forma
-# leggibile. E' la regola che questo elenco impone ai file di testo, applicata al codice.
+# diff lo bloccherebbe, e ha ragione), e per gli invisibili il codepoint è l'unica forma
+# leggibile. È la regola che questo elenco impone ai file di testo, applicata al codice.
 # Parole italiane che si scrivono con l'ACCENTO e che finiscono spesso scritte con
 # l'apostrofo (`perche'` invece di `perché`), per contagio dai commenti del codice, che in
-# questi repo sono in ASCII. La lista e' CHIUSA di proposito: una regex generica su
+# questi repo sono in ASCII. La lista è CHIUSA di proposito: una regex generica su
 # 'vocale + apostrofo' colpirebbe gli apici di chiusura delle citazioni, trasformando
 # 'comando' in 'comandò. Meglio pochi casi certi che una regola che rompe il testo.
 ACCENTATE = {
@@ -123,8 +123,8 @@ ACCENTATE = {
     "pieta": "pietà",
     # Aggiunte il 2026-08-02, dopo un `a se'` finito nel corpo di una PR: erano proprio le
     # parole che l'errore preferisce, e non c'erano. Le quattro corte (se, ne, si, la) hanno un
-    # rischio di falso positivo che le altre non hanno, perche' possono chiudere una citazione
-    # ('rispondi si'): se un giorno il verificatore inciampa li', si riscrive la frase, non si
+    # rischio di falso positivo che le altre non hanno, perché possono chiudere una citazione
+    # ('rispondi sì): se un giorno il verificatore inciampa lì, si riscrive la frase, non si
     # toglie la parola dall'elenco.
     "se": "sé", "ne": "né", "si": "sì", "la": "là", "li": "lì",
     "velocita": "velocità", "capacita": "capacità", "necessita": "necessità",
@@ -148,14 +148,14 @@ VIETATI = {
     "\ufeff": "BOM: togli",
     "\u00b4": "accento acuto isolato: usa l'apice dritto",
 }
-# Intervalli di SIMBOLI ammessi, ricavati da quelli davvero in uso nei file di regole piu' il
+# Intervalli di SIMBOLI ammessi, ricavati da quelli davvero in uso nei file di regole più il
 # blocco intero da cui vengono: punteggiatura generale, frecce, operatori matematici, tecnici,
 # box drawing, forme, simboli e dingbat, frecce supplementari, simboli misti, emoji, selettori
-# di variante, ZWJ. Un carattere fuori da questi non e' un errore per forza: e' un carattere
+# di variante, ZWJ. Un carattere fuori da questi non è un errore per forza: è un carattere
 # NUOVO, e va dichiarato qui invece di entrare di straforo.
 # ⚠️ Il blocco Letterlike Symbols (2100-214F) NON si ammette in blocco: contiene omografi
 # veri, che Unicode classifica come lettere maiuscole e che a schermo sono indistinguibili
-# dalle latine (U+212A KELVIN SIGN e' una 'K', U+212B ANGSTROM SIGN una 'A' con l'anello,
+# dalle latine (U+212A KELVIN SIGN è una 'K', U+212B ANGSTROM SIGN una 'A' con l'anello,
 # U+2126 OHM SIGN una omega). Si ammette il solo simbolo in uso, U+2139.
 SIMBOLI_OK = [
     (0x00A1, 0x00BF), (0x00D7, 0x00D7), (0x00F7, 0x00F7),
@@ -171,19 +171,19 @@ SIMBOLI_OK = [
 # scriveva, e nessuno poteva accorgersi se la skill cambiava e il riquadro restava indietro:
 # nella skill non c'era il testo, c'era un segnaposto, quindi non esistevano due stringhe da
 # confrontare. Ora il testo vive UNA volta sola nella skill, fra i marcatori qui sotto, e il
-# brief ne porta la copia fra gli stessi marcatori: il confronto e' una macchina, non un
+# brief ne porta la copia fra gli stessi marcatori: il confronto è una macchina, non un
 # ricordo. ⚠️ Chi modifica il riquadro tocca la SORGENTE e ricopia; l'ordine inverso funziona
-# ma perde la ragione per cui la sorgente e' una.
+# ma perde la ragione per cui la sorgente è una.
 MARCATORI = ("<!-- brief-intro:inizio -->", "<!-- brief-intro:fine -->")
 INTRO_SORGENTE = SITO / ".claude/skills/handoff/SKILL.md"
 INTRO_COPIA = TOOLS / ".memo/LATEST.md"
 
 RE_MDLINK = re.compile(r"\[[^\]]*\]\(([^)#][^)]*)\)")
-# ⚠️ Il nome del file ammette gli SPAZI, e non e' pignoleria: fino al 2026-07-30 non li
-# ammetteva, e il rimando a `RoccobotOS/Da fare.txt` non e' mai stato controllato. Quando
+# ⚠️ Il nome del file ammette gli SPAZI, e non è pignoleria: fino al 2026-07-30 non li
+# ammetteva, e il rimando a `RoccobotOS/Da fare.txt` non è mai stato controllato. Quando
 # l'utente ha cancellato quel file, il verificatore ha risposto 'tutto in ordine' con un
 # rimando morto in casa. Un controllo che non copre un caso non lo dichiara: dice che va tutto
-# bene, ed e' il modo peggiore di fallire.
+# bene, ed è il modo peggiore di fallire.
 RE_PATH = re.compile(r"`([\w./-]+/[\w.-]+(?: [\w.-]+)*\.(?:md|js|json|txt|py|css|html|toml))`")
 RE_SECT = re.compile(r"(?:§|sezione|sezioni)\s*'([^']{4,})'")
 RE_HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*$")
@@ -214,21 +214,21 @@ def variants(title):
 
 
 def etichetta(ch):
-    """Come si nomina il reperto: per codepoint se e' un carattere, fra apici se e' una parola.
+    """Come si nomina il reperto: per codepoint se è un carattere, fra apici se è una parola.
 
-    Serve perche' il controllo sugli accenti segnala una PAROLA (`perche'`), non un carattere,
-    e `ord()` su due lettere solleva un'eccezione: la prima versione del controllo e' morta
-    esattamente li'."""
+    Serve perché il controllo sugli accenti segnala una PAROLA (`perche'`), non un carattere,
+    e `ord()` su due lettere solleva un'eccezione: la prima versione del controllo è morta
+    esattamente lì."""
     return f"U+{ord(ch):04X} {ch!r}" if len(ch) == 1 else repr(ch)
 
 
 def char_defects(text):
     """Difetti di carattere in un testo: [(riga, colonna, carattere, motivo)].
 
-    Traccia il contesto 'codice' (fence ``` e backtick inline) perche' i due divieti hanno
+    Traccia il contesto 'codice' (fence ``` e backtick inline) perché i due divieti hanno
     portata diversa: quello tipografico vale FUORI dal codice, quello sulle lettere non
     latine vale SEMPRE. L'ordine dei casi conta: `VIETATI` si controlla prima degli
-    intervalli, perche' em-dash ed ellissi cadono dentro un blocco per il resto ammesso.
+    intervalli, perché em-dash ed ellissi cadono dentro un blocco per il resto ammesso.
     """
     out = []
     in_fence = False
@@ -241,9 +241,9 @@ def char_defects(text):
             if ch == "`" and not in_fence:
                 in_code = not in_code
                 continue
-            # Un '+' fra due lettere non e' mai legittimo fuori dal codice: e' un refuso di
+            # Un '+' fra due lettere non è mai legittimo fuori dal codice: è un refuso di
             # copia-incolla che prende il posto di un apostrofo (caso reale: 'dell+Aria' in
-            # JRRT.md, 2026-08-01). E' ASCII, quindi il filtro cp>=128 qui sotto non lo
+            # JRRT.md, 2026-08-01). È ASCII, quindi il filtro cp>=128 qui sotto non lo
             # vedrebbe mai: va controllato prima.
             if ch == "+" and not in_code:
                 prev = line[col - 2] if col >= 2 else ""
@@ -253,7 +253,7 @@ def char_defects(text):
                 # sinistra, e la notazione dei codepoint (U+0435), che queste stesse regole
                 # PRESCRIVONO per nominare un omografo. La seconda l'ha trovata il controllo
                 # segnalando 'U+F8FF' in un messaggio di commit: un verificatore che boccia
-                # la forma che le regole impongono e' rotto, non severo.
+                # la forma che le regole impongono è rotto, non severo.
                 mod = re.search(r"(Ctrl|Cmd|Alt|Shift|Fn|Opt|Option|Win|Super|Meta)$",
                                 line[:col - 1])
                 codepoint = prev == "U" and re.match(r"[0-9A-Fa-f]{4,6}\b", line[col:])
@@ -282,7 +282,7 @@ def char_defects(text):
             out.append((n, col, ch, f"carattere non previsto, {nome}: dichiaralo in SIMBOLI_OK se serve"))
         if not in_fence:
             # Accenti scritti con l'apostrofo: si guarda la riga senza i segmenti inline di
-            # codice, dove `e'` puo' essere codice legittimo (una stringa shell, per dire).
+            # codice, dove `e'` può essere codice legittimo (una stringa shell, per dire).
             fuori = re.sub(r"`[^`]*`", "", line)
             for m in RE_ACCENTATE.finditer(fuori):
                 sbagliata = m.group(0)
@@ -295,7 +295,7 @@ def char_defects(text):
 def blocco_marcato(path):
     """Righe fra i due marcatori: lista, oppure 'assente' / 'senza-marcatori'.
 
-    I tre esiti non si confondono: file che non c'e' significa 'sessione con un repo solo',
+    I tre esiti non si confondono: file che non c'è significa 'sessione con un repo solo',
     marcatori mancanti significa 'qualcuno li ha tolti', e sono due cose diverse.
     """
     if not path.exists():
@@ -317,7 +317,7 @@ def blocco_marcato(path):
 def check_intro():
     """Confronta il riquadro del brief con la sua sorgente nella skill.
 
-    Rende (difetti, nota): i difetti bloccano, la nota e' solo informativa (un repo solo).
+    Rende (difetti, nota): i difetti bloccano, la nota è solo informativa (un repo solo).
     """
     src, cop = blocco_marcato(INTRO_SORGENTE), blocco_marcato(INTRO_COPIA)
     for chi, val, path in (("sorgente", src, INTRO_SORGENTE), ("copia", cop, INTRO_COPIA)):
@@ -341,7 +341,7 @@ def main_text():
     """Modo `--text`: controlla i CARATTERI di un testo su stdin e nient'altro.
 
     Serve all'hook che guarda i messaggi di commit, che nessun altro controllo vede: l'hook
-    em-dash legge il diff, non il messaggio. Vive qui e non in una riga di shell a se' perche'
+    em-dash legge il diff, non il messaggio. Vive qui e non in una riga di shell a sé perché
     l'insieme dei caratteri ammessi deve avere UNA fonte: due liste divergerebbero.
     """
     bad = char_defects(sys.stdin.read())
@@ -439,7 +439,7 @@ def main():
         bad_paths, bad_sects = [], []
     else:
         report("percorsi citati inesistenti", bad_paths,
-               "un file citato che non c'e' è un rimando morto")
+               "un file citato che non c'è è un rimando morto")
         report("rimandi a sezioni inesistenti", bad_sects,
                "il titolo citato non esiste in nessun file di regole: aggiornalo alla nuova collocazione")
 

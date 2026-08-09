@@ -74,19 +74,19 @@
   //  2) PULIZIA DELLA PAGINA: popup Google, invito sul video, tasto AI
   // ═══════════════════════════════════════════════════════════════════════
   // Tre fastidi diversi, un solo meccanismo: un foglio di stile iniettato subito
-  // (a document-start, cosi' non c'e' il lampo di roba che compare e sparisce) piu'
-  // un osservatore che ripassa a ogni mutazione, perche' PH e' in parte una SPA e
+  // (a document-start, così non c'è il lampo di roba che compare e sparisce) più
+  // un osservatore che ripassa a ogni mutazione, perché PH è in parte una SPA e
   // ricostruisce pezzi di DOM di continuo.
   //
   // ⚠️ DUE STRATEGIE, e la differenza conta quando qualcosa smette di funzionare:
-  //  - il popup di Google si becca per SELETTORE, perche' i suoi identificativi sono
+  //  - il popup di Google si becca per SELETTORE, perché i suoi identificativi sono
   //    quelli della libreria Google Identity Services e non cambiano col sito;
-  //  - l'invito sul video e il tasto AI si beccano per TESTO, perche' le loro classi
-  //    sono generate e cambiano senza preavviso, mentre la scritta resta. Il testo e'
-  //    anche cio' che l'utente ha indicato negli screenshot, quindi e' il criterio
-  //    piu' fedele alla richiesta.
+  //  - l'invito sul video e il tasto AI si beccano per TESTO, perché le loro classi
+  //    sono generate e cambiano senza preavviso, mentre la scritta resta. Il testo è
+  //    anche ciò che l'utente ha indicato negli screenshot, quindi è il criterio
+  //    più fedele alla richiesta.
   // ⚠️ PH blocca gli strumenti automatici, quindi questi selettori NON sono stati
-  // provati sul sito dal vivo: se uno non prende, e' li' che si guarda per primo.
+  // provati sul sito dal vivo: se uno non prende, è lì che si guarda per primo.
 
   const RE_INVITO_VIDEO = /click here to watch|watch the full scene|guarda la scena completa/i;
   const RE_TASTO_AI = /^ai\b/i;
@@ -120,14 +120,14 @@
     el.classList.add('rb-ph-via');
   }
 
-  // Il popup si toglie DAVVERO dal DOM, non solo si nasconde: finche' resta montato
+  // Il popup si toglie DAVVERO dal DOM, non solo si nasconde: finché resta montato
   // ruba il fuoco da tastiera e la libreria continua a lavorarci.
   function viaPopupGoogle(radice) {
     try {
       const dentro = radice.querySelectorAll ? radice.querySelectorAll(SEL_POPUP_GOOGLE) : [];
       for (const el of dentro) el.remove();
       if (radice.matches && radice.matches(SEL_POPUP_GOOGLE)) radice.remove();
-      // Se la libreria e' gia' in pagina, le si chiede di chiudere: senza questo
+      // Se la libreria è già in pagina, le si chiede di chiudere: senza questo
       // rimonterebbe il contenitore appena tolto.
       const w = (typeof unsafeWindow !== 'undefined') ? unsafeWindow : window;
       if (w.google && w.google.accounts && w.google.accounts.id && w.google.accounts.id.cancel) {
@@ -136,7 +136,7 @@
     } catch (e) { /* mai rompere la pagina */ }
   }
 
-  // Testo dell'elemento SENZA quello dei figli: serve a trovare il nodo piu' piccolo
+  // Testo dell'elemento SENZA quello dei figli: serve a trovare il nodo più piccolo
   // che porta davvero la scritta, invece di beccare il contenitore di mezza pagina.
   function testoProprio(el) {
     let t = '';
@@ -145,8 +145,8 @@
   }
 
   // L'invito 'Click here to watch the full scene!' sta in una barretta sovrapposta al
-  // player. Si sale dal nodo col testo fino al primo antenato POSIZIONATO, che e' il
-  // riquadro da nascondere, con un tetto di quattro livelli: piu' su c'e' il player,
+  // player. Si sale dal nodo col testo fino al primo antenato POSIZIONATO, che è il
+  // riquadro da nascondere, con un tetto di quattro livelli: più su c'è il player,
   // e nasconderlo spegnerebbe il video.
   function viaInvitoSulVideo(radice) {
     try {
@@ -177,7 +177,7 @@
           if (el.classList.contains('rb-ph-via')) continue;
           const t = (el.textContent || '').trim();
           if (t.length > 40 || !RE_TASTO_AI.test(t)) continue;
-          // Si nasconde il contenitore del tasto se e' un guscio che tiene solo lui,
+          // Si nasconde il contenitore del tasto se è un guscio che tiene solo lui,
           // o resterebbe un buco con lo sfondo del bottone.
           const p = el.parentElement;
           viaDiQui(p && p.children.length === 1 ? p : el);
@@ -189,11 +189,11 @@
   // ═══════════════════════════════════════════════════════════════════════
   //  3) OGNI LINK A UN ALTRO VIDEO SI APRE IN UNA SCHEDA NUOVA
   // ═══════════════════════════════════════════════════════════════════════
-  // Si riconosce una pagina video dall'indirizzo, non dalla posizione del link: cosi'
+  // Si riconosce una pagina video dall'indirizzo, non dalla posizione del link: così
   // vale per le miniature, per i correlati e per i link dentro i commenti, senza dover
-  // conoscere il markup di ognuno. rel='noopener' e' obbligatorio: senza, la scheda
-  // nuova puo' toccare quella che l'ha aperta.
-  // ⚠️ '/video/search' NON e' un video ma la pagina dei risultati, e con un semplice
+  // conoscere il markup di ognuno. rel='noopener' è obbligatorio: senza, la scheda
+  // nuova può toccare quella che l'ha aperta.
+  // ⚠️ '/video/search' NON è un video ma la pagina dei risultati, e con un semplice
   // '/video/' finiva anche lei in una scheda nuova: misurato su una pagina di prova.
   const RE_LINK_VIDEO = /(?:\/view_video\.php|[?&]viewkey=|\/video\/(?!search\b))/i;
 
@@ -231,7 +231,7 @@
           for (const n of m.addedNodes) if (n.nodeType === 1) passata(n);
         }
         // Il popup e il tasto AI possono comparire anche per un semplice cambio di
-        // attributo su nodi gia' in pagina, che non passa da addedNodes.
+        // attributo su nodi già in pagina, che non passa da addedNodes.
         viaPopupGoogle(document);
         viaTastoAI(document);
       }).observe(document.documentElement, { subtree: true, childList: true });

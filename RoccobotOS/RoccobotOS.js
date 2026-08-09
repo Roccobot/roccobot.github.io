@@ -1,4 +1,4 @@
-/* RoccobotOS - il numero di versione NON si scrive qui: la sua unica fonte e' la costante
+/* RoccobotOS - il numero di versione NON si scrive qui: la sua unica fonte è la costante
    VERSIONE poco sotto, che il numero in pagina legge a runtime. Un numero in questo commento
    sarebbe un secondo posto, e due posti prima o poi divergono.
    Vedi RoccobotOS/CLAUDE.md, sezione sulla versione. */
@@ -10,9 +10,9 @@
 // index.html nascono VUOTI: se questo script non gira il CSS li nasconde con :empty, invece di
 // mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "3.92";
+  const VERSIONE = "3.93";
   // Due punti di resa, uno per formato: la pillola nell'angolo dell'indice su desktop,
-  // il numero sopra il logo su mobile. A deciderlo e' il CSS, qui si scrivono entrambi.
+  // il numero sopra il logo su mobile. A deciderlo è il CSS, qui si scrivono entrambi.
   for (const id of ["siteVersion", "tocVersion"]) {
     const el = document.getElementById(id);
     if (el) el.textContent = "v" + VERSIONE;
@@ -20,26 +20,26 @@
 }();
 // ── Comandi fissi: tema, tabelle, indice, salti ──
 // Riscritto in chiaro il 2026-08-01, prima era il minificato dell'export: la regola di
-// visibilita' e' cambiata abbastanza da rendere il rattoppo meno leggibile della riscrittura.
+// visibilità è cambiata abbastanza da rendere il rattoppo meno leggibile della riscrittura.
 //
 // DISPOSIZIONE su smartphone: l'indice in basso a SINISTRA nell'angolo, inizio e fine pagina
 // in basso a DESTRA. Su desktop ci sono i soli due salti, in basso a destra: l'indice non
-// serve perche' la colonna laterale e' sempre in vista.
+// serve perché la colonna laterale è sempre in vista.
 //
-// VISIBILITA', e la regola e' UNA SOLA per i due formati: si vedono mentre si SCORRE e
+// VISIBILITÀ, e la regola è UNA SOLA per i due formati: si vedono mentre si SCORRE e
 // spariscono dopo 3
-// secondi di quiete. Ognuno ha in piu' una condizione sua, e sono tutte e tre della stessa
+// secondi di quiete. Ognuno ha in più una condizione sua, e sono tutte e tre della stessa
 // natura: si nasconde il comando che in quel momento non porta da nessuna parte.
-//   - 'vai in cima' non compare se si e' gia' in cima, 'vai in fondo' se si e' gia' in fondo;
-//   - l'indice non compare quando l'indice e' gia' APERTO, e li' c'e' anche la ragione per
+//   - 'vai in cima' non compare se si è già in cima, 'vai in fondo' se si è già in fondo;
+//   - l'indice non compare quando l'indice è già APERTO, e lì c'è anche la ragione per
 //     cui l'utente ha chiesto il cambio: il pannello arriva fino in fondo allo schermo, e un
 //     tasto in quell'angolo gli copriva la parte bassa.
 //
-// ⚠️ STORIA, perche' il codice da solo non la racconta: fino al 2026-08-01 c'era anche un
-// gruppo di SINISTRA (tema piu' indice) visibile a pagina FERMA, cioe' l'esatto opposto della
-// destra. L'idea era buona ma si scontrava col pannello dell'indice; il tasto del tema e'
-// finito dietro un flag e l'indice e' passato di qua. Se un domani si vuole riprovare la
-// simmetria, il difetto da risolvere prima e' quello.
+// ⚠️ STORIA, perché il codice da solo non la racconta: fino al 2026-08-01 c'era anche un
+// gruppo di SINISTRA (tema più indice) visibile a pagina FERMA, cioè l'esatto opposto della
+// destra. L'idea era buona ma si scontrava col pannello dell'indice; il tasto del tema è
+// finito dietro un flag e l'indice è passato di qua. Se un domani si vuole riprovare la
+// simmetria, il difetto da risolvere prima è quello.
 !function () {
   const html = document.documentElement;
   const mqScuro = window.matchMedia("(prefers-color-scheme: dark)");
@@ -57,15 +57,15 @@
   const listaIndice = document.getElementById("mweb_toc_list_iid");
   if (!tastoTema || !iconaSole || !iconaLuna) return;
 
-  // ⚠️ FEATURE FLAG. Lo switch fra tabelle standard e schede resta nel codice ma non ha piu'
+  // ⚠️ FEATURE FLAG. Lo switch fra tabelle standard e schede resta nel codice ma non ha più
   // un pulsante: l'utente non l'ha mai usato (istruzione del 2026-08-01). Per rimetterlo basta
-  // questo true, il pulsante e il CSS delle schede sono al loro posto. Non si cancella perche'
-  // il lavoro di adattamento delle tabelle strette e' fatto e riaverlo costerebbe caro.
+  // questo true, il pulsante e il CSS delle schede sono al loro posto. Non si cancella perché
+  // il lavoro di adattamento delle tabelle strette è fatto e riaverlo costerebbe caro.
   const FLAG_SWITCH_TABELLE = false;
 
   // ⚠️ FEATURE FLAG. Anche il pulsante del tema sparisce (istruzione dell'utente,
   // 2026-08-01): con l'indice aperto i comandi di sinistra ne coprivano il fondo, e fra i
-  // due questo e' il sacrificabile, perche' il tema segue gia' la preferenza del SISTEMA e
+  // due questo è il sacrificabile, perché il tema segue già la preferenza del SISTEMA e
   // l'utente dice di non commutarlo quasi mai. La logica del tema resta tutta al suo posto,
   // tasto `T` compreso: sparisce il bottone, non la funzione.
   const FLAG_TASTO_TEMA = false;
@@ -74,12 +74,12 @@
   const QUIETE = 3000;
 
   // Chi ha chiesto meno animazioni al sistema non riceve nemmeno lo scorrimento animato: la
-  // query si legge a ogni salto, non una volta sola, perche' l'impostazione puo' cambiare a
+  // query si legge a ogni salto, non una volta sola, perché l'impostazione può cambiare a
   // pagina aperta. La controparte CSS sta in RoccobotOS.css.
   const andatura = () => mqMenoMoto.matches ? "auto" : "smooth";
 
   // ── Tema ──
-  // Il pulsante DICE quale tema e' attivo: 'Cambia tema' da solo non faceva sapere a un
+  // Il pulsante DICE quale tema è attivo: 'Cambia tema' da solo non faceva sapere a un
   // lettore di schermo da che parte si stava andando.
   function applicaTema(scuro) {
     html.setAttribute("data-theme", scuro ? "dark" : "light");
@@ -93,7 +93,7 @@
   function temaDiSistema() { applicaTema(mqScuro.matches); }
   temaDiSistema();
 
-  // Dopo una scelta manuale il sistema non comanda piu' per un momento, o il tema tornerebbe
+  // Dopo una scelta manuale il sistema non comanda più per un momento, o il tema tornerebbe
   // indietro da solo se l'utente commuta proprio mentre il sistema cambia.
   let sceltaManuale = false;
   function commutaTema() {
@@ -105,15 +105,15 @@
   tastoTema.addEventListener("click", commutaTema);
 
   // ── Tasti nudi e scorciatoie ──
-  // T commuta il tema (come su 'I Grandi di Arda'). Tasto NUDO, quindi vale solo dove c'e'
+  // T commuta il tema (come su 'I Grandi di Arda'). Tasto NUDO, quindi vale solo dove c'è
   // una tastiera; con un modificatore premuto si lascia passare, o si rubano le scorciatoie
   // del browser.
   // ⌘/Ctrl + freccia su o giu' portano in cima e in fondo, come i due pulsanti e come su
-  // 'I Grandi di Arda' (richiesta dell'utente, 2026-08-01). Si fa preventDefault perche'
-  // l'override sulla scorciatoia del browser e' esplicitamente voluto; il salto e' ISTANTANEO,
+  // 'I Grandi di Arda' (richiesta dell'utente, 2026-08-01). Si fa preventDefault perché
+  // l'override sulla scorciatoia del browser è esplicitamente voluto; il salto è ISTANTANEO,
   // sempre come su Arda, dove i pulsanti sono fluidi e la tastiera no.
-  // La guardia sui campi di testo e' obbligatoria in entrambi i casi: senza, scrivere una 't'
-  // nella ricerca del browser commuterebbe il tema, e le frecce non scriverebbero piu'.
+  // La guardia sui campi di testo è obbligatoria in entrambi i casi: senza, scrivere una 't'
+  // nella ricerca del browser commuterebbe il tema, e le frecce non scriverebbero più.
   function inCampoDiTesto() {
     const a = document.activeElement;
     return !!(a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)));
@@ -177,10 +177,10 @@
   }
 
   // ── Indice su smartphone ──
-  // ⚠️ Aprire o chiudere l'indice cambia anche la visibilita' del suo pulsante, quindi le due
+  // ⚠️ Aprire o chiudere l'indice cambia anche la visibilità del suo pulsante, quindi le due
   // funzioni chiamano aggiornaComandi(): a indice aperto il pulsante se ne va, per non
   // coprire il fondo del pannello. Se ci si dimentica la chiamata il difetto non si vede
-  // subito, perche' il primo scorrimento successivo rimette tutto a posto da solo.
+  // subito, perché il primo scorrimento successivo rimette tutto a posto da solo.
   function chiudiIndice() {
     html.removeAttribute("data-mobile-toc");
     if (tastoIndice) {
@@ -222,7 +222,7 @@
   }
   // Il fondo si rimisura: le immagini a caricamento pigro allungano la pagina mentre si
   // scende, e un solo scrollTo si fermerebbe dove il fondo era un attimo prima. Dieci
-  // tentativi a 300 ms sono il tetto: oltre, e' un caso che non si chiudera' comunque.
+  // tentativi a 300 ms sono il tetto: oltre, è un caso che non si chiudera' comunque.
   function vaiInFondo(fluido) {
     const modo = fluido ? andatura() : "auto";
     window.scrollTo({ top: altezzaPagina(), behavior: modo });
@@ -236,12 +236,12 @@
   if (tastoCima) tastoCima.addEventListener("click", () => vaiInCima(true));
   if (tastoFondo) tastoFondo.addEventListener("click", () => vaiInFondo(true));
 
-  // ── Visibilita' dei comandi ──
-  // ⚠️ Il gruppo di SINISTRA non esiste piu' (2026-08-01). Era tema piu' indice, visibile a
+  // ── Visibilità dei comandi ──
+  // ⚠️ Il gruppo di SINISTRA non esiste più (2026-08-01). Era tema più indice, visibile a
   // pagina ferma; ma quando l'indice si apre, il pannello arriva fino in fondo allo schermo e
-  // quei due tasti ne coprivano la parte bassa. Il tema e' sparito dietro un flag, e l'indice
-  // e' passato alla regola di destra: si vede mentre si SCORRE. In piu' sparisce a indice
-  // aperto, perche' li' non serve piu': le uniche mosse sensate sono toccare una voce o
+  // quei due tasti ne coprivano la parte bassa. Il tema è sparito dietro un flag, e l'indice
+  // è passato alla regola di destra: si vede mentre si SCORRE. In più sparisce a indice
+  // aperto, perché lì non serve più: le uniche mosse sensate sono toccare una voce o
   // toccare fuori per chiudere.
 
   function mostra(el) {
@@ -263,9 +263,9 @@
     return { inCima: y <= 4, inFondo: y + h >= altezzaPagina() - 4 };
   }
 
-  // Un comando a opacita' zero e' invisibile ma NON e' fuori dal giro del Tab: chi naviga da
-  // tastiera ci finiva sopra senza vedere nulla. Si adegua tabindex leggendo l'opacita' in
-  // linea, che e' l'unico stato che il resto del codice conosce.
+  // Un comando a opacità zero è invisibile ma NON è fuori dal giro del Tab: chi naviga da
+  // tastiera ci finiva sopra senza vedere nulla. Si adegua tabindex leggendo l'opacità in
+  // linea, che è l'unico stato che il resto del codice conosce.
   function sincronizzaTab() {
     [tastoTema, tastoTabelle, tastoCima, tastoFondo, tastoIndice].forEach(el => {
       if (!el) return;
@@ -283,17 +283,17 @@
   // Vero mentre si scorre, falso dopo QUIETE millisecondi di fermo. Vale su tutti i formati.
   let inMovimento = false;
 
-  // ⚠️ La regola e' UNA SOLA per i due formati (richiesta dell'utente, 2026-08-02): anche su
+  // ⚠️ La regola è UNA SOLA per i due formati (richiesta dell'utente, 2026-08-02): anche su
   // desktop i due salti si vedono solo mentre si scorre e se ne vanno dopo la quiete. Prima
   // desktop aveva un ramo suo in cui restavano sempre in vista, e teneva in piedi due
   // comportamenti da ricordare invece di uno.
   function aggiornaComandi() {
     const bordi = aiBordi();
     const indiceAperto = html.getAttribute("data-mobile-toc") === "open";
-    // Il tasto del tema, quando il suo flag e' acceso, non segue lo scorrimento: sta fermo
-    // dov'e'. Non e' un salto, e' un interruttore, e un interruttore che scompare si cerca.
+    // Il tasto del tema, quando il suo flag è acceso, non segue lo scorrimento: sta fermo
+    // dov'è. Non è un salto, è un interruttore, e un interruttore che scompare si cerca.
     if (FLAG_TASTO_TEMA) mostra(tastoTema);
-    // L'indice esiste solo su smartphone (su desktop e' display:none), quindi non serve
+    // L'indice esiste solo su smartphone (su desktop è display:none), quindi non serve
     // distinguere il formato: lo stile in linea su un elemento nascosto non si vede.
     if (tastoIndice) (inMovimento && !indiceAperto) ? mostra(tastoIndice) : nascondi(tastoIndice);
     if (tastoCima) (inMovimento && !bordi.inCima) ? mostra(tastoCima) : nascondi(tastoCima);
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Tabelle e blocchi di codice che sbordano in orizzontale si scorrevano solo col dito o col
 // mouse. Il tabindex si mette SOLO dove serve davvero (scrollWidth > clientWidth): metterlo su
 // tutte le tabelle infilerebbe una quarantina di fermate inutili nel giro del Tab. La misura si
-// rifa' al ridimensionamento, perche' una tabella stretta puo' diventare larga e viceversa.
+// rifa' al ridimensionamento, perché una tabella stretta può diventare larga e viceversa.
 document.addEventListener("DOMContentLoaded", () => {
   const CANDIDATI = ".markdown-body table, .markdown-body pre, .markdown-body div > pre, .plist-box";
   function sync() {

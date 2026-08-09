@@ -4,14 +4,14 @@
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
 ! $document,important              : fiducia totale alla pagina (cosmetiche e scriptlet).
-! $document,subdocument,important  : come sopra ma anche quando il dominio e' in iframe
+! $document,subdocument,important  : come sopra ma anche quando il dominio è in iframe
 !                                    (widget di pagamento/verifica: Stripe e simili).
-! $stealth,important               : disattiva la Modalita' Stealth solo su quel dominio
+! $stealth,important               : disattiva la Modalità Stealth solo su quel dominio
 !                                    (user agent, header, referrer e cookie restano
 !                                    intatti). Serve ai siti dietro un bot manager
 !                                    (Akamai e simili) che rispondono 403 Access Denied
 !                                    quando la richiesta risulta alterata.
-! Doppia riga = banche, pagamenti, finanza, assicurazioni, PA/identita'.
+! Doppia riga = banche, pagamenti, finanza, assicurazioni, PA/identità.
 
 @@||192.168.1.2^$important
 @@||aci.it^$important
@@ -22,7 +22,7 @@
 @@||agosweb.it^$important
 @@||agosweb.it^$document,important
 ! Alamo (Enterprise Holdings): dietro bot manager Akamai, che risponde 403 Access
-! Denied se la richiesta e' alterata. Serve anche l'esenzione dalla Stealth.
+! Denied se la richiesta è alterata. Serve anche l'esenzione dalla Stealth.
 @@||alamo.com^$important
 @@||alamo.com^$document,important
 @@||alamo.com^$stealth,important
@@ -40,7 +40,7 @@
 @@||blizzard.com^$important
 @@||bonusx.it^$important
 @@||bonusx.it^$document,important
-! captcha-delivery.com: e' il dominio da cui DataDome serve la SFIDA ('Verifica del
+! captcha-delivery.com: è il dominio da cui DataDome serve la SFIDA ('Verifica del
 ! dispositivo'), in un iframe (lo dichiara la CSP di Qwant, frame-src). Serve la forma
 ! per iframe, e la Stealth non deve toccarla o la verifica non passa.
 @@||captcha-delivery.com^$important
@@ -69,11 +69,11 @@
 ! fingerprinting partono alterate e il punteggio della sessione resta insufficiente.
 @@||datadome.co^$important
 @@||datadome.co^$stealth,important
-! dd.qwant.com: e' il tag anti-bot di Qwant (`/tags.js`), servito in PRIMA PARTE ma
+! dd.qwant.com: è il tag anti-bot di Qwant (`/tags.js`), servito in PRIMA PARTE ma
 ! CNAME verso dd.qwant.com.first-party-js.datadome.co (misurato via DoH il
 ! 2026-07-29). Con lo scoprimento dei CNAME la regola `||datadome.co^$third-party` di
 ! EasyPrivacy e della Tracking Protection di AdGuard lo BLOCCA, e l'eccezione su
-! datadome.co non basta perche' la richiesta del browser e' a dd.qwant.com. Bloccato
+! datadome.co non basta perché la richiesta del browser è a dd.qwant.com. Bloccato
 ! il tag, la sessione non ottiene il cookie e Qwant risponde 403 alla prima ricerca.
 @@||dd.qwant.com^$important
 @@||dd.qwant.com^$stealth,important
@@ -193,15 +193,15 @@
 @@||poste.it^$document,important
 @@||prima.it^$important
 @@||prima.it^$document,important
-! Qwant: sta dietro DataDome. La sola esenzione dalla Stealth NON bastava, perche' il
-! problema e' di BLOCCO: il tag anti-bot vive su dd.qwant.com, che e' un CNAME verso
+! Qwant: sta dietro DataDome. La sola esenzione dalla Stealth NON bastava, perché il
+! problema è di BLOCCO: il tag anti-bot vive su dd.qwant.com, che è un CNAME verso
 ! datadome.co (vedi il blocco dd.qwant.com qui sopra). Senza quel tag la sessione non
 ! ottiene il cookie e la prima ricerca prende 403 per una trentina di secondi.
 ! L'esenzione dalla Stealth resta comunque utile: la sfida esamina la richiesta a fondo.
 ! NB: non si sblocca tutto qwant.com (`@@||qwant.com^$important`), che tirerebbe dentro
 ! anche la sua telemetria (apm/k.qwant.com, /action/, /impression/): la regola mirata su
-! dd.qwant.com basta. Se un domani non bastasse, il passo successivo e' la fiducia
-! totale alla pagina, `@@||qwant.com^$document,important`, che pero' spegne anche le
+! dd.qwant.com basta. Se un domani non bastasse, il passo successivo è la fiducia
+! totale alla pagina, `@@||qwant.com^$document,important`, che però spegne anche le
 ! cosmetiche e gli scriptlet sui risultati.
 @@||qwant.com^$stealth,important
 @@||raiplaysound.it^$document,subdocument,important
@@ -290,7 +290,7 @@
 ! Impediscono alle regole $removeparam (in primis la lista "AdGuard URL Tracking",
 ! ~2540 regole) di strippare parametri funzionali (token, code, state, callback) su
 ! questi domini, dove lo stripping romperebbe login o pagamenti. patreon.com aggiunto
-! perche' il parameter stripping impediva di ricevere il codice di accesso.
+! perché il parameter stripping impediva di ricevere il codice di accesso.
 @@||aci.it^$removeparam
 @@||agos.it^$removeparam
 @@||agosweb.it^$removeparam

@@ -30,7 +30,7 @@
   const SALVA_CON_DIALOGO  = true;  // MP4: true = chiede dove salvare, false = scarica diretto
   const SEGMENTI_PARALLELI = 5;     // HLS: quanti segmenti scaricare insieme
   const TENTATIVI_SEGMENTO = 3;     // HLS: ritentativi per singolo segmento
-  const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha piu' varianti
+  const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha più varianti
 
   const COLORE_BASE = '#7b3fa0';    // viola: tinta del tasto a riposo
   const COLORE_OK   = '#12b76a';
@@ -43,9 +43,9 @@
   // ═══════════════════════════════════════════════════════════════════════
   // I due siti usano player diversi e su enfhub la sorgente non sta nel DOM:
   // hls.js chiede il manifest via fetch/XHR e passa al <video> un blob:.
-  // Qui si annota ogni URL .m3u8/.mp4 richiesto dalla pagina: e' il modo piu'
+  // Qui si annota ogni URL .m3u8/.mp4 richiesto dalla pagina: è il modo più
   // affidabile di sapere QUALE video si sta guardando, anche dopo una
-  // navigazione interna (enfhub e' una SPA Next.js). Gli agganci sono
+  // navigazione interna (enfhub è una SPA Next.js). Gli agganci sono
   // pass-through e in try/catch: non possono rompere il sito.
 
   var sniffate = [];
@@ -84,7 +84,7 @@
   // ═══════════════════════════════════════════════════════════════════════
   //  2) RILEVAMENTO DELLE FONTI (i quattro player dei due siti)
   // ═══════════════════════════════════════════════════════════════════════
-  // enf-cmnf.cc:  a) <video><source src="....mp4">        (video.js, il caso piu' comune)
+  // enf-cmnf.cc:  a) <video><source src="....mp4">        (video.js, il caso più comune)
   //               b) <video><source src="....m3u8">       (HLS self-hosted, playlist diretta)
   //               c) <video src="....mp4">                (blocco video di WordPress)
   // enfhub.com:   d) hls.js su cdn.enfhub.site/videos/<id>/master.m3u8 (master + varianti)
@@ -116,9 +116,9 @@
   }
 
   // d) enfhub: l'id del video compare nel poster (thumbnails/<id>/) e nel payload
-  //    RSC della pagina (videos/<id>/master.m3u8). Il poster e' quello del player
+  //    RSC della pagina (videos/<id>/master.m3u8). Il poster è quello del player
   //    ATTUALE, quindi ha la precedenza; del payload si prende l'ultima occorrenza
-  //    perche' a ogni navigazione interna Next.js ne accoda uno nuovo.
+  //    perché a ogni navigazione interna Next.js ne accoda uno nuovo.
   function fontiEnfhub() {
     var out = [];
     try {
@@ -164,7 +164,7 @@
     return out;
   }
 
-  // Un manifest figlio (la variante) non e' un video in piu': se una playlist sta
+  // Un manifest figlio (la variante) non è un video in più: se una playlist sta
   // dentro la cartella di un'altra playlist, si tiene solo quella padre.
   function togliVarianti(lista) {
     var cartelle = lista.filter(eHls).map(function (u) { return u.replace(/[^/]*$/, ''); });
@@ -175,7 +175,7 @@
     });
   }
 
-  // Ordine di fiducia: prima cio' che la pagina ha davvero chiesto (spia),
+  // Ordine di fiducia: prima ciò che la pagina ha davvero chiesto (spia),
   // poi il DOM, poi la deduzione di enfhub, infine il testo grezzo.
   function fonti() {
     var tutte = [].concat(
@@ -231,7 +231,7 @@
   // Verificato per esclusione: con il solo Referer 403, con il solo
   // Sec-Fetch-Dest 403, con Dest "audio"/"empty"/"document" 403. Ne segue anche
   // che aprire l'MP4 in una scheda nuova NON funziona (la navigazione manda
-  // Dest: document), quindi non e' un ripiego utilizzabile. I .m3u8 e i .ts
+  // Dest: document), quindi non è un ripiego utilizzabile. I .m3u8 e i .ts
   // passano comunque; le intestazioni si mandano lo stesso per uniformita'.
 
   const INTESTAZIONI_MEDIA = {
@@ -563,7 +563,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════════
-  //  7) INTERFACCIA: tasto fisso + elenco quando i video sono piu' di uno
+  //  7) INTERFACCIA: tasto fisso + elenco quando i video sono più di uno
   // ═══════════════════════════════════════════════════════════════════════
 
   var ID_TASTO = 'rb-enf-dl', ID_ELENCO = 'rb-enf-menu';
@@ -656,8 +656,8 @@
   // ═══════════════════════════════════════════════════════════════════════
   //  8) AVVIO, SPA E RILEVAMENTO CONTINUO
   // ═══════════════════════════════════════════════════════════════════════
-  // Il tasto compare solo quando una sorgente c'e' davvero (i post di sole foto
-  // non ne hanno). enfhub e' una SPA: al cambio di indirizzo si azzera la spia,
+  // Il tasto compare solo quando una sorgente c'è davvero (i post di sole foto
+  // non ne hanno). enfhub è una SPA: al cambio di indirizzo si azzera la spia,
   // altrimenti si scaricherebbe il video della pagina precedente.
 
   var ultimoHref = location.href;

@@ -1,14 +1,14 @@
 /* Pages.css - tema chiaro e scuro delle SOTTO-PAGINE di RoccobotOS
    (Characters.html, Formats.html, AdServers.html, 'BlendModes.html').
 
-   Perche' un file a parte e non le regole dentro ogni pagina: le quattro sotto-pagine sono
+   Perché un file a parte e non le regole dentro ogni pagina: le quattro sotto-pagine sono
    export vecchi con il foglio di stile scritto dentro l'head, e in due varianti diverse.
    Duplicare il blocco quattro volte avrebbe creato quattro fonti che prima o poi divergono;
-   qui la fonte e' una sola e le pagine la richiamano dopo il loro <style>, che e' cio' che
-   gli fa vincere il confronto a parita' di specificita'.
+   qui la fonte è una sola e le pagine la richiamano dopo il loro <style>, che è ciò che
+   gli fa vincere il confronto a parita' di specificità.
 
    DUE VIE PER IL TEMA, e nessuna delle due memorizza niente:
-   1. la preferenza del SISTEMA operativo (prefers-color-scheme), che e' quella con cui la
+   1. la preferenza del SISTEMA operativo (prefers-color-scheme), che è quella con cui la
       pagina si apre;
    2. il tasto T, che scrive data-theme sull'elemento html e deve poter vincere sulla media
       query in ENTRAMBI i versi (chiaro forzato su sistema scuro e viceversa).
@@ -16,7 +16,7 @@
    variabili: la media query e i due data-theme ridefiniscono solo quelle, e le regole vere
    stanno scritte una volta sola.
 
-   I valori sono quelli del tema scuro di RoccobotOS.css, cosi' le cinque pagine si
+   I valori sono quelli del tema scuro di RoccobotOS.css, così le cinque pagine si
    somigliano: fondo #121212, testo #eaeaea, righe alterne #181818, intestazioni #262626,
    bordi #3a3a3a, verde dei link #43b59e (7,4:1 sul fondo scuro). */
 
@@ -118,10 +118,10 @@ table tr th, th {
 table tr td, td { border-color: var(--pg-bordo-cella) }
 
 /* Angoli stondati di 8 px, come sulla pagina principale (richiesta dell'utente, 2026-08-02).
-   Il perche' del modello separato e delle quattro celle d'angolo sta in RoccobotOS.css, e non
+   Il perché del modello separato e delle quattro celle d'angolo sta in RoccobotOS.css, e non
    si ripete: qui cambiano solo i colori, che passano per le variabili.
    ⚠️ Qui le tabelle NON sono 'display:block', quindi la via dell'overflow che ritaglia non
-   esisterebbe nemmeno: e' la ragione per cui la tecnica scelta e' quella delle celle. */
+   esisterebbe nemmeno: è la ragione per cui la tecnica scelta è quella delle celle. */
 table {
   border-collapse: separate;
   border-spacing: 0;
@@ -142,7 +142,7 @@ table tbody tr:last-child td:last-child { border-bottom-right-radius: 7px }
 
 /* Colonne strette in grigio nelle tabelle a colonne ripetute: regola generale del progetto,
    spiegata per esteso in RoccobotOS.css. Qui serve alle due tabelle dei caratteri, dove la
-   colonna stretta e' la SECONDA di ogni coppia (nome esteso, poi il glifo). */
+   colonna stretta è la SECONDA di ogni coppia (nome esteso, poi il glifo). */
 table.narrow-cols-odd td:nth-child(odd),
 table.narrow-cols-even td:nth-child(2n) { background-color: var(--pg-cella-stretta) }
 
@@ -165,7 +165,7 @@ button, #ws, #message {
   color: var(--pg-testo);
 }
 
-/* Le schermate sono immagini a fondo chiaro: al buio abbagliano meno cosi'. */
+/* Le schermate sono immagini a fondo chiaro: al buio abbagliano meno così. */
 html[data-theme="dark"] img[src$=".png"],
 html[data-theme="dark"] img[src$=".jpg"] { opacity: .92 }
 @media (prefers-color-scheme: dark) {
@@ -178,7 +178,7 @@ html[data-theme="light"] img[src$=".jpg"] { opacity: 1 }
    Lo crea Pages.js e riporta a index.html, che dalle sotto-pagine era irraggiungibile.
    Sta in alto a sinistra come ha chiesto l'utente; il corpo guadagna in cima lo spazio che
    il pulsante occupa, altrimenti su schermo stretto coprirebbe il titolo. Bersaglio da
-   44 px, cioe' sopra il minimo delle linee guida, e colori dalle variabili del tema, cosi'
+   44 px, cioè sopra il minimo delle linee guida, e colori dalle variabili del tema, così
    segue la media query e il tasto T senza regole doppie. */
 .pg-back {
   position: fixed;
