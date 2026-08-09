@@ -89,7 +89,7 @@ function buildDatiFile(dati, version, cardColors, badgeAdjust, siteFlags) {
   var head = 'var datiVersion = "' + version + '";\n';
   // Config colori editabile (Fase 2): se presente, emessa come `var cardColors`
   // su UNA riga (JSON.stringify non produce newline) SUBITO dopo datiVersion, così
-  // readCardColors puo' rileggerla con una regex su riga singola. Assente = riga
+  // readCardColors può rileggerla con una regex su riga singola. Assente = riga
   // omessa (il sito usa il fallback interno).
   if (cardColors && typeof cardColors === 'object') {
     head += 'var cardColors = ' + JSON.stringify(cardColors) + ';\n';
@@ -388,11 +388,11 @@ export default {
           // gonfiare il numero di versione). Gli altri salvataggi bumpano +0.01.
           const curVer = readVersion(oldSrc) || DEFAULT_VERSION;
           newVersion = (body.keepVersion === true) ? curVer : bumpVersion(curVer);
-          // Config colori: usa quella inviata (gia' validata) se presente,
+          // Config colori: usa quella inviata (già validata) se presente,
           // altrimenti PRESERVA quella nel file (un salvataggio di contenuti non
           // deve cancellarla).
           const cc = body.cardColors !== undefined ? body.cardColors : readCardColors(oldSrc);
-          // Micro-aggiustamenti: usa quelli inviati (gia' validati) se presenti,
+          // Micro-aggiustamenti: usa quelli inviati (già validati) se presenti,
           // altrimenti PRESERVA quelli nel file (un salvataggio che non li tocca
           // non deve cancellarli).
           const ba = body.badgeAdjust !== undefined ? body.badgeAdjust : readBadgeAdjust(oldSrc);

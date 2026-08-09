@@ -1,13 +1,13 @@
 // realfont.js - serve il sito ai test CON I FONT REALI.
 //
-// PERCHE' ESISTE: in questo ambiente `fonts.googleapis.com` non e' raggiungibile dal
+// PERCHÉ ESISTE: in questo ambiente `fonts.googleapis.com` non è raggiungibile dal
 // browser di prova (ERR_CONNECTION_RESET), quindi Chromium ripiega sul fallback serif e
-// ogni misura di larghezza, a-capo o allineamento ottico e' di un ALTRO carattere. La
+// ogni misura di larghezza, a-capo o allineamento ottico è di un ALTRO carattere. La
 // pagina si vede benissimo, per questo l'errore passa inosservato.
 //
-// Vive qui e non nello scratchpad perche' lo scratchpad muore con la sessione, e sotto
+// Vive qui e non nello scratchpad perché lo scratchpad muore con la sessione, e sotto
 // `.memo/` (cartella col punto) GitHub Pages non lo pubblica. ⚠️ Sta in QUESTO repo e non
-// in `Roccobot/tools` perche' e' specifico di 'I Grandi di Arda': serve questo sito e si
+// in `Roccobot/tools` perché è specifico di 'I Grandi di Arda': serve questo sito e si
 // aspetta i suoi font. Il criterio sta nel `CLAUDE.md` di root, § 'Branch, allineamento e
 // push'.
 //
@@ -21,7 +21,7 @@
 //   console.log(await rf.ready(page));             // { n, loaded, fam } -> la spia, vedi sotto
 //
 // ⚠️ `document.fonts.check()` MENTE: risponde true anche senza alcuna webfont. La spia
-// affidabile e' `document.fonts.size` (0 = nessuna) o il conto degli `status === 'loaded'`.
+// affidabile è `document.fonts.size` (0 = nessuna) o il conto degli `status === 'loaded'`.
 // Atteso su questo sito: n 28, loaded >= 9, famiglie Cinzel / Cinzel Decorative / EB Garamond.
 
 const fs = require('fs');
@@ -36,7 +36,7 @@ const CACHE = path.join(os.tmpdir(), 'arda-realfont');     // fuori dal repo: so
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
            '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
-// L'URL e' lo stesso di `arda/top/index.html`: se cambiano le famiglie, va riallineato.
+// L'URL è lo stesso di `arda/top/index.html`: se cambiano le famiglie, va riallineato.
 const GF = 'https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900' +
   '&family=Cinzel:wght@400;600;700;900' +
   '&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap';
@@ -72,7 +72,7 @@ function fontCss() {
     (_, u) => `url(http://localhost:${PORT}/__fonts/${u.split('/').pop()})`);
 }
 
-// Server statico sul repo, piu' /__fonts per i woff2 in cache.
+// Server statico sul repo, più /__fonts per i woff2 in cache.
 // ⚠️ Serve HTTP: da `file://` il browser blocca il caricamento dei font.
 function serve() {
   bootstrap();
@@ -95,8 +95,8 @@ function serve() {
   })));
 }
 
-// ⚠️ Il Chromium preinstallato NON e' quello che il pacchetto playwright si aspetta, quindi
-// `chromium.launch()` nudo falla con 'Executable doesn't exist'. Questo lo risolve da se':
+// ⚠️ Il Chromium preinstallato NON è quello che il pacchetto playwright si aspetta, quindi
+// `chromium.launch()` nudo falla con 'Executable doesn't exist'. Questo lo risolve da sé:
 //   const b = await chromium.launch({ executablePath: rf.chromiumPath() });
 function chromiumPath() {
   const base = '/opt/pw-browsers';
@@ -116,7 +116,7 @@ async function attach(page) {
   return page;
 }
 
-// La spia: se `n` e' 0 le webfont NON ci sono e le misure non valgono.
+// La spia: se `n` è 0 le webfont NON ci sono e le misure non valgono.
 async function ready(page) {
   await page.evaluate(async () => { try { await document.fonts.ready; } catch (e) {} });
   return page.evaluate(() => ({

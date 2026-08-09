@@ -1,17 +1,17 @@
 body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{width:1em;height:1em;vertical-align:-.15em}.markdown-body table{max-width:100%;font-size:.9rem}@keyframes loading-skeleton{0%{background-position:200% 0}100%{background-position:-200% 0}}@keyframes fade-in{from{opacity:0}to{opacity:1}}.markdown-body table tr:nth-child(odd){background-color:#fdfefe}.toc-list a.toc-link.is-active-link{color:#f7b59e!important;font-weight:800}.toc-list .is-active-link::before{background-color:#f7b59e!important}.theme-toggle{position:fixed;top:12px;right:12px;z-index:9999;width:34px;height:34px;border:1px solid rgba(0,0,0,.15);border-radius:999px;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);display:inline-flex;align-items:center;justify-content:center;place-items:center;cursor:pointer;opacity:.65;transform:translateX(0);transition:opacity .15s,border-color .15s,background .15s,transform .25s;color:#222}.theme-toggle:hover{opacity:1}.theme-toggle svg{width:18px;height:18px;display:block}.tables-toggle{position:fixed;bottom:16px;right:12px;left:auto;z-index:9999;width:34px;height:34px;border:1px solid rgba(0,0,0,.15);border-radius:999px;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);display:none;place-items:center;cursor:pointer;opacity:.65;transform:translateX(0);transition:opacity .15s,border-color .15s,background .15s,transform .25s;color:#222;font-size:16px}.tables-toggle:hover{opacity:1}.toc-toggle{position:fixed;left:12px;z-index:9999;width:34px;height:34px;border:1px solid rgba(0,0,0,.15);border-radius:999px;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);display:none;place-items:center;cursor:pointer;opacity:.65;transform:translateX(0);transition:opacity .15s,border-color .15s,background .15s,transform .25s;color:#222;font-size:18px}.toc-toggle:hover{opacity:1}html[data-theme=dark] .toc-toggle{background:rgba(32,32,32,.95);border-color:#43b59e;color:#eaeaea}.scroll-toggle{position:fixed;right:12px;z-index:9999;width:34px;height:34px;border:1px solid rgba(0,0,0,.15);border-radius:999px;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);display:grid;place-items:center;cursor:pointer;opacity:.65;transform:translateX(0);transition:opacity .15s,border-color .15s,background .15s,transform .25s;color:#222;font-size:16px}.scroll-top-toggle{bottom:60px}.scroll-bottom-toggle{bottom:16px}.scroll-toggle:hover{opacity:1}html[data-theme=dark],html[data-theme=dark] body{background-color:#121212;color:#eaeaea}html[data-theme=dark] .markdown-body{color:#eaeaea}html[data-theme=dark] .markdown-body h1,html[data-theme=dark] .markdown-body h4,html[data-theme=dark] .markdown-body h5,html[data-theme=dark] .markdown-body h6{border-color:#2a2a2a}html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body strong{color:#bc4a61}html[data-theme=dark] .markdown-body hr{background-color:#2a2a2a;border-color:#2a2a2a}html[data-theme=dark] .markdown-body blockquote{color:#d0d0d0;border-left-color:#444}html[data-theme=dark] .markdown-body table td,html[data-theme=dark] .markdown-body table th{border-color:#3a3a3a}html[data-theme=dark] .markdown-body table tr{background-color:#181818}html[data-theme=dark] .markdown-body table tr:nth-child(odd){background-color:#202020}html[data-theme=dark] .markdown-body table th{background-color:#262626}html[data-theme=dark] .markdown-body code,html[data-theme=dark] .markdown-body kbd{background-color:#1e1e1e;border-color:#444;color:#f2c3d0}html[data-theme=dark] .markdown-body .highlight pre,html[data-theme=dark] .markdown-body pre{background-color:#1e1e1e}html[data-theme=dark] :not(pre)>code[class*=language-],html[data-theme=dark] pre[class*=language-]{background-color:#1e1e1e;color:#eaeaea}html[data-theme=dark] div.code-toolbar>.toolbar>.toolbar-item>a,html[data-theme=dark] div.code-toolbar>.toolbar>.toolbar-item>button,html[data-theme=dark] div.code-toolbar>.toolbar>.toolbar-item>span{background:rgba(40,40,40,.9)}html[data-theme=dark] .mweb_toc_wrap_ct{background-color:#252528;color:#e5e5e5}html[data-theme=dark] .toc-link::before{background-color:#333!important}html[data-theme=dark] .toc-list .is-active-link::before{background-color:#f7b59e!important}html[data-theme=dark] .theme-toggle{background:rgba(32,32,32,.95);border-color:#43b59e;box-shadow:0 0 0 1px rgba(0,0,0,.8),0 4px 10px rgba(0,0,0,.7);color:#eaeaea}html[data-theme=dark] .scroll-toggle,html[data-theme=dark] .tables-toggle{background:rgba(32,32,32,.95);border-color:#43b59e;color:#eaeaea}@media screen and (max-width:600px){body{max-width:100%!important;margin:0!important;padding:12px!important}.mweb_ct_wrap{padding:12px!important}.theme-toggle{top:auto;bottom:calc(16px + env(safe-area-inset-bottom));left:16px;right:auto;--hide-shift:-16px}.toc-toggle{display:grid;bottom:calc(16px + env(safe-area-inset-bottom));left:16px;right:auto;--hide-shift:-16px}.mweb_toc_wrap_ct{transition:transform .25s,opacity .25s;transform:translateX(-16px);opacity:0;pointer-events:none}html[data-mobile-toc=open] .mweb_toc_wrap{display:block}html[data-mobile-toc=open] .mweb_toc_wrap_ct{position:fixed;top:0;bottom:0;left:0;width:80vw;max-width:320px;margin-left:0;border-radius:0;box-shadow:4px 0 16px rgba(0,0,0,.35);transform:translateX(0);opacity:1;pointer-events:auto;z-index:9998}html[data-mobile-toc=open],html[data-mobile-toc=open] body{overscroll-behavior:contain}html[data-theme=dark][data-mobile-toc=open] .mweb_toc_wrap_ct{background-color:#252528}.scroll-top-toggle{display:grid;bottom:calc(60px + env(safe-area-inset-bottom));right:16px;left:auto}.scroll-bottom-toggle{display:grid;bottom:calc(16px + env(safe-area-inset-bottom));right:16px;left:auto}html[data-tables=standard] .markdown-body table{display:block;width:100%;overflow-x:auto}html[data-tables=standard] .markdown-body table td,html[data-tables=standard] .markdown-body table th{white-space:nowrap;padding:2px 4px;font-size:.65rem}html[data-tables=cards] .markdown-body table thead{display:none}html[data-tables=cards] .markdown-body table{display:block;width:100%;max-width:100%;border-collapse:separate;border-spacing:0;margin:0;box-sizing:border-box;text-align:center}html[data-tables=cards] .markdown-body table tr{display:inline-block;width:100%;max-width:520px;margin:0 auto 12px;padding:6px 10px 6px 16px;border:1px solid #d0d0d0;border-radius:8px;background-color:#fff;position:relative;box-shadow:0 1px 2px rgba(0,0,0,.04);box-sizing:border-box;text-align:center;vertical-align:top}html[data-tables=cards] .markdown-body table tr::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:3px;background-color:#43b59e;border-radius:8px 0 0 8px}html[data-tables=cards] .markdown-body table td{display:block;border:0;padding:2px 0;font-size:12px;white-space:normal;text-align:center!important}html[data-tables=cards] .markdown-body table td::before{content:'';display:none;font-size:10px;font-weight:600;opacity:.65;margin-bottom:1px}html[data-tables=cards] .markdown-body table td:first-child::before{content:'';margin-bottom:0}html[data-tables=cards] .markdown-body table td:first-child{font-weight:600;margin-bottom:2px}html[data-tables=cards] .markdown-body table td+td{border-top:1px solid #eee;margin-top:2px;padding-top:3px}html[data-theme=dark][data-tables=cards] .markdown-body table tr{background-color:#181818;border-color:#3a3a3a;box-shadow:0 1px 2px rgba(0,0,0,.6)}html[data-theme=dark][data-tables=cards] .markdown-body table td+td{border-top-color:#333}html[data-theme=dark][data-tables=cards] .markdown-body table tr::before{background-color:#43b59e}}.markdown-body{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;line-height:1.5;color:#333;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;font-size:1rem;word-wrap:break-word}.markdown-body figure{margin:0;padding:0;display:table}.markdown-body figure figcaption{font-size:92%;text-align:center;color:#bc4a61}.markdown-body details{display:block}.markdown-body summary{display:list-item}.markdown-body a:active,.markdown-body a:hover{outline-width:0}.markdown-body strong{color:#333}.markdown-body em{color:#333}.markdown-body img{border-style:none}.markdown-body input{font:inherit;margin:0;overflow:visible;font-family:inherit;font-size:inherit;line-height:inherit}.markdown-body [type=checkbox]{box-sizing:border-box;padding:0}.markdown-body *{box-sizing:border-box}.markdown-body a{background-color:initial;color:#43b59e;text-decoration:none}.markdown-body a:hover{text-decoration:underline}.markdown-body strong{font-weight:600}.markdown-body hr:after,.markdown-body hr:before{display:table;content:""}.markdown-body hr:after{clear:both}.markdown-body td,.markdown-body th{padding:0}.markdown-body details summary{cursor:pointer}.markdown-body kbd{display:inline-block;padding:.1875rem .3125rem;font:0.75rem/.75rem SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;color:#bc4a61;vertical-align:middle;background-color:#f7f8f8;border:1px solid #e1e2e2;border-radius:.1875rem}.markdown-body blockquote{margin:0}.markdown-body ol ol,.markdown-body ul ol{list-style-type:lower-roman}.markdown-body ol ol ol,.markdown-body ol ul ol,.markdown-body ul ol ol,.markdown-body ul ul ol{list-style-type:lower-alpha}.markdown-body dd{margin-left:0}.markdown-body code,.markdown-body pre{font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace}.markdown-body input::-webkit-inner-spin-button,.markdown-body input::-webkit-outer-spin-button{margin:0;-webkit-appearance:none;appearance:none}.markdown-body:after,.markdown-body:before{display:table;content:""}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body blockquote,.markdown-body details,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:1rem}.markdown-body hr{box-sizing:initial;overflow:visible;height:.25rem;padding:0;margin:1.5rem 0;background-color:#e1e2e2;border:0}.markdown-body blockquote{padding:0 1rem;color:#636363;border-left:.25rem solid #bbb}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:1.5rem;margin-bottom:1rem;font-weight:600;line-height:1.25}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{padding-bottom:.3rem;border-bottom:1px solid #e7e8e8}.markdown-body h2{font-size:1.5rem}.markdown-body h3{font-size:1.25rem}.markdown-body h4{font-size:1rem}.markdown-body h5{font-size:.875rem}.markdown-body h6{font-size:.85rem}.markdown-body ol,.markdown-body ul{padding-left:2rem}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body li{overflow-wrap:break-word}.markdown-body li>p{margin-top:1rem}.markdown-body li+li{margin-top:.25rem}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:1rem;font-size:1rem;font-style:italic;font-weight:600}.markdown-body dl dd{padding:0 1rem;margin-bottom:1rem}.markdown-body table{border-spacing:0;border-collapse:collapse;display:block;width:100%;overflow:auto}.markdown-body table td,.markdown-body table th{padding:.375rem .75rem;border:1px solid #b9baba}.markdown-body table tr{background-color:#feffff;border-top:1px solid #b9baba}.markdown-body table th{font-weight:600;background-color:#e7e8e8}.markdown-body table tr:nth-child(2n){background-color:#f8f9f9}.markdown-body img,.markdown-body video{max-width:100%;box-sizing:initial}.markdown-body img[align=right]{padding-left:1.25rem}.markdown-body img[align=left]{padding-right:1.25rem}.markdown-body code{padding:.2rem .4rem;margin:0;font-size:85%;background-color:#f7f8f8;color:#bc4a61;border-radius:.1875rem}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:0 0;border:0}.markdown-body .highlight{margin-bottom:1rem}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:1rem;overflow:auto;font-size:85%;line-height:1.45;background-color:#f7f8f8;border-radius:.1875rem}.markdown-body pre code{display:inline;max-width:none;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:initial;border:0;color:#bc4a61}.markdown-body .task-list-item{list-style-type:none}.markdown-body .task-list-item+.task-list-item{margin-top:.1875rem}.markdown-body .task-list-item input{margin:0 .2rem .25rem -1.6rem;vertical-align:middle}.markdown-body .task-list-item input[type=checkbox]{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:.875rem;height:.875rem;outline:0;border:1px solid #43b59e;border-radius:2px}.markdown-body .task-list-item input[type=checkbox]:checked{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20fill%3D%22%2343B59E%22%20d%3D%22M173.898%20439.404l-166.4-166.4c-9.997-9.997-9.997-26.206%200-36.204l36.203-36.204c9.997-9.998%2026.207-9.998%2036.204%200L192%20312.69%20432.095%2072.596c9.997-9.997%2026.207-9.997%2036.204%200l36.203%2036.204c9.997%209.997%209.997%2026.206%200%2036.204l-294.4%20294.401c-9.998%209.997-26.207%209.997-36.204-.001z%22%2F%3E%3C%2Fsvg%3E") center/80% no-repeat}.markdown-body section.footnotes{margin-top:3rem;border-top:1px solid #e1e2e2;padding-top:0}@media (prefers-color-scheme:dark){.markdown-body mark{color:#111}}code[class*=language-],pre[class*=language-]{color:#000;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1rem;margin:.5rem 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background-color:#f7f8f8}:not(pre)>code[class*=language-]{padding:.1rem;border-radius:.3rem;white-space:normal}body{box-sizing:border-box;margin:0 auto}@media print{code[class*=language-],pre[class*=language-]{text-shadow:none}code,pre,pre code{overflow:visible!important;white-space:pre-wrap!important;white-space:-moz-pre-wrap!important;white-space:-pre-wrap!important;white-space:-o-pre-wrap!important;word-wrap:break-word!important}body,html{margin:0;padding:4px}}div.code-toolbar{position:relative}div.code-toolbar>.toolbar{position:absolute;z-index:10;top:.3em;right:.2em;transition:opacity .3s ease-in-out;opacity:0}div.code-toolbar:hover>.toolbar{opacity:1}div.code-toolbar:focus-within>.toolbar{opacity:1}div.code-toolbar>.toolbar>.toolbar-item{display:inline-block}div.code-toolbar>.toolbar>.toolbar-item>button{border:0;color:inherit;font:inherit;line-height:normal;overflow:visible;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}div.code-toolbar>.toolbar>.toolbar-item>a,div.code-toolbar>.toolbar>.toolbar-item>button,div.code-toolbar>.toolbar>.toolbar-item>span{color:inherit;font-size:.8em;padding:4px .5em;background:rgba(224,224,224,.4);box-shadow:0 2px 0 0 rgba(0,0,0,.2);border-radius:.5em}div.code-toolbar>.toolbar>.toolbar-item>a:focus,div.code-toolbar>.toolbar>.toolbar-item>a:hover,div.code-toolbar>.toolbar>.toolbar-item>button:focus,div.code-toolbar>.toolbar>.toolbar-item>button:hover,div.code-toolbar>.toolbar>.toolbar-item>span:focus,div.code-toolbar>.toolbar>.toolbar-item>span:hover{color:inherit;text-decoration:none}body{max-width:1108px;padding:24px}#mweb_toc_list_iid{overflow-y:auto;padding-left:0}#mweb_toc_list_iid>.toc-list{overflow:hidden;position:relative}.toc-list{margin:0;padding-left:10px}a.toc-link{height:100%}.is-collapsible{max-height:1000px;overflow:hidden;transition:.3s ease-in-out}.is-collapsed{max-height:0}.toc-link::before{background-color:#f0f0f0!important;content:' ';display:inline-block;height:inherit;left:0;margin-top:-1px;position:absolute;width:2px}.mweb_ct_wrap{margin:0 auto}.mweb_toc_wrap{margin-top:18px;float:left}.mweb_toc_wrap_ct{position:fixed;padding:0;overflow:auto;border-radius:8px;width:270px;top:42px;bottom:42px;margin-left:-300px}.mweb_toc_wrap_ct .markdown-body li{margin:2px 0}.mweb_toc_wrap_ct ul{padding-left:14px}.mweb_toc_wrap_ct .markdown-body{padding:12px;font-size:13px}.mweb_toc_wrap_ct li.is-active-li{font-weight:700}.mweb_toc_wrap_ct li.is-active-li li{font-weight:400}#mweb_toc_list_iid>ul{padding-left:22px}.mweb_toc_wrap_ct,.toc-link::before{background-color:#f8f8f8}.is-active-link::before{background-color:#bbb}.mweb_ct_wrap{padding-left:300px}@media screen and (max-width:860px){.mweb_toc_wrap{display:none}.mweb_ct_wrap{padding:30px}}@media print{.mweb_toc_wrap{display:none}.mweb_ct_wrap{padding:30px}}
 /* Iconcine del testo: allineamento verticale.
-   Il RIFERIMENTO e' la linea che taglia a meta' una MAIUSCOLA senza overshoot, tipo E, B, D
+   Il RIFERIMENTO è la linea che taglia a metà una MAIUSCOLA senza overshoot, tipo E, B, D
    (criterio dell'utente, 2026-08-01, che supera il centro della 'o' minuscola usato il giorno
    prima). Si ottiene da 'vertical-align:middle', che allinea al centro della x-height, alzando
    l'icona di (cap-height - x-height) / 2: sul font di casa vale 0,094em nel testo a 16 px e
    0,069em nelle tabelle a 14,4 px.
-   Ogni icona porta poi il proprio --nudge, che e' la correzione TOTALE rispetto al centro della
-   x-height: dentro c'e' sia la parte di regola sia l'aggiustamento OTTICO, che dipende dalla
+   Ogni icona porta poi il proprio --nudge, che è la correzione TOTALE rispetto al centro della
+   x-height: dentro c'è sia la parte di regola sia l'aggiustamento OTTICO, che dipende dalla
    forma del disegno e non si calcola. I valori vengono dall'utente, misurati sul suo schermo in
    pixel a DPR 2 e convertiti in em sul corpo del testo del contesto (attenzione: il globo vive
    in una tabella a 14,4 px, le altre a 16 px, quindi lo stesso pixel vale em diversi).
    Verticale col transform e non col margine, come vuole la regola universale: sposta la sola
-   icona senza toccare i vicini ne' l'altezza della riga. */
+   icona senza toccare i vicini né l'altezza della riga. */
 .icon-png-svg{vertical-align:middle;transform:translateY(var(--nudge,0))}
 .ic-globe{--nudge:-.1042em}   /* 3 px a DPR 2, su un testo di 14,4 px */
 .ic-mask{--nudge:-.0625em}    /* 2 px a DPR 2 */
@@ -19,45 +19,45 @@ body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{wid
 .ic-tg-old{--nudge:-.0625em}  /* 2 px a DPR 2 */
 .ic-eye{--nudge:-.03125em}    /* 1 px a DPR 2 */
 .ic-tg-new{--nudge:-.03125em} /* 1 px a DPR 2 */
-/* ic-mission resta dove sta, approvata cosi' dall'utente. */
-.ic-reload{--nudge:-.03125em;margin-left:-.0625em}  /* 1 px a DPR 2 piu' in alto, e un filo
-                                                       meno aria prima: e' piu' larga delle altre */
+/* ic-mission resta dove sta, approvata così dall'utente. */
+.ic-reload{--nudge:-.03125em;margin-left:-.0625em}  /* 1 px a DPR 2 più in alto, e un filo
+                                                       meno aria prima: è più larga delle altre */
 /* Spazio prima dell'icona, quando 'clic su' le sta accanto: il margine agisce a CASCATA
    verso destra, come vuole la regola universale, e non si compensa mai col lato opposto.
-   I valori sono 'leggermente' tradotto in numeri, cioe' 2 px a DPR 2 in piu' dove serve aria
-   e altrettanti in meno dove ne avanzava (la ricarica, che e' piu' larga delle altre). */
+   I valori sono 'leggermente' tradotto in numeri, cioè 2 px a DPR 2 in più dove serve aria
+   e altrettanti in meno dove ne avanzava (la ricarica, che è più larga delle altre). */
 .ic-eye,.ic-mask,.ic-tg-new{margin-left:.0625em}
 /* Logo Apple: sostituisce il carattere U+F8FF, che si vede SOLO sui sistemi Apple (area
-   privata Unicode) e altrove e' un quadratino vuoto. Altezza in em, cosi' scala col testo
+   privata Unicode) e altrove è un quadratino vuoto. Altezza in em, così scala col testo
    della cella; nudge alla sola regola generale (centro della maiuscola nel contesto a
    14,4 px).
-   ⚠️ L'altezza e' .936em dal 2026-08-02, cioe' il +20% chiesto dall'utente sul .78em di prima:
-   accanto ai glifi della stessa colonna la mela si leggeva piu' piccola di un'emoji. Il valore
-   e' scritto come prodotto e non arrotondato apposta, o si perde da dove viene.
+   ⚠️ L'altezza è .936em dal 2026-08-02, cioè il +20% chiesto dall'utente sul .78em di prima:
+   accanto ai glifi della stessa colonna la mela si leggeva più piccola di un'emoji. Il valore
+   è scritto come prodotto e non arrotondato apposta, o si perde da dove viene.
    ⚠️ L'allineamento ORIZZONTALE resta aperto, e la ragione va saputa prima di provare a
    'sistemarlo': in quella colonna i glifi NON condividono alcun bordo destro. Misurato
    l'inchiostro vero con le metriche del canvas, i bordi destri stanno in un intervallo di 14 px
-   (da 541,59 di ♪ a 555,59 di ⌦), perche' ogni glifo ha la sua larghezza e la colonna e'
+   (da 541,59 di ♪ a 555,59 di ⌦), perché ogni glifo ha la sua larghezza e la colonna è
    allineata a sinistra. Non esiste quindi un bordo a cui allinearsi 'al pixel': lo spostamento
-   sara' un valore deciso dall'utente. */
+   sarà un valore deciso dall'utente. */
 .ic-apple{height:.936em;width:auto;--nudge:-.0694em}
 
 /* Numero di versione: sta SOPRA il logo-titolo, allineato al pixel col suo bordo sinistro, e
-   NON e' fisso allo schermo: scorrendo esce di scena insieme alla testata (precisazione
+   NON è fisso allo schermo: scorrendo esce di scena insieme alla testata (precisazione
    dell'utente, 2026-07-31, dopo un primo giro che lo aveva fatto 'fixed' e sempre presente).
    'absolute' dentro #markdown_content da' entrambe le cose: scorre col documento e sta fuori
-   dal flusso, quindi non sposta nulla. Il left:0 funziona in tutti i formati perche' il bordo
+   dal flusso, quindi non sposta nulla. Il left:0 funziona in tutti i formati perché il bordo
    sinistro di #markdown_content coincide col bordo sinistro del logo (misurato: 370 px su
    desktop, 24 px su mobile, identici per i due elementi), e l'inchiostro verde del carattere
    parte dal primo pixel dell'immagine. Il bottom:100% lo appoggia esattamente sopra il
    contenuto, nei 24 px di margine che restano liberi in entrambi i formati.
    Niente pillola, niente sfondo, niente bordo: solo il numero, con la 'v' minuscola e il
-   carattere sans serif chiesti dall'utente. L'opacita' e' DIVERSA nei due temi, .3 sul chiaro e
+   carattere sans serif chiesti dall'utente. L'opacità è DIVERSA nei due temi, .3 sul chiaro e
    .25 sullo scuro (scelta dell'utente del 2026-07-31, su mockup a confronto): il fondo nero
-   abbassa gia' la resa percepita, quindi lo stesso valore darebbe due discrezioni diverse.
+   abbassa già la resa percepita, quindi lo stesso valore darebbe due discrezioni diverse.
    NON alzarle per far passare il contrasto axe-core, che con questi valori boccia entrambi i
-   temi: e' una deroga voluta, non un difetto da correggere. Il sans e' dichiarato anche se il corpo del testo
-   e' gia' sans, per proteggere il numero se un domani cambia. */
+   temi: è una deroga voluta, non un difetto da correggere. Il sans è dichiarato anche se il corpo del testo
+   è già sans, per proteggere il numero se un domani cambia. */
 #markdown_content{position:relative}
 .site-version{position:absolute;left:0;bottom:100%;
   font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
@@ -68,17 +68,17 @@ html[data-theme=dark] .site-version{color:#eaeaea;opacity:.25}@media print{.site
 
 /* Pillola di versione nell'angolo dell'indice, su DESKTOP (mockup dell'utente, 2026-08-01).
    Il numero visibile ha due rese alternative, mai insieme: qui sopra i 860 px, dove l'indice
-   c'e'; il numero sopra il logo sotto quella soglia, dove l'indice sparisce. La soglia e' la
+   c'è; il numero sopra il logo sotto quella soglia, dove l'indice sparisce. La soglia è la
    stessa dell'indice, non un valore nuovo da tarare.
-   ⚠️ Il riquadro dell'indice ha lo scorrimento interno, quindi la pillola NON puo' essere
+   ⚠️ Il riquadro dell'indice ha lo scorrimento interno, quindi la pillola NON può essere
    'absolute': scorrerebbe via col contenuto. Sta in una riga 'sticky' ad altezza zero, che
-   resta incollata in cima allo scroll e non occupa spazio nel flusso, cosi' non sposta di un
+   resta incollata in cima allo scroll e non occupa spazio nel flusso, così non sposta di un
    pixel le voci dell'indice.
    Colori scelti dall'utente (2026-08-01, dopo il mockup): pillola BIANCO PURO con testo
    #9b9b9b sul tema chiaro. In tema scuro il bianco puro sarebbe un rettangolo acceso in mezzo
    a un riquadro scuro, quindi la pillola prende il nero corrispondente e il TESTO resta
-   identico: e' il testo a dare l'identita', il fondo si adatta al tema.
-   Il contrasto (2,8:1) resta sotto la soglia: e' voluto, come per il numero su mobile, e
+   identico: è il testo a dare l'identità, il fondo si adatta al tema.
+   Il contrasto (2,8:1) resta sotto la soglia: è voluto, come per il numero su mobile, e
    axe lo boccia. NON alzarlo. */
 .toc-version-row{position:sticky;top:0;height:0;text-align:right;z-index:2;pointer-events:none}
 .toc-version{display:inline-block;margin:.4375rem .4375rem 0 0;padding:2px 6px;
@@ -91,22 +91,22 @@ html[data-theme=dark] .toc-version{background:#0f0f10;color:#9b9b9b}@media scree
 /* Tabella delle sostituzioni testo: si allarga fino al bordo del contenuto (richiesta
    dell'utente, 2026-08-01), invece di restare stretta sul contenuto delle celle. Le tabelle
    di questa pagina sono 'display:block' per poter scorrere in orizzontale sugli schermi
-   stretti: qui la si riporta a 'display:table' SOLO sopra i 700 px, dove lo spazio c'e'
-   davvero, cosi' sotto quella soglia lo scorrimento resta.
-   Il grigio delle sue colonne 'con' non e' piu' una regola di questa tabella: e' diventato la
-   regola generale delle colonne strette, poco piu' sotto. */
+   stretti: qui la si riporta a 'display:table' SOLO sopra i 700 px, dove lo spazio c'è
+   davvero, così sotto quella soglia lo scorrimento resta.
+   Il grigio delle sue colonne 'con' non è più una regola di questa tabella: è diventato la
+   regola generale delle colonne strette, poco più sotto. */
 @media screen and (min-width:701px){.markdown-body table.sost-table{display:table;width:100%}}
 
 /* ── Colonne strette in grigio nelle tabelle a colonne ripetute ──
    Regola generale voluta dall'utente (2026-08-02), nata come caso singolo della tabella delle
    sostituzioni. Quando una tabella ripete lo stesso gruppo di colonne per sfruttare la
    larghezza (simbolo/tasto, sostituisci/con, nome/carattere), la colonna STRETTA di ogni
-   coppia prende un fondo grigio: e' quella che porta un glifo o una sigla, e il grigio dice
+   coppia prende un fondo grigio: è quella che porta un glifo o una sigla, e il grigio dice
    dove finisce una coppia e comincia la successiva senza aggiungere nessun bordo.
-   ⚠️ Servono DUE classi e non un solo `nth-child`, perche' la colonna stretta non sta sempre
-   dallo stesso lato: e' la prima nelle tabelle dei tasti (simbolo, poi il nome esteso) e la
+   ⚠️ Servono DUE classi e non un solo `nth-child`, perché la colonna stretta non sta sempre
+   dallo stesso lato: è la prima nelle tabelle dei tasti (simbolo, poi il nome esteso) e la
    seconda in quelle delle sostituzioni e dei caratteri (il testo, poi il glifo).
-   Si applica alle sole celle del corpo: le intestazioni hanno gia' un grigio proprio, e un
+   Si applica alle sole celle del corpo: le intestazioni hanno già un grigio proprio, e un
    secondo tono le confonderebbe. */
 .markdown-body table.narrow-cols-odd td:nth-child(odd),
 .markdown-body table.narrow-cols-even td:nth-child(2n){background-color:#ececec}
@@ -115,24 +115,24 @@ html[data-theme=dark] .markdown-body table.narrow-cols-even td:nth-child(2n){bac
 
 /* Glifi dei tasti inizio e fine pagina: centratura ottica chiesta dall'utente (2026-08-01),
    3 suoi pixel in alto per la freccia in su e 1 per quella in giu'. I suoi pixel sono a
-   DPR 2, quindi valgono 1,5 e 0,5 px CSS, cioe' .09375rem e .03125rem sul corpo di 16 px.
-   Il glifo sta in uno span apposta: il transform NON puo' stare sul bottone, che lo usa gia'
+   DPR 2, quindi valgono 1,5 e 0,5 px CSS, cioè .09375rem e .03125rem sul corpo di 16 px.
+   Il glifo sta in uno span apposta: il transform NON può stare sul bottone, che lo usa già
    per la dissolvenza laterale (translateX), e il verticale si fa col transform e non col
    margine, come vuole la regola universale. */
 .scroll-glyph{display:block;line-height:1}
 .scroll-top-toggle .scroll-glyph{transform:translateY(-.09375rem)}
 .scroll-bottom-toggle .scroll-glyph{transform:translateY(-.03125rem)}
 
-/* Il tasto dell'indice e' l'unico dei cinque comandi fissi che nella regola base non
+/* Il tasto dell'indice è l'unico dei cinque comandi fissi che nella regola base non
    dichiarava nessuna distanza dal fondo: ce l'aveva solo dentro la media query dei 600 px.
    Il JS leggeva quel valore all'avvio e, su finestra larga, si portava a casa 'auto': dopo
    una rotazione del telefono il tasto finiva a decine di migliaia di pixel fuori schermo.
-   Il JS non lo legge piu' (riscrittura del 2026-08-01), ma la distanza resta dichiarata qui
-   perche' su desktop il tasto e' display:none e non si vedrebbe l'errore.
-   ⚠️ Questa regola sta DOPO la media query e ha la stessa specificita', quindi vince lei: il
-   valore va tenuto uguale a quello di la' (16 px: dal 2026-08-01 il tasto sta nell'angolo, il
-   tasto del tema che gli stava sotto non c'e' piu'), o il tasto si sposta e sembra un difetto
-   della media query, che invece e' corretta. */
+   Il JS non lo legge più (riscrittura del 2026-08-01), ma la distanza resta dichiarata qui
+   perché su desktop il tasto è display:none e non si vedrebbe l'errore.
+   ⚠️ Questa regola sta DOPO la media query e ha la stessa specificità, quindi vince lei: il
+   valore va tenuto uguale a quello di là (16 px: dal 2026-08-01 il tasto sta nell'angolo, il
+   tasto del tema che gli stava sotto non c'è più), o il tasto si sposta e sembra un difetto
+   della media query, che invece è corretta. */
 .toc-toggle{bottom:calc(16px + env(safe-area-inset-bottom))}
 
 /* Pallini dell'indice: la regola che li toglieva pretendeva un antenato '.toc', che in pagina
@@ -140,95 +140,95 @@ html[data-theme=dark] .markdown-body table.narrow-cols-even td:nth-child(2n){bac
    mostrava i tre livelli di pallino che quella regola voleva evitare. */
 #mweb_toc_list_iid li{list-style:none}
 
-/* Stampa: i comandi fissi non vanno sulla carta. Il foglio di stampa nascondeva gia' indice,
+/* Stampa: i comandi fissi non vanno sulla carta. Il foglio di stampa nascondeva già indice,
    pillola e numero di versione, ma i cinque tondi restavano 'fixed' e finivano sul foglio
    sopra il testo. */
 @media print{.theme-toggle,.tables-toggle,.toc-toggle,.scroll-toggle{display:none}}
 
-/* Vista a schede: l'etichetta di colonna si mostra dove il JS l'ha scritta, cioe' nelle sole
-   tabelle con piu' di due colonne. Prima il CSS dichiarava content:'' e display:none, quindi
+/* Vista a schede: l'etichetta di colonna si mostra dove il JS l'ha scritta, cioè nelle sole
+   tabelle con più di due colonne. Prima il CSS dichiarava content:'' e display:none, quindi
    buttava via il lavoro del JS e le tabelle larghe restavano senza intestazioni. */
 html[data-tables=cards] .markdown-body table td[data-label]::before{content:attr(data-label);display:block;font-size:10px;font-weight:600;opacity:.7;margin-bottom:2px}
 
 /* Il 'Link' di esempio nella tabella del markdown: era un <a href=""> che ricaricava la
-   pagina e faceva perdere il segno. Ora e' uno span che ne imita solo l'aspetto. */
+   pagina e faceva perdere il segno. Ora è uno span che ne imita solo l'aspetto. */
 .link-sample{color:#43b59e}
 
 /* ── Palette: correzioni di contrasto approvate dall'utente il 2026-08-01 ──
    Le tre voci qui sotto vengono dal confronto a mockup (casi 1, 2 e 3 della proposta di
-   palette). Il criterio non e' 'far passare axe': e' che tre colori scelti guardando UN tema
+   palette). Il criterio non è 'far passare axe': è che tre colori scelti guardando UN tema
    solo non si leggono nell'altro. Percio' ogni riga cambia il colore di UN tema e lascia
-   intatto quello dove funzionava gia'.
+   intatto quello dove funzionava già.
    ⚠️ Non toccano le due deroghe volute (numero di versione sopra il logo e pillola
    dell'indice), che restano sotto soglia per scelta e sono documentate in CLAUDE.md. */
 
-/* 1. Link: sul bianco il verde acqua dava 2,51:1, cioe' poco piu' della meta' della soglia,
-      perche' era stato scelto sul fondo nero (dove da' 7,44:1 e resta com'e'). Il verde
-      nuovo e' lo stesso colore piu' profondo: stessa tonalita', luminosita' dimezzata. */
+/* 1. Link: sul bianco il verde acqua dava 2,51:1, cioè poco più della metà della soglia,
+      perché era stato scelto sul fondo nero (dove da' 7,44:1 e resta com'è). Il verde
+      nuovo è lo stesso colore più profondo: stessa tonalità, luminosità dimezzata. */
 .markdown-body a{color:#1c7a68}
 html[data-theme=dark] .markdown-body a{color:#43b59e}
 .link-sample{color:#1c7a68}
 html[data-theme=dark] .link-sample{color:#43b59e}
 
-/* 2. Voce attiva dell'indice: la pesca su fondo chiarissimo dava 1,64:1, il valore piu' basso
-      di tutta la pagina, e rendeva la voce attiva PIU' pallida di quelle inattive. Nel tema
+/* 2. Voce attiva dell'indice: la pesca su fondo chiarissimo dava 1,64:1, il valore più basso
+      di tutta la pagina, e rendeva la voce attiva PIÙ pallida di quelle inattive. Nel tema
       scuro la stessa pesca da' 8,78:1 e non si tocca. Terracotta scelta dall'utente fra tre
-      proposte (variante A). L'!important e' obbligato: la regola che batte porta il suo. */
+      proposte (variante A). L'!important è obbligato: la regola che batte porta il suo. */
 .toc-list a.toc-link.is-active-link{color:#a8461f!important}
 html[data-theme=dark] .toc-list a.toc-link.is-active-link{color:#f7b59e!important}
 
-/* 3. Grassetti e corsivi nel tema scuro: 522 occorrenze a 3,33:1 dentro le tabelle, cioe'
+/* 3. Grassetti e corsivi nel tema scuro: 522 occorrenze a 3,33:1 dentro le tabelle, cioè
       proprio le parole messe in risalto erano le meno leggibili. Il rosa nuovo sta fra il
-      mattone di prima e il #f2c3d0 che il codice inline usa gia' nello stesso tema, quindi
+      mattone di prima e il #f2c3d0 che il codice inline usa già nello stesso tema, quindi
       il tema scuro guadagna una scala coerente invece di due rosa scollegati. */
 html[data-theme=dark] .markdown-body em,html[data-theme=dark] .markdown-body strong{color:#e8909f}
 
 /* ── Scala dei titoli ──
-   Il principio, che vale piu' dei singoli valori: il VERDE e' l'azione (link e accenti), i
+   Il principio, che vale più dei singoli valori: il VERDE è l'azione (link e accenti), i
    TITOLI sono la struttura. Prima erano tre freddi vicini (verde acqua, ciano, azzurro) che
-   litigavano fra loro invece di fare gerarchia, perche' dicevano tutti 'guardami' senza
+   litigavano fra loro invece di fare gerarchia, perché dicevano tutti 'guardami' senza
    distinguersi per ruolo.
-   ⚠️ Nata il 2026-08-01 come scala tutta calda ('ambra e ruggine'), dal 2026-08-02 e' tutta
-   FREDDA: prima l'h2 e' passato al teal, poi h3 e h4 lo hanno seguito per chiudere il salto di
+   ⚠️ Nata il 2026-08-01 come scala tutta calda ('ambra e ruggine'), dal 2026-08-02 è tutta
+   FREDDA: prima l'h2 è passato al teal, poi h3 e h4 lo hanno seguito per chiudere il salto di
    temperatura che si era aperto in mezzo. Il vincolo che tiene in piedi la distinzione dai
-   link non e' la temperatura ma la DISTANZA DI TINTA, 23 gradi. Vedi Styleguide.html.
+   link non è la temperatura ma la DISTANZA DI TINTA, 23 gradi. Vedi Styleguide.html.
    ⚠️ Nel tema CHIARO la gerarchia cromatica non esisteva affatto: misurato prima di questa
-   modifica, h1, h2, h3 e h4 erano tutti #0595bf, perche' l'ultima regola del foglio vinceva
-   su tutte le altre. Non e' una scala che si ritocca, e' una scala che si introduce.
+   modifica, h1, h2, h3 e h4 erano tutti #0595bf, perché l'ultima regola del foglio vinceva
+   su tutte le altre. Non è una scala che si ritocca, è una scala che si introduce.
    I titoli cambiano in ENTRAMBI i temi: caldi di giorno e ciani di notte sarebbero due siti.
-   L'h1 e' neutro per scelta dell'utente (grigio, non piu' azzurro): il titolo di capitolo non
+   L'h1 è neutro per scelta dell'utente (grigio, non più azzurro): il titolo di capitolo non
    ha bisogno di colore per farsi vedere, e lascia il colore alla gerarchia sotto di lui. */
 .markdown-body h1{color:#333}
 html[data-theme=dark] .markdown-body h1{color:#f1f1f1}
-/* h2 in teal dal 2026-08-02, scelta dell'utente su mockup (variante C). Non e' il #00727B
+/* h2 in teal dal 2026-08-02, scelta dell'utente su mockup (variante C). Non è il #00727B
    che aveva proposto: quello sta a 184 gradi di tinta contro i 169 del verde dei link, con la
-   stessa luminosita', e un titolo che somiglia a un link e' un difetto d'uso. Spostato a 192
-   gradi, cioe' 23 di scarto invece di 15. La coppia e' obbligatoria: #0A6B84 sul fondo scuro
+   stessa luminosità, e un titolo che somiglia a un link è un difetto d'uso. Spostato a 192
+   gradi, cioè 23 di scarto invece di 15. La coppia è obbligatoria: #0A6B84 sul fondo scuro
    darebbe 3,08:1, sotto il minimo. Valori e contrasti in Styleguide.html. */
 .markdown-body h2{color:#0A6B84}
 html[data-theme=dark] .markdown-body h2{color:#4fb3cc}
-/* ⚠️ Il filo sotto h1 e h2 e' dichiarato UNA volta sola, chiaro, e il tema scuro lo
+/* ⚠️ Il filo sotto h1 e h2 è dichiarato UNA volta sola, chiaro, e il tema scuro lo
    ricoloriva in un elenco che comprendeva h1, h4, h5 e h6 ma NON h2: al buio ogni h2 aveva
    sotto una riga #e7e8e8, quasi bianca su fondo #121212. Vista a schermo il 2026-08-02,
-   misurando i titoli dopo il cambio di colore: nessuno l'aveva mai guardata perche' il
+   misurando i titoli dopo il cambio di colore: nessuno l'aveva mai guardata perché il
    difetto stava nel BORDO mentre tutte le prove guardavano il TESTO. */
 html[data-theme=dark] .markdown-body h2{border-bottom-color:#2a2a2a}
 /* h3 e h4 nella stessa tinta dell'h2 dal 2026-08-02 (proposta A, scelta su mockup). Prima
-   erano caldi, ruggine e bruno, e fra h2 e h3 il colore non si smorzava: cambiava LATO, cosi'
-   il lettore leggeva un cambio di argomento dove c'e' solo un livello in meno.
-   ⚠️ Non e' il difetto del 2.71 al contrario: la' i tre freddi erano tre TINTE diverse che
-   gridavano insieme, qui la tinta e' una sola (circa 190 gradi) e a variare e' quanto e'
+   erano caldi, ruggine e bruno, e fra h2 e h3 il colore non si smorzava: cambiava LATO, così
+   il lettore leggeva un cambio di argomento dove c'è solo un livello in meno.
+   ⚠️ Non è il difetto del 2.71 al contrario: là i tre freddi erano tre TINTE diverse che
+   gridavano insieme, qui la tinta è una sola (circa 190 gradi) e a variare è quanto è
    accesa: saturazione 86, poi 30, poi 11. Il colore non cambia lato, si ritira. */
 .markdown-body h3{color:#3d6b72}
 html[data-theme=dark] .markdown-body h3{color:#82c3cc}
 /* h4, h5 e h6 in bruno neutro: l'utente ha scelto di togliere di mezzo anche l'ultimo verde
-   fra i titoli, cosi' il verde resta SOLO ai link e la regola non ha eccezioni. */
+   fra i titoli, così il verde resta SOLO ai link e la regola non ha eccezioni. */
 .markdown-body h4,.markdown-body h5,.markdown-body h6{color:#55636a}
 html[data-theme=dark] .markdown-body h4,html[data-theme=dark] .markdown-body h5,html[data-theme=dark] .markdown-body h6{color:#aebfc4}
 
 /* ── Logo in testata ──
-   Il logo e' SVG INLINE in index.html (prima era <img src="RoccobotOS.svg">, che il foglio di
-   stile non puo' ricolorare). Le due parti si vestono separatamente: la scritta segue il tema,
+   Il logo è SVG INLINE in index.html (prima era <img src="RoccobotOS.svg">, che il foglio di
+   stile non può ricolorare). Le due parti si vestono separatamente: la scritta segue il tema,
    il marchio resta verde in entrambi. Le misure riproducono quelle che l'<img> aveva davvero,
    misurate nel browser reale prima del cambio: 760 x 77,6 px in una colonna da 760. */
 .site-logo{display:block;width:781.9px;max-width:100%;height:auto}
@@ -245,7 +245,7 @@ html[data-theme=dark] .plist-box{border-color:#3a3a3a}
 /* ── prefers-reduced-motion ──
    Chi ha chiesto meno animazioni al sistema le perde tutte: lo scheletro di caricamento, la
    comparsa delle immagini, le transizioni dei comandi fissi e lo scorrimento animato. Non si
-   azzerano le durate a 0s ma a .01ms, perche' una transizione di durata zero in certi browser
+   azzerano le durate a 0s ma a .01ms, perché una transizione di durata zero in certi browser
    non emette l'evento 'transitionend' e chi lo aspetta resta appeso.
    Lo scorrimento animato dei tasti su e giu' lo spegne anche il JS, che non passa dal CSS. */
 @media (prefers-reduced-motion:reduce){
@@ -254,98 +254,98 @@ html[data-theme=dark] .plist-box{border-color:#3a3a3a}
 
 /* ── Celle con una riga vuota in coda ──
    Sette celle tenevano l'altezza con un <br> seguito da uno spazio a larghezza zero (U+200B):
-   invisibile nel sorgente, si perde in un copia-incolla e un lettore di schermo lo puo'
-   annunciare. La riga in piu' vale esattamente una interlinea (21,6 px su un corpo di 14,4),
-   cioe' 1,5em, che si somma ai 6 px di riempimento gia' previsti dal tema: la resa e'
+   invisibile nel sorgente, si perde in un copia-incolla e un lettore di schermo lo può
+   annunciare. La riga in più vale esattamente una interlinea (21,6 px su un corpo di 14,4),
+   cioè 1,5em, che si somma ai 6 px di riempimento già previsti dal tema: la resa è
    identica, misurata nel browser reale prima e dopo il cambio. */
 .markdown-body td.cell-extra-line{padding-bottom:calc(.375rem + 1.5em)}
 
 /* ── Comandi shell rientrati ──
-   Due righe della tabella adb erano rientrate con tre spazi unificatori piu' uno normale:
+   Due righe della tabella adb erano rientrate con tre spazi unificatori più uno normale:
    spaziatura fatta col contenuto, che si perde in un copia-incolla del comando. Il rientro
    misurato era 16 px, che sommati ai 12 px di riempimento della cella fanno 1,75rem. */
 .markdown-body td.cmd-indent{padding-left:1.75rem}
 
 /* ── Link di salto al contenuto ──
-   Sta fuori schermo finche' non riceve il fuoco, e allora compare in alto a sinistra. Non si
-   nasconde con display:none ne' con visibility:hidden, che lo toglierebbero anche dal giro
-   del Tab, cioe' esattamente il contrario di quello che deve fare. */
+   Sta fuori schermo finché non riceve il fuoco, e allora compare in alto a sinistra. Non si
+   nasconde con display:none né con visibility:hidden, che lo toglierebbero anche dal giro
+   del Tab, cioè esattamente il contrario di quello che deve fare. */
 .skip-link{position:absolute;left:-9999px;top:0;z-index:1000;padding:.5rem 1rem;background:#fff;color:#1c7a68;border:2px solid #1c7a68;border-radius:0 0 6px 0;font-weight:600;text-decoration:none}
 .skip-link:focus{left:0}
 html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#43b59e}
 #markdown_content:focus{outline:none}
 
 /* ── Griglia 'Indice': bersagli da toccare ──
-   I quindici link erano riquadri inline alti 11 px, meno della meta' dei 24 px che le linee
+   I quindici link erano riquadri inline alti 11 px, meno della metà dei 24 px che le linee
    guida chiedono a un bersaglio. Diventano blocchi che riempiono la cella: cresce solo
    l'altezza della griglia, il testo e i colori restano quelli. */
 .markdown-body table.index-grid td{padding:0}
 .markdown-body table.index-grid td a{display:block;padding:.75rem .9rem}
 
 /* ── Link dentro i titoli ──
-   Un titolo che e' anche un link (le schede delle app rimandano all'App Store) era
+   Un titolo che è anche un link (le schede delle app rimandano all'App Store) era
    indistinguibile da un titolo qualunque: stesso colore, stesso peso, nessun segno. Si
-   sottolinea invece di ricolorare, cosi' la scala dei titoli della Styleguide resta intatta. Le ancore invisibili dell'export non ci sono piu' (tolte con la potatura di D2),
-   quindi non serve piu' escluderle dal selettore. */
+   sottolinea invece di ricolorare, così la scala dei titoli della Styleguide resta intatta. Le ancore invisibili dell'export non ci sono più (tolte con la potatura di D2),
+   quindi non serve più escluderle dal selettore. */
 .markdown-body h1 a[href],.markdown-body h2 a[href],.markdown-body h3 a[href],.markdown-body h4 a[href],.markdown-body h5 a[href],.markdown-body h6 a[href]{text-decoration:underline;text-decoration-thickness:from-font;text-underline-offset:.12em}
 
 /* ── Comandi fissi spenti da un feature flag ──
-   ⚠️⚠️ L'attributo `hidden` da solo NON BASTA, ed e' un difetto che e' arrivato fino in
+   ⚠️⚠️ L'attributo `hidden` da solo NON BASTA, ed è un difetto che è arrivato fino in
    produzione (2026-08-01): `hidden` nasconde con una regola del foglio di stile del BROWSER,
    e qui ogni comando dichiara il suo `display` (inline-flex o grid) in una regola d'autore,
-   che vince sempre. Il pulsante del tema restava percio' visibile con il suo flag gia' spento,
+   che vince sempre. Il pulsante del tema restava percio' visibile con il suo flag già spento,
    e il tasto dell'indice ci finiva sopra.
    ⚠️ E la prova che non l'ha visto sbagliava proprio qui: leggeva la PROPRIETA' `hidden`
    dell'elemento, che era `true` come atteso. Un comando spento si verifica sul `display`
    CALCOLATO, mai sull'attributo.
-   Vale fuori da ogni media query, perche' il flag spegne il comando su tutti i formati.
+   Vale fuori da ogni media query, perché il flag spegne il comando su tutti i formati.
    ⚠️ Il verso in cui un comando scivola via quando sparisce lo decide --hide-shift, che deve
    essere NEGATIVO per quelli di sinistra: col valore predefinito uscirebbero dal lato
    sbagliato, attraversando lo schermo. */
 .theme-toggle[hidden],.tables-toggle[hidden],.toc-toggle[hidden],.scroll-toggle[hidden]{display:none!important}
 
 /* ── Cornice del titolo dopo un salto dall'indice ──
-   Non e' un difetto del nostro CSS: tocbot, finito lo scorrimento, mette tabindex="-1" sul
+   Non è un difetto del nostro CSS: tocbot, finito lo scorrimento, mette tabindex="-1" sul
    titolo di arrivo e gli da' il fuoco, e il browser ci disegna intorno il suo anello (blu su
    macOS). Serve a un lettore di schermo, che riprende la lettura dal punto giusto: quello NON
-   si perde togliendo l'anello, perche' il fuoco resta dov'e'. Si perde solo il rettangolo, che
+   si perde togliendo l'anello, perché il fuoco resta dov'è. Si perde solo il rettangolo, che
    a un titolo non dice niente: i titoli hanno tabindex -1, quindi col Tab non ci si arriva mai
-   e non e' l'indicatore di 'dove sono' di chi naviga da tastiera. */
+   e non è l'indicatore di 'dove sono' di chi naviga da tastiera. */
 .markdown-body h1:focus,.markdown-body h2:focus,.markdown-body h3:focus,
 .markdown-body h4:focus,.markdown-body h5:focus,.markdown-body h6:focus{outline:none}
 
 /* ── Evidenziazione del tocco ──
    Su Android, al tocco, il browser disegna un rettangolo azzurro traslucido sul riquadro
    dell'elemento: ignora il border-radius, quindi su un comando tondo si vede un QUADRATO che
-   lo copre per un istante. Si spegne solo cosi': non e' un outline ne' un background, e
+   lo copre per un istante. Si spegne solo così: non è un outline né un background, e
    nessuna delle due regole lo toccherebbe. Il riscontro visivo del tocco resta comunque,
-   perche' i comandi hanno gia' la loro transizione di opacita'. */
+   perché i comandi hanno già la loro transizione di opacità. */
 .theme-toggle,.tables-toggle,.toc-toggle,.scroll-toggle,.skip-link,
 .markdown-body table.index-grid td a{-webkit-tap-highlight-color:transparent}
 
 /* ── Angoli stondati delle tabelle ──
    Richiesta dell'utente (2026-08-02): 8 px su tutte le tabelle.
-   ⚠️ Un `border-radius` sulla tabella NON basta con `border-collapse:collapse`, ed e' la
+   ⚠️ Un `border-radius` sulla tabella NON basta con `border-collapse:collapse`, ed è la
    ragione per cui serve tutto questo blocco invece di una riga: nel modello collassato la
    cornice esterna la disegnano le CELLE, che restano quadrate, e agli angoli si vedrebbe lo
    squadro del bordo sotto la curva. Si passa percio' al modello separato: la cornice diventa
    una proprieta' della tabella, e le celle tengono i soli tratti interni (destra e sotto).
-   ⚠️ La curva la seguono anche le QUATTRO CELLE D'ANGOLO, che prendono il loro raggio: e' la
+   ⚠️ La curva la seguono anche le QUATTRO CELLE D'ANGOLO, che prendono il loro raggio: è la
    via che non dipende da un contenitore che ritaglia. Fidarsi dell'`overflow:auto` che queste
-   tabelle hanno gia' funzionerebbe qui e non sulle sotto-pagine, dove le tabelle non sono
-   `display:block`, e su un elemento tabella l'overflow non e' garantito che ritagli.
-   Il raggio delle celle e' 7 px e non 8: la cornice sta fuori, e all'interno la curva ha un
+   tabelle hanno già funzionerebbe qui e non sulle sotto-pagine, dove le tabelle non sono
+   `display:block`, e su un elemento tabella l'overflow non è garantito che ritagli.
+   Il raggio delle celle è 7 px e non 8: la cornice sta fuori, e all'interno la curva ha un
    pixel in meno di raggio, o si vedrebbe un filo di fondo pagina fra bordo e cella.
    ⚠️ E la cornice ha imposto un cambio di larghezza, che va capito prima di rimetterci mano:
    queste tabelle sono `display:block` per poter scorrere, e il blocco era largo il 100% mentre
-   le celle dentro restano larghe quanto il loro contenuto. Finche' nessuno disegnava il bordo
+   le celle dentro restano larghe quanto il loro contenuto. Finché nessuno disegnava il bordo
    del blocco la differenza non si vedeva; disegnandolo, la cornice arrivava a fondo pagina con
-   le celle ferme a meta'. Percio' il blocco passa a `width:fit-content`, che lo fa aderire alle
-   celle: il `max-width:100%` che le tabelle hanno gia' tiene in piedi lo scorrimento.
-   ⚠️ Il separatore verticale delle INTESTAZIONI e' passato al grigio delle celle (2026-08-02,
-   segnalato dall'utente: 'molto piu' netta e scura, cosa che non mi piace'). Era #555, il tono
+   le celle ferme a metà. Percio' il blocco passa a `width:fit-content`, che lo fa aderire alle
+   celle: il `max-width:100%` che le tabelle hanno già tiene in piedi lo scorrimento.
+   ⚠️ Il separatore verticale delle INTESTAZIONI è passato al grigio delle celle (2026-08-02,
+   segnalato dall'utente: 'molto più netta e scura, cosa che non mi piace'). Era #555, il tono
    che l'export si portava dietro, e in un primo giro l'avevo conservato credendolo voluto: con
-   la cornice tonda quel filo scuro sotto il titolo salta all'occhio ancora di piu'. Se un
+   la cornice tonda quel filo scuro sotto il titolo salta all'occhio ancora di più. Se un
    domani lo si vuole indietro, il valore era #555 e la regola stava qui. */
 .markdown-body table{border-collapse:separate;border-spacing:0;border:1px solid #b9baba;border-radius:8px;width:fit-content}
 html[data-tables=standard] .markdown-body table{width:fit-content}
@@ -362,41 +362,41 @@ html[data-theme=dark] .markdown-body table td,html[data-theme=dark] .markdown-bo
 /* Una cella unita a coppie che arriva IN FONDO alla tabella non sta nell'ultima riga, quindi
    le due regole qui sopra la mancano: le lascerebbero il tratto inferiore (doppia linea sulla
    cornice) e darebbero l'angolo tondo alla cella sbagliata, quella accanto. Nasce con le
-   frecce direzionali della tabella dei tasti (2026-08-02), ma la regola e' scritta per la
+   frecce direzionali della tabella dei tasti (2026-08-02), ma la regola è scritta per la
    forma, non per quel caso. */
 .markdown-body table tbody tr:nth-last-child(2) td[rowspan="2"]{border-bottom:0}
 .markdown-body table tbody tr:nth-last-child(2) td[rowspan="2"]:last-child{border-bottom-right-radius:7px}
 
 /* ⚠️ E l'altra faccia dello stesso problema: nella riga accorciata dalla cella unita, l'ULTIMA
-   cella scritta non e' l'ultima COLONNA. La regola che toglie il tratto destro a `td:last-child`
+   cella scritta non è l'ultima COLONNA. La regola che toglie il tratto destro a `td:last-child`
    la colpisce lo stesso, e sparisce il bordo fra quella cella e la cella unita che le sta a
-   fianco: e' il buco visto in pagina sotto 'Esc' il 2026-08-02.
-   Il rimedio e' una classe nel markup e non un selettore piu' furbo, perche' il CSS non sa
+   fianco: è il buco visto in pagina sotto 'Esc' il 2026-08-02.
+   Il rimedio è una classe nel markup e non un selettore più furbo, perché il CSS non sa
    contare le colonne: `:last-child` guarda i fratelli scritti, e una cella unita che arriva da
-   sopra fra quei fratelli non c'e'. Il selettore porta `tbody` apposta, per stare sopra la
-   regola che toglie il bordo, che ha la stessa specificita' senza.
-   ⚠️ La stessa classe annulla anche l'ANGOLO TONDO in basso a destra, e non e' un di piu': la
+   sopra fra quei fratelli non c'è. Il selettore porta `tbody` apposta, per stare sopra la
+   regola che toglie il bordo, che ha la stessa specificità senza.
+   ⚠️ La stessa classe annulla anche l'ANGOLO TONDO in basso a destra, e non è un di più: la
    regola dell'angolo guarda lo stesso `td:last-child`, quindi arrotondava la cella sbagliata e
    si vedeva una rientranza curva accanto alla cella unita. Sono due sintomi di una causa sola,
    e vanno tolti insieme o si torna a inseguirli uno per volta.
-   ⚠️ E la specificita' va contata, non indovinata: la regola dell'angolo e'
-   `tbody tr:last-child td:last-child`, cioe' 1 classe e 2 pseudo-classi, e batte un selettore
+   ⚠️ E la specificità va contata, non indovinata: la regola dell'angolo è
+   `tbody tr:last-child td:last-child`, cioè 1 classe e 2 pseudo-classi, e batte un selettore
    con la sola classe nuova. Il primo tentativo perdeva proprio qui e l'angolo restava tondo.
    Per questo il selettore ripete `:last-child`, che gli fa superare quella somma. */
 .markdown-body table tbody tr td.not-last-col:last-child{border-right:1px solid #b9baba;border-bottom-right-radius:0}
 html[data-theme=dark] .markdown-body table tbody tr td.not-last-col:last-child{border-right-color:#3a3a3a}
 
-/* La vista a schede degli schermi stretti non e' piu' una tabella: ogni riga e' gia' una
+/* La vista a schede degli schermi stretti non è più una tabella: ogni riga è già una
    scheda con la sua cornice tonda, e la cornice della tabella le disegnerebbe intorno un
    secondo riquadro vuoto. */
 html[data-tables=cards] .markdown-body table{border:0;border-radius:0}
 
 /* ── Riquadro dell'indice: 8 px come le tabelle ──
    Richiesta dell'utente (2026-08-02), subito dopo gli angoli delle tabelle: il pannello aveva
-   4 px e con le tabelle a 8 stonava. Il valore e' cambiato dov'era gia' dichiarato, nel blocco
+   4 px e con le tabelle a 8 stonava. Il valore è cambiato dov'era già dichiarato, nel blocco
    dell'export in testa al file, invece di aggiungere qui una dichiarazione che lo sovrascriva:
-   una dichiarazione superata non e' codice morto e il censimento non la vedrebbe (la trappola
+   una dichiarazione superata non è codice morto e il censimento non la vedrebbe (la trappola
    sta in RoccobotOS/CLAUDE.md).
-   ⚠️ Sul cassetto a schermo intero degli smartphone il raggio resta 0, ed e' voluto: la' il
-   pannello e' incollato ai tre lati dello schermo e un angolo tondo mostrerebbe la pagina
+   ⚠️ Sul cassetto a schermo intero degli smartphone il raggio resta 0, ed è voluto: là il
+   pannello è incollato ai tre lati dello schermo e un angolo tondo mostrerebbe la pagina
    sotto. Quella regola vive nella media query dei 600 px. */

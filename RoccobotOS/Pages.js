@@ -6,15 +6,15 @@
 
    NIENTE localStorage, di proposito (stessa istruzione): la pagina si apre sempre secondo la
    preferenza del SISTEMA operativo, e il tasto T vale per la visita in corso. Il tema scelto
-   nella pagina principale non arriva fin qui, perche' nemmeno lei lo memorizza.
+   nella pagina principale non arriva fin qui, perché nemmeno lei lo memorizza.
 
-   Come funziona: finche' nessuno preme T non c'e' nessun attributo data-theme, quindi decide
+   Come funziona: finché nessuno preme T non c'è nessun attributo data-theme, quindi decide
    la media query prefers-color-scheme di Pages.css. Al primo T si scrive data-theme con il
-   verso opposto a quello che si sta vedendo, e da li' in poi vince l'attributo. Il tema di
+   verso opposto a quello che si sta vedendo, e da lì in poi vince l'attributo. Il tema di
    partenza si legge da matchMedia, non dall'attributo, o la prima pressione non farebbe
    nulla su un sistema in tema scuro.
 
-   Le due guardie sono obbligatorie e sono le stesse della pagina principale: si esce se e'
+   Le due guardie sono obbligatorie e sono le stesse della pagina principale: si esce se è
    premuto un modificatore (o si rubano le scorciatoie del browser) e se il focus sta in un
    campo di testo (o scrivere una 't' commuterebbe il tema). */
 (function () {
@@ -37,7 +37,7 @@
 
 /* ── FAB 'indietro' ──
    Le sotto-pagine non avevano NESSUN modo di tornare a index.html: ci si arrivava da un link
-   e da li' restava solo il tasto indietro del browser, che non c'e' su tutte le tastiere e non
+   e da lì restava solo il tasto indietro del browser, che non c'è su tutte le tastiere e non
    si vede. Il pulsante si crea da JS invece di scriverlo in quattro pagine: la fonte resta una
    sola, come per il foglio di stile. Si compone con createElement e textContent, mai con
    innerHTML (regola non derogabile). Se lo script non gira non compare, e la pagina resta

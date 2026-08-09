@@ -27,14 +27,14 @@
   const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
   const LATO_MAX_PX = 32000;   // tetto di sicurezza: oltre, il browser fatica a disegnare l'elemento
   const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch da trackpad)
-  // Sensibilità dello zoom col DITO (gesto nudo da superficie touch). ⚠️ NON si puo' riusare
+  // Sensibilità dello zoom col DITO (gesto nudo da superficie touch). ⚠️ NON si può riusare
   // ZOOM_SENS: il pinch manda pochi px per gesto, un colpo di dito ne manda centinaia, e con
   // 0,015 un solo colpo misurato sul Magic Mouse dell'utente darebbe uno zoom di 39.000 volte.
   // Tarata sui quattro gesti reali della sonda (2026-07-31): un colpo veloce (circa 700 px in
   // totale) fa 3,5x, un gesto lento (50-105 px) fa da +9% a +21%, e dal 100% al 400% ci si
-  // arriva in poco piu' di un colpo. Scartati: 0,0008 (colpo veloce 1,7x, troppo pigro) e
+  // arriva in poco più di un colpo. Scartati: 0,0008 (colpo veloce 1,7x, troppo pigro) e
   // 0,0025 (5,8x, incontrollabile). Alzata da 0,0015 a 0,0018 su richiesta dell'utente
-  // ('leggermente piu' sensibile, di poco') dopo la prova sul suo Magic Mouse.
+  // ('leggermente più sensibile, di poco') dopo la prova sul suo Magic Mouse.
   const ZOOM_SENS_TOUCH = 0.0018;
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
@@ -42,27 +42,27 @@
   // Cosa fa il gesto NUDO (senza ctrl), sia dalla rotella sia dal dito:
   //   'auto'   = ZOOM sempre, con la taratura giusta per ciascuno: a scatti tondi dalla
   //              rotella, continuo e proporzionale al movimento dal dito (trackpad, Magic
-  //              Mouse). Per spostarsi nell'immagine c'e' il trascinamento.
+  //              Mouse). Per spostarsi nell'immagine c'è il trascinamento.
   //   'scorri' = il dito SCORRE l'immagine e la rotella zooma a scatti (comportamento
   //              della 2.19.1, per chi preferisce lo scorrimento a due dita)
   //   'mai'    = comportamento storico: tutto scorre, e lo zoom resta su ctrl+rotella e pinch
   // ⚠️ Richiesta esplicita dell'utente (2026-07-31): il dito deve zoomare, esattamente come
-  // la rotella fisica, perche' per spostarsi c'e' gia' il trascinamento. La 2.19.1 aveva
+  // la rotella fisica, perché per spostarsi c'è già il trascinamento. La 2.19.1 aveva
   // reso il comportamento COERENTE (scorre sempre) ma non era quello voluto: 'auto' quindi
-  // non significa piu' 'il touch scorre'.
+  // non significa più 'il touch scorre'.
   const ROTELLA_ZOOM = 'auto';
-  // Soglie del riconoscimento del gesto (vedi la sezione ROTELLA NUDA piu' sotto).
+  // Soglie del riconoscimento del gesto (vedi la sezione ROTELLA NUDA più sotto).
   const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
-  const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui puo' PARTIRE un gesto di dito
+  const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può PARTIRE un gesto di dito
   const TOUCH_MEMORIA_MS = 800;  // per quanto una firma touch appena vista copre i gesti seguenti
                                  // (scartato 1500: una rotella priva di firma forte sarebbe
                                  // restata muta per un secondo e mezzo dopo uno scorrimento)
   const PASSO_ROTELLA = 1.1;   // quanto ingrandisce UN singolo scatto (1.1 = +10%:
                                // 100 → 110 → 121 → 133 → 146 → 161 → 177 → 194 → ...)
   // TAPPE FISSE, in percentuale della dimensione reale: la rotella salta di tappa in
-  // tappa invece di moltiplicare, cosi' i valori sono TONDI (120% invece di 121,2%).
+  // tappa invece di moltiplicare, così i valori sono TONDI (120% invece di 121,2%).
   // Costruite per imitare l'andamento dell'1,1x scegliendo, fra i candidati entro il
-  // 6% dal bersaglio ideale, il numero piu' rotondo: sopra il 10% i rapporti stanno
+  // 6% dal bersaglio ideale, il numero più rotondo: sopra il 10% i rapporti stanno
   // tutti fra 1,06 e 1,17 (media 1,10) e servono gli stessi 14 scatti dell'1,1x puro
   // per andare dal 100% al 400%. Elenco vuoto = passo geometrico PASSO_ROTELLA.
   // Oltre gli estremi dell'elenco riprende comunque il passo geometrico.
@@ -71,51 +71,51 @@
     200, 225, 250, 275, 300, 325, 350, 400, 450, 500, 550, 600, 650, 700, 800, 900, 1000,
     1100, 1200, 1300, 1500, 1650, 1800, 2000, 2200, 2500, 2800, 3000, 3300, 3500, 4000];
   // SCARTO MINIMO fra il valore attuale e la tappa in cui si atterra. Serve quando si
-  // parte da un valore "fuori scala" (l'adattamento alla finestra, che e' un numero
-  // qualsiasi): senza, dal 199% un tic porterebbe al 200%, cioe' non farebbe nulla di
+  // parte da un valore "fuori scala" (l'adattamento alla finestra, che è un numero
+  // qualsiasi): senza, dal 199% un tic porterebbe al 200%, cioè non farebbe nulla di
   // percepibile. Le tappe troppo vicine si saltano.
   const SALTO_MIN_SU = 0.05;   // ingrandendo: almeno +5%
   const SALTO_MIN_GIU = 0.02;  // rimpicciolendo: almeno -2%
   // ── Menu del tasto destro ──
   // Risoluzione della copia negli appunti di un SVG, che di pixel propri non ne ha.
   // Stessa convenzione del pannello di esportazione: px = misura nominale x DPI / 96
-  // (1 px CSS = 1/96 di pollice). A 96 DPI, cioe' la risoluzione dello schermo, la
-  // copia e' 1:1 con la dimensione nominale: un SVG 640x360 si copia a 640x360.
+  // (1 px CSS = 1/96 di pollice). A 96 DPI, cioè la risoluzione dello schermo, la
+  // copia è 1:1 con la dimensione nominale: un SVG 640x360 si copia a 640x360.
   const DPI_COPIA = 96;
   // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
-  // scelta resta memorizzata (globale, come la modalita' del tondo 1:1).
+  // scelta resta memorizzata (globale, come la modalità del tondo 1:1).
   const ROTELLA_SU_INGRANDISCE = true;
   // ── Adattamento alla vista ──
   // false = criterio originale: l'immagine si adatta ma non supera MAI la dimensione
-  //         reale, quindi una figura piu' piccola della vista resta a 1:1;
-  // true  = si adatta anche INGRANDENDO, cioe' una figura piccola viene portata a
+  //         reale, quindi una figura più piccola della vista resta a 1:1;
+  // true  = si adatta anche INGRANDENDO, cioè una figura piccola viene portata a
   //         riempire la vista.
   // Si commuta al volo col tasto A e la scelta resta memorizzata.
   const ADATTA_INGRANDENDO = false;
   const OVERLAY_NUDGE_Y = 0;   // px: micro-compensazione verticale opzionale del testo dell'overlay.
                                // Dopo text-box-trim resta solo un residuo SUB-PIXEL di arrotondamento
                                // del rendering, che dipende dallo ZOOM DI PAGINA del browser (es. a
-                               // 110% il pelo e' sopra, al 100% sotto): NON e' correggibile in modo
+                               // 110% il pelo è sopra, al 100% sotto): NON è correggibile in modo
                                // stabile/universale. Default 0 = nessuna alterazione; tarabile a mano
                                // (es. -0.5 oppure 0.5) per un livello di zoom abituale.
 
   // Agisce SOLO sulle "pagine-immagine" (il browser mostra direttamente un file immagine).
-  // Nota: restringere via @match/@include all'ESTENSIONE dell'URL e' fragile e va
+  // Nota: restringere via @match/@include all'ESTENSIONE dell'URL è fragile e va
   // evitato: salta le immagini dirette con query string (es. ...preview01.jpg?1662541242)
   // o senza estensione, e in certi gestori (AdGuard) l'@include a regex non inietta
   // affatto lo script (v2.1.0: sfondo a scacchi + overlay + zoom spariti). Percio' il
-  // match resta ampio (http/https) e il VERO filtro e' questa guardia sul content-type:
-  // se la pagina non e' un file immagine servito direttamente (image/*), si esce subito
+  // match resta ampio (http/https) e il VERO filtro è questa guardia sul content-type:
+  // se la pagina non è un file immagine servito direttamente (image/*), si esce subito
   // senza toccare nulla.
   if ((document.contentType || '').indexOf('image/') !== 0) return;
 
   // ── Documenti XML (SVG) ───────────────────────────────────────────────
-  // Una pagina PNG/JPEG e' un documento HTML costruito dal browser: c'e' un
-  // <body> e dentro un <img>. Una pagina SVG NO: e' un documento XML la cui
-  // radice e' il <svg> stesso, senza body e senza img. Due conseguenze:
+  // Una pagina PNG/JPEG è un documento HTML costruito dal browser: c'è un
+  // <body> e dentro un <img>. Una pagina SVG NO: è un documento XML la cui
+  // radice è il <svg> stesso, senza body e senza img. Due conseguenze:
   //  1. document.createElement() in un documento XML crea elementi SENZA
   //     namespace, che NON vengono resi: servono createElementNS(XHTML, ...);
-  //  2. GM_addStyle crea il suo <style> allo stesso modo, quindi li' non
+  //  2. GM_addStyle crea il suo <style> allo stesso modo, quindi lì non
   //     applicherebbe nulla: il foglio va inserito a mano, con namespace.
   const XHTML = 'http://www.w3.org/1999/xhtml';
   const eSvg = document.contentType === 'image/svg+xml';
@@ -127,7 +127,7 @@
     (document.head || document.documentElement).appendChild(st);
   }
 
-  // Dimensione "reale" di un SVG: non e' sempre scritta nel file, quindi si
+  // Dimensione "reale" di un SVG: non è sempre scritta nel file, quindi si
   // cerca in ordine di attendibilita'. Il browser NON aiuta (un <img> con un
   // SVG privo di misure riporta 300x150, o 90x150 applicando il rapporto del
   // viewBox all'altezza di default: numeri inventati, misurati).
@@ -135,7 +135,7 @@
     const m = /^\s*([+-]?[\d.]+)\s*(px|pt|pc|cm|mm|in|q|em|ex|rem|%)?\s*$/i.exec(v || '');
     if (!m) return 0;
     const u = (m[2] || 'px').toLowerCase();
-    // le unita' relative non danno una dimensione intrinseca: si passa al viewBox
+    // le unità relative non danno una dimensione intrinseca: si passa al viewBox
     if (u === '%' || u === 'em' || u === 'ex' || u === 'rem') return 0;
     const k = { px: 1, pt: 96 / 72, pc: 16, in: 96, cm: 96 / 2.54, mm: 96 / 25.4, q: 96 / 25.4 / 4 }[u] || 1;
     return parseFloat(m[1]) * k;
@@ -144,7 +144,7 @@
     let w = svgUnitaPx(svg.getAttribute('width')), h = svgUnitaPx(svg.getAttribute('height'));
     const vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
     const vbOk = vb.length === 4 && vb[2] > 0 && vb[3] > 0;
-    // 1) attributi width/height in unita' assolute (il caso normale)
+    // 1) attributi width/height in unità assolute (il caso normale)
     if (w > 0 && h > 0) return { w: Math.round(w), h: Math.round(h) };
     // 1b) uno solo dei due: l'altro si ricava dal rapporto del viewBox
     if (vbOk && w > 0) return { w: Math.round(w), h: Math.round(w * vb[3] / vb[2]) };
@@ -163,7 +163,7 @@
   }
 
   // Trasforma la pagina SVG in un documento con <body>, riusando lo STESSO
-  // <svg> gia' analizzato dal browser (niente seconda richiesta, e resta
+  // <svg> già analizzato dal browser (niente seconda richiesta, e resta
   // vettoriale: ridimensionandolo si ridisegna nitido a qualunque ingrandimento).
   // Restituisce l'elemento da visualizzare, oppure null se qualcosa va storto
   // (in quel caso lo script si ferma e la pagina resta quella nativa).
@@ -171,7 +171,7 @@
   if (eSvg) {
     try {
       const radice = document.documentElement;
-      // Se la radice non e' davvero un <svg> il file non e' stato analizzato come
+      // Se la radice non è davvero un <svg> il file non è stato analizzato come
       // tale (tipico: errore di sintassi XML, il browser mostra la sua pagina di
       // errore). Meglio non toccare nulla.
       if (!radice || radice.namespaceURI !== 'http://www.w3.org/2000/svg') return;
@@ -225,7 +225,7 @@
     // Tasto tondo DENTRO la pill, INCASTRATO nel semicerchio sinistro (left piccolo → quasi concentrico
     // con la curvatura). position:absolute → fuori dal flusso, così NON alza MAI la pill (l'altezza resta
     // quella del testo, compatta per text-box-trim). La pill riserva lo spazio col padding-left. Niente
-    // bordo, distinto solo dal fondo tenue; cliccabile (pointer-events:auto) benche' la pill no. Solo "1:1".
+    // bordo, distinto solo dal fondo tenue; cliccabile (pointer-events:auto) benché la pill no. Solo "1:1".
     '#dv-scalemode{position:absolute;left:.3rem;top:50%;transform:translateY(-50%);pointer-events:auto;cursor:pointer;' +
       'width:1.15em;height:1.15em;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;' +
       'display:flex;align-items:center;justify-content:center;text-shadow:1px 1px 2px #444;outline:none;-webkit-tap-highlight-color:transparent}' +
@@ -253,7 +253,7 @@
     // (browser vecchi) resta il semplice align-items:center: nessun peggioramento.
     '.image-info>b,.image-info>span{text-box-trim:trim-both;text-box-edge:cap alphabetic;transform:translateY(' + OVERLAY_NUDGE_Y + 'px)}' +
     '.ii-ext,.ii-zoom{font-weight:700}' +
-    // Trascinamento: la manina compare SOLO quando c'e' davvero da spostarsi
+    // Trascinamento: la manina compare SOLO quando c'è davvero da spostarsi
     '#dv-wrap.dv-pan>img,#dv-wrap.dv-pan>svg{cursor:grab}' +
     '#dv-wrap.dv-trascina>img,#dv-wrap.dv-trascina>svg{cursor:grabbing}' +
     // Navigatore in alto a destra: vista d'insieme + riquadro della parte a schermo
@@ -360,7 +360,7 @@
     const natW = svgNat ? svgNat.w : img.naturalWidth, natH = svgNat ? svgNat.h : img.naturalHeight;
     const dpr = window.devicePixelRatio || 1;
     // Modalità del "100%/reale": 'phys' = 1 px immagine → 1 px FISICO (default, fedele al pannello);
-    // 'log' = 1 px immagine → 1 px LOGICO (CSS), come il viewer nativo (su HiDPI appare piu' grande).
+    // 'log' = 1 px immagine → 1 px LOGICO (CSS), come il viewer nativo (su HiDPI appare più grande).
     // Il tasto tondo le commuta; realScale/logR sono ricalcolati al cambio (quindi let, non const).
     // Preferenza fisico/logico MEMORIZZATA (globale, cross-dominio, via storage Tampermonkey).
     function leggiScaleMode() { try { return GM_getValue('dv-scale-mode', 'phys') === 'log' ? 'log' : 'phys'; } catch (e) { return 'phys'; } }
@@ -372,12 +372,12 @@
     //  - senza ingrandire (predefinito, il criterio originale): l'immagine si adatta
     //    alla vista ma non supera MAI la dimensione reale, quindi una figura piccola
     //    resta a 1:1 e il clic non ha nulla da alternare;
-    //  - ingrandendo: anche una figura che sta tutta nella vista puo' essere portata a
-    //    riempirla, cosi' il clic alterna sempre fra "riempi lo schermo" e 1:1.
-    // ⚠️ L'INGRANDIMENTO E' SEMPRE SU RICHIESTA, mai spontaneo: chi apre un'immagine piu'
-    // piccola della vista la vede a 1:1 anche con l'opzione accesa, ed e' il CLIC (o la
+    //  - ingrandendo: anche una figura che sta tutta nella vista può essere portata a
+    //    riempirla, così il clic alterna sempre fra "riempi lo schermo" e 1:1.
+    // ⚠️ L'INGRANDIMENTO È SEMPRE SU RICHIESTA, mai spontaneo: chi apre un'immagine più
+    // piccola della vista la vede a 1:1 anche con l'opzione accesa, ed è il CLIC (o la
     // voce "Adatta alla vista" del menu) a chiedere il riempimento. Per questo esistono
-    // due misure di adattamento: fitDisplay() e' quella CHIESTA, fitSenzaCrescere()
+    // due misure di adattamento: fitDisplay() è quella CHIESTA, fitSenzaCrescere()
     // quella dei riadattamenti automatici (apertura, ridimensionamento della finestra).
     // Il tetto di maxScale() vale in ogni caso: su un'icona minuscola l'adattamento
     // chiederebbe altrimenti ingrandimenti assurdi.
@@ -397,16 +397,16 @@
     }
     function clamp(s) { return Math.max(minScale(), Math.min(s, maxScale())); }
 
-    // Stato di partenza: adattato SOLO se c'e' davvero da rimpicciolire. Un'immagine piu'
+    // Stato di partenza: adattato SOLO se c'è davvero da rimpicciolire. Un'immagine più
     // piccola della vista si apre a 1:1 anche con l'ingrandimento acceso (che si chiede
-    // col clic); una piu' grande si apre adattata, come sempre.
+    // col clic); una più grande si apre adattata, come sempre.
     let scale = fitScale() < realScale ? fitDisplay() : realScale;
     // ⚠️ isFit significa "sto mostrando l'adattato CHE IL CLIC DAREBBE", non "sono
-    // arrivato qui adattando": e' da questo che il clic capisce se ha qualcosa da
+    // arrivato qui adattando": è da questo che il clic capisce se ha qualcosa da
     // alternare. Percio' si RICALCOLA ogni volta che cambia la scala, l'opzione di
-    // ingrandimento o la vista, e non si assume mai vero solo perche' si e' adattato.
+    // ingrandimento o la vista, e non si assume mai vero solo perché si è adattato.
     // Senza, dopo un riadattamento automatico a 1:1 (finestra allargata) il clic
-    // credeva di essere gia' sull'adattato e non riusciva a chiedere il riempimento.
+    // credeva di essere già sull'adattato e non riusciva a chiedere il riempimento.
     function scalaEAdattata() { return Math.abs(scale - fitDisplay()) < 0.0005; }
     let isFit = scalaEAdattata();
     let zoomL = Math.log(scale);   // posizione di zoom "desiderata" (log), separata dal fermo al 100%
@@ -466,28 +466,28 @@
       const prev = zoomL;
       if ((prev <= logR - ZOOM_SNAP_STICK && Ldes >= logR + ZOOM_SNAP_STICK) ||
           (prev >= logR + ZOOM_SNAP_STICK && Ldes <= logR - ZOOM_SNAP_STICK)) Ldes = logR;
-      // ⚠️ La posizione desiderata si LIMITA ai valori che una scala ammessa puo' avere,
+      // ⚠️ La posizione desiderata si LIMITA ai valori che una scala ammessa può avere,
       // altrimenti insistere contro il tetto la fa crescere all'infinito e per tornare
       // indietro bisogna prima riconsumarla tutta a vuoto (difetto segnalato dall'utente e
       // misurato: arrivati al 4000%, servivano 5.900 px di movimento, circa otto colpi di
       // dito, prima che l'immagine ricominciasse a rimpicciolire). Lo scarto di
-      // ZOOM_SNAP_STICK e' quello che il fermo al 100% introduce fra posizione e scala:
+      // ZOOM_SNAP_STICK è quello che il fermo al 100% introduce fra posizione e scala:
       // senza sommarlo, ai limiti la scala si fermerebbe un fermo prima del vero limite.
       zoomL = Math.min(Math.max(Ldes, Math.log(minScale()) - ZOOM_SNAP_STICK),
                        Math.log(maxScale()) + ZOOM_SNAP_STICK);
       applicaScala(clamp(scalaConDetent(zoomL)), fx, fy);
     }
-    // vaiFit(chiesto): con `chiesto === false` e' un riadattamento AUTOMATICO (finestra
-    // ridimensionata, cambio di definizione del "reale") e li' non si ingrandisce da se',
-    // perche' l'ingrandimento per adattare lo chiede il clic. Tutti gli altri richiami
+    // vaiFit(chiesto): con `chiesto === false` è un riadattamento AUTOMATICO (finestra
+    // ridimensionata, cambio di definizione del "reale") e lì non si ingrandisce da sé,
+    // perché l'ingrandimento per adattare lo chiede il clic. Tutti gli altri richiami
     // (clic, voce di menu, tasto A) nascono da un gesto esplicito e possono ingrandire.
     function vaiFit(chiesto) {
       scale = (chiesto === false) ? fitSenzaCrescere() : fitDisplay();
-      isFit = scalaEAdattata();   // con `false` puo' NON coincidere: vedi scalaEAdattata
+      isFit = scalaEAdattata();   // con `false` può NON coincidere: vedi scalaEAdattata
       apply(); zoomL = Math.log(scale);
     }
-    // L'adattamento in corso e' un INGRANDIMENTO? Ci si arriva solo chiedendolo, quindi
-    // e' la spia che dice se un riadattamento automatico deve conservarlo.
+    // L'adattamento in corso è un INGRANDIMENTO? Ci si arriva solo chiedendolo, quindi
+    // è la spia che dice se un riadattamento automatico deve conservarlo.
     function fitEIngrandito() { return isFit && scale > realScale + 0.0005; }
 
     // ── Tasto tondo (dentro la pill, a sinistra): commuta il "100%/reale" fisico <-> logico ──
@@ -537,8 +537,8 @@
     wrap.addEventListener('click', function (e) {
       if (e.button !== 0 || e.ctrlKey || e.metaKey) return;
       if (daGesture) { daGesture = false; return; }  // era la coda di un pinch: ignora
-      // era la coda di un TRASCINAMENTO: il dito/mouse si e' mosso, quindi non
-      // e' un clic e non deve alternare adattato/reale
+      // era la coda di un TRASCINAMENTO: il dito/mouse si è mosso, quindi non
+      // è un clic e non deve alternare adattato/reale
       if (hoTrascinato) { hoTrascinato = false; e.preventDefault(); e.stopImmediatePropagation(); return; }
       // col pannello aperto il clic "fuori" lo chiude e basta: non deve anche
       // far scattare l'alternanza adattato/reale sotto di esso
@@ -551,34 +551,34 @@
     wrap.addEventListener('dblclick', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
 
     // ── ROTELLA NUDA = zoom a scatti (mouse), scorrimento (superficie touch) ──
-    // Con un mouse la rotella e' il comando naturale dello zoom; con una superficie
+    // Con un mouse la rotella è il comando naturale dello zoom; con una superficie
     // touch (trackpad, Magic Mouse) il dito serve invece a scorrere l'immagine
-    // ingrandita, visto che qui il trascinamento non c'e' per scelta.
-    // ⚠️⚠️ LA DECISIONE E' PER GESTO, NON PER EVENTO, e non e' un dettaglio: NESSUNA
+    // ingrandita, visto che qui il trascinamento non c'è per scelta.
+    // ⚠️⚠️ LA DECISIONE È PER GESTO, NON PER EVENTO, e non è un dettaglio: NESSUNA
     // proprieta' del singolo evento distingue in modo affidabile una rotella da una
     // superficie touch. Deciderlo evento per evento produceva il difetto peggiore
-    // possibile, cioe' UN SOLO gesto che scorre e zooma a tratti (misurato col Magic
+    // possibile, cioè UN SOLO gesto che scorre e zooma a tratti (misurato col Magic
     // Mouse 2 dell'utente, Chrome 150 su macOS, sonda del 2026-07-31: un colpo veloce
     // in su portava lo zoom dal 100% al 225%, uno in giu' al 35%, mentre i gesti lenti
     // scorrevano correttamente).
     // ⚠️ Le due firme che sembravano discriminanti NON lo sono, e le misure dicono
-    // perche': su 177 eventi del Magic Mouse, i deltaY erano interi 177 volte su 177
-    // (quindi "frazionario = touch" e' falso) e |wheelDeltaY| non era multiplo di 120
+    // perché: su 177 eventi del Magic Mouse, i deltaY erano interi 177 volte su 177
+    // (quindi "frazionario = touch" è falso) e |wheelDeltaY| non era multiplo di 120
     // nemmeno una volta (quindi quel ramo non scattava mai, e a decidere restava la
     // sola rete di sicurezza sull'ampiezza >= 40). Il deltaX era zero in circa 9 casi
-    // su 10: con un dito solo il movimento e' piu' diritto che con due dita sul
-    // trackpad, ed e' per questo che il trackpad si salvava e il Magic Mouse no.
-    // La firma che regge e' l'AVVIO del gesto: una superficie touch parte sempre piano
+    // su 10: con un dito solo il movimento è più diritto che con due dita sul
+    // trackpad, ed è per questo che il trackpad si salvava e il Magic Mouse no.
+    // La firma che regge è l'AVVIO del gesto: una superficie touch parte sempre piano
     // (il primo evento di tutti e quattro i gesti misurati valeva 1 px), poi accelera e
     // lascia una coda di inerzia; una rotella parte subito con l'ampiezza di uno scatto.
     // Percio' si decide sul PRIMO evento del gesto e la decisione si tiene fino alla
-    // pausa; in piu' la firma touch, quando si vede, resta in memoria per un attimo, cosi'
+    // pausa; in più la firma touch, quando si vede, resta in memoria per un attimo, così
     // un colpo brusco che partisse grande viene ricondotto al dispositivo giusto.
-    // ⚠️ QUANTO VALE "UNO SCATTO" NON E' UNIVERSALE (misurato sul mouse dell'utente).
+    // ⚠️ QUANTO VALE "UNO SCATTO" NON È UNIVERSALE (misurato sul mouse dell'utente).
     // La convenzione dice 120 di wheelDeltaY per scatto, ma con l'accelerazione di
-    // sistema un solo tic fisico puo' valerne 360. Dando per buono il 120 si
+    // sistema un solo tic fisico può valerne 360. Dando per buono il 120 si
     // contavano tre passi per un tic solo (100% che diventava 274%). Percio'
-    // l'unita' si IMPARA: la piu' piccola ampiezza vista su questo mouse e' uno
+    // l'unità si IMPARA: la più piccola ampiezza vista su questo mouse è uno
     // scatto, e gli eventi uniti dal browser ne sono multipli interi.
     let unitaScatto = 0;
     function ampiezza(e) {
@@ -591,32 +591,32 @@
     function scattiGrezzi(e) {
       const a = ampiezza(e);
       if (!a) return 1;
-      // solo le ampiezze plausibili tarano l'unita': una coda di inerzia non deve
+      // solo le ampiezze plausibili tarano l'unità: una coda di inerzia non deve
       // rimpicciolirla per sempre
       if (a >= 40 && (!unitaScatto || a < unitaScatto)) unitaScatto = a;
       const n = a / (unitaScatto || 120);
       return Math.min(n, 8);                                    // tetto di sicurezza
     }
-    // Firma FORTE di rotella: unita' a righe o a pagine, oppure il multiplo esatto di 120
+    // Firma FORTE di rotella: unità a righe o a pagine, oppure il multiplo esatto di 120
     // di wheelDeltaY. Vale come prova, quindi scavalca la memoria touch: una superficie
     // touch non la produce (0 casi su 177 eventi misurati col Magic Mouse).
     function firmaRotellaForte(e) {
-      if (e.deltaMode !== 0) return true;          // righe o pagine: e' una rotella
+      if (e.deltaMode !== 0) return true;          // righe o pagine: è una rotella
       const wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
       return !!(wd && wd % 120 === 0 && e.deltaX === 0);
     }
     // Firma DEBOLE, di ripiego per i browser che wheelDeltaY non ce l'hanno: ampiezza da
-    // scatto e nessuna componente orizzontale. ⚠️ E' esattamente la regola che, applicata a
+    // scatto e nessuna componente orizzontale. ⚠️ È esattamente la regola che, applicata a
     // OGNI evento, produceva il difetto del Magic Mouse: percio' qui la si interroga solo
-    // sul primo evento di un gesto, e solo quando nessuna firma touch e' recente.
+    // sul primo evento di un gesto, e solo quando nessuna firma touch è recente.
     function firmaRotellaDebole(e) {
       return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
     }
-    // Un gesto di dito PARTE piano: e' questa la firma che regge (vedi il blocco sopra).
+    // Un gesto di dito PARTE piano: è questa la firma che regge (vedi il blocco sopra).
     function firmaTouch(e) {
       return e.deltaMode === 0 && Math.abs(e.deltaY) <= TOUCH_AVVIO_MAX;
     }
-    // timeStamp e' monotono e piu' preciso di Date.now(); il fallback serve solo per gli
+    // timeStamp è monotono e più preciso di Date.now(); il fallback serve solo per gli
     // eventi sintetici di certi gestori, che a volte non lo valorizzano.
     function quandoEv(e) {
       return (typeof e.timeStamp === 'number' && e.timeStamp > 0) ? e.timeStamp : Date.now();
@@ -629,13 +629,13 @@
       const nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
       gestoUltimo = ora;
       // ⚠️ La firma touch si registra SEMPRE, anche a gesto avviato: la coda di inerzia di
-      // un colpo brusco e' fatta di eventi piccoli, quindi il dispositivo si impara subito
+      // un colpo brusco è fatta di eventi piccoli, quindi il dispositivo si impara subito
       // e il gesto successivo parte con la decisione giusta. La decisione del gesto IN
       // CORSO invece non si ribalta mai, altrimenti si tornerebbe al comportamento misto
       // che questo blocco esiste per eliminare.
       if (firmaTouch(e)) touchVistoA = ora;
       // ⚠️⚠️ UN'ECCEZIONE al 'la decisione non si ribalta': la firma FORTE di rotella chiude
-      // il gesto in corso e ne apre uno suo, perche' altrimenti bastava girare la rotella
+      // il gesto in corso e ne apre uno suo, perché altrimenti bastava girare la rotella
       // entro GESTO_PAUSA_MS dall'ultimo evento del dito per vedersela trattare come un
       // dito per tutta la girata, e la girata non scadeva mai (ogni tic rinnova
       // gestoUltimo, quindi 'nuovo' restava falso all'infinito). Caso concreto: portatile
@@ -645,7 +645,7 @@
       const forte = firmaRotellaForte(e);
       if (forte) touchVistoA = -1e9;     // una prova di rotella cancella la memoria touch
       if (!nuovo && gestoDaRotella !== null && !forte) return gestoDaRotella;
-      // ⚠️ L'ordine di questi tre casi e' il cuore del blocco, e il secondo e' nato da un
+      // ⚠️ L'ordine di questi tre casi è il cuore del blocco, e il secondo è nato da un
       // difetto trovato PROVANDO la correzione con la sonda: se la memoria touch avesse
       // avuto la precedenza sulla firma forte, chi alterna trackpad e mouse si sarebbe
       // visto trattare la rotella come un dito per un secondo e mezzo dopo ogni gesto.
@@ -655,9 +655,9 @@
       return gestoDaRotella;
     }
     // UNO SCATTO DI ZOOM PER OGNI SCATTO DELLA ROTELLA. Girando in fretta il
-    // browser UNISCE piu' scatti in un solo evento: contarne uno soltanto ne
+    // browser UNISCE più scatti in un solo evento: contarne uno soltanto ne
     // farebbe perdere per strada. Qui si contano davvero, e l'eventuale frazione
-    // avanzata resta in cassa per l'evento successivo, cosi' non si perde nulla
+    // avanzata resta in cassa per l'evento successivo, così non si perde nulla
     // nemmeno con le rotelle a passo fine.
     let accScatti = 0, ultimoScatto = 0;
     function scattiInteri(e) {
@@ -671,9 +671,9 @@
       accScatti -= interi;
       return interi;
     }
-    // Che comando e' questo gesto: 'scatti' (zoom a tappe tonde, dalla rotella), 'continuo'
+    // Che comando è questo gesto: 'scatti' (zoom a tappe tonde, dalla rotella), 'continuo'
     // (zoom proporzionale al movimento, dal dito) o 'scorre' (lo prende il browser).
-    // ⚠️ La cache sull'identita' dell'evento non e' un'ottimizzazione: il ramo di
+    // ⚠️ La cache sull'identità dell'evento non è un'ottimizzazione: il ramo di
     // shift+rotella interroga questa funzione DUE volte per lo stesso evento, e senza cache
     // il secondo giro conterebbe l'evento un'altra volta nella macchina a stati.
     let evDeciso = null, cmdCache = 'scorre';
@@ -686,7 +686,7 @@
       return cmdCache;
     }
     // Zoom a passo FISSO: reattivo, senza inerzia e senza attriti. Se il passo
-    // scavalca la dimensione reale ci si ferma esattamente sul 100%, cosi' il
+    // scavalca la dimensione reale ci si ferma esattamente sul 100%, così il
     // valore "giusto" non si salta mai per un pelo; lo scatto dopo prosegue oltre
     // (nessun impuntamento, a differenza della zona morta del gesto continuo).
     // Un solo scatto, a partire da una scala data: o la tappa successiva
@@ -703,7 +703,7 @@
           const soglia = p * (1 - SALTO_MIN_GIU);
           for (let j = TAPPE_ZOOM.length - 1; j >= 0; j--) if (TAPPE_ZOOM[j] <= soglia) return realScale * TAPPE_ZOOM[j] / 100;
         }
-        // fuori dall'elenco: si prosegue col passo geometrico, cosi' i limiti restano raggiungibili
+        // fuori dall'elenco: si prosegue col passo geometrico, così i limiti restano raggiungibili
       }
       return su ? s * PASSO_ROTELLA : s / PASSO_ROTELLA;
     }
@@ -715,19 +715,19 @@
 
     function passoZoom(bersaglio, fx, fy) {
       const nuova = clamp(bersaglio);
-      // ⚠️ "gia' sul fermo" va inteso con tolleranza, non con l'uguaglianza esatta.
+      // ⚠️ "già sul fermo" va inteso con tolleranza, non con l'uguaglianza esatta.
       // Dopo un giro di divisioni e moltiplicazioni la scala del 100% vale
       // 0.9999999999999998, non 1: senza questa tolleranza ogni scatto successivo
-      // riagganciava al 100% e poi SCARTAVA il risultato perche' la differenza era
+      // riagganciava al 100% e poi SCARTAVA il risultato perché la differenza era
       // infinitesima, quindi non si passava mai oltre (difetto misurato: dopo essere
-      // scesi sotto il 100% si restava inchiodati li', e solo un clic sbloccava).
+      // scesi sotto il 100% si restava inchiodati lì, e solo un clic sbloccava).
       const sulFermo = Math.abs(scale - realScale) < 1e-9;
       if (!sulFermo && ((scale < realScale && nuova > realScale) || (scale > realScale && nuova < realScale))) {
-        applicaScala(realScale, fx, fy);   // atterra ESATTO sul 100%: e' il fermo che si vuole
+        applicaScala(realScale, fx, fy);   // atterra ESATTO sul 100%: è il fermo che si vuole
         zoomL = Math.log(scale);
         return;
       }
-      if (Math.abs(nuova - scale) < 1e-9) return;   // gia' al limite: niente da fare
+      if (Math.abs(nuova - scale) < 1e-9) return;   // già al limite: niente da fare
       applicaScala(nuova, fx, fy);
       zoomL = Math.log(scale);            // il gesto continuo riparte da qui
     }
@@ -739,15 +739,15 @@
       if (!e.ctrlKey) {
         const cmd = comandoGesto(e);
         // shift+gesto = scorrimento verticale: dove il gesto nudo zooma, resta il modo di
-        // spostare con la tastiera un'immagine piu' grande della vista (l'altro modo, e il
-        // principale, e' il trascinamento)
+        // spostare con la tastiera un'immagine più grande della vista (l'altro modo, e il
+        // principale, è il trascinamento)
         if (e.shiftKey && cmd !== 'scorre') {
           e.preventDefault();
           wrap.scrollTop += e.deltaY * (e.deltaMode === 1 ? 16 : 1);
           return;
         }
         if (cmd === 'scorre') return;      // se lo prende il browser, non si tocca nulla
-        // ⚠️ Un evento SENZA componente verticale non e' un comando di zoom: viene dalla
+        // ⚠️ Un evento SENZA componente verticale non è un comando di zoom: viene dalla
         // rotella inclinabile o dalla rotellina del pollice. Senza questa uscita valeva
         // uno scatto AL ROVESCIO (verso = deltaY < 0 ? 1 : -1 da' -1 per deltaY 0, e
         // un'ampiezza nulla vale un intero scatto in scattiGrezzi), quindi lo zoom tornava
@@ -759,7 +759,7 @@
         const segno = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? 1 : -1;
         if (cmd === 'continuo') {
           // Dito su una superficie touch: zoom proporzionale al movimento, senza scatti e
-          // senza tappe tonde, perche' il gesto e' continuo e le tappe lo farebbero
+          // senza tappe tonde, perché il gesto è continuo e le tappe lo farebbero
           // sobbalzare. Il fermo al 100% lo mette zoomGesto, come per il pinch.
           // ⚠️ Nessun ZOOM_STEP_CAP qui: taglierebbe proprio il colpo veloce, che deve
           // restare il modo di fare molto zoom in fretta.
@@ -803,11 +803,11 @@
     wrap.addEventListener('touchend', function (e) { if (e.touches.length < 2) d0 = 0; }, { passive: true });
 
     // ═══════════════════════════════════════════════════════════════════
-    //  SPOSTARSI DENTRO UN'IMMAGINE PIU' GRANDE DELLA VISTA
+    //  SPOSTARSI DENTRO UN'IMMAGINE PIÙ GRANDE DELLA VISTA
     // ═══════════════════════════════════════════════════════════════════
     // ⚠️ Il "niente trascinamento" era una scelta di progetto, non una
     // dimenticanza: la rotella scorreva e bastava. Dalla 2.15 la rotella
-    // zooma, quindi quel presupposto e' caduto e il trascinamento serve.
+    // zooma, quindi quel presupposto è caduto e il trascinamento serve.
 
     function eccedeVista() {
       return wrap.scrollWidth > wrap.clientWidth + 1 || wrap.scrollHeight > wrap.clientHeight + 1;
@@ -821,7 +821,7 @@
 
     wrap.addEventListener('pointerdown', function (e) {
       ditaGiu++;
-      if (ditaGiu > 1) { trascin = null; aggiornaCursore(); return; }   // due dita: e' un pinch
+      if (ditaGiu > 1) { trascin = null; aggiornaCursore(); return; }   // due dita: è un pinch
       if (e.button !== 0 || !eccedeVista()) return;
       trascin = { x: e.clientX, y: e.clientY, sl: wrap.scrollLeft, st: wrap.scrollTop, id: e.pointerId };
       hoTrascinato = false;
@@ -831,7 +831,7 @@
     wrap.addEventListener('pointermove', function (e) {
       if (!trascin || e.pointerId !== trascin.id) return;
       const dx = e.clientX - trascin.x, dy = e.clientY - trascin.y;
-      // soglia: sotto i 4px e' un clic con la mano ferma, non un trascinamento
+      // soglia: sotto i 4px è un clic con la mano ferma, non un trascinamento
       if (!hoTrascinato && Math.abs(dx) + Math.abs(dy) < 4) return;
       hoTrascinato = true;
       e.preventDefault();
@@ -849,7 +849,7 @@
     wrap.addEventListener('pointercancel', fineTrascinamento);
 
     // ── Navigatore (minimappa) in alto a destra ────────────────────────
-    // Compare da se' quando l'immagine esce dalla vista, cioe' quando c'e'
+    // Compare da sé quando l'immagine esce dalla vista, cioè quando c'è
     // davvero qualcosa da navigare. Si costruisce al primo bisogno.
     const MINI_LATO = 190;               // lato massimo della vista d'insieme
     var mini = null, miniBox = null, miniRett = null, miniVisibile = false;
@@ -869,7 +869,7 @@
       miniBox.style.width = mw + 'px';
       miniBox.style.height = mh + 'px';
       // vista d'insieme: per il vettoriale un clone (esatto anche senza misure
-      // dichiarate), per il raster lo stesso file, che e' gia' nella cache
+      // dichiarate), per il raster lo stesso file, che è già nella cache
       if (svgMedia) {
         const c = svgMedia.cloneNode(true);
         c.removeAttribute('style');
@@ -967,8 +967,8 @@
     document.addEventListener('keydown', function (e) {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const t = e.target;
-      // ATTENZIONE al confronto MAIUSCOLO/minuscolo: in una pagina SVG il documento e'
-      // XML, e li' tagName conserva il caso originale ('input'), mentre in HTML e'
+      // ATTENZIONE al confronto MAIUSCOLO/minuscolo: in una pagina SVG il documento è
+      // XML, e lì tagName conserva il caso originale ('input'), mentre in HTML è
       // sempre maiuscolo ('INPUT'). Confrontando col solo 'INPUT' i tasti nudi
       // scattavano mentre si scriveva nel campo DPI del pannello di esportazione.
       const nomeTag = t && t.tagName ? String(t.tagName).toUpperCase() : '';
@@ -977,10 +977,10 @@
         e.preventDefault();
         ingrandisciPerAdattare = !ingrandisciPerAdattare;
         try { GM_setValue('dv-fit-grow', ingrandisciPerAdattare ? '1' : '0'); } catch (err) {}
-        // Il tasto NON ingrandisce da se': cambia solo cosa fara' il clic. Riporta invece
-        // sull'adattato quando questo si e' RIMPICCIOLITO (opzione spenta mentre si stava
-        // riempiendo la vista), perche' quella scala non e' piu' un adattamento. Negli
-        // altri casi si resta dove si e', ri-limitando: i confini si sono spostati.
+        // Il tasto NON ingrandisce da sé: cambia solo cosa farà il clic. Riporta invece
+        // sull'adattato quando questo si è RIMPICCIOLITO (opzione spenta mentre si stava
+        // riempiendo la vista), perché quella scala non è più un adattamento. Negli
+        // altri casi si resta dove si è, ri-limitando: i confini si sono spostati.
         if (isFit && scale > fitDisplay() + 0.0005) vaiFit();
         else {
           scale = clamp(scale);
@@ -1008,9 +1008,9 @@
 
     // ── Resize: se sto mostrando "adattato", ri-adatta; comunque ri-limita ──
     window.addEventListener('resize', function () {
-      // allargando la finestra un'immagine prima piu' grande della vista puo' entrarci
+      // allargando la finestra un'immagine prima più grande della vista può entrarci
       // tutta: ri-adattarla NON deve ingrandirla, se quell'ingrandimento non era stato
-      // chiesto. Se invece si stava gia' riempiendo la vista, il riempimento si conserva.
+      // chiesto. Se invece si stava già riempiendo la vista, il riempimento si conserva.
       if (isFit) vaiFit(fitEIngrandito());
       else { scale = clamp(scale); isFit = scalaEAdattata(); apply(); }
     });
@@ -1018,9 +1018,9 @@
     // ── Info: dimensioni reali + peso del file ────────────────────────────
     imageInfo.dimensions = natW + '×' + natH;
     updateInfo();
-    // I byte scaricati qui servono gia' al peso; si TENGONO da parte (senza
-    // decodificarli) perche' il pannello di scaricamento possa offrire il file
-    // originale senza una seconda richiesta. Nessun lavoro in piu' al caricamento.
+    // I byte scaricati qui servono già al peso; si TENGONO da parte (senza
+    // decodificarli) perché il pannello di scaricamento possa offrire il file
+    // originale senza una seconda richiesta. Nessun lavoro in più al caricamento.
     var byteOriginali = null;
     try {
       GM_xmlhttpRequest({
@@ -1039,16 +1039,16 @@
     //  MENU DEL TASTO DESTRO
     // ═══════════════════════════════════════════════════════════════════
     // ⚠️ Un menu proprio SOSTITUISCE quello del browser: non si affianca, e
-    // quello nativo non si puo' richiamare da JavaScript. Si perde quindi
-    // "Ispeziona", che non e' reimpiazzabile. Via di fuga: SHIFT + tasto destro
+    // quello nativo non si può richiamare da JavaScript. Si perde quindi
+    // "Ispeziona", che non è reimpiazzabile. Via di fuga: SHIFT + tasto destro
     // lascia passare il menu del browser.
-    // Le voci degli SVG sono riempite piu' sotto (azioniSvg): il menu si
+    // Le voci degli SVG sono riempite più sotto (azioniSvg): il menu si
     // costruisce al primo clic destro, quando ormai ci sono.
     var azioniSvg = null;
     var menuEl = null, menuVoci = [], menuSel = -1;
 
     async function bloboPng() {
-      // Un raster ha i suoi pixel e si copia com'e'; un SVG no, quindi lo si
+      // Un raster ha i suoi pixel e si copia com'è; un SVG no, quindi lo si
       // rasterizza alla risoluzione scelta (DPI_COPIA).
       const w = svgMedia ? Math.max(1, Math.round(natW * DPI_COPIA / 96)) : natW;
       const h = svgMedia ? Math.max(1, Math.round(natH * DPI_COPIA / 96)) : natH;
@@ -1075,13 +1075,13 @@
 
     async function copiaImmagine() {
       try {
-        // il blob si passa come PROMESSA: cosi' il permesso del clic non scade
-        // mentre si disegna, che e' il motivo per cui la copia a volte fallisce
+        // il blob si passa come PROMESSA: così il permesso del clic non scade
+        // mentre si disegna, che è il motivo per cui la copia a volte fallisce
         await navigator.clipboard.write([new ClipboardItem({ 'image/png': bloboPng() })]);
         toast('Image copied');
       } catch (e) {
-        // ripiego: se il file e' gia' un PNG si copiano i byte cosi' come sono
-        // (utile quando il canvas e' "sporco", per esempio sui file locali)
+        // ripiego: se il file è già un PNG si copiano i byte così come sono
+        // (utile quando il canvas è "sporco", per esempio sui file locali)
         try {
           if (byteOriginali && /png/i.test(document.contentType)) {
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([byteOriginali], { type: 'image/png' }) })]);
@@ -1222,10 +1222,10 @@
     //  PANNELLO "SCARICA" (solo SVG): esporta in PNG a un DPI scelto,
     //  oppure salva l'SVG ripulito dai metadati.
     // ═══════════════════════════════════════════════════════════════════
-    // ⚠️ TUTTO E' A RICHIESTA: al caricamento della pagina si crea SOLO il
+    // ⚠️ TUTTO È A RICHIESTA: al caricamento della pagina si crea SOLO il
     // tondo nella pill. Il pannello, il suo foglio di stile e la pulizia
-    // dell'SVG (che scandisce l'intero albero) nascono al primo clic, cosi'
-    // aprire un SVG non costa nulla piu' di prima.
+    // dell'SVG (che scandisce l'intero albero) nascono al primo clic, così
+    // aprire un SVG non costa nulla più di prima.
 
     const SVGNS = 'http://www.w3.org/2000/svg';
     const DPI_PRESET = [96, 150, 300, 600];
@@ -1236,7 +1236,7 @@
     // Tetto pratico: 268 Mpx vorrebbero circa 1 GB di memoria solo per il canvas.
     const MPX_MAX = 80e6;
 
-    // Tondo "scarica" nel semicerchio destro. L'icona e' una freccia in giu' su
+    // Tondo "scarica" nel semicerchio destro. L'icona è una freccia in giu' su
     // una base, disegnata in SVG (niente glifi: si centrano male, come il "1:1").
     const btnDl = creaEl('div');
     btnDl.id = 'dv-download';
@@ -1264,7 +1264,7 @@
     var pan = null;                       // il pannello: creato al primo clic
 
     // ── Calcoli (nessun disegno, si possono chiamare a ogni tasto premuto) ──
-    // 1 px CSS = 1/96 di pollice: e' la definizione del CSS, verificata misurando
+    // 1 px CSS = 1/96 di pollice: è la definizione del CSS, verificata misurando
     // in pagina un riquadro di 1in (96 px, indipendente dal devicePixelRatio).
     function pxPerDpi(dpi) {
       return { w: Math.max(1, Math.round(natW * dpi / 96)), h: Math.max(1, Math.round(natH * dpi / 96)) };
@@ -1295,12 +1295,12 @@
 
     // ── Pulizia dell'SVG ────────────────────────────────────────────────
     // Si lavora su un CLONE del <svg> vivo, mai sul testo del file: il DOM che
-    // il browser ha gia' analizzato e' ben formato per costruzione, ha le entita'
-    // (&ns_ai; e simili) gia' risolte e non porta con se' prologo, DOCTYPE e
+    // il browser ha già analizzato è ben formato per costruzione, ha le entita'
+    // (&ns_ai; e simili) già risolte e non porta con sé prologo, DOCTYPE e
     // commenti esterni, che spariscono gratis alla serializzazione. Una pulizia
     // a espressioni regolari sul testo, invece, sui file con DOCTYPE ed entita'
-    // produce XML che non si apre piu'.
-    // La lista dei namespace e' quella di SVGO (plugins/_collections.js).
+    // produce XML che non si apre più.
+    // La lista dei namespace è quella di SVGO (plugins/_collections.js).
     const NS_EDITOR = [
       'http://creativecommons.org/ns#',
       'http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd',
@@ -1336,7 +1336,7 @@
       // Il visualizzatore ha tolto width/height (e a volte aggiunto un viewBox)
       // per governare lo zoom: nel file salvato si rimette ESATTAMENTE quello che
       // c'era scritto nell'originale. Un file ripulito deve differire dal suo
-      // originale solo per cio' che gli e' stato TOLTO, mai per qualcosa in piu':
+      // originale solo per ciò che gli è stato TOLTO, mai per qualcosa in più:
       // scrivere "800" dove l'autore aveva messo "100%" cambierebbe come l'SVG si
       // comporta dentro una pagina.
       const o = svgAttrOrig || {};
@@ -1360,14 +1360,14 @@
       });
 
       // 4) elementi in namespace di editor: qui sta il grosso del risparmio,
-      //    perche' comprende <i:pgf>, i dati vettoriali proprietari di Illustrator
+      //    perché comprende <i:pgf>, i dati vettoriali proprietari di Illustrator
       //    (nel corpus di prova valgono da soli un quarto dei byte totali)
       tutti().forEach(function (e) {
         if (e !== c && eDiEditor(e.namespaceURI) && e.parentNode) e.parentNode.removeChild(e);
       });
 
       // 5) <foreignObject> rimasti vuoti (l'involucro di quei dati). NON si tocca
-      //    lo <switch> che li contiene, ne' i suoi requiredExtensions: e' lui a
+      //    lo <switch> che li contiene, né i suoi requiredExtensions: è lui a
       //    far scegliere al browser il ramo col disegno vero.
       [].slice.call(c.querySelectorAll('foreignObject')).forEach(function (e) {
         if (!e.children.length && !(e.textContent || '').trim()) e.parentNode.removeChild(e);
@@ -1419,8 +1419,8 @@
     }
 
     // Il canvas non scrive il DPI nel file: senza questo chunk un PNG "a 254 DPI"
-    // sarebbe solo un'immagine piu' grande, e ogni programma di grafica la
-    // leggerebbe come 96 DPI. Il pHYs va subito dopo l'IHDR; se ce n'e' gia' uno
+    // sarebbe solo un'immagine più grande, e ogni programma di grafica la
+    // leggerebbe come 96 DPI. Il pHYs va subito dopo l'IHDR; se ce n'è già uno
     // si sostituisce, non si duplica.
     function crc32(buf, da, a) {
       var t = crc32.tab;
@@ -1439,7 +1439,7 @@
     function pngConDpi(arrayBuffer, dpi) {
       const src = new Uint8Array(arrayBuffer);
       const firma = [137, 80, 78, 71, 13, 10, 26, 10];
-      for (var i = 0; i < 8; i++) if (src[i] !== firma[i]) return arrayBuffer;   // non e' un PNG: lascio com'e'
+      for (var i = 0; i < 8; i++) if (src[i] !== firma[i]) return arrayBuffer;   // non è un PNG: lascio com'è
       const u32 = function (o) { return ((src[o] << 24) | (src[o + 1] << 16) | (src[o + 2] << 8) | src[o + 3]) >>> 0; };
       var off = 8, fineIhdr = -1, physOff = -1, physTot = 0;
       while (off + 8 <= src.length) {
@@ -1458,7 +1458,7 @@
       dv.setUint32(0, 9);
       ch.set([0x70, 0x48, 0x59, 0x73], 4);           // "pHYs"
       dv.setUint32(8, ppm); dv.setUint32(12, ppm);
-      ch[16] = 1;                                    // unita' di misura: il metro
+      ch[16] = 1;                                    // unità di misura: il metro
       dv.setUint32(17, crc32(ch, 4, 17));            // CRC su tipo + dati
       const pezzi = [src.subarray(0, fineIhdr), ch];
       if (physOff >= fineIhdr) {
@@ -1601,7 +1601,7 @@
           prevSub.textContent = 'At most ' + max + ' DPI for this image';
           prevSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
         } else {
-          // i centimetri NON dipendono dal DPI: e' la stessa carta, stampata piu' o meno fitta
+          // i centimetri NON dipendono dal DPI: è la stessa carta, stampata più o meno fitta
           prevSub.textContent = num(natW / 96 * 2.54, 1) + ' × ' + num(natH / 96 * 2.54, 1) + ' cm at ' + dpi + ' DPI';
           prevSub.setAttribute('class', 'dv-dl-sub');
         }

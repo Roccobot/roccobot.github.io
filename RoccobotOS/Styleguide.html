@@ -17,10 +17,10 @@
 
   <style>
     /* ── Styleguide, foglio proprio ──
-       Pages.css porta i token del tema e la commutazione col tasto T; qui c'e' solo cio' che
-       serve a questa pagina, cioe' i componenti che MOSTRANO i colori invece di nominarli.
-       ⚠️ I valori dei campioni sono scritti a mano, ed e' voluto: questa pagina deve far
-       vedere il colore che dichiara, quindi non puo' leggerlo da una variabile che un giorno
+       Pages.css porta i token del tema e la commutazione col tasto T; qui c'è solo ciò che
+       serve a questa pagina, cioè i componenti che MOSTRANO i colori invece di nominarli.
+       ⚠️ I valori dei campioni sono scritti a mano, ed è voluto: questa pagina deve far
+       vedere il colore che dichiara, quindi non può leggerlo da una variabile che un giorno
        potrebbe cambiare senza che la tabella se ne accorga. Se un token cambia, si cambia
        qui e nel CSS del sito nello stesso commit. */
 
@@ -67,9 +67,9 @@
     .sommario { color: var(--pg-tenue); max-width: 64ch; }
 
     /* ── Il campione a due facce ──
-       Ogni token si vede su ENTRAMBI i fondi veri del sito, perche' un colore che va bene su
-       uno puo' crollare sull'altro: e' il difetto storico di questo progetto, e la scheda e'
-       fatta apposta per non poterlo piu' ripetere. */
+       Ogni token si vede su ENTRAMBI i fondi veri del sito, perché un colore che va bene su
+       uno può crollare sull'altro: è il difetto storico di questo progetto, e la scheda è
+       fatta apposta per non poterlo più ripetere. */
     .griglia {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
@@ -102,7 +102,7 @@
       color: var(--pg-tenue);
     }
 
-    /* Superfici: qui il colore E' il fondo, quindi il campione e' un rettangolo pieno */
+    /* Superfici: qui il colore È il fondo, quindi il campione è un rettangolo pieno */
     .facce.piene .faccia { height: 3.25rem; padding: 0; }
 
     .rapporto { font-weight: 600; }
@@ -129,9 +129,9 @@
     }
 
     /* La tabella d'esempio deve essere la tabella VERA, angoli compresi: se qui restasse
-       quadrata mentre il sito e' stondato, la pagina mentirebbe proprio sul componente che
-       sta descrivendo. Percio' anche qui il modello e' 'separate' e le celle d'angolo hanno
-       il loro raggio. Il perche' della tecnica sta in RoccobotOS.css e non si ripete. */
+       quadrata mentre il sito è stondato, la pagina mentirebbe proprio sul componente che
+       sta descrivendo. Percio' anche qui il modello è 'separate' e le celle d'angolo hanno
+       il loro raggio. Il perché della tecnica sta in RoccobotOS.css e non si ripete. */
     .guscio { overflow-x: auto; margin: 0 0 1rem; }
     table {
       border-collapse: separate; border-spacing: 0; width: 100%; font-size: .9rem;
@@ -175,8 +175,8 @@
     }
 
     /* ── Provino dei comandi fissi ──
-       Sono cerchi veri, con le misure vere: 34 px, bordo, opacita' .65. Non e' decorazione,
-       e' il modo di accorgersi se un giorno la descrizione e il sito divergono. */
+       Sono cerchi veri, con le misure vere: 34 px, bordo, opacità .65. Non è decorazione,
+       è il modo di accorgersi se un giorno la descrizione e il sito divergono. */
     .comandi { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
     .comando { display: flex; flex-direction: column; align-items: center; gap: .4rem; width: 7.5rem; }
     .tondo {
