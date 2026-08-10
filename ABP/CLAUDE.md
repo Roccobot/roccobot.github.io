@@ -37,19 +37,39 @@
   finanziarie restano `$document,subdocument` (con `,important`). `@@||dominio^`
   senza tipo vale comunque per tutti i tipi di richiesta e per tutti i
   sottodomini/percorsi.
-- ⚠️ **Facebook: la sidebar destra si nasconde ESCLUDENDO i dialog**, non col solo
-  `div[role="complementary"]` (corretto il 2026-08-10). `complementary` è il ruolo ARIA
-  generico di 'contenuto laterale di supporto', e Facebook lo riusa: la colonna di **commenti
-  e geotag del visualizzatore foto** è anch'essa un `complementary`, quindi la regola nuda la
-  nascondeva insieme alla chat, lasciando una banda vuota accanto alla foto. Il discriminante
-  è l'antenato: la colonna del visualizzatore sta dentro `div[role="dialog"]`, la sidebar non
-  ha antenati con ruolo. Da qui la forma `:not([role="dialog"] div[role="complementary"])`.
-  - ⚠️ **La misura da tenere è quella SCARTATA**: `:not(:has([role="article"]))` (cioè
-    'risparmia la colonna che contiene commenti') sembrava più naturale e **non funziona**,
-    perché su una foto **senza** commenti là dentro non c'è nessun `article` e la colonna
-    veniva nascosta comunque. Sarebbe stato un difetto **intermittente**, peggiore di quello
-    di partenza: colonna visibile sulle foto commentate, invisibile sulle altre. Provata in
-    laboratorio su un DOM che riproduce le due strutture, non dedotta.
+- ⚠️ **Facebook: la sidebar destra si distingue per CONTENUTO, non per posizione nel DOM**
+  (2026-08-10). `complementary` è il ruolo ARIA generico di 'contenuto laterale di supporto', e
+  Facebook lo riusa: la colonna di **commenti e geotag del visualizzatore foto** è anch'essa un
+  `complementary`, quindi la regola nuda `div[role="complementary"]` la nascondeva insieme alla
+  chat, lasciando una banda vuota accanto alla foto. Forma in vigore:
+  `:has(:contains(/^\s*(Contatti|Contacts)\s*$/))`, cioè 'la colonna che contiene un titolo il
+  cui testo è esattamente Contatti'.
+  - ⚠️⚠️ **Lo stesso visualizzatore ha DUE strutture, ed è la trappola che ha fatto sbagliare
+    due volte**: aperto con un clic dal feed la colonna sta dentro `div[role="dialog"]`, ma dopo
+    un **ricaricamento** la stessa schermata diventa una pagina `/photo/` **senza alcun dialog**,
+    e là la colonna è un `complementary` di primo livello, indistinguibile dalla sidebar per
+    qualunque criterio di posizione. Chi verifica una modifica a questa regola **deve provare
+    entrambe le aperture**, o metà dei casi resta fuori.
+  - **Le misure scartate, che valgono più della regola tenuta.** Tutte provate in laboratorio col
+    motore vero (`@adguard/extended-css`) su un DOM che riproduce i due visualizzatori più i casi
+    avversi, non dedotte:
+    - `:not(:has([role="article"]))` ('risparmia la colonna che contiene commenti'): **inutile**,
+      perché su una foto **senza** commenti là dentro non c'è nessun `article`. Sarebbe stato un
+      difetto **intermittente**, peggiore di quello di partenza.
+    - `:not([role="dialog"] div[role="complementary"])` ('risparmia quel che sta in un dialog'):
+      copre **solo** l'apertura dal feed, per la trappola delle due strutture qui sopra.
+    - `:contains(/Contatti/)` senza ancoraggio: prende anche una foto il cui **commento** nomina
+      la parola dentro una frase.
+    - `:has(h3:contains(...))`: ancorare al **tag** del titolo non trova **nulla** se quel titolo
+      non è un `h3`, e quale sia nel DOM di Facebook non è dato saperlo dall'esterno.
+    - la stessa regola **senza `\s*`**: perde la sidebar appena il markup mette il titolo su una
+      riga sua, cioè spazi attorno al testo. Misurato: con gli spazi, zero match.
+  - ⚠️ **Rischio residuo dichiarato**: un commento composto dalla **sola** parola 'Contatti'
+    nasconderebbe la colonna su quella foto. Tenuto perché è l'unico falso positivo rimasto e
+    perché ogni alternativa più stretta ricade in uno dei difetti sopra.
+  - ⚠️ **Un refresh del browser NON riscarica le liste**, che hanno un ciclo proprio: dopo una
+    modifica va forzato l'aggiornamento dei filtri, o si continua a misurare la regola vecchia
+    credendo di misurare quella nuova. È costato un giro di diagnosi.
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
