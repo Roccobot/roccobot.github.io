@@ -37,6 +37,19 @@
   finanziarie restano `$document,subdocument` (con `,important`). `@@||dominio^`
   senza tipo vale comunque per tutti i tipi di richiesta e per tutti i
   sottodomini/percorsi.
+- ⚠️ **Facebook: la sidebar destra si nasconde ESCLUDENDO i dialog**, non col solo
+  `div[role="complementary"]` (corretto il 2026-08-10). `complementary` è il ruolo ARIA
+  generico di 'contenuto laterale di supporto', e Facebook lo riusa: la colonna di **commenti
+  e geotag del visualizzatore foto** è anch'essa un `complementary`, quindi la regola nuda la
+  nascondeva insieme alla chat, lasciando una banda vuota accanto alla foto. Il discriminante
+  è l'antenato: la colonna del visualizzatore sta dentro `div[role="dialog"]`, la sidebar non
+  ha antenati con ruolo. Da qui la forma `:not([role="dialog"] div[role="complementary"])`.
+  - ⚠️ **La misura da tenere è quella SCARTATA**: `:not(:has([role="article"]))` (cioè
+    'risparmia la colonna che contiene commenti') sembrava più naturale e **non funziona**,
+    perché su una foto **senza** commenti là dentro non c'è nessun `article` e la colonna
+    veniva nascosta comunque. Sarebbe stato un difetto **intermittente**, peggiore di quello
+    di partenza: colonna visibile sulle foto commentate, invisibile sulle altre. Provata in
+    laboratorio su un DOM che riproduce le due strutture, non dedotta.
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
