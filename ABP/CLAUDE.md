@@ -70,6 +70,13 @@
   - ⚠️ **Un refresh del browser NON riscarica le liste**, che hanno un ciclo proprio: dopo una
     modifica va forzato l'aggiornamento dei filtri, o si continua a misurare la regola vecchia
     credendo di misurare quella nuova. È costato un giro di diagnosi.
+    - ⚠️ **E l'aggiornamento a mano si può chiedere una volta all'ora**, quindi non è una via
+      per provare una modifica: la via sono le **regole personalizzate** di AdGuard, che si
+      applicano subito perché non vengono scaricate. Servono **due** righe, e la prima è quella
+      che si dimentica: un'eccezione `dominio#@#<selettore vecchio>` che **spegne** la regola
+      ancora in vigore nella lista scaricata, e poi la regola nuova. Senza l'eccezione le due
+      convivono e vince il nascondimento, quindi la prova sembra fallita mentre la regola nuova
+      è giusta. Provato dal vivo il 2026-08-10.
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
