@@ -38,7 +38,7 @@
   senza tipo vale comunque per tutti i tipi di richiesta e per tutti i
   sottodomini/percorsi.
 - ⚠️ **Facebook: la sidebar destra si distingue per CONTENUTO, non per posizione nel DOM**
-  (2026-08-10). `complementary` è il ruolo ARIA generico di 'contenuto laterale di supporto', e
+  (2026-08-11). `complementary` è il ruolo ARIA generico di 'contenuto laterale di supporto', e
   Facebook lo riusa: la colonna di **commenti e geotag del visualizzatore foto** è anch'essa un
   `complementary`, quindi la regola nuda `div[role="complementary"]` la nascondeva insieme alla
   chat, lasciando una banda vuota accanto alla foto. Forma in vigore:
@@ -76,7 +76,31 @@
       che si dimentica: un'eccezione `dominio#@#<selettore vecchio>` che **spegne** la regola
       ancora in vigore nella lista scaricata, e poi la regola nuova. Senza l'eccezione le due
       convivono e vince il nascondimento, quindi la prova sembra fallita mentre la regola nuova
-      è giusta. Provato dal vivo il 2026-08-10.
+      è giusta. Provato dal vivo il 2026-08-11.
+- ⚠️ **Perché una pubblicità si vede SOLO da mobile: sono TRE livelli, non uno** (caso
+  Jerkmate su `enf-cmnf.cc`, 2026-08-11). La distinzione è già dichiarata dentro la lista ma
+  vale come criterio generale, perché spiega una classe intera di segnalazioni:
+  - le voci **nude** (`dominio.tld`) valgono come regole **DNS**, ed è quello che gira sul
+    telefono;
+  - le `||dominio^` bloccano col **filtraggio di contenuto**, cioè dove c'è un blocker nel
+    browser;
+  - le **cosmetiche** `##selettore` esistono solo nel filtraggio di contenuto: il DNS non ne
+    applica nessuna.
+  Quindi una pubblicità coperta dalle sole cosmetiche **resta visibile sul telefono**, e una
+  coperta dal solo DNS lascia il **buco** dell'elemento non caricato. Servono tutti e tre i
+  livelli, e per Jerkmate ci sono: dominio nudo, `||jerkmate.com^` e due cosmetiche.
+  - ⚠️ **Il buco va nascosto anche quando il contenuto è già bloccato**: l'annuncio era un
+    `iframe` con `height:700px` **inline** più un paragrafo 'Advertisement below:', quindi
+    bloccare il dominio lascia in pagina lo spazio e la scritta.
+  - **La cosmetica si ancora alla RELAZIONE, non al testo**: `p:has(+ iframe[src*="jerkmate"])`
+    prende il paragrafo perché precede quell'iframe, quindi regge se cambiano la dicitura o la
+    lingua. È inoltre **CSS puro**, non un selettore esteso, quindi funziona anche nei blocker
+    che di ExtCSS non sanno nulla (Vivaldi e simili). Verificato sull'HTML reale della pagina:
+    un match per l'iframe, uno per il paragrafo, zero altrove.
+  - ⚠️ **Lo userscript NON è la via**, benché per questo sito ce ne sia uno: `ENFRoccobot` è un
+    **downloader di video**, e mettergli dentro un ad-blocker sarebbe fuori scopo; soprattutto,
+    il browser mobile in uso non esegue userscript, cioè proprio la piattaforma da cui il
+    problema si vedeva.
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
