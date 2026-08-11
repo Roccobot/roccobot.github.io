@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-08-10
+! Last updated: 2026-08-11
 
 *ads.js
 *pagead.js
@@ -119,6 +119,7 @@
 ||istripper.com^$empty,important
 ||italianmethod.com^$empty,important
 ||j2756.ru^$empty,important
+||jerkmate.com^$empty,important
 ||jf71qh5v14.com^$empty,important
 ||joom.com^$empty,important
 ||justmineit.com^$empty,important
@@ -326,6 +327,8 @@ enf-cmnf.*###footer_bg
 enf-cmnf.*###post_entry > table > tbody > tr > td > div
 enf-cmnf.*###text-25 > .div_wrap_sidebar
 enf-cmnf.*###text-34 > .div_wrap_sidebar
+enf-cmnf.*##iframe[src*="jerkmate"]
+enf-cmnf.*##p:has(+ iframe[src*="jerkmate"])
 epicload.com##.show.modal
 epicload.com##.show.modal-backdrop
 erai-raws.info,www.erai-raws.info###smart_push_smio_overlay
@@ -388,6 +391,8 @@ icv-crew.com###header
 ilcorsaroviola.info##.blossomfeaturebox.openbox
 iot-eu-logser.realme.com
 iot-logser.realme.com
+jerkmate.com
+multi.jerkmate.com
 k2sporn.com##.block.banner
 kemono.cr,kemono.party##.shifted.content-wrapper > [href] > div
 kemono.cr,kemono.party###announcement-banner
