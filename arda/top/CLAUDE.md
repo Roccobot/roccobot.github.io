@@ -103,6 +103,40 @@ serve.
 - Il codice del Worker si ridistribuisce **da sé** a ogni push su `master` via la Git integration di
   Cloudflare; `wrangler deploy` resta solo come fallback manuale.
 
+## 📲 App installabile (PWA)
+
+**Com'è fatto** (dalla v15.03). `arda/top/manifest.webmanifest` (nome **'Arda Roccobot'**,
+`short_name` 'Arda', `display: standalone`, scope e `start_url` su `/arda/top/`), quattro icone
+in `arda/top/pwa/` (192 e 512, `any` e `maskable`), `apple-touch-icon` per iOS che il manifest
+non guarda, e `arda/top/sw.js`. Le icone **non sono un disegno a parte: sono il glifo del FAB**,
+estratto da `index.html` e rasterizzato da `.memo/scripts/pwaicons.js`. Colori presi dal FAB
+reale: turchese `#1f5562` con glifo bianco (la variante del tema chiaro), oppure glifo oro
+`#d2b25c` su blu scuro desaturato `#141824`.
+
+- ⚠️⚠️ **Il service worker NON ha cache, e non è una dimenticanza.** Esiste solo perché i
+  browser Chromium chiedono un worker con handler `fetch` per offrire 'Installa app'; il suo
+  handler è **inerte** e lascia passare tutto in rete. Una cache lì sarebbe un difetto grave e
+  **silenzioso**: `dati.js` cambia a ogni salvataggio admin e a ogni bump, quindi il sito
+  servirebbe la classifica vecchia **con il deploy verde e la sonda sul file grezzo che
+  conferma la pubblicazione**, cioè con tutte le spie a posto.
+  - ⚠️ Un worker registrato **sopravvive alla cancellazione del file**: se un domani lo si
+    rimuove, va disattivato anche per chi ce l'ha (unregister), o continuera' a governare
+    quello scope nei browser altrui.
+- ⚠️⚠️ **DUE icone per due temi di sistema NON sono possibili**, ed era la richiesta: il
+  manifest non conosce `prefers-color-scheme`, e su Android l'icona viene **fissata al momento
+  dell'installazione** (WebAPK), quindi non segue il tema come fa il FAB in pagina. Le due
+  varianti sono entrambe committate e pronte; quella **installata** è la turchese, perché è
+  leggibile su qualunque sfondo di launcher, mentre l'oro su blu quasi nero si perde sui
+  wallpaper scuri. Cambiarla vuol dire cambiare i quattro `src` del manifest, niente di più.
+- ⚠️ **Il glifo si posiziona con `<g transform>`, non con un `<svg>` innestato**: un svg interno
+  eredita le regole CSS che colpiscono `svg` e si ritrova ridimensionato. La prima passata del
+  generatore produsse icone col simbolo gigante e tagliato proprio per questo.
+- **La `maskable` ha il glifo più piccolo** (46% del lato contro 60%): i launcher che ritagliano
+  in tondo mangiano il bordo, e la zona sicura è l'80% centrale. Sono due file distinti perché
+  un solo compromesso li serve male entrambi.
+- ⚠️ **`favicon.png` e la favicon del sito NON sono state toccate**: l'icona dell'app è un'altra
+  cosa, e cambiare la favicon non era richiesto.
+
 ## 🔎 Modalità ingrandita
 
 Ingrandimento del sito al **130%**, per la leggibilità su desktop (l'utente era
