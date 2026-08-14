@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-07-29
+! Last updated: 2026-08-11
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -183,6 +183,15 @@
 @@||pec.it^$important
 @@||pec.it^$document,important
 @@||perchance.org^$important
+! Photopea: l'editor carica gli annunci con Google Publisher Tag
+! (securepubads.g.doubleclick.net/tag/js/gpt.js) e con Funding Choices rileva chi li
+! blocca, rifiutando di funzionare. L'eccezione $document include urlblock, quindi
+! sblocca anche le richieste di terzi partite dalla sua pagina, che e' cio' che serve.
+! ⚠️ Sul telefono NON basta: la voce nuda doubleclick.net e' una regola DNS, e il DNS
+! non sa da quale sito arrivi la richiesta, quindi nessuna eccezione per-sito lo tocca.
+@@||photopea.com^$important
+@@||photopea.com^$document,important
+@@||vecpea.com^$important
 @@||photos.google.com^$important
 @@||photos.google.com^$document,important
 @@||photosi.com^$important
