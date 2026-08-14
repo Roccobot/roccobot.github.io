@@ -105,37 +105,51 @@ serve.
 
 ## 📲 App installabile (PWA)
 
-**Com'è fatto** (dalla v15.03). `arda/top/manifest.webmanifest` (nome **'Arda Roccobot'**,
-`short_name` 'Arda', `display: standalone`, scope e `start_url` su `/arda/top/`), quattro icone
-in `arda/top/pwa/` (192 e 512, `any` e `maskable`), `apple-touch-icon` per iOS che il manifest
-non guarda, e `arda/top/sw.js`. Le icone **non sono un disegno a parte: sono il glifo del FAB**,
-estratto da `index.html` e rasterizzato da `.memo/scripts/pwaicons.js`. Colori presi dal FAB
-reale: turchese `#1f5562` con glifo bianco (la variante del tema chiaro), oppure glifo oro
-`#d2b25c` su blu scuro desaturato `#141824`.
+**Com'è fatto** (dalla v15.03, splash e squircle dalla v15.04). `arda/top/manifest.webmanifest`
+(nome **'Arda Roccobot'**, `short_name` 'Arda', `display: standalone`, scope e `start_url` su
+`/arda/top/`), quattro icone in `arda/top/pwa/`, `apple-touch-icon` per iOS che il manifest non
+guarda, e `arda/top/sw.js`. Le icone **non sono un disegno a parte: sono il glifo del FAB**,
+estratto da `index.html` e rasterizzato da `.memo/scripts/pwaicons.js`. Colori dal FAB reale:
+turchese `#1f5562` con glifo bianco.
 
+- **Lo splash è uniforme perché il fondo dell'icona COINCIDE col `background_color`**, ed è così
+  che si ottiene 'schermo pieno turchese col logo piccolo al centro' (richiesta dell'utente):
+  lo splash di sistema è fatto di `background_color` più l'icona centrata, e la dimensione
+  dell'icona non è governabile. Rendendo il riquadro dello stesso colore del fondo, il riquadro
+  **scompare** e resta solo il glifo. `theme_color` è turchese per la stessa coerenza.
+  - ⚠️ **Il `theme_color` del manifest e il `<meta name="theme-color">` sono DUE canali
+    distinti**: il primo colora l'app installata, il secondo la barra del browser. Il meta resta
+    `#060a14` di proposito, così l'aspetto in-browser non cambia.
+  - ⚠️ **Gli angoli dello squircle devono restare TRASPARENTI** (misurato: alpha 0 negli angoli,
+    fondo `31,85,98` che è esattamente il `background_color`): con gli angoli opachi sullo splash
+    ricomparirebbe il quadrato sopra il fondo uniforme. Nel generatore lo garantisce
+    `omitBackground` dello screenshot.
+- **Squircle, non rettangolo arrotondato**: superellisse `|x|^n + |y|^n = 1` con n=4.6,
+  campionata a 256 punti, che a 512px è indistinguibile da una curva e non dipende da
+  approssimazioni di `border-radius`. Riguarda la sola icona `any`: la **maskable resta un
+  quadrato pieno**, perché è il launcher a ritagliarla e un doppio ritaglio mangerebbe il glifo.
 - ⚠️⚠️ **Il service worker NON ha cache, e non è una dimenticanza.** Esiste solo perché i
   browser Chromium chiedono un worker con handler `fetch` per offrire 'Installa app'; il suo
   handler è **inerte** e lascia passare tutto in rete. Una cache lì sarebbe un difetto grave e
   **silenzioso**: `dati.js` cambia a ogni salvataggio admin e a ogni bump, quindi il sito
-  servirebbe la classifica vecchia **con il deploy verde e la sonda sul file grezzo che
-  conferma la pubblicazione**, cioè con tutte le spie a posto.
+  servirebbe la classifica vecchia **con il deploy verde e la sonda sul file grezzo che conferma
+  la pubblicazione**, cioè con tutte le spie a posto.
   - ⚠️ Un worker registrato **sopravvive alla cancellazione del file**: se un domani lo si
-    rimuove, va disattivato anche per chi ce l'ha (unregister), o continuera' a governare
-    quello scope nei browser altrui.
-- ⚠️⚠️ **DUE icone per due temi di sistema NON sono possibili**, ed era la richiesta: il
-  manifest non conosce `prefers-color-scheme`, e su Android l'icona viene **fissata al momento
-  dell'installazione** (WebAPK), quindi non segue il tema come fa il FAB in pagina. Le due
-  varianti sono entrambe committate e pronte; quella **installata** è la turchese, perché è
-  leggibile su qualunque sfondo di launcher, mentre l'oro su blu quasi nero si perde sui
-  wallpaper scuri. Cambiarla vuol dire cambiare i quattro `src` del manifest, niente di più.
+    rimuove, va disattivato anche per chi ce l'ha (unregister), o continuerà a governare quello
+    scope nei browser altrui.
+- ⚠️⚠️ **DUE icone per due temi di sistema NON sono possibili**, ed era la richiesta iniziale: il
+  manifest non conosce `prefers-color-scheme` e su Android l'icona viene **fissata al momento
+  dell'installazione** (WebAPK), quindi non segue il tema come fa il FAB in pagina. La questione
+  è **decaduta** con la scelta dello splash turchese in entrambi i temi: la variante oro su blu
+  è stata rimossa dal repo per non lasciare asset morti, e il generatore la sa rifare in una
+  riga se un domani servisse.
 - ⚠️ **Il glifo si posiziona con `<g transform>`, non con un `<svg>` innestato**: un svg interno
   eredita le regole CSS che colpiscono `svg` e si ritrova ridimensionato. La prima passata del
   generatore produsse icone col simbolo gigante e tagliato proprio per questo.
-- **La `maskable` ha il glifo più piccolo** (46% del lato contro 60%): i launcher che ritagliano
-  in tondo mangiano il bordo, e la zona sicura è l'80% centrale. Sono due file distinti perché
-  un solo compromesso li serve male entrambi.
 - ⚠️ **`favicon.png` e la favicon del sito NON sono state toccate**: l'icona dell'app è un'altra
   cosa, e cambiare la favicon non era richiesto.
+- ⚠️ **Dopo un cambio di icona l'app va disinstallata e reinstallata**: Android tiene quella
+  fissata all'installazione, quindi un aggiornamento del manifest da solo non si vede.
 
 ## 🔎 Modalità ingrandita
 
