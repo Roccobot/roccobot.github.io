@@ -480,7 +480,6 @@ www.opensubtitles.com##[id*="sub-dl-buttons-content"] > .panel
 www.opensubtitles.org##.ui-dialog.ui-widget
 www.opensubtitles.org###bounce_arrow
 www.opensubtitles.org###chromepop
-www.photopea.com##.app.flexrow > div
 www.pixiv.net##.TbiBa
 www.recaptcha.net##.ui-dialog.ui-widget
 www.recaptcha.net###bounce_arrow
