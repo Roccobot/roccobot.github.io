@@ -123,6 +123,36 @@
     già su 'indirizzo IP zero'); e cercare il colpevole nelle liste, incluse le nostre, che una
     verifica per sottostringa ha scagionato subito. Il rimedio è **'Sblocca dominio'** nel
     registro delle query, cioè un'eccezione del profilo.
+- ⚠️ **Brave: si blocca ciò che è OPZIONALE, mai ciò che tiene in piedi il browser**
+  (2026-08-17). Le due famiglie non si distinguono dal nome, quindi vanno tenute separate a
+  mano e **verificate**: `rewards`, `wallet` (compresi `ethereum-mainnet` e `solana-mainnet`),
+  `creators`, `basicattentiontoken.org`, `simplehash.com` (scoperta NFT), `p3a` e
+  `star-randsrv` (analitiche) sono **bloccati**; `go-updater`, `componentupdater`,
+  `brave-core-ext.s3`, `crlsets`, `safebrowsing`, `variations` e **`sync-v2`** devono restare
+  **liberi**, e `sync-v2` ha per giunta la sua eccezione in whitelist, perché è il canale dei
+  segnalibri fra dispositivi e va protetto anche dalle liste di terzi.
+  - ⚠️⚠️ **`brave-core-ext.s3.brave.com` e `componentupdater` NON si toccano**: da lì passano
+    gli aggiornamenti dei componenti, filtri compresi. Bloccarli congelerebbe il blocco stesso,
+    e il sintomo (liste che smettono di aggiornarsi) arriverebbe settimane dopo la causa.
+  - **La verifica è uno script, non una lettura a occhio**: si prende l'elenco dei domini
+    funzionali e quello dei domini da bloccare, e si controlla riga per riga chi colpisce chi,
+    **incluse le voci nude**, che sono pattern di sottostringa e possono allargarsi da sole.
+    Rifarla dopo ogni aggiunta in quest'area.
+  - **`variations.brave.com` resta libero per scelta**: scarica configurazioni, non invia
+    profilazione, e bloccarlo impedirebbe i rollout dei correttivi. Se un domani lo si vuole
+    fuori, è una decisione da prendere, non un'omissione da correggere.
+- **Qwant: la barra 'Usa l'app' si aggancia all'URL, non alle classi** (2026-08-17). Le classi
+  di Qwant sono **hashate** (`_1xQVj`, `_2wTg-`) e cambiano a ogni build, quindi come appiglio
+  durerebbero fino al primo deploy. L'invariante è il link, che porta sempre
+  `utm_medium=smartbanner`: da qui `div:has(> div > a[href*="utm_medium=smartbanner"])`.
+  - **Il livello del contenitore è misurato, non scelto a occhio**: risalendo dal link, il
+    genitore diretto è la barra e il suo genitore è il wrapper (che contiene **solo** il
+    banner), mentre il livello ancora sopra include già 'Skip to main content' e i **risultati**
+    di ricerca. Si nasconde il wrapper: un gradino più su si porterebbe via la pagina.
+  - ⚠️ **Non è lo userscript**: `QwantRoccobot` gira solo dove ci sono le estensioni, e il
+    problema si vede sul **telefono**, dove non ne gira nessuna. Vale il criterio dei tre
+    livelli già scritto sopra.
+
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
