@@ -39,7 +39,7 @@
   // IDENTICHE: chi aggiorna si ritrova le sue scelte, senza migrazione.
   const OPZ = [
     { k: 'dv-lang',         t: 'scelta', d: 'auto', v: ['auto', 'it', 'en'] },
-    { k: 'dv-theme',        t: 'scelta', d: 'dark', v: ['system', 'dark', 'light'] },
+    { k: 'dv-bg',           t: 'scelta', d: 'scacchi', v: ['scacchi', 'chiaro', 'scuro', 'sistema'] },
     { k: 'dv-wheel-mode',   t: 'scelta', d: 'auto', v: ['auto', 'scorri', 'mai'] },
     { k: 'dv-scale-mode',   t: 'scelta', d: 'phys', v: ['phys', 'log'] },
     { k: 'dv-wheel-up-in',  t: 'bool',   d: '1' },
@@ -145,11 +145,12 @@
       oLang: 'Interface language',
       oLangD: 'Automatic follows the browser.',
       oAuto: 'Automatic',
-      oTema: 'Checkerboard',
-      oTemaD: 'The background behind a transparent image.',
-      oSistema: 'System',
-      oScuro: 'Dark',
+      oSfondo: 'Background',
+      oSfondoD: 'What you see behind a transparent image.',
+      oScacchi: 'Checkerboard (transparency)',
       oChiaro: 'Light',
+      oScuro: 'Dark',
+      oSistema: 'System',
       oReale: 'What "real size" means',
       oRealeD: 'Also switchable from the round button in the info panel.',
       oFisici: 'Physical pixels (faithful)',
@@ -226,11 +227,12 @@
       oLang: 'Lingua dell\'interfaccia',
       oLangD: 'Automatica segue il browser.',
       oAuto: 'Automatica',
-      oTema: 'Scacchiera',
-      oTemaD: 'Lo sfondo dietro a un\'immagine trasparente.',
-      oSistema: 'Di sistema',
-      oScuro: 'Scura',
-      oChiaro: 'Chiara',
+      oSfondo: 'Sfondo',
+      oSfondoD: 'Che cosa si vede dietro a un\'immagine trasparente.',
+      oScacchi: 'Scacchiera (trasparenza)',
+      oChiaro: 'Chiaro',
+      oScuro: 'Scuro',
+      oSistema: 'Sistema',
       oReale: 'Che cosa vuol dire "dimensione reale"',
       oRealeD: 'Si commuta anche dal tondo nel riquadro delle informazioni.',
       oFisici: 'Pixel fisici (fedele)',
@@ -270,7 +272,7 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   // I valori qui sotto arrivano dalla tabella OPZ (archivio del gestore); i commenti
   // dicono da dove viene il DEFAULT, che è il numero scritto in OPZ.
-  let THEME = leggiOpz('dv-theme');   // 'system' | 'dark' | 'light' (sfondo a scacchi)
+  const SFONDO = leggiOpz('dv-bg');   // 'scacchi' | 'chiaro' | 'scuro' | 'sistema'
   const ZOOM_MAX_MULT = numOpz('dv-zoom-max');    // zoom massimo = N× la dimensione reale (1:1)
   const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
   const LATO_MAX_PX = 32000;   // tetto di sicurezza: oltre, il browser fatica a disegnare l'elemento
@@ -483,16 +485,42 @@
     }
   }
 
-  if (THEME === 'system') {
-    THEME = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  // ── Sfondo dietro all'immagine ─────────────────────────────────────────
+  // 'scacchi' resta il predefinito perché è l'unico che RENDE VISIBILE la
+  // trasparenza, che su una pagina-immagine è un'informazione e non un vezzo: una
+  // tinta piatta non dice se il bianco che si vede è il fondo o un pixel opaco.
+  // Le due tinte sono i grigi che la scacchiera già usava, non due colori nuovi.
+  const GRIGI = { chiaro: '#EEE', scuro: '#222' };
+  // ⚠️ Serve DUE volte, col passo della scacchiera diverso: dietro all'immagine (20 px)
+  // e dentro il riquadro del navigatore (10 px), che e' la stessa immagine in piccolo.
+  // Scritta una volta sola perche' due copie divergerebbero, e si vedrebbe subito:
+  // il navigatore mostrerebbe una trasparenza che la pagina non ha piu'.
+  function cssSfondo(passo) {
+    if (SFONDO === 'scacchi') {
+      const g = ['#333', '#222'], mezzo = passo / 2;
+      return 'background-position:0 0,' + mezzo + 'px ' + mezzo + 'px;background-size:' + passo + 'px ' + passo + 'px;' +
+        'background-image:linear-gradient(45deg,' + g[0] + ' 25%,transparent 25%,transparent 75%,' + g[0] + ' 75%,' + g[0] + ' 100%),' +
+        'linear-gradient(45deg,' + g[0] + ' 25%,' + g[1] + ' 25%,' + g[1] + ' 75%,' + g[0] + ' 75%,' + g[0] + ' 100%)';
+    }
+    // ⚠️ 'sistema' si legge UNA volta, all'avvio: cambiando il tema del sistema a
+    // pagina aperta serve un ricaricamento. Un ascoltatore su matchMedia costerebbe
+    // poco, ma qui riscriverebbe un foglio già iniettato per un caso che si risolve
+    // con un tasto, e il codice in più vivrebbe su ogni pagina-immagine.
+    const scuro = SFONDO === 'scuro' ||
+      (SFONDO === 'sistema' && !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
+    // ⚠️⚠️ `!important` NON e' pigrizia: su una pagina-immagine il browser scrive un
+    // `background-color` INLINE sul body (Chromium mette rgb(14,14,14)), e un foglio
+    // iniettato perde contro l'inline a prescindere dalla specificita'. La scacchiera
+    // non se n'era accorta perche' copre il fondo con gradienti opachi; la tinta
+    // piatta invece spariva del tutto, e la pagina restava del colore del browser.
+    // Misurato in laboratorio: senza queste due dichiarazioni il body resta a
+    // rgb(14,14,14) in tutte e tre le tinte.
+    return 'background-image:none!important;background-color:' + (scuro ? GRIGI.scuro : GRIGI.chiaro) + '!important';
   }
-  const grid = THEME === 'light' ? ['#DDD', '#EEE'] : ['#333', '#222'];
 
   aggiungiCss(
     'html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden}' +
-    'body{background-attachment:fixed;background-position:0 0,10px 10px;background-size:20px 20px;' +
-      'background-image:linear-gradient(45deg,' + grid[0] + ' 25%,transparent 25%,transparent 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%),' +
-      'linear-gradient(45deg,' + grid[0] + ' 25%,' + grid[1] + ' 25%,' + grid[1] + ' 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%)}' +
+    'body{' + (SFONDO === 'scacchi' ? 'background-attachment:fixed;' : '') + cssSfondo(20) + '}' +
     // contenitore scrollabile che riempie la vista; touch-action:none così i gesti touch li gestiamo noi
     '#dv-wrap{position:fixed;inset:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;' +
       'touch-action:none;-ms-touch-action:none;overscroll-behavior:contain}' +
@@ -541,10 +569,7 @@
     '#dv-mini{position:fixed;top:1rem;right:1rem;z-index:11;display:none;padding:4px;border-radius:8px;' +
       'background:#000000b8;box-shadow:0 2px 10px rgba(0,0,0,.45);cursor:pointer;' +
       'user-select:none;-webkit-user-select:none;touch-action:none}' +
-    '#dv-mini .dv-mini-box{position:relative;overflow:hidden;border-radius:4px;' +
-      'background-position:0 0,5px 5px;background-size:10px 10px;' +
-      'background-image:linear-gradient(45deg,' + grid[0] + ' 25%,transparent 25%,transparent 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%),' +
-      'linear-gradient(45deg,' + grid[0] + ' 25%,' + grid[1] + ' 25%,' + grid[1] + ' 75%,' + grid[0] + ' 75%,' + grid[0] + ' 100%)}' +
+    '#dv-mini .dv-mini-box{position:relative;overflow:hidden;border-radius:4px;' + cssSfondo(10) + '}' +
     '#dv-mini img,#dv-mini svg{display:block;width:100%;height:100%;pointer-events:none}' +
     '#dv-mini .dv-mini-rett{position:absolute;box-sizing:border-box;border:2px solid #FF4E4E;' +
       'pointer-events:none;border-radius:2px}' +
@@ -2049,7 +2074,7 @@
     const PAGINA = [
       { g: 'oGrpGenerale', righe: [
         { k: 'dv-lang',       l: 'oLang',      d: 'oLangD',  et: { auto: 'oAuto', it: 'oItaliano', en: 'oEnglish' } },
-        { k: 'dv-theme',      l: 'oTema',      d: 'oTemaD',  et: { system: 'oSistema', dark: 'oScuro', light: 'oChiaro' } },
+        { k: 'dv-bg',         l: 'oSfondo',    d: 'oSfondoD', et: { scacchi: 'oScacchi', chiaro: 'oChiaro', scuro: 'oScuro', sistema: 'oSistema' } },
         { k: 'dv-scale-mode', l: 'oReale',     d: 'oRealeD', et: { phys: 'oFisici', log: 'oLogici' } }
       ] },
       { g: 'oGrpZoom', righe: [

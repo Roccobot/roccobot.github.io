@@ -131,6 +131,23 @@ pagina `options.html` di 'Image Max URL'.
   un pannello quella motivazione si perde e resta un numero da girare a caso.
 - ⚠️ **La versione mostrata in cima si LEGGE da `GM_info`**, non si riscrive: due numeri
   scritti a mano nello stesso file divergono al primo bump distratto.
+- ⚠️⚠️ **Lo sfondo a tinta piatta vuole `!important`, e non è pigrizia.** Su una
+  pagina-immagine il browser scrive un `background-color` **inline** sul `body` (Chromium
+  mette `rgb(14,14,14)`), e un foglio iniettato perde contro l'inline a prescindere dalla
+  specificità. La **scacchiera non se n'era mai accorta** perché copre il fondo con gradienti
+  opachi; la tinta piatta invece spariva del tutto e la pagina restava del colore del browser.
+  Misurato: senza quelle due dichiarazioni il `body` resta a `rgb(14,14,14)` in tutte e tre le
+  tinte. ⚠️ Il difetto lo ha trovato il **banco di prova**, non la lettura del codice: a occhio
+  la regola CSS sembrava giusta.
+- **Lo sfondo si calcola in UNA funzione sola** (`cssSfondo(passo)`), usata due volte: dietro
+  all'immagine e dentro il riquadro del navigatore, che è la stessa immagine in piccolo. Due
+  copie divergerebbero, e si vedrebbe subito: il navigatore mostrerebbe una trasparenza che la
+  pagina non ha più.
+- ⚠️ **Il predefinito resta la scacchiera** (istruzione dell'utente, 2026-08-17), ed è l'unico
+  che rende **visibile la trasparenza**, che su una pagina-immagine è un'informazione e non un
+  vezzo: con una tinta piatta non si distingue il bianco del fondo da un pixel bianco opaco.
+  Con lo stesso cambio è **caduta la scacchiera chiara**, che l'opzione precedente offriva:
+  ora 'Chiaro' è un grigio pieno. Non è una perdita per distrazione, è la scelta dell'utente.
 - ⚠️ **Il banco di prova con Playwright inganna due volte**, e vale saperlo prima di
   ricostruirlo: `addInitScript` parte a `document-start` (niente `<head>`, quindi
   `GM_addStyle` esplode, e per provare il visualizzatore lo script va iniettato **dopo** il

@@ -629,7 +629,7 @@ per vederla basta ricaricare la pagina-immagine.
 | Opzione | Valori | Predefinito |
 | --- | --- | --- |
 | Lingua dell'interfaccia | automatica, italiano, inglese | automatica (segue il browser) |
-| Scacchiera | di sistema, scura, chiara | scura |
+| Sfondo | scacchiera (trasparenza), chiaro, scuro, sistema | scacchiera |
 | Che cosa vuol dire 'dimensione reale' | pixel fisici, pixel logici | pixel fisici |
 | Rotella e dito nudi | zoomano tutti e due, il dito scorre, scorre tutto | zoomano tutti e due |
 | La rotella in su ingrandisce | sì/no | sì |
@@ -644,6 +644,13 @@ per vederla basta ricaricare la pagina-immagine.
 
 Le tre scelte dei tasti `A`, `I` e `N` sono le stesse voci del pannello: cambiarle da un
 lato si vede dall'altro.
+
+> ⚠️ **Perché lo sfondo predefinito resta la scacchiera.** E' l'unico che rende **visibile la
+> trasparenza**, che su una pagina-immagine e' un'informazione e non un vezzo: con una tinta
+> piatta non si distingue il bianco del fondo da un pixel bianco opaco. Le tinte piatte
+> servono a chi guarda foto opache e vuole un contorno neutro, e sono i due grigi che la
+> scacchiera gia' usava (`#EEE` e `#222`), non due colori nuovi. **Sistema** legge il tema del
+> browser una volta sola, all'avvio: cambiando tema a pagina aperta serve un ricaricamento.
 
 > ⚠️ **Il verso della rotella è UNA voce sola, non due.** Nel pannello si imposta il verso
 > **predefinito**; il tasto `I` lo inverte al volo. Salvando il verso dal pannello,
