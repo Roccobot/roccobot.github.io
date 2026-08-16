@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-08-11
+! Last updated: 2026-08-17
 
 *ads.js
 *pagead.js
@@ -42,6 +42,7 @@
 ||atlaslife.eu^$empty,important
 ||audienceline.com^$empty,important
 ||autoizers.info^$empty,important
+||basicattentiontoken.org^$empty,important
 ||bemobpath.com^$empty,important
 ||bet365.it^$empty,important
 ||betsonsport.ru/*$image
@@ -70,6 +71,7 @@
 ||com-shield-device.live^$empty,important
 ||constintptr.com^$empty,important
 ||cool-4free.top^$empty,important
+||creators.brave.com^$empty,important
 ||cryptobrowser.site^$empty,important
 ||cyberprivacy.pro^$empty,important
 ||deloplen.com^$empty,important
@@ -157,6 +159,7 @@
 ||omaze.com^$empty,important
 ||one.com^$empty,important
 ||opensubtitles.pw^$empty,important
+||p3a.brave.com^$empty,important
 ||parallels.com^$empty,important
 ||partypoker.it^$empty,important
 ||paypal.com^$empty,important
@@ -182,6 +185,7 @@
 ||repair.live^$empty,important
 ||resolveanyissue.com^$empty,important
 ||retainguaninefluorite.info^$empty,important
+||rewards.brave.com^$empty,important
 ||robinbob.in/images/promo*$image
 ||rsalcuk.com^$empty,important
 ||runtnc.net^$empty,important
@@ -200,6 +204,7 @@
 ||sexmotors.com^$empty,important
 ||sheedsoh.com^$empty,important
 ||shein.com^$empty,important
+||simplehash.com^$empty,important
 ||skincarie.com^$empty,important
 ||soft2download.website^$empty,important
 ||softonic.com^$empty,important
@@ -210,6 +215,7 @@
 ||spotscenered.info^$empty,important
 ||srchmoney.com^$empty,important
 ||srnk.club^$empty,important
+||star-randsrv.bsg.brave.com^$empty,important
 ||startmag.it^$empty,important
 ||stimmtso.space^$empty,important
 ||storereviews.org^$empty,important
@@ -235,6 +241,7 @@
 ||uploaded.net/register*$document
 ||utbutretcelac.info^$empty,important
 ||vatleta.com^$empty,important
+||wallet.brave.com^$empty,important
 ||whatisuptodaynow.com^$empty,important
 ||wikia.nocookie.net/*/Wiki-background*$important
 ||wish.com^$empty,important
@@ -276,6 +283,7 @@ animeworld.so##.img-right
 api-adservices.apple.com
 api.bugsnag.com
 apkmirror.com###ezmobfooter > center
+api.rewards.brave.com
 app.bugsnag.com
 beeg.com##.Banner
 beeg.com###inplayerbox > .wrp > .close-btn
@@ -285,6 +293,7 @@ bing.com,www.bing.com##.on.gi_fre_pu
 bing.com,www.bing.com###gi_tc
 bing.com,www.bing.com##footer[id="footer"]
 booking.frs.es###app > .frs__overlay
+basicattentiontoken.org
 books-analytics-events.apple.com
 browser.sentry-cdn.com
 business-api.tiktok.com
@@ -304,6 +313,7 @@ corriere.it##[class*="bck-adblock"] > .adblock__container
 ! .adbox.banner_ads.adsbox che non combaciava). Domini espliciti perché il wildcard
 ! d3ward.* non sempre applica i cosmetici su mobile.
 d3ward.com,adblock.turtlecute.org,d3ward.*##.textads, .banner-ads, .banner_ads, .ad-unit, .afs_ads, .ad-zone, .ad-space, .adsbox
+creators.brave.com
 data.mistat.india.xiaomi.com
 data.mistat.rus.xiaomi.com
 data.mistat.xiaomi.com
@@ -363,6 +373,8 @@ goodreads.com##.siteHeader__topFullImageContainer
 google.com,google.it##.gb_g.gb_aa
 google.com,google.it##div.L3eUgb > div.o3j99
 gql.twitch.tv,passport.twitch.tv,player.twitch.tv,www.twitch.tv##div.container > table > tbody > tr > td
+ethereum-mainnet.wallet.brave.com
+grant.rewards.brave.com
 grs.hicloud.com
 hanime.tv##.htvnad.mobile.native_0
 hanime.tv##.htvnad1.mobile.native_1
@@ -417,6 +429,7 @@ nsfwalbum.com###pwaInstallBanner
 nytimes.com##.expanded-dock.expanded.shown.gdpr
 ocsp.apple.com
 offerwall.yandex.net
+p3a.brave.com
 pagead2.googleadservices.com
 pagead2.googlesyndication.com
 pantsu.cat###mascot
@@ -430,13 +443,19 @@ pornolab.net###logo
 pornolab.net###sidebar1
 pr0gramm.com##.gpt.mobile-sticky-header
 pr0gramm.com###footer-links
+qwant.com##div:has(> div > a[href*="utm_medium=smartbanner"])
 repubblica.it,www.repubblica.it##.iubenda-cs-container
 repubblica.it,www.repubblica.it##.iubenda-cs-visible.iubenda-cs-black
 rutracker.org##.w100.tCenter > div
 secure.splitwise.com##.ads_disabled
 secure.splitwise.com##[src*="assets.splitwise.com/assets/pro/logo-"]
+ratios.wallet.brave.com
+rewards.brave.com
 segugio.it/images/skin*
 sessions.bugsnag.com
+simplehash.com
+solana-mainnet.wallet.brave.com
+star-randsrv.bsg.brave.com
 static.adf.ly
 stream24.ilsole24ore.com,www.ilsole24ore.com##.ot-fade-in.onetrust-pc-dark-filter
 stream24.ilsole24ore.com,www.ilsole24ore.com###onetrust-button-group-parent

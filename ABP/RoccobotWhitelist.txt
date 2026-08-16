@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-08-11
+! Last updated: 2026-08-17
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -198,6 +198,10 @@
 @@||photosi.com^$document,subdocument,important
 @@||poliziadistato.it^$important
 @@||poliziadistato.it^$document,important
+! Sincronizzazione di Brave: e' il canale che tiene allineati segnalibri e
+! impostazioni fra i dispositivi, e va protetto da qualunque lista, nostra o di
+! terzi. Niente $document: qui serve solo che le richieste passino.
+@@||sync-v2.brave.com^$important
 @@||poste.it^$important
 @@||poste.it^$document,important
 @@||prima.it^$important
