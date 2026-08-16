@@ -629,7 +629,8 @@ per vederla basta ricaricare la pagina-immagine.
 | Opzione | Valori | Predefinito |
 | --- | --- | --- |
 | Lingua dell'interfaccia | automatica, italiano, inglese | automatica (segue il browser) |
-| Sfondo | scacchiera (trasparenza), chiaro, scuro, sistema | scacchiera |
+| Tipo di sfondo | scacchiera (trasparenza), uniforme | scacchiera |
+| Tema di sfondo | adattivo, chiaro, scuro | adattivo |
 | Che cosa vuol dire 'dimensione reale' | pixel fisici, pixel logici | pixel fisici |
 | Rotella e dito nudi | zoomano tutti e due, il dito scorre, scorre tutto | zoomano tutti e due |
 | La rotella in su ingrandisce | sì/no | sì |
@@ -645,12 +646,21 @@ per vederla basta ricaricare la pagina-immagine.
 Le tre scelte dei tasti `A`, `I` e `N` sono le stesse voci del pannello: cambiarle da un
 lato si vede dall'altro.
 
-> ⚠️ **Perché lo sfondo predefinito resta la scacchiera.** E' l'unico che rende **visibile la
-> trasparenza**, che su una pagina-immagine e' un'informazione e non un vezzo: con una tinta
-> piatta non si distingue il bianco del fondo da un pixel bianco opaco. Le tinte piatte
-> servono a chi guarda foto opache e vuole un contorno neutro, e sono i due grigi che la
-> scacchiera gia' usava (`#EEE` e `#222`), non due colori nuovi. **Sistema** legge il tema del
-> browser una volta sola, all'avvio: cambiando tema a pagina aperta serve un ricaricamento.
+**Lo sfondo ha due assi indipendenti**, quindi sei combinazioni:
+
+| | **Adattivo** (segue il browser) | **Chiaro** | **Scuro** |
+| --- | --- | --- | --- |
+| **Scacchiera** | scacchiera chiara o scura | scacchiera chiara | scacchiera scura |
+| **Uniforme** | `#EEE` o `#222` | `#EEE` | `#222` |
+
+> ⚠️ **Perche' il predefinito e' la scacchiera.** E' l'unica che rende **visibile la
+> trasparenza**, che su una pagina-immagine e' un'informazione e non un vezzo: su una tinta
+> unita non si distingue il bianco del fondo da un pixel bianco opaco. I quattro colori non
+> sono inventati: sono le due coppie della scacchiera storica, e le tinte unite prendono il
+> chiaro dell'una e lo scuro dell'altra.
+
+> ⚠️ **Adattivo** legge il tema del browser una volta sola, all'avvio: cambiando tema a
+> pagina aperta serve un ricaricamento.
 
 > ⚠️ **Il verso della rotella è UNA voce sola, non due.** Nel pannello si imposta il verso
 > **predefinito**; il tasto `I` lo inverte al volo. Salvando il verso dal pannello,

@@ -148,11 +148,19 @@ pagina `options.html` di 'Image Max URL'.
   all'immagine e dentro il riquadro del navigatore, che è la stessa immagine in piccolo. Due
   copie divergerebbero, e si vedrebbe subito: il navigatore mostrerebbe una trasparenza che la
   pagina non ha più.
-- ⚠️ **Il predefinito resta la scacchiera** (istruzione dell'utente, 2026-08-17), ed è l'unico
-  che rende **visibile la trasparenza**, che su una pagina-immagine è un'informazione e non un
-  vezzo: con una tinta piatta non si distingue il bianco del fondo da un pixel bianco opaco.
-  Con lo stesso cambio è **caduta la scacchiera chiara**, che l'opzione precedente offriva:
-  ora 'Chiaro' è un grigio pieno. Non è una perdita per distrazione, è la scelta dell'utente.
+- ⚠️⚠️ **Lo sfondo sono DUE opzioni, non una: tipo e tema** (istruzione dell'utente,
+  2026-08-17, dopo che una prima versione le aveva fuse). La fusione sembrava un'economia e
+  invece era un errore di analisi: sono **assi indipendenti**, e unirli costringeva a
+  scegliere fra la trasparenza e il colore, facendo sparire per forza la **scacchiera
+  chiara**. Separati danno sei combinazioni e nessuna si perde. Il predefinito è scacchiera +
+  adattivo, ed è la scacchiera perché è l'unica che rende **visibile la trasparenza**, che su
+  una pagina-immagine è un'informazione e non un vezzo.
+  - ⚠️ **Cambia il predefinito rispetto alla 2.20**, dove la scacchiera era sempre scura: con
+    'adattivo' chi ha il browser in tema chiaro adesso vede la **scacchiera chiara**. Non è
+    una regressione, è l'effetto voluto del nuovo default.
+  - **I quattro colori non sono inventati**: sono le due coppie della scacchiera storica
+    (`#DDD`/`#EEE` e `#333`/`#222`), e le tinte unite prendono il chiaro dell'una e lo scuro
+    dell'altra.
 - ⚠️ **Il banco di prova con Playwright inganna due volte**, e vale saperlo prima di
   ricostruirlo: `addInitScript` parte a `document-start` (niente `<head>`, quindi
   `GM_addStyle` esplode, e per provare il visualizzatore lo script va iniettato **dopo** il
