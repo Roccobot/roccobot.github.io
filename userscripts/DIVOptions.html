@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Decent Image Viewer: opzioni</title>
+<link rel="icon" href="Roccobot.png">
+<style>
+  /* Questo guscio NON conosce le impostazioni e non prova a disegnarle: il
+     pannello lo costruisce lo userscript, che e' l'unico ad avere accesso al
+     proprio archivio (GM_getValue). Qui c'e' solo quel tanto che serve perche'
+     la pagina non lampeggi bianca prima dell'iniezione, e l'avviso per chi
+     arriva senza lo script installato. */
+  :root { color-scheme: light dark; --sfondo: #f4f6f7; --testo: #16232b; --tenue: #5d6d76; --acc: #1f5562; }
+  @media (prefers-color-scheme: dark) {
+    :root { --sfondo: #141b1f; --testo: #e9eef0; --tenue: #9aa9b1; --acc: #7fd0e0; }
+  }
+  body {
+    margin: 0; background: var(--sfondo); color: var(--testo);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px; line-height: 1.45;
+  }
+  #dv-opz { max-width: 46rem; margin: 0 auto; padding: 2rem 1.1rem 4rem; }
+  h1 { font-size: 1.5rem; margin: 0 0 .6rem; }
+  p { margin: 0 0 .8rem; }
+  .tenue { color: var(--tenue); font-size: .95rem; }
+  a { color: var(--acc); }
+</style>
+</head>
+<body>
+<div id="dv-opz">
+  <h1>Decent Image Viewer</h1>
+  <p>Questa pagina mostra le impostazioni dello userscript <strong>Decent Image Viewer</strong>.
+     Se stai leggendo questo avviso, lo script non e' installato o non e' attivo su questa pagina:
+     le impostazioni vivono nel suo archivio, quindi solo lui puo' disegnarle.</p>
+  <p class="tenue">This page shows the settings of the <strong>Decent Image Viewer</strong> userscript.
+     If you can read this notice, the script is not installed or not running here: the settings live in
+     its own storage, so only the script itself can draw them.</p>
+  <p><a href="https://roccobot.github.io/userscripts/DIVRoccobot.user.js">Installa lo userscript / Install the userscript</a></p>
+</div>
+</body>
+</html>

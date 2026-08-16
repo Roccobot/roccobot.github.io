@@ -71,6 +71,65 @@
   aggiornamento, anche minore/patch: dopo ogni pubblicazione l'URL va ripetuto,
   senza eccezioni.
 
+## 🌍 'Decent Image Viewer' è BILINGUE, ed è una deroga dichiarata
+
+Dalla 2.21 la UI di `DIVRoccobot.user.js` è **italiana o inglese**, scelta dall'utente o
+dedotta dal browser (richiesta esplicita dell'utente, 2026-08-17: 'puoi aggiungere una
+variabile lingua'). È una **deroga dichiarata** alla regola 'anche la UI è in inglese' scritta
+qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha un'eccezione.
+
+- **Le stringhe stanno tutte in una tabella sola** (`TESTI`, in testa allo script), inglese e
+  italiano affiancati riga per riga. ⚠️ Il motivo della forma affiancata è che una traduzione
+  mancante si vede **leggendo la tabella**, non aprendo la pagina: sparse nel codice, le due
+  lingue divergerebbero in silenzio.
+- ⚠️ **Chi aggiunge una stringa visibile la aggiunge in TUTTE E DUE le lingue.** `T()` ripiega
+  sull'inglese se la chiave italiana manca, quindi il difetto non si schianta: produce un
+  pannello mezzo tradotto, che è peggio, perché sembra una scelta.
+- **Niente terza via e niente lingua parziale**: 'auto' guarda `navigator.language` e sceglie
+  italiano se comincia per `it`, inglese in ogni altro caso.
+- ⚠️ **Il separatore decimale resta il punto** anche in italiano ('21.0 × 29.7 cm'), come la
+  nota qui sopra prescrive per la UI inglese. Non è una svista: il numero lo compone `num()`,
+  una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era
+  stato tolto apposta.
+
+## ⚙️ La pagina delle opzioni (`DIVOptions.html`)
+
+Voce **Opzioni** nel menu del gestore, che apre
+<https://roccobot.github.io/userscripts/DIVOptions.html>. Modello dichiarato dall'utente: la
+pagina `options.html` di 'Image Max URL'.
+
+- ⚠️⚠️ **La pagina è un GUSCIO: il pannello lo disegna lo userscript**, e non è una scelta di
+  stile. Le impostazioni vivono in `GM_getValue`, cioè nell'archivio dello script, dove una
+  pagina web non arriva in nessun modo: l'unico che può leggerle e scriverle è lo script
+  stesso, che quella pagina la matcha già (`@match https://*/*`) e vi inietta il pannello.
+  Chi apre l'indirizzo senza lo script vede l'avviso del guscio, ed è il comportamento giusto.
+- ⚠️ **La voce di menu si registra PRIMA della guardia sul content-type.** Il menu del gestore
+  appartiene alla scheda in cui si sta: registrandolo dopo la guardia comparirebbe solo mentre
+  si guarda un'immagine, cioè quasi mai quando serve.
+- ⚠️ **Il pannello aspetta il DOM**, come l'avvio del visualizzatore. `@run-at document-idle`
+  vale per Tampermonkey, ma altri gestori possono partire prima: misurato in laboratorio,
+  iniettando a `document-start` la pagina restava all'avviso 'script non installato', cioè il
+  difetto peggiore, perché fa sembrare rotta l'installazione.
+- **Le opzioni sono una tabella sola** (`OPZ`), che è insieme il default, i limiti e ciò che
+  il pannello disegna. ⚠️ Le chiavi delle cinque preferenze che esistevano già sono rimaste
+  **identiche**, quindi chi aggiorna ritrova le sue scelte senza migrazione.
+- ⚠️ **`dv-wheel-invert` NON è nella tabella, ed è deliberato**: non è una preferenza ma lo
+  stato del tasto `I`, cioè un'inversione momentanea del verso salvato in `dv-wheel-up-in`.
+  Esporli tutti e due darebbe due interruttori per la stessa cosa, che si spengono a vicenda;
+  il pannello scrive il verso e **azzera** l'inversione.
+- **Che cosa NON si è esposto, e perché**: passo della rotella, tappe tonde dello zoom, salti
+  minimi e soglie dei gesti. Sono valori misurati sui gesti reali dell'utente, e accanto a
+  ciascuno il commento dice da quale misura viene e che cosa è stato scartato. In un campo di
+  un pannello quella motivazione si perde e resta un numero da girare a caso.
+- ⚠️ **La versione mostrata in cima si LEGGE da `GM_info`**, non si riscrive: due numeri
+  scritti a mano nello stesso file divergono al primo bump distratto.
+- ⚠️ **Il banco di prova con Playwright inganna due volte**, e vale saperlo prima di
+  ricostruirlo: `addInitScript` parte a `document-start` (niente `<head>`, quindi
+  `GM_addStyle` esplode, e per provare il visualizzatore lo script va iniettato **dopo** il
+  caricamento); e un archivio simulato con un oggetto nudo si **ricrea vuoto** a ogni
+  ricaricamento, quindi le prove su lingua e ripristino misurano il banco invece dello script.
+  Va appoggiato a `localStorage`.
+
 ## ⚠️ Qwant: la barra 'Usa l'app' vive in DUE posti, ed è voluto
 
 Il selettore che nasconde lo smart banner di Qwant (`div:has(> div > a[href*="utm_medium=smartbanner"])`)
