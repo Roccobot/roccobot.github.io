@@ -101,6 +101,28 @@
     **downloader di video**, e mettergli dentro un ad-blocker sarebbe fuori scopo; soprattutto,
     il browser mobile in uso non esegue userscript, cioè proprio la piattaforma da cui il
     problema si vedeva.
+- ⚠️⚠️ **`ERR_CONNECTION_RESET` su un sito solo: guardare la PROTEZIONE ANTI-TYPOSQUATTING
+  del profilo AdGuard DNS, non le liste** (accertato il 2026-08-16 su `lithub.com`, dopo una
+  diagnosi lunghissima presa da tutte le direzioni sbagliate). Quella protezione difende dai
+  domini-truffa che imitano un marchio noto, e quando crede di riconoscerne uno **non blocca:
+  RISCRIVE** la risposta DNS con un IP di AdGuard. Il browser ci apre un TLS chiedendo il nome
+  vero, il certificato non corrisponde, e l'errore che arriva all'utente parla di **rete**
+  mentre la causa è di **filtraggio**.
+  - **La firma, per riconoscerla in trenta secondi**: nel registro delle query del profilo la
+    voce è **'MODIFICATO'** e non 'bloccato', il codice è **NOERROR**, e il dettaglio nomina il
+    dominio famoso che si crede imitato (`lithub.com` è stato scambiato per `github.com`, due
+    caratteri di distanza). Nel log dell'app, in parallelo: **'Nessuna regola applicata'**,
+    evento 'Tunnel HTTPS', ragione **'Errore TLS remoto'**, destinazione in `94.140.14.0/23`
+    (rete di AdGuard, verificabile via RDAP).
+  - **Chi ne è a rischio**: qualunque dominio legittimo il cui nome somigli a quello di un
+    servizio molto noto. È l'unica classe di guasti di questa famiglia che si può **prevedere**,
+    e vale la pena saperlo perché il sintomo non contiene alcun indizio.
+  - ⚠️ **Le vie che NON funzionano, tutte provate**: `@@||dominio^$document,important` fra le
+    regole utente (agisce sul contenuto, mentre qui la risposta arriva già riscritta dal
+    server); la modalità di blocco del profilo (irrilevante: non è un blocco, e infatti era
+    già su 'indirizzo IP zero'); e cercare il colpevole nelle liste, incluse le nostre, che una
+    verifica per sottostringa ha scagionato subito. Il rimedio è **'Sblocca dominio'** nel
+    registro delle query, cioè un'eccezione del profilo.
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
