@@ -88,9 +88,14 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
 - **Niente terza via e niente lingua parziale**: 'auto' guarda `navigator.language` e sceglie
   italiano se comincia per `it`, inglese in ogni altro caso.
 - ⚠️ **Il punto finale segue il RUOLO della stringa, non l'orecchio** (rilievo dell'utente,
-  2026-08-17: 'qui manca un punto finale, occhio alla coerenza'). Lo portano i **tooltip** e
-  le **descrizioni**; non lo portano gli **elementi di interfaccia**: etichette, pulsanti,
-  voci di menu, avvisi a scomparsa, righe di stato e di errore, `aria-label`. Il criterio è il
+  2026-08-17: 'qui manca un punto finale, occhio alla coerenza'). Lo portano i **tooltip**, le
+  **descrizioni** e i **messaggi di errore**; non lo portano gli **elementi di interfaccia**:
+  etichette, pulsanti, voci di menu, avvisi a scomparsa, `aria-label` e le righe di **stato**,
+  che sono frammenti e non frasi ('Niente da ripulire', 'Al massimo 480 DPI per questa
+  immagine'). ⚠️ Gli errori sono entrati nella famiglia col punto **dopo**, riscrivendoli
+  l'utente stesso ('L'immagine è troppo grande per il browser.'): la regola è stata corretta
+  invece di piegare le sue frasi, perché una frase compiuta col punto è coerente e uno stato
+  frammentario senza punto pure. Il criterio è il
   ruolo perché si **verifica a macchina** (una passata sulla tabella, chiave per chiave); con
   'è una frase compiuta?' si va a sentimento, ed erano rimasti senza punto **tre tooltip su
   cinque** in tutte e due le lingue. La regola sta scritta accanto alla tabella `TESTI`, che è

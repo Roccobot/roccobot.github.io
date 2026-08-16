@@ -88,13 +88,15 @@
   // Le stringhe stanno tutte qui: una chiave per riga, inglese e italiano affiancati,
   // così una traduzione mancante si vede a occhio invece di scoprirsi in pagina.
   // I segnaposto sono {1}, {2}, {3} e si riempiono con gli argomenti di T().
-  // ⚠️ PUNTO FINALE, regola per RUOLO e non a orecchio: lo portano i tooltip
-  // (scalaFis, scalaLog, navTip, dlTip, dpiTip) e le descrizioni (svgSub, oSotto,
-  // oNota e tutte le oXxxD del pannello); non lo portano gli elementi di
-  // interfaccia, cioè etichette, pulsanti, voci di menu, avvisi a scomparsa, righe
-  // di stato e di errore e gli aria-label. Il criterio è il ruolo perché si può
-  // verificare a macchina: 'è una frase compiuta?' andava a sentimento, e infatti
-  // tre tooltip su cinque erano rimasti senza punto.
+  // ⚠️ PUNTO FINALE, regola per RUOLO e non a orecchio. Lo portano tre famiglie:
+  // i tooltip (scalaFis, scalaLog, navTip, dlTip, dpiTip), le descrizioni (svgSub,
+  // oSotto, oNota e tutte le oXxxD del pannello) e i messaggi di ERRORE (errRaster,
+  // errBig, errExtern, errPng). Non lo portano gli elementi di interfaccia: etichette,
+  // pulsanti, voci di menu, avvisi a scomparsa, aria-label e le righe di STATO, che
+  // sono frammenti e non frasi ('Niente da ripulire', 'Al massimo 480 DPI per questa
+  // immagine'). Il criterio è il ruolo perché si verifica a macchina: 'è una frase
+  // compiuta?' andava a sentimento, e infatti tre tooltip su cinque erano rimasti
+  // senza punto.
   const TESTI = {
     en: {
       menuOpzioni: 'Options',
@@ -121,19 +123,18 @@
       pngWait: 'Please wait...',
       pngMax: 'At most {1} DPI for this image',
       pngCm: '{1} × {2} cm at {3} DPI',
-      svgSub: 'Strips metadata, XMP and Illustrator or Inkscape leftovers. The geometry is left alone.',
+      svgSub: 'Strips metadata, XMP and Illustrator or Inkscape leftovers.\nThe geometry is left untouched.',
       svgGo: 'Download cleaned SVG',
       svgOrig: 'Download original ({1})',
       svgOrigNo: 'Original not available',
-      svgNothing: 'Nothing to clean in this file',
-      svgMinimal: '  (already minimal)',
-      errRaster: 'This SVG cannot be rasterized',
-      errBig: 'Image too large for the browser',
-      errExtern: 'PNG not possible: the SVG contains external resources',
-      errPng: 'PNG failed ({1})',
-      errGen: 'error',
+      svgNothing: 'Nothing to clean',
+      svgMinimal: '  (already optimized)',
+      errRaster: 'The SVG cannot be rasterized.',
+      errBig: 'The image is too large for the browser.',
+      errExtern: 'Cannot convert to PNG: external resources are missing.',
+      errPng: 'PNG conversion failed.',
       oTitolo: 'Decent Image Viewer',
-      oSotto: 'Every change is saved right away. Reload an image page to see it.',
+      oSotto: 'Changes are applied right away: reload an image to check.',
       oGrpGenerale: 'General',
       oGrpZoom: 'Zoom and gestures',
       oGrpEsport: 'Export',
@@ -143,7 +144,7 @@
       oItaliano: 'Italiano',
       oEnglish: 'English',
       oLang: 'Interface language',
-      oLangD: 'Automatic follows the browser.',
+      oLangD: 'Automatic (follows the browser).',
       oAuto: 'Automatic',
       oSfondo: 'Background',
       oSfondoD: 'What you see behind a transparent image.',
@@ -170,7 +171,7 @@
       oSensDito: 'Finger sensitivity',
       oSensDitoD: 'A finger sends far more pixels per gesture than a pinch: this is a separate number on purpose.',
       oZoomMax: 'Maximum zoom',
-      oZoomMaxD: 'Times the real size.',
+      oZoomMaxD: 'Multiple of the real size.',
       oDpiCopia: 'DPI when copying an SVG',
       oDpiCopiaD: 'An SVG has no pixels of its own: 96 DPI copies it at its nominal size.',
       oDpiPng: 'Starting DPI of the PNG export',
@@ -200,22 +201,21 @@
       dpiChip: 'Imposta {1} DPI',
       pngWhite: 'Sfondo bianco invece che trasparente',
       pngGo: 'Scarica PNG',
-      pngWait: 'Un momento...',
+      pngWait: 'Attendi...',
       pngMax: 'Al massimo {1} DPI per questa immagine',
       pngCm: '{1} × {2} cm a {3} DPI',
-      svgSub: 'Toglie metadati, XMP e residui di Illustrator o Inkscape. La geometria non si tocca.',
+      svgSub: 'Toglie metadati, XMP e residui di Illustrator o Inkscape.\nLa geometria resta invariata.',
       svgGo: 'Scarica SVG ripulito',
       svgOrig: 'Scarica originale ({1})',
       svgOrigNo: 'Originale non disponibile',
-      svgNothing: 'Niente da ripulire in questo file',
-      svgMinimal: '  (già minimo)',
-      errRaster: 'Questo SVG non si può rasterizzare',
-      errBig: 'Immagine troppo grande per il browser',
-      errExtern: 'PNG impossibile: l\'SVG contiene risorse esterne',
-      errPng: 'PNG non riuscito ({1})',
-      errGen: 'errore',
+      svgNothing: 'Niente da ripulire',
+      svgMinimal: '  (già ottimizzato)',
+      errRaster: 'L\'SVG non può essere rasterizzato.',
+      errBig: 'L\'immagine è troppo grande per il browser.',
+      errExtern: 'Impossibile convertire in PNG: mancano delle risorse esterne.',
+      errPng: 'Conversione in PNG non riuscita.',
       oTitolo: 'Decent Image Viewer',
-      oSotto: 'Ogni modifica si salva subito. Ricarica una pagina-immagine per vederla.',
+      oSotto: 'Modifiche applicate in tempo reale: ricarica un\'immagine per verificare.',
       oGrpGenerale: 'Generale',
       oGrpZoom: 'Zoom e gesti',
       oGrpEsport: 'Esportazione',
@@ -225,7 +225,7 @@
       oItaliano: 'Italiano',
       oEnglish: 'English',
       oLang: 'Lingua dell\'interfaccia',
-      oLangD: 'Automatica segue il browser.',
+      oLangD: 'Automatica (segue il browser).',
       oAuto: 'Automatica',
       oSfondo: 'Sfondo',
       oSfondoD: 'Che cosa si vede dietro a un\'immagine trasparente.',
@@ -252,7 +252,7 @@
       oSensDito: 'Sensibilità del dito',
       oSensDitoD: 'Un dito manda molti più pixel per gesto di un pinch: è un numero a parte apposta.',
       oZoomMax: 'Zoom massimo',
-      oZoomMaxD: 'Volte la dimensione reale.',
+      oZoomMaxD: 'Multiplo della dimensione reale.',
       oDpiCopia: 'DPI con cui si copia un SVG',
       oDpiCopiaD: 'Un SVG non ha pixel propri: a 96 DPI si copia alla sua misura nominale.',
       oDpiPng: 'DPI di partenza dell\'esportazione PNG',
@@ -1800,7 +1800,7 @@
         '.dv-chip:hover{background:rgba(255,255,255,.2)}' +
         '.dv-chip[aria-pressed="true"]{background:rgba(255,255,255,.28)}' +
         '.dv-dl-prev{margin:.5rem 0 .1rem;font-variant-numeric:tabular-nums}' +
-        '.dv-dl-sub{opacity:.62;font-size:12px}' +
+        '.dv-dl-sub{opacity:.62;font-size:12px;white-space:pre-line}' +
         '.dv-dl-warn{color:#ffcf6b;opacity:1}' +
         '.dv-dl-opt{display:flex;align-items:center;gap:.4rem;margin-top:.5rem;font-size:12px;opacity:.82;cursor:pointer;min-height:24px}' +
         '.dv-go{display:block;width:100%;min-height:32px;margin-top:.6rem;font:inherit;color:#fff;cursor:pointer;' +
@@ -1958,7 +1958,7 @@
             occupato(false);
             avviso(e && e.name === 'SecurityError'
               ? T('errExtern')
-              : T('errPng', (e && e.message) || T('errGen')));
+              : T('errPng'));
           }
         };
         im.src = url;
