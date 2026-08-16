@@ -88,12 +88,19 @@
   // Le stringhe stanno tutte qui: una chiave per riga, inglese e italiano affiancati,
   // così una traduzione mancante si vede a occhio invece di scoprirsi in pagina.
   // I segnaposto sono {1}, {2}, {3} e si riempiono con gli argomenti di T().
+  // ⚠️ PUNTO FINALE, regola per RUOLO e non a orecchio: lo portano i tooltip
+  // (scalaFis, scalaLog, navTip, dlTip, dpiTip) e le descrizioni (svgSub, oSotto,
+  // oNota e tutte le oXxxD del pannello); non lo portano gli elementi di
+  // interfaccia, cioè etichette, pulsanti, voci di menu, avvisi a scomparsa, righe
+  // di stato e di errore e gli aria-label. Il criterio è il ruolo perché si può
+  // verificare a macchina: 'è una frase compiuta?' andava a sentimento, e infatti
+  // tre tooltip su cinque erano rimasti senza punto.
   const TESTI = {
     en: {
       menuOpzioni: 'Options',
       scalaFis: 'Real = PHYSICAL pixels: 1 image px = 1 screen px (faithful; {1}x on this display). Click for logical pixels.',
       scalaLog: 'Real = LOGICAL pixels: 1 image px = 1 CSS px (larger on HiDPI screens). Click to go back to physical pixels.',
-      navTip: 'Navigator: drag the box to move around (press N to hide it)',
+      navTip: 'Navigator: drag the box to move around (press N to hide it).',
       fitGrowOn: 'Fit, enlarging if needed',
       fitGrowOff: 'Fit without enlarging',
       navOn: 'Navigator on',
@@ -104,10 +111,10 @@
       mCopyUrl: 'Copy image URL',
       mSave: 'Save image...',
       mFit: 'Fit to view',
-      dlTip: 'Download: PNG at any resolution, or a cleaned-up SVG',
+      dlTip: 'Download: PNG at any resolution, or a cleaned-up SVG.',
       dlDialog: 'Download image',
       dpiAria: 'Resolution in DPI',
-      dpiTip: 'Resolution in DPI (from {1} to {2})',
+      dpiTip: 'Resolution in DPI (from {1} to {2}).',
       dpiChip: 'Set {1} DPI',
       pngWhite: 'White background instead of transparent',
       pngGo: 'Download PNG',
@@ -174,7 +181,7 @@
       menuOpzioni: 'Opzioni',
       scalaFis: 'Reale = pixel FISICI: 1 px dell\'immagine = 1 px dello schermo (fedele; {1}x su questo display). Clic per i pixel logici.',
       scalaLog: 'Reale = pixel LOGICI: 1 px dell\'immagine = 1 px CSS (più grande sugli schermi HiDPI). Clic per tornare ai pixel fisici.',
-      navTip: 'Navigatore: trascina il riquadro per spostarti (N lo nasconde)',
+      navTip: 'Navigatore: trascina il riquadro per spostarti (N lo nasconde).',
       fitGrowOn: 'Adatta, ingrandendo se serve',
       fitGrowOff: 'Adatta senza ingrandire',
       navOn: 'Navigatore acceso',
@@ -185,10 +192,10 @@
       mCopyUrl: 'Copia indirizzo immagine',
       mSave: 'Salva immagine...',
       mFit: 'Adatta alla vista',
-      dlTip: 'Scarica: PNG a qualsiasi risoluzione, oppure un SVG ripulito',
+      dlTip: 'Scarica: PNG a qualsiasi risoluzione, oppure un SVG ripulito.',
       dlDialog: 'Scarica immagine',
       dpiAria: 'Risoluzione in DPI',
-      dpiTip: 'Risoluzione in DPI (da {1} a {2})',
+      dpiTip: 'Risoluzione in DPI (da {1} a {2}).',
       dpiChip: 'Imposta {1} DPI',
       pngWhite: 'Sfondo bianco invece che trasparente',
       pngGo: 'Scarica PNG',

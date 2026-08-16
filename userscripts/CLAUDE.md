@@ -87,6 +87,14 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
   pannello mezzo tradotto, che è peggio, perché sembra una scelta.
 - **Niente terza via e niente lingua parziale**: 'auto' guarda `navigator.language` e sceglie
   italiano se comincia per `it`, inglese in ogni altro caso.
+- ⚠️ **Il punto finale segue il RUOLO della stringa, non l'orecchio** (rilievo dell'utente,
+  2026-08-17: 'qui manca un punto finale, occhio alla coerenza'). Lo portano i **tooltip** e
+  le **descrizioni**; non lo portano gli **elementi di interfaccia**: etichette, pulsanti,
+  voci di menu, avvisi a scomparsa, righe di stato e di errore, `aria-label`. Il criterio è il
+  ruolo perché si **verifica a macchina** (una passata sulla tabella, chiave per chiave); con
+  'è una frase compiuta?' si va a sentimento, ed erano rimasti senza punto **tre tooltip su
+  cinque** in tutte e due le lingue. La regola sta scritta accanto alla tabella `TESTI`, che è
+  dove serve leggerla.
 - ⚠️ **Il separatore decimale resta il punto** anche in italiano ('21.0 × 29.7 cm'), come la
   nota qui sopra prescrive per la UI inglese. Non è una svista: il numero lo compone `num()`,
   una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era
