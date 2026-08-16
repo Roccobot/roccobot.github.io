@@ -71,6 +71,22 @@
   aggiornamento, anche minore/patch: dopo ogni pubblicazione l'URL va ripetuto,
   senza eccezioni.
 
+## ⚠️ Qwant: la barra 'Usa l'app' vive in DUE posti, ed e' voluto
+
+Il selettore che nasconde lo smart banner di Qwant (`div:has(> div > a[href*="utm_medium=smartbanner"])`)
+sta **sia** in `QwantRoccobot.user.js` (dentro `NASCONDI_PROMO`) **sia** come regola cosmetica
+in `ABP/RoccobotFilters.txt`. E' una duplicazione **dichiarata**, non una dimenticanza:
+
+- lo **userscript** copre chi ha un gestore di userscript (desktop, e su Android l'app AdGuard,
+  che li esegue: lo ha accertato l'utente il 2026-08-17);
+- la **lista** copre chi ha solo un blocker senza userscript.
+
+⚠️ Chi tocca uno dei due **aggiorni anche l'altro**, o divergeranno in silenzio: qui la fonte
+unica non e' possibile, perche' i due meccanismi non si leggono a vicenda. Il criterio con cui
+e' stato scelto il selettore (l'URL invece delle classi, che in Qwant sono hashate; e il
+livello del contenitore misurato risalendo il DOM) sta in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md),
+per non scriverlo due volte.
+
 ## 🔬 La sonda dello scorrimento (`ScrollProbe.html`)
 
 Pagina di diagnostica di questa cartella, pubblicata come le altre
