@@ -173,7 +173,7 @@
     it: {
       menuOpzioni: 'Opzioni',
       scalaFis: 'Reale = pixel FISICI: 1 px dell\'immagine = 1 px dello schermo (fedele; {1}x su questo display). Clic per i pixel logici.',
-      scalaLog: 'Reale = pixel LOGICI: 1 px dell\'immagine = 1 px CSS (piu\' grande sugli schermi HiDPI). Clic per tornare ai pixel fisici.',
+      scalaLog: 'Reale = pixel LOGICI: 1 px dell\'immagine = 1 px CSS (più grande sugli schermi HiDPI). Clic per tornare ai pixel fisici.',
       navTip: 'Navigatore: trascina il riquadro per spostarti (N lo nasconde)',
       fitGrowOn: 'Adatta, ingrandendo se serve',
       fitGrowOff: 'Adatta senza ingrandire',
@@ -200,8 +200,8 @@
       svgOrig: 'Scarica originale ({1})',
       svgOrigNo: 'Originale non disponibile',
       svgNothing: 'Niente da ripulire in questo file',
-      svgMinimal: '  (gia\' minimo)',
-      errRaster: 'Questo SVG non si puo\' rasterizzare',
+      svgMinimal: '  (già minimo)',
+      errRaster: 'Questo SVG non si può rasterizzare',
       errBig: 'Immagine troppo grande per il browser',
       errExtern: 'PNG impossibile: l\'SVG contiene risorse esterne',
       errPng: 'PNG non riuscito ({1})',
@@ -227,7 +227,7 @@
       oReale: 'Che cosa vuol dire "dimensione reale"',
       oRealeD: 'Si commuta anche dal tondo nel riquadro delle informazioni.',
       oFisici: 'Pixel fisici (fedele)',
-      oLogici: 'Pixel logici (piu\' grande su HiDPI)',
+      oLogici: 'Pixel logici (più grande su HiDPI)',
       oGesto: 'Rotella e dito nudi',
       oGestoD: 'Che cosa succede senza tenere premuto ctrl.',
       oGestoAuto: 'Zoomano tutti e due',
@@ -239,9 +239,9 @@
       oAdattaD: 'Tasto A.',
       oNavig: 'Mostra il navigatore',
       oNavigD: 'Tasto N.',
-      oSensPinch: 'Sensibilita\' di ctrl+rotella e pinch',
-      oSensDito: 'Sensibilita\' del dito',
-      oSensDitoD: 'Un dito manda molti piu\' pixel per gesto di un pinch: e\' un numero a parte apposta.',
+      oSensPinch: 'Sensibilità di ctrl+rotella e pinch',
+      oSensDito: 'Sensibilità del dito',
+      oSensDitoD: 'Un dito manda molti più pixel per gesto di un pinch: è un numero a parte apposta.',
       oZoomMax: 'Zoom massimo',
       oZoomMaxD: 'Volte la dimensione reale.',
       oDpiCopia: 'DPI con cui si copia un SVG',
@@ -249,7 +249,7 @@
       oDpiPng: 'DPI di partenza dell\'esportazione PNG',
       oNudge: 'Spostamento verticale del testo informativo',
       oNudgeD: 'In pixel, per uno zoom di pagina che lascia il testo mezzo pixel fuori posto. 0 = non si tocca.',
-      oNota: 'Qui ci sono solo le impostazioni che conviene cambiare. Passo della rotella, tappe dello zoom e soglie dei gesti restano nello script: sono valori misurati, e accanto a ciascuno e\' scritto il perche\'.'
+      oNota: 'Qui ci sono solo le impostazioni che conviene cambiare. Passo della rotella, tappe dello zoom e soglie dei gesti restano nello script: sono valori misurati, e accanto a ciascuno è scritto il perché.'
     }
   };
   function T(k) {
