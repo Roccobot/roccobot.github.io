@@ -482,6 +482,8 @@ wordreference.com,www.wordreference.com##.j8etqankrtb2
 wordreference.com,www.wordreference.com###footer
 wordreference.com,www.wordreference.com###rightcolumn
 www.amazon.it##.ssf-background
+www.ansa.it##.ad-section
+www.ansa.it##.subscribe-section
 www.ansa.it###iubenda-cs-banner
 www.artstation.com##.ng-star-inserted.separator
 www.erosberry.com##canvas

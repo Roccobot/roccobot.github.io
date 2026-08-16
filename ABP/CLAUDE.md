@@ -152,6 +152,19 @@
   - ⚠️ **Non è lo userscript**: `QwantRoccobot` gira solo dove ci sono le estensioni, e il
     problema si vede sul **telefono**, dove non ne gira nessuna. Vale il criterio dei tre
     livelli già scritto sopra.
+- **ANSA: lo spazio vuoto in alto NON è un difetto del blocco, è il contenitore che resta**
+  (2026-08-17). Il posto dell'annuncio è un `.ad-section` con altezza riservata dal CSS del
+  sito: bloccare la richiesta svuota il riquadro ma non lo toglie, e il risultato è una banda
+  bianca che sembra un bug della pagina. La cosmetica `www.ansa.it##.ad-section` chiude il
+  buco, ed è la stessa lezione già scritta per Jerkmate: **il blocco di rete e il
+  nascondimento sono due lavori distinti**, e servono tutti e due.
+  - `www.ansa.it##.subscribe-section` toglie invece il promo 'Abbonati', che non è pubblicità
+    di terzi ma sollecitazione del sito: si nasconde per **scelta dell'utente**, non perché una
+    lista lo imponga. Chi un domani volesse rivederlo tolga questa riga sola, senza toccare
+    l'altra: le due non hanno niente in comune se non il dominio.
+  - ⚠️ **Restano cosmetiche, quindi sul telefono via DNS non si vedono affatto**: vale il
+    criterio dei tre livelli scritto sopra, e qui il livello DNS non c'è perché l'annuncio
+    arriva dai circuiti pubblicitari già coperti altrove nella lista.
 
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
