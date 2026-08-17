@@ -145,10 +145,43 @@ serve.
 - ⚠️ **Il glifo si posiziona con `<g transform>`, non con un `<svg>` innestato**: un svg interno
   eredita le regole CSS che colpiscono `svg` e si ritrova ridimensionato. La prima passata del
   generatore produsse icone col simbolo gigante e tagliato proprio per questo.
-- ⚠️ **`favicon.png` e la favicon del sito NON sono state toccate**: l'icona dell'app è un'altra
-  cosa, e cambiare la favicon non era richiesto.
+- ⚠️ **L'icona dell'app e la favicon sono DUE cose distinte**, benché dal 2026-08-17 condividano
+  il glifo: l'app è un quadrato turchese pieno con glifo bianco, la favicon è il **simbolo nudo**
+  su trasparente (vedi la sezione seguente). Una nota fino a quel giorno diceva 'la favicon non è
+  stata toccata': era vera, non lo è più.
 - ⚠️ **Dopo un cambio di icona l'app va disinstallata e reinstallata**: Android tiene quella
   fissata all'installazione, quindi un manifest aggiornato da solo non si vede.
+
+## 🔖 Favicon
+
+**Com'è fatta** (dalla v15.06). Il **glifo del FAB** su trasparente, senza tondo né fondo, generato da
+`.memo/scripts/favicon.js` che lo estrae da `index.html` come già fa `pwaicons.js`: quattro file
+in `arda/top/`, un `favicon.svg` per i browser moderni e i PNG **48, 32 e 16** come fallback,
+tutti referenziati in testa alla pagina. Il colore è **`#b87323`**, non l'oro del FAB.
+
+- **Perché non l'oro `#d2b25c`**: su barra dei preferiti **bianca** stava a **2,05:1**, cioè
+  quasi svaniva, ed è il difetto da cui è partita la richiesta ('forse svetta di più su chiaro').
+  Scendendo in tinta verso l'arancio il contrasto su chiaro sale e quello su scuro cala, e i due
+  si **incrociano** su `#b87323` (3,81 su bianco, 3,77 sulla barra scura di Chrome `#292a2d`).
+  ⚠️ Il valore scelto è **un gradino sopra l'incrocio**, `#b87323`, per restare parente dell'oro
+  del sito: `#ab5f1c` e sotto guadagnano su bianco spegnendosi sullo scuro, e a 16 px si vede.
+  Della scala provata resta il criterio, non l'elenco: lo rifà il generatore cambiando una
+  costante.
+- **Area massimizzata, senza ritaglio.** Il bbox del glifo è **misurato dal browser** e non
+  assunto dal viewBox nominale: coincidono (`451.999 x 605.862` contro `452 x 605.87`), quindi
+  margine morto **zero** e non c'era nulla da ritagliare. Il glifo è solo scalato a filo del
+  riquadro, +13,2% di area sul 94% della prima passata, e la regola 'icone as-is' resta intatta.
+- **Maschera di contrasto sull'ALFA**, non sul colore: su un glifo monocromatico su trasparente
+  è l'alfa a portare la forma, quindi è l'unico canale da irrigidire (sfocatura gaussiana 3x3,
+  poi `alfa + 0,35 * (alfa - sfocato)`). Serve alle sole misure raster, dove le aste sottili
+  sfumavano su due pixel: **l'SVG non la porta**, perché il browser lo rasterizza nitido da sé.
+- ⚠️ **`favicon.png` NON è stata toccata e resta in cartella**, non più referenziata: è coperta
+  dalla regola non derogabile sulle immagini esistenti (§ '🧹 Asset del progetto'), quindi la
+  favicon nuova si affianca invece di sovrascriverla.
+- **La verifica si fa a DIMENSIONE REALE, DPR 1.** Un'anteprima resa a DPR 3 viene poi ridotta
+  dal visualizzatore, e le icone si giudicano più piccole di 16 px: è già capitato, e la seconda
+  anteprima è stata rifatta per questo. ⚠️ Vanno guardati anche i segnalibri **senza nome**, dove
+  non c'è il testo a dire quale sito sia ed è lì che la leggibilità pesa davvero.
 
 ## 🔎 Modalità ingrandita
 
