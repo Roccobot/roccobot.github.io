@@ -1,31 +1,31 @@
 // pwaicons.js - rigenera le icone dell'app installabile di 'I Grandi di Arda'.
 //
 // PERCHE' ESISTE: le icone non sono un disegno a parte, sono IL GLIFO DEL FAB.
-// Questo script lo estrae da `arda/top/index.html` e lo rasterizza, cosi' se il
+// Questo script lo estrae da `arda/top/index.html` e lo rasterizza, così se il
 // simbolo o i colori del FAB cambiano le icone si rifanno invece di divergere in
-// silenzio. Vive qui come `realfont.js`, per la stessa ragione: e' specifico di
-// quel progetto e il repo sempre presente e' questo.
+// silenzio. Vive qui come `realfont.js`, per la stessa ragione: è specifico di
+// quel progetto e il repo sempre presente è questo.
 //
 // USO:  node .memo/scripts/pwaicons.js       (dalla radice del repo)
 //
 // ⚠️ Serve `playwright` installato nella radice (npm i playwright): il browser
-// preinstallato si passa con executablePath, perche' `chromium.launch()` nudo
+// preinstallato si passa con executablePath, perché `chromium.launch()` nudo
 // cerca una build che non c'e'.
 // Genera le icone PWA dal path del FAB. Sorgente unica: il glifo estratto da
-// index.html, cosi' l'icona non e' un disegno a parte destinato a divergere.
+// index.html, così l'icona non è un disegno a parte destinato a divergere.
 // ⚠️ Il glifo si posiziona con <g transform>, NON con un <svg> innestato: un
 // svg interno eredita le regole CSS che colpiscono 'svg' e si ritrova
-// ridimensionato, che e' come la prima passata ha prodotto icone tagliate.
+// ridimensionato, che è come la prima passata ha prodotto icone tagliate.
 const { chromium } = require('playwright');
 const fs = require('fs');
 const HTML = fs.readFileSync('arda/top/index.html', 'utf8');
 const path = HTML.match(/<path fill="currentColor" d="([^"]+)"\/><\/svg>';/)[1];
 const GW = 452, GH = 605.87;
 
-// L'icona e' ADATTIVA: un quadrato PIENO col glifo nella zona sicura, che il
+// L'icona è ADATTIVA: un quadrato PIENO col glifo nella zona sicura, che il
 // launcher ritaglia nella forma che preferisce (cerchio, squircle, goccia...).
 // ⚠️ Nessuna forma disegnata qui dentro: uno squircle rasterizzato si vedrebbe
-// come forma DENTRO la forma del launcher, ed e' la ragione per cui e' stato
+// come forma DENTRO la forma del launcher, ed è la ragione per cui è stato
 // tolto (v15.05).
 function svg(bg, fg, frac) {
   const h = 512 * frac, sc = h / GH, w = GW * sc;
@@ -40,7 +40,7 @@ function svg(bg, fg, frac) {
 // frac = altezza del glifo sul lato. 'any' respira; 'maskable' sta nella zona
 // sicura (80% centrale), o il launcher che ritaglia in tondo gli taglia le punte.
 // frac 0.44: il glifo sta dentro la ZONA SICURA (l'80% centrale), o il launcher
-// che ritaglia in tondo gli taglia le punte. Un solo set di file, perche' l'icona
+// che ritaglia in tondo gli taglia le punte. Un solo set di file, perché l'icona
 // adattiva serve anche i contesti che non ritagliano.
 const VARIANTI = [
   { file: 'app', bg: '#1f5562', fg: '#ffffff', frac: 0.44 }

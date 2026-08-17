@@ -1,34 +1,34 @@
 // favicon.js - rigenera la favicon di 'I Grandi di Arda'.
 //
-// PERCHE' ESISTE: come le icone PWA, la favicon non e' un disegno a parte ma IL
+// PERCHÉ ESISTE: come le icone PWA, la favicon non è un disegno a parte ma IL
 // GLIFO DEL FAB, estratto da `arda/top/index.html`. Se il simbolo cambia, la
-// favicon si rifa' invece di divergere in silenzio. Vive qui come `pwaicons.js`
-// e per la stessa ragione: e' specifico di quel progetto e il repo sempre
-// presente e' questo.
+// favicon si rifà invece di divergere in silenzio. Vive qui come `pwaicons.js`
+// e per la stessa ragione: è specifico di quel progetto e il repo sempre
+// presente è questo.
 //
 // USO:  node .memo/scripts/favicon.js       (dalla radice del repo)
 //
 // ⚠️ Serve `playwright` installato nella radice (npm i playwright): il browser
-// preinstallato si passa con executablePath, perche' `chromium.launch()` nudo
-// cerca una build che non c'e'.
+// preinstallato si passa con executablePath, perché `chromium.launch()` nudo
+// cerca una build che non c'è.
 //
 // DUE SCELTE DA NON DISFARE, entrambe volute dall'utente (2026-08-17):
 // 1) AREA MASSIMIZZATA: il bbox del glifo sta a filo del riquadro, non al 94%
 //    come la prima passata. ⚠️ Il bbox si MISURA col browser e non si assume dai
 //    valori nominali del viewBox: qui coincidono (margine morto zero), quindi non
-//    c'e' niente da ritagliare, e il glifo si scala e basta. Nessun pixel spostato
+//    c'è niente da ritagliare, e il glifo si scala e basta. Nessun pixel spostato
 //    nel canvas: la regola 'icone as-is' resta intatta.
 // 2) MASCHERA DI CONTRASTO sull'ALFA, leggera (0,35): su un glifo monocromatico su
-//    trasparente e' l'alfa a portare la forma, quindi e' l'unico canale da
-//    irrigidire. Serve solo alle misure raster piccole; l'SVG e' vettoriale e il
-//    browser lo rasterizza nitido da se'.
+//    trasparente è l'alfa a portare la forma, quindi è l'unico canale da
+//    irrigidire. Serve solo alle misure raster piccole; l'SVG è vettoriale e il
+//    browser lo rasterizza nitido da sé.
 const { chromium } = require('playwright');
 const fs = require('fs');
 const HTML = fs.readFileSync('arda/top/index.html', 'utf8');
 const D = HTML.match(/<path fill="currentColor" d="([^"]+)"\/><\/svg>';/)[1];
 
-// Non l'oro del FAB (#d2b25c): su barra dei preferiti bianca stava a 2,05:1, cioe'
-// quasi invisibile. Questo e' un gradino sopra il punto di equilibrio fra i due
+// Non l'oro del FAB (#d2b25c): su barra dei preferiti bianca stava a 2,05:1, cioè
+// quasi invisibile. Questo è un gradino sopra il punto di equilibrio fra i due
 // temi, e misura 3,05:1 su bianco e 4,70:1 sulla barra scura di Chrome.
 const COL = '#b87323';
 const MISURE = [16, 32, 48];
@@ -47,7 +47,7 @@ const AMOUNT = 0.35;
     return { x: r.x, y: r.y, w: r.width, h: r.height };
   }, D);
 
-  // l'altezza e' il vincolo: il glifo e' piu' alto che largo
+  // l'altezza è il vincolo: il glifo è più alto che largo
   const sc = 16 / bb.h;
   const tx = ((16 - bb.w * sc) / 2 - bb.x * sc).toFixed(4), ty = (-bb.y * sc).toFixed(4);
   // ⚠️ <g transform>, non un <svg> innestato: stessa trappola di pwaicons.js
