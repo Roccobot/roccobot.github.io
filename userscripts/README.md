@@ -648,8 +648,14 @@ per vederla basta ricaricare la pagina-immagine.
 | DPI con cui si copia un SVG | da 12 a 2400 | 96 |
 | Spostamento verticale del testo informativo | da -2 a 2 px | 0 |
 
-Le tre scelte dei tasti `A`, `I` e `N` sono le stesse voci del pannello: cambiarle da un
-lato si vede dall'altro.
+Le tre scelte dei tasti `A`, `I` e `N` sono le stesse voci del pannello, e **restano
+memorizzate**: valgono per tutte le pagine-immagine, non solo per quella aperta. Cambiarle da
+un lato si vede dall'altro, perche' scrivono la stessa preferenza.
+
+> ⚠️ **Nella 2.21.0 e 2.21.1 il tasto `I` era l'eccezione, e la casella mentiva.** Scriveva
+> una chiave sua, che il pannello non mostrava: dopo un tocco di `I` il verso cambiava
+> davvero, ma la casella 'La rotella in su ingrandisce' continuava a dichiarare quello
+> vecchio. Corretto nella **2.21.2**: ora anche `I` scrive la voce del pannello.
 
 **Lo sfondo ha due assi indipendenti**, quindi sei combinazioni:
 
@@ -667,10 +673,9 @@ lato si vede dall'altro.
 > ⚠️ **Adattivo** legge il tema del browser una volta sola, all'avvio: cambiando tema a
 > pagina aperta serve un ricaricamento.
 
-> ⚠️ **Il verso della rotella è UNA voce sola, non due.** Nel pannello si imposta il verso
-> **predefinito**; il tasto `I` lo inverte al volo. Salvando il verso dal pannello,
-> l'inversione del tasto `I` si azzera: senza, la scelta appena fatta si vedrebbe rovesciata,
-> e l'interruttore direbbe il falso.
+> ⚠️ **Il verso della rotella è UNA voce sola, non due**, e la scrivono in due: il pannello e
+> il tasto `I`. E' l'unico modo perche' la casella dica la verita', qualunque via si sia usata
+> per cambiare il verso.
 
 **Che cosa resta nel sorgente, e perché.** Passo della rotella (`PASSO_ROTELLA`), tappe tonde
 dello zoom (`TAPPE_ZOOM`), salti minimi, soglie del riconoscimento dei gesti
