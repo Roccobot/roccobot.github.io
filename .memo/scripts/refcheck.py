@@ -8,6 +8,7 @@ verità che invecchia: qui i rimandi si CALCOLANO.
 
 Uso: python3 .memo/scripts/refcheck.py [-v]
      python3 .memo/scripts/refcheck.py --text < testo   (solo i caratteri, da stdin)
+     git diff --cached | python3 .memo/scripts/refcheck.py --diff   (accenti, righe aggiunte)
 Esce 1 se trova difetti, 0 se è tutto in ordine. Gli hook PreToolUse sui commit
 lo lanciano da sé: vedi .claude/settings.json nei due repo.
 
@@ -54,7 +55,7 @@ RULEFILES = [
     TOOLS / "rules/Roccobot.md",
     TOOLS / "rules/JRRT.md",
     TOOLS / ".claude/skills/desc/SKILL.md",
-# Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollera'
+# Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollerà
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
 # averne trovati DUE stantii nello stesso momento, entrambi con rimandi a file di regole
 # cancellati il giorno prima: fuori copertura, un rimando morto là non lo segnalava
@@ -127,13 +128,76 @@ ACCENTATE = {
     # ('rispondi sì): se un giorno il verificatore inciampa lì, si riscrive la frase, non si
     # toglie la parola dall'elenco.
     "se": "sé", "ne": "né", "si": "sì", "la": "là", "li": "lì",
+    # Aggiunte il 2026-08-17: `percio` era la parola PIÙ frequente del censimento (12
+    # occorrenze) e non c'era, il che spiega da solo perché una lista chiusa va allargata
+    # quando salta fuori un caso, invece di correggere il solo file che l'ha mostrato.
+    "percio": "perciò", "affinche": "affinché", "nonche": "nonché", "anziche": "anziché",
+    "purche": "purché", "sicche": "sicché", "cosicche": "cosicché", "giu": "giù",
+    # ⚠️ Qui NON si aggiungono futuri (`tornera`, `restera`) né nomi in -tà: sarebbe tornare
+    # all'elenco aneddotico, un caso alla volta. Quelli li copre la corsia che avvisa.
     "velocita": "velocità", "capacita": "capacità", "necessita": "necessità",
     "unita": "unità", "eta": "età", "complessita": "complessità",
     "densita": "densità", "intensita": "intensità", "visibilita": "visibilità",
     "affidabilita": "affidabilità", "compatibilita": "compatibilità",
     "stabilita": "stabilità", "accessibilita": "accessibilità",
 }
-RE_ACCENTATE = re.compile(r"\b(" + "|".join(ACCENTATE) + r")'(?=[\s,.;:)!?]|$)", re.I)
+# ⚠️ Il seguito si esprime per NEGAZIONE (non una lettera, non una cifra) e non con un elenco
+# chiuso di punteggiatura, com'era fino al 2026-08-17: quell'elenco non conteneva l'asterisco,
+# quindi `**Accessibilita'**:` passava indisturbato dentro il file più presidiato del sistema.
+# Un elenco di caratteri ammessi dopo l'apostrofo è una seconda lista chiusa, con lo stesso
+# difetto della prima.
+RE_ACCENTATE = re.compile(r"\b(" + "|".join(ACCENTATE) + r")'(?![A-Za-zÀ-ÿ0-9])", re.I)
+
+# ── Le altre due corsie (2026-08-17) ────────────────────────────────────────────────────
+# La lista chiusa qui sopra BLOCCA, e resta chiusa: là dentro stanno solo parole la cui
+# forma con l'apostrofo non esiste in italiano, quindi un rilievo è certo. Ma da sola la
+# lista non copre la lingua, e il censimento del 2026-08-17 l'ha misurato: 76 occorrenze nei
+# due repo, con TRE buchi sistematici (`percio` mancante, i futuri in -rà tutti, e mezza
+# famiglia dei -tà). Da qui le due corsie che seguono.
+#
+# ⚠️⚠️ PERCHÉ NON SI ALLARGA LA LISTA CHE BLOCCA, che è la domanda naturale: perché le due
+# famiglie morfologiche sono INDISTINGUIBILI dai nomi femminili che finiscono uguale, e un
+# nome può chiudere una citazione. `lettera'` ha la stessa forma di `restera'`, `tastiera'`
+# di `continuera'`, `vita'` di `qualita'`. Un controllo che le bloccasse fermerebbe un
+# commit su `'principessa pastora'` o `'Abbreviazioni da tastiera'`, che sono testo corretto:
+# e un presidio che blocca il giusto viene disattivato, non corretto. Perciò le famiglie
+# AVVISANO e non bloccano, e il giudizio resta a chi legge la riga.
+APOCOPI_OK = {"po", "be", "mo", "to", "ca", "ni"}
+# ⚠️ Apocopi con l'apostrofo LEGITTIMO: `un po'`, `be'`, `mo'`. Non si segnalano MAI. Il loro
+# errore è l'opposto (`pò`), che sta in ACCENTO_SBAGLIATO qui sotto.
+
+AMBIGUE = {"da": "dà", "fa": "fa senza segno", "va": "va senza segno",
+           "sta": "sta senza segno", "di": "dì"}
+# ⚠️⚠️ Le cinque in cui apostrofo E accento sono entrambi corretti, e distinguono
+# l'IMPERATIVO dall'indicativo (osservazione dell'utente, 2026-08-17): `da' retta` è
+# imperativo e si scrive così, `dà 7,44:1` è indicativo e vuole l'accento. Nessun controllo
+# statico può deciderlo senza capire la frase, quindi qui si avvisa e si stampa la riga.
+# Nota di merito: solo `da` e `di` hanno una forma accentata (`dà`, `dì`); per `fa`, `va` e
+# `sta` l'indicativo è senza segno, e `fà`/`và`/`stà` sono sempre errori.
+
+FAM_TA = re.compile(r"(?<![\w'])([a-zà-ÿ]{3,}(?:it|et|lt|st|t)a)'(?![A-Za-zÀ-ÿ0-9])", re.I)
+FAM_RA = re.compile(r"(?<![\w'])([a-zà-ÿ]{3,}(?:[aei]r|dr|tr|vr|rr)a)'(?![A-Za-zÀ-ÿ0-9])", re.I)
+# I nomi astratti in -tà/-ità e i futuri in -rà: due famiglie REGOLARI, quindi enumerabili
+# con un pattern invece che a mano. È ciò che rende la copertura completa dove la lista era
+# aneddotica.
+
+# ⚠️⚠️ Le chiavi si scrivono per CODEPOINT e non incollando il carattere, per la ragione già
+# scritta in testa a questo blocco: un file che vieta una forma non deve contenerla, o il
+# presidio blocca sé stesso. Accertato subito, e non in teoria: la prima stesura le aveva
+# incollate, e il controllo sul diff ha fermato il commit che lo introduceva. Vale come prova
+# che funziona, e come promemoria per chi ne aggiungerà una quinta.
+ACCENTO_SBAGLIATO = {
+    "p\u00f2": "si scrive `po'` con l'apostrofo: è il troncamento di 'poco', "
+               "non una parola accentata",
+    "f\u00e0": "si scrive `fa` senza segno (l'imperativo vuole l'apostrofo)",
+    "v\u00e0": "si scrive `va` senza segno (l'imperativo vuole l'apostrofo)",
+    "st\u00e0": "si scrive `sta` senza segno (l'imperativo vuole l'apostrofo)",
+}
+RE_ACCENTO_SBAGLIATO = re.compile(r"(?<![\w'])(" + "|".join(ACCENTO_SBAGLIATO) + r")(?![\w'])")
+# ⚠️ Queste BLOCCANO, e non sono simmetriche alle altre: sono l'errore che nasce quando
+# qualcuno 'corregge' un'apocope legittima, cioè il danno tipico di una sostituzione
+# automatica fatta male. Censite il 2026-08-17: zero nei due repo, quindi questo è un
+# presidio che nasce pulito e serve a restare tale.
 
 VIETATI = {
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
@@ -289,6 +353,43 @@ def char_defects(text):
                 giusta = ACCENTATE[m.group(1).lower()]
                 out.append((n, line.find(sbagliata) + 1, sbagliata,
                             f"accento scritto con l'apostrofo: si scrive '{giusta}'"))
+            for m in RE_ACCENTO_SBAGLIATO.finditer(fuori):
+                out.append((n, line.find(m.group(0)) + 1, m.group(0),
+                            f"accento su una parola che non lo vuole: {ACCENTO_SBAGLIATO[m.group(0)]}"))
+    return out
+
+
+def accent_warnings(text):
+    """Avvisi che NON bloccano: [(riga, reperto, motivo)].
+
+    Le due famiglie morfologiche e le cinque apocopi ambigue. Vivono qui e non in
+    `char_defects` perché quella funzione alimenta controlli che bloccano, e mescolare i due
+    gradi renderebbe impossibile bloccare l'uno senza bloccare l'altro. Il valore di questa
+    corsia non è impedire il commit: è RENDERE VISIBILE un errore che oggi nessuno vede,
+    perché nessun presidio guarda i sorgenti.
+    """
+    out = []
+    in_fence = False
+    for n, line in enumerate(text.splitlines(), 1):
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        fuori = re.sub(r"`[^`]*`", "", line)
+        for m in re.finditer(r"(?<![\w'])([a-zà-ÿ]{1,3})'(?![A-Za-zÀ-ÿ0-9])", fuori, re.I):
+            w = m.group(1).lower()
+            if w in APOCOPI_OK or w not in AMBIGUE:
+                continue
+            out.append((n, m.group(0), "apostrofo legittimo SE è imperativo (`da' retta`), "
+                                      f"da correggere se è indicativo (`{AMBIGUE[w]}`): guarda la frase"))
+        for pat, fam in ((FAM_TA, "nome in -tà/-ità"), (FAM_RA, "futuro in -rà")):
+            for m in pat.finditer(fuori):
+                w = m.group(1).lower()
+                if w in ACCENTATE or w in APOCOPI_OK:
+                    continue
+                out.append((n, m.group(0), f"possibile {fam} scritto con l'apostrofo. "
+                                           "Se invece è un nome che chiude una citazione, va bene così"))
     return out
 
 
@@ -354,9 +455,56 @@ def main_text():
     return 1
 
 
+def main_diff():
+    """Modo `--diff`: legge un `git diff` da stdin e controlla le RIGHE AGGIUNTE, in OGNI file.
+
+    ⚠️ Esiste perché i tre presidi che c'erano guardavano altro, e il censimento del
+    2026-08-17 l'ha misurato: `RULEFILES` contiene dodici file di REGOLE e nessun sorgente,
+    l'hook sul diff cercava i soli trattini lunghi, e il terzo leggeva il messaggio di
+    commit. Le 76 occorrenze stavano tutte fuori da quei tre insiemi: non erano sfuggite ai
+    controlli, non erano mai state guardate.
+    ⚠️ Solo le righe AGGIUNTE, e non è pigrizia: così il costo non dipende dalla dimensione
+    del repo e il preesistente non blocca un commit che non lo tocca. La bonifica del
+    preesistente è un lavoro a sé, che questo presidio non deve mescolare.
+    """
+    corrente, aggiunte = None, {}
+    for riga in sys.stdin.read().splitlines():
+        if riga.startswith("+++ b/"):
+            corrente = riga[6:]
+            aggiunte.setdefault(corrente, [])
+        elif riga.startswith("+") and not riga.startswith("+++") and corrente:
+            aggiunte[corrente].append(riga[1:])
+    blocca, avvisi = [], []
+    for f, righe in aggiunte.items():
+        testo = "\n".join(righe)
+        # ⚠️ Si passa il solo controllo ACCENTI, non tutto `char_defects`: su un sorgente
+        # qualunque quello segnalerebbe simboli e lettere non latine legittime (una regex, un
+        # nome proprio), e un presidio rumoroso viene disattivato. I trattini lunghi hanno
+        # già il loro hook sul diff.
+        for n, col, ch, motivo in char_defects(testo):
+            if "accento" in motivo:
+                blocca.append((f, righe[n - 1].strip()[:100], etichetta(ch), motivo))
+        for n, tok, motivo in accent_warnings(testo):
+            avvisi.append((f, righe[n - 1].strip()[:100], tok, motivo))
+    if avvisi:
+        print(f"\n~~ da guardare, NON blocca: {len(avvisi)}")
+        for f, riga, tok, motivo in avvisi:
+            print(f"   {f}: {tok}\n      {riga}\n      {motivo}")
+    if not blocca:
+        print(f"diffcheck: nessun accento fuori regola nelle righe aggiunte "
+              f"({sum(len(v) for v in aggiunte.values())} righe in {len(aggiunte)} file)")
+        return 0
+    print(f"\n!! accenti fuori regola nelle righe aggiunte: {len(blocca)}")
+    for f, riga, tok, motivo in blocca:
+        print(f"   {f}: {tok} -> {motivo}\n      {riga}")
+    return 1
+
+
 def main():
     if "--text" in sys.argv:
         return main_text()
+    if "--diff" in sys.argv:
+        return main_diff()
     present = [f for f in RULEFILES if f.exists()]
     missing_repo = not TOOLS.exists()
 

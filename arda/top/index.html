@@ -579,7 +579,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 .type-badge .ttx { margin-left:0.134em; }
 /* Desktop/tablet (>480px): risalita ottica di ~2px delle etichette tipo
    rispetto alla base della riga nome (le maiuscole del Cinzel siedono in alto,
-   percio' i badge centrati sul flex cadono percettivamente bassi). Solo
+   perciò i badge centrati sul flex cadono percettivamente bassi). Solo
    trasformazione visiva: non tocca icone, nome, flusso o a-capo. Su <=480px
    il nudge lo da già il translateY di .rank-tipi. */
 @media (min-width:481px) {
@@ -782,7 +782,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
   border:0 !important; box-shadow:none !important; text-shadow:none !important;
   padding:0; margin:0; border-radius:0; pointer-events:none; z-index:1;
   /* Transizione per l'ACCENSIONE al passaggio del mouse (dalla v12.24): il bagliore
-     nella tinta di famiglia è iniettato via JS (usa rgba(var(--ccrgb),…), che il Nu
+     nella tinta di famiglia è iniettato via JS (usa rgba(var(--ccrgb),...), che il Nu
      non parsa) e deve vincere sul box-shadow:none qui sopra. */
   transition:box-shadow 0.24s ease-out;
 }
@@ -2085,7 +2085,7 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      dall'interlinea). Giova anche ai nomi su due righe. */
   .rank-name { display:block; line-height:1.5; }
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel è tutto
-     maiuscolo e siede in alto nella line-box, percio' le icone centrate sulla
+     maiuscolo e siede in alto nella line-box, perciò le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
      alto l'intero blocco (icone + simbolo di genere) di .07em: gli allineamenti
      interni restano intatti (anelli e genere hanno già i propri nudge). */
@@ -2517,7 +2517,7 @@ html[data-theme="light"] .modal-backdrop { --note-acc:var(--macc-l,#2e5461); }
 .note-viewer-box p { margin:0 0 .8em; font-size:inherit; line-height:inherit; opacity:1; color:inherit; }
 html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 /* Tasto 'copia link' della nota, sotto il titolo. DISCRETO per scelta: contorno
-   e non riempimento, corpo piccolo, centrato. E' un comando di servizio e non
+   e non riempimento, corpo piccolo, centrato. È un comando di servizio e non
    deve competere col testo; sta sull'oro del tema come ogni cosa cliccabile che
    non sia un personaggio. La conferma (icona di spunta) riempie il tondo, ed è
    la stessa del 'copia link' del Pannello, perché è lo stesso codice. */
@@ -2670,7 +2670,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.07</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.08</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3147,7 +3147,7 @@ if (ZOOM_PHONE_MQ.addEventListener) ZOOM_PHONE_MQ.addEventListener('change', fun
 
 // ── Effetti PARAMETRICI: bagliore della striscia e riflettore ────────────────
 // Le regole vivono qui (iniettate a runtime) e non nel <style> statico, per due
-// ragioni: usano rgba(var(--ccrgb),…), che il Nu Checker non sa parsare, e
+// ragioni: usano rgba(var(--ccrgb),...), che il Nu Checker non sa parsare, e
 // dipendono dalle manopole, quindi si ri-iniettano a ogni modifica.
 // La FORMULA sta in un posto solo (fxGlowInner/fxGlowOuter/fxSpotBg): la usano sia
 // queste regole sia l'anteprima della sotto-modale, così l'anteprima non può
@@ -3383,7 +3383,7 @@ function patSvg(mot, col, w){
          '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round">' +
          g + '</g></svg>';
 }
-// Livello di sfondo: `url(data:…)`. Il colore porta l'opacità dentro di sé, così
+// Livello di sfondo: `url(data:...)`. Il colore porta l'opacità dentro di sé, così
 // l'unico parametro CSS residuo è la dimensione. Tinta e opacità sono manopole
 // separate e PER TEMA: la stessa tinta rende in modo diverso sui due fondi.
 function fxPatBg(cfg, light){
@@ -3596,7 +3596,7 @@ function fxPodiumFilter(cfg, light){
 // un grigio fisso (nero, 66% o altro) tira sempre il colore verso la luminosità
 // di quel grigio. Verificato: al variare della cromia la L resta identica al
 // millesimo. `cc` = terna concreta per l'anteprima, altrimenti var(--ccrgb).
-// Se il browser non conosce `oklch(from …)` la dichiarazione cade e vale la regola
+// Se il browser non conosce `oklch(from ...)` la dichiarazione cade e vale la regola
 // base .rank-num{color:var(--name)}: la resa storica, grigia e AA-safe.
 function fxNumColor(cfg, light, cc){
   var sat = light ? cfg.lsat : cfg.dsat;
@@ -3611,12 +3611,12 @@ function fxNumColor(cfg, light, cc){
 // rgba(var(--ccrgb), 0.18|0.11) senza scostamenti. Se il browser non conosce la
 // sintassi relativa la dichiarazione cade e vale la regola storica di
 // injectCardColorRules: la resa di sempre, già verificata AA.
-// ⚠️ IL RISULTATO VA RIPORTATO IN sRGB con `rgb(from … r g b / alpha)`, non lasciato
+// ⚠️ IL RISULTATO VA RIPORTATO IN sRGB con `rgb(from ... r g b / alpha)`, non lasciato
 // in `oklch()`. Misurato: un colore SEMITRASPARENTE dichiarato in `oklch()` resta
 // tale nel valore calcolato e Chromium lo compone in **oklab**, non in sRGB, quindi
 // il fondo della card risultava diverso dal vecchio `rgba()` fino a 6/255 su un
 // canale (rohir, tinta satura al bordo di gamut) pur con le manopole a 1. Passando
-// da `rgb(from …)` la composizione torna in sRGB e il round-trip è esatto a
+// da `rgb(from ...)` la composizione torna in sRGB e il round-trip è esatto a
 // ~0.01/255. Il colore OPACO invece non ha questo problema: per quello `fxNumColor`
 // può restare in oklch.
 function fxHovBg(cfg, light, cc){
@@ -3705,7 +3705,7 @@ function injectFxRules(){
   if (flagOn('hov')) {
     // Specificità (0,4,1) in scuro e (0,5,1) in chiaro: battono le regole di
     // injectCardColorRules ((0,3,0) e (0,3,1)), che restano il fallback storico se
-    // `oklch(from …)` non è supportato.
+    // `oklch(from ...)` non è supportato.
     css.push('html.fx-hov .rank-item[class*="cc-"]:hover,html.fx-hov .rank-item[class*="cc-"]:focus-within{background:' + fxHovBg(hv, false) + '!important}');
     css.push('html.fx-hov[data-theme="light"] .rank-item[class*="cc-"]:hover,html.fx-hov[data-theme="light"] .rank-item[class*="cc-"]:focus-within{background:' + fxHovBg(hv, true) + '!important}');
   } else {
@@ -6659,7 +6659,7 @@ function wireControlPanel() {
 // così riaprire il link riproduce esattamente la vista.
 // ── Permalink degli overlay condivisibili (note, risorse, nota sulla
 //    traduzione) ──
-// Forma BARE come i permalink delle categorie (?x, ?101): la query E' il token.
+// Forma BARE come i permalink delle categorie (?x, ?101): la query È il token.
 // I token sono parole e i bitmask sono di sole cifre, quindi le due famiglie
 // non possono collidere; e un token sconosciuto cade nel ramo che ignora la
 // query, cioè apre la vista di default invece di rompersi.
@@ -7909,7 +7909,7 @@ function showAdminEditor() {
       const apoChkEl = document.getElementById('ae-' + i + '-apocrifo');
       if (apoChkEl) { if (apoChkEl.checked) p.apocrifo = (typeof p.apocrifo === 'string' ? p.apocrifo : true); else delete p.apocrifo; }
     });
-    saveBtn.textContent = 'Salvataggio…';
+    saveBtn.textContent = 'Salvataggio...';
     const res = await doCommit('admin: modifica testi personaggi', next);
     if (res.ok) {
       // Solo ora applichiamo le modifiche all'array globale (in place, così i
@@ -7977,7 +7977,7 @@ function showAdminEditor() {
       if (enV && !itV) { from = 'en'; to = 'it'; src = enEl.value; dstEl = itEl; }
       else if (itV)    { from = 'it'; to = 'en'; src = itEl.value; dstEl = enEl; }
       else return; // entrambi vuoti
-      const old = b.textContent; b.disabled = true; b.textContent = '…';
+      const old = b.textContent; b.disabled = true; b.textContent = '...';
       const tr = await translateText(src, from, to);
       b.disabled = false; b.textContent = old;
       if (tr != null) dstEl.value = tr;
@@ -8223,7 +8223,7 @@ function showAdminEditor() {
     var sp = foldFind(val, qf);
     if (!sp) return esc(val.slice(0,70));
     var os=sp[0], oe=sp[1], a=Math.max(0, os-24);
-    return (a>0?'…':'') + esc(val.slice(a,os)) + '<mark>' + esc(val.slice(os,oe)) + '</mark>' + esc(val.slice(oe, oe+36)) + (oe+36<val.length?'…':'');
+    return (a>0?'...':'') + esc(val.slice(a,os)) + '<mark>' + esc(val.slice(os,oe)) + '</mark>' + esc(val.slice(oe, oe+36)) + (oe+36<val.length?'...':'');
   }
   function computeMatches(q){
     var qf = fold(q.trim()); if (!qf) return [];
@@ -10311,7 +10311,7 @@ function showColorEditor(initState) {
     hint.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
     hint.textContent = it ? 'Cerca un personaggio e definisci solo il suo colore.' : 'Search a character and set only its colour.';
     var search = document.createElement('input'); search.type = 'text'; search.autocomplete = 'off';
-    search.placeholder = it ? 'Cerca per nome…' : 'Search by name…';
+    search.placeholder = it ? 'Cerca per nome...' : 'Search by name...';
     search.setAttribute('aria-label', it ? 'Cerca personaggio per nome' : 'Search character by name');
     var results = document.createElement('div');
     results.style.cssText = 'max-height:170px;overflow:auto;margin:0.4rem 0;display:flex;flex-direction:column;gap:2px;';

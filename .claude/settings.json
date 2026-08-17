@@ -66,6 +66,10 @@
             "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.memo/scripts/refcheck.py\" ] || exit 0; MSG=$(printf '%s' \"$IN\" | python3 -c 'import sys,json;print(json.load(sys.stdin).get(\"tool_input\",{}).get(\"command\",\"\"))'); OUT=$(printf '%s' \"$MSG\" | python3 \"$R/.memo/scripts/refcheck.py\" --text) || { printf 'Commit bloccato: caratteri fuori regola nel MESSAGGIO di commit (omografo, o carattere vietato fuori dal codice). Il controllo em-dash legge il diff, questo legge il messaggio: nessun altro lo guardava.\\n%s\\n' \"$OUT\" >&2; exit 2; } ;; esac",
             "timeout": 20,
             "statusMessage": "Controllo caratteri del messaggio (pre-commit)..."
+          },
+          {
+            "type": "command",
+            "command": "IN=$(cat); case \"$IN\" in *\"git commit\"*) R=$(git rev-parse --show-toplevel 2>/dev/null); [ -f \"$R/.memo/scripts/refcheck.py\" ] || exit 0; OUT=$(git diff --cached | python3 \"$R/.memo/scripts/refcheck.py\" --diff) || { printf 'Commit bloccato: accento reso con apostrofo nelle righe aggiunte, oppure accento su una parola che non lo vuole. Vale in OGNI file, commenti del codice compresi: dal 2026-08-02 i commenti non sono più in ASCII. Gli avvisi che NON bloccano (imperativo contro indicativo, nomi in -tà, futuri in -rà) vanno guardati a occhio.\\n%s\\n' \"$OUT\" >&2; exit 2; }; printf '%s\\n' \"$OUT\" ;; esac"
           }
         ]
       }

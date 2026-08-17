@@ -1,6 +1,6 @@
 // pwaicons.js - rigenera le icone dell'app installabile di 'I Grandi di Arda'.
 //
-// PERCHE' ESISTE: le icone non sono un disegno a parte, sono IL GLIFO DEL FAB.
+// PERCHÉ ESISTE: le icone non sono un disegno a parte, sono IL GLIFO DEL FAB.
 // Questo script lo estrae da `arda/top/index.html` e lo rasterizza, così se il
 // simbolo o i colori del FAB cambiano le icone si rifanno invece di divergere in
 // silenzio. Vive qui come `realfont.js`, per la stessa ragione: è specifico di
