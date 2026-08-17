@@ -192,7 +192,7 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
       var letto = elenco.length === 1 ? nomi[elenco[0]]
         : 'MISTO (difetto): ' + elenco.map(function (k) { return nomi[k] + ' x' + comandi[k]; }).join(' + ');
       var pxTot = amp.reduce(function (a, b) { return a + b; }, 0);
-      r.push('GESTO ' + (i + 1) + ': ' + s.length + ' eventi, verso ' + (s[0].dy < 0 ? 'su' : 'giu'));
+      r.push('GESTO ' + (i + 1) + ': ' + s.length + ' eventi, verso ' + (s[0].dy < 0 ? 'su' : 'giù'));
       r.push('  deltaMode              : ' + Object.keys(modi).join(','));
       r.push('  primo |deltaY|         : ' + num(amp[0], 2));
       r.push('  |deltaY| min/med/max   : ' + num(Math.min.apply(null, amp), 2) + ' / ' +
