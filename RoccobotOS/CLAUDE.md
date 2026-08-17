@@ -314,7 +314,7 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   `viewBox` ha le proporzioni del PNG originale: verificato a misura, **dimensioni identiche**
   su tutte e sette, nei due temi. Le due frecce di Telegram sono fuori da questo conto, perché
   là il quadrato dell'asset detta la larghezza.
-  - ⚠️ **L'ingombro non si tocca, la posizione verticale SI'**, ed è una precisazione dello
+  - ⚠️ **L'ingombro non si tocca, la posizione verticale SÌ**, ed è una precisazione dello
     stesso giorno: vedi '⚠️⚠️ ALLINEAMENTO VERTICALE' più sotto. Le due cose convivono, e il
     primo giro le aveva confuse tenendo anche l'allineamento sbagliato dei PNG.
 - ⚠️ **Il LOGO APPLE è l'eccezione al vincolo dell'ingombro**, ed è voluta: dal 2026-08-02 è
