@@ -634,11 +634,11 @@ per vederla basta ricaricare la pagina-immagine.
 | Opzione | Valori | Predefinito |
 | --- | --- | --- |
 | Lingua dell'interfaccia | automatica, italiano, inglese | automatica (segue il browser) |
-| Tipo di sfondo | scacchiera (trasparenza), uniforme | scacchiera |
-| Tema di sfondo | adattivo, chiaro, scuro | adattivo |
+| Tipo di sfondo | scacchiera (trasparenza), colore uniforme | scacchiera |
+| Tema dello sfondo | automatico, chiaro, scuro | automatico |
 | Rendering su schermi HiDPI | pixel fisici, pixel logici | pixel fisici |
-| Mouse e trackpad | zoomano tutti e due, il dito scorre, scorre tutto | zoomano tutti e due |
-| Inverti scorrimento | sì/no | no |
+| Trackpad e mouse | zoom, ibrido, spostamento | zoom |
+| Scorrimento inverso | sì/no | no |
 | Ingrandisci le immagini piccole | sì/no | no |
 | Mostra il navigatore | sì/no | sì |
 | Sensibilità dello zoom gestuale | da 0,002 a 0,06 | 0,015 (dietro guardia) |
@@ -667,10 +667,10 @@ un lato si vede dall'altro, perché scrivono la stessa preferenza.
 
 **Lo sfondo ha due assi indipendenti**, quindi sei combinazioni:
 
-| | **Adattivo** (segue il browser) | **Chiaro** | **Scuro** |
+| | **Automatico** (segue il browser) | **Chiaro** | **Scuro** |
 | --- | --- | --- | --- |
 | **Scacchiera** | scacchiera chiara o scura | scacchiera chiara | scacchiera scura |
-| **Uniforme** | `#EEE` o `#222` | `#EEE` | `#222` |
+| **Colore uniforme** | `#EEE` o `#222` | `#EEE` | `#222` |
 
 > ⚠️ **Perche' il predefinito è la scacchiera.** È l'unica che rende **visibile la
 > trasparenza**, che su una pagina-immagine è un'informazione e non un vezzo: su una tinta
@@ -678,7 +678,7 @@ un lato si vede dall'altro, perché scrivono la stessa preferenza.
 > sono inventati: sono le due coppie della scacchiera storica, e le tinte unite prendono il
 > chiaro dell'una e lo scuro dell'altra.
 
-> ⚠️ **Adattivo** legge il tema del browser una volta sola, all'avvio: cambiando tema a
+> ⚠️ **Automatico** legge il tema del browser una volta sola, all'avvio: cambiando tema a
 > pagina aperta serve un ricaricamento.
 
 > ⚠️ **Il verso della rotella è UNA voce sola, non due**, e la scrivono in due: il pannello e
