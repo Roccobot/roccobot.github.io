@@ -1,21 +1,18 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.2.0
-// @description  Adds a Download button to enf-cmnf.cc, enfhub.com, javguru.fit and xhamster.com that saves the page's videos. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
+// @version      1.3.0
+// @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://enf-cmnf.cc/*
 // @match        https://www.enf-cmnf.cc/*
 // @match        https://enfhub.com/*
 // @match        https://www.enfhub.com/*
-// @match        https://javguru.fit/*
-// @match        https://*.javguru.fit/*
 // @match        https://xhamster.com/*
 // @match        https://*.xhamster.com/*
-// @match        https://upload18.org/*
-// @match        https://upload18.cc/*
 // @run-at       document-start
+// @noframes
 // @grant        unsafeWindow
 // @grant        GM_download
 // @grant        GM_xmlhttpRequest
@@ -25,9 +22,6 @@
 // @connect      enfhub.site
 // @connect      xhamster.com
 // @connect      xhcdn.com
-// @connect      javguru.fit
-// @connect      upload18.org
-// @connect      upload18.cc
 // @connect      *
 // @updateURL    https://roccobot.github.io/userscripts/ENFRoccobot.user.js
 // @downloadURL  https://roccobot.github.io/userscripts/ENFRoccobot.user.js
@@ -249,7 +243,6 @@
       fontiDalDom(),
       fontiEnfhub(),
       perSito,
-      daiFrame.map(function (f) { return f.url; }),
       perSito.length ? [] : fontiDallHtml()
     );
     var viste = {}, uniche = [];
@@ -260,69 +253,6 @@
       uniche.push(u);
     }
     return togliVarianti(uniche);
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════
-  //  2c) PLAYER DENTRO UN IFRAME: il ponte fra il frame e la pagina
-  // ═══════════════════════════════════════════════════════════════════════
-  // Su javguru il video non è nella pagina: c'è un iframe di un altro dominio
-  // (upload18) col suo jwplayer, e il manifest non compare nemmeno nell'HTML del
-  // frame, perché lo chiede il JavaScript del player.
-  //
-  // ⚠️ Da qui la scelta di far girare lo script ANCHE nei frame (via `@match` sui
-  // domini dei player, e senza `@noframes`), con due comportamenti diversi:
-  //   - dentro un frame: nessun tasto, nessuna interfaccia. Guarda e ANNUNCIA al
-  //     livello sopra gli URL che ha visto passare.
-  //   - nella pagina in cima: raccoglie gli annunci e li unisce alle sue fonti.
-  // ⚠️ L'annuncio si RIPETE, non si fa una volta: il player chiede il manifest
-  // qualche secondo dopo il caricamento, quindi un annuncio solo arriverebbe vuoto.
-  // Ed è il frame a parlare al padre, non il padre a leggere il frame: origini
-  // diverse, quindi leggere dentro non si può e non è un dettaglio aggirabile.
-
-  var CANALE = 'rb-enf-fonti', CHIEDI = 'rb-enf-chiedi';
-  var daiFrame = [];   // [{url, da}] raccolte nella pagina in cima
-
-  function dentroUnFrame() {
-    try { return window.top !== window.self; } catch (e) { return true; }
-  }
-
-  function annunciaAlPadre() {
-    try {
-      var mie = [].concat(sniffate.filter(eMedia), fontiDalDom(), fontiDallHtml());
-      if (!mie.length) return;
-      var viste = {}, uniche = [];
-      for (var i = 0; i < mie.length; i++) {
-        if (mie[i] && !viste[mie[i]]) { viste[mie[i]] = 1; uniche.push(mie[i]); }
-      }
-      window.parent.postMessage({ tipo: CANALE, urls: togliVarianti(uniche), da: location.hostname }, '*');
-    } catch (e) {}
-  }
-
-  function ascoltaIFrame() {
-    window.addEventListener('message', function (e) {
-      try {
-        var d = e.data;
-        if (!d || d.tipo !== CANALE || !d.urls || !d.urls.length) return;
-        for (var i = 0; i < d.urls.length; i++) {
-          var u = d.urls[i];
-          if (!eMedia(u)) continue;
-          if (!daiFrame.some(function (f) { return f.url === u; })) {
-            daiFrame.push({ url: u, da: String(d.da || 'iframe').slice(0, 60) });
-          }
-        }
-      } catch (er) {}
-    }, false);
-  }
-
-  // Il padre bussa ai frame: serve quando la pagina in cima si apre DOPO che il
-  // player ha già chiesto il suo manifest, e quell'annuncio è andato perduto.
-  function bussaAiFrame() {
-    try {
-      var f = document.querySelectorAll('iframe');
-      for (var i = 0; i < f.length; i++) {
-        try { f[i].contentWindow.postMessage(CHIEDI, '*'); } catch (e) {}
-      }
-    } catch (e) {}
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -440,11 +370,7 @@
     // sarebbe peggio che ammetterlo.
     var resto = fonti().filter(function (u) { return !visti[u]; });
     for (var k = 0; k < resto.length; k++) {
-      var dal = daiFrame.filter(function (f) { return f.url === resto[k]; })[0];
-      voci.push({
-        url: resto[k], el: null, post: '', autore: '', poster: '',
-        staccato: true, da: dal ? dal.da : ''
-      });
+      voci.push({ url: resto[k], el: null, post: '', autore: '', poster: '', staccato: true });
     }
     for (var n = 0; n < voci.length; n++) voci[n].indice = n + 1;
     return voci;
@@ -984,7 +910,6 @@
 
       var prima = document.createElement('span');
       var etichetta = v.indice + '. ' + (v.post ? v.post
-        : v.da ? 'embedded player (' + v.da + ')'
         : v.staccato ? 'not tied to a player' : 'post ?');
       if (v.autore) etichetta += ' · ' + v.autore;
       prima.textContent = etichetta;
@@ -1138,34 +1063,21 @@
         timer = setTimeout(function () { timer = null; cambioPagina(); aggiorna(); }, 400);
       }).observe(document.documentElement, { subtree: true, childList: true });
     } catch (e) {}
-    setInterval(function () { cambioPagina(); bussaAiFrame(); aggiorna(); }, 1500);
+    setInterval(function () { cambioPagina(); aggiorna(); }, 1500);
     window.addEventListener('popstate', cambioPagina);
-    window.addEventListener('load', function () { bussaAiFrame(); aggiorna(); });
+    window.addEventListener('load', aggiorna);
   }
 
   // Dentro un frame lo script fa UNA cosa e nessun'altra: annuncia al livello sopra
   // quello che vede. ⚠️ Nessun tasto, nessuna voce di menu, nessun ascolto di
   // click: due interfacce sovrapposte (una nella pagina e una nel player) sarebbero
   // un difetto, e nel frame il tasto cadrebbe dentro il rettangolo del video.
-  function avvioNelFrame() {
-    annunciaAlPadre();
-    setInterval(annunciaAlPadre, 1200);
-    window.addEventListener('message', function (e) {
-      if (e && e.data === CHIEDI) annunciaAlPadre();
-    }, false);
+  if (typeof GM_registerMenuCommand !== 'undefined') {
+    GM_registerMenuCommand('Download the video on this page', function () {
+      alClic(document.getElementById(ID_TASTO) || creaTasto());
+    });
   }
 
-  if (dentroUnFrame()) {
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvioNelFrame);
-    else avvioNelFrame();
-  } else {
-    ascoltaIFrame();
-    if (typeof GM_registerMenuCommand !== 'undefined') {
-      GM_registerMenuCommand('Download the video on this page', function () {
-        alClic(document.getElementById(ID_TASTO) || creaTasto());
-      });
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
-    else avvio();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
+  else avvio();
 })();

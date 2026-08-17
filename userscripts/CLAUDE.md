@@ -250,12 +250,12 @@ unica non è possibile, perché i due meccanismi non si leggono a vicenda. Il cr
 livello del contenitore misurato risalendo il DOM) sta in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md),
 per non scriverlo due volte.
 
-## 📥 ENF Roccobot: il picker e i player fuori dalla pagina
+## 📥 ENF Roccobot: il picker, e il sito che è stato tolto
 
-**Com'è fatto** (dalla 1.2.0). Il tasto apre un **picker** quando la pagina ha più di un
+**Com'è fatto** (dalla 1.2.0, con javguru rimossa nella 1.3.0). Il tasto apre un **picker** quando la pagina ha più di un
 video: elenco nell'**ordine del documento**, anteprima, numero del post, autore, mirino che
 porta al player, caselle di selezione e scaricamento **in fila**. Il numero del post entra nel
-nome del file. Copre `enf-cmnf.cc`, `enfhub.com`, `xhamster.com` e `javguru.fit`.
+nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
 
 - ⚠️⚠️ **L'ordine del picker NON è quello di `fonti()`**, ed è la ragione per cui esiste una
   funzione a sé (`videoDellaPagina()`): in `fonti()` le sorgenti arrivano prima dalla spia di
@@ -273,17 +273,26 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com`, `xhamster.com` e `javguru.fit`
   scaricamenti insieme se lo calpesterebbero, col secondo che annulla la mano del primo. Gli
   errori si riassumono **una volta sola** alla fine: sette video andati male sarebbero sette
   finestre da chiudere.
-- ⚠️⚠️ **`@noframes` è CADUTO, e serviva un ponte.** Su javguru il video non è nella pagina: c'è
-  un iframe di un altro dominio col suo jwplayer, e il manifest non sta nemmeno nell'HTML del
-  frame, perché lo chiede il JavaScript. Quindi lo script gira anche nei frame, con **due
-  comportamenti**: dentro un frame nessuna interfaccia e annuncio al livello sopra, nella pagina
-  in cima raccolta degli annunci. ⚠️ È il **frame a parlare al padre**, non il padre a leggere il
-  frame: origini diverse, quindi leggere dentro non si può, e non è un dettaglio aggirabile.
-  - ⚠️ L'annuncio si **ripete** (il player chiede il manifest secondi dopo il caricamento) e la
-    pagina in cima **bussa** ai frame, per il caso opposto: annuncio partito prima che lei fosse
-    pronta. Con una sola chiamata, in un verso solo, la sorgente si perde in metà dei casi.
-  - ⚠️ Nel frame **niente tasto e niente voce di menu**: due interfacce sovrapposte sarebbero un
-    difetto, e nel frame il tasto cadrebbe dentro il rettangolo del video.
+- ⚠️⚠️ **javguru.fit: PROVATO E RIMOSSO nella 1.3.0. Non riproporlo senza un fatto nuovo.**
+  Là il video non è nella pagina: c'è un iframe di `upload18` col suo jwplayer, e quel player
+  **non chiede mai un indirizzo in chiaro**. La misura, che è il motivo per cui la questione è
+  chiusa: la pagina dell'iframe dichiara `workerDomains: ["helvid.com"]` con una chiave di
+  cifratura, carica un blob **WebAssembly** dove la risoluzione del flusso è compilata, e monta
+  **due guardie anti-DevTools** (`disable-devtool` più un `player-devtool-guard`). Quindi la
+  spia di rete non ha nulla da annotare, e farlo funzionare vorrebbe dire **aggirare quella
+  protezione**, che è una cosa diversa dallo scaricare un file servito in chiaro: non si fa.
+  - **Che cosa farebbe cambiare la risposta**: una scheda 'server' di javguru che usi un player
+    normale (MP4 o HLS in chiaro). Quel caso il rilevamento generico lo copre **da sé**, senza
+    codice nuovo: basterebbe rimettere il `@match`.
+  - ⚠️ **Con javguru è caduto anche il ponte coi frame**, che era nato per lei: `@noframes` è
+    tornato. Era codice che nessun sito coperto poteva più attivare, e in più faceva girare lo
+    script dentro **ogni** iframe delle pagine coperte, comprese le pubblicità. La sua idea
+    (nel frame nessuna interfaccia, solo un annuncio al livello sopra, ripetuto perché il
+    manifest arriva in ritardo) sta in questa nota e nella storia git, se un domani servisse.
+  - ⚠️ **Rimosso anche lo stato 'not available' del tasto**, che diceva a chi guarda perché non
+    c'era niente da prendere: senza frame da ascoltare non poteva più scattare. Era la risposta
+    giusta alla domanda giusta ('il tasto non compare, è rotto?'), ma la risposta migliore è
+    stata **non far comparire lo script su un sito dove non può fare nulla**.
 - ⚠️ **Su xhamster si preferiscono i link di download che il sito stesso espone** (uno per
   qualità, nel payload della pagina): gli mp4 diretti del CDN sono **firmati e legati all'IP**
   (`key=`, `end=`, `data=<ip>`), quindi scadono e da un altro indirizzo rispondono 403. L'ordine

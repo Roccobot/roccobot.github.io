@@ -774,7 +774,7 @@ riconoscimento nella 2.19.1 e la sensibilità dello zoom col dito nella 2.20.0.
 
 **File:** `ENFRoccobot.user.js` (titolo `@name`: **ENF Roccobot**)
 
-Su `enf-cmnf.cc`, `enfhub.com`, `javguru.fit` e `xhamster.com` aggiunge in basso
+Su `enf-cmnf.cc`, `enfhub.com` e `xhamster.com` aggiunge in basso
 a destra un tasto **"⬇︎ Download"** che scarica il video della pagina. Il tasto
 compare solo quando una sorgente c'è davvero (i post di sole foto non lo
 mostrano) e, se la pagina contiene **più video**, apre il **picker** descritto
@@ -789,7 +789,6 @@ I siti usano **player diversi**, quindi lo script li riconosce tutti:
 | enf-cmnf.cc | `<video src="....mp4">` (blocco video di WordPress) | MP4 diretto |
 | enfhub.com | hls.js su `cdn.enfhub.site/videos/<id>/master.m3u8` | variante migliore, unita in `.ts` |
 | xhamster.com | sorgenti nel payload della pagina | il **link di download del sito** alla qualità migliore |
-| javguru.fit | jwplayer dentro un **iframe** di `upload18` | quello che il player chiede davvero, di solito HLS |
 
 ### Il picker (dalla 1.2.0)
 
@@ -810,15 +809,14 @@ l'unico dato che lega il file alla pagina da cui viene. `Esc` o un clic fuori
 chiudono il picker; gli errori di una coda si riassumono **una volta sola** alla
 fine, invece di una finestra per video.
 
-**I player dentro un iframe.** Su javguru il video non è nella pagina: c'è un
-iframe di un altro dominio col suo player, e il manifest non compare nemmeno
-nell'HTML del frame, perché lo chiede il JavaScript. Lo script gira quindi
-**anche nei frame** (`@match` sui domini dei player, senza `@noframes`) con due
-comportamenti: dentro un frame non disegna nulla e **annuncia** al livello sopra
-gli URL che ha visto passare; nella pagina in cima li raccoglie e li unisce alle
-sue fonti. L'annuncio si **ripete**, perché il player chiede il manifest qualche
-secondo dopo il caricamento, e la pagina in cima **bussa** ai frame, per il caso
-opposto (annuncio partito prima che lei fosse pronta).
+> ⚠️ **javguru.fit è stato provato e RIMOSSO nella 1.3.0.** Là il video non sta
+> nella pagina: c'è un iframe di `upload18` col suo player, e quel player **non
+> chiede mai un indirizzo video in chiaro**. Misurato sui suoi file: dichiara
+> `workerDomains: ["helvid.com"]` con una chiave di cifratura, ricompone il flusso
+> dentro un blob **WebAssembly** e monta due guardie anti-DevTools. Non c'è niente
+> da intercettare, quindi il tasto non poteva comparire: la copertura è stata
+> tolta insieme al ponte coi frame che serviva solo a lei, perché codice che non
+> può funzionare è peggio di codice assente.
 
 **xhamster.** Le sorgenti stanno nel payload della pagina, e accanto ci sono i
 **link di download che il sito stesso espone**, uno per qualità: lo script
