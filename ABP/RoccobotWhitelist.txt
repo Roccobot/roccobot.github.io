@@ -187,8 +187,8 @@
 ! Photopea: l'editor carica gli annunci con Google Publisher Tag
 ! (securepubads.g.doubleclick.net/tag/js/gpt.js) e con Funding Choices rileva chi li
 ! blocca, rifiutando di funzionare. L'eccezione $document include urlblock, quindi
-! sblocca anche le richieste di terzi partite dalla sua pagina, che e' cio' che serve.
-! ⚠️ Sul telefono NON basta: la voce nuda doubleclick.net e' una regola DNS, e il DNS
+! sblocca anche le richieste di terzi partite dalla sua pagina, che è ciò che serve.
+! ⚠️ Sul telefono NON basta: la voce nuda doubleclick.net è una regola DNS, e il DNS
 ! non sa da quale sito arrivi la richiesta, quindi nessuna eccezione per-sito lo tocca.
 @@||photopea.com^$important
 @@||photopea.com^$document,important
@@ -199,7 +199,7 @@
 @@||photosi.com^$document,subdocument,important
 @@||poliziadistato.it^$important
 @@||poliziadistato.it^$document,important
-! Sincronizzazione di Brave: e' il canale che tiene allineati segnalibri e
+! Sincronizzazione di Brave: è il canale che tiene allineati segnalibri e
 ! impostazioni fra i dispositivi, e va protetto da qualunque lista, nostra o di
 ! terzi. Niente $document: qui serve solo che le richieste passino.
 @@||sync-v2.brave.com^$important
