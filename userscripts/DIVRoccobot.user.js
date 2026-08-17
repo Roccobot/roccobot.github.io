@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         3.0.0
+// @version         3.0.1
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -121,12 +121,12 @@
       dpiAria: 'Resolution in DPI',
       dpiTip: 'Resolution in DPI (from {1} to {2}).',
       dpiChip: 'Set {1} DPI',
-      pngWhite: 'White background instead of transparent',
+      pngWhite: 'White background',
       pngGo: 'Download PNG',
       pngWait: 'Please wait...',
       pngMax: 'At most {1} DPI for this image',
       pngCm: '{1} × {2} cm at {3} DPI',
-      svgSub: 'Strips metadata, XMP and Illustrator or Inkscape leftovers.\nThe geometry is left untouched.',
+      svgSub: 'Removes metadata, XMP and application leftovers. The image is left untouched.',
       svgGo: 'Download cleaned SVG',
       svgOrig: 'Download original ({1})',
       svgOrigNo: 'Original not available',
@@ -208,12 +208,12 @@
       dpiAria: 'Risoluzione in DPI',
       dpiTip: 'Risoluzione in DPI (da {1} a {2}).',
       dpiChip: 'Imposta {1} DPI',
-      pngWhite: 'Sfondo bianco invece che trasparente',
+      pngWhite: 'Sfondo bianco',
       pngGo: 'Scarica PNG',
       pngWait: 'Attendi...',
       pngMax: 'Al massimo {1} DPI per questa immagine',
       pngCm: '{1} × {2} cm a {3} DPI',
-      svgSub: 'Toglie metadati, XMP e residui di Illustrator o Inkscape.\nLa geometria resta invariata.',
+      svgSub: 'Rimozione di metadati, XMP e residui di applicazioni. L\'immagine resta invariata.',
       svgGo: 'Scarica SVG ripulito',
       svgOrig: 'Scarica originale ({1})',
       svgOrigNo: 'Originale non disponibile',
@@ -1832,7 +1832,7 @@
         '.dv-chip:hover{background:rgba(255,255,255,.2)}' +
         '.dv-chip[aria-pressed="true"]{background:rgba(255,255,255,.28)}' +
         '.dv-dl-prev{margin:.5rem 0 .1rem;font-variant-numeric:tabular-nums}' +
-        '.dv-dl-sub{opacity:.62;font-size:12px;white-space:pre-line}' +
+        '.dv-dl-sub{opacity:.62;font-size:12px}' +
         '.dv-dl-warn{color:#ffcf6b;opacity:1}' +
         '.dv-dl-opt{display:flex;align-items:center;gap:.4rem;margin-top:.5rem;font-size:12px;opacity:.82;cursor:pointer;min-height:24px}' +
         '.dv-go{display:block;width:100%;min-height:32px;margin-top:.6rem;font:inherit;color:#fff;cursor:pointer;' +
