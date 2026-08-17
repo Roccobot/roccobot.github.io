@@ -115,6 +115,28 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
     localizzare') aveva come risposta 'si può, e lo fa'. Averlo misurato invece di modificare
     subito ha portato a una decisione informata, e la modifica è arrivata dopo, per un motivo
     diverso da quello supposto.
+- ⚠️ **Il grassetto nelle descrizioni si fa col marcatore `*X*`**, non con `innerHTML`: la
+  stringa si spezza sugli asterischi e i pezzi dispari diventano `<strong>`. Serve per i tasti
+  citati (`*A*`, `*I*`, `*N*`), che l'utente vuole in evidenza (2026-08-17). ⚠️ Nei **tooltip
+  non si può fare**, perché un attributo `title` non porta markup: là i tasti restano nudi,
+  e non è una svista.
+- ⚠️⚠️ **Casella NEGATA**: quando l'etichetta dice il contrario della chiave ('Inverti
+  scorrimento' contro `dv-wheel-up-in`), la casella mostra e scrive il valore **rovesciato**, e
+  la chiave resta **una**. L'alternativa, cioè una seconda chiave col senso invertito, è
+  esattamente il difetto che il tasto `I` aveva fino alla 2.21.2: due fonti di verità per la
+  stessa cosa.
+- ⚠️⚠️ **GUARDIA sui valori delicati** (le due sensibilità e lo spostamento del testo): una
+  casella che blocca il campo, per richiesta dell'utente (2026-08-17: *è un valore che voglio
+  esporre ma va toccato con attenzione*). Due polarità perché due indoli: **Predefinito**
+  spuntato dice 'sto usando il valore di fabbrica', **Modifica ⚠️** spuntato dice 'so quello
+  che faccio'.
+  - ⚠️ **Lo stato della casella NON si salva: si RICAVA dal valore** (spuntata quando il valore
+    è quello di fabbrica). Salvarlo darebbe due fonti di verità per la stessa cosa, e alla
+    riapertura la casella potrebbe dichiarare 'Predefinito' con dentro un valore ritoccato:
+    lo stesso difetto del tasto `I`, in un'altra forma. Provato in laboratorio riaprendo la
+    pagina con un valore ritoccato: la guardia si presenta aperta, non chiusa.
+  - **Rimettendo la guardia il valore torna quello di fabbrica**, e viene salvato: senza,
+    l'etichetta 'Predefinito' direbbe il falso su un campo che mostra 0,04.
 - ⚠️ **Il separatore decimale resta il punto** anche in italiano ('21.0 × 29.7 cm'), come la
   nota qui sopra prescrive per la UI inglese. Non è una svista: il numero lo compone `num()`,
   una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era

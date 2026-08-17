@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.21.2
+// @version         2.22.0
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -139,9 +139,9 @@
       oTitolo: 'Decent Image Viewer',
       oSotto: 'Changes are applied right away: reload an image to check.',
       oGrpGenerale: 'General',
-      oGrpZoom: 'Zoom and gestures',
+      oGrpZoom: 'Scrolling, gestures and shortcuts',
       oGrpEsport: 'Export',
-      oGrpFino: 'Fine tuning',
+      oGrpFino: 'Other',
       oReset: 'Restore defaults',
       oSalvato: 'Saved',
       oItaliano: 'Italiano',
@@ -158,31 +158,34 @@
       oAdattivo: 'Adaptive',
       oChiaro: 'Light',
       oScuro: 'Dark',
-      oReale: 'What "real size" means',
+      oReale: 'Rendering on HiDPI screens (e.g. \'Retina\')',
       oRealeD: 'Also switchable from the round button in the info panel.',
-      oFisici: 'Physical pixels (faithful)',
+      oFisici: 'Physical pixels',
       oLogici: 'Logical pixels (larger on HiDPI)',
-      oGesto: 'Bare wheel and finger',
+      oGesto: 'Mouse and trackpad',
       oGestoD: 'What happens without holding ctrl.',
       oGestoAuto: 'Both zoom',
       oGestoScorri: 'The finger scrolls, the wheel zooms',
       oGestoMai: 'Everything scrolls (zoom only with ctrl)',
-      oRotellaSu: 'Wheel up zooms in',
-      oRotellaSuD: 'The I key changes this same setting while viewing.',
-      oAdatta: 'Fit enlarges small images',
-      oAdattaD: 'Key A.',
+      oRotellaSu: 'Invert scrolling (default: scroll up to zoom in)',
+      oRotellaSuD: 'You can still flip it on the fly with *I*.',
+      oAdatta: 'Enlarge small images',
+      oAdattaD: 'Key *A* toggles it on the fly.',
       oNavig: 'Show the navigator',
-      oNavigD: 'Key N.',
-      oSensPinch: 'ctrl+wheel and pinch sensitivity',
-      oSensDito: 'Finger sensitivity',
-      oSensDitoD: 'A finger sends far more pixels per gesture than a pinch: this is a separate number on purpose.',
-      oZoomMax: 'Maximum zoom',
+      oNavigD: 'Key *N* shows and hides it on the fly.',
+      oSensPinch: 'Gesture zoom sensitivity',
+      oSensPinchD: 'For trackpads and CTRL/Cmd + scroll.',
+      oSensDito: 'Scroll zoom sensitivity',
+      oSensDitoD: 'For up and down drag-scrolling on a trackpad.\nUsually a much lower value than the previous one.',
+      oZoomMax: 'Maximum magnification',
       oZoomMaxD: 'Multiple of the real size.',
-      oDpiCopia: 'DPI when copying an SVG',
-      oDpiCopiaD: 'An SVG has no pixels of its own: 96 DPI copies it at its nominal size.',
-      oDpiPng: 'Starting DPI of the PNG export',
+      oDpiCopia: 'DPI for \'Copy image\' on vector files',
+      oDpiCopiaD: 'DPI of the image generated on the fly by \'Copy image\' on SVG files.',
+      oDpiPng: 'Default DPI for exported PNGs',
       oNudge: 'Vertical nudge of the info text',
-      oNudgeD: 'In pixels, for a browser page zoom that leaves the text half a pixel off. 0 = untouched.',
+      oNudgeD: 'Useful to compensate an unwanted shift at certain custom zoom levels. 0 = untouched.',
+      oPredefinito: 'Default',
+      oModifica: 'Edit ⚠️',
       oNota: 'Only the settings worth changing are here. Wheel step, zoom stops and gesture thresholds stay in the script: they are measured values, and the reason behind each one is written next to it.'
     },
     it: {
@@ -223,9 +226,9 @@
       oTitolo: 'Decent Image Viewer',
       oSotto: 'Modifiche applicate in tempo reale: ricarica un\'immagine per verificare.',
       oGrpGenerale: 'Generale',
-      oGrpZoom: 'Zoom e gesti',
+      oGrpZoom: 'Scorrimento, gesti e scorciatoie',
       oGrpEsport: 'Esportazione',
-      oGrpFino: 'Regolazione fine',
+      oGrpFino: 'Altro',
       oReset: 'Ripristina i valori iniziali',
       oSalvato: 'Salvato',
       oItaliano: 'Italiano',
@@ -242,31 +245,34 @@
       oAdattivo: 'Adattivo',
       oChiaro: 'Chiaro',
       oScuro: 'Scuro',
-      oReale: 'Che cosa vuol dire "dimensione reale"',
+      oReale: 'Rendering su schermi HiDPI (es. \'Retina\')',
       oRealeD: 'Si commuta anche dal tondo nel riquadro delle informazioni.',
-      oFisici: 'Pixel fisici (fedele)',
+      oFisici: 'Pixel fisici',
       oLogici: 'Pixel logici (più grande su HiDPI)',
-      oGesto: 'Rotella e dito nudi',
+      oGesto: 'Mouse e trackpad',
       oGestoD: 'Che cosa succede senza tenere premuto ctrl.',
       oGestoAuto: 'Zoomano tutti e due',
       oGestoScorri: 'Il dito scorre, la rotella zooma',
       oGestoMai: 'Scorre tutto (zoom solo con ctrl)',
-      oRotellaSu: 'La rotella in su ingrandisce',
-      oRotellaSuD: 'Il tasto I cambia questa stessa impostazione mentre si guarda.',
-      oAdatta: 'L\'adattamento ingrandisce le immagini piccole',
-      oAdattaD: 'Tasto A.',
+      oRotellaSu: 'Inverti scorrimento (predefinito: scorrimento in alto per ingrandire)',
+      oRotellaSuD: 'Puoi comunque cambiare verso al volo premendo *I*.',
+      oAdatta: 'Ingrandisci le immagini piccole',
+      oAdattaD: 'Tasto *A* per attivare/disattivare al volo.',
       oNavig: 'Mostra il navigatore',
-      oNavigD: 'Tasto N.',
-      oSensPinch: 'Sensibilità di ctrl+rotella e pinch',
-      oSensDito: 'Sensibilità del dito',
-      oSensDitoD: 'Un dito manda molti più pixel per gesto di un pinch: è un numero a parte apposta.',
-      oZoomMax: 'Zoom massimo',
+      oNavigD: 'Tasto *N* per mostrare/nascondere al volo.',
+      oSensPinch: 'Sensibilità dello zoom gestuale',
+      oSensPinchD: 'Per trackpad e CTRL/Cmd + scorrimento.',
+      oSensDito: 'Sensibilità dello zoom a scorrimento',
+      oSensDitoD: 'Per lo scorrimento con trascinamento su/giù sul trackpad.\nValore di solito molto più basso del precedente.',
+      oZoomMax: 'Ingrandimento massimo',
       oZoomMaxD: 'Multiplo della dimensione reale.',
-      oDpiCopia: 'DPI con cui si copia un SVG',
-      oDpiCopiaD: 'Un SVG non ha pixel propri: a 96 DPI si copia alla sua misura nominale.',
-      oDpiPng: 'DPI di partenza dell\'esportazione PNG',
+      oDpiCopia: 'DPI per \'Copia immagine\' dei file vettoriali',
+      oDpiCopiaD: 'DPI dell\'immagine generata al volo con \'Copia immagine\' su file SVG.',
+      oDpiPng: 'DPI predefinito per i PNG esportati',
       oNudge: 'Spostamento verticale del testo informativo',
-      oNudgeD: 'In pixel, per uno zoom di pagina che lascia il testo mezzo pixel fuori posto. 0 = non si tocca.',
+      oNudgeD: 'Utile per compensare uno spostamento indesiderato a certi livelli di zoom personalizzati. 0 = inalterato.',
+      oPredefinito: 'Predefinito',
+      oModifica: 'Modifica ⚠️',
       oNota: 'Qui ci sono solo le impostazioni che conviene cambiare. Passo della rotella, tappe dello zoom e soglie dei gesti restano nello script: sono valori misurati, e accanto a ciascuno è scritto il perché.'
     }
   };
@@ -2106,11 +2112,11 @@
       ] },
       { g: 'oGrpZoom', righe: [
         { k: 'dv-wheel-mode',  l: 'oGesto',      d: 'oGestoD', et: { auto: 'oGestoAuto', scorri: 'oGestoScorri', mai: 'oGestoMai' } },
-        { k: 'dv-wheel-up-in', l: 'oRotellaSu',  d: 'oRotellaSuD' },
+        { k: 'dv-wheel-up-in', l: 'oRotellaSu',  d: 'oRotellaSuD', negato: true },
         { k: 'dv-fit-grow',    l: 'oAdatta',     d: 'oAdattaD' },
         { k: 'dv-minimappa',   l: 'oNavig',      d: 'oNavigD' },
-        { k: 'dv-zoom-sens',   l: 'oSensPinch' },
-        { k: 'dv-touch-sens',  l: 'oSensDito',   d: 'oSensDitoD' },
+        { k: 'dv-zoom-sens',   l: 'oSensPinch',  d: 'oSensPinchD', guardia: 'predefinito' },
+        { k: 'dv-touch-sens',  l: 'oSensDito',   d: 'oSensDitoD',  guardia: 'predefinito' },
         { k: 'dv-zoom-max',    l: 'oZoomMax',    d: 'oZoomMaxD' }
       ] },
       { g: 'oGrpEsport', righe: [
@@ -2118,7 +2124,7 @@
         { k: 'dv-copy-dpi', l: 'oDpiCopia', d: 'oDpiCopiaD' }
       ] },
       { g: 'oGrpFino', righe: [
-        { k: 'dv-nudge-y', l: 'oNudge', d: 'oNudgeD' }
+        { k: 'dv-nudge-y', l: 'oNudge', d: 'oNudgeD', guardia: 'modifica' }
       ] }
     ];
 
@@ -2140,8 +2146,11 @@
       '.dv-o-gt+.dv-o-riga{border-top:0}' +
       '.dv-o-txt{flex:1 1 auto;min-width:0}' +
       '.dv-o-l{display:block;font-weight:600}' +
-      '.dv-o-d{display:block;color:var(--dv-sub);font-size:.85rem;margin-top:.15rem}' +
-      '.dv-o-ctl{flex:0 0 auto;display:flex;align-items:center;min-height:2rem}' +
+      '.dv-o-d{display:block;color:var(--dv-sub);font-size:.85rem;margin-top:.15rem;white-space:pre-line}' +
+      '.dv-o-d strong{color:var(--dv-fg);font-weight:700}' +
+      '.dv-o-guardia{font-size:.85rem;color:var(--dv-sub);cursor:pointer;user-select:none;margin-right:.35rem}' +
+      '.dv-o-ctl{flex:0 0 auto;display:flex;align-items:center;gap:.4rem;min-height:2rem}' +
+      '.dv-o-ctl input[disabled]{opacity:.45;cursor:not-allowed}' +
       '.dv-o-ctl select,.dv-o-ctl input[type=number]{font:inherit;font-size:.95rem;color:inherit;background:var(--dv-bg);' +
         'border:1px solid var(--dv-line);border-radius:9px;padding:.35rem .5rem;max-width:15rem}' +
       '.dv-o-ctl input[type=number]{width:6.5rem;text-align:right}' +
@@ -2172,6 +2181,18 @@
       if (cls) e.className = cls;
       if (testo != null) e.textContent = testo;
       return e;
+    }
+    // ⚠️ Grassetto in linea col marcatore *X*, e senza innerHTML: la stringa si
+    // spezza sugli asterischi e i pezzi in posizione dispari diventano <strong>.
+    // Serve per i tasti citati nelle descrizioni (*A*, *I*, *N*), che l'utente
+    // vuole in evidenza. ⚠️ Nei TOOLTIP non si puo' fare, perche' un attributo
+    // `title` non porta markup: la' i tasti restano nudi, e non e' una svista.
+    function testoRicco(el, testo) {
+      String(testo).split('*').forEach(function (pezzo, i) {
+        if (!pezzo) return;
+        el.appendChild(i % 2 ? nodo('strong', '', pezzo) : document.createTextNode(pezzo));
+      });
+      return el;
     }
     const eco = nodo('span', 'dv-o-eco', '');
     function segnala(testo) {
@@ -2204,7 +2225,7 @@
         const lab = nodo('label', 'dv-o-l', T(r.l));
         lab.setAttribute('for', 'opz-' + r.k);
         txt.appendChild(lab);
-        if (r.d) txt.appendChild(nodo('span', 'dv-o-d', T(r.d)));
+        if (r.d) txt.appendChild(testoRicco(nodo('span', 'dv-o-d'), T(r.d)));
         riga.appendChild(txt);
 
         const ctl = nodo('div', 'dv-o-ctl');
@@ -2227,8 +2248,15 @@
         } else if (o.t === 'bool') {
           campo = document.createElement('input');
           campo.type = 'checkbox';
-          campo.checked = leggiOpz(r.k) === '1';
-          campo.addEventListener('change', function () { scrivi(r.k, campo.checked ? '1' : '0'); });
+          // ⚠️ `negato` serve quando l'etichetta dice il CONTRARIO della chiave
+          // ('Inverti scorrimento' contro `dv-wheel-up-in`): la casella mostra e
+          // scrive il valore rovesciato, e la chiave resta UNA. L'alternativa,
+          // cioe' una seconda chiave col senso invertito, e' esattamente il difetto
+          // che il tasto I aveva fino alla 2.21.2.
+          campo.checked = (leggiOpz(r.k) === '1') !== !!r.negato;
+          campo.addEventListener('change', function () {
+            scrivi(r.k, (campo.checked !== !!r.negato) ? '1' : '0');
+          });
         } else {
           campo = document.createElement('input');
           campo.type = 'number';
@@ -2244,6 +2272,37 @@
             campo.value = String(buono);
             scrivi(r.k, buono);
           });
+          // ⚠️ GUARDIA: i valori tarati su misure reali (le due sensibilita', lo
+          // spostamento del testo) restano dietro una casella, per richiesta
+          // dell'utente: 'e' un valore che voglio esporre ma va toccato con
+          // attenzione'. Due polarita', perche' due indoli: 'predefinito' spuntato
+          // dice 'sto usando il valore di fabbrica', 'modifica' spuntato dice
+          // 'so quello che faccio'.
+          // ⚠️⚠️ Lo stato della casella NON si salva: si RICAVA dal valore
+          // (spuntata quando il valore e' quello di fabbrica). Salvarlo darebbe
+          // due fonti di verita' per la stessa cosa, e alla riapertura la casella
+          // potrebbe dichiarare 'predefinito' con dentro un valore ritoccato.
+          if (r.guardia) {
+            const perModifica = r.guardia === 'modifica';
+            const g = document.createElement('input');
+            g.type = 'checkbox';
+            g.id = 'guardia-' + r.k;
+            const aDifetto = parseFloat(leggiOpz(r.k)) === parseFloat(o.d);
+            g.checked = perModifica ? !aDifetto : aDifetto;
+            const et = nodo('label', 'dv-o-guardia', T(perModifica ? 'oModifica' : 'oPredefinito'));
+            et.setAttribute('for', g.id);
+            const applica = function (riporta) {
+              const bloccato = perModifica ? !g.checked : g.checked;
+              campo.disabled = bloccato;
+              // rimettendo la guardia il valore torna quello di fabbrica, o
+              // l'etichetta 'Predefinito' direbbe il falso
+              if (bloccato && riporta && campo.value !== o.d) { campo.value = o.d; scrivi(r.k, o.d); }
+            };
+            g.addEventListener('change', function () { applica(true); });
+            applica(false);
+            ctl.appendChild(g);
+            ctl.appendChild(et);
+          }
         }
         campo.id = 'opz-' + r.k;
         ctl.appendChild(campo);

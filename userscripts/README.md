@@ -622,9 +622,9 @@ per vederla basta ricaricare la pagina-immagine.
 > nell'archivio del gestore, che l'aggiornamento non tocca.
 
 > ⚠️ **La voce di menu resta in inglese anche con l'interfaccia in italiano**, per scelta
-> dell'utente: e' la consuetudine degli userscript multilingua, e quel menu appartiene al
+> dell'utente: è la consuetudine degli userscript multilingua, e quel menu appartiene al
 > gestore (Tampermonkey), non allo script, quindi sta in mezzo alle voci delle altre
-> estensioni. Il pannello che apre e' invece bilingue, titolo della scheda compreso.
+> estensioni. Il pannello che apre è invece bilingue, titolo della scheda compreso.
 
 > ⚠️ **La pagina è un guscio, e il pannello lo disegna lo script.** Le impostazioni vivono
 > nell'archivio dello userscript (`GM_getValue`), dove una pagina web normale non arriva:
@@ -636,21 +636,29 @@ per vederla basta ricaricare la pagina-immagine.
 | Lingua dell'interfaccia | automatica, italiano, inglese | automatica (segue il browser) |
 | Tipo di sfondo | scacchiera (trasparenza), uniforme | scacchiera |
 | Tema di sfondo | adattivo, chiaro, scuro | adattivo |
-| Che cosa vuol dire 'dimensione reale' | pixel fisici, pixel logici | pixel fisici |
-| Rotella e dito nudi | zoomano tutti e due, il dito scorre, scorre tutto | zoomano tutti e due |
-| La rotella in su ingrandisce | sì/no | sì |
-| L'adattamento ingrandisce le immagini piccole | sì/no | no |
+| Rendering su schermi HiDPI | pixel fisici, pixel logici | pixel fisici |
+| Mouse e trackpad | zoomano tutti e due, il dito scorre, scorre tutto | zoomano tutti e due |
+| Inverti scorrimento | sì/no | no |
+| Ingrandisci le immagini piccole | sì/no | no |
 | Mostra il navigatore | sì/no | sì |
-| Sensibilità di ctrl+rotella e pinch | da 0,002 a 0,06 | 0,015 |
-| Sensibilità del dito | da 0,0004 a 0,006 | 0,0018 |
-| Zoom massimo | da 2 a 200 volte il reale | 40 |
-| DPI di partenza dell'esportazione PNG | da 12 a 2400 | 96 |
-| DPI con cui si copia un SVG | da 12 a 2400 | 96 |
-| Spostamento verticale del testo informativo | da -2 a 2 px | 0 |
+| Sensibilità dello zoom gestuale | da 0,002 a 0,06 | 0,015 (dietro guardia) |
+| Sensibilità dello zoom a scorrimento | da 0,0004 a 0,006 | 0,0018 (dietro guardia) |
+| Ingrandimento massimo | da 2 a 200 volte il reale | 40 |
+| DPI predefinito per i PNG esportati | da 12 a 2400 | 96 |
+| DPI per 'Copia immagine' dei file vettoriali | da 12 a 2400 | 96 |
+| Spostamento verticale del testo informativo | da -2 a 2 px | 0 (dietro guardia) |
+
+> ⚠️ **Tre valori stanno dietro una GUARDIA**, cioè una casella da togliere (o mettere)
+> prima di poter scrivere nel campo: sono tarati su misure reali e non vanno girati a caso.
+> Le due sensibilità hanno la casella **Predefinito**, spuntata quando il valore è quello di
+> fabbrica; lo spostamento del testo ha **Modifica ⚠️**, da spuntare per sbloccare. ⚠️ Lo stato
+> della casella non si salva: si **ricava dal valore**, quindi riaprendo la pagina con un
+> valore ritoccato la casella lo dichiara invece di mentire. Rimettendo la guardia il valore
+> torna quello di fabbrica, o l'etichetta 'Predefinito' direbbe il falso.
 
 Le tre scelte dei tasti `A`, `I` e `N` sono le stesse voci del pannello, e **restano
 memorizzate**: valgono per tutte le pagine-immagine, non solo per quella aperta. Cambiarle da
-un lato si vede dall'altro, perche' scrivono la stessa preferenza.
+un lato si vede dall'altro, perché scrivono la stessa preferenza.
 
 > ⚠️ **Nella 2.21.0 e 2.21.1 il tasto `I` era l'eccezione, e la casella mentiva.** Scriveva
 > una chiave sua, che il pannello non mostrava: dopo un tocco di `I` il verso cambiava
@@ -664,8 +672,8 @@ un lato si vede dall'altro, perche' scrivono la stessa preferenza.
 | **Scacchiera** | scacchiera chiara o scura | scacchiera chiara | scacchiera scura |
 | **Uniforme** | `#EEE` o `#222` | `#EEE` | `#222` |
 
-> ⚠️ **Perche' il predefinito e' la scacchiera.** E' l'unica che rende **visibile la
-> trasparenza**, che su una pagina-immagine e' un'informazione e non un vezzo: su una tinta
+> ⚠️ **Perche' il predefinito è la scacchiera.** È l'unica che rende **visibile la
+> trasparenza**, che su una pagina-immagine è un'informazione e non un vezzo: su una tinta
 > unita non si distingue il bianco del fondo da un pixel bianco opaco. I quattro colori non
 > sono inventati: sono le due coppie della scacchiera storica, e le tinte unite prendono il
 > chiaro dell'una e lo scuro dell'altra.
@@ -674,7 +682,7 @@ un lato si vede dall'altro, perche' scrivono la stessa preferenza.
 > pagina aperta serve un ricaricamento.
 
 > ⚠️ **Il verso della rotella è UNA voce sola, non due**, e la scrivono in due: il pannello e
-> il tasto `I`. E' l'unico modo perche' la casella dica la verita', qualunque via si sia usata
+> il tasto `I`. È l'unico modo perché la casella dica la verità, qualunque via si sia usata
 > per cambiare il verso.
 
 **Che cosa resta nel sorgente, e perché.** Passo della rotella (`PASSO_ROTELLA`), tappe tonde
@@ -819,7 +827,7 @@ annulla** lo scaricamento in corso. Il nome del file è il titolo del post
 const SALVA_CON_DIALOGO  = true;  // MP4: true = chiede dove salvare, false = scarica diretto
 const SEGMENTI_PARALLELI = 5;     // HLS: quanti segmenti scaricare insieme
 const TENTATIVI_SEGMENTO = 3;     // HLS: ritentativi per singolo segmento
-const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha piu' varianti
+const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha più varianti
 ```
 
 ### Installazione
