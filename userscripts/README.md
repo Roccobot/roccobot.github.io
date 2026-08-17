@@ -454,14 +454,14 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     numero più rotondo. Risultato misurato: sopra il 10% i rapporti stanno tutti fra
     **1,06 e 1,17** (media 1,10) e servono gli stessi **14 scatti** dell'1,1× puro per
     andare dal 100% al 400%, con un'irregolarità di 0,05 contro 0,20 di una scala scelta
-    a mano. Oltre gli estremi dell'elenco riprende il passo geometrico `PASSO_ROTELLA`,
+    a mano. Oltre gli estremi dell'elenco riprende il passo geometrico `WHEEL_STEP`,
     così i limiti (2% e 4000%) restano raggiungibili.
   - **Scarto minimo, per non sprecare un tic.** Partendo da un valore fuori scala (per
     esempio 199%, raggiunto col pinch) la tappa successiva sarebbe 200%: un tic che non
     cambia nulla di percepibile. Le tappe troppo vicine si **saltano**: serve almeno
     **+5%** ingrandendo e almeno **−2%** rimpicciolendo. Misurato: da 191% si va a 225%,
     da 190% a 200%; scendendo, da 204% si va a 180%, da 205% a 200%.
-  - Per tornare al passo geometrico basta svuotare `TAPPE_ZOOM`.
+  - Per tornare al passo geometrico basta svuotare `ZOOM_STOPS`.
   - **Limiti più larghi (dalla 2.13):** dal **2%** al **4000%** (prima 10% e 1200%), con
     un tetto di sicurezza sul lato in pixel perché oltre una certa misura il browser
     fatica a disegnare l'elemento.
@@ -497,7 +497,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - ⚠️ **La rotella non viene più confusa col dito se la giri subito dopo (2.20.1).** Una
     **firma forte** di rotella (unità a righe o pagine, `wheelDeltaY` multiplo di 120)
     **chiude** il gesto in corso invece di esserne assorbita. Prima bastava girare la
-    rotella entro `GESTO_PAUSA_MS` dall'ultimo evento del dito per vedersi trattare tutta
+    rotella entro `GESTURE_PAUSE_MS` dall'ultimo evento del dito per vedersi trattare tutta
     la girata come un gesto di dito, e la girata **non scadeva mai**, perché ogni tic
     rinnovava il conteggio della pausa. Caso concreto: portatile con mouse esterno, la mano
     sinistra sul trackpad e la destra sul mouse, dove fra l'ultimo evento e il primo tic
@@ -515,7 +515,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     dispositivo si riconosce **una volta per gesto**, dall'ampiezza con cui il gesto parte,
     e la decisione **si tiene fino alla pausa**; la firma touch, quando si vede, resta in
     memoria un attimo e copre anche il gesto successivo, così un colpo brusco che partisse
-    già ampio viene ricondotto al dispositivo giusto. Le soglie sono `GESTO_PAUSA_MS`,
+    già ampio viene ricondotto al dispositivo giusto. Le soglie sono `GESTURE_PAUSE_MS`,
     `TOUCH_AVVIO_MAX` e `TOUCH_MEMORIA_MS`.
     - ⚠️ **Perché non si decide più evento per evento (difetto corretto nella 2.19.1).**
       ⚠️ Attenzione: la 2.19.1 rendeva il gesto del dito uno **scorrimento** coerente, e
@@ -685,9 +685,9 @@ un lato si vede dall'altro, perché scrivono la stessa preferenza.
 > il tasto `I`. È l'unico modo perché la casella dica la verità, qualunque via si sia usata
 > per cambiare il verso.
 
-**Che cosa resta nel sorgente, e perché.** Passo della rotella (`PASSO_ROTELLA`), tappe tonde
-dello zoom (`TAPPE_ZOOM`), salti minimi, soglie del riconoscimento dei gesti
-(`GESTO_PAUSA_MS`, `TOUCH_AVVIO_MAX`, `TOUCH_MEMORIA_MS`) e tetti di sicurezza del disegno.
+**Che cosa resta nel sorgente, e perché.** Passo della rotella (`WHEEL_STEP`), tappe tonde
+dello zoom (`ZOOM_STOPS`), salti minimi, soglie del riconoscimento dei gesti
+(`GESTURE_PAUSE_MS`, `TOUCH_AVVIO_MAX`, `TOUCH_MEMORIA_MS`) e tetti di sicurezza del disegno.
 Sono valori **misurati** sui gesti reali, e accanto a ciascuno il commento dice da quale
 misura viene e che cosa è stato scartato: in un campo di un pannello quella motivazione si
 perderebbe, e resterebbe un numero da girare a caso.

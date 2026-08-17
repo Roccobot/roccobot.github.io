@@ -66,19 +66,19 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   'use strict';
 
   // ⚠️ Le soglie e le funzioni qui sotto sono la COPIA di quelle di DIVRoccobot.user.js
-  // 2.21.0 (blocco 'ROTELLA NUDA'): servono perché la sonda dica che cosa fa il
+  // 3.0.0 (blocco 'ROTELLA NUDA'): servono perché la sonda dica che cosa fa il
   // visualizzatore davvero, non che cosa si suppone che faccia. Se quel blocco cambia,
   // questo va aggiornato con lui, altrimenti la sonda mente. La nota è registrata anche
   // in userscripts/CLAUDE.md.
-  // ⚠️ Dalla 2.21 tre di questi valori (ROTELLA_ZOOM e ZOOM_SENS_TOUCH, piu' la
+  // ⚠️ Dalla 2.21 tre di questi valori (WHEEL_MODE e ZOOM_SENS_TOUCH, piu' la
   // sensibilita' del pinch) sono OPZIONI dell'utente, non piu' costanti del sorgente:
   // qui restano i valori INIZIALI, perche' una pagina normale non puo' leggere
   // l'archivio dello userscript. Chi li ha cambiati dalla pagina delle opzioni
   // rimetta a mano gli stessi numeri qui, o la sonda descrivera' un visualizzatore
   // che non e' il suo.
-  var RIF_VERSIONE = '2.21.0';
-  var ROTELLA_ZOOM = 'auto';       // come nello script: 'auto' | 'scorri' | 'mai'
-  var GESTO_PAUSA_MS = 400;
+  var RIF_VERSIONE = '3.0.0';
+  var WHEEL_MODE = 'auto';         // come nello script: 'auto' | 'scroll' | 'never'
+  var GESTURE_PAUSE_MS = 400;
   var TOUCH_AVVIO_MAX = 20;
   var TOUCH_MEMORIA_MS = 800;
   var ZOOM_SENS_TOUCH = 0.0018;    // zoom col dito: fattore = e^(px * questo)
@@ -88,39 +88,39 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   var pad = document.getElementById('pad');
   var esito = document.getElementById('esito');
 
-  function firmaRotellaForte(e) {
+  function strongWheelSignature(e) {
     if (e.deltaMode !== 0) return true;
     var wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
     return !!(wd && wd % 120 === 0 && e.deltaX === 0);
   }
-  function firmaRotellaDebole(e) {
+  function weakWheelSignature(e) {
     return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
   }
-  function firmaTouch(e) {
+  function touchSignature(e) {
     return e.deltaMode === 0 && Math.abs(e.deltaY) <= TOUCH_AVVIO_MAX;
   }
-  var gestoUltimo = -1e9, gestoDaRotella = null, touchVistoA = -1e9;
-  function decidiGesto(e) {
+  var lastGesture = -1e9, gestoDaRotella = null, touchVistoA = -1e9;
+  function decideGesture(e) {
     var ora = e.timeStamp;
-    var nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
-    gestoUltimo = ora;
-    if (firmaTouch(e)) touchVistoA = ora;
-    var forte = firmaRotellaForte(e);
-    if (forte) touchVistoA = -1e9;
-    if (!nuovo && gestoDaRotella !== null && !forte) return gestoDaRotella;
-    if (forte) gestoDaRotella = true;
-    else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
-    else gestoDaRotella = firmaRotellaDebole(e);
+    var nuovo = (ora - lastGesture) > GESTURE_PAUSE_MS;
+    lastGesture = ora;
+    if (touchSignature(e)) touchVistoA = ora;
+    var strong = strongWheelSignature(e);
+    if (strong) touchVistoA = -1e9;
+    if (!nuovo && gestoDaRotella !== null && !strong) return gestoDaRotella;
+    if (strong) gestoDaRotella = true;
+    else if (touchSignature(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
+    else gestoDaRotella = weakWheelSignature(e);
     return gestoDaRotella;
   }
-  var evDeciso = null, cmdCache = 'scorre';
-  function comandoGesto(e) {
-    if (ROTELLA_ZOOM === 'mai') return 'scorre';
+  var evDecided = null, cmdCache = 'scorre';
+  function gestureCommand(e) {
+    if (WHEEL_MODE === 'never') return 'scorre';
     if (!e.deltaY) return 'niente';       // solo orizzontale: non è un comando di zoom
-    if (e === evDeciso) return cmdCache;
-    evDeciso = e;
-    var daRotella = decidiGesto(e);
-    cmdCache = daRotella ? 'scatti' : (ROTELLA_ZOOM === 'scorri' ? 'scorre' : 'continuo');
+    if (e === evDecided) return cmdCache;
+    evDecided = e;
+    var fromWheel = decideGesture(e);
+    cmdCache = fromWheel ? 'scatti' : (WHEEL_MODE === 'scroll' ? 'scorre' : 'continuo');
     return cmdCache;
   }
 
@@ -138,7 +138,7 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
       wd: (typeof e.wheelDeltaY === 'number') ? e.wheelDeltaY : null,
       modo: e.deltaMode,
       ctrl: e.ctrlKey,
-      cmd: comandoGesto(e)
+      cmd: gestureCommand(e)
     });
     document.getElementById('padmsg').textContent = eventi.length + ' eventi raccolti';
   }, { passive: false });
@@ -149,7 +149,7 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
     var gruppi = [], cur = null;
     for (var i = 0; i < eventi.length; i++) {
       var e = eventi[i];
-      if (!cur || e.t - cur[cur.length - 1].t > GESTO_PAUSA_MS) { cur = []; gruppi.push(cur); }
+      if (!cur || e.t - cur[cur.length - 1].t > GESTURE_PAUSE_MS) { cur = []; gruppi.push(cur); }
       cur.push(e);
     }
     return gruppi;
@@ -240,8 +240,8 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
     grezzi = !grezzi; scrivi(grezzi ? listaGrezzi() : riassunto());
   });
   document.getElementById('btnAzzera').addEventListener('click', function () {
-    eventi = []; gestoUltimo = -1e9; gestoDaRotella = null; touchVistoA = -1e9;
-    evDeciso = null; cmdCache = 'scorre';
+    eventi = []; lastGesture = -1e9; gestoDaRotella = null; touchVistoA = -1e9;
+    evDecided = null; cmdCache = 'scorre';
     scrivi('Nessun dato.');
     document.getElementById('padmsg').textContent = 'scorri qui';
   });
