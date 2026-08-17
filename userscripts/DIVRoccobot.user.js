@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.21.1
+// @version         2.21.2
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -53,12 +53,14 @@
     { k: 'dv-png-dpi',      t: 'num',    d: '96',     min: 12,     max: 2400,  passo: 1 },
     { k: 'dv-nudge-y',      t: 'num',    d: '0',      min: -2,     max: 2,     passo: 0.5 }
   ];
-  // ⚠️ `dv-wheel-invert` NON sta nella tabella, ed è deliberato: non è una
-  // preferenza ma lo stato del tasto I, cioè un'inversione momentanea del verso
-  // deciso in `dv-wheel-up-in`. Metterli tutti e due nel pannello darebbe due
-  // interruttori per la stessa cosa, con l'effetto di spegnersi a vicenda; il
-  // pannello scrive il verso e azzera l'inversione, che è l'unica lettura sensata
-  // di 'da qui in avanti la rotella in su fa questo'.
+  // ⚠️⚠️ `dv-wheel-up-in` la scrivono in DUE: il pannello e il tasto I, che
+  // commuta il verso mentre si guarda. È una chiave sola per scelta, dopo un
+  // difetto vero: fino alla 2.21.1 il tasto I scriveva una chiave a parte
+  // (`dv-wheel-invert`) che il pannello non mostrava, e il risultato era una
+  // casella che MENTIVA, perché dopo un tocco di I continuava a dichiarare il
+  // verso vecchio. Vale come criterio generale: una preferenza, un posto: se una
+  // scorciatoia e un pannello cambiano la stessa cosa, devono scrivere la stessa
+  // chiave, o uno dei due racconta il passato.
   function opzDi(k) { for (var i = 0; i < OPZ.length; i++) if (OPZ[i].k === k) return OPZ[i]; return null; }
   function leggiOpz(k) {
     const o = opzDi(k);
@@ -166,7 +168,7 @@
       oGestoScorri: 'The finger scrolls, the wheel zooms',
       oGestoMai: 'Everything scrolls (zoom only with ctrl)',
       oRotellaSu: 'Wheel up zooms in',
-      oRotellaSuD: 'The I key still flips it while viewing.',
+      oRotellaSuD: 'The I key changes this same setting while viewing.',
       oAdatta: 'Fit enlarges small images',
       oAdattaD: 'Key A.',
       oNavig: 'Show the navigator',
@@ -250,7 +252,7 @@
       oGestoScorri: 'Il dito scorre, la rotella zooma',
       oGestoMai: 'Scorre tutto (zoom solo con ctrl)',
       oRotellaSu: 'La rotella in su ingrandisce',
-      oRotellaSuD: 'Il tasto I la inverte comunque mentre si guarda.',
+      oRotellaSuD: 'Il tasto I cambia questa stessa impostazione mentre si guarda.',
       oAdatta: 'L\'adattamento ingrandisce le immagini piccole',
       oAdattaD: 'Tasto A.',
       oNavig: 'Mostra il navigatore',
@@ -1058,8 +1060,10 @@
       applicaScala(nuova, fx, fy);
       zoomL = Math.log(scale);            // il gesto continuo riparte da qui
     }
-    let versoInvertito = false;
-    try { versoInvertito = GM_getValue('dv-wheel-invert', '0') === '1'; } catch (e) {}
+    // Verso corrente: parte dalla preferenza e lo commuta il tasto I, che salva
+    // nella stessa chiave. Le tre scorciatoie (A, I, N) si comportano così, quindi
+    // il pannello e i tasti dicono sempre la stessa cosa.
+    let suIngrandisce = ROTELLA_SU_INGRANDISCE;
 
     // ── GESTO NUDO = zoom; ctrl+gesto = zoom continuo (pinch da trackpad) ──
     wrap.addEventListener('wheel', function (e) {
@@ -1083,7 +1087,7 @@
         if (!e.deltaY) return;
         e.preventDefault();
         // Segno del verso, comune ai due modi: +1 quando "in su" deve ingrandire.
-        const segno = (ROTELLA_SU_INGRANDISCE !== versoInvertito) ? 1 : -1;
+        const segno = suIngrandisce ? 1 : -1;
         if (cmd === 'continuo') {
           // Dito su una superficie touch: zoom proporzionale al movimento, senza scatti e
           // senza tappe tonde, perché il gesto è continuo e le tappe lo farebbero
@@ -1327,9 +1331,8 @@
       }
       if (e.key !== 'i' && e.key !== 'I') return;
       e.preventDefault();
-      versoInvertito = !versoInvertito;
-      try { GM_setValue('dv-wheel-invert', versoInvertito ? '1' : '0'); } catch (err) {}
-      const suIngrandisce = (ROTELLA_SU_INGRANDISCE !== versoInvertito);
+      suIngrandisce = !suIngrandisce;
+      try { GM_setValue('dv-wheel-up-in', suIngrandisce ? '1' : '0'); } catch (err) {}
       toast(T(suIngrandisce ? 'wheelIn' : 'wheelOut'));
     });
 
@@ -2179,10 +2182,6 @@
     }
     function scrivi(k, v) {
       try { GM_setValue(k, String(v)); } catch (e) { return; }
-      // ⚠️ Il verso scritto qui è il verso PREDEFINITO, e finché resta in giro
-      // l'inversione del tasto I la scelta appena fatta si vedrebbe rovesciata.
-      // Azzerarla è l'unico modo perché l'interruttore dica la verità.
-      if (k === 'dv-wheel-up-in') { try { GM_setValue('dv-wheel-invert', '0'); } catch (e) {} }
       segnala(T('oSalvato'));
     }
 
@@ -2259,7 +2258,6 @@
     reset.type = 'button';
     reset.addEventListener('click', function () {
       OPZ.forEach(function (o) { try { GM_setValue(o.k, o.d); } catch (e) {} });
-      try { GM_setValue('dv-wheel-invert', '0'); } catch (e) {}
       // ridisegnare a mano vorrebbe dire rileggere ogni campo: ricaricare è più
       // corto e non può dimenticarsene uno
       location.reload();

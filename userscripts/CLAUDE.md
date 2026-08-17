@@ -141,10 +141,19 @@ pagina `options.html` di 'Image Max URL'.
 - **Le opzioni sono una tabella sola** (`OPZ`), che è insieme il default, i limiti e ciò che
   il pannello disegna. ⚠️ Le chiavi delle cinque preferenze che esistevano già sono rimaste
   **identiche**, quindi chi aggiorna ritrova le sue scelte senza migrazione.
-- ⚠️ **`dv-wheel-invert` NON è nella tabella, ed è deliberato**: non è una preferenza ma lo
-  stato del tasto `I`, cioè un'inversione momentanea del verso salvato in `dv-wheel-up-in`.
-  Esporli tutti e due darebbe due interruttori per la stessa cosa, che si spengono a vicenda;
-  il pannello scrive il verso e **azzera** l'inversione.
+- ⚠️⚠️ **UNA preferenza, UN posto: se una scorciatoia e un pannello cambiano la stessa cosa,
+  devono scrivere la stessa chiave.** Nella 2.21.0 il tasto `I` scriveva una chiave sua
+  (`dv-wheel-invert`) che il pannello non mostrava, e il verso effettivo era la combinazione
+  delle due: la casella 'La rotella in su ingrandisce' **mentiva** dopo ogni tocco di `I`.
+  Corretto nella 2.21.2, dove `I` scrive `dv-wheel-up-in`, la voce del pannello.
+  - ⚠️ **Il difetto era nascosto dietro un ragionamento che sembrava buono**: due chiavi
+    separate per non mettere due interruttori nel pannello. La conclusione era giusta (un
+    interruttore solo) ma il mezzo sbagliato: bastava che il tasto scrivesse quella voce.
+  - ⚠️ **L'ha trovato una DOMANDA dell'utente**, non una prova: 'quando commutati con la
+    scorciatoia, questi valori sono temporanei o restano memorizzati?'. I tasti `A` e `N`
+    erano già coerenti, quindi il difetto riguardava uno solo dei tre e nessuna prova lo
+    guardava. Dal 2026-08-17 il banco legge **quali chiavi vengono scritte** dai tre tasti,
+    che è la misura che l'avrebbe visto.
 - **Che cosa NON si è esposto, e perché**: passo della rotella, tappe tonde dello zoom, salti
   minimi e soglie dei gesti. Sono valori misurati sui gesti reali dell'utente, e accanto a
   ciascuno il commento dice da quale misura viene e che cosa è stato scartato. In un campo di
