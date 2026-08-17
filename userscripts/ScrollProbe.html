@@ -66,11 +66,17 @@ difetto: vuol dire che lo stesso movimento fa due cose diverse.</p>
   'use strict';
 
   // ⚠️ Le soglie e le funzioni qui sotto sono la COPIA di quelle di DIVRoccobot.user.js
-  // 2.20.0 (blocco 'ROTELLA NUDA'): servono perché la sonda dica che cosa fa il
+  // 2.21.0 (blocco 'ROTELLA NUDA'): servono perché la sonda dica che cosa fa il
   // visualizzatore davvero, non che cosa si suppone che faccia. Se quel blocco cambia,
   // questo va aggiornato con lui, altrimenti la sonda mente. La nota è registrata anche
   // in userscripts/CLAUDE.md.
-  var RIF_VERSIONE = '2.20.1';
+  // ⚠️ Dalla 2.21 tre di questi valori (ROTELLA_ZOOM e ZOOM_SENS_TOUCH, piu' la
+  // sensibilita' del pinch) sono OPZIONI dell'utente, non piu' costanti del sorgente:
+  // qui restano i valori INIZIALI, perche' una pagina normale non puo' leggere
+  // l'archivio dello userscript. Chi li ha cambiati dalla pagina delle opzioni
+  // rimetta a mano gli stessi numeri qui, o la sonda descrivera' un visualizzatore
+  // che non e' il suo.
+  var RIF_VERSIONE = '2.21.0';
   var ROTELLA_ZOOM = 'auto';       // come nello script: 'auto' | 'scorri' | 'mai'
   var GESTO_PAUSA_MS = 400;
   var TOUCH_AVVIO_MAX = 20;

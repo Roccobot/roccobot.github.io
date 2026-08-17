@@ -609,26 +609,77 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
 > misurato, cambia i pixel su 25 file su 33. La pulizia locale fa il lavoro che serve in
 > **1,7 ms** invece di 40, senza dipendenze e senza toccare il disegno.
 
-### Personalizzazione
+### Personalizzazione: la pagina delle opzioni
 
-```js
-let THEME = 'dark';          // 'system' | 'dark' | 'light' (sfondo a scacchi)
-const ZOOM_MAX_MULT = 40;    // zoom massimo = N× la dimensione reale
-const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale
-const ZOOM_SENS = 0.015;     // sensibilità dello zoom continuo (ctrl+rotella / pinch)
-const ZOOM_SENS_TOUCH = 0.0018; // sensibilità dello zoom col dito (gesto nudo da superficie touch)
-const ROTELLA_ZOOM = 'auto'; // gesto nudo: 'auto' (zoom sempre) | 'scorri' (il dito scorre) | 'mai'
-const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
-const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può partire un gesto di dito
-const TOUCH_MEMORIA_MS = 800;  // per quanto una firma touch appena vista copre i gesti seguenti
-const PASSO_ROTELLA = 1.1;   // quanto ingrandisce un singolo scatto di rotella
-const TAPPE_ZOOM = [2, 3, ..., 100, 110, 125, 140, ..., 4000];  // tappe tonde; vuoto = passo geometrico
-const SALTO_MIN_SU = 0.05;   // ingrandendo, salta le tappe a meno del +5%
-const SALTO_MIN_GIU = 0.02;  // rimpicciolendo, salta le tappe a meno del -2%
-const ROTELLA_SU_INGRANDISCE = true;  // verso predefinito (si inverte al volo col tasto I)
-const ADATTA_INGRANDENDO = false;     // false = non superare mai il reale | true = adatta anche
-                                      // ingrandendo (si commuta al volo col tasto A)
-```
+Dalla **2.21** non si modifica più il sorgente. Nel menu di Tampermonkey (l'icona
+dell'estensione) lo script espone la voce **Opzioni**, che apre
+<https://roccobot.github.io/userscripts/DIVOptions.html>: ogni modifica si salva subito, e
+per vederla basta ricaricare la pagina-immagine.
+
+> ⚠️ **Perché non erano già così.** Il difetto delle costanti nel sorgente non era la
+> scomodità ma la **durata**: l'aggiornamento automatico riscrive il file, quindi ogni
+> personalizzazione viveva fino al primo update e spariva senza dirlo. Le opzioni ora stanno
+> nell'archivio del gestore, che l'aggiornamento non tocca.
+
+> ⚠️ **La pagina è un guscio, e il pannello lo disegna lo script.** Le impostazioni vivono
+> nell'archivio dello userscript (`GM_getValue`), dove una pagina web normale non arriva:
+> perciò chi apre quell'indirizzo **senza** lo script installato vede solo un avviso, ed è il
+> comportamento giusto, non un errore.
+
+| Opzione | Valori | Predefinito |
+| --- | --- | --- |
+| Lingua dell'interfaccia | automatica, italiano, inglese | automatica (segue il browser) |
+| Tipo di sfondo | scacchiera (trasparenza), uniforme | scacchiera |
+| Tema di sfondo | adattivo, chiaro, scuro | adattivo |
+| Che cosa vuol dire 'dimensione reale' | pixel fisici, pixel logici | pixel fisici |
+| Rotella e dito nudi | zoomano tutti e due, il dito scorre, scorre tutto | zoomano tutti e due |
+| La rotella in su ingrandisce | sì/no | sì |
+| L'adattamento ingrandisce le immagini piccole | sì/no | no |
+| Mostra il navigatore | sì/no | sì |
+| Sensibilità di ctrl+rotella e pinch | da 0,002 a 0,06 | 0,015 |
+| Sensibilità del dito | da 0,0004 a 0,006 | 0,0018 |
+| Zoom massimo | da 2 a 200 volte il reale | 40 |
+| DPI di partenza dell'esportazione PNG | da 12 a 2400 | 96 |
+| DPI con cui si copia un SVG | da 12 a 2400 | 96 |
+| Spostamento verticale del testo informativo | da -2 a 2 px | 0 |
+
+Le tre scelte dei tasti `A`, `I` e `N` sono le stesse voci del pannello: cambiarle da un
+lato si vede dall'altro.
+
+**Lo sfondo ha due assi indipendenti**, quindi sei combinazioni:
+
+| | **Adattivo** (segue il browser) | **Chiaro** | **Scuro** |
+| --- | --- | --- | --- |
+| **Scacchiera** | scacchiera chiara o scura | scacchiera chiara | scacchiera scura |
+| **Uniforme** | `#EEE` o `#222` | `#EEE` | `#222` |
+
+> ⚠️ **Perche' il predefinito e' la scacchiera.** E' l'unica che rende **visibile la
+> trasparenza**, che su una pagina-immagine e' un'informazione e non un vezzo: su una tinta
+> unita non si distingue il bianco del fondo da un pixel bianco opaco. I quattro colori non
+> sono inventati: sono le due coppie della scacchiera storica, e le tinte unite prendono il
+> chiaro dell'una e lo scuro dell'altra.
+
+> ⚠️ **Adattivo** legge il tema del browser una volta sola, all'avvio: cambiando tema a
+> pagina aperta serve un ricaricamento.
+
+> ⚠️ **Il verso della rotella è UNA voce sola, non due.** Nel pannello si imposta il verso
+> **predefinito**; il tasto `I` lo inverte al volo. Salvando il verso dal pannello,
+> l'inversione del tasto `I` si azzera: senza, la scelta appena fatta si vedrebbe rovesciata,
+> e l'interruttore direbbe il falso.
+
+**Che cosa resta nel sorgente, e perché.** Passo della rotella (`PASSO_ROTELLA`), tappe tonde
+dello zoom (`TAPPE_ZOOM`), salti minimi, soglie del riconoscimento dei gesti
+(`GESTO_PAUSA_MS`, `TOUCH_AVVIO_MAX`, `TOUCH_MEMORIA_MS`) e tetti di sicurezza del disegno.
+Sono valori **misurati** sui gesti reali, e accanto a ciascuno il commento dice da quale
+misura viene e che cosa è stato scartato: in un campo di un pannello quella motivazione si
+perderebbe, e resterebbe un numero da girare a caso.
+
+### Lingua dell'interfaccia
+
+Il visualizzatore parla **italiano o inglese**. Con la lingua su *automatica* segue il
+browser: italiano se la sua lingua comincia per `it`, inglese in ogni altro caso. Non c'è una
+terza via, e non c'è una lingua parziale: mescolarne due dentro lo stesso pannello sarebbe
+peggio dell'inglese pieno.
 
 ### Tasti
 
