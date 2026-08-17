@@ -10,7 +10,7 @@
 // index.html nascono VUOTI: se questo script non gira il CSS li nasconde con :empty, invece di
 // mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "3.94";
+  const VERSIONE = "3.95";
   // Due punti di resa, uno per formato: la pillola nell'angolo dell'indice su desktop,
   // il numero sopra il logo su mobile. A deciderlo è il CSS, qui si scrivono entrambi.
   for (const id of ["siteVersion", "tocVersion"]) {
@@ -108,7 +108,7 @@
   // T commuta il tema (come su 'I Grandi di Arda'). Tasto NUDO, quindi vale solo dove c'è
   // una tastiera; con un modificatore premuto si lascia passare, o si rubano le scorciatoie
   // del browser.
-  // ⌘/Ctrl + freccia su o giu' portano in cima e in fondo, come i due pulsanti e come su
+  // ⌘/Ctrl + freccia su o giù portano in cima e in fondo, come i due pulsanti e come su
   // 'I Grandi di Arda' (richiesta dell'utente, 2026-08-01). Si fa preventDefault perché
   // l'override sulla scorciatoia del browser è esplicitamente voluto; il salto è ISTANTANEO,
   // sempre come su Arda, dove i pulsanti sono fluidi e la tastiera no.

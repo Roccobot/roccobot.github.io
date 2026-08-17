@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         3.0.2
+// @version         3.0.3
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -894,7 +894,7 @@
     // superficie touch. Deciderlo evento per evento produceva il difetto peggiore
     // possibile, cioè UN SOLO gesto che scorre e zooma a tratti (misurato col Magic
     // Mouse 2 dell'utente, Chrome 150 su macOS, sonda del 2026-07-31: un colpo veloce
-    // in su portava lo zoom dal 100% al 225%, uno in giu' al 35%, mentre i gesti lenti
+    // in su portava lo zoom dal 100% al 225%, uno in giù al 35%, mentre i gesti lenti
     // scorrevano correttamente).
     // ⚠️ Le due firme che sembravano discriminanti NON lo sono, e le misure dicono
     // perché: su 177 eventi del Magic Mouse, i deltaY erano interi 177 volte su 177
@@ -1572,7 +1572,7 @@
     // Tetto pratico: 268 Mpx vorrebbero circa 1 GB di memoria solo per il canvas.
     const MPX_MAX = 80e6;
 
-    // Tondo "scarica" nel semicerchio destro. L'icona è una freccia in giu' su
+    // Tondo "scarica" nel semicerchio destro. L'icona è una freccia in giù su
     // una base, disegnata in SVG (niente glifi: si centrano male, come il "1:1").
     const btnDl = makeEl('div');
     btnDl.id = 'dv-download';
@@ -2274,7 +2274,7 @@
           });
           // ⚠️ GUARDIA: i valori tarati su misure reali (le due sensibilità, lo
           // spostamento del testo) restano dietro una casella, per richiesta
-          // dell'utente: 'e' un valore che voglio esporre ma va toccato con
+          // dell'utente: 'è un valore che voglio esporre ma va toccato con
           // attenzione'. Due polarità, perché due indoli: 'default' spuntato
           // dice 'sto usando il valore di fabbrica', 'edit' spuntato dice
           // 'so quello che faccio'.

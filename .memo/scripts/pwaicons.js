@@ -10,7 +10,7 @@
 //
 // ⚠️ Serve `playwright` installato nella radice (npm i playwright): il browser
 // preinstallato si passa con executablePath, perché `chromium.launch()` nudo
-// cerca una build che non c'e'.
+// cerca una build che non c'è.
 // Genera le icone PWA dal path del FAB. Sorgente unica: il glifo estratto da
 // index.html, così l'icona non è un disegno a parte destinato a divergere.
 // ⚠️ Il glifo si posiziona con <g transform>, NON con un <svg> innestato: un

@@ -655,6 +655,17 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   allegato. Nel file i caratteri che le regole vietano e quelli dell'area privata stanno come
   **riferimenti numerici** (`&#x2014;`, `&#xF8FF;`): l'XML li risolve nel glifo giusto e il file
   tracciato resta pulito, che è la stessa soluzione già usata in pagina con le entità.
+  - ⚠️⚠️ **ECCEZIONE DICHIARATA, da non 'correggere': in questo progetto vivono quattro
+    occorrenze di caratteri che le regole vietano, e sono tutte legittime** (censite il
+    2026-08-17, quando il presidio sugli accenti ha iniziato a guardare i sorgenti). Sono
+    l'accento acuto isolato nelle **tabelle dei caratteri** (`Characters.html` e `index.html`),
+    che ne documentano la scorciatoia, e la sequenza `E'` in due punti: la **cella della
+    tabella** che dice come si digita `È`, e il campo `shortcut` del **plist**, dove `E'` non è
+    un errore ma **il testo che si batte** perché macOS lo sostituisca. Correggerle romperebbe
+    la sostituzione, cioè la funzione stessa del file.
+    - Conseguenza operativa: un commit che tocca **quelle righe** viene bloccato dal presidio
+      sul diff, e ha ragione a bloccare. Là si guarda la riga e si prosegue a mano, invece di
+      allentare il controllo per tutti.
 - **Il plist per macOS si genera dalla tabella**, non si scrive a mano. ⚠️⚠️ **E il formato è
   quello dell'ESPORTAZIONE, non quello del dominio globale**: un array di dizionari con le due
   chiavi `shortcut` e `phrase`. La forma `NSUserDictionaryReplacementItems` con `on`, `replace` e

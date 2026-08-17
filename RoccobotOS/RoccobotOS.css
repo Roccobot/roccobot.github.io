@@ -114,7 +114,7 @@ html[data-theme=dark] .markdown-body table.narrow-cols-odd td:nth-child(odd),
 html[data-theme=dark] .markdown-body table.narrow-cols-even td:nth-child(2n){background-color:#2a2a2a}
 
 /* Glifi dei tasti inizio e fine pagina: centratura ottica chiesta dall'utente (2026-08-01),
-   3 suoi pixel in alto per la freccia in su e 1 per quella in giu'. I suoi pixel sono a
+   3 suoi pixel in alto per la freccia in su e 1 per quella in giù. I suoi pixel sono a
    DPR 2, quindi valgono 1,5 e 0,5 px CSS, cioè .09375rem e .03125rem sul corpo di 16 px.
    Il glifo sta in uno span apposta: il transform NON può stare sul bottone, che lo usa già
    per la dissolvenza laterale (translateX), e il verticale si fa col transform e non col
@@ -247,7 +247,7 @@ html[data-theme=dark] .plist-box{border-color:#3a3a3a}
    comparsa delle immagini, le transizioni dei comandi fissi e lo scorrimento animato. Non si
    azzerano le durate a 0s ma a .01ms, perché una transizione di durata zero in certi browser
    non emette l'evento 'transitionend' e chi lo aspetta resta appeso.
-   Lo scorrimento animato dei tasti su e giu' lo spegne anche il JS, che non passa dal CSS. */
+   Lo scorrimento animato dei tasti su e giù lo spegne anche il JS, che non passa dal CSS. */
 @media (prefers-reduced-motion:reduce){
   *,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
