@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.22.1
+// @version         3.0.0
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -37,21 +37,21 @@
   // ⚠️ Le chiavi delle quattro opzioni che esistevano già (modo del tondo 1:1,
   // adattamento, verso della rotella, navigatore, DPI del PNG) sono rimaste
   // IDENTICHE: chi aggiorna si ritrova le sue scelte, senza migrazione.
-  const OPZ = [
-    { k: 'dv-lang',         t: 'scelta', d: 'auto', v: ['auto', 'it', 'en'] },
-    { k: 'dv-bg-tipo',      t: 'scelta', d: 'scacchi',  v: ['scacchi', 'uniforme'] },
-    { k: 'dv-bg-tema',      t: 'scelta', d: 'adattivo', v: ['adattivo', 'chiaro', 'scuro'] },
-    { k: 'dv-wheel-mode',   t: 'scelta', d: 'auto', v: ['auto', 'scorri', 'mai'] },
-    { k: 'dv-scale-mode',   t: 'scelta', d: 'phys', v: ['phys', 'log'] },
+  const OPTS = [
+    { k: 'dv-lang',         t: 'choice', d: 'auto', v: ['auto', 'it', 'en'] },
+    { k: 'dv-bg-type',      t: 'choice', d: 'checker',  v: ['checker', 'solid'] },
+    { k: 'dv-bg-theme',      t: 'choice', d: 'auto', v: ['auto', 'light', 'dark'] },
+    { k: 'dv-wheel-mode',   t: 'choice', d: 'auto', v: ['auto', 'scroll', 'never'] },
+    { k: 'dv-scale-mode',   t: 'choice', d: 'phys', v: ['phys', 'log'] },
     { k: 'dv-wheel-up-in',  t: 'bool',   d: '1' },
     { k: 'dv-fit-grow',     t: 'bool',   d: '0' },
-    { k: 'dv-minimappa',    t: 'bool',   d: '1' },
-    { k: 'dv-zoom-sens',    t: 'num',    d: '0.015',  min: 0.002,  max: 0.06,  passo: 0.001 },
-    { k: 'dv-touch-sens',   t: 'num',    d: '0.0018', min: 0.0004, max: 0.006, passo: 0.0001 },
-    { k: 'dv-zoom-max',     t: 'num',    d: '40',     min: 2,      max: 200,   passo: 1 },
-    { k: 'dv-copy-dpi',     t: 'num',    d: '96',     min: 12,     max: 2400,  passo: 1 },
-    { k: 'dv-png-dpi',      t: 'num',    d: '96',     min: 12,     max: 2400,  passo: 1 },
-    { k: 'dv-nudge-y',      t: 'num',    d: '0',      min: -2,     max: 2,     passo: 0.5 }
+    { k: 'dv-navigator',    t: 'bool',   d: '1' },
+    { k: 'dv-zoom-sens',    t: 'num',    d: '0.015',  min: 0.002,  max: 0.06,  step: 0.001 },
+    { k: 'dv-touch-sens',   t: 'num',    d: '0.0018', min: 0.0004, max: 0.006, step: 0.0001 },
+    { k: 'dv-zoom-max',     t: 'num',    d: '40',     min: 2,      max: 200,   step: 1 },
+    { k: 'dv-copy-dpi',     t: 'num',    d: '96',     min: 12,     max: 2400,  step: 1 },
+    { k: 'dv-png-dpi',      t: 'num',    d: '96',     min: 12,     max: 2400,  step: 1 },
+    { k: 'dv-nudge-y',      t: 'num',    d: '0',      min: -2,     max: 2,     step: 0.5 }
   ];
   // ⚠️⚠️ `dv-wheel-up-in` la scrivono in DUE: il pannello e il tasto I, che
   // commuta il verso mentre si guarda. È una chiave sola per scelta, dopo un
@@ -61,30 +61,30 @@
   // verso vecchio. Vale come criterio generale: una preferenza, un posto: se una
   // scorciatoia e un pannello cambiano la stessa cosa, devono scrivere la stessa
   // chiave, o uno dei due racconta il passato.
-  function opzDi(k) { for (var i = 0; i < OPZ.length; i++) if (OPZ[i].k === k) return OPZ[i]; return null; }
-  function leggiOpz(k) {
-    const o = opzDi(k);
+  function optByKey(k) { for (var i = 0; i < OPTS.length; i++) if (OPTS[i].k === k) return OPTS[i]; return null; }
+  function readOpt(k) {
+    const o = optByKey(k);
     if (!o) return '';
     var v;
     try { v = GM_getValue(k, null); } catch (e) { v = null; }
     if (v === null || v === undefined || v === '') return o.d;
     v = String(v);
-    if (o.t === 'scelta') return o.v.indexOf(v) >= 0 ? v : o.d;
+    if (o.t === 'choice') return o.v.indexOf(v) >= 0 ? v : o.d;
     if (o.t === 'bool') return v === '1' ? '1' : '0';
     const n = parseFloat(v);
     if (!isFinite(n)) return o.d;
     return String(Math.min(o.max, Math.max(o.min, n)));
   }
-  function numOpz(k) { return parseFloat(leggiOpz(k)); }
-  function boolOpz(k) { return leggiOpz(k) === '1'; }
+  function numOpt(k) { return parseFloat(readOpt(k)); }
+  function boolOpt(k) { return readOpt(k) === '1'; }
 
   // ── Lingua dell'interfaccia ──
   // 'auto' guarda la lingua del browser; italiano se comincia per 'it', inglese
   // in ogni altro caso. Non c'è una terza via: una lingua parziale sarebbe peggio
   // dell'inglese pieno, perché mescolerebbe le due dentro lo stesso pannello.
-  const LINGUA = (function () {
-    const scelta = leggiOpz('dv-lang');
-    if (scelta === 'it' || scelta === 'en') return scelta;
+  const LANG = (function () {
+    const choice = readOpt('dv-lang');
+    if (choice === 'it' || choice === 'en') return choice;
     const n = String(navigator.language || (navigator.languages || [])[0] || 'en').toLowerCase();
     return n.indexOf('it') === 0 ? 'it' : 'en';
   })();
@@ -93,18 +93,18 @@
   // I segnaposto sono {1}, {2}, {3} e si riempiono con gli argomenti di T().
   // ⚠️ PUNTO FINALE, regola per RUOLO e non a orecchio. Lo portano tre famiglie:
   // i tooltip (scalaFis, scalaLog, navTip, dlTip, dpiTip), le descrizioni (svgSub,
-  // oSotto, oNota e tutte le oXxxD del pannello) e i messaggi di ERRORE (errRaster,
+  // oSubtitle, oNote e tutte le oXxxD del pannello) e i messaggi di ERRORE (errRaster,
   // errBig, errExtern, errPng). Non lo portano gli elementi di interfaccia: etichette,
   // pulsanti, voci di menu, avvisi a scomparsa, aria-label e le righe di STATO, che
   // sono frammenti e non frasi ('Niente da ripulire', 'Al massimo 480 DPI per questa
   // immagine'). Il criterio è il ruolo perché si verifica a macchina: 'è una frase
   // compiuta?' andava a sentimento, e infatti tre tooltip su cinque erano rimasti
   // senza punto.
-  const TESTI = {
+  const TEXTS = {
     en: {
-      oOpzioni: 'Options',
-      scalaFis: 'Real = PHYSICAL pixels: 1 image px = 1 screen px (faithful; {1}x on this display). Click for logical pixels.',
-      scalaLog: 'Real = LOGICAL pixels: 1 image px = 1 CSS px (larger on HiDPI screens). Click to go back to physical pixels.',
+      oOptions: 'Options',
+      scalePhys: 'Real = PHYSICAL pixels: 1 image px = 1 screen px (faithful; {1}x on this display). Click for logical pixels.',
+      scaleLog: 'Real = LOGICAL pixels: 1 image px = 1 CSS px (larger on HiDPI screens). Click to go back to physical pixels.',
       navTip: 'Navigator: drag the box to move around (press N to hide it).',
       fitGrowOn: 'Fit, enlarging if needed',
       fitGrowOff: 'Fit without enlarging',
@@ -136,62 +136,62 @@
       errBig: 'The image is too large for the browser.',
       errExtern: 'Cannot convert to PNG: external resources are missing.',
       errPng: 'PNG conversion failed.',
-      oTitolo: 'Decent Image Viewer',
-      oSotto: 'Changes are applied right away: reload an image to check.',
-      oGrpGenerale: 'General',
+      oTitle: 'Decent Image Viewer',
+      oSubtitle: 'Changes are applied in real time: reload an image to check.',
+      oGrpGeneral: 'General',
       oGrpZoom: 'Scrolling, gestures and shortcuts',
-      oGrpEsport: 'Export',
-      oGrpFino: 'Other',
+      oGrpExport: 'Export',
+      oGrpOther: 'Other',
       oReset: 'Restore defaults',
-      oSalvato: 'Saved',
-      oItaliano: 'Italiano',
+      oSaved: 'Saved',
+      oItalian: 'Italiano',
       oEnglish: 'English',
       oLang: 'Interface language',
       oLangD: 'With \'Automatic\', it follows the browser language (Italian or English).',
       oAuto: 'Automatic',
-      oBgTipo: 'Background type',
-      oBgTipoD: 'What you see behind a transparent image.',
-      oScacchi: 'Checkerboard (transparency)',
-      oUniforme: 'Solid color',
-      oBgTema: 'Background theme',
-      oBgTemaD: '\'Automatic\' follows the browser theme.',
-      oAdattivo: 'Automatic',
-      oChiaro: 'Light',
-      oScuro: 'Dark',
-      oReale: 'Rendering on HiDPI screens (e.g. \'Retina\')',
-      oRealeD: 'Also switchable from the round button in the info panel.',
-      oFisici: 'Physical pixels',
-      oLogici: 'Logical pixels (larger on HiDPI)',
-      oGesto: 'Trackpad and mouse',
-      oGestoD: 'Effect of scrolling without CTRL/Cmd held down.',
-      oGestoAuto: 'Zoom',
-      oGestoScorri: 'Hybrid (trackpad: panning / mouse: zoom)',
-      oGestoMai: 'Panning',
-      oRotellaSu: 'Inverted scrolling (default: scroll up to zoom in)',
-      oRotellaSuD: 'You can still flip it on the fly with *I*.',
-      oAdatta: 'Enlarge small images',
-      oAdattaD: 'Key *A* toggles it on the fly.',
-      oNavig: 'Show the navigator',
-      oNavigD: 'Key *N* shows and hides it on the fly.',
-      oSensPinch: 'Gesture zoom sensitivity',
-      oSensPinchD: 'For trackpads and CTRL/Cmd + scroll.',
-      oSensDito: 'Scroll zoom sensitivity',
-      oSensDitoD: 'For two-finger up and down dragging on a trackpad.\nUsually a much lower value than the previous one.',
-      oZoomMax: 'Maximum magnification',
-      oZoomMaxD: 'Multiple of the real size.',
-      oDpiCopia: 'DPI for \'Copy image\' on vector files',
-      oDpiCopiaD: 'Resolution of the image generated on the fly by \'Copy image\' on SVG files.',
+      oBgType: 'Background type',
+      oBgTypeD: 'What you see behind a transparent image.',
+      oChecker: 'Checkerboard (transparency)',
+      oSolid: 'Solid color',
+      oBgTheme: 'Background theme',
+      oBgThemeD: '\'Automatic\' follows the browser theme.',
+      oAutoTheme: 'Automatic',
+      oLight: 'Light',
+      oDark: 'Dark',
+      oHiDpi: 'Rendering on HiDPI screens (e.g. \'Retina\')',
+      oHiDpiD: 'Also switchable from the round button in the info panel.',
+      oPhysical: 'Physical pixels',
+      oLogical: 'Logical pixels (larger on HiDPI)',
+      oPointer: 'Trackpad and mouse',
+      oPointerD: 'Effect of scrolling without CTRL/Cmd held down.',
+      oPointerZoom: 'Zoom',
+      oPointerHybrid: 'Hybrid (trackpad: panning / mouse: zoom)',
+      oPointerPan: 'Panning',
+      oInvertScroll: 'Inverted scrolling (default: scroll up to zoom in)',
+      oInvertScrollD: 'You can still flip it on the fly with *I*.',
+      oGrowSmall: 'Enlarge small images',
+      oGrowSmallD: 'Key *A* toggles it on the fly.',
+      oShowNav: 'Show the navigator',
+      oShowNavD: 'Key *N* shows and hides it on the fly.',
+      oSensGesture: 'Gesture zoom sensitivity',
+      oSensGestureD: 'For trackpads and CTRL/Cmd + scroll.',
+      oSensScroll: 'Scroll zoom sensitivity',
+      oSensScrollD: 'For two-finger up and down dragging on a trackpad.\nUsually a much lower value than the previous one.',
+      oMaxZoom: 'Maximum magnification',
+      oMaxZoomD: 'Multiple of the real size.',
+      oDpiCopy: 'DPI for \'Copy image\' on vector files',
+      oDpiCopyD: 'Resolution of the image generated on the fly by \'Copy image\' on SVG files.',
       oDpiPng: 'Default DPI for exported PNGs',
       oNudge: 'Vertical nudge of the info text',
-      oNudgeD: 'Useful to compensate a misalignment\nat certain custom zoom levels.\n(0 = untouched).',
-      oPredefinito: 'Default',
-      oModifica: 'Edit ⚠️',
-      oNota: 'Only the settings worth changing are here. Wheel step, zoom stops and gesture thresholds stay in the script: they are measured values, and the reason behind each one is written next to it.'
+      oNudgeD: 'Useful to compensate a misalignment\nat certain custom zoom levels. 0 = untouched.',
+      oDefault: 'Default',
+      oEdit: 'Edit ⚠️',
+      oNote: 'Only the settings worth changing are here. Wheel step, zoom stops and gesture thresholds stay in the script: they are measured values, and the reason behind each one is written next to it.'
     },
     it: {
-      oOpzioni: 'Opzioni',
-      scalaFis: 'Reale = pixel FISICI: 1 px dell\'immagine = 1 px dello schermo (fedele; {1}x su questo display). Clic per i pixel logici.',
-      scalaLog: 'Reale = pixel LOGICI: 1 px dell\'immagine = 1 px CSS (più grande sugli schermi HiDPI). Clic per tornare ai pixel fisici.',
+      oOptions: 'Opzioni',
+      scalePhys: 'Reale = pixel FISICI: 1 px dell\'immagine = 1 px dello schermo (fedele; {1}x su questo display). Clic per i pixel logici.',
+      scaleLog: 'Reale = pixel LOGICI: 1 px dell\'immagine = 1 px CSS (più grande sugli schermi HiDPI). Clic per tornare ai pixel fisici.',
       navTip: 'Navigatore: trascina il riquadro per spostarti (N lo nasconde).',
       fitGrowOn: 'Adatta, ingrandendo se serve',
       fitGrowOff: 'Adatta senza ingrandire',
@@ -223,80 +223,80 @@
       errBig: 'L\'immagine è troppo grande per il browser.',
       errExtern: 'Impossibile convertire in PNG: mancano delle risorse esterne.',
       errPng: 'Conversione in PNG non riuscita.',
-      oTitolo: 'Decent Image Viewer',
-      oSotto: 'Modifiche applicate in tempo reale: ricarica un\'immagine per verificare.',
-      oGrpGenerale: 'Generale',
+      oTitle: 'Decent Image Viewer',
+      oSubtitle: 'Le modifiche sono applicate in tempo reale: ricarica un\'immagine per verificare.',
+      oGrpGeneral: 'Generale',
       oGrpZoom: 'Scorrimento, gesti e scorciatoie',
-      oGrpEsport: 'Esportazione',
-      oGrpFino: 'Altro',
+      oGrpExport: 'Esportazione',
+      oGrpOther: 'Altro',
       oReset: 'Ripristina i valori iniziali',
-      oSalvato: 'Salvato',
-      oItaliano: 'Italiano',
+      oSaved: 'Salvato',
+      oItalian: 'Italiano',
       oEnglish: 'English',
       oLang: 'Lingua dell\'interfaccia',
       oLangD: 'Con \'Automatica\' si allinea alla lingua del browser (italiano o inglese).',
       oAuto: 'Automatica',
-      oBgTipo: 'Tipo di sfondo',
-      oBgTipoD: 'Che cosa si vede dietro a un\'immagine trasparente.',
-      oScacchi: 'Scacchiera (trasparenza)',
-      oUniforme: 'Colore uniforme',
-      oBgTema: 'Tema dello sfondo',
-      oBgTemaD: '\'Automatico\' segue il tema del browser.',
-      oAdattivo: 'Automatico',
-      oChiaro: 'Chiaro',
-      oScuro: 'Scuro',
-      oReale: 'Rendering su schermi HiDPI (es. \'Retina\')',
-      oRealeD: 'Si commuta anche dal tondo nel riquadro delle informazioni.',
-      oFisici: 'Pixel fisici',
-      oLogici: 'Pixel logici (più grande su HiDPI)',
-      oGesto: 'Trackpad e mouse',
-      oGestoD: 'Effetto dello scorrimento senza pressione di CTRL/Cmd.',
-      oGestoAuto: 'Zoom',
-      oGestoScorri: 'Ibrido (trackpad: spostamento / mouse: zoom)',
-      oGestoMai: 'Spostamento',
-      oRotellaSu: 'Scorrimento inverso (predefinito: scorri in alto per ingrandire)',
-      oRotellaSuD: 'Puoi comunque cambiare verso al volo premendo *I*.',
-      oAdatta: 'Ingrandisci le immagini piccole',
-      oAdattaD: 'Tasto *A* per attivare/disattivare al volo.',
-      oNavig: 'Mostra il navigatore',
-      oNavigD: 'Tasto *N* per mostrare/nascondere al volo.',
-      oSensPinch: 'Sensibilità dello zoom gestuale',
-      oSensPinchD: 'Per trackpad e CTRL/Cmd + scorrimento.',
-      oSensDito: 'Sensibilità dello zoom a scorrimento',
-      oSensDitoD: 'Per il trascinamento su/giù con due dita sul trackpad.\nValore di solito molto più basso del precedente.',
-      oZoomMax: 'Ingrandimento massimo',
-      oZoomMaxD: 'Multiplo della dimensione reale.',
-      oDpiCopia: 'DPI per \'Copia immagine\' dei file vettoriali',
-      oDpiCopiaD: 'Risoluzione dell\'immagine generata al volo con \'Copia immagine\' su file SVG.',
+      oBgType: 'Tipo di sfondo',
+      oBgTypeD: 'Che cosa si vede dietro a un\'immagine trasparente.',
+      oChecker: 'Scacchiera (trasparenza)',
+      oSolid: 'Colore uniforme',
+      oBgTheme: 'Tema dello sfondo',
+      oBgThemeD: '\'Automatico\' segue il tema del browser.',
+      oAutoTheme: 'Automatico',
+      oLight: 'Chiaro',
+      oDark: 'Scuro',
+      oHiDpi: 'Rendering su schermi HiDPI (es. \'Retina\')',
+      oHiDpiD: 'Si commuta anche dal tondo nel riquadro delle informazioni.',
+      oPhysical: 'Pixel fisici',
+      oLogical: 'Pixel logici (più grande su HiDPI)',
+      oPointer: 'Trackpad e mouse',
+      oPointerD: 'Effetto dello scorrimento senza pressione di CTRL/Cmd.',
+      oPointerZoom: 'Zoom',
+      oPointerHybrid: 'Ibrido (trackpad: spostamento / mouse: zoom)',
+      oPointerPan: 'Spostamento',
+      oInvertScroll: 'Scorrimento inverso (predefinito: scorri in alto per ingrandire)',
+      oInvertScrollD: 'Puoi comunque cambiare verso al volo premendo *I*.',
+      oGrowSmall: 'Ingrandisci le immagini piccole',
+      oGrowSmallD: 'Tasto *A* per attivare/disattivare al volo.',
+      oShowNav: 'Mostra il navigatore',
+      oShowNavD: 'Tasto *N* per mostrare/nascondere al volo.',
+      oSensGesture: 'Sensibilità dello zoom gestuale',
+      oSensGestureD: 'Per trackpad e CTRL/Cmd + scorrimento.',
+      oSensScroll: 'Sensibilità dello zoom a scorrimento',
+      oSensScrollD: 'Per il trascinamento su/giù con due dita sul trackpad.\nValore di solito molto più basso del precedente.',
+      oMaxZoom: 'Ingrandimento massimo',
+      oMaxZoomD: 'Multiplo della dimensione reale.',
+      oDpiCopy: 'DPI per \'Copia immagine\' dei file vettoriali',
+      oDpiCopyD: 'Risoluzione dell\'immagine generata al volo con \'Copia immagine\' su file SVG.',
       oDpiPng: 'DPI predefinito per i PNG esportati',
       oNudge: 'Spostamento verticale del testo informativo',
-      oNudgeD: 'Utile per compensare un disallineamento\na certi livelli personalizzati di zoom.\n(0 = inalterato).',
-      oPredefinito: 'Predefinito',
-      oModifica: 'Modifica ⚠️',
-      oNota: 'Qui ci sono solo le impostazioni che conviene cambiare. Passo della rotella, tappe dello zoom e soglie dei gesti restano nello script: sono valori misurati, e accanto a ciascuno è scritto il perché.'
+      oNudgeD: 'Utile per compensare un disallineamento\na certi livelli personalizzati di zoom. 0 = inalterato.',
+      oDefault: 'Predefinito',
+      oEdit: 'Modifica ⚠️',
+      oNote: 'Qui ci sono solo le impostazioni che conviene cambiare. Passo della rotella, tappe dello zoom e soglie dei gesti restano nello script: sono valori misurati, e accanto a ciascuno è scritto il perché.'
     }
   };
   function T(k) {
-    var s = TESTI[LINGUA][k];
-    if (s == null) s = TESTI.en[k];
+    var s = TEXTS[LANG][k];
+    if (s == null) s = TEXTS.en[k];
     if (s == null) return k;
     for (var i = 1; i < arguments.length; i++) s = s.split('{' + i + '}').join(String(arguments[i]));
     return s;
   }
 
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
-  // I valori qui sotto arrivano dalla tabella OPZ (archivio del gestore); i commenti
-  // dicono da dove viene il DEFAULT, che è il numero scritto in OPZ.
+  // I valori qui sotto arrivano dalla tabella OPTS (archivio del gestore); i commenti
+  // dicono da dove viene il DEFAULT, che è il numero scritto in OPTS.
   // Lo sfondo ha DUE assi indipendenti, e tenerli separati e' la richiesta dell'utente
   // (2026-08-17) dopo che una prima versione li aveva fusi in una voce sola: la fusione
   // costringeva a scegliere fra la trasparenza e il colore, e faceva sparire la
   // scacchiera chiara, che con due assi torna a essere una delle sei combinazioni.
-  const BG_TIPO = leggiOpz('dv-bg-tipo');   // 'scacchi' | 'uniforme'
-  const BG_TEMA = leggiOpz('dv-bg-tema');   // 'adattivo' | 'chiaro' | 'scuro'
-  const ZOOM_MAX_MULT = numOpz('dv-zoom-max');    // zoom massimo = N× la dimensione reale (1:1)
+  const BG_TYPE = readOpt('dv-bg-type');   // 'checker' | 'solid'
+  const BG_THEME = readOpt('dv-bg-theme');   // 'auto' | 'light' | 'dark'
+  const ZOOM_MAX_MULT = numOpt('dv-zoom-max');    // zoom massimo = N× la dimensione reale (1:1)
   const ZOOM_MIN_MULT = 0.02;  // zoom minimo = frazione della dimensione reale (si può rimpicciolire)
-  const LATO_MAX_PX = 32000;   // tetto di sicurezza: oltre, il browser fatica a disegnare l'elemento
-  const ZOOM_SENS = numOpz('dv-zoom-sens');   // sensibilità dello zoom continuo (ctrl+rotella / pinch da trackpad)
+  const SIDE_MAX_PX = 32000;   // tetto di sicurezza: oltre, il browser fatica a disegnare l'elemento
+  const ZOOM_SENS = numOpt('dv-zoom-sens');   // sensibilità dello zoom continuo (ctrl+rotella / pinch da trackpad)
   // Sensibilità dello zoom col DITO (gesto nudo da superficie touch). ⚠️ NON si può riusare
   // ZOOM_SENS: il pinch manda pochi px per gesto, un colpo di dito ne manda centinaia, e con
   // 0,015 un solo colpo misurato sul Magic Mouse dell'utente darebbe uno zoom di 39.000 volte.
@@ -305,7 +305,7 @@
   // arriva in poco più di un colpo. Scartati: 0,0008 (colpo veloce 1,7x, troppo pigro) e
   // 0,0025 (5,8x, incontrollabile). Alzata da 0,0015 a 0,0018 su richiesta dell'utente
   // ('leggermente più sensibile, di poco') dopo la prova sul suo Magic Mouse.
-  const ZOOM_SENS_TOUCH = numOpz('dv-touch-sens');
+  const ZOOM_SENS_TOUCH = numOpt('dv-touch-sens');
   const ZOOM_STEP_CAP = 45;    // px: limite per singolo evento (evita salti con la rotella del mouse)
   const ZOOM_SNAP_STICK = 0.16; // "resistenza" del fermo al 100% (log-scala: ~17% per staccarsi)
   // ── Rotella del mouse e superfici touch ──
@@ -320,23 +320,23 @@
   // la rotella fisica, perché per spostarsi c'è già il trascinamento. La 2.19.1 aveva
   // reso il comportamento COERENTE (scorre sempre) ma non era quello voluto: 'auto' quindi
   // non significa più 'il touch scorre'.
-  const ROTELLA_ZOOM = leggiOpz('dv-wheel-mode');
+  const WHEEL_MODE = readOpt('dv-wheel-mode');
   // Soglie del riconoscimento del gesto (vedi la sezione ROTELLA NUDA più sotto).
-  const GESTO_PAUSA_MS = 400;    // oltre questa pausa comincia un gesto nuovo
+  const GESTURE_PAUSE_MS = 400;    // oltre questa pausa comincia un gesto nuovo
   const TOUCH_AVVIO_MAX = 20;    // px: ampiezza massima con cui può PARTIRE un gesto di dito
   const TOUCH_MEMORIA_MS = 800;  // per quanto una firma touch appena vista copre i gesti seguenti
                                  // (scartato 1500: una rotella priva di firma forte sarebbe
                                  // restata muta per un secondo e mezzo dopo uno scorrimento)
-  const PASSO_ROTELLA = 1.1;   // quanto ingrandisce UN singolo scatto (1.1 = +10%:
+  const WHEEL_STEP = 1.1;   // quanto ingrandisce UN singolo scatto (1.1 = +10%:
                                // 100 → 110 → 121 → 133 → 146 → 161 → 177 → 194 → ...)
   // TAPPE FISSE, in percentuale della dimensione reale: la rotella salta di tappa in
   // tappa invece di moltiplicare, così i valori sono TONDI (120% invece di 121,2%).
   // Costruite per imitare l'andamento dell'1,1x scegliendo, fra i candidati entro il
   // 6% dal bersaglio ideale, il numero più rotondo: sopra il 10% i rapporti stanno
   // tutti fra 1,06 e 1,17 (media 1,10) e servono gli stessi 14 scatti dell'1,1x puro
-  // per andare dal 100% al 400%. Elenco vuoto = passo geometrico PASSO_ROTELLA.
+  // per andare dal 100% al 400%. Elenco vuoto = passo geometrico WHEEL_STEP.
   // Oltre gli estremi dell'elenco riprende comunque il passo geometrico.
-  const TAPPE_ZOOM = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 23, 25,
+  const ZOOM_STOPS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 23, 25,
     27, 30, 35, 40, 45, 50, 55, 60, 70, 75, 80, 90, 100, 110, 125, 140, 150, 165, 180,
     200, 225, 250, 275, 300, 325, 350, 400, 450, 500, 550, 600, 650, 700, 800, 900, 1000,
     1100, 1200, 1300, 1500, 1650, 1800, 2000, 2200, 2500, 2800, 3000, 3300, 3500, 4000];
@@ -344,25 +344,25 @@
   // parte da un valore "fuori scala" (l'adattamento alla finestra, che è un numero
   // qualsiasi): senza, dal 199% un tic porterebbe al 200%, cioè non farebbe nulla di
   // percepibile. Le tappe troppo vicine si saltano.
-  const SALTO_MIN_SU = 0.05;   // ingrandendo: almeno +5%
-  const SALTO_MIN_GIU = 0.02;  // rimpicciolendo: almeno -2%
+  const MIN_JUMP_UP = 0.05;   // ingrandendo: almeno +5%
+  const MIN_JUMP_DOWN = 0.02;  // rimpicciolendo: almeno -2%
   // ── Menu del tasto destro ──
   // Risoluzione della copia negli appunti di un SVG, che di pixel propri non ne ha.
   // Stessa convenzione del pannello di esportazione: px = misura nominale x DPI / 96
   // (1 px CSS = 1/96 di pollice). A 96 DPI, cioè la risoluzione dello schermo, la
   // copia è 1:1 con la dimensione nominale: un SVG 640x360 si copia a 640x360.
-  const DPI_COPIA = numOpz('dv-copy-dpi');
+  const DPI_COPY = numOpt('dv-copy-dpi');
   // Verso predefinito: rotella in su = ingrandisce. Si inverte col tasto I, e la
   // scelta resta memorizzata (globale, come la modalità del tondo 1:1).
-  const ROTELLA_SU_INGRANDISCE = boolOpz('dv-wheel-up-in');
+  const WHEEL_UP_ZOOMS_IN = boolOpt('dv-wheel-up-in');
   // ── Adattamento alla vista ──
   // false = criterio originale: l'immagine si adatta ma non supera MAI la dimensione
   //         reale, quindi una figura più piccola della vista resta a 1:1;
   // true  = si adatta anche INGRANDENDO, cioè una figura piccola viene portata a
   //         riempire la vista.
   // Si commuta al volo col tasto A e la scelta resta memorizzata.
-  const ADATTA_INGRANDENDO = boolOpz('dv-fit-grow');
-  const OVERLAY_NUDGE_Y = numOpz('dv-nudge-y');   // px: micro-compensazione verticale opzionale del testo dell'overlay.
+  const FIT_GROWS = boolOpt('dv-fit-grow');
+  const OVERLAY_NUDGE_Y = numOpt('dv-nudge-y');   // px: micro-compensazione verticale opzionale del testo dell'overlay.
                                // Dopo text-box-trim resta solo un residuo SUB-PIXEL di arrotondamento
                                // del rendering, che dipende dallo ZOOM DI PAGINA del browser (es. a
                                // 110% il pelo è sopra, al 100% sotto): NON è correggibile in modo
@@ -375,19 +375,19 @@
   // gestore appartiene alla scheda in cui si sta, quindi registrandolo dopo la
   // guardia comparirebbe solo mentre si guarda un'immagine, cioè quasi mai
   // quando serve. Non tocca il DOM e non osserva nulla: registra una voce e basta.
-  const URL_OPZIONI = 'https://roccobot.github.io/userscripts/DIVOptions.html';
-  // ⚠️ L'UNICA stringa visibile fuori dalla tabella TESTI, e non e' una dimenticanza:
+  const URL_OPTIONS = 'https://roccobot.github.io/userscripts/DIVOptions.html';
+  // ⚠️ L'UNICA stringa visibile fuori dalla tabella TEXTS, e non e' una dimenticanza:
   // resta in inglese fisso per scelta dell'utente (2026-08-17), che segue la consuetudine
   // degli userscript multilingua di tenere in inglese la voce di configurazione. Ha anche
   // una logica sua: quel menu appartiene al GESTORE, non allo script, e sta in mezzo alle
   // voci delle altre estensioni. Il pannello che apre resta invece bilingue, titolo della
   // scheda compreso, perche' quello e' interfaccia dello script.
-  const VOCE_MENU = 'Options';
+  const MENU_ENTRY = 'Options';
   try {
     if (typeof GM_registerMenuCommand === 'function') {
-      GM_registerMenuCommand(VOCE_MENU, function () {
-        try { GM_openInTab(URL_OPZIONI, { active: true }); }
-        catch (e) { window.open(URL_OPZIONI, '_blank'); }
+      GM_registerMenuCommand(MENU_ENTRY, function () {
+        try { GM_openInTab(URL_OPTIONS, { active: true }); }
+        catch (e) { window.open(URL_OPTIONS, '_blank'); }
       });
     }
   } catch (e) { /* gestore senza menu: si continua senza */ }
@@ -403,9 +403,9 @@
   // avrebbe dove attaccarsi. Misurato: iniettando a document-start la pagina
   // restava all'avviso 'script non installato', cioè il difetto peggiore, perché
   // sembra colpa dell'installazione.
-  if (location.href.split('#')[0].split('?')[0] === URL_OPZIONI) {
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', disegnaOpzioni);
-    else disegnaOpzioni();
+  if (location.href.split('#')[0].split('?')[0] === URL_OPTIONS) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', drawOptions);
+    else drawOptions();
     return;
   }
 
@@ -428,11 +428,11 @@
   //  2. GM_addStyle crea il suo <style> allo stesso modo, quindi lì non
   //     applicherebbe nulla: il foglio va inserito a mano, con namespace.
   const XHTML = 'http://www.w3.org/1999/xhtml';
-  const eSvg = document.contentType === 'image/svg+xml';
-  function creaEl(tag) { return eSvg ? document.createElementNS(XHTML, tag) : document.createElement(tag); }
-  function aggiungiCss(css) {
-    if (!eSvg) { GM_addStyle(css); return; }
-    const st = creaEl('style');
+  const isSvg = document.contentType === 'image/svg+xml';
+  function makeEl(tag) { return isSvg ? document.createElementNS(XHTML, tag) : document.createElement(tag); }
+  function addCss(css) {
+    if (!isSvg) { GM_addStyle(css); return; }
+    const st = makeEl('style');
     st.textContent = css;
     (document.head || document.documentElement).appendChild(st);
   }
@@ -441,7 +441,7 @@
   // cerca in ordine di attendibilita'. Il browser NON aiuta (un <img> con un
   // SVG privo di misure riporta 300x150, o 90x150 applicando il rapporto del
   // viewBox all'altezza di default: numeri inventati, misurati).
-  function svgUnitaPx(v) {
+  function svgUnitToPx(v) {
     const m = /^\s*([+-]?[\d.]+)\s*(px|pt|pc|cm|mm|in|q|em|ex|rem|%)?\s*$/i.exec(v || '');
     if (!m) return 0;
     const u = (m[2] || 'px').toLowerCase();
@@ -450,8 +450,8 @@
     const k = { px: 1, pt: 96 / 72, pc: 16, in: 96, cm: 96 / 2.54, mm: 96 / 25.4, q: 96 / 25.4 / 4 }[u] || 1;
     return parseFloat(m[1]) * k;
   }
-  function misuraSvg(svg) {
-    let w = svgUnitaPx(svg.getAttribute('width')), h = svgUnitaPx(svg.getAttribute('height'));
+  function measureSvg(svg) {
+    let w = svgUnitToPx(svg.getAttribute('width')), h = svgUnitToPx(svg.getAttribute('height'));
     const vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
     const vbOk = vb.length === 4 && vb[2] > 0 && vb[3] > 0;
     // 1) attributi width/height in unità assolute (il caso normale)
@@ -477,36 +477,36 @@
   // vettoriale: ridimensionandolo si ridisegna nitido a qualunque ingrandimento).
   // Restituisce l'elemento da visualizzare, oppure null se qualcosa va storto
   // (in quel caso lo script si ferma e la pagina resta quella nativa).
-  let svgMedia = null, svgNat = null, svgAttrOrig = null;
-  if (eSvg) {
+  let svgEl = null, svgNat = null, svgAttrOrig = null;
+  if (isSvg) {
     try {
-      const radice = document.documentElement;
+      const root = document.documentElement;
       // Se la radice non è davvero un <svg> il file non è stato analizzato come
       // tale (tipico: errore di sintassi XML, il browser mostra la sua pagina di
       // errore). Meglio non toccare nulla.
-      if (!radice || radice.namespaceURI !== 'http://www.w3.org/2000/svg') return;
-      svgNat = misuraSvg(radice);
+      if (!root || root.namespaceURI !== 'http://www.w3.org/2000/svg') return;
+      svgNat = measureSvg(root);
       // Le misure dichiarate nel file si annotano PRIMA di toccarle (sono tre
       // stringhe, nessun costo): servono al pannello di scaricamento per
       // restituire un SVG ripulito che differisca dall'originale SOLO per le
       // rimozioni, senza aggiungere misure che il file non aveva.
       svgAttrOrig = {
-        w: radice.getAttribute('width'),
-        h: radice.getAttribute('height'),
-        vb: radice.getAttribute('viewBox')
+        w: root.getAttribute('width'),
+        h: root.getAttribute('height'),
+        vb: root.getAttribute('viewBox')
       };
       // Senza viewBox il disegno NON si scala: ridimensionare il <svg> allargherebbe
       // solo l'area visibile. Gliene diamo uno pari alla dimensione reale trovata.
-      if (!/^\s*[-\d.]+[\s,]+[-\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*$/.test(radice.getAttribute('viewBox') || '')) {
-        radice.setAttribute('viewBox', '0 0 ' + svgNat.w + ' ' + svgNat.h);
+      if (!/^\s*[-\d.]+[\s,]+[-\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*$/.test(root.getAttribute('viewBox') || '')) {
+        root.setAttribute('viewBox', '0 0 ' + svgNat.w + ' ' + svgNat.h);
       }
-      radice.removeAttribute('width');
-      radice.removeAttribute('height');
-      const html = creaEl('html'), head = creaEl('head'), body = creaEl('body');
+      root.removeAttribute('width');
+      root.removeAttribute('height');
+      const html = makeEl('html'), head = makeEl('head'), body = makeEl('body');
       html.appendChild(head); html.appendChild(body);
-      document.replaceChild(html, radice);
-      body.appendChild(radice);
-      svgMedia = radice;
+      document.replaceChild(html, root);
+      body.appendChild(root);
+      svgEl = root;
     } catch (e) {
       return;   // trasformazione non riuscita: meglio la resa nativa che una pagina rotta
     }
@@ -519,23 +519,23 @@
   // una tinta unita non si distingue il bianco del fondo da un pixel bianco opaco.
   // I quattro colori non sono inventati: sono le due coppie della scacchiera
   // storica, e le tinte unite prendono il chiaro dell'una e lo scuro dell'altra.
-  const SCACCHI = { chiaro: ['#DDD', '#EEE'], scuro: ['#333', '#222'] };
-  const UNIFORME = { chiaro: '#EEE', scuro: '#222' };
-  // ⚠️ 'adattivo' si legge UNA volta, all'avvio: cambiando il tema del browser a pagina
+  const CHECKER = { light: ['#DDD', '#EEE'], dark: ['#333', '#222'] };
+  const SOLID = { light: '#EEE', dark: '#222' };
+  // ⚠️ 'auto' si legge UNA volta, all'avvio: cambiando il tema del browser a pagina
   // aperta serve un ricaricamento. Un ascoltatore su matchMedia costerebbe poco, ma
   // riscriverebbe un foglio gia' iniettato per un caso che si risolve con un tasto, e il
   // codice in piu' vivrebbe su ogni pagina-immagine.
-  const BG_CHIARO = (BG_TEMA === 'chiaro') || (BG_TEMA === 'adattivo' &&
+  const BG_IS_LIGHT = (BG_THEME === 'light') || (BG_THEME === 'auto' &&
     !(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
-  const TINTA = BG_CHIARO ? 'chiaro' : 'scuro';
+  const TINT = BG_IS_LIGHT ? 'light' : 'dark';
   // ⚠️ Serve DUE volte, col passo della scacchiera diverso: dietro all'immagine (20 px)
   // e dentro il riquadro del navigatore (10 px), che e' la stessa immagine in piccolo.
   // Scritta una volta sola perche' due copie divergerebbero, e si vedrebbe subito:
   // il navigatore mostrerebbe una trasparenza che la pagina non ha piu'.
-  function cssSfondo(passo) {
-    if (BG_TIPO === 'scacchi') {
-      const g = SCACCHI[TINTA], mezzo = passo / 2;
-      return 'background-position:0 0,' + mezzo + 'px ' + mezzo + 'px;background-size:' + passo + 'px ' + passo + 'px;' +
+  function cssBackground(step) {
+    if (BG_TYPE === 'checker') {
+      const g = CHECKER[TINT], mezzo = step / 2;
+      return 'background-position:0 0,' + mezzo + 'px ' + mezzo + 'px;background-size:' + step + 'px ' + step + 'px;' +
         'background-image:linear-gradient(45deg,' + g[0] + ' 25%,transparent 25%,transparent 75%,' + g[0] + ' 75%,' + g[0] + ' 100%),' +
         'linear-gradient(45deg,' + g[0] + ' 25%,' + g[1] + ' 25%,' + g[1] + ' 75%,' + g[0] + ' 75%,' + g[0] + ' 100%)';
     }
@@ -546,12 +546,12 @@
     // piatta invece spariva del tutto, e la pagina restava del colore del browser.
     // Misurato in laboratorio: senza queste due dichiarazioni il body resta a
     // rgb(14,14,14) sia in chiaro sia in scuro.
-    return 'background-image:none!important;background-color:' + UNIFORME[TINTA] + '!important';
+    return 'background-image:none!important;background-color:' + SOLID[TINT] + '!important';
   }
 
-  aggiungiCss(
+  addCss(
     'html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden}' +
-    'body{' + (BG_TIPO === 'scacchi' ? 'background-attachment:fixed;' : '') + cssSfondo(20) + '}' +
+    'body{' + (BG_TYPE === 'checker' ? 'background-attachment:fixed;' : '') + cssBackground(20) + '}' +
     // contenitore scrollabile che riempie la vista; touch-action:none così i gesti touch li gestiamo noi
     '#dv-wrap{position:fixed;inset:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;' +
       'touch-action:none;-ms-touch-action:none;overscroll-behavior:contain}' +
@@ -595,14 +595,14 @@
     '.ii-ext,.ii-zoom{font-weight:700}' +
     // Trascinamento: la manina compare SOLO quando c'è davvero da spostarsi
     '#dv-wrap.dv-pan>img,#dv-wrap.dv-pan>svg{cursor:grab}' +
-    '#dv-wrap.dv-trascina>img,#dv-wrap.dv-trascina>svg{cursor:grabbing}' +
+    '#dv-wrap.dv-dragging>img,#dv-wrap.dv-dragging>svg{cursor:grabbing}' +
     // Navigatore in alto a destra: vista d'insieme + riquadro della parte a schermo
     '#dv-mini{position:fixed;top:1rem;right:1rem;z-index:11;display:none;padding:4px;border-radius:8px;' +
       'background:#000000b8;box-shadow:0 2px 10px rgba(0,0,0,.45);cursor:pointer;' +
       'user-select:none;-webkit-user-select:none;touch-action:none}' +
-    '#dv-mini .dv-mini-box{position:relative;overflow:hidden;border-radius:4px;' + cssSfondo(10) + '}' +
+    '#dv-mini .dv-mini-box{position:relative;overflow:hidden;border-radius:4px;' + cssBackground(10) + '}' +
     '#dv-mini img,#dv-mini svg{display:block;width:100%;height:100%;pointer-events:none}' +
-    '#dv-mini .dv-mini-rett{position:absolute;box-sizing:border-box;border:2px solid #FF4E4E;' +
+    '#dv-mini .dv-mini-frame{position:absolute;box-sizing:border-box;border:2px solid #FF4E4E;' +
       'pointer-events:none;border-radius:2px}' +
     // Menu del tasto destro
     '#dv-menu{position:fixed;z-index:13;min-width:210px;padding:5px;border-radius:10px;' +
@@ -613,7 +613,7 @@
     '#dv-menu .dv-mv{display:flex;align-items:center;justify-content:space-between;gap:1.2rem;' +
       'padding:7px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}' +
     '#dv-menu .dv-mv:hover,#dv-menu .dv-mv.dv-sel{background:rgba(255,255,255,.16)}' +
-    '#dv-menu .dv-mv-tasto{opacity:.45;font-size:12px}' +
+    '#dv-menu .dv-mv-key{opacity:.45;font-size:12px}' +
     '#dv-menu .dv-msep{height:1px;margin:5px 8px;background:rgba(255,255,255,.14)}' +
     // messaggio momentaneo in basso (conferma del verso della rotella)
     '#dv-toast{position:fixed;left:50%;bottom:2rem;transform:translateX(-50%);z-index:12;pointer-events:none;' +
@@ -641,11 +641,11 @@
   function boxEl() {
     let b = document.getElementById('dv-info');
     if (!b) {
-      b = creaEl('div');
+      b = makeEl('div');
       b.id = 'dv-info';
       b.setAttribute('class', 'image-info');
       [['b', 'ii-ext'], ['span', 'ii-size'], ['span', 'ii-dim'], ['b', 'ii-zoom']].forEach(function (v) {
-        const e = creaEl(v[0]);
+        const e = makeEl(v[0]);
         e.setAttribute('class', v[1]);
         b.appendChild(e);
       });
@@ -660,7 +660,7 @@
     sz.textContent = '';
     if (imageInfo.size) {
       sz.appendChild(document.createTextNode(imageInfo.size.n + ' '));
-      const u = creaEl('strong');
+      const u = makeEl('strong');
       u.textContent = imageInfo.size.u;
       sz.appendChild(u);
       sz.style.display = '';
@@ -678,15 +678,15 @@
   // Lavora indifferentemente su <img> (raster) o <svg> (vettoriale): cambia
   // solo da dove arriva la dimensione reale e il fatto che il vettoriale non
   // va mai reso "a pixel netti".
-  function avvio() {
-    const img = svgMedia || document.querySelector('img');
+  function start() {
+    const img = svgEl || document.querySelector('img');
     if (!img) return;
-    if (!svgMedia && !img.naturalWidth) { img.addEventListener('load', avvio, { once: true }); return; }
+    if (!svgEl && !img.naturalWidth) { img.addEventListener('load', start, { once: true }); return; }
 
     // Avvolgo l'immagine in un contenitore scrollabile sotto il mio controllo.
     let wrap = document.getElementById('dv-wrap');
     if (!wrap) {
-      wrap = creaEl('div');
+      wrap = makeEl('div');
       wrap.id = 'dv-wrap';
       img.parentNode.insertBefore(wrap, img);
       wrap.appendChild(img);
@@ -700,8 +700,8 @@
     // 'log' = 1 px immagine → 1 px LOGICO (CSS), come il viewer nativo (su HiDPI appare più grande).
     // Il tasto tondo le commuta; realScale/logR sono ricalcolati al cambio (quindi let, non const).
     // Preferenza fisico/logico MEMORIZZATA (globale, cross-dominio, via storage Tampermonkey).
-    function leggiScaleMode() { try { return GM_getValue('dv-scale-mode', 'phys') === 'log' ? 'log' : 'phys'; } catch (e) { return 'phys'; } }
-    let scaleMode = leggiScaleMode();
+    function readScaleMode() { try { return GM_getValue('dv-scale-mode', 'phys') === 'log' ? 'log' : 'phys'; } catch (e) { return 'phys'; } }
+    let scaleMode = readScaleMode();
     let realScale = scaleMode === 'phys' ? 1 / dpr : 1;
     let logR = Math.log(realScale);   // 100% = dimensione reale, in scala logaritmica
     function fitScale() { return Math.min(wrap.clientWidth / natW, wrap.clientHeight / natH); }
@@ -718,19 +718,19 @@
     // quella dei riadattamenti automatici (apertura, ridimensionamento della finestra).
     // Il tetto di maxScale() vale in ogni caso: su un'icona minuscola l'adattamento
     // chiederebbe altrimenti ingrandimenti assurdi.
-    let ingrandisciPerAdattare = false;
-    try { ingrandisciPerAdattare = GM_getValue('dv-fit-grow', ADATTA_INGRANDENDO ? '1' : '0') === '1'; } catch (e) {}
-    function fitSenzaCrescere() { return Math.min(fitScale(), realScale); }
+    let growToFit = false;
+    try { growToFit = GM_getValue('dv-fit-grow', FIT_GROWS ? '1' : '0') === '1'; } catch (e) {}
+    function fitWithoutGrowing() { return Math.min(fitScale(), realScale); }
     function fitDisplay() {
       const f = fitScale();
-      return ingrandisciPerAdattare ? Math.min(f, maxScale()) : Math.min(f, realScale);
+      return growToFit ? Math.min(f, maxScale()) : Math.min(f, realScale);
     }
     // Limite basso: si può rimpicciolire sotto l'adattato (fino a ZOOM_MIN_MULT del reale),
     // senza però mai alzare l'adattato se l'immagine è enorme (fit già sotto quel minimo).
     function minScale() { return Math.min(realScale * ZOOM_MIN_MULT, fitDisplay()); }
     // tetto: N volte il reale, ma senza mai chiedere al browser un elemento assurdo
     function maxScale() {
-      return Math.min(realScale * ZOOM_MAX_MULT, LATO_MAX_PX / Math.max(natW, natH));
+      return Math.min(realScale * ZOOM_MAX_MULT, SIDE_MAX_PX / Math.max(natW, natH));
     }
     function clamp(s) { return Math.max(minScale(), Math.min(s, maxScale())); }
 
@@ -744,8 +744,8 @@
     // ingrandimento o la vista, e non si assume mai vero solo perché si è adattato.
     // Senza, dopo un riadattamento automatico a 1:1 (finestra allargata) il clic
     // credeva di essere già sull'adattato e non riusciva a chiedere il riempimento.
-    function scalaEAdattata() { return Math.abs(scale - fitDisplay()) < 0.0005; }
-    let isFit = scalaEAdattata();
+    function scaleIsFitted() { return Math.abs(scale - fitDisplay()) < 0.0005; }
+    let isFit = scaleIsFitted();
     let zoomL = Math.log(scale);   // posizione di zoom "desiderata" (log), separata dal fermo al 100%
 
     function apply() {
@@ -759,26 +759,26 @@
       // Sul vettoriale MAI: non ci sono pixel da mostrare, l'SVG si ridisegna nitido a ogni misura
       // (e 'pixelated' sgranerebbe le eventuali immagini raster incorporate).
       img.style.setProperty('image-rendering',
-        (!svgMedia && scaleMode === 'phys' && scale >= realScale - 1e-6) ? 'pixelated' : 'auto', 'important');
-      aggiornaZoom();
-      aggiornaNavigatore();
+        (!svgEl && scaleMode === 'phys' && scale >= realScale - 1e-6) ? 'pixelated' : 'auto', 'important');
+      updateZoom();
+      updateNavigator();
     }
 
     // Livello di zoom, SEMPRE visibile, nella stessa riga del riquadro info.
     // 100% = dimensione reale (1:1 coi pixel fisici).
-    function aggiornaZoom() {
-      const perc = Math.round(scale / realScale * 100) + '%';
+    function updateZoom() {
+      const pct = Math.round(scale / realScale * 100) + '%';
       const z = boxEl().querySelector('.ii-zoom');
-      if (z && z.textContent !== perc) z.textContent = perc;
+      if (z && z.textContent !== pct) z.textContent = pct;
     }
 
     // Applica una scala già decisa, mantenendo fermo il punto (fx,fy) sotto il cursore/pinch.
-    function applicaScala(nuova, fx, fy) {
+    function applyScale(nextScale, fx, fy) {
       const r = img.getBoundingClientRect();
       const px = r.width ? (fx - r.left) / r.width : 0.5;
       const py = r.height ? (fy - r.top) / r.height : 0.5;
-      scale = nuova;
-      isFit = scalaEAdattata();
+      scale = nextScale;
+      isFit = scaleIsFitted();
       apply();
       const r2 = img.getBoundingClientRect();
       wrap.scrollLeft += (r2.left + px * r2.width) - fx;
@@ -786,19 +786,19 @@
     }
     // Zoom "diretto" (clic): niente fermo, sincronizza la posizione virtuale.
     function zoomTo(newScale, fx, fy) {
-      applicaScala(clamp(newScale), fx, fy);
+      applyScale(clamp(newScale), fx, fy);
       zoomL = Math.log(scale);
     }
     // Fermo (detent) al 100%: attorno a logR c'è una "zona morta" di semiampiezza
     // ZOOM_SNAP_STICK (log-scala). Dentro la zona la scala resta esattamente reale
     // (100%); per uscirne bisogna spingere oltre. Fuori, il moto riprende con continuità.
-    function scalaConDetent(Ldes) {
+    function scaleWithDetent(Ldes) {
       const d = Ldes - logR;
       if (Math.abs(d) <= ZOOM_SNAP_STICK) return realScale;
       return Math.exp(logR + (d - (d > 0 ? ZOOM_SNAP_STICK : -ZOOM_SNAP_STICK)));
     }
     // Zoom "a gesto" (ctrl+rotella / pinch): applica il fermo al 100%.
-    function zoomGesto(Ldes, fx, fy) {
+    function zoomGesture(Ldes, fx, fy) {
       // se un singolo passo scavalcherebbe TUTTA la zona morta, cattura al centro (100%)
       const prev = zoomL;
       if ((prev <= logR - ZOOM_SNAP_STICK && Ldes >= logR + ZOOM_SNAP_STICK) ||
@@ -812,48 +812,48 @@
       // senza sommarlo, ai limiti la scala si fermerebbe un fermo prima del vero limite.
       zoomL = Math.min(Math.max(Ldes, Math.log(minScale()) - ZOOM_SNAP_STICK),
                        Math.log(maxScale()) + ZOOM_SNAP_STICK);
-      applicaScala(clamp(scalaConDetent(zoomL)), fx, fy);
+      applyScale(clamp(scaleWithDetent(zoomL)), fx, fy);
     }
     // vaiFit(chiesto): con `chiesto === false` è un riadattamento AUTOMATICO (finestra
     // ridimensionata, cambio di definizione del "reale") e lì non si ingrandisce da sé,
     // perché l'ingrandimento per adattare lo chiede il clic. Tutti gli altri richiami
     // (clic, voce di menu, tasto A) nascono da un gesto esplicito e possono ingrandire.
-    function vaiFit(chiesto) {
-      scale = (chiesto === false) ? fitSenzaCrescere() : fitDisplay();
-      isFit = scalaEAdattata();   // con `false` può NON coincidere: vedi scalaEAdattata
+    function goFit(asked) {
+      scale = (asked === false) ? fitWithoutGrowing() : fitDisplay();
+      isFit = scaleIsFitted();   // con `false` può NON coincidere: vedi scalaEAdattata
       apply(); zoomL = Math.log(scale);
     }
     // L'adattamento in corso è un INGRANDIMENTO? Ci si arriva solo chiedendolo, quindi
     // è la spia che dice se un riadattamento automatico deve conservarlo.
-    function fitEIngrandito() { return isFit && scale > realScale + 0.0005; }
+    function fitIsEnlarged() { return isFit && scale > realScale + 0.0005; }
 
     // ── Tasto tondo (dentro la pill, a sinistra): commuta il "100%/reale" fisico <-> logico ──
     let btnScale = null;
-    function aggiornaScaleBtn() {
+    function updateScaleBtn() {
       if (!btnScale) return;
       // Il tondo NON cambia aspetto in base allo stato (nessuno stato "premuto"): solo il tooltip.
-      btnScale.title = scaleMode === 'phys' ? T('scalaFis', dpr) : T('scalaLog');
+      btnScale.title = scaleMode === 'phys' ? T('scalePhys', dpr) : T('scaleLog');
     }
     function toggleScaleMode() {
-      const eraIngrandito = fitEIngrandito();   // da leggere PRIMA che "reale" cambi
+      const wasEnlarged = fitIsEnlarged();   // da leggere PRIMA che "reale" cambi
       scaleMode = (scaleMode === 'phys') ? 'log' : 'phys';
       realScale = scaleMode === 'phys' ? 1 / dpr : 1;
       logR = Math.log(realScale);
       try { GM_setValue('dv-scale-mode', scaleMode); } catch (e) { /* storage non disponibile: pazienza */ }
-      vaiFit(eraIngrandito);  // ri-adatta alla nuova definizione di "reale", senza
+      goFit(wasEnlarged);  // ri-adatta alla nuova definizione di "reale", senza
                               // inventare un ingrandimento che non era stato chiesto
-      aggiornaScaleBtn();
+      updateScaleBtn();
     }
 
     apply();
 
     // Inserito come PRIMO figlio della pill → sta a SINISTRA di tutto il resto.
-    btnScale = creaEl('div');
+    btnScale = makeEl('div');
     btnScale.id = 'dv-scalemode';
     btnScale.setAttribute('role', 'button');
-    const glifo = creaEl('span');
-    glifo.setAttribute('class', 'dv-sm-ratio');
-    btnScale.appendChild(glifo);
+    const glyph = makeEl('span');
+    glyph.setAttribute('class', 'dv-sm-ratio');
+    btnScale.appendChild(glyph);
     const pill = boxEl();
     pill.insertBefore(btnScale, pill.firstChild);
     btnScale.setAttribute('tabindex', '0');   // altrimenti il tondo non si raggiunge col Tab
@@ -861,26 +861,26 @@
     btnScale.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleScaleMode(); }
     });
-    aggiornaScaleBtn();
+    updateScaleBtn();
 
     // ── Pannello "Scarica" (solo SVG): vedi in fondo, tutto a richiesta ────
-    var pannelloAperto = false;   // letto dal gestore del clic qui sotto
-    var chiudiPannello = function () {};
+    var dlOpen = false;   // letto dal gestore del clic qui sotto
+    var closeDlPanel = function () {};
 
     // ── CLIC (desktop): alterna adattato ↔ reale ──────────────────────────
-    let daGesture = false;
+    let fromGesture = false;
     wrap.addEventListener('click', function (e) {
       if (e.button !== 0 || e.ctrlKey || e.metaKey) return;
-      if (daGesture) { daGesture = false; return; }  // era la coda di un pinch: ignora
+      if (fromGesture) { fromGesture = false; return; }  // era la coda di un pinch: ignora
       // era la coda di un TRASCINAMENTO: il dito/mouse si è mosso, quindi non
       // è un clic e non deve alternare adattato/reale
       if (hoTrascinato) { hoTrascinato = false; e.preventDefault(); e.stopImmediatePropagation(); return; }
       // col pannello aperto il clic "fuori" lo chiude e basta: non deve anche
       // far scattare l'alternanza adattato/reale sotto di esso
-      if (pannelloAperto) { e.preventDefault(); e.stopImmediatePropagation(); chiudiPannello(false); return; }
+      if (dlOpen) { e.preventDefault(); e.stopImmediatePropagation(); closeDlPanel(false); return; }
       e.preventDefault(); e.stopImmediatePropagation();
       if (isFit) zoomTo(realScale, e.clientX, e.clientY);  // fit → reale (100%), centrato sul clic
-      else vaiFit();                                        // qualsiasi altro stato → adattato
+      else goFit();                                        // qualsiasi altro stato → adattato
     }, true);
     // sopprime lo zoom-click nativo dell'image viewer (dove intercettabile)
     wrap.addEventListener('dblclick', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
@@ -915,27 +915,27 @@
     // contavano tre passi per un tic solo (100% che diventava 274%). Percio'
     // l'unità si IMPARA: la più piccola ampiezza vista su questo mouse è uno
     // scatto, e gli eventi uniti dal browser ne sono multipli interi.
-    let unitaScatto = 0;
-    function ampiezza(e) {
+    let stepUnit = 0;
+    function amplitude(e) {
       const wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
       if (wd) return wd;
       if (e.deltaMode === 1) return Math.abs(e.deltaY) * 40;    // righe → equivalente
       if (e.deltaMode === 2) return Math.abs(e.deltaY) * 400;   // pagine → equivalente
       return Math.abs(e.deltaY) * 1.2;                          // pixel → equivalente
     }
-    function scattiGrezzi(e) {
-      const a = ampiezza(e);
+    function rawSteps(e) {
+      const a = amplitude(e);
       if (!a) return 1;
       // solo le ampiezze plausibili tarano l'unità: una coda di inerzia non deve
       // rimpicciolirla per sempre
-      if (a >= 40 && (!unitaScatto || a < unitaScatto)) unitaScatto = a;
-      const n = a / (unitaScatto || 120);
+      if (a >= 40 && (!stepUnit || a < stepUnit)) stepUnit = a;
+      const n = a / (stepUnit || 120);
       return Math.min(n, 8);                                    // tetto di sicurezza
     }
     // Firma FORTE di rotella: unità a righe o a pagine, oppure il multiplo esatto di 120
     // di wheelDeltaY. Vale come prova, quindi scavalca la memoria touch: una superficie
     // touch non la produce (0 casi su 177 eventi misurati col Magic Mouse).
-    function firmaRotellaForte(e) {
+    function strongWheelSignature(e) {
       if (e.deltaMode !== 0) return true;          // righe o pagine: è una rotella
       const wd = (typeof e.wheelDeltaY === 'number') ? Math.abs(e.wheelDeltaY) : 0;
       return !!(wd && wd % 120 === 0 && e.deltaX === 0);
@@ -944,49 +944,49 @@
     // scatto e nessuna componente orizzontale. ⚠️ È esattamente la regola che, applicata a
     // OGNI evento, produceva il difetto del Magic Mouse: percio' qui la si interroga solo
     // sul primo evento di un gesto, e solo quando nessuna firma touch è recente.
-    function firmaRotellaDebole(e) {
+    function weakWheelSignature(e) {
       return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
     }
     // Un gesto di dito PARTE piano: è questa la firma che regge (vedi il blocco sopra).
-    function firmaTouch(e) {
+    function touchSignature(e) {
       return e.deltaMode === 0 && Math.abs(e.deltaY) <= TOUCH_AVVIO_MAX;
     }
     // timeStamp è monotono e più preciso di Date.now(); il fallback serve solo per gli
     // eventi sintetici di certi gestori, che a volte non lo valorizzano.
-    function quandoEv(e) {
+    function evTime(e) {
       return (typeof e.timeStamp === 'number' && e.timeStamp > 0) ? e.timeStamp : Date.now();
     }
-    let gestoUltimo = -1e9, gestoDaRotella = null, touchVistoA = -1e9;
+    let lastGesture = -1e9, gestoDaRotella = null, touchVistoA = -1e9;
     // Ritorna true se il gesto in corso viene da una ROTELLA, false se da una superficie
     // touch. Che cosa farne (scatti, zoom continuo, scorrimento) lo decide comandoGesto.
-    function decidiGesto(e) {
-      const ora = quandoEv(e);
-      const nuovo = (ora - gestoUltimo) > GESTO_PAUSA_MS;
-      gestoUltimo = ora;
+    function decideGesture(e) {
+      const nowMs = evTime(e);
+      const newVal = (nowMs - lastGesture) > GESTURE_PAUSE_MS;
+      lastGesture = nowMs;
       // ⚠️ La firma touch si registra SEMPRE, anche a gesto avviato: la coda di inerzia di
       // un colpo brusco è fatta di eventi piccoli, quindi il dispositivo si impara subito
       // e il gesto successivo parte con la decisione giusta. La decisione del gesto IN
       // CORSO invece non si ribalta mai, altrimenti si tornerebbe al comportamento misto
       // che questo blocco esiste per eliminare.
-      if (firmaTouch(e)) touchVistoA = ora;
+      if (touchSignature(e)) touchVistoA = nowMs;
       // ⚠️⚠️ UN'ECCEZIONE al 'la decisione non si ribalta': la firma FORTE di rotella chiude
       // il gesto in corso e ne apre uno suo, perché altrimenti bastava girare la rotella
-      // entro GESTO_PAUSA_MS dall'ultimo evento del dito per vedersela trattare come un
+      // entro GESTURE_PAUSE_MS dall'ultimo evento del dito per vedersela trattare come un
       // dito per tutta la girata, e la girata non scadeva mai (ogni tic rinnova
       // gestoUltimo, quindi 'nuovo' restava falso all'infinito). Caso concreto: portatile
       // con mouse esterno, la mano sinistra sul trackpad e la destra sul mouse, dove fra
       // l'ultimo evento e il primo tic passano 50-300 ms. Non riapre il difetto del Magic
       // Mouse, che quella firma non la produce mai (0 casi su 177 eventi misurati).
-      const forte = firmaRotellaForte(e);
-      if (forte) touchVistoA = -1e9;     // una prova di rotella cancella la memoria touch
-      if (!nuovo && gestoDaRotella !== null && !forte) return gestoDaRotella;
+      const strong = strongWheelSignature(e);
+      if (strong) touchVistoA = -1e9;     // una prova di rotella cancella la memoria touch
+      if (!newVal && gestoDaRotella !== null && !strong) return gestoDaRotella;
       // ⚠️ L'ordine di questi tre casi è il cuore del blocco, e il secondo è nato da un
       // difetto trovato PROVANDO la correzione con la sonda: se la memoria touch avesse
       // avuto la precedenza sulla firma forte, chi alterna trackpad e mouse si sarebbe
       // visto trattare la rotella come un dito per un secondo e mezzo dopo ogni gesto.
-      if (forte) gestoDaRotella = true;
-      else if (firmaTouch(e) || (ora - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
-      else gestoDaRotella = firmaRotellaDebole(e);
+      if (strong) gestoDaRotella = true;
+      else if (touchSignature(e) || (nowMs - touchVistoA) < TOUCH_MEMORIA_MS) gestoDaRotella = false;
+      else gestoDaRotella = weakWheelSignature(e);
       return gestoDaRotella;
     }
     // UNO SCATTO DI ZOOM PER OGNI SCATTO DELLA ROTELLA. Girando in fretta il
@@ -994,30 +994,30 @@
     // farebbe perdere per strada. Qui si contano davvero, e l'eventuale frazione
     // avanzata resta in cassa per l'evento successivo, così non si perde nulla
     // nemmeno con le rotelle a passo fine.
-    let accScatti = 0, ultimoScatto = 0;
-    function scattiInteri(e) {
-      const ora = Date.now();
-      if (ora - ultimoScatto > 600) accScatti = 0;   // serie nuova: si riparte puliti
-      ultimoScatto = ora;
-      const verso = e.deltaY < 0 ? 1 : -1;
-      if (accScatti !== 0 && (accScatti > 0) !== (verso > 0)) accScatti = 0;  // cambio di verso
-      accScatti += verso * scattiGrezzi(e);
-      const interi = accScatti > 0 ? Math.floor(accScatti) : Math.ceil(accScatti);
-      accScatti -= interi;
-      return interi;
+    let stepAcc = 0, ultimoScatto = 0;
+    function wholeSteps(e) {
+      const nowMs = Date.now();
+      if (nowMs - ultimoScatto > 600) stepAcc = 0;   // serie nuova: si riparte puliti
+      ultimoScatto = nowMs;
+      const dir = e.deltaY < 0 ? 1 : -1;
+      if (stepAcc !== 0 && (stepAcc > 0) !== (dir > 0)) stepAcc = 0;  // cambio di verso
+      stepAcc += dir * rawSteps(e);
+      const whole = stepAcc > 0 ? Math.floor(stepAcc) : Math.ceil(stepAcc);
+      stepAcc -= whole;
+      return whole;
     }
     // Che comando è questo gesto: 'scatti' (zoom a tappe tonde, dalla rotella), 'continuo'
     // (zoom proporzionale al movimento, dal dito) o 'scorre' (lo prende il browser).
     // ⚠️ La cache sull'identità dell'evento non è un'ottimizzazione: il ramo di
     // shift+rotella interroga questa funzione DUE volte per lo stesso evento, e senza cache
     // il secondo giro conterebbe l'evento un'altra volta nella macchina a stati.
-    let evDeciso = null, cmdCache = 'scorre';
-    function comandoGesto(e) {
-      if (ROTELLA_ZOOM === 'mai') return 'scorre';
-      if (e === evDeciso) return cmdCache;
-      evDeciso = e;
-      const daRotella = decidiGesto(e);
-      cmdCache = daRotella ? 'scatti' : (ROTELLA_ZOOM === 'scorri' ? 'scorre' : 'continuo');
+    let evDecided = null, cmdCache = 'scorre';
+    function gestureCommand(e) {
+      if (WHEEL_MODE === 'never') return 'scorre';
+      if (e === evDecided) return cmdCache;
+      evDecided = e;
+      const fromWheel = decideGesture(e);
+      cmdCache = fromWheel ? 'scatti' : (WHEEL_MODE === 'scroll' ? 'scorre' : 'continuo');
       return cmdCache;
     }
     // Zoom a passo FISSO: reattivo, senza inerzia e senza attriti. Se il passo
@@ -1026,55 +1026,55 @@
     // (nessun impuntamento, a differenza della zona morta del gesto continuo).
     // Un solo scatto, a partire da una scala data: o la tappa successiva
     // dell'elenco, o la moltiplicazione per il passo geometrico.
-    function unPasso(s, su) {
-      if (TAPPE_ZOOM.length) {
+    function oneStep(s, su) {
+      if (ZOOM_STOPS.length) {
         const p = s / realScale * 100;
         // la tappa deve stare abbastanza lontano da dove siamo, altrimenti il tic
         // sarebbe impercettibile (il caso del 199% che diventa 200%)
         if (su) {
-          const soglia = p * (1 + SALTO_MIN_SU);
-          for (let i = 0; i < TAPPE_ZOOM.length; i++) if (TAPPE_ZOOM[i] >= soglia) return realScale * TAPPE_ZOOM[i] / 100;
+          const threshold = p * (1 + MIN_JUMP_UP);
+          for (let i = 0; i < ZOOM_STOPS.length; i++) if (ZOOM_STOPS[i] >= threshold) return realScale * ZOOM_STOPS[i] / 100;
         } else {
-          const soglia = p * (1 - SALTO_MIN_GIU);
-          for (let j = TAPPE_ZOOM.length - 1; j >= 0; j--) if (TAPPE_ZOOM[j] <= soglia) return realScale * TAPPE_ZOOM[j] / 100;
+          const threshold = p * (1 - MIN_JUMP_DOWN);
+          for (let j = ZOOM_STOPS.length - 1; j >= 0; j--) if (ZOOM_STOPS[j] <= threshold) return realScale * ZOOM_STOPS[j] / 100;
         }
         // fuori dall'elenco: si prosegue col passo geometrico, così i limiti restano raggiungibili
       }
-      return su ? s * PASSO_ROTELLA : s / PASSO_ROTELLA;
+      return su ? s * WHEEL_STEP : s / WHEEL_STEP;
     }
-    function scalaDopoScatti(n) {
+    function scaleAfterSteps(n) {
       let s = scale;
-      for (let i = 0; i < Math.abs(n); i++) s = unPasso(s, n > 0);
+      for (let i = 0; i < Math.abs(n); i++) s = oneStep(s, n > 0);
       return s;
     }
 
-    function passoZoom(bersaglio, fx, fy) {
-      const nuova = clamp(bersaglio);
+    function zoomStep(target, fx, fy) {
+      const nextScale = clamp(target);
       // ⚠️ "già sul fermo" va inteso con tolleranza, non con l'uguaglianza esatta.
       // Dopo un giro di divisioni e moltiplicazioni la scala del 100% vale
       // 0.9999999999999998, non 1: senza questa tolleranza ogni scatto successivo
       // riagganciava al 100% e poi SCARTAVA il risultato perché la differenza era
       // infinitesima, quindi non si passava mai oltre (difetto misurato: dopo essere
       // scesi sotto il 100% si restava inchiodati lì, e solo un clic sbloccava).
-      const sulFermo = Math.abs(scale - realScale) < 1e-9;
-      if (!sulFermo && ((scale < realScale && nuova > realScale) || (scale > realScale && nuova < realScale))) {
-        applicaScala(realScale, fx, fy);   // atterra ESATTO sul 100%: è il fermo che si vuole
+      const onDetent = Math.abs(scale - realScale) < 1e-9;
+      if (!onDetent && ((scale < realScale && nextScale > realScale) || (scale > realScale && nextScale < realScale))) {
+        applyScale(realScale, fx, fy);   // atterra ESATTO sul 100%: è il fermo che si vuole
         zoomL = Math.log(scale);
         return;
       }
-      if (Math.abs(nuova - scale) < 1e-9) return;   // già al limite: niente da fare
-      applicaScala(nuova, fx, fy);
+      if (Math.abs(nextScale - scale) < 1e-9) return;   // già al limite: niente da fare
+      applyScale(nextScale, fx, fy);
       zoomL = Math.log(scale);            // il gesto continuo riparte da qui
     }
     // Verso corrente: parte dalla preferenza e lo commuta il tasto I, che salva
     // nella stessa chiave. Le tre scorciatoie (A, I, N) si comportano così, quindi
     // il pannello e i tasti dicono sempre la stessa cosa.
-    let suIngrandisce = ROTELLA_SU_INGRANDISCE;
+    let upZoomsIn = WHEEL_UP_ZOOMS_IN;
 
     // ── GESTO NUDO = zoom; ctrl+gesto = zoom continuo (pinch da trackpad) ──
     wrap.addEventListener('wheel', function (e) {
       if (!e.ctrlKey) {
-        const cmd = comandoGesto(e);
+        const cmd = gestureCommand(e);
         // shift+gesto = scorrimento verticale: dove il gesto nudo zooma, resta il modo di
         // spostare con la tastiera un'immagine più grande della vista (l'altro modo, e il
         // principale, è il trascinamento)
@@ -1093,7 +1093,7 @@
         if (!e.deltaY) return;
         e.preventDefault();
         // Segno del verso, comune ai due modi: +1 quando "in su" deve ingrandire.
-        const segno = suIngrandisce ? 1 : -1;
+        const sign = upZoomsIn ? 1 : -1;
         if (cmd === 'continuo') {
           // Dito su una superficie touch: zoom proporzionale al movimento, senza scatti e
           // senza tappe tonde, perché il gesto è continuo e le tappe lo farebbero
@@ -1103,13 +1103,13 @@
           let dyT = e.deltaY;
           if (e.deltaMode === 1) dyT *= 16;
           else if (e.deltaMode === 2) dyT *= (wrap.clientHeight || 800);
-          zoomGesto(zoomL - segno * dyT * ZOOM_SENS_TOUCH, e.clientX, e.clientY);
+          zoomGesture(zoomL - sign * dyT * ZOOM_SENS_TOUCH, e.clientX, e.clientY);
           return;
         }
-        const n = scattiInteri(e);
+        const n = wholeSteps(e);
         if (!n) return;                    // solo una frazione: resta in cassa
-        const ingrandisce = segno > 0 ? (n > 0) : !(n > 0);
-        passoZoom(scalaDopoScatti(ingrandisce ? Math.abs(n) : -Math.abs(n)), e.clientX, e.clientY);
+        const zoomsIn = sign > 0 ? (n > 0) : !(n > 0);
+        zoomStep(scaleAfterSteps(zoomsIn ? Math.abs(n) : -Math.abs(n)), e.clientX, e.clientY);
         return;
       }
       e.preventDefault();                  // blocca lo zoom di pagina
@@ -1120,7 +1120,7 @@
       else if (e.deltaMode === 2) dy *= (wrap.clientHeight || 800); // pagine → px
       if (dy > ZOOM_STEP_CAP) dy = ZOOM_STEP_CAP;              // limita i salti per singolo evento
       else if (dy < -ZOOM_STEP_CAP) dy = -ZOOM_STEP_CAP;
-      zoomGesto(zoomL - dy * ZOOM_SENS, e.clientX, e.clientY);
+      zoomGesture(zoomL - dy * ZOOM_SENS, e.clientX, e.clientY);
     }, { passive: false, capture: true });
 
     // ── TOUCH: pinch = zoom immagine (override pinch PAGINA) ───────────────
@@ -1128,13 +1128,13 @@
     function dist(t) { return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
     function mid(t) { return { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 }; }
     wrap.addEventListener('touchstart', function (e) {
-      if (e.touches.length === 2) { d0 = dist(e.touches); l0 = zoomL; daGesture = true; e.preventDefault(); }
+      if (e.touches.length === 2) { d0 = dist(e.touches); l0 = zoomL; fromGesture = true; e.preventDefault(); }
     }, { passive: false });
     wrap.addEventListener('touchmove', function (e) {
       if (e.touches.length === 2 && d0) {
         e.preventDefault();
         const m = mid(e.touches);
-        zoomGesto(l0 + Math.log(dist(e.touches) / d0), m.x, m.y);
+        zoomGesture(l0 + Math.log(dist(e.touches) / d0), m.x, m.y);
       }
     }, { passive: false });
     wrap.addEventListener('touchend', function (e) { if (e.touches.length < 2) d0 = 0; }, { passive: true });
@@ -1146,126 +1146,126 @@
     // dimenticanza: la rotella scorreva e bastava. Dalla 2.15 la rotella
     // zooma, quindi quel presupposto è caduto e il trascinamento serve.
 
-    function eccedeVista() {
+    function exceedsView() {
       return wrap.scrollWidth > wrap.clientWidth + 1 || wrap.scrollHeight > wrap.clientHeight + 1;
     }
-    var trascin = null, hoTrascinato = false, ditaGiu = 0;
+    var drag = null, hoTrascinato = false, ditaGiu = 0;
 
-    function aggiornaCursore() {
-      wrap.classList.toggle('dv-pan', eccedeVista());
-      wrap.classList.toggle('dv-trascina', !!trascin);
+    function updateCursor() {
+      wrap.classList.toggle('dv-pan', exceedsView());
+      wrap.classList.toggle('dv-dragging', !!drag);
     }
 
     wrap.addEventListener('pointerdown', function (e) {
       ditaGiu++;
-      if (ditaGiu > 1) { trascin = null; aggiornaCursore(); return; }   // due dita: è un pinch
-      if (e.button !== 0 || !eccedeVista()) return;
-      trascin = { x: e.clientX, y: e.clientY, sl: wrap.scrollLeft, st: wrap.scrollTop, id: e.pointerId };
+      if (ditaGiu > 1) { drag = null; updateCursor(); return; }   // due dita: è un pinch
+      if (e.button !== 0 || !exceedsView()) return;
+      drag = { x: e.clientX, y: e.clientY, sl: wrap.scrollLeft, st: wrap.scrollTop, id: e.pointerId };
       hoTrascinato = false;
       try { wrap.setPointerCapture(e.pointerId); } catch (err) {}
-      aggiornaCursore();
+      updateCursor();
     });
     wrap.addEventListener('pointermove', function (e) {
-      if (!trascin || e.pointerId !== trascin.id) return;
-      const dx = e.clientX - trascin.x, dy = e.clientY - trascin.y;
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       // soglia: sotto i 4px è un clic con la mano ferma, non un trascinamento
       if (!hoTrascinato && Math.abs(dx) + Math.abs(dy) < 4) return;
       hoTrascinato = true;
       e.preventDefault();
-      wrap.scrollLeft = trascin.sl - dx;
-      wrap.scrollTop = trascin.st - dy;
+      wrap.scrollLeft = drag.sl - dx;
+      wrap.scrollTop = drag.st - dy;
     });
-    function fineTrascinamento(e) {
+    function endDrag(e) {
       ditaGiu = Math.max(0, ditaGiu - 1);
-      if (!trascin || (e && e.pointerId !== trascin.id)) return;
-      try { wrap.releasePointerCapture(trascin.id); } catch (err) {}
-      trascin = null;
-      aggiornaCursore();
+      if (!drag || (e && e.pointerId !== drag.id)) return;
+      try { wrap.releasePointerCapture(drag.id); } catch (err) {}
+      drag = null;
+      updateCursor();
     }
-    wrap.addEventListener('pointerup', fineTrascinamento);
-    wrap.addEventListener('pointercancel', fineTrascinamento);
+    wrap.addEventListener('pointerup', endDrag);
+    wrap.addEventListener('pointercancel', endDrag);
 
     // ── Navigatore (minimappa) in alto a destra ────────────────────────
     // Compare da sé quando l'immagine esce dalla vista, cioè quando c'è
     // davvero qualcosa da navigare. Si costruisce al primo bisogno.
-    const MINI_LATO = 190;               // lato massimo della vista d'insieme
+    const MINI_SIDE = 190;               // lato massimo della vista d'insieme
     var mini = null, miniBox = null, miniRett = null, miniVisibile = false;
-    var navigatoreAcceso = true;
-    try { navigatoreAcceso = GM_getValue('dv-minimappa', '1') !== '0'; } catch (e) {}
+    var navigatorOn = true;
+    try { navigatorOn = GM_getValue('dv-navigator', '1') !== '0'; } catch (e) {}
 
-    function creaNavigatore() {
+    function makeNavigator() {
       if (mini) return;
-      const largo = natW >= natH;
-      const mw = Math.round(largo ? MINI_LATO : MINI_LATO * natW / natH);
-      const mh = Math.round(largo ? MINI_LATO * natH / natW : MINI_LATO);
-      mini = creaEl('div');
+      const wide = natW >= natH;
+      const mw = Math.round(wide ? MINI_SIDE : MINI_SIDE * natW / natH);
+      const mh = Math.round(wide ? MINI_SIDE * natH / natW : MINI_SIDE);
+      mini = makeEl('div');
       mini.id = 'dv-mini';
       mini.title = T('navTip');
-      miniBox = creaEl('div');
+      miniBox = makeEl('div');
       miniBox.setAttribute('class', 'dv-mini-box');
       miniBox.style.width = mw + 'px';
       miniBox.style.height = mh + 'px';
       // vista d'insieme: per il vettoriale un clone (esatto anche senza misure
       // dichiarate), per il raster lo stesso file, che è già nella cache
-      if (svgMedia) {
-        const c = svgMedia.cloneNode(true);
+      if (svgEl) {
+        const c = svgEl.cloneNode(true);
         c.removeAttribute('style');
         c.setAttribute('width', String(mw));
         c.setAttribute('height', String(mh));
         miniBox.appendChild(c);
       } else {
-        const im = creaEl('img');
+        const im = makeEl('img');
         im.setAttribute('src', location.href);
         im.setAttribute('alt', '');
         miniBox.appendChild(im);
       }
-      miniRett = creaEl('div');
-      miniRett.setAttribute('class', 'dv-mini-rett');
+      miniRett = makeEl('div');
+      miniRett.setAttribute('class', 'dv-mini-frame');
       miniBox.appendChild(miniRett);
       mini.appendChild(miniBox);
       (document.body || document.documentElement).appendChild(mini);
 
       // clic e trascinamento sulla minimappa: la vista segue il puntatore
-      var trascinaMini = false;
-      function portaVista(e) {
+      var dragMini = false;
+      function bringIntoView(e) {
         const r = miniBox.getBoundingClientRect();
         const fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
         const fy = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
         wrap.scrollLeft = fx * natW * scale - wrap.clientWidth / 2;
         wrap.scrollTop = fy * natH * scale - wrap.clientHeight / 2;
-        aggiornaNavigatore();
+        updateNavigator();
       }
       mini.addEventListener('pointerdown', function (e) {
         e.preventDefault(); e.stopPropagation();
-        trascinaMini = true;
+        dragMini = true;
         try { mini.setPointerCapture(e.pointerId); } catch (err) {}
-        portaVista(e);
+        bringIntoView(e);
       });
       mini.addEventListener('pointermove', function (e) {
-        if (!trascinaMini) return;
+        if (!dragMini) return;
         e.preventDefault(); e.stopPropagation();
-        portaVista(e);
+        bringIntoView(e);
       });
-      function fineMini(e) {
-        if (!trascinaMini) return;
-        trascinaMini = false;
+      function endMini(e) {
+        if (!dragMini) return;
+        dragMini = false;
         try { mini.releasePointerCapture(e.pointerId); } catch (err) {}
       }
-      mini.addEventListener('pointerup', fineMini);
-      mini.addEventListener('pointercancel', fineMini);
+      mini.addEventListener('pointerup', endMini);
+      mini.addEventListener('pointercancel', endMini);
       // il clic sulla minimappa non deve arrivare sotto (alternanza adattato/reale)
       mini.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); }, true);
       mini.addEventListener('wheel', function (e) { e.stopPropagation(); }, { capture: true });
     }
 
-    function aggiornaNavigatore() {
-      const serve = navigatoreAcceso && eccedeVista();
-      if (!serve) {
+    function updateNavigator() {
+      const needed = navigatorOn && exceedsView();
+      if (!needed) {
         if (mini && miniVisibile) { mini.style.display = 'none'; miniVisibile = false; }
-        aggiornaCursore();
+        updateCursor();
         return;
       }
-      creaNavigatore();
+      makeNavigator();
       if (!miniVisibile) { mini.style.display = 'block'; miniVisibile = true; }
       const iw = natW * scale, ih = natH * scale;
       const vw = wrap.clientWidth, vh = wrap.clientHeight;
@@ -1278,25 +1278,25 @@
       miniRett.style.top = (fy * r.height) + 'px';
       miniRett.style.width = (fw * r.width) + 'px';
       miniRett.style.height = (fh * r.height) + 'px';
-      aggiornaCursore();
+      updateCursor();
     }
 
     // lo scorrimento (barre, trascinamento, shift+rotella) muove il riquadro rosso
-    var attesaFrame = 0;
+    var frameWait = 0;
     wrap.addEventListener('scroll', function () {
-      if (attesaFrame) return;
-      attesaFrame = requestAnimationFrame(function () { attesaFrame = 0; aggiornaNavigatore(); });
+      if (frameWait) return;
+      frameWait = requestAnimationFrame(function () { frameWait = 0; updateNavigator(); });
     }, { passive: true });
 
     // ── Tasto I: inverte il verso della rotella, e la scelta resta memorizzata ──
-    function toast(testo) {
+    function toast(text) {
       let t = document.getElementById('dv-toast');
       if (!t) {
-        t = creaEl('div');
+        t = makeEl('div');
         t.id = 'dv-toast';
         (document.body || document.documentElement).appendChild(t);
       }
-      t.textContent = testo;
+      t.textContent = text;
       t.setAttribute('class', 'dv-on');
       clearTimeout(toast.tempo);
       toast.tempo = setTimeout(function () { t.setAttribute('class', ''); }, 1600);
@@ -1308,38 +1308,38 @@
       // XML, e lì tagName conserva il caso originale ('input'), mentre in HTML è
       // sempre maiuscolo ('INPUT'). Confrontando col solo 'INPUT' i tasti nudi
       // scattavano mentre si scriveva nel campo DPI del pannello di esportazione.
-      const nomeTag = t && t.tagName ? String(t.tagName).toUpperCase() : '';
-      if (nomeTag === 'INPUT' || nomeTag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+      const tagUpper = t && t.tagName ? String(t.tagName).toUpperCase() : '';
+      if (tagUpper === 'INPUT' || tagUpper === 'TEXTAREA' || (t && t.isContentEditable)) return;
       if (e.key === 'a' || e.key === 'A') {         // adattamento: ingrandisce o no
         e.preventDefault();
-        ingrandisciPerAdattare = !ingrandisciPerAdattare;
-        try { GM_setValue('dv-fit-grow', ingrandisciPerAdattare ? '1' : '0'); } catch (err) {}
+        growToFit = !growToFit;
+        try { GM_setValue('dv-fit-grow', growToFit ? '1' : '0'); } catch (err) {}
         // Il tasto NON ingrandisce da sé: cambia solo cosa farà il clic. Riporta invece
         // sull'adattato quando questo si è RIMPICCIOLITO (opzione spenta mentre si stava
         // riempiendo la vista), perché quella scala non è più un adattamento. Negli
         // altri casi si resta dove si è, ri-limitando: i confini si sono spostati.
-        if (isFit && scale > fitDisplay() + 0.0005) vaiFit();
+        if (isFit && scale > fitDisplay() + 0.0005) goFit();
         else {
           scale = clamp(scale);
-          isFit = scalaEAdattata();   // il clic dev'essere pronto col nuovo criterio
+          isFit = scaleIsFitted();   // il clic dev'essere pronto col nuovo criterio
           apply();
         }
-        toast(T(ingrandisciPerAdattare ? 'fitGrowOn' : 'fitGrowOff'));
+        toast(T(growToFit ? 'fitGrowOn' : 'fitGrowOff'));
         return;
       }
       if (e.key === 'n' || e.key === 'N') {         // navigatore acceso/spento
         e.preventDefault();
-        navigatoreAcceso = !navigatoreAcceso;
-        try { GM_setValue('dv-minimappa', navigatoreAcceso ? '1' : '0'); } catch (err) {}
-        aggiornaNavigatore();
-        toast(T(navigatoreAcceso ? 'navOn' : 'navOff'));
+        navigatorOn = !navigatorOn;
+        try { GM_setValue('dv-navigator', navigatorOn ? '1' : '0'); } catch (err) {}
+        updateNavigator();
+        toast(T(navigatorOn ? 'navOn' : 'navOff'));
         return;
       }
       if (e.key !== 'i' && e.key !== 'I') return;
       e.preventDefault();
-      suIngrandisce = !suIngrandisce;
-      try { GM_setValue('dv-wheel-up-in', suIngrandisce ? '1' : '0'); } catch (err) {}
-      toast(T(suIngrandisce ? 'wheelIn' : 'wheelOut'));
+      upZoomsIn = !upZoomsIn;
+      try { GM_setValue('dv-wheel-up-in', upZoomsIn ? '1' : '0'); } catch (err) {}
+      toast(T(upZoomsIn ? 'wheelIn' : 'wheelOut'));
     });
 
     // ── Resize: se sto mostrando "adattato", ri-adatta; comunque ri-limita ──
@@ -1347,8 +1347,8 @@
       // allargando la finestra un'immagine prima più grande della vista può entrarci
       // tutta: ri-adattarla NON deve ingrandirla, se quell'ingrandimento non era stato
       // chiesto. Se invece si stava già riempiendo la vista, il riempimento si conserva.
-      if (isFit) vaiFit(fitEIngrandito());
-      else { scale = clamp(scale); isFit = scalaEAdattata(); apply(); }
+      if (isFit) goFit(fitIsEnlarged());
+      else { scale = clamp(scale); isFit = scaleIsFitted(); apply(); }
     });
 
     // ── Info: dimensioni reali + peso del file ────────────────────────────
@@ -1357,13 +1357,13 @@
     // I byte scaricati qui servono già al peso; si TENGONO da parte (senza
     // decodificarli) perché il pannello di scaricamento possa offrire il file
     // originale senza una seconda richiesta. Nessun lavoro in più al caricamento.
-    var byteOriginali = null;
+    var originalBytes = null;
     try {
       GM_xmlhttpRequest({
         method: 'GET', url: location.href, responseType: 'arraybuffer',
         onload: function (r) {
           if (r.response && r.response.byteLength) {
-            byteOriginali = r.response;
+            originalBytes = r.response;
             imageInfo.size = formatBytes(r.response.byteLength);
             updateInfo();
           }
@@ -1380,25 +1380,25 @@
     // lascia passare il menu del browser.
     // Le voci degli SVG sono riempite più sotto (azioniSvg): il menu si
     // costruisce al primo clic destro, quando ormai ci sono.
-    var azioniSvg = null;
+    var svgActions = null;
     var menuEl = null, menuVoci = [], menuSel = -1;
 
-    async function bloboPng() {
+    async function pngBlob() {
       // Un raster ha i suoi pixel e si copia com'è; un SVG no, quindi lo si
-      // rasterizza alla risoluzione scelta (DPI_COPIA).
-      const w = svgMedia ? Math.max(1, Math.round(natW * DPI_COPIA / 96)) : natW;
-      const h = svgMedia ? Math.max(1, Math.round(natH * DPI_COPIA / 96)) : natH;
-      const cv = creaEl('canvas');
+      // rasterizza alla risoluzione scelta (DPI_COPY).
+      const w = svgEl ? Math.max(1, Math.round(natW * DPI_COPY / 96)) : natW;
+      const h = svgEl ? Math.max(1, Math.round(natH * DPI_COPY / 96)) : natH;
+      const cv = makeEl('canvas');
       cv.width = w; cv.height = h;
       const g = cv.getContext('2d');
-      if (svgMedia) {
-        if (!azioniSvg) throw new Error('source not ready');
-        const url = URL.createObjectURL(new Blob([azioniSvg.perRaster(w, h)], { type: 'image/svg+xml;charset=utf-8' }));
+      if (svgEl) {
+        if (!svgActions) throw new Error('source not ready');
+        const url = URL.createObjectURL(new Blob([svgActions.perRaster(w, h)], { type: 'image/svg+xml;charset=utf-8' }));
         try {
-          const im = await new Promise(function (ris, rif) {
+          const im = await new Promise(function (resolve, reject) {
             const i = new Image();
-            i.onload = function () { ris(i); };
-            i.onerror = function () { rif(new Error('SVG cannot be rasterized')); };
+            i.onload = function () { resolve(i); };
+            i.onerror = function () { reject(new Error('SVG cannot be rasterized')); };
             i.src = url;
           });
           g.drawImage(im, 0, 0, w, h);
@@ -1409,18 +1409,18 @@
       return await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
     }
 
-    async function copiaImmagine() {
+    async function copyImage() {
       try {
         // il blob si passa come PROMESSA: così il permesso del clic non scade
         // mentre si disegna, che è il motivo per cui la copia a volte fallisce
-        await navigator.clipboard.write([new ClipboardItem({ 'image/png': bloboPng() })]);
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob() })]);
         toast('Image copied');
       } catch (e) {
         // ripiego: se il file è già un PNG si copiano i byte così come sono
         // (utile quando il canvas è "sporco", per esempio sui file locali)
         try {
-          if (byteOriginali && /png/i.test(document.contentType)) {
-            await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([byteOriginali], { type: 'image/png' }) })]);
+          if (originalBytes && /png/i.test(document.contentType)) {
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([originalBytes], { type: 'image/png' }) })]);
             toast('Image copied');
             return;
           }
@@ -1429,60 +1429,60 @@
       }
     }
 
-    function copiaIndirizzo() {
+    function copyUrl() {
       try { navigator.clipboard.writeText(location.href).then(function () { toast('URL copied'); }); }
       catch (e) { toast('Copy failed'); }
     }
 
-    function nomeFileImmagine() {
+    function imageFileName() {
       var n = 'image';
       try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'image'; } catch (e) {}
       if (!/\.[a-z0-9]{2,5}$/i.test(n)) n += '.' + (imageInfo.ext || 'img');
       return n;
     }
-    function salvaImmagine() {
-      const nome = nomeFileImmagine();
-      if (svgMedia && byteOriginali) {
-        const a = creaEl('a');
-        const u = URL.createObjectURL(new Blob([byteOriginali], { type: 'image/svg+xml' }));
-        a.setAttribute('href', u); a.setAttribute('download', nome);
+    function saveImage() {
+      const fileName = imageFileName();
+      if (svgEl && originalBytes) {
+        const a = makeEl('a');
+        const u = URL.createObjectURL(new Blob([originalBytes], { type: 'image/svg+xml' }));
+        a.setAttribute('href', u); a.setAttribute('download', fileName);
         (document.body || document.documentElement).appendChild(a);
         a.click(); if (a.parentNode) a.parentNode.removeChild(a);
         setTimeout(function () { URL.revokeObjectURL(u); }, 30000);
         return;
       }
       try {
-        GM_download({ url: location.href, name: nome, saveAs: true, headers: { Referer: location.href } });
+        GM_download({ url: location.href, name: fileName, saveAs: true, headers: { Referer: location.href } });
       } catch (e) {
-        const a = creaEl('a');
-        a.setAttribute('href', location.href); a.setAttribute('download', nome);
+        const a = makeEl('a');
+        a.setAttribute('href', location.href); a.setAttribute('download', fileName);
         (document.body || document.documentElement).appendChild(a);
         a.click(); if (a.parentNode) a.parentNode.removeChild(a);
       }
     }
 
     // Elenco voluto dall'utente: solo queste, in quest'ordine. Sugli SVG cambia
-    // il CONTENUTO di due voci (copia raster a DPI_COPIA, salva il file originale),
+    // il CONTENUTO di due voci (copia raster a DPI_COPY, salva il file originale),
     // non l'elenco: il menu resta identico ovunque.
-    function vociDelMenu(x, y) {
+    function menuItems(x, y) {
       return [
-        { t: T('mCopy'), f: copiaImmagine },
-        { t: T('mCopyUrl'), f: copiaIndirizzo },
-        { t: T('mSave'), f: salvaImmagine },
+        { t: T('mCopy'), f: copyImage },
+        { t: T('mCopyUrl'), f: copyUrl },
+        { t: T('mSave'), f: saveImage },
         { sep: true },
-        { t: T('mFit'), f: vaiFit },
+        { t: T('mFit'), f: goFit },
         { t: '100%', f: function () { zoomTo(realScale, x, y); } },
         { t: '200%', f: function () { zoomTo(realScale * 2, x, y); } },
         { t: '400%', f: function () { zoomTo(realScale * 4, x, y); } }
       ];
     }
 
-    function chiudiMenu() {
+    function closeMenu() {
       if (menuEl) { menuEl.hidden = true; menuSel = -1; }
     }
-    function apriMenu(x, y) {
+    function openMenu(x, y) {
       if (!menuEl) {
-        menuEl = creaEl('div');
+        menuEl = makeEl('div');
         menuEl.id = 'dv-menu';
         menuEl.setAttribute('role', 'menu');
         (document.body || document.documentElement).appendChild(menuEl);
@@ -1490,28 +1490,28 @@
       }
       while (menuEl.firstChild) menuEl.removeChild(menuEl.firstChild);
       menuVoci = [];
-      vociDelMenu(x, y).forEach(function (v) {
+      menuItems(x, y).forEach(function (v) {
         if (v.sep) {
-          const s = creaEl('div');
+          const s = makeEl('div');
           s.setAttribute('class', 'dv-msep');
           menuEl.appendChild(s);
           return;
         }
-        const r = creaEl('div');
+        const r = makeEl('div');
         r.setAttribute('class', 'dv-mv');
         r.setAttribute('role', 'menuitem');
         r.setAttribute('tabindex', '-1');
-        const et = creaEl('span');
-        et.textContent = v.t;
-        r.appendChild(et);
+        const labelEl = makeEl('span');
+        labelEl.textContent = v.t;
+        r.appendChild(labelEl);
         if (v.k) {
-          const k = creaEl('span');
-          k.setAttribute('class', 'dv-mv-tasto');
+          const k = makeEl('span');
+          k.setAttribute('class', 'dv-mv-key');
           k.textContent = v.k;
           r.appendChild(k);
         }
-        r.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); chiudiMenu(); v.f(); });
-        r.addEventListener('mouseenter', function () { evidenzia(menuVoci.indexOf(r)); });
+        r.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); closeMenu(); v.f(); });
+        r.addEventListener('mouseenter', function () { highlight(menuVoci.indexOf(r)); });
         menuVoci.push(r);
         menuEl.appendChild(r);
       });
@@ -1522,7 +1522,7 @@
       menuEl.style.left = Math.max(4, Math.min(x, window.innerWidth - w - 4)) + 'px';
       menuEl.style.top = Math.max(4, (y + h > window.innerHeight - 4) ? y - h : y) + 'px';
     }
-    function evidenzia(i) {
+    function highlight(i) {
       menuVoci.forEach(function (r, j) { r.classList.toggle('dv-sel', j === i); });
       menuSel = i;
     }
@@ -1531,28 +1531,28 @@
       if (e.shiftKey) return;                     // via di fuga: menu del browser
       if (e.target && e.target.closest && e.target.closest('#dv-dl')) return;  // nel pannello serve quello nativo
       e.preventDefault();
-      apriMenu(e.clientX, e.clientY);
+      openMenu(e.clientX, e.clientY);
     });
     document.addEventListener('pointerdown', function (e) {
-      if (menuEl && !menuEl.hidden && !(e.target && e.target.closest && e.target.closest('#dv-menu'))) chiudiMenu();
+      if (menuEl && !menuEl.hidden && !(e.target && e.target.closest && e.target.closest('#dv-menu'))) closeMenu();
     }, true);
     document.addEventListener('keydown', function (e) {
       if (!menuEl || menuEl.hidden) return;
-      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); chiudiMenu(); return; }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeMenu(); return; }
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         e.preventDefault();
         const d = e.key === 'ArrowDown' ? 1 : -1;
-        evidenzia((menuSel + d + menuVoci.length + (menuSel < 0 && d < 0 ? 1 : 0)) % menuVoci.length);
+        highlight((menuSel + d + menuVoci.length + (menuSel < 0 && d < 0 ? 1 : 0)) % menuVoci.length);
         if (menuVoci[menuSel]) menuVoci[menuSel].focus();
       } else if (e.key === 'Enter' && menuSel >= 0) {
         e.preventDefault();
         menuVoci[menuSel].click();
       }
     }, true);
-    window.addEventListener('blur', chiudiMenu);
-    wrap.addEventListener('scroll', chiudiMenu, { passive: true });
+    window.addEventListener('blur', closeMenu);
+    wrap.addEventListener('scroll', closeMenu, { passive: true });
 
-    if (!eSvg) return;
+    if (!isSvg) return;
 
     // ═══════════════════════════════════════════════════════════════════
     //  PANNELLO "SCARICA" (solo SVG): esporta in PNG a un DPI scelto,
@@ -1568,13 +1568,13 @@
     const DPI_MIN = 12, DPI_MAX = 2400;
     // Limiti del canvas MISURATI su Chromium: oltre, il canvas non solleva
     // eccezioni, resta semplicemente vuoto. Vanno quindi previsti, non intercettati.
-    const CANVAS_LATO_MAX = 65535, CANVAS_AREA_MAX = 268435456;
+    const CANVAS_SIDE_MAX = 65535, CANVAS_AREA_MAX = 268435456;
     // Tetto pratico: 268 Mpx vorrebbero circa 1 GB di memoria solo per il canvas.
     const MPX_MAX = 80e6;
 
     // Tondo "scarica" nel semicerchio destro. L'icona è una freccia in giu' su
     // una base, disegnata in SVG (niente glifi: si centrano male, come il "1:1").
-    const btnDl = creaEl('div');
+    const btnDl = makeEl('div');
     btnDl.id = 'dv-download';
     btnDl.setAttribute('role', 'button');
     btnDl.setAttribute('tabindex', '0');
@@ -1590,9 +1590,9 @@
     ico.setAttribute('stroke-linecap', 'round');
     ico.setAttribute('stroke-linejoin', 'round');
     ico.setAttribute('aria-hidden', 'true');
-    const tratto = document.createElementNS(SVGNS, 'path');
-    tratto.setAttribute('d', 'M12 3v11m0 0 4.2-4.2M12 14l-4.2-4.2M4 19h16');
-    ico.appendChild(tratto);
+    const stroke = document.createElementNS(SVGNS, 'path');
+    stroke.setAttribute('d', 'M12 3v11m0 0 4.2-4.2M12 14l-4.2-4.2M4 19h16');
+    ico.appendChild(stroke);
     btnDl.appendChild(ico);
     pill.setAttribute('class', 'image-info dv-has-dl');
     pill.appendChild(btnDl);
@@ -1605,24 +1605,24 @@
     function pxPerDpi(dpi) {
       return { w: Math.max(1, Math.round(natW * dpi / 96)), h: Math.max(1, Math.round(natH * dpi / 96)) };
     }
-    function dpiMassimo() {
-      const perArea = Math.sqrt(Math.min(CANVAS_AREA_MAX, MPX_MAX) / (natW * natH)) * 96;
-      const perLato = Math.min(CANVAS_LATO_MAX / natW, CANVAS_LATO_MAX / natH) * 96;
-      return Math.max(DPI_MIN, Math.floor(Math.min(DPI_MAX, perArea, perLato)));
+    function dpiMax() {
+      const byArea = Math.sqrt(Math.min(CANVAS_AREA_MAX, MPX_MAX) / (natW * natH)) * 96;
+      const bySide = Math.min(CANVAS_SIDE_MAX / natW, CANVAS_SIDE_MAX / natH) * 96;
+      return Math.max(DPI_MIN, Math.floor(Math.min(DPI_MAX, byArea, bySide)));
     }
     // Punto decimale, coerente con la UI in inglese (era la virgola italiana).
     function num(n, dec) { return n.toFixed(dec); }
-    function peso(b) { return b >= 1048576 ? num(b / 1048576, 1) + ' MB' : num(b / 1024, 1) + ' KB'; }
-    function nomeBase() {
+    function sizeText(b) { return b >= 1048576 ? num(b / 1048576, 1) + ' MB' : num(b / 1024, 1) + ' KB'; }
+    function baseName() {
       var n = 'image';
       try { n = decodeURIComponent(location.pathname.split('/').pop() || '') || 'image'; } catch (e) {}
       return n.replace(/\.svgz?$/i, '') || 'image';
     }
-    function salvaFile(blob, nome) {
+    function saveFile(blob, fileName) {
       const u = URL.createObjectURL(blob);
-      const a = creaEl('a');
+      const a = makeEl('a');
       a.setAttribute('href', u);
-      a.setAttribute('download', nome);
+      a.setAttribute('download', fileName);
       (document.body || document.documentElement).appendChild(a);
       a.click();
       if (a.parentNode) a.parentNode.removeChild(a);
@@ -1664,10 +1664,10 @@
       'https://boxy-svg.com'
     ];
     const NS_XMLNS = 'http://www.w3.org/2000/xmlns/';
-    function eDiEditor(ns) { return !!ns && NS_EDITOR.indexOf(ns) !== -1; }
+    function isEditorNs(ns) { return !!ns && NS_EDITOR.indexOf(ns) !== -1; }
 
-    function svgRipulito() {
-      const c = svgMedia.cloneNode(true);
+    function cleanedSvg() {
+      const c = svgEl.cloneNode(true);
       c.removeAttribute('style');
       // Il visualizzatore ha tolto width/height (e a volte aggiunto un viewBox)
       // per governare lo zoom: nel file salvato si rimette ESATTAMENTE quello che
@@ -1681,12 +1681,12 @@
       if (o.vb != null) c.setAttribute('viewBox', o.vb); else c.removeAttribute('viewBox');
 
       // 1) commenti (SVGO conserva quelli che iniziano con "!", di solito licenze)
-      const cam = document.createTreeWalker(c, NodeFilter.SHOW_COMMENT);
+      const commentWalker = document.createTreeWalker(c, NodeFilter.SHOW_COMMENT);
       const comm = [];
-      while (cam.nextNode()) comm.push(cam.currentNode);
+      while (commentWalker.nextNode()) comm.push(commentWalker.currentNode);
       comm.forEach(function (n) { if (!/^!/.test(n.data) && n.parentNode) n.parentNode.removeChild(n); });
 
-      const tutti = function () { return [c].concat([].slice.call(c.querySelectorAll('*'))); };
+      const allNodes = function () { return [c].concat([].slice.call(c.querySelectorAll('*'))); };
 
       // 2) <metadata> e 3) <desc> vuoti o generati dall'editor (regola di SVGO)
       [].slice.call(c.querySelectorAll('metadata')).forEach(function (e) { e.parentNode.removeChild(e); });
@@ -1698,8 +1698,8 @@
       // 4) elementi in namespace di editor: qui sta il grosso del risparmio,
       //    perché comprende <i:pgf>, i dati vettoriali proprietari di Illustrator
       //    (nel corpus di prova valgono da soli un quarto dei byte totali)
-      tutti().forEach(function (e) {
-        if (e !== c && eDiEditor(e.namespaceURI) && e.parentNode) e.parentNode.removeChild(e);
+      allNodes().forEach(function (e) {
+        if (e !== c && isEditorNs(e.namespaceURI) && e.parentNode) e.parentNode.removeChild(e);
       });
 
       // 5) <foreignObject> rimasti vuoti (l'involucro di quei dati). NON si tocca
@@ -1710,28 +1710,28 @@
       });
 
       // 6) attributi in namespace di editor, e le loro dichiarazioni xmlns
-      tutti().forEach(function (e) {
+      allNodes().forEach(function (e) {
         [].slice.call(e.attributes).forEach(function (a) {
-          if (a.namespaceURI === NS_XMLNS && eDiEditor(a.value)) e.removeAttributeNode(a);
-          else if (eDiEditor(a.namespaceURI)) e.removeAttributeNode(a);
+          if (a.namespaceURI === NS_XMLNS && isEditorNs(a.value)) e.removeAttributeNode(a);
+          else if (isEditorNs(a.namespaceURI)) e.removeAttributeNode(a);
         });
       });
 
       // 7) dichiarazioni xmlns rimaste inutilizzate: PER ULTIME, dopo il punto 6,
       //    altrimenti si conserverebbero prefissi che nel frattempo sono spariti
-      const usati = {};
-      tutti().forEach(function (e) {
-        if (e.prefix) usati[e.prefix] = 1;
-        [].slice.call(e.attributes).forEach(function (a) { if (a.prefix && a.prefix !== 'xmlns') usati[a.prefix] = 1; });
+      const usedPrefixes = {};
+      allNodes().forEach(function (e) {
+        if (e.prefix) usedPrefixes[e.prefix] = 1;
+        [].slice.call(e.attributes).forEach(function (a) { if (a.prefix && a.prefix !== 'xmlns') usedPrefixes[a.prefix] = 1; });
       });
       [].slice.call(c.attributes).forEach(function (a) {
-        if (a.namespaceURI === NS_XMLNS && a.localName !== 'xmlns' && !usati[a.localName]) c.removeAttributeNode(a);
+        if (a.namespaceURI === NS_XMLNS && a.localName !== 'xmlns' && !usedPrefixes[a.localName]) c.removeAttributeNode(a);
       });
 
       return new XMLSerializer().serializeToString(c);
     }
 
-    function xmlValido(t) {
+    function xmlValid(t) {
       try {
         const d = new DOMParser().parseFromString(t, 'image/svg+xml');
         return !d.getElementsByTagName('parsererror').length &&
@@ -1744,10 +1744,10 @@
     // pagina. Due ragioni misurate: puntare l'URL della pagina SPORCHEREBBE il
     // canvas (toBlob darebbe SecurityError), e i <foreignObject> di Illustrator
     // fanno lo stesso effetto, quindi si tolgono prima.
-    function sorgentePerRaster(w, h) {
-      const c = svgMedia.cloneNode(true);
-      const fo = c.querySelectorAll('foreignObject');
-      for (var i = fo.length - 1; i >= 0; i--) fo[i].parentNode.removeChild(fo[i]);
+    function sourceForRaster(w, h) {
+      const c = svgEl.cloneNode(true);
+      const foreignObjects = c.querySelectorAll('foreignObject');
+      for (var i = foreignObjects.length - 1; i >= 0; i--) foreignObjects[i].parentNode.removeChild(foreignObjects[i]);
       c.removeAttribute('style');
       c.setAttribute('width', String(w));
       c.setAttribute('height', String(h));
@@ -1772,48 +1772,48 @@
       for (var i = da; i < a; i++) x = t[(x ^ buf[i]) & 0xFF] ^ (x >>> 8);
       return (x ^ 0xFFFFFFFF) >>> 0;
     }
-    function pngConDpi(arrayBuffer, dpi) {
+    function pngWithDpi(arrayBuffer, dpi) {
       const src = new Uint8Array(arrayBuffer);
-      const firma = [137, 80, 78, 71, 13, 10, 26, 10];
-      for (var i = 0; i < 8; i++) if (src[i] !== firma[i]) return arrayBuffer;   // non è un PNG: lascio com'è
+      const signature = [137, 80, 78, 71, 13, 10, 26, 10];
+      for (var i = 0; i < 8; i++) if (src[i] !== signature[i]) return arrayBuffer;   // non è un PNG: lascio com'è
       const u32 = function (o) { return ((src[o] << 24) | (src[o + 1] << 16) | (src[o + 2] << 8) | src[o + 3]) >>> 0; };
       var off = 8, fineIhdr = -1, physOff = -1, physTot = 0;
       while (off + 8 <= src.length) {
         const len = u32(off);
-        const tipo = String.fromCharCode(src[off + 4], src[off + 5], src[off + 6], src[off + 7]);
-        const tot = 12 + len;
-        if (tipo === 'IHDR') fineIhdr = off + tot;
-        else if (tipo === 'pHYs') { physOff = off; physTot = tot; }
-        off += tot;
-        if (tipo === 'IEND') break;
+        const kind = String.fromCharCode(src[off + 4], src[off + 5], src[off + 6], src[off + 7]);
+        const total = 12 + len;
+        if (kind === 'IHDR') fineIhdr = off + total;
+        else if (kind === 'pHYs') { physOff = off; physTot = total; }
+        off += total;
+        if (kind === 'IEND') break;
       }
       if (fineIhdr < 0) return arrayBuffer;
-      const ppm = Math.round(dpi / 0.0254);          // pixel per metro: 1 pollice = 0,0254 m
+      const pixelsPerMetre = Math.round(dpi / 0.0254);          // pixel per metro: 1 pollice = 0,0254 m
       const ch = new Uint8Array(21);                 // 4 lunghezza + 4 tipo + 9 dati + 4 CRC
       const dv = new DataView(ch.buffer);
       dv.setUint32(0, 9);
       ch.set([0x70, 0x48, 0x59, 0x73], 4);           // "pHYs"
-      dv.setUint32(8, ppm); dv.setUint32(12, ppm);
+      dv.setUint32(8, pixelsPerMetre); dv.setUint32(12, pixelsPerMetre);
       ch[16] = 1;                                    // unità di misura: il metro
       dv.setUint32(17, crc32(ch, 4, 17));            // CRC su tipo + dati
-      const pezzi = [src.subarray(0, fineIhdr), ch];
+      const parts = [src.subarray(0, fineIhdr), ch];
       if (physOff >= fineIhdr) {
-        pezzi.push(src.subarray(fineIhdr, physOff), src.subarray(physOff + physTot));
+        parts.push(src.subarray(fineIhdr, physOff), src.subarray(physOff + physTot));
       } else {
-        pezzi.push(src.subarray(fineIhdr));
+        parts.push(src.subarray(fineIhdr));
       }
       var n = 0;
-      pezzi.forEach(function (p) { n += p.length; });
+      parts.forEach(function (p) { n += p.length; });
       const out = new Uint8Array(n);
       var q = 0;
-      pezzi.forEach(function (p) { out.set(p, q); q += p.length; });
+      parts.forEach(function (p) { out.set(p, q); q += p.length; });
       return out.buffer;
     }
 
     // ── Costruzione del pannello (una volta sola, al primo clic) ────────
-    function creaPannello() {
+    function makePanel() {
       if (pan) return pan;
-      aggiungiCss(
+      addCss(
         '#dv-dl{position:fixed;z-index:11;box-sizing:border-box;' +
           'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
           'font-size:13px;line-height:1.35;color:#fff;background:#000000d9;border-radius:14px;padding:.85rem .9rem;' +
@@ -1846,14 +1846,14 @@
         '#dv-dl input:focus-visible,#dv-dl button:focus-visible{outline:2px solid #fff;outline-offset:1px;opacity:1}'
       );
 
-      function nodo(tag, cls, testo) {
-        const e = creaEl(tag);
+      function node(tag, cls, text) {
+        const e = makeEl(tag);
         if (cls) e.setAttribute('class', cls);
-        if (testo != null) e.textContent = testo;
+        if (text != null) e.textContent = text;
         return e;
       }
 
-      pan = creaEl('div');
+      pan = makeEl('div');
       pan.id = 'dv-dl';
       pan.setAttribute('role', 'dialog');
       pan.setAttribute('aria-label', T('dlDialog'));
@@ -1861,9 +1861,9 @@
       btnDl.setAttribute('aria-controls', 'dv-dl');
 
       // ── sezione PNG ──
-      pan.appendChild(nodo('div', 'dv-dl-h', 'PNG'));
-      const riga = nodo('div', 'dv-dl-row');
-      const inDpi = creaEl('input');
+      pan.appendChild(node('div', 'dv-dl-h', 'PNG'));
+      const row = node('div', 'dv-dl-row');
+      const inDpi = makeEl('input');
       inDpi.id = 'dv-dpi';
       inDpi.setAttribute('type', 'number');
       inDpi.setAttribute('min', String(DPI_MIN));
@@ -1872,99 +1872,99 @@
       inDpi.setAttribute('inputmode', 'numeric');
       inDpi.setAttribute('aria-label', T('dpiAria'));
       inDpi.title = T('dpiTip', DPI_MIN, DPI_MAX);
-      riga.appendChild(inDpi);
-      riga.appendChild(nodo('span', 'dv-dl-unit', 'DPI'));
-      pan.appendChild(riga);
+      row.appendChild(inDpi);
+      row.appendChild(node('span', 'dv-dl-unit', 'DPI'));
+      pan.appendChild(row);
 
-      const rigaChip = nodo('div', 'dv-dl-chips');
+      const chipRow = node('div', 'dv-dl-chips');
       const chips = [];
       DPI_PRESET.forEach(function (d) {
-        const c = nodo('button', 'dv-chip', String(d));
+        const c = node('button', 'dv-chip', String(d));
         c.setAttribute('type', 'button');
         c.setAttribute('aria-label', T('dpiChip', d));
         c.setAttribute('aria-pressed', 'false');
-        c.addEventListener('click', function () { inDpi.value = String(d); aggiornaPng(); inDpi.focus(); });
+        c.addEventListener('click', function () { inDpi.value = String(d); updatePng(); inDpi.focus(); });
         chips.push(c);
-        rigaChip.appendChild(c);
+        chipRow.appendChild(c);
       });
-      pan.appendChild(rigaChip);
+      pan.appendChild(chipRow);
 
-      const prevPx = nodo('div', 'dv-dl-prev', '');
-      const prevSub = nodo('div', 'dv-dl-sub', '');
-      pan.appendChild(prevPx);
-      pan.appendChild(prevSub);
+      const previewPx = node('div', 'dv-dl-prev', '');
+      const previewSub = node('div', 'dv-dl-sub', '');
+      pan.appendChild(previewPx);
+      pan.appendChild(previewSub);
 
-      const optSfondo = nodo('label', 'dv-dl-opt');
-      const chkSfondo = creaEl('input');
-      chkSfondo.setAttribute('type', 'checkbox');
-      optSfondo.appendChild(chkSfondo);
-      optSfondo.appendChild(document.createTextNode(T('pngWhite')));
-      pan.appendChild(optSfondo);
+      const optBackground = node('label', 'dv-dl-opt');
+      const chkBackground = makeEl('input');
+      chkBackground.setAttribute('type', 'checkbox');
+      optBackground.appendChild(chkBackground);
+      optBackground.appendChild(document.createTextNode(T('pngWhite')));
+      pan.appendChild(optBackground);
 
-      const goPng = nodo('button', 'dv-go', T('pngGo'));
+      const goPng = node('button', 'dv-go', T('pngGo'));
       goPng.setAttribute('type', 'button');
       pan.appendChild(goPng);
 
-      pan.appendChild(nodo('hr', 'dv-sep'));
+      pan.appendChild(node('hr', 'dv-sep'));
 
       // ── sezione SVG ──
-      pan.appendChild(nodo('div', 'dv-dl-h', 'SVG'));
-      const svgInfo = nodo('div', 'dv-dl-prev', '');
-      const svgSub = nodo('div', 'dv-dl-sub', T('svgSub'));
+      pan.appendChild(node('div', 'dv-dl-h', 'SVG'));
+      const svgInfo = node('div', 'dv-dl-prev', '');
+      const svgSubEl = node('div', 'dv-dl-sub', T('svgSub'));
       pan.appendChild(svgInfo);
-      pan.appendChild(svgSub);
-      const goSvg = nodo('button', 'dv-go', T('svgGo'));
+      pan.appendChild(svgSubEl);
+      const goSvg = node('button', 'dv-go', T('svgGo'));
       goSvg.setAttribute('type', 'button');
       pan.appendChild(goSvg);
-      const goOrig = nodo('button', 'dv-ghost', T('svgOrigNo'));
+      const goOrig = node('button', 'dv-ghost', T('svgOrigNo'));
       goOrig.setAttribute('type', 'button');
       pan.appendChild(goOrig);
 
       (document.body || document.documentElement).appendChild(pan);
 
       // ── anteprima in tempo reale del PNG ──
-      function dpiDigitato() {
+      function dpiTyped() {
         var v = parseInt(inDpi.value, 10);
         if (!isFinite(v)) v = 96;
         return Math.max(DPI_MIN, v);
       }
-      function dpiEffettivo() { return Math.min(dpiDigitato(), dpiMassimo()); }
-      function aggiornaPng() {
-        const dpi = dpiDigitato(), max = dpiMassimo(), troppo = dpi > max;
+      function dpiEffective() { return Math.min(dpiTyped(), dpiMax()); }
+      function updatePng() {
+        const dpi = dpiTyped(), max = dpiMax(), troppo = dpi > max;
         const d = pxPerDpi(troppo ? max : dpi);
-        prevPx.textContent = d.w + ' × ' + d.h + ' px';
+        previewPx.textContent = d.w + ' × ' + d.h + ' px';
         if (troppo) {
-          prevSub.textContent = T('pngMax', max);
-          prevSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
+          previewSub.textContent = T('pngMax', max);
+          previewSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
         } else {
           // i centimetri NON dipendono dal DPI: è la stessa carta, stampata più o meno fitta
-          prevSub.textContent = T('pngCm', num(natW / 96 * 2.54, 1), num(natH / 96 * 2.54, 1), dpi);
-          prevSub.setAttribute('class', 'dv-dl-sub');
+          previewSub.textContent = T('pngCm', num(natW / 96 * 2.54, 1), num(natH / 96 * 2.54, 1), dpi);
+          previewSub.setAttribute('class', 'dv-dl-sub');
         }
         chips.forEach(function (c, i) { c.setAttribute('aria-pressed', DPI_PRESET[i] === dpi ? 'true' : 'false'); });
       }
-      function avviso(t) {
-        prevSub.textContent = t;
-        prevSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
+      function warn(t) {
+        previewSub.textContent = t;
+        previewSub.setAttribute('class', 'dv-dl-sub dv-dl-warn');
       }
-      function occupato(on) {
+      function busy(on) {
         goPng.disabled = on;
         goPng.textContent = T(on ? 'pngWait' : 'pngGo');
       }
 
-      function scaricaPng() {
+      function downloadPng() {
         if (goPng.disabled) return;
-        const dpi = dpiEffettivo();
+        const dpi = dpiEffective();
         const d = pxPerDpi(dpi);
-        const testo = sorgentePerRaster(d.w, d.h);
-        occupato(true);
-        const url = URL.createObjectURL(new Blob([testo], { type: 'image/svg+xml;charset=utf-8' }));
+        const text = sourceForRaster(d.w, d.h);
+        busy(true);
+        const url = URL.createObjectURL(new Blob([text], { type: 'image/svg+xml;charset=utf-8' }));
         const im = new Image();
-        im.onerror = function () { URL.revokeObjectURL(url); occupato(false); avviso(T('errRaster')); };
+        im.onerror = function () { URL.revokeObjectURL(url); busy(false); warn(T('errRaster')); };
         im.onload = function () {
           URL.revokeObjectURL(url);
           try {
-            const cv = creaEl('canvas');
+            const cv = makeEl('canvas');
             cv.width = d.w; cv.height = d.h;
             if (cv.width !== d.w || cv.height !== d.h) throw new Error('misura rifiutata');
             const g = cv.getContext('2d');
@@ -1973,22 +1973,22 @@
             g.fillStyle = '#ff00ff'; g.fillRect(0, 0, 1, 1);
             if (g.getImageData(0, 0, 1, 1).data[3] === 0) throw new Error('canvas troppo grande');
             g.clearRect(0, 0, 1, 1);
-            if (chkSfondo.checked) { g.fillStyle = '#ffffff'; g.fillRect(0, 0, d.w, d.h); }
+            if (chkBackground.checked) { g.fillStyle = '#ffffff'; g.fillRect(0, 0, d.w, d.h); }
             g.drawImage(im, 0, 0, d.w, d.h);
             cv.toBlob(function (b) {
-              if (!b) { occupato(false); avviso(T('errBig')); return; }
+              if (!b) { busy(false); warn(T('errBig')); return; }
               b.arrayBuffer().then(function (ab) {
-                occupato(false);
+                busy(false);
                 try { GM_setValue('dv-png-dpi', String(dpi)); } catch (e) {}
-                salvaFile(new Blob([pngConDpi(ab, dpi)], { type: 'image/png' }),
-                          nomeBase() + (dpi === 96 ? '' : '@' + dpi + 'dpi') + '.png');
+                saveFile(new Blob([pngWithDpi(ab, dpi)], { type: 'image/png' }),
+                          baseName() + (dpi === 96 ? '' : '@' + dpi + 'dpi') + '.png');
                 cv.width = cv.height = 0;     // libera subito i 4 byte per pixel
-                chiudi(true);
+                closeDl(true);
               });
             }, 'image/png');
           } catch (e) {
-            occupato(false);
-            avviso(e && e.name === 'SecurityError'
+            busy(false);
+            warn(e && e.name === 'SecurityError'
               ? T('errExtern')
               : T('errPng'));
           }
@@ -1997,50 +1997,50 @@
       }
 
       // ── la pulizia gira SOLO ora, all'apertura del pannello ──
-      var svgPulito = null;
-      function preparaSvg() {
-        const pesoOrig = byteOriginali ? byteOriginali.byteLength : 0;
-        goOrig.disabled = !byteOriginali;
-        goOrig.textContent = byteOriginali ? T('svgOrig', peso(pesoOrig)) : T('svgOrigNo');
+      var cleanSvg = null;
+      function prepareSvg() {
+        const origSize = originalBytes ? originalBytes.byteLength : 0;
+        goOrig.disabled = !originalBytes;
+        goOrig.textContent = originalBytes ? T('svgOrig', sizeText(origSize)) : T('svgOrigNo');
         var t = null;
-        try { t = svgRipulito(); } catch (e) { t = null; }
-        if (!t || !xmlValido(t)) {
-          svgPulito = null;
+        try { t = cleanedSvg(); } catch (e) { t = null; }
+        if (!t || !xmlValid(t)) {
+          cleanSvg = null;
           goSvg.disabled = true;
           svgInfo.textContent = T('svgNothing');
           return;
         }
-        svgPulito = t;
+        cleanSvg = t;
         goSvg.disabled = false;
-        const pul = new Blob([t]).size;
-        const rif = pesoOrig || new Blob([new XMLSerializer().serializeToString(svgMedia)]).size;
-        const perc = Math.round((1 - pul / rif) * 100);
-        svgInfo.textContent = peso(rif) + ' → ' + peso(pul) + (perc > 0 ? '  (-' + perc + '%)' : T('svgMinimal'));
+        const cleanSize = new Blob([t]).size;
+        const refSize = origSize || new Blob([new XMLSerializer().serializeToString(svgEl)]).size;
+        const pct = Math.round((1 - cleanSize / refSize) * 100);
+        svgInfo.textContent = sizeText(refSize) + ' → ' + sizeText(cleanSize) + (pct > 0 ? '  (-' + pct + '%)' : T('svgMinimal'));
       }
 
-      goPng.addEventListener('click', scaricaPng);
-      inDpi.addEventListener('input', aggiornaPng);
-      inDpi.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); scaricaPng(); } });
+      goPng.addEventListener('click', downloadPng);
+      inDpi.addEventListener('input', updatePng);
+      inDpi.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); downloadPng(); } });
       goSvg.addEventListener('click', function () {
-        if (!svgPulito) return;
-        salvaFile(new Blob([svgPulito], { type: 'image/svg+xml;charset=utf-8' }), nomeBase() + '.min.svg');
-        chiudi(true);
+        if (!cleanSvg) return;
+        saveFile(new Blob([cleanSvg], { type: 'image/svg+xml;charset=utf-8' }), baseName() + '.min.svg');
+        closeDl(true);
       });
       goOrig.addEventListener('click', function () {
-        if (!byteOriginali) return;
-        salvaFile(new Blob([byteOriginali], { type: 'image/svg+xml;charset=utf-8' }), nomeBase() + '.svg');
-        chiudi(true);
+        if (!originalBytes) return;
+        saveFile(new Blob([originalBytes], { type: 'image/svg+xml;charset=utf-8' }), baseName() + '.svg');
+        closeDl(true);
       });
       // ctrl+rotella sul pannello: qui il gestore di wrap non arriva, quindi
       // senza questa riga zoomerebbe la PAGINA
       pan.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
 
-      pan.__dv = { aggiornaPng: aggiornaPng, preparaSvg: preparaSvg, inDpi: inDpi };
+      pan.__dv = { updatePng: updatePng, prepareSvg: prepareSvg, inDpi: inDpi };
       return pan;
     }
 
     // ── apertura, chiusura, posizionamento ──────────────────────────────
-    function posizionaPannello() {
+    function placePanel() {
       const r = pill.getBoundingClientRect();
       const top = r.bottom + 8;
       // il pannello sta SEMPRE sotto la pill, che non deve mai coprire: su vista
@@ -2053,43 +2053,43 @@
       pan.style.left = Math.round(left) + 'px';
       pan.style.top = Math.round(top) + 'px';
     }
-    function apri() {
-      creaPannello();
-      var dpiIniziale = 96;
-      try { dpiIniziale = parseInt(GM_getValue('dv-png-dpi', '96'), 10) || 96; } catch (e) {}
-      pan.__dv.inDpi.value = String(dpiIniziale);
-      pannelloAperto = true;
+    function openDl() {
+      makePanel();
+      var dpiInitial = 96;
+      try { dpiInitial = parseInt(GM_getValue('dv-png-dpi', '96'), 10) || 96; } catch (e) {}
+      pan.__dv.inDpi.value = String(dpiInitial);
+      dlOpen = true;
       pan.hidden = false;
       btnDl.setAttribute('aria-expanded', 'true');
-      pan.__dv.aggiornaPng();
-      pan.__dv.preparaSvg();          // la pulizia gira qui, non prima
-      posizionaPannello();
+      pan.__dv.updatePng();
+      pan.__dv.prepareSvg();          // la pulizia gira qui, non prima
+      placePanel();
       pan.__dv.inDpi.focus();
       pan.__dv.inDpi.select();
     }
-    function chiudi(tornaAlTasto) {
+    function closeDl(backToKey) {
       if (!pan) return;
-      pannelloAperto = false;
+      dlOpen = false;
       pan.hidden = true;
       btnDl.setAttribute('aria-expanded', 'false');
-      if (tornaAlTasto) btnDl.focus();
+      if (backToKey) btnDl.focus();
     }
-    chiudiPannello = chiudi;
-    function commuta() { pannelloAperto ? chiudi(true) : apri(); }
+    closeDlPanel = closeDl;
+    function toggleDl() { dlOpen ? closeDl(true) : openDl(); }
 
     // Gancio per il menu del tasto destro: la voce "Copia immagine" deve poter
     // rasterizzare l'SVG, ma il menu vive anche sulle pagine raster e non deve
     // conoscere i dettagli di questa sezione.
-    azioniSvg = { perRaster: sorgentePerRaster };
+    svgActions = { perRaster: sourceForRaster };
 
-    btnDl.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); commuta(); });
+    btnDl.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleDl(); });
     btnDl.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); commuta(); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDl(); }
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && pannelloAperto) { e.preventDefault(); e.stopPropagation(); chiudi(true); }
+      if (e.key === 'Escape' && dlOpen) { e.preventDefault(); e.stopPropagation(); closeDl(true); }
     }, true);
-    window.addEventListener('resize', function () { if (pannelloAperto) posizionaPannello(); });
+    window.addEventListener('resize', function () { if (dlOpen) placePanel(); });
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -2099,32 +2099,32 @@
   //  metterebbe duecento righe di pannello davanti al visualizzatore, che è
   //  il mestiere vero di questo script.
   // ═══════════════════════════════════════════════════════════════════
-  function disegnaOpzioni() {
-    // Com'è fatta la pagina: gruppi di righe, ogni riga una chiave di OPZ.
+  function drawOptions() {
+    // Com'è fatta la pagina: gruppi di righe, ogni riga una chiave di OPTS.
     // I valori delle scelte portano l'etichetta da mostrare, che è una chiave
-    // di TESTI: così la pagina si traduce insieme al resto e non a parte.
-    const PAGINA = [
-      { g: 'oGrpGenerale', righe: [
-        { k: 'dv-lang',       l: 'oLang',      d: 'oLangD',  et: { auto: 'oAuto', it: 'oItaliano', en: 'oEnglish' } },
-        { k: 'dv-bg-tipo',    l: 'oBgTipo',    d: 'oBgTipoD', et: { scacchi: 'oScacchi', uniforme: 'oUniforme' } },
-        { k: 'dv-bg-tema',    l: 'oBgTema',    d: 'oBgTemaD', et: { adattivo: 'oAdattivo', chiaro: 'oChiaro', scuro: 'oScuro' } },
-        { k: 'dv-scale-mode', l: 'oReale',     d: 'oRealeD', et: { phys: 'oFisici', log: 'oLogici' } }
+    // di TEXTS: così la pagina si traduce insieme al resto e non a parte.
+    const PANEL = [
+      { g: 'oGrpGeneral', rows: [
+        { k: 'dv-lang',       l: 'oLang',      d: 'oLangD',  labels: { auto: 'oAuto', it: 'oItalian', en: 'oEnglish' } },
+        { k: 'dv-bg-type',    l: 'oBgType',    d: 'oBgTypeD', labels: { checker: 'oChecker', solid: 'oSolid' } },
+        { k: 'dv-bg-theme',    l: 'oBgTheme',    d: 'oBgThemeD', labels: { auto: 'oAutoTheme', light: 'oLight', dark: 'oDark' } },
+        { k: 'dv-scale-mode', l: 'oHiDpi',     d: 'oHiDpiD', labels: { phys: 'oPhysical', log: 'oLogical' } }
       ] },
-      { g: 'oGrpZoom', righe: [
-        { k: 'dv-wheel-mode',  l: 'oGesto',      d: 'oGestoD', et: { auto: 'oGestoAuto', scorri: 'oGestoScorri', mai: 'oGestoMai' } },
-        { k: 'dv-wheel-up-in', l: 'oRotellaSu',  d: 'oRotellaSuD', negato: true },
-        { k: 'dv-fit-grow',    l: 'oAdatta',     d: 'oAdattaD' },
-        { k: 'dv-minimappa',   l: 'oNavig',      d: 'oNavigD' },
-        { k: 'dv-zoom-sens',   l: 'oSensPinch',  d: 'oSensPinchD', guardia: 'predefinito' },
-        { k: 'dv-touch-sens',  l: 'oSensDito',   d: 'oSensDitoD',  guardia: 'predefinito' },
-        { k: 'dv-zoom-max',    l: 'oZoomMax',    d: 'oZoomMaxD' }
+      { g: 'oGrpZoom', rows: [
+        { k: 'dv-wheel-mode',  l: 'oPointer',      d: 'oPointerD', labels: { auto: 'oPointerZoom', scroll: 'oPointerHybrid', never: 'oPointerPan' } },
+        { k: 'dv-wheel-up-in', l: 'oInvertScroll',  d: 'oInvertScrollD', negated: true },
+        { k: 'dv-fit-grow',    l: 'oGrowSmall',     d: 'oGrowSmallD' },
+        { k: 'dv-navigator',   l: 'oShowNav',      d: 'oShowNavD' },
+        { k: 'dv-zoom-sens',   l: 'oSensGesture',  d: 'oSensGestureD', guard: 'default' },
+        { k: 'dv-touch-sens',  l: 'oSensScroll',   d: 'oSensScrollD',  guard: 'default' },
+        { k: 'dv-zoom-max',    l: 'oMaxZoom',    d: 'oMaxZoomD' }
       ] },
-      { g: 'oGrpEsport', righe: [
+      { g: 'oGrpExport', rows: [
         { k: 'dv-png-dpi',  l: 'oDpiPng' },
-        { k: 'dv-copy-dpi', l: 'oDpiCopia', d: 'oDpiCopiaD' }
+        { k: 'dv-copy-dpi', l: 'oDpiCopy', d: 'oDpiCopyD' }
       ] },
-      { g: 'oGrpFino', righe: [
-        { k: 'dv-nudge-y', l: 'oNudge', d: 'oNudgeD', guardia: 'modifica' }
+      { g: 'oGrpOther', rows: [
+        { k: 'dv-nudge-y', l: 'oNudge', d: 'oNudgeD', guard: 'edit' }
       ] }
     ];
 
@@ -2134,52 +2134,52 @@
       'body{margin:0;background:var(--dv-bg);color:var(--dv-fg);' +
         'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Helvetica Neue",Arial,sans-serif;' +
         'font-size:16px;line-height:1.45}' +
-      '#dv-opz{max-width:46rem;margin:0 auto;padding:2rem 1.1rem 4rem}' +
+      '#dv-options{max-width:46rem;margin:0 auto;padding:2rem 1.1rem 4rem}' +
       '.dv-o-h1{font-size:1.5rem;font-weight:700;margin:0 0 .2rem}' +
       '.dv-o-ver{font-size:.85rem;color:var(--dv-sub);margin:0 0 .1rem}' +
       '.dv-o-sub{color:var(--dv-sub);margin:0 0 1.6rem;font-size:.95rem}' +
       '.dv-o-grp{background:var(--dv-card);border:1px solid var(--dv-line);border-radius:14px;padding:.2rem 1.1rem;margin:0 0 1.1rem}' +
       '.dv-o-gt{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dv-acc);' +
         'margin:1rem 0 .2rem}' +
-      '.dv-o-riga{display:flex;align-items:flex-start;justify-content:space-between;gap:1.2rem;' +
+      '.dv-o-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1.2rem;' +
         'padding:.85rem 0;border-top:1px solid var(--dv-line)}' +
-      '.dv-o-gt+.dv-o-riga{border-top:0}' +
+      '.dv-o-gt+.dv-o-row{border-top:0}' +
       '.dv-o-txt{flex:1 1 auto;min-width:0}' +
       '.dv-o-l{display:block;font-weight:600}' +
       '.dv-o-d{display:block;color:var(--dv-sub);font-size:.85rem;margin-top:.15rem;white-space:pre-line}' +
       '.dv-o-d strong{color:var(--dv-fg);font-weight:700}' +
-      '.dv-o-guardia{font-size:.85rem;color:var(--dv-sub);cursor:pointer;user-select:none;margin-right:.35rem}' +
+      '.dv-o-guard{font-size:.85rem;color:var(--dv-sub);cursor:pointer;user-select:none;margin-right:.35rem}' +
       '.dv-o-ctl{flex:0 0 auto;display:flex;align-items:center;gap:.4rem;min-height:2rem}' +
       '.dv-o-ctl input[disabled]{opacity:.45;cursor:not-allowed}' +
       '.dv-o-ctl select,.dv-o-ctl input[type=number]{font:inherit;font-size:.95rem;color:inherit;background:var(--dv-bg);' +
         'border:1px solid var(--dv-line);border-radius:9px;padding:.35rem .5rem;max-width:15rem}' +
       '.dv-o-ctl input[type=number]{width:6.5rem;text-align:right}' +
       '.dv-o-ctl input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--dv-acc);margin:0}' +
-      '.dv-o-pie{display:flex;align-items:center;gap:1rem;margin-top:1.4rem;flex-wrap:wrap}' +
+      '.dv-o-foot{display:flex;align-items:center;gap:1rem;margin-top:1.4rem;flex-wrap:wrap}' +
       '.dv-o-reset{font:inherit;font-size:.9rem;color:inherit;background:var(--dv-card);cursor:pointer;' +
         'border:1px solid var(--dv-line);border-radius:9px;padding:.45rem .9rem}' +
       '.dv-o-reset:hover{border-color:var(--dv-acc)}' +
-      '.dv-o-eco{color:var(--dv-acc);font-size:.9rem;opacity:0;transition:opacity .15s}' +
-      '.dv-o-eco.dv-on{opacity:1}' +
-      '.dv-o-nota{color:var(--dv-sub);font-size:.82rem;margin-top:1.6rem}' +
+      '.dv-o-echo{color:var(--dv-acc);font-size:.9rem;opacity:0;transition:opacity .15s}' +
+      '.dv-o-echo.dv-on{opacity:1}' +
+      '.dv-o-note{color:var(--dv-sub);font-size:.82rem;margin-top:1.6rem}' +
       ':focus-visible{outline:2px solid var(--dv-acc);outline-offset:2px}'
     );
 
-    var radice = document.getElementById('dv-opz');
-    if (!radice) {
-      radice = document.createElement('div');
-      radice.id = 'dv-opz';
-      document.body.appendChild(radice);
+    var root = document.getElementById('dv-options');
+    if (!root) {
+      root = document.createElement('div');
+      root.id = 'dv-options';
+      document.body.appendChild(root);
     }
     // il guscio remoto porta il proprio avviso 'script non installato': si è qui,
     // quindi lo script c'è, e l'avviso lascia il posto al pannello vero
-    while (radice.firstChild) radice.removeChild(radice.firstChild);
-    try { document.title = T('oTitolo') + ' - ' + T('oOpzioni'); } catch (e) {}
+    while (root.firstChild) root.removeChild(root.firstChild);
+    try { document.title = T('oTitle') + ' - ' + T('oOptions'); } catch (e) {}
 
-    function nodo(tag, cls, testo) {
+    function node(tag, cls, text) {
       const e = document.createElement(tag);
       if (cls) e.className = cls;
-      if (testo != null) e.textContent = testo;
+      if (text != null) e.textContent = text;
       return e;
     }
     // ⚠️ Grassetto in linea col marcatore *X*, e senza innerHTML: la stringa si
@@ -2187,146 +2187,146 @@
     // Serve per i tasti citati nelle descrizioni (*A*, *I*, *N*), che l'utente
     // vuole in evidenza. ⚠️ Nei TOOLTIP non si puo' fare, perche' un attributo
     // `title` non porta markup: la' i tasti restano nudi, e non e' una svista.
-    function testoRicco(el, testo) {
-      String(testo).split('*').forEach(function (pezzo, i) {
-        if (!pezzo) return;
-        el.appendChild(i % 2 ? nodo('strong', '', pezzo) : document.createTextNode(pezzo));
+    function richText(el, text) {
+      String(text).split('*').forEach(function (part, i) {
+        if (!part) return;
+        el.appendChild(i % 2 ? node('strong', '', part) : document.createTextNode(part));
       });
       return el;
     }
-    const eco = nodo('span', 'dv-o-eco', '');
-    function segnala(testo) {
-      eco.textContent = testo;
-      eco.classList.add('dv-on');
-      clearTimeout(segnala.tempo);
-      segnala.tempo = setTimeout(function () { eco.classList.remove('dv-on'); }, 1400);
+    const echo = node('span', 'dv-o-echo', '');
+    function flash(text) {
+      echo.textContent = text;
+      echo.classList.add('dv-on');
+      clearTimeout(flash.tempo);
+      flash.tempo = setTimeout(function () { echo.classList.remove('dv-on'); }, 1400);
     }
-    function scrivi(k, v) {
+    function saveOpt(k, v) {
       try { GM_setValue(k, String(v)); } catch (e) { return; }
-      segnala(T('oSalvato'));
+      flash(T('oSaved'));
     }
 
-    radice.appendChild(nodo('h1', 'dv-o-h1', T('oTitolo')));
+    root.appendChild(node('h1', 'dv-o-h1', T('oTitle')));
     // La versione si LEGGE dai metadati (GM_info), non si riscrive qui: due numeri
     // scritti a mano nello stesso file divergono al primo bump distratto.
-    var versione = '';
-    try { versione = (GM_info && GM_info.script && GM_info.script.version) || ''; } catch (e) {}
-    if (versione) radice.appendChild(nodo('p', 'dv-o-ver', 'v' + versione));
-    radice.appendChild(nodo('p', 'dv-o-sub', T('oSotto')));
+    var version = '';
+    try { version = (GM_info && GM_info.script && GM_info.script.version) || ''; } catch (e) {}
+    if (version) root.appendChild(node('p', 'dv-o-ver', 'v' + version));
+    root.appendChild(node('p', 'dv-o-sub', T('oSubtitle')));
 
-    PAGINA.forEach(function (gruppo) {
-      const box = nodo('div', 'dv-o-grp');
-      box.appendChild(nodo('div', 'dv-o-gt', T(gruppo.g)));
-      gruppo.righe.forEach(function (r) {
-        const o = opzDi(r.k);
+    PANEL.forEach(function (group) {
+      const box = node('div', 'dv-o-grp');
+      box.appendChild(node('div', 'dv-o-gt', T(group.g)));
+      group.rows.forEach(function (r) {
+        const o = optByKey(r.k);
         if (!o) return;
-        const riga = nodo('div', 'dv-o-riga');
-        const txt = nodo('div', 'dv-o-txt');
-        const lab = nodo('label', 'dv-o-l', T(r.l));
-        lab.setAttribute('for', 'opz-' + r.k);
+        const row = node('div', 'dv-o-row');
+        const txt = node('div', 'dv-o-txt');
+        const lab = node('label', 'dv-o-l', T(r.l));
+        lab.setAttribute('for', 'opt-' + r.k);
         txt.appendChild(lab);
-        if (r.d) txt.appendChild(testoRicco(nodo('span', 'dv-o-d'), T(r.d)));
-        riga.appendChild(txt);
+        if (r.d) txt.appendChild(richText(node('span', 'dv-o-d'), T(r.d)));
+        row.appendChild(txt);
 
-        const ctl = nodo('div', 'dv-o-ctl');
-        var campo;
-        if (o.t === 'scelta') {
-          campo = document.createElement('select');
+        const ctl = node('div', 'dv-o-ctl');
+        var field;
+        if (o.t === 'choice') {
+          field = document.createElement('select');
           o.v.forEach(function (val) {
             const op = document.createElement('option');
             op.value = val;
-            op.textContent = (r.et && r.et[val]) ? T(r.et[val]) : val;
-            campo.appendChild(op);
+            op.textContent = (r.labels && r.labels[val]) ? T(r.labels[val]) : val;
+            field.appendChild(op);
           });
-          campo.value = leggiOpz(r.k);
-          campo.addEventListener('change', function () {
-            scrivi(r.k, campo.value);
+          field.value = readOpt(r.k);
+          field.addEventListener('change', function () {
+            saveOpt(r.k, field.value);
             // la lingua cambia le etichette di questa stessa pagina: si ridisegna,
             // altrimenti resterebbe scritta in quella di prima fino a un ricaricamento
             if (r.k === 'dv-lang') location.reload();
           });
         } else if (o.t === 'bool') {
-          campo = document.createElement('input');
-          campo.type = 'checkbox';
-          // ⚠️ `negato` serve quando l'etichetta dice il CONTRARIO della chiave
+          field = document.createElement('input');
+          field.type = 'checkbox';
+          // ⚠️ `negated` serve quando l'etichetta dice il CONTRARIO della chiave
           // ('Inverti scorrimento' contro `dv-wheel-up-in`): la casella mostra e
           // scrive il valore rovesciato, e la chiave resta UNA. L'alternativa,
           // cioe' una seconda chiave col senso invertito, e' esattamente il difetto
           // che il tasto I aveva fino alla 2.21.2.
-          campo.checked = (leggiOpz(r.k) === '1') !== !!r.negato;
-          campo.addEventListener('change', function () {
-            scrivi(r.k, (campo.checked !== !!r.negato) ? '1' : '0');
+          field.checked = (readOpt(r.k) === '1') !== !!r.negated;
+          field.addEventListener('change', function () {
+            saveOpt(r.k, (field.checked !== !!r.negated) ? '1' : '0');
           });
         } else {
-          campo = document.createElement('input');
-          campo.type = 'number';
-          campo.min = String(o.min);
-          campo.max = String(o.max);
-          campo.step = String(o.passo);
-          campo.value = leggiOpz(r.k);
+          field = document.createElement('input');
+          field.type = 'number';
+          field.min = String(o.min);
+          field.max = String(o.max);
+          field.step = String(o.step);
+          field.value = readOpt(r.k);
           // sul 'change' e non sull''input': altrimenti mentre si scrive '150' il
           // valore intermedio '1' verrebbe salvato e subito riportato al minimo
-          campo.addEventListener('change', function () {
-            const n = parseFloat(campo.value);
-            const buono = isFinite(n) ? Math.min(o.max, Math.max(o.min, n)) : parseFloat(o.d);
-            campo.value = String(buono);
-            scrivi(r.k, buono);
+          field.addEventListener('change', function () {
+            const n = parseFloat(field.value);
+            const good = isFinite(n) ? Math.min(o.max, Math.max(o.min, n)) : parseFloat(o.d);
+            field.value = String(good);
+            saveOpt(r.k, good);
           });
           // ⚠️ GUARDIA: i valori tarati su misure reali (le due sensibilita', lo
           // spostamento del testo) restano dietro una casella, per richiesta
           // dell'utente: 'e' un valore che voglio esporre ma va toccato con
-          // attenzione'. Due polarita', perche' due indoli: 'predefinito' spuntato
-          // dice 'sto usando il valore di fabbrica', 'modifica' spuntato dice
+          // attenzione'. Due polarita', perche' due indoli: 'default' spuntato
+          // dice 'sto usando il valore di fabbrica', 'edit' spuntato dice
           // 'so quello che faccio'.
           // ⚠️⚠️ Lo stato della casella NON si salva: si RICAVA dal valore
           // (spuntata quando il valore e' quello di fabbrica). Salvarlo darebbe
           // due fonti di verita' per la stessa cosa, e alla riapertura la casella
-          // potrebbe dichiarare 'predefinito' con dentro un valore ritoccato.
-          if (r.guardia) {
-            const perModifica = r.guardia === 'modifica';
+          // potrebbe dichiarare 'default' con dentro un valore ritoccato.
+          if (r.guard) {
+            const isEditGuard = r.guard === 'edit';
             const g = document.createElement('input');
             g.type = 'checkbox';
-            g.id = 'guardia-' + r.k;
-            const aDifetto = parseFloat(leggiOpz(r.k)) === parseFloat(o.d);
-            g.checked = perModifica ? !aDifetto : aDifetto;
-            const et = nodo('label', 'dv-o-guardia', T(perModifica ? 'oModifica' : 'oPredefinito'));
-            et.setAttribute('for', g.id);
-            const applica = function (riporta) {
-              const bloccato = perModifica ? !g.checked : g.checked;
-              campo.disabled = bloccato;
+            g.id = 'guard-' + r.k;
+            const atDefault = parseFloat(readOpt(r.k)) === parseFloat(o.d);
+            g.checked = isEditGuard ? !atDefault : atDefault;
+            const labelEl = node('label', 'dv-o-guard', T(isEditGuard ? 'oEdit' : 'oDefault'));
+            labelEl.setAttribute('for', g.id);
+            const applyGuard = function (restore) {
+              const locked = isEditGuard ? !g.checked : g.checked;
+              field.disabled = locked;
               // rimettendo la guardia il valore torna quello di fabbrica, o
               // l'etichetta 'Predefinito' direbbe il falso
-              if (bloccato && riporta && campo.value !== o.d) { campo.value = o.d; scrivi(r.k, o.d); }
+              if (locked && restore && field.value !== o.d) { field.value = o.d; saveOpt(r.k, o.d); }
             };
-            g.addEventListener('change', function () { applica(true); });
-            applica(false);
+            g.addEventListener('change', function () { applyGuard(true); });
+            applyGuard(false);
             ctl.appendChild(g);
-            ctl.appendChild(et);
+            ctl.appendChild(labelEl);
           }
         }
-        campo.id = 'opz-' + r.k;
-        ctl.appendChild(campo);
-        riga.appendChild(ctl);
-        box.appendChild(riga);
+        field.id = 'opt-' + r.k;
+        ctl.appendChild(field);
+        row.appendChild(ctl);
+        box.appendChild(row);
       });
-      radice.appendChild(box);
+      root.appendChild(box);
     });
 
-    const pie = nodo('div', 'dv-o-pie');
-    const reset = nodo('button', 'dv-o-reset', T('oReset'));
+    const footer = node('div', 'dv-o-foot');
+    const reset = node('button', 'dv-o-reset', T('oReset'));
     reset.type = 'button';
     reset.addEventListener('click', function () {
-      OPZ.forEach(function (o) { try { GM_setValue(o.k, o.d); } catch (e) {} });
+      OPTS.forEach(function (o) { try { GM_setValue(o.k, o.d); } catch (e) {} });
       // ridisegnare a mano vorrebbe dire rileggere ogni campo: ricaricare è più
       // corto e non può dimenticarsene uno
       location.reload();
     });
-    pie.appendChild(reset);
-    pie.appendChild(eco);
-    radice.appendChild(pie);
-    radice.appendChild(nodo('p', 'dv-o-nota', T('oNota')));
+    footer.appendChild(reset);
+    footer.appendChild(echo);
+    root.appendChild(footer);
+    root.appendChild(node('p', 'dv-o-note', T('oNote')));
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
-  else avvio();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 })();

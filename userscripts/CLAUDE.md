@@ -78,7 +78,7 @@ dedotta dal browser (richiesta esplicita dell'utente, 2026-08-17: 'puoi aggiunge
 variabile lingua'). È una **deroga dichiarata** alla regola 'anche la UI è in inglese' scritta
 qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha un'eccezione.
 
-- **Le stringhe stanno tutte in una tabella sola** (`TESTI`, in testa allo script), inglese e
+- **Le stringhe stanno tutte in una tabella sola** (`TEXTS`, in testa allo script), inglese e
   italiano affiancati riga per riga. ⚠️ Il motivo della forma affiancata è che una traduzione
   mancante si vede **leggendo la tabella**, non aprendo la pagina: sparse nel codice, le due
   lingue divergerebbero in silenzio.
@@ -98,16 +98,16 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
   frammentario senza punto pure. Il criterio è il
   ruolo perché si **verifica a macchina** (una passata sulla tabella, chiave per chiave); con
   'è una frase compiuta?' si va a sentimento, ed erano rimasti senza punto **tre tooltip su
-  cinque** in tutte e due le lingue. La regola sta scritta accanto alla tabella `TESTI`, che è
+  cinque** in tutte e due le lingue. La regola sta scritta accanto alla tabella `TEXTS`, che è
   dove serve leggerla.
 - ⚠️⚠️ **UNA sola stringa sta fuori dalla tabella: la voce di menu del gestore**, in inglese
-  fisso (`VOCE_MENU`), per scelta dell'utente (2026-08-17: *anche gli userscript multilingua
+  fisso (`MENU_ENTRY`), per scelta dell'utente (2026-08-17: *anche gli userscript multilingua
   usano sempre l'inglese per le impostazioni, preferisco la coerenza*). ⚠️ Non era un difetto
   da correggere: quella voce **era** già localizzata e seguiva la lingua del browser, misurato
   su cinque combinazioni di lingua. È una scelta di convenzione, e ha una logica sua: quel menu
   appartiene al **gestore**, non allo script, e sta in mezzo alle voci delle altre estensioni.
   - ⚠️ **Il pannello che apre resta bilingue**, titolo della scheda compreso, perché quello è
-    interfaccia dello script. La chiave che serviva al menu è stata **rinominata** `oOpzioni`
+    interfaccia dello script. La chiave che serviva al menu è stata **rinominata** `oOptions`
     invece di lasciarla chiamare `menuOpzioni`: ha cambiato mestiere, e un nome che mente su
     chi la usa manda fuori strada chi legge.
   - ⚠️ **Prima di dare per buona una richiesta di questo tipo, verificare che cosa fa già il
@@ -137,6 +137,26 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
     pagina con un valore ritoccato: la guardia si presenta aperta, non chiusa.
   - **Rimettendo la guardia il valore torna quello di fabbrica**, e viene salvato: senza,
     l'etichetta 'Predefinito' direbbe il falso su un campo che mostra 0,04.
+- ⚠️⚠️ **NOMI in inglese, TESTI in italiano: le due cose non si mescolano** (istruzione
+  dell'utente, 2026-08-17: *voglio tutte le variabili, le chiavi e i valori in inglese*). Dalla
+  3.0.0 sono inglesi le variabili, le funzioni, le chiavi dell'archivio (`dv-bg-type`,
+  `dv-bg-theme`, `dv-navigator`), i valori salvati (`checker`, `solid`, `auto`, `light`,
+  `dark`, `scroll`, `never`), le chiavi della tabella dei testi e i nomi di classe CSS. In
+  italiano restano i **testi** e i **commenti**, questi ultimi per la non-retroattività già
+  scritta nelle regole universali.
+  - ⚠️⚠️ **Rinominare dentro i COMMENTI è un errore, e l'ho commesso**: `passo`, `serve`,
+    `tutti`, `avvio`, `peso` sono parole italiane comuni prima di essere nomi di variabile, e
+    una passata cieca aveva prodotto prose come *il step della rotella* e *needed*. La
+    sostituzione va fatta con un tokenizzatore che tocchi **solo il codice**; i pochi commenti
+    che citano davvero un nome si aggiornano a mano, uno per uno.
+  - ⚠️ **Le chiavi rinominate azzerano le preferenze salvate**, e per questo la 3.0.0 è un
+    major: chi aggiorna riparte dai predefiniti. Non è stata scritta nessuna migrazione perché
+    l'utente ha dichiarato che avrebbe reinstallato da zero.
+  - **Il presidio è una prova sui PREDEFINITI a installazione pulita**, da rifare a ogni
+    rinomina: archivio vuoto, tutte e quattordici le voci lette dal DOM e confrontate con
+    quelle attese, più la verifica che aprire il pannello **non scriva nulla** nell'archivio.
+    Senza quest'ultima un default sbagliato si fossilizzerebbe al primo accesso, e da lì in poi
+    la prova lo troverebbe 'giusto' perché salvato.
 - ⚠️ **Il separatore decimale resta il punto** anche in italiano ('21.0 × 29.7 cm'), come la
   nota qui sopra prescrive per la UI inglese. Non è una svista: il numero lo compone `num()`,
   una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era
@@ -160,7 +180,7 @@ pagina `options.html` di 'Image Max URL'.
   vale per Tampermonkey, ma altri gestori possono partire prima: misurato in laboratorio,
   iniettando a `document-start` la pagina restava all'avviso 'script non installato', cioè il
   difetto peggiore, perché fa sembrare rotta l'installazione.
-- **Le opzioni sono una tabella sola** (`OPZ`), che è insieme il default, i limiti e ciò che
+- **Le opzioni sono una tabella sola** (`OPTS`), che è insieme il default, i limiti e ciò che
   il pannello disegna. ⚠️ Le chiavi delle cinque preferenze che esistevano già sono rimaste
   **identiche**, quindi chi aggiorna ritrova le sue scelte senza migrazione.
 - ⚠️⚠️ **UNA preferenza, UN posto: se una scorciatoia e un pannello cambiano la stessa cosa,
@@ -199,10 +219,10 @@ pagina `options.html` di 'Image Max URL'.
   invece era un errore di analisi: sono **assi indipendenti**, e unirli costringeva a
   scegliere fra la trasparenza e il colore, facendo sparire per forza la **scacchiera
   chiara**. Separati danno sei combinazioni e nessuna si perde. Il predefinito è scacchiera +
-  adattivo, ed è la scacchiera perché è l'unica che rende **visibile la trasparenza**, che su
+  automatico, ed è la scacchiera perché è l'unica che rende **visibile la trasparenza**, che su
   una pagina-immagine è un'informazione e non un vezzo.
   - ⚠️ **Cambia il predefinito rispetto alla 2.20**, dove la scacchiera era sempre scura: con
-    'adattivo' chi ha il browser in tema chiaro adesso vede la **scacchiera chiara**. Non è
+    'automatico' chi ha il browser in tema chiaro adesso vede la **scacchiera chiara**. Non è
     una regressione, è l'effetto voluto del nuovo default.
   - **I quattro colori non sono inventati**: sono le due coppie della scacchiera storica
     (`#DDD`/`#EEE` e `#333`/`#222`), e le tinte unite prendono il chiaro dell'una e lo scuro
