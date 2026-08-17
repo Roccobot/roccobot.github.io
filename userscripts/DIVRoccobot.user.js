@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         3.0.1
+// @version         3.0.2
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -287,7 +287,7 @@
   // ════════════════════════ IMPOSTAZIONI ════════════════════════
   // I valori qui sotto arrivano dalla tabella OPTS (archivio del gestore); i commenti
   // dicono da dove viene il DEFAULT, che è il numero scritto in OPTS.
-  // Lo sfondo ha DUE assi indipendenti, e tenerli separati e' la richiesta dell'utente
+  // Lo sfondo ha DUE assi indipendenti, e tenerli separati è la richiesta dell'utente
   // (2026-08-17) dopo che una prima versione li aveva fusi in una voce sola: la fusione
   // costringeva a scegliere fra la trasparenza e il colore, e faceva sparire la
   // scacchiera chiara, che con due assi torna a essere una delle sei combinazioni.
@@ -376,12 +376,12 @@
   // guardia comparirebbe solo mentre si guarda un'immagine, cioè quasi mai
   // quando serve. Non tocca il DOM e non osserva nulla: registra una voce e basta.
   const URL_OPTIONS = 'https://roccobot.github.io/userscripts/DIVOptions.html';
-  // ⚠️ L'UNICA stringa visibile fuori dalla tabella TEXTS, e non e' una dimenticanza:
+  // ⚠️ L'UNICA stringa visibile fuori dalla tabella TEXTS, e non è una dimenticanza:
   // resta in inglese fisso per scelta dell'utente (2026-08-17), che segue la consuetudine
   // degli userscript multilingua di tenere in inglese la voce di configurazione. Ha anche
   // una logica sua: quel menu appartiene al GESTORE, non allo script, e sta in mezzo alle
   // voci delle altre estensioni. Il pannello che apre resta invece bilingue, titolo della
-  // scheda compreso, perche' quello e' interfaccia dello script.
+  // scheda compreso, perché quello è interfaccia dello script.
   const MENU_ENTRY = 'Options';
   try {
     if (typeof GM_registerMenuCommand === 'function') {
@@ -413,7 +413,7 @@
   // Nota: restringere via @match/@include all'ESTENSIONE dell'URL è fragile e va
   // evitato: salta le immagini dirette con query string (es. ...preview01.jpg?1662541242)
   // o senza estensione, e in certi gestori (AdGuard) l'@include a regex non inietta
-  // affatto lo script (v2.1.0: sfondo a scacchi + overlay + zoom spariti). Percio' il
+  // affatto lo script (v2.1.0: sfondo a scacchi + overlay + zoom spariti). Perciò il
   // match resta ampio (http/https) e il VERO filtro è questa guardia sul content-type:
   // se la pagina non è un file immagine servito direttamente (image/*), si esce subito
   // senza toccare nulla.
@@ -438,7 +438,7 @@
   }
 
   // Dimensione "reale" di un SVG: non è sempre scritta nel file, quindi si
-  // cerca in ordine di attendibilita'. Il browser NON aiuta (un <img> con un
+  // cerca in ordine di attendibilità. Il browser NON aiuta (un <img> con un
   // SVG privo di misure riporta 300x150, o 90x150 applicando il rapporto del
   // viewBox all'altezza di default: numeri inventati, misurati).
   function svgUnitToPx(v) {
@@ -459,7 +459,7 @@
     // 1b) uno solo dei due: l'altro si ricava dal rapporto del viewBox
     if (vbOk && w > 0) return { w: Math.round(w), h: Math.round(w * vb[3] / vb[2]) };
     if (vbOk && h > 0) return { w: Math.round(h * vb[2] / vb[3]), h: Math.round(h) };
-    // 2) il viewBox da' l'area di disegno dichiarata
+    // 2) il viewBox dà l'area di disegno dichiarata
     if (vbOk) return { w: Math.round(vb[2]), h: Math.round(vb[3]) };
     // 3) niente misure: si prende l'ingombro del disegno, ORIGINE INCLUSA
     //    (x+larghezza), altrimenti un disegno spostato verrebbe tagliato
@@ -523,15 +523,15 @@
   const SOLID = { light: '#EEE', dark: '#222' };
   // ⚠️ 'auto' si legge UNA volta, all'avvio: cambiando il tema del browser a pagina
   // aperta serve un ricaricamento. Un ascoltatore su matchMedia costerebbe poco, ma
-  // riscriverebbe un foglio gia' iniettato per un caso che si risolve con un tasto, e il
-  // codice in piu' vivrebbe su ogni pagina-immagine.
+  // riscriverebbe un foglio già iniettato per un caso che si risolve con un tasto, e il
+  // codice in più vivrebbe su ogni pagina-immagine.
   const BG_IS_LIGHT = (BG_THEME === 'light') || (BG_THEME === 'auto' &&
     !(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
   const TINT = BG_IS_LIGHT ? 'light' : 'dark';
   // ⚠️ Serve DUE volte, col passo della scacchiera diverso: dietro all'immagine (20 px)
-  // e dentro il riquadro del navigatore (10 px), che e' la stessa immagine in piccolo.
-  // Scritta una volta sola perche' due copie divergerebbero, e si vedrebbe subito:
-  // il navigatore mostrerebbe una trasparenza che la pagina non ha piu'.
+  // e dentro il riquadro del navigatore (10 px), che è la stessa immagine in piccolo.
+  // Scritta una volta sola perché due copie divergerebbero, e si vedrebbe subito:
+  // il navigatore mostrerebbe una trasparenza che la pagina non ha più.
   function cssBackground(step) {
     if (BG_TYPE === 'checker') {
       const g = CHECKER[TINT], mezzo = step / 2;
@@ -539,10 +539,10 @@
         'background-image:linear-gradient(45deg,' + g[0] + ' 25%,transparent 25%,transparent 75%,' + g[0] + ' 75%,' + g[0] + ' 100%),' +
         'linear-gradient(45deg,' + g[0] + ' 25%,' + g[1] + ' 25%,' + g[1] + ' 75%,' + g[0] + ' 75%,' + g[0] + ' 100%)';
     }
-    // ⚠️⚠️ `!important` NON e' pigrizia: su una pagina-immagine il browser scrive un
+    // ⚠️⚠️ `!important` NON è pigrizia: su una pagina-immagine il browser scrive un
     // `background-color` INLINE sul body (Chromium mette rgb(14,14,14)), e un foglio
-    // iniettato perde contro l'inline a prescindere dalla specificita'. La scacchiera
-    // non se n'era accorta perche' copre il fondo con gradienti opachi; la tinta
+    // iniettato perde contro l'inline a prescindere dalla specificità. La scacchiera
+    // non se n'era accorta perché copre il fondo con gradienti opachi; la tinta
     // piatta invece spariva del tutto, e la pagina restava del colore del browser.
     // Misurato in laboratorio: senza queste due dichiarazioni il body resta a
     // rgb(14,14,14) sia in chiaro sia in scuro.
@@ -740,7 +740,7 @@
     let scale = fitScale() < realScale ? fitDisplay() : realScale;
     // ⚠️ isFit significa "sto mostrando l'adattato CHE IL CLIC DAREBBE", non "sono
     // arrivato qui adattando": è da questo che il clic capisce se ha qualcosa da
-    // alternare. Percio' si RICALCOLA ogni volta che cambia la scala, l'opzione di
+    // alternare. Perciò si RICALCOLA ogni volta che cambia la scala, l'opzione di
     // ingrandimento o la vista, e non si assume mai vero solo perché si è adattato.
     // Senza, dopo un riadattamento automatico a 1:1 (finestra allargata) il clic
     // credeva di essere già sull'adattato e non riusciva a chiedere il riempimento.
@@ -890,7 +890,7 @@
     // touch (trackpad, Magic Mouse) il dito serve invece a scorrere l'immagine
     // ingrandita, visto che qui il trascinamento non c'è per scelta.
     // ⚠️⚠️ LA DECISIONE È PER GESTO, NON PER EVENTO, e non è un dettaglio: NESSUNA
-    // proprieta' del singolo evento distingue in modo affidabile una rotella da una
+    // proprietà del singolo evento distingue in modo affidabile una rotella da una
     // superficie touch. Deciderlo evento per evento produceva il difetto peggiore
     // possibile, cioè UN SOLO gesto che scorre e zooma a tratti (misurato col Magic
     // Mouse 2 dell'utente, Chrome 150 su macOS, sonda del 2026-07-31: un colpo veloce
@@ -906,13 +906,13 @@
     // La firma che regge è l'AVVIO del gesto: una superficie touch parte sempre piano
     // (il primo evento di tutti e quattro i gesti misurati valeva 1 px), poi accelera e
     // lascia una coda di inerzia; una rotella parte subito con l'ampiezza di uno scatto.
-    // Percio' si decide sul PRIMO evento del gesto e la decisione si tiene fino alla
+    // Perciò si decide sul PRIMO evento del gesto e la decisione si tiene fino alla
     // pausa; in più la firma touch, quando si vede, resta in memoria per un attimo, così
     // un colpo brusco che partisse grande viene ricondotto al dispositivo giusto.
     // ⚠️ QUANTO VALE "UNO SCATTO" NON È UNIVERSALE (misurato sul mouse dell'utente).
     // La convenzione dice 120 di wheelDeltaY per scatto, ma con l'accelerazione di
     // sistema un solo tic fisico può valerne 360. Dando per buono il 120 si
-    // contavano tre passi per un tic solo (100% che diventava 274%). Percio'
+    // contavano tre passi per un tic solo (100% che diventava 274%). Perciò
     // l'unità si IMPARA: la più piccola ampiezza vista su questo mouse è uno
     // scatto, e gli eventi uniti dal browser ne sono multipli interi.
     let stepUnit = 0;
@@ -942,7 +942,7 @@
     }
     // Firma DEBOLE, di ripiego per i browser che wheelDeltaY non ce l'hanno: ampiezza da
     // scatto e nessuna componente orizzontale. ⚠️ È esattamente la regola che, applicata a
-    // OGNI evento, produceva il difetto del Magic Mouse: percio' qui la si interroga solo
+    // OGNI evento, produceva il difetto del Magic Mouse: perciò qui la si interroga solo
     // sul primo evento di un gesto, e solo quando nessuna firma touch è recente.
     function weakWheelSignature(e) {
       return Math.abs(e.deltaY) >= 40 && e.deltaX === 0 && e.deltaY === Math.trunc(e.deltaY);
@@ -1086,7 +1086,7 @@
         if (cmd === 'scorre') return;      // se lo prende il browser, non si tocca nulla
         // ⚠️ Un evento SENZA componente verticale non è un comando di zoom: viene dalla
         // rotella inclinabile o dalla rotellina del pollice. Senza questa uscita valeva
-        // uno scatto AL ROVESCIO (verso = deltaY < 0 ? 1 : -1 da' -1 per deltaY 0, e
+        // uno scatto AL ROVESCIO (verso = deltaY < 0 ? 1 : -1 dà -1 per deltaY 0, e
         // un'ampiezza nulla vale un intero scatto in scattiGrezzi), quindi lo zoom tornava
         // indietro di una tappa per ogni evento orizzontale, e il preventDefault impediva
         // anche lo scorrimento laterale che l'utente stava chiedendo.
@@ -2185,8 +2185,8 @@
     // ⚠️ Grassetto in linea col marcatore *X*, e senza innerHTML: la stringa si
     // spezza sugli asterischi e i pezzi in posizione dispari diventano <strong>.
     // Serve per i tasti citati nelle descrizioni (*A*, *I*, *N*), che l'utente
-    // vuole in evidenza. ⚠️ Nei TOOLTIP non si puo' fare, perche' un attributo
-    // `title` non porta markup: la' i tasti restano nudi, e non e' una svista.
+    // vuole in evidenza. ⚠️ Nei TOOLTIP non si può fare, perché un attributo
+    // `title` non porta markup: là i tasti restano nudi, e non è una svista.
     function richText(el, text) {
       String(text).split('*').forEach(function (part, i) {
         if (!part) return;
@@ -2251,7 +2251,7 @@
           // ⚠️ `negated` serve quando l'etichetta dice il CONTRARIO della chiave
           // ('Inverti scorrimento' contro `dv-wheel-up-in`): la casella mostra e
           // scrive il valore rovesciato, e la chiave resta UNA. L'alternativa,
-          // cioe' una seconda chiave col senso invertito, e' esattamente il difetto
+          // cioè una seconda chiave col senso invertito, è esattamente il difetto
           // che il tasto I aveva fino alla 2.21.2.
           field.checked = (readOpt(r.k) === '1') !== !!r.negated;
           field.addEventListener('change', function () {
@@ -2272,15 +2272,15 @@
             field.value = String(good);
             saveOpt(r.k, good);
           });
-          // ⚠️ GUARDIA: i valori tarati su misure reali (le due sensibilita', lo
+          // ⚠️ GUARDIA: i valori tarati su misure reali (le due sensibilità, lo
           // spostamento del testo) restano dietro una casella, per richiesta
           // dell'utente: 'e' un valore che voglio esporre ma va toccato con
-          // attenzione'. Due polarita', perche' due indoli: 'default' spuntato
+          // attenzione'. Due polarità, perché due indoli: 'default' spuntato
           // dice 'sto usando il valore di fabbrica', 'edit' spuntato dice
           // 'so quello che faccio'.
           // ⚠️⚠️ Lo stato della casella NON si salva: si RICAVA dal valore
-          // (spuntata quando il valore e' quello di fabbrica). Salvarlo darebbe
-          // due fonti di verita' per la stessa cosa, e alla riapertura la casella
+          // (spuntata quando il valore è quello di fabbrica). Salvarlo darebbe
+          // due fonti di verità per la stessa cosa, e alla riapertura la casella
           // potrebbe dichiarare 'default' con dentro un valore ritoccato.
           if (r.guard) {
             const isEditGuard = r.guard === 'edit';

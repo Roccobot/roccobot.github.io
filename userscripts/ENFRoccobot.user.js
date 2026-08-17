@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.1.0
+// @version      1.1.1
 // @description  Adds a Download button to enf-cmnf.cc and enfhub.com that saves the page's video. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. Progress on the button, second click cancels, picker when the page holds more than one video.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -232,7 +232,7 @@
   // Sec-Fetch-Dest 403, con Dest "audio"/"empty"/"document" 403. Ne segue anche
   // che aprire l'MP4 in una scheda nuova NON funziona (la navigazione manda
   // Dest: document), quindi non è un ripiego utilizzabile. I .m3u8 e i .ts
-  // passano comunque; le intestazioni si mandano lo stesso per uniformita'.
+  // passano comunque; le intestazioni si mandano lo stesso per uniformità.
 
   const INTESTAZIONI_MEDIA = {
     'Referer': location.href,
@@ -467,7 +467,7 @@
   }
 
   // HLS: playlist, poi i segmenti in parallelo mantenendo l'ordine, poi un solo
-  // file .ts (i segmenti sono MPEG-TS: concatenarli da' un flusso valido).
+  // file .ts (i segmenti sono MPEG-TS: concatenarli dà un flusso valido).
   async function scaricaHls(url, nome, btn) {
     mostra(btn, '⏳ Playlist...');
     var testo = await chiedi(url);

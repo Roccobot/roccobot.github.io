@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.17.0
+// @version      2.17.1
 // @description  Declutters Qwant and opens image results on the original file. Home page and results page: the official logo instead of event doodles; no left sidebar, footer, promo cards, options/filters button or ads (in-line data-testid adResult and right column); fixed search parameters per tab; the Filters button shown on image search; no image preview strip on web search; and, behind an experimental flag, result links rewritten to skip the fdn.qwant.com tracking redirect. Image search: a click opens the original file, taken from the React state already in the page or else from the thumbnail URL, which matters now that Qwant serves Bing thumbnails that cannot be reversed; when neither works, the click is left untouched. That module makes no network request and runs only on the Images tab, because its global listeners on web search used to trip Qwant's anti-bot (403).
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -35,7 +35,7 @@
   const IMMAGINI_DIRETTE = true;    // false = disattiva del tutto il modulo immagini (solo pulizia)
   // -- Ricerca web --
   // Riscrive i link dei risultati per saltare il redirect di tracking di Qwant
-  // (fdn.qwant.com/v3/r/), che con l'anti-tracking attivo da' ERR_TUNNEL_CONNECTION_FAILED.
+  // (fdn.qwant.com/v3/r/), che con l'anti-tracking attivo dà ERR_TUNNEL_CONNECTION_FAILED.
   // SPERIMENTALE: agisce sulla ricerca WEB, il contesto in cui i listener storicamente
   // irritavano l'anti-bot (403). Se tornano i 403, mettere questo flag a false.
   const BYPASS_REDIRECT_WEB = true;
@@ -131,9 +131,9 @@
       '[data-testid^="downloadApp"]{display:none!important}',
       // Barra "Usa l'app subito!" in cima alla SERP mobile (smart banner). Non ha
       // data-testid e le classi di Qwant sono hashate (cambiano a ogni build):
-      // l'invariante e' il link, che porta sempre utm_medium=smartbanner. Si nasconde
+      // l'invariante è il link, che porta sempre utm_medium=smartbanner. Si nasconde
       // il WRAPPER (nonno del link), misurato risalendo il DOM: contiene solo il
-      // banner, mentre un gradino piu' su ci sono gia' i risultati di ricerca.
+      // banner, mentre un gradino più su ci sono già i risultati di ricerca.
       'div:has(> div > a[href*="utm_medium=smartbanner"]){display:none!important}',
       'a[href*="chrome.google.com/webstore"],a[href*="chromewebstore.google.com"]{display:none!important}'
     );

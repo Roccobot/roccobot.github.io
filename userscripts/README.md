@@ -672,7 +672,7 @@ un lato si vede dall'altro, perché scrivono la stessa preferenza.
 | **Scacchiera** | scacchiera chiara o scura | scacchiera chiara | scacchiera scura |
 | **Colore uniforme** | `#EEE` o `#222` | `#EEE` | `#222` |
 
-> ⚠️ **Perche' il predefinito è la scacchiera.** È l'unica che rende **visibile la
+> ⚠️ **Perché il predefinito è la scacchiera.** È l'unica che rende **visibile la
 > trasparenza**, che su una pagina-immagine è un'informazione e non un vezzo: su una tinta
 > unita non si distingue il bianco del fondo da un pixel bianco opaco. I quattro colori non
 > sono inventati: sono le due coppie della scacchiera storica, e le tinte unite prendono il
