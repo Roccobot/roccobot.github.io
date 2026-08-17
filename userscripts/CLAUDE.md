@@ -100,6 +100,21 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
   'è una frase compiuta?' si va a sentimento, ed erano rimasti senza punto **tre tooltip su
   cinque** in tutte e due le lingue. La regola sta scritta accanto alla tabella `TESTI`, che è
   dove serve leggerla.
+- ⚠️⚠️ **UNA sola stringa sta fuori dalla tabella: la voce di menu del gestore**, in inglese
+  fisso (`VOCE_MENU`), per scelta dell'utente (2026-08-17: *anche gli userscript multilingua
+  usano sempre l'inglese per le impostazioni, preferisco la coerenza*). ⚠️ Non era un difetto
+  da correggere: quella voce **era** già localizzata e seguiva la lingua del browser, misurato
+  su cinque combinazioni di lingua. È una scelta di convenzione, e ha una logica sua: quel menu
+  appartiene al **gestore**, non allo script, e sta in mezzo alle voci delle altre estensioni.
+  - ⚠️ **Il pannello che apre resta bilingue**, titolo della scheda compreso, perché quello è
+    interfaccia dello script. La chiave che serviva al menu è stata **rinominata** `oOpzioni`
+    invece di lasciarla chiamare `menuOpzioni`: ha cambiato mestiere, e un nome che mente su
+    chi la usa manda fuori strada chi legge.
+  - ⚠️ **Prima di dare per buona una richiesta di questo tipo, verificare che cosa fa già il
+    codice**: qui la domanda dell'utente ('lasciala in inglese, a meno che non si possa
+    localizzare') aveva come risposta 'si può, e lo fa'. Averlo misurato invece di modificare
+    subito ha portato a una decisione informata, e la modifica è arrivata dopo, per un motivo
+    diverso da quello supposto.
 - ⚠️ **Il separatore decimale resta il punto** anche in italiano ('21.0 × 29.7 cm'), come la
   nota qui sopra prescrive per la UI inglese. Non è una svista: il numero lo compone `num()`,
   una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era
@@ -107,7 +122,7 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
 
 ## ⚙️ La pagina delle opzioni (`DIVOptions.html`)
 
-Voce **Opzioni** nel menu del gestore, che apre
+Voce **Options** nel menu del gestore, che apre
 <https://roccobot.github.io/userscripts/DIVOptions.html>. Modello dichiarato dall'utente: la
 pagina `options.html` di 'Image Max URL'.
 
