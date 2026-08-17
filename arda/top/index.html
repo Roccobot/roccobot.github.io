@@ -27,10 +27,10 @@
 <meta name="twitter:description" content="Gli esseri più potenti del mondo di Tolkien · The mightiest beings in Tolkien's world">
 <meta name="twitter:image" content="https://roccobot.github.io/arda/top/og-image.jpg">
 <!-- Favicon: il glifo del FAB in #b87323, area a filo del riquadro. L'SVG serve i
-     browser moderni a qualunque densita'; i PNG sono il fallback, con una passata
+     browser moderni a qualunque densità; i PNG sono il fallback, con una passata
      leggera di maschera di contrasto sull'alfa (le misure piccole ne hanno bisogno,
      il vettoriale no). Generati da .memo/scripts/favicon.js.
-     ⚠️ `favicon.png` (il vecchio disegno) NON e' stato toccato: resta in cartella. -->
+     ⚠️ `favicon.png` (il vecchio disegno) NON è stato toccato: resta in cartella. -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=1">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png?v=1">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1">
@@ -231,7 +231,7 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
   font-size: 0.8rem;
   color: var(--gold);
   cursor: pointer;
-  /* Solo le proprieta' dell'hover: NON 'right', che deve compensare la scrollbar
+  /* Solo le proprietà dell'hover: NON 'right', che deve compensare la scrollbar
      in modo istantaneo (sincrono con la sparizione della barra), non animato. */
   transition: background 0.3s, color 0.3s, transform 0.3s;
   letter-spacing: 0.1em;
@@ -2519,8 +2519,8 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 /* Tasto 'copia link' della nota, sotto il titolo. DISCRETO per scelta: contorno
    e non riempimento, corpo piccolo, centrato. E' un comando di servizio e non
    deve competere col testo; sta sull'oro del tema come ogni cosa cliccabile che
-   non sia un personaggio. La conferma (icona di spunta) riempie il tondo, ed e'
-   la stessa del 'copia link' del Pannello, perche' e' lo stesso codice. */
+   non sia un personaggio. La conferma (icona di spunta) riempie il tondo, ed è
+   la stessa del 'copia link' del Pannello, perché è lo stesso codice. */
 .note-share { display:flex; align-items:center; gap:.4em; margin:-.35em auto 1.2em; padding:.3em .75em; border:1px solid var(--note-acc); border-radius:999px; background:transparent; color:var(--note-acc); font-family:inherit; font-size:.78rem; line-height:1; cursor:pointer; opacity:.88; transition:opacity .2s, background .2s, color .2s; }
 .note-share:hover, .note-share:focus-visible { opacity:1; outline:none; }
 .note-share svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -2670,7 +2670,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.06</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.07</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5758,7 +5758,7 @@ var ICON_LINK = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a
 // Le due mappe della sezione Risorse, in tabella invece che nelle chiamate:
 // servono in DUE punti (l'elenco della modale e la tabella dei permalink), e
 // duplicare titolo e percorso avrebbe creato due fonti che prima o poi
-// divergono. Lo slug e' il token del permalink (vedi SHARE_ROUTES).
+// divergono. Lo slug è il token del permalink (vedi SHARE_ROUTES).
 var RES_MAPS = [
   { slug: 'eldar', src: '/arda/res/Journey.png', titleIt: 'Il Grande Viaggio degli Elfi', titleEn: 'The Great Journey of the Elves' },
   { slug: 'quendi', src: '/arda/res/Sundering.png', titleIt: 'Suddivisioni dei popoli degli Elfi', titleEn: 'Sundering of the Firstborn', shortIt: 'Suddivisioni degli Elfi' }
@@ -5930,7 +5930,7 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   bar.appendChild(mkBtn('−', itL ? 'Riduci' : 'Zoom out', function() { zoomBy(0.8, stage.clientWidth / 2, stage.clientHeight / 2); }));
   bar.appendChild(mkBtn('+', itL ? 'Ingrandisci' : 'Zoom in', function() { zoomBy(1.25, stage.clientWidth / 2, stage.clientHeight / 2); }));
   bar.appendChild(mkBtn('⛶', itL ? 'Adatta allo schermo' : 'Fit to screen', fit));
-  // ⚠️ Il 'copia link' va PRIMA della chiusura, e non e' estetica: il tasto
+  // ⚠️ Il 'copia link' va PRIMA della chiusura, e non è estetica: il tasto
   // Indietro del browser chiude questo visualizzatore cliccando l'ULTIMO
   // .imgv-btn della barra, quindi la X deve restare l'ultima.
   if (slug) { var sb = mkBtn('', itL ? 'Copia il link a questa risorsa' : 'Copy the link to this resource', function(){ copyShareLink(sb, shareRouteUrl(slug)); }); sb.insertAdjacentHTML('beforeend', ICON_LINK); bar.appendChild(sb); }
@@ -6662,11 +6662,11 @@ function wireControlPanel() {
 // Forma BARE come i permalink delle categorie (?x, ?101): la query E' il token.
 // I token sono parole e i bitmask sono di sole cifre, quindi le due famiglie
 // non possono collidere; e un token sconosciuto cade nel ramo che ignora la
-// query, cioe' apre la vista di default invece di rompersi.
-// ⚠️ Questa tabella e' l'unica fonte: chi apre un overlay dichiara il proprio
+// query, cioè apre la vista di default invece di rompersi.
+// ⚠️ Questa tabella è l'unica fonte: chi apre un overlay dichiara il proprio
 // slug con setShareRoute, chi arriva da un link lo ritrova qui. Rendere
 // condivisibile una nota nuova non chiede altro che il suo campo 'slug'.
-// ⚠️ Lo slug e' UNO SOLO per nota, quindi la parola dev'essere UNIVERSALE e mai
+// ⚠️ Lo slug è UNO SOLO per nota, quindi la parola dev'essere UNIVERSALE e mai
 // di una lingua sola: nomi propri (glorfindel, celeborn), termini elfici
 // (peredhil, eldar, quendi) o abbreviazioni internazionali (res, ita, badge).
 // Un token italiano su un link che serve anche i lettori inglesi sarebbe un
@@ -6678,18 +6678,18 @@ var SHARE_ROUTES = {
 RES_MAPS.forEach(function(r){ SHARE_ROUTES[r.slug] = function(){ openImageViewer(r.src, r.titleIt, r.titleEn, r.slug); }; });
 EDITORIAL_NOTES.forEach(function(n){ SHARE_ROUTES[n.slug] = function(){ openNoteViewer(n); }; });
 
-// Slug dell'overlay aperto in questo momento, o null: e' cio' che fa scrivere
+// Slug dell'overlay aperto in questo momento, o null: è ciò che fa scrivere
 // il permalink nella barra degli indirizzi al posto dell'URL della vista.
 // ⚠️ Una transizione (nota → scheda → nota, risorse → mappa) prima azzera e
 // poi riscrive, quindi i due passaggi non vanno coordinati: vince l'ultimo,
-// che e' sempre l'overlay rimasto in scena.
+// che è sempre l'overlay rimasto in scena.
 var overlayShare = null;
 function shareRouteUrl(slug) { return location.origin + location.pathname + '?' + slug; }
 function setShareRoute(slug) { overlayShare = slug || null; syncUrl(); }
 
-// Tasto 'copia link' di una nota o di una risorsa. Discreto per scelta: e' un
+// Tasto 'copia link' di una nota o di una risorsa. Discreto per scelta: è un
 // comando di servizio e non deve competere col testo della nota. La conferma
-// visiva e' quella del Pannello, perche' riusa copyShareLink passandogli il
+// visiva è quella del Pannello, perché riusa copyShareLink passandogli il
 // permalink invece dell'URL della vista.
 function makeShareBtn(slug) {
   var b = document.createElement('button');
@@ -10592,9 +10592,9 @@ enableDragDrop();
 //    perciò le transizioni (nota → scheda → nota) non generano falsi 'indietro'.
 // ── App installabile: registrazione del service worker ──
 // Dopo il 'load', per non rubare banda all'avvio della pagina. ⚠️ Quel worker
-// NON ha cache e non intercetta niente (vedi sw.js): esiste solo perche' il
-// browser offra 'Installa app'. Il catch e' muto per scelta: su file:// o su
-// HTTP locale la registrazione fallisce, ed e' un caso di sviluppo, non un
+// NON ha cache e non intercetta niente (vedi sw.js): esiste solo perché il
+// browser offra 'Installa app'. Il catch è muto per scelta: su file:// o su
+// HTTP locale la registrazione fallisce, ed è un caso di sviluppo, non un
 // difetto da segnalare in pagina.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -10603,10 +10603,10 @@ if ('serviceWorker' in navigator) {
 }
 
 // ── Arrivo da un permalink di nota o risorsa ──
-// Gira in coda a tutto, quando lista e handler ci sono gia': l'overlay si apre
+// Gira in coda a tutto, quando lista e handler ci sono già: l'overlay si apre
 // sopra la pagina normale, quindi chiudendolo si resta sul sito invece di
-// trovare una pagina a se'. Un token sconosciuto non fa nulla: la query e' gia'
-// stata ignorata dal parser delle categorie, e la vista e' quella di default.
+// trovare una pagina a sé. Un token sconosciuto non fa nulla: la query è già
+// stata ignorata dal parser delle categorie, e la vista è quella di default.
 (function openSharedOverlay(){
   try {
     var t = (window.location.search || '').replace(/^\?/, '').split('&')[0].toLowerCase();
