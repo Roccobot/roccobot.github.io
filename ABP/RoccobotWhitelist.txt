@@ -80,6 +80,7 @@
 @@||deezer.com^$document,subdocument,important
 @@||developer.apple.com^$important
 @@||digicert.com^$important
+@@||digicert.com^$document,important
 @@||docs.google.com^$document,subdocument,important
 @@||easyparkitalia.it^$important
 @@||easyparkitalia.it^$document,important
