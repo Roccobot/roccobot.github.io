@@ -45,7 +45,7 @@ body,html{color:#333;overflow-x:hidden;background-color:#feffff}.icon-inline{wid
 /* Numero di versione: sta SOPRA il logo-titolo, allineato al pixel col suo bordo sinistro, e
    NON è fisso allo schermo: scorrendo esce di scena insieme alla testata (precisazione
    dell'utente, 2026-07-31, dopo un primo giro che lo aveva fatto 'fixed' e sempre presente).
-   'absolute' dentro #markdown_content da' entrambe le cose: scorre col documento e sta fuori
+   'absolute' dentro #markdown_content dà entrambe le cose: scorre col documento e sta fuori
    dal flusso, quindi non sposta nulla. Il left:0 funziona in tutti i formati perché il bordo
    sinistro di #markdown_content coincide col bordo sinistro del logo (misurato: 370 px su
    desktop, 24 px su mobile, identici per i due elementi), e l'inchiostro verde del carattere
@@ -157,13 +157,13 @@ html[data-tables=cards] .markdown-body table td[data-label]::before{content:attr
 /* ── Palette: correzioni di contrasto approvate dall'utente il 2026-08-01 ──
    Le tre voci qui sotto vengono dal confronto a mockup (casi 1, 2 e 3 della proposta di
    palette). Il criterio non è 'far passare axe': è che tre colori scelti guardando UN tema
-   solo non si leggono nell'altro. Percio' ogni riga cambia il colore di UN tema e lascia
+   solo non si leggono nell'altro. Perciò ogni riga cambia il colore di UN tema e lascia
    intatto quello dove funzionava già.
    ⚠️ Non toccano le due deroghe volute (numero di versione sopra il logo e pillola
    dell'indice), che restano sotto soglia per scelta e sono documentate in CLAUDE.md. */
 
 /* 1. Link: sul bianco il verde acqua dava 2,51:1, cioè poco più della metà della soglia,
-      perché era stato scelto sul fondo nero (dove da' 7,44:1 e resta com'è). Il verde
+      perché era stato scelto sul fondo nero (dove dà 7,44:1 e resta com'è). Il verde
       nuovo è lo stesso colore più profondo: stessa tonalità, luminosità dimezzata. */
 .markdown-body a{color:#1c7a68}
 html[data-theme=dark] .markdown-body a{color:#43b59e}
@@ -172,7 +172,7 @@ html[data-theme=dark] .link-sample{color:#43b59e}
 
 /* 2. Voce attiva dell'indice: la pesca su fondo chiarissimo dava 1,64:1, il valore più basso
       di tutta la pagina, e rendeva la voce attiva PIÙ pallida di quelle inattive. Nel tema
-      scuro la stessa pesca da' 8,78:1 e non si tocca. Terracotta scelta dall'utente fra tre
+      scuro la stessa pesca dà 8,78:1 e non si tocca. Terracotta scelta dall'utente fra tre
       proposte (variante A). L'!important è obbligato: la regola che batte porta il suo. */
 .toc-list a.toc-link.is-active-link{color:#a8461f!important}
 html[data-theme=dark] .toc-list a.toc-link.is-active-link{color:#f7b59e!important}
@@ -293,9 +293,9 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    ⚠️⚠️ L'attributo `hidden` da solo NON BASTA, ed è un difetto che è arrivato fino in
    produzione (2026-08-01): `hidden` nasconde con una regola del foglio di stile del BROWSER,
    e qui ogni comando dichiara il suo `display` (inline-flex o grid) in una regola d'autore,
-   che vince sempre. Il pulsante del tema restava percio' visibile con il suo flag già spento,
+   che vince sempre. Il pulsante del tema restava perciò visibile con il suo flag già spento,
    e il tasto dell'indice ci finiva sopra.
-   ⚠️ E la prova che non l'ha visto sbagliava proprio qui: leggeva la PROPRIETA' `hidden`
+   ⚠️ E la prova che non l'ha visto sbagliava proprio qui: leggeva la PROPRIETÀ `hidden`
    dell'elemento, che era `true` come atteso. Un comando spento si verifica sul `display`
    CALCOLATO, mai sull'attributo.
    Vale fuori da ogni media query, perché il flag spegne il comando su tutti i formati.
@@ -306,7 +306,7 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
 
 /* ── Cornice del titolo dopo un salto dall'indice ──
    Non è un difetto del nostro CSS: tocbot, finito lo scorrimento, mette tabindex="-1" sul
-   titolo di arrivo e gli da' il fuoco, e il browser ci disegna intorno il suo anello (blu su
+   titolo di arrivo e gli dà il fuoco, e il browser ci disegna intorno il suo anello (blu su
    macOS). Serve a un lettore di schermo, che riprende la lettura dal punto giusto: quello NON
    si perde togliendo l'anello, perché il fuoco resta dov'è. Si perde solo il rettangolo, che
    a un titolo non dice niente: i titoli hanno tabindex -1, quindi col Tab non ci si arriva mai
@@ -328,8 +328,8 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    ⚠️ Un `border-radius` sulla tabella NON basta con `border-collapse:collapse`, ed è la
    ragione per cui serve tutto questo blocco invece di una riga: nel modello collassato la
    cornice esterna la disegnano le CELLE, che restano quadrate, e agli angoli si vedrebbe lo
-   squadro del bordo sotto la curva. Si passa percio' al modello separato: la cornice diventa
-   una proprieta' della tabella, e le celle tengono i soli tratti interni (destra e sotto).
+   squadro del bordo sotto la curva. Si passa perciò al modello separato: la cornice diventa
+   una proprietà della tabella, e le celle tengono i soli tratti interni (destra e sotto).
    ⚠️ La curva la seguono anche le QUATTRO CELLE D'ANGOLO, che prendono il loro raggio: è la
    via che non dipende da un contenitore che ritaglia. Fidarsi dell'`overflow:auto` che queste
    tabelle hanno già funzionerebbe qui e non sulle sotto-pagine, dove le tabelle non sono
@@ -340,7 +340,7 @@ html[data-theme=dark] .skip-link{background:#202020;color:#43b59e;border-color:#
    queste tabelle sono `display:block` per poter scorrere, e il blocco era largo il 100% mentre
    le celle dentro restano larghe quanto il loro contenuto. Finché nessuno disegnava il bordo
    del blocco la differenza non si vedeva; disegnandolo, la cornice arrivava a fondo pagina con
-   le celle ferme a metà. Percio' il blocco passa a `width:fit-content`, che lo fa aderire alle
+   le celle ferme a metà. Perciò il blocco passa a `width:fit-content`, che lo fa aderire alle
    celle: il `max-width:100%` che le tabelle hanno già tiene in piedi lo scorrimento.
    ⚠️ Il separatore verticale delle INTESTAZIONI è passato al grigio delle celle (2026-08-02,
    segnalato dall'utente: 'molto più netta e scura, cosa che non mi piace'). Era #555, il tono

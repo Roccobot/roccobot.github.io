@@ -10,7 +10,7 @@
 // index.html nascono VUOTI: se questo script non gira il CSS li nasconde con :empty, invece di
 // mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "3.93";
+  const VERSIONE = "3.94";
   // Due punti di resa, uno per formato: la pillola nell'angolo dell'indice su desktop,
   // il numero sopra il logo su mobile. A deciderlo è il CSS, qui si scrivono entrambi.
   for (const id of ["siteVersion", "tocVersion"]) {
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Tabelle e blocchi di codice che sbordano in orizzontale si scorrevano solo col dito o col
 // mouse. Il tabindex si mette SOLO dove serve davvero (scrollWidth > clientWidth): metterlo su
 // tutte le tabelle infilerebbe una quarantina di fermate inutili nel giro del Tab. La misura si
-// rifa' al ridimensionamento, perché una tabella stretta può diventare larga e viceversa.
+// rifà al ridimensionamento, perché una tabella stretta può diventare larga e viceversa.
 document.addEventListener("DOMContentLoaded", () => {
   const CANDIDATI = ".markdown-body table, .markdown-body pre, .markdown-body div > pre, .plist-box";
   function sync() {
