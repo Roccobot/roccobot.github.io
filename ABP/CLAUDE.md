@@ -166,6 +166,17 @@
     criterio dei tre livelli scritto sopra, e qui il livello DNS non c'è perché l'annuncio
     arriva dai circuiti pubblicitari già coperti altrove nella lista.
 
+- ⚠️ **Un'autorita' di certificazione va protetta, e il sintomo di un blocco non parla di
+  pubblicità** (caso `digicert.com`, 2026-08-17). Da quei domini passano OCSP, CRL e i
+  certificati intermedi: bloccarli non fa sparire un banner, fa **fallire la validazione dei
+  certificati**, e l'errore che arriva all'utente parla di connessione non sicura. È la stessa
+  famiglia dei domini funzionali di Brave: si tiene libero anche quando nessuna nostra regola
+  lo tocca, perché l'eccezione qui vale come **presidio contro le liste di terzi**.
+  - ⚠️ **La riga base `@@||dominio^$important` copre GIÀ tutti i sottodomini e tutti i
+    percorsi**: chi chiede di 'whitelistare anche i sottodomini' sta chiedendo una cosa che c'è
+    già. L'unica aggiunta che serve davvero è la seconda riga `$document,important`, che è la
+    sola cosa che `$important` non fa: disattivare **cosmetiche e scriptlet** sulla pagina.
+
 - **Cloudflare e `workers.dev`/`pages.dev`** sono whitelistati per intero nel
   blocco 'Cloudflare' del file (copre anche i proxy di progetto
   `arda-admin-proxy` e `rules-proxy`); i domini navigabili come siti hanno pure
