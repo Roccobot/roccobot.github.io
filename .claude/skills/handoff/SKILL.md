@@ -296,7 +296,7 @@ commit**, branch, albero pulito o no, deploy non ancora arrivato, `rev` del Work
 all'allineamento, come riferimento. Per `tools`: la versione dei file di regole e
 se il Worker `rules-proxy` la serve già. Numeri, non impressioni.
 
-## In sospeso                            [senza tetto - LA SEZIONE PIU' IMPORTANTE]
+## In sospeso                            [senza tetto - LA SEZIONE PIÙ IMPORTANTE]
 Cosa era in corso e **il punto esatto** in cui si è fermato. Solo cose **aperte**: quelle
 evase si cancellano (regola n. 3). Ogni voce passa la prova di sufficienza della regola
 n. 2: obiettivo, criterio col puntatore, numeri già misurati, cosa non va rifatto, primo
