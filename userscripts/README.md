@@ -774,12 +774,13 @@ riconoscimento nella 2.19.1 e la sensibilità dello zoom col dito nella 2.20.0.
 
 **File:** `ENFRoccobot.user.js` (titolo `@name`: **ENF Roccobot**)
 
-Su `enf-cmnf.cc` ed `enfhub.com` aggiunge in basso a destra un tasto
-**"⬇︎ Download"** che scarica il video della pagina. Il tasto compare solo
-quando una sorgente c'è davvero (i post di sole foto non lo mostrano) e, se la
-pagina contiene **più video**, apre un elenco per scegliere quale scaricare.
+Su `enf-cmnf.cc`, `enfhub.com`, `javguru.fit` e `xhamster.com` aggiunge in basso
+a destra un tasto **"⬇︎ Download"** che scarica il video della pagina. Il tasto
+compare solo quando una sorgente c'è davvero (i post di sole foto non lo
+mostrano) e, se la pagina contiene **più video**, apre il **picker** descritto
+sotto.
 
-I due siti usano **player diversi**, quindi lo script li riconosce tutti:
+I siti usano **player diversi**, quindi lo script li riconosce tutti:
 
 | Dove | Player | Cosa scarica |
 |---|---|---|
@@ -787,6 +788,45 @@ I due siti usano **player diversi**, quindi lo script li riconosce tutti:
 | enf-cmnf.cc | `<video><source src="....m3u8">` (HLS self-hosted) | segmenti uniti in `.ts` |
 | enf-cmnf.cc | `<video src="....mp4">` (blocco video di WordPress) | MP4 diretto |
 | enfhub.com | hls.js su `cdn.enfhub.site/videos/<id>/master.m3u8` | variante migliore, unita in `.ts` |
+| xhamster.com | sorgenti nel payload della pagina | il **link di download del sito** alla qualità migliore |
+| javguru.fit | jwplayer dentro un **iframe** di `upload18` | quello che il player chiede davvero, di solito HLS |
+
+### Il picker (dalla 1.2.0)
+
+Quando la pagina ha più di un video, il tasto apre una finestrella che li elenca
+**nell'ordine della pagina**, con:
+
+- una **anteprima** (il poster del player, o un'immagine dello stesso post; se non
+  c'è, il riquadro mostra il numero della voce);
+- il **numero del post** e l'**autore**, che è il modo di capire quale video sia
+  quale: i file di un thread si chiamano tutti allo stesso modo;
+- il tipo (`MP4` o `HLS`) e il nome del file;
+- un **mirino ⌖** che porta al player nella pagina e lo evidenzia per due secondi;
+- **caselle di selezione** e un tasto `Select all`: si spuntano i video che
+  servono e si scaricano **in fila**, uno dopo l'altro (il tasto mostra `[3/7]`).
+
+Il **numero del post finisce nel nome del file** (`Titolo [p3145].mp4`), che è
+l'unico dato che lega il file alla pagina da cui viene. `Esc` o un clic fuori
+chiudono il picker; gli errori di una coda si riassumono **una volta sola** alla
+fine, invece di una finestra per video.
+
+**I player dentro un iframe.** Su javguru il video non è nella pagina: c'è un
+iframe di un altro dominio col suo player, e il manifest non compare nemmeno
+nell'HTML del frame, perché lo chiede il JavaScript. Lo script gira quindi
+**anche nei frame** (`@match` sui domini dei player, senza `@noframes`) con due
+comportamenti: dentro un frame non disegna nulla e **annuncia** al livello sopra
+gli URL che ha visto passare; nella pagina in cima li raccoglie e li unisce alle
+sue fonti. L'annuncio si **ripete**, perché il player chiede il manifest qualche
+secondo dopo il caricamento, e la pagina in cima **bussa** ai frame, per il caso
+opposto (annuncio partito prima che lei fosse pronta).
+
+**xhamster.** Le sorgenti stanno nel payload della pagina, e accanto ci sono i
+**link di download che il sito stesso espone**, uno per qualità: lo script
+preferisce quelli. Gli mp4 diretti del CDN restano il ripiego, perché sono
+firmati e legati all'IP di chi li ha chiesti (`key=`, `end=`, `data=<ip>`):
+scadono, e da un altro indirizzo rispondono 403. ⚠️ Filtrate le **anteprime
+animate** delle miniature (`...t.mp4`) e i modelli con segnaposto (`_TPL_`):
+senza quel filtro il picker mostrava tre voci per un video solo.
 
 Come trova la sorgente, in ordine di fiducia: **1)** una spia di rete installata
 a `document-start` annota gli URL `.m3u8`/`.mp4` che la pagina richiede davvero
@@ -818,8 +858,10 @@ inoltrasse le intestazioni, un ripiego che scarica in memoria e salva il blob.
 > manda. I `.m3u8` e i `.ts` passano comunque.
 
 Avanzamento (percentuale, MB e barra) sul tasto stesso; un **secondo clic
-annulla** lo scaricamento in corso. Il nome del file è il titolo del post
-(`Titolo.mp4` o `Titolo.ts`, con `(2)`, `(3)`... quando i video sono più d'uno).
+annulla** lo scaricamento in corso, e in una coda la interrompe. Il nome del file
+è il titolo del post, col numero del post fra parentesi quadre quando lo si sa
+(`Titolo [p3145].mp4`) e `(2)`, `(3)`... quando non lo si sa e i video sono più
+d'uno.
 
 ### Personalizzazione
 

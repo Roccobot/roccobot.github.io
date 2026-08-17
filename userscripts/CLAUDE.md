@@ -250,6 +250,59 @@ unica non è possibile, perché i due meccanismi non si leggono a vicenda. Il cr
 livello del contenitore misurato risalendo il DOM) sta in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md),
 per non scriverlo due volte.
 
+## 📥 ENF Roccobot: il picker e i player fuori dalla pagina
+
+**Com'è fatto** (dalla 1.2.0). Il tasto apre un **picker** quando la pagina ha più di un
+video: elenco nell'**ordine del documento**, anteprima, numero del post, autore, mirino che
+porta al player, caselle di selezione e scaricamento **in fila**. Il numero del post entra nel
+nome del file. Copre `enf-cmnf.cc`, `enfhub.com`, `xhamster.com` e `javguru.fit`.
+
+- ⚠️⚠️ **L'ordine del picker NON è quello di `fonti()`**, ed è la ragione per cui esiste una
+  funzione a sé (`videoDellaPagina()`): in `fonti()` le sorgenti arrivano prima dalla spia di
+  rete, cioè nell'ordine in cui il player le ha chieste, che su un thread non è l'ordine in cui
+  si leggono. Le due convivono: `fonti()` risponde a 'che cosa si può scaricare',
+  `videoDellaPagina()` a 'che cosa vedo, e dove'.
+- ⚠️ **Il numero del post nel NOME del file non è un vezzo**: con dieci video dello stesso
+  thread, `Titolo (7).ts` non dice più niente il giorno dopo, `Titolo [p3145].ts` si ritrova. È
+  l'unico dato che lega il file alla pagina da cui viene.
+- ⚠️ **Il markup dei forum non è uno**: XenForo marca il post con `data-content="post-N"`,
+  altri con un id (`p3145`, `post-3145`) o con `data-post-id`. Si provano tutti in cascata, e se
+  nessuno risponde la voce resta **senza numero**, che è meglio di un numero sbagliato.
+- ⚠️⚠️ **La coda scarica UNO ALLA VOLTA, e non è pigrizia**: il motore ha uno stato solo
+  (`inCorso`, la mano di GM per l'annullamento, il tasto come barra di avanzamento) e due
+  scaricamenti insieme se lo calpesterebbero, col secondo che annulla la mano del primo. Gli
+  errori si riassumono **una volta sola** alla fine: sette video andati male sarebbero sette
+  finestre da chiudere.
+- ⚠️⚠️ **`@noframes` è CADUTO, e serviva un ponte.** Su javguru il video non è nella pagina: c'è
+  un iframe di un altro dominio col suo jwplayer, e il manifest non sta nemmeno nell'HTML del
+  frame, perché lo chiede il JavaScript. Quindi lo script gira anche nei frame, con **due
+  comportamenti**: dentro un frame nessuna interfaccia e annuncio al livello sopra, nella pagina
+  in cima raccolta degli annunci. ⚠️ È il **frame a parlare al padre**, non il padre a leggere il
+  frame: origini diverse, quindi leggere dentro non si può, e non è un dettaglio aggirabile.
+  - ⚠️ L'annuncio si **ripete** (il player chiede il manifest secondi dopo il caricamento) e la
+    pagina in cima **bussa** ai frame, per il caso opposto: annuncio partito prima che lei fosse
+    pronta. Con una sola chiamata, in un verso solo, la sorgente si perde in metà dei casi.
+  - ⚠️ Nel frame **niente tasto e niente voce di menu**: due interfacce sovrapposte sarebbero un
+    difetto, e nel frame il tasto cadrebbe dentro il rettangolo del video.
+- ⚠️ **Su xhamster si preferiscono i link di download che il sito stesso espone** (uno per
+  qualità, nel payload della pagina): gli mp4 diretti del CDN sono **firmati e legati all'IP**
+  (`key=`, `end=`, `data=<ip>`), quindi scadono e da un altro indirizzo rispondono 403. L'ordine
+  fra i due non va invertito.
+- ⚠️ **Non tutto ciò che finisce in `.mp4` è il video**: la scansione del testo grezzo pesca le
+  **anteprime animate** delle miniature (`...t.mp4`, sei secondi senza audio) e i **modelli** con
+  segnaposto al posto della qualità (`_TPL_.h264.mp4`), che come file non esistono. Misurato
+  sulla pagina vera: senza il filtro il picker mostrava **tre voci per un video solo**, e la
+  prima buona era la seconda. Quando un estrattore specifico del sito ha risposto, la scansione
+  grezza si **salta**.
+- **Come si provano queste cose senza il sito in mano**: banco Playwright che serve le pagine
+  **vere salvate** ai loro **indirizzi reali** (`ctx.route`), perché lo script si riconosce dal
+  `location.hostname` e da un file locale la prova misurerebbe il banco. Il player dentro
+  l'iframe si simula con una paginetta che chiede un `.m3u8` dopo qualche decimo di secondo.
+  ⚠️ Una rotta jolly che serve l'HTML a **qualunque** richiesta di quel dominio fa comparire un
+  `Unexpected token '<'`: è il banco, non lo script, e si distingue caricando la pagina da sola.
+  ⚠️ E un HLS **non passa da `GM_download`** ma da `GM_xmlhttpRequest`: un banco che guarda solo
+  il primo dà per non trovato un video che è stato trovato.
+
 ## 🔬 La sonda dello scorrimento (`ScrollProbe.html`)
 
 Pagina di diagnostica di questa cartella, pubblicata come le altre

@@ -1,16 +1,21 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.1.1
-// @description  Adds a Download button to enf-cmnf.cc and enfhub.com that saves the page's video. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. Progress on the button, second click cancels, picker when the page holds more than one video.
+// @version      1.2.0
+// @description  Adds a Download button to enf-cmnf.cc, enfhub.com, javguru.fit and xhamster.com that saves the page's videos. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://enf-cmnf.cc/*
 // @match        https://www.enf-cmnf.cc/*
 // @match        https://enfhub.com/*
 // @match        https://www.enfhub.com/*
+// @match        https://javguru.fit/*
+// @match        https://*.javguru.fit/*
+// @match        https://xhamster.com/*
+// @match        https://*.xhamster.com/*
+// @match        https://upload18.org/*
+// @match        https://upload18.cc/*
 // @run-at       document-start
-// @noframes
 // @grant        unsafeWindow
 // @grant        GM_download
 // @grant        GM_xmlhttpRequest
@@ -18,6 +23,11 @@
 // @connect      enf-cmnf.cc
 // @connect      enfhub.com
 // @connect      enfhub.site
+// @connect      xhamster.com
+// @connect      xhcdn.com
+// @connect      javguru.fit
+// @connect      upload18.org
+// @connect      upload18.cc
 // @connect      *
 // @updateURL    https://roccobot.github.io/userscripts/ENFRoccobot.user.js
 // @downloadURL  https://roccobot.github.io/userscripts/ENFRoccobot.user.js
@@ -115,6 +125,46 @@
     return out;
   }
 
+  // e) xhamster: le sorgenti stanno nel payload `window.initials` della pagina, e
+  //    accanto ci sono i LINK DI DOWNLOAD che il sito stesso espone nel suo menu,
+  //    uno per qualità. Si preferiscono quelli: sono la via che la pagina offre a
+  //    chiunque la guardi, quindi la più stabile e la meno inventata.
+  //    ⚠️ Gli mp4 diretti del CDN sono FIRMATI e legati all'IP di chi li ha chiesti
+  //    (`key=`, `end=`, `data=<ip>`): scadono, e da un altro indirizzo rispondono
+  //    403. Sono il ripiego, non la prima scelta, ed è la ragione per cui l'ordine
+  //    fra i due non va invertito.
+  function fontiXhamster() {
+    var out = [];
+    try {
+      if (!/(^|\.)xhamster\.com$/i.test(location.hostname)) return out;
+      var html = document.documentElement ? document.documentElement.innerHTML : '';
+      var re = /"(\d{3,4})p"\s*:\s*\{\s*"link"\s*:\s*"([^"]+)"/g, m;
+      var uff = [];
+      while ((m = re.exec(html)) !== null) {
+        uff.push({ q: parseInt(m[1], 10), url: m[2].replace(/\\\//g, '/').replace(/\\u002F/gi, '/') });
+      }
+      var mp4 = [];
+      var re2 = /"(\d{3,4})p"\s*:\s*"(https?:[^"]+?\.mp4[^"]*)"/g;
+      while ((m = re2.exec(html)) !== null) {
+        mp4.push({ q: parseInt(m[1], 10), url: m[2].replace(/\\\//g, '/').replace(/\\u002F/gi, '/') });
+      }
+      var scelta = miglioreQualita(uff) || miglioreQualita(mp4);
+      if (scelta) out.push(scelta.url);
+    } catch (e) {}
+    return out;
+  }
+
+  // La qualità si sceglie con la stessa manopola dell'HLS: due impostazioni per la
+  // stessa decisione finirebbero per divergere.
+  // ⚠️ Il nome NON è `migliore`, che dentro `scegliVariante` è già una variabile
+  // locale: due cose con lo stesso nome nello stesso file si confondono a colpo
+  // d'occhio, anche quando gli ambiti le tengono separate.
+  function miglioreQualita(lista) {
+    if (!lista || !lista.length) return null;
+    var ord = lista.slice().sort(function (a, b) { return a.q - b.q; });
+    return QUALITA_HLS === 'min' ? ord[0] : ord[ord.length - 1];
+  }
+
   // d) enfhub: l'id del video compare nel poster (thumbnails/<id>/) e nel payload
   //    RSC della pagina (videos/<id>/master.m3u8). Il poster è quello del player
   //    ATTUALE, quindi ha la precedenza; del payload si prende l'ultima occorrenza
@@ -164,6 +214,16 @@
     return out;
   }
 
+  // ⚠️ Non tutto ciò che finisce in `.mp4` è il video: la scansione del testo grezzo
+  // pesca anche le ANTEPRIME animate delle miniature (`thumb-v7.xhcdn.com/...t.mp4`,
+  // sei secondi senza audio) e i modelli di URL col segnaposto al posto della
+  // qualità (`_TPL_.h264.mp4`), che non esistono come file. Misurato sulla pagina
+  // vera di xhamster: senza questo filtro il picker mostrava tre voci per un video
+  // solo, e la prima buona era la seconda.
+  function scarta(u) {
+    return /_TPL_|\/thumb-|thumb-v\d+\.|\.t\.mp4(\?|#|$)|\.av1\.mp4(\?|#|$)|\/sprite|\/preview/i.test(u || '');
+  }
+
   // Un manifest figlio (la variante) non è un video in più: se una playlist sta
   // dentro la cartella di un'altra playlist, si tiene solo quella padre.
   function togliVarianti(lista) {
@@ -176,22 +236,218 @@
   }
 
   // Ordine di fiducia: prima ciò che la pagina ha davvero chiesto (spia),
-  // poi il DOM, poi la deduzione di enfhub, infine il testo grezzo.
+  // poi il DOM, poi le deduzioni per sito, poi ciò che ha annunciato un player
+  // dentro un iframe, infine il testo grezzo.
   function fonti() {
+    var perSito = fontiXhamster();
+    // ⚠️ Quando un estrattore SPECIFICO del sito ha risposto, la scansione del testo
+    // grezzo si salta: là dentro sta il ripiego per i siti che non conosciamo, e su
+    // xhamster aggiungerebbe solo rumore a una risposta che è già quella giusta.
+    // La spia e il DOM restano, perché dicono che cosa la pagina sta suonando adesso.
     var tutte = [].concat(
       sniffate.filter(eMedia),
       fontiDalDom(),
       fontiEnfhub(),
-      fontiDallHtml()
+      perSito,
+      daiFrame.map(function (f) { return f.url; }),
+      perSito.length ? [] : fontiDallHtml()
     );
     var viste = {}, uniche = [];
     for (var i = 0; i < tutte.length; i++) {
       var u = tutte[i];
-      if (!u || viste[u]) continue;
+      if (!u || viste[u] || scarta(u)) continue;
       viste[u] = 1;
       uniche.push(u);
     }
     return togliVarianti(uniche);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  2c) PLAYER DENTRO UN IFRAME: il ponte fra il frame e la pagina
+  // ═══════════════════════════════════════════════════════════════════════
+  // Su javguru il video non è nella pagina: c'è un iframe di un altro dominio
+  // (upload18) col suo jwplayer, e il manifest non compare nemmeno nell'HTML del
+  // frame, perché lo chiede il JavaScript del player.
+  //
+  // ⚠️ Da qui la scelta di far girare lo script ANCHE nei frame (via `@match` sui
+  // domini dei player, e senza `@noframes`), con due comportamenti diversi:
+  //   - dentro un frame: nessun tasto, nessuna interfaccia. Guarda e ANNUNCIA al
+  //     livello sopra gli URL che ha visto passare.
+  //   - nella pagina in cima: raccoglie gli annunci e li unisce alle sue fonti.
+  // ⚠️ L'annuncio si RIPETE, non si fa una volta: il player chiede il manifest
+  // qualche secondo dopo il caricamento, quindi un annuncio solo arriverebbe vuoto.
+  // Ed è il frame a parlare al padre, non il padre a leggere il frame: origini
+  // diverse, quindi leggere dentro non si può e non è un dettaglio aggirabile.
+
+  var CANALE = 'rb-enf-fonti', CHIEDI = 'rb-enf-chiedi';
+  var daiFrame = [];   // [{url, da}] raccolte nella pagina in cima
+
+  function dentroUnFrame() {
+    try { return window.top !== window.self; } catch (e) { return true; }
+  }
+
+  function annunciaAlPadre() {
+    try {
+      var mie = [].concat(sniffate.filter(eMedia), fontiDalDom(), fontiDallHtml());
+      if (!mie.length) return;
+      var viste = {}, uniche = [];
+      for (var i = 0; i < mie.length; i++) {
+        if (mie[i] && !viste[mie[i]]) { viste[mie[i]] = 1; uniche.push(mie[i]); }
+      }
+      window.parent.postMessage({ tipo: CANALE, urls: togliVarianti(uniche), da: location.hostname }, '*');
+    } catch (e) {}
+  }
+
+  function ascoltaIFrame() {
+    window.addEventListener('message', function (e) {
+      try {
+        var d = e.data;
+        if (!d || d.tipo !== CANALE || !d.urls || !d.urls.length) return;
+        for (var i = 0; i < d.urls.length; i++) {
+          var u = d.urls[i];
+          if (!eMedia(u)) continue;
+          if (!daiFrame.some(function (f) { return f.url === u; })) {
+            daiFrame.push({ url: u, da: String(d.da || 'iframe').slice(0, 60) });
+          }
+        }
+      } catch (er) {}
+    }, false);
+  }
+
+  // Il padre bussa ai frame: serve quando la pagina in cima si apre DOPO che il
+  // player ha già chiesto il suo manifest, e quell'annuncio è andato perduto.
+  function bussaAiFrame() {
+    try {
+      var f = document.querySelectorAll('iframe');
+      for (var i = 0; i < f.length; i++) {
+        try { f[i].contentWindow.postMessage(CHIEDI, '*'); } catch (e) {}
+      }
+    } catch (e) {}
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  2b) I VIDEO DELLA PAGINA IN ORDINE, COL LORO RIFERIMENTO
+  // ═══════════════════════════════════════════════════════════════════════
+  // Su una pagina di thread i video sono molti e i file si chiamano tutti allo
+  // stesso modo, quindi un elenco di soli nomi non dice QUALE sia quale: è il
+  // difetto che questa parte esiste per togliere. Ogni voce porta quindi il numero
+  // del post, l'autore, la miniatura e la posizione nella pagina.
+  //
+  // ⚠️ L'ordine è quello del DOCUMENTO, non quello di `fonti()`: là le sorgenti
+  // arrivano prima dalla spia di rete, cioè nell'ordine in cui il player le ha
+  // chieste, che sulle pagine con molti video non è l'ordine in cui si leggono.
+  // Le due funzioni convivono per questo: `fonti()` risponde a 'che cosa si può
+  // scaricare', questa a 'che cosa vedo, e dove'.
+
+  // I forum non hanno un solo markup: XenForo marca il post con
+  // `data-content="post-N"`, altri con un id (`p3145`, `post-3145`) o con
+  // `data-post-id`. Si provano tutti invece di scommettere su uno, e se nessuno
+  // risponde la voce resta senza numero, che è meglio di un numero sbagliato.
+  function postContenitore(el) {
+    var sel = ['[data-content^="post-"]', '[data-post-id]', 'article.message', 'article[id]',
+               '[id^="post-"]', '[id^="post_"]', '.postcontainer', '.post', 'article'];
+    for (var i = 0; i < sel.length; i++) {
+      try {
+        var c = el.closest(sel[i]);
+        if (c) return c;
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  function numeroPost(cont) {
+    if (!cont) return '';
+    var fonti_ = [cont.getAttribute('data-content'), cont.getAttribute('data-post-id'), cont.id];
+    for (var i = 0; i < fonti_.length; i++) {
+      var m = /(\d{2,})/.exec(fonti_[i] || '');
+      if (m) return 'p' + m[1];
+    }
+    try {
+      var a = cont.querySelector('a[href*="#p"], a[href*="post-"], a[href*="post="]');
+      var m2 = /#p?(\d{2,})|post[-=](\d{2,})/i.exec((a && a.getAttribute('href')) || '');
+      if (m2) return 'p' + (m2[1] || m2[2]);
+    } catch (e) {}
+    return '';
+  }
+
+  function autorePost(cont) {
+    if (!cont) return '';
+    var a = cont.getAttribute('data-author');
+    if (a) return pulisci(a);
+    var sel = ['.message-name a', '.message-name', '.username', '.author', '.postusername'];
+    for (var i = 0; i < sel.length; i++) {
+      try {
+        var el = cont.querySelector(sel[i]);
+        var t = el && pulisci(el.textContent);
+        if (t) return t.slice(0, 40);
+      } catch (e) {}
+    }
+    return '';
+  }
+
+  // La miniatura: prima il poster del player (è il fotogramma giusto), poi
+  // un'immagine dello stesso post. Serve solo a riconoscere il video a occhio,
+  // quindi se manca non è un difetto: la voce mostra il numero e basta.
+  function miniatura(v, cont) {
+    try {
+      var p = v.getAttribute('poster');
+      if (p) return assoluto(p);
+      var vp = v.parentElement && v.parentElement.querySelector('.vjs-poster img');
+      if (vp && vp.getAttribute('src')) return assoluto(vp.getAttribute('src'));
+      if (cont) {
+        var img = cont.querySelector('img[src]');
+        if (img && !/emoji|smilie|avatar/i.test(img.getAttribute('src') || '')) {
+          return assoluto(img.getAttribute('src'));
+        }
+      }
+    } catch (e) {}
+    return '';
+  }
+
+  function urlDiUnVideo(v) {
+    var diretto = v.getAttribute('src');
+    if (diretto && !/^(blob|data):/i.test(diretto) && eMedia(diretto)) return assoluto(diretto);
+    var src = v.querySelectorAll('source');
+    for (var j = 0; j < src.length; j++) {
+      var s = src[j].getAttribute('src');
+      if (s && !/^(blob|data):/i.test(s) && eMedia(s)) return assoluto(s);
+    }
+    return '';
+  }
+
+  function videoDellaPagina() {
+    var voci = [], visti = {};
+    try {
+      var video = document.querySelectorAll('video');
+      for (var i = 0; i < video.length; i++) {
+        var v = video[i];
+        var url = urlDiUnVideo(v);
+        if (!url || visti[url]) continue;
+        visti[url] = 1;
+        var cont = postContenitore(v);
+        voci.push({
+          url: url,
+          el: v,
+          post: numeroPost(cont),
+          autore: autorePost(cont),
+          poster: miniatura(v, cont)
+        });
+      }
+    } catch (e) {}
+    // Le sorgenti che nessun <video> del DOM dichiara (il caso di un player pigro,
+    // di un flusso visto solo dalla spia, o di un player dentro un iframe) vanno in
+    // coda e lo DICONO: non hanno un posto nella pagina, quindi inventarglielo
+    // sarebbe peggio che ammetterlo.
+    var resto = fonti().filter(function (u) { return !visti[u]; });
+    for (var k = 0; k < resto.length; k++) {
+      var dal = daiFrame.filter(function (f) { return f.url === resto[k]; })[0];
+      voci.push({
+        url: resto[k], el: null, post: '', autore: '', poster: '',
+        staccato: true, da: dal ? dal.da : ''
+      });
+    }
+    for (var n = 0; n < voci.length; n++) voci[n].indice = n + 1;
+    return voci;
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -216,9 +472,14 @@
     return pulisci(d) || 'video';
   }
 
-  function nomeFile(url, indice, totale) {
+  // `rif` è la voce di `videoDellaPagina()`, quando lo scaricamento parte dal
+  // picker. Il numero del post entra nel NOME perché è l'unico dato che lega il
+  // file alla pagina da cui viene: con dieci video dello stesso thread, 'Titolo
+  // (7).ts' non dice più niente il giorno dopo, 'Titolo [p3145].ts' si ritrova.
+  function nomeFile(url, indice, totale, rif) {
     var base = titolo().slice(0, 170);
-    if (totale > 1) base += ' (' + (indice + 1) + ')';
+    if (rif && rif.post) base += ' [' + rif.post + ']';
+    else if (totale > 1) base += ' (' + (indice + 1) + ')';
     return base + (eHls(url) ? '.ts' : '.mp4');
   }
 
@@ -366,16 +627,20 @@
   // ═══════════════════════════════════════════════════════════════════════
 
   var inCorso = false, annullato = false, manoGM = null;
+  // Prefisso '[3/7] ' quando si sta scaricando una coda scelta dal picker: sta qui
+  // e non nelle chiamate perché lo scrivono TUTTI i punti che aggiornano il tasto,
+  // e passarlo a mano vorrebbe dire dimenticarselo in uno.
+  var etichettaCoda = '';
 
   function mostra(btn, testo, sfondo) {
     if (!btn) return;
-    btn.textContent = testo;
+    btn.textContent = etichettaCoda + testo;
     if (sfondo) btn.style.setProperty('background', sfondo, 'important');
   }
 
   function barra(btn, pct, testo) {
     if (!btn) return;
-    btn.textContent = testo;
+    btn.textContent = etichettaCoda + testo;
     btn.style.setProperty('background',
       'linear-gradient(90deg,' + COLORE_OK + ' ' + pct + '%,' + COLORE_BASE + ' ' + pct + '%)', 'important');
   }
@@ -540,26 +805,57 @@
     mostra(btn, '⬇︎ Download', COLORE_BASE);
   }
 
-  async function scarica(url, indice, totale, btn) {
-    if (inCorso) { annulla(btn); return; }
+  // `rif` = la voce del picker (per il nome del file); `inCoda` sopprime l'alert
+  // per-video e restituisce l'errore alla coda, che lo riassume una volta sola:
+  // sette video andati male sarebbero sette finestre da chiudere.
+  async function scarica(url, indice, totale, btn, rif, inCoda) {
+    if (inCorso && !inCoda) { annulla(btn); return true; }
     inCorso = true; annullato = false; manoGM = null;
     if (btn) btn.title = 'Click again to cancel';
-    var nome = nomeFile(url, indice, totale);
+    var nome = nomeFile(url, indice, totale, rif);
     try {
       if (eHls(url)) await scaricaHls(url, nome, btn);
       else await scaricaMp4(url, nome, btn);
-      if (annullato) return;
+      if (annullato) return false;
       mostra(btn, '✅ Done', COLORE_OK);
-      setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
+      if (!inCoda) setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
+      return true;
     } catch (e) {
-      if (annullato) return;
+      if (annullato) return false;
       var msg = (e && e.message) ? e.message : String(e);
       mostra(btn, '⚠️ Error', COLORE_KO);
+      if (inCoda) return msg;
       alert('ENF Roccobot: download failed.\n' + msg + '\n\nSource:\n' + url);
       setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
+      return false;
     } finally {
       inCorso = false; manoGM = null;
     }
+  }
+
+  // Coda: i video scelti nel picker, uno dopo l'altro. ⚠️ Uno alla volta e non in
+  // parallelo, e non è pigrizia: il motore ha UNO stato (`inCorso`, `manoGM`, il
+  // tasto come barra di avanzamento) e due scaricamenti insieme se lo
+  // calpesterebbero, col secondo che annulla la mano del primo.
+  async function scaricaScelti(voci, btn) {
+    var errori = [];
+    for (var i = 0; i < voci.length; i++) {
+      if (annullato) break;
+      etichettaCoda = voci.length > 1 ? '[' + (i + 1) + '/' + voci.length + '] ' : '';
+      var esito = await scarica(voci[i].url, voci[i].indice - 1, voci.length, btn, voci[i], true);
+      if (typeof esito === 'string') errori.push('· ' + (voci[i].post || ('#' + voci[i].indice)) + ': ' + esito);
+      if (annullato) break;
+    }
+    etichettaCoda = '';
+    if (annullato) return;
+    if (errori.length) {
+      mostra(btn, '⚠️ ' + errori.length + ' failed', COLORE_KO);
+      alert('ENF Roccobot: ' + (voci.length - errori.length) + ' of ' + voci.length +
+            ' downloaded.\n\nFailed:\n' + errori.join('\n'));
+    } else {
+      mostra(btn, '✅ ' + voci.length + ' done', COLORE_OK);
+    }
+    setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -600,41 +896,193 @@
   function chiudiElenco() {
     var m = document.getElementById(ID_ELENCO);
     if (m) m.remove();
+    if (viaEsc) { document.removeEventListener('keydown', viaEsc, true); viaEsc = null; }
   }
 
-  function apriElenco(lista, btn) {
+  var viaEsc = null;
+
+  // Evidenzia nella pagina il player di una voce e ci porta: è il modo più diretto
+  // di rispondere a 'quale sarebbe, questo?', e costa meno di un'anteprima che
+  // riproduce. Il contorno si toglie da sé: non deve restare appeso alla pagina.
+  function portaAl(v) {
+    if (!v || !v.el) return;
+    try {
+      v.el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      var vecchio = v.el.style.outline;
+      v.el.style.setProperty('outline', '4px solid ' + COLORE_BASE, 'important');
+      setTimeout(function () {
+        try { v.el.style.outline = vecchio || ''; } catch (e) {}
+      }, 2200);
+    } catch (e) {}
+  }
+
+  // Il PICKER. Su una pagina di thread i video sono molti e il tasto non può
+  // scaricarne uno a caso: qui si scelgono, si vedono in anteprima e si riconoscono
+  // dal numero di post. Selezione multipla, perché scaricarne cinque a mano
+  // vorrebbe dire riaprire il picker cinque volte.
+  function apriElenco(voci, btn) {
     chiudiElenco();
+
     var m = document.createElement('div');
     m.id = ID_ELENCO;
     stile(m, {
       'position': 'fixed', 'bottom': '64px', 'right': '16px', 'z-index': '2147483647',
-      'max-width': 'min(420px, 92vw)', 'padding': '8px', 'border-radius': '12px',
-      'background': '#1b1b1b', 'color': '#fff', 'box-shadow': '0 8px 26px rgba(0,0,0,.5)',
+      'width': 'min(460px, 94vw)', 'max-height': 'min(70vh, 640px)',
+      'display': 'flex', 'flex-direction': 'column',
+      'padding': '0', 'border-radius': '14px', 'overflow': 'hidden',
+      'background': '#1b1b1b', 'color': '#fff', 'box-shadow': '0 10px 30px rgba(0,0,0,.55)',
       'font': '400 13px/1.35 system-ui, -apple-system, sans-serif'
     });
-    var t = document.createElement('div');
-    t.textContent = lista.length + ' videos on this page:';
-    stile(t, { 'padding': '6px 8px 8px', 'opacity': '0.7', 'font-weight': '700' });
-    m.appendChild(t);
-    lista.forEach(function (url, i) {
-      var r = document.createElement('button');
-      r.type = 'button';
-      r.textContent = (i + 1) + ') ' + (eHls(url) ? 'HLS · ' : 'MP4 · ') + url.split('/').pop().split('?')[0];
-      stile(r, {
-        'display': 'block', 'width': '100%', 'text-align': 'left', 'margin': '2px 0',
-        'padding': '9px 10px', 'border': 'none', 'border-radius': '8px',
-        'background': '#2a2a2a', 'color': '#fff', 'cursor': 'pointer',
-        'font': '400 13px/1.3 system-ui, -apple-system, sans-serif',
+
+    var testa = document.createElement('div');
+    testa.textContent = voci.length + ' videos on this page';
+    stile(testa, {
+      'padding': '11px 13px', 'font-weight': '700', 'flex': '0 0 auto',
+      'border-bottom': '1px solid #333', 'background': '#232323'
+    });
+    m.appendChild(testa);
+
+    var corpo = document.createElement('div');
+    stile(corpo, { 'flex': '1 1 auto', 'overflow-y': 'auto', 'padding': '6px' });
+    m.appendChild(corpo);
+
+    var caselle = [];
+
+    voci.forEach(function (v, i) {
+      var riga = document.createElement('label');
+      stile(riga, {
+        'display': 'flex', 'align-items': 'center', 'gap': '9px',
+        'margin': '2px 0', 'padding': '7px 8px', 'border-radius': '9px',
+        'background': '#2a2a2a', 'cursor': 'pointer'
+      });
+      riga.addEventListener('mouseenter', function () { riga.style.setProperty('background', '#343434', 'important'); });
+      riga.addEventListener('mouseleave', function () { riga.style.setProperty('background', '#2a2a2a', 'important'); });
+
+      var c = document.createElement('input');
+      c.type = 'checkbox';
+      c.checked = false;
+      stile(c, { 'flex': '0 0 auto', 'width': '17px', 'height': '17px', 'margin': '0', 'cursor': 'pointer' });
+      c.addEventListener('change', aggiornaTotale);
+      caselle.push({ casella: c, voce: v });
+      riga.appendChild(c);
+
+      // Anteprima: il poster quando c'è, altrimenti un riquadro col numero. Non un
+      // buco: senza qualcosa di fisso le righe si disallineano.
+      var prev = document.createElement('span');
+      stile(prev, {
+        'flex': '0 0 auto', 'width': '64px', 'height': '38px', 'border-radius': '5px',
+        'background': '#111 center/cover no-repeat', 'display': 'inline-flex',
+        'align-items': 'center', 'justify-content': 'center',
+        'font': '700 12px/1 system-ui, sans-serif', 'color': '#777', 'overflow': 'hidden'
+      });
+      if (v.poster) prev.style.setProperty('background-image', 'url("' + v.poster.replace(/"/g, '%22') + '")', 'important');
+      else prev.textContent = String(v.indice);
+      riga.appendChild(prev);
+
+      var testo = document.createElement('span');
+      stile(testo, { 'flex': '1 1 auto', 'min-width': '0' });
+
+      var prima = document.createElement('span');
+      var etichetta = v.indice + '. ' + (v.post ? v.post
+        : v.da ? 'embedded player (' + v.da + ')'
+        : v.staccato ? 'not tied to a player' : 'post ?');
+      if (v.autore) etichetta += ' · ' + v.autore;
+      prima.textContent = etichetta;
+      stile(prima, {
+        'display': 'block', 'font-weight': '700',
         'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'
       });
-      r.addEventListener('mouseenter', function () { r.style.setProperty('background', '#3a3a3a', 'important'); });
-      r.addEventListener('mouseleave', function () { r.style.setProperty('background', '#2a2a2a', 'important'); });
-      r.addEventListener('click', function () { chiudiElenco(); scarica(url, i, lista.length, btn); });
-      m.appendChild(r);
+      testo.appendChild(prima);
+
+      var dopo = document.createElement('span');
+      dopo.textContent = (eHls(v.url) ? 'HLS · ' : 'MP4 · ') + v.url.split('/').pop().split('?')[0];
+      stile(dopo, {
+        'display': 'block', 'opacity': '0.62', 'font-size': '12px',
+        'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'
+      });
+      testo.appendChild(dopo);
+      riga.appendChild(testo);
+
+      // 'Dov'è' solo per le voci che hanno un player nella pagina: sulle altre
+      // sarebbe un tasto che non può funzionare.
+      if (v.el) {
+        var vai = document.createElement('button');
+        vai.type = 'button';
+        vai.textContent = '⌖';
+        vai.title = 'Show it in the page';
+        stile(vai, {
+          'flex': '0 0 auto', 'width': '28px', 'height': '28px', 'padding': '0',
+          'border': 'none', 'border-radius': '7px', 'background': '#3d3d3d',
+          'color': '#fff', 'cursor': 'pointer', 'font': '400 15px/1 system-ui, sans-serif'
+        });
+        vai.addEventListener('click', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          portaAl(v);
+        });
+        riga.appendChild(vai);
+      }
+
+      corpo.appendChild(riga);
     });
+
+    var piede = document.createElement('div');
+    stile(piede, {
+      'flex': '0 0 auto', 'display': 'flex', 'gap': '7px', 'align-items': 'center',
+      'padding': '9px 10px', 'border-top': '1px solid #333', 'background': '#232323'
+    });
+
+    function tasto(testo_, sfondo) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = testo_;
+      stile(b, {
+        'padding': '8px 12px', 'border': 'none', 'border-radius': '8px',
+        'background': sfondo, 'color': '#fff', 'cursor': 'pointer',
+        'font': '700 13px/1 system-ui, -apple-system, sans-serif'
+      });
+      return b;
+    }
+
+    var tutti = tasto('Select all', '#3d3d3d');
+    tutti.addEventListener('click', function () {
+      var accendi = caselle.some(function (x) { return !x.casella.checked; });
+      caselle.forEach(function (x) { x.casella.checked = accendi; });
+      aggiornaTotale();
+    });
+    piede.appendChild(tutti);
+
+    var spazio = document.createElement('span');
+    stile(spazio, { 'flex': '1 1 auto' });
+    piede.appendChild(spazio);
+
+    var scarica_ = tasto('Download', COLORE_BASE);
+    scarica_.disabled = true;
+    scarica_.addEventListener('click', function () {
+      var scelti = caselle.filter(function (x) { return x.casella.checked; }).map(function (x) { return x.voce; });
+      if (!scelti.length) return;
+      chiudiElenco();
+      scaricaScelti(scelti, btn);
+    });
+    piede.appendChild(scarica_);
+    m.appendChild(piede);
+
+    function aggiornaTotale() {
+      var n = caselle.filter(function (x) { return x.casella.checked; }).length;
+      scarica_.textContent = n ? 'Download ' + n : 'Download';
+      scarica_.disabled = !n;
+      scarica_.style.setProperty('opacity', n ? '1' : '0.5', 'important');
+      scarica_.style.setProperty('cursor', n ? 'pointer' : 'default', 'important');
+    }
+    aggiornaTotale();
+
     document.body.appendChild(m);
+
+    viaEsc = function (e) { if (e.key === 'Escape') { chiudiElenco(); } };
+    document.addEventListener('keydown', viaEsc, true);
+
     setTimeout(function () {
       document.addEventListener('click', function via(e) {
+        if (!m.isConnected) { document.removeEventListener('click', via, true); return; }
         if (!m.contains(e.target) && e.target !== btn) { chiudiElenco(); document.removeEventListener('click', via, true); }
       }, true);
     }, 0);
@@ -643,14 +1091,14 @@
   function alClic(btn) {
     if (inCorso) { annulla(btn); return; }
     if (document.getElementById(ID_ELENCO)) { chiudiElenco(); return; }
-    var lista = fonti();
-    if (!lista.length) {
+    var voci = videoDellaPagina();
+    if (!voci.length) {
       alert('ENF Roccobot: no video found on this page.\n' +
             'If the player is there, start it for a moment and try again, so the source gets detected.');
       return;
     }
-    if (lista.length === 1) scarica(lista[0], 0, 1, btn);
-    else apriElenco(lista, btn);
+    if (voci.length === 1) scarica(voci[0].url, 0, 1, btn, voci[0]);
+    else apriElenco(voci, btn);
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -690,17 +1138,34 @@
         timer = setTimeout(function () { timer = null; cambioPagina(); aggiorna(); }, 400);
       }).observe(document.documentElement, { subtree: true, childList: true });
     } catch (e) {}
-    setInterval(function () { cambioPagina(); aggiorna(); }, 1500);
+    setInterval(function () { cambioPagina(); bussaAiFrame(); aggiorna(); }, 1500);
     window.addEventListener('popstate', cambioPagina);
-    window.addEventListener('load', aggiorna);
+    window.addEventListener('load', function () { bussaAiFrame(); aggiorna(); });
   }
 
-  if (typeof GM_registerMenuCommand !== 'undefined') {
-    GM_registerMenuCommand('Download the video on this page', function () {
-      alClic(document.getElementById(ID_TASTO) || creaTasto());
-    });
+  // Dentro un frame lo script fa UNA cosa e nessun'altra: annuncia al livello sopra
+  // quello che vede. ⚠️ Nessun tasto, nessuna voce di menu, nessun ascolto di
+  // click: due interfacce sovrapposte (una nella pagina e una nel player) sarebbero
+  // un difetto, e nel frame il tasto cadrebbe dentro il rettangolo del video.
+  function avvioNelFrame() {
+    annunciaAlPadre();
+    setInterval(annunciaAlPadre, 1200);
+    window.addEventListener('message', function (e) {
+      if (e && e.data === CHIEDI) annunciaAlPadre();
+    }, false);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
-  else avvio();
+  if (dentroUnFrame()) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvioNelFrame);
+    else avvioNelFrame();
+  } else {
+    ascoltaIFrame();
+    if (typeof GM_registerMenuCommand !== 'undefined') {
+      GM_registerMenuCommand('Download the video on this page', function () {
+        alClic(document.getElementById(ID_TASTO) || creaTasto());
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
+    else avvio();
+  }
 })();
