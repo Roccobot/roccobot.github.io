@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         2.21.0
+// @version         2.21.1
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -100,7 +100,7 @@
   // senza punto.
   const TESTI = {
     en: {
-      menuOpzioni: 'Options',
+      oOpzioni: 'Options',
       scalaFis: 'Real = PHYSICAL pixels: 1 image px = 1 screen px (faithful; {1}x on this display). Click for logical pixels.',
       scalaLog: 'Real = LOGICAL pixels: 1 image px = 1 CSS px (larger on HiDPI screens). Click to go back to physical pixels.',
       navTip: 'Navigator: drag the box to move around (press N to hide it).',
@@ -184,7 +184,7 @@
       oNota: 'Only the settings worth changing are here. Wheel step, zoom stops and gesture thresholds stay in the script: they are measured values, and the reason behind each one is written next to it.'
     },
     it: {
-      menuOpzioni: 'Opzioni',
+      oOpzioni: 'Opzioni',
       scalaFis: 'Reale = pixel FISICI: 1 px dell\'immagine = 1 px dello schermo (fedele; {1}x su questo display). Clic per i pixel logici.',
       scalaLog: 'Reale = pixel LOGICI: 1 px dell\'immagine = 1 px CSS (più grande sugli schermi HiDPI). Clic per tornare ai pixel fisici.',
       navTip: 'Navigatore: trascina il riquadro per spostarti (N lo nasconde).',
@@ -368,9 +368,16 @@
   // guardia comparirebbe solo mentre si guarda un'immagine, cioè quasi mai
   // quando serve. Non tocca il DOM e non osserva nulla: registra una voce e basta.
   const URL_OPZIONI = 'https://roccobot.github.io/userscripts/DIVOptions.html';
+  // ⚠️ L'UNICA stringa visibile fuori dalla tabella TESTI, e non e' una dimenticanza:
+  // resta in inglese fisso per scelta dell'utente (2026-08-17), che segue la consuetudine
+  // degli userscript multilingua di tenere in inglese la voce di configurazione. Ha anche
+  // una logica sua: quel menu appartiene al GESTORE, non allo script, e sta in mezzo alle
+  // voci delle altre estensioni. Il pannello che apre resta invece bilingue, titolo della
+  // scheda compreso, perche' quello e' interfaccia dello script.
+  const VOCE_MENU = 'Options';
   try {
     if (typeof GM_registerMenuCommand === 'function') {
-      GM_registerMenuCommand(T('menuOpzioni'), function () {
+      GM_registerMenuCommand(VOCE_MENU, function () {
         try { GM_openInTab(URL_OPZIONI, { active: true }); }
         catch (e) { window.open(URL_OPZIONI, '_blank'); }
       });
@@ -2155,7 +2162,7 @@
     // il guscio remoto porta il proprio avviso 'script non installato': si è qui,
     // quindi lo script c'è, e l'avviso lascia il posto al pannello vero
     while (radice.firstChild) radice.removeChild(radice.firstChild);
-    try { document.title = T('oTitolo') + ' - ' + T('menuOpzioni'); } catch (e) {}
+    try { document.title = T('oTitolo') + ' - ' + T('oOpzioni'); } catch (e) {}
 
     function nodo(tag, cls, testo) {
       const e = document.createElement(tag);

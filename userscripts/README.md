@@ -612,7 +612,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
 ### Personalizzazione: la pagina delle opzioni
 
 Dalla **2.21** non si modifica più il sorgente. Nel menu di Tampermonkey (l'icona
-dell'estensione) lo script espone la voce **Opzioni**, che apre
+dell'estensione) lo script espone la voce **Options**, che apre
 <https://roccobot.github.io/userscripts/DIVOptions.html>: ogni modifica si salva subito, e
 per vederla basta ricaricare la pagina-immagine.
 
@@ -620,6 +620,11 @@ per vederla basta ricaricare la pagina-immagine.
 > scomodità ma la **durata**: l'aggiornamento automatico riscrive il file, quindi ogni
 > personalizzazione viveva fino al primo update e spariva senza dirlo. Le opzioni ora stanno
 > nell'archivio del gestore, che l'aggiornamento non tocca.
+
+> ⚠️ **La voce di menu resta in inglese anche con l'interfaccia in italiano**, per scelta
+> dell'utente: e' la consuetudine degli userscript multilingua, e quel menu appartiene al
+> gestore (Tampermonkey), non allo script, quindi sta in mezzo alle voci delle altre
+> estensioni. Il pannello che apre e' invece bilingue, titolo della scheda compreso.
 
 > ⚠️ **La pagina è un guscio, e il pannello lo disegna lo script.** Le impostazioni vivono
 > nell'archivio dello userscript (`GM_getValue`), dove una pagina web normale non arriva:
