@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.3.0
-// @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
+// @version      1.4.0
+// @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. On xhamster it also forces the English site (no language subdomain) and picks the highest resolution on its own, asking only when the same resolution comes in more than one codec. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://enf-cmnf.cc/*
@@ -35,12 +35,35 @@
   const SEGMENTI_PARALLELI = 5;     // HLS: quanti segmenti scaricare insieme
   const TENTATIVI_SEGMENTO = 3;     // HLS: ritentativi per singolo segmento
   const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha più varianti
+  const FORZA_INGLESE      = true;  // xhamster: porta i sottodomini di lingua su xhamster.com
 
   const COLORE_BASE = '#7b3fa0';    // viola: tinta del tasto a riposo
   const COLORE_OK   = '#12b76a';
   const COLORE_KO   = '#d0021b';
 
   const W = (typeof unsafeWindow !== 'undefined' && unsafeWindow) ? unsafeWindow : window;
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  0) XHAMSTER SEMPRE IN INGLESE, SENZA IL SOTTODOMINIO DI LINGUA
+  // ═══════════════════════════════════════════════════════════════════════
+  // Richiesta dell'utente (2026-08-17): la versione inglese, e l'indirizzo senza
+  // `ita.` davanti. Si fa qui, a `document-start`, e non dopo: più tardi la pagina
+  // localizzata sarebbe già stata scaricata e in parte disegnata, quindi si vedrebbe
+  // un lampo di italiano prima del salto.
+  // ⚠️ `location.replace` e non `location.href`: così l'indirizzo localizzato NON
+  // resta nella cronologia, e il tasto Indietro riporta da dove si veniva invece di
+  // ricadere sulla pagina `ita.` che rimanderebbe di nuovo qui.
+  // ⚠️ `www` e `m` sono esclusi: il primo è l'alias del sito, il secondo la versione
+  // per telefono, e nessuno dei due è una lingua.
+  if (FORZA_INGLESE) {
+    try {
+      var lingua = /^([a-z]{2,3})\.xhamster\.com$/i.exec(location.hostname);
+      if (lingua && lingua[1].toLowerCase() !== 'www' && lingua[1].toLowerCase() !== 'm') {
+        location.replace('https://xhamster.com' + location.pathname + location.search + location.hash);
+        return;
+      }
+    } catch (e) {}
+  }
 
   // ═══════════════════════════════════════════════════════════════════════
   //  1) SPIA DI RETE (deve girare a document-start, prima del player)
@@ -119,44 +142,65 @@
     return out;
   }
 
-  // e) xhamster: le sorgenti stanno nel payload `window.initials` della pagina, e
-  //    accanto ci sono i LINK DI DOWNLOAD che il sito stesso espone nel suo menu,
-  //    uno per qualità. Si preferiscono quelli: sono la via che la pagina offre a
-  //    chiunque la guardi, quindi la più stabile e la meno inventata.
-  //    ⚠️ Gli mp4 diretti del CDN sono FIRMATI e legati all'IP di chi li ha chiesti
-  //    (`key=`, `end=`, `data=<ip>`): scadono, e da un altro indirizzo rispondono
-  //    403. Sono il ripiego, non la prima scelta, ed è la ragione per cui l'ordine
-  //    fra i due non va invertito.
-  function fontiXhamster() {
+  // e) xhamster: le sorgenti stanno nel payload della pagina, una per qualità, e il
+  //    nome del file dichiara il codec (`720p.h264.mp4`, `1080p.av1.mp4`).
+  //
+  // ⚠️⚠️ NON si usano i link `movies/<id>/download/<q>` che il sito espone nel suo
+  // menu, e la 1.3.0 sbagliava a preferirli: MISURATI il 2026-08-17, rispondono
+  // **403 con una pagina HTML** in ogni combinazione provata (nudi, con Referer e
+  // Sec-Fetch-Dest, con i cookie di sessione, sia su `ita.` sia su `xhamster.com`).
+  // Vogliono la sessione di un utente registrato, quindi per chi non lo è sono un
+  // vicolo cieco: era l'errore che l'utente vedeva a schermo.
+  // ⚠️ Gli mp4 firmati del CDN invece FUNZIONANO: 302 verso `ahcdn.com` e poi 206
+  // `video/mp4`, perfino senza nessuna intestazione. Sono legati all'IP di chi ha
+  // aperto la pagina, che è esattamente il nostro caso: il browser dell'utente.
+  function candidatiXhamster() {
     var out = [];
+    if (!/(^|\.)xhamster\.com$/i.test(location.hostname)) return out;
     try {
-      if (!/(^|\.)xhamster\.com$/i.test(location.hostname)) return out;
       var html = document.documentElement ? document.documentElement.innerHTML : '';
-      var re = /"(\d{3,4})p"\s*:\s*\{\s*"link"\s*:\s*"([^"]+)"/g, m;
-      var uff = [];
+      var re = /"(\d{3,4})p"\s*:\s*"(https?:[^"]+?\.mp4[^"]*)"/g, m, visti = {};
       while ((m = re.exec(html)) !== null) {
-        uff.push({ q: parseInt(m[1], 10), url: m[2].replace(/\\\//g, '/').replace(/\\u002F/gi, '/') });
+        var url = m[2].replace(/\\\//g, '/').replace(/\\u002F/gi, '/');
+        if (visti[url] || scarta(url)) continue;
+        visti[url] = 1;
+        out.push({ q: parseInt(m[1], 10), codec: codecDa(url), url: url });
       }
-      var mp4 = [];
-      var re2 = /"(\d{3,4})p"\s*:\s*"(https?:[^"]+?\.mp4[^"]*)"/g;
-      while ((m = re2.exec(html)) !== null) {
-        mp4.push({ q: parseInt(m[1], 10), url: m[2].replace(/\\\//g, '/').replace(/\\u002F/gi, '/') });
-      }
-      var scelta = miglioreQualita(uff) || miglioreQualita(mp4);
-      if (scelta) out.push(scelta.url);
     } catch (e) {}
     return out;
   }
 
-  // La qualità si sceglie con la stessa manopola dell'HLS: due impostazioni per la
-  // stessa decisione finirebbero per divergere.
-  // ⚠️ Il nome NON è `migliore`, che dentro `scegliVariante` è già una variabile
-  // locale: due cose con lo stesso nome nello stesso file si confondono a colpo
-  // d'occhio, anche quando gli ambiti le tengono separate.
-  function miglioreQualita(lista) {
-    if (!lista || !lista.length) return null;
-    var ord = lista.slice().sort(function (a, b) { return a.q - b.q; });
-    return QUALITA_HLS === 'min' ? ord[0] : ord[ord.length - 1];
+  function codecDa(u) {
+    if (/[._-]av1[._-]/i.test(u)) return 'AV1';
+    if (/[._-](h265|hevc|x265)[._-]/i.test(u)) return 'H.265';
+    if (/[._-](h264|avc|x264)[._-]/i.test(u)) return 'H.264';
+    return '';
+  }
+
+  // ⚠️⚠️ La risoluzione NON si chiede all'utente: si prende la più alta e basta
+  // (istruzione dell'utente, 2026-08-17: *va scelta sempre e automaticamente la
+  // versione a risoluzione maggiore*). La scelta si offre in UN caso solo, quello in
+  // cui è davvero una scelta: **stessa risoluzione, codec diversi** (H.264 contro AV1
+  // o H.265), dove non esiste un 'migliore' universale.
+  var qualitaXh = {};   // url -> {q, codec}, per le etichette del picker
+
+  function fontiXhamster() {
+    var c = candidatiXhamster();
+    if (!c.length) return [];
+    var qMax = c[0].q;
+    for (var i = 1; i < c.length; i++) if (c[i].q > qMax) qMax = c[i].q;
+    var cima = c.filter(function (x) { return x.q === qMax; });
+    // Stesso codec dichiarato più volte alla stessa risoluzione: è lo stesso video,
+    // non una scelta. Si tiene il primo.
+    var perCodec = {}, out = [];
+    for (var j = 0; j < cima.length; j++) {
+      var k = cima[j].codec || 'x';
+      if (perCodec[k]) continue;
+      perCodec[k] = 1;
+      qualitaXh[cima[j].url] = { q: cima[j].q, codec: cima[j].codec };
+      out.push(cima[j].url);
+    }
+    return out;
   }
 
   // d) enfhub: l'id del video compare nel poster (thumbnails/<id>/) e nel payload
@@ -214,8 +258,12 @@
   // qualità (`_TPL_.h264.mp4`), che non esistono come file. Misurato sulla pagina
   // vera di xhamster: senza questo filtro il picker mostrava tre voci per un video
   // solo, e la prima buona era la seconda.
+  // ⚠️ `av1` NON sta in questo elenco, e prima sì: alla stessa risoluzione è una
+  // variante legittima fra cui l'utente vuole poter scegliere (istruzione del
+  // 2026-08-17). Le varianti a risoluzione più bassa non arrivano più qui, perché su
+  // xhamster vale il solo estrattore del sito.
   function scarta(u) {
-    return /_TPL_|\/thumb-|thumb-v\d+\.|\.t\.mp4(\?|#|$)|\.av1\.mp4(\?|#|$)|\/sprite|\/preview/i.test(u || '');
+    return /_TPL_|\/thumb-|thumb-v\d+\.|\.t\.mp4(\?|#|$)|\/sprite|\/preview/i.test(u || '');
   }
 
   // Un manifest figlio (la variante) non è un video in più: se una playlist sta
@@ -234,16 +282,18 @@
   // dentro un iframe, infine il testo grezzo.
   function fonti() {
     var perSito = fontiXhamster();
-    // ⚠️ Quando un estrattore SPECIFICO del sito ha risposto, la scansione del testo
-    // grezzo si salta: là dentro sta il ripiego per i siti che non conosciamo, e su
-    // xhamster aggiungerebbe solo rumore a una risposta che è già quella giusta.
-    // La spia e il DOM restano, perché dicono che cosa la pagina sta suonando adesso.
+    // ⚠️⚠️ Quando l'estrattore SPECIFICO del sito risponde, vale SOLO lui: né la spia
+    // di rete, né il DOM, né il testo grezzo. Non è diffidenza verso gli altri
+    // rilevatori, è che su xhamster producevano DUE voci per un video solo: la spia
+    // vede passare la variante che il player sta suonando (`144p.av1.mp4.m3u8`, cioè
+    // la più bassa) e il picker la offriva accanto a quella giusta. Chi conosce il
+    // sito sa già qual è la sorgente da prendere, e le voci in più sono solo rumore.
+    if (perSito.length) return perSito;
     var tutte = [].concat(
       sniffate.filter(eMedia),
       fontiDalDom(),
       fontiEnfhub(),
-      perSito,
-      perSito.length ? [] : fontiDallHtml()
+      fontiDallHtml()
     );
     var viste = {}, uniche = [];
     for (var i = 0; i < tutte.length; i++) {
@@ -370,7 +420,11 @@
     // sarebbe peggio che ammetterlo.
     var resto = fonti().filter(function (u) { return !visti[u]; });
     for (var k = 0; k < resto.length; k++) {
-      voci.push({ url: resto[k], el: null, post: '', autore: '', poster: '', staccato: true });
+      var qx = qualitaXh[resto[k]];
+      voci.push({
+        url: resto[k], el: null, post: '', autore: '', poster: '', staccato: true,
+        qualita: qx ? qx.q + 'p' : '', codec: qx ? qx.codec : ''
+      });
     }
     for (var n = 0; n < voci.length; n++) voci[n].indice = n + 1;
     return voci;
@@ -405,6 +459,7 @@
   function nomeFile(url, indice, totale, rif) {
     var base = titolo().slice(0, 170);
     if (rif && rif.post) base += ' [' + rif.post + ']';
+    else if (rif && rif.qualita) base += ' [' + rif.qualita + (rif.codec ? ' ' + rif.codec : '') + ']';
     else if (totale > 1) base += ' (' + (indice + 1) + ')';
     return base + (eHls(url) ? '.ts' : '.mp4');
   }
@@ -910,6 +965,7 @@
 
       var prima = document.createElement('span');
       var etichetta = v.indice + '. ' + (v.post ? v.post
+        : v.qualita ? v.qualita + (v.codec ? ' · ' + v.codec : '')
         : v.staccato ? 'not tied to a player' : 'post ?');
       if (v.autore) etichetta += ' · ' + v.autore;
       prima.textContent = etichetta;

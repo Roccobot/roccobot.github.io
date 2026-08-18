@@ -293,10 +293,36 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
     c'era niente da prendere: senza frame da ascoltare non poteva più scattare. Era la risposta
     giusta alla domanda giusta ('il tasto non compare, è rotto?'), ma la risposta migliore è
     stata **non far comparire lo script su un sito dove non può fare nulla**.
-- ⚠️ **Su xhamster si preferiscono i link di download che il sito stesso espone** (uno per
-  qualità, nel payload della pagina): gli mp4 diretti del CDN sono **firmati e legati all'IP**
-  (`key=`, `end=`, `data=<ip>`), quindi scadono e da un altro indirizzo rispondono 403. L'ordine
-  fra i due non va invertito.
+- ⚠️⚠️ **Su xhamster si usano gli mp4 FIRMATI del CDN, NON i link di download del sito, e la
+  1.3.0 aveva l'ordine rovesciato.** Correzione del 2026-08-17 su segnalazione dell'utente, che
+  vedeva un `403` a schermo. La misura che decide: `movies/<id>/download/<q>` risponde **403 con
+  una pagina HTML** in ogni combinazione provata (nudo, con Referer e `Sec-Fetch-Dest`, coi
+  cookie di sessione, sia su `ita.` sia su `xhamster.com`), perché vuole la sessione di un
+  utente **registrato**; l'mp4 del CDN invece risponde **302 verso `ahcdn.com` e poi 206
+  `video/mp4`**, perfino senza nessuna intestazione.
+  - ⚠️ **La firma legata all'IP non è un problema, ed era il mio argomento sbagliato**: il
+    token porta l'indirizzo di chi ha aperto la pagina, che è esattamente il browser dove lo
+    script gira. Da un'altra macchina darebbe 403, ma quel caso non esiste.
+  - **Lezione di metodo**: la 1.3.0 preferiva il link del sito per un motivo plausibile ('è la
+    via che la pagina offre, quindi la più stabile'), scritto **senza provarlo**. Bastava una
+    richiesta per sapere.
+- ⚠️⚠️ **La risoluzione NON si chiede: si prende la più alta** (istruzione dell'utente,
+  2026-08-17: *va scelta sempre e automaticamente la versione a risoluzione maggiore*). Il
+  picker su xhamster compare in **un solo caso**, quello in cui è davvero una scelta: **stessa
+  risoluzione, codec diversi** (H.264 contro AV1 o H.265), dove non esiste un migliore
+  universale. Il codec si legge dal nome del file (`1080p.av1.mp4`) e finisce nell'etichetta e
+  nel nome del file salvato.
+  - ⚠️ **Quando l'estrattore del sito risponde, gli altri rilevatori si spengono.** Senza
+    questo, la spia di rete aggiungeva la variante che il player stava suonando
+    (`144p.av1.mp4.m3u8`, la più bassa) e il picker mostrava **due voci per un video solo**: è
+    il difetto che l'utente ha visto in una schermata.
+  - ⚠️ **`av1` è uscito dal filtro dello spazzatura**: alla stessa risoluzione è un'alternativa
+    legittima, non rumore. Le varianti basse non arrivano più perché vale la regola qui sopra.
+- ⚠️ **xhamster si forza in INGLESE, senza il sottodominio di lingua** (richiesta dell'utente,
+  2026-08-17), e il salto si fa a `document-start`: più tardi si vedrebbe un lampo di pagina
+  localizzata. ⚠️ Si usa `location.replace` e non `location.href`, o l'indirizzo `ita.` resta
+  nella cronologia e il tasto Indietro ci ricade rimbalzando di nuovo qui. Esclusi `www` e `m`,
+  che non sono lingue.
 - ⚠️ **Non tutto ciò che finisce in `.mp4` è il video**: la scansione del testo grezzo pesca le
   **anteprime animate** delle miniature (`...t.mp4`, sei secondi senza audio) e i **modelli** con
   segnaposto al posto della qualità (`_TPL_.h264.mp4`), che come file non esistono. Misurato
