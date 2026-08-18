@@ -157,16 +157,24 @@ serve.
 **Com'è fatta** (dalla v15.06). Il **glifo del FAB** su trasparente, senza tondo né fondo, generato da
 `.memo/scripts/favicon.js` che lo estrae da `index.html` come già fa `pwaicons.js`: quattro file
 in `arda/top/`, un `favicon.svg` per i browser moderni e i PNG **48, 32 e 16** come fallback,
-tutti referenziati in testa alla pagina. Il colore è **`#b87323`**, non l'oro del FAB.
+tutti referenziati in testa alla pagina. Il colore è **`#c5872b`**, non l'oro del FAB.
 
 - **Perché non l'oro `#d2b25c`**: su barra dei preferiti **bianca** stava a **2,05:1**, cioè
   quasi svaniva, ed è il difetto da cui è partita la richiesta ('forse svetta di più su chiaro').
   Scendendo in tinta verso l'arancio il contrasto su chiaro sale e quello su scuro cala, e i due
   si **incrociano** su `#b87323` (3,81 su bianco, 3,77 sulla barra scura di Chrome `#292a2d`).
-  ⚠️ Il valore scelto è **un gradino sopra l'incrocio**, `#b87323`, per restare parente dell'oro
-  del sito: `#ab5f1c` e sotto guadagnano su bianco spegnendosi sullo scuro, e a 16 px si vede.
   Della scala provata resta il criterio, non l'elenco: lo rifà il generatore cambiando una
   costante.
+- ⚠️ **Il valore NON è l'incrocio: sta due gradini sopra**, ed è una scelta dell'utente
+  (2026-08-18: *l'ho fatta scurire troppo, lasciala solo leggermente più scura dell'oro del
+  sito*). Quindi `#c5872b`, che misura **3,05:1** su bianco e **4,70:1** sulla barra scura. Il
+  criterio è la **parentela con l'oro**, non il massimo contrasto: l'incrocio `#b87323` è
+  arrivato live per un giorno solo e `#ab5f1c` e sotto guadagnano su bianco spegnendosi sullo
+  scuro. ⚠️ Le due misure vivono anche nel commento di `favicon.js`, sopra la costante: chi
+  cambia la tinta riscrive entrambe, o mentono.
+- ⚠️ **Cambiando la tinta va bumpato il `?v=` dei quattro link in `index.html`**, o chi ha già
+  visitato il sito continua a vedere la favicon vecchia dalla cache del browser, che per le
+  icone è tenace: si crederebbe a un deploy mancato.
 - **Area massimizzata, senza ritaglio.** Il bbox del glifo è **misurato dal browser** e non
   assunto dal viewBox nominale: coincidono (`451.999 x 605.862` contro `452 x 605.87`), quindi
   margine morto **zero** e non c'era nulla da ritagliare. Il glifo è solo scalato a filo del

@@ -28,9 +28,10 @@ const HTML = fs.readFileSync('arda/top/index.html', 'utf8');
 const D = HTML.match(/<path fill="currentColor" d="([^"]+)"\/><\/svg>';/)[1];
 
 // Non l'oro del FAB (#d2b25c): su barra dei preferiti bianca stava a 2,05:1, cioè
-// quasi invisibile. Questo è un gradino sopra il punto di equilibrio fra i due
-// temi, e misura 3,05:1 su bianco e 4,70:1 sulla barra scura di Chrome.
-const COL = '#b87323';
+// quasi invisibile. Questo è due gradini sopra il punto di equilibrio fra i due temi
+// (#b87323), perché l'utente vuole la favicon solo LEGGERMENTE più scura dell'oro
+// del sito: misura 3,05:1 su bianco e 4,70:1 sulla barra scura di Chrome.
+const COL = '#c5872b';
 const MISURE = [16, 32, 48];
 const AMOUNT = 0.35;
 
