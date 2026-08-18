@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.4.0
+// @version      1.4.1
 // @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. On xhamster it also forces the English site (no language subdomain) and picks the highest resolution on its own, asking only when the same resolution comes in more than one codec. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -285,7 +285,7 @@
     // ⚠️⚠️ Quando l'estrattore SPECIFICO del sito risponde, vale SOLO lui: né la spia
     // di rete, né il DOM, né il testo grezzo. Non è diffidenza verso gli altri
     // rilevatori, è che su xhamster producevano DUE voci per un video solo: la spia
-    // vede passare la variante che il player sta suonando (`144p.av1.mp4.m3u8`, cioè
+    // vede passare la variante che il player sta riproducendo (`144p.av1.mp4.m3u8`, cioè
     // la più bassa) e il picker la offriva accanto a quella giusta. Chi conosce il
     // sito sa già qual è la sorgente da prendere, e le voci in più sono solo rumore.
     if (perSito.length) return perSito;

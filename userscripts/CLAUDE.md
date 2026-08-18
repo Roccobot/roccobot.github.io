@@ -313,7 +313,7 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
   universale. Il codec si legge dal nome del file (`1080p.av1.mp4`) e finisce nell'etichetta e
   nel nome del file salvato.
   - ⚠️ **Quando l'estrattore del sito risponde, gli altri rilevatori si spengono.** Senza
-    questo, la spia di rete aggiungeva la variante che il player stava suonando
+    questo, la spia di rete aggiungeva la variante che il player stava riproducendo
     (`144p.av1.mp4.m3u8`, la più bassa) e il picker mostrava **due voci per un video solo**: è
     il difetto che l'utente ha visto in una schermata.
   - ⚠️ **`av1` è uscito dal filtro dello spazzatura**: alla stessa risoluzione è un'alternativa
