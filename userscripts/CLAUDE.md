@@ -323,6 +323,25 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
   localizzata. ⚠️ Si usa `location.replace` e non `location.href`, o l'indirizzo `ita.` resta
   nella cronologia e il tasto Indietro ci ricade rimbalzando di nuovo qui. Esclusi `www` e `m`,
   che non sono lingue.
+  - ⚠️⚠️ **UN SOLO TENTATIVO, con una guardia, perché la 1.4.0 finiva in CICLO INFINITO**
+    (misurato dall'utente il 2026-08-18: *qualsiasi pagina si ricarica da sola e non si apre
+    mai*). La causa non era il salto in sé: xhamster instrada per **geografia**, quindi da un
+    indirizzo italiano rimanda a `ita.` la pagina che avevamo appena portato su `xhamster.com`,
+    e i due si rincorrono. La marca del tentativo vive in `sessionStorage` con una finestra di
+    30 secondi: se il sito ci riporta indietro si smette e si lavora sulla pagina localizzata,
+    che funziona benissimo.
+    - **`sessionStorage` è PER ORIGINE, e qui è un vantaggio**: la marca la scrive `ita.` e la
+      rilegge `ita.` quando il sito ci riporta là, che è il momento in cui serve. Un cookie di
+      dominio funzionerebbe, ma sopravvivrebbe alla scheda, e il giorno dopo il tentativo va
+      rifatto.
+    - **Provato e scartato**: il parametro `language=en` che compare nella pagina **non** è un
+      interruttore del sito (sta dentro l'URL di un banner pubblicitario), e il server non mette
+      **nessun** cookie di lingua, verificato sulle intestazioni con `Accept-Language` sia
+      italiano sia inglese. La lingua **è** il sottodominio: non c'è modo di fissarla senza
+      cambiare indirizzo, quindi la guardia non è un ripiego, è l'unica difesa possibile.
+    - ⚠️ **Trappola del banco**: il rimbalzo si simula lato **pagina**, non con un 302, perché
+      una rotta di Playwright che risponde `302` non viene seguita e la prova finisce su un
+      errore di rete, misurando il banco invece dello script.
 - ⚠️ **Non tutto ciò che finisce in `.mp4` è il video**: la scansione del testo grezzo pesca le
   **anteprime animate** delle miniature (`...t.mp4`, sei secondi senza audio) e i **modelli** con
   segnaposto al posto della qualità (`_TPL_.h264.mp4`), che come file non esistono. Misurato
