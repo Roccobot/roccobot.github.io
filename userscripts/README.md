@@ -788,7 +788,7 @@ I siti usano **player diversi**, quindi lo script li riconosce tutti:
 | enf-cmnf.cc | `<video><source src="....m3u8">` (HLS self-hosted) | segmenti uniti in `.ts` |
 | enf-cmnf.cc | `<video src="....mp4">` (blocco video di WordPress) | MP4 diretto |
 | enfhub.com | hls.js su `cdn.enfhub.site/videos/<id>/master.m3u8` | variante migliore, unita in `.ts` |
-| xhamster.com | sorgenti nel payload della pagina | il **link di download del sito** alla qualità migliore |
+| xhamster.com | sorgenti nel payload della pagina | l'**mp4 firmato del CDN** alla risoluzione massima |
 
 ### Il picker (dalla 1.2.0)
 
@@ -818,13 +818,24 @@ fine, invece di una finestra per video.
 > tolta insieme al ponte coi frame che serviva solo a lei, perché codice che non
 > può funzionare è peggio di codice assente.
 
-**xhamster.** Le sorgenti stanno nel payload della pagina, e accanto ci sono i
-**link di download che il sito stesso espone**, uno per qualità: lo script
-preferisce quelli. Gli mp4 diretti del CDN restano il ripiego, perché sono
-firmati e legati all'IP di chi li ha chiesti (`key=`, `end=`, `data=<ip>`):
-scadono, e da un altro indirizzo rispondono 403. ⚠️ Filtrate le **anteprime
-animate** delle miniature (`...t.mp4`) e i modelli con segnaposto (`_TPL_`):
-senza quel filtro il picker mostrava tre voci per un video solo.
+**xhamster (dalla 1.4.0).** Tre cose:
+
+- **sempre la versione inglese**: se l'indirizzo ha un sottodominio di lingua
+  (`ita.xhamster.com`) lo script salta subito su `xhamster.com` conservando il
+  percorso. Il salto avviene all'apertura, prima che la pagina localizzata si
+  disegni, e non lascia l'indirizzo vecchio nella cronologia;
+- **la risoluzione la scegle lo script**: la più alta, senza chiedere. Il picker
+  compare **solo** quando la stessa risoluzione arriva in **più codec** (H.264
+  contro AV1 o H.265), che è l'unico caso in cui la scelta è vera. Qualità e codec
+  finiscono nel nome del file (`Titolo [1080p AV1].mp4`);
+- **si scarica l'mp4 firmato del CDN**, non il link `movies/<id>/download/<q>` che
+  il sito mostra nel suo menu: quello risponde **403** a chi non ha una sessione da
+  utente registrato (misurato in ogni combinazione di intestazioni e coi cookie),
+  mentre l'mp4 del CDN risponde 302 e poi 206 `video/mp4` anche senza intestazioni.
+
+⚠️ Filtrate le **anteprime animate** delle miniature (`...t.mp4`) e i modelli con
+segnaposto (`_TPL_`): senza quel filtro il picker mostrava tre voci per un video
+solo.
 
 Come trova la sorgente, in ordine di fiducia: **1)** una spia di rete installata
 a `document-start` annota gli URL `.m3u8`/`.mp4` che la pagina richiede davvero
