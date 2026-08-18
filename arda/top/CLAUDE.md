@@ -157,21 +157,30 @@ serve.
 **Com'è fatta** (dalla v15.06). Il **glifo del FAB** su trasparente, senza tondo né fondo, generato da
 `.memo/scripts/favicon.js` che lo estrae da `index.html` come già fa `pwaicons.js`: quattro file
 in `arda/top/`, un `favicon.svg` per i browser moderni e i PNG **48, 32 e 16** come fallback,
-tutti referenziati in testa alla pagina. Il colore è **`#c5872b`**, non l'oro del FAB.
+tutti referenziati in testa alla pagina. Il colore è **`#ce9d3b`**, un gradino sotto l'oro del FAB.
 
-- **Perché non l'oro `#d2b25c`**: su barra dei preferiti **bianca** stava a **2,05:1**, cioè
-  quasi svaniva, ed è il difetto da cui è partita la richiesta ('forse svetta di più su chiaro').
-  Scendendo in tinta verso l'arancio il contrasto su chiaro sale e quello su scuro cala, e i due
-  si **incrociano** su `#b87323` (3,81 su bianco, 3,77 sulla barra scura di Chrome `#292a2d`).
-  Della scala provata resta il criterio, non l'elenco: lo rifà il generatore cambiando una
-  costante.
-- ⚠️ **Il valore NON è l'incrocio: sta due gradini sopra**, ed è una scelta dell'utente
-  (2026-08-18: *l'ho fatta scurire troppo, lasciala solo leggermente più scura dell'oro del
-  sito*). Quindi `#c5872b`, che misura **3,05:1** su bianco e **4,70:1** sulla barra scura. Il
-  criterio è la **parentela con l'oro**, non il massimo contrasto: l'incrocio `#b87323` è
-  arrivato live per un giorno solo e `#ab5f1c` e sotto guadagnano su bianco spegnendosi sullo
-  scuro. ⚠️ Le due misure vivono anche nel commento di `favicon.js`, sopra la costante: chi
-  cambia la tinta riscrive entrambe, o mentono.
+- ⚠️⚠️ **La tinta l'ha SCELTA L'UTENTE A OCCHIO, e non si ritocca per contrasto** (2026-08-18:
+  *l'unico che mi piace è `#ce9d3b`*), fra otto candidate rese a **dimensione reale** sulle sue
+  barre dei preferiti vere, **`#edeeed`** e **`#292929`**, dove misura **2,12:1** su chiaro e
+  **5,90:1** su scuro. Il criterio è la **parentela con l'oro del sito**, non il massimo
+  contrasto: sta **sotto il 3:1** su barra chiara, ed è una scelta informata, non una svista.
+  Il percorso, che spiega perché il criterio è quello: l'oro nudo `#d2b25c` quasi svaniva su
+  chiaro (**1,76:1**), da cui la prima passata a `#b87323` (3,27 / 3,82); l'utente l'ha
+  giudicata **troppo scura**, poi ha bocciato anche il gradino intermedio.
+- ⚠️⚠️ **Il '4:1 su entrambe' è IMPOSSIBILE, e la domanda non va riaperta**: il contrasto WCAG
+  dipende **solo dalla luminanza**, quindi con quelle due barre le due condizioni si escludono
+  (servirebbe Y ≤ 0,176 su chiaro e Y ≥ 0,239 su scuro). Il massimo simultaneo è **3,54:1**, al
+  punto di equilibrio `#b16e22`, e nessuna tinta di nessuna tonalità può superarlo. La finestra
+  che tiene il **3:1** su entrambe (Y fra 0,167 e 0,251) esiste, va da `#c27825` a `#a0641f`, e
+  là nessuna tinta piaceva all'utente: è la ragione per cui la favicon sta fuori da quella
+  finestra.
+  - ⚠️ **La favicon vive nella chrome del browser, non nella pagina**: non entra nell'audit axe
+    né nel gate W3C, e non intacca la conformità AA del sito, che resta un vincolo intatto per
+    tutto ciò che sta **dentro** la pagina.
+- ⚠️ **Le misure si fanno sulle barre REALI, non su bianco puro**: su `#ffffff` la stessa tinta
+  dà **2,47:1** invece di 2,12, cioè un terzo di punto di contrasto regalato, e su quel numero
+  si è già preso un abbaglio. Le due misure vivono anche nel commento di `favicon.js`, sopra la
+  costante: chi cambia la tinta riscrive entrambe, o mentono.
 - ⚠️ **Cambiando la tinta va bumpato il `?v=` dei quattro link in `index.html`**, o chi ha già
   visitato il sito continua a vedere la favicon vecchia dalla cache del browser, che per le
   icone è tenace: si crederebbe a un deploy mancato.
