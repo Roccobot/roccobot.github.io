@@ -823,7 +823,12 @@ fine, invece di una finestra per video.
 - **sempre la versione inglese**: se l'indirizzo ha un sottodominio di lingua
   (`ita.xhamster.com`) lo script salta subito su `xhamster.com` conservando il
   percorso. Il salto avviene all'apertura, prima che la pagina localizzata si
-  disegni, e non lascia l'indirizzo vecchio nella cronologia;
+  disegni, e non lascia l'indirizzo vecchio nella cronologia. ⚠️ **Un solo
+  tentativo per scheda** (finestra di 30 secondi): xhamster instrada per
+  geografia, quindi da certi paesi rimanda al sottodominio della lingua, e senza
+  quella guardia le due parti si rincorrono e la pagina non si apre mai. Se il sito
+  insiste, si resta sulla versione localizzata e tutto il resto funziona; per
+  spegnere la funzione basta `FORZA_INGLESE = false`;
 - **la risoluzione la scegle lo script**: la più alta, senza chiedere. Il picker
   compare **solo** quando la stessa risoluzione arriva in **più codec** (H.264
   contro AV1 o H.265), che è l'unico caso in cui la scelta è vera. Qualità e codec

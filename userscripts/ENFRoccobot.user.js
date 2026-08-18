@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.4.1
+// @version      1.4.2
 // @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. On xhamster it also forces the English site (no language subdomain) and picks the highest resolution on its own, asking only when the same resolution comes in more than one codec. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -55,12 +55,36 @@
   // ricadere sulla pagina `ita.` che rimanderebbe di nuovo qui.
   // ⚠️ `www` e `m` sono esclusi: il primo è l'alias del sito, il secondo la versione
   // per telefono, e nessuno dei due è una lingua.
+  // ⚠️⚠️ UN SOLO TENTATIVO, e non è prudenza: senza la guardia si finisce in un
+  // CICLO INFINITO, misurato dall'utente il 2026-08-18 ('qualsiasi pagina si ricarica
+  // da sola e non si apre mai'). La causa non è il nostro salto in sé: xhamster
+  // instrada per GEOGRAFIA, quindi da un indirizzo italiano rimanda a `ita.` la
+  // pagina che noi avevamo appena portato su `xhamster.com`, e i due si rincorrono.
+  // ⚠️ La marca sta in `sessionStorage`, che è PER ORIGINE, e va bene proprio per
+  // questo: la scrive `ita.` e la rilegge `ita.` quando il sito ci riporta là, che è
+  // il momento in cui serve. Con un cookie di dominio funzionerebbe pure, ma
+  // sopravviverebbe alla scheda, e un giorno dopo il tentativo va rifatto.
+  // ⚠️ Provato e scartato: il parametro `language=en` visto nella pagina NON è un
+  // interruttore del sito (sta dentro l'URL di un banner), e il server non mette
+  // alcun cookie di lingua: la lingua È il sottodominio, quindi non c'è modo di
+  // fissarla senza cambiare indirizzo.
+  var CHIAVE_EN = 'rb-enf-inglese-tentato';
+  var ATTESA_EN = 30000;
+
   if (FORZA_INGLESE) {
     try {
-      var lingua = /^([a-z]{2,3})\.xhamster\.com$/i.exec(location.hostname);
-      if (lingua && lingua[1].toLowerCase() !== 'www' && lingua[1].toLowerCase() !== 'm') {
-        location.replace('https://xhamster.com' + location.pathname + location.search + location.hash);
-        return;
+      var lingua = /^([a-z]{2,4})\.xhamster\.com$/i.exec(location.hostname);
+      var sotto = lingua ? lingua[1].toLowerCase() : '';
+      if (sotto && sotto !== 'www' && sotto !== 'm') {
+        var ora = Date.now(), prima = 0;
+        try { prima = parseInt(sessionStorage.getItem(CHIAVE_EN) || '0', 10) || 0; } catch (e) {}
+        if (!prima || ora - prima > ATTESA_EN) {
+          try { sessionStorage.setItem(CHIAVE_EN, String(ora)); } catch (e) {}
+          location.replace('https://xhamster.com' + location.pathname + location.search + location.hash);
+          return;
+        }
+        // Il sito ci ha riportati qui: si smette e si lavora su questa pagina, che
+        // funziona benissimo. Insistere darebbe una pagina che non si apre mai.
       }
     } catch (e) {}
   }
