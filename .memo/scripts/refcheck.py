@@ -36,11 +36,12 @@ from pathlib import Path
 
 VERBOSE = "-v" in sys.argv
 
-# Root dei due repo, ricavate dalla posizione di questo file: mai percorsi
+# Root dei repo, ricavate dalla posizione di questo file: mai percorsi
 # assoluti scritti a mano, e nessuna dipendenza dalla cwd, che negli ambienti
 # Claude Code può essere la cartella che contiene i repo.
 SITO = Path(__file__).resolve().parents[2]
 TOOLS = SITO.parent / "tools"
+MIHON = SITO.parent / "mihon-aniyomi-ext"
 
 RULEFILES = [
     SITO / "CLAUDE.md",
@@ -62,6 +63,24 @@ RULEFILES = [
 # nessuno. Glob e non elenco: uno snippet nuovo entra nel controllo da sé, che è l'unico
 # modo perché non si ripeta.
 ] + sorted(TOOLS.glob("snippets/*.md"))
+
+# ── I documenti degli ALTRI repo ──
+# Non sono file di regole, e per questo stanno in un insieme a sé invece che in `RULEFILES`:
+# di loro si controllano i CARATTERI e i LINK, che valgono per qualunque testo italiano, non
+# i rimandi fra sezioni né i titoli citabili come ancora, che sono un meccanismo dei soli
+# file di regole. Mescolarli avrebbe indicizzato come 'sezione citabile' ogni titolo di un
+# README, cioè il contrario di quello che l'indice serve a dire.
+# ⚠️ Sono entrati il 2026-08-19, quando la bonifica di `mihon-aniyomi-ext` ha trovato 110
+# righe senza accenti e tre `E'`, cioè la forma che le regole vietano per nome. Non erano
+# sfuggite al controllo: erano fuori dal suo raggio, che si fermava a due repo, ed è la stessa
+# lezione degli snippet stantii ('un controllo che copre un repo non dice niente sull'altro').
+# Glob e non elenco, per la stessa ragione: un documento nuovo entra da sé.
+# ⚠️ I SORGENTI restano fuori di proposito: i loro commenti sono in inglese per regola, e su
+# un sorgente il controllo dei caratteri segnalerebbe lettere non latine legittime (una regex,
+# un nome proprio). Le loro righe aggiunte le guarda comunque il modo `--diff`, che gira su
+# ogni file.
+TESTI = sorted(MIHON.glob("*.md")) + sorted(MIHON.glob("*/README.md")) \
+    + sorted(MIHON.glob(".github/workflows/*.yml"))
 
 # Eccezioni DICHIARATE, non pigrizia: senza di esse il controllo darebbe 17
 # falsi positivi su zero difetti veri, e un controllo rumoroso viene ignorato.
@@ -506,6 +525,7 @@ def main():
     if "--diff" in sys.argv:
         return main_diff()
     present = [f for f in RULEFILES if f.exists()]
+    testi = [f for f in TESTI if f.exists()]
     missing_repo = not TOOLS.exists()
 
     titles = {}
@@ -523,8 +543,10 @@ def main():
     bad_links, bad_paths, bad_sects, bad_chars = [], [], [], []
     seen = {"link": 0, "path": 0, "sect": 0}
 
-    for f in present:
+    for f in present + testi:
         base = f.parent
+        # I documenti degli altri repo si fermano qui: caratteri e link, non i rimandi.
+        solo_testo = f in testi
         for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8")):
             bad_chars.append((f, n, f"{etichetta(ch)} -> {motivo}"))
         for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
@@ -534,6 +556,8 @@ def main():
                 seen["link"] += 1
                 if not (base / url).resolve().exists():
                     bad_links.append((f, n, url))
+            if solo_testo:
+                continue
             for p in RE_PATH.findall(line):
                 if p in SKIP_PATHS or p.startswith(SKIP_PREFIXES):
                     continue
@@ -548,10 +572,12 @@ def main():
                     bad_sects.append((f, n, s))
 
     def rel(p):
-        try:
-            return f"SITO/{p.relative_to(SITO)}"
-        except ValueError:
-            return f"TOOLS/{p.relative_to(TOOLS)}"
+        for etichetta_repo, radice in (("SITO", SITO), ("TOOLS", TOOLS), ("MIHON", MIHON)):
+            try:
+                return f"{etichetta_repo}/{p.relative_to(radice)}"
+            except ValueError:
+                continue
+        return str(p)
 
     def report(label, rotti, hint):
         if not rotti:
@@ -598,8 +624,15 @@ def main():
         print(f"\nNota: {TOOLS} non è agganciato a questa sessione, quindi il controllo è "
               "PARZIALE: restano i link interni, i titoli e i caratteri, non i rimandi ai file "
               "di regole universali. Per il controllo completo, aggancia il repo.")
+    # ⚠️ Si DICHIARA anche l'altra assenza, invece di saltarla in silenzio: un controllo che
+    # non guarda un repo e non lo dice si legge come 'là è tutto in ordine', che è il falso
+    # negativo peggiore (regola universale sui controlli che non fanno prova).
+    if not MIHON.exists():
+        print(f"\nNota: {MIHON} non è agganciato, quindi i suoi documenti non sono stati "
+              "guardati. Non è un difetto: è copertura mancante, e si recupera agganciando "
+              "il repo.")
     if VERBOSE or rotti:
-        print(f"\n{tot} riferimenti controllati in {len(present)} file "
+        print(f"\n{tot} riferimenti controllati in {len(present) + len(testi)} file "
               f"({seen['link']} link, {seen['path']} percorsi, {seen['sect']} rimandi a sezione), "
               f"{len(titles)} titoli indicizzati.")
     print("refcheck: tutto in ordine" if not rotti else "refcheck: DIFETTI TROVATI")
