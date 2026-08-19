@@ -463,7 +463,8 @@ poi divergerebbe.
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, **trattini
   lunghi** nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i
   **caratteri del messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
-  e controlla anche i file di `Roccobot/tools` quando il repo è agganciato). ⚠️ Criterio,
+  e controlla anche i file di `Roccobot/tools` e i **documenti** di `Roccobot/mihon-aniyomi-ext`
+  quando quei repo sono agganciati; di un repo assente lo **dichiara**). ⚠️ Criterio,
   whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
   regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
   che bloccano il commit. ⚠️ **Quanti sono non si scrive**: l'elenco qui sopra è la sostanza,
