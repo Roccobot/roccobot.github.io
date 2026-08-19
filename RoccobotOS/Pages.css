@@ -5,7 +5,7 @@
    export vecchi con il foglio di stile scritto dentro l'head, e in due varianti diverse.
    Duplicare il blocco quattro volte avrebbe creato quattro fonti che prima o poi divergono;
    qui la fonte è una sola e le pagine la richiamano dopo il loro <style>, che è ciò che
-   gli fa vincere il confronto a parita' di specificità.
+   gli fa vincere il confronto a parità di specificità.
 
    DUE VIE PER IL TEMA, e nessuna delle due memorizza niente:
    1. la preferenza del SISTEMA operativo (prefers-color-scheme), che è quella con cui la
