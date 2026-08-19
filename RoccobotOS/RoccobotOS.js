@@ -10,7 +10,7 @@
 // index.html nascono VUOTI: se questo script non gira il CSS li nasconde con :empty, invece di
 // mostrare una 'v' senza numero.
 !function () {
-  const VERSIONE = "3.96";
+  const VERSIONE = "3.97";
   // Due punti di resa, uno per formato: la pillola nell'angolo dell'indice su desktop,
   // il numero sopra il logo su mobile. A deciderlo è il CSS, qui si scrivono entrambi.
   for (const id of ["siteVersion", "tocVersion"]) {
@@ -222,7 +222,7 @@
   }
   // Il fondo si rimisura: le immagini a caricamento pigro allungano la pagina mentre si
   // scende, e un solo scrollTo si fermerebbe dove il fondo era un attimo prima. Dieci
-  // tentativi a 300 ms sono il tetto: oltre, è un caso che non si chiudera' comunque.
+  // tentativi a 300 ms sono il tetto: oltre, è un caso che non si chiuderà comunque.
   function vaiInFondo(fluido) {
     const modo = fluido ? andatura() : "auto";
     window.scrollTo({ top: altezzaPagina(), behavior: modo });

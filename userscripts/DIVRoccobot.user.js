@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         3.0.3
+// @version         3.0.4
 // @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -1631,10 +1631,10 @@
 
     // ── Pulizia dell'SVG ────────────────────────────────────────────────
     // Si lavora su un CLONE del <svg> vivo, mai sul testo del file: il DOM che
-    // il browser ha già analizzato è ben formato per costruzione, ha le entita'
+    // il browser ha già analizzato è ben formato per costruzione, ha le entità
     // (&ns_ai; e simili) già risolte e non porta con sé prologo, DOCTYPE e
     // commenti esterni, che spariscono gratis alla serializzazione. Una pulizia
-    // a espressioni regolari sul testo, invece, sui file con DOCTYPE ed entita'
+    // a espressioni regolari sul testo, invece, sui file con DOCTYPE ed entità
     // produce XML che non si apre più.
     // La lista dei namespace è quella di SVGO (plugins/_collections.js).
     const NS_EDITOR = [
