@@ -1,10 +1,12 @@
-var datiVersion = "0.01";
+var datiVersion = "0.02";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 var cardColors = {"fam":{"man":{"dark":"#d9c089","light":"#9c7c3a"},"dragon":{"dark":"#e0a090","light":"#b25a48"}},"map":{"type-man":"man","type-dragon":"dragon"}};
 // ⚠️⚠️ DATASET DI PARTENZA, NON ANCORA VERIFICATO SULLE FONTI.
-// Contiene SOLO quello che l'utente ha dichiarato a memoria il 2026-08-20: nome d'uso,
-// vero nome fra parentesi, e quali sono draghi. Tutto il resto è volutamente vuoto:
+// Contiene SOLO quello che l'utente ha dichiarato a memoria (il 2026-08-20 le prime voci,
+// il 2026-08-21 Sparviero e Solevivo): nome d'uso, vero nome fra parentesi, e quali sono
+// draghi. ⚠️ `nome_en` ripete l'italiano di proposito: le rese inglesi non sono in scena, e
+// tradurne una sola (Sparviero -> Sparrowhawk) farebbe sembrare attestate anche le altre. Tutto il resto è volutamente vuoto:
 // origine, genere, parentele, descrizioni e fonti non sono attestati da nulla che sia
 // in scena, e riempirli a memoria è esattamente ciò che la regola vieta.
 var dati = [
@@ -24,5 +26,7 @@ var dati = [
 {"nome":"Brace","nome_en":"Brace","fonte":"","fonte_en":"","paese":"","genere":"f","padre":"","madre":"","tipo":"Donna","tipo_en":"Woman","nomi_alternativi":"Elehal","nomi_alternativi_en":"Elehal","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Early","nome_en":"Early","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Teriel","nomi_alternativi_en":"Teriel","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Diamante","nome_en":"Diamante","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Essiri","nomi_alternativi_en":"Essiri","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
-{"nome":"Burrone / Otak","nome_en":"Burrone / Otak","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Irioth","nomi_alternativi_en":"Irioth","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"}
+{"nome":"Burrone / Otak","nome_en":"Burrone / Otak","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Irioth","nomi_alternativi_en":"Irioth","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
+{"nome":"Sparviero","nome_en":"Sparviero","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Ged","nomi_alternativi_en":"Ged","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
+{"nome":"Solevivo","nome_en":"Solevivo","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Ayeth","nomi_alternativi_en":"Ayeth","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"citazione":"","citazione_en":"","divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"}
 ];
