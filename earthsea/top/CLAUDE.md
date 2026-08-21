@@ -93,7 +93,7 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
 
 - ✅ **Dalla `0.12` è acceso sulle NOVE voci che il canone elenca** (`rules/Earthsea.md`,
   § 'Chi conobbe il vero nome di Sparviero', elenco dell'utente del 2026-08-21): Ogion,
-  Veccia, Millefoglie, Arha / Goha, Arren, Tehanu, Dote, Orm Embar, Kalessin.
+  Veccia, Millefoglie, Goha, Arren, Tehanu, Dote, Orm Embar, Kalessin.
   - ⚠️ **Quel file è la sua UNICA fonte**: il badge non si ricava dalla scheda di un
     personaggio, quindi non si deduce e non si aggiunge a intuito. Chi vuole cambiarne uno
     cambia prima il canone.
@@ -131,10 +131,19 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
 | **Nomi alternativi** (secondaria) | `nomi_alternativi` | sottotitolo `.rank-subtitle` |
 | **Titoli e onorificenze** (come sopra) | `appellativi` | stesso sottotitolo, dopo il `|` |
 
-- **Il nome doppio col separatore ` / ` è quasi finito**: era la forma di partenza (Sparviero /
-  Falco, Lontra / Sterna, Burrone / Otak) e l'utente l'ha sciolta voce per voce, mandando il
-  secondo nome fra gli alternativi. ⚠️ **Resta la sola `Arha / Goha`**, e non è una
-  dimenticanza: quelli sono due nomi d'uso di due fasi della vita, non un nome più un alias.
+- ✅ **Il nome doppio col separatore ` / ` è FINITO**: era la forma di partenza (Sparviero /
+  Falco, Lontra / Sterna, Burrone / Otak, Arha / Goha) e l'utente l'ha sciolta voce per voce,
+  mandando il secondo nome fra gli alternativi. Dalla `0.15` **nessuna voce** lo porta, e chi
+  ne introducesse uno nuovo starebbe reintroducendo una forma abbandonata.
+  - ⚠️ **`Goha` è il caso che ha richiesto una decisione, non una regola**: i suoi tre nomi
+    appartengono a tre fasi della vita, e non c'era un alias da relegare. La ricostruzione
+    dell'utente (2026-08-21): fu **Arha** ad Atuan, poi per molti anni si fece chiamare
+    pubblicamente col **vero nome** Tenar, e infine, sposando un contadino di Gont, scelse
+    **Goha**. Si usa il **nome definitivo**: nome `Goha`, vero nome `Tenar`, alternativo
+    `Arha`.
+  - ⚠️ **Nel canone l'elenco dei portatori del terzo badge la chiama ancora `Arha`**
+    (`rules/Earthsea.md`), perché è il nome con cui l'utente l'ha elencata: la corrispondenza
+    è annotata là, e cercare `Arha` fra i nomi principali del dataset non dà risultati.
 
 - ⚠️ **`vero_nome` NON ha un campo `_en`**, ed è l'unico campo così: il vero nome è nella
   Lingua della Creazione, non si traduce. Chi gli aggiungesse un `_en` inviterebbe a inventare
