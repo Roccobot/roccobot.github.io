@@ -12,6 +12,7 @@
 | progetto | cartella | file di regole |
 |---|---|---|
 | **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre) | `arda/top/` | [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md) |
+| **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20) | `earthsea/top/` | [`earthsea/top/CLAUDE.md`](earthsea/top/CLAUDE.md) |
 | **Regole AdBlock** ('Roccobot ABP') | `ABP/` | [`ABP/CLAUDE.md`](ABP/CLAUDE.md) |
 | **Userscript** | `userscripts/` | [`userscripts/CLAUDE.md`](userscripts/CLAUDE.md) |
 | **RoccobotOS**, il sito di riferimento personale | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
@@ -37,8 +38,9 @@ progetti (`Roccobot.md`, § '🌿 Workflow git e versioni'), il primo con la fon
 `datiVersion` e il badge in testata, il secondo col numero visibile in cima e sopra il logo
 (dettagli in [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'); le
 liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e
-il link di installazione da ripetere dopo ogni go-live. ⚠️ 'Senza versione' non è vero per
-nessuno dei cinque progetti.
+il link di installazione da ripetere dopo ogni go-live; 'I Grandi di Terramare' nasce con
+SlimVer e la fonte in `datiVersion`, come il progetto da cui è copiato. ⚠️ 'Senza versione'
+non è vero per nessun progetto del repo.
 - ⚠️ Il **deploy Pages da attendere è UNICO e riguarda tutti i progetti del repo**: la
   verifica di pubblicazione si fa con la sonda del progetto toccato (vedi '🌿 Branch,
   allineamento e push').
@@ -65,11 +67,15 @@ sessione:
    **si attende la risposta** prima di iniziare il lavoro: l'utente ha detto
    esplicitamente che il ritardo di un giro non è un problema, perché si paga una
    volta sola.
-   - **`Carico anche rules/JRRT.md?`** (il canone tolkieniano). ⚠️ È **l'unico file di
-     regole opzionale**: tutto il resto vive in `Roccobot.md`, che si carica sempre. Se
-     un domani ne nascono altri, si aggiungono qui come opzioni.
-   - **`Quali CLAUDE.md di progetto leggo subito?`**, a **scelta multipla** fra i
-     cinque della tabella in testa a questo file (richiesta dell'utente, 2026-07-30).
+   - **`Carico anche i canoni?`**, a **scelta multipla**: `rules/JRRT.md` (il canone
+     tolkieniano) e `rules/Earthsea.md` (il canone di Terramare). Sono i **soli** file di
+     regole opzionali: tutto il resto vive in `Roccobot.md`, che si carica sempre. Se un
+     domani ne nascono altri, si aggiungono qui come opzioni.
+     - ⚠️ **Il secondo è nato il 2026-08-20 con il progetto 'I Grandi di Terramare'**, e
+       finché dichiara di essere un guscio non è un'autorità: si carica per sapere che il
+       canone non c'è ancora, che è l'informazione che impedisce di inventarne uno.
+   - **`Quali CLAUDE.md di progetto leggo subito?`**, a **scelta multipla** fra quelli
+     della tabella in testa a questo file (richiesta dell'utente, 2026-07-30).
      Quelli che l'utente non sceglie **non** si leggono all'avvio: si leggono **al
      volo** quando il lavoro entra nella loro cartella, che è esattamente la rete di
      sicurezza già prescritta sopra.
@@ -134,9 +140,12 @@ sessione:
   dove scriverne una nuova.
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
+- **`rules/Earthsea.md`**: il canone di Terramare, per ora un **guscio** che dichiara di non
+  essere un'autorità. Serve al progetto `earthsea/top/`.
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
+  - <https://rules-proxy.roccobot-b90.workers.dev/rules/Earthsea.md>
 
   ⚠️ **I raw GitHub NON funzionano** (verificato il 2026-07-29 e riverificato il
   2026-08-01: `raw.githubusercontent.com/Roccobot/tools/...` risponde 404 **con e senza
@@ -197,10 +206,16 @@ Dalla più forte alla più debole:
    questo file) per ciò che è **specifico** di un progetto. Non competono fra
    loro: vince quello che parla nel proprio dominio (vedi 'La specificità vale
    per DOMINIO' più sotto).
-3. **`rules/JRRT.md`**: il canone. Sta qui, sopra i file di processo, perché è
-   un'autorità **sui fatti** (che cosa dicono le fonti), non sul modo di lavorare:
-   mettere una regola di processo sopra un fatto attestato sarebbe rovesciato. Nel
-   suo dominio ha la stessa autorevolezza di `Roccobot.md`, o più.
+3. **I canoni, `rules/JRRT.md` e `rules/Earthsea.md`**: stanno qui, sopra i file di
+   processo, perché sono autorità **sui fatti** (che cosa dicono le fonti), non sul modo
+   di lavorare: mettere una regola di processo sopra un fatto attestato sarebbe
+   rovesciato. Nel proprio dominio hanno la stessa autorevolezza di `Roccobot.md`, o più.
+   - ⚠️ **Non competono fra loro**: parlano di due mondi diversi, e ognuno vale per il
+     progetto che lo riguarda (`JRRT.md` per `arda/top/`, `Earthsea.md` per
+     `earthsea/top/`). Applicare l'uno all'altro sarebbe un errore di dominio, non una
+     questione di scala.
+   - ⚠️ **`Earthsea.md` finché è un guscio non attesta nulla**: sta a questo livello per
+     la funzione che avrà, ma oggi la sua unica affermazione è che il canone non c'è.
    - ⚠️ Ma resta **sotto** [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), il solo
      progetto a cui si applica, e non per gerarchia astratta: **là** vivono le
      **scelte editoriali deliberate** che divergono dal canone pubblicato
