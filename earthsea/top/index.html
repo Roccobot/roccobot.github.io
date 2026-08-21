@@ -1605,49 +1605,16 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      del passo 11px tra badge). Solo desktop; su mobile sotto. */
   .rank-name > .rank-flags .genere-svg { margin-left:0.07em; }
 }
-/* ELFI: tonalità blu/celeste */
-.type-noldo      { background:rgba(28,61,182,0.28); border:1px solid rgba(145,193,246,0.8); color:#91c1f6; }
-.type-vanya      { background:rgba(0,155,200,0.28); border:1px solid rgba(24,232,255,0.8); color:#18e8ff; }
-.type-teler, .type-sinda { background:rgba(9,146,133,0.28); border:1px solid rgba(77,230,204,0.8); color:#4de6cc; }
-.type-falma      { background:rgba(9,120,150,0.30); border:1px solid rgba(69,216,238,0.8); color:#45d8ee; }
-/* MEZZELFI: indaco stellare */
-.type-half-elf    { background:rgba(11,112,174,0.28); border:1px solid rgba(94,214,250,0.8); color:#5ed6fa; }
-/* UOMINI: rosso/vermiglio/ocra rossa */
-.type-numenorean  { background:rgba(204,0,34,0.27); border:1px solid rgba(255,66,97,0.8); color:#ff4261; }
-.type-hador       { background:rgba(204,92,0,0.27); border:1px solid rgba(255,149,61,0.8); color:#ff953d; }
-.type-beor        { background:rgba(204,27,0,0.27); border:1px solid rgba(255,87,61,0.8); color:#ff573d; }
-.type-haleth      { background:rgba(204,153,0,0.27); border:1px solid rgba(255,207,61,0.8); color:#ffcf3d; }
-.type-rohir    { background:rgba(124,184,20,0.27); border:1px solid rgba(170,231,65,0.8); color:#aae741; }
-.type-dunadan     { background:rgba(190,14,46,0.27); border:1px solid rgba(226,83,109,0.8); color:#e2536d; }
-.type-eotheod     { background:rgba(204,156,0,0.27); border:1px solid rgba(235,179,0,0.8); color:#ebb300; }
-/* NANI: ambra/oro */
-.type-dwarf        { background:rgba(195,135,0,0.3); border:1px solid rgba(255,216,40,0.8); color:#ffd828; }
-/* ORCHI: viola */
-.type-orc        { background:rgba(143,0,213,0.3); border:1px solid rgba(218,80,255,0.8); color:#da50ff; }
-.type-troll       { background:rgba(199,60,205,0.3); border:1px solid rgba(237,131,224,0.8); color:#ed83e0; }
-/* HOBBIT: giallo/ocra */
-.type-hobbit      { background:rgba(215,108,0,0.3); border:1px solid rgba(255,168,56,0.8); color:#ffa838; }
-/* AQUILE: turchese */
-.type-eagle      { background:rgba(0,190,188,0.28); border:1px solid rgba(24,255,248,0.8); color:#18fff8; }
-/* ENT: verde */
-.type-ent         { background:rgba(14,132,61,0.30); border:1px solid rgba(68,206,107,0.8); color:#44ce6b; }
-/* AINUR/ISTARI */
-.type-maia        { background:rgba(6,195,0,0.28); border:1px solid rgba(91,255,65,0.8); color:#5bff41; }
-.type-fallback    { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
-.type-ainu       { background:rgba(0,43,205,0.30); border:1px solid rgba(107,159,255,0.8); color:#6b9fff; }
-.type-mystery  { background:rgba(73,34,126,0.30); border:1px solid rgba(200,168,255,0.8); color:#c8a8ff; }
-.type-northman { background:rgba(136,149,55,0.27); border:1px solid rgba(174,186,99,0.8); color:#aeba63; }
-/* ESSERI SUPERIORI: rosa/magenta per Valar e Valier */
-.type-vala, .type-valie { background:rgba(101,4,56,0.44); border:1px solid rgba(253,139,212,0.8); color:#fd8bd4; text-shadow:0 0 8px rgba(220,100,180,0.35); }
-.type-darkmaia   { background:rgba(132,0,81,0.36); border:1px solid rgba(255,81,187,0.8); color:#ff51bb; }
-.type-balrog      { background:rgba(177,44,0,0.42); border:1px solid rgba(255,112,56,0.8); color:#ff7038; }
-.type-dragon       { background:rgba(185,0,0,0.40); border:1px solid rgba(255,76,76,0.8); color:#ff4c4c; }
-.type-spider, .type-shadow { background:rgba(120,72,210,0.28); border:1px solid rgba(170,129,236,0.8); color:#aa81ec; }
-.type-wolf        { background:rgba(69,77,95,0.38); border:1px solid rgba(195,205,223,0.8); color:#c3cddf; }
-.type-beast      { background:rgba(134,95,28,0.32); border:1px solid rgba(240,206,122,0.8); color:#f0ce7a; }
-/* COLORI A PARTE: Morgoth e Tom Bombadil */
-.type-morgoth     { background:rgba(37,29,55,0.62); border:1px solid rgba(166,145,204,0.8); color:#a691cc; }
-.type-spirit    { background:rgba(30,90,20,0.42); border:1px solid rgba(132,234,80,0.8); color:#84ea50; }
+/* Etichette di razza: DUE, come le razze di Terramare. Le tinte sono le stesse
+   delle famiglie card (oro per gli uomini, rosso per i draghi), così la pillola
+   e il bordo della card non possono raccontare due cose diverse.
+   ⚠️ Qui c'era la tavolozza di 'I Grandi di Arda', una quarantina di regole per
+   Elfi, Nani, Hobbit, Ainur e il resto: irraggiungibili, perché `tipoClass` non
+   produce quelle classi. */
+.type-man        { background:rgba(156,124,58,0.28); border:1px solid rgba(217,192,137,0.8); color:#d9c089; }
+.type-dragon     { background:rgba(185,0,0,0.40); border:1px solid rgba(255,76,76,0.8); color:#ff4c4c; }
+/* Ripiego: una voce il cui tipo non nomina né uomo né drago. */
+.type-fallback   { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
 
 .modal-backdrop {
   position:fixed; inset:0;
@@ -1774,19 +1741,10 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   line-height:1.1; margin-bottom:0.4rem; letter-spacing:0.01em;
 }
 
-/* Riga del nome: nome a sinistra, bottone Tolkien Gateway a destra */
+/* Riga del nome. ⚠️ In 'I Grandi di Arda' teneva anche il collegamento alla voce
+   esterna: qui il posto è libero (vedi il commento nel markup di .modal-head). */
 .modal-head { display:flex; align-items:center; justify-content:space-between; gap:0.8rem; margin-bottom:0.4rem; }
 .modal-head .modal-name { margin-bottom:0; }
-.modal-tg {
-  display:inline-flex; align-items:center; gap:0.45em; flex-shrink:0;
-  padding:0.34em 0.66em; border-radius:999px;
-  background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.35);
-  color:var(--gold); text-decoration:none;
-  transition:background 0.2s,border-color 0.2s;
-}
-.modal-tg:hover,.modal-tg:focus-visible { background:rgba(104,144,168,0.25); border-color:var(--gold); outline:none; }
-.modal-tg svg { width:0.95em; height:0.95em; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-.modal-tg img { width:1.5em; height:1.5em; display:block; }
 
 .modal-source {
   font-family:'EB Garamond',serif; font-style:italic;
@@ -1950,7 +1908,7 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
   html, body { background:#fff !important; }
   body { margin:0 !important; }
   header, footer, .lang-switch, .jump-fabs, #ctrl-fab, #ctrl-panel, #ctrl-backdrop,
-  .fab-container, #fab-modal, .modal-backdrop, #arda-toast { display:none !important; }
+  .fab-container, #fab-modal, .modal-backdrop, #earthsea-toast { display:none !important; }
   .drag-handle { display:none !important; }
   #rank-list { margin:0 !important; padding:0 !important; max-width:none !important; }
   /* Riflettore: su carta non ha senso (e resterebbe congelato dov'era il puntatore). */
@@ -1974,8 +1932,8 @@ html[data-theme="light"] .fab-modal-confirm.is-danger:hover { background:rgba(18
 .admin-overlay { position:fixed;inset:0;z-index:300;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--ink-deep);padding:0 1rem calc(2rem + env(safe-area-inset-bottom,0px)); }
 /* Con editor admin aperto: nasconde TUTTO il resto della pagina (display:none →
    non più trovabile da Ctrl/Cmd+F sotto la modale). Restano la modale stessa, la
-   gap-modal di conferma campi (.fab-modal-overlay) e i toast (#arda-toast). */
-html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#arda-toast) { display:none !important; }
+   gap-modal di conferma campi (.fab-modal-overlay) e i toast (#earthsea-toast). */
+html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#earthsea-toast) { display:none !important; }
 .admin-header { position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 1.5rem;padding:0.8rem 0.5rem;background:var(--ink-deep);border-bottom:1px solid rgba(104,144,168,0.15);flex-wrap:wrap;gap:0.8rem; }
 .admin-title { font-family:'Cinzel',serif;font-size:1rem;color:var(--gold-bright);letter-spacing:0.06em; }
 .admin-btn-wrap { display:flex;gap:0.7rem; }
@@ -2357,8 +2315,6 @@ html[data-theme="light"] .modal-close {
 html[data-theme="light"] .modal-close:hover { background: #3a5878; color: #f6f6fa; }
 html[data-theme="light"] .modal-rank { color: #3a5878; font-weight: 700; }
 html[data-theme="light"] .modal-name { color: #12141e; }
-html[data-theme="light"] .modal-tg { background: rgba(58,88,120,0.08); border-color: rgba(58,88,120,0.4); color: #3a5878; }
-html[data-theme="light"] .modal-tg:hover, html[data-theme="light"] .modal-tg:focus-visible { background: rgba(58,88,120,0.18); border-color: #3a5878; }
 html[data-theme="light"] .modal-source {
     color: #253d58;
     border-bottom-color: #4a7090;
@@ -2380,54 +2336,10 @@ html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
 html[data-theme="light"] footer p { color: #2e2e2e; }
 
 
-/* race badge light-mode: vivid but dark enough for marble bg */
-html[data-theme="light"] .type-noldo { background:rgba(22,55,183,0.11); border-color:rgba(15,63,185,0.8); color:#0f3fb9; }
-html[data-theme="light"] .type-vanya { background:rgba(0,150,195,0.12); border-color:rgba(0,106,134,0.8); color:#006a86; }
-html[data-theme="light"] .type-teler, html[data-theme="light"] .type-sinda { background:rgba(9,146,133,0.11); border-color:rgba(0,110,97,0.8); color:#006e61; }
-html[data-theme="light"] .type-falma { background:rgba(9,130,150,0.12); border-color:rgba(0,104,112,0.8); color:#006870; }
-html[data-theme="light"] .type-half-elf { background:rgba(11,112,174,0.11); border-color:rgba(0,100,157,0.8); color:#00649d; }
-html[data-theme="light"] .type-numenorean { background:rgba(204,0,34,0.12); border-color:rgba(169,0,27,0.8); color:#a9001b; }
-html[data-theme="light"] .type-hador { background:rgba(204,92,0,0.12); border-color:rgba(158,71,0,0.8); color:#9e4700; }
-html[data-theme="light"] .type-beor { background:rgba(204,27,0,0.12); border-color:rgba(158,21,0,0.8); color:#9e1500; }
-html[data-theme="light"] .type-haleth { background:rgba(204,153,0,0.12); border-color:rgba(125,94,0,0.8); color:#7d5e00; }
-html[data-theme="light"] .type-rohir { background:rgba(124,184,20,0.12); border-color:rgba(70,110,0,0.8); color:#466e00; }
-html[data-theme="light"] .type-dunadan { background:rgba(190,14,46,0.12); border-color:rgba(136,6,31,0.8); color:#88061f; }
-html[data-theme="light"] .type-eotheod { background:rgba(204,156,0,0.12); border-color:rgba(133,102,0,0.8); color:#856600; }
-html[data-theme="light"] .type-dwarf { background:rgba(185,128,0,0.13); border-color:rgba(116,95,0,0.8); color:#745f00; }
-html[data-theme="light"] .type-orc { background:rgba(132,0,201,0.12); border-color:rgba(104,0,152,0.8); color:#680098; }
-html[data-theme="light"] .type-troll { background:rgba(200,80,170,0.12); border-color:rgba(156,38,128,0.8); color:#9c2680; }
-html[data-theme="light"] .type-hobbit { background:rgba(210,100,0,0.12); border-color:rgba(161,69,0,0.8); color:#a14500; }
-html[data-theme="light"] .type-eagle { background:rgba(0,185,180,0.12); border-color:rgba(0,110,103,0.8); color:#006e67; }
-html[data-theme="light"] .type-ent { background:rgba(0,120,60,0.13); border-color:rgba(0,108,44,0.8); color:#006c2c; }
-html[data-theme="light"] .type-maia { background:rgba(5,186,0,0.12); border-color:rgba(10,115,0,0.8); color:#0a7300; }
-html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
-html[data-theme="light"] .type-ainu { background:rgba(0,43,205,0.10); border-color:rgba(11,55,210,0.8); color:#0b37d2; }
-html[data-theme="light"] .type-mystery { background:rgba(73,34,126,0.08); border-color:rgba(89,30,177,0.8); color:#591eb1; }
-html[data-theme="light"] .type-northman { background:rgba(136,149,55,0.12); border-color:rgba(94,103,32,0.8); color:#5e6720; }
-html[data-theme="light"] .type-vala, html[data-theme="light"] .type-valie { background:rgba(200,0,87,0.11); border-color:rgba(174,0,78,0.8); color:#ae004e; text-shadow:none; }
-html[data-theme="light"] .type-morgoth { background:rgba(54,44,76,0.12); border-color:rgba(87,72,126,0.8); color:#57487e; text-shadow:none; }
-html[data-theme="light"] .type-spider, html[data-theme="light"] .type-shadow { background:rgba(77,25,155,0.11); border-color:rgba(87,29,170,0.8); color:#571daa; }
-html[data-theme="light"] .type-balrog { background:rgba(205,55,0,0.12); border-color:rgba(171,53,0,0.8); color:#ab3500; text-shadow:none; }
-html[data-theme="light"] .type-darkmaia { background:rgba(162,0,92,0.12); border-color:rgba(152,0,89,0.8); color:#980059; }
+/* Etichette di razza nel tema chiaro: scure quanto serve sul fondo marmo. */
+html[data-theme="light"] .type-man { background:rgba(156,124,58,0.12); border-color:rgba(124,97,40,0.8); color:#7c6128; }
 html[data-theme="light"] .type-dragon { background:rgba(185,0,0,0.10); border-color:rgba(190,0,0,0.8); color:#be0000; }
-html[data-theme="light"] .type-wolf { background:rgba(69,77,95,0.12); border-color:rgba(60,71,92,0.8); color:#3c475c; }
-html[data-theme="light"] .type-beast { background:rgba(134,95,28,0.12); border-color:rgba(125,89,11,0.8); color:#7d590b; }
-html[data-theme="light"] .type-spirit { background:rgba(30,90,20,0.12); border-color:rgba(39,108,13,0.8); color:#276c0d; }
-/* ── Compensazione contrasto sulle card apocrife (SOLO tema chiaro) ──
-   La velatura opacity:0.8 delle card apocrife (scelta deliberata, intatta)
-   sbiadisce le etichette sotto la soglia AA 4.5:1. Qui i colori di partenza
-   sono più scuri del minimo necessario perché il colore PERCEPITO dopo la
-   velatura superi 4.6:1 (bordo = stesso RGB @0.8, come da regola). Coprono
-   i tipi presenti oggi sulle 18 voci apocrife: se in futuro una voce
-   apocrifa avrà un tipo diverso, aggiungere qui la compensazione. */
-html[data-theme="light"] .rank-item.apocrifo .type-noldo { border-color:rgba(13,54,159,0.8); color:#0d369f; }
-html[data-theme="light"] .rank-item.apocrifo .type-teler, html[data-theme="light"] .rank-item.apocrifo .type-sinda { border-color:rgba(0,76,66,0.8); color:#004c42; }
-html[data-theme="light"] .rank-item.apocrifo .type-vanya { border-color:rgba(0,72,91,0.8); color:#00485b; }
-html[data-theme="light"] .rank-item.apocrifo .type-haleth { border-color:rgba(84,63,0,0.8); color:#543f00; }
-html[data-theme="light"] .rank-item.apocrifo .type-hador { border-color:rgba(107,48,0,0.8); color:#6b3000; }
-html[data-theme="light"] .rank-item.apocrifo .type-beor { border-color:rgba(141,19,0,0.8); color:#8d1300; }
-html[data-theme="light"] .rank-item.apocrifo .type-dunadan { border-color:rgba(121,0,27,0.8); color:#79001b; }
-html[data-theme="light"] .rank-item.apocrifo .type-fallback { border-color:rgba(68,68,68,0.8); color:#444444; }
+html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
 html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
@@ -2633,7 +2545,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   // qui, il più presto possibile, per non mostrare un lampo di pagina a dimensione
   // normale. La chiave è la stessa usata da toggleZoomMode (ZOOM_LS_KEY, definita
   // più sotto: qui si usa la stringa letterale perché questo blocco gira prima).
-  try { if (localStorage.getItem('arda-zoom-big') === '1') document.documentElement.classList.add('zoom-big'); } catch (e) {}
+  try { if (localStorage.getItem('earthsea-zoom-big') === '1') document.documentElement.classList.add('zoom-big'); } catch (e) {}
 })();
 // Animazione 'piega' del glifo di chiusura del pannello: usa la proprietà CSS
 // 'd' su <path> (SVG 2). È valida, ma il validatore W3C Nu non la riconosce
@@ -2748,7 +2660,7 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // Worker né rischio di race di deploy. Se una `_m` manca nel salvato, viene
 // SEMINATA come copia della desktop (comportamento identico finché l'admin non
 // differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
-var ZOOM_LS_KEY = 'arda-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
+var ZOOM_LS_KEY = 'earthsea-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
 var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
@@ -2776,7 +2688,7 @@ var FX_PTR = { hov:true };
 // `fxSelOpts`, così la fonte resta una sola.
 var FX_SEL = {
   pat: {
-    mot: [['stars', 'Stelle di Varda', 'Stars of Varda'], ['mallorn', 'Mallorn', 'Mallorn'],
+    mot: [['stars', 'Stelle', 'Stars'], ['foglia', 'Foglia', 'Leaf'],
           ['loz', 'Losanghe', 'Lozenges'], ['seme', 'Campo di stelle', 'Star field'],
           ['weave', 'Intreccio', 'Interlace'], ['banner', 'Vessillo', 'Banner']]
   }
@@ -2823,7 +2735,9 @@ var SITE_FLAGS_DEFAULT = {
   // sovrimpressione. ⚠️ Default SPENTO - è l'unico effetto che nasce spento, perché
   // aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello quando
   // l'utente decide. `mot` è una manopola a SCELTE (vedi il tipo `sel`): sei motivi,
-  // dalle stelle di Varda alle due reti intrecciate (vedi PAT_TILE).
+  // dalle stelle alle due reti intrecciate (vedi PAT_TILE). ⚠️ I disegni sono
+  // EREDITATI da 'I Grandi di Arda' e non hanno niente di Terramare: valgono come
+  // trame neutre finché non nasceranno i motivi propri dell'arcipelago.
   // ⚠️ Dalla v14.65 NON esiste più la scelta 'Dove' (`area`): la trama sta SEMPRE
   // fuori dalla colonna delle schede e fuori dalla testata, quindi la sfumatura vale
   // sempre e un eventuale `area` residuo nei dati salvati è ignorato.
@@ -3231,7 +3145,7 @@ function fxGlowOuter(cfg, light, cc){
 // elementi sui bordi sono duplicati a coordinate opposte.
 var PAT_TILE = {
   stars: { w: 200, h: 200 },
-  mallorn: { w: 160, h: 160 },
+  foglia: { w: 160, h: 160 },
   loz: { w: 150, h: 150 },
   seme: { w: 140, h: 140 },
   weave: { w: 180, h: 180 },
@@ -3349,7 +3263,7 @@ function patSvg(mot, col, w){
     g = '<path d="' + patCross(35, 35, 11) + '"/><path d="' + patCross(105, 105, 11) + '"/>' +
         '<path d="' + patCross(105, 35, 5) + '"/><path d="' + patCross(35, 105, 5) + '"/>' +
         dots([[70, 70], [0, 70], [140, 70], [70, 0], [70, 140]], 1.4);
-  } else if (mot === 'mallorn') {
+  } else if (mot === 'foglia') {
     // foglia lanceolata + nervature + picciolo ricurvo, in maglia diagonale
     var foglia = '<path d="M0 -17C7 -9 7 4 0 15C-7 4-7 -9 0 -17Z"/><path d="M0 -14V12"/>' +
                  '<path d="M0 -6 5 -1M0 -6-5 -1M0 2 4 6M0 2-4 6"/><path d="M0 15C0 20-3 23-7 24"/>';
@@ -3842,7 +3756,12 @@ function wireSpotlight(){
 }
 applySiteFlags();
 
-var currentLang = LS.getItem('arda-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
+// ⚠️ Prefisso 'earthsea-' su TUTTE le chiavi di localStorage, e non è cosmesi:
+// l'origine roccobot.github.io è una sola, quindi le chiavi 'arda-' del motore da
+// cui questo file nasce sono LE STESSE di 'I Grandi di Arda'. Lasciarle avrebbe
+// fatto scrivere a Terramare sopra le preferenze e la bozza-ordine di quel sito
+// (e a 'Scarta' di cancellargliela: clearDraftOrderKeys spazza per prefisso).
+var currentLang = LS.getItem('earthsea-lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
 
 // Blocco dello scroll di pagina (pannello/modali aperti). DEVE agire su
 // documentElement: con html{overflow-y:scroll} lo scroller della pagina è
@@ -4038,8 +3957,7 @@ var i18n = {
     subtitle: "I grandi dell'arcipelago di Terramare, dagli uomini ai draghi",
     intro: "Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare, e chiamarla significa averne parte.",
     footer: "Il potere, a Terramare, comincia da un nome.",
-    position: 'Posizione',
-    tgLink: ''
+    position: 'Posizione'
   },
   en: {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
@@ -4047,8 +3965,7 @@ var i18n = {
     subtitle: 'The great ones of the Earthsea archipelago, from men to dragons',
     intro: "Mages, witches, kings, dragons and common folk of the archipelago. In Earthsea power takes many forms, and nearly always runs through names: to know the true name of a thing is to be able to call it, and to call it is to have a part in it.",
     footer: "Power, in Earthsea, begins with a name.",
-    position: 'Position',
-    tgLink: ''
+    position: 'Position'
   }
 };
 
@@ -4064,7 +3981,7 @@ var langRefresh = null;
 var themeRefresh = null;
 function setLang(lang) {
   currentLang = lang;
-  LS.setItem('arda-lang', lang);
+  LS.setItem('earthsea-lang', lang);
   document.documentElement.lang = lang;
   document.querySelector('#lang-switch .ls-face').textContent = lang === 'it' ? 'EN' : 'IT';
   document.getElementById('crest').innerHTML = i18n[lang].crest;
@@ -4486,16 +4403,17 @@ function customPair(p) {
 // trovare le voci di un dato type-classe.
 function stripClassOf(p) {
   var tp = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
-  var badgeClasses = (p.nome !== 'Lúthien' && isAinu(p)) ? ['type-ainu'] : [];
+  var badgeClasses = [];
   var colorSegs = (p.tipo_color || '').split('|');
   if (tp) tp.split('|').forEach(function(seg, i){
     var ov = (colorSegs[i] || '').trim();
     if (!/^type-[a-z-]*$/.test(ov)) ov = '';
     badgeClasses.push(ov || tipoClass(seg.trim()));
   });
-  return (badgeClasses[0] === 'type-noldo' || badgeClasses[0] === 'type-half-elf')
-    ? badgeClasses[0]
-    : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback'));
+  // Con più etichette vale la SECONDA, come nel motore di provenienza; l'eccezione
+  // 'prima etichetta' di quel sito riguardava due stirpi elfiche e qui non ha
+  // nessun caso a cui applicarsi.
+  return badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback');
 }
 function familyOf(p) {
   // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
@@ -4510,9 +4428,7 @@ function familyOf(p) {
   return CARDCOLORS.map[sc] || 'man';
 }
 
-// Icone badge: PNG 256x256 normalizzati (oggetto al vivo, centrato) in
-// arda/top/icons/, nomi da legenda ITA. La resa identica agli SVG di
-// prima è garantita dalle classi si-* (fattori di scala) nel CSS.
+// Icone badge dei tre segni di Terramare (strega/stregone, mago, vero nome).
 var BADGE_ICON = {
   // ⚠️ SVG in linea e non file immagine, al contrario di 'I Grandi di Arda': la sua
   // cartella di icone qui non c'entra, e un `img` verso un file che non esiste mostrava
@@ -4742,47 +4658,26 @@ function buildStatus(p) {
 }
 
 // \u2500\u2500 Categorie per il filtro \u2500\u2500
-var CATS = ['ainu','arcane','elf','adan','man','dwarf','hobbit','orc','animal'];
-// Ainu (Vala/Valië/Maia/Balrog) dedotto dal tipo CANONICO italiano (p.tipo):
-// FONTE UNICA condivisa dalla categoria 'ainu' e dal badge 'Ainu', così le due
-// logiche non possono più divergere. Il type-segmento conta a inizio stringa o
-// dopo un '|' (es. Lúthien: 'Elfa (Teler) | Maia | ...'). Usa il tipo canonico,
-// non quello localizzato: le viste restano coerenti IT/EN (l'inglese anticipa
-// l'aggettivo, es. 'Fallen Vala', e una regex ancorata sul localizzato fallirebbe).
-// Le esclusioni specifiche (Balrog dal badge, Lúthien) restano ai chiamanti.
-function isAinu(p) { return /(?:^|\|)\s*(vala|vali[eë]|maia|balrog)/i.test(p.tipo || ''); }
+// ⚠️ DUE sole categorie, perché a Terramare le razze sono due (uomini e draghi,
+// istruzione dell'utente). Non è una lista ridotta 'per ora': la tassonomia di
+// nove voci del motore di provenienza teneva i draghi in 'arcane', categoria
+// SPENTA di default, e i tre draghi del dataset non comparivano affatto.
+// Le ORIGINI geografiche (isola o arcipelago) saranno un'altra cosa: etichette
+// per voce, non categorie di questo filtro.
+var CATS = ['man','dragon'];
+// Categoria di una voce: la razza, letta dal tipo CANONICO italiano (p.tipo) e
+// non da quello localizzato, così le due lingue non possono divergere. Fonte
+// unica con `tipoClass`, che dal tipo ricava la classe del colore: se le due
+// leggessero il tipo in modo diverso, una card rossa potrebbe finire fra gli
+// uomini. Tutto ciò che non è drago è uomo: a Terramare non c'è altro.
 function categoria(p) {
-  // Bestie e creature leggendarie mostrate per scelta editoriale in una
-  // categoria diversa dalla tassonomia del tipo (solo visualizzazione: tipo ed
-  // etichette restano invariati). L'override per nome precede il check
-  // Ainur/divino (molte hanno divino:true) e i check sul tipo.
-  // Destrieri dei Valar, Grandi Aquile, i grandi lupi e il ragno →
-  // Esseri arcani/ancestrali.
-  if (/^(Nahar|Huan|Carcharoth|Shelob|Draugluin|Thorondor|Gwaihir|Landroval|Meneldor)$/.test(p.nome)) return 'arcane';
-  // Rochallor (cavallo di Fingolfin) resta tra gli Animali.
-  if (p.nome === 'Rochallor') return 'animal';
-  var t = (p.tipo || '').toLowerCase();
-  // Ainur = Valar, Valië e Morgoth E tutti i Maiar (Balrog e Sauron 'Maia
-  // decaduto' inclusi), via isAinu(). Lúthien, unica Maia in categoria diversa,
-  // resta tra gli Elfi: esclusa per nome qui, ricade poi nel check elfo/elfa.
-  if (p.nome !== 'Lúthien' && isAinu(p)) return 'ainu';
-  if (p.divino) return 'arcane'; // altri esseri arcani/ancestrali: draghi, spiriti, vampiri, Ungoliant, Ent...
-  if (/re-stregone|angmar|khamûl|khamul/i.test(p.nome)) return 'arcane'; // Spettri-capi
-  if (/orco|orc|uruk|troll/.test(t)) return 'orc'; // Troll inclusi: stessa categoria 'orc' (legenda 'Orchi e Troll')
-  if (/hobbit/.test(t)) return 'hobbit';
-  if (/nano|nana|nanerott|dwarf/.test(t)) return 'dwarf'; // 'nana' = nana (es. Dís); 'nanerott' = Nanerottoli (Petty-dwarves, es. Mîm)
-  if (/drúed|drued/.test(t)) return 'man'; // Drúedain ≠ Edain
-  if (p.nome === 'Elros' || p.nome === 'Dior') return 'adan'; // Dior: mortale, tra gli Edain (colore Teleri = eredità di Doriath, scelta editoriale)
-  if (/elfo|elfa|mezzelf|half-el/.test(t)) return 'elf';
-  if (/númen|numen|dúnad|dunad|dúned|duned|hador|bëor|casa di beor|haleth|gondor/.test(t)) return 'adan'; // Gondoriani = stirpe edain/dúnedain
-  if (/uomo|man |donna|woman|rohir|beorn|dale|éothéod|eothéod/.test(t)) return 'man';
-  if (/cavallo|pony|corvo|mearas|raven|horse|cane|dog|hound|segugio/.test(t)) return 'animal';
-  return 'arcane'; // forze ancestrali residue (es. Ent). Le Grandi Aquile sono
-                   // dirottate in 'animal' dall'override per nome in cima.
+  return /drago|dragon/i.test(p.tipo || '') ? 'dragon' : 'man';
 }
 var filterState = {};
 (function(){
-  CATS.forEach(function(c){ filterState[c] = (c !== 'ainu' && c !== 'arcane' && c !== 'animal'); });
+  // Tutte ACCESE: con due categorie, spegnerne una all'avvio nasconderebbe
+  // metà del dataset senza che nessuno l'abbia chiesto.
+  CATS.forEach(function(c){ filterState[c] = true; });
 })();
 // Snapshot dei default (prima di un eventuale override da URL): serve a
 // buildShareUrl per riconoscere la vista di default e copiarne il link pulito.
@@ -4790,24 +4685,28 @@ var FILTER_DEFAULT = {};
 CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
 // Permalink della vista (forma BARE, senza 'cat='): la query è direttamente il
 // token. ?x = tutte le categorie; ?<bitmask> = un carattere 0/1 per categoria
-// nell'ordine di CATS (es. ?101 → ainu, elf; ?1 → sola ainu), zeri finali
-// omessi; il 10° bit, se 1, accende gli Apocrifi (es. ?1000000001 = sola ainu +
-// apocrifi; ?1111111111 = tutto + apocrifi). Maschera tutta-zero = ignorata.
+// nell'ordine di CATS (es. ?01 → soli draghi; ?1 → soli uomini), zeri finali
+// omessi; un bit IN PIÙ, se 1, accende il catalogo esteso (es. ?101 = soli
+// uomini + esteso). Maschera tutta-zero = ignorata.
+// ⚠️ La larghezza si ricava da CATS.length e NON è scritta a mano: nel motore di
+// provenienza le categorie erano nove e i due numeri erano cablati (9 e 10),
+// quindi con due categorie un link condiviso si leggeva sbagliato.
 // Forme LEGACY ancora lette: ?cat=x|2 / ?tutte / ?all (tutte), ?cat=<bitmask>,
-// ?cat=key1,key2,... (chiavi), ?a=1 (apocrifi). buildShareUrl genera la forma
-// bare. Vale SOLO all'avvio (lo stato non è persistito). È il tasto 'copia
+// ?cat=key1,key2,... (chiavi), ?a=1 (catalogo esteso). buildShareUrl genera la
+// forma bare. Vale SOLO all'avvio (lo stato non è persistito). È il tasto 'copia
 // link' del Pannello a generare questi URL.
 var showApocrifi = false;
 (function(){
   try {
     var bare = (window.location.search || '').replace(/^\?/, '');
     var qs = new URLSearchParams(window.location.search);
+    var NBIT = CATS.length; // bit delle categorie; il bit NBIT+1 è il catalogo esteso
     if (bare === 'x') {
       CATS.forEach(function(c){ filterState[c] = true; });
-    } else if (/^[01]{1,10}$/.test(bare)) {
-      var catBits = bare.slice(0, 9); // primi 9 bit = categorie; 10° bit = Apocrifi
+    } else if (new RegExp('^[01]{1,' + (NBIT + 1) + '}$').test(bare)) {
+      var catBits = bare.slice(0, NBIT);
       if (catBits.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = catBits.charAt(i) === '1'; });
-      if (bare.length >= 10 && bare.charAt(9) === '1') showApocrifi = true;
+      if (bare.length > NBIT && bare.charAt(NBIT) === '1') showApocrifi = true;
     } else if (qs.has('tutte') || qs.has('all')) {
       CATS.forEach(function(c){ filterState[c] = true; });
     } else if (qs.has('cat')) {
@@ -4818,7 +4717,6 @@ var showApocrifi = false;
         if (raw.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = raw.charAt(i) === '1'; });
       } else {
         var valid = raw.split(',').map(function(s){ return s.trim(); })
-                      .map(function(c){ return c === 'ainur' ? 'ainu' : c; }) // alias: vecchi link
                       .filter(function(c){ return CATS.indexOf(c) !== -1; });
         if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
       }
@@ -4933,12 +4831,11 @@ function renderList() {
     // micro-aggiustamenti (dalla v11.70), come i bi-<id> dei badge in buildStatus.
     var genereSym = genere === 'f' ? GENDER_ICON.f.split('%L%').join(gl.f).replace('genere-svg--f', 'genere-svg--f bi-female')
                   : genere === 'm' ? GENDER_ICON.m.split('%L%').join(gl.m).replace('genere-svg--m', 'genere-svg--m bi-male') : '';
-    // Badge 'Ainu' per Valar/Maiar via isAinu() (fonte unica con categoria()),
-    // Balrog INCLUSI: mostrano 'Ainu' come primo badge (tipoStr costruito prima
-    // dei segmenti di p.tipo), poi 'Maia decaduto'/'Balrog'. Lúthien esclusa.
-    var hasAinur = p.nome !== 'Lúthien' && isAinu(p);
-    var badgeClasses = hasAinur ? ['type-ainu'] : [];
-    var tipoStr = hasAinur ? '<span class="type-badge type-ainu">Ainu</span>' : '';
+    // Nessuna etichetta anteposta ai segmenti di p.tipo: a Terramare la razza
+    // è già il primo segmento del tipo, e il motore di provenienza usava questo
+    // punto per una categoria (gli Ainur) che qui non esiste.
+    var badgeClasses = [];
+    var tipoStr = '';
     // tipo_color: override del colore allineato per segmento ('|'), come tipo/tipo_label.
     // Un segmento vuoto lascia il colore automatico da tipoClass().
     var colorSegs = (p.tipo_color || '').split('|');
@@ -4977,14 +4874,10 @@ function renderList() {
       return '<span class="type-badge ' + segCls + '">' + displaySeg + '</span>';
     }).join('') : '';
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con più
-    // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
-    // Nessuna etichetta -> grigio generico.
-    // Eccezione 'prima etichetta' (scelta dell'utente): se la PRIMA etichetta è
-    // Noldor (Elfo/a (Noldo)) O Mezzelfo, si usa quella, non la seconda. Per
-    // tutti gli altri resta la regola generale (2a se più d'una, altrimenti 1a).
-    var stripClass = (badgeClasses[0] === 'type-noldo' || badgeClasses[0] === 'type-half-elf')
-      ? badgeClasses[0]
-      : (badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback'));
+    // etichette renderizzate si usa la SECONDA. Nessuna etichetta -> grigio
+    // generico. Stessa regola di stripClassOf, che è la fonte per il resto della
+    // pagina: se le due divergessero, bordino e scheda direbbero colori diversi.
+    var stripClass = badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback');
     // Famiglia colore card via familyOf (unica fonte, condivisa con la scheda):
     // override p.cardcolor, poi Classe crepuscolari -> 'demon', poi CARDCOLOR_OF.
     var cardFam = familyOf(p);
@@ -5347,12 +5240,6 @@ function openModal(idx, instant) {
 
   document.getElementById('modal-rank').textContent = i18n[lang].position + ' ' + visiblePos(idx);
   document.getElementById('modal-name').textContent = nome;
-  // Link alla voce dedicata su Tolkien Gateway: titolo esatto nel campo
-  // opzionale tg (per i casi che divergono), altrimenti il nome inglese.
-  var tgBtn = document.getElementById('modal-tg');
-  tgBtn.href = 'https://tolkiengateway.net/wiki/' + encodeURIComponent((p.tg || p.nome_en || p.nome).replace(/ /g, '_'));
-  tgBtn.title = i18n[lang].tgLink;
-  tgBtn.setAttribute('aria-label', i18n[lang].tgLink);
   var pf = parseFonte(fonte);
   var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
   // titleYear e autore sono testo puro → escapati.
@@ -5922,10 +5809,12 @@ let isFirstRender = true;
 
 // ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
-  it: { ainu:'Ainur', arcane:'Esseri arcani/primordiali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi e Troll', animal:'Animali' },
-  en: { ainu:'Ainur', arcane:'Arcane/primordial beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs & Trolls', animal:'Animals' }
+  it: { man:'Uomini', dragon:'Draghi' },
+  en: { man:'Men', dragon:'Dragons' }
 };
-var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818', man:'#ff4040', dwarf:'#e0c020', hobbit:'#ffa838', orc:'#cc60e0', animal:'#c8ad7f' };
+// Colore della spia di categoria nel Pannello: le due tinte delle famiglie card
+// (oro e rosso), così la legenda e le schede dicono la stessa cosa.
+var CAT_COLOR = { man:'#9c7c3a', dragon:'#b25a48' };
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
 // (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
 var TYPE_LABEL = {
@@ -6506,7 +6395,7 @@ function exitReorder() {
 // Bozza-ordine: CHIAVE UNICA (i nomi salvati sono sempre p.nome, italiani,
 // a prescindere dalla lingua della UI: una chiave per lingua era incoerente
 // e faceva risorgere bozze scartate al cambio lingua).
-function saveLocalDraft(){ LS.setItem('arda-ranking-v4', JSON.stringify(dati.map(function(d){ return d.nome; }))); }
+function saveLocalDraft(){ LS.setItem('earthsea-ranking-v1', JSON.stringify(dati.map(function(d){ return d.nome; }))); }
 /* Riordino per nome con OMONIMI: mai risolvere con find(), che aggancia
    sempre la PRIMA voce con quel nome. Con due omonimi in classifica la
    seconda occorrenza collassava sulla prima (voce duplicata) e l'altra voce
@@ -6567,13 +6456,15 @@ function doExport(){
 // visitatori). 'Chiudi' tiene la bozza locale (manopole restano su desktop).
 // 'Ripristina' torna all'ordine del server.
 // Scarta le modifiche all'ordine (tasto × del Pannello). Conferma in modale,
-// poi rimuove le sole chiavi della bozza-ordine (arda-ranking-*) + reload
-// forzato (così Apocrifi tornano OFF e l'ordine torna quello del server).
+// poi rimuove le sole chiavi della bozza-ordine (earthsea-ranking-*) + reload
+// forzato (così l'ordine torna quello del server).
 // MAI localStorage.clear(): l'origine roccobot.github.io è condivisa con
 // altri progetti e con preferenze da conservare (lingua, override proxy).
+// ⚠️ E il prefisso deve essere QUELLO DI QUESTO PROGETTO: con 'arda-ranking-'
+// questa funzione cancellava la bozza-ordine di 'I Grandi di Arda'.
 function clearDraftOrderKeys(){
   LS.keys().forEach(function(k){
-    if (k && (k === 'arda-ranking-v4' || k.indexOf('arda-ranking-') === 0)) LS.removeItem(k);
+    if (k && k.indexOf('earthsea-ranking-') === 0) LS.removeItem(k);
   });
 }
 function confirmDiscardReorder(){
@@ -6669,30 +6560,24 @@ function showActionChoiceModal() {
   viewMain();
 }
 
-// Nota sui testi in italiano (tasto Info, solo IT): traduzioni di riferimento
-// del canone con anni, terminologia STI, e la postilla su Fatica. Riusa la
-// modale .fab-modal-overlay con il box allargato .info-note-box.
+// Nota sulle edizioni (tasto Info): SEGNAPOSTO nelle due lingue. Le edizioni
+// italiane e inglesi di riferimento si scriveranno qui quando il canone del
+// progetto sarà stato compilato sulle fonti, e non prima: una nota che nomina
+// edizioni non verificate sarebbe una fonte inventata. Riusa la modale
+// .fab-modal-overlay con il box allargato .info-note-box.
 var INFO_NOTE_HTML_IT =
   '<div class="info-note">'
-  + '<h3>Nota sui testi in italiano</h3>'
-  + '<p>⚠️ Questa nota è un segnaposto: le edizioni italiane di riferimento per Terramare '
-  + 'saranno indicate qui quando il canone del progetto sarà stato compilato sulle fonti.</p>';
+  + '<h3>Nota sui testi</h3>'
+  + '<p>⚠️ Questa nota è un segnaposto: le edizioni di riferimento per Terramare, '
+  + 'italiane e inglesi, saranno indicate qui quando il canone del progetto sarà '
+  + 'stato compilato sulle fonti.</p>'
+  + '</div>';
 var INFO_NOTE_HTML_EN =
   '<div class="info-note">'
-  + '<h3>About the Italian translation</h3>'
-  + '<p>On this page the quotations are verbatim: English from Tolkien\'s own text, Italian from the reference editions.</p>'
-  + '<p>Even though the original English is the true and sacred source, we Italians are fiercely proud of our historical literary edition, because the Professor himself gave it his blessing. Tolkien loved our language (he even studied it for a while), and in 1967 the very first Italian draft of <em>The Fellowship of the Ring</em>, by Vittoria Alliata, was sent to him for review. He was thrilled with the manuscript, praising its rich, poetic, slightly archaic prose as a perfect match for the epic and chivalric spirit he had imagined for Middle-earth. So the foundational style of our beloved historical edition carries the Professor\'s own seal of approval.</p>'
-  + '<p>These are the only editions we hold trustworthy and usable, the ones that gladdened the world before the Enemy:</p>'
-  + '<ul>'
-  +   '<li><strong>The Lord of the Rings</strong> → Vittoria Alliata (1967), rev. Quirino Principe (1970), rev. Società Tolkieniana Italiana (2004)</li>'
-  +   '<li><strong>The Hobbit</strong> → Caterina Ciuferri and Paolo Paron (2012)</li>'
-  +   '<li><strong>The Silmarillion</strong> → Francesco Saba Sardi (1978)</li>'
-  +   '<li><strong>Unfinished Tales</strong> → Francesco Saba Sardi (1981), rev. Società Tolkieniana Italiana (2001/2013)</li>'
-  +   '<li><strong>The Children of Húrin</strong> → Caterina Ciuferri (2007)</li>'
-  +   '<li><strong>Beren and Lúthien</strong> → Luca Manini and Simone Buttazzi (2017)</li>'
-  +   '<li><strong>The Fall of Gondolin</strong> → Luca Manini and Simone Buttazzi (2018)</li>'
-  + '</ul>'
-  + '<p class="info-note-final"><span class="info-note-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg></span><span>Ottavio Fatica is pure evil and is not allowed on this page.</span></p>'
+  + '<h3>About the editions</h3>'
+  + '<p>⚠️ This note is a placeholder: the reference editions for Earthsea, Italian '
+  + 'and English alike, will be listed here once the canon of this project has been '
+  + 'compiled from the sources.</p>'
   + '</div>';
 function showInfoNote() {
   if (document.getElementById('fab-modal')) return;
@@ -6915,11 +6800,10 @@ function buildControlPanel() {
 // la bozza locale lo riordini: serve a 'Scarta' per tornare allo stato server.
 var DATI_SERVER_ORDER = dati.map(function(d){ return d.nome; });
 (function(){
-  // Chiave unica (i nomi sono sempre italiani); le chiavi legacy per-lingua
-  // restano lette in ripiego per le bozze salvate prima del cambio.
-  var _raw = LS.getItem('arda-ranking-v4')
-           || LS.getItem('arda-ranking-v4-' + currentLang)
-           || LS.getItem('arda-ranking-v3-' + currentLang);
+  // Chiave unica (i nomi sono sempre italiani). Qui NON esistono chiavi legacy
+  // da leggere in ripiego: il progetto nasce con questa, e i ripieghi del motore
+  // di provenienza puntavano alle bozze di un altro sito.
+  var _raw = LS.getItem('earthsea-ranking-v1');
   if (!_raw) return;
   try {
     var _saved = JSON.parse(_raw);
@@ -7037,13 +6921,22 @@ let saveUnlocked = false;
 let adminPassword = '';
 // URL del proxy admin (Cloudflare Worker). Non è un segreto: è solo l'endpoint.
 // Overridabile al volo dal campo "Proxy" nell'editor admin (localStorage).
-var ADMIN_PROXY_URL_DEFAULT = 'https://arda-admin-proxy.roccobot-b90.workers.dev';
+//
+// ⚠️⚠️ VUOTO, ED È UNA SALVAGUARDIA, non un pezzo che manca: Terramare non ha
+// ancora un Worker suo, e quello di 'I Grandi di Arda' ha il percorso di scrittura
+// CABLATO lato server (`FILE_PATH = 'arda/top/dati.js'` in
+// proxy/arda-admin-proxy.js). Ereditando quell'URL, un salvataggio fatto da qui
+// avrebbe committato le 17 voci di Terramare SOPRA il dataset di Arda, con la
+// versione bumpata e il deploy tutto verde: distruzione silenziosa dell'altro
+// sito. Finché resta vuoto lo sblocco admin si rifiuta (vedi tryAuth) e il
+// pannello resta quello dei visitatori, con 'Esporta' al posto di 'Salva'.
+var ADMIN_PROXY_URL_DEFAULT = '';
 // L'override da localStorage è comodo per i test ma è anche un bersaglio:
 // chi riuscisse a scrivere quella chiave dirotterebbe la parola d'ordine
 // verso un server proprio al prossimo sblocco. Allowlist: solo https sui
 // Worker dell'account roccobot-b90; tutto il resto viene ignorato.
 function proxyUrl() {
-  var ov = LS.getItem('arda-proxy-url');
+  var ov = LS.getItem('earthsea-proxy-url');
   if (ov) {
     try {
       var u = new URL(ov);
@@ -7238,10 +7131,10 @@ function onPointerUp() {
 }
 
 function showToast(msg, isError, icon) {
-  var t = document.getElementById('arda-toast');
+  var t = document.getElementById('earthsea-toast');
   if (!t) {
     t = document.createElement('div');
-    t.id = 'arda-toast';
+    t.id = 'earthsea-toast';
     // z-index 600: sopra TUTTI gli overlay (fab-modal 400, imgv 500), altrimenti
     // il backdrop-filter:blur di un modale aperto lo sfoca (il toast dei salvataggi
     // dell'editor colori finiva dietro il velo).
@@ -7400,7 +7293,8 @@ function showPasswordModal(promptText, onSuccess, extra) {
     // Messaggi distinti: 'Password errata' è solo il vero 401. Un fallimento di
     // rete/blocco o un rate-limit (429) mostravano lo STESSO testo, mascherando
     // la causa reale (utile p.es. sul bug 'mai riconosciuta da mobile').
-    const MSG = { auth: 'Password errata', rate: 'Troppi tentativi: attendi circa un minuto', net: 'Impossibile contattare il server (rete assente o richiesta bloccata)' };
+    const MSG = { auth: 'Password errata', rate: 'Troppi tentativi: attendi circa un minuto', net: 'Impossibile contattare il server (rete assente o richiesta bloccata)',
+                  noproxy: 'Terramare non ha ancora un proxy admin: usa Esporta' };
     const fail = (kind) => {
       inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
       errMsg.textContent = MSG[kind] || MSG.auth;
@@ -7413,6 +7307,9 @@ function showPasswordModal(promptText, onSuccess, extra) {
       authing = true;
       const pw = inp.value;
       if (!pw) { fail('auth'); authing = false; return; }
+      // Nessun proxy: si esce PRIMA di mandare la parola d'ordine in rete, che
+      // senza endpoint finirebbe in una POST sulla pagina stessa.
+      if (!proxyUrl()) { fail('noproxy'); authing = false; return; }
       cb.disabled = true;
       let outcome = 'net';
       // Validazione lato server: la parola d'ordine non è nel sorgente pubblico.
@@ -9816,7 +9713,7 @@ function showColorStats(initState) {
   // Tutte le classi-etichetta di una voce (replica renderList/stripClassOf).
   function typeClassesOf(p){
     var tp = it ? p.tipo : (p.tipo_en || p.tipo);
-    var cls = (p.nome !== 'Lúthien' && isAinu(p)) ? ['type-ainu'] : [];
+    var cls = [];
     var segs = (p.tipo_color || '').split('|');
     if (tp) tp.split('|').forEach(function(seg, i){ var ov = (segs[i] || '').trim(); if (!/^type-[a-z-]*$/.test(ov)) ov = ''; cls.push(ov || tipoClass(seg.trim())); });
     return cls;
