@@ -46,14 +46,33 @@ temi).
 
 ## 🏅 I tre badge e il genere
 
-I badge sono tre: **strega/stregone**, **mago**, **vero nome** (`ICON_ORDER`).
+I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged**
+(`ICON_ORDER = ['stregone','mago','nomeged']`).
 
 - ⚠️ **Sono SVG in linea, non file immagine**, al contrario di Arda: le icone di quel progetto
   non c'entrano nulla con questo, e un `img` verso un file inesistente mostrava il rettangolo
   di immagine rotta. Sono **segnaposto sobri** e usano `currentColor`: le grafiche vere sono
   da disegnare.
-- **Tutti i draghi portano il badge 'vero nome'** perché non hanno nome comune (istruzione
-  dell'utente).
+
+### ⚠️ Il terzo badge ha CAMBIATO SIGNIFICATO il 2026-08-21
+
+Era `veronome`, 'ha un vero nome attestato', ed era acceso su tutti i draghi perché il loro
+nome d'uso **è** il vero nome. L'utente l'ha riqualificato: ora è **`nomeged`**, 'Depositario
+del vero nome di Ged', *applicato a tutti coloro che lo conobbero* (chiesto anche più
+sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true name'**).
+
+- ⚠️ **Nasce SPENTO su tutte le voci, e non è un dato mancante**: l'elenco dei portatori
+  arriverà dal **canone di Terramare** (`rules/Earthsea.md`), non da una deduzione sul testo
+  inglese di Wikipedia. Chi lo trova a zero non lo 'ripari' inventando i portatori.
+  - Conseguenza visibile: la terza riga della legenda badge nel Pannello è **attenuata**,
+    perché nessuna voce lo porta. È corretto, non è un difetto di resa.
+- ⚠️ **Il vecchio significato non va rimesso in circolo**: dopo la riqualificazione il badge
+  non dice più niente sui draghi, e i 19 valori ereditati sono stati azzerati insieme al
+  nome del campo. Un badge riusato con l'etichetta nuova e i dati vecchi mentirebbe su
+  entrambi i fronti.
+- ⚠️ **Anche la casella 'Vero nome' dell'artefatto Schedario decade** per la stessa ragione:
+  là il badge era una casella da spuntare per voce, e ora l'informazione non si ricava dalla
+  scheda del personaggio.
 - **Il genere riusa i simboli di Arda** (`icons/Maschio.webp`, `icons/Femmina.webp`, scelta
   dell'utente): sono i **soli** due file immagine di questa cartella.
   - ⚠️ **I draghi fanno eccezione e NON hanno genere** (decisione dell'utente, 2026-08-21,
@@ -84,11 +103,48 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
   `ccFamTxt` la corregge sul fondo di ciascun tema. Chi tocca i colori delle famiglie deve
   ri-iniettare **entrambe** le terne (`injectCardColorRules` e `reinjectFamilyColors` lo fanno).
 - ⚠️ **I draghi hanno la riga del vero nome VUOTA**, di proposito: il loro nome d'uso **è** il
-  vero nome, e ripeterlo su due righe sarebbe rumore. Lo dice il badge.
+  vero nome, e ripeterlo su due righe sarebbe rumore. ⚠️ Fino alla `0.07` a dirlo era il terzo
+  badge, che il 2026-08-21 ha cambiato significato: **oggi non lo dice nessuno**, e resta una
+  convenzione del dataset scritta soltanto qui.
 - **Storico che spiega la forma dei dati**: fino alla `0.05` il vero nome viveva in
   `nomi_alternativi`, e il nome d'uso portava le due forme insieme (`Sparviero / Falco`). Il
   2026-08-21 l'utente ha corretto: il nome principale è uno, il secondo va fra gli
   alternativi, e il vero nome ha il suo campo.
+
+## 🎛️ Il Pannello COMPATTO (mockup dell'utente, 2026-08-21)
+
+Il Pannello di Arda è dimensionato su 15 famiglie e una decina di badge: qui, con **due**
+categorie e **tre** badge, restava mezzo vuoto. L'utente ha fornito un mockup e la forma
+adesso è questa, su **due colonne**:
+
+| colonna | contenuto |
+|---|---|
+| `.ctrl-left` | toolbar (lingua, tema, zoom, ordine) + **card di legenda** |
+| `.ctrl-right` | categorie + slot del tag + **legenda dei badge** |
+
+- ⚠️ **La colonna destra si costruisce in una VARIABILE e si emette dopo la chiusura di
+  `.ctrl-left`**, non con un `h +=` in mezzo al flusso. Al primo tentativo categorie e slot
+  restavano dentro la sinistra e l'ordine visivo era quello di prima: misurato, sinistra 225px
+  e destra 98px. È il genere di errore che a occhio non si vede, perché la pagina resta
+  plausibile.
+- **Controlli RIMOSSI, tutti perché con due categorie non dicevano niente**: la testata
+  'CATEGORIE' (una sola sezione non ha bisogno di un titolo), i tasti **Tutti/All** e
+  **Solo/Only** (rimossi dall'utente nel mockup: *quei pulsanti con due sole categorie sono
+  inutili*), `.ctrl-btn-m`, la **nota mobile** sui nomi, e le chiavi i18n `cat` e `all` che
+  non avevano più nessuno da etichettare.
+  - ⚠️ Chi rimette una categoria in più **non riapra** questa decisione per riflesso: il
+    ragionamento dell'utente è aritmetico ('con due sole categorie'), quindi con tre o
+    quattro può tornare valido, ma è una sua chiamata.
+- **Le righe della legenda badge vanno a capo**, permesso esplicito dell'utente ('le
+  descrizioni possono andare a capo o le eliminiamo'): `white-space:normal` più una
+  `min-height` sulla riga, e l'icona a `flex:none` perché non si schiacci quando il testo
+  occupa due righe.
+- ⚠️ **La card di legenda ha `margin-top` FISSO, non `auto`**: con `auto` si mangiava lo
+  spazio residuo e stirava la colonna sinistra, lasciando un vuoto sotto di sé. È una
+  compensazione mancata, non una preferenza estetica.
+- Misure a font reali in Chromium: pannello desktop **638x244** con le due colonne a **203**
+  ciascuna, mobile 390x844 con pannello **390x391** e i blocchi impilati nella bottom-sheet.
+  Nessun errore JS, nessun 404, nessuno scroll orizzontale.
 
 ## 🗂️ La legenda nel Pannello è una CARD FINTA
 
@@ -221,8 +277,9 @@ raccontano un altro mondo**, e la regola universale sulle sostituzioni su parole
 per un disastro già capitato proprio qui. Si tocca **quando si tocca quel codice**, un pezzo
 alla volta, con una prova in browser dopo ognuno.
 
-- Il **pannello** è ancora quasi tutto quello di Arda: l'utente ne ha chiesto uno 'molto più
-  semplice', e la semplificazione è appena cominciata.
+- Il **pannello** è stato riorganizzato sul mockup dell'utente (vedi '🎛️ Il Pannello
+  COMPATTO'), ma la sua struttura interna resta quella di Arda: la semplificazione ha toccato
+  le due colonne e i controlli inutili, non tutto il resto.
   - ✅ **Il sistema degli 'Apocrifi' è stato TOLTO** (istruzione dell'utente, 2026-08-21):
     interruttore, predicato di visibilità, card grigia con la pill 'Solo HoME', bit nel
     permalink e casella nell'editor admin. Era il catalogo esteso di Arda per i personaggi
