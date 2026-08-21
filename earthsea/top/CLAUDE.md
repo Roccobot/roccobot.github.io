@@ -10,15 +10,22 @@
 
 ## ⚠️⚠️ Stato: SCHELETRO, e il dataset non è verificato
 
-Al 2026-08-21 il progetto è uno **scheletro funzionante** con **17 voci** che contengono
+Al 2026-08-21 il progetto è uno **scheletro funzionante** con **19 voci** che contengono
 **solo** quello che l'utente ha dichiarato a memoria: nome comune, vero nome, razza e genere.
 Nessuna fonte, nessuna descrizione, nessuna citazione.
+
+- **L'ordine è quello in cui l'utente ha passato i nomi**, non una classifica: le voci nuove
+  si accodano, e il riordino si fa dal Pannello quando lui deciderà le posizioni. ⚠️ Quindi
+  Sparviero è ultimo, e non vuol dire niente.
+- ⚠️ **`nome_en` ripete l'italiano su tutte le voci**, di proposito: le rese inglesi non sono
+  in scena. Tradurne una sola perché è nota (Sparviero -> Sparrowhawk) farebbe sembrare
+  attestate anche le altre, ed è il tipo di deriva che questo file esiste per fermare.
 
 - Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools` ed è ancora un **guscio**:
   dichiara di non essere un'autorità finché le fonti non sono in scena. Finché quel file dice
   così, **nessuna voce può appoggiarsi a esso** e niente si scrive a memoria.
-- ⚠️ **Il dataset piccolo inganna**: una sola voce sbagliata su 17 pesa quanto dieci su
-  cinquecento, e i nomi veri di Terramare si ricordano con sicurezza ingannevole.
+- ⚠️ **Il dataset piccolo inganna**: una voce sbagliata qui pesa quanto dieci su un dataset
+  da centinaia di righe, e i nomi veri di Terramare si ricordano con sicurezza ingannevole.
 
 ## 🧬 Le due razze, e perché il filtro ha DUE categorie
 
@@ -100,3 +107,7 @@ alla volta, con una prova in browser dopo ognuno.
 **SlimVer** (`x.xx`) come 'I Grandi di Arda', fonte unica in `var datiVersion` in testa a
 `dati.js`, e la sonda di pubblicazione è quel campo su
 <https://roccobot.github.io/earthsea/top/dati.js>.
+
+⚠️ Il numero scritto nel badge HTML è **solo il ripiego** per il caso in cui `dati.js` non
+carichi, ma va tenuto allineato: nato dalla copia, portava il **15.11 di Arda**, cioè il
+ripiego avrebbe mostrato la versione di un altro sito.
