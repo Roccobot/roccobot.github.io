@@ -818,7 +818,13 @@ html[data-theme="light"] .cc-man{--ccrgb:156,124,58}
 html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
-#ctrl-fab svg { height:1.9rem; width:auto; fill:currentColor; stroke:none; }
+/* Il logo del FAB porta margini PROPRI dentro il suo canvas quadrato: il disegno
+   misura 640x822 su 1024, cioè occupa l'80% in altezza. L'altezza dell'svg è quindi
+   1.9rem / 0.8, così il disegno ha l'ingombro che il Pannello prevedeva per il
+   glifo, senza ritagliare il canvas ne' spostarne i pixel (icone as-is). Se un
+   domani il logo definitivo arriva con margini diversi, si rimisura la sua bbox e
+   si rifà questa divisione: non si ritaglia il file. */
+#ctrl-fab svg { height:2.375rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB di controllo: a sinistra su desktop, a destra su mobile. Icona oro in scuro, teal+bianco in chiaro */
 #ctrl-fab { position:fixed; left:2rem; bottom:2rem; z-index:160; }
 #ctrl-fab.fab-btn { background:rgba(210,178,92,0.96); border:none; color:#3a2808; box-shadow:0 3px 14px rgba(0,0,0,0.45); }
@@ -2359,7 +2365,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.08</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.09</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5509,6 +5515,12 @@ function controlPanelHTML() {
   // (visibility:hidden).
   function buildLegend(lang, measure) {
     var IL = ICON_LABEL[lang];
+    // Nel Pannello la riga porta la SOLA etichetta, non la spiegazione: il mockup
+    // dell'utente (2026-08-21) le mostra svuotate, e lui ha dato il permesso
+    // esplicito di eliminarle. Si taglia alla prima ': ' invece di tenere una
+    // seconda tabella di stringhe brevi, che divergerebbe dai tooltip delle card:
+    // ICON_LABEL resta la fonte unica, e chi non ha spiegazione passa intatto.
+    function legLbl(t) { var i = (t || '').indexOf(': '); return i === -1 ? t : t.slice(0, i); }
     function legRow(row, inner, extraCls) {
       if (measure) return '<div class="ctrl-legend-row' + (extraCls ? ' ' + extraCls : '') + '">' + inner + '</div>';
       var on = badgeFilter.has(row);
@@ -5578,7 +5590,7 @@ function controlPanelHTML() {
         // tooltip restano quelli di ICON_LABEL.
         return; // ⚠️ Riga tolta: gli Anelli del Potere sono di Arda.
       }
-      s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + IL[k] + '</span>');
+      s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + legLbl(IL[k]) + '</span>');
     });
     if (FEATURES.genderLegendPill) {
       var GLb = GENDER_LABEL[lang] || GENDER_LABEL.it;
@@ -6152,11 +6164,29 @@ function buildControlPanel() {
   var fab = document.createElement('button');
   fab.id = 'ctrl-fab'; fab.className = 'fab-btn ctrl-fab';
   fab.setAttribute('aria-label', 'Filtri e legenda');
-  // ⚠️ SEGNAPOSTO, non un logo: il glifo di 'I Grandi di Arda' è la rivisitazione del
-  // monogramma di Tolkien, disegnata dall'utente, e qui sarebbe fuori posto due volte.
-  // Questo è un segno neutro (due onde e un punto: il mare e l'isola) che tiene il posto
-  // finché non se ne disegna uno vero, come si fece per la favicon dell'altro sito.
-  fab.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M18 62c8-9 16-9 24 0s16 9 24 0 12-7 16-3"/><path d="M18 78c8-9 16-9 24 0s16 9 24 0 12-7 16-3"/></g><circle cx="50" cy="34" r="9" fill="currentColor"/></svg>';
+  // Logo del FAB, fornito dall'utente il 2026-08-21 e dichiarato PROVVISORIO da lui
+  // stesso ('probabilmente'): ha preso il posto del segnaposto a due onde nato con
+  // il progetto. ⚠️ La sorgente identica sta anche in `icons/Earthsea.svg`, che serve
+  // per riusarlo altrove (favicon, immagine di anteprima); qui il disegno è inline
+  // perché il FAB lo tinge con `currentColor` (oro su scuro, bianco su chiaro), che
+  // un `img` non erediterebbe. Le due copie vanno cambiate insieme.
+  // ⚠️ Costruito con `createElementNS`, non con `innerHTML`, che è vietato: qui il
+  // motore di provenienza lo usava, ed è stato l'occasione per togliere anche quello.
+  var FAB_LOGO_D = 'M262.73,654.39c14.2,0,25.71-11.51,25.71-25.71s-11.51-25.71-25.71-25.71-25.71,11.51-25.71,25.71,11.51,25.71,25.71,25.71ZM262.73,180.13c14.2,0,25.71-11.51,25.71-25.71s-11.51-25.71-25.71-25.71-25.71,11.51-25.71,25.71,11.51,25.71,25.71,25.71ZM282.48,369.71c-.09.11-.18.21-.26.32-.17.22-.35.44-.5.67-.26.37-.49.76-.7,1.17-.08.15-.15.3-.22.45-.16.34-.3.68-.43,1.03-.05.14-.11.28-.15.42-.14.45-.26.91-.35,1.39-.03.15-.05.31-.07.46-.06.37-.09.74-.11,1.12,0,.14-.02.29-.02.43,0,.08-.01.16-.01.24h0c0,.45.03.9.08,1.33,0,0,0,0,0,0,.06.55.17,1.08.3,1.6.02.07.03.14.05.21.14.51.3,1,.5,1.48.02.04.02.08.04.12.12.28.27.54.41.81.02.04.04.08.06.12,1.71,3.25,4.99,5.71,9.11,6.12.16.02.31.02.47.04.25.02.49.06.74.06h259.02s184.97.03,184.97.03l-8.56,9.5-213.23,226.02-84.23-85.54-51.24-51.99c-5.11-4.09-12.01-3.35-16.25,1.34-3.79,4.19-4.35,11.47,0,15.9l141.92,144.39c5.32,5.42,12.86,6.91,18.65.8l45.7-48.21,168.05-178.29,35.12-37.46c.2-.21.35-.44.53-.66.09-.1.17-.21.26-.32.17-.22.35-.44.5-.67.26-.37.49-.76.7-1.16.08-.15.15-.3.22-.45.16-.34.3-.68.43-1.03.05-.14.11-.28.15-.42.14-.45.26-.91.35-1.38.03-.16.05-.31.07-.47.06-.37.09-.74.11-1.12,0-.15.02-.29.02-.44,0-.08.01-.16.01-.23,0-.45-.03-.89-.08-1.33,0,0,0,0,0-.01-.06-.55-.17-1.08-.3-1.6-.02-.07-.04-.14-.05-.21-.14-.51-.3-1-.5-1.48-.02-.04-.02-.08-.04-.12-.12-.28-.27-.54-.41-.81-.02-.04-.04-.08-.06-.12-1.71-3.25-4.99-5.71-9.11-6.12-.16-.02-.32-.02-.48-.04-.25-.02-.48-.06-.74-.06h-258.21s-185.78-.03-185.78-.03l8.56-9.5,213.23-226.02,84.23,85.54,51.24,51.99c5.11,4.09,12.01,3.35,16.25-1.34,3.79-4.19,4.35-11.47,0-15.9l-141.92-144.39c-5.32-5.42-12.86-6.91-18.65-.8l-45.7,48.21-168.05,178.29-35.12,37.46c-.2.21-.35.44-.53.65ZM201.31,807.92c6,1.41,9.93-1.54,13.43-5.7,17.13-20.38,38.88-36.29,63.3-47.18,24.16-10.78,50.08-16.28,76.51-17.4,40.24-1.71,77.08,6.71,114.69,20.07l44.96,15.97c19.39,6.89,38.79,12.47,59.02,16.53,67.74,13.59,135.77,5.24,195.33-30.53,20.04-12.03,37.93-27.09,53.12-44.72,4.54-5.27,2.95-13.09-1.99-16.95-5.3-4.15-12.3-3.03-16.86,1.94-9.87,10.75-20.31,20.56-32.27,29.12-50.29,36-111.2,48.78-172.36,40.58-19.79-2.65-38.87-6.59-57.67-13.06l-41.32-14.22-42.25-14.32c-44.34-13.58-89.25-19.06-135.3-11.29-48.47,8.18-94.98,32.38-126.25,70.55-3.03,3.7-4.25,7.76-2.73,12.65,1.06,3.39,4.32,6.95,8.65,7.97ZM806.5,128.84c-14.12,0-25.57,11.45-25.57,25.57s11.45,25.57,25.57,25.57,25.57-11.45,25.57-25.57-11.45-25.57-25.57-25.57ZM819.74,812.56c-5.29-4.09-12.33-3.1-16.92,2.04-19.45,21.79-43.11,38.89-69.84,50.96-47.75,21.55-98.05,26.1-149.46,16.31-16.58-3.16-32.5-7.02-48.38-12.58l-47.65-16.67c-43.26-15.14-83.01-26.02-129.58-24.86-32.62.82-64.65,7.98-94.14,21.73-20.73,9.66-39.35,22.51-55.57,38.43l-12.83,14.07c-4.62,5.07-4.66,12.47.24,17.36,4.32,4.31,12.66,5.18,17.17-.26,16.8-20.26,37.28-36.27,61.03-47.37,45.15-21.1,94.45-24.15,143.04-14.29,15.43,3.13,30.14,6.92,44.93,12.16l42.42,15.04,47.01,14.88c69.6,18.89,139.81,15.77,204.28-17.83,25.27-13.17,47.59-30.63,66.22-52.12,4.59-5.29,3.12-13.07-1.97-17.01Z';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var fabSvg = document.createElementNS(SVGNS, 'svg');
+  fabSvg.setAttribute('viewBox', '0 0 1024 1024');
+  fabSvg.setAttribute('aria-hidden', 'true');
+  var fabPath = document.createElementNS(SVGNS, 'path');
+  fabPath.setAttribute('d', FAB_LOGO_D);
+  // Fill E stroke, perché il disegno originale ha un contorno da 17 unità che fa
+  // parte della forma: tenerne solo uno lo assottiglierebbe (icone as-is).
+  fabPath.setAttribute('fill', 'currentColor');
+  fabPath.setAttribute('stroke', 'currentColor');
+  fabPath.setAttribute('stroke-width', '17');
+  fabPath.setAttribute('stroke-miterlimit', '10');
+  fabSvg.appendChild(fabPath);
+  fab.appendChild(fabSvg);
   // ── Tap LUNGO sul FAB = scorciatoia 'SEGRETA' della Modalità XL (v12.43) ────
   // Controparte mobile del tasto Z: ~500ms di pressione commutano la PREFERENZA
   // PERSONALE di zoom (localStorage, stessa chiave e stesso toggleZoomMode del

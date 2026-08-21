@@ -135,16 +135,46 @@ adesso è questa, su **due colonne**:
   - ⚠️ Chi rimette una categoria in più **non riapra** questa decisione per riflesso: il
     ragionamento dell'utente è aritmetico ('con due sole categorie'), quindi con tre o
     quattro può tornare valido, ma è una sua chiamata.
-- **Le righe della legenda badge vanno a capo**, permesso esplicito dell'utente ('le
-  descrizioni possono andare a capo o le eliminiamo'): `white-space:normal` più una
-  `min-height` sulla riga, e l'icona a `flex:none` perché non si schiacci quando il testo
-  occupa due righe.
+- **Nella legenda badge la riga porta la SOLA etichetta**, non la spiegazione: nel mockup
+  le descrizioni sono svuotate, e l'utente aveva dato il permesso di eliminarle ('possono
+  andare a capo o le eliminiamo'). Il taglio si fa alla prima `': '` con `legLbl`, non con
+  una seconda tabella di stringhe brevi: **`ICON_LABEL` resta la fonte unica**, e i tooltip
+  delle card continuano a portare la spiegazione intera. Un'etichetta senza `': '` passa
+  intatta, ed è il caso del terzo badge.
+  - Misura del guadagno: il pannello desktop è passato da **638** a **540** px di larghezza.
+  - Resta in piedi il capo a riga (`white-space:normal`, `min-height` sulla riga, icona a
+    `flex:none`), che ora serve solo se un'etichetta futura sarà lunga.
 - ⚠️ **La card di legenda ha `margin-top` FISSO, non `auto`**: con `auto` si mangiava lo
   spazio residuo e stirava la colonna sinistra, lasciando un vuoto sotto di sé. È una
   compensazione mancata, non una preferenza estetica.
-- Misure a font reali in Chromium: pannello desktop **638x244** con le due colonne a **203**
-  ciascuna, mobile 390x844 con pannello **390x391** e i blocchi impilati nella bottom-sheet.
-  Nessun errore JS, nessun 404, nessuno scroll orizzontale.
+- Misure a font reali in Chromium: pannello desktop **540x244** (era 638 prima che le
+  descrizioni dei badge uscissero), mobile 390x844 con pannello **390x391** e i blocchi
+  impilati nella bottom-sheet. Nessun errore JS, nessun 404, nessuno scroll orizzontale.
+
+## 🔆 Il logo del FAB (provvisorio, 2026-08-21)
+
+L'utente ha fornito il glifo del pulsante, dichiarandolo lui stesso provvisorio
+('probabilmente'): un segno con due punti, una figura angolare e due onde. Ha preso il posto
+del **segnaposto a due onde e un punto** nato con il progetto.
+
+- ⚠️ **La sorgente vive in DUE posti che vanno cambiati insieme**: inline nel FAB
+  (`FAB_LOGO_D` in `buildControlPanel`) e nel file `icons/Earthsea.svg`. Inline perché il
+  FAB lo tinge con `currentColor` (oro su scuro, bianco su chiaro) e un `img` non
+  erediterebbe il colore; il file perché servirà altrove (favicon, immagine di anteprima).
+- ⚠️ **Si costruisce con `createElementNS`, non con `innerHTML`**, che è vietato senza
+  deroghe: qui il motore di provenienza lo usava per il segnaposto, e sostituire il glifo è
+  stata l'occasione per togliere anche quello.
+- ⚠️ **`fill` E `stroke` insieme**, entrambi a `currentColor`, con `stroke-width:17` e
+  `stroke-miterlimit:10` come nell'originale: il contorno fa parte della forma, e tenere
+  solo il riempimento assottiglierebbe il disegno. La classe `.cls-1` del file fornito
+  portava `stroke:#000`, che in tema chiaro avrebbe stonato col FAB teal: normalizzata a
+  `currentColor` una volta sola, nel file e inline.
+- **L'altezza dell'svg è `2.375rem`, cioè `1.9rem / 0.8`**, e la divisione è la nota da
+  tenere: il disegno misura **640x822 su un canvas 1024x1024**, quindi occupa l'80%
+  dell'altezza e ha margini propri. Scalare il canvas gli ridà l'ingombro che il Pannello
+  prevedeva per il glifo **senza ritagliare il file né spostarne i pixel** (icone as-is).
+  ⚠️ Se arriva il logo definitivo con margini diversi, si rimisura la sua `getBBox` e si
+  rifà la divisione: non si ritaglia il viewBox.
 
 ## 🗂️ La legenda nel Pannello è una CARD FINTA
 
@@ -287,8 +317,9 @@ alla volta, con una prova in browser dopo ognuno.
     così, quindi non era un pezzo 'per ora vuoto', era un pezzo di un altro progetto.
     ⚠️ Chi legge un vecchio link `?...1` o `?a=1` di Arda non accende più nulla: il bit in
     coda alla maschera non c'è, e la maschera ora è larga quanto `CATS`.
-- **Grafiche mancanti**: le tre icone dei badge, il glifo del pulsante, la favicon,
-  l'immagine di anteprima, e le due **mappe** dei visualizzatori di immagini.
+- **Grafiche mancanti**: le tre icone dei badge, la favicon, l'immagine di anteprima, e le
+  due **mappe** dei visualizzatori di immagini. ✅ Il **glifo del pulsante** è arrivato il
+  2026-08-21 (vedi '🔆 Il logo del FAB'), provvisorio per dichiarazione dell'utente.
 
 ## 🔢 Versione
 
