@@ -1573,6 +1573,17 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 }
 /* Ripiego: una voce il cui tipo non nomina né uomo né drago. */
 .type-fallback   { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
+/* ECCEZIONE SENZA PARI (istruzione dell'utente, 2026-08-21): l'etichetta 'Donna' di
+   TEHANU, che è donna E drago. Il viola non appartiene a nessuna famiglia, e questo
+   è il punto: dice a occhio che quella voce non sta in nessuna delle due categorie
+   per intero. Si applica per segmento via `tipo_color` nel dato, non per nome
+   della voce, quindi la regola resta generale anche se il caso è unico.
+   ⚠️ Ridefinisce le due VARIABILI invece di riscrivere fondo, bordo e colore: così
+   la sola fonte delle tre proprietà resta `.rank-item .type-badge`, e una modifica
+   là non lascia indietro questa. Un valore posato sull'elemento vince
+   sull'eredità della card (`.cc-dragon`) a prescindere dalla specificità, che è
+   la ragione per cui una riga per tema basta. */
+.type-donnadrago { --ccrgb:201,166,232; --cctxt:201,166,232; }
 
 .modal-backdrop {
   position:fixed; inset:0;
@@ -2217,6 +2228,9 @@ html[data-theme="light"] footer p { color: var(--parchment-dim); }
 /* Etichette di razza nel tema chiaro: scure quanto serve sul fondo marmo. */
 html[data-theme="light"] .rank-item .type-badge { background:rgba(var(--ccrgb,144,152,168),0.10); }
 html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
+/* L'eccezione viola di TEHANU nel tema chiaro: stessa tinta, scurita per leggersi
+   sul fondo marmo (7,1:1 contro #f9fbfa, ben oltre AA). */
+html[data-theme="light"] .type-donnadrago { --ccrgb:107,63,160; --cctxt:107,63,160; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
 html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#445d64; }
@@ -2440,7 +2454,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.17</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.18</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

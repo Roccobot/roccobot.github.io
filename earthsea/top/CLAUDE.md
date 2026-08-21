@@ -49,6 +49,25 @@ differenza è il punto da capire prima di toccare i colori.
     tenere allineato al genere a mano, voce per voce.
   - ✅ **Tehanu**: Donna **e** Drago, ma la sua tinta è quella dei **draghi**, quindi
     `cardcolor` vale `dragon` ed è la sola voce umana a non essere `man`.
+    - ✅ **QUARTA tinta, e riguarda una sola etichetta**: dalla `0.18` la sua etichetta
+      `Donna` è **viola** (`#C9A6E8` scuro, contrasto 8,50; `#6B3FA0` chiaro, 7,11), su
+      istruzione dell'utente, che l'ha chiamata *un'eccezione senza pari*. Il viola non
+      appartiene a nessuna famiglia, e questo è il punto: dice a occhio che la voce non sta
+      per intero in nessuna delle due categorie. La `Drago` resta terracotta come la card.
+    - ⚠️ **Si applica col campo `tipo_color`, per SEGMENTO, non per nome della voce**:
+      `"tipo_color":"type-donnadrago|"` (il secondo segmento vuoto lascia il colore automatico
+      di `tipoClass`). Il meccanismo esisteva già dal motore di provenienza, con la whitelist
+      `^type-[a-z-]*$` perché il valore finisce in un attributo `class` senza escaping.
+    - ⚠️ **La classe CSS ridefinisce `--ccrgb` e `--cctxt`, non fondo, bordo e colore**: così
+      la sola fonte di quelle tre proprietà resta `.rank-item .type-badge`, e un domani che
+      là cambiassero l'eccezione non resta indietro. In più un valore posato **sull'elemento**
+      vince sull'eredità della card (`.cc-dragon`) a prescindere dalla specificità, che è la
+      ragione per cui basta **una riga per tema** invece di rincorrere i selettori
+      `html[data-theme="light"] .rank-item ...`, che sono più specifici.
+      - ⚠️ La trappola che questo evita è **misurabile su `.type-fallback`**, che è scritta
+        all'altro modo (fondo e colore propri, selettore a una classe): dentro una card
+        **perde** contro `.rank-item .type-badge`, che è più specifico. Non si vede perché
+        quel ripiego non ha voci a cui applicarsi, ma è lo sbaglio da non ripetere.
   - ⚠️ **La tinta NON è il solo canale del genere**: il simbolo di genere sulla card c'è già,
     quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza perdere
     informazione per chi non distingue quelle due tinte.
@@ -371,11 +390,18 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   - **Due racconti sono più vecchi della raccolta** che li contiene: *Rosascura e Diamante*
     è 1999 e *Libellula* 1997, mentre la raccolta è 2001. Un anno uniformato al volume
     sarebbe stato plausibile e sbagliato.
-- ⚠️ **`The Rule of Names` resta in inglese e senza anno** (è l'opera di **Yevaud**): il
-  racconto non è nell'edizione italiana dell'utente e la sua data non è attestata dalle fonti
-  in scena. Il ripiego bidirezionale fa sì che la vista italiana mostri il titolo inglese
-  invece di una riga vuota, ed è il comportamento voluto: **non si inventa** né la traduzione
-  né la data.
+- ⚠️⚠️ **`La regola dei nomi` (l'opera di **Yevaud**) porta l'anno della RACCOLTA, 1975**, e
+  non della prima apparizione del racconto, che è **1964** (attestata: vedi `rules/Earthsea.md`,
+  § 'I due racconti dentro la raccolta *I dodici punti cardinali*'). È una
+  **scelta dell'utente** (2026-08-21), quindi non è un difetto da sanare, **ma divergerebbe**
+  dal criterio della voce sopra, dove per due racconti su tre vale l'anno del racconto: se un
+  domani si uniforma, il numero da mettere è 1964.
+  - ⚠️ **Il titolo italiano è una resa dell'utente, non quella attestata**: l'indice
+    dell'edizione italiana della raccolta scrive `La legge dei nomi`. Chi confronta il dataset
+    con la fonte trova la divergenza: è voluta.
+  - Ⓘ **Fino alla `0.17` la voce non aveva anno**, e la ragione registrata era che la data non
+    fosse attestata: era vero solo perché si era cercato nel volume sbagliato (*Le leggende di
+    Terramare*, che quel racconto non lo contiene).
 
 ## 🎨 La tavolozza applicata, e i punti dove era CABLATA
 
