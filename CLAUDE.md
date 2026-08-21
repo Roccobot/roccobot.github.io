@@ -496,6 +496,14 @@ poi divergerebbe.
   - **Il verificatore controlla anche** i **caratteri** dei file di regole e la **fedeltà del
     riquadro** del brief alla sua sorgente nella skill `handoff`, che prima era una
     raccomandazione non verificabile.
+  - ⚠️ **Quali file copre si ricava a GLOB, non da un elenco** (dal 2026-08-21): i `CLAUDE.md`
+    di progetto e i file di `rules/` entrano da sé. Prima erano scritti a mano, e due file di
+    regole nati nello stesso giorno (`earthsea/top/CLAUDE.md` e `rules/Earthsea.md`) sono
+    rimasti fuori copertura senza che nessuno lo notasse. ⚠️ **Il sintomo era rovesciato**, ed
+    è la ragione per cui vale scriverlo: un rimando **corretto** a una sezione di un file non
+    coperto veniva segnalato come 'sezione inesistente', cioè l'errore compariva dove il file
+    era giusto. Appena la copertura si è allargata, quel file ha rivelato **nove** difetti veri
+    (sette titoli con la data dentro e due rimandi sbagliati).
   - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e

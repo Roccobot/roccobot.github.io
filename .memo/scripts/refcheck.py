@@ -45,17 +45,19 @@ MIHON = SITO.parent / "mihon-aniyomi-ext"
 
 RULEFILES = [
     SITO / "CLAUDE.md",
-    SITO / "arda/top/CLAUDE.md",
-    SITO / "ABP/CLAUDE.md",
-    SITO / "userscripts/CLAUDE.md",
-    SITO / "RoccobotOS/CLAUDE.md",
-    SITO / "proxy/CLAUDE.md",
     SITO / ".claude/skills/handoff/SKILL.md",
     TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
-    TOOLS / "rules/Roccobot.md",
-    TOOLS / "rules/JRRT.md",
     TOOLS / ".claude/skills/desc/SKILL.md",
+# ⚠️ I `CLAUDE.md` di progetto e i file di `rules/` si prendono a GLOB e non a elenco, dal
+# 2026-08-21, per la stessa ragione degli snippet qui sotto: erano un elenco scritto a mano, e
+# due file di regole nati lo stesso giorno (`earthsea/top/CLAUDE.md` e `rules/Earthsea.md`)
+# sono rimasti FUORI copertura senza che nessuno lo notasse. Il sintomo era rovesciato e per
+# questo ingannevole: un rimando corretto a una sezione di `Earthsea.md` veniva segnalato come
+# 'sezione inesistente', perché quel file non era indicizzato. Un elenco a mano di file che
+# nascono è una manutenzione che prima o poi si dimentica; un glob no.
+] + sorted(SITO.glob("*/CLAUDE.md")) + sorted(SITO.glob("*/*/CLAUDE.md")) \
+  + sorted(TOOLS.glob("rules/*.md")) + [
 # Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollerà
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
 # averne trovati DUE stantii nello stesso momento, entrambi con rimandi a file di regole
