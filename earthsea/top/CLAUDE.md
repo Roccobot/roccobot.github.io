@@ -32,8 +32,21 @@ non ci saranno (vedi la sezione sui nomi non cliccabili).
 
 **Terramare ha due razze: uomini e draghi** (istruzione dell'utente). Gli uomini hanno il
 fondo **oro**, i draghi il **rosso**, entrambi chiari e desaturati: valori in `cardColors`
-dentro `dati.js`, ancora **provvisori** (vanno misurati sul gate di contrasto AA nei due
-temi).
+dentro `dati.js`, ancora **provvisori**.
+
+- ⚠️⚠️ **L'ORO sta per uscire, e la tinta degli umani seguirà il GENERE** (indicazione
+  dell'utente, 2026-08-21): *turchese per le donne, blu oltremare per gli uomini*, col rosso
+  dei draghi confermato. ⚠️ **Non cambia nulla come categoria**, parole sue: il filtro resta a
+  due voci, si sdoppia soltanto la tavolozza. La ragione dichiarata dell'oro che esce è che nel
+  tema chiaro, scurito fin dove serve per fare da testo, **diventa un marrone** che non gli
+  piace.
+  - **Non è ancora applicato**: aspetta la scelta fra le due tavolozze proposte. Finché non
+    arriva, `.cc-man` resta oro e nel dataset `cardcolor` vale `man` per ogni umano.
+  - ⚠️ **Quando si applica, il caso da guardare è Therru**, Donna **e** Drago: prenderebbe due
+    tinte, e va deciso quale vince (la prima razza dichiarata è la donna).
+  - ⚠️ **La tinta NON diventa il solo canale del genere**: il simbolo di genere sulla card
+    c'è già, quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza
+    perdere informazione per chi non distingue quelle due tinte.
 
 - ⚠️ **`CATS` ha due voci, e non è una lista 'ridotta per ora'.** La tassonomia a nove
   categorie ereditata da Arda mandava i draghi in `arcane`, che nasce **spenta**: i tre draghi
@@ -90,8 +103,8 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
 
 | livello | campo | resa sulla card |
 |---|---|---|
-| **Nome d'uso** (importanza massima) | `nome` / `nome_en` | riga 1, `.rank-name` |
-| **Vero nome** (STESSA importanza) | `vero_nome` | riga 2, `.rank-vero`: grassetto, corpo pari al nome, colore = accento del gruppo |
+| **Nome d'uso** (importanza massima) | `nome` / `nome_en` | riga 1, `.rank-name`: **EB Garamond**, corpo maggiore, iniziali maiuscole dal dato |
+| **Vero nome** | `vero_nome` | riga 2, `.rank-vero`: **Cinzel MAIUSCOLO**, grassetto, corpo minore, colore = accento del gruppo |
 | **Nomi alternativi** (secondaria) | `nomi_alternativi` | sottotitolo `.rank-subtitle` |
 | **Titoli e onorificenze** (come sopra) | `appellativi` | stesso sottotitolo, dopo il `|` |
 
@@ -106,6 +119,30 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
   vero nome, e ripeterlo su due righe sarebbe rumore. ⚠️ Fino alla `0.07` a dirlo era il terzo
   badge, che il 2026-08-21 ha cambiato significato: **oggi non lo dice nessuno**, e resta una
   convenzione del dataset scritta soltanto qui.
+
+### ✒️ La resa tipografica delle due righe (rivista il 2026-08-21)
+
+Istruzione dell'utente: nome d'uso **più grande ma con la sola iniziale maiuscola** (o le
+iniziali, come `Orm Embar`); vero nome **più piccolo, colorato, grassetto e maiuscolo**.
+Il peso del vero nome non viene più dalla dimensione: viene dalla **forma**.
+
+- ⚠️ **Per questo il nome d'uso ha lasciato Cinzel per EB Garamond**, e non è una preferenza:
+  Cinzel è una capitale romana, i suoi glifi 'minuscoli' sono **versaletti**, quindi
+  `Sparviero` veniva reso `S` + `PARVIERO` e 'sola iniziale maiuscola' non era ottenibile
+  restando là. Garamond ha minuscole vere ed era già in pagina.
+- ⚠️ **Il vero nome RESTA in Cinzel proprio perché è una capitale romana**: su una parola
+  tutta maiuscola quella forma è il messaggio. Il tracking sale a `0.06em`, che il maiuscolo
+  pieno esige per non impastarsi.
+- ⚠️ **Nessun `text-transform` sul nome d'uso**: le maiuscole vengono dal **dato**, che è già
+  scritto così. Una regola CSS che le forzasse romperebbe i nomi senza maiuscola interna.
+- ⚠️ **Tre override di dimensione vanno mossi INSIEME** al clamp principale, o la card 'in
+  cima' e la card di legenda del Pannello restano al corpo vecchio: `.rank-item.vis-top`, il
+  suo gemello in tema chiaro, e `.ctrl-cardleg`. Nella legenda serve anche `.rank-vero`,
+  altrimenti la card finta mostra una gerarchia **rovesciata** rispetto a quella che spiega.
+- **`.type-badge` è tornata a `0.62em`** (era `0.72em`): è ancorata in em al nome, quindi era
+  cresciuta con lui fino a sfiorarne il corpo senza che nessuno l'avesse chiesto. È un
+  ripristino dei ~18px di prima, non una compensazione.
+
 - **Storico che spiega la forma dei dati**: fino alla `0.05` il vero nome viveva in
   `nomi_alternativi`, e il nome d'uso portava le due forme insieme (`Sparviero / Falco`). Il
   2026-08-21 l'utente ha corretto: il nome principale è uno, il secondo va fra gli
@@ -157,6 +194,13 @@ L'utente ha fornito il glifo del pulsante, dichiarandolo lui stesso provvisorio
 ('probabilmente'): un segno con due punti, una figura angolare e due onde. Ha preso il posto
 del **segnaposto a due onde e un punto** nato con il progetto.
 
+- ⚠️ **Ne esistono già DUE versioni**, entrambe del 2026-08-21: la prima a un tracciato con
+  contorno, la seconda (in vigore) a **due tracciati e nessuno stroke**, tutta a riempimento.
+  Chi ne porta una terza guardi **quanti `path` ha** invece di aggiornarne uno: aggiornarne
+  uno solo lascia mezzo logo per strada. `FAB_LOGO_D` è per questo un **elenco**.
+  - **La ripulitura è la parte che pesa**: il file di Illustrator era 77 KB, di cui 65,7 di
+    `<metadata>`; ripulito sta in 11 KB. Si toglie il blocco `<metadata>`, il commento del
+    generatore, l'id di livello, lo `xmlns:i` di Adobe e `version`.
 - ⚠️ **La sorgente vive in DUE posti che vanno cambiati insieme**: inline nel FAB
   (`FAB_LOGO_D` in `buildControlPanel`) e nel file `icons/Earthsea.svg`. Inline perché il
   FAB lo tinge con `currentColor` (oro su scuro, bianco su chiaro) e un `img` non
@@ -169,12 +213,13 @@ del **segnaposto a due onde e un punto** nato con il progetto.
   solo il riempimento assottiglierebbe il disegno. La classe `.cls-1` del file fornito
   portava `stroke:#000`, che in tema chiaro avrebbe stonato col FAB teal: normalizzata a
   `currentColor` una volta sola, nel file e inline.
-- **L'altezza dell'svg è `2.375rem`, cioè `1.9rem / 0.8`**, e la divisione è la nota da
-  tenere: il disegno misura **640x822 su un canvas 1024x1024**, quindi occupa l'80%
+- **L'altezza dell'svg è `2.273rem`, cioè `1.9rem / 0.836`**, e la divisione è la nota da
+  tenere: il disegno misura **674x856 su un canvas 1024x1024**, quindi occupa l'83,6%
   dell'altezza e ha margini propri. Scalare il canvas gli ridà l'ingombro che il Pannello
   prevedeva per il glifo **senza ritagliare il file né spostarne i pixel** (icone as-is).
-  ⚠️ Se arriva il logo definitivo con margini diversi, si rimisura la sua `getBBox` e si
-  rifà la divisione: non si ritaglia il viewBox.
+  ⚠️ **Il divisore si rimisura a ogni logo nuovo** con la `getBBox` dei suoi tracciati: la
+  prima versione dava 0,8 e la seconda 0,836, quindi tenere il numero vecchio non rompe
+  niente e **sbaglia in silenzio**. Non si ritaglia il viewBox.
 
 ## 🗂️ La legenda nel Pannello è una CARD FINTA
 
