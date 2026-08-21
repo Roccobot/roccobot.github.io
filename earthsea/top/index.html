@@ -2415,7 +2415,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.13</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.14</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4247,18 +4247,19 @@ function familyOf(p) {
 
 // Icone badge dei tre segni di Terramare (strega/stregone, mago, vero nome).
 var BADGE_ICON = {
-  // ⚠️ SVG in linea e non file immagine, al contrario di 'I Grandi di Arda': la sua
-  // cartella di icone qui non c'entra, e un `img` verso un file che non esiste mostrava
-  // l'immagine rotta del browser accanto a ogni nome. Questi tre segni sono SEGNAPOSTO
-  // sobri, non un disegno definitivo, e useranno `currentColor` come i simboli di genere
-  // finché non ci saranno icone vere.
-  // Strega o stregone: una scintilla a quattro punte, l'incantesimo minore.
-  stregone: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><path fill=\"currentColor\" d=\"M12 2l1.8 7.2L21 11l-7.2 1.8L12 20l-1.8-7.2L3 11l7.2-1.8z\"/></svg>",
-  // Mago: il bastone, con il pomo in cima.
-  mago: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M8 21L15 7\"/></g><circle cx=\"16\" cy=\"4\" r=\"3\" fill=\"currentColor\"/></svg>",
-  // Nome di Ged: un segno inciso, come una runa della lingua antica.
-  nomeged: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 3v18M12 8l6-4M12 8L6 4M12 15l6 4M12 15l-6 4\"/></g></svg>"
+  // Icone dei tre badge, fornite dall'utente il 2026-08-21 (PNG a colori: sparkle,
+  // wand, ged). Hanno preso il posto dei tre SVG segnaposto in `currentColor`.
+  // ⚠️ Sono `img`, non SVG in linea, quindi NON seguono il colore del testo: il colore
+  // sta nel file. È la stessa via dei simboli di genere, che sono già `img` da sempre,
+  // e la ragione per cui il motore ha le classi `.status-icon` e `img.badge-broken`.
+  // ⚠️ File rinominati col nome del BADGE e non del disegno (`sparkle` -> `Stregone`):
+  // un domani il disegno cambia e il badge no, e un file che si chiama come il disegno
+  // costringerebbe a toccare il codice per sostituire un'immagine.
+  stregone: '<img class="status-icon si-stregone" src="icons/Stregone.png" title="%L%" alt="%L%">',
+  mago: '<img class="status-icon si-mago" src="icons/Mago.png" title="%L%" alt="%L%">',
+  nomeged: '<img class="status-icon si-nomeged" src="icons/NomeGed.png" title="%L%" alt="%L%">'
 };
+
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
 // lista, per la legenda del Pannello e per la griglia dell'editor admin. In
 // legenda condividono la riga: (king_high+king_high_now), (west+envoy),
