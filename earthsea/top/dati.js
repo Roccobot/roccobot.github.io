@@ -1,4 +1,4 @@
-var datiVersion = "0.04";
+var datiVersion = "0.05";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 var cardColors = {"fam":{"man":{"dark":"#d9c089","light":"#9c7c3a"},"dragon":{"dark":"#e0a090","light":"#b25a48"}},"map":{"type-man":"man","type-dragon":"dragon"}};
@@ -32,6 +32,6 @@ var dati = [
 {"nome":"Early","nome_en":"Early","fonte":"","fonte_en":"The Finder","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Teriel","nomi_alternativi_en":"Teriel","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Diamante","nome_en":"Diamante","fonte":"","fonte_en":"Darkrose and Diamond","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Essiri","nomi_alternativi_en":"Essiri","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Burrone / Otak","nome_en":"Burrone / Otak","fonte":"","fonte_en":"On the High Marsh","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Irioth","nomi_alternativi_en":"Irioth","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
-{"nome":"Sparviero","nome_en":"Sparviero","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Ged","nomi_alternativi_en":"Ged","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
+{"nome":"Sparviero / Falco","nome_en":"Sparviero / Falco","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Ged","nomi_alternativi_en":"Ged","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Solevivo","nome_en":"Solevivo","fonte":"","fonte_en":"On the High Marsh","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Ayeth","nomi_alternativi_en":"Ayeth","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"veronome":true,"descrizione":"","descrizione_en":"","cardcolor":"man"}
 ];
