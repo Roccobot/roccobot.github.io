@@ -55,9 +55,23 @@ I badge sono tre: **strega/stregone**, **mago**, **vero nome** (`ICON_ORDER`).
   dell'utente).
 - **Il genere riusa i simboli di Arda** (`icons/Maschio.webp`, `icons/Femmina.webp`, scelta
   dell'utente): sono i **soli** due file immagine di questa cartella.
-  - ⚠️ **I tre draghi NON hanno genere**, e non è una dimenticanza: l'utente ha dichiarato
-    femminili sei personaggi, e da lì si ricava il maschile degli **uomini**, non il sesso di
-    un drago. Attribuirlo sarebbe un'attestazione inventata (Kalessin in particolare).
+  - ⚠️ **I draghi fanno eccezione e NON hanno genere** (decisione dell'utente, 2026-08-21,
+    con il 'per il momento' che lui stesso ha messo: è una scelta rivedibile, non un fatto).
+    Prima era una mia deduzione prudenziale, e la ragione resta valida: dalle sei femmine
+    dichiarate si ricava il maschile degli **uomini**, non il sesso di un drago.
+    ⚠️ Quindi una card di drago senza simbolo di genere **non è un dato mancante**: chi la
+    vede non deve mettersi a cercare l'attestazione, e chi riempirà il dataset sulle fonti
+    non deve riempire quel campo perché 'è vuoto'.
+
+## 🔤 Filtro al plurale, card al singolare: è deliberato
+
+Il Pannello dice **'Uomini'** e **'Draghi'**, la card dice **'Uomo'**, **'Donna'**, **'Drago'**:
+il filtro nomina un **insieme**, la card nomina **una persona**, e per una persona il genere si
+vede (istruzione dell'utente, 2026-08-21: nel filtro **tutto al plurale**).
+
+⚠️ Non è un'incoerenza da sanare, ed è scritto qui perché a colpo d'occhio lo sembra: chi
+uniformasse i due registri romperebbe quello giusto. Le sei donne del dataset portano 'Donna'
+sulla card **e** stanno sotto 'Uomini' nel filtro, che è la razza.
 
 ## 🔐 Nessun proxy admin, e il motivo è distruttivo
 
