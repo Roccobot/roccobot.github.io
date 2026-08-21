@@ -448,6 +448,20 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
 
+/* DRAGHI: il nome sta TUTTO nella prima riga (istruzione dell'utente, 2026-08-21,
+   che l'ha chiamata una sua svista precedente). Un drago non ha nome d'uso: il suo
+   nome È il vero nome, quindi la seconda riga non esiste e la prima porta già la resa
+   del vero nome, maiuscola e in tinta di famiglia. Nomi alternativi e titoli restano
+   possibili, e continuano a stare nel sottotitolo.
+   ⚠️ La regola si applica al `.rank-name-text`, NON a `.rank-name`: quel contenitore
+   ospita anche etichette e icone (rank-tipi/rank-flags via display:contents), e un
+   `text-transform` messo là dentro renderebbe maiuscola anche l'etichetta 'Drago'. */
+.rank-name.name-vero > .rank-name-text {
+  font-family:'Cinzel',serif; font-weight:900;
+  font-size:0.88em; letter-spacing:0.06em; text-transform:uppercase;
+  color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
+}
+
 /* VERO NOME (dal 2026-08-21, istruzione dell'utente): a Terramare il vero nome è
    la cosa più importante di un individuo, quindi ha una riga sua allo STESSO
    livello del nome d'uso, non fra i nomi alternativi. Colore = accento del gruppo
@@ -1077,7 +1091,6 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
    vere e nella card finta sarebbe piu' grande del nome d'uso, mostrando una
    gerarchia rovesciata rispetto a quella che sta spiegando. */
 .ctrl-cardleg .rank-vero { font-size:0.92rem; }
-.ctrl-cardleg .rank-vero { font-size:1.02rem; }
 .ctrl-cardleg .rank-subtitle { font-size:0.86rem; }
 /* ⚠️ NIENTE transizione sul fondo delle righe (dalla v14.77, segnalato dall'utente:
    'l'hover lagga sempre più di quanto sembrerebbe naturale'). Non era la macchina: era
@@ -2390,7 +2403,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.10</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.11</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4629,6 +4642,11 @@ function renderList() {
     // Il vero nome è UNICO per le due lingue: è nella Lingua della Creazione, non
     // si traduce, quindi non ha un campo _en da cui ripiegare.
     var veroNome = escapeHtml(p.vero_nome || '');
+    // ⚠️ I DRAGHI hanno una riga sola: il loro nome È il vero nome, quindi la prima
+    // riga ne prende la resa e la seconda non si emette. Il predicato guarda le
+    // CATEGORIE, non `p.tipo` grezzo, così Tehanu (Donna | Drago) ci rientra: è
+    // l'esempio con cui l'utente ha dato la regola.
+    var soloVero = categorie(p).indexOf('dragon') !== -1;
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
@@ -4768,8 +4786,8 @@ function renderList() {
       '<span class="rank-strip" aria-hidden="true"></span>' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
-        (veroNome ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
+        '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        (veroNome && !soloVero ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
         rigaDesc +
         riga2 +
         '<span class="rank-title">' + titleYear + '</span>' +

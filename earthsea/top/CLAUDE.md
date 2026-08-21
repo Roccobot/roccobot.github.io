@@ -115,10 +115,34 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
   va bene per bordi e fondi, ma come TESTO l'oro e il rosso desaturati non passano il gate AA.
   `ccFamTxt` la corregge sul fondo di ciascun tema. Chi tocca i colori delle famiglie deve
   ri-iniettare **entrambe** le terne (`injectCardColorRules` e `reinjectFamilyColors` lo fanno).
-- ⚠️ **I draghi hanno la riga del vero nome VUOTA**, di proposito: il loro nome d'uso **è** il
-  vero nome, e ripeterlo su due righe sarebbe rumore. ⚠️ Fino alla `0.07` a dirlo era il terzo
-  badge, che il 2026-08-21 ha cambiato significato: **oggi non lo dice nessuno**, e resta una
-  convenzione del dataset scritta soltanto qui.
+### 🐉 I DRAGHI hanno una riga sola (istruzione dell'utente, 2026-08-21)
+
+Un drago **non ha nome d'uso**: il suo nome è il vero nome. Quindi la seconda riga non
+esiste e la **prima** porta già la resa del vero nome, maiuscola e in tinta di famiglia.
+Nomi alternativi e titoli restano possibili e continuano a stare nel sottotitolo.
+⚠️ L'utente ha dato questa regola definendo una **propria svista** il modello precedente,
+dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
+
+- ⚠️ **Il predicato guarda le CATEGORIE, non `p.tipo` grezzo** (`categorie(p)` contiene
+  `dragon`): è così che **Tehanu**, che è `Donna | Drago`, ci rientra. È l'esempio con cui
+  l'utente ha dato la regola, non un effetto collaterale.
+- ⚠️ **La classe va sul `.rank-name-text`, non su `.rank-name`**: quel contenitore ospita
+  anche etichette e icone (`rank-tipi`/`rank-flags` via `display:contents`), e un
+  `text-transform` messo là renderebbe maiuscola anche l'etichetta 'Drago'.
+- **Corpo `0.88em`**, non `1em`: le maiuscole di Cinzel a corpo pieno risulterebbero più
+  alte delle maiuscole di Garamond del nome d'uso, e la lista perderebbe il pari livello
+  fra le due rese. ⚠️ Il valore viene dal **rendering vero**, guardato nei due temi: il
+  `measureText` del canvas dava per Garamond e Cinzel la stessa larghezza al decimo su nove
+  caratteri, cioè ricadeva su un fallback, e `document.fonts.check` diceva `true` lo stesso.
+  Non fidarsi di quella misura.
+- ⚠️ **Su una voce drago il campo `vero_nome` è INVISIBILE**: la seconda riga non si emette,
+  quindi un valore lasciato là non darebbe errore e non si vedrebbe. Per questo Tehanu ha
+  `vero_nome` **vuoto** e il nome unico in `nome`, con `Therru` fra i nomi alternativi.
+- **La card di legenda del Pannello mostra il caso generale** (nome d'uso, vero nome,
+  alternativi, titoli) e **non** il caso drago: è una scelta, non una dimenticanza, perché
+  una legenda con due card finte spiegherebbe meno di una.
+- Ⓘ **Su Tehanu il sottotitolo ripete il nome**, perché la sua opera di prima apparizione è
+  il romanzo *Tehanu*: `TEHANU` / `Therru` / *Tehanu*. È un dato corretto, non un difetto.
 
 ### ✒️ La resa tipografica delle due righe (rivista il 2026-08-21)
 
