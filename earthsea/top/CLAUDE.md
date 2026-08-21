@@ -390,15 +390,17 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   - **Due racconti sono più vecchi della raccolta** che li contiene: *Rosascura e Diamante*
     è 1999 e *Libellula* 1997, mentre la raccolta è 2001. Un anno uniformato al volume
     sarebbe stato plausibile e sbagliato.
-- ⚠️⚠️ **`La regola dei nomi` (l'opera di **Yevaud**) porta l'anno della RACCOLTA, 1975**, e
-  non della prima apparizione del racconto, che è **1964** (attestata: vedi `rules/Earthsea.md`,
-  § 'I due racconti dentro la raccolta *I dodici punti cardinali*'). È una
-  **scelta dell'utente** (2026-08-21), quindi non è un difetto da sanare, **ma divergerebbe**
-  dal criterio della voce sopra, dove per due racconti su tre vale l'anno del racconto: se un
-  domani si uniforma, il numero da mettere è 1964.
-  - ⚠️ **Il titolo italiano è una resa dell'utente, non quella attestata**: l'indice
-    dell'edizione italiana della raccolta scrive `La legge dei nomi`. Chi confronta il dataset
-    con la fonte trova la divergenza: è voluta.
+- ✅ **L'opera di **Yevaud** è `La legge dei nomi (1964)`**, titolo e anno **attestati** e non
+  scelti: il titolo viene dall'indice dell'edizione italiana della raccolta *I dodici punti
+  cardinali*, l'anno dalla pagina di copyright di quella inglese (vedi `rules/Earthsea.md`,
+  § 'I due racconti dentro la raccolta *I dodici punti cardinali*'). ⚠️ **Il criterio è quello
+  della voce sopra**, e vale per tutti i racconti: **l'anno è quello della prima apparizione,
+  non della raccolta** che li contiene.
+  - ⚠️⚠️ **Due valori PLAUSIBILI e sbagliati sono già passati per questa voce**, ed è la
+    ragione per cui vale scriverlo: `La regola dei nomi` come titolo (una resa a memoria) e
+    `1975` come anno (quello della **raccolta**, non del racconto). Entrambi sono stati messi
+    nel dataset e poi corretti, dall'utente stesso, nel giro successivo. Chi rimette uno dei
+    due sta tornando indietro, non correggendo.
   - Ⓘ **Fino alla `0.17` la voce non aveva anno**, e la ragione registrata era che la data non
     fosse attestata: era vero solo perché si era cercato nel volume sbagliato (*Le leggende di
     Terramare*, che quel racconto non lo contiene).
