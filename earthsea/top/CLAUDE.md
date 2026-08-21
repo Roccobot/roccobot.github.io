@@ -110,9 +110,15 @@ raccontano un altro mondo**, e la regola universale sulle sostituzioni su parole
 per un disastro già capitato proprio qui. Si tocca **quando si tocca quel codice**, un pezzo
 alla volta, con una prova in browser dopo ognuno.
 
-- Il **pannello** è ancora quello di Arda per intero: l'utente ne ha chiesto uno 'molto più
-  semplice', e la semplificazione è da fare (l'interruttore del catalogo esteso, per esempio,
-  qui non ha nemmeno una voce a cui applicarsi).
+- Il **pannello** è ancora quasi tutto quello di Arda: l'utente ne ha chiesto uno 'molto più
+  semplice', e la semplificazione è appena cominciata.
+  - ✅ **Il sistema degli 'Apocrifi' è stato TOLTO** (istruzione dell'utente, 2026-08-21):
+    interruttore, predicato di visibilità, card grigia con la pill 'Solo HoME', bit nel
+    permalink e casella nell'editor admin. Era il catalogo esteso di Arda per i personaggi
+    attestati solo in HoME/NoME: a Terramare non esiste una fonte di rango minore da segnare
+    così, quindi non era un pezzo 'per ora vuoto', era un pezzo di un altro progetto.
+    ⚠️ Chi legge un vecchio link `?...1` o `?a=1` di Arda non accende più nulla: il bit in
+    coda alla maschera non c'è, e la maschera ora è larga quanto `CATS`.
 - **Grafiche mancanti**: le tre icone dei badge, il glifo del pulsante, la favicon,
   l'immagine di anteprima, e le due **mappe** dei visualizzatori di immagini.
 

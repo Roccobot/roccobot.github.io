@@ -814,22 +814,6 @@ html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .c
 html[data-theme="light"] .cc-man{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
 html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
 
-/* Catalogo esteso «Apocrifi» (solo HoME/NoME): card grigia tenue, leggermente semitrasparente */
-.rank-item.apocrifo {
-  background:linear-gradient(90deg,rgba(130,130,142,0.08) 0%,rgba(130,130,142,0.025) 100%);
-  border-left-color:rgba(172,174,186,0.55);
-  opacity:0.8;
-}
-.rank-item.apocrifo:hover, .rank-item.apocrifo:focus-within { opacity:1; }
-/* pill «Solo HoME»: contornata, in alto a destra, distinta dalle etichette tipo */
-.pill-home {
-  position:absolute; top:0.6rem; right:0.7rem;
-  font-size:0.62rem; letter-spacing:0.06em; line-height:1.4;
-  padding:1px 7px; border-radius:4px;
-  border:1px solid rgba(188,190,202,0.45); color:rgba(206,208,218,0.82);
-  background:rgba(255,255,255,0.03); pointer-events:none;
-}
-
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
 #ctrl-fab svg { height:1.9rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB di controllo: a sinistra su desktop, a destra su mobile. Icona oro in scuro, teal+bianco in chiaro */
@@ -889,35 +873,10 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
 /* Tutti i tasti quadrati (Tutti/All + Solo/Only) hanno la STESSA larghezza:
    la faccia visibile e i quattro segnaposto invisibili (.ctrl-btn-m, le quattro
    parole) condividono la stessa cella → larghezza = testo più largo fra tutte,
-   uguale in entrambe le lingue. Tiene anche fermo lo switch 'Apocrifi' e la
-   colonna 'Solo'. */
+   uguale in entrambe le lingue. Tiene anche ferma la colonna 'Solo'. */
 .ctrl-reset > *, .ctrl-solo > * { grid-area:1 / 1; }
 .ctrl-reset > .ctrl-btn-m, .ctrl-solo > .ctrl-btn-m { visibility:hidden; pointer-events:none; }
 .ctrl-reset:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
-/* interruttore «Apocrifi» (catalogo esteso): a destra di 'Categorie', a sinistra di 'Tutti' */
-.ctrl-apo { display:inline-flex; align-items:center; gap:0.4rem; margin-left:auto; background:none; border:none; padding:0; cursor:pointer; color:inherit; }
-.ctrl-apo .apo-lbl { display:inline-grid; justify-items:start; align-items:center; font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--parchment); opacity:0.72; white-space:nowrap; transition:opacity 0.15s,color 0.15s; }
-/* Larghezza della label = testo più lungo tra IT ('Apocrifi') ed EN
-   ('Apocrypha'): la faccia visibile e la forma nell'altra lingua (invisibile)
-   condividono la stessa cella di griglia, così al cambio lingua l'interruttore
-   (nel DOM prima del testo, gruppo ancorato a destra) non si sposta di un pixel. */
-.ctrl-apo .apo-lbl > span { grid-area:1 / 1; }
-.ctrl-apo .apo-lbl > .apo-lbl-alt { visibility:hidden; pointer-events:none; }
-.ctrl-apo .apo-sw { position:relative; width:30px; height:16px; border-radius:8px; background:rgba(140,140,150,0.35); border:1px solid rgba(154,156,168,0.4); transition:background 0.15s,border-color 0.15s; flex-shrink:0; }
-.ctrl-apo .apo-sw::after { content:''; position:absolute; top:1px; left:1px; width:12px; height:12px; border-radius:50%; background:rgba(230,226,214,0.9); transition:left 0.15s; }
-.ctrl-apo.on .apo-sw { background:rgba(210,178,92,0.85); border-color:rgba(224,194,108,0.9); }
-.ctrl-apo.on .apo-sw::after { left:15px; background:#3a2808; }
-.ctrl-apo.on .apo-lbl { opacity:1; color:rgba(224,194,108,0.95); }
-/* La label 'Apocrifi' da spenta usa var(--parchment) (colore testo, corretto in
-   entrambi i temi grazie all'inversione dei token in chiaro): nessun override
-   qui. Storico: c'era `color:var(--ink)`, ma in chiaro --ink è il colore di
-   SFONDO chiaro, che rendeva la parola invisibile su fondo chiaro (fix v7.69). */
-/* Oro piu scuro del minimo necessario: il colore percepito dopo l'alpha 0.95
-   sul fondo chiaro del pannello supera 4.7:1 (audit axe: il precedente
-   rgba(150,108,16,.95) dava 3.88:1, sotto il minimo AA 4.5:1). */
-html[data-theme="light"] .ctrl-apo.on .apo-lbl { color:rgba(128,90,10,0.95); }
-html[data-theme="light"] .ctrl-apo.on .apo-sw { background:rgba(58,88,120,0.85); border-color:rgba(58,88,120,0.9); }
-html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
 /* Target touch su mobile: area cliccabile più alta (≥ ~28px) e testi un filo
    più grandi per i controlli del Pannello, senza cambiarne il disegno. */
 @media (max-width:768px) {
@@ -927,15 +886,12 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      Tutti e Solo condividono la stessa regola: riquadri identici. */
   .ctrl-solo, .ctrl-reset { padding:5px 12px; font-size:0.64rem; }
   .ctrl-cat-row { min-height:31.72px; }
-  .ctrl-apo { padding:6px 0; }
-  .ctrl-apo .apo-lbl { font-size:0.64rem; }
   /* Centrature ottiche mobile (misure utente da smartphone, DPR 3, quindi /3;
      em = relative al font dell'elemento). Il blocco testata scende per rendere
      il gap Tutti->primo Solo IDENTICO al gap tra i Solo (valore tarato sul DOM
      reale, vedi sotto); transform = niente riflusso. */
   #ctrl-panel .ctrl-cat-head { transform:translateY(0.384rem); }
   #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.363em); }
-  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-lbl { transform:translateY(0.065em); }
   #ctrl-panel .ctrl-reset .rst-face { transform:translate(0.098em, 0.081em); }
   #ctrl-panel .ctrl-solo .solo-face { transform:translate(0.065em, 0.098em); }
 }
@@ -1044,14 +1000,11 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      le tre voci della testata vengono portate sullo stesso centro ottico
      verticale (convergono entro ~0.1px). Valori piccoli perché le stime a occhio
      su screenshot zoomato ingrandiscono gli scarti reali.
-     - blocco testata {CATEGORIE, Apocrifi, Tutti} sceso di 0.2375rem (=3.8px):
+     - blocco testata {CATEGORIE, Tutti} sceso di 0.2375rem (=3.8px):
        pareggia il gap testata->prima riga col passo delle righe (bordi = 13.5px,
        ritmo uniforme). rem = relativo al root, scala con lo zoom testo.
      - CATEGORIE (Cinzel, corpo maggiore): translateY 0.326em -> centro OTTICO
        riga (geometricamente era gia centrata, ma otticamente va ~0.5px piu su).
-     - APOCRIFI (Cinzel, corpo minore): +0.067em (~0.62px) sul centro riga.
-     - interruttore Apocrifi: +0.010rem (~0.17px): centrato sulla riga (~0.42px)
-       e poi alzato ~0.25px per la centratura ottica (richiesta utente).
      - testo dei tasti Tutti/Solo: translate(0.081em, 0.105em) = ~0.75px a DESTRA
        e ~0.97px in GIU, per la centratura OTTICA (non geometrica) nel bottone.
        Il 'a destra' compensa il letter-spacing di coda (spazio dopo l'ultima
@@ -1062,8 +1015,6 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      Transform = spostamento visivo, nessun riflusso delle righe sotto. */
   #ctrl-panel .ctrl-cat-head { transform:translateY(0.2375rem); }
   #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.302em); }
-  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-lbl { transform:translateY(0.067em); }
-  #ctrl-panel .ctrl-cat-head .ctrl-apo .apo-sw { transform:translateY(0.004rem); }
   /* Testo Tutti/All e Solo/Only: stesso spostamento (a destra per il
      letter-spacing di coda, in giu per la centratura ottica del maiuscoletto).
      Regole tenute separate per eventuali tarature per-pulsante future. */
@@ -1983,19 +1934,8 @@ html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#earths
    il centro-box dell'icona coincide con quello della checkbox (offset azzerato). */
 .admin-flags-row .admin-flag-chk > span { display:flex;align-items:center; }
 .admin-flags-row .admin-flag-chk img { display:block;transform:none; } /* annulla i nudge verticali si-* (anelli): qui il flex centra da sé */
-/* GRIGLIA dei badge (dalla v3.93): su desktop 12 colonne regolari su due
-   righe, con le colonne sovrapposte e i bordi allineati (prima e ultima
-   colonna di entrambe le righe combaciano); 'Apocrifo' occupa i DUE spazi a
-   destra della seconda riga (grid-column 11/13), liberati dalla v7.29 togliendo
-   il Re 'in carica' (king_high_now) dai badge admin: prima erano 23 badge
-   (riga2 piena fino a col11) e l'apo scendeva a una terza riga; ora 22 badge
-   (riga2 fino a col10) e l'apo entra nei due slot 11-12. Su mobile resta il
-   wrap fluido, con 'Apocrifo' a tutta riga. */
-.admin-apo-chk { justify-content:center;margin-top:0.7rem;flex-basis:100%; }
-.admin-apo-chk > span:last-child { white-space:nowrap; }
 @media (min-width:769px) {
   .admin-flags-row { display:grid;grid-template-columns:repeat(12,1fr);gap:0.6rem 0.3rem;justify-items:start; }
-  .admin-apo-chk { grid-column:11 / 13;margin-top:0;flex-basis:auto;justify-content:start; }
 }
 .admin-input,.admin-textarea { background:var(--ink-deep);border:1px solid var(--gold-deep);border-radius:4px;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:0.45rem 0.6rem;outline:none;box-sizing:border-box;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
 .admin-input:focus,.admin-textarea:focus { border-color:var(--gold-bright); }
@@ -2061,11 +2001,6 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name.name-tight > .rank-flags { margin-left:0; margin-right:0.3em; }
   .rank-name.name-tight > .rank-name-text { margin-right:0.24em; }
   .rank-name.name-tight > .rank-tipi { gap:0.3em; }
-  /* Card apocrife: le etichette vanno a capo SOLO quando collidono davvero con
-     la pill 'Solo HoME' in alto a destra (classe .apo-wrap, assegnata da
-     reflowApoLabels misurando riga per riga). Con nomi corti (es. Duilin,
-     Penlod) resta lo spazio per tenerle in coda al nome, come le card ordinarie. */
-  .rank-item.apocrifo.apo-wrap .rank-name > .rank-tipi { display:flex; margin-top:0.3em; }
   .modal-body { padding:1.8rem 1.2rem; }
   .modal-close { top:14px; right:14px; }
   .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
@@ -2276,9 +2211,6 @@ html[data-theme="light"] .rank-item.animale:hover, html[data-theme="light"] .ran
    fa scendere l'etichetta .type-beast (#7d590b) a 4.48:1, sotto AA. Scurita a
    #6d4a05 (5.6:1 sul tan) solo sulle card animali; bordo = testo @0.8. */
 html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-color:rgba(109,74,5,0.8); }
-html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
-html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-within { background: rgba(236,236,239,0.85); }
-html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
 html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
@@ -2340,7 +2272,6 @@ html[data-theme="light"] footer p { color: #2e2e2e; }
 html[data-theme="light"] .type-man { background:rgba(156,124,58,0.12); border-color:rgba(124,97,40,0.8); color:#7c6128; }
 html[data-theme="light"] .type-dragon { background:rgba(185,0,0,0.10); border-color:rgba(190,0,0,0.8); color:#be0000; }
 html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
-html[data-theme="light"] .rank-item.apocrifo .pill-home { color:#4b4c56; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
 html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#445d64; }
@@ -2568,7 +2499,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.02</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.03</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4686,27 +4617,23 @@ CATS.forEach(function(c){ FILTER_DEFAULT[c] = filterState[c]; });
 // Permalink della vista (forma BARE, senza 'cat='): la query è direttamente il
 // token. ?x = tutte le categorie; ?<bitmask> = un carattere 0/1 per categoria
 // nell'ordine di CATS (es. ?01 → soli draghi; ?1 → soli uomini), zeri finali
-// omessi; un bit IN PIÙ, se 1, accende il catalogo esteso (es. ?101 = soli
-// uomini + esteso). Maschera tutta-zero = ignorata.
+// omessi. Maschera tutta-zero = ignorata.
 // ⚠️ La larghezza si ricava da CATS.length e NON è scritta a mano: nel motore di
-// provenienza le categorie erano nove e i due numeri erano cablati (9 e 10),
-// quindi con due categorie un link condiviso si leggeva sbagliato.
+// provenienza le categorie erano nove e il numero era cablato, quindi con due
+// categorie un link condiviso si leggeva sbagliato.
 // Forme LEGACY ancora lette: ?cat=x|2 / ?tutte / ?all (tutte), ?cat=<bitmask>,
-// ?cat=key1,key2,... (chiavi), ?a=1 (catalogo esteso). buildShareUrl genera la
-// forma bare. Vale SOLO all'avvio (lo stato non è persistito). È il tasto 'copia
-// link' del Pannello a generare questi URL.
-var showApocrifi = false;
+// ?cat=key1,key2,... (chiavi). buildShareUrl genera la forma bare. Vale SOLO
+// all'avvio (lo stato non è persistito). È il tasto 'copia link' del Pannello a
+// generare questi URL.
 (function(){
   try {
     var bare = (window.location.search || '').replace(/^\?/, '');
     var qs = new URLSearchParams(window.location.search);
-    var NBIT = CATS.length; // bit delle categorie; il bit NBIT+1 è il catalogo esteso
+    var NBIT = CATS.length; // un bit per categoria, nell'ordine di CATS
     if (bare === 'x') {
       CATS.forEach(function(c){ filterState[c] = true; });
-    } else if (new RegExp('^[01]{1,' + (NBIT + 1) + '}$').test(bare)) {
-      var catBits = bare.slice(0, NBIT);
-      if (catBits.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = catBits.charAt(i) === '1'; });
-      if (bare.length > NBIT && bare.charAt(NBIT) === '1') showApocrifi = true;
+    } else if (new RegExp('^[01]{1,' + NBIT + '}$').test(bare)) {
+      if (bare.indexOf('1') !== -1) CATS.forEach(function(c, i){ filterState[c] = bare.charAt(i) === '1'; });
     } else if (qs.has('tutte') || qs.has('all')) {
       CATS.forEach(function(c){ filterState[c] = true; });
     } else if (qs.has('cat')) {
@@ -4721,7 +4648,6 @@ var showApocrifi = false;
         if (valid.length) CATS.forEach(function(c){ filterState[c] = valid.indexOf(c) !== -1; });
       }
     }
-    if (qs.get('a') === '1') showApocrifi = true; // legacy: apocrifi via ?a=1
   } catch (e) {}
 })();
 
@@ -4735,11 +4661,10 @@ var GENDER_ICON = {
   m: '<img class="genere-svg genere-svg--m" src="icons/Maschio.webp" title="%L%" alt="%L%">'
 };
 
-// Predicato di visibilità UNICO (filtri categoria + interruttore Apocrifi):
-// condiviso da renderList, visiblePos e stepVisible, così la posizione nella
-// modale e la navigazione con le frecce restano sempre coerenti con la lista.
+// Predicato di visibilità UNICO (filtri categoria + filtro badge): condiviso da
+// renderList, visiblePos e stepVisible, così la posizione nella modale e la
+// navigazione con le frecce restano sempre coerenti con la lista.
 function isVisibile(p) {
-  if (p.apocrifo && !showApocrifi) return false; // catalogo esteso: visibile solo con l'interruttore Apocrifi
   if (badgeFilter.size) {
     var hit = false;
     badgeFilter.forEach(function(row){
@@ -4759,7 +4684,6 @@ function visibleCountWithBadgeSet(rowSet) {
   var n = 0;
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
-    if (p.apocrifo && !showApocrifi) continue;
     if (rowSet.size) {
       var hit = false;
       rowSet.forEach(function(row){ if (!hit) BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; }); });
@@ -4778,12 +4702,11 @@ function visibleCountWithBadgeSet(rowSet) {
 // portatori nelle categorie tornerebbero erroneamente attivabili (bug v7.40:
 // dopo un filtro, tutte le righe prima spente 'riapparivano'). Le righe già
 // attive restano sempre cliccabili (si possono spegnere), quindi mai disabilitate.
-// Vero se ALMENO un personaggio nelle categorie attive (rispettando l'apocrifi)
-// porta uno dei badge della riga. Base condivisa da disabilitazione e potatura.
+// Vero se ALMENO un personaggio nelle categorie attive porta uno dei badge
+// della riga. Base condivisa da disabilitazione e potatura.
 function rowHasMembersInCats(row) {
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
-    if (p.apocrifo && !showApocrifi) continue;
     if (!filterState[categoria(p)]) continue;
     var hit = false;
     BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; });
@@ -4795,7 +4718,7 @@ function rowHasMembersInCats(row) {
 function badgeRowNoMembersInCats(row) {
   return !badgeFilter.has(row) && !rowHasMembersInCats(row);
 }
-// Potatura al cambio categoria/apocrifi (fix v7.45): un filtro badge ATTIVO che
+// Potatura al cambio categoria (fix v7.45): un filtro badge ATTIVO che
 // non ha più portatori nelle categorie attive va DISATTIVATO da sé (altrimenti
 // resta bloccato dando lista vuota, e non lo si riesce più a togglare). Chiamata
 // a ogni applyFilter, prima del render.
@@ -4937,18 +4860,10 @@ function renderList() {
       // Card base con tinta/bordo terra (tan Leggero), non una variante .divine.
       classes += ' animale';
     }
-    if (p.apocrifo) classes += ' apocrifo';
     // Classe-colore card (cardcolor): governa SFONDO + bordino. Sostituisce il
     // colore-da-Classe (Crepuscolari/Angeliche/...): la Classe resta solo come
     // logica (filtri/raggruppamenti), non colora più la card.
     classes += ' cc-' + cardFam;
-    // Pill 'Solo HoME/NoME' (catalogo esteso): in alto a destra della card.
-    var apoPill = '';
-    if (p.apocrifo) {
-      var apoSrc = (typeof p.apocrifo === 'string') ? p.apocrifo : 'HoME';
-      var apoTxt = currentLang === 'it' ? ('Solo ' + apoSrc) : (apoSrc + '-only');
-      apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + escapeHtml(apoTxt) + '</span>';
-    }
     // Voci 'custom' (Modifica mirata): le due terne per-tema arrivano inline
     // (--ccdark/--cclight) e le regole .cc-custom iniettate le mappano su --ccrgb
     // per tema (la card e la striscia la ereditano). Un solo colore (legacy) =
@@ -4960,7 +4875,7 @@ function renderList() {
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
       // sul layout), colore dal contorno dell'etichetta tipo (2a se più d'una).
       // Spessore 4px normali / 8px podio via CSS (.vis-top .rank-strip).
-      '<span class="rank-strip" aria-hidden="true"></span>' + apoPill +
+      '<span class="rank-strip" aria-hidden="true"></span>' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
         '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
@@ -5078,26 +4993,6 @@ function joinBipartite(parts) {
   if (parts.length < 2) return parts.join(' | ');
   return '<span class="bp-a">' + parts[0] + '</span><span class="bp-sep"><i class="bp-bar"></i></span><span class="bp-b">' + parts[1] + '</span>';
 }
-/* Etichette delle card apocrife: in linea al nome se c'è spazio, a capo solo se
-   collidono con la pill 'Solo HoME' (assoluta, in alto a destra). Solo mobile
-   (≤480px): lì la riga del nome è in flusso inline e le etichette scorrerebbero
-   SOTTO la pill. Si misura in stato inline e si aggiunge .apo-wrap solo a chi
-   sovrappone la pill; i nomi corti (Duilin, Penlod) restano in linea. */
-function reflowApoLabels() {
-  var mobile = window.matchMedia('(max-width:480px)').matches;
-  var items = document.querySelectorAll('#rank-list .rank-item.apocrifo');
-  for (var i = 0; i < items.length; i++) {
-    var it = items[i];
-    it.classList.remove('apo-wrap');
-    if (!mobile) continue;
-    var tipi = it.querySelector('.rank-name > .rank-tipi');
-    var pill = it.querySelector('.pill-home');
-    if (!tipi || !pill || !tipi.children.length) continue;
-    var t = tipi.getBoundingClientRect(), p = pill.getBoundingClientRect();
-    // Sovrapposizione su entrambi gli assi (stessa riga della pill + invasione a destra).
-    if (t.right > p.left - 4 && t.left < p.right && t.top < p.bottom && t.bottom > p.top) it.classList.add('apo-wrap');
-  }
-}
 // Linee mediane di allineamento sulla pagina reale (tasto '.', ADMIN-only, dalla
 // v11.80): una riga tratteggiata a metà del maiuscoletto del nome di ogni card, per
 // giudicare l'allineamento ottico delle icone-badge come nell'editor. Attiva solo
@@ -5172,7 +5067,7 @@ function toggleCardMidlines() {
   list.classList.toggle('show-midlines', midlinesOn);
   if (midlinesOn) placeCardMidlines();
 }
-function reflowRows() { tightenNames(); optimizeBipartite(); reflowApoLabels(); if (midlinesOn) placeCardMidlines(); }
+function reflowRows() { tightenNames(); optimizeBipartite(); if (midlinesOn) placeCardMidlines(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
@@ -5191,8 +5086,7 @@ function visiblePos(idx) {
   return n;
 }
 // Prossimo/precedente indice visibile, per la navigazione con le frecce
-// (gli indici nascosti dai filtri o dall'interruttore Apocrifi vanno
-// saltati, non mostrati).
+// (gli indici nascosti dai filtri vanno saltati, non mostrati).
 function stepVisible(from, dir) {
   for (var i = from + dir; i >= 0 && i < dati.length; i += dir)
     if (isVisibile(dati[i])) return i;
@@ -5825,11 +5719,11 @@ var TYPE_LABEL = {
   en: { 'type-man':'Men', 'type-dragon':'Dragons' }
 };
 var CTRL_I18N = {
-  it: { cat:'Categorie', close:'Chiudi', all:'Tutti', apocrifi:'Apocrifi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
+  it: { cat:'Categorie', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
         dSave:'Salva', dKeep:'Chiudi', dRestore:'Annulla le modifiche', exportLabel:'Esporta',
         introAdmin:"Funzionalità solo per amministratori: inserisci la password. Se sei un visitatore, usa il tasto 'Esporta' per salvare la tua classifica personale." },
-  en: { cat:'Categories', close:'Close', all:'All', apocrifi:'Apocrypha', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
+  en: { cat:'Categories', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
         confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state',
         dSave:'Save', dKeep:'Close', dRestore:'Discard changes', exportLabel:'Export',
         introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
@@ -5853,8 +5747,8 @@ function controlPanelHTML() {
   var infoLbl = currentLang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var infoBtn = '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>';
   // Tasto Riordina (↑↓): SOLO toolbar desktop, a sinistra di Info. Entra in
-  // modalità riordino forzando Apocrifi + tutte le categorie (la classifica è
-  // assoluta) e mostra le maniglie. In riordino diventa × (scarta modifiche,
+  // modalità riordino forzando tutte le categorie (la classifica è assoluta) e
+  // mostra le maniglie. In riordino diventa × (scarta modifiche,
   // con conferma). 'Tutti' resta separato (tocca solo le categorie).
   var REORDER_ICON = '<svg viewBox="0 0 24 24"><path d="M8 4v16M8 4 5 7.5M8 4l3 3.5"/><path d="M16 20V4M16 20l-3-3.5M16 20l3-3.5"/></svg>';
   var REORDER_X_ICON = '<svg viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></svg>';
@@ -5902,7 +5796,7 @@ function controlPanelHTML() {
   // categorie ha la stessa larghezza fra le lingue: senza, il bottone 'Tutti' e
   // la colonna 'Solo' scivolavano al cambio lingua (jitter mobile e desktop).
   var catHead = '<span class="ctrl-h"><span class="ctrl-h-face">' + T.cat + '</span><span class="ctrl-h-alt" aria-hidden="true">' + To.cat + '</span></span>';
-  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head">' + catHead + '<button type="button" class="ctrl-apo' + (showApocrifi ? ' on' : '') + '" id="ctrl-apo" role="switch" aria-checked="' + (showApocrifi ? 'true' : 'false') + '" title="' + T.apocrifi + '"><span class="apo-sw"></span><span class="apo-lbl"><span class="apo-lbl-face">' + T.apocrifi + '</span><span class="apo-lbl-alt" aria-hidden="true">' + To.apocrifi + '</span></span></button><button class="ctrl-reset" id="ctrl-reset"><span class="rst-face">' + T.all + '</span>' + BTN_MEAS + '</button></div>';
+  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head">' + catHead + '<button class="ctrl-reset" id="ctrl-reset"><span class="rst-face">' + T.all + '</span>' + BTN_MEAS + '</button></div>';
   var soloTxt = currentLang === 'it' ? 'solo' : 'only';
   var soloInner = '<span class="solo-face">' + soloTxt + '</span>' + BTN_MEAS;
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
@@ -6199,16 +6093,9 @@ function wireControlPanel() {
     resetBtn.addEventListener('click', doReset);
     resetBtn.addEventListener('touchend', doReset); // iOS: touchend garantisce risposta anche dentro bottom sheet scrollabile
   }
-  // Interruttore Apocrifi (catalogo esteso HoME/NoME): indipendente dalle categorie.
-  var apoBtn = document.getElementById('ctrl-apo');
-  if (apoBtn) {
-    var doApo = function(e){ if (e.cancelable) e.preventDefault(); showApocrifi = !showApocrifi; setTimeout(applyFilter, 0); };
-    apoBtn.addEventListener('click', doApo);
-    apoBtn.addEventListener('touchend', doApo);
-  }
   // Tasto Riordina/Scarta (↑↓ / ×): solo desktop. Fuori dal riordino entra in
-  // modalità riordino (enterReorder forza Apocrifi + categorie); in riordino
-  // chiede conferma e scarta la bozza-ordine (chiavi arda-ranking-*) + reload.
+  // modalità riordino (enterReorder forza tutte le categorie); in riordino
+  // chiede conferma e scarta la bozza-ordine (chiavi earthsea-ranking-*) + reload.
   panel.querySelectorAll('.ctrl-reorder-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       if (reorderMode) confirmDiscardReorder();
@@ -6261,11 +6148,10 @@ function wireControlPanel() {
 }
 
 // URL della vista corrente, in forma BARE (dalla v1.60): ?x se sono attive
-// TUTTE le categorie (apocrifi spenti), nessun parametro se è la vista di
-// default, altrimenti ?<bitmask> (un bit 0/1 per categoria nell'ordine di
-// CATS + 10° bit Apocrifi, zeri finali omessi: es. ?101). Il loader rilegge
-// queste forme (più le legacy ?cat=..., ?tutte, ?all, ?a=1, non più emesse),
-// così riaprire il link riproduce esattamente la vista.
+// TUTTE le categorie, nessun parametro se è la vista di default, altrimenti
+// ?<bitmask> (un bit 0/1 per categoria nell'ordine di CATS, zeri finali omessi:
+// es. ?01). Il loader rilegge queste forme (più le legacy ?cat=..., ?tutte,
+// ?all, non più emesse), così riaprire il link riproduce esattamente la vista.
 // ── Permalink degli overlay condivisibili (note, risorse, nota sulla
 //    traduzione) ──
 // Forma BARE come i permalink delle categorie (?x, ?101): la query È il token.
@@ -6316,12 +6202,12 @@ function makeShareBtn(slug) {
 function buildShareUrl() {
   var base = location.origin + location.pathname;
   var active = CATS.filter(function(c){ return filterState[c]; });
-  // 'tutte le categorie' senza apocrifi: forma bare ?x.
-  if (active.length === CATS.length && !showApocrifi) return base + '?x';
+  // 'tutte le categorie': forma bare ?x.
+  if (active.length === CATS.length) return base + '?x';
   var isDefault = CATS.every(function(c){ return !!filterState[c] === !!FILTER_DEFAULT[c]; });
-  if (isDefault && !showApocrifi) return base;
-  // bitmask bare: 9 bit categorie + 10° bit apocrifi, zeri finali omessi.
-  var bits = (CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('') + (showApocrifi ? '1' : '')).replace(/0+$/, '');
+  if (isDefault) return base;
+  // bitmask bare: un bit per categoria, zeri finali omessi.
+  var bits = CATS.map(function(c){ return filterState[c] ? '1' : '0'; }).join('').replace(/0+$/, '');
   return bits ? base + '?' + bits : base;
 }
 
@@ -6377,7 +6263,6 @@ function fallbackCopy(text) {
 function enterReorder() {
   badgeFilter.clear(); // il riordino esige la lista completa (come le categorie tutte attive)
   CATS.forEach(function(c){ filterState[c] = true; });
-  showApocrifi = true; // classifica ASSOLUTA: il riordino opera sull'elenco completo (Apocrifi inclusi)
   reorderMode = true;
   var panel = document.getElementById('ctrl-panel');
   if (panel && panel.classList.contains('open')) toggleControlPanel();
@@ -6979,7 +6864,7 @@ function enableDragDrop() {
 
   // Le maniglie compaiono SOLO in modalità riordino (desktop): il riordino è
   // ora separato dalla visualizzazione. La classifica è ASSOLUTA, perciò
-  // enterReorder forza Apocrifi + tutte le categorie. Il tasto ↑↓ del Pannello
+  // enterReorder forza tutte le categorie. Il tasto ↑↓ del Pannello
   // entra in riordino; 'Tutti' tocca solo le categorie, non più il riordino.
   const gateOpen = reorderMode && !isMobileViewport();
   list.querySelectorAll('.drag-handle').forEach(function(h){ h.remove(); });
@@ -6991,8 +6876,8 @@ function enableDragDrop() {
   list.querySelectorAll('.rank-item').forEach((item) => {
     // NON sovrascrivere item.dataset.idx: è l'indice REALE in `dati` impostato
     // da renderList. Serve a onPointerUp per rimappare la posizione visiva sullo
-    // slot reale quando la lista resa è un sottoinsieme (apocrifi nascosti o
-    // categorie filtrate). Sovrascriverlo con l'indice visivo rompeva il riordino.
+    // slot reale quando la lista resa è un sottoinsieme (categorie filtrate).
+    // Sovrascriverlo con l'indice visivo rompeva il riordino.
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
     handle.style.cssText = 'position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);cursor:grab;color:var(--gold);opacity:0.22;transition:opacity 0.2s;touch-action:none;padding:0.35rem;display:flex;align-items:center;';
@@ -7114,7 +6999,7 @@ function onPointerUp() {
 
   if (startIdx !== currentIdx) {
     // startIdx/currentIdx sono posizioni VISIVE: la lista resa può essere un
-    // sottoinsieme di `dati` (apocrifi nascosti, categorie filtrate). Si leggono
+    // sottoinsieme di `dati` (categorie filtrate). Si leggono
     // gli indici REALI in `dati` dalle card (data-idx, impostato da renderList,
     // in ordine crescente) e si riordina solo tra le voci visibili, lasciando le
     // voci nascoste nei loro slot. Senza questo, lo splice colpiva voci sbagliate.
@@ -7514,9 +7399,6 @@ function showAdminEditor() {
         // la checkbox lo mantiene se resta spuntata, lo rimuove se deselezionata.
         if (chkEl) { if (chkEl.checked) p[k] = (p[k] === 'presunto' ? 'presunto' : true); else delete p[k]; }
       });
-      // catalogo esteso «Apocrifi»: preserva un'eventuale stringa-fonte ('HoME'/'NoME'), altrimenti true/assente
-      const apoChkEl = document.getElementById('ae-' + i + '-apocrifo');
-      if (apoChkEl) { if (apoChkEl.checked) p.apocrifo = (typeof p.apocrifo === 'string' ? p.apocrifo : true); else delete p.apocrifo; }
     });
     saveBtn.textContent = 'Salvataggio...';
     const res = await doCommit('admin: modifica testi personaggi', next);
@@ -7713,21 +7595,6 @@ function showAdminEditor() {
       lbl.appendChild(chk); lbl.appendChild(iconEl);
       flagsRow.appendChild(lbl);
     });
-    // Catalogo esteso «Apocrifi» (personaggio attestato solo in HoME/NoME):
-    // dentro la griglia dei flag, nei DUE spazi a destra della seconda riga
-    // (dalla v7.29, liberati togliendo il Re 'in carica' king_high_now dai
-    // badge admin; vedi CSS .admin-apo-chk, grid-column 11/13).
-    const apoRow = document.createElement('label');
-    apoRow.className = 'admin-flag-chk admin-apo-chk';
-    apoRow.title = 'Fonte apocrifa: personaggio attestato solo nella HoME/NoME';
-    const apoChk = document.createElement('input');
-    apoChk.type = 'checkbox';
-    apoChk.id = 'ae-' + i + '-apocrifo';
-    apoChk.checked = !!p.apocrifo;
-    const apoTxt = document.createElement('span');
-    apoTxt.textContent = 'Apocrifo';
-    apoRow.appendChild(apoChk); apoRow.appendChild(apoTxt);
-    flagsRow.appendChild(apoRow);
     card.appendChild(flagsRow);
 
     // Indicatore 'campo modificato nella sessione': ogni input/textarea memorizza
