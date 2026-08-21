@@ -43,7 +43,7 @@
   --gold: #8b8b8b;
   --gold-bright: #bbbbbb;
   --gold-deep: #555555;
-  --name: #d2d2d2; --name-hover: #f2f2f2;
+  --name: #d2d2d2;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -353,7 +353,6 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rank-name-text:hover { color: var(--name-hover); }
 }
 
 .rank-item:hover::before { opacity:1; }
@@ -395,7 +394,9 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   flex-wrap: wrap;
   gap: 0.32em;
 }
-.rank-name-text { cursor:pointer; transition:color 0.2s; }
+/* Il nome NON è cliccabile a Terramare (decisione dell'utente, 2026-08-21):
+   niente cursore a manina e niente colore al passaggio, che prometterebbero
+   un'azione che non c'è. */
 /* NOMI INCISI (dalla v12.24): ombra tipografica impercettibile sul nome. In tema
    CHIARO è un letterpress (lume bianco sotto + velo scuro sopra: il nome sembra
    stampato nella carta); in SCURO un semplice stacco morbido. Non tocca misure né
@@ -1681,52 +1682,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none;
 }
 
-.modal-rank {
-  font-family:'Cinzel',serif; font-weight:900; font-size:0.85rem;
-  letter-spacing:0.3em; color:var(--gold); text-transform:uppercase; margin-bottom:0.5rem;
-}
-
-.modal-name {
-  font-family:'Cinzel Decorative',serif; font-weight:900;
-  font-size:clamp(1.8rem,6vw,2.6rem); color:var(--parchment);
-  line-height:1.1; margin-bottom:0.4rem; letter-spacing:0.01em;
-}
-
-/* Riga del nome. ⚠️ In 'I Grandi di Arda' teneva anche il collegamento alla voce
-   esterna: qui il posto è libero (vedi il commento nel markup di .modal-head). */
-.modal-head { display:flex; align-items:center; justify-content:space-between; gap:0.8rem; margin-bottom:0.4rem; }
-.modal-head .modal-name { margin-bottom:0; }
-
-.modal-source {
-  font-family:'EB Garamond',serif; font-style:italic;
-  font-size:clamp(1rem,2.5vw,1.15rem); color:var(--gold-bright);
-  margin-bottom:1.5rem; border-bottom:1px solid rgba(104,144,168,0.3); padding-bottom:1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.25em;
-}
-
-.modal-source .modal-author {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-}
-
-.modal-section { margin-bottom:1.4rem; }
-
-.modal-section p { font-family:'EB Garamond',serif; font-size:1.02rem; line-height:1.7; color:var(--parchment); }
-
-.modal-quote {
-  font-family:'EB Garamond',serif; font-style:italic;
-  font-size:1rem; color:var(--parchment-dim);
-  padding:1rem 1.4rem; border-left:2px solid var(--gold);
-  margin-top:1.2rem; background:rgba(255,255,255,0.05);
-  /* preserva gli a capo (\n) nelle citazioni in versi, es. Nevecrino; il testo
-     resta inserito via textContent, quindi niente <br>. */
-  white-space:pre-line;
-}
-
 footer {
   text-align:center; padding:4rem 1.5rem 3rem;
   border-top:1px solid rgba(104,144,168,0.15); margin-top:4rem;
@@ -2117,7 +2072,7 @@ html[data-theme="light"] {
     --gold: #565656;
     --gold-bright: #6c6c6c;
     --gold-deep: #3b3b3b;
-    --name: #373737; --name-hover: #6f6f6f;
+    --name: #373737;
   }
   /* Genealogia (.bp-b in .rank-desc): la riga descrizione ha opacity 0.72,
      che in tema chiaro fa scendere il color-mix pergamena+oro a ~4.36:1
@@ -2219,7 +2174,6 @@ html[data-theme="light"] .leg-gender .leg-g-half:first-child { border-right-colo
 html[data-theme="light"] .rank-name {
     font-weight: 700;
   }
-/* #4: hover nome gestito da var(--name-hover) */
 html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.1rem,3.4vw,1.6rem); }
 html[data-theme="light"] .rank-title {
     color: #2e2e2e;
@@ -2245,25 +2199,6 @@ html[data-theme="light"] .modal-close {
     color: #253d58;
   }
 html[data-theme="light"] .modal-close:hover { background: #3a5878; color: #f6f6fa; }
-html[data-theme="light"] .modal-rank { color: #3a5878; font-weight: 700; }
-html[data-theme="light"] .modal-name { color: #12141e; }
-html[data-theme="light"] .modal-source {
-    color: #253d58;
-    border-bottom-color: #4a7090;
-  }
-html[data-theme="light"] .modal-section p { color: #12141e; }
-html[data-theme="light"] .modal-quote {
-    color: #2a2d3e;
-    border-left-color: #4a7090;
-    background: rgba(0,0,0,0.05);
-  }
-/* Accento cardcolor scheda: i TESTI (rank/source/chiudi) usano --cctext, il
-   colore-testo AA calcolato a runtime in openModal (dalla v9.62): tiene la tinta
-   della famiglia e la rende contrastata sul fondo modale, o resta il colore
-   stesso se già AA. I BORDI restano col colore famiglia (--ccrgb, decorativi).
-   Sostituisce la vecchia lista-oro statica :not(...) (rimossa): ora vale per
-   ogni famiglia, anche nuova o rinominata, in entrambi i temi. */
-
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
 html[data-theme="light"] footer p { color: #2e2e2e; }
 
@@ -2370,19 +2305,11 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
    tinta (v13.98, richiesta dell'utente): il rimando è il titolo, il prefisso lo
    introduce. Resta cliccabile tutta la riga; sottolineatura e anello di focus
    vivono sul titolo, così l'indicatore di focus è ben visibile. */
-.modal-noteref { margin-top:1.1em; line-height:1.5; }
-.modal-noteref-link { cursor:pointer; }
-.modal-noteref-link:focus-visible { outline:none; }
-.modal-noteref-link strong { color:var(--gold-bright); border-bottom:1px dotted transparent; transition:border-color .2s; }
-.modal-noteref-link:hover strong, .modal-noteref-link:focus-visible strong { border-bottom-color:currentColor; }
 /* Nomi cliccabili nelle note: ognuno nella tinta della PROPRIA famiglia colore
    (v13.96, richiesta dell'utente). Le due terne arrivano inline dallo span
    (`--nl-d` / `--nl-l`), già rese AA sul fondo della modale: servono entrambe
    perché il tasto T non ricostruisce la nota. Il grigio resta come fallback se
    un nome non ha famiglia (nome non in classifica: lì è <strong>, non un link). */
-.note-charlink { display:inline; background:none; border:none; padding:0; margin:0; font:inherit; font-weight:700; color:var(--nl-d,var(--gold-bright)); cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .2s; }
-html[data-theme="light"] .note-charlink { color:var(--nl-l,var(--gold-bright)); }
-.note-charlink:hover, .note-charlink:focus-visible { border-bottom-color:currentColor; outline:none; }
 /* Rimando 'Leggi anche' in fondo a una nota, verso una nota correlata. */
 .note-viewer-box .note-seealso { margin-top:1.5em; padding-top:.8em; border-top:1px solid rgba(154,192,216,0.22); opacity:.92; }
 /* Rimando nota -> nota: l'accento della modale (v13.96), quindi eredita anche la
@@ -2499,7 +2426,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.03</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.04</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2523,27 +2450,6 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   <p id="footer-links" style="color:var(--gold-bright);margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and notes</button> ✦</p>
   <p id="footer-text">Il potere, a Terramare, comincia da un nome.</p>
 </footer>
-
-<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-name">
-  <div class="modal">
-    <button class="modal-close" id="modal-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
-    <div class="modal-body" id="modal-body">
-      <div class="modal-rank" id="modal-rank"></div>
-      <div class="modal-head">
-        <div class="modal-name" id="modal-name" role="heading" aria-level="2"></div>
-        <!-- ⚠️ Tolto il collegamento alla voce esterna che 'I Grandi di Arda' ha su Tolkien
-             Gateway: per Terramare non c'è un equivalente di pari autorità, e il posto
-             resta libero finché non si decide se e dove mandare il lettore. -->
-      </div>
-      <div class="modal-source" id="modal-source"></div>
-      <div class="modal-section">
-        <p id="modal-info"></p>
-        <div class="modal-noteref" id="modal-noteref" hidden></div>
-      </div>
-      <div class="modal-quote" id="modal-quote"></div>
-    </div>
-  </div>
-</div>
 
 <script src="dati.js"></script>
 <script>
@@ -3887,16 +3793,14 @@ var i18n = {
     title: 'I Grandi di Terramare',
     subtitle: "I grandi dell'arcipelago di Terramare, dagli uomini ai draghi",
     intro: "Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare, e chiamarla significa averne parte.",
-    footer: "Il potere, a Terramare, comincia da un nome.",
-    position: 'Posizione'
+    footer: "Il potere, a Terramare, comincia da un nome."
   },
   en: {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Earthsea',
     subtitle: 'The great ones of the Earthsea archipelago, from men to dragons',
     intro: "Mages, witches, kings, dragons and common folk of the archipelago. In Earthsea power takes many forms, and nearly always runs through names: to know the true name of a thing is to be able to call it, and to call it is to have a part in it.",
-    footer: "Power, in Earthsea, begins with a name.",
-    position: 'Position'
+    footer: "Power, in Earthsea, begins with a name."
   }
 };
 
@@ -3924,9 +3828,6 @@ function setLang(lang) {
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
-  // Se una scheda è aperta, ricarica la modale nella nuova lingua (la parte
-  // admin non usa questa modale, quindi resta esclusa di fatto).
-  if (currentIdx !== null && document.getElementById('modal-backdrop').classList.contains('active')) openModal(currentIdx);
   // Qualsiasi altra modale aperta (note, risorse, image viewer, riordino...)
   // si aggiorna nella nuova lingua tramite la callback che ha registrato.
   if (typeof langRefresh === 'function') langRefresh();
@@ -4222,25 +4123,6 @@ function ccAaText(fg, bg, target) {
     // NB: l'ACCENSIONE della striscia (fx-glow) stava qui fino alla v12.38. Dalla
     // v12.39 è PARAMETRICA e vive in injectFxRules(), che si ri-inietta a ogni
     // modifica delle manopole; qui resterebbe congelata alla taratura di default.
-    // ── Accento cardcolor sulla SCHEDA personaggio (dalla v8.77) ──────────────
-    // La .modal della scheda riceve cc-<fam> da openModal. BORDI (decorativi):
-    // sempre col colore famiglia, in entrambi i temi. TESTI/ICONE (rank, source,
-    // chiudi): col colore famiglia qui; in tema CHIARO le famiglie non AA-safe
-    // ripiegano a gold via override statico (vedi CSS, regola .modal ...:not(...)).
-    '.modal[class*="cc-"]{border-color:rgba(var(--ccrgb),0.9)!important}',
-    '.modal[class*="cc-"]::before{border-color:rgba(var(--ccrgb),0.34)!important}',
-    '.modal[class*="cc-"] .modal-source{border-bottom-color:rgba(var(--ccrgb),0.32)!important}',
-    '.modal[class*="cc-"] .modal-quote{border-left-color:rgba(var(--ccrgb),0.85)!important}',
-    '.modal[class*="cc-"] .modal-rank{color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
-    '.modal[class*="cc-"] .modal-source{color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
-    '.modal[class*="cc-"] .modal-close{border-color:rgba(var(--ccrgb),0.9)!important;color:rgba(var(--cctext,var(--ccrgb)),1)!important}',
-    // Rimando 'Leggi anche -> nota' (v13.96, richiesta dell'utente): era l'unico
-    // accento della scheda rimasto grigio, mentre POSIZIONE, fonte e × sono in
-    // tinta famiglia dalla v8.77. Stessa --cctext, quindi stessa garanzia AA.
-    // ⚠️ Dalla v13.98 la tinta va sul SOLO titolo: il prefisso 'Leggi anche →'
-    // resta nel colore del testo (la sottolineatura segue con currentColor).
-    '.modal[class*="cc-"] .modal-noteref-link strong{color:rgba(var(--cctext,var(--ccrgb)),1)}',
-    '.modal[class*="cc-"] .modal-close:hover{background:rgba(var(--ccrgb),0.2)!important;border-color:rgba(var(--ccrgb),1)!important}',
     // Picker colore arrotondati (editor colori): i <input type=color> nativi non
     // rispettano border-radius sullo swatch interno; qui si stilano i pseudo
     // vendor. Iniettate via JS così il Nu Checker non si lamenta dei pseudo.
@@ -4737,7 +4619,12 @@ function renderList() {
     visN++;
     var isVisTop = visN <= 3;
     var nome = escapeHtml(currentLang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome));
-    var fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
+    // Prima apparizione (istruzione dell'utente, 2026-08-21): il ripiego vale nei
+    // DUE sensi, al contrario del resto dei campi bilingui. I titoli sono per ora
+    // quelli INGLESI presi dalla voce Wikipedia: finché le rese italiane non
+    // arrivano, la vista italiana mostra l'inglese invece di una riga vuota, e il
+    // campo `fonte` resta libero per il titolo italiano vero.
+    var fonte = currentLang === 'it' ? (p.fonte || p.fonte_en) : (p.fonte_en || p.fonte);
     var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
@@ -4878,7 +4765,7 @@ function renderList() {
       '<span class="rank-strip" aria-hidden="true"></span>' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        '<span class="rank-name"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
         rigaDesc +
         riga2 +
         '<span class="rank-title">' + titleYear + '</span>' +
@@ -4902,20 +4789,6 @@ function renderList() {
     list.classList.remove('list-animate');
   }
   list.innerHTML = html;
-
-  var items = list.querySelectorAll('.rank-item');
-  for (var j = 0; j < items.length; j++) {
-    (function(el) {
-      var dataIdx = parseInt(el.getAttribute('data-idx'));
-      var nameEl = el.querySelector('.rank-name-text');
-      if (nameEl) {
-        nameEl.addEventListener('click', function(e) { e.stopPropagation(); modalReturn = null; openModal(dataIdx); });
-        nameEl.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); modalReturn = null; openModal(dataIdx); }
-        });
-      }
-    })(items[j]);
-  }
   reflowRows();
 }
 
@@ -5075,200 +4948,6 @@ window.addEventListener('resize', function() {
 });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); });
 
-var currentIdx = null;
-
-// Posizione dinamica: numero d'ordine tra i soli personaggi visibili coi
-// filtri attuali (lo stesso numero mostrato in lista), non l'indice
-// assoluto in dati.
-function visiblePos(idx) {
-  var n = 0;
-  for (var i = 0; i <= idx; i++) if (isVisibile(dati[i])) n++;
-  return n;
-}
-// Prossimo/precedente indice visibile, per la navigazione con le frecce
-// (gli indici nascosti dai filtri vanno saltati, non mostrati).
-function stepVisible(from, dir) {
-  for (var i = from + dir; i >= 0 && i < dati.length; i += dir)
-    if (isVisibile(dati[i])) return i;
-  return null;
-}
-
-// Accento cardcolor della SCHEDA: la .modal eredita la famiglia della card
-// (cc-<fam>), da cui derivano bordo/filetto/rank/source/chiudi (dalla v8.77).
-// Le voci 'custom' (colore individuale) tengono il PROPRIO colore anche qui
-// (v13.97, segnalato dall'utente: 'come mai Lúthien ha questo colore così chiaro e
-// azzurro, diverso dal suo?'). Fino alla v13.96 ripiegavano sull'accento neutro
-// 'man' - un grigio-azzurro - per una cautela della v9.17: un colore arbitrario
-// non era garantito AA-safe sui testi della modale. ⚠️ Quella cautela è obsoleta
-// dalla v9.62: `--cctext` passa QUALUNQUE tinta per `ccAaText`, che le garantisce
-// il 4.5:1. Come la card, la scheda prende `cc-custom` + le due terne inline, e le
-// regole iniettate `.cc-custom` mappano `--ccrgb` sul tema.
-// ⚠️ Va richiamata anche al cambio di TEMA a scheda aperta (tasto `T`): --cctext è
-// calcolata sul fondo di UN tema, quindi restava del tema sbagliato.
-function setModalAccent(p) {
-  var modalEl = document.querySelector('#modal-backdrop > .modal');
-  if (!modalEl || !p) return;
-  var mf = familyOf(p), cp = (mf === 'custom') ? customPair(p) : null;
-  modalEl.className = 'modal cc-' + mf;
-  modalEl.style.setProperty('--ccdark', cp ? cp.dark : '');
-  modalEl.style.setProperty('--cclight', cp ? cp.light : '');
-  // Colore-testo AA (v9.62): tinta della famiglia, resa contrastata sul fondo
-  // modale del tema. I BORDI restano col colore famiglia (--ccrgb); i TESTI
-  // (rank/source/close) usano --cctext = versione AA-safe (o il colore stesso
-  // se già a contrasto). Rimpiazza la vecchia lista-oro statica.
-  var th = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-  var famHex = cp ? ccTripletToHex(cp[th])
-                  : ((CARDCOLORS.fam[mf] && CARDCOLORS.fam[mf][th]) ? CARDCOLORS.fam[mf][th] : '#9098a8');
-  modalEl.style.setProperty('--cctext', ccHexToTriplet(ccAaText(famHex, th === 'light' ? '#F4F4F4' : '#252525', 4.5)));
-}
-
-function openModal(idx, instant) {
-  currentIdx = idx;
-  var p = dati[idx];
-  var lang = currentLang;
-  setModalAccent(p);
-  var nome = lang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
-  var fonte = lang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
-  var info = lang === 'it' ? (p.descrizione || '') : (p.descrizione_en || p.descrizione || '');
-  var citazione = lang === 'it' ? p.citazione : (p.citazione_en || p.citazione);
-
-  document.getElementById('modal-rank').textContent = i18n[lang].position + ' ' + visiblePos(idx);
-  document.getElementById('modal-name').textContent = nome;
-  var pf = parseFonte(fonte);
-  var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
-  // titleYear e autore sono testo puro → escapati.
-  document.getElementById('modal-source').innerHTML =
-    '<span>' + titleYear + '</span>' +
-    '<span class="modal-author">' + escapeHtml(pf.author) + '</span>';
-  // La descrizione ammette SOLO i <br> come markup: si escapa tutto e si
-  // ripristinano i soli <br>, così il sink innerHTML non può eseguire nulla.
-  document.getElementById('modal-info').innerHTML =
-    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>').replace(/&lt;(\/?)em&gt;/gi, '<$1em>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  // Rimando cliccabile alla nota editoriale collegata (se il personaggio ne ha
-  // una in NOTE_BY_CHAR): '→ Nota Editoriale: <titolo>' apre il viewer.
-  var refEl = document.getElementById('modal-noteref');
-  var linkedNote = (typeof NOTE_BY_CHAR !== 'undefined') ? NOTE_BY_CHAR[p.nome] : null;
-  if (refEl) {
-    if (linkedNote) {
-      var refLbl = lang === 'it' ? 'Leggi anche' : 'See also';
-      var refTitle = lang === 'it' ? linkedNote.titleIt : linkedNote.titleEn;
-      // 'Leggi anche →' nel colore normale del testo, il TITOLO in grassetto e in
-      // tinta (v13.98, richiesta dell'utente): è il titolo il rimando, il prefisso
-      // è solo un'introduzione. Nelle note (`.note-seealso`) il prefisso stava già
-      // fuori dal link; qui era dentro, quindi si colorava anche lui.
-      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0"><span class="nr-pre">'
-        + escapeHtml(refLbl) + ' &rarr;</span> <strong>' + escapeHtml(refTitle) + '</strong></span>';
-      refEl.hidden = false;
-      var refLink = refEl.querySelector('.modal-noteref-link');
-      // Anche questo è un passaggio (scheda -> nota): si apre la finestra di
-      // dissolvenza rapida a mano, perché qui closeModal non ha modalReturn.
-      // La nota si apre DA questa scheda: la provenienza è questo personaggio.
-      var goNote = function() { NOTE_ACC_IDX = idx; modalReturn = null; modalXfadeWindow(); modalXfadeOut(document.getElementById('modal-backdrop')); closeModal(); noteReturn = function(){ openModal(idx); }; openNoteViewer(linkedNote); };
-      refLink.onclick = goNote;
-      refLink.onkeydown = function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goNote(); } };
-    } else {
-      refEl.hidden = true; refEl.innerHTML = '';
-    }
-  }
-  // citazione è testo puro: textContent azzera ogni rischio di injection.
-  // Se manca (alcune voci non hanno un verbatim attestato), si nasconde il
-  // blocco: evita il riquadro col bordo-oro vuoto.
-  var quoteEl = document.getElementById('modal-quote');
-  quoteEl.textContent = citazione || '';
-  quoteEl.style.display = citazione ? '' : 'none';
-  document.getElementById('modal-body').scrollTop = 0;
-  var bd = document.getElementById('modal-backdrop');
-  // Se la scheda era appena USCITA da un passaggio, il suo `.xout` è ancora addosso
-  // (lo tiene inerte): togliendolo si riapre subito interattiva.
-  bd.classList.remove('xout');
-  // instant=true (si arriva da una nota) oppure siamo dentro la finestra di un
-  // passaggio: dissolvenza velocissima e nessun movimento (v13.86). Prima era un
-  // salto secco (`no-anim`), che l'utente ha trovato brusco.
-  if (instant || MODAL_XFADE) modalXfadeMark(bd);
-  bd.classList.add('active');
-  lockPageScroll(true);
-  // Ricorda da dove si è aperta (per restituire il focus alla chiusura) e
-  // sposta il focus DOPO che il backdrop non è più visibility:hidden: un
-  // elemento nascosto non è focalizzabile, la focus() sincrona era un no-op
-  // e il Tab continuava a scorrere le card dietro la modale.
-  if (!modalOpener) modalOpener = document.activeElement;
-  setTimeout(function(){ document.getElementById('modal-close').focus(); }, 60);
-}
-
-var modalOpener = null;
-// Contenuto a cui tornare quando si chiude la scheda personaggio (es. la nota
-// da cui si è cliccato il link del nome): callback che lo riapre, o null (in
-// tal caso, chiudendo, si torna alla nuda lista, com'era prima).
-var modalReturn = null;
-// Contenuto a cui tornare quando si CHIUDE il viewer di una nota editoriale
-// (× / Esc / click sul backdrop): callback che lo riapre. Lo imposta chi apre
-// la nota, cioè la modale coi tre tasti (torna alla lista) o il rimando
-// '→ Nota Editoriale' di una scheda (torna a quella scheda). null = torna alla
-// pagina.
-var noteReturn = null;
-// Analogo per la nota 'Traduzione italiana' (showInfoNote): callback per
-// tornare alla modale 'Risorse e note' da cui la si è aperta. null = niente.
-var infoReturn = null;
-// Analogo per il viewer immagini (openImageViewer): callback per tornare alla
-// modale 'Risorse e note' alla chiusura (✕/Esc/backdrop/gesto indietro). null =
-// niente (immagine aperta senza una modale di provenienza).
-var imgvReturn = null;
-// Consumatori dello scroll-lock ancora attivi: se ce n'è almeno uno, NON
-// sbloccare (lo farà lui alla propria chiusura). Protegge lo sblocco differito
-// della scheda dal riattivarsi mentre un altro overlay/pannello è aperto.
-function scrollLockNeeded() {
-  var bd = document.getElementById('modal-backdrop');
-  var panel = document.getElementById('ctrl-panel');
-  return (bd && bd.classList.contains('active'))
-      || !!document.querySelector('.fab-modal-overlay')
-      || !!document.querySelector('.modal-backdrop.dyn-modal')
-      || !!document.getElementById('imgv')
-      || document.documentElement.classList.contains('admin-open')
-      || (panel && panel.classList.contains('open'));
-}
-function closeModal() {
-  var bd = document.getElementById('modal-backdrop');
-  // Si torna a una nota: è un passaggio, non una chiusura - la scheda resta dipinta
-  // e piena (modalXfadeOut) mentre la nota le dissolve sopra (modalXfadeWindow).
-  if (modalReturn) { modalXfadeWindow(); modalXfadeOut(bd); }
-  bd.classList.remove('active');
-  currentIdx = null;
-  // Restituisce il focus al punto di partenza (la card da cui si era aperta).
-  if (modalOpener && modalOpener.isConnected) { try { modalOpener.focus(); } catch (e) {} }
-  modalOpener = null;
-  // Se la scheda era stata aperta da una nota, la si riapre: lo scroll resta
-  // bloccato per l'intero giro (niente toggle sblocca/riblocca). Sincrono.
-  if (modalReturn) { var r = modalReturn; modalReturn = null; r(); return; }
-  // Chiusura verso la lista: sblocca lo scroll DOPO la dissolvenza del backdrop.
-  // Sbloccarlo subito farebbe ricomparire la barra di scorrimento mentre la
-  // modale sfuma, e il ricentramento la farebbe 'tremolare' di ~mezza barra.
-  var done = false;
-  var fin = function() {
-    if (done) return; done = true;
-    bd.removeEventListener('transitionend', onEnd);
-    if (!scrollLockNeeded()) lockPageScroll(false);
-  };
-  var onEnd = function(e) { if (e.target === bd && e.propertyName === 'opacity') fin(); };
-  bd.addEventListener('transitionend', onEnd);
-  setTimeout(fin, 360);   // fallback se transitionend non scatta
-}
-
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-backdrop').addEventListener('click', function(e) {
-  if (e.target === document.getElementById('modal-backdrop')) closeModal();
-});
-// Trappola del Tab: finché la modale è aperta il focus resta al suo interno
-// (senza, il Tab scorreva le card dietro la modale aperta).
-document.getElementById('modal-backdrop').addEventListener('keydown', function(e) {
-  if (e.key !== 'Tab') return;
-  var bd = document.getElementById('modal-backdrop');
-  if (!bd.classList.contains('active')) return;
-  var focusables = bd.querySelectorAll('button, a[href]');
-  if (!focusables.length) return;
-  var first = focusables[0], last = focusables[focusables.length - 1];
-  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-});
 
 document.addEventListener('keydown', function(e) {
   // Esc agisce solo a modale davvero aperta: senza il guard, closeModal()
@@ -5291,12 +4970,9 @@ document.addEventListener('keydown', function(e) {
     var sm = document.getElementById('stats-modal');
     if (sm) { var sx = sm.querySelector('.fab-modal-close'); if (sx) sx.click(); return; }
     if (document.getElementById('imgv') || document.getElementById('res-modal')) return;
-    if (document.getElementById('modal-backdrop').classList.contains('active')) { closeModal(); return; }
     var pnl = document.getElementById('ctrl-panel');
     if (pnl && pnl.classList.contains('open')) { toggleControlPanel(); return; }
   }
-  if (e.key === 'ArrowRight' && currentIdx !== null) { var nx = stepVisible(currentIdx, 1); if (nx !== null) openModal(nx); }
-  if (e.key === 'ArrowLeft' && currentIdx !== null) { var pv = stepVisible(currentIdx, -1); if (pv !== null) openModal(pv); }
 });
 
 // ── 'Resources and maps' (footer) → modale con voci bilingui → viewer zoomabile ──
@@ -5588,17 +5264,9 @@ function noteCharIndex() {
   for (var i = 0; i < dati.length; i++) { var n = dati[i].nome; if (m[n] === undefined) m[n] = i; }
   return m;
 }
-// Sostituisce i marcatori #{Testo|NomeDati}# con pulsanti cliccabili (o
-// grassetto semplice se il nome non è in classifica). Il testo statico è
-// d'autore (nessun input utente); l'unico dato dinamico è l'indice intero.
-// Tinta di un nome cliccabile: quella della famiglia di DESTINAZIONE (dove porta
-// il link), **desaturata al 55%** e poi resa AA sul fondo della modale (scelta
-// dell'utente sul confronto a quattro gradi: la famiglia si riconosce ancora, ma
-// con sei tinte in una pagina di testo il colpo d'occhio resta quieto).
-// La desaturazione è puramente estetica: `ccAaText` viene applicata DOPO, quindi
-// il contrasto resta sopra 4.5:1 a qualunque grado. Si calcolano ENTRAMBI i temi
-// perché il tasto `T` non ricostruisce la nota aperta.
-var NOTE_TINT_SAT = 0.55;
+// Sostituisce i marcatori #{Testo|NomeDati}# con un grassetto semplice: a
+// Terramare i nomi non sono cliccabili, quindi il marcatore serve solo a
+// riconoscere un personaggio nel testo di una nota.
 // Personaggio di PROVENIENZA della modale informativa: se una nota è stata aperta
 // dalla scheda di qualcuno, i suoi accenti prendono la tinta di quella famiglia e
 // la tengono anche passando di nota in nota (la provenienza non cambia). null =
@@ -5615,22 +5283,14 @@ function noteAccentVars(bd) {
   bd.style.setProperty('--macc-d', ccAaText(hd, '#252525', 4.5));
   bd.style.setProperty('--macc-l', ccAaText(hl, '#F4F4F4', 4.5));
 }
-function noteCharTint(p) {
-  var fam = familyOf(p), pair = (fam === 'custom') ? customPair(p) : null;
-  var hd = pair ? ccTripletToHex(pair.dark) : ccFamHex(fam, 'dark');
-  var hl = pair ? ccTripletToHex(pair.light) : ccFamHex(fam, 'light');
-  var soft = function(hex){ var h = ccHexToHsl(hex); return ccHslToHex(h[0], h[1] * NOTE_TINT_SAT, h[2]); };
-  return '--nl-d:' + ccAaText(soft(hd), '#252525', 4.5) + ';--nl-l:' + ccAaText(soft(hl), '#F4F4F4', 4.5);
-}
 function renderNoteBodyHtml(html) {
   var idx = noteCharIndex();
   return html.replace(/#\{([^}|]+)(?:\|([^}]+))?\}#/g, function(_, disp, look) {
     var key = look || disp, i = idx[key];
     if (i === undefined) return '<strong>' + disp + '</strong>';
-    // <span> (non <button>): inline puro, così la punteggiatura seguente non
-    // va mai a capo da sola (un button è inline-block e crea un break-point).
-    return '<span class="note-charlink" role="button" tabindex="0" data-idx="' + i + '"'
-         + ' style="' + noteCharTint(dati[i]) + '">' + disp + '</span>';
+    // Il nome resta EVIDENZIATO ma non è un rimando: a Terramare i nomi non
+    // sono cliccabili, quindi non c'è una scheda da aprire.
+    return '<strong>' + disp + '</strong>';
   });
 }
 
@@ -5672,26 +5332,16 @@ function openNoteViewer(note) {
   var body = document.createElement('div');
   body.innerHTML = renderNoteBodyHtml(currentLang === 'it' ? note.bodyIt : note.bodyEn);
   box.appendChild(body);
-  // Un nome cliccato apre la scheda del personaggio (chiude prima il viewer).
-  function openChar(b) {
-    var i = parseInt(b.getAttribute('data-idx'), 10);
-    var st = m.body.scrollTop, note2 = note;   // lo scroll vive in .modal-body; si ripristina al ritorno
-    dismiss(true);   // transizione: preserva noteReturn per l'intero giro nota → scheda → nota
-    modalReturn = function(){ openNoteViewer(note2); var nb = document.querySelector('#note-modal .modal-body'); if (nb) nb.scrollTop = st; };
-    openModal(i, true);   // istantanea: la nota è appena sparita, niente flash della lista
-  }
   // Rimando 'Leggi anche' a un'altra nota: data-note = titleIt della nota bersaglio.
   function openNote(el) {
     var tgt = EDITORIAL_NOTES.find(function(n){ return n.titleIt === el.getAttribute('data-note'); });
     if (tgt) { dismiss(true); openNoteViewer(tgt); }   // transizione: la nuova nota eredita noteReturn
   }
   box.addEventListener('click', function(e) {
-    var b = e.target.closest('.note-charlink'); if (b) { openChar(b); return; }
     var nl = e.target.closest('.note-notelink'); if (nl) openNote(nl);
   });
   box.addEventListener('keydown', function(e) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
-    var b = e.target.closest('.note-charlink'); if (b) { e.preventDefault(); openChar(b); return; }
     var nl = e.target.closest('.note-notelink'); if (nl) { e.preventDefault(); openNote(nl); }
   });
 }
@@ -6560,9 +6210,6 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   var m = document.querySelector('meta[name="theme-color"]');
   if (m) m.setAttribute('content', next === 'light' ? '#ebebef' : '#060a14');
-  // Scheda aperta: l'accento va ricalcolato sul fondo del NUOVO tema (--cctext è
-  // AA su un fondo solo), altrimenti resta la tinta dell'altro tema.
-  if (currentIdx !== null && dati[currentIdx]) setModalAccent(dati[currentIdx]);
   // Una modale aperta che dipende dal tema (editor colori/statistiche) si
   // ricostruisce nel nuovo tema, conservando tab/scroll (anti-jitter).
   if (typeof themeRefresh === 'function') themeRefresh();
@@ -7322,7 +6969,6 @@ function showAdminEditor() {
     { it:'tipo',        en:'tipo_en',        li:'Tipo IT',        le:'Tipo EN' },
     { it:'info',        en:'info_en',        li:'Info IT',        le:'Info EN' },
     { it:'descrizione', en:'descrizione_en', li:'Descrizione IT', le:'Descrizione EN', ta:8 },
-    { it:'citazione',   en:'citazione_en',   li:'Citazione IT',   le:'Citazione EN', ta:3 },
     { it:'fonte',       en:'fonte_en',       li:'Fonte IT',       le:'Fonte EN' },
   ];
   const originals = dati.map(p => {
@@ -7390,7 +7036,6 @@ function showAdminEditor() {
       p.nomi_alternativi = g(i, 'nomi_alternativi'); p.nomi_alternativi_en = g(i, 'nomi_alternativi_en');
       p.appellativi = g(i, 'appellativi'); p.appellativi_en = g(i, 'appellativi_en');
       p.descrizione = g(i, 'descrizione'); p.descrizione_en = g(i, 'descrizione_en');
-      p.citazione = g(i, 'citazione'); p.citazione_en = g(i, 'citazione_en');
       p.fonte = g(i, 'fonte'); p.fonte_en = g(i, 'fonte_en');
       ICON_ORDER.forEach(function(k) {
         if (k === 'morgoth' || k === 'king_high_now') return; // nessuna checkbox: valore PRESERVATO (Morgoth su Fingolfin, Re 'in carica' su Finarfin)
@@ -7678,8 +7323,8 @@ function showAdminEditor() {
   // Cerca SOLO nel contenuto dei campi (mai nelle etichette UI) di TUTTE le voci,
   // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
   // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
-  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre','padre_en','madre_en'];
-  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
+  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en'];
+  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre' };
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
   // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
@@ -10105,7 +9750,6 @@ if ('serviceWorker' in navigator) {
     if ((el = document.getElementById('fab-modal'))){ var x = el.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
     if ((el = document.getElementById('note-modal'))){ var x = el.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
     if ((el = document.getElementById('res-modal'))){ var x = el.querySelector('.modal-close, .fab-modal-close'); if (x) x.click(); return; }
-    var bd = document.getElementById('modal-backdrop'); if (bd && bd.classList.contains('active')){ closeModal(); return; }
     if (panelOpen()) toggleControlPanel();
   }
   var trapped = false, selfPop = false;
