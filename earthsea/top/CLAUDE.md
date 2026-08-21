@@ -36,24 +36,29 @@ non ci saranno (vedi la sezione sui nomi non cliccabili).
 
 ## 🧬 Le due razze, e perché il filtro ha DUE categorie
 
-**Terramare ha due razze: uomini e draghi** (istruzione dell'utente). Gli uomini hanno il
-fondo **oro**, i draghi il **rosso**, entrambi chiari e desaturati: valori in `cardColors`
-dentro `dati.js`, ancora **provvisori**.
+**Terramare ha due razze: uomini e draghi** (istruzione dell'utente), ma **TRE tinte**, e la
+differenza è il punto da capire prima di toccare i colori.
 
-- ⚠️⚠️ **L'ORO sta per uscire, e la tinta degli umani seguirà il GENERE** (indicazione
-  dell'utente, 2026-08-21): *turchese per le donne, blu oltremare per gli uomini*, col rosso
-  dei draghi confermato. ⚠️ **Non cambia nulla come categoria**, parole sue: il filtro resta a
-  due voci, si sdoppia soltanto la tavolozza. La ragione dichiarata dell'oro che esce è che nel
-  tema chiaro, scurito fin dove serve per fare da testo, **diventa un marrone** che non gli
-  piace.
-  - **Non è ancora applicato**: aspetta la scelta fra le due tavolozze proposte. Finché non
-    arriva, `.cc-man` resta oro.
-  - ✅ **Il caso Tehanu è DECISO** (utente, 2026-08-21): Donna **e** Drago, ma la sua tinta è
-    quella dei **draghi**, quindi `cardcolor` vale `dragon` ed è la sola voce umana a non
-    essere `man`. Quando la tavolozza per genere entrerà in vigore, lei resta rossa.
-  - ⚠️ **La tinta NON diventa il solo canale del genere**: il simbolo di genere sulla card
-    c'è già, quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza
-    perdere informazione per chi non distingue quelle due tinte.
+- ✅ **La tavolozza è APPLICATA dalla `0.16`** (scelta dell'utente sulle due proposte):
+  **uomini oltremare**, **donne turchese**, **draghi terracotta**. L'**oro è uscito** dalle
+  categorie, perché nel tema chiaro, scurito fin dove serve per fare da **testo** (il vero
+  nome prende la tinta), diventava un marrone che l'utente non voleva.
+  - ⚠️⚠️ **TRE tinte, DUE categorie**: il filtro resta a due voci. La tinta degli umani segue
+    il **genere**, e la deduzione sta in **`familyOf`**, non nel dato: `cardcolor` vale `man`
+    per ogni umano e diventa `woman` se `genere` è `f`. Così il colore non è un campo da
+    tenere allineato al genere a mano, voce per voce.
+  - ✅ **Tehanu**: Donna **e** Drago, ma la sua tinta è quella dei **draghi**, quindi
+    `cardcolor` vale `dragon` ed è la sola voce umana a non essere `man`.
+  - ⚠️ **La tinta NON è il solo canale del genere**: il simbolo di genere sulla card c'è già,
+    quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza perdere
+    informazione per chi non distingue quelle due tinte.
+  - **Valori misurati** (contrasto sul fondo del proprio tema): scuro `#9CB2F0` 8,45 /
+    `#6FD0D6` 9,82 / `#E0A090` 8,08; chiaro `#22449C` 8,51 / `#0C757E` 5,23 / `#A8462F` 5,64.
+    ⚠️ Nel chiaro sono **scuriti fin dove serve a fare da testo**: passano AA, non solo il 3:1
+    del testo grande.
+  - ⚠️ **`cardColors` in `dati.js` VINCE sul fallback di `index.html`.** Applicando la
+    tavolozza i valori vecchi restavano attivi mentre il fallback ne dichiarava altri: chi
+    cambia una tinta la cambia **là**, e il fallback lo segue.
 
 - ⚠️ **`CATS` ha due voci, e non è una lista 'ridotta per ora'.** La tassonomia a nove
   categorie ereditata da Arda mandava i draghi in `arcane`, che nasce **spenta**: i tre draghi
@@ -148,6 +153,10 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
 - ⚠️ **`vero_nome` NON ha un campo `_en`**, ed è l'unico campo così: il vero nome è nella
   Lingua della Creazione, non si traduce. Chi gli aggiungesse un `_en` inviterebbe a inventare
   una resa che non esiste.
+- ⚠️ **Nei TESTI un vero nome si scrive tutto maiuscolo** (`TENAR`, `GED`), regola del canone
+  (`rules/Earthsea.md`, § 'Come si scrive un VERO NOME'); **nel DATO** resta con la sola
+  iniziale maiuscola, perché la resa maiuscola la fa il CSS e la grafia originale deve
+  sopravvivere da qualche parte.
 - ⚠️ **Il colore dell'accento passa da `--cctxt`**, non da `--ccrgb`: la tinta della famiglia
   va bene per bordi e fondi, ma come TESTO l'oro e il rosso desaturati non passano il gate AA.
   `ccFamTxt` la corregge sul fondo di ciascun tema. Chi tocca i colori delle famiglie deve
@@ -160,20 +169,19 @@ Nomi alternativi e titoli restano possibili e continuano a stare nel sottotitolo
 ⚠️ L'utente ha dato questa regola definendo una **propria svista** il modello precedente,
 dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
 
-- ⚠️⚠️ **Il predicato è 'SOLO drago', non 'anche drago'**, e la differenza è tutta in
-  **Tehanu**: è `Donna | Drago`, e l'utente ha chiesto per lei una **card normale col nome in
-  rosso** (istruzione dello stesso giorno, che corregge la prima stesura dove le toccava la
-  riga sola). Quindi ci sono TRE rese e non due:
+- **Il predicato è 'ANCHE drago'**, e ci rientra **Tehanu**, che è `Donna | Drago`. Le rese
+  sono DUE:
   | caso | prima riga | seconda riga |
   |---|---|---|
   | uomo o donna | nome d'uso, Garamond, colore `--name` | vero nome, Cinzel maiuscolo, tinta |
-  | **solo drago** | vero nome, Cinzel maiuscolo, tinta | nessuna |
-  | **drago misto** (Tehanu) | nome, Garamond, **tinta** (`.name-tinta`) | nessuna |
-  - **Perché il drago misto ha il nome in tinta**: non avendo una seconda riga, non ha dove
-    mostrare l'accento del gruppo. La tinta sul nome è quell'accento.
-  - ⚠️ **Il suo `cardcolor` è `dragon`**, quindi filetto ed etichette sono rossi come il nome:
-    una card mezza oro e mezza rossa sarebbe stata incoerente. Se l'utente volesse il **solo**
-    nome rosso su una card oro, si cambia lì.
+  | **drago** (puro o misto) | vero nome, Cinzel maiuscolo, tinta | nessuna |
+  - ⚠️ **Su Tehanu l'utente ha cambiato idea due volte nello stesso giorno**, e sapere come è
+    finita evita di riaprire un giro chiuso: prima 'card normale col nome in rosso' (che le
+    aveva dato una resa a sé, `.name-tinta`), poi *'TEHANU va reso in maiuscolo'*. Il suo nome
+    **è** il suo vero nome, e un vero nome si rende come tale: la classe intermedia è uscita.
+  - **Quello che la distingue dai draghi puri resta il resto della card**: due etichette di
+    razza, il simbolo di genere e i badge, che un drago puro non ha.
+  - ⚠️ Il suo `cardcolor` è `dragon`, quindi filetto ed etichette accompagnano il nome.
 - ⚠️ **La classe va sul `.rank-name-text`, non su `.rank-name`**: quel contenitore ospita
   anche etichette e icone (`rank-tipi`/`rank-flags` via `display:contents`), e un
   `text-transform` messo là renderebbe maiuscola anche l'etichetta 'Drago'.
@@ -300,6 +308,12 @@ riempirlo con la legenda dell'**anatomia di una card**: una card con le stesse c
 quelle vere, dove ogni riga porta scritto che cos'è (`Nome d'uso`, `Vero nome`,
 `Nomi alternativi | Titoli e onorificenze`).
 
+⚠️⚠️ **L'ORDINE delle righe deve essere quello delle card vere**: nome d'uso, vero nome,
+nomi alternativi e titoli, **e per ultima l'opera della prima apparizione**. Alla prima
+stesura l'opera stava sopra gli alternativi e la legenda mostrava un ordine che la lista non
+ha (segnalato dall'utente): con le classi reali è l'unico modo in cui questa legenda può
+sbagliare, perché tutto il resto lo eredita.
+
 ⚠️ **Usa le classi REALI** (`.rank-item`, `.rank-name`, `.rank-vero`, `.rank-subtitle`) e la
 stessa `joinBipartite` del sottotitolo: gli overrides in `.ctrl-cardleg` toccano **solo** le
 misure del contenitore. Se un domani si ridisegnasse la card copiando gli stili nella legenda,
@@ -362,6 +376,56 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   in scena. Il ripiego bidirezionale fa sì che la vista italiana mostri il titolo inglese
   invece di una riga vuota, ed è il comportamento voluto: **non si inventa** né la traduzione
   né la data.
+
+## 🎨 La tavolozza applicata, e i punti dove era CABLATA
+
+Le due tavolozze proposte sono state applicate il 2026-08-21, con due correzioni dell'utente
+sulla proposta: **tema scuro leggermente meno scuro** (fondo `#0D1A22` invece di `#08131A`) e
+**titolo in verde mare**, che sullo scuro tende al blu e in chiaro è smeraldo.
+
+- ⚠️⚠️ **Il fondo pagina era CABLATO in nove punti**, non solo nel `body`: il gemello del tema
+  chiaro, il **fondo di riferimento del gate AA** (`ccFamTxt`), le due anteprime (effetti ed
+  editor colori) e i commenti che lo nominavano. Cambiarne uno solo avrebbe fatto calcolare
+  il gate su un fondo che la pagina non ha più, **senza dare errore**. Ora il `body` legge
+  `var(--ink)`, così la prossima tavolozza si cambia in un posto.
+- ⚠️ **Gli override di colore che ripetevano un token sono usciti**: esistevano perché i
+  token erano grigi neutri, e con la tavolozza nuova erano una seconda fonte di verità che
+  mentiva (crest, footer, sottotitolo, badge di versione, lang-switch, e i loro gemelli
+  chiari). Dove la funzione corrisponde si usa `var(--...)`.
+- ⚠️ **Le etichette di tipo hanno perso il colore proprio**: `.type-man` (oro) e
+  `.type-dragon` (rosso acceso, ereditato da Arda) sono state sostituite da una regola che
+  legge `--ccrgb`/`--cctxt` della card. Prima mostravano 'Donna' in **oro** accanto a un vero
+  nome **turchese**: il difetto tipico di un colore cablato che una tavolozza nuova dimentica.
+- **L'oro sopravvive in due posti, entrambi voluti**: il **disco del FAB** (in chiaro
+  `#E0B54A`, dove non deve leggersi come testo) e i **numeri del podio**, che sono la
+  convenzione oro-argento-bronzo e non una tinta di tavolozza.
+
+## 🔎 Il filtro 'solo chi ha un vero nome noto'
+
+Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
+
+- ⚠️ **Un DRAGO conta come noto anche col campo vuoto**: il suo nome d'uso **è** il vero nome.
+  Guardare solo `vero_nome` avrebbe nascosto proprio le voci che di vero nome ne hanno uno
+  solo, ed è il difetto che il predicato `veroNomeNoto` esiste per evitare.
+- ⚠️ **Oggi non esclude nessuna delle 19 voci**, perché ognuna ha un vero nome noto: serve al
+  dataset che verrà. Che funzioni è provato svuotando due `vero_nome` a runtime (19 -> 17), non
+  dedotto dal fatto che la casella si spunta.
+- **Stato in memoria, non nel permalink né nel `localStorage`**: un filtro che sopravvive al
+  ricaricamento senza dirlo fa credere che il dataset sia più corto di quello che è. ⚠️ Il
+  rovescio, dichiarato: un link condiviso non porta con sé questo filtro.
+- Sta **fuori** dalla sezione `--filtri`, che è la lista delle categorie: mescolarvi una riga
+  che categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
+
+## 🏷️ 'Esseri umani', e la trappola delle DUE mappe di etichette
+
+La categoria si chiama **'Esseri umani'** / 'Humans' (istruzione dell'utente, 2026-08-21):
+'Uomini' si legge come il **genere**, tanto più da quando la tinta degli umani lo distingue.
+Le etichette sulla singola card restano **'Uomo'/'Donna'**, che del genere parlano per davvero.
+
+⚠️⚠️ **Le etichette di categoria vivono in DUE mappe**: `CAT_LABEL` (chiavi `man`/`dragon`) è
+quella che il **Pannello mostra**, `TYPE_LABEL` (chiavi `type-man`/`type-dragon`) serve
+altrove. Cambiarne una sola lascia il filtro a dire la parola vecchia, ed è successo al primo
+tentativo. Vanno cambiate insieme.
 
 ## 🎛️ Il Pannello a UNA COLONNA
 
