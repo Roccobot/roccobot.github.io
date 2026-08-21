@@ -84,9 +84,9 @@ I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged*
     linea sono nati perché il motore copiato puntava alle icone di Arda, che qui non esistono.
     Chi aggiunge un badge aggiunge **anche il file**, o torna quel difetto.
 
-### ⚠️ Il terzo badge ha CAMBIATO SIGNIFICATO il 2026-08-21
+### ⚠️ Il terzo badge ha CAMBIATO SIGNIFICATO
 
-Era `veronome`, 'ha un vero nome attestato', ed era acceso su tutti i draghi perché il loro
+**Il 2026-08-21.** Era `veronome`, 'ha un vero nome attestato', ed era acceso su tutti i draghi perché il loro
 nome d'uso **è** il vero nome. L'utente l'ha riqualificato: ora è **`nomeged`**, 'Depositario
 del vero nome di Ged', *applicato a tutti coloro che lo conobbero* (chiesto anche più
 sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true name'**).
@@ -143,9 +143,9 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
   va bene per bordi e fondi, ma come TESTO l'oro e il rosso desaturati non passano il gate AA.
   `ccFamTxt` la corregge sul fondo di ciascun tema. Chi tocca i colori delle famiglie deve
   ri-iniettare **entrambe** le terne (`injectCardColorRules` e `reinjectFamilyColors` lo fanno).
-### 🐉 I DRAGHI hanno una riga sola (istruzione dell'utente, 2026-08-21)
+### 🐉 I DRAGHI hanno una riga sola
 
-Un drago **non ha nome d'uso**: il suo nome è il vero nome. Quindi la seconda riga non
+Istruzione dell'utente, 2026-08-21. Un drago **non ha nome d'uso**: il suo nome è il vero nome. Quindi la seconda riga non
 esiste e la **prima** porta già la resa del vero nome, maiuscola e in tinta di famiglia.
 Nomi alternativi e titoli restano possibili e continuano a stare nel sottotitolo.
 ⚠️ L'utente ha dato questa regola definendo una **propria svista** il modello precedente,
@@ -183,9 +183,9 @@ dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
 - Ⓘ **Su Tehanu il sottotitolo ripete il nome**, perché la sua opera di prima apparizione è
   il romanzo *Tehanu*: `TEHANU` / `Therru` / *Tehanu*. È un dato corretto, non un difetto.
 
-### ✒️ La resa tipografica delle due righe (rivista il 2026-08-21)
+### ✒️ La resa tipografica delle due righe
 
-Istruzione dell'utente: nome d'uso **più grande ma con la sola iniziale maiuscola** (o le
+Rivista il 2026-08-21, istruzione dell'utente: nome d'uso **più grande ma con la sola iniziale maiuscola** (o le
 iniziali, come `Orm Embar`); vero nome **più piccolo, colorato, grassetto e maiuscolo**.
 Il peso del vero nome non viene più dalla dimensione: viene dalla **forma**.
 
@@ -211,9 +211,9 @@ Il peso del vero nome non viene più dalla dimensione: viene dalla **forma**.
   2026-08-21 l'utente ha corretto: il nome principale è uno, il secondo va fra gli
   alternativi, e il vero nome ha il suo campo.
 
-## 🎛️ Il Pannello COMPATTO (mockup dell'utente, 2026-08-21)
+## 🎛️ Il Pannello COMPATTO
 
-Il Pannello di Arda è dimensionato su 15 famiglie e una decina di badge: qui, con **due**
+Da un mockup dell'utente del 2026-08-21. Il Pannello di Arda è dimensionato su 15 famiglie e una decina di badge: qui, con **due**
 categorie e **tre** badge, restava mezzo vuoto. L'utente ha fornito un mockup e la forma
 adesso è questa, su **due colonne**:
 
@@ -251,9 +251,9 @@ adesso è questa, su **due colonne**:
   descrizioni dei badge uscissero), mobile 390x844 con pannello **390x391** e i blocchi
   impilati nella bottom-sheet. Nessun errore JS, nessun 404, nessuno scroll orizzontale.
 
-## 🔆 Il logo del FAB (provvisorio, 2026-08-21)
+## 🔆 Il logo del FAB
 
-L'utente ha fornito il glifo del pulsante, dichiarandolo lui stesso provvisorio
+**Provvisorio, 2026-08-21.** L'utente ha fornito il glifo del pulsante, dichiarandolo lui stesso provvisorio
 ('probabilmente'): un segno con due punti, una figura angolare e due onde. Ha preso il posto
 del **segnaposto a due onde e un punto** nato con il progetto.
 
@@ -301,9 +301,9 @@ sbagliare.
   grassetto sotto il nome'), che dopo questa riorganizzazione **diceva il falso**. Con lei sono
   usciti la lineetta di riferimento e `fitNoteRule`, che serviva solo ad allinearla.
 
-## ✅ I 19 confrontati con Wikipedia (2026-08-21)
+## ✅ I 19 confrontati con Wikipedia
 
-Confronto voce per voce con *List of Earthsea characters* su tutto tranne il nome italiano,
+Il 2026-08-21, confronto voce per voce con *List of Earthsea characters* su tutto tranne il nome italiano,
 su richiesta dell'utente. **Coerenti**: veri nomi (tutti e 16 sono elencati là come veri
 nomi), razze, generi, opere di prima apparizione. Corretti **i badge**, che erano tutti spenti:
 `mago` a Ogion, Veccia, Lontra/Sterna, Gelluk, Brace, Early, Burrone/Otak, Sparviero e
@@ -342,7 +342,7 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   parentesi sta `Autore, anno`, quindi `(1968)` finiva nel campo autore e l'anno non compariva
   **senza dare alcun errore**. Ora un contenuto di sole quattro cifre si legge come anno.
 - ⚠️⚠️ **Titoli e anni sono VERIFICATI sulle fonti, non ricordati**, e stanno nel canone
-  (`rules/Earthsea.md`, § 'Le opere' e § 'I racconti'): i titoli italiani dai metadata dei sei
+  (`rules/Earthsea.md`, § 'Le opere, in italiano' e § 'I racconti dentro *Le leggende di Terramare*'): i titoli italiani dai metadata dei sei
   epub Mondadori dell'utente e dall'indice di *Le leggende di Terramare*, gli anni dalle pagine
   di copyright delle edizioni inglesi. Chi ne aggiunge uno lo cerca là, non a memoria.
   - **Due racconti sono più vecchi della raccolta** che li contiene: *Rosascura e Diamante*
@@ -354,9 +354,9 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   invece di una riga vuota, ed è il comportamento voluto: **non si inventa** né la traduzione
   né la data.
 
-## 🎛️ Il Pannello a UNA COLONNA (istruzione dell'utente, 2026-08-21)
+## 🎛️ Il Pannello a UNA COLONNA
 
-Dopo il pannello compatto a due colonne, l'utente ha chiesto di mettere **tutto in colonna
+Istruzione dell'utente, 2026-08-21. Dopo il pannello compatto a due colonne, l'utente ha chiesto di mettere **tutto in colonna
 unica**: card di legenda, poi le due checkbox di categoria, poi la legenda dei badge.
 
 - La `.ctrl-right` **non esiste più**, e la griglia desktop di `#ctrl-panel` è passata da
