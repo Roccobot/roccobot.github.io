@@ -115,15 +115,28 @@ nomi), razze, generi, opere di prima apparizione. Corretti **i badge**, che eran
 `mago` a Ogion, Veccia, Lontra/Sterna, Gelluk, Brace, Early, Burrone/Otak, Sparviero e
 Diamante; `stregone` a Solevivo.
 
-⚠️ **Tre cose sono rimaste in sospeso perché sono scelte editoriali, non dati**:
+✅ **Le tre scelte editoriali che erano rimaste in sospeso sono state decise dall'utente il
+2026-08-21**, e sono queste:
 
-1. **Therru/Tehanu**: Wikipedia la dice *'burned child, a woman-dragon'*. Sul sito è Donna
-   (razza uomo). Cambiarla sposterebbe colore e categoria, quindi non si tocca senza l'utente.
-2. **Kalessin 'once called Segoy'**: un nome in più che Wikipedia attesta, ma dicendo che
-   *suggerisce* un'identità col creatore. Non scritto nei dati.
-3. **Diamante/Essiri**: il badge `mago` gli è stato dato perché il testo lo dice *'gifted'* e
-   la definizione dell'utente lega il badge al **dono**, non alla professione; ma la stessa
-   riga dice che *abbandona* la magia per la musica. Da confermare.
+1. **Therru è sia Donna sia Drago**, e l'utente dice che è **l'unico caso in tutto il
+   dataset**. Nei dati: `tipo` = `'Donna | Drago'`. ⚠️ Da qui nasce il fatto che le categorie
+   di una voce sono un **elenco** (`categorie(p)`) e non un valore solo: chi filtra chiede se
+   **almeno una** è accesa, altrimenti Therru spariva spegnendo gli Uomini pur essendo anche
+   un drago. `categoria(p)` (singolare) resta e restituisce la **prima**, che governa colore e
+   statistiche, dove un valore solo serve.
+   - **La card resta ORO**, non rossa: il colore viene da `cardcolor` (`man`), cioè dalla sua
+     vita umana, e sono le due etichette a dire il resto. Scelta di resa, non un dato: se
+     l'utente la vuole rossa, si cambia quel campo.
+2. **Kalessin resta solo Drago** e `Segoy` **non entra** nei dati (istruzione dell'utente).
+   Che cosa dice la fonte, per non riaprire la ricerca: la voce Wikipedia lo afferma **senza
+   citazione**; due fonti secondarie indipendenti convergono sulla stessa scena, l'ULTIMA
+   parte di *Tehanu*, dove **Therru chiama il drago 'Segoy'** parlando la Lingua della
+   Creazione, e Ged poco dopo lo chiama *'the giver of names'*. ⚠️ **Non verificato sul
+   testo**: da qui il libro non è raggiungibile, e la conferma sta al capitolo finale di
+   *Tehanu*, che l'utente ha in casa.
+3. **Diamante porta il badge `mago`** (conferma dell'utente): *'smette di praticare per sua
+   scelta, ma ciò non gli toglie il dono della magia'*. È la lettura letterale della
+   definizione del badge, che parla del **dono**.
 
 ## 🔤 Filtro al plurale, card al singolare: è deliberato
 
