@@ -439,6 +439,18 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
 
+/* VERO NOME (dal 2026-08-21, istruzione dell'utente): a Terramare il vero nome è
+   la cosa più importante di un individuo, quindi ha una riga sua allo STESSO
+   livello del nome d'uso, non fra i nomi alternativi. Corpo pari a quello del
+   nome, grassetto, e colore = accento del gruppo (--cctxt, la tinta di famiglia
+   resa AA sul fondo del tema: vedi injectCardColorRules). */
+.rank-vero {
+  font-family:'Cinzel',serif; font-weight:900;
+  font-size:clamp(1.1rem,3.2vw,1.6rem);
+  color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
+  letter-spacing:0.03em; line-height:1.2;
+}
+
 .rank-subtitle {
   font-family:'EB Garamond',serif;
   font-size:clamp(0.88rem,2.1vw,1.03rem);
@@ -796,24 +808,14 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    nel CSS statico o tornano gli errori W3C. Qui restano solo le terne --ccrgb,
    che il Nu valida senza problemi. */
 /* Terne per famiglia (default = tema SCURO, bilanciato; override CHIARO sotto). */
-.cc-noldo{--ccrgb:91,123,240} .cc-sinda{--ccrgb:43,184,166} .cc-maia{--ccrgb:82,185,95}
-.cc-rohir{--ccrgb:159,182,65} .cc-other{--ccrgb:224,138,58} .cc-highman{--ccrgb:216,178,60}
-.cc-demon{--ccrgb:224,89,106} .cc-vala{--ccrgb:222,90,142} .cc-orc{--ccrgb:160,107,224}
-.cc-beast{--ccrgb:179,148,104} .cc-man{--ccrgb:144,152,168} .cc-half-elf{--ccrgb:58,160,186}
-.cc-numenorean{--ccrgb:198,138,152}
-/* Famiglia speciale 'custom' (Modifica mirata): tiene insieme le voci con colore
-   individuale. Le due terne per-tema arrivano INLINE dalla card
-   (style="--ccdark:R,G,B;--cclight:R,G,B" da p.cardrgb {dark,light}); le regole
-   iniettate .cc-custom mappano --ccrgb sulla terna del tema. Questa è solo un
-   fallback neutro se mancassero. NON è modificabile a blocchi (voci isolate). */
-.cc-custom{--ccrgb:144,152,168}
-html[data-theme="light"] .cc-noldo{--ccrgb:47,79,208} html[data-theme="light"] .cc-sinda{--ccrgb:21,158,143}
-html[data-theme="light"] .cc-maia{--ccrgb:58,154,69} html[data-theme="light"] .cc-rohir{--ccrgb:138,154,42}
-html[data-theme="light"] .cc-other{--ccrgb:210,118,15} html[data-theme="light"] .cc-highman{--ccrgb:199,148,19}
-html[data-theme="light"] .cc-demon{--ccrgb:196,34,51} html[data-theme="light"] .cc-vala{--ccrgb:194,31,110}
-html[data-theme="light"] .cc-orc{--ccrgb:122,63,206} html[data-theme="light"] .cc-beast{--ccrgb:150,117,74}
-html[data-theme="light"] .cc-man{--ccrgb:111,116,130} html[data-theme="light"] .cc-half-elf{--ccrgb:30,84,98}
-html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
+/* Fallback statico delle DUE famiglie di Terramare: le terne vive (e il colore
+   testo --cctxt) le iniettano injectCardColorRules/reinjectFamilyColors leggendo
+   CARDCOLORS, quindi queste servono solo se quel codice non gira.
+   ⚠️ Qui c'erano le 15 famiglie di 'I Grandi di Arda' (Noldor, Maiar, Valar...):
+   irraggiungibili, perché `familyOf` non produce quei nomi. */
+.cc-man{--ccrgb:217,192,137} .cc-dragon{--ccrgb:224,160,144}
+html[data-theme="light"] .cc-man{--ccrgb:156,124,58}
+html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
 #ctrl-fab svg { height:1.9rem; width:auto; fill:currentColor; stroke:none; }
@@ -1038,7 +1040,7 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
      Categorie resta fermo. Il vecchio suggerimento in corsivo (.ctrl-badge-hint,
      solo riempitivo) è stato rimosso. */
   #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:auto 0; min-height:21px; display:flex; flex-direction:column; align-items:center; }
-  #ctrl-panel .ctrl-left .ctrl-tag-slot + .ctrl-names-note { margin-top:0; }
+  #ctrl-panel .ctrl-left .ctrl-tag-slot + .ctrl-cardleg { margin-top:0; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
      nota, non ammassato in fondo. */
@@ -1047,9 +1049,7 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
      della legenda (riferimento a contorni spenti); la righetta qui sotto
      chiude la colonna alla stessa quota del fondo del contorno attivo
      (riferimento a contorni accesi). Margini tarati su misura. */
-  #ctrl-panel .ctrl-names-note { display:block; margin-top:auto; margin-bottom:0; }
-  #ctrl-panel .ctrl-note-rule { display:block; height:1px; background:rgba(104,144,168,0.28); margin:2px 0 0 0.3rem; }
-  html[data-theme="light"] #ctrl-panel .ctrl-note-rule { background:rgba(58,88,120,0.3); }
+  #ctrl-panel .ctrl-cardleg { margin-top:auto; margin-bottom:0; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
 .ctrl-sheet-head { display:none; }
@@ -1097,13 +1097,19 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
    bottom-sheet impila tutto come prima); diventa flex verticale solo su
    desktop, vedi @media (min-width:769px). */
 .ctrl-left { display:contents; }
-.ctrl-names-note {
-  display:none; font-style:italic;
-  font-family:'EB Garamond',serif; font-size:0.84rem; line-height:1.45;
-  color:var(--parchment-dim); padding:0 0.3rem; max-width:17rem;
+/* Card di legenda nel Pannello: la card vera, rimpicciolita quanto serve a
+   starci in colonna. Si toccano SOLO le misure del contenitore (padding, margini,
+   colonna del numero che qui non esiste): tipi, colori, bordino e fondo restano
+   quelli della lista, altrimenti la legenda mostrerebbe una card che non esiste. */
+.ctrl-cardleg { padding:0 0.3rem; max-width:19rem; }
+.ctrl-cardleg .rank-item {
+  grid-template-columns:1fr; gap:0; margin:0;
+  padding:0.6rem 0.7rem 0.6rem 0.65rem; cursor:default;
 }
-.ctrl-names-note strong { font-weight:800; color:var(--parchment); }
-.ctrl-note-rule { display:none; }
+.ctrl-cardleg .rank-item:hover, .ctrl-cardleg .rank-item:focus-within { background:inherit; }
+.ctrl-cardleg .rank-name { font-size:1.02rem; }
+.ctrl-cardleg .rank-vero { font-size:1.02rem; }
+.ctrl-cardleg .rank-subtitle { font-size:0.86rem; }
 /* ⚠️ NIENTE transizione sul fondo delle righe (dalla v14.77, segnalato dall'utente:
    'l'hover lagga sempre più di quanto sembrerebbe naturale'). Non era la macchina: era
    una dissolvenza di 0.15s dichiarata da noi, in entrata E in uscita. Misurato: il
@@ -2426,7 +2432,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.05</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.06</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4143,22 +4149,32 @@ function ccAaText(fg, bg, target) {
   // e ri-iniettare, senza toccare il CSS statico (che resta come fallback).
   Object.keys(CARDCOLORS.fam).forEach(function(k){
     var f = CARDCOLORS.fam[k] || {};
-    css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + '}');
-    css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + '}');
+    css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + ';--cctxt:' + ccFamTxt(f.dark, 'dark') + '}');
+    css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + ';--cctxt:' + ccFamTxt(f.light, 'light') + '}');
   });
   var s = document.createElement('style');
   s.id = 'cc-fam-rules';
   s.textContent = css.join('');
   document.head.appendChild(s);
 })();
+// Colore-TESTO di una famiglia: la sua tinta resa AA (4.5:1) sul fondo pagina del
+// tema. Serve alla riga del vero nome, che è testo e non decorazione: le tinte
+// oro e rosso desaturate della config non superano il gate da sole.
+// ⚠️ Il fondo di riferimento è quello della PAGINA (#262626 / #F5F5F5); la card ci
+// aggiunge la propria velatura al 10%/5%, quindi la misura è prudenziale.
+function ccFamTxt(hex, tema) {
+  return ccHexToTriplet(ccAaText(hex, tema === 'light' ? '#F5F5F5' : '#262626', 4.5));
+}
 // Ri-inietta le sole terne --ccrgb per famiglia (dopo un edit colori in anteprima).
 function reinjectFamilyColors(){
   var old = document.getElementById('cc-fam-vars'); if (old) old.remove();
   var css = [];
+  // ⚠️ Anche qui vanno le DUE terne: se l'anteprima dell'editor colori scrivesse
+  // solo --ccrgb, la riga del vero nome resterebbe al colore di prima.
   Object.keys(CARDCOLORS.fam).forEach(function(k){
     var f = CARDCOLORS.fam[k] || {};
-    css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + '}');
-    css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + '}');
+    css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + ';--cctxt:' + ccFamTxt(f.dark, 'dark') + '}');
+    css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + ';--cctxt:' + ccFamTxt(f.light, 'light') + '}');
   });
   var s = document.createElement('style'); s.id = 'cc-fam-vars'; s.textContent = css.join('');
   document.head.appendChild(s);
@@ -4626,6 +4642,9 @@ function renderList() {
     // campo `fonte` resta libero per il titolo italiano vero.
     var fonte = currentLang === 'it' ? (p.fonte || p.fonte_en) : (p.fonte_en || p.fonte);
     var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
+    // Il vero nome è UNICO per le due lingue: è nella Lingua della Creazione, non
+    // si traduce, quindi non ha un campo _en da cui ripiegare.
+    var veroNome = escapeHtml(p.vero_nome || '');
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
@@ -4766,6 +4785,7 @@ function renderList() {
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
         '<span class="rank-name"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        (veroNome ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
         rigaDesc +
         riga2 +
         '<span class="rank-title">' + titleYear + '</span>' +
@@ -5504,16 +5524,24 @@ function controlPanelHTML() {
   // riempire il vuoto della colonna; rimosso perché ridondante (e sotto la
   // soglia AA di contrasto in tema chiaro).
   h += '</div>';
-  // Nota sui nomi (visibile solo nel layout orizzontale, via CSS): sotto il
-  // nome ci sono le alternative note; i veri nomi sono in grassetto.
-  h += '<div class="ctrl-names-note">' + (currentLang === 'it'
-     ? 'Sotto i nomi dei personaggi sono indicate le alternative note. I <strong>veri nomi</strong> sono in grassetto.'
-     : 'Below each character\'s name are the known alternatives. The <strong>true names</strong> are in bold.') + '</div>';
-  // Righetta di riferimento sotto la nota (solo desktop, via CSS): elemento
-  // grafico che segna il bordo inferiore della colonna anche quando nessun
-  // contorno di riga è acceso; il suo fondo combacia col fondo del contorno
-  // dell'ultima riga della legenda (entrambi chiudono la colonna).
-  h += '<div class="ctrl-note-rule"></div>';
+  // Legenda dell'ANATOMIA di una card (istruzione dell'utente, 2026-08-21): una
+  // card finta, con le stesse classi di quelle vere, dove ogni riga porta scritto
+  // che cos'è. Ha preso il posto della vecchia nota sui nomi, che dopo lo
+  // spostamento del vero nome su una riga sua diceva il falso.
+  // ⚠️ Le classi sono quelle REALI (.rank-item, .rank-name, .rank-vero,
+  // .rank-subtitle): così la legenda non può divergere dalla resa della lista, che
+  // è il solo motivo per cui esiste. `cc-man` le dà la tinta della famiglia più
+  // numerosa, quindi anche l'accento del vero nome è quello vero.
+  h += '<div class="ctrl-cardleg" aria-hidden="true"><div class="rank-item cc-man">'
+     + '<span class="rank-strip"></span>'
+     + '<span class="rank-content">'
+     +   '<span class="rank-name"><span class="rank-name-text">' + (currentLang === 'it' ? "Nome d'uso" : 'Use-name') + '</span></span>'
+     +   '<span class="rank-vero">' + (currentLang === 'it' ? 'Vero nome' : 'True name') + '</span>'
+     +   '<span class="rank-subtitle">' + joinBipartite([
+             '<span class="alt-token">' + (currentLang === 'it' ? 'Nomi alternativi' : 'Other names') + '</span>',
+             '<span class="alt-token">' + (currentLang === 'it' ? 'Titoli e onorificenze' : 'Titles and honours') + '</span>'
+           ]) + '</span>'
+     + '</span></div></div>';
   h += '</div>'; // chiude .ctrl-left
   // Legenda iconografie
   // Legenda SENZA intestazione (rimossa in v4.05 per compattezza, scelta
@@ -5642,43 +5670,9 @@ function refreshControlPanel() {
   wireControlPanel();
 }
 
-// Lineetta di riferimento sotto la nota: deve finire ESATTAMENTE dove finisce
-// il testo (al punto dell'ultima riga), non riempire la colonna. Si misura il
-// bordo destro massimo delle righe della nota e vi si adatta la larghezza.
-// Solo desktop (su mobile la .ctrl-note-rule è display:none).
-function fitNoteRule() {
-  var panel = document.getElementById('ctrl-panel');
-  if (!panel) return;
-  var note = panel.querySelector('.ctrl-names-note');
-  var rule = panel.querySelector('.ctrl-note-rule');
-  if (!note || !rule || getComputedStyle(rule).display === 'none') { if (rule) rule.style.width = ''; return; }
-  var range = document.createRange();
-  range.selectNodeContents(note);
-  var rects = range.getClientRects();
-  if (!rects.length) return;
-  // Bordo destro dell'ULTIMA riga (dove sta il punto finale), non della riga
-  // più larga: si prende il top massimo (ultima riga) e, tra i frammenti su
-  // quella riga, il right massimo.
-  var lastTop = -Infinity;
-  for (var i = 0; i < rects.length; i++) if (rects[i].top > lastTop) lastTop = rects[i].top;
-  var right = 0;
-  for (var j = 0; j < rects.length; j++) if (rects[j].top >= lastTop - 1) right = Math.max(right, rects[j].right);
-  // Larghezza dal bordo sinistro REALE della lineetta (i margini di nota e
-  // lineetta possono differire). Le misure getBoundingClientRect sono nello
-  // spazio TRASFORMATO: a pannello chiuso il transform scale(0.96) le
-  // rimpicciolisce, quindi si divide per lo scale reale (a pannello aperto
-  // vale 1, nessun effetto).
-  var ruleLeft = rule.getBoundingClientRect().left;
-  var m = new DOMMatrixReadOnly(getComputedStyle(panel).transform);
-  var sx = m.a || 1;
-  rule.style.width = Math.max(0, Math.round((right - ruleLeft) / sx)) + 'px';
-}
-window.addEventListener('resize', function(){ clearTimeout(window._noteRuleT); window._noteRuleT = setTimeout(fitNoteRule, 150); });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fitNoteRule(); });
 
 function wireControlPanel() {
   var panel = document.getElementById('ctrl-panel');
-  fitNoteRule();
   function applyFilter() {
     pruneBadgeFilter(); // filtri badge non più validi (categorie cambiate) -> off
     renderList();

@@ -11,8 +11,8 @@
 ## ⚠️⚠️ Stato: SCHELETRO, e il dataset non è verificato
 
 Al 2026-08-21 il progetto è uno **scheletro funzionante** con **19 voci** che contengono
-**solo** quello che l'utente ha dichiarato a memoria (nome comune, vero nome, razza, genere)
-più l'**opera di prima apparizione** presa da Wikipedia. Nessuna descrizione, e le citazioni
+**solo** quello che l'utente ha dichiarato a memoria (nome d'uso, vero nome, razza, genere)
+più l'**opera di prima apparizione** e i **badge** ricavati da Wikipedia. Nessuna descrizione, e le citazioni
 non ci saranno (vedi la sezione sui nomi non cliccabili).
 
 - **L'ordine è quello in cui l'utente ha passato i nomi**, non una classifica: le voci nuove
@@ -63,6 +63,67 @@ I badge sono tre: **strega/stregone**, **mago**, **vero nome** (`ICON_ORDER`).
     ⚠️ Quindi una card di drago senza simbolo di genere **non è un dato mancante**: chi la
     vede non deve mettersi a cercare l'attestazione, e chi riempirà il dataset sulle fonti
     non deve riempire quel campo perché 'è vuoto'.
+
+## 🪶 I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua
+
+Istruzione dell'utente, 2026-08-21: a Terramare **il vero nome è la cosa più importante di
+ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in quest'ordine:
+
+| livello | campo | resa sulla card |
+|---|---|---|
+| **Nome d'uso** (importanza massima) | `nome` / `nome_en` | riga 1, `.rank-name` |
+| **Vero nome** (STESSA importanza) | `vero_nome` | riga 2, `.rank-vero`: grassetto, corpo pari al nome, colore = accento del gruppo |
+| **Nomi alternativi** (secondaria) | `nomi_alternativi` | sottotitolo `.rank-subtitle` |
+| **Titoli e onorificenze** (come sopra) | `appellativi` | stesso sottotitolo, dopo il `|` |
+
+- ⚠️ **`vero_nome` NON ha un campo `_en`**, ed è l'unico campo così: il vero nome è nella
+  Lingua della Creazione, non si traduce. Chi gli aggiungesse un `_en` inviterebbe a inventare
+  una resa che non esiste.
+- ⚠️ **Il colore dell'accento passa da `--cctxt`**, non da `--ccrgb`: la tinta della famiglia
+  va bene per bordi e fondi, ma come TESTO l'oro e il rosso desaturati non passano il gate AA.
+  `ccFamTxt` la corregge sul fondo di ciascun tema. Chi tocca i colori delle famiglie deve
+  ri-iniettare **entrambe** le terne (`injectCardColorRules` e `reinjectFamilyColors` lo fanno).
+- ⚠️ **I draghi hanno la riga del vero nome VUOTA**, di proposito: il loro nome d'uso **è** il
+  vero nome, e ripeterlo su due righe sarebbe rumore. Lo dice il badge.
+- **Storico che spiega la forma dei dati**: fino alla `0.05` il vero nome viveva in
+  `nomi_alternativi`, e il nome d'uso portava le due forme insieme (`Sparviero / Falco`). Il
+  2026-08-21 l'utente ha corretto: il nome principale è uno, il secondo va fra gli
+  alternativi, e il vero nome ha il suo campo.
+
+## 🗂️ La legenda nel Pannello è una CARD FINTA
+
+Il Pannello di Terramare è molto più vuoto di quello di Arda, e l'utente ha chiesto di
+riempirlo con la legenda dell'**anatomia di una card**: una card con le stesse classi di
+quelle vere, dove ogni riga porta scritto che cos'è (`Nome d'uso`, `Vero nome`,
+`Nomi alternativi | Titoli e onorificenze`).
+
+⚠️ **Usa le classi REALI** (`.rank-item`, `.rank-name`, `.rank-vero`, `.rank-subtitle`) e la
+stessa `joinBipartite` del sottotitolo: gli overrides in `.ctrl-cardleg` toccano **solo** le
+misure del contenitore. Se un domani si ridisegnasse la card copiando gli stili nella legenda,
+la legenda comincerebbe a mostrare una card che non esiste, che è l'unico modo in cui può
+sbagliare.
+
+- Ha preso il posto della vecchia **nota sui nomi** ereditata da Arda ('i veri nomi sono in
+  grassetto sotto il nome'), che dopo questa riorganizzazione **diceva il falso**. Con lei sono
+  usciti la lineetta di riferimento e `fitNoteRule`, che serviva solo ad allinearla.
+
+## ✅ I 19 confrontati con Wikipedia (2026-08-21)
+
+Confronto voce per voce con *List of Earthsea characters* su tutto tranne il nome italiano,
+su richiesta dell'utente. **Coerenti**: veri nomi (tutti e 16 sono elencati là come veri
+nomi), razze, generi, opere di prima apparizione. Corretti **i badge**, che erano tutti spenti:
+`mago` a Ogion, Veccia, Lontra/Sterna, Gelluk, Brace, Early, Burrone/Otak, Sparviero e
+Diamante; `stregone` a Solevivo.
+
+⚠️ **Tre cose sono rimaste in sospeso perché sono scelte editoriali, non dati**:
+
+1. **Therru/Tehanu**: Wikipedia la dice *'burned child, a woman-dragon'*. Sul sito è Donna
+   (razza uomo). Cambiarla sposterebbe colore e categoria, quindi non si tocca senza l'utente.
+2. **Kalessin 'once called Segoy'**: un nome in più che Wikipedia attesta, ma dicendo che
+   *suggerisce* un'identità col creatore. Non scritto nei dati.
+3. **Diamante/Essiri**: il badge `mago` gli è stato dato perché il testo lo dice *'gifted'* e
+   la definizione dell'utente lega il badge al **dono**, non alla professione; ma la stessa
+   riga dice che *abbandona* la magia per la musica. Da confermare.
 
 ## 🔤 Filtro al plurale, card al singolare: è deliberato
 
