@@ -11,8 +11,9 @@
 ## ⚠️⚠️ Stato: SCHELETRO, e il dataset non è verificato
 
 Al 2026-08-21 il progetto è uno **scheletro funzionante** con **19 voci** che contengono
-**solo** quello che l'utente ha dichiarato a memoria: nome comune, vero nome, razza e genere.
-Nessuna fonte, nessuna descrizione, nessuna citazione.
+**solo** quello che l'utente ha dichiarato a memoria (nome comune, vero nome, razza, genere)
+più l'**opera di prima apparizione** presa da Wikipedia. Nessuna descrizione, e le citazioni
+non ci saranno (vedi la sezione sui nomi non cliccabili).
 
 - **L'ordine è quello in cui l'utente ha passato i nomi**, non una classifica: le voci nuove
   si accodano, e il riordino si fa dal Pannello quando lui deciderà le posizioni. ⚠️ Quindi
@@ -72,6 +73,42 @@ vede (istruzione dell'utente, 2026-08-21: nel filtro **tutto al plurale**).
 ⚠️ Non è un'incoerenza da sanare, ed è scritto qui perché a colpo d'occhio lo sembra: chi
 uniformasse i due registri romperebbe quello giusto. Le sei donne del dataset portano 'Donna'
 sulla card **e** stanno sotto 'Uomini' nel filtro, che è la razza.
+
+## 🚫 I nomi NON sono cliccabili, e la scheda personaggio non esiste
+
+Istruzione dell'utente, 2026-08-21: *'su Earthsea i nomi non saranno cliccabili: ho deciso
+che non serve'*. Quindi la **scheda personaggio è stata rimossa** (markup, `openModal`,
+`closeModal`, l'accento cardcolor della modale, le frecce fra le schede, la trappola del
+Tab, il ramo di Esc e il CSS suo), e il nome è un testo come gli altri: niente `role`,
+niente `tabindex`, niente cursore a manina, niente colore al passaggio.
+
+- ⚠️ **Conseguenza dichiarata dall'utente: niente citazioni.** I campi `citazione` e
+  `citazione_en` sono usciti dal dataset, dall'editor admin e dalla ricerca: senza scheda non
+  esisteva più un posto dove leggerle. Chi le rimettesse dovrebbe prima decidere DOVE si
+  leggono.
+- ⚠️ **Non rimettere il cursore a manina 'per coerenza'**: prometterebbe un'azione che non c'è,
+  ed è il difetto che questa scelta elimina.
+- Restano in piedi le modali che servono ad altro: 'Risorse e note', l'informativa, i due
+  **visualizzatori di immagini** per le mappe. Il loro guscio condiviso (`buildStdModal`) e le
+  classi `.modal`, `.modal-body`, `.modal-close` sono di quelli, non della scheda.
+
+## 📖 Prima apparizione: `fonte_en`, e il ripiego vale nei due sensi
+
+Ogni voce registra **l'opera dove il personaggio appare per la prima volta** (istruzione
+dell'utente, 2026-08-21), presa dalla parentesi della voce Wikipedia *List of Earthsea
+characters*. Si vede sulla card, nella riga che il motore chiama `.rank-title`.
+
+- I titoli sono **inglesi**, perché la fonte è inglese: stanno in `fonte_en`, e `fonte` resta
+  **vuoto** perché è il posto del titolo italiano, che nessuna fonte in scena attesta.
+  ⚠️ Per questo il ripiego è **bidirezionale** (`p.fonte || p.fonte_en` anche in italiano),
+  al contrario di tutti gli altri campi bilingui: senza, la vista italiana mostrerebbe una
+  riga vuota.
+- ⚠️ **Arren e Sparviero non hanno l'opera**, e non è una dimenticanza: in quella voce la
+  parentesi non c'è. Per ovvia che sia la risposta (*Il mago di Terramare*, *La spiaggia più
+  lontana*), dedurla è esattamente ciò che la regola vieta: la mette l'utente o una fonte.
+- ⚠️ **Wikipedia elenca le apparizioni, non la prima**: dove ne dà più di una si è preso il
+  **primo titolo elencato**. Quindi il campo va riletto quando il canone entra in scena
+  (Kalessin, per dire, è dato come *Tehanu*).
 
 ## 🔐 Nessun proxy admin, e il motivo è distruttivo
 
