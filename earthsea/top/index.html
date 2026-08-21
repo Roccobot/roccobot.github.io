@@ -2432,7 +2432,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.06</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.07</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4500,7 +4500,27 @@ var CATS = ['man','dragon'];
 // leggessero il tipo in modo diverso, una card rossa potrebbe finire fra gli
 // uomini. Tutto ciò che non è drago è uomo: a Terramare non c'è altro.
 function categoria(p) {
-  return /drago|dragon/i.test(p.tipo || '') ? 'dragon' : 'man';
+  return categorie(p)[0];
+}
+// ⚠️ Una voce può appartenere a DUE razze, e non è un caso teorico: Therru è
+// 'Donna | Drago' (istruzione dell'utente, 2026-08-21: 'è sia Donna che Drago',
+// unica in tutto il dataset). Quindi le categorie di una voce sono un ELENCO,
+// ricavato da tutti i segmenti di `p.tipo` separati da '|', e chi filtra deve
+// chiedersi se ALMENO UNA è accesa: con la sola prima, Therru spariva spegnendo
+// gli Uomini pur essendo anche un drago.
+// L'ordine è quello del tipo, e `categoria(p)` (singolare) ne restituisce la
+// PRIMA: è quella che governa colore e statistiche, dove un valore solo serve.
+function categorie(p) {
+  var viste = {}, fuori = [];
+  (p.tipo || '').split('|').forEach(function(seg){
+    var c = /drago|dragon/i.test(seg) ? 'dragon' : 'man';
+    if (!viste[c]) { viste[c] = 1; fuori.push(c); }
+  });
+  return fuori.length ? fuori : ['man'];
+}
+// Vero se la voce è visibile con le categorie attive: basta UNA delle sue.
+function inCatsAttive(p) {
+  return categorie(p).some(function(c){ return !!filterState[c]; });
 }
 var filterState = {};
 (function(){
@@ -4570,7 +4590,7 @@ function isVisibile(p) {
     });
     if (!hit) return false;
   }
-  return !!filterState[categoria(p)];
+  return inCatsAttive(p);
 }
 
 // Conta le voci visibili con un IPOTETICO set di righe-badge (dry-run), stessa
@@ -4587,7 +4607,7 @@ function visibleCountWithBadgeSet(rowSet) {
       rowSet.forEach(function(row){ if (!hit) BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; }); });
       if (!hit) continue;
     }
-    if (!filterState[categoria(p)]) continue;
+    if (!inCatsAttive(p)) continue;
     n++;
   }
   return n;
@@ -4605,7 +4625,7 @@ function visibleCountWithBadgeSet(rowSet) {
 function rowHasMembersInCats(row) {
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
-    if (!filterState[categoria(p)]) continue;
+    if (!inCatsAttive(p)) continue;
     var hit = false;
     BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; });
     if (hit) return true;
