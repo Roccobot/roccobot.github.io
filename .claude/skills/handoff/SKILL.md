@@ -251,6 +251,15 @@ sito non cambia. Messaggio: `handoff: <AAAA-MM-GG> <una riga>`.
 Se la sessione sta già pubblicando altro, **infila il file in quel push** invece di
 farne uno a sé.
 
+⚠️⚠️ **E se proprio deve andare in un push a sé, l'ordine è: merge, RIALLINEO, poi si
+scrive il brief.** Non è una preferenza di stile: il riallineo del branch è un
+`git reset --hard`, e il passo 1 chiede di misurare l'allineamento **dopo** lo squash,
+quindi la tentazione naturale è tenere il brief modificato mentre si riallinea. Là il
+`reset` lo cancella, e il reflog non lo recupera perché salva i commit, non il working
+tree. Misurato il 2026-08-21: sei modifiche appena scritte, perse e riscritte a mano.
+La regola generale (con la guardia da mettere dentro la ricetta del riallineo) vive in
+`Roccobot.md`, § '🌿 Workflow git e versioni'.
+
 ### 5. Chiudi in chat
 
 Stampa un riassunto di **5 righe al massimo** (stato, cosa è live, cosa è in sospeso) e
