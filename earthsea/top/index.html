@@ -462,6 +462,12 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
 }
 
+/* Drago MISTO (Tehanu, sola nel dataset): card normale, quindi font e cassa del
+   nome d'uso, ma il nome prende la TINTA di famiglia invece del grigio. Serve
+   perché una voce senza seconda riga non ha dove mostrare l'accento del gruppo, e
+   l'utente ha chiesto per lei il 'nome in rosso come i draghi'. */
+.rank-name.name-tinta > .rank-name-text { color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1); }
+
 /* VERO NOME (dal 2026-08-21, istruzione dell'utente): a Terramare il vero nome è
    la cosa più importante di un individuo, quindi ha una riga sua allo STESSO
    livello del nome d'uso, non fra i nomi alternativi. Colore = accento del gruppo
@@ -960,7 +966,9 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
    spazio sotto le Categorie. Se il Pannello è più alto della finestra,
    scorre (max-height + overflow). */
 @media (min-width:769px) {
-  #ctrl-panel { display:grid; grid-template-columns:auto auto; column-gap:2rem; align-items:start; }
+  /* UNA colonna (istruzione dell'utente, 2026-08-21): prima erano due, con le
+     categorie e la legenda badge a fianco della card di legenda. */
+  #ctrl-panel { display:grid; grid-template-columns:auto; align-items:start; }
   /* Colonna sinistra come flex verticale, stirata all'altezza della Legenda.
      Allineamenti ottici a elementi esistenti della colonna destra:
      - l'interruttore tema ha il bordo superiore allineato al top del testo
@@ -971,7 +979,7 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
        inline), non sul flex-row che falsava il rilievo.
      Le Categorie hanno margini auto e restano centrate otticamente nello
      spazio tra interruttore (sopra) e nota (sotto): gap sopra = gap sotto. */
-  #ctrl-panel .ctrl-left { display:flex; flex-direction:column; align-self:stretch; }
+  #ctrl-panel .ctrl-left { display:flex; flex-direction:column; }
   /* Toolbar a 3 colonne: versione ancorata a sinistra (col 1, justify-self
      start), tasti tema/lingua centrati come gruppo (col 2 auto, simmetrica tra
      due 1fr). La versione è otticamente centrata in verticale coi tasti
@@ -995,11 +1003,10 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
   /* Come per la versione mobile: in tema chiaro blu piu scuro per superare
      il 4.7:1 percepito dopo opacity .9 (stesso difetto di contrasto). */
   html[data-theme="light"] #ctrl-panel .ctrl-ver-desk { color:#3e607e; }
-  /* ── Colonna DESTRA: categorie in alto, legenda sotto (mockup dell'utente,
-     2026-08-21). Le due liste condividono il passo verticale delle righe, così
-     le checkbox e le icone badge stanno sullo stesso ritmo. ── */
-  #ctrl-panel .ctrl-right { display:flex; flex-direction:column; }
-  #ctrl-panel .ctrl-right .ctrl-section--filtri { margin:3px 0 0.45rem; }
+  /* Categorie e legenda badge sotto la card di legenda, nella colonna unica: le
+     due liste condividono il passo verticale delle righe, così le checkbox e le
+     icone badge stanno sullo stesso ritmo. */
+  #ctrl-panel .ctrl-section--filtri { margin:0.8rem 0 0.45rem; }
   /* ⚠️ Le righe di legenda hanno min-height, non height: le descrizioni dei
      badge possono ANDARE A CAPO (permesso dall'utente), e con l'altezza fissa
      la seconda riga sarebbe uscita dal riquadro. */
@@ -1016,7 +1023,12 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
      tag '× N badge attivi' compare/sparisce in-place senza reflow e il blocco
      Categorie resta fermo. Il vecchio suggerimento in corsivo (.ctrl-badge-hint,
      solo riempitivo) è stato rimosso. */
-  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:auto 0; min-height:21px; display:flex; flex-direction:column; align-items:center; }
+  /* ⚠️ Margine FISSO e non `auto`: con la colonna unica il margine automatico
+     distribuiva lo spazio residuo qui, aprendo un vuoto fra le categorie e la
+     legenda dei badge. Nella disposizione a due colonne serviva a centrare lo slot,
+     e resta la misura scartata: non rimetterlo. Lo `min-height` invece serve ancora,
+     e riserva l'altezza del tag anche a filtro spento. */
+  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:0.35rem 0; min-height:21px; display:flex; flex-direction:column; align-items:center; }
   #ctrl-panel .ctrl-left .ctrl-tag-slot + .ctrl-cardleg { margin-top:0; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
@@ -2403,7 +2415,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.12</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.13</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3938,6 +3950,11 @@ function parseFonte(fonte) {
   if (lp === -1) return { title: fonte, author: fonte, year: '' };
   var title = fonte.slice(0, lp).trim();
   var inside = fonte.slice(lp + 1).replace(/\)$/, '');
+  // ⚠️ DIVERGENZA dal motore di Arda, dove fra parentesi sta 'Autore, anno': a
+  // Terramare l'autrice è una sola, quindi la parentesi porta il solo ANNO e un
+  // contenuto di quattro cifre si legge così. Senza questo ramo '(1968)' finiva nel
+  // campo autore e l'anno non compariva sulla card: nessun errore, solo un dato muto.
+  if (/^\s*\d{4}\s*$/.test(inside)) return { title: title, author: '', year: inside.trim() };
   var fc = inside.indexOf(',');
   if (fc === -1) return { title: title, author: inside.trim(), year: '' };
   return { title: title, author: inside.slice(0, fc).trim(), year: inside.slice(fc + 1).trim() };
@@ -4642,11 +4659,16 @@ function renderList() {
     // Il vero nome è UNICO per le due lingue: è nella Lingua della Creazione, non
     // si traduce, quindi non ha un campo _en da cui ripiegare.
     var veroNome = escapeHtml(p.vero_nome || '');
-    // ⚠️ I DRAGHI hanno una riga sola: il loro nome È il vero nome, quindi la prima
-    // riga ne prende la resa e la seconda non si emette. Il predicato guarda le
-    // CATEGORIE, non `p.tipo` grezzo, così Tehanu (Donna | Drago) ci rientra: è
-    // l'esempio con cui l'utente ha dato la regola.
-    var soloVero = categorie(p).indexOf('dragon') !== -1;
+    // ⚠️ I DRAGHI PURI hanno una riga sola: il loro nome È il vero nome, quindi la
+    // prima riga ne prende la resa (Cinzel maiuscolo) e la seconda non si emette.
+    // ⚠️ Il predicato è 'SOLO drago', non 'anche drago': Tehanu è Donna E Drago, e
+    // l'utente ha chiesto per lei una **card normale col nome in rosso** (istruzione
+    // del 2026-08-21, che corregge la prima stesura dove le toccava la riga sola).
+    var cats = categorie(p);
+    var soloVero = cats.length === 1 && cats[0] === 'dragon';
+    // Drago MISTO: card normale, ma il nome prende la tinta di famiglia invece del
+    // grigio, perché quella voce non ha una seconda riga su cui mostrarla.
+    var nomeTinto = !soloVero && cats.indexOf('dragon') !== -1;
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
@@ -4786,7 +4808,7 @@ function renderList() {
       '<span class="rank-strip" aria-hidden="true"></span>' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        '<span class="rank-name' + (soloVero ? ' name-vero' : '') + (nomeTinto ? ' name-tinta' : '') + '"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
         (veroNome && !soloVero ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
         rigaDesc +
         riga2 +
@@ -5538,13 +5560,17 @@ function controlPanelHTML() {
      + '<span class="rank-content">'
      +   '<span class="rank-name"><span class="rank-name-text">' + (currentLang === 'it' ? "Nome d'uso" : 'Use-name') + '</span></span>'
      +   '<span class="rank-vero">' + (currentLang === 'it' ? 'Vero nome' : 'True name') + '</span>'
+     +   '<span class="rank-title">' + (currentLang === 'it' ? "Opera della prima apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
      +   '<span class="rank-subtitle">' + joinBipartite([
              '<span class="alt-token">' + (currentLang === 'it' ? 'Nomi alternativi' : 'Other names') + '</span>',
              '<span class="alt-token">' + (currentLang === 'it' ? 'Titoli e onorificenze' : 'Titles and honours') + '</span>'
            ]) + '</span>'
      + '</span></div></div>';
-  h += '</div>'; // chiude .ctrl-left
-  h += '<div class="ctrl-right">' + destra;
+  // ⚠️ UNA COLONNA SOLA (istruzione dell'utente, 2026-08-21): le categorie e la
+  // legenda dei badge stanno SOTTO la card di legenda, dentro la stessa colonna.
+  // La `.ctrl-right` non esiste più, e con lei la griglia a due colonne del
+  // Pannello desktop: quello che era 'a fianco' ora è 'sotto', in un unico flusso.
+  h += destra;
   // Legenda iconografie
   // Legenda SENZA intestazione (rimossa in v4.05 per compattezza, scelta
   // utente: i badge sono autoesplicativi). Ogni riga è anche un FILTRO:
@@ -5648,7 +5674,7 @@ function controlPanelHTML() {
      + '<div class="leg-face">' + buildLegend(currentLang, false) + '</div>'
      + '<div class="leg-measure" aria-hidden="true">' + buildLegend(currentLang === 'it' ? 'en' : 'it', true) + '</div>'
      + '</div></div>';
-  h += '</div>'; // chiude .ctrl-right
+  h += '</div>'; // chiude .ctrl-left
   h += '</div>'; // chiude .ctrl-cols
   // Barra sticky in basso (solo mobile): versione (anche accesso admin) a
   // sinistra, tema + lingua centrati come gruppo, chiudi a destra (vicino a
