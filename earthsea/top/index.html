@@ -4514,13 +4514,17 @@ function familyOf(p) {
 // arda/top/icons/, nomi da legenda ITA. La resa identica agli SVG di
 // prima è garantita dalle classi si-* (fattori di scala) nel CSS.
 var BADGE_ICON = {
-  // ⚠️ Le tre icone NON esistono ancora: vanno disegnate con l'utente, come si fece per
-  // la favicon di 'I Grandi di Arda'. Finché mancano, il CSS già previsto per l'immagine
-  // che non carica lascia al suo posto il testo alternativo, quindi il badge si vede e si
-  // capisce lo stesso.
-  stregone:  "<img class=\"status-icon\" src=\"icons/Stregone.webp\" title=\"%L%\" alt=\"%L%\">",
-  mago:      "<img class=\"status-icon\" src=\"icons/Mago.webp\" title=\"%L%\" alt=\"%L%\">",
-  veronome:  "<img class=\"status-icon\" src=\"icons/VeroNome.webp\" title=\"%L%\" alt=\"%L%\">"
+  // ⚠️ SVG in linea e non file immagine, al contrario di 'I Grandi di Arda': la sua
+  // cartella di icone qui non c'entra, e un `img` verso un file che non esiste mostrava
+  // l'immagine rotta del browser accanto a ogni nome. Questi tre segni sono SEGNAPOSTO
+  // sobri, non un disegno definitivo, e useranno `currentColor` come i simboli di genere
+  // finché non ci saranno icone vere.
+  // Strega o stregone: una scintilla a quattro punte, l'incantesimo minore.
+  stregone: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><path fill=\"currentColor\" d=\"M12 2l1.8 7.2L21 11l-7.2 1.8L12 20l-1.8-7.2L3 11l7.2-1.8z\"/></svg>",
+  // Mago: il bastone, con il pomo in cima.
+  mago: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M8 21L15 7\"/></g><circle cx=\"16\" cy=\"4\" r=\"3\" fill=\"currentColor\"/></svg>",
+  // Vero nome: un segno inciso, come una runa della lingua antica.
+  veronome: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 3v18M12 8l6-4M12 8L6 4M12 15l6 4M12 15l-6 4\"/></g></svg>"
 };
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
 // lista, per la legenda del Pannello e per la griglia dell'editor admin. In
@@ -5925,6 +5929,9 @@ var CAT_COLOR = { ainu:'#5540e0', arcane:'#5ac060', elf:'#70c0e8', adan:'#8a1818
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
 // (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
 var TYPE_LABEL = {
+  // ⚠️ Il plurale del FILTRO resta al maschile perché indica la razza, non il singolo:
+  // le due categorie sono 'uomini' e 'draghi'. Sulla singola card invece l'etichetta
+  // segue il genere ('Uomo' oppure 'Donna'), perché in quel punto si parla di una persona.
   it: { 'type-man':'Uomini', 'type-dragon':'Draghi' },
   en: { 'type-man':'Men', 'type-dragon':'Dragons' }
 };
