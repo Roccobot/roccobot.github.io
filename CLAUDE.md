@@ -71,9 +71,10 @@ sessione:
      tolkieniano) e `rules/Earthsea.md` (il canone di Terramare). Sono i **soli** file di
      regole opzionali: tutto il resto vive in `Roccobot.md`, che si carica sempre. Se un
      domani ne nascono altri, si aggiungono qui come opzioni.
-     - ⚠️ **Il secondo è nato il 2026-08-20 con il progetto 'I Grandi di Terramare'**, e
-       finché dichiara di essere un guscio non è un'autorità: si carica per sapere che il
-       canone non c'è ancora, che è l'informazione che impedisce di inventarne uno.
+     - ⚠️ **Il secondo è nato il 2026-08-20 con il progetto 'I Grandi di Terramare'** ed è
+       **canone vero dal 2026-08-21**: opere, edizioni italiane coi traduttori, sigle
+       bilingui, Maestri di Roke, e i link alle fonti scaricabili. Le note che lo dicono un
+       guscio sono superate.
    - **`Quali CLAUDE.md di progetto leggo subito?`**, a **scelta multipla** fra quelli
      della tabella in testa a questo file (richiesta dell'utente, 2026-07-30).
      Quelli che l'utente non sceglie **non** si leggono all'avvio: si leggono **al
@@ -140,8 +141,11 @@ sessione:
   dove scriverne una nuova.
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
-- **`rules/Earthsea.md`**: il canone di Terramare, per ora un **guscio** che dichiara di non
-  essere un'autorità. Serve al progetto `earthsea/top/`.
+- **`rules/Earthsea.md`**: il canone di Terramare (opere, edizioni e traduttori italiani,
+  sigle, fonti scaricabili). Serve al progetto `earthsea/top/`. ⚠️ **La sua filologia è di un
+  altro genere da quella tolkieniana**: ogni scritto pubblicato è canone per definizione, non
+  esistono apocrifi, e gli unici dubbi riguardano le scelte di traduzione italiana, sulle
+  quali decide l'utente.
 - **Lettura** via Worker `rules-proxy` (funziona anche a repo privato):
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/Roccobot.md>
   - <https://rules-proxy.roccobot-b90.workers.dev/rules/JRRT.md>
@@ -214,8 +218,8 @@ Dalla più forte alla più debole:
      progetto che lo riguarda (`JRRT.md` per `arda/top/`, `Earthsea.md` per
      `earthsea/top/`). Applicare l'uno all'altro sarebbe un errore di dominio, non una
      questione di scala.
-   - ⚠️ **`Earthsea.md` finché è un guscio non attesta nulla**: sta a questo livello per
-     la funzione che avrà, ma oggi la sua unica affermazione è che il canone non c'è.
+   - ⚠️ **`Earthsea.md` attesta dal 2026-08-21**: fino a quel giorno era un guscio che
+     dichiarava di non essere un'autorità, e le note che lo dicono ancora sono superate.
    - ⚠️ Ma resta **sotto** [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), il solo
      progetto a cui si applica, e non per gerarchia astratta: **là** vivono le
      **scelte editoriali deliberate** che divergono dal canone pubblicato

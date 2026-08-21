@@ -22,9 +22,15 @@ non ci saranno (vedi la sezione sui nomi non cliccabili).
   in scena. Tradurne una sola perché è nota (Sparviero -> Sparrowhawk) farebbe sembrare
   attestate anche le altre, ed è il tipo di deriva che questo file esiste per fermare.
 
-- Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools` ed è ancora un **guscio**:
-  dichiara di non essere un'autorità finché le fonti non sono in scena. Finché quel file dice
-  così, **nessuna voce può appoggiarsi a esso** e niente si scrive a memoria.
+- ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools` e dal **2026-08-21 non è
+  più un guscio**: porta le sette opere inglesi e le sei italiane, le edizioni coi traduttori,
+  le sigle bilingui, i nove Maestri di Roke, l'elenco dei portatori del terzo badge e i
+  **link alle fonti scaricabili**, verificati uno per uno.
+  - ⚠️ **Quindi ora si può e si deve verificare col grep sui testi**: prima 'niente a memoria'
+    era un divieto senza alternativa, adesso l'alternativa esiste.
+  - ⚠️ **Ma il dataset NON è stato riverificato sulle fonti**: le 19 voci vengono ancora da
+    quello che l'utente ha dichiarato a memoria e da Wikipedia. Avere il canone non riverifica
+    i dati da sé.
 - ⚠️ **Il dataset piccolo inganna**: una voce sbagliata qui pesa quanto dieci su un dataset
   da centinaia di righe, e i nomi veri di Terramare si ricordano con sicurezza ingannevole.
 
@@ -74,11 +80,17 @@ nome d'uso **è** il vero nome. L'utente l'ha riqualificato: ora è **`nomeged`*
 del vero nome di Ged', *applicato a tutti coloro che lo conobbero* (chiesto anche più
 sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true name'**).
 
-- ⚠️ **Nasce SPENTO su tutte le voci, e non è un dato mancante**: l'elenco dei portatori
-  arriverà dal **canone di Terramare** (`rules/Earthsea.md`), non da una deduzione sul testo
-  inglese di Wikipedia. Chi lo trova a zero non lo 'ripari' inventando i portatori.
-  - Conseguenza visibile: la terza riga della legenda badge nel Pannello è **attenuata**,
-    perché nessuna voce lo porta. È corretto, non è un difetto di resa.
+- ✅ **Dalla `0.12` è acceso sulle NOVE voci che il canone elenca** (`rules/Earthsea.md`,
+  § 'Chi conobbe il vero nome di Sparviero', elenco dell'utente del 2026-08-21): Ogion,
+  Veccia, Millefoglie, Arha / Goha, Arren, Tehanu, Dote, Orm Embar, Kalessin.
+  - ⚠️ **Quel file è la sua UNICA fonte**: il badge non si ricava dalla scheda di un
+    personaggio, quindi non si deduce e non si aggiunge a intuito. Chi vuole cambiarne uno
+    cambia prima il canone.
+  - ⚠️ **Sparviero NON lo porta**, e non è una dimenticanza: il badge marca chi **ricevette
+    in custodia** il suo nome, non chi lo porta.
+  - **Kurremkarmerruk è nell'elenco ma non nel dataset**: quando la voce nascerà, nasce col
+    badge acceso. E i **due maestri di Roke senza nome** contemporanei di Ged sono esclusi per
+    scelta dell'utente, non per mancanza di dati.
 - ⚠️ **Il vecchio significato non va rimesso in circolo**: dopo la riqualificazione il badge
   non dice più niente sui draghi, e i 19 valori ereditati sono stati azzerati insieme al
   nome del campo. Un badge riusato con l'etichetta nuova e i dati vecchi mentirebbe su
