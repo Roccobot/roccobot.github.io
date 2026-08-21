@@ -69,10 +69,20 @@ dentro `dati.js`, ancora **provvisori**.
 I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged**
 (`ICON_ORDER = ['stregone','mago','nomeged']`).
 
-- ⚠️ **Sono SVG in linea, non file immagine**, al contrario di Arda: le icone di quel progetto
-  non c'entrano nulla con questo, e un `img` verso un file inesistente mostrava il rettangolo
-  di immagine rotta. Sono **segnaposto sobri** e usano `currentColor`: le grafiche vere sono
-  da disegnare.
+- ✅ **Dalla `0.14` sono PNG a colori fornite dall'utente** (`icons/Stregone.png`,
+  `icons/Mago.png`, `icons/NomeGed.png`), al posto dei tre SVG segnaposto in `currentColor`.
+  - ⚠️ **Sono `img`, quindi NON seguono il colore del testo**: il colore sta nel file, e un
+    cambio di tema non lo tocca. È la stessa via dei simboli di genere, `img` da sempre.
+  - ⚠️ **I file sono rinominati col nome del BADGE, non del disegno** (`sparkle` ->
+    `Stregone`, `wand` -> `Mago`, `ged` -> `NomeGed`): un domani il disegno cambia e il badge
+    no, e un file che si chiama come il disegno costringerebbe a toccare il codice per
+    sostituire un'immagine.
+  - **`NomeGed.png` non è quadrata** (194x256): sulla card la regola
+    `.rank-name .rank-flags .status-icon { width:auto }` le lascia le proporzioni; in legenda
+    il box è quadrato e `object-fit:contain` la contiene senza deformarla.
+  - ⚠️ **Il rettangolo di immagine rotta era il difetto della prima stesura**: gli SVG in
+    linea sono nati perché il motore copiato puntava alle icone di Arda, che qui non esistono.
+    Chi aggiunge un badge aggiunge **anche il file**, o torna quel difetto.
 
 ### ⚠️ Il terzo badge ha CAMBIATO SIGNIFICATO il 2026-08-21
 
@@ -451,9 +461,10 @@ alla volta, con una prova in browser dopo ognuno.
     così, quindi non era un pezzo 'per ora vuoto', era un pezzo di un altro progetto.
     ⚠️ Chi legge un vecchio link `?...1` o `?a=1` di Arda non accende più nulla: il bit in
     coda alla maschera non c'è, e la maschera ora è larga quanto `CATS`.
-- **Grafiche mancanti**: le tre icone dei badge, la favicon, l'immagine di anteprima, e le
-  due **mappe** dei visualizzatori di immagini. ✅ Il **glifo del pulsante** è arrivato il
-  2026-08-21 (vedi '🔆 Il logo del FAB'), provvisorio per dichiarazione dell'utente.
+- **Grafiche mancanti**: la favicon, l'immagine di anteprima, e le due **mappe** dei
+  visualizzatori di immagini. ✅ Sono arrivate il 2026-08-21 il **glifo del pulsante** (vedi
+  '🔆 Il logo del FAB', provvisorio per dichiarazione dell'utente) e le **tre icone dei
+  badge**.
 
 ## 🔢 Versione
 
