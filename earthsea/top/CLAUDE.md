@@ -47,9 +47,10 @@ dentro `dati.js`, ancora **provvisori**.
   tema chiaro, scurito fin dove serve per fare da testo, **diventa un marrone** che non gli
   piace.
   - **Non è ancora applicato**: aspetta la scelta fra le due tavolozze proposte. Finché non
-    arriva, `.cc-man` resta oro e nel dataset `cardcolor` vale `man` per ogni umano.
-  - ⚠️ **Quando si applica, il caso da guardare è Therru**, Donna **e** Drago: prenderebbe due
-    tinte, e va deciso quale vince (la prima razza dichiarata è la donna).
+    arriva, `.cc-man` resta oro.
+  - ✅ **Il caso Tehanu è DECISO** (utente, 2026-08-21): Donna **e** Drago, ma la sua tinta è
+    quella dei **draghi**, quindi `cardcolor` vale `dragon` ed è la sola voce umana a non
+    essere `man`. Quando la tavolozza per genere entrerà in vigore, lei resta rossa.
   - ⚠️ **La tinta NON diventa il solo canale del genere**: il simbolo di genere sulla card
     c'è già, quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza
     perdere informazione per chi non distingue quelle due tinte.
@@ -120,6 +121,11 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
 | **Nomi alternativi** (secondaria) | `nomi_alternativi` | sottotitolo `.rank-subtitle` |
 | **Titoli e onorificenze** (come sopra) | `appellativi` | stesso sottotitolo, dopo il `|` |
 
+- **Il nome doppio col separatore ` / ` è quasi finito**: era la forma di partenza (Sparviero /
+  Falco, Lontra / Sterna, Burrone / Otak) e l'utente l'ha sciolta voce per voce, mandando il
+  secondo nome fra gli alternativi. ⚠️ **Resta la sola `Arha / Goha`**, e non è una
+  dimenticanza: quelli sono due nomi d'uso di due fasi della vita, non un nome più un alias.
+
 - ⚠️ **`vero_nome` NON ha un campo `_en`**, ed è l'unico campo così: il vero nome è nella
   Lingua della Creazione, non si traduce. Chi gli aggiungesse un `_en` inviterebbe a inventare
   una resa che non esiste.
@@ -135,9 +141,20 @@ Nomi alternativi e titoli restano possibili e continuano a stare nel sottotitolo
 ⚠️ L'utente ha dato questa regola definendo una **propria svista** il modello precedente,
 dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
 
-- ⚠️ **Il predicato guarda le CATEGORIE, non `p.tipo` grezzo** (`categorie(p)` contiene
-  `dragon`): è così che **Tehanu**, che è `Donna | Drago`, ci rientra. È l'esempio con cui
-  l'utente ha dato la regola, non un effetto collaterale.
+- ⚠️⚠️ **Il predicato è 'SOLO drago', non 'anche drago'**, e la differenza è tutta in
+  **Tehanu**: è `Donna | Drago`, e l'utente ha chiesto per lei una **card normale col nome in
+  rosso** (istruzione dello stesso giorno, che corregge la prima stesura dove le toccava la
+  riga sola). Quindi ci sono TRE rese e non due:
+  | caso | prima riga | seconda riga |
+  |---|---|---|
+  | uomo o donna | nome d'uso, Garamond, colore `--name` | vero nome, Cinzel maiuscolo, tinta |
+  | **solo drago** | vero nome, Cinzel maiuscolo, tinta | nessuna |
+  | **drago misto** (Tehanu) | nome, Garamond, **tinta** (`.name-tinta`) | nessuna |
+  - **Perché il drago misto ha il nome in tinta**: non avendo una seconda riga, non ha dove
+    mostrare l'accento del gruppo. La tinta sul nome è quell'accento.
+  - ⚠️ **Il suo `cardcolor` è `dragon`**, quindi filetto ed etichette sono rossi come il nome:
+    una card mezza oro e mezza rossa sarebbe stata incoerente. Se l'utente volesse il **solo**
+    nome rosso su una card oro, si cambia lì.
 - ⚠️ **La classe va sul `.rank-name-text`, non su `.rank-name`**: quel contenitore ospita
   anche etichette e icone (`rank-tipi`/`rank-flags` via `display:contents`), e un
   `text-transform` messo là renderebbe maiuscola anche l'etichetta 'Drago'.
@@ -150,9 +167,9 @@ dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
 - ⚠️ **Su una voce drago il campo `vero_nome` è INVISIBILE**: la seconda riga non si emette,
   quindi un valore lasciato là non darebbe errore e non si vedrebbe. Per questo Tehanu ha
   `vero_nome` **vuoto** e il nome unico in `nome`, con `Therru` fra i nomi alternativi.
-- **La card di legenda del Pannello mostra il caso generale** (nome d'uso, vero nome,
-  alternativi, titoli) e **non** il caso drago: è una scelta, non una dimenticanza, perché
-  una legenda con due card finte spiegherebbe meno di una.
+- **La card di legenda del Pannello mostra il caso generale** (nome d'uso, vero nome, **opera
+  della prima apparizione**, alternativi e titoli) e **non** i casi drago: è una scelta, non
+  una dimenticanza, perché una legenda con tre card finte spiegherebbe meno di una.
 - Ⓘ **Su Tehanu il sottotitolo ripete il nome**, perché la sua opera di prima apparizione è
   il romanzo *Tehanu*: `TEHANU` / `Therru` / *Tehanu*. È un dato corretto, non un difetto.
 
@@ -304,6 +321,42 @@ Diamante; `stregone` a Solevivo.
 3. **Diamante porta il badge `mago`** (conferma dell'utente): *'smette di praticare per sua
    scelta, ma ciò non gli toglie il dono della magia'*. È la lettura letterale della
    definizione del badge, che parla del **dono**.
+
+## 📅 L'opera di prima apparizione: titolo tradotto e anno
+
+Due istruzioni dell'utente del 2026-08-21: *nell'italiano i titoli delle opere vanno indicati
+in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
+
+- **Il formato dei due campi è `Titolo (anno)`**, in `fonte` (italiano) e `fonte_en`
+  (inglese). ⚠️ Ha richiesto un ramo in più in **`parseFonte`**: nel motore di Arda fra
+  parentesi sta `Autore, anno`, quindi `(1968)` finiva nel campo autore e l'anno non compariva
+  **senza dare alcun errore**. Ora un contenuto di sole quattro cifre si legge come anno.
+- ⚠️⚠️ **Titoli e anni sono VERIFICATI sulle fonti, non ricordati**, e stanno nel canone
+  (`rules/Earthsea.md`, § 'Le opere' e § 'I racconti'): i titoli italiani dai metadata dei sei
+  epub Mondadori dell'utente e dall'indice di *Le leggende di Terramare*, gli anni dalle pagine
+  di copyright delle edizioni inglesi. Chi ne aggiunge uno lo cerca là, non a memoria.
+  - **Due racconti sono più vecchi della raccolta** che li contiene: *Rosascura e Diamante*
+    è 1999 e *Libellula* 1997, mentre la raccolta è 2001. Un anno uniformato al volume
+    sarebbe stato plausibile e sbagliato.
+- ⚠️ **`The Rule of Names` resta in inglese e senza anno** (è l'opera di **Yevaud**): il
+  racconto non è nell'edizione italiana dell'utente e la sua data non è attestata dalle fonti
+  in scena. Il ripiego bidirezionale fa sì che la vista italiana mostri il titolo inglese
+  invece di una riga vuota, ed è il comportamento voluto: **non si inventa** né la traduzione
+  né la data.
+
+## 🎛️ Il Pannello a UNA COLONNA (istruzione dell'utente, 2026-08-21)
+
+Dopo il pannello compatto a due colonne, l'utente ha chiesto di mettere **tutto in colonna
+unica**: card di legenda, poi le due checkbox di categoria, poi la legenda dei badge.
+
+- La `.ctrl-right` **non esiste più**, e la griglia desktop di `#ctrl-panel` è passata da
+  `auto auto` a `auto`. Quello che era 'a fianco' ora è 'sotto', in un unico flusso.
+- ⚠️ **Lo slot del tag badge ha perso il `margin:auto`**: serviva a centrarlo verticalmente
+  nella disposizione a due colonne, ma con la colonna unica distribuiva lì tutto lo spazio
+  residuo e apriva un vuoto fra le categorie e la legenda. È la **misura scartata**: non
+  rimetterlo. Il suo `min-height` invece serve ancora, e riserva l'altezza del tag a filtro
+  spento.
+- Misura a font reali: pannello desktop **311x420** (era 540 di larghezza a due colonne).
 
 ## 🔤 Filtro al plurale, card al singolare: è deliberato
 
