@@ -843,15 +843,6 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
    #ctrl-panel vede .ctrl-left e la legenda come figli diretti); su mobile
    diventa un blocco flex centrato (vedi media query). */
 .ctrl-cols { display:contents; }
-.ctrl-solo {
-  flex-shrink:0; margin-left:0.35rem;
-  display:inline-grid; justify-items:center; align-items:center;
-  font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase;
-  background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32);
-  border-radius:3px; color:var(--parchment); padding:3px 11px;
-  cursor:pointer; transition:background 0.15s,opacity 0.15s; white-space:nowrap; user-select:none;
-}
-.ctrl-solo:hover:not(:disabled) { background:rgba(104,144,168,0.28); }
 .ctrl-toolbar { display:flex; align-items:center; justify-content:center; gap:0.55rem; margin-bottom:0.7rem; }
 .ctrl-toolbar .ctrl-lang-btn { height:2rem; width:2rem; padding:0; border-radius:6px; background:rgba(104,144,168,0.12); border:1px solid rgba(104,144,168,0.32); color:var(--parchment); font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.1em; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
 .ctrl-toolbar .ctrl-lang-btn:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
@@ -866,42 +857,14 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
    della barra mobile. */
 .ctrl-icon-btn.ctrl-share-done,
 .ctrl-bottombar .ctrl-icon-btn.ctrl-share-done { background:var(--gold); border-color:var(--gold-bright); color:var(--ink); }
-.ctrl-cat-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
-.ctrl-cat-head .ctrl-h { margin:0; display:inline-grid; justify-items:start; align-items:center; }
-/* Testata categorie a larghezza costante fra le lingue (grid-stack): impedisce
-   che 'CATEGORIE'/'CATEGORIES' faccia scivolare 'Tutti' e la colonna 'Solo'. */
-.ctrl-cat-head .ctrl-h > span { grid-area:1 / 1; }
-.ctrl-cat-head .ctrl-h > .ctrl-h-alt { visibility:hidden; pointer-events:none; }
-.ctrl-reset { display:inline-grid; justify-items:center; align-items:center; font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; background:rgba(104,144,168,0.1); border:1px solid rgba(104,144,168,0.32); border-radius:3px; color:var(--parchment); padding:3px 11px; cursor:pointer; transition:background 0.15s,border-color 0.15s; white-space:nowrap; }
-/* Tutti i tasti quadrati (Tutti/All + Solo/Only) hanno la STESSA larghezza:
-   la faccia visibile e i quattro segnaposto invisibili (.ctrl-btn-m, le quattro
-   parole) condividono la stessa cella → larghezza = testo più largo fra tutte,
-   uguale in entrambe le lingue. Tiene anche ferma la colonna 'Solo'. */
-.ctrl-reset > *, .ctrl-solo > * { grid-area:1 / 1; }
-.ctrl-reset > .ctrl-btn-m, .ctrl-solo > .ctrl-btn-m { visibility:hidden; pointer-events:none; }
-.ctrl-reset:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 /* Target touch su mobile: area cliccabile più alta (≥ ~28px) e testi un filo
    più grandi per i controlli del Pannello, senza cambiarne il disegno. */
 @media (max-width:768px) {
-  /* Tasti piu bassi (padding verticale 7->5px) per dare aria tra i Solo;
-     min-height sulla riga preserva il passo verticale di prima (31.72px),
-     cosi l'aria guadagnata resta TRA i tasti e il ritmo non cambia.
-     Tutti e Solo condividono la stessa regola: riquadri identici. */
-  .ctrl-solo, .ctrl-reset { padding:5px 12px; font-size:0.64rem; }
   .ctrl-cat-row { min-height:31.72px; }
-  /* Centrature ottiche mobile (misure utente da smartphone, DPR 3, quindi /3;
-     em = relative al font dell'elemento). Il blocco testata scende per rendere
-     il gap Tutti->primo Solo IDENTICO al gap tra i Solo (valore tarato sul DOM
-     reale, vedi sotto); transform = niente riflusso. */
-  #ctrl-panel .ctrl-cat-head { transform:translateY(0.384rem); }
-  #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.363em); }
-  #ctrl-panel .ctrl-reset .rst-face { transform:translate(0.098em, 0.081em); }
-  #ctrl-panel .ctrl-solo .solo-face { transform:translate(0.065em, 0.098em); }
 }
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
 .ctrl-row.cat-locked { cursor:default; pointer-events:none; }
-.ctrl-solo.cat-locked { opacity:0.35; pointer-events:none; }
 .ctrl-panel {
   position:fixed; z-index:210; bottom:6rem; left:2rem; width:max-content; min-width:280px; max-width:calc(100vw - 4rem);
   /* overscroll-behavior:contain: a fine corsa il gesto NON si incatena
@@ -991,48 +954,21 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
   /* Come per la versione mobile: in tema chiaro blu piu scuro per superare
      il 4.7:1 percepito dopo opacity .9 (stesso difetto di contrasto). */
   html[data-theme="light"] #ctrl-panel .ctrl-ver-desk { color:#3e607e; }
-  /* Categorie ANCORATE IN ALTO (dalla v4.05): lo spazio recuperato sotto
-     'Animali' ospita il tag del filtro badge. Dalla v7.29 il margine è ridotto
-     di 6px (era calc(2.15rem + 3px) = 37.4px, ora calc(2.15rem - 3px) = 31.4px)
-     per AZZERARE l'offset di 6px con cui le righe categoria cadevano sotto le
-     righe legenda: ora i box delle righe categoria si incolonnano con quelli
-     delle righe legenda (stesso passo 31.5px E stessa quota). L'ancoraggio
-     toolbar<->prima riga legenda (righe legenda) resta invariato. */
-  #ctrl-panel .ctrl-left .ctrl-section--filtri { margin:calc(2.15rem - 3px) 0 0; }
-  /* Ritocco di centratura (richiesta utente), misurato sui FONT REALI (Cinzel):
-     le tre voci della testata vengono portate sullo stesso centro ottico
-     verticale (convergono entro ~0.1px). Valori piccoli perché le stime a occhio
-     su screenshot zoomato ingrandiscono gli scarti reali.
-     - blocco testata {CATEGORIE, Tutti} sceso di 0.2375rem (=3.8px):
-       pareggia il gap testata->prima riga col passo delle righe (bordi = 13.5px,
-       ritmo uniforme). rem = relativo al root, scala con lo zoom testo.
-     - CATEGORIE (Cinzel, corpo maggiore): translateY 0.326em -> centro OTTICO
-       riga (geometricamente era gia centrata, ma otticamente va ~0.5px piu su).
-     - testo dei tasti Tutti/Solo: translate(0.081em, 0.105em) = ~0.75px a DESTRA
-       e ~0.97px in GIU, per la centratura OTTICA (non geometrica) nel bottone.
-       Il 'a destra' compensa il letter-spacing di coda (spazio dopo l'ultima
-       lettera che sposta otticamente il blocco a sinistra); il 'in giù' e la
-       correzione ottica del maiuscoletto. Valori scelti dall'utente a occhio sul
-       rendering reale (la centratura ottica è una valutazione percettiva).
-     em = relativo al font dell'elemento (la centratura regge a ogni scala).
-     Transform = spostamento visivo, nessun riflusso delle righe sotto. */
-  #ctrl-panel .ctrl-cat-head { transform:translateY(0.2375rem); }
-  #ctrl-panel .ctrl-cat-head .ctrl-h { transform:translateY(0.302em); }
-  /* Testo Tutti/All e Solo/Only: stesso spostamento (a destra per il
-     letter-spacing di coda, in giu per la centratura ottica del maiuscoletto).
-     Regole tenute separate per eventuali tarature per-pulsante future. */
-  #ctrl-panel .ctrl-reset .rst-face { transform:translate(0.081em, 0.105em); }
-  #ctrl-panel .ctrl-solo .solo-face { transform:translate(0.081em, 0.105em); }
-  /* Righe categoria e righe legenda sullo STESSO passo verticale (31.5px):
-     senza altezza esplicita i due ritmi differivano di ~0.3px a riga e le
-     righe uscivano progressivamente di fase (4px sull'ultima). */
-  #ctrl-panel .ctrl-legend-row { box-sizing:border-box; height:31.5px; }
+  /* ── Colonna DESTRA: categorie in alto, legenda sotto (mockup dell'utente,
+     2026-08-21). Le due liste condividono il passo verticale delle righe, così
+     le checkbox e le icone badge stanno sullo stesso ritmo. ── */
+  #ctrl-panel .ctrl-right { display:flex; flex-direction:column; }
+  #ctrl-panel .ctrl-right .ctrl-section--filtri { margin:3px 0 0.45rem; }
+  /* ⚠️ Le righe di legenda hanno min-height, non height: le descrizioni dei
+     badge possono ANDARE A CAPO (permesso dall'utente), e con l'altezza fissa
+     la seconda riga sarebbe uscita dal riquadro. */
+  #ctrl-panel .ctrl-legend-row { box-sizing:border-box; min-height:31.5px; }
   /* ALLINEAMENTO SUI CONTORNI (riquadri delle righe attive), non sul testo:
      il contorno della PRIMA riga combacia col box della toolbar (in alto) e
      quello dell'ULTIMA riga col fondo visivo del testo della nota (in
      basso, margine negativo che compensa lo slack di interlinea). */
   #ctrl-panel .ctrl-section--legend { margin-top:3px; }
-  #ctrl-panel .ctrl-cat-row { height:31.5px; }
+  #ctrl-panel .ctrl-cat-row { min-height:31.5px; }
   /* Slot del tag: centrato in verticale nello spazio tra 'Animali' e
      l'avviso sui nomi (auto sopra/sotto). Riserva SEMPRE l'altezza del tag
      (min-height:21px, dalla v7.29) anche a filtro spento (slot vuoto), così il
@@ -1049,13 +985,15 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
      della legenda (riferimento a contorni spenti); la righetta qui sotto
      chiude la colonna alla stessa quota del fondo del contorno attivo
      (riferimento a contorni accesi). Margini tarati su misura. */
-  #ctrl-panel .ctrl-cardleg { margin-top:auto; margin-bottom:0; }
+  /* La card di legenda sta SOTTO la toolbar, non in fondo alla colonna: col
+     Pannello compatto (mockup dell'utente) il margin-top:auto stirava la colonna
+     sinistra e apriva un vuoto a destra sotto la legenda. */
+  #ctrl-panel .ctrl-cardleg { margin-top:0.9rem; margin-bottom:0; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
 .ctrl-sheet-head { display:none; }
 /* Nota nomi (mobile) e barra inferiore (mobile): nascoste di default, mostrate
    solo nella bottom-sheet (vedi @media max-width:768px). */
-.ctrl-mobile-note { display:none; }
 .ctrl-bottombar { display:none; }
 /* Tasto chiudi del pannello (solo mobile): tondo, ma stessa palette dei tasti
    tema/lingua della barra (sfondo, bordo e colore uniformi, in entrambi i
@@ -1159,7 +1097,7 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
 .ctrl-dot { width:0.85rem; height:0.85rem; border-radius:3px; flex-shrink:0; }
 /* Righe legenda = interruttori del filtro badge (v4.05): cliccabili, stato
    .on evidenziato in oro, focus visibile da tastiera. */
-.ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.4rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; cursor:pointer; border:1px solid transparent; border-radius:6px; user-select:none; }
+.ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.4rem; font-size:0.8rem; color:var(--parchment); cursor:pointer; border:1px solid transparent; border-radius:6px; user-select:none; }
 /* Grid-stack bilingue della legenda: faccia visibile + copia invisibile
    nell'altra lingua nella stessa cella → la colonna riserva la larghezza
    MASSIMA fra le due lingue e non cambia dimensione al cambio lingua (bordo
@@ -1239,7 +1177,10 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-x { font-size:1.05rem; line-height:0; font-family:'EB Garamond',serif; display:inline-flex; align-items:center; }
 html[data-theme="light"] .ctrl-badge-tag { border-color:rgba(58,88,120,0.6); background:rgba(58,88,120,0.10); color:#2a4a68; }
 html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18); }
-.ctrl-legend-row span { white-space:nowrap; }
+/* Il testo della riga va a capo se serve (permesso dell'utente, 2026-08-21);
+   l'icona no, e resta incolonnata perché è flex:none. */
+.ctrl-legend-row span { white-space:normal; }
+.ctrl-legend-row .leg-ico { flex:none; }
 .ctrl-label { white-space:nowrap; display:inline-grid; justify-items:start; align-items:center; }
 /* Larghezza dell'etichetta = testo più lungo tra IT ed EN (faccia visibile +
    altra lingua invisibile nella stessa cella): così la colonna sinistra del
@@ -1443,7 +1384,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      width:0 + min-width:100% la fa riempire la larghezza del blocco senza
      dettarla (come le Categorie), così non allarga il blocco fit-content; il
      padding-left la incolonna con le icone della legenda. */
-  #ctrl-panel .ctrl-mobile-note { text-align:left; opacity:0.8; width:0; min-width:100%; box-sizing:border-box; padding-left:0.3rem; white-space:nowrap; }
   html[data-theme="light"] .ctrl-sheet-head { background:rgba(245,247,247,0.98); }
   .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
@@ -1469,12 +1409,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      facendo apparire il blocco fuori centro. Con 0.24rem i due rientri
      coincidono e il contenuto è centrato nel pannello. */
   #ctrl-panel .ctrl-section--filtri { width:0; min-width:100%; box-sizing:border-box; padding-right:0.24rem; }
-  /* nota nomi: in fondo, su una sola riga, allineata a sinistra come le sezioni */
-  .ctrl-mobile-note {
-    display:block; white-space:nowrap; font-family:'EB Garamond',serif;
-    font-style:italic; font-size:0.8rem; color:var(--parchment-dim);
-    padding:0 0.3rem; margin-top:0.5rem;
-  }
   /* barra sticky in basso: [versione | (tema lingua) | chiudi] */
   .ctrl-bottombar {
     display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
@@ -1499,13 +1433,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   }
   .ctrl-bottombar .ctrl-icon-btn { width:2rem; padding:0; }
   .ctrl-bottombar .ctrl-lang-btn { width:2rem; padding:0; }
-}
-/* Rete di sicurezza (<=360px): la nota nomi (nowrap, che di proposito sfora nel
-   margine destro sui telefoni normali) su schermi molto stretti potrebbe
-   eccedere il pannello; qui torna ad andare a capo, evitando scroll orizzontale.
-   Viene DOPO il blocco 768px: a parità di specificità vince in cascata. */
-@media (max-width:360px) {
-  #ctrl-panel .ctrl-mobile-note { white-space:normal; }
 }
 /* ⚠️ RIMOSSO nella v14.67 il ramo `@media (min-width:640px) and (max-width:768px)`
    che nella bottom-sheet metteva il contenuto a DUE COLONNE affiancate (categorie a
@@ -2432,7 +2359,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.07</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.08</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4268,8 +4195,8 @@ var BADGE_ICON = {
   stregone: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><path fill=\"currentColor\" d=\"M12 2l1.8 7.2L21 11l-7.2 1.8L12 20l-1.8-7.2L3 11l7.2-1.8z\"/></svg>",
   // Mago: il bastone, con il pomo in cima.
   mago: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M8 21L15 7\"/></g><circle cx=\"16\" cy=\"4\" r=\"3\" fill=\"currentColor\"/></svg>",
-  // Vero nome: un segno inciso, come una runa della lingua antica.
-  veronome: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 3v18M12 8l6-4M12 8L6 4M12 15l6 4M12 15l-6 4\"/></g></svg>"
+  // Nome di Ged: un segno inciso, come una runa della lingua antica.
+  nomeged: "<svg class=\"status-icon\" viewBox=\"0 0 24 24\" role=\"img\" aria-label=\"%L%\"><title>%L%</title><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 3v18M12 8l6-4M12 8L6 4M12 15l6 4M12 15l-6 4\"/></g></svg>"
 };
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
 // lista, per la legenda del Pannello e per la griglia dell'editor admin. In
@@ -4278,7 +4205,7 @@ var BADGE_ICON = {
 // gli altri hanno riga propria. 'est' precede 'Aman/west' (la nave che va, poi
 // quella che torna). 'morgoth' è un EASTER EGG (solo Fingolfin): saltato in
 // legenda e nella griglia admin, appare solo sulla sua card.
-var ICON_ORDER = ['stregone','mago','veronome'];
+var ICON_ORDER = ['stregone','mago','nomeged'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
@@ -4287,7 +4214,7 @@ var ICON_ORDER = ['stregone','mago','veronome'];
 var BADGE_ROWS = {
   // Una riga per badge: qui non ci sono gruppi da tenere insieme come gli Anelli o i Re
   // di 'I Grandi di Arda'.
-  stregone:['stregone'], mago:['mago'], veronome:['veronome']
+  stregone:['stregone'], mago:['mago'], nomeged:['nomeged']
 };
 var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
@@ -4417,12 +4344,18 @@ var ICON_LABEL = {
   it: {
     stregone: "Strega o stregone: incantatore con un certo potere",
     mago:     "Mago: ha il vero dono della magia",
-    veronome: "Se ne conosce il vero nome, nella lingua della creazione"
+    // ⚠️ Il terzo badge ha CAMBIATO significato il 2026-08-21 (istruzione
+    // dell'utente): diceva 'di questo personaggio si conosce il vero nome', che la
+    // riga del vero nome ora dice da sé. Adesso marca chi ha ricevuto in custodia
+    // il vero nome di Ged: a Terramare è la forma più alta di fiducia fra due
+    // persone. La chiave è cambiata con lui (`veronome` -> `nomeged`), perché un
+    // nome di campo che dice la cosa sbagliata è una trappola per chi legge dopo.
+    nomeged:  "Custode del vero nome di Ged"
   },
   en: {
     stregone: "Witch or sorcerer: a spell-worker of some power",
     mago:     "Mage: holder of the true gift of magic",
-    veronome: "Their true name, in the Language of the Making, is known"
+    nomeged:  "Keeper of Ged's true name"
   }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
@@ -5409,11 +5342,11 @@ var TYPE_LABEL = {
   en: { 'type-man':'Men', 'type-dragon':'Dragons' }
 };
 var CTRL_I18N = {
-  it: { cat:'Categorie', close:'Chiudi', all:'Tutti', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
+  it: { close:'Chiudi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
         confirm:'Conferma', confirmSub:'Salva le modifiche in modo permanente', keep:'Chiudi', keepSub:'Continua a modificare', discard:'Scarta', discardSub:'Ignora le modifiche e torna allo stato precedente',
         dSave:'Salva', dKeep:'Chiudi', dRestore:'Annulla le modifiche', exportLabel:'Esporta',
         introAdmin:"Funzionalità solo per amministratori: inserisci la password. Se sei un visitatore, usa il tasto 'Esporta' per salvare la tua classifica personale." },
-  en: { cat:'Categories', close:'Close', all:'All', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
+  en: { close:'Close', reorder:'Reorder', reorderExit:'Close ordering mode', editContent:'Edit content',
         confirm:'Confirm', confirmSub:'Save changes permanently', keep:'Close', keepSub:'Keep editing', discard:'Discard', discardSub:'Ignore changes and revert to the previous state',
         dSave:'Save', dKeep:'Close', dRestore:'Discard changes', exportLabel:'Export',
         introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
@@ -5475,39 +5408,38 @@ function controlPanelHTML() {
      +   '<button class="ctrl-icon-btn ctrl-share-btn" aria-label="' + shareLbl + '" title="' + shareLbl + '">' + ICON_LINK + '</button>'
      + '</span>'
      + '</div>';
-  // Filtri
-  var To = CTRL_I18N[currentLang === 'it' ? 'en' : 'it']; // stringhe nell'altra lingua (segnaposto di larghezza)
-  // Segnaposto invisibile comune a TUTTI i tasti quadrati (Tutti/All + Solo/Only):
-  // sovrapposto nella stessa cella, riserva la larghezza del testo più largo tra
-  // tutte e quattro le parole → i tasti hanno la STESSA larghezza in entrambe le
-  // lingue (richiesta utente). Vedi CSS .ctrl-btn-m.
-  var BTN_MEAS = '<span class="ctrl-btn-m" aria-hidden="true">Tutti</span><span class="ctrl-btn-m" aria-hidden="true">All</span><span class="ctrl-btn-m" aria-hidden="true">solo</span><span class="ctrl-btn-m" aria-hidden="true">only</span>';
-  // Testata 'CATEGORIE'/'CATEGORIES' stabilizzata (grid-stack) così la colonna
-  // categorie ha la stessa larghezza fra le lingue: senza, il bottone 'Tutti' e
-  // la colonna 'Solo' scivolavano al cambio lingua (jitter mobile e desktop).
-  var catHead = '<span class="ctrl-h"><span class="ctrl-h-face">' + T.cat + '</span><span class="ctrl-h-alt" aria-hidden="true">' + To.cat + '</span></span>';
-  h += '<div class="ctrl-section ctrl-section--filtri"><div class="ctrl-cat-head">' + catHead + '<button class="ctrl-reset" id="ctrl-reset"><span class="rst-face">' + T.all + '</span>' + BTN_MEAS + '</button></div>';
-  var soloTxt = currentLang === 'it' ? 'solo' : 'only';
-  var soloInner = '<span class="solo-face">' + soloTxt + '</span>' + BTN_MEAS;
+  var destra = '';
+  // ── Colonna DESTRA: categorie e legenda (mockup dell'utente, 2026-08-21) ──
+  // Il Pannello di Terramare ha poca roba, e la disposizione di Arda (categorie a
+  // sinistra sotto la toolbar, legenda a destra) lasciava una colonna mezza vuota.
+  // Qui le due liste stanno insieme a destra e la colonna sinistra tiene la
+  // toolbar e la card di legenda.
+  // ⚠️ Sono usciti la testata 'CATEGORIE', il tasto 'Tutti' e i tasti 'solo' di
+  // riga: con DUE categorie erano ridondanti (spegnere l'una è l'unico modo di
+  // isolare l'altra) e mangiavano la metà della larghezza. Con loro sono uscite
+  // le misure-fantasma .ctrl-btn-m, che servivano a tenerli larghi uguali fra le
+  // lingue.
+  destra += '<div class="ctrl-section ctrl-section--filtri">';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){
+    // Ultima categoria accesa: la checkbox si blocca, altrimenti si arriverebbe a
+    // una lista vuota per sbaglio.
     var isLocked = activeCats.length === 1 && filterState[c];
-    h += '<div class="ctrl-cat-row">';
-    h += '<label class="ctrl-row' + (isLocked ? ' cat-locked' : '') + '">'
+    destra += '<div class="ctrl-cat-row">';
+    destra += '<label class="ctrl-row' + (isLocked ? ' cat-locked' : '') + '">'
        + '<input type="checkbox" data-cat="' + c + '"' + (filterState[c] ? ' checked' : '') + (isLocked ? ' disabled' : '') + '>'
        + '<span class="ctrl-chk"></span><span class="ctrl-dot" style="background:' + CAT_COLOR[c] + '"></span>'
        + '<span class="ctrl-label"><span class="ctrl-label-face">' + CL[c] + '</span><span class="ctrl-label-alt" aria-hidden="true">' + CLo[c] + '</span></span></label>';
-    h += '<button class="ctrl-solo' + (isLocked ? ' cat-locked' : '') + '" data-cat="' + c + '"' + (isLocked ? ' disabled' : '') + '>' + soloInner + '</button>';
-    h += '</div>';
+    destra += '</div>';
   });
-  h += '</div>';
+  destra += '</div>';
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a
   // sinistra): SOLO a filtro attivo; figlio diretto di .ctrl-left, così su
   // desktop i margini auto lo centrano (in orizzontale e in verticale tra
   // 'Animali' e l'avviso sui nomi). Il click azzera tutti i badge.
   // SLOT del tag sempre presente (altezza riservata su mobile): la comparsa
   // del tag non fa scorrere la legenda sottostante.
-  h += '<div class="ctrl-tag-slot">';
+  destra += '<div class="ctrl-tag-slot">';
   if (badgeFilter.size) {
     var nB = badgeFilter.size;
     // La parte numerica ha uno slot a larghezza fissa (.tag-num, vedi CSS): il
@@ -5531,7 +5463,7 @@ function controlPanelHTML() {
     // box 'ballava' di ~5px commutando IT/EN).
     var tagMaxIt = numSlot('16') + '<span>badge attivo</span>';
     var tagMaxEn = numSlot('16') + '<span>active badges</span>';
-    h += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '">'
+    destra += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '">'
        + '<span class="tag-face"><span class="tag-x">×</span>' + tagTxt + '</span>'
        + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxIt + '</span>'
        + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxEn + '</span>'
@@ -5543,7 +5475,7 @@ function controlPanelHTML() {
   // qui c'era un suggerimento in corsivo (.ctrl-badge-hint) messo solo per
   // riempire il vuoto della colonna; rimosso perché ridondante (e sotto la
   // soglia AA di contrasto in tema chiaro).
-  h += '</div>';
+  destra += '</div>';
   // Legenda dell'ANATOMIA di una card (istruzione dell'utente, 2026-08-21): una
   // card finta, con le stesse classi di quelle vere, dove ogni riga porta scritto
   // che cos'è. Ha preso il posto della vecchia nota sui nomi, che dopo lo
@@ -5563,6 +5495,7 @@ function controlPanelHTML() {
            ]) + '</span>'
      + '</span></div></div>';
   h += '</div>'; // chiude .ctrl-left
+  h += '<div class="ctrl-right">' + destra;
   // Legenda iconografie
   // Legenda SENZA intestazione (rimossa in v4.05 per compattezza, scelta
   // utente: i badge sono autoesplicativi). Ogni riga è anche un FILTRO:
@@ -5660,12 +5593,7 @@ function controlPanelHTML() {
      + '<div class="leg-face">' + buildLegend(currentLang, false) + '</div>'
      + '<div class="leg-measure" aria-hidden="true">' + buildLegend(currentLang === 'it' ? 'en' : 'it', true) + '</div>'
      + '</div></div>';
-  // Nota nomi (solo mobile, via CSS): in fondo, dopo la legenda, DENTRO
-  // .ctrl-cols così segue la larghezza/posizione del blocco a ogni viewport
-  // (prima era fuori e andava allineata a mano).
-  h += '<div class="ctrl-mobile-note">' + (currentLang === 'it'
-     ? 'Nelle schede dei personaggi i veri nomi sono in grassetto.'
-     : 'On character cards, the true names are in bold.') + '</div>';
+  h += '</div>'; // chiude .ctrl-right
   h += '</div>'; // chiude .ctrl-cols
   // Barra sticky in basso (solo mobile): versione (anche accesso admin) a
   // sinistra, tema + lingua centrati come gruppo, chiudi a destra (vicino a
@@ -5709,13 +5637,6 @@ function wireControlPanel() {
       applyFilter();
     });
   });
-  panel.querySelectorAll('.ctrl-solo[data-cat]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var c = btn.getAttribute('data-cat');
-      CATS.forEach(function(k){ filterState[k] = (k === c); });
-      applyFilter();
-    });
-  });
   // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).
   // Guard 'risultati 0' (rete di sicurezza oltre alla disabilitazione visiva):
   // un toggle che svuoterebbe la lista NON viene applicato (nessun effetto).
@@ -5744,19 +5665,6 @@ function wireControlPanel() {
   });
   var badgeTag = document.getElementById('ctrl-badge-tag');
   if (badgeTag) badgeTag.addEventListener('click', function(){ badgeFilter.clear(); applyFilter(); });
-  var resetBtn = document.getElementById('ctrl-reset');
-  if (resetBtn) {
-    // "Tutti": abilita tutte le categorie. Su mobile il touchend rigenera il pannello;
-    // rinviamo il re-render con setTimeout così l'eventuale click sintetico successivo
-    // ricade ancora sul vecchio bottone (innocuo) e non su una riga categoria spostata.
-    var doReset = function(e) {
-      if (e.cancelable) e.preventDefault();
-      CATS.forEach(function(k){ filterState[k] = true; });
-      setTimeout(applyFilter, 0);
-    };
-    resetBtn.addEventListener('click', doReset);
-    resetBtn.addEventListener('touchend', doReset); // iOS: touchend garantisce risposta anche dentro bottom sheet scrollabile
-  }
   // Tasto Riordina/Scarta (↑↓ / ×): solo desktop. Fuori dal riordino entra in
   // modalità riordino (enterReorder forza tutte le categorie); in riordino
   // chiede conferma e scarta la bozza-ordine (chiavi earthsea-ranking-*) + reload.
