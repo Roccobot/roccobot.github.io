@@ -32,18 +32,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink: #060a14;
-  --ink-deep: #030710;
-  /* Colori TESTO/ACCENTO neutralizzati (dalla v8.79, scelta utente): grigi a
-     PARI LUMINANZA relativa dei vecchi ardesia (saturazione 0, luminosità
-     invariata) → i contrasti AA restano identici. Erano #e8eef8/#9ab0c8/
-     #6890a8/#9ac0d8/#3a5870/#cdd3dc/#eef2f8. --ink/--ink-deep (fondali) restano. */
-  --parchment: #ededed;
-  --parchment-dim: #aeaeae;
-  --gold: #8b8b8b;
-  --gold-bright: #bbbbbb;
-  --gold-deep: #555555;
-  --name: #d2d2d2;
+  /* ── Tavolozza 'Notte sull'Arcipelago' (scelta dell'utente, 2026-08-21) ──
+     Ha sostituito i grigi neutri ereditati da 'I Grandi di Arda' e il suo fondo
+     blu-viola. Il fondo vira al blu-verde del mare aperto; l'accento è un
+     grigio-verde chiaro e NON un teal, perché le tinte forti qui sono quelle delle
+     categorie (uomini oltremare, donne turchese, draghi terracotta) e un accento
+     teal ci litigherebbe.
+     ⚠️ Il fondo è `#0D1A22` e non `#08131A` come nella proposta: l'utente ha chiesto
+     un tema scuro 'leggermente meno scuro'. Alzare il fondo ABBASSA tutti i
+     contrasti, quindi `--gold-deep` è stato schiarito con lui (era 3,22 sul fondo
+     vecchio, sarebbe scesso a 2,93). I numeri stanno in `earthsea/top/CLAUDE.md`. */
+  --ink: #0d1a22;
+  --ink-deep: #071016;
+  --parchment: #e6ece9;
+  --parchment-dim: #a3b2b0;
+  --gold: #a9b6b4;
+  --gold-bright: #d2dbd8;
+  --gold-deep: #5f747a;
+  --name: #dfe6e3;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -103,9 +109,10 @@ html.no-pick [contenteditable="true"] { -webkit-user-select:text; user-select:te
 body {
   /* Sfondo pagina NEUTRO (dalla v8.72): il colore lo portano le card (cardcolor),
      quindi il fondo pagina non è più blu-inchiostro ma un grigio neutro (default
-     = tema scuro #262626; override chiaro #F5F5F5 sotto). Token invariati: titolo,
-     pannello, pulsanti restano com'erano. */
-  background: #262626;
+     = tema scuro; override chiaro sotto). ⚠️ Dal 2026-08-21 legge `--ink` invece di un
+     letterale: col cambio di tavolozza il fondo era cablato in nove punti, e tenerne uno
+     qui avrebbe voluto dire ricordarsene di nuovo al prossimo giro. */
+  background: var(--ink);
   /* VIGNETTATURA (dalla v12.24): alone radiale appena percettibile ai bordi, per
      dare profondità a un fondo altrimenti perfettamente piatto. È un LIVELLO DI
      SFONDO del body (non un elemento sovrapposto): niente nuovi nodi, nessun
@@ -124,7 +131,7 @@ body {
 /* Sfondo pagina davvero NEUTRO (dalla v8.74): rimosso il vecchio overlay
    decorativo `body::before` (radial-gradient blu-inchiostro, `position:fixed;
    inset:0`). Due motivi: (1) la sua base opaca copriva il fondo neutro del
-   `body`, quindi il grigio #303030/#F5F5F5 non si vedeva (l'utente misurava
+   `body`, quindi il grigio #303030/#f9fbfa non si vedeva (l'utente misurava
    ~#DBDEE8, media dei gradienti); (2) essendo un layer FIXED grande quanto il
    viewport, su mobile non seguiva la barra dinamica del browser e lasciava una
    'linea' di giunzione sempre alla stessa altezza (il suo bordo contro il fondo
@@ -190,7 +197,7 @@ header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
 .version-badge { transition: opacity 0.12s linear; }
 html.scrolled .version-badge { opacity: 0; pointer-events: none; }
 .version-badge:hover, .home-link:hover { opacity: 1; }
-html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: #333333; }
+html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: var(--gold); }
 
 .lang-switch {
   /* Fisso in alto a destra: resta visibile e fluttuante anche scorrendo (desktop).
@@ -257,11 +264,12 @@ h1 {
   /* Bagliore neutralizzato (dalla v8.79): grigi a pari luminanza dei vecchi
      rgba(104,144,168)/rgba(30,60,100). L'effetto sul font resta, la tinta no. */
   text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
-  /* Fill ORO (tema scuro, scelta utente): gradiente champagne caldo -> oro medio
-     (Variante A). Solo la tinta del titolo torna calda; testi e accenti restano
-     neutralizzati. Il tema chiaro mantiene il fill teal (regola light più sotto).
-     AA testo grande verificato (punto più scuro #a67c34 su #262626 >= 3:1). */
-  background:linear-gradient(180deg,#efe0b8 0%,#a67c34 100%);
+  /* Fill VERDE MARE che scende verso il BLU (istruzione dell'utente, 2026-08-21,
+     con la tavolozza nuova): sostituisce il gradiente oro ereditato da Arda.
+     Il punto più scuro (#3f92a8) fa 4,96 sul fondo `#0D1A22`, ben sopra il 3:1 che
+     il testo grande richiede: c'è margine se un domani il fondo si schiarisse
+     ancora. Il tema chiaro ha il suo, smeraldo, nella regola light più sotto. */
+  background:linear-gradient(180deg,#a8e6dc 0%,#3f92a8 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   /* Con background-clip:text il gradiente riempie il testo solo entro il box di
      riga; con line-height:0.95 gli svolazzi bassi di Cinzel Decorative (code di
@@ -296,7 +304,7 @@ h1 {
 /* Sfondo pagina neutro (v8.72): i testi ardesia dell'intestazione erano tarati
    sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
    (solo tema scuro; il titolo e il resto del chrome restano invariati). */
-html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
+html[data-theme="dark"] .intro-cta { color:var(--parchment-dim); }
 /* Accento verso il colore del FAB (dalla v8.82, entrambi i temi; nato in v8.81
    come esperimento caldo solo-scuro): il link 'Risorse e note' vira verso il colore
    del FAB del tema (scuro = oro, vedi qui; chiaro = teal, vedi tema chiaro). Il
@@ -305,13 +313,13 @@ html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
    dell'utente). I grigi sono a PARI luminanza relativa dei virati: #aaaaaa per il
    testo (era #b4a98d) e #b6b6b6 per i due ✦ (era #c0b69a), quindi i contrasti non
    si muovono (6.49 -> 6.51 e 7.49 -> 7.46 sul fondo scuro). */
-html[data-theme="dark"] .crest { color:#aaaaaa; }
-html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { color:#b6b6b6; }
-html[data-theme="dark"] #footer-links { color:#c0b69a !important; }
-html[data-theme="dark"] #res-link { color:#c0b69a; }
-html[data-theme="dark"] .subtitle-note { color:#aeaeae; opacity:1; }
-html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:#d3d3d3; }
-html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:#bdbdbd; }
+html[data-theme="dark"] .crest { color:var(--parchment-dim); }
+html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { color:var(--gold); }
+html[data-theme="dark"] #footer-links { color:var(--gold) !important; }
+html[data-theme="dark"] #res-link { color:var(--gold); }
+html[data-theme="dark"] .subtitle-note { color:var(--parchment-dim); opacity:1; }
+html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:var(--gold-bright); }
+html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:var(--gold-bright); }
 
 .scroll { max-width:920px; margin:1.2rem auto 3rem; padding:0 1rem; }
 
@@ -461,12 +469,6 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
   font-size:0.88em; letter-spacing:0.06em; text-transform:uppercase;
   color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
 }
-
-/* Drago MISTO (Tehanu, sola nel dataset): card normale, quindi font e cassa del
-   nome d'uso, ma il nome prende la TINTA di famiglia invece del grigio. Serve
-   perché una voce senza seconda riga non ha dove mostrare l'accento del gruppo, e
-   l'utente ha chiesto per lei il 'nome in rosso come i draghi'. */
-.rank-name.name-tinta > .rank-name-text { color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1); }
 
 /* VERO NOME (dal 2026-08-21, istruzione dell'utente): a Terramare il vero nome è
    la cosa più importante di un individuo, quindi ha una riga sua allo STESSO
@@ -853,9 +855,10 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    CARDCOLORS, quindi queste servono solo se quel codice non gira.
    ⚠️ Qui c'erano le 15 famiglie di 'I Grandi di Arda' (Noldor, Maiar, Valar...):
    irraggiungibili, perché `familyOf` non produce quei nomi. */
-.cc-man{--ccrgb:217,192,137} .cc-dragon{--ccrgb:224,160,144}
-html[data-theme="light"] .cc-man{--ccrgb:156,124,58}
-html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
+.cc-man{--ccrgb:156,178,240} .cc-woman{--ccrgb:111,208,214} .cc-dragon{--ccrgb:224,160,144}
+html[data-theme="light"] .cc-man{--ccrgb:34,68,156}
+html[data-theme="light"] .cc-woman{--ccrgb:12,117,126}
+html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
 /* Il logo del FAB porta margini PROPRI dentro il suo canvas quadrato: il disegno
@@ -1002,11 +1005,16 @@ html[data-theme="light"] .cc-dragon{--ccrgb:178,90,72}
   #ctrl-panel .ctrl-ver-desk:hover { opacity:1; }
   /* Come per la versione mobile: in tema chiaro blu piu scuro per superare
      il 4.7:1 percepito dopo opacity .9 (stesso difetto di contrasto). */
-  html[data-theme="light"] #ctrl-panel .ctrl-ver-desk { color:#3e607e; }
+  html[data-theme="light"] #ctrl-panel .ctrl-ver-desk { color:var(--gold-bright); }
   /* Categorie e legenda badge sotto la card di legenda, nella colonna unica: le
      due liste condividono il passo verticale delle righe, così le checkbox e le
      icone badge stanno sullo stesso ritmo. */
   #ctrl-panel .ctrl-section--filtri { margin:0.8rem 0 0.45rem; }
+  /* La riga del filtro 'vero nome' porta una frase, non una parola: va a capo, e
+     l'interruttore resta in alto invece di centrarsi sulle due righe. */
+  #ctrl-panel .ctrl-row--vero { align-items:flex-start; }
+  #ctrl-panel .ctrl-row--vero .ctrl-label-face { white-space:normal; }
+  #ctrl-panel .ctrl-section--vero { margin:0 0 0.2rem; max-width:15rem; }
   /* ⚠️ Le righe di legenda hanno min-height, non height: le descrizioni dei
      badge possono ANDARE A CAPO (permesso dall'utente), e con l'altezza fissa
      la seconda riga sarebbe uscita dal riquadro. */
@@ -1357,7 +1365,7 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .ctrl-scroll-hint.play .csh-tail { animation:csh-trail 3.5s linear forwards; }
 @keyframes csh-swipe { 0%{transform:translateY(10px);opacity:0} 6%{transform:translateY(0);opacity:1} 50%{transform:translateY(-72px);opacity:1} 62%{transform:translateY(-72px);opacity:0} 100%{transform:translateY(-72px);opacity:0} }
 @keyframes csh-trail { 0%{opacity:0} 6%{opacity:0} 13%{opacity:0.5} 50%{opacity:0} 100%{opacity:0} }
-html[data-theme="light"] .ctrl-scroll-hint .csh-dot { background:#1f5562; border-color:rgba(31,85,98,0.55); }
+html[data-theme="light"] .ctrl-scroll-hint .csh-dot { background:#2e4145; border-color:rgba(46,65,69,0.55); }
 html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,0.34); }
 @media (prefers-reduced-motion:reduce){ .ctrl-scroll-hint.play, .ctrl-scroll-hint.play .csh-tail { animation:none; } }
 /* Chiusura morbida del Pannello (bottom-sheet mobile, classe .closing): parte
@@ -1476,7 +1484,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   html[data-theme="light"] .ctrl-bottombar { background:rgba(245,247,247,0.98); }
   /* Versione leggibile in tema chiaro: blu piu scuro cosi il colore percepito
      dopo opacity .9 supera 4.7:1 (axe: il --gold-bright chiaro dava 4.0:1). */
-  html[data-theme="light"] .ctrl-bottombar .ctrl-ver { color:#3e607e; }
+  html[data-theme="light"] .ctrl-bottombar .ctrl-ver { color:var(--gold-bright); }
   .ctrl-bottombar .ctrl-ver { justify-self:start; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.06em; color:var(--gold-bright); opacity:0.9; cursor:pointer; padding:0.2rem 0.1rem; }
   .ctrl-bb-group { justify-self:center; display:flex; align-items:center; gap:0.9rem; }
   .ctrl-bottombar .ctrl-sheet-close { justify-self:end; }
@@ -1552,8 +1560,17 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    ⚠️ Qui c'era la tavolozza di 'I Grandi di Arda', una quarantina di regole per
    Elfi, Nani, Hobbit, Ainur e il resto: irraggiungibili, perché `tipoClass` non
    produce quelle classi. */
-.type-man        { background:rgba(156,124,58,0.28); border:1px solid rgba(217,192,137,0.8); color:#d9c089; }
-.type-dragon     { background:rgba(185,0,0,0.40); border:1px solid rgba(255,76,76,0.8); color:#ff4c4c; }
+/* ⚠️ Le etichette leggono `--ccrgb`/`--cctxt` della card, quindi NON hanno un colore
+   proprio: la razza la dice il testo, la tinta la dà la famiglia. Le vecchie
+   `.type-man` (oro) e `.type-dragon` (rosso acceso) sono uscite col cambio di
+   tavolozza, dove erano rimaste indietro mostrando 'Donna' in oro accanto a un vero
+   nome turchese. Il testo passa da `--cctxt`, la terna già corretta AA sul fondo del
+   tema; bordo e fondo da `--ccrgb`, dove il gate non serve. */
+.rank-item .type-badge {
+  background:rgba(var(--ccrgb,144,152,168),0.16);
+  border:1px solid rgba(var(--ccrgb,144,152,168),0.75);
+  color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
+}
 /* Ripiego: una voce il cui tipo non nomina né uomo né drago. */
 .type-fallback   { background:rgba(100,100,100,0.15); border:1px solid rgba(184,184,184,0.8); color:#b8b8b8; }
 
@@ -2052,27 +2069,32 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
 /* ── Tema chiaro (appiattito: niente CSS nesting, per compatibilità
    e validazione W3C; semantica e specificità invariate) ── */
 html[data-theme="light"] {
-    --ink: #f2f2f6;
-    --ink-deep: #ebebef;
-    /* Token neutralizzati anche in chiaro (dalla v8.79): grigi a pari luminanza
-       dei vecchi #12141e/#2a2d3e/#3a5878/#4a7090/#253d58/#34373f/#6c6f78. */
-    --parchment: #141414;
-    --parchment-dim: #2e2e2e;
-    --gold: #565656;
-    --gold-bright: #6c6c6c;
-    --gold-deep: #3b3b3b;
-    --name: #373737;
+    /* ── Tavolozza 'Luce di Gont' (scelta dell'utente, 2026-08-21) ──
+       Quasi bianco, ma con un filo di verde: un bianco puro avrebbe reso il fondo
+       carta da stampante, e le tinte delle categorie ci si posano peggio. L'accento
+       è neutro freddo per la stessa ragione dello scuro: il colore lo portano i
+       personaggi. ⚠️ L'ORO è uscito da qui: scurito fin dove serve per fare da testo
+       diventava un marrone, e l'utente non lo voleva. Sopravvive SOLO sul disco del
+       FAB, dove non deve leggersi (vedi la regola del FAB in tema chiaro). */
+    --ink: #f9fbfa;
+    --ink-deep: #eff3f2;
+    --parchment: #131e22;
+    --parchment-dim: #4b5a5e;
+    --gold: #4f6266;
+    --gold-bright: #2e4145;
+    --gold-deep: #748a8e;
+    --name: #131e22;
   }
   /* Genealogia (.bp-b in .rank-desc): la riga descrizione ha opacity 0.72,
      che in tema chiaro fa scendere il color-mix pergamena+oro a ~4.36:1
      (sotto la soglia AA 4.5:1). Un colore un filo piu scuro, con la stessa
      tinta fredda, riporta l'effettivo (dopo la velatura) a ~5.16:1. Solo
      tema chiaro: in scuro la genealogia passa gia e resta col color-mix. */
-  html[data-theme="light"] .rank-desc .bp-b { color:#232c3d; }
+  html[data-theme="light"] .rank-desc .bp-b { color:var(--parchment); }
 
 html[data-theme="light"] body {
-    background: #F5F5F5;
-    color: #12141e;
+    background: var(--ink);
+    color: var(--parchment);
   }
 /* Peso testo UNIFORME nei due temi (400), scelta utente: prima il tema chiaro
    usava font-weight:500 su body/p/intro/schede per 'ingrassare' il testo, ma il
@@ -2081,12 +2103,12 @@ html[data-theme="light"] body {
    a-capo sono identici; il contrasto in chiaro resta ampiamente AA. */
 
 html[data-theme="light"] h1 {
-    /* Fill teal chiaro e tenue (v9.07): stessa tonalità del FAB ma molto più
-       chiara del vecchio charcoal #141414→#565656 (che era quasi nero). Il fondo
-       della sfumatura (#66909a) è il punto più chiaro: contrasto 3.20:1 su #F5F5F5,
-       sopra la soglia AA per il testo grande (3:1). Non schiarire oltre il fondo
-       o il titolo scende sotto soglia. */
-    background: linear-gradient(180deg, #34707f 0%, #66909a 100%);
+    /* Fill SMERALDO -> verde mare (istruzione dell'utente, 2026-08-21): la
+       controparte chiara del gradiente turchese-blu del tema scuro. Il punto più
+       chiaro (#3e8f84) è quello che va guardato: fa 3,70 sul fondo `#F9FBFA`, sopra
+       il 3:1 del testo grande. ⚠️ Non schiarirlo oltre: a `#4a9a8e` scende a 3,21 e
+       a `#56a498` sfonda la soglia (2,82). */
+    background: linear-gradient(180deg, #0e6b5e 0%, #3e8f84 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -2107,14 +2129,14 @@ html[data-theme="light"] h1 {
 html[data-theme="light"] .crest { color: #595959; }
 html[data-theme="light"] .crest::before, html[data-theme="light"] .crest::after { color: #595959; }
 html[data-theme="light"] #footer-links { color: #445d64 !important; }
-html[data-theme="light"] .subtitle { color: #2e2e2e; }
-html[data-theme="light"] .intro { color: #2e2e2e; }
+html[data-theme="light"] .subtitle { color: var(--parchment-dim); }
+html[data-theme="light"] .intro { color: var(--parchment-dim); }
 html[data-theme="light"] .lang-switch {
     background: rgba(210,212,218,0.5);
-    border-color: #565656;
-    color: #3b3b3b;
+    border-color: var(--gold);
+    color: var(--gold-bright);
   }
-html[data-theme="light"] .lang-switch:hover { background: #565656; color: #f2f2f6; }
+html[data-theme="light"] .lang-switch:hover { background: var(--gold); color: var(--ink); }
 
 html[data-theme="light"] .rank-item {
     background: rgba(224,236,252,0.16);
@@ -2156,7 +2178,7 @@ html[data-theme="light"] .rank-item.animale:hover, html[data-theme="light"] .ran
    #6d4a05 (5.6:1 sul tan) solo sulle card animali; bordo = testo @0.8. */
 html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-color:rgba(109,74,5,0.8); }
 html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); }
-html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
+html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:var(--parchment); }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
 html[data-theme="light"] .leg-gender { background:rgba(58,88,120,0.07); border-color:rgba(58,88,120,0.28); }
 html[data-theme="light"] .leg-gender .leg-g-half:first-child { border-right-color:rgba(58,88,120,0.20); }
@@ -2189,18 +2211,21 @@ html[data-theme="light"] .modal-close {
   }
 html[data-theme="light"] .modal-close:hover { background: #3a5878; color: #f6f6fa; }
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
-html[data-theme="light"] footer p { color: #2e2e2e; }
+html[data-theme="light"] footer p { color: var(--parchment-dim); }
 
 
 /* Etichette di razza nel tema chiaro: scure quanto serve sul fondo marmo. */
-html[data-theme="light"] .type-man { background:rgba(156,124,58,0.12); border-color:rgba(124,97,40,0.8); color:#7c6128; }
-html[data-theme="light"] .type-dragon { background:rgba(185,0,0,0.10); border-color:rgba(190,0,0,0.8); color:#be0000; }
+html[data-theme="light"] .rank-item .type-badge { background:rgba(var(--ccrgb,144,152,168),0.10); }
 html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
 html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#445d64; }
-html[data-theme="light"] #ctrl-fab { background:#1f5562; border-color:rgba(31,85,98,0.55); color:#ffffff; }
-html[data-theme="light"] #ctrl-fab:hover { background:#2a6d7d; border-color:rgba(42,109,125,0.75); }
+/* ⚠️ L'ORO del disco è l'unico superstite in tema chiaro, e per un motivo preciso:
+   un disco pieno non deve passare il gate come TESTO, quindi può restare un oro vero
+   invece del marrone che serviva per leggersi (istruzione dell'utente, 2026-08-21).
+   Il glifo sopra è il bruno caldo del tema scuro: 7,32 sul disco. */
+html[data-theme="light"] #ctrl-fab { background:#e0b54a; border-color:rgba(201,150,46,0.55); color:#3a2808; }
+html[data-theme="light"] #ctrl-fab:hover { background:#e9c266; border-color:rgba(224,181,74,0.8); }
 /* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
    dalla regola base). */
 html[data-theme="light"] .jump-fab { background:rgba(31,85,98,0.9); border-color:transparent; color:#ffffff; }
@@ -2262,7 +2287,7 @@ html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);borde
    rimetterlo. Titoli, titoletti e collegamenti che non sono personaggi stanno
    sull'oro del tema. */
 .modal-backdrop { --note-acc:var(--macc-d,#c6ad66); }
-html[data-theme="light"] .modal-backdrop { --note-acc:var(--macc-l,#2e5461); }
+html[data-theme="light"] .modal-backdrop { --note-acc:var(--macc-l,#2e4145); }
 .note-viewer-box h3 { color:var(--note-acc); font-size:1.15rem; margin:0 0 .9em; padding:0 1.4em; text-align:center; }
 /* I paragrafi non ereditano il font-size:0.82rem/opacity:0.65 del box di
    conferma: stessa dimensione e pienezza dell'elenco (font-size/opacity/colore
@@ -2415,7 +2440,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.15</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.17</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4014,12 +4039,17 @@ var CARDCOLOR_OF = {
 // storici (identici a quelli statici del CSS). `familyOf`, l'iniezione delle
 // --ccrgb e l'editor leggono/scrivono SEMPRE CARDCOLORS (mai le costanti sopra).
 var CARDCOLORS_FALLBACK = {
-  // ⚠️ Due sole famiglie, e i valori sono PROVVISORI: vanno misurati sul gate di
-  // contrasto AA nei due temi prima di considerarli definitivi. Sono chiari e desaturati
-  // per scelta dell'utente, al contrario dei colori saturi di Arda.
+  // ⚠️ TRE famiglie ma DUE categorie, e non è una svista: la tinta degli umani segue il
+  // GENERE (istruzione dell'utente, 2026-08-21: turchese le donne, blu oltremare gli
+  // uomini), mentre il filtro resta a due voci. Vedi `familyOf`, che è dove le due cose
+  // si separano.
+  // ⚠️ I valori sono MISURATI, non provvisori: nel tema chiaro fanno anche da TESTO (il
+  // vero nome prende la tinta), quindi devono passare AA e non solo distinguersi. I
+  // numeri stanno in `earthsea/top/CLAUDE.md`.
   fam: {
-    "man": { dark:"#d9c089", light:"#9c7c3a" },
-    "dragon": { dark:"#e0a090", light:"#b25a48" }
+    "man": { dark:"#9cb2f0", light:"#22449c" },
+    "woman": { dark:"#6fd0d6", light:"#0c757e" },
+    "dragon": { dark:"#e0a090", light:"#a8462f" }
   },
   map: CARDCOLOR_OF
 };
@@ -4041,8 +4071,8 @@ function ccHexToTriplet(h) {
 }
 // Derivazione automatica delle varianti tema (dalla v9.48): da UN colore base
 // si tiene la TINTA (hue) e si declina la luminosità per ciascun fondo: variante
-// SCURA più chiara (pop su #262626), variante CHIARA più profonda (contrasto su
-// #F5F5F5). Sfondo card e striscia restano sempre AA-safe (bassa opacità); il
+// SCURA più chiara (pop su #0d1a22), variante CHIARA più profonda (contrasto su
+// #f9fbfa). Sfondo card e striscia restano sempre AA-safe (bassa opacità); il
 // testo scheda per colori non-AA ripiega a oro (gestione statica come oggi).
 function ccHexToHsl(hex) {
   var h = String(hex || '').replace('#', '');
@@ -4148,10 +4178,10 @@ function ccAaText(fg, bg, target) {
 // Colore-TESTO di una famiglia: la sua tinta resa AA (4.5:1) sul fondo pagina del
 // tema. Serve alla riga del vero nome, che è testo e non decorazione: le tinte
 // oro e rosso desaturate della config non superano il gate da sole.
-// ⚠️ Il fondo di riferimento è quello della PAGINA (#262626 / #F5F5F5); la card ci
+// ⚠️ Il fondo di riferimento è quello della PAGINA (#0d1a22 / #f9fbfa); la card ci
 // aggiunge la propria velatura al 10%/5%, quindi la misura è prudenziale.
 function ccFamTxt(hex, tema) {
-  return ccHexToTriplet(ccAaText(hex, tema === 'light' ? '#F5F5F5' : '#262626', 4.5));
+  return ccHexToTriplet(ccAaText(hex, tema === 'light' ? '#f9fbfa' : '#0d1a22', 4.5));
 }
 // Ri-inietta le sole terne --ccrgb per famiglia (dopo un edit colori in anteprima).
 function reinjectFamilyColors(){
@@ -4236,7 +4266,14 @@ function familyOf(p) {
   // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
   // (isolata dal batch, ogni voce tiene la propria coppia per-tema via p.cardrgb).
   if (customPair(p)) return 'custom';
-  if (p.cardcolor) return p.cardcolor;
+  if (p.cardcolor) {
+    // ⚠️ La tinta degli umani segue il GENERE, e la deduzione sta QUI e non nel dato:
+    // così `cardcolor` resta un valore solo ('man') e il colore non diventa un campo da
+    // tenere allineato al genere a mano, voce per voce. I draghi non ci passano, perché
+    // il loro `cardcolor` è già 'dragon'.
+    if (p.cardcolor === 'man' && p.genere === 'f') return 'woman';
+    return p.cardcolor;
+  }
   // Classe crepuscolari -> famiglia 'demon' (dalla v8.83): copre i nomi il cui
   // tipo mapperebbe altrove (Melkor/oscurità, Shelob/ragno, ecc.); draghi, lupi
   // e balrog ci arrivano comunque via CARDCOLOR_OF.
@@ -4577,7 +4614,20 @@ var GENDER_ICON = {
 // Predicato di visibilità UNICO (filtri categoria + filtro badge): condiviso da
 // renderList, visiblePos e stepVisible, così la posizione nella modale e la
 // navigazione con le frecce restano sempre coerenti con la lista.
+// Filtro 'solo i personaggi di cui è noto il vero nome' (checkbox nel Pannello,
+// istruzione dell'utente del 2026-08-21). Stato in memoria e non nel permalink né nel
+// localStorage: un filtro che sopravvive al ricaricamento senza dirlo è un modo per
+// far credere che il dataset sia più corto di quello che è.
+var soloVeroNome = false;
+// ⚠️ Un DRAGO ha il vero nome noto anche col campo vuoto: il suo nome d'uso È il vero
+// nome (vedi il CLAUDE.md del progetto). Guardare solo `vero_nome` avrebbe nascosto
+// proprio le voci che di vero nome ne hanno uno solo.
+function veroNomeNoto(p) {
+  return !!(p.vero_nome && String(p.vero_nome).trim()) || categorie(p).indexOf('dragon') !== -1;
+}
+
 function isVisibile(p) {
+  if (soloVeroNome && !veroNomeNoto(p)) return false;
   if (badgeFilter.size) {
     var hit = false;
     badgeFilter.forEach(function(row){
@@ -4660,16 +4710,14 @@ function renderList() {
     // Il vero nome è UNICO per le due lingue: è nella Lingua della Creazione, non
     // si traduce, quindi non ha un campo _en da cui ripiegare.
     var veroNome = escapeHtml(p.vero_nome || '');
-    // ⚠️ I DRAGHI PURI hanno una riga sola: il loro nome È il vero nome, quindi la
-    // prima riga ne prende la resa (Cinzel maiuscolo) e la seconda non si emette.
-    // ⚠️ Il predicato è 'SOLO drago', non 'anche drago': Tehanu è Donna E Drago, e
-    // l'utente ha chiesto per lei una **card normale col nome in rosso** (istruzione
-    // del 2026-08-21, che corregge la prima stesura dove le toccava la riga sola).
-    var cats = categorie(p);
-    var soloVero = cats.length === 1 && cats[0] === 'dragon';
-    // Drago MISTO: card normale, ma il nome prende la tinta di famiglia invece del
-    // grigio, perché quella voce non ha una seconda riga su cui mostrarla.
-    var nomeTinto = !soloVero && cats.indexOf('dragon') !== -1;
+    // ⚠️ I DRAGHI hanno una riga sola: il loro nome È il vero nome, quindi la prima riga
+    // ne prende la resa (Cinzel maiuscolo, in tinta) e la seconda non si emette.
+    // ⚠️ Il predicato è 'ANCHE drago' e ci rientra Tehanu, che è Donna E Drago: per un
+    // giro ha avuto una card normale col nome in tinta, poi l'utente ha chiesto che
+    // 'TEHANU sia reso in maiuscolo', e un vero nome si rende come tale. Quello che la
+    // distingue dai draghi puri resta il resto della card: due etichette di razza, il
+    // simbolo di genere e i badge.
+    var soloVero = categorie(p).indexOf('dragon') !== -1;
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
@@ -4809,7 +4857,7 @@ function renderList() {
       '<span class="rank-strip" aria-hidden="true"></span>' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name' + (soloVero ? ' name-vero' : '') + (nomeTinto ? ' name-tinta' : '') + '"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
         (veroNome && !soloVero ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
         rigaDesc +
         riga2 +
@@ -5398,20 +5446,33 @@ let isFirstRender = true;
 
 // ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
-  it: { man:'Uomini', dragon:'Draghi' },
-  en: { man:'Men', dragon:'Dragons' }
+  // ⚠️ 'Esseri umani' e non 'Uomini' (istruzione dell'utente, 2026-08-21): la categoria è
+  // la RAZZA, e 'Uomini' si legge come il genere, tanto più da quando la tinta degli umani
+  // lo distingue. Le etichette sulla singola card restano 'Uomo'/'Donna', che del genere
+  // parlano per davvero.
+  // ⚠️ È QUESTA la mappa che il Pannello mostra: `TYPE_LABEL`, più sotto, ha le stesse
+  // etichette ma chiavi `type-*` e serve altrove. Cambiarne una sola lascia il filtro a
+  // dire la parola vecchia, ed è successo.
+  it: { man:'Esseri umani', dragon:'Draghi' },
+  en: { man:'Humans', dragon:'Dragons' }
 };
 // Colore della spia di categoria nel Pannello: le due tinte delle famiglie card
 // (oro e rosso), così la legenda e le schede dicono la stessa cosa.
-var CAT_COLOR = { man:'#9c7c3a', dragon:'#b25a48' };
+// Pastiglie delle due categorie nel Pannello: la tinta di famiglia in tema CHIARO
+// (il fondo del Pannello è scuro in entrambi i temi, quindi i valori chiari si
+// leggono su entrambi). ⚠️ 'Uomini' porta l'oltremare perché è la categoria, non il
+// genere: il turchese delle donne è una tinta di card, non una voce di filtro.
+var CAT_COLOR = { man:'#22449c', dragon:'#a8462f' };
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
 // (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
 var TYPE_LABEL = {
   // ⚠️ Il plurale del FILTRO resta al maschile perché indica la razza, non il singolo:
   // le due categorie sono 'uomini' e 'draghi'. Sulla singola card invece l'etichetta
   // segue il genere ('Uomo' oppure 'Donna'), perché in quel punto si parla di una persona.
-  it: { 'type-man':'Uomini', 'type-dragon':'Draghi' },
-  en: { 'type-man':'Men', 'type-dragon':'Dragons' }
+  // Stesse etichette di `CAT_LABEL` (vedi là il perché di 'Esseri umani'), con le chiavi
+  // `type-*`: le due mappe vanno cambiate insieme.
+  it: { 'type-man':'Esseri umani', 'type-dragon':'Draghi' },
+  en: { 'type-man':'Humans', 'type-dragon':'Dragons' }
 };
 var CTRL_I18N = {
   it: { close:'Chiudi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
@@ -5505,6 +5566,21 @@ function controlPanelHTML() {
     destra += '</div>';
   });
   destra += '</div>';
+  // Filtro 'solo i personaggi di cui è noto il vero nome' (istruzione dell'utente,
+  // 2026-08-21). Sta sotto le categorie perché è un filtro come loro, ma FUORI dalla
+  // sezione `--filtri`: quella è la lista delle categorie, e mescolarvi una riga che
+  // categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
+  // ⚠️ Oggi non esclude nessuna delle 19 voci, perché ognuna ha un vero nome noto (o è
+  // un drago, il cui nome È il vero nome): serve al dataset che verrà, e la sua utilità
+  // si vedrà quando entreranno le voci senza.
+  var vnLbl = currentLang === 'it' ? 'Mostra solo i personaggi di cui è noto il vero nome'
+                                   : 'Show only characters whose true name is known';
+  destra += '<div class="ctrl-section ctrl-section--vero">'
+     + '<label class="ctrl-row ctrl-row--vero" title="' + vnLbl + '">'
+     +   '<input type="checkbox" id="ctrl-solovero"' + (soloVeroNome ? ' checked' : '') + '>'
+     +   '<span class="ctrl-chk"></span>'
+     +   '<span class="ctrl-label"><span class="ctrl-label-face">' + vnLbl + '</span></span>'
+     + '</label></div>';
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a
   // sinistra): SOLO a filtro attivo; figlio diretto di .ctrl-left, così su
   // desktop i margini auto lo centrano (in orizzontale e in verticale tra
@@ -5561,11 +5637,14 @@ function controlPanelHTML() {
      + '<span class="rank-content">'
      +   '<span class="rank-name"><span class="rank-name-text">' + (currentLang === 'it' ? "Nome d'uso" : 'Use-name') + '</span></span>'
      +   '<span class="rank-vero">' + (currentLang === 'it' ? 'Vero nome' : 'True name') + '</span>'
-     +   '<span class="rank-title">' + (currentLang === 'it' ? "Opera della prima apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
      +   '<span class="rank-subtitle">' + joinBipartite([
              '<span class="alt-token">' + (currentLang === 'it' ? 'Nomi alternativi' : 'Other names') + '</span>',
              '<span class="alt-token">' + (currentLang === 'it' ? 'Titoli e onorificenze' : 'Titles and honours') + '</span>'
            ]) + '</span>'
+     // ⚠️ L'opera va per ULTIMA, come nelle card vere: nella prima stesura stava sopra
+     // i nomi alternativi e la legenda mostrava un ordine che la lista non ha, che è
+     // l'unico modo in cui una legenda a classi reali può sbagliare.
+     +   '<span class="rank-title">' + (currentLang === 'it' ? "Opera della prima apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
      + '</span></div></div>';
   // ⚠️ UNA COLONNA SOLA (istruzione dell'utente, 2026-08-21): le categorie e la
   // legenda dei badge stanno SOTTO la card di legenda, dentro la stessa colonna.
@@ -5719,6 +5798,8 @@ function wireControlPanel() {
       applyFilter();
     });
   });
+  var svn = panel.querySelector('#ctrl-solovero');
+  if (svn) svn.addEventListener('change', function(){ soloVeroNome = svn.checked; applyFilter(); });
   // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).
   // Guard 'risultati 0' (rete di sicurezza oltre alla disabilitazione visiva):
   // un toggle che svuoterebbe la lista NON viene applicato (nessun effetto).
@@ -7710,7 +7791,7 @@ var FX_SLIDERS_SVG = '<svg viewBox="0 0 20 20" width="17" height="17" aria-hidde
   '<path d="M7 3v8.2M7 15.6V17M13 3v2.4M13 9.8V17"/>' +
   '<circle cx="7" cy="13.4" r="2.2"/><circle cx="13" cy="7.6" r="2.2"/></g></svg>';
 // CSS dell'anteprima: iniettato all'apertura (invisibile al Nu, come per gli altri
-// editor admin). I fondi sono quelli REALI del sito (#262626 / #F5F5F5) e la card
+// editor admin). I fondi sono quelli REALI del sito (#0d1a22 / #f9fbfa) e la card
 // riproduce struttura, bordi e opacità di sfondo di una card vera.
 function injectFxEditorCss(){
   if (document.getElementById('fx-ed-css')) return;
@@ -7737,8 +7818,8 @@ function injectFxEditorCss(){
     '.fxp-pane.fxp-airy{padding:1.9rem 2.4rem}',
     // (il valore definitivo lo calcola paint(), dalle manopole: vedi 'respiro
     // DINAMICO'. Questo è solo il punto di partenza del primo fotogramma.)
-    '.fxp-pane.d{background:#262626;color:#d2d2d2}',
-    '.fxp-pane.l{background:#F5F5F5;color:#373737}',
+    '.fxp-pane.d{background:#0d1a22;color:#d2d2d2}',
+    '.fxp-pane.l{background:#f9fbfa;color:#373737}',
     // ⚠️ `.fxp-edit` (evidenziazione del riquadro in modifica, v12.64-12.75) NON è
     // più applicata dalla v12.76: con le manopole per tema si mostra un solo
     // riquadro, quello che si sta modificando, quindi non c'è nulla da distinguere.
@@ -8917,7 +8998,7 @@ function baInjectEditorCss(){
     '.ba-ftop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px;}',
     '.ba-fname{font-size:0.82rem;font-weight:600;}',
     '.ba-fval{font-size:0.82rem;font-weight:700;color:#c8a24a;font-family:ui-monospace,monospace;flex:none;}',
-    'html[data-theme="light"] .ba-fval{color:#1f5562;}',
+    'html[data-theme="light"] .ba-fval{color:#2e4145;}',
     '.ba-fline{display:flex;align-items:center;gap:12px;}',
     // Input numerico corto, a SINISTRA (bordi sx allineati in colonna). Selettore
     // .ba-fline input.ba-num per scavalcare il globale .fab-modal-box input[type=text].
@@ -8926,8 +9007,8 @@ function baInjectEditorCss(){
     '.ba-fline input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:60px;height:5px;border-radius:5px;background:rgba(128,128,128,0.32);outline:none;margin:0;}',
     '.ba-fline input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#c8a24a;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.3);}',
     '.ba-fline input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:#c8a24a;cursor:pointer;}',
-    'html[data-theme="light"] .ba-fline input[type=range]::-webkit-slider-thumb{background:#1f5562;}',
-    'html[data-theme="light"] .ba-fline input[type=range]::-moz-range-thumb{background:#1f5562;}',
+    'html[data-theme="light"] .ba-fline input[type=range]::-webkit-slider-thumb{background:#2e4145;}',
+    'html[data-theme="light"] .ba-fline input[type=range]::-moz-range-thumb{background:#2e4145;}',
     '.ba-reset{margin-top:0.55rem;font-size:0.74rem;background:none;border:none;color:inherit;opacity:0.7;cursor:pointer;text-decoration:underline;padding:0;}',
     '.ba-reset:hover{opacity:1;}',
     // Anteprime impilate (scuro sopra, chiaro sotto), un po piu grandi.
@@ -9596,8 +9677,8 @@ function showColorEditor(initState) {
     host.innerHTML = '';
     // [tema, hex, sfondoPagina, sfondoScheda, opacitàCard, coloreTesto]
     // Ordine: CHIARO a sinistra, SCURO a destra (in colonna con le caselle sopra).
-    [['light', lightHex, '#F5F5F5', '#F4F4F4', 0.05, 'rgba(30,30,34,0.92)'],
-     ['dark', darkHex, '#262626', '#252525', 0.10, 'rgba(232,232,232,0.92)']].forEach(function(row){
+    [['light', lightHex, '#f9fbfa', '#eff3f2', 0.05, 'rgba(30,30,34,0.92)'],
+     ['dark', darkHex, '#0d1a22', '#071016', 0.10, 'rgba(232,232,232,0.92)']].forEach(function(row){
       var hex = row[1], pageBg = row[2], modalBg = row[3], cardOp = row[4], txt = row[5];
       var trip = ccHexToTriplet(hex);
       var cct = ccHexToTriplet(ccAaText(hex, modalBg, 4.5));
