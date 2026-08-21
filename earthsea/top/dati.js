@@ -1,4 +1,4 @@
-var datiVersion = "0.09";
+var datiVersion = "0.10";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 var cardColors = {"fam":{"man":{"dark":"#d9c089","light":"#9c7c3a"},"dragon":{"dark":"#e0a090","light":"#b25a48"}},"map":{"type-man":"man","type-dragon":"dragon"}};
