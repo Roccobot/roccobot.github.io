@@ -416,10 +416,30 @@ Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più
 
 ### 📱 Il manifest e l'icona dell'app
 
-- **`name` è `Earthsea Top by Roccobot`** (istruzione dell'utente, 2026-08-22), `short_name`
-  `Earthsea Top`. ⚠️ Sono in **inglese**, al contrario del `<title>` della pagina, che resta
-  *I Grandi di Terramare by Roccobot*: è una scelta dell'utente sul manifest, non
-  un'incoerenza da sanare. Chi li 'allinea' da sé sta decidendo al posto suo.
+- ⚠️⚠️ **I NOMI SEGUONO LO SCHEMA DI ARDA, campo per campo** (istruzione dell'utente,
+  2026-08-22, dalla `0.25`), e lo schema usa **stringhe diverse** nei diversi posti: non è una
+  sola forma ripetuta, ed è la cosa da capire prima di 'allinearli' fra loro.
+
+  | campo | 'I Grandi di Arda' | qui |
+  |---|---|---|
+  | `<h1>` visibile | `I Grandi di Arda` | `I Grandi di Terramare` |
+  | `<title>`, `og:title`, `twitter:title` | `Arda Top by Roccobot` | `Earthsea Top by Roccobot` |
+  | `og:site_name` | `Arda Top` | `Earthsea Top` |
+  | `apple-mobile-web-app-title`, manifest `name` | `Arda Roccobot` | `Earthsea Roccobot` |
+  | manifest `short_name` | `Arda` | `Earthsea` |
+
+  - ⚠️⚠️ **Il titolo VISIBILE resta italiano, e i metadati no**: non è un'incoerenza, è la
+    convenzione di Arda, dove convivono `I Grandi di Arda` nell'`h1` e `Arda Top by Roccobot`
+    nel `<title>`. Chi 'sana' l'`h1` per allinearlo ai metadati rompe la regola della lingua
+    primaria (`CLAUDE.md` di root, § 'Lingua di risposta' e le deroghe di sviluppo).
+  - Ⓘ **Percorso, perché la stringa si è spostata**: la `0.24` aveva messo
+    `Earthsea Top by Roccobot` nel **manifest**, su richiesta dell'utente; uniformandosi ad
+    Arda quella stringa è passata al **`<title>`**, che è il campo dove Arda la tiene, e il
+    manifest ha preso `Earthsea Roccobot`. La richiesta è quindi rispettata nella sostanza,
+    solo in un altro campo: non è un dietrofront.
+  - ⚠️ **`apple-mobile-web-app-title` segue il MANIFEST, non il `<title>`**: è l'etichetta
+    sotto l'icona in schermata Home, quindi vuole la forma breve. Nella `0.24` diceva
+    `Earthsea Top`, che non era nessuna delle due forme di Arda.
 - ⚠️ **`background_color` e `theme_color` erano `#1f5562`**, cioè il **teal di Arda**: un
   residuo della copia, che nessuno aveva notato perché il manifest non si guarda mai. Ora sono
   `#0d1a22`, il fondo notte di questo sito.
