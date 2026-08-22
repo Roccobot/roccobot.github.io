@@ -21,11 +21,23 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="I Grandi di Terramare by Roccobot">
 <meta name="twitter:description" content="I grandi dell'arcipelago di Terramare - The great ones of the Earthsea archipelago">
-<!-- ⚠️ Nessuna favicon e nessuna icona: sono da disegnare. I file di 'I Grandi di Arda'
-     NON si riusano, perché portano il suo simbolo. Finché mancano, il browser mostra la
-     sua icona predefinita e il sito funziona lo stesso. -->
+<!-- Favicon e icone dell'app: il GLIFO DEL FAB, non un disegno a parte, generati da
+     `.memo/scripts/earthsea-icons.js`, che lo estrae da questo stesso file. Se il simbolo
+     cambia si rigenerano, invece di divergere in silenzio: qui è cambiato quattro volte in
+     tre giorni. L'SVG serve i browser moderni, i PNG sono il ripiego (Safari vecchi e
+     alcuni lettori RSS non prendono il vettoriale).
+     ⚠️ Il `?v=` va BUMPATO a ogni cambio di tinta o di disegno, o chi ha già visitato il
+     sito vede la favicon vecchia dalla cache del browser, che per le icone è tenace: si
+     crederebbe a un deploy mancato. -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=1">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png?v=1">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1">
+<!-- ⚠️ L'`apple-touch-icon` serve a iOS, che per l'icona NON guarda il manifest: senza
+     questo tag l'aggiunta alla schermata Home prende uno screenshot della pagina. -->
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="apple-mobile-web-app-title" content="Terramare Roccobot">
+<link rel="apple-touch-icon" href="pwa/app-192.png">
+<meta name="apple-mobile-web-app-title" content="Earthsea Top">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2509,7 +2521,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.23</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.24</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
