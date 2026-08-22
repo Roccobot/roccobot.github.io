@@ -1,7 +1,7 @@
 {
   "id": "/earthsea/top/",
-  "name": "Terramare Roccobot",
-  "short_name": "Terramare",
+  "name": "Earthsea Top by Roccobot",
+  "short_name": "Earthsea Top",
   "description": "I grandi dell'arcipelago di Terramare. The great ones of the Earthsea archipelago.",
   "lang": "it",
   "dir": "ltr",
@@ -10,6 +10,10 @@
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "any",
-  "background_color": "#1f5562",
-  "theme_color": "#1f5562"
+  "background_color": "#0d1a22",
+  "theme_color": "#0d1a22",
+  "icons": [
+    { "src": "pwa/app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "pwa/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
 }

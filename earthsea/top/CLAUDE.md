@@ -360,6 +360,70 @@ sole.svg`): un'**onda e un sole**, un tracciato solo, tutto a riempimento.
     non è un difetto da sistemare: e non si compensa spostando il canvas (icone as-is). Il
     centraggio ottico, se un domani lo si vuole, si fa **a monte nel file**.
 
+## 🔖 Favicon e icone dell'app installabile
+
+**Dalla `0.24`**, e sono **lo stesso glifo del FAB**, non un disegno a parte: le genera
+`.memo/scripts/earthsea-icons.js` estraendolo da `index.html`. Se il simbolo cambia si
+rigenerano invece di divergere in silenzio, ⚠️ e qui non è un rischio teorico: **il logo è
+cambiato quattro volte in tre giorni**.
+
+- **Che cosa produce**: `favicon.svg` più i PNG **48, 32 e 16** (ripiego per i browser che non
+  prendono il vettoriale), e `pwa/app.svg` più `app-192.png` e `app-512.png` per il manifest.
+  Tutti referenziati in testa alla pagina.
+- ⚠️ **UN solo script dove Arda ne ha DUE** (`favicon.js` e `pwaicons.js`), ed è deliberato: le
+  due famiglie nascono dallo stesso glifo e dalla **stessa misura di bbox**. In due file quella
+  misura sarebbe scritta due volte, e divergerebbero al primo logo nuovo.
+- ⚠️ **Il glifo si legge da `FAB_LOGO_D`, che è un ELENCO**, e lo script prende **tutti** i
+  tracciati: le versioni del logo ne hanno avuti 1, 2, 2 e 1, quindi il numero non si assume.
+  Leggerne uno solo darebbe mezza icona con tutta la catena verde.
+- ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: qui il canvas è 1024x1024 ma
+  il disegno ne occupa **801,23x899,17**, quindi il margine morto è reale e assumere il nominale
+  darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro, nessun pixel spostato
+  (icone as-is).
+
+### 🔵 La tinta della favicon, e perché qui la finestra conforme ESISTE
+
+**`#0080ff`**, il blu elettrico chiesto dall'utente (2026-08-22): **3,26:1** sulla sua barra
+dei preferiti chiara (`#edeeed`) e **3,83:1** sulla scura (`#292929`).
+
+- ⚠️⚠️ **Le misure si fanno sulle DUE BARRE REALI, non su bianco puro**: su `#ffffff` la stessa
+  tinta regala un terzo di punto di contrasto, e su quel numero in questo repo si è già preso un
+  abbaglio (`arda/top/CLAUDE.md`, § 'Favicon').
+- ⚠️⚠️ **Il tetto simultaneo è 3,54:1 e NON dipende dalla tonalità**, solo dalla luminanza delle
+  due barre: è lo stesso numero calcolato per l'oro di Arda, e ritrovarlo qui lo conferma. Il
+  punto di equilibrio esatto per il blu è **`#007af5`** (3,54 / 3,53).
+  - ⚠️ **Quindi il caso di Arda NON si trasporta qui**: là la favicon sta *fuori* dalla finestra
+    del 3:1 perché all'utente non piaceva nessuna tinta *dentro*, non perché la finestra non
+    esistesse. Il blu elettrico ci sta dentro per natura, quindi qui **nessuna deroga serve**, e
+    chi legge quella nota non concluda che anche questa sia una deroga.
+- ⚠️ **Il `?v=` dei quattro link va BUMPATO a ogni cambio di tinta o di disegno**, o chi ha già
+  visitato il sito vede la favicon vecchia dalla cache del browser, che per le icone è tenace:
+  si crederebbe a un deploy mancato.
+- **Maschera di contrasto sull'ALFA** (0,35), non sul colore: su un glifo monocromatico su
+  trasparente è l'alfa a portare la forma. Serve alle sole misure raster; l'SVG non la porta,
+  perché il browser lo rasterizza nitido da sé.
+- **La verifica si fa a DPR 1 e a dimensione vera**, e vanno guardati anche i segnalibri
+  **senza nome**, dove non c'è il testo a dire quale sito sia: un'anteprima resa a DPR alto
+  viene poi ridotta dal visualizzatore e le icone si giudicano più piccole di 16px.
+
+### 📱 Il manifest e l'icona dell'app
+
+- **`name` è `Earthsea Top by Roccobot`** (istruzione dell'utente, 2026-08-22), `short_name`
+  `Earthsea Top`. ⚠️ Sono in **inglese**, al contrario del `<title>` della pagina, che resta
+  *I Grandi di Terramare by Roccobot*: è una scelta dell'utente sul manifest, non
+  un'incoerenza da sanare. Chi li 'allinea' da sé sta decidendo al posto suo.
+- ⚠️ **`background_color` e `theme_color` erano `#1f5562`**, cioè il **teal di Arda**: un
+  residuo della copia, che nessuno aveva notato perché il manifest non si guarda mai. Ora sono
+  `#0d1a22`, il fondo notte di questo sito.
+- **L'icona è un quadrato PIENO** (fondo `#0080ff`, segno bianco) col glifo al **44%** del
+  lato, dentro la zona sicura: il launcher ritaglia nella forma che preferisce. ⚠️ Nessuna
+  forma disegnata dentro, o si vedrebbe come forma **dentro** la forma del launcher.
+  - **La combinazione scartata è il fondo marmo** (`#f9fbfa` con segno blu): è l'analogo esatto
+    del disco marmo del FAB, e sbaglia per la stessa ragione. Il segno si legge, ma il quadrato
+    scompare su qualunque sfondo chiaro, e un'icona senza contorno percepito sembra un buco.
+- ⚠️ **L'`apple-touch-icon` serve a iOS, che per l'icona NON guarda il manifest**: senza quel
+  tag l'aggiunta alla schermata Home prende uno screenshot della pagina. Non è ridondante.
+
 ## 🗂️ La legenda nel Pannello è una CARD FINTA
 
 Il Pannello di Terramare è molto più vuoto di quello di Arda, e l'utente ha chiesto di
@@ -652,10 +716,11 @@ alla volta, con una prova in browser dopo ognuno.
     così, quindi non era un pezzo 'per ora vuoto', era un pezzo di un altro progetto.
     ⚠️ Chi legge un vecchio link `?...1` o `?a=1` di Arda non accende più nulla: il bit in
     coda alla maschera non c'è, e la maschera ora è larga quanto `CATS`.
-- **Grafiche mancanti**: la favicon, l'immagine di anteprima, e le due **mappe** dei
+- **Grafiche mancanti**: l'**immagine di anteprima** (Open Graph) e le due **mappe** dei
   visualizzatori di immagini. ✅ Sono arrivate il 2026-08-21 le **tre icone dei badge** e il
   **glifo del pulsante**, quest'ultimo rifatto due volte il 2026-08-22 (vedi '🔆 Il logo del
-  FAB').
+  FAB'), e con la `0.24` la **favicon** e le **icone dell'app** (vedi '🔖 Favicon e icone
+  dell'app installabile'), che dal glifo si generano da sé.
   - Ⓘ **L'invio del 2026-08-22 portava DUE disegni**, e alla fine è il secondo, `Mare e
     sole.svg`, quello in vigore: sta nel repo come `icons/Earthsea.svg`, che è il percorso del
     ruolo. Il primo, `Earthsea Roccobot.svg`, **non è nel repo** e non ha un uso: l'utente ha
