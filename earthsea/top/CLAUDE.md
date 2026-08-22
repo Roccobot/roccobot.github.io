@@ -386,6 +386,14 @@ cambiato quattro volte in tre giorni**.
 **`#0080ff`**, il blu elettrico chiesto dall'utente (2026-08-22): **3,26:1** sulla sua barra
 dei preferiti chiara (`#edeeed`) e **3,83:1** sulla scura (`#292929`).
 
+⚠️⚠️ **CONFERMATO dall'utente dopo aver visto le cinque tinte rese a 16px sulle sue due barre**
+(2026-08-22, *'favicon A'*), quindi non è solo la tinta di partenza: è quella scelta **contro**
+le altre quattro. La conseguenza pratica sta nel capoverso dell'equilibrio qui sotto: chi
+trovasse `#0080ff` e pensasse di 'migliorarlo' portandolo a `#007af5` per guadagnare 0,28 di
+contrasto sulla barra chiara starebbe **disfacendo una scelta**, non correggendo una svista.
+Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più profondo) e
+`#0a5fff` (più saturo, ma **fuori** dalla finestra del 3:1: 2,84 sulla barra scura).
+
 - ⚠️⚠️ **Le misure si fanno sulle DUE BARRE REALI, non su bianco puro**: su `#ffffff` la stessa
   tinta regala un terzo di punto di contrasto, e su quel numero in questo repo si è già preso un
   abbaglio (`arda/top/CLAUDE.md`, § 'Favicon').
@@ -418,9 +426,13 @@ dei preferiti chiara (`#edeeed`) e **3,83:1** sulla scura (`#292929`).
 - **L'icona è un quadrato PIENO** (fondo `#0080ff`, segno bianco) col glifo al **44%** del
   lato, dentro la zona sicura: il launcher ritaglia nella forma che preferisce. ⚠️ Nessuna
   forma disegnata dentro, o si vedrebbe come forma **dentro** la forma del launcher.
-  - **La combinazione scartata è il fondo marmo** (`#f9fbfa` con segno blu): è l'analogo esatto
-    del disco marmo del FAB, e sbaglia per la stessa ragione. Il segno si legge, ma il quadrato
-    scompare su qualunque sfondo chiaro, e un'icona senza contorno percepito sembra un buco.
+  ⚠️ **Scelta dall'utente fra quattro combinazioni rese** (2026-08-22, *'icona webapp 1'*), e
+  coincide con lo schema di 'I Grandi di Arda' (fondo in tinta, segno bianco): la parentela fra
+  i due siti è un effetto voluto, non un residuo della copia.
+  - **Le tre scartate**: fondo notte del sito con segno blu, fondo blu con segno prugna-notte,
+    e il **fondo marmo** (`#f9fbfa` con segno blu). Quest'ultima è l'analogo esatto del disco
+    marmo del FAB, e sbaglia per la stessa ragione: il segno si legge, ma il quadrato scompare
+    su qualunque sfondo chiaro, e un'icona senza contorno percepito sembra un buco.
 - ⚠️ **L'`apple-touch-icon` serve a iOS, che per l'icona NON guarda il manifest**: senza quel
   tag l'aggiunta alla schermata Home prende uno screenshot della pagina. Non è ridondante.
 
