@@ -289,36 +289,45 @@ adesso è questa, su **due colonne**:
 
 ## 🔆 Il logo del FAB
 
-**In vigore dalla `0.20` la TERZA versione** (2026-08-22, file dell'utente `Earthsea
-Roccobot.svg`): un **monogramma dentro un anello**, tutto a riempimento. Ha preso il posto
-della figura a onde del 2026-08-21 e, prima di quella, del segnaposto nato col progetto.
+**In vigore dalla `0.23` la QUARTA versione** (2026-08-22, file dell'utente `Mare e
+sole.svg`): un'**onda e un sole**, un tracciato solo, tutto a riempimento.
 
-- ⚠️ **Ne esistono TRE versioni**, e la prima cosa da guardare è **quanti `path` ha** quella
-  nuova, non il contenuto di uno: la prima aveva un tracciato con contorno, la seconda e la
-  terza ne hanno **due e nessuno stroke**. Aggiornarne uno solo lascia mezzo logo per
-  strada, ed è la ragione per cui `FAB_LOGO_D` è un **elenco**.
+- ⚠️ **Ne esistono QUATTRO, e due sono arrivate lo stesso giorno**: il **monogramma dentro
+  un anello** (`Earthsea Roccobot.svg`) è stato in vigore per un solo giro, la `0.20`-`0.22`,
+  poi l'utente ha scelto l'altro disegno del medesimo invio. Prima c'erano la figura a onde
+  del 2026-08-21 e il segnaposto nato col progetto.
+  - Ⓘ Il monogramma **non è un errore da correggere**: era la scelta di quel giro, e la sua
+    storia sta nella storia git. Chi legge un commit della `0.20` non stia a cercare perché
+    il logo sia diverso.
+- ⚠️⚠️ **La prima cosa da guardare in un logo nuovo è QUANTI `path` ha**, non il contenuto di
+  uno: 1 nella prima versione (con `stroke`), **2** nella seconda e nella terza, di nuovo **1**
+  nella quarta. Aggiornarne uno quando sono due lascia mezzo logo per strada, ed è la ragione
+  per cui `FAB_LOGO_D` è un **elenco**. Il numero non è monotono: non si deduce dall'ordine.
   - **La ripulitura è la parte che pesa, sempre**: gli export di Illustrator sono
-    `<metadata>` per il 96-99%, cioè il blob proprietario `i:aipgf`. Il terzo logo è passato
-    da **113 KB a 4,9 KB** togliendo quel blocco, il commento del generatore e lo `xmlns:i`
-    di Adobe, che senza il blob non ha più niente da qualificare. Geometria, `viewBox`,
-    `fill` e `id` restano identici al byte, e si **verifica** che lo siano.
+    `<metadata>` per il 96-99%, cioè il blob proprietario `i:aipgf`. I due loghi dell'invio
+    del 2026-08-22 sono passati da **113 KB a 4,9 KB** e da **269 KB a 1,9 KB** togliendo quel
+    blocco, il commento del generatore e lo `xmlns:i` di Adobe, che senza il blob non ha più
+    niente da qualificare. Geometria, `viewBox`, `fill` e `id` restano identici al byte, e si
+    **verifica** che lo siano.
 - ⚠️ **La sorgente vive in DUE posti che vanno cambiati insieme**: inline nel FAB
   (`FAB_LOGO_D` in `buildControlPanel`) e nel file `icons/Earthsea.svg`. Inline perché il
   FAB lo tinge con `currentColor` e un `img` non erediterebbe il colore; il file perché
   servirà altrove (favicon, immagine di anteprima).
   - ⚠️ **Il nome del file segue il RUOLO, non il disegno**: `Earthsea.svg` è 'il logo del
-    progetto', e tre disegni diversi sono passati per quel percorso senza che il codice
-    cambiasse. Stessa ragione delle PNG dei badge (§ 'I tre badge e il genere'), e vale anche
-    quando l'utente manda un file con un altro nome.
+    progetto', e **quattro** disegni diversi sono passati per quel percorso senza che il
+    codice cambiasse. Stessa ragione delle PNG dei badge (§ 'I tre badge e il genere'), e vale
+    anche quando l'utente manda un file con un altro nome, come è successo due volte.
 - ⚠️ **Si costruisce con `createElementNS`, non con `innerHTML`**, che è vietato senza
   deroghe: qui il motore di provenienza lo usava per il segnaposto, e sostituire il glifo è
   stata l'occasione per togliere anche quello.
 - ⚠️⚠️ **Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo**: il colore
   con cui l'utente l'ha disegnato è `#4a3f46`, che sul fondo scuro `#0d1a22` fa **1,76**
-  (invisibile) e sul disco oro del FAB **4,57**. La coppia di disco e inchiostro è il disegno, non
-  una scelta del CSS, e **l'artwork lo dichiara**: il file porta un cerchio `#d9b75d` a piena
-  tela tenuto `display:none`, che è il fondo per cui è pensato. Inline quel cerchio non entra,
-  perché il disco lo disegna il FAB, e metterlo darebbe due dischi sovrapposti.
+  (invisibile) e sul disco oro del FAB **4,57**. La coppia di disco e inchiostro è il disegno,
+  non una scelta del CSS.
+  - Ⓘ **Il monogramma lo DICHIARAVA, questo no**: quel file portava un cerchio `#d9b75d` a
+    piena tela tenuto `display:none`, cioè il fondo per cui era pensato, e inline non entrava
+    perché il disco lo disegna il FAB (due dischi sovrapposti). `Mare e sole.svg` non ha
+    quell'indizio, quindi la misura qui sopra è l'unica fonte del fatto.
   - ✅ **L'inchiostro è `#4a3f46` nei DUE temi** (scelta dell'utente il 2026-08-22 fra quattro
     strade misurate, dalla `0.21`): è il colore del disegno, e tenerlo uguale fa sì che il FAB
     resti riconoscibile come lo stesso oggetto passando da un tema all'altro. Cambia il
@@ -334,16 +343,22 @@ della figura a onde del 2026-08-21 e, prima di quella, del segnaposto nato col p
       solo segno inganna: va misurato anche il bottone contro la pagina.
     - L'altra scartata era l'**inversione** (disco `#4a3f46`, segno oro `#d9b75d`, 5,21): non
       per un difetto, ma perché cambiava il **peso** del FAB nella pagina e non il solo colore.
-- **L'altezza dell'svg è `2.812rem`, cioè `1.9rem / 0.6757`**, e la divisione è la nota da
-  tenere: il disegno misura **691,92x691,92 su un canvas 1024x1024**, quindi occupa il 67,57%
-  del lato e ha margini propri. Scalare il canvas gli ridà l'ingombro che il Pannello
-  prevedeva per il glifo **senza ritagliare il file né spostarne i pixel** (icone as-is).
-  ⚠️ **Il divisore si rimisura a ogni logo nuovo** con la `getBBox` dei suoi tracciati: le tre
-  versioni hanno dato 0,8, 0,836 e 0,6757, quindi tenere il numero vecchio non rompe niente e
-  **sbaglia in silenzio**. Non si ritaglia il viewBox.
-  - ⚠️ **Il terzo logo è il primo CIRCOLARE**, quindi la bbox è quadrata e `1.9rem` è il
-    **diametro** del disegno; nei due precedenti era l'altezza di una figura più alta che
-    larga. Leggere quel numero come 'la stessa misura di prima' porta fuori strada.
+- **L'altezza dell'svg è `2.164rem`, cioè `1.9rem / 0.8781`**, e la divisione è la nota da
+  tenere: il disegno misura **801,23x899,17 su un canvas 1024x1024**, quindi occupa l'87,81%
+  del lato più lungo e ha margini propri. Scalare il canvas gli ridà l'ingombro che il
+  Pannello prevedeva per il glifo **senza ritagliare il file né spostarne i pixel**
+  (icone as-is).
+  ⚠️ **Il divisore si rimisura a ogni logo nuovo** con la `getBBox` dei suoi tracciati: le
+  quattro versioni hanno dato 0,8, 0,836, 0,6757 e 0,8781, quindi tenere il numero vecchio non
+  rompe niente e **sbaglia in silenzio**. Non si ritaglia il viewBox.
+  - ⚠️⚠️ **Si divide per il lato PIÙ LUNGO**, e questo si è capito solo alla quarta versione:
+    la terza era **circolare**, quindi la sua bbox era quadrata e i due numeri coincidevano.
+    Con una figura più alta che larga usare la larghezza darebbe un disegno **più grande del
+    disco**. La regola vale per tutte, la coincidenza la nascondeva.
+  - ⚠️ **Questo logo è ASIMMETRICO** (peso in basso a destra), quindi nel tondo resta un vuoto
+    in alto a sinistra. È stato **visto e accettato dall'utente** prima di sceglierlo, quindi
+    non è un difetto da sistemare: e non si compensa spostando il canvas (icone as-is). Il
+    centraggio ottico, se un domani lo si vuole, si fa **a monte nel file**.
 
 ## 🗂️ La legenda nel Pannello è una CARD FINTA
 
@@ -639,12 +654,14 @@ alla volta, con una prova in browser dopo ognuno.
     coda alla maschera non c'è, e la maschera ora è larga quanto `CATS`.
 - **Grafiche mancanti**: la favicon, l'immagine di anteprima, e le due **mappe** dei
   visualizzatori di immagini. ✅ Sono arrivate il 2026-08-21 le **tre icone dei badge** e il
-  **glifo del pulsante**, quest'ultimo rifatto il 2026-08-22 (vedi '🔆 Il logo del FAB').
-  - ⚠️ **Un secondo disegno è in casa e NON è nel repo**: `Mare e sole.svg`, arrivato ripulito
-    insieme al logo del 2026-08-22 e senza un uso assegnato. Non è stato committato di
-    proposito, perché un asset senza impiego è codice morto: quando l'utente gli dà un posto
-    (la favicon e l'anteprima sono i candidati ovvi) va richiesto a lui, perché i file mandati
-    in chat **non sopravvivono alla sessione**.
+  **glifo del pulsante**, quest'ultimo rifatto due volte il 2026-08-22 (vedi '🔆 Il logo del
+  FAB').
+  - Ⓘ **L'invio del 2026-08-22 portava DUE disegni**, e alla fine è il secondo, `Mare e
+    sole.svg`, quello in vigore: sta nel repo come `icons/Earthsea.svg`, che è il percorso del
+    ruolo. Il primo, `Earthsea Roccobot.svg`, **non è nel repo** e non ha un uso: l'utente ha
+    solo i file che gli sono stati restituiti in chat, quindi se un domani lo si vuole (per la
+    favicon o l'anteprima) va richiesto a lui, perché i file passati in chat **non
+    sopravvivono alla sessione**.
 
 ## 🔢 Versione
 
