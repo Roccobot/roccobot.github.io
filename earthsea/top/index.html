@@ -321,7 +321,20 @@ html[data-theme="dark"] .subtitle-note { color:var(--parchment-dim); opacity:1; 
 html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:var(--gold-bright); }
 html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:var(--gold-bright); }
 
-.scroll { max-width:920px; margin:1.2rem auto 3rem; padding:0 1rem; }
+/* ⚠️⚠️ LARGHEZZA DELLA COLONNA DELLE SCHEDE: fonte UNICA, letta anche da JS.
+   Era `max-width:920px` scritto qui e ripetuto come `var PAT_COL = 920` nel
+   codice, che da lì calcola la maschera della trama e la soglia 'c'è posto ai
+   lati della colonna'. Due numeri da tenere allineati a mano, e cambiandone uno
+   solo il difetto era invisibile: la trama sarebbe rimasta esclusa da una fascia
+   più larga delle card. Ora il CSS dichiara e il JS legge.
+   Il valore è **680px** dalla 0.22 (richiesta dell'utente: a Terramare le card
+   portano molte meno informazioni e a 920 restavano troppo vuote). Misurato:
+   l'inchiostro più largo di tutte le voci arriva a 460px, quindi a 920 la card
+   era piena al 52% e a 680 lo è al 71%, con ~190px di margine prima che un
+   sottotitolo lungo vada a capo. Nessun elemento sfora e nessuna riga si spezza
+   fino a 620px: sotto quella soglia va rimisurato. */
+html { --col-max:680px; }
+.scroll { max-width:var(--col-max); margin:1.2rem auto 3rem; padding:0 1rem; }
 
 .rank-item {
   position:relative;
@@ -2431,7 +2444,21 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 //    ripristina il cerchio velato (versione B) via la classe
 //    html.jump-mobile-circle, se le sole freccine non fossero abbastanza
 //    usabili. Riguarda solo mobile; su desktop i tasti sono sempre col tondo.
-var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A', adminTranslate: false, istariFiveIcons: false, jumpMobileCircle: false };
+//  - xlMode: la MODALITÀ XL, cioè `zoom:1.3` su tutta la pagina. Spenta per
+//    intero su richiesta dell'utente (2026-08-22): non solo il default di
+//    sito, ma anche la scorciatoia personale (tasto Z e tocco lungo sul FAB)
+//    e la riga nel pannello Feature flag, che offrirebbe un interruttore
+//    inerte. A true torna tutto come prima, senz'altre modifiche.
+//    ⚠️ La XL aveva DUE canali indipendenti, ed è la ragione per cui il flag
+//    è uno e viene letto in SEI punti invece di uno: il default di sito
+//    (`zoomBig`) e la preferenza personale nel `localStorage`, che vinceva
+//    sul primo. Spegnere un canale solo lasciava la XL raggiungibile, ed è
+//    l'errore che questa nota esiste per prevenire.
+//    ⚠️ Il CSS (`html.zoom-big`, `--zoomf`) resta in piedi di proposito: senza
+//    di esso il flag non potrebbe riaccendere niente. Le espressioni
+//    `calc(... / var(--zoomf,1))` sparse nelle modali valgono 1 a XL spenta,
+//    quindi sono inerti e non si toccano.
+var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A', adminTranslate: false, istariFiveIcons: false, jumpMobileCircle: false, xlMode: false };
 (function(){
   var l = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   document.documentElement.setAttribute('data-theme', l ? 'light' : 'dark');
@@ -2447,7 +2474,14 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   // qui, il più presto possibile, per non mostrare un lampo di pagina a dimensione
   // normale. La chiave è la stessa usata da toggleZoomMode (ZOOM_LS_KEY, definita
   // più sotto: qui si usa la stringa letterale perché questo blocco gira prima).
-  try { if (localStorage.getItem('earthsea-zoom-big') === '1') document.documentElement.classList.add('zoom-big'); } catch (e) {}
+  // ⚠️ Col flag `xlMode` spento questo ripristino NON deve girare, ed è il punto
+  // più importante dei sei: una preferenza salvata prima dello spegnimento
+  // riaccenderebbe la XL da sola al primo caricamento, senza che nessuno l'abbia
+  // chiesta. La chiave nel `localStorage` non si cancella, così riaccendendo il
+  // flag l'utente ritrova la sua scelta.
+  if (FEATURES.xlMode) {
+    try { if (localStorage.getItem('earthsea-zoom-big') === '1') document.documentElement.classList.add('zoom-big'); } catch (e) {}
+  }
 })();
 // Animazione 'piega' del glifo di chiusura del pannello: usa la proprietà CSS
 // 'd' su <path> (SVG 2). È valida, ma il validatore W3C Nu non la riconosce
@@ -2470,7 +2504,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.21</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.22</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2846,9 +2880,14 @@ if (FX_MOBILE_MQ.addEventListener) FX_MOBILE_MQ.addEventListener('change', funct
 // ricalcola sia le config sia l'aggancio del riflettore.
 // Larghezza massima della colonna delle schede (`.scroll`), e quindi la soglia
 // oltre la quale resta sfondo libero ai suoi lati: è lì che la trama ha senso.
-// ⚠️ NON si usa FX_MOBILE_MQ (768px): fra 768 e 920 la colonna riempie già tutta la
-// finestra e la trama non avrebbe dove stare (misurato: a 800px il margine è 0).
-var PAT_COL = 920;
+// ⚠️ NON si usa FX_MOBILE_MQ (768px): sotto la larghezza della colonna quest'ultima
+// riempie già tutta la finestra e la trama non avrebbe dove stare.
+// ⚠️⚠️ Il numero NON si scrive qui: si LEGGE dal CSS (`--col-max` su `html`), che è
+// la fonte unica. Prima era un `920` cablato in due posti, e cambiarne uno solo
+// lasciava la maschera della trama tarata su una colonna che non esisteva più:
+// un difetto invisibile, perché la pagina non dà nessun errore. Il ripiego a 680
+// serve solo se la variabile mancasse, cioè se qualcuno la togliesse dal CSS.
+var PAT_COL = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--col-max')) || 680;
 var PAT_ROOM_MQ = window.matchMedia('(min-width:' + PAT_COL + 'px)');
 if (PAT_ROOM_MQ.addEventListener) PAT_ROOM_MQ.addEventListener('change', function(){ applySiteFlags(); });
 var FX_PTR_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
@@ -2910,8 +2949,11 @@ function applySiteFlags() {
   // sui telefoni (≤480px) la Modalità XL di sito NON si applica; lì la XL si
   // ottiene solo con la preferenza personale (tap lungo sul FAB, o un eventuale
   // tasto Z con tastiera collegata). La preferenza personale vale ovunque.
-  var mine = LS.getItem(ZOOM_LS_KEY);
-  var siteZoom = !!SITE_FLAGS.zoomBig && !ZOOM_PHONE_MQ.matches;
+  // ⚠️ Col flag `xlMode` spento la classe si TOGLIE sempre, invece di saltare la
+  // riga: `applySiteFlags` gira anche dopo un salvataggio admin, e uscire senza
+  // toccarla lascerebbe attiva una XL accesa in un giro precedente.
+  var mine = FEATURES.xlMode ? LS.getItem(ZOOM_LS_KEY) : '0';
+  var siteZoom = FEATURES.xlMode && !!SITE_FLAGS.zoomBig && !ZOOM_PHONE_MQ.matches;
   r.classList.toggle('zoom-big', mine === null ? siteZoom : mine === '1');
   injectFxRules();
   wireSpotlight();
@@ -3940,6 +3982,12 @@ document.addEventListener('keydown', function(e) {
 document.addEventListener('keydown', function(e) {
   var k = e.key.toLowerCase();
   if (k !== 'p' && k !== 'l' && k !== 't' && k !== 'z') return;
+  // ⚠️ Con `xlMode` spento la Z si scarta QUI, in cima, e non più sotto dove
+  // chiama `toggleZoomMode`: là il tasto era già stato consumato da un
+  // `preventDefault` e da un `return`, quindi la scorciatoia sarebbe rimasta
+  // 'esistente ma inerte' invece di non esserci. Scartandola qui, la Z torna un
+  // tasto che la pagina non gestisce.
+  if (k === 'z' && !FEATURES.xlMode) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (document.documentElement.classList.contains('admin-open')) return;
   if (typeof reorderMode !== 'undefined' && reorderMode) return;
@@ -6301,12 +6349,22 @@ var ZOOM_BIG_FACTOR = 1.3;
 //  1) DEFAULT DI SITO: il flag `zoomBig` del pannello 'Feature flag' (admin):
 //     vale per TUTTI i visitatori, vive nei dati (siteFlags in dati.js);
 //  2) PREFERENZA PERSONALE: il tasto `Z`, che vale SOLO su questo browser, NON tocca
-//     il sito, e si ricorda in localStorage (chiave arda-zoom-big).
+//     il sito, e si ricorda in localStorage (chiave `earthsea-zoom-big`, cioè
+//     ZOOM_LS_KEY; la nota diceva `arda-zoom-big`, che è la chiave del sito da cui
+//     il motore è stato copiato e qui non esiste).
 // La personale, se impostata, SCAVALCA il default di sito (per questo si salva
 // '1'/'0' espliciti: la chiave assente significa 'segui il sito', non 'spento').
 // Il ripristino avviene il più presto possibile (blocco iniziale) per non mostrare
 // un lampo di pagina alla dimensione sbagliata.
+// ⚠️⚠️ TUTTO QUESTO È SPENTO dal 2026-08-22 col flag `FEATURES.xlMode`, che copre
+// entrambi i livelli e la riga del pannello: vedi il blocco dei Feature flag in
+// testa al file. Questa descrizione resta perché è ciò che torna in vigore
+// riaccendendo il flag.
 function toggleZoomMode() {
+  // Spegnimento della funzionalità: si esce SUBITO, senza toast. Un toast
+  // 'Modalità normale' su una pressione che non fa niente racconterebbe che la
+  // funzione c'è ancora, ed è peggio del silenzio.
+  if (!FEATURES.xlMode) return;
   var on = document.documentElement.classList.toggle('zoom-big');
   LS.setItem(ZOOM_LS_KEY, on ? '1' : '0');
   // Le misure dipendono dalla scala: rifà a-capo 'smart' e linee mediane.
@@ -6383,8 +6441,13 @@ function buildControlPanel() {
   // già Z. Il gesto è volutamente non scopribile, come il tap sulla versione.
   var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
   var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
+  // ⚠️⚠️ Col flag spento il timer NON deve nemmeno partire, e gatare il solo
+  // `toggleZoomMode` sarebbe stato un DIFETTO invece di uno spegnimento: il
+  // timer scatterebbe comunque, alzerebbe `lpFired`, e il gestore del click qui
+  // sotto consumerebbe il click successivo. Risultato: un tocco lungo sul FAB
+  // non aprirebbe più nemmeno il Pannello. Si scarta all'inizio del gesto.
   fab.addEventListener('pointerdown', function(e){
-    if (e.pointerType !== 'touch') return;
+    if (e.pointerType !== 'touch' || !FEATURES.xlMode) return;
     lpFired = false; lpX = e.clientX; lpY = e.clientY;
     lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; toggleZoomMode(); }, 500);
   });
@@ -8830,6 +8893,10 @@ function showSiteFlagsEditor(initState){
   function renderRows(){
     rowsBox.textContent = '';
     SITE_FLAG_ITEMS.forEach(function(f){
+      // Col flag `xlMode` spento la riga della XL non si mostra affatto: un
+      // interruttore che non commuta niente è peggio della sua assenza, perché
+      // sembra rotto invece di dichiarare che la funzione non c'è.
+      if (f.k === 'zoomBig' && !FEATURES.xlMode) return;
       if ((f.k === 'zoomBig' || f.noMob) && tab === 'm') return; // XL e Riflettore: solo nella tab Desktop
       // ⚠️ Senza tab il suffisso è PER-RIGA e vale la variante ATTIVA (v14.23): i
       // due criteri (larghezza per cinque effetti, puntatore per quelli in FX_PTR)
@@ -8916,7 +8983,11 @@ function showSiteFlagsEditor(initState){
   overlay._renderRows = function(){ renderRows(); syncPreview(); syncVarWarn(); }; // cambio di telaio (onRs)
   // Avviso se la preferenza personale di zoom sta scavalcando il flag: senza,
   // sembrerebbe che l'interruttore 'non funzioni'.
-  var mine = LS.getItem(ZOOM_LS_KEY);
+  // Col flag spento non c'è nessuna precedenza da spiegare: la preferenza
+  // personale può esistere ancora nel `localStorage` (non la cancelliamo, così
+  // riaccendendo il flag l'utente la ritrova) ma non ha più effetto, e mostrare
+  // l'avviso direbbe il falso.
+  var mine = FEATURES.xlMode ? LS.getItem(ZOOM_LS_KEY) : null;
   if (mine !== null) {
     var warn = document.createElement('p');
     warn.style.cssText = 'font-size:0.76rem;opacity:0.8;margin:0 0 0.9rem;padding:0.5rem 0.6rem;border-left:2px solid rgba(200,162,74,0.8);';

@@ -563,6 +563,56 @@ lo zoom e la **bozza-ordine** di quel sito, e il tasto 'Scarta' gliela **cancell
 ⚠️ Vale per ogni chiave nuova, senza eccezioni: la stessa trappola si ripresenta identica al
 primo progetto che nascerà da un'altra copia di questo motore.
 
+## 🔍 La Modalità XL è SPENTA, e la larghezza della colonna è una fonte unica
+
+Due modifiche della `0.22`, chieste insieme dall'utente e in quest'ordine: prima spegnere la
+XL, poi restringere le card, perché *a Terramare contengono molte meno info e sono troppo
+vuote per essere così larghe*.
+
+- ✅ **La Modalità XL è spenta PER INTERO col flag `FEATURES.xlMode`** (`false`), che è
+  l'oggetto dei flag di build già in testa al file: non un meccanismo nuovo. A `true` torna
+  tutto come prima, senza altre modifiche, ed è la ragione per cui il CSS (`html.zoom-big`,
+  `--zoomf`) **resta in piedi** invece di essere cancellato.
+- ⚠️⚠️ **Il flag è UNO ma si legge in SEI punti, e non è ridondanza**: la XL arrivava da **due
+  canali indipendenti**, il default di sito (`zoomBig`) e la **preferenza personale** nel
+  `localStorage`, che **vinceva** sul primo. Spegnere un canale solo la lasciava raggiungibile.
+  I sei: il ripristino anticipato nell'`head`, `applySiteFlags`, `toggleZoomMode`, il tasto
+  `Z`, il tocco lungo sul FAB, e la riga nel pannello Feature flag.
+  - ⚠️ **Il punto più insidioso è il ripristino anticipato**: una preferenza salvata **prima**
+    dello spegnimento riaccenderebbe la XL da sola al primo caricamento, senza che nessuno
+    l'abbia chiesta. La chiave nel `localStorage` **non si cancella**, così riaccendendo il
+    flag l'utente ritrova la sua scelta.
+  - ⚠️⚠️ **Il tocco lungo sul FAB va scartato all'inizio del gesto, non dentro
+    `toggleZoomMode`**: gatare solo quest'ultimo sarebbe stato un **difetto** invece di uno
+    spegnimento, perché il timer scatterebbe comunque, alzerebbe `lpFired`, e il gestore del
+    click consumerebbe il click successivo. Risultato: un tocco lungo non aprirebbe più
+    nemmeno il Pannello. Provato in browser nei due sensi, ed è la ragione per cui la prova
+    del tocco lungo controlla che il Pannello **si apra**.
+  - ⚠️ Il tasto `Z` si scarta **in cima** al gestore, dove si decide quali tasti guardare, e
+    non dove chiamava `toggleZoomMode`: là era già stato consumato da un `preventDefault`,
+    quindi la scorciatoia sarebbe rimasta 'esistente ma inerte' invece di non esserci.
+  - ⚠️ La **riga nel pannello Feature flag non si mostra** a flag spento: un interruttore che
+    non commuta niente sembra rotto, e dichiara il falso.
+- ⚠️ **La XL era il caso peggiore di alcune misure del Pannello** (le etichette misurate a
+  320px in XL col font reale). Quelle misure **restano valide e non si toccano**: quello che
+  è cambiato è che il caso peggiore oggi non è più raggiungibile, non che il numero sia
+  sbagliato. Riaccendendo il flag torna a valere.
+- ⚠️⚠️ **La larghezza della colonna era CABLATA IN DUE POSTI**, e questo era il difetto vero
+  della seconda richiesta: `max-width:920px` nel CSS di `.scroll` **e** `var PAT_COL = 920` in
+  JS, da cui si calcolano la maschera della trama e la soglia 'c'è posto ai lati della
+  colonna'. Cambiando solo il CSS, la trama sarebbe rimasta esclusa da una fascia **più larga
+  delle card**, e la pagina non avrebbe dato alcun errore. Ora il CSS **dichiara**
+  (`--col-max` su `html`) e il JS **legge**: fonte unica.
+- **Il valore è `680px`**, e viene da una misura, non dall'occhio: l'inchiostro più largo di
+  tutte le voci arriva a **460px**, quindi a 920 la card era piena al **52%** e a 680 lo è al
+  **71%**, con ~190px di margine prima che un sottotitolo lungo vada a capo.
+  - ⚠️ **La misura per scatole NON serve, e ci si cade subito**: misurando i rettangoli degli
+    elementi, ogni card dava 868px, perché la riga del vero nome è un **blocco** e occupa
+    tutta la larghezza anche con una parola dentro. Il numero utile è l'**inchiostro**, cioè i
+    rettangoli dei nodi di testo (`Range.getClientRects`) più le immagini.
+  - **Fino a 620px non sfora nulla e nessuna riga si spezza** (provato a 920, 760, 720, 680 e
+    620, con l'altezza delle card identica): sotto quella soglia va rimisurato.
+
 ## 🧹 Residui del motore di provenienza (debito dichiarato)
 
 Il file nasce da una copia di `arda/top/index.html`, e la ripulitura è stata fatta **dove si
