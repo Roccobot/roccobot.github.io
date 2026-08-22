@@ -319,15 +319,21 @@ della figura a onde del 2026-08-21 e, prima di quella, del segnaposto nato col p
   una scelta del CSS, e **l'artwork lo dichiara**: il file porta un cerchio `#d9b75d` a piena
   tela tenuto `display:none`, che è il fondo per cui è pensato. Inline quel cerchio non entra,
   perché il disco lo disegna il FAB, e metterlo darebbe due dischi sovrapposti.
-  - ✅ **Tema scuro: inchiostro `#4a3f46`**, cioè il colore del disegno (istruzione
-    dell'utente, che l'ha dato come quello giusto per lo scuro).
-  - ⏳ **Tema chiaro: ancora `#3a2808`**, il bruno caldo che veniva dal logo precedente, in
-    attesa della scelta dell'utente (*'per il chiaro vediamo insieme'*). ⚠️ Non è una
-    dimenticanza: è uno stato dichiarato, e chi lo trova non lo 'uniformi' da sé.
+  - ✅ **L'inchiostro è `#4a3f46` nei DUE temi** (scelta dell'utente il 2026-08-22 fra quattro
+    strade misurate, dalla `0.21`): è il colore del disegno, e tenerlo uguale fa sì che il FAB
+    resti riconoscibile come lo stesso oggetto passando da un tema all'altro. Cambia il
+    **disco** fra i due temi (`rgba(210,178,92,0.96)` e `#e0b54a`), non il segno: contrasti
+    4,57 e 5,20. ⚠️ Due regole CSS distinte lo dicono, quindi chi ne cambia una cambi l'altra.
+    - Ⓘ **Prima veniva dal logo precedente**, `#3a2808`, un bruno più caldo e con più
+      contrasto (7,32): scartato non per la misura ma perché non apparteneva più a niente.
+      ⚠️ Resta in vita su `.jump-fab`, che porta un chevron e non il logo: non è un residuo da
+      uniformare a vista, e se un domani si uniforma va deciso, non dedotto.
     - **La misura scartata è il disco marmo** (`#eff3f2` con segno `#4a3f46`): il segno si
       legge benissimo (8,98) ma il **disco sparisce contro il fondo pagina** (1,08), e un FAB
       invisibile è un difetto peggiore di un contrasto mediocre. È il caso in cui misurare il
       solo segno inganna: va misurato anche il bottone contro la pagina.
+    - L'altra scartata era l'**inversione** (disco `#4a3f46`, segno oro `#d9b75d`, 5,21): non
+      per un difetto, ma perché cambiava il **peso** del FAB nella pagina e non il solo colore.
 - **L'altezza dell'svg è `2.812rem`, cioè `1.9rem / 0.6757`**, e la divisione è la nota da
   tenere: il disegno misura **691,92x691,92 su un canvas 1024x1024**, quindi occupa il 67,57%
   del lato e ha margini propri. Scalare il canvas gli ridà l'ingombro che il Pannello

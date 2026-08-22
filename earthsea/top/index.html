@@ -2250,7 +2250,11 @@ html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color
    un disco pieno non deve passare il gate come TESTO, quindi può restare un oro vero
    invece del marrone che serviva per leggersi (istruzione dell'utente, 2026-08-21).
    Il glifo sopra è il bruno caldo del tema scuro: 7,32 sul disco. */
-html[data-theme="light"] #ctrl-fab { background:#e0b54a; border-color:rgba(201,150,46,0.55); color:#3a2808; }
+/* ⚠️ L'inchiostro del logo è lo STESSO nei due temi (scelta dell'utente, 2026-08-22, fra
+   quattro strade misurate): `#4a3f46` è il colore con cui il logo è disegnato, e tenerlo
+   uguale fa sì che il FAB resti riconoscibile come lo stesso oggetto passando da un tema
+   all'altro. Non è una svista di copia: cambia il disco, non il segno. */
+html[data-theme="light"] #ctrl-fab { background:#e0b54a; border-color:rgba(201,150,46,0.55); color:#4a3f46; }
 html[data-theme="light"] #ctrl-fab:hover { background:#e9c266; border-color:rgba(224,181,74,0.8); }
 /* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
    dalla regola base). */
@@ -2466,7 +2470,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.20</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.21</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
