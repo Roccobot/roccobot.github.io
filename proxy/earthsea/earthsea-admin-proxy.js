@@ -342,10 +342,20 @@ export default {
     // (i deploy via Git non sono altrimenti verificabili senza dashboard), 'rl' =
     // presenza del binding del Durable Object, 'site' = quale sito serve, che qui
     // conta piu' che altrove: due Worker gemelli si distinguono da questa riga.
-    // Nessun segreto esposto. ⚠️ `rev` va bumpato a ogni modifica sostanziale, o
-    // smette di dire la verita'.
+    // ⚠️ `rev` va bumpato a ogni modifica sostanziale, o smette di dire la verita'.
+    // ⚠️⚠️ `pw` e `pat` dicono se i due secret CI SONO, non quanto valgono: un
+    // booleano, mai un pezzo del valore ne' la sua lunghezza. Sono nati dal difetto
+    // del 2026-08-23 (secret non impostato e serratura aperta): quello stato era
+    // invisibile dall'esterno, e per accorgersene serviva un POST di prova. Ora si
+    // legge dalla stessa riga che dice se il deploy e' arrivato, che e' il posto
+    // dove si guarda comunque.
+    // ⚠️ Un `pw:false` NON significa piu' 'chiunque puo' entrare': da rev 2 la
+    // serratura e' fail-closed e in quel caso rifiuta tutto. Significa 'admin
+    // inutilizzabile finche' non metti il secret'.
     if (request.method !== 'POST') {
-      return json({ ok: false, error: 'method', rev: 1, rl: !!env.RL_DO, site: 'earthsea' }, 405, ch);
+      return json({ ok: false, error: 'method', rev: 2, rl: !!env.RL_DO, site: 'earthsea',
+        pw: !!(env.ADMIN_PASSWORD && String(env.ADMIN_PASSWORD).length),
+        pat: !!(env.GITHUB_PAT && String(env.GITHUB_PAT).length) }, 405, ch);
     }
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
@@ -366,7 +376,21 @@ export default {
     catch (e) { return json({ ok: false, error: 'bad-json' }, 400, ch); }
 
     // Autenticazione lato server: la password non esiste nel client.
-    if (!(await safeEqual(String(body.password || ''), String(env.ADMIN_PASSWORD || '')))) {
+    // ⚠️⚠️ FAIL-CLOSED, e la guardia esiste per un difetto MISURATO in produzione il
+    // 2026-08-23, un quarto d'ora dopo il primo deploy: senza il secret impostato,
+    // `String(env.ADMIN_PASSWORD || '')` vale `''`, e il confronto con una password
+    // vuota mandata dal client tornava TRUE. Il Worker rispondeva `{"ok":true}` a
+    // chiunque mandasse `password: ""`, cioe' la serratura si apriva proprio quando
+    // la chiave non era stata messa. Il caso non era teorico: e' stato trovato con un
+    // POST di prova, e fino a questa riga l'area admin era aperta.
+    // ⚠️ La politica e' l'OPPOSTO di quella del rate limiter, ed e' deliberato: quello
+    // e' fail-open (meglio un Worker senza limitatore che un admin chiuso fuori),
+    // questa e' la serratura, e una serratura che si apre quando manca un pezzo non e'
+    // una serratura. Errore parlante e 500: e' una configurazione mancante, non un
+    // tentativo sbagliato, e chi la vede deve sapere dove guardare.
+    const atteso = String(env.ADMIN_PASSWORD || '');
+    if (!atteso) return json({ ok: false, error: 'no-admin-password' }, 500, ch);
+    if (!(await safeEqual(String(body.password || ''), atteso))) {
       return json({ ok: false, error: 'auth' }, 401, ch);
     }
 

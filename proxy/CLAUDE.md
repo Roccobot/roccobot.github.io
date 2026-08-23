@@ -52,6 +52,33 @@ diverse.
   (edizioni italiane, nomi canonici). Copiarlo avrebbe portato le regole di un altro mondo
   dentro questo sito.
 
+### 🔓 La serratura è FAIL-CLOSED, e si è imparato sul campo
+
+**Il 2026-08-23, un quarto d'ora dopo il primo deploy del Worker di Terramare**: il secret
+`ADMIN_PASSWORD` non era ancora impostato, e il Worker rispondeva **`{"ok":true}`** a chiunque
+mandasse `password: ""`. La causa è una riga che sembra innocua e sta in **entrambi** i
+Worker: `safeEqual(String(body.password || ''), String(env.ADMIN_PASSWORD || ''))`. Senza il
+secret il secondo argomento vale `''`, e il confronto con una password vuota torna **true**:
+la serratura si apriva proprio quando la chiave non era stata messa.
+
+- ⚠️⚠️ **Da `rev` 2 (Terramare) la guardia c'è**: secret assente o vuoto -> `no-admin-password`
+  e 500, mai un `ok`. Una serratura che si apre quando manca un pezzo non è una serratura.
+- ⚠️ **La politica è l'OPPOSTO di quella del rate limiter, ed è deliberato**: quello è
+  **fail-open** (meglio un Worker senza limitatore che un admin chiuso fuori), l'autenticazione
+  è **fail-closed**. Chi legge le due politiche vicine non le uniformi: rispondono a domande
+  diverse.
+- ⚠️⚠️ **`arda-admin-proxy` ha ancora la riga vecchia.** Non è esposto, ed è **misurato**: alla
+  stessa prova risponde `auth`, quindi il suo secret c'è. Ma è la stessa trappola in attesa,
+  e basterebbe un secret cancellato per aprirlo. Va portata anche là, ⚠️ **con la conferma
+  dell'utente**, perché toccare quel Worker è una modifica pesante.
+- **Come si prova, e perché serve una prova e non una lettura del codice**: un POST
+  `{"action":"auth","password":""}`. Se torna `ok:true` il secret non c'è **e** il Worker è
+  fail-open. Sono due difetti diversi che quel test distingue da solo, e nessuno dei due si
+  vede dalla dashboard.
+- **La spia lo dice da sé, dalla `rev` 2**: il GET diagnostico di Terramare porta anche
+  `pw` e `pat`, due booleani che dicono se i secret ci sono. ⚠️ Booleani e basta: mai un pezzo
+  del valore, mai la lunghezza. Prima quello stato era invisibile dall'esterno.
+
 Il resto di questo file descrive `arda-admin-proxy`, e vale come impianto anche per
 l'altro, con le quattro differenze qui sopra.
 
