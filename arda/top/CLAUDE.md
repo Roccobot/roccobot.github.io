@@ -875,6 +875,31 @@ riallineato là**. L'URL del Worker sta in `ADMIN_PROXY_URL_DEFAULT` (non segret
 dal campo 'Proxy' dell'editor; la parola d'ordine vive **solo in memoria** per la durata della
 sessione. Deploy e secret in `proxy/README.md`.
 
+### 🧹 Il campo paese è uscito dal dataset
+
+Uscito nella `15.12`. Era su tutte e **360** le voci, con lo stesso valore `gb`, e **non lo
+leggeva nessuno**: zero
+occorrenze in `index.html` e nel Worker. Tolto il 2026-08-23 su richiesta dell'utente.
+
+- **Da dove veniva**: da **`artifacts/legion50/index.html`**, il capostipite di questo motore,
+  una classifica di saghe epiche dove `paese` è un **codice ISO che pesca una bandiera**
+  (`getFlag(paese)`) e i valori sono veri e diversi (`gb`, `jp`, `gr`, `cn`, `is`...). Qui
+  diventano tutti `gb`, perché Tolkien è uno solo, e la bandiera è uscita dalla resa: da lì in
+  poi il campo era un fossile. ⚠️ **Chi trova un campo inspiegabile lo cerchi LÀ** prima di
+  dedurne il significato.
+- ⚠️⚠️ **Perché valeva toglierlo, e non è pulizia estetica**: un campo presente su ogni voce,
+  **vuoto o uniforme, e senza lettori, somiglia a un campo libero**. Sul gemello di Terramare
+  vi è finita dentro l'origine geografica di un personaggio, e ci sono voluti tre giri per
+  rimetterla al posto giusto (`earthsea/top/CLAUDE.md`, § 'Il campo origine').
+- **Perché era sicuro**: il Worker serializza ogni voce con `JSON.stringify(d)` e valida il
+  solo `nome`, e l'editor admin lavora su una copia profonda dell'array. Le chiavi passano
+  intatte, quindi nessuna lista di campi da tenere allineata. ⚠️ Verificato **prima**, e la
+  prova è stata rifatta dopo: 360 voci prima e dopo, e l'unica chiave di differenza è `paese`.
+- ⚠️⚠️ **Una scheda admin già APERTA può rimetterlo**, ed è la sola cosa da sapere: quella
+  pagina ha in memoria le voci **col campo**, e al salvataggio riscrive tutte e 360 le righe
+  come le ha lei, `paese` compreso. Non è un conflitto e non dà errore: il file torna com'era.
+  Dopo una bonifica di questo genere **si ricarica l'editor admin** prima di salvare.
+
 ### ⚠️ Trappole
 
 - ⚠️⚠️ **Omonimi in classifica** (Galdor ×3, Rúmil ×2): l'ordine è memorizzato come lista di
