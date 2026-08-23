@@ -407,11 +407,14 @@ leggere prima di toccare il numero.
   teneva l'inchiostro uguale al colore del FILE (`#4a3f46` col terzo e col quarto logo,
   `#4d4048` col quinto). Non è una svista da sanare rimettendo il colore dell'artwork: il file
   resta il suo, il FAB lo tinge con `currentColor`.
-  - ⚠️ **Il bianco sul disco `#78adc2` fa 2,45**, sotto il 3:1 dei componenti, e lo si sa: è
-    una scelta estetica, non una misura sfuggita. **La leva è il DISCO, non il segno**, e i
-    gradini misurati sono `#4c8fc4` (bianco 3,48, disco sul fondo 5,08) e `#3072a1` (bianco
-    5,19, disco 3,41). ⚠️ E il disco va cambiato in **due** posti insieme, perché da qui lo
-    legge anche l'icona dell'app installabile, vedi il suo paragrafo.
+  - ⚠️⚠️ **La leva del contrasto è il DISCO, non il segno, e nella `0.38` è stata usata**: il
+    bianco sul `#78adc2` della `0.37` faceva **2,45**, sotto il 3:1 dei componenti; sul
+    `#3072a1` scelto dall'utente fa **5,19**. Il gradino intermedio misurato era `#4c8fc4`
+    (bianco 3,48). ⚠️ E il disco va cambiato in **due** posti insieme, perché da qui lo legge
+    anche l'icona dell'app installabile, vedi il suo paragrafo.
+    - ⚠️ **`#3072a1` sul fondo pagina fa 3,41**, appena sopra la soglia: è il pavimento del
+      disco, e scurirlo di più sfonderebbe. Con il 5,19 del segno, la coppia è un punto di
+      equilibrio e non un valore fra tanti.
   - Ⓘ **Il colore del file serviva a qualcosa, e vale saperlo**: col segno scuro il logo NON
     funzionava sul fondo pagina (`#4d4048` su `#0d1a22` fa 1,71), quindi il disco era
     obbligatorio. Col bianco quel vincolo cade, ma il disco resta: è ciò che rende il FAB un
@@ -421,15 +424,19 @@ leggere prima di toccare il numero.
     perché il disco lo disegna il FAB (due dischi sovrapposti). Dal quarto logo quell'indizio
     non c'è più, quindi la misura qui sopra è l'unica fonte del fatto.
   - ⚠️⚠️ **I DUE TEMI HANNO DISCHI DIVERSI E LO STESSO SEGNO** (i dischi dalla `0.29`, il segno
-    bianco dalla `0.37`): in **scuro** disco `#78adc2` e bianco (**2,45**), in **chiaro** disco
-    `#267d71` e bianco (**4,94**, disco sul fondo pagina 4,75, hover `#339487` 3,67). ⚠️ Due
-    regole CSS distinte, quindi chi ne cambia una guardi l'altra.
-    - **Da dove vengono i due dischi**: dalle istruzioni del 2026-08-23 *FAB del tema chiaro
-      identico al colore-base del titolone* e *titolone del tema scuro più scuro e azzurro, FAB
-      in tinta*. Il chiaro è la **media** dei due capi del gradiente chiaro, lo scuro era il
-      **capo alto** di quello scuro. ⚠️ Dalla `0.37` il legame dello scuro è finito, perché il
-      titolo si è schiarito e il disco è rimasto: vedi § 'La tavolozza applicata, e i punti
-      dove era CABLATA'.
+    bianco dalla `0.37`): in **scuro** disco `#3072a1` e bianco (**5,19**, disco sul fondo
+    pagina 3,41, hover `#3a85b9` 4,01), in **chiaro** disco `#267d71` e bianco (**4,94**, disco
+    sul fondo 4,75, hover `#339487` 3,67). ⚠️ Due regole CSS distinte, quindi chi ne cambia una
+    guardi l'altra.
+    - **Da dove vengono i due dischi**: il **chiaro** dall'istruzione *FAB del tema chiaro
+      identico al colore-base del titolone* (2026-08-23), ed è la **media** dei due capi del
+      gradiente chiaro. Lo **scuro** era nato uguale (*titolone del tema scuro più scuro e
+      azzurro, FAB in tinta*, il capo alto di allora), ma dalla `0.38` **non lo è più**: lo
+      decide la leggibilità del segno bianco, non la somiglianza col titolo.
+    - ⚠️⚠️ **Il legame col titolo si è sciolto in DUE passi, e nessuno dei due è una svista**:
+      nella `0.37` il titolo si è schiarito e il disco è rimasto dov'era; nella `0.38` il disco
+      si è scurito e il titolo è rimasto dov'era. Chi trova i due valori diversi **non li
+      riallinei**: vedi § 'La tavolozza applicata, e i punti dove era CABLATA'.
     - Ⓘ **Percorso dei dischi, perché nei commenti girano ancora valori vecchi**: in scuro
       **oro** `rgba(210,178,92,0.96)` fino alla `0.35`, l'ultimo pezzo di Arda rimasto qui
       dentro; in chiaro **oro** `#e0b54a` fino alla `0.28`, poi il teal `#34707f` fino alla
@@ -518,10 +525,11 @@ cambiato cinque volte in quattro giorni**.
 - ⚠️⚠️ **`PWA_BG` NON è più un blu suo: dalla `0.37` è IL DISCO DEL FAB IN TEMA SCURO**
   (`#78adc2`, istruzione dell'utente: *per la webapp usa lo stesso colore del FAB del tema
   scuro*). Quindi si cambia **quando cambia il disco**, e il posto dove leggerlo è
-  `#ctrl-fab.fab-btn` in `index.html`. Il bianco sopra fa **2,45**, la stessa coppia che il FAB
-  porta in pagina. ⚠️ La ricetta dei quattro gradini di 'più scuro e desaturato' che aveva
-  prodotto `#3b6fa3` è **decaduta**: sta nel commento dello script come storia, non come
-  regola.
+  `#ctrl-fab.fab-btn` in `index.html`. ⚠️ **Ed è già successo in un giorno**: `#78adc2` nella
+  `0.37`, `#3072a1` nella `0.38`, col bianco che passa da 2,45 a **5,19**. Chi schiarisse il
+  fondo dell'icona lo paga su quel numero. ⚠️ La ricetta dei quattro gradini di 'più scuro e
+  desaturato' che aveva prodotto `#3b6fa3` è **decaduta**: sta nel commento dello script come
+  storia, non come regola.
 - ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: col quinto logo il canvas è
   1120x1120 e il disegno ne occupa **944,70x1011,50**, quindi il margine morto è reale e
   assumere il nominale darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro,
@@ -837,12 +845,14 @@ nel **solo** tema chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo), che non si è mosso
   su un fondo scuro un alone grigio **abbassa** il titolo invece di staccarlo, e schiarire il
   gradiente senza togliere l'alone avrebbe risolto a metà.
 - ⚠️⚠️ **Dalla `0.37` il disco del FAB e la card-legenda NON sono più 'il capo alto del
-  gradiente'**, ed è la nota che evita di 'riallinearli': valgono `#78adc2`, cioè il capo alto
-  della `0.36`, e restano là per due ragioni tecniche. Il disco tiene un segno **bianco**, che
-  su `#cfe8f5` sparirebbe (1,4); la card-legenda è **testo su un pannello scuro**, e a
-  `#cfe8f5` si leggerebbe come bianco perdendo il colore. Quindi la famiglia di tinta è una
-  sola, il valore no: `#78adc2` è il riferimento dell'identità scura, e il titolo lo
-  attraversa poco sopra la metà.
+  gradiente'**, ed è la nota che evita di 'riallinearli'. Il perché è tecnico e diverso per i
+  due: il disco tiene un segno **bianco**, che su una tinta chiara sparirebbe (su `#cfe8f5`
+  farebbe 1,4), e dalla `0.38` è scurito a **`#3072a1`** per portare il bianco a 5,19; la
+  card-legenda è **testo su un pannello scuro**, e a `#cfe8f5` si leggerebbe come bianco
+  perdendo il colore, quindi resta a **`#78adc2`**.
+  - **Quindi oggi i tre valori sono TRE**, e la famiglia di tinta è una sola: titolo
+    `#cfe8f5` -> `#5f9fd4`, disco del FAB `#3072a1`, card-legenda `#78adc2`. Ognuno risponde al
+    proprio mestiere, e propagarne uno sugli altri rompe il mestiere degli altri due.
 - **Le misure del titolo nuovo** sul fondo `#0d1a22`: capo alto `#cfe8f5` **13,90**, capo basso
   `#5f9fd4` **6,23**. ⚠️ Il tetto della `0.36` (capo basso a 3,41, cioè al limite del 3:1)
   **non vale più**: schiarendo si è ricomprato margine, e chi volesse riscurire ha spazio fino
