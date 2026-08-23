@@ -144,10 +144,11 @@ bestia vera.
   restava invisibile finché nessuno salvava dall'editor colori, e le sue card ripiegavano sul
   grigio senza `--cctxt`. Non è una rifinitura: era il difetto che avrebbe reso muto il giallo
   appena aggiunto.
-- ⚠️ **Il tasto 'solo' del Pannello aveva senso e l'ha ripreso**: era stato tolto perché con
-  **due** categorie spegnere l'una era l'unico modo di isolare l'altra. Con tre ne servono
-  due, quindi quella motivazione è decaduta. Non è stato reintrodotto perché nessuno l'ha
-  chiesto, e la nota vive anche accanto al codice.
+- ✅ **Il tasto 'solo' NON torna, e l'ha deciso l'utente** (*no, niente tasto 'Solo'*). La
+  motivazione con cui era stato tolto è **decaduta** (con due categorie spegnere l'una era
+  l'unico modo di isolare l'altra; con tre servono due spegnimenti), quindi la domanda era
+  legittima ed è stata posta: la risposta è no. Il caso sta anche in § 'Il Pannello COMPATTO',
+  dove la decisione originale prevedeva proprio questo bivio.
 
 ### 🔍 I dodici animali: che cosa è attestato, e i sei punti dove il testo dice altro
 
@@ -623,6 +624,10 @@ adesso è questa, su **due colonne**:
   - ⚠️ Chi rimette una categoria in più **non riapra** questa decisione per riflesso: il
     ragionamento dell'utente è aritmetico ('con due sole categorie'), quindi con tre o
     quattro può tornare valido, ma è una sua chiamata.
+    - ✅ **E la chiamata c'è stata: NO, nemmeno con tre categorie** (2026-08-23, alla nascita
+      degli Animali: *no, niente tasto 'Solo'*). Quindi il caso previsto qui sopra si è
+      presentato e la risposta è stata la stessa: quei tasti **non tornano**, e chi li
+      riproponesse perché 'ora l'aritmetica regge' sta rifacendo un giro già chiuso.
 - **Nella legenda badge la riga porta la SOLA etichetta**, non la spiegazione: nel mockup
   le descrizioni sono svuotate, e l'utente aveva dato il permesso di eliminarle ('possono
   andare a capo o le eliminiamo'). Il taglio si fa alla prima `': '` con `legLbl`, non con
