@@ -328,11 +328,31 @@ sole.svg`): un'**onda e un sole**, un tracciato solo, tutto a riempimento.
     piena tela tenuto `display:none`, cioè il fondo per cui era pensato, e inline non entrava
     perché il disco lo disegna il FAB (due dischi sovrapposti). `Mare e sole.svg` non ha
     quell'indizio, quindi la misura qui sopra è l'unica fonte del fatto.
-  - ✅ **L'inchiostro è `#4a3f46` nei DUE temi** (scelta dell'utente il 2026-08-22 fra quattro
-    strade misurate, dalla `0.21`): è il colore del disegno, e tenerlo uguale fa sì che il FAB
-    resti riconoscibile come lo stesso oggetto passando da un tema all'altro. Cambia il
-    **disco** fra i due temi (`rgba(210,178,92,0.96)` e `#e0b54a`), non il segno: contrasti
-    4,57 e 5,20. ⚠️ Due regole CSS distinte lo dicono, quindi chi ne cambia una cambi l'altra.
+  - ⚠️⚠️ **I DUE TEMI HANNO ORA COMBINAZIONI DIVERSE** (dalla `0.29`, 2026-08-23): in **scuro**
+    disco oro `rgba(210,178,92,0.96)` e segno `#4a3f46` (4,57); in **chiaro** disco teal
+    `#34707f` e segno **bianco** (5,57 il segno, 5,36 il disco sul fondo pagina; hover
+    `#3d8291`, 4,37). ⚠️ Due regole CSS distinte, quindi chi ne cambia una guardi l'altra.
+    - ⚠️⚠️ **È CADUTA la regola 'stesso inchiostro nei due temi'**, che valeva dalla `0.21` al
+      2026-08-23, e conviene sapere che è caduta per non 'ripararla': l'utente ha chiesto in
+      chiaro una combinazione *'più simile ad Arda'*, e Arda in chiaro ha disco profondo e
+      segno bianco. Il motivo di allora (il FAB riconoscibile come lo stesso oggetto al cambio
+      tema) non era sbagliato: è stato **scavalcato** da una scelta più forte.
+    - ⚠️ **Disco e segno si cambiano INSIEME o non si cambiano**: `#4a3f46` sul teal fa **1,72**,
+      cioè illeggibile. Chi scurisse il disco lasciando l'inchiostro del disegno otterrebbe un
+      FAB muto, e la misura non gliela darebbe nessuno se non la cerca.
+    - ⚠️ **La tinta chiara non è inventata, ed era già scritta in pagina**: `#34707f` è quella
+      che il CSS del titolo chiama 'la tinta del FAB' nel suo alone
+      (`rgba(52,112,127,0.38)`), da quando il FAB era teal come in Arda. L'oro in chiaro era il
+      **residuo**, e quell'alone lo diceva da giorni senza che nessuno lo leggesse: un commento
+      che sopravvive alla cosa che descrive è una spia, non un dettaglio.
+    - ⚠️ **Resta un teal DIVERSO da quello dei tasti salto chiari** (`rgba(31,85,98,0.9)`, il
+      `#1f5562` di Arda, 8,29). Le due rese erano fra le cinque offerte all'utente e lui ha
+      scelto la più chiara: **non è una svista da sanare** allineandole, e se un domani si
+      uniforma va deciso, non dedotto.
+    - **Scelta fra CINQUE rese sul sito vero** (2026-08-23, *'FAB -> A'*), a DPR 3 su viewport
+      mobile e con le schede dietro: le altre erano il verde mare profondo del titolo
+      (`#0e6b5e`), l'ardesia di tavolozza (`#2e4145`), il teal di Arda (`#1f5562`) e l'oro
+      allora in vigore.
     - Ⓘ **Prima veniva dal logo precedente**, `#3a2808`, un bruno più caldo e con più
       contrasto (7,32): scartato non per la misura ma perché non apparteneva più a niente.
       ⚠️ Resta in vita su `.jump-fab`, che porta un chevron e non il logo: non è un residuo da
@@ -440,7 +460,7 @@ Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più
   - ⚠️ **`apple-mobile-web-app-title` segue il MANIFEST, non il `<title>`**: è l'etichetta
     sotto l'icona in schermata Home, quindi vuole la forma breve. Nella `0.24` diceva
     `Earthsea Top`, che non era nessuna delle due forme di Arda.
-- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#2f78c2`, e la
+- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#3b6fa3`, e la
   coincidenza è il **requisito**, non una scelta estetica. La schermata di avvio dipinge tutto
   lo schermo con `background_color` e ci mette l'icona al centro: l'icona è un quadrato
   **opaco**, quindi se i due colori divergono si vede un **quadrato centrale** stagliato sul
@@ -462,30 +482,35 @@ Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più
     notato; poi `#0d1a22`, il fondo notte di questo sito, che era **coerente col sito ma
     sbagliato per la schermata di avvio**: è il valore che faceva comparire il quadrato.
     Coerenza con la pagina e correttezza della schermata qui non coincidono.
-- **L'icona è un quadrato PIENO** (fondo `#2f78c2`, segno bianco) col glifo al **44%** del
+- **L'icona è un quadrato PIENO** (fondo `#3b6fa3`, segno bianco) col glifo al **44%** del
   lato, dentro la zona sicura: il launcher ritaglia nella forma che preferisce. ⚠️ Nessuna
   forma disegnata dentro, o si vedrebbe come forma **dentro** la forma del launcher.
   ⚠️ **Scelta dall'utente fra quattro combinazioni rese** (2026-08-22, *'icona webapp 1'*), e
   coincide con lo schema di 'I Grandi di Arda' (fondo in tinta, segno bianco): la parentela fra
   i due siti è un effetto voluto, non un residuo della copia.
-  - ⚠️ **Il blu del fondo NON è quello della favicon**, ed è voluto: `#2f78c2` qui contro
-    `#0080ff` là (istruzioni dell'utente sulla sola webapp, 2026-08-22: *leggermente più scuro
-    e leggermente meno saturo*, poi *ancora più scuro e desaturato*). I due fanno lavori
+  - ⚠️ **Il blu del fondo NON è quello della favicon**, ed è voluto: `#3b6fa3` qui contro
+    `#0080ff` là (istruzioni dell'utente sulla sola webapp, 2026-08-22 e 23: *leggermente più
+    scuro e leggermente meno saturo*, poi *ancora più scuro e desaturato*, poi *ancora più
+    scuro*, e la distanza fra i due blu è cresciuta a ogni passo). I due fanno lavori
     diversi. La favicon è un glifo su **trasparente** e deve leggersi su due barre di luminanza
     opposta, quindi vuole un tono medio; il fondo dell'icona è un **campo dietro un glifo
     bianco**, quindi scurirlo aumenta il contrasto del segno. Allinearli 'per coerenza'
     peggiorerebbe uno dei due, e la coerenza che conta qui è quella col `background_color`,
     non fra i due blu.
-  - ⚠️ **La TONALITÀ non si tocca, si muovono saturazione e valore insieme**: le due richieste
+  - ⚠️ **La TONALITÀ non si tocca, si muovono saturazione e valore insieme**: le richieste
     dicevano *più scuro e desaturato*, mai *più freddo*, e la scala che ne è uscita tiene la
     tinta 210 spostando i due assi dello stesso passo (-12 per volta), col contrasto del bianco
-    che sale a ogni gradino. È la ricetta da riusare se ne arriva un terzo.
+    che sale a ogni gradino. ⚠️ **Il passo è costante ed è la ricetta**: sono già arrivate TRE
+    richieste in due giorni, quindi il gradino dopo si calcola invece di improvvisarlo, e
+    sarebbe `52/52`, cioè `#406285` (bianco a 6,36). Sotto quella soglia il blu comincia a
+    leggersi come ardesia, e conviene dirlo prima di applicarlo.
 
     | passo | colore | HSV | bianco sopra |
     |---|---|---|---|
     | tinta della favicon, punto di partenza | `#0080ff` | 210/100/100 | 3,80:1 |
     | *leggermente più scuro e meno saturo* | `#1b7ee0` | 210/88/88 | 4,11:1 |
-    | *ancora più scuro e desaturato* (in vigore) | `#2f78c2` | 210/76/76 | **4,58:1** |
+    | *ancora più scuro e desaturato* | `#2f78c2` | 210/76/76 | 4,58:1 |
+    | *ancora più scuro* (in vigore) | `#3b6fa3` | 210/64/64 | **5,26:1** |
   - **Le tre scartate**: fondo notte del sito con segno blu, fondo blu con segno prugna-notte,
     e il **fondo marmo** (`#f9fbfa` con segno blu). Quest'ultima è l'analogo esatto del disco
     marmo del FAB, e sbaglia per la stessa ragione: il segno si legge, ma il quadrato scompare
@@ -642,9 +667,10 @@ sulla proposta: **tema scuro leggermente meno scuro** (fondo `#0D1A22` invece di
   `.type-dragon` (rosso acceso, ereditato da Arda) sono state sostituite da una regola che
   legge `--ccrgb`/`--cctxt` della card. Prima mostravano 'Donna' in **oro** accanto a un vero
   nome **turchese**: il difetto tipico di un colore cablato che una tavolozza nuova dimentica.
-- **L'oro sopravvive in due posti, entrambi voluti**: il **disco del FAB** (in chiaro
-  `#E0B54A`, dove non deve leggersi come testo) e i **numeri del podio**, che sono la
-  convenzione oro-argento-bronzo e non una tinta di tavolozza.
+- **L'oro sopravvive dove è voluto, e dal 2026-08-23 in un posto in meno**: il **disco del FAB
+  in tema SCURO** e i **numeri del podio**, che sono la convenzione oro-argento-bronzo e non
+  una tinta di tavolozza. ⚠️ **In tema chiaro il disco del FAB non è più oro** (`#E0B54A`) ma
+  teal: vedi § 'Il logo del FAB'. Nel chiaro, quindi, l'oro resta solo sul podio.
 
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 

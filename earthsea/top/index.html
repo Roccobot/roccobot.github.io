@@ -902,11 +902,15 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
    vuoto in alto a sinistra. È accettato dall'utente e NON si compensa spostando il
    canvas: il centraggio ottico si fa a monte, nel file. */
 #ctrl-fab svg { height:2.164rem; width:auto; fill:currentColor; stroke:none; }
-/* FAB di controllo: a sinistra su desktop, a destra su mobile. Disco oro, inchiostro scuro. */
+/* FAB di controllo: a sinistra su desktop, a destra su mobile. In tema SCURO disco oro
+   e inchiostro prugna; in CHIARO disco teal e segno bianco (dal 2026-08-23, vedi la
+   regola del tema chiaro). */
 #ctrl-fab { position:fixed; left:2rem; bottom:2rem; z-index:160; }
 /* ⚠️ `color` è l'INCHIOSTRO DEL LOGO, non un colore di testo: il disegno è inline e
    prende `currentColor` (vedi FAB_LOGO_D). Dal 2026-08-22 vale `#4a3f46`, il colore
    con cui l'utente ha disegnato il terzo logo, che è quello che vuole in tema scuro.
+   ⚠️ Questa regola vale il solo tema SCURO: in chiaro il segno è bianco sul disco teal,
+   e il valore lo scavalca la regola di quel tema (dal 2026-08-23).
    ⚠️ Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo: `#4a3f46`
    sul fondo scuro `#0d1a22` fa 1,76 (invisibile), mentre sul disco oro fa 4,57. La
    coppia di disco e inchiostro è il disegno, e l'artwork lo dichiara: il file porta un
@@ -2127,8 +2131,10 @@ html[data-theme="light"] {
        carta da stampante, e le tinte delle categorie ci si posano peggio. L'accento
        è neutro freddo per la stessa ragione dello scuro: il colore lo portano i
        personaggi. ⚠️ L'ORO è uscito da qui: scurito fin dove serve per fare da testo
-       diventava un marrone, e l'utente non lo voleva. Sopravvive SOLO sul disco del
-       FAB, dove non deve leggersi (vedi la regola del FAB in tema chiaro). */
+       diventava un marrone, e l'utente non lo voleva. ⚠️ Dal 2026-08-23 non è più
+       nemmeno sul disco del FAB, che in chiaro è teal: nel tema chiaro l'oro resta
+       SOLO sui numeri del podio, che sono la convenzione oro-argento-bronzo e non
+       una tinta di tavolozza. */
     --ink: #f9fbfa;
     --ink-deep: #eff3f2;
     --parchment: #131e22;
@@ -2280,12 +2286,23 @@ html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color
    un disco pieno non deve passare il gate come TESTO, quindi può restare un oro vero
    invece del marrone che serviva per leggersi (istruzione dell'utente, 2026-08-21).
    Il glifo sopra è il bruno caldo del tema scuro: 7,32 sul disco. */
-/* ⚠️ L'inchiostro del logo è lo STESSO nei due temi (scelta dell'utente, 2026-08-22, fra
-   quattro strade misurate): `#4a3f46` è il colore con cui il logo è disegnato, e tenerlo
-   uguale fa sì che il FAB resti riconoscibile come lo stesso oggetto passando da un tema
-   all'altro. Non è una svista di copia: cambia il disco, non il segno. */
-html[data-theme="light"] #ctrl-fab { background:#e0b54a; border-color:rgba(201,150,46,0.55); color:#4a3f46; }
-html[data-theme="light"] #ctrl-fab:hover { background:#e9c266; border-color:rgba(224,181,74,0.8); }
+/* ⚠️⚠️ IN TEMA CHIARO il FAB è TEAL con il segno BIANCO dal 2026-08-23 (scelta
+   dell'utente fra cinque rese, *'più simile ad Arda'*), e questo ROVESCIA la regola
+   precedente, per cui l'inchiostro del logo era lo stesso nei due temi: là si teneva
+   `#4a3f46` per far riconoscere il FAB come lo stesso oggetto al cambio tema, qui si
+   segue lo schema di 'I Grandi di Arda', che in chiaro ha disco profondo e segno bianco.
+   ⚠️ `#4a3f46` sul teal farebbe 1,72 (illeggibile): il segno DEVE schiarire quando il
+   disco scurisce, quindi le due cose si cambiano insieme o non si cambiano.
+   Misure: bianco sul disco 5,57 (hover 4,37), disco sul fondo pagina 5,36.
+   ⚠️ La tinta NON è inventata: `#34707f` è quella che il CSS del titolo chiama già
+   'la tinta del FAB' nel suo alone (`rgba(52,112,127,0.38)`), da quando il FAB era teal
+   come in Arda. L'oro in chiaro era il residuo, e l'alone del titolo lo diceva da
+   giorni senza che nessuno lo leggesse.
+   ⚠️ Resta un teal DIVERSO da quello dei tasti salto chiari (`rgba(31,85,98,0.9)`, il
+   `#1f5562` di Arda): le due rese erano fra le cinque offerte e l'utente ha scelto
+   questa, quindi non è una svista da 'sanare' allineandole. */
+html[data-theme="light"] #ctrl-fab { background:#34707f; border-color:rgba(52,112,127,0.55); color:#ffffff; }
+html[data-theme="light"] #ctrl-fab:hover { background:#3d8291; border-color:rgba(61,130,145,0.8); }
 /* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
    dalla regola base). */
 html[data-theme="light"] .jump-fab { background:rgba(31,85,98,0.9); border-color:transparent; color:#ffffff; }
@@ -2521,7 +2538,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.28</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.29</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
