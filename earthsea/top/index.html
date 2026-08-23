@@ -672,14 +672,16 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    SOLO questo gap. Etichette-freccia iniziano tutte con maiuscole a stelo
    (D/E/M/U) → distanza ~costante. */
 .type-badge .ttx { margin-left:0.134em; }
-/* Desktop/tablet (>480px): risalita ottica di ~2px delle etichette tipo
-   rispetto alla base della riga nome (le maiuscole del Cinzel siedono in alto,
-   perciò i badge centrati sul flex cadono percettivamente bassi). Solo
-   trasformazione visiva: non tocca icone, nome, flusso o a-capo. Su <=480px
-   il nudge lo da già il translateY di .rank-tipi. */
-@media (min-width:481px) {
-  .rank-name .type-badge { transform:translateY(-2px); }
-}
+/* ⚠️⚠️ QUI C'ERA UNA RISALITA DI 2px delle etichette tipo, ed è uscita nella 0.41.
+   La sua ragione, scritta nel commento, era il **Cinzel** di Arda: *le maiuscole del
+   Cinzel siedono in alto, perciò i badge centrati sul flex cadono percettivamente
+   bassi*. Ma qui il nome è in **EB Garamond** a cassa mista, quindi la premessa non
+   vale, e la compensazione faceva l'opposto: l'utente ha visto le etichette *troppo in
+   alto* e ha chiesto di abbassarle.
+   ⚠️ Senza il nudge il `align-items:center` del flex le centra da sé sull'asse ottico
+   del nome: misurato su 19 card coi font veri, **-0,55px** dalla metà delle maiuscole
+   (era +1,45px, cioè in alto). Non serve nessun valore al posto di quello: serve
+   togliere il valore. */
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
    Rimosso il margin-left ridondante che la raddoppiava (~0.68em -> 0.4em). */
@@ -1714,9 +1716,10 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    (non transform) per non entrare in conflitto con le transform per-icona di
    anelli e genere, che restano e mantengono l'allineamento interno. Solo
    >480px: su <=480px ci pensa il translateY del blocco .rank-flags. */
+/* ⚠️ Anche il `top:-0.03em` che stava qui su icone e genere è uscito nella 0.41, per la
+   stessa ragione e con la stessa misura: le icone erano +0,36px in alto, ora sono a
+   -0,50px dall'asse. Era l'altra metà della taratura fatta sul Cinzel. */
 @media (min-width:481px) {
-  .rank-name > .rank-flags .status-icon,
-  .rank-name > .rank-flags .genere-svg { position:relative; top:-0.03em; }
   /* Simbolo genere = gruppo a sé (dalla v8.80): stacco dai badge di merito con
      un margine sinistro extra, così non 'tocca' l'ultimo badge (era ~8px, meno
      del passo 11px tra badge). Solo desktop; su mobile sotto. */
@@ -2113,7 +2116,12 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
      alto l'intero blocco (icone + simbolo di genere) di .07em: gli allineamenti
      interni restano intatti (anelli e genere hanno già i propri nudge). */
-  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0; margin-right:0.4em; vertical-align:middle; transform:translateY(-0.07em); }
+  /* ⚠️ La risalita è -0.156em e NON -0.07em (0.41): sotto i 480px il flex centra i
+     blocchi più in basso dell'asse ottico del nome (misurato: icone a -1,71px ed
+     etichette a -1,98px, cioè BASSE, il contrario del desktop), e questo valore le
+     riporta a -0,14px. ⚠️ I due punti di rottura hanno bisogno di due valori diversi:
+     sopra i 480px il centraggio lo fa il flex da solo, qui no. */
+  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0; margin-right:0.4em; vertical-align:middle; transform:translateY(-0.156em); }
   .rank-name > .rank-flags:empty { display:none; }
   /* Gap nome->(icone o etichette) come margine di coda del nome: presente
      anche quando .rank-flags è vuoto (creature senza icone), e mai
@@ -2135,7 +2143,9 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      maiuscole del nome (l'allineamento aritmetico era corretto ma cadeva
      percettivamente basso). Se il gruppo da solo supera la larghezza della
      card, il wrap interno del flex resta comunque allineato. */
-  .rank-name > .rank-tipi { display:inline-flex; flex-wrap:wrap; align-items:center; gap:0.35em 0.4em; max-width:100%; vertical-align:middle; transform:translateY(-1px); }
+  /* Stessa risalita delle icone (0.41): era -1px, tarata a occhio, e lasciava le
+     etichette 1,98px sotto l'asse del nome. In em, così scala col corpo. */
+  .rank-name > .rank-tipi { display:inline-flex; flex-wrap:wrap; align-items:center; gap:0.35em 0.4em; max-width:100%; vertical-align:middle; transform:translateY(-0.156em); }
   .rank-name > .rank-tipi:empty { display:none; }
   .rank-name > .rank-tipi .type-badge { margin-left:0; }
   .rank-name.name-tight > .rank-flags { margin-left:0; margin-right:0.3em; }
@@ -2662,7 +2672,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.40</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.41</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4650,11 +4660,17 @@ var BADGE_ADJUST_FALLBACK = {
   // quello del gemello di Arda, dove i valori salvati sono assoluti. Scartata.
   stregone:{ml:0.12,mr:0,ny:0,sc:1}, mago:{ml:0.12,mr:0,ny:0,sc:1},
   nomeged:{ml:0.12,mr:0,ny:0,sc:1},
-  // Genere: seed = resa ATTUALE del CSS statico .genere-svg--m/f (nessun cambio
-  // visivo). male ml 0.076 = separazione 0.07 + la vecchia X translate 0.006 (ora
-  // margine, a cascata); ny = la vecchia translateY per-simbolo (-0.076 / +0.15).
-  // ⚠️ Anche qui il valore unifica i due punti di rottura (desktop 0.07, mobile 0.06).
-  male:{ml:0.076,mr:0,ny:-0.076,sc:1}, female:{ml:0.07,mr:0,ny:0.15,sc:1}
+  // Genere: `ml` resta la resa del CSS statico (0.076 = separazione 0.07 più la vecchia
+  // X translate 0.006, ora margine a cascata), e unifica i due punti di rottura
+  // (desktop 0.07, mobile 0.06).
+  // ⚠️⚠️ Ma `ny` è **0** dalla 0.41, e prima era -0.076 (maschio) e +0.15 (femmina):
+  // quei due numeri venivano dai file di ARDA, dove i glifi hanno offset interni loro.
+  // Le icone di Terramare sono altri file, quindi quelle correzioni spostavano i simboli
+  // fuori asse in direzioni **opposte**: misurato su 19 card, maschio +2,88px in alto e
+  // femmina -4,09px in basso rispetto alla metà delle maiuscole del nome. Con ny 0 vanno
+  // entrambi a -0,2px. ⚠️ In una media dei due sessi il difetto si ANNULLAVA, ed è la
+  // ragione per cui non si era visto: va misurato per sesso.
+  male:{ml:0.076,mr:0,ny:0,sc:1}, female:{ml:0.07,mr:0,ny:0,sc:1}
 };
 // Dimensioni base (em) dei simboli di genere (dal CSS .genere-svg--m/f): sc le
 // scala mantenendo l'aspetto (male quadrato, female più stretta e alta). Usate sia

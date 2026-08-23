@@ -165,6 +165,40 @@ I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged*
 - **Come si verifica che funzioni**, senza aprire l'editor a mano: sulla pagina vera,
   `BADGE_ADJUST.mago.ml = 0.62; injectBadgeAdjustRules();` e si misura la `x` dell'icona sulla
   card. Misurato: **+14,56px** su un attesi 14,6 (0,5em di 29,12px).
+### 📏 L'asse ottico della riga del nome, e i tre nudge di Arda che lo sbagliavano
+
+**Istruzione dell'utente, 2026-08-23**: *il testo delle etichette deve essere centrato in
+verticale con il testo che lo precede. Al momento è troppo in alto: abbassa le etichette.
+Centra di conseguenza sullo stesso asse anche le icone badge.* Fatto nella `0.41`, e l'asse è
+la **metà delle maiuscole del nome**, cioè lo stesso riferimento che l'anteprima dell'editor
+disegna già con `placeMidlinesFor`.
+
+- ⚠️⚠️ **Sopra i 480px il centraggio lo fa il FLEX da solo**, e i nudge erano il difetto: sono
+  usciti la **risalita di 2px** delle etichette e il **`top:-0.03em`** di icone e simbolo di
+  genere. Misura su 19 card coi font veri: etichette da **+1,45px** (alte) a **-0,55px**,
+  icone da +0,36 a -0,50. Non serviva un valore nuovo: serviva togliere quelli.
+  - **Perché c'erano**: il commento lo diceva, ed era vero **in Arda**: *le maiuscole del
+    Cinzel siedono in alto, perciò i badge centrati sul flex cadono percettivamente bassi*. Qui
+    il nome è in **EB Garamond a cassa mista**, la premessa cade e la compensazione lavora al
+    contrario. È la stessa famiglia di difetti delle unità dei badge: un valore giusto per un
+    altro font.
+- ⚠️ **Sotto i 480px serve invece il contrario**, e i due punti di rottura vogliono due valori:
+  là il flex centra **più in basso** dell'asse (icone -1,71px, etichette -1,98px), e la
+  risalita dei due contenitori passa da `-0.07em` / `-1px` a **`-0.156em`**, misurata, che li
+  porta a -0,14px.
+- ⚠️⚠️ **I simboli di GENERE erano fuori asse in direzioni OPPOSTE**, e il loro `ny` è ora
+  **0** per entrambi (era -0.076 maschio e +0.15 femmina, valori presi dai file di Arda, che
+  hanno offset interni loro): maschio **+2,88px** in alto e femmina **-4,09px** in basso, ora
+  entrambi a -0,2px.
+  - ⚠️⚠️ **In una media dei due sessi il difetto si ANNULLAVA** (+2,88 e -4,09 su dieci maschi
+    e sei femmine fanno ~0), ed è la ragione per cui non si era visto prima: questa misura si
+    fa **per sesso**, o dice che va tutto bene.
+- **Come si misura l'asse**, perché non si legge da nessuna proprietà CSS: si prende il font
+  reso (`getComputedStyle`), si chiede a un canvas `measureText` del nome vero
+  (`fontBoundingBoxAscent/Descent` per la linea di base, `actualBoundingBoxAscent` per l'altezza
+  delle maiuscole), e l'asse è a metà fra base e cima delle maiuscole. Poi si confronta col
+  centro del riquadro di ogni elemento. ⚠️ Senza i **font veri** la misura è di un altro
+  carattere e non vale.
 - ⚠️ Il **Worker di Terramare accetta già** `badgeAdjust` (lo valida per forma, non per nomi di
   unità, e lo **preserva** quando il salvataggio non lo manda): non c'era niente da cambiare
   là, ed è la ragione per cui il difetto era tutto nel client.
