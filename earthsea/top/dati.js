@@ -1,4 +1,4 @@
-var datiVersion = "0.47";
+var datiVersion = "0.48";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 // ⚠️ Questa riga VINCE sul fallback dentro index.html: e' la configurazione salvata,
@@ -15,7 +15,7 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // tradurne una sola (Sparviero -> Sparrowhawk) farebbe sembrare attestate anche le altre.
 // ⚠️ Il badge `nomeged` ('Custode del vero nome di Ged') è acceso sulle NOVE voci che
 // il canone elenca (`rules/Earthsea.md`, § 'Chi conobbe il vero nome di Sparviero'): Ogion,
-// Veccia, Millefoglie, Arha / Goha, Arren, Tehanu, Dote, Orm Embar, Kalessin. Quel file è
+// Veccia, Millefoglie, Arha / Goha, Arren, Therru / Tehanu, Dote, Orm Embar, Kalessin. Quel file è
 // la sua UNICA fonte: non si ricava dalla scheda di un personaggio, quindi non si deduce e
 // non si aggiunge a intuito. Kurremkarmerruk è nell'elenco ma non ancora nel dataset, e i
 // due maestri di Roke senza nome sono esclusi per scelta dell'utente.
@@ -55,14 +55,24 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // categoria unica 'Animali' la ricava il motore dall'elenco `TIPI_ANIMALE` in
 // `index.html`, ed è là che va aggiunto un animale nuovo, o la sua card finisce fra gli
 // uomini senza dare alcun errore.
+// ⚠️ IL GENERE DEI DRAGHI È PIENO SU TRE VOCI SOLE, e le altre restano vuote di proposito
+// (elenco chiuso dall'utente il 2026-08-23): **Tehanu** e **Orm Irian** femmine perché sono
+// donne oltre che draghi, **Ammaud** maschio perché è Orm Irian a chiamarlo *mio fratello*,
+// cioè un drago che parla della propria famiglia. ⚠️ `Orm` NON lo prende benché il testo dica
+// *tuo padre Orm*: là il maschile è la convenzione con cui gli uomini nominano un drago.
+// Il criterio, con la frase del canone che lo chiude, e l'elenco dei cinque che restano senza,
+// stanno in `rules/Earthsea.md`, § 'Il genere dei draghi: congettura, non dato'.
 // ⚠️⚠️ I SETTE DRAGHI HANNO IL DATO INVERTITO, e va raddrizzato: un drago ha **solo** il
 // vero nome, quindi il campo vuoto deve essere `nome` e `vero_nome` deve portare il nome
 // (`Kalessin`), non il contrario come adesso. Correzione dell'utente del 2026-08-23 su un
 // malinteso vecchio: *è una differenza sostanziale... è uno dei punti-chiave del dataset*.
 // ⚠️ Non si tocca finché non arrivano i personaggi dello Schedario, che nasceranno già nella
-// forma giusta: migrare due volte costa il doppio. Le sette voci, il che cosa cambia nel
-// motore e la domanda aperta sull'ibrida stanno in `CLAUDE.md`, § 'Il DATO è INVERTITO, e va
-// raddrizzato: il campo vuoto è il nome d'uso'.
+// forma giusta: migrare due volte costa il doppio. Le voci e che cosa cambia nel motore stanno
+// in `CLAUDE.md`, § 'Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune'.
+// ⚠️ Le due IBRIDE sono FUORI da quella migrazione, e dalla `0.48` seguono la regola umana:
+// **Tehanu** porta `nome` `Therru` e `vero_nome` `Tehanu` (istruzione dell'utente: *gli ibridi
+// sono eccezioni e ragionano a sé... dopotutto le due sono ANCHE umane*), e `Orm Irian` nascerà
+// con `Libellula` davanti. Quindi le voci-drago da raddrizzare sono SEI, non sette.
 // ⚠️ `origine` degli animali è `Gont` per tutti e dodici, ed è la RESIDENZA attestata (la
 // casa di zia Muschio, Dieci Ontani, il pollaio di Re Albi), non un luogo di nascita: la
 // regola ammette la residenza in mancanza della nascita, e di un pollo non si dice dove sia
@@ -75,7 +85,7 @@ var dati = [
 {"nome":"Millefoglie","nome_en":"Millefoglie","vero_nome":"Kest","fonte":"Un mago di Terramare (1968)","fonte_en":"A Wizard of Earthsea (1968)","origine":"","genere":"f","padre":"","madre":"","tipo":"Donna","tipo_en":"Woman","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Goha","nome_en":"Goha","vero_nome":"Tenar","fonte":"Le tombe di Atuan (1970)","fonte_en":"The Tombs of Atuan (1970)","origine":"","genere":"f","padre":"","madre":"","tipo":"Donna","tipo_en":"Woman","nomi_alternativi":"Arha","nomi_alternativi_en":"Arha","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Arren","nome_en":"Arren","vero_nome":"Lebannen","fonte":"","fonte_en":"","origine":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
-{"nome":"Tehanu","nome_en":"Tehanu","vero_nome":"","fonte":"Tehanu (1990)","fonte_en":"Tehanu (1990)","origine":"","genere":"f","padre":"","madre":"","tipo":"Donna | Drago","tipo_en":"Woman | Dragon","tipo_color":"type-donnadrago|","nomi_alternativi":"Therru","nomi_alternativi_en":"Therru","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"dragon"},
+{"nome":"Therru","nome_en":"Therru","vero_nome":"Tehanu","fonte":"Tehanu (1990)","fonte_en":"Tehanu (1990)","origine":"","genere":"f","padre":"","madre":"","tipo":"Donna | Drago","tipo_en":"Woman | Dragon","tipo_color":"type-donnadrago|","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"dragon"},
 {"nome":"Dote","nome_en":"Dote","vero_nome":"Emer","fonte":"Nell'Alta Palude (2001)","fonte_en":"On the High Marsh (2001)","origine":"","genere":"f","padre":"","madre":"","tipo":"Donna","tipo_en":"Woman","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Orm Embar","nome_en":"Orm Embar","vero_nome":"","fonte":"La spiaggia più lontana (1972)","fonte_en":"The Farthest Shore (1972)","origine":"","genere":"","padre":"","madre":"","tipo":"Drago","tipo_en":"Dragon","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"dragon"},
 {"nome":"Kalessin","nome_en":"Kalessin","vero_nome":"","fonte":"Tehanu (1990)","fonte_en":"Tehanu (1990)","origine":"","genere":"","padre":"","madre":"","tipo":"Drago","tipo_en":"Dragon","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"dragon"},
@@ -94,7 +104,7 @@ var dati = [
 {"nome":"Nerone","nome_en":"Old Black","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","origine":"Gont","genere":"m","padre":"","madre":"","tipo":"Gatto","tipo_en":"Cat","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Gatto di zia Muschio","info_en":"Aunty Moss's cat","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
 {"nome":"Biddy","nome_en":"Biddy","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","origine":"Gont","genere":"f","padre":"","madre":"","tipo":"Gallina","tipo_en":"Hen","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Gallina di zia Muschio","info_en":"Aunty Moss's hen","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
 {"nome":"Fioccodineve","nome_en":"Snowflakes","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","origine":"Gont","genere":"f","padre":"","madre":"","tipo":"Gallina","tipo_en":"Hen","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Gallina di zia Muschio","info_en":"Aunty Moss's hen","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
-{"nome":"Vaiavanti","nome_en":"Gobefore","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","origine":"Gont","genere":"","padre":"","madre":"","tipo":"Cane","tipo_en":"Dog","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Cane della zia di Sparviero, a Dieci Ontani","info_en":"Sparrowhawk's aunt's dog, at Ten Alders","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
+{"nome":"Vaiavanti","nome_en":"Gobefore","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","origine":"Gont","genere":"m","padre":"","madre":"","tipo":"Cane","tipo_en":"Dog","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Cane della zia di Sparviero, a Dieci Ontani","info_en":"Sparrowhawk's aunt's dog, at Ten Alders","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
 {"nome":"Tiro","nome_en":"Tug","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","origine":"Gont","genere":"","padre":"","madre":"Grigina","madre_en":"Little Grey","tipo":"Gatto","tipo_en":"Cat","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
 {"nome":"Bucca Rossa","nome_en":"Red Bucca","vero_nome":"","fonte":"Le ossa della terra (2001)","fonte_en":"The Bones of the Earth (2001)","origine":"Gont","genere":"f","padre":"","madre":"","tipo":"Gallina","tipo_en":"Hen","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Gallina di Heleth, a Re Albi","info_en":"Heleth's hen, at Re Albi","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
 {"nome":"Bucca Bruna","nome_en":"Brown Bucca","vero_nome":"","fonte":"Le ossa della terra (2001)","fonte_en":"The Bones of the Earth (2001)","origine":"Gont","genere":"f","padre":"","madre":"","tipo":"Gallina","tipo_en":"Hen","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"Gallina di Heleth, a Re Albi","info_en":"Heleth's hen, at Re Albi","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"animale"},
