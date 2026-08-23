@@ -79,10 +79,15 @@ const FAV_AMOUNT = 0.35;
 // deve esserci per il launcher, ma non si vede più.
 // ⚠️ Il glifo NON si può togliere dalla schermata di avvio: la disegna il sistema,
 // non la pagina. L'unica leva è farne coincidere il fondo.
-// `#1b7ee0` (istruzione dell'utente, 2026-08-22: 'leggermente più scuro e
-// leggermente meno saturo' di `#0080ff`): saturazione e valore scesi dal 100%
-// all'88%, e il bianco sopra guadagna contrasto, da 3,80 a **4,11**.
-const PWA_BG = '#1b7ee0';
+// `#2f78c2` (istruzioni dell'utente, 2026-08-22, in DUE passi successivi: prima
+// 'leggermente più scuro e leggermente meno saturo' di `#0080ff`, poi 'ancora più
+// scuro e desaturato'). Saturazione e valore scendono di 12 punti per passo, sulla
+// stessa tonalità 210: 100/100 -> 88/88 -> 76/76. Il bianco sopra guadagna a ogni
+// passo: 3,80 -> 4,11 -> **4,58**.
+// ⚠️ La tonalità NON si tocca, solo saturazione e valore: l'utente chiede sempre
+// 'più scuro e desaturato', mai 'più freddo' o 'più caldo'. Ruotare la tonalità
+// sarebbe una modifica in più che non ha chiesto.
+const PWA_BG = '#2f78c2';
 const PWA_FG = '#ffffff';
 const PWA_FRAC = 0.44;
 // ⚠️ La FAVICON resta `#0080ff` e la divergenza è VOLUTA: i due blu fanno lavori

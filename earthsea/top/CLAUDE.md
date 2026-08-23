@@ -440,7 +440,7 @@ Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più
   - ⚠️ **`apple-mobile-web-app-title` segue il MANIFEST, non il `<title>`**: è l'etichetta
     sotto l'icona in schermata Home, quindi vuole la forma breve. Nella `0.24` diceva
     `Earthsea Top`, che non era nessuna delle due forme di Arda.
-- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#1b7ee0`, e la
+- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#2f78c2`, e la
   coincidenza è il **requisito**, non una scelta estetica. La schermata di avvio dipinge tutto
   lo schermo con `background_color` e ci mette l'icona al centro: l'icona è un quadrato
   **opaco**, quindi se i due colori divergono si vede un **quadrato centrale** stagliato sul
@@ -462,19 +462,30 @@ Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più
     notato; poi `#0d1a22`, il fondo notte di questo sito, che era **coerente col sito ma
     sbagliato per la schermata di avvio**: è il valore che faceva comparire il quadrato.
     Coerenza con la pagina e correttezza della schermata qui non coincidono.
-- **L'icona è un quadrato PIENO** (fondo `#1b7ee0`, segno bianco) col glifo al **44%** del
+- **L'icona è un quadrato PIENO** (fondo `#2f78c2`, segno bianco) col glifo al **44%** del
   lato, dentro la zona sicura: il launcher ritaglia nella forma che preferisce. ⚠️ Nessuna
   forma disegnata dentro, o si vedrebbe come forma **dentro** la forma del launcher.
   ⚠️ **Scelta dall'utente fra quattro combinazioni rese** (2026-08-22, *'icona webapp 1'*), e
   coincide con lo schema di 'I Grandi di Arda' (fondo in tinta, segno bianco): la parentela fra
   i due siti è un effetto voluto, non un residuo della copia.
-  - ⚠️ **Il blu del fondo NON è quello della favicon**, ed è voluto: `#1b7ee0` qui contro
-    `#0080ff` là (istruzione dell'utente sulla sola webapp, 2026-08-22: *leggermente più scuro
-    e leggermente meno saturo*). I due fanno lavori diversi. La favicon è un glifo su
-    **trasparente** e deve leggersi su due barre di luminanza opposta, quindi vuole un tono
-    medio; il fondo dell'icona è un **campo dietro un glifo bianco**, quindi scurirlo aumenta
-    il contrasto del segno (da 3,80 a **4,11**). Allinearli 'per coerenza' peggiorerebbe uno
-    dei due, e la coerenza che conta qui è quella col `background_color`, non fra i due blu.
+  - ⚠️ **Il blu del fondo NON è quello della favicon**, ed è voluto: `#2f78c2` qui contro
+    `#0080ff` là (istruzioni dell'utente sulla sola webapp, 2026-08-22: *leggermente più scuro
+    e leggermente meno saturo*, poi *ancora più scuro e desaturato*). I due fanno lavori
+    diversi. La favicon è un glifo su **trasparente** e deve leggersi su due barre di luminanza
+    opposta, quindi vuole un tono medio; il fondo dell'icona è un **campo dietro un glifo
+    bianco**, quindi scurirlo aumenta il contrasto del segno. Allinearli 'per coerenza'
+    peggiorerebbe uno dei due, e la coerenza che conta qui è quella col `background_color`,
+    non fra i due blu.
+  - ⚠️ **La TONALITÀ non si tocca, si muovono saturazione e valore insieme**: le due richieste
+    dicevano *più scuro e desaturato*, mai *più freddo*, e la scala che ne è uscita tiene la
+    tinta 210 spostando i due assi dello stesso passo (-12 per volta), col contrasto del bianco
+    che sale a ogni gradino. È la ricetta da riusare se ne arriva un terzo.
+
+    | passo | colore | HSV | bianco sopra |
+    |---|---|---|---|
+    | tinta della favicon, punto di partenza | `#0080ff` | 210/100/100 | 3,80:1 |
+    | *leggermente più scuro e meno saturo* | `#1b7ee0` | 210/88/88 | 4,11:1 |
+    | *ancora più scuro e desaturato* (in vigore) | `#2f78c2` | 210/76/76 | **4,58:1** |
   - **Le tre scartate**: fondo notte del sito con segno blu, fondo blu con segno prugna-notte,
     e il **fondo marmo** (`#f9fbfa` con segno blu). Quest'ultima è l'analogo esatto del disco
     marmo del FAB, e sbaglia per la stessa ragione: il segno si legge, ma il quadrato scompare
