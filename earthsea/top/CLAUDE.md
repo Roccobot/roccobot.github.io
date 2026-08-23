@@ -927,6 +927,51 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
     fosse attestata: era vero solo perché si era cercato nel volume sbagliato (*Le leggende di
     Terramare*, che quel racconto non lo contiene).
 
+## 🧭 Sege e Tosla: che cosa è attestato e che cosa no
+
+Le prime due voci **verificate sulle fonti** invece che dichiarate a memoria (`0.43`,
+2026-08-23, su richiesta dell'utente). ⚠️ Sono entrate **senza passare dallo Schedario**, che
+è una **deroga esplicita** dell'utente (*non occorre inserirli nello schedario*) alla regola
+'niente personaggi nuovi finché lo Schedario non è compilato': non è un precedente che si
+applica da sé alle altre 84.
+
+Entrambi compaiono **solo** in *I venti di Terramare* (2001), e il grep lo conferma su tutte
+le fonti: `Tosla` 43 occorrenze in inglese e 36 in italiano, `Sege` 17 e 17, **zero** negli
+altri sei volumi.
+
+| dato | Sege | Tosla |
+|---|---|---|
+| come lo chiama il testo ITA | «il principe Sege della Casa di Havnor» | «il capitano Tosla» |
+| come lo chiama il testo ENG | `Prince Sege of the House of Havnor` | `Shipmaster Tosla` |
+| origine | **Havnor** | ⚠️ **non attestata** |
+| vero nome | non dato | non dato |
+
+- ⚠️⚠️ **`Primo Consigliere` NON è attestato in nessuna delle due lingue**, e va detto invece
+  di farlo passare per una resa: il grep di `Primo Consigliere` sui sei epub ITA e di
+  `First Counsellor` sui sette ENG dà **zero**. È il titolo che l'utente dà per ufficiale
+  (2026-08-23: *Sege è il suo Primo Consigliere, titolo ufficiale*), e come tale sta nella
+  card. Quello che il testo attesta è il **ruolo**: presiede il protocollo del consiglio, ne
+  fa osservare le regole, apre e chiude le sedute («Udite il re»), e **governa gli affari di
+  stato in assenza del re** con un gruppo scelto di consiglieri.
+  - **La resa inglese è `First Councillor` e non `Counsellor`**: il testo inglese scrive
+    `councillor` per i membri del consiglio, quindi la grafia segue la sua.
+- **L'origine di Sege è Havnor su due indizi che convergono**: la Casa di Havnor, e il suo
+  ricordo di voci d'infanzia «giù nelle strade della città» mentre si trova a Havnor. ⚠️ Il
+  testo **non dice 'nato a'**: è nascita per convergenza, non alla lettera (criterio in
+  § 'Origine: significa NASCITA, e la residenza è solo un ripiego').
+- ⚠️ **L'origine di Tosla resta VUOTA, e il vuoto è il dato**: il testo non nomina mai una sua
+  isola. La faccia «scura come legno di quercia stagionato» farebbe pensare al Sud, ed è
+  esattamente il genere di deduzione che qui non si scrive. Chi la trovasse vuota non la
+  riempia a intuito.
+  - Di lui il testo dà invece **due navi**: la sua, la *Sterna* (`the Tern`), e la *Delfino*
+    (`the Dolphin`), che il re gli affida «come già in passato». Sono in `CLAUDE.md` e non nel
+    dataset perché non c'è un campo dove metterle.
+- ⚠️ **`paese` è un campo INERTE**: esiste nel dataset e queste sono le prime due voci che lo
+  usano, ma `index.html` non lo legge in nessun punto (zero occorrenze). Quindi l'origine di
+  Sege è **registrata e non visibile**, e comparirà quando le origini geografiche avranno la
+  loro resa. Non è un difetto da 'sistemare' aggiungendo una riga alla card: quella resa è una
+  scelta editoriale ancora aperta.
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo
