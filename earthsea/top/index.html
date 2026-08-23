@@ -1260,9 +1260,21 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 /* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
    × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
 /* Slot del tag: su mobile altezza FISSA (spazio riservato anche a filtro
-   spento: niente salti quando il tag compare), tag centrato dentro; un po'
-   più su e con aria prima della legenda (scelte utente). */
-.ctrl-tag-slot { min-height:1.5rem; display:flex; align-items:center; justify-content:center; margin:0.1rem 0 0.4rem; }
+   spento: niente salti quando il tag compare), tag centrato dentro.
+   ⚠️ `min-height` = l'altezza MISURATA del tag, non un numero tondo (richiesta
+   dell'utente del 2026-08-23: lo stacco fra i filtri e la legenda dei badge ridotto
+   al minimo che lascia spazio al tag). Il tag rende 21px, lo slot ne riservava 24, e
+   quei 3px di troppo si vedevano sempre perché lo slot c'è anche a filtro spento: è
+   la sua ragione di esistere. La regola desktop cabla `21px`, qui è in rem perché il
+   tag scala col corpo del testo e lo slot deve seguirlo (`1.3125rem` = 21px).
+   ⚠️ NON si azzera: senza, la comparsa del tag farebbe scorrere la legenda, che è
+   il difetto per cui lo slot è nato. Il minimo indispensabile è l'altezza del tag,
+   non zero.
+   ⚠️ Il `margin-top` è 0 e lo stacco sopra lo dà il `margin-bottom` della sezione
+   del filtro (0.4rem, qui sotto): due margini che si sommano davano 19,2px sopra
+   contro 6,4px sotto, cioè un tag otticamente appeso al blocco di sotto. Ora sono
+   0.4rem e 0.4rem, simmetrici. */
+.ctrl-tag-slot { min-height:1.3125rem; display:flex; align-items:center; justify-content:center; margin:0 0 0.4rem; }
 .ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 9px 4px 8px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 /* Larghezza stabile: min-width:146px fissa il riquadro alla stessa misura in
    entrambe le lingue (il testo più lungo, '16 active badges', sta sotto i
@@ -1520,6 +1532,12 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    (troppo vuoto segnalato dall'utente; su desktop comanda il layout a
    colonne, che azzera questo margine con margin:...0). */
 .ctrl-section--filtri { margin-bottom:0.4rem; }
+/* Stesso stacco per il filtro del vero nome, che senza una regola sua ereditava
+   l'1.1rem di `.ctrl-section` (richiesta dell'utente del 2026-08-23). ⚠️ Non è
+   simmetria per gusto: sotto di lui c'è lo slot del tag, quindi quel margine è aria
+   PRIMA di uno spazio già riservato, e si sommava al `margin-top` dello slot. Il
+   desktop non è toccato: là `#ctrl-panel .ctrl-section--vero` vince per l'id. */
+.ctrl-section--vero { margin-bottom:0.4rem; }
   /* Anti-jitter del blocco al cambio lingua: la sezione Categorie è l'unico
      figlio di .ctrl-cols (oltre alla legenda, già riservata via leg-measure)
      la cui larghezza dipende dalla lingua. Se in una lingua le etichette
@@ -2554,7 +2572,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.30</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.31</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
