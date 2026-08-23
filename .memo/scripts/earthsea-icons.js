@@ -79,19 +79,19 @@ const FAV_AMOUNT = 0.35;
 // deve esserci per il launcher, ma non si vede più.
 // ⚠️ Il glifo NON si può togliere dalla schermata di avvio: la disegna il sistema,
 // non la pagina. L'unica leva è farne coincidere il fondo.
-// ⚠️⚠️ `#78adc2` DALLA 0.37, ed è IL DISCO DEL FAB IN TEMA SCURO, non un blu scelto
-// qui (istruzione dell'utente, 2026-08-23: *per la webapp usa lo stesso colore del FAB
-// del tema scuro*). Quindi non è più un valore autonomo: **si cambia quando cambia il
-// disco**, e il posto dove leggerlo è `#ctrl-fab.fab-btn` in `earthsea/top/index.html`.
-// ⚠️ Il bianco sopra fa **2,45**, sotto il 3:1 dei componenti, ed è la stessa coppia che
-// il FAB porta in pagina: è una scelta estetica dell'utente, non una misura sfuggita.
-// La leva, se un domani vuole che stacchi, è il disco (`#4c8fc4` -> 3,48; `#3072a1` ->
-// 5,19), e va cambiato nei DUE posti insieme.
+// ⚠️⚠️ È IL DISCO DEL FAB IN TEMA SCURO, non un blu scelto qui (istruzione dell'utente,
+// 2026-08-23: *per la webapp usa lo stesso colore del FAB del tema scuro*). Quindi non è
+// un valore autonomo: **si cambia quando cambia il disco**, e il posto dove leggerlo è
+// `#ctrl-fab.fab-btn` in `earthsea/top/index.html`. È già successo una volta in un
+// giorno: `#78adc2` nella 0.37, `#3072a1` nella 0.38.
+// ⚠️ Il bianco sopra fa **5,19**: la coppia è la stessa che il FAB porta in pagina, ed è
+// per quel numero che l'utente ha scurito il disco (sul `#78adc2` il bianco faceva 2,45,
+// sotto il 3:1 dei componenti). Chi schiarisse il fondo dell'icona lo paga qui.
 // Ⓘ Percorso, perché nei commenti girano ancora i valori vecchi: `#0080ff` come la
 // favicon, poi tre gradini di 'più scuro e desaturato' sulla tonalità 210 (88/88, 76/76,
 // 64/64) fino a `#3b6fa3`, col bianco che saliva 3,80 -> 4,11 -> 4,58 -> 5,26. Quella
 // ricetta è **decaduta**: ora il colore lo decide il FAB.
-const PWA_BG = '#78adc2';
+const PWA_BG = '#3072a1';
 const PWA_FG = '#ffffff';
 const PWA_FRAC = 0.44;
 // ⚠️ La FAVICON resta `#0080ff` e la divergenza è VOLUTA: i due blu fanno lavori
