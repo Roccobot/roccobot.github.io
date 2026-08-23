@@ -1,1 +1,7 @@
 .DS_Store
+
+# Cache compilata di Python: non è una sorgente. Era TRACCIATA per sbaglio, e a ogni
+# esecuzione di refcheck.py sporcava l'albero di lavoro, finendo nei diff (tolta dall'indice
+# il 2026-08-23). Il file resta sul disco, semplicemente non si versiona.
+__pycache__/
+*.pyc
