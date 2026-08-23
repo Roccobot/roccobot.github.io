@@ -966,19 +966,14 @@ altri sei volumi.
   - Di lui il testo dà invece **due navi**: la sua, la *Sterna* (`the Tern`), e la *Delfino*
     (`the Dolphin`), che il re gli affida «come già in passato». Sono in `CLAUDE.md` e non nel
     dataset perché non c'è un campo dove metterle.
-- ⚠️⚠️ **L'origine di Sege sta QUI e non nel dataset**, perché **un campo dove metterla non
-  esiste ancora**: le origini geografiche saranno etichette per voce e la loro resa è una
-  scelta editoriale aperta (vedi § 'Le due razze, e perché il filtro ha DUE categorie'). Fino
-  a quel momento il dato verificato vive in questo file, ed è il posto giusto: non si inventa
-  un campo per non perderlo.
-  - ⚠️⚠️ **`paese` NON è quel campo, ed è un errore già commesso**: nella `0.43` la voce di
-    Sege portava `"paese":"Havnor"`, corretto nella `0.44`. `paese` è un **residuo del motore
-    di provenienza** (vedi § 'Residui del motore di provenienza (debito dichiarato)'), non un
-    campo di questo progetto: in `arda/top/dati.js` vale **`gb` per tutte e 360 le voci**,
-    cioè è il codice di paese della lista da cui quel motore è nato, e **nessuno dei due siti
-    lo legge** (zero occorrenze in entrambi gli `index.html`). Il vuoto delle 19 voci di
-    Terramare non era 'un campo da riempire': era un residuo mai toccato, e leggerlo come il
-    posto dell'origine è la trappola.
+- **L'origine di Sege sta nel campo `origine` del dataset** (`Havnor`), che dalla `0.45` è il
+  campo dell'origine geografica e ha preso il posto del residuo `paese`. Storia, trappola e
+  ragione per cui rinominare un campo qui è sicuro: § 'Il campo origine'.
+  - ⚠️ **Due giri sbagliati prima di quello giusto**, e vale saperlo per non rifarli: nella
+    `0.43` il dato era in `paese` (un residuo), nella `0.44` era stato **tolto dal dataset** e
+    lasciato solo in questo file. Nessuna delle due era la risposta: il campo andava creato col
+    nome che gli spetta, ed è la correzione dell'utente (*non è vero che le origini non hanno
+    un campo: c'è il campo 'origine'*).
 
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
@@ -1125,6 +1120,31 @@ campo del dataset e per lo Schedario che lo alimenta.
   un'altra frase e sembrava una prova senza esserlo (Kalessin col brano di Orm Embar, Ivy con
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
   di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
+
+### 🗃️ Il campo origine: si chiama così, e ha preso il posto di `paese`
+
+Dalla `0.45` il campo del dataset è **`origine`**, con lo stesso nome della voce omonima
+dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non c'era.
+
+- ⚠️⚠️ **`paese` non c'è più, e sapere che cos'era evita di reintrodurlo**: era un **residuo
+  del motore di provenienza**, presente su ogni voce, con valore `gb` su tutte e 360 quelle di
+  `arda/top/dati.js` (il codice di paese della lista da cui quel motore nasce) e **vuoto** su
+  tutte quelle di Terramare. Nessuno dei due `index.html` lo leggeva.
+  - ⚠️⚠️ **La trappola, che è già scattata**: un campo vuoto su tutte le voci e senza lettori
+    **somiglia a un campo libero**. Nella `0.43` vi è finita l'origine di Sege (`Havnor`),
+    tolta nella `0.44` e rimessa nella `0.45` nel campo giusto. Chi ha un dato e non trova
+    dove metterlo **crea il campo col nome che gli spetta**: non lo infila in un residuo, e
+    non lo lascia fuori dal dataset.
+- **Rinominare un campo qui è sicuro, e la ragione è nel Worker**: `earthsea-admin-proxy.js`
+  serializza ogni voce con `JSON.stringify(d)` e valida il solo `nome`, e l'editor admin lavora
+  su una copia profonda dell'array, quindi **le chiavi passano intatte** e nessuna lista di
+  campi va tenuta allineata. ⚠️ Verificato prima di rinominare, non dopo.
+- ⚠️ **Il campo non è ancora RESO in pagina**, e resta la scelta editoriale aperta di come
+  (etichette per voce, filtro, riga della card): il dato c'è e aspetta quella decisione. Al
+  2026-08-23 lo usa la sola voce di **Sege** (`Havnor`).
+- Ⓘ **In `arda/top/dati.js` `paese` c'è ancora**, `gb` su 360 voci: toglierlo là è una modifica
+  al flusso dati di 'I Grandi di Arda', che è fra i casi **pesanti** (conferma esplicita), e
+  nessuno l'ha chiesta.
 
 ## 🌐 Le due metà del dataset: l'italiano è dell'utente, l'inglese è mio
 
@@ -1385,16 +1405,11 @@ raccontano un altro mondo**, e la regola universale sulle sostituzioni su parole
 per un disastro già capitato proprio qui. Si tocca **quando si tocca quel codice**, un pezzo
 alla volta, con una prova in browser dopo ognuno.
 
-- ⚠️⚠️ **`paese` è un residuo del DATASET, e ha già ingannato una sessione**: è un campo di
-  ogni voce, vale `gb` per tutte e 360 quelle di Arda (il codice di paese della lista da cui
-  quel motore nasce) ed è **vuoto** per tutte quelle di Terramare, e **nessuno dei due
-  `index.html` lo legge**. ⚠️ Un campo vuoto e senza lettori **somiglia a un campo libero**: il
-  2026-08-23 vi è finita l'origine verificata di Sege (`Havnor`, nella `0.43`, corretta nella
-  `0.44`). Chi ha un dato nuovo e non trova dove metterlo lo scrive **in questo file**, non in
-  un campo residuo: vedi § 'Sege e Tosla'.
-  - Ⓘ **Perché non si cancella**: il Worker admin riscrive `dati.js` per sostituzioni e il
-    campo compare in ogni riga, quindi toglierlo è un lavoro sul dataset e sul Worker, non una
-    ripulitura. Vale la regola di questa sezione: si tocca quando si tocca quel codice.
+- ✅ **`paese` è USCITO dal dataset** nella `0.45`, sostituito da `origine`: era un residuo
+  presente su ogni voce (`gb` su tutte e 360 quelle di Arda, vuoto su quelle di Terramare) e
+  non lo leggeva nessuno. ⚠️ **Ha ingannato una sessione prima di uscire**, e la trappola vale
+  per ogni altro residuo di questa sezione: un campo vuoto e senza lettori **somiglia a un
+  campo libero**. Il caso e il criterio stanno in § 'Il campo origine'.
 - Il **pannello** è stato riorganizzato sul mockup dell'utente (vedi '🎛️ Il Pannello
   COMPATTO'), ma la sua struttura interna resta quella di Arda: la semplificazione ha toccato
   le due colonne e i controlli inutili, non tutto il resto.
