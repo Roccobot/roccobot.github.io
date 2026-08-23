@@ -2651,7 +2651,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.38</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.39</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2664,7 +2664,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
     <circle cx="140" cy="18" r="1.5" fill="#8b8b8b"/>
   </svg>
   <div class="intro" id="intro">
-    Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare, e chiamarla significa averne parte.
+    Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare; nominarla significa dominarla.
   </div>
 </header>
 
@@ -4059,14 +4059,14 @@ var i18n = {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Terramare',
     subtitle: "I grandi dell'arcipelago di Terramare, dagli uomini ai draghi",
-    intro: "Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare, e chiamarla significa averne parte.",
+    intro: "Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare; nominarla significa dominarla.",
     footer: "Il potere, a Terramare, comincia da un nome."
   },
   en: {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Earthsea',
     subtitle: 'The great ones of the Earthsea archipelago, from men to dragons',
-    intro: "Mages, witches, kings, dragons and common folk of the archipelago. In Earthsea power takes many forms, and nearly always runs through names: to know the true name of a thing is to be able to call it, and to call it is to have a part in it.",
+    intro: "Mages, witches, kings, dragons and common folk of the archipelago. In Earthsea power takes many forms, and nearly always runs through names: to know the true name of a thing is to be able to call it; to name it is to master it.",
     footer: "Power, in Earthsea, begins with a name."
   }
 };
@@ -4595,53 +4595,54 @@ var ISTARI_ICON = {};
 // BADGE_ICON: così la LEGENDA resta intatta). Le regole vengono INIETTATE a runtime
 // da badgeAdjust (dati.js) o dal fallback seed-once qui sotto, e scavalcano il
 // CSS statico per-icona (che resta come rete di sicurezza).
+// ⚠️⚠️ FINO ALLA 0.38 QUI C'ERANO LE 24 UNITÀ DI ARDA (aratar, silmaril, istari...),
+// ereditate col motore, e questo rendeva l'editor dei micro-aggiustamenti INERTE su
+// Terramare, senza dare nessun errore: `BADGE_UNIT` non trovava i tre badge di qui,
+// quindi le `img` non prendevano la classe `bi-<id>`, quindi le regole iniettate
+// (`.bi-aratar`...) non pescavano nessun elemento. Il sintomo che ne vedeva l'utente
+// era doppio, ed è esattamente quello che ha segnalato: gli slider non muovevano
+// niente in pagina, e l'anteprima diceva 'Nessuna scheda con questo badge' perché
+// cercava campioni con `p.aratar`. ⚠️ I due simboli di genere funzionavano, perché
+// `male`/`female` c'erano in entrambi i mondi: era la spia che il difetto stava
+// nell'elenco e non nel meccanismo.
 var BADGE_ADJUST_UNITS = [
-  { id:'aratar',       it:'Aratar',               en:'Aratar',               members:['aratar'] },
-  { id:'calaquende',   it:'Calaquendë',           en:'Calaquendi',           members:['calaquende'] },
-  { id:'silmaril',     it:'Silmaril',             en:'Silmaril',             members:['silmaril'] },
-  { id:'incarnazione', it:'Mandos',               en:'Mandos',               members:['incarnazione'] },
-  { id:'helcaraxe',    it:'Helcaraxë',            en:'Helcaraxë',            members:['helcaraxe'] },
-  { id:'morgoth',      it:'Morgoth',              en:'Morgoth',              members:['morgoth'] },
-  { id:'guerradira',   it:"Guerra d'Ira",         en:'War of Wrath',         members:['guerradira'] },
-  { id:'suicidio',     it:'Suicidio',             en:'Suicide',              members:['suicidio'] },
-  { id:'fellowship',   it:"Compagnia dell'Anello", en:'Fellowship of the Ring', members:['fellowship'] },
-  { id:'istari',       it:'Istari',               en:'Istari',               members:['istari'], grp:5 },
-  { id:'survivor',     it:'Quarta Era',           en:'Fourth Age',           members:['survivor'] },
-  { id:'navi',         it:'Navi (Blu/Viola/Verde)', en:'Ships (Blue/Purple/Green)', members:['est','west','envoy'], grp:3 },
-  { id:'drago',        it:'Drago',                en:'Dragon',               members:['drago'] },
-  { id:'balrog',       it:'Balrog',               en:'Balrog',               members:['balrog'] },
-  { id:'king_std',     it:'Alto Re',              en:'King',                 members:['king_std'] },
-  { id:'king_high',    it:'Re Supremo',           en:'High King',            members:['king_high'] },
-  { id:'king_high_now',it:'Re in carica',         en:'Reigning King',        members:['king_high_now'] },
-  { id:'onering',      it:'Unico Anello',         en:'One Ring',             members:['onering'] },
-  { id:'ringelven',    it:'Anelli degli Elfi',    en:'Elven Rings',          members:['vilya','nenya','narya'], grp:3 },
-  { id:'ringdm',       it:'Altri Anelli del Potere', en:'Other Rings of Power', members:['menring','sette'], grp:2 },
-  // Simboli di genere (dalla v11.70): unità a sé, dimensioni BASE proprie (non
-  // 0.92em: sc le scala mantenendo l'aspetto). Regolabili come i badge, ma il
-  // rendering sulla card è il simbolo ♂/♀ aggiunto in renderList (genereSym), non
-  // in buildStatus. members = chiave-marcatore (non un flag dei dati): il match
-  // per-genere è gestito a parte (samples/renderList).
-  { id:'male',         it:'Maschio',              en:'Male',                 members:['male'] },
-  { id:'female',       it:'Femmina',              en:'Female',               members:['female'] }
+  { id:'stregone', it:'Strega o stregone', en:'Witch or sorcerer', members:['stregone'] },
+  { id:'mago',     it:'Mago',              en:'Mage',              members:['mago'] },
+  { id:'nomeged',  it:'Nome di Sparviero', en:"Sparrowhawk's name", members:['nomeged'] },
+  // Simboli di genere: unità a sé, con dimensioni BASE proprie (non 0.92em: `sc` le
+  // scala mantenendo l'aspetto, male quadrato e female più stretta e alta). Il
+  // rendering sulla card è il simbolo aggiunto in renderList (genereSym), non in
+  // buildStatus, e `members` qui è la chiave-marcatore e non un campo dei dati.
+  { id:'male',     it:'Maschio',           en:'Male',              members:['male'] },
+  { id:'female',   it:'Femmina',           en:'Female',            members:['female'] }
 ];
 // badge key → id unità (per assegnare bi-<id> in buildStatus e per l'anteprima).
 var BADGE_UNIT = (function(){ var m = {}; BADGE_ADJUST_UNITS.forEach(function(u){ u.members.forEach(function(k){ m[k] = u.id; }); }); return m; })();
 // Fallback seed-once: i valori ATTUALI (dal CSS statico) per ogni unità. Restano
 // come default per le voci future prive del campo e come rete se dati.js manca.
 var BADGE_ADJUST_FALLBACK = {
-  aratar:{ml:0,mr:0,ny:0,sc:1}, calaquende:{ml:0.10,mr:-0.06,ny:0,sc:1},
-  silmaril:{ml:-0.05,mr:0,ny:0,sc:1}, incarnazione:{ml:-0.05,mr:0,ny:0,sc:1},
-  helcaraxe:{ml:-0.02,mr:-0.07,ny:0,sc:1}, morgoth:{ml:0.01,mr:-0.06,ny:0,sc:1},
-  guerradira:{ml:-0.05,mr:0,ny:0,sc:1}, suicidio:{ml:-0.05,mr:0,ny:0,sc:1},
-  fellowship:{ml:0,mr:0,ny:0,sc:1}, istari:{ml:-0.05,mr:-0.05,ny:0,sc:1},
-  survivor:{ml:0,mr:0,ny:0,sc:1}, navi:{ml:-0.05,mr:0,ny:0,sc:1},
-  drago:{ml:-0.05,mr:0,ny:0,sc:1}, balrog:{ml:-0.05,mr:0,ny:0,sc:1},
-  king_std:{ml:-0.056,mr:0,ny:-0.078,sc:1}, king_high:{ml:-0.056,mr:0,ny:-0.078,sc:1},
-  king_high_now:{ml:-0.056,mr:0,ny:-0.078,sc:1}, onering:{ml:-0.02,mr:-0.02,ny:0,sc:1},
-  ringelven:{ml:-0.02,mr:-0.02,ny:-0.067,sc:1}, ringdm:{ml:-0.02,mr:-0.02,ny:-0.032,sc:1},
+  // I tre badge non hanno CSS per-icona: il loro seed è il margine di `.status-icon`
+  // (0.12em), MISURATO sulla pagina vera (3,4944px su un corpo di 29,12px, desktop).
+  // ⚠️ Su mobile quel margine è azzerato dalla media query e la separazione la fa il
+  // `gap:0.28em` del flex, quindi la regola iniettata aggiunge là 0.12em che prima non
+  // c'erano: **+2,19px per icona**, misurati sulle due copie del sito a 430px. Sul
+  // desktop invece la resa è **identica al centesimo di pixel** (dx, dy, larghezza e
+  // altezza tutti a 0 su quattro card). Si accetta come si è già accettato per il
+  // genere (vedi sotto), e l'alternativa era un seed a 0, che avrebbe tolto 3,5px sul
+  // desktop: peggio, perché toglie invece di aggiungere.
+  // ⚠️⚠️ Un seed che valga per i DUE punti di rottura non esiste, e conviene sapere
+  // perché invece di cercarlo: la regola iniettata scrive `margin-left` in assoluto e
+  // scavalca entrambe le regole statiche, che a quel margine dànno valori diversi
+  // (0.12em sopra i 480px, 0 sotto). L'unica via per averli entrambi fedeli sarebbe
+  // trasformare il valore in un DELTA (`calc(base + var(--ba-ml))`), ma allora il
+  // numero dell'editor non sarebbe più quello che la pagina applica, e divergerebbe da
+  // quello del gemello di Arda, dove i valori salvati sono assoluti. Scartata.
+  stregone:{ml:0.12,mr:0,ny:0,sc:1}, mago:{ml:0.12,mr:0,ny:0,sc:1},
+  nomeged:{ml:0.12,mr:0,ny:0,sc:1},
   // Genere: seed = resa ATTUALE del CSS statico .genere-svg--m/f (nessun cambio
   // visivo). male ml 0.076 = separazione 0.07 + la vecchia X translate 0.006 (ora
   // margine, a cascata); ny = la vecchia translateY per-simbolo (-0.076 / +0.15).
+  // ⚠️ Anche qui il valore unifica i due punti di rottura (desktop 0.07, mobile 0.06).
   male:{ml:0.076,mr:0,ny:-0.076,sc:1}, female:{ml:0.07,mr:0,ny:0.15,sc:1}
 };
 // Dimensioni base (em) dei simboli di genere (dal CSS .genere-svg--m/f): sc le
@@ -9397,7 +9398,11 @@ function showBadgeAdjustEditor(initState){
   if (document.getElementById('fab-modal')) return;
   baInjectEditorCss();
   var it = currentLang === 'it';
-  var cur = (initState && initState.cur) || 'helcaraxe';
+  // ⚠️ L'unità di partenza si legge dall'ELENCO, non da un id scritto a mano: qui c'era
+  // `'helcaraxe'`, cioè un'unità di Arda, e su Terramare apriva l'editor su un id
+  // inesistente. Effetto: `BADGE_ADJUST[cur]` undefined e la modale che moriva con un
+  // TypeError in `showVal`, quindi l'editor non si apriva affatto.
+  var cur = (initState && initState.cur) || BADGE_ADJUST_UNITS[0].id;
   var myL;
   injectFxEditorCss(); // CSS del dock: serve anche aprendo QUESTO editor per primo
   var docked = dockAvailable(560);
