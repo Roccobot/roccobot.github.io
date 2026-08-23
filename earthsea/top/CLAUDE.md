@@ -210,6 +210,25 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
     riga della genealogia stampa **'Figlio di'**, che è il ripiego del motore: non è un dato,
     è la mancanza di una forma neutra.
 
+### 🕯️ Mago Nero: il vero nome ESISTE nella storia, ma il testo non lo dà
+
+Voce chiesta dall'utente il 2026-08-23 (*non sono attestati altri nomi, d'altronde è un
+personaggio avvolto nella leggenda*), ed è il **rovescio esatto** di Akambar: là manca il nome
+comune, qui manca il vero nome.
+
+- **Attestato una volta per edizione**, in *Un mago di Terramare*: *Nereger di Paln... aveva
+  appreso il nome del Mago Nero* origliando i draghi (`Nereger of Paln had learned the Black
+  Mage's name from overhearing the conversation of dragons`). Quindi `Mago Nero` / `Black Mage`
+  è l'unica coppia di nomi in scena, e non ci sono varianti fra cui scegliere.
+- ⚠️⚠️ **Il `vero_nome` vuoto qui significa 'il testo non lo dice', e non 'non ne ha uno'**: la
+  frase attestata dice proprio che quel nome **fu appreso**, quindi esiste nella storia e resta
+  ignoto al lettore. È una terza cosa rispetto ai due casi già registrati (i draghi, il cui
+  nome È il vero nome, e chi non ha nome d'uso), e il campo vuoto **non va riempito** a intuito
+  perché la storia lo dichiara esistente.
+- ⚠️ **Il maschile è la grammatica dell'epiteto, non un'attestazione**: `Mago Nero` è
+  maschile in italiano e l'inglese non dice niente. Il genere è dell'utente, ed è ben fondato
+  (a Terramare 'mago' è un ruolo maschile), ma è una deduzione come quella di Solevivo.
+
 ### 👑 Akambar: il primo senza nome comune, e i due titoli
 
 Voce chiesta dall'utente il 2026-08-23, la prima con `nome` **vuoto** per scelta e non per
