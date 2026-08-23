@@ -1432,6 +1432,13 @@ alla volta, con una prova in browser dopo ognuno.
   non lo leggeva nessuno. ⚠️ **Ha ingannato una sessione prima di uscire**, e la trappola vale
   per ogni altro residuo di questa sezione: un campo vuoto e senza lettori **somiglia a un
   campo libero**. Il caso e il criterio stanno in § 'Il campo origine'.
+  - Ⓘ **Da dove veniva davvero**, trovato il 2026-08-23 e utile perché chiude la domanda: il
+    capostipite non è 'I Grandi di Arda' ma **`artifacts/legion50/index.html`**, una classifica
+    di saghe epiche dove `paese` è un **codice ISO che serve a pescare una bandiera**
+    (`getFlag(paese)` costruisce l'`img` da `country-flags`), e i valori sono veri e diversi
+    (`gb`, `jp`, `gr`, `cn`, `is`...). In Arda diventano tutti `gb`, perché Tolkien è uno solo,
+    e la bandiera sparisce dalla resa: da lì in poi il campo è un fossile. ⚠️ **Chi trova un
+    campo inspiegabile in questi due siti lo cerchi LÀ**, prima di dedurne il significato.
 - Il **pannello** è stato riorganizzato sul mockup dell'utente (vedi '🎛️ Il Pannello
   COMPATTO'), ma la sua struttura interna resta quella di Arda: la semplificazione ha toccato
   le due colonne e i controlli inutili, non tutto il resto.
