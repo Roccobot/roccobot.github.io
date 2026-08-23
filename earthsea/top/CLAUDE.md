@@ -210,6 +210,31 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
     riga della genealogia stampa **'Figlio di'**, che è il ripiego del motore: non è un dato,
     è la mancanza di una forma neutra.
 
+### 🚻 Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni
+
+Regola editoriale dell'utente, 2026-08-23, e nasce da un problema pratico che ricorre a ogni
+voce nuova: *a volte è difficile assumere il genere di un personaggio; ma le convenzioni di
+genere di Terramare vengono in aiuto*.
+
+- **La convenzione**: chiunque una fonte definisca `mago` o `stregone` (`mage`, `wizard`,
+  `sorcerer`) è **maschio**, e tanto basta a riempire il campo. L'attestazione e il perché
+  stanno in `rules/Earthsea.md`, § 'Il vocabolario del potere ha un GENERE: mago e stregone
+  sono uomini'.
+  - **Retroattivo su due voci già nel dataset**, e le conferma: `Sula` è *lo stregone Sula*, il
+    `Mago Nero` è un mago. Entrambe erano maschili per deduzione, e adesso la deduzione ha una
+    regola invece di essere caso per caso.
+- ⚠️⚠️ **LE ECCEZIONI SONO DUE, ed è una scelta dell'utente** (*uniche due eccezioni, per
+  scelta mia*): le **due co-fondatrici della Scuola di Roke insieme a Medra**, cioè **Brace**
+  (vero nome `Elehal`, già nel dataset) e **Velo** (vero nome `Yahan`, ancora nello Schedario).
+  - **Attestato in *Il Trovatore***: sono loro due a discutere con Medra per un intero inverno,
+    e *fu in quelle discussioni che la Scuola di Roke ebbe inizio*. È là che nascono i nomi
+    delle branche dell'arte che ancora oggi sono *le arti dei Maestri di Roke*.
+  - ⚠️ **Perché è una scelta e non un'attestazione**: le fonti le chiamano *le donne della
+    Mano* e *le sagge dell'isola*, non maghe. L'utente le tratta come l'eccezione alla
+    convenzione, e il dataset segue lui.
+  - ⚠️ **La coppia è CHIUSA a due**: una terza donna definita maga non esiste, e chi ne
+    trovasse una starebbe leggendo male una `strega`.
+
 ### 🕯️ Mago Nero: il vero nome ESISTE nella storia, ma il testo non lo dà
 
 Voce chiesta dall'utente il 2026-08-23 (*non sono attestati altri nomi, d'altronde è un
