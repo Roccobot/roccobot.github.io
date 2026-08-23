@@ -303,7 +303,16 @@ adesso è questa, su **due colonne**:
   andare a capo o le eliminiamo'). Il taglio si fa alla prima `': '` con `legLbl`, non con
   una seconda tabella di stringhe brevi: **`ICON_LABEL` resta la fonte unica**, e i tooltip
   delle card continuano a portare la spiegazione intera. Un'etichetta senza `': '` passa
-  intatta, ed è il caso del terzo badge.
+  intatta.
+  - ⚠️⚠️ **Dal 2026-08-23 nessuna delle tre ha più i due punti**, perché l'utente le ha
+    riscritte nella forma `Titolo (spiegazione)`: quindi **passano intere e la spiegazione
+    si vede**, che è esattamente quello che voleva. Il taglio non scatta più per nessuna.
+    - ⚠️ `legLbl` **non è diventato codice morto**: è la rete che regge se un domani
+      un'etichetta tornerà col formato `Titolo: spiegazione`. Chi lo togliesse dovrebbe
+      prima garantire che non ricapiti, e non c'è modo di garantirlo.
+    - **Misurato con le etichette nuove**: le tre righe stanno su **una riga ciascuna** in
+      entrambi i layout (31px mobile, 32px desktop) e non c'è scroll orizzontale. Il capo a
+      riga resta come rete, non come normalità.
   - Misura del guadagno: il pannello desktop è passato da **638** a **540** px di larghezza.
   - Resta in piedi il capo a riga (`white-space:normal`, `min-height` sulla riga, icona a
     `flex:none`), che ora serve solo se un'etichetta futura sarà lunga.
@@ -313,6 +322,39 @@ adesso è questa, su **due colonne**:
 - Misure a font reali in Chromium: pannello desktop **540x244** (era 638 prima che le
   descrizioni dei badge uscissero), mobile 390x844 con pannello **390x391** e i blocchi
   impilati nella bottom-sheet. Nessun errore JS, nessun 404, nessuno scroll orizzontale.
+
+### 👻 Il tag del filtro sta in FONDO, e il suo spazio lo riserva un fantasma
+
+**Dal 2026-08-23** (istruzione dell'utente: *il badge mettilo in basso, dopo la legenda*).
+Due cambiamenti che risolvono la stessa cosa da due lati.
+
+- **La posizione**: il tag era in mezzo, fra il filtro del vero nome e la legenda, cioè nel
+  punto peggiore. In fondo non ha più niente sotto di sé, quindi nessuno scarto di altezza
+  può spostare qualcosa. ⚠️ L'utente ha accettato esplicitamente il vuoto che resta a filtro
+  spento: *lì anche se resta un po' di spazio in più non mi disturba*.
+- **Lo spazio riservato è il TAG STESSO**: a filtro spento il tag è nel DOM come **fantasma**
+  (`visibility:hidden`, `disabled`, `tabindex="-1"`, `aria-hidden`, e **senza** l'id, che è
+  l'aggancio del click). Così l'ingombro dello stato spento è quello dello stato acceso **per
+  costruzione**, altezza e larghezza comprese.
+- ⚠️⚠️ **La lezione, che vale più del rimedio**: al posto del fantasma c'era un `min-height`
+  **a numero**, e quel numero era il difetto. Valeva 24px, la `0.31` l'ha stretto a
+  `1.3125rem` (21px) perché 21px era l'altezza del tag **misurata nell'ambiente di prova, dove
+  Cinzel non si carica**. Col font vero il tag è più alto, e comparendo spingeva giù la
+  legenda: difetto visto dall'utente, che ha proposto *3 o 4 pixel in più*. Quella taratura
+  avrebbe funzionato, ma sarebbe stato un secondo numero indovinato sullo stesso font che non
+  posso misurare. La regola non derogabile dice che **una misura fatta senza i font reali non
+  si spaccia per buona**: qui l'unico modo di rispettarla era **non prendere la misura**.
+  - ⚠️ **Il difetto non si riproduce in Chromium**, ed è la ragione per cui è arrivato in
+    produzione: senza Cinzel il tag rende 21px e lo slot da 21px basta. Chi verifica questa
+    zona sappia che il banco di prova **non può** vedere la classe di difetti che dipende
+    dalle metriche del font: là serve lo schermo dell'utente.
+  - **Verificato dopo il rimedio, su cinque larghezze (320-430) e nei due temi**: nessun
+    elemento del Pannello si muove all'attivazione del filtro, e lo slot ha rettangolo
+    identico nei due stati. Il fantasma **non dipende dal font**, quindi questa volta la
+    misura in Chromium vale.
+  - **Riserva anche la LARGHEZZA**, e questo era un difetto latente che nessuno aveva notato:
+    il contenitore del Pannello è `width:fit-content`, quindi un tag più largo del resto del
+    contenuto lo allargherebbe e sposterebbe tutto in orizzontale.
 
 ## 🔆 Il logo del FAB
 
