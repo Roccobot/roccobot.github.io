@@ -221,9 +221,11 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
     convenzione** e che il loro sesso è congettura (`rules/Earthsea.md`, § 'Il genere dei
     draghi'). Chi trovasse 'padre' e volesse riempire `genere` starebbe seguendo la
     convenzione, non un fatto.
-- ⚠️ **I tre draghi hanno `vero_nome` vuoto come Kalessin e Orm Embar**: è la regola di
-  § 'I DRAGHI hanno una riga sola', non un dato mancante. L'utente li ha annotati *(vero
-  nome)* proprio perché è così che funzionano.
+- ⚠️⚠️ **I tre draghi sono nati col dato INVERTITO come gli altri quattro**, cioè il nome in
+  `nome` e `vero_nome` vuoto. Non è la regola: è il malinteso che l'utente ha corretto il
+  2026-08-23, e la forma giusta è l'opposta. Quando li annotava *(vero nome)* diceva proprio
+  questo. Che cosa va raddrizzato, quando e con quali conseguenze sta in
+  § 'Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune'.
 
 ## 🏅 I tre badge e il genere
 
@@ -498,6 +500,39 @@ dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
     **è** il suo vero nome, e un vero nome si rende come tale: la classe intermedia è uscita.
   - **Quello che la distingue dai draghi puri resta il resto della card**: due etichette di
     razza, il simbolo di genere e i badge, che un drago puro non ha.
+
+#### ⚠️⚠️ Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune
+
+Correzione dell'utente, 2026-08-23, su un malinteso che *va avanti da un po'*: **i draghi hanno
+SOLO il vero nome, ed è il nome comune a essere vuoto**. Sono sue parole, e la chiude così:
+*è una differenza sostanziale... è uno dei punti-chiave del dataset*.
+
+- **La regola sopra era già giusta come CONCETTO** e sbagliata come **dato**: la resa della
+  card fa la cosa corretta (il nome del drago sta in riga 1 in Cinzel maiuscolo), ma il valore
+  vive nel campo del **nome d'uso** e `vero_nome` resta vuoto. Cioè il dataset dice il
+  contrario di quello che la card mostra.
+- **La forma giusta**: `vero_nome` **pieno** (`Kalessin`), `nome` e `nome_en` **vuoti**. Il
+  vuoto non è una lacuna: è l'informazione che quel drago non ha nome d'uso.
+- ⚠️ **Alla `0.47` sono SETTE le voci da raddrizzare**, misurate: `Orm Embar`, `Kalessin`,
+  `Yevaud`, `Bar Oth`, `Ammaud`, `Orm` (draghi puri) e `Tehanu` (ibrida). Tutte hanno il nome
+  in `nome` e `vero_nome` vuoto.
+- ⚠️⚠️ **NON si raddrizza adesso**: l'utente ha chiesto di aspettare i personaggi dello
+  Schedario, che arrivano *a breve*, e di **controllare questo aspetto** quando ci sono.
+  Il motivo pratico è che quei dati arriveranno già nella forma giusta, e migrare due volte
+  costa il doppio.
+- **Che cosa toccherà nel motore**, così non si riparte dall'indagine: la prima riga di
+  `renderList` legge `nome`, quindi con `soloVero` deve leggere `vero_nome` (col ripiego su
+  `nome`, o le sette voci vecchie sparirebbero dal titolo). Da ricontrollare nello stesso giro:
+  il ripiego `p.nome_en || p.nome` della lingua inglese, l'ordinamento e la ricerca per nome,
+  l'esportazione, l'editor admin e la navigazione fra le card. ⚠️ `veroNomeNoto` **è già
+  pronto**: considera noto il vero nome di ogni drago anche col campo vuoto, quindi dopo la
+  migrazione quel ramo diventa superfluo ma non dannoso.
+- ⚠️ **L'IBRIDA è la domanda aperta, e non si decide da sé**: `Tehanu` ha **entrambi** i nomi
+  (`Therru` è il suo nome d'uso, oggi fra gli alternativi). Raddrizzare il dato le darebbe
+  `nome` `Therru` e `vero_nome` `Tehanu`, ma allora la card mostrerebbe `Therru` in tondo e
+  `TEHANU` sotto: è il contrario della scelta esplicita dell'utente (*TEHANU va reso in
+  maiuscolo* in prima riga). Serve la sua decisione, e vale anche per `Orm Irian`, che non è
+  ancora nel dataset.
   - ⚠️ Il suo `cardcolor` è `dragon`, quindi filetto ed etichette accompagnano il nome.
 - ⚠️ **La classe va sul `.rank-name-text`, non su `.rank-name`**: quel contenitore ospita
   anche etichette e icone (`rank-tipi`/`rank-flags` via `display:contents`), e un
@@ -1348,6 +1383,11 @@ chiama `nome d'uso EN`.
   riempito e la scheda resta incompleta finché non lo è (`data-serve-it` nello Schedario).
   ⚠️ È l'unica eccezione alla regola di § 'I QUATTRO livelli dei nomi, e perché il vero nome
   ha una riga sua', e non si estende alle altre 94.
+  - ⚠️⚠️ **`Orm Irian` è l'eccezione dentro l'eccezione**: è un'IBRIDA, e per un drago il nome
+    d'uso vuoto è la forma **giusta** e non una scheda incompleta (§ 'Il DATO è INVERTITO, e va
+    raddrizzato: il campo vuoto è il nome d'uso'). Il suo caso è però doppio, perché
+    `Libellula` un nome d'uso è: la decisione spetta all'utente, e finché non c'è quella scheda
+    non si dichiara incompleta per il campo vuoto.
 - ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
   scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
 - ⚠️ **Il caso rovescio: una forma INGLESE fra i nomi alternativi ITALIANI è legittima, e non
