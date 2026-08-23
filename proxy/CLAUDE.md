@@ -1,10 +1,59 @@
 # CLAUDE.md: Worker di amministrazione (`proxy/`)
 
-> **Cos'è questo file.** Le regole del **Cloudflare Worker** che fa da proxy ai salvataggi
-> dell'area admin di 'I Grandi di Arda'. Si carica quando si legge un file di questa
-> cartella; le regole trasversali stanno nel `CLAUDE.md` di **root**, e il formato dei dati
-> che il Worker scrive in [`arda/top/CLAUDE.md`](../arda/top/CLAUDE.md), sezione
-> '🗃️ Struttura dati'.
+> **Cos'è questo file.** Le regole dei **Cloudflare Worker** che fanno da proxy ai
+> salvataggi delle aree admin. Si carica quando si legge un file di questa cartella; le
+> regole trasversali stanno nel `CLAUDE.md` di **root**, e il formato dei dati che il Worker
+> scrive in [`arda/top/CLAUDE.md`](../arda/top/CLAUDE.md), sezione '🗃️ Struttura dati'.
+
+## ⚠️⚠️ I Worker sono DUE, e la separazione è la salvaguardia
+
+| Worker | sorgente | scrive su | serve |
+|---|---|---|---|
+| `arda-admin-proxy` | `proxy/arda-admin-proxy.js` | `arda/top/dati.js` | 'I Grandi di Arda' |
+| `earthsea-admin-proxy` | `proxy/earthsea/earthsea-admin-proxy.js` | `earthsea/top/dati.js` | 'I Grandi di Terramare' (dal 2026-08-23) |
+
+**Perché due e non uno multi-sito** (scelta dell'utente, 2026-08-23, fra le due strade
+messe a confronto): il percorso di scrittura è cablato lato server, quindi un solo Worker
+avrebbe dovuto riceverlo dal client, e un client che sbaglia parametro avrebbe scritto le
+voci di un sito **sopra** il dataset dell'altro. Con due Worker quel danno non ha proprio
+la strada: sono due URL, due `FILE_PATH`, due secret, e le parole d'ordine possono essere
+diverse.
+
+- ⚠️⚠️ **Il rovescio, che va sorvegliato**: i due file condividono l'impianto e possono
+  **divergere**. Chi corregge un difetto in uno **guardi se c'è anche nell'altro**. Le
+  differenze **volute** sono quattro, ed è l'unica cosa che non va uniformata: `FILE_PATH`,
+  `DATI_MIN` (50 per Arda che ha ~300 voci, **5** per Terramare che ne ha 19: copiare il 50
+  romperebbe *tutti* i salvataggi di Terramare, e l'errore direbbe 'client rotto'), il bump
+  di sola SlimVer (Arda è bi-formato per il suo SemVer storico), e la **riscrittura che
+  conserva i commenti**.
+- ⚠️⚠️ **La riscrittura è diversa, e non è un vezzo**: Arda **ricostruisce** l'intero
+  `dati.js` dai dati ricevuti; Terramare **sostituisce le sole righe che cambiano**. Il suo
+  `dati.js` porta 28 righe di commento fra le dichiarazioni (che cosa è attestato, il
+  criterio del badge `nomeged`, la fonte dei titoli inglesi), e ricostruendo il file il
+  primo salvataggio admin le avrebbe cancellate tutte, in silenzio e senza errori. Il
+  dataset è dichiarato NON verificato: quelle note sono la sua sola memoria.
+  - **Ogni sostituzione deve trovare la sua ancora**: se una non la trova, il Worker
+    **rifiuta** con un errore parlante e non scrive niente. Un file mezzo riscritto è
+    peggio di un salvataggio rifiutato.
+  - **Presidio sul risultato**: prima del PUT si contano i commenti, e se dopo sono meno di
+    prima il salvataggio si ferma. È la verifica che rende la conservazione un fatto invece
+    di un'intenzione.
+  - ⚠️ **C'è un banco di prova, e va lanciato**: `node proxy/earthsea/prova-riscrittura.mjs`
+    esercita quella funzione sul `dati.js` **vero**, in locale. Va usato **prima di ogni
+    modifica** a `rewriteDatiFile`, perché l'unico altro modo di provarla è un salvataggio
+    in produzione, cioè sul file che deve non rovinare.
+- **La spia `site`**: i due Worker rispondono al GET diagnostico anche con `site`
+  (`earthsea` per quello nuovo). ⚠️ È la verifica che conta più di `rev` quando si ha un
+  dubbio su quale URL si sta interrogando: due Worker gemelli si distinguono da lì.
+- ⚠️ **In dashboard la root directory è `proxy/earthsea`**, non `proxy`: quella è di Arda, e
+  due `wrangler.toml` nella stessa cartella non potrebbero convivere.
+- Il Worker di Terramare **non ha l'action `translate`**, e non è una dimenticanza: quel
+  flag è spento in Terramare, e il prompt di Arda è tarato sul legendarium **tolkieniano**
+  (edizioni italiane, nomi canonici). Copiarlo avrebbe portato le regole di un altro mondo
+  dentro questo sito.
+
+Il resto di questo file descrive `arda-admin-proxy`, e vale come impianto anche per
+l'altro, con le quattro differenze qui sopra.
 
 ## 🔌 Il Worker `arda-admin-proxy`
 

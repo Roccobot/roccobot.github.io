@@ -1,0 +1,46 @@
+# Configurazione Cloudflare Worker: proxy admin di 'I Grandi di Terramare'
+#
+# I SECRET (GITHUB_PAT, ADMIN_PASSWORD) NON vanno qui: si impostano con
+#   wrangler secret put GITHUB_PAT
+#   wrangler secret put ADMIN_PASSWORD
+# (oppure dal dashboard: Workers -> earthsea-admin-proxy -> Settings -> Variables
+# -> Secrets). Vedi proxy/earthsea/README.md.
+#
+# Qui sotto solo la variabile NON segreta dell'origine autorizzata (CORS).
+#
+# ⚠️ Worker SEPARATO da arda-admin-proxy, con nome, secret e Durable Object propri:
+# la separazione e' la salvaguardia contro il rischio di scrivere sul dataset
+# dell'altro sito (vedi l'intestazione del sorgente).
+# ⚠️ La root directory di questo progetto in dashboard e' `proxy/earthsea`, NON
+# `proxy`: quella e' di Arda, e due wrangler.toml nella stessa cartella non
+# potrebbero convivere.
+
+name = "earthsea-admin-proxy"
+main = "earthsea-admin-proxy.js"
+compatibility_date = "2024-11-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ALLOWED_ORIGIN = "https://roccobot.github.io"
+
+# Rate limiting anti brute force sulla parola d'ordine admin: contatore per IP in
+# un Durable Object (classe RateLimiter nel codice), unico strumento sui Workers
+# con conteggio globale e coerente. Limite e finestra sono nel codice
+# (RL_MAX/RL_WINDOW). Binding + migrazione dichiarati qui, quindi sopravvivono a
+# ogni ricostruzione automatica via Git integration: configurato una volta, per
+# sempre.
+# ⚠️ Le alternative sono gia' state misurate e NON funzionano su questo hosting: il
+# binding nativo 'ratelimit' e' no-op sui Workers Builds, il contatore in KV e'
+# troppo lento, quello in memoria dell'isolate non conta. Storia in proxy/CLAUDE.md,
+# non riprovarle.
+[[durable_objects.bindings]]
+name = "RL_DO"
+class_name = "RateLimiter"
+
+# Migrazione una tantum: registra la classe come Durable Object con backend SQLite
+# (disponibile anche sul piano gratuito). Il tag e' per-Worker, quindi non
+# interferisce con la migrazione omonima di arda-admin-proxy.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RateLimiter"]

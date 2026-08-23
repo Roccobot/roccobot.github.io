@@ -1168,6 +1168,27 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
   padding:0.6rem 0.7rem 0.6rem 0.65rem; cursor:default;
 }
 .ctrl-cardleg .rank-item:hover, .ctrl-cardleg .rank-item:focus-within { background:inherit; }
+/* ⚠️⚠️ La legenda porta il COLORE DEL TITOLONE, non quello di una famiglia (richiesta
+   dell'utente, 2026-08-23), e sono i capi alti dei due gradienti di `h1`: `#a8e6dc` in
+   scuro, `#0e6b5e` in chiaro. Così la card finta si legge come parte
+   dell'intestazione del sito e non come la scheda di un uomo, che è quello che
+   sembrava prendendo la tinta di `cc-man`.
+   ⚠️ È una DEROGA dichiarata alla regola per cui in `.ctrl-cardleg` si toccano solo le
+   misure del contenitore: qui si tocca anche la tinta, ed è voluto. Tutto il resto
+   (tipi, bordino, fondo, struttura) resta quello delle card vere, che è il motivo per
+   cui la legenda esiste.
+   ⚠️ La classe `cc-man` RESTA nel markup e non è un residuo: porta con sé le regole
+   iniettate da `injectCardColorRules` (fondo e bordino leggono `--ccrgb`), e qui si
+   sovrascrivono le due sole variabili. Togliendola, la card perderebbe fondo e
+   bordino insieme al colore.
+   ⚠️ I due `--cctxt` NON sono copiati a mano dal gradiente: sono il risultato di
+   `ccFamTxt`, la stessa funzione che rende AA le tinte di famiglia, interrogata sulla
+   pagina vera. Per queste due tinte torna il colore invariato (sono già sopra 4,5:1
+   sul fondo del loro tema), e per questo le coppie coincidono: non è una svista.
+   La specificità basta a battere le regole iniettate: (0,2,0) contro (0,1,0) in
+   scuro, (0,3,1) contro (0,2,1) in chiaro. */
+.ctrl-cardleg .rank-item { --ccrgb:168,230,220; --cctxt:168,230,220; }
+html[data-theme="light"] .ctrl-cardleg .rank-item { --ccrgb:14,107,94; --cctxt:14,107,94; }
 .ctrl-cardleg .rank-name { font-size:1.14rem; }
 /* La legenda scala anche il vero nome: senza, resterebbe al clamp delle card
    vere e nella card finta sarebbe piu' grande del nome d'uso, mostrando una
@@ -2572,7 +2593,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.31</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.32</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6761,15 +6782,16 @@ let adminPassword = '';
 // URL del proxy admin (Cloudflare Worker). Non è un segreto: è solo l'endpoint.
 // Overridabile al volo dal campo "Proxy" nell'editor admin (localStorage).
 //
-// ⚠️⚠️ VUOTO, ED È UNA SALVAGUARDIA, non un pezzo che manca: Terramare non ha
-// ancora un Worker suo, e quello di 'I Grandi di Arda' ha il percorso di scrittura
-// CABLATO lato server (`FILE_PATH = 'arda/top/dati.js'` in
-// proxy/arda-admin-proxy.js). Ereditando quell'URL, un salvataggio fatto da qui
-// avrebbe committato le 17 voci di Terramare SOPRA il dataset di Arda, con la
-// versione bumpata e il deploy tutto verde: distruzione silenziosa dell'altro
-// sito. Finché resta vuoto lo sblocco admin si rifiuta (vedi tryAuth) e il
-// pannello resta quello dei visitatori, con 'Esporta' al posto di 'Salva'.
-var ADMIN_PROXY_URL_DEFAULT = '';
+// ⚠️⚠️ È il Worker DI TERRAMARE, e il nome va guardato prima di toccarlo: fino al
+// 2026-08-23 questa riga era VUOTA come salvaguardia, perché il Worker di 'I Grandi
+// di Arda' ha il percorso di scrittura CABLATO lato server (`FILE_PATH =
+// 'arda/top/dati.js'`). Ereditando QUEL URL, un salvataggio fatto da qui avrebbe
+// committato le voci di Terramare SOPRA il dataset di Arda, con la versione bumpata
+// e il deploy tutto verde: distruzione silenziosa dell'altro sito. La salvaguardia
+// non è caduta, è stata sostituita da un Worker separato (`proxy/earthsea/`) che
+// scrive su `earthsea/top/dati.js`. ⚠️ Chi vedesse `arda-admin-proxy` qui dentro non
+// stia a chiedersi se è un refuso: è il difetto che questa nota previene.
+var ADMIN_PROXY_URL_DEFAULT = 'https://earthsea-admin-proxy.roccobot-b90.workers.dev';
 // L'override da localStorage è comodo per i test ma è anche un bersaglio:
 // chi riuscisse a scrivere quella chiave dirotterebbe la parola d'ordine
 // verso un server proprio al prossimo sblocco. Allowlist: solo https sui
@@ -7133,7 +7155,7 @@ function showPasswordModal(promptText, onSuccess, extra) {
     // rete/blocco o un rate-limit (429) mostravano lo STESSO testo, mascherando
     // la causa reale (utile p.es. sul bug 'mai riconosciuta da mobile').
     const MSG = { auth: 'Password errata', rate: 'Troppi tentativi: attendi circa un minuto', net: 'Impossibile contattare il server (rete assente o richiesta bloccata)',
-                  noproxy: 'Terramare non ha ancora un proxy admin: usa Esporta' };
+                  noproxy: 'Nessun proxy admin configurato: usa Esporta' };
     const fail = (kind) => {
       inp.style.borderColor = 'rgba(220,80,80,0.8)'; inp.value = '';
       errMsg.textContent = MSG[kind] || MSG.auth;
@@ -7148,6 +7170,11 @@ function showPasswordModal(promptText, onSuccess, extra) {
       if (!pw) { fail('auth'); authing = false; return; }
       // Nessun proxy: si esce PRIMA di mandare la parola d'ordine in rete, che
       // senza endpoint finirebbe in una POST sulla pagina stessa.
+      // ⚠️ Dal 2026-08-23 l'endpoint c'è (Worker di Terramare), quindi questo ramo
+      // non scatta più nell'uso normale: NON è codice morto ed è la ragione per cui
+      // resta scritto qui. È la precondizione che regge se un domani la costante
+      // viene svuotata o l'override in `localStorage` finisce vuoto, e il suo costo
+      // è una riga contro una parola d'ordine spedita a un endpoint sbagliato.
       if (!proxyUrl()) { fail('noproxy'); authing = false; return; }
       cb.disabled = true;
       let outcome = 'net';
