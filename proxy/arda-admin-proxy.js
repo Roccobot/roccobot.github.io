@@ -300,7 +300,19 @@ export default {
     // 'rl' = presenza del binding del Durable Object di rate limiting.
     // Nessun segreto esposto. (Il rate limiting via DO è stato verificato
     // funzionante il 2026-07-04: ok fino a RL_MAX, poi 429.)
-    if (request.method !== 'POST') return json({ ok: false, error: 'method', rev: 15, rl: !!env.RL_DO }, 405, ch);
+    // ⚠️ `pw`, `pat` e `gem` (dalla rev 16) dicono se i tre secret CI SONO, non quanto
+    // valgono: booleani, mai un pezzo del valore né la sua lunghezza. Sono nati dal
+    // difetto del Worker gemello di Terramare (secret non impostato e serratura
+    // aperta): quello stato era invisibile dall'esterno, e per accorgersene serviva un
+    // POST di prova. Ora si legge dalla stessa riga che dice se il deploy è arrivato.
+    // `gem` è la chiave della traduzione, opzionale: un `false` lì significa solo che
+    // l'action `translate` risponderà `no-gemini-key`, non che l'admin sia rotto.
+    if (request.method !== 'POST') {
+      return json({ ok: false, error: 'method', rev: 16, rl: !!env.RL_DO,
+        pw: !!(env.ADMIN_PASSWORD && String(env.ADMIN_PASSWORD).length),
+        pat: !!(env.GITHUB_PAT && String(env.GITHUB_PAT).length),
+        gem: !!(env.GEMINI_API_KEY && String(env.GEMINI_API_KEY).length) }, 405, ch);
+    }
 
     // Rate limiting per IP, applicato PRIMA di leggere il body e di toccare la
     // password: un brute force scala da migliaia di tentativi al minuto a
@@ -322,7 +334,22 @@ export default {
     catch (e) { return json({ ok: false, error: 'bad-json' }, 400, ch); }
 
     // Autenticazione lato server: la password non esiste nel client.
-    if (!(await safeEqual(String(body.password || ''), String(env.ADMIN_PASSWORD || '')))) {
+    // ⚠️⚠️ FAIL-CLOSED, e la guardia arriva da un difetto MISURATO sul Worker GEMELLO
+    // di Terramare il 2026-08-23: senza il secret impostato,
+    // `String(env.ADMIN_PASSWORD || '')` vale `''`, e il confronto con una password
+    // vuota mandata dal client tornava TRUE. Là il Worker rispondeva `{"ok":true}` a
+    // chiunque mandasse `password: ""`, cioè la serratura si apriva proprio quando la
+    // chiave non era stata messa. Questo Worker NON era esposto (il suo secret c'è, ed
+    // è stato verificato con la stessa prova), ma la riga era identica: la guardia è
+    // arrivata qui prima che il caso si presentasse, non dopo.
+    // ⚠️ La politica è l'OPPOSTO di quella del rate limiter, ed è deliberato: quello è
+    // fail-open (meglio un Worker senza limitatore che un admin chiuso fuori), questa
+    // è la serratura, e una serratura che si apre quando manca un pezzo non è una
+    // serratura. Errore parlante e 500: è una configurazione mancante, non un
+    // tentativo sbagliato.
+    const atteso = String(env.ADMIN_PASSWORD || '');
+    if (!atteso) return json({ ok: false, error: 'no-admin-password' }, 500, ch);
+    if (!(await safeEqual(String(body.password || ''), atteso))) {
       return json({ ok: false, error: 'auth' }, 401, ch);
     }
 
