@@ -1,4 +1,4 @@
-var datiVersion = "0.43";
+var datiVersion = "0.44";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 // ⚠️ Questa riga VINCE sul fallback dentro index.html: e' la configurazione salvata,
@@ -39,9 +39,12 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // ⚠️ Le due voci in coda, **Sege** e **Tosla**, sono le PRIME verificate sulle fonti
 // invece che dichiarate a memoria (2026-08-23, su richiesta dell'utente, e senza passare
 // dallo Schedario: sua deroga esplicita). Che cosa è attestato e che cosa no sta in
-// `CLAUDE.md`, § 'Sege e Tosla'; qui basta il punto che inganna: `paese` è pieno per
-// Sege (Havnor) e VUOTO per Tosla, perché del secondo il testo non dice mai da dove
-// venga. Il vuoto è un dato, non un campo da riempire.
+// `CLAUDE.md`, § 'Sege e Tosla'.
+// ⚠️⚠️ `paese` NON è il campo dell'origine, ed è un errore già commesso qui: nella `0.43`
+// portava `Havnor` per Sege, corretto nella `0.44`. È un **residuo del motore di
+// provenienza**, dove vale `gb` per tutte e 360 le voci di Arda: un codice di paese della
+// lista originale, che nessuno dei due siti legge. L'origine verificata di Sege vive in
+// `CLAUDE.md` finché le origini geografiche non avranno un campo vero.
 var dati = [
 {"nome":"Sparviero","nome_en":"Sparviero","vero_nome":"Ged","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Falco","nomi_alternativi_en":"Falco","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":false,"signoredraghi":true,"arcimago":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Ogion","nome_en":"Ogion","vero_nome":"Aihal","fonte":"Le ossa della terra (2001)","fonte_en":"The Bones of the Earth (2001)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
@@ -62,6 +65,6 @@ var dati = [
 {"nome":"Diamante","nome_en":"Diamante","vero_nome":"Essiri","fonte":"Rosascura e Diamante (1999)","fonte_en":"Darkrose and Diamond (1999)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Burrone","nome_en":"Burrone","vero_nome":"Irioth","fonte":"Nell'Alta Palude (2001)","fonte_en":"On the High Marsh (2001)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Otak","nomi_alternativi_en":"Otak","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Solevivo","nome_en":"Solevivo","vero_nome":"Ayeth","fonte":"Nell'Alta Palude (2001)","fonte_en":"On the High Marsh (2001)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"stregone":true,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"},
-{"nome":"Sege","nome_en":"Sege","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","paese":"Havnor","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"Primo Consigliere, Principe della Casa di Havnor","appellativi_en":"First Councillor, Prince of the House of Havnor","info":"","info_en":"","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"},
+{"nome":"Sege","nome_en":"Sege","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"Primo Consigliere, Principe della Casa di Havnor","appellativi_en":"First Councillor, Prince of the House of Havnor","info":"","info_en":"","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Tosla","nome_en":"Tosla","vero_nome":"","fonte":"I venti di Terramare (2001)","fonte_en":"The Other Wind (2001)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"Capitano","appellativi_en":"Shipmaster","info":"","info_en":"","featured":false,"divino":false,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"}
 ];
