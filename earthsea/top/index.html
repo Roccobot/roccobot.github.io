@@ -5984,11 +5984,10 @@ function controlPanelHTML() {
   // isolare l'altra) e mangiavano la metà della larghezza. Con loro sono uscite
   // le misure-fantasma .ctrl-btn-m, che servivano a tenerli larghi uguali fra le
   // lingue.
-  // ⚠️ Dal 2026-08-23 le categorie sono TRE, quindi quella ragione è decaduta: per
-  // isolarne una servono adesso DUE spegnimenti, e il tasto 'solo' torna a valere
-  // qualcosa. Non è stato reintrodotto perché nessuno l'ha chiesto: qui resta scritto
-  // che la sua motivazione originale non regge più, così chi lo rivorrà non ripartirà
-  // credendo che fosse una scelta di spazio.
+  // ⚠️ Dal 2026-08-23 le categorie sono TRE, quindi quella ragione è decaduta: per isolarne
+  // una servono adesso DUE spegnimenti. La domanda è stata posta all'utente, e la risposta è
+  // **no**: *niente tasto 'Solo'*. Quindi non è una dimenticanza da sanare, è una scelta
+  // ripetuta a distanza di due giorni e con l'aritmetica cambiata.
   destra += '<div class="ctrl-section ctrl-section--filtri">';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){
