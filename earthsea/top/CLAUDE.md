@@ -533,9 +533,23 @@ sbagliare, perché tutto il resto lo eredita.
 
 ⚠️ **Usa le classi REALI** (`.rank-item`, `.rank-name`, `.rank-vero`, `.rank-subtitle`) e la
 stessa `joinBipartite` del sottotitolo: gli overrides in `.ctrl-cardleg` toccano **solo** le
-misure del contenitore. Se un domani si ridisegnasse la card copiando gli stili nella legenda,
-la legenda comincerebbe a mostrare una card che non esiste, che è l'unico modo in cui può
-sbagliare.
+misure del contenitore, **e la tinta** (deroga dichiarata qui sotto). Se un domani si
+ridisegnasse la card copiando gli stili nella legenda, la legenda comincerebbe a mostrare una
+card che non esiste, che è l'unico modo in cui può sbagliare.
+
+- ⚠️⚠️ **La tinta è quella del TITOLONE, non di una famiglia** (richiesta dell'utente,
+  2026-08-23): i capi alti dei due gradienti di `h1`, `#a8e6dc` in scuro e `#0e6b5e` in
+  chiaro. Prima prendeva quella di `cc-man` e la card finta si leggeva come la scheda di un
+  uomo; ora si legge come parte dell'intestazione del sito. È la sola deroga alla regola
+  'solo le misure', ed è voluta.
+  - ⚠️ **La classe `cc-man` RESTA nel markup e non è un residuo**: porta con sé le regole
+    iniettate da `injectCardColorRules` (fondo e bordino leggono `--ccrgb`), e il CSS
+    sovrascrive le due sole variabili. Togliendola, la card perderebbe fondo e bordino
+    insieme al colore.
+  - ⚠️ **Il colore del testo non è copiato a mano dal gradiente**: viene da `ccFamTxt`, la
+    stessa funzione che rende AA le tinte di famiglia, **interrogata sulla pagina vera**
+    invece di replicarne la formula. Per queste due tinte torna il colore invariato (sono già
+    sopra 4,5:1 sul fondo del loro tema), e per questo le coppie coincidono: non è una svista.
 
 - Ha preso il posto della vecchia **nota sui nomi** ereditata da Arda ('i veri nomi sono in
   grassetto sotto il nome'), che dopo questa riorganizzazione **diceva il falso**. Con lei sono
@@ -775,18 +789,36 @@ characters*. Si vede sulla card, nella riga che il motore chiama `.rank-title`.
   **primo titolo elencato**. Quindi il campo va riletto quando il canone entra in scena
   (Kalessin, per dire, è dato come *Tehanu*).
 
-## 🔐 Nessun proxy admin, e il motivo è distruttivo
+## 🔐 Il proxy admin è SUO, e la separazione è la salvaguardia
 
-`ADMIN_PROXY_URL_DEFAULT` è **vuoto** e lo sblocco admin si rifiuta con un messaggio
-esplicito. Non è un pezzo che manca: è una **salvaguardia**.
+**Dal 2026-08-23** Terramare ha un Worker proprio, `earthsea-admin-proxy`
+(`proxy/earthsea/`), e `ADMIN_PROXY_URL_DEFAULT` punta a lui. Le regole del Worker vivono
+in [`proxy/CLAUDE.md`](../../proxy/CLAUDE.md) e qui non si duplicano: qui sta solo quello
+che serve sapere **da questo lato**.
 
-⚠️ Il Worker di 'I Grandi di Arda' ha il percorso di scrittura **cablato lato server**
-(`FILE_PATH = 'arda/top/dati.js'` in `proxy/arda-admin-proxy.js`). Ereditando quell'URL, un
-salvataggio fatto da qui avrebbe committato le voci di Terramare **sopra il dataset di Arda**,
-con la versione bumpata e il deploy tutto verde: nessun errore da nessuna parte, e l'altro
-sito distrutto in silenzio. Quando Terramare avrà un Worker suo, si mette **quello**.
-
-Fino ad allora il pannello resta quello dei visitatori, con **Esporta** al posto di Salva.
+- ⚠️⚠️ **Perché non si eredita l'URL di Arda, e va saputo prima di 'semplificare'**: quel
+  Worker ha il percorso di scrittura **cablato lato server** (`FILE_PATH =
+  'arda/top/dati.js'`). Puntandolo da qui, un salvataggio avrebbe committato le voci di
+  Terramare **sopra il dataset di Arda**, con la versione bumpata e il deploy tutto verde:
+  nessun errore da nessuna parte, e l'altro sito distrutto in silenzio. Fino al 2026-08-23
+  la salvaguardia era tenere la costante **vuota**; ora è un Worker separato, che è la stessa
+  difesa fatta meglio. ⚠️ Chi vedesse `arda-admin-proxy` in questo sito non si chieda se è
+  un refuso: è il difetto che questa nota previene.
+- ⚠️ **Il pannello NON diventa admin da solo**: servono i secret sul Worker, e finché non ci
+  sono lo sblocco risponde `auth` e il salvataggio `no-github-pat`. Le tre cose da fare in
+  dashboard stanno in `proxy/earthsea/README.md`, e sono dell'utente: richiedono l'accesso
+  all'account Cloudflare.
+- **La verifica che il Worker giusto risponda** è un GET sul suo URL: torna anche
+  `site:"earthsea"`. ⚠️ Vale più di `rev` quando il dubbio è *quale* dei due Worker si sta
+  interrogando, perché sono gemelli.
+- **Il ramo 'nessun proxy' nel client resta**, e non è codice morto: è la precondizione che
+  regge se la costante viene svuotata o se l'override in `localStorage` finisce vuoto, e
+  costa una riga contro una parola d'ordine spedita a un endpoint sbagliato. Il suo
+  messaggio non dice più 'Terramare non ha ancora un proxy', che sarebbe falso.
+- ⚠️ **Il `dati.js` di questo sito ha 28 righe di COMMENTO** fra le dichiarazioni, e il
+  Worker le conserva perché **sostituisce le righe** invece di ricostruire il file (come fa
+  invece quello di Arda). Se un domani si toccasse quella parte, `proxy/CLAUDE.md` dice
+  perché, e c'è un banco di prova da lanciare prima.
 
 ## 🗄️ Le chiavi di `localStorage` portano il prefisso `earthsea-`
 
