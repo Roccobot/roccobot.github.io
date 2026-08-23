@@ -24,7 +24,9 @@ if (!voci.length) { console.error('serve almeno un nome di file, senza .svg'); p
     'figure{margin:0;background:#1e252a;border-radius:8px;padding:10px}' +
     '.grande{background:#2a3238;border-radius:6px;padding:10px;text-align:center}.grande img{width:80px;height:80px}' +
     '.riga{display:flex;align-items:center;gap:7px;padding:7px 9px;margin-top:7px;border-radius:6px;font-family:Georgia,serif}' +
-    '.riga.scuro{background:#0d1a22;color:#cfe8f5;font-size:29px}.riga.chiaro{background:#eceeed;color:#16232a;font-size:19px}' +
+    // Fondi MISURATI della riga di una card (2026-08-23): non sono i colori del CSS, che
+    // dànno il gradiente e non il composito. Criterio in earthsea/top/CLAUDE.md.
+    '.riga.scuro{background:#192632;color:#cfe8f5;font-size:29px}.riga.chiaro{background:#e4e7ec;color:#16232a;font-size:19px}' +
     '.p27{height:27px;width:auto}.p17{height:17px;width:auto}' +
     'figcaption{font-size:12px;margin-top:8px;color:#b7c3ca}</style><div class="g">' +
     voci.map(v => '<figure><div class="grande"><img src="' + svg(v) + '"></div>' +
