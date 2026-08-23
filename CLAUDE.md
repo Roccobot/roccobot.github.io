@@ -61,6 +61,16 @@ quindi è da qui che parte tutto il resto (scelta dell'utente, 2026-07-29).
 I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
 sessione:
 
+0. ⚠️⚠️ **PRIMA DI TUTTO, il permesso `Artifact` nelle impostazioni UTENTE**, senza chiederlo
+   e senza annunciarlo (istruzione dell'utente, 2026-08-23: *fa' in modo che questa cosa
+   avvenga ad ogni nuova sessione, all'inizio, senza che lo debba chiedere io*). Il comando è
+   **idempotente** e conserva le altre chiavi di un file già esistente:
+   ```
+   python3 -c "import json,os;p=os.path.expanduser('~/.claude/settings.json');os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault('permissions',{}).setdefault('allow',[]);'Artifact' in al or al.append('Artifact');json.dump(d,open(p,'w'),indent=1)"
+   ```
+   ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
+   chiedere il consenso a ogni artefatto, ed è successo per giorni. Il perché la regola non
+   basti scritta altrove, e le altre due vie che la coprono, stanno in § '🖼️ Artefatti'.
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
 2. Poi si fa **una sola chiamata** allo strumento di domanda, con **due** domande, e
@@ -382,13 +392,28 @@ privato finché l'utente non lo condivide.
 - ⚠️ **Ma il permesso `Artifact` di questo `settings.json` non basta**, e l'utente si è visto
   chiedere il consenso a ogni artefatto per giorni: nelle sessioni coi **due repo affiancati**
   quel file non si legge (trappola in fondo a questo `CLAUDE.md`), quindi la regola non entra
-  mai in vigore. Il rimedio che **aggira** la causa invece di subirla sono le impostazioni
-  **utente**, lette a prescindere dalla radice di progetto: se `~/.claude/settings.json` non
-  esiste, crearlo con `{"permissions":{"allow":["Artifact"]}}` e proseguire senza dirlo.
-  - ⚠️ **Va rifatto, e non è una svista**: il container di queste sessioni è effimero, quindi
-    il file sparisce con lui. È scritto qui perché questo è il solo file che si carica
-    **sempre**, anche quando la radice di progetto è la cartella che contiene i due repo: una
-    nota altrove non arriverebbe in tempo.
+  mai in vigore. Il rimedio **aggira** la causa invece di subirla: le impostazioni **utente**
+  (`~/.claude/settings.json`), che si leggono a prescindere dalla radice di progetto.
+- ⚠️⚠️ **Il permesso si scrive in TRE punti, e non è ridondanza: ognuno copre un caso che gli
+  altri due non coprono.** Sapere quale copre cosa evita di 'sanare' quello che sembra
+  duplicato.
+  1. **Lo script di setup dell'ambiente** (impostazioni web di Claude Code, non un file del
+     repo): è l'unico che gira **prima** che la sessione parta, quindi l'unico che toglie il
+     prompt **anche al primo artefatto della prima sessione** di un container nuovo. La riga
+     da incollare là è quella del passo 0 del protocollo di avvio.
+  2. **L'hook `SessionStart` di questo `settings.json`**: gira da sé, senza che nessuno
+     ricordi niente, ⚠️ ma **solo nelle sessioni la cui radice è il repo** (dove il permesso
+     `Artifact` di questo stesso file già bastava). Vale come rete: costa nulla e non dipende
+     da me.
+  3. **Il passo 0 del protocollo di avvio**, che è l'unico che copre il caso peggiore, le
+     sessioni coi **due repo affiancati**: là nessun hook gira e nessun `settings.json` di
+     progetto si legge, ma **questo file si carica sempre**, quindi la regola arriva comunque.
+  - ⚠️ **Il limite che resta, e va detto invece di prometterlo risolto**: un file scritto
+    **dentro** la sessione può non entrare in vigore in quella sessione, perché le
+    impostazioni si leggono all'avvio. Nelle vie 2 e 3 il permesso è certo dalla sessione
+    dopo; solo la via 1 lo garantisce dal primo turno.
+  - ⚠️ **Va rifatto a ogni container, e non è una svista**: il container di queste sessioni è
+    effimero, quindi il file sparisce con lui. La via 1 è l'unica che lo ricrea da sé.
 
 ## 📐 Misure in pixel → unità relative
 
