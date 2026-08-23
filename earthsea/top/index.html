@@ -442,8 +442,18 @@ html { --col-max:680px; }
    ⚠️ Niente `text-transform` qui: le iniziali arrivano dal DATO, che è già scritto
    così ('Orm Embar'), e una regola CSS che le forzasse maiuscole romperebbe i nomi
    in cui la maiuscola interna non c'è. */
+/* ⚠️⚠️ IL PESO È 700 NEI DUE TEMI dalla 0.40, e prima non lo era: il tema chiaro
+   scavalcava a 700 e lo scuro restava a 600. Segnalato dall'utente come un difetto
+   ('passando da un tema all'altro le lettere sono più piccole in tema scuro'), ed era
+   vero: a parità di corpo il 600 rende il nome più stretto di 3,78px su 118,86
+   (misurato coi font veri, 'Sparviero' a 1200px di viewport). Non è un'illusione
+   ottica, è un peso diverso.
+   ⚠️ L'override chiaro veniva da Arda SENZA un commento che ne dicesse la ragione, e
+   una compensazione ottica non dichiarata non si distingue da una svista: se un domani
+   si vuole alleggerire il nome sul fondo scuro (dove il chiaro su scuro 'fiorisce'), si
+   fa con una nota che lo dica e con l'utente d'accordo. */
 .rank-name {
-  font-family:'EB Garamond',serif; font-weight:600;
+  font-family:'EB Garamond',serif; font-weight:700;
   font-size:clamp(1.24rem,3.7vw,1.82rem);
   color:var(--name); letter-spacing:0.01em;
   transition:color 0.35s; line-height:1.2;
@@ -491,7 +501,10 @@ html { --col-max:680px; }
 .rank-name.name-tight { letter-spacing:0.006em; gap:0.24em; }
 
 .rank-title {
-  font-family:'EB Garamond',serif; font-style:italic;
+  /* Peso 500 nei due temi (0.40): era 500 nel solo chiaro. La riga oggi è vuota per
+     tutti (nessuna voce ha titoli), quindi la differenza non si vedeva: si sarebbe vista
+     appena compilati i primi titoli, ed è lo stesso difetto del nome. */
+  font-family:'EB Garamond',serif; font-style:italic; font-weight:500;
   font-size:clamp(0.82rem,2.1vw,0.98rem);
   color:var(--parchment-dim); letter-spacing:0.01em;
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
@@ -2320,10 +2333,9 @@ html[data-theme="light"] .rank-item:hover, html[data-theme="light"] .rank-item:f
     border-color: rgba(60,95,150,0.55);
   }
 /* vis-top: inline-style handles border; no background override */
-html[data-theme="light"] .rank-num {
-    text-shadow: none;
-    font-weight: 900;
-  }
+/* Il `font-weight:900` che stava qui RIPETEVA il valore base: via, resta lo spegnimento
+   dell'alone, che in chiaro è una scelta vera. */
+html[data-theme="light"] .rank-num { text-shadow: none; }
 /* #2: il numero non cambia colore al passaggio del mouse */
 
 html[data-theme="light"] .rank-item.divine {
@@ -2350,14 +2362,13 @@ html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { 
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
 html[data-theme="light"] .leg-gender { background:rgba(58,88,120,0.07); border-color:rgba(58,88,120,0.28); }
 html[data-theme="light"] .leg-gender .leg-g-half:first-child { border-right-color:rgba(58,88,120,0.20); }
-html[data-theme="light"] .rank-name {
-    font-weight: 700;
-  }
-html[data-theme="light"] .rank-item.vis-top .rank-name { font-size: clamp(1.24rem,3.9vw,1.82rem); }
-html[data-theme="light"] .rank-title {
-    color: #2e2e2e;
-    font-weight: 500;
-  }
+/* ⚠️ Qui c'erano TRE regole tipografiche per-tema, e sono uscite tutte nella 0.40: il
+   peso 700 del nome (ora è il valore base, vedi `.rank-name`), il peso 500 di
+   `.rank-title` (ora base: là il testo è VUOTO finché nessuno ha titoli, quindi la
+   differenza 400/500 era invisibile e sarebbe comparsa il giorno che si compilano) e un
+   `font-size` su `.vis-top .rank-name` **identico** a quello base, cioè codice morto
+   copiato col motore. Resta il solo colore, che per-tema ha senso. */
+html[data-theme="light"] .rank-title { color: #2e2e2e; }
 
 /* Backdrop uniforme (dalla v8.76): CHIARO su tema chiaro (prima era un velo
    scuro anche in chiaro). Vale per tutti i modali che usano .modal-backdrop
@@ -2651,7 +2662,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.39</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.40</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

@@ -895,6 +895,29 @@ nel **solo** tema chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo), che non si è mosso
   **non vale più**: schiarendo si è ricomprato margine, e chi volesse riscurire ha spazio fino
   a `#3072a1`.
 
+- ⚠️⚠️ **LE DUE TAVOLOZZE NON TOCCANO LA TIPOGRAFIA, e dalla `0.40` è vero**: corpo, peso,
+  spaziatura e famiglia sono gli stessi nei due temi, e per-tema resta il solo **colore** (più
+  lo spegnimento dell'alone del numero in chiaro, che è una scelta vera). Segnalato
+  dall'utente come un difetto: *passando da un tema all'altro le lettere sono più piccole in
+  tema scuro*.
+  - **Non era un'illusione: era un PESO diverso.** Il nome della card stava a **600** in scuro
+    e a **700** in chiaro, e a parità di corpo il 600 lo rende più stretto di **3,78px su
+    118,86** ('Sparviero' a 1200px di viewport, misurato coi font veri). Uguale storia per
+    `.rank-title`, 400 in scuro e 500 in chiaro, ⚠️ **invisibile oggi** perché quella riga è
+    vuota per tutti: sarebbe comparsa il giorno in cui si compilano i titoli.
+  - ⚠️⚠️ **Le due regole venivano da Arda SENZA un commento che ne dicesse la ragione**, ed è
+    questo che le ha rese indistinguibili da una svista. Alleggerire un testo chiaro su fondo
+    scuro (dove 'fiorisce') è una tecnica legittima: ma se la si vuole, si dichiara nel
+    commento e la decide l'utente. Una compensazione ottica muta è un difetto.
+  - **Nella stessa passata sono uscite due regole MORTE**, copiate col motore: un `font-size`
+    per-tema su `.vis-top .rank-name` **identico** a quello base, e un `font-weight:900` su
+    `.rank-num` **identico** a quello base.
+  - **Come si verifica**, ed è il modo che ha trovato il difetto: si misurano `fontSize`,
+    `fontWeight`, `letterSpacing`, `lineHeight` e la larghezza resa di una dozzina di
+    selettori nei due temi, in **tre** modi (caricamento in chiaro, caricamento in scuro,
+    commutazione col tasto del Pannello), e si confrontano. ⚠️ La sola `transform` delle card
+    resta diversa fra due letture e **non è un difetto**: è l'animazione d'ingresso colta a
+    metà, e vale 0,3px.
 - ⚠️⚠️ **Il fondo pagina era CABLATO in nove punti**, non solo nel `body`: il gemello del tema
   chiaro, il **fondo di riferimento del gate AA** (`ccFamTxt`), le due anteprime (effetti ed
   editor colori) e i commenti che lo nominavano. Cambiarne uno solo avrebbe fatto calcolare
@@ -941,6 +964,27 @@ campo del dataset e per lo Schedario che lo alimenta.
   un'altra frase e sembrava una prova senza esserlo (Kalessin col brano di Orm Embar, Ivy con
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
   di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
+
+## 🌐 Le due metà del dataset: l'italiano è dell'utente, l'inglese è mio
+
+Quasi ogni campo di testo ha il gemello `_en` (`nome`/`nome_en`, `nomi_alternativi`/`_en`,
+`appellativi`/`_en`, `descrizione`/`_en`, `fonte`/`fonte_en`), e le due metà **non si
+riempiono nello stesso modo** (istruzione dell'utente, 2026-08-23).
+
+- **L'italiano lo scrive l'utente**, coi libri in mano: è la resa delle **edizioni italiane**
+  (Mondadori per i titoli delle opere, Nord per i nomi), e nessuna fonte in rete la sostituisce.
+  Lo Schedario chiede quella metà, e i suoi campi lo dicono nell'etichetta.
+- ⚠️ **L'inglese lo scrivo io, DALLE FONTI**: sue parole, *lascio a te la traduzione in inglese
+  di quello che manca in quella parte di dataset*. Non è una traduzione a memoria e non è una
+  resa letterale: dove la formula tocca **nomi o cose della lore** (un titolo come 'Maestro di
+  Ged', un ruolo di Roke, un toponimo) si **verifica sulle fonti** prima di scriverla, con gli
+  strumenti del canone (`rules/Earthsea.md`: la API della wiki, le pagine di Wikipedia, il
+  grep sugli epub).
+- ⚠️ **Il vero nome NON ha due metà**: nel dataset il campo è singolo, perché i veri nomi non
+  si traducono. Chi aggiungesse un `vero_nome_en` starebbe inventando un campo.
+- **Dove vive la metà inglese finché il dataset non c'è**: negli attributi delle schede dello
+  Schedario, e l'esportazione la porta in **due colonne** (`alternativi EN`, `titoli EN`).
+  ⚠️ Prima stava solo nel mio scratchpad, che muore con la sessione.
 
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 
