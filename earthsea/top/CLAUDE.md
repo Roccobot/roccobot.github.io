@@ -252,7 +252,7 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
     vede non deve mettersi a cercare l'attestazione, e chi riempirà il dataset sulle fonti
     non deve riempire quel campo perché 'è vuoto'.
 
-### 🐲 I TRE badge annunciati, e il criterio di uno solo
+### 🐲 I TRE badge annunciati: il criterio di uno solo
 
 ⚠️ **Non sono ancora nel sito** (al 2026-08-23): l'utente li ha annunciati, le icone sono
 allo stato di proposta in `.memo/proposte/badge-terramare/` (cartella non pubblicata da
