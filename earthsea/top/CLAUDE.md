@@ -440,15 +440,41 @@ Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più
   - ⚠️ **`apple-mobile-web-app-title` segue il MANIFEST, non il `<title>`**: è l'etichetta
     sotto l'icona in schermata Home, quindi vuole la forma breve. Nella `0.24` diceva
     `Earthsea Top`, che non era nessuna delle due forme di Arda.
-- ⚠️ **`background_color` e `theme_color` erano `#1f5562`**, cioè il **teal di Arda**: un
-  residuo della copia, che nessuno aveva notato perché il manifest non si guarda mai. Ora sono
-  `#0d1a22`, il fondo notte di questo sito.
-- **L'icona è un quadrato PIENO** (fondo `#0080ff`, segno bianco) col glifo al **44%** del
+- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#1b7ee0`, e la
+  coincidenza è il **requisito**, non una scelta estetica. La schermata di avvio dipinge tutto
+  lo schermo con `background_color` e ci mette l'icona al centro: l'icona è un quadrato
+  **opaco**, quindi se i due colori divergono si vede un **quadrato centrale** stagliato sul
+  campo. Facendoli coincidere il quadrato scompare nel campo e resta il solo glifo bianco.
+  - ⚠️ **Il glifo NON si può togliere dalla schermata di avvio**: la disegna il sistema, non la
+    pagina, e non esiste un modo per averla vuota. L'unica leva è il fondo.
+  - ⚠️⚠️ **NON si scrive a mano: lo scrive lo SCRIPT.** `earthsea-icons.js` riscrive i due
+    campi del manifest da `PWA_BG` e **verifica** di averlo fatto. Tre valori da tenere
+    allineati a mano (costante, `background_color`, `theme_color`) sono tre occasioni di
+    divergere, e il difetto non darebbe **nessun errore**: si vedrebbe solo aprendo l'app
+    installata, che è la cosa che si guarda meno di tutte. È la stessa trappola della
+    larghezza delle card (§ 'La Modalità XL è SPENTA, e la larghezza della colonna è una fonte unica'), risolta allo stesso modo.
+  - ⚠️ **`theme_color` è la barra di sistema, non il campo**, e sta sullo stesso blu perché
+    l'utente ha chiesto la schermata *uniforme su tutto lo schermo*. Conseguenza da conoscere:
+    a pagina caricata subentra il `<meta name="theme-color">` della pagina (`#060a14` scuro,
+    `#ebebef` chiaro), quindi la barra **cambia** dal blu al colore del sito. È un istante e
+    non è un difetto.
+  - Ⓘ **Prima erano `#1f5562`**, il teal di Arda, un residuo della copia che nessuno aveva
+    notato; poi `#0d1a22`, il fondo notte di questo sito, che era **coerente col sito ma
+    sbagliato per la schermata di avvio**: è il valore che faceva comparire il quadrato.
+    Coerenza con la pagina e correttezza della schermata qui non coincidono.
+- **L'icona è un quadrato PIENO** (fondo `#1b7ee0`, segno bianco) col glifo al **44%** del
   lato, dentro la zona sicura: il launcher ritaglia nella forma che preferisce. ⚠️ Nessuna
   forma disegnata dentro, o si vedrebbe come forma **dentro** la forma del launcher.
   ⚠️ **Scelta dall'utente fra quattro combinazioni rese** (2026-08-22, *'icona webapp 1'*), e
   coincide con lo schema di 'I Grandi di Arda' (fondo in tinta, segno bianco): la parentela fra
   i due siti è un effetto voluto, non un residuo della copia.
+  - ⚠️ **Il blu del fondo NON è quello della favicon**, ed è voluto: `#1b7ee0` qui contro
+    `#0080ff` là (istruzione dell'utente sulla sola webapp, 2026-08-22: *leggermente più scuro
+    e leggermente meno saturo*). I due fanno lavori diversi. La favicon è un glifo su
+    **trasparente** e deve leggersi su due barre di luminanza opposta, quindi vuole un tono
+    medio; il fondo dell'icona è un **campo dietro un glifo bianco**, quindi scurirlo aumenta
+    il contrasto del segno (da 3,80 a **4,11**). Allinearli 'per coerenza' peggiorerebbe uno
+    dei due, e la coerenza che conta qui è quella col `background_color`, non fra i due blu.
   - **Le tre scartate**: fondo notte del sito con segno blu, fondo blu con segno prugna-notte,
     e il **fondo marmo** (`#f9fbfa` con segno blu). Quest'ultima è l'analogo esatto del disco
     marmo del FAB, e sbaglia per la stessa ragione: il segno si legge, ma il quadrato scompare

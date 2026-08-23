@@ -67,9 +67,29 @@ const FAV_AMOUNT = 0.35;
 // come forma DENTRO la forma del launcher.
 // ⚠️ `frac` è l'altezza del glifo sul lato, e 0.44 lo tiene dentro l'80%
 // centrale: un valore più generoso fa tagliare le punte dal ritaglio in tondo.
-const PWA_BG = '#0080ff';
+// ⚠️⚠️ `PWA_BG` NON è solo il fondo dell'icona: è anche il colore della SCHERMATA
+// DI AVVIO, e lo script lo scrive da sé nel manifest (`background_color` e
+// `theme_color`, vedi in fondo). Non si tocca il manifest a mano.
+// La ragione è ciò che si vedeva prima: la schermata di avvio dipinge tutto lo
+// schermo con `background_color` e ci mette l'icona al centro. L'icona è un
+// quadrato OPACO, quindi se i due colori non coincidono si vede un **quadrato
+// centrale** stagliato sul fondo, ed è esattamente quello che accadeva con
+// `background_color` a `#0d1a22` e l'icona blu. Facendoli coincidere il quadrato
+// scompare nel campo e resta il solo glifo bianco: il quadrato è ancora lì, e
+// deve esserci per il launcher, ma non si vede più.
+// ⚠️ Il glifo NON si può togliere dalla schermata di avvio: la disegna il sistema,
+// non la pagina. L'unica leva è farne coincidere il fondo.
+// `#1b7ee0` (istruzione dell'utente, 2026-08-22: 'leggermente più scuro e
+// leggermente meno saturo' di `#0080ff`): saturazione e valore scesi dal 100%
+// all'88%, e il bianco sopra guadagna contrasto, da 3,80 a **4,11**.
+const PWA_BG = '#1b7ee0';
 const PWA_FG = '#ffffff';
 const PWA_FRAC = 0.44;
+// ⚠️ La FAVICON resta `#0080ff` e la divergenza è VOLUTA: i due blu fanno lavori
+// diversi. La favicon è un glifo su trasparente e deve leggersi su due barre di
+// luminanza opposta, quindi vuole un tono medio; il fondo dell'icona è un campo
+// dietro un glifo bianco, quindi più scuro è meglio. Allinearli 'per coerenza'
+// peggiorerebbe uno dei due.
 
 (async () => {
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
@@ -171,5 +191,27 @@ const PWA_FRAC = 0.44;
     console.log('pwa/app-' + lato + ' : glifo ' + w.toFixed(1) + 'x' + h.toFixed(1)
       + ' su 512, fondo ' + PWA_BG + ', segno ' + PWA_FG);
   }
+
+  // ⚠️⚠️ Il manifest prende i suoi due colori DA QUI, invece di ripeterli a mano:
+  // `background_color` è il campo della schermata di avvio e `theme_color` la sua
+  // barra di sistema, e se uno dei due si scosta da `PWA_BG` torna il quadrato
+  // centrale (o una striscia in cima di un altro colore). Tre valori da tenere
+  // allineati a mano sono tre occasioni di divergere in silenzio: il difetto non
+  // darebbe nessun errore, si vedrebbe solo aprendo l'app installata, che è la
+  // cosa che si guarda meno di tutte.
+  // ⚠️ Si riscrive il SOLO valore, con una sostituzione mirata: rigenerare il JSON
+  // da un oggetto riordinerebbe le chiavi e cambierebbe il file a ogni giro.
+  const MANIFEST = 'earthsea/top/manifest.webmanifest';
+  let man = fs.readFileSync(MANIFEST, 'utf8');
+  const prima = man;
+  man = man.replace(/("background_color":\s*")[^"]*(")/, '$1' + PWA_BG + '$2')
+           .replace(/("theme_color":\s*")[^"]*(")/, '$1' + PWA_BG + '$2');
+  const dopo = JSON.parse(man);
+  if (dopo.background_color !== PWA_BG || dopo.theme_color !== PWA_BG) {
+    throw new Error('manifest: i due colori non combaciano con PWA_BG, la sostituzione non ha preso');
+  }
+  fs.writeFileSync(MANIFEST, man);
+  console.log('manifest    : background_color e theme_color a ' + PWA_BG
+    + (man === prima ? ' (erano già allineati)' : ' (aggiornati)'));
   await b.close(); process.exit(0);
 })();
