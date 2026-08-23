@@ -220,11 +220,13 @@ comune, qui manca il vero nome.
   appreso il nome del Mago Nero* origliando i draghi (`Nereger of Paln had learned the Black
   Mage's name from overhearing the conversation of dragons`). Quindi `Mago Nero` / `Black Mage`
   è l'unica coppia di nomi in scena, e non ci sono varianti fra cui scegliere.
-- ⚠️⚠️ **Il `vero_nome` vuoto qui significa 'il testo non lo dice', e non 'non ne ha uno'**: la
-  frase attestata dice proprio che quel nome **fu appreso**, quindi esiste nella storia e resta
-  ignoto al lettore. È una terza cosa rispetto ai due casi già registrati (i draghi, il cui
-  nome È il vero nome, e chi non ha nome d'uso), e il campo vuoto **non va riempito** a intuito
-  perché la storia lo dichiara esistente.
+- ⚠️ **Il `vero_nome` vuoto NON è un caso a sé**, e va detto perché io l'avevo trattato come
+  tale: a Terramare **ogni cosa ha un vero nome**, quindi il campo vuoto significa sempre e
+  soltanto *non lo sappiamo*. Distinguere fra 'il testo dice che esiste' (come qui: quel nome
+  *fu appreso* da Nereger) e 'il testo non ne parla' è un **cavillo**, ed è l'utente a
+  chiuderlo. L'attestazione, che nel libro serve a contraddire un Arcimago, sta in
+  `rules/Earthsea.md`, § 'Tutte le cose hanno un vero nome: il campo vuoto dice solo che NOI
+  non lo sappiamo'.
 - ⚠️ **Il maschile è la grammatica dell'epiteto, non un'attestazione**: `Mago Nero` è
   maschile in italiano e l'inglese non dice niente. Il genere è dell'utente, ed è ben fondato
   (a Terramare 'mago' è un ruolo maschile), ma è una deduzione come quella di Solevivo.
