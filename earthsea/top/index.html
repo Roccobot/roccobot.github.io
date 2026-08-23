@@ -2684,7 +2684,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.45</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.46</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4124,7 +4124,11 @@ function setLang(lang) {
   document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
-  var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes';
+  // ⚠️ La voce del footer segue la stessa regola del tasto Info: in inglese si NASCONDE,
+  // perché porta alle sole mappe italiane. Il testo si scrive comunque, così se un domani
+  // la modale avrà contenuti bilingui basta togliere la riga dell'`hidden`.
+  var rl = document.getElementById('res-link');
+  if (rl) { rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes'; rl.hidden = (lang !== 'it'); }
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
@@ -5524,11 +5528,19 @@ var ICON_LINK = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a
 // duplicare titolo e percorso avrebbe creato due fonti che prima o poi
 // divergono. Lo slug è il token del permalink (vedi SHARE_ROUTES).
 var RES_MAPS = [
-  // ⚠️ SEGNAPOSTO: i due file NON esistono ancora, li fornirà l'utente. Finché mancano, il
-  // visualizzatore si apre e mostra un'immagine rotta: è voluto, perché un elenco vuoto
-  // non direbbe a nessuno che qui ci vanno due mappe.
-  { slug: 'mappa', src: '/earthsea/res/Mappa.png', titleIt: 'Mappa di Terramare', titleEn: 'Map of Earthsea' },
-  { slug: 'arcipelago', src: '/earthsea/res/Arcipelago.png', titleIt: "Mappa dell'arcipelago", titleEn: 'Map of the archipelago' }
+  // ⚠️⚠️ Le due mappe sono in ITALIANO, e non ne esiste una versione inglese altrettanto
+  // definita (istruzione dell'utente, 2026-08-23). Perciò `titleEn` ripete l'etichetta
+  // italiana invece di tradurla: il titolo nomina QUELL'immagine, e una resa inglese
+  // farebbe credere a una mappa inglese che non c'è. Per la stessa ragione in inglese la
+  // voce 'Risorse' non si mostra affatto: vedi `infoBtn` e il link del footer.
+  // Le etichette sono quelle scelte dall'utente, compreso il fatto che la verticale dice
+  // 'Earthsea' e l'orizzontale 'Terramare': non è una svista da uniformare.
+  { slug: 'mappa-v', src: '/earthsea/res/Earthsea_V.jpg',
+    titleIt: 'Mappa di Earthsea (verticale)', titleEn: 'Mappa di Earthsea (verticale)',
+    shortIt: 'Mappa verticale', shortEn: 'Mappa verticale' },
+  { slug: 'mappa-o', src: '/earthsea/res/Earthsea_O.jpg',
+    titleIt: 'Mappa di Terramare (orizzontale)', titleEn: 'Mappa di Terramare (orizzontale)',
+    shortIt: 'Mappa orizzontale', shortEn: 'Mappa orizzontale' }
 ];
 
 function openResourcesModal() {
@@ -5679,7 +5691,7 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } ttl.textContent = currentLang === 'it' ? titleIt : (titleEn || titleIt); };
 }
 
-(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse' : 'Resources'; rl.addEventListener('click', openResourcesModal); } })();
+(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse' : 'Resources'; rl.hidden = (currentLang !== 'it'); rl.addEventListener('click', openResourcesModal); } })();
 
 // ── 'Note editoriali' (footer) → modale con pulsanti → viewer testuale ──
 // Ogni nota ha titolo pieno + breve (mobile) e corpo bilingue in HTML statico.
@@ -5853,7 +5865,14 @@ function controlPanelHTML() {
   // una voce di quella modale). Bilingue.
   var INFO_ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
   var infoLbl = currentLang === 'it' ? 'Risorse e note' : 'Resources and notes';
-  var infoBtn = '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>';
+  // ⚠️⚠️ In INGLESE il tasto non si disegna, e non è una dimenticanza: la modale che apre
+  // contiene SOLO le due mappe, che esistono in italiano e in nessun'altra lingua
+  // (istruzione dell'utente, 2026-08-23). Un tasto che apre una modale vuota è peggio di un
+  // tasto assente. ⚠️ Il collegamento gira su `querySelectorAll`, quindi zero occorrenze non
+  // dànno errore: chi lo rimettesse non deve toccare `wireControlPanel`.
+  var infoBtn = currentLang === 'it'
+    ? '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>'
+    : '';
   // Tasto Riordina (↑↓): SOLO toolbar desktop, a sinistra di Info. Entra in
   // modalità riordino forzando tutte le categorie (la classifica è assoluta) e
   // mostra le maniglie. In riordino diventa × (scarta modifiche,

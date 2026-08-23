@@ -29,10 +29,12 @@ badge), il verde (`GedName`) e le due dei generi (azzurro e rosa).
 | `F1-collina` + `F2-collina-sigillo` | coppia di Roke | viola | **scartate** con la scelta di `H` |
 | `G1-runa` + `G2-runa-sigillo` | coppia di Roke | viola | **scartate**, e con la riserva del simbolo di Venere (vedi sotto) |
 | `H1-anello-bordo.svg` | Maestro di Roke | viola `#6f5bd0` | **superato**: il tondo pieno sul cerchio |
-| `H1b-anello-aperto.svg` | Maestro di Roke | viola `#6f5bd0` | ✅ in **anteprima**: il tondo diventa un varco |
+| `H1b-anello-aperto.svg` | Maestro di Roke | viola `#6f5bd0` | **superata**: varco di 70 gradi in alto, troppo largo |
+| `H1c-anello-viola.svg`, `H1d-anello-viola-chiaro.svg` | Maestro di Roke | viola `#8b78e0` / `#9a86e8` | ✅ in **anteprima**: varco di 44 gradi in alto a destra e pallino di `Sorcerer` |
 | `H2c-teal` | Arcimago di Roke | teal `#1c7f92` | tinta **scelta**, ma il tondo al centro è superato |
 | `H2a-oro`, `H2b-cremisi` | Arcimago di Roke | oro, cremisi | **scartate** con la scelta del teal |
-| `H2d-stella.svg`, `H2e-stella-chiara.svg` | Arcimago di Roke | teal + arancio | ✅ in **anteprima**: la stella al centro, due arancioni |
+| `H2d-stella.svg`, `H2e-stella-chiara.svg` | Arcimago di Roke | teal + arancio | **superate**: stella ridisegnata, e piccola |
+| `H2f-stella-sorcerer.png`, `H2g-stella-sorcerer-vivo.png` | Arcimago di Roke | rosso-arancione + `Sorcerer` | ✅ in **anteprima**: la stella VERA di `Sorcerer`, ingrandita |
 | `H2-anello-centro.svg` | -- | viola | **superata**: era l'Arcimago in viola, cioè la stessa tinta del Maestro |
 
 ## ⚠️ Il secondo giro (2026-08-23): corna unite e una coppia nuova
@@ -124,6 +126,35 @@ l'idea di magia.*
   - **La stella non tocca l'anello**: raggio 46 dentro un buco di raggio 62, quindi il fondo
     della card resta visibile intorno, ed è su quello che i contrasti sono misurati.
 
+## 🌟 Il quinto giro (2026-08-23): la stella vera e il varco stretto
+
+Richiesta dell'utente: *copia sia il colore che la forma da `Sorcerer.webp`, e rendilo più
+grande in modo che si sovrapponga al cerchio. Il cerchio fallo rosso-arancione vivo.* E per il
+Maestro: *riduci il gap e ruota di 45 gradi in senso orario. Colora il cerchio con un viola
+più chiaro, e metti al centro un pallino dello stesso colore preso da `Sorcerer.webp`.*
+
+- ⚠️⚠️ **La stella dell'Arcimago NON è ridisegnata: sono i pixel di `Sorcerer.webp`.** Il file
+  contiene **tre** stelle (una grande e due piccole), e serviva solo la grande: si isola con
+  le componenti connesse dei pixel opachi (la grande ne ha **10 332**, le due piccole 1 871 e
+  1 605), si ritaglia (165x191) e si compone sopra l'anello. Così forma e tinta sono quelle
+  vere, e la tinta misurata è una sola, **`#ffac33`** (9 538 pixel su 10 332, il resto è
+  antialiasing). ⚠️ **La stella grande NON è simmetrica**: è più alta che larga, e vale
+  saperlo prima di 'raddrizzarla'.
+  - **Per questo i due file sono PNG e non SVG**: incorporano un raster. Ingrandita a 204 di
+    altezza sfora il buco dell'anello (124) e si sovrappone al bordo, che è quello che
+    l'utente ha chiesto.
+- **Le tinte, misurate sui fondi veri e anche fra loro**: `#e8420e` (3,82 scuro / 3,25 chiaro)
+  contro `#ff5722` (4,86 / 2,55). ⚠️ Il numero che conta qui è un **terzo**: il contrasto fra
+  anello e stella, perché sono adiacenti. `#e8420e` dà **2,15**, `#ff5722` solo **1,69**:
+  più l'anello è vivo, più la stella gli si fonde dentro.
+- **Maestro**: varco da 70 a **44 gradi**, ruotato di 45 in senso orario, quindi centrato in
+  alto a destra; anello in viola più chiaro (`#8b78e0` un gradino, `#9a86e8` due) e pallino
+  centrale `#ffac33`, preso da `Sorcerer`.
+  - ⚠️ **Il pallino sta nel BUCO**, quindi il suo fondo è la card e non l'anello: `#ffac33` fa
+    8,21 sul fondo scuro ma **1,51** sul chiaro, dov'è la tinta più debole di tutto il sito
+    (è la stessa di `Sorcerer`). Se in tema chiaro sparisce, la leva è il pallino, non
+    l'anello.
+
 **Scartate e perché** (non si ripropongano): una testa di drago di profilo e un muso frontale
 (a 22px si leggevano come un uccello e come un gatto), tre artigli (parentesi), due ali
 (farfalla), un bastone liscio e una foglia (troppo astratti). La lezione: a queste misure
@@ -134,8 +165,8 @@ e **17px** (mobile), sui due fondi, accanto a un'icona già in uso. Gli script c
 fatto stanno nello scratchpad e muoiono con la sessione: si rifanno in dieci righe con
 Playwright, disegnando le SVG in un `<img>` alle due altezze.
 
-**Domande aperte prima di implementare**: quale **arancio** per la stella, se il **varco** del
-Maestro va stretto, e i testi delle due legende bilingui.
+**Domande aperte prima di implementare**: quale coppia di tinte (`#8b78e0`+`#e8420e` oppure
+`#9a86e8`+`#ff5722`), e i testi delle due legende bilingui.
 
 ⚠️ **Il criterio editoriale del `Signore dei Draghi` NON è più una domanda aperta**: è
 deciso dall'utente il 2026-08-23 (Ged, Erreth-Akbe, Morred e Pannocchia; e chi è drago non

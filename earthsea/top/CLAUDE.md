@@ -946,15 +946,18 @@ altri sei volumi.
 | origine | **Havnor** | ⚠️ **non attestata** |
 | vero nome | non dato | non dato |
 
-- ⚠️⚠️ **`Primo Consigliere` NON è attestato in nessuna delle due lingue**, e va detto invece
-  di farlo passare per una resa: il grep di `Primo Consigliere` sui sei epub ITA e di
-  `First Counsellor` sui sette ENG dà **zero**. È il titolo che l'utente dà per ufficiale
-  (2026-08-23: *Sege è il suo Primo Consigliere, titolo ufficiale*), e come tale sta nella
-  card. Quello che il testo attesta è il **ruolo**: presiede il protocollo del consiglio, ne
-  fa osservare le regole, apre e chiude le sedute («Udite il re»), e **governa gli affari di
+- ✅ **`Primo Consigliere` è USCITO nella `0.46`**, per ripensamento dell'utente: a Sege resta
+  il solo titolo attestato, `Principe della Casa di Havnor`. ⚠️ Non era attestato in nessuna
+  delle due lingue (il grep di `Primo Consigliere` sui sei epub ITA e di `First Counsellor`
+  sui sette ENG dà **zero**), e questo resta il motivo per cui non va rimesso a intuito.
+  Quello che il testo attesta è il **ruolo**: Sege presiede il protocollo del consiglio, ne fa
+  osservare le regole, apre e chiude le sedute («Udite il re»), e **governa gli affari di
   stato in assenza del re** con un gruppo scelto di consiglieri.
-  - **La resa inglese è `First Councillor` e non `Counsellor`**: il testo inglese scrive
-    `councillor` per i membri del consiglio, quindi la grafia segue la sua.
+- ✅ **Tosla non ha più alcun titolo** (`0.46`): `Capitano` da solo è troppo generico
+  (giudizio dell'utente), e **nessuna fonte lo completa**. Cercato prima di togliere: il testo
+  dice `il capitano Tosla` e `Shipmaster Tosla` e basta; l'unico 'capitano della nave' che
+  compare è la cabina del capitano, non un titolo suo. Se un domani salta fuori una formula
+  piena, il campo torna.
 - **L'origine di Sege è Havnor su due indizi che convergono**: la Casa di Havnor, e il suo
   ricordo di voci d'infanzia «giù nelle strade della città» mentre si trova a Havnor. ⚠️ Il
   testo **non dice 'nato a'**: è nascita per convergenza, non alla lettera (criterio in
@@ -974,6 +977,39 @@ altri sei volumi.
     lasciato solo in questo file. Nessuna delle due era la risposta: il campo andava creato col
     nome che gli spetta, ed è la correzione dell'utente (*non è vero che le origini non hanno
     un campo: c'è il campo 'origine'*).
+
+## 🗺️ Le due mappe delle Risorse, e perché in inglese NON si offrono
+
+Dalla `0.46` la parte **Risorse** della modale ha le sue due immagini vere, in `earthsea/res/`, aperte dal
+visualizzatore già esistente. Prima erano due segnaposto che puntavano a file inesistenti.
+
+| voce | file | etichetta |
+|---|---|---|
+| in alto | `Earthsea_V.jpg` (2853x4371) | 'Mappa di Earthsea (verticale)' |
+| in basso | `Earthsea_O.jpg` (4800x3810) | 'Mappa di Terramare (orizzontale)' |
+
+- ⚠️ **Le etichette sono quelle dell'utente e NON si uniformano**: la verticale dice
+  'Earthsea' e l'orizzontale 'Terramare'. Chi le allineasse 'per coerenza' starebbe
+  correggendo una scelta.
+- ⚠️⚠️ **In INGLESE la voce 'Risorse' non si mostra affatto** (istruzione dell'utente,
+  2026-08-23: *le mappe sono in italiano e non ho mappe altrettanto definite e ben fatte in
+  inglese*). Sono **due** i punti che la aprono, e vanno spenti entrambi o il difetto resta
+  metà: il **tasto Info** della toolbar (`infoBtn`, che in inglese diventa stringa vuota) e la
+  **voce del footer** (`#res-link`, che prende `hidden`). ⚠️ La modale contiene **solo** le due
+  mappe, quindi in inglese sarebbe vuota: un tasto che apre il nulla è peggio di un tasto che
+  non c'è.
+  - **Il collegamento del tasto gira su `querySelectorAll`**, quindi zero occorrenze non
+    dànno errore e `wireControlPanel` non va toccato. Verificato: in italiano trova **2**
+    tasti (desktop e mobile), in inglese **0**.
+  - ⚠️ **I permalink delle mappe restano validi anche in inglese** (`SHARE_ROUTES` si ricava
+    da `RES_MAPS`), e non è una dimenticanza: un link condiviso deve aprire quello che
+    promette, mentre il menu è un'offerta e in inglese non c'è nulla da offrire.
+- **`titleEn` ripete l'etichetta ITALIANA** invece di tradurla: il titolo nomina
+  quell'immagine, e 'Map of Earthsea' farebbe credere a una mappa inglese che non esiste.
+- ⚠️ **Pesano 5,0 e 3,4 MB**, in scala di grigi: il visualizzatore le carica a piena
+  risoluzione, e su una connessione lenta si vede. Non sono state ricompresse perché l'utente
+  le ha fornite così e nessuno l'ha chiesto: se un domani si fa, il confronto va fatto sul
+  dettaglio dei nomi delle isole, che è la ragione per cui sono grandi.
 
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
