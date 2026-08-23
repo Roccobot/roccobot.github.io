@@ -93,15 +93,39 @@ differenza è il punto da capire prima di toccare i colori.
 I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged**
 (`ICON_ORDER = ['stregone','mago','nomeged']`).
 
-- ✅ **Dalla `0.14` sono PNG a colori fornite dall'utente** (`icons/Stregone.png`,
-  `icons/Mago.png`, `icons/NomeGed.png`), al posto dei tre SVG segnaposto in `currentColor`.
+- ✅ **Sono immagini a colori fornite dall'utente** (`icons/Sorcerer.webp`,
+  `icons/Mage.webp`, `icons/GedName.webp`), dalla `0.14`, al posto dei tre SVG segnaposto in
+  `currentColor`.
   - ⚠️ **Sono `img`, quindi NON seguono il colore del testo**: il colore sta nel file, e un
     cambio di tema non lo tocca. È la stessa via dei simboli di genere, `img` da sempre.
-  - ⚠️ **I file sono rinominati col nome del BADGE, non del disegno** (`sparkle` ->
-    `Stregone`, `wand` -> `Mago`, `ged` -> `NomeGed`): un domani il disegno cambia e il badge
-    no, e un file che si chiama come il disegno costringerebbe a toccare il codice per
-    sostituire un'immagine.
-  - **`NomeGed.png` non è quadrata** (194x256): sulla card la regola
+  - ⚠️⚠️ **I nomi dei file sono in INGLESE, ed è la regola generale del progetto**
+    (istruzione dell'utente, 2026-08-23): `Sorcerer`, `Mage`, `GedName`, `Female`, `Male`.
+    ⚠️ **In 'I Grandi di Arda' la regola è talvolta infranta**, e non è un modello da imitare:
+    là è arrivata dopo, qui vale dall'inizio. Chi vede `Femmina.webp` in quell'altro progetto
+    non la prenda per la convenzione di casa.
+    - **Le parole seguono la UI inglese del sito**, non una traduzione a orecchio: l'etichetta
+      del secondo badge è *'Mage: holder of the true gift of magic'*, quindi il file è
+      `Mage`, non `Wizard`.
+  - ⚠️ **I file portano il nome del BADGE, non del disegno** (`sparkle` -> `Sorcerer`, `wand`
+    -> `Mage`, `ged` -> `GedName`): un domani il disegno cambia e il badge no, e un file che si
+    chiama come il disegno costringerebbe a toccare il codice per sostituire un'immagine.
+    ⚠️ È già successo **tre volte** con `GedName`, che ha cambiato disegno il 2026-08-23 senza
+    che il codice si accorgesse di nulla: è la prova che la convenzione paga.
+  - ⚠️⚠️ **Formato WebP LOSSLESS** (istruzione dell'utente, 2026-08-23: *senza quantizzarli,
+    come stabilito in Arda*). I tre PNG pesavano 39 KB, i WebP ne pesano 10: **-74%** a pixel
+    **identici**, verificato confrontando ogni pixel dopo la conversione.
+    - ⚠️⚠️ **La strada del browser NON è lossless, e sembra esserlo**: il primo tentativo era
+      `canvas.toDataURL('image/webp', 1)` di Chromium, che ha prodotto differenze fino a **63**
+      su un canale. Senza il confronto pixel a pixel sarebbe passata per buona, e le icone
+      sarebbero state ricompresse **con perdita** mentre il commit diceva 'lossless'. Serve un
+      encoder vero (`PIL.save(..., lossless=True)`), e la verifica va rifatta ogni volta.
+    - **Perché lossless e non il q85 'visually lossless' che Arda ammette**: questi glifi sono
+      a tinta piatta con antialiasing, cioè il caso in cui il lossless **vince anche sul peso**.
+      La scelta fra le due strade dipende dal disegno, non dal gusto.
+    - ⚠️ **Restano PNG le icone PWA e le favicon**, e non è una svista: il manifest le dichiara
+      `image/png` e le PNG della favicon sono il ripiego per i browser che non prendono l'SVG.
+      Là il formato è un requisito di piattaforma, non una scelta di compressione.
+  - **`GedName.webp` non è quadrata** (194x256): sulla card la regola
     `.rank-name .rank-flags .status-icon { width:auto }` le lascia le proporzioni; in legenda
     il box è quadrato e `object-fit:contain` la contiene senza deformarla.
   - ⚠️ **Il rettangolo di immagine rotta era il difetto della prima stesura**: gli SVG in
@@ -133,8 +157,11 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
 - ⚠️ **Anche la casella 'Vero nome' dell'artefatto Schedario decade** per la stessa ragione:
   là il badge era una casella da spuntare per voce, e ora l'informazione non si ricava dalla
   scheda del personaggio.
-- **Il genere riusa i simboli di Arda** (`icons/Maschio.webp`, `icons/Femmina.webp`, scelta
-  dell'utente): sono i **soli** due file immagine di questa cartella.
+- **Il genere riusa i simboli di Arda** (`icons/Male.webp`, `icons/Female.webp`, scelta
+  dell'utente), rinominati in inglese come tutti gli altri il 2026-08-23. ⚠️ In Arda gli
+  stessi due file si chiamano ancora `Maschio.webp` e `Femmina.webp`: **i due progetti hanno
+  nomi diversi per lo stesso disegno**, e va saputo prima di copiare un percorso dall'uno
+  all'altro.
   - ⚠️ **I draghi fanno eccezione e NON hanno genere** (decisione dell'utente, 2026-08-21,
     con il 'per il momento' che lui stesso ha messo: è una scelta rivedibile, non un fatto).
     Prima era una mia deduzione prudenziale, e la ragione resta valida: dalle sei femmine
