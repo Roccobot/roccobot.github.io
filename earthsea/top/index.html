@@ -2686,7 +2686,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.49</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.50</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4601,6 +4601,18 @@ function stripClassOf(p) {
   // nessun caso a cui applicarsi.
   return badgeClasses.length >= 2 ? badgeClasses[1] : (badgeClasses[0] || 'type-fallback');
 }
+// ⚠️⚠️ IL NOME CON CUI UNA VOCE SI CHIAMA, e non è sempre `nome`: chi non ha nome d'uso si
+// chiama col VERO nome, e il campo `nome` vuoto è la forma corretta, non una lacuna. Vale per
+// tutti i draghi (il loro nome È il vero nome) e per gli umani che non ne hanno uno, come
+// `Akambar`: l'utente ha annunciato che dallo Schedario **ne arriveranno tanti altri**, quindi
+// questa è la funzione da usare ovunque si mostri o si cerchi un nome, non un ripiego locale.
+// ⚠️ Nata il 2026-08-23 perché la card mostrava la **prima riga vuota**, e con lei sarebbero
+// restati muti anche l'elenco delle Statistiche, la ricerca admin e l'editor dei colori: sei
+// punti che leggevano `p.nome` a mano, ognuno col proprio ripiego fra le due lingue.
+function nomeDiRif(p, it) {
+  var uso = it ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
+  return uso || p.vero_nome || '';
+}
 function familyOf(p) {
   // Colore individuale (Modifica mirata): vince su tutto, famiglia 'custom'
   // (isolata dal batch, ogni voce tiene la propria coppia per-tema via p.cardrgb).
@@ -5099,7 +5111,7 @@ function renderList() {
     var cat = categoria(p);
     visN++;
     var isVisTop = visN <= 3;
-    var nome = escapeHtml(currentLang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome));
+    var nomeUso = currentLang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
     // Prima apparizione (istruzione dell'utente, 2026-08-21): il ripiego vale nei
     // DUE sensi, al contrario del resto dei campi bilingui. I titoli sono per ora
     // quelli INGLESI presi dalla voce Wikipedia: finché le rese italiane non
@@ -5122,8 +5134,18 @@ function renderList() {
     // riga (che è il caso che questo predicato copriva), e infine la resa umana con Therru
     // davanti. Il terzo giro non contraddice il secondo: TEHANU resta in Cinzel maiuscolo,
     // solo che sta nella riga del vero nome, che è il suo posto.
+    // ⚠️⚠️ LA RIGA SOLA NON È UNA COSA DA DRAGHI: è di chi NON HA NOME D'USO, e i draghi
+    // sono solo il caso in cui questo è sempre vero (dal 2026-08-23, con l'arrivo di
+    // `Akambar`, che è un uomo e non ne ha uno). Quindi il predicato guarda **prima** il campo
+    // vuoto, e la clausola sul drago puro resta come rete per le sei voci-drago che hanno
+    // ancora il dato invertito (il nome in `nome` e `vero_nome` vuoto): quando quella
+    // migrazione arriva, la seconda metà diventa superflua e si può togliere.
     var catsP = categorie(p);
-    var soloVero = catsP.length === 1 && catsP[0] === 'dragon';
+    var soloVero = !nomeUso || (catsP.length === 1 && catsP[0] === 'dragon');
+    // Titolo della card: il nome d'uso, o il vero nome quando quello non c'è, dalla FONTE
+    // UNICA `nomeDiRif` (vedi là il perché). Senza questo ripiego una voce senza nome d'uso
+    // avrebbe la **prima riga vuota**, che è quello che succedeva ad Akambar.
+    var nome = escapeHtml(nomeDiRif(p, currentLang === 'it'));
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
@@ -7957,11 +7979,12 @@ function showAdminEditor() {
     var nameHits = [], other = [];
     for (var i=0;i<dati.length;i++){
       var p = dati[i];
-      var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0);
+      var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0)
+                || (!p.nome && !p.nome_en && fold(p.vero_nome||'').indexOf(qf)>=0);
       var hf=null, hv=null;
       for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
       if (!hf) continue;
-      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, qf:qf });
+      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(nomeDiRif(p, currentLang === 'it') || '?'), val:hv, qf:qf });
     }
     return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
   }
@@ -9717,7 +9740,7 @@ function showBadgeAdjustEditor(initState){
     return out;
   }
   function iconFile(p, k){ if (k === 'istari'){ var a = ISTARI_ICON[p.nome]; return 'icons/' + ((a && a[0]) || 'Bianco.webp'); } var m = /src="([^"]+)"/.exec(BADGE_ICON[k] || ''); return m ? m[1] : ('icons/' + k + '.webp'); }
-  function nmOf(p){ return it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); }
+  function nmOf(p){ return nomeDiRif(p, it); }
   function renderPane(pane){
     var u = unitOf(cur); var ss = samples(u);
     if (!ss.length){ pane.innerHTML = '<div class="ba-pv-empty">' + (it ? 'Nessuna scheda con questo badge' : 'No card with this badge') + '</div>'; return; }
@@ -9871,7 +9894,7 @@ function showColorStats(initState) {
     var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;';
     chars.forEach(function(p){
       var r = document.createElement('div'); r.style.cssText = 'padding:0.3rem 0.35rem;font-size:0.9rem;border-bottom:1px solid rgba(128,128,128,0.12);';
-      r.textContent = it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); wrap.appendChild(r);
+      r.textContent = nomeDiRif(p, it); wrap.appendChild(r);
     });
     host.appendChild(wrap);
   }
@@ -10080,13 +10103,13 @@ function showColorEditor(initState) {
       var hits = [];
       for (var i = 0; i < dati.length && hits.length < 20; i++){
         var p = dati[i];
-        if ((p.nome||'').toLowerCase().indexOf(q) !== -1 || (p.nome_en||'').toLowerCase().indexOf(q) !== -1) hits.push(i);
+        if (nomeDiRif(p, true).toLowerCase().indexOf(q) !== -1 || nomeDiRif(p, false).toLowerCase().indexOf(q) !== -1) hits.push(i);
       }
       hits.forEach(function(i){
         var p = dati[i];
         var row = document.createElement('button'); row.className = 'fab-modal-confirm';
         row.style.cssText = 'text-align:left;padding:0.4rem 0.6rem;font-size:0.9rem;';
-        row.textContent = (it ? (p.nome||p.nome_en) : (p.nome_en||p.nome)) + '  ·  ' + familyOf(p);
+        row.textContent = nomeDiRif(p, it) + '  ·  ' + familyOf(p);
         row.onclick = function(){ selectChar(i, panel); };
         results.appendChild(row);
       });
@@ -10104,7 +10127,7 @@ function showColorEditor(initState) {
     var curDark  = isCustom ? ccTripletToHex(cp.dark)  : ccFamHex(fam, 'dark');
     var curLight = isCustom ? ccTripletToHex(cp.light) : ccFamHex(fam, 'light');
     var name = document.createElement('p'); name.style.cssText = 'font-weight:600;margin:0.6rem 0 0.2rem;';
-    name.textContent = it ? (p.nome||p.nome_en) : (p.nome_en||p.nome);
+    name.textContent = nomeDiRif(p, it);
     var famLine = document.createElement('p'); famLine.style.cssText = 'font-size:0.78rem;opacity:0.7;margin:0 0 0.5rem;';
     function setFamLine(){ famLine.textContent = (it ? 'Famiglia attuale: ' : 'Current family: ') + familyOf(p) + (customPair(p) ? (it ? ' (colore individuale)' : ' (individual)') : ''); }
     setFamLine();
@@ -10127,7 +10150,7 @@ function showColorEditor(initState) {
       };
     }
     function apply(){ var g = ctrl.get(); dockCharPending = null; p.cardrgb = { dark: g.dark, light: g.light }; renderList(); setFamLine(); }
-    var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ apply(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + (p.nome||p.nome_en))); }, true);
+    var bSave = mkBtn(it ? 'Salva sul repo' : 'Save to repo', function(btn){ apply(); withBtn(btn, saveColorsToRepo('colori: colore individuale di ' + nomeDiRif(p, true))); }, true);
     panel.appendChild(name); panel.appendChild(famLine); panel.appendChild(ctrl.el);
     if (isCustom) panel.appendChild(mkBtn(it ? 'Rimuovi colore individuale' : 'Remove individual colour', function(){ delete p.cardrgb; renderList(); showToast(it?'✓ Torna alla famiglia':'✓ Back to family', false); selectChar(i, panel); }));
     panel.appendChild(bSave);

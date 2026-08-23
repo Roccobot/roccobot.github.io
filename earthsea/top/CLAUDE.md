@@ -210,6 +210,26 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
     riga della genealogia stampa **'Figlio di'**, che è il ripiego del motore: non è un dato,
     è la mancanza di una forma neutra.
 
+### 👑 Akambar: il primo senza nome comune, e i due titoli
+
+Voce chiesta dall'utente il 2026-08-23, la prima con `nome` **vuoto** per scelta e non per
+lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome comune').
+
+- **Attestato**: *King Akambar, a prince of Shelieth on Way, moved the court to Havnor and made
+  Havnor Great Port the capital*; in italiano *Re Akambar trasferì la corte da Berila alla città
+  di Havnor*. Ricacciò i Karg a est ed è uno dei **quattordici** sovrani di Havnor. `origine` è
+  **`Way`**, che l'utente aveva già indicato: Shelieth è su Way, e il casato di Way *risale ad
+  Akambar e alla Casa di Shelieth*.
+- ⚠️ **I due titoli NON sono attestati accanto al suo nome**, e conviene saperlo prima di
+  difenderli come fatti: `Re di Tutte le Isole` e `Re di Terramare` sono titoli **della
+  regalità**, non appellativi personali suoi. Nelle fonti il primo compare per **Maharion** e
+  per l'incoronazione di Lebannen, il secondo per **Lebannen**. Akambar li porta perché fu re,
+  ed è una scelta editoriale dell'utente, legittima: non un'attestazione da citare.
+- ⚠️ **La forma con le MAIUSCOLE viene dalle fonti**: `Re di Tutte le Isole` compare così 4
+  volte (e `King of All the Isles` altrettante), mentre l'utente l'aveva scritto in minuscolo.
+  Il secondo titolo in italiano nel testo è minuscolo (`re di Terramare`, 9 occorrenze), e nel
+  dataset sta capitalizzato perché là è l'etichetta di una scheda, non prosa.
+
 ### 🐉 Keor, Sula e i tre draghi nuovi
 
 - **`Keor`**, uomo: *Keor, principe di Enlad*, che uccise il drago `Bar Oth` trecento anni
@@ -519,6 +539,28 @@ dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
     **è** il suo vero nome, e un vero nome si rende come tale: la classe intermedia è uscita.
   - **Quello che la distingue dai draghi puri resta il resto della card**: due etichette di
     razza, il simbolo di genere e i badge, che un drago puro non ha.
+
+#### 🎩 La riga sola NON è una cosa da draghi: è di chi non ha nome comune
+
+Scoperto con `Akambar` (2026-08-23), che è un **uomo** e non ha nome d'uso, e l'utente ha
+avvertito che dallo Schedario **ne arriveranno tanti altri**. Quindi la regola si riformula, e
+questa è la forma buona: **la card ha una riga sola quando manca il nome comune**, e i draghi
+sono soltanto il caso in cui questo è sempre vero.
+
+- **Nel motore**: `soloVero` guarda **prima** il campo vuoto, e la clausola sul drago puro
+  resta come rete per le sei voci che hanno ancora il dato invertito. Quando quella migrazione
+  arriva, la seconda metà del predicato diventa superflua.
+- ⚠️⚠️ **E serve una fonte unica per il nome, `nomeDiRif`**: il titolo della card non è
+  `p.nome`, è il nome d'uso **oppure** il vero nome. Senza quel ripiego Akambar aveva la
+  **prima riga vuota**. ⚠️ Ma la card non era il solo punto: leggevano `p.nome` a mano, ognuno
+  col proprio ripiego fra le due lingue, anche l'**elenco delle Statistiche**, la **ricerca
+  admin** (dove il nome compariva come `?`) e l'**editor dei colori** in tre punti. Sei letture
+  sparse, un difetto solo: adesso passano tutte da lì.
+  - ⚠️ Nella ricerca admin il vero nome conta come **nome** solo quando il nome d'uso manca:
+    così un match su `Akambar` sale in cima come gli altri nomi, e per gli altri personaggi il
+    vero nome resta un campo fra i campi.
+- ⚠️ **Non confondere questo con la resa delle IBRIDE**: là il nome d'uso **c'è** (`Therru`),
+  quindi le due righe ci sono entrambe. Il criterio è il campo, non la razza.
 
 #### ⚠️⚠️ Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune
 
