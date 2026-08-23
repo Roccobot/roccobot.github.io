@@ -284,6 +284,42 @@ def norm(s):
     return " ".join(s.lower().split())
 
 
+# Prefissi con cui una riga di continuazione comincia in questi file: commento JS, citazione
+# markdown, elenco, o solo rientro. Si togliono prima di ricucire, o finirebbero dentro il
+# titolo citato.
+RE_CONT = re.compile(r"^\s*(?://+\s*|>\s*|[-*]\s+)?")
+
+
+def sect_refs(righe, i, max_cont=2):
+    """I rimandi a sezione che cominciano sulla riga `i`, anche se vanno A CAPO.
+
+    ⚠️⚠️ ESISTE PERCHÉ IL CONTROLLO RIGA-PER-RIGA TACEVA: `RE_SECT` girava su una riga
+    sola, quindi un rimando spezzato dal ritorno a capo NON veniva controllato affatto, e
+    il verificatore rispondeva 'tutto in ordine'. Misurato il 2026-08-23 su un rimando di
+    `earthsea/top/dati.js` che puntava a una sezione RINOMINATA: passato liscio. In questi
+    file le righe si fermano a ~100 caratteri, quindi un rimando a capo è la norma, non
+    il caso raro. È la stessa lezione del commento su `RE_PATH` qui sopra: un controllo
+    che non copre un caso non lo dichiara, dice che va tutto bene.
+    """
+    line = righe[i]
+    fuori = RE_SECT.findall(line)
+    # Apertura senza chiusura sulla stessa riga: si ricuce con le righe dopo.
+    apre = re.search(r"(?:§|sezione|sezioni)\s*'([^']*)$", line)
+    if apre:
+        pezzi = [apre.group(1)]
+        for j in range(i + 1, min(i + 1 + max_cont, len(righe))):
+            testo = RE_CONT.sub("", righe[j])
+            fine = testo.find("'")
+            if fine != -1:
+                pezzi.append(testo[:fine])
+                intero = " ".join(p.strip() for p in pezzi if p.strip())
+                if len(intero) >= 4:
+                    fuori.append(intero)
+                break
+            pezzi.append(testo)
+    return fuori
+
+
 def variants(title):
     """Il titolo intero e le sue forme troncate, che i rimandi citano di norma.
 
@@ -551,7 +587,8 @@ def main():
         solo_testo = f in testi
         for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8")):
             bad_chars.append((f, n, f"{etichetta(ch)} -> {motivo}"))
-        for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+        righe = f.read_text(encoding="utf-8").splitlines()
+        for n, line in enumerate(righe, 1):
             for url in RE_MDLINK.findall(line):
                 if url.startswith(("http://", "https://", "mailto:")) or url in SKIP_LINKS:
                     continue
@@ -566,7 +603,7 @@ def main():
                 seen["path"] += 1
                 if not any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent)):
                     bad_paths.append((f, n, p))
-            for s in RE_SECT.findall(line):
+            for s in sect_refs(righe, n - 1):
                 if s in SKIP_SECTS:
                     continue
                 seen["sect"] += 1

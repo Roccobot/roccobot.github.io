@@ -2686,7 +2686,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.47</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.48</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5112,12 +5112,18 @@ function renderList() {
     var veroNome = escapeHtml(p.vero_nome || '');
     // ⚠️ I DRAGHI hanno una riga sola: il loro nome È il vero nome, quindi la prima riga
     // ne prende la resa (Cinzel maiuscolo, in tinta) e la seconda non si emette.
-    // ⚠️ Il predicato è 'ANCHE drago' e ci rientra Tehanu, che è Donna E Drago: per un
-    // giro ha avuto una card normale col nome in tinta, poi l'utente ha chiesto che
-    // 'TEHANU sia reso in maiuscolo', e un vero nome si rende come tale. Quello che la
-    // distingue dai draghi puri resta il resto della card: due etichette di razza, il
-    // simbolo di genere e i badge.
-    var soloVero = categorie(p).indexOf('dragon') !== -1;
+    // ⚠️⚠️ Il predicato è 'drago PURO', e dal 2026-08-23 non è più 'anche drago': gli IBRIDI
+    // tornano alla resa umana, con le due righe (istruzione dell'utente: *gli ibridi sono
+    // eccezioni e ragionano a sé: va benissimo se Tehanu e Orm Irian sono preceduti da Therru
+    // e Libellula: dopotutto le due sono ANCHE umane*). Quindi Tehanu è `Therru` in Garamond
+    // con `TEHANU` sotto in Cinzel, come una donna qualunque.
+    // ⚠️ Su Tehanu l'utente ha cambiato idea TRE volte, e conviene saperlo per non riaprire un
+    // giro chiuso: card normale col nome in tinta, poi 'TEHANU reso in maiuscolo' in prima
+    // riga (che è il caso che questo predicato copriva), e infine la resa umana con Therru
+    // davanti. Il terzo giro non contraddice il secondo: TEHANU resta in Cinzel maiuscolo,
+    // solo che sta nella riga del vero nome, che è il suo posto.
+    var catsP = categorie(p);
+    var soloVero = catsP.length === 1 && catsP[0] === 'dragon';
     var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);

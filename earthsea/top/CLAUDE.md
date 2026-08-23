@@ -172,22 +172,26 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
   potrebbe essere chiunque, ma più avanti Ogion trova il pollaio senza *nessuna traccia del
   gallo, il re*. ⚠️ L'edizione italiana lo scrive **minuscolo** (`il re`), l'inglese
   maiuscolo (`the King`): nel dataset sta `Il Re` / `The King`, cioè la forma inglese e
-  l'italiana capitalizzata come nome di scheda.
+  l'italiana **capitalizzata come nome di scheda**, ✅ scelta confermata dall'utente
+  (*in italiano va bene con l'iniziale in maiuscolo*).
 - ⚠️⚠️ **`Biddy` non ha nessuna resa italiana**: Mondadori ha **tolto il nome**, e la frase
   in italiano dice solo *dormono con la zia*. Quindi `nome` e `nome_en` portano entrambi
-  `Biddy`, e non è una dimenticanza da sanare. ⚠️ Nemmeno il testo dice che è una gallina:
+  `Biddy`, ✅ **confermato dall'utente**, e non è una dimenticanza da sanare. ⚠️ Nemmeno il testo dice che è una gallina:
   lo dicono il contesto (la casa è piena di *cani, gatti, galli*) e il fatto che `biddy` in
   inglese sia il nome familiare della gallina. La voce è **dell'utente**, e resta la sua.
 - ⚠️ **`Fioccodineve` esisteva accanto a `Biddy` nella stessa frase**, e nell'elenco di
   partenza mancava: se ne è accorto l'utente mentre il grep la trovava. Vale come misura di
   quanto il grep sia più affidabile del ricordo, in **entrambe** le direzioni.
-- ⚠️ **`Vaiavanti` in inglese è un MASCHIO**: *She called **him** Gobefore*. L'utente lo ha
-  dichiarato senza genere, e il dato resta come lui l'ha voluto; ma l'italiano (*lo chiamava
-  Vaiavanti*) **non prova nulla**, perché `cane` è maschile per grammatica, mentre l'inglese
-  `him` è una scelta. Se un domani si vuole allineare alla fonte, questa è la riga.
-- ⚠️ **`Tiro` è il caso in cui il dubbio è NEL TESTO**: Tehanu dice *credo che sia un maschio*
-  e da lì la narrazione usa `he`. Quindi 'senza genere' non è una lacuna del dataset: è la
-  cosa che la storia dice, e il maschile che segue è un'ipotesi di un personaggio.
+- ✅ **`Vaiavanti` è MASCHIO dalla `0.48`**: la fonte inglese dice *She called **him**
+  Gobefore*, l'utente l'aveva dichiarato senza genere e ha corretto appena visto il passo. ⚠️ La
+  prova sta **solo** nell'inglese: l'italiano (*lo chiamava Vaiavanti*) **non prova nulla**,
+  perché `cane` è maschile per grammatica, mentre `him` è una scelta dell'autrice.
+- ✅ **`Tiro` resta SENZA GENERE**, confermato dall'utente, e il caso è quello in cui il dubbio
+  è **nel testo**: Tehanu dice *credo che sia un maschio* e da lì la narrazione usa `he`.
+  Quindi il campo vuoto non è una lacuna del dataset: è la cosa che la storia dice, e il
+  maschile che segue è l'ipotesi di un personaggio. ⚠️ È la coppia da guardare insieme:
+  Vaiavanti ha un `him` narrativo, Tiro un *credo* in bocca a un personaggio, e la differenza
+  fra i due gradi di prova è la ragione per cui uno ha il genere e l'altro no.
   - Sua madre è `Grigina` (`madre` e `madre_en`), e l'attestazione è doppia: i quattro gattini
     di Grigina, e *il migliore della cucciolata* consegnato ad Alder. ⚠️ Con `genere` vuoto la
     riga della genealogia stampa **'Figlio di'**, che è il ripiego del motore: non è un dato,
@@ -201,7 +205,9 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
   vuoto**: la fonte non lo dà, e l'utente stesso lo chiedeva col punto di domanda.
 - ⚠️⚠️ **`Sula` / `Gannet` è uno STREGONE, non un mago**, e la differenza qui è sostanziale
   perché il sito ha due badge distinti: le fonti dicono *lo stregone Sula* e *the sorcerer
-  Gannet*. Quindi porta `stregone`, non `mago`.
+  Gannet*. Quindi porta `stregone`, non `mago`. ✅ **L'utente ha confermato la fonte** contro
+  la propria indicazione iniziale (*Sula Stregone: ottimo, grazie per la correzione*), quindi
+  il punto è chiuso e non va riaperto.
   - ⚠️ **Da dove nasce l'equivoco, che è dentro la storia**: dopo la sua morte il Maestro
     delle Evocazioni **ipotizza** che in lui *ci fosse un grande Potere magico rimasto
     nascosto o mascherato in vita*. È l'ipotesi di un personaggio su un fatto, non
@@ -527,12 +533,25 @@ SOLO il vero nome, ed è il nome comune a essere vuoto**. Sono sue parole, e la 
   l'esportazione, l'editor admin e la navigazione fra le card. ⚠️ `veroNomeNoto` **è già
   pronto**: considera noto il vero nome di ogni drago anche col campo vuoto, quindi dopo la
   migrazione quel ramo diventa superfluo ma non dannoso.
-- ⚠️ **L'IBRIDA è la domanda aperta, e non si decide da sé**: `Tehanu` ha **entrambi** i nomi
-  (`Therru` è il suo nome d'uso, oggi fra gli alternativi). Raddrizzare il dato le darebbe
-  `nome` `Therru` e `vero_nome` `Tehanu`, ma allora la card mostrerebbe `Therru` in tondo e
-  `TEHANU` sotto: è il contrario della scelta esplicita dell'utente (*TEHANU va reso in
-  maiuscolo* in prima riga). Serve la sua decisione, e vale anche per `Orm Irian`, che non è
-  ancora nel dataset.
+- ✅ **LE IBRIDE SONO FUORI da questa migrazione, e seguono la regola UMANA** (decisione
+  dell'utente, 2026-08-23: *gli ibridi sono eccezioni e ragionano a sé: va benissimo se Tehanu
+  e Orm Irian sono preceduti da Therru e Libellula: dopotutto le due sono ANCHE umane*).
+  Quindi le voci-drago da raddrizzare sono **SEI**, non sette.
+  - **Applicato nella `0.48`**: `Tehanu` ha `nome` e `nome_en` `Therru` (identico nelle due
+    edizioni, 236 occorrenze ENG e 241 ITA) e `vero_nome` `Tehanu`; `Therru` è **uscito** dai
+    nomi alternativi, dove sarebbe comparso due volte. `Orm Irian` nascerà con `Libellula` /
+    `Dragonfly` davanti.
+  - ⚠️ **Il predicato del motore è cambiato con lei**: `soloVero` era 'ANCHE drago' ed è
+    diventato **'drago PURO'** (`categorie(p)` di lunghezza 1). Sui draghi puri non cambia
+    niente, quindi la modifica non aspetta la migrazione del dato.
+  - ⚠️ **Non contraddice la scelta di rendere TEHANU in maiuscolo**: il nome resta in Cinzel
+    maiuscolo, solo che sta nella riga del **vero nome**, che è il suo posto. È il terzo giro
+    su questa card, e i tre non si annullano: card in tinta, poi maiuscolo in prima riga, poi
+    maiuscolo in seconda con il nome d'uso davanti.
+  - ✅ **E fa COMBACIARE il dataset col canone**, che nell'elenco dei portatori del badge
+    `nomeged` la chiamava già `Therru` (`rules/Earthsea.md`): quella corrispondenza era
+    annotata come una divergenza da leggere insieme, e adesso non lo è più. Resta la sola
+    `Arha`/`Goha`.
   - ⚠️ Il suo `cardcolor` è `dragon`, quindi filetto ed etichette accompagnano il nome.
 - ⚠️ **La classe va sul `.rank-name-text`, non su `.rank-name`**: quel contenitore ospita
   anche etichette e icone (`rank-tipi`/`rank-flags` via `display:contents`), e un
@@ -1383,11 +1402,10 @@ chiama `nome d'uso EN`.
   riempito e la scheda resta incompleta finché non lo è (`data-serve-it` nello Schedario).
   ⚠️ È l'unica eccezione alla regola di § 'I QUATTRO livelli dei nomi, e perché il vero nome
   ha una riga sua', e non si estende alle altre 94.
-  - ⚠️⚠️ **`Orm Irian` è l'eccezione dentro l'eccezione**: è un'IBRIDA, e per un drago il nome
-    d'uso vuoto è la forma **giusta** e non una scheda incompleta (§ 'Il DATO è INVERTITO, e va
-    raddrizzato: il campo vuoto è il nome d'uso'). Il suo caso è però doppio, perché
-    `Libellula` un nome d'uso è: la decisione spetta all'utente, e finché non c'è quella scheda
-    non si dichiara incompleta per il campo vuoto.
+  - ✅ **`Orm Irian` NON è un'eccezione, ed è l'utente a chiuderla**: è un'IBRIDA, quindi segue
+    la regola umana e il campo va riempito come per le altre otto. Il suo nome d'uso è
+    `Libellula` / `Dragonfly`, e `Orm Irian` è il vero nome. Il perché sta in
+    § 'Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune'.
 - ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
   scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
 - ⚠️ **Il caso rovescio: una forma INGLESE fra i nomi alternativi ITALIANI è legittima, e non
