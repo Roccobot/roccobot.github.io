@@ -1082,8 +1082,11 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
      legenda dei badge. Nella disposizione a due colonne serviva a centrare lo slot,
      e resta la misura scartata: non rimetterlo. Lo `min-height` invece serve ancora,
      e riserva l'altezza del tag anche a filtro spento. */
-  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:0.35rem 0; min-height:21px; display:flex; flex-direction:column; align-items:center; }
-  #ctrl-panel .ctrl-left .ctrl-tag-slot + .ctrl-cardleg { margin-top:0; }
+  /* ⚠️ Via il `min-height:21px` (2026-08-23): lo spazio lo riserva il tag fantasma, e
+     quel numero era la stessa misura presa senza i font reali che su mobile faceva
+     scendere la legenda. Restano i margini e il centraggio, che non dipendono da
+     nessuna misura. */
+  #ctrl-panel .ctrl-left .ctrl-tag-slot { margin:0.35rem 0; display:flex; flex-direction:column; align-items:center; }
   /* Nota ancorata al bordo INFERIORE della colonna (margin-top:auto nel
      flex): il vuoto della colonna sinistra resta tra il tag del filtro e la
      nota, non ammassato in fondo. */
@@ -1161,7 +1164,9 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
    vince per specificità grazie all'id: chi tocca una delle due guardi l'altra.
    ⚠️ Non è la disposizione a essere diversa: per un giro questo commento ha detto che
    su desktop la card sta 'in fondo alla colonna', e non è vero. Lo era in un layout
-   precedente, e la regola `.ctrl-tag-slot + .ctrl-cardleg` sopravvive da allora. */
+   precedente, e da allora sopravviveva una regola `.ctrl-tag-slot + .ctrl-cardleg`,
+   uscita il 2026-08-23 insieme allo spostamento del tag in fondo: era già inerte prima,
+   perché la card non segue lo slot in nessuno dei due layout. */
 .ctrl-cardleg { padding:0 0.3rem; max-width:19rem; margin-bottom:1.1rem; }
 .ctrl-cardleg .rank-item {
   grid-template-columns:1fr; gap:0; margin:0;
@@ -1280,22 +1285,25 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 @media (prefers-reduced-motion:reduce) { .ctrl-legend-row.leg-shake { animation:none; } }
 /* Tag del filtro badge attivo (sotto le Categorie): riquadro stondato con la
    × a sinistra, come nei sistemi a tag; il click azzera il filtro. */
-/* Slot del tag: su mobile altezza FISSA (spazio riservato anche a filtro
-   spento: niente salti quando il tag compare), tag centrato dentro.
-   ⚠️ `min-height` = l'altezza MISURATA del tag, non un numero tondo (richiesta
-   dell'utente del 2026-08-23: lo stacco fra i filtri e la legenda dei badge ridotto
-   al minimo che lascia spazio al tag). Il tag rende 21px, lo slot ne riservava 24, e
-   quei 3px di troppo si vedevano sempre perché lo slot c'è anche a filtro spento: è
-   la sua ragione di esistere. La regola desktop cabla `21px`, qui è in rem perché il
-   tag scala col corpo del testo e lo slot deve seguirlo (`1.3125rem` = 21px).
-   ⚠️ NON si azzera: senza, la comparsa del tag farebbe scorrere la legenda, che è
-   il difetto per cui lo slot è nato. Il minimo indispensabile è l'altezza del tag,
-   non zero.
-   ⚠️ Il `margin-top` è 0 e lo stacco sopra lo dà il `margin-bottom` della sezione
-   del filtro (0.4rem, qui sotto): due margini che si sommano davano 19,2px sopra
-   contro 6,4px sotto, cioè un tag otticamente appeso al blocco di sotto. Ora sono
-   0.4rem e 0.4rem, simmetrici. */
-.ctrl-tag-slot { min-height:1.3125rem; display:flex; align-items:center; justify-content:center; margin:0 0 0.4rem; }
+/* Slot del tag, in fondo al Pannello (dopo la legenda). Il tag centrato dentro.
+   ⚠️⚠️ NIENTE `min-height`, ed è il punto della faccenda: lo spazio lo riserva il TAG
+   FANTASMA, che a filtro spento è nel DOM con `visibility:hidden` (vedi la nota nel JS,
+   dove si costruisce). Così l'altezza e la larghezza dello stato spento sono quelle
+   dello stato acceso **per costruzione**, in qualunque font.
+   ⚠️ Storia da non ripetere: qui c'è stato un `min-height` a numero, 24px fino alla
+   `0.31` e poi `1.3125rem` (21px), cioè l'altezza del tag misurata nell'ambiente di
+   prova, dove **Cinzel non si carica**. Col font vero il tag è più alto, quei pixel non
+   bastavano e la legenda scendeva: difetto segnalato dall'utente. La lezione non è 'il
+   numero era sbagliato' ma 'non doveva essere un numero': una misura presa senza i font
+   reali non si spaccia per buona (regola non derogabile), e qui l'unico modo di non
+   sbagliarla era non prenderla.
+   ⚠️ Il `margin-top` resta 0: lo stacco sopra lo dà il margine della sezione che
+   precede, e sommarne due dava un tag otticamente appeso al blocco di sotto. */
+.ctrl-tag-slot { display:flex; align-items:center; justify-content:center; margin:0 0 0.4rem; }
+/* Il tag FANTASMA: occupa il suo posto e non esiste per nessun altro scopo.
+   `visibility:hidden` (non `opacity:0`) perché toglie l'elemento anche dall'albero di
+   accessibilità e dal tab order, conservando l'ingombro. */
+.ctrl-badge-tag--ghost { visibility:hidden; pointer-events:none; }
 .ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 9px 4px 8px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 /* Larghezza stabile: min-width:146px fissa il riquadro alla stessa misura in
    entrambe le lingue (il testo più lungo, '16 active badges', sta sotto i
@@ -2593,7 +2601,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.33</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.35</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4640,22 +4648,34 @@ document.addEventListener('error', function(e){
   }
 }, true);
 
+// ⚠️ Le tre etichette sono state RISCRITTE dall'utente il 2026-08-23, e la forma è
+// cambiata insieme al testo: prima 'Titolo: spiegazione' coi due punti, ora
+// 'Titolo (spiegazione)' fra parentesi. Vale per tutte e tre, quindi non si mescolano
+// le due forme.
 var ICON_LABEL = {
   it: {
-    stregone: "Strega o stregone: incantatore con un certo potere",
-    mago:     "Mago: ha il vero dono della magia",
+    stregone: "Strega o stregone (possiede qualche potere)",
+    mago:     "Mago (detiene il vero potere)",
     // ⚠️ Il terzo badge ha CAMBIATO significato il 2026-08-21 (istruzione
     // dell'utente): diceva 'di questo personaggio si conosce il vero nome', che la
     // riga del vero nome ora dice da sé. Adesso marca chi ha ricevuto in custodia
     // il vero nome di Ged: a Terramare è la forma più alta di fiducia fra due
     // persone. La chiave è cambiata con lui (`veronome` -> `nomeged`), perché un
     // nome di campo che dice la cosa sbagliata è una trappola per chi legge dopo.
-    nomeged:  "Custode del vero nome di Ged"
+    // ⚠️ Dal 2026-08-23 nomina il personaggio col NOME D'USO e mette il vero nome fra
+    // parentesi (`Sparviero (Ged)`), che è l'ordine delle card: là il nome d'uso sta
+    // sopra e il vero nome sotto. Prima diceva il solo `Ged`, cioè il vero nome nudo,
+    // che è l'informazione che il sito tratta come la più preziosa.
+    nomeged:  "Custode del vero nome di Sparviero (Ged)"
   },
   en: {
-    stregone: "Witch or sorcerer: a spell-worker of some power",
-    mago:     "Mage: holder of the true gift of magic",
-    nomeged:  "Keeper of Ged's true name"
+    stregone: "Witch or sorcerer (holds some power)",
+    mago:     "Mage (holds the true power)",
+    // ⚠️ 'Sparviero' e NON 'Sparrowhawk', ed è la stessa scelta che il dataset fa con
+    // `nome_en`: le rese inglesi dei nomi non sono in scena, e tradurne una sola
+    // farebbe sembrare attestate anche le altre. Chi la volesse inglese cambi prima
+    // quella regola, non questa riga.
+    nomeged:  "Keeper of Sparviero's true name (Ged)"
   }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
@@ -5782,49 +5802,62 @@ function controlPanelHTML() {
      +   '<span class="ctrl-chk"></span>'
      +   '<span class="ctrl-label"><span class="ctrl-label-face">' + vnLbl + '</span></span>'
      + '</label></div>';
-  // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a
-  // sinistra): SOLO a filtro attivo; figlio diretto di .ctrl-left, così su
-  // desktop i margini auto lo centrano (in orizzontale e in verticale tra
-  // 'Animali' e l'avviso sui nomi). Il click azzera tutti i badge.
-  // SLOT del tag sempre presente (altezza riservata su mobile): la comparsa
-  // del tag non fa scorrere la legenda sottostante.
-  destra += '<div class="ctrl-tag-slot">';
-  if (badgeFilter.size) {
-    var nB = badgeFilter.size;
-    // La parte numerica ha uno slot a larghezza fissa (.tag-num, vedi CSS): il
-    // numero è centrato nel suo spazio, così il testo 'badge attiv...' parte
-    // sempre dalla stessa x e non fa jitter orizzontale quando il conteggio
-    // cambia numero di cifre (1 → 10). L'unica variazione (o/i, s finale) resta
-    // in coda e non sposta nulla a sinistra.
-    // niente spazio iniziale prima di 'badge': la separazione la dà il gap flex
-    // del .tag-face (come tra × e numero), così lo spazio resta costante.
-    // Slot del numero a larghezza fissa = quella di '16' (il massimo: 16 righe
-    // badge), col numero visibile sovrapposto a un '16' invisibile (grid-stack):
-    // larghezza minima per 2 cifre, quindi nessun jitter da 1 a 2 cifre.
-    function numSlot(n){ return '<span class="tag-num"><span class="tag-num-f">' + n + '</span><span class="tag-num-m" aria-hidden="true">16</span></span>'; }
-    var tagTxt = currentLang === 'it' ? (numSlot(nB) + '<span class="tag-txt">badge attiv' + (nB === 1 ? 'o' : 'i') + '</span>')
-                                      : (numSlot(nB) + '<span class="tag-txt">active badge' + (nB === 1 ? '' : 's') + '</span>');
-    var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
-    // Segnaposti invisibili con la stringa più larga possibile di ENTRAMBE le
-    // lingue (2 cifre + forma più lunga): fissano la larghezza del riquadro fin
-    // dal primo tap E la tengono identica al cambio lingua, come gli altri
-    // controlli del Pannello (prima si riservava solo la lingua corrente e il
-    // box 'ballava' di ~5px commutando IT/EN).
-    var tagMaxIt = numSlot('16') + '<span>badge attivo</span>';
-    var tagMaxEn = numSlot('16') + '<span>active badges</span>';
-    destra += '<button class="ctrl-badge-tag" id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '">'
-       + '<span class="tag-face"><span class="tag-x">×</span>' + tagTxt + '</span>'
-       + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxIt + '</span>'
-       + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxEn + '</span>'
-       + '</button>';
-  }
-  // A filtro spento lo slot resta VUOTO ma riserva l'altezza del tag (CSS
-  // min-height, dalla v7.29): il tag compare/sparisce in-place senza reflow e
-  // le Categorie (che stanno sopra) non si spostano. Storico: fino alla v7.28
-  // qui c'era un suggerimento in corsivo (.ctrl-badge-hint) messo solo per
-  // riempire il vuoto della colonna; rimosso perché ridondante (e sotto la
-  // soglia AA di contrasto in tema chiaro).
-  destra += '</div>';
+  // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a sinistra).
+  // Il click azzera tutti i badge.
+  // ⚠️⚠️ STA IN FONDO AL PANNELLO, DOPO LA LEGENDA (istruzione dell'utente,
+  // 2026-08-23), e la posizione è la prima metà del rimedio all'anti-jitter: sotto di
+  // lui non c'è niente, quindi qualunque scarto residuo di altezza non può più
+  // spostare nulla. Prima stava fra il filtro del vero nome e la legenda, cioè nel
+  // punto peggiore: in mezzo. ⚠️ L'HTML si accumula qui ma si APPENDE dopo la
+  // legenda: il codice sta ancora in questo punto perché è dove vivono le sue note.
+  // ⚠️⚠️ E IL TAG SI COSTRUISCE SEMPRE, anche a filtro spento: quello inattivo è un
+  // FANTASMA (`--ghost`: `visibility:hidden`, inerte, fuori dall'albero a11y). È la
+  // seconda metà del rimedio, e sostituisce il `min-height` che riservava l'altezza a
+  // numero. Quel numero era il difetto: la v0.31 l'ha tarato su 21px, l'altezza del
+  // tag misurata **senza i font reali** (Cinzel non si carica nell'ambiente di prova),
+  // e col font vero il tag è più alto, quindi comparendo spingeva giù la legenda di
+  // qualche pixel. L'utente l'ha visto e ha proposto '3 o 4 pixel in più': con il
+  // fantasma non c'è più niente da tarare, perché lo spazio riservato È il tag, in
+  // qualunque font e a qualunque corpo del testo.
+  // ⚠️ Riserva anche la LARGHEZZA, che è un difetto in meno di cui nessuno si era
+  // accorto: il contenitore del Pannello è `width:fit-content`, quindi un tag più largo
+  // del resto del contenuto lo allargherebbe, spostando tutto in orizzontale.
+  var nB = badgeFilter.size;
+  var ghost = !nB;
+  // La parte numerica ha uno slot a larghezza fissa (.tag-num, vedi CSS): il numero è
+  // centrato nel suo spazio, così il testo 'badge attiv...' parte sempre dalla stessa
+  // x e non fa jitter orizzontale quando il conteggio cambia numero di cifre (1 → 10).
+  // L'unica variazione (o/i, s finale) resta in coda e non sposta nulla a sinistra.
+  // Niente spazio iniziale prima di 'badge': la separazione la dà il gap flex del
+  // .tag-face (come tra × e numero), così lo spazio resta costante.
+  // Slot del numero a larghezza fissa = quella di '16' (il massimo: 16 righe badge),
+  // col numero visibile sovrapposto a un '16' invisibile (grid-stack): larghezza
+  // minima per 2 cifre, quindi nessun jitter da 1 a 2 cifre.
+  function numSlot(n){ return '<span class="tag-num"><span class="tag-num-f">' + n + '</span><span class="tag-num-m" aria-hidden="true">16</span></span>'; }
+  // Il fantasma porta il numero più largo (16): non si vede, e così la larghezza
+  // riservata è quella del caso peggiore anche prima del primo tap.
+  var nVis = ghost ? 16 : nB;
+  var tagTxt = currentLang === 'it' ? (numSlot(nVis) + '<span class="tag-txt">badge attiv' + (nVis === 1 ? 'o' : 'i') + '</span>')
+                                    : (numSlot(nVis) + '<span class="tag-txt">active badge' + (nVis === 1 ? '' : 's') + '</span>');
+  var tagLbl = currentLang === 'it' ? 'Rimuovi il filtro badge' : 'Clear the badge filter';
+  // Segnaposti invisibili con la stringa più larga possibile di ENTRAMBE le lingue
+  // (2 cifre + forma più lunga): fissano la larghezza del riquadro fin dal primo tap E
+  // la tengono identica al cambio lingua, come gli altri controlli del Pannello (prima
+  // si riservava solo la lingua corrente e il box 'ballava' di ~5px commutando IT/EN).
+  var tagMaxIt = numSlot('16') + '<span>badge attivo</span>';
+  var tagMaxEn = numSlot('16') + '<span>active badges</span>';
+  // ⚠️ Il fantasma NON prende l'id: `#ctrl-badge-tag` è l'aggancio del click che azzera
+  // il filtro, e darglielo significherebbe due elementi con lo stesso id, con il
+  // gestore appeso a quello sbagliato. Niente id, `disabled`, `tabindex=-1` e
+  // `aria-hidden`: quattro modi di dire che non è un bottone, perché uno solo si
+  // dimentica.
+  var tagSlotHtml = '<div class="ctrl-tag-slot">'
+     + '<button class="ctrl-badge-tag' + (ghost ? ' ctrl-badge-tag--ghost' : '') + '"'
+     +   (ghost ? ' aria-hidden="true" tabindex="-1" disabled' : ' id="ctrl-badge-tag" aria-label="' + tagLbl + '" title="' + tagLbl + '"') + '>'
+     + '<span class="tag-face"><span class="tag-x">×</span>' + tagTxt + '</span>'
+     + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxIt + '</span>'
+     + '<span class="tag-measure" aria-hidden="true"><span class="tag-x">×</span>' + tagMaxEn + '</span>'
+     + '</button></div>';
   // Legenda dell'ANATOMIA di una card (istruzione dell'utente, 2026-08-21): una
   // card finta, con le stesse classi di quelle vere, dove ogni riga porta scritto
   // che cos'è. Ha preso il posto della vecchia nota sui nomi, che dopo lo
@@ -5955,6 +5988,9 @@ function controlPanelHTML() {
      + '<div class="leg-face">' + buildLegend(currentLang, false) + '</div>'
      + '<div class="leg-measure" aria-hidden="true">' + buildLegend(currentLang === 'it' ? 'en' : 'it', true) + '</div>'
      + '</div></div>';
+  // Il tag del filtro badge, costruito molto più sopra (dove vivono le sue note), si
+  // appende QUI: in fondo, dopo la legenda. Vedi là il perché della posizione.
+  h += tagSlotHtml;
   h += '</div>'; // chiude .ctrl-left
   h += '</div>'; // chiude .ctrl-cols
   // Barra sticky in basso (solo mobile): versione (anche accesso admin) a
