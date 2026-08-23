@@ -1167,6 +1167,27 @@ riempiono nello stesso modo** (istruzione dell'utente, 2026-08-23).
   Schedario, e l'esportazione la porta in **due colonne** (`alternativi EN`, `titoli EN`).
   ⚠️ Prima stava solo nel mio scratchpad, che muore con la sessione.
 
+### 🔤 Il nome d'uso inglese va in `nome_en`, e NON fra gli alternativi
+
+Le due metà del **nome d'uso** sono `nome` e `nome_en`: `Sparviero`/`Sparrowhawk`,
+`Giaggiolo`/`Flag`, `Dote`/`Gift`. ⚠️ **La forma inglese non è un nome alternativo**, e
+confonderla con quelli è l'errore che lo Schedario ha indotto (2026-08-23): il suggerimento
+`in inglese: Veil` stava sotto il campo **nomi alternativi** invece che sotto **nome
+italiano**, e l'utente si è ritrovato a scriverci `Veil -> da mettere come nome comune ENG`.
+Corretto: il suggerimento vive sotto il campo di cui parla, e la colonna dell'esportazione si
+chiama `nome d'uso EN`.
+
+- ⚠️⚠️ **NOVE schede dello Schedario sono intestate col VERO nome**, perché la pagina
+  Wikipedia le elenca così: `Yahan` (uso `Veil`), `Hara` (`Alder`), `Mevre` (`Lily`),
+  `Heleth` (`Dulse`), `Hayohe` (`Apple`), `Hatha` (`Moss`), `Erisen` (`Aspen`), `Etaudis`
+  (`Rose`), `Orm Irian` (`Dragonfly`). Là la regola del campo vuoto **si rovescia**: il vuoto
+  darebbe il **vero** nome come nome d'uso, che è la cosa sbagliata, quindi il campo va
+  riempito e la scheda resta incompleta finché non lo è (`data-serve-it` nello Schedario).
+  ⚠️ È l'unica eccezione alla regola di § 'I QUATTRO livelli dei nomi, e perché il vero nome
+  ha una riga sua', e non si estende alle altre 94.
+- ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
+  scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
+
 ### ✍️ `Sparviero` è la forma scelta, e `Sparviere` sta fra gli alternativi
 
 Decisione dell'utente, 2026-08-23, dopo il grep che ha fatto emergere la divergenza: *la forma
