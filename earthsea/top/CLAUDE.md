@@ -358,49 +358,75 @@ Due cambiamenti che risolvono la stessa cosa da due lati.
 
 ## 🔆 Il logo del FAB
 
-**In vigore dalla `0.23` la QUARTA versione** (2026-08-22, file dell'utente `Mare e
-sole.svg`): un'**onda e un sole**, un tracciato solo, tutto a riempimento.
+**In vigore dalla `0.36` la QUINTA versione** (2026-08-23, file dell'utente `Earthsea_04`,
+arrivato come `.txt` da rinominare): un **tondo con un'onda e una stella** che sporge in alto
+a destra, un tracciato solo, tutto a riempimento, disegnato in `#4d4048` su una tavola
+`1120x1120`.
 
-- ⚠️ **Ne esistono QUATTRO, e due sono arrivate lo stesso giorno**: il **monogramma dentro
+⚠️⚠️ **La stella che sporge cambia il modo di MISURARE il logo**, e con lui il divisore
+dell'altezza: la regola sta nel blocco in fondo a questo paragrafo, ed è la prima cosa da
+leggere prima di toccare il numero.
+
+- ⚠️ **Ne esistono CINQUE, e due sono arrivate lo stesso giorno**: il **monogramma dentro
   un anello** (`Earthsea Roccobot.svg`) è stato in vigore per un solo giro, la `0.20`-`0.22`,
-  poi l'utente ha scelto l'altro disegno del medesimo invio. Prima c'erano la figura a onde
+  poi l'utente ha scelto l'altro disegno del medesimo invio; l'**onda e sole**
+  (`Mare e sole.svg`) ha tenuto dalla `0.23` alla `0.35`. Prima c'erano la figura a onde
   del 2026-08-21 e il segnaposto nato col progetto.
   - Ⓘ Il monogramma **non è un errore da correggere**: era la scelta di quel giro, e la sua
     storia sta nella storia git. Chi legge un commit della `0.20` non stia a cercare perché
     il logo sia diverso.
 - ⚠️⚠️ **La prima cosa da guardare in un logo nuovo è QUANTI `path` ha**, non il contenuto di
   uno: 1 nella prima versione (con `stroke`), **2** nella seconda e nella terza, di nuovo **1**
-  nella quarta. Aggiornarne uno quando sono due lascia mezzo logo per strada, ed è la ragione
-  per cui `FAB_LOGO_D` è un **elenco**. Il numero non è monotono: non si deduce dall'ordine.
+  nella quarta e nella quinta. Aggiornarne uno quando sono due lascia mezzo logo per strada,
+  ed è la ragione per cui `FAB_LOGO_D` è un **elenco**. Il numero non è monotono: non si deduce
+  dall'ordine.
+  - ⚠️ **E QUANTO è grande il suo viewBox**, che è l'altra cosa che cambia in silenzio: i primi
+    quattro erano `1024x1024`, il quinto è `1120x1120`. L'attributo si scrive a mano in
+    `buildControlPanel` accanto a `FAB_LOGO_D`, e sbagliarlo non dà nessun errore: disegna il
+    logo in scala sbagliata e tagliato.
   - **La ripulitura è la parte che pesa, sempre**: gli export di Illustrator sono
     `<metadata>` per il 96-99%, cioè il blob proprietario `i:aipgf`. I due loghi dell'invio
-    del 2026-08-22 sono passati da **113 KB a 4,9 KB** e da **269 KB a 1,9 KB** togliendo quel
-    blocco, il commento del generatore e lo `xmlns:i` di Adobe, che senza il blob non ha più
-    niente da qualificare. Geometria, `viewBox`, `fill` e `id` restano identici al byte, e si
-    **verifica** che lo siano.
+    del 2026-08-22 sono passati da **113 KB a 4,9 KB** e da **269 KB a 1,9 KB**, e il quinto da
+    **254,6 KB a 2,5 KB** (-99%), togliendo quel blocco, il commento del generatore, lo
+    `xmlns:i` di Adobe (che senza il blob non ha più niente da qualificare) e i suoi attributi
+    `i:`. Geometria, `viewBox`, `fill` e `id` restano identici al byte, e si **verifica** che lo
+    siano.
 - ⚠️ **La sorgente vive in DUE posti che vanno cambiati insieme**: inline nel FAB
   (`FAB_LOGO_D` in `buildControlPanel`) e nel file `icons/Earthsea.svg`. Inline perché il
   FAB lo tinge con `currentColor` e un `img` non erediterebbe il colore; il file perché
   servirà altrove (favicon, immagine di anteprima).
   - ⚠️ **Il nome del file segue il RUOLO, non il disegno**: `Earthsea.svg` è 'il logo del
-    progetto', e **quattro** disegni diversi sono passati per quel percorso senza che il
+    progetto', e **cinque** disegni diversi sono passati per quel percorso senza che il
     codice cambiasse. Stessa ragione delle PNG dei badge (§ 'I tre badge e il genere'), e vale
     anche quando l'utente manda un file con un altro nome, come è successo due volte.
 - ⚠️ **Si costruisce con `createElementNS`, non con `innerHTML`**, che è vietato senza
   deroghe: qui il motore di provenienza lo usava per il segnaposto, e sostituire il glifo è
   stata l'occasione per togliere anche quello.
 - ⚠️⚠️ **Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo**: il colore
-  con cui l'utente l'ha disegnato è `#4a3f46`, che sul fondo scuro `#0d1a22` fa **1,76**
-  (invisibile) e sul disco oro del FAB **4,57**. La coppia di disco e inchiostro è il disegno,
-  non una scelta del CSS.
-  - Ⓘ **Il monogramma lo DICHIARAVA, questo no**: quel file portava un cerchio `#d9b75d` a
+  con cui l'utente ha disegnato il quinto è `#4d4048`, che sul fondo scuro `#0d1a22` fa **1,71**
+  (invisibile) e sul disco `#78adc2` del FAB **3,99**, sopra il 3:1 dei componenti. La coppia di
+  disco e inchiostro è il disegno, non una scelta del CSS.
+  - **L'inchiostro del tema scuro è il colore del FILE, e il criterio non è cambiato**: era
+    `#4a3f46` col terzo e col quarto logo, è `#4d4048` col quinto, tre punti per canale di
+    differenza. A occhio non si vede, ma il valore si allinea comunque: il giorno che arriva un
+    logo disegnato in un colore diverso, un inchiostro 'ereditato' sarebbe una seconda fonte di
+    verità che nessuno pensa a guardare.
+  - Ⓘ **Il monogramma lo DICHIARAVA, gli altri no**: quel file portava un cerchio `#d9b75d` a
     piena tela tenuto `display:none`, cioè il fondo per cui era pensato, e inline non entrava
-    perché il disco lo disegna il FAB (due dischi sovrapposti). `Mare e sole.svg` non ha
-    quell'indizio, quindi la misura qui sopra è l'unica fonte del fatto.
-  - ⚠️⚠️ **I DUE TEMI HANNO ORA COMBINAZIONI DIVERSE** (dalla `0.29`, 2026-08-23): in **scuro**
-    disco oro `rgba(210,178,92,0.96)` e segno `#4a3f46` (4,57); in **chiaro** disco teal
-    `#34707f` e segno **bianco** (5,57 il segno, 5,36 il disco sul fondo pagina; hover
-    `#3d8291`, 4,37). ⚠️ Due regole CSS distinte, quindi chi ne cambia una guardi l'altra.
+    perché il disco lo disegna il FAB (due dischi sovrapposti). Dal quarto logo quell'indizio
+    non c'è più, quindi la misura qui sopra è l'unica fonte del fatto.
+  - ⚠️⚠️ **I DUE TEMI HANNO COMBINAZIONI DIVERSE** (dalla `0.29`, 2026-08-23), e in entrambi il
+    disco è **IN TINTA COL TITOLONE** (dalla `0.36`, istruzioni dell'utente dello stesso
+    giorno: *FAB del tema chiaro identico al colore-base del titolone* e *titolone del tema
+    scuro più scuro e azzurro, FAB in tinta*): in **scuro** disco `#78adc2`, il capo alto del
+    gradiente del titolo, e segno `#4d4048` (**3,99**); in **chiaro** disco `#267d71`, la media
+    dei due capi del gradiente chiaro, e segno **bianco** (**4,94** il segno, 4,75 il disco sul
+    fondo pagina; hover `#339487`, 3,67). ⚠️ Due regole CSS distinte, quindi chi ne cambia una
+    guardi l'altra.
+    - Ⓘ **Percorso dei dischi, perché nei commenti girano ancora valori vecchi**: in scuro
+      **oro** `rgba(210,178,92,0.96)` fino alla `0.35`, l'ultimo pezzo di Arda rimasto qui
+      dentro; in chiaro **oro** `#e0b54a` fino alla `0.28`, poi il teal `#34707f` fino alla
+      `0.35`. Chi trova uno di quei tre in una nota sa a che giro appartiene.
     - ⚠️⚠️ **È CADUTA la regola 'stesso inchiostro nei due temi'**, che valeva dalla `0.21` al
       2026-08-23, e conviene sapere che è caduta per non 'ripararla': l'utente ha chiesto in
       chiaro una combinazione *'più simile ad Arda'*, e Arda in chiaro ha disco profondo e
@@ -432,29 +458,46 @@ sole.svg`): un'**onda e un sole**, un tracciato solo, tutto a riempimento.
       solo segno inganna: va misurato anche il bottone contro la pagina.
     - L'altra scartata era l'**inversione** (disco `#4a3f46`, segno oro `#d9b75d`, 5,21): non
       per un difetto, ma perché cambiava il **peso** del FAB nella pagina e non il solo colore.
-- **L'altezza dell'svg è `2.164rem`, cioè `1.9rem / 0.8781`**, e la divisione è la nota da
-  tenere: il disegno misura **801,23x899,17 su un canvas 1024x1024**, quindi occupa l'87,81%
-  del lato più lungo e ha margini propri. Scalare il canvas gli ridà l'ingombro che il
-  Pannello prevedeva per il glifo **senza ritagliare il file né spostarne i pixel**
-  (icone as-is).
-  ⚠️ **Il divisore si rimisura a ogni logo nuovo** con la `getBBox` dei suoi tracciati: le
-  quattro versioni hanno dato 0,8, 0,836, 0,6757 e 0,8781, quindi tenere il numero vecchio non
-  rompe niente e **sbaglia in silenzio**. Non si ritaglia il viewBox.
-  - ⚠️⚠️ **Si divide per il lato PIÙ LUNGO**, e questo si è capito solo alla quarta versione:
-    la terza era **circolare**, quindi la sua bbox era quadrata e i due numeri coincidevano.
-    Con una figura più alta che larga usare la larghezza darebbe un disegno **più grande del
-    disco**. La regola vale per tutte, la coincidenza la nascondeva.
-  - ⚠️ **Questo logo è ASIMMETRICO** (peso in basso a destra), quindi nel tondo resta un vuoto
-    in alto a sinistra. È stato **visto e accettato dall'utente** prima di sceglierlo, quindi
-    non è un difetto da sistemare: e non si compensa spostando il canvas (icone as-is). Il
-    centraggio ottico, se un domani lo si vuole, si fa **a monte nel file**.
+- **L'altezza dell'svg è `2.2526rem`, cioè `1.9rem / 0.84348`**, e il divisore è la nota da
+  tenere. Il fine non cambia da sempre: la parte **significativa** del disegno deve rendere
+  `1.9rem`, l'ingombro che il Pannello prevedeva per il glifo, **senza ritagliare il file né
+  spostarne i pixel** (icone as-is).
+  - ⚠️⚠️ **QUI IL DIVISORE VIENE DAL CERCHIO, NON DALLA BBOX** (istruzione dell'utente,
+    2026-08-23: *la centratura deve tenere conto del CERCHIO, non dell'intero contenuto*, e
+    *ho già centrato la grafica sulla tavola da disegno*). Le due misure divergono perché la
+    **stella sporge**: la bbox è `944,70x1011,50` su `1120`, ma quei 66 punti in più sono la
+    punta della stella, e il centro della bbox cade **33 punti sopra** il centro della tavola.
+    Il cerchio invece misura **944,70 di diametro** ed è centrato sulla tavola (margini 87,6 a
+    sinistra e a destra, 88,0 sopra, 87,3 sotto), cioè l'**84,348%** del lato.
+    - **Conseguenza pratica, ed è la ragione per cui l'utente lo ha chiesto**: dividendo per la
+      bbox il tondo renderebbe `1,78rem` invece di `1,9rem` e scenderebbe di mezzo pixel sotto
+      il centro del disco. Col cerchio il riferimento è il **viewBox**, quindi non serve
+      **nessun** offset di centratura: l'svg si centra da sé nel FAB e il tondo ci finisce
+      dentro centrato.
+    - **Misurato sul FAB vero** (2026-08-23, DPR 4, viewport mobile): svg `36,03px` nel disco
+      da `48px`, tondo reso `30,5px` = **1,906rem**, centro a mezzo pixel di device dal centro
+      del disco. La stella resta dentro il disco.
+  - ⚠️ **Il criterio dei quattro loghi precedenti era il lato PIÙ LUNGO della bbox** (divisori
+    0,8, 0,836, 0,6757 e 0,8781), e non è stato abbandonato per gusto: quei disegni non avevano
+    una parte che **sporge** dalla figura, quindi bbox e figura erano la stessa cosa. Chi porta
+    il sesto logo guardi prima se ce l'ha: se sì vale il criterio del cerchio, se no quello
+    della bbox.
+  - ⚠️ **Il divisore si rimisura a ogni logo nuovo**, in un modo o nell'altro, e tenere il
+    numero vecchio non rompe niente e **sbaglia in silenzio**. Come si misura: la bbox con la
+    `getBBox` dei tracciati, il cerchio con la **riga più larga** di un render a grandezza di
+    viewBox (dieci righe di Playwright più PIL, rifatte al bisogno). Mai dai valori nominali.
+  - Ⓘ **Il quarto logo era ASIMMETRICO** (peso in basso a destra) e nel tondo lasciava un vuoto
+    in alto a sinistra, visto e accettato dall'utente. Col quinto la questione **non esiste
+    più**: il disegno è un tondo centrato sulla tavola. La nota resta perché spiega perché
+    allora non si compensò spostando il canvas (icone as-is): il centraggio ottico si fa a
+    monte nel file, ed è esattamente quello che l'utente ha fatto qui.
 
 ## 🔖 Favicon e icone dell'app installabile
 
 **Dalla `0.24`**, e sono **lo stesso glifo del FAB**, non un disegno a parte: le genera
 `.memo/scripts/earthsea-icons.js` estraendolo da `index.html`. Se il simbolo cambia si
 rigenerano invece di divergere in silenzio, ⚠️ e qui non è un rischio teorico: **il logo è
-cambiato quattro volte in tre giorni**.
+cambiato cinque volte in quattro giorni**.
 
 - **Che cosa produce**: `favicon.svg` più i PNG **48, 32 e 16** (ripiego per i browser che non
   prendono il vettoriale), e `pwa/app.svg` più `app-192.png` e `app-512.png` per il manifest.
@@ -463,12 +506,17 @@ cambiato quattro volte in tre giorni**.
   due famiglie nascono dallo stesso glifo e dalla **stessa misura di bbox**. In due file quella
   misura sarebbe scritta due volte, e divergerebbero al primo logo nuovo.
 - ⚠️ **Il glifo si legge da `FAB_LOGO_D`, che è un ELENCO**, e lo script prende **tutti** i
-  tracciati: le versioni del logo ne hanno avuti 1, 2, 2 e 1, quindi il numero non si assume.
+  tracciati: le versioni del logo ne hanno avuti 1, 2, 2, 1 e 1, quindi il numero non si assume.
   Leggerne uno solo darebbe mezza icona con tutta la catena verde.
-- ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: qui il canvas è 1024x1024 ma
-  il disegno ne occupa **801,23x899,17**, quindi il margine morto è reale e assumere il nominale
-  darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro, nessun pixel spostato
-  (icone as-is).
+- ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: col quinto logo il canvas è
+  1120x1120 e il disegno ne occupa **944,70x1011,50**, quindi il margine morto è reale e
+  assumere il nominale darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro,
+  nessun pixel spostato (icone as-is).
+  - ⚠️⚠️ **Qui la bbox è quella giusta, al contrario del FAB**, e la differenza va capita prima
+    di 'uniformare' i due: nelle icone il glifo va **a filo del riquadro** perché non c'è nessun
+    disco da centrarci dentro, quindi conta l'ingombro totale, stella compresa. Sul FAB conta il
+    cerchio, perché il disco è il suo riferimento (§ 'Il logo del FAB'). Due fini diversi, due
+    misure diverse, ed è deliberato.
 
 ### 🔵 La tinta della favicon, e perché qui la finestra conforme ESISTE
 
@@ -607,8 +655,10 @@ ridisegnasse la card copiando gli stili nella legenda, la legenda comincerebbe a
 card che non esiste, che è l'unico modo in cui può sbagliare.
 
 - ⚠️⚠️ **La tinta è quella del TITOLONE, non di una famiglia** (richiesta dell'utente,
-  2026-08-23): i capi alti dei due gradienti di `h1`, `#a8e6dc` in scuro e `#0e6b5e` in
-  chiaro. Prima prendeva quella di `cc-man` e la card finta si leggeva come la scheda di un
+  2026-08-23): i capi alti dei due gradienti di `h1`, `#78adc2` in scuro e `#0e6b5e` in
+  chiaro. ⚠️ In scuro era `#a8e6dc` fino alla `0.35`: **la riga segue il titolo**, quindi chi
+  ritocca il gradiente di `h1` ritocca anche quella, o la tinta resta quella di un titolo che
+  non c'è più. Prima prendeva quella di `cc-man` e la card finta si leggeva come la scheda di un
   uomo; ora si legge come parte dell'intestazione del sito. È la sola deroga alla regola
   'solo le misure', ed è voluta.
   - ⚠️ **La classe `cc-man` RESTA nel markup e non è un residuo**: porta con sé le regole
@@ -753,6 +803,18 @@ Le due tavolozze proposte sono state applicate il 2026-08-21, con due correzioni
 sulla proposta: **tema scuro leggermente meno scuro** (fondo `#0D1A22` invece di `#08131A`) e
 **titolo in verde mare**, che sullo scuro tende al blu e in chiaro è smeraldo.
 
+⚠️ **In tema SCURO il titolo NON è più verde mare dalla `0.36`** (istruzione dell'utente,
+2026-08-23: *titolone del tema scuro più scuro e azzurro*): il gradiente va da `#78adc2` a
+`#3072a1`, azzurro che scende al blu, e la tavolozza del 2026-08-21 resta nel **solo** tema
+chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo). Con lui si muovono, e vanno tenuti insieme, il
+**disco del FAB** (§ 'Il logo del FAB') e la **tinta della card-legenda** (§ 'La legenda nel
+Pannello è una CARD FINTA').
+- ⚠️⚠️ **Il capo basso è al LIMITE e non si scurisce oltre**: `#3072a1` fa **3,41** sul fondo
+  `#0d1a22`, contro il 3:1 che il testo grande richiede, e il margine che c'era prima (4,96) è
+  stato speso proprio per scurire. Chi volesse il titolo ancora più scuro deve **comprimere il
+  gradiente verso il capo alto**, non abbassare questo. La misura completa, coi tre gradini
+  proposti per il capo alto, sta nel commento di `h1`.
+
 - ⚠️⚠️ **Il fondo pagina era CABLATO in nove punti**, non solo nel `body`: il gemello del tema
   chiaro, il **fondo di riferimento del gate AA** (`ccFamTxt`), le due anteprime (effetti ed
   editor colori) e i commenti che lo nominavano. Cambiarne uno solo avrebbe fatto calcolare
@@ -766,10 +828,10 @@ sulla proposta: **tema scuro leggermente meno scuro** (fondo `#0D1A22` invece di
   `.type-dragon` (rosso acceso, ereditato da Arda) sono state sostituite da una regola che
   legge `--ccrgb`/`--cctxt` della card. Prima mostravano 'Donna' in **oro** accanto a un vero
   nome **turchese**: il difetto tipico di un colore cablato che una tavolozza nuova dimentica.
-- **L'oro sopravvive dove è voluto, e dal 2026-08-23 in un posto in meno**: il **disco del FAB
-  in tema SCURO** e i **numeri del podio**, che sono la convenzione oro-argento-bronzo e non
-  una tinta di tavolozza. ⚠️ **In tema chiaro il disco del FAB non è più oro** (`#E0B54A`) ma
-  teal: vedi § 'Il logo del FAB'. Nel chiaro, quindi, l'oro resta solo sul podio.
+- **L'oro sopravvive nel SOLO posto dove è voluto**, dalla `0.36`: i **numeri del podio**, che
+  sono la convenzione oro-argento-bronzo e non una tinta di tavolozza. ⚠️ **Il disco del FAB non
+  è più oro in nessuno dei due temi**: in chiaro dalla `0.29` (`#E0B54A` -> teal), in scuro dalla
+  `0.36` (`rgba(210,178,92,0.96)` -> `#78adc2`, in tinta col titolone). Vedi § 'Il logo del FAB'.
 
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 

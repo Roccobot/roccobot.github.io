@@ -276,12 +276,22 @@ h1 {
   /* Bagliore neutralizzato (dalla v8.79): grigi a pari luminanza dei vecchi
      rgba(104,144,168)/rgba(30,60,100). L'effetto sul font resta, la tinta no. */
   text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
-  /* Fill VERDE MARE che scende verso il BLU (istruzione dell'utente, 2026-08-21,
-     con la tavolozza nuova): sostituisce il gradiente oro ereditato da Arda.
-     Il punto più scuro (#3f92a8) fa 4,96 sul fondo `#0D1A22`, ben sopra il 3:1 che
-     il testo grande richiede: c'è margine se un domani il fondo si schiarisse
-     ancora. Il tema chiaro ha il suo, smeraldo, nella regola light più sotto. */
-  background:linear-gradient(180deg,#a8e6dc 0%,#3f92a8 100%);
+  /* Fill AZZURRO che scende al BLU (istruzione dell'utente, 2026-08-23: *titolone del
+     tema scuro più scuro e azzurro*). Ha sostituito il verde mare della tavolozza del
+     2026-08-21 (`#a8e6dc` -> `#3f92a8`), che a sua volta aveva sostituito il gradiente
+     oro ereditato da Arda. Il tema chiaro ha il suo, smeraldo, nella regola light.
+     ⚠️⚠️ **IL CAPO BASSO È AL LIMITE, e non si scurisce oltre**: `#3072a1` fa **3,41**
+     sul fondo `#0d1a22`, contro il **3:1** che il testo grande richiede. Il margine che
+     c'era prima (4,96) è stato speso proprio per scurire, quindi da qui in giù si sfonda
+     la soglia. Chi volesse il titolo ancora più scuro deve **comprimere il gradiente**
+     verso il capo alto, non abbassare questo.
+     ⚠️ Il capo ALTO è la leva del 'più scuro' e vale `#78adc2` (7,20 sul fondo): scelto
+     dall'utente fra tre gradini resi sul sito vero (gli altri erano `#9ac9db`, 9,89, e
+     `#5b92a8`, 5,15). ⚠️ Il terzo è stato scartato per una ragione che si vede solo
+     misurando: sotto quel valore il segno prugna del FAB, che ora prende questa stessa
+     tinta, scende a 2,93 e va sostituito col bianco, cioè si perde il colore con cui il
+     logo è stato disegnato. */
+  background:linear-gradient(180deg,#78adc2 0%,#3072a1 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   /* Con background-clip:text il gradiente riempie il testo solo entro il box di
      riga; con line-height:0.95 gli svolazzi bassi di Cinzel Decorative (code di
@@ -886,39 +896,56 @@ html[data-theme="light"] .cc-woman{--ccrgb:12,117,126}
 html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
-/* Il logo del FAB porta margini PROPRI dentro il suo canvas: il disegno misura
-   801,23x899,17 su 1024, cioè occupa l'87,81% del lato più lungo. L'altezza dell'svg
-   è quindi 1.9rem / 0.8781, così il disegno ha l'ingombro che il Pannello prevedeva
-   per il glifo, senza ritagliare il canvas ne' spostarne i pixel (icone as-is).
-   ⚠️ Il divisore va RIMISURATO a ogni logo nuovo, con la `getBBox` dei suoi
-   tracciati: le quattro versioni hanno dato 0,8, 0,836, 0,6757 e 0,8781, quindi
-   tenere il numero vecchio non rompe niente e sbaglia in silenzio. Non si ritocca
-   il file.
-   ⚠️ Si divide per il lato PIÙ LUNGO, non per l'altezza: il terzo logo era circolare
-   (bbox quadrata) e i due numeri coincidevano, quindi il criterio non si vedeva. Qui
-   la bbox è più alta che larga, e usare la larghezza darebbe un disegno più grande
-   del disco.
-   ⚠️ Questo logo è ASIMMETRICO (peso in basso a destra), quindi nel tondo resta un
-   vuoto in alto a sinistra. È accettato dall'utente e NON si compensa spostando il
-   canvas: il centraggio ottico si fa a monte, nel file. */
-#ctrl-fab svg { height:2.164rem; width:auto; fill:currentColor; stroke:none; }
+/* Il logo del FAB porta margini PROPRI dentro il suo canvas, e l'altezza dell'svg
+   nasce da lì: si vuole che la parte SIGNIFICATIVA del disegno renda 1.9rem, cioè
+   l'ingombro che il Pannello prevedeva per il glifo, senza ritagliare il canvas ne'
+   spostarne i pixel (icone as-is).
+   ⚠️⚠️ QUI IL DIVISORE VIENE DAL CERCHIO, NON DALLA BBOX (istruzione dell'utente,
+   2026-08-23: *la centratura deve tenere conto del CERCHIO, non dell'intero
+   contenuto*). Il quinto logo è un tondo con un'onda e una STELLA che sporge in alto
+   a destra: la bbox misura 944,70x1011,50 su 1120, ma quei 66 punti in più di altezza
+   sono la stella, e dividere per la bbox rimpicciolirebbe il tondo e lo spingerebbe
+   in basso, perché il centro della bbox sta 33 punti sopra il centro della tavola.
+   Il cerchio invece misura 944,70 di diametro ed è centrato sulla tavola (margini
+   87,6 a sinistra e a destra, 88,0 sopra e 87,3 sotto): occupa l'84,348% del lato,
+   quindi l'altezza è 1.9rem / 0.84348 = 2.2526rem e non serve NESSUN offset di
+   centratura, perché il riferimento è il viewBox.
+   ⚠️ Il criterio dei quattro loghi precedenti era il lato PIÙ LUNGO della bbox (0,8,
+   0,836, 0,6757, 0,8781): non è stato abbandonato per gusto, ma perché quei disegni
+   non avevano una parte che sporge dalla figura. Chi porta il sesto logo guardi prima
+   se ce l'ha: se sì vale questo criterio, se no quello.
+   ⚠️ La misura si prende col browser (`getBBox` per la bbox, e per il cerchio la riga
+   più larga di un render a 1120px), mai dai valori nominali del viewBox. */
+#ctrl-fab svg { height:2.2526rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB di controllo: a sinistra su desktop, a destra su mobile. In tema SCURO disco oro
    e inchiostro prugna; in CHIARO disco teal e segno bianco (dal 2026-08-23, vedi la
    regola del tema chiaro). */
 #ctrl-fab { position:fixed; left:2rem; bottom:2rem; z-index:160; }
 /* ⚠️ `color` è l'INCHIOSTRO DEL LOGO, non un colore di testo: il disegno è inline e
-   prende `currentColor` (vedi FAB_LOGO_D). Dal 2026-08-22 vale `#4a3f46`, il colore
-   con cui l'utente ha disegnato il terzo logo, che è quello che vuole in tema scuro.
+   prende `currentColor` (vedi FAB_LOGO_D). Il criterio è invariato dal 2026-08-22 ed è
+   il colore con cui l'utente ha disegnato il logo: col quinto è `#4d4048`, tre punti per
+   canale sotto il `#4a3f46` del terzo, differenza invisibile a occhio ma il criterio è
+   quello e va tenuto vero.
    ⚠️ Questa regola vale il solo tema SCURO: in chiaro il segno è bianco sul disco teal,
    e il valore lo scavalca la regola di quel tema (dal 2026-08-23).
-   ⚠️ Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo: `#4a3f46`
-   sul fondo scuro `#0d1a22` fa 1,76 (invisibile), mentre sul disco oro fa 4,57. La
-   coppia di disco e inchiostro è il disegno, e l'artwork lo dichiara: il file porta un
-   cerchio `#d9b75d` a piena tela, tenuto `display:none` perché qui il disco lo
-   disegna il FAB. Chi usasse i soli tracciati senza un fondo chiaro non vedrebbe
-   nulla, e non sarebbe un difetto del CSS. */
-#ctrl-fab.fab-btn { background:rgba(210,178,92,0.96); border:none; color:#4a3f46; box-shadow:0 3px 14px rgba(0,0,0,0.45); }
-#ctrl-fab.fab-btn:hover { background:rgba(224,194,108,1); border:none; }
+   ⚠️ Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo: `#4d4048`
+   sul fondo scuro `#0d1a22` fa 1,71 (invisibile), mentre sul disco `#78adc2` fa 3,99,
+   sopra il 3:1 dei componenti. La coppia di disco e inchiostro è il disegno, e sta
+   nel CSS e non nell'artwork: il file del quinto logo porta il solo simbolo, senza il
+   cerchio a piena tela che il terzo teneva `display:none` per dichiarare il fondo per
+   cui era pensato. Chi usasse i tracciati senza un fondo chiaro non vedrebbe nulla, e
+   non sarebbe un difetto del CSS. */
+/* ⚠️⚠️ IN TEMA SCURO il disco è IN TINTA COL TITOLONE dal 2026-08-23 (istruzione
+   dell'utente: *FAB in tinta*), e prende il **capo alto** del suo gradiente: `#78adc2`.
+   Ha sostituito il disco ORO `rgba(210,178,92,0.96)`, che era l'ultimo pezzo di Arda
+   rimasto qui dentro. ⚠️ Con lui l'oro esce dal tema scuro tranne che dai numeri del
+   podio, e la nota della tavolozza lo dice.
+   ⚠️ Il segno è il colore con cui il logo è disegnato (`#4d4048` col quinto, `#4a3f46`
+   col terzo), perché su questa tinta fa **3,99** e si legge: è la ragione per cui il
+   gradino più scuro fra i tre proposti è stato scartato (là scendeva a 2,93 e avrebbe
+   imposto il bianco). */
+#ctrl-fab.fab-btn { background:#78adc2; border:none; color:#4d4048; box-shadow:0 3px 14px rgba(0,0,0,0.45); }
+#ctrl-fab.fab-btn:hover { background:#8fc4d9; border:none; }
 /* Finezze FAB. Tap (apertura): piccolo rimbalzo sull'asse Z (si schiaccia 'sotto
    il dito' e rimbalza). Chiusura del Pannello: il FAB cresce dalle dimensioni
    ridotte a quelle normali, in sincrono col Pannello. Regia: toggleControlPanel. */
@@ -1190,9 +1217,13 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
    `ccFamTxt`, la stessa funzione che rende AA le tinte di famiglia, interrogata sulla
    pagina vera. Per queste due tinte torna il colore invariato (sono già sopra 4,5:1
    sul fondo del loro tema), e per questo le coppie coincidono: non è una svista.
+   ⚠️⚠️ La tinta SCURA SEGUE il titolo: era `168,230,220` (`#a8e6dc`) finché il gradiente
+   scuro partiva da là, ed è `120,173,194` (`#78adc2`) da quando il titolo è più scuro e
+   azzurro (0.36). Chi ritocca il gradiente di `h1` ritocca anche questa riga, o la
+   'tinta del titolone' diventa la tinta di un titolo che non c'è più.
    La specificità basta a battere le regole iniettate: (0,2,0) contro (0,1,0) in
    scuro, (0,3,1) contro (0,2,1) in chiaro. */
-.ctrl-cardleg .rank-item { --ccrgb:168,230,220; --cctxt:168,230,220; }
+.ctrl-cardleg .rank-item { --ccrgb:120,173,194; --cctxt:120,173,194; }
 html[data-theme="light"] .ctrl-cardleg .rank-item { --ccrgb:14,107,94; --cctxt:14,107,94; }
 .ctrl-cardleg .rank-name { font-size:1.14rem; }
 /* La legenda scala anche il vero nome: senza, resterebbe al clamp delle card
@@ -2345,27 +2376,31 @@ html[data-theme="light"] .type-donnadrago { --ccrgb:107,63,160; --cctxt:107,63,1
 /* Footer: 'Risorse e mappe' era a 4.4:1 nel chiaro (gold-bright condiviso):
    override locale, non si tocca la variabile. */
 html[data-theme="light"] #res-link, html[data-theme="light"] #notes-link { color:#445d64; }
-/* ⚠️ L'ORO del disco è l'unico superstite in tema chiaro, e per un motivo preciso:
-   un disco pieno non deve passare il gate come TESTO, quindi può restare un oro vero
-   invece del marrone che serviva per leggersi (istruzione dell'utente, 2026-08-21).
-   Il glifo sopra è il bruno caldo del tema scuro: 7,32 sul disco. */
-/* ⚠️⚠️ IN TEMA CHIARO il FAB è TEAL con il segno BIANCO dal 2026-08-23 (scelta
-   dell'utente fra cinque rese, *'più simile ad Arda'*), e questo ROVESCIA la regola
-   precedente, per cui l'inchiostro del logo era lo stesso nei due temi: là si teneva
-   `#4a3f46` per far riconoscere il FAB come lo stesso oggetto al cambio tema, qui si
-   segue lo schema di 'I Grandi di Arda', che in chiaro ha disco profondo e segno bianco.
-   ⚠️ `#4a3f46` sul teal farebbe 1,72 (illeggibile): il segno DEVE schiarire quando il
-   disco scurisce, quindi le due cose si cambiano insieme o non si cambiano.
-   Misure: bianco sul disco 5,57 (hover 4,37), disco sul fondo pagina 5,36.
-   ⚠️ La tinta NON è inventata: `#34707f` è quella che il CSS del titolo chiama già
-   'la tinta del FAB' nel suo alone (`rgba(52,112,127,0.38)`), da quando il FAB era teal
-   come in Arda. L'oro in chiaro era il residuo, e l'alone del titolo lo diceva da
-   giorni senza che nessuno lo leggesse.
-   ⚠️ Resta un teal DIVERSO da quello dei tasti salto chiari (`rgba(31,85,98,0.9)`, il
-   `#1f5562` di Arda): le due rese erano fra le cinque offerte e l'utente ha scelto
-   questa, quindi non è una svista da 'sanare' allineandole. */
-html[data-theme="light"] #ctrl-fab { background:#34707f; border-color:rgba(52,112,127,0.55); color:#ffffff; }
-html[data-theme="light"] #ctrl-fab:hover { background:#3d8291; border-color:rgba(61,130,145,0.8); }
+/* ⚠️⚠️ IN TEMA CHIARO il disco è LA TINTA MEDIA DEL TITOLONE, `#267d71` (scelta
+   dell'utente, 2026-08-23: *FAB del tema chiaro identico al colore-base del titolone*,
+   e alla domanda su quale fosse il colore-base ha risposto **la tinta media fra i due
+   capi**, non un capo). Il segno resta BIANCO.
+   ⚠️ **La media non è una terza tinta inventata, ed è la ragione per cui regge**: un
+   gradiente lineare in sRGB interpola i canali, quindi la media aritmetica dei due capi
+   (`#0e6b5e` e `#3e8f84`) è **letteralmente il colore che il titolo mostra a metà
+   altezza**. Il FAB porta un colore che sul titolo si vede.
+   Misure: bianco sul disco **4,94** (hover 3,67), disco sul fondo pagina **4,75**.
+   ⚠️ `#4a3f46` qui farebbe 1,86 (illeggibile): il segno DEVE restare chiaro quando il
+   disco è scuro, quindi le due cose si cambiano insieme o non si cambiano. È la stessa
+   regola del tema scuro, applicata al rovescio.
+   Ⓘ **Percorso, perché due valori vecchi girano ancora nei commenti**: fino al
+   2026-08-23 il disco chiaro era l'ORO ereditato da Arda (`#e0b54a`), l'unico superstite
+   della sua tavolozza; poi è stato il teal `#34707f`, scelto fra cinque rese perché
+   l'utente voleva qualcosa *più simile ad Arda*; ora è la tinta del titolo. Chi trova
+   uno di quei due in una nota sa a che giro appartiene.
+   ⚠️ L'alone del titolo chiaro porta ancora `rgba(52,112,127,0.38)`, cioè il teal del
+   giro precedente, e **non è più 'la tinta del FAB'** come dice il commento di lassù: non
+   è stato allineato perché l'utente non ha chiesto di toccare il titolo chiaro, e
+   cambiarlo si vede. Se un domani lo si allinea, il valore è questo qui.
+   ⚠️ I tasti salto chiari restano al `#1f5562` di Arda: erano fra le rese offerte e non
+   sono una svista da 'sanare' allineandola. */
+html[data-theme="light"] #ctrl-fab { background:#267d71; border-color:rgba(38,125,113,0.55); color:#ffffff; }
+html[data-theme="light"] #ctrl-fab:hover { background:#339487; border-color:rgba(51,148,135,0.8); }
 /* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
    dalla regola base). */
 html[data-theme="light"] .jump-fab { background:rgba(31,85,98,0.9); border-color:transparent; color:#ffffff; }
@@ -2601,7 +2636,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.35</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.36</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6576,16 +6611,20 @@ function buildControlPanel() {
   // motore di provenienza lo usava, ed è stato l'occasione per togliere anche quello.
   // ⚠️⚠️ Il numero di tracciati CAMBIA da una versione all'altra, e per questo
   // `FAB_LOGO_D` è un elenco: 1 nella prima (con stroke), 2 nella seconda e nella
-  // terza, e di nuovo 1 qui. Chi porta la quinta guardi **quanti** `path` ha invece di
-  // aggiornarne uno: ne aggiornò due su tre e lascerebbe mezzo logo per strada.
-  // ⚠️ Questo file NON porta il cerchio oro `display:none` che aveva il monogramma:
-  // là dichiarava il fondo per cui il disegno era pensato, e qui quell'indizio non
-  // c'è. Il disco resta quello del FAB (vedi il CSS di `#ctrl-fab`), e l'inchiostro
-  // `#4a3f46` è lo stesso: il fondo scuro della pagina resta inservibile (1,76).
-  var FAB_LOGO_D = ["M349,282.11c.22-51.8,24.28-98.89,64.63-130.28,68.5-53.28,166.01-42.47,222.29,24.01,32.71,38.65,46.91,89.42,35.25,141.99-19.39,87.37-112.01,145.41-198.84,121.69-16.02,11.87-30.33,28.71-34.55,47.06,58.9,21.84,122.67,16.87,176.75-12.42,74.05-40.11,119.77-117.28,116.18-201.96-3.89-91.78-65.08-170.44-151.74-199.04-75.4-24.88-158.77-5.27-216.64,49.39-46.06,43.5-71.48,104.1-68.63,167.44,18.84-4.59,36.3-7.55,55.31-7.89ZM909.8,517.8c-80.05-19.24-167.39,6.23-243.52,31.51l-72.55,24.09c-40.99,13.61-100.53,27.69-139.68,13.5-26.21-9.5-43.88-30.18-49.6-57.49-7.65-36.54,4.48-73.01,30.73-100.21,15.85-16.42,34.83-27.56,55.72-36.05l32.22-13.09c-25.6-22.36-53.07-40.23-84.76-51.89-101.87-37.46-212.04.69-276.11,87.45-44.54,60.3-59.86,136.76-45.29,210.18,7.31,36.83,17.96,70.72,34.91,104.51,40.72,81.14,106.35,147.66,186.63,189.06,114.3,58.94,248.87,56.08,360.66-7.19,75.15-42.54,136.48-107.07,174.21-185.12,30.82-63.76,46.52-139.11,36.44-209.26ZM347.67,861.91c-36.81-21.65-68.64-48.73-95.91-80.67,24.43-14,44.16-30.17,62.02-50.98,42.78,37.66,88.24,69.26,138.89,93.47,64.07,29.66,132.02,45.65,202.44,48.94-99.96,50.77-212.51,44.11-307.44-10.76ZM737.6,817.08c-170.95,14.52-318.3-45.41-430.96-172.45-22.29,40.85-47.81,70.58-87.67,91.96-24.81-39.1-40.92-80.6-48.7-125.12-9.72-55.6.51-110.33,32.22-157.23,46.06-68.11,127.53-102.51,208.74-77.31-30.58,25.15-50.51,56.72-59.51,93.69-16.07,66.05,13.13,125.48,59.92,171.84,62.4,61.82,147.25,96.31,233.74,108.65,50.38,7.19,99.35,6.21,150.67-.07-17.09,26.06-36.6,45.92-58.44,66.04ZM830.77,688.59c-106.69,25.05-229.35,14.39-323.92-41.5,26.31-1.96,49.73-5.31,73.63-12.85l85.81-27.06c35.7-11.82,69.83-22.81,106.52-31.45,28.53-6.65,56.19-10.55,85.69-9.69-1.61,42.68-11.36,83.55-27.73,122.55Z"];
+  // terza, 1 nella quarta e 1 qui. Chi porta la sesta guardi **quanti** `path` ha
+  // invece di aggiornarne uno: ne aggiornò due su tre e lascerebbe mezzo logo per
+  // strada.
+  // ⚠️ Cambia anche il VIEWBOX, e non è un dettaglio: i primi quattro loghi erano
+  // 1024x1024, il quinto è 1120x1120. È l'attributo qui sotto, e sbagliarlo non dà
+  // errore: ridisegna il logo in scala sbagliata e tagliato.
+  // ⚠️ Questo file porta il SOLO simbolo, senza il cerchio oro `display:none` che
+  // aveva il monogramma per dichiarare il fondo per cui era pensato. Il disco resta
+  // quello del FAB (vedi il CSS di `#ctrl-fab`), e l'inchiostro `#4d4048` viene dal
+  // file: il fondo scuro della pagina resta inservibile (1,71).
+  var FAB_LOGO_D = ["M1030.78,522.22c-7.14-86.41-36.56-166.17-86.56-236.6-.51-.66-.29-.98.3-1.21l.87-.34,27.63-10.24,48.96-18.18,1.57-.46c.26-.08.42-.65-.52-.89l-137.39-50.82-29.27-10.96c-2.03-.9-3.02-2.24-3.86-4.5l-61.75-166.77-39.79,107.14c-37.71-16.82-77.16-28.41-118.12-34.59-96.59-15.42-197.52.32-284.79,44.35-150.02,75.68-249.88,225.58-259.52,393.97-1.53,26.63-1.2,53.52,1.78,80.21,6.5,58.15,23.58,114.52,50.59,166.31,48.08,92.18,125.43,166.12,219.62,210.05,65.66,30.62,137.01,45.55,209.96,43.94,95.25-2.1,186.77-32.7,263.82-87.75,67.13-47.96,120.44-112.31,154.98-187.37,33.57-72.95,48.13-155.01,41.49-235.28ZM638.17,955.79c-69.68,15.33-141.68,10.48-208.45-13.38-27.25-9.74-53.38-22.15-77.94-37.51-37.1-23.2-70.26-51.43-99.38-84.79,18.02-10.2,34.61-21.71,50.02-35.52l22.53-22.97c55.85,48.26,118.4,90.01,186.76,117.76,51.97,21,106.13,34.85,161.75,41.54l50.05,4.51c-27.35,13.58-55.67,23.61-85.34,30.37ZM887.88,787.16c-9.07,13.46-18.92,25.78-29.98,37.76l-37.04,36.25c-45.49,3.99-91.35,3.18-136.94-2.38-63.55-7.75-125.15-25.8-182.53-54.1-71.94-35.48-130.83-82.42-184.8-141.44-24.87,45.66-56.35,81.35-102.43,105.58-28.2-43.29-47.41-90.92-56.75-141.49-14.26-77.21,5.94-152.38,59.39-209.94,57.01-61.2,141.39-86.28,222.07-61.36-38.06,30.72-62.59,70.42-71.79,118.07-11.16,61.05,10.95,116.09,49.79,162.42,25.86,30.84,57.76,56.84,91.93,78.08,62.18,38.65,134.72,61.52,207.11,71.39,31.96,4.35,63.8,5.86,96.04,5.14l73.48-5.21,1.28-.16c.29-.04,1.14-.27,1.36-.11.56.41.31.74-.18,1.48ZM939.27,689.68l-9.44,24.02c-26.73,6.37-53.58,10.27-81.15,12.49-71.71,5.8-141.36-.25-210.47-21.82-30.45-9.88-59.3-21.95-87.32-38.4,27.18-1.77,53.95-4.87,80.09-12.91l75.1-23.08,82.13-25.79,79.31-21.23c31.3-6.94,62.78-10.61,94.71-10.1-1.53,40.22-9.35,79.24-22.97,116.81ZM821.31,528.76l-57.02,16.48-76.27,24.73-43.1,13.87c-23.65,7.61-47.36,13.26-71.96,16.89-28.23,4.16-60.09,5.28-86.73-4.79-26.93-10.19-46.89-32.4-54.06-60.27-13.31-51.67,9.56-102.09,50.92-133.83,13.66-10.48,28.27-18.79,44.25-25.22l42.49-17.11c-33.82-29.04-68.37-49.96-111.1-63.48-52.49-16.61-108.72-16.62-161.39-.77-27.73,8.34-53.03,20.47-78.09,36.88,15.59-24.49,33.89-45.54,53.57-64.9,91.87-90.37,221.39-132.07,348.84-112.58,36.99,5.65,73.18,16,107.51,31.78.04,1.78-.52,3.21-1.2,5.13l-170.75,63.2,62.99,23.42,107.54,39.75,45.79,123.79,16.66,44.97c0,1.14,1.34,1.47,1.21.01l62.51-168.82,28.94-10.74c46.62,59.41,74.97,127.9,84.56,203.15-50-2.17-98.4,6.41-146.11,18.45Z"];
   var SVGNS = 'http://www.w3.org/2000/svg';
   var fabSvg = document.createElementNS(SVGNS, 'svg');
-  fabSvg.setAttribute('viewBox', '0 0 1024 1024');
+  fabSvg.setAttribute('viewBox', '0 0 1120 1120');
   fabSvg.setAttribute('aria-hidden', 'true');
   FAB_LOGO_D.forEach(function(d){
     var fp = document.createElementNS(SVGNS, 'path');
