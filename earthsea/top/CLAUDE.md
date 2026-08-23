@@ -1085,7 +1085,7 @@ trappola stanno in `rules/Earthsea.md` § 'Grep sugli epub'; qui sta la scelta.
 - ⚠️ **La stessa cautela vale per ogni altro nome d'uso**: una divergenza fra epub e dataset non
   è di per sé un errore del dataset. Prima si guarda **quale edizione** dice cosa.
 
-### 🎨 I fondi VERI della riga di una card, misurati
+### 🎨 I fondi VERI della riga di una card: come si misurano
 
 Servono a giudicare una tinta di icona, e non si leggono dal CSS: il fondo della card è un
 gradiente **semitrasparente** sopra `var(--ink)`, quindi il colore che l'occhio vede è un
