@@ -31,15 +31,32 @@ all'account:
    ```
    curl https://earthsea-admin-proxy.roccobot-b90.workers.dev/
    ```
-   Deve rispondere `{"ok":false,"error":"method","rev":1,"rl":true,"site":"earthsea"}`.
+   Deve rispondere
+   `{"ok":false,"error":"method","rev":2,"rl":true,"site":"earthsea","pw":true,"pat":true}`.
    - `site` dice **quale** dei due Worker hai davanti: e' la verifica che conta, perche'
      i due sono gemelli e l'URL si sbaglia facilmente.
+   - **`pw` e `pat` dicono se i due secret ci sono.** Sono la riga da guardare dopo aver
+     impostato i secret: se uno dei due e' `false`, quel secret non e' arrivato al Worker.
+     Sono booleani e basta: non espongono nulla del valore.
    - `rl:true` significa che il Durable Object del rate limiting e' agganciato.
    - `rev` e' la revisione del codice attiva: e' l'unico modo di sapere se una
      ridistribuzione via Git e' arrivata in produzione.
 
-⚠️ Finche' i secret non ci sono, lo sblocco admin risponde `auth` (password mai
-uguale a un secret assente) e il salvataggio `no-github-pat`.
+4. **La prova della serratura**, che vale piu' di tutte le altre:
+   ```
+   curl -X POST -H 'Content-Type: application/json' \
+     -d '{"action":"auth","password":""}' \
+     https://earthsea-admin-proxy.roccobot-b90.workers.dev/
+   ```
+   Deve rispondere **`{"ok":false,"error":"auth"}`**.
+   - ⚠️⚠️ Se rispondesse `{"ok":true}`, l'area admin sarebbe **aperta a chiunque**: e'
+     successo davvero il 2026-08-23, col secret non ancora impostato e la `rev` 1 che
+     confrontava due stringhe vuote trovandole uguali. Dalla `rev` 2 quel caso risponde
+     `no-admin-password` e non apre piu' niente, ma la prova va rifatta lo stesso a ogni
+     riconfigurazione dei secret: costa una riga e guarda il comportamento vero.
+
+⚠️ Finche' i secret non ci sono, lo sblocco admin risponde `no-admin-password` e il
+salvataggio `no-github-pat`.
 
 ## In alternativa, da riga di comando
 
