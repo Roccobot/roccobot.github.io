@@ -1434,6 +1434,10 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group--est { gap:0.34rem; }
 .ctrl-legend-row .leg-group--balrog { gap:0.4rem; }
+/* Coppia di Roke (dal 2026-08-23): stesso meccanismo delle coppie di Arda, e lo stesso
+   gap della riga Drago/Balrog, che è la coppia più simile per lunghezza delle etichette.
+   ⚠️ Valore ereditato, non misurato su questa riga: se un domani si tara, si tara qui. */
+.ctrl-legend-row .leg-group--roke { gap:0.4rem; }
 /* Incolonnamento delle 3 righe a due colonne, Aman (nave viola 'envoy'),
    Drago (Balrog) e Re (Re Supremo), con etichetta primaria a larghezza FISSA
    (>= la più lunga delle 6 stringhe IT/EN col1), così il gruppo secondario e la
@@ -1447,8 +1451,16 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    larghezza = meno divario di larghezza IT↔EN del blocco `fit-content` centrato
    su mobile, quindi meno jitter. Storico: 10.05em fino a v7.28 (tarata sul
    'High King of the Noldor' del vecchio Re 'in carica'), 8.5em v7.29-7.45. */
+/* ⚠️⚠️ **6.4em e non 7.7em, dal 2026-08-23**: il 7.7 veniva da 'I Grandi di Arda' ed era
+   tarato sul suo 'Alto Re dei Noldor' (95,11px coi font veri). Qui l'unica riga a due
+   metà è la coppia di Roke, e la sua etichetta più lunga è 'Maestro di Roke': **81,13px**
+   in italiano, 75,59px in inglese, misurati con EB Garamond a 12,8px sulla pagina vera.
+   6.4em = 81,92px, cioè combacia con la più lunga come prescrive il criterio qui sopra;
+   il 7.7 lasciava 17px di colonna vuota fra le due metà. ⚠️ Il valore SCARTATO era
+   proprio tenere il 7.7 'perché funzionava': funzionava, ma spostava a destra la seconda
+   icona senza una ragione di questo sito. */
 .ctrl-legend-row .leg-lbl-col,
-.ctrl-legend-row .leg-lbl-king { width:7.7em; flex:none; white-space:nowrap; }
+.ctrl-legend-row .leg-lbl-king { width:6.4em; flex:none; white-space:nowrap; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...', coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
 .ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
@@ -2672,7 +2684,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.41</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.42</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4574,7 +4586,15 @@ var BADGE_ICON = {
   // costringerebbe a toccare il codice per sostituire un'immagine.
   stregone: '<img class="status-icon si-stregone" src="icons/Sorcerer.webp" title="%L%" alt="%L%">',
   mago: '<img class="status-icon si-mago" src="icons/Mage.webp" title="%L%" alt="%L%">',
-  nomeged: '<img class="status-icon si-nomeged" src="icons/GedName.webp" title="%L%" alt="%L%">'
+  nomeged: '<img class="status-icon si-nomeged" src="icons/GedName.webp" title="%L%" alt="%L%">',
+  // I tre badge del 2026-08-23, disegnati qui e scelti dall'utente fra le proposte di
+  // `.memo/proposte/badge-terramare/` (`A12-corona`, `H1-anello-bordo`, `H2c-teal`).
+  // ⚠️ La COPPIA di Roke ha due TINTE diverse, e non è una scelta estetica: le due forme
+  // differiscono per un punto che si sposta dal cerchio al centro, e a 17px il colore è
+  // l'unico canale che le distingue davvero (richiesta esplicita dell'utente).
+  signoredraghi: '<img class="status-icon si-signoredraghi" src="icons/Dragonlord.webp" title="%L%" alt="%L%">',
+  maestro: '<img class="status-icon si-maestro" src="icons/MasterOfRoke.webp" title="%L%" alt="%L%">',
+  arcimago: '<img class="status-icon si-arcimago" src="icons/ArchmageOfRoke.webp" title="%L%" alt="%L%">'
 };
 
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
@@ -4584,16 +4604,20 @@ var BADGE_ICON = {
 // gli altri hanno riga propria. 'est' precede 'Aman/west' (la nave che va, poi
 // quella che torna). 'morgoth' è un EASTER EGG (solo Fingolfin): saltato in
 // legenda e nella griglia admin, appare solo sulla sua card.
-var ICON_ORDER = ['stregone','mago','nomeged'];
+var ICON_ORDER = ['stregone','mago','nomeged','signoredraghi','maestro','arcimago'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
 // (unione), incrociato con le categorie attive. Non persistito e ignorato
 // dagli URL condivisi (scelte dell'utente); azzerato entrando nel riordino.
 var BADGE_ROWS = {
-  // Una riga per badge: qui non ci sono gruppi da tenere insieme come gli Anelli o i Re
-  // di 'I Grandi di Arda'.
-  stregone:['stregone'], mago:['mago'], nomeged:['nomeged']
+  // Una riga per badge, TRANNE la coppia di Roke: `maestro` e `arcimago` stanno sulla
+  // stessa riga di legenda (richiesta dell'utente, come le coppie di 'I Grandi di Arda'),
+  // quindi condividono un id di riga e il filtro prende l'UNIONE dei due.
+  // ⚠️ L'id di riga `roke` non è il nome di un campo dei dati: i campi sono i suoi due
+  // membri. Chi lo cercasse in `dati.js` non lo troverebbe.
+  stregone:['stregone'], mago:['mago'], nomeged:['nomeged'],
+  signoredraghi:['signoredraghi'], roke:['maestro','arcimago']
 };
 var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
@@ -4630,6 +4654,13 @@ var BADGE_ADJUST_UNITS = [
   { id:'stregone', it:'Strega o stregone', en:'Witch or sorcerer', members:['stregone'] },
   { id:'mago',     it:'Mago',              en:'Mage',              members:['mago'] },
   { id:'nomeged',  it:'Nome di Sparviero', en:"Sparrowhawk's name", members:['nomeged'] },
+  // ⚠️ La coppia di Roke ha DUE unità e non una, benché condivida la riga di legenda: le
+  // due icone hanno lo stesso disegno ma tinte diverse, e un aggiustamento buono per una
+  // non è detto che vada bene per l'altra. La riga di legenda e le unità di aggiustamento
+  // rispondono a domande diverse.
+  { id:'signoredraghi', it:'Signore dei Draghi', en:'Dragonlord',       members:['signoredraghi'] },
+  { id:'maestro',  it:'Maestro di Roke',  en:'Master of Roke',    members:['maestro'] },
+  { id:'arcimago', it:'Arcimago di Roke', en:'Archmage of Roke',  members:['arcimago'] },
   // Simboli di genere: unità a sé, con dimensioni BASE proprie (non 0.92em: `sc` le
   // scala mantenendo l'aspetto, male quadrato e female più stretta e alta). Il
   // rendering sulla card è il simbolo aggiunto in renderList (genereSym), non in
@@ -4660,6 +4691,10 @@ var BADGE_ADJUST_FALLBACK = {
   // quello del gemello di Arda, dove i valori salvati sono assoluti. Scartata.
   stregone:{ml:0.12,mr:0,ny:0,sc:1}, mago:{ml:0.12,mr:0,ny:0,sc:1},
   nomeged:{ml:0.12,mr:0,ny:0,sc:1},
+  // I tre nuovi nascono col seed dei tre vecchi: sono `.status-icon` come loro e non
+  // hanno CSS per-icona, quindi il margine di partenza è lo stesso.
+  signoredraghi:{ml:0.12,mr:0,ny:0,sc:1}, maestro:{ml:0.12,mr:0,ny:0,sc:1},
+  arcimago:{ml:0.12,mr:0,ny:0,sc:1},
   // Genere: `ml` resta la resa del CSS statico (0.076 = separazione 0.07 più la vecchia
   // X translate 0.006, ora margine a cascata), e unifica i due punti di rottura
   // (desktop 0.07, mobile 0.06).
@@ -4744,7 +4779,14 @@ var ICON_LABEL = {
     // parentesi (`Sparviero (Ged)`), che è l'ordine delle card: là il nome d'uso sta
     // sopra e il vero nome sotto. Prima diceva il solo `Ged`, cioè il vero nome nudo,
     // che è l'informazione che il sito tratta come la più preziosa.
-    nomeged:  "Custode del vero nome di Sparviero (Ged)"
+    nomeged:  "Custode del vero nome di Sparviero (Ged)",
+    // ⚠️ La spiegazione fra parentesi è la DEFINIZIONE del testo, non una parafrasi: in
+    // 'Le tombe di Atuan' Ged dice ad Arha 'Un Signore dei Draghi è uno con cui i draghi
+    // parlano', e aggiunge che non si tratta di addomesticarli. Attestazioni e portatori
+    // in `rules/Earthsea.md`, § 'Signore dei Draghi'.
+    signoredraghi: "Signore dei Draghi (i draghi gli parlano)",
+    maestro:  "Maestro di Roke (uno dei Nove)",
+    arcimago: "Arcimago di Roke (il primo fra i Nove)"
   },
   en: {
     stregone: "Witch or sorcerer (holds some power)",
@@ -4753,7 +4795,10 @@ var ICON_LABEL = {
     // `nome_en`: le rese inglesi dei nomi non sono in scena, e tradurne una sola
     // farebbe sembrare attestate anche le altre. Chi la volesse inglese cambi prima
     // quella regola, non questa riga.
-    nomeged:  "Keeper of Sparviero's true name (Ged)"
+    nomeged:  "Keeper of Sparviero's true name (Ged)",
+    signoredraghi: "Dragonlord (dragons speak with him)",
+    maestro:  "Master of Roke (one of the Nine)",
+    arcimago: "Archmage of Roke (first among the Nine)"
   }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
@@ -6009,6 +6054,23 @@ function controlPanelHTML() {
     ICON_ORDER.forEach(function(k){
       if (k === 'king_high_now' || k === 'king_std' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring' || k === 'sette') return;
       if (k === 'morgoth') return; // easter egg (solo Fingolfin): nessuna riga in legenda
+      if (k === 'arcimago') return; // sta nella riga di 'maestro' (coppia di Roke)
+      if (k === 'maestro') {
+        // Coppia di Roke su UNA riga (richiesta dell'utente, 2026-08-23), con lo stesso
+        // meccanismo delle coppie di Arda: prima colonna a larghezza fissa, la seconda
+        // icona col suo testo dentro `.leg-group`. L'id di riga è `roke` e filtra
+        // l'unione dei due badge (vedi BADGE_ROWS).
+        // ⚠️⚠️ Qui i due testi sono BREVI e dedicati, non `IL[...]`: la prima colonna è a
+        // larghezza FISSA e `nowrap`, quindi l'etichetta completa con la spiegazione fra
+        // parentesi la sfonda e la seconda metà le finisce SOPRA. Misurato: con
+        // 'Master of Roke (one of the Nine)' le due metà si sovrapponevano illeggibili.
+        // I tooltip delle card restano quelli interi di ICON_LABEL.
+        var maestroTxt = lang === 'it' ? 'Maestro di Roke' : 'Master of Roke';
+        var arcimagoTxt = lang === 'it' ? 'Arcimago di Roke' : 'Archmage of Roke';
+        s += legRow('roke', '<span class="leg-ico">' + BADGE_ICON['maestro'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + maestroTxt + '</span>'
+           + '<span class="leg-group leg-group--roke">' + BADGE_ICON['arcimago'].split('%L%').join('') + '<span>' + arcimagoTxt + '</span></span>');
+        return;
+      }
       if (k === 'istari' && FEATURES.istariFiveIcons) {
         // Variante a 5 icone (feature flag, default OFF dalla v7.30): i 5 Istari
         // in fila (come gli Anelli): Saruman, Gandalf, Radagast, Alatar, Pallando

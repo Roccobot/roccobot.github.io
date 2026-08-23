@@ -1,4 +1,4 @@
-var datiVersion = "0.41";
+var datiVersion = "0.42";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 // ⚠️ Questa riga VINCE sul fallback dentro index.html: e' la configurazione salvata,
@@ -29,8 +29,15 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // (per ovvia che sia) sarebbe esattamente quello che la regola vieta. Tutto il resto è volutamente vuoto:
 // origine, genere, parentele, descrizioni e fonti non sono attestati da nulla che sia
 // in scena, e riempirli a memoria è esattamente ciò che la regola vieta.
+// ⚠️ I badge `signoredraghi` e `arcimago` (dal 2026-08-23) sono accesi sul solo
+// Sparviero, e su UNA frase attestata: l'apertura di 'Un mago di Terramare' dice che
+// 'nei suoi giorni mortali divenne Signore dei Draghi e Arcimago'. Non si estendono a
+// intuito: il criterio del primo (chi è drago NON lo porta) sta in questo `CLAUDE.md`,
+// le attestazioni degli altri portatori in `rules/Earthsea.md`, e le loro voci non sono
+// ancora nel dataset. ⚠️ Il terzo badge nuovo, `maestro`, non ha ancora NESSUN portatore:
+// non è una dimenticanza, è che nessuno dei nove Maestri di Roke è nel dataset.
 var dati = [
-{"nome":"Sparviero","nome_en":"Sparviero","vero_nome":"Ged","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Falco","nomi_alternativi_en":"Falco","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":false,"descrizione":"","descrizione_en":"","cardcolor":"man"},
+{"nome":"Sparviero","nome_en":"Sparviero","vero_nome":"Ged","fonte":"","fonte_en":"","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"Falco","nomi_alternativi_en":"Falco","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":false,"signoredraghi":true,"arcimago":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Ogion","nome_en":"Ogion","vero_nome":"Aihal","fonte":"Le ossa della terra (2001)","fonte_en":"The Bones of the Earth (2001)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Veccia","nome_en":"Veccia","vero_nome":"Estarriol","fonte":"Un mago di Terramare (1968)","fonte_en":"A Wizard of Earthsea (1968)","paese":"","genere":"m","padre":"","madre":"","tipo":"Uomo","tipo_en":"Man","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"mago":true,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},
 {"nome":"Millefoglie","nome_en":"Millefoglie","vero_nome":"Kest","fonte":"Un mago di Terramare (1968)","fonte_en":"A Wizard of Earthsea (1968)","paese":"","genere":"f","padre":"","madre":"","tipo":"Donna","tipo_en":"Woman","nomi_alternativi":"","nomi_alternativi_en":"","appellativi":"","appellativi_en":"","info":"","info_en":"","featured":false,"divino":false,"nomeged":true,"descrizione":"","descrizione_en":"","cardcolor":"man"},

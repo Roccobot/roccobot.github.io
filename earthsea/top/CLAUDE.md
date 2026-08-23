@@ -254,12 +254,29 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
 
 ### 🐲 I TRE badge annunciati: il criterio di uno solo
 
-⚠️ **Non sono ancora nel sito** (al 2026-08-23): l'utente li ha annunciati, le icone sono
-allo stato di proposta in `.memo/proposte/badge-terramare/` (cartella non pubblicata da
-Pages, con il suo `COME-SONO-FATTE.md`), e qui sta la parte che vale **oltre** la scelta del
-disegno, cioè il criterio editoriale. Sono `Signore dei Draghi` e la coppia `Maestro di
-Roke` / `Arcimago di Roke`, che vanno sulla **stessa riga di legenda** come le coppie di
-Arda.
+✅ **Sono nel sito dalla `0.42`** (2026-08-23), e sono `signoredraghi`, `maestro`, `arcimago`.
+Le proposte scartate e la storia dei disegni restano in `.memo/proposte/badge-terramare/`
+(cartella non pubblicata da Pages, col suo `COME-SONO-FATTE.md`); qui sta ciò che vale oltre
+il disegno.
+
+- **Icone**: `Dragonlord.webp`, `MasterOfRoke.webp`, `ArchmageOfRoke.webp`, WebP **lossless**
+  verificato pixel per pixel (scarto massimo per canale **0**), coi nomi in inglese e del
+  BADGE, non del disegno, come i tre di prima.
+- ⚠️⚠️ **La coppia di Roke ha DUE TINTE diverse** (viola `#6f5bd0` il Maestro, teal `#1c7f92`
+  l'Arcimago), e non è una scelta estetica: le due forme differiscono per un punto che si
+  sposta dal cerchio al centro, e a 17px il colore è l'unico canale che le distingue davvero.
+  Richiesta esplicita dell'utente, dopo aver visto la coppia monocroma.
+- **In legenda stanno su UNA riga** (id di riga `roke`, che filtra l'unione dei due), col
+  meccanismo `.leg-lbl-col` + `.leg-group` delle coppie di Arda. ⚠️ **Ma coi testi BREVI**:
+  la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
+  spiegazione fra parentesi la sfonda e la seconda metà le finisce **sopra**, illeggibile.
+  Misurato, non previsto. I tooltip delle card restano quelli interi di `ICON_LABEL`.
+- ⚠️ **`maestro` non ha ancora NESSUN portatore**, e non è un difetto: nessuno dei nove
+  Maestri di Roke è nel dataset. La riga di legenda resta viva perché il suo compagno
+  `arcimago` ne ha uno, e il 'filtro a risultati 0' guarda la riga, non il singolo badge.
+- **Chi li porta oggi**: solo **Sparviero**, con `signoredraghi` e `arcimago`, e su **una**
+  frase attestata (l'apertura di *Un mago di Terramare*: «nei suoi giorni mortali divenne
+  Signore dei Draghi e Arcimago»). Non si estendono a intuito.
 
 **Il criterio del `Signore dei Draghi`**, dettato dall'utente il 2026-08-23: *è un titolo che
 probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
@@ -279,16 +296,9 @@ probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
 `Arcimago` dipende dai nove Maestri (`rules/Earthsea.md` § 'I nove Maestri di Roke') e dalla
 successione degli Arcimaghi, che il dataset non ha ancora. Non si deduce a memoria.
 
-**I disegni scelti** (utente, 2026-08-23: *proviamo con A12 e H*):
-
-- **`Signore dei Draghi` = `A12`**, la corona con le corna chiare appoggiate sulle spalle.
-- **Coppia di Roke = `H`**, i due anelli: il **Maestro** ha il punto sul cerchio (uno dei nove),
-  l'**Arcimago** il punto al centro.
-  - ⚠️⚠️ **E la coppia vuole DUE TINTE DIVERSE**, non due varianti della stessa (sua richiesta
-    esplicita): con la forma quasi identica, il colore è l'unico canale che distingue i due
-    badge a 17px. Il Maestro resta **viola `#6f5bd0`**; la tinta dell'Arcimago è in scelta fra
-    oro-ottone, cremisi e teal (le tre candidate stanno nel file delle proposte, coi contrasti
-    misurati sui fondi veri).
+**I disegni scelti** (utente, 2026-08-23): `A12` per il `Signore dei Draghi`, la corona con
+le corna chiare appoggiate sulle spalle; `H` per la coppia, i due anelli col punto sul cerchio
+(Maestro) e al centro (Arcimago); e per l'Arcimago la tinta **teal** fra le tre candidate.
 
 ## 🪶 I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua
 
@@ -301,6 +311,21 @@ ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in q
 | **Vero nome** | `vero_nome` | riga 2, `.rank-vero`: **Cinzel MAIUSCOLO**, grassetto, corpo minore, colore = accento del gruppo |
 | **Nomi alternativi** (secondaria) | `nomi_alternativi` | sottotitolo `.rank-subtitle` |
 | **Titoli e onorificenze** (come sopra) | `appellativi` | stesso sottotitolo, dopo il `|` |
+
+⚠️⚠️ **Il nome d'uso È il riferimento del personaggio, e vale nei due sensi** (precisazione
+dell'utente, 2026-08-23: *se indico un nome d'uso, questo (o il suo corrispettivo ENG) diventa
+il riferimento del personaggio*). Quindi:
+
+- **Se il nome d'uso c'è, comanda lui**: è il titolo della card, la chiave con cui si nomina la
+  voce in chat e nei file di regole, e il `nome` del dataset (col gemello `nome_en`). Non è il
+  vero nome a fare da riferimento, nemmeno dove è più celebre.
+- **Se manca, vale il nome con cui la voce è già intestata.** È la faccia opposta della stessa
+  regola, e nello Schedario è resa esplicita: un campo `nome italiano` vuoto significa *va bene
+  il nome che vedi*, quindi non è un dato mancante e non tiene la scheda 'incompleta'.
+  - ⚠️ **Nelle 84 schede non ancora nel sito quel nome intestato è spesso il VERO nome**,
+    perché la pagina Wikipedia le elenca così (`Hara` per Ontano/Alder, `Aihal` per Ogion). Là
+    il vuoto **non** equivale al nome d'uso, e il campo va riempito: lo Schedario lo dice
+    scheda per scheda nel segnaposto del campo (`vuoto: vale "Hara"`).
 
 - ✅ **Il nome doppio col separatore ` / ` è FINITO**: era la forma di partenza (Sparviero /
   Falco, Lontra / Sterna, Burrone / Otak, Arha / Goha) e l'utente l'ha sciolta voce per voce,
