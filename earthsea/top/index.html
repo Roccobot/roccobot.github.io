@@ -273,25 +273,31 @@ h1 {
   font-family:'Cinzel Decorative',serif; font-weight:900;
   font-size:clamp(2.4rem,8vw,5.5rem); line-height:0.95;
   letter-spacing:0.02em;
-  /* Bagliore neutralizzato (dalla v8.79): grigi a pari luminanza dei vecchi
-     rgba(104,144,168)/rgba(30,60,100). L'effetto sul font resta, la tinta no. */
-  text-shadow:0 0 30px rgba(139,139,139,0.4),0 0 60px rgba(59,59,59,0.3),0 4px 12px rgba(0,0,0,0.8);
-  /* Fill AZZURRO che scende al BLU (istruzione dell'utente, 2026-08-23: *titolone del
-     tema scuro più scuro e azzurro*). Ha sostituito il verde mare della tavolozza del
-     2026-08-21 (`#a8e6dc` -> `#3f92a8`), che a sua volta aveva sostituito il gradiente
-     oro ereditato da Arda. Il tema chiaro ha il suo, smeraldo, nella regola light.
-     ⚠️⚠️ **IL CAPO BASSO È AL LIMITE, e non si scurisce oltre**: `#3072a1` fa **3,41**
-     sul fondo `#0d1a22`, contro il **3:1** che il testo grande richiede. Il margine che
-     c'era prima (4,96) è stato speso proprio per scurire, quindi da qui in giù si sfonda
-     la soglia. Chi volesse il titolo ancora più scuro deve **comprimere il gradiente**
-     verso il capo alto, non abbassare questo.
-     ⚠️ Il capo ALTO è la leva del 'più scuro' e vale `#78adc2` (7,20 sul fondo): scelto
-     dall'utente fra tre gradini resi sul sito vero (gli altri erano `#9ac9db`, 9,89, e
-     `#5b92a8`, 5,15). ⚠️ Il terzo è stato scartato per una ragione che si vede solo
-     misurando: sotto quel valore il segno prugna del FAB, che ora prende questa stessa
-     tinta, scende a 2,93 e va sostituito col bianco, cioè si perde il colore con cui il
-     logo è stato disegnato. */
-  background:linear-gradient(180deg,#78adc2 0%,#3072a1 100%);
+  /* ⚠️⚠️ I DUE ALONI GRIGI SONO USCITI (0.37), e non sono da rimettere: erano
+     `0 0 30px rgba(139,139,139,0.4)` e `0 0 60px rgba(59,59,59,0.3)`, il bagliore
+     neutralizzato che veniva da Arda (v8.79), e su questo fondo scuro facevano fumo
+     attorno alle lettere. L'utente lo ha visto come *una specie di ombra interna
+     fortissima* che rendeva il titolo *smorto e scuro al tempo stesso*: la parte 'smorta'
+     era proprio quella, non il gradiente. Resta il solo distacco nero, dimezzato in
+     opacità e avvicinato (era `0 4px 12px rgba(0,0,0,0.8)`), che tiene il titolo staccato
+     dal fondo senza velarlo. */
+  text-shadow:0 2px 8px rgba(0,0,0,0.5);
+  /* Fill AZZURRO BRILLANTE che scende al blu (0.37, istruzione dell'utente: *lo voglio
+     più brillante*, scelta la resa B fra cinque rese sul sito vero e coi font veri).
+     Percorso: oro di Arda, poi il verde mare della tavolozza del 2026-08-21
+     (`#a8e6dc` -> `#3f92a8`), poi l'azzurro scuro della 0.36 (`#78adc2` -> `#3072a1`),
+     che è quello che l'utente ha giudicato smorto. Il tema chiaro ha il suo, smeraldo,
+     nella regola light, e non si è mosso.
+     Misure sul fondo `#0d1a22`: capo alto `#cfe8f5` **13,90**, capo basso `#5f9fd4`
+     **6,23**, entrambi larghi sopra il 3:1 del testo grande. ⚠️ Il tetto della 0.36 (capo
+     basso a 3,41, cioè al limite) NON vale più: schiarendo si è ricomprato margine, e chi
+     un domani volesse riscurire ha di nuovo spazio fino a `#3072a1`.
+     ⚠️⚠️ **DA QUI IL DISCO DEL FAB NON È PIÙ 'IL CAPO ALTO DEL GRADIENTE'**, e la
+     differenza va capita prima di 'riallinearli': il disco tiene un segno **bianco**
+     (0.37), e su una tinta chiara come `#cfe8f5` il bianco sparirebbe (1,4). Il disco
+     resta `#78adc2`, che il gradiente attraversa poco sopra la metà: la tinta è la stessa
+     famiglia, il valore no, e i due si scelgono ognuno per il proprio mestiere. */
+  background:linear-gradient(180deg,#cfe8f5 0%,#5f9fd4 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   /* Con background-clip:text il gradiente riempie il testo solo entro il box di
      riga; con line-height:0.95 gli svolazzi bassi di Cinzel Decorative (code di
@@ -922,29 +928,32 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
    regola del tema chiaro). */
 #ctrl-fab { position:fixed; left:2rem; bottom:2rem; z-index:160; }
 /* ⚠️ `color` è l'INCHIOSTRO DEL LOGO, non un colore di testo: il disegno è inline e
-   prende `currentColor` (vedi FAB_LOGO_D). Il criterio è invariato dal 2026-08-22 ed è
-   il colore con cui l'utente ha disegnato il logo: col quinto è `#4d4048`, tre punti per
-   canale sotto il `#4a3f46` del terzo, differenza invisibile a occhio ma il criterio è
-   quello e va tenuto vero.
-   ⚠️ Questa regola vale il solo tema SCURO: in chiaro il segno è bianco sul disco teal,
-   e il valore lo scavalca la regola di quel tema (dal 2026-08-23).
-   ⚠️ Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo: `#4d4048`
-   sul fondo scuro `#0d1a22` fa 1,71 (invisibile), mentre sul disco `#78adc2` fa 3,99,
-   sopra il 3:1 dei componenti. La coppia di disco e inchiostro è il disegno, e sta
-   nel CSS e non nell'artwork: il file del quinto logo porta il solo simbolo, senza il
-   cerchio a piena tela che il terzo teneva `display:none` per dichiarare il fondo per
-   cui era pensato. Chi usasse i tracciati senza un fondo chiaro non vedrebbe nulla, e
-   non sarebbe un difetto del CSS. */
+   prende `currentColor` (vedi FAB_LOGO_D).
+   ⚠️⚠️ **DALLA 0.37 È BIANCO NEI DUE TEMI** (istruzione dell'utente: *il logo sul FAB non
+   mi piace del colore attuale: fallo bianco*), quindi è caduto il criterio che teneva qui
+   il colore del FILE (`#4d4048` col quinto logo, `#4a3f46` col terzo e col quarto). Non
+   rimetterlo 'per coerenza con l'artwork': il file resta il suo, il FAB lo tinge.
+   ⚠️ Il bianco sul disco `#78adc2` fa **2,45**, sotto il 3:1 dei componenti, e lo si
+   sa: è una scelta estetica dell'utente, non una misura sfuggita. Se un domani vuole che
+   stacchi, la leva è il DISCO e non il segno: `#4c8fc4` porta il bianco a 3,48, `#3072a1`
+   a 5,19 (e il disco sul fondo pagina scende da 7,20 a 5,08 e 3,41, sempre sopra soglia).
+   ⚠️ Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo: il bianco su
+   `#0d1a22` si vedrebbe benissimo, ma il disco è ciò che rende il FAB un oggetto. La
+   coppia di disco e segno sta nel CSS e non nell'artwork: il file del quinto logo porta il
+   solo simbolo, senza il cerchio a piena tela che il terzo teneva `display:none` per
+   dichiarare il fondo per cui era pensato. */
 /* ⚠️⚠️ IN TEMA SCURO il disco è IN TINTA COL TITOLONE dal 2026-08-23 (istruzione
    dell'utente: *FAB in tinta*), e prende il **capo alto** del suo gradiente: `#78adc2`.
    Ha sostituito il disco ORO `rgba(210,178,92,0.96)`, che era l'ultimo pezzo di Arda
    rimasto qui dentro. ⚠️ Con lui l'oro esce dal tema scuro tranne che dai numeri del
    podio, e la nota della tavolozza lo dice.
-   ⚠️ Il segno è il colore con cui il logo è disegnato (`#4d4048` col quinto, `#4a3f46`
-   col terzo), perché su questa tinta fa **3,99** e si legge: è la ragione per cui il
-   gradino più scuro fra i tre proposti è stato scartato (là scendeva a 2,93 e avrebbe
-   imposto il bianco). */
-#ctrl-fab.fab-btn { background:#78adc2; border:none; color:#4d4048; box-shadow:0 3px 14px rgba(0,0,0,0.45); }
+   ⚠️ Il disco è rimasto a questo valore anche quando il titolo si è schiarito (0.37): il
+   legame 'in tinta col capo alto' è finito là, e la ragione sta nel commento di `h1`.
+   Ⓘ Storia che spiega un commento vecchio: il gradino più scuro fra i tre proposti per il
+   titolo era stato scartato perché portava il segno prugna a 2,93 *imponendo il bianco*.
+   Il bianco è arrivato comunque per scelta dell'utente, quindi quell'argomento è
+   decaduto: non lo si usi per rimettere in gioco il gradino. */
+#ctrl-fab.fab-btn { background:#78adc2; border:none; color:#ffffff; box-shadow:0 3px 14px rgba(0,0,0,0.45); }
 #ctrl-fab.fab-btn:hover { background:#8fc4d9; border:none; }
 /* Finezze FAB. Tap (apertura): piccolo rimbalzo sull'asse Z (si schiaccia 'sotto
    il dito' e rimbalza). Chiusura del Pannello: il FAB cresce dalle dimensioni
@@ -2636,7 +2645,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.36</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.37</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5727,8 +5736,16 @@ var TYPE_LABEL = {
   // segue il genere ('Uomo' oppure 'Donna'), perché in quel punto si parla di una persona.
   // Stesse etichette di `CAT_LABEL` (vedi là il perché di 'Esseri umani'), con le chiavi
   // `type-*`: le due mappe vanno cambiate insieme.
-  it: { 'type-man':'Esseri umani', 'type-dragon':'Draghi' },
-  en: { 'type-man':'Humans', 'type-dragon':'Dragons' }
+  // ⚠️⚠️ `type-donnadrago` sta QUI e non in `CAT_LABEL`, e non è una dimenticanza: NON è
+  // una categoria di filtro (quelle sono due, umani e draghi), è una classe-etichetta che
+  // le Statistiche contano a parte. Senza questa riga `typeName` ripiegava sulla classe
+  // grezza e la tab 'Tipi' mostrava **'donnadrago'** in minuscolo, come l'utente ha visto
+  // il 2026-08-23; la dicitura giusta è **'Ibridi'** (sua istruzione).
+  // ⚠️ Il ripiego di `typeName` resta, ed è giusto che resti: mostra qualcosa invece di
+  // niente. Ma è anche la ragione per cui il difetto non dà nessun errore, quindi una
+  // classe-etichetta nuova nel dataset va aggiunta qui il giorno che nasce.
+  it: { 'type-man':'Esseri umani', 'type-dragon':'Draghi', 'type-donnadrago':'Ibridi' },
+  en: { 'type-man':'Humans', 'type-dragon':'Dragons', 'type-donnadrago':'Hybrids' }
 };
 var CTRL_I18N = {
   it: { close:'Chiudi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
