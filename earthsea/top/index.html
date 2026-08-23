@@ -2686,7 +2686,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.48</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.49</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -9886,7 +9886,12 @@ function showColorStats(initState) {
   function catDetailView(catKey, catName){
     return function(host){
       backBar(host, catName, null);
-      var counts = {}; dati.forEach(function(p){ if (categoria(p) !== catKey) return; typeClassesOf(p).forEach(function(c){ if (c) counts[c] = (counts[c] || 0) + 1; }); });
+      // ⚠️ `categorie` (plurale) e non `categoria`: un'IBRIDA appartiene a DUE categorie, e
+      // aprendo 'Draghi' deve comparire anche lei. Col singolare (la prima categoria del
+      // tipo) Therru entrava nel dettaglio degli umani e spariva da quello dei draghi,
+      // mentre il filtro del Pannello la mostrava in entrambi: due punti della stessa
+      // pagina che dicevano cose diverse.
+      var counts = {}; dati.forEach(function(p){ if (categorie(p).indexOf(catKey) === -1) return; typeClassesOf(p).forEach(function(c){ if (c) counts[c] = (counts[c] || 0) + 1; }); });
       var rows = Object.keys(counts).map(function(k){ return { k:k, n:counts[k] }; }).sort(function(a, b){ return b.n - a.n; });
       var max = rows.length ? rows[0].n : 1;
       subLine(host, rows.length + (it ? ' tipi in questa categoria' : ' types in this category'));
@@ -9906,12 +9911,23 @@ function showColorStats(initState) {
     noteLine(host, it?'Tocca una famiglia per vederne i personaggi.':'Tap a family to see its characters.');
   }
   function catView(host){
-    var counts = {}; dati.forEach(function(x){ var c = categoria(x); counts[c] = (counts[c] || 0) + 1; });
+    // ⚠️⚠️ Si conta con `categorie` (plurale), quindi un'IBRIDA vale in DUE righe: appartiene
+    // a entrambe le categorie (istruzione dell'utente, 2026-08-23: *a livello di categoria
+    // devono appartenere sia a umani che a draghi... appariranno sia con solo Draghi attivo
+    // che con solo Umani attivo*), ed è già così nel filtro del Pannello. Col singolare qui
+    // i draghi erano SEI e nel filtro SETTE, cioè la stessa pagina si contraddiceva.
+    // ⚠️ Conseguenza da dichiarare, non da nascondere: la somma delle righe può superare il
+    // totale dei personaggi, e per questo la riga di sintesi lo dice quando succede. È lo
+    // stesso patto della tab 'Tipi', che parla di etichette e non di persone.
+    var counts = {}; dati.forEach(function(x){ categorie(x).forEach(function(c){ counts[c] = (counts[c] || 0) + 1; }); });
     var rows = CATS.map(function(k){ return { k:k, n:counts[k]||0 }; }).filter(function(r){ return r.n > 0; }).sort(function(a, b){ return b.n - a.n; });
     var max = rows.length ? rows[0].n : 1, CL = CAT_LABEL[it?'it':'en'];
+    var doppie = dati.filter(function(x){ return categorie(x).length > 1; }).length;
     // Nomi di categoria PER ESTESO (come nel Pannello): la colonna nome è
     // allargata (nameW) così ci stanno interi, es. 'Esseri arcani/primordiali'.
-    subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' categorie':' categories'));
+    subLine(host, total + (it?' personaggi in ':' characters in ') + rows.length + (it?' categorie':' categories')
+      + (doppie ? (it ? ' (' + doppie + (doppie === 1 ? ' ibrido conta' : ' ibridi contano') + ' in due)'
+                      : ' (' + doppie + (doppie === 1 ? ' hybrid counts' : ' hybrids count') + ' in two)') : ''));
     rows.forEach(function(r){ var nm = CL[r.k] || r.k; statRow(host, { name: nm, n:r.n, max:max, barColor:acc, nameW:'212px', onClick: function(){ pushView(catDetailView(r.k, nm)); } }); });
     noteLine(host, it?'Tocca una categoria per vedere i tipi al suo interno.':'Tap a category to see the types within.');
   }

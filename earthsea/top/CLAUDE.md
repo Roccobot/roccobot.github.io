@@ -99,6 +99,18 @@ dove restano, sono superate dalla voce sugli animali in fondo a questa sezione.
   nessun errore. Chi aggiunge una categoria la aggiunge una per una, non riapre quella lista.
 - `categoria()` legge il **tipo canonico italiano** (`p.tipo`), come `tipoClass` per il
   colore: se le due leggessero fonti diverse, una card rossa potrebbe finire fra gli uomini.
+- ⚠️⚠️ **`categorie()` (plurale) è la forma da usare quasi sempre, e `categoria()` è
+  l'eccezione**: un'ibrida appartiene a DUE categorie, quindi chi conta o filtra deve
+  chiedersi se **almeno una** è accesa. Il singolare serve solo dove serve un valore unico
+  (il colore della card), e usarlo per contare è il difetto da cui guardarsi.
+  - **Misurato il 2026-08-23, e corretto nella `0.49`**: la tab 'Categorie' delle Statistiche
+    contava col singolare, quindi diceva **6 draghi** mentre il filtro ne mostrava **7**. La
+    stessa pagina si contraddiceva, e nessuno dei due numeri era sbagliato per conto suo: era
+    la scelta fra plurale e singolare a non essere stata fatta.
+  - ⚠️ **La somma delle righe può superare il totale dei personaggi**, ed è inevitabile appena
+    una voce sta in due categorie. Non si nasconde: la riga di sintesi lo **dichiara** e conta
+    da sé quante voci doppie ci sono (`1 ibrido conta in due`), invece di lasciare un totale
+    che non torna. È lo stesso patto della tab 'Tipi', che parla di etichette e non di persone.
 - Le **origini geografiche** (isola o arcipelago) saranno **etichette per voce**, non
   categorie di questo filtro, e non sono ancora fissate.
 
@@ -538,6 +550,15 @@ SOLO il vero nome, ed è il nome comune a essere vuoto**. Sono sue parole, e la 
   dell'utente, 2026-08-23: *gli ibridi sono eccezioni e ragionano a sé: va benissimo se Tehanu
   e Orm Irian sono preceduti da Therru e Libellula: dopotutto le due sono ANCHE umane*).
   Quindi le voci-drago da raddrizzare sono **SEI**, non sette.
+  - ⚠️⚠️ **'Regola umana' vale per la RESA, non per la categoria**, e la precisazione è
+    dell'utente (2026-08-23): *la regola 'visiva' è umana, cioè doppio nome. Ma a livello di
+    categoria devono appartenere sia a umani che a draghi... appariranno sia con solo Draghi
+    attivo che con solo Umani attivo*. Sono **due livelli indipendenti**, ed è la cosa da non
+    confondere: il doppio nome non le sposta fra gli umani, e la doppia categoria non le
+    riporta alla resa dei draghi.
+    - ⚠️ **La sovrapposizione è NUOVA e non esisteva in Arda** (parole sue): là una voce stava
+      in una categoria sola, quindi il motore di provenienza non offre nessun precedente da
+      copiare.
   - **Applicato nella `0.48`**: `Tehanu` ha `nome` e `nome_en` `Therru` (identico nelle due
     edizioni, 236 occorrenze ENG e 241 ITA) e `vero_nome` `Tehanu`; `Therru` è **uscito** dai
     nomi alternativi, dove sarebbe comparso due volte. `Orm Irian` nascerà con `Libellula` /
