@@ -1164,10 +1164,11 @@ riempiono nello stesso modo** (istruzione dell'utente, 2026-08-23).
 - ⚠️ **Il vero nome NON ha due metà**: nel dataset il campo è singolo, perché i veri nomi non
   si traducono. Chi aggiungesse un `vero_nome_en` starebbe inventando un campo.
 - **Dove vive la metà inglese finché il dataset non c'è**: negli attributi delle schede dello
-  Schedario, e l'esportazione la porta in **due colonne** (`alternativi EN`, `titoli EN`).
-  ⚠️ Prima stava solo nel mio scratchpad, che muore con la sessione.
+  Schedario, e l'esportazione la porta in **due colonne** (`nome d'uso EN`, `titoli EN`).
+  ⚠️ Prima stava solo nel mio scratchpad, che muore con la sessione, e ⚠️ la prima colonna si
+  chiamava `alternativi EN`, che era il nome sbagliato: vedi § 'La metà inglese del nome'.
 
-### 🔤 Il nome d'uso inglese va in `nome_en`, e NON fra gli alternativi
+### 🔤 La metà inglese del nome: va in `nome_en`, non fra gli alternativi
 
 Le due metà del **nome d'uso** sono `nome` e `nome_en`: `Sparviero`/`Sparrowhawk`,
 `Giaggiolo`/`Flag`, `Dote`/`Gift`. ⚠️ **La forma inglese non è un nome alternativo**, e
