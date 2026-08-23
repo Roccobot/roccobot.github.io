@@ -1,4 +1,4 @@
-var datiVersion = "0.48";
+var datiVersion = "0.49";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 // ⚠️ Questa riga VINCE sul fallback dentro index.html: e' la configurazione salvata,
@@ -62,7 +62,7 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // *tuo padre Orm*: là il maschile è la convenzione con cui gli uomini nominano un drago.
 // Il criterio, con la frase del canone che lo chiude, e l'elenco dei cinque che restano senza,
 // stanno in `rules/Earthsea.md`, § 'Il genere dei draghi: congettura, non dato'.
-// ⚠️⚠️ I SETTE DRAGHI HANNO IL DATO INVERTITO, e va raddrizzato: un drago ha **solo** il
+// ⚠️⚠️ I SEI DRAGHI PURI HANNO IL DATO INVERTITO, e va raddrizzato: un drago ha **solo** il
 // vero nome, quindi il campo vuoto deve essere `nome` e `vero_nome` deve portare il nome
 // (`Kalessin`), non il contrario come adesso. Correzione dell'utente del 2026-08-23 su un
 // malinteso vecchio: *è una differenza sostanziale... è uno dei punti-chiave del dataset*.
@@ -72,7 +72,10 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // ⚠️ Le due IBRIDE sono FUORI da quella migrazione, e dalla `0.48` seguono la regola umana:
 // **Tehanu** porta `nome` `Therru` e `vero_nome` `Tehanu` (istruzione dell'utente: *gli ibridi
 // sono eccezioni e ragionano a sé... dopotutto le due sono ANCHE umane*), e `Orm Irian` nascerà
-// con `Libellula` davanti. Quindi le voci-drago da raddrizzare sono SEI, non sette.
+// con `Libellula` davanti.
+// ⚠️ Ma la regola umana vale per la RESA, non per la categoria: un'ibrida appartiene a
+// ENTRAMBE (`Donna | Drago`), quindi compare sia coi soli Umani accesi sia coi soli Draghi. Sono
+// due livelli indipendenti, ed è la precisazione dell'utente del 2026-08-23.
 // ⚠️ `origine` degli animali è `Gont` per tutti e dodici, ed è la RESIDENZA attestata (la
 // casa di zia Muschio, Dieci Ontani, il pollaio di Re Albi), non un luogo di nascita: la
 // regola ammette la residenza in mancanza della nascita, e di un pollo non si dice dove sia
