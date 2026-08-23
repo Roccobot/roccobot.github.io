@@ -279,6 +279,17 @@ probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
 `Arcimago` dipende dai nove Maestri (`rules/Earthsea.md` § 'I nove Maestri di Roke') e dalla
 successione degli Arcimaghi, che il dataset non ha ancora. Non si deduce a memoria.
 
+**I disegni scelti** (utente, 2026-08-23: *proviamo con A12 e H*):
+
+- **`Signore dei Draghi` = `A12`**, la corona con le corna chiare appoggiate sulle spalle.
+- **Coppia di Roke = `H`**, i due anelli: il **Maestro** ha il punto sul cerchio (uno dei nove),
+  l'**Arcimago** il punto al centro.
+  - ⚠️⚠️ **E la coppia vuole DUE TINTE DIVERSE**, non due varianti della stessa (sua richiesta
+    esplicita): con la forma quasi identica, il colore è l'unico canale che distingue i due
+    badge a 17px. Il Maestro resta **viola `#6f5bd0`**; la tinta dell'Arcimago è in scelta fra
+    oro-ottone, cremisi e teal (le tre candidate stanno nel file delle proposte, coi contrasti
+    misurati sui fondi veri).
+
 ## 🪶 I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua
 
 Istruzione dell'utente, 2026-08-21: a Terramare **il vero nome è la cosa più importante di
@@ -1057,6 +1068,38 @@ riempiono nello stesso modo** (istruzione dell'utente, 2026-08-23).
 - **Dove vive la metà inglese finché il dataset non c'è**: negli attributi delle schede dello
   Schedario, e l'esportazione la porta in **due colonne** (`alternativi EN`, `titoli EN`).
   ⚠️ Prima stava solo nel mio scratchpad, che muore con la sessione.
+
+### ✍️ `Sparviero` è la forma scelta, e `Sparviere` sta fra gli alternativi
+
+Decisione dell'utente, 2026-08-23, dopo il grep che ha fatto emergere la divergenza: *la forma
+da me scelta è Sparviero. Metterò comunque `Sparviere` tra gli alternativi.*
+
+⚠️⚠️ **Serve a non farsi 'correggere' il dato da una verifica fatta bene**: sulle fonti ITA
+scaricabili, che sono l'edizione **Mondadori 2024**, il nome d'uso di Ged è **Sparviere**, 411
+occorrenze contro 1. Un grep quindi **contraddice il dataset**, e ha ragione sul proprio corpus:
+è la resa **Nord** che prevale sui nomi, e Nord non è fra le fonti in scena. La misura e la
+trappola stanno in `rules/Earthsea.md` § 'Grep sugli epub'; qui sta la scelta.
+
+- **Conseguenza operativa**: il campo `nome` resta `Sparviero`, e `Sparviere` entra in
+  `nomi_alternativi` quando l'utente compila la scheda. Nessuno dei due va dedotto da un grep.
+- ⚠️ **La stessa cautela vale per ogni altro nome d'uso**: una divergenza fra epub e dataset non
+  è di per sé un errore del dataset. Prima si guarda **quale edizione** dice cosa.
+
+### 🎨 I fondi VERI della riga di una card, misurati
+
+Servono a giudicare una tinta di icona, e non si leggono dal CSS: il fondo della card è un
+gradiente **semitrasparente** sopra `var(--ink)`, quindi il colore che l'occhio vede è un
+composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realfont.js`):
+**scuro `#192632`**, **chiaro `#e4e7ec`**.
+
+- ⚠️ **Il 3:1 delle componenti grafiche NON è la soglia in vigore su queste icone**, e saperlo
+  evita di 'sanare' una scelta dell'utente: misurate col tono che porta il segno in quel tema,
+  le cinque in uso dànno `Sorcerer` 10,26 / **1,51**, `Mage` 8,21 / 3,72, `GedName` 4,94 /
+  2,51, `Male` 4,69 / 2,65, `Female` 4,32 / 2,87. Nel tema chiaro sono quasi tutte sotto: sono
+  **marchi accanto a un'etichetta di testo**, non testo, e le ha scelte lui.
+- **Come si rimisura**, se i fondi cambiano: `realfont.js` serve il sito, si porta il tema con
+  `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
+  centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
 
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 

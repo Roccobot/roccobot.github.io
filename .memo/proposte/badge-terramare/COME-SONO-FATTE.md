@@ -20,14 +20,17 @@ badge), il verde (`GedName`) e le due dei generi (azzurro e rosa).
 | `A1-occhio.svg` | Signore dei Draghi | ruggine `#b4472e` | **finalista**, la più leggibile a 17px |
 | `A6-occhio-arcata.svg` | Signore dei Draghi | ruggine | in piccolo sembra un occhio socchiuso |
 | `A7-corona.svg` | Signore dei Draghi | ruggine | **superata**: la corona convince, ma le corna galleggiavano (vedi sotto) |
-| `A9`, `A10`, `A11`, `A12-corona.svg` | Signore dei Draghi | ruggine | i quattro modi di unire le corna, in gara |
+| `A12-corona.svg` | Signore dei Draghi | ruggine | ✅ **SCELTA** dall'utente il 2026-08-23 |
+| `A9`, `A10`, `A11-corona.svg` | Signore dei Draghi | ruggine | le altre tre vie per unire le corna, scartate con la scelta di `A12` |
 | `C1-porta.svg` + `C2-porta-stella.svg` | coppia di Roke | viola `#6f5bd0` | **scartate** dall'utente il 2026-08-23 |
 | `D1-albero.svg` + `D2-albero-stella.svg` | coppia di Roke | viola | **scartate**, con le C |
 | `B2-bastone-stella.svg` | Arcimago | viola | **scartata**, e da sola era un trattino |
-| `E1-libro` + `E2-libro-sigillo` | coppia di Roke | viola | il libro del Sapere, in gara |
-| `F1-collina` + `F2-collina-sigillo` | coppia di Roke | viola | la collina di Roke, in gara |
-| `G1-runa` + `G2-runa-sigillo` | coppia di Roke | viola | un glifo della Lingua della Creazione, in gara **con una riserva** (vedi sotto) |
-| `H1-anello-bordo` + `H2-anello-centro` | coppia di Roke | viola | il cerchio dei nove, in gara |
+| `E1-libro` + `E2-libro-sigillo` | coppia di Roke | viola | **scartate** con la scelta di `H` |
+| `F1-collina` + `F2-collina-sigillo` | coppia di Roke | viola | **scartate** con la scelta di `H` |
+| `G1-runa` + `G2-runa-sigillo` | coppia di Roke | viola | **scartate**, e con la riserva del simbolo di Venere (vedi sotto) |
+| `H1-anello-bordo.svg` | Maestro di Roke | viola `#6f5bd0` | ✅ **SCELTO** |
+| `H2a-oro`, `H2b-cremisi`, `H2c-teal` | Arcimago di Roke | tre tinte | ✅ forma **scelta**, tinta **in scelta** |
+| `H2-anello-centro.svg` | -- | viola | **superata**: era l'Arcimago in viola, cioè la stessa tinta del Maestro |
 
 ## ⚠️ Il secondo giro (2026-08-23): corna unite e una coppia nuova
 
@@ -64,6 +67,36 @@ o scartata la famiglia: non è un dubbio di gusto, è una collisione con un segn
 Terramare non sono descritte come forme nelle fonti, quindi disegnarne una 'giusta' sarebbe
 inventare un'attestazione.
 
+## ✅ Il terzo giro (2026-08-23): la scelta, e le due tinte della coppia
+
+L'utente ha scelto: *proviamo con A12 e H. Però la scelta H la voglio in due colori distinti
+tra maestro e arcimago.*
+
+**Perché la coppia vuole due tinte e non due varianti della stessa.** Le forme di `H1` e `H2`
+differiscono per un punto che si sposta dal cerchio al centro: a 27px si distingue, a 17px il
+colore fa quasi tutto il lavoro. Quindi il Maestro resta **viola `#6f5bd0`** e l'Arcimago
+prende una tinta sua.
+
+**I fondi sono MISURATI, non stimati**: `#192632` in tema scuro e `#e4e7ec` in chiaro,
+campionati dallo screenshot della pagina vera (il fondo della card è un gradiente
+semitrasparente sopra il fondo pagina, quindi il CSS non lo dice). Vivono in
+`earthsea/top/CLAUDE.md`, § 'I fondi VERI della riga di una card', col modo di rimisurarli.
+
+| candidata | tinte | scuro | chiaro | la nota che conta |
+|---|---|---|---|---|
+| `H2a-oro` | `#a8791a` / `#e6c46a` | 9,14 | 3,13 | gerarchia classica, ma l'oro è già la tinta di `Sorcerer` e `Mage`, che stanno **sulla stessa riga** |
+| `H2b-cremisi` | `#a3234b` / `#e089a2` | 6,06 | 5,84 | la più lontana dal viola e la più equilibrata fra i due temi |
+| `H2c-teal` | `#1c7f92` / `#7fc9d4` | 8,21 | 3,76 | tinta libera, ma vicina all'azzurro del simbolo maschile |
+
+⚠️ **La soglia 3:1 non è il criterio qui**, e crederlo porterebbe a scartare tinte che l'utente
+ha già approvato altrove: le cinque icone in uso stanno **sotto** quella soglia nel tema chiaro
+(`Sorcerer` fa 1,51). I numeri servono a ordinare le candidate, non a bocciarle.
+
+**Come si guarda la scelta**: `NODE_PATH=/opt/node22/lib/node_modules node riga.js`, che rende
+la **riga completa** come sarà davvero (i due badge esistenti, il nome di Ged, la corona, la
+coppia e il simbolo di genere) alle due misure e sui due fondi veri. È il solo modo di vedere
+la collisione dell'oro, che su una coppia isolata non si nota.
+
 **Scartate e perché** (non si ripropongano): una testa di drago di profilo e un muso frontale
 (a 22px si leggevano come un uccello e come un gatto), tre artigli (parentesi), due ali
 (farfalla), un bastone liscio e una foglia (troppo astratti). La lezione: a queste misure
@@ -74,8 +107,8 @@ e **17px** (mobile), sui due fondi, accanto a un'icona già in uso. Gli script c
 fatto stanno nello scratchpad e muoiono con la sessione: si rifanno in dieci righe con
 Playwright, disegnando le SVG in un `<img>` alle due altezze.
 
-**Domande aperte prima di implementare**: quale finalista per il Signore dei Draghi (la
-corona corretta o l'occhio), quale coppia per Roke, e i testi delle due legende bilingui.
+**Domande aperte prima di implementare**: la **tinta dell'Arcimago** fra le tre candidate, e i
+testi delle due legende bilingui. I disegni sono scelti.
 
 ⚠️ **Il criterio editoriale del `Signore dei Draghi` NON è più una domanda aperta**: è
 deciso dall'utente il 2026-08-23 (Ged, Erreth-Akbe, Morred e Pannocchia; e chi è drago non
