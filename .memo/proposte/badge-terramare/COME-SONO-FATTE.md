@@ -28,8 +28,11 @@ badge), il verde (`GedName`) e le due dei generi (azzurro e rosa).
 | `E1-libro` + `E2-libro-sigillo` | coppia di Roke | viola | **scartate** con la scelta di `H` |
 | `F1-collina` + `F2-collina-sigillo` | coppia di Roke | viola | **scartate** con la scelta di `H` |
 | `G1-runa` + `G2-runa-sigillo` | coppia di Roke | viola | **scartate**, e con la riserva del simbolo di Venere (vedi sotto) |
-| `H1-anello-bordo.svg` | Maestro di Roke | viola `#6f5bd0` | ✅ **SCELTO** |
-| `H2a-oro`, `H2b-cremisi`, `H2c-teal` | Arcimago di Roke | tre tinte | ✅ forma **scelta**, tinta **in scelta** |
+| `H1-anello-bordo.svg` | Maestro di Roke | viola `#6f5bd0` | **superato**: il tondo pieno sul cerchio |
+| `H1b-anello-aperto.svg` | Maestro di Roke | viola `#6f5bd0` | ✅ in **anteprima**: il tondo diventa un varco |
+| `H2c-teal` | Arcimago di Roke | teal `#1c7f92` | tinta **scelta**, ma il tondo al centro è superato |
+| `H2a-oro`, `H2b-cremisi` | Arcimago di Roke | oro, cremisi | **scartate** con la scelta del teal |
+| `H2d-stella.svg`, `H2e-stella-chiara.svg` | Arcimago di Roke | teal + arancio | ✅ in **anteprima**: la stella al centro, due arancioni |
 | `H2-anello-centro.svg` | -- | viola | **superata**: era l'Arcimago in viola, cioè la stessa tinta del Maestro |
 
 ## ⚠️ Il secondo giro (2026-08-23): corna unite e una coppia nuova
@@ -97,6 +100,30 @@ la **riga completa** come sarà davvero (i due badge esistenti, il nome di Ged, 
 coppia e il simbolo di genere) alle due misure e sui due fondi veri. È il solo modo di vedere
 la collisione dell'oro, che su una coppia isolata non si nota.
 
+## 🔭 Il quarto giro (2026-08-23): il varco e la stella
+
+Richiesta dell'utente: *modifica l'icona Maestro facendo un buco nel cerchio al posto del
+tondo: diventerà come una C ruotata di 90 gradi in senso antiorario. Per l'icona Arcimago,
+invece, metti un'icona arancione a forma di stella al centro del cerchio, cosa che richiama
+l'idea di magia.*
+
+- **Maestro, `H1b`**: l'anello ha un **varco di 70 gradi centrato in alto**, quindi il tondo
+  pieno non serve più: la forma stessa dice 'uno dei nove, non il centro'. Il tracciato è un
+  arco vero (due archi e due tagli radiali), non un cerchio con un pezzo sopra.
+  ⚠️ **A 17px legge come un ferro di cavallo**, non come una C: il varco in alto lo mette in
+  quella posizione, ed è una conseguenza della richiesta, non un difetto del disegno. Il varco
+  si può stringere per farlo somigliare più a un anello interrotto.
+- **Arcimago, `H2d` e `H2e`**: anello teal invariato, e al centro una **stella a quattro punte**
+  arancione. ⚠️ **L'arancio richiama la magia proprio perché è già la tinta di `Mage` e
+  `Sorcerer`**, che stanno sulla stessa riga: è l'effetto voluto dall'utente, non la collisione
+  che avevamo evitato scartando l'oro per l'anello intero.
+  - **Le due tinte in prova, misurate sui fondi veri**: `#b95b00` (l'arancio scuro del `Mage`)
+    fa **3,34** sul fondo scuro e **3,72** sul chiaro, ed è il più equilibrato; `#e8890f` fa
+    **5,87** e **2,11**, quindi si accende sullo scuro e si spegne sul chiaro. ⚠️ Più
+    l'arancio è acceso, più svanisce in tema chiaro: `Sorcerer` col suo `#ffac33` fa **1,51**.
+  - **La stella non tocca l'anello**: raggio 46 dentro un buco di raggio 62, quindi il fondo
+    della card resta visibile intorno, ed è su quello che i contrasti sono misurati.
+
 **Scartate e perché** (non si ripropongano): una testa di drago di profilo e un muso frontale
 (a 22px si leggevano come un uccello e come un gatto), tre artigli (parentesi), due ali
 (farfalla), un bastone liscio e una foglia (troppo astratti). La lezione: a queste misure
@@ -107,8 +134,8 @@ e **17px** (mobile), sui due fondi, accanto a un'icona già in uso. Gli script c
 fatto stanno nello scratchpad e muoiono con la sessione: si rifanno in dieci righe con
 Playwright, disegnando le SVG in un `<img>` alle due altezze.
 
-**Domande aperte prima di implementare**: la **tinta dell'Arcimago** fra le tre candidate, e i
-testi delle due legende bilingui. I disegni sono scelti.
+**Domande aperte prima di implementare**: quale **arancio** per la stella, se il **varco** del
+Maestro va stretto, e i testi delle due legende bilingui.
 
 ⚠️ **Il criterio editoriale del `Signore dei Draghi` NON è più una domanda aperta**: è
 deciso dall'utente il 2026-08-23 (Ged, Erreth-Akbe, Morred e Pannocchia; e chi è drago non
