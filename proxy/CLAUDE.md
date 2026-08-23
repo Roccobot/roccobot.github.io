@@ -67,17 +67,24 @@ la serratura si apriva proprio quando la chiave non era stata messa.
   **fail-open** (meglio un Worker senza limitatore che un admin chiuso fuori), l'autenticazione
   è **fail-closed**. Chi legge le due politiche vicine non le uniformi: rispondono a domande
   diverse.
-- ⚠️⚠️ **`arda-admin-proxy` ha ancora la riga vecchia.** Non è esposto, ed è **misurato**: alla
-  stessa prova risponde `auth`, quindi il suo secret c'è. Ma è la stessa trappola in attesa,
-  e basterebbe un secret cancellato per aprirlo. Va portata anche là, ⚠️ **con la conferma
-  dell'utente**, perché toccare quel Worker è una modifica pesante.
+- ✅ **La guardia è nei DUE Worker**: Terramare dalla `rev` 2, Arda dalla `rev` 16 (2026-08-23,
+  col benestare dell'utente, perché toccare quel Worker è una modifica pesante).
+  ⚠️ **Arda non era esposto**, ed è **misurato**: alla stessa prova rispondeva `auth`, quindi
+  il suo secret c'era. La guardia è arrivata là **prima** che il caso si presentasse, non
+  dopo: è l'unica delle due volte in cui si è agito in anticipo, e vale ricordarlo perché la
+  tentazione era di lasciar stare visto che 'funzionava'.
 - **Come si prova, e perché serve una prova e non una lettura del codice**: un POST
   `{"action":"auth","password":""}`. Se torna `ok:true` il secret non c'è **e** il Worker è
   fail-open. Sono due difetti diversi che quel test distingue da solo, e nessuno dei due si
   vede dalla dashboard.
-- **La spia lo dice da sé, dalla `rev` 2**: il GET diagnostico di Terramare porta anche
-  `pw` e `pat`, due booleani che dicono se i secret ci sono. ⚠️ Booleani e basta: mai un pezzo
-  del valore, mai la lunghezza. Prima quello stato era invisibile dall'esterno.
+- **La spia lo dice da sé**: il GET diagnostico porta anche i booleani dei secret, `pw` e
+  `pat` su Terramare (dalla `rev` 2), più `gem` su Arda, che ha anche la chiave della
+  traduzione (dalla `rev` 16). ⚠️ Booleani e basta: mai un pezzo del valore, mai la
+  lunghezza. Prima quello stato era invisibile dall'esterno.
+  - ⚠️ Un `pw:false` **non** significa più 'chiunque può entrare': col fail-closed quel caso
+    rifiuta tutto, e vuol dire 'admin inutilizzabile finché non metti il secret'.
+  - ⚠️ Su Arda un `gem:false` non è un guasto dell'admin: è solo la traduzione automatica
+    che risponderà `no-gemini-key`, ed è un secret **opzionale**.
 
 Il resto di questo file descrive `arda-admin-proxy`, e vale come impianto anche per
 l'altro, con le quattro differenze qui sopra.
@@ -134,11 +141,13 @@ Dal contenuto legge anche la versione, per bumparla.
     perché Cloudflare sparge le richieste su isolate diversi. Solo il Durable
     Object dà un conteggio affidabile. Storia in PR #294-#302.
   - **Spia di salute del Worker:** un `GET` (o qualunque non-POST) risponde
-    `{ok:false, error:'method', rev:N, rl:bool}`; `rev` è la revisione del codice attiva
-    (serve a verificare che una ridistribuzione via Git sia andata a buon fine, non
-    altrimenti ispezionabile senza dashboard), `rl` se il binding `RL_DO` è presente.
-    Nessun segreto esposto. ⚠️ **Il valore corrente non si scrive qui**: si legge con un
-    GET, e una copia scritta mentirebbe al primo bump non registrato.
+    `{ok:false, error:'method', rev:N, rl:bool, pw:bool, pat:bool, gem:bool}`; `rev` è la
+    revisione del codice attiva (serve a verificare che una ridistribuzione via Git sia
+    andata a buon fine, non altrimenti ispezionabile senza dashboard), `rl` se il binding
+    `RL_DO` è presente, e gli ultimi tre **se i secret ci sono** (dalla rev 16; su
+    Terramare sono due, che non ha la traduzione). Nessun segreto esposto: sono booleani,
+    mai un pezzo del valore né la sua lunghezza. ⚠️ **Il valore corrente non si scrive
+    qui**: si legge con un GET, e una copia scritta mentirebbe al primo bump non registrato.
 - ⚠️⚠️ **Race di deploy fra sito e Worker.** Si ridistribuiscono dallo **stesso push** ma su
   infrastrutture diverse, con tempi diversi: finché il Worker è alla revisione precedente un
   salvataggio dal pannello **sembra riuscire** e invece la config nuova non viene scritta, e
