@@ -1224,6 +1224,24 @@ chiama `nome d'uso EN`.
   ha una riga sua', e non si estende alle altre 94.
 - ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
   scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
+- ⚠️ **Il caso rovescio: una forma INGLESE fra i nomi alternativi ITALIANI è legittima, e non
+  si specchia in inglese** (istruzione dell'utente, 2026-08-23: *talvolta metto come nome
+  d'uso alternativo per la voce italiana un nome inglese, per coprire le scelte di entrambe le
+  edizioni (alcuni nomi non tradotti da Mondadori). Ovviamente, in tal caso nell'inglese non
+  li devi aggiungere perché sarebbero doppioni dei nomi d'uso*). Suo esempio: `Lepre`/`Hare`,
+  dove `Hare` sta fra i `nomi_alternativi` della voce italiana perché un'edizione italiana
+  lascia il nome non tradotto, ma in `nomi_alternativi_en` **non entra**: là è già `nome_en`, e
+  comparirebbe due volte nella stessa scheda.
+  - ⚠️ **Non contraddice la regola qui sopra**: quella vieta di mettere la metà inglese del
+    nome **al posto** di `nome_en`, questa ammette una forma inglese **in più** sul lato
+    italiano, dove sta coprendo la resa di un'altra edizione e non la metà inglese del nome.
+  - **Come si riconosce**: se la forma inglese è **anche** `nome_en`, sul lato inglese è un
+    doppione e si toglie; se è un nome diverso da entrambi (un soprannome, una variante), vale
+    come qualunque altro alternativo e si valuta a sé.
+  - ⚠️ **Il travaso 1:1 degli alternativi è la trappola**: alla 0.46 le cinque voci che ne
+    hanno portano lo stesso testo nei due campi (`Falco`, `Arha`, `Therru`, `Sterna`, `Otak`),
+    e là è giusto perché quei nomi sono identici nelle due edizioni. Copiare per abitudine è
+    esattamente il modo in cui `Hare` finirebbe due volte.
 
 ### ✍️ `Sparviero` è la forma scelta, e `Sparviere` sta fra gli alternativi
 

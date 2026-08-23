@@ -1548,6 +1548,11 @@ PNG originali conservati come backup non referenziato.
   modificati, ridimensionati, compressi od ottimizzati **per nessun motivo**: sono materiale da
   consultazione a piena qualità. Anche `favicon.png` e le altre immagini esistenti restano come
   sono, salvo richiesta esplicita.
+  - ⚠️ **Dal 2026-08-23 la parte su `res/` è UNIVERSALE** e vale per ogni progetto
+    (`Roccobot.md`, § 'Bonifica e ottimizzazione degli asset'): la formulazione locale è
+    rimasta perché copre anche `favicon.png`, che è di qui, ma non è più il solo posto dove la
+    regola vive. Il motivo del travaso: scritta solo qui, lasciava scoperto ogni progetto
+    nuovo, ed è successo con `earthsea/res/`.
 - A ogni **main release** verificare che tutti gli asset siano stati bonificati secondo la regola
   universale, e ripulire prima di rilasciare quello che non lo è.
 - Riferimenti storici di consulenza estetica: colori troppo saturi rispetto agli altri badge, e
