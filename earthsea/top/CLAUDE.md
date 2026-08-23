@@ -68,6 +68,17 @@ differenza è il punto da capire prima di toccare i colori.
         all'altro modo (fondo e colore propri, selettore a una classe): dentro una card
         **perde** contro `.rank-item .type-badge`, che è più specifico. Non si vede perché
         quel ripiego non ha voci a cui applicarsi, ma è lo sbaglio da non ripetere.
+  - ⚠️⚠️ **Gli ibridi sono DUE, e la seconda va trattata come la prima**: istruzione
+    dell'utente, 2026-08-23, *gli 'ibridi' (umani-draghi) saranno due, entrambe di genere
+    femminile... applica a Orm Irian lo stesso trattamento di Tehanu*. Quindi **Orm Irian**
+    nasce con `tipo` `Donna | Drago`, `tipo_color` `type-donnadrago|` e `cardcolor` `dragon`,
+    esattamente come Tehanu: etichetta viola sulla prima metà, tinta dei draghi sulla card.
+    - ⚠️ **Nello Schedario l'utente le marca come DONNE** (razza `Uomo`, genere `f`), perché
+      là la razza è a scelta esclusiva: **il doppio tipo lo costruisce il sito**, non il
+      dato in arrivo. Chi legge un export dello Schedario e vede `uomo` per quelle due voci
+      non ha davanti un errore da segnalare, ma la metà di un dato che si completa qui.
+    - ⚠️ **Nessun altro personaggio-drago prende questo trattamento**: Kalessin e Orm Embar
+      sono `Drago` e basta. La coppia è chiusa a due, ed è l'utente a dirlo.
   - ⚠️ **La tinta NON è il solo canale del genere**: il simbolo di genere sulla card c'è già,
     quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza perdere
     informazione per chi non distingue quelle due tinte.
@@ -240,6 +251,33 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
     ⚠️ Quindi una card di drago senza simbolo di genere **non è un dato mancante**: chi la
     vede non deve mettersi a cercare l'attestazione, e chi riempirà il dataset sulle fonti
     non deve riempire quel campo perché 'è vuoto'.
+
+### 🐲 I TRE badge annunciati, e il criterio di uno solo
+
+⚠️ **Non sono ancora nel sito** (al 2026-08-23): l'utente li ha annunciati, le icone sono
+allo stato di proposta in `.memo/proposte/badge-terramare/` (cartella non pubblicata da
+Pages, con il suo `COME-SONO-FATTE.md`), e qui sta la parte che vale **oltre** la scelta del
+disegno, cioè il criterio editoriale. Sono `Signore dei Draghi` e la coppia `Maestro di
+Roke` / `Arcimago di Roke`, che vanno sulla **stessa riga di legenda** come le coppie di
+Arda.
+
+**Il criterio del `Signore dei Draghi`**, dettato dall'utente il 2026-08-23: *è un titolo che
+probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
+
+- ⚠️⚠️ **Le persone che sono esse stesse draghi NON sono Signori di Draghi** (parole
+  dell'utente). Quindi **Tehanu e Orm Irian ne restano fuori**, e con loro Kalessin e Orm
+  Embar: il badge marca chi **parla** coi draghi, non chi è drago. È l'esclusione che un
+  audit sbaglierebbe da sé, perché sono le voci più vicine al tema.
+- **Le attestazioni stanno nel canone**, non qui: `rules/Earthsea.md` § 'Signore dei Draghi',
+  col grado di prova voce per voce. ⚠️ Da sapere prima di fidarsi dell'elenco: per **Morred**
+  nessun passo usa l'etichetta, e quel che c'è è la definizione del titolo applicata a lui
+  («Morred ed Erreth-Akbe parlavano con i draghi»). L'elenco dell'utente regge, ma su una
+  prova di grado diverso dalle altre tre.
+- **Pannocchia è Cob**, e nel dataset la voce non c'è ancora: quando nascerà, nasce col badge.
+
+⚠️ **Il criterio della coppia di Roke NON è ancora fissato**: chi porta `Maestro` e chi
+`Arcimago` dipende dai nove Maestri (`rules/Earthsea.md` § 'I nove Maestri di Roke') e dalla
+successione degli Arcimaghi, che il dataset non ha ancora. Non si deduce a memoria.
 
 ## 🪶 I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua
 
