@@ -906,15 +906,17 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    nel CSS statico o tornano gli errori W3C. Qui restano solo le terne --ccrgb,
    che il Nu valida senza problemi. */
 /* Terne per famiglia (default = tema SCURO, bilanciato; override CHIARO sotto). */
-/* Fallback statico delle DUE famiglie di Terramare: le terne vive (e il colore
+/* Fallback statico delle QUATTRO famiglie di Terramare: le terne vive (e il colore
    testo --cctxt) le iniettano injectCardColorRules/reinjectFamilyColors leggendo
    CARDCOLORS, quindi queste servono solo se quel codice non gira.
    ⚠️ Qui c'erano le 15 famiglie di 'I Grandi di Arda' (Noldor, Maiar, Valar...):
    irraggiungibili, perché `familyOf` non produce quei nomi. */
 .cc-man{--ccrgb:156,178,240} .cc-woman{--ccrgb:111,208,214} .cc-dragon{--ccrgb:224,160,144}
+.cc-animale{--ccrgb:230,196,69}
 html[data-theme="light"] .cc-man{--ccrgb:34,68,156}
 html[data-theme="light"] .cc-woman{--ccrgb:12,117,126}
 html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
+html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
 /* Il logo del FAB porta margini PROPRI dentro il suo canvas, e l'altezza dell'svg
@@ -2684,7 +2686,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.46</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.47</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4302,16 +4304,46 @@ function processAlt(str) {
     .replace(/([^,|*]+?)\s*\*/g, (_, n) => '<strong>' + n.trim() + '</strong>');
 }
 
+// ⚠️⚠️ I tipi ANIMALE sono un ELENCO, non una regola, e la ragione è la richiesta
+// dell'utente (2026-08-23): *la categoria è Animali, ma nelle etichette voglio scrivere
+// l'animale effettivo (gatto, gatta, cane...)*. Quindi nel dato il tipo è `Gatta` o
+// `Gallo`, l'etichetta della card lo mostra tale e quale, e la categoria unica la
+// ricavano da qui `tipoClass` e `categorie`, che restano le due sole letture del tipo.
+// ⚠️⚠️ UN ANIMALE NUOVO VA AGGIUNTO QUI il giorno che entra nel dataset, o finisce fra
+// gli **uomini senza dare alcun errore**: il ripiego di `tipoClass` è `type-man` per
+// costruzione, quindi il difetto non ha nessuna spia. È la stessa trappola di
+// `TYPE_LABEL` (vedi là), e qui morde più forte perché il colore sbagliato sembra un
+// dato inserito male invece di un elenco incompleto.
+// ⚠️ L'elenco è più largo del dataset di proposito: `corvo`, `otak` e `harrekki` non
+// hanno ancora una voce, ma sono gli animali che le fonti nominano come compagni (il
+// corvo di Nemmerle, l'otak di Ged, la lucertola-drago da bracciale), quindi sono i
+// prossimi candidati. Coprirli adesso costa una parola e chiude la trappola in anticipo.
+// ⚠️⚠️ LE PAROLE VANNO NELLE DUE LINGUE, esattamente come il test `drago|dragon` qui
+// sotto, e non è ridondanza: `typeClassesOf` delle Statistiche legge il tipo
+// **localizzato** (`p.tipo_en` in inglese), quindi con le sole parole italiane la tab
+// 'Tipi' contava dodici animali fra gli **Esseri umani** senza dare alcun errore. Trovato
+// misurando la pagina in inglese il 2026-08-23, non rileggendo il codice: in italiano
+// tornava giusto.
+var TIPI_ANIMALE = ['gatto','gatta','gattino','gattina','cane','cagna','cucciolo',
+                    'gallina','gallo','pulcino','corvo','otak','harrekki',
+                    'cat','kitten','dog','puppy','hen','rooster','chick','raven'];
+function isTipoAnimale(t) {
+  return TIPI_ANIMALE.some(function(a){ return t.indexOf(a) !== -1; });
+}
 function tipoClass(tipo) {
   // ⚠️⚠️ QUI Terramare si allontana da 'I Grandi di Arda', e non per semplificare: quel
   // mondo ha una dozzina di stirpi che sono ANCHE la categoria della card, questo ne ha
-  // DUE, uomini e draghi, e la categoria (l'isola d'origine) è un'altra cosa. Il colore
-  // dice la razza, l'origine sta nelle etichette e nei filtri.
+  // TRE, uomini, draghi e animali, e la categoria geografica (l'isola d'origine) è
+  // un'altra cosa. Il colore dice la razza, l'origine sta nelle etichette e nei filtri.
+  // ⚠️ Gli ANIMALI sono nati il 2026-08-23, su richiesta dell'utente: fino a quel giorno
+  // le categorie erano due e 'tutto ciò che non è drago è uomo' era vero. Le note che lo
+  // dicono ancora sono superate.
   // ⚠️ Il ripiego è `type-man` e non un 'fallback' neutro: un personaggio senza tipo
-  // dichiarato è un uomo, perché le razze sono due e i draghi si dichiarano sempre.
+  // dichiarato è un uomo, perché i draghi e gli animali si dichiarano sempre.
   if (!tipo) return 'type-man';
   var t = tipo.replace(/^→\s*/,'').toLowerCase();
   if (t.includes('drago') || t.includes('dragon')) return 'type-dragon';
+  if (isTipoAnimale(t)) return 'type-animale';
   return 'type-man';
 }
 
@@ -4324,7 +4356,7 @@ function tipoClass(tipo) {
 // I valori colore per-tema vivono nel CSS (variabile --ccrgb per .cc-<fam>):
 // così si ricolora un intero gruppo cambiando un solo valore.
 var CARDCOLOR_OF = {
-  'type-man':'man', 'type-dragon':'dragon'
+  'type-man':'man', 'type-dragon':'dragon', 'type-animale':'animale'
 };
 
 // ── Config colori EDITABILE (Fase 2, dalla v9.27) ───────────────────────────
@@ -4335,17 +4367,21 @@ var CARDCOLOR_OF = {
 // storici (identici a quelli statici del CSS). `familyOf`, l'iniezione delle
 // --ccrgb e l'editor leggono/scrivono SEMPRE CARDCOLORS (mai le costanti sopra).
 var CARDCOLORS_FALLBACK = {
-  // ⚠️ TRE famiglie ma DUE categorie, e non è una svista: la tinta degli umani segue il
-  // GENERE (istruzione dell'utente, 2026-08-21: turchese le donne, blu oltremare gli
-  // uomini), mentre il filtro resta a due voci. Vedi `familyOf`, che è dove le due cose
-  // si separano.
+  // ⚠️ QUATTRO famiglie ma TRE categorie, e non è una svista: la tinta degli umani segue
+  // il GENERE (istruzione dell'utente, 2026-08-21: turchese le donne, blu oltremare gli
+  // uomini), mentre il filtro resta a una voce sola per gli umani. Vedi `familyOf`, che è
+  // dove le due cose si separano.
+  // ⚠️ Gli ANIMALI **non** sdoppiano la tinta per genere, ed è voluto: fra loro il genere
+  // manca spesso (Vaiavanti e Tiro non l'hanno attestato), quindi una tinta per sesso
+  // dividerebbe la famiglia su un dato che il più delle volte non c'è.
   // ⚠️ I valori sono MISURATI, non provvisori: nel tema chiaro fanno anche da TESTO (il
   // vero nome prende la tinta), quindi devono passare AA e non solo distinguersi. I
   // numeri stanno in `earthsea/top/CLAUDE.md`.
   fam: {
     "man": { dark:"#9cb2f0", light:"#22449c" },
     "woman": { dark:"#6fd0d6", light:"#0c757e" },
-    "dragon": { dark:"#e0a090", light:"#a8462f" }
+    "dragon": { dark:"#e0a090", light:"#a8462f" },
+    "animale": { dark:"#e6c445", light:"#856508" }
   },
   map: CARDCOLOR_OF
 };
@@ -4356,7 +4392,14 @@ var CARDCOLORS_FALLBACK = {
 var CARDCOLORS = (function(){
   var saved = (typeof cardColors !== 'undefined') ? cardColors : null;
   if (saved && saved.fam && saved.map) {
-    return { fam: saved.fam, map: Object.assign({}, CARDCOLOR_OF, saved.map) };
+    // ⚠️ Anche `fam` si FONDE col fallback, come `map`, e dal 2026-08-23: prima si teneva
+    // la sola config salvata, quindi una famiglia NUOVA aggiunta nel codice restava
+    // invisibile finché qualcuno non salvava dai colori, e le sue card ripiegavano sul
+    // grigio senza `--cctxt`. È lo stesso ragionamento della fusione di `map`, che era
+    // già scritta così: la config salvata dice quello che l'utente ha cambiato, non
+    // l'elenco di quello che esiste.
+    return { fam: Object.assign({}, CARDCOLORS_FALLBACK.fam, saved.fam),
+             map: Object.assign({}, CARDCOLOR_OF, saved.map) };
   }
   return { fam: CARDCOLORS_FALLBACK.fam, map: CARDCOLORS_FALLBACK.map };
 })();
@@ -4867,13 +4910,18 @@ function buildStatus(p) {
 }
 
 // \u2500\u2500 Categorie per il filtro \u2500\u2500
-// ⚠️ DUE sole categorie, perché a Terramare le razze sono due (uomini e draghi,
-// istruzione dell'utente). Non è una lista ridotta 'per ora': la tassonomia di
-// nove voci del motore di provenienza teneva i draghi in 'arcane', categoria
-// SPENTA di default, e i tre draghi del dataset non comparivano affatto.
-// Le ORIGINI geografiche (isola o arcipelago) saranno un'altra cosa: etichette
-// per voce, non categorie di questo filtro.
-var CATS = ['man','dragon'];
+// ⚠️ TRE categorie: uomini, draghi e ANIMALI, questi ultimi dal 2026-08-23 (istruzione
+// dell'utente: *va aggiunta la categoria 'Animali' a cui non avevo pensato*). Non è una
+// lista che cresce a piacere: la tassonomia di nove voci del motore di provenienza teneva
+// i draghi in 'arcane', categoria SPENTA di default, e i tre draghi del dataset non
+// comparivano affatto.
+// ⚠️ Gli animali si aggiungono IN FONDO, e non è indifferente: il permalink della vista è
+// una maschera di bit posizionale, quindi un link vecchio (`?01` = soli draghi) continua a
+// dire quello che diceva, con gli animali spenti. Infilare la categoria nuova in mezzo
+// avrebbe cambiato il senso di ogni link già condiviso.
+// Le ORIGINI geografiche (isola o arcipelago) sono un'altra cosa: etichette per voce, non
+// categorie di questo filtro.
+var CATS = ['man','dragon','animale'];
 // Categoria di una voce: la razza, letta dal tipo CANONICO italiano (p.tipo) e
 // non da quello localizzato, così le due lingue non possono divergere. Fonte
 // unica con `tipoClass`, che dal tipo ricava la classe del colore: se le due
@@ -4893,7 +4941,11 @@ function categoria(p) {
 function categorie(p) {
   var viste = {}, fuori = [];
   (p.tipo || '').split('|').forEach(function(seg){
-    var c = /drago|dragon/i.test(seg) ? 'dragon' : 'man';
+    // Stessa scala di priorità di `tipoClass`, e per la stessa ragione: se le due
+    // leggessero il tipo in ordine diverso, una card gialla potrebbe finire fra gli
+    // uomini. Il ripiego resta 'man'.
+    var c = /drago|dragon/i.test(seg) ? 'dragon'
+          : isTipoAnimale(seg.toLowerCase()) ? 'animale' : 'man';
     if (!viste[c]) { viste[c] = 1; fuori.push(c); }
   });
   return fuori.length ? fuori : ['man'];
@@ -4904,8 +4956,8 @@ function inCatsAttive(p) {
 }
 var filterState = {};
 (function(){
-  // Tutte ACCESE: con due categorie, spegnerne una all'avvio nasconderebbe
-  // metà del dataset senza che nessuno l'abbia chiesto.
+  // Tutte ACCESE: spegnerne una all'avvio nasconderebbe una fetta del dataset senza
+  // che nessuno l'abbia chiesto (con due categorie era la metà).
   CATS.forEach(function(c){ filterState[c] = true; });
 })();
 // Snapshot dei default (prima di un eventuale override da URL): serve a
@@ -5809,22 +5861,25 @@ var CAT_LABEL = {
   // ⚠️ È QUESTA la mappa che il Pannello mostra: `TYPE_LABEL`, più sotto, ha le stesse
   // etichette ma chiavi `type-*` e serve altrove. Cambiarne una sola lascia il filtro a
   // dire la parola vecchia, ed è successo.
-  it: { man:'Esseri umani', dragon:'Draghi' },
-  en: { man:'Humans', dragon:'Dragons' }
+  // ⚠️ 'Animali' è la CATEGORIA, e sulla card l'etichetta dice l'animale vero ('Gatta',
+  // 'Gallo'): sono due livelli diversi per richiesta dell'utente, non un'incoerenza.
+  it: { man:'Esseri umani', dragon:'Draghi', animale:'Animali' },
+  en: { man:'Humans', dragon:'Dragons', animale:'Animals' }
 };
 // Colore della spia di categoria nel Pannello: le due tinte delle famiglie card
 // (oro e rosso), così la legenda e le schede dicono la stessa cosa.
-// Pastiglie delle due categorie nel Pannello: la tinta di famiglia in tema CHIARO
+// Pastiglie delle categorie nel Pannello: la tinta di famiglia in tema CHIARO
 // (il fondo del Pannello è scuro in entrambi i temi, quindi i valori chiari si
 // leggono su entrambi). ⚠️ 'Uomini' porta l'oltremare perché è la categoria, non il
 // genere: il turchese delle donne è una tinta di card, non una voce di filtro.
-var CAT_COLOR = { man:'#22449c', dragon:'#a8462f' };
+var CAT_COLOR = { man:'#22449c', dragon:'#a8462f', animale:'#856508' };
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
 // (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
 var TYPE_LABEL = {
   // ⚠️ Il plurale del FILTRO resta al maschile perché indica la razza, non il singolo:
-  // le due categorie sono 'uomini' e 'draghi'. Sulla singola card invece l'etichetta
-  // segue il genere ('Uomo' oppure 'Donna'), perché in quel punto si parla di una persona.
+  // le categorie sono 'uomini', 'draghi' e 'animali'. Sulla singola card invece
+  // l'etichetta segue il genere ('Uomo', 'Donna', 'Gatta'), perché in quel punto si parla
+  // di un individuo.
   // Stesse etichette di `CAT_LABEL` (vedi là il perché di 'Esseri umani'), con le chiavi
   // `type-*`: le due mappe vanno cambiate insieme.
   // ⚠️⚠️ `type-donnadrago` sta QUI e non in `CAT_LABEL`, e non è una dimenticanza: NON è
@@ -5835,8 +5890,8 @@ var TYPE_LABEL = {
   // ⚠️ Il ripiego di `typeName` resta, ed è giusto che resti: mostra qualcosa invece di
   // niente. Ma è anche la ragione per cui il difetto non dà nessun errore, quindi una
   // classe-etichetta nuova nel dataset va aggiunta qui il giorno che nasce.
-  it: { 'type-man':'Esseri umani', 'type-dragon':'Draghi', 'type-donnadrago':'Ibridi' },
-  en: { 'type-man':'Humans', 'type-dragon':'Dragons', 'type-donnadrago':'Hybrids' }
+  it: { 'type-man':'Esseri umani', 'type-dragon':'Draghi', 'type-donnadrago':'Ibridi', 'type-animale':'Animali' },
+  en: { 'type-man':'Humans', 'type-dragon':'Dragons', 'type-donnadrago':'Hybrids', 'type-animale':'Animals' }
 };
 var CTRL_I18N = {
   it: { close:'Chiudi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
@@ -5923,6 +5978,11 @@ function controlPanelHTML() {
   // isolare l'altra) e mangiavano la metà della larghezza. Con loro sono uscite
   // le misure-fantasma .ctrl-btn-m, che servivano a tenerli larghi uguali fra le
   // lingue.
+  // ⚠️ Dal 2026-08-23 le categorie sono TRE, quindi quella ragione è decaduta: per
+  // isolarne una servono adesso DUE spegnimenti, e il tasto 'solo' torna a valere
+  // qualcosa. Non è stato reintrodotto perché nessuno l'ha chiesto: qui resta scritto
+  // che la sua motivazione originale non regge più, così chi lo rivorrà non ripartirà
+  // credendo che fosse una scelta di spazio.
   destra += '<div class="ctrl-section ctrl-section--filtri">';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   CATS.forEach(function(c){

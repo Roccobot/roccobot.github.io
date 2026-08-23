@@ -34,10 +34,13 @@ non ci saranno (vedi la sezione sui nomi non cliccabili).
 - ⚠️ **Il dataset piccolo inganna**: una voce sbagliata qui pesa quanto dieci su un dataset
   da centinaia di righe, e i nomi veri di Terramare si ricordano con sicurezza ingannevole.
 
-## 🧬 Le due razze, e perché il filtro ha DUE categorie
+## 🧬 Le razze, e perché le tinte non contano come le categorie
 
-**Terramare ha due razze: uomini e draghi** (istruzione dell'utente), ma **TRE tinte**, e la
-differenza è il punto da capire prima di toccare i colori.
+**Terramare ha due razze, uomini e draghi** (istruzione dell'utente), e dal 2026-08-23 una
+**terza categoria** che razza non è, gli **animali**: le categorie del filtro sono quindi
+**tre** e le tinte **cinque**, e la differenza è il punto da capire prima di toccare i colori.
+⚠️ Le note che dicono 'due categorie' o 'tre tinte' descrivono lo stato fino al 2026-08-22:
+dove restano, sono superate dalla voce sugli animali in fondo a questa sezione.
 
 - ✅ **La tavolozza è APPLICATA dalla `0.16`** (scelta dell'utente sulle due proposte):
   **uomini oltremare**, **donne turchese**, **draghi terracotta**. L'**oro è uscito** dalle
@@ -90,14 +93,137 @@ differenza è il punto da capire prima di toccare i colori.
     tavolozza i valori vecchi restavano attivi mentre il fallback ne dichiarava altri: chi
     cambia una tinta la cambia **là**, e il fallback lo segue.
 
-- ⚠️ **`CATS` ha due voci, e non è una lista 'ridotta per ora'.** La tassonomia a nove
+- ⚠️ **`CATS` ha TRE voci, e non è una lista che si allunga a piacere.** La tassonomia a nove
   categorie ereditata da Arda mandava i draghi in `arcane`, che nasce **spenta**: i tre draghi
   del dataset non comparivano affatto, e il difetto era invisibile perché la pagina non dava
-  nessun errore. Chi aggiunge una razza aggiunge una categoria, non riapre quella lista.
+  nessun errore. Chi aggiunge una categoria la aggiunge una per una, non riapre quella lista.
 - `categoria()` legge il **tipo canonico italiano** (`p.tipo`), come `tipoClass` per il
   colore: se le due leggessero fonti diverse, una card rossa potrebbe finire fra gli uomini.
 - Le **origini geografiche** (isola o arcipelago) saranno **etichette per voce**, non
   categorie di questo filtro, e non sono ancora fissate.
+
+### 🐈 Gli ANIMALI: una categoria, tante etichette
+
+Istruzione dell'utente, 2026-08-23: *innanzi tutto va aggiunta la categoria 'Animali' a cui
+non avevo pensato... la categoria è Animali, ma nelle etichette voglio scrivere l'animale
+effettivo (gatto, gatta, cane...)*. Sono **due livelli diversi**, e tenerli distinti è la
+regola: la **categoria** che filtra e conta è una sola, l'**etichetta** della card dice la
+bestia vera.
+
+- **Nel dato**: `tipo` è `Gatta`, `Gatto`, `Gallina`, `Gallo`, `Cane` (con `tipo_en` `Cat`,
+  `Hen`, `Rooster`, `Dog`), e `cardcolor` è `animale`. Nessun campo dice 'animale': la
+  categoria la ricava il motore.
+- ⚠️⚠️ **Il ponte fra i due livelli è l'elenco `TIPI_ANIMALE` in `index.html`**, che
+  `tipoClass` e `categorie` leggono entrambe. **Un animale nuovo va aggiunto là**, o la sua
+  card finisce fra gli **uomini senza dare alcun errore**: il ripiego di `tipoClass` è
+  `type-man` per costruzione, quindi il difetto non ha nessuna spia. È la stessa trappola
+  della tabella `TYPE_LABEL` (vedi § "'Esseri umani', e la trappola delle DUE mappe di
+  etichette"), e qui morde più forte perché una tinta sbagliata somiglia a un dato inserito
+  male invece che a un elenco incompleto.
+  - ⚠️⚠️ **Le parole vanno nelle DUE LINGUE**, come il test `drago|dragon` accanto, e non è
+    ridondanza: `typeClassesOf` delle Statistiche legge il tipo **localizzato**, quindi con le
+    sole parole italiane la tab 'Tipi' contava **dodici animali fra gli Esseri umani**.
+    Trovato **misurando la pagina in inglese**, non rileggendo il codice: in italiano tornava
+    giusto, ed è il caso di scuola del difetto che si vede solo cambiando lingua.
+  - L'elenco è **più largo del dataset** di proposito (`corvo`, `otak`, `harrekki`): sono gli
+    animali che le fonti nominano come compagni, quindi i prossimi candidati.
+- **La tinta è il GIALLO**, proposto dall'utente (*Scegliamo un colore per questo nuovo tipo
+  di card (giallo?)*) e misurato: **`#e6c445`** nel tema scuro (10,39 sul fondo pagina, 9,05
+  sul fondo della riga) e **`#856508`** nel chiaro (5,23 e 4,39). ⚠️ La coppia chiara è
+  **identica per contrasto a quella delle donne** (5,23 / 4,39), che l'utente aveva già
+  approvato: è la ragione per cui è stata scelta fra cinque candidate, non il gusto.
+  - ⚠️ **Gli animali NON sdoppiano la tinta per genere**, al contrario degli umani: fra loro
+    il genere manca spesso (Vaiavanti e Tiro non l'hanno attestato), e una tinta per sesso
+    dividerebbe la famiglia su un dato che il più delle volte non c'è.
+  - ⚠️ Il giallo è anche la tinta delle icone `Sorcerer` e `Mage`, che stanno **sulla stessa
+    riga**: è la collisione per cui l'oro fu scartato dalle categorie nella `0.16`. Qui è
+    accettata, perché quelle sono **icone** e questa è la tinta di fondo, striscia ed
+    etichetta, e perché il giallo lo ha chiesto l'utente.
+- ⚠️ **`CARDCOLORS` fonde `fam` col fallback dal 2026-08-23**, come già faceva con `map`.
+  Prima teneva la sola config salvata, quindi una famiglia **nuova aggiunta nel codice**
+  restava invisibile finché nessuno salvava dall'editor colori, e le sue card ripiegavano sul
+  grigio senza `--cctxt`. Non è una rifinitura: era il difetto che avrebbe reso muto il giallo
+  appena aggiunto.
+- ⚠️ **Il tasto 'solo' del Pannello aveva senso e l'ha ripreso**: era stato tolto perché con
+  **due** categorie spegnere l'una era l'unico modo di isolare l'altra. Con tre ne servono
+  due, quindi quella motivazione è decaduta. Non è stato reintrodotto perché nessuno l'ha
+  chiesto, e la nota vive anche accanto al codice.
+
+### 🔍 I dodici animali: che cosa è attestato, e i sei punti dove il testo dice altro
+
+Le dodici voci sono entrate nella `0.47` **verificate col grep sugli epub**, una per una. Qui
+sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato giusto.
+
+| voce | attestazione |
+|---|---|
+| `Grigina` / `Little Grey` | gatta di zia Muschio, *ha avuto quattro gattini* (da cui il femminile) |
+| `Nerone` / `Old Black` | gatto della stessa casa, `Old Black **he** killed one` |
+| `Biddy` | citata una volta sola, in ENG: i gattini *dormono con la zia e Biddy* |
+| `Fioccodineve` / `Snowflakes` | gallina di zia Muschio: i cuccioli davano la caccia *ai suoi pulcini* |
+| `Vaiavanti` / `Gobefore` | *un vecchio cane che non abbaiava mai*, della zia di Sparviero a Dieci Ontani |
+| `Tiro` / `Tug` | il gattino grigio, *il migliore della cucciolata*, chiamato così da un marinaio |
+| le cinque galline e `Il Re` | il pollaio del mago di Re Albi: `Bucca Bruna, Grigia, Candore, Ghette e il re` |
+
+- ⚠️⚠️ **Le galline sono di HELETH, non di 'Haleth'**: l'utente ha scritto la seconda forma, e
+  il testo dà la prima (*nessuna traccia del gallo, il re, come lo chiamava Heleth*). `Haleth`
+  è un nome **tolkieniano**, ed è esattamente il tipo di scambio che un progetto gemello
+  invita a fare.
+- ⚠️ **`Il Re` è un GALLO, e la conferma arriva dal capitolo dopo**: nell'elenco del pollaio
+  potrebbe essere chiunque, ma più avanti Ogion trova il pollaio senza *nessuna traccia del
+  gallo, il re*. ⚠️ L'edizione italiana lo scrive **minuscolo** (`il re`), l'inglese
+  maiuscolo (`the King`): nel dataset sta `Il Re` / `The King`, cioè la forma inglese e
+  l'italiana capitalizzata come nome di scheda.
+- ⚠️⚠️ **`Biddy` non ha nessuna resa italiana**: Mondadori ha **tolto il nome**, e la frase
+  in italiano dice solo *dormono con la zia*. Quindi `nome` e `nome_en` portano entrambi
+  `Biddy`, e non è una dimenticanza da sanare. ⚠️ Nemmeno il testo dice che è una gallina:
+  lo dicono il contesto (la casa è piena di *cani, gatti, galli*) e il fatto che `biddy` in
+  inglese sia il nome familiare della gallina. La voce è **dell'utente**, e resta la sua.
+- ⚠️ **`Fioccodineve` esisteva accanto a `Biddy` nella stessa frase**, e nell'elenco di
+  partenza mancava: se ne è accorto l'utente mentre il grep la trovava. Vale come misura di
+  quanto il grep sia più affidabile del ricordo, in **entrambe** le direzioni.
+- ⚠️ **`Vaiavanti` in inglese è un MASCHIO**: *She called **him** Gobefore*. L'utente lo ha
+  dichiarato senza genere, e il dato resta come lui l'ha voluto; ma l'italiano (*lo chiamava
+  Vaiavanti*) **non prova nulla**, perché `cane` è maschile per grammatica, mentre l'inglese
+  `him` è una scelta. Se un domani si vuole allineare alla fonte, questa è la riga.
+- ⚠️ **`Tiro` è il caso in cui il dubbio è NEL TESTO**: Tehanu dice *credo che sia un maschio*
+  e da lì la narrazione usa `he`. Quindi 'senza genere' non è una lacuna del dataset: è la
+  cosa che la storia dice, e il maschile che segue è un'ipotesi di un personaggio.
+  - Sua madre è `Grigina` (`madre` e `madre_en`), e l'attestazione è doppia: i quattro gattini
+    di Grigina, e *il migliore della cucciolata* consegnato ad Alder. ⚠️ Con `genere` vuoto la
+    riga della genealogia stampa **'Figlio di'**, che è il ripiego del motore: non è un dato,
+    è la mancanza di una forma neutra.
+
+### 🐉 Keor, Sula e i tre draghi nuovi
+
+- **`Keor`**, uomo: *Keor, principe di Enlad*, che uccise il drago `Bar Oth` trecento anni
+  prima della `Spiaggia più lontana`. Il titolo entra in `appellativi` alla lettera
+  (`Principe di Enlad` / `Prince of Enlad`), e `origine` è `Enlad`. Il **vero nome resta
+  vuoto**: la fonte non lo dà, e l'utente stesso lo chiedeva col punto di domanda.
+- ⚠️⚠️ **`Sula` / `Gannet` è uno STREGONE, non un mago**, e la differenza qui è sostanziale
+  perché il sito ha due badge distinti: le fonti dicono *lo stregone Sula* e *the sorcerer
+  Gannet*. Quindi porta `stregone`, non `mago`.
+  - ⚠️ **Da dove nasce l'equivoco, che è dentro la storia**: dopo la sua morte il Maestro
+    delle Evocazioni **ipotizza** che in lui *ci fosse un grande Potere magico rimasto
+    nascosto o mascherato in vita*. È l'ipotesi di un personaggio su un fatto, non
+    un'attestazione: se un domani la si vuole accogliere, si accoglie sapendo che è quello.
+  - Fu lui a **dare il vero nome ad Alder** (*il mio maestro, Sula, l'uomo che mi aveva dato
+    il nome*), ed è morto cinque anni prima del racconto. `origine` è `Taon`, dove insegnava:
+    l'utente l'ha dichiarata **non per nascita**, e il testo infatti non dice dove sia nato.
+- **`Bar Oth`**: drago giovane, *non ancora adulto*, ucciso da Keor; la sua pelle è conservata
+  a Serilune e *coprirebbe tutta la piazza del mercato*.
+- **`Ammaud`**: drago, *mio fratello Ammaud* dice Orm Irian, e agisce *secondo il volere di
+  Kalessin*. Il maschile viene da lì, ed è la sola delle tre voci a portarlo.
+- **`Orm`**: il grande drago che uccise Erreth-Akbe a Selidor e ne fu ucciso; sconfisse Ath;
+  **padre** di Orm Embar e nonno di Orm Irian. Prima apparizione già in `Un mago di
+  Terramare`, nella Ballata di Erreth-Akbe.
+  - ⚠️ **`padre` è attestato (*tuo padre Orm*) e il campo `genere` resta comunque vuoto**, e
+    non è una contraddizione: il canone dice che i draghi si nominano al maschile **per
+    convenzione** e che il loro sesso è congettura (`rules/Earthsea.md`, § 'Il genere dei
+    draghi'). Chi trovasse 'padre' e volesse riempire `genere` starebbe seguendo la
+    convenzione, non un fatto.
+- ⚠️ **I tre draghi hanno `vero_nome` vuoto come Kalessin e Orm Embar**: è la regola di
+  § 'I DRAGHI hanno una riga sola', non un dato mancante. L'utente li ha annotati *(vero
+  nome)* proprio perché è così che funzionano.
 
 ## 🏅 I tre badge e il genere
 
