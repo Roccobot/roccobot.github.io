@@ -55,9 +55,14 @@ var siteFlags = {"zoomBig":false,"glow":{"on":true,"all":true,"pl":true,"pr":fal
 // categoria unica 'Animali' la ricava il motore dall'elenco `TIPI_ANIMALE` in
 // `index.html`, ed è là che va aggiunto un animale nuovo, o la sua card finisce fra gli
 // uomini senza dare alcun errore.
-// ⚠️ I tre draghi hanno `vero_nome` VUOTO come Kalessin e Orm Embar, e non è un dato
-// mancante: un drago non ha nome d'uso, il suo nome È il vero nome, e la prima riga della
-// card ne porta già la resa (`CLAUDE.md`, § 'I DRAGHI hanno una riga sola').
+// ⚠️⚠️ I SETTE DRAGHI HANNO IL DATO INVERTITO, e va raddrizzato: un drago ha **solo** il
+// vero nome, quindi il campo vuoto deve essere `nome` e `vero_nome` deve portare il nome
+// (`Kalessin`), non il contrario come adesso. Correzione dell'utente del 2026-08-23 su un
+// malinteso vecchio: *è una differenza sostanziale... è uno dei punti-chiave del dataset*.
+// ⚠️ Non si tocca finché non arrivano i personaggi dello Schedario, che nasceranno già nella
+// forma giusta: migrare due volte costa il doppio. Le sette voci, il che cosa cambia nel
+// motore e la domanda aperta sull'ibrida stanno in `CLAUDE.md`, § 'Il DATO è INVERTITO, e va
+// raddrizzato: il campo vuoto è il nome d'uso'.
 // ⚠️ `origine` degli animali è `Gont` per tutti e dodici, ed è la RESIDENZA attestata (la
 // casa di zia Muschio, Dieci Ontani, il pollaio di Re Albi), non un luogo di nascita: la
 // regola ammette la residenza in mancanza della nascita, e di un pollo non si dice dove sia
