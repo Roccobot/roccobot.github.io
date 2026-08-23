@@ -866,6 +866,35 @@ nel **solo** tema chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo), che non si è mosso
   è più oro in nessuno dei due temi**: in chiaro dalla `0.29` (`#E0B54A` -> teal), in scuro dalla
   `0.36` (`rgba(210,178,92,0.96)` -> `#78adc2`, in tinta col titolone). Vedi § 'Il logo del FAB'.
 
+## 🗺️ Origine: significa NASCITA, e la residenza è solo un ripiego
+
+**Istruzione dell'utente, 2026-08-23**: *per 'origine' s'intende il luogo di nascita, e solo
+in seconda istanza, in mancanza di dati, si può usare il luogo di residenza*. Vale per il
+campo del dataset e per lo Schedario che lo alimenta.
+
+- ⚠️⚠️ **Le fonti dicono quasi sempre l'altra cosa**, ed è la ragione per cui la regola serve:
+  l'elenco personaggi di Wikipedia descrive i ruoli (*a mage on Roke*, *a dyer of Lorbanery*,
+  *priestess at the Place of the Tombs*), che sono **dove uno sta**, non dove è nato. Misura
+  del 2026-08-23 sulle 103 voci dello Schedario: nascita attestata **23**, sola residenza
+  **71**, nessuna delle due **9**.
+- ⚠️ **Perciò i due casi si tengono DISTINTI e marcati**, non mescolati in un campo unico che
+  poi mente: nello Schedario ogni valore porta l'etichetta *nascita attestata* o *residenza,
+  non nascita*, con la citazione della fonte accanto. Chi porterà queste voci nel dataset
+  deve sapere quale delle due sta copiando.
+- **Conseguenza attesa, già prevista dall'utente**: **Roke** compare spesso come residenza
+  (i Maestri) e quasi mai come nascita. Un raggruppamento per origine che mostri Roke pieno
+  sta contando le residenze.
+- ⚠️ **Chi non ha nessuna delle due resta VUOTO**: 9 voci, e sono quelle per cui nemmeno il
+  testo dei libri dice un luogo (Irioth, Ath, Nemico di Morred, Erisen, Firelord, Hoeg, Segoy,
+  Serrathen, Skiorh). Un valore dedotto per simmetria ('è un mago, quindi Roke') sarebbe un
+  dato falso in un campo che sembra verificato.
+- **Le 22 origini che vengono dal TESTO** e non dalle due wiki si sono ottenute cercando negli
+  epub le frasi in cui il nome e un luogo stanno **entro 250 caratteri**, e leggendole. ⚠️ La
+  citazione va **centrata sulla coppia**: con una finestra larga il brano pescava il luogo da
+  un'altra frase e sembrava una prova senza esserlo (Kalessin col brano di Orm Embar, Ivy con
+  quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
+  di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
+
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 
 Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
