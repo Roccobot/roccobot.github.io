@@ -966,11 +966,19 @@ altri sei volumi.
   - Di lui il testo dà invece **due navi**: la sua, la *Sterna* (`the Tern`), e la *Delfino*
     (`the Dolphin`), che il re gli affida «come già in passato». Sono in `CLAUDE.md` e non nel
     dataset perché non c'è un campo dove metterle.
-- ⚠️ **`paese` è un campo INERTE**: esiste nel dataset e queste sono le prime due voci che lo
-  usano, ma `index.html` non lo legge in nessun punto (zero occorrenze). Quindi l'origine di
-  Sege è **registrata e non visibile**, e comparirà quando le origini geografiche avranno la
-  loro resa. Non è un difetto da 'sistemare' aggiungendo una riga alla card: quella resa è una
-  scelta editoriale ancora aperta.
+- ⚠️⚠️ **L'origine di Sege sta QUI e non nel dataset**, perché **un campo dove metterla non
+  esiste ancora**: le origini geografiche saranno etichette per voce e la loro resa è una
+  scelta editoriale aperta (vedi § 'Le due razze, e perché il filtro ha DUE categorie'). Fino
+  a quel momento il dato verificato vive in questo file, ed è il posto giusto: non si inventa
+  un campo per non perderlo.
+  - ⚠️⚠️ **`paese` NON è quel campo, ed è un errore già commesso**: nella `0.43` la voce di
+    Sege portava `"paese":"Havnor"`, corretto nella `0.44`. `paese` è un **residuo del motore
+    di provenienza** (vedi § 'Residui del motore di provenienza (debito dichiarato)'), non un
+    campo di questo progetto: in `arda/top/dati.js` vale **`gb` per tutte e 360 le voci**,
+    cioè è il codice di paese della lista da cui quel motore è nato, e **nessuno dei due siti
+    lo legge** (zero occorrenze in entrambi gli `index.html`). Il vuoto delle 19 voci di
+    Terramare non era 'un campo da riempire': era un residuo mai toccato, e leggerlo come il
+    posto dell'origine è la trappola.
 
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
@@ -1377,6 +1385,16 @@ raccontano un altro mondo**, e la regola universale sulle sostituzioni su parole
 per un disastro già capitato proprio qui. Si tocca **quando si tocca quel codice**, un pezzo
 alla volta, con una prova in browser dopo ognuno.
 
+- ⚠️⚠️ **`paese` è un residuo del DATASET, e ha già ingannato una sessione**: è un campo di
+  ogni voce, vale `gb` per tutte e 360 quelle di Arda (il codice di paese della lista da cui
+  quel motore nasce) ed è **vuoto** per tutte quelle di Terramare, e **nessuno dei due
+  `index.html` lo legge**. ⚠️ Un campo vuoto e senza lettori **somiglia a un campo libero**: il
+  2026-08-23 vi è finita l'origine verificata di Sege (`Havnor`, nella `0.43`, corretta nella
+  `0.44`). Chi ha un dato nuovo e non trova dove metterlo lo scrive **in questo file**, non in
+  un campo residuo: vedi § 'Sege e Tosla'.
+  - Ⓘ **Perché non si cancella**: il Worker admin riscrive `dati.js` per sostituzioni e il
+    campo compare in ogni riga, quindi toglierlo è un lavoro sul dataset e sul Worker, non una
+    ripulitura. Vale la regola di questa sezione: si tocca quando si tocca quel codice.
 - Il **pannello** è stato riorganizzato sul mockup dell'utente (vedi '🎛️ Il Pannello
   COMPATTO'), ma la sua struttura interna resta quella di Arda: la semplificazione ha toccato
   le due colonne e i controlli inutili, non tutto il resto.
