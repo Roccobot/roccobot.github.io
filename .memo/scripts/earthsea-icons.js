@@ -79,18 +79,19 @@ const FAV_AMOUNT = 0.35;
 // deve esserci per il launcher, ma non si vede più.
 // ⚠️ Il glifo NON si può togliere dalla schermata di avvio: la disegna il sistema,
 // non la pagina. L'unica leva è farne coincidere il fondo.
-// `#3b6fa3` (istruzioni dell'utente in TRE passi successivi, 2026-08-22 e 23:
-// 'leggermente più scuro e leggermente meno saturo' di `#0080ff`, poi 'ancora più
-// scuro e desaturato', poi 'ancora più scuro'). Saturazione e valore scendono di 12
-// punti per passo, sulla stessa tonalità 210: 100/100 -> 88/88 -> 76/76 -> 64/64.
-// Il bianco sopra guadagna a ogni passo: 3,80 -> 4,11 -> 4,58 -> **5,26**.
-// ⚠️ La tonalità NON si tocca, solo saturazione e valore: l'utente chiede sempre
-// 'più scuro e desaturato', mai 'più freddo' o 'più caldo'. Ruotare la tonalità
-// sarebbe una modifica in più che non ha chiesto.
-// ⚠️ Il passo è COSTANTE e vale come ricetta per il prossimo giro, se arriva: il
-// gradino dopo è 52/52, cioè `#406285` (bianco a 6,36). Sotto quella soglia il blu
-// comincia a leggersi come ardesia e conviene dirlo prima di applicarlo.
-const PWA_BG = '#3b6fa3';
+// ⚠️⚠️ `#78adc2` DALLA 0.37, ed è IL DISCO DEL FAB IN TEMA SCURO, non un blu scelto
+// qui (istruzione dell'utente, 2026-08-23: *per la webapp usa lo stesso colore del FAB
+// del tema scuro*). Quindi non è più un valore autonomo: **si cambia quando cambia il
+// disco**, e il posto dove leggerlo è `#ctrl-fab.fab-btn` in `earthsea/top/index.html`.
+// ⚠️ Il bianco sopra fa **2,45**, sotto il 3:1 dei componenti, ed è la stessa coppia che
+// il FAB porta in pagina: è una scelta estetica dell'utente, non una misura sfuggita.
+// La leva, se un domani vuole che stacchi, è il disco (`#4c8fc4` -> 3,48; `#3072a1` ->
+// 5,19), e va cambiato nei DUE posti insieme.
+// Ⓘ Percorso, perché nei commenti girano ancora i valori vecchi: `#0080ff` come la
+// favicon, poi tre gradini di 'più scuro e desaturato' sulla tonalità 210 (88/88, 76/76,
+// 64/64) fino a `#3b6fa3`, col bianco che saliva 3,80 -> 4,11 -> 4,58 -> 5,26. Quella
+// ricetta è **decaduta**: ora il colore lo decide il FAB.
+const PWA_BG = '#78adc2';
 const PWA_FG = '#ffffff';
 const PWA_FRAC = 0.44;
 // ⚠️ La FAVICON resta `#0080ff` e la divergenza è VOLUTA: i due blu fanno lavori

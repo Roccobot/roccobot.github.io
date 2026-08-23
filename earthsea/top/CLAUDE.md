@@ -402,27 +402,34 @@ leggere prima di toccare il numero.
 - ⚠️ **Si costruisce con `createElementNS`, non con `innerHTML`**, che è vietato senza
   deroghe: qui il motore di provenienza lo usava per il segnaposto, e sostituire il glifo è
   stata l'occasione per togliere anche quello.
-- ⚠️⚠️ **Il logo NON funziona sul fondo pagina, e va saputo prima di spostarlo**: il colore
-  con cui l'utente ha disegnato il quinto è `#4d4048`, che sul fondo scuro `#0d1a22` fa **1,71**
-  (invisibile) e sul disco `#78adc2` del FAB **3,99**, sopra il 3:1 dei componenti. La coppia di
-  disco e inchiostro è il disegno, non una scelta del CSS.
-  - **L'inchiostro del tema scuro è il colore del FILE, e il criterio non è cambiato**: era
-    `#4a3f46` col terzo e col quarto logo, è `#4d4048` col quinto, tre punti per canale di
-    differenza. A occhio non si vede, ma il valore si allinea comunque: il giorno che arriva un
-    logo disegnato in un colore diverso, un inchiostro 'ereditato' sarebbe una seconda fonte di
-    verità che nessuno pensa a guardare.
+- ⚠️⚠️ **IL SEGNO È BIANCO NEI DUE TEMI dalla `0.37`** (istruzione dell'utente: *il logo sul
+  FAB non mi piace del colore attuale: fallo bianco*), e con lui è **caduto** il criterio che
+  teneva l'inchiostro uguale al colore del FILE (`#4a3f46` col terzo e col quarto logo,
+  `#4d4048` col quinto). Non è una svista da sanare rimettendo il colore dell'artwork: il file
+  resta il suo, il FAB lo tinge con `currentColor`.
+  - ⚠️ **Il bianco sul disco `#78adc2` fa 2,45**, sotto il 3:1 dei componenti, e lo si sa: è
+    una scelta estetica, non una misura sfuggita. **La leva è il DISCO, non il segno**, e i
+    gradini misurati sono `#4c8fc4` (bianco 3,48, disco sul fondo 5,08) e `#3072a1` (bianco
+    5,19, disco 3,41). ⚠️ E il disco va cambiato in **due** posti insieme, perché da qui lo
+    legge anche l'icona dell'app installabile, vedi il suo paragrafo.
+  - Ⓘ **Il colore del file serviva a qualcosa, e vale saperlo**: col segno scuro il logo NON
+    funzionava sul fondo pagina (`#4d4048` su `#0d1a22` fa 1,71), quindi il disco era
+    obbligatorio. Col bianco quel vincolo cade, ma il disco resta: è ciò che rende il FAB un
+    oggetto invece di un glifo appoggiato sulla pagina.
   - Ⓘ **Il monogramma lo DICHIARAVA, gli altri no**: quel file portava un cerchio `#d9b75d` a
     piena tela tenuto `display:none`, cioè il fondo per cui era pensato, e inline non entrava
     perché il disco lo disegna il FAB (due dischi sovrapposti). Dal quarto logo quell'indizio
     non c'è più, quindi la misura qui sopra è l'unica fonte del fatto.
-  - ⚠️⚠️ **I DUE TEMI HANNO COMBINAZIONI DIVERSE** (dalla `0.29`, 2026-08-23), e in entrambi il
-    disco è **IN TINTA COL TITOLONE** (dalla `0.36`, istruzioni dell'utente dello stesso
-    giorno: *FAB del tema chiaro identico al colore-base del titolone* e *titolone del tema
-    scuro più scuro e azzurro, FAB in tinta*): in **scuro** disco `#78adc2`, il capo alto del
-    gradiente del titolo, e segno `#4d4048` (**3,99**); in **chiaro** disco `#267d71`, la media
-    dei due capi del gradiente chiaro, e segno **bianco** (**4,94** il segno, 4,75 il disco sul
-    fondo pagina; hover `#339487`, 3,67). ⚠️ Due regole CSS distinte, quindi chi ne cambia una
-    guardi l'altra.
+  - ⚠️⚠️ **I DUE TEMI HANNO DISCHI DIVERSI E LO STESSO SEGNO** (i dischi dalla `0.29`, il segno
+    bianco dalla `0.37`): in **scuro** disco `#78adc2` e bianco (**2,45**), in **chiaro** disco
+    `#267d71` e bianco (**4,94**, disco sul fondo pagina 4,75, hover `#339487` 3,67). ⚠️ Due
+    regole CSS distinte, quindi chi ne cambia una guardi l'altra.
+    - **Da dove vengono i due dischi**: dalle istruzioni del 2026-08-23 *FAB del tema chiaro
+      identico al colore-base del titolone* e *titolone del tema scuro più scuro e azzurro, FAB
+      in tinta*. Il chiaro è la **media** dei due capi del gradiente chiaro, lo scuro era il
+      **capo alto** di quello scuro. ⚠️ Dalla `0.37` il legame dello scuro è finito, perché il
+      titolo si è schiarito e il disco è rimasto: vedi § 'La tavolozza applicata, e i punti
+      dove era CABLATA'.
     - Ⓘ **Percorso dei dischi, perché nei commenti girano ancora valori vecchi**: in scuro
       **oro** `rgba(210,178,92,0.96)` fino alla `0.35`, l'ultimo pezzo di Arda rimasto qui
       dentro; in chiaro **oro** `#e0b54a` fino alla `0.28`, poi il teal `#34707f` fino alla
@@ -508,6 +515,13 @@ cambiato cinque volte in quattro giorni**.
 - ⚠️ **Il glifo si legge da `FAB_LOGO_D`, che è un ELENCO**, e lo script prende **tutti** i
   tracciati: le versioni del logo ne hanno avuti 1, 2, 2, 1 e 1, quindi il numero non si assume.
   Leggerne uno solo darebbe mezza icona con tutta la catena verde.
+- ⚠️⚠️ **`PWA_BG` NON è più un blu suo: dalla `0.37` è IL DISCO DEL FAB IN TEMA SCURO**
+  (`#78adc2`, istruzione dell'utente: *per la webapp usa lo stesso colore del FAB del tema
+  scuro*). Quindi si cambia **quando cambia il disco**, e il posto dove leggerlo è
+  `#ctrl-fab.fab-btn` in `index.html`. Il bianco sopra fa **2,45**, la stessa coppia che il FAB
+  porta in pagina. ⚠️ La ricetta dei quattro gradini di 'più scuro e desaturato' che aveva
+  prodotto `#3b6fa3` è **decaduta**: sta nel commento dello script come storia, non come
+  regola.
 - ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: col quinto logo il canvas è
   1120x1120 e il disegno ne occupa **944,70x1011,50**, quindi il margine morto è reale e
   assumere il nominale darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro,
@@ -654,11 +668,19 @@ misure del contenitore, **e la tinta** (deroga dichiarata qui sotto). Se un doma
 ridisegnasse la card copiando gli stili nella legenda, la legenda comincerebbe a mostrare una
 card che non esiste, che è l'unico modo in cui può sbagliare.
 
-- ⚠️⚠️ **La tinta è quella del TITOLONE, non di una famiglia** (richiesta dell'utente,
-  2026-08-23): i capi alti dei due gradienti di `h1`, `#78adc2` in scuro e `#0e6b5e` in
-  chiaro. ⚠️ In scuro era `#a8e6dc` fino alla `0.35`: **la riga segue il titolo**, quindi chi
-  ritocca il gradiente di `h1` ritocca anche quella, o la tinta resta quella di un titolo che
-  non c'è più. Prima prendeva quella di `cc-man` e la card finta si leggeva come la scheda di un
+- ⚠️⚠️ **La tinta è quella dell'INTESTAZIONE, non di una famiglia** (richiesta dell'utente,
+  2026-08-23): `#78adc2` in scuro e `#0e6b5e` in chiaro, cioè la tinta che il sito usa per
+  identificarsi, non quella di `cc-man`.
+  - ⚠️ **In chiaro è il capo alto del gradiente di `h1`; in scuro NON più** (dalla `0.37`):
+    là il titolo è stato schiarito a `#cfe8f5` -> `#5f9fd4` e questa riga è rimasta a
+    `#78adc2`, che è il valore del **disco del FAB**. La ragione è che qui si tratta di
+    **testo su un pannello scuro**: a `#cfe8f5` si leggerebbe come bianco e la card finta
+    perderebbe il colore, che è il motivo per cui la deroga esiste. Il percorso completo sta
+    in § 'La tavolozza applicata, e i punti dove era CABLATA'.
+  - Ⓘ In scuro era `#a8e6dc` fino alla `0.35`, `#78adc2` dalla `0.36`. Chi ritocca la tinta
+    dell'intestazione guardi **tutti e tre** i punti (titolo, disco del FAB, questa riga) e
+    decida per ognuno, invece di propagare un valore: dalla `0.37` non sono più lo stesso
+    numero. Prima prendeva quella di `cc-man` e la card finta si leggeva come la scheda di un
   uomo; ora si legge come parte dell'intestazione del sito. È la sola deroga alla regola
   'solo le misure', ed è voluta.
   - ⚠️ **La classe `cc-man` RESTA nel markup e non è un residuo**: porta con sé le regole
@@ -803,17 +825,28 @@ Le due tavolozze proposte sono state applicate il 2026-08-21, con due correzioni
 sulla proposta: **tema scuro leggermente meno scuro** (fondo `#0D1A22` invece di `#08131A`) e
 **titolo in verde mare**, che sullo scuro tende al blu e in chiaro è smeraldo.
 
-⚠️ **In tema SCURO il titolo NON è più verde mare dalla `0.36`** (istruzione dell'utente,
-2026-08-23: *titolone del tema scuro più scuro e azzurro*): il gradiente va da `#78adc2` a
-`#3072a1`, azzurro che scende al blu, e la tavolozza del 2026-08-21 resta nel **solo** tema
-chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo). Con lui si muovono, e vanno tenuti insieme, il
-**disco del FAB** (§ 'Il logo del FAB') e la **tinta della card-legenda** (§ 'La legenda nel
-Pannello è una CARD FINTA').
-- ⚠️⚠️ **Il capo basso è al LIMITE e non si scurisce oltre**: `#3072a1` fa **3,41** sul fondo
-  `#0d1a22`, contro il 3:1 che il testo grande richiede, e il margine che c'era prima (4,96) è
-  stato speso proprio per scurire. Chi volesse il titolo ancora più scuro deve **comprimere il
-  gradiente verso il capo alto**, non abbassare questo. La misura completa, coi tre gradini
-  proposti per il capo alto, sta nel commento di `h1`.
+⚠️ **In tema SCURO il titolo NON è più verde mare**, e ha cambiato due volte in un giorno: la
+`0.36` lo ha portato ad azzurro scuro (`#78adc2` -> `#3072a1`, istruzione *più scuro e
+azzurro*), la `0.37` ad **azzurro brillante** (`#cfe8f5` -> `#5f9fd4`), perché la resa scura
+l'utente l'ha giudicata *smorta e scura al tempo stesso*. La tavolozza del 2026-08-21 resta
+nel **solo** tema chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo), che non si è mosso.
+- ⚠️⚠️ **Lo 'smorto' NON era il gradiente: erano i DUE ALONI GRIGI** del `text-shadow`
+  (`rgba(139,139,139,0.4)` e `rgba(59,59,59,0.3)`, il bagliore neutralizzato ereditato da
+  Arda), che su questo fondo facevano fumo attorno alle lettere. Sono usciti nella `0.37` e
+  **non vanno rimessi**; è rimasto il solo distacco nero, dimezzato. È la lezione da tenere:
+  su un fondo scuro un alone grigio **abbassa** il titolo invece di staccarlo, e schiarire il
+  gradiente senza togliere l'alone avrebbe risolto a metà.
+- ⚠️⚠️ **Dalla `0.37` il disco del FAB e la card-legenda NON sono più 'il capo alto del
+  gradiente'**, ed è la nota che evita di 'riallinearli': valgono `#78adc2`, cioè il capo alto
+  della `0.36`, e restano là per due ragioni tecniche. Il disco tiene un segno **bianco**, che
+  su `#cfe8f5` sparirebbe (1,4); la card-legenda è **testo su un pannello scuro**, e a
+  `#cfe8f5` si leggerebbe come bianco perdendo il colore. Quindi la famiglia di tinta è una
+  sola, il valore no: `#78adc2` è il riferimento dell'identità scura, e il titolo lo
+  attraversa poco sopra la metà.
+- **Le misure del titolo nuovo** sul fondo `#0d1a22`: capo alto `#cfe8f5` **13,90**, capo basso
+  `#5f9fd4` **6,23**. ⚠️ Il tetto della `0.36` (capo basso a 3,41, cioè al limite del 3:1)
+  **non vale più**: schiarendo si è ricomprato margine, e chi volesse riscurire ha spazio fino
+  a `#3072a1`.
 
 - ⚠️⚠️ **Il fondo pagina era CABLATO in nove punti**, non solo nel `body`: il gemello del tema
   chiaro, il **fondo di riferimento del gate AA** (`ccFamTxt`), le due anteprime (effetti ed
@@ -850,6 +883,20 @@ Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
   che categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
 
 ## 🏷️ 'Esseri umani', e la trappola delle DUE mappe di etichette
+
+⚠️⚠️ **E le due mappe NON hanno le stesse chiavi**, che è il difetto scoperto il 2026-08-23:
+`CAT_LABEL` ha le due **categorie di filtro** (umani e draghi), `TYPE_LABEL` ha le
+**classi-etichetta** che le Statistiche contano, e ce n'è una terza, `type-donnadrago`, che
+categoria non è. Mancando da `TYPE_LABEL`, `typeName` ripiegava sulla classe grezza e la tab
+'Tipi' mostrava **'donnadrago'** in minuscolo. La dicitura giusta è **'Ibridi'** ('Hybrids' in
+inglese), istruzione dell'utente.
+- ⚠️ **Il ripiego non si tocca**: mostrare la classe grezza è meglio che mostrare niente. Ma è
+  anche la ragione per cui il difetto **non dà errore**, quindi una classe-etichetta nuova nel
+  dataset va aggiunta a `TYPE_LABEL` il giorno che nasce.
+- ⚠️ **Verificarlo vuole le DUE lingue**, perché le mappe sono bilingui e la seconda si
+  dimentica: la prova sta in `showColorStats()` chiamata a mano (le Statistiche stanno dietro
+  il bivio admin) con `locale` forzato, per la trappola del contesto in inglese registrata nel
+  paragrafo dell'alone sfumato.
 
 La categoria si chiama **'Esseri umani'** / 'Humans' (istruzione dell'utente, 2026-08-21):
 'Uomini' si legge come il **genere**, tanto più da quando la tinta degli umani lo distingue.
