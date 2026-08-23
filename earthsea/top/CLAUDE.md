@@ -132,6 +132,43 @@ I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged*
     linea sono nati perché il motore copiato puntava alle icone di Arda, che qui non esistono.
     Chi aggiunge un badge aggiunge **anche il file**, o torna quel difetto.
 
+### 🎚️ I micro-aggiustamenti delle icone, e perché erano INERTI
+
+**Riparati nella `0.39`.** L'editor admin 'Micro-aggiustamenti icone badge' regola per ogni
+**unità** quattro numeri
+(`ml`, `mr`, `ny`, `sc`), li applica live iniettando regole su `.bi-<id>` e li salva in
+`badgeAdjust` dentro `dati.js`. Su Terramare **non faceva niente**, e la causa era una sola:
+`BADGE_ADJUST_UNITS` portava ancora le **24 unità di Arda** (aratar, silmaril, istari...).
+
+- ⚠️⚠️ **Il difetto non dava nessun errore**, ed è la ragione per cui va scritto: senza le
+  unità giuste `BADGE_UNIT` non trovava i tre badge di qui, quindi le `img` non prendevano la
+  classe `bi-<id>`, quindi le regole iniettate non pescavano nessun elemento. Il sintomo era
+  **doppio**, e l'utente lo ha descritto così: gli slider non muovevano nulla in pagina e
+  *forse non funziona l'anteprima*. L'anteprima diceva davvero 'Nessuna scheda con questo
+  badge', perché cercava campioni con `p.aratar`.
+- ⚠️ **I due simboli di GENERE funzionavano**, perché `male` e `female` esistono in entrambi i
+  mondi: era la spia che il difetto stava nell'**elenco** e non nel meccanismo.
+- ⚠️ **Secondo difetto, dietro il primo**: l'unità di partenza dell'editor era scritta a mano
+  (`'helcaraxe'`), quindi la modale moriva con un `TypeError` prima di comparire. Ora si legge
+  da `BADGE_ADJUST_UNITS[0].id`, che non può invecchiare.
+- **I seed valgono `ml:0.12` per i tre badge**, cioè il margine di `.status-icon` misurato
+  sulla pagina vera (3,4944px su un corpo di 29,12px). ⚠️ Sul **desktop** la resa resta
+  identica al centesimo di pixel; su **mobile** ogni icona guadagna **2,19px**, perché là la
+  media query azzerava quel margine e la separazione la faceva il `gap` del flex. Il seed
+  alternativo (0) sarebbe stato fedele su mobile e avrebbe **tolto** 3,5px sul desktop.
+  - ⚠️⚠️ **Un seed fedele ai due punti di rottura NON esiste**, e conviene saperlo per non
+    cercarlo: la regola iniettata scrive `margin-left` in **assoluto** e scavalca entrambe le
+    regole statiche, che a quel margine dànno valori diversi. L'unica via sarebbe trasformare
+    il valore in un **delta** (`calc(base + var(--ba-ml))`), ma allora il numero dell'editor
+    non sarebbe più quello che la pagina applica, e divergerebbe dal gemello di Arda, dove i
+    valori salvati sono assoluti. **Scartata**, e la differenza si corregge con l'editor.
+- **Come si verifica che funzioni**, senza aprire l'editor a mano: sulla pagina vera,
+  `BADGE_ADJUST.mago.ml = 0.62; injectBadgeAdjustRules();` e si misura la `x` dell'icona sulla
+  card. Misurato: **+14,56px** su un attesi 14,6 (0,5em di 29,12px).
+- ⚠️ Il **Worker di Terramare accetta già** `badgeAdjust` (lo valida per forma, non per nomi di
+  unità, e lo **preserva** quando il salvataggio non lo manda): non c'era niente da cambiare
+  là, ed è la ragione per cui il difetto era tutto nel client.
+
 ### ⚠️ Il terzo badge ha CAMBIATO SIGNIFICATO
 
 **Il 2026-08-21.** Era `veronome`, 'ha un vero nome attestato', ed era acceso su tutti i draghi perché il loro
