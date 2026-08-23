@@ -1146,7 +1146,23 @@ html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
    starci in colonna. Si toccano SOLO le misure del contenitore (padding, margini,
    colonna del numero che qui non esiste): tipi, colori, bordino e fondo restano
    quelli della lista, altrimenti la legenda mostrerebbe una card che non esiste. */
-.ctrl-cardleg { padding:0 0.3rem; max-width:19rem; }
+/* ⚠️ `margin-bottom` = il ritmo delle sezioni (`.ctrl-section`, 1.1rem), richiesta
+   dell'utente del 2026-08-23 ('più spazio fra la card-legenda e le checkbox'), e il
+   valore NON è inventato: misurato inchiostro a inchiostro nella bottom-sheet, il
+   vuoto sotto la card era 0,51rem contro 1,44rem fra le categorie e il filtro del
+   vero nome, cioè il più stretto del Pannello proprio sotto il blocco più pesante
+   (la card ha contorno e fondo). Con 1.1rem diventa 1,61rem, il più ampio dopo lo
+   slot del tag: la card si legge come blocco a sé e non come intestazione delle
+   checkbox.
+   ⚠️ Vale il solo MOBILE, e il perché è misurato, non assunto: su DESKTOP la card sta
+   nello stesso posto (sotto la toolbar, sopra le categorie) ma il vuoto è già 1,31rem
+   contro 1,24rem fra categorie e filtro, quindi là non c'è niente da correggere. Lo
+   confina la regola `#ctrl-panel .ctrl-cardleg` di lassù, che azzera il margine e
+   vince per specificità grazie all'id: chi tocca una delle due guardi l'altra.
+   ⚠️ Non è la disposizione a essere diversa: per un giro questo commento ha detto che
+   su desktop la card sta 'in fondo alla colonna', e non è vero. Lo era in un layout
+   precedente, e la regola `.ctrl-tag-slot + .ctrl-cardleg` sopravvive da allora. */
+.ctrl-cardleg { padding:0 0.3rem; max-width:19rem; margin-bottom:1.1rem; }
 .ctrl-cardleg .rank-item {
   grid-template-columns:1fr; gap:0; margin:0;
   padding:0.6rem 0.7rem 0.6rem 0.65rem; cursor:default;
@@ -2538,7 +2554,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.29</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.30</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

@@ -540,6 +540,22 @@ sbagliare.
 - Ha preso il posto della vecchia **nota sui nomi** ereditata da Arda ('i veri nomi sono in
   grassetto sotto il nome'), che dopo questa riorganizzazione **diceva il falso**. Con lei sono
   usciti la lineetta di riferimento e `fitNoteRule`, che serviva solo ad allinearla.
+- **Lo stacco sotto la card vale `1.1rem` e SOLO su mobile** (richiesta dell'utente,
+  2026-08-23): nella bottom-sheet la card era attaccata alle checkbox delle categorie, e il
+  numero non è a occhio ma **misurato inchiostro a inchiostro**, che è l'unico modo di
+  confrontare vuoti fra blocchi con padding diversi.
+  - **I numeri**: il vuoto sotto la card era **0,51rem** contro **1,44rem** fra le categorie e
+    il filtro del vero nome, cioè il più stretto del Pannello proprio sotto il blocco più
+    pesante (la card ha contorno e fondo). Con `1.1rem`, il ritmo di `.ctrl-section`, diventa
+    **1,61rem**: la card si legge come blocco a sé e non come intestazione delle checkbox.
+  - ⚠️ **Su DESKTOP non c'era niente da correggere, e va saputo prima di 'uniformare'**: là il
+    vuoto era già **1,31rem** contro 1,24rem fra categorie e filtro. La regola
+    `#ctrl-panel .ctrl-cardleg` tiene il margine a zero e vince per specificità grazie all'id,
+    quindi il mobile si aggiusta senza una media query nuova.
+  - ⚠️ **La card NON sta in fondo alla colonna, in nessuno dei due layout**: sta sotto la
+    toolbar e sopra le categorie. Ci sono ancora una regola (`.ctrl-tag-slot + .ctrl-cardleg`)
+    e dei commenti che raccontano una disposizione precedente, e per un giro questa nota stessa
+    ha ripetuto l'errore: la posizione si guarda nel DOM, non nei commenti.
 
 ## ✅ I 19 confrontati con Wikipedia
 
