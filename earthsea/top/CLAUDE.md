@@ -578,6 +578,51 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
     fosse attestata: era vero solo perché si era cercato nel volume sbagliato (*Le leggende di
     Terramare*, che quel racconto non lo contiene).
 
+## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
+
+**Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo
+schermo compariva una **linea orizzontale netta a tutta larghezza**, visibile anche
+**attraverso** le schede (che hanno un fondo semitrasparente). L'effetto `vig` ora non si
+applica dove non c'è un puntatore fine.
+
+- **Che cos'era, e non era una banda dipinta di troppo: era un velo che si interrompe.**
+  L'alone è un livello di sfondo del `body` con `background-attachment:fixed`, quindi la sua
+  tessera è alta quanto il viewport e si **ripete**. Quando la barra degli indirizzi si
+  ritrae, WebKit non ricalcola quell'area: la striscia che si libera in fondo mostra
+  l'**inizio** della tessera successiva, che è trasparente.
+- ⚠️⚠️ **La misura è ciò che rende la diagnosi un fatto**, e va rifatta così se un domani
+  ricomparisse qualcosa di simile: campionati i pixel dello screenshot ai **due bordi
+  opposti**, il salto cade alla **stessa** y (quindi è orizzontale e a tutta larghezza), da
+  `rgb(223,224,226)` a `rgb(249,251,250)`. Il secondo è `--ink` chiaro **nudo**; il primo è lo
+  stesso fondo con l'alone al massimo, e il calcolo lo conferma a **un punto per canale**
+  (`#f9fbfa` + `rgba(40,44,60,0.129)` = `rgb(222,224,226)`). Nessun altro strato della pagina
+  può produrre quella coppia di toni.
+- ⚠️ **Il discriminante è la CAPACITÀ DEL PUNTATORE, non i 768px**: la barra dinamica sta nei
+  browser touch, tablet larghi compresi, mentre una finestra desktop stretta col mouse non ce
+  l'ha e non deve perdere l'effetto. È lo stesso criterio già scelto per 'Al passaggio'.
+- ⚠️ **Perché si spegne invece di aggiustarlo** (la misura che si tiene è quella scartata). La
+  strada per conservarlo era una tessera più alta del viewport massimo
+  (`background-size:100% 200vh`), così la striscia liberata cade **dentro** il gradiente: ma
+  cambia la resa proprio dove l'effetto si vede, il velo in fondo diventa più tenue, e non è
+  verificabile senza un iPhone in mano. Il precedente di casa dice di non insistere: la
+  **v8.74 aveva già rimosso un `body::before` fisso per la stessa linea di giunzione**. Su
+  mobile, del resto, le schede occupano tutta la larghezza e dell'alone si vede solo la
+  striscia in fondo: si perde molto poco.
+- **La config diventa UNICA** (`FX_UNI` più `noMob`), come il riflettore e la trama: una
+  variante mobile regolabile sarebbe una manopola che non muove niente, e nel Pannello la riga
+  esce dalla tab Mobile. ⚠️ **Le due mappe vanno tenute allineate**, e il codice lo dichiara:
+  `FX_UNI` governa il rendering, `noMob` l'anteprima del Pannello.
+  - Verificato in browser nei tre punti che potevano rompersi: su touch la classe `fx-vig` non
+    c'è e il `body` non porta alcun gradiente; col mouse resta `fixed` e identico a prima; il
+    Pannello mostra 'Alone sfumato' nella tab Desktop e non in quella Mobile, senza errori.
+  - ⚠️ **La verifica in Chromium ha un limite dichiarato**: riproduce l'assenza dell'effetto,
+    non la barra dinamica di iOS, che nessun emulatore ha. Che la linea sia sparita lo dice lo
+    schermo dell'utente.
+  - ⚠️ **Trappola del test, costata due esiti falsi**: il contesto del browser parte in
+    **inglese**, quindi cercare 'Alone sfumato' dava `false` anche dove la riga c'era. Un test
+    che cerca le etichette della UI **deve** forzare `locale: 'it-IT'`, o conferma il contrario
+    di quello che sta misurando.
+
 ## 🎨 La tavolozza applicata, e i punti dove era CABLATA
 
 Le due tavolozze proposte sono state applicate il 2026-08-21, con due correzioni dell'utente

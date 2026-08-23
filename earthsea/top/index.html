@@ -2521,7 +2521,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.27</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.28</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2596,10 +2596,16 @@ var ZOOM_LS_KEY = 'earthsea-zoom-big'; // chiave della preferenza PERSONALE di z
 var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
-// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Solo il riflettore
-// (dalla v13.18): l'alone segue il puntatore, e senza puntatore non c'è nulla da
-// mostrare né da regolare.
-var FX_UNI = { spot:true, pat:true };
+// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Ci stanno i tre
+// effetti che su mobile NON esistono, ognuno per una ragione sua: il riflettore
+// (v13.18) segue il puntatore, e senza puntatore non c'è nulla da mostrare né da
+// regolare; la trama (v14.43) vuole sfondo libero ai lati della colonna, che
+// sotto soglia non c'è; l'alone sfumato (2026-08-23) si spegne sui browser touch
+// per il difetto della barra dinamica, spiegato in `applySiteFlags`. In tutti e
+// tre i casi una variante mobile regolabile sarebbe una manopola che non muove
+// niente, ed è la ragione per cui la config diventa unica invece di restare
+// doppia con metà dei valori inerti.
+var FX_UNI = { spot:true, pat:true, vig:true };
 // ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
 // dalla larghezza (v14.22, scelta dell'utente). `hov` è il fondo della card sotto
 // il puntatore: su touch l'effetto ESISTE. Misurato: il tap applica `:hover` e lo
@@ -2958,6 +2964,34 @@ function applySiteFlags() {
   // fra i due valori il margine laterale è già zero. Sotto soglia la classe si
   // toglie del tutto, così non si paga nemmeno il disegno.
   if (!PAT_ROOM_MQ.matches) r.classList.remove(SITE_FLAG_CLASS.pat);
+  // ⚠️⚠️ L'ALONE SFUMATO si spegne sui browser TOUCH (difetto fotografato
+  // dall'utente, 2026-08-23), e la ragione è la BARRA DINAMICA del browser, non
+  // l'estetica. L'alone è un livello di sfondo del body con
+  // `background-attachment:fixed`, quindi la sua tessera è alta quanto il viewport
+  // e si RIPETE (il `background-repeat` di default). Quando la barra degli
+  // indirizzi si ritrae, WebKit non ricalcola quell'area: la striscia che si
+  // libera in fondo mostra l'INIZIO della tessera successiva, che è trasparente, e
+  // il salto si legge come una linea orizzontale netta a tutta larghezza. Si vede
+  // anche ATTRAVERSO le schede, che hanno un fondo semitrasparente.
+  //   Misura sullo screenshot dell'utente (iPhone, DPR 3), che è ciò che rende la
+  //   diagnosi un fatto invece di un sospetto: sopra la linea `rgb(223,224,226)`,
+  //   sotto `rgb(249,251,250)`. Il secondo è `--ink` chiaro NUDO; il primo è lo
+  //   stesso fondo con l'alone al massimo, e il calcolo lo conferma a un punto per
+  //   canale (`#f9fbfa` + `rgba(40,44,60,0.129)` = `rgb(222,224,226)`). Non è una
+  //   banda dipinta di troppo: è un velo che si interrompe.
+  // ⚠️ Il discriminante è la CAPACITÀ DEL PUNTATORE e non i 768px: la barra
+  // dinamica sta nei browser touch, tablet larghi compresi, mentre una finestra
+  // desktop stretta col mouse non ce l'ha e non deve perdere l'effetto.
+  // ⚠️ Perché si spegne invece di aggiustarlo. La strada per conservarlo sarebbe
+  // una tessera più alta del viewport massimo (`background-size:100% 200vh`), così
+  // la striscia liberata cade DENTRO il gradiente: ma cambierebbe la resa proprio
+  // dove l'effetto si vede (il velo in fondo diventa più tenue) e non è
+  // verificabile senza un iPhone in mano. Il precedente di casa dice di non
+  // insistere: la v8.74 aveva già rimosso un `body::before` fisso per la STESSA
+  // linea di giunzione, e la trama nasce desktop-only in parte per questo. Su
+  // mobile, del resto, le schede occupano tutta la larghezza e dell'alone si vede
+  // solo la striscia in fondo: si perde molto poco e si guadagna il difetto in meno.
+  if (!FX_PTR_MQ.matches) r.classList.remove(SITE_FLAG_CLASS.vig);
   // Bagliore su TUTTE le card invece che solo su quella attiva: classe a parte,
   // così le regole iniettate cambiano solo il selettore e non la formula.
   r.classList.toggle('fx-glow-all', flagOn('glow') && fxCfg('glow').all === true);
@@ -7712,7 +7746,9 @@ var SITE_FLAG_ITEMS = [
   { k:'nums', it:'Numeri colorati', en:'Number tint', cfg:true },
   { k:'spot', it:'Riflettore', en:'Spotlight', cfg:true, noMob:true }, // config unica: mai nella tab Mobile (v13.18)
   { k:'press', it:'Incisione', en:'Engraving', cfg:true },
-  { k:'vig', it:'Alone sfumato', en:'Soft halo', cfg:true },
+  // `noMob` come il riflettore, ma per la ragione della barra dinamica: su touch
+  // l'alone è spento del tutto, quindi la sua variante mobile non muoverebbe nulla.
+  { k:'vig', it:'Alone sfumato', en:'Soft halo', cfg:true, noMob:true },
   { k:'podium', it:'Effetto podio', en:'Podium effect', cfg:true },
   // ⚠️ Etichetta CORTA per forza: la colonna della label misura **102px** a 320px in
   // Modalità XL (rimisurata col font reale il 2026-07-28; la nota diceva 132px, che
@@ -8916,7 +8952,7 @@ function showSiteFlagsEditor(initState){
       // interruttore che non commuta niente è peggio della sua assenza, perché
       // sembra rotto invece di dichiarare che la funzione non c'è.
       if (f.k === 'zoomBig' && !FEATURES.xlMode) return;
-      if ((f.k === 'zoomBig' || f.noMob) && tab === 'm') return; // XL e Riflettore: solo nella tab Desktop
+      if ((f.k === 'zoomBig' || f.noMob) && tab === 'm') return; // XL e gli effetti `noMob` (FX_UNI): solo nella tab Desktop
       // ⚠️ Senza tab il suffisso è PER-RIGA e vale la variante ATTIVA (v14.23): i
       // due criteri (larghezza per cinque effetti, puntatore per quelli in FX_PTR)
       // possono dare risposte diverse sullo stesso dispositivo, e un suffisso unico
