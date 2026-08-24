@@ -30,6 +30,7 @@ ogni rimando che lo cita resta indietro (caso reale: il protocollo di avvio ha
 cambiato titolo due volte in un giorno). I controlli 5 e 6 sono del 2026-07-30 e
 hanno la loro spiegazione accanto al codice, che è dove serve leggerla.
 """
+import html as htmllib
 import os
 import re
 import sys
@@ -527,8 +528,18 @@ def main_html():
 
     ⚠️ Si controlla il testo VISIBILE: `<style>`, `<script>` e i tag spariscono, o il
     controllo annegherebbe nei valori CSS e nelle stringhe di codice (dove un apostrofo è
-    sintassi, non un accento sbagliato). Le entità HTML restano come sono: `&middot;` non
-    è un carattere fuori regola, e decodificarle introdurrebbe falsi rilievi.
+    sintassi, non un accento sbagliato).
+
+    ⚠️⚠️ E le ENTITÀ SI DECODIFICANO, dal 2026-08-24, perché non decodificarle rifaceva
+    lo stesso buco un livello più in basso. Il primo giro di questo modo le lasciava com'erano,
+    col ragionamento che `&middot;` non è un carattere fuori regola: vero ma irrilevante, perché
+    quello che conta è ciò che il lettore VEDE. Un generatore che scrive `piu&#x27;` produce a
+    schermo `piu'`, cioè l'accento con l'apostrofo che questo strumento esiste per fermare, e il
+    controllo lo dichiarava verde: misurato sull'artefatto delle citazioni, due occorrenze
+    pubblicate. Stessa cosa per `&mdash;`, che a schermo è un em-dash.
+    ⚠️ L'unica entità che NON si decodifica è `&nbsp;`: là il carattere insecabile è markup di
+    impaginazione voluto, non un refuso, e decodificarlo darebbe un rilievo falso a ogni pagina
+    che lo usa. Si sostituisce con uno spazio normale prima di decodificare il resto.
     """
     percorsi = [a for a in sys.argv[1:] if not a.startswith("-")]
     if not percorsi:
@@ -541,9 +552,12 @@ def main_html():
             print(f"!! file assente: {p}")
             esito = 1
             continue
-        html = f.read_text(encoding="utf-8")
-        html = re.sub(r"<(style|script)\b[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
-        testo = re.sub(r"<[^>]+>", " ", html)
+        sorgente = f.read_text(encoding="utf-8")
+        sorgente = re.sub(r"<(style|script)\b[^>]*>.*?</\1>", " ", sorgente,
+                          flags=re.S | re.I)
+        testo = re.sub(r"<[^>]+>", " ", sorgente)
+        testo = re.sub(r"&(nbsp|#160|#[xX]0*[aA]0);", " ", testo)
+        testo = htmllib.unescape(testo)
         bad = char_defects(testo)
         avvisi = accent_warnings(testo)
         if avvisi:
@@ -591,17 +605,25 @@ def main_fix():
         # contenesse alla lettera verrebbe bloccato dal controllo sul diff, che non sa
         # distinguere l'uso dalla citazione. È la stessa politica degli omografi, che il
         # file nomina per codepoint.
+        # \u26a0\ufe0f\u26a0\ufe0f L'apostrofo si riconosce anche nelle sue ENTIT\u00c0 HTML, perch\u00e9 su un artefatto
+        # il testo arriva gi\u00e0 codificato: un generatore che scrive `piu&#x27;` mette in pagina
+        # `piu'`, e quella forma passava indenne sia da qui sia da `--html`, che a sua volta
+        # non decodificava. Due occorrenze pubblicate il 2026-08-24, in un file che entrambi i
+        # modi avevano dichiarato pulito. Correggere il generatore non basta come rimedio: chi
+        # passa di qui ha in mano il file finito, ed \u00e8 l\u00e0 che il presidio deve guardare.
         AP = chr(39)
+        APOS = "(?:" + AP + r"|&#[xX]27;|&#39;|&apos;)"
+        FINE = r"(?![A-Za-z\u00c0-\u00ff0-9]|&[a-zA-Z]+;|&#)"
         for pre in ("c", "C", "com", "Com", "dov", "Dov", "quand", "ch", "s"):
-            forma = pre + AP + "e" + AP
+            forma = re.escape(pre) + APOS + "e" + APOS
             sost = pre + AP + "\u00e8"
-            testo, n = re.subn(re.escape(forma) + r"(?![A-Za-z\u00c0-\u00ff0-9])", sost, testo)
+            testo, n = re.subn(forma + FINE, sost, testo)
             tot += n
         for tronca, giusta in ACCENTATE.items():
             for forma, sost in ((tronca, giusta),
                                 (tronca.capitalize(), giusta.capitalize()),
                                 (tronca.upper(), giusta.upper())):
-                pat = r"(?<![\w'])" + re.escape(forma) + r"'(?![A-Za-zÀ-ÿ0-9])"
+                pat = r"(?<![\w'])" + re.escape(forma) + APOS + FINE
                 testo, n = re.subn(pat, sost, testo)
                 tot += n
         f.write_text(testo, encoding="utf-8")
