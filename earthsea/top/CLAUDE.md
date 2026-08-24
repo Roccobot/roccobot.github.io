@@ -24,9 +24,12 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
   `nomi_alternativi_en`, `appellativi_en`) è **attestata dalle fonti, non tradotta**.
   Ⓘ La vecchia regola '`nome_en` ripete l'italiano' è decaduta con l'importazione: valeva
   per lo scheletro, quando le rese inglesi non erano in scena.
-- ⚠️ **Le divergenze trovate dalla verifica NON sono state corrette d'ufficio**: dove lo
-  Schedario e le fonti dicono cose diverse resta il dato dell'utente, e la divergenza sta
-  nel brief finché lui non decide.
+- ⚠️ **Le divergenze trovate dalla verifica NON si correggono d'ufficio**: dove lo Schedario
+  e le fonti dicono cose diverse resta il dato dell'utente, e la divergenza sta nel brief
+  finché lui non decide. ⚠️⚠️ **E non si risolvono cercando una regola generale**, che è
+  l'errore naturale di chi ne trova dieci insieme: *non ti fornisco regole perché non
+  esistono: li ho già valutati io singolarmente* (utente, 2026-08-24). Si chiedono **una per
+  una**, e il pacchetto del 2026-08-24 è stato chiuso così.
 - ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools`: opere, edizioni coi
   traduttori, sigle bilingui, Maestri di Roke, elenchi dei portatori dei badge e **link
   alle fonti scaricabili**. È da lì che si verifica, col grep e mai a memoria.
@@ -2042,8 +2045,18 @@ rientra fino a stare a piombo sulla fine del testo.
   che ridisegna le card senza passare di là si ritrova le attribuzioni ferme sulla misura
   vecchia. Le righe di una sola riga non hanno niente da allineare e restano al `float`.
 - **Il ripiego è deciso in anticipo** (utente, `0.70`): se la resa si rompe, si passa alla
-  variante **D**, l'attribuzione su una riga propria sotto la citazione, allineata a destra,
-  che è *meno elegante ma semplice e solida* e non richiede misure.
+  variante **D**, l'attribuzione su una riga propria sotto la citazione, allineata a destra
+  (`float:none; display:block; text-align:right`), che è *meno elegante ma semplice e solida*,
+  non richiede misure ed è puro CSS. Costa **27px** di altezza a scheda.
+  - **I due sintomi che lo farebbero scattare**, perché 'se si rompe' da solo non si
+    riconosce: un rientro che **cresce a ogni reflow** (segno che una passata sta misurando
+    sopra un valore già applicato) e attribuzioni **ferme sulla misura vecchia** dopo un
+    cambio lingua o un ridimensionamento (segno che un percorso ridisegna le card senza
+    passare da `reflowRows`).
+  - ⚠️ **Sta qui e NON nel brief di consegna** (istruzione dell'utente, 2026-08-24: *il brief
+    non è un promemoria, e può anche darsi che quella scelta anticipata non serva mai*): è una
+    decisione durevole senza lavoro attaccato, e nel brief avrebbe continuato a farsi rileggere
+    a ogni sessione come se fosse una cosa da fare.
 
 ### 🧟 Un testo che nessuna edizione ha, e la ragione per cui va bene
 
