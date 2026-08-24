@@ -526,12 +526,16 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
    ⚠️ Il contenitore della faccia dev'essere un `flow-root`, o il float sborda dal
    riquadro e - cosa peggiore - non entra nel calcolo dell'altezza, che è ciò su cui
    poggia tutto l'anti-jitter. */
-/* ⚠️ Dalla 0.69: PARENTESI e non trattino, e corpo un filo minore (istruzione
-   dell'utente, 2026-08-24). Il trattino iniziale a fine riga si leggeva come un segno
-   di elenco fuori posto; la parentesi chiude l'inciso senza aggiungere un segno.
+/* ⚠️ La resa dell'attribuzione è cambiata TRE volte in un giorno (2026-08-24), e conviene
+   sapere dove si è fermata: `- Nome` in corsivo grassetto, poi `(Nome)` col corpo a
+   0.92em, e infine **Nome in TONDO grassetto, senza parentesi**. Il criterio dell'utente
+   è uno solo: distinguere l'attribuzione dalla citazione senza aggiungere segni, e il
+   tondo dentro un testo corsivo la stacca da sé.
    ⚠️ Il corpo è `0.92em`, cioè relativo al testo della citazione e non un valore suo:
-   se un domani cambia il corpo della citazione, l'attribuzione lo segue. */
-.rc-voce { float:right; margin-left:1.4em; font-weight:600; white-space:nowrap; font-size:0.92em; }
+   se un domani cambia il corpo della citazione, l'attribuzione lo segue.
+   ⚠️ `position:relative` serve ad `alignVoci`, che scrive `right` in px: sta qui e non
+   inline perché è una proprietà della resa, non un valore calcolato. */
+.rc-voce { float:right; margin-left:1.4em; font-weight:600; font-style:normal; white-space:nowrap; font-size:0.92em; position:relative; }
 .rc-testo:not(.bil) { display:flow-root; }
 .rc-testo.bil > .bil-f, .rc-testo.bil > .bil-m { display:flow-root; }
 /* La riga di contesto: opera, capitolo e che cosa succede, nella SOLA lingua corrente.
@@ -2887,7 +2891,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.69</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.70</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5622,7 +5626,7 @@ function citazHtml(p){
   var vit = p.citazione_voce || '', ven = p.citazione_voce_en || '';
   var fit = p.citazione_fonte || '', fen = p.citazione_fonte_en || '';
   function faccia(t, v){
-    return escapeHtml(t) + (v ? '<b class="rc-voce">(' + escapeHtml(v) + ')</b>' : '');
+    return escapeHtml(t) + (v ? '<b class="rc-voce">' + escapeHtml(v) + '</b>' : '');
   }
   return '<span class="rank-citaz">' +
     bilingue('rc-testo', faccia(it, vit), faccia(en, ven), true) +
@@ -6029,7 +6033,66 @@ function toggleCardMidlines() {
   list.classList.toggle('show-midlines', midlinesOn);
   if (midlinesOn) placeCardMidlines();
 }
-function reflowRows() { tightenNames(); optimizeBipartite(); if (midlinesOn) placeCardMidlines(); }
+// ── L'attribuzione allineata alla FINE DELLA RIGA SOPRA (0.70) ──────────────────
+// Scelta dell'utente fra quattro rese (artefatto del 2026-08-24). Il CSS da solo non sa
+// dire 'finisci dove finisce la riga precedente': `float:right` allinea al bordo del
+// CONTENITORE, che arriva sempre al riquadro, e a riga corta l'attribuzione restava
+// staccata dal testo.
+// ⚠️⚠️ QUINDI QUESTA È UNA RESA CALCOLATA, non una regola CSS, e il patto va conosciuto:
+// il numero vale per QUEL testo a QUELLA larghezza, quindi si rifà a ogni render, a ogni
+// cambio di lingua e a ogni ridimensionamento. Si aggancia a `reflowRows`, dove già
+// vivono `tightenNames` e `optimizeBipartite`: nessun listener nuovo, nessun timer.
+// ⚠️ Il ripiego, deciso in anticipo dall'utente: *se qualcosa nella visualizzazione si
+// rompe, ripieghiamo su D*, cioè l'attribuzione su una riga propria allineata a destra
+// (`float:none; display:block; text-align:right`), che è puro CSS e costa 27px di
+// altezza a scheda. È la via d'uscita, e sta scritta qui perché il giorno che serve non
+// si debba ridecidere niente.
+// ⚠️ Si sposta con `right` e `position:relative`, NON con un margine: il relativo non
+// tocca il flusso, quindi il testo non si ri-dispone e il calcolo non può rincorrersi.
+// Con `margin-right` la riga si accorcerebbe A CAUSA dello spostamento, e il giro dopo
+// misurerebbe un'altra cosa.
+// ⚠️ Tre passate separate (azzera tutti, misura tutti, applica tutti) e non una sola per
+// voce: leggere e scrivere il layout a turno costringe il browser a un reflow per ogni
+// elemento. Ed è anche una questione di correttezza: il tetto di sicurezza legge la
+// posizione della voce, che senza l'azzeramento porterebbe dentro lo spostamento del
+// giro precedente.
+// ⚠️ Le gemelle invisibili dell'anti-jitter si saltano: riservano l'altezza, non si
+// vedono, e allinearle sarebbe lavoro per nessuno.
+// Costo misurato (2026-08-24, 9 attribuzioni su 120 schede): 0,43 ms a giro, contro i
+// 2,6 ms di `optimizeBipartite` e i 22,5 di `tightenNames` che già girano lì accanto.
+function alignVoci(){
+  var facce = document.querySelectorAll('#rank-list .rc-testo > .bil-f, #rank-list .rc-testo:not(.bil)');
+  var lav = [], i;
+  for (i = 0; i < facce.length; i++) {
+    var vv = facce[i].querySelector(':scope > .rc-voce');
+    if (vv) { vv.style.right = ''; lav.push({ f: facce[i], v: vv }); }
+  }
+  for (i = 0; i < lav.length; i++) {
+    var f = lav[i].f, v = lav[i].v;
+    // Il Range copre il TESTO fino alla voce: i suoi rettangoli sono le righe vere.
+    var rg = document.createRange();
+    rg.setStart(f, 0);
+    rg.setEnd(f, Array.prototype.indexOf.call(f.childNodes, v));
+    var rects = rg.getClientRects(), sopra = null, stessa = null, k;
+    var vb = v.getBoundingClientRect(), destro = f.getBoundingClientRect().right;
+    for (k = 0; k < rects.length; k++) {
+      if (rects[k].height <= 1 || rects[k].width <= 1) continue;
+      if (rects[k].top < vb.top - 2) sopra = rects[k];
+      else if (Math.abs(rects[k].top - vb.top) <= 2) stessa = rects[k];
+    }
+    // Testo di una riga sola: non c'è nessuna riga sopra a cui allinearsi, e la voce
+    // resta dov'è (a filo del riquadro).
+    if (!sopra) { lav[i].px = 0; continue; }
+    var d = destro - sopra.right;
+    // ⚠️ Il TETTO: mai più vicina di 0.8em al testo della propria riga. Senza, su una
+    // riga sopra molto corta l'attribuzione arriverebbe a toccare la frase.
+    var gap = parseFloat(getComputedStyle(f).fontSize) * 0.8;
+    var tetto = stessa ? Math.max(0, vb.left - (stessa.right + gap)) : d;
+    lav[i].px = Math.max(0, Math.min(d, tetto));
+  }
+  for (i = 0; i < lav.length; i++) if (lav[i].px > 0.5) lav[i].v.style.right = lav[i].px.toFixed(2) + 'px';
+}
+function reflowRows() { tightenNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
