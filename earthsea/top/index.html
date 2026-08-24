@@ -484,12 +484,19 @@ html { --col-max:740px; }
 .rank-name.name-tight { letter-spacing:0.006em; gap:0.24em; }
 
 .rank-title {
-  /* Peso 500 nei due temi (0.40): era 500 nel solo chiaro. La riga oggi è vuota per
-     tutti (nessuna voce ha titoli), quindi la differenza non si vedeva: si sarebbe vista
-     appena compilati i primi titoli, ed è lo stesso difetto del nome. */
-  font-family:'EB Garamond',serif; font-style:italic; font-weight:500;
-  font-size:clamp(0.82rem,2.1vw,0.98rem);
-  color:var(--parchment-dim); letter-spacing:0.01em;
+  /* ⚠️⚠️ LA RIGA DELL'OPERA CAMBIA CARATTERE nella 0.72 (istruzione dell'utente: *trova un
+     modo per differenziarlo di più dal titolo dell'opera della prima apparizione*). Era in
+     EB Garamond corsivo 500 a 15,7px, cioè lo stesso carattere della riga sopra e a un
+     soffio dal suo corpo: due righe che si confondevano.
+     ⚠️ Il salto di FAMIGLIA è la stessa medicina dell'attribuzione della citazione, e per
+     la stessa ragione: dentro una card tutta in EB Garamond, corsivo e peso non bastano a
+     separare. Cinzel qui non è un carattere nuovo: è quello del nome, dell'origine e
+     dell'attribuzione, e a corpo piccolo rende piccole maiuscole.
+     ⚠️ Colore e opacità NON si toccano: il corpo scende, e schiarire una riga già tenue la
+     porterebbe sotto il contrasto AA che il tema scuro tiene per un soffio. */
+  font-family:'Cinzel',serif; font-style:normal; font-weight:400;
+  font-size:clamp(0.76rem,1.9vw,0.88rem);
+  color:var(--parchment-dim); letter-spacing:0.05em;
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
 
@@ -570,6 +577,19 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
 .bil { display:grid; }
 .bil > .bil-f, .bil > .bil-m { grid-area:1 / 1; min-width:0; }
 .bil > .bil-m { visibility:hidden; pointer-events:none; }
+/* ⚠️⚠️ IL NOME LIBERO dalla riserva ORIZZONTALE (0.71). La cella bilingue è larga quanto
+   la lingua PIÙ larga, e in italiano quella riserva si vede come un vuoto fra il nome e le
+   etichette: 52,4px su Sparviero (`Sparrowhawk` è più lungo), 58,2 su `Il Re`, 53,1 su
+   `Rosa`, e in tutto 17 card su 120 sopra gli 8px. L'utente l'ha segnalato su Ged, dove
+   salta all'occhio perché il nome è lungo e le etichette sono cinque.
+   ⚠️ Con la classe la gemella esce dal flusso ORIZZONTALE (resta invisibile e non sposta
+   niente), quindi la cella si stringe sul nome vero e le etichette gli si accostano.
+   ⚠️⚠️ MA la classe NON si mette a tutte: la dà `freeNames()` card per card, e solo dove è
+   provato che l'altezza non cambi. Il perché sta là, e non è una cautela teorica: misurato
+   su sei larghezze, applicandola a tutte, a 320px e a 360px TRE card cambiano altezza al
+   cambio lingua (fino a 23px), perché il nome va a capo in una lingua sola. */
+.rank-name-text.bil.nm-libero { position:relative; }
+.rank-name-text.bil.nm-libero > .bil-m { position:absolute; left:0; top:0; width:100%; }
 .rank-title.bil > .bil-f, .rank-title.bil > .bil-m {
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
@@ -685,7 +705,11 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
 
 .rank-subtitle {
   font-family:'EB Garamond',serif;
-  font-size:clamp(0.88rem,2.1vw,1.03rem);
+  /* ⚠️ Ingrandita nella 0.72 (istruzione dell'utente): era
+     `clamp(0.88rem,2.1vw,1.03rem)`, cioè 16,5px su desktop, a un soffio dai 15,7 della
+     riga dell'opera qui sotto, e i due pesi si confondevano. Ora 17,9px, e la riga
+     dell'opera prende un trattamento suo (vedi `.rank-title`). */
+  font-size:clamp(0.95rem,2.3vw,1.12rem);
   color:var(--parchment-dim);
   opacity:0.75;
   letter-spacing:0.01em;
@@ -2932,7 +2956,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.71</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.72</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6144,7 +6168,79 @@ function alignVoci(){
   }
   for (i = 0; i < lav.length; i++) if (lav[i].px > 0.5) lav[i].v.style.right = lav[i].px.toFixed(2) + 'px';
 }
-function reflowRows() { tightenNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); }
+// ── Il nome libero dalla riserva orizzontale, dove non costa un salto (0.71) ────
+// La cella bilingue del nome è larga quanto la lingua più larga: è ciò che tiene ferme le
+// etichette al cambio lingua, ed è anche il vuoto che l'utente ha segnalato su Ged.
+// ⚠️⚠️ La riserva si toglie SOLO dove è provato che non introduca un salto verticale, e le
+// due prove sono diverse fra loro:
+//   1. la faccia visibile e la gemella devono essere ALTE UGUALE, o il nome andrebbe a
+//      capo in una lingua sola e la card cambierebbe altezza al cambio lingua;
+//   2. l'altezza della RIGA non deve cambiare quando la classe viene messa: stringendo la
+//      cella si libera spazio, e un'etichetta che stava a capo può rientrare in riga, che
+//      è un salto verticale prodotto dal rimedio stesso. Questa seconda prova si fa
+//      prima/dopo sulla STESSA lingua, quindi non richiede di simulare l'altra.
+//   3. la riga deve restare alta uguale anche con la cella alla larghezza DELL'ALTRA
+//      lingua: liberata, la cella misura quanto il nome corrente, che nelle due lingue è
+//      diverso, quindi le etichette possono impilarsi di là e non di qua. ⚠️ Questa prova
+//      è nata da un difetto vero e non per prudenza: con le sole prime due, a 320px
+//      `Pannocchia` passava da 345,5 a 322,3px al cambio lingua, e a 360px `Mago Rosso`
+//      da 145,7 a 122,6. Si simula mettendo alla cella la larghezza della gemella, che è
+//      esattamente il nome dell'altra lingua.
+// ⚠️ Senza la prova 1, misurato su sei larghezze: a 320px e a 360px tre card cambiano
+// altezza al cambio lingua (fino a 23px). Da 390px in su nessuna, ed è la ragione per cui
+// una soglia di larghezza sarebbe sembrata sufficiente: non lo è, perché la larghezza a
+// cui un nome va a capo dipende dal font del dispositivo, non dai px.
+function freeNames() {
+  var celle = document.querySelectorAll('#rank-list .rank-name-text.bil');
+  var i, cand = [];
+  for (i = 0; i < celle.length; i++) celle[i].classList.remove('nm-libero');
+  for (i = 0; i < celle.length; i++) {
+    var f = celle[i].querySelector(':scope > .bil-f'), m = celle[i].querySelector(':scope > .bil-m');
+    var riga = celle[i].closest('.rank-name');
+    if (!f || !m || !riga) continue;
+    if (Math.abs(f.getBoundingClientRect().height - m.getBoundingClientRect().height) > 0.5) continue;
+    // La larghezza della gemella si legge ORA, finché è nel flusso: liberata, prende
+    // quella della faccia e non direbbe più quanto misura il nome dell'altra lingua.
+    cand.push({ el: celle[i], riga: riga, prima: riga.getBoundingClientRect().height,
+                altra: m.getBoundingClientRect().width });
+  }
+  for (i = 0; i < cand.length; i++) cand[i].el.classList.add('nm-libero');
+  for (i = 0; i < cand.length; i++)
+    if (Math.abs(cand[i].riga.getBoundingClientRect().height - cand[i].prima) > 0.5) { cand[i].el.classList.remove('nm-libero'); cand[i].fuori = true; }
+  // Prova 3: la riga con la cella alla larghezza dell'altra lingua.
+  for (i = 0; i < cand.length; i++) {
+    if (cand[i].fuori) continue;
+    cand[i].el.style.width = cand[i].altra + 'px';
+    cand[i].conAltra = cand[i].riga.getBoundingClientRect().height;
+  }
+  for (i = 0; i < cand.length; i++) {
+    if (cand[i].fuori) continue;
+    cand[i].el.style.width = '';
+    if (Math.abs(cand[i].conAltra - cand[i].prima) > 0.5) cand[i].el.classList.remove('nm-libero');
+  }
+}
+// ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE, è la cura di un difetto misurato: al CAMBIO
+// LINGUA il primo `freeNames` decide su un layout non ancora assestato e sbaglia. Provato a
+// 320px: `Cob` risultava liberata benché la sua riga passasse da 52,9 a 29,8px (la prova 2
+// avrebbe dovuto scartarla), e un solo `reflowRows()` in più la rimetteva a posto. Il
+// sintomo era una card che cambiava altezza al cambio lingua, cioè esattamente ciò che
+// `freeNames` esiste per non fare.
+// ⚠️ Due `requestAnimationFrame` annidati, non uno: il primo consegna il frame in cui il
+// browser applica lo stile nuovo, il secondo misura quando quel frame è già disposto.
+// ⚠️ Due colpi e non uno, e il secondo NON è superstizione: al cambio lingua i due
+// `requestAnimationFrame` da soli non bastavano (misurato: `Cob` restava liberata a
+// sproposito anche 1,2 secondi dopo, mentre un `freeNames()` a mano la rimetteva a posto).
+// Il colpo a tempo copre l'assestamento che i frame non vedono.
+var freeRipassoPend = false;
+function freeRipasso() {
+  if (freeRipassoPend) return;
+  freeRipassoPend = true;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ freeNames(); }); });
+  setTimeout(function(){ freeRipassoPend = false; freeNames(); }, 160);
+}
+// ⚠️ `freeNames` sta DOPO `tightenNames`: quello decide gli a-capo del nome, e la prova
+// sulle altezze va fatta sulla disposizione definitiva, non su quella di partenza.
+function reflowRows() { tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); freeRipasso(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);

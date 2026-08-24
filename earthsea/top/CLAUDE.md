@@ -772,6 +772,23 @@ Il peso del vero nome non viene più dalla dimensione: viene dalla **forma**.
   2026-08-21 l'utente ha corretto: il nome principale è uno, il secondo va fra gli
   alternativi, e il vero nome ha il suo campo.
 
+#### 📖 La riga dell'OPERA passa a Cinzel, e la riga dei nomi alternativi cresce
+
+Nella `0.72`, istruzione dell'utente: *ingrandisci il testo dei nomi alternativi e dei titoli
+e trova un modo per differenziarlo di più dal titolo dell'opera della prima apparizione*.
+
+- `.rank-subtitle` (nomi alternativi | titoli) sale da **16,5 a 17,9px** su desktop.
+- `.rank-title` (l'opera) lascia EB Garamond corsivo per **Cinzel 400 a 14,1px**, tracking
+  `0.05em`, che a quel corpo rende **piccole maiuscole**.
+- ⚠️ **La medicina è la stessa dell'attribuzione della citazione, e la ragione è identica**:
+  in una card scritta tutta in EB Garamond, corsivo e peso non bastano a separare due righe
+  vicine (erano 16,5 contro 15,7px, stesso carattere). Separa il salto di **famiglia**.
+- ⚠️ **Cinzel qui non è un carattere nuovo**: è già quello del vero nome, dell'origine e
+  dell'attribuzione, quindi la card non guadagna un quarto alfabeto.
+- ⚠️ **Colore e opacità non si toccano**: il corpo scende, e schiarire una riga già tenue la
+  porterebbe sotto il contrasto AA che il tema scuro tiene per un soffio (vedi la nota sul
+  contrasto delle due righe tenui in `index.html`).
+
 ## 🎛️ Il Pannello COMPATTO
 
 Da un mockup dell'utente del 2026-08-21. Il Pannello di Arda è dimensionato su 15 famiglie e una decina di badge: qui, con **due**
@@ -2060,8 +2077,36 @@ corrette nella `0.67`.
   `visibility` e spegne il bottone con `disabled` invece che con `hidden`, perché quello
   usciva dal flusso portandosi via anche il suo bordo da 1px.
 - ⚠️ **Il prezzo del primo rimedio è dichiarato**: sulle card dove i due nomi divergono
-  resta uno stacco variabile fra nome ed etichetta, ed è il patto dell'utente (*uno spazio
-  vuoto è preferibile al jitter*).
+  resta uno stacco variabile fra nome ed etichetta, ed era il patto dell'utente (*uno spazio
+  vuoto è preferibile al jitter*). ⚠️ **Il patto è CADUTO nella `0.71`**: vedi qui sotto.
+
+### 🔓 Il nome si LIBERA dalla riserva orizzontale dove non costa un salto
+
+L'utente ha segnalato lo stacco su Ged (`Sparviero` contro `Sparrowhawk`, **52,4px**) e ha
+scelto di toglierlo. Non è un difetto di quella card: succede su **17 card su 120** sopra gli
+8px (`Il Re` 58,2, `Rosa` 53,1), e su Ged salta all'occhio perché il nome è lungo e le
+etichette sono cinque.
+
+- **Come**: la classe `nm-libero` fa uscire la gemella dal flusso **orizzontale**
+  (`position:absolute`), quindi la cella si stringe sul nome vero. La gemella resta
+  invisibile e continua a non spostare niente.
+- ⚠️⚠️ **La classe NON si mette a tutte, la dà `freeNames()` card per card**, e solo dove tre
+  prove dicono che l'altezza non cambia. Toglierla in blocco è la cosa che sembra ovvia e
+  che è stata misurata sbagliata: a **320px** e a **360px** tre card cambiavano altezza al
+  cambio lingua (fino a **23px**), perché il nome va a capo in una lingua sola.
+  1. faccia visibile e gemella **alte uguale**;
+  2. la **riga** non cambia altezza quando la classe viene messa (stringendo la cella si
+     libera spazio, e un'etichetta che stava a capo può rientrare in riga);
+  3. la riga resta alta uguale anche con la cella alla larghezza **dell'altra lingua**: è la
+     prova che ha salvato `Pannocchia` (345,5 -> 322,3px a 320px) e `Mago Rosso` a 360px.
+- ⚠️⚠️ **Il RIPASSO differito non è una precauzione, cura un difetto misurato**: al cambio
+  lingua il primo `freeNames` decide su un layout non ancora assestato e sbaglia. Servono
+  **due colpi**, due `requestAnimationFrame` annidati **e** un `setTimeout` a 160ms: coi soli
+  frame `Cob` restava liberata a sproposito anche 1,2 secondi dopo.
+- ✅ **Misurato su sei larghezze** (320, 360, 390, 412, 900, 1280): **zero** card cambiano
+  altezza al cambio lingua e l'altezza della lista è identica. Lo stacco sopra gli 8px
+  sparisce da 390px in su; a 320 e 360 restano una o due card, dove liberare costerebbe un
+  salto ed è giusto non farlo.
 - ✅ **Misurato dopo**: su desktop (1280 e 900) **nessun** elemento si muove, nei due stati
   dell'interruttore dello spazio riservato. Su **mobile** le card non si muovono di un
   pixel (0/120 in posizione relativa alla lista e in altezza).
