@@ -424,28 +424,36 @@ per cui la 0.41 sembrava chiusa e non lo era: là si misurava un gruppo solo.
 
 | caso | prima riga | etichette e icone |
 |---|---|---|
-| senza nome comune (`.name-vero`) | Cinzel **tutto maiuscolo**, senza discendenti, siede alto | **su di 3px** |
-| col nome comune | EB Garamond a **cassa mista**, massa più bassa | **giù di 3px** |
+| senza nome comune (`.name-vero`) | Cinzel **tutto maiuscolo**, senza discendenti, siede alto | **su** |
+| col nome comune | EB Garamond a **cassa mista**, massa più bassa | **giù** |
 
+- ⚠️⚠️ **I `3px` CHIESTI SONO DEVICE PX, e valgono 1,5px CSS**: lo dice la regola universale
+  (`Roccobot.md`, § '🎨 Grafica' → 'Misure UI web fornite dall'utente') e lo conferma la
+  misura. La `0.63` aveva applicato 3px CSS, cioè il **doppio**, e la `0.64` ha dimezzato.
+  - ⚠️ **Come si è stimato il DPR senza chiederlo, e vale come metodo**: la larghezza in px
+    CSS di una riga di testo **non dipende dal viewport**, quindi il rapporto fra i pixel
+    che quella riga occupa in uno screenshot dell'utente e la sua misura sul DOM **è** il
+    DPR. Sulla riga del footer inglese: 226,8px CSS contro ~462px nell'immagine, cioè
+    **2,03**. Schermo a DPR 2 (un 32 pollici 4K con scala al 200%).
 - ⚠️⚠️ **I DUE NUMERI DEL CSS SONO LO STESSO SPOSTAMENTO**, espresso in due em diversi:
-  l'em delle icone è quello del **nome** (29,12px sul desktop, 3px = `0.103em`), quello
-  dell'etichetta è il suo **0.62em** (18,05px, 3px = `0.166em`). Scrivere lo stesso numero su
-  entrambi sposterebbe l'etichetta di 1,9px invece di 3, e il gruppo si spezzerebbe in due
-  senza che nessuna misura complessiva lo dica.
+  l'em delle icone è quello del **nome** (29,12px sul desktop, 1,5px = `0.052em`), quello
+  dell'etichetta è il suo **0.62em** (18,05px, 1,5px = `0.083em`). Scrivere lo stesso numero
+  su entrambi sposterebbe l'etichetta di 0,94px invece di 1,5, e il gruppo si spezzerebbe in
+  due senza che nessuna misura complessiva lo dica.
 - ⚠️ **Si sposta con `top`, non con `transform`**: le regole `.bi-<id>` iniettate dai
   micro-aggiustamenti dei badge usano `translateY` con specificità maggiore, quindi un
   transform qui sparirebbe alla prima apertura di quell'editor.
 - **Misurato prima e dopo, coi font veri, contro la metà delle maiuscole**: il gruppo del
-  vero nome passa da **+1,88px** a **-1,10px** e quello del nome d'uso da **+0,31px** a
-  **+3,29px**, cioè esattamente i 3px chiesti in ciascun verso; etichette e icone restano
-  allineate fra loro entro 0,1px. Su **mobile** vale ~2px, perché il valore è in em e là il
-  nome è 19,84px: è il comportamento voluto, e si **somma** alla risalita di `-0.156em` dei
-  due contenitori, che corregge la riga e non il font.
+  vero nome passa da **+1,88px** a **+0,40px** e quello del nome d'uso da **+0,31px** a
+  **+1,79px**, cioè 1,48px per verso; etichette e icone restano allineate fra loro entro
+  0,1px. Su **mobile** vale ~1px, perché il valore è in em e là il nome è 19,84px: è il
+  comportamento voluto, e si **somma** alla risalita di `-0.156em` dei due contenitori, che
+  corregge la riga e non il font.
 - ⚠️ **Il mio asse dice un'altra cosa dall'occhio, e va saputo**: sulla metà delle maiuscole
-  i due gruppi distavano **1,6px**, mentre l'utente ne vede **6** (3 per verso). Non è una
-  misura sbagliata: è che con una riga tutta maiuscola il riferimento percettivo non è la
-  metà delle maiuscole. Chi rimisurasse col vecchio criterio troverebbe questi valori
-  'scentrati', e non lo sono.
+  i due gruppi distavano **1,6px**, e l'utente ne ha chiesti **3** di distanza (1,5 per
+  verso). Non è una misura sbagliata: è che con una riga tutta maiuscola il riferimento
+  percettivo non è la metà delle maiuscole. Chi rimisurasse col vecchio criterio troverebbe
+  questi valori 'scentrati', e non lo sono.
 
 - ⚠️⚠️ **Sopra i 480px il centraggio lo fa il FLEX da solo**, e i nudge erano il difetto: sono
   usciti la **risalita di 2px** delle etichette e il **`top:-0.03em`** di icone e simbolo di
