@@ -1591,7 +1591,7 @@ campo del dataset e per lo Schedario che lo alimenta.
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
   di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
 
-### 📍 Segno o parola nella colonna origine, e lo sceglie chi guarda
+### 📍 Segno o parola nella colonna origine, e lo decide il Pannello di CONTROLLO
 
 Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) oppure la
 **parola** 'origine'/'origin', e una riga del Pannello commuta le due rese senza ricaricare.
@@ -1603,11 +1603,19 @@ Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) 
 - **I due vantaggi del segno li ha enunciati lui**: non va tradotto, e non prende posizione
   fra origine per nascita e residenza, che è la dualità di § 'Origine: significa NASCITA, e
   la residenza è solo un ripiego'.
-- ⚠️ **La preferenza vive nel `localStorage`** (`earthsea-orig-pin`), come tema e zoom, e
-  **al contrario del filtro 'solo vero nome'**, che sta in memoria: quello nasconde delle
-  voci, e sopravvivere al ricaricamento senza dirlo farebbe credere il dataset più corto (la
-  ragione sta in § 'Il filtro solo chi ha un vero nome noto'). Qui non si nasconde niente,
-  cambia la resa di un'etichetta, quindi ricordarla è quello che ci si aspetta.
+- ⚠️⚠️ **DALLA `0.69` LE DUE SCELTE SONO FLAG DI SITO** (`orig` in `SITE_FLAGS`), governate
+  dal **Pannello di controllo** dell'admin e valide per tutti i visitatori, con una terza
+  voce (`on`) che spegne del tutto la colonna. Nella `0.66`-`0.68` stavano nel Pannello dei
+  **filtri** come preferenza del visitatore nel `localStorage`: era la lettura sbagliata di
+  *mettimi nel Pannello di Controllo un'opzione*, e l'utente l'ha corretta (*devono stare nel
+  Pannello di controllo, come avevo chiesto: sono riservati a chi ha le credenziali da
+  admin*).
+  - ⚠️ **'Pannello' e 'Pannello di controllo' sono DUE COSE**, ed è la lezione da tenere: il
+    primo è la modale del FAB, coi filtri e la legenda, aperta a tutti; il secondo è l'editor
+    admin dell'aspetto, che salva in `dati.js` e dichiara *le impostazioni valgono per tutti
+    i visitatori*. Chi legge una richiesta che nomina il secondo non la applichi al primo.
+  - Le chiavi `earthsea-orig-pin` e `earthsea-orig-slot` restano nel `localStorage` di chi le
+    ha toccate e non fanno danno: nessuno le legge più.
 - ⚠️ **La riga del Pannello porta una FRASE, e la classe che lo dice è `.ctrl-row--wrap`**:
   si chiamava `--vero`, cioè col nome del filtro che l'aveva inaugurata, e con la seconda
   riga quel nome mentiva. Nella stessa passata il capo a riga è passato dalla sola
@@ -1665,7 +1673,7 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
     dell'utente): la card torna a due colonne (`.rank-item.has-orig` c'è solo dove serve) e
     il resto usa lo spazio. Un'etichetta vuota col divisorio sarebbe il difetto opposto.
   - ✅ **Parola o segno lo sceglie il VISITATORE, dalla `0.62`**: vedi § 'Segno o parola
-    nella colonna origine, e lo sceglie chi guarda'.
+    nella colonna origine, e lo decide il Pannello di CONTROLLO'.
 - Ⓘ **In `arda/top/dati.js` `paese` c'è ancora**, `gb` su 360 voci: toglierlo là è una modifica
   al flusso dati di 'I Grandi di Arda', che è fra i casi **pesanti** (conferma esplicita), e
   nessuno l'ha chiesta.
