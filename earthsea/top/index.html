@@ -886,8 +886,12 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 .rank-name > .rank-flags > *, .rank-name > .rank-tipi > * { position:relative; }
 .rank-name.name-vero > .rank-flags > * { top:-0.052em; }
 .rank-name.name-vero > .rank-tipi > .type-badge { top:-0.083em; }
-.rank-name:not(.name-vero) > .rank-flags > * { top:0.052em; }
-.rank-name:not(.name-vero) > .rank-tipi > .type-badge { top:0.083em; }
+/* ⚠️ Il gruppo col NOME COMUNE è sceso di ALTRI 1,5px CSS nella 0.76 (3 device px a DPR 2,
+   istruzione dell'utente dopo i lavori sulla tipografia della card): 0.052 -> 0.104em sulle
+   icone (29,12px di corpo) e 0.083 -> 0.166em sull'etichetta (18,05px). Il gruppo col solo
+   vero nome NON si tocca: là l'utente ha detto che l'allineamento va bene. */
+.rank-name:not(.name-vero) > .rank-flags > * { top:0.104em; }
+.rank-name:not(.name-vero) > .rank-tipi > .type-badge { top:0.166em; }
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
    Rimosso il margin-left ridondante che la raddoppiava (~0.68em -> 0.4em). */
@@ -2393,10 +2397,14 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      +1,20 e +1,84, resa flex prima del nudge -2,82 e -1,78.
      ⚠️ Come sul desktop, i due numeri di ogni gruppo sono lo STESSO spostamento in due em
      diversi: l'etichetta è 0.62em del nome, l'icona 0.92em. */
-  .rank-name.name-vero > .rank-tipi > .type-badge { top:0.244em; }
-  .rank-name.name-vero > .rank-flags > * { top:0.168em; }
-  .rank-name:not(.name-vero) > .rank-tipi > .type-badge { top:0.377em; }
-  .rank-name:not(.name-vero) > .rank-flags > * { top:0.199em; }
+  /* ⚠️ Ritoccati nella 0.76 su misure dell'utente (device px a DPR 3, quindi divisi per 3):
+     il gruppo col solo VERO NOME sale di 1,333px CSS (4 device px) e quello col NOME COMUNE
+     scende di 0,667 (2 device px). I corpi su cui si convertono sono quelli veri, misurati
+     sul DOM: etichetta 12,30px, icone 18,25px. */
+  .rank-name.name-vero > .rank-tipi > .type-badge { top:0.136em; }
+  .rank-name.name-vero > .rank-flags > * { top:0.095em; }
+  .rank-name:not(.name-vero) > .rank-tipi > .type-badge { top:0.431em; }
+  .rank-name:not(.name-vero) > .rank-flags > * { top:0.236em; }
   .rank-name > .rank-flags .status-icon { margin-left:0; }
   /* Genere: minimo stacco extra oltre al gap flex 0.28em (dalla v8.81: la v8.80
      0.3em risultava troppo distanziata). */
@@ -2961,7 +2969,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.75</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.76</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

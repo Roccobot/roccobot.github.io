@@ -452,6 +452,26 @@ per cui la 0.41 sembrava chiusa e non lo era: là si misurava un gruppo solo.
   0,1px. Su **mobile** vale ~1px, perché il valore è in em e là il nome è 19,84px: è il
   comportamento voluto, e si **somma** alla risalita di `-0.156em` dei due contenitori, che
   corregge la riga e non il font.
+- ⚠️⚠️ **RITARATI nella `0.76`, dopo i lavori di tipografia della card** (la riga dei nomi
+  alternativi ingrandita, l'opera passata a Cinzel): l'utente ha rimisurato e chiesto altri
+  spostamenti, sempre in **device px**. Sono i valori in vigore, e i precedenti non vanno
+  ripescati:
+
+  | dove | gruppo | chiesto | in px CSS | etichetta | icone |
+  |---|---|---|---|---|---|
+  | desktop (DPR 2) | solo vero nome | nessuna modifica | 0 | `-0.083em` | `-0.052em` |
+  | desktop (DPR 2) | col nome comune | giù 3px | +1,5 | `0.166em` | `0.104em` |
+  | mobile (DPR 3) | solo vero nome | su 4px | -1,333 | `0.136em` | `0.095em` |
+  | mobile (DPR 3) | col nome comune | giù 2px | +0,667 | `0.431em` | `0.236em` |
+
+  - **I corpi su cui si convertono si MISURANO sul DOM, non si prendono dai commenti**:
+    desktop etichetta 18,05px e icone 29,12px; mobile etichetta 12,30px e icone 18,25px. È la
+    ragione per cui gli em di mobile e desktop non si somigliano affatto pur essendo lo stesso
+    genere di spostamento.
+  - ✅ **Verificato dopo**, misurando il `top` calcolato prima e dopo: desktop col nome comune
+    +3,00 e +3,03 device px, mobile col solo vero nome -3,99 e -4,00, mobile col nome comune
+    +1,99 e +2,03, e il gruppo desktop del vero nome fermo a 0. Etichetta e icone restano
+    allineate fra loro entro 0,04px.
 - ⚠️ **Il mio asse dice un'altra cosa dall'occhio, e va saputo**: sulla metà delle maiuscole
   i due gruppi distavano **1,6px**, e l'utente ne ha chiesti **3** di distanza (1,5 per
   verso). Non è una misura sbagliata: è che con una riga tutta maiuscola il riferimento
