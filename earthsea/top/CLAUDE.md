@@ -1908,11 +1908,11 @@ unica**: card di legenda, poi le due checkbox di categoria, poi la legenda dei b
 Due ritocchi della `0.71`, tutti e due nati da un difetto che la `0.69` aveva lasciato dietro
 di sé togliendo il trascinamento.
 
-- **L'aria in cima (`padding-top:1.2rem`) è tornata.** Il `padding-top:0` aveva senso finché
-  c'era la **barretta di presa**, che faceva da stacco; uscita quella, il contenuto è rimasto
-  incollato al bordo superiore (segnalazione dell'utente: *s'è rotto qualcosa
-  nell'allineamento*). Il valore è la simmetria col padding dei fianchi, non una scelta a
-  occhio.
+- **L'aria in cima**: nella `0.71` era un `padding-top:1.2rem`, perché la **barretta di
+  presa** che faceva da stacco era uscita con la 0.69 e il contenuto era rimasto incollato al
+  bordo (segnalazione dell'utente: *s'è rotto qualcosa nell'allineamento*). ⚠️ Nella `0.78`,
+  tornata la barretta, il padding è tornato a **zero**: lo stacco lo fa di nuovo lei, e
+  tenerli tutti e due lo raddoppierebbe.
   - ⚠️ **Quell'altezza NON si recupera comprimendo il fondo**: sotto la legenda vive lo slot
     del tag del filtro badge, che è spazio riservato da un fantasma (§ 'Il tag del filtro sta
     in FONDO, e il suo spazio lo riserva un fantasma'), e toglierlo rimetterebbe il salto che
@@ -1928,6 +1928,43 @@ di sé togliendo il trascinamento.
     pannello irraggiungibile, cioè un difetto peggiore di quello curato.
   - Si richiama a **ogni apertura**, a ogni **ridisegno** del Pannello e sul **resize**: il
     contenuto cambia con la lingua e con la rotazione dello schermo.
+
+#### 👆 Scorrere e trascinare sono DUE gesti, e una volta sono stati tolti insieme
+
+⚠️⚠️ **La lezione vale oltre il caso, ed è la ragione per cui questa voce esiste.** La
+richiesta della `0.69` (*il pannello mobile è abbastanza breve: puoi abbassarlo e fare in modo
+che non sia trascinabile*) è stata letta come 'via tutti i gesti', e con lo scorrimento è
+uscito anche il **trascinamento verso il basso per chiudere**, che l'utente voleva tenere. Sua
+precisazione (2026-08-24): *non volevo che si scorresse in basso il contenuto (dito dal basso
+all'alto), cosa che prima mi faceva fare nonostante non servisse; ma il gesto opposto (dall'alto
+al basso) per richiudere il pannello mi piaceva*.
+
+- **Che cosa vale oggi (`0.78`)**: lo **scorrimento** del contenuto resta spento
+  (`overflow:hidden`, con la rete di `fitControlSheet`), il **trascinamento** verso il basso
+  chiude la sheet oltre i **90px**, e sotto soglia rientra.
+- ⚠️ **Barretta e gesto stanno o cadono INSIEME**: un appiglio che non appiglia niente
+  promette un'azione che non c'è, e un gesto senza appiglio non lo scopre nessuno. Chi
+  togliesse l'uno tolga anche l'altro, e viceversa.
+- ⚠️ **La guardia `atTop` non è ridondante** benché la sheet non scorra: dove
+  `fitControlSheet` riaccende lo scorrimento (schermi bassi), il gesto deve cedere il passo
+  allo scroll finché non si è in cima.
+- ⚠️ **Il fondo della testata è quello NEUTRO** (`36,39,42`), non il caldo `42,41,36` che
+  aveva prima della 0.69: ripescare il vecchio valore rimetterebbe in cima al Pannello
+  proprio la dominante giallognola che l'utente ha chiesto di togliere.
+- ✅ **Provato con eventi touch veri** a 390x844 e a 320x568: barretta presente (42x4px),
+  trascinamento di 40px che rientra, di 160px che chiude, nessun errore JS. Anche dove la
+  sheet scorre il gesto parte correttamente dall'alto.
+
+#### 📐 Il crest a schermi strettissimi
+
+Dalla `0.78`: sotto i **360px** `ROCCOBOT PRESENTA` andava a capo mentre l'inglese `PRESENTS`
+stava su una riga, e l'intestazione cresceva di **17,9px** al cambio lingua. Era l'ultimo
+salto rimasto dopo il cambio di titolo, e **non veniva dal titolo**.
+
+- **Il tracking scende a `0.32em` e i margini dei fregi a `0.5em`, solo sotto la soglia**: a
+  320px la riga italiana rientrerebbe già da `0.42em`, ma a **300px** serve `0.34em`, e la
+  regola deve coprire anche quello. Sopra i 360px non cambia nulla.
+- ✅ Misurato: salto **0** da 300px a 1280px, con una riga sola in entrambe le lingue.
 
 ### ↕️ Le freccine di salto pagina stanno a FILO del bordo
 
