@@ -9,6 +9,7 @@ verità che invecchia: qui i rimandi si CALCOLANO.
 Uso: python3 .memo/scripts/refcheck.py [-v]
      python3 .memo/scripts/refcheck.py --text < testo   (solo i caratteri, da stdin)
      python3 .memo/scripts/refcheck.py --html PAGINA.html   (i caratteri del testo visibile)
+     python3 .memo/scripts/refcheck.py --fix FILE   (corregge gli accenti a lista chiusa)
      git diff --cached | python3 .memo/scripts/refcheck.py --diff   (accenti, righe aggiunte)
 Esce 1 se trova difetti, 0 se è tutto in ordine. Gli hook PreToolUse sui commit
 lo lanciano da sé: vedi .claude/settings.json nei due repo.
@@ -74,7 +75,7 @@ RULEFILES = [
 # file di regole. Mescolarli avrebbe indicizzato come 'sezione citabile' ogni titolo di un
 # README, cioè il contrario di quello che l'indice serve a dire.
 # ⚠️ Sono entrati il 2026-08-19, quando la bonifica di `mihon-aniyomi-ext` ha trovato 110
-# righe senza accenti e tre `E'`, cioè la forma che le regole vietano per nome. Non erano
+# righe senza accenti e tre `È`, cioè la forma che le regole vietano per nome. Non erano
 # sfuggite al controllo: erano fuori dal suo raggio, che si fermava a due repo, ed è la stessa
 # lezione degli snippet stantii ('un controllo che copre un repo non dice niente sull'altro').
 # Glob e non elenco, per la stessa ragione: un documento nuovo entra da sé.
@@ -144,7 +145,7 @@ ACCENTATE = {
     "modalita": "modalità", "specificita": "specificità", "luminosita": "luminosità",
     "opacita": "opacità", "tonalita": "tonalità", "profondita": "profondità",
     "pieta": "pietà",
-    # Aggiunte il 2026-08-02, dopo un `a se'` finito nel corpo di una PR: erano proprio le
+    # Aggiunte il 2026-08-02, dopo un `a sé` finito nel corpo di una PR: erano proprio le
     # parole che l'errore preferisce, e non c'erano. Le quattro corte (se, ne, si, la) hanno un
     # rischio di falso positivo che le altre non hanno, perché possono chiudere una citazione
     # ('rispondi sì): se un giorno il verificatore inciampa lì, si riscrive la frase, non si
@@ -165,7 +166,7 @@ ACCENTATE = {
 }
 # ⚠️ Il seguito si esprime per NEGAZIONE (non una lettera, non una cifra) e non con un elenco
 # chiuso di punteggiatura, com'era fino al 2026-08-17: quell'elenco non conteneva l'asterisco,
-# quindi `**Accessibilita'**:` passava indisturbato dentro il file più presidiato del sistema.
+# quindi `**Accessibilità**:` passava indisturbato dentro il file più presidiato del sistema.
 # Un elenco di caratteri ammessi dopo l'apostrofo è una seconda lista chiusa, con lo stesso
 # difetto della prima.
 RE_ACCENTATE = re.compile(r"\b(" + "|".join(ACCENTATE) + r")'(?![A-Za-zÀ-ÿ0-9])", re.I)
@@ -180,7 +181,7 @@ RE_ACCENTATE = re.compile(r"\b(" + "|".join(ACCENTATE) + r")'(?![A-Za-zÀ-ÿ0-9]
 # ⚠️⚠️ PERCHÉ NON SI ALLARGA LA LISTA CHE BLOCCA, che è la domanda naturale: perché le due
 # famiglie morfologiche sono INDISTINGUIBILI dai nomi femminili che finiscono uguale, e un
 # nome può chiudere una citazione. `lettera'` ha la stessa forma di `restera'`, `tastiera'`
-# di `continuera'`, `vita'` di `qualita'`. Un controllo che le bloccasse fermerebbe un
+# di `continuera'`, `vita'` di `qualità`. Un controllo che le bloccasse fermerebbe un
 # commit su `'principessa pastora'` o `'Abbreviazioni da tastiera'`, che sono testo corretto:
 # e un presidio che blocca il giusto viene disattivato, non corretto. Perciò le famiglie
 # AVVISANO e non bloccano, e il giudizio resta a chi legge la riga.
@@ -559,6 +560,55 @@ def main_html():
     return esito
 
 
+def main_fix():
+    """Modo `--fix FILE`: corregge in loco gli accenti scritti con l'apostrofo.
+
+    ⚠️ Tocca SOLO le parole di `ACCENTATE`, che è una lista chiusa di forme la cui grafia
+    con l'apostrofo **non esiste in italiano** (`è`, `perché`, `più`, `già`): là la
+    correzione è certa e non serve leggere la frase. Le due famiglie morfologiche (`-tà`,
+    `-rà`) restano fuori di proposito, perché sono indistinguibili da un nome che chiude una
+    citazione, e un fix automatico là rovinerebbe il testo: quelle si segnalano e basta.
+    Nasce il 2026-08-24, dopo il terzo artefatto di fila che le portava: il presidio le
+    fermava tutte, ma correggerle a mano a ogni giro è lavoro che una lista chiusa può fare.
+    """
+    percorsi = [a for a in sys.argv[1:] if not a.startswith("-")]
+    if not percorsi:
+        print("uso: refcheck.py --fix FILE [ALTRO]")
+        return 2
+    for p in percorsi:
+        f = Path(p)
+        if not f.exists():
+            print(f"!! file assente: {p}")
+            continue
+        testo = f.read_text(encoding="utf-8")
+        tot = 0
+        # ⚠️ Le ELISIONI vanno prima e a parte: dopo un apostrofo di elisione il
+        # lookbehind del pattern generale (qui sotto) non scatta, perché esclude
+        # l'apostrofo per non toccare le chiusure di citazione. Ma lì quella forma è
+        # sempre il verbo essere, quindi la correzione è certa. Trovate in un artefatto che
+        # il modo `--fix` aveva già ripulito: erano le due sole rimaste.
+        # ⚠⚠ Le stringhe si COSTRUISCONO invece di scriverle: un sorgente che le
+        # contenesse alla lettera verrebbe bloccato dal controllo sul diff, che non sa
+        # distinguere l'uso dalla citazione. È la stessa politica degli omografi, che il
+        # file nomina per codepoint.
+        AP = chr(39)
+        for pre in ("c", "C", "com", "Com", "dov", "Dov", "quand", "ch", "s"):
+            forma = pre + AP + "e" + AP
+            sost = pre + AP + "\u00e8"
+            testo, n = re.subn(re.escape(forma) + r"(?![A-Za-z\u00c0-\u00ff0-9])", sost, testo)
+            tot += n
+        for tronca, giusta in ACCENTATE.items():
+            for forma, sost in ((tronca, giusta),
+                                (tronca.capitalize(), giusta.capitalize()),
+                                (tronca.upper(), giusta.upper())):
+                pat = r"(?<![\w'])" + re.escape(forma) + r"'(?![A-Za-zÀ-ÿ0-9])"
+                testo, n = re.subn(pat, sost, testo)
+                tot += n
+        f.write_text(testo, encoding="utf-8")
+        print(f"fix: {f.name}, {tot} accenti corretti")
+    return 0
+
+
 def main_diff():
     """Modo `--diff`: legge un `git diff` da stdin e controlla le RIGHE AGGIUNTE, in OGNI file.
 
@@ -609,6 +659,8 @@ def main():
         return main_text()
     if "--html" in sys.argv:
         return main_html()
+    if "--fix" in sys.argv:
+        return main_fix()
     if "--diff" in sys.argv:
         return main_diff()
     present = [f for f in RULEFILES if f.exists()]
