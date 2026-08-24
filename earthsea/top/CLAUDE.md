@@ -1719,14 +1719,21 @@ card si allarghi. Spento di default, cioè la resa in vigore fin qui.
 
 #### 📍 Il segnaposto sale di 1px quando l'origine è IN LINEA
 
-Dalla `0.79`, misura dell'utente (*3 pixel apparenti* a DPR 3, cioè 1px CSS). Il pin è
-`1.05em` su un corpo di **17px**, quindi lo spostamento vale `0.059em`, scritto come
-`position:relative; top`.
+Il valore è cresciuto in **due passi**, entrambi dell'utente, e conviene sapere che sono di
+natura diversa: nella `0.79` **1px CSS** da una misura (*3 pixel apparenti* a DPR 3), nella
+`0.80` altri **`0.06em`** dati direttamente in em, cioè a occhio. Totale **`0.119em`**, che
+sul corpo del pin (17px) fa 2,02px. Si scrive con `position:relative; top`.
 
 ⚠️ **Vale SOLO sotto i 480px**, dove l'origine scende sotto il contenuto e si mette in riga
 col toponimo: nella colonna desktop il pin sta **sopra** la parola, e là lo stesso
-spostamento non correggerebbe niente. ✅ Misurato: lo scarto fra il centro del pin e il centro
-del testo passa da **1,05px a 0,05px** su mobile, e su desktop il `top` resta `auto`.
+spostamento non correggerebbe niente (l'utente lo ha confermato: *non avrebbe avuto senso
+spostare l'icona in verticale su desktop*).
+
+⚠️ **L'asse ottico qui NON è il centro geometrico**, ed è la ragione per cui il secondo passo
+è arrivato dopo il primo: portati i due centri a coincidere (scarto 0,05px), l'occhio vedeva
+il segnaposto ancora basso. Con la goccia del pin, che ha la massa in alto e la punta in
+basso, il baricentro percepito sta **sopra** il centro del rettangolo. ✅ Misurato dopo: il
+centro del pin sta ora **0,97px sopra** quello del testo, e su desktop il `top` resta `auto`.
 
 ### 🗃️ Il campo origine: si chiama così, e ha preso il posto di `paese`
 
