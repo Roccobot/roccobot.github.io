@@ -8,29 +8,28 @@
 > derogabili, lingua, git e go-live) vivono nel `CLAUDE.md` di **root**, che si carica
 > sempre: quello resta l'hub, e questo file non lo sostituisce.
 
-## ⚠️⚠️ Stato: SCHELETRO, e il dataset non è verificato
+## ⚠️⚠️ Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti
 
-Al 2026-08-21 il progetto è uno **scheletro funzionante** con **19 voci** che contengono
-**solo** quello che l'utente ha dichiarato a memoria (nome d'uso, vero nome, razza, genere)
-più l'**opera di prima apparizione** e i **badge** ricavati da Wikipedia. Nessuna descrizione, e le citazioni
-non ci saranno (vedi la sezione sui nomi non cliccabili).
+Dal 2026-08-23 (`0.52`) il dataset porta le **100 schede** dello Schedario compilate
+dall'utente (80 voci nuove, 20 aggiornate), sopra le voci già presenti: **120 voci** in
+tutto. Ogni scheda è passata da una **verifica col grep sugli epub** (un agente per lotto
+di dieci), che ha stabilito le metà inglesi e segnalato le divergenze. Nessuna descrizione,
+e le citazioni non ci saranno (vedi la sezione sui nomi non cliccabili).
 
-- **L'ordine è quello in cui l'utente ha passato i nomi**, non una classifica: le voci nuove
-  si accodano, e il riordino si fa dal Pannello quando lui deciderà le posizioni. ⚠️ Quindi
-  Sparviero è ultimo, e non vuol dire niente.
-- ⚠️ **`nome_en` ripete l'italiano su tutte le voci**, di proposito: le rese inglesi non sono
-  in scena. Tradurne una sola perché è nota (Sparviero -> Sparrowhawk) farebbe sembrare
-  attestate anche le altre, ed è il tipo di deriva che questo file esiste per fermare.
-
-- ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools` e dal **2026-08-21 non è
-  più un guscio**: porta le sette opere inglesi e le sei italiane, le edizioni coi traduttori,
-  le sigle bilingui, i nove Maestri di Roke, l'elenco dei portatori del terzo badge e i
-  **link alle fonti scaricabili**, verificati uno per uno.
-  - ⚠️ **Quindi ora si può e si deve verificare col grep sui testi**: prima 'niente a memoria'
-    era un divieto senza alternativa, adesso l'alternativa esiste.
-  - ⚠️ **Ma il dataset NON è stato riverificato sulle fonti**: le 19 voci vengono ancora da
-    quello che l'utente ha dichiarato a memoria e da Wikipedia. Avere il canone non riverifica
-    i dati da sé.
+- **L'ordine è quello in cui le voci sono entrate**, non una classifica: le voci nuove
+  si accodano, e il riordino si fa dal Pannello quando l'utente deciderà le posizioni.
+- ⚠️ **Le due metà si riempiono in modi diversi** (la sezione sulle due metà del dataset,
+  più sotto, dice come): la colonna italiana è **dello Schedario**,
+  cioè dell'utente, coi nomi Nord dove divergono da Mondadori; la metà inglese (`nome_en`,
+  `nomi_alternativi_en`, `appellativi_en`) è **attestata dalle fonti, non tradotta**.
+  Ⓘ La vecchia regola '`nome_en` ripete l'italiano' è decaduta con l'importazione: valeva
+  per lo scheletro, quando le rese inglesi non erano in scena.
+- ⚠️ **Le divergenze trovate dalla verifica NON sono state corrette d'ufficio**: dove lo
+  Schedario e le fonti dicono cose diverse resta il dato dell'utente, e la divergenza sta
+  nel brief finché lui non decide.
+- ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools`: opere, edizioni coi
+  traduttori, sigle bilingui, Maestri di Roke, elenchi dei portatori dei badge e **link
+  alle fonti scaricabili**. È da lì che si verifica, col grep e mai a memoria.
 - ⚠️ **Il dataset piccolo inganna**: una voce sbagliata qui pesa quanto dieci su un dataset
   da centinaia di righe, e i nomi veri di Terramare si ricordano con sicurezza ingannevole.
 
@@ -306,11 +305,11 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
     convenzione** e che il loro sesso è congettura (`rules/Earthsea.md`, § 'Il genere dei
     draghi'). Chi trovasse 'padre' e volesse riempire `genere` starebbe seguendo la
     convenzione, non un fatto.
-- ⚠️⚠️ **I tre draghi sono nati col dato INVERTITO come gli altri quattro**, cioè il nome in
-  `nome` e `vero_nome` vuoto. Non è la regola: è il malinteso che l'utente ha corretto il
-  2026-08-23, e la forma giusta è l'opposta. Quando li annotava *(vero nome)* diceva proprio
-  questo. Che cosa va raddrizzato, quando e con quali conseguenze sta in
-  § 'Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune'.
+- ⚠️⚠️ **I tre draghi erano nati col dato INVERTITO come gli altri quattro**, cioè il nome
+  in `nome` e `vero_nome` vuoto: era il malinteso che l'utente ha corretto il 2026-08-23
+  (quando li annotava *(vero nome)* diceva proprio questo), e la `0.52` li ha raddrizzati
+  tutti. Storia e conseguenze in
+  § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 
 ## 🏅 I tre badge e il genere
 
@@ -484,12 +483,17 @@ il disegno.
   la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
   spiegazione fra parentesi la sfonda e la seconda metà le finisce **sopra**, illeggibile.
   Misurato, non previsto. I tooltip delle card restano quelli interi di `ICON_LABEL`.
-- ⚠️ **`maestro` non ha ancora NESSUN portatore**, e non è un difetto: nessuno dei nove
-  Maestri di Roke è nel dataset. La riga di legenda resta viva perché il suo compagno
-  `arcimago` ne ha uno, e il 'filtro a risultati 0' guarda la riga, non il singolo badge.
-- **Chi li porta oggi**: solo **Sparviero**, con `signoredraghi` e `arcimago`, e su **una**
-  frase attestata (l'apertura di *Un mago di Terramare*: «nei suoi giorni mortali divenne
-  Signore dei Draghi e Arcimago»). Non si estendono a intuito.
+- ✅ **`maestro` ha i suoi portatori dalla `0.52`**: gli **otto** che le fonti attestano col
+  titolo di un Maestro di Roke accanto al nome, cioè Nemmerle e Azver (Schemi/Modelli),
+  Lontra (il primo Custode della Porta), Brand e Thorion (Evocatore), Deyala (Erborista),
+  Azzardo (Chiave dei Venti, *Gamble the Windkey* in *I venti di Terramare*) e
+  Kurremkarmerruk (Nomi, *the Master Namer... Kurremkarmerruk* già in *Un mago di
+  Terramare*). ⚠️ **Thorion porta `maestro` e NON `arcimago`**: fu Evocatore, mai eletto.
+  ⚠️ **Ard non lo porta**: 'Maestra di Heleth' non è un Maestro **di Roke**, e nemmeno
+  Ogion ('Maestro di Ged') o Elt: il badge marca i nove uffici della Scuola.
+- **Chi porta che cosa dalla `0.52`**: `arcimago` su Sparviero, Nemmerle e Gensher (i tre
+  del canone, § 'Gli Arcimaghi che le fonti nominano'); `signoredraghi` su Sparviero,
+  Erreth-Akbe, Morred e Pannocchia. Non si estendono a intuito.
 
 **Il criterio del `Signore dei Draghi`**, dettato dall'utente il 2026-08-23: *è un titolo che
 probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
@@ -503,11 +507,14 @@ probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
   nessun passo usa l'etichetta, e quel che c'è è la definizione del titolo applicata a lui
   («Morred ed Erreth-Akbe parlavano con i draghi»). L'elenco dell'utente regge, ma su una
   prova di grado diverso dalle altre tre.
-- **Pannocchia è Cob**, e nel dataset la voce non c'è ancora: quando nascerà, nasce col badge.
+- ✅ **Pannocchia è Cob**, ed è nel dataset dalla `0.52`, nato col badge come previsto.
 
-⚠️ **Il criterio della coppia di Roke NON è ancora fissato**: chi porta `Maestro` e chi
-`Arcimago` dipende dai nove Maestri (`rules/Earthsea.md` § 'I nove Maestri di Roke') e dalla
-successione degli Arcimaghi, che il dataset non ha ancora. Non si deduce a memoria.
+✅ **Il criterio della coppia di Roke è fissato dalla `0.52`**: `maestro` va a chi le fonti
+attestano con l'appellativo di uno dei nove uffici (`rules/Earthsea.md` § 'I nove Maestri
+di Roke') **accanto al nome**; `arcimago` ai tre che il canone nomina (§ 'Gli Arcimaghi che
+le fonti nominano'). Nemmerle li porta **entrambi** (Maestro dei Modelli prima, Arcimago
+poi). ⚠️ Nessuno dei due si deduce dalla scheda: la fonte è sempre una frase attestata o
+l'elenco del canone.
 
 **I disegni scelti** (utente, 2026-08-23): `A12` per il `Signore dei Draghi`, la corona con
 le corna chiare appoggiate sulle spalle; `H` per la coppia, i due anelli col punto sul cerchio
@@ -608,32 +615,29 @@ sono soltanto il caso in cui questo è sempre vero.
 - ⚠️ **Non confondere questo con la resa delle IBRIDE**: là il nome d'uso **c'è** (`Therru`),
   quindi le due righe ci sono entrambe. Il criterio è il campo, non la razza.
 
-#### ⚠️⚠️ Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune
+#### ⚠️⚠️ Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune
 
-Correzione dell'utente, 2026-08-23, su un malinteso che *va avanti da un po'*: **i draghi hanno
-SOLO il vero nome, ed è il nome comune a essere vuoto**. Sono sue parole, e la chiude così:
-*è una differenza sostanziale... è uno dei punti-chiave del dataset*.
+Correzione dell'utente, 2026-08-23, su un malinteso che *andava avanti da un po'*: **i draghi
+hanno SOLO il vero nome, ed è il nome comune a essere vuoto**. Sono sue parole, e la chiude
+così: *è una differenza sostanziale... è uno dei punti-chiave del dataset*.
 
-- **La regola sopra era già giusta come CONCETTO** e sbagliata come **dato**: la resa della
-  card fa la cosa corretta (il nome del drago sta in riga 1 in Cinzel maiuscolo), ma il valore
-  vive nel campo del **nome d'uso** e `vero_nome` resta vuoto. Cioè il dataset dice il
-  contrario di quello che la card mostra.
+✅ **Applicata nella `0.52`, con l'importazione dello Schedario**: i sei draghi puri
+(`Orm Embar`, `Kalessin`, `Yevaud`, `Bar Oth`, `Ammaud`, `Orm`) hanno `vero_nome` pieno e
+`nome`/`nome_en` **vuoti**.
+
 - **La forma giusta**: `vero_nome` **pieno** (`Kalessin`), `nome` e `nome_en` **vuoti**. Il
   vuoto non è una lacuna: è l'informazione che quel drago non ha nome d'uso.
-- ⚠️ **Alla `0.47` sono SETTE le voci da raddrizzare**, misurate: `Orm Embar`, `Kalessin`,
-  `Yevaud`, `Bar Oth`, `Ammaud`, `Orm` (draghi puri) e `Tehanu` (ibrida). Tutte hanno il nome
-  in `nome` e `vero_nome` vuoto.
-- ⚠️⚠️ **NON si raddrizza adesso**: l'utente ha chiesto di aspettare i personaggi dello
-  Schedario, che arrivano *a breve*, e di **controllare questo aspetto** quando ci sono.
-  Il motivo pratico è che quei dati arriveranno già nella forma giusta, e migrare due volte
-  costa il doppio.
-- **Che cosa toccherà nel motore**, così non si riparte dall'indagine: la prima riga di
-  `renderList` legge `nome`, quindi con `soloVero` deve leggere `vero_nome` (col ripiego su
-  `nome`, o le sette voci vecchie sparirebbero dal titolo). Da ricontrollare nello stesso giro:
-  il ripiego `p.nome_en || p.nome` della lingua inglese, l'ordinamento e la ricerca per nome,
-  l'esportazione, l'editor admin e la navigazione fra le card. ⚠️ `veroNomeNoto` **è già
-  pronto**: considera noto il vero nome di ogni drago anche col campo vuoto, quindi dopo la
-  migrazione quel ramo diventa superfluo ma non dannoso.
+- ⚠️ **Perché si è raddrizzato SOLO all'importazione**: l'utente aveva chiesto di aspettare
+  i personaggi dello Schedario, che arrivavano già nella forma giusta, per non migrare due
+  volte. Fino alla `0.51` il dataset faceva l'opposto (il nome in `nome`, `vero_nome` vuoto)
+  e la **card** rendeva comunque la cosa giusta, che è la ragione per cui il difetto era
+  passato inosservato a lungo.
+- **Nel motore la migrazione ha chiuso due reti**, tolte nella `0.52` perché col dato
+  raddrizzato erano rami morti: la clausola sul drago puro di `soloVero` (ora guarda solo il
+  campo vuoto) e il ramo drago di `veroNomeNoto`. `nomeDiRif` resta la fonte unica del nome
+  mostrato (card, Statistiche, ricerca admin, editor dei colori), e un drago reintrodotto
+  col nome nel campo sbagliato tornerebbe semplicemente a mostrare due righe: visibile,
+  non silenzioso.
 - ✅ **LE IBRIDE SONO FUORI da questa migrazione, e seguono la regola UMANA** (decisione
   dell'utente, 2026-08-23: *gli ibridi sono eccezioni e ragionano a sé: va benissimo se Tehanu
   e Orm Irian sono preceduti da Therru e Libellula: dopotutto le due sono ANCHE umane*).
@@ -1519,7 +1523,7 @@ chiama `nome d'uso EN`.
   - ✅ **`Orm Irian` NON è un'eccezione, ed è l'utente a chiuderla**: è un'IBRIDA, quindi segue
     la regola umana e il campo va riempito come per le altre otto. Il suo nome d'uso è
     `Libellula` / `Dragonfly`, e `Orm Irian` è il vero nome. Il perché sta in
-    § 'Il DATO è INVERTITO, e va raddrizzato: il campo vuoto è il nome comune'.
+    § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 - ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
   scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
 - ⚠️ **Il caso rovescio: una forma INGLESE fra i nomi alternativi ITALIANI è legittima, e non
@@ -1656,23 +1660,26 @@ niente `tabindex`, niente cursore a manina, niente colore al passaggio.
   **visualizzatori di immagini** per le mappe. Il loro guscio condiviso (`buildStdModal`) e le
   classi `.modal`, `.modal-body`, `.modal-close` sono di quelli, non della scheda.
 
-## 📖 Prima apparizione: `fonte_en`, e il ripiego vale nei due sensi
+## 📖 Prima apparizione: `fonte` e `fonte_en`, e il ripiego vale nei due sensi
 
 Ogni voce registra **l'opera dove il personaggio appare per la prima volta** (istruzione
-dell'utente, 2026-08-21), presa dalla parentesi della voce Wikipedia *List of Earthsea
-characters*. Si vede sulla card, nella riga che il motore chiama `.rank-title`.
+dell'utente, 2026-08-21), nel formato `Titolo (anno)` nelle due lingue (la sezione
+sul titolo tradotto e l'anno, qui sopra, dice da dove vengono titoli e anni). Si vede
+sulla card, nella riga che il motore chiama `.rank-title`.
 
-- I titoli sono **inglesi**, perché la fonte è inglese: stanno in `fonte_en`, e `fonte` resta
-  **vuoto** perché è il posto del titolo italiano, che nessuna fonte in scena attesta.
-  ⚠️ Per questo il ripiego è **bidirezionale** (`p.fonte || p.fonte_en` anche in italiano),
-  al contrario di tutti gli altri campi bilingui: senza, la vista italiana mostrerebbe una
-  riga vuota.
-- ⚠️ **Arren e Sparviero non hanno l'opera**, e non è una dimenticanza: in quella voce la
-  parentesi non c'è. Per ovvia che sia la risposta (*Il mago di Terramare*, *La spiaggia più
-  lontana*), dedurla è esattamente ciò che la regola vieta: la mette l'utente o una fonte.
-- ⚠️ **Wikipedia elenca le apparizioni, non la prima**: dove ne dà più di una si è preso il
-  **primo titolo elencato**. Quindi il campo va riletto quando il canone entra in scena
-  (Kalessin, per dire, è dato come *Tehanu*).
+- ⚠️ Il ripiego resta **bidirezionale** (`p.fonte || p.fonte_en` anche in italiano), al
+  contrario di tutti gli altri campi bilingui: è nato quando `fonte` era vuoto su tutte le
+  voci, e resta come rete per una voce che avesse una sola delle due metà.
+- ✅ **Arren e Sparviero hanno l'opera dallo Schedario** (`0.52`): fino ad allora il campo
+  era vuoto, perché la parentesi di Wikipedia mancava e dedurre l'opera era vietato. È
+  stato l'utente a fissarla (*La spiaggia più lontana*, *Un mago di Terramare*).
+- ⚠️ **Wikipedia elenca le apparizioni, non necessariamente la prima**, e i valori che
+  vengono dalla sua parentesi non sono tutti riverificati sul testo: dove il grep della
+  verifica ha trovato una divergenza fra il valore dichiarato e la prima opera che porta
+  il nome, la divergenza sta nel brief e decide l'utente. ⚠️ Un nome assente dall'opera
+  dichiarata non basta a dire che il valore sia sbagliato: un personaggio può comparire
+  senza nome, ed è la stessa distinzione del canone fra apparizione del personaggio e
+  prima comparsa del nome.
 
 ## 🔐 Il proxy admin è SUO, e la separazione è la salvaguardia
 
