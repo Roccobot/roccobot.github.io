@@ -1717,6 +1717,17 @@ card si allarghi. Spento di default, cioè la resa in vigore fin qui.
   Verificato col codice e non a occhio: la griglia resa su una card senza origine misura
   `54px 286px` anche a interruttore acceso.
 
+#### 📍 Il segnaposto sale di 1px quando l'origine è IN LINEA
+
+Dalla `0.79`, misura dell'utente (*3 pixel apparenti* a DPR 3, cioè 1px CSS). Il pin è
+`1.05em` su un corpo di **17px**, quindi lo spostamento vale `0.059em`, scritto come
+`position:relative; top`.
+
+⚠️ **Vale SOLO sotto i 480px**, dove l'origine scende sotto il contenuto e si mette in riga
+col toponimo: nella colonna desktop il pin sta **sopra** la parola, e là lo stesso
+spostamento non correggerebbe niente. ✅ Misurato: lo scarto fra il centro del pin e il centro
+del testo passa da **1,05px a 0,05px** su mobile, e su desktop il `top` resta `auto`.
+
 ### 🗃️ Il campo origine: si chiama così, e ha preso il posto di `paese`
 
 Dalla `0.45` il campo del dataset è **`origine`**, con lo stesso nome della voce omonima
