@@ -197,7 +197,25 @@ const PWA_FRAC = 0.44;
   }
 
   const h = 512 * PWA_FRAC, psc = h / bb.h, w = bb.w * psc;
-  const ptx = ((512 - w) / 2 - bb.x * psc).toFixed(2), pty = ((512 - h) / 2 - bb.y * psc).toFixed(2);
+  // ⚠️⚠️ IL CENTRAGGIO VERTICALE SEGUE IL CERCHIO, NON LA BBOX (2026-08-24, difetto visto
+  // dall'utente sul telefono: *il simbolo al centro dell'icona della webapp è troppo in
+  // basso, va spostato verso l'alto di 3,5px* a DPR 3). La causa è la stella che sporge
+  // in alto: la bbox la include, quindi centrando la bbox il CERCHIO - che è la figura
+  // che l'occhio legge come il simbolo - cade sotto il centro del riquadro.
+  // ⚠️ È lo stesso ragionamento già in vigore sul FAB, dove il divisore viene dal
+  // cerchio: la nota che diceva 'qui la bbox è quella giusta, al contrario del FAB'
+  // valeva per la SCALA (il glifo va a filo del riquadro, stella compresa) e non per la
+  // POSIZIONE, e su questa era sbagliata.
+  // ⚠️ Il cerchio si ricava dalla bbox invece di misurarlo a parte: il suo diametro È
+  // la larghezza totale (la stella non sporge di lato) e il suo fondo È il fondo della
+  // bbox (la stella sporge solo in alto). Verificato sui numeri del logo in vigore:
+  // 944,70 di larghezza e centro a (560,0 / 560,4) su una tavola di 1120, cioè il
+  // centro della tavola, che è dove l'utente ha centrato la grafica.
+  const pD = bb.w, pcx = bb.x + bb.w / 2, pcy = bb.y + bb.h - pD / 2;
+  const ptx = (256 - pcx * psc).toFixed(2), pty = (256 - pcy * psc).toFixed(2);
+  console.log('centro glifo: cerchio a (' + pcx.toFixed(1) + ',' + pcy.toFixed(1)
+    + ') di ' + pD.toFixed(1) + ', il segno sale di '
+    + (((bb.y + bb.h / 2) - pcy) * psc).toFixed(2) + 'px su 512 rispetto al centro bbox');
   const pwaSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">\n'
     + '<rect width="512" height="512" fill="' + PWA_BG + '"/>\n'
     + '<g transform="translate(' + ptx + ' ' + pty + ') scale(' + psc.toFixed(5) + ')">'

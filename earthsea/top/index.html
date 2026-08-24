@@ -526,7 +526,12 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
    ⚠️ Il contenitore della faccia dev'essere un `flow-root`, o il float sborda dal
    riquadro e - cosa peggiore - non entra nel calcolo dell'altezza, che è ciò su cui
    poggia tutto l'anti-jitter. */
-.rc-voce { float:right; margin-left:1.4em; font-weight:600; white-space:nowrap; }
+/* ⚠️ Dalla 0.69: PARENTESI e non trattino, e corpo un filo minore (istruzione
+   dell'utente, 2026-08-24). Il trattino iniziale a fine riga si leggeva come un segno
+   di elenco fuori posto; la parentesi chiude l'inciso senza aggiungere un segno.
+   ⚠️ Il corpo è `0.92em`, cioè relativo al testo della citazione e non un valore suo:
+   se un domani cambia il corpo della citazione, l'attribuzione lo segue. */
+.rc-voce { float:right; margin-left:1.4em; font-weight:600; white-space:nowrap; font-size:0.92em; }
 .rc-testo:not(.bil) { display:flow-root; }
 .rc-testo.bil > .bil-f, .rc-testo.bil > .bil-m { display:flow-root; }
 /* La riga di contesto: opera, capitolo e che cosa succede, nella SOLA lingua corrente.
@@ -612,7 +617,7 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
   letter-spacing:0.05em; line-height:1.2; text-align:center;
   overflow-wrap:break-word;
 }
-/* Il segno di LUOGO al posto della parola, quando `ORIG_PIN` è acceso: non va
+/* Il segno di LUOGO al posto della parola, quando `orig.pin` è acceso: non va
    tradotto e non prende posizione fra nascita e residenza, che è la ragione per cui
    l'utente lo ha proposto. `currentColor` lo lega alla tinta dell'etichetta. */
 .ro-pin { width:1.05em; height:1.05em; display:block; opacity:0.8; }
@@ -1182,10 +1187,16 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
   /* overscroll-behavior:contain: a fine corsa il gesto NON si incatena
      alla pagina sotto (su mobile scorreva la classifica dietro il pannello) */
   max-height:80vh; overflow-y:auto; overscroll-behavior:contain;
-  /* Fondo caldo con la SATURAZIONE DIMEZZATA (v13.98, richiesta dell'utente: 'può
-     restare un vago sentore di tinta gialla'): era rgba(42,41,36) = HSL 50deg 7.7%
-     15.3%, ora 3.85% di saturazione a luminosità identica. */
-  background:rgba(41,40,38,0.94); border:1px solid rgba(136,133,126,0.4); border-radius:14px;
+  /* ⚠️⚠️ FONDO NEUTRO, appena azzurro (0.69, istruzione dell'utente: *togli la dominante
+     giallognola dallo sfondo scuro: neutralizza su grigio o leggermente blu*). Il tono
+     caldo veniva da Arda ed era rimasto qui per copia: `rgba(42,41,36)`, cioè HSL 50deg,
+     poi ammorbidito a `rgba(41,40,38)` (40deg) nella v13.98 di quel sito.
+     ⚠️ La LUMINOSITÀ non si tocca, si sposta la sola tinta: 15,5% prima e dopo, con
+     tonalità 210 e saturazione 8%. Cambiare anche la luminosità avrebbe rifatto la
+     taratura del contrasto di tutto ciò che sta dentro il Pannello.
+     ⚠️ E il BORDO va con lui, o resta l'unico pezzo caldo a tradire la dominante: era
+     `rgba(136,133,126)` (42deg), ora la stessa tinta del fondo alla sua luminosità. */
+  background:rgba(36,40,43,0.94); border:1px solid rgba(121,131,141,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow:0 12px 48px rgba(0,0,0,0.5);
   opacity:0; visibility:hidden; transform:translateY(14px) scale(0.96); transform-origin:bottom left; transition:opacity 0.18s ease, transform 0.34s cubic-bezier(0.22,1,0.36,1), visibility 0.34s;
@@ -1283,7 +1294,7 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      la riga invece del comportamento, e alla seconda riga sarebbe stato falso. */
   #ctrl-panel .ctrl-row--wrap { align-items:flex-start; }
   #ctrl-panel .ctrl-row--wrap .ctrl-label > span { white-space:normal; }
-  #ctrl-panel .ctrl-section--vero, #ctrl-panel .ctrl-section--orig { margin:0 0 0.2rem; max-width:15rem; }
+  #ctrl-panel .ctrl-section--vero { margin:0 0 0.2rem; max-width:15rem; }
   /* ⚠️ Le righe di legenda hanno min-height, non height: le descrizioni dei
      badge possono ANDARE A CAPO (permesso dall'utente), e con l'altezza fissa
      la seconda riga sarebbe uscita dal riquadro. */
@@ -1324,7 +1335,6 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
   #ctrl-panel .ctrl-cardleg { margin-top:0.9rem; margin-bottom:0; }
   #ctrl-panel .ctrl-section--legend { margin-bottom:0; }
 }
-.ctrl-sheet-head { display:none; }
 /* Nota nomi (mobile) e barra inferiore (mobile): nascoste di default, mostrate
    solo nella bottom-sheet (vedi @media max-width:768px). */
 .ctrl-bottombar { display:none; }
@@ -1740,17 +1750,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
     animation:ctrl-sheet-close 0.5s cubic-bezier(0.16,1,0.3,1) forwards,
               ctrl-sheet-fade 0.18s ease 0.32s both;  /* both: tiene opacita 1 durante il delay (niente sfarfallio) */
   }
-  /* Testata sticky: solo la barretta di trascinamento (punto di presa per
-     chiudere la sheet). Sfondo opaco e margini negativi per coprire la
-     larghezza piena del pannello mentre il contenuto scorre sotto. */
-  .ctrl-sheet-head {
-    display:block; position:sticky; top:0; z-index:3; height:1.5rem;
-    margin:0 -1.2rem 0.4rem; background:rgba(42,41,36,0.98); pointer-events:none;
-    /* NIENTE border-radius proprio: la testata riempie l'intera fascia alta e
-       viene arrotondata dalla clip del pannello (overflow + border-radius). Il
-       raggio 18px 'suo' lasciava una scheggia di sfondo agli angoli che
-       spezzava la linea del bordo (glitch segnalato). */
-  }
   /* Categorie + legenda come UNICO blocco centrato (dalla v5.79): le due
      colonne si allineano a sinistra al bordo del blocco, così le checkbox delle
      categorie sono incolonnate con le icone della legenda. Niente più categorie
@@ -1790,8 +1789,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      width:0 + min-width:100% la fa riempire la larghezza del blocco senza
      dettarla (come le Categorie), così non allarga il blocco fit-content; il
      padding-left la incolonna con le icone della legenda. */
-  html[data-theme="light"] .ctrl-sheet-head { background:rgba(245,247,247,0.98); }
-  .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* l'interruttore tema desktop (in colonna) qui non serve: vive nella barra
      in basso */
   .ctrl-toolbar { display:none; }
@@ -1805,7 +1802,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    simmetria per gusto: sotto di lui c'è lo slot del tag, quindi quel margine è aria
    PRIMA di uno spazio già riservato, e si sommava al `margin-top` dello slot. Il
    desktop non è toccato: là `#ctrl-panel .ctrl-section--vero` vince per l'id. */
-.ctrl-section--vero, .ctrl-section--orig { margin-bottom:0.4rem; }
+.ctrl-section--vero { margin-bottom:0.4rem; }
   /* Anti-jitter del blocco al cambio lingua: la sezione Categorie è l'unico
      figlio di .ctrl-cols (oltre alla legenda, già riservata via leg-measure)
      la cui larghezza dipende dalla lingua. Se in una lingua le etichette
@@ -1827,7 +1824,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
     position:sticky; bottom:0; z-index:3;
     margin:1rem -1.2rem 0;
     padding:0.7rem 1.2rem calc(0.7rem + env(safe-area-inset-bottom,0px));
-    border-top:1px solid rgba(104,144,168,0.2); background:rgba(42,41,36,0.98);
+    border-top:1px solid rgba(104,144,168,0.2); background:rgba(36,39,42,0.98);
   }
   html[data-theme="light"] .ctrl-bottombar { background:rgba(245,247,247,0.98); }
   /* Versione leggibile in tema chiaro: blu piu scuro cosi il colore percepito
@@ -2288,7 +2285,24 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      quando va a capo sotto il nome (prima quasi lo toccava) senza toccare
      l'allineamento del caso in-linea (vertical-align:middle è indipendente
      dall'interlinea). Giova anche ai nomi su due righe. */
-  .rank-name { display:block; line-height:1.5; }
+  /* ⚠️⚠️ FLEX CON GLI ORDER, come su desktop (0.69). Era `display:block` coi due
+     contenitori inline-flex in coda, e la conseguenza la si vedeva solo quando lo
+     spazio finiva: le etichette, che nel DOM stanno DOPO le icone, andavano a capo da
+     sole e finivano sotto di esse, mentre il nome restava in linea con le icone. Il
+     difetto l'ha fotografato l'utente sulla card di Sparviero (2026-08-24), e non era
+     nuovo: la riserva di larghezza del nome della 0.67 l'ha solo reso più frequente.
+     ⚠️ Gli `order` mettono le ETICHETTE prima delle ICONE, come già fa il desktop,
+     quindi a spazio finito va a capo la coda (il gruppo delle icone, intero) e non un
+     elemento di mezzo. Misurato a 360px: le card con le etichette a capo passano da 5 a
+     0, e a testo ingrandito (393px con corpo 20) da 9 a 1.
+     ⚠️ I due contenitori restano `inline-flex` e NON diventano `display:contents`: là
+     vivono la loro spaziatura interna e la risalita ottica di -0.156em, che con
+     `contents` sparirebbero insieme alla scatola. Con `order` sul contenitore il gruppo
+     si sposta intero, che è anche la resa migliore. */
+  .rank-name { display:flex; align-items:center; flex-wrap:wrap; gap:0.32em; line-height:1.5; }
+  .rank-name > .rank-name-text { order:0; }
+  .rank-name > .rank-tipi { order:1; }
+  .rank-name > .rank-flags { order:2; }
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel è tutto
      maiuscolo e siede in alto nella line-box, perciò le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
@@ -2299,12 +2313,27 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      etichette a -1,98px, cioè BASSE, il contrario del desktop), e questo valore le
      riporta a -0,14px. ⚠️ I due punti di rottura hanno bisogno di due valori diversi:
      sopra i 480px il centraggio lo fa il flex da solo, qui no. */
-  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin-left:0; margin-right:0.4em; vertical-align:middle; transform:translateY(-0.156em); }
+  .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin:0; vertical-align:middle; transform:translateY(-0.156em); }
   .rank-name > .rank-flags:empty { display:none; }
   /* Gap nome->(icone o etichette) come margine di coda del nome: presente
      anche quando .rank-flags è vuoto (creature senza icone), e mai
      indentante quando le etichette vanno a capo. */
-  .rank-name > .rank-name-text { margin-right:0.32em; }
+  .rank-name > .rank-name-text { margin-right:0; }  /* il gap del flex ha preso il suo posto */
+  /* ⚠️⚠️ NUDGE OTTICO SU MOBILE, e i valori sono DIVERSI da quelli del desktop
+     (istruzione dell'utente, 2026-08-24, misurata da lui a DPR 3: le etichette vanno
+     **in basso** di 8px device sulle voci senza nome comune e di 3px su quelle col nome
+     comune, cioè 2,67 e 1,00 px CSS).
+     ⚠️ I suoi delta erano misurati sulla resa della 0.68, quando la riga era un blocco:
+     il passaggio a flex ha spostato tutto in alto di ~1,35px, quindi il valore applicato
+     qui NON è il suo delta ma quello che porta al suo TARGET. I conti, in px CSS
+     rispetto alla metà delle maiuscole: base 0.68 -1,47 (vero) e +0,84 (uso), target
+     +1,20 e +1,84, resa flex prima del nudge -2,82 e -1,78.
+     ⚠️ Come sul desktop, i due numeri di ogni gruppo sono lo STESSO spostamento in due em
+     diversi: l'etichetta è 0.62em del nome, l'icona 0.92em. */
+  .rank-name.name-vero > .rank-tipi > .type-badge { top:0.244em; }
+  .rank-name.name-vero > .rank-flags > * { top:0.168em; }
+  .rank-name:not(.name-vero) > .rank-tipi > .type-badge { top:0.377em; }
+  .rank-name:not(.name-vero) > .rank-flags > * { top:0.199em; }
   .rank-name > .rank-flags .status-icon { margin-left:0; }
   /* Genere: minimo stacco extra oltre al gap flex 0.28em (dalla v8.81: la v8.80
      0.3em risultava troppo distanziata). */
@@ -2326,8 +2355,7 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name > .rank-tipi { display:inline-flex; flex-wrap:wrap; align-items:center; gap:0.35em 0.4em; max-width:100%; vertical-align:middle; transform:translateY(-0.156em); }
   .rank-name > .rank-tipi:empty { display:none; }
   .rank-name > .rank-tipi .type-badge { margin-left:0; }
-  .rank-name.name-tight > .rank-flags { margin-left:0; margin-right:0.3em; }
-  .rank-name.name-tight > .rank-name-text { margin-right:0.24em; }
+  .rank-name.name-tight { gap:0.24em; }
   .rank-name.name-tight > .rank-tipi { gap:0.3em; }
   .modal-body { padding:1.8rem 1.2rem; }
   .modal-close { top:14px; right:14px; }
@@ -2452,7 +2480,16 @@ html[data-theme="light"] {
     --gold: #4f6266;
     --gold-bright: #2e4145;
     --gold-deep: #748a8e;
-    --name: #131e22;
+    /* ⚠️ Il NOME d'uso in tema chiaro NON è più il nero del testo (istruzione
+       dell'utente, 2026-08-24: *sono totalmente neri: falli di un grigio medio-scuro ma
+       ben distinto dal nero, troppo pesante*): era `#131e22`, cioè lo stesso
+       `--parchment` del corpo, e su una riga in EB Garamond a 700 pesava come un titolo
+       di giornale. ⚠️ Il grigio è **bluastro**, non neutro: sta fra `--parchment`
+       (#131e22) e `--parchment-dim` (#4b5a5e), quindi appartiene alla scala del tema
+       invece di essere un grigio a sé. Misurato: **7,40:1** sul fondo della card
+       (#e4e7ec) e 8,82:1 sul fondo pagina, cioè AA con margine anche se un domani il
+       nome scendesse di corpo. */
+    --name: #3a4a55;
   }
   /* Genealogia (.bp-b in .rank-desc): la riga descrizione ha opacity 0.72,
      che in tema chiaro fa scendere il color-mix pergamena+oro a ~4.36:1
@@ -2850,7 +2887,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.68</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.69</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2922,7 +2959,7 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // SEMINATA come copia della desktop (comportamento identico finché l'admin non
 // differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
 var ZOOM_LS_KEY = 'earthsea-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
-var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat']; // effetti regolabili
+var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat','orig','hint']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
 // SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Ci stanno i tre
@@ -2934,7 +2971,11 @@ var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat']; // e
 // tre i casi una variante mobile regolabile sarebbe una manopola che non muove
 // niente, ed è la ragione per cui la config diventa unica invece di restare
 // doppia con metà dei valori inerti.
-var FX_UNI = { spot:true, pat:true, vig:true };
+// ⚠️ `orig` sta qui per la ragione della trama: sotto i 480px la terza colonna della
+// card NON esiste (la griglia torna a due), quindi una variante mobile sarebbe una
+// manopola che non muove niente (istruzione dell'utente, 2026-08-24: *su mobile, se
+// sta sotto, quella parte dev'essere comunque nascosta*).
+var FX_UNI = { spot:true, pat:true, vig:true, orig:true, hint:true };
 // ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
 // dalla larghezza (v14.22, scelta dell'utente). `hov` è il fondo della card sotto
 // il puntatore: su touch l'effetto ESISTE. Misurato: il tap applica `:hover` e lo
@@ -3019,6 +3060,21 @@ var SITE_FLAGS_DEFAULT = {
   // sempre e un eventuale `area` residuo nei dati salvati è ignorato.
   pat:{ on:false, mot:'gorgo', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
+  // ⚠️⚠️ ORIGINE: è un effetto del Pannello di controllo e NON una preferenza del
+  // visitatore, ed è l'utente ad averlo corretto (2026-08-24: *devono stare nel Pannello
+  // di controllo, come avevo chiesto*). Nella 0.66-0.68 le due righe stavano nel Pannello
+  // dei filtri, col valore nel `localStorage`: era la lettura sbagliata della richiesta,
+  // perché qui la resa la decide chi amministra il sito e vale per tutti i visitatori.
+  //  • `on`   la colonna dell'origine esiste
+  //  • `pin`  il segno di luogo al posto della parola 'origine'/'origin'
+  //  • `slot` lo spazio riservato anche sulle voci senza luogo (9 su 120)
+  orig:{ on:true, pin:true, slot:false },
+  // ⚠️ Il 'dito che scorre' della bottom-sheet: SPENTO dalla 0.69 (istruzione
+  // dell'utente: *ci sta tutto fin da subito, perciò spegni l'animazione*), e resta
+  // riaccendibile dal Pannello di controllo, che è la seconda metà della richiesta.
+  // Non è stato tolto perché il giorno in cui il Pannello mobile tornerà più lungo del
+  // viewport servirà di nuovo, e la sua regia sa già misurare se c'è da scorrere.
+  hint:{ on:false },
   // press: quali parti incidere, name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
   // comportamento storico, dove l'ombra del Nome si ereditava sulle etichette.
@@ -5396,31 +5452,20 @@ function pruneBadgeFilter() {
 }
 
 // ── Origine: la colonna a destra della card ─────────────────────────────────────
-// ⚠️ `ORIG_PIN` sceglie fra la PAROLA ('origine'/'origin') e il SEGNO di luogo. È un
-// interruttore e non due rese affiancate perché la colonna ne ammette una sola: la
-// parola è la resa 'B' che l'utente ha scelto, il segno è la variante che ha chiesto
-// di vedere, e ha due vantaggi che ha enunciato lui (non va tradotto, e non prende
-// posizione fra origine per nascita e residenza).
-// ⚠️⚠️ Dalla 0.62 il SEGNO è il default e la scelta è del VISITATORE, con una riga nel
-// Pannello (istruzione dell'utente, 2026-08-24: prima *vai con il simbolo*, poi
-// *mettimi nel Pannello di Controllo un'opzione per passare al volo da testo a
-// simbolo*). Quindi non è più una costante da commutare nel sorgente.
-// ⚠️ La preferenza vive nel `localStorage`, come tema e zoom e AL CONTRARIO del filtro
-// 'solo vero nome', che sta in memoria per una ragione sua: quello nasconde delle voci,
-// e un filtro che sopravvive al ricaricamento senza dirlo fa credere che il dataset sia
-// più corto. Qui non si nasconde niente, cambia solo la resa di un'etichetta.
-var ORIG_PIN_LS_KEY = 'earthsea-orig-pin';
-var ORIG_PIN = LS.getItem(ORIG_PIN_LS_KEY) !== '0';
-// ⚠️ Il SECONDO interruttore dell'origine (2026-08-24, *non so decidere*): a colonna
-// riservata anche dove il luogo manca, le nove voci senza origine tengono lo spazio
-// vuoto invece di allargarsi. Spento di default, cioè la resa in vigore fin qui.
-// ⚠️ Costa qualcosa e va saputo prima di accenderlo: il blocco della citazione passa
-// da 571px a 433px, quattro card su cinque prendono una riga in più e la lista si
-// allunga di 193px (misure a 1280px coi font veri, 2026-08-24).
-// ⚠️ Su MOBILE non cambia niente in nessuno dei due stati, ed è voluto: sotto i 480px
-// `.rank-item.has-orig` torna a due colonne, quindi la terza non esiste comunque.
-var ORIG_SLOT_LS_KEY = 'earthsea-orig-slot';
-var ORIG_SLOT = LS.getItem(ORIG_SLOT_LS_KEY) === '1';
+// ⚠️⚠️ LE DUE SCELTE VIVONO NEI FLAG DI SITO (`orig` in `SITE_FLAGS`), governate dal
+// **Pannello di controllo** dell'admin, e valgono per TUTTI i visitatori. Sono la
+// parola contro il segno di luogo (`pin`) e lo spazio riservato dove il luogo manca
+// (`slot`); la riga stessa si può spegnere (`on`) e allora la colonna non c'è.
+// ⚠️ Nella 0.66-0.68 stavano nel Pannello dei FILTRI, come preferenza del visitatore
+// nel `localStorage`: era la lettura sbagliata di *mettimi nel Pannello di Controllo
+// un'opzione*, e l'utente l'ha corretta (2026-08-24: *devono stare nel Pannello di
+// controllo, come avevo chiesto: sono riservati a chi ha le credenziali da admin*).
+// Le due chiavi `earthsea-orig-pin` e `earthsea-orig-slot` non si usano più: restano
+// nel `localStorage` di chi le ha toccate e non fanno danno, perché nessuno le legge.
+// ⚠️ Il costo di `slot`, da conoscere prima di accenderlo: il blocco della citazione
+// passa da 571px a 433px, quattro card su cinque prendono una riga in più e la lista
+// si allunga di 193px (misure a 1280px coi font veri, 2026-08-24).
+function origCfg(){ return fxCfg('orig'); }
 // Il segno di luogo, disegnato qui e non in un file: è un glifo di 4 comandi, e un
 // `img` in più costerebbe una richiesta e un 404 possibile (vedi la nota delle icone
 // badge in CLAUDE.md). ⚠️ Niente `innerHTML` altrove: qui il markup è una costante
@@ -5577,7 +5622,7 @@ function citazHtml(p){
   var vit = p.citazione_voce || '', ven = p.citazione_voce_en || '';
   var fit = p.citazione_fonte || '', fen = p.citazione_fonte_en || '';
   function faccia(t, v){
-    return escapeHtml(t) + (v ? '<b class="rc-voce">- ' + escapeHtml(v) + '</b>' : '');
+    return escapeHtml(t) + (v ? '<b class="rc-voce">(' + escapeHtml(v) + ')</b>' : '');
   }
   return '<span class="rank-citaz">' +
     bilingue('rc-testo', faccia(it, vit), faccia(en, ven), true) +
@@ -5585,9 +5630,14 @@ function citazHtml(p){
     '</span>';
 }
 function origHtml(p){
+  var c = origCfg();
+  // ⚠️ `on` spento = la colonna non esiste per nessuno, nemmeno dove il luogo c'è: è
+  // l'interruttore della riga nel Pannello di controllo, e va guardato QUI e non solo
+  // nel render, o il dato tornerebbe a comparire dalla seconda strada.
+  if (!c.on) return '';
   var v = origineDi(p);
   if (!v) return '';
-  var et = ORIG_PIN ? ORIG_PIN_SVG
+  var et = c.pin ? ORIG_PIN_SVG
     : '<span class="ro-lab">' + (currentLang === 'it' ? 'origine' : 'origin') + '</span>';
   return '<span class="rank-orig">' + et + '<span class="ro-val">' + escapeHtml(v) + '</span></span>';
 }
@@ -5764,13 +5814,13 @@ function renderList() {
     var rigaNome = rigaNomeHtml(nome, nomeAltro, soloVero, statusStr, genereSym, tipoStr);
     // Origine: la terza colonna esiste solo dove il dato c'è (vedi il CSS di
     // `.rank-orig`), e la classe è ciò che la apre.
-    // ⚠️ Con `ORIG_SLOT` acceso la classe va anche sulle NOVE voci senza origine, che
+    // ⚠️ Con `slot` acceso la classe va anche sulle NOVE voci senza origine, che
     // così tengono la colonna riservata e VUOTA. Il filetto resta assente per
     // costruzione, perché lo porta `.rank-orig` e quel contenitore non si emette:
     // riservare lo spazio e disegnare un separatore sono due scelte diverse, e
     // l'utente ha chiesto la prima senza la seconda.
     var orig = origHtml(p);
-    if (orig || ORIG_SLOT) classes += ' has-orig';
+    if (orig || (origCfg().on && origCfg().slot)) classes += ' has-orig';
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
@@ -6478,7 +6528,9 @@ var CTRL_I18N = {
 function controlPanelHTML() {
   var T = CTRL_I18N[currentLang], CL = CAT_LABEL[currentLang], IL = ICON_LABEL[currentLang];
   var CLo = CAT_LABEL[currentLang === 'it' ? 'en' : 'it']; // etichette nell'altra lingua (segnaposto di larghezza)
-  var h = '<div class="ctrl-sheet-head"><div class="ctrl-sheet-grab"></div></div>';
+  // ⚠️ Niente barretta di presa: era l'indicatore del trascinamento, uscito nella 0.69
+  // insieme al gesto. Un appiglio che non appiglia niente promette un'azione che non c'è.
+  var h = '';
   // Toggle tema (sole/luna): non persistente
   var isLight = document.documentElement.getAttribute('data-theme') === 'light';
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
@@ -6574,42 +6626,15 @@ function controlPanelHTML() {
   // ⚠️ Oggi non esclude nessuna delle 19 voci, perché ognuna ha un vero nome noto (o è
   // un drago, il cui nome È il vero nome): serve al dataset che verrà, e la sua utilità
   // si vedrà quando entreranno le voci senza.
-  var vnLbl = currentLang === 'it' ? 'Mostra solo i personaggi di cui è noto il vero nome'
-                                   : 'Show only characters whose true name is known';
+  // ⚠️ Etichetta BREVE dalla 0.69 (istruzione dell'utente: *scrivi per brevità 'Solo veri
+  // nomi noti'*): la forma lunga prendeva due righe nella colonna del Pannello.
+  var vnLbl = currentLang === 'it' ? 'Solo veri nomi noti'
+                                   : 'Known true names only';
   destra += '<div class="ctrl-section ctrl-section--vero">'
      + '<label class="ctrl-row ctrl-row--wrap" title="' + vnLbl + '">'
      +   '<input type="checkbox" id="ctrl-solovero"' + (soloVeroNome ? ' checked' : '') + '>'
      +   '<span class="ctrl-chk"></span>'
      +   '<span class="ctrl-label"><span class="ctrl-label-face">' + vnLbl + '</span></span>'
-     + '</label></div>';
-  // Resa dell'ORIGINE nella card: segno di luogo (default) oppure la parola.
-  // ⚠️ Non è un filtro, è una preferenza di resa, e sta comunque qui perché è l'unico
-  // posto del Pannello dove vivono le righe con interruttore. La sua differenza dal
-  // filtro sopra si vede nel comportamento: si ricorda fra una visita e l'altra
-  // (`ORIG_PIN_LS_KEY`), mentre `soloVeroNome` no, e la ragione sta là.
-  var opLbl = currentLang === 'it' ? 'Segno di luogo al posto della parola \'origine\''
-                                   : 'Place mark instead of the word \'origin\'';
-  var opAlt = currentLang === 'it' ? 'Place mark instead of the word \'origin\''
-                                   : 'Segno di luogo al posto della parola \'origine\'';
-  // Seconda riga: lo spazio della colonna riservato anche dove il luogo manca. Sta
-  // nella STESSA sezione della prima perché parlano della stessa colonna, e due
-  // sezioni separate avrebbero aperto fra loro il vuoto del ritmo `.ctrl-section`.
-  var osLbl = currentLang === 'it' ? 'Spazio riservato anche senza il luogo'
-                                   : 'Keep the space where the place is missing';
-  var osAlt = currentLang === 'it' ? 'Keep the space where the place is missing'
-                                   : 'Spazio riservato anche senza il luogo';
-  destra += '<div class="ctrl-section ctrl-section--orig">'
-     + '<label class="ctrl-row ctrl-row--wrap" title="' + opLbl + '">'
-     +   '<input type="checkbox" id="ctrl-origpin"' + (ORIG_PIN ? ' checked' : '') + '>'
-     +   '<span class="ctrl-chk"></span>'
-     +   '<span class="ctrl-label"><span class="ctrl-label-face">' + opLbl + '</span>'
-     +     '<span class="ctrl-label-alt" aria-hidden="true">' + opAlt + '</span></span>'
-     + '</label>'
-     + '<label class="ctrl-row ctrl-row--wrap" title="' + osLbl + '">'
-     +   '<input type="checkbox" id="ctrl-origslot"' + (ORIG_SLOT ? ' checked' : '') + '>'
-     +   '<span class="ctrl-chk"></span>'
-     +   '<span class="ctrl-label"><span class="ctrl-label-face">' + osLbl + '</span>'
-     +     '<span class="ctrl-label-alt" aria-hidden="true">' + osAlt + '</span></span>'
      + '</label></div>';
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a sinistra).
   // Il click azzera tutti i badge.
@@ -6863,22 +6888,6 @@ function wireControlPanel() {
   });
   var svn = panel.querySelector('#ctrl-solovero');
   if (svn) svn.addEventListener('change', function(){ soloVeroNome = svn.checked; applyFilter(); });
-  // Resa dell'origine: il segno oppure la parola. ⚠️ Passa da `applyFilter` come le
-  // altre righe e non da un `renderList` diretto: quello è il choke point che
-  // ridisegna la lista e riallinea quello che dal render dipende (numeri, contatore,
-  // trama), e saltarlo lascerebbe fuori un pezzo senza dare errore.
-  var opn = panel.querySelector('#ctrl-origpin');
-  if (opn) opn.addEventListener('change', function(){
-    ORIG_PIN = opn.checked;
-    LS.setItem(ORIG_PIN_LS_KEY, ORIG_PIN ? '1' : '0');
-    applyFilter();
-  });
-  var osl = panel.querySelector('#ctrl-origslot');
-  if (osl) osl.addEventListener('change', function(){
-    ORIG_SLOT = osl.checked;
-    LS.setItem(ORIG_SLOT_LS_KEY, ORIG_SLOT ? '1' : '0');
-    applyFilter();
-  });
   // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).
   // Guard 'risultati 0' (rete di sicurezza oltre alla disabilitazione visiva):
   // un toggle che svuoterebbe la lista NON viene applicato (nessun effetto).
@@ -7306,7 +7315,7 @@ function showInfoNote() {
 // L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
 // pagina: flag in memoria (si azzera solo ricaricando), niente localStorage.
 var scrollHintPlayed = false;
-function toggleControlPanel(skipSheetAnim) {
+function toggleControlPanel() {
   var panel = document.getElementById('ctrl-panel'), bd = document.getElementById('ctrl-backdrop'),
       fab = document.getElementById('ctrl-fab');
   var open = panel.classList.toggle('open');
@@ -7319,16 +7328,17 @@ function toggleControlPanel(skipSheetAnim) {
   // chiusura (da tastiera servivano centinaia di Tab per raggiungerlo).
   if (open) setTimeout(function(){ panel.focus(); }, 60);
   else if (fab) fab.focus();
-  // Chiusura morbida del Pannello (solo mobile, animazione .closing). Saltata se
-  // skipSheetAnim===true (il drag handler anima da sé); l'apertura usa la transition.
+  // Chiusura morbida del Pannello (solo mobile, animazione .closing); l'apertura usa
+  // la transition. ⚠️ Il parametro `skipSheetAnim` è uscito con il drag (0.69): serviva
+  // al gesto, che animava da sé, e senza il gesto non ha più chiamanti.
   if (open) { panel.classList.remove('closing'); }
-  else if (skipSheetAnim !== true) { panel.classList.add('closing'); }  // desktop e mobile (CSS diverso per viewport)
+  else { panel.classList.add('closing'); }  // desktop e mobile (CSS diverso per viewport)
   // Solo mobile: alla PRIMA apertura del Pannello dopo il caricamento pagina, e
   // solo se c'è da scorrere, parte una volta l'animazione 'dito che scorre' (poi
   // mai più, finché non si ricarica). Ritardo breve per partire a slide-up quasi
   // concluso.
   var hint = document.getElementById('ctrl-scroll-hint');
-  if (open && hint && !scrollHintPlayed && window.matchMedia('(max-width:768px)').matches) {
+  if (open && hint && flagOn('hint') && !scrollHintPlayed && window.matchMedia('(max-width:768px)').matches) {
     scrollHintPlayed = true;
     setTimeout(function(){
       if (!panel.classList.contains('open')) return;
@@ -7491,47 +7501,13 @@ function buildControlPanel() {
   scrollHint.setAttribute('aria-hidden', 'true');
   scrollHint.innerHTML = '<span class="csh-tail"></span><span class="csh-dot"></span>';
   document.body.appendChild(scrollHint);
-  // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet è
-  // già in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
-  // punto la segue e, oltre la soglia, la chiude; sotto soglia rientra. Se non
-  // si è in cima, il gesto scorre normalmente il contenuto. La barretta in
-  // alto resta solo come indicatore. Attaccato una volta sola (il pannello
-  // persiste; si rigenera solo l'innerHTML).
-  (function(){
-    var startY = 0, dy = 0, dragging = false, atTop = false;
-    panel.addEventListener('touchstart', function(e){
-      if (e.touches.length !== 1) return;
-      if (!window.matchMedia('(max-width:768px)').matches) return;
-      startY = e.touches[0].clientY; dy = 0; dragging = false;
-      atTop = panel.scrollTop <= 0;
-    }, { passive: true });
-    panel.addEventListener('touchmove', function(e){
-      if (e.touches.length !== 1) return;
-      dy = e.touches[0].clientY - startY;
-      if (dragging || (atTop && dy > 0)) {
-        dragging = true;
-        panel.style.transition = 'none';
-        panel.style.transform = 'translateY(' + (dy > 0 ? dy : 0) + 'px)';
-        if (e.cancelable) e.preventDefault();
-      }
-    }, { passive: false });
-    function endDrag(){
-      if (!dragging) return;
-      dragging = false;
-      if (dy > 90) {
-        panel.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
-        panel.style.transform = 'translateY(100%)';
-        panel.style.opacity = '0';
-        setTimeout(function(){ toggleControlPanel(true); panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = ''; }, 210);
-      } else {
-        panel.style.transition = 'transform 0.2s ease';
-        panel.style.transform = 'translateY(0)';
-        setTimeout(function(){ panel.style.transition = ''; panel.style.transform = ''; }, 210);
-      }
-    }
-    panel.addEventListener('touchend', endDrag, { passive: true });
-    panel.addEventListener('touchcancel', endDrag, { passive: true });
-  })();
+  // ⚠️⚠️ IL TRASCINAMENTO PER CHIUDERE È USCITO nella 0.69 (istruzione dell'utente: *il
+  // pannello mobile è abbastanza breve: puoi abbassarlo e fare in modo che non sia
+  // trascinabile*). Con tutto il contenuto in vista il gesto non serviva più, e col
+  // gesto è uscita la barretta di presa in cima, che ne era l'indicatore: sono ~30px
+  // di altezza in meno, cioè la parte di 'abbassarlo'.
+  // ⚠️ La sheet resta chiudibile in TRE modi, e nessuno dipende dal gesto: il tasto
+  // Chiudi della barra in basso, il velo dietro e il tasto Esc.
   refreshControlPanel();
 }
 
@@ -8726,7 +8702,15 @@ var SITE_FLAG_ITEMS = [
   // di colonna (320px in XL, font reale), un margine troppo sottile per fidarsi.
   // `noMob` perché l'effetto è desktop-only, come il riflettore ma per un'altra
   // ragione: là manca il puntatore, qui manca lo sfondo su cui vedere la trama.
-  { k:'pat', it:'Trama', en:'Pattern', cfg:true, noMob:true }
+  { k:'pat', it:'Trama', en:'Pattern', cfg:true, noMob:true },
+  // ⚠️ `noMob` come la trama, e per una ragione affine: sotto i 480px la colonna
+  // dell'origine non esiste, quindi la variante mobile non muoverebbe nulla.
+  { k:'orig', it:'Origine', en:'Origin', cfg:true, noMob:true },
+  // ⚠️ È l'unico effetto SOLO MOBILE, e la sua voce sta comunque nella tab Desktop: la
+  // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
+  // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
+  // trama, che sono desktop-only e stanno lì per la stessa ragione strutturale.
+  { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -8882,8 +8866,8 @@ var FX_KNOBS = {
   pat: [
     { p:'on', t:'bool', it:'Attiva', en:'Enable' },
     { p:'mot', t:'sel', dep:'on', it:'Motivo', en:'Motif', opts:fxSelOpts('pat', 'mot'),
-      nit:'I primi otto sono di Terramare: marea, correnti, risacca, mare, schiuma, sartiame, rose dei venti, maglia di scaglie. Gli altri sei vengono da Arda.',
-      nen:'The first eight are of Earthsea: tide, currents, surf, sea, foam, rigging, wind roses, scale mail. The other six come from Arda.' },
+      nit:'I primi otto sono di Terramare: marea, correnti, risacca, mare, schiuma, sartiame, rose dei venti, maglia di scaglie. Gli altri tre vengono da Arda.',
+      nen:'The first eight are of Earthsea: tide, currents, surf, sea, foam, rigging, wind roses, scale mail. The other three come from Arda.' },
     { p:'fade', t:'num', step:10, unit:'px', dep:'on', it:'Sfumatura', en:'Fade',
       nit:'Quanto la trama si dissolve prima di incontrare la colonna delle schede e la testata, che restano sempre sgombre.',
       nen:'How far the pattern fades out before it meets the card column and the header, which always stay clear.' },
@@ -8894,6 +8878,19 @@ var FX_KNOBS = {
     { p:'sc', t:'num', step:0.05, dep:'on', it:'Dimensione', en:'Size',
       nit:'Quanto è grande il motivo. Valori alti lo rendono più rado.',
       nen:'How large the motif is. Higher values make it sparser.' }
+  ],
+  // ⚠️ L'origine non ha manopole numeriche: sono due scelte di RESA, e stanno qui
+  // perché valgono per tutti i visitatori (vedi il default di `orig`).
+  orig: [
+    { p:'on', t:'bool', it:'Attiva', en:'Enable',
+      nit:'La colonna con il luogo d\'origine, a destra della scheda. Sotto i 480px scende in linea sotto il contenuto, senza filetto.',
+      nen:'The column with the place of origin, to the right of the card. Below 480px it drops in line under the content, with no rule.' },
+    { p:'pin', t:'bool', dep:'on', it:'Segno di luogo', en:'Place mark',
+      nit:'Il segnaposto della mappa al posto della parola \'origine\': non va tradotto e non prende posizione fra nascita e residenza.',
+      nen:'The map pin instead of the word \'origin\': it needs no translation and takes no side between birth and residence.' },
+    { p:'slot', t:'bool', dep:'on', it:'Spazio riservato', en:'Reserved space',
+      nit:'Tiene la colonna anche sulle nove voci senza luogo, invece di lasciare che la scheda si allarghi. Costa una riga in piu\' a quattro citazioni.',
+      nen:'Keeps the column on the nine entries with no place, instead of letting the card widen. It costs one extra line to four quotes.' }
   ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
