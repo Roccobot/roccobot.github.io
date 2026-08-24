@@ -1324,6 +1324,13 @@ visualizzatore già esistente. Prima erano due segnaposto che puntavano a file i
   - **Il collegamento del tasto gira su `querySelectorAll`**, quindi zero occorrenze non
     dànno errore e `wireControlPanel` non va toccato. Verificato: in italiano trova **2**
     tasti (desktop e mobile), in inglese **0**.
+  - ⚠️⚠️ **Nel footer si nasconde la RIGA INTERA, non il bottone** (difetto visto dall'utente
+    il 2026-08-24, con lo screenshot della pagina inglese): il paragrafo `#footer-links` porta
+    un **✦ per lato**, quindi col solo bottone `hidden` restavano due stelline sospese che
+    promettevano un contenuto inesistente. ⚠️ E i punti che lo nascondono sono **due** (l'avvio
+    e `setLang`): stanno dietro `setResLinkHidden`, o il difetto torna dalla metà non
+    corretta, che è esattamente com'era nato. Misurato: in inglese il paragrafo rende **0px**
+    di altezza, in italiano 32.
   - ⚠️ **I permalink delle mappe restano validi anche in inglese** (`SHARE_ROUTES` si ricava
     da `RES_MAPS`), e non è una dimenticanza: un link condiviso deve aprire quello che
     promette, mentre il menu è un'offerta e in inglese non c'è nulla da offrire.
@@ -1378,6 +1385,30 @@ applica dove non c'è un puntatore fine.
     **inglese**, quindi cercare 'Alone sfumato' dava `false` anche dove la riga c'era. Un test
     che cerca le etichette della UI **deve** forzare `locale: 'it-IT'`, o conferma il contrario
     di quello che sta misurando.
+
+## 🌊 Le trame di sfondo: otto di Terramare e tre di Arda
+
+Le trame dell'effetto omonimo del Pannello sono **undici** dalla `0.62`: le **otto** disegnate
+per Terramare nella `0.59` (Marea, Correnti, Risacca, Onde, Gorghi, Sartiame, Rosa dei venti,
+Maglia) e le **tre** ereditate da 'I Grandi di Arda' che l'utente ha scelto di tenere
+(2026-08-24: *tieni `Vessillo`, `Campo di Stelle` e `Losanghe`*). In vigore sul sito è
+**`marea`**, in `siteFlags` di `dati.js`.
+
+- **Le altre tre di Arda sono USCITE col loro disegno** (`stars`, `foglia`, `weave`), e con
+  loro `patStar`, che non aveva più chiamanti. Non sono un magazzino da cui ripescare: la
+  scelta è stata fatta, e la storia sta in git.
+- ⚠️⚠️ **Il vincolo del tile è che il disegno sia una RETE CONNESSA, non una figura
+  ripetuta**: una figura affiancata a sé stessa legge come 'scaglie di pesce', ed è un difetto
+  misurato in Arda. Gli elementi sui bordi si duplicano a coordinate opposte, o la cucitura si
+  vede. La sola deroga dichiarata è `risacca`, dove le scaglie d'onda sono ciò che l'utente ha
+  chiesto e gli archi si compenetrano.
+- ⚠️ **Nelle onde conta il RAPPORTO fra ampiezza e semiperiodo, non l'ampiezza**: 25 su 50
+  leggeva come un reticolo geometrico, 9 su 50 legge come acqua. È il numero da guardare
+  quando una trama nuova 'non sembra quello che è'.
+- ⚠️ **Un motivo SCONOSCIUTO ripiega su `marea`**, disegno **e** tile insieme (`patSvg` si
+  richiama). Prima il tile ripiegava su `marea` e il disegno sull'ultimo `else`, che era
+  `stars`: con una trama ritirata (e dalla `0.62` sono tre) si sarebbe visto un disegno nel
+  tile di un altro, **senza nessun errore**.
 
 ## 🎨 La tavolozza applicata, e i punti dove era CABLATA
 
@@ -1480,6 +1511,31 @@ campo del dataset e per lo Schedario che lo alimenta.
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
   di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
 
+### 📍 Segno o parola nella colonna origine, e lo sceglie chi guarda
+
+Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) oppure la
+**parola** 'origine'/'origin', e una riga del Pannello commuta le due rese senza ricaricare.
+
+- **Le due istruzioni dell'utente, in quest'ordine** (2026-08-24): prima *vai con il simbolo
+  per l'origine, va già bene quello che mi hai proposto*, poi *mettimi nel Pannello di
+  Controllo un'opzione per passare al volo da testo a simbolo*. La seconda **non annulla** la
+  prima: il segno resta il default, e la parola è l'alternativa.
+- **I due vantaggi del segno li ha enunciati lui**: non va tradotto, e non prende posizione
+  fra origine per nascita e residenza, che è la dualità di § 'Origine: significa NASCITA, e
+  la residenza è solo un ripiego'.
+- ⚠️ **La preferenza vive nel `localStorage`** (`earthsea-orig-pin`), come tema e zoom, e
+  **al contrario del filtro 'solo vero nome'**, che sta in memoria: quello nasconde delle
+  voci, e sopravvivere al ricaricamento senza dirlo farebbe credere il dataset più corto (la
+  ragione sta in § 'Il filtro solo chi ha un vero nome noto'). Qui non si nasconde niente,
+  cambia la resa di un'etichetta, quindi ricordarla è quello che ci si aspetta.
+- ⚠️ **La riga del Pannello porta una FRASE, e la classe che lo dice è `.ctrl-row--wrap`**:
+  si chiamava `--vero`, cioè col nome del filtro che l'aveva inaugurata, e con la seconda
+  riga quel nome mentiva. Nella stessa passata il capo a riga è passato dalla sola
+  `.ctrl-label-face` a **tutte** le facce: la gemella anti-jitter `nowrap` misura la frase su
+  una riga sola e allarga il Pannello di tutta quella lunghezza, senza vedersi.
+- **Misurato coi font veri**: il Pannello resta **313x630** prima e dopo il click, e la
+  commutazione cambia 111 etichette (`.ro-pin` -> `.ro-lab`) senza errori.
+
 ### 🗃️ Il campo origine: si chiama così, e ha preso il posto di `paese`
 
 Dalla `0.45` il campo del dataset è **`origine`**, con lo stesso nome della voce omonima
@@ -1498,9 +1554,18 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
   serializza ogni voce con `JSON.stringify(d)` e valida il solo `nome`, e l'editor admin lavora
   su una copia profonda dell'array, quindi **le chiavi passano intatte** e nessuna lista di
   campi va tenuta allineata. ⚠️ Verificato prima di rinominare, non dopo.
-- ⚠️ **Il campo non è ancora RESO in pagina**, e resta la scelta editoriale aperta di come
-  (etichette per voce, filtro, riga della card): il dato c'è e aspetta quella decisione. Al
-  2026-08-23 lo usa la sola voce di **Sege** (`Havnor`).
+- ✅ **Il campo è RESO in pagina dalla `0.59`**, in una terza colonna a destra della card
+  (resa 'B', scelta dell'utente fra i mockup), e dalla `0.62` lo portano **111 voci su
+  120**. La nota che lo dava non reso, con la scelta editoriale ancora aperta, valeva fino
+  al 2026-08-23, quando la sola voce di **Sege** aveva il dato.
+  - **La colonna ha larghezza FISSA** (`--orig-col`), e il perché sta nel commento di
+    `.rank-orig` in `index.html`: con `auto` il filetto zigzaga da una card all'altra e si
+    perde l'unica ragione della resa 'B', cioè trovare l'origine sempre nello stesso punto.
+  - ⚠️ **Se l'origine manca non compare NULLA, nemmeno il filetto** (istruzione
+    dell'utente): la card torna a due colonne (`.rank-item.has-orig` c'è solo dove serve) e
+    il resto usa lo spazio. Un'etichetta vuota col divisorio sarebbe il difetto opposto.
+  - ✅ **Parola o segno lo sceglie il VISITATORE, dalla `0.62`**: vedi § 'Segno o parola
+    nella colonna origine, e lo sceglie chi guarda'.
 - Ⓘ **In `arda/top/dati.js` `paese` c'è ancora**, `gb` su 360 voci: toglierlo là è una modifica
   al flusso dati di 'I Grandi di Arda', che è fra i casi **pesanti** (conferma esplicita), e
   nessuno l'ha chiesta.
@@ -1850,15 +1915,37 @@ vuote per essere così larghe*.
   colonna'. Cambiando solo il CSS, la trama sarebbe rimasta esclusa da una fascia **più larga
   delle card**, e la pagina non avrebbe dato alcun errore. Ora il CSS **dichiara**
   (`--col-max` su `html`) e il JS **legge**: fonte unica.
-- **Il valore è `680px`**, e viene da una misura, non dall'occhio: l'inchiostro più largo di
-  tutte le voci arriva a **460px**, quindi a 920 la card era piena al **52%** e a 680 lo è al
-  **71%**, con ~190px di margine prima che un sottotitolo lungo vada a capo.
+- **Il valore è `740px` dalla `0.62`**, ed è una **scelta dell'utente su una misura**, non un
+  numero di gusto: con l'origine e la citazione entrate nella card, la domanda era se
+  allargare fino a **1040px**, cioè fin dove gli a-capo si azzerano. La risposta è stata
+  740, e questo è ciò che costa e ciò che rende (misurato coi font veri sulle 120 voci, in
+  **entrambe** le lingue):
+
+  | colonna | sottotitoli a capo (IT) | citazioni oltre 2 righe (IT) |
+  |---|---|---|
+  | 620px (il pavimento) | 6 | 17 |
+  | 680px (fino alla 0.61) | 5 | 10 |
+  | **740px (in vigore)** | **3** | **6** |
+  | 920px | 1 | 0 |
+  | 1040px (azzera tutto) | 0 | 0 |
+
+  - ⚠️ **Le 5 origini su due righe NON dipendono dalla colonna**, e chi le vedesse non allarghi
+    per loro: la colonna dell'origine ha larghezza fissa (`--orig-col`), quindi il numero è
+    **identico** da 620 a 1040. Sono le forme multiparola ('Terre di Kargad'), ed è il prezzo
+    dichiarato di non allargare quella colonna per tutte le altre.
+- Ⓘ **Da dove viene il 680** che ha tenuto dalla `0.22` alla `0.61`: l'inchiostro più largo
+  di tutte le voci arrivava a **460px**, quindi a 920 la card era piena al **52%** e a 680 lo
+  era al **71%**. La misura resta vera, ma è **precedente all'origine e alla citazione**, che
+  quello spazio l'hanno occupato.
   - ⚠️ **La misura per scatole NON serve, e ci si cade subito**: misurando i rettangoli degli
     elementi, ogni card dava 868px, perché la riga del vero nome è un **blocco** e occupa
     tutta la larghezza anche con una parola dentro. Il numero utile è l'**inchiostro**, cioè i
     rettangoli dei nodi di testo (`Range.getClientRects`) più le immagini.
-  - **Fino a 620px non sfora nulla e nessuna riga si spezza** (provato a 920, 760, 720, 680 e
-    620, con l'altezza delle card identica): sotto quella soglia va rimisurato.
+  - **620px resta il pavimento**, e sotto va rimisurato. ⚠️ Ma la formulazione vecchia
+    ('fino a 620 nessuna riga si spezza', misurata a 920, 760, 720, 680 e 620) è **superata
+    dai contenuti**: valeva quando la card portava tre righe corte, e oggi a 620 vanno a capo
+    6 sottotitoli e 17 citazioni. Non è la misura a essere sbagliata: è il metro, perché una
+    card con dentro una citazione non si giudica con la tabella di una card che non l'aveva.
 
 ## 🧹 Residui del motore di provenienza (debito dichiarato)
 

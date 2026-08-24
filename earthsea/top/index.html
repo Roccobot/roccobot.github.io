@@ -336,13 +336,15 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    lati della colonna'. Due numeri da tenere allineati a mano, e cambiandone uno
    solo il difetto era invisibile: la trama sarebbe rimasta esclusa da una fascia
    più larga delle card. Ora il CSS dichiara e il JS legge.
-   Il valore è **680px** dalla 0.22 (richiesta dell'utente: a Terramare le card
-   portano molte meno informazioni e a 920 restavano troppo vuote). Misurato:
-   l'inchiostro più largo di tutte le voci arriva a 460px, quindi a 920 la card
-   era piena al 52% e a 680 lo è al 71%, con ~190px di margine prima che un
-   sottotitolo lungo vada a capo. Nessun elemento sfora e nessuna riga si spezza
-   fino a 620px: sotto quella soglia va rimisurato. */
-html { --col-max:680px; }
+   Il valore è **740px** dalla 0.62 (scelta dell'utente fra i 680 di allora e i
+   1040 che avrebbero azzerato gli a-capo: la colonna resta stretta, e qualche
+   a-capo si accetta). Ⓘ Percorso: 920 fino alla 0.22, poi 680 (richiesta
+   dell'utente: a Terramare le card portano molte meno informazioni e a 920
+   restavano troppo vuote), poi questi 740 quando la card ha preso l'origine e
+   la citazione, che a 680 le stavano strette.
+   ⚠️ I 620px come pavimento restano VALIDI e sono la misura da non perdere:
+   sotto quella soglia le righe cominciano a spezzarsi, e va rimisurato. */
+html { --col-max:740px; }
 .scroll { max-width:var(--col-max); margin:1.2rem auto 3rem; padding:0 1rem; }
 
 .rank-item {
@@ -1224,11 +1226,18 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      due liste condividono il passo verticale delle righe, così le checkbox e le
      icone badge stanno sullo stesso ritmo. */
   #ctrl-panel .ctrl-section--filtri { margin:0.8rem 0 0.45rem; }
-  /* La riga del filtro 'vero nome' porta una frase, non una parola: va a capo, e
-     l'interruttore resta in alto invece di centrarsi sulle due righe. */
-  #ctrl-panel .ctrl-row--vero { align-items:flex-start; }
-  #ctrl-panel .ctrl-row--vero .ctrl-label-face { white-space:normal; }
-  #ctrl-panel .ctrl-section--vero { margin:0 0 0.2rem; max-width:15rem; }
+  /* Le righe che portano una FRASE e non una parola (il filtro 'vero nome' e la resa
+     dell'origine): vanno a capo, e l'interruttore resta in alto invece di centrarsi
+     sulle due righe.
+     ⚠️ Il capo a riga vale per TUTTE le facce, gemella anti-jitter compresa (era
+     `.ctrl-label-face`, quando la riga con la frase era una sola e non aveva
+     gemella): una gemella `nowrap` misura la frase su una riga sola e allarga il
+     Pannello di tutta quella lunghezza, invisibile perché la gemella non si vede.
+     ⚠️ La classe si chiamava `--vero` come il filtro che la inaugurò: il nome diceva
+     la riga invece del comportamento, e alla seconda riga sarebbe stato falso. */
+  #ctrl-panel .ctrl-row--wrap { align-items:flex-start; }
+  #ctrl-panel .ctrl-row--wrap .ctrl-label > span { white-space:normal; }
+  #ctrl-panel .ctrl-section--vero, #ctrl-panel .ctrl-section--orig { margin:0 0 0.2rem; max-width:15rem; }
   /* ⚠️ Le righe di legenda hanno min-height, non height: le descrizioni dei
      badge possono ANDARE A CAPO (permesso dall'utente), e con l'altezza fissa
      la seconda riga sarebbe uscita dal riquadro. */
@@ -1750,7 +1759,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    simmetria per gusto: sotto di lui c'è lo slot del tag, quindi quel margine è aria
    PRIMA di uno spazio già riservato, e si sommava al `margin-top` dello slot. Il
    desktop non è toccato: là `#ctrl-panel .ctrl-section--vero` vince per l'id. */
-.ctrl-section--vero { margin-bottom:0.4rem; }
+.ctrl-section--vero, .ctrl-section--orig { margin-bottom:0.4rem; }
   /* Anti-jitter del blocco al cambio lingua: la sezione Categorie è l'unico
      figlio di .ctrl-cols (oltre alla legenda, già riservata via leg-measure)
      la cui larghezza dipende dalla lingua. Se in una lingua le etichette
@@ -2795,7 +2804,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.61</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.62</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2899,17 +2908,19 @@ var FX_PTR = { hov:true };
 // primo salvataggio dal pannello). `FX_KNOBS` costruisce le sue `opts` da qui con
 // `fxSelOpts`, così la fonte resta una sola.
 var FX_SEL = {
-  // ⚠️ I primi CINQUE sono di Terramare (dalla 0.59), gli altri sei sono le trame
-  // ereditate da 'I Grandi di Arda', tenute finché l'utente non dice quali conservare.
+  // ⚠️ I primi OTTO sono di Terramare (dalla 0.59), gli ultimi tre sono le trame
+  // ereditate da 'I Grandi di Arda' che l'utente ha scelto di tenere (2026-08-24:
+  // *tieni `Vessillo`, `Campo di Stelle` e `Losanghe`*). Le altre tre di quel gruppo
+  // (`stars`, `foglia`, `weave`) sono uscite nella 0.62, disegni compresi: erano il
+  // resto di una scelta già fatta, non un magazzino da cui ripescare.
   pat: {
     mot: [['marea', 'Marea', 'Tide'], ['corrente', 'Correnti', 'Currents'],
           ['risacca', 'Risacca', 'Surf'],
           ['onde', 'Onde', 'Waves'], ['gorgo', 'Gorghi', 'Eddies'],
           ['sartie', 'Sartiame', 'Rigging'], ['venti', 'Rosa dei venti', 'Wind rose'],
           ['maglia', 'Maglia', 'Mail'],
-          ['stars', 'Stelle', 'Stars'], ['foglia', 'Foglia', 'Leaf'],
           ['loz', 'Losanghe', 'Lozenges'], ['seme', 'Campo di stelle', 'Star field'],
-          ['weave', 'Intreccio', 'Interlace'], ['banner', 'Vessillo', 'Banner']]
+          ['banner', 'Vessillo', 'Banner']]
   }
 };
 function fxSelOpts(k, p){
@@ -3189,9 +3200,9 @@ if (FX_MOBILE_MQ.addEventListener) FX_MOBILE_MQ.addEventListener('change', funct
 // ⚠️⚠️ Il numero NON si scrive qui: si LEGGE dal CSS (`--col-max` su `html`), che è
 // la fonte unica. Prima era un `920` cablato in due posti, e cambiarne uno solo
 // lasciava la maschera della trama tarata su una colonna che non esisteva più:
-// un difetto invisibile, perché la pagina non dà nessun errore. Il ripiego a 680
+// un difetto invisibile, perché la pagina non dà nessun errore. Il ripiego a 740
 // serve solo se la variabile mancasse, cioè se qualcuno la togliesse dal CSS.
-var PAT_COL = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--col-max')) || 680;
+var PAT_COL = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--col-max')) || 740;
 var PAT_ROOM_MQ = window.matchMedia('(min-width:' + PAT_COL + 'px)');
 if (PAT_ROOM_MQ.addEventListener) PAT_ROOM_MQ.addEventListener('change', function(){ applySiteFlags(); });
 var FX_PTR_MQ = window.matchMedia('(hover:hover) and (pointer:fine)');
@@ -3407,23 +3418,10 @@ var PAT_TILE = {
   sartie: { w: 120, h: 120 },
   venti: { w: 200, h: 200 },
   maglia: { w: 120, h: 120 },
-  stars: { w: 200, h: 200 },
-  foglia: { w: 160, h: 160 },
   loz: { w: 150, h: 150 },
   seme: { w: 140, h: 140 },
-  weave: { w: 180, h: 180 },
   banner: { w: 200, h: 200 }
 };
-// Stella a otto punte a raggi nudi: quattro punte lunghe (cardinali) e quattro
-// corte (diagonali), che è la resa classica dell'emblema.
-function patStar(cx, cy, r, r2){
-  var d = '';
-  for (var i = 0; i < 8; i++) {
-    var a = Math.PI / 4 * i, l = (i % 2 === 0) ? r : r2;
-    d += 'M' + cx + ' ' + cy + 'L' + fxR2(cx + Math.sin(a) * l) + ' ' + fxR2(cy - Math.cos(a) * l);
-  }
-  return d;
-}
 // Losanga (rombo): la cornice che nell'araldica racchiude le figure femminili.
 function patRomb(cx, cy, r){
   return 'M' + cx + ' ' + (cy - r) + 'L' + (cx + r) + ' ' + cy +
@@ -3650,22 +3648,6 @@ function patSvg(mot, col, w){
     for (var ny = 30; ny <= 90; ny += 60) {
       for (var nx = 30; nx <= 90; nx += 60) g += '<circle cx="' + nx + '" cy="' + ny + '" r="9"/>';
     }
-  } else if (mot === 'weave') {
-    // Reticolo OGIVALE: i lati della maglia sono a doppia curva e nei punti medi dei
-    // bordi del tile si incontrano con tangente VERTICALE, quindi la rete prosegue
-    // senza spigoli. Un lato + le sue tre riflessioni chiudono la maglia.
-    var og = 'M0 90C0 54 45 45 90 0';
-    g = ['', 'translate(180 0) scale(-1 1)', 'translate(0 180) scale(1 -1)',
-         'translate(180 180) scale(-1 -1)'].map(function(tr){
-           return '<path d="' + og + '"' + (tr ? ' transform="' + tr + '"' : '') + '/>';
-         }).join('') +
-        '<path d="' + patRose(90, 90, 7, 30, 8) + '"/>' +
-        '<path d="' + patRose(90, 90, 30, 38, 8, Math.PI / 8) + '"/>' +
-        '<path d="' + patRose(0, 0, 4, 15, 4, Math.PI / 4) + '"/>' +
-        '<path d="' + patRose(180, 0, 4, 15, 4, Math.PI / 4) + '"/>' +
-        '<path d="' + patRose(0, 180, 4, 15, 4, Math.PI / 4) + '"/>' +
-        '<path d="' + patRose(180, 180, 4, 15, 4, Math.PI / 4) + '"/>' +
-        dots([[90, 90, 2.1], [90, 0, 1.8], [90, 180, 1.8], [0, 90, 1.8], [180, 90, 1.8]], 1.8);
   } else if (mot === 'banner') {
     // Il più araldico: cornice di MANDORLE che si toccano ai vertici della losanga
     // (catena continua) e, dentro, il rosone raggiato dei vessilli.
@@ -3690,19 +3672,12 @@ function patSvg(mot, col, w){
     g = '<path d="' + patCross(35, 35, 11) + '"/><path d="' + patCross(105, 105, 11) + '"/>' +
         '<path d="' + patCross(105, 35, 5) + '"/><path d="' + patCross(35, 105, 5) + '"/>' +
         dots([[70, 70], [0, 70], [140, 70], [70, 0], [70, 140]], 1.4);
-  } else if (mot === 'foglia') {
-    // foglia lanceolata + nervature + picciolo ricurvo, in maglia diagonale
-    var foglia = '<path d="M0 -17C7 -9 7 4 0 15C-7 4-7 -9 0 -17Z"/><path d="M0 -14V12"/>' +
-                 '<path d="M0 -6 5 -1M0 -6-5 -1M0 2 4 6M0 2-4 6"/><path d="M0 15C0 20-3 23-7 24"/>';
-    g = '<g transform="translate(40 40)">' + foglia + '</g>' +
-        '<g transform="translate(120 120) rotate(180)">' + foglia + '</g>' +
-        '<circle cx="120" cy="40" r="1.6"/><circle cx="40" cy="120" r="1.6"/>';
   } else {
-    g = '<path d="' + patStar(50, 50, 15, 8) + '"/><path d="' + patStar(150, 150, 15, 8) + '"/>' +
-        '<path d="' + patStar(150, 50, 7, 4) + '"/><path d="' + patStar(50, 150, 7, 4) + '"/>' +
-        '<g fill="' + col + '" stroke="none"><circle cx="100" cy="100" r="1.5"/>' +
-        '<circle cx="0" cy="100" r="1.5"/><circle cx="200" cy="100" r="1.5"/>' +
-        '<circle cx="100" cy="0" r="1.5"/><circle cx="100" cy="200" r="1.5"/></g>';
+    // ⚠️ Motivo SCONOSCIUTO: si ridisegna `marea`, che è anche il ripiego del tile
+    // qui sopra. Prima l'ultimo ramo era il disegno di `stars` mentre `t` ripiegava
+    // su `marea`: le due misure si contraddicevano, cioè un motivo ritirato (e dalla
+    // 0.62 ce ne sono tre) avrebbe dato la stella nel tile dell'acqua, senza errori.
+    return patSvg('marea', col, w);
   }
   return '<svg xmlns="http://www.w3.org/2000/svg" width="' + t.w + '" height="' + t.h +
          '" viewBox="0 0 ' + t.w + ' ' + t.h + '"><g fill="none" stroke="' + col +
@@ -4384,8 +4359,12 @@ function setLang(lang) {
   // ⚠️ La voce del footer segue la stessa regola del tasto Info: in inglese si NASCONDE,
   // perché porta alle sole mappe italiane. Il testo si scrive comunque, così se un domani
   // la modale avrà contenuti bilingui basta togliere la riga dell'`hidden`.
+  // ⚠️⚠️ SI NASCONDE LA RIGA INTERA, non il solo bottone (difetto visto dall'utente il
+  // 2026-08-24): il paragrafo porta un ✦ per lato, quindi col bottone nascosto restavano
+  // due stelline sospese sopra il footer, che promettevano un contenuto che non c'era.
+  setResLinkHidden(lang !== 'it');
   var rl = document.getElementById('res-link');
-  if (rl) { rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes'; rl.hidden = (lang !== 'it'); }
+  if (rl) rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
@@ -5363,7 +5342,16 @@ function pruneBadgeFilter() {
 // parola è la resa 'B' che l'utente ha scelto, il segno è la variante che ha chiesto
 // di vedere, e ha due vantaggi che ha enunciato lui (non va tradotto, e non prende
 // posizione fra origine per nascita e residenza).
-var ORIG_PIN = false;
+// ⚠️⚠️ Dalla 0.62 il SEGNO è il default e la scelta è del VISITATORE, con una riga nel
+// Pannello (istruzione dell'utente, 2026-08-24: prima *vai con il simbolo*, poi
+// *mettimi nel Pannello di Controllo un'opzione per passare al volo da testo a
+// simbolo*). Quindi non è più una costante da commutare nel sorgente.
+// ⚠️ La preferenza vive nel `localStorage`, come tema e zoom e AL CONTRARIO del filtro
+// 'solo vero nome', che sta in memoria per una ragione sua: quello nasconde delle voci,
+// e un filtro che sopravvive al ricaricamento senza dirlo fa credere che il dataset sia
+// più corto. Qui non si nasconde niente, cambia solo la resa di un'etichetta.
+var ORIG_PIN_LS_KEY = 'earthsea-orig-pin';
+var ORIG_PIN = LS.getItem(ORIG_PIN_LS_KEY) !== '0';
 // Il segno di luogo, disegnato qui e non in un file: è un glifo di 4 comandi, e un
 // `img` in più costerebbe una richiesta e un 404 possibile (vedi la nota delle icone
 // badge in CLAUDE.md). ⚠️ Niente `innerHTML` altrove: qui il markup è una costante
@@ -6177,7 +6165,17 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } ttl.textContent = currentLang === 'it' ? titleIt : (titleEn || titleIt); };
 }
 
-(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse' : 'Resources'; rl.hidden = (currentLang !== 'it'); rl.addEventListener('click', openResourcesModal); } })();
+// ⚠️⚠️ Nasconde la RIGA (`#footer-links`), non il bottone: il paragrafo porta un ✦ per
+// lato, e col solo bottone via restavano due stelline a indicare il nulla. Sta in una
+// funzione perché i punti che la chiamano sono DUE (qui all'avvio e in `setLang`), e
+// con la riga scritta due volte il difetto sarebbe tornato dalla metà non corretta.
+function setResLinkHidden(hide){
+  var p = document.getElementById('footer-links');
+  if (p) p.hidden = !!hide;
+  var b = document.getElementById('res-link');
+  if (b) b.hidden = !!hide;
+}
+(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse' : 'Resources'; setResLinkHidden(currentLang !== 'it'); rl.addEventListener('click', openResourcesModal); } })();
 
 // ── 'Note editoriali' (footer) → modale con pulsanti → viewer testuale ──
 // Ogni nota ha titolo pieno + breve (mobile) e corpo bilingue in HTML statico.
@@ -6440,10 +6438,26 @@ function controlPanelHTML() {
   var vnLbl = currentLang === 'it' ? 'Mostra solo i personaggi di cui è noto il vero nome'
                                    : 'Show only characters whose true name is known';
   destra += '<div class="ctrl-section ctrl-section--vero">'
-     + '<label class="ctrl-row ctrl-row--vero" title="' + vnLbl + '">'
+     + '<label class="ctrl-row ctrl-row--wrap" title="' + vnLbl + '">'
      +   '<input type="checkbox" id="ctrl-solovero"' + (soloVeroNome ? ' checked' : '') + '>'
      +   '<span class="ctrl-chk"></span>'
      +   '<span class="ctrl-label"><span class="ctrl-label-face">' + vnLbl + '</span></span>'
+     + '</label></div>';
+  // Resa dell'ORIGINE nella card: segno di luogo (default) oppure la parola.
+  // ⚠️ Non è un filtro, è una preferenza di resa, e sta comunque qui perché è l'unico
+  // posto del Pannello dove vivono le righe con interruttore. La sua differenza dal
+  // filtro sopra si vede nel comportamento: si ricorda fra una visita e l'altra
+  // (`ORIG_PIN_LS_KEY`), mentre `soloVeroNome` no, e la ragione sta là.
+  var opLbl = currentLang === 'it' ? 'Segno di luogo al posto della parola \'origine\''
+                                   : 'Place mark instead of the word \'origin\'';
+  var opAlt = currentLang === 'it' ? 'Place mark instead of the word \'origin\''
+                                   : 'Segno di luogo al posto della parola \'origine\'';
+  destra += '<div class="ctrl-section ctrl-section--orig">'
+     + '<label class="ctrl-row ctrl-row--wrap" title="' + opLbl + '">'
+     +   '<input type="checkbox" id="ctrl-origpin"' + (ORIG_PIN ? ' checked' : '') + '>'
+     +   '<span class="ctrl-chk"></span>'
+     +   '<span class="ctrl-label"><span class="ctrl-label-face">' + opLbl + '</span>'
+     +     '<span class="ctrl-label-alt" aria-hidden="true">' + opAlt + '</span></span>'
      + '</label></div>';
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a sinistra).
   // Il click azzera tutti i badge.
@@ -6697,6 +6711,16 @@ function wireControlPanel() {
   });
   var svn = panel.querySelector('#ctrl-solovero');
   if (svn) svn.addEventListener('change', function(){ soloVeroNome = svn.checked; applyFilter(); });
+  // Resa dell'origine: il segno oppure la parola. ⚠️ Passa da `applyFilter` come le
+  // altre righe e non da un `renderList` diretto: quello è il choke point che
+  // ridisegna la lista e riallinea quello che dal render dipende (numeri, contatore,
+  // trama), e saltarlo lascerebbe fuori un pezzo senza dare errore.
+  var opn = panel.querySelector('#ctrl-origpin');
+  if (opn) opn.addEventListener('change', function(){
+    ORIG_PIN = opn.checked;
+    LS.setItem(ORIG_PIN_LS_KEY, ORIG_PIN ? '1' : '0');
+    applyFilter();
+  });
   // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).
   // Guard 'risultati 0' (rete di sicurezza oltre alla disabilitazione visiva):
   // un toggle che svuoterebbe la lista NON viene applicato (nessun effetto).
