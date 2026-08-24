@@ -518,24 +518,35 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
   font-size:clamp(0.94rem,2.3vw,1.09rem); line-height:1.42;
   color:var(--parchment); text-wrap:pretty;
 }
-/* ⚠️⚠️ CHI PRONUNCIA la frase: a destra, in grassetto, sulla riga dell'ultimo rigo se
-   c'è posto e a capo se non ce n'è. Lo fa il `float`, che è la sola via a non richiedere
-   una misura: un flottante dichiarato DOPO il testo si mette sulla riga corrente finché
-   entra, altrimenti scende. Resta in corsivo come la citazione, perché è la stessa voce
-   che parla: il tondo la staccherebbe come se fosse una nota.
+/* ⚠️⚠️ CHI PRONUNCIA la frase: a destra, sulla riga dell'ultimo rigo se c'è posto e a
+   capo se non ce n'è. Lo fa il `float`, che è la sola via a non richiedere una misura:
+   un flottante dichiarato DOPO il testo si mette sulla riga corrente finché entra,
+   altrimenti scende.
    ⚠️ Il contenitore della faccia dev'essere un `flow-root`, o il float sborda dal
    riquadro e - cosa peggiore - non entra nel calcolo dell'altezza, che è ciò su cui
    poggia tutto l'anti-jitter. */
-/* ⚠️ La resa dell'attribuzione è cambiata TRE volte in un giorno (2026-08-24), e conviene
-   sapere dove si è fermata: `- Nome` in corsivo grassetto, poi `(Nome)` col corpo a
-   0.92em, e infine **Nome in TONDO grassetto, senza parentesi**. Il criterio dell'utente
-   è uno solo: distinguere l'attribuzione dalla citazione senza aggiungere segni, e il
-   tondo dentro un testo corsivo la stacca da sé.
-   ⚠️ Il corpo è `0.92em`, cioè relativo al testo della citazione e non un valore suo:
-   se un domani cambia il corpo della citazione, l'attribuzione lo segue.
+/* ⚠️ La resa dell'attribuzione è cambiata QUATTRO volte in un giorno (2026-08-24), e
+   conviene sapere dove si è fermata invece di ripescare una forma vecchia: `- Nome` in
+   corsivo grassetto, poi `(Nome)` col corpo a 0.92em, poi Nome in tondo grassetto senza
+   parentesi, e infine **`\ Nome` in CINZEL chiaro, in tinta con la card**.
+   ⚠️ Il criterio dell'utente non è mai cambiato ed è uno solo: l'attribuzione deve
+   staccarsi dalla citazione. Le prime tre rese non bastavano perché restavano nello
+   stesso carattere del testo (EB Garamond); il salto di FAMIGLIA sì, ed è la ragione per
+   cui qui il font è dichiarato e non ereditato.
+   ⚠️ Il colore è quello della CARD, con lo stesso ripiego a catena di `.ro-val`: la
+   tinta segue la scheda invece di essere un grigio buono per tutte.
+   ⚠️ Il corpo è relativo (`0.78em` sul testo della citazione, non un valore suo): se un
+   domani cambia il corpo della citazione, l'attribuzione lo segue. È più basso del
+   `0.92em` di prima perché Cinzel ha un occhio molto più grande di EB Garamond, quindi a
+   parità di em risulterebbe più grande del testo invece che più piccolo.
    ⚠️ `position:relative` serve ad `alignVoci`, che scrive `right` in px: sta qui e non
    inline perché è una proprietà della resa, non un valore calcolato. */
-.rc-voce { float:right; margin-left:1.4em; font-weight:600; font-style:normal; white-space:nowrap; font-size:0.92em; position:relative; }
+.rc-voce {
+  float:right; margin-left:1.4em; position:relative; white-space:nowrap;
+  font-family:'Cinzel',serif; font-weight:400; font-style:normal;
+  font-size:0.78em; letter-spacing:0.04em;
+  color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
+}
 .rc-testo:not(.bil) { display:flow-root; }
 .rc-testo.bil > .bil-f, .rc-testo.bil > .bil-m { display:flow-root; }
 /* La riga di contesto: opera, capitolo e che cosa succede, nella SOLA lingua corrente.
@@ -1740,12 +1751,31 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      veloce e decelera subito, con breve fade finale. Il trascinamento per
      chiudere è gestito inline nel drag handler. La freccia 'scorri in fondo' è
      gestita in toggleControlPanel. */
+  /* ⚠️⚠️ L'ARIA IN CIMA È TORNATA nella 0.71, e la sua assenza era un DANNO COLLATERALE
+     della 0.69: là sono usciti insieme il trascinamento e la barretta di presa, e con
+     loro il `padding-top:0` è rimasto senza ciò che lo giustificava, cioè la barretta
+     che faceva da stacco. Il contenuto si è ritrovato incollato al bordo superiore
+     (segnalato dall'utente: *s'è rotto qualcosa nell'allineamento*).
+     ⚠️ Vale 1.2rem, lo stesso dei fianchi: non è un valore scelto a occhio ma la
+     simmetria col padding laterale che il pannello già ha.
+     ⚠️ NON si recupera quell'altezza comprimendo il fondo: là sotto la legenda vive lo
+     slot del tag del filtro badge, che è spazio RISERVATO da un fantasma (§ 'Il tag del
+     filtro sta in FONDO' nel CLAUDE.md di progetto), e toglierlo rimetterebbe il salto
+     che quel fantasma esiste per evitare.
+     ⚠️ `overflow:hidden` (era `auto`): con tutto il contenuto in vista non c'è niente da
+     scorrere, e il rimbalzo del gesto sulla sheet faceva ballare il pannello. La rete di
+     sicurezza è in `fitControlSheet`, che rimette lo scorrimento se il contenuto non ci
+     sta (schermi bassi, testo ingrandito dal sistema): senza, quella parte sarebbe
+     irraggiungibile. */
   .ctrl-panel {
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
     border-radius:18px 18px 0 0; transform:translateY(100%);
     transition:transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.16s ease, visibility 0.35s;
-    padding-top:0; padding-bottom:0;
+    padding-top:1.2rem; padding-bottom:0;
+    overflow:hidden;
   }
+  /* La rete: la classe la mette `fitControlSheet` misurando, non un media query. */
+  .ctrl-panel.sheet-scroll { overflow-y:auto; }
   /* Chiusura: comanda l'animazione (niente transition); resta visibile finché
      non finisce, poi .closing viene rimossa (animationend). Il fade parte solo
      in coda (delay 0.32s = 0.5s - 0.18s): breve dissolvenza finale. */
@@ -2445,7 +2475,18 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
   /* Cluster di navigazione (misure dal mockup utente): colonna quasi a filo
      del bordo destro come il cluster admin, parte a ~2/3 della viewport
      dall'alto e resta sopra il FAB principale; piccoli, distanziati, discreti */
-  .jump-fabs { right:0.75rem; bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
+  /* ⚠️ A FILO DEL BORDO dalla 0.71 (era `0.75rem`), su segnalazione dell'utente: le due
+     freccine cadevano SOPRA la linea destra del riquadro della citazione.
+     ⚠️ Il numero non è un gusto ma una misura, e conviene conoscerla prima di ritoccarlo:
+     su mobile il tondo dei tasti è spento (`FEATURES.jumpMobileCircle`), quindi ciò che si
+     vede è la sola freccia, 16px dentro un box di 26,4. Il riquadro della citazione
+     finisce a 23,4px dal bordo dello schermo, cioè MENO della larghezza del box: nessun
+     rientro può togliere la sovrapposizione al box, e infatti si ragiona sulla freccia.
+     A 390px: `0.75rem` la metteva 9,8px DENTRO la linea, `0.2rem` ancora 1px dentro, e a
+     filo del bordo sta 2,2px fuori, restando a 5,2px dallo schermo.
+     ⚠️ `env(safe-area-inset-right)` non è ornamentale: in orizzontale, sui telefoni con
+     notch, senza di lui le freccine finirebbero sotto la tacca. */
+  .jump-fabs { right:env(safe-area-inset-right,0px); bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
   .jump-fab { width:1.65rem; height:1.65rem; opacity:1; }
   .jump-fab svg { width:0.85rem; height:0.85rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
@@ -2891,7 +2932,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.70</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.71</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5611,10 +5652,11 @@ function sottotitoloDi(p, it){
 // ⚠️ `sempre` è acceso su entrambe: dove una lingua manca il contenitore si emette lo
 // stesso, o tornerebbe il salto che si sta togliendo.
 // ⚠️⚠️ CHI PRONUNCIA la frase sta in coda alla citazione, non più in testa al contesto
-// (istruzione dell'utente, 2026-08-24): a destra, in grassetto, in linea con l'ultima
-// riga se ci sta e a capo se non ci sta. Il `float` fa esattamente questo, ed è la sola
-// via che lo ottiene senza misurare niente: un elemento flottante dopo il testo si
-// sistema sulla riga corrente finché c'è spazio, altrimenti scende da sé.
+// (istruzione dell'utente, 2026-08-24): a destra, in linea con l'ultima riga se ci sta e
+// a capo se non ci sta. Il `float` fa esattamente questo, ed è la sola via che lo ottiene
+// senza misurare niente: un elemento flottante dopo il testo si sistema sulla riga
+// corrente finché c'è spazio, altrimenti scende da sé. Il rientro fino alla riga più
+// lunga è un passo IN PIÙ, e lo fa `alignVoci` (vedi la sua intestazione).
 // ⚠️ Il campo è VUOTO quando parla il personaggio della card o il narratore, e allora
 // non si scrive nulla: l'attribuzione servirebbe solo a ripetere il titolo della scheda.
 // ⚠️ La riga di contesto comincia dall'OPERA e porta la sola lingua corrente: i due
@@ -5626,7 +5668,10 @@ function citazHtml(p){
   var vit = p.citazione_voce || '', ven = p.citazione_voce_en || '';
   var fit = p.citazione_fonte || '', fen = p.citazione_fonte_en || '';
   function faccia(t, v){
-    return escapeHtml(t) + (v ? '<b class="rc-voce">' + escapeHtml(v) + '</b>' : '');
+    // ⚠️ La barra rovescia sta DENTRO l'elemento, non fra testo e attribuzione: fuori
+    // resterebbe attaccata all'ultima parola della citazione quando la voce va a capo,
+    // e non seguirebbe il rientro che `alignVoci` scrive sulla voce.
+    return escapeHtml(t) + (v ? '<span class="rc-voce">\\ ' + escapeHtml(v) + '</span>' : '');
   }
   return '<span class="rank-citaz">' +
     bilingue('rc-testo', faccia(it, vit), faccia(en, ven), true) +
@@ -6033,11 +6078,16 @@ function toggleCardMidlines() {
   list.classList.toggle('show-midlines', midlinesOn);
   if (midlinesOn) placeCardMidlines();
 }
-// ── L'attribuzione allineata alla FINE DELLA RIGA SOPRA (0.70) ──────────────────
+// ── L'attribuzione allineata alla RIGA PIÙ LUNGA della citazione (0.71) ─────────
 // Scelta dell'utente fra quattro rese (artefatto del 2026-08-24). Il CSS da solo non sa
-// dire 'finisci dove finisce la riga precedente': `float:right` allinea al bordo del
-// CONTENITORE, che arriva sempre al riquadro, e a riga corta l'attribuzione restava
-// staccata dal testo.
+// dire 'finisci dove finisce il testo': `float:right` allinea al bordo del CONTENITORE,
+// che arriva sempre al riquadro, e a riga corta l'attribuzione restava staccata dal testo.
+// ⚠️⚠️ IL RIFERIMENTO È CAMBIATO NELLA 0.71, e la differenza si vede solo su certe schede:
+// era la **riga precedente** (0.70), ora è la **più lunga fra tutte** le righe della
+// citazione (istruzione dell'utente). Il perché: la riga precedente è l'ultima piena, che
+// a volte è corta per un a-capo infelice, e l'attribuzione finiva a mezza colonna mentre
+// il blocco di testo si vedeva finire più a destra. La riga più lunga è il bordo che
+// l'occhio legge come 'fine del testo', quindi allineare là dà una colonna vera.
 // ⚠️⚠️ QUINDI QUESTA È UNA RESA CALCOLATA, non una regola CSS, e il patto va conosciuto:
 // il numero vale per QUEL testo a QUELLA larghezza, quindi si rifà a ogni render, a ogni
 // cambio di lingua e a ogni ridimensionamento. Si aggancia a `reflowRows`, dove già
@@ -6073,17 +6123,19 @@ function alignVoci(){
     var rg = document.createRange();
     rg.setStart(f, 0);
     rg.setEnd(f, Array.prototype.indexOf.call(f.childNodes, v));
-    var rects = rg.getClientRects(), sopra = null, stessa = null, k;
+    var rects = rg.getClientRects(), lunga = -1, stessa = null, k;
     var vb = v.getBoundingClientRect(), destro = f.getBoundingClientRect().right;
     for (k = 0; k < rects.length; k++) {
       if (rects[k].height <= 1 || rects[k].width <= 1) continue;
-      if (rects[k].top < vb.top - 2) sopra = rects[k];
+      // ⚠️ Solo le righe SOPRA la voce entrano nel massimo: quella su cui la voce sta
+      // finisce dove comincia lei, quindi misurarla darebbe il posto già occupato.
+      if (rects[k].top < vb.top - 2) lunga = Math.max(lunga, rects[k].right);
       else if (Math.abs(rects[k].top - vb.top) <= 2) stessa = rects[k];
     }
     // Testo di una riga sola: non c'è nessuna riga sopra a cui allinearsi, e la voce
     // resta dov'è (a filo del riquadro).
-    if (!sopra) { lav[i].px = 0; continue; }
-    var d = destro - sopra.right;
+    if (lunga < 0) { lav[i].px = 0; continue; }
+    var d = destro - lunga;
     // ⚠️ Il TETTO: mai più vicina di 0.8em al testo della propria riga. Senza, su una
     // riga sopra molto corta l'attribuzione arriverebbe a toccare la frase.
     var gap = parseFloat(getComputedStyle(f).fontSize) * 0.8;
@@ -6096,7 +6148,10 @@ function reflowRows() { tightenNames(); optimizeBipartite(); alignVoci(); if (mi
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
-  tightenTimer = setTimeout(reflowRows, 150);
+  // ⚠️ `fitControlSheet` entra QUI e non in un listener suo: la rotazione dello schermo
+  // cambia l'altezza disponibile, ed è il caso in cui la sheet passa da 'ci sta' a 'non
+  // ci sta'. Function declaration, quindi è già definita a questo punto.
+  tightenTimer = setTimeout(function(){ reflowRows(); fitControlSheet(); }, 150);
 });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); });
 
@@ -6928,6 +6983,9 @@ function refreshControlPanel() {
   if (!panel) return;
   panel.innerHTML = controlPanelHTML();
   wireControlPanel();
+  // Il contenuto è cambiato (lingua, filtri, voci del Pannello di controllo): la misura
+  // che decide se la sheet deve scorrere va rifatta, o resterebbe quella di prima.
+  fitControlSheet();
 }
 
 
@@ -7378,6 +7436,24 @@ function showInfoNote() {
 // L'animazione 'dito che scorre' va in scena UNA volta sola per caricamento
 // pagina: flag in memoria (si azzera solo ricaricando), niente localStorage.
 var scrollHintPlayed = false;
+// La sheet mobile non scorre (0.71, istruzione dell'utente: *blocca tutto in modo che non
+// scorra, tanto non serve*), ed è vero: il contenuto ci sta tutto da quando la 0.69 ha
+// tolto il trascinamento e la barretta.
+// ⚠️ Ma 'ci sta' è una misura, non una certezza: su uno schermo basso o col testo
+// ingrandito dal sistema il contenuto può eccedere, e con `overflow:hidden` fisso quella
+// parte diventerebbe irraggiungibile, cioè un difetto peggiore del rimbalzo che si sta
+// togliendo. Perciò lo scorrimento non si spegne in CSS: si spegne finché la misura dice
+// che non serve, e la classe torna appena serve.
+// ⚠️ Si richiama a ogni apertura e a ogni ridisegno del Pannello, non una volta sola: il
+// contenuto cambia con la lingua e con la rotazione dello schermo.
+function fitControlSheet() {
+  var p = document.getElementById('ctrl-panel');
+  if (!p) return;
+  if (!window.matchMedia('(max-width:768px)').matches) { p.classList.remove('sheet-scroll'); return; }
+  // Con la classe già messa la misura direbbe sempre 'serve': si toglie e si rimisura.
+  p.classList.remove('sheet-scroll');
+  if (p.scrollHeight > p.clientHeight + 1) p.classList.add('sheet-scroll');
+}
 function toggleControlPanel() {
   var panel = document.getElementById('ctrl-panel'), bd = document.getElementById('ctrl-backdrop'),
       fab = document.getElementById('ctrl-fab');
@@ -7396,6 +7472,7 @@ function toggleControlPanel() {
   // al gesto, che animava da sé, e senza il gesto non ha più chiamanti.
   if (open) { panel.classList.remove('closing'); }
   else { panel.classList.add('closing'); }  // desktop e mobile (CSS diverso per viewport)
+  if (open) fitControlSheet();
   // Solo mobile: alla PRIMA apertura del Pannello dopo il caricamento pagina, e
   // solo se c'è da scorrere, parte una volta l'animazione 'dito che scorre' (poi
   // mai più, finché non si ricarica). Ritardo breve per partire a slide-up quasi

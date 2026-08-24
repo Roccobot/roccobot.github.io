@@ -1830,6 +1830,45 @@ unica**: card di legenda, poi le due checkbox di categoria, poi la legenda dei b
   spento.
 - Misura a font reali: pannello desktop **311x420** (era 540 di larghezza a due colonne).
 
+### 📱 La sheet mobile: l'aria in cima e lo scorrimento spento
+
+Due ritocchi della `0.71`, tutti e due nati da un difetto che la `0.69` aveva lasciato dietro
+di sé togliendo il trascinamento.
+
+- **L'aria in cima (`padding-top:1.2rem`) è tornata.** Il `padding-top:0` aveva senso finché
+  c'era la **barretta di presa**, che faceva da stacco; uscita quella, il contenuto è rimasto
+  incollato al bordo superiore (segnalazione dell'utente: *s'è rotto qualcosa
+  nell'allineamento*). Il valore è la simmetria col padding dei fianchi, non una scelta a
+  occhio.
+  - ⚠️ **Quell'altezza NON si recupera comprimendo il fondo**: sotto la legenda vive lo slot
+    del tag del filtro badge, che è spazio riservato da un fantasma (§ 'Il tag del filtro sta
+    in FONDO, e il suo spazio lo riserva un fantasma'), e toglierlo rimetterebbe il salto che
+    quel fantasma esiste per evitare.
+- **La sheet non scorre** (`overflow:hidden`), perché da quando il contenuto ci sta tutto il
+  rimbalzo del gesto faceva solo ballare il pannello (istruzione dell'utente: *blocca tutto in
+  modo che non scorra, tanto non serve*).
+  - ⚠️⚠️ **Ma 'ci sta' è una MISURA, non una certezza**, ed è la ragione per cui lo
+    scorrimento non è spento in CSS: lo spegne `fitControlSheet()` finché la misura lo
+    consente, e la classe `.sheet-scroll` torna appena serve. Provato: a **390x844** e
+    **360x740** non scorre, a **320x568** lo scorrimento si riaccende da sé e il contenuto
+    resta raggiungibile. Con un `overflow:hidden` fisso, là sotto ci sarebbe una parte di
+    pannello irraggiungibile, cioè un difetto peggiore di quello curato.
+  - Si richiama a **ogni apertura**, a ogni **ridisegno** del Pannello e sul **resize**: il
+    contenuto cambia con la lingua e con la rotazione dello schermo.
+
+### ↕️ Le freccine di salto pagina stanno a FILO del bordo
+
+Dalla `0.71`, su segnalazione dell'utente: cadevano sopra la linea destra del riquadro della
+citazione. Il rientro mobile era `0.75rem`, ora è il solo `env(safe-area-inset-right)`.
+
+⚠️ **Il numero si ricava da una misura, e conoscerla evita di ritoccarlo a occhio**: su mobile
+il tondo dei tasti è spento (`FEATURES.jumpMobileCircle`), quindi ciò che si vede è la sola
+freccia, **16px** dentro un box di **26,4**. Il riquadro della citazione finisce a **23,4px**
+dal bordo dello schermo, cioè **meno** della larghezza del box: nessun rientro può togliere la
+sovrapposizione al box, e per questo si ragiona sulla freccia. A 390px: `0.75rem` la metteva
+**9,8px dentro** la linea, `0.2rem` ancora 1px dentro, a filo del bordo sta **2,2px fuori**
+restando a 5,2px dallo schermo.
+
 ## 🔤 Filtro al plurale, card al singolare: è deliberato
 
 Il Pannello dice **'Uomini'** e **'Draghi'**, la card dice **'Uomo'**, **'Donna'**, **'Drago'**:
@@ -1890,22 +1929,42 @@ sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una
     scende da sé quando non ce n'è, che è esattamente la richiesta. ⚠️ Il contenitore della
     faccia dev'essere `flow-root`, o il float sborda dal riquadro e **non entra nel calcolo
     dell'altezza**, cioè rompe in silenzio l'anti-jitter.
-  - ⚠️ **Il CORSIVO è caduto nella `0.70`**, e la vecchia motivazione (*è la stessa voce che
-    parla, il tondo la staccherebbe come una nota di redazione*) non va rimessa: l'utente ha
-    chiesto **tondo grassetto** proprio per staccarla dal testo citato, che è tutto corsivo,
-    e insieme ha tolto le **parentesi**. Corpo `0.92em`, `font-weight:600`.
+  - ⚠️ **Il CORSIVO è caduto nella `0.70` e il GRASSETTO nella `0.71`**, e le loro motivazioni
+    non vanno rimesse: prima *è la stessa voce che parla, il tondo la staccherebbe come una
+    nota di redazione*, poi il tondo grassetto che *non stacca ancora abbastanza*. La resa in
+    vigore è **`\ Nome` in Cinzel chiaro (400), corpo `0.78em`, in tinta con la card**, senza
+    parentesi.
+  - ⚠️⚠️ **Il criterio dell'utente non è mai cambiato ed è uno solo: l'attribuzione deve
+    STACCARSI dalla citazione.** Le prime tre rese hanno fallito per la stessa ragione, ed è la
+    cosa da sapere prima di provarne una quarta: restavano nello stesso carattere del testo (EB
+    Garamond), e dentro un blocco corsivo né il tondo né il grassetto bastano. Il salto di
+    **famiglia** sì.
+  - **Perché `0.78em` e non `0.92em`**: Cinzel ha un occhio molto più grande di EB Garamond,
+    quindi a parità di em sembrerebbe più grande del testo invece che più piccolo. Il corpo
+    resta comunque **relativo** a quello della citazione, non un valore suo.
+  - **La barra rovescia sta DENTRO l'elemento**, non fra testo e attribuzione: fuori resterebbe
+    attaccata all'ultima parola quando la voce va a capo, e non seguirebbe il rientro.
+  - **Il colore è quello della CARD** (`--cctxt`, col ripiego a catena di `.ro-val`): segue la
+    scheda invece di essere un grigio buono per tutte.
 
-#### 📐 L'attribuzione si allinea alla FINE DELLA RIGA PRECEDENTE, e costa un ricalcolo
+#### 📐 L'attribuzione si allinea alla RIGA PIÙ LUNGA, e costa un ricalcolo
 
 Scelta dell'utente nella `0.70` (variante **B** di quattro mockup misurati sulla pagina vera):
 il flottante a filo del bordo destro *va oltre e sembra fuori posto*, quindi l'attribuzione
-rientra fino a stare a piombo sull'**ultimo carattere della riga sopra**.
+rientra fino a stare a piombo sulla fine del testo.
 
+- ⚠️ **Il riferimento è cambiato nella `0.71`**, e la differenza si vede solo su certe schede:
+  era la **riga precedente**, ora è la **più lunga fra le righe sopra** l'attribuzione. La
+  ragione: la riga precedente è l'ultima piena, che a volte è corta per un a-capo infelice, e
+  l'attribuzione finiva a mezza colonna mentre il blocco di testo si vedeva finire più a
+  destra.
 - **Come si misura**, in `alignVoci()`: un `Range` sui nodi che precedono l'attribuzione dà i
-  rettangoli delle righe di testo; si prende l'ultima riga **sopra** l'attribuzione e la si
-  confronta col bordo destro della faccia; la differenza diventa un `position:relative` +
+  rettangoli delle righe di testo; si prende il **massimo bordo destro** fra le righe sopra e
+  lo si confronta col bordo destro della faccia; la differenza diventa un `position:relative` +
   `right`, che sposta senza toccare il flusso (quindi senza cambiare l'altezza della card, che
   è ciò che l'anti-jitter misura).
+  - ⚠️ La riga **su cui la voce sta** resta fuori dal massimo: finisce dove comincia lei,
+    quindi misurarla darebbe il posto già occupato.
 - ⚠️ **Tre passate, e l'ordine conta**: prima si azzera lo spostamento di tutte le
   attribuzioni, poi si misura, poi si applica. Misurare su un valore già applicato accumula,
   e il rientro cresce a ogni reflow.
