@@ -1211,9 +1211,13 @@ Diamante; `stregone` a Solevivo.
    Creazione, e Ged poco dopo lo chiama *'the giver of names'*. ⚠️ **Non verificato sul
    testo**: da qui il libro non è raggiungibile, e la conferma sta al capitolo finale di
    *Tehanu*, che l'utente ha in casa.
-3. **Diamante porta il badge `mago`** (conferma dell'utente): *'smette di praticare per sua
-   scelta, ma ciò non gli toglie il dono della magia'*. È la lettura letterale della
-   definizione del badge, che parla del **dono**.
+3. ⚠️⚠️ **Diamante porta `stregone`, NON `mago`, e la decisione è del 2026-08-24**: quella
+   del 2026-08-21 diceva l'opposto (*smette di praticare per sua scelta, ma ciò non gli
+   toglie il dono della magia*), ed è **superata**. La ragione nuova non è testuale ma
+   **storica**, e vale come criterio oltre il caso: *ai suoi tempi solo chi terminava gli
+   studi a Roke era considerato propriamente mago, a prescindere dal suo potere* (parole
+   dell'utente). Quindi il badge misura il **titolo riconosciuto**, non l'entità del dono,
+   e chi rileggesse la vecchia nota rimetterebbe `mago` in buona fede.
 
 ## 📅 L'opera di prima apparizione: titolo tradotto e anno
 
