@@ -254,6 +254,19 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
 
 .crest::before,.crest::after { content:'✦'; margin:0 0.8em; color:var(--gold-bright); }
 .crest a { color:inherit; text-decoration:none; font-weight:bold; }
+/* ⚠️ SCHERMI STRETTISSIMI (0.78): sotto i 360px `ROCCOBOT PRESENTA` andava a capo mentre
+   l'inglese `PRESENTS` stava su una riga, e l'intestazione cresceva di 17,9px al cambio
+   lingua. ⚠️ Era l'ULTIMO salto rimasto dopo il cambio di titolo della 0.77, e non veniva
+   dal titolo: quello a 320px misura identico nelle due lingue.
+   ⚠️ Il tracking scende al MINIMO che basta, non a un valore tondo scelto a occhio: a 320px
+   la riga italiana rientra già da `0.42em`, ma a 300px serve `0.34em`, e la regola deve
+   coprire anche quello. I fregi accorciano i loro margini per lo stesso motivo.
+   ⚠️ Sopra i 360px non cambia NULLA: il crest resta a `0.45em` e `0.8em`, che è la sua resa
+   voluta; qui si paga un filo di respiro solo dove l'alternativa è un salto della pagina. */
+@media (max-width:360px) {
+  .crest { letter-spacing:0.32em; }
+  .crest::before, .crest::after { margin:0 0.5em; }
+}
 
 h1 {
   font-family:'Cinzel Decorative',serif; font-weight:900;
@@ -1230,6 +1243,7 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
 .ctrl-row.cat-locked { cursor:default; pointer-events:none; }
+.ctrl-sheet-head { display:none; }
 .ctrl-panel {
   position:fixed; z-index:210; bottom:6rem; left:2rem; width:max-content; min-width:280px; max-width:calc(100vw - 4rem);
   /* overscroll-behavior:contain: a fine corsa il gesto NON si incatena
@@ -1804,9 +1818,23 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
     left:0; right:0; bottom:0; width:100%; max-width:100%; max-height:82vh;
     border-radius:18px 18px 0 0; transform:translateY(100%);
     transition:transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.16s ease, visibility 0.35s;
-    padding-top:1.2rem; padding-bottom:0;
+    padding-top:0; padding-bottom:0;
     overflow:hidden;
   }
+  /* ⚠️ La testata sticky è il punto di presa del gesto, e fa anche l'ARIA in cima: il
+     `padding-top:1.2rem` della 0.71 serviva a sostituirla mentre non c'era, quindi torna a
+     zero, o lo stacco si sommerebbe due volte.
+     ⚠️ Il fondo è quello NEUTRO della 0.69 (`36,39,42`), non il caldo `42,41,36` di prima:
+     riprendere il vecchio valore rimetterebbe in cima al pannello proprio la dominante
+     giallognola che l'utente ha chiesto di togliere.
+     ⚠️ Niente `border-radius` proprio: la testata riempie la fascia alta e la arrotonda la
+     clip del pannello. Un raggio suo lasciava una scheggia di sfondo agli angoli. */
+  .ctrl-sheet-head {
+    display:block; position:sticky; top:0; z-index:3; height:1.5rem;
+    margin:0 -1.2rem 0.4rem; background:rgba(36,39,42,0.98); pointer-events:none;
+  }
+  html[data-theme="light"] .ctrl-sheet-head { background:rgba(245,247,247,0.98); }
+  .ctrl-sheet-grab { position:absolute; top:0.5rem; left:50%; transform:translateX(-50%); width:42px; height:4px; border-radius:2px; background:rgba(154,192,216,0.4); }
   /* La rete: la classe la mette `fitControlSheet` misurando, non un media query. */
   .ctrl-panel.sheet-scroll { overflow-y:auto; }
   /* Chiusura: comanda l'animazione (niente transition); resta visibile finché
@@ -2969,7 +2997,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.77</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.78</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6781,9 +6809,13 @@ var CTRL_I18N = {
 function controlPanelHTML() {
   var T = CTRL_I18N[currentLang], CL = CAT_LABEL[currentLang], IL = ICON_LABEL[currentLang];
   var CLo = CAT_LABEL[currentLang === 'it' ? 'en' : 'it']; // etichette nell'altra lingua (segnaposto di larghezza)
-  // ⚠️ Niente barretta di presa: era l'indicatore del trascinamento, uscito nella 0.69
-  // insieme al gesto. Un appiglio che non appiglia niente promette un'azione che non c'è.
-  var h = '';
+  // ⚠️⚠️ LA BARRETTA DI PRESA È TORNATA nella 0.78, e con lei il gesto che indica: l'utente
+  // aveva chiesto di togliere lo SCORRIMENTO del contenuto (dito dal basso in alto, che non
+  // serviva), non il trascinamento verso il basso per CHIUDERE, che gli piaceva. La 0.69 li
+  // aveva tolti insieme, che era una lettura troppo larga della richiesta.
+  // ⚠️ Barretta e gesto stanno o cadono insieme: un appiglio che non appiglia niente promette
+  // un'azione che non c'è, e un gesto senza appiglio non lo scopre nessuno.
+  var h = '<div class="ctrl-sheet-head"><div class="ctrl-sheet-grab"></div></div>';
   // Toggle tema (sole/luna): non persistente
   var isLight = document.documentElement.getAttribute('data-theme') === 'light';
   var SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
@@ -7589,7 +7621,7 @@ function fitControlSheet() {
   p.classList.remove('sheet-scroll');
   if (p.scrollHeight > p.clientHeight + 1) p.classList.add('sheet-scroll');
 }
-function toggleControlPanel() {
+function toggleControlPanel(skipSheetAnim) {
   var panel = document.getElementById('ctrl-panel'), bd = document.getElementById('ctrl-backdrop'),
       fab = document.getElementById('ctrl-fab');
   var open = panel.classList.toggle('open');
@@ -7606,7 +7638,10 @@ function toggleControlPanel() {
   // la transition. ⚠️ Il parametro `skipSheetAnim` è uscito con il drag (0.69): serviva
   // al gesto, che animava da sé, e senza il gesto non ha più chiamanti.
   if (open) { panel.classList.remove('closing'); }
-  else { panel.classList.add('closing'); }  // desktop e mobile (CSS diverso per viewport)
+  // ⚠️ `skipSheetAnim` torna con il gesto (0.78): quando la sheet la chiude il dito,
+  // l'animazione l'ha già fatta il drag handler, e aggiungere `.closing` la farebbe partire
+  // una seconda volta da una posizione che non è più quella di riposo.
+  else if (skipSheetAnim !== true) { panel.classList.add('closing'); }  // desktop e mobile
   if (open) fitControlSheet();
   // Solo mobile: alla PRIMA apertura del Pannello dopo il caricamento pagina, e
   // solo se c'è da scorrere, parte una volta l'animazione 'dito che scorre' (poi
@@ -7765,6 +7800,54 @@ function buildControlPanel() {
   // Pulizia delle classi di animazione a fine corsa (così sono ri-attivabili).
   panel.addEventListener('animationend', function(e){ if (e.target === panel && (e.animationName === 'ctrl-sheet-close' || e.animationName === 'ctrl-pop-fade')) panel.classList.remove('closing'); });
   fab.addEventListener('animationend', function(e){ if (e.animationName === 'fab-grow') fab.classList.remove('fab-grow'); });  // fab-tap resta (tiene 0.92 a Pannello aperto); lo toglie toggleControlPanel
+  // ── Trascinamento verso il BASSO per chiudere la sheet (tornato nella 0.78) ────
+  // ⚠️⚠️ Questo gesto e lo SCORRIMENTO del contenuto sono due cose diverse, e la 0.69 le
+  // aveva tolte insieme: l'utente voleva perdere il secondo (dito dal basso in alto, che su
+  // un pannello che ci sta tutto non serviva) e tenere il primo, che gli piaceva.
+  // ⚠️ La guardia `atTop` NON è ridondante benché la sheet oggi non scorra: quando il
+  // contenuto non ci sta, `fitControlSheet` rimette lo scorrimento (schermi bassi, testo
+  // ingrandito), e là il gesto deve cedere il passo allo scroll finché non si è in cima.
+  // ⚠️ `preventDefault` chiede `passive:false` sul solo `touchmove`: senza, il browser
+  // scrolla la pagina sotto mentre il pannello segue il dito.
+  // ⚠️ Attaccato UNA volta sola: il pannello persiste per tutta la sessione, si rigenera
+  // solo il suo `innerHTML`, quindi riattaccarlo a ogni refresh accumulerebbe listener.
+  (function(){
+    var startY = 0, dy = 0, dragging = false, atTop = false;
+    panel.addEventListener('touchstart', function(e){
+      if (e.touches.length !== 1) return;
+      if (!window.matchMedia('(max-width:768px)').matches) return;
+      startY = e.touches[0].clientY; dy = 0; dragging = false;
+      atTop = panel.scrollTop <= 0;
+    }, { passive: true });
+    panel.addEventListener('touchmove', function(e){
+      if (e.touches.length !== 1) return;
+      dy = e.touches[0].clientY - startY;
+      if (dragging || (atTop && dy > 0)) {
+        dragging = true;
+        panel.style.transition = 'none';
+        panel.style.transform = 'translateY(' + (dy > 0 ? dy : 0) + 'px)';
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+    // ⚠️ La soglia è 90px: sotto, la sheet rientra. Un valore piccolo la farebbe chiudere a
+    // ogni sfioramento, che su un pannello pieno di interruttori è il difetto peggiore.
+    function endDrag(){
+      if (!dragging) return;
+      dragging = false;
+      if (dy > 90) {
+        panel.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+        panel.style.transform = 'translateY(100%)';
+        panel.style.opacity = '0';
+        setTimeout(function(){ toggleControlPanel(true); panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = ''; }, 210);
+      } else {
+        panel.style.transition = 'transform 0.2s ease';
+        panel.style.transform = 'translateY(0)';
+        setTimeout(function(){ panel.style.transition = ''; panel.style.transform = ''; }, 210);
+      }
+    }
+    panel.addEventListener('touchend', endDrag, { passive: true });
+    panel.addEventListener('touchcancel', endDrag, { passive: true });
+  })();
   document.body.appendChild(bd);
   document.body.appendChild(panel);
   document.body.appendChild(fab);
@@ -7776,12 +7859,13 @@ function buildControlPanel() {
   scrollHint.setAttribute('aria-hidden', 'true');
   scrollHint.innerHTML = '<span class="csh-tail"></span><span class="csh-dot"></span>';
   document.body.appendChild(scrollHint);
-  // ⚠️⚠️ IL TRASCINAMENTO PER CHIUDERE È USCITO nella 0.69 (istruzione dell'utente: *il
-  // pannello mobile è abbastanza breve: puoi abbassarlo e fare in modo che non sia
-  // trascinabile*). Con tutto il contenuto in vista il gesto non serviva più, e col
-  // gesto è uscita la barretta di presa in cima, che ne era l'indicatore: sono ~30px
-  // di altezza in meno, cioè la parte di 'abbassarlo'.
-  // ⚠️ La sheet resta chiudibile in TRE modi, e nessuno dipende dal gesto: il tasto
+  // ⚠️⚠️ IL TRASCINAMENTO PER CHIUDERE, uscito nella 0.69, È TORNATO nella 0.78, e la
+  // vicenda vale come lezione: la richiesta di allora (*il pannello mobile è abbastanza
+  // breve: puoi abbassarlo e fare in modo che non sia trascinabile*) è stata letta come
+  // 'via tutti i gesti', mentre l'utente ne voleva perdere uno solo. Sua precisazione:
+  // *non volevo che si scorresse in basso il contenuto, ma il gesto opposto per richiudere
+  // il pannello mi piaceva*. Lo SCORRIMENTO resta spento (`overflow:hidden`), il gesto no.
+  // ⚠️ La sheet resta chiudibile in QUATTRO modi, e tre non dipendono dal gesto: il tasto
   // Chiudi della barra in basso, il velo dietro e il tasto Esc.
   refreshControlPanel();
 }
