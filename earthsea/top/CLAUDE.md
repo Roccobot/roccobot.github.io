@@ -260,6 +260,17 @@ comune, qui manca il vero nome.
 Voce chiesta dall'utente il 2026-08-23, la prima con `nome` **vuoto** per scelta e non per
 lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome comune').
 
+- ✅ **Dalla `0.53` non è più solo**: le **dieci** schede dello Schedario il cui unico nome
+  è il vero nome (Akaren, Ard, Ath, Elfarran, Erreth-Akbe, Maharion, Morred, Nereger,
+  Serriadh, Thorion) hanno `nome` e `nome_en` vuoti come lui. ⚠️ **La trappola che le aveva
+  sdoppiate nella `0.52`**: l'esportazione dello Schedario riempie il campo vuoto col nome
+  di riferimento della scheda, quindi per queste dieci stampava il vero nome anche nella
+  colonna del nome d'uso, e l'importazione l'ha preso per un nome. La card ripeteva il nome
+  su due righe, e l'utente l'ha còlto su Thorion (*ha il nome vero come unico nome: togli
+  la ripetizione*). Chi rifà un'importazione tratti 'nome esportato uguale al vero nome'
+  come campo vuoto: le nove schede `data-serve-it` non possono cadere nel caso, perché là
+  il nome d'uso è obbligatorio proprio per non coincidere col vero.
+
 - **Attestato**: *King Akambar, a prince of Shelieth on Way, moved the court to Havnor and made
   Havnor Great Port the capital*; in italiano *Re Akambar trasferì la corte da Berila alla città
   di Havnor*. Ricacciò i Karg a est ed è uno dei **quattordici** sovrani di Havnor. `origine` è
