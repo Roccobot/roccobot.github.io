@@ -2217,12 +2217,41 @@ etichette sono cinque.
   dell'interruttore dello spazio riservato. Su **mobile** le card non si muovono di un
   pixel (0/120 in posizione relativa alla lista e in altezza).
 
-⚠️⚠️ **RESTA APERTO UN PUNTO, ed è l'INTESTAZIONE su mobile**: a 390px l'header passa da
-**471,78px a 508,27px** al cambio lingua (**+36,5px**) e fa scorrere in giù tutta la pagina.
-Non sono il sottotitolo né l'introduzione, che misurano identici nelle due lingue: è il
-**titolone**, che a quella larghezza va a capo su un numero di righe diverso (`I Grandi di
-Terramare` contro `The Greats of Earthsea`). Il rimedio è lo stesso idioma delle card (la
-gemella invisibile dell'altra lingua nella stessa cella), e l'utente ha chiesto di rimandarlo.
+### 🏷️ Il TITOLO del sito è cambiato, e ha chiuso il salto dell'intestazione
+
+Fino alla `0.76` l'header cresceva di **36,5px** al cambio lingua a 390px (da 471,78 a
+508,27), e faceva scorrere in giù tutta la pagina. Non erano il sottotitolo né
+l'introduzione, che misurano identici: era il **titolone**, che andava a capo su un numero di
+righe diverso (`I Grandi di Terramare` su due, `The Great Ones of Earthsea` su tre).
+
+⚠️⚠️ **La cura NON è stata tipografica ma EDITORIALE**, ed è la cosa da sapere: il titolo è
+diventato **`Il mondo di Terramare` / `The World of Earthsea`** (`0.77`, proposta
+dell'utente: *'I grandi di...' andava bene per Arda, qui ha meno senso*). Le due lingue hanno
+ora la stessa struttura, tre parole brevi sopra e il nome del mondo sotto, quindi occupano lo
+stesso numero di righe **per costruzione** e non per taratura.
+
+- **Le vie SCARTATE, con le loro misure**, perché non vengano riproposte:
+  - la **gemella invisibile** dell'altra lingua nella stessa cella di griglia (l'idioma delle
+    card): avrebbe funzionato, ma su un titolo che va a capo riserva l'altezza della lingua
+    più lunga **a tutte e due**, cioè allunga l'intestazione anche in italiano;
+  - **`THE` e `OF` rimpiccioliti** (55, 45 o 62% del corpo): azzeravano il salto a 390px, ma
+    è un trucco tipografico che dipende dalla larghezza;
+  - la variante con **`OF` in prima riga** (`THE GREAT ONES OF` / `EARTHSEA`): non regge. La
+    riga tenuta unita misura 360-373px contro i 358 disponibili a 390px e i **328 a 360px**:
+    esce di 2px nel caso migliore e di 45 nel peggiore.
+- ✅ **Verificato dopo il cambio, a sei larghezze**: salto **0** da 360px a 1280px, due righe
+  in entrambe le lingue, nessuna riga che sborda. A **360px** il margine più stretto è di
+  11px (`The world of` misura 317 su 328 disponibili): è il numero da ricontrollare se un
+  domani il titolone cresce di corpo.
+- ⚠️ **A 320px resta un salto di 17,9px, e NON è il titolo** (che là misura identico, 114,8px
+  in entrambe le lingue, su tre righe): è il **crest**, dove `ROCCOBOT PRESENTA` va a capo
+  mentre `ROCCOBOT PRESENTS` sta su una riga. Chi volesse chiuderlo agisca là, non sul titolo.
+- **L'a-capo NON è forzato** (scelta dell'utente): niente `<br>` nel dato, il browser manda a
+  capo da sé. Su schermi molto larghi le due lingue diventerebbero una riga sola insieme, e
+  il salto resta zero perché la struttura è simmetrica.
+- ⚠️ **Che cosa NON è cambiato**: il nome breve dell'app (`Earthsea`, `Earthsea Roccobot` nel
+  manifest) e i meta social (`Earthsea Top by Roccobot`), che l'utente ha chiesto di lasciare
+  come sono perché sotto l'icona ci stanno pochi caratteri.
 
 ## 📖 Prima apparizione: `fonte` e `fonte_en`, e il ripiego vale nei due sensi
 
