@@ -510,6 +510,92 @@ html { --col-max:680px; }
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
 
+/* ── Righe BILINGUI: la gemella invisibile che riserva l'altezza (0.59) ─────────
+   Faccia visibile e testo dell'altra lingua nella stessa cella di griglia: il box
+   prende l'altezza MAGGIORE delle due, e il cambio lingua non muove più le card.
+   ⚠️ Non è un'altezza indovinata, è quella vera dell'altra lingua misurata dal
+   browser sulla stessa larghezza: la stessa ragione per cui il tag del filtro
+   riserva il suo spazio col tag stesso e non con un `min-height` a numero.
+   ⚠️ `.rank-title` è un flex e la sua disposizione scende sulle FACCE, o il gap fra
+   titolo e anno andrebbe perduto quando la riga viene impilata. */
+.bil { display:grid; }
+.bil > .bil-f, .bil > .bil-m { grid-area:1 / 1; min-width:0; }
+.bil > .bil-m { visibility:hidden; pointer-events:none; }
+.rank-title.bil > .bil-f, .rank-title.bil > .bil-m {
+  display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
+}
+/* ⚠️ La riga del NOME vuole facce a colonna flex, non blocchi: `.rank-name` è un
+   `inline-flex`, e come figlio di un blocco si stringerebbe al contenuto invece di
+   prendere la larghezza della card, cambiando il punto in cui va a capo. Dentro una
+   colonna flex torna a essere l'elemento stirato che era in `.rank-content`. */
+.nome-slot > .bil-f, .nome-slot > .bil-m { display:flex; flex-direction:column; align-items:stretch; }
+
+/* ── ORIGINE: la colonna a destra (resa 'B', 0.59) ──────────────────────────────
+   Scelta dell'utente fra tre proposte: l'origine non è un'etichetta come 'Uomo' o
+   'Drago' (quelle dicono che cosa una voce È e stanno accanto al nome), è un dato di
+   SCHEDA, e messa in colonna si legge in verticale scorrendo la lista, che è l'unico
+   modo di confrontarla fra voci vicine.
+   ⚠️⚠️ La card è una GRIGLIA, e questa è una TERZA colonna che esiste solo dove il
+   dato c'è (`.has-orig`). È la costruzione che soddisfa 'origine ignota = niente
+   colonna, niente filetto, e il resto della card si riprende lo spazio': senza il
+   dato la griglia resta a due colonne e l'`1fr` del contenuto si allarga DA SOLO.
+   Una cella vuota nascosta con `visibility` avrebbe tenuto lo spazio, che è
+   l'opposto di quel che l'utente ha chiesto (ed è invece giusto per il tag del
+   filtro, dove lo spazio va riservato: vedi § 'Il tag del filtro sta in FONDO').
+   ⚠️ Il valore è in CINZEL con la cassa del dato: le minuscole di Cinzel sono
+   VERSALETTI, quindi 'Gont' rende G + ONT senza nessun `text-transform`. È la stessa
+   ragione per cui il nome d'uso ha dovuto lasciare Cinzel (vedi la nota di
+   `.rank-name`): qui quel comportamento è esattamente quello che si vuole. */
+/* ⚠️⚠️ La colonna ha una larghezza FISSA, e non `auto`: con `auto` ogni card si
+   dimensiona sul proprio valore, il filetto zigzaga da una card all'altra e la
+   colonna smette di essere una colonna, cioè si perde l'unica ragione per cui la
+   resa 'B' è stata scelta ('l'occhio trova l'origine sempre nello stesso punto
+   scorrendo la lista'). Misurato: da 34px ('Ark') a 150px ('Terre di Kargad').
+   ⚠️ Il valore è tarato sul toponimo di UNA parola più largo, `Lorbanery` (98,5px
+   coi font veri, Cinzel 600 a 15,68px), non sul più largo in assoluto: le due sole
+   forme multiparola ('Terre di Kargad' e 'Kargad Lands', 4 voci) vanno a capo in
+   due righe, che è il prezzo giusto perché non allarghino la colonna per tutte e
+   111. Per questo `.ro-val` NON è `nowrap`: dentro una parola non c'è punto di
+   rottura, quindi i toponimi singoli restano interi da soli. */
+html { --orig-col:6.6rem; }
+.rank-item.has-orig { grid-template-columns:clamp(54px,10vw,76px) 1fr var(--orig-col); }
+.rank-orig {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0.1rem; align-self:stretch; min-width:0;
+  padding-left:clamp(0.7rem,2.2vw,1.15rem);
+  border-left:1px solid rgba(104,144,168,0.22);
+}
+html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
+.ro-lab {
+  font-family:'EB Garamond',serif; font-style:italic; font-weight:400;
+  font-size:clamp(0.7rem,1.7vw,0.8rem);
+  color:var(--parchment-dim); opacity:0.7; letter-spacing:0.02em; line-height:1;
+}
+.ro-val {
+  font-family:'Cinzel',serif; font-weight:600;
+  font-size:clamp(0.82rem,2.1vw,0.98rem);
+  color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
+  letter-spacing:0.05em; line-height:1.2; text-align:center;
+  overflow-wrap:break-word;
+}
+/* Il segno di LUOGO al posto della parola, quando `ORIG_PIN` è acceso: non va
+   tradotto e non prende posizione fra nascita e residenza, che è la ragione per cui
+   l'utente lo ha proposto. `currentColor` lo lega alla tinta dell'etichetta. */
+.ro-pin { width:1.05em; height:1.05em; display:block; opacity:0.8; }
+.ro-pin path { fill:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1); }
+@media (max-width:480px) {
+  /* Sotto i 480px la terza colonna toglierebbe troppo al blocco dei nomi: l'origine
+     scende sotto il contenuto e torna in linea, senza filetto. La posizione va detta
+     a mano (`grid-column`), o la griglia a due colonne la metterebbe sotto il numero. */
+  .rank-item.has-orig { grid-template-columns:clamp(54px,10vw,76px) 1fr; }
+  .rank-orig {
+    grid-column:2; grid-row:2; flex-direction:row; align-items:baseline;
+    justify-content:flex-start; gap:0.4em; align-self:auto;
+    border-left:0; padding-left:0; margin-top:0.1rem;
+  }
+  .ro-pin { align-self:center; }
+}
+
 /* DRAGHI: il nome sta TUTTO nella prima riga (istruzione dell'utente, 2026-08-21,
    che l'ha chiamata una sua svista precedente). Un drago non ha nome d'uso: il suo
    nome È il vero nome, quindi la seconda riga non esiste e la prima porta già la resa
@@ -649,6 +735,15 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 /* Micro-correzione ottica: solo i due glifi parentesi '(' ')' delle etichette,
    alzati di 0.03em (contenuto e testo esterno invariati). Il wrapper .tpwrap tiene
    testo+parentesi in flusso inline, così lo spazio 'Elfo (' resta preservato. */
+/* Slot a larghezza stabile fra le due lingue (0.59): stesso meccanismo di
+   `.tag-measure` e `.ctrl-label-alt` del Pannello, portato sulle card. La pastiglia
+   prende la larghezza MAGGIORE fra l'etichetta italiana e quella inglese, quindi non
+   si restringe al cambio lingua e la riga del nome va a capo allo stesso punto.
+   ⚠️ Lo slot sta DENTRO la pastiglia e non al posto suo: `.type-badge` resta il flex
+   che centra la freccia SVG dei segmenti a freccia (vedi la nota nel JS). */
+.type-badge .tb-stack { display:inline-grid; justify-items:center; align-items:center; }
+.type-badge .tb-stack > span { grid-area:1 / 1; }
+.type-badge .tb-m { visibility:hidden; pointer-events:none; }
 .type-badge .tpwrap { display:inline; }
 .type-badge .tparen { display:inline-block; transform:translateY(-0.03em); }
 /* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
@@ -2686,7 +2781,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.58</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.59</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2790,8 +2885,13 @@ var FX_PTR = { hov:true };
 // primo salvataggio dal pannello). `FX_KNOBS` costruisce le sue `opts` da qui con
 // `fxSelOpts`, così la fonte resta una sola.
 var FX_SEL = {
+  // ⚠️ I primi CINQUE sono di Terramare (dalla 0.59), gli altri sei sono le trame
+  // ereditate da 'I Grandi di Arda', tenute finché l'utente non dice quali conservare.
   pat: {
-    mot: [['stars', 'Stelle', 'Stars'], ['foglia', 'Foglia', 'Leaf'],
+    mot: [['onde', 'Onde', 'Waves'], ['gorgo', 'Gorghi', 'Eddies'],
+          ['sartie', 'Sartiame', 'Rigging'], ['venti', 'Rosa dei venti', 'Wind rose'],
+          ['maglia', 'Maglia', 'Mail'],
+          ['stars', 'Stelle', 'Stars'], ['foglia', 'Foglia', 'Leaf'],
           ['loz', 'Losanghe', 'Lozenges'], ['seme', 'Campo di stelle', 'Star field'],
           ['weave', 'Intreccio', 'Interlace'], ['banner', 'Vessillo', 'Banner']]
   }
@@ -2838,13 +2938,13 @@ var SITE_FLAGS_DEFAULT = {
   // sovrimpressione. ⚠️ Default SPENTO - è l'unico effetto che nasce spento, perché
   // aggiunge qualcosa che il sito non ha mai avuto: si accende dal Pannello quando
   // l'utente decide. `mot` è una manopola a SCELTE (vedi il tipo `sel`): sei motivi,
-  // dalle stelle alle due reti intrecciate (vedi PAT_TILE). ⚠️ I disegni sono
-  // EREDITATI da 'I Grandi di Arda' e non hanno niente di Terramare: valgono come
-  // trame neutre finché non nasceranno i motivi propri dell'arcipelago.
+  // dalle onde alla maglia di scaglie (vedi PAT_TILE). ⚠️ Dalla 0.59 i motivi PROPRI
+  // dell'arcipelago ci sono e stanno in testa all'elenco; i sei ereditati da 'I Grandi
+  // di Arda' restano in coda finché l'utente non dice quali tenere.
   // ⚠️ Dalla v14.65 NON esiste più la scelta 'Dove' (`area`): la trama sta SEMPRE
   // fuori dalla colonna delle schede e fuori dalla testata, quindi la sfumatura vale
   // sempre e un eventuale `area` residuo nei dati salvati è ignorato.
-  pat:{ on:false, mot:'stars', c_d:'#ffffff', op_d:0.055,
+  pat:{ on:false, mot:'onde', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
   // press: quali parti incidere, name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
@@ -3283,6 +3383,11 @@ function fxGlowOuter(cfg, light, cc){
 // La geometria del tile è pensata per RIPETERSI senza cuciture visibili: gli
 // elementi sui bordi sono duplicati a coordinate opposte.
 var PAT_TILE = {
+  onde: { w: 200, h: 72 },
+  gorgo: { w: 240, h: 120 },
+  sartie: { w: 120, h: 120 },
+  venti: { w: 200, h: 200 },
+  maglia: { w: 120, h: 120 },
   stars: { w: 200, h: 200 },
   foglia: { w: 160, h: 160 },
   loz: { w: 150, h: 150 },
@@ -3353,8 +3458,48 @@ function patCross(cx, cy, r){
          'M' + fxR2(cx - q) + ' ' + fxR2(cy - q) + 'L' + fxR2(cx + q) + ' ' + fxR2(cy + q) +
          'M' + fxR2(cx + q) + ' ' + fxR2(cy - q) + 'L' + fxR2(cx - q) + ' ' + fxR2(cy + q);
 }
+// ── I motivi di TERRAMARE (0.59) ────────────────────────────────────────────────
+// Le sei trame qui sopra vengono da 'I Grandi di Arda' e non hanno niente
+// dell'arcipelago: queste cinque sono le sue, e coprono i temi che l'utente ha
+// chiesto (acqua, schiuma, marineria, navigazione, draghi).
+// ⚠️ Valgono anche qui le due regole del tile: RETE CONNESSA e non figura ripetuta,
+// e bordi duplicati a coordinate opposte perché la cucitura non si veda.
+// Onda a parabole di mezzo periodo, che è la resa pulita di una sinusoide.
+// ⚠️ Il rapporto fra AMPIEZZA e semiperiodo è ciò che decide se legge come acqua o
+// come reticolo: misurato, 25 su 50 fa una rete ogivale, 9 su 50 fa il mare.
+function patOnda(y0, w, semi, amp, giu){
+  var d = 'M0 ' + y0, x = 0, su = giu ? 1 : -1;
+  while (x < w) {
+    d += 'Q' + fxR2(x + semi / 2) + ' ' + fxR2(y0 + su * amp * 2) + ' ' + fxR2(x + semi) + ' ' + y0;
+    x += semi; su = -su;
+  }
+  return d;
+}
+// Spirale per quarti di giro, con il raggio che varia in modo lineare. Parte dal
+// raggio r0 all'angolo a0: chi la vuole innestata su una linea passa il punto di
+// innesto come primo raggio, non come ultimo.
+function patSpira(cx, cy, r0, r1, giri, a0, orario){
+  var n = Math.round(giri * 4), pr = r0, a = a0, sw = orario ? 1 : 0, s = orario ? 1 : -1;
+  var d = 'M' + fxR2(cx + Math.cos(a) * r0) + ' ' + fxR2(cy + Math.sin(a) * r0);
+  for (var i = 0; i < n; i++) {
+    var nr = r0 + (r1 - r0) * (i + 1) / n, na = a + s * Math.PI / 2;
+    d += 'A' + fxR2((pr + nr) / 2) + ' ' + fxR2((pr + nr) / 2) + ' 0 0 ' + sw + ' ' +
+         fxR2(cx + Math.cos(na) * nr) + ' ' + fxR2(cy + Math.sin(na) * nr);
+    a = na; pr = nr;
+  }
+  return d;
+}
+// Rosa dei venti: sedici raggi, otto lunghi e otto corti, come sui portolani.
+function patVenti(cx, cy, r, rc){
+  var d = '';
+  for (var i = 0; i < 16; i++) {
+    var a = Math.PI / 8 * i, l = (i % 2 === 0) ? rc : r;
+    d += 'M' + cx + ' ' + cy + 'L' + fxR2(cx + Math.sin(a) * l) + ' ' + fxR2(cy - Math.cos(a) * l);
+  }
+  return d;
+}
 function patSvg(mot, col, w){
-  var t = PAT_TILE[mot] || PAT_TILE.stars, g;
+  var t = PAT_TILE[mot] || PAT_TILE.onde, g;
   // I punti negli interstizi vanno PIENI, quindi in un gruppo proprio: il gruppo
   // esterno è `fill:none` perché tutto il resto è disegno a contorno.
   function dots(pts, r){
@@ -3362,7 +3507,69 @@ function patSvg(mot, col, w){
       return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (p[2] || r) + '"/>';
     }).join('') + '</g>';
   }
-  if (mot === 'weave') {
+  if (mot === 'onde') {
+    // ACQUA. Il passo fra le righe è il DOPPIO dell'ampiezza, quindi la cresta di una
+    // riga tocca il cavo di quella sopra: è ciò che salda le righe in una rete unica
+    // invece di lasciarle righe parallele. Il tile è alto quattro righe, cioè un
+    // numero pari: con un numero dispari la parità della fase non tornerebbe e la
+    // cucitura orizzontale si vedrebbe.
+    var pt = [];
+    g = '';
+    for (var oi = 0; oi <= 4; oi++) {
+      g += '<path d="' + patOnda(oi * 18, 200, 50, 9, oi % 2 === 0) + '"/>';
+      if (oi < 4) {
+        // i nodi si CALCOLANO dai punti di contatto invece di essere scritti a mano
+        pt.push([oi % 2 === 0 ? 25 : 75, oi * 18 + 9], [oi % 2 === 0 ? 125 : 175, oi * 18 + 9]);
+      }
+    }
+    g += dots(pt, 1.3);
+  } else if (mot === 'gorgo') {
+    // SCHIUMA: la stessa rete, più alta e più rada, con un ricciolo su ogni cresta.
+    // ⚠️ Il ricciolo si INNESTA sulla rete (parte dal punto di cresta e si avvolge
+    // verso l'interno): una catena di spirali sciolte sarebbe la figura ripetuta che
+    // la regola del tile vieta. Il verso si alterna, o l'acqua sembra pettinata.
+    g = '';
+    for (var gi = 0; gi <= 4; gi++) g += '<path d="' + patOnda(gi * 30, 240, 60, 15, gi % 2 === 0) + '"/>';
+    for (var gj = 0; gj <= 4; gj++) {
+      var gy = gj * 30 - 15;
+      for (var gx = (gj % 2 === 0) ? 90 : 30; gx < 240; gx += 120) {
+        g += '<path d="' + patSpira(gx, gy - 11, 11, 2.5, 1.25, Math.PI / 2, (gx / 30 + gj) % 2 === 0) + '"/>';
+      }
+    }
+  } else if (mot === 'sartie') {
+    // MARINERIA: stragli verticali e griselle che flettono sotto il peso, con un nodo
+    // a ogni incrocio. È la FLESSIONE a distinguerlo da una griglia: dritte, quelle
+    // righe farebbero carta millimetrata.
+    g = '<path d="M0 0V120M120 0V120M60 0V120"/>';
+    var sn = [];
+    for (var sy = 0; sy <= 120; sy += 40) {
+      g += '<path d="M0 ' + sy + 'Q30 ' + (sy + 10) + ' 60 ' + sy + 'Q90 ' + (sy + 10) + ' 120 ' + sy + '"/>';
+      sn.push([0, sy], [60, sy], [120, sy]);
+    }
+    g += dots(sn, 1.9);
+  } else if (mot === 'venti') {
+    // NAVIGAZIONE: la rete dei venti dei portolani. Qui la connessione non è un
+    // artificio per rispettare la regola: le lossodromie che uniscono le rose SONO
+    // il disegno. Le rose ai quattro angoli si ricompongono a cavallo della cucitura.
+    g = '<path d="M0 0L200 200M200 0L0 200M0 100H200M100 0V200"/>' +
+        '<path d="' + patVenti(100, 100, 34, 20) + '"/><circle cx="100" cy="100" r="34"/>';
+    [[0, 0], [200, 0], [0, 200], [200, 200]].forEach(function(p){
+      g += '<path d="' + patVenti(p[0], p[1], 22, 13) + '"/><circle cx="' + p[0] + '" cy="' + p[1] + '" r="22"/>';
+    });
+    g += dots([[100, 100, 2.2], [0, 100], [200, 100], [100, 0], [100, 200]], 1.6);
+  } else if (mot === 'maglia') {
+    // DRAGHI: anelli che si compenetrano, cioè la cotta di scaglie. Il passo (60) è
+    // minore del diametro (84), quindi gli anelli si intersecano DAVVERO e la rete è
+    // una sola: con un passo pari al diametro sarebbero cerchi affiancati, che è
+    // esattamente il difetto 'scaglie di pesce'.
+    g = '';
+    for (var my = 0; my <= 120; my += 60) {
+      for (var mx = 0; mx <= 120; mx += 60) g += '<circle cx="' + mx + '" cy="' + my + '" r="42"/>';
+    }
+    for (var ny = 30; ny <= 90; ny += 60) {
+      for (var nx = 30; nx <= 90; nx += 60) g += '<circle cx="' + nx + '" cy="' + ny + '" r="9"/>';
+    }
+  } else if (mot === 'weave') {
     // Reticolo OGIVALE: i lati della maglia sono a doppia curva e nei punti medi dei
     // bordi del tile si incontrano con tangente VERTICALE, quindi la rete prosegue
     // senza spigoli. Un lato + le sue tre riflessioni chiudono la maglia.
@@ -3491,7 +3698,7 @@ window.addEventListener('scroll', queuePatTop, { passive: true });
 })();
 // Dimensione del tile in px, scalata dalla manopola.
 function fxPatSize(cfg){
-  var t = PAT_TILE[cfg.mot] || PAT_TILE.stars;
+  var t = PAT_TILE[cfg.mot] || PAT_TILE.onde;
   return Math.round(t.w * cfg.sc) + 'px ' + Math.round(t.h * cfg.sc) + 'px';
 }
 // Vignettatura (REGOLABILE dalla v12.42): livello di sfondo del body, radial dal
@@ -5102,6 +5309,114 @@ function pruneBadgeFilter() {
   badgeFilter.forEach(function(row){ if (!rowHasMembersInCats(row)) badgeFilter['delete'](row); });
 }
 
+// ── Origine: la colonna a destra della card ─────────────────────────────────────
+// ⚠️ `ORIG_PIN` sceglie fra la PAROLA ('origine'/'origin') e il SEGNO di luogo. È un
+// interruttore e non due rese affiancate perché la colonna ne ammette una sola: la
+// parola è la resa 'B' che l'utente ha scelto, il segno è la variante che ha chiesto
+// di vedere, e ha due vantaggi che ha enunciato lui (non va tradotto, e non prende
+// posizione fra origine per nascita e residenza).
+var ORIG_PIN = false;
+// Il segno di luogo, disegnato qui e non in un file: è un glifo di 4 comandi, e un
+// `img` in più costerebbe una richiesta e un 404 possibile (vedi la nota delle icone
+// badge in CLAUDE.md). ⚠️ Niente `innerHTML` altrove: qui il markup è una costante
+// del sorgente, non un dato, come per gli altri SVG in linea della pagina.
+var ORIG_PIN_SVG = '<svg class="ro-pin" viewBox="0 0 24 24" aria-hidden="true">' +
+  '<path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5' +
+  'A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>';
+// L'origine da mostrare: `origine_en` esiste SOLO dove le due lingue divergono
+// ('Terre di Kargad' / 'Kargad Lands'), e per tutte le altre il ripiego è il campo
+// italiano, perché i toponimi dell'arcipelago sono identici nelle due edizioni.
+// È lo stesso patto di `padre_en` e `madre_en`.
+function origineDi(p){
+  var v = currentLang === 'it' ? (p.origine || '') : (p.origine_en || p.origine || '');
+  return String(v).trim();
+}
+// ── Cambio lingua ANTI-JITTER (0.59) ────────────────────────────────────────────
+// Istruzione dell'utente: *vorrei che il cambio lingua fosse totalmente anti-jitter,
+// perciò lascia un po' di spazio vuoto nelle card inglesi con nomi alternativi o
+// altre cose mancanti. Per il mio uso, uno spazio vuoto è preferibile al jitter.*
+// ⚠️⚠️ Il meccanismo è quello GIÀ IN CASA per il tag del filtro e per le etichette del
+// Pannello (`.tag-measure`, `.ctrl-label-alt`): faccia visibile e gemella invisibile
+// nella STESSA cella di griglia, così il box prende la misura MAGGIORE delle due.
+// Non è un'altezza indovinata: è l'altezza vera dell'altra lingua, misurata dal
+// browser sulla stessa larghezza. È la stessa ragione per cui il tag riserva il suo
+// spazio col tag stesso invece che con un `min-height` a numero.
+// ⚠️ La gemella si emette SOLO se le due lingue divergono: dove il testo coincide
+// (i cinque alternativi identici nelle due edizioni) sarebbe DOM sprecato.
+// Misura del 2026-08-24, prima del rimedio: 14 card su 120 cambiavano altezza al
+// cambio lingua, per 360,9px in totale; 12 erano il sottotitolo che sparisce in
+// inglese (Lepre/Hare, Rosa, Ontano, Diaspro, Dote, Millefoglie, Pannocchia: casi
+// della regola anti-doppione), 2 la riga del nome (vedi `.tb-stack`).
+function bilingue(cls, itHtml, enHtml, sempre){
+  var cur = currentLang === 'it' ? itHtml : enHtml;
+  var alt = currentLang === 'it' ? enHtml : itHtml;
+  if (!cur && !alt && !sempre) return '';
+  if (cur === alt) return '<span class="' + cls + '">' + cur + '</span>';
+  return '<span class="' + cls + ' bil"><span class="bil-f">' + cur + '</span>' +
+         '<span class="bil-m" aria-hidden="true">' + alt + '</span></span>';
+}
+// Il CONTENUTO delle due righe bilingui, per lingua: servono a `bilingue`, che le
+// chiede in entrambe le lingue per riservare l'altezza maggiore.
+// ⚠️ Sono la stessa costruzione di prima, solo parametrizzata sulla lingua invece
+// che su `currentLang`: chi le tocca deve ricordarsi che qui `it` è un argomento.
+function descDi(p, it){
+  var padre = escapeHtml(it ? (p.padre || '') : (p.padre_en || p.padre || ''));
+  var madre = escapeHtml(it ? (p.madre || '') : (p.madre_en || p.madre || ''));
+  var info = escapeHtml(it ? (p.info || '') : (p.info_en || p.info || ''));
+  var parti = [];
+  if (info) parti.push(info);
+  if (padre || madre) {
+    var pre = (p.genere || '') === 'f' ? (it ? 'Figlia di' : 'Daughter of') : (it ? 'Figlio di' : 'Son of');
+    var lin = [];
+    if (padre) lin.push(padre);
+    if (madre) lin.push(madre);
+    parti.push(pre + ' ' + lin.join(it ? ' e ' : ' and '));
+  }
+  return joinBipartite(parti);
+}
+// Prima apparizione (istruzione dell'utente, 2026-08-21): il ripiego vale nei DUE
+// sensi, al contrario del resto dei campi bilingui. Finché le rese italiane non
+// arrivano, la vista italiana mostra l'inglese invece di una riga vuota.
+// La riga del NOME, che si impila come le altre quando i due nomi d'uso divergono.
+// ⚠️ Si duplica la riga INTERA e non il solo testo, ed è una scelta: impilare il solo
+// `.rank-name-text` porterebbe la larghezza al massimo fra le due lingue, cioè uno
+// stacco variabile fra nome ed etichetta su quasi tutte le card. Qui invece la
+// gemella riserva la sola ALTEZZA, che è il difetto che l'utente ha chiesto di
+// togliere; la larghezza resta quella naturale di ciascuna lingua.
+// ⚠️ Icone, simbolo di genere ed etichette si RIUSANO tali e quali: sono uguali nelle
+// due lingue (le etichette hanno già lo slot a larghezza stabile, vedi `.tb-stack`),
+// quindi ricostruirle per la gemella non cambierebbe una misura.
+function rigaNomeHtml(nome, soloVero, statusStr, genereSym, tipoStr){
+  return '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '">' +
+    '<span class="rank-name-text">' + nome + '</span>' +
+    '<span class="rank-flags">' + statusStr + genereSym + '</span>' +
+    '<span class="rank-tipi">' + tipoStr + '</span></span>';
+}
+function operaDi(p, it){
+  var pf = parseFonte(it ? (p.fonte || p.fonte_en) : (p.fonte_en || p.fonte));
+  return escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+}
+function sottotitoloDi(p, it){
+  var alt = it ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
+  var app = escapeHtml(it ? (p.appellativi || '') : (p.appellativi_en || ''));
+  if (!alt && !app) return '';
+  // Ogni voce separata da virgola diventa un `.alt-token` (nowrap): la riga va a capo
+  // solo ai separatori, mai dentro un titolo di più parole.
+  var parti = [];
+  if (alt) parti.push(alt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
+  if (app) parti.push(app.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
+  // Solo titoli (nessun nome): vanno resi in corsivo come i titoli bipartiti;
+  // `joinBipartite` a parte singola li lascerebbe 'nudi'.
+  if (app && !alt) return '<span class="bp-solo">' + parti[0] + '</span>';
+  return joinBipartite(parti);
+}
+function origHtml(p){
+  var v = origineDi(p);
+  if (!v) return '';
+  var et = ORIG_PIN ? ORIG_PIN_SVG
+    : '<span class="ro-lab">' + (currentLang === 'it' ? 'origine' : 'origin') + '</span>';
+  return '<span class="rank-orig">' + et + '<span class="ro-val">' + escapeHtml(v) + '</span></span>';
+}
 function renderList() {
   var list = document.getElementById('rank-list');
   var html = '';
@@ -5118,8 +5433,6 @@ function renderList() {
     // quelli INGLESI presi dalla voce Wikipedia: finché le rese italiane non
     // arrivano, la vista italiana mostra l'inglese invece di una riga vuota, e il
     // campo `fonte` resta libero per il titolo italiano vero.
-    var fonte = currentLang === 'it' ? (p.fonte || p.fonte_en) : (p.fonte_en || p.fonte);
-    var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
     // Il vero nome è UNICO per le due lingue: è nella Lingua della Creazione, non
     // si traduce, quindi non ha un campo _en da cui ripiegare.
     var veroNome = escapeHtml(p.vero_nome || '');
@@ -5147,11 +5460,11 @@ function renderList() {
     // UNICA `nomeDiRif` (vedi là il perché). Senza questo ripiego una voce senza nome d'uso
     // avrebbe la **prima riga vuota**, che è quello che succedeva ad Akambar.
     var nome = escapeHtml(nomeDiRif(p, currentLang === 'it'));
-    var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
-    var pf = parseFonte(fonte);
-    var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+    // L'etichetta dell'ALTRA lingua, per lo slot a larghezza stabile: vedi `.tb-stack`.
+    var tipoAlt = currentLang === 'it' ? (p.tipo_label_en || p.tipo_en || p.tipo_label || tipo)
+                                       : (p.tipo_label || p.tipo || tipoLabel);
     // ⚠️⚠️ NIENTE ripiego sul maschile, al contrario di 'I Grandi di Arda': un campo
     // vuoto qui significa 'non lo sappiamo ancora', e ricadere sul maschile ATTRIBUIREBBE
     // un dato che nessuna fonte ha attestato. La riga sotto rende già stringa vuota per un
@@ -5202,6 +5515,22 @@ function renderList() {
       if (!isArrowSeg && (displaySeg.indexOf('(') !== -1 || displaySeg.indexOf(')') !== -1)) {
         displaySeg = '<span class="tpwrap">' + displaySeg.split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>') + '</span>';
       }
+      // ⚠️ SLOT A LARGHEZZA STABILE fra le due lingue (0.59): l'etichetta visibile e
+      // quella dell'altra lingua stanno nella STESSA cella di griglia, quindi la
+      // pastiglia prende la larghezza MAGGIORE delle due e non si restringe passando
+      // da 'Uomo' a 'Man'. Non è una rifinitura estetica: è la riga del NOME a
+      // dipenderne, perché il suo a-capo si sposta con la larghezza dell'etichetta.
+      // Misurato: erano le uniche due card in cui la riga del nome cambiava altezza
+      // al cambio lingua (Erreth-Akbe da 61,05 a 30,75px, Kurremkarmerruk da 71 a
+      // 65,2), cioè i due nomi più lunghi del dataset.
+      // ⚠️ I segmenti con la FRECCIA restano fuori: là la freccia SVG dev'essere
+      // figlia DIRETTA del flex per restare centrata (vedi la nota qui sopra), e uno
+      // slot in mezzo la scentrerebbe. Oggi non ce ne sono, ma il ripiego regge.
+      var altSeg = escapeHtml(((tipoAlt || '').split('|')[idx] || '').trim());
+      if (!isArrowSeg && altSeg && altSeg !== displaySeg) {
+        displaySeg = '<span class="tb-stack"><span class="tb-f">' + displaySeg + '</span>' +
+                     '<span class="tb-m" aria-hidden="true">' + altSeg + '</span></span>';
+      }
       return '<span class="type-badge ' + segCls + '">' + displaySeg + '</span>';
     }).join('') : '';
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con più
@@ -5217,36 +5546,13 @@ function renderList() {
     // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i
     // genitori dal nome tradotto (Tuc/Took, Brandibuck/Brandybuck, di/of...);
     // assenti = nome identico nelle due lingue (fallback su padre/madre).
-    var padre = escapeHtml(currentLang === 'it' ? (p.padre || '') : (p.padre_en || p.padre || ''));
-    var madre = escapeHtml(currentLang === 'it' ? (p.madre || '') : (p.madre_en || p.madre || ''));
-    var desc = escapeHtml(currentLang === 'it' ? (p.info || '') : (p.info_en || p.info || ''));
-    var descParts = [];
-    if (desc) descParts.push(desc);
-    if (padre || madre) {
-      var preL = genere === 'f' ? (currentLang === 'it' ? 'Figlia di' : 'Daughter of') : (currentLang === 'it' ? 'Figlio di' : 'Son of');
-      var linParts = [];
-      if (padre) linParts.push(padre);
-      if (madre) linParts.push(madre);
-      descParts.push(preL + ' ' + linParts.join(currentLang === 'it' ? ' e ' : ' and '));
-    }
-    var rigaDesc = '<span class="rank-desc">' + joinBipartite(descParts) + '</span>';
+    // ⚠️ Le due righe si costruiscono in ENTRAMBE le lingue e passano da `bilingue`,
+    // che impila la gemella invisibile: è così che il cambio lingua non muove più le
+    // card (vedi la nota di `bilingue`). La riga `.rank-desc` si emette sempre, anche
+    // vuota, come faceva prima: toglierla cambierebbe il ritmo verticale della card.
+    var rigaDesc = bilingue('rank-desc', descDi(p, true), descDi(p, false), true);
     // Riga 3: nomi alternativi + appellativi
-    var riga2 = '';
-    if (nomiAlt || appell) {
-      // Ogni voce separata da virgola diventa un .alt-token (nowrap): la riga va
-      // a capo solo ai separatori (virgola, |), mai dentro un titolo di più
-      // parole. (appell è già escapato; i nomi passano da processAlt.)
-      var altParts = [];
-      if (nomiAlt) altParts.push(nomiAlt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
-      if (appell) altParts.push(appell.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
-      // Solo titoli (nessun nome): vanno resi in corsivo come i titoli
-      // bipartiti; joinBipartite() a parte singola li lascerebbe 'nudi'.
-      if (appell && !nomiAlt) {
-        riga2 = '<span class="rank-subtitle"><span class="bp-solo">' + altParts[0] + '</span></span>';
-      } else {
-        riga2 = '<span class="rank-subtitle">' + joinBipartite(altParts) + '</span>';
-      }
-    }
+    var riga2 = bilingue('rank-subtitle', sottotitoloDi(p, true), sottotitoloDi(p, false));
     // vis-1/2/3 (dalla v12.24): posizione esatta sul podio, per i numeri metallici
     // (oro/argento/bronzo). visN è il numero d'ordine tra i VISIBILI, quindi il
     // podio segue i filtri attivi, come lo spessore 8px della striscia.
@@ -5278,6 +5584,20 @@ function renderList() {
     // stessa terna nei due tag.
     var _cp = cardFam === 'custom' ? customPair(p) : null;
     var ccInline = _cp ? (';--ccdark:' + _cp.dark + ';--cclight:' + _cp.light) : '';
+    // Riga del nome, impilata quando i due nomi d'uso divergono (vedi `rigaNomeHtml`):
+    // sono le uniche card in cui la prima riga può andare a capo in una lingua e non
+    // nell'altra (misurato: Sparviero/Sparrowhawk e Mago Rosso di Ark/Red Mage of Ark).
+    var nomeAltro = escapeHtml(nomeDiRif(p, currentLang !== 'it'));
+    var facciaNome = rigaNomeHtml(nome, soloVero, statusStr, genereSym, tipoStr);
+    var rigaNome = (nomeAltro && nomeAltro !== nome)
+      ? '<span class="bil nome-slot"><span class="bil-f">' + facciaNome + '</span>' +
+        '<span class="bil-m" aria-hidden="true">' +
+        rigaNomeHtml(nomeAltro, soloVero, statusStr, genereSym, tipoStr) + '</span></span>'
+      : facciaNome;
+    // Origine: la terza colonna esiste solo dove il dato c'è (vedi il CSS di
+    // `.rank-orig`), e la classe è ciò che la apre.
+    var orig = origHtml(p);
+    if (orig) classes += ' has-orig';
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
@@ -5286,12 +5606,13 @@ function renderList() {
       '<span class="rank-strip" aria-hidden="true"></span>' +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '"><span class="rank-name-text">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        rigaNome +
         (veroNome && !soloVero ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
         rigaDesc +
         riga2 +
-        '<span class="rank-title">' + titleYear + '</span>' +
+        bilingue('rank-title', operaDi(p, true), operaDi(p, false), true) +
       '</span>' +
+      orig +
     '</div>';
   }
   // Incrocio categorie × badge senza risultati: messaggio al posto del vuoto.
@@ -5369,18 +5690,36 @@ function rowLines(el) {
   for (i = 0; i < tops.length; i++) { if (tops[i] - cur > 8) { lines++; cur = tops[i]; } }
   return lines;
 }
+// Righe di una riga bipartita che può essere IMPILATA (vedi `bilingue`): si misura
+// ogni faccia a sé e si tiene la MAGGIORE.
+// ⚠️⚠️ Misurare la riga intera con un `Range` dà un numero SBAGLIATO da quando le due
+// lingue si impilano: il range prende anche i rettangoli della gemella nascosta, che
+// sta nella stessa cella ma può avere un numero di righe diverso, e `rowLines` li
+// conta come righe in più. Il difetto è visibile e non silenzioso: il sottotitolo di
+// Sparviero restava spezzato in due anche a 1040px, dove la riga misura 733px e il
+// testo ne occupa 733 (cioè ci stava).
+// ⚠️ E si prende il MASSIMO invece della sola faccia visibile perché la decisione
+// dev'essere la stessa nelle due lingue: decidendo sulla visibile, l'italiano
+// potrebbe spezzare e l'inglese no, e il jitter rientrerebbe dalla finestra.
+function righeBipartite(row) {
+  var facce = row.querySelectorAll(':scope > .bil-f, :scope > .bil-m');
+  if (!facce.length) return rowLines(row);
+  var n = 0;
+  for (var i = 0; i < facce.length; i++) n = Math.max(n, rowLines(facce[i]));
+  return n;
+}
 function optimizeBipartite() {
   var rows = document.querySelectorAll('#rank-list .rank-desc, #rank-list .rank-subtitle');
   var i, cand = [];
   for (i = 0; i < rows.length; i++) rows[i].classList.remove('bp-break');
   for (i = 0; i < rows.length; i++) {
     if (!rows[i].querySelector('.bp-b')) continue;
-    var n = rowLines(rows[i]);
+    var n = righeBipartite(rows[i]);
     if (n > 1) cand.push({ el: rows[i], before: n });
   }
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('bp-break');
   for (i = 0; i < cand.length; i++)
-    if (rowLines(cand[i].el) > cand[i].before) cand[i].el.classList.remove('bp-break');
+    if (righeBipartite(cand[i].el) > cand[i].before) cand[i].el.classList.remove('bp-break');
 }
 // Emissione delle righe bipartite: con due parti, ciascuna in uno span
 // misurabile e separatore a sé (nascosto da .bp-break); con una sola, testo nudo.
@@ -8296,8 +8635,8 @@ var FX_KNOBS = {
   pat: [
     { p:'on', t:'bool', it:'Attiva', en:'Enable' },
     { p:'mot', t:'sel', dep:'on', it:'Motivo', en:'Motif', opts:fxSelOpts('pat', 'mot'),
-      nit:'Stelle e foglia di Lothlórien, figure araldiche, reti intrecciate.',
-      nen:'Stars and the leaf of Lothlórien, heraldic figures, interlaced nets.' },
+      nit:'I primi cinque sono di Terramare: mare, schiuma, sartiame, rose dei venti, maglia di scaglie. Gli altri sei vengono da Arda.',
+      nen:'The first five are of Earthsea: sea, foam, rigging, wind roses, scale mail. The other six come from Arda.' },
     { p:'fade', t:'num', step:10, unit:'px', dep:'on', it:'Sfumatura', en:'Fade',
       nit:'Quanto la trama si dissolve prima di incontrare la colonna delle schede e la testata, che restano sempre sgombre.',
       nen:'How far the pattern fades out before it meets the card column and the header, which always stay clear.' },
