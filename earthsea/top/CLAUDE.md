@@ -2071,17 +2071,27 @@ corrette nella `0.67`.
 - ⚠️⚠️ **La lezione vale oltre il caso**: una misura che guarda una dimensione sola può
   dichiarare 'zero' mentre la pagina si muove in un'altra. Se l'utente dice che vede
   muoversi qualcosa, il metro è sbagliato prima del codice.
-- ⚠️⚠️ **MA LE DUE DIMENSIONI NON VALGONO UGUALE, e questo è il criterio da tenere**
-  (precisazione dell'utente, 2026-08-24): *l'anti-jitter che mi interessava era soprattutto
-  quello verticale*. Il salto **verticale** fa scorrere la pagina sotto gli occhi mentre si
-  legge, ed è il difetto vero; lo scivolamento **orizzontale** di un'etichetta dentro la sua
-  card è molto meno grave del vuoto permanente che si paga per evitarlo.
-  - **La conseguenza pratica, già applicata nella `0.71`**: la riserva **orizzontale** del
-    nome si toglie dove non costa un salto verticale (vedi la sezione qui sotto), mentre
-    quella verticale non si tocca mai.
-  - ⚠️ **Chi legge 'anti-jitter' senza questa nota rimette la riserva orizzontale** in nome
-    della coerenza, ed è esattamente il difetto che l'utente ha segnalato su Ged: la nota
-    esiste per quello.
+- ⚠️⚠️ **QUI, E SOLO QUI, l'asse verticale conta più dell'orizzontale.** Precisazione
+  dell'utente, 2026-08-24, che ha corretto una prima stesura di questa nota troppo larga: *in
+  generale l'anti-jitter riguarda specifici elementi di UI: applicarlo al Pannello o a una
+  modale o al Pannello di Controllo o all'editor admin significa cercare di non far muovere
+  nulla (entrambi gli assi). Ma in questo caso specifico, visto che ho chiesto una cosa non
+  proprio scontata (coerenza di allineamento di un'intera pagina) l'asse verticale era quello
+  che contava davvero; ma non è una regola generale.*
+  - **Il caso è quello della LISTA delle card al cambio lingua**, cioè una pagina intera che
+    si vuole immobile: là il salto **verticale** fa scorrere il testo sotto gli occhi mentre
+    si legge ed è il difetto vero, mentre lo scivolamento **orizzontale** di un'etichetta
+    dentro la sua card costa meno del vuoto permanente che si paga per evitarlo. È la ragione
+    della `0.71`: la riserva orizzontale del nome si toglie dove non costa un salto verticale
+    (vedi la sezione qui sotto), quella verticale non si tocca mai.
+  - ⚠️⚠️ **Su un COMPONENTE di UI vale l'anti-jitter pieno, su tutti e due gli assi**:
+    Pannello, Pannello di controllo, modali, editor admin. Là non c'è nessun compromesso da
+    fare, e un elemento che si sposta di lato mentre lo si sta usando è un difetto quanto uno
+    che salta in su.
+  - ⚠️ La nota esiste perché 'anti-jitter' letto senza distinzioni porta a rimettere la
+    riserva orizzontale del nome in nome della coerenza, ed è il vuoto che l'utente ha
+    segnalato su Ged; ma letto **troppo** in senso lato porta all'errore opposto, cioè a
+    tollerare uno scivolamento dentro il Pannello.
 - **I tre rimedi**: la gemella del nome passa dalla riga intera al **solo testo** (così la
   cella prende il massimo delle due lingue in **entrambe** le dimensioni); la citazione
   impila **le due righe separatamente** invece del blocco; il footer nasconde la riga con
@@ -2090,8 +2100,8 @@ corrette nella `0.67`.
 - ⚠️ **Il prezzo del primo rimedio è dichiarato**: sulle card dove i due nomi divergono
   resta uno stacco variabile fra nome ed etichetta, ed era il patto dell'utente (*uno spazio
   vuoto è preferibile al jitter*). ⚠️ **Il patto è CADUTO nella `0.71`**: vedi qui sotto. Non
-  perché il patto fosse sbagliato, ma perché valeva per il jitter **verticale**, e nessuno lo
-  aveva scritto: applicandolo anche all'orizzontale è nato il vuoto di Ged.
+  perché fosse sbagliato, ma perché in una LISTA quello che conta è il jitter **verticale**, e
+  nessuno lo aveva scritto: applicandolo anche all'orizzontale è nato il vuoto di Ged.
 
 ### 🔓 Il nome si LIBERA dalla riserva orizzontale dove non costa un salto
 
