@@ -793,6 +793,30 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    del nome: misurato su 19 card coi font veri, **-0,55px** dalla metà delle maiuscole
    (era +1,45px, cioè in alto). Non serve nessun valore al posto di quello: serve
    togliere il valore. */
+/* ⚠️⚠️ IL NUDGE OTTICO DIPENDE DAL TIPO DI NOME, ed è l'utente ad averlo capito
+   (2026-08-24): *non mi tornavano gli allineamenti: dipende dalla configurazione dei
+   nomi*. Le due prime righe sono in due font diversi, quindi la loro massa ottica
+   sta a due altezze diverse, e un valore solo non può servirle entrambe:
+   • senza nome comune (`.name-vero`: draghi e i dieci col solo vero nome) la riga è
+     in **Cinzel tutto maiuscolo**, che non ha discendenti e siede alto: etichette e
+     icone vanno **su di 3px**;
+   • col nome comune la riga è in **EB Garamond a cassa mista**, la cui massa scende
+     con la x-height e le discendenti: etichette e icone vanno **giù di 3px**.
+   ⚠️ I DUE NUMERI SONO LO STESSO SPOSTAMENTO, espresso in due em diversi: l'em delle
+   icone è quello del nome (29,12px sul desktop, 3px = 0.103em), quello dell'etichetta
+   è il suo 0.62em (18,05px, 3px = 0.166em). Scrivere lo stesso numero su entrambi
+   sposterebbe l'etichetta di 1,9px invece di 3, e il gruppo si spezzerebbe in due.
+   ⚠️ Si sposta con `top` e NON con `transform`: le regole `.bi-<id>` iniettate dai
+   micro-aggiustamenti dei badge usano `translateY` con specificità maggiore, quindi un
+   transform qui verrebbe cancellato da un editor che nessuno ha aperto.
+   ⚠️ In em, quindi scala col corpo: su mobile vale ~2px, dove il nome è 19,84px. Là i
+   due contenitori sono `inline-flex` con la loro risalita di -0.156em e questo nudge
+   ci si SOMMA, che è l'effetto voluto (quello corregge la riga, questo il font). */
+.rank-name > .rank-flags > *, .rank-name > .rank-tipi > * { position:relative; }
+.rank-name.name-vero > .rank-flags > * { top:-0.103em; }
+.rank-name.name-vero > .rank-tipi > .type-badge { top:-0.166em; }
+.rank-name:not(.name-vero) > .rank-flags > * { top:0.103em; }
+.rank-name:not(.name-vero) > .rank-tipi > .type-badge { top:0.166em; }
 /* Spaziatura tra etichette tipo: solo il gap del contenitore flex (.rank-name
    su desktop, .rank-tipi su mobile), uniforme con quella verso nome e icone.
    Rimosso il margin-left ridondante che la raddoppiava (~0.68em -> 0.4em). */
@@ -2804,7 +2828,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.62</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.63</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

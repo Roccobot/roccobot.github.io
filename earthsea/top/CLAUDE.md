@@ -417,6 +417,36 @@ Centra di conseguenza sullo stesso asse anche le icone badge.* Fatto nella `0.41
 la **metà delle maiuscole del nome**, cioè lo stesso riferimento che l'anteprima dell'editor
 disegna già con `placeMidlinesFor`.
 
+⚠️⚠️ **Dalla `0.63` il nudge DIPENDE DAL TIPO DI NOME, e l'ha capito l'utente**: *non mi
+tornavano gli allineamenti: dipende dalla configurazione dei nomi*. Le due prime righe sono
+in due font diversi, quindi un valore solo non può servirle entrambe, e questa è la ragione
+per cui la 0.41 sembrava chiusa e non lo era: là si misurava un gruppo solo.
+
+| caso | prima riga | etichette e icone |
+|---|---|---|
+| senza nome comune (`.name-vero`) | Cinzel **tutto maiuscolo**, senza discendenti, siede alto | **su di 3px** |
+| col nome comune | EB Garamond a **cassa mista**, massa più bassa | **giù di 3px** |
+
+- ⚠️⚠️ **I DUE NUMERI DEL CSS SONO LO STESSO SPOSTAMENTO**, espresso in due em diversi:
+  l'em delle icone è quello del **nome** (29,12px sul desktop, 3px = `0.103em`), quello
+  dell'etichetta è il suo **0.62em** (18,05px, 3px = `0.166em`). Scrivere lo stesso numero su
+  entrambi sposterebbe l'etichetta di 1,9px invece di 3, e il gruppo si spezzerebbe in due
+  senza che nessuna misura complessiva lo dica.
+- ⚠️ **Si sposta con `top`, non con `transform`**: le regole `.bi-<id>` iniettate dai
+  micro-aggiustamenti dei badge usano `translateY` con specificità maggiore, quindi un
+  transform qui sparirebbe alla prima apertura di quell'editor.
+- **Misurato prima e dopo, coi font veri, contro la metà delle maiuscole**: il gruppo del
+  vero nome passa da **+1,88px** a **-1,10px** e quello del nome d'uso da **+0,31px** a
+  **+3,29px**, cioè esattamente i 3px chiesti in ciascun verso; etichette e icone restano
+  allineate fra loro entro 0,1px. Su **mobile** vale ~2px, perché il valore è in em e là il
+  nome è 19,84px: è il comportamento voluto, e si **somma** alla risalita di `-0.156em` dei
+  due contenitori, che corregge la riga e non il font.
+- ⚠️ **Il mio asse dice un'altra cosa dall'occhio, e va saputo**: sulla metà delle maiuscole
+  i due gruppi distavano **1,6px**, mentre l'utente ne vede **6** (3 per verso). Non è una
+  misura sbagliata: è che con una riga tutta maiuscola il riferimento percettivo non è la
+  metà delle maiuscole. Chi rimisurasse col vecchio criterio troverebbe questi valori
+  'scentrati', e non lo sono.
+
 - ⚠️⚠️ **Sopra i 480px il centraggio lo fa il FLEX da solo**, e i nudge erano il difetto: sono
   usciti la **risalita di 2px** delle etichette e il **`top:-0.03em`** di icone e simbolo di
   genere. Misura su 19 card coi font veri: etichette da **+1,45px** (alte) a **-0,55px**,
