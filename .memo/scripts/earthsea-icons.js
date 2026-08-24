@@ -48,11 +48,19 @@ const DS = JSON.parse(HTML.match(/var FAB_LOGO_D = (\[[\s\S]*?\]);/)[1]);
 // tinta di ogni tonalità. L'oro del sito gemello cadeva fuori dalla finestra
 // perché all'utente non piaceva nessuna tinta dentro; il blu elettrico ci sta
 // dentro per natura, quindi qui non serve nessuna deroga.
-// `#0080ff` (scelta dell'utente, 2026-08-22: 'blu elettrico'): 3,26:1 su barra
-// chiara e 3,83:1 su scura. Il punto di equilibrio esatto sarebbe `#007af5`
-// (3,54 / 3,53), tenuto come alternativa e non come correzione.
+// `#3e8f84` (scelta dell'utente, 2026-08-24: 'verde smeraldo'): 3,30:1 su barra
+// chiara e 3,79:1 su scura. Il punto di equilibrio esatto sarebbe `#007af5`
+// (3,54 / 3,53), tenuto come riferimento e non come correzione.
+// ⚠️⚠️ È IL CAPO BASSO DEL TITOLO IN TEMA CHIARO, cioè una tinta della tavolozza, e
+// questo era il punto: il `#0080ff` di prima (3,26 / 3,83) era l'unico colore del
+// progetto che non veniva da nessuna parte, e l'utente ha scelto fra undici rese a
+// 16px sulle due barre vere. ⚠️ Delle tinte del sito è **l'unica** che sta dentro la
+// finestra del 3:1 su ENTRAMBE le barre: l'azzurro del titolo e l'azzurro polvere
+// cadono sul chiaro (2,44 e 2,11), il blu e il verde del FAB e il verde mare cadono
+// sullo scuro (2,80, 2,95, 2,27). Chi volesse una di quelle deve prima portarla nel
+// punto di equilibrio muovendone la sola luminanza.
 // ⚠️ Chi cambia la tinta riscrive ENTRAMBE le misure qui sopra, o mentono.
-const FAV_COL = '#0080ff';
+const FAV_COL = '#3e8f84';
 const FAV_MISURE = [16, 32, 48];
 // Maschera di contrasto sull'ALFA, non sul colore: su un glifo monocromatico su
 // trasparente è l'alfa a portare la forma, quindi è l'unico canale da
@@ -94,10 +102,10 @@ const FAV_AMOUNT = 0.35;
 const PWA_BG = '#3072a1';
 const PWA_FG = '#ffffff';
 const PWA_FRAC = 0.44;
-// ⚠️ La FAVICON resta `#0080ff` e la divergenza è VOLUTA: i due blu fanno lavori
-// diversi. La favicon è un glifo su trasparente e deve leggersi su due barre di
-// luminanza opposta, quindi vuole un tono medio; il fondo dell'icona è un campo
-// dietro un glifo bianco, quindi più scuro è meglio. Allinearli 'per coerenza'
+// ⚠️ La FAVICON è `#3e8f84` e la divergenza è VOLUTA, oggi perfino di tonalità: i due
+// colori fanno lavori diversi. La favicon è un glifo su trasparente e deve leggersi su
+// due barre di luminanza opposta, quindi vuole un tono medio; il fondo dell'icona è un
+// campo dietro un glifo bianco, quindi più scuro è meglio. Allinearli 'per coerenza'
 // peggiorerebbe uno dei due.
 
 (async () => {
