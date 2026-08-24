@@ -215,16 +215,26 @@ Regola editoriale dell'utente, 2026-08-23, e nasce da un problema pratico che ri
 voce nuova: *a volte è difficile assumere il genere di un personaggio; ma le convenzioni di
 genere di Terramare vengono in aiuto*.
 
-- **La convenzione**: chiunque una fonte definisca `mago` o `stregone` (`mage`, `wizard`,
-  `sorcerer`) è **maschio**, e tanto basta a riempire il campo. L'attestazione e il perché
-  stanno in `rules/Earthsea.md`, § 'Il vocabolario del potere ha un GENERE: mago e stregone
-  sono uomini'.
+- **La convenzione**: chiunque una fonte definisca `wizard`, `mage` o `sorcerer` è
+  **maschio**, e tanto basta a riempire il campo. L'attestazione e il perché stanno in
+  `rules/Earthsea.md`, § 'Il vocabolario del potere ha un GENERE: wizard e mage sono uomini'.
+  - ⚠️⚠️ **La regola si enuncia sulle parole INGLESI, e in italiano si rompe** (precisazione
+    dell'utente, 2026-08-24): l'italiano rende **sia `wizard` sia `mage`** con `mago`, quindi
+    quella parola non distingue i due gradi, e l'unica distinzione di **potere** che
+    l'italiano conserva è `mago` contro `stregone`, `strega` e `incantatore` (resa Nord).
+    La tabella delle quattro parole sta nel canone.
   - **Retroattivo su due voci già nel dataset**, e le conferma: `Sula` è *lo stregone Sula*, il
     `Mago Nero` è un mago. Entrambe erano maschili per deduzione, e adesso la deduzione ha una
     regola invece di essere caso per caso.
-- ⚠️⚠️ **LE ECCEZIONI SONO DUE, ed è una scelta dell'utente** (*uniche due eccezioni, per
-  scelta mia*): le **due co-fondatrici della Scuola di Roke insieme a Medra**, cioè **Brace**
-  (vero nome `Elehal`, già nel dataset) e **Velo** (vero nome `Yahan`, ancora nello Schedario).
+- ⚠️⚠️ **LE ECCEZIONI SONO TRE dal 2026-08-24, ed è una scelta dell'utente**: le **due
+  co-fondatrici della Scuola di Roke insieme a Medra**, cioè **Brace** (vero nome `Elehal`) e
+  **Velo** (vero nome `Yahan`), più **Ard**, la maestra di Heleth.
+  - ⚠️ **`Ard` è la terza *fino a nuovo ordine***, e sono parole dell'utente: sta cercando
+    nelle fonti, e *l'entità del suo dono* lo rende propenso ad allargare la coppia. Il testo
+    la dice *a sorcerer of no fame even in Gont* e *his old witch-teacher*, ma Mondadori
+    traduce *una maga*: è il caso in cui le due lingue non coincidono, e decide lui.
+    ⚠️ Chi legge 'la coppia è chiusa a due' in una nota vecchia sta leggendo una
+    formulazione superata.
   - **Attestato in *Il Trovatore***: sono loro due a discutere con Medra per un intero inverno,
     e *fu in quelle discussioni che la Scuola di Roke ebbe inizio*. È là che nascono i nomi
     delle branche dell'arte che ancora oggi sono *le arti dei Maestri di Roke*.
