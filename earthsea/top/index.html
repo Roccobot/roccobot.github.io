@@ -2956,7 +2956,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.72</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.74</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6134,12 +6134,31 @@ function toggleCardMidlines() {
 // vedono, e allinearle sarebbe lavoro per nessuno.
 // Costo misurato (2026-08-24, 9 attribuzioni su 120 schede): 0,43 ms a giro, contro i
 // 2,6 ms di `optimizeBipartite` e i 22,5 di `tightenNames` che già girano lì accanto.
+// ── La baseline: una sonda, perché un float non si allinea al testo ────────────
+// ⚠️⚠️ Un elemento FLOTTANTE si appoggia in ALTO nella riga, non alla baseline: con un corpo
+// più piccolo del testo la firma resta sollevata, e si vede (segnalazione dell'utente sulla
+// card di Ammaud, 2026-08-24, con la riga tirata a matita sullo screenshot).
+// ⚠️ Lo scarto NON si può fissare in `em`: misurato, vale 5px sia col testo a 17,44px sia a
+// 15,04px, cioè non scala col corpo (dipende dalle metriche del font e dal mezzo interlinea,
+// non solo dalla dimensione). Un valore in em sarebbe giusto a una larghezza e sbagliato
+// altrove: si calcola.
+// **La sonda**: un `inline-block` largo e alto 0 con `vertical-align:baseline` ha il bordo
+// inferiore ESATTAMENTE sulla baseline della riga in cui sta. Una dentro la firma e una in
+// coda al testo che la precede danno le due baseline, e la differenza è la correzione.
+function baselineDi(el, prima) {
+  var s = document.createElement('span');
+  s.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+  if (prima) el.insertBefore(s, prima); else el.appendChild(s);
+  var y = s.getBoundingClientRect().bottom;
+  s.parentNode.removeChild(s);
+  return y;
+}
 function alignVoci(){
   var facce = document.querySelectorAll('#rank-list .rc-testo > .bil-f, #rank-list .rc-testo:not(.bil)');
   var lav = [], i;
   for (i = 0; i < facce.length; i++) {
     var vv = facce[i].querySelector(':scope > .rc-voce');
-    if (vv) { vv.style.right = ''; lav.push({ f: facce[i], v: vv }); }
+    if (vv) { vv.style.right = ''; vv.style.top = ''; lav.push({ f: facce[i], v: vv }); }
   }
   for (i = 0; i < lav.length; i++) {
     var f = lav[i].f, v = lav[i].v;
@@ -6156,6 +6175,10 @@ function alignVoci(){
       if (rects[k].top < vb.top - 2) lunga = Math.max(lunga, rects[k].right);
       else if (Math.abs(rects[k].top - vb.top) <= 2) stessa = rects[k];
     }
+    // La baseline si corregge solo quando la firma SIEDE su una riga di testo: se il float
+    // è sceso su una riga sua non c'è niente a cui allinearla, e lo scarto misurato sarebbe
+    // quello di una riga intera.
+    if (stessa) lav[i].dy = baselineDi(f, v) - baselineDi(v, null);
     // Testo di una riga sola: non c'è nessuna riga sopra a cui allinearsi, e la voce
     // resta dov'è (a filo del riquadro).
     if (lunga < 0) { lav[i].px = 0; continue; }
@@ -6166,7 +6189,10 @@ function alignVoci(){
     var tetto = stessa ? Math.max(0, vb.left - (stessa.right + gap)) : d;
     lav[i].px = Math.max(0, Math.min(d, tetto));
   }
-  for (i = 0; i < lav.length; i++) if (lav[i].px > 0.5) lav[i].v.style.right = lav[i].px.toFixed(2) + 'px';
+  for (i = 0; i < lav.length; i++) {
+    if (lav[i].px > 0.5) lav[i].v.style.right = lav[i].px.toFixed(2) + 'px';
+    if (lav[i].dy && Math.abs(lav[i].dy) > 0.3) lav[i].v.style.top = lav[i].dy.toFixed(2) + 'px';
+  }
 }
 // ── Il nome libero dalla riserva orizzontale, dove non costa un salto (0.71) ────
 // La cella bilingue del nome è larga quanto la lingua più larga: è ciò che tiene ferme le

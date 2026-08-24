@@ -1299,6 +1299,16 @@ Diamante; `stregone` a Solevivo.
    studi a Roke era considerato propriamente mago, a prescindere dal suo potere* (parole
    dell'utente). Quindi il badge misura il **titolo riconosciuto**, non l'entità del dono,
    e chi rileggesse la vecchia nota rimetterebbe `mago` in buona fede.
+4. ⚠️⚠️ **`stregone` e `mago` NON si portano insieme** (istruzione dell'utente, 2026-08-24:
+   *Avorio deve avere solo il badge Stregone, togli Mago*). Sono due **gradi** della stessa
+   scala, non due doti che si sommano, quindi il badge alto esclude il basso: è la stessa
+   logica del titolo riconosciuto del punto 3.
+   - **Censito il giorno stesso, a dato**: `Avorio` era l'**unico** dei 120 a portarli
+     entrambi (18 solo stregone, 39 solo mago), quindi la correzione è una voce sola. ⚠️ Il
+     numero **non si scrive qui come elenco**: si ricava da `dati.js`, e chi deve rifare il
+     conto cerca le voci con `"stregone":true` e `"mago":true`, che devono essere **zero**.
+   - **Perché proprio Avorio, e perché regge alle fonti**: studia a Roke ma ne è mandato via
+     senza finire, quindi il titolo di mago non gli è mai stato riconosciuto.
 
 ## 📅 L'opera di prima apparizione: titolo tradotto e anno
 
@@ -1987,6 +1997,23 @@ rientra fino a stare a piombo sulla fine del testo.
   e il rientro cresce a ogni reflow.
 - **Il tetto di `0.8em` dal testo della propria riga** impedisce che l'attribuzione, tirata a
   sinistra, finisca addosso alle parole che la precedono sulla stessa riga.
+- ⚠️⚠️ **E si allinea anche in VERTICALE, alla baseline** (`0.74`, segnalazione dell'utente
+  con la riga tirata a matita sullo screenshot di Ammaud): un elemento **flottante** si
+  appoggia in ALTO nella riga, non alla baseline, quindi con un corpo più piccolo del testo
+  la firma restava sollevata.
+  - ⚠️ **Lo scarto NON si può fissare in `em`**: misurato, vale **5px** sia col testo a
+    17,44px sia a 15,04px, cioè non scala col corpo, perché dipende dalle metriche del font e
+    dal mezzo interlinea e non solo dalla dimensione. Un valore in em sarebbe giusto a una
+    larghezza e sbagliato a un'altra: si calcola, come il rientro orizzontale.
+  - **Come si misura: con una SONDA.** Un `inline-block` largo e alto 0 con
+    `vertical-align:baseline` ha il bordo inferiore **esattamente** sulla baseline della riga
+    in cui sta (`baselineDi`). Una dentro la firma, una in coda al testo che la precede, e la
+    differenza è la correzione, scritta come `top` sul solito `position:relative`.
+  - ⚠️ Si applica **solo se la firma siede su una riga di testo**: quando il float è sceso su
+    una riga sua non c'è niente a cui allinearla, e lo scarto misurato sarebbe quello di una
+    riga intera.
+  - ✅ Verificato a 1280, 900 e 390px, in IT e in EN: scarto **0** su tutte le firme in linea,
+    identico dopo altri due reflow.
 - ⚠️⚠️ **È un calcolo, non una regola CSS: va rifatto a ogni render**, ed è agganciato a
   `reflowRows()` insieme a `tightenNames()` e `optimizeBipartite()`. Chi aggiunge un percorso
   che ridisegna le card senza passare di là si ritrova le attribuzioni ferme sulla misura
