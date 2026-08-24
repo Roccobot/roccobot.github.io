@@ -8,6 +8,7 @@ verità che invecchia: qui i rimandi si CALCOLANO.
 
 Uso: python3 .memo/scripts/refcheck.py [-v]
      python3 .memo/scripts/refcheck.py --text < testo   (solo i caratteri, da stdin)
+     python3 .memo/scripts/refcheck.py --html PAGINA.html   (i caratteri del testo visibile)
      git diff --cached | python3 .memo/scripts/refcheck.py --diff   (accenti, righe aggiunte)
 Esce 1 se trova difetti, 0 se è tutto in ordine. Gli hook PreToolUse sui commit
 lo lanciano da sé: vedi .claude/settings.json nei due repo.
@@ -128,7 +129,7 @@ VOLATILE_SKIP = {"LATEST.md"}
 # diff lo bloccherebbe, e ha ragione), e per gli invisibili il codepoint è l'unica forma
 # leggibile. È la regola che questo elenco impone ai file di testo, applicata al codice.
 # Parole italiane che si scrivono con l'ACCENTO e che finiscono spesso scritte con
-# l'apostrofo (`perche'` invece di `perché`), per contagio dai commenti del codice, che in
+# l'apostrofo (`perché` invece di `perché`), per contagio dai commenti del codice, che in
 # questi repo sono in ASCII. La lista è CHIUSA di proposito: una regex generica su
 # 'vocale + apostrofo' colpirebbe gli apici di chiusura delle citazioni, trasformando
 # 'comando' in 'comandò. Meglio pochi casi certi che una regola che rompe il testo.
@@ -337,7 +338,7 @@ def variants(title):
 def etichetta(ch):
     """Come si nomina il reperto: per codepoint se è un carattere, fra apici se è una parola.
 
-    Serve perché il controllo sugli accenti segnala una PAROLA (`perche'`), non un carattere,
+    Serve perché il controllo sugli accenti segnala una PAROLA (`perché`), non un carattere,
     e `ord()` su due lettere solleva un'eccezione: la prima versione del controllo è morta
     esattamente lì."""
     return f"U+{ord(ch):04X} {ch!r}" if len(ch) == 1 else repr(ch)
@@ -403,7 +404,7 @@ def char_defects(text):
             out.append((n, col, ch, f"carattere non previsto, {nome}: dichiaralo in SIMBOLI_OK se serve"))
         if not in_fence:
             # Accenti scritti con l'apostrofo: si guarda la riga senza i segmenti inline di
-            # codice, dove `e'` può essere codice legittimo (una stringa shell, per dire).
+            # codice, dove `è` può essere codice legittimo (una stringa shell, per dire).
             fuori = re.sub(r"`[^`]*`", "", line)
             for m in RE_ACCENTATE.finditer(fuori):
                 sbagliata = m.group(0)
@@ -512,6 +513,52 @@ def main_text():
     return 1
 
 
+def main_html():
+    """Modo `--html FILE`: controlla i CARATTERI del testo VISIBILE di una pagina HTML.
+
+    ⚠️⚠️ Esiste per gli ARTEFATTI, che erano il buco più grande dei presidi e nessuno lo
+    vedeva: un artefatto non è un file del repo, quindi non passa dal diff, e non è un
+    messaggio di commit, quindi non passa da `--text`. Il 2026-08-24 un report pubblicato
+    portava 77 accenti scritti con l'apostrofo (`è`, `perché`, `regalita'`), tutte forme
+    che la lista di `ACCENTATE` blocca da mesi: lo strumento c'era, il testo non gli era
+    mai stato dato. Da qui un modo che prende il file com'è, così il controllo non
+    dipende più da chi si ricorda di estrarre il testo a mano.
+
+    ⚠️ Si controlla il testo VISIBILE: `<style>`, `<script>` e i tag spariscono, o il
+    controllo annegherebbe nei valori CSS e nelle stringhe di codice (dove un apostrofo è
+    sintassi, non un accento sbagliato). Le entità HTML restano come sono: `&middot;` non
+    è un carattere fuori regola, e decodificarle introdurrebbe falsi rilievi.
+    """
+    percorsi = [a for a in sys.argv[1:] if not a.startswith("-")]
+    if not percorsi:
+        print("uso: refcheck.py --html FILE.html [ALTRO.html]")
+        return 2
+    esito = 0
+    for p in percorsi:
+        f = Path(p)
+        if not f.exists():
+            print(f"!! file assente: {p}")
+            esito = 1
+            continue
+        html = f.read_text(encoding="utf-8")
+        html = re.sub(r"<(style|script)\b[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+        testo = re.sub(r"<[^>]+>", " ", html)
+        bad = char_defects(testo)
+        avvisi = accent_warnings(testo)
+        if avvisi:
+            print(f"\n~~ da guardare in {f.name}, NON blocca: {len(avvisi)}")
+            for n, tok, motivo in avvisi:
+                print(f"   {tok} -> {motivo}")
+        if not bad:
+            print(f"htmlcheck: {f.name}, nessun carattere fuori regola nel testo visibile")
+            continue
+        print(f"\n!! caratteri fuori regola nel testo visibile di {f.name}: {len(bad)}")
+        for n, col, ch, motivo in bad:
+            print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
+        esito = 1
+    return esito
+
+
 def main_diff():
     """Modo `--diff`: legge un `git diff` da stdin e controlla le RIGHE AGGIUNTE, in OGNI file.
 
@@ -560,6 +607,8 @@ def main_diff():
 def main():
     if "--text" in sys.argv:
         return main_text()
+    if "--html" in sys.argv:
+        return main_html()
     if "--diff" in sys.argv:
         return main_diff()
     present = [f for f in RULEFILES if f.exists()]
