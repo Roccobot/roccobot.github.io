@@ -518,8 +518,21 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
   font-size:clamp(0.94rem,2.3vw,1.09rem); line-height:1.42;
   color:var(--parchment); text-wrap:pretty;
 }
-/* La riga di contesto: chi parla, opera, capitolo, che cosa succede. Serve a ritrovare
-   il passo nel libro e a verificarlo, quindi porta i titoli in ENTRAMBE le lingue. */
+/* ⚠️⚠️ CHI PRONUNCIA la frase: a destra, in grassetto, sulla riga dell'ultimo rigo se
+   c'è posto e a capo se non ce n'è. Lo fa il `float`, che è la sola via a non richiedere
+   una misura: un flottante dichiarato DOPO il testo si mette sulla riga corrente finché
+   entra, altrimenti scende. Resta in corsivo come la citazione, perché è la stessa voce
+   che parla: il tondo la staccherebbe come se fosse una nota.
+   ⚠️ Il contenitore della faccia dev'essere un `flow-root`, o il float sborda dal
+   riquadro e - cosa peggiore - non entra nel calcolo dell'altezza, che è ciò su cui
+   poggia tutto l'anti-jitter. */
+.rc-voce { float:right; margin-left:1.4em; font-weight:600; white-space:nowrap; }
+.rc-testo:not(.bil) { display:flow-root; }
+.rc-testo.bil > .bil-f, .rc-testo.bil > .bil-m { display:flow-root; }
+/* La riga di contesto: opera, capitolo e che cosa succede, nella SOLA lingua corrente.
+   ⚠️ Fino alla 0.66 portava i due titoli affiancati (`Tehanu / Tehanu`) e in testa il
+   nome di chi parla: l'utente ha tolto entrambi (2026-08-24), e il nome è diventato la
+   riga di attribuzione qui sopra. */
 .rc-fonte {
   display:block; margin-top:0.4rem;
   font-family:'EB Garamond',serif; font-size:clamp(0.76rem,1.9vw,0.86rem);
@@ -540,11 +553,16 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
 .rank-title.bil > .bil-f, .rank-title.bil > .bil-m {
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
-/* ⚠️ La riga del NOME vuole facce a colonna flex, non blocchi: `.rank-name` è un
-   `inline-flex`, e come figlio di un blocco si stringerebbe al contenuto invece di
-   prendere la larghezza della card, cambiando il punto in cui va a capo. Dentro una
-   colonna flex torna a essere l'elemento stirato che era in `.rank-content`. */
-.nome-slot > .bil-f, .nome-slot > .bil-m { display:flex; flex-direction:column; align-items:stretch; }
+/* ⚠️⚠️ Il NOME impila il solo TESTO, e la cella dev'essere `inline-grid`: su desktop
+   `.rank-name` è un flex e il figlio andrebbe bene comunque, ma su mobile è un blocco e
+   un `display:grid` porterebbe il nome a tutta larghezza, mandando etichette e icone
+   sulla riga sotto. ⚠️ `justify-items:start` tiene le due facce ancorate a sinistra:
+   senza, la faccia più corta si stirerebbe alla cella e il testo resterebbe a sinistra
+   ma il box no, che è invisibile finché non si misura.
+   Ⓘ Fino alla 0.66 si impilava la riga INTERA, con la classe `.nome-slot` e le facce a
+   colonna flex: quella via riservava la sola altezza e lasciava slittare le etichette,
+   che è il difetto corretto nella 0.67. */
+.rank-name-text.bil { display:inline-grid; justify-items:start; }
 
 /* ── ORIGINE: la colonna a destra (resa 'B', 0.59) ──────────────────────────────
    Scelta dell'utente fra tre proposte: l'origine non è un'etichetta come 'Uomo' o
@@ -2832,7 +2850,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.66</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.67</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5451,24 +5469,49 @@ function descDi(p, it){
 // Prima apparizione (istruzione dell'utente, 2026-08-21): il ripiego vale nei DUE
 // sensi, al contrario del resto dei campi bilingui. Finché le rese italiane non
 // arrivano, la vista italiana mostra l'inglese invece di una riga vuota.
-// La riga del NOME, che si impila come le altre quando i due nomi d'uso divergono.
-// ⚠️ Si duplica la riga INTERA e non il solo testo, ed è una scelta: impilare il solo
-// `.rank-name-text` porterebbe la larghezza al massimo fra le due lingue, cioè uno
-// stacco variabile fra nome ed etichetta su quasi tutte le card. Qui invece la
-// gemella riserva la sola ALTEZZA, che è il difetto che l'utente ha chiesto di
-// togliere; la larghezza resta quella naturale di ciascuna lingua.
-// ⚠️ Icone, simbolo di genere ed etichette si RIUSANO tali e quali: sono uguali nelle
-// due lingue (le etichette hanno già lo slot a larghezza stabile, vedi `.tb-stack`),
-// quindi ricostruirle per la gemella non cambierebbe una misura.
-function rigaNomeHtml(nome, soloVero, statusStr, genereSym, tipoStr){
-  return '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '">' +
-    '<span class="rank-name-text">' + nome + '</span>' +
+// La riga del NOME, con la gemella anti-jitter sul SOLO TESTO del nome (0.67).
+// ⚠️⚠️ Fino alla 0.66 si duplicava la riga INTERA, e la scelta era scritta qui come
+// deliberata: la gemella riservava la sola ALTEZZA, e la larghezza restava quella
+// naturale di ciascuna lingua. Era un difetto, e l'utente l'ha visto: con la larghezza
+// libera, `Sparviero` -> `Sparrowhawk` sposta di lato etichette e icone, misurate fino
+// a **52px** su 61 card. L'altezza non cambiava e la misura di allora, che guardava
+// l'altezza, diceva zero.
+// ⚠️ Impilando il solo testo la cella prende il MASSIMO delle due lingue in **entrambe**
+// le dimensioni, quindi l'etichetta parte sempre dallo stesso punto e la riga va a capo
+// allo stesso modo nelle due lingue. Il prezzo è lo stacco variabile fra nome ed
+// etichetta sulle card dove i due nomi divergono, ed è esattamente il patto che l'utente
+// ha stabilito: *uno spazio vuoto è preferibile al jitter*.
+// ⚠️ Icone, simbolo di genere ed etichette non si duplicano affatto: sono uguali nelle
+// due lingue (le etichette hanno già lo slot a larghezza stabile, vedi `.tb-stack`).
+function rigaNomeHtml(nomeCur, nomeAlt, soloVero, statusStr, genereSym, tipoStr){
+  var testo = (nomeAlt && nomeAlt !== nomeCur)
+    ? '<span class="rank-name-text bil"><span class="bil-f">' + nomeCur + '</span>' +
+      '<span class="bil-m" aria-hidden="true">' + nomeAlt + '</span></span>'
+    : '<span class="rank-name-text">' + nomeCur + '</span>';
+  return '<span class="rank-name' + (soloVero ? ' name-vero' : '') + '">' + testo +
     '<span class="rank-flags">' + statusStr + genereSym + '</span>' +
     '<span class="rank-tipi">' + tipoStr + '</span></span>';
 }
 function operaDi(p, it){
   var pf = parseFonte(it ? (p.fonte || p.fonte_en) : (p.fonte_en || p.fonte));
   return escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+}
+// ⚠️⚠️ LA PRIMA LETTERA DI OGNI RIGA VA MAIUSCOLA (istruzione dell'utente, 2026-08-24:
+// *non te l'ho detto perché pensavo ereditassi il principio da Arda*). Serve soprattutto
+// all'inglese, dove le fonti attestano forme come `dragonlord`, `the White` o `the Dragon
+// of Pendor`: 15 campi su questo dataset, contro 2 in italiano (`il Grande Drago`, `la
+// Bella`).
+// ⚠️ Si fa in RESA e non nel dato, ed è la scelta che conta: `dragonlord` è la forma che
+// il testo attesta, e cambiarla in `dati.js` significherebbe scrivere nel dataset una
+// grafia che nessuna fonte porta. Qui è tipografia di riga, come la maiuscola dopo il
+// punto fermo.
+// ⚠️ Vale per la riga LOGICA, non per la riga resa: se il sottotitolo va a capo, la
+// seconda riga fisica sta in mezzo a una frase e non si tocca.
+function capIniz(s){
+  if (!s) return s;
+  // salta i tag di apertura, o si maiuscolerebbe una lettera del markup
+  var m = /^(\s*(?:<[^>]+>\s*)*)([\s\S])/.exec(s);
+  return m ? m[1] + m[2].toUpperCase() + s.slice(m[0].length) : s;
 }
 function sottotitoloDi(p, it){
   var alt = it ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
@@ -5479,6 +5522,9 @@ function sottotitoloDi(p, it){
   var parti = [];
   if (alt) parti.push(alt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
   if (app) parti.push(app.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
+  // La maiuscola tocca al pezzo che APRE la riga, che è il primo presente: i titoli
+  // aprono la riga solo quando i nomi alternativi mancano.
+  parti[0] = capIniz(parti[0]);
   // Solo titoli (nessun nome): vanno resi in corsivo come i titoli bipartiti;
   // `joinBipartite` a parte singola li lascerebbe 'nudi'.
   if (app && !alt) return '<span class="bp-solo">' + parti[0] + '</span>';
@@ -5491,12 +5537,39 @@ function sottotitoloDi(p, it){
 // ⚠️ Il testo italiano è MONDADORI coi nomi del SITO: è un mix voluto e dichiarato
 // (vedi `earthsea/top/CLAUDE.md`, § sulle citazioni). Nelle trenta scelte non è servita
 // nessuna sostituzione, quindi oggi sono tutte verbatim, ma il patto resta quello.
-function citazBlocco(p, it){
-  var t = it ? (p.citazione || '') : (p.citazione_en || '');
-  if (!t) return '';
-  var f = it ? (p.citazione_fonte || '') : (p.citazione_fonte_en || '');
-  return '<span class="rc-testo">' + escapeHtml(t) + '</span>' +
-         (f ? '<span class="rc-fonte">' + escapeHtml(f) + '</span>' : '');
+// Il blocco della citazione, con la gemella anti-jitter sulle DUE righe separatamente
+// (0.67) e non sul blocco intero.
+// ⚠️⚠️ La differenza si vede solo dentro il riquadro, ed è il difetto che l'utente ha
+// còlto: impilando il blocco, il riquadro teneva l'altezza giusta (il massimo fra le due
+// lingue) ma il CONTENUTO ci ballava dentro, perché la citazione inglese è quasi sempre
+// più corta di una riga e la riga di contesto le saliva sotto. Misurato: 3 testi e 5
+// righe di contesto si muovevano di 24,75px, cioè una riga esatta.
+// ⚠️ Impilando le due righe una per una, ciascuna prende il massimo della propria coppia
+// e nessuna si sposta: lo spazio vuoto, quando avanza, resta in fondo alla sua riga.
+// ⚠️ `sempre` è acceso su entrambe: dove una lingua manca il contenitore si emette lo
+// stesso, o tornerebbe il salto che si sta togliendo.
+// ⚠️⚠️ CHI PRONUNCIA la frase sta in coda alla citazione, non più in testa al contesto
+// (istruzione dell'utente, 2026-08-24): a destra, in grassetto, in linea con l'ultima
+// riga se ci sta e a capo se non ci sta. Il `float` fa esattamente questo, ed è la sola
+// via che lo ottiene senza misurare niente: un elemento flottante dopo il testo si
+// sistema sulla riga corrente finché c'è spazio, altrimenti scende da sé.
+// ⚠️ Il campo è VUOTO quando parla il personaggio della card o il narratore, e allora
+// non si scrive nulla: l'attribuzione servirebbe solo a ripetere il titolo della scheda.
+// ⚠️ La riga di contesto comincia dall'OPERA e porta la sola lingua corrente: i due
+// titoli affiancati erano nella 0.60-0.66 e l'utente li ha tolti (*in inglese solo
+// l'inglese; in italiano solo l'italiano*).
+function citazHtml(p){
+  var it = p.citazione || '', en = p.citazione_en || '';
+  if (!it && !en) return '';
+  var vit = p.citazione_voce || '', ven = p.citazione_voce_en || '';
+  var fit = p.citazione_fonte || '', fen = p.citazione_fonte_en || '';
+  function faccia(t, v){
+    return escapeHtml(t) + (v ? '<b class="rc-voce">- ' + escapeHtml(v) + '</b>' : '');
+  }
+  return '<span class="rank-citaz">' +
+    bilingue('rc-testo', faccia(it, vit), faccia(en, ven), true) +
+    ((fit || fen) ? bilingue('rc-fonte', escapeHtml(fit), escapeHtml(fen), true) : '') +
+    '</span>';
 }
 function origHtml(p){
   var v = origineDi(p);
@@ -5672,16 +5745,10 @@ function renderList() {
     // stessa terna nei due tag.
     var _cp = cardFam === 'custom' ? customPair(p) : null;
     var ccInline = _cp ? (';--ccdark:' + _cp.dark + ';--cclight:' + _cp.light) : '';
-    // Riga del nome, impilata quando i due nomi d'uso divergono (vedi `rigaNomeHtml`):
-    // sono le uniche card in cui la prima riga può andare a capo in una lingua e non
-    // nell'altra (misurato: Sparviero/Sparrowhawk e Mago Rosso di Ark/Red Mage of Ark).
+    // Riga del nome: la gemella sta sul SOLO TESTO, così la cella prende il massimo
+    // delle due lingue in larghezza e in altezza (vedi `rigaNomeHtml`).
     var nomeAltro = escapeHtml(nomeDiRif(p, currentLang !== 'it'));
-    var facciaNome = rigaNomeHtml(nome, soloVero, statusStr, genereSym, tipoStr);
-    var rigaNome = (nomeAltro && nomeAltro !== nome)
-      ? '<span class="bil nome-slot"><span class="bil-f">' + facciaNome + '</span>' +
-        '<span class="bil-m" aria-hidden="true">' +
-        rigaNomeHtml(nomeAltro, soloVero, statusStr, genereSym, tipoStr) + '</span></span>'
-      : facciaNome;
+    var rigaNome = rigaNomeHtml(nome, nomeAltro, soloVero, statusStr, genereSym, tipoStr);
     // Origine: la terza colonna esiste solo dove il dato c'è (vedi il CSS di
     // `.rank-orig`), e la classe è ciò che la apre.
     // ⚠️ Con `ORIG_SLOT` acceso la classe va anche sulle NOVE voci senza origine, che
@@ -5704,10 +5771,7 @@ function renderList() {
         rigaDesc +
         riga2 +
         bilingue('rank-title', operaDi(p, true), operaDi(p, false), true) +
-        // ⚠️ Anche la citazione passa da `bilingue`: le due lingue non hanno la stessa
-        // lunghezza (l'italiano è quasi sempre più lungo), quindi senza la gemella
-        // il riquadro sarebbe la nuova sorgente di jitter al cambio lingua.
-        bilingue('rank-citaz', citazBlocco(p, true), citazBlocco(p, false)) +
+        citazHtml(p) +
       '</span>' +
       orig +
     '</div>';
@@ -5888,7 +5952,11 @@ function placeMidlinesFor(pairs) {
 function placeCardMidlines() {
   var pairs = [];
   document.querySelectorAll('#rank-list .rank-item').forEach(function(item) {
-    pairs.push({ host: item, nm: item.querySelector('.rank-name-text') });
+    // ⚠️ Dove il nome è impilato serve la FACCIA VISIBILE, non il contenitore: quello
+    // porta dentro anche la gemella, quindi il suo `textContent` sarebbe i due nomi
+    // attaccati e il `measureText` misurerebbe una parola che non esiste.
+    var nm = item.querySelector('.rank-name-text > .bil-f') || item.querySelector('.rank-name-text');
+    pairs.push({ host: item, nm: nm });
   });
   placeMidlinesFor(pairs);
 }
@@ -6212,11 +6280,26 @@ function openImageViewer(src, titleIt, titleEn, slug) {
 // lato, e col solo bottone via restavano due stelline a indicare il nulla. Sta in una
 // funzione perché i punti che la chiamano sono DUE (qui all'avvio e in `setLang`), e
 // con la riga scritta due volte il difetto sarebbe tornato dalla metà non corretta.
+// ⚠️⚠️ Si nasconde con `visibility`, NON con `hidden`, e la ragione è l'anti-jitter: col
+// `hidden` della 0.62 il paragrafo usciva dal flusso e il footer si accorciava di
+// **55,72px** al cambio lingua, cioè si toglieva un salto dalla riga e se ne creava uno
+// più grande sulla pagina. Da invisibile ma presente, la riga non si vede e non muove
+// niente: è il patto dell'utente (*uno spazio vuoto è preferibile al jitter*) e lo stesso
+// idioma del tag fantasma del Pannello.
+// ⚠️⚠️ E il bottone si spegne con `disabled`, NON con `hidden`: col `hidden` usciva dal
+// flusso e si portava via il suo `border-bottom` da 1px, quindi il footer si muoveva
+// **di un pixel** anche col paragrafo presente. È l'ultimo residuo di jitter della
+// pagina, e si vedeva solo misurando. `visibility:hidden` sul padre lo toglie già dal
+// tab e dall'albero a11y; `disabled` è la cintura in più, ed è lo stesso idioma del tag
+// fantasma del Pannello (§ 'Il tag del filtro sta in FONDO' in CLAUDE.md).
 function setResLinkHidden(hide){
   var p = document.getElementById('footer-links');
-  if (p) p.hidden = !!hide;
+  if (p) {
+    p.style.visibility = hide ? 'hidden' : '';
+    p.setAttribute('aria-hidden', hide ? 'true' : 'false');
+  }
   var b = document.getElementById('res-link');
-  if (b) b.hidden = !!hide;
+  if (b) { b.hidden = false; b.disabled = !!hide; b.tabIndex = hide ? -1 : 0; }
 }
 (function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse' : 'Resources'; setResLinkHidden(currentLang !== 'it'); rl.addEventListener('click', openResourcesModal); } })();
 
