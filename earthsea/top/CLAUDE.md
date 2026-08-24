@@ -1042,29 +1042,47 @@ cambiato cinque volte in quattro giorni**.
     cerchio, perché il disco è il suo riferimento (§ 'Il logo del FAB'). Due fini diversi, due
     misure diverse, ed è deliberato.
 
-### 🔵 La tinta della favicon, e perché qui la finestra conforme ESISTE
+### 🟢 La tinta della favicon, e perché qui la finestra conforme ESISTE
 
-**`#0080ff`**, il blu elettrico chiesto dall'utente (2026-08-22): **3,26:1** sulla sua barra
-dei preferiti chiara (`#edeeed`) e **3,83:1** sulla scura (`#292929`).
+**`#3e8f84`**, il **verde smeraldo** scelto dall'utente il 2026-08-24 ('la H'): **3,30:1**
+sulla sua barra dei preferiti chiara (`#edeeed`) e **3,79:1** sulla scura (`#292929`). È il
+**capo basso del titolo in tema chiaro**, cioè una tinta della tavolozza.
 
-⚠️⚠️ **CONFERMATO dall'utente dopo aver visto le cinque tinte rese a 16px sulle sue due barre**
-(2026-08-22, *'favicon A'*), quindi non è solo la tinta di partenza: è quella scelta **contro**
-le altre quattro. La conseguenza pratica sta nel capoverso dell'equilibrio qui sotto: chi
-trovasse `#0080ff` e pensasse di 'migliorarlo' portandolo a `#007af5` per guadagnare 0,28 di
-contrasto sulla barra chiara starebbe **disfacendo una scelta**, non correggendo una svista.
-Le altre tre offerte e non scelte erano `#3d7dff` (più chiaro), `#1f6feb` (più profondo) e
-`#0a5fff` (più saturo, ma **fuori** dalla finestra del 3:1: 2,84 sulla barra scura).
+⚠️⚠️ **Scelto fra UNDICI rese a 16px sulle due barre vere**, e il punto era che il `#0080ff`
+di prima era l'unico colore del progetto **che non veniva da nessuna parte**. Il dato che ha
+deciso, e che non va rifatto: delle tinte del sito questa è **l'unica** dentro la finestra del
+3:1 su **entrambe** le barre.
+
+| tinta del sito | barra chiara | barra scura |
+|---|---|---|
+| **verde smeraldo `#3e8f84`** (in vigore) | **3,30** | **3,79** |
+| azzurro del titolo `#5f9fd4` | 2,44 | 5,12 |
+| azzurro polvere `#78adc2` | 2,11 | 5,93 |
+| blu del FAB `#3072a1` | 4,46 | 2,80 |
+| verde del FAB `#267d71` | 4,24 | 2,95 |
+| verde mare `#0e6b5e` | 5,50 | 2,27 |
+
+- ⚠️ **Una tinta che cade da una parte si può portare dentro** muovendone la sola **luminanza**
+  e tenendo tonalità e saturazione: `#3072a1` -> `#3783b8`, `#267d71` -> `#2a8b7e`,
+  `#0e6b5e` -> `#128d7b` (tutte 3,54 / 3,53). Sono state offerte e non scelte, e restano la
+  ricetta per la prossima.
+- Ⓘ **Percorso**, perché nei commenti gira ancora il valore vecchio: `#0080ff` dal 2026-08-22
+  (scelto allora fra cinque, contro `#3d7dff`, `#1f6feb` e `#0a5fff`, quest'ultimo **fuori**
+  dalla finestra con 2,84 sulla scura), verde smeraldo dal 2026-08-24. ⚠️ Il blu **non era una
+  svista**: era una scelta, e la sua sostituzione non la corregge, la supera con un criterio
+  nuovo (l'appartenenza alla tavolozza).
 
 - ⚠️⚠️ **Le misure si fanno sulle DUE BARRE REALI, non su bianco puro**: su `#ffffff` la stessa
   tinta regala un terzo di punto di contrasto, e su quel numero in questo repo si è già preso un
   abbaglio (`arda/top/CLAUDE.md`, § 'Favicon').
 - ⚠️⚠️ **Il tetto simultaneo è 3,54:1 e NON dipende dalla tonalità**, solo dalla luminanza delle
   due barre: è lo stesso numero calcolato per l'oro di Arda, e ritrovarlo qui lo conferma. Il
-  punto di equilibrio esatto per il blu è **`#007af5`** (3,54 / 3,53).
+  punto di equilibrio esatto per il blu di prima era **`#007af5`** (3,54 / 3,53), e per ogni
+  altra tinta si calcola allo stesso modo: si tiene la tonalità e si muove la luminanza.
   - ⚠️ **Quindi il caso di Arda NON si trasporta qui**: là la favicon sta *fuori* dalla finestra
     del 3:1 perché all'utente non piaceva nessuna tinta *dentro*, non perché la finestra non
-    esistesse. Il blu elettrico ci sta dentro per natura, quindi qui **nessuna deroga serve**, e
-    chi legge quella nota non concluda che anche questa sia una deroga.
+    esistesse. Qui la tinta in vigore ci sta dentro, quindi **nessuna deroga serve**, e chi
+    legge quella nota non concluda che anche questa sia una deroga.
 - ⚠️ **Il `?v=` dei quattro link va BUMPATO a ogni cambio di tinta o di disegno**, o chi ha già
   visitato il sito vede la favicon vecchia dalla cache del browser, che per le icone è tenace:
   si crederebbe a un deploy mancato.
