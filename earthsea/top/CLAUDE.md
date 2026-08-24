@@ -1024,14 +1024,21 @@ cambiato cinque volte in quattro giorni**.
 - ⚠️ **Il glifo si legge da `FAB_LOGO_D`, che è un ELENCO**, e lo script prende **tutti** i
   tracciati: le versioni del logo ne hanno avuti 1, 2, 2, 1 e 1, quindi il numero non si assume.
   Leggerne uno solo darebbe mezza icona con tutta la catena verde.
-- ⚠️⚠️ **`PWA_BG` NON è più un blu suo: dalla `0.37` è IL DISCO DEL FAB IN TEMA SCURO**
-  (`#78adc2`, istruzione dell'utente: *per la webapp usa lo stesso colore del FAB del tema
-  scuro*). Quindi si cambia **quando cambia il disco**, e il posto dove leggerlo è
-  `#ctrl-fab.fab-btn` in `index.html`. ⚠️ **Ed è già successo in un giorno**: `#78adc2` nella
-  `0.37`, `#3072a1` nella `0.38`, col bianco che passa da 2,45 a **5,19**. Chi schiarisse il
-  fondo dell'icona lo paga su quel numero. ⚠️ La ricetta dei quattro gradini di 'più scuro e
-  desaturato' che aveva prodotto `#3b6fa3` è **decaduta**: sta nel commento dello script come
-  storia, non come regola.
+- ⚠️⚠️ **`PWA_BG` è IL DISCO DEL FAB, e dalla `0.66` quello del TEMA CHIARO**: `#267d71`,
+  la tinta media del titolone chiaro (istruzione dell'utente, 2026-08-24: *imposta lo stesso
+  colore del FAB in tema chiaro come sfondo dell'icona e della schermata della webapp*).
+  Quindi si cambia **quando cambia quel disco**, e il posto dove leggerlo è
+  `html[data-theme="light"] #ctrl-fab` in `index.html`.
+  - ⚠️⚠️ **È il TEMA di riferimento a essere cambiato, non solo il numero**, e va saputo per
+    non 'ripararlo' rimettendo il blu: `#78adc2` nella `0.37`, `#3072a1` (disco **scuro**)
+    dalla `0.38` alla `0.65`, `#267d71` (disco **chiaro**) dalla `0.66`. Chi trova uno dei due
+    valori vecchi in una nota sa a che giro appartiene.
+  - **Il bianco sopra fa 4,94** contro i 5,19 del blu: si perdono 0,25 e si resta ben sopra il
+    4,5:1, quindi il segno regge. È la coppia che il FAB porta in pagina nel tema chiaro, ed è
+    il senso della richiesta: l'app installata si presenta col **verde del sito**, non con un
+    blu che nel sito non compare più da nessuna parte.
+  - ⚠️ La ricetta dei quattro gradini di 'più scuro e desaturato' che aveva prodotto `#3b6fa3`
+    è **decaduta**: sta nel commento dello script come storia, non come regola.
 - ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: col quinto logo il canvas è
   1120x1120 e il disegno ne occupa **944,70x1011,50**, quindi il margine morto è reale e
   assumere il nominale darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro,
@@ -1119,7 +1126,7 @@ deciso, e che non va rifatto: delle tinte del sito questa è **l'unica** dentro 
   - ⚠️ **`apple-mobile-web-app-title` segue il MANIFEST, non il `<title>`**: è l'etichetta
     sotto l'icona in schermata Home, quindi vuole la forma breve. Nella `0.24` diceva
     `Earthsea Top`, che non era nessuna delle due forme di Arda.
-- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#3b6fa3`, e la
+- ⚠️⚠️ **`background_color` e `theme_color` VALGONO IL FONDO DELL'ICONA**, `#267d71`, e la
   coincidenza è il **requisito**, non una scelta estetica. La schermata di avvio dipinge tutto
   lo schermo con `background_color` e ci mette l'icona al centro: l'icona è un quadrato
   **opaco**, quindi se i due colori divergono si vede un **quadrato centrale** stagliato sul
@@ -1132,44 +1139,45 @@ deciso, e che non va rifatto: delle tinte del sito questa è **l'unica** dentro 
     divergere, e il difetto non darebbe **nessun errore**: si vedrebbe solo aprendo l'app
     installata, che è la cosa che si guarda meno di tutte. È la stessa trappola della
     larghezza delle card (§ 'La Modalità XL è SPENTA, e la larghezza della colonna è una fonte unica'), risolta allo stesso modo.
-  - ⚠️ **`theme_color` è la barra di sistema, non il campo**, e sta sullo stesso blu perché
+  - ⚠️ **`theme_color` è la barra di sistema, non il campo**, e sta sullo stesso verde perché
     l'utente ha chiesto la schermata *uniforme su tutto lo schermo*. Conseguenza da conoscere:
     a pagina caricata subentra il `<meta name="theme-color">` della pagina (`#060a14` scuro,
-    `#ebebef` chiaro), quindi la barra **cambia** dal blu al colore del sito. È un istante e
+    `#ebebef` chiaro), quindi la barra **cambia** dal verde al colore del sito. È un istante e
     non è un difetto.
   - Ⓘ **Prima erano `#1f5562`**, il teal di Arda, un residuo della copia che nessuno aveva
     notato; poi `#0d1a22`, il fondo notte di questo sito, che era **coerente col sito ma
     sbagliato per la schermata di avvio**: è il valore che faceva comparire il quadrato.
     Coerenza con la pagina e correttezza della schermata qui non coincidono.
-- **L'icona è un quadrato PIENO** (fondo `#3b6fa3`, segno bianco) col glifo al **44%** del
+- **L'icona è un quadrato PIENO** (fondo `#267d71`, segno bianco) col glifo al **44%** del
   lato, dentro la zona sicura: il launcher ritaglia nella forma che preferisce. ⚠️ Nessuna
   forma disegnata dentro, o si vedrebbe come forma **dentro** la forma del launcher.
   ⚠️ **Scelta dall'utente fra quattro combinazioni rese** (2026-08-22, *'icona webapp 1'*), e
   coincide con lo schema di 'I Grandi di Arda' (fondo in tinta, segno bianco): la parentela fra
   i due siti è un effetto voluto, non un residuo della copia.
-  - ⚠️ **Il blu del fondo NON è quello della favicon**, ed è voluto: `#3b6fa3` qui contro
-    `#0080ff` là (istruzioni dell'utente sulla sola webapp, 2026-08-22 e 23: *leggermente più
-    scuro e leggermente meno saturo*, poi *ancora più scuro e desaturato*, poi *ancora più
-    scuro*, e la distanza fra i due blu è cresciuta a ogni passo). I due fanno lavori
-    diversi. La favicon è un glifo su **trasparente** e deve leggersi su due barre di luminanza
-    opposta, quindi vuole un tono medio; il fondo dell'icona è un **campo dietro un glifo
-    bianco**, quindi scurirlo aumenta il contrasto del segno. Allinearli 'per coerenza'
-    peggiorerebbe uno dei due, e la coerenza che conta qui è quella col `background_color`,
-    non fra i due blu.
-  - ⚠️ **La TONALITÀ non si tocca, si muovono saturazione e valore insieme**: le richieste
-    dicevano *più scuro e desaturato*, mai *più freddo*, e la scala che ne è uscita tiene la
-    tinta 210 spostando i due assi dello stesso passo (-12 per volta), col contrasto del bianco
-    che sale a ogni gradino. ⚠️ **Il passo è costante ed è la ricetta**: sono già arrivate TRE
-    richieste in due giorni, quindi il gradino dopo si calcola invece di improvvisarlo, e
-    sarebbe `52/52`, cioè `#406285` (bianco a 6,36). Sotto quella soglia il blu comincia a
-    leggersi come ardesia, e conviene dirlo prima di applicarlo.
+  - ⚠️ **Il fondo NON è la tinta della favicon**, ed è voluto anche adesso che sono parenti:
+    `#267d71` qui contro `#3e8f84` là. I due fanno lavori diversi. La favicon è un glifo su
+    **trasparente** e deve leggersi su due barre di luminanza opposta, quindi vuole un tono
+    medio; il fondo dell'icona è un **campo dietro un glifo bianco**, quindi più profondo è
+    meglio. Allinearli 'per coerenza' peggiorerebbe uno dei due, e la coerenza che conta qui è
+    quella col `background_color`, non fra le due tinte.
+    - Ⓘ **Prima erano lontanissimi**, e la nota serve a leggere i commenti vecchi: fondo
+      `#3b6fa3` e poi `#3072a1` contro la favicon `#0080ff`, con la distanza cresciuta a ogni
+      *più scuro e desaturato* dell'utente (2026-08-22 e 23). Dal 2026-08-24 sono due verdi
+      della stessa famiglia, ma la ragione per tenerli distinti non è cambiata.
+  - Ⓘ **La scala dei blu è STORIA dal 2026-08-24**, quando il fondo è diventato il disco
+    chiaro: si legge per capire i commenti vecchi, non per calcolare il gradino dopo. Il
+    criterio che la governava resta valido se un domani servisse una scala nuova: **la
+    tonalità non si tocca**, si muovono saturazione e valore insieme e dello stesso passo (le
+    richieste dicevano *più scuro e desaturato*, mai *più freddo*), col contrasto del bianco
+    che sale a ogni gradino. Il gradino successivo sarebbe stato `52/52`, cioè `#406285`
+    (bianco a 6,36), e sotto quella soglia il blu comincia a leggersi come ardesia.
 
     | passo | colore | HSV | bianco sopra |
     |---|---|---|---|
     | tinta della favicon, punto di partenza | `#0080ff` | 210/100/100 | 3,80:1 |
     | *leggermente più scuro e meno saturo* | `#1b7ee0` | 210/88/88 | 4,11:1 |
     | *ancora più scuro e desaturato* | `#2f78c2` | 210/76/76 | 4,58:1 |
-    | *ancora più scuro* (in vigore) | `#3b6fa3` | 210/64/64 | **5,26:1** |
+    | *ancora più scuro* (ultimo blu della scala) | `#3b6fa3` | 210/64/64 | **5,26:1** |
   - **Le tre scartate**: fondo notte del sito con segno blu, fondo blu con segno prugna-notte,
     e il **fondo marmo** (`#f9fbfa` con segno blu). Quest'ultima è l'analogo esatto del disco
     marmo del FAB, e sbaglia per la stessa ragione: il segno si legge, ma il quadrato scompare
@@ -1591,6 +1599,26 @@ Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) 
   una riga sola e allarga il Pannello di tutta quella lunghezza, senza vedersi.
 - **Misurato coi font veri**: il Pannello resta **313x630** prima e dopo il click, e la
   commutazione cambia 111 etichette (`.ro-pin` -> `.ro-lab`) senza errori.
+
+⚠️⚠️ **E dalla `0.66` gli interruttori sono DUE**, perché l'utente non ha voluto decidere fra
+le due rese (*visto che non so decidere, aggiungi un altro interruttore*): il secondo tiene la
+colonna **riservata e vuota** anche sulle nove voci senza luogo, invece di lasciare che la
+card si allarghi. Spento di default, cioè la resa in vigore fin qui.
+
+- **Nel motore è una condizione sola**: `if (orig || ORIG_SLOT) classes += ' has-orig'`. Il
+  **filetto resta assente per costruzione**, perché lo porta `.rank-orig` e quel contenitore
+  non si emette: riservare lo spazio e disegnare un separatore sono due scelte diverse, e
+  l'utente ha chiesto la prima senza la seconda (la variante col filetto gli è stata mostrata
+  e non l'ha scelta).
+- ⚠️ **Costa, e il numero va conosciuto prima di accenderlo**: sulle cinque voci senza origine
+  che hanno una citazione il blocco passa da **571px a 433px** (-24%), quattro di esse
+  prendono **una riga in più** e la lista si allunga di **193px**. Le altre quattro non
+  cambiano di un pixel: hanno poco testo e quello spazio non lo usavano.
+- ⚠️ **Su mobile non cambia NIENTE in nessuno dei due stati**, ed è voluto (richiesta
+  dell'utente: *su mobile, se sta sotto, quella parte dev'essere comunque nascosta*): sotto i
+  480px `.rank-item.has-orig` torna a due colonne, quindi la terza non esiste comunque.
+  Verificato col codice e non a occhio: la griglia resa su una card senza origine misura
+  `54px 286px` anche a interruttore acceso.
 
 ### 🗃️ Il campo origine: si chiama così, e ha preso il posto di `paese`
 

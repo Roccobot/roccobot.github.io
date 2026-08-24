@@ -2832,7 +2832,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.65</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.66</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5380,6 +5380,16 @@ function pruneBadgeFilter() {
 // più corto. Qui non si nasconde niente, cambia solo la resa di un'etichetta.
 var ORIG_PIN_LS_KEY = 'earthsea-orig-pin';
 var ORIG_PIN = LS.getItem(ORIG_PIN_LS_KEY) !== '0';
+// ⚠️ Il SECONDO interruttore dell'origine (2026-08-24, *non so decidere*): a colonna
+// riservata anche dove il luogo manca, le nove voci senza origine tengono lo spazio
+// vuoto invece di allargarsi. Spento di default, cioè la resa in vigore fin qui.
+// ⚠️ Costa qualcosa e va saputo prima di accenderlo: il blocco della citazione passa
+// da 571px a 433px, quattro card su cinque prendono una riga in più e la lista si
+// allunga di 193px (misure a 1280px coi font veri, 2026-08-24).
+// ⚠️ Su MOBILE non cambia niente in nessuno dei due stati, ed è voluto: sotto i 480px
+// `.rank-item.has-orig` torna a due colonne, quindi la terza non esiste comunque.
+var ORIG_SLOT_LS_KEY = 'earthsea-orig-slot';
+var ORIG_SLOT = LS.getItem(ORIG_SLOT_LS_KEY) === '1';
 // Il segno di luogo, disegnato qui e non in un file: è un glifo di 4 comandi, e un
 // `img` in più costerebbe una richiesta e un 404 possibile (vedi la nota delle icone
 // badge in CLAUDE.md). ⚠️ Niente `innerHTML` altrove: qui il markup è una costante
@@ -5674,8 +5684,13 @@ function renderList() {
       : facciaNome;
     // Origine: la terza colonna esiste solo dove il dato c'è (vedi il CSS di
     // `.rank-orig`), e la classe è ciò che la apre.
+    // ⚠️ Con `ORIG_SLOT` acceso la classe va anche sulle NOVE voci senza origine, che
+    // così tengono la colonna riservata e VUOTA. Il filetto resta assente per
+    // costruzione, perché lo porta `.rank-orig` e quel contenitore non si emette:
+    // riservare lo spazio e disegnare un separatore sono due scelte diverse, e
+    // l'utente ha chiesto la prima senza la seconda.
     var orig = origHtml(p);
-    if (orig) classes += ' has-orig';
+    if (orig || ORIG_SLOT) classes += ' has-orig';
     html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
       '" data-idx="' + i + '">' +
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
@@ -6480,12 +6495,25 @@ function controlPanelHTML() {
                                    : 'Place mark instead of the word \'origin\'';
   var opAlt = currentLang === 'it' ? 'Place mark instead of the word \'origin\''
                                    : 'Segno di luogo al posto della parola \'origine\'';
+  // Seconda riga: lo spazio della colonna riservato anche dove il luogo manca. Sta
+  // nella STESSA sezione della prima perché parlano della stessa colonna, e due
+  // sezioni separate avrebbero aperto fra loro il vuoto del ritmo `.ctrl-section`.
+  var osLbl = currentLang === 'it' ? 'Spazio riservato anche senza il luogo'
+                                   : 'Keep the space where the place is missing';
+  var osAlt = currentLang === 'it' ? 'Keep the space where the place is missing'
+                                   : 'Spazio riservato anche senza il luogo';
   destra += '<div class="ctrl-section ctrl-section--orig">'
      + '<label class="ctrl-row ctrl-row--wrap" title="' + opLbl + '">'
      +   '<input type="checkbox" id="ctrl-origpin"' + (ORIG_PIN ? ' checked' : '') + '>'
      +   '<span class="ctrl-chk"></span>'
      +   '<span class="ctrl-label"><span class="ctrl-label-face">' + opLbl + '</span>'
      +     '<span class="ctrl-label-alt" aria-hidden="true">' + opAlt + '</span></span>'
+     + '</label>'
+     + '<label class="ctrl-row ctrl-row--wrap" title="' + osLbl + '">'
+     +   '<input type="checkbox" id="ctrl-origslot"' + (ORIG_SLOT ? ' checked' : '') + '>'
+     +   '<span class="ctrl-chk"></span>'
+     +   '<span class="ctrl-label"><span class="ctrl-label-face">' + osLbl + '</span>'
+     +     '<span class="ctrl-label-alt" aria-hidden="true">' + osAlt + '</span></span>'
      + '</label></div>';
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a sinistra).
   // Il click azzera tutti i badge.
@@ -6747,6 +6775,12 @@ function wireControlPanel() {
   if (opn) opn.addEventListener('change', function(){
     ORIG_PIN = opn.checked;
     LS.setItem(ORIG_PIN_LS_KEY, ORIG_PIN ? '1' : '0');
+    applyFilter();
+  });
+  var osl = panel.querySelector('#ctrl-origslot');
+  if (osl) osl.addEventListener('change', function(){
+    ORIG_SLOT = osl.checked;
+    LS.setItem(ORIG_SLOT_LS_KEY, ORIG_SLOT ? '1' : '0');
     applyFilter();
   });
   // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).

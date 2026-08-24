@@ -87,19 +87,24 @@ const FAV_AMOUNT = 0.35;
 // deve esserci per il launcher, ma non si vede più.
 // ⚠️ Il glifo NON si può togliere dalla schermata di avvio: la disegna il sistema,
 // non la pagina. L'unica leva è farne coincidere il fondo.
-// ⚠️⚠️ È IL DISCO DEL FAB IN TEMA SCURO, non un blu scelto qui (istruzione dell'utente,
-// 2026-08-23: *per la webapp usa lo stesso colore del FAB del tema scuro*). Quindi non è
-// un valore autonomo: **si cambia quando cambia il disco**, e il posto dove leggerlo è
-// `#ctrl-fab.fab-btn` in `earthsea/top/index.html`. È già successo una volta in un
-// giorno: `#78adc2` nella 0.37, `#3072a1` nella 0.38.
-// ⚠️ Il bianco sopra fa **5,19**: la coppia è la stessa che il FAB porta in pagina, ed è
-// per quel numero che l'utente ha scurito il disco (sul `#78adc2` il bianco faceva 2,45,
-// sotto il 3:1 dei componenti). Chi schiarisse il fondo dell'icona lo paga qui.
+// ⚠️⚠️ È IL DISCO DEL FAB IN TEMA CHIARO dal 2026-08-24 (istruzione dell'utente: *imposta
+// lo stesso colore del FAB in tema chiaro come sfondo dell'icona e della schermata della
+// webapp*), cioè `#267d71`, la tinta media del titolone chiaro. Quindi non è un valore
+// autonomo: **si cambia quando cambia quel disco**, e il posto dove leggerlo è
+// `html[data-theme="light"] #ctrl-fab` in `earthsea/top/index.html`.
+// ⚠️ Il TEMA di riferimento è cambiato, e va saputo per non 'ripararlo': fino alla 0.65
+// era il disco del tema SCURO (`#3072a1`, istruzione del 2026-08-23), e prima ancora
+// `#78adc2` per un giorno solo. Chi trova uno di quei due in una nota sa a che giro
+// appartiene.
+// ⚠️ Il bianco sopra fa **4,94** contro i 5,19 del blu scuro: si perdono 0,25 e restiamo
+// ben sopra il 4,5:1, quindi il segno regge. È la coppia che il FAB porta in pagina nel
+// tema chiaro, ed è il senso della richiesta: l'app installata si presenta col verde del
+// sito e non con un blu che nel sito non compare più da nessuna parte.
 // Ⓘ Percorso, perché nei commenti girano ancora i valori vecchi: `#0080ff` come la
 // favicon, poi tre gradini di 'più scuro e desaturato' sulla tonalità 210 (88/88, 76/76,
 // 64/64) fino a `#3b6fa3`, col bianco che saliva 3,80 -> 4,11 -> 4,58 -> 5,26. Quella
 // ricetta è **decaduta**: ora il colore lo decide il FAB.
-const PWA_BG = '#3072a1';
+const PWA_BG = '#267d71';
 const PWA_FG = '#ffffff';
 const PWA_FRAC = 0.44;
 // ⚠️ La FAVICON è `#3e8f84` e la divergenza è VOLUTA, oggi perfino di tonalità: i due
