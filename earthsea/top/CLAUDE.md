@@ -1890,8 +1890,34 @@ sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una
     scende da sé quando non ce n'è, che è esattamente la richiesta. ⚠️ Il contenitore della
     faccia dev'essere `flow-root`, o il float sborda dal riquadro e **non entra nel calcolo
     dell'altezza**, cioè rompe in silenzio l'anti-jitter.
-  - ⚠️ **L'attribuzione resta in CORSIVO** come la citazione: è la stessa voce che parla, e
-    il tondo la staccherebbe come se fosse una nota di redazione.
+  - ⚠️ **Il CORSIVO è caduto nella `0.70`**, e la vecchia motivazione (*è la stessa voce che
+    parla, il tondo la staccherebbe come una nota di redazione*) non va rimessa: l'utente ha
+    chiesto **tondo grassetto** proprio per staccarla dal testo citato, che è tutto corsivo,
+    e insieme ha tolto le **parentesi**. Corpo `0.92em`, `font-weight:600`.
+
+#### 📐 L'attribuzione si allinea alla FINE DELLA RIGA PRECEDENTE, e costa un ricalcolo
+
+Scelta dell'utente nella `0.70` (variante **B** di quattro mockup misurati sulla pagina vera):
+il flottante a filo del bordo destro *va oltre e sembra fuori posto*, quindi l'attribuzione
+rientra fino a stare a piombo sull'**ultimo carattere della riga sopra**.
+
+- **Come si misura**, in `alignVoci()`: un `Range` sui nodi che precedono l'attribuzione dà i
+  rettangoli delle righe di testo; si prende l'ultima riga **sopra** l'attribuzione e la si
+  confronta col bordo destro della faccia; la differenza diventa un `position:relative` +
+  `right`, che sposta senza toccare il flusso (quindi senza cambiare l'altezza della card, che
+  è ciò che l'anti-jitter misura).
+- ⚠️ **Tre passate, e l'ordine conta**: prima si azzera lo spostamento di tutte le
+  attribuzioni, poi si misura, poi si applica. Misurare su un valore già applicato accumula,
+  e il rientro cresce a ogni reflow.
+- **Il tetto di `0.8em` dal testo della propria riga** impedisce che l'attribuzione, tirata a
+  sinistra, finisca addosso alle parole che la precedono sulla stessa riga.
+- ⚠️⚠️ **È un calcolo, non una regola CSS: va rifatto a ogni render**, ed è agganciato a
+  `reflowRows()` insieme a `tightenNames()` e `optimizeBipartite()`. Chi aggiunge un percorso
+  che ridisegna le card senza passare di là si ritrova le attribuzioni ferme sulla misura
+  vecchia. Le righe di una sola riga non hanno niente da allineare e restano al `float`.
+- **Il ripiego è deciso in anticipo** (utente, `0.70`): se la resa si rompe, si passa alla
+  variante **D**, l'attribuzione su una riga propria sotto la citazione, allineata a destra,
+  che è *meno elegante ma semplice e solida* e non richiede misure.
 
 ### 🧟 Un testo che nessuna edizione ha, e la ragione per cui va bene
 
