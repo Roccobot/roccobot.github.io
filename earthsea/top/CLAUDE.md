@@ -564,7 +564,7 @@ il riferimento del personaggio*). Quindi:
   regola, e nello Schedario è resa esplicita: un campo `nome italiano` vuoto significa *va bene
   il nome che vedi*, quindi non è un dato mancante e non tiene la scheda 'incompleta'.
   - ⚠️ **Nelle 84 schede non ancora nel sito quel nome intestato è spesso il VERO nome**,
-    perché la pagina Wikipedia le elenca così (`Hara` per Ontano/Alder, `Aihal` per Ogion). Là
+    perché la pagina Wikipedia le elenca così (`Hara` per Alder, `Aihal` per Ogion). Là
     il vuoto **non** equivale al nome d'uso, e il campo va riempito: lo Schedario lo dice
     scheda per scheda nel segnaposto del campo (`vuoto: vale "Hara"`).
 
