@@ -2850,7 +2850,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.67</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.68</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3017,7 +3017,7 @@ var SITE_FLAGS_DEFAULT = {
   // ⚠️ Dalla v14.65 NON esiste più la scelta 'Dove' (`area`): la trama sta SEMPRE
   // fuori dalla colonna delle schede e fuori dalla testata, quindi la sfumatura vale
   // sempre e un eventuale `area` residuo nei dati salvati è ignorato.
-  pat:{ on:false, mot:'marea', c_d:'#ffffff', op_d:0.055,
+  pat:{ on:false, mot:'gorgo', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
   // press: quali parti incidere, name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
@@ -3653,14 +3653,27 @@ function patSvg(mot, col, w){
     // ⚠️ Il ricciolo si INNESTA sulla rete (parte dal punto di cresta e si avvolge
     // verso l'interno): una catena di spirali sciolte sarebbe la figura ripetuta che
     // la regola del tile vieta. Il verso si alterna, o l'acqua sembra pettinata.
+    // ⚠️⚠️ Le spirali si disegnano anche una tile SOPRA e una SOTTO, e senza le copie
+    // il motivo mostra RICCIOLI MONCHI (difetto visto dall'utente il 2026-08-24, dopo
+    // che aveva scelto questa trama). La regola del tile era già scritta sopra
+    // `PAT_TILE` ('gli elementi sui bordi sono duplicati a coordinate opposte') e qui
+    // era applicata alle onde e non ai riccioli, che sono alti 22 e sporgono.
+    // ⚠️ Misurato prima del rimedio: due spirali cadevano **tutte fuori** dal tile
+    // (y da -33,6 a -15) e due a cavallo del bordo (da -3,6 a 15), con la metà tagliata
+    // che non ricompariva in fondo. Una fila su tre rendeva mezzi archi a U.
+    // ⚠️ Il ciclo va da 0 a 3, cioè le QUATTRO file vere del tile alto 120: con la
+    // quinta (`<= 4`) la fila a y 105 sarebbe stata disegnata due volte, perché -15 e
+    // 105 sono la stessa fila modulo l'altezza.
     g = '';
     for (var gi = 0; gi <= 4; gi++) g += '<path d="' + patOnda(gi * 30, 240, 60, 15, gi % 2 === 0) + '"/>';
-    for (var gj = 0; gj <= 4; gj++) {
-      var gy = gj * 30 - 15;
-      for (var gx = (gj % 2 === 0) ? 90 : 30; gx < 240; gx += 120) {
-        g += '<path d="' + patSpira(gx, gy - 11, 11, 2.5, 1.25, Math.PI / 2, (gx / 30 + gj) % 2 === 0) + '"/>';
+    [-120, 0, 120].forEach(function(gdy){
+      for (var gj = 0; gj < 4; gj++) {
+        var gy = gj * 30 - 15 + gdy;
+        for (var gx = (gj % 2 === 0) ? 90 : 30; gx < 240; gx += 120) {
+          g += '<path d="' + patSpira(gx, gy - 11, 11, 2.5, 1.25, Math.PI / 2, (gx / 30 + gj) % 2 === 0) + '"/>';
+        }
       }
-    }
+    });
   } else if (mot === 'sartie') {
     // MARINERIA: stragli verticali e griselle che flettono sotto il peso, con un nodo
     // a ogni incrocio. È la FLESSIONE a distinguerlo da una griglia: dritte, quelle

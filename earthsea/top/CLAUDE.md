@@ -1456,7 +1456,9 @@ Le trame dell'effetto omonimo del Pannello sono **undici** dalla `0.62`: le **ot
 per Terramare nella `0.59` (Marea, Correnti, Risacca, Onde, Gorghi, Sartiame, Rosa dei venti,
 Maglia) e le **tre** ereditate da 'I Grandi di Arda' che l'utente ha scelto di tenere
 (2026-08-24: *tieni `Vessillo`, `Campo di Stelle` e `Losanghe`*). In vigore sul sito è
-**`marea`**, in `siteFlags` di `dati.js`.
+**`gorgo`** dalla `0.68`, scelta dell'utente (*forse la mia preferita*); prima era
+`marea`. Il valore vive in `siteFlags` di `dati.js`, e il fallback di `index.html` gli
+va tenuto dietro.
 
 - **Le altre tre di Arda sono USCITE col loro disegno** (`stars`, `foglia`, `weave`), e con
   loro `patStar`, che non aveva più chiamanti. Non sono un magazzino da cui ripescare: la
@@ -1469,6 +1471,20 @@ Maglia) e le **tre** ereditate da 'I Grandi di Arda' che l'utente ha scelto di t
 - ⚠️ **Nelle onde conta il RAPPORTO fra ampiezza e semiperiodo, non l'ampiezza**: 25 su 50
   leggeva come un reticolo geometrico, 9 su 50 legge come acqua. È il numero da guardare
   quando una trama nuova 'non sembra quello che è'.
+- ⚠️⚠️ **La regola del tile vale per OGNI elemento, non per il disegno principale**, e il
+  `gorgo` lo ha dimostrato: le onde erano replicate a coordinate opposte e i **riccioli**
+  no, quindi quattro spirali cadevano sul bordo superiore e la loro metà non ricompariva in
+  fondo. Una fila su tre mostrava **mezzi archi a U**, e l'ha visto l'utente dopo aver scelto
+  la trama. Misurato: due spirali stavano **tutte fuori** dal tile (y da -33,6 a -15) e due a
+  cavallo (da -3,6 a 15). Corretto nella `0.68` replicando le spirali a `dy` di -120, 0 e
+  +120, come le righe di `marea` e `corrente`.
+  - ⚠️ **Il ciclo delle file va da 0 a 3, non a 4**: il tile è alto 120 e le file distano 30,
+    quindi la quinta è la prima del tile successivo e disegnarla la raddoppia.
+  - ✅ **Un controllo automatico esiste ora, e le undici trame lo passano**: per ogni forma
+    che sporge da un bordo si cerca il gemello traslato di una larghezza o di un'altezza; chi
+    non ce l'ha è un candidato monco. ⚠️ Non contano le forme che **attraversano** il tile da
+    parte a parte: quelle le salda la ripetizione. Lo script vive nello scratchpad e muore
+    col container: si rifà leggendo le `getBBox` dei path di `patSvg`.
 - ⚠️ **Un motivo SCONOSCIUTO ripiega su `marea`**, disegno **e** tile insieme (`patSvg` si
   richiama). Prima il tile ripiegava su `marea` e il disegno sull'ultimo `else`, che era
   `stars`: con una trama ritirata (e dalla `0.62` sono tre) si sarebbe visto un disegno nel
