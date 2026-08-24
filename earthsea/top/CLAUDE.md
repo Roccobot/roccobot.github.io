@@ -1025,6 +1025,29 @@ leggere prima di toccare il numero.
     allora non si compensò spostando il canvas (icone as-is): il centraggio ottico si fa a
     monte nel file, ed è esattamente quello che l'utente ha fatto qui.
 
+## 🖼️ L'anteprima social (Open Graph)
+
+Dalla `0.75`. Il file è `earthsea/top/og-image.jpg`, **1200x630** (1,91:1), fornito
+dall'utente: un ragazzo che tocca il muso di un drago bianco sulla scogliera, al tramonto.
+Serve `og:image`, `og:image:width/height/alt` e `twitter:image`, e con lui `twitter:card`
+passa da `summary` a **`summary_large_image`**, o l'anteprima resterebbe il quadratino.
+
+- ⚠️⚠️ **L'URL porta un `?v=` e va BUMPATO a ogni sostituzione dell'immagine**: la cache
+  dell'anteprima è **dei server dei social**, non del browser, quindi un file sostituito con lo
+  stesso nome continua a mostrare la versione vecchia per giorni e non c'è modo di svuotarla
+  dal proprio lato. Il parametro è l'unica leva.
+- ⚠️ **L'URL dev'essere ASSOLUTO** (`https://roccobot.github.io/...`): i crawler non
+  risolvono i percorsi relativi come fa un browser.
+- **Il formato resta JPEG o PNG, non WebP** (risposta a una domanda dell'utente, 2026-08-24):
+  Facebook e WhatsApp lo digeriscono, ma X/Twitter, LinkedIn e vari client di posta e chat no,
+  e un'anteprima non è un posto dove un formato non supportato degrada: sparisce e basta.
+- ⚠️ **L'immagine è dell'utente e non si ricomprime**: 357 KB stanno larghi sotto il tetto
+  pratico di 1 MB, e una ricompressione guadagnerebbe pochi KB al prezzo di un degrado su
+  un'immagine che è il biglietto da visita del sito.
+- **Il contenuto sta nel quadrato centrale**: molti client ritagliano così, e il soggetto qui
+  è già al centro. ⚠️ Il testo, se un domani se ne aggiunge, va **disegnato dentro
+  l'immagine**: chi guarda l'anteprima non ha i font del sito.
+
 ## 🔖 Favicon e icone dell'app installabile
 
 **Dalla `0.24`**, e sono **lo stesso glifo del FAB**, non un disegno a parte: le genera

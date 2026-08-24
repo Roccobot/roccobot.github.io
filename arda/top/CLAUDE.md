@@ -1466,6 +1466,23 @@ motivate**, perché nei dati un'esclusione è indistinguibile da una dimenticanz
 - La PNG di `morgoth` **conserva il padding trasparente** su sua richiesta, e il box è di aspetto
   pari al canvas così l'immagine lo riempie senza letterbox.
 
+## 🖼️ L'anteprima social (Open Graph)
+
+`arda/top/og-image.jpg`, **1200x630**, fornita dall'utente. **Sostituita il 2026-08-24**
+(`15.13`): era l'Occhio di Sauron in un anello di fuoco, ora è un re elfico in armatura
+dorata con la spada sguainata. ⚠️ Sostituendo l'immagine si riscrive anche `og:image:alt`,
+che descrive il **disegno**: lasciarlo com'era significa mentire a chi usa uno screen reader.
+
+⚠️⚠️ **L'URL porta un `?v=` e va BUMPATO a ogni sostituzione** (`?v=2` da questa): la cache
+dell'anteprima è **dei server dei social**, non del browser, quindi un file sostituito con lo
+stesso nome continuerebbe a mostrare la versione vecchia per giorni, e non c'è modo di
+svuotarla dal proprio lato. Il parametro va messo in **entrambi** i meta, `og:image` e
+`twitter:image`.
+
+- **Formato JPEG o PNG, non WebP**: diversi client social non lo mostrano affatto, e
+  un'anteprima non degrada, sparisce.
+- ⚠️ **L'immagine è dell'utente e non si ricomprime.**
+
 ## 🧹 Asset del progetto
 
 ### 🖼️ Rendering delle icone-badge sulle card
