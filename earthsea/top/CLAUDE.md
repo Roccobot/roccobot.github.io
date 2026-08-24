@@ -14,7 +14,7 @@ Dal 2026-08-23 (`0.52`) il dataset porta le **100 schede** dello Schedario compi
 dall'utente (80 voci nuove, 20 aggiornate), sopra le voci già presenti: **120 voci** in
 tutto. Ogni scheda è passata da una **verifica col grep sugli epub** (un agente per lotto
 di dieci), che ha stabilito le metà inglesi e segnalato le divergenze. Nessuna descrizione,
-e le citazioni non ci saranno (vedi la sezione sui nomi non cliccabili).
+e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
 
 - **L'ordine è quello in cui le voci sono entrate**, non una classifica: le voci nuove
   si accodano, e il riordino si fa dal Pannello quando l'utente deciderà le posizioni.
@@ -1675,15 +1675,78 @@ che non serve'*. Quindi la **scheda personaggio è stata rimossa** (markup, `ope
 Tab, il ramo di Esc e il CSS suo), e il nome è un testo come gli altri: niente `role`,
 niente `tabindex`, niente cursore a manina, niente colore al passaggio.
 
-- ⚠️ **Conseguenza dichiarata dall'utente: niente citazioni.** I campi `citazione` e
-  `citazione_en` sono usciti dal dataset, dall'editor admin e dalla ricerca: senza scheda non
-  esisteva più un posto dove leggerle. Chi le rimettesse dovrebbe prima decidere DOVE si
-  leggono.
+- Ⓘ **La conseguenza 'niente citazioni' è DECADUTA il 2026-08-24**, ed è utile sapere come:
+  la regola diceva *chi le rimettesse dovrebbe prima decidere DOVE si leggono*, e l'utente
+  l'ha fatto (*mi piacerebbe inserirle ciascuna nella card del suo personaggio, senza
+  modale*). Quindi i campi sono tornati, ma **non nella scheda**: la scelta di questa
+  sezione resta intatta, e la citazione vive in fondo alla card. Vedi § 'Le CITAZIONI nella card: testo Mondadori, nomi Nord'.
 - ⚠️ **Non rimettere il cursore a manina 'per coerenza'**: prometterebbe un'azione che non c'è,
   ed è il difetto che questa scelta elimina.
 - Restano in piedi le modali che servono ad altro: 'Risorse e note', l'informativa, i due
   **visualizzatori di immagini** per le mappe. Il loro guscio condiviso (`buildStdModal`) e le
   classi `.modal`, `.modal-body`, `.modal-close` sono di quelli, non della scheda.
+
+## 📖 Le CITAZIONI nella card: testo Mondadori, nomi Nord
+
+Dalla `0.60`. **Una citazione per personaggio**, in un riquadro stondato in fondo alla card,
+con sotto la riga di contesto. Trenta voci su 120 ce l'hanno: chi è solo menzionato di
+sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una lacuna.
+
+- **I quattro campi**: `citazione` / `citazione_en` per il testo, `citazione_fonte` /
+  `citazione_fonte_en` per il contesto. ⚠️ Esistono su **tutte** le voci, anche vuoti: un
+  campo che vive solo su trenta card su 120 è un campo che l'editor admin non sa di avere.
+- **Il criterio di scelta è dell'utente**: *per ogni personaggio scegli la citazione più
+  corta (a meno che non sia ENORMEMENTE più significativa la meno corta)*. Le tre deroghe
+  applicate (Akambar, Ammaud, Serriadh) sono motivate una per una nello script che le ha
+  scelte, e la ragione ricorrente è la stessa: la più corta non nominava il personaggio,
+  oppure era lo stesso brano già assegnato a un'altra voce.
+- **La riga di contesto ha una forma fissa**, dettata dall'utente col suo esempio:
+  `<Voce> (<chi parla>) · <Opera IT> / <Opera EN>, cap. N - '<titolo>': <che cosa succede>.`
+  ⚠️ I due titoli dell'opera stanno nella riga di **entrambe** le lingue, e non è una
+  dimenticanza: servono a ritrovare il passo in tutte e due le edizioni, che è lo scopo per
+  cui lui ha chiesto il contesto (*mi aiuta sia a ritrovarla nel testo che a
+  verificarla/copiarla*).
+
+### 🧟 Un testo che nessuna edizione ha, e la ragione per cui va bene
+
+⚠️⚠️ **Le citazioni italiane NON sono un verbatim di nessuna edizione, ed è VOLUTO.** È la
+scelta più importante di questa sezione, e va conosciuta prima di 'correggerla': un audit che
+confronti una citazione col suo volume la troverà diversa, e non è un errore.
+
+Parole dell'utente, 2026-08-24, che valgono come formulazione: *ti ho detto edizione
+Mondadori, ma nomi di Nord. Per avere un'edizione Frankenstein che unisce il meglio di
+entrambe. Filologicamente discutibile, ma è la cosa con cui mi trovo meglio ed è una scelta
+consapevole di ri-adattamento sul mio sito.*
+
+- **Perché le due cose non coincidono**: le due edizioni divergono nel **testo**, non solo nei
+  nomi. Misurato sulle 88 candidate verificate parola per parola: **52** verbatim su
+  Mondadori e **11** su Nord. Il canone porta il dato e la sua conseguenza
+  (`rules/Earthsea.md`, § 'Fonti ITA').
+- ⚠️ **Oggi la sostituzione non ha dovuto operare**: nessuna delle trenta citazioni scelte
+  contiene uno dei nomi divergenti nel corpo, quindi sono tutte verbatim Mondadori. Il patto
+  resta però quello, e vale per le citazioni future.
+- **La lista dei nomi da sostituire è CHIUSA e si ricava dal censimento**, non da un'idea:
+  Mondadori scrive il nome inglese dove Nord e il dataset ne hanno uno italiano
+  (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`). Quale edizione decide sui nomi,
+  e perché sono i **libri 1, 2 e 3** di Nord, sta nel canone.
+
+### ⚠️ Come si VERIFICA una citazione, e le due trappole che l'hanno insegnato
+
+- **Si confrontano le PAROLE, non la tipografia.** Al primo giro passavano 31 candidate su
+  88, e quasi tutte cadevano su due cose che parole non sono: le **virgolette** (caporali
+  nelle candidate, dritte nell'edizione digitale Mondadori, curve nell'inglese) e il **punto
+  finale**, che Mondadori mette **fuori** dalla battuta (`...di Kalessin".`). Togliendo le
+  une e la punteggiatura ai due estremi si è passati a 52 verbatim più 24 montaggi.
+  ⚠️ Lettere e accenti **non** si normalizzano: quelli sono testo, e un confronto che li
+  perdonasse non verificherebbe più niente.
+- **L'estrazione delle fonti va fatta PER CAPITOLO**, e con due accorgimenti che il testo
+  piatto non ha: l'ordine viene dallo **spine dell'OPF**, non dai nomi dei file (il JSON
+  piatto della sessione prima faceva cominciare *Un mago di Terramare* col primo capitolo
+  delle *Tombe di Atuan*), e le **anteprime** del volume successivo si riconoscono invece di
+  indovinarle, con una regola calcolata: un capitolo che vive in due libri è anteprima nel
+  libro dove sta **più lontano dall'inizio**. ⚠️ Due regole scartate, e conviene saperlo: la
+  **lunghezza** (le anteprime non sono per forza troncate: 25 799 caratteri contro 25 784 per
+  lo stesso capitolo) e il **nome del file**, che cambia col prossimo epub.
 
 ## 📖 Prima apparizione: `fonte` e `fonte_en`, e il ripiego vale nei due sensi
 
