@@ -1849,12 +1849,25 @@ sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una
   applicate (Akambar, Ammaud, Serriadh) sono motivate una per una nello script che le ha
   scelte, e la ragione ricorrente è la stessa: la più corta non nominava il personaggio,
   oppure era lo stesso brano già assegnato a un'altra voce.
-- **La riga di contesto ha una forma fissa**, dettata dall'utente col suo esempio:
-  `<Voce> (<chi parla>) · <Opera IT> / <Opera EN>, cap. N - '<titolo>': <che cosa succede>.`
-  ⚠️ I due titoli dell'opera stanno nella riga di **entrambe** le lingue, e non è una
-  dimenticanza: servono a ritrovare il passo in tutte e due le edizioni, che è lo scopo per
-  cui lui ha chiesto il contesto (*mi aiuta sia a ritrovarla nel testo che a
-  verificarla/copiarla*).
+- **La forma è cambiata il 2026-08-24 (`0.67`), su tre correzioni dell'utente**, e la
+  vecchia (`<Voce> (<chi parla>) · <Opera IT> / <Opera EN>, cap. N - '<titolo>': <che cosa
+  succede>.`) non va rimessa:
+  1. ⚠️⚠️ **CHI PRONUNCIA la frase esce dal contesto** e diventa una riga di attribuzione in
+     coda alla citazione: a destra, in grassetto, in linea con l'ultima riga se ci sta e a
+     capo se non ci sta. Vive nei campi **`citazione_voce`/`citazione_voce_en`** ed è
+     **vuoto** quando parla il personaggio della card o il narratore, perché là
+     l'attribuzione ripeterebbe il titolo della scheda. Oggi la portano 9 citazioni su 30.
+  2. ⚠️⚠️ **Il contesto porta la SOLA lingua corrente**: *in inglese solo l'inglese, in
+     italiano solo l'italiano*. I due titoli affiancati erano una mia scelta, motivata col
+     ritrovare il passo in entrambe le edizioni, e l'utente l'ha rovesciata.
+  3. **E comincia dall'OPERA**: `<Opera>, cap. N - '<titolo>': <che cosa succede>.`
+  - ⚠️ **La resa a destra la fa un `float`, e la ragione è che non richiede misure**: un
+    flottante dichiarato **dopo** il testo si sistema sulla riga corrente finché c'è posto e
+    scende da sé quando non ce n'è, che è esattamente la richiesta. ⚠️ Il contenitore della
+    faccia dev'essere `flow-root`, o il float sborda dal riquadro e **non entra nel calcolo
+    dell'altezza**, cioè rompe in silenzio l'anti-jitter.
+  - ⚠️ **L'attribuzione resta in CORSIVO** come la citazione: è la stessa voce che parla, e
+    il tondo la staccherebbe come se fosse una nota di redazione.
 
 ### 🧟 Un testo che nessuna edizione ha, e la ragione per cui va bene
 
@@ -1879,6 +1892,24 @@ consapevole di ri-adattamento sul mio sito.*
   (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`). Quale edizione decide sui nomi,
   e perché sono i **libri 1, 2 e 3** di Nord, sta nel canone.
 
+### ✒️ La prima lettera di ogni riga va MAIUSCOLA
+
+Istruzione dell'utente, 2026-08-24: *la prima lettera di qualsiasi riga dev'essere sempre
+maiuscola; non te l'ho detto perché pensavo ereditassi il principio da Arda*. È una
+convenzione tipografica del dataset, come quelle di 'I Grandi di Arda'.
+
+- **Serve soprattutto all'INGLESE**, dove le fonti attestano forme che cominciano minuscole:
+  `dragonlord`, `the White, Hero-Mage of Havnor`, `the Dragon of Pendor`, `wielder of the
+  Sword of Serriadh`. Sono **15** campi contro i **2** italiani (`il Grande Drago` di Orm e
+  `la Bella` di Elfarran).
+- ⚠️⚠️ **Si applica in RESA, non nel dato** (`capIniz` in `index.html`), e questa è la scelta
+  che conta: `dragonlord` è la forma che il testo attesta, e riscriverla in `dati.js`
+  metterebbe nel dataset una grafia che nessuna fonte porta. Qui è tipografia di riga, come
+  la maiuscola dopo il punto fermo.
+- ⚠️ **Vale per la riga LOGICA**: se il sottotitolo va a capo, la seconda riga fisica sta in
+  mezzo a una frase e non si tocca. E tocca al pezzo che **apre** la riga, che è il primo
+  presente: i titoli aprono la riga solo quando i nomi alternativi mancano.
+
 ### ⚠️ Come si VERIFICA una citazione, e le due trappole che l'hanno insegnato
 
 - **Si confrontano le PAROLE, non la tipografia.** Al primo giro passavano 31 candidate su
@@ -1896,6 +1927,42 @@ consapevole di ri-adattamento sul mio sito.*
   libro dove sta **più lontano dall'inizio**. ⚠️ Due regole scartate, e conviene saperlo: la
   **lunghezza** (le anteprime non sono per forza troncate: 25 799 caratteri contro 25 784 per
   lo stesso capitolo) e il **nome del file**, che cambia col prossimo epub.
+
+## 🪞 L'ANTI-JITTER, e perché una misura sola diceva zero mentre l'occhio vedeva muoversi
+
+Nella `0.59` il cambio lingua era stato dichiarato senza jitter su una misura vera: **0 card
+su 120** cambiavano altezza. L'utente ha detto che non era così (2026-08-24), e aveva
+ragione: quella misura guardava **una cosa sola**. Allargata al rettangolo (x, y, larghezza,
+altezza) di ogni elemento, dentro e fuori le schede, il cambio lingua muoveva tre cose, tutte
+corrette nella `0.67`.
+
+| che cosa si muoveva | quante | perché |
+|---|---|---|
+| etichette e icone del nome, in **orizzontale** | 61 e 38 card | la gemella riservava la sola altezza, non la larghezza: `Sparviero` -> `Sparrowhawk` le spostava fino a **52px** |
+| testo e riga di contesto **dentro** il riquadro della citazione | 3 e 5 card | la gemella stava sul blocco intero, quindi il riquadro teneva l'altezza giusta e il contenuto ci ballava dentro di **24,75px**, una riga |
+| la riga Risorse nel **footer** | sempre | il `hidden` della `0.62` toglieva il paragrafo dal flusso: **55,72px** |
+
+- ⚠️⚠️ **La lezione vale oltre il caso**: una misura che guarda una dimensione sola può
+  dichiarare 'zero' mentre la pagina si muove in un'altra. Se l'utente dice che vede
+  muoversi qualcosa, il metro è sbagliato prima del codice.
+- **I tre rimedi**: la gemella del nome passa dalla riga intera al **solo testo** (così la
+  cella prende il massimo delle due lingue in **entrambe** le dimensioni); la citazione
+  impila **le due righe separatamente** invece del blocco; il footer nasconde la riga con
+  `visibility` e spegne il bottone con `disabled` invece che con `hidden`, perché quello
+  usciva dal flusso portandosi via anche il suo bordo da 1px.
+- ⚠️ **Il prezzo del primo rimedio è dichiarato**: sulle card dove i due nomi divergono
+  resta uno stacco variabile fra nome ed etichetta, ed è il patto dell'utente (*uno spazio
+  vuoto è preferibile al jitter*).
+- ✅ **Misurato dopo**: su desktop (1280 e 900) **nessun** elemento si muove, nei due stati
+  dell'interruttore dello spazio riservato. Su **mobile** le card non si muovono di un
+  pixel (0/120 in posizione relativa alla lista e in altezza).
+
+⚠️⚠️ **RESTA APERTO UN PUNTO, ed è l'INTESTAZIONE su mobile**: a 390px l'header passa da
+**471,78px a 508,27px** al cambio lingua (**+36,5px**) e fa scorrere in giù tutta la pagina.
+Non sono il sottotitolo né l'introduzione, che misurano identici nelle due lingue: è il
+**titolone**, che a quella larghezza va a capo su un numero di righe diverso (`I Grandi di
+Terramare` contro `The Greats of Earthsea`). Il rimedio è lo stesso idioma delle card (la
+gemella invisibile dell'altra lingua nella stessa cella), e l'utente ha chiesto di rimandarlo.
 
 ## 📖 Prima apparizione: `fonte` e `fonte_en`, e il ripiego vale nei due sensi
 
