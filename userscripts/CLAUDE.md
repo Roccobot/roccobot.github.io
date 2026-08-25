@@ -162,6 +162,34 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
   una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era
   stato tolto apposta.
 
+### 🔎 'Cerca simili' e il menu del tasto destro
+
+Nato con la **3.1.0**, insieme al rinomino di `Salva immagine...` in **`Scarica`** (richiesta
+dell'utente, 2026-08-25). La voce nuova sta **subito sotto** a quella dello scaricamento e
+consegna l'immagine a un motore di ricerca per immagini.
+
+- ⚠️⚠️ **La ricerca inversa la fa il MOTORE, non il browser**: gli si passa un **indirizzo
+  pubblico** e va a scaricarsi lui l'immagine. Da qui discende tutto il resto: su un file
+  locale (`file://`, `data:`, `blob:`) l'indirizzo della pagina non gli dice niente, e
+  l'unica via vera è **copiare l'immagine e aprire la pagina del motore**, dove si incolla.
+  Lo si **dice a schermo**: un motore aperto sul niente sembra un difetto dello script.
+- ⚠️⚠️ **Sul file locale le due azioni si ostacolano a vicenda**, ed è un conflitto misurato
+  in laboratorio, non una precauzione: scrivere negli appunti **consuma l'attivazione** del
+  clic, quindi la finestra aperta dopo viene **bloccata**; ma aprendo prima la finestra il
+  documento **perde il fuoco**, e gli appunti vogliono una pagina a fuoco. La via d'uscita è
+  **`GM_openInTab`** (già fra i grant), che appartiene al gestore e da quell'attivazione non
+  dipende: si copia, **poi** si apre. Dove mancasse si torna a `window.open` chiamato per
+  primo, e allora la copia può non riuscire: lo dice l'avviso, che propone di trascinare il
+  file nella pagina appena aperta.
+- ⚠️ **Un motore solo nel menu, la scelta nelle OPZIONI** (`dv-similar`, fra Google Lens,
+  Yandex, Bing e TinEye). Un sottomenu con quattro voci avrebbe gonfiato un menu che è
+  volutamente minimale, ed è l'utente stesso ad averne fissato l'elenco voce per voce.
+- ⚠️ **Gli avvisi a scomparsa erano rimasti in inglese fisso** (`Image copied`, `URL copied`,
+  `Copy failed`), fuori dalla tabella `TEXTS`, in uno script bilingue dalla 2.21: sanati nella
+  stessa release, perché la regola dice che **ogni** stringa visibile vive in tabella e in
+  tutte e due le lingue. Erano invisibili al censimento perché un avviso non si legge nel
+  DOM a riposo: compare per due secondi e sparisce.
+
 ## ⚙️ La pagina delle opzioni (`DIVOptions.html`)
 
 Voce **Options** nel menu del gestore, che apre

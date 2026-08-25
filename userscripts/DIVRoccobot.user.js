@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         3.0.4
-// @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, save, fit, 100/200/400%), and shift+right-click keeps the browser's. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
+// @version         3.1.0
+// @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, download, search similar, fit, 100/200/400%), and shift+right-click keeps the browser's. 'Search similar' hands the image to a reverse image search engine, chosen in the options among Google Lens, Yandex, Bing and TinEye; on a local file, where no engine can reach the image, it copies the picture and opens the engine so it can be pasted. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -51,7 +51,8 @@
     { k: 'dv-zoom-max',     t: 'num',    d: '40',     min: 2,      max: 200,   step: 1 },
     { k: 'dv-copy-dpi',     t: 'num',    d: '96',     min: 12,     max: 2400,  step: 1 },
     { k: 'dv-png-dpi',      t: 'num',    d: '96',     min: 12,     max: 2400,  step: 1 },
-    { k: 'dv-nudge-y',      t: 'num',    d: '0',      min: -2,     max: 2,     step: 0.5 }
+    { k: 'dv-nudge-y',      t: 'num',    d: '0',      min: -2,     max: 2,     step: 0.5 },
+    { k: 'dv-similar',      t: 'choice', d: 'lens', v: ['lens', 'yandex', 'bing', 'tineye'] }
   ];
   // ⚠️⚠️ `dv-wheel-up-in` la scrivono in DUE: il pannello e il tasto I, che
   // commuta il verso mentre si guarda. È una chiave sola per scelta, dopo un
@@ -114,8 +115,15 @@
       wheelOut: 'Wheel up: zoom out',
       mCopy: 'Copy image',
       mCopyUrl: 'Copy image URL',
-      mSave: 'Save image...',
+      mSave: 'Download',
+      mSimilar: 'Search similar',
       mFit: 'Fit to view',
+      tCopied: 'Image copied',
+      tUrlCopied: 'URL copied',
+      tCopyFail: 'Copy failed',
+      tCopyFailWhy: 'Copy failed: {1}',
+      simLocal: 'Local file: image copied, paste it into the page that just opened',
+      simFail: 'Local file: copy failed, drag the file into the page that just opened',
       dlTip: 'Download: PNG at any resolution, or a cleaned-up SVG.',
       dlDialog: 'Download image',
       dpiAria: 'Resolution in DPI',
@@ -182,6 +190,12 @@
       oDpiCopy: 'DPI for \'Copy image\' on vector files',
       oDpiCopyD: 'Resolution of the image generated on the fly by \'Copy image\' on SVG files.',
       oDpiPng: 'Default DPI for exported PNGs',
+      oSimilar: 'Reverse image search',
+      oSimilarD: 'Engine used by \'Search similar\' in the right-click menu.',
+      oLens: 'Google Lens',
+      oYandex: 'Yandex',
+      oBing: 'Bing',
+      oTineye: 'TinEye',
       oNudge: 'Vertical nudge of the info text',
       oNudgeD: 'Useful to compensate a misalignment\nat certain custom zoom levels. 0 = untouched.',
       oDefault: 'Default',
@@ -201,8 +215,15 @@
       wheelOut: 'Rotella in su: rimpicciolisce',
       mCopy: 'Copia immagine',
       mCopyUrl: 'Copia indirizzo immagine',
-      mSave: 'Salva immagine...',
+      mSave: 'Scarica',
+      mSimilar: 'Cerca simili',
       mFit: 'Adatta alla vista',
+      tCopied: 'Immagine copiata',
+      tUrlCopied: 'Indirizzo copiato',
+      tCopyFail: 'Copia non riuscita',
+      tCopyFailWhy: 'Copia non riuscita: {1}',
+      simLocal: 'File locale: immagine copiata, incollala nella pagina appena aperta',
+      simFail: 'File locale: copia non riuscita, trascina il file nella pagina appena aperta',
       dlTip: 'Scarica: PNG a qualsiasi risoluzione, oppure un SVG ripulito.',
       dlDialog: 'Scarica immagine',
       dpiAria: 'Risoluzione in DPI',
@@ -269,6 +290,12 @@
       oDpiCopy: 'DPI per \'Copia immagine\' dei file vettoriali',
       oDpiCopyD: 'Risoluzione dell\'immagine generata al volo con \'Copia immagine\' su file SVG.',
       oDpiPng: 'DPI predefinito per i PNG esportati',
+      oSimilar: 'Ricerca per immagine',
+      oSimilarD: 'Motore usato da \'Cerca simili\' nel menu del tasto destro.',
+      oLens: 'Google Lens',
+      oYandex: 'Yandex',
+      oBing: 'Bing',
+      oTineye: 'TinEye',
       oNudge: 'Spostamento verticale del testo informativo',
       oNudgeD: 'Utile per compensare un disallineamento\na certi livelli personalizzati di zoom. 0 = inalterato.',
       oDefault: 'Predefinito',
@@ -1409,29 +1436,34 @@
       return await new Promise(function (r) { cv.toBlob(r, 'image/png'); });
     }
 
-    async function copyImage() {
+    // `muta` serve a chi la chiama per un altro scopo (la ricerca di immagini
+    // simili su un file locale): là l'avviso lo dà quella, e due avvisi di fila
+    // direbbero due volte la stessa cosa. Restituisce se la copia è riuscita.
+    async function copyImage(muta) {
       try {
         // il blob si passa come PROMESSA: così il permesso del clic non scade
         // mentre si disegna, che è il motivo per cui la copia a volte fallisce
         await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob() })]);
-        toast('Image copied');
+        if (!muta) toast(T('tCopied'));
+        return true;
       } catch (e) {
         // ripiego: se il file è già un PNG si copiano i byte così come sono
         // (utile quando il canvas è "sporco", per esempio sui file locali)
         try {
           if (originalBytes && /png/i.test(document.contentType)) {
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([originalBytes], { type: 'image/png' }) })]);
-            toast('Image copied');
-            return;
+            if (!muta) toast(T('tCopied'));
+            return true;
           }
         } catch (e2) {}
-        toast('Copy failed: ' + ((e && e.name) || 'error'));
+        if (!muta) toast(T('tCopyFailWhy', (e && e.name) || 'error'));
+        return false;
       }
     }
 
     function copyUrl() {
-      try { navigator.clipboard.writeText(location.href).then(function () { toast('URL copied'); }); }
-      catch (e) { toast('Copy failed'); }
+      try { navigator.clipboard.writeText(location.href).then(function () { toast(T('tUrlCopied')); }); }
+      catch (e) { toast(T('tCopyFail')); }
     }
 
     function imageFileName() {
@@ -1461,6 +1493,65 @@
       }
     }
 
+    // ── Cerca simili ────────────────────────────────────────────────────
+    // ⚠️⚠️ La ricerca inversa la fa il MOTORE, che si scarica l'immagine da
+    // un indirizzo pubblico: non è il browser a mandargliela. Quindi su un file
+    // locale (`file://`, `data:` o `blob:`) l'indirizzo di questa pagina non
+    // gli dice niente, e l'unica via vera è copiare l'immagine e aprire la
+    // pagina del motore, dove si incolla. Si dice a schermo invece di far
+    // finta di aver cercato: un motore aperto sul niente sembra un difetto.
+    // ⚠️⚠️ Sul file locale le due azioni si ostacolano a vicenda, ed è un
+    // conflitto vero, misurato in laboratorio: scrivere negli appunti CONSUMA
+    // l'attivazione del clic, quindi la finestra aperta dopo viene bloccata;
+    // ma aprendo la finestra per prima il documento perde il fuoco, e la copia
+    // fallisce perché gli appunti vogliono una pagina a fuoco. La via d'uscita
+    // è `GM_openInTab`, che è del gestore e non dipende da quell'attivazione:
+    // si copia, poi si apre. Dove non ci fosse, si torna a `window.open`
+    // chiamato per primo e la copia può non riuscire: allora lo dice l'avviso,
+    // che propone di trascinare il file nella pagina appena aperta.
+    function apriScheda(url) {
+      try {
+        if (typeof GM_openInTab === 'function') { GM_openInTab(url, { active: true, insert: true }); return; }
+      } catch (e) {}
+      window.open(url, '_blank', 'noopener');
+    }
+    var MOTORI_SIMILI = {
+      lens: {
+        url: function (u) { return 'https://lens.google.com/uploadbyurl?url=' + encodeURIComponent(u); },
+        home: 'https://lens.google.com/'
+      },
+      yandex: {
+        url: function (u) { return 'https://yandex.com/images/search?rpt=imageview&url=' + encodeURIComponent(u); },
+        home: 'https://yandex.com/images/'
+      },
+      bing: {
+        url: function (u) { return 'https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:' + encodeURIComponent(u); },
+        home: 'https://www.bing.com/visualsearch'
+      },
+      tineye: {
+        url: function (u) { return 'https://tineye.com/search?url=' + encodeURIComponent(u); },
+        home: 'https://tineye.com/'
+      }
+    };
+
+    function searchSimilar() {
+      const motore = MOTORI_SIMILI[readOpt('dv-similar')] || MOTORI_SIMILI.lens;
+      if (/^https?:$/i.test(location.protocol)) {
+        apriScheda(motore.url(location.href));
+        return;
+      }
+      if (typeof GM_openInTab === 'function') {
+        copyImage(true).then(function (ok) {
+          apriScheda(motore.home);
+          toast(ok ? T('simLocal') : T('simFail'));
+        });
+        return;
+      }
+      const copia = copyImage(true);
+      apriScheda(motore.home);
+      copia.then(function (ok) { toast(ok ? T('simLocal') : T('simFail')); });
+    }
+
     // Elenco voluto dall'utente: solo queste, in quest'ordine. Sugli SVG cambia
     // il CONTENUTO di due voci (copia raster a DPI_COPY, salva il file originale),
     // non l'elenco: il menu resta identico ovunque.
@@ -1469,6 +1560,7 @@
         { t: T('mCopy'), f: copyImage },
         { t: T('mCopyUrl'), f: copyUrl },
         { t: T('mSave'), f: saveImage },
+        { t: T('mSimilar'), f: searchSimilar },
         { sep: true },
         { t: T('mFit'), f: goFit },
         { t: '100%', f: function () { zoomTo(realScale, x, y); } },
@@ -2108,7 +2200,8 @@
         { k: 'dv-lang',       l: 'oLang',      d: 'oLangD',  labels: { auto: 'oAuto', it: 'oItalian', en: 'oEnglish' } },
         { k: 'dv-bg-type',    l: 'oBgType',    d: 'oBgTypeD', labels: { checker: 'oChecker', solid: 'oSolid' } },
         { k: 'dv-bg-theme',    l: 'oBgTheme',    d: 'oBgThemeD', labels: { auto: 'oAutoTheme', light: 'oLight', dark: 'oDark' } },
-        { k: 'dv-scale-mode', l: 'oHiDpi',     d: 'oHiDpiD', labels: { phys: 'oPhysical', log: 'oLogical' } }
+        { k: 'dv-scale-mode', l: 'oHiDpi',     d: 'oHiDpiD', labels: { phys: 'oPhysical', log: 'oLogical' } },
+        { k: 'dv-similar',    l: 'oSimilar',   d: 'oSimilarD', labels: { lens: 'oLens', yandex: 'oYandex', bing: 'oBing', tineye: 'oTineye' } }
       ] },
       { g: 'oGrpZoom', rows: [
         { k: 'dv-wheel-mode',  l: 'oPointer',      d: 'oPointerD', labels: { auto: 'oPointerZoom', scroll: 'oPointerHybrid', never: 'oPointerPan' } },
