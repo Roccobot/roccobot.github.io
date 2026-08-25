@@ -2456,6 +2456,13 @@ corrette nella `0.67`.
     riserva orizzontale del nome in nome della coerenza, ed è il vuoto che l'utente ha
     segnalato su Ged; ma letto **troppo** in senso lato porta all'errore opposto, cioè a
     tollerare uno scivolamento dentro il Pannello.
+  - **Caso applicato: le tre schede della modale STATISTICHE** (`0.91`, segnalazione
+    dell'utente). È un COMPONENTE, quindi vale l'anti-jitter pieno, e infatti Famiglie (4
+    righe) e Categorie (3) facevano ballare la modale a ogni giro. La riserva si **misura**
+    disegnando le tre viste e tenendo la maggiore, non si scrive a numero: le righe le
+    contano i dati, e un `min-height` fisso mentirebbe al primo cambio del dataset. Misura
+    dopo il rimedio: **0,00px di scarto** fra le tre. ⚠️ Riserva le sole viste base: le
+    drill-down sono un altro livello e crescono quanto serve.
 - **I tre rimedi**: la gemella del nome passa dalla riga intera al **solo testo** (così la
   cella prende il massimo delle due lingue in **entrambe** le dimensioni); la citazione
   impila **le due righe separatamente** invece del blocco; il footer nasconde la riga con

@@ -2850,7 +2850,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.90</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.91</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3204,6 +3204,22 @@ function fxMigrateLegacy(k, obj){
 // Normalizza UNA config di effetto (base o _m): accetta booleano legacy (= solo
 // interruttore), oggetto parziale (manopole mancanti → default), valori fuori
 // scala (clamp su FX_RANGE). `k` è sempre la chiave BASE (senza _m).
+// ⚠️⚠️ GLI EFFETTI CHE TOCCANO IL MARKUP vanno RIDISEGNATI, non basta `applySiteFlags`
+// (0.91, segnalazione dell'utente: *nessuna ha effetto in tempo reale, non si vede alcuna
+// anteprima*). Quasi tutti gli effetti vivono di classi sul documento e di variabili CSS,
+// e per quelli il ridisegno sarebbe sprecato; l'ORIGINE no: la sua colonna è markup che
+// `renderList` scrive card per card (`origHtml`, e la classe `has-orig`), quindi finché
+// non si ridisegna la lista le tre caselle cambiano solo un flag in memoria.
+// ⚠️ Misurato prima del rimedio: con `pin` e `on` spenti e il solo `applySiteFlags`, le
+// 112 colonne e i 112 segni di luogo restavano tutti in pagina; dopo `renderList`, zero.
+// ⚠️ `enableDragDrop` va rifatto dopo, come in ogni altro ridisegno: il render sostituisce
+// i nodi e con loro i gestori del trascinamento.
+var FX_MARKUP = { orig: true };
+function fxRidisegna(k){
+  if (!FX_MARKUP[k]) return;
+  renderList();
+  if (typeof enableDragDrop === 'function') enableDragDrop();
+}
 function normFxEffect(k, v){
   var def = SITE_FLAGS_DEFAULT[k];
   var obj = (v && typeof v === 'object') ? fxMigrateLegacy(k, JSON.parse(JSON.stringify(v))) : {};
@@ -9901,7 +9917,7 @@ function showFxConfigEditor(key, sfx, onDone){
         SITE_FLAGS[vk][kn.p] = cb.checked;
         // Le caselle di POSIZIONE (e 'Attiva') decidono quali righe sono attive:
         // dopo un cambio si ridisegna l'elenco, così le dipendenze si aggiornano.
-        applySiteFlags(); paint(); renderKnobs();
+        applySiteFlags(); paint(); renderKnobs(); fxRidisegna(key);
       });
       row.appendChild(cb);
     } else if (kn.t === 'sel') {
@@ -10700,7 +10716,11 @@ function showColorStats(initState) {
     var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow-wrap:anywhere;line-height:1.2;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
     var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
     var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
-    var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.innerHTML = '<b>' + o.n + '</b> · ' + pct + '%'; row.appendChild(cnt);
+    // ⚠️ Il conteggio si compone a NODI: `innerHTML` è vietato senza eccezioni (regola non
+    // derogabile), anche quando il contenuto è un numero calcolato da noi.
+    var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;';
+    var cntB = document.createElement('b'); cntB.textContent = String(o.n); cnt.appendChild(cntB);
+    cnt.appendChild(document.createTextNode(' · ' + pct + '%')); row.appendChild(cnt);
     if (o.onClick){
       row.style.cursor = 'pointer'; row.style.borderRadius = '6px'; row.style.padding = '0.12rem 0.25rem'; row.style.margin = '0.18rem -0.25rem';
       row.tabIndex = 0; row.setAttribute('role', 'button'); row.setAttribute('aria-label', o.name + ', ' + o.n);
@@ -10734,7 +10754,7 @@ function showColorStats(initState) {
   // ── Stack di viste (drill-down). Ogni vista è una fn(host). Il primo elemento
   //    è la vista base della tab corrente; push apre un dettaglio, pop torna su. ──
   var stack = [];
-  function renderTop(){ content.innerHTML = ''; box.scrollTop = 0; stack[stack.length - 1](content); }
+  function renderTop(){ content.textContent = ''; box.scrollTop = 0; stack[stack.length - 1](content); }
   function pushView(fn){ stack.push(fn); renderTop(); }
   function popView(){ if (stack.length > 1){ stack.pop(); renderTop(); } }
   // Barra 'indietro' + titolo per le viste di dettaglio.
@@ -10821,6 +10841,31 @@ function showColorStats(initState) {
   }
   function setStatTab(w){ curTab = w; Object.keys(btns).forEach(function(k){ btns[k].style.opacity = k===w ? '1' : '0.5'; }); stack = [ w==='fam' ? famView : w==='cat' ? catView : typeView ]; renderTop(); }
   setStatTab(initState && initState.tab ? initState.tab : 'fam');
+  // ⚠️⚠️ ANTI-JITTER VERTICALE FRA LE TRE SCHEDE (0.91, segnalazione dell'utente: *le tab
+  // Famiglie e Tipi hanno la stessa altezza, ma Categorie è più bassa e la modale balla in
+  // modo fastidioso al passaggio*). Famiglie ha quattro righe e Categorie tre, quindi la
+  // modale si accorciava e si riallungava a ogni giro di schede.
+  // ⚠️ L'altezza NON si indovina e non si scrive a numero: si MISURA disegnando le tre
+  // viste una dopo l'altra e tenendo la maggiore, come per le gemelle bilingui delle card.
+  // Un `min-height` a occhio sarebbe sbagliato al primo cambio di dataset, e qui il numero
+  // delle righe viene dai dati (le famiglie sono quattro oggi).
+  // ⚠️ Riserva le sole viste BASE: le drill-down (l'elenco dei personaggi di una famiglia)
+  // sono un altro livello e possono crescere quanto vogliono, tanto ci si entra apposta.
+  // ⚠️ Due `requestAnimationFrame`: il primo consegna il frame in cui la modale entra nel
+  // DOM, il secondo quello in cui ha già la sua larghezza, e le righe si misurano solo
+  // allora. Ⓘ Il limite dichiarato: la riserva è calcolata all'apertura, quindi un resize a
+  // modale aperta non la ricalcola; il cambio lingua o tema sì, perché ricostruisce tutto.
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    if (!document.body.contains(ov)) return;
+    var attiva = curTab, alta = 0;
+    ['fam', 'cat', 'type'].forEach(function(k){
+      stack = [ k === 'fam' ? famView : k === 'cat' ? catView : typeView ];
+      renderTop();
+      alta = Math.max(alta, content.offsetHeight);
+    });
+    setStatTab(attiva);
+    if (alta) content.style.minHeight = alta + 'px';
+  }); });
   if (initState && initState.scroll) box.scrollTop = initState.scroll;
   // Scorciatoie L (lingua) e T (tema) mentre la modale è aperta: si ricostruisce
   // nel nuovo lingua/tema conservando tab e scroll (anti-jitter). La drill-down
