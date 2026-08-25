@@ -2144,20 +2144,49 @@ percettibile con dentro il **logo del progetto**, tagliato dal bordo e in positi
   separate sono la strada scartata**: andrebbero tenute d'accordo a ogni ritocco, e basta un
   valore diverso perché il logo sopravviva all'alone o viceversa.
 - ⚠️⚠️ **Il tracciato del logo NON si duplica**: si usa il file `icons/Earthsea.svg`, lo
-  stesso del FAB, portato al bianco da un `filter`. Quel disegno vive già in **due** copie
-  che vanno cambiate insieme; una terza sarebbe il modo garantito di ritrovarsi due loghi
-  diversi nella stessa pagina.
+  stesso del FAB. Quel disegno vive già in **due** copie che vanno cambiate insieme; una
+  terza sarebbe il modo garantito di ritrovarsi due loghi diversi nella stessa pagina.
 - ⚠️ **Sta sotto ai testi grazie a `position:relative` sui fratelli**, non a uno `z-index`
   negativo: quello la manderebbe sotto al fondo del Pannello, cioè fuori vista.
 - ⚠️ **La stella a quattro punte resta intera dentro il riquadro** (istruzione dell'utente):
-  è la ragione del `right:0` invece del rientro negativo della prima resa, dove il bordo la
-  tagliava a metà. L'onda invece esce, e deve uscire.
+  è la ragione del rientro orizzontale a zero, contro il rientro negativo della prima resa,
+  dove il bordo la tagliava a metà. L'onda invece esce, e deve uscire.
 - ⚠️ **Si rimette a ogni ricostruzione del Pannello** (`addPanelDeco`, chiamata da
   `wireControlPanel`), perché quella riscrive tutto il contenuto e se la porterebbe via.
   Verificato che sopravviva a un filtro spento e riacceso e a due cambi di lingua.
   - ⚠️ **Si costruisce a NODI**, non come stringa dentro `controlPanelHTML()`: quella finisce
     in un `innerHTML`, e il divieto è una regola non derogabile. Che il markup preesistente
     lo usi ancora non è una ragione per aggiungergliene altro.
+
+##### 🕳️ Il logo BUCA il velo, e i due temi sono speculari
+
+Dalla `0.98`, e la formulazione è dell'utente: *più che un colore preciso, diciamo che 'buca'
+il bagliore o l'ombra riportando lo sfondo al suo colore iniziale*. Al **scuro** un velo di
+luce, al **chiaro** un velo d'ombra, entrambi appena percepibili.
+
+Il velo è il `background` della decorazione, e la sua maschera ha **due strati**: la sfumatura
+radiale **meno** la forma del logo (`mask-composite:subtract`). Dove passa il logo il velo non
+viene dipinto, quindi si vede il fondo come se non ci fosse mai stato niente sopra.
+
+- ⚠️⚠️ **Dipingere il logo del colore del fondo è la strada SCARTATA**, ed è durata una
+  stesura: un colore dichiarato resta fisso, mentre il fondo del Pannello è **semitrasparente**
+  (0,94) e ha un `backdrop-filter`, quindi il suo composito **cambia con quello che scorre
+  dietro**. Il logo sarebbe rimasto giusto da fermo e sarebbe diventato una macchia appena la
+  lista si muoveva. Bucando non c'è nessun colore da sapere, e i due temi funzionano con lo
+  **stesso** meccanismo invece che con due valori misurati a mano.
+  - Ⓘ Le due misure buttate, che restano utili se un domani servisse quel colore: il fondo
+    **reso** nell'angolo vale `rgb(241,243,243)` in chiaro e `rgb(35,39,41)` in scuro, cioè
+    **non** i valori dichiarati nel CSS (`rgba(245,247,247,0.97)` e `rgba(36,40,43,0.94)`).
+    Un colore di fondo che conta si **legge dal pixel reso**, non si deduce dalla regola.
+- ⚠️ **La percentuale verticale della maschera non è quella del posizionamento assoluto**: in
+  `mask-position` si calcola sulla **differenza** fra il box e l'immagine, non sul box. Il
+  `bottom:-14%` dell'elemento diventa **-44%** come strato di maschera, e quel numero esce da
+  un conto (`-0,14 x H_box / (H_box - H_logo)`), che dà -43,2% sul desktop e -45,4% sul
+  mobile: il valore unico ne dista meno di un pixel. Chi ritocca la geometria rifaccia il
+  conto, o il logo si sposta senza che nulla lo segnali.
+- ⚠️ **`mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+.** Dove manca, i due
+  strati si **sommano** invece di sottrarsi: il difetto è una macchia di velo a forma di logo,
+  non una pagina rotta.
 
 #### ⚧ Il filtro per GENERE, e le voci senza
 

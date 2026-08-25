@@ -1453,16 +1453,48 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      e' la ragione del `right:0` invece del rientro negativo che aveva la prima resa, dove
      il bordo la tagliava a meta'. L'onda invece esce, e deve uscire. */
 #ctrl-panel > *:not(.ctrl-deco) { position:relative; }
+/* ⚠️⚠️ I DUE TEMI SONO SPECULARI (istruzione dell'utente, 0.98): al SCURO un velo di LUCE,
+   al CHIARO un velo d'OMBRA. Entrambi 'appena percepibili', che e' la richiesta: i valori
+   qui sotto sono i piu' bassi che restano visibili. */
+#ctrl-panel { --deco-velo:rgba(255,255,255,0.05); --deco-velo0:rgba(255,255,255,0); }
+html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(0,0,0,0.045); --deco-velo0:rgba(0,0,0,0); }
+/* ⚠️⚠️ IL LOGO NON SI DIPINGE: BUCA il velo (formulazione dell'utente, 0.98: *piu' che un
+   colore preciso, diciamo che 'buca' il bagliore o l'ombra riportando lo sfondo al suo
+   colore iniziale*). Il velo e' il `background` di questo elemento, e la sua maschera ha due
+   strati: la sfumatura radiale MENO la forma del logo (`mask-composite:subtract`). Dove
+   passa il logo il velo non viene dipinto, quindi si vede il fondo come se non ci fosse mai
+   stato niente sopra.
+   ⚠️⚠️ **Dipingere il logo del colore del fondo e' la strada SCARTATA**, ed era quella della
+   prima stesura di questa versione: un colore dichiarato resta fisso, mentre il fondo del
+   Pannello e' semitrasparente (0,94) e ha un `backdrop-filter`, quindi il suo composito
+   CAMBIA con quello che scorre dietro. Il logo sarebbe rimasto giusto da fermo e sarebbe
+   diventato una macchia appena la lista si muoveva. Bucando non c'e' nessun colore da
+   sapere, e i due temi funzionano con lo STESSO meccanismo invece che con due valori
+   misurati a mano. Costo del cambio: due misure buttate (il fondo reso vale `rgb(241,243,243)`
+   in chiaro e `rgb(35,39,41)` in scuro, non i valori dichiarati nel CSS).
+   ⚠️ `mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+. Dove manca, i due
+   strati si SOMMANO invece di sottrarsi: il difetto e' una macchia di velo a forma di logo,
+   non una pagina rotta.
+   ⚠️ Il **-44%** verticale non e' lo stesso numero del `bottom:-14%` che aveva l'elemento, e
+   non e' una taratura a occhio: in `mask-position` la percentuale si calcola sulla
+   DIFFERENZA fra il box e l'immagine, non sul box. Con la geometria di qui vale
+   -0,14 x H_box / (H_box - H_logo), che fa -43,2% sul desktop e -45,4% sul mobile: il valore
+   unico ne dista meno di un pixel. Chi ritocca la geometria della decorazione rifaccia
+   questo conto, o il logo si sposta senza che nulla lo segnali. */
 .ctrl-deco {
   position:absolute; right:0; bottom:0; width:66%; height:42%;
   pointer-events:none; z-index:0; overflow:hidden;
-  background:linear-gradient(to top left, rgba(255,255,255,0.075), rgba(255,255,255,0));
-  -webkit-mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%);
-  mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%);
-}
-.ctrl-deco .deco-logo {
-  position:absolute; right:0; bottom:-14%; width:58%; height:auto; display:block;
-  opacity:0.06; filter:brightness(0) invert(1);
+  background:linear-gradient(to top left, var(--deco-velo), var(--deco-velo0));
+  -webkit-mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%), url('icons/Earthsea.svg');
+  -webkit-mask-position:0 0, right 0 bottom -44%;
+  -webkit-mask-size:auto, 58% auto;
+  -webkit-mask-repeat:no-repeat, no-repeat;
+  -webkit-mask-composite:source-out;
+  mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%), url('icons/Earthsea.svg');
+  mask-position:0 0, right 0 bottom -44%;
+  mask-size:auto, 58% auto;
+  mask-repeat:no-repeat, no-repeat;
+  mask-composite:subtract;
 }
 /* ⚠️⚠️ NIENTE `max-width` (istruzione dell'utente, 0.95): la card di legenda occupa la
    larghezza PIENA del contenuto, come le righe di filtro e la legenda sotto, e cosi' le
@@ -3037,7 +3069,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.97</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.98</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7371,11 +7403,9 @@ function addPanelDeco(panel) {
   var deco = document.createElement('div');
   deco.className = 'ctrl-deco';
   deco.setAttribute('aria-hidden', 'true');
-  var logo = document.createElement('img');
-  logo.className = 'deco-logo';
-  logo.src = 'icons/Earthsea.svg';
-  logo.alt = '';
-  deco.appendChild(logo);
+  // ⚠️ NIENTE figlio per il logo: dalla 0.98 il logo e' uno strato della MASCHERA di questo
+  // stesso elemento (vedi il CSS di `.ctrl-deco`), perche' buca il velo invece di dipingersi
+  // sopra. Il div resta vuoto, ed e' il segno che l'effetto e' tutto nel CSS.
   panel.insertBefore(deco, panel.firstChild);
 }
 
