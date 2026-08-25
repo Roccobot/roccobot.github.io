@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CleanSVG</title>
+<meta name="description" content="Ripulisce un file SVG dai metadati e dai residui delle applicazioni di disegno, mostrando che cosa toglie e verificando che il disegno resti identico.">
+<meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6fb2'/%3E%3Cpath d='M9 21.5 22.5 8' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='11' cy='11' r='3' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --sfondo: #eef1f3;
+    --carta: #fff;
+    --riga: #dbe1e5;
+    --inchiostro: #16232b;
+    --tenue: #5d6d76;
+    --tinta: #1f6fb2;
+    --tinta-ink: #fff;
+    --ok: #12855b;
+    --ko: #c02a1e;
+    --quadro-a: #dddddd;
+    --quadro-b: #eeeeee;
+    --quadro-fondo: #f4f6f7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --sfondo: #101619;
+      --carta: #182126;
+      --riga: #27353b;
+      --inchiostro: #e9eef0;
+      --tenue: #9aa9b1;
+      --tinta: #4ea8e6;
+      --tinta-ink: #06202f;
+      --ok: #45d39b;
+      --ko: #ff7a6e;
+      --quadro-a: #2a2a2a;
+      --quadro-b: #333333;
+      --quadro-fondo: #1b1b1b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--sfondo);
+    color: var(--inchiostro);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+  }
+  .guscio { max-width: 62rem; margin: 0 auto; padding: 1.6rem 1.1rem 4rem; }
+  header { display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap; margin-bottom: .35rem; }
+  h1 { font-size: 1.6rem; margin: 0; letter-spacing: -.01em; }
+  .versione { color: var(--tenue); font-size: .85rem; font-variant-numeric: tabular-nums; }
+  .occhiello { color: var(--tenue); margin: 0 0 1.3rem; font-size: .95rem; }
+  .motore { color: var(--tenue); font-size: .82rem; margin-left: auto; }
+  .motore b { color: var(--inchiostro); font-weight: 600; }
+
+  #zona {
+    border: 2px dashed var(--riga);
+    border-radius: 16px;
+    background: var(--carta);
+    padding: 2.6rem 1.4rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  #zona:hover, #zona:focus-visible { border-color: var(--tinta); }
+  #zona.caldo { border-color: var(--tinta); background: color-mix(in srgb, var(--tinta) 8%, var(--carta)); }
+  #zona .grande { font-size: 1.15rem; font-weight: 600; display: block; margin-bottom: .3rem; }
+  #zona .piccolo { color: var(--tenue); font-size: .88rem; }
+
+  #lavoro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.1rem; margin-top: 1.1rem; }
+  @media (max-width: 800px) { #lavoro { grid-template-columns: 1fr; } }
+
+  .carta { background: var(--carta); border: 1px solid var(--riga); border-radius: 16px; padding: .9rem 1rem 1.1rem; }
+  .carta h2 { font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--tinta); margin: .1rem 0 .7rem; }
+
+  .barra { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .7rem; }
+  .gruppo { display: inline-flex; border: 1px solid var(--riga); border-radius: 10px; overflow: hidden; }
+  .gruppo button {
+    font: inherit; font-size: .85rem; color: inherit; background: transparent;
+    border: 0; padding: .38rem .7rem; cursor: pointer;
+  }
+  .gruppo button + button { border-left: 1px solid var(--riga); }
+  .gruppo button[aria-pressed="true"] { background: var(--tinta); color: var(--tinta-ink); font-weight: 600; }
+
+  #telaio {
+    position: relative;
+    border-radius: 12px;
+    border: 1px solid var(--riga);
+    min-height: 19rem;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    overflow: hidden;
+  }
+  #telaio img { max-width: 100%; max-height: 24rem; display: block; }
+  .misura { color: var(--tenue); font-size: .82rem; margin: .55rem 0 0; font-variant-numeric: tabular-nums; }
+
+  dl.numeri { display: grid; grid-template-columns: auto auto; gap: .3rem .8rem; margin: 0 0 .9rem; font-size: .92rem; }
+  dl.numeri dt { color: var(--tenue); }
+  dl.numeri dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  dl.numeri dd.risparmio { color: var(--ok); font-weight: 700; }
+
+  ul.tolto { list-style: none; margin: 0 0 .9rem; padding: 0; font-size: .9rem; }
+  ul.tolto li { display: flex; justify-content: space-between; gap: .8rem; padding: .22rem 0; border-top: 1px solid var(--riga); }
+  ul.tolto li:first-child { border-top: 0; }
+  ul.tolto span { color: var(--tenue); font-variant-numeric: tabular-nums; }
+  ul.tolto li.nulla { color: var(--tenue); justify-content: flex-start; }
+
+  .verdetto { font-size: .88rem; border-radius: 11px; padding: .55rem .7rem; margin: 0 0 .9rem; }
+  .verdetto.uguale { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .verdetto.diversa { color: var(--ko); background: color-mix(in srgb, var(--ko) 13%, transparent); }
+  .verdetto.attesa { color: var(--tenue); background: color-mix(in srgb, var(--tenue) 10%, transparent); }
+
+  button.principale {
+    font: inherit; font-weight: 700; width: 100%;
+    color: var(--tinta-ink); background: var(--tinta);
+    border: 0; border-radius: 11px; padding: .7rem 1rem; cursor: pointer;
+  }
+  button.principale:hover { filter: brightness(1.08); }
+  button.principale:disabled { opacity: .5; cursor: default; filter: none; }
+  button.minore {
+    font: inherit; font-size: .85rem; color: inherit; background: transparent;
+    border: 1px solid var(--riga); border-radius: 10px; padding: .4rem .7rem; cursor: pointer; margin-top: .5rem; width: 100%;
+  }
+  button.minore:hover { border-color: var(--tinta); }
+
+  #errore { margin-top: 1.1rem; border-left: 4px solid var(--ko); background: var(--carta); border-radius: 0 12px 12px 0; padding: .8rem 1rem; }
+  #errore .titolo { font-weight: 700; color: var(--ko); }
+  #errore .dettaglio { color: var(--tenue); font-size: .88rem; margin-top: .2rem; white-space: pre-wrap; word-break: break-word; }
+
+  footer { color: var(--tenue); font-size: .82rem; margin-top: 1.6rem; }
+  footer a { color: inherit; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="guscio">
+  <header>
+    <h1>CleanSVG</h1>
+    <span class="versione" id="versione"></span>
+    <span class="motore" id="motore">motore: in caricamento...</span>
+  </header>
+  <p class="occhiello">Trascina qui un file SVG: si vede subito che cosa contiene, che cosa gli viene tolto e se il disegno resta identico.</p>
+
+  <div id="zona" tabindex="0" role="button" aria-label="Scegli o trascina un file SVG">
+    <span class="grande">Trascina qui il tuo SVG</span>
+    <span class="piccolo">oppure fai clic per sceglierlo, o incollalo con CTRL+V</span>
+  </div>
+  <input type="file" id="scelta" accept=".svg,image/svg+xml" hidden>
+
+  <div id="errore" hidden>
+    <div class="titolo" id="errore-titolo"></div>
+    <div class="dettaglio" id="errore-dettaglio"></div>
+  </div>
+
+  <div id="lavoro" hidden>
+    <section class="carta">
+      <h2>Anteprima</h2>
+      <div class="barra">
+        <div class="gruppo" role="group" aria-label="Che cosa mostrare">
+          <button type="button" id="mostra-pulito" aria-pressed="true">Pulito</button>
+          <button type="button" id="mostra-originale" aria-pressed="false">Originale</button>
+        </div>
+        <div class="gruppo" role="group" aria-label="Sfondo dell'anteprima">
+          <button type="button" id="fondo-auto" aria-pressed="true">Sfondo automatico</button>
+          <button type="button" id="fondo-chiaro" aria-pressed="false">Chiaro</button>
+          <button type="button" id="fondo-scuro" aria-pressed="false">Scuro</button>
+        </div>
+      </div>
+      <div id="telaio"><img id="anteprima" alt="Anteprima del file SVG"></div>
+      <p class="misura" id="misura"></p>
+    </section>
+
+    <aside class="carta">
+      <h2>Rapporto</h2>
+      <dl class="numeri">
+        <dt>Nome</dt><dd id="n-nome">-</dd>
+        <dt>Prima</dt><dd id="n-prima">-</dd>
+        <dt>Dopo</dt><dd id="n-dopo">-</dd>
+        <dt>Risparmio</dt><dd class="risparmio" id="n-risparmio">-</dd>
+      </dl>
+      <ul class="tolto" id="elenco-tolto"></ul>
+      <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
+      <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
+      <button type="button" class="minore" id="altro">Pulisci un altro file</button>
+    </aside>
+  </div>
+
+  <footer>
+    <p id="nota-motore"></p>
+    <p>Tutto avviene nel browser: il file non viene caricato da nessuna parte. Titolo e descrizione restano nel file, perché sono accessibilità e non metadati di scarto.</p>
+  </footer>
+</div>
+
+<script type="module">
+'use strict';
+
+// ══════════════════════════════════════════════════════════════════════════
+//  CleanSVG - fonte unica della versione
+// ══════════════════════════════════════════════════════════════════════════
+// SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
+// pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
+const VERSIONE = '1.00';
+document.getElementById('versione').textContent = 'v' + VERSIONE;
+
+// ══════════════════════════════════════════════════════════════════════════
+//  1) IL MOTORE: SVGO preso dal CDN, con ripiego
+// ══════════════════════════════════════════════════════════════════════════
+// ⚠️ La libreria arriva da un CDN e si aggiorna da sé (scelta dell'utente,
+// 2026-08-25: 'direi da un CDN così sono sempre aggiornate'). `@latest`
+// significa però che a decidere quando la pagina cambia comportamento è una
+// pubblicazione altrui, non noi: per questo il caricamento ha tre indirizzi e,
+// se nessuno risponde o l'API non è quella attesa, la pagina NON si ferma e
+// pulisce con il suo pulitore interno, dichiarandolo in testata. L'utente vede
+// sempre da dove viene il motore che ha lavorato sul suo file.
+const INDIRIZZI = [
+  'https://cdn.jsdelivr.net/npm/svgo@latest/dist/svgo.browser.js',
+  'https://unpkg.com/svgo@latest/dist/svgo.browser.js',
+  'https://esm.sh/svgo@latest/dist/svgo.browser.js'
+];
+const ATTESA_CDN = 6000;
+
+let svgo = null;   // { optimize, versione, da }
+
+function conScadenza(promessa, ms) {
+  return Promise.race([
+    promessa,
+    new Promise((_, no) => setTimeout(() => no(new Error('scaduto')), ms))
+  ]);
+}
+
+// ⚠️ I tre indirizzi si provano INSIEME e vince il primo che risponde, non uno
+// dopo l'altro: in fila, tre CDN irraggiungibili farebbero aspettare tre volte
+// la scadenza prima di dire che si va di ripiego, e chi guarda vedrebbe una
+// pagina che non dice niente per venti secondi.
+async function caricaMotore() {
+  const tentativi = INDIRIZZI.map((indirizzo) =>
+    conScadenza(import(indirizzo), ATTESA_CDN).then((modulo) => {
+      if (!modulo || typeof modulo.optimize !== 'function') throw new Error('API inattesa');
+      return { optimize: modulo.optimize, versione: modulo.VERSION || '?', da: new URL(indirizzo).hostname };
+    })
+  );
+  try {
+    return await Promise.any(tentativi);
+  } catch (e) {
+    return null;
+  }
+}
+
+function scriviMotore() {
+  const riga = document.getElementById('motore');
+  const nota = document.getElementById('nota-motore');
+  if (svgo) {
+    riga.textContent = '';
+    riga.append('motore: ', Object.assign(document.createElement('b'), { textContent: 'SVGO ' + svgo.versione }), ' da ' + svgo.da);
+    nota.textContent = `La pulizia usa SVGO ${svgo.versione}, preso da ${svgo.da} all'apertura della pagina, quindi sempre nella sua versione più recente. La rifinitura che segue è di CleanSVG.`;
+  } else {
+    riga.textContent = '';
+    riga.append('motore: ', Object.assign(document.createElement('b'), { textContent: 'interno' }));
+    nota.textContent = 'SVGO non è raggiungibile in questo momento (nessuno dei tre CDN ha risposto): la pulizia usa il pulitore interno di CleanSVG, che toglie metadati, commenti, script e residui delle applicazioni ma non riscrive i tracciati.';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  2) LA RIFINITURA, CHE SERVE ANCHE QUANDO SVGO C'È
+// ══════════════════════════════════════════════════════════════════════════
+// ⚠️⚠️ NON è un doppione di SVGO, ed è una misura del 2026-08-25: SVGO 4.1.0
+// conosce il namespace `sodipodi-0.dtd`, mentre Inkscape scrive nei suoi file
+// `sodipodi-0.0.dtd`. Sono due URI diversi, quindi `<sodipodi:namedview>` e la
+// sua dichiarazione xmlns SOPRAVVIVONO alla pulizia, che è esattamente la
+// roba che questo strumento esiste per togliere. La rifinitura lavora per URI
+// di namespace e non per prefisso, perché il prefisso lo sceglie chi scrive
+// il file e può essere qualunque cosa.
+const NS_DA_TOGLIERE = [
+  'http://sodipodi.sourceforge.net/dtd/sodipodi-0.0.dtd',
+  'http://sodipodi.sourceforge.net/dtd/sodipodi-0.dtd',
+  'http://inkscape.sourceforge.net/dtd/sodipodi-0.0.dtd',
+  'http://www.inkscape.org/namespaces/inkscape',
+  'http://ns.adobe.com/adobeillustrator/10.0/',
+  'http://ns.adobe.com/adobesvgviewerextensions/3.0/',
+  'http://ns.adobe.com/extensibility/1.0/',
+  'http://ns.adobe.com/flows/1.0/',
+  'http://ns.adobe.com/graphs/1.0/',
+  'http://ns.adobe.com/imagereplacement/1.0/',
+  'http://ns.adobe.com/saveforweb/1.0/',
+  'http://ns.adobe.com/variables/1.0/',
+  'http://ns.adobe.com/xap/1.0/',
+  'http://ns.adobe.com/xap/1.0/mm/',
+  'http://ns.adobe.com/xap/1.0/stype/resourceref#',
+  'http://purl.org/dc/elements/1.1/',
+  'http://creativecommons.org/ns#',
+  'http://web.resource.org/cc/',
+  'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  'http://www.serif.com/',
+  'http://boxy-svg.com/',
+  'http://www.figma.com/figma/ns',
+  'http://www.bohemiancoding.com/sketch/ns',
+  'http://www.vector.evaxdesign.sk',
+  'http://www.corel.com/coreldraw/'
+];
+const ELEMENTI_DA_TOGLIERE = ['metadata', 'script', 'foreignobject'];
+const NS_SVG = 'http://www.w3.org/2000/svg';
+
+function daTogliere(uri) {
+  return !!uri && NS_DA_TOGLIERE.indexOf(String(uri).toLowerCase()) >= 0;
+}
+
+// Il conto di che cosa è stato tolto: è quello che la pagina mostra, e serve
+// più del peso, perché dice PERCHÉ il file era grosso.
+// ⚠️ Gli attributi degli editor si contano a parte dai gestori `on...`: fusi in
+// una voce sola, un file di Inkscape senza una riga di codice dichiarava 'sei
+// script e gestori di eventi', cioè un allarme al posto di un'informazione.
+function contoNuovo() {
+  return { metadati: 0, commenti: 0, editor: 0, script: 0, namespace: 0, attributi: 0, gestori: 0 };
+}
+
+function rifinisci(testo, conto) {
+  const doc = new DOMParser().parseFromString(testo, 'image/svg+xml');
+  const errore = doc.querySelector('parsererror');
+  if (errore || !doc.documentElement || doc.documentElement.nodeName === 'parsererror') {
+    // ⚠️ Il testo del parser arriva in inglese e con l'intestazione della pagina
+    // di errore che il browser si costruisce ('This page contains the following
+    // errors'): si tiene solo la riga utile, quella con riga e colonna, perché
+    // è l'unica che dice dove guardare nel file.
+    const grezzo = (errore ? errore.textContent : '')
+      .replace(/\s+/g, ' ')
+      .split(/Below is a rendering/i)[0]   // il browser accoda la pagina di errore intera
+      .trim();
+    const punto = /line (\d+) at column (\d+)\s*:?\s*(.*)$/i.exec(grezzo);
+    throw new Error(punto
+      ? `Riga ${punto[1]}, colonna ${punto[2]}: ${punto[3].slice(0, 160)}`
+      : (grezzo.slice(0, 200) || 'il file non è un SVG leggibile'));
+  }
+  const radice = doc.documentElement;
+
+  // I commenti: un TreeWalker li vede tutti, anche quelli fuori dal root.
+  const passeggiata = doc.createTreeWalker(doc, NodeFilter.SHOW_COMMENT);
+  const commenti = [];
+  while (passeggiata.nextNode()) commenti.push(passeggiata.currentNode);
+  commenti.forEach((c) => { conto.commenti++; if (c.parentNode) c.parentNode.removeChild(c); });
+
+  // Elementi: quelli di un namespace da buttare, più metadati e script.
+  const morituri = [];
+  const tutti = doc.getElementsByTagName('*');
+  for (let i = 0; i < tutti.length; i++) {
+    const el = tutti[i];
+    const nome = el.localName ? el.localName.toLowerCase() : '';
+    if (daTogliere(el.namespaceURI)) { morituri.push([el, 'editor']); continue; }
+    if (el.namespaceURI === NS_SVG && ELEMENTI_DA_TOGLIERE.indexOf(nome) >= 0) {
+      morituri.push([el, nome === 'metadata' ? 'metadati' : 'script']);
+    }
+  }
+  morituri.forEach(([el, famiglia]) => {
+    if (!el.parentNode) return;
+    conto[famiglia]++;
+    el.parentNode.removeChild(el);
+  });
+
+  // Attributi: quelli di un namespace da buttare e i gestori `on...`, che in
+  // un file di disegno non hanno niente da fare.
+  const rimasti = doc.getElementsByTagName('*');
+  for (let i = 0; i < rimasti.length; i++) {
+    const el = rimasti[i];
+    const attributi = Array.prototype.slice.call(el.attributes);
+    attributi.forEach((a) => {
+      const nome = a.name.toLowerCase();
+      if (nome.indexOf('xmlns') === 0) return;           // le dichiarazioni si trattano dopo
+      if (daTogliere(a.namespaceURI)) { conto.attributi++; el.removeAttributeNode(a); return; }
+      if (/^on/.test(nome)) { conto.gestori++; el.removeAttributeNode(a); }
+    });
+  }
+
+  // Le dichiarazioni xmlns rimaste appese al nulla: si tolgono solo quelle che
+  // NESSUN elemento e NESSUN attributo usa più, perché toglierne una ancora
+  // in uso spezzerebbe il documento.
+  const usati = new Set();
+  const finali = doc.getElementsByTagName('*');
+  for (let i = 0; i < finali.length; i++) {
+    const el = finali[i];
+    if (el.namespaceURI) usati.add(el.namespaceURI);
+    for (let j = 0; j < el.attributes.length; j++) {
+      const a = el.attributes[j];
+      if (a.namespaceURI) usati.add(a.namespaceURI);
+    }
+  }
+  Array.prototype.slice.call(radice.attributes).forEach((a) => {
+    if (a.name.toLowerCase().indexOf('xmlns:') !== 0) return;
+    if (usati.has(a.value)) return;
+    conto.namespace++;
+    radice.removeAttributeNode(a);
+  });
+
+  return new XMLSerializer().serializeToString(doc);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  3) LA PULIZIA COMPLETA
+// ══════════════════════════════════════════════════════════════════════════
+// ⚠️ `removeViewBox` NON si tocca, e in SVGO 4 non è nemmeno più nel preset
+// predefinito: un SVG senza viewBox smette di ridimensionarsi, che è il modo
+// più facile di rovinare un file credendo di alleggerirlo. Stessa ragione per
+// titolo e descrizione, che restano: sono accessibilità, non scarto.
+const CONFIGURAZIONE = {
+  multipass: true,
+  plugins: [
+    'preset-default',
+    'removeScripts',
+    'removeEditorsNSData',
+    'removeXMLProcInst',
+    'removeComments',
+    'removeMetadata'
+  ]
+};
+
+function pulisci(testo) {
+  const conto = contoNuovo();
+  let corrente = testo, conSvgo = false;
+  if (svgo) {
+    try {
+      const esito = svgo.optimize(testo, CONFIGURAZIONE);
+      if (esito && typeof esito.data === 'string' && esito.data.length) {
+        corrente = esito.data;
+        conSvgo = true;
+      }
+    } catch (e) {
+      // Un SVG malformato lo dice SVGO con un messaggio preciso: si lascia
+      // salire, perché è l'informazione più utile che l'utente possa avere.
+      throw e;
+    }
+  }
+  return { testo: rifinisci(corrente, conto), conto: conto, conSvgo: conSvgo };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  4) ANTEPRIMA E SFONDO DINAMICO
+// ══════════════════════════════════════════════════════════════════════════
+// ⚠️ L'anteprima è un <img> e non un SVG inline, e non è un dettaglio: dentro
+// un <img> il browser tiene l'SVG in modalità sicura, quindi niente script e
+// niente risorse esterne. Un file appena arrivato da fuori non si mette mai nel
+// DOM della pagina che lo esamina.
+// ⚠️ Lo sfondo si sceglie MISURANDO il contenuto, non a occhio: si rasterizza,
+// si pesa la luminanza dei soli pixel non trasparenti e si prende il fondo che
+// gli sta più lontano. Un logo bianco su fondo bianco è il caso che questa
+// pagina esiste per non far succedere.
+const QUADRO = 12;
+
+function fondoScacchiera(chiaro) {
+  const a = chiaro ? '#dddddd' : '#2a2a2a';
+  const b = chiaro ? '#eeeeee' : '#333333';
+  return {
+    'background-image':
+      'linear-gradient(45deg,' + a + ' 25%,transparent 25%),' +
+      'linear-gradient(-45deg,' + a + ' 25%,transparent 25%),' +
+      'linear-gradient(45deg,transparent 75%,' + a + ' 75%),' +
+      'linear-gradient(-45deg,transparent 75%,' + a + ' 75%)',
+    'background-size': (QUADRO * 2) + 'px ' + (QUADRO * 2) + 'px',
+    'background-position': '0 0,0 ' + QUADRO + 'px,' + QUADRO + 'px -' + QUADRO + 'px,-' + QUADRO + 'px 0',
+    'background-color': b
+  };
+}
+
+function applicaFondo(chiaro) {
+  const telaio = document.getElementById('telaio');
+  const stile = fondoScacchiera(chiaro);
+  Object.keys(stile).forEach((k) => telaio.style.setProperty(k, stile[k]));
+}
+
+function urlDi(testo) {
+  return URL.createObjectURL(new Blob([testo], { type: 'image/svg+xml;charset=utf-8' }));
+}
+
+function caricaImmagine(url) {
+  return new Promise((si, no) => {
+    const im = new Image();
+    im.onload = () => si(im);
+    im.onerror = () => no(new Error('il browser non riesce a disegnare questo SVG'));
+    im.src = url;
+  });
+}
+
+// Rasterizza in un quadrato di lato fisso, conservando il rapporto: serve sia
+// alla misura della luminanza sia al confronto fra prima e dopo.
+async function raster(testo, lato) {
+  const url = urlDi(testo);
+  try {
+    const im = await caricaImmagine(url);
+    const larghezza = im.naturalWidth || im.width || lato;
+    const altezza = im.naturalHeight || im.height || lato;
+    const scala = Math.min(lato / larghezza, lato / altezza);
+    const w = Math.max(1, Math.round(larghezza * scala));
+    const h = Math.max(1, Math.round(altezza * scala));
+    const tela = document.createElement('canvas');
+    tela.width = lato; tela.height = lato;
+    const g = tela.getContext('2d', { willReadFrequently: true });
+    g.drawImage(im, Math.round((lato - w) / 2), Math.round((lato - h) / 2), w, h);
+    return g.getImageData(0, 0, lato, lato);
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(url), 20000);
+  }
+}
+
+function luminanzaMedia(dati) {
+  let somma = 0, peso = 0;
+  const p = dati.data;
+  for (let i = 0; i < p.length; i += 4) {
+    const alfa = p[i + 3] / 255;
+    if (alfa < 0.06) continue;
+    // Luminanza percepita (Rec. 709), non la media dei tre canali: il verde
+    // pesa più del blu per l'occhio, e su un disegno colorato la differenza
+    // decide da che parte sta il contenuto.
+    const l = (0.2126 * p[i] + 0.7152 * p[i + 1] + 0.0722 * p[i + 2]) / 255;
+    somma += l * alfa;
+    peso += alfa;
+  }
+  return { luminanza: peso ? somma / peso : 0.5, copertura: peso / (dati.width * dati.height) };
+}
+
+function confronta(a, b) {
+  const x = a.data, y = b.data;
+  let diversi = 0, contati = 0;
+  for (let i = 0; i < x.length; i += 4) {
+    contati++;
+    // Il confronto tiene conto dell'alfa: due pixel trasparenti sono uguali
+    // qualunque colore dichiarino sotto.
+    const aa = x[i + 3], ab = y[i + 3];
+    if (Math.abs(aa - ab) > 8) { diversi++; continue; }
+    if (aa < 8 && ab < 8) continue;
+    if (Math.abs(x[i] - y[i]) > 8 || Math.abs(x[i + 1] - y[i + 1]) > 8 || Math.abs(x[i + 2] - y[i + 2]) > 8) diversi++;
+  }
+  return { diversi: diversi, contati: contati, quota: contati ? diversi / contati : 0 };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  5) LA PAGINA
+// ══════════════════════════════════════════════════════════════════════════
+const stato = {
+  nome: 'immagine.svg',
+  originale: '',
+  pulito: '',
+  mostra: 'pulito',
+  fondo: 'auto',
+  fondoMisurato: true
+};
+
+const el = (id) => document.getElementById(id);
+
+function peso(n) {
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return (n / 1024).toFixed(1) + ' kB';
+  return (n / 1048576).toFixed(2) + ' MB';
+}
+
+function byte(testo) { return new TextEncoder().encode(testo).length; }
+
+function mostraErrore(titolo, dettaglio) {
+  el('errore-titolo').textContent = titolo;
+  el('errore-dettaglio').textContent = dettaglio || '';
+  el('errore').hidden = false;
+}
+
+function nascondiErrore() { el('errore').hidden = true; }
+
+function premuto(bottone, acceso) { bottone.setAttribute('aria-pressed', acceso ? 'true' : 'false'); }
+
+function aggiornaInterruttori() {
+  premuto(el('mostra-pulito'), stato.mostra === 'pulito');
+  premuto(el('mostra-originale'), stato.mostra === 'originale');
+  premuto(el('fondo-auto'), stato.fondo === 'auto');
+  premuto(el('fondo-chiaro'), stato.fondo === 'chiaro');
+  premuto(el('fondo-scuro'), stato.fondo === 'scuro');
+}
+
+function disegnaAnteprima() {
+  const testo = stato.mostra === 'originale' ? stato.originale : stato.pulito;
+  const img = el('anteprima');
+  const vecchio = img.getAttribute('src');
+  img.setAttribute('src', urlDi(testo));
+  if (vecchio && vecchio.indexOf('blob:') === 0) setTimeout(() => URL.revokeObjectURL(vecchio), 20000);
+  applicaFondo(stato.fondo === 'auto' ? stato.fondoMisurato : stato.fondo === 'chiaro');
+  aggiornaInterruttori();
+}
+
+function elencoTolto(conto) {
+  const lista = el('elenco-tolto');
+  while (lista.firstChild) lista.removeChild(lista.firstChild);
+  const voci = [
+    ['Blocchi di metadati', conto.metadati],
+    ['Elementi delle applicazioni', conto.editor],
+    ['Attributi delle applicazioni', conto.attributi],
+    ['Commenti', conto.commenti],
+    ['Script e gestori di eventi', conto.script + conto.gestori],
+    ['Dichiarazioni di namespace', conto.namespace]
+  ].filter(([, n]) => n > 0);
+  if (!voci.length) {
+    const riga = document.createElement("li");
+    riga.className = 'nulla';
+    riga.textContent = 'Nessun residuo da togliere: il file era già pulito.';
+    lista.appendChild(riga);
+    return;
+  }
+  voci.forEach(([nome, n]) => {
+    const riga = document.createElement("li");
+    riga.appendChild(document.createTextNode(nome));
+    const numero = document.createElement('span');
+    numero.textContent = String(n);
+    riga.appendChild(numero);
+    lista.appendChild(riga);
+  });
+}
+
+function verdetto(classe, testo) {
+  const p = el('verdetto');
+  p.className = 'verdetto ' + classe;
+  p.textContent = testo;
+}
+
+async function misureVisive() {
+  // ⚠️ Due misure in una passata sola: il fondo giusto per l'anteprima e la
+  // prova che la pulizia non ha cambiato il disegno. La seconda è la promessa
+  // dello strumento, e una promessa che nessuno verifica prima o poi mente.
+  try {
+    const [prima, dopo] = await Promise.all([raster(stato.originale, 384), raster(stato.pulito, 384)]);
+    const misura = luminanzaMedia(dopo);
+    // ⚠️ `fondoMisurato` dice se il FONDO va chiaro, non se lo è il contenuto,
+    // e i due sono l'opposto l'uno dell'altro: un logo bianco vuole il fondo
+    // scuro. Scritto al rovescio, la pagina metteva il bianco sul bianco, cioè
+    // esattamente il caso che questo calcolo esiste per evitare.
+    stato.fondoMisurato = misura.luminanza <= 0.5;
+    applicaFondo(stato.fondo === 'auto' ? stato.fondoMisurato : stato.fondo === 'chiaro');
+
+    const differenza = confronta(prima, dopo);
+    el('misura').textContent = 'Luminanza del contenuto ' + Math.round(misura.luminanza * 100) +
+      '%, occupa il ' + Math.round(misura.copertura * 100) + '% del riquadro.';
+    if (differenza.diversi === 0) {
+      verdetto('uguale', 'Resa identica: nessun pixel diverso su ' + differenza.contati.toLocaleString('it-IT') + ' confrontati.');
+    } else if (differenza.quota < 0.002) {
+      verdetto('uguale', `Resa identica a meno di ${differenza.diversi} pixel di bordo su ` +
+        `${differenza.contati.toLocaleString('it-IT')}: è l'arrotondamento dell'antialiasing.`);
+    } else {
+      verdetto('diversa', `Attenzione: la resa cambia nel ${Math.round(differenza.quota * 100)}% ` +
+        `dei pixel. Confronta con 'Originale' prima di scaricare.`);
+    }
+  } catch (e) {
+    verdetto('attesa', 'Confronto della resa non riuscito: ' + ((e && e.message) || e));
+  }
+}
+
+async function lavora(testo, nome) {
+  nascondiErrore();
+  stato.nome = nome || 'immagine.svg';
+  stato.originale = testo;
+  let esito;
+  try {
+    esito = pulisci(testo);
+  } catch (e) {
+    el('lavoro').hidden = true;
+    mostraErrore('Questo file non si riesce a leggere.', (e && e.message) ? String(e.message) : String(e));
+    return;
+  }
+  stato.pulito = esito.testo;
+  stato.mostra = 'pulito';
+
+  const prima = byte(testo), dopo = byte(esito.testo);
+  el('n-nome').textContent = stato.nome;
+  el('n-prima').textContent = peso(prima);
+  el('n-dopo').textContent = peso(dopo);
+  const risparmio = prima ? Math.round((1 - dopo / prima) * 100) : 0;
+  el('n-risparmio').textContent = (risparmio > 0 ? '-' + risparmio + '%' : risparmio === 0 ? 'nessuno' : '+' + Math.abs(risparmio) + '%');
+  elencoTolto(esito.conto);
+
+  el('lavoro').hidden = false;
+  el('scarica').disabled = false;
+  verdetto('attesa', 'Confronto della resa in corso...');
+  disegnaAnteprima();
+  await misureVisive();
+}
+
+function leggiFile(file) {
+  if (!file) return;
+  const nome = file.name || 'immagine.svg';
+  if (!/\.svg$/i.test(nome) && file.type !== 'image/svg+xml') {
+    mostraErrore('Serve un file SVG.', 'Questo è ' + (file.type || 'di tipo sconosciuto') + '.');
+    return;
+  }
+  const lettore = new FileReader();
+  lettore.onload = () => lavora(String(lettore.result), nome);
+  lettore.onerror = () => mostraErrore('Il file non si è lasciato leggere.', '');
+  lettore.readAsText(file);
+}
+
+// ── Trascinamento, clic e incolla ────────────────────────────────────────
+// Il file si molla su TUTTA la pagina, non solo nel riquadro: mirare un
+// bersaglio piccolo con un file in mano è una fatica inutile, e il riquadro
+// resta lì a dire dove si può fare.
+const zona = el('zona');
+
+['dragenter', 'dragover'].forEach((tipo) => {
+  document.addEventListener(tipo, (e) => { e.preventDefault(); zona.classList.add('caldo'); });
+});
+['dragleave', 'drop'].forEach((tipo) => {
+  document.addEventListener(tipo, (e) => {
+    if (tipo === 'dragleave' && e.relatedTarget) return;
+    zona.classList.remove('caldo');
+  });
+});
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const dati = e.dataTransfer;
+  if (!dati) return;
+  if (dati.files && dati.files.length) { leggiFile(dati.files[0]); return; }
+  const testo = dati.getData('text');
+  if (testo && testo.indexOf('<svg') >= 0) lavora(testo, 'incollato.svg');
+});
+
+zona.addEventListener('click', () => el('scelta').click());
+zona.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el('scelta').click(); }
+});
+el('scelta').addEventListener('change', (e) => {
+  leggiFile(e.target.files && e.target.files[0]);
+  e.target.value = '';
+});
+
+document.addEventListener('paste', (e) => {
+  const dati = e.clipboardData;
+  if (!dati) return;
+  if (dati.files && dati.files.length) { leggiFile(dati.files[0]); return; }
+  const testo = dati.getData('text');
+  if (testo && testo.indexOf('<svg') >= 0) { e.preventDefault(); lavora(testo, 'incollato.svg'); }
+});
+
+// ── Interruttori dell'anteprima ──────────────────────────────────────────
+el('mostra-pulito').addEventListener('click', () => { stato.mostra = 'pulito'; disegnaAnteprima(); });
+el('mostra-originale').addEventListener('click', () => { stato.mostra = 'originale'; disegnaAnteprima(); });
+el('fondo-auto').addEventListener('click', () => { stato.fondo = 'auto'; disegnaAnteprima(); });
+el('fondo-chiaro').addEventListener('click', () => { stato.fondo = 'chiaro'; disegnaAnteprima(); });
+el('fondo-scuro').addEventListener('click', () => { stato.fondo = 'scuro'; disegnaAnteprima(); });
+
+// ── Scaricamento ─────────────────────────────────────────────────────────
+el('scarica').addEventListener('click', () => {
+  if (!stato.pulito) return;
+  const nome = stato.nome.replace(/\.svg$/i, '') + '-pulito.svg';
+  const url = urlDi(stato.pulito);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nome;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 30000);
+});
+
+el('altro').addEventListener('click', () => {
+  el('lavoro').hidden = true;
+  nascondiErrore();
+  el('scelta').click();
+});
+
+// ── Avvio ────────────────────────────────────────────────────────────────
+applicaFondo(true);
+caricaMotore().then((motore) => {
+  svgo = motore;
+  scriviMotore();
+  // Un file già caricato mentre il CDN rispondeva si ripulisce con il motore
+  // vero, invece di restare con il risultato del ripiego.
+  if (stato.originale) lavora(stato.originale, stato.nome);
+});
+</script>
+</body>
+</html>
