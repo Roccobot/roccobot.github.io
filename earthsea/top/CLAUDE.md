@@ -2064,6 +2064,24 @@ sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una
   applicate (Akambar, Ammaud, Serriadh) sono motivate una per una nello script che le ha
   scelte, e la ragione ricorrente è la stessa: la più corta non nominava il personaggio,
   oppure era lo stesso brano già assegnato a un'altra voce.
+- ⚠️⚠️ **I `[...]` AI DUE ESTREMI NON SI SCRIVONO** (convenzione dell'utente, `0.83`), e
+  quelli **in mezzo** restano: là segnano un salto dentro il brano, che è un'informazione;
+  agli estremi direbbero soltanto che la citazione è un ritaglio, e questo si sa già.
+  - **In coda**: si chiude col **punto fermo**. *È una citazione troncata, non modificata, e
+    il punto finale indica semplicemente la fine* (parole dell'utente).
+  - **In apertura**: si comincia dalla parola dopo, con l'**iniziale maiuscola**.
+  - ⚠️ **Si applica nel DATO, non in resa**, al contrario della maiuscola di riga del
+    sottotitolo (§ 'La prima lettera di ogni riga va MAIUSCOLA', che la fa con `capIniz`):
+    qui non è tipografia di riga ma il **taglio** della citazione, cioè una scelta su dove
+    comincia e dove finisce, e quella vive nel campo.
+  - ⚠️⚠️ **Quindi la citazione diverge dalla fonte in due punti, ed è voluto**: il testo di
+    Elfarran attacca minuscolo (*si mosse una forma*) e quello del Mago Nero non finisce lì.
+    Un audit che confronti col volume lo troverà diverso: non è un errore, ed è la stessa
+    natura della scelta di § 'Un testo che nessuna edizione ha, e la ragione per cui va bene'.
+  - **Censito il giorno stesso**, e serve a rifare il conto: dei campi `citazione` e
+    `citazione_en`, **2** finivano coi puntini (la sola voce del Mago Nero, nelle due lingue)
+    e **5** cominciavano con essi. Ne restano **6** con i `[...]` in mezzo, che sono quelli
+    giusti.
 - **La forma è cambiata il 2026-08-24 (`0.67`), su tre correzioni dell'utente**, e la
   vecchia (`<Voce> (<chi parla>) · <Opera IT> / <Opera EN>, cap. N - '<titolo>': <che cosa
   succede>.`) non va rimessa:
@@ -2072,6 +2090,14 @@ sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una
      capo se non ci sta. Vive nei campi **`citazione_voce`/`citazione_voce_en`** ed è
      **vuoto** quando parla il personaggio della card o il narratore, perché là
      l'attribuzione ripeterebbe il titolo della scheda. Oggi la portano 9 citazioni su 30.
+     - ⚠️ **Un TITOLO in firma non porta l'articolo** (convenzione dell'utente, `0.83`):
+       `Maestro Erborista`, non `Il Maestro Erborista`, e in inglese `Master Herbal`, non
+       `The Master Herbal`. La firma nomina chi parla, come farebbe un nome proprio, e
+       `\ Sparviero` accanto a `\ Il Maestro Erborista` mostrava due registri diversi nella
+       stessa colonna. ⚠️ Vale per la **firma**, non per gli `appellativi`, dove l'articolo
+       fa parte della formula attestata: è la stessa distinzione fra campo-intestazione e
+       campo-formula di § 'La metà inglese del nome: va in `nome_en`, non fra gli
+       alternativi'. Oggi è l'unica firma che era un titolo, ed è l'unica a cui si applica.
   2. ⚠️⚠️ **Il contesto porta la SOLA lingua corrente**: *in inglese solo l'inglese, in
      italiano solo l'italiano*. I due titoli affiancati erano una mia scelta, motivata col
      ritrovare il passo in entrambe le edizioni, e l'utente l'ha rovesciata.
