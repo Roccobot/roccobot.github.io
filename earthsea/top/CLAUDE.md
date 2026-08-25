@@ -2164,12 +2164,20 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
        3. **Sintassi contorta**: *del Labirinto, ai servi di Kossil, Arha lascia sapere il
           minimo*, con due incisi prima del soggetto.
        4. ⚠️ **La più grave, e non è una questione di forma: la coda che dice il FALSO.**
-          Quattro righe attribuivano al personaggio una cosa che il testo non dice
-          (`Solevivo` dato per mandato da Roke, mentre è lo stregone geloso che se ne va),
-          o nominavano una forma che l'edizione italiana non usa (`la Divorata`,
-          `Vistavvento`: zero occorrenze in Mondadori). ⚠️ **Un nome che sembra ovvio si
-          verifica col grep come tutto il resto**, anche quando sta nel contesto e non nella
-          citazione.
+          Tre righe attribuivano al personaggio una cosa che il testo non dice (`Solevivo`
+          dato per mandato da Roke, mentre è lo stregone geloso che se ne va; il pavimento
+          che Ogion *vorrebbe* fare a Dulse e che invece gli aveva già fatto), o nominavano
+          una forma che l'edizione italiana non usa (la barca `Vistavvento`: **zero**
+          occorrenze in Mondadori, che quella barca non la nomina affatto). ⚠️ **Un nome che
+          sembra ovvio si verifica col grep come tutto il resto**, anche quando sta nel
+          contesto e non nella citazione.
+       - ⚠️⚠️ **MA il grep da solo non basta a condannare una forma, e `La Divorata` lo
+         dimostra**: l'avevo tolta perché in Mondadori ci sono **zero** occorrenze (là si
+         legge *Colei che è stata Divorata*), e l'utente l'ha rimessa perché è una **sua
+         formula**, scelta apposta (2026-08-25). Quindi prima di correggere una forma
+         assente si guarda se sia una **scelta editoriale**: il sito ne è pieno, a partire
+         dai nomi Nord dentro il testo Mondadori. Sul lato inglese resta invece la forma
+         attestata, `the Eaten One`.
   - ⚠️ **La resa a destra la fa un `float`, e la ragione è che non richiede misure**: un
     flottante dichiarato **dopo** il testo si sistema sulla riga corrente finché c'è posto e
     scende da sé quando non ce n'è, che è esattamente la richiesta. ⚠️ Il contenitore della
