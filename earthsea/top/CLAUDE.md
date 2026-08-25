@@ -1287,24 +1287,31 @@ stesura l'opera stava sopra gli alternativi e la legenda mostrava un ordine che 
 ha (segnalato dall'utente): con le classi reali è l'unico modo in cui questa legenda può
 sbagliare, perché tutto il resto lo eredita.
 
-⚠️⚠️ **L'ultima riga è ABBREVIATA, e la cura è sul TESTO invece che sul layout** (istruzione
-dell'utente, `0.95`). Diceva `Opera della prima apparizione (anno)` e andava a capo: la riga
-occupava **45,03px** in italiano contro i **22,52** dell'inglese su una riga sola, quindi il
-Pannello **cresceva di 22,52px** passando all'italiano. Ora dice `Titolo 1ª apparizione
-(anno)` e l'altezza è **22,52px** in tutte e due le lingue, cioè il Pannello misura 483,14px
-in entrambe.
+⚠️⚠️ **L'ultima riga è stata RISCRITTA, e la cura è sul TESTO invece che sul layout**
+(istruzione dell'utente, `0.95`). Diceva `Opera della prima apparizione (anno)` e andava a
+capo: la riga occupava **45,03px** in italiano contro i **22,52** dell'inglese su una riga
+sola, quindi il Pannello **cresceva di 22,52px** passando all'italiano. Ora dice
+`Titolo prima apparizione (anno)` e l'altezza è **22,52px** in tutte e due le lingue.
+
+- Ⓘ Per un giro (`0.95` e `0.96`) l'ordinale era **abbreviato** in `1ª`, poi l'utente ha
+  chiesto di riprovare per esteso: **ci sta**, e la card ne esce a 299,84px naturali. ⚠️ Ma
+  ci sta **a una condizione**, ed è la parte che va saputa prima di allungare quella riga:
+  la card non ha riserva bilingue, quindi se diventa lei il blocco più largo del Pannello
+  il cambio lingua lo fa **ballare in larghezza** (299,84 in italiano contro 297,28 in
+  inglese, cioè 2,56px). Regge perché la riga dei filtri, che è anti-jitter per costruzione,
+  resta più larga di lei. Chi allunga ancora quel testo rimisuri **quel** rapporto, non la
+  sola altezza della riga.
 
 - ⚠️ **Un anti-jitter era escluso dall'utente in partenza** (*non risolverlo con un
   accorgimento anti-jitter*), e aveva ragione di merito: una riserva d'altezza avrebbe
   congelato lo spazio di una riga che **non serve a nessuna delle due lingue**. Qui la
   riserva delle gemelle invisibili, che altrove è la soluzione giusta, sarebbe stata un
   cerotto su un testo troppo lungo.
-- ⚠️ **'Titolo' e non 'Opera'**, e non è un sinonimo scelto a caso: accostato a `1ª`,
+- ⚠️ **'Titolo' e non 'Opera'**, e non è un sinonimo scelto a caso: accostato a `prima`,
   *Opera prima* si legge come il modo di dire (l'esordio di un autore), che qui non c'entra
-  niente. La riga indica il **titolo** in cui il personaggio compare la prima volta.
-- Ⓘ Nel sorgente l'ordinale è `ª` (U+00AA, l'indicatore ordinale femminile). Nella resa la
-  riga è in **maiuscoletto**, quindi a schermo si vede come una A piccola in alto: è la
-  trasformazione del font, non un carattere diverso nel dato.
+  niente. La riga indica il **titolo** in cui il personaggio compare la prima volta. ⚠️ La
+  ragione **vale ancora ora che l'ordinale è per esteso**, anzi vale di più: è proprio la
+  parola `prima` accanto a `Opera` a evocare il modo di dire.
 
 ⚠️ **Usa le classi REALI** (`.rank-item`, `.rank-name`, `.rank-vero`, `.rank-subtitle`) e la
 stessa `joinBipartite` del sottotitolo: gli overrides in `.ctrl-cardleg` toccano **solo** le
@@ -1998,16 +2005,31 @@ Mockup dell'utente, `0.92`. I filtri erano sei righe impilate, una per voce, e l
 restava mezza vuota mentre il Pannello cresceva in altezza. Ora sono **due righe da tre
 celle**: le categorie sopra, i due generi e il vero nome sotto.
 
-- ⚠️⚠️ **Allineate a SINISTRA, e ogni cella prende solo lo spazio che le serve** (istruzione
-  dell'utente, `0.93`). **`space-between` è la misura scartata**, ed era quella della `0.92`:
-  con le etichette corte (`Persone`, `Draghi`, `Animali`) distribuire su tutta la larghezza
-  apriva due vuoti larghi quanto le parole, e le due righe risultavano sfilacciate invece che
-  allineate fra loro. Misurato dopo il cambio: le due righe partono dallo **stesso x** (il
-  bordo sinistro della gabbia) e lo spazio **visibile** fra due celle è **15,68px** uniforme.
-  ⚠️ Quello spazio è la somma di tre valori (padding destro della prima cella, `gap` della
-  riga, padding sinistro della seconda): chi lo ritocca li guardi tutti e tre. Nella `0.95`
-  il padding di cella è salito alla gabbia comune e il `gap` è sceso da 0.5 a 0.38rem
-  **per conservarlo**: 4,8 + 6,08 + 4,8 fa gli stessi 15,68px di prima.
+- ⚠️⚠️ **DISTRIBUITE (`space-between`), coi bordi dell'hover a filo del contenuto**
+  (istruzione dell'utente, `0.97`). ⚠️ **Questa voce è cambiata TRE volte, e conviene sapere
+  perché non è un'oscillazione**: la `0.92` distribuiva ma le celle erano rientrate rispetto
+  alla card, la `0.93` è passata all'allineamento a sinistra perché con le etichette corte la
+  distribuzione apriva due vuoti larghi quanto le parole, e la `0.97` è tornata a distribuire
+  **una volta che i bordi erano a posto**: è quello che l'utente ha chiesto con *adesso che
+  c'è lo spazio e che il meccanismo funziona*. Il difetto della `0.92` non era la
+  distribuzione, erano i bordi.
+- ⚠️⚠️ **Due padding diversi, e servono a due cose diverse.** È il punto che si sbaglia:
+  - il `padding` della **sezione** è la gabbia (`--pan-gutter`), e porta il bordo
+    dell'**hover** a filo del contenuto, cioè esattamente dove comincia e finisce la card di
+    legenda e dove cominciano e finiscono i riquadri della legenda dei badge;
+  - il `padding` della **cella** è il rientro del contenuto **dentro** l'hover, e vale
+    `0.4rem + 1px`, che è quello delle righe di legenda: così la checkbox e l'icona del badge
+    stanno sulla stessa colonna.
+  - ⚠️ **Quel `+ 1px` non è tarato a occhio**: la riga di legenda porta un
+    `border:1px solid transparent`, che le riserva lo spessore del bordo che compare quando
+    il filtro si accende, e quel pixel sposta il suo contenuto verso l'interno. Senza,
+    checkbox a **31,38** e icona a **32,38**. Dare un bordo trasparente anche alla cella è la
+    strada scartata: non ha nessuno stato che lo accenda, sarebbe una scatola diversa che
+    finge di essere uguale.
+- **Le misure, tutte identiche nelle due lingue** (1280 e 390): prima cella a **24,98** e
+  ultima a **24,98** dai due bordi, come la card visibile e i riquadri della legenda;
+  checkbox e icona badge entrambe a **32,38**; Pannello a **358,56px** in italiano e in
+  inglese.
 - **Le celle non sono incolonnate FRA LORO**, ed è una scelta: le etichette hanno lunghezze
   molto diverse (`Draghi` contro `Solo veri nomi noti`), e colonne uguali avrebbero lasciato
   buchi larghi quanto la parola più lunga. L'incolonnamento che conta è quello della **prima**

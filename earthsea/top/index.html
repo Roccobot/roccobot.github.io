@@ -1113,7 +1113,7 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    ⚠️ `align-items:center` allinea l'etichetta al centro della sua casella: era il
    difetto dell'allineamento verticale che l'utente ha misurato (5px a DPR 2) sulla
    riga del vero nome, che ereditava `flex-start` da quando andava a capo. */
-.ctrl-frow { display:flex; align-items:center; justify-content:flex-start; gap:0.38rem; }
+.ctrl-frow { display:flex; align-items:center; justify-content:space-between; gap:0.38rem; }
 .ctrl-frow > .ctrl-row { flex:0 0 auto; min-width:0; }
 /* ⚠️ Gap piu' stretti che nelle righe impilate, e non e' un ritocco estetico: con tre
    celle sulla stessa riga i due spazi interni di ognuna si pagano SEI volte, e col passo
@@ -1127,7 +1127,27 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    stessi **15,68px** di prima, misurati. Non e' una compensazione (quelle sono coppie di
    `margin` di segno opposto): e' lo stesso spazio ripartito diversamente fra i due
    parametri che lo compongono. */
-.ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:var(--pan-gutter); padding-right:var(--pan-gutter); }
+.ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:calc(0.4rem + 1px); padding-right:calc(0.4rem + 1px); }
+/* ⚠️⚠️ LA RIGA DI FILTRI STA NELLA GABBIA, e il rientro interno e' quello delle righe di
+   LEGENDA (0.4rem), non piu' quello della gabbia. Sono due cose diverse e servono a due
+   cose diverse (istruzione dell'utente, 0.97: *le prime checkbox devono partire leggermente
+   piu' a destra, perche' e' l'hover che deve stare a filo del contenuto*):
+   - il `padding` della SEZIONE porta il bordo dell'**hover** a filo del contenuto, cioe'
+     esattamente dove comincia e finisce la card di legenda e dove cominciano e finiscono i
+     riquadri della legenda dei badge;
+   - il `padding` della CELLA e' il rientro del contenuto DENTRO l'hover, e vale 0.4rem
+     perche' e' lo stesso della riga di legenda: cosi' la checkbox e l'icona del badge sotto
+     stanno sulla stessa colonna, che era la seconda meta' della richiesta.
+   ⚠️ Il **`+ 1px`** non e' una taratura a occhio: la riga di legenda porta un
+   `border:1px solid transparent`, che le serve per riservare lo spessore del bordo che
+   compare quando il filtro si accende. Quel pixel sposta il suo contenuto verso l'interno,
+   e senza di lui la checkbox restava a 31,38 mentre l'icona stava a 32,38 (misurato). La
+   cella non puo' prendersi un bordo trasparente a sua volta: non ha nessuno stato che lo
+   accenda, e sarebbe una scatola diversa che finge di essere uguale.
+   ⚠️ Prima la cella usava il valore della gabbia e la sezione non aveva padding: l'hover
+   partiva 4,79px piu' a sinistra della card e la checkbox era incolonnata col bordo del
+   riquadro invece che con l'icona. Le due misure sembravano una sola. */
+.ctrl-section--filtri { padding:0 var(--pan-gutter); box-sizing:border-box; }
 /* Wrapper delle due colonne: trasparente ovunque (la griglia desktop di
    #ctrl-panel vede .ctrl-left e la legenda come figli diretti); su mobile
    diventa un blocco flex centrato (vedi media query). */
@@ -1940,12 +1960,12 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      blocco (dettata dalla legenda, stabile) senza mai dettarla: contribuiscono
      solo il min-content all'intrinsic width, così il blocco resta immobile
      (come su desktop). Le etichette lunghe semmai vanno a capo entro il blocco. */
-  /* padding-right pareggia il rientro sinistro (~3.8px) della checkbox: senza,
-     i pulsanti SOLO/TUTTI arrivavano a filo del bordo destro del blocco mentre
-     a sinistra c'era il rientro, spostando il contenuto visibile a destra e
-     facendo apparire il blocco fuori centro. Con 0.24rem i due rientri
-     coincidono e il contenuto è centrato nel pannello. */
-  #ctrl-panel .ctrl-section--filtri { width:0; min-width:100%; box-sizing:border-box; padding-right:0.24rem; }
+  /* Ⓘ Qui viveva un `padding-right:0.24rem` che pareggiava il rientro sinistro della
+     checkbox, nato per i pulsanti SOLO/TUTTI che stavano a filo del bordo destro. Quei
+     pulsanti non esistono piu' (l'utente li ha rifiutati due volte) e dalla `0.97` il
+     rientro simmetrico lo da' la gabbia `--pan-gutter` sulla sezione: sommarci anche quel
+     valore sbilancerebbe la riga a destra, cioe' rifarebbe il difetto che curava. */
+  #ctrl-panel .ctrl-section--filtri { width:0; min-width:100%; box-sizing:border-box; }
   /* barra sticky in basso: [versione | (tema lingua) | chiudi] */
   .ctrl-bottombar {
     display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
@@ -3017,7 +3037,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.96</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.97</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7110,8 +7130,8 @@ function controlPanelHTML() {
   // Seconda riga: i due generi e il filtro del vero nome.
   var GEN = { it: { m: 'Maschi', f: 'Femmine' }, en: { m: 'Males', f: 'Females' } };
   var gCur = currentLang === 'it' ? GEN.it : GEN.en, gAlt = currentLang === 'it' ? GEN.en : GEN.it;
-  var vnLbl = currentLang === 'it' ? 'Solo veri nomi noti' : 'Known true names only';
-  var vnAlt = currentLang === 'it' ? 'Known true names only' : 'Solo veri nomi noti';
+  var vnLbl = currentLang === 'it' ? 'Solo veri nomi noti' : 'Known true names';
+  var vnAlt = currentLang === 'it' ? 'Known true names' : 'Solo veri nomi noti';
   var vn = statoVeroNome();
   destra += '<div class="ctrl-frow">';
   ['m', 'f'].forEach(function(g){
@@ -7207,7 +7227,7 @@ function controlPanelHTML() {
      // ⚠️ L'opera va per ULTIMA, come nelle card vere: nella prima stesura stava sopra
      // i nomi alternativi e la legenda mostrava un ordine che la lista non ha, che è
      // l'unico modo in cui una legenda a classi reali può sbagliare.
-     // ⚠️⚠️ La riga italiana è ABBREVIATA (istruzione dell'utente, 0.95), e la ragione è
+     // ⚠️⚠️ La riga italiana è RISCRITTA (istruzione dell'utente, 0.95), e la ragione è
      // il BALLO del Pannello al cambio lingua: 'Opera della prima apparizione (anno)'
      // andava a capo e occupava 45,03px, l'inglese ne occupava 22,52 su una riga sola,
      // quindi il Pannello cresceva di 22,52px passando all'italiano. ⚠️ È stata scelta
@@ -7215,10 +7235,16 @@ function controlPanelHTML() {
      // esplicitamente l'accorgimento): una riserva d'altezza avrebbe congelato lo spazio
      // di una riga che non serve a nessuna delle due lingue.
      // ⚠️ 'Titolo' e non 'Opera' (correzione dell'utente in corso d'opera): accostato a
-     // '1ª', 'Opera prima' si legge come il modo di dire, cioè l'esordio di un autore,
+     // 'prima', 'Opera prima' si legge come il modo di dire, cioè l'esordio di un autore,
      // che qui non c'entra. La riga indica il TITOLO in cui il personaggio compare per
      // la prima volta.
-     +   '<span class="rank-title">' + (currentLang === 'it' ? "Titolo 1ª apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
+     // ⚠️⚠️ E l'ordinale è tornato PER ESTESO nella 0.97 (l'utente ha chiesto di riprovare):
+     // ci sta, ma a una condizione che va saputa prima di allungare ancora questa riga. La
+     // card NON ha riserva bilingue, quindi se diventa lei il blocco più largo del Pannello
+     // il cambio lingua lo fa ballare in LARGHEZZA (299,84px in italiano contro 297,28 in
+     // inglese). Regge perché la riga dei filtri, che è anti-jitter per costruzione, resta
+     // più larga: chi tocca questo testo rimisuri quel rapporto, non la sola altezza.
+     +   '<span class="rank-title">' + (currentLang === 'it' ? "Titolo prima apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
      + '</span></div></div>';
   // ⚠️ UNA COLONNA SOLA (istruzione dell'utente, 2026-08-21): le categorie e la
   // legenda dei badge stanno SOTTO la card di legenda, dentro la stessa colonna.
