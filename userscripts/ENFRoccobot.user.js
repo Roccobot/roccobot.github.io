@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         ENF Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      1.4.2
-// @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. On xhamster it also forces the English site (no language subdomain) and picks the highest resolution on its own, asking only when the same resolution comes in more than one codec. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
+// @version      1.5.0
+// @description  Adds a Download button to enf-cmnf.cc, enfhub.com and xhamster.com that saves the page's videos. On enf-cmnf.cc photo posts a second button packs every full-size image of the post into a single ZIP, built in the script itself with no external library: it takes the widest srcset candidate, retries the un-resized WordPress original (the -800x600 suffix hides a bigger file), skips avatars, icons and thumbnails from the sidebars, downloads a few images at a time and lists the failed ones once at the end. On xhamster it also forces the English site (no language subdomain) and picks the highest resolution on its own, asking only when the same resolution comes in more than one codec. Covers every player the two sites use: direct MP4 (<source> or <video src>), self-hosted HLS on cdn.enf-cmnf.cc, and enfhub's HLS (master.m3u8, read from the player or derived from the poster); HLS is fetched segment by segment and joined into one .ts file. On forum threads it opens a picker that lists the videos in page order with a thumbnail, the post number and the author, lets you tick several of them and downloads them one after the other, writing the post number into each filename. Progress on the button, second click cancels.
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://enf-cmnf.cc/*
@@ -36,8 +36,12 @@
   const TENTATIVI_SEGMENTO = 3;     // HLS: ritentativi per singolo segmento
   const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha più varianti
   const FORZA_INGLESE      = true;  // xhamster: porta i sottodomini di lingua su xhamster.com
+  const IMMAGINI_PARALLELE = 4;     // ZIP: quante immagini scaricare insieme
+  const TENTATIVI_IMMAGINE = 2;     // ZIP: ritentativi per singola immagine
+  const LATO_MINIMO_IMG    = 260;   // ZIP: sotto questa larghezza è un'icona, non una foto
 
   const COLORE_BASE = '#7b3fa0';    // viola: tinta del tasto a riposo
+  const COLORE_IMG  = '#1f6fb2';    // blu: tinta del tasto delle immagini
   const COLORE_OK   = '#12b76a';
   const COLORE_KO   = '#d0021b';
 
@@ -455,11 +459,142 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════════
+  //  2c) THE PHOTOS OF A POST (enf-cmnf.cc)
+  // ═══════════════════════════════════════════════════════════════════════
+  // A photo post has no player, so the video button stays hidden and the page
+  // offers nothing: saving twenty pictures by hand was the only way out. This
+  // part finds them, section 5b packs them into one ZIP.
+  //
+  // ⚠️ enf-cmnf.cc ONLY, and it is a scope, not an oversight: enfhub and
+  // xhamster are video platforms where every picture on screen is a thumbnail
+  // of something else, so a button there would promise a gallery that does not
+  // exist. What would change the answer: a photo post on one of them with the
+  // pictures in the body of the page.
+  // ⚠️ Measured on 2026-08-25: the images of cdn.enf-cmnf.cc answer 200 with NO
+  // headers at all, Range requests included. The 403 rule written in section 4
+  // is about the MP4 files and does not apply here; the headers are sent anyway,
+  // for uniformity with the rest of the script.
+
+  function suEnfCmnf() { return /(^|\.)enf-cmnf\.cc$/i.test(location.hostname); }
+
+  function eImmagine(u) { return /\.(jpe?g|png|gif|webp|avif|bmp)(\?|#|$)/i.test(u || ''); }
+
+  // Avatars, emoji, share icons, spacers and sidebar thumbnails live in the same
+  // page and end in .jpg like the photos: without this filter half the ZIP is
+  // furniture of the site.
+  function scartaImg(u) {
+    return !u || /^(data|blob):/i.test(u) ||
+      /(avatar|gravatar|emoji|smilie|sprite|spacer|placeholder|logo|favicon|badge|banner|wp-includes|\/plugins\/|\/themes\/)/i.test(u);
+  }
+
+  // A srcset lists the same picture at several widths: the widest one wins.
+  // Candidates measured in `2x` instead of `w` say nothing about pixels, so
+  // there the attribute of the tag stays.
+  function piuLargaDaSrcset(ss, ripiego) {
+    var migliore = ripiego, larghezza = 0;
+    (ss || '').split(',').forEach(function (voce) {
+      var p = voce.trim().split(/\s+/);
+      if (!p[0]) return;
+      var w = /^(\d+)w$/i.exec(p[1] || '');
+      var n = w ? parseInt(w[1], 10) : 0;
+      if (n > larghezza) { larghezza = n; migliore = p[0]; }
+    });
+    return migliore;
+  }
+
+  // ⚠️ WordPress keeps the original next to its resized copies, and the page
+  // often shows a copy: `pic-774x1024.jpg` is a crop of `pic.jpg`. Measured on
+  // the sample post: 84701 bytes against 196055, so the suffix hides a file more
+  // than twice as big, and 'full resolution' means asking for the plain name.
+  function originaleWp(u) {
+    try {
+      var url = new URL(u, location.href);
+      var nudo = url.pathname.replace(/-\d{2,5}x\d{2,5}(\.[a-z0-9]+)$/i, '$1');
+      if (nudo === url.pathname) return '';
+      url.pathname = nudo;
+      return url.href;
+    } catch (e) { return ''; }
+  }
+
+  function contenutoDelPost() {
+    var sel = ['.entry-content', 'article .post-content', 'article', 'main'];
+    for (var i = 0; i < sel.length; i++) {
+      var el = document.querySelector(sel[i]);
+      if (el) return el;
+    }
+    return document.body || null;
+  }
+
+  function immaginiDellaPagina() {
+    var voci = [], visti = {};
+    if (!suEnfCmnf()) return voci;
+    var radice = contenutoDelPost();
+    if (!radice) return voci;
+
+    var img = radice.querySelectorAll('img');
+    for (var i = 0; i < img.length; i++) {
+      var el = img[i];
+      // ⚠️ A picture already loaded declares its real size, and an icon is
+      // 96px wide: that is a measure, not a guess. One that has not loaded yet
+      // reports 0, and there it is kept, or every photo below the fold would be
+      // dropped for being small.
+      if (el.naturalWidth && el.naturalWidth < LATO_MINIMO_IMG) continue;
+      var pigra = el.getAttribute('data-src') || el.getAttribute('data-lazy-src') ||
+                  el.getAttribute('data-original') || '';
+      var url = piuLargaDaSrcset(el.getAttribute('srcset') || el.getAttribute('data-srcset'),
+                                 pigra || el.getAttribute('src') || '');
+      // <a href="full.jpg"><img src="thumb.jpg">: there the link IS the full
+      // size, and the tag only holds the preview.
+      try {
+        var a = el.closest('a[href]');
+        var href = a ? a.getAttribute('href') : '';
+        if (href && eImmagine(href)) url = href;
+      } catch (e) {}
+      if (!url) continue;
+      url = assoluto(url);
+      if (!eImmagine(url) || scartaImg(url) || visti[url]) continue;
+      visti[url] = 1;
+      // `mostrata` is what the page actually displays, kept as the last resort:
+      // when the widest candidate turns out not to exist, the picture on screen
+      // is still worth having, and losing it would be worse than saving a
+      // smaller copy of it.
+      voci.push({
+        url: url,
+        mostrata: assoluto(pigra || el.getAttribute('src') || ''),
+        alt: pulisci(el.getAttribute('alt') || ''),
+        el: el
+      });
+    }
+
+    // Pictures linked without being shown. None in the three sample posts, but
+    // the request was 'contained OR linked', and a link costs one loop.
+    var link = radice.querySelectorAll('a[href]');
+    for (var j = 0; j < link.length; j++) {
+      var h = assoluto(link[j].getAttribute('href') || '');
+      if (!eImmagine(h) || scartaImg(h) || visti[h]) continue;
+      visti[h] = 1;
+      voci.push({ url: h, alt: pulisci(link[j].textContent || ''), el: link[j] });
+    }
+
+    for (var n = 0; n < voci.length; n++) voci[n].indice = n + 1;
+    return voci;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
   //  3) NOME DEL FILE
   // ═══════════════════════════════════════════════════════════════════════
 
+  // ⚠️ Long dashes, curly quotes and the single-character ellipsis are banned
+  // everywhere, and text coming from the page is no exception: the title of a
+  // post carries them (`CMNF photos - Asian girl...` has an en dash in it) and
+  // from there they would end up in the name of every file saved.
   function pulisci(s) {
-    return (s || '').replace(/[\/\\:*?"<>|\x00-\x1f]/g, ' ').replace(/\s+/g, ' ').trim();
+    return (s || '')
+      .replace(/[–—]/g, '-')
+      .replace(/[‘’“”]/g, "'")
+      .replace(/…/g, '...')
+      .replace(/[\/\\:*?"<>|\x00-\x1f]/g, ' ')
+      .replace(/\s+/g, ' ').trim();
   }
 
   function titolo() {
@@ -628,6 +763,104 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════════
+  //  5b) THE ZIP, WRITTEN HERE (stored entries, no library)
+  // ═══════════════════════════════════════════════════════════════════════
+  // ⚠️ The entries are STORED, not deflated, and that is the whole reason this
+  // is eighty lines instead of a dependency: JPEG, PNG and WebP are compressed
+  // already, so deflating them buys a couple of per cent for a library pulled
+  // from a CDN with @require, which would then run on every page the script
+  // touches. Stored means the writer is a CRC, three headers and a Blob that
+  // never copies the pixels.
+  // ⚠️ Plain zip32: no zip64 record, so the archive has to stay under 4 GiB.
+  // The caller checks it, because an overflow would silently produce a file
+  // that only fails the day someone opens it.
+
+  var TABELLA_CRC = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) c = TABELLA_CRC[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  // MS-DOS date and time: two 16 bit words, seconds with a resolution of two.
+  function oraDos(d) {
+    return {
+      ora: ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF,
+      giorno: (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF
+    };
+  }
+
+  // ⚠️ Bit 11 of the general purpose flag says 'the name is UTF-8'. Without it
+  // a caption with an accent comes out mangled once the archive is opened on
+  // Windows, which is exactly the kind of defect nobody notices while testing.
+  var ZIP_UTF8 = 0x0800;
+
+  function zipDaVoci(file) {
+    var pezzi = [], centrali = [], scarto = 0, quando = oraDos(new Date());
+    var codifica = new TextEncoder();
+
+    file.forEach(function (f) {
+      var nome = codifica.encode(f.nome);
+      var dati = new Uint8Array(f.buffer);
+      var crc = crc32(dati);
+
+      var locale = new DataView(new ArrayBuffer(30));
+      locale.setUint32(0, 0x04034b50, true);
+      locale.setUint16(4, 20, true);            // version needed
+      locale.setUint16(6, ZIP_UTF8, true);
+      locale.setUint16(8, 0, true);             // method: stored
+      locale.setUint16(10, quando.ora, true);
+      locale.setUint16(12, quando.giorno, true);
+      locale.setUint32(14, crc, true);
+      locale.setUint32(18, dati.length, true);  // compressed size
+      locale.setUint32(22, dati.length, true);  // uncompressed size
+      locale.setUint16(26, nome.length, true);
+      locale.setUint16(28, 0, true);            // extra field
+      pezzi.push(locale.buffer, nome, dati);
+
+      var centrale = new DataView(new ArrayBuffer(46));
+      centrale.setUint32(0, 0x02014b50, true);
+      centrale.setUint16(4, 20, true);          // version made by
+      centrale.setUint16(6, 20, true);          // version needed
+      centrale.setUint16(8, ZIP_UTF8, true);
+      centrale.setUint16(10, 0, true);
+      centrale.setUint16(12, quando.ora, true);
+      centrale.setUint16(14, quando.giorno, true);
+      centrale.setUint32(16, crc, true);
+      centrale.setUint32(20, dati.length, true);
+      centrale.setUint32(24, dati.length, true);
+      centrale.setUint16(28, nome.length, true);
+      centrale.setUint32(42, scarto, true);     // offset of the local header
+      centrali.push(centrale.buffer, nome);
+
+      scarto += 30 + nome.length + dati.length;
+    });
+
+    var misuraCentrale = centrali.reduce(function (n, p) {
+      return n + (p.byteLength !== undefined ? p.byteLength : p.length);
+    }, 0);
+
+    var coda = new DataView(new ArrayBuffer(22));
+    coda.setUint32(0, 0x06054b50, true);
+    coda.setUint16(8, file.length, true);       // entries on this disk
+    coda.setUint16(10, file.length, true);      // entries in total
+    coda.setUint32(12, misuraCentrale, true);
+    coda.setUint32(16, scarto, true);           // where the directory starts
+    coda.setUint16(20, 0, true);                // no comment
+
+    return new Blob(pezzi.concat(centrali, [coda.buffer]), { type: 'application/zip' });
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
   //  6) STATO E SCARICAMENTO
   // ═══════════════════════════════════════════════════════════════════════
 
@@ -636,6 +869,13 @@
   // e non nelle chiamate perché lo scrivono TUTTI i punti che aggiornano il tasto,
   // e passarlo a mano vorrebbe dire dimenticarselo in uno.
   var etichettaCoda = '';
+  // The button the work in progress is writing on. There are two buttons now and
+  // one engine: a click on either has to cancel what is running, and cancelling
+  // has to restore the button that was actually being used, not the one clicked.
+  var tastoAttivo = null;
+  // How many pictures the last scan found: the label of the images button says
+  // it out loud, so that a click never comes as a surprise.
+  var quanteImmagini = 0;
 
   function mostra(btn, testo, sfondo) {
     if (!btn) return;
@@ -643,11 +883,13 @@
     if (sfondo) btn.style.setProperty('background', sfondo, 'important');
   }
 
+  function tintaDi(btn) { return (btn && btn === tastoImg) ? COLORE_IMG : COLORE_BASE; }
+
   function barra(btn, pct, testo) {
     if (!btn) return;
     btn.textContent = etichettaCoda + testo;
     btn.style.setProperty('background',
-      'linear-gradient(90deg,' + COLORE_OK + ' ' + pct + '%,' + COLORE_BASE + ' ' + pct + '%)', 'important');
+      'linear-gradient(90deg,' + COLORE_OK + ' ' + pct + '%,' + tintaDi(btn) + ' ' + pct + '%)', 'important');
   }
 
   function mb(n) { return (n / 1048576).toFixed(1) + ' MB'; }
@@ -800,8 +1042,9 @@
     try { if (manoGM && manoGM.abort) manoGM.abort(); } catch (e) {}
     manoGM = null;
     inCorso = false;
+    tastoAttivo = null;
     mostra(btn, '✖︎ cancelled', COLORE_KO);
-    setTimeout(function () { if (!inCorso) riposo(btn); }, 3000);
+    setTimeout(function () { if (!inCorso) riposoDi(btn); }, 3000);
   }
 
   function riposo(btn) {
@@ -810,12 +1053,23 @@
     mostra(btn, '⬇︎ Download', COLORE_BASE);
   }
 
+  function riposoImg(btn) {
+    if (!btn) return;
+    btn.title = 'Download every full-size image of this post as a ZIP';
+    mostra(btn, '🖼 ' + (quanteImmagini === 1 ? '1 image (ZIP)' : quanteImmagini + ' images (ZIP)'), COLORE_IMG);
+  }
+
+  function riposoDi(btn) {
+    if (btn && btn === tastoImg) riposoImg(btn);
+    else riposo(btn);
+  }
+
   // `rif` = la voce del picker (per il nome del file); `inCoda` sopprime l'alert
   // per-video e restituisce l'errore alla coda, che lo riassume una volta sola:
   // sette video andati male sarebbero sette finestre da chiudere.
   async function scarica(url, indice, totale, btn, rif, inCoda) {
     if (inCorso && !inCoda) { annulla(btn); return true; }
-    inCorso = true; annullato = false; manoGM = null;
+    inCorso = true; annullato = false; manoGM = null; tastoAttivo = btn;
     if (btn) btn.title = 'Click again to cancel';
     var nome = nomeFile(url, indice, totale, rif);
     try {
@@ -834,7 +1088,7 @@
       setTimeout(function () { if (!inCorso) riposo(btn); }, 6000);
       return false;
     } finally {
-      inCorso = false; manoGM = null;
+      inCorso = false; manoGM = null; tastoAttivo = null;
     }
   }
 
@@ -864,37 +1118,245 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════════
+  //  6b) THE PHOTOS: DOWNLOAD, THEN ONE ZIP
+  // ═══════════════════════════════════════════════════════════════════════
+
+  const INTESTAZIONI_IMG = {
+    'Referer': location.href,
+    'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+    'Sec-Fetch-Dest': 'image',
+    'Sec-Fetch-Mode': 'no-cors',
+    'Sec-Fetch-Site': 'same-site'
+  };
+
+  function prendiImmagine(url) {
+    return new Promise(function (risolvi, rifiuta) {
+      GM_xmlhttpRequest({
+        method: 'GET',
+        url: url,
+        responseType: 'arraybuffer',
+        timeout: 90000,
+        headers: INTESTAZIONI_IMG,
+        onload: function (r) {
+          if (r.status < 200 || r.status >= 300) { rifiuta(new Error('HTTP ' + r.status)); return; }
+          var tipo = '';
+          try {
+            var m = (r.responseHeaders || '').match(/content-type:\s*([^\r\n]+)/i);
+            tipo = m ? m[1].trim() : '';
+          } catch (e) {}
+          // ⚠️ An error page renamed .jpg is the silent failure of this whole
+          // feature: it goes into the archive like a real picture and only
+          // shows up the day the file will not open.
+          if (/text\/html/i.test(tipo)) { rifiuta(new Error('the server answered with a page, not an image')); return; }
+          if (!r.response || !r.response.byteLength) { rifiuta(new Error('empty file')); return; }
+          risolvi({ buffer: r.response, tipo: tipo });
+        },
+        onerror: function () { rifiuta(new Error('network')); },
+        ontimeout: function () { rifiuta(new Error('timeout')); }
+      });
+    });
+  }
+
+  // The un-resized original first, what the page showed as a fallback. ⚠️ No
+  // HEAD probe before it: the download itself is the proof that the original is
+  // there, and probing would double the number of requests to find out
+  // something the next line finds out anyway.
+  async function immagineIntera(voce) {
+    var candidati = [], visti = {}, pieno = originaleWp(voce.url);
+    [pieno, voce.url, voce.mostrata].forEach(function (u) {
+      if (!u || visti[u]) return;
+      visti[u] = 1;
+      candidati.push(u);
+    });
+    var ultimo = null;
+    for (var i = 0; i < candidati.length; i++) {
+      for (var t = 0; t < TENTATIVI_IMMAGINE; t++) {
+        if (annullato) throw new Error('cancelled');
+        try {
+          var r = await prendiImmagine(candidati[i]);
+          r.url = candidati[i];
+          return r;
+        } catch (e) {
+          ultimo = e;
+          // 403 and 404 mean 'that name does not exist here': asking twice
+          // wastes a request, and the answer is the next candidate.
+          if (/HTTP 40[34]/.test((e && e.message) || '')) break;
+          await new Promise(function (r2) { setTimeout(r2, 300 * (t + 1)); });
+        }
+      }
+    }
+    throw ultimo || new Error('not downloaded');
+  }
+
+  function estensioneDa(tipo) {
+    if (/jpeg/i.test(tipo)) return '.jpg';
+    if (/png/i.test(tipo)) return '.png';
+    if (/gif/i.test(tipo)) return '.gif';
+    if (/webp/i.test(tipo)) return '.webp';
+    if (/avif/i.test(tipo)) return '.avif';
+    return '.jpg';
+  }
+
+  // ⚠️ The number in front is not decoration: it keeps the order of the page,
+  // which is the order of the story being told, and a folder sorted by name
+  // would otherwise shuffle the pictures by their upload names.
+  function nomeInZip(voce, url, tipo, totale) {
+    var cifre = String(totale).length, n = String(voce.indice);
+    while (n.length < cifre) n = '0' + n;
+    var pezzo = '';
+    try { pezzo = decodeURIComponent(new URL(url).pathname.split('/').pop() || ''); } catch (e) {}
+    pezzo = pulisci(pezzo).replace(/^[.\s]+/, '');
+    if (!pezzo || !eImmagine(pezzo)) pezzo = 'image' + estensioneDa(tipo);
+    return n + ' - ' + pezzo.slice(0, 120);
+  }
+
+  function nomeZip() { return titolo().slice(0, 170) + '.zip'; }
+
+  async function scaricaImmagini(btn) {
+    var voci = immaginiDellaPagina();
+    if (!voci.length) {
+      alert('ENF Roccobot: no images found in this post.');
+      return;
+    }
+    inCorso = true; annullato = false; manoGM = null; tastoAttivo = btn;
+    if (btn) btn.title = 'Click again to cancel';
+    barra(btn, 0, '⬇︎ 0/' + voci.length);
+
+    var presi = new Array(voci.length), errori = [], prossimo = 0, fatti = 0, byte = 0;
+
+    async function operaio() {
+      while (true) {
+        if (annullato) return;
+        var i = prossimo++;
+        if (i >= voci.length) return;
+        try {
+          var r = await immagineIntera(voci[i]);
+          presi[i] = { nome: nomeInZip(voci[i], r.url, r.tipo, voci.length), buffer: r.buffer };
+          byte += r.buffer.byteLength;
+        } catch (e) {
+          if (annullato) return;
+          // One picture missing does not spoil the archive: it gets counted and
+          // named at the end, once, like the errors of a video queue.
+          errori.push('· ' + voci[i].indice + ': ' + ((e && e.message) || e));
+        }
+        fatti++;
+        barra(btn, Math.round((fatti / voci.length) * 100), '⬇︎ ' + fatti + '/' + voci.length + ' · ' + mb(byte));
+      }
+    }
+
+    try {
+      var operai = [];
+      for (var i = 0; i < Math.min(IMMAGINI_PARALLELE, voci.length); i++) operai.push(operaio());
+      await Promise.all(operai);
+      if (annullato) return;
+
+      var dentro = presi.filter(Boolean);
+      if (!dentro.length) throw new Error('none of the images could be downloaded');
+      if (byte > 4294000000) throw new Error('too much for a plain ZIP: over 4 GiB');
+
+      mostra(btn, '🗜 Zipping...');
+      // One turn of the event loop, or the button freezes on the last
+      // percentage while the CRC runs and the page looks stuck.
+      await new Promise(function (r) { setTimeout(r, 30); });
+      var archivio = zipDaVoci(dentro);
+
+      mostra(btn, '💾 Saving...');
+      salvaBlob(archivio, nomeZip());
+
+      if (errori.length) {
+        mostra(btn, '⚠️ ' + errori.length + ' failed', COLORE_KO);
+        alert('ENF Roccobot: ' + dentro.length + ' of ' + voci.length + ' images saved.\n\nFailed:\n' + errori.join('\n'));
+      } else {
+        mostra(btn, '✅ ' + dentro.length + ' images', COLORE_OK);
+      }
+    } catch (e) {
+      if (!annullato) {
+        mostra(btn, '⚠️ Error', COLORE_KO);
+        alert('ENF Roccobot: the ZIP could not be built.\n' + ((e && e.message) || e));
+      }
+    } finally {
+      inCorso = false; manoGM = null; tastoAttivo = null;
+      setTimeout(function () { if (!inCorso) riposoImg(btn); }, 6000);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
   //  7) INTERFACCIA: tasto fisso + elenco quando i video sono più di uno
   // ═══════════════════════════════════════════════════════════════════════
 
-  var ID_TASTO = 'rb-enf-dl', ID_ELENCO = 'rb-enf-menu';
+  var ID_TASTO = 'rb-enf-dl', ID_TASTO_IMG = 'rb-enf-zip';
+  var ID_BARRA = 'rb-enf-bar', ID_ELENCO = 'rb-enf-menu';
+  var tastoImg = null;
 
   function stile(el, css) { for (var k in css) el.style.setProperty(k, css[k], 'important'); }
 
-  function creaTasto() {
-    var b = document.getElementById(ID_TASTO);
+  // ⚠️ The two buttons live in a column, not one on top of the other by
+  // coordinates: with fixed positions the images button would hang in the air
+  // whenever the video one is hidden, which on a photo post is always.
+  // `pointer-events` is off on the strip and on again on the buttons, so the
+  // gap between them does not eat clicks meant for the page.
+  function creaBarra() {
+    var b = document.getElementById(ID_BARRA);
     if (b) return b;
     if (!document.body) return null;
-    b = document.createElement('button');
-    b.id = ID_TASTO;
-    b.type = 'button';
+    b = document.createElement('div');
+    b.id = ID_BARRA;
     stile(b, {
       'position': 'fixed', 'bottom': '16px', 'right': '16px', 'z-index': '2147483647',
-      'display': 'none', 'visibility': 'visible', 'opacity': '0.92',
+      'display': 'flex', 'flex-direction': 'column', 'align-items': 'flex-end', 'gap': '8px',
+      'margin': '0', 'padding': '0', 'border': 'none', 'background': 'none',
+      'pointer-events': 'none'
+    });
+    document.body.appendChild(b);
+    return b;
+  }
+
+  function nuovoTasto(id, tinta) {
+    var b = document.createElement('button');
+    b.id = id;
+    b.type = 'button';
+    stile(b, {
+      'position': 'static', 'display': 'none', 'visibility': 'visible', 'opacity': '0.92',
       'width': '210px', 'box-sizing': 'border-box', 'text-align': 'center',
       'white-space': 'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis',
       'height': 'auto', 'margin': '0', 'padding': '11px 14px',
       'border': 'none', 'border-radius': '999px',
-      'background': COLORE_BASE, 'color': '#fff',
+      'background': tinta, 'color': '#fff',
       'font': '700 14px/1 system-ui, -apple-system, sans-serif',
       'cursor': 'pointer', 'box-shadow': '0 4px 14px rgba(0,0,0,.45)',
-      'text-transform': 'none', 'letter-spacing': 'normal', 'line-height': '1'
+      'text-transform': 'none', 'letter-spacing': 'normal', 'line-height': '1',
+      'pointer-events': 'auto'
     });
     b.addEventListener('mouseenter', function () { b.style.setProperty('opacity', '1', 'important'); });
     b.addEventListener('mouseleave', function () { b.style.setProperty('opacity', '0.92', 'important'); });
+    return b;
+  }
+
+  function creaTasto() {
+    var b = document.getElementById(ID_TASTO);
+    if (b) return b;
+    var barraEl = creaBarra();
+    if (!barraEl) return null;
+    b = nuovoTasto(ID_TASTO, COLORE_BASE);
     b.addEventListener('click', function () { alClic(b); });
     riposo(b);
-    document.body.appendChild(b);
+    barraEl.appendChild(b);
+    return b;
+  }
+
+  // The images button goes ABOVE the video one, which has been sitting in that
+  // corner since 1.0: moving the old one would cost the habit of whoever uses
+  // it every day, and the new one has no claim to the better spot.
+  function creaTastoImg() {
+    var b = document.getElementById(ID_TASTO_IMG);
+    if (b) { tastoImg = b; return b; }
+    var barraEl = creaBarra();
+    if (!barraEl) return null;
+    b = nuovoTasto(ID_TASTO_IMG, COLORE_IMG);
+    b.addEventListener('click', function () { alClicImg(b); });
+    tastoImg = b;
+    riposoImg(b);
+    barraEl.insertBefore(b, barraEl.firstChild);
     return b;
   }
 
@@ -928,10 +1390,15 @@
   function apriElenco(voci, btn) {
     chiudiElenco();
 
+    // ⚠️ Measured, not a constant: with two buttons the strip is twice as tall,
+    // and a hard-coded 64px would drop the picker on top of the images button.
+    var barraEl = document.getElementById(ID_BARRA);
+    var sopra = ((barraEl ? barraEl.offsetHeight : 44) + 24) + 'px';
+
     var m = document.createElement('div');
     m.id = ID_ELENCO;
     stile(m, {
-      'position': 'fixed', 'bottom': '64px', 'right': '16px', 'z-index': '2147483647',
+      'position': 'fixed', 'bottom': sopra, 'right': '16px', 'z-index': '2147483647',
       'width': 'min(460px, 94vw)', 'max-height': 'min(70vh, 640px)',
       'display': 'flex', 'flex-direction': 'column',
       'padding': '0', 'border-radius': '14px', 'overflow': 'hidden',
@@ -1106,6 +1573,16 @@
     else apriElenco(voci, btn);
   }
 
+  // ⚠️ No picker for the pictures, and it is a decision: a photo post is one
+  // gallery told in order, so 'all of them' is the answer in every case the
+  // request came from. The count is written on the button before the click, so
+  // what is about to happen is never a surprise.
+  function alClicImg(btn) {
+    if (inCorso) { annulla(tastoAttivo || btn); return; }
+    chiudiElenco();
+    scaricaImmagini(btn);
+  }
+
   // ═══════════════════════════════════════════════════════════════════════
   //  8) AVVIO, SPA E RILEVAMENTO CONTINUO
   // ═══════════════════════════════════════════════════════════════════════
@@ -1123,6 +1600,13 @@
       var ce = fonti().length > 0;
       b.style.setProperty('display', ce ? 'block' : 'none', 'important');
       if (!ce) chiudiElenco();
+
+      var n = immaginiDellaPagina().length;
+      var bi = n ? creaTastoImg() : tastoImg;
+      if (bi) {
+        if (n && n !== quanteImmagini) { quanteImmagini = n; riposoImg(bi); }
+        bi.style.setProperty('display', n ? 'block' : 'none', 'important');
+      }
     } catch (e) {}
   }
 
@@ -1155,6 +1639,9 @@
   if (typeof GM_registerMenuCommand !== 'undefined') {
     GM_registerMenuCommand('Download the video on this page', function () {
       alClic(document.getElementById(ID_TASTO) || creaTasto());
+    });
+    GM_registerMenuCommand('Download the images of this post (ZIP)', function () {
+      alClicImg(document.getElementById(ID_TASTO_IMG) || creaTastoImg());
     });
   }
 
