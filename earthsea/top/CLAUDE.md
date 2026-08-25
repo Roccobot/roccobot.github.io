@@ -2134,6 +2134,24 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
     `citazione_en`, **2** finivano coi puntini (la sola voce del Mago Nero, nelle due lingue)
     e **5** cominciavano con essi. Ne restano **6** con i `[...]` in mezzo, che sono quelli
     giusti.
+  - ⚠️⚠️ **DAVANTI al `[...]` si RIMETTE il segno di punteggiatura, ed è la seconda eccezione
+    dichiarata al verbatim** (istruzione dell'utente, `0.91`: *è un elemento di leggibilità
+    fondamentale, nonché nuova eccezione al verbatim, se vuoi prender nota*). Togliendo la
+    didascalia di battuta (§ sulla `0.87`) se ne va anche il segno che la reggeva, e la
+    citazione resta con due periodi cuciti senza pausa: `Chiederò il loro nome [...] Se me lo
+    diranno` contro `Chiederò il loro nome. [...] Se me lo diranno`.
+    - ⚠️ **Il segno NON si sceglie a gusto: si legge nella fonte**, al punto del taglio, ed è
+      la differenza fra ricostruire e inventare. Nella `0.91`: Lontra prende il **punto**
+      perché l'originale ha *«Chiederò il loro nome» spiegò Medra. Sorrise.*, e Orm Embar la
+      **virgola** perché là il periodo prosegue, *«Era Orm Embar» disse, «il Drago di
+      Selidor»*. Un punto d'ufficio su Orm Embar avrebbe spezzato una frase sola in due.
+    - **Therru non è stata toccata**: aveva già il punto in tutte e due le lingue. Su sei
+      campi con `[...]`, tre hanno avuto bisogno del segno.
+  - ⚠️ **La sigla si VESTE in resa** (`vestiEllissi`, dalla `0.91`): tonda, 0.72em, più
+    tenue, sulla baseline, mentre nel dato resta il semplice `[...]`. Il perché sta nel CSS
+    di `.rc-ell`, e in breve: dentro una citazione tutta in corsivo la sigla si leggeva come
+    una parola di Le Guin. ⚠️ Non confondere i due piani: **il taglio** vive nel dato (voce
+    qui sopra), **la sua veste** in resa.
 - **La forma è cambiata il 2026-08-24 (`0.67`), su tre correzioni dell'utente**, e la
   vecchia (`<Voce> (<chi parla>) · <Opera IT> / <Opera EN>, cap. N - '<titolo>': <che cosa
   succede>.`) non va rimessa:
@@ -2438,6 +2456,13 @@ corrette nella `0.67`.
     riserva orizzontale del nome in nome della coerenza, ed è il vuoto che l'utente ha
     segnalato su Ged; ma letto **troppo** in senso lato porta all'errore opposto, cioè a
     tollerare uno scivolamento dentro il Pannello.
+  - **Caso applicato: le tre schede della modale STATISTICHE** (`0.91`, segnalazione
+    dell'utente). È un COMPONENTE, quindi vale l'anti-jitter pieno, e infatti Famiglie (4
+    righe) e Categorie (3) facevano ballare la modale a ogni giro. La riserva si **misura**
+    disegnando le tre viste e tenendo la maggiore, non si scrive a numero: le righe le
+    contano i dati, e un `min-height` fisso mentirebbe al primo cambio del dataset. Misura
+    dopo il rimedio: **0,00px di scarto** fra le tre. ⚠️ Riserva le sole viste base: le
+    drill-down sono un altro livello e crescono quanto serve.
 - **I tre rimedi**: la gemella del nome passa dalla riga intera al **solo testo** (così la
   cella prende il massimo delle due lingue in **entrambe** le dimensioni); la citazione
   impila **le due righe separatamente** invece del blocco; il footer nasconde la riga con
