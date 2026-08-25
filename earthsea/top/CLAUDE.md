@@ -2048,11 +2048,22 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   contro **32,72** a destra. Ora card, toolbar, righe di filtro e legenda stanno tutte
   fra gli stessi due bordi, con **20,19px** per parte, misurati a 1024, 1280 e 1600 e
   identici nelle due lingue.
-  - ⚠️ **Su MOBILE non cambia nulla, ed è verificato invece che dedotto**: là la card è più
-    stretta del tetto, che quindi non mordeva (a 360px resta 237,75px in italiano e 261,23
-    in inglese, uguali prima e dopo). Su quella vista la card si dimensiona sul proprio
-    contenuto e l'equilibrio dei margini **non c'è**: è un fatto preesistente, non un
-    effetto di questo cambio.
+  - ⚠️⚠️ **Su MOBILE vale lo stesso, dalla `0.96`** (istruzione dell'utente), e là la causa
+    era un'altra: `.ctrl-cols` è un flex con `align-items:flex-start`, quindi `width:auto`
+    significa 'larga quanto il contenuto'. La card finiva dove finiva la sua riga più lunga,
+    che in italiano e in inglese non è la stessa: **237,75px contro 261,23** a 360px, cioè
+    un **jitter orizzontale** a ogni cambio lingua, che è come l'utente se n'è accorto. Ora
+    card, sezione dei filtri e legenda sono a `width:100%` e stanno tutte fra gli stessi due
+    bordi: **24,98px per parte**, identici nelle due lingue, a 360, 390 e 768.
+    - ⚠️⚠️ **I selettori sono DISCENDENTI, non `>` di `.ctrl-cols`**, e la trappola è
+      costata una passata a vuoto: fra i due c'è `.ctrl-left`, che è `display:contents`.
+      Quello toglie il suo box dal **layout** ma non dal **DOM**, quindi `.ctrl-cols > .ctrl-cardleg`
+      non trova nulla. Il sintomo era parziale e quindi ingannevole: i riquadri della
+      legenda, figli veri di `.ctrl-cols`, si sistemavano, mentre la card restava com'era.
+    - Ⓘ Col cambio è caduto il `margin-left:-0.16rem` della legenda mobile, che tirava fuori
+      il blocco per incolonnare checkbox e icona: era una **compensazione** (vietata,
+      `Roccobot.md` § '🎨 Grafica'), e con i riquadri a larghezza piena faceva sbordare la
+      legenda di 2,56px a sinistra, cioè rompeva l'equidistanza appena ottenuta.
 - **L'allineamento verticale delle etichette** viene da `align-items:center`, non da uno
   spostamento in `em`: la riga del vero nome ereditava `flex-start` da quando la frase andava
   a capo, ed è il difetto che l'utente aveva misurato in 5px a DPR 2. Scarto dopo: **0,01px**.
@@ -2094,6 +2105,37 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   un francobollo accanto a un testo, non un fondo di scheda, e le tinte piene della lista
   risultavano dure. Chi cambia i colori delle card **non venga a cambiare anche questi** per
   coerenza.
+
+#### 🌒 La decorazione d'angolo
+
+Mockup dell'utente, `0.96`: in basso a destra del Pannello una **schiaritura bianca** appena
+percettibile con dentro il **logo del progetto**, tagliato dal bordo e in positivo, il tutto
+**sotto** ai testi. Fra tre rese mostrate (sobria, media, marcata) l'utente ha scelto la
+**sobria**: alone al 7,5%, logo al 6%, area del 66% x 42%.
+
+- ⚠️ **Il bordo netto verso l'esterno non è disegnato**: lo dà il Pannello, che ritaglia sul
+  proprio `border-radius` (ha già `overflow-y:auto`, che porta con sé il taglio orizzontale).
+  Il mezzo pixel sfumato che l'utente chiedeva è l'**antialiasing di quel taglio**: esatto
+  per costruzione invece che tarato a mano.
+- ⚠️ **La sfumatura verso il centro è UNA SOLA**, una `mask-image` radiale ancorata
+  all'angolo e applicata al contenitore: alone e logo svaniscono insieme. **Due maschere
+  separate sono la strada scartata**: andrebbero tenute d'accordo a ogni ritocco, e basta un
+  valore diverso perché il logo sopravviva all'alone o viceversa.
+- ⚠️⚠️ **Il tracciato del logo NON si duplica**: si usa il file `icons/Earthsea.svg`, lo
+  stesso del FAB, portato al bianco da un `filter`. Quel disegno vive già in **due** copie
+  che vanno cambiate insieme; una terza sarebbe il modo garantito di ritrovarsi due loghi
+  diversi nella stessa pagina.
+- ⚠️ **Sta sotto ai testi grazie a `position:relative` sui fratelli**, non a uno `z-index`
+  negativo: quello la manderebbe sotto al fondo del Pannello, cioè fuori vista.
+- ⚠️ **La stella a quattro punte resta intera dentro il riquadro** (istruzione dell'utente):
+  è la ragione del `right:0` invece del rientro negativo della prima resa, dove il bordo la
+  tagliava a metà. L'onda invece esce, e deve uscire.
+- ⚠️ **Si rimette a ogni ricostruzione del Pannello** (`addPanelDeco`, chiamata da
+  `wireControlPanel`), perché quella riscrive tutto il contenuto e se la porterebbe via.
+  Verificato che sopravviva a un filtro spento e riacceso e a due cambi di lingua.
+  - ⚠️ **Si costruisce a NODI**, non come stringa dentro `controlPanelHTML()`: quella finisce
+    in un `innerHTML`, e il divieto è una regola non derogabile. Che il markup preesistente
+    lo usi ancora non è una ragione per aggiungergliene altro.
 
 #### ⚧ Il filtro per GENERE, e le voci senza
 

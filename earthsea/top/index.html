@@ -1410,6 +1410,40 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    volte. ⚠️ Chi tocca questo valore li sposta TUTTI, che e' esattamente lo scopo: quattro
    numeri uguali scritti in quattro punti divergono al primo ritocco. */
 #ctrl-panel { --pan-gutter:0.3rem; }
+/* ⚠️⚠️ DECORAZIONE D'ANGOLO in basso a destra (mockup dell'utente, 0.96, variante 'A'
+   fra le tre rese che gli sono state mostrate). Una schiaritura bianca appena percettibile
+   con dentro il logo del progetto, tagliato dal bordo e in positivo, il tutto SOTTO ai
+   testi. Come e' fatta, punto per punto, perche' ogni pezzo risolve una richiesta precisa:
+   - **Il bordo netto verso l'esterno non e' disegnato**: lo da' il Pannello, che ritaglia
+     sul proprio `border-radius` (ha gia' `overflow-y:auto`, che porta con se' il taglio
+     orizzontale). Il mezzo pixel sfumato che l'utente chiedeva e' l'antialiasing di quel
+     taglio, quindi e' esatto per costruzione invece che tarato a mano.
+   - **La sfumatura verso il centro e' UNA SOLA**, una `mask-image` radiale ancorata
+     all'angolo e applicata al contenitore: alone e logo svaniscono insieme. Due maschere
+     separate (una per l'alone, una per il logo) sono la strada SCARTATA: andrebbero tenute
+     d'accordo a ogni ritocco, e basterebbe un valore diverso perche' il logo sopravviva
+     all'alone o viceversa.
+   - **Il logo e' il file `icons/Earthsea.svg`**, lo stesso del FAB, portato al bianco da un
+     `filter`. ⚠️ Il suo tracciato NON si duplica qui: vive gia' in due copie che vanno
+     cambiate insieme (l'inline del FAB e quel file), e una terza sarebbe una copia di
+     troppo, cioe' un modo garantito di ritrovarsi due loghi diversi nella stessa pagina.
+   - **Sta sotto ai testi** grazie ai due `position:relative` qui accanto, non a uno
+     `z-index` negativo: quello la manderebbe sotto al fondo del Pannello, cioe' fuori vista.
+   - **La stella a quattro punte resta INTERA dentro il riquadro** (istruzione dell'utente):
+     e' la ragione del `right:0` invece del rientro negativo che aveva la prima resa, dove
+     il bordo la tagliava a meta'. L'onda invece esce, e deve uscire. */
+#ctrl-panel > *:not(.ctrl-deco) { position:relative; }
+.ctrl-deco {
+  position:absolute; right:0; bottom:0; width:66%; height:42%;
+  pointer-events:none; z-index:0; overflow:hidden;
+  background:linear-gradient(to top left, rgba(255,255,255,0.075), rgba(255,255,255,0));
+  -webkit-mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%);
+  mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%);
+}
+.ctrl-deco .deco-logo {
+  position:absolute; right:0; bottom:-14%; width:58%; height:auto; display:block;
+  opacity:0.06; filter:brightness(0) invert(1);
+}
 /* ⚠️⚠️ NIENTE `max-width` (istruzione dell'utente, 0.95): la card di legenda occupa la
    larghezza PIENA del contenuto, come le righe di filtro e la legenda sotto, e cosi' le
    distanze del contenuto dai due bordi del Pannello sono uguali per costruzione invece
@@ -1845,17 +1879,39 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      sinistro (e le posizioni riservate di etichette/pulsanti) restano fissi:
      niente scivolamento. Il tag resta centrato (align-self:center, sotto). */
   #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:100%; box-sizing:border-box; }
-  #ctrl-panel .ctrl-cols > .ctrl-left { width:auto; }
-  #ctrl-panel .ctrl-cols > .ctrl-section--legend { width:auto; }
+  /* ⚠️⚠️ TUTTI I BLOCCHI A LARGHEZZA PIENA anche qui (istruzione dell'utente, 0.96), come
+     su desktop. `width:auto` in un flex con `align-items:flex-start` significa 'larga
+     quanto il contenuto', ed e' la misura SCARTATA: la card di legenda finiva dove finiva
+     la sua riga piu' lunga, che in italiano e in inglese non e' la stessa, quindi il suo
+     bordo destro **si spostava al cambio lingua** (misurato a 360px: 237,75px contro
+     261,23, cioe' 23,5px di salto). A larghezza piena il bordo destro e' quello della
+     gabbia e non dipende piu' dal testo. Stesso motivo per i riquadri della legenda dei
+     badge, che l'utente vedeva finire prima della card. */
+     ⚠️ I selettori sono DISCENDENTI e non `>` di `.ctrl-cols`, e non e' pigrizia: fra i due
+     c'e' `.ctrl-left`, che qui e' `display:contents`. Quello toglie il suo box dal layout
+     ma NON dal DOM, quindi un `.ctrl-cols > .ctrl-cardleg` non trova niente. Provato: i
+     riquadri della legenda, che di `.ctrl-cols` sono figli veri, si sistemavano; la card,
+     che sta dentro `.ctrl-left`, restava larga quanto il testo. */
+  #ctrl-panel .ctrl-cols > .ctrl-left { width:100%; box-sizing:border-box; }
+  #ctrl-panel .ctrl-cols .ctrl-section--legend,
+  #ctrl-panel .ctrl-cols .ctrl-cardleg,
+  #ctrl-panel .ctrl-cols .ctrl-section--filtri { width:100%; box-sizing:border-box; }
   /* .ctrl-left è display:contents, quindi i suoi figli (categorie, tag-slot,
      nota) sono flex-item diretti del blocco .ctrl-cols, allineati a sinistra.
      Il tag del filtro badge va invece CENTRATO nel blocco (= centro pannello):
      align-self:center sul suo slot. Categorie e legenda restano a sinistra. */
   #ctrl-panel .ctrl-cols .ctrl-tag-slot { align-self:center; }
-  /* Ritocco: allinea al pixel il bordo sinistro del quadratino checkbox con
-     quello dell'icona badge (le due righe hanno padding-left diversi: 0.3rem
-     la categoria, 0.4rem la legenda). */
-  #ctrl-panel .ctrl-section--legend { margin-left:-0.16rem; }
+  /* Ⓘ Qui viveva un `margin-left:-0.16rem` sulla legenda, che tirava fuori il blocco per
+     incolonnare il quadratino della checkbox con l'icona del badge (le due righe hanno
+     padding interni diversi: la cella 0.3rem, la riga di legenda 0.4rem). ⚠️ E' CADUTO
+     nella `0.96` per due ragioni che vanno insieme: era un `margin` negativo che isolava
+     un movimento, cioe' una **compensazione**, che le regole universali vietano
+     (`Roccobot.md` § '🎨 Grafica'); e da quando i riquadri della legenda occupano la
+     larghezza piena, quei 2,56px in fuori li facevano **sbordare** a sinistra rispetto
+     alla card e rientrare a destra, cioe' rompevano l'equidistanza che l'utente aveva
+     appena chiesto. Il rientro dell'icona rispetto alla checkbox resta, ed e' lo stesso
+     che il Pannello desktop ha sempre avuto: le righe di legenda sono rientrate di piu'
+     perche' sono un elenco, non una riga di controllo. */
   /* Nota nomi in fondo: allineata a sinistra come le righe, e un filo più
      chiara (più tenue) del resto (scelta utente). Ora è DENTRO .ctrl-cols:
      width:0 + min-width:100% la fa riempire la larghezza del blocco senza
@@ -2961,7 +3017,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.95</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.96</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7279,8 +7335,27 @@ function refreshControlPanel() {
 }
 
 
+// La decorazione d'angolo (vedi il CSS di `.ctrl-deco`) si rimette a ogni ricostruzione
+// del Pannello, perche' quella riscrive tutto il contenuto e se la porterebbe via.
+// ⚠️ Si costruisce a NODI e non come stringa dentro `controlPanelHTML()`, che finisce in
+// un `innerHTML`: il divieto e' una regola non derogabile, e se il markup preesistente lo
+// usa ancora non e' una ragione per aggiungergliene altro.
+function addPanelDeco(panel) {
+  if (!panel || panel.querySelector('.ctrl-deco')) return;
+  var deco = document.createElement('div');
+  deco.className = 'ctrl-deco';
+  deco.setAttribute('aria-hidden', 'true');
+  var logo = document.createElement('img');
+  logo.className = 'deco-logo';
+  logo.src = 'icons/Earthsea.svg';
+  logo.alt = '';
+  deco.appendChild(logo);
+  panel.insertBefore(deco, panel.firstChild);
+}
+
 function wireControlPanel() {
   var panel = document.getElementById('ctrl-panel');
+  addPanelDeco(panel);
   function applyFilter() {
     pruneBadgeFilter(); // filtri badge non più validi (categorie cambiate) -> off
     renderList();
