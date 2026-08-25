@@ -2135,7 +2135,26 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
      coda alla citazione: a destra, in grassetto, in linea con l'ultima riga se ci sta e a
      capo se non ci sta. Vive nei campi **`citazione_voce`/`citazione_voce_en`** ed è
      **vuoto** quando parla il personaggio della card o il narratore, perché là
-     l'attribuzione ripeterebbe il titolo della scheda. Oggi la portano 9 citazioni su 30.
+     l'attribuzione ripeterebbe il titolo della scheda. Alla `0.87` la portano 40 citazioni
+     su 105, contate sul DOM reale e non a mano.
+     - ⚠️⚠️ **La DIDASCALIA DI BATTUTA non sta nella citazione, mai** (istruzione
+       dell'utente, `0.87`: *'disse Dulse' va tolto, perché è la firma di chi pronuncia la
+       citazione, ma essendo lo stesso personaggio della card si omette*). Quindi:
+       - parla il personaggio della card -> la didascalia **sparisce e basta**
+         (`'Cammino sulla terra battuta da settantacinque anni' disse Dulse.` diventa
+         `Cammino sulla terra battuta da settantacinque anni.`);
+       - parla un altro -> la didascalia **esce dal testo ed entra nella firma**, che è il
+         campo fatto apposta (`disse Corvo` sulla card di Ath diventa `\ Corvo`).
+       - ⚠️ **Il modo di dire perduto si recupera nel CONTESTO, non si tiene nella
+         citazione**: togliendo la didascalia se ne vanno anche `sardonico`, `in kargico`,
+         `sminuendo il lavoro di una vita`. Nella `0.87` sono passati nella riga di
+         contesto di Tosla, Seserakh e Corvo, che è il posto dove quelle informazioni
+         valgono senza sporcare la battuta.
+       - ⚠️ **Dodici citazioni su 105 ce l'avevano**, e dieci restano **verbatim** anche
+         dopo il taglio. Le due che diventano **montaggi dichiarati** sono quelle in cui la
+         didascalia stava **in mezzo** alla battuta (Tuly e la Rosa del *Trovatore*): là
+         ricucire i due tronconi è l'unico modo di togliere la firma, ed è la stessa
+         pratica dei montaggi del primo giro.
      - ⚠️ **Un TITOLO in firma non porta l'articolo** (convenzione dell'utente, `0.83`):
        `Maestro Erborista`, non `Il Maestro Erborista`, e in inglese `Master Herbal`, non
        `The Master Herbal`. La firma nomina chi parla, come farebbe un nome proprio, e
