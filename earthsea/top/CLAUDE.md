@@ -2148,6 +2148,23 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
      italiano solo l'italiano*. I due titoli affiancati erano una mia scelta, motivata col
      ritrovare il passo in entrambe le edizioni, e l'utente l'ha rovesciata.
   3. **E comincia dall'OPERA**: `<Opera>, cap. N - '<titolo>': <che cosa succede>.`
+     - ⚠️⚠️ **La coda è PROSA, e si rilegge come tale** (richiesta dell'utente, 2026-08-25:
+       *ti sei assicurato che il contesto non stoni col tono della citazione e sia
+       grammaticalmente impeccabile?*). Sta sotto una frase di Le Guin, quindi una sciatteria
+       si vede: nella rilettura della `0.85` ne sono uscite **sedici**, e le famiglie sono
+       quattro, tutte da cercare a mano perché nessun controllo le vede.
+       1. **Ridondanze e cacofonie**: *vorrebbe pavimentargli il pavimento*; e la coda che
+          ripete il titolo del capitolo appena citato (*'L'Oceano Aperto': in mare aperto...*).
+       2. **Registro fuori tono**: un'espressione colloquiale in mezzo a righe descrittive.
+       3. **Sintassi contorta**: *del Labirinto, ai servi di Kossil, Arha lascia sapere il
+          minimo*, con due incisi prima del soggetto.
+       4. ⚠️ **La più grave, e non è una questione di forma: la coda che dice il FALSO.**
+          Quattro righe attribuivano al personaggio una cosa che il testo non dice
+          (`Solevivo` dato per mandato da Roke, mentre è lo stregone geloso che se ne va),
+          o nominavano una forma che l'edizione italiana non usa (`la Divorata`,
+          `Vistavvento`: zero occorrenze in Mondadori). ⚠️ **Un nome che sembra ovvio si
+          verifica col grep come tutto il resto**, anche quando sta nel contesto e non nella
+          citazione.
   - ⚠️ **La resa a destra la fa un `float`, e la ragione è che non richiede misure**: un
     flottante dichiarato **dopo** il testo si sistema sulla riga corrente finché c'è posto e
     scende da sé quando non ce n'è, che è esattamente la richiesta. ⚠️ Il contenitore della
@@ -2247,6 +2264,32 @@ consapevole di ri-adattamento sul mio sito.*
 - ⚠️ **Oggi la sostituzione non ha dovuto operare**: nessuna delle trenta citazioni scelte
   contiene uno dei nomi divergenti nel corpo, quindi sono tutte verbatim Mondadori. Il patto
   resta però quello, e vale per le citazioni future.
+- ⚠️⚠️ **La sostituzione non riguarda i soli NOMI: riguarda anche il VOCABOLARIO DEL POTERE**
+  (istruzione dell'utente, 2026-08-25). Mondadori distingue due parole dove Nord ne usa una:
+
+  | inglese | Mondadori | Nord, e il sito |
+  |---|---|---|
+  | `wizard` | mago | **mago** |
+  | `mage` | **magio** | **mago** |
+  | `wizards`, `mages` | maghi, **magi** | **maghi** |
+
+  - **La scelta è dell'utente e la dichiara per quel che è**: *resto su Edizioni Nord anche
+    per la nomenclatura magica: è una semplificazione, ma ne guadagna la forma*. Quindi
+    `magio` e `magi` **non compaiono in pagina**: si riportano come `mago` e `maghi`, nelle
+    citazioni come altrove.
+  - ⚠️ **È la stessa cosa che si fa coi nomi, un gradino più in là**, e vale saperlo prima di
+    trattarla come un'eccezione: la citazione italiana non è verbatim **per costruzione**
+    (§ 'Un testo che nessuna edizione ha, e la ragione per cui va bene'), e questa riga
+    allarga il patto dal nome proprio al lessico. Un audit che confronti col volume troverà
+    `magio`: non è un errore.
+  - ⚠️ **Il CANONE dice già la stessa cosa** (`rules/Earthsea.md`, § 'Il vocabolario del
+    potere ha un GENERE: wizard e mage sono uomini'): la sua tabella rende **sia `wizard` sia
+    `mage` con `mago`**, ed è la resa Nord. Quindi qui non nasce nessun conflitto fra i due
+    file: `magio` è una forma della sola edizione Mondadori.
+  - ⚠️ **Attenzione a `magi` nelle sostituzioni automatiche**: senza confine di parola
+    mangia `magia` e `magie`, che sono parole comuni e non c'entrano niente. Applicato con
+    `\b`, nella `0.85`, il censimento sul dataset dà **una** occorrenza sola (la citazione di
+    Ennas), e nessuna nel resto del sito.
 - **La lista dei nomi da sostituire è CHIUSA e si ricava dal censimento**, non da un'idea:
   Mondadori scrive il nome inglese dove Nord e il dataset ne hanno uno italiano
   (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`). Quale edizione decide sui nomi,
