@@ -1823,6 +1823,22 @@ chiama `nome d'uso EN`.
     § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 - ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
   scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
+- ⚠️⚠️ **L'ARTICOLO non entra nel nome inglese** (decisione dell'utente, `0.82`: *togli il
+  'the'. In inglese dev'essere solo 'Enemy of Morred'*), ed è una scelta editoriale che
+  **diverge dalle fonti**: il testo scrive `the Enemy of Morred`, e la citazione della sua
+  card lo conserva alla lettera, perché là è testo citato e non un campo.
+  - **Il campo è un'INTESTAZIONE, non prosa**, ed è la ragione che regge oltre il caso: un
+    nome di scheda non porta l'articolo, come `Nemico di Morred` non porta 'il'.
+  - ⚠️ **Vale per `nome_en`, NON per gli alternativi e i titoli**, dove l'articolo resta
+    perché fa parte della formula attestata (`the Wandlord`, `the Dragon of Pendor`,
+    `the White, Hero-Mage of Havnor`): là è la fonte a scrivere così, e `capIniz` alza la
+    sola iniziale quando la riga comincia da lì.
+  - ⚠️ **`The King` NON è lo stesso caso** e non va toccato: là l'articolo **è** il nome del
+    gallo di Heleth (`Il Re` in italiano), non un articolo davanti a un nome.
+  - **Effetto misurato, che è quello per cui la richiesta è nata**: il nome inglese passa da
+    180,8 a **148,5px**, cioè meno dell'italiano (156,3), e a 360px le due icone tornano in
+    riga in **entrambe** le lingue. La card si accorcia di 23px e la quarta prova di
+    `freeNames` su quella voce non serve più.
 - ⚠️ **Il caso rovescio: una forma INGLESE fra i nomi alternativi ITALIANI è legittima, e non
   si specchia in inglese** (istruzione dell'utente, 2026-08-23: *talvolta metto come nome
   d'uso alternativo per la voce italiana un nome inglese, per coprire le scelte di entrambe le
@@ -2284,10 +2300,15 @@ etichette sono cinque.
     `display:contents` e un `flex-basis` sul contenitore non sposterebbe niente. Il JS
     guarda il `display` **calcolato** invece di una soglia in px, che sarebbe una seconda
     fonte della stessa cosa.
-  - ⚠️ **A 320px il rimedio si annulla da sé, ed è la prova che la riverifica serve**: là
-    l'a-capo forzato faceva passare quella card da 369,6 a 375,3px, quindi le due misure
-    rifatte lo respingono e il buco resta. Chi lo trovasse ancora su uno schermo strettissimo
-    non stia cercando un difetto: sta guardando la quarta prova che ha detto di no.
+  - ⚠️ **Il rimedio si annulla da sé dove non regge, ed è la prova che la riverifica serve**:
+    a 320px, sulla stessa card, l'a-capo forzato la faceva passare da 369,6 a 375,3px, quindi
+    le due misure rifatte lo respingevano e il buco restava. Chi trovasse un buco su uno
+    schermo strettissimo non stia cercando un difetto: sta guardando la quarta prova che ha
+    detto di no.
+  - Ⓘ **Su 'Nemico di Morred' il rimedio non serve più dalla `0.82`**, perché l'utente ha
+    tolto l'articolo dal nome inglese e le due lingue ci stanno entrambe in riga (vedi
+    § 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi'). La quarta prova
+    resta, e resta per il caso, non per quella card: a 360px la usa ancora un'altra voce.
 - ⚠️⚠️ **Il RIPASSO differito non è una precauzione, cura un difetto misurato**: al cambio
   lingua il primo `freeNames` decide su un layout non ancora assestato e sbaglia. Servono
   **due colpi**, due `requestAnimationFrame` annidati **e** un `setTimeout` a 160ms: coi soli
@@ -2298,8 +2319,11 @@ etichette sono cinque.
   salto ed è giusto non farlo.
   - ✅ **Rimisurato con la quarta prova** (`0.81`): il salto resta **zero** su tutte e sei le
     larghezze, e lo stacco sopra gli 8px sparisce anche a **360px** (era la sola
-    `Nemico di Morred`, 24,5px). A 320px ne resta una, che è quella dove il rimedio si
-    annulla da sé.
+    `Nemico di Morred`, 24,5px). A 320px ne restava una, quella dove il rimedio si annulla
+    da sé.
+  - ✅ **E col nome inglese accorciato** (`0.82`): **zero** stacchi sopra gli 8px su tutte e
+    sei le larghezze, in tutte e due le lingue, col salto sempre a zero. È il primo giro in
+    cui non ne resta nemmeno uno.
 - ✅ **Misurato dopo**: su desktop (1280 e 900) **nessun** elemento si muove, nei due stati
   dell'interruttore dello spazio riservato. Su **mobile** le card non si muovono di un
   pixel (0/120 in posizione relativa alla lista e in altezza).
