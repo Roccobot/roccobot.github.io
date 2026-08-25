@@ -1404,6 +1404,12 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   § 'I due racconti dentro la raccolta *I dodici punti cardinali*'). ⚠️ **Il criterio è quello
   della voce sopra**, e vale per tutti i racconti: **l'anno è quello della prima apparizione,
   non della raccolta** che li contiene.
+  - ⚠️⚠️ **Della raccolta entrano nei corpora SOLO i due racconti di Terramare**, e il taglio
+    si fa **allo scarico della fonte** (istruzione dell'utente, 2026-08-25). Confini, pagine
+    dell'edizione inglese e contro-prova stanno nel canone, § 'I due racconti dentro la
+    raccolta *I dodici punti cardinali*': qui basta sapere che un corpus che porti anche gli
+    altri quindici racconti è **da rifare**, perché un riscontro là dentro sarebbe un falso
+    positivo con la forma di una prova.
   - ⚠️⚠️ **Due valori PLAUSIBILI e sbagliati sono già passati per questa voce**, ed è la
     ragione per cui vale scriverlo: `La regola dei nomi` come titolo (una resa a memoria) e
     `1975` come anno (quello della **raccolta**, non del racconto). Entrambi sono stati messi
