@@ -683,6 +683,24 @@ dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
   - **Quello che la distingue dai draghi puri resta il resto della card**: due etichette di
     razza, il simbolo di genere e i badge, che un drago puro non ha.
 
+#### 🏰 Il Signore di Re Albi entra nel dataset
+
+Dalla `0.84`, istruzione dell'utente: uomo, genere `m`, **né stregone né mago**, nessun vero
+nome e nessun alternativo, origine `Gont`, subito **dopo Diaspro**. La sua citazione viene da
+*Un mago di Terramare*, cap. 2, dove il testo lo nomina come padre della fanciulla che
+Sparviero incontra nel prato di Ogion.
+
+- ⚠️⚠️ **Il canone lo dava ESCLUSO IN VIA DEFINITIVA** (`rules/Earthsea.md`, § 'Chi NON entra
+  nel dataset, e perché', 2026-08-24) e arrivava a **vietare di riparare l'esclusione**. La voce è
+  stata riscritta insieme a questo lavoro: non è stata aggirata, è stata **ribaltata da chi
+  l'aveva presa**. Chi trova la formulazione vecchia in un commit sa che è superata.
+- ⚠️ **Non ha nome proprio, ed è il secondo caso**: come il **Nemico di Morred**, la card
+  usa la perifrasi come nome d'uso. Il motore non ha avuto bisogno di niente di nuovo, e
+  questa è la prova che l'esclusione non nasceva da un ostacolo tecnico.
+- ⚠️ **Nelle fonti i Signori di Re Albi sono DUE persone**, a secoli di distanza: il
+  *vecchio* Signore di *Un mago di Terramare*, padre di Serret, e quello di *Tehanu*, che
+  tiene Pioppo come mago. La voce sta sul primo, che è la prima apparizione dichiarata.
+
 #### 🎩 La riga sola NON è una cosa da draghi: è di chi non ha nome comune
 
 Scoperto con `Akambar` (2026-08-23), che è un **uomo** e non ha nome d'uso, e l'utente ha
@@ -2053,8 +2071,25 @@ niente `tabindex`, niente cursore a manina, niente colore al passaggio.
 ## 📖 Le CITAZIONI nella card: testo Mondadori, nomi Nord
 
 Dalla `0.60`. **Una citazione per personaggio**, in un riquadro stondato in fondo alla card,
-con sotto la riga di contesto. Trenta voci su 120 ce l'hanno: chi è solo menzionato di
-sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una lacuna.
+con sotto la riga di contesto. Dalla `0.84` le portano **105 voci su 121**.
+
+⚠️⚠️ **Il primo giro ne coprì TRENTA, e il criterio era di SCALA, non di merito**: erano le
+**posizioni 1-30** della lista, senza un buco, lavorate a lotti da dieci. La nota che diceva
+*chi è solo menzionato di sfuggita resta col campo vuoto* descriveva le esclusioni **dentro**
+il gruppo (un passo scartato perché suonava come una massima, uno perché già assegnato a
+un'altra voce), non il taglio: la prova che il taglio non fosse di merito è che il **Nemico
+di Morred**, che non parla mai e non compare mai in scena, la citazione ce l'aveva. Chi
+rilegge quella formulazione in un commit vecchio sappia che è stata corretta il 2026-08-25.
+
+- **Chi resta senza, e sono SEDICI**: i **dodici animali** (istruzione dell'utente: *lascia
+  perdere gli animali*), le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di
+  Ark`, `Keor`), e **`Cenerino`**.
+  - ⚠️ **`Cenerino` è l'unico escluso da un LIMITE DELLA FONTE, non da una scelta**:
+    l'edizione Mondadori **non lo nomina mai** (zero occorrenze di `Cenerino` e di
+    `Littleash`), mentre l'inglese lo attesta una volta sola (*Her brother, Littleash, used
+    to come to the city every year or two*). Senza una frase italiana non c'è metà italiana,
+    e una citazione a metà non si scrive. Chi trovasse la voce vuota non stia a cercare la
+    scelta editoriale: è un dato che manca.
 
 - **I quattro campi**: `citazione` / `citazione_en` per il testo, `citazione_fonte` /
   `citazione_fonte_en` per il contesto. ⚠️ Esistono su **tutte** le voci, anche vuoti: un
@@ -2064,6 +2099,17 @@ sfuggita resta col campo vuoto, ed è una scelta dichiarata dall'utente, non una
   applicate (Akambar, Ammaud, Serriadh) sono motivate una per una nello script che le ha
   scelte, e la ragione ricorrente è la stessa: la più corta non nominava il personaggio,
   oppure era lo stesso brano già assegnato a un'altra voce.
+  - ⚠️⚠️ **'Più corta' si applica alle VALIDE, e la distinzione non è un cavillo**: su un
+    personaggio molto citato le prime quaranta frasi per lunghezza sono tutte **didascalie
+    di battuta** (`Vai pure, Deyala.`), che del personaggio non dicono niente. Nel giro
+    della `0.84` il cercatore parte quindi da un **pavimento** di lunghezza e sale: è un
+    filtro di lettura, non un criterio nuovo, e le deroghe vere restano scritte voce per
+    voce nel file delle scelte.
+  - ⚠️ **Una citazione può nominare il personaggio col RUOLO invece che col nome**, dove il
+    testo fa così: `Deyala` è nominato due volte in tutto, e la frase che lo dice davvero lo
+    chiama *l'Erborista*. Vale anche il rovescio, cioè una metà che lo nomina e l'altra no
+    (`Lepre` in italiano, il pronome in inglese): sono i testi a divergere, e la nota della
+    voce lo dichiara.
 - ⚠️⚠️ **I `[...]` AI DUE ESTREMI NON SI SCRIVONO** (convenzione dell'utente, `0.83`), e
   quelli **in mezzo** restano: là segnano un salto dentro il brano, che è un'informazione;
   agli estremi direbbero soltanto che la citazione è un ritaglio, e questo si sa già.
@@ -2205,6 +2251,13 @@ consapevole di ri-adattamento sul mio sito.*
   Mondadori scrive il nome inglese dove Nord e il dataset ne hanno uno italiano
   (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`). Quale edizione decide sui nomi,
   e perché sono i **libri 1, 2 e 3** di Nord, sta nel canone.
+  - ⚠️⚠️ **Col giro della `0.84` la lista si è allungata, e il modo in cui l'ha fatto vale
+    più dei nomi nuovi**: cercando le candidate, **due voci non davano NESSUNA frase**
+    (`Cenerino` e `Gazzamarina`), e la causa non era che il testo non ne parlasse, ma che
+    Mondadori le chiama **all'inglese** (`Littleash`, `Murre`). Quindi la lista non si
+    'completa' a tavolino: un nome che il sito traduce e Mondadori no si scopre **da un
+    risultato vuoto**, ed è il sintomo da riconoscere. Nella `0.84` sono stati sostituiti
+    `Murre`, `Yarrow`, `Vetch`, `Jasper` e `Hare`.
 
 ### ✒️ La prima lettera di ogni riga va MAIUSCOLA
 
