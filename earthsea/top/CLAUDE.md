@@ -2156,6 +2156,11 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
        1. **Ridondanze e cacofonie**: *vorrebbe pavimentargli il pavimento*; e la coda che
           ripete il titolo del capitolo appena citato (*'L'Oceano Aperto': in mare aperto...*).
        2. **Registro fuori tono**: un'espressione colloquiale in mezzo a righe descrittive.
+          ⚠️ E la **parola sbagliata per il mestiere**: chi guarisce è il **guaritore**,
+          correzione dell'utente nella `0.86`. Non è una sfumatura: in quell'edizione
+          `curatore` esiste già e vuol dire un'altra cosa, il **curatore del museo** di un
+          racconto di *I dodici punti cardinali*. Il lessico dei ruoli si prende dal corpus,
+          come i nomi.
        3. **Sintassi contorta**: *del Labirinto, ai servi di Kossil, Arha lascia sapere il
           minimo*, con due incisi prima del soggetto.
        4. ⚠️ **La più grave, e non è una questione di forma: la coda che dice il FALSO.**
