@@ -2128,6 +2128,71 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   risultavano dure. Chi cambia i colori delle card **non venga a cambiare anche questi** per
   coerenza.
 
+#### 🎛️ Decorazione e scostamento dei tasti nel Pannello di controllo
+
+Richiesta dell'utente, `1.00`: la **decorazione** diventa spegnibile, e lo **scostamento dei
+tasti di salto** diventa regolabile invece che deciso a misura (*così lo regolo io invece di
+tirare a indovinare*).
+
+- **`deco`**, terzultima voce, prima di 'Origine' e 'Dito che scorre' (posizione chiesta
+  dall'utente): un interruttore e basta, senza manopole, perché la resa è già stata scelta
+  fra tre mockup e qui serve solo poterla spegnere.
+  - ⚠️ Il verso è **spenta di base, accesa dalla classe** (`fx-deco`), come ogni altro
+    effetto: così un flag che non arriva (dati vecchi, JS a metà) lascia il Pannello pulito
+    invece di mostrare una decorazione che nessuno ha acceso.
+- **`jumpx`**, ultima voce, con una manopola numerica in px.
+  - ⚠️⚠️ **Il valore statico nel CSS è lo stato SPENTO (tasti a filo), non il default**, e la
+    differenza non è formale: se là ci fosse il default, spegnere la manopola non riporterebbe
+    i tasti a filo e la sua nota direbbe il falso. Misurato prima del rimedio: a manopola
+    spenta restavano a 2,33px. Lo scostamento chiesto a misura sopravvive come **default del
+    flag**, quindi la resa non cambia per nessuno: cambia solo chi la decide.
+  - ⚠️ **L'anteprima non è codice dedicato**: la regola è iniettata da `injectFxRules`, che
+    gli slider richiamano a ogni `input`, quindi il valore arriva in pagina mentre si
+    trascina. L'unica aggiunta è `fxAnteprima`, che porta i tasti **a galla** durante la
+    regolazione: si dissolvono da soli e stanno a `z-index:160`, sotto il velo della modale
+    (opaco al 92%, `z-index:200`). Senza, la manopola si regolerebbe a occhi chiusi.
+    - ⚠️ Il timer si **riarma** a ogni movimento invece di contare dal primo: trascinando per
+      più di un secondo l'anteprima sparirebbe proprio mentre la si usa.
+- ⚠️ **Il Worker non è stato toccato, e non per fortuna**: valida i flag **per forma** (foglie
+  o oggetti di foglie, max 40 chiavi), non con una lista di chiavi note. Verificato prima di
+  scrivere il codice: **25 chiavi** dopo l'aggiunta, forma valida. Un salvataggio admin porta
+  le due voci nuove in `dati.js` senza alcuna modifica lato server.
+- ⚠️ **Il segno 'solo mobile'** (una piccola icona di smartphone, `title` e `aria-label`
+  *Solo sito mobile*) accanto a 'Dito che scorre' e 'Tasti ⤒⤓': quelle voci stanno nella tab
+  **Desktop** pur riguardando il solo mobile, che è una conseguenza della config unica
+  (`FX_UNI`), e senza un segno la contraddizione si legge come un difetto. **Una dicitura a
+  parole è la strada scartata** (prima idea dell'utente, corretta da lui stesso): in quella
+  colonna avrebbe mandato a capo le etichette lunghe.
+  - Ⓘ I glifi `⤒⤓` sono stati **verificati nel font**, non dati per scontati: un glifo
+    mancante non dà errore, disegna un rettangolo vuoto. Il metodo è confrontare la larghezza
+    del testo con quella di un codepoint sicuramente assente (area a uso privato): 13,02px
+    contro 22,91px, quindi il glifo è vero.
+
+#### ↔️ I tasti di salto pagina su mobile
+
+Spostati a sinistra su richiesta dell'utente, in **due riprese**: prima ~5px, poi altri 2.
+
+- ⚠️⚠️ **Sono device px a DPR 3, quindi 7 in tutto valgono 2,33px CSS** (`0.1458rem`).
+  Prenderli per buoni avrebbe spostato le freccine del **triplo**. La regola è universale
+  (`Roccobot.md` § '🎨 Grafica'), ma qui è utile il caso concreto: la **seconda** richiesta
+  diceva solo *altri 2px*, senza ripetere il DPR, ed è stata letta con la stessa unità della
+  prima perché è la stessa misura sullo stesso screenshot.
+- Verificato dal DOM: **2,328px CSS**, cioè **6,98 device px**.
+
+#### ✨ Il bagliore intorno al Pannello
+
+Variante 'B' scelta dall'utente fra tre rese (`1.00`): un alone freddo a 34px più un filo di
+bordo illuminato, **solo sul tema scuro**.
+
+- **È la controparte scura dell'ombra portata**, e la ragione per cui serviva è che
+  **un'ombra ha bisogno di luce attorno per esistere**: sul fondo nero non si vede nulla,
+  quindi il tema scuro non aveva niente che staccasse il Pannello dal fondo mentre il chiaro
+  sì. Non è decorazione aggiunta al chiaro: è il pareggio di un'asimmetria.
+- ⚠️ **Sta in una variabile (`--pan-glow`) e il tema chiaro lo SPEGNE**, invece di riscrivere
+  tutta la `box-shadow` là: riscriverla avrebbe duplicato anche l'ombra portata, cioè due
+  copie dello stesso valore destinate a divergere. Ⓘ Lo spegnimento è un'ombra **nulla** e
+  non `none`, così resta una voce valida della `box-shadow` composta.
+
 #### 🌒 La decorazione d'angolo
 
 Mockup dell'utente, `0.96`: in basso a destra del Pannello una **schiaritura bianca** appena
@@ -2184,9 +2249,18 @@ tag in fondo al Pannello) e i **due tasti di salto pagina** erano in **oro vero*
   (`rgba(31,85,98,0.9)`) era un blu-petrolio, non il teal del FAB chiaro. **Usare il colore
   pieno del FAB è la strada scartata**: col glifo bianco sopra il contrasto sarebbe sceso da
   **8,30** a **4,98**, cioè si sarebbe allineata la tinta peggiorando la leggibilità.
-- Ⓘ **Resta in oro il tasto Riordina acceso**, che l'utente non ha nominato: è uno stato
-  transitorio della modalità di riordino, non una selezione. Se un domani va allineato, la
-  tinta è già una variabile.
+- ⚠️ **Anche il tasto Riordina acceso è passato alla tinta** (`1.00`), ed era l'ultimo pezzo
+  di tavolozza di Arda rimasto in pagina. ⚠️ Là però lo stato acceso e quello a riposo hanno
+  ora la **stessa famiglia di colore** (il tasto a riposo è già un azzurro tenue): a
+  distinguerli non è più la tinta ma il **bordo** (da 0,32 a 0,70 di alpha) e il **glifo**,
+  che passa da chiaro ad azzurro pieno. Chi ritocca uno dei due guardi l'altro, perché sono
+  l'unico segnale rimasto.
+  - ⚠️ **Trappola di misura, costata una diagnosi sbagliata**: il tasto ha
+    `transition:background 0.15s,border-color 0.15s`, quindi un `getComputedStyle` letto
+    **subito** dopo aver acceso la classe restituisce ancora i valori di partenza, e sembra
+    che la regola non si applichi (il `color`, che non transita, cambia invece all'istante:
+    è la spia che smaschera il falso allarme). Chi misura uno stato con transizione **aspetti
+    che finisca**.
 
 ##### 🕳️ Il logo BUCA il velo, e i due temi sono speculari
 
