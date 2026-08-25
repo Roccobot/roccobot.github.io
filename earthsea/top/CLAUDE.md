@@ -565,6 +565,14 @@ il disegno.
   la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
   spiegazione fra parentesi la sfonda e la seconda metà le finisce **sopra**, illeggibile.
   Misurato, non previsto. I tooltip delle card restano quelli interi di `ICON_LABEL`.
+- ⚠️ **Il `Signore dei Draghi` sale di `0.1em` NELLA SOLA LEGENDA** del Pannello (`0.81`,
+  istruzione dell'utente: *solo nel pannello... senza spostare altro*). La regola è scoped a
+  `.ctrl-legend-row` e nomina la sola `.si-signoredraghi`, quindi le card e le altre cinque
+  icone non si muovono: misurato, **-1,82px** su quella e **0** su tutte le altre, col
+  Pannello identico (344x572 desktop, 390x583 mobile).
+  - ⚠️ **Si sposta con `top`, non con `transform`**, come i nudge della riga del nome: le
+    regole `.bi-<id>` dei micro-aggiustamenti dei badge usano `translateY` con specificità
+    maggiore, e un transform qui sparirebbe alla prima apertura di quell'editor.
 - ✅ **`maestro` ha i suoi portatori dalla `0.52`**: gli **otto** che le fonti attestano col
   titolo di un Maestro di Roke accanto al nome, cioè Nemmerle e Azver (Schemi/Modelli),
   Lontra (il primo Custode della Porta), Brand e Thorion (Evocatore), Deyala (Erborista),
@@ -2260,6 +2268,26 @@ etichette sono cinque.
      libera spazio, e un'etichetta che stava a capo può rientrare in riga);
   3. la riga resta alta uguale anche con la cella alla larghezza **dell'altra lingua**: è la
      prova che ha salvato `Pannocchia` (345,5 -> 322,3px a 320px) e `Mago Rosso` a 360px.
+- ⚠️⚠️ **La QUARTA prova è un RIMEDIO, non una condizione in più**, e va letta così o sembra
+  una prova che ne respinge altre: alle card che le prove 2 o 3 hanno **scartato** si prova a
+  liberare la cella **e** a mandare a capo il gruppo delle icone (classe `nm-acapo` sulla
+  riga, `flex-basis:100%`) in **tutte e due** le lingue. Così la riga resta alta come prima
+  per costruzione, e il vuoto sparisce lo stesso. Poi si rifanno le misure delle prove 2 e 3
+  sul nuovo assetto, e se una delle due non torna il rimedio si annulla per intero.
+  - **Da dove nasce**: la domanda dell'utente su 'Nemico di Morred' (*perché 'Uomo' è così
+    discostato dal nome del personaggio?*, 2026-08-24). Là a 360px la cella restava riservata
+    perché liberandola le icone rientravano in riga e la card si accorciava di **23px in
+    italiano soltanto** (`Nemico di Morred` 156,3px contro i 180,8 di `the Enemy of Morred`),
+    cioè un salto al cambio lingua. Il buco di 24,5px era il **prezzo dell'anti-jitter**, non
+    un difetto di spaziatura, e questo è ciò che il rimedio cambia.
+  - ⚠️ **Si prova SOLO sotto i 480px**, dove `.rank-flags` è un flex item vero: sopra è
+    `display:contents` e un `flex-basis` sul contenitore non sposterebbe niente. Il JS
+    guarda il `display` **calcolato** invece di una soglia in px, che sarebbe una seconda
+    fonte della stessa cosa.
+  - ⚠️ **A 320px il rimedio si annulla da sé, ed è la prova che la riverifica serve**: là
+    l'a-capo forzato faceva passare quella card da 369,6 a 375,3px, quindi le due misure
+    rifatte lo respingono e il buco resta. Chi lo trovasse ancora su uno schermo strettissimo
+    non stia cercando un difetto: sta guardando la quarta prova che ha detto di no.
 - ⚠️⚠️ **Il RIPASSO differito non è una precauzione, cura un difetto misurato**: al cambio
   lingua il primo `freeNames` decide su un layout non ancora assestato e sbaglia. Servono
   **due colpi**, due `requestAnimationFrame` annidati **e** un `setTimeout` a 160ms: coi soli
@@ -2268,6 +2296,10 @@ etichette sono cinque.
   altezza al cambio lingua e l'altezza della lista è identica. Lo stacco sopra gli 8px
   sparisce da 390px in su; a 320 e 360 restano una o due card, dove liberare costerebbe un
   salto ed è giusto non farlo.
+  - ✅ **Rimisurato con la quarta prova** (`0.81`): il salto resta **zero** su tutte e sei le
+    larghezze, e lo stacco sopra gli 8px sparisce anche a **360px** (era la sola
+    `Nemico di Morred`, 24,5px). A 320px ne resta una, che è quella dove il rimedio si
+    annulla da sé.
 - ✅ **Misurato dopo**: su desktop (1280 e 900) **nessun** elemento si muove, nei due stati
   dell'interruttore dello spazio riservato. Su **mobile** le card non si muovono di un
   pixel (0/120 in posizione relativa alla lista e in altezza).

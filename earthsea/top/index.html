@@ -1666,6 +1666,14 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    centri ottici e l'attacco del testo risultano sfalsati. */
 .ctrl-legend-row .leg-ico { width:.95em; display:inline-flex; justify-content:center; flex-shrink:0; font-size:1.141rem; }
 .ctrl-legend-row .leg-ico img { margin-left:0; }
+/* ⚠️ Il badge 'Signore dei Draghi' sale di 0.1em NELLA SOLA LEGENDA del Pannello (0.81,
+   richiesta dell'utente: *solo nel pannello, senza spostare altro*). La regola è scoped a
+   `.ctrl-legend-row`, quindi sulle card l'icona non si muove di un pixel, e nomina la sola
+   `.si-signoredraghi`, quindi le altre cinque della legenda restano dove sono.
+   ⚠️ Si sposta con `top`, non con `transform`: le regole `.bi-<id>` iniettate dai
+   micro-aggiustamenti dei badge usano `translateY` con specificità maggiore, e un transform
+   qui sparirebbe alla prima apertura di quell'editor. */
+.ctrl-legend-row .leg-ico .si-signoredraghi { position:relative; top:-0.1em; }
 /* Gruppo secondario della riga (es. corona 'In carica', nave Ambasciatore):
    inline-flex così l'icona è centrata in verticale dal flexbox come la
    gemella, non dalla baseline del testo (che la spostava in basso di
@@ -2416,6 +2424,16 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      sopra i 480px il centraggio lo fa il flex da solo, qui no. */
   .rank-name > .rank-flags { display:inline-flex; align-items:center; flex-wrap:nowrap; gap:0.28em; font-size:0.92em; margin:0; vertical-align:middle; transform:translateY(-0.156em); }
   .rank-name > .rank-flags:empty { display:none; }
+  /* ⚠️⚠️ L'A-CAPO FORZATO del gruppo icone (0.81), che è la QUARTA prova di `freeNames`.
+     La mette solo lui, riga per riga, e serve alle card dove liberare la cella del nome
+     accorcerebbe la riga in una lingua sola: là il vuoto fra nome ed etichette era il
+     prezzo dell'anti-jitter (segnalato dall'utente su 'Nemico di Morred'). Tenendo le
+     icone sempre a capo, la riga resta alta come oggi in ENTRAMBE le lingue e la cella si
+     può stringere: il vuoto sparisce senza pagare un salto.
+     ⚠️ Vale solo qui sotto i 480px, dove `.rank-flags` è un flex item vero: sopra è
+     `display:contents` e un `flex-basis` sul contenitore non avrebbe alcun effetto. Lo
+     sa anche il JS, che prima di provare il rimedio guarda il `display` calcolato. */
+  .rank-name.nm-acapo > .rank-flags { flex-basis:100%; }
   /* Gap nome->(icone o etichette) come margine di coda del nome: presente
      anche quando .rank-flags è vuoto (creature senza icone), e mai
      indentante quando le etichette vanno a capo. */
@@ -3003,7 +3021,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.80</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.81</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6259,6 +6277,18 @@ function alignVoci(){
 //      `Pannocchia` passava da 345,5 a 322,3px al cambio lingua, e a 360px `Mago Rosso`
 //      da 145,7 a 122,6. Si simula mettendo alla cella la larghezza della gemella, che è
 //      esattamente il nome dell'altra lingua.
+//   4. IL RIMEDIO delle scartate (0.81), che non è una quarta condizione ma un secondo
+//      tentativo: alle card che le prove 2 o 3 hanno respinto si prova a liberare la cella
+//      E a mandare a capo il gruppo delle icone (`nm-acapo`) in tutte e due le lingue. Così
+//      la riga resta alta come oggi PER COSTRUZIONE, e il vuoto sparisce lo stesso. Le due
+//      misure di prima si rifanno sul nuovo assetto, e dove non tornano il rimedio si
+//      annulla per intero. ⚠️ Nato dalla domanda dell'utente su 'Nemico di Morred'
+//      (*perché 'Uomo' è così discostato dal nome del personaggio?*): là a 360px la cella
+//      restava riservata perché liberandola le icone rientravano in riga e la card si
+//      accorciava di 23px in italiano soltanto (`Nemico di Morred` 156,3px contro i 180,8
+//      di `the Enemy of Morred`).
+//      ⚠️ Il rimedio si prova SOLO dove `.rank-flags` è un flex item vero, cioè sotto i
+//      480px: sopra è `display:contents` e la classe non avrebbe alcun effetto.
 // ⚠️ Senza la prova 1, misurato su sei larghezze: a 320px e a 360px tre card cambiano
 // altezza al cambio lingua (fino a 23px). Da 390px in su nessuna, ed è la ragione per cui
 // una soglia di larghezza sarebbe sembrata sufficiente: non lo è, perché la larghezza a
@@ -6266,7 +6296,11 @@ function alignVoci(){
 function freeNames() {
   var celle = document.querySelectorAll('#rank-list .rank-name-text.bil');
   var i, cand = [];
-  for (i = 0; i < celle.length; i++) celle[i].classList.remove('nm-libero');
+  for (i = 0; i < celle.length; i++) {
+    celle[i].classList.remove('nm-libero');
+    var r0 = celle[i].closest('.rank-name');
+    if (r0) r0.classList.remove('nm-acapo');
+  }
   for (i = 0; i < celle.length; i++) {
     var f = celle[i].querySelector(':scope > .bil-f'), m = celle[i].querySelector(':scope > .bil-m');
     var riga = celle[i].closest('.rank-name');
@@ -6275,7 +6309,8 @@ function freeNames() {
     // La larghezza della gemella si legge ORA, finché è nel flusso: liberata, prende
     // quella della faccia e non direbbe più quanto misura il nome dell'altra lingua.
     cand.push({ el: celle[i], riga: riga, prima: riga.getBoundingClientRect().height,
-                altra: m.getBoundingClientRect().width });
+                altra: m.getBoundingClientRect().width,
+                flags: riga.querySelector(':scope > .rank-flags') });
   }
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('nm-libero');
   for (i = 0; i < cand.length; i++)
@@ -6289,7 +6324,30 @@ function freeNames() {
   for (i = 0; i < cand.length; i++) {
     if (cand[i].fuori) continue;
     cand[i].el.style.width = '';
-    if (Math.abs(cand[i].conAltra - cand[i].prima) > 0.5) cand[i].el.classList.remove('nm-libero');
+    if (Math.abs(cand[i].conAltra - cand[i].prima) > 0.5) { cand[i].el.classList.remove('nm-libero'); cand[i].fuori = true; }
+  }
+  // Prova 4, il RIMEDIO delle scartate: cella libera E icone sempre a capo. Si prova solo
+  // dove il gruppo icone esiste ed è un flex item vero (sotto i 480px): con
+  // `display:contents` la classe non sposterebbe niente, e il rimedio sarebbe una promessa
+  // non mantenuta invece di un tentativo fallito.
+  var rim = [], c;
+  for (i = 0; i < cand.length; i++) {
+    c = cand[i];
+    if (!c.fuori || !c.flags || !c.flags.children.length) continue;
+    if (getComputedStyle(c.flags).display === 'contents') continue;
+    c.el.classList.add('nm-libero'); c.riga.classList.add('nm-acapo');
+    rim.push(c);
+  }
+  for (i = 0; i < rim.length; i++) rim[i].conAcapo = rim[i].riga.getBoundingClientRect().height;
+  // Le due misure di prima, rifatte sul nuovo assetto: l'altezza di adesso e quella con la
+  // cella alla larghezza dell'altra lingua. Il rimedio vale solo se le rispetta entrambe.
+  for (i = 0; i < rim.length; i++) rim[i].el.style.width = rim[i].altra + 'px';
+  for (i = 0; i < rim.length; i++) rim[i].acapoAltra = rim[i].riga.getBoundingClientRect().height;
+  for (i = 0; i < rim.length; i++) {
+    rim[i].el.style.width = '';
+    if (Math.abs(rim[i].conAcapo - rim[i].prima) > 0.5 || Math.abs(rim[i].acapoAltra - rim[i].prima) > 0.5) {
+      rim[i].el.classList.remove('nm-libero'); rim[i].riga.classList.remove('nm-acapo');
+    }
   }
 }
 // ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE, è la cura di un difetto misurato: al CAMBIO
