@@ -67,6 +67,24 @@
   --gold-bright: #d2dbd8;
   --gold-deep: #5f747a;
   --name: #dfe6e3;
+  /* ⚠️⚠️ TINTA DELLA SELEZIONE, derivata dal FAB (istruzione dell'utente, 0.99).
+     Fin qui i filtri badge accesi e i due tasti di salto pagina erano in ORO VERO
+     (`rgba(210,178,92)`), che in questo progetto non e' un colore di casa: e' un residuo
+     letterale di 'I Grandi di Arda', sopravvissuto proprio dove le variabili non
+     arrivavano. ⚠️ Si vede anche dal fatto che `--gold` qui NON e' oro ma un grigio-verde:
+     chi ha ritinto la tavolozza ha cambiato le variabili, e questi valori scritti a mano
+     sono rimasti indietro senza che niente lo segnalasse.
+     ⚠️ La base e' il fondo del FAB (`#3072a1`), ma **schiarita e un filo piu' satura**
+     (istruzione dell'utente: *del turchese mi interessa la tonalita', puoi schiarirlo come
+     meglio credi*): il colore pieno del FAB e' pensato per un disco opaco con un glifo
+     bianco sopra, mentre qui serve per bordi, testo e veli traslucidi su fondo scuro, dove
+     una tinta scura sparisce. I contrasti misurati stanno in `earthsea/top/CLAUDE.md`. */
+  --sel: #7ab4de;
+  --sel-bd: rgba(122,180,222,0.55);
+  --sel-bg: rgba(122,180,222,0.15);
+  --sel-txt: rgba(158,203,233,0.95);
+  --jump-bg: rgba(120,186,228,0.82);
+  --jump-ink: #07202e;
 }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 /* overflow-y:scroll = scrollbar SEMPRE presente: quando il Pannello apre e mette
@@ -1457,7 +1475,13 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    al CHIARO un velo d'OMBRA. Entrambi 'appena percepibili', che e' la richiesta: i valori
    qui sotto sono i piu' bassi che restano visibili. */
 #ctrl-panel { --deco-velo:rgba(255,255,255,0.05); --deco-velo0:rgba(255,255,255,0); }
-html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(0,0,0,0.045); --deco-velo0:rgba(0,0,0,0); }
+/* ⚠️ L'ombra del tema chiaro e' piu' densa della luce dello scuro (0,075 contro 0,05) e
+   NON e' nera: tira al teal del FAB chiaro (`#267d71`, qui scurito a `rgb(18,58,53)`).
+   Sono due ritocchi dell'utente sulla stessa riga, e vanno insieme: sul fondo chiaro il velo
+   si vedeva molto meno che sullo scuro, perche' su un fondo gia' luminoso l'occhio distingue
+   peggio uno scarto verso il basso. Alzare l'alpha e dargli una tinta invece di lasciarlo
+   grigio rende visibile lo stesso effetto senza appesantirlo. */
+html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(18,58,53,0.075); --deco-velo0:rgba(18,58,53,0); }
 /* ⚠️⚠️ IL LOGO NON SI DIPINGE: BUCA il velo (formulazione dell'utente, 0.98: *piu' che un
    colore preciso, diciamo che 'buca' il bagliore o l'ombra riportando lo sfondo al suo
    colore iniziale*). Il velo e' il `background` di questo elemento, e la sua maschera ha due
@@ -1645,7 +1669,7 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
    cambio di stato e beneficia del fade; spegnerlo torna istantaneo (vale la
    transizione della regola base, che non ne ha). Il passaggio del puntatore non
    transita mai, in nessuno dei due versi. */
-.ctrl-legend-row.on { background:rgba(210,178,92,0.13); border-color:rgba(224,194,108,0.55); transition:background 0.15s,border-color 0.15s; }
+.ctrl-legend-row.on { background:var(--sel-bg); border-color:var(--sel-bd); transition:background 0.15s,border-color 0.15s; }
 html[data-theme="light"] .ctrl-legend-row:hover { background:rgba(58,88,120,0.10); }
 html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); border-color:rgba(58,88,120,0.55); }
 /* Riga-badge DISABILITATA ('filtro a risultati 0'): quel badge non ha portatori
@@ -1679,7 +1703,7 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
    `visibility:hidden` (non `opacity:0`) perché toglie l'elemento anche dall'albero di
    accessibilità e dal tab order, conservando l'ingombro. */
 .ctrl-badge-tag--ghost { visibility:hidden; pointer-events:none; }
-.ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 9px 4px 8px; border-radius:9px; border:1px solid rgba(224,194,108,0.6); background:rgba(210,178,92,0.13); color:rgba(224,194,108,0.95); font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
+.ctrl-badge-tag { display:inline-grid; justify-items:start; align-items:center; min-width:146px; padding:4px 9px 4px 8px; border-radius:9px; border:1px solid var(--sel-bd); background:var(--sel-bg); color:var(--sel-txt); font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.15s; }
 /* Larghezza stabile: min-width:146px fissa il riquadro alla stessa misura in
    entrambe le lingue (il testo più lungo, '16 active badges', sta sotto i
    146px), così nemmeno il cambio lingua lo fa 'ballare'. La faccia visibile e
@@ -1714,7 +1738,7 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-num-m { visibility:hidden; pointer-events:none; }
 /* Stesso velo bianco del tasto Riordina acceso, e per la stessa ragione: il fondo oro e'
    lo stato (filtro badge attivo), l'hover lo schiarisce e basta. */
-.ctrl-badge-tag:hover { background:linear-gradient(rgba(255,255,255,0.12),rgba(255,255,255,0.12)),rgba(210,178,92,0.13); }
+.ctrl-badge-tag:hover { background:linear-gradient(rgba(255,255,255,0.12),rgba(255,255,255,0.12)),var(--sel-bg); }
 /* × in EB Garamond, più grande del testo: line-height azzerata (il glifo siede
    alto sulla baseline). La centratura verticale fine è affidata al transform
    per-elemento sopra (.tag-x translateY), non più a un top negativo. */
@@ -2597,7 +2621,7 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
    tasto (non sul contenitore), così l'hover illumina solo il tasto sotto il
    puntatore; su mobile diventano solo freccine a piena opacità (media query in
    fondo). Il contenitore gestisce solo il fade di comparsa (opacity 0->1). */
-.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(210,178,92,0.82);border:1px solid transparent;color:#3a2808;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0.5;transition:filter 0.15s,background 0.15s,opacity 0.15s; }
+.jump-fab { width:2.2rem;height:2.2rem;border-radius:50%;background:var(--jump-bg);border:1px solid transparent;color:var(--jump-ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0.5;transition:filter 0.15s,background 0.15s,opacity 0.15s; }
 /* :focus-visible accanto a :hover, il tasto a fuoco da tastiera va a piena
    opacità come quello sotto il puntatore: a 0.5 (l'opacità di riposo su desktop,
    v9.58) anche l'anello di focus risulterebbe smorzato. */
@@ -2631,7 +2655,10 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
      filo del bordo sta 2,2px fuori, restando a 5,2px dallo schermo.
      ⚠️ `env(safe-area-inset-right)` non è ornamentale: in orizzontale, sui telefoni con
      notch, senza di lui le freccine finirebbero sotto la tacca. */
-  .jump-fabs { right:env(safe-area-inset-right,0px); bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
+  /* ⚠️ I ~5px che l'utente ha misurato a DPR 3 valgono **1,67px CSS**, cioe' `0.104rem`:
+     i pixel di uno screenshot sono device px e si dividono per il DPR (regola universale in
+     `Roccobot.md` § 'Grafica'). Prenderli per buoni avrebbe spostato le freccine del TRIPLO. */
+  .jump-fabs { right:calc(env(safe-area-inset-right,0px) + 0.104rem); bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
   .jump-fab { width:1.65rem; height:1.65rem; opacity:1; }
   .jump-fab svg { width:0.85rem; height:0.85rem; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
@@ -2839,7 +2866,13 @@ html[data-theme="light"] #ctrl-fab { background:#267d71; border-color:rgba(38,12
 html[data-theme="light"] #ctrl-fab:hover { background:#339487; border-color:rgba(51,148,135,0.8); }
 /* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
    dalla regola base). */
-html[data-theme="light"] .jump-fab { background:rgba(31,85,98,0.9); border-color:transparent; color:#ffffff; }
+/* ⚠️ Anche qui la TONALITA' e' quella del FAB (`#267d71`), ma la LUMINOSITA' e' quella che
+   c'era: il valore vecchio (`rgba(31,85,98,0.9)`) era un blu-petrolio (tonalita' ~195), non
+   il teal del FAB (~172). ⚠️ Usare il colore pieno del FAB e' la strada scartata: con un
+   glifo bianco sopra il contrasto scendeva da **8,30** a **4,98**, cioe' si allineava la
+   tinta peggiorando la leggibilita'. Ruotando la sola tonalita' si ottiene l'una senza
+   pagare l'altra. */
+html[data-theme="light"] .jump-fab { background:rgba(24,86,78,0.9); border-color:transparent; color:#ffffff; }
 /* ── Tasti salto su MOBILE: versione "solo freccine" (senza tondo) ──────────
    Meno invadente del cerchio; le freccine restano leggibili grazie a una
    leggera ombra. Il tondo VELATO (versione B) si riattiva con
@@ -3069,7 +3102,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.98</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.99</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

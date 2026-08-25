@@ -2158,6 +2158,36 @@ percettibile con dentro il **logo del progetto**, tagliato dal bordo e in positi
     in un `innerHTML`, e il divieto è una regola non derogabile. Che il markup preesistente
     lo usi ancora non è una ragione per aggiungergliene altro.
 
+##### 🎨 La tinta della SELEZIONE viene dal FAB, e l'oro era un residuo di Arda
+
+Istruzione dell'utente, `0.99`. I **filtri badge accesi** (riquadro della riga di legenda e
+tag in fondo al Pannello) e i **due tasti di salto pagina** erano in **oro vero**
+(`rgba(210,178,92)`), che in questo progetto non è un colore di casa.
+
+- ⚠️⚠️ **Era un residuo LETTERALE di 'I Grandi di Arda'**, sopravvissuto proprio dove le
+  variabili non arrivavano. Lo si vede da un dettaglio che vale come diagnosi generale: in
+  questo progetto **`--gold` non è oro** ma un grigio-verde, perché chi ha ritinto la
+  tavolozza ha cambiato le **variabili**; i valori scritti a mano nelle regole sono rimasti
+  indietro, e nessuno li ha segnalati per settimane. Il commento del CSS diceva perfino *in
+  tinta col FAB (oro su scuro)*, mentre il FAB scuro è blu: la nota descriveva Arda.
+- La base è il fondo del FAB (`#3072a1` sullo scuro), **schiarita e un filo più satura**: il
+  colore pieno è pensato per un disco opaco con un glifo bianco sopra, mentre qui serve per
+  bordi, testo e veli traslucidi su fondo scuro, dove una tinta scura sparisce.
+- **I contrasti misurati** (fondo del Pannello `rgb(35,39,42)`): testo del tag **6,07**,
+  bordo del riquadro acceso **3,06**, testo della riga accesa **9,41**; disco del tasto di
+  salto sulla pagina **6,02** e freccia sul disco **5,70**.
+  - ⚠️ **Il glifo del tasto è SCURO su disco chiaro, non chiaro su disco scuro**, ed è la
+    scelta che ha dato i numeri migliori: la prima stesura (disco `rgba(59,150,206,0.82)` con
+    freccia quasi bianca) si fermava a **3,98** contro i 5,70 di adesso. È anche il rapporto
+    che l'oro aveva prima, quindi il tasto conserva il suo peso visivo.
+- ⚠️ **Sul tema CHIARO è cambiata la sola TONALITÀ**, non la luminosità: il valore vecchio
+  (`rgba(31,85,98,0.9)`) era un blu-petrolio, non il teal del FAB chiaro. **Usare il colore
+  pieno del FAB è la strada scartata**: col glifo bianco sopra il contrasto sarebbe sceso da
+  **8,30** a **4,98**, cioè si sarebbe allineata la tinta peggiorando la leggibilità.
+- Ⓘ **Resta in oro il tasto Riordina acceso**, che l'utente non ha nominato: è uno stato
+  transitorio della modalità di riordino, non una selezione. Se un domani va allineato, la
+  tinta è già una variabile.
+
 ##### 🕳️ Il logo BUCA il velo, e i due temi sono speculari
 
 Dalla `0.98`, e la formulazione è dell'utente: *più che un colore preciso, diciamo che 'buca'
@@ -2187,6 +2217,11 @@ viene dipinto, quindi si vede il fondo come se non ci fosse mai stato niente sop
 - ⚠️ **`mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+.** Dove manca, i due
   strati si **sommano** invece di sottrarsi: il difetto è una macchia di velo a forma di logo,
   non una pagina rotta.
+- ⚠️ **I due veli NON hanno la stessa densità, e non è una svista**: luce a **0,05** sullo
+  scuro, ombra a **0,075** sul chiaro (ritocco dell'utente, `0.99`). Su un fondo già luminoso
+  l'occhio distingue peggio uno scarto verso il basso, quindi la stessa alpha darebbe due
+  effetti diversi. E l'ombra **non è nera**: tira al teal del FAB chiaro (`#267d71`, scurito
+  a `rgb(18,58,53)`), perché un grigio puro su questa tavolozza si legge come sporco.
 
 #### ⚧ Il filtro per GENERE, e le voci senza
 
