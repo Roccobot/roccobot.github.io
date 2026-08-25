@@ -537,6 +537,24 @@ html { --col-max:740px; }
   background:rgba(var(--ccrgb,111,116,130),0.055);
 }
 html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),0.075); }
+/* ⚠️⚠️ LA RISERVA ANTI-JITTER STA FUORI DAL RIQUADRO (0.89), ed è la correzione di un
+   difetto che l'utente ha colto sullo screenshot di Penthe: la lingua più lunga (di
+   norma l'inglese, che va a capo dove l'italiano sta in una riga) riservava il suo
+   spazio DENTRO il riquadro, che si allungava e mostrava un vuoto fra la citazione e la
+   riga di contesto. Lo spazio riservato è una misura di PAGINA, non un contenuto della
+   citazione: il riquadro deve stringersi su quello che c'è, e il vuoto avanzare sotto.
+   ⚠️ Il modo è lo stesso grid-stack di `.bil`, applicato un livello PIÙ SU: nella cella
+   stanno due riquadri interi, quello visibile e la gemella dell'altra lingua. Così la
+   cella prende l'altezza maggiore (la card non si muove al cambio lingua) e il riquadro
+   visibile tiene la propria, che è quella del suo contenuto.
+   ⚠️ `align-self:start` è ciò che tiene il riquadro in alto: senza, la griglia lo
+   stirerebbe all'altezza della cella e il difetto tornerebbe identico.
+   Ⓘ La forma scartata è impilare le DUE RIGHE separatamente (`.rc-testo` e `.rc-fonte`
+   ciascuna `.bil`), che è come stava dalla 0.67 alla 0.88: teneva ferme le righe una per
+   una, ma il vuoto finiva per forza dentro al riquadro, perché la cella era là dentro. */
+.rc-slot { display:grid; }
+.rc-slot > .rank-citaz { grid-area:1 / 1; align-self:start; min-width:0; }
+.rc-slot > .rc-m { visibility:hidden; pointer-events:none; }
 .rc-testo {
   display:block;
   font-family:'EB Garamond',serif; font-style:italic; font-weight:400;
@@ -572,8 +590,7 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
   font-size:0.78em; letter-spacing:0.04em;
   color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
 }
-.rc-testo:not(.bil) { display:flow-root; }
-.rc-testo.bil > .bil-f, .rc-testo.bil > .bil-m { display:flow-root; }
+.rc-testo { display:flow-root; }
 /* La riga di contesto: opera, capitolo e che cosa succede, nella SOLA lingua corrente.
    ⚠️ Fino alla 0.66 portava i due titoli affiancati (`Tehanu / Tehanu`) e in testa il
    nome di chi parla: l'utente ha tolto entrambi (2026-08-24), e il nome è diventato la
@@ -3021,7 +3038,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.88</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.89</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5729,17 +5746,20 @@ function sottotitoloDi(p, it){
 // ⚠️ Il testo italiano è MONDADORI coi nomi del SITO: è un mix voluto e dichiarato
 // (vedi `earthsea/top/CLAUDE.md`, § sulle citazioni). Nelle trenta scelte non è servita
 // nessuna sostituzione, quindi oggi sono tutte verbatim, ma il patto resta quello.
-// Il blocco della citazione, con la gemella anti-jitter sulle DUE righe separatamente
-// (0.67) e non sul blocco intero.
-// ⚠️⚠️ La differenza si vede solo dentro il riquadro, ed è il difetto che l'utente ha
-// còlto: impilando il blocco, il riquadro teneva l'altezza giusta (il massimo fra le due
-// lingue) ma il CONTENUTO ci ballava dentro, perché la citazione inglese è quasi sempre
-// più corta di una riga e la riga di contesto le saliva sotto. Misurato: 3 testi e 5
-// righe di contesto si muovevano di 24,75px, cioè una riga esatta.
-// ⚠️ Impilando le due righe una per una, ciascuna prende il massimo della propria coppia
-// e nessuna si sposta: lo spazio vuoto, quando avanza, resta in fondo alla sua riga.
-// ⚠️ `sempre` è acceso su entrambe: dove una lingua manca il contenitore si emette lo
-// stesso, o tornerebbe il salto che si sta togliendo.
+// Il blocco della citazione, con la gemella anti-jitter sul RIQUADRO INTERO e FUORI da
+// lui (0.89): due riquadri completi nella stessa cella di griglia, quello visibile e
+// quello dell'altra lingua, così la cella riserva l'altezza maggiore e il riquadro
+// visibile tiene la sua. Il perché sta nel CSS di `.rc-slot`, e in breve è questo: lo
+// spazio riservato è una misura di pagina, non un contenuto della citazione, quindi non
+// può stare dentro al riquadro.
+// Ⓘ Le due forme provate prima, in ordine, perché nessuna delle due torni: fino alla
+// 0.66 si impilava il blocco con la gemella DENTRO il riquadro, e il contenuto ci
+// ballava (3 testi e 5 righe di contesto si spostavano di 24,75px, una riga esatta);
+// dalla 0.67 alla 0.88 si impilavano le DUE RIGHE separatamente, e le righe stavano
+// ferme, ma il vuoto restava per forza dentro al riquadro, che si allungava.
+// ⚠️ Le due lingue si emettono ENTRAMBE anche dove una manca, o tornerebbe il salto che
+// si sta togliendo; la gemella invece si salta quando le due coincidono in tutto, che è
+// la stessa economia di `bilingue`.
 // ⚠️⚠️ CHI PRONUNCIA la frase sta in coda alla citazione, non più in testa al contesto
 // (istruzione dell'utente, 2026-08-24): a destra, in linea con l'ultima riga se ci sta e
 // a capo se non ci sta. Il `float` fa esattamente questo, ed è la sola via che lo ottiene
@@ -5762,10 +5782,20 @@ function citazHtml(p){
     // e non seguirebbe il rientro che `alignVoci` scrive sulla voce.
     return escapeHtml(t) + (v ? '<span class="rc-voce">\\ ' + escapeHtml(v) + '</span>' : '');
   }
-  return '<span class="rank-citaz">' +
-    bilingue('rc-testo', faccia(it, vit), faccia(en, ven), true) +
-    ((fit || fen) ? bilingue('rc-fonte', escapeHtml(fit), escapeHtml(fen), true) : '') +
-    '</span>';
+  // Un riquadro completo per lingua: `m` marca la gemella, che riserva l'altezza e non
+  // si vede. La riga di contesto si emette solo dove c'è, perché un contenitore vuoto
+  // dentro al riquadro aprirebbe di nuovo un vuoto là dentro.
+  function riquadro(t, v, f, m){
+    return '<span class="rank-citaz' + (m ? ' rc-m" aria-hidden="true' : '') + '">' +
+      '<span class="rc-testo">' + faccia(t, v) + '</span>' +
+      (f ? '<span class="rc-fonte">' + escapeHtml(f) + '</span>' : '') +
+      '</span>';
+  }
+  var cur = currentLang === 'it';
+  var box = riquadro(cur ? it : en, cur ? vit : ven, cur ? fit : fen, false);
+  if (it === en && vit === ven && fit === fen) return box;
+  return '<span class="rc-slot">' + box +
+    riquadro(cur ? en : it, cur ? ven : vit, cur ? fen : fit, true) + '</span>';
 }
 function origHtml(p){
   var c = origCfg();
@@ -6195,8 +6225,11 @@ function toggleCardMidlines() {
 // elemento. Ed è anche una questione di correttezza: il tetto di sicurezza legge la
 // posizione della voce, che senza l'azzeramento porterebbe dentro lo spostamento del
 // giro precedente.
-// ⚠️ Le gemelle invisibili dell'anti-jitter si saltano: riservano l'altezza, non si
-// vedono, e allinearle sarebbe lavoro per nessuno.
+// ⚠️ I riquadri gemelli dell'anti-jitter si saltano (`:not(.rc-m)`): riservano l'altezza,
+// non si vedono, e allinearli sarebbe lavoro per nessuno. ⚠️ Saltarli non falsa l'altezza
+// riservata, ed è la ragione per cui si può: lo spostamento si scrive in `right` su un
+// elemento `position:relative`, che non tocca il flusso, quindi la gemella non allineata
+// è alta esattamente quanto sarebbe da allineata.
 // Costo misurato (2026-08-24, 9 attribuzioni su 120 schede): 0,43 ms a giro, contro i
 // 2,6 ms di `optimizeBipartite` e i 22,5 di `tightenNames` che già girano lì accanto.
 // ── La baseline: una sonda, perché un float non si allinea al testo ────────────
@@ -6219,7 +6252,7 @@ function baselineDi(el, prima) {
   return y;
 }
 function alignVoci(){
-  var facce = document.querySelectorAll('#rank-list .rc-testo > .bil-f, #rank-list .rc-testo:not(.bil)');
+  var facce = document.querySelectorAll('#rank-list .rank-citaz:not(.rc-m) > .rc-testo');
   var lav = [], i;
   for (i = 0; i < facce.length; i++) {
     var vv = facce[i].querySelector(':scope > .rc-voce');
