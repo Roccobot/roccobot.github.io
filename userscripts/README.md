@@ -400,16 +400,31 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
   - Un trascinamento **non** fa scattare l'alternanza adattato/reale del clic: sotto i
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
-- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di sette
-  voci: **Copy image**, **Copy image URL**, **Save image...**, separatore,
-  **Fit to view**, **100%**, **200%**, **400%** (gli zoom sono centrati sul punto
-  cliccato). L'elenco è identico su raster e su SVG; cambia il **contenuto** di due voci:
+- **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di otto
+  voci: **Copia immagine**, **Copia indirizzo immagine**, **Scarica**,
+  **Cerca simili**, separatore, **Adatta alla vista**, **100%**, **200%**, **400%**
+  (gli zoom sono centrati sul punto cliccato). Le etichette seguono la lingua
+  dell'interfaccia: in inglese sono **Copy image**, **Copy image URL**, **Download**,
+  **Search similar**, **Fit to view**. L'elenco è identico su raster e su SVG; cambia il
+  **contenuto** di due voci:
   - sugli SVG **Copy image** produce un raster a **96 DPI**, cioè alla risoluzione
     dello schermo, perché un vettoriale pixel propri non ne ha. Vale la convenzione del
     pannello di esportazione (`px = misura nominale × DPI / 96`), quindi la copia è 1:1
     con la dimensione nominale: un SVG 640×360 si copia a 640×360. Si cambia con la
     costante `DPI_COPIA`.
-  - sugli SVG **Save image...** salva il file originale intatto.
+  - sugli SVG **Scarica** salva il file originale intatto.
+  - **Cerca simili (dalla 3.1.0)** consegna l'immagine a un motore di ricerca per
+    immagini, scelto nelle opzioni fra **Google Lens** (predefinito), **Yandex**, **Bing**
+    e **TinEye**. ⚠️ La ricerca inversa la fa il **motore**, che si scarica l'immagine da
+    un indirizzo pubblico: su un **file locale** (`file://`) quell'indirizzo non gli dice
+    niente, quindi lo script **copia l'immagine** negli appunti e apre la pagina del
+    motore, dove si incolla, dicendolo a schermo. ⚠️ Su un file locale le due azioni si
+    ostacolano a vicenda, ed è un conflitto misurato: scrivere negli appunti **consuma**
+    l'attivazione del clic e la finestra aperta dopo viene bloccata, mentre aprendo prima
+    la finestra il documento **perde il fuoco** e la copia fallisce. Si passa quindi da
+    `GM_openInTab`, che è del gestore e non dipende da quell'attivazione; dove non ci
+    fosse, si torna a `window.open` e l'avviso propone di trascinare il file nella pagina
+    appena aperta.
   - ⚠️ **Un menu proprio sostituisce quello del browser**, non si affianca, e quello
     nativo non è richiamabile da JavaScript: si perde **"Ispeziona"**, che non è
     reimpiazzabile. Via di fuga: **`shift` + tasto destro** lascia passare il menu del
