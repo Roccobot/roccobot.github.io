@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Decent Image Viewer
 // @namespace       https://roccobot.github.io/
-// @version         3.1.0
-// @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, download, search similar, fit, 100/200/400%), and shift+right-click keeps the browser's. 'Search similar' hands the image to a reverse image search engine, chosen in the options among Google Lens, Yandex, Bing and TinEye; on a local file, where no engine can reach the image, it copies the picture and opens the engine so it can be pasted. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
+// @version         3.1.1
+// @description     Decent image viewer for the browser's own image pages, for local files (file:///) and for SVG. Checkerboard background; one-line info panel with format, weight, pixel size and zoom; the image fits the view but never grows past its real size (1:1 with physical pixels), and a click toggles fit and 1:1. Zoom acts on the image only, never on the page: the bare wheel steps through round values and snaps at 100%, from 2% to 4000%; ctrl+wheel and pinch work too; dragging pans, with an overview navigator. Right-click opens its own menu (copy image, copy URL, image search, download, fit, 100/200/400%), and shift+right-click keeps the browser's. 'Image search' hands the image to a reverse image search engine, chosen in the options among Google Lens, Yandex, Bing and TinEye; on a local file, where no engine can reach the image, it copies the picture and opens the engine so it can be pasted. SVG stays vector and exports either as PNG at a chosen DPI or as an SVG stripped of metadata. Keys: A fill-view mode, I wheel direction, N navigator. The Options entry in the manager's menu opens a settings page: interface language (Italian, English or automatic), theme, gestures and export defaults, all kept across script updates.
 // @author          Rocco Casadei, a.k.a. Roccobot
 // @icon            https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match           http://*/*
@@ -116,7 +116,7 @@
       mCopy: 'Copy image',
       mCopyUrl: 'Copy image URL',
       mSave: 'Download',
-      mSimilar: 'Search similar',
+      mSearch: 'Image search',
       mFit: 'Fit to view',
       tCopied: 'Image copied',
       tUrlCopied: 'URL copied',
@@ -191,7 +191,7 @@
       oDpiCopyD: 'Resolution of the image generated on the fly by \'Copy image\' on SVG files.',
       oDpiPng: 'Default DPI for exported PNGs',
       oSimilar: 'Reverse image search',
-      oSimilarD: 'Engine used by \'Search similar\' in the right-click menu.',
+      oSimilarD: 'Engine used by \'Image search\' in the right-click menu.',
       oLens: 'Google Lens',
       oYandex: 'Yandex',
       oBing: 'Bing',
@@ -216,7 +216,7 @@
       mCopy: 'Copia immagine',
       mCopyUrl: 'Copia indirizzo immagine',
       mSave: 'Scarica',
-      mSimilar: 'Cerca simili',
+      mSearch: 'Ricerca immagine',
       mFit: 'Adatta alla vista',
       tCopied: 'Immagine copiata',
       tUrlCopied: 'Indirizzo copiato',
@@ -291,7 +291,7 @@
       oDpiCopyD: 'Risoluzione dell\'immagine generata al volo con \'Copia immagine\' su file SVG.',
       oDpiPng: 'DPI predefinito per i PNG esportati',
       oSimilar: 'Ricerca per immagine',
-      oSimilarD: 'Motore usato da \'Cerca simili\' nel menu del tasto destro.',
+      oSimilarD: 'Motore usato da \'Ricerca immagine\' nel menu del tasto destro.',
       oLens: 'Google Lens',
       oYandex: 'Yandex',
       oBing: 'Bing',
@@ -1559,8 +1559,8 @@
       return [
         { t: T('mCopy'), f: copyImage },
         { t: T('mCopyUrl'), f: copyUrl },
+        { t: T('mSearch'), f: searchSimilar },
         { t: T('mSave'), f: saveImage },
-        { t: T('mSimilar'), f: searchSimilar },
         { sep: true },
         { t: T('mFit'), f: goFit },
         { t: '100%', f: function () { zoomTo(realScale, x, y); } },

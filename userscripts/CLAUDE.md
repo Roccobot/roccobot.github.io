@@ -162,10 +162,12 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
   una funzione sola, e farla dipendere dalla lingua rimetterebbe in piedi il `numIt` che era
   stato tolto apposta.
 
-### 🔎 'Cerca simili' e il menu del tasto destro
+### 🔎 'Ricerca immagine' e il menu del tasto destro
 
-Nato con la **3.1.0**, insieme al rinomino di `Salva immagine...` in **`Scarica`** (richiesta
-dell'utente, 2026-08-25). La voce nuova sta **subito sotto** a quella dello scaricamento e
+Nata con la **3.1.0**, insieme al rinomino di `Salva immagine...` in **`Scarica`** (richiesta
+dell'utente, 2026-08-25). ⚠️ Nella **3.1.1**, sempre su richiesta dell'utente, la voce ha
+cambiato nome (era `Cerca simili`) e ha scavalcato lo scaricamento: l'ordine di oggi è **prima
+`Ricerca immagine`, poi `Scarica`**, e le note che dicono il contrario sono superate. La voce
 consegna l'immagine a un motore di ricerca per immagini.
 
 - ⚠️⚠️ **La ricerca inversa la fa il MOTORE, non il browser**: gli si passa un **indirizzo
