@@ -2575,6 +2575,14 @@ che serve sapere **da questo lato**.
   Worker le conserva perché **sostituisce le righe** invece di ricostruire il file (come fa
   invece quello di Arda). Se un domani si toccasse quella parte, `proxy/CLAUDE.md` dice
   perché, e c'è un banco di prova da lanciare prima.
+  - ⚠️ **Chi riscrive UNA riga dell'array deve rimetterci la VIRGOLA finale**, che `json.dumps`
+    non produce: ogni riga dell'array la porta tranne l'ultima, e ricucire il corpo con
+    `'\n'.join` invece di `',\n'.join` lascia due oggetti attaccati. Costa caro perché
+    l'errore **non compare dove si è scritto**: l'interprete si ferma sulla riga *dopo*, e la
+    pagina non mostra nemmeno una card, che sembra un guasto del motore. Successo alla `0.88`
+    su una modifica di una sola riga; la prova rapida è
+    `node -e "eval(require('fs').readFileSync('dati.js','utf8')); console.log(dati.length)"`,
+    che deve stampare il numero delle voci.
 
 ## 🗄️ Le chiavi di `localStorage` portano il prefisso `earthsea-`
 
