@@ -2017,6 +2017,18 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   verticali coincidono a **581,742px** (la centratura la dà `align-items:center` della riga,
   non un margine). **La stesura orizzontale `0.66rem x 0.53rem` è la misura scartata**: non
   corrispondeva al mockup.
+- ⚠️ **L'hover delle voci del Pannello è un BIANCO TRASLUCIDO** (istruzione dell'utente,
+  `0.94`), `rgba(255,255,255,0.09)`, e vale sia per le righe di filtro sia per quelle della
+  legenda: due hover diversi nello stesso riquadro si vedrebbero. Prima era `#463E2B`, un
+  marrone giallastro ereditato dal motore di Arda, che sul fondo scuro del Pannello
+  (`rgba(36,40,43,0.94)`, fondo effettivo `rgb(34.6, 39.2, 42.5)`) si leggeva come un alone
+  **giallo**. ⚠️ Sta nella regola **base** e non in un ramo di tema, ed è una scelta: un
+  bianco a bassa opacità schiarisce e basta, quindi non può stonare col fondo qualunque esso
+  sia (il tema **chiaro** ha il suo valore proprio, `rgba(104,144,168,0.12)`, perché là il
+  bianco sparirebbe). Misurato: luminanza **0,0423** contro **0,0198** del fondo, stacco dello
+  stesso ordine del marrone (0,0492) e testo che ci guadagna, da **8,84** a **9,51** di
+  contrasto. **`0.11` è la misura scartata**: pareggerebbe la luminanza esatta del marrone,
+  ma la parità con un valore che si stava togliendo non è un obiettivo.
 - ⚠️ I **colori** dei rettangoli (`CAT_COLOR`, dati dall'utente nella `0.92`) sono una
   tavolozza **a sé**, non quella delle card (`cardColors` in `dati.js`): qui il rettangolo è
   un francobollo accanto a un testo, non un fondo di scheda, e le tinte piene della lista
