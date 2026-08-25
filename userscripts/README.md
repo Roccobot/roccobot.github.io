@@ -401,11 +401,11 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     4px di movimento è un clic, sopra è un trascinamento.
   - **Shift+rotella** e le barre restano comunque disponibili.
 - **Menu del tasto destro (dalla 2.17).** Il clic destro apre un menu proprio di otto
-  voci: **Copia immagine**, **Copia indirizzo immagine**, **Scarica**,
-  **Cerca simili**, separatore, **Adatta alla vista**, **100%**, **200%**, **400%**
+  voci: **Copia immagine**, **Copia indirizzo immagine**, **Ricerca immagine**,
+  **Scarica**, separatore, **Adatta alla vista**, **100%**, **200%**, **400%**
   (gli zoom sono centrati sul punto cliccato). Le etichette seguono la lingua
-  dell'interfaccia: in inglese sono **Copy image**, **Copy image URL**, **Download**,
-  **Search similar**, **Fit to view**. L'elenco è identico su raster e su SVG; cambia il
+  dell'interfaccia: in inglese sono **Copy image**, **Copy image URL**,
+  **Image search**, **Download**, **Fit to view**. L'elenco è identico su raster e su SVG; cambia il
   **contenuto** di due voci:
   - sugli SVG **Copy image** produce un raster a **96 DPI**, cioè alla risoluzione
     dello schermo, perché un vettoriale pixel propri non ne ha. Vale la convenzione del
@@ -413,7 +413,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     con la dimensione nominale: un SVG 640×360 si copia a 640×360. Si cambia con la
     costante `DPI_COPIA`.
   - sugli SVG **Scarica** salva il file originale intatto.
-  - **Cerca simili (dalla 3.1.0)** consegna l'immagine a un motore di ricerca per
+  - **Ricerca immagine (dalla 3.1.0)** consegna l'immagine a un motore di ricerca per
     immagini, scelto nelle opzioni fra **Google Lens** (predefinito), **Yandex**, **Bing**
     e **TinEye**. ⚠️ La ricerca inversa la fa il **motore**, che si scarica l'immagine da
     un indirizzo pubblico: su un **file locale** (`file://`) quell'indirizzo non gli dice
