@@ -2365,6 +2365,22 @@ convenzione tipografica del dataset, come quelle di 'I Grandi di Arda'.
 - ⚠️ **Vale per la riga LOGICA**: se il sottotitolo va a capo, la seconda riga fisica sta in
   mezzo a una frase e non si tocca. E tocca al pezzo che **apre** la riga, che è il primo
   presente: i titoli aprono la riga solo quando i nomi alternativi mancano.
+- ⚠️⚠️ **Il rovescio della regola: DENTRO una frase, l'articolo di un appellativo va
+  MINUSCOLO** (istruzione dell'utente, `0.89`, sullo screenshot di Penthe): `mentre la
+  Divorata si arrabbia`, non `mentre La Divorata`. La maiuscola è del nome, non dell'articolo,
+  che resta un articolo come ogni altro; e l'inglese lo faceva già (`while the Eaten One
+  rages`), quindi le due lingue sono tornate a dire la stessa cosa.
+  - **Dove NON si applica, e perché**: negli **elenchi** di `appellativi`, dove ogni voce sta
+    da sola e non è dentro nessuna frase, la forma resta quella scelta dall'utente nella
+    `0.86` (`Alta Sacerdotessa delle Tombe di Atuan, La Divorata`). Ⓘ Là l'articolo apre la
+    voce, ed è il caso della regola qui sopra, non della sua eccezione.
+  - ⚠️ E non si applica **mai** dentro una citazione, che è verbatim: se la fonte scrive
+    l'articolo maiuscolo in mezzo alla frase, resta com'è. La convenzione è nostra e vale sul
+    testo nostro, cioè sulle righe di contesto.
+  - **Censimento della `0.89`**: un caso solo in tutto il dataset (Penthe), trovato con una
+    ricerca di `La|Il|Lo|Le|Gli|I|L'` maiuscoli non a inizio campo su tutti i campi delle 121
+    voci. La ricerca vale più della singola correzione, e si rifà uguale quando si aggiungono
+    righe di contesto.
 
 ### ⚠️ Come si VERIFICA una citazione, e le due trappole che l'hanno insegnato
 
@@ -2427,6 +2443,26 @@ corrette nella `0.67`.
   impila **le due righe separatamente** invece del blocco; il footer nasconde la riga con
   `visibility` e spegne il bottone con `disabled` invece che con `hidden`, perché quello
   usciva dal flusso portandosi via anche il suo bordo da 1px.
+  - ⚠️⚠️ **Il secondo rimedio è stato SUPERATO nella `0.89`, e questa è la regola che ne
+    resta**: *la riserva anti-jitter non sta mai dentro un contenitore che si VEDE*. Impilare
+    le due righe teneva ferme le righe, ma la cella era **dentro** al riquadro della
+    citazione, quindi il riquadro si allungava fino alla lingua più alta e mostrava un vuoto
+    fra la citazione e la riga di contesto (segnalazione dell'utente con tre screenshot sulla
+    card di Penthe, dove l'inglese va a capo e l'italiano no).
+  - **Il rimedio nuovo è lo stesso grid-stack un livello PIÙ SU** (`.rc-slot`): nella cella
+    stanno **due riquadri interi**, il visibile e la gemella dell'altra lingua. La cella
+    riserva il massimo, il riquadro visibile tiene l'altezza del proprio contenuto, e il vuoto
+    avanza **sotto** il riquadro, dove è invisibile perché la card non ha sfondo suo.
+  - **La misura che chiude il caso** (2026-08-25, sei larghezze da 320 a 1440px, font veri):
+    **0 card** cambiano altezza al cambio lingua e il vuoto residuo dentro i **105** riquadri
+    è **0px** su tutte. ⚠️ La seconda metà della misura è quella che prima non si faceva:
+    guardare solo le altezze delle card avrebbe dichiarato 'a posto' anche la `0.88`, che il
+    difetto ce l'aveva.
+  - ⚠️ **Il criterio per riconoscere il caso altrove**: se l'elemento che porta la gemella ha
+    un `background`, un `border` o un `padding` visibile, la riserva è nel posto sbagliato e
+    va spostata su un contenitore trasparente che lo avvolge. Se invece è testo nudo (le righe
+    `.rank-desc`, `.rank-subtitle`, `.rank-title`), la gemella può restare dov'è: il vuoto
+    cade sul fondo della card e non lo vede nessuno.
 - ⚠️ **Il prezzo del primo rimedio è dichiarato**: sulle card dove i due nomi divergono
   resta uno stacco variabile fra nome ed etichetta, ed era il patto dell'utente (*uno spazio
   vuoto è preferibile al jitter*). ⚠️ **Il patto è CADUTO nella `0.71`**: vedi qui sotto. Non
