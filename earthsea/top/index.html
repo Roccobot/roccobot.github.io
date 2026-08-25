@@ -1113,15 +1113,21 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    ⚠️ `align-items:center` allinea l'etichetta al centro della sua casella: era il
    difetto dell'allineamento verticale che l'utente ha misurato (5px a DPR 2) sulla
    riga del vero nome, che ereditava `flex-start` da quando andava a capo. */
-.ctrl-frow { display:flex; align-items:center; justify-content:flex-start; gap:0.5rem; }
+.ctrl-frow { display:flex; align-items:center; justify-content:flex-start; gap:0.38rem; }
 .ctrl-frow > .ctrl-row { flex:0 0 auto; min-width:0; }
 /* ⚠️ Gap piu' stretti che nelle righe impilate, e non e' un ritocco estetico: con tre
    celle sulla stessa riga i due spazi interni di ognuna si pagano SEI volte, e col passo
    largo di prima il Pannello si allargava di 44px oltre la sua misura (misurato).
    ⚠️ Lo spazio VISIBILE fra due celle e' la somma di tre valori (il padding destro della
    prima, il `gap` della riga, il padding sinistro della seconda): chi lo ritocca guardi
-   tutti e tre, o finira' per compensare l'uno con l'altro. */
-.ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:0.24rem; padding-right:0.24rem; }
+   tutti e tre, o finira' per compensare l'uno con l'altro.
+   ⚠️ Il padding di cella e' la GABBIA comune (`--pan-gutter`) e non piu' `0.24rem`, cosi'
+   la prima checkbox parte dallo stesso filo della card e del logo. Lo spazio fra le celle
+   e' conservato abbassando il `gap` della riga da 0.5 a 0.38rem: 4,8 + 6,08 + 4,8 fa gli
+   stessi **15,68px** di prima, misurati. Non e' una compensazione (quelle sono coppie di
+   `margin` di segno opposto): e' lo stesso spazio ripartito diversamente fra i due
+   parametri che lo compongono. */
+.ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:var(--pan-gutter); padding-right:var(--pan-gutter); }
 /* Wrapper delle due colonne: trasparente ovunque (la griglia desktop di
    #ctrl-panel vede .ctrl-left e la legenda come figli diretti); su mobile
    diventa un blocco flex centrato (vedi media query). */
@@ -1134,7 +1140,13 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 .ctrl-icon-btn svg { width:1.15rem; height:1.15rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 /* Tasto Riordina attivo (stato ×, modalità riordino in corso): tinta oro per segnalare lo stato e che il click scarta. */
 .ctrl-icon-btn.ctrl-reorder-btn.is-active { background:rgba(210,178,92,0.2); border-color:rgba(210,178,92,0.7); color:var(--gold); }
-.ctrl-icon-btn.ctrl-reorder-btn.is-active:hover { background:rgba(210,178,92,0.32); border-color:rgba(224,194,108,0.9); }
+/* ⚠️ L'hover SCHIARISCE, non ingrossa l'oro (istruzione dell'utente, 0.95, che ha voluto
+   il bianco traslucido su tutti gli hover del Pannello). Il velo bianco si sovrappone al
+   fondo dello stato con un `linear-gradient` a due stop uguali, che e' il modo di avere
+   DUE strati in un solo `background`: cosi' l'oro dello stato acceso resta sotto e non
+   viene sostituito, che era il rischio di scrivere qui un colore solo. Il `border-color`
+   non si tocca per la stessa ragione: e' la spia dello stato, non un effetto di hover. */
+.ctrl-icon-btn.ctrl-reorder-btn.is-active:hover { background:linear-gradient(rgba(255,255,255,0.14),rgba(255,255,255,0.14)),rgba(210,178,92,0.2); }
 /* Stato 'link copiato' del tasto condividi (✓ + tinta oro). Il 2° selettore
    (specificità 0,3,0) vince anche sulla regola .ctrl-bottombar .ctrl-icon-btn
    della barra mobile. */
@@ -1227,15 +1239,18 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      due 1fr). La versione è otticamente centrata in verticale coi tasti
      (align-items:center) e a sinistra si allinea con le checkbox sottostanti
      (padding-left 0.3rem = rientro di riga delle Categorie). */
-  /* ⚠️⚠️ LA TOOLBAR CONDIVIDE LA GABBIA DELLA CARD DI LEGENDA (0.92, punto dell'utente:
-     i pulsanti *spostati a sinistra per allinearsi ai bordi del contenuto*): stesso
-     `max-width` e stesso `padding` di `.ctrl-cardleg`, quindi il logo tocca il bordo
+  /* ⚠️⚠️ LA TOOLBAR CONDIVIDE LA GABBIA DELLA CARD DI LEGENDA (0.92): stesso `padding`
+     di `.ctrl-cardleg` e nessun tetto di larghezza, quindi il logo tocca il bordo
      sinistro del riquadro e l'ultimo pulsante quello destro, sempre.
-     ⚠️ Un `padding-right` a numero NON avrebbe retto, ed e' la strada provata e scartata:
-     lo scarto non e' costante ma dipende dal `max-width:19rem` della card, che morde solo
-     quando il Pannello e' piu' largo di quel tetto. Misurato a 1280px: 4,8px di padding
-     della sezione piu' 4,53px di tetto, cioe' un valore che cambia con la larghezza. */
-  #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto; align-items:center; margin:3px 0 0; max-width:19rem; padding:0 0.3rem; box-sizing:border-box; }
+     ⚠️ Nella `0.92` la gabbia condivisa era `max-width:19rem`, e i pulsanti finivano
+     percio' rientrati a sinistra. **L'utente ha corretto la rotta nella `0.95`** (*avevo
+     sbagliato a farti spostare a sinistra i pulsanti: bisognava fare l'opposto*): la
+     gabbia c'e' ancora ed e' ancora condivisa, ma e' la larghezza PIENA del contenuto.
+     Il perche' del tetto tolto vive sulla card, che e' dove la gabbia e' definita.
+     ⚠️ Un `padding-right` a numero resta la strada provata e scartata: lo scarto non e'
+     costante ma dipende dalla larghezza del Pannello (misurato a 1280px: 4,8px di padding
+     della sezione piu' 4,53px di tetto, cioe' un valore che cambia col viewport). */
+  #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto; align-items:center; margin:3px 0 0; padding:0 var(--pan-gutter); box-sizing:border-box; }
   #ctrl-panel .ctrl-toolbar-btns { justify-self:end; display:flex; align-items:center; gap:0.55rem; }
   #ctrl-panel .ctrl-left-group { justify-self:start; display:flex; align-items:center; gap:0.5rem; }
   /* Logo dello stesso colore del numero di versione accanto (var --gold-bright,
@@ -1329,7 +1344,17 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    via JS (cerca 'ctrl-close-bend' nello script), NON qui nel <style> statico,
    così il file resta W3C-pulito. Fallback senza JS: il chevron dell'attributo
    'd' dell'SVG (statico, corretto). Il reduced-motion è gestito nell'iniezione. */
-.ctrl-sheet-close:hover, .ctrl-sheet-close:focus-visible { background:var(--gold); color:var(--ink); outline:none; }
+/* ⚠️ Niente piu' INVERSIONE in oro (istruzione dell'utente, 0.95): il fondo si schiarisce
+   di bianco e il glifo resta chiaro. ⚠️ L'opacita' qui e' `0.20` e non lo `0.09` delle
+   righe, ed e' la deroga che l'utente ha previsto (*piu' opaco se necessario affinche' si
+   veda meglio*): su un bottone di 32px il velo leggero delle righe si perderebbe, perche'
+   la superficie e' un ventesimo di quella di una riga.
+   ⚠️ E il focus da tastiera ora ha un OUTLINE vero: prima l'inversione oro faceva da
+   segnale e `outline:none` era sostenibile, ma un fondo appena schiarito non basta a dire
+   'sono qui', e toglierlo senza rimpiazzo avrebbe peggiorato l'accessibilita' per un
+   ritocco di tinta. */
+.ctrl-sheet-close:hover { background:rgba(255,255,255,0.20); }
+.ctrl-sheet-close:focus-visible { background:rgba(255,255,255,0.20); outline:2px solid rgba(154,192,216,0.9); outline-offset:2px; }
 .ctrl-section { margin-bottom:1.1rem; }
 .ctrl-section:last-child { margin-bottom:0; }
 .ctrl-h {
@@ -1373,7 +1398,30 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    precedente, e da allora sopravviveva una regola `.ctrl-tag-slot + .ctrl-cardleg`,
    uscita il 2026-08-23 insieme allo spostamento del tag in fondo: era già inerte prima,
    perché la card non segue lo slot in nessuno dei due layout. */
-.ctrl-cardleg { padding:0 0.3rem; max-width:19rem; margin-bottom:1.1rem; }
+/* ⚠️⚠️ LA GABBIA DEL PANNELLO, in un valore solo (0.95, richiesta di equidistanza
+   dell'utente). Tutto cio' che nel Pannello ha un BORDO VISIBILE si rientra di questo
+   stesso valore dai due lati: la card di legenda, la toolbar, le celle dei filtri e i
+   riquadri della legenda dei badge. ⚠️ La distanza che l'utente misura e' quella del
+   bordo VISIBILE, non del box che lo contiene, ed e' la ragione per cui la variabile
+   serviva: card e toolbar avevano gia' `padding:0 0.3rem` e i loro riquadri finivano a
+   24,98px dal bordo, mentre le righe di legenda, che di padding non ne avevano, si
+   accendevano a **20,19**, cioe' 4,79px piu' in fuori su tutti e due i lati. A occhio
+   sembrava che il riquadro del badge sbordasse, e infatti l'utente lo ha segnalato due
+   volte. ⚠️ Chi tocca questo valore li sposta TUTTI, che e' esattamente lo scopo: quattro
+   numeri uguali scritti in quattro punti divergono al primo ritocco. */
+#ctrl-panel { --pan-gutter:0.3rem; }
+/* ⚠️⚠️ NIENTE `max-width` (istruzione dell'utente, 0.95): la card di legenda occupa la
+   larghezza PIENA del contenuto, come le righe di filtro e la legenda sotto, e cosi' le
+   distanze del contenuto dai due bordi del Pannello sono uguali per costruzione invece
+   che per taratura. ⚠️ `max-width:19rem` e' la misura SCARTATA, ed era della `0.92`: con
+   quel tetto la card finiva a 356,19 mentre le righe sotto arrivavano a 368,72, cioe'
+   12,53px di vuoto a destra che si vedevano come uno sbilanciamento (20,19px di margine a
+   sinistra contro 32,72 a destra, misurati a 1280). Ora sono 20,19 da entrambe le parti.
+   ⚠️ Il rientro interno resta il suo `padding`, che e' quello che stacca la striscia
+   colorata dal filo delle checkbox: toglierlo allineerebbe due cose che sono diverse. */
+.ctrl-cardleg { padding:0 var(--pan-gutter); margin-bottom:1.1rem; }
+/* Riquadri della legenda dei badge nella stessa gabbia: e' il rientro che mancava. */
+.ctrl-section--legend { padding:0 var(--pan-gutter); }
 .ctrl-cardleg .rank-item {
   grid-template-columns:1fr; gap:0; margin:0;
   padding:0.6rem 0.7rem 0.6rem 0.65rem; cursor:default;
@@ -1578,7 +1626,9 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-num { display:inline-grid; justify-items:center; align-items:center; }
 .ctrl-badge-tag .tag-num > span { grid-area:1 / 1; }
 .ctrl-badge-tag .tag-num-m { visibility:hidden; pointer-events:none; }
-.ctrl-badge-tag:hover { background:rgba(210,178,92,0.24); }
+/* Stesso velo bianco del tasto Riordina acceso, e per la stessa ragione: il fondo oro e'
+   lo stato (filtro badge attivo), l'hover lo schiarisce e basta. */
+.ctrl-badge-tag:hover { background:linear-gradient(rgba(255,255,255,0.12),rgba(255,255,255,0.12)),rgba(210,178,92,0.13); }
 /* × in EB Garamond, più grande del testo: line-height azzerata (il glifo siede
    alto sulla baseline). La centratura verticale fine è affidata al transform
    per-elemento sopra (.tag-x translateY), non più a un top negativo. */
@@ -2911,7 +2961,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.94</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.95</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7101,7 +7151,18 @@ function controlPanelHTML() {
      // ⚠️ L'opera va per ULTIMA, come nelle card vere: nella prima stesura stava sopra
      // i nomi alternativi e la legenda mostrava un ordine che la lista non ha, che è
      // l'unico modo in cui una legenda a classi reali può sbagliare.
-     +   '<span class="rank-title">' + (currentLang === 'it' ? "Opera della prima apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
+     // ⚠️⚠️ La riga italiana è ABBREVIATA (istruzione dell'utente, 0.95), e la ragione è
+     // il BALLO del Pannello al cambio lingua: 'Opera della prima apparizione (anno)'
+     // andava a capo e occupava 45,03px, l'inglese ne occupava 22,52 su una riga sola,
+     // quindi il Pannello cresceva di 22,52px passando all'italiano. ⚠️ È stata scelta
+     // la cura sul TESTO e non un anti-jitter (decisione dell'utente, che ha escluso
+     // esplicitamente l'accorgimento): una riserva d'altezza avrebbe congelato lo spazio
+     // di una riga che non serve a nessuna delle due lingue.
+     // ⚠️ 'Titolo' e non 'Opera' (correzione dell'utente in corso d'opera): accostato a
+     // '1ª', 'Opera prima' si legge come il modo di dire, cioè l'esordio di un autore,
+     // che qui non c'entra. La riga indica il TITOLO in cui il personaggio compare per
+     // la prima volta.
+     +   '<span class="rank-title">' + (currentLang === 'it' ? "Titolo 1ª apparizione (anno)" : 'Work of first appearance (year)') + '</span>'
      + '</span></div></div>';
   // ⚠️ UNA COLONNA SOLA (istruzione dell'utente, 2026-08-21): le categorie e la
   // legenda dei badge stanno SOTTO la card di legenda, dentro la stessa colonna.

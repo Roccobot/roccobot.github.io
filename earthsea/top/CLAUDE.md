@@ -1287,6 +1287,25 @@ stesura l'opera stava sopra gli alternativi e la legenda mostrava un ordine che 
 ha (segnalato dall'utente): con le classi reali è l'unico modo in cui questa legenda può
 sbagliare, perché tutto il resto lo eredita.
 
+⚠️⚠️ **L'ultima riga è ABBREVIATA, e la cura è sul TESTO invece che sul layout** (istruzione
+dell'utente, `0.95`). Diceva `Opera della prima apparizione (anno)` e andava a capo: la riga
+occupava **45,03px** in italiano contro i **22,52** dell'inglese su una riga sola, quindi il
+Pannello **cresceva di 22,52px** passando all'italiano. Ora dice `Titolo 1ª apparizione
+(anno)` e l'altezza è **22,52px** in tutte e due le lingue, cioè il Pannello misura 483,14px
+in entrambe.
+
+- ⚠️ **Un anti-jitter era escluso dall'utente in partenza** (*non risolverlo con un
+  accorgimento anti-jitter*), e aveva ragione di merito: una riserva d'altezza avrebbe
+  congelato lo spazio di una riga che **non serve a nessuna delle due lingue**. Qui la
+  riserva delle gemelle invisibili, che altrove è la soluzione giusta, sarebbe stata un
+  cerotto su un testo troppo lungo.
+- ⚠️ **'Titolo' e non 'Opera'**, e non è un sinonimo scelto a caso: accostato a `1ª`,
+  *Opera prima* si legge come il modo di dire (l'esordio di un autore), che qui non c'entra
+  niente. La riga indica il **titolo** in cui il personaggio compare la prima volta.
+- Ⓘ Nel sorgente l'ordinale è `ª` (U+00AA, l'indicatore ordinale femminile). Nella resa la
+  riga è in **maiuscoletto**, quindi a schermo si vede come una A piccola in alto: è la
+  trasformazione del font, non un carattere diverso nel dato.
+
 ⚠️ **Usa le classi REALI** (`.rank-item`, `.rank-name`, `.rank-vero`, `.rank-subtitle`) e la
 stessa `joinBipartite` del sottotitolo: gli overrides in `.ctrl-cardleg` toccano **solo** le
 misure del contenitore, **e la tinta** (deroga dichiarata qui sotto). Se un domani si
@@ -1983,9 +2002,12 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   dell'utente, `0.93`). **`space-between` è la misura scartata**, ed era quella della `0.92`:
   con le etichette corte (`Persone`, `Draghi`, `Animali`) distribuire su tutta la larghezza
   apriva due vuoti larghi quanto le parole, e le due righe risultavano sfilacciate invece che
-  allineate fra loro. Misurato dopo il cambio: le due righe partono dallo **stesso x**
-  (52,19px a 1280, il bordo sinistro del contenuto) e lo spazio fra le celle è **8,00px**
-  uniforme.
+  allineate fra loro. Misurato dopo il cambio: le due righe partono dallo **stesso x** (il
+  bordo sinistro della gabbia) e lo spazio **visibile** fra due celle è **15,68px** uniforme.
+  ⚠️ Quello spazio è la somma di tre valori (padding destro della prima cella, `gap` della
+  riga, padding sinistro della seconda): chi lo ritocca li guardi tutti e tre. Nella `0.95`
+  il padding di cella è salito alla gabbia comune e il `gap` è sceso da 0.5 a 0.38rem
+  **per conservarlo**: 4,8 + 6,08 + 4,8 fa gli stessi 15,68px di prima.
 - **Le celle non sono incolonnate FRA LORO**, ed è una scelta: le etichette hanno lunghezze
   molto diverse (`Draghi` contro `Solo veri nomi noti`), e colonne uguali avrebbero lasciato
   buchi larghi quanto la parola più lunga. L'incolonnamento che conta è quello della **prima**
@@ -2001,12 +2023,36 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
 - **Il passo interno delle celle è più stretto** di quello delle righe impilate, e non è
   estetica: con tre celle sulla stessa riga i due spazi interni si pagano **sei** volte, e col
   passo largo il Pannello si allargava di **44px** oltre la sua misura.
-- ⚠️ **La toolbar condivide la GABBIA della card di legenda** (`max-width` e `padding`
-  uguali), così il logo tocca il bordo sinistro del riquadro e l'ultimo pulsante quello
-  destro. **Un `padding-right` a numero è la misura scartata**: lo scarto non è costante ma
-  dipende dal `max-width:19rem` della card, che morde solo quando il Pannello è più largo di
-  quel tetto (a 1280px valeva 4,8px di padding più 4,53px di tetto). Con la gabbia condivisa
-  lo scarto misurato è **0,00px** a qualunque larghezza.
+- ⚠️ **La toolbar condivide la GABBIA della card di legenda** (stesso `padding`, nessun
+  tetto di larghezza), così il logo tocca il bordo sinistro del riquadro e l'ultimo pulsante
+  quello destro. **Un `padding-right` a numero è la misura scartata**: lo scarto non è
+  costante ma dipende dalla larghezza del Pannello (a 1280px valeva 4,8px di padding più
+  4,53px di tetto). Con la gabbia condivisa lo scarto misurato è **0,00px** a qualunque
+  larghezza.
+- ⚠️⚠️ **La gabbia del Pannello è UN VALORE SOLO**, `--pan-gutter` su `#ctrl-panel`
+  (`0.3rem`), e vale per tutto ciò che ha un **bordo visibile**: card di legenda, toolbar,
+  celle dei filtri, riquadri della legenda dei badge.
+  - ⚠️⚠️ **La distanza che conta è quella del bordo VISIBILE, non del box che lo contiene**,
+    ed è la lezione che è costata due segnalazioni all'utente. Card e toolbar avevano già
+    `padding:0 0.3rem`, quindi i loro riquadri finivano a **24,98px** dal bordo del Pannello;
+    le righe della legenda, senza padding, si accendevano a **20,19**, cioè **4,79px più in
+    fuori** da entrambi i lati. I *box* erano perfettamente allineati (20,19 ovunque): a
+    misurare quelli si concludeva che era tutto a posto, mentre a schermo il riquadro del
+    badge sbordava. Dopo: **24,98 per parte** per tutti, riquadro acceso compreso.
+  - Un valore solo e non quattro numeri uguali in quattro punti: quelli divergono al primo
+    ritocco, e chi tocca la variabile li sposta **tutti**, che è lo scopo.
+- ⚠️⚠️ **La gabbia è la larghezza PIENA del contenuto, e il `max-width:19rem` è caduto**
+  (istruzione dell'utente, `0.95`: *avevo sbagliato a farti spostare a sinistra i pulsanti:
+  bisognava fare l'opposto*). Con quel tetto la card finiva a 356,19 mentre le righe sotto
+  arrivavano a 368,72: **12,53px** di vuoto a destra, cioè 20,19px di margine a sinistra
+  contro **32,72** a destra. Ora card, toolbar, righe di filtro e legenda stanno tutte
+  fra gli stessi due bordi, con **20,19px** per parte, misurati a 1024, 1280 e 1600 e
+  identici nelle due lingue.
+  - ⚠️ **Su MOBILE non cambia nulla, ed è verificato invece che dedotto**: là la card è più
+    stretta del tetto, che quindi non mordeva (a 360px resta 237,75px in italiano e 261,23
+    in inglese, uguali prima e dopo). Su quella vista la card si dimensiona sul proprio
+    contenuto e l'equilibrio dei margini **non c'è**: è un fatto preesistente, non un
+    effetto di questo cambio.
 - **L'allineamento verticale delle etichette** viene da `align-items:center`, non da uno
   spostamento in `em`: la riga del vero nome ereditava `flex-start` da quando la frase andava
   a capo, ed è il difetto che l'utente aveva misurato in 5px a DPR 2. Scarto dopo: **0,01px**.
@@ -2029,6 +2075,20 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   stesso ordine del marrone (0,0492) e testo che ci guadagna, da **8,84** a **9,51** di
   contrasto. **`0.11` è la misura scartata**: pareggerebbe la luminanza esatta del marrone,
   ma la parità con un valore che si stava togliendo non è un obiettivo.
+  - ⚠️ **Nella `0.95` il bianco è arrivato anche sui tre hover che erano rimasti in oro**
+    (istruzione dell'utente), e su due di essi l'oro **è lo stato, non l'hover**: il tasto
+    Riordina acceso e il tag del filtro badge. Là il velo bianco si **sovrappone** al fondo
+    con un `linear-gradient` a due stop uguali, che è il modo di avere due strati in un solo
+    `background`: scriverci un colore solo avrebbe **sostituito** l'oro, cioè spento la spia
+    di stato. Il `border-color` non si tocca, per la stessa ragione.
+  - ⚠️ **Le opacità NON sono uguali fra loro, e non è una svista**: `0.09` sulle righe,
+    `0.12` sul tag, `0.14` sul tasto acceso, `0.20` sul pulsante di chiusura della sheet.
+    Più la superficie è piccola, più il velo dev'essere denso per vedersi, e l'utente lo
+    aveva previsto (*più opaco se necessario affinché si veda meglio*).
+  - ⚠️ Col pulsante di chiusura è caduta anche la sua **inversione** in oro pieno, e con lei
+    il suo `outline:none` sul focus: l'inversione faceva da segnale di focus, un fondo appena
+    schiarito no. Ora quel focus ha un **outline vero**, perché togliere il segnale senza
+    rimpiazzarlo avrebbe peggiorato l'accessibilità per un ritocco di tinta.
 - ⚠️ I **colori** dei rettangoli (`CAT_COLOR`, dati dall'utente nella `0.92`) sono una
   tavolozza **a sé**, non quella delle card (`cardColors` in `dati.js`): qui il rettangolo è
   un francobollo accanto a un testo, non un fondo di scheda, e le tinte piene della lista
