@@ -2184,8 +2184,16 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
           ⚠️ E la **parola sbagliata per il mestiere**: chi guarisce è il **guaritore**,
           correzione dell'utente nella `0.86`. Non è una sfumatura: in quell'edizione
           `curatore` esiste già e vuol dire un'altra cosa, il **curatore del museo** di un
-          racconto di *I dodici punti cardinali*. Il lessico dei ruoli si prende dal corpus,
-          come i nomi.
+          racconto di *I dodici punti cardinali* (riscontro preso quando il corpus portava
+          ancora la raccolta intera, prima del ritaglio del 2026-08-25). Il lessico dei ruoli
+          si prende dal corpus, come i nomi.
+          - ⚠️ **In inglese però la parola NON è `healer`, ed è la prima che verrebbe in
+            mente**: in *On the High Marsh* Le Guin chiama Irioth **`curer`** (19 occorrenze
+            contro 2 di `healer`, una delle quali dentro `a curer, a cattle healer`), e
+            `curer` non compare in **nessun'altra** opera del ciclo. Quindi le due lingue
+            **non si specchiano**: `guaritore` in italiano, `curer` in inglese, ognuna presa
+            dal proprio corpus. Chi 'uniformasse' l'inglese a `healer` starebbe correggendo
+            l'autrice.
        3. **Sintassi contorta**: *del Labirinto, ai servi di Kossil, Arha lascia sapere il
           minimo*, con due incisi prima del soggetto.
        4. ⚠️ **La più grave, e non è una questione di forma: la coda che dice il FALSO.**
