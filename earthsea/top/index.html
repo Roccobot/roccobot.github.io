@@ -1096,21 +1096,31 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 @media (prefers-reduced-motion:reduce){ #ctrl-fab.fab-tap, #ctrl-fab.fab-grow { animation:none; } }
 /* Categorie con bottone solo */
 /* ⚠️⚠️ LE DUE RIGHE DI FILTRI (0.92, mockup dell'utente): tre celle ciascuna,
-   distribuite sulla larghezza del contenuto invece di essere impilate una per riga.
-   ⚠️ `space-between` e non colonne uguali: le etichette hanno lunghezze molto diverse
-   ('Draghi' contro 'Solo veri nomi noti'), e colonne uguali avrebbero lasciato buchi
-   larghi quanto la parola piu' lunga. L'anti-jitter NON viene dalle colonne fisse ma
+   su una riga sola invece di essere impilate una per riga.
+   ⚠️⚠️ ALLINEATE A SINISTRA, non distribuite (istruzione dell'utente, 0.93: *lasciando
+   gli spazi opportuni [...] disponili allineati a sinistra: prenderanno solo lo spazio che
+   serve*). La `0.92` usava `space-between`, ed e' la misura SCARTATA: con le etichette
+   corte ('Persone', 'Draghi', 'Animali') distribuire su tutta la larghezza apriva due
+   vuoti larghi quanto le parole, e le due righe risultavano sfilacciate invece che
+   allineate fra loro. `flex-start` le fa cominciare tutte dallo stesso bordo, che e'
+   l'incolonnamento che conta davvero: quello della PRIMA cella.
+   ⚠️ Restano celle a larghezza propria, NON colonne uguali: le etichette hanno lunghezze
+   molto diverse ('Draghi' contro 'Solo veri nomi noti'), e colonne uguali lascerebbero
+   buchi larghi quanto la parola piu' lunga. L'anti-jitter NON viene dalle colonne fisse ma
    dalle gemelle invisibili delle etichette (`.ctrl-label-alt`), che riservano in ogni
    cella la larghezza maggiore fra le due lingue: le posizioni non si muovono al cambio
    lingua anche se le celle hanno misure diverse fra loro.
    ⚠️ `align-items:center` allinea l'etichetta al centro della sua casella: era il
    difetto dell'allineamento verticale che l'utente ha misurato (5px a DPR 2) sulla
    riga del vero nome, che ereditava `flex-start` da quando andava a capo. */
-.ctrl-frow { display:flex; align-items:center; justify-content:space-between; gap:0.25rem; }
+.ctrl-frow { display:flex; align-items:center; justify-content:flex-start; gap:0.5rem; }
 .ctrl-frow > .ctrl-row { flex:0 0 auto; min-width:0; }
 /* ⚠️ Gap piu' stretti che nelle righe impilate, e non e' un ritocco estetico: con tre
    celle sulla stessa riga i due spazi interni di ognuna si pagano SEI volte, e col passo
-   largo di prima il Pannello si allargava di 44px oltre la sua misura (misurato). */
+   largo di prima il Pannello si allargava di 44px oltre la sua misura (misurato).
+   ⚠️ Lo spazio VISIBILE fra due celle e' la somma di tre valori (il padding destro della
+   prima, il `gap` della riga, il padding sinistro della seconda): chi lo ritocca guardi
+   tutti e tre, o finira' per compensare l'uno con l'altro. */
 .ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:0.24rem; padding-right:0.24rem; }
 /* Wrapper delle due colonne: trasparente ovunque (la griglia desktop di
    #ctrl-panel vede .ctrl-left e la legenda come figli diretti); su mobile
@@ -1447,11 +1457,22 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
    passa con margine); in tema chiaro l'override qui sotto la porta a 0.62. */
 .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.55; }
 /* Il RETTANGOLO di colore della categoria (0.92, mockup dell'utente): era un quadrato
-   di 0.85rem, ora e' un rettangolo orizzontale con gli angoli piu' morbidi.
-   ⚠️ La forma non e' un vezzo: accanto a una checkbox QUADRATA di 1.05rem, un secondo
-   quadrato quasi uguale si leggeva come una seconda casella, e l'occhio cercava di
-   cliccarlo. Il rettangolo dice 'campione di colore' e non 'interruttore'. */
-.ctrl-dot { width:0.66rem; height:0.53rem; border-radius:3px; flex-shrink:0; }
+   di 0.85rem, ora e' un rettangolo VERTICALE, piu' alto che largo.
+   ⚠️ La forma non e' un vezzo: accanto a una checkbox QUADRATA, un secondo quadrato quasi
+   uguale si leggeva come una seconda casella, e l'occhio cercava di cliccarlo. Il
+   rettangolo dice 'campione di colore' e non 'interruttore'.
+   ⚠️⚠️ L'altezza si SCRIVE IN RELAZIONE alla checkbox, non a numero: l'utente l'ha chiesto
+   'alto 2 pixel apparenti in meno', e con un valore fisso quel rapporto si perderebbe al
+   primo ritocco della casella (che e' `border-box`, quindi la sua altezza apparente e'
+   proprio `1.05rem`). Ⓘ Nella prima stesura della 0.92 era orizzontale, 0.66x0.53rem, e
+   non corrispondeva al mockup: e' la misura scartata.
+   ⚠️ La CENTRATURA verticale non si scrive qui: la da' `align-items:center` della riga, e
+   un allineamento imposto sul figlio andrebbe rifatto a ogni cambio di corpo del testo. */
+.ctrl-dot {
+  --dot-h:calc(1.05rem - 2px);
+  height:var(--dot-h); width:calc(var(--dot-h) * 0.66);
+  border-radius:3px; flex-shrink:0;
+}
 /* Righe legenda = interruttori del filtro badge (v4.05): cliccabili, stato
    .on evidenziato in oro, focus visibile da tastiera. */
 .ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.4rem; font-size:0.8rem; color:var(--parchment); cursor:pointer; border:1px solid transparent; border-radius:6px; user-select:none; }
@@ -2876,7 +2897,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.92</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.93</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6788,17 +6809,20 @@ let isFirstRender = true;
 
 // ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
-  // ⚠️ 'Esseri umani' e non 'Uomini' (istruzione dell'utente, 2026-08-21): la categoria è
-  // la RAZZA, e 'Uomini' si legge come il genere, tanto più da quando la tinta degli umani
-  // lo distingue. Le etichette sulla singola card restano 'Uomo'/'Donna', che del genere
+  // ⚠️ 'Persone' / 'People' dalla 0.93 (istruzione dell'utente). Prima era 'Esseri umani'
+  // (2026-08-21), che a sua volta aveva sostituito 'Uomini': la ragione di quel primo
+  // cambio VALE ANCORA ed è il motivo per cui non si torna indietro, cioè che la categoria
+  // è la RAZZA e 'Uomini' si legge come il genere, tanto più da quando la tinta degli umani
+  // lo distingue. 'Persone' dice la stessa cosa in una parola sola, e la riga di filtri ne
+  // guadagna. Le etichette sulla singola card restano 'Uomo'/'Donna', che del genere
   // parlano per davvero.
   // ⚠️ È QUESTA la mappa che il Pannello mostra: `TYPE_LABEL`, più sotto, ha le stesse
   // etichette ma chiavi `type-*` e serve altrove. Cambiarne una sola lascia il filtro a
   // dire la parola vecchia, ed è successo.
   // ⚠️ 'Animali' è la CATEGORIA, e sulla card l'etichetta dice l'animale vero ('Gatta',
   // 'Gallo'): sono due livelli diversi per richiesta dell'utente, non un'incoerenza.
-  it: { man:'Esseri umani', dragon:'Draghi', animale:'Animali' },
-  en: { man:'Humans', dragon:'Dragons', animale:'Animals' }
+  it: { man:'Persone', dragon:'Draghi', animale:'Animali' },
+  en: { man:'People', dragon:'Dragons', animale:'Animals' }
 };
 // Colore della spia di categoria nel Pannello: le due tinte delle famiglie card
 // (oro e rosso), così la legenda e le schede dicono la stessa cosa.
@@ -6821,8 +6845,12 @@ var TYPE_LABEL = {
   // le categorie sono 'uomini', 'draghi' e 'animali'. Sulla singola card invece
   // l'etichetta segue il genere ('Uomo', 'Donna', 'Gatta'), perché in quel punto si parla
   // di un individuo.
-  // Stesse etichette di `CAT_LABEL` (vedi là il perché di 'Esseri umani'), con le chiavi
-  // `type-*`: le due mappe vanno cambiate insieme.
+  // Stesse etichette di `CAT_LABEL` (vedi là il perché di 'Persone'), con le chiavi
+  // `type-*`: le due mappe vanno cambiate insieme. ⚠️ Il rinomino della 0.93 è arrivato
+  // qui **per questa regola**, non per richiesta separata: l'utente aveva nominato il
+  // Pannello, ma lasciare le Statistiche a dire 'Esseri umani' avrebbe fatto convivere due
+  // parole per la stessa categoria nella stessa pagina, che è esattamente il difetto che
+  // la nota qui sopra registra come già successo.
   // ⚠️⚠️ `type-donnadrago` sta QUI e non in `CAT_LABEL`, e non è una dimenticanza: NON è
   // una categoria di filtro (quelle sono due, umani e draghi), è una classe-etichetta che
   // le Statistiche contano a parte. Senza questa riga `typeName` ripiegava sulla classe
@@ -6831,8 +6859,8 @@ var TYPE_LABEL = {
   // ⚠️ Il ripiego di `typeName` resta, ed è giusto che resti: mostra qualcosa invece di
   // niente. Ma è anche la ragione per cui il difetto non dà nessun errore, quindi una
   // classe-etichetta nuova nel dataset va aggiunta qui il giorno che nasce.
-  it: { 'type-man':'Esseri umani', 'type-dragon':'Draghi', 'type-donnadrago':'Ibridi', 'type-animale':'Animali' },
-  en: { 'type-man':'Humans', 'type-dragon':'Dragons', 'type-donnadrago':'Hybrids', 'type-animale':'Animals' }
+  it: { 'type-man':'Persone', 'type-dragon':'Draghi', 'type-donnadrago':'Ibridi', 'type-animale':'Animali' },
+  en: { 'type-man':'People', 'type-dragon':'Dragons', 'type-donnadrago':'Hybrids', 'type-animale':'Animals' }
 };
 var CTRL_I18N = {
   it: { close:'Chiudi', reorder:'Riordina', reorderExit:'Chiudi modalità ordinamento', editContent:'Modifica contenuti',
@@ -6932,10 +6960,11 @@ function controlPanelHTML() {
   // ⚠️⚠️ DUE RIGHE che riempiono la larghezza (mockup dell'utente, 0.92): le tre
   // categorie sopra, i due generi e il vero nome sotto. Prima erano sei righe impilate,
   // una per filtro, e la colonna restava mezza vuota mentre il Pannello cresceva in
-  // altezza. ⚠️ Le due righe si distribuiscono da sé (`space-between`) e NON sono
-  // incolonnate fra loro: le etichette hanno lunghezze diverse, e incolonnarle avrebbe
-  // richiesto una griglia a colonne fisse, cioè spazi vuoti larghi quanto la parola più
-  // lunga. Il mockup mostra proprio la distribuzione libera.
+  // altezza. ⚠️ Dalla 0.93 le due righe sono allineate A SINISTRA e ogni cella prende solo
+  // lo spazio che le serve (istruzione dell'utente): incolonnate fra loro sulla PRIMA
+  // cella, non cella per cella, che avrebbe voluto una griglia a colonne fisse, cioè spazi
+  // vuoti larghi quanto la parola più lunga. La `0.92` le distribuiva (`space-between`), e
+  // con le etichette corte la riga si sfilacciava: vedi il CSS di `.ctrl-frow`.
   destra += '<div class="ctrl-section ctrl-section--filtri">';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
   // La riga di un filtro: interruttore, quadratino di colore se c'è, etichetta con la

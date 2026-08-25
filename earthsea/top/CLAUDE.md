@@ -131,7 +131,7 @@ bestia vera.
   `tipoClass` e `categorie` leggono entrambe. **Un animale nuovo va aggiunto là**, o la sua
   card finisce fra gli **uomini senza dare alcun errore**: il ripiego di `tipoClass` è
   `type-man` per costruzione, quindi il difetto non ha nessuna spia. È la stessa trappola
-  della tabella `TYPE_LABEL` (vedi § "'Esseri umani', e la trappola delle DUE mappe di
+  della tabella `TYPE_LABEL` (vedi § "'Persone', e la trappola delle DUE mappe di
   etichette"), e qui morde più forte perché una tinta sbagliata somiglia a un dato inserito
   male invece che a un elenco incompleto.
   - ⚠️⚠️ **Le parole vanno nelle DUE LINGUE**, come il test `drago|dragon` accanto, e non è
@@ -1930,7 +1930,7 @@ Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
 - Sta **fuori** dalla sezione `--filtri`, che è la lista delle categorie: mescolarvi una riga
   che categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
 
-## 🏷️ 'Esseri umani', e la trappola delle DUE mappe di etichette
+## 🏷️ 'Persone', e la trappola delle DUE mappe di etichette
 
 ⚠️⚠️ **E le due mappe NON hanno le stesse chiavi**, che è il difetto scoperto il 2026-08-23:
 `CAT_LABEL` ha le due **categorie di filtro** (umani e draghi), `TYPE_LABEL` ha le
@@ -1946,8 +1946,12 @@ inglese), istruzione dell'utente.
   il bivio admin) con `locale` forzato, per la trappola del contesto in inglese registrata nel
   paragrafo dell'alone sfumato.
 
-La categoria si chiama **'Esseri umani'** / 'Humans' (istruzione dell'utente, 2026-08-21):
-'Uomini' si legge come il **genere**, tanto più da quando la tinta degli umani lo distingue.
+La categoria si chiama **'Persone'** / 'People' (istruzione dell'utente, 0.93), e prima era
+'Esseri umani' (2026-08-21). ⚠️ **La ragione del primo rinomino vale ancora**, ed è il motivo
+per cui non si torna a 'Uomini' nemmeno per accorciare: 'Uomini' si legge come il **genere**,
+tanto più da quando la tinta degli umani lo distingue, e dalla `0.92` la riga di filtri porta
+proprio le caselle 'Maschi' e 'Femmine' accanto. 'Persone' dice la stessa cosa in una parola
+sola, che nella riga distribuita di filtri è quello che serviva.
 Le etichette sulla singola card restano **'Uomo'/'Donna'**, che del genere parlano per davvero.
 
 ⚠️⚠️ **Le etichette di categoria vivono in DUE mappe**: `CAT_LABEL` (chiavi `man`/`dragon`) è
@@ -1969,19 +1973,31 @@ unica**: card di legenda, poi le due checkbox di categoria, poi la legenda dei b
   spento.
 - Misura a font reali: pannello desktop **311x420** (era 540 di larghezza a due colonne).
 
-### 🔳 I filtri su DUE RIGHE distribuite, e il filtro per genere
+### 🔳 I filtri su DUE RIGHE allineate a sinistra, e il filtro per genere
 
 Mockup dell'utente, `0.92`. I filtri erano sei righe impilate, una per voce, e la colonna
 restava mezza vuota mentre il Pannello cresceva in altezza. Ora sono **due righe da tre
 celle**: le categorie sopra, i due generi e il vero nome sotto.
 
-- **Le celle si distribuiscono (`space-between`), non sono incolonnate**, ed è una scelta:
-  le etichette hanno lunghezze molto diverse (`Draghi` contro `Solo veri nomi noti`), e
-  colonne uguali avrebbero lasciato buchi larghi quanto la parola più lunga.
+- ⚠️⚠️ **Allineate a SINISTRA, e ogni cella prende solo lo spazio che le serve** (istruzione
+  dell'utente, `0.93`). **`space-between` è la misura scartata**, ed era quella della `0.92`:
+  con le etichette corte (`Persone`, `Draghi`, `Animali`) distribuire su tutta la larghezza
+  apriva due vuoti larghi quanto le parole, e le due righe risultavano sfilacciate invece che
+  allineate fra loro. Misurato dopo il cambio: le due righe partono dallo **stesso x**
+  (52,19px a 1280, il bordo sinistro del contenuto) e lo spazio fra le celle è **8,00px**
+  uniforme.
+- **Le celle non sono incolonnate FRA LORO**, ed è una scelta: le etichette hanno lunghezze
+  molto diverse (`Draghi` contro `Solo veri nomi noti`), e colonne uguali avrebbero lasciato
+  buchi larghi quanto la parola più lunga. L'incolonnamento che conta è quello della **prima**
+  cella di ogni riga, che l'allineamento a sinistra dà da sé.
+- ⚠️ **Lo spazio visibile fra due celle è la somma di TRE valori**: il `padding-right` della
+  prima, il `gap` della riga, il `padding-left` della seconda. Chi lo ritocca li guardi tutti
+  e tre, o finirà per compensare l'uno con l'altro (le compensazioni sono vietate,
+  `Roccobot.md` § '🎨 Grafica').
 - ⚠️ **L'anti-jitter NON viene dalle colonne fisse ma dalle gemelle invisibili** delle
   etichette (`.ctrl-label-alt`), che riservano in ogni cella la larghezza maggiore fra le due
-  lingue. Misurato: le sei celle hanno **posizione e larghezza identiche** in italiano e in
-  inglese, e il Pannello resta a **348,91px** in entrambe.
+  lingue. Misurato di nuovo nella `0.93`: le sei celle hanno **posizione e larghezza
+  identiche** in italiano e in inglese, e il Pannello resta a **356,91px** in entrambe.
 - **Il passo interno delle celle è più stretto** di quello delle righe impilate, e non è
   estetica: con tre celle sulla stessa riga i due spazi interni si pagano **sei** volte, e col
   passo largo il Pannello si allargava di **44px** oltre la sua misura.
@@ -1994,6 +2010,18 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
 - **L'allineamento verticale delle etichette** viene da `align-items:center`, non da uno
   spostamento in `em`: la riga del vero nome ereditava `flex-start` da quando la frase andava
   a capo, ed è il difetto che l'utente aveva misurato in 5px a DPR 2. Scarto dopo: **0,01px**.
+- ⚠️ **I rettangoli di categoria sono VERTICALI** (istruzione dell'utente, `0.93`, col suo
+  mockup), e la loro altezza è espressa **in relazione alla checkbox** invece che a numero:
+  `calc(1.05rem - 2px)`, cioè i 2px apparenti in meno che l'utente ha chiesto. Misurato:
+  **14,797px** contro i **16,797px** della casella, larghezza **9,766px**, e i due centri
+  verticali coincidono a **581,742px** (la centratura la dà `align-items:center` della riga,
+  non un margine). **La stesura orizzontale `0.66rem x 0.53rem` è la misura scartata**: non
+  corrispondeva al mockup.
+- ⚠️ I **colori** dei rettangoli (`CAT_COLOR`, dati dall'utente nella `0.92`) sono una
+  tavolozza **a sé**, non quella delle card (`cardColors` in `dati.js`): qui il rettangolo è
+  un francobollo accanto a un testo, non un fondo di scheda, e le tinte piene della lista
+  risultavano dure. Chi cambia i colori delle card **non venga a cambiare anche questi** per
+  coerenza.
 
 #### ⚧ Il filtro per GENERE, e le voci senza
 
