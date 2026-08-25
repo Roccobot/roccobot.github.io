@@ -877,6 +877,48 @@ annulla** lo scaricamento in corso, e in una coda la interrompe. Il nome del fil
 (`Titolo [p3145].mp4`) e `(2)`, `(3)`... quando non lo si sa e i video sono più
 d'uno.
 
+### Le foto di un post in un solo ZIP (dalla 1.5.0)
+
+Su `enf-cmnf.cc` i post di sole foto non hanno player, quindi il tasto dei video
+resta nascosto e la pagina non offre niente: le immagini si salvavano una per
+una. Dalla 1.5.0 compare **sopra** a quello dei video un secondo tasto,
+**"🖼 N images (ZIP)"**, che dice quante ne ha trovate e, con un clic, le mette
+tutte in un unico archivio. Un secondo clic annulla, come per i video.
+
+Che cosa prende, e a quale risoluzione:
+
+- le immagini del **corpo del post** (`.entry-content`), nell'ordine in cui si
+  leggono, più quelle **collegate** da un link diretto a un file immagine;
+- di ogni immagine la versione **più grande** disponibile: il candidato più
+  largo dello `srcset`, e se l'indirizzo porta il suffisso WordPress `-800x600`
+  si chiede prima il file **senza suffisso**, che è l'originale. Misurato sul
+  post campione: **196055 byte contro 84701**, cioè il suffisso nascondeva un
+  file più che doppio. Se l'originale non c'è, si ripiega su quello che la
+  pagina mostra invece di perdere l'immagine;
+- **niente** avatar, emoji, icone, loghi e miniature delle barre laterali: un
+  filtro sui nomi, più la larghezza reale di ogni immagine già caricata (sotto i
+  260px è arredamento del sito, non una foto).
+
+I file dentro l'archivio sono **numerati** (`01 - IMG_3266.jpg`), perché una
+cartella ordinata per nome mescolerebbe le foto secondo il nome con cui sono
+state caricate, perdendo l'ordine del racconto; il nome dell'archivio è il
+titolo del post. Le immagini che il CDN rifiuta non fermano il lavoro: entrano
+nell'archivio quelle riuscite e le altre si riassumono **una volta sola** alla
+fine.
+
+> **Lo ZIP lo scrive lo script.** Le voci sono **stored**, cioè non compresse:
+> JPEG, PNG e WebP sono già compressi, quindi comprimerli di nuovo guadagna
+> qualche punto percentuale, e in cambio si eviterebbe una libreria presa da un
+> CDN con `@require` che poi girerebbe su ogni pagina coperta. Il formato scritto
+> a mano sta in ottanta righe: un CRC32, tre intestazioni e un `Blob` che i pixel
+> non li copia mai. È uno ZIP a 32 bit, quindi l'archivio deve stare sotto i
+> **4 GiB**, e sopra quella soglia il tasto lo dice invece di produrre un file
+> che si rompe solo all'apertura.
+
+⚠️ **Solo `enf-cmnf.cc`**, ed è una scelta: enfhub e xhamster sono piattaforme
+video, dove ogni immagine a schermo è la miniatura di qualcos'altro, e là il
+tasto prometterebbe una galleria che non esiste.
+
 ### Personalizzazione
 
 ```js
@@ -884,6 +926,9 @@ const SALVA_CON_DIALOGO  = true;  // MP4: true = chiede dove salvare, false = sc
 const SEGMENTI_PARALLELI = 5;     // HLS: quanti segmenti scaricare insieme
 const TENTATIVI_SEGMENTO = 3;     // HLS: ritentativi per singolo segmento
 const QUALITA_HLS        = 'max'; // 'max' o 'min' quando il flusso ha più varianti
+const IMMAGINI_PARALLELE = 4;     // ZIP: quante immagini scaricare insieme
+const TENTATIVI_IMMAGINE = 2;     // ZIP: ritentativi per singola immagine
+const LATO_MINIMO_IMG    = 260;   // ZIP: sotto questa larghezza è un'icona, non una foto
 ```
 
 ### Installazione

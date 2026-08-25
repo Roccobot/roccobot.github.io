@@ -357,6 +357,53 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
   ⚠️ E un HLS **non passa da `GM_download`** ma da `GM_xmlhttpRequest`: un banco che guarda solo
   il primo dà per non trovato un video che è stato trovato.
 
+### 🖼️ Le foto in uno ZIP
+
+Nato con la **1.5.0**: secondo tasto, **sopra** a quello dei video, che impacchetta in un solo archivio le immagini
+a piena risoluzione del post. Nasce perché su un post di sole foto il tasto dei video non
+compare e la pagina non offre niente: si salvava a mano, una per una.
+
+- ⚠️⚠️ **La 'risoluzione piena' è una MISURA, non l'indirizzo che la pagina mostra**: WordPress
+  tiene l'originale accanto alle sue copie ridotte, e la pagina spesso mostra una copia.
+  Misurato il 2026-08-25 sul post campione: `girlfriend-nude-baseball20-min-774x1024.jpg` pesa
+  **84701** byte, lo stesso file senza il suffisso `-WxH` ne pesa **196055**. Quindi si chiede
+  prima il nome nudo, e **la richiesta stessa è la prova** che esiste: una HEAD di verifica
+  raddoppierebbe le richieste per sapere quello che il download scopre comunque.
+  - ⚠️ **Se il nome nudo non c'è si ripiega su quello che la pagina mostra**, e questo ordine
+    di candidati (nudo, poi il più largo dello `srcset`, poi il `src` del tag) è ciò che evita
+    il difetto peggiore: perdere un'immagine per essere stati ambiziosi.
+- ⚠️ **Le immagini di `cdn.enf-cmnf.cc` NON hanno il vincolo dei video**: rispondono **200
+  senza alcuna intestazione**, Range compreso (misurato il 2026-08-25). Il 403 che pretende
+  `Referer` + `Sec-Fetch-Dest: video` riguarda i soli MP4, e chi legge quella nota non la
+  estenda alle foto.
+- ⚠️⚠️ **Lo ZIP se lo scrive lo script, con le voci STORED**, e non è artigianato per il
+  gusto: JPEG e PNG sono già compressi, quindi il deflate vale qualche punto percentuale,
+  mentre una libreria presa con `@require` da un CDN girerebbe su **ogni** pagina coperta dallo
+  script. Stored significa un CRC32, tre intestazioni e un `Blob` che i pixel non li copia.
+  ⚠️ È zip32: sopra i **4 GiB** il tasto lo dichiara invece di produrre un archivio che si
+  rompe solo all'apertura, e il **bit 11** del flag (nomi UTF-8) c'è perché senza di lui un
+  titolo accentato esce storto su Windows, che è il difetto che nessuno vede provando.
+- ⚠️ **Niente picker per le foto, ed è una decisione**: un post di foto è **una** galleria
+  raccontata in ordine, quindi 'tutte' è la risposta in ogni caso da cui la richiesta è nata.
+  Il **conteggio sta sull'etichetta** prima del clic (`🖼 10 images (ZIP)`), che è il modo di
+  non far trovare sorprese senza chiedere niente.
+- ⚠️ I file dentro l'archivio sono **numerati** (`01 - IMG_3266.jpg`): senza il numero una
+  cartella ordinata per nome rimescola le foto secondo il nome con cui l'autore le ha
+  caricate, e l'ordine del racconto si perde.
+- ⚠️ **Solo `enf-cmnf.cc`**: enfhub e xhamster sono piattaforme video, dove ogni immagine a
+  schermo è la miniatura di qualcos'altro, e il tasto prometterebbe una galleria inesistente.
+  **Che cosa farebbe cambiare la risposta**: un post di foto su uno dei due, con le immagini
+  nel corpo della pagina.
+- ⚠️ **I due tasti stanno in una colonna flex, non a coordinate fisse**: con due `position:
+  fixed` il tasto delle immagini resterebbe sospeso a mezz'aria ogni volta che quello dei
+  video è nascosto, cioè sempre, su un post di foto. Il picker dei video si ancora
+  **misurando** l'altezza della colonna, invece del vecchio `64px`, che con due tasti gli
+  cadeva sopra.
+- ⚠️ **`pulisci()` normalizza anche i caratteri vietati** (trattini lunghi, apici curvi,
+  ellissi): il titolo dei post ne è pieno, e da lì finivano nel nome di **ogni** file salvato,
+  video compresi. È l'applicazione della regola universale 'un carattere vietato ricevuto in
+  input si normalizza', che qui aveva una falla in silenzio.
+
 ## 🔬 La sonda dello scorrimento (`ScrollProbe.html`)
 
 Pagina di diagnostica di questa cartella, pubblicata come le altre
