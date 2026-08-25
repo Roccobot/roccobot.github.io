@@ -1969,6 +1969,63 @@ unica**: card di legenda, poi le due checkbox di categoria, poi la legenda dei b
   spento.
 - Misura a font reali: pannello desktop **311x420** (era 540 di larghezza a due colonne).
 
+### 🔳 I filtri su DUE RIGHE distribuite, e il filtro per genere
+
+Mockup dell'utente, `0.92`. I filtri erano sei righe impilate, una per voce, e la colonna
+restava mezza vuota mentre il Pannello cresceva in altezza. Ora sono **due righe da tre
+celle**: le categorie sopra, i due generi e il vero nome sotto.
+
+- **Le celle si distribuiscono (`space-between`), non sono incolonnate**, ed è una scelta:
+  le etichette hanno lunghezze molto diverse (`Draghi` contro `Solo veri nomi noti`), e
+  colonne uguali avrebbero lasciato buchi larghi quanto la parola più lunga.
+- ⚠️ **L'anti-jitter NON viene dalle colonne fisse ma dalle gemelle invisibili** delle
+  etichette (`.ctrl-label-alt`), che riservano in ogni cella la larghezza maggiore fra le due
+  lingue. Misurato: le sei celle hanno **posizione e larghezza identiche** in italiano e in
+  inglese, e il Pannello resta a **348,91px** in entrambe.
+- **Il passo interno delle celle è più stretto** di quello delle righe impilate, e non è
+  estetica: con tre celle sulla stessa riga i due spazi interni si pagano **sei** volte, e col
+  passo largo il Pannello si allargava di **44px** oltre la sua misura.
+- ⚠️ **La toolbar condivide la GABBIA della card di legenda** (`max-width` e `padding`
+  uguali), così il logo tocca il bordo sinistro del riquadro e l'ultimo pulsante quello
+  destro. **Un `padding-right` a numero è la misura scartata**: lo scarto non è costante ma
+  dipende dal `max-width:19rem` della card, che morde solo quando il Pannello è più largo di
+  quel tetto (a 1280px valeva 4,8px di padding più 4,53px di tetto). Con la gabbia condivisa
+  lo scarto misurato è **0,00px** a qualunque larghezza.
+- **L'allineamento verticale delle etichette** viene da `align-items:center`, non da uno
+  spostamento in `em`: la riga del vero nome ereditava `flex-start` da quando la frase andava
+  a capo, ed è il difetto che l'utente aveva misurato in 5px a DPR 2. Scarto dopo: **0,01px**.
+
+#### ⚧ Il filtro per GENERE, e le voci senza
+
+Due caselle, Maschi e Femmine, accese di default e mai spegnibili insieme (l'ultima accesa si
+blocca, come per le categorie; e la guardia è **anche** nel gestore, non solo nel `disabled`).
+
+- ⚠️⚠️ **Le voci senza genere dichiarato passano SEMPRE**, ed è la scelta che conta: il campo
+  è vuoto su 6 voci, e cinque sono draghi. Il canone dice che il genere dei draghi è
+  **congettura e non dato** (`rules/Earthsea.md`), quindi spegnere 'Maschi' non può far
+  sparire un drago di cui nessuna fonte ha detto il sesso: sarebbe il filtro a decidere un
+  fatto che le fonti lasciano aperto.
+- **Conseguenza dichiarata**: con una casella spenta il totale non è la differenza attesa
+  (40 femmine su 121 lasciano **81** card, non 80), perché i 6 senza genere restano. È il
+  prezzo giusto: l'alternativa era attribuire un sesso per omissione.
+
+#### 🔒 'Solo veri nomi noti' segue le categorie accese
+
+Regola dell'utente, `0.92`, e i numeri del dataset la fondano.
+
+| categorie accese | la casella | perché |
+|---|---|---|
+| **soli animali** | si **spegne** e si blocca | **0 animali su 12** hanno un vero nome: accesa darebbe lista vuota |
+| **soli draghi** | si **accende** e si blocca | **8 draghi su 8** ce l'hanno, e per un drago il nome È il vero nome: spegnerla non toglierebbe nulla |
+
+- ⚠️ **Il valore scelto dall'utente non si perde**: `soloVeroNome` resta com'è e la regola
+  decide solo che cosa **mostrare** e se lasciar toccare. Riaccendendo una terza categoria la
+  casella torna in mano all'utente col valore di prima, ed è la ragione per cui lo stato
+  forzato non si scrive nella variabile.
+- ⚠️ **Il filtro legge `veroNomeInVigore()`, non `soloVeroNome`**: con una sola categoria
+  accesa comanda la regola, e leggere la variabile grezza farebbe dire alla lista una cosa e
+  alla casella un'altra.
+
 ### 📱 La sheet mobile: l'aria in cima e lo scorrimento spento
 
 Due ritocchi della `0.71`, tutti e due nati da un difetto che la `0.69` aveva lasciato dietro

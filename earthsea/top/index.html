@@ -1095,8 +1095,23 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 @keyframes fab-grow { from { transform:scale(0.92); } to { transform:scale(1); } }
 @media (prefers-reduced-motion:reduce){ #ctrl-fab.fab-tap, #ctrl-fab.fab-grow { animation:none; } }
 /* Categorie con bottone solo */
-.ctrl-cat-row { display:flex; align-items:center; }
-.ctrl-cat-row .ctrl-row { flex:1; min-width:0; }
+/* ⚠️⚠️ LE DUE RIGHE DI FILTRI (0.92, mockup dell'utente): tre celle ciascuna,
+   distribuite sulla larghezza del contenuto invece di essere impilate una per riga.
+   ⚠️ `space-between` e non colonne uguali: le etichette hanno lunghezze molto diverse
+   ('Draghi' contro 'Solo veri nomi noti'), e colonne uguali avrebbero lasciato buchi
+   larghi quanto la parola piu' lunga. L'anti-jitter NON viene dalle colonne fisse ma
+   dalle gemelle invisibili delle etichette (`.ctrl-label-alt`), che riservano in ogni
+   cella la larghezza maggiore fra le due lingue: le posizioni non si muovono al cambio
+   lingua anche se le celle hanno misure diverse fra loro.
+   ⚠️ `align-items:center` allinea l'etichetta al centro della sua casella: era il
+   difetto dell'allineamento verticale che l'utente ha misurato (5px a DPR 2) sulla
+   riga del vero nome, che ereditava `flex-start` da quando andava a capo. */
+.ctrl-frow { display:flex; align-items:center; justify-content:space-between; gap:0.25rem; }
+.ctrl-frow > .ctrl-row { flex:0 0 auto; min-width:0; }
+/* ⚠️ Gap piu' stretti che nelle righe impilate, e non e' un ritocco estetico: con tre
+   celle sulla stessa riga i due spazi interni di ognuna si pagano SEI volte, e col passo
+   largo di prima il Pannello si allargava di 44px oltre la sua misura (misurato). */
+.ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:0.24rem; padding-right:0.24rem; }
 /* Wrapper delle due colonne: trasparente ovunque (la griglia desktop di
    #ctrl-panel vede .ctrl-left e la legenda come figli diretti); su mobile
    diventa un blocco flex centrato (vedi media query). */
@@ -1118,7 +1133,6 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 /* Target touch su mobile: area cliccabile più alta (≥ ~28px) e testi un filo
    più grandi per i controlli del Pannello, senza cambiarne il disegno. */
 @media (max-width:768px) {
-  .ctrl-cat-row { min-height:31.72px; }
 }
 .ctrl-row.cat-locked .ctrl-chk,
 .ctrl-row.cat-locked input { opacity:0.35; pointer-events:none; }
@@ -1203,9 +1217,17 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      due 1fr). La versione è otticamente centrata in verticale coi tasti
      (align-items:center) e a sinistra si allinea con le checkbox sottostanti
      (padding-left 0.3rem = rientro di riga delle Categorie). */
-  #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto; align-items:center; margin:3px 0 0; }
+  /* ⚠️⚠️ LA TOOLBAR CONDIVIDE LA GABBIA DELLA CARD DI LEGENDA (0.92, punto dell'utente:
+     i pulsanti *spostati a sinistra per allinearsi ai bordi del contenuto*): stesso
+     `max-width` e stesso `padding` di `.ctrl-cardleg`, quindi il logo tocca il bordo
+     sinistro del riquadro e l'ultimo pulsante quello destro, sempre.
+     ⚠️ Un `padding-right` a numero NON avrebbe retto, ed e' la strada provata e scartata:
+     lo scarto non e' costante ma dipende dal `max-width:19rem` della card, che morde solo
+     quando il Pannello e' piu' largo di quel tetto. Misurato a 1280px: 4,8px di padding
+     della sezione piu' 4,53px di tetto, cioe' un valore che cambia con la larghezza. */
+  #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto; align-items:center; margin:3px 0 0; max-width:19rem; padding:0 0.3rem; box-sizing:border-box; }
   #ctrl-panel .ctrl-toolbar-btns { justify-self:end; display:flex; align-items:center; gap:0.55rem; }
-  #ctrl-panel .ctrl-left-group { justify-self:start; display:flex; align-items:center; gap:0.5rem; padding-left:0.3rem; }
+  #ctrl-panel .ctrl-left-group { justify-self:start; display:flex; align-items:center; gap:0.5rem; }
   /* Logo dello stesso colore del numero di versione accanto (var --gold-bright,
      theme-aware): il path usa fill="currentColor", che eredita questo color. */
   #ctrl-panel .ctrl-logo { display:inline-flex; align-items:center; line-height:0; color:var(--gold-bright); opacity:0.9; transition:opacity 0.2s; }
@@ -1246,7 +1268,6 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      quello dell'ULTIMA riga col fondo visivo del testo della nota (in
      basso, margine negativo che compensa lo slack di interlinea). */
   #ctrl-panel .ctrl-section--legend { margin-top:3px; }
-  #ctrl-panel .ctrl-cat-row { min-height:31.5px; }
   /* Slot del tag: centrato in verticale nello spazio tra 'Animali' e
      l'avviso sui nomi (auto sopra/sotto). Riserva SEMPRE l'altezza del tag
      (min-height:21px, dalla v7.29) anche a filtro spento (slot vuoto), così il
@@ -1425,7 +1446,12 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
    0.55 (era 0.45, sotto la soglia AA: contrasto 3.99 su bg scuro; 0.55 = 5.37,
    passa con margine); in tema chiaro l'override qui sotto la porta a 0.62. */
 .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.55; }
-.ctrl-dot { width:0.85rem; height:0.85rem; border-radius:3px; flex-shrink:0; }
+/* Il RETTANGOLO di colore della categoria (0.92, mockup dell'utente): era un quadrato
+   di 0.85rem, ora e' un rettangolo orizzontale con gli angoli piu' morbidi.
+   ⚠️ La forma non e' un vezzo: accanto a una checkbox QUADRATA di 1.05rem, un secondo
+   quadrato quasi uguale si leggeva come una seconda casella, e l'occhio cercava di
+   cliccarlo. Il rettangolo dice 'campione di colore' e non 'interruttore'. */
+.ctrl-dot { width:0.66rem; height:0.53rem; border-radius:3px; flex-shrink:0; }
 /* Righe legenda = interruttori del filtro badge (v4.05): cliccabili, stato
    .on evidenziato in oro, focus visibile da tastiera. */
 .ctrl-legend-row { display:flex; align-items:center; gap:0.6rem; padding:0.28rem 0.4rem; font-size:0.8rem; color:var(--parchment); cursor:pointer; border:1px solid transparent; border-radius:6px; user-select:none; }
@@ -2850,7 +2876,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.91</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>0.92</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5378,8 +5404,56 @@ function veroNomeNoto(p) {
   return !!(p.vero_nome && String(p.vero_nome).trim());
 }
 
+// ── Filtro per GENERE (0.92, mockup dell'utente) ────────────────────────────────
+// Due caselle, Maschi e Femmine, accese di default e mai spegnibili insieme (la
+// guardia è la stessa delle categorie: l'ultima accesa si blocca).
+// ⚠️⚠️ Le voci SENZA genere dichiarato passano SEMPRE, ed è la scelta che conta: il
+// campo è vuoto su 6 voci, e cinque sono draghi. Il canone dice che il genere dei
+// draghi è congettura e non dato (`rules/Earthsea.md`), quindi spegnere 'Maschi'
+// non può far sparire un drago di cui nessuno ha mai detto il sesso: sarebbe il
+// filtro a decidere un fatto che le fonti lasciano aperto. Il filtro riguarda chi un
+// genere ce l'ha scritto.
+// ⚠️ Conseguenza dichiarata: con una sola casella accesa il totale non è la somma
+// delle due (74 maschi + 41 femmine + 6 senza = 121), e chi conta le card se ne
+// accorge. È il prezzo giusto: l'alternativa era attribuire un sesso per omissione.
+var genereFiltro = { m: true, f: true };
+function genereAttivo(p) {
+  var g = (p.genere || '').trim();
+  if (g !== 'm' && g !== 'f') return true;
+  return genereFiltro[g] !== false;
+}
+
+// ── 'Solo veri nomi noti' SEGUE le categorie accese (0.92, regola dell'utente) ───
+// Due casi estremi, e in entrambi la casella smette di essere una scelta:
+//   soli ANIMALI  -> si SPEGNE e si blocca. Nessuno dei 12 ha un vero nome (misurato
+//                    sul dataset), quindi lasciarla accendere darebbe una lista vuota:
+//                    una casella che può solo far sparire tutto non è un filtro.
+//   soli DRAGHI   -> si ACCENDE e si blocca. Tutti e 8 ce l'hanno, e per un drago il
+//                    nome È il vero nome: spegnerla non toglierebbe nulla, quindi la
+//                    casella mentirebbe promettendo un effetto che non c'è.
+// ⚠️ Il valore scelto dall'utente NON si perde: `soloVeroNome` resta com'è e questa
+// funzione decide solo che cosa MOSTRARE e se lasciar toccare. Riaccendendo una terza
+// categoria la casella torna in mano all'utente col suo valore di prima, che è la
+// ragione per cui lo stato forzato non si scrive nella variabile.
+// ⚠️ È calcolata a ogni ridisegno del Pannello e non memorizzata: le categorie possono
+// cambiare da più strade (le caselle, un permalink, il riordino), e uno stato copiato
+// resterebbe indietro da una di quelle.
+function statoVeroNome() {
+  var attive = CATS.filter(function(c){ return filterState[c]; });
+  if (attive.length === 1 && attive[0] === 'animale') return { on: false, locked: true };
+  if (attive.length === 1 && attive[0] === 'dragon') return { on: true, locked: true };
+  return { on: soloVeroNome, locked: false };
+}
+// Il valore che il FILTRO deve usare, che è quello mostrato: con una sola categoria
+// accesa comanda la regola qui sopra, altrimenti la scelta dell'utente.
+function veroNomeInVigore() { return statoVeroNome().on; }
+
 function isVisibile(p) {
-  if (soloVeroNome && !veroNomeNoto(p)) return false;
+  // ⚠️ `veroNomeInVigore()` e non `soloVeroNome`: con una sola categoria accesa il valore
+  // lo decide la regola (vedi `statoVeroNome`), o la lista direbbe una cosa e la casella
+  // ne mostrerebbe un'altra.
+  if (veroNomeInVigore() && !veroNomeNoto(p)) return false;
+  if (!genereAttivo(p)) return false;
   if (badgeFilter.size) {
     var hit = false;
     badgeFilter.forEach(function(row){
@@ -6732,7 +6806,14 @@ var CAT_LABEL = {
 // (il fondo del Pannello è scuro in entrambi i temi, quindi i valori chiari si
 // leggono su entrambi). ⚠️ 'Uomini' porta l'oltremare perché è la categoria, non il
 // genere: il turchese delle donne è una tinta di card, non una voce di filtro.
-var CAT_COLOR = { man:'#22449c', dragon:'#a8462f', animale:'#856508' };
+// ⚠️⚠️ I colori dei RETTANGOLI del Pannello sono una tavolozza A SE', non quella delle
+// card (`cardColors` in `dati.js`), e i valori li ha dati l'utente nella `0.92`. Sono
+// gli stessi tre colori attenuati: qui il rettangolo e' un francobollo di 1rem accanto a
+// un testo, non un fondo di scheda, quindi le tinte piene della lista risultavano dure.
+// ⚠️ Chi cambia i colori delle card NON deve venire a cambiare anche questi 'per
+// coerenza': sono due usi diversi dello stesso significato, e il precedente e' che questa
+// riga era rimasta indietro alla tavolozza della 0.16 senza che nessuno se ne accorgesse.
+var CAT_COLOR = { man:'#8ca1c7', dragon:'#cb7e72', animale:'#a0c487' };
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
 // (drill-down) al posto della classe grezza. Bilingue. Fallback: classe senza 'type-'.
 var TYPE_LABEL = {
@@ -6848,37 +6929,59 @@ function controlPanelHTML() {
   // una servono adesso DUE spegnimenti. La domanda è stata posta all'utente, e la risposta è
   // **no**: *niente tasto 'Solo'*. Quindi non è una dimenticanza da sanare, è una scelta
   // ripetuta a distanza di due giorni e con l'aritmetica cambiata.
+  // ⚠️⚠️ DUE RIGHE che riempiono la larghezza (mockup dell'utente, 0.92): le tre
+  // categorie sopra, i due generi e il vero nome sotto. Prima erano sei righe impilate,
+  // una per filtro, e la colonna restava mezza vuota mentre il Pannello cresceva in
+  // altezza. ⚠️ Le due righe si distribuiscono da sé (`space-between`) e NON sono
+  // incolonnate fra loro: le etichette hanno lunghezze diverse, e incolonnarle avrebbe
+  // richiesto una griglia a colonne fisse, cioè spazi vuoti larghi quanto la parola più
+  // lunga. Il mockup mostra proprio la distribuzione libera.
   destra += '<div class="ctrl-section ctrl-section--filtri">';
   var activeCats = CATS.filter(function(c){ return filterState[c]; });
+  // La riga di un filtro: interruttore, quadratino di colore se c'è, etichetta con la
+  // gemella invisibile dell'altra lingua (anti-jitter: la cella riserva la larghezza
+  // maggiore fra le due lingue, quindi le posizioni non ballano al cambio lingua).
+  function filtroRow(o){
+    return '<label class="ctrl-row' + (o.locked ? ' cat-locked' : '') + '"' + (o.title ? ' title="' + o.title + '"' : '') + '>'
+       + '<input type="checkbox"' + (o.attr || '') + (o.on ? ' checked' : '') + (o.locked ? ' disabled' : '') + '>'
+       + '<span class="ctrl-chk"></span>'
+       + (o.color ? '<span class="ctrl-dot" style="background:' + o.color + '"></span>' : '')
+       + '<span class="ctrl-label"><span class="ctrl-label-face">' + o.lbl + '</span>'
+       +   '<span class="ctrl-label-alt" aria-hidden="true">' + o.lblAlt + '</span></span></label>';
+  }
+  destra += '<div class="ctrl-frow">';
   CATS.forEach(function(c){
     // Ultima categoria accesa: la checkbox si blocca, altrimenti si arriverebbe a
     // una lista vuota per sbaglio.
     var isLocked = activeCats.length === 1 && filterState[c];
-    destra += '<div class="ctrl-cat-row">';
-    destra += '<label class="ctrl-row' + (isLocked ? ' cat-locked' : '') + '">'
-       + '<input type="checkbox" data-cat="' + c + '"' + (filterState[c] ? ' checked' : '') + (isLocked ? ' disabled' : '') + '>'
-       + '<span class="ctrl-chk"></span><span class="ctrl-dot" style="background:' + CAT_COLOR[c] + '"></span>'
-       + '<span class="ctrl-label"><span class="ctrl-label-face">' + CL[c] + '</span><span class="ctrl-label-alt" aria-hidden="true">' + CLo[c] + '</span></span></label>';
-    destra += '</div>';
+    destra += filtroRow({ attr: ' data-cat="' + c + '"', on: filterState[c], locked: isLocked,
+                          color: CAT_COLOR[c], lbl: CL[c], lblAlt: CLo[c] });
   });
   destra += '</div>';
-  // Filtro 'solo i personaggi di cui è noto il vero nome' (istruzione dell'utente,
-  // 2026-08-21). Sta sotto le categorie perché è un filtro come loro, ma FUORI dalla
-  // sezione `--filtri`: quella è la lista delle categorie, e mescolarvi una riga che
-  // categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
-  // ⚠️ Oggi non esclude nessuna delle 19 voci, perché ognuna ha un vero nome noto (o è
-  // un drago, il cui nome È il vero nome): serve al dataset che verrà, e la sua utilità
-  // si vedrà quando entreranno le voci senza.
-  // ⚠️ Etichetta BREVE dalla 0.69 (istruzione dell'utente: *scrivi per brevità 'Solo veri
-  // nomi noti'*): la forma lunga prendeva due righe nella colonna del Pannello.
-  var vnLbl = currentLang === 'it' ? 'Solo veri nomi noti'
-                                   : 'Known true names only';
-  destra += '<div class="ctrl-section ctrl-section--vero">'
-     + '<label class="ctrl-row ctrl-row--wrap" title="' + vnLbl + '">'
-     +   '<input type="checkbox" id="ctrl-solovero"' + (soloVeroNome ? ' checked' : '') + '>'
-     +   '<span class="ctrl-chk"></span>'
-     +   '<span class="ctrl-label"><span class="ctrl-label-face">' + vnLbl + '</span></span>'
-     + '</label></div>';
+  // Seconda riga: i due generi e il filtro del vero nome.
+  var GEN = { it: { m: 'Maschi', f: 'Femmine' }, en: { m: 'Males', f: 'Females' } };
+  var gCur = currentLang === 'it' ? GEN.it : GEN.en, gAlt = currentLang === 'it' ? GEN.en : GEN.it;
+  var vnLbl = currentLang === 'it' ? 'Solo veri nomi noti' : 'Known true names only';
+  var vnAlt = currentLang === 'it' ? 'Known true names only' : 'Solo veri nomi noti';
+  var vn = statoVeroNome();
+  destra += '<div class="ctrl-frow">';
+  ['m', 'f'].forEach(function(g){
+    // Stessa guardia delle categorie: l'ultimo genere acceso si blocca.
+    var soloLui = genereFiltro[g] && !genereFiltro[g === 'm' ? 'f' : 'm'];
+    destra += filtroRow({ attr: ' data-gen="' + g + '"', on: genereFiltro[g], locked: soloLui,
+                          lbl: gCur[g], lblAlt: gAlt[g] });
+  });
+  destra += filtroRow({ attr: ' id="ctrl-solovero"', on: vn.on, locked: vn.locked,
+                        title: vnLbl, lbl: vnLbl, lblAlt: vnAlt });
+  destra += '</div>';
+  destra += '</div>';
+  // Ⓘ Il filtro 'solo i personaggi di cui è noto il vero nome' aveva una sezione tutta
+  // sua (`--vero`) e stava su una riga a parte sotto le categorie: dalla `0.92` è la
+  // terza cella della seconda riga, accanto ai due generi (mockup dell'utente). ⚠️ Con
+  // lui è caduta la classe `.ctrl-row--wrap`, che gli serviva perché la frase andava a
+  // capo nella colonna stretta: nella riga distribuita ci sta in una riga sola.
+  // ⚠️ L'etichetta BREVE resta ('Solo veri nomi noti', istruzione della `0.69`): la forma
+  // lunga tornerebbe a spezzarsi.
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a sinistra).
   // Il click azzera tutti i badge.
   // ⚠️⚠️ STA IN FONDO AL PANNELLO, DOPO LA LEGENDA (istruzione dell'utente,
@@ -7092,6 +7195,20 @@ function wireControlPanel() {
   });
   var svn = panel.querySelector('#ctrl-solovero');
   if (svn) svn.addEventListener('change', function(){ soloVeroNome = svn.checked; applyFilter(); });
+  // Caselle del GENERE. ⚠️ La guardia sta QUI e non solo nel `disabled` dell'ultima
+  // accesa: `disabled` è la resa, questa è la regola. Un doppio clic rapido, una
+  // scorciatoia da tastiera o un ridisegno arrivato a metà gesto possono portare un
+  // `change` su una casella che nel frattempo è diventata l'ultima, e senza il
+  // controllo la lista si svuoterebbe. Stessa architettura del filtro badge, che il
+  // suo `toggleBadgeRow` lo protegge nello stesso modo.
+  panel.querySelectorAll('input[data-gen]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var g = inp.getAttribute('data-gen'), altro = g === 'm' ? 'f' : 'm';
+      if (!inp.checked && !genereFiltro[altro]) { inp.checked = true; return; }
+      genereFiltro[g] = inp.checked;
+      applyFilter();
+    });
+  });
   // Filtro badge: ogni riga di legenda è un interruttore (click o Invio/Spazio).
   // Guard 'risultati 0' (rete di sicurezza oltre alla disabilitazione visiva):
   // un toggle che svuoterebbe la lista NON viene applicato (nessun effetto).
