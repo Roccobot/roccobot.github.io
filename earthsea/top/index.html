@@ -68,7 +68,6 @@
   --gold-deep: #5f747a;
   --name: #dfe6e3;
 }
-
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 /* overflow-y:scroll = scrollbar SEMPRE presente: quando il Pannello apre e mette
    body in overflow:hidden, la scrollbar non sparisce (lo spazio è già lì), così
@@ -125,7 +124,6 @@ body {
   overflow-x: hidden;
   transition: background 0.3s, color 0.3s;
 }
-
 /* Sfondo pagina davvero NEUTRO (dalla v8.74): rimosso il vecchio overlay
    decorativo `body::before` (radial-gradient blu-inchiostro, `position:fixed;
    inset:0`). Due motivi: (1) la sua base opaca copriva il fondo neutro del
@@ -137,7 +135,6 @@ body {
    piatto. Il gradiente ornato resta SOLO sul titolo `#title`, non sulla pagina. */
 
 header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
-
 /* Angolo in alto a sinistra (impianto v14.53, mockup dell'utente): `roccobot.me`
    SOPRA e il numero di versione SOTTO, incolonnati. In cima alla pagina si vedono
    entrambi; appena si scorre il numero DISSOLVE e resta il solo `roccobot.me`,
@@ -196,7 +193,6 @@ header { text-align:center; padding:2.2rem 1.5rem 1.4rem; position: relative; }
 html.scrolled .version-badge { opacity: 0; pointer-events: none; }
 .version-badge:hover, .home-link:hover { opacity: 1; }
 html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { color: var(--gold); }
-
 .lang-switch {
   /* Fisso in alto a destra: resta visibile e fluttuante anche scorrendo (desktop).
      Su mobile è comunque nascosto dal flag langSwitchMobile. In modalità admin
@@ -235,7 +231,6 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
 }
 .lang-switch > .ls-face, .lang-switch > .ls-measure { grid-area: 1 / 1; }
 .lang-switch > .ls-measure { visibility: hidden; pointer-events: none; }
-
 .lang-switch:hover {
   background: var(--gold);
   color: var(--ink);
@@ -244,14 +239,12 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
 /* Cambio lingua nascosto su mobile quando il flag langSwitchMobile è spento
    (classe no-langswitch-mobile sull'html). Resta nel DOM e su desktop. */
 @media (max-width:768px) { html.no-langswitch-mobile .lang-switch { display:none; } }
-
 .crest {
   font-family:'Cinzel Decorative',serif;
   font-size:clamp(0.7rem,2vw,0.85rem);
   letter-spacing:0.45em; color:var(--gold);
   margin-bottom:0.9rem; text-transform:uppercase;
 }
-
 .crest::before,.crest::after { content:'✦'; margin:0 0.8em; color:var(--gold-bright); }
 .crest a { color:inherit; text-decoration:none; font-weight:bold; }
 /* ⚠️ SCHERMI STRETTISSIMI (0.78): sotto i 360px `ROCCOBOT PRESENTA` andava a capo mentre
@@ -267,7 +260,6 @@ html[data-theme="light"] .version-badge, html[data-theme="light"] .home-link { c
   .crest { letter-spacing:0.32em; }
   .crest::before, .crest::after { margin:0 0.5em; }
 }
-
 h1 {
   font-family:'Cinzel Decorative',serif; font-weight:900;
   font-size:clamp(2.4rem,8vw,5.5rem); line-height:0.95;
@@ -307,7 +299,6 @@ h1 {
   margin-bottom:calc(0.5rem - 0.14em);
 }
 #title a { color:inherit; text-decoration:none; -webkit-text-fill-color:inherit; cursor:pointer; }
-
 .subtitle {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
@@ -317,9 +308,7 @@ h1 {
   text-wrap:balance;
 }
 .subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.69; letter-spacing:0.04em; margin-top:0.15rem; }
-
 .flourish { width:200px; height:30px; margin:0.7rem auto; opacity:0.7; }
-
 .intro {
   max-width:580px; margin:0.9rem auto 0;
   font-size:0.95rem; color:var(--parchment-dim); line-height:1.5;
@@ -328,10 +317,6 @@ h1 {
 .intro-cta {
   display:block; margin-top:0.7rem; color:var(--gold); font-size:0.9rem;
 }
-/* Sfondo pagina neutro (v8.72): i testi ardesia dell'intestazione erano tarati
-   sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
-   (solo tema scuro; il titolo e il resto del chrome restano invariati). */
-html[data-theme="dark"] .intro-cta { color:var(--parchment-dim); }
 /* Accento verso il colore del FAB (dalla v8.82, entrambi i temi; nato in v8.81
    come esperimento caldo solo-scuro): il link 'Risorse e note' vira verso il colore
    del FAB del tema (scuro = oro, vedi qui; chiaro = teal, vedi tema chiaro). Il
@@ -345,9 +330,9 @@ html[data-theme="dark"] .crest::before, html[data-theme="dark"] .crest::after { 
 html[data-theme="dark"] #footer-links { color:var(--gold) !important; }
 html[data-theme="dark"] #res-link { color:var(--gold); }
 html[data-theme="dark"] .subtitle-note { color:var(--parchment-dim); opacity:1; }
+html[data-theme="dark"] .intro-cta { color:var(--parchment-dim); }
 html[data-theme="dark"] .version-badge, html[data-theme="dark"] .home-link { color:var(--gold-bright); }
 html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls-face { color:var(--gold-bright); }
-
 /* ⚠️⚠️ LARGHEZZA DELLA COLONNA DELLE SCHEDE: fonte UNICA, letta anche da JS.
    Era `max-width:920px` scritto qui e ripetuto come `var PAT_COL = 920` nel
    codice, che da lì calcola la maschera della trama e la soglia 'c'è posto ai
@@ -364,7 +349,6 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    sotto quella soglia le righe cominciano a spezzarsi, e va rimisurato. */
 html { --col-max:740px; }
 .scroll { max-width:var(--col-max); margin:1.2rem auto 3rem; padding:0 1rem; }
-
 .rank-item {
   position:relative;
   display:grid;
@@ -384,15 +368,12 @@ html { --col-max:740px; }
   font:inherit; color:inherit;
   -webkit-user-select:text; user-select:text;
 }
-
 .rank-empty { text-align:center; padding:2.5rem 1rem; color:var(--parchment-dim); font-style:italic; }
-
 .rank-item::before {
   content:''; position:absolute; inset:0;
   background:linear-gradient(90deg,transparent 0%,rgba(202,204,212,0.10) 50%,transparent 100%);
   opacity:0; transition:opacity 0.4s; pointer-events:none;
 }
-
 .rank-item:hover,.rank-item:focus-within {
   /* border-color (shorthand) PRIMA di border-left-color: l'ordine inverso
      annullerebbe il bordo sinistro oro promesso dall'hover */
@@ -401,16 +382,12 @@ html { --col-max:740px; }
   background:linear-gradient(90deg,rgba(78,82,96,0.66) 0%,rgba(200,202,210,0.08) 100%);
   outline:none;
 }
-
 @media (hover: hover) and (pointer: fine) {
 }
-
 .rank-item:hover::before { opacity:1; }
-
 /* #2: il numero non cambia colore al passaggio del mouse */
 
 .rank-item:hover .rank-name,.rank-item:focus-within .rank-name { color:var(--name); }
-
 .rank-num {
   font-family:'Cinzel',serif; font-weight:900;
   font-size:clamp(1.45rem,3.9vw,2.05rem);
@@ -431,9 +408,7 @@ html { --col-max:740px; }
      sale a z-index:2: il bagliore continua a tingere il fondo, non più le cifre. */
   position:relative; z-index:2;
 }
-
 .rank-content { display:flex; flex-direction:column; gap:0.2rem; min-width:0; }
-
 /* NOME D'USO (rivisto il 2026-08-21, istruzione dell'utente): 'un po' più grande
    ma con la sola iniziale maiuscola (o LE iniziali, es. Orm Embar)'.
    ⚠️ Per questo il font passa da Cinzel a EB GARAMOND, e non è un capriccio: Cinzel
@@ -500,7 +475,6 @@ html { --col-max:740px; }
    (mai il corpo del font), e solo sulle card dove questo fa guadagnare una
    riga intera: i casi che 'per un pelo' sforano l'optimum. */
 .rank-name.name-tight { letter-spacing:0.006em; gap:0.24em; }
-
 .rank-title {
   /* ⚠️⚠️ LA RIGA DELL'OPERA CAMBIA CARATTERE nella 0.72 (istruzione dell'utente: *trova un
      modo per differenziarlo di più dal titolo dell'opera della prima apparizione*). Era in
@@ -517,7 +491,6 @@ html { --col-max:740px; }
   color:var(--parchment-dim); letter-spacing:0.05em;
   display:flex; align-items:center; gap:0.4em; flex-wrap:wrap;
 }
-
 /* ── La CITAZIONE, in fondo alla card (0.60) ───────────────────────────────────
    Richiesta dell'utente: *l'intero testo della citazione deve risiedere in un riquadro
    stondato tipo codeblock (ma meno 'tecnico') o qualcosa di simile, che lo separi
@@ -591,6 +564,21 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
   color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
 }
 .rc-testo { display:flow-root; }
+/* La SIGLA DEL TAGLIO `[...]` dentro la citazione (0.91). Scelta dell'utente fra quattro
+   rese messe a confronto sulla card di Lontra: tonda, piccola e più tenue.
+   ⚠️ Il corsivo è ciò che si toglie per primo: la citazione è tutta in corsivo perché è
+   voce di Le Guin, e la sigla non lo è; in tondo smette di sembrare una parola della
+   frase. Il corpo minore e l'opacità la mettono in secondo piano senza cancellarla.
+   ⚠️ Niente `vertical-align`: la sigla siede sulla BASELINE come ogni testo inline, ed è
+   quello che l'utente ha chiesto. Un allineamento diverso (apice, `middle`) la farebbe
+   galleggiare fra le righe.
+   ⚠️ Il `padding` orizzontale non è decorazione: a corpo ridotto la sigla si incollava
+   alla parola che segue, e due caratteri di spazio a occhio non si possono scrivere nel
+   dato senza sporcare il testo. */
+.rc-ell {
+  font-style:normal; font-size:0.72em; letter-spacing:0.02em;
+  padding:0 0.08em; opacity:0.62;
+}
 /* La riga di contesto: opera, capitolo e che cosa succede, nella SOLA lingua corrente.
    ⚠️ Fino alla 0.66 portava i due titoli affiancati (`Tehanu / Tehanu`) e in testa il
    nome di chi parla: l'utente ha tolto entrambi (2026-08-24), e il nome è diventato la
@@ -600,7 +588,6 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
   font-family:'EB Garamond',serif; font-size:clamp(0.76rem,1.9vw,0.86rem);
   line-height:1.38; color:var(--parchment-dim); opacity:0.82; text-wrap:pretty;
 }
-
 /* ── Righe BILINGUI: la gemella invisibile che riserva l'altezza (0.59) ─────────
    Faccia visibile e testo dell'altra lingua nella stessa cella di griglia: il box
    prende l'altezza MAGGIORE delle due, e il cambio lingua non muove più le card.
@@ -638,7 +625,6 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
    colonna flex: quella via riservava la sola altezza e lasciava slittare le etichette,
    che è il difetto corretto nella 0.67. */
 .rank-name-text.bil { display:inline-grid; justify-items:start; }
-
 /* ── ORIGINE: la colonna a destra (resa 'B', 0.59) ──────────────────────────────
    Scelta dell'utente fra tre proposte: l'origine non è un'etichetta come 'Uomo' o
    'Drago' (quelle dicono che cosa una voce È e stanno accanto al nome), è un dato di
@@ -710,7 +696,6 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
      parola e questo spostamento non avrebbe senso. */
   .ro-pin { align-self:center; position:relative; top:-0.119em; }
 }
-
 /* DRAGHI: il nome sta TUTTO nella prima riga (istruzione dell'utente, 2026-08-21,
    che l'ha chiamata una sua svista precedente). Un drago non ha nome d'uso: il suo
    nome È il vero nome, quindi la seconda riga non esiste e la prima porta già la resa
@@ -724,7 +709,6 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
   font-size:0.88em; letter-spacing:0.06em; text-transform:uppercase;
   color:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1);
 }
-
 /* VERO NOME (dal 2026-08-21, istruzione dell'utente): a Terramare il vero nome è
    la cosa più importante di un individuo, quindi ha una riga sua allo STESSO
    livello del nome d'uso, non fra i nomi alternativi. Colore = accento del gruppo
@@ -743,7 +727,6 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
   letter-spacing:0.06em; line-height:1.24;
   text-transform:uppercase;
 }
-
 .rank-subtitle {
   font-family:'EB Garamond',serif;
   /* ⚠️ Ingrandita nella 0.72 (istruzione dell'utente): era
@@ -772,7 +755,6 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
    distinguono dalla parte 1 (Nomi / Info) anche a capo senza il '|'. Fallback al
    colore-base dove color-mix non è supportato (resta il corsivo). */
 .rank-subtitle .bp-b, .rank-subtitle .bp-solo, .rank-desc .bp-b { font-style:italic; color:var(--parchment-dim); color:color-mix(in srgb, var(--parchment-dim) 64%, var(--gold) 36%); }
-
 .rank-desc {
   font-family:'EB Garamond',serif;
   font-size:clamp(0.73rem,1.7vw,0.86rem);
@@ -807,7 +789,6 @@ html[data-theme="dark"] .rank-subtitle { color:#c0c0c0; opacity:1; }
 html[data-theme="dark"] .rank-desc .bp-b,
 html[data-theme="dark"] .rank-subtitle .bp-b,
 html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
-
 /* A capo ottimizzato delle righe bipartite (vedi optimizeBipartite): quando
    la parte 2 (genealogia o titoli) andrebbe a capo lasciando una testa breve
    sulla prima riga, .bp-break la manda a capo per intero e nasconde il '|'. */
@@ -837,10 +818,8 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
   vertical-align:baseline;
   transform:translateY(0.67px);
 }
-
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
 .rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.24rem,3.9vw,1.82rem); }
-
 /* ⚠️ 0.62em e non 0.72em dal 2026-08-21: l'etichetta è ancorata in em al nome, e
    quando il nome d'uso è cresciuto (1.6 -> 1.82rem) è cresciuta con lui senza che
    nessuno l'avesse chiesto, arrivando quasi al corpo del nome. Il valore nuovo la
@@ -947,129 +926,13 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    gli screen reader) e un box fisso 14px mostra solo il piccolo glifo di immagine
    rotta. Classe messa da un listener 'error' (vedi lo script). Solo sulle card. */
 .rank-name .rank-flags img.badge-broken { font-size:0 !important; width:14px !important; height:14px !important; margin:0 1px !important; transform:none !important; }
-/* Icone PNG normalizzate: i fattori replicano la resa esatta dei vecchi
-   SVG letterboxati nel box 0.92em. Le icone già bilanciate in file
-   (Mappa, Aman, Silmaril) usano il box pieno. Le icone con oggetto
-   nettamente verticale derogano dal canvas 256x256 (es. Hobbit 220x256,
-   anelli degli Elfi 195x256, anello degli Uomini 234x256): meno margini
-   fantasma, larghezza CSS proporzionata. */
-.si-aratar { width:.823em; height:.823em; }
 .si-istari { width:.935em; height:.935em; }
-.si-resupremo { width:.935em; height:.935em; }
-.si-refinarfin { width:.935em; height:.935em; }
-.si-renoldor { width:.935em; height:.935em; }
-.si-unico { width:.707em; height:.707em; }
-.si-hobbit { width:.791em; height:.92em; }
-/* Fenice (badge incarnazione, dalla v11.04): icona QUADRATA (contenuto 228x228,
-   aspetto 1.0) -> box quadrato di default 0.92em (come le altre icone bilanciate);
-   niente override di larghezza. La correzione -0.05em resta nel gruppo
-   si-silmaril/si-incarnazione/si-ira. */
-.si-incarnazione { width:.92em; height:.92em; }
-/* Guerra d'Ira (spade). Canvas 240x256 (compensazione ottica dell'utente):
-   larghezza proporzionata = 240/256 * .92em. Il badge suicidio (fiore reciso,
-   Morte.webp) è quadrato 256x256 e usa il box .status-icon di default. */
-.si-ira { width:.863em; height:.92em; }
-/* Morgoth (guerriero corazzato, easter-egg su Fingolfin): PNG su canvas
-   quadrato standard 256x256 (padding trasparente CONSERVATO, voluto
-   dall'utente). Box quadrato di default, come le altre icone bilanciate.
-   Storico: fino alla v10.42 era ritagliata al contenuto (215x237) con box
-   .835em, per togliere il whitespace che allargava i gap coi badge vicini. */
-.si-morgoth { width:.848em; height:.92em; }
-/* Helcaraxë (iceberg a picchi): correzione OTTICA solo sulle CARD (non in
-   legenda). La forma triangolare lascia percepire più spazio ai lati del box,
-   quindi si stringono i margini orizzontali di ~2px per lato. Scoped a
-   .rank-name .rank-flags così non tocca la riga di legenda. */
-.rank-name .rank-flags .si-helcaraxe { margin-left:-0.02em; margin-right:-0.07em; }
 /* Badge Drago e Balrog: classe condivisa (correzione spaziatura, solo sulle
    CARD, non in legenda). */
 .rank-name .rank-flags .si-demon { margin-left:-0.05em; }
-/* Badge Est (nave verso Est): correzione spaziatura a sinistra, solo sulle card. */
-.rank-name .rank-flags .si-est { margin-left:-0.04em; }
-/* Badge suicidio (Morte.webp): correzione spaziatura a sinistra, solo sulle card. */
-.rank-name .rank-flags .si-morte { margin-left:-0.05em; }
-/* Navi Aman (west) e Valinor (envoy): correzione spaziatura a sinistra, solo card. */
-.rank-name .rank-flags .si-aman,
-.rank-name .rank-flags .si-valinor { margin-left:-0.05em; }
-/* Tutti gli Anelli (Unico, Vilya, Nenya, Narya, Nove, Sette): correzione
-   spaziatura su ENTRAMBI i lati, solo sulle card. */
-.rank-name .rank-flags .si-unico,
-.rank-name .rank-flags .si-vilya,
-.rank-name .rank-flags .si-nenya,
-.rank-name .rank-flags .si-narya,
-.rank-name .rank-flags .si-nove,
-.rank-name .rank-flags .si-sette { margin-left:-0.02em; margin-right:-0.02em; }
-/* Calaquendi (badge calaquende): correzione spaziatura su entrambi i lati, solo
-   sulle card. Sinistra 0.10em (default 0.12em ridotto di 0.02), destra -0.06em. */
-.rank-name .rank-flags .si-calaquende { margin-left:0.10em; margin-right:-0.06em; }
-/* Silmaril, Incarnazione, Ira: correzione spaziatura a sinistra, solo sulle card. */
-.rank-name .rank-flags .si-silmaril,
-.rank-name .rank-flags .si-incarnazione,
-.rank-name .rank-flags .si-ira { margin-left:-0.05em; }
 /* Icone Istari (le 5 dei maghi): correzione spaziatura a SINISTRA e a DESTRA,
    solo sulle card (in legenda si-istari ha una sua gestione dedicata). */
 .rank-name .rank-flags .si-istari { margin-left:-0.05em; margin-right:-0.05em; }
-/* Morgoth (easter-egg su Fingolfin, canvas quadrato 236x256): UN SOLO valore
-   di margine per entrambi i layout (niente più per-viewport). Compromesso tra
-   il vecchio desktop (ml -0.05 / mr -0.11) e mobile (ml +0.07): piccolo scarto
-   ottico simmetrico accettato. Solo sulle card. */
-.rank-name .rank-flags .si-morgoth { margin-left:0.01em; margin-right:-0.06em; }
-/* Corone dei Re (Alto Re dei Noldor, Re Supremo, Re Supremo in carica):
-   correzione OTTICA solo sulle CARD (non in legenda). Convenzione per ASSE:
-   - VERTICALE via nudge/transform: alzate di 0.078em (centrate sulla mezzana
-     virtuale delle maiuscole), sposta SOLO la corona senza intaccare il layout;
-   - ORIZZONTALE via margin, A CASCATA: -0.056em a sinistra sposta la corona e
-     tutti i badge alla sua destra (nessuna compensazione: le icone-badge sono
-     una fila a cascata, una modifica orizzontale DEVE spostare tutto cio che
-     segue, regola universale). Scoped a .rank-name .rank-flags. */
-.rank-name .rank-flags .si-renoldor,
-.rank-name .rank-flags .si-resupremo,
-.rank-name .rank-flags .si-refinarfin { transform:translateY(-0.078em); margin-left:-0.056em; }
-/* Le stesse corone nella LEGENDA del Pannello (solo ReNoldor e ReSupremo:
-   la terza, ReFinarfin, non e in legenda): orizzontale invariato, alzate di
-   0.08em via transform (sposta SOLO l'icona, non il layout ne il resto). */
-.ctrl-legend-row .si-renoldor,
-.ctrl-legend-row .si-resupremo { transform:translateY(-0.08em); }
-/* Helcaraxe e Ritorno (incarnazione): nudge verticale in LEGENDA, solo l'icona,
-   senza toccare le vicine ne il layout (richiesta utente). Rifiniti per gradi;
-   ora separati: Ritorno 0.02em sopra la linea, Helcaraxe 0.01em sotto. */
-.ctrl-legend-row .si-incarnazione { transform:translateY(-0.02em); }
-.ctrl-legend-row .si-helcaraxe { transform:translateY(0.01em); }
-/* Posizione verticale degli anelli in LEGENDA (richiesta utente, ritocchi per
-   gradi). Tutto scoped a .ctrl-legend-row: NON tocca le card (là il verticale
-   arriva dall'unità bi-ringelven / dalle regole globali). Ultimo aggiustamento:
-   Valori finali (impostazione assoluta, em puro):
-   - Elfici (Vilya/Nenya/Narya): -0.04em
-   - Unico: +0.03em
-   - Nove / Sette: +0.030em
-   Specificità (0,2,0) > le regole globali .si-* (0,1,0). */
-.ctrl-legend-row .si-vilya,
-.ctrl-legend-row .si-nenya,
-.ctrl-legend-row .si-narya { transform:translateY(-0.04em); }
-.ctrl-legend-row .si-unico { transform:translateY(0.03em); }
-.ctrl-legend-row .si-nove,
-.ctrl-legend-row .si-sette { transform:translateY(0.030em); }
-/* Anelli degli Elfi (gemma in alto, fascia in basso). Canvas 195x256, fascia
-   (Ø esterno ~179px) centrata a (~96,158): si risale così che sia la fascia,
-   non la gemma, ad allinearsi otticamente alle altre icone (stessa logica dei
-   cerchi dei simboli di genere). Valore in em puro (era calc(-.106em + 1px);
-   il +1px 'di rifinitura percettiva' è stato sciolto in em ≈ -0.05em a 18.26px,
-   così nessun pixel assoluto resta sulle icone-badge). Base ora scavalcata in
-   entrambi i contesti (card: bi-ringelven; legenda: .ctrl-legend-row .si-*), resta
-   come fallback. Misure scelte per resa IDENTICA ai vecchi anelli (Ø ~.624em). */
-.si-vilya { width:.680em; height:.893em; transform:translateY(-0.05em); }
-.si-nenya { width:.680em; height:.893em; transform:translateY(-0.05em); }
-.si-narya { width:.680em; height:.893em; transform:translateY(-0.05em); }
-/* Anello degli Uomini (i Nove / Nazgûl): gemma in alto, tondo sotto. Canvas
-   234x256, tondo (Ø esterno ~216px) centrato a (~116,139): risalita di
-   ~.032em così è il tondo, non la gemma, ad allinearsi agli altri cerchi
-   della riga (Unico, anelli degli Elfi, simboli di genere). Misure scelte per
-   resa IDENTICA al vecchio anello: Ø reso ~.623em, leggermente più piccolo
-   degli anelli degli Elfi (~.624em) e dell'Unico (~.685em). */
-.si-nove { width:.675em; height:.738em; transform:translateY(-.032em); }
-/* Anello dei Nani (Sette): stesso canvas/bbox di Nove (234x256), quindi stessa
-   resa di si-nove per allineare il tondo agli altri anelli della riga. */
-.si-sette { width:.675em; height:.738em; transform:translateY(-.032em); }
-
 /* ── CARD DEGLI ESSERI SUPERIORI: lieve dominante dorata ── */
 /* #2: card speciali: tinta lievissima, bordo identitario a sinistra; hover e numero ereditano lo stile sobrio delle card normali */
 .rank-item.divine {
@@ -1101,16 +964,11 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
   background:linear-gradient(90deg,rgba(50,110,30,0.22) 0%,rgba(50,110,30,0.08) 100%);
   border-left-color:rgba(146,226,116,0.95);
 }
-/* Classe 'Animali' (dalla v7.59): NON è .divine (card base). Solo lo SFONDO è
-   governato dalla Classe: tinta TAUPE (grigio caldo) molto tenue. Il bordino
-   sinistro viene dal contorno dell'etichetta tipo (.rank-strip), non da qui. */
-.rank-item.animale {
-  background:linear-gradient(90deg,rgba(147,141,132,0.05) 0%,rgba(147,141,132,0.016) 100%);
-}
-.rank-item.animale:hover, .rank-item.animale:focus-within {
-  background:linear-gradient(90deg,rgba(147,141,132,0.12) 0%,rgba(147,141,132,0.045) 100%);
-  border-color:rgba(200,202,210,0.45);
-}
+/* Ⓘ Qui vivevano le tre regole della classe `.animale` (sfondo TAUPE nei due temi, più
+   hover): erano la resa degli animali della v7.59, superata dalla v8.72 quando il colore
+   della card è passato alla famiglia `cardcolor`, che per gli animali è `beast`, VERDE.
+   Sono cadute nella `0.91` insieme al ramo che scriveva la classe, e la ragione per cui
+   nessuno se n'era accorto è che quel ramo non girava: la resa taupe non è mai comparsa. */
 /* ── Colore card e bordino dalla FAMIGLIA cardcolor (dalla v8.72) ─────────── */
 /* La Classe non colora più la card. Ogni card ha una classe .cc-<famiglia> che
    definisce --ccrgb (terna R,G,B, per tema). Lo SFONDO usa --ccrgb a bassa
@@ -1163,7 +1021,6 @@ html[data-theme="light"] .cc-man{--ccrgb:34,68,156}
 html[data-theme="light"] .cc-woman{--ccrgb:12,117,126}
 html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
 html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
-
 /* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
 /* Il logo del FAB porta margini PROPRI dentro il suo canvas, e l'altezza dell'svg
    nasce da lì: si vuole che la parte SIGNIFICATIVA del disegno renda 1.9rem, cioè
@@ -1580,12 +1437,13 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
 .ctrl-section--legend .leg-stack { display:grid; }
 .ctrl-section--legend .leg-stack > .leg-face, .ctrl-section--legend .leg-stack > .leg-measure { grid-area:1 / 1; }
 .ctrl-section--legend .leg-stack > .leg-measure { visibility:hidden; pointer-events:none; }
-/* Anti-jitter del TEMA: in tema chiaro body{font-weight:500} ingrassa il testo
-   della legenda (EB Garamond) e la colonna cresce di ~7px, spostando il bordo
-   del pannello a ogni cambio tema. La copia-misura riserva SEMPRE la larghezza
-   del peso massimo (500): il testo visibile resta 400 in tema scuro, ma la
-   colonna non balla piu. */
-.ctrl-section--legend .leg-stack > .leg-measure { font-weight:500; }
+/* Ⓘ Qui viveva l'anti-jitter del TEMA: la copia-misura riservava la larghezza del peso
+   500, perche' il tema chiaro ingrassava il testo con `body{font-weight:500}` e la colonna
+   cresceva di ~7px a ogni cambio tema. ⚠️ La regola e' caduta nella `0.91` perche' la sua
+   CAUSA non c'e' piu: il peso e' 400 in entrambi i temi da quando l'utente ha uniformato la
+   resa (vedi la nota del tema chiaro, che dice 'Con 400 ovunque la resa e gli a-capo sono
+   identici'). Restando, riservava una larghezza che nessun testo raggiunge piu, cioe'
+   allargava la colonna per un difetto che non esiste. */
 .ctrl-legend-row:hover { background:#463E2B; }
 .ctrl-legend-row:focus-visible { outline:2px solid var(--gold-bright); outline-offset:1px; }
 /* La dissolvenza vive QUI, sullo stato di arrivo: accendere un filtro badge è un
@@ -1699,10 +1557,7 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    interno differisce tra corona e nave perché i due PNG hanno whitespace
    interno diverso: serve un gap CSS minore per la nave a parità di resa. */
 .ctrl-legend-row .leg-group { display:inline-flex; align-items:center; gap:0.6rem; margin-left:0.12em; }
-.ctrl-legend-row .leg-group--king { gap:0.44rem; }
-.ctrl-legend-row .leg-group--aman { gap:0.34rem; }
 .ctrl-legend-row .leg-group--est { gap:0.34rem; }
-.ctrl-legend-row .leg-group--balrog { gap:0.4rem; }
 /* Coppia di Roke (dal 2026-08-23): stesso meccanismo delle coppie di Arda, e lo stesso
    gap della riga Drago/Balrog, che è la coppia più simile per lunghezza delle etichette.
    ⚠️ Valore ereditato, non misurato su questa riga: se un domani si tara, si tara qui. */
@@ -1729,17 +1584,8 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    proprio tenere il 7.7 'perché funzionava': funzionava, ma spostava a destra la seconda
    icona senza una ragione di questo sito. */
 .ctrl-legend-row .leg-lbl-col,
-.ctrl-legend-row .leg-lbl-king { width:6.4em; flex:none; white-space:nowrap; }
 /* Riga dei Tre Anelli: 'Portatore di [icona] Vilya ...', coppie icona+nome */
 .ctrl-legend-rings { gap:0.5rem; }
-.ctrl-legend-rings .leg-ring + .leg-ring { margin-left:0.22rem; }
-/* +0.04em di spazio extra tra l'Unico (1ª) e Vilya (2ª leg-ring) SOLO nella riga
-   anelli della legenda (richiesta utente): la 2ª leg-ring ha già margin-left
-   0.22rem, qui + 0.04em. Esclude la riga Istari (stessa classe ctrl-legend-rings).
-   Specificità (0,4,0) > la regola sopra (0,3,0). */
-.ctrl-legend-rings:not(.ctrl-legend-istari) .leg-ring:nth-child(2) { margin-left:calc(0.22rem + 0.04em); }
-.ctrl-legend-rings .leg-ring { display:inline-flex; align-items:center; gap:0.22rem; }
-.ctrl-legend-rings .leg-ring img { margin-left:0; }
 /* La prima icona-anello (Unico, .707em) è più stretta dello slot .leg-ico
    (.95em) delle righe normali e, non essendo centrata in uno slot, il suo
    centro cadrebbe ~2.2px a sinistra della colonna delle altre icone. La si
@@ -1747,14 +1593,6 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    così il suo centro si incolonna con le icone singole sopra. Le icone delle
    righe multi-icona sono DISTANZIATE (gap positivo 0.22rem, dalla v7.25), non
    più sovrapposte: c'è spazio in abbondanza (scelta dell'utente). */
-.ctrl-legend-rings .leg-ring:first-child { margin-left:0.138rem; }
-/* Cluster a larghezza fissa attorno alle 5 icone (Anelli e Istari): il testo
-   che segue parte SEMPRE dallo stesso x nelle due righe (allineamento esatto),
-   a prescindere dalla dimensione delle icone. */
-.ctrl-legend-rings .leg-cluster { display:inline-flex; align-items:center; width:7.45em; flex:none; }
-/* La riga Istari (5 maghi, feature flag) tiene la sua larghezza-cluster tarata
-   (6.40em); solo la riga Anelli è passata a 7.45em per i 6 anelli (dalla v10.62). */
-.ctrl-legend-istari .leg-cluster { width:6.40em; }
 /* Istari (v7.27): i PNG dei maghi sono stati RITAGLIATI (rimosso il ~16% di
    trasparente per lato; ora 174x256, verticali). In legenda li si dimensiona
    per ALTEZZA con width:auto → il box avvolge stretto la figura, senza padding
@@ -1762,8 +1600,6 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    sovrapposizione dei PNG (era quella a dare il 'rotto'). Le card non cambiano:
    là il box resta quadrato con object-fit:contain, resa identica a prima. */
 .ctrl-legend-istari .si-istari { width:auto; }
-.ctrl-legend-rings.ctrl-legend-istari .leg-ring + .leg-ring { margin-left:0.30rem; }
-.ctrl-legend-istari .leg-cluster .leg-ring:first-child { margin-left:0.13rem; }
 .ctrl-legend-row .leg-group img { margin-left:0; }
 /* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
    l'unica icona di fatto sempre presente, quindi messa in evidenza su una
@@ -1820,7 +1656,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 @keyframes ctrl-sheet-fade { from { opacity:1; } to { opacity:0; } }
 /* Chiusura del popover desktop: fade out puro (vedi nota su .ctrl-panel.closing). */
 @keyframes ctrl-pop-fade { from { opacity:1; } to { opacity:0; } }
-
 @media (max-width:768px) {
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura:
      SLIDE-UP intero dal bordo basso (transform translateY(100%) -> 0) con
@@ -2004,7 +1839,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 @media (min-width:481px) and (max-width:768px) {
   #ctrl-panel .ctrl-cols { max-width:23rem; margin-left:auto; margin-right:auto; }
 }
-
 .genere-svg { user-select:none; flex:none; }
 /* PNG al vivo e centrati: dimensioni e offset replicano la resa precedente
    (cerchi riallineati alla 'o' minuscola). Femmina: canvas 220x256 (deroga
@@ -2056,7 +1890,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    sull'eredità della card (`.cc-dragon`) a prescindere dalla specificità, che è
    la ragione per cui una riga per tema basta. */
 .type-donnadrago { --ccrgb:201,166,232; --cctxt:201,166,232; }
-
 .modal-backdrop {
   position:fixed; inset:0;
   /* VELO NEUTRO (v13.99, richiesta dell'utente). Era rgba(5,7,16,0.92), un blu
@@ -2076,7 +1909,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   transition:opacity 0.2s,visibility 0.2s;
   overflow-y:auto;
 }
-
 .modal-backdrop.active { opacity:1; visibility:visible; }
 /* Apertura senza animazione: niente dissolvenza (resta per usi tecnici). */
 .modal-backdrop.no-anim, .modal-backdrop.no-anim .modal { transition:none !important; }
@@ -2126,7 +1958,6 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    variare dell'altezza viewport con la barra URL). Lo scroll resta al tocco. */
 .modal-backdrop, .modal, .modal-body { scrollbar-width:none; -ms-overflow-style:none; }
 .modal-backdrop::-webkit-scrollbar, .modal::-webkit-scrollbar, .modal-body::-webkit-scrollbar { width:0; height:0; display:none; }
-
 .modal {
   /* Fondo neutro del tema scuro (scelta utente): #252525, come lo sfondo
      principale. Il bordo resta l'accento cardcolor (iniettato per famiglia). */
@@ -2142,19 +1973,15 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   transform:translateY(10px) scale(0.985);
   transition:transform 0.2s cubic-bezier(0.34,1.3,0.64,1);
 }
-
 .modal-backdrop.active .modal { transform:translateY(0) scale(1); }
-
 .modal::before {
   content:''; position:absolute; inset:8px;
   border:1px solid rgba(104,144,168,0.3); border-radius:3px; pointer-events:none;
 }
-
 /* Lo scroll vive qui e NON su .modal: la cornice ::before e il pulsante di
    chiusura sono ancorati a .modal e devono restare fermi mentre il contenuto
    scorre (altrimenti il testo "esce" dal riquadro, come accadeva su mobile). */
 .modal-body { overflow-y:auto; overscroll-behavior:contain; min-height:0; padding:2rem clamp(1.2rem,4vw,2.5rem); }
-
 .modal-close {
   position:absolute; top:14px; right:14px;
   width:26px; height:26px;
@@ -2166,16 +1993,13 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 /* Glifo × in SVG (non font): centrato per geometria, indipendente dalle
    metriche di Cinzel (il vecchio ✕ testuale risultava basso-sinistra). */
 .modal-close svg { width:0.85rem; height:0.85rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; }
-
 .modal-close:hover,.modal-close:focus-visible {
   background:var(--gold); color:var(--ink); transform:rotate(90deg); outline:none;
 }
-
 footer {
   text-align:center; padding:4rem 1.5rem 3rem;
   border-top:1px solid rgba(104,144,168,0.15); margin-top:4rem;
 }
-
 footer p { color:var(--parchment-dim); font-size:0.95rem; max-width:500px; margin:0 auto; }
 #footer-links { font-size:1.2rem; }
 @media (max-width:768px) {
@@ -2185,11 +2009,8 @@ footer p { color:var(--parchment-dim); font-size:0.95rem; max-width:500px; margi
   #footer-text { font-size:clamp(12px, 3.4vw, 14px); }
   #footer-links { font-size:clamp(12px, 3.2vw, 16px); white-space:nowrap; }
 }
-
 .list-animate .rank-item { opacity:0; transform:translateY(20px); animation:reveal 0.8s forwards; }
-
 @keyframes reveal { to { opacity:1; transform:translateY(0); } }
-
 /* Scrollbar della PAGINA: nessuno stile custom (dalla v8.78). In Chromium una
    scrollbar stilizzata via ::-webkit-scrollbar è SEMPRE 'classica' (fissa, non
    overlay), ignorando l'impostazione di sistema 'mostra allo scorrimento'.
@@ -2393,7 +2214,6 @@ html.admin-open body > *:not(.admin-overlay):not(.fab-modal-overlay):not(#earths
 html[data-theme="light"] .admin-field.admin-modified .admin-input,
 html[data-theme="light"] .admin-field.admin-modified .admin-textarea { border-color:#e07b39;box-shadow:0 0 0 2px rgba(224,123,57,0.40);background:#fff7ef; }
 html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1e; }
-
 @media (max-width:480px) {
   header { padding:3rem 1rem 2rem; }
   .scroll { margin:1.2rem auto 2rem; padding:0 0.6rem; }
@@ -2601,7 +2421,6 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
   .admin-mono-grid { grid-template-columns:1fr; }
   .admin-label-en { text-align:left; }
 }
-
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation-duration:0.01ms !important; animation-delay:0ms !important; transition-duration:0.01ms !important; }
 }
@@ -2611,7 +2430,6 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
      animation sul primo render e si mostrano subito tutti gli item. */
   .list-animate .rank-item { animation:none; opacity:1; transform:none; }
 }
-
 /* ── Tema chiaro (appiattito: niente CSS nesting, per compatibilità
    e validazione W3C; semantica e specificità invariate) ── */
 html[data-theme="light"] {
@@ -2648,7 +2466,6 @@ html[data-theme="light"] {
      tinta fredda, riporta l'effettivo (dopo la velatura) a ~5.16:1. Solo
      tema chiaro: in scuro la genealogia passa gia e resta col color-mix. */
   html[data-theme="light"] .rank-desc .bp-b { color:var(--parchment); }
-
 html[data-theme="light"] body {
     background: var(--ink);
     color: var(--parchment);
@@ -2694,7 +2511,6 @@ html[data-theme="light"] .lang-switch {
     color: var(--gold-bright);
   }
 html[data-theme="light"] .lang-switch:hover { background: var(--gold); color: var(--ink); }
-
 html[data-theme="light"] .rank-item {
     background: rgba(224,236,252,0.16);
     border: 1px solid rgba(80,110,150,0.22);
@@ -2727,12 +2543,14 @@ html[data-theme="light"] .rank-item.divine.morgoth { background: rgba(251,232,24
 html[data-theme="light"] .rank-item.divine.morgoth:hover, html[data-theme="light"] .rank-item.divine.morgoth:focus-within { background: rgba(251,232,240,0.40); border-color:rgba(150,30,90,0.38); }
 html[data-theme="light"] .rank-item.divine.bombadil { background: rgba(230,250,228,0.16); border-left-color:rgba(45,100,25,0.50); }
 html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="light"] .rank-item.divine.bombadil:focus-within { background: rgba(230,250,228,0.40); border-color:rgba(50,110,30,0.38); }
-html[data-theme="light"] .rank-item.animale { background: rgba(223,221,216,0.36); }
-html[data-theme="light"] .rank-item.animale:hover, html[data-theme="light"] .rank-item.animale:focus-within { background: rgba(223,221,216,0.55); border-color:rgba(147,141,132,0.5); }
-/* Compensazione contrasto (solo tema chiaro): la tinta tan della card animale
-   fa scendere l'etichetta .type-beast (#7d590b) a 4.48:1, sotto AA. Scurita a
-   #6d4a05 (5.6:1 sul tan) solo sulle card animali; bordo = testo @0.8. */
-html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-color:rgba(109,74,5,0.8); }
+/* Ⓘ Qui viveva una compensazione di contrasto per l'etichetta degli animali in tema
+   chiaro (`color:#6d4a05`, un bruno), scritta quando la card aveva il fondo taupe. Era
+   doppiamente morta: puntava a `.type-beast`, classe che questo motore non emette (scrive
+   `type-animale`), e stava sotto `.rank-item.animale`, classe che nessuno scriveva.
+   ⚠️ Non è stata riscritta col selettore giusto, e la ragione è una MISURA, non un
+   giudizio: col verde di `beast` di oggi l'etichetta fa **4,59** su fondo chiaro e
+   **9,93** su fondo scuro, cioè è già sopra il 4,5 di AA. Riscurirla sarebbe stato
+   correggere un difetto che non c'è più. */
 html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:var(--parchment); }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
@@ -2745,7 +2563,6 @@ html[data-theme="light"] .leg-gender .leg-g-half:first-child { border-right-colo
    `font-size` su `.vis-top .rank-name` **identico** a quello base, cioè codice morto
    copiato col motore. Resta il solo colore, che per-tema ha senso. */
 html[data-theme="light"] .rank-title { color: #2e2e2e; }
-
 /* Backdrop uniforme (dalla v8.76): CHIARO su tema chiaro (prima era un velo
    scuro anche in chiaro). Vale per tutti i modali che usano .modal-backdrop
    (scheda, note, risorse, info). */
@@ -2767,8 +2584,6 @@ html[data-theme="light"] .modal-close {
 html[data-theme="light"] .modal-close:hover { background: #3a5878; color: #f6f6fa; }
 html[data-theme="light"] footer { border-top-color: rgba(58,88,120,0.25); }
 html[data-theme="light"] footer p { color: var(--parchment-dim); }
-
-
 /* Etichette di razza nel tema chiaro: scure quanto serve sul fondo marmo. */
 html[data-theme="light"] .rank-item .type-badge { background:rgba(var(--ccrgb,144,152,168),0.10); }
 html[data-theme="light"] .type-fallback { background:rgba(80,80,80,0.07); border-color:rgba(72,72,72,0.8); color:#484848; }
@@ -2830,7 +2645,6 @@ html[data-theme="light"] .fab-modal-box p { color:#1a2535; opacity:0.7; }
 html[data-theme="light"] .fab-modal-box input[type=password], html[data-theme="light"] .fab-modal-box input[type=text] { background:rgba(255,255,255,0.92); color:#12141e; border-color:rgba(60,110,170,0.45); }
 html[data-theme="light"] .fab-modal-charname { color:#1a2535; }
 html[data-theme="light"] .fab-modal-close { color:#1a2535; }
-
 html[data-theme="light"] .admin-overlay { background:#eef1f8; }
 html[data-theme="light"] .admin-header { background:#eef1f8;border-bottom-color:rgba(58,88,120,0.2); }
 html[data-theme="light"] .admin-card { background:#ffffff;border-color:rgba(58,88,120,0.18);box-shadow:0 1px 4px rgba(20,30,60,0.06); }
@@ -2839,7 +2653,6 @@ html[data-theme="light"] .admin-input, html[data-theme="light"] .admin-textarea 
 html[data-theme="light"] .admin-input:focus, html[data-theme="light"] .admin-textarea:focus { border-color:#4a7090;background:#f8faff; }
 html[data-theme="light"] .admin-btn-back { border-color:rgba(58,88,120,0.4);color:#253d58; }
 html[data-theme="light"] .admin-btn-save { background:rgba(20,100,50,0.12);border-color:rgba(30,140,70,0.5);color:#1a6832; }
-
 /* Footer 'Resources and maps': solo il testo è cliccabile, i ✦ restano decorativi */
 #res-link, #notes-link { background:none; border:none; color:var(--gold-bright); font:inherit; cursor:pointer; padding:0 .15em; border-bottom:1px dotted transparent; transition:border-color .2s; }
 #res-link:hover, #res-link:focus-visible, #notes-link:hover, #notes-link:focus-visible { border-bottom-color:var(--gold-bright); outline:none; }
@@ -2949,7 +2762,6 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .imgv-stage { flex:1 1 auto; overflow:hidden; position:relative; cursor:grab; touch-action:none; }
 .imgv-stage.dragging { cursor:grabbing; }
 .imgv-stage img { position:absolute; top:0; left:0; transform-origin:0 0; max-width:none; user-select:none; -webkit-user-drag:none; }
-
 </style>
 <script>
 // ── Feature flag ──────────────────────────────────────────────────────
@@ -4607,6 +4419,17 @@ var i18n = {
 // document.body.contains nel closure evita che una modale già chiusa venga
 // riaperta, così non serve azzerarla in ogni dismiss.
 var langRefresh = null;
+// ⚠️⚠️ DOVE TORNARE quando si chiude un overlay aperto da un altro (0.91). Le tre
+// callback esistevano già ma NON erano dichiarate da nessuna parte: l'unica scrittura è
+// `imgvReturn = ...` dentro la modale Risorse, quindi in tutte le altre strade la lettura
+// cadeva su un nome inesistente. In `var` mancante lo sloppy mode perdona la SCRITTURA
+// (crea una globale implicita), non la LETTURA, che alza `ReferenceError`.
+// ⚠️ E la strada che lo innescava non è teorica: le rotte dei permalink (`SHARE_ROUTES`)
+// aprono il visualizzatore SENZA passare dalla modale Risorse. Riprodotto sulla rotta
+// `mappa-v`: alla chiusura l'eccezione fermava `dismiss` a metà e **il visualizzatore
+// restava aperto**, cioè il lettore ci restava dentro. Niente errore in console per chi
+// non la guarda: solo una modale che non si chiude.
+var imgvReturn = null, noteReturn = null, infoReturn = null;
 // Gemello di langRefresh per il TEMA: una modale aperta il cui contenuto dipende
 // dal tema (es. editor colori, statistiche: swatch/barre calcolati sul tema
 // attivo) registra qui una callback che la ricostruisce nel nuovo tema. La
@@ -5771,6 +5594,22 @@ function sottotitoloDi(p, it){
 // ⚠️ La riga di contesto comincia dall'OPERA e porta la sola lingua corrente: i due
 // titoli affiancati erano nella 0.60-0.66 e l'utente li ha tolti (*in inglese solo
 // l'inglese; in italiano solo l'italiano*).
+// ── La sigla `[...]` del taglio, vestita in RESA (0.91) ────────────────────────────
+// Scelta dell'utente fra quattro rese a confronto: **tondo, corpo 0.72em, tinta più
+// tenue**, appoggiata alla baseline come ogni testo inline.
+// ⚠️ Il perché è che la sigla NON è di Le Guin: dentro una citazione tutta in corsivo,
+// alla stessa misura del testo, si leggeva come una parte della frase. In tondo e più
+// piccola torna a essere quello che è, un segno redazionale, e l'occhio la scavalca.
+// ⚠️⚠️ Si veste in RESA e la sigla resta NEL DATO, come la maiuscola di `capIniz`: il
+// dataset continua a dire `[...]`, che è la forma leggibile ovunque (editor admin,
+// grep sui campi, esportazioni), e nessuna grafia di servizio ci entra.
+// ⚠️ La sostituzione va fatta DOPO `escapeHtml` e non prima, o lo span verrebbe escapato
+// insieme al testo; ed è sicura perché nessuno dei cinque caratteri di `[...]` è toccato
+// dall'escape. ⚠️ E vale anche per la gemella `.rc-m`, che passa di qui: le due facce
+// devono avere la stessa altezza, o l'anti-jitter salterebbe.
+function vestiEllissi(html){
+  return html.split('[...]').join('<span class="rc-ell">[...]</span>');
+}
 function citazHtml(p){
   var it = p.citazione || '', en = p.citazione_en || '';
   if (!it && !en) return '';
@@ -5780,7 +5619,8 @@ function citazHtml(p){
     // ⚠️ La barra rovescia sta DENTRO l'elemento, non fra testo e attribuzione: fuori
     // resterebbe attaccata all'ultima parola della citazione quando la voce va a capo,
     // e non seguirebbe il rientro che `alignVoci` scrive sulla voce.
-    return escapeHtml(t) + (v ? '<span class="rc-voce">\\ ' + escapeHtml(v) + '</span>' : '');
+    return vestiEllissi(escapeHtml(t))
+      + (v ? '<span class="rc-voce">\\ ' + escapeHtml(v) + '</span>' : '');
   }
   // Un riquadro completo per lingua: `m` marca la gemella, che riserva l'altezza e non
   // si vede. La riga di contesto si emette solo dove c'è, perché un contenitore vuoto
@@ -5961,11 +5801,16 @@ function renderList() {
       classes += ' divine';
       if (darkBg) classes += ' morgoth';
       else if (/bombadil/i.test(p.nome) || isEntEagle) classes += ' bombadil';
-    } else if (cat === 'animal') {
-      // Classe 'Animali' (dalla v7.59): coincide al 100% con la Categoria animal.
-      // Card base con tinta/bordo terra (tan Leggero), non una variante .divine.
-      classes += ' animale';
     }
+    // Ⓘ Qui viveva un ramo `cat === 'animal'` che aggiungeva la classe `.animale`, e il
+    // confronto era per giunta sbagliato (le categorie di questo sito sono
+    // `['man','dragon','animale']`, con la E finale), quindi non è mai stato vero.
+    // ⚠️⚠️ Ma la correzione GIUSTA non era farlo rivivere, ed è la trappola in cui si cade
+    // guardando il solo codice: quella classe portava la resa della v7.59, uno sfondo
+    // TAUPE, mentre dalla v8.72 il colore lo dà la famiglia `cardcolor`, e per gli animali
+    // è `beast`, cioè VERDE. Rianimare il ramo avrebbe steso il grigio caldo sopra il
+    // verde di oggi: un difetto nuovo al posto di uno inerte. Segnalazione dell'utente,
+    // `0.91`, mentre la correzione sbagliata era già scritta.
     // Classe-colore card (cardcolor): governa SFONDO + bordino. Sostituisce il
     // colore-da-Classe (Crepuscolari/Angeliche/...): la Classe resta solo come
     // logica (filtri/raggruppamenti), non colora più la card.
@@ -7136,9 +6981,17 @@ function controlPanelHTML() {
         + '" data-row="' + row + '" role="button" tabindex="0" aria-pressed="' + (on ? 'true' : 'false') + '">' + inner + '</div>';
     }
     var s = '';
+    // ⚠️⚠️ Qui vivevano NOVE rami del motore di Arda (`istari` a cinque icone, la riga dei
+    // Re, `west`/`est`, la coppia drago-balrog, gli Anelli) più un filtro che scartava le
+    // chiavi degli Anelli e dei Re. Sono stati potati nella `0.91`, e la ragione non è
+    // l'igiene: erano **mine**. `ICON_ORDER` di questo sito porta i soli sei badge di
+    // Terramare, quindi nessuno di quei rami poteva girare; ma i loro corpi leggevano
+    // `BADGE_ICON['king_std']`, `['west']`, `['balrog']`, chiavi che qui NON esistono,
+    // quindi il giorno che una di quelle chiavi fosse rientrata in `ICON_ORDER` la
+    // legenda sarebbe morta con un TypeError invece di mostrare una riga in più.
+    // ⚠️ Chi porta un badge nuovo lo aggiunge a `ICON_ORDER` e a `BADGE_ICON`: la riga
+    // generica in fondo lo disegna da sé, ed è la strada giusta.
     ICON_ORDER.forEach(function(k){
-      if (k === 'king_high_now' || k === 'king_std' || k === 'envoy' || k === 'balrog' || k === 'nenya' || k === 'narya' || k === 'vilya' || k === 'menring' || k === 'sette') return;
-      if (k === 'morgoth') return; // easter egg (solo Fingolfin): nessuna riga in legenda
       if (k === 'arcimago') return; // sta nella riga di 'maestro' (coppia di Roke)
       if (k === 'maestro') {
         // Coppia di Roke su UNA riga (richiesta dell'utente, 2026-08-23), con lo stesso
@@ -7155,56 +7008,6 @@ function controlPanelHTML() {
         s += legRow('roke', '<span class="leg-ico">' + BADGE_ICON['maestro'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + maestroTxt + '</span>'
            + '<span class="leg-group leg-group--roke">' + BADGE_ICON['arcimago'].split('%L%').join('') + '<span>' + arcimagoTxt + '</span></span>');
         return;
-      }
-      if (k === 'istari' && FEATURES.istariFiveIcons) {
-        // Variante a 5 icone (feature flag, default OFF dalla v7.30): i 5 Istari
-        // in fila (come gli Anelli): Saruman, Gandalf, Radagast, Alatar, Pallando
-        // (un'icona per mago, dal colore della veste/ordine). A flag spento la
-        // riga cade nel ramo generico (icona singola Gandalf grigio + testo).
-        var wiz = [['Bianco.webp','Saruman'],['Grigio.webp','Gandalf'],['Bruno.webp','Radagast'],['Blu1.webp','Alatar'],['Blu2.webp','Pallando']];
-        s += legRow('istari', '<span class="leg-cluster">' + wiz.map(function(w){
-          return '<span class="leg-ring"><img class="status-icon si-istari" src="icons/' + w[0] + '" title="' + w[1] + '" alt="' + w[1] + '"></span>';
-        }).join('') + '</span><span>' + IL['istari'] + '</span>', 'ctrl-legend-rings ctrl-legend-istari');
-        return;
-      }
-      if (k === 'king_high') {
-        // Riga Re unica (dalla v7.29): ReNoldor 'Alto Re dei Noldor' (col1) +
-        // ReSupremo 'Re Supremo (Aman)' (col2). Il Re 'in carica' (ReFinarfin,
-        // king_high_now) è stato tolto da legenda e admin: resta SOLO come badge
-        // sulla card di Finarfin (col suo tooltip), come l'easter egg di Morgoth.
-        // Testo di legenda inline: i tooltip delle card (ICON_LABEL) restano
-        // invariati per non rompere la convenzione 'Re Supremo vs Alto Re'.
-        var reNoldorTxt = lang === 'it' ? 'Alto Re dei Noldor' : 'King of the Noldor';
-        var reSupremoTxt = lang === 'it' ? 'Re Supremo (Aman)' : 'High King (Aman)';
-        s += legRow('king_high', '<span class="leg-ico">' + BADGE_ICON['king_std'].split('%L%').join('') + '</span><span class="leg-lbl-king">' + reNoldorTxt + '</span>'
-           + '<span class="leg-group leg-group--king">' + BADGE_ICON['king_high'].split('%L%').join('') + '<span>' + reSupremoTxt + '</span></span>');
-        return;
-      }
-      if (k === 'west') {
-        var westTxt = lang === 'it' ? 'Attraversò il Mare' : 'Crossed the Sea';
-        var envoyTxt = lang === 'it' ? 'Al seguito di Oromë' : "In Oromë's retinue";
-        s += legRow('west', '<span class="leg-ico">' + BADGE_ICON['west'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + westTxt + '</span>'
-           + '<span class="leg-group leg-group--aman">' + BADGE_ICON['envoy'].split('%L%').join('') + '<span>' + envoyTxt + '</span></span>');
-        return;
-      }
-      if (k === 'est') {
-        // In legenda l'etichetta breve resta concisa (il tooltip esteso della
-        // card è più lungo, 'su una nave degli Elfi...'): qui testo dedicato.
-        var estLeg = lang === 'it' ? 'Veleggiò verso est da Aman alla Terra di Mezzo' : 'Sailed eastwards from Aman to Middle-earth';
-        s += legRow('est', '<span class="leg-ico">' + BADGE_ICON['est'].split('%L%').join('') + '</span><span>' + estLeg + '</span>');
-        return;
-      }
-      if (k === 'drago') {
-        s += legRow('drago', '<span class="leg-ico">' + BADGE_ICON['drago'].split('%L%').join('') + '</span><span class="leg-lbl-col">' + IL['drago'] + '</span>'
-           + '<span class="leg-group leg-group--balrog">' + BADGE_ICON['balrog'].split('%L%').join('') + '<span>' + IL['balrog'] + '</span></span>');
-        return;
-      }
-      if (k === 'onering') {
-        // Tutti gli Anelli in un'unica riga, in coda alla legenda. Ordine SOLO
-        // di legenda: Unico, Vilya, Nenya, Narya, Sette, Nove (Nove dopo Sette,
-        // richiesta utente; ICON_ORDER delle card resta menring→sette). I singoli
-        // tooltip restano quelli di ICON_LABEL.
-        return; // ⚠️ Riga tolta: gli Anelli del Potere sono di Arda.
       }
       s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + legLbl(IL[k]) + '</span>');
     });
@@ -7488,7 +7291,16 @@ function exitReorder() {
 // Bozza-ordine: CHIAVE UNICA (i nomi salvati sono sempre p.nome, italiani,
 // a prescindere dalla lingua della UI: una chiave per lingua era incoerente
 // e faceva risorgere bozze scartate al cambio lingua).
-function saveLocalDraft(){ LS.setItem('earthsea-ranking-v1', JSON.stringify(dati.map(function(d){ return d.nome; }))); }
+// ⚠️⚠️ LA CHIAVE D'ORDINE non e' `d.nome`, e la differenza si vede su 17 voci: quelle
+// che il nome d'uso non ce l'hanno (Kalessin, Orm, Erreth-Akbe, Morred, i draghi...)
+// avevano tutte la stessa chiave, la stringa VUOTA, quindi finivano in un unico secchiello
+// e il ripristino le ridava nell'ordine del master invece che in quello salvato: un
+// riordino fra due di loro si perdeva in silenzio. Il vero nome e' l'unico nome che
+// abbiano, e insieme al nome d'uso copre tutte le voci del dataset.
+// ⚠️ Le bozze salvate PRIMA della 0.91 portano le vecchie chiavi vuote: per quelle 17 voci
+// non combaciano piu e finiscono in coda, che e' esattamente quello che gia' succedeva.
+function chiaveOrdine(d){ return d.nome || d.vero_nome || ''; }
+function saveLocalDraft(){ LS.setItem('earthsea-ranking-v1', JSON.stringify(dati.map(chiaveOrdine))); }
 /* Riordino per nome con OMONIMI: mai risolvere con find(), che aggancia
    sempre la PRIMA voce con quel nome. Con due omonimi in classifica la
    seconda occorrenza collassava sulla prima (voce duplicata) e l'altra voce
@@ -7499,7 +7311,7 @@ function saveLocalDraft(){ LS.setItem('earthsea-ranking-v1', JSON.stringify(dati
    dall'ordine salvato si accodano in fondo nell'ordine originale. */
 function orderByNames(master, names) {
   var buckets = {};
-  master.forEach(function(d){ (buckets[d.nome] = buckets[d.nome] || []).push(d); });
+  master.forEach(function(d){ var k = chiaveOrdine(d); (buckets[k] = buckets[k] || []).push(d); });
   var picked = [];
   names.forEach(function(n){ var q = buckets[n]; if (q && q.length) picked.push(q.shift()); });
   var used = new Set(picked);
@@ -7972,7 +7784,7 @@ function buildControlPanel() {
 // all'avvio (50-200 ms sprecati su mobile).
 // Ordine 'di fabbrica' (HTML = committato sul repo), catturato prima che
 // la bozza locale lo riordini: serve a 'Scarta' per tornare allo stato server.
-var DATI_SERVER_ORDER = dati.map(function(d){ return d.nome; });
+var DATI_SERVER_ORDER = dati.map(chiaveOrdine);
 (function(){
   // Chiave unica (i nomi sono sempre italiani). Qui NON esistono chiavi legacy
   // da leggere in ripiego: il progetto nasce con questa, e i ripieghi del motore
@@ -8430,7 +8242,7 @@ async function doCommit(msg, payload, cardColors, keepVersion, badgeAdjustCfg, s
     // riapplicherebbe per sempre, mascherando ogni modifica arrivata via git)
     // e lo snapshot per 'Scarta' va aggiornato al nuovo stato.
     clearDraftOrderKeys();
-    DATI_SERVER_ORDER = data.map(function(d){ return d.nome; });
+    DATI_SERVER_ORDER = data.map(chiaveOrdine);
     return { ok: true, version: r.version };
   } catch (err) {
     return { ok: false, reason: err.message };
@@ -8970,8 +8782,13 @@ function showAdminEditor() {
   // Cerca SOLO nel contenuto dei campi (mai nelle etichette UI) di TUTTE le voci,
   // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
   // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
-  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en'];
-  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre' };
+  // ⚠️⚠️ `vero_nome` sta in TESTA e non e' un dettaglio d'ordine: 17 voci hanno il campo
+  // `nome` vuoto (Kalessin, Orm, Erreth-Akbe, Morred...), e per loro il vero nome e' l'UNICO
+  // nome che esista. Senza, `isName` le riconosceva ma il ciclo sui campi non trovava nulla
+  // e la riga `if (!hf) continue;` le scartava: cercare 'Kalessin' nell'editor non dava
+  // nessun risultato. In testa perche' il primo campo che combacia e' quello mostrato.
+  var SEARCH_FIELDS = ['nome','nome_en','vero_nome','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en'];
+  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre', padre_en:'Padre EN', madre_en:'Madre EN', vero_nome:'Vero nome' };
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
   // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
