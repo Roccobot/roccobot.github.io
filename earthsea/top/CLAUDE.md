@@ -1588,8 +1588,8 @@ aveva regole CSS proprie, quindi il rinomino ha toccato i soli due punti JS che 
     un'unità sopra l'asse, quindi centrato sul riquadro 24x24 si legge alto. Qui la testa sta a
     **11,27** e la punta a **22,17**, e il baricentro cade a **11,98**.
 - ⚠️⚠️ **L'asse della fila è 11,98 e NON la media delle quattro icone**, che varrebbe 12,24: la
-  **luna** ha il baricentro a **13,02** perché il morso della falce la sbilancia in basso, ed è
-  una proprietà di quel glifo, non della fila. Sole, riordina e link, che sono simmetrici,
+  **luna** ha il baricentro a **13,02** perché è una falce, e l'incavo le toglie massa in alto:
+  è una proprietà di quel glifo, non della fila. Sole, riordina e link, che sono simmetrici,
   stanno tutti e tre a 11,97-11,98. Mediare dentro un glifo asimmetrico spostava il segnaposto
   di 0,26 unità **dal verso sbagliato**: poco, ma preso per misura.
 - **Come si misura**, perché nessuna proprietà CSS lo dice: si rasterizza l'SVG a 480px coi
