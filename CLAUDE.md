@@ -605,6 +605,20 @@ poi divergerebbe.
         lanciato senza la pipe stampa `0 righe in 0 file`, che si legge come 'nessun difetto'
         mentre è 'nessun dato'. Va sempre incanalato come sopra. È il falso negativo peggiore,
         lo stesso di un grep col pattern invecchiato.
+      - ⚠️⚠️ **L'uscita del verificatore NON si incanala in `tail` o `head` se poi c'è un
+        `&&`**, e questo difetto vanifica l'intero rimedio manuale. In una pipeline il codice
+        d'uscita è quello dell'**ultimo** comando, quindi
+        `refcheck.py --text < msg | tail -2 && git commit` esegue il commit **anche quando il
+        controllo ha trovato un difetto**: `tail` esce 0 sempre. Non è teorico, è successo il
+        2026-08-26, e il commit sbagliato era già pushato quando me ne sono accorto (corretto
+        con `--amend` e un push forzato, che sul proprio branch si può).
+        - **Come si lancia invece**: il comando **nudo**, senza pipe, e se serve vedere il
+          codice `echo "ESITO=$?"` **subito dopo**, su una riga a sé. Il verificatore stampa
+          già poche righe: incanalarlo non serviva a niente e costava la sola cosa che quel
+          comando doveva dare.
+        - ⚠️ **Vale per tutti e tre i modi**, non solo `--text`. E vale per qualunque
+          controllo messo in una catena `&&`: se la sua uscita passa da una pipe, la catena
+          non lo sta ascoltando.
     - ⚠️ **Come si verifica se un domani tornassero a girare**: solo da una **sessione nuova**
       (la configurazione si legge all'avvio), con un `git commit --allow-empty` il cui messaggio
       porti l'omografo **letterale nel comando**, perché gli hook ricevono la stringa del comando
