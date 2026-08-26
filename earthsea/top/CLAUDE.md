@@ -1802,6 +1802,43 @@ card si allarghi. Spento di default, cioè la resa in vigore fin qui.
   Verificato col codice e non a occhio: la griglia resa su una card senza origine misura
   `54px 286px` anche a interruttore acceso.
 
+⚠️⚠️ **LA SPUNTA DI 'ORIGINE' AGISCE SUBITO, e dalla `1.02` anche dalla LISTA del Pannello di
+controllo** (istruzione dell'utente, 2026-08-26: *mettere e togliere la spunta deve agire
+direttamente come mostra/nascondi, con effetto immediato nell'anteprima*): accende e spegne il
+riquadro **con le impostazioni già settate**, senza toccarle.
+
+- ⚠️ **Il rimedio esisteva già ma era agganciato a METÀ**: `fxRidisegna` (nata nella `0.91`,
+  quando l'utente segnalò *nessuna ha effetto in tempo reale*) era chiamata dalle sole manopole
+  della **sotto-modale**, mentre l'interruttore della riga faceva `applySiteFlags` e basta. Da lì
+  il flag cambiava e la colonna restava in pagina. ⚠️ **La lezione è il modo in cui il difetto si
+  presenta**: sembrava che 'la spunta non funzionasse', mentre funzionava e non si vedeva.
+- **Perché `applySiteFlags` non basta**: quasi tutti gli effetti vivono di classi sul documento e
+  di variabili CSS, l'origine no. La sua colonna è **markup** che `renderList` scrive card per
+  card, quindi finché non si ridisegna la lista il flag cambia solo in memoria. È la ragione per
+  cui `FX_MARKUP` esiste e contiene oggi il solo `orig`.
+- **Misurato**: 112 colonne spente e riaccese col solo click sulla casella, e la lista che torna
+  identica a com'era.
+- ⚠️ **Anche la chiusura senza salvare deve ridisegnare** (voce qui sotto): senza, il ripristino
+  tornerebbe vero nei flag ma non in pagina, che è lo stesso difetto rovesciato.
+
+⚠️⚠️ **USCIRE DAL PANNELLO DI CONTROLLO SENZA SALVARE = ANNULLA, dalla `1.02`** (istruzione
+dell'utente, 2026-08-26: *la chiusura con la × deve equivalere a un clic su Annulla, non deve
+salvare alcunché, nemmeno in localStorage*). Le tre vie d'uscita senza salvataggio, cioè la **×**,
+il **clic sul velo** e **`Esc`** (che passa dalla ×), chiamano la stessa funzione del tasto
+Annulla, ridisegno dell'origine compreso.
+
+- ⚠️ **Prima era così SOLO in vista divisa**: il ripristino stava dentro `close` nel ramo `docked`,
+  quindi nella modale classica la × lasciava in vigore le modifiche provate, che restavano in
+  pagina fino al reload senza che nessuno le avesse salvate.
+- ⚠️ **La funzione NON si sposta dentro `close`**, e non è una semplificazione mancata: da `close`
+  passano anche i rebuild **tecnici** (cambio di telaio al resize, tasto `L`), dove le regolazioni
+  non salvate devono **sopravvivere**.
+- **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dal Pannello di controllo non
+  parte nessuna scrittura, e il banco confronta l'intero `localStorage` prima e dopo. Le chiavi
+  `earthsea-` sono scritte da altro (lingua, bozza dell'ordine, preferenza di zoom).
+- **Vale identico su 'I Grandi di Arda'** dalla `15.14`, meno il ridisegno, che là non serve
+  perché nessun effetto tocca il markup.
+
 #### 📍 Il segnaposto sale di 1px quando l'origine è IN LINEA
 
 Il valore è cresciuto in **due passi**, entrambi dell'utente, e conviene sapere che sono di
@@ -2223,6 +2260,12 @@ bordo illuminato, **solo sul tema scuro**.
   tutta la `box-shadow` là: riscriverla avrebbe duplicato anche l'ombra portata, cioè due
   copie dello stesso valore destinate a divergere. Ⓘ Lo spegnimento è un'ombra **nulla** e
   non `none`, così resta una voce valida della `box-shadow` composta.
+- ⚠️ **Dal 2026-08-26 ce l'ha anche 'I Grandi di Arda'** (`15.14`), su richiesta dell'utente, ma
+  con **tinta e alfa proprie**: là la tavolozza è neutra e il fondo del Pannello è caldo, quindi
+  l'alone azzurro di qui sembrerebbe la luce di un altro ambiente. Le due tarature sono state
+  **pareggiate a misura**, e il metodo (confronto A/B sullo stesso sito, non contro il fondo
+  lontano) sta in [`arda/top/CLAUDE.md`](../../arda/top/CLAUDE.md), § 'Il bagliore intorno al
+  Pannello': è là perché è là che è nato il problema di pareggiare due tinte diverse.
 
 #### 🌒 La decorazione d'angolo
 

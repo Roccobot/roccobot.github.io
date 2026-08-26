@@ -559,9 +559,25 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
   congelamento il box in uscita si allarga a tutta pagina.
 - ⚠️ **I due editor chiamano l'iniezione del CSS del dock in testa**, perché quel CSS deve esserci
   anche quando si apre **uno di loro** per primo.
-- ⚠️ **Nella modale, sotto soglia, la chiusura senza salvare NON ripristina**, come è sempre stato:
-  la scelta 'torna al punto di partenza' riguardava la **vista divisa**. E là la tab del tema **non
-  tocca il tema del sito**, perché l'anteprima interna segue già la tab.
+- ⚠️⚠️ **USCIRE SENZA SALVARE = ANNULLA, e vale in TUTTI i telaii dalla `15.14`** (istruzione
+  dell'utente, 2026-08-26: *la chiusura con la × deve equivalere a un clic su Annulla, non deve
+  salvare alcunché, nemmeno in localStorage*). Le tre vie d'uscita senza salvataggio (la ×, il
+  clic sul velo, e `Esc`, che passa dalla ×) chiamano la **stessa** funzione del tasto Annulla.
+  - ⚠️ **Prima era così SOLO in vista divisa**, ed è la nota che questa voce sostituisce: il
+    ripristino stava dentro `close` nel ramo `docked`, quindi nella modale classica la × lasciava
+    in vigore le modifiche provate, che restavano in pagina fino al reload senza che nessuno le
+    avesse salvate.
+  - ⚠️ **La funzione NON si sposta dentro `close`**, e non è una semplificazione mancata: da `close`
+    passano anche i rebuild **tecnici** (cambio di telaio al resize, tasto `L`), dove le regolazioni
+    non salvate devono **sopravvivere**.
+  - ⚠️ **Su Terramare la stessa funzione ridisegna anche la lista**, perché là un effetto tocca il
+    markup (vedi `earthsea/top/CLAUDE.md`); qui non serve, e la riga in più sarebbe un ridisegno
+    sprecato a ogni chiusura.
+  - **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dal Pannello di controllo non
+    parte nessuna scrittura (l'unica chiave vicina è la preferenza personale di zoom, che la scrive
+    il tasto `Z`). Il banco confronta l'intero `localStorage` prima e dopo.
+  - La tab del tema in dock **non** è toccata da questa regola: continua a commutare il tema del
+    sito, e alla chiusura vera il tema torna a quello d'apertura.
 
 ### 🎨 Estetica e vincoli
 
@@ -1076,6 +1092,33 @@ azzera.
   di lista vuota resta un fallback teorico.
 - ⚠️ **Al cambio di categoria un filtro attivo che perde i portatori va POTATO da sé**, o la lista
   resta vuota e il filtro non si riesce più a togliere.
+
+### ✨ Il bagliore intorno al Pannello
+
+Portato qui da 'I Grandi di Terramare' nella `15.14` (richiesta dell'utente, 2026-08-26): un alone
+a 34px più un filo di bordo illuminato, **solo sul tema scuro**, nella variabile `--pan-glow` che
+il tema chiaro spegne con un'ombra **nulla** (non `none`, così resta una voce valida della
+`box-shadow` composta e l'ombra portata non va riscritta due volte).
+
+- **Perché serve solo al tema scuro**: è la **controparte scura dell'ombra portata**, e un'ombra ha
+  bisogno di luce attorno per esistere. Sul fondo nero non si vede nulla, quindi il tema chiaro
+  aveva qualcosa che staccava il Pannello dal fondo e lo scuro no. Non è decorazione aggiunta al
+  chiaro: è il pareggio di un'asimmetria.
+- ⚠️⚠️ **La TINTA è la parte che NON si copia dal gemello**: là l'alone è freddo
+  (`rgba(150,200,235)`) perché freddo è tutto quel sito; qui la tavolozza è neutra e il fondo del
+  Pannello è **caldo** (HSL 50deg, saturazione dimezzata), quindi un alone azzurro sembrerebbe la
+  luce di un altro ambiente. Si usa la luce calda-neutra della pergamena, `rgba(232,226,212)`.
+- ⚠️⚠️ **L'alfa è MISURATA, non scelta a gusto**, ed è più bassa di quella del gemello
+  (**0,12/0,10** contro 0,13/0,10): a parità di alfa una luce quasi bianca **rende di più** di una
+  tinta satura, e con 0,13 qui il bagliore batteva quello di Terramare dell'**11%** a ridosso del
+  bordo. Con 0,12 i due siti stanno al **98%** e al **94%** a 3px e 10px dal bordo.
+- ⚠️ **Come si misura, perché il metodo ovvio NON funziona**: confrontare l'anello attorno al
+  Pannello col 'fondo lontano' dà un delta **dentro il rumore**, perché il fondo dei due siti non è
+  uniforme (trame, contenuto sotto). Misurato così, il bagliore di Terramare risultava
+  **negativo**. Il confronto giusto è **A/B sullo stesso sito**, stesso fotogramma: si spegne la
+  sola `--pan-glow` da console e si misura la differenza di luminanza pixel per pixel nell'anello,
+  a più distanze dal bordo. ⚠️ A 22px il valore è ormai piccolissimo e torna dentro il rumore:
+  fanno fede i **3px e 10px**.
 
 ### Hover e layout del Pannello
 

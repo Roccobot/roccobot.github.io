@@ -3145,7 +3145,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.01</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.02</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -10653,9 +10653,23 @@ function showSiteFlagsEditor(initState){
       });
     }, 180);
   };
+  // ⚠️⚠️ USCIRE senza salvare = ANNULLA, per OGNI via d'uscita (richiesta dell'utente,
+  // 2026-08-26: *la chiusura con la × deve equivalere a un clic su Annulla*). Prima il
+  // ripristino stava dentro `close`, ma nel solo ramo `docked`: nella modale classica la
+  // × lasciava in vigore le modifiche provate, che restavano in pagina fino al reload
+  // senza che nessuno le avesse salvate. Qui il ripristino è esplicito e vale per la ×,
+  // per il clic sul velo e per Esc, che passa dalla × (vedi il gestore dei tasti).
+  // ⚠️ NON si sposta dentro `close`: là passano anche i rebuild TECNICI (cambio di
+  // telaio, cambio lingua), dove le modifiche in corso devono sopravvivere.
+  // ⚠️ `normSiteFlags` e non una copia grezza: SITE_FLAGS_SAVED può venire da un file
+  // dati vecchio (flag booleani), e rimetterlo così com'è lascerebbe un booleano dove il
+  // codice si aspetta l'oggetto con le manopole.
+  // ⚠️ `fxRidisegna('orig')` perché l'origine è markup: senza, il ripristino tornerebbe
+  // vero nei flag ma non in pagina (stessa ragione per cui la casella la richiama).
+  var annulla = function(){ SITE_FLAGS = normSiteFlags(SITE_FLAGS_SAVED); applySiteFlags(); reflowRows(); fxRidisegna('orig'); close(); };
   window.addEventListener('resize', onRs);
-  overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) annulla(); });
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = annulla; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
   // 'Pannello di controllo' dalla v12.42 (rinominato dall'utente; era 'Feature
   // flag'). Da non confondere col Pannello del FAB: questo è admin-only.
@@ -10756,6 +10770,14 @@ function showSiteFlagsEditor(initState){
         if (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') SITE_FLAGS[vk].on = cb.checked;
         else SITE_FLAGS[vk] = cb.checked;
         applySiteFlags(); reflowRows();
+        // ⚠️⚠️ La CASELLA di un effetto che tocca il markup deve RIDISEGNARE (richiesta
+        // dell'utente, 2026-08-26: la spunta di 'Origine' deve agire come mostra/nascondi,
+        // con effetto immediato). Il rimedio esisteva già (`fxRidisegna`, 0.91) ma era
+        // agganciato alle sole manopole della sotto-modale: da qui l'interruttore cambiava
+        // il flag e basta, e la colonna dell'origine restava in pagina con le sue
+        // impostazioni. `applySiteFlags` non basta perché quella colonna è markup scritto
+        // da `renderList`, non una classe sul documento.
+        fxRidisegna(f.k);
         // In tab Mobile la pagina non cambia: il riscontro è l'anteprima qui sopra.
         // Si RICOSTRUISCE (non solo ridipinge) perché il respiro del riquadro e la
         // classe .fxp-airy dipendono da quali effetti sono accesi.
@@ -10844,10 +10866,10 @@ function showSiteFlagsEditor(initState){
   var foot = document.createElement('div'); foot.style.cssText = 'display:flex;gap:10px;margin-top:1.1rem;';
   var cancel = document.createElement('button'); cancel.className = 'fab-modal-confirm';
   cancel.style.cssText = 'width:auto;flex:1;margin-top:0;'; cancel.textContent = it ? 'Annulla' : 'Cancel';
-  // normSiteFlags e non una copia grezza: SITE_FLAGS_SAVED può venire da un file
-  // dati vecchio (flag booleani), e rimetterlo così com'è lascerebbe un booleano
-  // dove il codice si aspetta l'oggetto con le manopole.
-  cancel.onclick = function(){ SITE_FLAGS = normSiteFlags(SITE_FLAGS_SAVED); applySiteFlags(); reflowRows(); close(); };
+  // Stessa funzione della × e del velo: le tre vie d'uscita senza salvataggio fanno
+  // la stessa cosa, invece di somigliarsi. Perché usi `normSiteFlags` e non una copia
+  // grezza sta scritto dove `annulla` è definita.
+  cancel.onclick = annulla;
   var save = document.createElement('button'); save.className = 'fab-modal-confirm';
   save.style.cssText = 'width:auto;flex:1;margin-top:0;'; save.textContent = it ? 'Salva' : 'Save';
   save.onclick = function(){
