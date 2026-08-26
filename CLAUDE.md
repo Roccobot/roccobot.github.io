@@ -95,6 +95,24 @@ sessione:
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. Il perché la regola non
    basti scritta altrove, e le altre due vie che la coprono, stanno in § '🖼️ Artefatti'.
+   - ⚠️⚠️ **Quel file è anche l'unica casa possibile dei permessi MCP, e il comando qui sopra
+     NON li porta**: copre `Artifact` e basta. È una lacuna, non una scelta, perché gli
+     strumenti **MCP** sono uno dei due soli punti in cui si vede l'assenza delle
+     impostazioni di progetto (l'altro è la modifica della configurazione: vedi la trappola in
+     fondo a questo file). Quindi nelle sessioni coi repo affiancati un tool MCP chiede il
+     consenso **e non offre 'Consenti sempre'**, che è una violazione della regola universale
+     'Offrire sempre Consenti sempre' (`Roccobot.md`, § '⚙️ Automazione e interazioni') di cui
+     nessuno ha colpa: il prompt non lo compone la sessione.
+     - **Come si rimedia**: si aggiungono alla stessa lista `allow` i tool MCP **per nome
+       intero** (`mcp__<server>__<tool>`), man mano che chiedono. ⚠️ **Mai un jolly sul
+       server**: dentro `claude-code-remote` vivono anche `archive_session` e
+       `create_session`, che non c'entrano niente con lo scrivere un promemoria.
+     - ⚠️ **Il limite resta quello della via 3**: un file scritto **dentro** la sessione può
+       non entrare in vigore in quella sessione, quindi il prompt di oggi lo si paga comunque.
+       Solo lo script di setup dell'ambiente (via 1) lo evita dal primo turno.
+     - Storico: accertato il 2026-08-26, quando `~/.claude/settings.json` **non esisteva
+       affatto** perché il passo 0 era stato saltato, e l'utente ha dovuto autorizzare a mano
+       `send_later` senza avere l'opzione durevole.
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
 2. Poi si fa **una sola chiamata** allo strumento di domanda, con **due** domande, e
