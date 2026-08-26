@@ -1528,45 +1528,81 @@ altri sei volumi.
     nome che gli spetta, ed è la correzione dell'utente (*non è vero che le origini non hanno
     un campo: c'è il campo 'origine'*).
 
-## 🗺️ Le due mappe delle Risorse, e perché in inglese NON si offrono
+## 🗺️ Le mappe: la regola che decide fra elenco e apertura diretta
 
-Dalla `0.46` la parte **Risorse** della modale ha le sue due immagini vere, in `earthsea/res/`, aperte dal
-visualizzatore già esistente. Prima erano due segnaposto che puntavano a file inesistenti.
+Dalla `0.46` le mappe sono immagini vere in `earthsea/res/`, aperte dal visualizzatore già
+esistente. ⚠️⚠️ **Dalla `1.03` sono TRE e l'inglese ha la sua**, e con lei sono cadute le due
+regole nate quando non l'aveva: che in inglese le mappe non si offrissero affatto, e che il
+link del footer si nascondesse. Le note che le dànno per vive sono superate.
 
-| voce | file | etichetta |
-|---|---|---|
-| in alto | `Earthsea_V.jpg` (2853x4371) | 'Mappa di Earthsea (verticale)' |
-| in basso | `Earthsea_O.jpg` (4800x3810) | 'Mappa di Terramare (orizzontale)' |
+| voce | file | lingua | etichetta |
+|---|---|---|---|
+| verticale | `Earthsea_V.jpg` (2853x4371) | `it` | 'Mappa di Earthsea (verticale)' |
+| orizzontale | `Earthsea_O.jpg` (4800x3810) | `it` | 'Mappa di Terramare (orizzontale)' |
+| inglese | `Earthsea_E.png` (1,6 MB) | `en` | 'Map of Earthsea' |
 
-- ⚠️ **Le etichette sono quelle dell'utente e NON si uniformano**: la verticale dice
+- ⚠️⚠️ **La regola è sul NUMERO di risorse, non sulla lingua** (istruzione dell'utente,
+  2026-08-26: *visto che però c'è una sola risorsa, il clic deve aprire direttamente il
+  visualizzatore*). Con **una** mappa il clic apre lei, con **due o più** apre l'elenco, e la
+  porta è una sola, `openMaps`: la usano il link del footer, il tasto del Pannello e il
+  permalink `?res`.
+  - ⚠️ **Scritta sul numero si aggiorna da sé**, ed è la ragione per cui non dice 'in inglese
+    si apre diretto': il giorno che l'inglese avrà la seconda mappa la modale ricompare senza
+    che nessuno debba ricordarsi di niente. L'utente ha lasciato la porta aperta (*se/quando
+    caricherò altre risorse, vedremo se è il caso di cambiare*).
+- **L'etichetta si RICAVA, non si scrive**: con una risorsa sola è il titolo di quella mappa
+  ('Map of Earthsea'), con più di una il nome della categoria ('Mappe' / 'Maps'). La dà
+  `mapsLabel`, identica per il footer e per il Pannello.
+  - ⚠️ **Prima il testo del link stava in DUE punti e divergevano**: all'avvio diceva
+    'Risorse', dopo un cambio di lingua 'Risorse e note'. Nessuno l'aveva visto perché per
+    vederlo bisogna premere il tasto della lingua **e poi** guardare in fondo alla pagina.
+- ⚠️ **Le etichette italiane sono quelle dell'utente e NON si uniformano**: la verticale dice
   'Earthsea' e l'orizzontale 'Terramare'. Chi le allineasse 'per coerenza' starebbe
-  correggendo una scelta.
-- ⚠️⚠️ **In INGLESE la voce 'Risorse' non si mostra affatto** (istruzione dell'utente,
-  2026-08-23: *le mappe sono in italiano e non ho mappe altrettanto definite e ben fatte in
-  inglese*). Sono **due** i punti che la aprono, e vanno spenti entrambi o il difetto resta
-  metà: il **tasto Info** della toolbar (`infoBtn`, che in inglese diventa stringa vuota) e la
-  **voce del footer** (`#res-link`, che prende `hidden`). ⚠️ La modale contiene **solo** le due
-  mappe, quindi in inglese sarebbe vuota: un tasto che apre il nulla è peggio di un tasto che
-  non c'è.
-  - **Il collegamento del tasto gira su `querySelectorAll`**, quindi zero occorrenze non
-    dànno errore e `wireControlPanel` non va toccato. Verificato: in italiano trova **2**
-    tasti (desktop e mobile), in inglese **0**.
-  - ⚠️⚠️ **Nel footer si nasconde la RIGA INTERA, non il bottone** (difetto visto dall'utente
-    il 2026-08-24, con lo screenshot della pagina inglese): il paragrafo `#footer-links` porta
-    un **✦ per lato**, quindi col solo bottone `hidden` restavano due stelline sospese che
-    promettevano un contenuto inesistente. ⚠️ E i punti che lo nascondono sono **due** (l'avvio
-    e `setLang`): stanno dietro `setResLinkHidden`, o il difetto torna dalla metà non
-    corretta, che è esattamente com'era nato. Misurato: in inglese il paragrafo rende **0px**
-    di altezza, in italiano 32.
-  - ⚠️ **I permalink delle mappe restano validi anche in inglese** (`SHARE_ROUTES` si ricava
-    da `RES_MAPS`), e non è una dimenticanza: un link condiviso deve aprire quello che
-    promette, mentre il menu è un'offerta e in inglese non c'è nulla da offrire.
-- **`titleEn` ripete l'etichetta ITALIANA** invece di tradurla: il titolo nomina
-  quell'immagine, e 'Map of Earthsea' farebbe credere a una mappa inglese che non esiste.
-- ⚠️ **Pesano 5,0 e 3,4 MB**, in scala di grigi: il visualizzatore le carica a piena
-  risoluzione, e su una connessione lenta si vede. Non sono state ricompresse perché l'utente
-  le ha fornite così e nessuno l'ha chiesto: se un domani si fa, il confronto va fatto sul
-  dettaglio dei nomi delle isole, che è la ragione per cui sono grandi.
+  correggendo una scelta. E il `titleEn` delle due italiane **ripete l'italiano**: il titolo
+  nomina quell'immagine, e una resa inglese la farebbe confondere con `Earthsea_E.png`, che
+  ora esiste per davvero.
+- ⚠️ **Il campo `lang` filtra anche l'elenco**, e serve a un caso che si vede solo dal
+  permalink: `?res` in inglese elencava le **due mappe italiane**, cioè era l'unico posto da
+  cui restavano raggiungibili mentre tasto e link erano spenti.
+- ⚠️ **Le due italiane pesano 5,0 e 3,4 MB**, in scala di grigi (l'inglese 1,6): il
+  visualizzatore le carica a piena risoluzione, e su una connessione lenta si vede. Non sono
+  state ricompresse perché l'utente le ha fornite così e nessuno l'ha chiesto: se un domani si
+  fa, il confronto va fatto sul dettaglio dei nomi delle isole, che è la ragione per cui sono
+  grandi.
+
+### 📍 Il tasto del Pannello è un SEGNAPOSTO, e la sua centratura è ottica
+
+Istruzione dell'utente, 2026-08-26: il cerchio con la 'i' diventa un segnaposto di mappa, *ad
+indicare che da lì si aprono le mappe*, e c'è in **tutte e due** le lingue. La classe è
+`.ctrl-maps-btn` e non più `.ctrl-info-btn`, perché il tasto non apre un'informativa; ⚠️ non
+aveva regole CSS proprie, quindi il rinomino ha toccato i soli due punti JS che la nominano.
+
+- ⚠️⚠️ **Il segnaposto è RIDISEGNATO, non quello di Feather scalato**, e le due ragioni sono
+  indipendenti: chi ne conoscesse una sola rifarebbe metà del lavoro.
+  - **`scale()` scala anche il tratto.** Il CSS fissa `stroke-width:2` per tutte le icone della
+    fila; col fattore che pareggiava l'ingombro (**0,853**) il tratto scendeva a **1,71**, e il
+    segnaposto risultava più leggero dei vicini a colpo d'occhio. Ridisegnato col raggio
+    **7,54**, l'ingombro torna giusto col tratto pieno.
+  - **La centratura è ottica, non aritmetica** (avviso dell'utente). La testa tonda pesa e la
+    punta no: il baricentro dell'inchiostro del segnaposto di Feather cade a **10,85**, più di
+    un'unità sopra l'asse, quindi centrato sul riquadro 24x24 si legge alto. Qui la testa sta a
+    **11,27** e la punta a **22,17**, e il baricentro cade a **11,98**.
+- ⚠️⚠️ **L'asse della fila è 11,98 e NON la media delle quattro icone**, che varrebbe 12,24: la
+  **luna** ha il baricentro a **13,02** perché il morso della falce la sbilancia in basso, ed è
+  una proprietà di quel glifo, non della fila. Sole, riordina e link, che sono simmetrici,
+  stanno tutti e tre a 11,97-11,98. Mediare dentro un glifo asimmetrico spostava il segnaposto
+  di 0,26 unità **dal verso sbagliato**: poco, ma preso per misura.
+- **Come si misura**, perché nessuna proprietà CSS lo dice: si rasterizza l'SVG a 480px coi
+  valori veri del CSS (tratto 2, cap e join tondi), si pesano i pixel sull'alfa e si fa la
+  media. ⚠️ Va fatto **sulla pagina vera**, dove l'SVG lo centra il flex del bottone: misurato
+  là, segnaposto 11,98, riordina 11,98, link 11,97, e tratto 2px per tutti.
+- ⚠️ **`setResLinkHidden` è USCITA** insieme allo spegnimento del link in inglese, ma la sua
+  storia serve a chi un domani volesse rispegnere quel link, perché i due rimedi non sono
+  intuibili: il paragrafo `#footer-links` si spegneva con `visibility` e non con `hidden`, o
+  usciva dal flusso e il footer si accorciava di **55,72px** al cambio lingua; e il bottone con
+  `disabled` e non con `hidden`, o si portava via il suo `border-bottom` da 1px e il footer si
+  muoveva di un pixel comunque. In più il paragrafo porta un **✦ per lato**, quindi nascondere
+  il solo bottone lasciava due stelline sospese a promettere il nulla.
 
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
@@ -2508,9 +2544,9 @@ niente `tabindex`, niente cursore a manina, niente colore al passaggio.
   sezione resta intatta, e la citazione vive in fondo alla card. Vedi § 'Le CITAZIONI nella card: testo Mondadori, nomi Nord'.
 - ⚠️ **Non rimettere il cursore a manina 'per coerenza'**: prometterebbe un'azione che non c'è,
   ed è il difetto che questa scelta elimina.
-- Restano in piedi le modali che servono ad altro: 'Risorse e note', l'informativa, i due
-  **visualizzatori di immagini** per le mappe. Il loro guscio condiviso (`buildStdModal`) e le
-  classi `.modal`, `.modal-body`, `.modal-close` sono di quelli, non della scheda.
+- Restano in piedi le modali che servono ad altro: l'elenco delle **mappe**, l'informativa e i
+  **visualizzatori di immagini**. Il loro guscio condiviso (`buildStdModal`) e le classi
+  `.modal`, `.modal-body`, `.modal-close` sono di quelli, non della scheda.
 
 ## 📖 Le CITAZIONI nella card: testo Mondadori, nomi Nord
 
@@ -2868,7 +2904,7 @@ corrette nella `0.67`.
 |---|---|---|
 | etichette e icone del nome, in **orizzontale** | 61 e 38 card | la gemella riservava la sola altezza, non la larghezza: `Sparviero` -> `Sparrowhawk` le spostava fino a **52px** |
 | testo e riga di contesto **dentro** il riquadro della citazione | 3 e 5 card | la gemella stava sul blocco intero, quindi il riquadro teneva l'altezza giusta e il contenuto ci ballava dentro di **24,75px**, una riga |
-| la riga Risorse nel **footer** | sempre | il `hidden` della `0.62` toglieva il paragrafo dal flusso: **55,72px** |
+| la riga Risorse nel **footer** | non più dalla `1.03` | il `hidden` della `0.62` toglieva il paragrafo dal flusso: **55,72px**. Da quando la riga non si nasconde in nessuna lingua il caso non ricorre: vedi § 'Le mappe' |
 
 - ⚠️⚠️ **La lezione vale oltre il caso**: una misura che guarda una dimensione sola può
   dichiarare 'zero' mentre la pagina si muove in un'altra. Se l'utente dice che vede

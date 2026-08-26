@@ -3166,7 +3166,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <div class="print-running-header" aria-hidden="true"><span>Il mondo di Terramare</span><span>roccobot.me</span></div>
 
 <footer>
-  <p id="footer-links" style="color:var(--gold-bright);margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Resources and notes</button> ✦</p>
+  <p id="footer-links" style="color:var(--gold-bright);margin-bottom:1.5rem;">✦ <button type="button" id="res-link">Mappe</button> ✦</p>
   <p id="footer-text">Il potere, a Terramare, comincia da un nome.</p>
 </footer>
 
@@ -4803,15 +4803,11 @@ function setLang(lang) {
   document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
-  // ⚠️ La voce del footer segue la stessa regola del tasto Info: in inglese si NASCONDE,
-  // perché porta alle sole mappe italiane. Il testo si scrive comunque, così se un domani
-  // la modale avrà contenuti bilingui basta togliere la riga dell'`hidden`.
-  // ⚠️⚠️ SI NASCONDE LA RIGA INTERA, non il solo bottone (difetto visto dall'utente il
-  // 2026-08-24): il paragrafo porta un ✦ per lato, quindi col bottone nascosto restavano
-  // due stelline sospese sopra il footer, che promettevano un contenuto che non c'era.
-  setResLinkHidden(lang !== 'it');
-  var rl = document.getElementById('res-link');
-  if (rl) rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes';
+  // La voce del footer c'è in tutte e due le lingue dal 2026-08-26, e il suo testo dipende
+  // da quante mappe ha la lingua: lo decide `mapsLabel`, che serve anche il tasto del
+  // Pannello. ⚠️ Prima era scritto QUI e un'altra volta all'avvio, e le due copie
+  // divergevano: all'avvio diceva 'Risorse', dopo un cambio di lingua 'Risorse e note'.
+  setResLinkLabel();
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList();
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
@@ -6698,13 +6694,14 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ── 'Resources and maps' (footer) → modale con voci bilingui → viewer zoomabile ──
-// Modale unica 'Risorse e note' (dalla v5.79): unifica le vecchie modali
-// Modale unica delle risorse e note, con tre sezioni: 'Risorse' (le due mappe +
-// il link esterno), 'Note' (note di pura lore in-universe, cat:'lore') e 'Note
-// editoriali' (scelte editoriali/presentazione dei dati, cat:'editorial', con
-// 'Traduzione italiana' ex tasto Info in testa). È raggiunta dal link a piè
-// pagina e dal tasto Info.
+// ── 'Mappe' (link del footer e tasto del Pannello) → elenco → visualizzatore ──
+// ⚠️ Il commento che stava qui descriveva la modale di 'I Grandi di Arda': tre sezioni
+// ('Risorse' con le mappe e un link esterno, 'Note' di lore, 'Note editoriali') di cui
+// **qui non esiste nessuna**, perché l'utente ha voluto le sole mappe. Era arrivato con la
+// copia del motore e nessuno l'aveva riscritto: vale come misura di quanto un commento
+// ereditato sopravviva al codice che descriveva.
+// Dal 2026-08-26 questa modale si apre solo quando la lingua ha PIÙ DI UNA mappa: con una
+// sola il clic va dritto al visualizzatore e la modale non entra in scena (`openMaps`).
 // ── Guscio-modale STANDARD condiviso (dalla v8.76) ──────────────────────────
 // Note, Risorse e Info riusano lo stesso guscio della scheda personaggio:
 // backdrop sfocato (chiaro su tema chiaro, scuro su scuro), .modal con doppio
@@ -6805,25 +6802,61 @@ function dismissStdModal(bd, mode) {
 // al primo ritocco.
 var ICON_LINK = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 
-// Le due mappe della sezione Risorse, in tabella invece che nelle chiamate:
-// servono in DUE punti (l'elenco della modale e la tabella dei permalink), e
-// duplicare titolo e percorso avrebbe creato due fonti che prima o poi
-// divergono. Lo slug è il token del permalink (vedi SHARE_ROUTES).
+// Le mappe, in tabella invece che nelle chiamate: servono in TRE punti
+// (l'elenco della modale, l'etichetta dei due tasti e la tabella dei
+// permalink), e duplicare titolo e percorso avrebbe creato due fonti che prima
+// o poi divergono. Lo slug è il token del permalink (vedi SHARE_ROUTES).
 var RES_MAPS = [
-  // ⚠️⚠️ Le due mappe sono in ITALIANO, e non ne esiste una versione inglese altrettanto
-  // definita (istruzione dell'utente, 2026-08-23). Perciò `titleEn` ripete l'etichetta
-  // italiana invece di tradurla: il titolo nomina QUELL'immagine, e una resa inglese
-  // farebbe credere a una mappa inglese che non c'è. Per la stessa ragione in inglese la
-  // voce 'Risorse' non si mostra affatto: vedi `infoBtn` e il link del footer.
+  // ⚠️⚠️ Le due mappe italiane sono SOLO italiane, e `titleEn` ripete l'etichetta italiana
+  // invece di tradurla (istruzione dell'utente, 2026-08-23): il titolo nomina
+  // QUELL'immagine, e una resa inglese farebbe credere a una mappa inglese diversa.
   // Le etichette sono quelle scelte dall'utente, compreso il fatto che la verticale dice
   // 'Earthsea' e l'orizzontale 'Terramare': non è una svista da uniformare.
-  { slug: 'mappa-v', src: '/earthsea/res/Earthsea_V.jpg',
+  // ⚠️ Il campo `lang` è nato il 2026-08-26 con la mappa inglese: prima l'inglese non
+  // aveva risorse e la lingua si trattava spegnendo tasto e link (vedi `mapsLabel`).
+  { slug: 'mappa-v', lang: 'it', src: '/earthsea/res/Earthsea_V.jpg',
     titleIt: 'Mappa di Earthsea (verticale)', titleEn: 'Mappa di Earthsea (verticale)',
     shortIt: 'Mappa verticale', shortEn: 'Mappa verticale' },
-  { slug: 'mappa-o', src: '/earthsea/res/Earthsea_O.jpg',
+  { slug: 'mappa-o', lang: 'it', src: '/earthsea/res/Earthsea_O.jpg',
     titleIt: 'Mappa di Terramare (orizzontale)', titleEn: 'Mappa di Terramare (orizzontale)',
-    shortIt: 'Mappa orizzontale', shortEn: 'Mappa orizzontale' }
+    shortIt: 'Mappa orizzontale', shortEn: 'Mappa orizzontale' },
+  { slug: 'mappa-en', lang: 'en', src: '/earthsea/res/Earthsea_E.png',
+    titleIt: 'Map of Earthsea', titleEn: 'Map of Earthsea',
+    shortIt: 'Map of Earthsea', shortEn: 'Map of Earthsea' }
 ];
+// Le mappe della lingua corrente. ⚠️ Filtrare invece di mostrarle tutte serve a
+// una cosa che si vede solo sul permalink `?res`: in inglese quella rotta
+// elencava le DUE mappe italiane, cioè l'unico posto da cui erano ancora
+// raggiungibili mentre tasto e link erano spenti.
+function resMaps() { return RES_MAPS.filter(function(r){ return r.lang === currentLang; }); }
+// ⚠️⚠️ Le due strade verso le mappe (link del footer e tasto del Pannello) decidono sul
+// NUMERO di risorse, non sulla lingua, ed è la differenza che conta: con una sola risorsa
+// la modale sarebbe un passaggio a vuoto e il clic apre il visualizzatore (istruzione
+// dell'utente, 2026-08-26); con due o più serve l'elenco. Così il giorno che l'inglese
+// avrà la seconda mappa la modale ricompare da sé, senza che nessuno ricordi una regola
+// scritta 'in inglese si apre diretto'.
+function openMaps() {
+  var list = resMaps();
+  if (list.length === 1) {
+    // ⚠️ `imgvReturn` si AZZERA: la modale Risorse lo imposta prima di aprire una mappa,
+    // e se restasse su (una `openImageViewer` che esce subito perché il visualizzatore è
+    // già in scena) la chiusura di questa mappa riaprirebbe una modale da cui non siamo
+    // passati.
+    imgvReturn = null;
+    openImageViewer(list[0].src, list[0].titleIt, list[0].titleEn, list[0].slug);
+    return;
+  }
+  openResourcesModal();
+}
+// Etichetta delle due strade: con una risorsa sola è il TITOLO di quella mappa, che dice
+// dove si va; con più di una è il nome della categoria. Non si scrive due volte, o le due
+// strade divergerebbero al primo ritocco (è già successo al link del footer, che diceva
+// 'Risorse' all'avvio e 'Risorse e note' dopo un cambio di lingua).
+function mapsLabel() {
+  var list = resMaps();
+  if (list.length === 1) return currentLang === 'it' ? list[0].titleIt : list[0].titleEn;
+  return currentLang === 'it' ? 'Mappe' : 'Maps';
+}
 
 function openResourcesModal() {
   if (document.getElementById('res-modal')) return;
@@ -6844,12 +6877,13 @@ function openResourcesModal() {
   function mkBtn(txt, fn, asHtml) { var b = document.createElement('button'); b.className = 'fab-modal-confirm'; if (asHtml) b.innerHTML = txt; else b.textContent = txt; b.onclick = fn; box.appendChild(b); }
   function label(itF, enF, itS, enS) { var it = mobile && itS ? itS : itF, en = mobile && enS ? enS : enF; return currentLang === 'it' ? it : en; }
   // ⚠️ Qui c'è MENO che in 'I Grandi di Arda', per scelta dell'utente: nessuna nota, né di
-  // lore né editoriale, e nessun link esterno. Restano i due visualizzatori di immagini
-  // per le mappe, ed è tutto quello che questa modale deve fare.
-  section(currentLang === 'it' ? 'Risorse' : 'Resources');
+  // lore né editoriale, e nessun link esterno. Restano i visualizzatori delle mappe, ed è
+  // tutto quello che questa modale deve fare. ⚠️ Quante siano dipende dalla lingua, quindi
+  // non si scrive: le conta `resMaps`.
+  section(currentLang === 'it' ? 'Mappe' : 'Maps');
   // Aprire una mappa da qui è un PASSAGGIO: dissolvenza velocissima, non l'uscita piena.
   function imgItem(r) { mkBtn(label(r.titleIt, r.titleEn, r.shortIt, r.shortEn), function() { dismiss('fast'); imgvReturn = function(){ openResourcesModal(); }; openImageViewer(r.src, r.titleIt, r.titleEn, r.slug); }); }
-  RES_MAPS.forEach(imgItem);
+  resMaps().forEach(imgItem);
 }
 
 function openImageViewer(src, titleIt, titleEn, slug) {
@@ -6973,32 +7007,22 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } ttl.textContent = currentLang === 'it' ? titleIt : (titleEn || titleIt); };
 }
 
-// ⚠️⚠️ Nasconde la RIGA (`#footer-links`), non il bottone: il paragrafo porta un ✦ per
-// lato, e col solo bottone via restavano due stelline a indicare il nulla. Sta in una
-// funzione perché i punti che la chiamano sono DUE (qui all'avvio e in `setLang`), e
-// con la riga scritta due volte il difetto sarebbe tornato dalla metà non corretta.
-// ⚠️⚠️ Si nasconde con `visibility`, NON con `hidden`, e la ragione è l'anti-jitter: col
-// `hidden` della 0.62 il paragrafo usciva dal flusso e il footer si accorciava di
-// **55,72px** al cambio lingua, cioè si toglieva un salto dalla riga e se ne creava uno
-// più grande sulla pagina. Da invisibile ma presente, la riga non si vede e non muove
-// niente: è il patto dell'utente (*uno spazio vuoto è preferibile al jitter*) e lo stesso
-// idioma del tag fantasma del Pannello.
-// ⚠️⚠️ E il bottone si spegne con `disabled`, NON con `hidden`: col `hidden` usciva dal
-// flusso e si portava via il suo `border-bottom` da 1px, quindi il footer si muoveva
-// **di un pixel** anche col paragrafo presente. È l'ultimo residuo di jitter della
-// pagina, e si vedeva solo misurando. `visibility:hidden` sul padre lo toglie già dal
-// tab e dall'albero a11y; `disabled` è la cintura in più, ed è lo stesso idioma del tag
-// fantasma del Pannello (§ 'Il tag del filtro sta in FONDO' in CLAUDE.md).
-function setResLinkHidden(hide){
-  var p = document.getElementById('footer-links');
-  if (p) {
-    p.style.visibility = hide ? 'hidden' : '';
-    p.setAttribute('aria-hidden', hide ? 'true' : 'false');
-  }
-  var b = document.getElementById('res-link');
-  if (b) { b.hidden = false; b.disabled = !!hide; b.tabIndex = hide ? -1 : 0; }
+// ⚠️⚠️ La riga del footer NON si nasconde più in nessuna lingua (2026-08-26): l'inglese ha
+// la sua mappa, quindi il link ha sempre dove portare. Con lei è uscita
+// `setResLinkHidden`, che dal momento in cui nessuno la chiama con `true` è codice morto.
+// ⚠️ La sua storia però serve, e non per nostalgia: **nasconderla costava jitter**, e i due
+// rimedi non erano intuibili. Il paragrafo si spegneva con `visibility` e non con `hidden`,
+// perché col secondo usciva dal flusso e il footer si accorciava di **55,72px** al cambio
+// lingua; e il bottone con `disabled` e non con `hidden`, perché col secondo si portava via
+// il suo `border-bottom` da 1px e il footer si muoveva di un pixel comunque. Chi un domani
+// tornasse a spegnere questo link rifaccia quei due rimedi invece di riscoprirli: stanno in
+// CLAUDE.md, § 'Le mappe'.
+// Il testo sta in `mapsLabel`, non qui: serve identico al tasto del Pannello.
+function setResLinkLabel() {
+  var rl = document.getElementById('res-link');
+  if (rl) rl.textContent = mapsLabel();
 }
-(function() { var rl = document.getElementById('res-link'); if (rl) { rl.textContent = currentLang === 'it' ? 'Risorse' : 'Resources'; setResLinkHidden(currentLang !== 'it'); rl.addEventListener('click', openResourcesModal); } })();
+(function() { var rl = document.getElementById('res-link'); if (rl) { setResLinkLabel(); rl.addEventListener('click', openMaps); } })();
 
 // ── 'Note editoriali' (footer) → modale con pulsanti → viewer testuale ──
 // Ogni nota ha titolo pieno + breve (mobile) e corpo bilingue in HTML statico.
@@ -7190,19 +7214,31 @@ function controlPanelHTML() {
   var shareLbl = currentLang === 'it' ? 'Copia il link alla vista corrente (categorie attive)' : 'Copy a link to the current view (active categories)';
   var themeLbl = isLight ? (currentLang==='it'?'Passa al tema scuro':'Switch to dark theme') : (currentLang==='it'?'Passa al tema chiaro':'Switch to light theme');
   var langLbl = currentLang === 'it' ? 'Visualizza in inglese' : 'View in Italian';
-  // Tasto Info (cerchio + i, stile Feather): dalla v5.79 apre la modale unica
-  // 'Risorse e note' (non più direttamente la nota sulle traduzioni, che ora è
-  // una voce di quella modale). Bilingue.
-  var INFO_ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-  var infoLbl = currentLang === 'it' ? 'Risorse e note' : 'Resources and notes';
-  // ⚠️⚠️ In INGLESE il tasto non si disegna, e non è una dimenticanza: la modale che apre
-  // contiene SOLO le due mappe, che esistono in italiano e in nessun'altra lingua
-  // (istruzione dell'utente, 2026-08-23). Un tasto che apre una modale vuota è peggio di un
-  // tasto assente. ⚠️ Il collegamento gira su `querySelectorAll`, quindi zero occorrenze non
-  // dànno errore: chi lo rimettesse non deve toccare `wireControlPanel`.
-  var infoBtn = currentLang === 'it'
-    ? '<button class="ctrl-icon-btn ctrl-info-btn" aria-label="' + infoLbl + '" title="' + infoLbl + '">' + INFO_ICON + '</button>'
-    : '';
+  // Tasto Mappe (segnaposto): dal 2026-08-26 al posto del cerchio con la 'i', su istruzione
+  // dell'utente, perché da lì si aprono le mappe e non un'informativa. Bilingue, e presente
+  // in tutte e due le lingue: prima in inglese non si disegnava, perché le sole mappe erano
+  // italiane e avrebbe aperto una modale vuota.
+  // ⚠️⚠️ Il segnaposto è RIDISEGNATO, non è quello di Feather scalato, e le due ragioni
+  // stanno una accanto all'altra:
+  //   - **centratura ottica**: la testa tonda pesa e la punta no, quindi il baricentro
+  //     dell'inchiostro del segnaposto di Feather cade a **10,85**, cioè più di un'unità
+  //     sopra l'asse della fila, e centrarlo sul riquadro 24x24 lo lascia percettivamente
+  //     alto. Qui la testa sta a 11,27 e la punta a 22,17: misurate rasterizzando le icone
+  //     a 480px e pesando i pixel sull'alfa, il baricentro cade a **11,98** e l'ingombro a
+  //     20,45 contro i 20,4 medi dei vicini.
+  //     - ⚠️⚠️ **L'asse della fila è 11,98 e NON la media delle quattro icone**, che varrebbe
+  //       12,24: la **luna** ha il baricentro a 13,02 perché il morso della falce la
+  //       sbilancia in basso, ed è una proprietà di quel glifo, non della fila. Sole,
+  //       riordina e link, che sono simmetrici, stanno tutti e tre a 11,97-11,98. Mediare
+  //       dentro un glifo asimmetrico spostava il segnaposto di 0,26 unità dal verso
+  //       sbagliato: poco, ma preso per misura.
+  //   - **niente `scale()`**: un transform di scala scala anche lo `stroke-width`, che il
+  //     CSS fissa a 2 per tutte. A 0,853 (il fattore che pareggiava l'ingombro) il tratto
+  //     scendeva a 1,71 e il segnaposto risultava più leggero dei vicini a colpo d'occhio.
+  //     Ridisegnandolo, il raggio 7,54 dà l'ingombro giusto col tratto pieno.
+  var MAP_ICON = '<svg viewBox="0 0 24 24"><path d="M19.54,11.27 c0,5.87 -7.54,10.89 -7.54,10.89 c0,0 -7.54,-5.03 -7.54,-10.89 a7.54,7.54 0 0 1 15.08,0 z"/><circle cx="12" cy="11.27" r="2.5"/></svg>';
+  var mapsLbl = mapsLabel();
+  var infoBtn = '<button class="ctrl-icon-btn ctrl-maps-btn" aria-label="' + mapsLbl + '" title="' + mapsLbl + '">' + MAP_ICON + '</button>';
   // Tasto Riordina (↑↓): SOLO toolbar desktop, a sinistra di Info. Entra in
   // modalità riordino forzando tutte le categorie (la classifica è assoluta) e
   // mostra le maniglie. In riordino diventa × (scarta modifiche,
@@ -7643,13 +7679,13 @@ function wireControlPanel() {
   panel.querySelectorAll('.ctrl-share-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ copyShareLink(btn); });
   });
-  // Tasto Info: apre la modale unica 'Risorse e note' (dalla v5.79). Chiude
-  // prima il Pannello, così l'unico overlay resta 'Risorse' e il gesto indietro
-  // torna dritto alla classifica (non al Pannello sottostante).
-  panel.querySelectorAll('.ctrl-info-btn').forEach(function(btn){
+  // Tasto Mappe: apre l'elenco, o la mappa stessa quando la lingua ne ha una sola
+  // (`openMaps`). Chiude prima il Pannello, così l'unico overlay resta quello delle mappe e
+  // il gesto indietro torna dritto alla classifica, non al Pannello sottostante.
+  panel.querySelectorAll('.ctrl-maps-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       if (panel.classList.contains('open')) toggleControlPanel();
-      openResourcesModal();
+      openMaps();
     });
   });
 }
@@ -7674,7 +7710,11 @@ function wireControlPanel() {
 // Un token italiano su un link che serve anche i lettori inglesi sarebbe un
 // indirizzo che dichiara una lingua che il contenuto non ha.
 var SHARE_ROUTES = {
-  res: function(){ openResourcesModal(); },
+  // ⚠️ `res` passa da `openMaps`, non da `openResourcesModal`: così anche chi arriva dal
+  // permalink incontra la stessa regola dei due tasti (una risorsa sola = si apre lei), e
+  // in inglese non si vede più un elenco di UNA voce. Il visualizzatore riscrive poi la
+  // rotta col proprio slug, quindi l'indirizzo si corregge da sé.
+  res: function(){ openMaps(); },
   ita: function(){ showInfoNote(); }
 };
 RES_MAPS.forEach(function(r){ SHARE_ROUTES[r.slug] = function(){ openImageViewer(r.src, r.titleIt, r.titleEn, r.slug); }; });
