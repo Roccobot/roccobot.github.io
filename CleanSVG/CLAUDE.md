@@ -7,9 +7,9 @@
 
 ## 🧭 Che cos'è
 
-Una **pagina sola** (`index.html`), senza build e senza dipendenze committate: ci si trascina
-un SVG, si vede che cosa contiene e che cosa gli viene tolto, e un tasto lo salva ripulito.
-Nasce il **2026-08-25** su richiesta dell'utente.
+Una **pagina sola** (`index.html`), senza build e senza dipendenze committate: ci si trascinano
+uno o **più** SVG, si vede che cosa contengono e che cosa viene tolto, e un tasto li salva
+ripuliti. Nasce il **2026-08-25** su richiesta dell'utente; la **coda** arriva il 2026-08-26.
 
 - **Indirizzo**: <https://roccobot.github.io/CleanSVG/>.
 - **Tutto avviene nel browser**: nessun file viene caricato da nessuna parte, e questo va
@@ -86,6 +86,45 @@ pulizia vera la fa **SVGO**, importato a runtime da `@latest`.
   trasparenza**, che su un SVG è un'informazione e non un vezzo (stessa ragione di 'Decent
   Image Viewer').
 
+## 📚 La coda, e perché i file si lavorano in fila
+
+Dal 2026-08-26 la pagina accetta **più file insieme**, dal trascinamento e dal picker, e li mette
+in coda.
+
+- ⚠️⚠️ **Si lavora UNO ALLA VOLTA, ed è la ragione del nome**: ogni file costa **due**
+  rasterizzazioni da 384x384 più un confronto pixel per pixel, e venti file lanciati insieme
+  bloccherebbero la pagina invece di finire prima. In fila la pagina resta viva e la riga che
+  sta lavorando si vede avanzare.
+- ⚠️ **Un file che fallisce NON ferma la coda**: la sua riga si marca e il giro continua. Un
+  gruppo di venti file in cui il terzo è malformato deve dare diciannove file puliti, non un
+  messaggio d'errore al posto di tutto.
+- **L'elenco compare da due file in su**: con uno solo sarebbe una riga sola, cioè spazio
+  occupato senza dire niente.
+- ⚠️⚠️ **I file scartati perché non sono SVG hanno una riga TUTTA LORO** (`#scartati`), e non
+  finiscono nel riquadro d'errore. Quel riquadro appartiene al **file scelto** e si svuota
+  appena se ne mostra uno buono: metterci dentro l'avviso lo faceva sparire dopo un istante.
+  Difetto vero, trovato dal banco alla prima passata. **Due messaggi con vite diverse non
+  possono stare nella stessa scatola.**
+- Il rapporto e l'anteprima appartengono alla **riga scelta**: le misure si calcolano una volta
+  e si conservano nella voce, invece di scriverle direttamente a schermo come faceva la
+  versione a file singolo.
+
+## 🗜️ Lo zip è scritto in casa
+
+'Scarica tutti' produce un archivio vero, senza librerie.
+
+- **Perché non una libreria**: la pagina ne carica già una da un CDN che può non rispondere, e
+  una seconda avrebbe voluto un secondo ripiego. Un archivio zip si scrive in una sessantina di
+  righe, e la compressione la fa il browser con **`CompressionStream('deflate-raw')`**, che è
+  nativo.
+- ⚠️ **Dove `CompressionStream` non c'è, le voci si scrivono NON compresse** invece di
+  rinunciare allo zip: uno zip di sole voci 'store' è pienamente valido, e un archivio più
+  grosso è comunque un archivio.
+- ⚠️ **Data e ora in formato DOS si scrivono davvero**: lasciarle a zero darebbe il giorno 0 del
+  mese 0, e qualche strumento segnala l'archivio come corrotto.
+- ⚠️ **I nomi dentro l'archivio si deduplicano**: due file trascinati da cartelle diverse possono
+  chiamarsi uguale, e senza un numero in coda l'uno sovrascriverebbe l'altro in silenzio.
+
 ## 🔬 Il confronto della resa, che è la promessa dello strumento
 
 Dopo la pulizia la pagina rasterizza **originale e pulito** alla stessa dimensione e li
@@ -108,6 +147,22 @@ vero, e due giri, **con** e **senza** SVGO.
   spia che lo rivela è che i due casi danno lo **stesso identico risultato**: quando succede,
   è il banco che mente, non la pagina. Il rimedio è servire il bundle vero di SVGO con
   `ctx.route`, scaricandolo a parte con `curl`.
+  - ✅ **Il rimedio funziona, provato il 2026-08-26**, e la misura che lo dimostra è la
+    differenza: sullo stesso file il ripiego lascia **264 byte** e SVGO 4.1.0 ne lascia
+    **164**. Due numeri diversi significano che il banco stava guardando due motori diversi.
+  - ⚠️ **Il ritardo nella risposta del CDN è parte della prova, non un fastidio**: rispondendo
+    dopo due secondi la coda comincia col ripiego e il motore arriva a giochi fatti, che è
+    l'unico modo di esercitare il **rifacimento** dell'intera coda.
+- **La coda si prova con un gruppo misto**, e i casi che contano sono quattro: più file buoni,
+  uno malformato in mezzo (la coda deve proseguire), un file che non è un SVG (deve comparire
+  fra gli scartati **e restare scritto**), e l'aggiunta a coda già piena.
+- **Lo zip si verifica aprendolo**, non guardando che il file scenda: `zipfile` di Python lo
+  apre, `testzip()` controlla i CRC e si conta che dentro ci siano tutte le voci attese.
+- ⚠️ **`document.createElement("li")` si scrive con le virgolette DOPPIE**, e non è un capriccio
+  di stile: col singolo apice il controllo pre-commit dei caratteri legge `li'` e lo segnala
+  come *lì* scritto con l'apostrofo. È un falso positivo suo, ma metterlo in whitelist
+  indebolirebbe il controllo su una parola vera, mentre le doppie non costano niente. Il file
+  lo faceva già in due punti senza dire perché: adesso è scritto.
 - ⚠️ Un file **malformato** va provato sempre: il messaggio del parser del browser arriva in
   inglese e con la pagina di errore intera in coda ('Below is a rendering...'), quindi si
   tiene solo riga, colonna e causa.

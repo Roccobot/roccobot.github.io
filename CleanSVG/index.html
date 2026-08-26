@@ -71,6 +71,44 @@
   #lavoro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.1rem; margin-top: 1.1rem; }
   @media (max-width: 800px) { #lavoro { grid-template-columns: 1fr; } }
 
+  /* ⚠️ I file scartati hanno una riga TUTTA LORO e non finiscono nel riquadro
+     d'errore, che appartiene al file scelto: quel riquadro si svuota appena si
+     mostra un file buono, e l'avviso spariva dopo un istante. Due messaggi con
+     vite diverse non possono stare nella stessa scatola. */
+  #scartati { color: var(--ko); font-size: .88rem; margin: .7rem 0 0; }
+
+  /* La coda. Compare solo con due o più file: con uno solo sarebbe un elenco
+     di una riga, cioè rumore al posto di un'informazione. */
+  #carta-coda { margin-top: 1.1rem; }
+  .testa-coda { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .6rem; }
+  .testa-coda h2 { margin: 0; }
+  #stato-coda { color: var(--tenue); font-size: .85rem; font-variant-numeric: tabular-nums; }
+  #scarica-tutti { margin-left: auto; margin-top: 0; width: auto; }
+  #svuota { margin-top: 0; width: auto; }
+  #scarica-tutti[hidden] + #svuota { margin-left: auto; }
+
+  #coda { list-style: none; margin: 0; padding: 0; max-height: 15rem; overflow-y: auto; }
+  #coda li {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .34rem .5rem; border-top: 1px solid var(--riga); border-radius: 8px;
+    font-size: .9rem; cursor: pointer;
+  }
+  #coda li:first-child { border-top: 0; }
+  #coda li:hover { background: color-mix(in srgb, var(--tinta) 7%, transparent); }
+  #coda li[aria-current="true"] { background: color-mix(in srgb, var(--tinta) 14%, transparent); font-weight: 600; }
+  #coda .nome { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #coda .esito { color: var(--tenue); font-variant-numeric: tabular-nums; font-size: .84rem; white-space: nowrap; }
+  #coda li.fallito .esito { color: var(--ko); }
+  #coda li.fallito .nome { text-decoration: line-through; text-decoration-color: var(--ko); }
+  /* Il pallino dice a colpo d'occhio a che punto è la riga, senza doverne
+     leggere il testo: in attesa, in lavorazione, fatta, fallita. */
+  #coda .spia { width: .55rem; height: .55rem; border-radius: 50%; flex: none; background: var(--riga); }
+  #coda li.lavora .spia { background: var(--tinta); animation: pulsa 1s ease-in-out infinite; }
+  #coda li.pronta .spia { background: var(--ok); }
+  #coda li.fallito .spia { background: var(--ko); }
+  @keyframes pulsa { 50% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { #coda li.lavora .spia { animation: none; } }
+
   .carta { background: var(--carta); border: 1px solid var(--riga); border-radius: 16px; padding: .9rem 1rem 1.1rem; }
   .carta h2 { font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--tinta); margin: .1rem 0 .7rem; }
 
@@ -141,18 +179,30 @@
     <span class="versione" id="versione"></span>
     <span class="motore" id="motore">motore: in caricamento...</span>
   </header>
-  <p class="occhiello">Trascina qui un file SVG: si vede subito che cosa contiene, che cosa gli viene tolto e se il disegno resta identico.</p>
+  <p class="occhiello">Trascina qui i tuoi file SVG, anche molti insieme: si vede subito che cosa contengono, che cosa viene tolto e se il disegno resta identico.</p>
 
-  <div id="zona" tabindex="0" role="button" aria-label="Scegli o trascina un file SVG">
-    <span class="grande">Trascina qui il tuo SVG</span>
-    <span class="piccolo">oppure fai clic per sceglierlo, o incollalo con CTRL+V</span>
+  <div id="zona" tabindex="0" role="button" aria-label="Scegli o trascina uno o più file SVG">
+    <span class="grande">Trascina qui i tuoi SVG</span>
+    <span class="piccolo">anche più di uno: fai clic per sceglierli, o incollane uno con CTRL+V</span>
   </div>
-  <input type="file" id="scelta" accept=".svg,image/svg+xml" hidden>
+  <input type="file" id="scelta" accept=".svg,image/svg+xml" multiple hidden>
+
+  <p id="scartati" hidden></p>
 
   <div id="errore" hidden>
     <div class="titolo" id="errore-titolo"></div>
     <div class="dettaglio" id="errore-dettaglio"></div>
   </div>
+
+  <section class="carta" id="carta-coda" hidden>
+    <div class="testa-coda">
+      <h2>Coda</h2>
+      <span id="stato-coda"></span>
+      <button type="button" class="minore" id="scarica-tutti" hidden>Scarica tutti in uno zip</button>
+      <button type="button" class="minore" id="svuota">Svuota la coda</button>
+    </div>
+    <ul id="coda"></ul>
+  </section>
 
   <div id="lavoro" hidden>
     <section class="carta">
@@ -183,7 +233,7 @@
       <ul class="tolto" id="elenco-tolto"></ul>
       <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
       <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
-      <button type="button" class="minore" id="altro">Pulisci un altro file</button>
+      <button type="button" class="minore" id="altro">Aggiungi altri file</button>
     </aside>
   </div>
 
@@ -201,7 +251,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
 // pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
-const VERSIONE = '1.00';
+const VERSIONE = '1.10';
 document.getElementById('versione').textContent = 'v' + VERSIONE;
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -532,15 +582,126 @@ function confronta(a, b) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  5) LA PAGINA
+//  5) LO ZIP, SCRITTO IN CASA
 // ══════════════════════════════════════════════════════════════════════════
+// ⚠️ Nessuna libreria, e non per orgoglio: la pagina ne carica già una da un CDN
+// che può non rispondere, e aggiungerne una seconda avrebbe voluto un secondo
+// ripiego. Un archivio zip invece si scrive in una sessantina di righe, e la
+// compressione la fa il browser con CompressionStream, che è nativo.
+// ⚠️ Dove CompressionStream non c'è, le voci si scrivono NON compresse anziché
+// rinunciare allo zip: un archivio più grosso è comunque un archivio, e uno zip
+// di sole voci 'store' è pienamente valido.
+const TAVOLA_CRC = (function () {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(byte) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < byte.length; i++) c = TAVOLA_CRC[(c ^ byte[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+async function sgonfia(byte) {
+  if (typeof CompressionStream !== 'function') return null;
+  try {
+    const flusso = new Blob([byte]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+    return new Uint8Array(await new Response(flusso).arrayBuffer());
+  } catch (e) {
+    return null;
+  }
+}
+
+// Data e ora in formato DOS, che è quello che lo zip vuole. Lasciarle a zero
+// darebbe una data impossibile (giorno 0 del mese 0) e qualche strumento la
+// segnala come archivio corrotto.
+function oraDos(d) {
+  return {
+    ora: ((d.getHours() & 31) << 11) | ((d.getMinutes() & 63) << 5) | ((d.getSeconds() / 2) & 31),
+    data: (((d.getFullYear() - 1980) & 127) << 9) | (((d.getMonth() + 1) & 15) << 5) | (d.getDate() & 31)
+  };
+}
+
+async function creaZip(voci) {
+  const cod = new TextEncoder();
+  const adesso = oraDos(new Date());
+  const pezzi = [];
+  const centrale = [];
+  let scostamento = 0;
+
+  for (const v of voci) {
+    const nome = cod.encode(v.nome);
+    const crudo = cod.encode(v.contenuto);
+    const stretto = await sgonfia(crudo);
+    const corpo = stretto || crudo;
+    const metodo = stretto ? 8 : 0;
+    const somma = crc32(crudo);
+
+    const testa = new DataView(new ArrayBuffer(30));
+    testa.setUint32(0, 0x04034b50, true);
+    testa.setUint16(4, 20, true);
+    testa.setUint16(6, 0x0800, true);   // nomi in UTF-8
+    testa.setUint16(8, metodo, true);
+    testa.setUint16(10, adesso.ora, true);
+    testa.setUint16(12, adesso.data, true);
+    testa.setUint32(14, somma, true);
+    testa.setUint32(18, corpo.length, true);
+    testa.setUint32(22, crudo.length, true);
+    testa.setUint16(26, nome.length, true);
+    testa.setUint16(28, 0, true);
+    pezzi.push(new Uint8Array(testa.buffer), nome, corpo);
+
+    const dir = new DataView(new ArrayBuffer(46));
+    dir.setUint32(0, 0x02014b50, true);
+    dir.setUint16(4, 20, true);
+    dir.setUint16(6, 20, true);
+    dir.setUint16(8, 0x0800, true);
+    dir.setUint16(10, metodo, true);
+    dir.setUint16(12, adesso.ora, true);
+    dir.setUint16(14, adesso.data, true);
+    dir.setUint32(16, somma, true);
+    dir.setUint32(20, corpo.length, true);
+    dir.setUint32(24, crudo.length, true);
+    dir.setUint16(28, nome.length, true);
+    dir.setUint32(42, scostamento, true);
+    centrale.push(new Uint8Array(dir.buffer), nome);
+
+    scostamento += 30 + nome.length + corpo.length;
+  }
+
+  const pesoCentrale = centrale.reduce((n, b) => n + b.length, 0);
+  const fine = new DataView(new ArrayBuffer(22));
+  fine.setUint32(0, 0x06054b50, true);
+  fine.setUint16(8, voci.length, true);
+  fine.setUint16(10, voci.length, true);
+  fine.setUint32(12, pesoCentrale, true);
+  fine.setUint32(16, scostamento, true);
+  return new Blob(pezzi.concat(centrale, [new Uint8Array(fine.buffer)]), { type: 'application/zip' });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  6) LA CODA E LA PAGINA
+// ══════════════════════════════════════════════════════════════════════════
+// ⚠️⚠️ I file si lavorano UNO ALLA VOLTA, ed è la ragione per cui questa si
+// chiama coda invece che elenco: ogni file costa due rasterizzazioni da 384x384
+// e un confronto pixel per pixel, e venti file lanciati insieme bloccherebbero
+// la pagina invece di finire prima. In fila, la pagina resta viva e la riga che
+// sta lavorando si vede avanzare.
+// ⚠️ Un file che fallisce NON ferma la coda: la sua riga si marca e il giro
+// continua. Un archivio di venti file in cui il terzo è malformato deve dare
+// diciannove file puliti, non un messaggio d'errore.
 const stato = {
-  nome: 'immagine.svg',
-  originale: '',
-  pulito: '',
+  coda: [],
+  scelto: null,
   mostra: 'pulito',
   fondo: 'auto',
-  fondoMisurato: true
+  inCorso: false,
+  contatore: 0
 };
 
 const el = (id) => document.getElementById(id);
@@ -571,13 +732,19 @@ function aggiornaInterruttori() {
   premuto(el('fondo-scuro'), stato.fondo === 'scuro');
 }
 
+function sceltaCorrente() {
+  return stato.coda.find((v) => v.id === stato.scelto) || null;
+}
+
 function disegnaAnteprima() {
-  const testo = stato.mostra === 'originale' ? stato.originale : stato.pulito;
+  const v = sceltaCorrente();
+  if (!v || v.stato !== 'pronta') return;
+  const testo = stato.mostra === 'originale' ? v.originale : v.pulito;
   const img = el('anteprima');
   const vecchio = img.getAttribute('src');
   img.setAttribute('src', urlDi(testo));
   if (vecchio && vecchio.indexOf('blob:') === 0) setTimeout(() => URL.revokeObjectURL(vecchio), 20000);
-  applicaFondo(stato.fondo === 'auto' ? stato.fondoMisurato : stato.fondo === 'chiaro');
+  applicaFondo(stato.fondo === 'auto' ? v.fondoMisurato : stato.fondo === 'chiaro');
   aggiornaInterruttori();
 }
 
@@ -615,78 +782,240 @@ function verdetto(classe, testo) {
   p.textContent = testo;
 }
 
-async function misureVisive() {
+// ── La coda a schermo ────────────────────────────────────────────────────
+function disegnaCoda() {
+  const carta = el('carta-coda');
+  // Con un file solo l'elenco sarebbe una riga sola: informazione zero, spazio
+  // sprecato. Compare da due in su.
+  carta.hidden = stato.coda.length < 2;
+
+  const lista = el('coda');
+  while (lista.firstChild) lista.removeChild(lista.firstChild);
+  stato.coda.forEach((v) => {
+    const riga = document.createElement("li");
+    riga.className = v.stato;
+    riga.tabIndex = 0;
+    riga.setAttribute('role', 'button');
+    riga.setAttribute('aria-current', v.id === stato.scelto ? 'true' : 'false');
+
+    const spia = document.createElement('span');
+    spia.className = 'spia';
+    riga.appendChild(spia);
+
+    const nome = document.createElement('span');
+    nome.className = 'nome';
+    nome.textContent = v.nome;
+    riga.appendChild(nome);
+
+    const esito = document.createElement('span');
+    esito.className = 'esito';
+    if (v.stato === 'pronta') {
+      const quota = v.prima ? Math.round((1 - v.dopo / v.prima) * 100) : 0;
+      esito.textContent = peso(v.dopo) + (quota > 0 ? '  -' + quota + '%' : '');
+    } else if (v.stato === 'fallito') {
+      esito.textContent = 'non leggibile';
+    } else if (v.stato === 'lavora') {
+      esito.textContent = 'in lavorazione';
+    } else {
+      esito.textContent = 'in coda';
+    }
+    riga.appendChild(esito);
+
+    const scegli = () => scegliVoce(v.id);
+    riga.addEventListener('click', scegli);
+    riga.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scegli(); }
+    });
+    lista.appendChild(riga);
+  });
+
+  const pronte = stato.coda.filter((v) => v.stato === 'pronta').length;
+  const fallite = stato.coda.filter((v) => v.stato === 'fallito').length;
+  const parti = [pronte + ' su ' + stato.coda.length + ' pronti'];
+  if (fallite) parti.push(fallite === 1 ? '1 non leggibile' : fallite + ' non leggibili');
+  el('stato-coda').textContent = parti.join(', ');
+  el('scarica-tutti').hidden = pronte < 2;
+}
+
+function scegliVoce(id) {
+  stato.scelto = id;
+  stato.mostra = 'pulito';
+  mostraScelta();
+  disegnaCoda();
+}
+
+function mostraScelta() {
+  const v = sceltaCorrente();
+  if (!v) { el('lavoro').hidden = true; return; }
+
+  if (v.stato === 'fallito') {
+    el('lavoro').hidden = true;
+    mostraErrore('Questo file non si riesce a leggere: ' + v.nome, v.errore || '');
+    return;
+  }
+  nascondiErrore();
+  if (v.stato !== 'pronta') { el('lavoro').hidden = true; return; }
+
+  el('n-nome').textContent = v.nome;
+  el('n-prima').textContent = peso(v.prima);
+  el('n-dopo').textContent = peso(v.dopo);
+  const quota = v.prima ? Math.round((1 - v.dopo / v.prima) * 100) : 0;
+  el('n-risparmio').textContent = quota > 0 ? '-' + quota + '%' : (quota === 0 ? 'nessuno' : '+' + Math.abs(quota) + '%');
+  elencoTolto(v.conto);
+  verdetto(v.verdetto.classe, v.verdetto.testo);
+  el('misura').textContent = v.misura;
+  el('lavoro').hidden = false;
+  el('scarica').disabled = false;
+  disegnaAnteprima();
+}
+
+// ── Lavorare la coda ─────────────────────────────────────────────────────
+function leggiTesto(file) {
+  return new Promise((si, no) => {
+    const lettore = new FileReader();
+    lettore.onload = () => si(String(lettore.result));
+    lettore.onerror = () => no(new Error('il file non si è lasciato leggere'));
+    lettore.readAsText(file);
+  });
+}
+
+async function misureDi(v) {
   // ⚠️ Due misure in una passata sola: il fondo giusto per l'anteprima e la
   // prova che la pulizia non ha cambiato il disegno. La seconda è la promessa
   // dello strumento, e una promessa che nessuno verifica prima o poi mente.
   try {
-    const [prima, dopo] = await Promise.all([raster(stato.originale, 384), raster(stato.pulito, 384)]);
+    const [prima, dopo] = await Promise.all([raster(v.originale, 384), raster(v.pulito, 384)]);
     const misura = luminanzaMedia(dopo);
     // ⚠️ `fondoMisurato` dice se il FONDO va chiaro, non se lo è il contenuto,
     // e i due sono l'opposto l'uno dell'altro: un logo bianco vuole il fondo
-    // scuro. Scritto al rovescio, la pagina metteva il bianco sul bianco, cioè
-    // esattamente il caso che questo calcolo esiste per evitare.
-    stato.fondoMisurato = misura.luminanza <= 0.5;
-    applicaFondo(stato.fondo === 'auto' ? stato.fondoMisurato : stato.fondo === 'chiaro');
+    // scuro. Scritto al rovescio, la pagina metteva il bianco sul bianco.
+    v.fondoMisurato = misura.luminanza <= 0.5;
+    v.misura = 'Luminanza del contenuto ' + Math.round(misura.luminanza * 100) +
+      '%, occupa il ' + Math.round(misura.copertura * 100) + '% del riquadro.';
 
     const differenza = confronta(prima, dopo);
-    el('misura').textContent = 'Luminanza del contenuto ' + Math.round(misura.luminanza * 100) +
-      '%, occupa il ' + Math.round(misura.copertura * 100) + '% del riquadro.';
     if (differenza.diversi === 0) {
-      verdetto('uguale', 'Resa identica: nessun pixel diverso su ' + differenza.contati.toLocaleString('it-IT') + ' confrontati.');
+      v.verdetto = { classe: 'uguale', testo: 'Resa identica: nessun pixel diverso su ' + differenza.contati.toLocaleString('it-IT') + ' confrontati.' };
     } else if (differenza.quota < 0.002) {
-      verdetto('uguale', `Resa identica a meno di ${differenza.diversi} pixel di bordo su ` +
-        `${differenza.contati.toLocaleString('it-IT')}: è l'arrotondamento dell'antialiasing.`);
+      v.verdetto = { classe: 'uguale', testo: `Resa identica a meno di ${differenza.diversi} pixel di bordo su ${differenza.contati.toLocaleString('it-IT')}: è l'arrotondamento dell'antialiasing.` };
     } else {
-      verdetto('diversa', `Attenzione: la resa cambia nel ${Math.round(differenza.quota * 100)}% ` +
-        `dei pixel. Confronta con 'Originale' prima di scaricare.`);
+      v.verdetto = { classe: 'diversa', testo: `Attenzione: la resa cambia nel ${Math.round(differenza.quota * 100)}% dei pixel. Confronta con 'Originale' prima di scaricare.` };
     }
   } catch (e) {
-    verdetto('attesa', 'Confronto della resa non riuscito: ' + ((e && e.message) || e));
+    v.fondoMisurato = true;
+    v.misura = '';
+    v.verdetto = { classe: 'attesa', testo: 'Confronto della resa non riuscito: ' + ((e && e.message) || e) };
   }
 }
 
-async function lavora(testo, nome) {
-  nascondiErrore();
-  stato.nome = nome || 'immagine.svg';
-  stato.originale = testo;
-  let esito;
+async function elabora(v) {
+  v.stato = 'lavora';
+  disegnaCoda();
   try {
-    esito = pulisci(testo);
+    if (!v.originale) v.originale = await leggiTesto(v.file);
+    const esito = pulisci(v.originale);
+    v.pulito = esito.testo;
+    v.conto = esito.conto;
+    v.prima = byte(v.originale);
+    v.dopo = byte(v.pulito);
+    await misureDi(v);
+    v.stato = 'pronta';
+    v.errore = '';
   } catch (e) {
-    el('lavoro').hidden = true;
-    mostraErrore('Questo file non si riesce a leggere.', (e && e.message) ? String(e.message) : String(e));
-    return;
+    v.stato = 'fallito';
+    v.errore = (e && e.message) ? String(e.message) : String(e);
   }
-  stato.pulito = esito.testo;
-  stato.mostra = 'pulito';
-
-  const prima = byte(testo), dopo = byte(esito.testo);
-  el('n-nome').textContent = stato.nome;
-  el('n-prima').textContent = peso(prima);
-  el('n-dopo').textContent = peso(dopo);
-  const risparmio = prima ? Math.round((1 - dopo / prima) * 100) : 0;
-  el('n-risparmio').textContent = (risparmio > 0 ? '-' + risparmio + '%' : risparmio === 0 ? 'nessuno' : '+' + Math.abs(risparmio) + '%');
-  elencoTolto(esito.conto);
-
-  el('lavoro').hidden = false;
-  el('scarica').disabled = false;
-  verdetto('attesa', 'Confronto della resa in corso...');
-  disegnaAnteprima();
-  await misureVisive();
+  // La prima riga pronta si mostra da sé: chi ha trascinato un file vuole
+  // vederlo, non doverlo cercare in un elenco.
+  if (stato.scelto === null && v.stato === 'pronta') stato.scelto = v.id;
+  disegnaCoda();
+  if (stato.scelto === v.id) mostraScelta();
 }
 
-function leggiFile(file) {
-  if (!file) return;
-  const nome = file.name || 'immagine.svg';
-  if (!/\.svg$/i.test(nome) && file.type !== 'image/svg+xml') {
-    mostraErrore('Serve un file SVG.', 'Questo è ' + (file.type || 'di tipo sconosciuto') + '.');
-    return;
+async function scorri() {
+  if (stato.inCorso) return;
+  stato.inCorso = true;
+  try {
+    for (;;) {
+      const prossima = stato.coda.find((v) => v.stato === 'attesa');
+      if (!prossima) break;
+      await elabora(prossima);
+    }
+  } finally {
+    stato.inCorso = false;
   }
-  const lettore = new FileReader();
-  lettore.onload = () => lavora(String(lettore.result), nome);
-  lettore.onerror = () => mostraErrore('Il file non si è lasciato leggere.', '');
-  lettore.readAsText(file);
+}
+
+function accoda(elenco) {
+  const buoni = [];
+  const scartati = [];
+  Array.prototype.slice.call(elenco || []).forEach((file) => {
+    const nome = file.name || 'immagine.svg';
+    if (!/\.svg$/i.test(nome) && file.type !== 'image/svg+xml') { scartati.push(nome); return; }
+    buoni.push({
+      id: ++stato.contatore, nome: nome, file: file, testo: '',
+      stato: 'attesa', originale: '', pulito: '', conto: null,
+      prima: 0, dopo: 0, verdetto: { classe: 'attesa', testo: '' },
+      misura: '', fondoMisurato: true, errore: ''
+    });
+  });
+
+  // ⚠️ Si dice QUALI file sono stati scartati, non solo che qualcosa non andava:
+  // con dieci file trascinati insieme, 'serve un SVG' non basta a capire quale
+  // dei dieci non lo era.
+  scriviScartati(scartati);
+  if (!buoni.length) return;
+
+  stato.coda = stato.coda.concat(buoni);
+  disegnaCoda();
+  scorri();
+}
+
+// Un SVG incollato non è un file e non ha un nome: entra in coda come gli altri,
+// col testo già in mano.
+function scriviScartati(elenco) {
+  const riga = el('scartati');
+  if (!elenco.length) { riga.hidden = true; riga.textContent = ''; return; }
+  riga.textContent = (elenco.length === 1 ? 'Saltato perché non è un SVG: ' : 'Saltati perché non sono SVG: ')
+    + elenco.join(', ');
+  riga.hidden = false;
+}
+
+function accodaTesto(testo, nome) {
+  scriviScartati([]);
+  stato.coda.push({
+    id: ++stato.contatore, nome: nome, file: null, testo: testo,
+    stato: 'attesa', originale: testo, pulito: '', conto: null,
+    prima: 0, dopo: 0, verdetto: { classe: 'attesa', testo: '' },
+    misura: '', fondoMisurato: true, errore: ''
+  });
+  nascondiErrore();
+  disegnaCoda();
+  scorri();
+}
+
+function svuota() {
+  stato.coda = [];
+  scriviScartati([]);
+  stato.scelto = null;
+  el('lavoro').hidden = true;
+  nascondiErrore();
+  disegnaCoda();
+}
+
+function nomePulito(nome) {
+  return nome.replace(/\.svg$/i, '') + '-pulito.svg';
+}
+
+function salva(blob, nome) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nome;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 30000);
 }
 
 // ── Trascinamento, clic e incolla ────────────────────────────────────────
@@ -708,9 +1037,9 @@ document.addEventListener('drop', (e) => {
   e.preventDefault();
   const dati = e.dataTransfer;
   if (!dati) return;
-  if (dati.files && dati.files.length) { leggiFile(dati.files[0]); return; }
+  if (dati.files && dati.files.length) { accoda(dati.files); return; }
   const testo = dati.getData('text');
-  if (testo && testo.indexOf('<svg') >= 0) lavora(testo, 'incollato.svg');
+  if (testo && testo.indexOf('<svg') >= 0) accodaTesto(testo, 'incollato.svg');
 });
 
 zona.addEventListener('click', () => el('scelta').click());
@@ -718,16 +1047,16 @@ zona.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el('scelta').click(); }
 });
 el('scelta').addEventListener('change', (e) => {
-  leggiFile(e.target.files && e.target.files[0]);
+  accoda(e.target.files);
   e.target.value = '';
 });
 
 document.addEventListener('paste', (e) => {
   const dati = e.clipboardData;
   if (!dati) return;
-  if (dati.files && dati.files.length) { leggiFile(dati.files[0]); return; }
+  if (dati.files && dati.files.length) { accoda(dati.files); return; }
   const testo = dati.getData('text');
-  if (testo && testo.indexOf('<svg') >= 0) { e.preventDefault(); lavora(testo, 'incollato.svg'); }
+  if (testo && testo.indexOf('<svg') >= 0) { e.preventDefault(); accodaTesto(testo, 'incollato.svg'); }
 });
 
 // ── Interruttori dell'anteprima ──────────────────────────────────────────
@@ -739,32 +1068,60 @@ el('fondo-scuro').addEventListener('click', () => { stato.fondo = 'scuro'; diseg
 
 // ── Scaricamento ─────────────────────────────────────────────────────────
 el('scarica').addEventListener('click', () => {
-  if (!stato.pulito) return;
-  const nome = stato.nome.replace(/\.svg$/i, '') + '-pulito.svg';
-  const url = urlDi(stato.pulito);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = nome;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 30000);
+  const v = sceltaCorrente();
+  if (!v || v.stato !== 'pronta') return;
+  salva(new Blob([v.pulito], { type: 'image/svg+xml;charset=utf-8' }), nomePulito(v.nome));
 });
 
-el('altro').addEventListener('click', () => {
-  el('lavoro').hidden = true;
-  nascondiErrore();
-  el('scelta').click();
+el('scarica-tutti').addEventListener('click', async () => {
+  const pronte = stato.coda.filter((v) => v.stato === 'pronta');
+  if (pronte.length < 2) return;
+  const bottone = el('scarica-tutti');
+  bottone.disabled = true;
+  const etichetta = bottone.textContent;
+  bottone.textContent = 'Preparo lo zip...';
+  try {
+    // ⚠️ I nomi dentro un archivio devono essere unici, e due file trascinati da
+    // cartelle diverse possono chiamarsi uguale: al secondo si aggiunge un
+    // numero, invece di lasciare che l'uno sovrascriva l'altro in silenzio.
+    const visti = new Map();
+    const voci = pronte.map((v) => {
+      let nome = nomePulito(v.nome);
+      if (visti.has(nome)) {
+        const n = visti.get(nome) + 1;
+        visti.set(nome, n);
+        nome = nome.replace(/\.svg$/i, '') + '-' + n + '.svg';
+      } else {
+        visti.set(nome, 1);
+      }
+      return { nome: nome, contenuto: v.pulito };
+    });
+    salva(await creaZip(voci), 'svg-puliti.zip');
+  } catch (e) {
+    mostraErrore('Lo zip non si è lasciato creare.', (e && e.message) ? String(e.message) : String(e));
+  } finally {
+    bottone.disabled = false;
+    bottone.textContent = etichetta;
+  }
 });
+
+el('altro').addEventListener('click', () => el('scelta').click());
+el('svuota').addEventListener('click', svuota);
 
 // ── Avvio ────────────────────────────────────────────────────────────────
 applicaFondo(true);
 caricaMotore().then((motore) => {
   svgo = motore;
   scriviMotore();
-  // Un file già caricato mentre il CDN rispondeva si ripulisce con il motore
-  // vero, invece di restare con il risultato del ripiego.
-  if (stato.originale) lavora(stato.originale, stato.nome);
+  // ⚠️ I file già lavorati mentre il CDN rispondeva si rifanno con il motore
+  // vero, invece di restare col risultato del ripiego. Vale per tutta la coda,
+  // non per il primo file soltanto.
+  const fatti = stato.coda.filter((v) => v.stato === 'pronta' || v.stato === 'fallito');
+  if (svgo && fatti.length) {
+    fatti.forEach((v) => { v.stato = 'attesa'; });
+    disegnaCoda();
+    scorri();
+  }
 });
 </script>
 </body>
