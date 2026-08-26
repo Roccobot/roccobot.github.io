@@ -242,6 +242,60 @@ In `Roccobot/tools`: `mkdir -p .memo`, poi scrivi `.memo/LATEST.md` col modello 
 sotto. **Un solo file, sovrascritto**: l'archivio è la storia git, non una cartella di
 copie. Sta sotto una cartella con il punto, quindi GitHub Pages non lo pubblica.
 
+### 3b. Porta con te i FILE che servono al lavoro in sospeso
+
+⚠️⚠️ **Il brief porta anche gli ALLEGATI, e non solo il testo** (istruzione dell'utente,
+2026-08-26: *vorrei che l'automazione di fine/inizio sessione si portasse dietro anche file
+copiandoli insieme al brief, riprendendoli da lì e cancellandoli una volta che non servono
+più; mi sembra l'unica cosa ragionevole per ovviare a una mia eventuale dimenticanza*).
+Vivono in `Roccobot/tools`, **`.memo/files/`**, accanto al brief e nello stesso commit.
+
+**Perché esistono.** Il container è effimero e lo scratchpad muore con lui, quindi finora un
+file che serviva alla sessione dopo aveva due sole strade: farlo scaricare all'utente, e
+sperare che se lo ricordi, oppure perderlo. La prima non è una procedura, è un affidamento;
+questa cartella la sostituisce. ⚠️ **Un file allegato NON è un ripiego per una cosa che
+andrebbe committata**: uno script che serve più di una volta va in `.memo/scripts/`, un dato
+che vale oltre la prossima sessione va nel repo che lo riguarda. Qui sta solo ciò che è
+**volatile come il brief**, e che con lui si cancella.
+
+**Che cosa ci va, e che cosa no.**
+
+- ✅ Il **lavoro non pubblicabile** di un repo che la sessione non può pushare: si consegna
+  come `git bundle`, che porta la storia e non solo i file (vedi sotto).
+- ✅ Un **campione** o un file di prova che l'utente ha fornito e che serve a una voce aperta.
+- ✅ Un **artefatto intermedio costoso da rifare** (un corpus ripulito, una misura lunga),
+  quando rifarlo costerebbe più che tenerlo.
+- ❌ **Mai** parole d'ordine, token, chiavi, keystore o contenuti di variabili d'ambiente. Vale
+  qui come ovunque, e il repo è privato ma questo non cambia la regola.
+- ❌ Quello che una sessione nuova **rifà con un comando**: un clone, un pacchetto scaricabile,
+  l'uscita di uno script committato.
+- ❌ Il file che dovrebbe **vivere nel suo repo**: allegarlo lo mette in un posto dove nessuno
+  lo cercherà fra un mese.
+
+**Il tetto è 100 MB per file**, ed è di GitHub, non nostro: oltre quella soglia il push viene
+**rifiutato**, e sopra i 50 MB arriva un avviso. ⚠️ Un allegato che si avvicina al tetto è
+quasi sempre il sintomo di un errore di categoria (si sta allegando qualcosa di ricostruibile):
+prima di committarlo, rileggere l'elenco qui sopra.
+
+**Come si consegna il lavoro git di un repo che non si può pushare.** Un `git bundle` è un
+**file unico che contiene i commit, i rami e la storia**, cioè un repository impacchettato:
+`git bundle create <nome>.bundle --all` dalla radice del clone. Chi arriva lo riapre con
+`git clone <nome>.bundle <cartella>`, poi rimette il remoto vero
+(`git remote set-url origin <url>`) e pusha. ⚠️ **Non è un archivio dei file**: uno zip
+perderebbe la storia, i rami e i messaggi di commit, cioè proprio la parte che non si
+ricostruisce.
+
+**Nel brief ogni allegato ha la sua riga**, nella sezione `Allegati` del modello: nome del
+file, che cos'è, **a quale voce in sospeso serve**, e il comando con cui si riapre. Un
+allegato che nessuna voce nomina è un file che nessuno saprà perché è lì.
+
+⚠️⚠️ **Si cancellano come si cancellano le voci** (regola n. 3, stessa prova): appena la voce
+che li richiedeva è evasa, l'allegato si **rimuove dal repo** nello stesso commit che riscrive
+il brief. Non si tengono 'per sicurezza': un file rimasto lì senza una voce che lo nomini è
+esattamente il genere di residuo che questa skill esiste per evitare, e la storia git lo
+conserva comunque. ⚠️ La prova vale come per le voci: si cancella con un dato letto **adesso**
+(il commit che pubblica quel lavoro, il file arrivato a destinazione), non perché sembri fatto.
+
 ### 4. Pubblica
 
 Commit e push come da regole del repo (branch `claude/*` → PR → squash merge →
@@ -344,6 +398,11 @@ finiscono qui per non perdersi al cambio di sessione (regola universale in `Rocc
 ragioni. ⚠️ Se il lavoro ha toccato un **altro repo**, la voce si scrive comunque qui,
 dichiarando di quale repo parla, perché il brief è uno solo. Risposta ottenuta → voce
 cancellata (regola n. 3).
+
+## Allegati                               [una riga per file, o 'Niente']
+I file in `.memo/files/` che servono a una voce in sospeso (passo 3b). Per ognuno: nome, che
+cos'è, **a quale voce serve** e il comando con cui si riapre. Evasa la voce, il file si
+**cancella dal repo** insieme alla sua riga. Se non ce ne sono, scrivi 'Niente'.
 ```
 
 ---
@@ -451,10 +510,14 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 > 5. **Questo file non è un archivio.** Tutto ciò che vale oltre la prossima sessione va nel
 >    `CLAUDE.md` del repo o nelle regole universali, **non qui**; qui resta solo l'aperto. E una
 >    domanda rimasta senza risposta si **aggiunge** in 'Da decidere', per non perderla.
+> 6. **Il brief porta anche dei FILE**, quando una voce in sospeso ne ha bisogno: vivono in
+>    `.memo/files/`, accanto a questo file, e la sezione 'Allegati' dice a quale voce serve
+>    ognuno e come si riapre. Valgono le stesse tre sorti delle voci: evasa la voce, il file si
+>    **cancella dal repo**. Mai segreti là dentro, e mai roba che si rifà con un comando.
 >
 > ⚠️ **La procedura completa vive nella skill `handoff`**, in `roccobot.github.io/.claude/skills/`,
 > e questo riquadro ne è il minimo operativo, non un sostituto. **Se la skill non è in scena**
-> (per esempio in una sessione che monta solo `Roccobot/tools`), i cinque punti qui sopra bastano
+> (per esempio in una sessione che monta solo `Roccobot/tools`), i sei punti qui sopra bastano
 > per lavorare bene: quello che non puoi fare, lo **dichiari** invece di ricostruirlo a memoria.
 > ⚠️ **Questo riquadro fa parte del formato del file**: chi riscrive il brief lo **conserva
 > verbatim, marcatori HTML compresi**. Non è un invito alla diligenza: la sua sorgente unica è
