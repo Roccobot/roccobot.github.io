@@ -967,7 +967,27 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
      15.3%, ora 3.85% di saturazione a luminosità identica. */
   background:rgba(41,40,38,0.94); border:1px solid rgba(136,133,126,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 12px 48px rgba(0,0,0,0.5);
+  /* ⚠️ BAGLIORE intorno al Pannello, portato qui da 'I Grandi di Terramare' (richiesta
+     dell'utente, 2026-08-26), dove era nato come variante 'B' fra tre rese: un alone a
+     34px piu' un filo di bordo illuminato. E' la controparte scura dell'ombra portata,
+     che su fondo nero non si vede: un'ombra ha bisogno di luce attorno per esistere,
+     quindi il tema scuro non aveva niente che staccasse il Pannello dal fondo, e il
+     chiaro si'.
+     ⚠️ La TINTA non e' quella di Terramare, ed e' la parte che non si copia: la' l'alone
+     e' freddo (rgba(150,200,235)) perche' freddo e' tutto il sito; qui la tavolozza e'
+     neutra e il fondo del Pannello e' caldo (HSL 50deg), quindi un alone azzurro
+     sembrerebbe una luce di un altro ambiente. Si usa la luce calda-neutra della
+     pergamena.
+     ⚠️ L'alfa e' PIU' BASSA di Terramare (0.12/0.10 contro 0.13/0.10) e il valore e'
+     MISURATO, non scelto a gusto: una luce quasi bianca rende piu' di una tinta satura a
+     parita' di alfa, e con 0.13/0.10 qui il bagliore batteva quello di Terramare dell'11%
+     a ridosso del bordo. Con 0.12/0.10 i due siti stanno al 98% e al 94% a 3px e 10px dal
+     bordo. Come si misura sta in `CLAUDE.md`, § 'Il bagliore intorno al Pannello'.
+     ⚠️ Sta in una variabile perche' il tema chiaro lo SPEGNE (l'ombra ce l'ha gia'), e
+     spegnerlo riscrivendo tutta la `box-shadow` la' avrebbe duplicato anche l'ombra
+     portata: due copie dello stesso valore che prima o poi divergono. */
+  --pan-glow:0 0 34px rgba(232,226,212,0.12), 0 0 0 1px rgba(232,226,212,0.10);
+  box-shadow:0 12px 48px rgba(0,0,0,0.5), var(--pan-glow);
   opacity:0; visibility:hidden; transform:translateY(14px) scale(0.96); transform-origin:bottom left; transition:opacity 0.18s ease, transform 0.34s cubic-bezier(0.22,1,0.36,1), visibility 0.34s;
   scrollbar-width:none; -ms-overflow-style:none;
 }
@@ -2335,7 +2355,9 @@ html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-
 html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
 html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-within { background: rgba(236,236,239,0.85); }
 html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
-html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); }
+/* Ⓘ Lo spegnimento del bagliore e' un'ombra NULLA e non `none`, cosi' resta una voce
+   valida della `box-shadow` composta invece di annullarla tutta (ombra portata inclusa). */
+html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); --pan-glow:0 0 0 rgba(0,0,0,0); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
 html[data-theme="light"] .leg-gender { background:rgba(58,88,120,0.07); border-color:rgba(58,88,120,0.28); }
@@ -2670,7 +2692,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.13</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.14</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -9488,9 +9510,21 @@ function showSiteFlagsEditor(initState){
       });
     }, 180);
   };
+  // ⚠️⚠️ USCIRE senza salvare = ANNULLA, per OGNI via d'uscita (richiesta dell'utente,
+  // 2026-08-26: *la chiusura con la × deve equivalere a un clic su Annulla*). Prima il
+  // ripristino stava dentro `close`, ma nel solo ramo `docked`: nella modale classica la
+  // × lasciava in vigore le modifiche provate, che restavano in pagina fino al reload
+  // senza che nessuno le avesse salvate. Qui il ripristino è esplicito e vale per la ×,
+  // per il clic sul velo e per Esc, che passa dalla × (vedi il gestore dei tasti).
+  // ⚠️ NON si sposta dentro `close`: là passano anche i rebuild TECNICI (cambio di
+  // telaio, cambio lingua), dove le modifiche in corso devono sopravvivere.
+  // ⚠️ `normSiteFlags` e non una copia grezza: SITE_FLAGS_SAVED può venire da un file
+  // dati vecchio (flag booleani), e rimetterlo così com'è lascerebbe un booleano dove il
+  // codice si aspetta l'oggetto con le manopole.
+  var annulla = function(){ SITE_FLAGS = normSiteFlags(SITE_FLAGS_SAVED); applySiteFlags(); reflowRows(); close(); };
   window.addEventListener('resize', onRs);
-  overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
-  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = close; box.appendChild(cl);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) annulla(); });
+  var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = annulla; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
   // 'Pannello di controllo' dalla v12.42 (rinominato dall'utente; era 'Feature
   // flag'). Da non confondere col Pannello del FAB: questo è admin-only.
@@ -9670,10 +9704,10 @@ function showSiteFlagsEditor(initState){
   var foot = document.createElement('div'); foot.style.cssText = 'display:flex;gap:10px;margin-top:1.1rem;';
   var cancel = document.createElement('button'); cancel.className = 'fab-modal-confirm';
   cancel.style.cssText = 'width:auto;flex:1;margin-top:0;'; cancel.textContent = it ? 'Annulla' : 'Cancel';
-  // normSiteFlags e non una copia grezza: SITE_FLAGS_SAVED può venire da un file
-  // dati vecchio (flag booleani), e rimetterlo così com'è lascerebbe un booleano
-  // dove il codice si aspetta l'oggetto con le manopole.
-  cancel.onclick = function(){ SITE_FLAGS = normSiteFlags(SITE_FLAGS_SAVED); applySiteFlags(); reflowRows(); close(); };
+  // Stessa funzione della × e del velo: le tre vie d'uscita senza salvataggio fanno
+  // la stessa cosa, invece di somigliarsi. Perché usi `normSiteFlags` e non una copia
+  // grezza sta scritto dove `annulla` è definita.
+  cancel.onclick = annulla;
   var save = document.createElement('button'); save.className = 'fab-modal-confirm';
   save.style.cssText = 'width:auto;flex:1;margin-top:0;'; save.textContent = it ? 'Salva' : 'Save';
   save.onclick = function(){
