@@ -84,8 +84,13 @@
   #lavoro.senza-coda { grid-template-areas: 'azioni azioni' 'anteprima info'; }
   #carta-coda { grid-area: coda; }
   #azioni { grid-area: azioni; }
-  #carta-anteprima { grid-area: anteprima; }
-  #carta-info { grid-area: info; }
+  /* ⚠️ Le due carte della riga di sotto sono ALTE UGUALI (scelta dell'utente),
+     e per ottenerlo serve smentire l'`align-items: start` della griglia su
+     loro due sole: le altre due devono continuare a stare alte quanto il loro
+     contenuto. Quella più corta si allunga con dello spazio vuoto in mezzo, e
+     va bene così: il piede col motore resta agganciato in fondo. */
+  #carta-anteprima { grid-area: anteprima; align-self: stretch; display: flex; flex-direction: column; }
+  #carta-info { grid-area: info; align-self: stretch; display: flex; flex-direction: column; }
   @media (max-width: 800px) {
     #lavoro, #lavoro.senza-coda {
       grid-template-columns: 1fr;
@@ -119,6 +124,20 @@
      contenuto e il `flex: 1` qui sotto non ha niente da riempire. */
   #azioni { display: flex; flex-direction: column; align-self: stretch; }
   #azioni #scarica { flex: 1; min-height: 3.6rem; font-size: 1.15rem; }
+
+  /* ⚠️ SENZA CODA i due tasti vanno in RIGA, e non è un vezzo: là le azioni
+     prendono tutta la larghezza della pagina, e un tasto pieno largo così è
+     troppo (scelta dell'utente). Le colonne sono le STESSE di `#lavoro`, con
+     lo stesso `gap`, così ognuno dei due finisce largo quanto la carta che gli
+     sta sotto: 'Carica altri file' quanto l'anteprima, 'Scarica' quanto il
+     pannello informativo, dove il colore basta a dargli il primo posto.
+     ⚠️ L'ordine si rovescia con `order` invece che nel markup, perché con la
+     coda il tasto pieno deve restare SOPRA, e quella disposizione va bene
+     com'è. */
+  .senza-coda #azioni {
+    display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.1rem;
+  }
+  .senza-coda #azioni #altro { order: -1; margin-top: 0; }
 
   #coda { list-style: none; margin: 0; padding: 0; max-height: 15rem; overflow-y: auto; }
   #coda li {
@@ -210,10 +229,16 @@
      resto: nessun rientro proprio, così la sua prima lettera cade sulla stessa
      colonna delle etichette qui sopra. Il filo che lo separa parte e finisce
      dove parte e finisce l'elenco. */
+  /* ⚠️ `margin-top: auto` è quello che lo tiene AGGANCIATO IN FONDO quando la
+     carta si allunga per pareggiare l'anteprima. Il distacco minimo non può
+     venire da lui, perché `auto` mangia qualunque valore: lo dà l'elenco qui
+     sopra col suo margine di sotto. */
   .piede-motore {
-    margin: 1rem 0 0; padding-top: .6rem; border-top: 1px solid var(--riga);
+    margin: 0; padding-top: .6rem; border-top: 1px solid var(--riga);
     color: var(--tenue); font-size: .78rem; line-height: 1.4;
   }
+  #carta-info #dettagli { margin-bottom: 1rem; }
+  #carta-info .piede-motore { margin-top: auto; }
   .piede-motore b { color: var(--inchiostro); font-weight: 600; }
 
   ul.tolto { list-style: none; margin: 0 0 .9rem; padding: 0; font-size: .9rem; }
@@ -226,7 +251,16 @@
      giudizio su quello che si sta guardando, e le due cose vanno viste in un
      colpo d'occhio solo. Prima stava in cima alla colonna delle azioni, cioè
      lontano dall'immagine di cui parla. */
-  .verdetto { font-size: .88rem; border-radius: 11px; padding: .55rem .7rem; margin: .7rem 0 0; }
+  .verdetto { font-size: .88rem; border-radius: 11px; padding: .55rem .7rem; margin: .7rem 0 0; text-align: center; }
+  /* ⚠️ ANCHE il verdetto si aggancia in fondo, per la stessa ragione del piede
+     col motore: delle due carte a pareggiare si allunga quella più corta, e
+     quale sia dipende dal file (con un file solo è l'anteprima, perché il
+     pannello di destra ha molte righe). Senza aggancio il riquadro verde
+     resterebbe a mezz'aria sopra un buco. Il distacco minimo lo dànno gli
+     elementi qui sopra, perché `auto` mangerebbe un margine suo. */
+  #carta-anteprima .verdetto { margin-top: auto; }
+  #carta-anteprima #telaio { margin-bottom: .7rem; }
+  #carta-anteprima #nota-tavole { margin: 0 0 .7rem; }
   .verdetto.uguale { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
   .verdetto.diversa { color: var(--ko); background: color-mix(in srgb, var(--ko) 13%, transparent); }
   .verdetto.attesa { color: var(--tenue); background: color-mix(in srgb, var(--tenue) 10%, transparent); }
@@ -291,7 +325,7 @@
 
     <div id="azioni">
       <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
-      <button type="button" class="minore" id="altro">Apri altri file</button>
+      <button type="button" class="minore" id="altro">Carica altri file</button>
     </div>
 
     <section class="carta" id="carta-anteprima">
@@ -347,7 +381,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
 // pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
-const VERSIONE = '1.40';
+const VERSIONE = '1.50';
 document.getElementById('versione').textContent = 'v' + VERSIONE;
 
 // ══════════════════════════════════════════════════════════════════════════
