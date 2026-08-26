@@ -22,6 +22,24 @@
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
 il lavoro corretto in ogni caso.
 
+⚠️⚠️ **`AIV/` non è un progetto di questo repo e non si tocca a mano: è una cartella
+GENERATA.** La riempie una GitHub Action del repo **`Roccobot/AIV`** (l'app Android
+'Astonishing Image Viewer'), che a ogni tag vi scrive l'APK firmato e la sua paginetta di
+download, e **sovrascrive** quello che trova. Quindi non ha un `CLAUDE.md` proprio e non
+compare nella tabella qui sopra: chi vuole cambiare quella pagina cambia il **modello**, che
+vive in AIV e non qui
+(<https://github.com/Roccobot/AIV/blob/main/publish/index.html>).
+- ⚠️ **Ci sta un APK solo, il più recente**, e i precedenti stanno fra le release di AIV: la
+  paginetta offre **un** download, e una cartella che si riempie di build vecchi la
+  costringerebbe a elencarli e a ordinarli. ⚠️ **La ragione NON è il peso**, e conviene
+  saperlo per non 'correggere' la scelta con un argomento sbagliato: l'APK di release
+  minificato misura **778.787 byte**, contro i 64 MB del build di debug da cui nasceva quel
+  timore.
+- ⚠️ **Un commit su `master` che arriva da `github-actions[bot]` e tocca `AIV/` è quello**, non
+  un salvataggio admin: è la terza sorgente di commit esterni di questo repo, dopo l'editor di
+  'I Grandi di Arda' e quello di Terramare, e conta come le altre due per la regola
+  dell'allineamento al remoto.
+
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, dov'era
 un'assunzione su cui poggiava tutto lo split in sei file. All'avvio le istruzioni portano i
 **soli** `CLAUDE.md` di root; quello di una sottocartella compare nel momento in cui si legge
