@@ -126,9 +126,17 @@ azioni in alto, anteprima e informazioni sotto.
 - ⚠️ **Senza coda le azioni prendono tutta la riga** (`.senza-coda`), invece di restare
   spaiate a destra di un buco: con un file solo l'elenco non compare, e quella metà sarebbe
   vuota.
-- Il **footer** è volutamente poco visibile (`opacity`): è una nota per l'utente, e là il
-  contrasto non conta (sua istruzione). Resta invece allineato al contenuto delle carte, che
-  è una misura e non un'impressione (vedi '🧪 Come si prova').
+- ⚠️⚠️ **Il tastone CRESCE fino a riempire la riga, e per farlo gli serve
+  `align-self: stretch`**: la griglia allinea tutto a `start`, perché le carte non devono
+  stirarsi l'una sull'altra, e senza quella riga il riquadro delle azioni resta alto quanto
+  il suo contenuto e il `flex: 1` non ha niente da riempire. È il modo di renderlo grosso
+  senza scegliere un'altezza a mano, che litigherebbe con la coda a ogni cambio di lunghezza
+  dell'elenco.
+- ⚠️⚠️ **IL FOOTER NON C'È PIÙ, dalla `1.40`** (istruzione dell'utente), e la sua frase, *La
+  pulizia è effettuata in locale.*, chiude la riga del motore: la sua casa naturale è accanto
+  a chi dichiara **chi** sta pulendo, e due note che dicevano la stessa cosa erano una di
+  troppo. Le note che lo descrivono (poco visibile, allineato al contenuto delle carte) sono
+  superate.
 
 ## ⬇️ Un solo tasto di scaricamento
 
@@ -221,6 +229,14 @@ Dopo la pulizia la pagina rasterizza **originale e pulito** alla stessa dimensio
 confronta pixel per pixel, dichiarando l'esito. ⚠️ Non è un vezzo: lo strumento promette che
 il disegno non cambia, e **una promessa che nessuno verifica prima o poi mente**.
 
+- ⚠️ **Il verdetto sta SOTTO l'anteprima dalla `1.40`** (scelta dell'utente): è il giudizio
+  su quello che si sta guardando, e le due cose vanno viste in un colpo d'occhio solo. Prima
+  stava in cima alla colonna delle azioni, cioè lontano dall'immagine di cui parla.
+- ⚠️ **La misura della luminanza sta SOPRA**, sulla riga del titolo dell'anteprima (stessa
+  scelta): là dice che cosa si sta per guardare, mentre sotto arrivava a cose viste. Lo
+  stacco dal titolo è largo per richiesta esplicita, e a schermo stretto la misura va a capo
+  da sé invece di stringersi.
+
 - La soglia sotto la quale si parla di **arrotondamento dell'antialiasing** è lo **0,2%** dei
   pixel: sul file campione SVGO ne cambia **2 su 147456**, che sono i bordi.
 - Il confronto tiene conto dell'**alfa**: due pixel trasparenti sono uguali qualunque colore
@@ -259,6 +275,12 @@ vero, e due giri, **con** e **senza** SVGO.
   comportamento della coda e la `1.30` ha fuso i due tasti, le prove di prima erano sbagliate
   ma quello che sorvegliavano serviva ancora. Cancellarle avrebbe tolto la sentinella insieme
   all'errore.
+  - ⚠️ **Si cancella solo quando sparisce la COSA**, non quando cambia: col footer è sparito
+    anche il banco che ne misurava l'allineamento, perché non restava niente da allineare.
+    Tenerlo sarebbe stato peggio di non averlo, perché avrebbe misurato un elemento assente.
+- **Una posizione si prova coi RIQUADRI, non con l'ordine nel DOM**: che il verdetto stia
+  sotto l'anteprima e la luminanza sopra si stabilisce confrontando le `y`, che è quello che
+  l'occhio vede; l'ordine dei nodi lo direbbe anche di un elemento spostato dal CSS.
 - ⚠️ **`document.createElement("li")` si scrive con le virgolette DOPPIE**, e non è un capriccio
   di stile: col singolo apice il controllo pre-commit dei caratteri legge `li'` e lo segnala
   come *lì* scritto con l'apostrofo. È un falso positivo suo, ma metterlo in whitelist
