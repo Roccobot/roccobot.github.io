@@ -106,10 +106,19 @@
   #stato-coda { color: var(--tenue); font-size: .85rem; font-variant-numeric: tabular-nums; }
   #svuota { margin-top: 0; width: auto; margin-left: auto; }
 
-  /* Le azioni NON stanno in una carta, per scelta di layout dell'utente: il
-     verdetto ha già un fondo suo e i due tasti sono pieni, quindi un riquadro
-     attorno sarebbe una cornice attorno a una cornice. */
-  #azioni .verdetto { margin-top: 0; }
+  /* Le azioni NON stanno in una carta, per scelta di layout dell'utente: i due
+     tasti sono già pieni, e un riquadro attorno sarebbe una cornice attorno a
+     una cornice.
+     ⚠️ Il tasto principale CRESCE fino a riempire la riga (`flex: 1`), che è il
+     modo di renderlo 'ancora più grosso' senza scegliere un'altezza a mano: la
+     riga la misura la coda accanto, e un numero fisso litigherebbe con lei a
+     ogni cambio di lunghezza dell'elenco. */
+  /* ⚠️ `align-self: stretch` è NECESSARIO e non decorativo: la griglia allinea
+     tutto a `start`, perché le carte non devono stirarsi l'una sull'altra, e
+     senza questa riga il riquadro delle azioni resta alto quanto il suo
+     contenuto e il `flex: 1` qui sotto non ha niente da riempire. */
+  #azioni { display: flex; flex-direction: column; align-self: stretch; }
+  #azioni #scarica { flex: 1; min-height: 3.6rem; font-size: 1.15rem; }
 
   #coda { list-style: none; margin: 0; padding: 0; max-height: 15rem; overflow-y: auto; }
   #coda li {
@@ -135,6 +144,15 @@
 
   .carta { background: var(--carta); border: 1px solid var(--riga); border-radius: 16px; padding: .9rem 1rem 1.1rem; }
   .carta h2 { font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--tinta); margin: .1rem 0 .7rem; }
+
+  /* ⚠️ La misura della luminanza sta SOPRA l'anteprima, sulla riga del titolo
+     (scelta dell'utente): là dice che cosa si sta per guardare, mentre sotto
+     arrivava a cose viste. Lo spazio fra titolo e misura è largo perché
+     l'utente ha chiesto che 'respiri': `gap` grande più `margin-left: auto`,
+     che a schermo stretto lascia la misura andare a capo da sé. */
+  .testa-anteprima { display: flex; align-items: baseline; gap: .4rem 2rem; flex-wrap: wrap; }
+  .testa-anteprima h2 { margin-bottom: .7rem; }
+  .testa-anteprima .misura { margin: 0 0 .7rem auto; }
 
   .barra { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .7rem; }
   .gruppo { display: inline-flex; border: 1px solid var(--riga); border-radius: 10px; overflow: hidden; }
@@ -204,7 +222,11 @@
   ul.tolto span { color: var(--tenue); font-variant-numeric: tabular-nums; }
   ul.tolto li.nulla { color: var(--tenue); justify-content: flex-start; }
 
-  .verdetto { font-size: .88rem; border-radius: 11px; padding: .55rem .7rem; margin: 0 0 .9rem; }
+  /* ⚠️ Il verdetto sulla resa sta sotto l'ANTEPRIMA (scelta dell'utente): è il
+     giudizio su quello che si sta guardando, e le due cose vanno viste in un
+     colpo d'occhio solo. Prima stava in cima alla colonna delle azioni, cioè
+     lontano dall'immagine di cui parla. */
+  .verdetto { font-size: .88rem; border-radius: 11px; padding: .55rem .7rem; margin: .7rem 0 0; }
   .verdetto.uguale { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
   .verdetto.diversa { color: var(--ko); background: color-mix(in srgb, var(--ko) 13%, transparent); }
   .verdetto.attesa { color: var(--tenue); background: color-mix(in srgb, var(--tenue) 10%, transparent); }
@@ -226,16 +248,11 @@
   #errore .titolo { font-weight: 700; color: var(--ko); }
   #errore .dettaglio { color: var(--tenue); font-size: .88rem; margin-top: .2rem; white-space: pre-wrap; word-break: break-word; }
 
-  /* ⚠️ Il footer rientra quanto il CONTENUTO di una carta, non quanto il guscio:
-     l'utente lo vuole allineato alla riga 'Luminanza...' del riquadro sopra, che
-     sta dentro una carta e quindi parte un bordo più un padding più in là. Il
-     valore non è scelto a occhio ma preso da `.carta` (1px di bordo + 1rem di
-     padding), e verificato misurando le due posizioni nel browser. */
-  /* ⚠️ Meno visibile per richiesta esplicita dell'utente: è una nota che va bene
-     anche se non viene letta, e qui il contrasto NON è un obiettivo. Sta scritto
-     perché un domani non sembri una svista da correggere. */
-  footer { color: var(--tenue); font-size: .82rem; margin-top: 1.6rem; padding-left: calc(1rem + 1px); opacity: .6; }
-  footer a { color: inherit; }
+  /* ⚠️ IL FOOTER NON C'È PIÙ, dalla 1.40, e non è una dimenticanza: la riga del
+     motore, in fondo a 'File di origine', dice ormai tutto quello che diceva lui
+     (chi pulisce, da dove arriva, e che la pulizia è locale), e due note che
+     ripetono la stessa cosa sono una nota di troppo. Chi volesse rimetterlo si
+     ricordi che era allineato al contenuto delle carte, non al guscio. */
   [hidden] { display: none !important; }
   :focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; }
 </style>
@@ -273,13 +290,15 @@
     </section>
 
     <div id="azioni">
-      <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
       <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
       <button type="button" class="minore" id="altro">Apri altri file</button>
     </div>
 
     <section class="carta" id="carta-anteprima">
-      <h2>Anteprima</h2>
+      <div class="testa-anteprima">
+        <h2>Anteprima</h2>
+        <p class="misura" id="misura"></p>
+      </div>
       <div class="barra">
         <div class="gruppo" role="group" aria-label="Che cosa mostrare">
           <button type="button" id="mostra-pulito" aria-pressed="true">Pulito</button>
@@ -297,8 +316,8 @@
         </div>
       </div>
       <div id="telaio"><img id="anteprima" alt="Anteprima del file SVG"></div>
-      <p class="misura" id="misura"></p>
       <p class="misura" id="nota-tavole" hidden>L'anteprima mostra una tavola per volta; il file salvato le contiene tutte.</p>
+      <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
     </section>
 
     <aside class="carta" id="carta-info">
@@ -318,10 +337,6 @@
       <p class="piede-motore" id="motore">motore: in caricamento...</p>
     </aside>
   </div>
-
-  <footer>
-    <p>La pulizia è effettuata in locale: i file non lasciano mai il dispositivo di origine. CleanSVG è basato su SVGO, ma aggiunge rifiniture e ottimizzazioni per ridurre ulteriormente il peso dei file senza intaccare la geometria dell'illustrazione.</p>
-  </footer>
 </div>
 
 <script type="module">
@@ -332,7 +347,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
 // pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
-const VERSIONE = '1.30';
+const VERSIONE = '1.40';
 document.getElementById('versione').textContent = 'v' + VERSIONE;
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -351,6 +366,12 @@ const INDIRIZZI = [
   'https://esm.sh/svgo@latest/dist/svgo.browser.js'
 ];
 const ATTESA_CDN = 6000;
+
+// ⚠️ Questa frase era il footer, e dalla 1.40 chiude la riga del motore: è la
+// prima domanda che si fa chi trascina un file su un sito, e la sua casa
+// naturale è accanto a chi dichiara CHI sta pulendo. Un secondo posto che la
+// ripeteva era una nota di troppo.
+const LOCALE = 'La pulizia è effettuata in locale.';
 
 let svgo = null;   // { optimize, versione, da }
 
@@ -385,10 +406,10 @@ function scriviMotore() {
   riga.textContent = '';
   if (svgo) {
     riga.append('Motore: ', grassetto('SVGO ' + svgo.versione), ' da ' + svgo.da +
-      ', preso all\'apertura della pagina. La rifinitura che segue è di CleanSVG.');
+      ', preso all\'apertura della pagina. La rifinitura che segue è di CleanSVG. ' + LOCALE);
   } else {
     riga.append('Motore: ', grassetto('interno'),
-      '. Nessuno dei tre CDN ha risposto, quindi la pulizia usa il pulitore di CleanSVG: toglie metadati, commenti, script e residui, ma non riscrive i tracciati.');
+      '. Nessuno dei tre CDN ha risposto, quindi la pulizia usa il pulitore di CleanSVG: toglie metadati, commenti, script e residui, ma non riscrive i tracciati. ' + LOCALE);
   }
 }
 
