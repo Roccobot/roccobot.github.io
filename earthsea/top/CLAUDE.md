@@ -30,6 +30,11 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
   l'errore naturale di chi ne trova dieci insieme: *non ti fornisco regole perché non
   esistono: li ho già valutati io singolarmente* (utente, 2026-08-24). Si chiedono **una per
   una**, e il pacchetto del 2026-08-24 è stato chiuso così.
+- **Lo Schedario è un artefatto VIVO, e il suo indirizzo sta qui**:
+  <https://claude.ai/code/artifact/33262bb9-da74-4c21-bb36-a5a55379441c>, con **100 schede**
+  incluse e importate e **3** lasciate fuori dall'utente. ⚠️ Sta in questo file e non nel
+  brief di consegna perché è un puntatore che vale **oltre** la prossima sessione: nel brief
+  sarebbe andato perduto al primo giro di pulizia.
 - ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools`: opere, edizioni coi
   traduttori, sigle bilingui, Maestri di Roke, elenchi dei portatori dei badge e **link
   alle fonti scaricabili**. È da lì che si verifica, col grep e mai a memoria.

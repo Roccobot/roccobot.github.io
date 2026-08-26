@@ -571,11 +571,17 @@ poi divergerebbe.
       § '⚙️ Automazione e interazioni'): il difetto è un livello più a monte, il file non si legge.
       Chi trova ancora prompt di autorizzazione **non riscriva i permessi**: sono già corretti, ed
       è un lavoro che una sessione ha già fatto per niente.
-    - **Il rimedio, finché la causa resta**: prima di ogni commit lanciare a mano i due controlli
-      che coprono i file di regole, come **comandi singoli** e con percorso assoluto,
-      `python3 <radice>/.memo/scripts/refcheck.py` e
-      `printf '%s' '<messaggio>' | python3 <radice>/.memo/scripts/refcheck.py --text`. Gli
-      altri restano scoperti, quindi versione e allineamento si guardano a occhio.
+    - **Il rimedio, finché la causa resta**: prima di ogni commit lanciare a mano i controlli,
+      come **comandi singoli** e con percorso assoluto: `python3 <radice>/.memo/scripts/refcheck.py`
+      per i file di regole,
+      `git diff --cached | python3 <radice>/.memo/scripts/refcheck.py --diff` per le righe
+      aggiunte, e `printf '%s' '<testo>' | python3 <radice>/.memo/scripts/refcheck.py --text`
+      per il messaggio di commit **completo** e per il corpo della PR. Gli altri restano
+      scoperti, quindi versione e allineamento si guardano a occhio.
+      - ⚠️ **Il modo `--diff` legge il diff che gli arriva IN INGRESSO, e da solo mente**:
+        lanciato senza la pipe stampa `0 righe in 0 file`, che si legge come 'nessun difetto'
+        mentre è 'nessun dato'. Va sempre incanalato come sopra. È il falso negativo peggiore,
+        lo stesso di un grep col pattern invecchiato.
     - ⚠️ **Come si verifica se un domani tornassero a girare**: solo da una **sessione nuova**
       (la configurazione si legge all'avvio), con un `git commit --allow-empty` il cui messaggio
       porti l'omografo **letterale nel comando**, perché gli hook ricevono la stringa del comando
