@@ -68,7 +68,11 @@
   #zona .grande { font-size: 1.15rem; font-weight: 600; display: block; margin-bottom: .3rem; }
   #zona .piccolo { color: var(--tenue); font-size: .88rem; }
 
-  #lavoro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.1rem; margin-top: 1.1rem; }
+  /* ⚠️ `align-items: start` e non lo stiramento predefinito: da quando la colonna
+     destra porta anche i Dettagli è lei la più alta, e la carta dell'anteprima si
+     allungava a vuoto sotto la riga della luminanza. Ogni carta finisce dove
+     finisce il suo contenuto. */
+  #lavoro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.1rem; margin-top: 1.1rem; align-items: start; }
   @media (max-width: 800px) { #lavoro { grid-template-columns: 1fr; } }
 
   /* ⚠️ I file scartati hanno una riga TUTTA LORO e non finiscono nel riquadro
@@ -120,6 +124,14 @@
   }
   .gruppo button + button { border-left: 1px solid var(--riga); }
   .gruppo button[aria-pressed="true"] { background: var(--tinta); color: var(--tinta-ink); font-weight: 600; }
+  .gruppo button:disabled { opacity: .35; cursor: default; }
+  /* Il contatore delle tavole sta DENTRO al gruppo, fra le due frecce, perché
+     è quello che le frecce stanno spostando: separarlo lo farebbe leggere come
+     un'etichetta qualsiasi della barra. */
+  #tavola-quale {
+    font-size: .85rem; padding: .38rem .1rem; min-width: 4.2rem; text-align: center;
+    font-variant-numeric: tabular-nums; border-left: 1px solid var(--riga); border-right: 1px solid var(--riga);
+  }
 
   #telaio {
     position: relative;
@@ -137,6 +149,20 @@
   dl.numeri dt { color: var(--tenue); }
   dl.numeri dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
   dl.numeri dd.risparmio { color: var(--ok); font-weight: 700; }
+
+  /* Il pannello DETTAGLI, che è il più fitto della pagina per richiesta esplicita
+     dell'utente: 'nel modo più compatto possibile'. Quindi corpo piccolo, righe
+     strette, nessun bordo fra le voci, e soprattutto NIENTE righe vuote: una
+     voce che non ha niente da dire non compare, invece di occupare spazio per
+     scrivere 'nessuno'. */
+  .carta h2.secondo { margin-top: 1.2rem; }
+  dl.fitto {
+    display: grid; grid-template-columns: auto 1fr; gap: .12rem .7rem;
+    margin: 0; font-size: .82rem; line-height: 1.35;
+  }
+  dl.fitto dt { color: var(--tenue); white-space: nowrap; }
+  dl.fitto dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; word-break: break-word; }
+  dl.fitto dd.attenzione { color: var(--ko); font-weight: 600; }
 
   ul.tolto { list-style: none; margin: 0 0 .9rem; padding: 0; font-size: .9rem; }
   ul.tolto li { display: flex; justify-content: space-between; gap: .8rem; padding: .22rem 0; border-top: 1px solid var(--riga); }
@@ -166,7 +192,12 @@
   #errore .titolo { font-weight: 700; color: var(--ko); }
   #errore .dettaglio { color: var(--tenue); font-size: .88rem; margin-top: .2rem; white-space: pre-wrap; word-break: break-word; }
 
-  footer { color: var(--tenue); font-size: .82rem; margin-top: 1.6rem; }
+  /* ⚠️ Il footer rientra quanto il CONTENUTO di una carta, non quanto il guscio:
+     l'utente lo vuole allineato alla riga 'Luminanza...' del riquadro sopra, che
+     sta dentro una carta e quindi parte un bordo più un padding più in là. Il
+     valore non è scelto a occhio ma preso da `.carta` (1px di bordo + 1rem di
+     padding), e verificato misurando le due posizioni nel browser. */
+  footer { color: var(--tenue); font-size: .82rem; margin-top: 1.6rem; padding-left: calc(1rem + 1px); }
   footer a { color: inherit; }
   [hidden] { display: none !important; }
   :focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; }
@@ -217,13 +248,19 @@
           <button type="button" id="fondo-chiaro" aria-pressed="false">Chiaro</button>
           <button type="button" id="fondo-scuro" aria-pressed="false">Scuro</button>
         </div>
+        <div class="gruppo" role="group" aria-label="Tavola da mostrare" id="gruppo-tavole" hidden>
+          <button type="button" id="tavola-prec" aria-label="Tavola precedente">&#8249;</button>
+          <span id="tavola-quale"></span>
+          <button type="button" id="tavola-succ" aria-label="Tavola successiva">&#8250;</button>
+        </div>
       </div>
       <div id="telaio"><img id="anteprima" alt="Anteprima del file SVG"></div>
       <p class="misura" id="misura"></p>
+      <p class="misura" id="nota-tavole" hidden>L'anteprima mostra una tavola per volta; il file salvato le contiene tutte.</p>
     </section>
 
     <aside class="carta">
-      <h2>Rapporto</h2>
+      <h2>Info</h2>
       <dl class="numeri">
         <dt>Nome</dt><dd id="n-nome">-</dd>
         <dt>Prima</dt><dd id="n-prima">-</dd>
@@ -233,7 +270,10 @@
       <ul class="tolto" id="elenco-tolto"></ul>
       <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
       <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
-      <button type="button" class="minore" id="altro">Aggiungi altri file</button>
+      <button type="button" class="minore" id="altro">Apri altri file</button>
+
+      <h2 class="secondo">Dettagli</h2>
+      <dl class="fitto" id="dettagli"></dl>
     </aside>
   </div>
 
@@ -251,7 +291,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
 // pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
-const VERSIONE = '1.10';
+const VERSIONE = '1.20';
 document.getElementById('versione').textContent = 'v' + VERSIONE;
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -685,7 +725,156 @@ async function creaZip(voci) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-//  6) LA CODA E LA PAGINA
+//  6) CHE COS'ERA IL FILE DI PARTENZA
+// ══════════════════════════════════════════════════════════════════════════
+// Il pannello 'Dettagli' racconta il file ORIGINALE, non quello pulito: serve a
+// sapere che cosa si è ricevuto, e la pulizia lo cambierebbe sotto gli occhi.
+// ⚠️ Si mostra solo quello che il file DICE davvero. Una voce che non ha niente
+// da dire non compare, invece di occupare una riga per scrivere 'nessuno':
+// l'utente ha chiesto due volte 'il più compatto possibile', e un elenco di
+// assenze è esattamente il contrario.
+
+/** Elementi che in un SVG non sono disegno: servono a riconoscere le tavole. */
+const NON_DISEGNO = ['defs', 'metadata', 'title', 'desc', 'style', 'script'];
+
+/**
+ * Le tavole di un file multi-tavola, o un elenco vuoto.
+ *
+ * ⚠️ Il caso AFFIDABILE è uno solo: `<svg>` annidati dentro la radice, che è come
+ * Illustrator e Figma esportano più tavole in un file solo, ognuna con la sua
+ * geometria. Tutto il resto è congettura.
+ * ⚠️ Il ripiego sui gruppi di primo livello si accetta solo se quei gruppi sono
+ * TUTTO il disegno della radice: senza quella condizione, un file normale fatto
+ * di tre gruppi si annuncerebbe come tre tavole, che è peggio di non accorgersi
+ * di niente.
+ */
+function tavoleDi(doc) {
+  const figli = Array.prototype.slice.call(doc.documentElement.children);
+  const annidate = figli.filter((e) => e.localName === 'svg');
+  if (annidate.length > 1) return annidate;
+  const disegno = figli.filter((e) => NON_DISEGNO.indexOf(e.localName) < 0);
+  const gruppi = disegno.filter((e) => e.localName === 'g' && (e.getAttribute('id') || e.getAttribute('data-name')));
+  if (gruppi.length > 1 && gruppi.length === disegno.length) return gruppi;
+  return [];
+}
+
+/**
+ * Il file ridotto a UNA tavola, per l'anteprima.
+ *
+ * ⚠️⚠️ Si CLONA il documento e si tolgono le altre tavole, invece di estrarre
+ * quella scelta: i gradienti, i ritagli e le maschere vivono nei `<defs>` della
+ * radice e si richiamano per id, quindi una tavola portata via da sola arriverebbe
+ * senza i suoi colori. Togliere le sorelle lascia i defs dove sono.
+ * ⚠️ Questo tocca SOLO l'anteprima: il file che si scarica contiene tutte le
+ * tavole, e la pagina lo dice sotto al riquadro.
+ */
+function svgDellaTavola(testo, indice) {
+  const doc = new DOMParser().parseFromString(testo, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) return testo;
+  const tavole = tavoleDi(doc);
+  if (tavole.length < 2 || indice < 0 || indice >= tavole.length) return testo;
+  const scelta = tavole[indice];
+  tavole.forEach((t, i) => { if (i !== indice && t.parentNode) t.parentNode.removeChild(t); });
+  // Una tavola `<svg>` porta la propria geometria: la radice si riquadra su di
+  // lei, o si vedrebbe la tavola giusta persa in una tela grande quanto tutte.
+  // Un gruppo non ce l'ha, e allora la tela resta com'era: basta comunque,
+  // perché il caso da risolvere era vederne una sopra l'altra.
+  if (scelta.localName === 'svg') {
+    const n = (a) => parseFloat(scelta.getAttribute(a) || '0');
+    const w = n('width'), h = n('height');
+    if (w > 0 && h > 0) {
+      doc.documentElement.setAttribute('viewBox', n('x') + ' ' + n('y') + ' ' + w + ' ' + h);
+      doc.documentElement.removeAttribute('width');
+      doc.documentElement.removeAttribute('height');
+    }
+  }
+  return new XMLSerializer().serializeToString(doc);
+}
+
+/** Quante cifre dopo la virgola porta il numero più preciso del file. */
+function decimaliDi(doc) {
+  let massimo = 0;
+  const tutti = doc.getElementsByTagName('*');
+  for (let i = 0; i < tutti.length; i++) {
+    const attributi = tutti[i].attributes;
+    for (let j = 0; j < attributi.length; j++) {
+      // ⚠️ Si guardano gli ATTRIBUTI e non il testo grezzo del file: nel testo
+      // finirebbero anche i numeri dentro gli id, i commenti e le date dei
+      // metadati, che non sono precisione del disegno.
+      const numeri = attributi[j].value.match(/\d+\.\d+/g);
+      if (!numeri) continue;
+      numeri.forEach((n) => {
+        const cifre = n.split('.')[1].length;
+        if (cifre > massimo) massimo = cifre;
+      });
+    }
+  }
+  return massimo;
+}
+
+function analizza(testo) {
+  const doc = new DOMParser().parseFromString(testo, 'image/svg+xml');
+  if (doc.querySelector('parsererror') || !doc.documentElement) return null;
+  const radice = doc.documentElement;
+  const quanti = (nome) => doc.getElementsByTagName(nome).length;
+  const tavole = tavoleDi(doc);
+
+  // Riferimenti che escono dal file. ⚠️ Le dichiarazioni xmlns si saltano: sono
+  // identificatori di namespace, non indirizzi da cui si scarica qualcosa, e
+  // contarle direbbe che ogni file di Inkscape tira roba da internet.
+  let esterni = 0, incorporate = 0;
+  const tutti = doc.getElementsByTagName('*');
+  for (let i = 0; i < tutti.length; i++) {
+    const attributi = tutti[i].attributes;
+    for (let j = 0; j < attributi.length; j++) {
+      const a = attributi[j];
+      if (a.name.toLowerCase().indexOf('xmlns') === 0) continue;
+      if (/^https?:\/\//i.test(a.value)) esterni++;
+      else if (/^data:/i.test(a.value)) incorporate++;
+    }
+  }
+
+  const font = new Set();
+  for (let i = 0; i < tutti.length; i++) {
+    const f = tutti[i].getAttribute('font-family');
+    if (f) f.split(',').forEach((n) => font.add(n.trim().replace(/^['"]|['"]$/g, '')));
+  }
+
+  const misure = [radice.getAttribute('width'), radice.getAttribute('height')].filter(Boolean);
+  const voci = [];
+  const metti = (etichetta, valore, attenzione) => {
+    if (valore === 0 || valore === '' || valore === null || valore === undefined) return;
+    voci.push([etichetta, String(valore), !!attenzione]);
+  };
+
+  metti('Versione', radice.getAttribute('version') || 'non dichiarata');
+  // Il profilo è la voce che dice se è un Tiny SVG, ed è chiesta esplicitamente:
+  // compare sempre, anche quando la risposta è che non c'è.
+  voci.push(['Profilo', radice.getAttribute('baseProfile') || 'pieno (nessun baseProfile)', false]);
+  const vb = radice.getAttribute('viewBox');
+  voci.push(['viewBox', vb || 'assente', !vb]);
+  metti('Misure', misure.length === 2 ? misure.join(' x ') : 'non dichiarate');
+  voci.push(['Decimali', String(decimaliDi(doc)), false]);
+  metti('Elementi', tutti.length);
+  metti('Tracciati', quanti('path'));
+  metti('Gruppi', quanti('g'));
+  metti('Testi', quanti('text'));
+  metti('Fogli di stile', quanti('style'));
+  metti('Gradienti', quanti('linearGradient') + quanti('radialGradient'));
+  metti('Filtri', quanti('filter'));
+  metti('Ritagli e maschere', quanti('clipPath') + quanti('mask'));
+  metti('Immagini', quanti('image'));
+  metti('Dati incorporati', incorporate);
+  metti('Font', font.size ? Array.from(font).join(', ') : '');
+  metti('Riferimenti esterni', esterni, true);
+  if (tavole.length > 1) voci.push(['Tavole', String(tavole.length), false]);
+  metti('Prologo', [/^\s*<\?xml/.test(testo) ? 'dichiarazione XML' : '', /<!DOCTYPE/i.test(testo) ? 'DOCTYPE' : ''].filter(Boolean).join(' + '));
+
+  return { voci: voci, tavole: tavole.length };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  7) LA CODA E LA PAGINA
 // ══════════════════════════════════════════════════════════════════════════
 // ⚠️⚠️ I file si lavorano UNO ALLA VOLTA, ed è la ragione per cui questa si
 // chiama coda invece che elenco: ogni file costa due rasterizzazioni da 384x384
@@ -736,10 +925,32 @@ function sceltaCorrente() {
   return stato.coda.find((v) => v.id === stato.scelto) || null;
 }
 
+function disegnaTavole(v) {
+  const gruppo = el('gruppo-tavole');
+  gruppo.hidden = !(v && v.tavole > 1);
+  el('nota-tavole').hidden = gruppo.hidden;
+  if (gruppo.hidden) return;
+  el('tavola-quale').textContent = 'Tavola ' + (v.tavola + 1) + '/' + v.tavole;
+  el('tavola-prec').disabled = v.tavola === 0;
+  el('tavola-succ').disabled = v.tavola >= v.tavole - 1;
+}
+
+function scorriTavola(passo) {
+  const v = sceltaCorrente();
+  if (!v || v.tavole < 2) return;
+  v.tavola = Math.min(v.tavole - 1, Math.max(0, v.tavola + passo));
+  disegnaAnteprima();
+}
+
 function disegnaAnteprima() {
   const v = sceltaCorrente();
   if (!v || v.stato !== 'pronta') return;
-  const testo = stato.mostra === 'originale' ? v.originale : v.pulito;
+  let testo = stato.mostra === 'originale' ? v.originale : v.pulito;
+  // ⚠️ La tavola si sceglie su ENTRAMBE le viste, originale e pulito: sono lo
+  // stesso disegno, e passare da una all'altra saltando alla tavola 1 farebbe
+  // sembrare che la pulizia abbia spostato qualcosa.
+  if (v.tavole > 1) testo = svgDellaTavola(testo, v.tavola);
+  disegnaTavole(v);
   const img = el('anteprima');
   const vecchio = img.getAttribute('src');
   img.setAttribute('src', urlDi(testo));
@@ -773,6 +984,21 @@ function elencoTolto(conto) {
     numero.textContent = String(n);
     riga.appendChild(numero);
     lista.appendChild(riga);
+  });
+}
+
+function disegnaDettagli(v) {
+  const lista = el('dettagli');
+  while (lista.firstChild) lista.removeChild(lista.firstChild);
+  const voci = (v && v.dettagli && v.dettagli.voci) || [];
+  voci.forEach(([etichetta, valore, attenzione]) => {
+    const dt = document.createElement('dt');
+    dt.textContent = etichetta;
+    const dd = document.createElement('dd');
+    dd.textContent = valore;
+    if (attenzione) dd.className = 'attenzione';
+    lista.appendChild(dt);
+    lista.appendChild(dd);
   });
 }
 
@@ -862,6 +1088,7 @@ function mostraScelta() {
   const quota = v.prima ? Math.round((1 - v.dopo / v.prima) * 100) : 0;
   el('n-risparmio').textContent = quota > 0 ? '-' + quota + '%' : (quota === 0 ? 'nessuno' : '+' + Math.abs(quota) + '%');
   elencoTolto(v.conto);
+  disegnaDettagli(v);
   verdetto(v.verdetto.classe, v.verdetto.testo);
   el('misura').textContent = v.misura;
   el('lavoro').hidden = false;
@@ -913,6 +1140,10 @@ async function elabora(v) {
   disegnaCoda();
   try {
     if (!v.originale) v.originale = await leggiTesto(v.file);
+    // L'analisi guarda il file DI PARTENZA, quindi si fa prima di pulirlo.
+    v.dettagli = analizza(v.originale);
+    v.tavole = (v.dettagli && v.dettagli.tavole) || 1;
+    v.tavola = 0;
     const esito = pulisci(v.originale);
     v.pulito = esito.testo;
     v.conto = esito.conto;
@@ -927,7 +1158,12 @@ async function elabora(v) {
   }
   // La prima riga pronta si mostra da sé: chi ha trascinato un file vuole
   // vederlo, non doverlo cercare in un elenco.
-  if (stato.scelto === null && v.stato === 'pronta') stato.scelto = v.id;
+  // ⚠️ Ma solo se la voce è ANCORA in coda: un gruppo nuovo trascinato mentre il
+  // vecchio lavorava svuota la coda, e la lavorazione in volo finisce comunque.
+  // Senza questa guardia sceglierebbe un file che non è più in elenco, e il
+  // pannello si troverebbe a mostrare il nulla.
+  const viva = stato.coda.indexOf(v) >= 0;
+  if (viva && stato.scelto === null && v.stato === 'pronta') stato.scelto = v.id;
   disegnaCoda();
   if (stato.scelto === v.id) mostraScelta();
 }
@@ -966,7 +1202,12 @@ function accoda(elenco) {
   scriviScartati(scartati);
   if (!buoni.length) return;
 
-  stato.coda = stato.coda.concat(buoni);
+  // ⚠️ Ogni gruppo SOSTITUISCE il precedente, in silenzio (istruzione
+  // dell'utente): chi trascina un secondo gruppo sta cominciando un lavoro
+  // nuovo, non allungando quello di prima, e una coda che si accumula lo
+  // costringerebbe a svuotarla a mano ogni volta.
+  azzera();
+  stato.coda = buoni;
   disegnaCoda();
   scorri();
 }
@@ -983,6 +1224,7 @@ function scriviScartati(elenco) {
 
 function accodaTesto(testo, nome) {
   scriviScartati([]);
+  azzera();
   stato.coda.push({
     id: ++stato.contatore, nome: nome, file: null, testo: testo,
     stato: 'attesa', originale: testo, pulito: '', conto: null,
@@ -994,12 +1236,18 @@ function accodaTesto(testo, nome) {
   scorri();
 }
 
-function svuota() {
+/** Riporta la pagina a prima del gruppo, senza dire niente e senza toccare la
+ *  riga dei file scartati, che il chiamante ha appena scritto. */
+function azzera() {
   stato.coda = [];
-  scriviScartati([]);
   stato.scelto = null;
   el('lavoro').hidden = true;
   nascondiErrore();
+}
+
+function svuota() {
+  azzera();
+  scriviScartati([]);
   disegnaCoda();
 }
 
@@ -1065,6 +1313,8 @@ el('mostra-originale').addEventListener('click', () => { stato.mostra = 'origina
 el('fondo-auto').addEventListener('click', () => { stato.fondo = 'auto'; disegnaAnteprima(); });
 el('fondo-chiaro').addEventListener('click', () => { stato.fondo = 'chiaro'; disegnaAnteprima(); });
 el('fondo-scuro').addEventListener('click', () => { stato.fondo = 'scuro'; disegnaAnteprima(); });
+el('tavola-prec').addEventListener('click', () => scorriTavola(-1));
+el('tavola-succ').addEventListener('click', () => scorriTavola(1));
 
 // ── Scaricamento ─────────────────────────────────────────────────────────
 el('scarica').addEventListener('click', () => {
@@ -1084,9 +1334,15 @@ el('scarica-tutti').addEventListener('click', async () => {
     // ⚠️ I nomi dentro un archivio devono essere unici, e due file trascinati da
     // cartelle diverse possono chiamarsi uguale: al secondo si aggiunge un
     // numero, invece di lasciare che l'uno sovrascriva l'altro in silenzio.
+    // ⚠️ Nello zip i nomi restano QUELLI DI PARTENZA, senza il suffisso che ha
+    // il download singolo (istruzione dell'utente): quei file finiscono in una
+    // cartella loro, dove non c'è nessun originale da cui distinguerli, e
+    // '-pulito' su venti nomi è solo rumore ripetuto venti volte. Il download
+    // di un file solo invece atterra accanto all'originale, e là il suffisso
+    // serve ancora.
     const visti = new Map();
     const voci = pronte.map((v) => {
-      let nome = nomePulito(v.nome);
+      let nome = v.nome;
       if (visti.has(nome)) {
         const n = visti.get(nome) + 1;
         visti.set(nome, n);

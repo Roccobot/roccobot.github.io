@@ -91,6 +91,12 @@ pulizia vera la fa **SVGO**, importato a runtime da `@latest`.
 Dal 2026-08-26 la pagina accetta **più file insieme**, dal trascinamento e dal picker, e li mette
 in coda.
 
+- ⚠️⚠️ **Ogni gruppo SOSTITUISCE il precedente, in silenzio** (istruzione dell'utente,
+  2026-08-26): chi trascina un secondo gruppo sta cominciando un lavoro nuovo, non allungando
+  quello di prima. Fino alla `1.10` la coda si allungava, e quella nota è superata.
+  - ⚠️ Serve una **guardia** sulla lavorazione in volo: la voce che stava lavorando finisce
+    comunque, e senza il controllo che sia ancora in coda finirebbe per selezionare un file
+    che non è più in elenco, lasciando il pannello a mostrare il nulla.
 - ⚠️⚠️ **Si lavora UNO ALLA VOLTA, ed è la ragione del nome**: ogni file costa **due**
   rasterizzazioni da 384x384 più un confronto pixel per pixel, e venti file lanciati insieme
   bloccherebbero la pagina invece di finire prima. In fila la pagina resta viva e la riga che
@@ -122,8 +128,52 @@ in coda.
   grosso è comunque un archivio.
 - ⚠️ **Data e ora in formato DOS si scrivono davvero**: lasciarle a zero darebbe il giorno 0 del
   mese 0, e qualche strumento segnala l'archivio come corrotto.
+- ⚠️ **Nello zip i nomi restano QUELLI DI PARTENZA, senza il suffisso `-pulito`** (istruzione
+  dell'utente, 2026-08-26): quei file finiscono in una cartella loro, dove non c'è nessun
+  originale da cui distinguerli. Il download di **un file solo** invece atterra accanto
+  all'originale, e là il suffisso resta.
 - ⚠️ **I nomi dentro l'archivio si deduplicano**: due file trascinati da cartelle diverse possono
   chiamarsi uguale, e senza un numero in coda l'uno sovrascriverebbe l'altro in silenzio.
+
+## 🧾 I due pannelli: 'Info' e 'Dettagli'
+
+**Info** (che fino alla `1.10` si chiamava 'Rapporto') racconta la **pulizia**: pesi, risparmio,
+che cosa è stato tolto, e il verdetto sulla resa. **Dettagli**, sotto ai tasti, racconta il
+**file di partenza**: che cosa si è ricevuto.
+
+- ⚠️ **Dettagli guarda l'ORIGINALE e si calcola PRIMA di pulire**: descrive quello che è
+  arrivato, e la pulizia lo cambierebbe sotto gli occhi.
+- ⚠️⚠️ **Una voce che non ha niente da dire NON compare**, e non è pigrizia: l'utente ha chiesto
+  due volte *il più compatto possibile*, e un elenco di assenze è esattamente il contrario. Le
+  uniche tre che compaiono sempre sono **versione**, **profilo** e **viewBox**: le prime due
+  perché la domanda 'è un Tiny SVG?' vuole una risposta anche quando è no, la terza perché un
+  viewBox **assente** è un difetto e va detto in rosso.
+- ⚠️ **I decimali si contano sugli ATTRIBUTI, non sul testo grezzo**: nel testo finirebbero
+  anche i numeri dentro gli id, i commenti e le date dei metadati, che non sono precisione del
+  disegno.
+- ⚠️⚠️ **Le dichiarazioni `xmlns` NON contano come riferimenti esterni**, ed è la trappola di
+  quella voce: sono identificatori di namespace, non indirizzi da cui si scarica qualcosa.
+  Contarle direbbe che ogni file di Inkscape tira roba da internet.
+
+## 🗂️ I file multi-tavola
+
+Dal 2026-08-26 l'anteprima ne mostra **una per volta**, con un selettore. Prima si vedeva sempre
+l'ultima, perché le tavole stanno spesso sovrapposte nello stesso punto.
+
+- ⚠️⚠️ **Il caso affidabile è UNO SOLO**: `<svg>` annidati dentro la radice, che è come
+  Illustrator e Figma esportano più tavole in un file. Tutto il resto è congettura, e il ripiego
+  sui gruppi di primo livello si accetta **solo se quei gruppi sono tutto il disegno**: senza
+  quella condizione un file normale fatto di tre gruppi si annuncerebbe come tre tavole, che è
+  peggio di non accorgersi di niente.
+- ⚠️⚠️ **Si CLONA e si tolgono le altre, non si estrae quella scelta**: gradienti, ritagli e
+  maschere vivono nei `<defs>` della radice e si richiamano per id, quindi una tavola portata
+  via da sola arriverebbe **senza i propri colori**. Togliere le sorelle lascia i defs dove
+  sono.
+- ⚠️ **Tocca solo l'ANTEPRIMA**: il file che si scarica contiene tutte le tavole, e la pagina lo
+  dice sotto al riquadro. Senza quella riga sembrerebbe che lo strumento butti via il resto.
+- Una tavola `<svg>` porta la propria geometria e la radice si riquadra su di lei; un gruppo non
+  ce l'ha, e allora la tela resta com'era. Basta comunque, perché il caso da risolvere era
+  vederne una sopra l'altra.
 
 ## 🔬 Il confronto della resa, che è la promessa dello strumento
 
@@ -158,6 +208,13 @@ vero, e due giri, **con** e **senza** SVGO.
   fra gli scartati **e restare scritto**), e l'aggiunta a coda già piena.
 - **Lo zip si verifica aprendolo**, non guardando che il file scenda: `zipfile` di Python lo
   apre, `testzip()` controlla i CRC e si conta che dentro ci siano tutte le voci attese.
+- ⚠️ **Il contenuto di una tavola si legge dall'ANTEPRIMA, non chiamando la funzione**: lo script
+  è un modulo e le sue funzioni non sono globali, quindi dal banco non si raggiungono. Si legge
+  il blob dell'`<img>` con un `fetch`, che in più prova quello che la pagina **mostra** invece
+  di quello che saprebbe calcolare.
+- ⚠️ **Un allineamento si MISURA a due larghezze**: `getBoundingClientRect()` sui due elementi e
+  si confronta il bordo sinistro, sul largo e sullo stretto. A una colonna la carta si sposta, e
+  un allineamento che regge solo sul largo non è un allineamento.
 - ⚠️ **`document.createElement("li")` si scrive con le virgolette DOPPIE**, e non è un capriccio
   di stile: col singolo apice il controllo pre-commit dei caratteri legge `li'` e lo segnala
   come *lì* scritto con l'apostrofo. È un falso positivo suo, ma metterlo in whitelist
