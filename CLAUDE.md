@@ -518,10 +518,31 @@ poi divergerebbe.
     l'intestazione di quel file: dal 2026-07-31 il commento non porta il numero, e un
     `head -c 30` non mostrerebbe nulla facendo credere a un deploy mancato.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
-    pagina di stato GitHub sempre verde (questi guasti a raggio ristretto non vi compaiono,
-    cfr. deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e
-    basta attendere il push successivo. Se anche i push freschi falliscono ininterrottamente
-    oltre le ~12 ore, ticket al supporto GitHub, che solo il proprietario del repo può aprire.
+    pagina di stato GitHub verde (i guasti a **raggio ristretto** non vi compaiono, cfr.
+    deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e basta
+    attendere il push successivo. Se anche i push freschi falliscono ininterrottamente oltre
+    le ~12 ore, ticket al supporto GitHub, che solo il proprietario del repo può aprire.
+  - ⚠️⚠️ **MA la pagina di stato si guarda PRIMA, e costa un `curl`**: quando il guasto è
+    **largo** vi compare, e allora risponde in un comando a quello che altrimenti si cerca per
+    mezz'ora nel proprio codice. Il rovescio della nota qui sopra, che da sola sconsiglia una
+    misura che a volte è decisiva.
+    ```
+    curl -s https://www.githubstatus.com/api/v2/components.json
+    ```
+    - **Come si legge**: si cerca il componente per nome (`Actions`, `Pages`, `Git Operations`,
+      `API Requests`) e si guardano **stato e `updated_at`**. ⚠️ È il **confronto fra
+      `updated_at` e l'ora del proprio tentativo** a chiudere la questione, non lo stato da
+      solo: misurato il 2026-08-26, `Actions` è passata a `major_outage` alle **15:11:58Z** e
+      il dispatch che non partiva era delle **15:11:18Z**, quaranta secondi prima. Senza quel
+      raffronto restava il sospetto di aver rotto qualcosa io.
+    - ⚠️ **Durante un guasto ad Actions non esiste NESSUNA via manuale**, e conviene saperlo
+      per non promettere all'utente uno sblocco che non arriva: creare il tag a mano dalla
+      pagina *Draft a new release* fa scattare il trigger, ma il workflow ha comunque bisogno
+      di un runner e si accoda come gli altri. L'unica cosa da fare è aspettare, e i run in
+      coda si svegliano da sé.
+    - **Il sintomo di questo caso**, distinto dal degrado Pages descritto sopra: i run restano
+      `queued` con **zero job** e `updated_at` fermo all'istante della creazione. Chiedere i
+      job del run è la misura: `total_count: 0` significa che nessun runner l'ha preso.
 - ⚠️ **Allineamento al remoto prima di toccare un file: la regola vive in `Roccobot.md`**
   ('Workflow git e versioni') ed è **non derogabile**, col confronto dei ref come comando.
   Qui si aggiunge solo perché **questo repo è il caso peggiore**: l'editor admin di 'I Grandi
