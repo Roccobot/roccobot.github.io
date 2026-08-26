@@ -585,6 +585,33 @@ il disegno.
   del canone, § 'Gli Arcimaghi che le fonti nominano'); `signoredraghi` su Sparviero,
   Erreth-Akbe, Morred e Pannocchia. Non si estendono a intuito.
 
+⚠️⚠️ **Le DUE diciture riscritte nella `1.01`** (istruzione dell'utente, 2026-08-26), e la
+seconda va **più a fondo** della formula che sostituisce:
+
+| badge | prima | ora |
+|---|---|---|
+| `mago` | `Mago (detiene il vero potere)` | `Mago (educato a Roke; detiene il vero potere)` |
+| `signoredraghi` | `Signore dei Draghi (i draghi gli parlano)` | `Signore dei Draghi (i draghi lo considerano loro pari)` |
+
+- ⚠️⚠️ **La parentesi del `Signore dei Draghi` dice il canone dal capo giusto: la CAUSA invece
+  della sua manifestazione** (istruzione dell'utente, 2026-08-26: *è solo riformulata, e in
+  meglio, perché tocca il cuore della definizione anziché il modo 'esteriore' in cui si
+  manifesta*). In *Le tombe di Atuan* Ged dice ad Arha che un Signore dei Draghi è uno con cui
+  i draghi parlano, e aggiunge che non si tratta di addomesticarli: quel parlare però è il
+  **segno esteriore**. La sostanza è che un Signore dei Draghi può dialogare con un drago con
+  la **certezza di restarne vivo**, e quella certezza nasce dal rispetto (raro) che i draghi
+  nutrono verso quei pochi esseri umani, cioè da una parità riconosciuta. `I draghi lo
+  considerano loro pari` nomina quell'origine, ed è la ragione per cui la formula vale più
+  della resa alla lettera.
+- ⚠️ **La dicitura del `mago` ora enuncia il criterio invece di sottintenderlo**: 'educato a
+  Roke' è esattamente la regola con cui il badge si assegna dal 2026-08-24 (vedi il punto 3 di
+  § 'I 19 confrontati con Wikipedia': *ai suoi tempi solo chi terminava gli studi a Roke era
+  considerato propriamente mago*). L'etichetta e il criterio ora dicono la stessa cosa, e prima
+  no.
+- ⚠️ **Le metà inglesi seguono, e non si traducono a orecchio**: `Mage (trained on Roke; holds
+  the true power)` e `Dragonlord (dragons regard him as an equal)`. Cambiarne una sola lascia
+  il sito a dire due cose diverse nelle due lingue.
+
 **Il criterio del `Signore dei Draghi`**, dettato dall'utente il 2026-08-23: *è un titolo che
 probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
 
@@ -2134,9 +2161,13 @@ Richiesta dell'utente, `1.00`: la **decorazione** diventa spegnibile, e lo **sco
 tasti di salto** diventa regolabile invece che deciso a misura (*così lo regolo io invece di
 tirare a indovinare*).
 
-- **`deco`**, terzultima voce, prima di 'Origine' e 'Dito che scorre' (posizione chiesta
-  dall'utente): un interruttore e basta, senza manopole, perché la resa è già stata scelta
-  fra tre mockup e qui serve solo poterla spegnere.
+- **`deco`**, terzultima voce, **dopo 'Origine'** e prima di 'Dito che scorre': un
+  interruttore e basta, senza manopole, perché la resa è già stata scelta fra tre mockup e
+  qui serve solo poterla spegnere.
+  - ⚠️ **Le due si sono SCAMBIATE di posto nella `1.01`** (richiesta dell'utente,
+    2026-08-26): fino alla `1.00` `deco` stava **sopra** `orig`. L'ordine di queste voci è
+    una scelta dell'utente e non un ordine tecnico, quindi non si 'sistema' a intuito, in
+    nessuna delle due direzioni.
   - ⚠️ Il verso è **spenta di base, accesa dalla classe** (`fx-deco`), come ogni altro
     effetto: così un flag che non arriva (dati vecchi, JS a metà) lascia il Pannello pulito
     invece di mostrare una decorazione che nessuno ha acceso.

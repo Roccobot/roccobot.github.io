@@ -3145,7 +3145,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.00</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.01</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5508,7 +5508,7 @@ document.addEventListener('error', function(e){
 var ICON_LABEL = {
   it: {
     stregone: "Strega o stregone (possiede qualche potere)",
-    mago:     "Mago (detiene il vero potere)",
+    mago:     "Mago (educato a Roke; detiene il vero potere)",
     // ⚠️ Il terzo badge ha CAMBIATO significato il 2026-08-21 (istruzione
     // dell'utente): diceva 'di questo personaggio si conosce il vero nome', che la
     // riga del vero nome ora dice da sé. Adesso marca chi ha ricevuto in custodia
@@ -5520,23 +5520,28 @@ var ICON_LABEL = {
     // sopra e il vero nome sotto. Prima diceva il solo `Ged`, cioè il vero nome nudo,
     // che è l'informazione che il sito tratta come la più preziosa.
     nomeged:  "Custode del vero nome di Sparviero (Ged)",
-    // ⚠️ La spiegazione fra parentesi è la DEFINIZIONE del testo, non una parafrasi: in
-    // 'Le tombe di Atuan' Ged dice ad Arha 'Un Signore dei Draghi è uno con cui i draghi
-    // parlano', e aggiunge che non si tratta di addomesticarli. Attestazioni e portatori
-    // in `rules/Earthsea.md`, § 'Signore dei Draghi'.
-    signoredraghi: "Signore dei Draghi (i draghi gli parlano)",
+    // ⚠️ La spiegazione fra parentesi dice il canone dal capo giusto, cioè la causa invece
+    // del segno esteriore (scelta dell'utente, 2026-08-26). In 'Le tombe di Atuan' Ged
+    // dice ad Arha che un Signore dei Draghi è uno con cui i draghi parlano, e aggiunge
+    // che non si tratta di addomesticarli: ma quel parlare è il modo in cui il titolo si
+    // manifesta. La sostanza è che un Signore dei Draghi può dialogare con un drago con la
+    // certezza di restarne vivo, e quella certezza nasce dal rispetto raro che i draghi
+    // nutrono verso quei pochi umani, cioè da una parità riconosciuta. Il perché disteso
+    // in `earthsea/top/CLAUDE.md`, § 'I TRE badge annunciati: il criterio di uno solo';
+    // attestazioni e portatori in `rules/Earthsea.md`, § 'Signore dei Draghi'.
+    signoredraghi: "Signore dei Draghi (i draghi lo considerano loro pari)",
     maestro:  "Maestro di Roke (uno dei Nove)",
     arcimago: "Arcimago di Roke (il primo fra i Nove)"
   },
   en: {
     stregone: "Witch or sorcerer (holds some power)",
-    mago:     "Mage (holds the true power)",
+    mago:     "Mage (trained on Roke; holds the true power)",
     // ⚠️ 'Sparviero' e NON 'Sparrowhawk', ed è la stessa scelta che il dataset fa con
     // `nome_en`: le rese inglesi dei nomi non sono in scena, e tradurne una sola
     // farebbe sembrare attestate anche le altre. Chi la volesse inglese cambi prima
     // quella regola, non questa riga.
     nomeged:  "Keeper of Sparviero's true name (Ged)",
-    signoredraghi: "Dragonlord (dragons speak with him)",
+    signoredraghi: "Dragonlord (dragons regard him as an equal)",
     maestro:  "Master of Roke (one of the Nine)",
     arcimago: "Archmage of Roke (first among the Nine)"
   }
@@ -9469,12 +9474,14 @@ var SITE_FLAG_ITEMS = [
   { k:'pat', it:'Trama', en:'Pattern', cfg:true, noMob:true },
   // ⚠️ `noMob` come la trama, e per una ragione affine: sotto i 480px la colonna
   // dell'origine non esiste, quindi la variante mobile non muoverebbe nulla.
-  // ⚠️ Terzultima, prima di 'Origine' e 'Dito che scorre' (posizione chiesta
-  // dall'utente, 1.00). Senza `cfg`: e' un interruttore e basta, come 'Dito che
+  { k:'orig', it:'Origine', en:'Origin', cfg:true, noMob:true },
+  // ⚠️ L'ordine delle due voci e' stato INVERTITO nella 1.01 (richiesta dell'utente,
+  // 2026-08-26): 'Origine' sta sopra 'Decorazione', dove prima era sotto. La posizione
+  // di queste voci e' una scelta dell'utente e non un ordine tecnico, quindi non si
+  // 'sistema' a intuito. Senza `cfg`: e' un interruttore e basta, come 'Dito che
   // scorre', perche' la resa e' gia' stata scelta fra tre mockup e qui serve solo
   // poterla spegnere. `noMob` perche' la config e' unica (vedi FX_UNI).
   { k:'deco', it:'Decorazione', en:'Corner mark', noMob:true },
-  { k:'orig', it:'Origine', en:'Origin', cfg:true, noMob:true },
   // ⚠️ È l'unico effetto SOLO MOBILE, e la sua voce sta comunque nella tab Desktop: la
   // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
   // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
