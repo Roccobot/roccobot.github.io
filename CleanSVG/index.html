@@ -51,8 +51,9 @@
   h1 { font-size: 1.6rem; margin: 0; letter-spacing: -.01em; }
   .versione { color: var(--tenue); font-size: .85rem; font-variant-numeric: tabular-nums; }
   .occhiello { color: var(--tenue); margin: 0 0 1.3rem; font-size: .95rem; }
-  .motore { color: var(--tenue); font-size: .82rem; margin-left: auto; }
-  .motore b { color: var(--inchiostro); font-weight: 600; }
+  .firma { color: var(--tenue); font-size: .85rem; }
+  .firma a { color: var(--inchiostro); font-weight: 600; text-decoration-color: var(--riga); text-underline-offset: 2px; }
+  .firma a:hover { color: var(--tinta); text-decoration-color: currentColor; }
 
   #zona {
     border: 2px dashed var(--riga);
@@ -68,12 +69,29 @@
   #zona .grande { font-size: 1.15rem; font-weight: 600; display: block; margin-bottom: .3rem; }
   #zona .piccolo { color: var(--tenue); font-size: .88rem; }
 
-  /* ⚠️ `align-items: start` e non lo stiramento predefinito: da quando la colonna
-     destra porta anche i Dettagli è lei la più alta, e la carta dell'anteprima si
-     allungava a vuoto sotto la riga della luminanza. Ogni carta finisce dove
-     finisce il suo contenuto. */
-  #lavoro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.1rem; margin-top: 1.1rem; align-items: start; }
-  @media (max-width: 800px) { #lavoro { grid-template-columns: 1fr; } }
+  /* ⚠️ `align-items: start` e non lo stiramento predefinito: la colonna destra
+     porta anche il file di origine ed è la più alta, e la carta dell'anteprima
+     si allungava a vuoto sotto la riga della luminanza. Ogni carta finisce dove
+     finisce il suo contenuto.
+     ⚠️ Le AREE e non il solo ordine dei figli: la coda sparisce quando i file
+     sono meno di due, e senza aree lascerebbe un buco in alto a sinistra con le
+     azioni spaiate a destra. Con `senza-coda` le azioni prendono tutta la riga. */
+  #lavoro {
+    display: grid; gap: 1.1rem; margin-top: 1.1rem; align-items: start;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    grid-template-areas: 'coda azioni' 'anteprima info';
+  }
+  #lavoro.senza-coda { grid-template-areas: 'azioni azioni' 'anteprima info'; }
+  #carta-coda { grid-area: coda; }
+  #azioni { grid-area: azioni; }
+  #carta-anteprima { grid-area: anteprima; }
+  #carta-info { grid-area: info; }
+  @media (max-width: 800px) {
+    #lavoro, #lavoro.senza-coda {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'coda' 'azioni' 'anteprima' 'info';
+    }
+  }
 
   /* ⚠️ I file scartati hanno una riga TUTTA LORO e non finiscono nel riquadro
      d'errore, che appartiene al file scelto: quel riquadro si svuota appena si
@@ -83,13 +101,15 @@
 
   /* La coda. Compare solo con due o più file: con uno solo sarebbe un elenco
      di una riga, cioè rumore al posto di un'informazione. */
-  #carta-coda { margin-top: 1.1rem; }
   .testa-coda { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .6rem; }
   .testa-coda h2 { margin: 0; }
   #stato-coda { color: var(--tenue); font-size: .85rem; font-variant-numeric: tabular-nums; }
-  #scarica-tutti { margin-left: auto; margin-top: 0; width: auto; }
-  #svuota { margin-top: 0; width: auto; }
-  #scarica-tutti[hidden] + #svuota { margin-left: auto; }
+  #svuota { margin-top: 0; width: auto; margin-left: auto; }
+
+  /* Le azioni NON stanno in una carta, per scelta di layout dell'utente: il
+     verdetto ha già un fondo suo e i due tasti sono pieni, quindi un riquadro
+     attorno sarebbe una cornice attorno a una cornice. */
+  #azioni .verdetto { margin-top: 0; }
 
   #coda { list-style: none; margin: 0; padding: 0; max-height: 15rem; overflow-y: auto; }
   #coda li {
@@ -164,6 +184,20 @@
   dl.fitto dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; word-break: break-word; }
   dl.fitto dd.attenzione { color: var(--ko); font-weight: 600; }
 
+  /* Quale file stanno descrivendo i dettagli. Compare solo quando i file sono
+     più di uno: con uno solo la risposta è già nel nome scritto sopra, in Info. */
+  .quale-file { margin: -.35rem 0 .5rem; font-size: .82rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ⚠️ Il piede col motore si allinea al CONTENUTO della carta come tutto il
+     resto: nessun rientro proprio, così la sua prima lettera cade sulla stessa
+     colonna delle etichette qui sopra. Il filo che lo separa parte e finisce
+     dove parte e finisce l'elenco. */
+  .piede-motore {
+    margin: 1rem 0 0; padding-top: .6rem; border-top: 1px solid var(--riga);
+    color: var(--tenue); font-size: .78rem; line-height: 1.4;
+  }
+  .piede-motore b { color: var(--inchiostro); font-weight: 600; }
+
   ul.tolto { list-style: none; margin: 0 0 .9rem; padding: 0; font-size: .9rem; }
   ul.tolto li { display: flex; justify-content: space-between; gap: .8rem; padding: .22rem 0; border-top: 1px solid var(--riga); }
   ul.tolto li:first-child { border-top: 0; }
@@ -197,7 +231,10 @@
      sta dentro una carta e quindi parte un bordo più un padding più in là. Il
      valore non è scelto a occhio ma preso da `.carta` (1px di bordo + 1rem di
      padding), e verificato misurando le due posizioni nel browser. */
-  footer { color: var(--tenue); font-size: .82rem; margin-top: 1.6rem; padding-left: calc(1rem + 1px); }
+  /* ⚠️ Meno visibile per richiesta esplicita dell'utente: è una nota che va bene
+     anche se non viene letta, e qui il contrasto NON è un obiettivo. Sta scritto
+     perché un domani non sembri una svista da correggere. */
+  footer { color: var(--tenue); font-size: .82rem; margin-top: 1.6rem; padding-left: calc(1rem + 1px); opacity: .6; }
   footer a { color: inherit; }
   [hidden] { display: none !important; }
   :focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; }
@@ -208,7 +245,7 @@
   <header>
     <h1>CleanSVG</h1>
     <span class="versione" id="versione"></span>
-    <span class="motore" id="motore">motore: in caricamento...</span>
+    <span class="firma">by <a href="https://github.com/Roccobot" target="_blank" rel="noopener noreferrer">Roccobot</a></span>
   </header>
   <p class="occhiello">Trascina qui i tuoi file SVG, anche molti insieme: si vede subito che cosa contengono, che cosa viene tolto e se il disegno resta identico.</p>
 
@@ -225,18 +262,23 @@
     <div class="dettaglio" id="errore-dettaglio"></div>
   </div>
 
-  <section class="carta" id="carta-coda" hidden>
-    <div class="testa-coda">
-      <h2>Coda</h2>
-      <span id="stato-coda"></span>
-      <button type="button" class="minore" id="scarica-tutti" hidden>Scarica tutti in uno zip</button>
-      <button type="button" class="minore" id="svuota">Svuota la coda</button>
-    </div>
-    <ul id="coda"></ul>
-  </section>
-
   <div id="lavoro" hidden>
-    <section class="carta">
+    <section class="carta" id="carta-coda" hidden>
+      <div class="testa-coda">
+        <h2>Coda</h2>
+        <span id="stato-coda"></span>
+        <button type="button" class="minore" id="svuota">Svuota la coda</button>
+      </div>
+      <ul id="coda"></ul>
+    </section>
+
+    <div id="azioni">
+      <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
+      <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
+      <button type="button" class="minore" id="altro">Apri altri file</button>
+    </div>
+
+    <section class="carta" id="carta-anteprima">
       <h2>Anteprima</h2>
       <div class="barra">
         <div class="gruppo" role="group" aria-label="Che cosa mostrare">
@@ -259,7 +301,7 @@
       <p class="misura" id="nota-tavole" hidden>L'anteprima mostra una tavola per volta; il file salvato le contiene tutte.</p>
     </section>
 
-    <aside class="carta">
+    <aside class="carta" id="carta-info">
       <h2>Info</h2>
       <dl class="numeri">
         <dt>Nome</dt><dd id="n-nome">-</dd>
@@ -268,18 +310,17 @@
         <dt>Risparmio</dt><dd class="risparmio" id="n-risparmio">-</dd>
       </dl>
       <ul class="tolto" id="elenco-tolto"></ul>
-      <p class="verdetto attesa" id="verdetto">Confronto della resa in corso...</p>
-      <button type="button" class="principale" id="scarica" disabled>Scarica SVG pulito</button>
-      <button type="button" class="minore" id="altro">Apri altri file</button>
 
-      <h2 class="secondo">Dettagli</h2>
+      <h2 class="secondo">File di origine</h2>
+      <p class="quale-file" id="quale-file" hidden></p>
       <dl class="fitto" id="dettagli"></dl>
+
+      <p class="piede-motore" id="motore">motore: in caricamento...</p>
     </aside>
   </div>
 
   <footer>
-    <p id="nota-motore"></p>
-    <p>Tutto avviene nel browser: il file non viene caricato da nessuna parte. Titolo e descrizione restano nel file, perché sono accessibilità e non metadati di scarto.</p>
+    <p>La pulizia è effettuata in locale: i file non lasciano mai il dispositivo di origine. CleanSVG è basato su SVGO, ma aggiunge rifiniture e ottimizzazioni per ridurre ulteriormente il peso dei file senza intaccare la geometria dell'illustrazione.</p>
   </footer>
 </div>
 
@@ -291,7 +332,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
 // pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
-const VERSIONE = '1.20';
+const VERSIONE = '1.30';
 document.getElementById('versione').textContent = 'v' + VERSIONE;
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -340,15 +381,14 @@ async function caricaMotore() {
 
 function scriviMotore() {
   const riga = document.getElementById('motore');
-  const nota = document.getElementById('nota-motore');
+  const grassetto = (t) => Object.assign(document.createElement('b'), { textContent: t });
+  riga.textContent = '';
   if (svgo) {
-    riga.textContent = '';
-    riga.append('motore: ', Object.assign(document.createElement('b'), { textContent: 'SVGO ' + svgo.versione }), ' da ' + svgo.da);
-    nota.textContent = `La pulizia usa SVGO ${svgo.versione}, preso da ${svgo.da} all'apertura della pagina, quindi sempre nella sua versione più recente. La rifinitura che segue è di CleanSVG.`;
+    riga.append('Motore: ', grassetto('SVGO ' + svgo.versione), ' da ' + svgo.da +
+      ', preso all\'apertura della pagina. La rifinitura che segue è di CleanSVG.');
   } else {
-    riga.textContent = '';
-    riga.append('motore: ', Object.assign(document.createElement('b'), { textContent: 'interno' }));
-    nota.textContent = 'SVGO non è raggiungibile in questo momento (nessuno dei tre CDN ha risposto): la pulizia usa il pulitore interno di CleanSVG, che toglie metadati, commenti, script e residui delle applicazioni ma non riscrive i tracciati.';
+    riga.append('Motore: ', grassetto('interno'),
+      '. Nessuno dei tre CDN ha risposto, quindi la pulizia usa il pulitore di CleanSVG: toglie metadati, commenti, script e residui, ma non riscrive i tracciati.');
   }
 }
 
@@ -727,8 +767,10 @@ async function creaZip(voci) {
 // ══════════════════════════════════════════════════════════════════════════
 //  6) CHE COS'ERA IL FILE DI PARTENZA
 // ══════════════════════════════════════════════════════════════════════════
-// Il pannello 'Dettagli' racconta il file ORIGINALE, non quello pulito: serve a
-// sapere che cosa si è ricevuto, e la pulizia lo cambierebbe sotto gli occhi.
+// Il pannello 'File di origine' racconta il file COM'ERA PRIMA, non quello
+// pulito: serve a sapere che cosa si è ricevuto, e la pulizia lo cambierebbe
+// sotto gli occhi. ⚠️ Il titolo diceva 'Dettagli' fino alla 1.30, e l'utente
+// l'ha cambiato proprio perché quella parola non diceva DI QUALE file parlasse.
 // ⚠️ Si mostra solo quello che il file DICE davvero. Una voce che non ha niente
 // da dire non compare, invece di occupare una riga per scrivere 'nessuno':
 // l'utente ha chiesto due volte 'il più compatto possibile', e un elenco di
@@ -988,6 +1030,11 @@ function elencoTolto(conto) {
 }
 
 function disegnaDettagli(v) {
+  // Con più file in coda si dice a quale si riferiscono, perché il pannello
+  // cambia sotto gli occhi cliccando una riga e il nome sta lontano, su in Info.
+  const quale = el('quale-file');
+  quale.hidden = stato.coda.length < 2 || !v;
+  quale.textContent = quale.hidden ? '' : v.nome;
   const lista = el('dettagli');
   while (lista.firstChild) lista.removeChild(lista.firstChild);
   const voci = (v && v.dettagli && v.dettagli.voci) || [];
@@ -1060,7 +1107,23 @@ function disegnaCoda() {
   const parti = [pronte + ' su ' + stato.coda.length + ' pronti'];
   if (fallite) parti.push(fallite === 1 ? '1 non leggibile' : fallite + ' non leggibili');
   el('stato-coda').textContent = parti.join(', ');
-  el('scarica-tutti').hidden = pronte < 2;
+  // Senza coda le azioni prendono tutta la riga, invece di restare spaiate a
+  // destra di un buco.
+  el('lavoro').classList.toggle('senza-coda', carta.hidden);
+  etichettaScarica();
+}
+
+/**
+ * ⚠️ UN SOLO tasto di scaricamento, e l'etichetta dice che cosa farà (scelta
+ * dell'utente): con un file scarica quel file, con più di uno li mette tutti in
+ * uno zip. La conseguenza da conoscere è che con una coda piena non si scarica
+ * più il singolo file scelto: se servisse, si svuota la coda e si ricarica lui.
+ */
+function etichettaScarica() {
+  const pronte = stato.coda.filter((v) => v.stato === 'pronta').length;
+  const tasto = el('scarica');
+  tasto.textContent = pronte > 1 ? 'Scarica SVG puliti in uno ZIP' : 'Scarica SVG pulito';
+  tasto.disabled = pronte === 0;
 }
 
 function scegliVoce(id) {
@@ -1092,7 +1155,7 @@ function mostraScelta() {
   verdetto(v.verdetto.classe, v.verdetto.testo);
   el('misura').textContent = v.misura;
   el('lavoro').hidden = false;
-  el('scarica').disabled = false;
+  etichettaScarica();
   disegnaAnteprima();
 }
 
@@ -1317,18 +1380,19 @@ el('tavola-prec').addEventListener('click', () => scorriTavola(-1));
 el('tavola-succ').addEventListener('click', () => scorriTavola(1));
 
 // ── Scaricamento ─────────────────────────────────────────────────────────
-el('scarica').addEventListener('click', () => {
-  const v = sceltaCorrente();
-  if (!v || v.stato !== 'pronta') return;
-  salva(new Blob([v.pulito], { type: 'image/svg+xml;charset=utf-8' }), nomePulito(v.nome));
-});
-
-el('scarica-tutti').addEventListener('click', async () => {
+el('scarica').addEventListener('click', async () => {
   const pronte = stato.coda.filter((v) => v.stato === 'pronta');
-  if (pronte.length < 2) return;
-  const bottone = el('scarica-tutti');
+  if (!pronte.length) return;
+  // ⚠️ Con un file solo si scarica QUELLO PRONTO, non quello selezionato: i due
+  // coincidono sempre tranne quando la scelta è caduta su un file illeggibile,
+  // e là il tasto deve fare l'unica cosa sensata invece di non fare niente.
+  if (pronte.length === 1) {
+    const v = pronte[0];
+    salva(new Blob([v.pulito], { type: 'image/svg+xml;charset=utf-8' }), nomePulito(v.nome));
+    return;
+  }
+  const bottone = el('scarica');
   bottone.disabled = true;
-  const etichetta = bottone.textContent;
   bottone.textContent = 'Preparo lo zip...';
   try {
     // ⚠️ I nomi dentro un archivio devono essere unici, e due file trascinati da
@@ -1356,8 +1420,9 @@ el('scarica-tutti').addEventListener('click', async () => {
   } catch (e) {
     mostraErrore('Lo zip non si è lasciato creare.', (e && e.message) ? String(e.message) : String(e));
   } finally {
-    bottone.disabled = false;
-    bottone.textContent = etichetta;
+    // L'etichetta si rifà invece di essere rimessa com'era: nel frattempo la
+    // coda può essere cambiata, e `etichettaScarica` è la sola a saperlo.
+    etichettaScarica();
   }
 });
 

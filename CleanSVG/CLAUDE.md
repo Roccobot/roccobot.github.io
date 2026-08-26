@@ -115,9 +115,39 @@ in coda.
   e si conservano nella voce, invece di scriverle direttamente a schermo come faceva la
   versione a file singolo.
 
+## 🧱 La disposizione a due colonne
+
+Dalla `1.30` il corpo della pagina è una **griglia due per due** (mockup dell'utente): coda e
+azioni in alto, anteprima e informazioni sotto.
+
+- ⚠️ **Le due righe condividono le colonne**, quindi la coda è larga quanto l'anteprima per
+  costruzione: un banco che pretende di misurare 'la lista è più stretta dell'anteprima' non
+  prova niente, e il paragone giusto è con la **riga intera**.
+- ⚠️ **Senza coda le azioni prendono tutta la riga** (`.senza-coda`), invece di restare
+  spaiate a destra di un buco: con un file solo l'elenco non compare, e quella metà sarebbe
+  vuota.
+- Il **footer** è volutamente poco visibile (`opacity`): è una nota per l'utente, e là il
+  contrasto non conta (sua istruzione). Resta invece allineato al contenuto delle carte, che
+  è una misura e non un'impressione (vedi '🧪 Come si prova').
+
+## ⬇️ Un solo tasto di scaricamento
+
+Dalla `1.30` il tasto è **uno** e l'etichetta dice che cosa farà: *Scarica SVG pulito* con un
+file, *Scarica SVG puliti in uno ZIP* da due in su (istruzione dell'utente).
+
+- ⚠️⚠️ **La conseguenza da conoscere: con la coda piena non si scarica più il singolo file
+  scelto.** Non è una dimenticanza, è il prezzo del tasto unico: se serve quel file da solo,
+  si svuota la coda e si ricarica lui. Prima i tasti erano due e la cosa si poteva fare.
+- ⚠️ **Con un file solo si scarica quello PRONTO, non quello selezionato**: i due coincidono
+  sempre tranne quando la scelta è caduta su un file illeggibile, e là il tasto deve fare
+  l'unica cosa sensata invece di non fare niente.
+- ⚠️ **A fine zip l'etichetta si RICALCOLA invece di essere rimessa com'era**: mentre
+  l'archivio si preparava la coda può essere cambiata, e solo chi la conta sa che cosa
+  scriverci.
+
 ## 🗜️ Lo zip è scritto in casa
 
-'Scarica tutti' produce un archivio vero, senza librerie.
+Il tasto unico, con più di un file, produce un archivio vero, senza librerie.
 
 - **Perché non una libreria**: la pagina ne carica già una da un CDN che può non rispondere, e
   una seconda avrebbe voluto un secondo ripiego. Un archivio zip si scrive in una sessantina di
@@ -135,14 +165,24 @@ in coda.
 - ⚠️ **I nomi dentro l'archivio si deduplicano**: due file trascinati da cartelle diverse possono
   chiamarsi uguale, e senza un numero in coda l'uno sovrascriverebbe l'altro in silenzio.
 
-## 🧾 I due pannelli: 'Info' e 'Dettagli'
+## 🧾 I due pannelli: 'Info' e 'File di origine'
 
 **Info** (che fino alla `1.10` si chiamava 'Rapporto') racconta la **pulizia**: pesi, risparmio,
-che cosa è stato tolto, e il verdetto sulla resa. **Dettagli**, sotto ai tasti, racconta il
+che cosa è stato tolto. **File di origine**, sotto di lui nella stessa colonna, racconta il
 **file di partenza**: che cosa si è ricevuto.
 
-- ⚠️ **Dettagli guarda l'ORIGINALE e si calcola PRIMA di pulire**: descrive quello che è
+- ⚠️ **Il secondo si chiamava 'Dettagli' fino alla `1.20`**, e l'utente l'ha ribattezzato
+  proprio perché quella parola non diceva **di quale** file parlasse: la nuova dicitura
+  chiarisce da sé che sono le caratteristiche di **prima** della pulizia. Le note che lo
+  chiamano 'Dettagli' sono superate (l'`id` del suo elenco resta `dettagli`).
+- ⚠️ **Guarda l'ORIGINALE e si calcola PRIMA di pulire**: descrive quello che è
   arrivato, e la pulizia lo cambierebbe sotto gli occhi.
+- ⚠️ **Con più di un file in coda ripete il NOME di quello scelto**, sotto al titolo: due
+  pannelli che descrivono un file diverso da quello che si sta guardando sarebbero peggio che
+  nessun pannello, e il nome è l'unica cosa che lo àncora alla riga selezionata.
+- **La versione di SVGO sta in fondo a quel box**, dopo un filo di separatore e allineata
+  all'elenco sopra di lei (scelta dell'utente, 1.30). Prima viveva in testata, dov'era la
+  prima cosa che si leggeva pur essendo l'ultima che interessa.
 - ⚠️⚠️ **Una voce che non ha niente da dire NON compare**, e non è pigrizia: l'utente ha chiesto
   due volte *il più compatto possibile*, e un elenco di assenze è esattamente il contrario. Le
   uniche tre che compaiono sempre sono **versione**, **profilo** e **viewBox**: le prime due
@@ -215,6 +255,10 @@ vero, e due giri, **con** e **senza** SVGO.
 - ⚠️ **Un allineamento si MISURA a due larghezze**: `getBoundingClientRect()` sui due elementi e
   si confronta il bordo sinistro, sul largo e sullo stretto. A una colonna la carta si sposta, e
   un allineamento che regge solo sul largo non è un allineamento.
+- ⚠️ **Una prova che invecchia si CAMBIA, non si cancella**: quando la `1.10` ha rovesciato il
+  comportamento della coda e la `1.30` ha fuso i due tasti, le prove di prima erano sbagliate
+  ma quello che sorvegliavano serviva ancora. Cancellarle avrebbe tolto la sentinella insieme
+  all'errore.
 - ⚠️ **`document.createElement("li")` si scrive con le virgolette DOPPIE**, e non è un capriccio
   di stile: col singolo apice il controllo pre-commit dei caratteri legge `li'` e lo segnala
   come *lì* scritto con l'apostrofo. È un falso positivo suo, ma metterlo in whitelist
