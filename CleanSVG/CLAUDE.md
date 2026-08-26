@@ -125,7 +125,21 @@ azioni in alto, anteprima e informazioni sotto.
   prova niente, e il paragone giusto è con la **riga intera**.
 - ⚠️ **Senza coda le azioni prendono tutta la riga** (`.senza-coda`), invece di restare
   spaiate a destra di un buco: con un file solo l'elenco non compare, e quella metà sarebbe
-  vuota.
+  vuota. ⚠️ **Ma i due tasti vanno in RIGA, non in colonna** (scelta dell'utente, `1.50`): un
+  tasto pieno largo quanto la pagina è troppo. Le colonne sono le **stesse** di `#lavoro`, col
+  medesimo `gap`, così ognuno finisce largo quanto la carta che gli sta sotto, e l'ordine si
+  rovescia con `order` perché **con** la coda il tasto pieno deve restare sopra.
+- ⚠️⚠️ **Le due carte di sotto sono ALTE UGUALI**, e per ottenerlo si smentisce
+  l'`align-items: start` della griglia **su loro due sole**: le altre due devono continuare a
+  stare alte quanto il loro contenuto.
+  - ⚠️ **Quale delle due si allunghi DIPENDE DAL FILE**, e non si dia per scontato: con un
+    file solo si allunga l'**anteprima**, perché il pannello di destra ha molte righe; con la
+    coda piena può capitare il contrario. Per questo l'aggancio in fondo serve a **tutte e
+    due**, la riga del motore e il riquadro del verdetto: senza, uno dei due resta a
+    mezz'aria sopra un buco.
+  - ⚠️ **Il distacco minimo non può venire dall'elemento agganciato**, perché `margin-top:
+    auto` mangia qualunque valore gli si metta: lo dànno gli elementi che gli stanno sopra
+    (`#dettagli` di sotto, il telaio e la nota delle tavole nell'anteprima).
 - ⚠️⚠️ **Il tastone CRESCE fino a riempire la riga, e per farlo gli serve
   `align-self: stretch`**: la griglia allinea tutto a `start`, perché le carte non devono
   stirarsi l'una sull'altra, e senza quella riga il riquadro delle azioni resta alto quanto
@@ -231,7 +245,8 @@ il disegno non cambia, e **una promessa che nessuno verifica prima o poi mente**
 
 - ⚠️ **Il verdetto sta SOTTO l'anteprima dalla `1.40`** (scelta dell'utente): è il giudizio
   su quello che si sta guardando, e le due cose vanno viste in un colpo d'occhio solo. Prima
-  stava in cima alla colonna delle azioni, cioè lontano dall'immagine di cui parla.
+  stava in cima alla colonna delle azioni, cioè lontano dall'immagine di cui parla. Il suo
+  testo è **centrato** nel riquadro dalla `1.50`, sempre per scelta dell'utente.
 - ⚠️ **La misura della luminanza sta SOPRA**, sulla riga del titolo dell'anteprima (stessa
   scelta): là dice che cosa si sta per guardare, mentre sotto arrivava a cose viste. Lo
   stacco dal titolo è largo per richiesta esplicita, e a schermo stretto la misura va a capo
