@@ -2423,7 +2423,7 @@ blocca, come per le categorie; e la guardia è **anche** nel gestore, non solo n
   sparire un drago di cui nessuna fonte ha detto il sesso: sarebbe il filtro a decidere un
   fatto che le fonti lasciano aperto.
 - **Conseguenza dichiarata**: con una casella spenta il totale non è la differenza attesa
-  (40 femmine su 121 lasciano **81** card, non 80), perché i 6 senza genere restano. È il
+  (40 femmine su 120 lasciano **80** card, non i 74 maschi), perché i 6 senza genere restano. È il
   prezzo giusto: l'alternativa era attribuire un sesso per omissione.
 
 #### 🔒 'Solo veri nomi noti' segue le categorie accese
@@ -2551,7 +2551,7 @@ niente `tabindex`, niente cursore a manina, niente colore al passaggio.
 ## 📖 Le CITAZIONI nella card: testo Mondadori, nomi Nord
 
 Dalla `0.60`. **Una citazione per personaggio**, in un riquadro stondato in fondo alla card,
-con sotto la riga di contesto. Dalla `0.84` le portano **105 voci su 121**.
+con sotto la riga di contesto. Dalla `0.84` le portano **105 voci su 120**.
 
 ⚠️⚠️ **Il primo giro ne coprì TRENTA, e il criterio era di SCALA, non di merito**: erano le
 **posizioni 1-30** della lista, senza un buco, lavorate a lotti da dieci. La nota che diceva
@@ -2561,15 +2561,15 @@ un'altra voce), non il taglio: la prova che il taglio non fosse di merito è che
 di Morred**, che non parla mai e non compare mai in scena, la citazione ce l'aveva. Chi
 rilegge quella formulazione in un commit vecchio sappia che è stata corretta il 2026-08-25.
 
-- **Chi resta senza, e sono SEDICI**: i **dodici animali** (istruzione dell'utente: *lascia
-  perdere gli animali*), le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di
-  Ark`, `Keor`), e **`Cenerino`**.
-  - ⚠️ **`Cenerino` è l'unico escluso da un LIMITE DELLA FONTE, non da una scelta**:
-    l'edizione Mondadori **non lo nomina mai** (zero occorrenze di `Cenerino` e di
-    `Littleash`), mentre l'inglese lo attesta una volta sola (*Her brother, Littleash, used
-    to come to the city every year or two*). Senza una frase italiana non c'è metà italiana,
-    e una citazione a metà non si scrive. Chi trovasse la voce vuota non stia a cercare la
-    scelta editoriale: è un dato che manca.
+- **Chi resta senza, e sono QUINDICI**: i **dodici animali** (istruzione dell'utente: *lascia
+  perdere gli animali*) e le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di
+  Ark`, `Keor`).
+  - ⚠️ **Erano SEDICI fino alla `1.04`, e il sedicesimo era `Cenerino`**, uscito dal dataset
+    per scelta dell'utente. Vale la pena saperlo perché era l'unico escluso da un **limite
+    della fonte** e non da una scelta: l'edizione Mondadori non lo nominava mai (zero
+    occorrenze di `Cenerino` e di `Littleash`), mentre l'inglese lo attesta una volta sola
+    (*Her brother, Littleash, used to come to the city every year or two*). Chi ritrovasse
+    quel passo non ne ricavi una voce da rimettere: la voce c'è stata ed è stata tolta.
 
 - **I quattro campi**: `citazione` / `citazione_en` per il testo, `citazione_fonte` /
   `citazione_fonte_en` per il contesto. ⚠️ Esistono su **tutte** le voci, anche vuoti: un
@@ -2834,7 +2834,8 @@ consapevole di ri-adattamento sul mio sito.*
   e perché sono i **libri 1, 2 e 3** di Nord, sta nel canone.
   - ⚠️⚠️ **Col giro della `0.84` la lista si è allungata, e il modo in cui l'ha fatto vale
     più dei nomi nuovi**: cercando le candidate, **due voci non davano NESSUNA frase**
-    (`Cenerino` e `Gazzamarina`), e la causa non era che il testo non ne parlasse, ma che
+    (`Cenerino`, uscito dal dataset con la `1.04`, e `Gazzamarina`), e la causa non era che
+    il testo non ne parlasse, ma che
     Mondadori le chiama **all'inglese** (`Littleash`, `Murre`). Quindi la lista non si
     'completa' a tavolino: un nome che il sito traduce e Mondadori no si scopre **da un
     risultato vuoto**, ed è il sintomo da riconoscere. Nella `0.84` sono stati sostituiti
