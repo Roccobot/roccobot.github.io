@@ -1148,14 +1148,6 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    `margin` di segno opposto): e' lo stesso spazio ripartito diversamente fra i due
    parametri che lo compongono. */
 .ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:calc(0.4rem + 1px); padding-right:calc(0.4rem + 1px); }
-/* ⚠️ Lo stacco della riga dei CONTENUTI, e 'minimo' è la parola dell'utente (1.06). Le due
-   righe sopra dicono COME si guarda la lista (categorie, generi, veri nomi); questa dice CHE
-   COSA c'è dentro, ed è la prima del suo genere. Un filo d'aria segna il cambio di gruppo
-   senza aprire una sezione nuova, che vorrebbe un titolo e il ritmo da 1.1rem di
-   `.ctrl-section`: sarebbe un blocco intero per una casella sola.
-   ⚠️ Fra le due righe di sopra non c'è nessun margine, quindi questo 0.3rem (4,8px) è tutto
-   spazio in più e si vede: chi lo alzasse trasformerebbe lo stacco in una separazione. */
-.ctrl-frow--contenuti { margin-top:0.3rem; }
 /* ⚠️⚠️ LA RIGA DI FILTRI STA NELLA GABBIA, e il rientro interno e' quello delle righe di
    LEGENDA (0.4rem), non piu' quello della gabbia. Sono due cose diverse e servono a due
    cose diverse (istruzione dell'utente, 0.97: *le prime checkbox devono partire leggermente
@@ -3153,7 +3145,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.06</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.07</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3286,6 +3278,11 @@ function fxSelOpts(k, p){
 }
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
+  // ⚠️ `senzanome` NON è un effetto: è il primo flag di CONTENUTO (1.07), e decide se le
+  // voci col campo `senzanome` (il `Signore di Re Albi` e il `Nemico di Morred`, che per
+  // nome d'uso hanno una perifrasi) compaiono in classifica. Spento di default, come
+  // chiesto dall'utente, quindi di base quelle due non ci sono.
+  senzanome:false,
   // glow: dalla v12.76 le manopole numeriche sono PER TEMA (suffisso _d/_l) e
   // esistono anche per il lato DESTRO (prefisso r). Le chiavi restano PIATTE, coi
   // suffissi nel nome, così il Worker continua a validarne solo la forma.
@@ -3594,6 +3591,8 @@ function fxStrOk(k, p, v){
 function normSiteFlags(src){
   src = (src && typeof src === 'object') ? src : {};
   var out = { zoomBig: (typeof src.zoomBig === 'boolean') ? src.zoomBig : SITE_FLAGS_DEFAULT.zoomBig };
+  // Flag di contenuto: booleano piatto come `zoomBig`, senza varianti di piattaforma.
+  out.senzanome = (typeof src.senzanome === 'boolean') ? src.senzanome : SITE_FLAGS_DEFAULT.senzanome;
   FX_EFFECTS.forEach(function(k){
     out[k] = normFxEffect(k, src[k]);
     out[k + '_m'] = (src[k + '_m'] !== undefined)
@@ -5773,23 +5772,25 @@ function statoVeroNome() {
 // accesa comanda la regola qui sopra, altrimenti la scelta dell'utente.
 function veroNomeInVigore() { return statoVeroNome().on; }
 
-// ── 'Personaggi senza nome' (1.06, istruzione dell'utente) ──────────────────────
-// Le due voci il cui nome d'uso è una PERIFRASI e non un nome proprio: il `Signore di Re
-// Albi` e il `Nemico di Morred`. Spento di default, quindi in classifica non compaiono.
-// ⚠️⚠️ IL CRITERIO È UN CAMPO DEL DATO (`senzanome`) E NON UN ELENCO DI NOMI NEL CODICE,
-// come per ogni altra proprietà di una voce: se un domani ne entra una terza le basta il
-// campo, mentre un elenco qui dentro nessuno lo verrebbe a cercare.
-// ⚠️ Sta in memoria e non nel permalink né nel localStorage, esattamente come
-// `soloVeroNome` e per la stessa ragione: un filtro che sopravvive al ricaricamento senza
-// dirlo fa credere che il dataset sia più corto di quello che è.
-// ⚠️ Nessuna guardia 'lista vuota' come per categorie e generi, e non serve: questa casella
-// toglie due voci su 121, quindi non può svuotare niente.
-var mostraSenzaNome = false;
+// ── 'Personaggi senza nome': FLAG DI SITO, non un filtro del visitatore ─────────
+// Le due voci il cui nome d'uso è una PERIFRASI e non un nome proprio (il `Signore di Re
+// Albi` e il `Nemico di Morred`) compaiono in classifica solo se l'admin accende
+// `SITE_FLAGS.senzanome`. Spento di default, quindi di base non ci sono.
+// ⚠️⚠️ STA NEL PANNELLO DI CONTROLLO E NON NEL PANNELLO, e la distinzione è la stessa che
+// il `CLAUDE.md` del progetto porta scritta: il **Pannello** è la modale del FAB, coi filtri
+// del visitatore, aperta a tutti; il **Pannello di controllo** è l'editor admin, che salva in
+// `dati.js` e vale per tutti i visitatori. La `1.06` l'aveva messo nel primo, ed era la
+// seconda volta che quella confusione costava una versione.
+// ⚠️ Ne discende la differenza di sostanza, non solo di posto: non è una preferenza di chi
+// guarda ma una **scelta editoriale** del sito, quindi non ha senso che ognuno se la regoli.
+// ⚠️⚠️ IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
+// CODICE, come per ogni altra proprietà: se un domani ne entra una terza le basta il campo,
+// mentre un elenco qui dentro nessuno lo verrebbe a cercare.
 
 function isVisibile(p) {
   // ⚠️ Prima di tutti gli altri: è un filtro sul CONTENUTO, cioè decide se la voce esiste
   // per la lista, mentre gli altri decidono come guardarla.
-  if (!mostraSenzaNome && p.senzanome) return false;
+  if (!SITE_FLAGS.senzanome && p.senzanome) return false;
   // ⚠️ `veroNomeInVigore()` e non `soloVeroNome`: con una sola categoria accesa il valore
   // lo decide la regola (vedi `statoVeroNome`), o la lista direbbe una cosa e la casella
   // ne mostrerebbe un'altra.
@@ -7363,14 +7364,6 @@ function controlPanelHTML() {
   destra += filtroRow({ attr: ' id="ctrl-solovero"', on: vn.on, locked: vn.locked,
                         title: vnLbl, lbl: vnLbl, lblAlt: vnAlt });
   destra += '</div>';
-  // Terza riga, e apre un gruppo nuovo: i filtri sul CONTENUTO. Vedi
-  // `.ctrl-frow--contenuti` per lo stacco, e `mostraSenzaNome` per il criterio.
-  var snLbl = currentLang === 'it' ? 'Personaggi senza nome' : 'Nameless characters';
-  var snAlt = currentLang === 'it' ? 'Nameless characters' : 'Personaggi senza nome';
-  destra += '<div class="ctrl-frow ctrl-frow--contenuti">';
-  destra += filtroRow({ attr: ' id="ctrl-senzanome"', on: mostraSenzaNome,
-                        title: snLbl, lbl: snLbl, lblAlt: snAlt });
-  destra += '</div>';
   destra += '</div>';
   // Ⓘ Il filtro 'solo i personaggi di cui è noto il vero nome' aveva una sezione tutta
   // sua (`--vero`) e stava su una riga a parte sotto le categorie: dalla `0.92` è la
@@ -7626,8 +7619,6 @@ function wireControlPanel() {
   });
   var svn = panel.querySelector('#ctrl-solovero');
   if (svn) svn.addEventListener('change', function(){ soloVeroNome = svn.checked; applyFilter(); });
-  var csn = panel.querySelector('#ctrl-senzanome');
-  if (csn) csn.addEventListener('change', function(){ mostraSenzaNome = csn.checked; applyFilter(); });
   // Caselle del GENERE. ⚠️ La guardia sta QUI e non solo nel `disabled` dell'ultima
   // accesa: `disabled` è la resa, questa è la regola. Un doppio clic rapido, una
   // scorciatoia da tastiera o un ridisegno arrivato a metà gesto possono portare un
@@ -9564,7 +9555,20 @@ var SITE_FLAG_ITEMS = [
   // ⚠️ ULTIMA voce (posizione chiesta dall'utente, 1.00), e come 'Dito che scorre' e'
   // un effetto solo-mobile che sta nella tab Desktop: la tab Mobile mostra le varianti
   // `_m`, e questo ha config unica, quindi una variante desktop non governerebbe nulla.
-  { k:'jumpx', it:'Tasti \u2912\u2913', en:'Jump buttons', cfg:true, noMob:true, mobOnly:true }
+  { k:'jumpx', it:'Tasti \u2912\u2913', en:'Jump buttons', cfg:true, noMob:true, mobOnly:true },
+  // ⚠️⚠️ ULTIMA VOCE E PRIMA DI UN GRUPPO NUOVO: tutte quelle sopra governano l'ASPETTO,
+  // questa governa il CONTENUTO (1.07, istruzione dell'utente). `gap` le dà lo stacco
+  // minimo che segna il cambio di gruppo senza aprire una sezione con un titolo, che per
+  // una voce sola sarebbe sproporzionata. ⚠️ La nota di `jumpx` diceva 'ULTIMA voce': resta
+  // vera fra gli EFFETTI, che è la posizione chiesta dall'utente nella 1.00.
+  // ⚠️ `plain`: booleano piatto come `zoomBig`, senza varianti di piattaforma e senza
+  // manopole, quindi niente `cfg` e niente riga nella tab Mobile.
+  // ⚠️⚠️ L'ETICHETTA È CORTA PER FORZA, e non è la parola dell'utente accorciata a gusto:
+  // la colonna della label misura ~102px a 320px in Modalità XL, e 'Personaggi senza nome'
+  // ne misura **145,5** col font reale (contro gli 87,6 di 'Colore schede', che ci sta, e i
+  // 120,7 di 'Colore delle schede', che va a capo). 'Senza nome' ne misura 74,8 e 'Nameless'
+  // 58,9. Il nome per esteso resta quello della funzione, e vive nelle regole del progetto.
+  { k:'senzanome', it:'Senza nome', en:'Nameless', plain:true, gap:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -10826,15 +10830,16 @@ function showSiteFlagsEditor(initState){
       // interruttore che non commuta niente è peggio della sua assenza, perché
       // sembra rotto invece di dichiarare che la funzione non c'è.
       if (f.k === 'zoomBig' && !FEATURES.xlMode) return;
-      if ((f.k === 'zoomBig' || f.noMob) && tab === 'm') return; // XL e gli effetti `noMob` (FX_UNI): solo nella tab Desktop
+      if ((f.k === 'zoomBig' || f.plain || f.noMob) && tab === 'm') return; // XL, i flag piatti e gli effetti `noMob` (FX_UNI): solo nella tab Desktop
       // ⚠️ Senza tab il suffisso è PER-RIGA e vale la variante ATTIVA (v14.23): i
       // due criteri (larghezza per cinque effetti, puntatore per quelli in FX_PTR)
       // possono dare risposte diverse sullo stesso dispositivo, e un suffisso unico
       // ne avrebbe sbagliata almeno una. Con le tab decide la tab, come sempre.
       var sfx = isMob ? fxActiveSfx(f.k) : (tab === 'm' ? '_m' : '');
-      var vk = (f.k === 'zoomBig') ? f.k : f.k + sfx;
+      var vk = (f.k === 'zoomBig' || f.plain) ? f.k : f.k + sfx;
       var row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:center;margin:0 0 0.62rem;';
+      row.style.cssText = 'display:grid;grid-template-columns:auto 1fr auto;gap:0.55rem;align-items:center;margin:'
+        + (f.gap ? '0.5rem' : '0') + ' 0 0.62rem;';
       var cb = document.createElement('input'); cb.type = 'checkbox';
       cb.checked = (SITE_FLAGS[vk] && typeof SITE_FLAGS[vk] === 'object') ? SITE_FLAGS[vk].on !== false : !!SITE_FLAGS[vk];
       cb.id = 'sf-' + vk;
@@ -10902,7 +10907,7 @@ function showSiteFlagsEditor(initState){
   function syncVarWarn(){
     var tutte = [], fuori = [];
     if (!isMob) SITE_FLAG_ITEMS.forEach(function(f){
-      if (f.k === 'zoomBig' || f.noMob) return;
+      if (f.k === 'zoomBig' || f.plain || f.noMob) return;
       tutte.push(f);
       if ((tab === 'm' ? '_m' : '') !== fxActiveSfx(f.k)) fuori.push(it ? f.it : f.en);
     });
