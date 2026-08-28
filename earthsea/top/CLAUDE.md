@@ -2046,32 +2046,42 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
   `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
   centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
 
-## 🙈 Il filtro 'Personaggi senza nome', e perché apre un gruppo suo
+## 🙈 'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore
 
-Interruttore nel Pannello dalla `1.06` (istruzione dell'utente): decide se il **`Signore di
-Re Albi`** e il **`Nemico di Morred`** compaiono in classifica. Nasce **spento**, quindi di
-base quelle due non ci sono.
+Interruttore nel **Pannello di controllo** (l'editor admin) dalla `1.07`, istruzione
+dell'utente: decide se il **`Signore di Re Albi`** e il **`Nemico di Morred`** compaiono in
+classifica. Nasce **spento**, quindi di base quelle due non ci sono, per tutti i visitatori.
 
-- ⚠️⚠️ **È IL PRIMO FILTRO SUL CONTENUTO, e per questo ha una riga sua staccata**: le due
-  righe sopra dicono **come** si guarda la lista (categorie, generi, veri nomi), questa dice
-  **che cosa** c'è dentro. Lo stacco è di **0.3rem**, misurato **4,6px** sul DOM reale, ed è
-  la parola dell'utente: *uno spazio minimo*. Non una sezione nuova, che vorrebbe un titolo e
-  il ritmo da 1.1rem e sarebbe un blocco intero per una casella sola.
-- ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome`) E NON UN ELENCO DI NOMI NEL CODICE**,
-  come per ogni altra proprietà di una voce: se un domani ne entra una terza le basta il
-  campo, mentre un elenco dentro `index.html` nessuno lo verrebbe a cercare. Le due voci sono
-  quelle il cui **nome d'uso è una perifrasi** e non un nome proprio.
-- **Stato in memoria, non nel permalink né nel `localStorage`**, esattamente come il filtro
-  del vero nome e per la stessa ragione: un filtro che sopravvive al ricaricamento senza dirlo
-  fa credere che il dataset sia più corto di quello che è.
-- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: all'apertura la lista ne mostra
-  **119 su 121**, e non è un dato perso. Misurato sul DOM reale: 119 a interruttore spento,
-  121 acceso, e di nuovo 119 rispegnendolo.
+- ⚠️⚠️ **LA `1.06` L'AVEVA MESSO NEL PANNELLO, ED ERA LA SECONDA VOLTA**: la richiesta diceva
+  *Pannello di controllo*, e 'Pannello' e 'Pannello di controllo' sono **due cose** (vedi la
+  nota nella sezione dell'origine). Il primo è la modale del FAB, coi filtri del visitatore;
+  il secondo è l'editor admin, che salva in `dati.js` e vale per tutti. ⚠️ **Non è una
+  differenza di posto ma di sostanza**: qui non è una preferenza di chi guarda, è una
+  **scelta editoriale del sito**, quindi non ha senso che ognuno se la regoli.
+- ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
+  CODICE**, come per ogni altra proprietà: se un domani ne entra una terza le basta il campo.
+  Le due sono quelle il cui **nome d'uso è una perifrasi** e non un nome proprio.
+- **Come è fatto il flag**: `senzanome` in `SITE_FLAGS`, booleano **piatto** come `zoomBig`
+  (niente varianti di piattaforma, niente manopole). Nel codice i flag piatti si riconoscono
+  da `plain:true` nella voce di `SITE_FLAG_ITEMS`, che li tiene fuori dalla tab Mobile e
+  dall'avviso delle varianti.
+- ⚠️ **È l'ULTIMA voce e apre un gruppo nuovo**: tutte le altre governano l'**aspetto**,
+  questa il **contenuto**. Lo stacco è `gap:true` (0.5rem di margine sopra la riga), che è lo
+  'spazio minimo' chiesto: una sezione con un titolo, per una voce sola, sarebbe sproporzionata.
+  ⚠️ La nota di `jumpx` che dice 'ULTIMA voce' resta vera **fra gli effetti**.
+- ⚠️⚠️ **L'ETICHETTA È 'Senza nome' / 'Nameless' E NON IL NOME PER ESTESO, e non è un
+  accorciamento a gusto**: la colonna della label misura ~102px a 320px in Modalità XL, e
+  'Personaggi senza nome' ne misura **145,5** col font reale, contro gli **87,6** di 'Colore
+  schede' (ci sta) e i **120,7** di 'Colore delle schede' (va a capo). 'Senza nome' misura
+  **74,8** e 'Nameless' **58,9**. Il nome per esteso è quello della **funzione** e vive qui.
+- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: a flag spento la lista ne mostra
+  **119 su 121**, e non è un dato perso. Misurato sul DOM reale: 119 spento, 121 acceso.
   - ⚠️ **Contando le card sul DOM si prenda `#rank-list .rank-item`**: la legenda del Pannello
-    è una **card finta** con la stessa classe (vedi la sezione apposita), quindi un conteggio
-    su tutto il documento dà uno in più e sembra un fantasma nei dati.
-- **Nessuna guardia 'lista vuota'** come per categorie e generi, e non serve: toglie due voci
-  su 121, quindi non può svuotare niente.
+    è una **card finta** con la stessa classe, quindi un conteggio su tutto il documento dà
+    uno in più e sembra un fantasma nei dati.
+- **Il Worker non va toccato**: `validSiteFlags` controlla la **forma** e non un elenco di
+  chiavi (booleani ammessi, fino a 40 chiavi; con questa siamo a 18), quindi un flag nuovo
+  passa senza modifiche al proxy.
 
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 
