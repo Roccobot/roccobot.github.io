@@ -844,7 +844,7 @@ html[data-theme="light"] .cc-numenorean{--ccrgb:160,92,112}
   background:rgba(255,255,255,0.03); pointer-events:none;
 }
 
-/* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
+/* ── PANNELLO (filtri + legenda + opzioni) ── */
 #ctrl-fab svg { height:1.9rem; width:auto; fill:currentColor; stroke:none; }
 /* FAB di controllo: a sinistra su desktop, a destra su mobile. Icona oro in scuro, teal+bianco in chiaro */
 #ctrl-fab { position:fixed; left:2rem; bottom:2rem; z-index:160; }
@@ -2692,7 +2692,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.14</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.15</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4453,8 +4453,8 @@ function ccAaText(fg, bg, target) {
   var css = [
     '.rank-strip{background:rgba(var(--ccrgb,111,116,130),0.85)!important}',
     // NB: il colore del NUMERO di posizione stava qui fino alla v12.54 (miscela
-    // con var(--name) via color-mix). Dalla v12.63 è un effetto REGOLABILE del
-    // Pannello di controllo ('Colore dei numeri') e vive in injectFxRules, che si
+    // con var(--name) via color-mix). Dalla v12.63 è un effetto REGOLABILE della
+    // Console ('Colore dei numeri') e vive in injectFxRules, che si
     // ri-inietta a ogni modifica delle manopole; qui resterebbe congelato.
     '.rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.10)!important}',
     '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
@@ -6216,7 +6216,7 @@ function openNoteViewer(note) {
 
 let isFirstRender = true;
 
-// ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
+// ════════ PANNELLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
   it: { ainu:'Ainur', arcane:'Esseri arcani/primordiali', elf:'Elfi e Mezzelfi', adan:'Edain e Númenóreani', man:'Uomini', dwarf:'Nani', hobbit:'Hobbit', orc:'Orchi e Troll', animal:'Animali' },
   en: { ainu:'Ainur', arcane:'Arcane/primordial beings', elf:'Elves & Half-elves', adan:'Edain & Númenóreans', man:'Men', dwarf:'Dwarves', hobbit:'Hobbit', orc:'Orcs & Trolls', animal:'Animals' }
@@ -7122,7 +7122,7 @@ function buildControlPanel() {
   // (vedi toggleControlPanel), senza serve un Tab per ogni card per arrivarci.
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-modal', 'true');
-  panel.setAttribute('aria-label', currentLang === 'it' ? 'Pannello di controllo' : 'Control panel');
+  panel.setAttribute('aria-label', currentLang === 'it' ? 'Filtri e legenda' : 'Filters and legend');
   panel.setAttribute('tabindex', '-1');
   var fab = document.createElement('button');
   fab.id = 'ctrl-fab'; fab.className = 'fab-btn ctrl-fab';
@@ -8361,8 +8361,8 @@ function openAdminGate() {
 // Sostituisce l'ingresso diretto nell'editor: si sceglie tra 'Modifica
 // personaggi' (editor esistente) e 'Modifica colori' (pannello colori, Fase 1 =
 // Modifica mirata del singolo personaggio; funzioni di famiglia in Fase 2).
-// ── Pannello di controllo dell'aspetto (admin, dalla v12.24; in UI 'Pannello
-// di controllo' dalla v12.42, prima 'Feature flag') ──────────────────────────
+// ── Console: l'aspetto del sito (admin, dalla v12.24; in UI 'Console' dal
+// 2026-08-28, prima 'Pannello di controllo' e all'origine 'Feature flag') ────
 // Controllo dell'ASPETTO del sito per TUTTI i visitatori: modalità ingrandita +
 // i 5 effetti grafici. Salva `siteFlags` in dati.js via il Worker, SENZA bumpare
 // la versione (vedi saveSiteFlagsToRepo).
@@ -8817,7 +8817,7 @@ function fxGuardSlider(sl, onDbl){
 // Soglia = larghezza colonna + ~660px di pagina, in px di LAYOUT. ⚠️ MISURATO:
 // `clientWidth` NON si riduce sotto `zoom` (resta la larghezza della finestra),
 // quindi il fattore XL va diviso a mano: è già esposto in --zoomf (1 o 1.3).
-// La colonna ha larghezza PER-EDITOR (v13.17): Pannello di controllo 400,
+// La colonna ha larghezza PER-EDITOR (v13.17): Console 400,
 // editor colori 480, micro-aggiustamenti 560 (i loro contenuti sono più larghi).
 function dockAvailable(colw){
   var z = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zoomf')) || 1;
@@ -9119,7 +9119,7 @@ function showFxConfigEditor(key, sfx, onDone){
   var vk = key + sfx;                                  // chiave della variante
   var V = function(k){ return SITE_FLAGS[k + sfx]; };  // config di variante
   var vOn = function(k){ return V(k).on !== false; };  // 'acceso' nella variante
-  // Catena degli hook lingua: questa modale sta SOPRA il pannello di controllo,
+  // Catena degli hook lingua: questa modale sta SOPRA la Console,
   // che ha già registrato il suo langRefresh. Lo si conserva (prevL) e lo si
   // RIPRISTINA alla chiusura: azzerarlo lascerebbe il pannello sotto senza L.
   var prevL = langRefresh;
@@ -9441,8 +9441,8 @@ function showFxConfigEditor(key, sfx, onDone){
   foot.appendChild(rst); foot.appendChild(def); foot.appendChild(ok); box.appendChild(foot);
   var hint = document.createElement('p');
   hint.style.cssText = 'font-size:0.72rem;opacity:0.6;margin:0.7rem 0 0;';
-  hint.textContent = it ? 'Per rendere le modifiche definitive, salva dal Pannello di controllo.'
-                        : 'To make changes permanent, save from the Control panel.';
+  hint.textContent = it ? 'Per rendere le modifiche definitive, salva dalla Console.'
+                        : 'To make changes permanent, save from the Console.';
   box.appendChild(hint);
   // L a modale aperta: prima si ricostruisce il PANNELLO sotto nella nuova lingua
   // (prevL, il suo hook), poi questa sotto-modale sopra di lui. Senza il passo
@@ -9526,9 +9526,11 @@ function showSiteFlagsEditor(initState){
   overlay.addEventListener('click', function(e){ if (e.target === overlay) annulla(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = annulla; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
-  // 'Pannello di controllo' dalla v12.42 (rinominato dall'utente; era 'Feature
-  // flag'). Da non confondere col Pannello del FAB: questo è admin-only.
-  t.textContent = it ? 'Pannello di controllo' : 'Control panel'; box.appendChild(t);
+  // 'Console' dal 2026-08-28 (rinominata dall'utente; era 'Pannello di controllo'
+  // dalla v12.42, prima 'Feature flag'). Il nome vecchio conteneva quello del Pannello
+  // del FAB, che è un'altra cosa ed è dei visitatori: ogni abbreviazione li faceva
+  // collidere, ed è costata due volte. Uguale nelle due lingue, quindi niente ternario.
+  t.textContent = 'Console'; box.appendChild(t);
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 1rem;';
   sub.textContent = it ? 'Le impostazioni valgono per tutti i visitatori.' : 'Settings apply to every visitor.';
   box.appendChild(sub);
@@ -9712,7 +9714,7 @@ function showSiteFlagsEditor(initState){
   save.style.cssText = 'width:auto;flex:1;margin-top:0;'; save.textContent = it ? 'Salva' : 'Save';
   save.onclick = function(){
     save.disabled = true; save.style.opacity = '0.4';
-    saveSiteFlagsToRepo(it ? 'aspetto: pannello di controllo' : 'appearance: control panel').then(function(res){
+    saveSiteFlagsToRepo(it ? 'aspetto: console' : 'appearance: console').then(function(res){
       if (res.ok){ SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS)); showToast(it ? '✓ Salvato' : '✓ Saved', false); close(); }
       else showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true);
     }).finally(function(){ save.disabled = false; save.style.opacity = ''; });
@@ -9754,10 +9756,10 @@ function showAdminChoiceModal() {
   // riga2 icone badge.
   b4.innerHTML = it ? 'Micro-aggiustamenti<br>icone badge' : 'Badge-icon<br>micro-tuning';
   b4.onclick = function(){ close(); showBadgeAdjustEditor(); };
-  // Feature flag (dalla v12.24): pannello di controllo dell'ASPETTO del sito
-  // (effetti grafici + modalità ingrandita) valido per tutti i visitatori.
+  // Console (dalla v12.24, allora 'Feature flag'): governa l'ASPETTO del sito
+  // (effetti grafici + modalità ingrandita) per tutti i visitatori.
   var b5 = document.createElement('button'); b5.className = 'fab-modal-confirm';
-  b5.textContent = it ? 'Pannello di controllo' : 'Control panel';
+  b5.textContent = 'Console';
   b5.onclick = function(){ close(); showSiteFlagsEditor(); };
   box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3); box.appendChild(b4); box.appendChild(b5);
 }

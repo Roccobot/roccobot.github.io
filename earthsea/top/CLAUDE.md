@@ -1791,7 +1791,7 @@ campo del dataset e per lo Schedario che lo alimenta.
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
   di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
 
-### 📍 Segno o parola nella colonna origine, e lo decide il Pannello di CONTROLLO
+### 📍 Segno o parola nella colonna origine, e lo decide la CONSOLE
 
 Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) oppure la
 **parola** 'origine'/'origin', e una riga del Pannello commuta le due rese senza ricaricare.
@@ -1804,16 +1804,22 @@ Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) 
   fra origine per nascita e residenza, che è la dualità di § 'Origine: significa NASCITA, e
   la residenza è solo un ripiego'.
 - ⚠️⚠️ **DALLA `0.69` LE DUE SCELTE SONO FLAG DI SITO** (`orig` in `SITE_FLAGS`), governate
-  dal **Pannello di controllo** dell'admin e valide per tutti i visitatori, con una terza
+  dalla **Console** dell'admin e valide per tutti i visitatori, con una terza
   voce (`on`) che spegne del tutto la colonna. Nella `0.66`-`0.68` stavano nel Pannello dei
   **filtri** come preferenza del visitatore nel `localStorage`: era la lettura sbagliata di
   *mettimi nel Pannello di Controllo un'opzione*, e l'utente l'ha corretta (*devono stare nel
   Pannello di controllo, come avevo chiesto: sono riservati a chi ha le credenziali da
   admin*).
-  - ⚠️ **'Pannello' e 'Pannello di controllo' sono DUE COSE**, ed è la lezione da tenere: il
-    primo è la modale del FAB, coi filtri e la legenda, aperta a tutti; il secondo è l'editor
-    admin dell'aspetto, che salva in `dati.js` e dichiara *le impostazioni valgono per tutti
-    i visitatori*. Chi legge una richiesta che nomina il secondo non la applichi al primo.
+  - ⚠️ **Sono DUE COSE, e dal 2026-08-28 portano due nomi che non si somigliano**: il
+    **Pannello** è la modale del FAB, coi filtri e la legenda, aperta a tutti; la **Console**
+    è l'editor admin dell'aspetto, che salva in `dati.js` e dichiara *le impostazioni valgono
+    per tutti i visitatori*. Chi legge una richiesta che nomina la seconda non la applichi al
+    primo. ⚠️⚠️ **Il nome vecchio della Console CONTENEVA quello del Pannello**, quindi ogni
+    abbreviazione li faceva collidere: questa nota da sola non è bastata, il fraintendimento
+    è capitato **due volte** (l'origine nella `0.66`, i senza nome nella `1.06`), ed è per
+    questo che si è cambiato il nome invece di ripetere l'avviso.
+  - ⚠️ **Le citazioni dell'utente qui sopra restano alla lettera**: dicono 'Pannello di
+    controllo' perché la Console si chiamava così fino a quel giorno.
   - Le chiavi `earthsea-orig-pin` e `earthsea-orig-slot` restano nel `localStorage` di chi le
     ha toccate e non fanno danno: nessuno le legge più.
 - ⚠️ **La riga del Pannello porta una FRASE, e la classe che lo dice è `.ctrl-row--wrap`**:
@@ -1863,7 +1869,7 @@ riquadro **con le impostazioni già settate**, senza toccarle.
 - ⚠️ **Anche la chiusura senza salvare deve ridisegnare** (voce qui sotto): senza, il ripristino
   tornerebbe vero nei flag ma non in pagina, che è lo stesso difetto rovesciato.
 
-⚠️⚠️ **USCIRE DAL PANNELLO DI CONTROLLO SENZA SALVARE = ANNULLA, dalla `1.02`** (istruzione
+⚠️⚠️ **USCIRE DALLA CONSOLE SENZA SALVARE = ANNULLA, dalla `1.02`** (istruzione
 dell'utente, 2026-08-26: *la chiusura con la × deve equivalere a un clic su Annulla, non deve
 salvare alcunché, nemmeno in localStorage*). Le tre vie d'uscita senza salvataggio, cioè la **×**,
 il **clic sul velo** e **`Esc`** (che passa dalla ×), chiamano la stessa funzione del tasto
@@ -1875,7 +1881,7 @@ Annulla, ridisegno dell'origine compreso.
 - ⚠️ **La funzione NON si sposta dentro `close`**, e non è una semplificazione mancata: da `close`
   passano anche i rebuild **tecnici** (cambio di telaio al resize, tasto `L`), dove le regolazioni
   non salvate devono **sopravvivere**.
-- **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dal Pannello di controllo non
+- **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dalla Console non
   parte nessuna scrittura, e il banco confronta l'intero `localStorage` prima e dopo. Le chiavi
   `earthsea-` sono scritte da altro (lingua, bozza dell'ordine, preferenza di zoom).
 - **Vale identico su 'I Grandi di Arda'** dalla `15.14`, meno il ridisegno, che là non serve
@@ -1928,7 +1934,7 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
     dell'utente): la card torna a due colonne (`.rank-item.has-orig` c'è solo dove serve) e
     il resto usa lo spazio. Un'etichetta vuota col divisorio sarebbe il difetto opposto.
   - ✅ **Parola o segno lo sceglie il VISITATORE, dalla `0.62`**: vedi § 'Segno o parola
-    nella colonna origine, e lo decide il Pannello di CONTROLLO'.
+    nella colonna origine, e lo decide la CONSOLE'.
 - Ⓘ **In `arda/top/dati.js` `paese` c'è ancora**, `gb` su 360 voci: toglierlo là è una modifica
   al flusso dati di 'I Grandi di Arda', che è fra i casi **pesanti** (conferma esplicita), e
   nessuno l'ha chiesta.
@@ -2048,14 +2054,16 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
 
 ## 🙈 'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore
 
-Interruttore nel **Pannello di controllo** (l'editor admin) dalla `1.07`, istruzione
+Interruttore nella **Console** (l'editor admin) dalla `1.07`, istruzione
 dell'utente: decide se il **`Signore di Re Albi`** e il **`Nemico di Morred`** compaiono in
 classifica. Nasce **spento**, quindi di base quelle due non ci sono, per tutti i visitatori.
 
 - ⚠️⚠️ **LA `1.06` L'AVEVA MESSO NEL PANNELLO, ED ERA LA SECONDA VOLTA**: la richiesta diceva
-  *Pannello di controllo*, e 'Pannello' e 'Pannello di controllo' sono **due cose** (vedi la
-  nota nella sezione dell'origine). Il primo è la modale del FAB, coi filtri del visitatore;
-  il secondo è l'editor admin, che salva in `dati.js` e vale per tutti. ⚠️ **Non è una
+  *Pannello di controllo*, che allora era il nome della **Console** e conteneva quello del
+  **Pannello**, cioè di un'altra cosa (vedi la nota nella sezione dell'origine). Il Pannello è
+  la modale del FAB, coi filtri del visitatore; la Console è l'editor admin, che salva in
+  `dati.js` e vale per tutti. ⚠️ È da questo secondo fraintendimento che nasce il rename del
+  2026-08-28. ⚠️ **Non è una
   differenza di posto ma di sostanza**: qui non è una preferenza di chi guarda, è una
   **scelta editoriale del sito**, quindi non ha senso che ognuno se la regoli.
 - ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
@@ -2271,7 +2279,7 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   risultavano dure. Chi cambia i colori delle card **non venga a cambiare anche questi** per
   coerenza.
 
-#### 🎛️ Decorazione e scostamento dei tasti nel Pannello di controllo
+#### 🎛️ Decorazione e scostamento dei tasti nella Console
 
 Richiesta dell'utente, `1.00`: la **decorazione** diventa spegnibile, e lo **scostamento dei
 tasti di salto** diventa regolabile invece che deciso a misura (*così lo regolo io invece di
@@ -2963,7 +2971,7 @@ corrette nella `0.67`.
     della `0.71`: la riserva orizzontale del nome si toglie dove non costa un salto verticale
     (vedi la sezione qui sotto), quella verticale non si tocca mai.
   - ⚠️⚠️ **Su un COMPONENTE di UI vale l'anti-jitter pieno, su tutti e due gli assi**:
-    Pannello, Pannello di controllo, modali, editor admin. Là non c'è nessun compromesso da
+    Pannello, Console, modali, editor admin. Là non c'è nessun compromesso da
     fare, e un elemento che si sposta di lato mentre lo si sta usando è un difetto quanto uno
     che salta in su.
   - ⚠️ La nota esiste perché 'anti-jitter' letto senza distinzioni porta a rimettere la
