@@ -2046,6 +2046,33 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
   `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
   centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
 
+## 🙈 Il filtro 'Personaggi senza nome', e perché apre un gruppo suo
+
+Interruttore nel Pannello dalla `1.06` (istruzione dell'utente): decide se il **`Signore di
+Re Albi`** e il **`Nemico di Morred`** compaiono in classifica. Nasce **spento**, quindi di
+base quelle due non ci sono.
+
+- ⚠️⚠️ **È IL PRIMO FILTRO SUL CONTENUTO, e per questo ha una riga sua staccata**: le due
+  righe sopra dicono **come** si guarda la lista (categorie, generi, veri nomi), questa dice
+  **che cosa** c'è dentro. Lo stacco è di **0.3rem**, misurato **4,6px** sul DOM reale, ed è
+  la parola dell'utente: *uno spazio minimo*. Non una sezione nuova, che vorrebbe un titolo e
+  il ritmo da 1.1rem e sarebbe un blocco intero per una casella sola.
+- ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome`) E NON UN ELENCO DI NOMI NEL CODICE**,
+  come per ogni altra proprietà di una voce: se un domani ne entra una terza le basta il
+  campo, mentre un elenco dentro `index.html` nessuno lo verrebbe a cercare. Le due voci sono
+  quelle il cui **nome d'uso è una perifrasi** e non un nome proprio.
+- **Stato in memoria, non nel permalink né nel `localStorage`**, esattamente come il filtro
+  del vero nome e per la stessa ragione: un filtro che sopravvive al ricaricamento senza dirlo
+  fa credere che il dataset sia più corto di quello che è.
+- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: all'apertura la lista ne mostra
+  **119 su 121**, e non è un dato perso. Misurato sul DOM reale: 119 a interruttore spento,
+  121 acceso, e di nuovo 119 rispegnendolo.
+  - ⚠️ **Contando le card sul DOM si prenda `#rank-list .rank-item`**: la legenda del Pannello
+    è una **card finta** con la stessa classe (vedi la sezione apposita), quindi un conteggio
+    su tutto il documento dà uno in più e sembra un fantasma nei dati.
+- **Nessuna guardia 'lista vuota'** come per categorie e generi, e non serve: toglie due voci
+  su 121, quindi non può svuotare niente.
+
 ## 🔎 Il filtro 'solo chi ha un vero nome noto'
 
 Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
