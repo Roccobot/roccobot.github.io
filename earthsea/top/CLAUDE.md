@@ -12,8 +12,9 @@
 
 Dal 2026-08-23 (`0.52`) il dataset porta le **100 schede** dello Schedario compilate
 dall'utente (80 voci nuove, 20 aggiornate), sopra le voci già presenti: **120 voci** in
-tutto. Ogni scheda è passata da una **verifica col grep sugli epub** (un agente per lotto
-di dieci), che ha stabilito le metà inglesi e segnalato le divergenze. Nessuna descrizione,
+tutto, **121 dalla `1.05`** con l'ingresso di `Elassen`. Ogni scheda è passata da una
+**verifica col grep sugli epub** (un agente per lotto di dieci), che ha stabilito le metà
+inglesi e segnalato le divergenze. Nessuna descrizione,
 e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
 
 - **L'ordine è quello in cui le voci sono entrate**, non una classifica: le voci nuove
@@ -2551,7 +2552,8 @@ niente `tabindex`, niente cursore a manina, niente colore al passaggio.
 ## 📖 Le CITAZIONI nella card: testo Mondadori, nomi Nord
 
 Dalla `0.60`. **Una citazione per personaggio**, in un riquadro stondato in fondo alla card,
-con sotto la riga di contesto. Dalla `0.84` le portano **105 voci su 120**.
+con sotto la riga di contesto. Dalla `0.84` le portano **105 voci su 120**, e **106 su 121**
+dalla `1.05`, perché `Elassen` è entrato con la sua.
 
 ⚠️⚠️ **Il primo giro ne coprì TRENTA, e il criterio era di SCALA, non di merito**: erano le
 **posizioni 1-30** della lista, senza un buco, lavorate a lotti da dieci. La nota che diceva
