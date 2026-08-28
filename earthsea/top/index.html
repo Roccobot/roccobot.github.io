@@ -1041,7 +1041,7 @@ html[data-theme="light"] .cc-man{--ccrgb:34,68,156}
 html[data-theme="light"] .cc-woman{--ccrgb:12,117,126}
 html[data-theme="light"] .cc-dragon{--ccrgb:168,70,47}
 html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
-/* ── PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ── */
+/* ── PANNELLO (filtri + legenda + opzioni) ── */
 /* Il logo del FAB porta margini PROPRI dentro il suo canvas, e l'altezza dell'svg
    nasce da lì: si vuole che la parte SIGNIFICATIVA del disegno renda 1.9rem, cioè
    l'ingombro che il Pannello prevedeva per il glifo, senza ritagliare il canvas né
@@ -1523,7 +1523,7 @@ html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(18,58,53,0.075); --deco-
    -0,14 x H_box / (H_box - H_logo), che fa -43,2% sul desktop e -45,4% sul mobile: il valore
    unico ne dista meno di un pixel. Chi ritocca la geometria della decorazione rifaccia
    questo conto, o il logo si sposta senza che nulla lo segnali. */
-/* ⚠️ La decorazione e' governata dal Pannello di CONTROLLO (1.00), cioe' vale per tutti
+/* ⚠️ La decorazione è governata dalla CONSOLE (1.00), cioè vale per tutti
    i visitatori: la classe `fx-deco` la accende. ⚠️ Il verso e' 'spenta di base, accesa
    dalla classe' e non il contrario, come per ogni altro effetto: cosi' un flag che non
    arriva (dati vecchi, JS a meta') lascia il Pannello pulito invece di mostrare una
@@ -2689,7 +2689,7 @@ html.fx-jumpx-live .jump-fabs { opacity:1 !important; z-index:230; }
      ⚠️ `env(safe-area-inset-right)` non è ornamentale: in orizzontale, sui telefoni con
      notch, senza di lui le freccine finirebbero sotto la tacca. */
   /* ⚠️⚠️ Qui i tasti stanno A FILO del bordo, e lo scostamento NON e' scritto in questa
-     regola: dalla 1.00 lo governa la manopola del Pannello di controllo (`jumpx`), che lo
+     regola: dalla 1.00 lo governa la manopola della Console (`jumpx`), che lo
      inietta a runtime. ⚠️ Il valore statico e' quindi lo stato **spento**, ed e' voluto: se
      fosse il valore di default, spegnere la manopola non riporterebbe i tasti a filo, e la
      nota della manopola ('spento, i tasti tornano a filo del bordo') direbbe il falso.
@@ -3145,7 +3145,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.07</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.08</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3328,7 +3328,7 @@ var SITE_FLAGS_DEFAULT = {
   // sempre e un eventuale `area` residuo nei dati salvati è ignorato.
   pat:{ on:false, mot:'gorgo', c_d:'#ffffff', op_d:0.055,
         c_l:'#000000', op_l:0.05, sc:1, fade:120 },
-  // ⚠️⚠️ ORIGINE: è un effetto del Pannello di controllo e NON una preferenza del
+  // ⚠️⚠️ ORIGINE: è un effetto della Console e NON una preferenza del
   // visitatore, ed è l'utente ad averlo corretto (2026-08-24: *devono stare nel Pannello
   // di controllo, come avevo chiesto*). Nella 0.66-0.68 le due righe stavano nel Pannello
   // dei filtri, col valore nel `localStorage`: era la lettura sbagliata della richiesta,
@@ -3339,7 +3339,7 @@ var SITE_FLAGS_DEFAULT = {
   orig:{ on:true, pin:true, slot:false },
   // ⚠️ Il 'dito che scorre' della bottom-sheet: SPENTO dalla 0.69 (istruzione
   // dell'utente: *ci sta tutto fin da subito, perciò spegni l'animazione*), e resta
-  // riaccendibile dal Pannello di controllo, che è la seconda metà della richiesta.
+  // riaccendibile dalla Console, che è la seconda metà della richiesta.
   // Non è stato tolto perché il giorno in cui il Pannello mobile tornerà più lungo del
   // viewport servirà di nuovo, e la sua regia sa già misurare se c'è da scorrere.
   hint:{ on:false },
@@ -5160,8 +5160,8 @@ function ccAaText(fg, bg, target) {
   var css = [
     '.rank-strip{background:rgba(var(--ccrgb,111,116,130),0.85)!important}',
     // NB: il colore del NUMERO di posizione stava qui fino alla v12.54 (miscela
-    // con var(--name) via color-mix). Dalla v12.63 è un effetto REGOLABILE del
-    // Pannello di controllo ('Colore dei numeri') e vive in injectFxRules, che si
+    // con var(--name) via color-mix). Dalla v12.63 è un effetto REGOLABILE della
+    // Console ('Colore dei numeri') e vive in injectFxRules, che si
     // ri-inietta a ogni modifica delle manopole; qui resterebbe congelato.
     '.rank-item[class*="cc-"]{background:rgba(var(--ccrgb,111,116,130),0.10)!important}',
     '.rank-item[class*="cc-"]:hover,.rank-item[class*="cc-"]:focus-within{background:rgba(var(--ccrgb,111,116,130),0.18)!important}',
@@ -5776,11 +5776,12 @@ function veroNomeInVigore() { return statoVeroNome().on; }
 // Le due voci il cui nome d'uso è una PERIFRASI e non un nome proprio (il `Signore di Re
 // Albi` e il `Nemico di Morred`) compaiono in classifica solo se l'admin accende
 // `SITE_FLAGS.senzanome`. Spento di default, quindi di base non ci sono.
-// ⚠️⚠️ STA NEL PANNELLO DI CONTROLLO E NON NEL PANNELLO, e la distinzione è la stessa che
-// il `CLAUDE.md` del progetto porta scritta: il **Pannello** è la modale del FAB, coi filtri
-// del visitatore, aperta a tutti; il **Pannello di controllo** è l'editor admin, che salva in
-// `dati.js` e vale per tutti i visitatori. La `1.06` l'aveva messo nel primo, ed era la
-// seconda volta che quella confusione costava una versione.
+// ⚠️⚠️ STA NELLA CONSOLE E NON NEL PANNELLO, e sono due cose: il **Pannello** è la
+// modale del FAB, coi filtri del visitatore, aperta a tutti; la **Console** è l'editor admin,
+// che salva in `dati.js` e vale per tutti i visitatori. La `1.06` l'aveva messo nel primo, ed
+// era la seconda volta che quella confusione costava una versione.
+// ⚠️ Dal 2026-08-28 l'editor si chiama **Console** proprio per questo: 'Pannello di
+// controllo' conteneva l'altro nome, quindi ogni abbreviazione li faceva collidere.
 // ⚠️ Ne discende la differenza di sostanza, non solo di posto: non è una preferenza di chi
 // guarda ma una **scelta editoriale** del sito, quindi non ha senso che ognuno se la regoli.
 // ⚠️⚠️ IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
@@ -5859,13 +5860,15 @@ function pruneBadgeFilter() {
 
 // ── Origine: la colonna a destra della card ─────────────────────────────────────
 // ⚠️⚠️ LE DUE SCELTE VIVONO NEI FLAG DI SITO (`orig` in `SITE_FLAGS`), governate dal
-// **Pannello di controllo** dell'admin, e valgono per TUTTI i visitatori. Sono la
+// **Console** dell'admin, e valgono per TUTTI i visitatori. Sono la
 // parola contro il segno di luogo (`pin`) e lo spazio riservato dove il luogo manca
 // (`slot`); la riga stessa si può spegnere (`on`) e allora la colonna non c'è.
 // ⚠️ Nella 0.66-0.68 stavano nel Pannello dei FILTRI, come preferenza del visitatore
 // nel `localStorage`: era la lettura sbagliata di *mettimi nel Pannello di Controllo
 // un'opzione*, e l'utente l'ha corretta (2026-08-24: *devono stare nel Pannello di
 // controllo, come avevo chiesto: sono riservati a chi ha le credenziali da admin*).
+// ⚠️ Le sue parole di allora dicono 'Pannello di controllo' perché la Console si
+// chiamava così fino al 2026-08-28: le citazioni restano alla lettera, il nome no.
 // Le due chiavi `earthsea-orig-pin` e `earthsea-orig-slot` non si usano più: restano
 // nel `localStorage` di chi le ha toccate e non fanno danno, perché nessuno le legge.
 // ⚠️ Il costo di `slot`, da conoscere prima di accenderlo: il blocco della citazione
@@ -6072,7 +6075,7 @@ function citazHtml(p){
 function origHtml(p){
   var c = origCfg();
   // ⚠️ `on` spento = la colonna non esiste per nessuno, nemmeno dove il luogo c'è: è
-  // l'interruttore della riga nel Pannello di controllo, e va guardato QUI e non solo
+  // l'interruttore della riga nella Console, e va guardato QUI e non solo
   // nel render, o il dato tornerebbe a comparire dalla seconda strada.
   if (!c.on) return '';
   var v = origineDi(p);
@@ -7156,7 +7159,7 @@ function openNoteViewer(note) {
 
 let isFirstRender = true;
 
-// ════════ PANNELLO DI CONTROLLO (filtri + legenda + opzioni) ════════
+// ════════ PANNELLO (filtri + legenda + opzioni) ════════
 var CAT_LABEL = {
   // ⚠️ 'Persone' / 'People' dalla 0.93 (istruzione dell'utente). Prima era 'Esseri umani'
   // (2026-08-21), che a sua volta aveva sostituito 'Uomini': la ragione di quel primo
@@ -7576,7 +7579,7 @@ function refreshControlPanel() {
   if (!panel) return;
   panel.innerHTML = controlPanelHTML();
   wireControlPanel();
-  // Il contenuto è cambiato (lingua, filtri, voci del Pannello di controllo): la misura
+  // Il contenuto è cambiato (lingua, filtri, voci del Pannello): la misura
   // che decide se la sheet deve scorrere va rifatta, o resterebbe quella di prima.
   fitControlSheet();
 }
@@ -8189,7 +8192,7 @@ function buildControlPanel() {
   // (vedi toggleControlPanel), senza serve un Tab per ogni card per arrivarci.
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-modal', 'true');
-  panel.setAttribute('aria-label', currentLang === 'it' ? 'Pannello di controllo' : 'Control panel');
+  panel.setAttribute('aria-label', currentLang === 'it' ? 'Filtri e legenda' : 'Filters and legend');
   panel.setAttribute('tabindex', '-1');
   var fab = document.createElement('button');
   fab.id = 'ctrl-fab'; fab.className = 'fab-btn ctrl-fab';
@@ -9486,8 +9489,8 @@ function openAdminGate() {
 // Sostituisce l'ingresso diretto nell'editor: si sceglie tra 'Modifica
 // personaggi' (editor esistente) e 'Modifica colori' (pannello colori, Fase 1 =
 // Modifica mirata del singolo personaggio; funzioni di famiglia in Fase 2).
-// ── Pannello di controllo dell'aspetto (admin, dalla v12.24; in UI 'Pannello
-// di controllo' dalla v12.42, prima 'Feature flag') ──────────────────────────
+// ── Console: l'aspetto del sito (admin, dalla v12.24; in UI 'Console' dal
+// 2026-08-28, prima 'Pannello di controllo' e all'origine 'Feature flag') ────
 // Controllo dell'ASPETTO del sito per TUTTI i visitatori: modalità ingrandita +
 // i 5 effetti grafici. Salva `siteFlags` in dati.js via il Worker, SENZA bumpare
 // la versione (vedi saveSiteFlagsToRepo).
@@ -10038,7 +10041,7 @@ function fxGuardSlider(sl, onDbl){
 // Soglia = larghezza colonna + ~660px di pagina, in px di LAYOUT. ⚠️ MISURATO:
 // `clientWidth` NON si riduce sotto `zoom` (resta la larghezza della finestra),
 // quindi il fattore XL va diviso a mano: è già esposto in --zoomf (1 o 1.3).
-// La colonna ha larghezza PER-EDITOR (v13.17): Pannello di controllo 400,
+// La colonna ha larghezza PER-EDITOR (v13.17): Console 400,
 // editor colori 480, micro-aggiustamenti 560 (i loro contenuti sono più larghi).
 function dockAvailable(colw){
   var z = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zoomf')) || 1;
@@ -10340,7 +10343,7 @@ function showFxConfigEditor(key, sfx, onDone){
   var vk = key + sfx;                                  // chiave della variante
   var V = function(k){ return SITE_FLAGS[k + sfx]; };  // config di variante
   var vOn = function(k){ return V(k).on !== false; };  // 'acceso' nella variante
-  // Catena degli hook lingua: questa modale sta SOPRA il pannello di controllo,
+  // Catena degli hook lingua: questa modale sta SOPRA la Console,
   // che ha già registrato il suo langRefresh. Lo si conserva (prevL) e lo si
   // RIPRISTINA alla chiusura: azzerarlo lascerebbe il pannello sotto senza L.
   var prevL = langRefresh;
@@ -10662,8 +10665,8 @@ function showFxConfigEditor(key, sfx, onDone){
   foot.appendChild(rst); foot.appendChild(def); foot.appendChild(ok); box.appendChild(foot);
   var hint = document.createElement('p');
   hint.style.cssText = 'font-size:0.72rem;opacity:0.6;margin:0.7rem 0 0;';
-  hint.textContent = it ? 'Per rendere le modifiche definitive, salva dal Pannello di controllo.'
-                        : 'To make changes permanent, save from the Control panel.';
+  hint.textContent = it ? 'Per rendere le modifiche definitive, salva dalla Console.'
+                        : 'To make changes permanent, save from the Console.';
   box.appendChild(hint);
   // L a modale aperta: prima si ricostruisce il PANNELLO sotto nella nuova lingua
   // (prevL, il suo hook), poi questa sotto-modale sopra di lui. Senza il passo
@@ -10749,9 +10752,11 @@ function showSiteFlagsEditor(initState){
   overlay.addEventListener('click', function(e){ if (e.target === overlay) annulla(); });
   var cl = document.createElement('button'); cl.className = 'fab-modal-close'; cl.textContent = '×'; cl.onclick = annulla; box.appendChild(cl);
   var t = document.createElement('p'); t.style.cssText = 'font-weight:600;font-size:1.05rem;margin:0 0 0.2rem;';
-  // 'Pannello di controllo' dalla v12.42 (rinominato dall'utente; era 'Feature
-  // flag'). Da non confondere col Pannello del FAB: questo è admin-only.
-  t.textContent = it ? 'Pannello di controllo' : 'Control panel'; box.appendChild(t);
+  // 'Console' dal 2026-08-28 (rinominata dall'utente; era 'Pannello di controllo'
+  // dalla v12.42, prima 'Feature flag'). Il nome vecchio conteneva quello del Pannello
+  // del FAB, che è un'altra cosa ed è dei visitatori: ogni abbreviazione li faceva
+  // collidere, ed è costata due volte. Uguale nelle due lingue, quindi niente ternario.
+  t.textContent = 'Console'; box.appendChild(t);
   var sub = document.createElement('p'); sub.style.cssText = 'font-size:0.8rem;opacity:0.7;margin:0 0 1rem;';
   sub.textContent = it ? 'Le impostazioni valgono per tutti i visitatori.' : 'Settings apply to every visitor.';
   box.appendChild(sub);
@@ -10953,7 +10958,7 @@ function showSiteFlagsEditor(initState){
   save.style.cssText = 'width:auto;flex:1;margin-top:0;'; save.textContent = it ? 'Salva' : 'Save';
   save.onclick = function(){
     save.disabled = true; save.style.opacity = '0.4';
-    saveSiteFlagsToRepo(it ? 'aspetto: pannello di controllo' : 'appearance: control panel').then(function(res){
+    saveSiteFlagsToRepo(it ? 'aspetto: console' : 'appearance: console').then(function(res){
       if (res.ok){ SITE_FLAGS_SAVED = JSON.parse(JSON.stringify(SITE_FLAGS)); showToast(it ? '✓ Salvato' : '✓ Saved', false); close(); }
       else showToast((it ? '✗ Salvataggio fallito: ' : '✗ Save failed: ') + (res.reason || ''), true);
     }).finally(function(){ save.disabled = false; save.style.opacity = ''; });
@@ -10995,10 +11000,10 @@ function showAdminChoiceModal() {
   // riga2 icone badge.
   b4.innerHTML = it ? 'Micro-aggiustamenti<br>icone badge' : 'Badge-icon<br>micro-tuning';
   b4.onclick = function(){ close(); showBadgeAdjustEditor(); };
-  // Feature flag (dalla v12.24): pannello di controllo dell'ASPETTO del sito
-  // (effetti grafici + modalità ingrandita) valido per tutti i visitatori.
+  // Console (dalla v12.24, allora 'Feature flag'): governa l'ASPETTO del sito
+  // (effetti grafici + modalità ingrandita) per tutti i visitatori.
   var b5 = document.createElement('button'); b5.className = 'fab-modal-confirm';
-  b5.textContent = it ? 'Pannello di controllo' : 'Control panel';
+  b5.textContent = 'Console';
   b5.onclick = function(){ close(); showSiteFlagsEditor(); };
   box.appendChild(cl); box.appendChild(t); box.appendChild(b1); box.appendChild(b2); box.appendChild(b3); box.appendChild(b4); box.appendChild(b5);
 }

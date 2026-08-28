@@ -216,7 +216,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   JS `ZOOM_BIG_FACTOR` (quest'ultima solo di riferimento: le misure a runtime
   rilevano lo zoom da sé).
 - **DUE LIVELLI, da non confondere** (impianto voluto dall'utente, v12.24):
-  1. **default di SITO**: il flag `zoomBig` del pannello 'Pannello di controllo'
+  1. **default di SITO**: il flag `zoomBig` della **Console**
      (admin): vive nei dati (`siteFlags` in `dati.js`) e vale per i visitatori
      **desktop/tablet**. ⚠️ **Sui TELEFONI (≤480px) NON si applica** (v12.43,
      scelta dell'utente: la XL è 'destinata al desktop'): `applySiteFlags` lo
@@ -236,7 +236,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   `mine === null ? (flag di sito && !telefono) : mine === '1'`.
 - ⚠️ **Nessun pulsante nel Pannello** (rimosso nella v12.24 su richiesta
   dell'utente): lo zoom si comanda col tasto `Z` (personale), col tap lungo sul
-  FAB (personale, mobile) o dal Pannello di controllo (sito). Storico: la v12.14
+  FAB (personale, mobile) o dalla Console (sito). Storico: la v12.14
   aveva un tasto `A+` in toolbar e barra mobile.
 - **Tap LUNGO sul FAB = scorciatoia 'SEGRETA' mobile (dalla v12.43).** ~500ms di
   pressione sul FAB del Pannello commutano la preferenza personale
@@ -249,7 +249,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   preventato e callout/selezione iOS soppressi **inline sul solo FAB**
   (`webkitTouchCallout`/`userSelect`/`touchAction`, invisibili al Nu). Il gesto
   è volutamente NON scopribile (come il tap sulla versione); la nota della
-  Modalità XL nel Pannello di controllo lo documenta per l'admin.
+  Modalità XL nella Console lo documenta per l'admin.
 - **Ripristino in due fasi** (la `dati.js` si carica DOPO il blocco iniziale):
   1. blocco iniziale in testa allo script: riapplica solo la **preferenza
      personale**, il più presto possibile, per non mostrare un lampo alla
@@ -269,7 +269,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
 
-## ✨ Feature flag dell'aspetto (Pannello di controllo)
+## ✨ Feature flag dell'aspetto (la Console)
 
 Pannello dell'**aspetto del sito**, valido per **tutti i visitatori**: la Modalità XL e 8
 effetti grafici, tutti a costo zero sul layout.
@@ -472,8 +472,13 @@ compaiono nella tab Mobile.
 
 ### Decisioni dell'utente da non ridiscutere
 
-- **Nome in UI: 'Pannello di controllo' / 'Control panel'**, prima 'Feature flag'. Il nome
-  interno resta `siteFlags`; da non confondere col 'Pannello' del FAB, che è dei visitatori.
+- **Nome in UI: 'Console'**, uguale nelle due lingue (istruzione dell'utente, 2026-08-28):
+  era 'Pannello di controllo' dalla v12.42, e all'origine 'Feature flag'. Il nome interno
+  resta `siteFlags`. ⚠️ **Il rename toglie una COLLISIONE e non è un gusto**: il nome vecchio
+  **conteneva** 'Pannello', che è la modale del FAB dei visitatori, quindi ogni abbreviazione
+  li faceva coincidere. Scriverlo nelle regole non è bastato: sul gemello di Terramare la
+  stessa confusione è costata **due** versioni (`earthsea/top/CLAUDE.md`, § 'Personaggi senza
+  nome').
 - **Nomi e ordine delle voci:** Modalità XL, Bagliore, Numeri colorati, Riflettore, Incisione,
   Alone sfumato, Effetto podio, Colore schede, Trama. Etichette brevi, di una parola dove
   possibile.
@@ -573,7 +578,7 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
   - ⚠️ **Su Terramare la stessa funzione ridisegna anche la lista**, perché là un effetto tocca il
     markup (vedi `earthsea/top/CLAUDE.md`); qui non serve, e la riga in più sarebbe un ridisegno
     sprecato a ogni chiusura.
-  - **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dal Pannello di controllo non
+  - **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dalla Console non
     parte nessuna scrittura (l'unica chiave vicina è la preferenza personale di zoom, che la scrive
     il tasto `Z`). Il banco confronta l'intero `localStorage` prima e dopo.
   - La tab del tema in dock **non** è toccata da questa regola: continua a commutare il tema del
@@ -1153,7 +1158,7 @@ il tema chiaro spegne con un'ombra **nulla** (non `none`, così resta una voce v
     intervenire lì rimetterebbe in gioco lo scivolamento orizzontale. Lo strumento è
     `scratchpad/tabfix.js`.
 - ⚠️ Per il caso **tablet con mouse**, che spiega insieme l'assenza di hover nel Pannello e la
-  variante 'A tocco' del Colore schede, vedi la sezione del Pannello di controllo: è lo stesso
+  variante 'A tocco' del Colore schede, vedi la sezione della Console: è lo stesso
   fatto, e la nota vive là.
 
 ### Elfi ed etichette senza stirpe attestata
