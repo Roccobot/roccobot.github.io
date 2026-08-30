@@ -33,13 +33,19 @@ vive in AIV e non qui
   paginetta offre **un** download, e una cartella che si riempie di build vecchi la
   costringerebbe a elencarli e a ordinarli. ⚠️ **La ragione NON è il peso**, e conviene
   saperlo per non 'correggere' la scelta con un argomento sbagliato: l'APK di release
-  minificato misura **1.634.026 byte**, contro i 64 MB del build di debug da cui nasceva quel
-  timore.
+  minificato sta in **pochi megabyte** (3.275.094 byte nella `0.68`, misurati sul file
+  servito), contro i 64 MB del build di debug da cui nasceva quel timore.
+  - ⚠️ **La cifra esatta invecchia a ogni rilascio, e per questo porta la sua versione**:
+    quello che regge l'argomento è l'**ordine di grandezza**, cioè pochi megabyte contro
+    sessantaquattro, e quello non cambia. Fino al 2026-08-30 qui stava il numero della
+    `0.12`, **1.634.026 byte**, che nel frattempo era diventato la metà del vero: un numero
+    senza versione accanto si legge come attuale per sempre.
   - ⚠️⚠️ **Il peso di un APK si misura sul file SERVITO, non sull'artefatto della run**, e la
-    differenza è grossa: lo stesso APK compare come **787.248 byte** fra gli artefatti,
-    perché quelli sono uno **zip** e un APK contiene voci non compresse (`resources.arsc` in
-    testa) che lo zip esterno stringe. Chi prende quel numero per il peso dell'app lo dimezza
-    senza accorgersene, ed è già successo qui.
+    differenza è grossa: lo stesso APK compare **circa dimezzato** fra gli artefatti (misurato
+    sulla `0.12`: 787.248 byte contro 1.634.026), perché quelli sono uno **zip** e un APK
+    contiene voci non compresse (`resources.arsc` in testa) che lo zip esterno stringe. Chi
+    prende quel numero per il peso dell'app lo dimezza senza accorgersene, ed è già successo
+    qui.
 - ⚠️ **Un commit su `master` che arriva da `github-actions[bot]` e tocca `AIV/` è quello**, non
   un salvataggio admin: è la terza sorgente di commit esterni di questo repo, dopo l'editor di
   'I Grandi di Arda' e quello di Terramare, e conta come le altre due per la regola
