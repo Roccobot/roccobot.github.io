@@ -413,7 +413,17 @@ def char_defects(text):
                 mod = re.search(r"(Ctrl|Cmd|Alt|Shift|Fn|Opt|Option|Win|Super|Meta)$",
                                 line[:col - 1])
                 codepoint = prev == "U" and re.match(r"[0-9A-Fa-f]{4,6}\b", line[col:])
-                if prev.isalpha() and nxt.isalpha() and not mod and not codepoint:
+                # La terza forma legittima: il qualificatore BCP-47 delle cartelle di risorse
+                # Android, che nomina una lingua con la sua regione. Si riconosce dal
+                # GETTONE INTERO e non dai due caratteri intorno, che sono due lettere come
+                # in un refuso: comincia per 'b' e porta uno o più sottotag separati.
+                # Trovata dal controllo su un messaggio di commit che descriveva una cartella
+                # nuova, e valgono le stesse parole del caso qui sopra: un verificatore che
+                # boccia la forma che il sistema impone è rotto, non severo.
+                gettone = (re.search(r"[A-Za-z0-9+-]*$", line[:col - 1]).group() + "+" +
+                           re.match(r"[A-Za-z0-9+-]*", line[col:]).group())
+                bcp = re.fullmatch(r"(?:values-)?b(?:\+[A-Za-z0-9]{1,8})+", gettone)
+                if prev.isalpha() and nxt.isalpha() and not mod and not codepoint and not bcp:
                     out.append((n, col, ch, "'+' fra due lettere: refuso da copia-incolla, "
                                             "probabile apostrofo mancato"))
                 continue
