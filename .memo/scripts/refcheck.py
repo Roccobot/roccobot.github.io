@@ -223,6 +223,38 @@ RE_ACCENTO_SBAGLIATO = re.compile(r"(?<![\w'])(" + "|".join(ACCENTO_SBAGLIATO) +
 # automatica fatta male. Censite il 2026-08-17: zero nei due repo, quindi questo è un
 # presidio che nasce pulito e serve a restare tale.
 
+# ⚠️⚠️ Il repertorio accentato dell'italiano è CHIUSO e minuscolo: le cinque vocali col grave
+# e le cinque con l'acuto, e nient'altro. Serve perché le regole sugli accenti qui sopra
+# sono regole ITALIANE, e il modo `--diff` gira su qualunque file: su una riga in un'altra
+# lingua segnalano testo corretto. Misurato il 2026-08-31 sulle traduzioni di AIV: il
+# vietnamita `và`, la congiunzione `e`, è identico alla forma che in italiano è sempre un
+# errore, e da solo
+# bloccava 8 righe giuste. Un presidio che blocca il giusto viene disattivato, non corretto,
+# ed è la ragione per cui questa uscita esiste.
+# ⚠️ Le chiavi per CODEPOINT, come tutto il resto di questo blocco: un file che vieta una
+# forma non deve contenerla.
+ITALIANE = {chr(c) for c in list(range(0x41, 0x5B)) + list(range(0x61, 0x7B)) + [
+    0x00E0, 0x00E8, 0x00E9, 0x00EC, 0x00ED, 0x00EE, 0x00F2, 0x00F3, 0x00F9, 0x00FA,
+    0x00C0, 0x00C8, 0x00C9, 0x00CC, 0x00CD, 0x00CE, 0x00D2, 0x00D3, 0x00D9, 0x00DA,
+]}
+
+
+def altra_lingua(riga):
+    """Vero se la riga contiene una lettera che l'italiano non usa.
+
+    ⚠️ Il criterio è il REPERTORIO, non un elenco di lingue né una libreria di
+    riconoscimento: una `ơ` vietnamita, una `ń` polacca o una lettera bengalese dicono da sé
+    che la riga non è italiano, e costano un confronto per carattere.
+    ⚠️ Il falso negativo che si accetta, e va detto invece di scoprirlo dopo: una riga
+    MISTA (un `verita'` italiano accanto a una `ü` tedesca) non viene più guardata. Il
+    rovescio, cioè bloccare ogni riga di ogni traduzione, costa di più: là il difetto è
+    certo e frequente, qui è un caso di confine. E l'italiano puro resta coperto, che è
+    dove l'errore nasce: nelle 11 traduzioni nuove il presidio ha comunque trovato il
+    `verita'` del commento di intestazione, che è italiano.
+    """
+    return any(unicodedata.category(ch).startswith("L") and ch not in ITALIANE for ch in riga)
+
+
 VIETATI = {
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
     "\u2013": "en-dash: usa il trattino breve, anche negli intervalli numerici (dal 2026-08-01)",
@@ -658,9 +690,15 @@ def main_diff():
         # nome proprio), e un presidio rumoroso viene disattivato. I trattini lunghi hanno
         # già il loro hook sul diff.
         for n, col, ch, motivo in char_defects(testo):
-            if "accento" in motivo:
+            # ⚠️ La riga in un'altra lingua salta le regole ITALIANE sugli accenti: vedi
+            # `altra_lingua`. Il filtro sta QUI e non in `char_defects`, perché il modo a
+            # file intero gira sui soli file di regole, che sono italiani, e là non deve
+            # allentare niente.
+            if "accento" in motivo and not altra_lingua(righe[n - 1]):
                 blocca.append((f, righe[n - 1].strip()[:100], etichetta(ch), motivo))
         for n, tok, motivo in accent_warnings(testo):
+            if altra_lingua(righe[n - 1]):
+                continue
             avvisi.append((f, righe[n - 1].strip()[:100], tok, motivo))
     if avvisi:
         print(f"\n~~ da guardare, NON blocca: {len(avvisi)}")
