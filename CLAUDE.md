@@ -512,7 +512,7 @@ poi divergerebbe.
     Nel degrado il guasto sta **prima del deploy**, nell'assegnazione dei job ai runner: il job
     `build` parte e si impianta, oppure il run finisce **`startup_failure` con 0 job**. Chiedere
     i job del run: `total_count: 0` significa run fantasma, non lentezza.
-  - ⚠️ **I run `queued` vecchissimi NON sono la causa.** In coda restano per sempre i cadaveri
+  - ⚠️ **I run `queued` vecchissimi NON sono la causa.** In coda restano per sempre i residui
     degli episodi passati, che GitHub non ripulisce e non lascia cancellare: **non bloccano
     nulla**, ed è provato dal fatto che centinaia di deploy sono riusciti con quei run già in
     coda. Non perdere tempo a cancellarli.
