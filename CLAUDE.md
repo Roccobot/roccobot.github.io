@@ -119,6 +119,31 @@ sessione:
      - Storico: accertato il 2026-08-26, quando `~/.claude/settings.json` **non esisteva
        affatto** perché il passo 0 era stato saltato, e l'utente ha dovuto autorizzare a mano
        `send_later` senza avere l'opzione durevole.
+   - ⚠️⚠️ **E NELLO STESSO PASSO SI CONTROLLA CLAUDE DESIGN, che dalla richiesta dell'utente
+     del 2026-09-02 va agganciato SEMPRE** (*aggiorna le routine delle nuove sessioni in modo
+     che sia sempre agganciato anche Claude Design*). Là vive il **design system** dei
+     progetti, e senza quell'aggancio una sessione riscrive a mano colori, misure e frasi che
+     esistono già.
+     - **Il controllo costa una chiamata** e non si chiede niente all'utente: `DesignSync` in
+       modo `list_projects`. Se risponde con l'elenco, è agganciato e si tira avanti.
+     - ⚠️⚠️ **SE NON È AUTORIZZATO, IL COMANDO DA CHIEDERE È `/design-consent`**, e si chiede
+       una volta sola perché il consenso è **dell'account** e non della sessione (si revoca
+       con `/design revoke`). ⚠️ **NON è `/design-login`**, che è quello che l'errore dello
+       strumento suggerisce: quel comando esiste nel Claude Code **da terminale** e in una
+       sessione remota **non esiste affatto** (provato dall'utente il 2026-09-02: *a quanto
+       pare il comando /design-login non esiste*). Chi ripete il suggerimento dell'errore
+       manda l'utente a sbattere.
+     - ⚠️ **Le letture non chiedono niente, le scritture sì**: `list_projects`, `list_files` e
+       `get_file` girano senza prompt appena il consenso c'è; una scrittura passa da
+       `finalize_plan` e da un'autorizzazione a sé. Per questo `DesignSync` **non** sta nella
+       lista `allow` del passo 0: metterlo là pre-autorizzerebbe anche le modifiche al design
+       system, che è un'altra cosa da quello che serve all'avvio.
+     - **Che cosa si raggiunge e che cosa no**, misurato il 2026-09-02: i **progetti di design
+       system** sì (il suo `Roccobot Design`, due suoi progetti di prova, e due condivisi del
+       lavoro che **non si toccano**); i **documenti** `.dc.html` che vivono fuori da un
+       progetto **no**, e quello è il buco che ha bloccato la paginetta di download di AIV.
+       Il dettaglio completo, coi contenuti di `Roccobot Design`, sta in `Roccobot.md`,
+       § '🎨 Grafica' → '🎨 Claude Design, dove vive il design system'.
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
 2. Poi si fa **una sola chiamata** allo strumento di domanda, con **due** domande, e
