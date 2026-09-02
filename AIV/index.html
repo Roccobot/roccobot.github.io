@@ -101,6 +101,10 @@
        ⚠️ Il token giusto è `--brand-glyph-dark` e non `--brand-link-dark`, che
        oggi ha lo stesso valore ma dice un'altra cosa (i link). */
     --glyph:var(--brand-glyph);
+    /* ⚠️ L'ombra della schermata è un token perché sul fondo scuro un'ombra NERA
+       non si vede: là al suo posto (accanto, per la verità) c'è un alone del
+       colore dell'accento, che è il 'bagliore' chiesto dall'utente. */
+    --ombra-schermata:0 12px 30px rgba(0,0,0,0.20);
   }
   [data-theme="dark"]{
     --bg:var(--dark-back);
@@ -114,6 +118,7 @@
     --outline:var(--dark-outline);
     --outline-variant:var(--dark-outline-variant);
     --glyph:var(--brand-glyph-dark);
+    --ombra-schermata:0 12px 34px rgba(0,0,0,0.55), 0 0 26px rgba(79,217,190,0.12);
   }
 
   *{box-sizing:border-box}
@@ -147,6 +152,7 @@
   }
   .scarica:hover{text-decoration:none; filter:brightness(1.06)}
   .tecnica{font-size:13px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+  .tecnica .minuta{opacity:0.72}
   .installa{font-size:13px; line-height:1.6; color:var(--text-muted); opacity:0.7; max-width:44ch; margin-top:auto}
 
   /* ── La schermata dell'app, che è VERA dal 2026-09-02 ──
@@ -157,7 +163,7 @@
   .schermata-blocco{display:flex; flex-direction:column; align-items:center}
   .schermata-blocco img{
     display:block; width:280px; height:auto; border-radius:22px;
-    border:1px solid var(--outline-variant); box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    border:1px solid var(--outline-variant); box-shadow:var(--ombra-schermata);
   }
 
   .fatti{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 40px; padding:56px 0 0; max-width:840px}
@@ -390,7 +396,7 @@
       installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
       schermataAlt: 'La griglia delle immagini con una selezione in corso: un elemento scelto, e in basso il pannello con le dieci azioni.',
       fatti: [
-        ['La trasparenza si vede', 'Tratta la trasparenza come merita, con la griglia adattiva da 12dp per visualizzare il canale alfa.'],
+        ['La trasparenza si vede', 'Tratta la trasparenza come merita, con la scacchiera adattiva da 12dp per visualizzare il canale alfa.'],
         ['Video, GIF e WebP animate', 'Apri i video con il player nativo e prendi il controllo delle immagini animate, con controllo e salvataggio dei fotogrammi.'],
         ['Pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
         ['Tutti i formati che contano', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: grandi e piccoli, vettoriali e animati. Non lasciamo indietro nessuno.'],
@@ -410,7 +416,7 @@
       installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
       schermataAlt: 'The picture grid with a selection under way: one item picked, and the panel with the ten actions at the bottom.',
       fatti: [
-        ['Transparency you can see', 'Treats transparency as it deserves, with the adaptive 12dp grid that shows the alpha channel.'],
+        ['Transparency you can see', 'Treats transparency as it deserves, with the adaptive 12dp chequerboard that shows the alpha channel.'],
         ['Video, animated GIF and WebP', 'Open videos with the native player and take control of animated images, with frame control and frame saving.'],
         ['Details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
         ['Every format that matters', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: large and small, vector and animated. We leave none behind.'],
@@ -484,9 +490,11 @@
     var sorgente = document.createElement('a');
     sorgente.href = 'https://github.com/' + REPO;
     sorgente.textContent = T.sorgente;
+    // ⚠️ La versione di Android porta una classe sua: è il pezzo meno importante
+    // dei tre, e l'utente l'ha voluta un filo più trasparente delle altre.
     var righe = [];
-    if (asset) righe.push(asset.name + ' \u00B7 ' + peso(asset.size, T.loc));
-    righe.push(T.android, sorgente);
+    if (asset) righe.push([asset.name + ' \u00B7 ' + peso(asset.size, T.loc), '']);
+    righe.push([T.android, ' minuta'], [sorgente, '']);
     for (var r = 0; r < righe.length; r++) {
       if (r) {
         var sep = document.createElement('span');
@@ -495,8 +503,8 @@
         tecnica.appendChild(sep);
       }
       var pz = document.createElement('span');
-      pz.className = 'pezzo';
-      if (typeof righe[r] === 'string') pz.textContent = righe[r]; else pz.appendChild(righe[r]);
+      pz.className = 'pezzo' + righe[r][1];
+      if (typeof righe[r][0] === 'string') pz.textContent = righe[r][0]; else pz.appendChild(righe[r][0]);
       tecnica.appendChild(pz);
     }
 
