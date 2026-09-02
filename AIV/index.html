@@ -183,10 +183,12 @@
   footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
   .piede-riga{
     border-top:1px solid var(--outline-variant); padding-top:18px;
-    display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; justify-content:space-between;
+    /* ⚠️ `nowrap`: firma a sinistra e lingua a destra sulla STESSA riga anche sul
+       telefono, come ha chiesto l'utente. Ci stanno: a 390px la firma misura circa
+       200px e il tasto una cinquantina. */
+    display:flex; flex-wrap:nowrap; gap:12px 24px; align-items:center; justify-content:space-between;
   }
-  .firma, .diritti{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-muted)}
-  .diritti{gap:14px}
+  .firma{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-muted)}
   .lingua{
     font:inherit; font-size:13px; color:var(--text-muted); background:none; border:0;
     border-bottom:1px dotted var(--outline); padding:0 0 1px; cursor:pointer;
@@ -304,12 +306,15 @@
         <path d="M512,1023.36c-90.79,0-182.86-2.05-273.66-6.08-119.58-5.97-225.65-112.04-231.62-231.62C-1.35,604.07-1.35,419.93,6.73,238.34,12.69,118.76,118.76,12.69,238.35,6.73,329.14,2.69,421.21.64,512,.64s182.86,2.05,273.66,6.08c119.58,5.96,225.65,112.03,231.62,231.62,8.08,181.58,8.08,365.72,0,547.31-5.96,119.58-112.03,225.65-231.62,231.62-90.79,4.04-182.86,6.08-273.65,6.08Z" fill="var(--accent)"></path>
         <path d="M574.47,477.47h280.3l-24.03-302.06H191.65v75.89h278.7c-4,54.64-9.61,103.98-17.62,149.51H170.03l21.62,76.65h242.66c-12.01,40.98-26.43,75.89-44.05,103.98-48.85,77.41-131.34,144.96-248.27,201.88l53.66,65.27c128.14-66.79,219.44-144.96,273.1-235.27,16.02-27.32,29.63-59.96,42.45-97.9,59.26,142.68,164.98,253.49,317.94,333.18l52.86-65.27c-148.96-72.1-251.47-173.8-307.53-305.85ZM555.25,251.3h208.54l6.56,149.51h-232.72c7.21-44.02,12.81-94.11,17.62-149.51Z" fill="var(--glyph)"></path>
       </svg>
-      <span>by Roccobot 天</span>
+      <!-- ⚠️ LA FIRMA È QUELLA DELL'APP, parola per parola (`Identity.kt`, `Signature`):
+           là dice '✦ made with love by Roccobot 天', con 'Roccobot' collegato a
+           roccobot.me. Qui la stella e il 天 finale non ci sono, perché la mini icona
+           accanto è già quel glifo: apre la riga come la stella apre quella dell'app.
+           ⚠️ NON SI TRADUCE e non sta nel dizionario dei testi, ed è la stessa regola
+           dell'app: è una firma, non un testo dell'interfaccia. -->
+      <span>made with love by <a href="https://roccobot.me">Roccobot</a></span>
     </div>
-    <div class="diritti">
-      <span id="diritti"></span>
-      <button type="button" class="lingua" id="lingua"></button>
-    </div>
+    <button type="button" class="lingua" id="lingua"></button>
   </div>
 </footer>
 
@@ -467,14 +472,6 @@
       titolo.textContent = T.fatti[f][0];
       corpo.textContent = T.fatti[f][1];
     }
-
-    var diritti = el('diritti');
-    svuota(diritti);
-    diritti.appendChild(document.createTextNode('vibes ✦ ' + new Date().getFullYear() + ' Rocco Casadei | '));
-    var sito = document.createElement('a');
-    sito.href = 'https://roccobot.me';
-    sito.textContent = 'roccobot.me';
-    diritti.appendChild(sito);
 
     var tastoLingua = el('lingua');
     tastoLingua.textContent = T.altra;
