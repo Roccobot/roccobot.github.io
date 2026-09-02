@@ -45,6 +45,12 @@ VERBOSE = "-v" in sys.argv
 SITO = Path(__file__).resolve().parents[2]
 TOOLS = SITO.parent / "tools"
 MIHON = SITO.parent / "mihon-aniyomi-ext"
+# ⚠️ `AIV` è entrato il 2026-09-02, ed è un file di REGOLE come gli altri, non un documento
+# di repo terzo come quelli di `mihon-aniyomi-ext`: `AIV/CLAUDE.md` è nato il 2026-09-01 e
+# dal giorno dopo il brief ne citava una sezione, che il verificatore segnalava come
+# inesistente proprio perché il file era fuori copertura. È il sintomo rovesciato già visto
+# con `Earthsea.md`, e la lezione è la stessa: un file di regole nuovo deve entrare da sé.
+AIV = SITO.parent / "AIV"
 
 RULEFILES = [
     SITO / "CLAUDE.md",
@@ -60,6 +66,7 @@ RULEFILES = [
 # 'sezione inesistente', perché quel file non era indicizzato. Un elenco a mano di file che
 # nascono è una manutenzione che prima o poi si dimentica; un glob no.
 ] + sorted(SITO.glob("*/CLAUDE.md")) + sorted(SITO.glob("*/*/CLAUDE.md")) \
+  + sorted(AIV.glob("CLAUDE.md")) + sorted(AIV.glob("*/CLAUDE.md")) \
   + sorted(TOOLS.glob("rules/*.md")) + [
 # Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollerà
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
@@ -353,6 +360,21 @@ def sect_refs(righe, i, max_cont=2):
                 break
             pezzi.append(testo)
     return fuori
+
+
+def cita_aiv(righe, i, intorno=1):
+    """Vero se il rimando che parte dalla riga `i` parla del repo `AIV`.
+
+    Serve solo quando quel repo NON è agganciato, per distinguere un rimando rotto da uno
+    non verificabile. Guarda la riga e le sue vicine perché il nome del repo sta quasi
+    sempre nel percorso che precede il `§` (`AIV/CLAUDE.md`, § '...'), e un rimando lungo
+    va a capo. ⚠️ Il falso positivo possibile è dichiarato: una riga che nomina AIV per
+    altro e cita una sezione davvero inesistente di un altro file passerebbe come non
+    verificabile. Costa un difetto non visto in una sessione senza AIV, mentre l'errore
+    opposto (trattare per rotto ciò che non si può leggere) blocca ogni commit.
+    """
+    vicine = righe[max(0, i - intorno):i + intorno + 1]
+    return any("AIV" in r for r in vicine)
 
 
 def variants(title):
@@ -750,6 +772,15 @@ def main():
                 volatile.append((f, n, m.group(2)))
 
     bad_links, bad_paths, bad_sects, bad_chars = [], [], [], []
+    # ⚠️ I riferimenti ad AIV in una sessione che non monta quel repo non sono ROTTI: sono
+    # NON VERIFICABILI, ed è la stessa distinzione che il codice fa già per `TOOLS` assente
+    # (un errore che risponde 'non trovato' non prova un'assenza). Il riconoscimento è
+    # SORVEGLIATO invece di generale: per un percorso è il prefisso `AIV/`, per un rimando a
+    # sezione è il nome del repo nelle righe intorno. Downgradare tutto, come si fa con
+    # `TOOLS`, spegnerebbe il controllo dei rimandi nelle sessioni coi due repo classici,
+    # che sono quelle in cui serve di più.
+    non_verif = []
+    aiv_missing = not AIV.exists()
     seen = {"link": 0, "path": 0, "sect": 0}
 
     for f in present + testi:
@@ -773,16 +804,19 @@ def main():
                     continue
                 seen["path"] += 1
                 if not any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent)):
-                    bad_paths.append((f, n, p))
+                    dove = non_verif if aiv_missing and p.startswith("AIV/") else bad_paths
+                    dove.append((f, n, p))
             for s in sect_refs(righe, n - 1):
                 if s in SKIP_SECTS:
                     continue
                 seen["sect"] += 1
                 if norm(s) not in titles:
-                    bad_sects.append((f, n, s))
+                    dove = non_verif if aiv_missing and cita_aiv(righe, n - 1) else bad_sects
+                    dove.append((f, n, s))
 
     def rel(p):
-        for etichetta_repo, radice in (("SITO", SITO), ("TOOLS", TOOLS), ("MIHON", MIHON)):
+        for etichetta_repo, radice in (("SITO", SITO), ("TOOLS", TOOLS), ("AIV", AIV),
+                                       ("MIHON", MIHON)):
             try:
                 return f"{etichetta_repo}/{p.relative_to(radice)}"
             except ValueError:
@@ -826,6 +860,9 @@ def main():
                "un file citato che non c'è è un rimando morto")
         report("rimandi a sezioni inesistenti", bad_sects,
                "il titolo citato non esiste in nessun file di regole: aggiornalo alla nuova collocazione")
+    if non_verif and not missing_repo:
+        print(f"\n(avviso) {len(non_verif)} riferimenti ad AIV non verificabili senza quel "
+              "repo, non contati come difetti")
 
     tot = sum(seen.values())
     rotti = (len(bad_links) + len(bad_paths) + len(bad_sects) + len(volatile)
@@ -837,6 +874,10 @@ def main():
     # ⚠️ Si DICHIARA anche l'altra assenza, invece di saltarla in silenzio: un controllo che
     # non guarda un repo e non lo dice si legge come 'là è tutto in ordine', che è il falso
     # negativo peggiore (regola universale sui controlli che non fanno prova).
+    if aiv_missing:
+        print(f"\nNota: {AIV} non è agganciato, quindi `AIV/CLAUDE.md` non è stato guardato "
+              "e i suoi titoli non sono nell'indice: i rimandi che lo nominano restano non "
+              "verificabili. Non è un difetto: è copertura mancante.")
     if not MIHON.exists():
         print(f"\nNota: {MIHON} non è agganciato, quindi i suoi documenti non sono stati "
               "guardati. Non è un difetto: è copertura mancante, e si recupera agganciando "
