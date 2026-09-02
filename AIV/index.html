@@ -1,97 +1,674 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AIV - Astonishing Image Viewer</title>
-<meta name="description" content="Astonishing Image Viewer: a native Android image viewer with gesture zoom, a transparency grid and a details panel.">
+<meta name="description" content="Astonishing Image Viewer: un visualizzatore di immagini nativo per Android, con zoom a gesti, la scacchiera della trasparenza e un pannello dei dettagli.">
 <meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="light dark">
 <!--
-  This page is a TEMPLATE and the file you are reading on the website is its
-  output: the release workflow of Roccobot/AIV substitutes the five __TOKEN__
-  placeholders and commits the result to roccobot.github.io/AIV/index.html.
-  Edit it here, never there, or the next tag overwrites the change.
+  QUESTA PAGINA È LA SORGENTE, e quella che si legge sul sito è la sua COPIA:
+  il workflow di rilascio di Roccobot/AIV la copia in
+  roccobot.github.io/AIV/index.html a ogni tag. Si modifica QUI, mai là, o il
+  tag successivo sovrascrive la modifica.
+
+  ⚠️⚠️ NON C'È PIÙ NESSUN SEGNAPOSTO DA SOSTITUIRE, e fino alla 1.36 ce n'erano
+  cinque (__APK__, __VERSION__, __SIZE__, __DATE__, __YEAR__) che il passo 13 di
+  `release.yml` riempiva con `sed`. Adesso versione, nome del file, peso, data e
+  note arrivano da UNA chiamata all'API di GitHub al caricamento della pagina,
+  come chiede il brief dei disegni: la pagina non invecchia più fra due tag, e il
+  workflow torna a fare una copia e nient'altro. Chi rimettesse un segnaposto
+  qui dovrebbe rimettere anche il `sed` là.
+
+  ⚠️ LA VESTE È QUELLA DEL DESIGN SYSTEM, e il documento di riferimento è
+  'AIV: pagina di download' di Claude Design (progetto 'Roccobot Design'): copy
+  italiano e inglese parola per parola, struttura, misure e colori. I colori sono
+  i token di `tokens/colors.css` COPIATI qui, perché una pagina statica su Pages
+  non può linkare il design system; sono gli stessi di `Theme.kt` e di
+  `colors.xml` dell'app, e non se ne inventano altri.
+
+  ⚠️ IL TESTO STA IN UN DIZIONARIO E IL DOM È UNO SOLO, mentre il documento di
+  Design porta due blocchi gemelli (uno per lingua). Il risultato reso è lo
+  stesso; qui una frase vive in un posto solo, e le due lingue non possono
+  divergere in silenzio.
+
+  ⚠️ MAI `innerHTML`: ogni testo entra con `textContent` e i nodi si compongono
+  a mano (regola non derogabile del repo: è il canale classico delle iniezioni,
+  e qui dentro arriva il corpo delle note di rilascio, cioè testo scritto fuori).
 -->
 <style>
+  /* ── I token del design system, copiati da tokens/colors.css ── */
   :root{
-    --bg:#101418; --panel:#171d23; --ink:#e8edf2; --dim:#9fb0bf;
-    --line:rgba(255,255,255,0.10); --accent:#5f9fd4; --accent-ink:#0b1116;
+    --brand-accent:#43B59E;
+    --brand-accent-dark:#00727B;
+    --brand-glyph:#EBFFF7;
+    --brand-glyph-dark:#4FD9BE;
+    --brand-link-light:#0B6B5B;
+    --brand-link-dark:#4FD9BE;
+
+    --light-back:#FCFBF8;
+    --light-surface-container:#F8F7F4;
+    --light-surface-variant:#EFEEEA;
+    --light-ink:#1A1C1B;
+    --light-ink-variant:#5B6360;
+    --light-outline:#79817D;
+    --light-outline-variant:#DAD9D5;
+
+    --dark-back:#151B1A;
+    --dark-surface-container:#1E2523;
+    --dark-surface-variant:#2A312F;
+    --dark-ink:#E4E9E7;
+    --dark-ink-variant:#A9B3B0;
+    --dark-outline:#8A9490;
+    --dark-outline-variant:#3C4442;
+
+    --checker-a:#FFFFFF;
+    --checker-b:#D8DDDB;
+
+    --bg:var(--light-back);
+    --surface-container:var(--light-surface-container);
+    --surface-variant:var(--light-surface-variant);
+    --text-body:var(--light-ink);
+    --text-muted:var(--light-ink-variant);
+    --text-link:var(--brand-link-light);
+    --accent:var(--brand-accent);
+    --on-accent:#00382F;
+    --outline:var(--light-outline);
+    --outline-variant:var(--light-outline-variant);
+    /* ⚠️ Il glifo dell'icona e quello del tastino nel mockup seguono l'APP, che
+       ha una `values-night/` sua (`#EBFFF7` su `#43B59E`, `#4FD9BE` su
+       `#00727B`): quindi cambiano col tema, mentre il contenuto del tasto di
+       download resta `--brand-glyph` in tutti e due, come fissa il brief.
+       ⚠️ Il token giusto è `--brand-glyph-dark` e non `--brand-link-dark`, che
+       oggi ha lo stesso valore ma dice un'altra cosa (i link). */
+    --glyph:var(--brand-glyph);
   }
-  @media (prefers-color-scheme: light){
-    :root{
-      --bg:#f4f6f8; --panel:#ffffff; --ink:#1b2430; --dim:#5c6b7a;
-      --line:rgba(0,0,0,0.10); --accent:#22449c; --accent-ink:#ffffff;
-    }
+  [data-theme="dark"]{
+    --bg:var(--dark-back);
+    --surface-container:var(--dark-surface-container);
+    --surface-variant:var(--dark-surface-variant);
+    --text-body:var(--dark-ink);
+    --text-muted:var(--dark-ink-variant);
+    --text-link:var(--brand-link-dark);
+    --accent:var(--brand-accent-dark);
+    --on-accent:#FFFFFF;
+    --outline:var(--dark-outline);
+    --outline-variant:var(--dark-outline-variant);
+    --checker-b:#3A403E;
+    --glyph:var(--brand-glyph-dark);
   }
+
   *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
   body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font:16px/1.6 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-    display:flex; flex-direction:column; min-height:100vh;
+    background:var(--bg); color:var(--text-body);
+    font-family:Roboto,system-ui,-apple-system,'Segoe UI',sans-serif;
+    min-height:100vh; display:flex; flex-direction:column;
   }
-  main{width:100%; max-width:40rem; margin:0 auto; padding:3rem 1.25rem 2rem; flex:1}
-  h1{font-size:1.9rem; line-height:1.2; margin:0 0 .25rem}
-  .sub{color:var(--dim); margin:0 0 2rem}
-  .card{
-    background:var(--panel); border:1px solid var(--line); border-radius:14px;
-    padding:1.5rem; margin-bottom:1.5rem;
+  a{color:var(--text-link); text-decoration:none}
+  a:hover{text-decoration:underline}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .foglio{max-width:960px; width:100%; margin:0 auto; padding:24px 24px 0}
+  .alto{display:grid; grid-template-columns:1fr auto; gap:48px; align-items:start}
+  .parole{display:flex; flex-direction:column; gap:20px; max-width:34rem}
+  .icona{border-radius:24%; display:block}
+  h1{font-size:40px; line-height:1.1; letter-spacing:-0.02em; font-weight:500; margin:0}
+  .claim{font-size:18px; line-height:1.55; color:var(--text-muted); margin:0}
+  .blocco-scarica{display:flex; flex-direction:column; gap:10px; align-items:flex-start}
+  .scarica{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--accent); color:var(--brand-glyph);
+    font-size:16px; font-weight:500; padding:14px 24px; border-radius:12px;
+    box-shadow:0 3px 6px rgba(0,0,0,0.18);
   }
-  .get{
-    display:inline-block; background:var(--accent); color:var(--accent-ink);
-    text-decoration:none; font-weight:700; padding:.8rem 1.5rem; border-radius:10px;
+  .scarica:hover{text-decoration:none; filter:brightness(1.06)}
+  .tecnica{font-size:13px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+  .installa{font-size:13px; line-height:1.6; color:var(--text-muted); opacity:0.7; max-width:44ch; padding-top:6px}
+
+  .telefono-blocco{display:flex; flex-direction:column; gap:10px; align-items:center}
+  .telefono{
+    width:248px; height:496px; border-radius:28px;
+    background:var(--surface-container); border:1px solid var(--outline-variant);
+    padding:10px; display:flex; flex-direction:column; gap:8px;
+    position:relative; overflow:hidden;
   }
-  .get:hover{filter:brightness(1.08)}
-  .meta{color:var(--dim); font-size:.9rem; margin:.9rem 0 0}
-  dl{display:grid; grid-template-columns:auto 1fr; gap:.4rem 1rem; margin:0}
-  dt{color:var(--dim)}
-  dd{margin:0}
-  h2{font-size:1.05rem; margin:0 0 .6rem}
-  p{margin:0 0 .8rem}
-  p:last-child{margin-bottom:0}
-  a{color:var(--accent)}
-  footer{
-    border-top:1px solid var(--line); padding:1rem 1.25rem; font-size:.85rem;
-    color:var(--dim); display:flex; flex-wrap:wrap; gap:.5rem 1rem;
-    justify-content:space-between;
+  .barra-telefono{display:flex; align-items:center; justify-content:space-between; padding:4px 6px 0}
+  .barra-telefono b{font-size:13px; font-weight:500}
+  .barra-telefono span{font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+  .griglia{display:grid; grid-template-columns:repeat(3,1fr); gap:3px}
+  /* Thumb del design system senza immagine: il quadro sulla variante di superficie
+     con dentro Placeholder, cioè il glifo in grigio. La pagina non inventa fotografie. */
+  .cella{position:relative; aspect-ratio:1/1; background:var(--surface-variant);
+    color:var(--text-muted); display:grid; place-items:center; overflow:hidden}
+  .durata{
+    position:absolute; left:6px; bottom:6px; display:flex; align-items:center; gap:2px;
+    padding:2px 6px; border-radius:4px; background:rgba(0,0,0,0.55); color:#fff;
+    font-size:11px; font-weight:500;
+  }
+  .tastino{
+    position:absolute; right:16px; bottom:16px; width:40px; height:40px; border-radius:12px;
+    background:var(--accent); color:var(--glyph);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 6px rgba(0,0,0,0.24);
+  }
+  .didascalia{font-size:12px; color:var(--text-muted)}
+
+  .fatti{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 40px; padding:56px 0 0; max-width:840px}
+  .fatto{display:flex; gap:14px; align-items:flex-start}
+  .fatto svg{flex:none; color:var(--accent)}
+  .fatto .testi{display:flex; flex-direction:column; gap:3px}
+  .fatto .titolo{font-size:15px; font-weight:500}
+  .fatto .corpo{font-size:14px; line-height:1.5; color:var(--text-muted)}
+  .scacchiera{
+    width:24px; height:24px; flex:none; border-radius:4px;
+    background-image:
+      linear-gradient(45deg,var(--checker-b) 25%,transparent 25%,transparent 75%,var(--checker-b) 75%),
+      linear-gradient(45deg,var(--checker-b) 25%,transparent 25%,transparent 75%,var(--checker-b) 75%);
+    background-color:var(--checker-a);
+    background-size:12px 12px;
+    background-position:0 0,6px 6px;
+  }
+
+  .note{padding:56px 0 0; max-width:840px}
+  .note-testa{display:flex; align-items:baseline; gap:12px; padding-bottom:14px; flex-wrap:wrap}
+  .note-titolo{font-size:22px; font-weight:500; letter-spacing:-0.01em}
+  .note-meta{font-size:13px; color:var(--text-muted); font-variant-numeric:tabular-nums}
+  .note-scheda{background:var(--surface-container); border-radius:12px; padding:8px 4px; display:flex; flex-direction:column}
+  .riga{display:grid; grid-template-columns:104px 1fr; gap:16px; align-items:baseline; padding:12px 18px}
+  .riga .genere{font-size:11px; font-weight:500; color:var(--accent); letter-spacing:0.04em; text-transform:uppercase}
+  .riga .frase{font-size:14px; line-height:1.6}
+  .note-piede{
+    font-size:13px; line-height:1.6; color:var(--text-muted);
+    padding:13px 18px 15px; border-top:1px solid var(--outline-variant); margin:6px 14px 0;
+  }
+
+  footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
+  .piede-riga{
+    border-top:1px solid var(--outline-variant); padding-top:18px;
+    display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; justify-content:space-between;
+  }
+  .firma, .diritti{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-muted)}
+  .diritti{gap:14px}
+  .lingua{
+    font:inherit; font-size:13px; color:var(--text-muted); background:none; border:0;
+    border-bottom:1px dotted var(--outline); padding:0 0 1px; cursor:pointer;
+  }
+
+  /* Sul telefono le due colonne diventano una, e il mockup esce di scena: è un
+     ritratto di un telefono, e su un telefono vero non aggiunge niente. */
+  @media (max-width:760px){
+    .alto{grid-template-columns:1fr; gap:24px}
+    .telefono-blocco{display:none}
+    h1{font-size:32px}
+    .fatti{grid-template-columns:1fr; padding-top:40px}
+    .note{padding-top:40px}
+    .riga{grid-template-columns:1fr; gap:2px}
   }
 </style>
 </head>
 <body>
 
-<main>
-  <h1>Astonishing Image Viewer</h1>
-  <p class="sub">A native Android image viewer: gesture zoom and pan, a transparency
-  grid, long-press actions and a details panel. Not a web page in an apk.</p>
+<main class="foglio">
+  <div class="alto">
+    <div class="parole">
+      <!-- L'icona dell'app, e il tracciato è QUELLO VERO, copiato da
+           `res/drawable/ic_launcher_foreground.xml`: il disco e la A col tratto
+           già incorporato nel contorno e il controcampo tenuto aperto da
+           `evenodd`. Sta nelle coordinate del master, cioè senza la scala 0,65
+           del drawable, perché quella serve solo a un'icona adattiva, di cui si
+           vedono i 72dp centrali su 108; qui la piastrella si vede tutta.
+           ⚠️ La coppia di colori segue il tema come l'icona vera, che ha una
+           `values-night/` sua: non si fissa il glifo chiaro. -->
+      <svg class="icona" viewBox="0 0 108 108" width="88" height="88" aria-hidden="true">
+        <rect width="108" height="108" fill="var(--accent)"></rect>
+        <path d="M30,19a10,10 0 1,0 0,20a10,10 0 1,0 0,-20z" fill="var(--glyph)"></path>
+        <path fill="var(--glyph)" fill-rule="evenodd" d="M58.1311,27.1833L88.1311,71.1833A5,5 0 0 1 84,79L24,79A5,5 0 0 1 19.8689,71.1833L49.8689,27.1833A5,5 0 0 1 58.1311,27.1833ZM56.0424,49.5583L68.0424,66.5583A2.5,2.5 0 0 1 66,70.5L42,70.5A2.5,2.5 0 0 1 39.9576,66.5583L51.9576,49.5583A2.5,2.5 0 0 1 56.0424,49.5583Z"></path>
+      </svg>
+      <h1>Astonishing Image Viewer</h1>
+      <p class="claim" id="claim"></p>
+      <div class="blocco-scarica">
+        <a class="scarica" id="scarica" href="https://github.com/Roccobot/AIV/releases/latest" download>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M12 3.5v11.2M12 15.6l4.4-4.4M12 15.6L7.6 11.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M4.4 18.8h15.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          <span id="scarica-testo"></span>
+        </a>
+        <div class="tecnica" id="tecnica"></div>
+        <div class="installa" id="installa"></div>
+      </div>
+    </div>
 
-  <div class="card">
-    <a class="get" href="AIV-1.36.apk" download>Download AIV 1.36</a>
-    <p class="meta">AIV-1.36.apk &middot; 6.4M &middot; released 2026-09-02</p>
+    <div class="telefono-blocco">
+      <div class="telefono">
+        <div class="barra-telefono">
+          <b id="mock-titolo"></b>
+          <span id="mock-conto"></span>
+        </div>
+        <div class="griglia" id="griglia"></div>
+        <div class="tastino">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M3.4 7.6V18.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M3.4 18.6H16.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M8 4.2h4.4l1.8 1.8h6.4a1.2 1.2 0 0 1 1.2 1.2v7.6a1.2 1.2 0 0 1-1.2 1.2H8a1.2 1.2 0 0 1-1.2-1.2V5.4A1.2 1.2 0 0 1 8 4.2z" fill="currentColor"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="didascalia" id="mock-didascalia"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <dl>
-      <dt>Requires</dt><dd>Android 9 (API 28) or later</dd>
-      <dt>Version</dt><dd>1.36</dd>
-      <dt>Source</dt><dd><a href="https://github.com/Roccobot/AIV">github.com/Roccobot/AIV</a></dd>
-      <dt>Older builds</dt><dd><a href="https://github.com/Roccobot/AIV/releases">every release</a></dd>
-    </dl>
+  <div class="fatti">
+    <div class="fatto">
+      <div class="scacchiera"></div>
+      <div class="testi"><div class="titolo" data-t="f0"></div><div class="corpo" data-c="f0"></div></div>
+    </div>
+    <div class="fatto">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3.2" y="4.4" width="17.6" height="15.2" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M10.4 9.2l5 2.8-5 2.8z" fill="currentColor"></path></svg>
+      <div class="testi"><div class="titolo" data-t="f1"></div><div class="corpo" data-c="f1"></div></div>
+    </div>
+    <div class="fatto">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.8v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="7.8" r="1.2" fill="currentColor"></circle></svg>
+      <div class="testi"><div class="titolo" data-t="f2"></div><div class="corpo" data-c="f2"></div></div>
+    </div>
+    <div class="fatto">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4.6 6.8h14.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M6.4 6.8l1 11.4a1.4 1.4 0 0 0 1.4 1.2h6.4a1.4 1.4 0 0 0 1.4-1.2l1-11.4" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M9.6 6.8V5.2a1.2 1.2 0 0 1 1.2-1.2h2.4a1.2 1.2 0 0 1 1.2 1.2v1.6" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>
+      <div class="testi"><div class="titolo" data-t="f3"></div><div class="corpo" data-c="f3"></div></div>
+    </div>
+    <div class="fatto">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6.4" y="3.2" width="11.2" height="17.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><rect x="8.4" y="14.8" width="4" height="4" rx="1.2" fill="currentColor"></rect></svg>
+      <div class="testi"><div class="titolo" data-t="f4"></div><div class="corpo" data-c="f4"></div></div>
+    </div>
+    <div class="fatto">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="5.6" y="5.6" width="12.8" height="12.8" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M9.2 2.8v2.8M14.8 2.8v2.8M9.2 18.4v2.8M14.8 18.4v2.8M2.8 9.2h2.8M2.8 14.8h2.8M18.4 9.2h2.8M18.4 14.8h2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <div class="testi"><div class="titolo" data-t="f5"></div><div class="corpo" data-c="f5"></div></div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Installing it</h2>
-    <p>This apk is signed but it does not come from the Play Store, so Android asks
-    for permission the first time: open the downloaded file, and allow your browser
-    or file manager to install unknown apps when prompted.</p>
-    <p>Only the latest version is kept here. Every previous build stays on the
-    releases page linked above.</p>
+  <div class="note">
+    <div class="note-testa">
+      <div class="note-titolo" id="note-titolo"></div>
+      <div class="note-meta" id="note-meta"></div>
+    </div>
+    <div class="note-scheda">
+      <div id="note-righe"></div>
+      <div class="note-piede" id="note-piede"></div>
+    </div>
   </div>
 </main>
 
 <footer>
-  <span><strong>AIV</strong> 1.36</span>
-  <span>vibes ✦ 2026 Rocco Casadei | <a href="https://roccobot.me">rocco.bot</a></span>
+  <div class="piede-riga">
+    <div class="firma">
+      <svg viewBox="0 0 1024 1024" width="22" height="22" aria-hidden="true">
+        <path d="M512,1023.36c-90.79,0-182.86-2.05-273.66-6.08-119.58-5.97-225.65-112.04-231.62-231.62C-1.35,604.07-1.35,419.93,6.73,238.34,12.69,118.76,118.76,12.69,238.35,6.73,329.14,2.69,421.21.64,512,.64s182.86,2.05,273.66,6.08c119.58,5.96,225.65,112.03,231.62,231.62,8.08,181.58,8.08,365.72,0,547.31-5.96,119.58-112.03,225.65-231.62,231.62-90.79,4.04-182.86,6.08-273.65,6.08Z" fill="#43b59e"></path>
+        <path d="M574.47,477.47h280.3l-24.03-302.06H191.65v75.89h278.7c-4,54.64-9.61,103.98-17.62,149.51H170.03l21.62,76.65h242.66c-12.01,40.98-26.43,75.89-44.05,103.98-48.85,77.41-131.34,144.96-248.27,201.88l53.66,65.27c128.14-66.79,219.44-144.96,273.1-235.27,16.02-27.32,29.63-59.96,42.45-97.9,59.26,142.68,164.98,253.49,317.94,333.18l52.86-65.27c-148.96-72.1-251.47-173.8-307.53-305.85ZM555.25,251.3h208.54l6.56,149.51h-232.72c7.21-44.02,12.81-94.11,17.62-149.51Z" fill="#ebfff7"></path>
+      </svg>
+      <span>by Roccobot 天</span>
+    </div>
+    <div class="diritti">
+      <span id="diritti"></span>
+      <button type="button" class="lingua" id="lingua"></button>
+    </div>
+  </div>
 </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var REPO = 'Roccobot/AIV';
+
+  /*
+   * ⚠️ IL COPY È QUELLO DEL DOCUMENTO DI DESIGN, parola per parola, e non si
+   * riscrive qui: se una frase va cambiata, si cambia là e si riporta.
+   * ⚠️ **DUE SCOSTAMENTI DAL COPY, e sono dichiarati entrambi qui.**
+   * 1. **Il claim sopra il tasto l'ha DETTATO L'UTENTE** (2026-09-02, in chat:
+   *    *sopra il tasto per scaricare metti questo testo*), quindi non è quello
+   *    del documento e non ci si torna: un'istruzione della sessione vale più
+   *    del documento, e la versione inglese è la sua controparte. La frase del
+   *    documento diceva 'Non una pagina web dentro un apk'; questa aggiunge i
+   *    formati e chiude su 'niente fuffa AI', che è il punto che gli importa.
+   * 2. **La sesta scheda porta un NUMERO VIVO**: nel documento diceva '4,1 MB',
+   *    vero alla 1.20 e adesso no (l'apk sta oltre i 6). Il peso lo mette la
+   *    pagina dal file servito, quindi quella frase non può più invecchiare.
+   */
+  var TESTI = {
+    it: {
+      lang: 'it',
+      loc: 'it-IT',
+      claim: 'Un visualizzatore di immagini nativo per Android: zoom e pan a gesti, una scacchiera della trasparenza fatta bene, azioni utili con pressione lunga, un pannello dei dettagli serio, supporto pieno ai formati che servono davvero. Soprattutto: funzionalità curate e niente fuffa AI.',
+      scarica: 'Scarica AIV',
+      android: 'Android 9 o successivo',
+      sorgente: 'codice sorgente',
+      installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
+      mockTitolo: 'Immagini',
+      mockConto: '128 immagini',
+      mockDidascalia: 'La griglia miniature. Le immagini sono segnaposto.',
+      fatti: [
+        ['La trasparenza si vede', 'Dietro l\'immagine c\'è la scacchiera da 12dp, non un fondo bianco che ti fa indovinare dove finisce il PNG.'],
+        ['GIF e WebP animate', 'Si muovono nella griglia e nel viewer. Un video lo apri con un tocco.'],
+        ['Il pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
+        ['Il cestino è dentro l\'app', 'Puoi accenderlo dalle impostazioni. ⚠️ Attenzione: se disinstalli l\'app, il contenuto del cestino è perso e non si recupera.'],
+        ['Si usa con una mano', 'Le azioni principali passano al bordo sinistro se sei mancino. È un\'impostazione, non un ripiego.'],
+        ['Nativa, non una webview', 'Kotlin e Compose, %PESO%, nessuna traccia di browser: lo zoom segue il dito perché lo disegna il sistema.']
+      ],
+      noteTitolo: 'Note di rilascio',
+      notePiede: 'Aggiornate da GitHub a ogni caricamento della pagina.',
+      tutte: 'Tutte le versioni',
+      attesa: ['In arrivo', 'Sto leggendo le note della versione da GitHub.'],
+      rotto: ['Non ora', 'GitHub non risponde: le note della versione sono sulla pagina delle release.'],
+      generi: { nuovo: 'Novità', corretto: 'Corretto', migliorato: 'Migliorato', rimosso: 'Rimosso', altro: 'Altro' },
+      altra: 'English',
+      titoloAltra: 'Read this page in English'
+    },
+    en: {
+      lang: 'en',
+      loc: 'en-GB',
+      claim: 'A native Android image viewer: gesture zoom and pan, a transparency chequerboard done properly, useful long-press actions, a serious details panel, full support for the formats that actually matter. Above all: features made with care and no AI fluff.',
+      scarica: 'Download AIV',
+      android: 'Android 9 or later',
+      sorgente: 'source',
+      installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
+      mockTitolo: 'Pictures',
+      mockConto: '128 pictures',
+      mockDidascalia: 'The thumbnail grid. Pictures are placeholders.',
+      fatti: [
+        ['Transparency you can see', 'Behind a picture there is the 12dp chequerboard, not a white sheet that leaves you guessing where the PNG ends.'],
+        ['Animated GIF and WebP', 'They move in the grid and in the viewer. You can still play a video with a tap.'],
+        ['The details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
+        ['The bin lives in the app', 'You can turn it on in the settings. ⚠️ WARNING: if you uninstall the app, the contents of the bin are lost and cannot be recovered.'],
+        ['One-handed', 'The main actions flip to the left edge for a left-handed user. It is a real setting, not a nicety.'],
+        ['Native, not a webview', 'Kotlin and Compose, %PESO%, no browser anywhere: the zoom follows your finger because the system draws it.']
+      ],
+      noteTitolo: 'Release notes',
+      notePiede: 'Pulled from GitHub on every page load.',
+      tutte: 'All versions',
+      attesa: ['Loading', 'Reading the release notes from GitHub.'],
+      rotto: ['Not now', 'GitHub is not answering: the release notes live on the releases page.'],
+      generi: { nuovo: 'New', corretto: 'Fixed', migliorato: 'Improved', rimosso: 'Removed', altro: 'Other' },
+      altra: 'Italiano',
+      titoloAltra: 'Leggi questa pagina in italiano'
+    }
+  };
+
+  // Italiano su browser o sistemi italiani, inglese per tutti gli altri.
+  function linguaIniziale() {
+    var tags = (navigator.languages && navigator.languages.length)
+      ? navigator.languages
+      : [navigator.language || 'en'];
+    for (var i = 0; i < tags.length; i++) {
+      if (/^it\b/i.test(tags[i])) return 'it';
+    }
+    return 'en';
+  }
+
+  var stato = { lingua: linguaIniziale(), rel: null, rotto: false };
+
+  function el(id) { return document.getElementById(id); }
+  function svuota(nodo) { while (nodo.firstChild) nodo.removeChild(nodo.firstChild); }
+
+  /* ── Il tema segue il sistema, e cambia mentre la pagina è aperta ── */
+  function tema() {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var applica = function (scuro) {
+      document.documentElement.setAttribute('data-theme', scuro ? 'dark' : 'light');
+    };
+    applica(mq.matches);
+    if (mq.addEventListener) mq.addEventListener('change', function (ev) { applica(ev.matches); });
+    else if (mq.addListener) mq.addListener(function (ev) { applica(ev.matches); });
+  }
+
+  /* ── Le miniature del mockup: Thumb senza immagine, cioè Placeholder ──
+   * ⚠️ Nessuna fotografia inventata: il design system non ne ha, e una foto
+   * pescata da fuori sarebbe una promessa che l'app non fa.
+   */
+  /* ⚠️ Ogni glifo è una CORNICE A TRATTO più i suoi pieni, come tutte le altre
+   * icone di questa pagina (tratto 1.8 sul riquadro da 24). Un tracciato solo,
+   * riempito, non torna: il rettangolo esterno copre il disegno di dentro, e
+   * nella griglia si vedeva un blocchetto pieno invece dell'immagine. */
+  var GLIFO_IMMAGINE = [
+    ['M3.4 5.4h17.2v13.2H3.4z', false],
+    ['M5.8 16.6l3.8-4.6 2.4 2.9 2-2.4 4 4.1z', true],
+    ['M16.4 9.6a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0z', true]
+  ];
+  var GLIFO_FILMATO = [
+    ['M3.4 5.4h17.2v13.2H3.4z', false],
+    ['M10 8.8l6 3.2-6 3.2z', true]
+  ];
+  var GLIFO_AVVIO = [['M9 7.4l7 4.6-7 4.6z', true]];
+
+  function glifo(pezzi, misura) {
+    var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    s.setAttribute('viewBox', '0 0 24 24');
+    s.setAttribute('width', misura);
+    s.setAttribute('height', misura);
+    s.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < pezzi.length; i++) {
+      var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', pezzi[i][0]);
+      if (pezzi[i][1]) {
+        p.setAttribute('fill', 'currentColor');
+      } else {
+        p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', 'currentColor');
+        p.setAttribute('stroke-width', '1.8');
+      }
+      s.appendChild(p);
+    }
+    return s;
+  }
+
+  function griglia() {
+    var dove = el('griglia');
+    svuota(dove);
+    for (var i = 0; i < 15; i++) {
+      var cella = document.createElement('div');
+      cella.className = 'cella';
+      var filmato = (i === 4);
+      cella.appendChild(glifo(filmato ? GLIFO_FILMATO : GLIFO_IMMAGINE, 24));
+      if (filmato) {
+        var badge = document.createElement('div');
+        badge.className = 'durata';
+        badge.appendChild(glifo(GLIFO_AVVIO, 12));
+        badge.appendChild(document.createTextNode('0:12'));
+        cella.appendChild(badge);
+      }
+      dove.appendChild(cella);
+    }
+  }
+
+  /* ── Le note di rilascio: da bullet di sviluppatore a righe leggibili ──
+   * ⚠️ Due correzioni rispetto al prototipo, e le chiede il brief perché le note
+   * vere le mostrano: i bullet cominciano col NUMERO DI VERSIONE ('1.31: gli SVG
+   * si vedono') e portano URL NUDI di GitHub. Il numero diventa l'etichetta
+   * della riga invece di far ricadere tutto su 'Altro', e gli URL nudi escono.
+   */
+  var GENERI = [
+    [/^(add(ed|s)?|new|feat(ure)?)\b[:\s-]*/i, 'nuovo'],
+    [/^(fix(ed|es)?|bug(fix)?)\b[:\s-]*/i, 'corretto'],
+    [/^(change[ds]?|improve[ds]?|update[ds]?|better|perf(ormance)?|refactor)\b[:\s-]*/i, 'migliorato'],
+    [/^(remove[ds]?|drop(ped|s)?|deprecate[ds]?)\b[:\s-]*/i, 'rimosso']
+  ];
+
+  function leggiNote(corpo) {
+    var righe = String(corpo || '').split('\n');
+    var fuori = [];
+    for (var i = 0; i < righe.length && fuori.length < 6; i++) {
+      var l = righe[i].trim();
+      if (!/^[-*•]\s+/.test(l)) continue;
+      l = l.replace(/^[-*•]\s+/, '')
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\*\*|__|\*|_/g, '')
+        .replace(/https?:\/\/\S+/g, '')
+        .replace(/\(#\d+\)|#\d+/g, '')
+        .replace(/\b[0-9a-f]{7,40}\b/g, '')
+        .replace(/\bby @[\w-]+/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+      if (l.length <= 2) continue;
+
+      var genere = null, etichetta = null;
+      var versione = /^(\d+\.\d+)\s*[:.)-]?\s+/.exec(l);
+      if (versione) {
+        etichetta = versione[1];
+        l = l.slice(versione[0].length);
+      } else {
+        genere = 'altro';
+        for (var g = 0; g < GENERI.length; g++) {
+          if (GENERI[g][0].test(l)) { genere = GENERI[g][1]; l = l.replace(GENERI[g][0], ''); break; }
+        }
+      }
+      l = l.trim();
+      if (!l) continue;
+      l = l.charAt(0).toUpperCase() + l.slice(1);
+      if (!/[.!?]$/.test(l)) l += '.';
+      fuori.push({ genere: genere, etichetta: etichetta, testo: l });
+    }
+    return fuori;
+  }
+
+  function peso(byte, loc) {
+    return (byte / 1048576).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' MB';
+  }
+
+  function data(iso, loc) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString(loc, { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  /* ── Il disegno della pagina, per la lingua in vigore ── */
+  function disegna() {
+    var T = TESTI[stato.lingua];
+    var rel = stato.rel;
+    var asset = rel && rel.asset;
+    document.documentElement.lang = T.lang;
+
+    el('claim').textContent = T.claim;
+    el('installa').textContent = T.installa;
+    el('mock-titolo').textContent = T.mockTitolo;
+    el('mock-conto').textContent = T.mockConto;
+    el('mock-didascalia').textContent = T.mockDidascalia;
+    el('note-titolo').textContent = T.noteTitolo;
+
+    // ⚠️ Il tasto porta all'apk della release; senza apk allegato porta alla
+    // release stessa invece di rompersi, come chiede il brief.
+    var tasto = el('scarica');
+    el('scarica-testo').textContent = T.scarica + (rel ? ' ' + rel.tag : '');
+    tasto.href = asset ? asset.browser_download_url
+      : (rel ? rel.pagina : 'https://github.com/' + REPO + '/releases/latest');
+    if (asset) tasto.setAttribute('download', ''); else tasto.removeAttribute('download');
+
+    // ⚠️ Nome e peso ci sono SOLO se c'è l'apk allegato, e senza di lui la riga
+    // si accorcia invece di riempirsi di trattini: prima nominava un file
+    // ricavato dal tag, cioè un file che nessuno può scaricare.
+    var tecnica = el('tecnica');
+    svuota(tecnica);
+    var pezzi = [];
+    if (asset) pezzi.push(asset.name, peso(asset.size, T.loc));
+    pezzi.push(T.android);
+    tecnica.appendChild(document.createTextNode(pezzi.join(' · ') + ' · '));
+    var sorgente = document.createElement('a');
+    sorgente.href = 'https://github.com/' + REPO;
+    sorgente.textContent = T.sorgente;
+    tecnica.appendChild(sorgente);
+
+    for (var f = 0; f < T.fatti.length; f++) {
+      var titolo = document.querySelector('[data-t="f' + f + '"]');
+      var corpo = document.querySelector('[data-c="f' + f + '"]');
+      if (!titolo || !corpo) continue;
+      titolo.textContent = T.fatti[f][0];
+      corpo.textContent = T.fatti[f][1].replace('%PESO%', asset ? peso(asset.size, T.loc) : (T.lang === 'it' ? 'pochi megabyte' : 'a few megabytes'));
+    }
+
+    el('note-meta').textContent = rel ? rel.tag + ' · ' + data(rel.quando, T.loc) : '';
+
+    var righe = el('note-righe');
+    svuota(righe);
+    var elenco;
+    if (stato.rotto) elenco = [{ etichetta: T.rotto[0], testo: T.rotto[1] }];
+    else if (!rel) elenco = [{ etichetta: T.attesa[0], testo: T.attesa[1] }];
+    else if (!rel.righe.length) elenco = [{ etichetta: T.rotto[0], testo: T.rotto[1] }];
+    else elenco = rel.righe;
+
+    for (var r = 0; r < elenco.length; r++) {
+      var riga = document.createElement('div');
+      riga.className = 'riga';
+      var genere = document.createElement('div');
+      genere.className = 'genere';
+      genere.textContent = elenco[r].etichetta || T.generi[elenco[r].genere || 'altro'];
+      var frase = document.createElement('div');
+      frase.className = 'frase';
+      frase.textContent = elenco[r].testo;
+      riga.appendChild(genere);
+      riga.appendChild(frase);
+      righe.appendChild(riga);
+    }
+
+    var piede = el('note-piede');
+    svuota(piede);
+    piede.appendChild(document.createTextNode(T.notePiede + ' '));
+    var tutte = document.createElement('a');
+    tutte.href = 'https://github.com/' + REPO + '/releases';
+    tutte.textContent = T.tutte;
+    piede.appendChild(tutte);
+
+    var diritti = el('diritti');
+    svuota(diritti);
+    diritti.appendChild(document.createTextNode('vibes ✦ ' + new Date().getFullYear() + ' Rocco Casadei | '));
+    var sito = document.createElement('a');
+    sito.href = 'https://roccobot.me';
+    sito.textContent = 'roccobot.me';
+    diritti.appendChild(sito);
+
+    var tastoLingua = el('lingua');
+    tastoLingua.textContent = T.altra;
+    tastoLingua.title = T.titoloAltra;
+  }
+
+  /* ── Una sola chiamata a GitHub, e da lì tutto il resto ── */
+  function leggiRelease() {
+    fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=1', {
+      headers: { Accept: 'application/vnd.github+json' }
+    }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function (elenco) {
+      var ultima = elenco && elenco[0];
+      if (!ultima) throw new Error('nessuna release');
+      var apk = null;
+      var assets = ultima.assets || [];
+      for (var i = 0; i < assets.length; i++) {
+        if (/\.apk$/i.test(assets[i].name)) { apk = assets[i]; break; }
+      }
+      stato.rel = {
+        tag: String(ultima.tag_name || '').replace(/^v/i, ''),
+        quando: ultima.published_at || ultima.created_at,
+        righe: leggiNote(ultima.body),
+        asset: apk,
+        pagina: ultima.html_url
+      };
+      disegna();
+    }).catch(function () {
+      stato.rotto = true;
+      disegna();
+    });
+  }
+
+  el('lingua').addEventListener('click', function () {
+    stato.lingua = (stato.lingua === 'it') ? 'en' : 'it';
+    disegna();
+  });
+
+  tema();
+  griglia();
+  disegna();
+  leggiRelease();
+})();
+</script>
 
 </body>
 </html>
