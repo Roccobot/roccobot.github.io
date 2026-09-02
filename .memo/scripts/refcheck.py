@@ -262,6 +262,27 @@ def altra_lingua(riga):
     return any(unicodedata.category(ch).startswith("L") and ch not in ITALIANE for ch in riga)
 
 
+def dentro_identificatore(riga, col):
+    """Vero se il token accentato è incollato a un identificatore da `-` o `_`.
+
+    ⚠️ Il caso vero, misurato il 2026-09-02 sulla pagina di download di AIV:
+    `el('note-meta')` finisce per `meta` più l'apostrofo, cioè esattamente la forma che la
+    lista chiusa blocca, ma là quell'apostrofo **chiude una stringa** e non è punteggiatura
+    italiana. Bloccava un commit corretto, e un presidio che blocca il giusto viene
+    disattivato invece che corretto.
+    ⚠️ Il criterio è il segno PRIMA del token e non un elenco di caratteri ammessi dopo
+    l'apostrofo, che sarebbe la seconda lista chiusa contro cui avverte la nota di
+    `RE_ACCENTATE`: in italiano una parola accentata non segue mai un trattino o un
+    trattino basso senza spazio, mentre in un identificatore è la norma.
+    ⚠️ Quello che NON copre, e va detto invece di scoprirlo dopo: un identificatore la cui
+    parola accentata sta in TESTA (`meta_note`) o dopo un punto (`dati.meta'`). Il primo
+    non ha l'apostrofo attaccato e quindi non arriva qui; il secondo resta scoperto, e si
+    guarda a mano.
+    """
+    prima = riga[col - 2] if col >= 2 else ""
+    return prima in ("-", "_")
+
+
 VIETATI = {
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
     "\u2013": "en-dash: usa il trattino breve, anche negli intervalli numerici (dal 2026-08-01)",
@@ -722,11 +743,14 @@ def main_diff():
         # nome proprio), e un presidio rumoroso viene disattivato. I trattini lunghi hanno
         # già il loro hook sul diff.
         for n, col, ch, motivo in char_defects(testo):
-            # ⚠️ La riga in un'altra lingua salta le regole ITALIANE sugli accenti: vedi
-            # `altra_lingua`. Il filtro sta QUI e non in `char_defects`, perché il modo a
-            # file intero gira sui soli file di regole, che sono italiani, e là non deve
-            # allentare niente.
-            if "accento" in motivo and not altra_lingua(righe[n - 1]):
+            # ⚠️ Due uscite, e stanno QUI e non in `char_defects` per la stessa ragione: il
+            # modo a file intero gira sui soli file di REGOLE, che sono prosa italiana, e là
+            # la copertura non si allenta di un millimetro. Il modo `--diff` invece gira su
+            # qualunque sorgente. La riga in un'altra lingua salta le regole italiane sugli
+            # accenti (vedi `altra_lingua`), e il token incollato a un identificatore non è
+            # prosa (vedi `dentro_identificatore`).
+            if ("accento" in motivo and not altra_lingua(righe[n - 1])
+                    and not dentro_identificatore(righe[n - 1], col)):
                 blocca.append((f, righe[n - 1].strip()[:100], etichetta(ch), motivo))
         for n, tok, motivo in accent_warnings(testo):
             if altra_lingua(righe[n - 1]):
