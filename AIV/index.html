@@ -181,20 +181,44 @@
     border-bottom:1px dotted var(--outline); padding:0 0 1px; cursor:pointer;
   }
 
-  /* Sul telefono le due colonne diventano una, e la schermata RESTA.
-     ⚠️ Prima spariva (`display:none`), e la ragione scritta era che un mockup di
-     telefono, su un telefono vero, non aggiunge niente. Vale per un mockup, non
-     per una schermata vera: chi guarda questa pagina da un Android sta decidendo
-     se installare l'app, e la cosa che gli serve vedere è proprio com'è fatta. */
-  /* ⚠️ LA SOGLIA È 880 E NON 760 DAL 2026-09-02, ed è una misura: fino a 880px la
-     schermata resta la colonna più alta e il paragrafo dell'installazione le va a
-     filo, sotto no (a 870 sfora di 6px, a 780 di 33). Sotto la soglia le colonne
-     si impilano, e il filo non ha più senso perché non sono più affiancate. */
+  /* ══ IL TELEFONO: testata affiancata e il resto centrato ═══════════════════
+     Disegno scelto dall'utente il 2026-09-02 fra tre mockup. In testa l'icona a
+     sinistra e il titolo a destra su due righe allineate a sinistra; sotto,
+     centrati, il tasto (più grande), la riga tecnica su tre righe e la schermata
+     larga quanto il testo. Il claim e il paragrafo dell'installazione restano
+     allineati a sinistra: sono gli unici due blocchi di testo lungo, e centrati
+     si leggono peggio.
+     ⚠️ `display:contents` SCIOGLIE I DUE CONTENITORI (`.parole` e
+     `.blocco-scarica`), così i loro figli diventano voci della griglia e si
+     collocano uno per uno: senza, l'icona e il titolo non potrebbero stare
+     affiancati, e la schermata non potrebbe salire sopra il paragrafo
+     dell'installazione, che le sta dentro.
+     ⚠️ GLI `order` SERVONO PROPRIO A QUELLO: nel DOM la schermata viene dopo il
+     paragrafo, e qui va prima.
+     ⚠️ LA SOGLIA È 880 E NON 760, ed è una misura: fino a 880px la schermata
+     resta la colonna più alta e il paragrafo dell'installazione le va a filo,
+     sotto no (a 870 sfora di 6px, a 780 di 33).
+     ⚠️ E LA SCHERMATA NON SPARISCE PIÙ: prima era `display:none`, perché il
+     mockup di un telefono su un telefono vero non aggiunge niente. Vale per un
+     mockup, non per una schermata vera. */
   @media (max-width:880px){
-    .alto{grid-template-columns:1fr; gap:24px}
-    .schermata-blocco{align-items:flex-start}
-    .schermata-blocco img{width:min(280px,64vw)}
-    h1{font-size:32px}
+    .alto{display:grid; grid-template-columns:auto 1fr; gap:18px 16px; align-items:center}
+    .parole, .blocco-scarica{display:contents}
+
+    .icona{order:1; grid-column:1; grid-row:1; width:88px; height:88px}
+    h1{order:2; grid-column:2; grid-row:1; font-size:30px; text-align:left}
+    .claim{order:3; grid-column:1 / -1}
+    .scarica{order:4; grid-column:1 / -1; justify-self:center;
+      font-size:18px; padding:16px 30px; border-radius:14px}
+    .tecnica{order:5; grid-column:1 / -1; text-align:center; line-height:1.8}
+    .schermata-blocco{order:6; grid-column:1 / -1}
+    .installa{order:7; grid-column:1 / -1; margin-top:2px; max-width:none}
+
+    /* la riga tecnica va a capo prima di 'Android' e prima di 'codice sorgente' */
+    .tecnica .sep{display:none}
+    .tecnica .pezzo{display:block}
+
+    .schermata-blocco img{width:100%; max-width:none}
     .fatti{grid-template-columns:1fr; padding-top:40px}
   }
 </style>
@@ -256,8 +280,13 @@
            `div` col motivo a gradienti nei colori veri della scacchiera dell'app
            (bianco e grigio). Le sei scatole erano già tutte 24x24, ma quella si
            leggeva più piccola: un pieno chiaro su fondo chiaro, in mezzo a cinque
-           tratti color accento. Adesso è cornice più pieni, come le altre. -->
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M6 6h4v4H6zM14 6h4v4h-4zM10 10h4v4h-4zM6 14h4v4H6zM14 14h4v4h-4z" fill="currentColor"></path></svg>
+           tratti color accento. Adesso è cornice più pieni, come le altre.
+           ⚠️ È UNA 2x2 SENZA MARGINE, scelta dall'utente fra due disegni provati: i
+           due pieni toccano il bordo interno della cornice, e a farli stare dentro
+           l'angolo stondato è il `clipPath` (senza, sbordano dove la cornice gira).
+           La 3x3 con l'aria intorno è durata un giro. ⚠️ E la cornice è 16 invece di
+           17,6, cioè un filo più piccola delle vicine: l'ha chiesto lui guardandola. -->
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><defs><clipPath id="clip-scacchiera"><rect x="4.9" y="4.9" width="14.2" height="14.2" rx="1.5"></rect></clipPath></defs><g clip-path="url(#clip-scacchiera)"><path d="M4.9 4.9h7.1v7.1h-7.1zM12 12h7.1v7.1h-7.1z" fill="currentColor"></path></g><rect x="4" y="4" width="16" height="16" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect></svg>
       <div class="testi"><div class="titolo" data-t="f0"></div><div class="corpo" data-c="f0"></div></div>
     </div>
     <div class="fatto">
@@ -366,7 +395,7 @@
         ['Pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
         ['Tutti i formati che contano', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: grandi e piccoli, vettoriali e animati. Non lasciamo indietro nessuno.'],
         ['Un vero Cestino', 'Per fare le cose bene, ma anche a cuor leggero.'],
-        ['Nativa e scattante', 'Kotlin e Compose, pochi MB, niente ripieghi WebView.']
+        ['Nativa e scattante', 'Kotlin e Compose, pochi MB, niente WebView.']
       ],
       altra: 'English',
       titoloAltra: 'Read this page in English'
@@ -386,7 +415,7 @@
         ['Details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
         ['Every format that matters', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: large and small, vector and animated. We leave none behind.'],
         ['A real bin', 'For doing things properly, and for doing them with a light heart.'],
-        ['Native and snappy', 'Kotlin and Compose, a few MB, no WebView stopgaps.']
+        ['Native and snappy', 'Kotlin and Compose, a few MB, no WebView.']
       ],
       altra: 'Italiano',
       titoloAltra: 'Leggi questa pagina in italiano'
@@ -446,16 +475,30 @@
     // ⚠️ Nome e peso ci sono SOLO se c'è l'apk allegato, e senza di lui la riga
     // si accorcia invece di riempirsi di trattini: prima nominava un file
     // ricavato dal tag, cioè un file che nessuno può scaricare.
+    // ⚠️ TRE PEZZI E DUE SEPARATORI, e non una stringa sola: sul telefono la riga
+    // va a capo prima di 'Android' e prima di 'codice sorgente' (richiesta
+    // dell'utente), e per farlo i pezzi devono essere nodi che il CSS possa
+    // rendere blocchi. Su schermo largo il risultato è identico a prima.
     var tecnica = el('tecnica');
     svuota(tecnica);
-    var pezzi = [];
-    if (asset) pezzi.push(asset.name, peso(asset.size, T.loc));
-    pezzi.push(T.android);
-    tecnica.appendChild(document.createTextNode(pezzi.join(' · ') + ' · '));
     var sorgente = document.createElement('a');
     sorgente.href = 'https://github.com/' + REPO;
     sorgente.textContent = T.sorgente;
-    tecnica.appendChild(sorgente);
+    var righe = [];
+    if (asset) righe.push(asset.name + ' \u00B7 ' + peso(asset.size, T.loc));
+    righe.push(T.android, sorgente);
+    for (var r = 0; r < righe.length; r++) {
+      if (r) {
+        var sep = document.createElement('span');
+        sep.className = 'sep';
+        sep.textContent = ' \u00B7 ';
+        tecnica.appendChild(sep);
+      }
+      var pz = document.createElement('span');
+      pz.className = 'pezzo';
+      if (typeof righe[r] === 'string') pz.textContent = righe[r]; else pz.appendChild(righe[r]);
+      tecnica.appendChild(pz);
+    }
 
     for (var f = 0; f < T.fatti.length; f++) {
       var titolo = document.querySelector('[data-t="f' + f + '"]');
