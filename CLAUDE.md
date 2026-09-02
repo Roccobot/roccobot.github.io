@@ -601,8 +601,9 @@ poi divergerebbe.
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, **trattini
   lunghi** nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i
   **caratteri del messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
-  e controlla anche i file di `Roccobot/tools` e i **documenti** di `Roccobot/mihon-aniyomi-ext`
-  quando quei repo sono agganciati; di un repo assente lo **dichiara**). ⚠️ Criterio,
+  e controlla anche i file di `Roccobot/tools`, il `CLAUDE.md` di `Roccobot/AIV` e i
+  **documenti** di `Roccobot/mihon-aniyomi-ext` quando quei repo sono agganciati; di un repo
+  assente lo **dichiara**). ⚠️ Criterio,
   whitelist e trappole del verificatore vivono in `Roccobot.md` § '📥 Protocollo Aggiungi alle
   regole': qui basta sapere che esistono, che si calcolano invece di essere scritti a mano, e
   che bloccano il commit. ⚠️ **Quanti sono non si scrive**: l'elenco qui sopra è la sostanza,
@@ -623,6 +624,18 @@ poi divergerebbe.
     coperto veniva segnalato come 'sezione inesistente', cioè l'errore compariva dove il file
     era giusto. Appena la copertura si è allargata, quel file ha rivelato **nove** difetti veri
     (sette titoli con la data dentro e due rimandi sbagliati).
+    - ⚠️ **È RISUCCESSO il 2026-09-02 con `AIV/CLAUDE.md`**, e la ripetizione dice che il glob
+      copre i file **di questo repo** e non quelli dei repo vicini: nato il 2026-09-01, il
+      giorno dopo il brief ne citava una sezione e il verificatore la dava per inesistente,
+      cioè lo stesso sintomo rovesciato. Adesso entra anche lui (`AIV/CLAUDE.md` e
+      `AIV/*/CLAUDE.md`), e il suo indice ha aggiunto **nove** titoli citabili senza rivelare
+      difetti.
+    - ⚠️ **Un rimando ad AIV in una sessione senza quel repo NON blocca il commit**: come per
+      `tools` assente, è **non verificabile** e non rotto, e il verificatore lo dice contando
+      quanti sono. Il riconoscimento è sorvegliato invece di generale (il prefisso `AIV/` per
+      un percorso, il nome del repo nelle righe intorno per un rimando a sezione), perché
+      spegnere tutti i rimandi come si fa con `tools` costerebbe il controllo proprio nelle
+      sessioni coi due repo classici.
   - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
