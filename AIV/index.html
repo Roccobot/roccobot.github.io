@@ -132,12 +132,17 @@
   :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 
   .foglio{max-width:960px; width:100%; margin:0 auto; padding:24px 24px 0}
-  .alto{display:grid; grid-template-columns:1fr auto; gap:48px; align-items:start}
+  /* ⚠️ LE DUE COLONNE SONO ALTE UGUALI (nessun `align-items:start`), e serve al
+     paragrafo dell'installazione: sta in fondo alla sua colonna, quindi il suo
+     bordo inferiore va a filo con quello della schermata. Chiesto dall'utente il
+     2026-09-02. Se un domani la colonna di sinistra diventasse la più alta, il
+     filo si perde da sé: là sotto non c'è più spazio da distribuire. */
+  .alto{display:grid; grid-template-columns:1fr auto; gap:48px}
   .parole{display:flex; flex-direction:column; gap:20px; max-width:34rem}
   .icona{border-radius:24%; display:block}
   h1{font-size:40px; line-height:1.1; letter-spacing:-0.02em; font-weight:500; margin:0}
   .claim{font-size:18px; line-height:1.55; color:var(--text-muted); margin:0}
-  .blocco-scarica{display:flex; flex-direction:column; gap:10px; align-items:flex-start}
+  .blocco-scarica{display:flex; flex-direction:column; gap:10px; align-items:flex-start; flex:1}
   .scarica{
     display:inline-flex; align-items:center; gap:10px;
     background:var(--accent); color:var(--glyph);
@@ -146,19 +151,18 @@
   }
   .scarica:hover{text-decoration:none; filter:brightness(1.06)}
   .tecnica{font-size:13px; color:var(--text-muted); font-variant-numeric:tabular-nums}
-  .installa{font-size:13px; line-height:1.6; color:var(--text-muted); opacity:0.7; max-width:44ch; padding-top:6px}
+  .installa{font-size:13px; line-height:1.6; color:var(--text-muted); opacity:0.7; max-width:44ch; margin-top:auto}
 
   /* ── La schermata dell'app, che è VERA dal 2026-09-02 ──
      Prima qui c'era un mockup disegnato in CSS: una cornice di telefono con
      quindici quadretti segnaposto, perché il design system non ha fotografie e la
      pagina non se ne inventava. Adesso ci sono le due schermate che ha mandato
      l'utente, chiara e scura. */
-  .schermata-blocco{display:flex; flex-direction:column; gap:10px; align-items:center}
+  .schermata-blocco{display:flex; flex-direction:column; align-items:center}
   .schermata-blocco img{
     display:block; width:280px; height:auto; border-radius:22px;
     border:1px solid var(--outline-variant); box-shadow:0 6px 18px rgba(0,0,0,0.12);
   }
-  .didascalia{font-size:12px; color:var(--text-muted); max-width:280px; text-align:center}
 
   .fatti{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 40px; padding:56px 0 0; max-width:840px}
   .fatto{display:flex; gap:14px; align-items:flex-start}
@@ -193,7 +197,11 @@
      telefono, su un telefono vero, non aggiunge niente. Vale per un mockup, non
      per una schermata vera: chi guarda questa pagina da un Android sta decidendo
      se installare l'app, e la cosa che gli serve vedere è proprio com'è fatta. */
-  @media (max-width:760px){
+  /* ⚠️ LA SOGLIA È 880 E NON 760 DAL 2026-09-02, ed è una misura: fino a 880px la
+     schermata resta la colonna più alta e il paragrafo dell'installazione le va a
+     filo, sotto no (a 870 sfora di 6px, a 780 di 33). Sotto la soglia le colonne
+     si impilano, e il filo non ha più senso perché non sono più affiancate. */
+  @media (max-width:880px){
     .alto{grid-template-columns:1fr; gap:24px}
     .schermata-blocco{align-items:flex-start}
     .schermata-blocco img{width:min(280px,64vw)}
@@ -250,7 +258,6 @@
         <source srcset="schermate/ita-scura.webp" media="(prefers-color-scheme: dark)">
         <img id="schermata" src="schermate/ita-chiara.webp" width="560" height="1132" alt="">
       </picture>
-      <div class="didascalia" id="didascalia"></div>
     </div>
   </div>
 
@@ -268,11 +275,18 @@
       <div class="testi"><div class="titolo" data-t="f2"></div><div class="corpo" data-c="f2"></div></div>
     </div>
     <div class="fatto">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4.6 6.8h14.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M6.4 6.8l1 11.4a1.4 1.4 0 0 0 1.4 1.2h6.4a1.4 1.4 0 0 0 1.4-1.2l1-11.4" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M9.6 6.8V5.2a1.2 1.2 0 0 1 1.2-1.2h2.4a1.2 1.2 0 0 1 1.2 1.2v1.6" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>
+      <!-- Molte immagini: il foglio dietro che sporge più la cornice davanti col suo
+           segno. ⚠️ La cornice davanti è RIEMPITA col fondo della pagina, o il foglio
+           dietro le passerebbe attraverso: è l'unico posto in questa pagina in cui un
+           glifo ha un pieno che non è `currentColor`. -->
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8 3.6h12.4v12.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><rect x="3.2" y="7.6" width="13.2" height="13.2" rx="2.4" fill="var(--bg)" stroke="currentColor" stroke-width="1.8"></rect><path d="M5.4 18.2l3.2-3.8 2.2 2.6 1.6-1.9 2.4 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="7" cy="11.6" r="1.2" fill="currentColor"></circle></svg>
       <div class="testi"><div class="titolo" data-t="f3"></div><div class="corpo" data-c="f3"></div></div>
     </div>
     <div class="fatto">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="6.4" y="3.2" width="11.2" height="17.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><rect x="8.4" y="14.8" width="4" height="4" rx="1.2" fill="currentColor"></rect></svg>
+      <!-- Il cestino, che dalla scheda 4 è passato alla 5 insieme al suo testo: qui
+           prima c'era il telefono di 'Si usa con una mano', scheda che l'utente ha
+           tolto il 2026-09-02. -->
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4.6 6.8h14.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M6.4 6.8l1 11.4a1.4 1.4 0 0 0 1.4 1.2h6.4a1.4 1.4 0 0 0 1.4-1.2l1-11.4" fill="none" stroke="currentColor" stroke-width="1.8"></path><path d="M9.6 6.8V5.2a1.2 1.2 0 0 1 1.2-1.2h2.4a1.2 1.2 0 0 1 1.2 1.2v1.6" fill="none" stroke="currentColor" stroke-width="1.8"></path></svg>
       <div class="testi"><div class="titolo" data-t="f4"></div><div class="corpo" data-c="f4"></div></div>
     </div>
     <div class="fatto">
@@ -321,9 +335,23 @@
    *      dettagli; questa apre su **gestore di immagini** e **prestazioni**,
    *      nomina il **convertitore** e il **cestino**, e chiude su 'zero fuffa
    *      AI'. Chi trovasse in giro la frase vecchia non la rimetta.
-   * 2. **La sesta scheda porta un NUMERO VIVO**: nel documento diceva '4,1 MB',
-   *    vero alla 1.20 e adesso no (l'apk sta oltre i 6). Il peso lo mette la
-   *    pagina dal file servito, quindi quella frase non può più invecchiare.
+   * 2. **LE ULTIME TRE SCHEDE LE HA DETTATE L'UTENTE** (2026-09-02), e hanno
+   *    sostituito 'Il cestino è dentro l'app', 'Si usa con una mano' e 'Nativa,
+   *    non una webview': adesso sono 'Tutti i formati che contano', 'Un vero
+   *    Cestino' e 'Nativa e scattante'. Con la scheda del telefono è uscita
+   *    l'unica riga della pagina che parlava della mano sinistra, e col cestino
+   *    l'avvertimento sulla disinstallazione: erano nel copy di Design, non sono
+   *    dimenticanze.
+   *    - ⚠️ **Il suo elenco dei formati diceva 'AIFF', che è un formato AUDIO**, e
+   *      qui è scritto **AVIF**: una lettera, e l'app apre quello dalla 1.26.
+   *      Corretto senza chiedere e dichiarato in chat; se un domani ricomparisse
+   *      'AIFF' in un copy, è questo refuso che torna.
+   *    - ⚠️⚠️ **CON LORO È SPARITO IL SEGNAPOSTO `%PESO%`**, che era l'unico rimasto
+   *      e viveva nella sesta scheda: il documento di Design ci scriveva '4,1 MB',
+   *      vero alla 1.20 e falso poi, quindi la pagina ce lo metteva dal file
+   *      servito. Il testo nuovo dice 'pochi MB', che non invecchia, quindi la
+   *      sostituzione è uscita invece di restare a girare a vuoto. Il peso vero si
+   *      legge comunque, nella riga tecnica sotto il tasto.
    */
   var TESTI = {
     it: {
@@ -335,14 +363,13 @@
       sorgente: 'codice sorgente',
       installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
       schermataAlt: 'La griglia delle immagini con una selezione in corso: un elemento scelto, e in basso il pannello con le dieci azioni.',
-      didascalia: 'La griglia con una selezione in corso.',
       fatti: [
         ['La trasparenza si vede', 'Dietro l\'immagine c\'è la scacchiera da 12dp, non un fondo bianco che ti fa indovinare dove finisce il PNG.'],
         ['GIF e WebP animate', 'Si muovono nella griglia e nel viewer. Un video lo apri con un tocco.'],
         ['Il pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
-        ['Il cestino è dentro l\'app', 'Puoi accenderlo dalle impostazioni. ⚠️ Attenzione: se disinstalli l\'app, il contenuto del cestino è perso e non si recupera.'],
-        ['Si usa con una mano', 'Le azioni principali passano al bordo sinistro se sei mancino. È un\'impostazione, non un ripiego.'],
-        ['Nativa, non una webview', 'Kotlin e Compose, %PESO%, nessuna traccia di browser: lo zoom segue il dito perché lo disegna il sistema.']
+        ['Tutti i formati che contano', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: grandi e piccoli, vettoriali e animati. Non lasciamo indietro nessuno.'],
+        ['Un vero Cestino', 'Per fare le cose bene, ma anche a cuor leggero.'],
+        ['Nativa e scattante', 'Kotlin e Compose, pochi MB, niente ripieghi WebView.']
       ],
       altra: 'English',
       titoloAltra: 'Read this page in English'
@@ -356,14 +383,13 @@
       sorgente: 'source',
       installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
       schermataAlt: 'The picture grid with a selection under way: one item picked, and the panel with the ten actions at the bottom.',
-      didascalia: 'The grid with a selection under way. Screenshot in Italian.',
       fatti: [
         ['Transparency you can see', 'Behind a picture there is the 12dp chequerboard, not a white sheet that leaves you guessing where the PNG ends.'],
         ['Animated GIF and WebP', 'They move in the grid and in the viewer. You can still play a video with a tap.'],
         ['The details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
-        ['The bin lives in the app', 'You can turn it on in the settings. ⚠️ WARNING: if you uninstall the app, the contents of the bin are lost and cannot be recovered.'],
-        ['One-handed', 'The main actions flip to the left edge for a left-handed user. It is a real setting, not a nicety.'],
-        ['Native, not a webview', 'Kotlin and Compose, %PESO%, no browser anywhere: the zoom follows your finger because the system draws it.']
+        ['Every format that matters', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: large and small, vector and animated. We leave none behind.'],
+        ['A real bin', 'For doing things properly, and for doing them with a light heart.'],
+        ['Native and snappy', 'Kotlin and Compose, a few MB, no WebView stopgaps.']
       ],
       altra: 'Italiano',
       titoloAltra: 'Leggi questa pagina in italiano'
@@ -411,7 +437,6 @@
     el('claim').textContent = T.claim;
     el('installa').textContent = T.installa;
     el('schermata').alt = T.schermataAlt;
-    el('didascalia').textContent = T.didascalia;
 
     // ⚠️ Il tasto porta all'apk della release; senza apk allegato porta alla
     // release stessa invece di rompersi, come chiede il brief.
@@ -440,7 +465,7 @@
       var corpo = document.querySelector('[data-c="f' + f + '"]');
       if (!titolo || !corpo) continue;
       titolo.textContent = T.fatti[f][0];
-      corpo.textContent = T.fatti[f][1].replace('%PESO%', asset ? peso(asset.size, T.loc) : (T.lang === 'it' ? 'pochi megabyte' : 'a few megabytes'));
+      corpo.textContent = T.fatti[f][1];
     }
 
     var diritti = el('diritti');
