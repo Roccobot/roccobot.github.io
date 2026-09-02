@@ -506,7 +506,11 @@
         .replace(/https?:\/\/\S+/g, '')
         .replace(/\(#\d+\)|#\d+/g, '')
         .replace(/\b[0-9a-f]{7,40}\b/g, '')
-        .replace(/\bby @[\w-]+/gi, '')
+        // ⚠️ La coda 'by @tizio in <url>' si toglie INTERA, preposizione compresa: con la
+        // sola `by @tizio` e l'URL già sparito restava un ' in' orfano, e ogni riga delle
+        // note finiva con 'in.'. Misurato sul corpo VERO della release 1.37, che GitHub
+        // genera dai titoli delle PR e ha quella forma per ognuna.
+        .replace(/\bby @[\w-]+(\s+in)?\b/gi, '')
         .replace(/\s{2,}/g, ' ')
         .trim();
       if (l.length <= 2) continue;
