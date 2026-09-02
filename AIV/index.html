@@ -76,9 +76,6 @@
     --dark-outline:#8A9490;
     --dark-outline-variant:#3C4442;
 
-    --checker-a:#FFFFFF;
-    --checker-b:#D8DDDB;
-
     --bg:var(--light-back);
     --surface-container:var(--light-surface-container);
     --surface-variant:var(--light-surface-variant);
@@ -116,7 +113,6 @@
     --on-accent:#FFFFFF;
     --outline:var(--dark-outline);
     --outline-variant:var(--dark-outline-variant);
-    --checker-b:#3A403E;
     --glyph:var(--brand-glyph-dark);
   }
 
@@ -170,15 +166,6 @@
   .fatto .testi{display:flex; flex-direction:column; gap:3px}
   .fatto .titolo{font-size:15px; font-weight:500}
   .fatto .corpo{font-size:14px; line-height:1.5; color:var(--text-muted)}
-  .scacchiera{
-    width:24px; height:24px; flex:none; border-radius:4px;
-    background-image:
-      linear-gradient(45deg,var(--checker-b) 25%,transparent 25%,transparent 75%,var(--checker-b) 75%),
-      linear-gradient(45deg,var(--checker-b) 25%,transparent 25%,transparent 75%,var(--checker-b) 75%);
-    background-color:var(--checker-a);
-    background-size:12px 12px;
-    background-position:0 0,6px 6px;
-  }
 
   footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
   .piede-riga{
@@ -265,7 +252,12 @@
 
   <div class="fatti">
     <div class="fatto">
-      <div class="scacchiera"></div>
+      <!-- ⚠️ LA SCACCHIERA È UN GLIFO COME GLI ALTRI dal 2026-09-02, e prima era un
+           `div` col motivo a gradienti nei colori veri della scacchiera dell'app
+           (bianco e grigio). Le sei scatole erano già tutte 24x24, ma quella si
+           leggeva più piccola: un pieno chiaro su fondo chiaro, in mezzo a cinque
+           tratti color accento. Adesso è cornice più pieni, come le altre. -->
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M6 6h4v4H6zM14 6h4v4h-4zM10 10h4v4h-4zM6 14h4v4H6zM14 14h4v4h-4z" fill="currentColor"></path></svg>
       <div class="testi"><div class="titolo" data-t="f0"></div><div class="corpo" data-c="f0"></div></div>
     </div>
     <div class="fatto">
@@ -369,9 +361,9 @@
       installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
       schermataAlt: 'La griglia delle immagini con una selezione in corso: un elemento scelto, e in basso il pannello con le dieci azioni.',
       fatti: [
-        ['La trasparenza si vede', 'Dietro l\'immagine c\'è la scacchiera da 12dp, non un fondo bianco che ti fa indovinare dove finisce il PNG.'],
-        ['GIF e WebP animate', 'Si muovono nella griglia e nel viewer. Un video lo apri con un tocco.'],
-        ['Il pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
+        ['La trasparenza si vede', 'Tratta la trasparenza come merita, con la griglia adattiva da 12dp per visualizzare il canale alfa.'],
+        ['Video, GIF e WebP animate', 'Apri i video con il player nativo e prendi il controllo delle immagini animate, con controllo e salvataggio dei fotogrammi.'],
+        ['Pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
         ['Tutti i formati che contano', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: grandi e piccoli, vettoriali e animati. Non lasciamo indietro nessuno.'],
         ['Un vero Cestino', 'Per fare le cose bene, ma anche a cuor leggero.'],
         ['Nativa e scattante', 'Kotlin e Compose, pochi MB, niente ripieghi WebView.']
@@ -389,9 +381,9 @@
       installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
       schermataAlt: 'The picture grid with a selection under way: one item picked, and the panel with the ten actions at the bottom.',
       fatti: [
-        ['Transparency you can see', 'Behind a picture there is the 12dp chequerboard, not a white sheet that leaves you guessing where the PNG ends.'],
-        ['Animated GIF and WebP', 'They move in the grid and in the viewer. You can still play a video with a tap.'],
-        ['The details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
+        ['Transparency you can see', 'Treats transparency as it deserves, with the adaptive 12dp grid that shows the alpha channel.'],
+        ['Video, animated GIF and WebP', 'Open videos with the native player and take control of animated images, with frame control and frame saving.'],
+        ['Details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
         ['Every format that matters', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: large and small, vector and animated. We leave none behind.'],
         ['A real bin', 'For doing things properly, and for doing them with a light heart.'],
         ['Native and snappy', 'Kotlin and Compose, a few MB, no WebView stopgaps.']
