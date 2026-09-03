@@ -592,7 +592,7 @@ peso**, e soprattutto un comportamento di visualizzazione controllato:
     **sfondo bianco** invece che trasparente, comoda per la stampa. Il valore usato
     l'ultima volta si ricorda.
     - Il tetto massimo di DPI è calcolato **prima** e mostrato se lo si supera: oltre i
-      limiti del canvas Chromium non solleva alcun errore, restituisce semplicemente
+      limiti del canvas Chromium non dà alcun errore, restituisce semplicemente
       un'immagine vuota, quindi non si può intercettare dopo.
     - È rasterizzazione vettoriale vera, non un ingrandimento: misurato sul bordo di un
       cerchio, la sfumatura resta di **1 pixel** sia a 96 sia a 254 DPI (un ingrandimento
