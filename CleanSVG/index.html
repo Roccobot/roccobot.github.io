@@ -453,8 +453,8 @@ function scriviMotore() {
 // ⚠️⚠️ NON è un doppione di SVGO, ed è una misura del 2026-08-25: SVGO 4.1.0
 // conosce il namespace `sodipodi-0.dtd`, mentre Inkscape scrive nei suoi file
 // `sodipodi-0.0.dtd`. Sono due URI diversi, quindi `<sodipodi:namedview>` e la
-// sua dichiarazione xmlns SOPRAVVIVONO alla pulizia, che è esattamente la
-// roba che questo strumento esiste per togliere. La rifinitura lavora per URI
+// sua dichiarazione xmlns SOPRAVVIVONO alla pulizia, che è esattamente il
+// contenuto che questo strumento esiste per togliere. La rifinitura lavora per URI
 // di namespace e non per prefisso, perché il prefisso lo sceglie chi scrive
 // il file e può essere qualunque cosa.
 const NS_DA_TOGLIERE = [
@@ -918,7 +918,7 @@ function analizza(testo) {
 
   // Riferimenti che escono dal file. ⚠️ Le dichiarazioni xmlns si saltano: sono
   // identificatori di namespace, non indirizzi da cui si scarica qualcosa, e
-  // contarle direbbe che ogni file di Inkscape tira roba da internet.
+  // contarle direbbe che ogni file di Inkscape scarica contenuti da internet.
   let esterni = 0, incorporate = 0;
   const tutti = doc.getElementsByTagName('*');
   for (let i = 0; i < tutti.length; i++) {

@@ -238,7 +238,7 @@ const TIMEOUT_MS = 60000;  // timeout per singola immagine
 
 Alleggerisce la wiki LotR di Fandom (`lotr.fandom.com`): toglie l'**enorme immagine
 di sfondo** del tema (e, iniettando il CSS a `document-start`, ne **evita anche il
-caricamento**), e nasconde la roba pesante/inutile lasciando **intatti contenuto e
+caricamento**), e nasconde gli elementi pesanti e inutili lasciando **intatti contenuto e
 leggibilità** della wiki. Solo CSS, nessuna richiesta di rete.
 
 Cosa nasconde (tutto attivabile/disattivabile dai flag in cima):

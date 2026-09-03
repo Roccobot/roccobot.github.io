@@ -1058,7 +1058,7 @@ leggere prima di toccare il numero.
     - ⚠️ **Resta un teal DIVERSO da quello dei tasti salto chiari** (`rgba(31,85,98,0.9)`, il
       `#1f5562` di Arda, 8,29). Le due rese erano fra le cinque offerte all'utente e lui ha
       scelto la più chiara: **non è una svista da sanare** allineandole, e se un domani si
-      uniforma va deciso, non dedotto.
+      uniforma va deciso.
     - **Scelta fra CINQUE rese sul sito vero** (2026-08-23, *'FAB -> A'*), a DPR 3 su viewport
       mobile e con le schede dietro: le altre erano il verde mare profondo del titolo
       (`#0e6b5e`), l'ardesia di tavolozza (`#2e4145`), il teal di Arda (`#1f5562`) e l'oro
@@ -1066,7 +1066,7 @@ leggere prima di toccare il numero.
     - Ⓘ **Prima veniva dal logo precedente**, `#3a2808`, un bruno più caldo e con più
       contrasto (7,32): scartato non per la misura ma perché non apparteneva più a niente.
       ⚠️ Resta in vita su `.jump-fab`, che porta un chevron e non il logo: non è un residuo da
-      uniformare a vista, e se un domani si uniforma va deciso, non dedotto.
+      uniformare a vista, e se un domani si uniforma va deciso.
     - **La misura scartata è il disco marmo** (`#eff3f2` con segno `#4a3f46`): il segno si
       legge benissimo (8,98) ma il **disco sparisce contro il fondo pagina** (1,08), e un FAB
       invisibile è un difetto peggiore di un contrasto mediocre. È il caso in cui misurare il
@@ -1847,7 +1847,7 @@ card si allarghi. Spento di default, cioè la resa in vigore fin qui.
 - ⚠️ **Su mobile non cambia NIENTE in nessuno dei due stati**, ed è voluto (richiesta
   dell'utente: *su mobile, se sta sotto, quella parte dev'essere comunque nascosta*): sotto i
   480px `.rank-item.has-orig` torna a due colonne, quindi la terza non esiste comunque.
-  Verificato col codice e non a occhio: la griglia resa su una card senza origine misura
+  Verificato col codice: la griglia resa su una card senza origine misura
   `54px 286px` anche a interruttore acceso.
 
 ⚠️⚠️ **LA SPUNTA DI 'ORIGINE' AGISCE SUBITO, e dalla `1.02` anche dalla LISTA del Pannello di
@@ -3265,7 +3265,7 @@ collegamento esterno per voce (che lanciava un `TypeError` a ogni scheda aperta)
 `localStorage`, proxy admin.
 
 **Resta dentro** una quantità di commenti e di rami inerti che parlano di Tolkien (l'elenco
-degli apocrifi, gli Istari, i Balrog, le misure tipografiche di quel sito). ⚠️ Non è roba da
+degli apocrifi, gli Istari, i Balrog, le misure tipografiche di quel sito). ⚠️ Non è materiale da
 sistemare a colpi di sostituzione globale: è **codice funzionante letto da spiegazioni che
 raccontano un altro mondo**, e la regola universale sulle sostituzioni su parole corte esiste
 per un disastro già capitato proprio qui. Si tocca **quando si tocca quel codice**, un pezzo

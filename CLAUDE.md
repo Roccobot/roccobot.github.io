@@ -29,7 +29,7 @@ download, e **sovrascrive** quello che trova. Quindi non ha un `CLAUDE.md` propr
 compare nella tabella qui sopra: chi vuole cambiare quella pagina cambia il **modello**, che
 vive in AIV e non qui
 (<https://github.com/Roccobot/AIV/blob/main/publish/index.html>).
-- ⚠️ **Ci sta un APK solo, il più recente**, e i precedenti stanno fra le release di AIV: la
+- ⚠️ **C'è un APK solo, il più recente**, e i precedenti stanno fra le release di AIV: la
   paginetta offre **un** download, e una cartella che si riempie di build vecchi la
   costringerebbe a elencarli e a ordinarli. ⚠️ **La ragione NON è il peso**, e conviene
   saperlo per non 'correggere' la scelta con un argomento sbagliato: l'APK di release
@@ -407,6 +407,29 @@ in `.claude/settings.json` (`"model": "opus"`), quindi non serve farlo a mano.
   file o della richiesta. I contenuti tecnici (codice, messaggi di commit, corpo
   delle PR, nomi di file) seguono le loro convenzioni, ma la **comunicazione con
   l'utente** è sempre in italiano.
+
+## 🗣️ Registro: italiano corretto, non formale
+
+⚠️⚠️ **NIENTE FORMULE COLLOQUIALI O DIALETTALI, in nessun output** (istruzione dell'utente,
+2026-09-03: *devi parlare un italiano non ampolloso o formale, ma assolutamente corretto,
+esatto, preciso, grammaticalmente e sintatticamente impeccabile*). Le forme già bandite, con
+la sostituzione: `esce` per **risulta**, `ci sta` per **c'è**, `roba` per la cosa vera (i
+file, il contenuto, gli elementi), `sollevare` per un errore (**va in errore**, **dà
+errore**, **fallisce**). ⚠️ Fuori anche la coda su quello che **non** si è fatto, del tipo
+`invece di indovinarla` oppure `e non a memoria`: al suo posto va il metodo. La regola
+completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
+§ '🙂 Formule da non usare'.
+
+- ⚠️⚠️ **STA QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
+  stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
+  precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
+  file di regole entra in scena **quando lo si legge** e da un riassunto sparisce. Il
+  2026-09-03 due divieti scritti alle 03:27 sono stati infranti verso le 11, con una
+  compattazione in mezzo: non mancava la regola, mancava il suo testo.
+- ⚠️ **Il presidio è `refcheck.py`**, che dal 2026-09-03 blocca queste forme come già i
+  trattini lunghi. Nelle sessioni coi repo affiancati gli hook non girano (trappola in fondo a
+  questo file), quindi prima di un commit si lancia a mano, come comando singolo e **senza
+  pipe**.
 
 ## ✒️ Caratteri vietati
 

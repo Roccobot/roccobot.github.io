@@ -253,11 +253,11 @@ def altra_lingua(riga):
     riconoscimento: una `ơ` vietnamita, una `ń` polacca o una lettera bengalese dicono da sé
     che la riga non è italiano, e costano un confronto per carattere.
     ⚠️ Il falso negativo che si accetta, e va detto invece di scoprirlo dopo: una riga
-    MISTA (un `verita'` italiano accanto a una `ü` tedesca) non viene più guardata. Il
+    MISTA (un `verità` italiano accanto a una `ü` tedesca) non viene più guardata. Il
     rovescio, cioè bloccare ogni riga di ogni traduzione, costa di più: là il difetto è
     certo e frequente, qui è un caso di confine. E l'italiano puro resta coperto, che è
     dove l'errore nasce: nelle 11 traduzioni nuove il presidio ha comunque trovato il
-    `verita'` del commento di intestazione, che è italiano.
+    `verità` del commento di intestazione, che è italiano.
     """
     return any(unicodedata.category(ch).startswith("L") and ch not in ITALIANE for ch in riga)
 
@@ -266,7 +266,7 @@ def dentro_identificatore(riga, col):
     """Vero se il token accentato è incollato a un identificatore da `-` o `_`.
 
     ⚠️ Il caso vero, misurato il 2026-09-02 sulla pagina di download di AIV:
-    `el('note-meta')` finisce per `meta` più l'apostrofo, cioè esattamente la forma che la
+    `el('note-metà)` finisce per `meta` più l'apostrofo, cioè esattamente la forma che la
     lista chiusa blocca, ma là quell'apostrofo **chiude una stringa** e non è punteggiatura
     italiana. Bloccava un commit corretto, e un presidio che blocca il giusto viene
     disattivato invece che corretto.
@@ -275,7 +275,7 @@ def dentro_identificatore(riga, col):
     `RE_ACCENTATE`: in italiano una parola accentata non segue mai un trattino o un
     trattino basso senza spazio, mentre in un identificatore è la norma.
     ⚠️ Quello che NON copre, e va detto invece di scoprirlo dopo: un identificatore la cui
-    parola accentata sta in TESTA (`meta_note`) o dopo un punto (`dati.meta'`). Il primo
+    parola accentata sta in TESTA (`meta_note`) o dopo un punto (`dati.metà`). Il primo
     non ha l'apostrofo attaccato e quindi non arriva qui; il secondo resta scoperto, e si
     guarda a mano.
     """
@@ -305,8 +305,13 @@ VIETATI = {
 # veri, che Unicode classifica come lettere maiuscole e che a schermo sono indistinguibili
 # dalle latine (U+212A KELVIN SIGN è una 'K', U+212B ANGSTROM SIGN una 'A' con l'anello,
 # U+2126 OHM SIGN una omega). Si ammette il solo simbolo in uso, U+2139.
+# ⚠️ U+FF0B FULLWIDTH PLUS SIGN si ammette da solo, e non è un vezzo: è il glifo VERO del
+# tasto che aggiunge un allegato nei documenti di collaudo (a quel corpo il `+` normale sta
+# alto e stretto), quindi la prosa che nomina quel tasto deve poterlo scrivere. Ammesso il
+# solo codepoint, non il blocco Halfwidth and Fullwidth Forms, che contiene le latine a
+# larghezza intera, cioè omografi perfetti.
 SIMBOLI_OK = [
-    (0x00A1, 0x00BF), (0x00D7, 0x00D7), (0x00F7, 0x00F7),
+    (0x00A1, 0x00BF), (0x00D7, 0x00D7), (0x00F7, 0x00F7), (0xFF0B, 0xFF0B),
     (0x2000, 0x206F), (0x2139, 0x2139), (0x2150, 0x218F), (0x2190, 0x21FF),
     (0x2200, 0x22FF), (0x2300, 0x23FF), (0x2460, 0x24FF), (0x2500, 0x257F),
     (0x25A0, 0x25FF), (0x2600, 0x27BF), (0x2900, 0x297F), (0x2B00, 0x2BFF),
@@ -325,6 +330,93 @@ SIMBOLI_OK = [
 MARCATORI = ("<!-- brief-intro:inizio -->", "<!-- brief-intro:fine -->")
 INTRO_SORGENTE = SITO / ".claude/skills/handoff/SKILL.md"
 INTRO_COPIA = TOOLS / ".memo/LATEST.md"
+
+# ── Il lessico: le formule bandite e il registro ──
+# ⚠️⚠️ NASCE PERCHÉ LA PROSA NON È BASTATA, e la misura è di una giornata sola: il 2026-09-03
+# alle 03:27 sono state bandite in `Roccobot.md` due formule ('sollevare' per un errore, e la
+# coda che dichiara quello che NON si è fatto); alle 11 le ho riscritte tutte e due, in file
+# che erano stati appena bonificati. Nel frattempo la conversazione era stata compattata, cioè
+# il testo delle regole non era più in scena: una regola che vive solo come prosa dipende dal
+# fatto che quella prosa sia sotto gli occhi nel momento in cui si scrive, e la compattazione
+# toglie esattamente quello.
+# ⚠️ I divieti che NON sono più tornati sono quelli con una macchina dietro: i trattini lunghi
+# e gli omografi non ricompaiono da quando questo script li blocca. Non è una questione di
+# quante regole ci sono, ma di quali hanno un controllo. Quindi il rimedio per questa famiglia
+# è qui e non in un'altra riga di prosa.
+# ⚠️ DUE CANALI E NON UNO, e la ragione è il rumore: una formula che ha anche un uso legittimo
+# (`a occhio` nel senso di 'allineamento ottico', `esce` nel senso di 'uscire da un luogo')
+# non può bloccare un commit, o il presidio viene disattivato in due giorni. Quelle bloccano
+# solo dove la forma è inequivocabile, e per il resto avvisano.
+FORMULE_BLOCCA = [
+    # ⚠️⚠️ IL SENSO FISICO DI `sollevare` È LEGITTIMO e non si tocca: 'sollevare una colonna
+    # a piena altezza', 'la firma restava sollevata'. Il divieto riguarda l'errore, quindi la
+    # forma si riconosce dalla parola che le sta accanto. Senza questo vincolo il controllo
+    # segnalerebbe due note di grafica corrette, e un presidio che sbaglia in quel verso viene
+    # disattivato.
+    (re.compile(r"\bsollev\w*\b[^.;]{0,30}?\b(error\w*|eccezion\w*|exception)\b", re.I),
+     "'sollevare' per un errore: va in errore, dà errore, fallisce, lo rifiuta"),
+    (re.compile(r"invece di (indovinar|andare a memoria|andare a tentativi|ragionarci|"
+                r"crederlo|stimar|dedurr)", re.I),
+     "coda su quello che NON si è fatto: scrivi il metodo (misurato sul file servito, "
+     "letto nel sorgente, contato con grep)"),
+    (re.compile(r"\be non (a memoria|dedott[oai]|stimat[oai]|a occhio|per sentito dire)\b",
+                re.I),
+     "coda su quello che NON si è fatto: scrivi il metodo e basta"),
+    (re.compile(r"\b(non dedotto|non stimato|non si stima|non tiro a indovinare)\b", re.I),
+     "coda su quello che NON si è fatto: scrivi il metodo e basta"),
+    (re.compile(r"\broba\b", re.I),
+     "'roba' è colloquiale: cose, contenuto, materiale, file"),
+    # ⚠️⚠️ IL SENSO SPAZIALE DI `starci` È ITALIANO CORRETTO, e distinguerlo è la sola cosa
+    # che rende questa riga utilizzabile: 'nella cella non ci sta la parola' vuol dire che non
+    # entra, ed è giusto; 'sotto AIV/ ci sta un solo APK' vuol dire 'c'è', ed è colloquiale.
+    # Il discrimine è la NEGAZIONE e le parole che accompagnano la misura: il senso spaziale
+    # è quasi sempre negato ('non ci sta') o accompagnato ('ci sta dentro', 'a stento',
+    # 'appena'). Senza questa distinzione il controllo bloccherebbe una frase corretta, e un
+    # presidio che sbaglia in quel verso viene disattivato in due giorni.
+    (re.compile(r"(?<!non )\bci st(?:a|anno)\s+(?!dentro|a stento|appena|bene)"
+                r"(?:un|uno|una|il|lo|la|i|gli|le|dei|delle|degli)\b", re.I),
+     "'ci sta' per 'c'è' è colloquiale: c'è, ci sono, resta, vive"),
+    # ⚠️ `subito` NON è un participio, e senza questa esclusione sembra tale: la forma
+    # legittima 'una funzione che esce subito' (cioè ritorna presto) finiva segnalata come
+    # `esce` per `risulta`. Trovato in `earthsea/top/index.html`, dove la frase era corretta.
+    (re.compile(r"\besce\s+(non |NON |già |comunque )?(?!subito\b)[a-zA-Zà-ù]+"
+                r"(ato|ata|ati|ate|ito|ita|iti|ite|uto|uta)\b"),
+     "'esce' per 'risulta': risulta, viene, si ottiene"),
+]
+FORMULE_AVVISA = [
+    (re.compile(r"\bci st(?:a|anno)\s+bene\b", re.I),
+     "'ci sta bene' è colloquiale nel senso di 'è appropriato' (legittimo nel senso "
+     "spaziale: il numero ci sta bene nella cella)"),
+    # ⚠️ `a occhio` DA SOLO NON SI SEGNALA, ed è una misura e non una clemenza: sui due repo
+    # ricorre 16 volte, e tutte e 16 nel senso corretto di 'senza strumenti, per valutazione
+    # visiva' ('lo ha trovato il banco di prova, non la lettura a occhio'). Un controllo che
+    # sbaglia su tutte le occorrenze del corpus non è severo: è rumore, e il rumore fa
+    # spegnere il canale. Resta segnalato quello che vale davvero 'circa', cioè la forma
+    # estesa e quella seguita da una quantità.
+    (re.compile(r"\ba occhio e croce\b|\ba occhio\s+(?:circa|sono|fanno|una|un|due|tre|"
+                r"quattro|cinque|dieci|\d)", re.I),
+     "'a occhio' per 'approssimativamente' è colloquiale: circa, dell'ordine di, "
+     "una stima di (legittimo nel senso ottico: verificato a occhio, non misurato)"),
+    # ⚠️ `senza un telefono` vuole la NEGAZIONE che segue, perché da sola quella forma ha un
+    # uso legittimo e in casa c'è: `SvgClean.refine` è pura, quindi 'si può provare senza un
+    # file, senza un contesto e senza un telefono' è un pregio della funzione, non una scusa.
+    # La scusa è sempre 'senza un telefono NON posso', ed è quella che si segnala.
+    # ⚠️ Le varianti con l'accento scritto all'apostrofo NON si elencano qui, e non è una
+    # dimenticanza: quella grafia la blocca già il controllo sugli accenti, quindi metterla
+    # anche in queste espressioni sarebbe una seconda fonte da tenere allineata.
+    (re.compile(r"\bnon (?:c'è|ho|abbiamo|si ha) un telefono\b|"
+                r"\bsenza un telefono\s+non\b|\bnon l'ho potuto riprodurre\b", re.I),
+     "il collaudo lo fa l'utente per patto: non si ripete (`Roccobot.md` § '🔁 Il giro del "
+     "collaudo'). Si nomina UNA incognita specifica, non la mancanza di un telefono"),
+]
+# ⚠️ Una formula fra BACKTICK è una CITAZIONE, non un uso, ed è la stessa convenzione con cui
+# i trattini lunghi si possono nominare nella regola che li vieta: il divieto, per esistere,
+# deve poter scrivere la parola. Chi aggiunge una formula qui la scriva fra backtick anche
+# nelle regole, o il controllo bloccherà il file che lo definisce.
+FORMULE_ESENTI = (
+    # Questo file: la tabella qui sopra contiene per forza le forme che vieta.
+    ".memo/scripts/refcheck.py",
+)
 
 RE_MDLINK = re.compile(r"\[[^\]]*\]\(([^)#][^)]*)\)")
 # ⚠️ Il nome del file ammette gli SPAZI, e non è pignoleria: fino al 2026-07-30 non li
@@ -416,9 +508,153 @@ def etichetta(ch):
     """Come si nomina il reperto: per codepoint se è un carattere, fra apici se è una parola.
 
     Serve perché il controllo sugli accenti segnala una PAROLA (`perché`), non un carattere,
-    e `ord()` su due lettere solleva un'eccezione: la prima versione del controllo è morta
+    e `ord()` su due lettere va in errore: la prima versione del controllo è morta
     esattamente lì."""
     return f"U+{ord(ch):04X} {ch!r}" if len(ch) == 1 else repr(ch)
+
+
+# ⚠️ L'impalcatura dei commenti di codice: `//`, `/*`, `/**`, `*/` e l'asterisco di
+# continuazione di un KDoc o di un JSDoc. Si cancella PRIMA di cercare il corsivo, perché là
+# l'asterisco è sintassi e non enfasi.
+RE_IMPALCATURA = re.compile(r"^([ \t]*)(?://+|/\*+|\*+/|\*+)([ \t]?)")
+RE_FINE_COMMENTO = re.compile(r"\*+/[ \t]*$")
+
+
+def _senza_impalcatura(riga):
+    """La riga con l'impalcatura del commento sostituita da spazi (le colonne non si muovono)."""
+    m = RE_IMPALCATURA.match(riga)
+    if m:
+        riga = " " * m.end() + riga[m.end():]
+    m = RE_FINE_COMMENTO.search(riga)
+    if m:
+        riga = riga[:m.start()] + " " * (len(riga) - m.start())
+    return riga
+
+
+def libere_di(paragrafo):
+    """Le colonne libere di un paragrafo: `{numero di riga: set di colonne}`.
+
+    Libere vuol dire FUORI dal codice inline e fuori dalle citazioni in corsivo. Le esclusioni
+    sono due, entrambe necessarie:
+    - i **backtick**, perché un divieto per esistere deve poter nominare la forma che vieta;
+    - il **corsivo a un asterisco**, che in questi file è la convenzione con cui si riportano
+      le parole dell'utente **verbatim**.
+    ⚠️⚠️ LA SECONDA NON È UNA COMODITÀ: le parole dell'utente non sono un difetto di chi
+    scrive, e un controllo che le segnalasse chiederebbe di **falsificare una citazione**, che
+    è un danno molto peggiore di un colloquialismo. Il grassetto a due asterischi invece è
+    enfasi nostra, quindi resta sotto controllo. ⚠️ E l'esenzione copre la FEDELTÀ della
+    citazione, non la forma citata: dentro le sue parole può esserci un errore mio, e trovarlo
+    esente qui non vuol dire che sia lecito altrove (`Roccobot.md` § '🙂 Formule da non usare').
+
+    ⚠️⚠️ SI CERCANO COPPIE, NON UNO STATO APERTO E CHIUSO, e questa è la correzione del
+    2026-09-03 dopo che la prima versione ha prodotto un falso negativo enorme. Con uno stato
+    che si ribalta a ogni marcatore, un asterisco **spaiato** apre un corsivo che non si chiude
+    mai, e da lì in poi il controllo non guarda più niente. Gli asterischi spaiati nel
+    codice sono la norma: la moltiplicazione (`a * b`), e sopra tutto l'impalcatura di un
+    commento a blocco, dove ogni riga di continuazione ne porta uno. Misurato sul documento di
+    collaudo: un `roba` in un commento JavaScript passava indisturbato, e con lui tutto il
+    resto del file. Ora un marcatore che non trova il suo compagno **nel paragrafo** è un
+    carattere qualunque, e non nasconde nulla.
+    ⚠️ Il paragrafo è l'unità giusta perché è quanto può durare al massimo una citazione
+    andata a capo: in questi file il testo si spezza a un centinaio di caratteri, quindi le sue
+    parole occupano tre o quattro righe, mai due paragrafi.
+
+    Torna gli indici invece di ripulire il testo, così la colonna riportata resta quella vera
+    del file.
+    """
+    testi = [_senza_impalcatura(r) for _, r in paragrafo]
+    unito = "\n".join(testi)
+    # Le posizioni di inizio di ogni riga dentro `unito`, per tornare a (riga, colonna).
+    inizi, acc = [], 0
+    for t in testi:
+        inizi.append(acc)
+        acc += len(t) + 1
+
+    coperto = [False] * len(unito)
+
+    def copri(a, b):
+        for k in range(a, min(b, len(unito))):
+            coperto[k] = True
+
+    # 1) il codice inline: coppie di backtick
+    i = 0
+    while i < len(unito):
+        if unito[i] == "`":
+            j = unito.find("`", i + 1)
+            if j < 0:
+                break
+            copri(i, j + 1)
+            i = j + 1
+        else:
+            i += 1
+
+    # 2) il corsivo a UN asterisco, fuori dal codice: coppie, e il grassetto non conta
+    def marcatori():
+        k = 0
+        while k < len(unito):
+            if unito[k] == "*" and not coperto[k]:
+                if k + 1 < len(unito) and unito[k + 1] == "*":
+                    k += 2
+                    continue
+                yield k
+            k += 1
+
+    aperti = list(marcatori())
+    p = 0
+    while p + 1 < len(aperti):
+        copri(aperti[p], aperti[p + 1] + 1)
+        p += 2
+
+    fuori = {}
+    for (n, riga), inizio, testo in zip(paragrafo, inizi, testi):
+        fuori[n] = {c for c in range(len(testo)) if not coperto[inizio + c]}
+    return fuori
+
+
+def formula_defects(text, path=None):
+    """Formule bandite e colloquialismi in un testo: (blocca, avvisa).
+
+    Ogni elemento è `(riga, colonna, forma trovata, motivo)`. Vedi `FORMULE_BLOCCA` per il
+    perché questo controllo esiste e per il perché ha due canali.
+    """
+    if path and any(str(path).endswith(e) for e in FORMULE_ESENTI):
+        return [], []
+    blocca, avvisa = [], []
+    # Si lavora a PARAGRAFI, perché è l'unità in cui vivono le coppie di marcatori: vedi
+    # `libere_di`. Una riga di recinto ``` chiude il paragrafo come una riga vuota.
+    paragrafi, corrente = [], []
+    for n, riga in enumerate(text.splitlines(), 1):
+        if not riga.strip() or riga.lstrip().startswith("```"):
+            if corrente:
+                paragrafi.append(corrente)
+                corrente = []
+            continue
+        corrente.append((n, riga))
+    if corrente:
+        paragrafi.append(corrente)
+
+    for paragrafo in paragrafi:
+        fuori = libere_di(paragrafo)
+        for n, riga in paragrafo:
+            libere = fuori[n]
+            for tabella, dove in ((FORMULE_BLOCCA, blocca), (FORMULE_AVVISA, avvisa)):
+                # ⚠️ I doppioni si scartano: due forme della stessa famiglia possono coprire
+                # lo stesso pezzo di riga ('e non dedotto' contiene 'non dedotto'), e
+                # segnalarlo due volte fa credere a due difetti dove ce n'è uno. Si tiene il
+                # primo che copre quel tratto, cioè il più esteso, perché le tabelle sono
+                # in quest'ordine.
+                presi = []
+                for rx, motivo in tabella:
+                    for m in rx.finditer(riga):
+                        if m.start() not in libere:
+                            continue
+                        if any(a <= m.start() < b for a, b in presi):
+                            continue
+                        presi.append((m.start(), m.end()))
+                        dove.append((n, m.start() + 1, m.group(0), motivo))
+    blocca.sort(key=lambda x: (x[0], x[1]))
+    avvisa.sort(key=lambda x: (x[0], x[1]))
+    return blocca, avvisa
 
 
 def char_defects(text):
@@ -590,14 +826,86 @@ def main_text():
     em-dash legge il diff, non il messaggio. Vive qui e non in una riga di shell a sé perché
     l'insieme dei caratteri ammessi deve avere UNA fonte: due liste divergerebbero.
     """
-    bad = char_defects(sys.stdin.read())
-    if not bad:
-        print("charcheck: nessun carattere fuori regola")
+    testo = sys.stdin.read()
+    bad = char_defects(testo)
+    # ⚠️ Il lessico si controlla ANCHE qui, e questo modo è il più importante dei tre: un
+    # messaggio di commit e il corpo di una PR non passano da nessun altro controllo, e sono
+    # esattamente i posti in cui le formule bandite sono ricomparse il 2026-09-03.
+    lex, avvisi = formula_defects(testo)
+    if avvisi:
+        print(f"\n~~ registro da guardare, NON blocca: {len(avvisi)}")
+        for n, col, forma, motivo in avvisi:
+            print(f"   riga {n}: {forma!r} -> {motivo}")
+    if not bad and not lex:
+        print("charcheck: nessun carattere e nessuna formula fuori regola")
         return 0
-    print(f"\n!! caratteri fuori regola nel testo: {len(bad)}")
-    for n, col, ch, motivo in bad:
-        print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
+    if bad:
+        print(f"\n!! caratteri fuori regola nel testo: {len(bad)}")
+        for n, col, ch, motivo in bad:
+            print(f"   riga {n} colonna {col}: {etichetta(ch)} -> {motivo}")
+    if lex:
+        print(f"\n!! formule fuori regola nel testo: {len(lex)}")
+        for n, col, forma, motivo in lex:
+            print(f"   riga {n} colonna {col}: {forma!r} -> {motivo}")
     return 1
+
+
+RE_SORGENTE = re.compile(r"<(\w+)([^>]*\bid=[\"']sorgente[\"'][^>]*)>", re.I)
+
+
+def senza_sorgente(html_grezzo):
+    """La pagina senza il blocco `#sorgente`, cioè la copia del guscio che tiene di sé.
+
+    ⚠️⚠️ SERVE PERCHÉ QUEL BLOCCO NON È TESTO VISIBILE, ED ERA L'UNICA COSA CHE `--html`
+    SEGNALAVA. I documenti di collaudo portano dentro un `<div id="sorgente" hidden>` la
+    propria sorgente **escapata**, che è il guscio da cui il giro dopo riparte. Il modo
+    `--html` toglie i tag e poi decodifica le entità: in quell'ordine la sorgente escapata
+    sopravvive allo spoglio dei tag e **ridiventa markup** dopo la decodifica, quindi il
+    controllo si metteva a leggere un `<link>` di Google Fonts e due righe di JavaScript come
+    se fossero prosa. Il 2026-09-03 gli 8 rilievi su `feedback145.html` erano tutti quelli, e
+    non uno vero: cinque `+` fra i nomi dei font, due `＋` presi da `textContent`, e un `li`
+    che era il nome di una variabile.
+    ⚠️ Questo è il difetto che conta più di quegli 8: un presidio che a ogni giro stampa
+    solo rilievi falsi insegna a non guardarlo, e a quel punto il giro in cui ne stampa uno
+    vero passa insieme agli altri.
+    ⚠️ Si tolgono i **soli** blocchi con quell'`id`, che è una convenzione di questi
+    documenti, e non tutti gli elementi `hidden`: un pannello a schede si nasconde con
+    `hidden` e porta testo vero, quindi spegnerlo in blocco costerebbe la copertura dove
+    serve. L'`id` non si ricava a occhio dalla pagina: è quello che il generatore scrive.
+    """
+    fine = 0
+    fuori = []
+    for m in RE_SORGENTE.finditer(html_grezzo):
+        if m.start() < fine:
+            continue
+        tag = m.group(1)
+        # La chiusura si trova contando le annidature dello stesso tag: un `<div>` dentro
+        # un `<div>` è la norma, e fermarsi al primo `</div>` taglierebbe a metà.
+        livello, i = 1, m.end()
+        apre = re.compile(rf"<{tag}\b", re.I)
+        chiude = re.compile(rf"</{tag}\s*>", re.I)
+        while livello and i < len(html_grezzo):
+            a = apre.search(html_grezzo, i)
+            c = chiude.search(html_grezzo, i)
+            if not c:
+                i = len(html_grezzo)
+                break
+            if a and a.start() < c.start():
+                livello += 1
+                i = a.end()
+            else:
+                livello -= 1
+                i = c.end()
+        fuori.append((m.start(), i))
+        fine = i
+    if not fuori:
+        return html_grezzo
+    pezzi, prec = [], 0
+    for a, b in fuori:
+        pezzi.append(html_grezzo[prec:a])
+        prec = b
+    pezzi.append(html_grezzo[prec:])
+    return " ".join(pezzi)
 
 
 def main_html():
@@ -618,8 +926,8 @@ def main_html():
     ⚠️⚠️ E le ENTITÀ SI DECODIFICANO, dal 2026-08-24, perché non decodificarle rifaceva
     lo stesso buco un livello più in basso. Il primo giro di questo modo le lasciava com'erano,
     col ragionamento che `&middot;` non è un carattere fuori regola: vero ma irrilevante, perché
-    quello che conta è ciò che il lettore VEDE. Un generatore che scrive `piu&#x27;` produce a
-    schermo `piu'`, cioè l'accento con l'apostrofo che questo strumento esiste per fermare, e il
+    quello che conta è ciò che il lettore VEDE. Un generatore che scrive `più` produce a
+    schermo `più`, cioè l'accento con l'apostrofo che questo strumento esiste per fermare, e il
     controllo lo dichiarava verde: misurato sull'artefatto delle citazioni, due occorrenze
     pubblicate. Stessa cosa per `&mdash;`, che a schermo è un em-dash.
     ⚠️ L'unica entità che NON si decodifica è `&nbsp;`: là il carattere insecabile è markup di
@@ -640,6 +948,7 @@ def main_html():
         sorgente = f.read_text(encoding="utf-8")
         sorgente = re.sub(r"<(style|script)\b[^>]*>.*?</\1>", " ", sorgente,
                           flags=re.S | re.I)
+        sorgente = senza_sorgente(sorgente)
         testo = re.sub(r"<[^>]+>", " ", sorgente)
         testo = re.sub(r"&(nbsp|#160|#[xX]0*[aA]0);", " ", testo)
         testo = htmllib.unescape(testo)
@@ -691,8 +1000,8 @@ def main_fix():
         # distinguere l'uso dalla citazione. È la stessa politica degli omografi, che il
         # file nomina per codepoint.
         # \u26a0\ufe0f\u26a0\ufe0f L'apostrofo si riconosce anche nelle sue ENTIT\u00c0 HTML, perch\u00e9 su un artefatto
-        # il testo arriva gi\u00e0 codificato: un generatore che scrive `piu&#x27;` mette in pagina
-        # `piu'`, e quella forma passava indenne sia da qui sia da `--html`, che a sua volta
+        # il testo arriva gi\u00e0 codificato: un generatore che scrive `più` mette in pagina
+        # `più`, e quella forma passava indenne sia da qui sia da `--html`, che a sua volta
         # non decodificava. Due occorrenze pubblicate il 2026-08-24, in un file che entrambi i
         # modi avevano dichiarato pulito. Correggere il generatore non basta come rimedio: chi
         # passa di qui ha in mano il file finito, ed \u00e8 l\u00e0 che il presidio deve guardare.
@@ -756,15 +1065,28 @@ def main_diff():
             if altra_lingua(righe[n - 1]):
                 continue
             avvisi.append((f, righe[n - 1].strip()[:100], tok, motivo))
+        # ⚠️ Il lessico gira sulle righe aggiunte di QUALUNQUE file, sorgenti compresi: le
+        # formule bandite vivono nei commenti, e i commenti sono la metà del codice di questi
+        # repo. ⚠️ La riga in un'altra lingua si salta come per gli accenti: queste sono regole
+        # italiane, e una stringa tradotta non le riguarda.
+        lex, lex_avvisi = formula_defects(testo, f)
+        for n, col, forma, motivo in lex:
+            if altra_lingua(righe[n - 1]):
+                continue
+            blocca.append((f, righe[n - 1].strip()[:100], repr(forma), motivo))
+        for n, col, forma, motivo in lex_avvisi:
+            if altra_lingua(righe[n - 1]):
+                continue
+            avvisi.append((f, righe[n - 1].strip()[:100], repr(forma), motivo))
     if avvisi:
         print(f"\n~~ da guardare, NON blocca: {len(avvisi)}")
         for f, riga, tok, motivo in avvisi:
             print(f"   {f}: {tok}\n      {riga}\n      {motivo}")
     if not blocca:
-        print(f"diffcheck: nessun accento fuori regola nelle righe aggiunte "
+        print(f"diffcheck: nessun accento e nessuna formula fuori regola nelle righe aggiunte "
               f"({sum(len(v) for v in aggiunte.values())} righe in {len(aggiunte)} file)")
         return 0
-    print(f"\n!! accenti fuori regola nelle righe aggiunte: {len(blocca)}")
+    print(f"\n!! accenti o formule fuori regola nelle righe aggiunte: {len(blocca)}")
     for f, riga, tok, motivo in blocca:
         print(f"   {f}: {tok} -> {motivo}\n      {riga}")
     return 1
@@ -796,6 +1118,7 @@ def main():
                 volatile.append((f, n, m.group(2)))
 
     bad_links, bad_paths, bad_sects, bad_chars = [], [], [], []
+    bad_lex, lex_avvisi = [], []
     # ⚠️ I riferimenti ad AIV in una sessione che non monta quel repo non sono ROTTI: sono
     # NON VERIFICABILI, ed è la stessa distinzione che il codice fa già per `TOOLS` assente
     # (un errore che risponde 'non trovato' non prova un'assenza). Il riconoscimento è
@@ -813,6 +1136,14 @@ def main():
         solo_testo = f in testi
         for n, col, ch, motivo in char_defects(f.read_text(encoding="utf-8")):
             bad_chars.append((f, n, f"{etichetta(ch)} -> {motivo}"))
+        # ⚠️ Il lessico sui file di REGOLE per intero, non solo sulle righe aggiunte: sono
+        # prosa italiana e sono il posto da cui la forma sbagliata si propaga a tutto il
+        # resto, perché chi scrive un commento nuovo imita il testo che ha intorno.
+        lex, avvisi_f = formula_defects(f.read_text(encoding="utf-8"), f)
+        for n, col, forma, motivo in lex:
+            bad_lex.append((f, n, f"{forma!r} -> {motivo}"))
+        for n, col, forma, motivo in avvisi_f:
+            lex_avvisi.append((f, n, f"{forma!r} -> {motivo}"))
         righe = f.read_text(encoding="utf-8").splitlines()
         for n, line in enumerate(righe, 1):
             for url in RE_MDLINK.findall(line):
@@ -863,6 +1194,14 @@ def main():
            "fuori dal codice l'em-dash e i suoi simili non si usano; una lettera non latina è "
            "sempre un difetto e si nomina per codepoint")
 
+    report("formule fuori regola", bad_lex,
+           "la forma bandita si riscrive: vedi `Roccobot.md` § '🙂 Formule da non usare'. "
+           "Fra backtick è una citazione e non blocca")
+    if lex_avvisi:
+        print(f"\n(avviso) registro da guardare, non contato come difetto: {len(lex_avvisi)}")
+        for f, n, det in lex_avvisi[:12]:
+            print(f"   {f.name}:{n} {det}")
+
     bad_intro, nota_intro = check_intro()
     report("riquadro del brief fuori sincrono", bad_intro,
            "la sorgente è la skill handoff: si modifica là e si ricopia nel brief, verbatim")
@@ -890,7 +1229,7 @@ def main():
 
     tot = sum(seen.values())
     rotti = (len(bad_links) + len(bad_paths) + len(bad_sects) + len(volatile)
-             + len(bad_chars) + len(bad_intro))
+             + len(bad_chars) + len(bad_intro) + len(bad_lex))
     if missing_repo:
         print(f"\nNota: {TOOLS} non è agganciato a questa sessione, quindi il controllo è "
               "PARZIALE: restano i link interni, i titoli e i caratteri, non i rimandi ai file "

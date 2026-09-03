@@ -2061,7 +2061,7 @@
             if (cv.width !== d.w || cv.height !== d.h) throw new Error('misura rifiutata');
             const g = cv.getContext('2d');
             if (!g) throw new Error('niente contesto 2d');
-            // sonda: oltre i limiti il canvas non solleva errori, resta vuoto
+            // sonda: oltre i limiti il canvas non dà errore, resta vuoto
             g.fillStyle = '#ff00ff'; g.fillRect(0, 0, 1, 1);
             if (g.getImageData(0, 0, 1, 1).data[3] === 0) throw new Error('canvas troppo grande');
             g.clearRect(0, 0, 1, 1);

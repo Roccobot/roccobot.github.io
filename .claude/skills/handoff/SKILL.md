@@ -513,7 +513,7 @@ compresi, e `refcheck.py` verifica che i due combacino carattere per carattere.
 > 6. **Il brief porta anche dei FILE**, quando una voce in sospeso ne ha bisogno: vivono in
 >    `.memo/files/`, accanto a questo file, e la sezione 'Allegati' dice a quale voce serve
 >    ognuno e come si riapre. Valgono le stesse tre sorti delle voci: evasa la voce, il file si
->    **cancella dal repo**. Mai segreti là dentro, e mai roba che si rifà con un comando.
+>    **cancella dal repo**. Mai segreti là dentro, e mai file che si rifanno con un comando.
 >
 > ⚠️ **La procedura completa vive nella skill `handoff`**, in `roccobot.github.io/.claude/skills/`,
 > e questo riquadro ne è il minimo operativo, non un sostituto. **Se la skill non è in scena**

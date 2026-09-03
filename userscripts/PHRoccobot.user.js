@@ -74,7 +74,7 @@
   //  2) PULIZIA DELLA PAGINA: popup Google, invito sul video, tasto AI
   // ═══════════════════════════════════════════════════════════════════════
   // Tre fastidi diversi, un solo meccanismo: un foglio di stile iniettato subito
-  // (a document-start, così non c'è il lampo di roba che compare e sparisce) più
+  // (a document-start, così non c'è il lampo di elementi che compaiono e spariscono) più
   // un osservatore che ripassa a ogni mutazione, perché PH è in parte una SPA e
   // ricostruisce pezzi di DOM di continuo.
   //
