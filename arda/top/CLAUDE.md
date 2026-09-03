@@ -379,7 +379,7 @@ compaiono nella tab Mobile.
   prova diretta di che cosa ha scritto un salvataggio.
 - ⚠️ **`fade` (bordi lista in dissolvenza) NON esiste più**, sostituito dal riflettore su
   richiesta dell'utente: non reintrodurlo, ed è altra cosa dalla manopola `fade` della trama.
-- ⚠️ **Il fondo per l'AA di un testo su strati semitrasparenti si COMPONE, non si stima**:
+- ⚠️ **Il fondo per l'AA di un testo su strati semitrasparenti si COMPONE**:
   riquadro, card (con l'alpha dello stato corrente, non di riposo) e velo della pill, applicati
   uno per uno. Stimarlo su un solo strato faceva scendere sotto soglia dove le card sono accese.
 - ⚠️ **Tetti in `vh` e Modalità XL**: le unità viewport risolvono in px di **layout**, quindi
@@ -1452,7 +1452,7 @@ motivate**, perché nei dati un'esclusione è indistinguibile da una dimenticanz
   Noldo, non il Silvano omonimo**. **Thingol** è l'unico Sinda, con **tooltip dedicato** (vide gli
   Alberi come ambasciatore, 'non annoverato tra i Moriquendi'). I portatori al 50% sono Calaquendi
   solo sull'assunto 'Esule nato in Aman', col luogo di nascita non attestato; ⚠️ **Glorfindel è
-  invece CERTO**, non dedotto. ⚠️ **`Celeborn` ESCLUSO** benché altre liste lo contino: quello
+  invece CERTO**. ⚠️ **`Celeborn` ESCLUSO** benché altre liste lo contino: quello
   presume la versione *Teleporno*, scartata dal progetto, e il nostro Celeborn è Sinda della Terra
   di Mezzo.
 - **`aratar` di Melkor al 50%**, con etichetta dedicata sotto la chiave del suo `nome` e non
@@ -1662,7 +1662,7 @@ note e da `RES_MAPS`: rendere condivisibile una nota nuova non chiede altro che 
   collidere**, perché i token delle note sono parole e i bitmask delle categorie sono di sole
   cifre. Un token sconosciuto cade nel ramo che ignora la query, cioè apre la vista di default.
 - ⚠️⚠️ **Chiudere l'overlay NON basta a ripulire l'indirizzo, e la causa è la trappola del tasto
-  Indietro** (misurato, non dedotto): quella impila una voce di cronologia all'apertura e la
+  Indietro** (misurato): quella impila una voce di cronologia all'apertura e la
   **consuma con `history.back()`** alla chiusura, tornando a una voce il cui indirizzo era stato
   riscritto col permalink mentre l'overlay era aperto. Da qui la risincronizzazione dentro il
   `popstate` della trappola. Senza, in barra resta il link a una nota ormai chiusa.

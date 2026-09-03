@@ -10682,7 +10682,7 @@ if ('serviceWorker' in navigator) {
     // ⚠️ Consumando la trappola si TORNA a una voce di cronologia il cui indirizzo
     // era stato riscritto mentre l'overlay era aperto (il suo permalink), quindi
     // l'indirizzo va risincronizzato qui: senza, chiudendo una nota in barra
-    // resterebbe il link a una nota ormai chiusa. Misurato, non dedotto.
+    // resterebbe il link a una nota ormai chiusa. Misurato.
     if (selfPop){ selfPop = false; syncUrl(); return; }
     if (anyOpen()){
       closeTop();

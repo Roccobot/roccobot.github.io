@@ -3220,7 +3220,7 @@ var ZOOM_LS_KEY = 'earthsea-zoom-big'; // chiave della preferenza PERSONALE di z
 var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat','deco','orig','hint','jumpx']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
-// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Ci stanno i tre
+// SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Sono i tre
 // effetti che su mobile NON esistono, ognuno per una ragione sua: il riflettore
 // (v13.18) segue il puntatore, e senza puntatore non c'è nulla da mostrare né da
 // regolare; la trama (v14.43) vuole sfondo libero ai lati della colonna, che
@@ -7308,7 +7308,7 @@ function controlPanelHTML() {
      + '</div>';
   var destra = '';
   // ── Colonna DESTRA: categorie e legenda (mockup dell'utente, 2026-08-21) ──
-  // Il Pannello di Terramare ha poca roba, e la disposizione di Arda (categorie a
+  // Il Pannello di Terramare ha pochi comandi, e la disposizione di Arda (categorie a
   // sinistra sotto la toolbar, legenda a destra) lasciava una colonna mezza vuota.
   // Qui le due liste stanno insieme a destra e la colonna sinistra tiene la
   // toolbar e la card di legenda.
@@ -9764,8 +9764,8 @@ var FX_KNOBS = {
       nit:'Lo scostamento dei due tasti di salto pagina dal bordo destro, su mobile. Spento, i tasti tornano a filo del bordo.',
       nen:'The offset of the two page-jump buttons from the right edge, on mobile. Off, the buttons go back flush with the edge.' },
     { p:'x', t:'num', dep:'on', step:0.5, unit:'px', it:'Scostamento', en:'Offset',
-      nit:'Misurato in px CSS: su uno schermo a DPR 3 ognuno vale tre pixel fisici. Da mobile i tasti si mostrano mentre muovi il cursore, cosi\' la posizione si vede invece di indovinarla.',
-      nen:'Measured in CSS px: on a DPR 3 screen each one is three physical pixels. On mobile the buttons show themselves while you drag, so you can see the position instead of guessing it.' }
+      nit:'Misurato in px CSS: su uno schermo a DPR 3 ognuno vale tre pixel fisici. Da mobile i tasti si mostrano mentre muovi il cursore, cosi\' la posizione si vede mentre la scegli.',
+      nen:'Measured in CSS px: on a DPR 3 screen each one is three physical pixels. On mobile the buttons show themselves while you drag, so you can see the position as you set it.' }
   ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
@@ -11974,7 +11974,7 @@ if ('serviceWorker' in navigator) {
     // ⚠️ Consumando la trappola si TORNA a una voce di cronologia il cui indirizzo
     // era stato riscritto mentre l'overlay era aperto (il suo permalink), quindi
     // l'indirizzo va risincronizzato qui: senza, chiudendo una nota in barra
-    // resterebbe il link a una nota ormai chiusa. Misurato, non dedotto.
+    // resterebbe il link a una nota ormai chiusa. Misurato.
     if (selfPop){ selfPop = false; syncUrl(); return; }
     if (anyOpen()){
       closeTop();

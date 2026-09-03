@@ -56,7 +56,7 @@ pulizia vera la fa **SVGO**, importato a runtime da `@latest`.
 - ⚠️⚠️ **La rifinitura nostra gira SEMPRE, anche quando SVGO c'è, e non è ridondanza.**
   Misurato il 2026-08-25: SVGO 4.1.0 conosce il namespace `sodipodi-0.dtd`, mentre Inkscape
   scrive nei suoi file `sodipodi-0.0.dtd`. Sono due URI diversi, quindi `<sodipodi:namedview>`
-  e la sua dichiarazione `xmlns` **sopravvivono** alla pulizia: esattamente la roba che questo
+  e la sua dichiarazione `xmlns` **sopravvivono** alla pulizia: esattamente il contenuto che questo
   strumento esiste per togliere.
 - ⚠️ **La rifinitura lavora per URI di namespace, non per prefisso**: il prefisso lo sceglie
   chi scrive il file e può essere qualunque cosa, mentre l'URI è quello che identifica
@@ -215,7 +215,7 @@ che cosa è stato tolto. **File di origine**, sotto di lui nella stessa colonna,
   disegno.
 - ⚠️⚠️ **Le dichiarazioni `xmlns` NON contano come riferimenti esterni**, ed è la trappola di
   quella voce: sono identificatori di namespace, non indirizzi da cui si scarica qualcosa.
-  Contarle direbbe che ogni file di Inkscape tira roba da internet.
+  Contarle direbbe che ogni file di Inkscape scarica contenuti da internet.
 
 ## 🗂️ I file multi-tavola
 
