@@ -224,7 +224,24 @@
     .tecnica .sep{display:none}
     .tecnica .pezzo{display:block}
 
-    .schermata-blocco img{width:100%; max-width:none}
+    /* ⚠️⚠️ DA BORDO A BORDO SUL TELEFONO, e prima non lo era (riscontro dell'utente,
+       2026-09-03: `da bordo a bordo? Sì, ma dovrebbe essere già così`). Il `width:100%`
+       era la larghezza della COLONNA, cioè 24px di rientro per lato: la schermata
+       sembrava a filo e non lo era. I margini negativi la portano fuori dal rientro
+       del `.foglio`, e i due numeri sono lo stesso 24 di là: chi cambia quello cambi
+       anche questi, o la schermata sfora o resta rientrata.
+       ⚠️ NON è una compensazione (le due coppie vietate di segno opposto): è un
+       elemento che esce da un contenitore rientrato, e i due margini sono lo stesso
+       gesto sui due lati. */
+    .schermata-blocco img{
+      width:calc(100% + 48px); max-width:none;
+      margin-left:-24px; margin-right:-24px;
+      /* ⚠️ Bordo, stondamento e ombra vanno via TUTTI E TRE, e per la stessa ragione:
+         sono i segni che dicono 'questa immagine finisce qui', e a filo di schermo si
+         vedrebbero solo sopra e sotto, cioè come due righe fuori posto su un lato solo.
+         Restano sopra 880px, dove la schermata è un oggetto in mezzo alla pagina. */
+      border:0; border-radius:0; box-shadow:none
+    }
     .fatti{grid-template-columns:1fr; padding-top:40px}
   }
 </style>
@@ -403,7 +420,7 @@
       schermataAlt: 'La griglia delle immagini con una selezione in corso: un elemento scelto, e in basso il pannello con le dieci azioni.',
       fatti: [
         ['La trasparenza si vede', 'Tratta la trasparenza come merita, con la scacchiera adattiva da 12dp per visualizzare il canale alfa.'],
-        ['Video, GIF e WebP animate', 'Apri i video con il player nativo e prendi il controllo delle immagini animate, con controllo e salvataggio dei fotogrammi.'],
+        ['Video, GIF e WebP animate', 'Apri i video con il player nativo e prendi il controllo delle immagini animate, con avanzamento e salvataggio dei fotogrammi.'],
         ['Pannello dei dettagli', 'Dimensioni, peso, formato, bit per canale, EXIF quando c\'è. Una riga per fatto, senza interpretazioni.'],
         ['Tutti i formati che contano', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: grandi e piccoli, vettoriali e animati. Non lasciamo indietro nessuno.'],
         ['Un vero Cestino', 'Per fare le cose bene, ma anche a cuor leggero.'],
@@ -423,7 +440,7 @@
       schermataAlt: 'The picture grid with a selection under way: one item picked, and the panel with the ten actions at the bottom.',
       fatti: [
         ['Transparency you can see', 'Treats transparency as it deserves, with the adaptive 12dp checkerboard that shows the alpha channel.'],
-        ['Video, animated GIF and WebP', 'Open videos with the native player and take control of animated images, with frame control and frame saving.'],
+        ['Video, animated GIF and WebP', 'Open videos with the native player and take control of animated images, with frame stepping and frame saving.'],
         ['Details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
         ['Every format that matters', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: large and small, vector and animated. We leave none behind.'],
         ['A real bin', 'For doing things properly, and for doing them with a light heart.'],
