@@ -277,8 +277,9 @@ vero, e due giri, **con** e **senza** SVGO.
 - **La coda si prova con un gruppo misto**, e i casi che contano sono quattro: più file buoni,
   uno malformato in mezzo (la coda deve proseguire), un file che non è un SVG (deve comparire
   fra gli scartati **e restare scritto**), e l'aggiunta a coda già piena.
-- **Lo zip si verifica aprendolo**, non guardando che il file scenda: `zipfile` di Python lo
-  apre, `testzip()` controlla i CRC e si conta che dentro ci siano tutte le voci attese.
+- **Lo zip si verifica APRENDOLO**, che è una prova più forte di quella che lo scaricamento
+  offre: `zipfile` di Python lo apre, `testzip()` controlla i CRC e si conta che dentro ci
+  siano tutte le voci attese.
 - ⚠️ **Il contenuto di una tavola si legge dall'ANTEPRIMA, non chiamando la funzione**: lo script
   è un modulo e le sue funzioni non sono globali, quindi dal banco non si raggiungono. Si legge
   il blob dell'`<img>` con un `fetch`, che in più prova quello che la pagina **mostra** invece

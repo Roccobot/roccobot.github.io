@@ -1453,7 +1453,7 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
 - ⚠️⚠️ **Titoli e anni sono VERIFICATI sulle fonti, non ricordati**, e stanno nel canone
   (`rules/Earthsea.md`, § 'Le opere, in italiano' e § 'I racconti dentro *Le leggende di Terramare*'): i titoli italiani dai metadata dei sei
   epub Mondadori dell'utente e dall'indice di *Le leggende di Terramare*, gli anni dalle pagine
-  di copyright delle edizioni inglesi. Chi ne aggiunge uno lo cerca là, non a memoria.
+  di copyright delle edizioni inglesi. Chi ne aggiunge uno lo cerca là.
   - **Due racconti sono più vecchi della raccolta** che li contiene: *Rosascura e Diamante*
     è 1999 e *Libellula* 1997, mentre la raccolta è 2001. Un anno uniformato al volume
     sarebbe stato plausibile e sbagliato.
