@@ -347,6 +347,9 @@ INTRO_COPIA = TOOLS / ".memo/LATEST.md"
 # (`a occhio` nel senso di 'allineamento ottico', `esce` nel senso di 'uscire da un luogo')
 # non può bloccare un commit, o il presidio viene disattivato in due giorni. Quelle bloccano
 # solo dove la forma è inequivocabile, e per il resto avvisano.
+MOTIVO_RESA = ("'niente da fare' in italiano vuol dire 'non c'è rimedio': apre un resoconto "
+               "di routine con una nota di resa. Non si scrive nessuna formula al suo posto, "
+               "si dice il fatto")
 FORMULE_BLOCCA = [
     # ⚠️⚠️ IL SENSO FISICO DI `sollevare` È LEGITTIMO e non si tocca: 'sollevare una colonna
     # a piena altezza', 'la firma restava sollevata'. Il divieto riguarda l'errore, quindi la
@@ -355,15 +358,49 @@ FORMULE_BLOCCA = [
     # disattivato.
     (re.compile(r"\bsollev\w*\b[^.;]{0,30}?\b(error\w*|eccezion\w*|exception)\b", re.I),
      "'sollevare' per un errore: va in errore, dà errore, fallisce, lo rifiuta"),
-    (re.compile(r"invece di (indovinar|andare a memoria|andare a tentativi|ragionarci|"
-                r"crederlo|stimar|dedurr)", re.I),
+    # ⚠️⚠️ IL CONNETTIVO NON DECIDE NIENTE, E QUESTA RIGA LO HA IMPARATO A PROPRIE SPESE: la
+    # forma vietata era scritta con `invece di`, e il 2026-09-04 è rientrata come `invece che
+    # decisa a occhio`, cioè la stessa coda con l'altra congiunzione. Il divieto sta sul MODO
+    # SCARTATO che segue, quindi le due congiunzioni si trattano uguali e il participio conta
+    # come l'infinito. Ancorare sulla congiunzione avrebbe lasciato aperto un terzo modo di
+    # scriverla.
+    # ⚠️ `guardare` NON entra in questa lista, ed è una misura: nel corpus `invece di
+    # guardare` contrappone due MECCANISMI ('si risale la catena invece di guardare il solo
+    # genitore', `Veil.kt`), che è contenuto e non una coda. La coda con quel verbo ha la
+    # forma del gerundio, `non guardando`, e sta nella riga qui sotto.
+    (re.compile(r"invece (?:di|che) (?:indovinar|indovinat|andare a memoria|a memoria|"
+                r"andare a tentativi|ragionarci|crederlo|stimar|stimat|dedurr|dedott|"
+                r"decis\w*\s+a occhio|a occhio)", re.I),
      "coda su quello che NON si è fatto: scrivi il metodo (misurato sul file servito, "
      "letto nel sorgente, contato con grep)"),
-    (re.compile(r"\be non (a memoria|dedott[oai]|stimat[oai]|a occhio|per sentito dire)\b",
-                re.I),
+    # ⚠️ La `e` è OPZIONALE, e il gerundio è la forma che è sfuggita: `, non guardando l'app`
+    # non ha nessuna `e` davanti. A tenere la riga onesta è la parola che SEGUE `non`, che
+    # nomina un modo di conoscere scartato: senza quel vincolo la riga bloccherebbe qualunque
+    # `, non ...`, che in italiano è una struttura corrente e legittima.
+    (re.compile(r"\b(?:e )?non (?:a memoria|dedott[oai]|stimat[oai]|a occhio|"
+                r"per sentito dire|guardand\w*|indovinand\w*|tirando a indovinare)\b", re.I),
      "coda su quello che NON si è fatto: scrivi il metodo e basta"),
     (re.compile(r"\b(non dedotto|non stimato|non si stima|non tiro a indovinare)\b", re.I),
      "coda su quello che NON si è fatto: scrivi il metodo e basta"),
+    # ⚠️⚠️ QUINTA RICADUTA DI 'NIENTE DA FARE', E IL PRESIDIO ARRIVA SOLO ADESSO: quella voce
+    # di `Roccobot.md` § '🙂 Formule da non usare' ha quattro giri di rimedi scritti, tutti in
+    # prosa, e tutti e quattro hanno ceduto. La riga qui è l'unica cosa che non era ancora
+    # stata provata. ⚠️ COPRE I SINONIMI, perché il divieto è sul SENSO ('non c'è rimedio'
+    # messo in apertura di un resoconto di routine) e la quarta ricaduta è stata proprio
+    # 'Nulla da fare': una tabella che nomina una stringa si aggira senza accorgersene.
+    # ⚠️ Le QUATTRO ALTERNATIVE SUE restano fuori dal controllo e devono restarne fuori
+    # ('Niente da segnalare', 'Niente di nuovo', 'Niente di rilevante', 'Operazioni di
+    # routine'): il divieto è su `da fare`, non su `niente`.
+    # ⚠️⚠️ E VUOLE L'INIZIO DI FRASE, perché il senso legittimo è il più frequente del corpus:
+    # `niente da fare` con un verbo davanti vuol dire 'non ha scopo' ed è italiano corretto
+    # ('un tastino che lo apre non ha più niente da fare'). Misurato: 12 occorrenze sui tre
+    # repo, tutte e 12 di quel tipo. Bloccarle sarebbe il rumore che spegne il canale, e il
+    # criterio sta in `Roccobot.md` § '🙂 Formule da non usare'. La formula vietata è il
+    # gruppo NUDO che apre una frase, senza soggetto e senza verbo: quella non ha nessun uso
+    # legittimo in un resoconto.
+    # ⚠️ Il caso in cui la formula apre la RIGA sta in `FORMULE_BLOCCA_IN_APERTURA`, che ha
+    # bisogno di un dato che qui non si ha: se quella riga apre davvero una frase.
+    (re.compile(r"[.!?]\s+(?:niente|nulla) da fare\b", re.I), MOTIVO_RESA),
     (re.compile(r"\broba\b", re.I),
      "'roba' è colloquiale: cose, contenuto, materiale, file"),
     # ⚠️⚠️ IL SENSO SPAZIALE DI `starci` È ITALIANO CORRETTO, e distinguerlo è la sola cosa
@@ -383,7 +420,19 @@ FORMULE_BLOCCA = [
                 r"(ato|ata|ati|ate|ito|ita|iti|ite|uto|uta)\b"),
      "'esce' per 'risulta': risulta, viene, si ottiene"),
 ]
+# ⚠️⚠️ QUESTA TABELLA VALE SOLO DOVE LA RIGA APRE UNA FRASE, e il perché sta sul calcolo di
+# `apre` in `formula_defects`: una forma vietata **in apertura** non si può cercare in una riga
+# presa da sola, perché una frase legittima spezzata a capo comincia la riga senza aprire
+# niente. Chi ne aggiunge una la ancori con `^`.
+FORMULE_BLOCCA_IN_APERTURA = [
+    (re.compile(r"^\s*(?:[-*>|]\s*)?(?:niente|nulla) da fare\b", re.I), MOTIVO_RESA),
+]
 FORMULE_AVVISA = [
+    # ⚠️⚠️ I DUE PUNTI AVVISANO INVECE DI BLOCCARE, e la ragione è una misura: in un commento
+    # di codice `: niente da fare` vuol dire 'non c'è lavoro da fare' ed è il senso
+    # legittimo ('già al limite: niente da fare', `DIVRoccobot.user.js`). Dopo un punto la
+    # formula non ha nessun uso legittimo e blocca; dopo i due punti si guarda e si decide.
+    (re.compile(r":\s+(?:niente|nulla) da fare\b", re.I), MOTIVO_RESA),
     (re.compile(r"\bci st(?:a|anno)\s+bene\b", re.I),
      "'ci sta bene' è colloquiale nel senso di 'è appropriato' (legittimo nel senso "
      "spaziale: il numero ci sta bene nella cella)"),
@@ -635,9 +684,24 @@ def formula_defects(text, path=None):
 
     for paragrafo in paragrafi:
         fuori = libere_di(paragrafo)
+        prima = None
         for n, riga in paragrafo:
             libere = fuori[n]
-            for tabella, dove in ((FORMULE_BLOCCA, blocca), (FORMULE_AVVISA, avvisa)):
+            # ⚠️⚠️ SE QUESTA RIGA APRE UNA FRASE lo sa solo chi ha visto la riga PRIMA, e la
+            # tabella lavora riga per riga: senza questo dato una frase legittima spezzata a
+            # capo (i file di regole vanno a capo a 100 colonne) sembra una frase nuova, e le
+            # forme vietate solo in apertura darebbero un falso positivo a ogni andata a capo.
+            # Misurato: `CleanSVG/CLAUDE.md` diceva 'in un file di disegno non hanno / niente
+            # da fare' e veniva segnalato. Le tre ancore ammesse sono la prima riga del
+            # paragrafo, un terminatore di frase in coda alla riga prima, e un elenco.
+            apre = (prima is None
+                    or prima.rstrip().endswith((".", "!", "?", ":", ";"))
+                    or riga.lstrip()[:1] in ("-", "*", ">", "|"))
+            prima = riga
+            tabelle = [(FORMULE_BLOCCA, blocca), (FORMULE_AVVISA, avvisa)]
+            if apre:
+                tabelle.append((FORMULE_BLOCCA_IN_APERTURA, blocca))
+            for tabella, dove in tabelle:
                 # ⚠️ I doppioni si scartano: due forme della stessa famiglia possono coprire
                 # lo stesso pezzo di riga ('e non dedotto' contiene 'non dedotto'), e
                 # segnalarlo due volte fa credere a due difetti dove ce n'è uno. Si tiene il

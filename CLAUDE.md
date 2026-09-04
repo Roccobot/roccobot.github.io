@@ -420,6 +420,23 @@ errore**, **fallisce**). ⚠️ Fuori anche la coda su quello che **non** si è 
 completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
 § '🙂 Formule da non usare'.
 
+- ⚠️⚠️ **E FUORI `NIENTE DA FARE`, CHE È LA FORMA CADUTA CINQUE VOLTE**, più di ogni altra:
+  chiudendo o aprendo un resoconto di routine (le notifiche di GitHub sono il punto esatto) si
+  dice **il fatto** e non si scrive nessuna formula. ⚠️ **Il divieto è sul SENSO e non su
+  quella stringa**: `Nulla da fare` è già rientrato così, e qualunque frase che suoni come una
+  resa vale uguale.
+  - ⚠️⚠️ **LA QUINTA RICADUTA, 2026-09-04, DICE UNA COSA NUOVA SUL RIMEDIO, e per questo sta
+    qui**: la formula è tornata **in aggiunta** al fatto, non al suo posto (*Niente da fare,
+    nessun controllo rosso e nessun commento in sospeso*). Il rimedio del quarto giro diceva
+    'si dice il fatto e si passa oltre', cioè indicava una **preferenza**, e una preferenza
+    fra due cose non vieta di scriverle entrambe. Quindi il rimedio si legge come un divieto:
+    quella formula **non si scrive**, e il fatto da solo è già il messaggio intero.
+  - ⚠️ **Adesso c'è anche la macchina**: `refcheck.py` la blocca in apertura di frase e avvisa
+    dopo i due punti, dove il senso legittimo esiste (*già al limite: niente da fare* vuol dire
+    'non c'è lavoro da fare'). ⚠️ **Ma la macchina non vede la chat**, che è il posto in cui è
+    caduta tutte e cinque le volte: là resta questa riga, ed è la ragione per cui sta nel file
+    che si ricarica a ogni turno.
+
 - ⚠️⚠️ **STA QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
@@ -707,6 +724,16 @@ poi divergerebbe.
       aggiunte, e `printf '%s' '<testo>' | python3 <radice>/.memo/scripts/refcheck.py --text`
       per il messaggio di commit **completo** e per il corpo della PR. Gli altri restano
       scoperti, quindi versione e allineamento si guardano a occhio.
+      - ⚠️⚠️ **IL CORPO DELLA PR SI SCRIVE PRIMA IN UN FILE, e questa riga esiste perché senza
+        di lei quel controllo non gira mai.** Il messaggio di commit passa da un file per
+        forza (`git commit -F`), quindi il verificatore ce l'ha davanti; il corpo di una PR
+        invece si compone **dentro la chiamata allo strumento**, dove nessuna shell lo vede, e
+        allora il comando qui sopra si può solo ricordare, cioè si dimentica. Il 2026-09-04
+        sono uscite **tre** PR col corpo pieno di accenti scritti con l'apostrofo, un divieto
+        non derogabile, e nello stesso turno il messaggio di ognuna era stato controllato.
+      - **Quindi la procedura è**: il corpo si scrive in un file dello scratchpad, si lancia
+        `--text` su quel file, e solo dopo si passa allo strumento. ⚠️ **Il testo passato allo
+        strumento deve essere quello del file**, o il controllo ha guardato un'altra cosa.
       - ⚠️ **Il modo `--diff` legge il diff che gli arriva IN INGRESSO, e da solo mente**:
         lanciato senza la pipe stampa `0 righe in 0 file`, che si legge come 'nessun difetto'
         mentre è 'nessun dato'. Va sempre incanalato come sopra. È il falso negativo peggiore,
