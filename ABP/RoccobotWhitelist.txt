@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-08-17
+! Last updated: 2026-09-04
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -61,6 +61,12 @@
 @@||copecart.com^$document,subdocument,important
 @@||cupweb.it^$important
 @@||cupweb.it^$document,important
+! Cursor: le macchine virtuali dei suoi agenti in cloud, che vivono sui sottodomini di
+! cursorvm.com. La riga base copre già tutti i sottodomini e tutti i tipi di richiesta;
+! la seconda serve per la fiducia totale alla pagina anche quando il dominio è caricato
+! in un iframe, che è il modo in cui l'anteprima di una VM compare dentro l'editor.
+@@||cursorvm.com^$important
+@@||cursorvm.com^$document,subdocument,important
 @@||curve.com^$important
 @@||curve.com^$document,important
 @@||cutsy.net^$important
