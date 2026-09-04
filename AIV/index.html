@@ -8,6 +8,33 @@
 <meta name="author" content="Rocco Casadei, a.k.a. Roccobot">
 <meta name="color-scheme" content="light dark">
 <!--
+  IL GLIFO NUDO DELL'APP, IN #43B59E (richiesta dell'utente, giro della 1.46:
+  'imposta il glifo nudo dell'app come favicon in colore #43B59E, che dovrebbe
+  andare bene per entrambi i temi del browser').
+
+  ⚠️ IL DISEGNO NON È RIFATTO QUI: i due tracciati sono quelli di
+  app/src/main/res/drawable/ic_aiv_mark.xml, che a sua volta li prende byte per
+  byte dall'icona approvata. Cambia il formato, non la geometria, e questo è il
+  solo posto della pagina in cui c'è del disegno.
+
+  ⚠️ LA TELA È 70x60 E NON UN QUADRATO, perché quella è l'area
+  dell'inchiostro: 70 x 60 unità, misurate rendendo il disegno in Chromium (i
+  limiti veri escono 0..70 e 0..60, cioè zero margine). Un quadrato vorrebbe
+  dire aggiungere aria a una parte sola, e il browser il riquadro se lo fa da sé
+  rispettando le proporzioni. È PIÙ LARGO CHE ALTO, e chi lo riusa deve saperlo.
+
+  ⚠️ UN SOLO COLORE PER I DUE TEMI, come ha chiesto: un SVG può portarsi dentro
+  la sua media query e cambiare tinta col tema del browser, e qui NON lo fa
+  apposta. Se un giorno non risaltasse abbastanza sullo scuro, l'alternativa che
+  ha già nominato è #4FD9BE.
+
+  ⚠️ È INCORPORATO E NON UN FILE, e la ragione è il rilascio: il passo 13 del
+  workflow copia questa pagina e la cartella delle schermate, e nient'altro. Un
+  favicon.svg accanto resterebbe qui, e sul sito la pagina chiederebbe un file
+  che non c'è.
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2070%2060'%3E%3Cg%20fill='%2343B59E'%20transform='translate(-19,-19)'%3E%3Cpath%20d='M30,19a10,10%200%201,0%200,20a10,10%200%201,0%200,-20z'/%3E%3Cpath%20fill-rule='evenodd'%20d='M58.1311,27.1833L88.1311,71.1833A5,5%200%200%201%2084,79L24,79A5,5%200%200%201%2019.8689,71.1833L49.8689,27.1833A5,5%200%200%201%2058.1311,27.1833ZM56.0424,49.5583L68.0424,66.5583A2.5,2.5%200%200%201%2066,70.5L42,70.5A2.5,2.5%200%200%201%2039.9576,66.5583L51.9576,49.5583A2.5,2.5%200%200%201%2056.0424,49.5583Z'/%3E%3C/g%3E%3C/svg%3E">
+<!--
   QUESTA PAGINA È LA SORGENTE, e quella che si legge sul sito è la sua COPIA:
   il workflow di rilascio di Roccobot/AIV la copia in
   roccobot.github.io/AIV/index.html a ogni tag. Si modifica QUI, mai là, o il
