@@ -53,6 +53,13 @@
 <style>
   /* ── I token del design system, copiati da tokens/colors.css ── */
   :root{
+    /* ⚠️⚠️ `color-scheme` STA ANCHE QUI, e non basta il `<meta>` in testa: quello
+       dichiara che la pagina sa fare tutti e due i temi, e lascia scegliere al
+       sistema. Da quando c'è il tasto, la scelta può essere dell'utente, e senza
+       queste due righe le barre di scorrimento e i comandi di serie del browser
+       resterebbero del tema di SISTEMA anche col tema della pagina forzato: cioè
+       una pagina scura con la barra chiara. */
+    color-scheme:light;
     --brand-accent:#43B59E;
     --brand-accent-dark:#00727B;
     --brand-glyph:#EBFFF7;
@@ -103,10 +110,17 @@
     --glyph:var(--brand-glyph);
     /* ⚠️ L'ombra della schermata è un token perché sul fondo scuro un'ombra NERA
        non si vede: là al suo posto (accanto, per la verità) c'è un alone del
-       colore dell'accento, che è il 'bagliore' chiesto dall'utente. */
-    --ombra-schermata:0 12px 30px rgba(0,0,0,0.20);
+       colore dell'accento, che è il 'bagliore' chiesto dall'utente.
+       ⚠️⚠️ **ALLEGGERITE TUTTE E TRE DEL 25% NELLA 1.46** (richiesta dell'utente,
+       2026-09-03: *vedo un'ombra (chiaro) e/o un bagliore (scuro) troppo opachi,
+       alleggerisci un pelo*). Erano `0,20` sul chiaro, `0,55` e `0,12` sullo scuro.
+       ⚠️ **La stessa frazione su tutte e tre e non tre numeri scelti a occhio**: sono
+       la stessa cosa vista su due temi, quindi un ritocco che cambi il rapporto fra
+       loro cambierebbe il disegno invece di alleggerirlo. */
+    --ombra-schermata:0 12px 30px rgba(0,0,0,0.15);
   }
   [data-theme="dark"]{
+    color-scheme:dark;
     --bg:var(--dark-back);
     --surface-container:var(--dark-surface-container);
     --surface-variant:var(--dark-surface-variant);
@@ -118,7 +132,7 @@
     --outline:var(--dark-outline);
     --outline-variant:var(--dark-outline-variant);
     --glyph:var(--brand-glyph-dark);
-    --ombra-schermata:0 12px 34px rgba(0,0,0,0.55), 0 0 26px rgba(79,217,190,0.12);
+    --ombra-schermata:0 12px 34px rgba(0,0,0,0.41), 0 0 26px rgba(79,217,190,0.09);
   }
 
   *{box-sizing:border-box}
@@ -167,25 +181,66 @@
   }
 
   .fatti{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 40px; padding:56px 0 0; max-width:840px}
-  .fatto{display:flex; gap:14px; align-items:flex-start}
-  .fatto svg{flex:none; color:var(--accent)}
+  /* ⚠️⚠️ **IL GLIFO È CENTRATO SULLA PRIMA RIGA DEL TITOLO, e prima era appoggiato al
+     bordo di sopra della riga** (segnalazione dell'utente, 2026-09-03: *le icone dei 6
+     paragrafetti-highlights... secondo me sono troppo in basso*). Aveva ragione, ed è
+     aritmetica: con `align-items:flex-start` il glifo e la prima riga partono dallo stesso
+     punto, e il glifo è più alto della riga, quindi il suo centro cade più in basso di
+     mezza differenza. Misurato prima di toccare niente: lo scarto fra i due centri era
+     **+3,00px identico su tutte e sei**.
+     ⚠️ **Il numero è DERIVATO e non scelto**, ed è la ragione per cui corpo e interlinea
+     del titolo sono dichiarati qui come proprietà: chi cambia una delle tre misure non
+     deve ricalcolare niente a mano, perché il `calc` lo fa. Un valore scritto a mano si
+     scollerebbe al primo ritocco del corpo del testo.
+     ⚠️ **E NON è una compensazione** (le coppie di margini di segno opposto che le regole
+     vietano): è un margine solo, su un lato solo, che dichiara dove sta il glifo. */
+  .fatto{
+    display:flex; gap:14px; align-items:flex-start;
+    --glifo:24px; --titolo-corpo:15px; --titolo-interlinea:1.2;
+  }
+  .fatto svg{
+    flex:none; color:var(--accent);
+    width:var(--glifo); height:var(--glifo);
+    margin-top:calc((var(--titolo-corpo) * var(--titolo-interlinea) - var(--glifo)) / 2);
+  }
   .fatto .testi{display:flex; flex-direction:column; gap:3px}
-  .fatto .titolo{font-size:15px; font-weight:500}
+  .fatto .titolo{font-size:var(--titolo-corpo); line-height:var(--titolo-interlinea); font-weight:500}
   .fatto .corpo{font-size:14px; line-height:1.5; color:var(--text-muted)}
 
   footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
   .piede-riga{
+    /* ⚠️ `nowrap`: firma a sinistra e tasti a destra sulla STESSA riga, come ha
+       chiesto l'utente. ⚠️⚠️ **MA SUL TELEFONO NON SI PUÒ PIÙ, DA QUANDO I TASTI
+       SONO DUE, e la nota che c'era qui diceva il contrario**: diceva che ci
+       stanno, con la firma a circa 200px e 'il tasto' a una cinquantina. Era vero
+       con UN tasto. Adesso i due insieme misurano 141px in inglese, e una riga
+       sola vuole 216 di firma piu 24 di respiro piu 141, cioe 429px di finestra:
+       da li in giu la firma andrebbe a capo, e una firma spezzata in
+       'made with love by' e 'Roccobot' si legge come un difetto. Sotto la soglia
+       il piede va in colonna, che si legge come una scelta. */
     border-top:1px solid var(--outline-variant); padding-top:18px;
-    /* ⚠️ `nowrap`: firma a sinistra e lingua a destra sulla STESSA riga anche sul
-       telefono, come ha chiesto l'utente. Ci stanno: a 390px la firma misura circa
-       200px e il tasto una cinquantina. */
     display:flex; flex-wrap:nowrap; gap:12px 24px; align-items:center; justify-content:space-between;
   }
+  /* ⚠️ 460 e non 429: la soglia sta sopra la misura perche i caratteri non si
+     rendono identici su tutti i sistemi, e fra 429 e 460 stare in colonna non
+     costa niente. */
+  @media (max-width:460px){
+    .piede-riga{flex-direction:column; align-items:flex-start; gap:14px}
+  }
   .firma{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-muted)}
-  .lingua{
+  /* ⚠️ I DUE TASTI STANNO IN UN CONTENITORE LORO, e non sono due figli del piede:
+     così restano attaccati fra loro a destra della firma, con un respiro fra loro
+     più piccolo di quello che li separa da lei. Sciolti, `space-between` li
+     avrebbe spinti ai due capi e la lingua non sarebbe più stata a destra. */
+  .piede-tasti{display:flex; flex:none; gap:16px; align-items:center}
+  /* ⚠️ I DUE TASTI HANNO LA STESSA VESTE, e sono due collegamenti di solo testo:
+     l'utente lo ha chiesto così (2026-09-03, *dev'essere un link solo testo 'Tema
+     chiaro' / 'Tema scuro' e corrispettivi ENG*). */
+  .lingua,.tema{
     font:inherit; font-size:13px; color:var(--text-muted); background:none; border:0;
     border-bottom:1px dotted var(--outline); padding:0 0 1px; cursor:pointer;
   }
+  .lingua:hover,.tema:hover{color:var(--text-body)}
 
   /* ══ IL TELEFONO: testata affiancata e il resto centrato ═══════════════════
      Disegno scelto dall'utente il 2026-09-02 fra tre mockup. In testa l'icona a
@@ -281,18 +336,38 @@
 
     <!-- Le schermate vere dell'app, mandate dall'utente il 2026-09-02.
          ⚠️ UN <picture> E NON DUE <img> NASCOSTI A TURNO: così il browser ne
-         scarica UNA sola, e la sceglie prima di disegnare. La media query e il
-         `data-theme` non possono divergere, perché `tema()` legge la stessa
-         preferenza di sistema.
-         ⚠️ SONO IN ITALIANO ANCHE SULLA PAGINA INGLESE, per ora, ed è come le ha
-         mandate lui (*per ora solo in italiano*). Quando arrivano le inglesi il
-         nome del file diventa lingua + tema, e la scelta passa da `disegna()`.
+         scarica UNA sola, e la sceglie prima di disegnare.
+         ⚠️⚠️ **DA QUANDO C'È IL TASTO DEL TEMA, LA MEDIA QUERY QUI SOTTO NON BASTA
+         PIÙ, e la nota che c'era diceva il contrario**: diceva che la media query e
+         `data-theme` non possono divergere perché leggono la stessa preferenza di
+         sistema. Era vero finché il tema seguiva SOLO il sistema. Con una scelta
+         manuale i due divergono, e il risultato si vede: pagina scura e schermata
+         chiara. Il rimedio è che `applicaTema()` riscrive l'attributo `media` di
+         questo `<source>` (`all` per forzare lo scuro, `not all` per forzare il
+         chiaro, la media query vera quando si segue il sistema), così a scegliere
+         resta sempre il `<picture>` e non due `src` da tenere d'accordo.
+         ⚠️ **La media query RESTA scritta qui nel sorgente**, e non si parte da
+         `not all`: chi segue il sistema, che è il caso di fabbrica, deve avere
+         l'immagine giusta già in fase di analisi del documento, prima che lo script
+         giri. Se partisse da un valore neutro, quel visitatore vedrebbe la
+         schermata sbagliata per un istante, o due immagini scaricate invece di una.
+         ⚠️⚠️ **NON PORTANO PIÙ IL PREFISSO `ita-`, dalla 1.46, e non è un vezzo**: si
+         chiamavano `ita-chiara` e `ita-scura` perché erano schermate in italiano, e
+         una sola delle due lingue le poteva usare. Quelle nuove sono **prive di
+         testo**, quindi servono a tutte e due, e il prefisso mentiva. Chi lo
+         rimettesse dovrebbe rimettere anche il ramo che scegliva per lingua, che non
+         è mai esistito.
+         ⚠️ **Ed è una scelta dichiarata dell'utente, non un ripiego** (2026-09-03):
+         *non ho intenzione di produrre 4 screenshot ogni volta che si può mettere in
+         vetrina una funzionalità nuova. In questo modo sono uno per il tema chiaro e
+         uno per lo scuro, entrambi language-agnostic perché privi di testo*. Sono
+         mockup e non catture fedeli, e va bene così per la stessa ragione.
          ⚠️ Vivono in `publish/schermate/` e il passo 13 di `release.yml` copia la
          cartella accanto alla pagina: chi ne aggiunge una deve guardare anche là. -->
     <div class="schermata-blocco">
       <picture>
-        <source srcset="schermate/ita-scura.webp" media="(prefers-color-scheme: dark)">
-        <img id="schermata" src="schermate/ita-chiara.webp" width="560" height="1132" alt="">
+        <source id="schermata-scura" srcset="schermate/scura.webp" media="(prefers-color-scheme: dark)">
+        <img id="schermata" src="schermate/chiara.webp" width="1200" height="2426" alt="">
       </picture>
     </div>
   </div>
@@ -358,7 +433,13 @@
            dell'app: è una firma, non un testo dell'interfaccia. -->
       <span>made with love by <a href="https://roccobot.me">Roccobot</a></span>
     </div>
-    <button type="button" class="lingua" id="lingua"></button>
+    <!-- ⚠️ IL TEMA STA A SINISTRA DELLA LINGUA, e non viceversa: il tasto della
+         lingua è all'estrema destra da quando esiste la pagina, e chi la conosce
+         lo cerca là. Il tasto nuovo si mette accanto, non al suo posto. -->
+    <div class="piede-tasti">
+      <button type="button" class="tema" id="tema"></button>
+      <button type="button" class="lingua" id="lingua"></button>
+    </div>
   </div>
 </footer>
 
@@ -417,7 +498,10 @@
       android: 'Android 9 o successivo',
       sorgente: 'codice sorgente',
       installa: 'L\'apk è firmato ma non arriva dal Play Store, quindi la prima volta Android chiede il permesso: apri il file scaricato e consenti al browser o al gestore file di installare app sconosciute.',
-      schermataAlt: 'La griglia delle immagini con una selezione in corso: un elemento scelto, e in basso il pannello con le dieci azioni.',
+      /* ⚠️ NIENTE CONTI qui: diceva 'il pannello con le dieci azioni', e un numero in un
+         testo alternativo invecchia al primo mockup nuovo, che disegna l'utente e non io.
+         Vedi `Roccobot.md` § 'I conti si contano, non si scrivono'. */
+      schermataAlt: 'La griglia delle immagini di AIV con una selezione in corso: un elemento scelto col segno di spunta, il peso della selezione in testata, e in basso il pannello delle azioni.',
       fatti: [
         ['La trasparenza si vede', 'Tratta la trasparenza come merita, con la scacchiera adattiva da 12dp per visualizzare il canale alfa.'],
         ['Video, GIF e WebP animate', 'Apri i video con il player nativo e prendi il controllo delle immagini animate, con avanzamento e salvataggio dei fotogrammi.'],
@@ -427,7 +511,14 @@
         ['Nativa e scattante', 'Kotlin e Compose, pochi MB, niente WebView.']
       ],
       altra: 'English',
-      titoloAltra: 'Read this page in English'
+      titoloAltra: 'Read this page in English',
+      /* ⚠️ Le due parole sono quelle DETTATE dall'utente il 2026-09-03, e non si
+         accorciano: *un link solo testo 'Tema chiaro' / 'Tema scuro'*. */
+      temi: { light: 'Tema chiaro', dark: 'Tema scuro' },
+      titoliTema: {
+        light: 'Passa al tema chiaro',
+        dark: 'Passa al tema scuro'
+      }
     },
     en: {
       lang: 'en',
@@ -437,17 +528,22 @@
       android: 'Android 9 or later',
       sorgente: 'source',
       installa: 'This apk is signed but it does not come from the Play Store, so Android asks for permission the first time: open the downloaded file, and allow your browser or file manager to install unknown apps when prompted.',
-      schermataAlt: 'The picture grid with a selection under way: one item picked, and the panel with the ten actions at the bottom.',
+      schermataAlt: 'The AIV picture grid with a selection under way: one item picked with a check mark, the selection weight in the header, and the actions panel at the bottom.',
       fatti: [
         ['Transparency you can see', 'Treats transparency as it deserves, with the adaptive 12dp checkerboard that shows the alpha channel.'],
         ['Video, animated GIF and WebP', 'Open videos with the native player and take control of animated images, with frame stepping and frame saving.'],
         ['Details panel', 'Size, weight, format, bits per channel, EXIF when there is one. One row per fact, no interpretation.'],
         ['Every format that matters', 'JPG, PNG, AVIF, GIF, WebP, HEIC, SVG: large and small, vector and animated. We leave none behind.'],
-        ['A real bin', 'For doing things properly, and for doing them with a light heart.'],
+        ['A real bin', 'For doing things properly, and with a light heart.'],
         ['Native and snappy', 'Kotlin and Compose, a few MB, no WebView.']
       ],
       altra: 'Italiano',
-      titoloAltra: 'Leggi questa pagina in italiano'
+      titoloAltra: 'Leggi questa pagina in italiano',
+      temi: { light: 'Light theme', dark: 'Dark theme' },
+      titoliTema: {
+        light: 'Switch to the light theme',
+        dark: 'Switch to the dark theme'
+      }
     }
   };
 
@@ -462,21 +558,68 @@
     return 'en';
   }
 
-  var stato = { lingua: linguaIniziale(), rel: null };
-
   function el(id) { return document.getElementById(id); }
   function svuota(nodo) { while (nodo.firstChild) nodo.removeChild(nodo.firstChild); }
 
-  /* ── Il tema segue il sistema, e cambia mentre la pagina è aperta ── */
-  function tema() {
-    var mq = window.matchMedia('(prefers-color-scheme: dark)');
-    var applica = function (scuro) {
-      document.documentElement.setAttribute('data-theme', scuro ? 'dark' : 'light');
-    };
-    applica(mq.matches);
-    if (mq.addEventListener) mq.addEventListener('change', function (ev) { applica(ev.matches); });
-    else if (mq.addListener) mq.addListener(function (ev) { applica(ev.matches); });
+  /*
+   * ── Il tema: si nasce legati al sistema, e la scelta dura una visita ─────────
+   *
+   * ⚠️⚠️ **NON SI RICORDA NIENTE, ed è una scelta dell'utente e non una
+   * mancanza** (2026-09-03: *al caricamento la pagina segue il sistema; l'utente
+   * può cambiare, ma è una modifica non persistente. Se fa un refresh torna a
+   * legarsi al sistema*). Quindi qui non c'è nessun `localStorage`, e chi ne
+   * cercasse uno sappia che è stato deliberatamente escluso: una prima stesura ce
+   * l'aveva, con tre stati e un `auto` in mezzo, ed è uscita su sua istruzione.
+   * ⚠️ **`scelto` è `null` finché nessuno tocca il tasto**, e quel null è la
+   * differenza fra 'seguo il sistema' e 'ho scelto io': con un booleano non si
+   * potrebbero distinguere, e la pagina smetterebbe di seguire il sistema dal
+   * primo istante.
+   * ⚠️ **IL TASTO NOMINA QUELLO CHE SI OTTIENE, non il tema in vigore**, come il
+   * tasto della lingua accanto e come le voci di menu dell'app (la regola sta su
+   * `FolderScreen.kt`: *una riga di menu è una richiesta, non un indicatore di
+   * stato*). Quale tema c'è lo dice la pagina, che è sotto gli occhi.
+   */
+  var stato = { lingua: linguaIniziale(), scelto: null, rel: null };
+
+  var mqScuro = window.matchMedia('(prefers-color-scheme: dark)');
+
+  /** Il tema in vigore: quello scelto, o quello del sistema finché non si scelga. */
+  function temaInVigore() {
+    return stato.scelto || (mqScuro.matches ? 'dark' : 'light');
   }
+
+  /*
+   * Mette in vigore il tema: l'attributo sul documento e la schermata dell'app.
+   *
+   * ⚠️⚠️ **LA SCHERMATA SI STERZA RISCRIVENDO IL `media` DEL SUO `<source>`, e non
+   * assegnando un `src`.** Dentro un `<picture>` un `<source>` che corrisponde
+   * VINCE sull'`src` dell'`img`, quindi scrivere l'indirizzo a mano non avrebbe
+   * avuto effetto finché la media query era soddisfatta. Riscrivendo `media` a
+   * `all` o a `not all` si sposta la scelta senza toccare l'`img`, e a decidere
+   * resta un posto solo. Provato in Chromium: il cambio di attributo rifà la
+   * selezione e l'immagine cambia davvero.
+   * ⚠️ **Finché nessuno ha scelto, il `media` resta la media query vera**, e non
+   * un `all` calcolato: così chi segue il sistema ha esattamente il comportamento
+   * di prima, deciso dal browser e non da questa funzione.
+   */
+  function applicaTema() {
+    var scuro = temaInVigore() === 'dark';
+    document.documentElement.setAttribute('data-theme', scuro ? 'dark' : 'light');
+    var sorgente = el('schermata-scura');
+    if (sorgente) {
+      sorgente.media = stato.scelto
+        ? (scuro ? 'all' : 'not all')
+        : '(prefers-color-scheme: dark)';
+    }
+  }
+
+  /* ⚠️ Il sistema si ascolta SEMPRE, e a decidere se contare è `temaInVigore`: chi
+     non ha scelto deve vedere la pagina cambiare al tramonto, come faceva prima
+     che questo tasto esistesse. ⚠️ Serve anche `disegna`, perché il tasto nomina
+     il tema OPPOSTO a quello in vigore: cambiando il sistema, cambia l'etichetta. */
+  function alSistema() { applicaTema(); disegna(); }
+  if (mqScuro.addEventListener) mqScuro.addEventListener('change', alSistema);
+  else if (mqScuro.addListener) mqScuro.addListener(alSistema);
 
   function peso(byte, loc) {
     return (byte / 1048576).toLocaleString(loc, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' MB';
@@ -542,6 +685,13 @@
     var tastoLingua = el('lingua');
     tastoLingua.textContent = T.altra;
     tastoLingua.title = T.titoloAltra;
+
+    // ⚠️ Etichetta e titolo nominano il tema OPPOSTO a quello in vigore, cioè
+    // quello che si ottiene toccando: vedi la nota sopra `stato.scelto`.
+    var altro = (temaInVigore() === 'dark') ? 'light' : 'dark';
+    var tastoTema = el('tema');
+    tastoTema.textContent = T.temi[altro];
+    tastoTema.title = T.titoliTema[altro];
   }
 
   /* ── Una sola chiamata a GitHub, e da lì tutto il resto ── */
@@ -578,7 +728,16 @@
     disegna();
   });
 
-  tema();
+  el('tema').addEventListener('click', function () {
+    // ⚠️ Da qui in poi la pagina NON segue più il sistema, fino al ricaricamento.
+    stato.scelto = (temaInVigore() === 'dark') ? 'light' : 'dark';
+    applicaTema();
+    // ⚠️ Serve anche `disegna`, e non solo `applicaTema`: l'etichetta nomina il
+    // tema opposto a quello in vigore, quindi si scambia a ogni tocco.
+    disegna();
+  });
+
+  applicaTema();
   disegna();
   leggiRelease();
 })();
