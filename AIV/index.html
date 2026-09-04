@@ -210,21 +210,43 @@
   footer{max-width:960px; width:100%; margin:56px auto 0; padding:0 24px 32px}
   .piede-riga{
     /* ⚠️ `nowrap`: firma a sinistra e tasti a destra sulla STESSA riga, come ha
-       chiesto l'utente. ⚠️⚠️ **MA SUL TELEFONO NON SI PUÒ PIÙ, DA QUANDO I TASTI
-       SONO DUE, e la nota che c'era qui diceva il contrario**: diceva che ci
-       stanno, con la firma a circa 200px e 'il tasto' a una cinquantina. Era vero
-       con UN tasto. Adesso i due insieme misurano 141px in inglese, e una riga
-       sola vuole 216 di firma piu 24 di respiro piu 141, cioe 429px di finestra:
-       da li in giu la firma andrebbe a capo, e una firma spezzata in
-       'made with love by' e 'Roccobot' si legge come un difetto. Sotto la soglia
-       il piede va in colonna, che si legge come una scelta. */
+       chiesto l'utente, e adesso a OGNI larghezza di telefono.
+       ⚠️⚠️ **SOTTO LA SOGLIA CI STA PERCHE LA FIRMA SI ACCORCIA AL SOLO NOME**
+       (richiesta dell'utente, 2026-09-04), e prima quel caso andava in colonna:
+       la colonna era il rimedio a una firma che non entrava, non una scelta di
+       disegno, e togliere la causa costa meno che curare l'effetto.
+       ⚠️ Le misure sono prese col carattere di RIPIEGO (DejaVu Sans), che e il
+       piu largo della pila e quello su cui era tarata la soglia; dichiararlo
+       serve a poterle confrontare con quelle di domani. La firma intera vuole
+       216, piu 24 di respiro, piu 141 di tasti e 48 di rientro: 429px di
+       finestra. Col solo nome ne vuole 93, e il caso piu largo dei tasti (pagina
+       italiana, 'Tema chiaro' con 'English') 144: 309px in tutto. Con Roboto,
+       che e il carattere vero sul telefono, ne bastano 290. */
     border-top:1px solid var(--outline-variant); padding-top:18px;
     display:flex; flex-wrap:nowrap; gap:12px 24px; align-items:center; justify-content:space-between;
   }
   /* ⚠️ 460 e non 429: la soglia sta sopra la misura perche i caratteri non si
-     rendono identici su tutti i sistemi, e fra 429 e 460 stare in colonna non
+     rendono identici su tutti i sistemi, e fra 429 e 460 la firma corta non
      costa niente. */
   @media (max-width:460px){
+    /* ⚠️ Sparisce il preambolo, non il nome: il collegamento a roccobot.me resta,
+       e con lui la firma. */
+    .firma-lunga{display:none}
+  }
+  /* ⚠️⚠️ **LA COLONNA TORNA SOTTO I 305px, e non e un ripensamento**: li sotto non
+     ci sta piu nemmeno la firma corta, e `.piede-tasti` porta `flex:none` mentre
+     'Roccobot' e una parola sola che non va a capo, quindi la riga sborderebbe in
+     orizzontale. Senza questa regola la firma corta avrebbe TOLTO la colonna anche
+     dove serviva davvero.
+     ⚠️ **305 e la misura presa nel browser**: col carattere di ripiego, che
+     e il piu largo della pila, la riga chiede 305,2px nel caso peggiore (pagina
+     inglese, 92,0 di firma piu 141,3 di tasti piu 24 di respiro e 48 di rientro).
+     Il caso italiano ne chiede 300,6.
+     ⚠️ **Sotto i 300px la pagina sborda comunque, e NON e colpa del piede**: il
+     difetto c'era gia prima di questa modifica, misurato sulla pagina di partenza
+     (20px a 300, 40px a 280) col piede gia in colonna. Sta altrove, e chi lo
+     cerca non lo cerchi qui. */
+  @media (max-width:305px){
     .piede-riga{flex-direction:column; align-items:flex-start; gap:14px}
   }
   .firma{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-muted)}
@@ -430,8 +452,13 @@
            roccobot.me. Qui la stella e il 天 finale non ci sono, perché la mini icona
            accanto è già quel glifo: apre la riga come la stella apre quella dell'app.
            ⚠️ NON SI TRADUCE e non sta nel dizionario dei testi, ed è la stessa regola
-           dell'app: è una firma, non un testo dell'interfaccia. -->
-      <span>made with love by <a href="https://roccobot.me">Roccobot</a></span>
+           dell'app: è una firma, non un testo dell'interfaccia.
+           ⚠️⚠️ **SUL TELEFONO RESTA IL SOLO NOME** (richiesta dell'utente, 2026-09-04), e a
+           toglierlo è il CSS sotto la soglia del piede. Il testo NON è scritto due volte: il
+           preambolo è un nodo solo che si nasconde, quindi non esiste una stesura corta che
+           possa divergere da quella lunga, e il dizionario dei testi resta fuori. Lo spazio
+           fra le due parti sta dentro l'elemento nascosto perché è parte del preambolo. -->
+      <span><span class="firma-lunga">made with love by </span><a href="https://roccobot.me">Roccobot</a></span>
     </div>
     <!-- ⚠️ IL TEMA STA A SINISTRA DELLA LINGUA, e non viceversa: il tasto della
          lingua è all'estrema destra da quando esiste la pagina, e chi la conosce
