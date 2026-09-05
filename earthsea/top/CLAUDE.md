@@ -48,10 +48,16 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
     arrivato. ⚠️ Lo stato che l'utente ha spuntato **non** sta nell'HTML pubblicato, dove ogni
     scheda porta ancora `data-stato` del giorno in cui è nata: vive nel `localStorage` del suo
     telefono, quindi contare le spunte là dentro dà 19 e non dice niente.
-  - ⚠️ **`Gray Mage` è la sola scheda senza una decisione registrata** (misura del 2026-09-05):
-    le altre due che oggi mancano hanno la loro ragione scritta, cioè `Hoeg` nel canone (è il
-    nome della specie) e `Cenerino` qui sotto. Il Mago Grigio nel dataset esiste solo **dentro**
-    la citazione di Pannocchia, non come voce.
+  - ⚠️⚠️ **`Gray` e `Grey` NON COMBACIANO, e la trappola ha già prodotto un rilievo falso**
+    (2026-09-05): lo Schedario scrive `Gray Mage` all'americana, il dataset `Grey Mage`
+    all'inglese, quindi un confronto che normalizza maiuscole e punteggiatura li tratta come
+    due persone e conclude che la voce manchi. A mancare era il **confronto**: il Mago Grigio
+    è nel dataset da sempre, con origine, badge, opera e citazione.
+    - **Le schede senza voce sono `Hoeg`** (fuori per la regola del canone: è il nome della
+      specie) **e `Cenerino`** (entrato e tolto con la `1.04`). ⚠️ Un terzo nome che spunti da
+      un confronto di stringhe si cerca **dentro il dataset** prima di chiamarlo mancante, e la
+      variante ortografica è il primo posto dove guardare: i nomi di Terramare arrivano da
+      edizioni e wiki diverse.
 - ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools`: opere, edizioni coi
   traduttori, sigle bilingui, Maestri di Roke, elenchi dei portatori dei badge e **link
   alle fonti scaricabili**. È da lì che si verifica, col grep e mai a memoria.
@@ -2071,8 +2077,8 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
 ## 🙈 'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore
 
 Interruttore nella **Console** (l'editor admin) dalla `1.07`, istruzione
-dell'utente: decide se il **`Signore di Re Albi`** e il **`Nemico di Morred`** compaiono in
-classifica. Nasce **spento**, quindi di base quelle due non ci sono, per tutti i visitatori.
+dell'utente: decide se le voci il cui nome d'uso è una **perifrasi** compaiono in classifica.
+Nasce **spento**, quindi di base non ci sono, per tutti i visitatori.
 
 - ⚠️⚠️ **LA `1.06` L'AVEVA MESSO NEL PANNELLO, ED ERA LA SECONDA VOLTA**: la richiesta diceva
   *Pannello di controllo*, che allora era il nome della **Console** e conteneva quello del
@@ -2083,8 +2089,13 @@ classifica. Nasce **spento**, quindi di base quelle due non ci sono, per tutti i
   differenza di posto ma di sostanza**: qui non è una preferenza di chi guarda, è una
   **scelta editoriale del sito**, quindi non ha senso che ognuno se la regoli.
 - ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
-  CODICE**, come per ogni altra proprietà: se un domani ne entra una terza le basta il campo.
-  Le due sono quelle il cui **nome d'uso è una perifrasi** e non un nome proprio.
+  CODICE**, come per ogni altra proprietà. Sono le voci il cui **nome d'uso è una perifrasi** e
+  non un nome proprio, e la previsione 'se un domani ne entra una terza le basta il campo' si è
+  avverata con la `1.09`: il **`Mago Grigio`** è entrato nel gruppo su istruzione dell'utente
+  senza toccare una riga di codice.
+  - ⚠️ **La sua card ERA visibile, e questa modifica la nasconde**: la voce esisteva già come
+    scheda normale, quindi non è entrata in classifica, è passata dietro all'interruttore. Chi
+    la cercasse in pagina col flag spento non stia cercando un difetto.
 - **Come è fatto il flag**: `senzanome` in `SITE_FLAGS`, booleano **piatto** come `zoomBig`
   (niente varianti di piattaforma, niente manopole). Nel codice i flag piatti si riconoscono
   da `plain:true` nella voce di `SITE_FLAG_ITEMS`, che li tiene fuori dalla tab Mobile e
@@ -2098,8 +2109,11 @@ classifica. Nasce **spento**, quindi di base quelle due non ci sono, per tutti i
   'Personaggi senza nome' ne misura **145,5** col font reale, contro gli **87,6** di 'Colore
   schede' (ci sta) e i **120,7** di 'Colore delle schede' (va a capo). 'Senza nome' misura
   **74,8** e 'Nameless' **58,9**. Il nome per esteso è quello della **funzione** e vive qui.
-- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: a flag spento la lista ne mostra
-  **119 su 121**, e non è un dato perso. Misurato sul DOM reale: 119 spento, 121 acceso.
+- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: a flag spento la lista mostra tutte le
+  voci **meno** quelle marcate `senzanome`, e non è un dato perso. ⚠️ **Quante siano non si
+  scrive**, perché cambia a ogni voce che entra nel gruppo o ne esce (`Roccobot.md`, § '🔢 I
+  conti si contano, non si scrivono'): si contano sul DOM, o nel dataset con
+  `dati.filter(x=>x.senzanome)`.
   - ⚠️ **Contando le card sul DOM si prenda `#rank-list .rank-item`**: la legenda del Pannello
     è una **card finta** con la stessa classe, quindi un conteggio su tutto il documento dà
     uno in più e sembra un fantasma nei dati.
