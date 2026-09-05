@@ -367,9 +367,13 @@ aprire il Pannello.
   browser trattano gli input di testo come sempre `focus-visible`, quindi l'anello comparirebbe
   anche aprendo col dito. ⚠️⚠️ **NON vale per i RISULTATI**: `.ss-hit:focus-visible` resta,
   perché là il fondo è l'**unico** indicatore che dice su quale riga si è arrivati col Tab.
-- ⚠️ **Su desktop non ha una via d'accesso, e non è una dimenticanza**: l'utente ha chiesto il
-  solo gesto mobile. Sul gemello c'è un tasto lente nella toolbar del Pannello, quindi la
-  strada è nota e costa poco, ma qui va chiesta.
+- ⚠️⚠️ **Su desktop NON ha una via d'accesso, ed è deciso: il tasto lente qui non si mette**
+  (offerto e rifiutato, 2026-09-05: *no, su Arda non serve*). Sul gemello di Terramare quel
+  tasto c'è, nella toolbar del Pannello, quindi la differenza fra i due siti è **voluta** e
+  non una copia lasciata a metà: chi la 'sanasse' rifarebbe un giro già chiuso.
+  - **Che cosa resta vero**: `openSiteSearch` è una funzione a sé e il tasto costerebbe poche
+    righe, quindi la decisione si può rovesciare in qualunque momento senza toccare altro. Ma
+    la sola cosa che manca è la **richiesta**, e adesso c'è la risposta contraria.
 - ⚠️⚠️ **Il banco è `.memo/scripts/prova-ricerca-sito.js`, con eventi touch VERI via CDP**,
   come quello del gesto di zoom e per la stessa ragione: il tocco lungo vive su un
   `pointerdown` con `pointerType` `touch`, e un evento sintetico non lo sveglia. Serve i **due
