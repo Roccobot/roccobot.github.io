@@ -1665,6 +1665,53 @@ tocco si **trascina senza staccare il dito**, verso il basso per ingrandire.
   della `1.20`, scala da 0,762 a 1,326 verso il basso e ritorno a 0,875 verso l'alto, col pan
   a un dito che non muove la scala di un millesimo.
 
+## 🔍 La ricerca del sito, dal TOCCO LUNGO sul FAB
+
+Dalla `1.30`, richiesta dell'utente: installata la pagina come **PWA**, l'interfaccia del
+browser sparisce e con lei il 'trova nella pagina', mentre la classifica resta lunga. Un tocco
+lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello.
+
+- ⚠️⚠️ **Interroga il DATASET, non il DOM, e questo le dà quello che il 'trova' del browser
+  non può avere**: vede anche le voci che i filtri del visitatore tengono fuori e quelle che
+  il flag dei senza nome nasconde a **tutti** (§ "'Personaggi senza nome': un FLAG DI SITO,
+  non un filtro del visitatore"). È la ragione per cui l'utente l'ha chiesta al posto di una
+  ricerca che si limiti alla vista.
+- **I mattoni sono quelli della Console, promossi a globali** (`computeMatches`, `fold`,
+  `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): stavano dentro uno scope che si apre solo con le
+  credenziali, quindi non erano né riusabili né provabili. ⚠️ Due copie sarebbero divergute al
+  primo campo nuovo del dataset, ed è il difetto che la promozione evita.
+- ⚠️⚠️ **Una voce che nessun filtro mostra si SVELA per INDICE, e non spegnendo il filtro**
+  (`svelate`, letto in cima a `isVisibile`): gli altri filtri restano come li ha messi chi
+  guarda, e la classifica non cambia sotto i piedi per una ricerca. Senza il ridisegno il
+  salto finirebbe su una card che non esiste, cioè la ricerca sembrerebbe rotta proprio nei
+  casi per cui è nata.
+- ⚠️⚠️ **IL CLICK DEL RILASCIO CHIUDEVA LA RICERCA NELL'ISTANTE IN CUI SI APRIVA**, ed è il
+  difetto che il banco ha trovato e nessuno aveva previsto: il velo compare mentre il dito è
+  **ancora premuto**, quindi il click che il browser manda al rilascio cade su di lui e passa
+  per un clic fuori dalla modale. ⚠️ Il consumo di `lpFired` **non** lo copre, e sapere perché
+  evita di cercare il rimedio nel posto sbagliato: quello guarda il FAB, mentre questo velo,
+  quando il gesto è cominciato, non esisteva. La guardia è una finestra di **400ms** dalla
+  comparsa.
+- ⚠️ **L'evidenza del riscontro si compone a NODI**: `snippet()` della Console torna una
+  **stringa di markup**, che qui finirebbe in un `innerHTML`, e il divieto non è derogabile.
+  `conEvidenza` fa la stessa cosa con `createTextNode` e un `<mark>` vero.
+- **Il tetto è `SS_CAP` (40 righe disegnate), ma il CONTEGGIO resta quello vero**: una query
+  di una lettera trova quasi tutto il dataset, e disegnare centoventi righe per poi scorrerle
+  non aiuta nessuno. Chi arriva al tetto legge una riga che glielo dice.
+- ⚠️ **Il fuoco si dà DOPO l'animazione di entrata** (220ms): darlo subito, su iOS, fa salire
+  la tastiera mentre la modale si muove, e l'entrata si vede a scatti.
+- ⚠️⚠️ **Il banco è `.memo/scripts/prova-ricerca-sito.js`, con eventi touch VERI via CDP**,
+  come quello del gesto di zoom e per la stessa ragione: il tocco lungo vive su un
+  `pointerdown` con `pointerType` `touch`, e un evento sintetico non lo sveglia. Prova i tre
+  pezzi insieme (gesto del FAB, ricerca, filtro delle voci nascoste), perché si reggono a
+  vicenda e il difetto tipico non è un errore ma **un risultato che manca**.
+  - ⚠️ **La prova sul Pannello deve cercare `#ctrl-panel.open`, non `#ctrl-panel`**: quel
+    contenitore sta **sempre** nel DOM e si apre con una classe, quindi contarne l'esistenza
+    dà 1 in ogni caso, cioè è una prova che non prova niente.
+  - ⚠️ **L'indice della voce si prende dal DATASET, non dal testo delle card**: la stringa
+    `Mago Grigio` compare anche dentro la citazione di Nereger, quindi cercarla nel DOM
+    proverebbe un'altra cosa.
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo

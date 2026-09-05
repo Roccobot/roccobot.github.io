@@ -3020,6 +3020,35 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
    nel body (che è largo quanto la scheda personaggio). */
 .std-modal-inner { width:100%; }
 .res-modal-inner { max-width:340px; margin:0 auto; }
+/* ── Ricerca del sito (tocco lungo sul FAB) ──
+   Larga quanto la modale e con la lista che scorre da sé: la tastiera del
+   telefono mangia metà schermo, quindi il campo deve restare in vista mentre i
+   risultati scorrono sotto. Le tinte sono quelle della pagina, non colori
+   propri: qui non c'è niente da distinguere da altro. */
+.ss-input { width:100%; box-sizing:border-box; font-family:'EB Garamond',serif; font-size:1.1rem;
+  padding:.55rem .75rem; border-radius:8px; border:1px solid rgba(154,192,216,0.3);
+  background:rgba(0,0,0,0.16); color:inherit; outline:none; }
+.ss-input:focus-visible { border-color:var(--note-acc); box-shadow:0 0 0 2px rgba(120,173,194,0.35); }
+.ss-count { font-size:.78rem; opacity:.72; margin:.5rem 0 .35rem; text-align:right; }
+.ss-list { max-height:min(52vh,26rem); overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.ss-hit { display:block; width:100%; text-align:left; background:none; color:inherit; cursor:pointer;
+  font:inherit; border:1px solid transparent; border-radius:8px; padding:.5rem .6rem; }
+.ss-hit:hover, .ss-hit:focus-visible { background:rgba(255,255,255,0.09); border-color:rgba(154,192,216,0.28); outline:none; }
+html[data-theme="light"] .ss-hit:hover, html[data-theme="light"] .ss-hit:focus-visible { background:rgba(104,144,168,0.12); }
+.ss-hit-name { font-family:'Cinzel',serif; font-size:.95rem; }
+.ss-hit-nome .ss-hit-name { color:var(--note-acc); }
+.ss-hit-field { font-size:.7rem; text-transform:uppercase; letter-spacing:.07em; opacity:.6; margin-left:.5rem; }
+.ss-hit-snip { display:block; font-size:.84rem; opacity:.8; margin-top:.15rem; }
+.ss-hit-snip mark { background:rgba(210,178,92,0.28); color:inherit; border-radius:2px; padding:0 .1em; }
+html[data-theme="light"] .ss-hit-snip mark { background:rgba(14,107,94,0.18); }
+/* Il segno delle voci che i filtri non mostrano: è la ragione per cui questa
+   ricerca esiste, quindi si dichiara invece di far comparire una card a sorpresa. */
+.ss-hit-tag { font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; opacity:.75;
+  border:1px solid currentColor; border-radius:4px; padding:0 .3em; margin-left:.5rem; }
+.ss-more { font-size:.78rem; opacity:.7; text-align:center; margin:.6rem 0 0; }
+/* La card raggiunta: un alone che si spegne da sé, perché senza un segno il
+   salto lascia l'occhio a cercare quale delle card sia quella trovata. */
+.rank-item.ss-trovata { box-shadow:0 0 0 2px var(--note-acc), 0 0 22px rgba(120,173,194,0.35); }
 /* ⚠️ Colore proprio, non `--gold`: quel grigio dava **4.49:1** sul fondo scuro
    della modale, cioè 0.01 sotto la soglia 4.5:1 del testo normale (rilevato da
    axe, difetto preesistente sanato nella v13.86). Un filo più chiaro basta e
@@ -3145,7 +3174,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.20</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.30</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5788,7 +5817,56 @@ function veroNomeInVigore() { return statoVeroNome().on; }
 // CODICE, come per ogni altra proprietà: se un domani ne entra una terza le basta il campo,
 // mentre un elenco qui dentro nessuno lo verrebbe a cercare.
 
-function isVisibile(p) {
+// ── I mattoni della ricerca, comuni alla Console e al sito ──
+// Stavano dentro la Console, cioè in uno scope che si apre solo con le credenziali:
+// da lì non erano né riusabili né provabili. La ricerca del sito (tocco lungo sul
+// FAB) chiede le stesse cose, e due copie sarebbero divergute al primo campo nuovo.
+function escSearch(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
+var SEARCH_FIELDS = ['nome','nome_en','vero_nome','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en'];
+var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre', padre_en:'Padre EN', madre_en:'Madre EN', vero_nome:'Vero nome' };
+// Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
+// i segni diacritici via NFD, così 'eonwe' trova 'Eönwë' e ogni vocale semplice
+// copre le sue varianti accentate. foldFind() localizza la query (già foldata,
+// 'qf') e restituisce gli indici NELLA stringa ORIGINALE [start,end), per
+// evidenziare/selezionare il testo vero (non quello foldato).
+function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function foldFind(str, qf){
+  var f='', map=[];
+  for (var i=0;i<str.length;i++){ var c=str[i].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); for (var j=0;j<c.length;j++){ f+=c[j]; map.push(i); } }
+  var lo = f.indexOf(qf); if (lo<0) return null;
+  return [ map[lo], (lo+qf.length<=map.length ? map[lo+qf.length-1]+1 : str.length) ];
+}
+function snippet(val, qf){
+  val = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
+  var sp = foldFind(val, qf);
+  if (!sp) return escSearch(val.slice(0,70));
+  var os=sp[0], oe=sp[1], a=Math.max(0, os-24);
+  return (a>0?'...':'') + escSearch(val.slice(a,os)) + '<mark>' + escSearch(val.slice(os,oe)) + '</mark>' + escSearch(val.slice(oe, oe+36)) + (oe+36<val.length?'...':'');
+}
+function computeMatches(q){
+  var qf = fold(q.trim()); if (!qf) return [];
+  var nameHits = [], other = [];
+  for (var i=0;i<dati.length;i++){
+    var p = dati[i];
+    var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0)
+              || (!p.nome && !p.nome_en && fold(p.vero_nome||'').indexOf(qf)>=0);
+    var hf=null, hv=null;
+    for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
+    if (!hf) continue;
+    (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(nomeDiRif(p, currentLang === 'it') || '?'), val:hv, qf:qf });
+  }
+  return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
+}
+
+// Voci SVELATE dalla ricerca del sito: chi cerca una scheda che un filtro tiene fuori
+// (i senza nome, una categoria spenta, il genere) la trova lo stesso, e sceglierla la fa
+// comparire in classifica finché non si ricarica. ⚠️ È una deroga PUNTUALE e per indice,
+// non lo spegnimento del filtro: gli altri restano come li ha messi chi guarda, e la
+// classifica non cambia sotto i piedi per una ricerca.
+var svelate = new Set();
+
+function isVisibile(p, idx) {
+  if (svelate.size && idx !== undefined && svelate.has(idx)) return true;
   // ⚠️ Prima di tutti gli altri: è un filtro sul CONTENUTO, cioè decide se la voce esiste
   // per la lista, mentre gli altri decidono come guardarla.
   if (!SITE_FLAGS.senzanome && p.senzanome) return false;
@@ -6090,7 +6168,7 @@ function renderList() {
   var visN = 0;
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
-    if (!isVisibile(p)) continue;
+    if (!isVisibile(p, i)) continue;
     var cat = categoria(p);
     visN++;
     var isVisTop = visN <= 3;
@@ -6912,6 +6990,113 @@ function openResourcesModal() {
   // Aprire una mappa da qui è un PASSAGGIO: dissolvenza velocissima, non l'uscita piena.
   function imgItem(r) { mkBtn(label(r.titleIt, r.titleEn, r.shortIt, r.shortEn), function() { dismiss('fast'); imgvReturn = function(){ openResourcesModal(); }; openImageViewer(r.src, r.titleIt, r.titleEn, r.slug); }); }
   resMaps().forEach(imgItem);
+}
+
+// ── Ricerca del sito, dal tocco lungo sul FAB ──
+// Nasce dalla PWA installata (richiesta dell'utente): senza l'interfaccia del browser non
+// c'è più il 'trova nella pagina', e la classifica è lunga. Usa i MATTONI della Console
+// (`computeMatches` e compagni, ora globali), quindi interroga il dataset e non il DOM: di
+// qui il vantaggio che il 'trova' del browser non ha, cioè che vede anche le voci che i
+// filtri tengono fuori e quelle che il flag dei senza nome nasconde a tutti.
+var SS_CAP = 40;   // tetto alle righe disegnate; il conteggio resta quello vero
+function openSiteSearch() {
+  if (document.getElementById('site-search')) return;
+  var it = currentLang === 'it';
+  var m = buildStdModal('site-search'); var bd = m.backdrop;
+  var box = document.createElement('div'); box.className = 'std-modal-inner ss-inner'; m.body.appendChild(box);
+  var input = document.createElement('input');
+  input.type = 'search'; input.className = 'ss-input'; input.autocomplete = 'off'; input.spellcheck = false;
+  input.placeholder = it ? 'Cerca fra i personaggi' : 'Search the characters';
+  input.setAttribute('aria-label', input.placeholder);
+  var conta = document.createElement('p'); conta.className = 'ss-count';
+  var lista = document.createElement('div'); lista.className = 'ss-list';
+  box.appendChild(input); box.appendChild(conta); box.appendChild(lista);
+  activateStdModal(bd); lockPageScroll(true);
+  function chiudi(modo) { dismissStdModal(bd, modo); lockPageScroll(false); document.removeEventListener('keydown', onKey); }
+  function onKey(e) { if (e.key === 'Escape') chiudi(); }
+  document.addEventListener('keydown', onKey);
+  // ⚠️⚠️ Il click che il browser manda al RILASCIO del tocco lungo cade QUI, sul velo
+  // comparso mentre il dito era ancora premuto, e chiude la ricerca nell'istante in cui
+  // si apre. Il consumo di `lpFired` non lo copre: quello guarda il FAB, e questo velo,
+  // quando il gesto è cominciato, non esisteva. Misurato dal banco, non previsto.
+  var apertaA = Date.now();
+  bd.addEventListener('click', function(e) {
+    if (Date.now() - apertaA < 400) return;
+    if (e.target === bd) chiudi();
+  });
+  m.close.onclick = function(){ chiudi(); };
+
+  // Il pezzo che combacia si evidenzia componendo NODI: `snippet()` della Console
+  // torna una stringa di markup, e qui vale il divieto non derogabile su `innerHTML`.
+  function conEvidenza(val, qf) {
+    var f = document.createDocumentFragment();
+    var testo = String(val).replace(/\s+/g, ' ').trim();
+    var sp = foldFind(testo, qf);
+    if (!sp) { f.appendChild(document.createTextNode(testo.slice(0, 70))); return f; }
+    var a = Math.max(0, sp[0] - 24), coda = sp[1] + 36;
+    if (a > 0) f.appendChild(document.createTextNode('...'));
+    f.appendChild(document.createTextNode(testo.slice(a, sp[0])));
+    var mk = document.createElement('mark'); mk.textContent = testo.slice(sp[0], sp[1]); f.appendChild(mk);
+    f.appendChild(document.createTextNode(testo.slice(sp[1], coda)));
+    if (coda < testo.length) f.appendChild(document.createTextNode('...'));
+    return f;
+  }
+
+  // Una voce che nessun filtro mostra si SVELA e si ridisegna la lista: senza,
+  // il salto finirebbe su una card che non esiste, e la ricerca sembrerebbe rotta
+  // proprio nei casi per cui l'utente l'ha chiesta.
+  function vai(r) {
+    var sel = '.rank-item[data-idx="' + r.i + '"]';
+    if (!document.querySelector(sel)) { svelate.add(r.i); renderList(); }
+    chiudi('fast');
+    requestAnimationFrame(function() {
+      var card = document.querySelector(sel);
+      if (!card) return;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('ss-trovata');
+      setTimeout(function() { card.classList.remove('ss-trovata'); }, 2600);
+    });
+  }
+
+  function disegna() {
+    var q = input.value.trim();
+    while (lista.firstChild) lista.removeChild(lista.firstChild);
+    if (!q) { conta.textContent = ''; return; }
+    var tutti = computeMatches(q);
+    conta.textContent = tutti.length
+      ? (it ? tutti.length + (tutti.length === 1 ? ' scheda' : ' schede') : tutti.length + (tutti.length === 1 ? ' entry' : ' entries'))
+      : (it ? 'Nessun riscontro' : 'No match');
+    tutti.slice(0, SS_CAP).forEach(function(r) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'ss-hit' + (r.isName ? ' ss-hit-nome' : '');
+      var n = document.createElement('span'); n.className = 'ss-hit-name'; n.textContent = r.name;
+      b.appendChild(n);
+      // Il campo si dice solo quando NON è il nome: là il riscontro è già sotto gli occhi.
+      if (!r.isName) {
+        var f = document.createElement('span'); f.className = 'ss-hit-field';
+        f.textContent = FIELD_LABEL[r.field] || r.field; b.appendChild(f);
+      }
+      var s = document.createElement('span'); s.className = 'ss-hit-snip';
+      s.appendChild(conEvidenza(r.val, r.qf)); b.appendChild(s);
+      if (dati[r.i] && dati[r.i].senzanome && !SITE_FLAGS.senzanome) {
+        var tag = document.createElement('span'); tag.className = 'ss-hit-tag';
+        tag.textContent = it ? 'nascosto' : 'hidden'; b.appendChild(tag);
+      }
+      b.onclick = function() { vai(r); };
+      lista.appendChild(b);
+    });
+    if (tutti.length > SS_CAP) {
+      var p = document.createElement('p'); p.className = 'ss-more';
+      p.textContent = it ? 'Affina la ricerca per vedere il resto' : 'Refine the search to see the rest';
+      lista.appendChild(p);
+    }
+  }
+  input.addEventListener('input', disegna);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { var primo = lista.querySelector('.ss-hit'); if (primo) primo.click(); }
+  });
+  // ⚠️ Il fuoco si dà DOPO l'animazione di entrata: darlo subito, su iOS, fa
+  // salire la tastiera mentre la modale si muove, e l'entrata si vede a scatti.
+  setTimeout(function() { input.focus(); }, 220);
 }
 
 function openImageViewer(src, titleIt, titleEn, slug) {
@@ -8285,22 +8470,19 @@ function buildControlPanel() {
   });
   fab.appendChild(fabSvg);
   // ── Tap LUNGO sul FAB = scorciatoia 'SEGRETA' della Modalità XL (v12.43) ────
-  // Controparte mobile del tasto Z: ~500ms di pressione commutano la PREFERENZA
-  // PERSONALE di zoom (localStorage, stessa chiave e stesso toggleZoomMode del
-  // tasto Z; il toast fa da feedback del gesto riuscito). SOLO input touch
-  // (pointerType): col mouse un click 'lento' non deve scattare, su desktop c'è
-  // già Z. Il gesto è volutamente non scopribile, come il tap sulla versione.
+  // ~500ms di pressione aprono la RICERCA del sito (dalla 1.30). SOLO input touch
+  // (pointerType): col mouse un click 'lento' non deve scattare, e là il 'trova'
+  // del browser c'è ancora. Il gesto serve proprio dove quello manca, cioè nella
+  // PWA installata, dove non esiste interfaccia del browser.
+  // ⚠️ Il posto era della Modalità XL, spenta col flag `FEATURES.xlMode`: se un
+  // domani quel flag tornasse acceso, il tocco lungo NON torna a lei, perché ora
+  // è occupato: servirebbe una scelta, non un ripristino.
   var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
   var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
-  // ⚠️⚠️ Col flag spento il timer NON deve nemmeno partire, e gatare il solo
-  // `toggleZoomMode` sarebbe stato un DIFETTO invece di uno spegnimento: il
-  // timer scatterebbe comunque, alzerebbe `lpFired`, e il gestore del click qui
-  // sotto consumerebbe il click successivo. Risultato: un tocco lungo sul FAB
-  // non aprirebbe più nemmeno il Pannello. Si scarta all'inizio del gesto.
   fab.addEventListener('pointerdown', function(e){
-    if (e.pointerType !== 'touch' || !FEATURES.xlMode) return;
+    if (e.pointerType !== 'touch') return;
     lpFired = false; lpX = e.clientX; lpY = e.clientY;
-    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; toggleZoomMode(); }, 500);
+    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; openSiteSearch(); }, 500);
   });
   fab.addEventListener('pointerup', lpCancel);
   fab.addEventListener('pointercancel', lpCancel);
@@ -9402,43 +9584,8 @@ function showAdminEditor() {
   // nome che esista. Senza, `isName` le riconosceva ma il ciclo sui campi non trovava nulla
   // e la riga `if (!hf) continue;` le scartava: cercare 'Kalessin' nell'editor non dava
   // nessun risultato. In testa perche' il primo campo che combacia e' quello mostrato.
-  var SEARCH_FIELDS = ['nome','nome_en','vero_nome','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en'];
-  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre', padre_en:'Padre EN', madre_en:'Madre EN', vero_nome:'Vero nome' };
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
-  // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
-  // i segni diacritici via NFD, così 'eonwe' trova 'Eönwë' e ogni vocale semplice
-  // copre le sue varianti accentate. foldFind() localizza la query (già foldata,
-  // 'qf') e restituisce gli indici NELLA stringa ORIGINALE [start,end), per
-  // evidenziare/selezionare il testo vero (non quello foldato).
-  function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
-  function foldFind(str, qf){
-    var f='', map=[];
-    for (var i=0;i<str.length;i++){ var c=str[i].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); for (var j=0;j<c.length;j++){ f+=c[j]; map.push(i); } }
-    var lo = f.indexOf(qf); if (lo<0) return null;
-    return [ map[lo], (lo+qf.length<=map.length ? map[lo+qf.length-1]+1 : str.length) ];
-  }
-  function snippet(val, qf){
-    val = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
-    var sp = foldFind(val, qf);
-    if (!sp) return esc(val.slice(0,70));
-    var os=sp[0], oe=sp[1], a=Math.max(0, os-24);
-    return (a>0?'...':'') + esc(val.slice(a,os)) + '<mark>' + esc(val.slice(os,oe)) + '</mark>' + esc(val.slice(oe, oe+36)) + (oe+36<val.length?'...':'');
-  }
-  function computeMatches(q){
-    var qf = fold(q.trim()); if (!qf) return [];
-    var nameHits = [], other = [];
-    for (var i=0;i<dati.length;i++){
-      var p = dati[i];
-      var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0)
-                || (!p.nome && !p.nome_en && fold(p.vero_nome||'').indexOf(qf)>=0);
-      var hf=null, hv=null;
-      for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
-      if (!hf) continue;
-      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(nomeDiRif(p, currentLang === 'it') || '?'), val:hv, qf:qf });
-    }
-    return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
-  }
   function clearHit(){ Array.prototype.slice.call(overlay.querySelectorAll('.admin-search-hit')).forEach(function(w){ w.classList.remove('admin-search-hit'); }); }
   var SEARCH_CAP = 100; // tetto alla LISTA renderizzata (query corte = centinaia di nodi); il conteggio resta totale
   function renderResults(q){
