@@ -1767,6 +1767,28 @@ Istruzione dell'utente, `1.41`, dopo averlo visto sullo schermo. La regola tolta
 - **La regola è UNA SOLA**, senza varianti di tema o di piattaforma: toglierla vale per il
   chiaro e per lo scuro, su desktop e su mobile, che è quello che l'utente ha chiesto.
 
+#### ✖️ E su TOUCH non c'è nemmeno la ×
+
+Istruzione dell'utente, `1.42`: *su mobile, togli il tasto di chiusura. Non serve, tanto
+basta toccare qualsiasi punto fuori dalla barra di ricerca*. Col mouse la × resta.
+
+- ⚠️ **Il discriminante è la CAPACITÀ DEL PUNTATORE**, non una soglia in px, come per
+  l'alone sfumato (§ "L'alone sfumato è SPENTO sui browser touch"): una finestra desktop
+  stretta ha il mouse e la × la tiene.
+- **La media query si legge in JS**, e da lì esce la classe `ss-senza-x` che il CSS guarda:
+  dal CSS non si distinguerebbe questa modale dalle altre, che la × la tengono.
+- ⚠️⚠️ **Il tocco chiude sul VELO, non sulla cornice**, ed è utile saperlo prima di
+  descrivere il comportamento a parole: misurato a 390x844, il velo lascia **367px** liberi
+  sopra la modale e altrettanti sotto, mentre la cornice (358x110) non risponde al tocco.
+  L'area di chiusura resta larghissima, ed è la ragione per cui la × non serve.
+  - ⚠️ **Estendere la chiusura alla cornice è la strada SCARTATA, e l'ha scartata l'utente**
+    (*va bene com'è*, dopo che gliela avevo proposta insieme alla rimozione della ×). Chi
+    la riproponesse perché 'la frase sarebbe più vera alla lettera' starebbe rifacendo un
+    giro già chiuso.
+- **Il banco prova le DUE piattaforme**, perché un viewport solo non distingue il puntatore:
+  al tocco la × non c'è, col mouse sì, e su entrambi il velo chiude mentre il campo e le
+  righe di risultato no.
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo
