@@ -1630,6 +1630,41 @@ aveva regole CSS proprie, quindi il rinomino ha toccato i soli due punti JS che 
   muoveva di un pixel comunque. In più il paragrafo porta un **✦ per lato**, quindi nascondere
   il solo bottone lasciava due stelline sospese a promettere il nulla.
 
+## 🔎 Zoom a una mano nel visualizzatore: doppio tocco e trascina
+
+Dalla `1.20`, richiesta dell'utente: le mappe si consultano col telefono in **una mano sola**,
+e il pinch ne chiede due. Il gesto è quello di Google Maps: si tocca due volte e al secondo
+tocco si **trascina senza staccare il dito**, verso il basso per ingrandire.
+
+- **Da dove vengono i tre numeri**: `300ms` fra i due tocchi è la finestra classica del doppio
+  tocco; `30px` è il margine oltre il quale due tocchi sono in posti diversi e non un gesto
+  solo; `200px` di trascinamento per **raddoppiare** è scelto sulla mano, perché una trascinata
+  comoda su un telefono è di quell'ordine e il viewer ha un tetto di **8x**, cioè tre raddoppi.
+- ⚠️ **La scala cresce in modo esponenziale** (`2^(dy/200)`), non lineare, perché lo zoom è
+  moltiplicativo: a incrementi costanti i primi pixel varrebbero quanto gli ultimi, e il gesto
+  risulterebbe scattoso da ingrandito e inerte da rimpicciolito.
+- **Il centro è il punto del SECONDO tocco e resta fermo** per tutto il gesto: è ciò che tiene
+  il dettaglio sotto il dito invece di lasciarlo scappare mentre la mano scorre.
+- ⚠️⚠️ **Il browser manda un `dblclick` DOPO il secondo tocco, e senza guardia rifà lo zoom a
+  modo suo**: il viewer ha già un doppio clic che salta a 2.5x, quindi il gesto appena
+  finito verrebbe annullato da un salto. Il flag `dblSkip` lo lascia cadere **solo** se il
+  dito si è mosso davvero, così il doppio tocco **secco** conserva il salto di sempre.
+  - ⚠️ E il flag si azzera al tocco dopo che non apre un gesto: un salto soppresso e mai
+    consumato resterebbe in credito, e mangerebbe il doppio clic buono successivo.
+- ⚠️ **Durante il gesto il punto in `pts` va aggiornato lo stesso**, benché il pan non si
+  applichi: quel dizionario è la memoria di dov'è il dito, e lasciandolo indietro il primo
+  movimento dopo il gesto recupererebbe tutto il tragitto in un salto.
+- ⚠️ **Solo per il dito** (`pointerType === 'touch'`): col mouse ci sono la rotella e il doppio
+  clic, e un trascinamento col tasto premuto deve restare pan. Un **secondo dito** annulla il
+  gesto e passa la mano al pinch.
+- ⚠️⚠️ **Il banco è `.memo/scripts/prova-gesto-zoom.js`, e usa eventi touch VERI via CDP**: i
+  sintetici non bastano, perché il viewer chiama `setPointerCapture` a ogni `pointerdown` e
+  quel metodo **rifiuta** un `pointerId` che il browser non conosce, quindi il gestore va in
+  errore prima di fare qualunque cosa. Prova i **quattro** gesti insieme (pan, pinch, doppio
+  tocco secco, doppio tocco trascinato), perché è fra loro che si rubano gli eventi: misura
+  della `1.20`, scala da 0,762 a 1,326 verso il basso e ritorno a 0,875 verso l'alto, col pan
+  a un dito che non muove la scala di un millesimo.
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo

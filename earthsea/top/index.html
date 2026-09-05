@@ -3145,7 +3145,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.10</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.20</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6963,17 +6963,59 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function(g) {
     ov.addEventListener(g, function(e) { e.preventDefault(); });
   });
-  stage.addEventListener('dblclick', function(e) { var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top); });
+  stage.addEventListener('dblclick', function(e) {
+    // Se il doppio tocco è diventato un trascinamento, lo zoom l'ha già fatto
+    // il gesto a una mano: il salto a 2.5x qui sopra lo annullerebbe.
+    if (dblSkip) { dblSkip = false; return; }
+    var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top);
+  });
   // pan + pinch via pointer events
   var pts = {}, pinchD = 0, pinchMid = null;
+  // ── Zoom a una mano: doppio tocco e trascina ──
+  // Il gesto di Google Maps: si tocca due volte e al secondo tocco si trascina
+  // senza staccare il dito, verso il basso per ingrandire. Serve perché il
+  // pinch chiede due mani, e una mappa la si consulta con il telefono in una
+  // mano sola. Il centro dello zoom resta il punto toccato, così il dettaglio
+  // che si sta guardando non scappa via mentre il dito sale o scende.
+  // ⚠️ Solo per il dito: col mouse ci sono rotella e doppio clic, e un
+  // trascinamento col tasto premuto deve restare pan.
+  var TAP_GAP = 300;    // ms fra i due tocchi
+  var TAP_NEAR = 30;    // px CSS: oltre, sono due tocchi in punti diversi
+  var ZOOM_SPAN = 200;  // px CSS di trascinamento per raddoppiare la scala
+  var lastTapT = 0, lastTapX = 0, lastTapY = 0, zoomDrag = null, dblSkip = false;
   // Traccia il gesto per la chiusura da backdrop: un click secco (nessun
   // trascinamento, un solo dito) FUORI dall'immagine chiude il viewer.
   var pressMoved = 0, pressSingle = false;
-  stage.addEventListener('pointerdown', function(e) { pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); var n = Object.keys(pts).length; if (n === 1) { stage.classList.add('dragging'); pressMoved = 0; pressSingle = true; } else { pressSingle = false; } });
+  stage.addEventListener('pointerdown', function(e) {
+    pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId);
+    var n = Object.keys(pts).length;
+    if (n === 1) { stage.classList.add('dragging'); pressMoved = 0; pressSingle = true; } else { pressSingle = false; }
+    // Secondo tocco ravvicinato: da qui il dito comanda la scala, non la posizione.
+    var vicino = Math.abs(e.clientX - lastTapX) < TAP_NEAR && Math.abs(e.clientY - lastTapY) < TAP_NEAR;
+    if (e.pointerType === 'touch' && n === 1 && e.timeStamp - lastTapT < TAP_GAP && vicino) {
+      var rz = stage.getBoundingClientRect();
+      zoomDrag = { id: e.pointerId, y: e.clientY, cx: e.clientX - rz.left, cy: e.clientY - rz.top, moved: 0 };
+      pressSingle = false;   // un gesto di zoom non deve mai chiudere il viewer
+    } else {
+      dblSkip = false;       // ⚠️ o un salto soppresso resterebbe in credito per il tocco dopo
+    }
+  });
   stage.addEventListener('pointermove', function(e) {
     if (!pts[e.pointerId]) return;
     var ids = Object.keys(pts);
+    // Zoom a una mano: il dito che ha fatto il secondo tocco muove la SCALA.
+    // ⚠️ Il punto va aggiornato lo stesso, o al dito successivo il pan
+    // recupererebbe tutto il tragitto in un salto solo.
+    if (zoomDrag && e.pointerId === zoomDrag.id && ids.length < 2) {
+      var dy = e.clientY - zoomDrag.y;
+      zoomDrag.y = e.clientY; zoomDrag.moved += Math.abs(dy);
+      pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      pressMoved += Math.abs(dy);
+      if (dy) zoomBy(Math.pow(2, dy / ZOOM_SPAN), zoomDrag.cx, zoomDrag.cy);
+      return;
+    }
     if (ids.length >= 2) {
+      zoomDrag = null;   // arrivato un secondo dito: da qui comanda il pinch
       var a = pts[ids[0]], bb = pts[ids[1]];
       pts[e.pointerId] = { x: e.clientX, y: e.clientY };
       var na = pts[ids[0]], nb = pts[ids[1]];
@@ -6992,6 +7034,15 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   function up(e) {
     delete pts[e.pointerId];
     if (Object.keys(pts).length < 2) pinchD = 0;
+    if (zoomDrag && e.pointerId === zoomDrag.id) {
+      // Trascinato davvero: il doppio clic sintetico che il browser manda dopo
+      // il secondo tocco va lasciato cadere, o rifarebbe lo zoom a modo suo.
+      if (zoomDrag.moved > 6) dblSkip = true;
+      zoomDrag = null;
+    }
+    // Un tocco breve arma il gesto: il prossimo, se arriva vicino e in fretta,
+    // è il secondo del doppio tocco.
+    if (e.pointerType === 'touch' && pressMoved < 6) { lastTapT = e.timeStamp; lastTapX = e.clientX; lastTapY = e.clientY; }
     if (!Object.keys(pts).length) {
       stage.classList.remove('dragging');
       // Click secco fuori dall'immagine → chiude (backdrop, come da regola
