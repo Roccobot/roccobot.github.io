@@ -1712,6 +1712,40 @@ lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello
     `Mago Grigio` compare anche dentro la citazione di Nereger, quindi cercarla nel DOM
     proverebbe un'altra cosa.
 
+### 🔍 Su DESKTOP la stessa ricerca ha un tasto nella toolbar
+
+Dalla `1.40`, istruzione dell'utente: su desktop il tocco lungo non esiste, quindi la ricerca
+era irraggiungibile proprio dove la classifica si legge più a lungo. Il tasto è il **primo**
+della fila della toolbar, a sinistra di Riordina, e apre `openSiteSearch`, la stessa funzione
+del gesto: **una via d'accesso in più, non una seconda ricerca**.
+
+- **Chiude il Pannello prima di aprire**, come fa il tasto Mappe e per la stessa ragione:
+  senza, restano due overlay sovrapposti e il gesto indietro torna al Pannello invece che
+  alla classifica.
+- ⚠️⚠️ **La lente è ASIMMETRICA, quindi vale la centratura OTTICA della fila** (§ 'Il tasto
+  del Pannello è un SEGNAPOSTO, e la sua centratura è ottica'): il cerchio pesa in alto a
+  sinistra e il manico tira in basso a destra, quindi centrarla nel riquadro 24x24 la
+  lascerebbe percettivamente alta. Il glifo di Feather cade a **11,873**, un decimo sopra
+  l'asse della fila.
+  - **Il rimedio è allungare il MANICO di 0,4 unità**, e vale due volte: porta il baricentro
+    a **11,972**, cioè quello dei tre vicini simmetrici (11,975), **e** l'ingombro a **20,40**
+    contro i 20,48 medi della fila. **Spostare il glifo intero in basso di 0,1 è la misura
+    scartata**: centra ugualmente (11,980) ma lascia l'ingombro a 20,00.
+  - ⚠️ **Niente `scale()`**, per la ragione già scritta per il segnaposto: scalerebbe anche il
+    tratto, che il CSS fissa a 2 per tutte, e l'icona risulterebbe più leggera dei vicini.
+- ⚠️ **Il tasto NON compare su mobile**, e non è una dimenticanza: `.ctrl-toolbar` è
+  `display:none` nella bottom-sheet, e là la ricerca ce l'ha già il tocco lungo sul FAB.
+- ✅ **Costa ZERO in larghezza al Pannello**, misurato togliendo il tasto a runtime e
+  rimisurando: la fila cresce di **40,79px** (235,98 contro 195,19) ma resta dentro la
+  toolbar, e la larghezza del Pannello la comanda la **card di legenda** (329,19). ⚠️ Il
+  margine residuo è di **due** tasti: il terzo comincerebbe ad allargare il Pannello, e
+  allora la misura va rifatta.
+- **Il banco è `.memo/scripts/prova-tasto-ricerca.js`**, e la prova che conta è quella del
+  baricentro: si rasterizza il glifo **letto dal DOM** e si pesano i pixel sull'alfa, perché
+  nessuna proprietà CSS dice dove cade l'asse ottico. ⚠️ Il riferimento è **Riordina**, che è
+  simmetrico: mediare con la luna sposterebbe la misura dal verso sbagliato (§ del
+  segnaposto).
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo
