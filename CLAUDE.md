@@ -676,6 +676,12 @@ poi divergerebbe.
       un percorso, il nome del repo nelle righe intorno per un rimando a sezione), perché
       spegnere tutti i rimandi come si fa con `tools` costerebbe il controllo proprio nelle
       sessioni coi due repo classici.
+  - ⚠️⚠️ **`checkjs.py` LASCIA UN FILE accanto a quello che controlla** (lo script estratto,
+    come `index.html.js`), e con un `git add -A` quel file entra nel commit: misurato il
+    2026-09-05 su `earthsea/top/index.html`, dove ha portato in staging quasi novemila righe e
+    ha fatto scattare il verificatore sugli accenti dei commenti **preesistenti** del sito,
+    cioè un allarme che non riguardava per niente la modifica in corso. Si **cancella subito
+    dopo l'uso**, prima di preparare il commit.
   - ⚠️ **Gli script di `.memo/scripts/` si lanciano come comando SINGOLO e con percorso
     assoluto**, non dentro una catena `&&`: le regole di permesso Bash devono coprire
     **ogni** sottocomando di un comando composto (`Roccobot.md` § '⚙️ Automazione e
