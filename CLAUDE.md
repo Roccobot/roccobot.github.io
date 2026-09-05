@@ -740,6 +740,15 @@ poi divergerebbe.
       - **Quindi la procedura è**: il corpo si scrive in un file dello scratchpad, si lancia
         `--text` su quel file, e solo dopo si passa allo strumento. ⚠️ **Il testo passato allo
         strumento deve essere quello del file**, o il controllo ha guardato un'altra cosa.
+      - ⚠️⚠️ **E NON È SOLO IL CORPO DI UNA PR: VALE PER OGNI TESTO COMPOSTO DENTRO UNA
+        CHIAMATA A UNO STRUMENTO**, cioè anche il testo di una **domanda a scelta multipla**,
+        un **commento su GitHub** e il contenuto di un **artefatto** che non passi da un file.
+        Il criterio è uno: il messaggio di commit passa da un file per forza, tutto il resto no.
+        - ⚠️ **La domanda a scelta multipla è caduta il 2026-09-05, con undici accenti scritti
+          con l'apostrofo** in quattro opzioni, e nello stesso turno il messaggio di commit era
+          stato controllato. Quella prova dice che il difetto non è la disattenzione ma la
+          superficie, ed è la ragione per cui l'elenco qui sopra si legge come un criterio e
+          non come una lista da spuntare.
       - ⚠️ **Il modo `--diff` legge il diff che gli arriva IN INGRESSO, e da solo mente**:
         lanciato senza la pipe stampa `0 righe in 0 file`, che si legge come 'nessun difetto'
         mentre è 'nessun dato'. Va sempre incanalato come sopra. È il falso negativo peggiore,
