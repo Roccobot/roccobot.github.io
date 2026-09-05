@@ -21,6 +21,11 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
 
 - **L'ordine è quello in cui le voci sono entrate**, non una classifica: le voci nuove
   si accodano, e il riordino si fa dal Pannello quando l'utente deciderà le posizioni.
+  - ⚠️ **Ma l'utente sposta anche a mano, una voce alla volta** (`Cenerino` con la `1.10`,
+    poi `Skiorh`, `Burrone`, `Bordger` e `Ard` con la `1.43`), e allora la posizione è
+    **chiesta** e non si tocca. Le sue istruzioni sono nella forma *X dopo Y*: si applicano
+    **per nome**, mai per indice, perché ogni spostamento muove tutti quelli che seguono e
+    una lista di numeri sarebbe giusta solo al primo.
 - ⚠️ **Le due metà si riempiono in modi diversi** (la sezione sulle due metà del dataset,
   più sotto, dice come): la colonna italiana è **dello Schedario**,
   cioè dell'utente, coi nomi Nord dove divergono da Mondadori; la metà inglese (`nome_en`,
@@ -2835,9 +2840,27 @@ un'altra voce), non il taglio: la prova che il taglio non fosse di merito è che
 di Morred**, che non parla mai e non compare mai in scena, la citazione ce l'aveva. Chi
 rilegge quella formulazione in un commit vecchio sappia che è stata corretta il 2026-08-25.
 
-- **Chi resta senza, e sono QUINDICI**: i **dodici animali** (istruzione dell'utente: *lascia
-  perdere gli animali*) e le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di
-  Ark`, `Keor`).
+⚠️⚠️ **UNA VOCE NUOVA NASCE CON LA SUA CITAZIONE, ed è una regola di progetto** (istruzione
+dell'utente, 2026-09-05: *quando inserisci un personaggio, includi una citazione verificata e
+segui le regole già consolidate per la 'firma'*). Non è un lavoro da rimandare a un giro
+dedicato: la citazione fa parte della scheda come il nome e l'opera.
+
+- **Che cosa vuol dire in pratica**: la si cerca **sulle fonti** col grep (mai a memoria), si
+  applica il criterio della **più corta fra le valide**, si sceglie il **testo Mondadori coi
+  nomi Nord**, si chiude col **punto fermo** senza `[...]` agli estremi, e si riempie la
+  **firma** solo se parla qualcun altro (§ sui quattro campi, qui sopra).
+- ⚠️ **Il contesto vuole capitolo e titolo**, e quelli si prendono dallo **spine dell'OPF**
+  dell'epub, non dai nomi dei file né dal testo piano: nei `.txt` estratti le intestazioni di
+  capitolo non si riconoscono, e cercarle a occhio dà zero (provato il 2026-09-05).
+- ⚠️⚠️ **Una voce può NON averla, e allora si dice perché**: `Cenerino` resta senza, perché il
+  personaggio in italiano non ha nome in **nessuna** delle due edizioni (§ della sua voce), e
+  una citazione italiana che lo nomini non esiste. La regola chiede una citazione
+  **verificata**: dove la verifica non è possibile, il campo vuoto è la risposta onesta.
+
+- **Chi resta senza**: i **dodici animali** (istruzione dell'utente: *lascia perdere gli
+  animali*), le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di Ark`, `Keor`) e
+  `Cenerino`, per la ragione qui sopra. ⚠️ **Quante siano non si scrive**: si contano con
+  `dati.filter(x => !x.citazione)`, e il numero è già cambiato due volte.
   - ⚠️⚠️ **`Cenerino` è USCITO con la `1.04` e RIENTRATO con la `1.10`**, tutte e due le volte
     per scelta dell'utente, e la nota che diceva *non ne ricavi una voce da rimettere* è
     superata. Resta il fatto che l'ha reso un caso a sé: è l'unica voce il cui nome italiano
