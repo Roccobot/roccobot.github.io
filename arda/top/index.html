@@ -2586,6 +2586,36 @@ html[data-theme="light"] .note-charlink { color:var(--nl-l,var(--gold-bright)); 
    di bottoni è raccolto in .res-modal-inner, largo al massimo ~340px e centrato
    nel body (che è largo quanto la scheda personaggio). */
 .std-modal-inner { width:100%; }
+/* ── Ricerca del sito (tocco lungo sul FAB) ──
+   Le tinte sono quelle della pagina, non colori propri: qui non c'è niente da
+   distinguere da altro. ⚠️ Il campo NON ha anello di fuoco, ed è una scelta con una
+   ragione, non una dimenticanza di accessibilità: un campo di TESTO ha già il suo
+   indicatore nativo, il caret lampeggiante, e i browser trattano gli input di testo
+   come sempre `focus-visible`, quindi l'anello comparirebbe anche aprendo col dito.
+   ⚠️ NON vale per i RISULTATI: là il fondo è l'unico indicatore che dice su quale
+   riga si è arrivati col Tab. */
+.ss-input { width:100%; box-sizing:border-box; font-family:'EB Garamond',serif; font-size:1.1rem;
+  padding:.55rem .75rem; border-radius:8px; border:1px solid rgba(180,180,180,0.3);
+  background:rgba(0,0,0,0.16); color:inherit; outline:none; }
+.ss-count { font-size:.78rem; opacity:.72; margin:.5rem 0 .35rem; text-align:right; }
+.ss-list { max-height:min(52vh,26rem); overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.ss-hit { display:block; width:100%; text-align:left; background:none; color:inherit; cursor:pointer;
+  font:inherit; border:1px solid transparent; border-radius:8px; padding:.5rem .6rem; }
+.ss-hit:hover, .ss-hit:focus-visible { background:rgba(255,255,255,0.09); border-color:rgba(180,180,180,0.28); outline:none; }
+html[data-theme="light"] .ss-hit:hover, html[data-theme="light"] .ss-hit:focus-visible { background:rgba(120,120,120,0.12); }
+.ss-hit-name { font-family:'Cinzel',serif; font-size:.95rem; }
+.ss-hit-nome .ss-hit-name { color:var(--gold-bright); }
+.ss-hit-field { font-size:.7rem; text-transform:uppercase; letter-spacing:.07em; opacity:.6; margin-left:.5rem; }
+.ss-hit-snip { display:block; font-size:.84rem; opacity:.8; margin-top:.15rem; }
+.ss-hit-snip mark { background:rgba(210,178,92,0.28); color:inherit; border-radius:2px; padding:0 .1em; }
+html[data-theme="light"] .ss-hit-snip mark { background:rgba(139,139,139,0.22); }
+.ss-more { font-size:.78rem; opacity:.62; text-align:center; margin:.5rem 0 0; }
+/* Marca la voce APOCRIFA, che i filtri tengono fuori dalla classifica: senza, chi la
+   sceglie non capirebbe perché compare una card che prima non c'era. */
+.ss-hit-tag { font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; opacity:.75;
+  margin-left:.5rem; padding:.05em .4em; border:1px solid currentColor; border-radius:999px; }
+/* Alone temporaneo sulla card raggiunta dalla ricerca. */
+.rank-item.ss-trovata { box-shadow:0 0 0 2px var(--gold-bright), 0 0 22px rgba(187,187,187,0.35); }
 .res-modal-inner { max-width:340px; margin:0 auto; }
 /* ⚠️ Colore proprio, non `--gold`: quel grigio dava **4.49:1** sul fondo scuro
    della modale, cioè 0.01 sotto la soglia 4.5:1 del testo normale (rilevato da
@@ -2692,7 +2722,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.15</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.25</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4996,7 +5026,15 @@ var GENDER_ICON = {
 // Predicato di visibilità UNICO (filtri categoria + interruttore Apocrifi):
 // condiviso da renderList, visiblePos e stepVisible, così la posizione nella
 // modale e la navigazione con le frecce restano sempre coerenti con la lista.
-function isVisibile(p) {
+// Voci SVELATE dalla ricerca del sito: chi cerca una scheda che un filtro tiene
+// fuori (una categoria spenta, gli Apocrifi, un filtro badge) la trova lo stesso, e
+// sceglierla la fa comparire in classifica finché non si ricarica. ⚠️ È una deroga
+// PUNTUALE e per indice, non lo spegnimento del filtro: gli altri restano come li ha
+// messi chi guarda, e la classifica non cambia sotto i piedi per una ricerca.
+var svelate = new Set();
+
+function isVisibile(p, idx) {
+  if (svelate.size && idx !== undefined && svelate.has(idx)) return true;
   if (p.apocrifo && !showApocrifi) return false; // catalogo esteso: visibile solo con l'interruttore Apocrifi
   if (badgeFilter.size) {
     var hit = false;
@@ -5067,7 +5105,7 @@ function renderList() {
   var visN = 0;
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
-    if (!isVisibile(p)) continue;
+    if (!isVisibile(p, i)) continue;
     var cat = categoria(p);
     visN++;
     var isVisTop = visN <= 3;
@@ -5446,7 +5484,7 @@ var currentIdx = null;
 // assoluto in dati.
 function visiblePos(idx) {
   var n = 0;
-  for (var i = 0; i <= idx; i++) if (isVisibile(dati[i])) n++;
+  for (var i = 0; i <= idx; i++) if (isVisibile(dati[i], i)) n++;
   return n;
 }
 // Prossimo/precedente indice visibile, per la navigazione con le frecce
@@ -5454,7 +5492,7 @@ function visiblePos(idx) {
 // saltati, non mostrati).
 function stepVisible(from, dir) {
   for (var i = from + dir; i >= 0 && i < dati.length; i += dir)
-    if (isVisibile(dati[i])) return i;
+    if (isVisibile(dati[i], i)) return i;
   return null;
 }
 
@@ -5842,6 +5880,147 @@ function openResourcesModal() {
   EDITORIAL_NOTES.forEach(function(note) { if (note.cat === 'editorial') noteBtn(note); });
 }
 
+
+// ── I mattoni della ricerca, comuni all'editor admin e al sito ──
+// Stavano dentro l'editor admin, cioè in uno scope che si apre solo con le
+// credenziali: da li non erano ne riusabili ne provabili. La ricerca del sito
+// (tocco lungo sul FAB) chiede le stesse cose, e due copie sarebbero divergute
+// al primo campo nuovo del dataset.
+var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre','padre_en','madre_en'];
+var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
+// 'qf') e restituisce gli indici NELLA stringa ORIGINALE [start,end), per
+// evidenziare/selezionare il testo vero (non quello foldato).
+function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function foldFind(str, qf){
+  var f='', map=[];
+  for (var i=0;i<str.length;i++){ var c=str[i].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); for (var j=0;j<c.length;j++){ f+=c[j]; map.push(i); } }
+  var lo = f.indexOf(qf); if (lo<0) return null;
+  return [ map[lo], (lo+qf.length<=map.length ? map[lo+qf.length-1]+1 : str.length) ];
+}
+function computeMatches(q){
+  var qf = fold(q.trim()); if (!qf) return [];
+  var nameHits = [], other = [];
+  for (var i=0;i<dati.length;i++){
+    var p = dati[i];
+    var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0);
+    var hf=null, hv=null;
+    for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
+    if (!hf) continue;
+    (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, qf:qf });
+  }
+  return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
+}
+
+// ── Ricerca del sito, dal tocco lungo sul FAB ──
+// Nasce dalla PWA installata: senza l'interfaccia del browser non c'è più il
+// 'trova nella pagina', e la classifica è lunga. Usa i MATTONI dell'editor admin
+// (`computeMatches` e compagni, ora globali), quindi interroga il dataset e non il
+// DOM: di qui il vantaggio che il 'trova' del browser non ha, cioè che vede anche
+// le voci che i filtri tengono fuori e gli Apocrifi, spenti di default.
+// ⚠️⚠️ È di SOLA CONSULTAZIONE (istruzione dell'utente): non apre l'editor, non
+// tocca i dati e non chiede la parola d'ordine. La ricerca admin resta quella di
+// sempre, dentro l'editor, ed è un'altra cosa che condivide i soli mattoni.
+var SS_CAP = 40;   // tetto alle righe disegnate; il conteggio resta quello vero
+function openSiteSearch() {
+  if (document.getElementById('site-search')) return;
+  var it = currentLang === 'it';
+  var m = buildStdModal('site-search'); var bd = m.backdrop;
+  var box = document.createElement('div'); box.className = 'std-modal-inner ss-inner'; m.body.appendChild(box);
+  var input = document.createElement('input');
+  input.type = 'search'; input.className = 'ss-input'; input.autocomplete = 'off'; input.spellcheck = false;
+  input.placeholder = it ? 'Cerca fra i personaggi' : 'Search the characters';
+  input.setAttribute('aria-label', input.placeholder);
+  var conta = document.createElement('p'); conta.className = 'ss-count';
+  var lista = document.createElement('div'); lista.className = 'ss-list';
+  box.appendChild(input); box.appendChild(conta); box.appendChild(lista);
+  activateStdModal(bd); lockPageScroll(true);
+  function chiudi(modo) { dismissStdModal(bd, modo); lockPageScroll(false); document.removeEventListener('keydown', onKey); }
+  function onKey(e) { if (e.key === 'Escape') chiudi(); }
+  document.addEventListener('keydown', onKey);
+  // ⚠️⚠️ Il click che il browser manda al RILASCIO del tocco lungo cade QUI, sul velo
+  // comparso mentre il dito era ancora premuto, e chiude la ricerca nell'istante in cui
+  // si apre. Il consumo di `lpFired` non lo copre: quello guarda il FAB, e questo velo,
+  // quando il gesto è cominciato, non esisteva. Misurato dal banco, non previsto.
+  var apertaA = Date.now();
+  bd.addEventListener('click', function(e) {
+    if (Date.now() - apertaA < 400) return;
+    if (e.target === bd) chiudi();
+  });
+  m.close.onclick = function(){ chiudi(); };
+
+  // Il pezzo che combacia si evidenzia componendo NODI: `snippet()` dell'editor
+  // admin torna una stringa di markup, e qui vale il divieto su `innerHTML`.
+  function conEvidenza(val, qf) {
+    var f = document.createDocumentFragment();
+    var testo = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
+    var sp = foldFind(testo, qf);
+    if (!sp) { f.appendChild(document.createTextNode(testo.slice(0, 70))); return f; }
+    var a = Math.max(0, sp[0] - 24), coda = sp[1] + 36;
+    if (a > 0) f.appendChild(document.createTextNode('...'));
+    f.appendChild(document.createTextNode(testo.slice(a, sp[0])));
+    var mk = document.createElement('mark'); mk.textContent = testo.slice(sp[0], sp[1]); f.appendChild(mk);
+    f.appendChild(document.createTextNode(testo.slice(sp[1], coda)));
+    if (coda < testo.length) f.appendChild(document.createTextNode('...'));
+    return f;
+  }
+
+  // Una voce che nessun filtro mostra si SVELA e si ridisegna la lista: senza, il
+  // salto finirebbe su una card che non esiste, e la ricerca sembrerebbe rotta
+  // proprio nei casi per cui l'utente l'ha chiesta.
+  function vai(r) {
+    var sel = '.rank-item[data-idx="' + r.i + '"]';
+    if (!document.querySelector(sel)) { svelate.add(r.i); renderList(); }
+    chiudi('fast');
+    requestAnimationFrame(function() {
+      var card = document.querySelector(sel);
+      if (!card) return;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('ss-trovata');
+      setTimeout(function() { card.classList.remove('ss-trovata'); }, 2600);
+    });
+  }
+
+  function disegna() {
+    var q = input.value.trim();
+    while (lista.firstChild) lista.removeChild(lista.firstChild);
+    if (!q) { conta.textContent = ''; return; }
+    var tutti = computeMatches(q);
+    conta.textContent = tutti.length
+      ? (it ? tutti.length + (tutti.length === 1 ? ' scheda' : ' schede') : tutti.length + (tutti.length === 1 ? ' entry' : ' entries'))
+      : (it ? 'Nessun riscontro' : 'No match');
+    tutti.slice(0, SS_CAP).forEach(function(r) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'ss-hit' + (r.isName ? ' ss-hit-nome' : '');
+      var n = document.createElement('span'); n.className = 'ss-hit-name'; n.textContent = r.name;
+      b.appendChild(n);
+      // Il campo si dice solo quando NON è il nome: là il riscontro è già sotto gli occhi.
+      if (!r.isName) {
+        var f = document.createElement('span'); f.className = 'ss-hit-field';
+        f.textContent = FIELD_LABEL[r.field] || r.field; b.appendChild(f);
+      }
+      var sn = document.createElement('span'); sn.className = 'ss-hit-snip';
+      sn.appendChild(conEvidenza(r.val, r.qf)); b.appendChild(sn);
+      if (dati[r.i] && dati[r.i].apocrifo && !showApocrifi) {
+        var tag = document.createElement('span'); tag.className = 'ss-hit-tag';
+        tag.textContent = it ? 'apocrifo' : 'apocryphal'; b.appendChild(tag);
+      }
+      b.onclick = function() { vai(r); };
+      lista.appendChild(b);
+    });
+    if (tutti.length > SS_CAP) {
+      var pm = document.createElement('p'); pm.className = 'ss-more';
+      pm.textContent = it ? 'Affina la ricerca per vedere il resto' : 'Refine the search to see the rest';
+      lista.appendChild(pm);
+    }
+  }
+  input.addEventListener('input', disegna);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { var primo = lista.querySelector('.ss-hit'); if (primo) primo.click(); }
+  });
+  // ⚠️ Il fuoco si dà DOPO l'animazione di entrata: darlo subito, su iOS, fa salire
+  // la tastiera mentre la modale si muove, e l'entrata si vede a scatti.
+  setTimeout(function() { input.focus(); }, 220);
+}
+
 function openImageViewer(src, titleIt, titleEn, slug) {
   if (document.getElementById('imgv')) return;
   setShareRoute(slug || null);
@@ -5891,17 +6070,62 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function(g) {
     ov.addEventListener(g, function(e) { e.preventDefault(); });
   });
-  stage.addEventListener('dblclick', function(e) { var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top); });
+  stage.addEventListener('dblclick', function(e) {
+    // Se il doppio tocco è diventato un trascinamento, lo zoom l'ha già fatto il
+    // gesto a una mano: il salto a 2.5x qui sotto lo annullerebbe.
+    if (dblSkip) { dblSkip = false; return; }
+    var r = stage.getBoundingClientRect(); if (scale > minScale * 1.4) fit(); else zoomBy(2.5, e.clientX - r.left, e.clientY - r.top);
+  });
   // pan + pinch via pointer events
   var pts = {}, pinchD = 0, pinchMid = null;
+  // ── Zoom a una mano: doppio tocco e trascina ──
+  // Il gesto di Google Maps: si tocca due volte e al secondo tocco si trascina
+  // senza staccare il dito, verso il basso per ingrandire. Serve perché il pinch
+  // chiede due mani, e le mappe si consultano col telefono in una mano sola. Il
+  // centro dello zoom resta il punto toccato, così il dettaglio che si sta
+  // guardando non scappa mentre il dito sale o scende.
+  // ⚠️ Solo per il dito: col mouse ci sono rotella e doppio clic, e un
+  // trascinamento col tasto premuto deve restare pan.
+  // ⚠️ La scala cresce in modo ESPONENZIALE (`2^(dy/200)`), non lineare, perché
+  // lo zoom è moltiplicativo: a incrementi costanti il gesto risulterebbe
+  // scattoso da ingrandito e inerte da rimpicciolito.
+  var TAP_GAP = 300;    // ms fra i due tocchi
+  var TAP_NEAR = 30;    // px CSS: oltre, sono due tocchi in punti diversi
+  var ZOOM_SPAN = 200;  // px CSS di trascinamento per raddoppiare la scala
+  var lastTapT = 0, lastTapX = 0, lastTapY = 0, zoomDrag = null, dblSkip = false;
   // Traccia il gesto per la chiusura da backdrop: un click secco (nessun
   // trascinamento, un solo dito) FUORI dall'immagine chiude il viewer.
   var pressMoved = 0, pressSingle = false;
-  stage.addEventListener('pointerdown', function(e) { pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); var n = Object.keys(pts).length; if (n === 1) { stage.classList.add('dragging'); pressMoved = 0; pressSingle = true; } else { pressSingle = false; } });
+  stage.addEventListener('pointerdown', function(e) {
+    pts[e.pointerId] = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId);
+    var n = Object.keys(pts).length;
+    if (n === 1) { stage.classList.add('dragging'); pressMoved = 0; pressSingle = true; } else { pressSingle = false; }
+    // Secondo tocco ravvicinato: da qui il dito comanda la scala, non la posizione.
+    var vicino = Math.abs(e.clientX - lastTapX) < TAP_NEAR && Math.abs(e.clientY - lastTapY) < TAP_NEAR;
+    if (e.pointerType === 'touch' && n === 1 && e.timeStamp - lastTapT < TAP_GAP && vicino) {
+      var rz = stage.getBoundingClientRect();
+      zoomDrag = { id: e.pointerId, y: e.clientY, cx: e.clientX - rz.left, cy: e.clientY - rz.top, moved: 0 };
+      pressSingle = false;   // un gesto di zoom non deve mai chiudere il viewer
+    } else {
+      dblSkip = false;       // ⚠️ o un salto soppresso resterebbe in credito per il tocco dopo
+    }
+  });
   stage.addEventListener('pointermove', function(e) {
     if (!pts[e.pointerId]) return;
     var ids = Object.keys(pts);
+    // Zoom a una mano: il dito che ha fatto il secondo tocco muove la SCALA.
+    // ⚠️ Il punto va aggiornato lo stesso, o al movimento successivo il pan
+    // recupererebbe tutto il tragitto in un salto solo.
+    if (zoomDrag && e.pointerId === zoomDrag.id && ids.length < 2) {
+      var dy = e.clientY - zoomDrag.y;
+      zoomDrag.y = e.clientY; zoomDrag.moved += Math.abs(dy);
+      pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      pressMoved += Math.abs(dy);
+      if (dy) zoomBy(Math.pow(2, dy / ZOOM_SPAN), zoomDrag.cx, zoomDrag.cy);
+      return;
+    }
     if (ids.length >= 2) {
+      zoomDrag = null;   // arrivato un secondo dito: da qui comanda il pinch
       var a = pts[ids[0]], bb = pts[ids[1]];
       pts[e.pointerId] = { x: e.clientX, y: e.clientY };
       var na = pts[ids[0]], nb = pts[ids[1]];
@@ -5920,6 +6144,15 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   function up(e) {
     delete pts[e.pointerId];
     if (Object.keys(pts).length < 2) pinchD = 0;
+    if (zoomDrag && e.pointerId === zoomDrag.id) {
+      // Trascinato davvero: il doppio clic sintetico che il browser manda dopo il
+      // secondo tocco va lasciato cadere, o rifarebbe lo zoom a modo suo.
+      if (zoomDrag.moved > 6) dblSkip = true;
+      zoomDrag = null;
+    }
+    // Un tocco breve arma il gesto: il prossimo, se arriva vicino e in fretta, è
+    // il secondo del doppio tocco.
+    if (e.pointerType === 'touch' && pressMoved < 6) { lastTapT = e.timeStamp; lastTapX = e.clientX; lastTapY = e.clientY; }
     if (!Object.keys(pts).length) {
       stage.classList.remove('dragging');
       // Click secco fuori dall'immagine → chiude (backdrop, come da regola
@@ -7128,18 +7361,22 @@ function buildControlPanel() {
   fab.id = 'ctrl-fab'; fab.className = 'fab-btn ctrl-fab';
   fab.setAttribute('aria-label', 'Filtri e legenda');
   fab.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 605.87"><path fill="currentColor" d="M448.76 422.32c-29.8-11.97-57.74-37.2-84.81-61.64-15.46-13.96-31.13-28.1-47.64-40.17 39.83-22.19 62.96-60.22 62.96-108.78 0-24.9-7.25-47.1-21.53-66.06h43.09c3.29 0 6.11-1.9 6.69-4.5l9.45-42.54c.75-3.34-2.46-6.41-6.69-6.41h-151.3V5.23c0-3.3-3.42-5.78-7.08-5.13l-53.98 9.54c-2.77.49-4.76 2.63-4.76 5.13v77.45H51.17c-3.29 0-6.11 1.9-6.69 4.5l-9.45 42.54c-.75 3.34 2.46 6.41 6.69 6.41h52.54c-14.28 18.96-21.53 41.16-21.53 66.06 0 48.56 23.12 86.59 62.96 108.78-16.51 12.07-32.18 26.21-47.64 40.17-27.07 24.44-55.02 49.67-84.81 61.64-2.68 1.08-3.93 3.83-2.85 6.24l18.73 41.64c1.15 2.56 4.48 3.79 7.33 2.69 41.45-16 75.57-46.8 105.8-74.1 21.2-19.14 41.62-37.57 60.9-47.94v1.13c-.05.42-.07.85-.07 1.29 0 10.58.05 20.46.07 29.71v16.51c-.22 53.37-19.53 105.39-55.38 148.36-1.45 1.73-2.83 3.3-4.03 4.61-1.83 1.99-2.28 4.71-1.15 7.08 3.7 7.78 13.09 28.66 19.63 41.12 2.98 5.68 7.79 7.29 13.07 1.87 19.51-18.77 43.18-45.97 62.13-82.31 26.48-50.81 31.04-85.68 31.57-123.18v-.19c.09-6.66.06-13.4 0-20.33v-25.6c19.24 10.38 39.62 28.78 60.76 47.87 30.24 27.3 64.36 58.1 105.8 74.1 2.86 1.1 6.18-.13 7.33-2.69l18.73-41.64c1.09-2.41-.17-5.16-2.85-6.24M193.15 283.79c-38.08-9.1-58.62-33.88-58.62-72.03 0-26.83 13.89-46.26 42.46-59.42 5.36-2.47 10.83-4.52 16.16-6.22zm65.83-.04V146.16c5.28 1.7 10.7 3.73 16.02 6.18 28.57 13.16 42.46 32.59 42.46 59.42 0 38.11-20.49 62.87-58.48 72Z"/></svg>';
-  // ── Tap LUNGO sul FAB = scorciatoia 'SEGRETA' della Modalità XL (v12.43) ────
-  // Controparte mobile del tasto Z: ~500ms di pressione commutano la PREFERENZA
-  // PERSONALE di zoom (localStorage, stessa chiave e stesso toggleZoomMode del
-  // tasto Z; il toast fa da feedback del gesto riuscito). SOLO input touch
-  // (pointerType): col mouse un click 'lento' non deve scattare, su desktop c'è
-  // già Z. Il gesto è volutamente non scopribile, come il tap sulla versione.
+  // ── Tap LUNGO sul FAB = RICERCA DEL SITO (dalla 15.16) ─────────────────────
+  // ⚠️⚠️ Il gesto ha CAMBIATO PADRONE, e non è una svista: dalla v12.43 al
+  // 2026-09-05 commutava la Modalità XL, che su mobile perde così la sua
+  // scorciatoia personale (resta il default di sito, dalla Console). La scelta è
+  // dell'utente, messo davanti al conflitto: su questo sito il gesto era già
+  // occupato, mentre sul gemello di Terramare era libero perché là la XL è
+  // spenta da un flag di build. Chi trova le note della 'scorciatoia segreta'
+  // della XL in un commit vecchio sa che sono superate.
+  // ~500ms di pressione, SOLO input touch (pointerType): col mouse un click
+  // 'lento' non deve scattare, e su desktop la ricerca ha il suo tasto.
   var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
   var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
   fab.addEventListener('pointerdown', function(e){
     if (e.pointerType !== 'touch') return;
     lpFired = false; lpX = e.clientX; lpY = e.clientY;
-    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; toggleZoomMode(); }, 500);
+    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; openSiteSearch(); }, 500);
   });
   fab.addEventListener('pointerup', lpCancel);
   fab.addEventListener('pointercancel', lpCancel);
@@ -8224,41 +8461,17 @@ function showAdminEditor() {
   // Cerca SOLO nel contenuto dei campi (mai nelle etichette UI) di TUTTE le voci,
   // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
   // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
-  var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre','padre_en','madre_en'];
-  var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
   // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
   // i segni diacritici via NFD, così 'eonwe' trova 'Eönwë' e ogni vocale semplice
   // copre le sue varianti accentate. foldFind() localizza la query (già foldata,
-  // 'qf') e restituisce gli indici NELLA stringa ORIGINALE [start,end), per
-  // evidenziare/selezionare il testo vero (non quello foldato).
-  function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
-  function foldFind(str, qf){
-    var f='', map=[];
-    for (var i=0;i<str.length;i++){ var c=str[i].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); for (var j=0;j<c.length;j++){ f+=c[j]; map.push(i); } }
-    var lo = f.indexOf(qf); if (lo<0) return null;
-    return [ map[lo], (lo+qf.length<=map.length ? map[lo+qf.length-1]+1 : str.length) ];
-  }
   function snippet(val, qf){
     val = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
     var sp = foldFind(val, qf);
     if (!sp) return esc(val.slice(0,70));
     var os=sp[0], oe=sp[1], a=Math.max(0, os-24);
     return (a>0?'...':'') + esc(val.slice(a,os)) + '<mark>' + esc(val.slice(os,oe)) + '</mark>' + esc(val.slice(oe, oe+36)) + (oe+36<val.length?'...':'');
-  }
-  function computeMatches(q){
-    var qf = fold(q.trim()); if (!qf) return [];
-    var nameHits = [], other = [];
-    for (var i=0;i<dati.length;i++){
-      var p = dati[i];
-      var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0);
-      var hf=null, hv=null;
-      for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
-      if (!hf) continue;
-      (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, qf:qf });
-    }
-    return nameHits.concat(other); // match sul Nome per primi (poi ordine di classifica)
   }
   function clearHit(){ Array.prototype.slice.call(overlay.querySelectorAll('.admin-search-hit')).forEach(function(w){ w.classList.remove('admin-search-hit'); }); }
   var SEARCH_CAP = 100; // tetto alla LISTA renderizzata (query corte = centinaia di nodi); il conteggio resta totale
