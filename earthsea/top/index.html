@@ -3174,7 +3174,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.31</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.40</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7513,6 +7513,22 @@ function controlPanelHTML() {
     ? (currentLang === 'it' ? 'Scarta le modifiche all\'ordine' : 'Discard order changes')
     : (currentLang === 'it' ? 'Riordina i personaggi' : 'Reorder characters');
   var reorderBtn = '<button class="ctrl-icon-btn ctrl-reorder-btn' + (reorderMode ? ' is-active' : '') + '" aria-label="' + reorderLbl + '" title="' + reorderLbl + '">' + (reorderMode ? REORDER_X_ICON : REORDER_ICON) + '</button>';
+  // Tasto Ricerca (lente): SOLO toolbar desktop, primo della fila. Apre la STESSA
+  // ricerca del tocco lungo sul FAB (`openSiteSearch`), che su desktop non era
+  // raggiungibile: là il gesto non esiste, e il 'trova' del browser vede la sola
+  // vista, mentre questa interroga il dataset (istruzione dell'utente, 2026-09-05).
+  // ⚠️ La lente è ASIMMETRICA (il cerchio pesa in alto a sinistra, il manico tira in
+  // basso a destra), quindi centrarla nel riquadro 24x24 la lascerebbe percettivamente
+  // alta: vale la centratura OTTICA della fila, cioè il baricentro dell'inchiostro
+  // sull'asse 11,98 (vedi la nota del segnaposto, poco sopra). Il glifo di Feather
+  // cade a 11,873; qui il manico è allungato di 0,4 unità, e con quello il baricentro
+  // scende a 11,972, cioè quello dei tre vicini simmetrici (11,975).
+  // ⚠️ L'allungamento serve DUE volte, ed è la ragione per cui si è scelto lui invece
+  // di spostare il glifo intero in basso: porta anche l'ingombro a 20,40 contro i 20,48
+  // medi della fila, dove il glifo spostato restava a 20,00.
+  var SEARCH_ICON = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21.4 21.4l-4.75-4.75"/></svg>';
+  var searchLbl = currentLang === 'it' ? 'Cerca fra i personaggi' : 'Search the characters';
+  var searchBtn = '<button class="ctrl-icon-btn ctrl-search-btn" aria-label="' + searchLbl + '" title="' + searchLbl + '">' + SEARCH_ICON + '</button>';
   // Logo personale (inline, niente file salvabile): link a roccobot.me, in alto
   // a sinistra nella toolbar desktop, prima della versione.
   var logoTip = currentLang === 'it'
@@ -7535,6 +7551,7 @@ function controlPanelHTML() {
      +   '<span class="ctrl-ver-desk" id="ctrl-ver-desk">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>'
      + '</span>'
      + '<span class="ctrl-toolbar-btns">'
+     +   searchBtn
      +   reorderBtn
      +   infoBtn
      +   '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
@@ -7950,6 +7967,15 @@ function wireControlPanel() {
     btn.addEventListener('click', function(){
       if (panel.classList.contains('open')) toggleControlPanel();
       openMaps();
+    });
+  });
+  // Tasto Ricerca: chiude il Pannello e apre la ricerca, come fa Mappe e per la stessa
+  // ragione: senza, restano due overlay sovrapposti e il gesto indietro torna al
+  // Pannello invece che alla classifica.
+  panel.querySelectorAll('.ctrl-search-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if (panel.classList.contains('open')) toggleControlPanel();
+      openSiteSearch();
     });
   });
 }
