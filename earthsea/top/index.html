@@ -69,14 +69,14 @@
   --name: #dfe6e3;
   /* ⚠️⚠️ TINTA DELLA SELEZIONE, derivata dal FAB (istruzione dell'utente, 0.99).
      Fin qui i filtri badge accesi e i due tasti di salto pagina erano in ORO VERO
-     (`rgba(210,178,92)`), che in questo progetto non e' un colore di casa: e' un residuo
+     (`rgba(210,178,92)`), che in questo progetto non è un colore di casa: è un residuo
      letterale di 'I Grandi di Arda', sopravvissuto proprio dove le variabili non
-     arrivavano. ⚠️ Si vede anche dal fatto che `--gold` qui NON e' oro ma un grigio-verde:
+     arrivavano. ⚠️ Si vede anche dal fatto che `--gold` qui NON è oro ma un grigio-verde:
      chi ha ritinto la tavolozza ha cambiato le variabili, e questi valori scritti a mano
      sono rimasti indietro senza che niente lo segnalasse.
-     ⚠️ La base e' il fondo del FAB (`#3072a1`), ma **schiarita e un filo piu' satura**
-     (istruzione dell'utente: *del turchese mi interessa la tonalita', puoi schiarirlo come
-     meglio credi*): il colore pieno del FAB e' pensato per un disco opaco con un glifo
+     ⚠️ La base è il fondo del FAB (`#3072a1`), ma **schiarita e un filo più satura**
+     (istruzione dell'utente: *del turchese mi interessa la tonalità, puoi schiarirlo come
+     meglio credi*): il colore pieno del FAB è pensato per un disco opaco con un glifo
      bianco sopra, mentre qui serve per bordi, testo e veli traslucidi su fondo scuro, dove
      una tinta scura sparisce. I contrasti misurati stanno in `earthsea/top/CLAUDE.md`. */
   --sel: #7ab4de;
@@ -1119,14 +1119,14 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    su una riga sola invece di essere impilate una per riga.
    ⚠️⚠️ ALLINEATE A SINISTRA, non distribuite (istruzione dell'utente, 0.93: *lasciando
    gli spazi opportuni [...] disponili allineati a sinistra: prenderanno solo lo spazio che
-   serve*). La `0.92` usava `space-between`, ed e' la misura SCARTATA: con le etichette
+   serve*). La `0.92` usava `space-between`, ed è la misura SCARTATA: con le etichette
    corte ('Persone', 'Draghi', 'Animali') distribuire su tutta la larghezza apriva due
    vuoti larghi quanto le parole, e le due righe risultavano sfilacciate invece che
-   allineate fra loro. `flex-start` le fa cominciare tutte dallo stesso bordo, che e'
+   allineate fra loro. `flex-start` le fa cominciare tutte dallo stesso bordo, che è
    l'incolonnamento che conta davvero: quello della PRIMA cella.
    ⚠️ Restano celle a larghezza propria, NON colonne uguali: le etichette hanno lunghezze
    molto diverse ('Draghi' contro 'Solo veri nomi noti'), e colonne uguali lascerebbero
-   buchi larghi quanto la parola piu' lunga. L'anti-jitter NON viene dalle colonne fisse ma
+   buchi larghi quanto la parola più lunga. L'anti-jitter NON viene dalle colonne fisse ma
    dalle gemelle invisibili delle etichette (`.ctrl-label-alt`), che riservano in ogni
    cella la larghezza maggiore fra le due lingue: le posizioni non si muovono al cambio
    lingua anche se le celle hanno misure diverse fra loro.
@@ -1135,37 +1135,37 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    riga del vero nome, che ereditava `flex-start` da quando andava a capo. */
 .ctrl-frow { display:flex; align-items:center; justify-content:space-between; gap:0.38rem; }
 .ctrl-frow > .ctrl-row { flex:0 0 auto; min-width:0; }
-/* ⚠️ Gap piu' stretti che nelle righe impilate, e non e' un ritocco estetico: con tre
+/* ⚠️ Gap più stretti che nelle righe impilate, e non è un ritocco estetico: con tre
    celle sulla stessa riga i due spazi interni di ognuna si pagano SEI volte, e col passo
    largo di prima il Pannello si allargava di 44px oltre la sua misura (misurato).
-   ⚠️ Lo spazio VISIBILE fra due celle e' la somma di tre valori (il padding destro della
+   ⚠️ Lo spazio VISIBILE fra due celle è la somma di tre valori (il padding destro della
    prima, il `gap` della riga, il padding sinistro della seconda): chi lo ritocca guardi
    tutti e tre, o finira' per compensare l'uno con l'altro.
-   ⚠️ Il padding di cella e' la GABBIA comune (`--pan-gutter`) e non piu' `0.24rem`, cosi'
+   ⚠️ Il padding di cella è la GABBIA comune (`--pan-gutter`) e non più `0.24rem`, così
    la prima checkbox parte dallo stesso filo della card e del logo. Lo spazio fra le celle
-   e' conservato abbassando il `gap` della riga da 0.5 a 0.38rem: 4,8 + 6,08 + 4,8 fa gli
-   stessi **15,68px** di prima, misurati. Non e' una compensazione (quelle sono coppie di
-   `margin` di segno opposto): e' lo stesso spazio ripartito diversamente fra i due
+   è conservato abbassando il `gap` della riga da 0.5 a 0.38rem: 4,8 + 6,08 + 4,8 fa gli
+   stessi **15,68px** di prima, misurati. Non è una compensazione (quelle sono coppie di
+   `margin` di segno opposto): è lo stesso spazio ripartito diversamente fra i due
    parametri che lo compongono. */
 .ctrl-frow > .ctrl-row { gap:0.38rem; padding-left:calc(0.4rem + 1px); padding-right:calc(0.4rem + 1px); }
-/* ⚠️⚠️ LA RIGA DI FILTRI STA NELLA GABBIA, e il rientro interno e' quello delle righe di
-   LEGENDA (0.4rem), non piu' quello della gabbia. Sono due cose diverse e servono a due
+/* ⚠️⚠️ LA RIGA DI FILTRI STA NELLA GABBIA, e il rientro interno è quello delle righe di
+   LEGENDA (0.4rem), non più quello della gabbia. Sono due cose diverse e servono a due
    cose diverse (istruzione dell'utente, 0.97: *le prime checkbox devono partire leggermente
-   piu' a destra, perche' e' l'hover che deve stare a filo del contenuto*):
-   - il `padding` della SEZIONE porta il bordo dell'**hover** a filo del contenuto, cioe'
+   più a destra, perché è l'hover che deve stare a filo del contenuto*):
+   - il `padding` della SEZIONE porta il bordo dell'**hover** a filo del contenuto, cioè
      esattamente dove comincia e finisce la card di legenda e dove cominciano e finiscono i
      riquadri della legenda dei badge;
-   - il `padding` della CELLA e' il rientro del contenuto DENTRO l'hover, e vale 0.4rem
-     perche' e' lo stesso della riga di legenda: cosi' la checkbox e l'icona del badge sotto
-     stanno sulla stessa colonna, che era la seconda meta' della richiesta.
-   ⚠️ Il **`+ 1px`** non e' una taratura a occhio: la riga di legenda porta un
+   - il `padding` della CELLA è il rientro del contenuto DENTRO l'hover, e vale 0.4rem
+     perché è lo stesso della riga di legenda: così la checkbox e l'icona del badge sotto
+     stanno sulla stessa colonna, che era la seconda metà della richiesta.
+   ⚠️ Il **`+ 1px`** non è una taratura a occhio: la riga di legenda porta un
    `border:1px solid transparent`, che le serve per riservare lo spessore del bordo che
    compare quando il filtro si accende. Quel pixel sposta il suo contenuto verso l'interno,
    e senza di lui la checkbox restava a 31,38 mentre l'icona stava a 32,38 (misurato). La
-   cella non puo' prendersi un bordo trasparente a sua volta: non ha nessuno stato che lo
+   cella non può prendersi un bordo trasparente a sua volta: non ha nessuno stato che lo
    accenda, e sarebbe una scatola diversa che finge di essere uguale.
    ⚠️ Prima la cella usava il valore della gabbia e la sezione non aveva padding: l'hover
-   partiva 4,79px piu' a sinistra della card e la checkbox era incolonnata col bordo del
+   partiva 4,79px più a sinistra della card e la checkbox era incolonnata col bordo del
    riquadro invece che con l'icona. Le due misure sembravano una sola. */
 .ctrl-section--filtri { padding:0 var(--pan-gutter); box-sizing:border-box; }
 /* Wrapper delle due colonne: trasparente ovunque (la griglia desktop di
@@ -1179,19 +1179,19 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 .ctrl-icon-btn:hover { background:rgba(104,144,168,0.28); border-color:rgba(154,192,216,0.6); }
 .ctrl-icon-btn svg { width:1.15rem; height:1.15rem; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 /* Tasto Riordina attivo (stato ×, modalità riordino in corso): segnala che il click scarta.
-   ⚠️ Dalla 1.00 usa la tinta della SELEZIONE e non piu' l'oro (istruzione dell'utente): era
+   ⚠️ Dalla 1.00 usa la tinta della SELEZIONE e non più l'oro (istruzione dell'utente): era
    l'ultimo elemento rimasto della tavolozza di Arda. ⚠️ Qui lo stato acceso e quello a
-   riposo hanno ora la stessa FAMIGLIA di colore (il tasto a riposo e' gia' un azzurro
-   tenue), quindi a distinguerli non e' piu' la tinta ma il **bordo** (da 0,32 a 0,7 di
+   riposo hanno ora la stessa FAMIGLIA di colore (il tasto a riposo è già un azzurro
+   tenue), quindi a distinguerli non è più la tinta ma il **bordo** (da 0,32 a 0,7 di
    alpha) e il **glifo**, che passa da chiaro ad azzurro pieno. Chi ritocca uno dei due
    guardi l'altro: sono l'unico segnale rimasto. */
 .ctrl-icon-btn.ctrl-reorder-btn.is-active { background:var(--sel-on-bg); border-color:var(--sel-on-bd); color:var(--sel); }
 /* ⚠️ L'hover SCHIARISCE, non ingrossa la tinta dello stato (istruzione dell'utente, 0.95,
    che ha voluto il bianco traslucido su tutti gli hover del Pannello). Il velo bianco si
-   sovrappone al fondo dello stato con un `linear-gradient` a due stop uguali, che e' il modo
-   di avere DUE strati in un solo `background`: cosi' la tinta dello stato acceso resta sotto
+   sovrappone al fondo dello stato con un `linear-gradient` a due stop uguali, che è il modo
+   di avere DUE strati in un solo `background`: così la tinta dello stato acceso resta sotto
    e non viene sostituita, che era il rischio di scrivere qui un colore solo. Il
-   `border-color` non si tocca per la stessa ragione: e' la spia dello stato, non un effetto
+   `border-color` non si tocca per la stessa ragione: è la spia dello stato, non un effetto
    di hover. */
 .ctrl-icon-btn.ctrl-reorder-btn.is-active:hover { background:linear-gradient(rgba(255,255,255,0.14),rgba(255,255,255,0.14)),var(--sel-on-bg); }
 /* Stato 'link copiato' del tasto condividi (✓ + tinta oro). Il 2° selettore
@@ -1224,12 +1224,12 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
   background:rgba(36,40,43,0.94); border:1px solid rgba(121,131,141,0.4); border-radius:14px;
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   /* ⚠️ BAGLIORE intorno al Pannello, variante 'B' scelta dall'utente fra tre rese (1.00):
-     un alone freddo a 34px piu' un filo di bordo illuminato. E' la **controparte scura
+     un alone freddo a 34px più un filo di bordo illuminato. È la **controparte scura
      dell'ombra portata**, che su fondo nero non si vede: un'ombra ha bisogno di luce
      attorno per esistere, quindi il tema scuro non aveva niente che staccasse il Pannello
-     dal fondo, e il tema chiaro si'.
-     ⚠️ Sta in una variabile perche' il tema chiaro lo SPEGNE (l'ombra ce l'ha gia'), e
-     spegnerlo riscrivendo tutta la `box-shadow` la' avrebbe duplicato anche l'ombra
+     dal fondo, e il tema chiaro sì.
+     ⚠️ Sta in una variabile perché il tema chiaro lo SPEGNE (l'ombra ce l'ha già), e
+     spegnerlo riscrivendo tutta la `box-shadow` là avrebbe duplicato anche l'ombra
      portata: due copie dello stesso valore che prima o poi divergono. */
   --pan-glow:0 0 34px rgba(150,200,235,0.13), 0 0 0 1px rgba(150,200,235,0.10);
   box-shadow:0 12px 48px rgba(0,0,0,0.5), var(--pan-glow);
@@ -1299,13 +1299,13 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
      di `.ctrl-cardleg` e nessun tetto di larghezza, quindi il logo tocca il bordo
      sinistro del riquadro e l'ultimo pulsante quello destro, sempre.
      ⚠️ Nella `0.92` la gabbia condivisa era `max-width:19rem`, e i pulsanti finivano
-     percio' rientrati a sinistra. **L'utente ha corretto la rotta nella `0.95`** (*avevo
+     perciò rientrati a sinistra. **L'utente ha corretto la rotta nella `0.95`** (*avevo
      sbagliato a farti spostare a sinistra i pulsanti: bisognava fare l'opposto*): la
-     gabbia c'e' ancora ed e' ancora condivisa, ma e' la larghezza PIENA del contenuto.
-     Il perche' del tetto tolto vive sulla card, che e' dove la gabbia e' definita.
-     ⚠️ Un `padding-right` a numero resta la strada provata e scartata: lo scarto non e'
+     gabbia c'è ancora ed è ancora condivisa, ma è la larghezza PIENA del contenuto.
+     Il perché del tetto tolto vive sulla card, che è dove la gabbia è definita.
+     ⚠️ Un `padding-right` a numero resta la strada provata e scartata: lo scarto non è
      costante ma dipende dalla larghezza del Pannello (misurato a 1280px: 4,8px di padding
-     della sezione piu' 4,53px di tetto, cioe' un valore che cambia col viewport). */
+     della sezione più 4,53px di tetto, cioè un valore che cambia col viewport). */
   #ctrl-panel .ctrl-left .ctrl-toolbar { display:grid; grid-template-columns:1fr auto; align-items:center; margin:3px 0 0; padding:0 var(--pan-gutter); box-sizing:border-box; }
   #ctrl-panel .ctrl-toolbar-btns { justify-self:end; display:flex; align-items:center; gap:0.55rem; }
   #ctrl-panel .ctrl-left-group { justify-self:start; display:flex; align-items:center; gap:0.5rem; }
@@ -1400,14 +1400,14 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    via JS (cerca 'ctrl-close-bend' nello script), NON qui nel <style> statico,
    così il file resta W3C-pulito. Fallback senza JS: il chevron dell'attributo
    'd' dell'SVG (statico, corretto). Il reduced-motion è gestito nell'iniezione. */
-/* ⚠️ Niente piu' INVERSIONE in oro (istruzione dell'utente, 0.95): il fondo si schiarisce
-   di bianco e il glifo resta chiaro. ⚠️ L'opacita' qui e' `0.20` e non lo `0.09` delle
-   righe, ed e' la deroga che l'utente ha previsto (*piu' opaco se necessario affinche' si
-   veda meglio*): su un bottone di 32px il velo leggero delle righe si perderebbe, perche'
-   la superficie e' un ventesimo di quella di una riga.
+/* ⚠️ Niente più INVERSIONE in oro (istruzione dell'utente, 0.95): il fondo si schiarisce
+   di bianco e il glifo resta chiaro. ⚠️ L'opacità qui è `0.20` e non lo `0.09` delle
+   righe, ed è la deroga che l'utente ha previsto (*più opaco se necessario affinché si
+   veda meglio*): su un bottone di 32px il velo leggero delle righe si perderebbe, perché
+   la superficie è un ventesimo di quella di una riga.
    ⚠️ E il focus da tastiera ora ha un OUTLINE vero: prima l'inversione oro faceva da
    segnale e `outline:none` era sostenibile, ma un fondo appena schiarito non basta a dire
-   'sono qui', e toglierlo senza rimpiazzo avrebbe peggiorato l'accessibilita' per un
+   'sono qui', e toglierlo senza rimpiazzo avrebbe peggiorato l'accessibilità per un
    ritocco di tinta. */
 .ctrl-sheet-close:hover { background:rgba(255,255,255,0.20); }
 .ctrl-sheet-close:focus-visible { background:rgba(255,255,255,0.20); outline:2px solid rgba(154,192,216,0.9); outline-offset:2px; }
@@ -1455,78 +1455,78 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
    uscita il 2026-08-23 insieme allo spostamento del tag in fondo: era già inerte prima,
    perché la card non segue lo slot in nessuno dei due layout. */
 /* ⚠️⚠️ LA GABBIA DEL PANNELLO, in un valore solo (0.95, richiesta di equidistanza
-   dell'utente). Tutto cio' che nel Pannello ha un BORDO VISIBILE si rientra di questo
+   dell'utente). Tutto ciò che nel Pannello ha un BORDO VISIBILE si rientra di questo
    stesso valore dai due lati: la card di legenda, la toolbar, le celle dei filtri e i
-   riquadri della legenda dei badge. ⚠️ La distanza che l'utente misura e' quella del
-   bordo VISIBILE, non del box che lo contiene, ed e' la ragione per cui la variabile
-   serviva: card e toolbar avevano gia' `padding:0 0.3rem` e i loro riquadri finivano a
+   riquadri della legenda dei badge. ⚠️ La distanza che l'utente misura è quella del
+   bordo VISIBILE, non del box che lo contiene, ed è la ragione per cui la variabile
+   serviva: card e toolbar avevano già `padding:0 0.3rem` e i loro riquadri finivano a
    24,98px dal bordo, mentre le righe di legenda, che di padding non ne avevano, si
-   accendevano a **20,19**, cioe' 4,79px piu' in fuori su tutti e due i lati. A occhio
+   accendevano a **20,19**, cioè 4,79px più in fuori su tutti e due i lati. A occhio
    sembrava che il riquadro del badge sbordasse, e infatti l'utente lo ha segnalato due
-   volte. ⚠️ Chi tocca questo valore li sposta TUTTI, che e' esattamente lo scopo: quattro
+   volte. ⚠️ Chi tocca questo valore li sposta TUTTI, che è esattamente lo scopo: quattro
    numeri uguali scritti in quattro punti divergono al primo ritocco. */
 #ctrl-panel { --pan-gutter:0.3rem; }
 /* ⚠️⚠️ DECORAZIONE D'ANGOLO in basso a destra (mockup dell'utente, 0.96, variante 'A'
    fra le tre rese che gli sono state mostrate). Una schiaritura bianca appena percettibile
    con dentro il logo del progetto, tagliato dal bordo e in positivo, il tutto SOTTO ai
-   testi. Come e' fatta, punto per punto, perche' ogni pezzo risolve una richiesta precisa:
-   - **Il bordo netto verso l'esterno non e' disegnato**: lo da' il Pannello, che ritaglia
-     sul proprio `border-radius` (ha gia' `overflow-y:auto`, che porta con se' il taglio
-     orizzontale). Il mezzo pixel sfumato che l'utente chiedeva e' l'antialiasing di quel
-     taglio, quindi e' esatto per costruzione invece che tarato a mano.
-   - **La sfumatura verso il centro e' UNA SOLA**, una `mask-image` radiale ancorata
+   testi. Come è fatta, punto per punto, perché ogni pezzo risolve una richiesta precisa:
+   - **Il bordo netto verso l'esterno non è disegnato**: lo dà il Pannello, che ritaglia
+     sul proprio `border-radius` (ha già `overflow-y:auto`, che porta con sé il taglio
+     orizzontale). Il mezzo pixel sfumato che l'utente chiedeva è l'antialiasing di quel
+     taglio, quindi è esatto per costruzione invece che tarato a mano.
+   - **La sfumatura verso il centro è UNA SOLA**, una `mask-image` radiale ancorata
      all'angolo e applicata al contenitore: alone e logo svaniscono insieme. Due maschere
      separate (una per l'alone, una per il logo) sono la strada SCARTATA: andrebbero tenute
-     d'accordo a ogni ritocco, e basterebbe un valore diverso perche' il logo sopravviva
+     d'accordo a ogni ritocco, e basterebbe un valore diverso perché il logo sopravviva
      all'alone o viceversa.
-   - **Il logo e' il file `icons/Earthsea.svg`**, lo stesso del FAB, portato al bianco da un
-     `filter`. ⚠️ Il suo tracciato NON si duplica qui: vive gia' in due copie che vanno
+   - **Il logo è il file `icons/Earthsea.svg`**, lo stesso del FAB, portato al bianco da un
+     `filter`. ⚠️ Il suo tracciato NON si duplica qui: vive già in due copie che vanno
      cambiate insieme (l'inline del FAB e quel file), e una terza sarebbe una copia di
-     troppo, cioe' un modo garantito di ritrovarsi due loghi diversi nella stessa pagina.
+     troppo, cioè un modo garantito di ritrovarsi due loghi diversi nella stessa pagina.
    - **Sta sotto ai testi** grazie ai due `position:relative` qui accanto, non a uno
-     `z-index` negativo: quello la manderebbe sotto al fondo del Pannello, cioe' fuori vista.
+     `z-index` negativo: quello la manderebbe sotto al fondo del Pannello, cioè fuori vista.
    - **La stella a quattro punte resta INTERA dentro il riquadro** (istruzione dell'utente):
-     e' la ragione del `right:0` invece del rientro negativo che aveva la prima resa, dove
-     il bordo la tagliava a meta'. L'onda invece esce, e deve uscire. */
+     è la ragione del `right:0` invece del rientro negativo che aveva la prima resa, dove
+     il bordo la tagliava a metà. L'onda invece esce, e deve uscire. */
 #ctrl-panel > *:not(.ctrl-deco) { position:relative; }
 /* ⚠️⚠️ I DUE TEMI SONO SPECULARI (istruzione dell'utente, 0.98): al SCURO un velo di LUCE,
-   al CHIARO un velo d'OMBRA. Entrambi 'appena percepibili', che e' la richiesta: i valori
-   qui sotto sono i piu' bassi che restano visibili. */
+   al CHIARO un velo d'OMBRA. Entrambi 'appena percepibili', che è la richiesta: i valori
+   qui sotto sono i più bassi che restano visibili. */
 #ctrl-panel { --deco-velo:rgba(255,255,255,0.05); --deco-velo0:rgba(255,255,255,0); }
-/* ⚠️ L'ombra del tema chiaro e' piu' densa della luce dello scuro (0,075 contro 0,05) e
-   NON e' nera: tira al teal del FAB chiaro (`#267d71`, qui scurito a `rgb(18,58,53)`).
+/* ⚠️ L'ombra del tema chiaro è più densa della luce dello scuro (0,075 contro 0,05) e
+   NON è nera: tira al teal del FAB chiaro (`#267d71`, qui scurito a `rgb(18,58,53)`).
    Sono due ritocchi dell'utente sulla stessa riga, e vanno insieme: sul fondo chiaro il velo
-   si vedeva molto meno che sullo scuro, perche' su un fondo gia' luminoso l'occhio distingue
+   si vedeva molto meno che sullo scuro, perché su un fondo già luminoso l'occhio distingue
    peggio uno scarto verso il basso. Alzare l'alpha e dargli una tinta invece di lasciarlo
    grigio rende visibile lo stesso effetto senza appesantirlo. */
 html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(18,58,53,0.075); --deco-velo0:rgba(18,58,53,0); }
-/* ⚠️⚠️ IL LOGO NON SI DIPINGE: BUCA il velo (formulazione dell'utente, 0.98: *piu' che un
+/* ⚠️⚠️ IL LOGO NON SI DIPINGE: BUCA il velo (formulazione dell'utente, 0.98: *più che un
    colore preciso, diciamo che 'buca' il bagliore o l'ombra riportando lo sfondo al suo
-   colore iniziale*). Il velo e' il `background` di questo elemento, e la sua maschera ha due
+   colore iniziale*). Il velo è il `background` di questo elemento, e la sua maschera ha due
    strati: la sfumatura radiale MENO la forma del logo (`mask-composite:subtract`). Dove
    passa il logo il velo non viene dipinto, quindi si vede il fondo come se non ci fosse mai
    stato niente sopra.
-   ⚠️⚠️ **Dipingere il logo del colore del fondo e' la strada SCARTATA**, ed era quella della
+   ⚠️⚠️ **Dipingere il logo del colore del fondo è la strada SCARTATA**, ed era quella della
    prima stesura di questa versione: un colore dichiarato resta fisso, mentre il fondo del
-   Pannello e' semitrasparente (0,94) e ha un `backdrop-filter`, quindi il suo composito
+   Pannello è semitrasparente (0,94) e ha un `backdrop-filter`, quindi il suo composito
    CAMBIA con quello che scorre dietro. Il logo sarebbe rimasto giusto da fermo e sarebbe
-   diventato una macchia appena la lista si muoveva. Bucando non c'e' nessun colore da
+   diventato una macchia appena la lista si muoveva. Bucando non c'è nessun colore da
    sapere, e i due temi funzionano con lo STESSO meccanismo invece che con due valori
    misurati a mano. Costo del cambio: due misure buttate (il fondo reso vale `rgb(241,243,243)`
    in chiaro e `rgb(35,39,41)` in scuro, non i valori dichiarati nel CSS).
    ⚠️ `mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+. Dove manca, i due
-   strati si SOMMANO invece di sottrarsi: il difetto e' una macchia di velo a forma di logo,
+   strati si SOMMANO invece di sottrarsi: il difetto è una macchia di velo a forma di logo,
    non una pagina rotta.
-   ⚠️ Il **-44%** verticale non e' lo stesso numero del `bottom:-14%` che aveva l'elemento, e
-   non e' una taratura a occhio: in `mask-position` la percentuale si calcola sulla
+   ⚠️ Il **-44%** verticale non è lo stesso numero del `bottom:-14%` che aveva l'elemento, e
+   non è una taratura a occhio: in `mask-position` la percentuale si calcola sulla
    DIFFERENZA fra il box e l'immagine, non sul box. Con la geometria di qui vale
    -0,14 x H_box / (H_box - H_logo), che fa -43,2% sul desktop e -45,4% sul mobile: il valore
    unico ne dista meno di un pixel. Chi ritocca la geometria della decorazione rifaccia
    questo conto, o il logo si sposta senza che nulla lo segnali. */
 /* ⚠️ La decorazione è governata dalla CONSOLE (1.00), cioè vale per tutti
-   i visitatori: la classe `fx-deco` la accende. ⚠️ Il verso e' 'spenta di base, accesa
-   dalla classe' e non il contrario, come per ogni altro effetto: cosi' un flag che non
-   arriva (dati vecchi, JS a meta') lascia il Pannello pulito invece di mostrare una
+   i visitatori: la classe `fx-deco` la accende. ⚠️ Il verso è 'spenta di base, accesa
+   dalla classe' e non il contrario, come per ogni altro effetto: così un flag che non
+   arriva (dati vecchi, JS a metà) lascia il Pannello pulito invece di mostrare una
    decorazione che nessuno ha acceso. */
 .ctrl-deco { display:none; }
 html.fx-deco .ctrl-deco {
@@ -1546,16 +1546,16 @@ html.fx-deco .ctrl-deco {
   mask-composite:subtract;
 }
 /* ⚠️⚠️ NIENTE `max-width` (istruzione dell'utente, 0.95): la card di legenda occupa la
-   larghezza PIENA del contenuto, come le righe di filtro e la legenda sotto, e cosi' le
+   larghezza PIENA del contenuto, come le righe di filtro e la legenda sotto, e così le
    distanze del contenuto dai due bordi del Pannello sono uguali per costruzione invece
-   che per taratura. ⚠️ `max-width:19rem` e' la misura SCARTATA, ed era della `0.92`: con
-   quel tetto la card finiva a 356,19 mentre le righe sotto arrivavano a 368,72, cioe'
+   che per taratura. ⚠️ `max-width:19rem` è la misura SCARTATA, ed era della `0.92`: con
+   quel tetto la card finiva a 356,19 mentre le righe sotto arrivavano a 368,72, cioè
    12,53px di vuoto a destra che si vedevano come uno sbilanciamento (20,19px di margine a
    sinistra contro 32,72 a destra, misurati a 1280). Ora sono 20,19 da entrambe le parti.
-   ⚠️ Il rientro interno resta il suo `padding`, che e' quello che stacca la striscia
+   ⚠️ Il rientro interno resta il suo `padding`, che è quello che stacca la striscia
    colorata dal filo delle checkbox: toglierlo allineerebbe due cose che sono diverse. */
 .ctrl-cardleg { padding:0 var(--pan-gutter); margin-bottom:1.1rem; }
-/* Riquadri della legenda dei badge nella stessa gabbia: e' il rientro che mancava. */
+/* Riquadri della legenda dei badge nella stessa gabbia: è il rientro che mancava. */
 .ctrl-section--legend { padding:0 var(--pan-gutter); }
 .ctrl-cardleg .rank-item {
   grid-template-columns:1fr; gap:0; margin:0;
@@ -1612,15 +1612,15 @@ html[data-theme="light"] .ctrl-cardleg .rank-item { --ccrgb:14,107,94; --cctxt:1
 /* ⚠️ BIANCO TRASLUCIDO, non una tinta (istruzione dell'utente, 0.94). Qui viveva
    `#463E2B`, un marrone giallastro ereditato dal motore di Arda: sul fondo scuro del
    Pannello (misurato `rgba(36,40,43,0.94)`) si leggeva come un alone GIALLO, che in
-   questo progetto non e' un colore di casa. Un bianco a bassa opacita' schiarisce e
-   basta, senza portare una dominante, e per costruzione non puo' stonare col fondo
-   qualunque esso sia: e' la ragione per cui sta nella regola BASE e non in un ramo di
-   tema. ⚠️ L'opacita' non e' a occhio: `0.09` da' un composito `rgb(54.5, 58.6, 61.6)`,
-   luminanza **0,0423** contro lo **0,0198** del fondo, cioe' uno stacco dello stesso
-   ordine di quello del vecchio marrone (0,0492) ma un filo piu' sobrio, e il testo ci
+   questo progetto non è un colore di casa. Un bianco a bassa opacità schiarisce e
+   basta, senza portare una dominante, e per costruzione non può stonare col fondo
+   qualunque esso sia: è la ragione per cui sta nella regola BASE e non in un ramo di
+   tema. ⚠️ L'opacità non è a occhio: `0.09` dà un composito `rgb(54.5, 58.6, 61.6)`,
+   luminanza **0,0423** contro lo **0,0198** del fondo, cioè uno stacco dello stesso
+   ordine di quello del vecchio marrone (0,0492) ma un filo più sobrio, e il testo ci
    guadagna (contrasto da **8,84** a **9,51**). ⚠️ Alzarla a `0.11` pareggerebbe la
-   luminanza esatta del marrone: e' la misura SCARTATA, perche' la parita' con un valore
-   che si stava togliendo non e' un obiettivo. */
+   luminanza esatta del marrone: è la misura SCARTATA, perché la parità con un valore
+   che si stava togliendo non è un obiettivo. */
 .ctrl-row:hover { background:rgba(255,255,255,0.09); }
 /* Tema chiaro: il bianco traslucido sparirebbe sul fondo chiaro, quindi qui serve un
    valore proprio (translucido freddo), gemello dell'override della legenda. */
@@ -1651,15 +1651,15 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
    passa con margine); in tema chiaro l'override qui sotto la porta a 0.62. */
 .ctrl-row input:not(:checked) ~ .ctrl-label { opacity:0.55; }
 /* Il RETTANGOLO di colore della categoria (0.92, mockup dell'utente): era un quadrato
-   di 0.85rem, ora e' un rettangolo VERTICALE, piu' alto che largo.
-   ⚠️ La forma non e' un vezzo: accanto a una checkbox QUADRATA, un secondo quadrato quasi
+   di 0.85rem, ora è un rettangolo VERTICALE, più alto che largo.
+   ⚠️ La forma non è un vezzo: accanto a una checkbox QUADRATA, un secondo quadrato quasi
    uguale si leggeva come una seconda casella, e l'occhio cercava di cliccarlo. Il
    rettangolo dice 'campione di colore' e non 'interruttore'.
    ⚠️⚠️ L'altezza si SCRIVE IN RELAZIONE alla checkbox, non a numero: l'utente l'ha chiesto
    'alto 2 pixel apparenti in meno', e con un valore fisso quel rapporto si perderebbe al
-   primo ritocco della casella (che e' `border-box`, quindi la sua altezza apparente e'
+   primo ritocco della casella (che è `border-box`, quindi la sua altezza apparente è
    proprio `1.05rem`). Ⓘ Nella prima stesura della 0.92 era orizzontale, 0.66x0.53rem, e
-   non corrispondeva al mockup: e' la misura scartata.
+   non corrispondeva al mockup: è la misura scartata.
    ⚠️ La CENTRATURA verticale non si scrive qui: la da' `align-items:center` della riga, e
    un allineamento imposto sul figlio andrebbe rifatto a ogni cambio di corpo del testo. */
 .ctrl-dot {
@@ -1679,11 +1679,11 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
 .ctrl-section--legend .leg-stack > .leg-face, .ctrl-section--legend .leg-stack > .leg-measure { grid-area:1 / 1; }
 .ctrl-section--legend .leg-stack > .leg-measure { visibility:hidden; pointer-events:none; }
 /* Ⓘ Qui viveva l'anti-jitter del TEMA: la copia-misura riservava la larghezza del peso
-   500, perche' il tema chiaro ingrassava il testo con `body{font-weight:500}` e la colonna
-   cresceva di ~7px a ogni cambio tema. ⚠️ La regola e' caduta nella `0.91` perche' la sua
-   CAUSA non c'e' piu: il peso e' 400 in entrambi i temi da quando l'utente ha uniformato la
+   500, perché il tema chiaro ingrassava il testo con `body{font-weight:500}` e la colonna
+   cresceva di ~7px a ogni cambio tema. ⚠️ La regola è caduta nella `0.91` perché la sua
+   CAUSA non c'è piu: il peso è 400 in entrambi i temi da quando l'utente ha uniformato la
    resa (vedi la nota del tema chiaro, che dice 'Con 400 ovunque la resa e gli a-capo sono
-   identici'). Restando, riservava una larghezza che nessun testo raggiunge piu, cioe'
+   identici'). Restando, riservava una larghezza che nessun testo raggiunge piu, cioè
    allargava la colonna per un difetto che non esiste. */
 /* Stesso bianco traslucido delle righe di filtro, e per la stessa ragione: sono le
    'voci del Pannello' di cui parla la nota di `.ctrl-row:hover`, e due hover diversi
@@ -1761,7 +1761,7 @@ html[data-theme="light"] .ctrl-legend-row.on { background:rgba(58,88,120,0.12); 
 .ctrl-badge-tag .tag-num { display:inline-grid; justify-items:center; align-items:center; }
 .ctrl-badge-tag .tag-num > span { grid-area:1 / 1; }
 .ctrl-badge-tag .tag-num-m { visibility:hidden; pointer-events:none; }
-/* Stesso velo bianco del tasto Riordina acceso, e per la stessa ragione: il fondo oro e'
+/* Stesso velo bianco del tasto Riordina acceso, e per la stessa ragione: il fondo oro è
    lo stato (filtro badge attivo), l'hover lo schiarisce e basta. */
 .ctrl-badge-tag:hover { background:linear-gradient(rgba(255,255,255,0.12),rgba(255,255,255,0.12)),var(--sel-bg); }
 /* × in EB Garamond, più grande del testo: line-height azzerata (il glifo siede
@@ -1982,14 +1982,14 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   #ctrl-panel .ctrl-cols { display:flex; flex-direction:column; align-items:flex-start; width:100%; box-sizing:border-box; }
   /* ⚠️⚠️ TUTTI I BLOCCHI A LARGHEZZA PIENA anche qui (istruzione dell'utente, 0.96), come
      su desktop. `width:auto` in un flex con `align-items:flex-start` significa 'larga
-     quanto il contenuto', ed e' la misura SCARTATA: la card di legenda finiva dove finiva
-     la sua riga piu' lunga, che in italiano e in inglese non e' la stessa, quindi il suo
+     quanto il contenuto', ed è la misura SCARTATA: la card di legenda finiva dove finiva
+     la sua riga più lunga, che in italiano e in inglese non è la stessa, quindi il suo
      bordo destro **si spostava al cambio lingua** (misurato a 360px: 237,75px contro
-     261,23, cioe' 23,5px di salto). A larghezza piena il bordo destro e' quello della
-     gabbia e non dipende piu' dal testo. Stesso motivo per i riquadri della legenda dei
-     badge, che l'utente vedeva finire prima della card. */
-     ⚠️ I selettori sono DISCENDENTI e non `>` di `.ctrl-cols`, e non e' pigrizia: fra i due
-     c'e' `.ctrl-left`, che qui e' `display:contents`. Quello toglie il suo box dal layout
+     261,23, cioè 23,5px di salto). A larghezza piena il bordo destro è quello della
+     gabbia e non dipende più dal testo. Stesso motivo per i riquadri della legenda dei
+     badge, che l'utente vedeva finire prima della card.
+     ⚠️ I selettori sono DISCENDENTI e non `>` di `.ctrl-cols`, e non è pigrizia: fra i due
+     c'è `.ctrl-left`, che qui è `display:contents`. Quello toglie il suo box dal layout
      ma NON dal DOM, quindi un `.ctrl-cols > .ctrl-cardleg` non trova niente. Provato: i
      riquadri della legenda, che di `.ctrl-cols` sono figli veri, si sistemavano; la card,
      che sta dentro `.ctrl-left`, restava larga quanto il testo. */
@@ -2004,15 +2004,15 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   #ctrl-panel .ctrl-cols .ctrl-tag-slot { align-self:center; }
   /* Ⓘ Qui viveva un `margin-left:-0.16rem` sulla legenda, che tirava fuori il blocco per
      incolonnare il quadratino della checkbox con l'icona del badge (le due righe hanno
-     padding interni diversi: la cella 0.3rem, la riga di legenda 0.4rem). ⚠️ E' CADUTO
+     padding interni diversi: la cella 0.3rem, la riga di legenda 0.4rem). ⚠️ È CADUTO
      nella `0.96` per due ragioni che vanno insieme: era un `margin` negativo che isolava
-     un movimento, cioe' una **compensazione**, che le regole universali vietano
+     un movimento, cioè una **compensazione**, che le regole universali vietano
      (`Roccobot.md` § '🎨 Grafica'); e da quando i riquadri della legenda occupano la
      larghezza piena, quei 2,56px in fuori li facevano **sbordare** a sinistra rispetto
-     alla card e rientrare a destra, cioe' rompevano l'equidistanza che l'utente aveva
-     appena chiesto. Il rientro dell'icona rispetto alla checkbox resta, ed e' lo stesso
-     che il Pannello desktop ha sempre avuto: le righe di legenda sono rientrate di piu'
-     perche' sono un elenco, non una riga di controllo. */
+     alla card e rientrare a destra, cioè rompevano l'equidistanza che l'utente aveva
+     appena chiesto. Il rientro dell'icona rispetto alla checkbox resta, ed è lo stesso
+     che il Pannello desktop ha sempre avuto: le righe di legenda sono rientrate di più
+     perché sono un elenco, non una riga di controllo. */
   /* Nota nomi in fondo: allineata a sinistra come le righe, e un filo più
      chiara (più tenue) del resto (scelta utente). Ora è DENTRO .ctrl-cols:
      width:0 + min-width:100% la fa riempire la larghezza del blocco senza
@@ -2043,9 +2043,9 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
      (come su desktop). Le etichette lunghe semmai vanno a capo entro il blocco. */
   /* Ⓘ Qui viveva un `padding-right:0.24rem` che pareggiava il rientro sinistro della
      checkbox, nato per i pulsanti SOLO/TUTTI che stavano a filo del bordo destro. Quei
-     pulsanti non esistono piu' (l'utente li ha rifiutati due volte) e dalla `0.97` il
+     pulsanti non esistono più (l'utente li ha rifiutati due volte) e dalla `0.97` il
      rientro simmetrico lo da' la gabbia `--pan-gutter` sulla sezione: sommarci anche quel
-     valore sbilancerebbe la riga a destra, cioe' rifarebbe il difetto che curava. */
+     valore sbilancerebbe la riga a destra, cioè rifarebbe il difetto che curava. */
   #ctrl-panel .ctrl-section--filtri { width:0; min-width:100%; box-sizing:border-box; }
   /* barra sticky in basso: [versione | (tema lingua) | chiudi] */
   .ctrl-bottombar {
@@ -2643,10 +2643,10 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
 .jump-fabs:focus-within { opacity:1 !important; pointer-events:auto !important; }
 /* ⚠️ ANTEPRIMA dello scostamento (1.00): mentre si trascina il cursore nel Pannello di
    controllo i due tasti vengono a galla SOPRA la modale, altrimenti l'anteprima sarebbe
-   nascosta dal suo velo (che e' opaco al 92% e sta a z-index 200, mentre i tasti stanno a
-   160). Senza questo, la manopola si regolerebbe a occhi chiusi, che e' esattamente cio'
+   nascosta dal suo velo (che è opaco al 92% e sta a z-index 200, mentre i tasti stanno a
+   160). Senza questo, la manopola si regolerebbe a occhi chiusi, che è esattamente ciò
    che l'utente voleva evitare.
-   ⚠️ `!important` sull'opacita' per la stessa ragione del focus qui sopra: la dissolvenza
+   ⚠️ `!important` sull'opacità per la stessa ragione del focus qui sopra: la dissolvenza
    pilota il contenitore con uno stile INLINE, che batte qualunque regola del foglio. */
 html.fx-jumpx-live .jump-fabs { opacity:1 !important; z-index:230; }
 /* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
@@ -2688,9 +2688,9 @@ html.fx-jumpx-live .jump-fabs { opacity:1 !important; z-index:230; }
      filo del bordo sta 2,2px fuori, restando a 5,2px dallo schermo.
      ⚠️ `env(safe-area-inset-right)` non è ornamentale: in orizzontale, sui telefoni con
      notch, senza di lui le freccine finirebbero sotto la tacca. */
-  /* ⚠️⚠️ Qui i tasti stanno A FILO del bordo, e lo scostamento NON e' scritto in questa
+  /* ⚠️⚠️ Qui i tasti stanno A FILO del bordo, e lo scostamento NON è scritto in questa
      regola: dalla 1.00 lo governa la manopola della Console (`jumpx`), che lo
-     inietta a runtime. ⚠️ Il valore statico e' quindi lo stato **spento**, ed e' voluto: se
+     inietta a runtime. ⚠️ Il valore statico è quindi lo stato **spento**, ed è voluto: se
      fosse il valore di default, spegnere la manopola non riporterebbe i tasti a filo, e la
      nota della manopola ('spento, i tasti tornano a filo del bordo') direbbe il falso.
      Misurato prima del rimedio: a manopola spenta restavano a 2,33px.
@@ -2838,8 +2838,8 @@ html[data-theme="light"] .rank-item.divine.bombadil:hover, html[data-theme="ligh
    giudizio: col verde di `beast` di oggi l'etichetta fa **4,59** su fondo chiaro e
    **9,93** su fondo scuro, cioè è già sopra il 4,5 di AA. Riscurirla sarebbe stato
    correggere un difetto che non c'è più. */
-/* Il bagliore si spegne qui: nel chiaro l'ombra portata basta e si vede gia'. Ⓘ Un'ombra
-   nulla e non `none`, cosi' resta una voce valida della `box-shadow` composta. */
+/* Il bagliore si spegne qui: nel chiaro l'ombra portata basta e si vede già. Ⓘ Un'ombra
+   nulla e non `none`, così resta una voce valida della `box-shadow` composta. */
 html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); --pan-glow:0 0 0 rgba(0,0,0,0); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:var(--parchment); }
 html[data-theme="light"] .ctrl-h { color:#3a5878; }
@@ -2909,11 +2909,11 @@ html[data-theme="light"] #ctrl-fab { background:#267d71; border-color:rgba(38,12
 html[data-theme="light"] #ctrl-fab:hover { background:#339487; border-color:rgba(51,148,135,0.8); }
 /* Desktop tema chiaro: versione A col teal del FAB chiaro (eredita blur/border
    dalla regola base). */
-/* ⚠️ Anche qui la TONALITA' e' quella del FAB (`#267d71`), ma la LUMINOSITA' e' quella che
-   c'era: il valore vecchio (`rgba(31,85,98,0.9)`) era un blu-petrolio (tonalita' ~195), non
-   il teal del FAB (~172). ⚠️ Usare il colore pieno del FAB e' la strada scartata: con un
-   glifo bianco sopra il contrasto scendeva da **8,30** a **4,98**, cioe' si allineava la
-   tinta peggiorando la leggibilita'. Ruotando la sola tonalita' si ottiene l'una senza
+/* ⚠️ Anche qui la TONALITÀ è quella del FAB (`#267d71`), ma la LUMINOSITÀ è quella che
+   c'era: il valore vecchio (`rgba(31,85,98,0.9)`) era un blu-petrolio (tonalità ~195), non
+   il teal del FAB (~172). ⚠️ Usare il colore pieno del FAB è la strada scartata: con un
+   glifo bianco sopra il contrasto scendeva da **8,30** a **4,98**, cioè si allineava la
+   tinta peggiorando la leggibilità. Ruotando la sola tonalità si ottiene l'una senza
    pagare l'altra. */
 html[data-theme="light"] .jump-fab { background:rgba(24,86,78,0.9); border-color:transparent; color:#ffffff; }
 /* ── Tasti salto su MOBILE: versione "solo freccine" (senza tondo) ──────────
@@ -3265,7 +3265,7 @@ var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat','deco'
 // ⚠️ `deco` e `jumpx` sono nati con config unica (1.00) per due ragioni opposte, che
 // vale la pena distinguere: la DECORAZIONE d'angolo si vede identica sulle due
 // piattaforme, quindi due varianti sarebbero due copie dello stesso valore; lo
-// SCOSTAMENTO dei tasti di salto invece e' solo-mobile come `hint`, quindi una
+// SCOSTAMENTO dei tasti di salto invece è solo-mobile come `hint`, quindi una
 // variante desktop non avrebbe nulla da governare.
 var FX_UNI = { spot:true, pat:true, vig:true, orig:true, hint:true, deco:true, jumpx:true };
 // ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
@@ -3373,11 +3373,11 @@ var SITE_FLAGS_DEFAULT = {
   // viewport servirà di nuovo, e la sua regia sa già misurare se c'è da scorrere.
   hint:{ on:false },
   // ⚠️ La DECORAZIONE d'angolo del Pannello (1.00): interruttore e basta, senza
-  // manopole, come `hint`. Accesa di default, perche' e' la resa che l'utente ha
+  // manopole, come `hint`. Accesa di default, perché è la resa che l'utente ha
   // scelto fra tre mockup: l'interruttore serve a spegnerla, non a introdurla.
   deco:{ on:true },
   // ⚠️ Scostamento orizzontale dei tasti di salto pagina su MOBILE (1.00, richiesta
-  // dell'utente: *cosi' lo regolo io invece di tirare a indovinare*). Il default e'
+  // dell'utente: *così lo regolo io invece di tirare a indovinare*). Il default è
   // il valore che l'utente aveva chiesto a misura, 7 device px a DPR 3 = 2,33px CSS:
   // chi non tocca nulla vede esattamente quello che c'era prima della manopola.
   jumpx:{ on:true, x:2.33 },
@@ -3428,8 +3428,8 @@ var FX_RANGE = {
          oamp_d:[4,40], oamp_l:[4,40], oint_d:[0.1,1], oint_l:[0.1,1],
          aamp_d:[6,60], aamp_l:[6,60], aint_d:[0.05,0.6], aint_l:[0.05,0.6] },
   spot:{ r:[70,300], int:[0.02,0.12] },
-  // ⚠️ Il tetto e' 24px e non di piu': oltre, le freccine entrerebbero nella colonna
-  // delle card, che sotto i 480px prende tutta la larghezza. Il minimo e' 0, cioe' il
+  // ⚠️ Il tetto è 24px e non di più: oltre, le freccine entrerebbero nella colonna
+  // delle card, che sotto i 480px prende tutta la larghezza. Il minimo è 0, cioè il
   // filo del bordo, che era la posizione prima che l'utente chiedesse lo scostamento.
   jumpx:{ x:[0,24] },
   vig:{ int:[0.05,0.6], start:[20,70] },
@@ -3569,13 +3569,13 @@ function fxRidisegna(k){
 }
 // ⚠️⚠️ ANTEPRIMA IN PAGINA di una manopola (1.00, richiesta dell'utente: *sarebbe bello
 // se da mobile mi mostrasse un'anteprima dinamica della posizione*). Quasi tutti gli
-// effetti si vedono da soli mentre si regolano, perche' agiscono su cio' che sta dietro
+// effetti si vedono da soli mentre si regolano, perché agiscono su ciò che sta dietro
 // la modale; i tasti di salto no, per DUE ragioni insieme: si dissolvono da soli dopo
-// qualche secondo, e stanno a z-index 160 sotto il velo della modale, che e' opaco al 92%.
-// Finche' dura la regolazione vengono quindi portati a galla da una classe (vedi
-// `html.fx-jumpx-live` nel CSS), che si spegne da se' poco dopo l'ultimo movimento.
+// qualche secondo, e stanno a z-index 160 sotto il velo della modale, che è opaco al 92%.
+// Finché dura la regolazione vengono quindi portati a galla da una classe (vedi
+// `html.fx-jumpx-live` nel CSS), che si spegne da sé poco dopo l'ultimo movimento.
 // ⚠️ Il timer si RIARMA a ogni movimento invece di contare dal primo: trascinando lo
-// slider per piu' di un secondo l'anteprima sparirebbe proprio mentre la si sta usando.
+// slider per più di un secondo l'anteprima sparirebbe proprio mentre la si sta usando.
 var FX_LIVE = { jumpx: 'fx-jumpx-live' };
 var fxLiveT = null;
 function fxAnteprima(k){
@@ -4582,8 +4582,8 @@ function injectFxRules(){
   // foglio statico proprio per l'anteprima. `injectFxRules` viene richiamata a ogni
   // `input` dello slider, quindi il valore arriva in pagina mentre l'utente trascina,
   // senza una riga di codice dedicata all'anteprima. Il valore statico resta come
-  // default: questa regola, iniettata in fondo al `head`, lo scavalca a parita' di
-  // specificita' per ordine di cascata.
+  // default: questa regola, iniettata in fondo al `head`, lo scavalca a parità di
+  // specificità per ordine di cascata.
   if (flagOn('jumpx')) {
     css.push('@media (max-width:768px){html.fx-jumpx .jump-fabs{right:calc(env(safe-area-inset-right,0px) + ' +
              fxR2(fxCfg('jumpx').x) + 'px)}}');
@@ -7418,12 +7418,12 @@ var CAT_LABEL = {
 // (il fondo del Pannello è scuro in entrambi i temi, quindi i valori chiari si
 // leggono su entrambi). ⚠️ 'Uomini' porta l'oltremare perché è la categoria, non il
 // genere: il turchese delle donne è una tinta di card, non una voce di filtro.
-// ⚠️⚠️ I colori dei RETTANGOLI del Pannello sono una tavolozza A SE', non quella delle
+// ⚠️⚠️ I colori dei RETTANGOLI del Pannello sono una tavolozza A SÉ, non quella delle
 // card (`cardColors` in `dati.js`), e i valori li ha dati l'utente nella `0.92`. Sono
-// gli stessi tre colori attenuati: qui il rettangolo e' un francobollo di 1rem accanto a
+// gli stessi tre colori attenuati: qui il rettangolo è un francobollo di 1rem accanto a
 // un testo, non un fondo di scheda, quindi le tinte piene della lista risultavano dure.
 // ⚠️ Chi cambia i colori delle card NON deve venire a cambiare anche questi 'per
-// coerenza': sono due usi diversi dello stesso significato, e il precedente e' che questa
+// coerenza': sono due usi diversi dello stesso significato, e il precedente è che questa
 // riga era rimasta indietro alla tavolozza della 0.16 senza che nessuno se ne accorgesse.
 var CAT_COLOR = { man:'#8ca1c7', dragon:'#cb7e72', animale:'#a0c487' };
 // Nomi 'normalizzati' delle classi-etichetta (type-*), usati nelle Statistiche
@@ -7839,18 +7839,18 @@ function refreshControlPanel() {
 
 
 // La decorazione d'angolo (vedi il CSS di `.ctrl-deco`) si rimette a ogni ricostruzione
-// del Pannello, perche' quella riscrive tutto il contenuto e se la porterebbe via.
+// del Pannello, perché quella riscrive tutto il contenuto e se la porterebbe via.
 // ⚠️ Si costruisce a NODI e non come stringa dentro `controlPanelHTML()`, che finisce in
-// un `innerHTML`: il divieto e' una regola non derogabile, e se il markup preesistente lo
-// usa ancora non e' una ragione per aggiungergliene altro.
+// un `innerHTML`: il divieto è una regola non derogabile, e se il markup preesistente lo
+// usa ancora non è una ragione per aggiungergliene altro.
 function addPanelDeco(panel) {
   if (!panel || panel.querySelector('.ctrl-deco')) return;
   var deco = document.createElement('div');
   deco.className = 'ctrl-deco';
   deco.setAttribute('aria-hidden', 'true');
-  // ⚠️ NIENTE figlio per il logo: dalla 0.98 il logo e' uno strato della MASCHERA di questo
-  // stesso elemento (vedi il CSS di `.ctrl-deco`), perche' buca il velo invece di dipingersi
-  // sopra. Il div resta vuoto, ed e' il segno che l'effetto e' tutto nel CSS.
+  // ⚠️ NIENTE figlio per il logo: dalla 0.98 il logo è uno strato della MASCHERA di questo
+  // stesso elemento (vedi il CSS di `.ctrl-deco`), perché buca il velo invece di dipingersi
+  // sopra. Il div resta vuoto, ed è il segno che l'effetto è tutto nel CSS.
   panel.insertBefore(deco, panel.firstChild);
 }
 
@@ -8117,14 +8117,14 @@ function exitReorder() {
 // Bozza-ordine: CHIAVE UNICA (i nomi salvati sono sempre p.nome, italiani,
 // a prescindere dalla lingua della UI: una chiave per lingua era incoerente
 // e faceva risorgere bozze scartate al cambio lingua).
-// ⚠️⚠️ LA CHIAVE D'ORDINE non e' `d.nome`, e la differenza si vede su 17 voci: quelle
+// ⚠️⚠️ LA CHIAVE D'ORDINE non è `d.nome`, e la differenza si vede su 17 voci: quelle
 // che il nome d'uso non ce l'hanno (Kalessin, Orm, Erreth-Akbe, Morred, i draghi...)
 // avevano tutte la stessa chiave, la stringa VUOTA, quindi finivano in un unico secchiello
 // e il ripristino le ridava nell'ordine del master invece che in quello salvato: un
-// riordino fra due di loro si perdeva in silenzio. Il vero nome e' l'unico nome che
+// riordino fra due di loro si perdeva in silenzio. Il vero nome è l'unico nome che
 // abbiano, e insieme al nome d'uso copre tutte le voci del dataset.
 // ⚠️ Le bozze salvate PRIMA della 0.91 portano le vecchie chiavi vuote: per quelle 17 voci
-// non combaciano piu e finiscono in coda, che e' esattamente quello che gia' succedeva.
+// non combaciano piu e finiscono in coda, che è esattamente quello che già succedeva.
 function chiaveOrdine(d){ return d.nome || d.vero_nome || ''; }
 function saveLocalDraft(){ LS.setItem('earthsea-ranking-v1', JSON.stringify(dati.map(chiaveOrdine))); }
 /* Riordino per nome con OMONIMI: mai risolvere con find(), che aggancia
@@ -9605,11 +9605,11 @@ function showAdminEditor() {
   // Cerca SOLO nel contenuto dei campi (mai nelle etichette UI) di TUTTE le voci,
   // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
   // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
-  // ⚠️⚠️ `vero_nome` sta in TESTA e non e' un dettaglio d'ordine: 17 voci hanno il campo
-  // `nome` vuoto (Kalessin, Orm, Erreth-Akbe, Morred...), e per loro il vero nome e' l'UNICO
+  // ⚠️⚠️ `vero_nome` sta in TESTA e non è un dettaglio d'ordine: 17 voci hanno il campo
+  // `nome` vuoto (Kalessin, Orm, Erreth-Akbe, Morred...), e per loro il vero nome è l'UNICO
   // nome che esista. Senza, `isName` le riconosceva ma il ciclo sui campi non trovava nulla
   // e la riga `if (!hf) continue;` le scartava: cercare 'Kalessin' nell'editor non dava
-  // nessun risultato. In testa perche' il primo campo che combacia e' quello mostrato.
+  // nessun risultato. In testa perché il primo campo che combacia è quello mostrato.
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
   function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
   function clearHit(){ Array.prototype.slice.call(overlay.querySelectorAll('.admin-search-hit')).forEach(function(w){ w.classList.remove('admin-search-hit'); }); }
@@ -9767,19 +9767,19 @@ var SITE_FLAG_ITEMS = [
   // ⚠️ `noMob` come la trama, e per una ragione affine: sotto i 480px la colonna
   // dell'origine non esiste, quindi la variante mobile non muoverebbe nulla.
   { k:'orig', it:'Origine', en:'Origin', cfg:true, noMob:true },
-  // ⚠️ L'ordine delle due voci e' stato INVERTITO nella 1.01 (richiesta dell'utente,
+  // ⚠️ L'ordine delle due voci è stato INVERTITO nella 1.01 (richiesta dell'utente,
   // 2026-08-26): 'Origine' sta sopra 'Decorazione', dove prima era sotto. La posizione
-  // di queste voci e' una scelta dell'utente e non un ordine tecnico, quindi non si
-  // 'sistema' a intuito. Senza `cfg`: e' un interruttore e basta, come 'Dito che
-  // scorre', perche' la resa e' gia' stata scelta fra tre mockup e qui serve solo
-  // poterla spegnere. `noMob` perche' la config e' unica (vedi FX_UNI).
+  // di queste voci è una scelta dell'utente e non un ordine tecnico, quindi non si
+  // 'sistema' a intuito. Senza `cfg`: è un interruttore e basta, come 'Dito che
+  // scorre', perché la resa è già stata scelta fra tre mockup e qui serve solo
+  // poterla spegnere. `noMob` perché la config è unica (vedi FX_UNI).
   { k:'deco', it:'Decorazione', en:'Corner mark', noMob:true },
   // ⚠️ È l'unico effetto SOLO MOBILE, e la sua voce sta comunque nella tab Desktop: la
   // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
   // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
   // trama, che sono desktop-only e stanno lì per la stessa ragione strutturale.
   { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true, mobOnly:true },
-  // ⚠️ ULTIMA voce (posizione chiesta dall'utente, 1.00), e come 'Dito che scorre' e'
+  // ⚠️ ULTIMA voce (posizione chiesta dall'utente, 1.00), e come 'Dito che scorre' è
   // un effetto solo-mobile che sta nella tab Desktop: la tab Mobile mostra le varianti
   // `_m`, e questo ha config unica, quindi una variante desktop non governerebbe nulla.
   { k:'jumpx', it:'Tasti \u2912\u2913', en:'Jump buttons', cfg:true, noMob:true, mobOnly:true },
@@ -9977,12 +9977,12 @@ var FX_KNOBS = {
       nit:'Tiene la colonna anche sulle nove voci senza luogo, invece di lasciare che la scheda si allarghi. Costa una riga in piu\' a quattro citazioni.',
       nen:'Keeps the column on the nine entries with no place, instead of letting the card widen. It costs one extra line to four quotes.' }
   ],
-  // ⚠️ Una manopola sola, e con l'unita' in px: qui il valore NON e' una quantita'
-  // astratta come le opacita' o le ampiezze degli altri effetti, e' una distanza che
-  // l'utente misura a occhio sul suo schermo. Mostrarla senza unita' (il default degli
+  // ⚠️ Una manopola sola, e con l'unità in px: qui il valore NON è una quantità
+  // astratta come le opacità o le ampiezze degli altri effetti, è una distanza che
+  // l'utente misura a occhio sul suo schermo. Mostrarla senza unità (il default degli
   // slider, due decimali) avrebbe costretto a indovinare in che cosa fosse espressa.
-  // ⚠️ Il passo e' 0.5px e non 1: i px qui sono CSS, e su uno schermo a DPR 3 mezzo px
-  // CSS e' un pixel e mezzo fisico, cioe' uno scarto che si vede davvero.
+  // ⚠️ Il passo è 0.5px e non 1: i px qui sono CSS, e su uno schermo a DPR 3 mezzo px
+  // CSS è un pixel e mezzo fisico, cioè uno scarto che si vede davvero.
   jumpx: [
     { p:'on', t:'bool', it:'Attiva', en:'Enable',
       nit:'Lo scostamento dei due tasti di salto pagina dal bordo destro, su mobile. Spento, i tasti tornano a filo del bordo.',
@@ -9997,13 +9997,13 @@ var FX_KNOBS = {
 // interrompono ai lati della manopola invece di passarci dietro: a 17px un cerchio
 // attraversato dalla linea impasta.
 // ⚠️⚠️ SEGNO 'SOLO MOBILE' accanto alle voci che governano cose che sul desktop non
-// esistono (1.00, richiesta dell'utente). Serve perche' quelle voci stanno nella tab
-// **Desktop** pur riguardando il solo mobile: e' una conseguenza della config unica
+// esistono (1.00, richiesta dell'utente). Serve perché quelle voci stanno nella tab
+// **Desktop** pur riguardando il solo mobile: è una conseguenza della config unica
 // (vedi FX_UNI), e senza un segno la contraddizione resta invisibile e si legge come un
 // difetto. ⚠️ L'utente ha chiesto prima una dicitura e poi, meglio, un'icona: una parola
-// in piu' in quella colonna avrebbe fatto andare a capo le etichette lunghe.
-// ⚠️ Costruita a NODI e non con `innerHTML`, che e' vietato: il markup accanto (`fx-gear`)
-// lo usa ancora, ma quello e' preesistente e non e' una ragione per aggiungerne.
+// in più in quella colonna avrebbe fatto andare a capo le etichette lunghe.
+// ⚠️ Costruita a NODI e non con `innerHTML`, che è vietato: il markup accanto (`fx-gear`)
+// lo usa ancora, ma quello è preesistente e non è una ragione per aggiungerne.
 // ⚠️ `title` per il puntatore e `aria-label` sul nodo focalizzabile-non-focalizzabile: il
 // solo `title` non arriva agli assistivi, e la sola `aria-label` non si vede col mouse.
 function fxSegnoMobile(it){
