@@ -3028,7 +3028,15 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .ss-input { width:100%; box-sizing:border-box; font-family:'EB Garamond',serif; font-size:1.1rem;
   padding:.55rem .75rem; border-radius:8px; border:1px solid rgba(154,192,216,0.3);
   background:rgba(0,0,0,0.16); color:inherit; outline:none; }
-.ss-input:focus-visible { border-color:var(--note-acc); box-shadow:0 0 0 2px rgba(120,173,194,0.35); }
+/* ⚠️⚠️ IL CAMPO NON HA ANELLO DI FUOCO, ed è una scelta con una ragione, non una
+   dimenticanza di accessibilità (istruzione dell'utente, 1.41). Un campo di TESTO ha già
+   il suo indicatore nativo, il caret lampeggiante, e qui l'anello non aggiungeva niente:
+   i browser trattano gli input di testo come sempre `focus-visible`, quindi compariva
+   anche aprendo col dito o col mouse, cioè non distingueva chi arriva da tastiera, che è
+   la sola cosa per cui esisterebbe. In più erano DUE anelli sovrapposti, il bordo oro
+   (`--note-acc`) e un alone azzurro da 2px.
+   ⚠️ NON si estende ai RISULTATI: `.ss-hit:focus-visible` resta, e là il fondo è l'unico
+   indicatore che dice su quale riga si è arrivati col Tab. */
 .ss-count { font-size:.78rem; opacity:.72; margin:.5rem 0 .35rem; text-align:right; }
 .ss-list { max-height:min(52vh,26rem); overflow-y:auto; -webkit-overflow-scrolling:touch; }
 .ss-hit { display:block; width:100%; text-align:left; background:none; color:inherit; cursor:pointer;
@@ -3174,7 +3182,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.40</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.41</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

@@ -1746,6 +1746,27 @@ del gesto: **una via d'accesso in più, non una seconda ricerca**.
   simmetrico: mediare con la luna sposterebbe la misura dal verso sbagliato (§ del
   segnaposto).
 
+#### 🚫 Il campo di ricerca NON ha anello di fuoco, e non è una dimenticanza
+
+Istruzione dell'utente, `1.41`, dopo averlo visto sullo schermo. La regola tolta accendeva
+**due** anelli sovrapposti, un bordo oro (`--note-acc`) e un alone azzurro da 2px.
+
+- ⚠️⚠️ **Non è una perdita di accessibilità, e la ragione è specifica del CAMPO DI TESTO**:
+  là l'indicatore di fuoco nativo è il **caret lampeggiante**, che c'è comunque. In più i
+  browser trattano gli input di testo come sempre `focus-visible`, quindi quell'anello
+  compariva anche aprendo col dito o col mouse: non distingueva chi arriva da tastiera, che
+  è la sola cosa per cui esisterebbe.
+- ⚠️⚠️ **NON si estende ai RISULTATI**: `.ss-hit:focus-visible` resta, e là il fondo è
+  l'**unico** indicatore che dice su quale riga si è arrivati col Tab. Chi 'uniformasse' i
+  due casi togliendo anche quello romperebbe la navigazione da tastiera dell'elenco.
+- ⚠️⚠️ **La prova sui risultati vuole un TAB VERO, non `.focus()`**, ed è la trappola che ha
+  fatto fallire il banco al primo giro: su un **bottone** `:focus-visible` scatta solo per
+  l'interazione da tastiera, quindi il fuoco dato da programma lascia il fondo trasparente e
+  la prova accusa il codice al posto del proprio metro. Sul **campo** invece `.focus()` basta,
+  ed è la differenza da conoscere prima di scrivere una misura del genere.
+- **La regola è UNA SOLA**, senza varianti di tema o di piattaforma: toglierla vale per il
+  chiaro e per lo scuro, su desktop e su mobile, che è quello che l'utente ha chiesto.
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo

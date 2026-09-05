@@ -92,11 +92,46 @@ function prova(nome, ok, dettaglio) {
   prova('il click apre la ricerca', await page.locator('#site-search').count() === 1);
   prova('e chiude il Pannello', await page.locator('#ctrl-panel.open').count() === 0);
 
+  // D2. il campo NON deve avere anello di fuoco (scelta dell'utente, 1.41): si
+  // confrontano gli stili col fuoco dentro e fuori, perché una regola `:focus-visible`
+  // rientrata si vedrebbe solo così. Il campo prende il fuoco da sé all'apertura.
+  const anello = await page.evaluate(() => {
+    const i = document.querySelector('#site-search .ss-input');
+    i.focus();
+    const a = getComputedStyle(i);
+    const conFuoco = { bordo: a.borderColor, ombra: a.boxShadow, outline: a.outlineStyle };
+    i.blur();
+    const b = getComputedStyle(i);
+    return { conFuoco, senza: { bordo: b.borderColor, ombra: b.boxShadow, outline: b.outlineStyle } };
+  });
+  prova('il campo non prende anello di fuoco',
+    anello.conFuoco.bordo === anello.senza.bordo
+    && anello.conFuoco.ombra === anello.senza.ombra
+    && anello.conFuoco.outline === 'none',
+    `bordo ${anello.conFuoco.bordo}, ombra ${anello.conFuoco.ombra}, outline ${anello.conFuoco.outline}`);
   // E. la ricerca è quella vera: trova anche le voci nascoste dal flag.
   await page.locator('#site-search .ss-input').fill('mago grigio');
   await page.waitForTimeout(150);
   const marcate = await page.locator('#site-search .ss-hit', { has: page.locator('.ss-hit-tag') }).count();
   prova('e trova le voci nascoste dai filtri', marcate >= 1, `righe marcate: ${marcate}`);
+  // ⚠️ I RISULTATI l'anello lo tengono: là il fondo è l'unico indicatore del Tab, e va
+  // provato QUI, a elenco pieno: prima della ricerca non esiste nessuna riga da misurare.
+  // ⚠️⚠️ E si prova con un TAB VERO, non con `.focus()`: su un bottone `:focus-visible`
+  // scatta solo per l'interazione da tastiera, quindi il fuoco dato da programma lascia
+  // il fondo trasparente e la prova accuserebbe il codice al posto del proprio metro.
+  const spento = await page.locator('#site-search .ss-hit').first().evaluate(
+    (e) => getComputedStyle(e).backgroundColor);
+  let acceso = spento, giri = 0;
+  await page.locator('#site-search .ss-input').focus();
+  while (giri++ < 6) {
+    await page.keyboard.press('Tab');
+    const su = await page.evaluate(() => {
+      const a = document.activeElement;
+      return a && a.classList.contains('ss-hit') ? getComputedStyle(a).backgroundColor : null;
+    });
+    if (su) { acceso = su; break; }
+  }
+  prova('i risultati invece lo tengono', acceso !== spento, `${spento} -> ${acceso}`);
   await page.keyboard.press('Escape');
   await page.waitForTimeout(320);
 
