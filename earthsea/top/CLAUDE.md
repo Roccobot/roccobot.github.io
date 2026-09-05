@@ -2030,6 +2030,17 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
   serializza ogni voce con `JSON.stringify(d)` e valida il solo `nome`, e l'editor admin lavora
   su una copia profonda dell'array, quindi **le chiavi passano intatte** e nessuna lista di
   campi va tenuta allineata. ⚠️ Verificato prima di rinominare, non dopo.
+- ⚠️ **Il campo ha la sua metà inglese, `origine_en`**, e si riempie solo dove le due lingue
+  divergono: le quattro voci delle **Terre di Kargad** (`Kargad Lands`) e, dalla `1.31`,
+  **Pechvarry** e **Ioeth**. Dove il toponimo è identico nelle due edizioni il campo non c'è, e
+  la resa ripiega sull'italiano.
+- ⚠️⚠️ **`Torning Bassa` è una RESA DELL'UTENTE, e Mondadori NON traduce quel toponimo**
+  (dalla `1.31`, istruzione dell'utente): il grep sull'edizione italiana dà **17** occorrenze di
+  `Low Torning` e **zero** di `Torning Bassa`, in tutti e sei i volumi. Non è un errore da
+  correggere: è la stessa scelta editoriale di `Sparviero` (§ "`Sparviero` è la forma scelta, e
+  `Sparviere` sta fra gli alternativi"), cioè il patto per cui il sito tiene il testo Mondadori
+  coi nomi dell'altra edizione. Chi rifà la verifica sulle fonti in scena la troverà sempre
+  contraddetta, ed è previsto.
 - ✅ **Il campo è RESO in pagina dalla `0.59`**, in una terza colonna a destra della card
   (resa 'B', scelta dell'utente fra i mockup), e dalla `0.62` lo portano **111 voci su
   120**. La nota che lo dava non reso, con la scelta editoriale ancora aperta, valeva fino
@@ -2246,6 +2257,17 @@ tanto più da quando la tinta degli umani lo distingue, e dalla `0.92` la riga d
 proprio le caselle 'Maschi' e 'Femmine' accanto. 'Persone' dice la stessa cosa in una parola
 sola, che nella riga distribuita di filtri è quello che serviva.
 Le etichette sulla singola card restano **'Uomo'/'Donna'**, che del genere parlano per davvero.
+
+⚠️⚠️ **E dalla `1.31` non sono più le sole**: `Ioeth`, che non raggiunse l'età adulta, porta
+**`Bambino` / `Child`** (istruzione dell'utente), con categoria, colore e tutto il resto
+invariati. È il caso in cui **non c'è niente da aggiungere a nessuna mappa**, e conviene
+saperlo perché sembra il contrario: qui è nuova l'**etichetta**, non la classe, e `tipoClass`
+ripiega su `type-man` per costruzione (§ 'Gli ANIMALI: una categoria, tante etichette', dove
+il ripiego è la trappola). `TYPE_LABEL` si tocca solo quando nasce una **classe** nuova.
+- ⚠️ **La differenza con gli animali è tutta qui**: là l'etichetta nuova chiedeva anche una
+  parola in `TIPI_ANIMALE`, o la card finiva fra gli uomini senza dare errore; qui fra gli
+  uomini ci deve finire, quindi il ripiego fa già la cosa giusta. Verificato in pagina:
+  `type-man`, `cc-man`, `categorie` `['man']`, in entrambe le lingue.
 
 ⚠️⚠️ **Le etichette di categoria vivono in DUE mappe**: `CAT_LABEL` (chiavi `man`/`dragon`) è
 quella che il **Pannello mostra**, `TYPE_LABEL` (chiavi `type-man`/`type-dragon`) serve
