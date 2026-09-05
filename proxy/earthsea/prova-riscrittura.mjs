@@ -1,7 +1,7 @@
 // Banco di prova di `rewriteDatiFile` sul dati.js VERO di Terramare.
 //
-// Perche' esiste: quella funzione riscrive il file dei dati, e l'unico altro modo
-// di provarla sarebbe un salvataggio in produzione, cioe' sul file che deve non
+// Perché esiste: quella funzione riscrive il file dei dati, e l'unico altro modo
+// di provarla sarebbe un salvataggio in produzione, cioè sul file che deve non
 // rovinare. Qui gira a vuoto, in locale, e confronta il risultato con l'originale.
 //
 // Uso:  node proxy/earthsea/prova-riscrittura.mjs
@@ -32,8 +32,8 @@ const dati = vociOrig.map(r => JSON.parse(r.replace(/,$/, '')));
 const cc = JSON.parse(/var cardColors = (\{.*\});/.exec(src)[1]);
 // ⚠️ La versione corrente si LEGGE dal file, non si scrive qui: al primo bump del sito
 // una copia cablata avrebbe fatto fallire la prova 'cambia solo la riga di cardColors',
-// che vedeva cambiare anche la riga 0. E' successo alla 0.32, ed e' lo stesso difetto
-// (un valore con due fonti di verita') che queste prove esistono per intercettare.
+// che vedeva cambiare anche la riga 0. È successo alla 0.32, ed è lo stesso difetto
+// (un valore con due fonti di verità) che queste prove esistono per intercettare.
 const verCorrente = /var datiVersion = "([^"]+)"/.exec(src)[1];
 console.log('dati.js: ' + src.length + ' byte, ' + dati.length + ' voci, ' +
   (src.match(/^[ \t]*\/\//gm) || []).length + ' righe di commento');
@@ -41,8 +41,8 @@ console.log('dati.js: ' + src.length + ' byte, ' + dati.length + ' voci, ' +
 console.log('\n1. Salvataggio ORDINARIO (stessi dati, versione bumpata)');
 const r1 = rewriteDatiFile(src, dati, '9.99', cc, null, null);
 prova('non torna errore', () => r1.error ? r1.error : true);
-prova('la versione nuova c e', () => r1.text.includes('var datiVersion = "9.99";') || 'assente');
-prova('la versione vecchia non c e piu', () => !r1.text.includes('"' + verCorrente + '"') || 'residuo');
+prova("la versione nuova c'è", () => r1.text.includes('var datiVersion = "9.99";') || 'assente');
+prova("la versione vecchia non c'è più", () => !r1.text.includes('"' + verCorrente + '"') || 'residuo');
 prova('i commenti sono TUTTI conservati', () => {
   const a = (src.match(/^[ \t]*\/\//gm) || []).length;
   const b = (r1.text.match(/^[ \t]*\/\//gm) || []).length;
@@ -106,7 +106,7 @@ prova('le voci sono ' + dati4.length, () => {
   const n = (r4.text.match(/^\{"nome"/gm) || []).length;
   return n === dati4.length || ('trovate ' + n);
 });
-prova('la voce nuova c e', () => r4.text.includes('"nome":"Prova"') || 'assente');
+prova("la voce nuova c'è", () => r4.text.includes('"nome":"Prova"') || 'assente');
 prova('i commenti restano', () => {
   const a = (src.match(/^[ \t]*\/\//gm) || []).length;
   const b = (r4.text.match(/^[ \t]*\/\//gm) || []).length;

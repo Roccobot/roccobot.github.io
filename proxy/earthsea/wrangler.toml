@@ -9,10 +9,10 @@
 # Qui sotto solo la variabile NON segreta dell'origine autorizzata (CORS).
 #
 # ⚠️ Worker SEPARATO da arda-admin-proxy, con nome, secret e Durable Object propri:
-# la separazione e' la salvaguardia contro il rischio di scrivere sul dataset
+# la separazione è la salvaguardia contro il rischio di scrivere sul dataset
 # dell'altro sito (vedi l'intestazione del sorgente).
-# ⚠️ La root directory di questo progetto in dashboard e' `proxy/earthsea`, NON
-# `proxy`: quella e' di Arda, e due wrangler.toml nella stessa cartella non
+# ⚠️ La root directory di questo progetto in dashboard è `proxy/earthsea`, NON
+# `proxy`: quella è di Arda, e due wrangler.toml nella stessa cartella non
 # potrebbero convivere.
 
 name = "earthsea-admin-proxy"
@@ -30,8 +30,8 @@ ALLOWED_ORIGIN = "https://roccobot.github.io"
 # (RL_MAX/RL_WINDOW). Binding + migrazione dichiarati qui, quindi sopravvivono a
 # ogni ricostruzione automatica via Git integration: configurato una volta, per
 # sempre.
-# ⚠️ Le alternative sono gia' state misurate e NON funzionano su questo hosting: il
-# binding nativo 'ratelimit' e' no-op sui Workers Builds, il contatore in KV e'
+# ⚠️ Le alternative sono già state misurate e NON funzionano su questo hosting: il
+# binding nativo 'ratelimit' è no-op sui Workers Builds, il contatore in KV è
 # troppo lento, quello in memoria dell'isolate non conta. Storia in proxy/CLAUDE.md,
 # non riprovarle.
 [[durable_objects.bindings]]
@@ -39,7 +39,7 @@ name = "RL_DO"
 class_name = "RateLimiter"
 
 # Migrazione una tantum: registra la classe come Durable Object con backend SQLite
-# (disponibile anche sul piano gratuito). Il tag e' per-Worker, quindi non
+# (disponibile anche sul piano gratuito). Il tag è per-Worker, quindi non
 # interferisce con la migrazione omonima di arda-admin-proxy.
 [[migrations]]
 tag = "v1"

@@ -969,22 +969,22 @@ html[data-theme="light"] .ctrl-apo.on .apo-sw::after { background:#fff; }
   padding:1.1rem 1.2rem 1.3rem; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   /* ⚠️ BAGLIORE intorno al Pannello, portato qui da 'I Grandi di Terramare' (richiesta
      dell'utente, 2026-08-26), dove era nato come variante 'B' fra tre rese: un alone a
-     34px piu' un filo di bordo illuminato. E' la controparte scura dell'ombra portata,
+     34px più un filo di bordo illuminato. È la controparte scura dell'ombra portata,
      che su fondo nero non si vede: un'ombra ha bisogno di luce attorno per esistere,
      quindi il tema scuro non aveva niente che staccasse il Pannello dal fondo, e il
-     chiaro si'.
-     ⚠️ La TINTA non e' quella di Terramare, ed e' la parte che non si copia: la' l'alone
-     e' freddo (rgba(150,200,235)) perche' freddo e' tutto il sito; qui la tavolozza e'
-     neutra e il fondo del Pannello e' caldo (HSL 50deg), quindi un alone azzurro
+     chiaro sì.
+     ⚠️ La TINTA non è quella di Terramare, ed è la parte che non si copia: là l'alone
+     è freddo (rgba(150,200,235)) perché freddo è tutto il sito; qui la tavolozza è
+     neutra e il fondo del Pannello è caldo (HSL 50deg), quindi un alone azzurro
      sembrerebbe una luce di un altro ambiente. Si usa la luce calda-neutra della
      pergamena.
-     ⚠️ L'alfa e' PIU' BASSA di Terramare (0.12/0.10 contro 0.13/0.10) e il valore e'
-     MISURATO, non scelto a gusto: una luce quasi bianca rende piu' di una tinta satura a
+     ⚠️ L'alfa è PIÙ BASSA di Terramare (0.12/0.10 contro 0.13/0.10) e il valore è
+     MISURATO, non scelto a gusto: una luce quasi bianca rende più di una tinta satura a
      parita' di alfa, e con 0.13/0.10 qui il bagliore batteva quello di Terramare dell'11%
      a ridosso del bordo. Con 0.12/0.10 i due siti stanno al 98% e al 94% a 3px e 10px dal
      bordo. Come si misura sta in `CLAUDE.md`, § 'Il bagliore intorno al Pannello'.
-     ⚠️ Sta in una variabile perche' il tema chiaro lo SPEGNE (l'ombra ce l'ha gia'), e
-     spegnerlo riscrivendo tutta la `box-shadow` la' avrebbe duplicato anche l'ombra
+     ⚠️ Sta in una variabile perché il tema chiaro lo SPEGNE (l'ombra ce l'ha già), e
+     spegnerlo riscrivendo tutta la `box-shadow` là avrebbe duplicato anche l'ombra
      portata: due copie dello stesso valore che prima o poi divergono. */
   --pan-glow:0 0 34px rgba(232,226,212,0.12), 0 0 0 1px rgba(232,226,212,0.10);
   box-shadow:0 12px 48px rgba(0,0,0,0.5), var(--pan-glow);
@@ -2355,7 +2355,7 @@ html[data-theme="light"] .rank-item.animale .type-beast { color:#6d4a05; border-
 html[data-theme="light"] .rank-item.apocrifo { background: rgba(236,236,239,0.6); border-left-color:rgba(124,126,138,0.55); }
 html[data-theme="light"] .rank-item.apocrifo:hover, html[data-theme="light"] .rank-item.apocrifo:focus-within { background: rgba(236,236,239,0.85); }
 html[data-theme="light"] .pill-home { border-color:rgba(120,122,134,0.5); color:rgba(92,94,106,0.92); background:rgba(255,255,255,0.5); }
-/* Ⓘ Lo spegnimento del bagliore e' un'ombra NULLA e non `none`, cosi' resta una voce
+/* Ⓘ Lo spegnimento del bagliore è un'ombra NULLA e non `none`, così resta una voce
    valida della `box-shadow` composta invece di annullarla tutta (ombra portata inclusa). */
 html[data-theme="light"] .ctrl-panel { background:rgba(245,247,247,0.97); border-color:rgba(120,124,126,0.35); --pan-glow:0 0 0 rgba(0,0,0,0); }
 html[data-theme="light"] .ctrl-row, html[data-theme="light"] .ctrl-legend-row { color:#12141e; }
