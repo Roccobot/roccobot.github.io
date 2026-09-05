@@ -419,6 +419,16 @@ FORMULE_BLOCCA = [
     (re.compile(r"\besce\s+(non |NON |già |comunque )?(?!subito\b)[a-zA-Zà-ù]+"
                 r"(ato|ata|ati|ate|ito|ita|iti|ite|uto|uta)\b"),
      "'esce' per 'risulta': risulta, viene, si ottiene"),
+    # ⚠️⚠️ `'sta`/`'sto` PER `questa`/`questo` (2026-09-05), CON DUE GUARDIE, E SENZA LA
+    # SECONDA IL CONTROLLO BLOCCA TESTO CORRETTO. La prima vuole uno spazio e una lettera dopo:
+    # senza, il pattern prenderebbe la stringa `'sto'` di un sorgente, dove l'apostrofo di
+    # chiusura è sintassi. La seconda esclude il VERBO `sto`/`sta`, perché un apostrofo che
+    # APRE una citazione ha la stessa forma della contrazione: `dice 'sto usando il valore di
+    # fabbrica'` è italiano corretto, e sta in `userscripts/CLAUDE.md`. A distinguerli è la
+    # parola dopo: la contrazione regge un NOME, il verbo un gerundio o un avverbio.
+    (re.compile(r"'st[ao]\s+(?!(?:per|bene|male|qui|qua|così|ancora|sempre|solo|già)\b"
+                r"|[a-zà-ù]+(?:ando|endo)\b)[a-zà-ù]", re.I),
+     "'sta/'sto per 'questa/questo' è una contrazione colloquiale: quest'ultima, questo"),
 ]
 # ⚠️⚠️ QUESTA TABELLA VALE SOLO DOVE LA RIGA APRE UNA FRASE, e il perché sta sul calcolo di
 # `apre` in `formula_defects`: una forma vietata **in apertura** non si può cercare in una riga
@@ -457,6 +467,14 @@ FORMULE_AVVISA = [
                 r"\bsenza un telefono\s+non\b|\bnon l'ho potuto riprodurre\b", re.I),
      "il collaudo lo fa l'utente per patto: non si ripete (`Roccobot.md` § '🔁 Il giro del "
      "collaudo'). Si nomina UNA incognita specifica, non la mancanza di un telefono"),
+    # ⚠️⚠️ `uscire` PER UNA COSA CANCELLATA AVVISA E NON BLOCCA, e la ragione è che il verbo ha
+    # qui l'uso più legittimo di tutti: una VERSIONE esce, ed è il modo in cui si parla di ogni
+    # rilascio ('la 1.69 è uscita'). A distinguerli è solo il soggetto, quindi il pattern lo
+    # nomina invece di guardare il verbo, e il giudizio resta a chi legge la riga.
+    (re.compile(r"\b(?:file|note|voce|voci|riga|righe|commento|commenti|tappa|tappe)\b"
+                r"[^.\n]{0,30}?\b(?:è|sono)\s+uscit[oaie]\b", re.I),
+     "'uscire' per una cosa cancellata è la famiglia di 'esce': non c'è più, "
+     "è stata cancellata, è stata tolta (legittimo per una versione che si pubblica)"),
 ]
 # ⚠️ Una formula fra BACKTICK è una CITAZIONE, non un uso, ed è la stessa convenzione con cui
 # i trattini lunghi si possono nominare nella regola che li vieta: il divieto, per esistere,
@@ -465,6 +483,16 @@ FORMULE_AVVISA = [
 FORMULE_ESENTI = (
     # Questo file: la tabella qui sopra contiene per forza le forme che vieta.
     ".memo/scripts/refcheck.py",
+)
+# ⚠️⚠️ UN FILE CHE È UNA CITAZIONE DA CIMA A FONDO NON SI CONTROLLA, e l'esenzione qui è per
+# PEZZO di percorso invece che per suffisso, perché questi file portano una data nel nome.
+# I riscontri consegnati dall'utente si archiviano **parola per parola** (`.memo/files/Giro-*.md`,
+# il testo del giro come lui l'ha scritto): là dentro ci sono per forza le forme che le regole
+# vietano, perché quasi sempre lui le cita per segnalarmele. Normalizzarle falsificherebbe la
+# citazione, che è il danno che l'esenzione del corsivo evita nella prosa; qui il corsivo non
+# si può usare, perché il file non è prosa mia con dentro le sue parole: è solo le sue parole.
+FORMULE_ESENTI_PARTI = (
+    ".memo/files/Giro-",
 )
 
 RE_MDLINK = re.compile(r"\[[^\]]*\]\(([^)#][^)]*)\)")
@@ -666,7 +694,8 @@ def formula_defects(text, path=None):
     Ogni elemento è `(riga, colonna, forma trovata, motivo)`. Vedi `FORMULE_BLOCCA` per il
     perché questo controllo esiste e per il perché ha due canali.
     """
-    if path and any(str(path).endswith(e) for e in FORMULE_ESENTI):
+    if path and (any(str(path).endswith(e) for e in FORMULE_ESENTI)
+                 or any(p in str(path) for p in FORMULE_ESENTI_PARTI)):
         return [], []
     blocca, avvisa = [], []
     # Si lavora a PARAGRAFI, perché è l'unità in cui vivono le coppie di marcatori: vedi

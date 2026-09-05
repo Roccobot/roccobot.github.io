@@ -451,8 +451,8 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
 ## ✒️ Caratteri vietati
 
 ⚠️⚠️ **I TRATTINI LUNGHI NON SI USANO MAI, DA NESSUNA PARTE**: em-dash `—` ed en-dash `–`,
-stessa regola e stessa tolleranza zero per entrambi ('non devi usare 'sto carattere: l'ho
-chiesto migliaia di volte'; e l'unificazione dei due, 2026-08-01: *non mi piace avere due
+stessa regola e stessa tolleranza zero per entrambi (*non devi usare 'sto carattere: l'ho
+chiesto migliaia di volte*; e l'unificazione dei due, 2026-08-01: *non mi piace avere due
 regole separate per due caratteri di cui voglio liberarmi ugualmente*). Vale per **tutto**: i
 campi di `dati.js`, i testi dell'interfaccia, le note e la documentazione, i messaggi di
 commit e i corpi delle PR, e le **risposte in chat**, dove è l'errore che ricorre più spesso.
