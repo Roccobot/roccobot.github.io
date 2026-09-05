@@ -11,8 +11,10 @@
 ## ⚠️⚠️ Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti
 
 Dal 2026-08-23 (`0.52`) il dataset porta le **100 schede** dello Schedario compilate
-dall'utente (80 voci nuove, 20 aggiornate), sopra le voci già presenti: **120 voci** in
-tutto, **121 dalla `1.05`** con l'ingresso di `Elassen`. Ogni scheda è passata da una
+dall'utente (80 voci nuove, 20 aggiornate), sopra le voci già presenti. ⚠️ **Quante siano
+adesso non si scrive qui**: cresce a ogni giro (l'ultimo, la `1.10`, ne ha aggiunte cinque) e
+si conta con `dati.length`, come dice `Roccobot.md` § '🔢 I conti si contano, non si
+scrivono'. Ogni scheda è passata da una
 **verifica col grep sugli epub** (un agente per lotto di dieci), che ha stabilito le metà
 inglesi e segnalato le divergenze. Nessuna descrizione,
 e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
@@ -153,8 +155,9 @@ regola: la **categoria** che filtra e conta è una sola, l'**etichetta** della c
 bestia vera.
 
 - **Nel dato**: `tipo` è `Gatta`, `Gatto`, `Gallina`, `Gallo`, `Cane` (con `tipo_en` `Cat`,
-  `Hen`, `Rooster`, `Dog`), e `cardcolor` è `animale`. Nessun campo dice 'animale': la
-  categoria la ricava il motore.
+  `Hen`, `Rooster`, `Dog`), e `cardcolor` è **`beast`** (non `animale`, che è il nome della
+  categoria e non il valore del campo: la nota diceva l'altro fino al 2026-09-05). Nessun campo
+  dice 'animale': la categoria la ricava il motore.
 - ⚠️⚠️ **Il ponte fra i due livelli è l'elenco `TIPI_ANIMALE` in `index.html`**, che
   `tipoClass` e `categorie` leggono entrambe. **Un animale nuovo va aggiunto là**, o la sua
   card finisce fra gli **uomini senza dare alcun errore**: il ripiego di `tipoClass` è
@@ -2091,11 +2094,12 @@ Nasce **spento**, quindi di base non ci sono, per tutti i visitatori.
 - ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
   CODICE**, come per ogni altra proprietà. Sono le voci il cui **nome d'uso è una perifrasi** e
   non un nome proprio, e la previsione 'se un domani ne entra una terza le basta il campo' si è
-  avverata con la `1.09`: il **`Mago Grigio`** è entrato nel gruppo su istruzione dell'utente
-  senza toccare una riga di codice.
-  - ⚠️ **La sua card ERA visibile, e questa modifica la nasconde**: la voce esisteva già come
-    scheda normale, quindi non è entrata in classifica, è passata dietro all'interruttore. Chi
-    la cercasse in pagina col flag spento non stia cercando un difetto.
+  avverata due volte in un giorno: il **`Mago Grigio`** con la `1.09`, il **`Mago Nero`** e il
+  **`Mago Rosso di Ark`** con la `1.10`, tutti su istruzione dell'utente e senza toccare una
+  riga di codice. ⚠️ **Chi sono si conta** (`dati.filter(x=>x.senzanome)`), non si elenca qui.
+  - ⚠️ **Le loro card ERANO visibili, e il flag le nasconde**: quelle voci esistevano già come
+    schede normali, quindi non sono entrate in classifica, sono passate dietro
+    all'interruttore. Chi le cercasse in pagina col flag spento non stia cercando un difetto.
 - **Come è fatto il flag**: `senzanome` in `SITE_FLAGS`, booleano **piatto** come `zoomBig`
   (niente varianti di piattaforma, niente manopole). Nel codice i flag piatti si riconoscono
   da `plain:true` nella voce di `SITE_FLAG_ITEMS`, che li tiene fuori dalla tab Mobile e
@@ -2641,12 +2645,19 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
 - **Chi resta senza, e sono QUINDICI**: i **dodici animali** (istruzione dell'utente: *lascia
   perdere gli animali*) e le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di
   Ark`, `Keor`).
-  - ⚠️ **Erano SEDICI fino alla `1.04`, e il sedicesimo era `Cenerino`**, uscito dal dataset
-    per scelta dell'utente. Vale la pena saperlo perché era l'unico escluso da un **limite
-    della fonte** e non da una scelta: l'edizione Mondadori non lo nominava mai (zero
-    occorrenze di `Cenerino` e di `Littleash`), mentre l'inglese lo attesta una volta sola
-    (*Her brother, Littleash, used to come to the city every year or two*). Chi ritrovasse
-    quel passo non ne ricavi una voce da rimettere: la voce c'è stata ed è stata tolta.
+  - ⚠️⚠️ **`Cenerino` è USCITO con la `1.04` e RIENTRATO con la `1.10`**, tutte e due le volte
+    per scelta dell'utente, e la nota che diceva *non ne ricavi una voce da rimettere* è
+    superata. Resta il fatto che l'ha reso un caso a sé: è l'unica voce il cui nome italiano
+    **non viene da nessuna edizione**, perché Mondadori il personaggio lo ha tolto del tutto
+    (zero occorrenze di `Littleash` e di qualunque resa), mentre l'inglese lo attesta una volta
+    sola, in *Il Trovatore*: *Her brother, Littleash, used to come to the city every year or
+    two*. `Cenerino` è dunque **una resa dell'utente**, dichiarata come tale, e il grep sulle
+    fonti italiane non la confermerà mai.
+    - **Sta in fondo agli umani, subito prima degli animali** (istruzione dell'utente,
+      2026-09-05). ⚠️ È l'unica voce con una posizione **chiesta**: le altre si accodano, e
+      questa vale come precedente solo se lui lo dice.
+    - `Her brother` dà il genere, e il fratello è quello della **madre di Lontra**, di
+      Endlane: da lì l'origine, che è dove vive e non una nascita attestata.
 
 - **I quattro campi**: `citazione` / `citazione_en` per il testo, `citazione_fonte` /
   `citazione_fonte_en` per il contesto. ⚠️ Esistono su **tutte** le voci, anche vuoti: un
