@@ -2034,13 +2034,25 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
   divergono: le quattro voci delle **Terre di Kargad** (`Kargad Lands`) e, dalla `1.31`,
   **Pechvarry** e **Ioeth**. Dove il toponimo è identico nelle due edizioni il campo non c'è, e
   la resa ripiega sull'italiano.
-- ⚠️⚠️ **`Torning Bassa` è una RESA DELL'UTENTE, e Mondadori NON traduce quel toponimo**
-  (dalla `1.31`, istruzione dell'utente): il grep sull'edizione italiana dà **17** occorrenze di
-  `Low Torning` e **zero** di `Torning Bassa`, in tutti e sei i volumi. Non è un errore da
-  correggere: è la stessa scelta editoriale di `Sparviero` (§ "`Sparviero` è la forma scelta, e
-  `Sparviere` sta fra gli alternativi"), cioè il patto per cui il sito tiene il testo Mondadori
-  coi nomi dell'altra edizione. Chi rifà la verifica sulle fonti in scena la troverà sempre
-  contraddetta, ed è previsto.
+- ⚠️⚠️ **`Torning Bassa` è la resa NORD ATTESTATA, non una scelta dell'utente** (dalla `1.31`):
+  16 occorrenze nel volume unico Nord e **zero** `Low Torning`, contro le **17** `Low Torning`
+  di Mondadori, che quel toponimo non lo traduce. È la regola dei nomi applicata ai **luoghi**,
+  e il canone la enuncia (`rules/Earthsea.md`, § 'Fonti ITA'), non una deroga.
+  - ⚠️⚠️ **QUI È CADUTO UN RILIEVO FALSO, ed è la ragione per cui questa voce esiste**: il
+    2026-09-05 `Torning Bassa` è stato dato per resa dell'utente perché il grep girava sulle
+    sole Mondadori, dove non compare mai. La fonte Nord **c'era** nel canone dal 2026-08-24, ma
+    **non nello script** che scarica i testi, quindi non era grep-abile: il difetto stava nella
+    macchina, non nella regola. Ora lo script la prende, col prefisso `ita-nord`.
+  - ⚠️ **Il metodo che ne resta**: un nome del dataset assente dalle Mondadori si cerca
+    **prima** nel Nord, e solo se manca in tutte e due si parla di resa dell'utente. È lo stesso
+    errore già commesso su `Sparviero` e già corretto nel canone: chiamare 'scelta editoriale'
+    l'applicazione della regola.
+  - ⚠️ **Restano vere le rese dell'utente accertate come tali**, ed è un caso diverso:
+    `Cenerino` non compare in **nessuna** delle due edizioni, e la prova sta nel passo, che è
+    identico in tutte e due (`Suo fratello veniva a trovarci in città ogni anno`, senza il
+    nome, contro `Her brother, Littleash` dell'inglese). Là il grep non confermerà mai, ed è
+    corretto: coerente col canone, dal quinto volume la traduzione è condivisa, quindi Nord e
+    Mondadori dicono la stessa cosa.
 - ✅ **Il campo è RESO in pagina dalla `0.59`**, in una terza colonna a destra della card
   (resa 'B', scelta dell'utente fra i mockup), e dalla `0.62` lo portano **111 voci su
   120**. La nota che lo dava non reso, con la scelta editoriale ancora aperta, valeva fino
@@ -2752,11 +2764,15 @@ rilegge quella formulazione in un commit vecchio sappia che è stata corretta il
   - ⚠️⚠️ **`Cenerino` è USCITO con la `1.04` e RIENTRATO con la `1.10`**, tutte e due le volte
     per scelta dell'utente, e la nota che diceva *non ne ricavi una voce da rimettere* è
     superata. Resta il fatto che l'ha reso un caso a sé: è l'unica voce il cui nome italiano
-    **non viene da nessuna edizione**, perché Mondadori il personaggio lo ha tolto del tutto
-    (zero occorrenze di `Littleash` e di qualunque resa), mentre l'inglese lo attesta una volta
-    sola, in *Il Trovatore*: *Her brother, Littleash, used to come to the city every year or
-    two*. `Cenerino` è dunque **una resa dell'utente**, dichiarata come tale, e il grep sulle
-    fonti italiane non la confermerà mai.
+    **non viene da nessuna edizione**, perché il personaggio perde il nome nella traduzione,
+    mentre l'inglese lo attesta una volta sola, in *Il Trovatore*: *Her brother, Littleash,
+    used to come to the city every year or two*. `Cenerino` è dunque **una resa dell'utente**,
+    dichiarata come tale, e il grep sulle fonti italiane non la confermerà mai.
+    - ⚠️ **Verificato su ENTRAMBE le edizioni il 2026-09-05**, e prima solo su Mondadori: il
+      passo è **identico** in Nord e in Mondadori (*Suo fratello veniva a trovarci in città
+      ogni anno*), con zero occorrenze di `Littleash` e di qualunque resa in tutte e due. Non
+      è una coincidenza: dal quinto volume la traduzione è condivisa (`rules/Earthsea.md`,
+      § 'Fonti ITA'), quindi là non c'era nulla da scegliere fra le due.
     - **Sta in fondo agli umani, subito prima degli animali** (istruzione dell'utente,
       2026-09-05). ⚠️ È l'unica voce con una posizione **chiesta**: le altre si accodano, e
       questa vale come precedente solo se lui lo dice.

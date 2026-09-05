@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# earthsea-fonti.py - scarica i 15 epub di Terramare e ne estrae il TESTO PIANO, per il grep.
+# earthsea-fonti.py - scarica gli epub di Terramare e ne estrae il TESTO PIANO, per il grep.
 #
 # PERCHÉ ESISTE: la regola di casa vieta di verificare un dato a memoria (`rules/JRRT.md`,
 # § 'Verifica alla lettera', e `rules/Earthsea.md`, § 'Verifica alla lettera: sempre TRAMITE
@@ -20,8 +20,15 @@
 # ⚠️ Serve lo User-Agent da browser: senza, il server risponde 403.
 # ⚠️ La terza fonte ITA ha l'accento PRECOMPOSTO nel nome (`piu%CC%80` non funziona): la
 # codifica la fa `quote` su una stringa normalizzata NFC, come qui sotto.
-# ⚠️ `Earthsea 07 - The daughter of Odren` esce quasi VUOTO (214 byte di testo): quell'epub
+# ⚠️ `Earthsea 07 - The daughter of Odren` risulta quasi VUOTO (214 byte di testo): quell'epub
 # non porta il testo in xhtml. Non è un difetto di questo script, e non ha edizione italiana.
+# ⚠️⚠️ LA FONTE NORD È LA TERZA FAMIGLIA, e senza di lei ogni verifica sui NOMI risponde
+# sbagliato: il canone dice che la resa italiana dei nomi (persone E luoghi) è quella dei
+# libri 1-3 dell'edizione Nord, mentre le sei `Terramare NN` sono MONDADORI, che quei nomi li
+# scrive diversi. Mancava fin qui, e il 2026-09-05 è costata un rilievo falso su `Torning
+# Bassa`, dato per resa dell'utente perché il grep sulle sole Mondadori trovava `Low Torning`.
+# ⚠️ Il suo txt porta il prefisso `ita-nord`, non `ita`: un glob `ita - *` prende le sole
+# Mondadori, che è quello che serve quando si confrontano le due edizioni.
 
 import html
 import os
@@ -51,6 +58,8 @@ ITA = ['Terramare 01 - Un mago di Terramare',
        'Terramare 05 - Le leggende di Terramare',
        'Terramare 06 - I venti di Terramare',
        'I dodici punti cardinali']
+# L'edizione NORD in volume unico, che decide sui nomi. Vive in `Fonti ITA` come le altre.
+ITA_NORD = ['Saga di Earthsea']
 
 TAG = re.compile(r'<[^>]+>')
 SPAZI = re.compile(r'[ \t\r\f\v]+')
@@ -61,6 +70,8 @@ def scarica(nome, lingua, dove):
     if os.path.exists(fuori) and os.path.getsize(fuori) > 10000:
         return fuori
     os.makedirs(os.path.dirname(fuori), exist_ok=True)
+    # `ita-nord` sta nella stessa cartella remota delle Mondadori: cambia il prefisso locale,
+    # non la provenienza.
     cart = 'Fonti%20ENG' if lingua == 'eng' else 'Fonti%20ITA'
     url = BASE + '/' + cart + '/' + urllib.parse.quote(
         unicodedata.normalize('NFC', nome + '.epub'))
@@ -88,7 +99,7 @@ def main():
     dove = sys.argv[1] if len(sys.argv) > 1 else '/home/user/fonti'
     txt = os.path.join(dove, 'txt')
     os.makedirs(txt, exist_ok=True)
-    for lingua, elenco in (('eng', ENG), ('ita', ITA)):
+    for lingua, elenco in (('eng', ENG), ('ita', ITA), ('ita-nord', ITA_NORD)):
         for nome in elenco:
             epub = scarica(nome, lingua, dove)
             fuori = os.path.join(txt, lingua + ' - ' + nome + '.txt')
