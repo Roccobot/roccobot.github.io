@@ -162,6 +162,57 @@ function prova(nome, ok, dettaglio) {
   const ph = await page.locator('#site-search .ss-input').getAttribute('placeholder');
   prova('la ricerca si apre anche in inglese', ph === 'Search the characters', ph);
 
+  // ── La × c'è col mouse e non c'è al tocco ──
+  // Si prova su DUE contesti, perché il discriminante è la capacità del puntatore e un
+  // solo viewport non lo distingue. ⚠️ Il resto della chiusura NON cambia fra i due: il
+  // velo chiude su entrambi, la cornice su nessuno dei due.
+  for (const [nome, opt, attesaX] of [
+    ['touch', { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true,
+                deviceScaleFactor: 3, locale: 'it-IT' }, false],
+    ['mouse', { viewport: { width: 1280, height: 900 }, locale: 'it-IT' }, true],
+  ]) {
+    const c2 = await browser.newContext(opt);
+    const p2 = await c2.newPage();
+    const err2 = [];
+    p2.on('pageerror', (e) => err2.push(String(e)));
+    await p2.goto(URL, { waitUntil: 'load' });
+    await p2.waitForSelector('#rank-list .rank-item');
+    const apri2 = async () => {
+      await p2.evaluate(() => { if (!document.getElementById('site-search')) openSiteSearch(); });
+      await p2.waitForTimeout(520);   // oltre la guardia dei 400 ms del velo
+    };
+    await apri2();
+
+    const vistaX = await p2.locator('#site-search .modal-close').isVisible();
+    prova(`[${nome}] la × ${attesaX ? 'c\'è' : 'non c\'è'}`, vistaX === attesaX, `visibile: ${vistaX}`);
+
+    // Il campo NON chiude: là il tocco serve a posare il cursore.
+    const box = await p2.locator('#site-search .modal').boundingBox();
+    const campo = await p2.locator('#site-search .ss-input').boundingBox();
+    await p2.mouse.click(campo.x + campo.width / 2, campo.y + campo.height / 2);
+    await p2.waitForTimeout(250);
+    prova(`[${nome}] il campo non chiude`, await p2.locator('#site-search').count() === 1);
+
+    // E nemmeno una riga di risultato, che ha il suo click: deve saltare alla card.
+    await p2.locator('#site-search .ss-input').fill('kalessin');
+    await p2.waitForTimeout(180);
+    const primo = p2.locator('#site-search .ss-hit').first();
+    const nomePrimo = await primo.locator('.ss-hit-name').textContent();
+    await primo.click();
+    await p2.waitForTimeout(420);
+    prova(`[${nome}] la riga salta alla card`,
+      await p2.locator('.rank-item.ss-trovata').count() === 1, `scelta: ${nomePrimo}`);
+
+    // Il velo resta la via di sempre, su tutte e due.
+    await apri2();
+    await p2.mouse.click(box.x + box.width / 2, Math.max(10, box.y / 2));
+    await p2.waitForTimeout(300);
+    prova(`[${nome}] il velo chiude`, await p2.locator('#site-search').count() === 0);
+
+    prova(`[${nome}] nessun errore JS`, err2.length === 0, err2.join(' | '));
+    await c2.close();
+  }
+
   prova('nessun errore JS in pagina', errori.length === 0, errori.join(' | '));
 
   await browser.close();
