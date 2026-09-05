@@ -223,8 +223,11 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
      spegne quando `ZOOM_PHONE_MQ` (matchMedia 480px) è attiva, con ricalcolo
      automatico al varco della soglia (listener `change`, niente lavoro a ogni
      resize);
-  2. **preferenza PERSONALE**: **tasto `Z`** su desktop, **TAP LUNGO SUL FAB**
-     su mobile (v12.43): vale solo su quel browser, **non tocca il sito**, si
+  2. **preferenza PERSONALE**: **tasto `Z`** su desktop. ⚠️⚠️ **Su MOBILE non c'è
+     più: il tap lungo sul FAB è passato alla RICERCA** (`15.25`, scelta
+     dell'utente messo davanti al conflitto), quindi sul telefono la XL resta solo
+     come default di sito, dalla Console. Vale solo su quel browser, **non tocca il
+     sito**, si
      ricorda in `localStorage` (`arda-zoom-big`) e **scavalca** il default di
      sito (nei due sensi, anche sui telefoni: è così che un telefono può stare
      in XL). Si salvano `'1'`/`'0'` **espliciti**: chiave assente =
@@ -238,18 +241,19 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   dell'utente): lo zoom si comanda col tasto `Z` (personale), col tap lungo sul
   FAB (personale, mobile) o dalla Console (sito). Storico: la v12.14
   aveva un tasto `A+` in toolbar e barra mobile.
-- **Tap LUNGO sul FAB = scorciatoia 'SEGRETA' mobile (dalla v12.43).** ~500ms di
-  pressione sul FAB del Pannello commutano la preferenza personale
-  (`toggleZoomMode`, stesso toast del tasto Z come feedback). Dettagli
-  implementativi da non rompere: SOLO input touch (`e.pointerType === 'touch'`:
-  col mouse un click lento non deve scattare, su desktop c'è Z); tolleranza di
-  movimento ~8px (il dito trema; oltre = intenzione di scorrere → annulla);
-  a gesto riuscito il **click al rilascio è consumato una volta** (flag
-  `lpFired`, altrimenti si aprirebbe anche il Pannello); `contextmenu`
-  preventato e callout/selezione iOS soppressi **inline sul solo FAB**
-  (`webkitTouchCallout`/`userSelect`/`touchAction`, invisibili al Nu). Il gesto
-  è volutamente NON scopribile (come il tap sulla versione); la nota della
-  Modalità XL nella Console lo documenta per l'admin.
+- ⚠️⚠️ **IL TAP LUNGO SUL FAB NON È PIÙ SUO: dalla `15.25` apre la RICERCA**
+  (§ 'La ricerca del sito, dal tocco lungo sul FAB'). Dalla v12.43 a quel giorno
+  commutava la preferenza personale di zoom, ed è la ragione per cui su mobile la
+  Modalità XL non ha più una scorciatoia personale.
+  - **Perché è cambiato**: l'utente ha chiesto di portare qui la ricerca del
+    gemello di Terramare, dove quel gesto era **libero** perché là la XL è spenta
+    da un flag di build. Qui era occupato, e messo davanti al conflitto ha scelto la
+    ricerca, sapendo il costo.
+  - **La meccanica del gesto è rimasta identica** e vale per il nuovo padrone: SOLO
+    input touch (`e.pointerType === 'touch'`), tolleranza di movimento ~8px, il
+    **click al rilascio consumato una volta** (flag `lpFired`), `contextmenu`
+    preventato e callout iOS soppressi inline sul solo FAB. Chi tocca quel codice
+    non tocchi quelle guardie.
 - **Ripristino in due fasi** (la `dati.js` si carica DOPO il blocco iniziale):
   1. blocco iniziale in testa allo script: riapplica solo la **preferenza
      personale**, il più presto possibile, per non mostrare un lampo alla
@@ -268,6 +272,114 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   elementi fissi (FAB, tasti salto) dentro il viewport, axe **0** in entrambi i temi
   con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
   nel CSS statico).
+
+## 🔎 Zoom a una mano nel visualizzatore: doppio tocco e trascina
+
+Dalla `15.25`, portato dal gemello di Terramare su richiesta dell'utente (*i meccanismi sono
+esattamente gli stessi*): le mappe di `arda/res/` si consultano col telefono in **una mano
+sola**, e il pinch ne chiede due. Il gesto è quello di Google Maps: si tocca due volte e al
+secondo tocco si **trascina senza staccare il dito**, verso il basso per ingrandire.
+
+- **Da dove vengono i tre numeri**: `300ms` fra i due tocchi è la finestra classica del doppio
+  tocco; `30px` è il margine oltre il quale due tocchi sono in posti diversi e non un gesto
+  solo; `200px` di trascinamento per **raddoppiare** è scelto sulla mano, perché una trascinata
+  comoda su un telefono è di quell'ordine e il viewer ha un tetto di **8x**, cioè tre raddoppi.
+- ⚠️ **La scala cresce in modo esponenziale** (`2^(dy/200)`), non lineare, perché lo zoom è
+  moltiplicativo: a incrementi costanti i primi pixel varrebbero quanto gli ultimi, e il gesto
+  risulterebbe scattoso da ingrandito e inerte da rimpicciolito.
+- **Il centro è il punto del SECONDO tocco e resta fermo** per tutto il gesto: è ciò che tiene
+  il dettaglio sotto il dito invece di lasciarlo scappare mentre la mano scorre.
+- ⚠️⚠️ **Il browser manda un `dblclick` DOPO il secondo tocco, e senza guardia rifà lo zoom a
+  modo suo**: qui il doppio clic salta a **2,5x** (o torna al fit sopra 1,4x), quindi il gesto
+  appena finito verrebbe annullato da un salto. Il flag `dblSkip` lo lascia cadere **solo** se
+  il dito si è mosso davvero, così il doppio tocco **secco** conserva il salto di sempre.
+  - ⚠️ E il flag si azzera al tocco dopo che non apre un gesto: un salto soppresso e mai
+    consumato resterebbe in credito, e mangerebbe il doppio clic buono successivo.
+- ⚠️ **Durante il gesto il punto in `pts` va aggiornato lo stesso**, benché il pan non si
+  applichi: quel dizionario è la memoria di dov'è il dito, e lasciandolo indietro il primo
+  movimento dopo il gesto recupererebbe tutto il tragitto in un salto.
+- ⚠️ **Solo per il dito** (`pointerType === 'touch'`): col mouse ci sono la rotella e il doppio
+  clic, e un trascinamento col tasto premuto deve restare pan. Un **secondo dito** annulla il
+  gesto e passa la mano al pinch.
+- ⚠️⚠️ **Il banco `.memo/scripts/prova-gesto-zoom.js` serve i DUE siti**, scegliendo il
+  soggetto con `PROVA_IMG`, e usa eventi touch **veri** via CDP: i sintetici non bastano, perché il
+  viewer chiama `setPointerCapture` a ogni `pointerdown` e quel metodo **rifiuta** un
+  `pointerId` che il browser non conosce, quindi il gestore va in errore prima di fare
+  qualunque cosa. ⚠️ **Una copia per sito sarebbe divergita al primo ritocco**, ed è la ragione
+  per cui il banco è uno solo. Misura della `15.25` su Arda: scala da **0,762 a 1,326** verso
+  il basso e ritorno a **0,875** verso l'alto, col pan a un dito che non muove la scala di un
+  millesimo e il doppio tocco secco che salta a 2,187.
+  - ⚠️ **Qui il soggetto di prova è l'icona PWA, non una mappa**, e non è una scelta di comodo:
+    il server locale pubblica `arda/top/`, mentre le mappe vivono in `arda/res/`, cioè un
+    livello sopra. Il gesto non guarda che cosa sta nel viewer, quindi la prova vale uguale.
+
+## 🔍 La ricerca del sito, dal tocco lungo sul FAB
+
+Dalla `15.25`, richiesta dell'utente insieme al gesto di zoom: installata la pagina come
+**PWA**, l'interfaccia del browser sparisce e con lei il 'trova nella pagina', mentre la
+classifica resta lunga. Un tocco lungo sul FAB apre la ricerca; il tocco **breve** continua ad
+aprire il Pannello.
+
+- ⚠️⚠️ **È di SOLA CONSULTAZIONE** (istruzione dell'utente: *per avviare la ricerca solo in
+  consultazione, niente modifiche admin*): trova, svela e porta alla card, e **non** apre
+  l'editor né tocca alcunché. Qui il punto pesa più che sul gemello, perché su questo sito una
+  ricerca **esisteva già**, dentro l'editor admin, ed è quella da cui vengono i mattoni.
+- ⚠️⚠️ **Interroga il DATASET, non il DOM, e questo le dà quello che il 'trova' del browser
+  non può avere**: vede anche le voci che i filtri del visitatore tengono fuori, categorie
+  spente comprese, e gli **Apocrifi**, che sono una visibilità a sé spenta di default
+  (§ 'Struttura dati'). È la ragione per cui l'utente l'ha chiesta al posto di una ricerca che
+  si limiti alla vista.
+- **I mattoni sono quelli dell'editor admin, promossi a globali** (`computeMatches`, `fold`,
+  `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): stavano dentro uno scope che si apre solo con le
+  credenziali, quindi non erano né riusabili né provabili. ⚠️ Due copie sarebbero divergute al
+  primo campo nuovo del dataset, ed è il difetto che la promozione evita.
+- ⚠️⚠️ **Una voce che nessun filtro mostra si SVELA per INDICE, e non spegnendo il filtro**
+  (`svelate`, letto in cima a `isVisibile`): gli altri filtri restano come li ha messi chi
+  guarda, e la classifica non cambia sotto i piedi per una ricerca. Senza il ridisegno il
+  salto finirebbe su una card che non esiste, cioè la ricerca sembrerebbe rotta proprio nei
+  casi per cui è nata.
+  - **Una riga di risultato che porta a una voce apocrifa lo dichiara** con un tag, o chi la
+    sceglie non capirebbe perché in classifica compare una card che prima non c'era.
+  - ⚠️ **La voce svelata resta in classifica finché non si ricarica**, ed è una deroga
+    consapevole al 'i filtri non si toccano': l'alternativa era togliere la card sotto gli
+    occhi di chi la stava leggendo.
+- ⚠️⚠️ **IL CLICK DEL RILASCIO CHIUDEVA LA RICERCA NELL'ISTANTE IN CUI SI APRIVA**, ed è il
+  difetto che il banco del gemello aveva trovato e che qui si sarebbe ripresentato identico: il
+  velo compare mentre il dito è **ancora premuto**, quindi il click che il browser manda al
+  rilascio cade su di lui e passa per un clic fuori dalla modale. ⚠️ Il consumo di `lpFired`
+  **non** lo copre, e sapere perché evita di cercare il rimedio nel posto sbagliato: quello
+  guarda il FAB, mentre questo velo, quando il gesto è cominciato, non esisteva. La guardia è
+  una finestra di **400ms** dalla comparsa.
+- ⚠️ **L'evidenza del riscontro si compone a NODI**: `snippet()` dell'editor admin torna una
+  **stringa di markup**, che qui finirebbe in un `innerHTML`, e il divieto non è derogabile.
+  `conEvidenza` fa la stessa cosa con `createTextNode` e un `<mark>` vero.
+- **Il tetto è `SS_CAP` (40 righe disegnate), ma il CONTEGGIO resta quello vero**: una query
+  di una lettera trova quasi tutto il dataset, e disegnare centinaia di righe per poi scorrerle
+  non aiuta nessuno. Chi arriva al tetto legge una riga che glielo dice.
+- ⚠️ **Il fuoco si dà DOPO l'animazione di entrata** (220ms): darlo subito, su iOS, fa salire
+  la tastiera mentre la modale si muove, e l'entrata si vede a scatti.
+- **Il guscio è quello della scheda personaggio** (`buildStdModal`), non quello minimale
+  dell'admin, ed è la regola di casa applicata: il discrimine è il **pubblico**, e questa
+  modale la vede il visitatore (§ 'Note e Note editoriali'). ⚠️ Da qui anche il velo **senza
+  tinta**: quello tinto resta alla ricerca **admin**, che è un'altra modale.
+- ⚠️ **Il campo di ricerca NON ha anello di fuoco**, e non è una dimenticanza di accessibilità:
+  in un campo di **testo** l'indicatore nativo è il caret lampeggiante, che c'è comunque, e i
+  browser trattano gli input di testo come sempre `focus-visible`, quindi l'anello comparirebbe
+  anche aprendo col dito. ⚠️⚠️ **NON vale per i RISULTATI**: `.ss-hit:focus-visible` resta,
+  perché là il fondo è l'**unico** indicatore che dice su quale riga si è arrivati col Tab.
+- ⚠️ **Su desktop non ha una via d'accesso, e non è una dimenticanza**: l'utente ha chiesto il
+  solo gesto mobile. Sul gemello c'è un tasto lente nella toolbar del Pannello, quindi la
+  strada è nota e costa poco, ma qui va chiesta.
+- ⚠️⚠️ **Il banco è `.memo/scripts/prova-ricerca-sito.js`, con eventi touch VERI via CDP**,
+  come quello del gesto di zoom e per la stessa ragione: il tocco lungo vive su un
+  `pointerdown` con `pointerType` `touch`, e un evento sintetico non lo sveglia. Serve i **due
+  siti** e prova i tre pezzi insieme (gesto del FAB, ricerca, voci nascoste), perché si reggono
+  a vicenda e il difetto tipico non è un errore ma **un risultato che manca**. Misura della
+  `15.25`: 9 controlli su 9, con un apocrifo trovato, svelato e segnato.
+  - ⚠️ **Che cosa cambia fra i due siti**: solo **come** una voce è tenuta fuori dalla
+    classifica, un flag di sito là e l'interruttore degli Apocrifi qui. Il banco la sceglie dal
+    **dataset**, non dal testo delle card, perché una stringa può comparire dentro un altro
+    campo e allora la prova proverebbe un'altra cosa.
 
 ## ✨ Feature flag dell'aspetto (la Console)
 

@@ -1,5 +1,6 @@
-// Banco del gesto 'doppio tocco e trascina' del visualizzatore di immagini di
-// 'I Grandi di Terramare'. Va lanciato prima di ogni modifica ai gesti del
+// Banco del gesto 'doppio tocco e trascina' del visualizzatore di immagini.
+// Serve i DUE siti: l'indirizzo e l'immagine si passano da variabile d'ambiente,
+// perché il gesto è lo stesso e due copie divergerebbero al primo ritocco. Va lanciato prima di ogni modifica ai gesti del
 // viewer: a occhio quel codice sembra sempre giusto, e i quattro gesti (pan,
 // pinch, doppio tocco secco, doppio tocco trascinato) si rubano gli eventi a
 // vicenda.
@@ -12,10 +13,12 @@
 // USO, dalla cartella del progetto:
 //   python3 -m http.server 8765 --bind 127.0.0.1 &
 //   NODE_PATH=/opt/node22/lib/node_modules node .memo/scripts/prova-gesto-zoom.js
-// L'indirizzo si cambia con la variabile PROVA_URL.
+// Su 'I Grandi di Arda' (che serve la sua cartella):
+//   PROVA_IMG='pwa/app-512.png' node .memo/scripts/prova-gesto-zoom.js
 const { chromium } = require('playwright');
 
 const URL = process.env.PROVA_URL || 'http://127.0.0.1:8765/index.html';
+const IMG = process.env.PROVA_IMG || 'pwa/app-512.png';
 let falliti = 0;
 function prova(nome, ok, dettaglio) {
   if (!ok) falliti++;
@@ -33,7 +36,7 @@ function prova(nome, ok, dettaglio) {
   page.on('pageerror', (e) => errori.push(String(e)));
   await page.goto(URL, { waitUntil: 'load' });
 
-  await page.evaluate(() => openImageViewer('pwa/app-512.png', 'Prova', 'Test', null));
+  await page.evaluate((img) => openImageViewer(img, 'Prova', 'Test', null), IMG);
   await page.waitForSelector('#imgv .imgv-stage img');
   await page.waitForFunction(() => {
     const i = document.querySelector('#imgv .imgv-stage img');
