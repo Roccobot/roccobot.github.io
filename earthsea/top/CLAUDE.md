@@ -32,10 +32,26 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
   esistono: li ho già valutati io singolarmente* (utente, 2026-08-24). Si chiedono **una per
   una**, e il pacchetto del 2026-08-24 è stato chiuso così.
 - **Lo Schedario è un artefatto VIVO, e il suo indirizzo sta qui**:
-  <https://claude.ai/code/artifact/33262bb9-da74-4c21-bb36-a5a55379441c>, con **100 schede**
-  incluse e importate e **3** lasciate fuori dall'utente. ⚠️ Sta in questo file e non nel
-  brief di consegna perché è un puntatore che vale **oltre** la prossima sessione: nel brief
-  sarebbe andato perduto al primo giro di pulizia.
+  <https://claude.ai/code/artifact/33262bb9-da74-4c21-bb36-a5a55379441c>, **103 schede**
+  ricavate dalla voce Wikipedia, che l'utente ha vagliato una per una. ⚠️ Sta in questo file e
+  non nel brief di consegna perché è un puntatore che vale **oltre** la prossima sessione: nel
+  brief sarebbe andato perduto al primo giro di pulizia.
+  - ⚠️⚠️ **QUANTE ne siano rimaste fuori NON si scrive: si CONTA**, e la riga che diceva '100
+    incluse e 3 lasciate fuori' è la prova del perché (`Roccobot.md`, § '🔢 I conti si contano,
+    non si scrivono'). Quel numero era vero al giro dell'importazione e si è disfatto da sé,
+    perché il Signore di Re Albi è entrato, `Elassen` è entrato con la `1.05` e `Cenerino` è
+    uscito con la `1.04`: diceva ancora 'tre' con tre nomi diversi. ⚠️ E letto a distanza si
+    legge come una **pendenza**, cioè come schede da riprendere, mentre erano scelte già fatte:
+    è successo il 2026-09-05, e l'utente ha dovuto chiedere che cosa fossero.
+  - **Come si conta**: le schede portano `data-ref` e `data-en-uso`, il dataset porta i suoi
+    nomi (compresi alternativi e veri nomi), e la differenza fra i due insiemi dice chi non è
+    arrivato. ⚠️ Lo stato che l'utente ha spuntato **non** sta nell'HTML pubblicato, dove ogni
+    scheda porta ancora `data-stato` del giorno in cui è nata: vive nel `localStorage` del suo
+    telefono, quindi contare le spunte là dentro dà 19 e non dice niente.
+  - ⚠️ **`Gray Mage` è la sola scheda senza una decisione registrata** (misura del 2026-09-05):
+    le altre due che oggi mancano hanno la loro ragione scritta, cioè `Hoeg` nel canone (è il
+    nome della specie) e `Cenerino` qui sotto. Il Mago Grigio nel dataset esiste solo **dentro**
+    la citazione di Pannocchia, non come voce.
 - ✅ Il **canone** vive in `rules/Earthsea.md` di `Roccobot/tools`: opere, edizioni coi
   traduttori, sigle bilingui, Maestri di Roke, elenchi dei portatori dei badge e **link
   alle fonti scaricabili**. È da lì che si verifica, col grep e mai a memoria.
