@@ -22,10 +22,13 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
 - **L'ordine è quello in cui le voci sono entrate**, non una classifica: le voci nuove
   si accodano, e il riordino si fa dal Pannello quando l'utente deciderà le posizioni.
   - ⚠️ **Ma l'utente sposta anche a mano, una voce alla volta** (`Cenerino` con la `1.10`,
-    poi `Skiorh`, `Burrone`, `Bordger` e `Ard` con la `1.43`), e allora la posizione è
-    **chiesta** e non si tocca. Le sue istruzioni sono nella forma *X dopo Y*: si applicano
-    **per nome**, mai per indice, perché ogni spostamento muove tutti quelli che seguono e
-    una lista di numeri sarebbe giusta solo al primo.
+    poi `Skiorh`, `Burrone`, `Bordger` e `Ard` con la `1.43`, e `Thoreg` e `Intahin` con la
+    `1.47`), e allora la posizione è **chiesta** e non si tocca. Le sue istruzioni sono nella
+    forma *X dopo Y*: si applicano **per nome**, mai per indice, perché ogni spostamento
+    muove tutti quelli che seguono e una lista di numeri sarebbe giusta solo al primo.
+    - **La `1.47` lo mostra in un caso solo**: spostato `Thoreg` all'indice 36, `Diamante` è
+      passato da 78 a **79**, quindi `Intahin` andava all'80 e non al 79. Con due indici
+      scritti in anticipo la seconda voce sarebbe finita **prima** della sua.
 - ⚠️ **Le due metà si riempiono in modi diversi** (la sezione sulle due metà del dataset,
   più sotto, dice come): la colonna italiana è **dello Schedario**,
   cioè dell'utente, coi nomi Nord dove divergono da Mondadori; la metà inglese (`nome_en`,
