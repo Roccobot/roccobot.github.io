@@ -3,7 +3,7 @@
 > **Cos'è questo file.** Le regole **trasversali** del repository
 > `Roccobot/roccobot.github.io`, che ospita **più di un progetto** (per convenzione
 > `progetto` ≠ `repo`: almeno un progetto per cartella di root, vedi
-> `rules/Roccobot.md`). Qui sta solo ciò che vale per **tutti** i progetti;
+> `rules/Roccobot.md`). Qui c'è solo ciò che vale per **tutti** i progetti;
 > ogni progetto ha il suo `CLAUDE.md` nella propria cartella. Tutto ciò che non è
 > specifico di questo repo vive nelle regole universali.
 
@@ -29,15 +29,15 @@ download, e **sovrascrive** quello che trova. Quindi non ha un `CLAUDE.md` propr
 compare nella tabella qui sopra: chi vuole cambiare quella pagina cambia il **modello**, che
 vive in AIV e non qui
 (<https://github.com/Roccobot/AIV/blob/main/publish/index.html>).
-- ⚠️ **C'è un APK solo, il più recente**, e i precedenti stanno fra le release di AIV: la
+- ⚠️ **C'è un APK solo, il più recente**, e i precedenti sono fra le release di AIV: la
   paginetta offre **un** download, e una cartella che si riempie di build vecchi la
   costringerebbe a elencarli e a ordinarli. ⚠️ **La ragione NON è il peso**, e conviene
   saperlo per non 'correggere' la scelta con un argomento sbagliato: l'APK di release
-  minificato sta in **pochi megabyte** (3.275.094 byte nella `0.68`, misurati sul file
+  minificato pesa **pochi megabyte** (3.275.094 byte nella `0.68`, misurati sul file
   servito), contro i 64 MB del build di debug da cui nasceva quel timore.
   - ⚠️ **La cifra esatta invecchia a ogni rilascio, e per questo porta la sua versione**:
     quello che regge l'argomento è l'**ordine di grandezza**, cioè pochi megabyte contro
-    sessantaquattro, e quello non cambia. Fino al 2026-08-30 qui stava il numero della
+    sessantaquattro, e quello non cambia. Fino al 2026-08-30 qui c'era il numero della
     `0.12`, **1.634.026 byte**, che nel frattempo era diventato la metà del vero: un numero
     senza versione accanto si legge come attuale per sempre.
   - ⚠️⚠️ **Il peso di un APK si misura sul file SERVITO, non sull'artefatto della run**, e la
@@ -59,7 +59,7 @@ un file di quella cartella.
   nessuno dei suoi file (una discussione in chat, un file creato da zero) non ha le sue regole
   in scena, ed è la lettura a portarle.
 - **Conseguenza prudenziale invariata**: una regola che serve **sempre** non può vivere là. Se
-  è di portata generale sta qui, se è universale sta in `rules/Roccobot.md`. Nel dubbio, questo
+  è di portata generale è qui, se è universale vive in `rules/Roccobot.md`. Nel dubbio, questo
   file.
 
 ⚠️ **Ogni progetto ha convenzioni PROPRIE, che non si mescolano**: 'I Grandi di Arda' e
@@ -100,7 +100,7 @@ sessione:
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. Il perché la regola non
-   basti scritta altrove, e le altre due vie che la coprono, stanno in § '🖼️ Artefatti'.
+   basti scritta altrove, e le altre due vie che la coprono, vivono in § '🖼️ Artefatti'.
    - ⚠️⚠️ **Quel file è anche l'unica casa possibile dei permessi MCP, e il comando qui sopra
      NON li porta**: copre `Artifact` e basta. È una lacuna, non una scelta, perché gli
      strumenti **MCP** sono uno dei due soli punti in cui si vede l'assenza delle
@@ -135,14 +135,14 @@ sessione:
        manda l'utente a sbattere.
      - ⚠️ **Le letture non chiedono niente, le scritture sì**: `list_projects`, `list_files` e
        `get_file` girano senza prompt appena il consenso c'è; una scrittura passa da
-       `finalize_plan` e da un'autorizzazione a sé. Per questo `DesignSync` **non** sta nella
+       `finalize_plan` e da un'autorizzazione a sé. Per questo `DesignSync` **non** è nella
        lista `allow` del passo 0: metterlo là pre-autorizzerebbe anche le modifiche al design
        system, che è un'altra cosa da quello che serve all'avvio.
      - **Che cosa si raggiunge e che cosa no**, misurato il 2026-09-02: i **progetti di design
        system** sì (il suo `Roccobot Design`, due suoi progetti di prova, e due condivisi del
        lavoro che **non si toccano**); i **documenti** `.dc.html` che vivono fuori da un
        progetto **no**, e quello è il buco che ha bloccato la paginetta di download di AIV.
-       Il dettaglio completo, coi contenuti di `Roccobot Design`, sta in `Roccobot.md`,
+       Il dettaglio completo, coi contenuti di `Roccobot Design`, vive in `Roccobot.md`,
        § '🎨 Grafica' → '🎨 Claude Design, dove vive il design system'.
 1. **`rules/Roccobot.md` si carica SEMPRE e subito**, senza chiedere niente: è la
    base universale e non è opzionale.
@@ -220,7 +220,7 @@ sessione:
 
 - **`rules/Roccobot.md`**: tutte le regole universali di collaborazione (lingua,
   caratteri, formato, git, test, **sviluppo software**, grafica, sicurezza). Ha in
-  testa un **indice delle sezioni**: si guarda quello per sapere dove sta una cosa e
+  testa un **indice delle sezioni**: si guarda quello per sapere dov'è una cosa e
   dove scriverne una nuova.
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
@@ -293,7 +293,7 @@ Dalla più forte alla più debole:
    questo file) per ciò che è **specifico** di un progetto. Non competono fra
    loro: vince quello che parla nel proprio dominio (vedi 'La specificità vale
    per DOMINIO' più sotto).
-3. **I canoni, `rules/JRRT.md` e `rules/Earthsea.md`**: stanno qui, sopra i file di
+3. **I canoni, `rules/JRRT.md` e `rules/Earthsea.md`**: sono qui, sopra i file di
    processo, perché sono autorità **sui fatti** (che cosa dicono le fonti), non sul modo
    di lavorare: mettere una regola di processo sopra un fatto attestato sarebbe
    rovesciato. Nel proprio dominio hanno la stessa autorevolezza di `Roccobot.md`, o più.
@@ -330,7 +330,7 @@ attestazioni; su caratteri, lingua e workflow git non dice nulla, e là vale `Ro
 ### 🔒 Regole NON derogabili a nessun livello
 
 Alcune regole non seguono la scala: valgono **sempre**, e nessun file più specifico
-può allentarle. Questo è l'indice, la formulazione completa sta dove indicato.
+può allentarle. Questo è l'indice, la formulazione completa è dove indicato.
 
 | regola | dove vive |
 |---|---|
@@ -368,26 +368,26 @@ regole' → '🪶 Come si mantiene un file di regole' (promosso il 2026-07-30): 
 che delle misure si tiene quella **scartata**. Vale per questo file come per ogni altro.
 
 - L'unica nota che resta locale: gli **elenchi di portatori dei badge** non si scrivono qui,
-  perché si ricavano da `dati.js`; il **criterio** e le **esclusioni motivate** sì, e stanno
+  perché si ricavano da `dati.js`; il **criterio** e le **esclusioni motivate** sì, e vivono
   in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🏅 Criteri editoriali dei badge'.
 
 ## 🏷️ Nomi dei progetti (terminologia condivisa)
 
 I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in chat
-**prima** che si apra un file di quel progetto: perciò il minimo indispensabile sta qui e
+**prima** che si apra un file di quel progetto: perciò il minimo indispensabile è qui e
 non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
 
 - **Il sito ha TRE nomi equivalenti** (`arda/top/`): **'Arda Top'**, **'I Grandi di Arda'** e
   **'Arda'** (istruzione dell'utente, 2026-07-30). Sono sinonimi, non un nome giusto e due
   tollerati, e l'utente li alterna: nessuno dei tre va corretto. Le sfumature d'uso (nei testi
   pubblicati resta il titolo per esteso, e 'Arda' da solo è ambiguo col mondo di cui il sito
-  parla) stanno in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § 'Come si chiama questo
+  parla) vivono in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § 'Come si chiama questo
   progetto'.
   - ⚠️ **'Grimorio' NON è un quarto sinonimo: è terminologia morta** (sopravvive solo in
     branch vecchi e commit storici): non usarla mai, né nei testi né parlando con l'utente.
 - **Le liste AdBlock sono 'Roccobot ABP'** (`ABP/`), che l'utente chiama anche 'Regole
   AdBlock' o 'Regole Adguard'. I sinonimi colloquiali delle due liste (blocco ed eccezioni)
-  stanno in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
+  vivono in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
   quale comando lo dice [`ABP/CLAUDE.md`](ABP/CLAUDE.md).
 - Gli altri tre progetti si chiamano col nome della loro cartella: **userscript**,
   **RoccobotOS** (il sito di riferimento personale, non 'la guida': vedi
@@ -425,7 +425,7 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   dice **il fatto** e non si scrive nessuna formula. ⚠️ **Il divieto è sul SENSO e non su
   quella stringa**: `Nulla da fare` è già rientrato così, e qualunque frase che suoni come una
   resa vale uguale.
-  - ⚠️⚠️ **LA QUINTA RICADUTA, 2026-09-04, DICE UNA COSA NUOVA SUL RIMEDIO, e per questo sta
+  - ⚠️⚠️ **LA QUINTA RICADUTA, 2026-09-04, DICE UNA COSA NUOVA SUL RIMEDIO, e per questo è
     qui**: la formula è tornata **in aggiunta** al fatto, non al suo posto (*Niente da fare,
     nessun controllo rosso e nessun commento in sospeso*). Il rimedio del quarto giro diceva
     'si dice il fatto e si passa oltre', cioè indicava una **preferenza**, e una preferenza
@@ -434,10 +434,10 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   - ⚠️ **Adesso c'è anche la macchina**: `refcheck.py` la blocca in apertura di frase e avvisa
     dopo i due punti, dove il senso legittimo esiste (*già al limite: niente da fare* vuol dire
     'non c'è lavoro da fare'). ⚠️ **Ma la macchina non vede la chat**, che è il posto in cui è
-    caduta tutte e cinque le volte: là resta questa riga, ed è la ragione per cui sta nel file
+    caduta tutte e cinque le volte: là resta questa riga, ed è la ragione per cui vive nel file
     che si ricarica a ogni turno.
 
-- ⚠️⚠️ **STA QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
+- ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
   file di regole entra in scena **quando lo si legge** e da un riassunto sparisce. Il
@@ -458,7 +458,7 @@ campi di `dati.js`, i testi dell'interfaccia, le note e la documentazione, i mes
 commit e i corpi delle PR, e le **risposte in chat**, dove è l'errore che ricorre più spesso.
 Al loro posto: **trattino breve** negli intervalli numerici (`1954-55`), **due punti** se
 introduce una spiegazione, **virgole o parentesi** se è un inciso, **punto fermo** se separa
-due frasi. La regola universale sta in `Roccobot.md`, sezione 'Caratteri': qui è ripetuta
+due frasi. La regola universale vive in `Roccobot.md`, sezione 'Caratteri': qui è ripetuta
 perché **questo file ha priorità più alta**.
 - ⚠️ **Le eccezioni cadute NON vanno reintrodotte**, ed erano due, entrambe vissute qui invece
   che dentro la regola universale: l'em-dash 'ammesso nei testi narrativi' di `dati.js` (fino
@@ -483,7 +483,7 @@ perché **questo file ha priorità più alta**.
 - **Le sole occorrenze legittime**, uguali per i due caratteri: questa regola, che per dire di
   non usarli deve nominarli; le **tabelle dei caratteri** di RoccobotOS, che ne documentano la
   scorciatoia di tastiera; e per necessità tecnica le **espressioni regolari** che devono
-  riconoscerli in un testo remoto. In tutti i casi il carattere sta **fra backtick** o dentro
+  riconoscerli in un testo remoto. In tutti i casi il carattere è **fra backtick** o dentro
   un blocco di codice, che è ciò che distingue il nominare dall'usare.
 
 - **Apici sempre dritti** (`'`), mai i curvi e mai le doppie; **ellissi** con tre punti
@@ -494,7 +494,7 @@ perché **questo file ha priorità più alta**.
   occorrenze di `1954-55` nelle fonti di 'I Grandi di Arda', più gli intervalli di `JRRT.md`
   e pochi usi puntuativi. Da allora il presidio automatico li tratta come l'em-dash.
 - Le convenzioni tipografiche **specifiche del dataset** (maiuscola iniziale delle righe,
-  nomi di creatura, toponimi con o senza articolo) stanno in `arda/top/CLAUDE.md`.
+  nomi di creatura, toponimi con o senza articolo) vivono in `arda/top/CLAUDE.md`.
 
 ## 🖼️ Artefatti
 
@@ -537,7 +537,7 @@ con la deroga ammessa nei casi difficili. Qui non se ne tiene una copia più cor
 poi divergerebbe.
 
 - ⚠️ I **riferimenti em concreti** dipendono dal progetto e dal corpo del testo: quelli di
-  'I Grandi di Arda' stanno in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔬 Misure
+  'I Grandi di Arda' vivono in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔬 Misure
   tipografiche'.
 
 ## 🌿 Branch, allineamento e push
@@ -574,7 +574,7 @@ poi divergerebbe.
     alcuno.
   - **Diagnosi rapida a dati.** Un run **sano** ha **3 job** (`build` →
     `report-build-status` → `deploy`) e dura **~20 secondi** in tutto: è il metro di paragone.
-    Nel degrado il guasto sta **prima del deploy**, nell'assegnazione dei job ai runner: il job
+    Nel degrado il guasto è **prima del deploy**, nell'assegnazione dei job ai runner: il job
     `build` parte e si impianta, oppure il run finisce **`startup_failure` con 0 job**. Chiedere
     i job del run: `total_count: 0` significa run fantasma, non lentezza.
   - ⚠️ **I run `queued` vecchissimi NON sono la causa.** In coda restano per sempre i residui
@@ -689,7 +689,7 @@ poi divergerebbe.
     la chiede **ogni volta**, perché per le modifiche l'approvazione scade con la sessione.
     Il percorso assoluto serve in più: la `cwd` non è la radice del repo. Costo di averlo
     ignorato: 8 autorizzazioni chieste all'utente in una sola sessione.
-  - ⚠️ **Perché gli script stanno QUI e non in `Roccobot/tools`** (domanda dell'utente,
+  - ⚠️ **Perché gli script vivono QUI e non in `Roccobot/tools`** (domanda dell'utente,
     2026-07-30). Perché l'hook che li lancia deve trovarli **sempre**, e il repo sempre
     presente è questo, dove vive l'hub delle regole: `tools` in molte sessioni non è
     agganciato. Spostarli non eliminerebbe il degrado, lo **sposterebbe** sulle sessioni che
@@ -702,7 +702,7 @@ poi divergerebbe.
       minimo che si può fare senza duplicare lo script, che divergerebbe.
   - ⚠️⚠️ **MA NON GIRANO AFFATTO quando la sessione monta i DUE repo affiancati**, e allora un
     commit sbagliato passa liscio (misurato il 2026-07-30 da una sessione vergine, che è la sola
-    in cui la prova valga). La causa non sta negli hook: là la **radice di progetto** è la cartella
+    in cui la prova valga). La causa non è negli hook: là la **radice di progetto** è la cartella
     che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
     è aperto e nessun hook è registrato.
     - ⚠️⚠️ **Che il file non sia letto è provato anche dal TESTO di un prompt**, che è la prova

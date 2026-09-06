@@ -2,7 +2,7 @@
 
 > **Cos'è questo file.** Le regole del progetto **CleanSVG**, la paginetta che ripulisce un
 > file SVG dai metadati e dai residui delle applicazioni di disegno. Si carica quando si legge
-> un file di questa cartella; le regole trasversali stanno nel `CLAUDE.md` di **root**, quelle
+> un file di questa cartella; le regole trasversali vivono nel `CLAUDE.md` di **root**, quelle
 > universali in `rules/Roccobot.md` di `Roccobot/tools`.
 
 ## 🧭 Che cos'è
@@ -77,7 +77,7 @@ pulizia vera la fa **SVGO**, importato a runtime da `@latest`.
   risorse esterne. Un file appena arrivato da fuori non si mette mai nel DOM della pagina che
   lo sta esaminando.
 - ⚠️⚠️ **Lo sfondo si MISURA, non si sceglie a occhio**: si rasterizza il file, si pesa la
-  luminanza (Rec. 709) dei soli pixel non trasparenti e si prende il fondo che gli sta più
+  luminanza (Rec. 709) dei soli pixel non trasparenti e si prende il fondo che gli è più
   lontano. Il caso che questo calcolo esiste per evitare è il **logo bianco su fondo bianco**.
   - ⚠️ **La variabile dice se il FONDO va chiaro, non se lo è il contenuto**, e i due sono
     l'opposto l'uno dell'altro. Scritta al rovescio, la pagina metteva il bianco sul bianco:
@@ -110,7 +110,7 @@ in coda.
   finiscono nel riquadro d'errore. Quel riquadro appartiene al **file scelto** e si svuota
   appena se ne mostra uno buono: metterci dentro l'avviso lo faceva sparire dopo un istante.
   Difetto vero, trovato dal banco alla prima passata. **Due messaggi con vite diverse non
-  possono stare nella stessa scatola.**
+  possono vivere nella stessa scatola.**
 - Il rapporto e l'anteprima appartengono alla **riga scelta**: le misure si calcolano una volta
   e si conservano nella voce, invece di scriverle direttamente a schermo come faceva la
   versione a file singolo.
@@ -127,18 +127,18 @@ azioni in alto, anteprima e informazioni sotto.
   spaiate a destra di un buco: con un file solo l'elenco non compare, e quella metà sarebbe
   vuota. ⚠️ **Ma i due tasti vanno in RIGA, non in colonna** (scelta dell'utente, `1.50`): un
   tasto pieno largo quanto la pagina è troppo. Le colonne sono le **stesse** di `#lavoro`, col
-  medesimo `gap`, così ognuno finisce largo quanto la carta che gli sta sotto, e l'ordine si
+  medesimo `gap`, così ognuno finisce largo quanto la carta che gli è sotto, e l'ordine si
   rovescia con `order` perché **con** la coda il tasto pieno deve restare sopra.
 - ⚠️⚠️ **Le due carte di sotto sono ALTE UGUALI**, e per ottenerlo si smentisce
   l'`align-items: start` della griglia **su loro due sole**: le altre due devono continuare a
-  stare alte quanto il loro contenuto.
+  essere alte quanto il loro contenuto.
   - ⚠️ **Quale delle due si allunghi DIPENDE DAL FILE**, e non si dia per scontato: con un
     file solo si allunga l'**anteprima**, perché il pannello di destra ha molte righe; con la
     coda piena può capitare il contrario. Per questo l'aggancio in fondo serve a **tutte e
     due**, la riga del motore e il riquadro del verdetto: senza, uno dei due resta a
     mezz'aria sopra un buco.
   - ⚠️ **Il distacco minimo non può venire dall'elemento agganciato**, perché `margin-top:
-    auto` mangia qualunque valore gli si metta: lo dànno gli elementi che gli stanno sopra
+    auto` mangia qualunque valore gli si metta: lo dànno gli elementi che gli sono sopra
     (`#dettagli` di sotto, il telaio e la nota delle tavole nell'anteprima).
 - ⚠️⚠️ **Il tastone CRESCE fino a riempire la riga, e per farlo gli serve
   `align-self: stretch`**: la griglia allinea tutto a `start`, perché le carte non devono
@@ -202,7 +202,7 @@ che cosa è stato tolto. **File di origine**, sotto di lui nella stessa colonna,
 - ⚠️ **Con più di un file in coda ripete il NOME di quello scelto**, sotto al titolo: due
   pannelli che descrivono un file diverso da quello che si sta guardando sarebbero peggio che
   nessun pannello, e il nome è l'unica cosa che lo àncora alla riga selezionata.
-- **La versione di SVGO sta in fondo a quel box**, dopo un filo di separatore e allineata
+- **La versione di SVGO è in fondo a quel box**, dopo un filo di separatore e allineata
   all'elenco sopra di lei (scelta dell'utente, 1.30). Prima viveva in testata, dov'era la
   prima cosa che si leggeva pur essendo l'ultima che interessa.
 - ⚠️⚠️ **Una voce che non ha niente da dire NON compare**, e non è pigrizia: l'utente ha chiesto
@@ -220,7 +220,7 @@ che cosa è stato tolto. **File di origine**, sotto di lui nella stessa colonna,
 ## 🗂️ I file multi-tavola
 
 Dal 2026-08-26 l'anteprima ne mostra **una per volta**, con un selettore. Prima si vedeva sempre
-l'ultima, perché le tavole stanno spesso sovrapposte nello stesso punto.
+l'ultima, perché le tavole sono spesso sovrapposte nello stesso punto.
 
 - ⚠️⚠️ **Il caso affidabile è UNO SOLO**: `<svg>` annidati dentro la radice, che è come
   Illustrator e Figma esportano più tavole in un file. Tutto il resto è congettura, e il ripiego
@@ -243,11 +243,11 @@ Dopo la pulizia la pagina rasterizza **originale e pulito** alla stessa dimensio
 confronta pixel per pixel, dichiarando l'esito. ⚠️ Non è un vezzo: lo strumento promette che
 il disegno non cambia, e **una promessa che nessuno verifica prima o poi mente**.
 
-- ⚠️ **Il verdetto sta SOTTO l'anteprima dalla `1.40`** (scelta dell'utente): è il giudizio
+- ⚠️ **Il verdetto è SOTTO l'anteprima dalla `1.40`** (scelta dell'utente): è il giudizio
   su quello che si sta guardando, e le due cose vanno viste in un colpo d'occhio solo. Prima
-  stava in cima alla colonna delle azioni, cioè lontano dall'immagine di cui parla. Il suo
+  era in cima alla colonna delle azioni, cioè lontano dall'immagine di cui parla. Il suo
   testo è **centrato** nel riquadro dalla `1.50`, sempre per scelta dell'utente.
-- ⚠️ **La misura della luminanza sta SOPRA**, sulla riga del titolo dell'anteprima (stessa
+- ⚠️ **La misura della luminanza è SOPRA**, sulla riga del titolo dell'anteprima (stessa
   scelta): là dice che cosa si sta per guardare, mentre sotto arrivava a cose viste. Lo
   stacco dal titolo è largo per richiesta esplicita, e a schermo stretto la misura va a capo
   da sé invece di stringersi.
@@ -294,7 +294,7 @@ vero, e due giri, **con** e **senza** SVGO.
   - ⚠️ **Si cancella solo quando sparisce la COSA**, non quando cambia: col footer è sparito
     anche il banco che ne misurava l'allineamento, perché non restava niente da allineare.
     Tenerlo sarebbe stato peggio di non averlo, perché avrebbe misurato un elemento assente.
-- **Una posizione si prova coi RIQUADRI, non con l'ordine nel DOM**: che il verdetto stia
+- **Una posizione si prova coi RIQUADRI, non con l'ordine nel DOM**: che il verdetto sia
   sotto l'anteprima e la luminanza sopra si stabilisce confrontando le `y`, che è quello che
   l'occhio vede; l'ordine dei nodi lo direbbe anche di un elemento spostato dal CSS.
 - ⚠️ **`document.createElement("li")` si scrive con le virgolette DOPPIE**, e non è un capriccio

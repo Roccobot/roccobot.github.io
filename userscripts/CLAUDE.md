@@ -2,7 +2,7 @@
 
 > **Cos'è questo file.** Le regole degli **userscript** Tampermonkey ospitati su
 > GitHub Pages. Si carica quando si legge un file di qui; le regole trasversali
-> stanno nel `CLAUDE.md` di **root**.
+> vivono nel `CLAUDE.md` di **root**.
 
 ## 🧩 Userscript (`/userscripts`)
 
@@ -33,7 +33,7 @@
     restano in italiano finché non si riscrive quella parte.
   - **Descrizione: massimo ~300 parole, limite morbido** (regola universale
     dell'utente, 2026-07-29). Dopo la potatura la più lunga è quella di DIV, **132** parole,
-    le altre stanno fra 47 e 140, quindi nessuna sfora. ⚠️ Il dettaglio tecnico va
+    le altre sono fra 47 e 140, quindi nessuna sfora. ⚠️ Il dettaglio tecnico va
     nel `README.md` di `userscripts/`, non nel metadato: la vecchia descrizione di DIV
     era di **743 parole** e ripeteva la storia versione per versione ('dalla 2.10',
     'dalla 2.12'...), cioè un changelog travestito da descrizione, mentre il README
@@ -78,7 +78,7 @@ dedotta dal browser (richiesta esplicita dell'utente, 2026-08-17: 'puoi aggiunge
 variabile lingua'). È una **deroga dichiarata** alla regola 'anche la UI è in inglese' scritta
 qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha un'eccezione.
 
-- **Le stringhe stanno tutte in una tabella sola** (`TEXTS`, in testa allo script), inglese e
+- **Le stringhe sono tutte in una tabella sola** (`TEXTS`, in testa allo script), inglese e
   italiano affiancati riga per riga. ⚠️ Il motivo della forma affiancata è che una traduzione
   mancante si vede **leggendo la tabella**, non aprendo la pagina: sparse nel codice, le due
   lingue divergerebbero in silenzio.
@@ -98,14 +98,14 @@ qui sopra, che **resta in vigore per gli altri sei script**: non è caduta, ha u
   frammentario senza punto pure. Il criterio è il
   ruolo perché si **verifica a macchina** (una passata sulla tabella, chiave per chiave); con
   'è una frase compiuta?' si va a sentimento, ed erano rimasti senza punto **tre tooltip su
-  cinque** in tutte e due le lingue. La regola sta scritta accanto alla tabella `TEXTS`, che è
+  cinque** in tutte e due le lingue. La regola è scritta accanto alla tabella `TEXTS`, che è
   dove serve leggerla.
-- ⚠️⚠️ **UNA sola stringa sta fuori dalla tabella: la voce di menu del gestore**, in inglese
+- ⚠️⚠️ **UNA sola stringa è fuori dalla tabella: la voce di menu del gestore**, in inglese
   fisso (`MENU_ENTRY`), per scelta dell'utente (2026-08-17: *anche gli userscript multilingua
   usano sempre l'inglese per le impostazioni, preferisco la coerenza*). ⚠️ Non era un difetto
   da correggere: quella voce **era** già localizzata e seguiva la lingua del browser, misurato
   su cinque combinazioni di lingua. È una scelta di convenzione, e ha una logica sua: quel menu
-  appartiene al **gestore**, non allo script, e sta in mezzo alle voci delle altre estensioni.
+  appartiene al **gestore**, non allo script, ed è in mezzo alle voci delle altre estensioni.
   - ⚠️ **Il pannello che apre resta bilingue**, titolo della scheda compreso, perché quello è
     interfaccia dello script. La chiave che serviva al menu è stata **rinominata** `oOptions`
     invece di lasciarla chiamare `menuOpzioni`: ha cambiato mestiere, e un nome che mente su
@@ -204,7 +204,7 @@ pagina `options.html` di 'Image Max URL'.
   stesso, che quella pagina la matcha già (`@match https://*/*`) e vi inietta il pannello.
   Chi apre l'indirizzo senza lo script vede l'avviso del guscio, ed è il comportamento giusto.
 - ⚠️ **La voce di menu si registra PRIMA della guardia sul content-type.** Il menu del gestore
-  appartiene alla scheda in cui si sta: registrandolo dopo la guardia comparirebbe solo mentre
+  appartiene alla scheda in cui si è: registrandolo dopo la guardia comparirebbe solo mentre
   si guarda un'immagine, cioè quasi mai quando serve.
 - ⚠️ **Il pannello aspetta il DOM**, come l'avvio del visualizzatore. `@run-at document-idle`
   vale per Tampermonkey, ma altri gestori possono partire prima: misurato in laboratorio,
@@ -267,7 +267,7 @@ pagina `options.html` di 'Image Max URL'.
 ## ⚠️ Qwant: la barra 'Usa l'app' vive in DUE posti, ed è voluto
 
 Il selettore che nasconde lo smart banner di Qwant (`div:has(> div > a[href*="utm_medium=smartbanner"])`)
-sta **sia** in `QwantRoccobot.user.js` (dentro `NASCONDI_PROMO`) **sia** come regola cosmetica
+è **sia** in `QwantRoccobot.user.js` (dentro `NASCONDI_PROMO`) **sia** come regola cosmetica
 in `ABP/RoccobotFilters.txt`. È una duplicazione **dichiarata**, non una dimenticanza:
 
 - lo **userscript** copre chi ha un gestore di userscript (desktop, e su Android l'app AdGuard,
@@ -277,7 +277,7 @@ in `ABP/RoccobotFilters.txt`. È una duplicazione **dichiarata**, non una diment
 ⚠️ Chi tocca uno dei due **aggiorni anche l'altro**, o divergeranno in silenzio: qui la fonte
 unica non è possibile, perché i due meccanismi non si leggono a vicenda. Il criterio con cui
 è stato scelto il selettore (l'URL invece delle classi, che in Qwant sono hashate; e il
-livello del contenitore misurato risalendo il DOM) sta in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md),
+livello del contenitore misurato risalendo il DOM) vive in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md),
 per non scriverlo due volte.
 
 ## 📥 ENF Roccobot: il picker, e il sito che è stato tolto
@@ -318,7 +318,7 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
     tornato. Era codice che nessun sito coperto poteva più attivare, e in più faceva girare lo
     script dentro **ogni** iframe delle pagine coperte, comprese le pubblicità. La sua idea
     (nel frame nessuna interfaccia, solo un annuncio al livello sopra, ripetuto perché il
-    manifest arriva in ritardo) sta in questa nota e nella storia git, se un domani servisse.
+    manifest arriva in ritardo) vive in questa nota e nella storia git, se un domani servisse.
   - ⚠️ **Rimosso anche lo stato 'not available' del tasto**, che diceva a chi guarda perché non
     c'era niente da prendere: senza frame da ascoltare non poteva più scattare. Era la risposta
     giusta alla domanda giusta ('il tasto non compare, è rotto?'), ma la risposta migliore è
@@ -365,7 +365,7 @@ nome del file. Copre `enf-cmnf.cc`, `enfhub.com` e `xhamster.com`.
       dominio funzionerebbe, ma sopravvivrebbe alla scheda, e il giorno dopo il tentativo va
       rifatto.
     - **Provato e scartato**: il parametro `language=en` che compare nella pagina **non** è un
-      interruttore del sito (sta dentro l'URL di un banner pubblicitario), e il server non mette
+      interruttore del sito (è dentro l'URL di un banner pubblicitario), e il server non mette
       **nessun** cookie di lingua, verificato sulle intestazioni con `Accept-Language` sia
       italiano sia inglese. La lingua **è** il sottodominio: non c'è modo di fissarla senza
       cambiare indirizzo, quindi la guardia non è un ripiego, è l'unica difesa possibile.
@@ -415,7 +415,7 @@ compare e la pagina non offre niente: si salvava a mano, una per una.
   titolo accentato esce storto su Windows, che è il difetto che nessuno vede provando.
 - ⚠️ **Niente picker per le foto, ed è una decisione**: un post di foto è **una** galleria
   raccontata in ordine, quindi 'tutte' è la risposta in ogni caso da cui la richiesta è nata.
-  Il **conteggio sta sull'etichetta** prima del clic (`🖼 10 images (ZIP)`), che è il modo di
+  Il **conteggio è sull'etichetta** prima del clic (`🖼 10 images (ZIP)`), che è il modo di
   non far trovare sorprese senza chiedere niente.
 - ⚠️ I file dentro l'archivio sono **numerati** (`01 - IMG_3266.jpg`): senza il numero una
   cartella ordinata per nome rimescola le foto secondo il nome con cui l'autore le ha
@@ -424,7 +424,7 @@ compare e la pagina non offre niente: si salvava a mano, una per una.
   schermo è la miniatura di qualcos'altro, e il tasto prometterebbe una galleria inesistente.
   **Che cosa farebbe cambiare la risposta**: un post di foto su uno dei due, con le immagini
   nel corpo della pagina.
-- ⚠️ **I due tasti stanno in una colonna flex, non a coordinate fisse**: con due `position:
+- ⚠️ **I due tasti sono in una colonna flex, non a coordinate fisse**: con due `position:
   fixed` il tasto delle immagini resterebbe sospeso a mezz'aria ogni volta che quello dei
   video è nascosto, cioè sempre, su un post di foto. Il picker dei video si ancora
   **misurando** l'altezza della colonna, invece del vecchio `64px`, che con due tasti gli

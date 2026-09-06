@@ -33,14 +33,14 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
   Ⓘ La vecchia regola '`nome_en` ripete l'italiano' è decaduta con l'importazione: valeva
   per lo scheletro, quando le rese inglesi non erano in scena.
 - ⚠️ **Le divergenze trovate dalla verifica NON si correggono d'ufficio**: dove lo Schedario
-  e le fonti dicono cose diverse resta il dato dell'utente, e la divergenza sta nel brief
+  e le fonti dicono cose diverse resta il dato dell'utente, e la divergenza è nel brief
   finché lui non decide. ⚠️⚠️ **E non si risolvono cercando una regola generale**, che è
   l'errore naturale di chi ne trova dieci insieme: *non ti fornisco regole perché non
   esistono: li ho già valutati io singolarmente* (utente, 2026-08-24). Si chiedono **una per
   una**, e il pacchetto del 2026-08-24 è stato chiuso così.
-- **Lo Schedario è un artefatto VIVO, e il suo indirizzo sta qui**:
+- **Lo Schedario è un artefatto VIVO, e il suo indirizzo è qui**:
   <https://claude.ai/code/artifact/33262bb9-da74-4c21-bb36-a5a55379441c>, **103 schede**
-  ricavate dalla voce Wikipedia, che l'utente ha vagliato una per una. ⚠️ Sta in questo file e
+  ricavate dalla voce Wikipedia, che l'utente ha vagliato una per una. ⚠️ È in questo file e
   non nel brief di consegna perché è un puntatore che vale **oltre** la prossima sessione: nel
   brief sarebbe andato perduto al primo giro di pulizia.
   - ⚠️⚠️ **QUANTE ne siano rimaste fuori NON si scrive: si CONTA**, e la riga che diceva '100
@@ -52,7 +52,7 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
     è successo il 2026-09-05, e l'utente ha dovuto chiedere che cosa fossero.
   - **Come si conta**: le schede portano `data-ref` e `data-en-uso`, il dataset porta i suoi
     nomi (compresi alternativi e veri nomi), e la differenza fra i due insiemi dice chi non è
-    arrivato. ⚠️ Lo stato che l'utente ha spuntato **non** sta nell'HTML pubblicato, dove ogni
+    arrivato. ⚠️ Lo stato che l'utente ha spuntato **non** è nell'HTML pubblicato, dove ogni
     scheda porta ancora `data-stato` del giorno in cui è nata: vive nel `localStorage` del suo
     telefono, quindi contare le spunte là dentro dà 19 e non dice niente.
   - ⚠️⚠️ **`Gray` e `Grey` NON COMBACIANO, e la trappola ha già prodotto un rilievo falso**
@@ -84,7 +84,7 @@ dove restano, sono superate dalla voce sugli animali in fondo a questa sezione.
   categorie, perché nel tema chiaro, scurito fin dove serve per fare da **testo** (il vero
   nome prende la tinta), diventava un marrone che l'utente non voleva.
   - ⚠️⚠️ **TRE tinte, DUE categorie**: il filtro resta a due voci. La tinta degli umani segue
-    il **genere**, e la deduzione sta in **`familyOf`**, non nel dato: `cardcolor` vale `man`
+    il **genere**, e la deduzione è in **`familyOf`**, non nel dato: `cardcolor` vale `man`
     per ogni umano e diventa `woman` se `genere` è `f`. Così il colore non è un campo da
     tenere allineato al genere a mano, voce per voce.
   - ✅ **Tehanu**: Donna **e** Drago, ma la sua tinta è quella dei **draghi**, quindi
@@ -92,7 +92,7 @@ dove restano, sono superate dalla voce sugli animali in fondo a questa sezione.
     - ✅ **QUARTA tinta, e riguarda una sola etichetta**: dalla `0.18` la sua etichetta
       `Donna` è **viola** (`#C9A6E8` scuro, contrasto 8,50; `#6B3FA0` chiaro, 7,11), su
       istruzione dell'utente, che l'ha chiamata *un'eccezione senza pari*. Il viola non
-      appartiene a nessuna famiglia, e questo è il punto: dice a occhio che la voce non sta
+      appartiene a nessuna famiglia, e questo è il punto: dice a occhio che la voce non è
       per intero in nessuna delle due categorie. La `Drago` resta terracotta come la card.
     - ⚠️ **Si applica col campo `tipo_color`, per SEGMENTO, non per nome della voce**:
       `"tipo_color":"type-donnadrago|"` (il secondo segmento vuoto lascia il colore automatico
@@ -145,7 +145,7 @@ dove restano, sono superate dalla voce sugli animali in fondo a questa sezione.
     stessa pagina si contraddiceva, e nessuno dei due numeri era sbagliato per conto suo: era
     la scelta fra plurale e singolare a non essere stata fatta.
   - ⚠️ **La somma delle righe può superare il totale dei personaggi**, ed è inevitabile appena
-    una voce sta in due categorie. Non si nasconde: la riga di sintesi lo **dichiara** e conta
+    una voce è in due categorie. Non si nasconde: la riga di sintesi lo **dichiara** e conta
     da sé quante voci doppie ci sono (`1 ibrido conta in due`), invece di lasciare un totale
     che non torna. È lo stesso patto della tab 'Tipi', che parla di etichette e non di persone.
 - Le **origini geografiche** (isola o arcipelago) saranno **etichette per voce**, non
@@ -185,7 +185,7 @@ bestia vera.
   - ⚠️ **Gli animali NON sdoppiano la tinta per genere**, al contrario degli umani: fra loro
     il genere manca spesso (Vaiavanti e Tiro non l'hanno attestato), e una tinta per sesso
     dividerebbe la famiglia su un dato che il più delle volte non c'è.
-  - ⚠️ Il giallo è anche la tinta delle icone `Sorcerer` e `Mage`, che stanno **sulla stessa
+  - ⚠️ Il giallo è anche la tinta delle icone `Sorcerer` e `Mage`, che sono **sulla stessa
     riga**: è la collisione per cui l'oro fu scartato dalle categorie nella `0.16`. Qui è
     accettata, perché quelle sono **icone** e questa è la tinta di fondo, striscia ed
     etichetta, e perché il giallo lo ha chiesto l'utente.
@@ -197,13 +197,13 @@ bestia vera.
 - ✅ **Il tasto 'solo' NON torna, e l'ha deciso l'utente** (*no, niente tasto 'Solo'*). La
   motivazione con cui era stato tolto è **decaduta** (con due categorie spegnere l'una era
   l'unico modo di isolare l'altra; con tre servono due spegnimenti), quindi la domanda era
-  legittima ed è stata posta: la risposta è no. Il caso sta anche in § 'Il Pannello COMPATTO',
+  legittima ed è stata posta: la risposta è no. Il caso è anche in § 'Il Pannello COMPATTO',
   dove la decisione originale prevedeva proprio questo bivio.
 
 ### 🔍 I dodici animali: che cosa è attestato, e i sei punti dove il testo dice altro
 
 Le dodici voci sono entrate nella `0.47` **verificate col grep sugli epub**, una per una. Qui
-sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato giusto.
+c'è solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato giusto.
 
 | voce | attestazione |
 |---|---|
@@ -222,7 +222,7 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
 - ⚠️ **`Il Re` è un GALLO, e la conferma arriva dal capitolo dopo**: nell'elenco del pollaio
   potrebbe essere chiunque, ma più avanti Ogion trova il pollaio senza *nessuna traccia del
   gallo, il re*. ⚠️ L'edizione italiana lo scrive **minuscolo** (`il re`), l'inglese
-  maiuscolo (`the King`): nel dataset sta `Il Re` / `The King`, cioè la forma inglese e
+  maiuscolo (`the King`): nel dataset c'è `Il Re` / `The King`, cioè la forma inglese e
   l'italiana **capitalizzata come nome di scheda**, ✅ scelta confermata dall'utente
   (*in italiano va bene con l'iniziale in maiuscolo*).
 - ⚠️⚠️ **`Biddy` non ha nessuna resa italiana**: Mondadori ha **tolto il nome**, e la frase
@@ -235,7 +235,7 @@ sta solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato gius
   quanto il grep sia più affidabile del ricordo, in **entrambe** le direzioni.
 - ✅ **`Vaiavanti` è MASCHIO dalla `0.48`**: la fonte inglese dice *She called **him**
   Gobefore*, l'utente l'aveva dichiarato senza genere e ha corretto appena visto il passo. ⚠️ La
-  prova sta **solo** nell'inglese: l'italiano (*lo chiamava Vaiavanti*) **non prova nulla**,
+  prova è **solo** nell'inglese: l'italiano (*lo chiamava Vaiavanti*) **non prova nulla**,
   perché `cane` è maschile per grammatica, mentre `him` è una scelta dell'autrice.
 - ✅ **`Tiro` resta SENZA GENERE**, confermato dall'utente, e il caso è quello in cui il dubbio
   è **nel testo**: Tehanu dice *credo che sia un maschio* e da lì la narrazione usa `he`.
@@ -255,13 +255,13 @@ voce nuova: *a volte è difficile assumere il genere di un personaggio; ma le co
 genere di Terramare vengono in aiuto*.
 
 - **La convenzione**: chiunque una fonte definisca `wizard`, `mage` o `sorcerer` è
-  **maschio**, e tanto basta a riempire il campo. L'attestazione e il perché stanno in
+  **maschio**, e tanto basta a riempire il campo. L'attestazione e il perché vivono in
   `rules/Earthsea.md`, § 'Il vocabolario del potere ha un GENERE: wizard e mage sono uomini'.
   - ⚠️⚠️ **La regola si enuncia sulle parole INGLESI, e in italiano si rompe** (precisazione
     dell'utente, 2026-08-24): l'italiano rende **sia `wizard` sia `mage`** con `mago`, quindi
     quella parola non distingue i due gradi, e l'unica distinzione di **potere** che
     l'italiano conserva è `mago` contro `stregone`, `strega` e `incantatore` (resa Nord).
-    La tabella delle quattro parole sta nel canone.
+    La tabella delle quattro parole è nel canone.
   - **Retroattivo su due voci già nel dataset**, e le conferma: `Sula` è *lo stregone Sula*, il
     `Mago Nero` è un mago. Entrambe erano maschili per deduzione, e adesso la deduzione ha una
     regola invece di essere caso per caso.
@@ -297,7 +297,7 @@ comune, qui manca il vero nome.
   tale: a Terramare **ogni cosa ha un vero nome**, quindi il campo vuoto significa sempre e
   soltanto *non lo sappiamo*. Distinguere fra 'il testo dice che esiste' (come qui: quel nome
   *fu appreso* da Nereger) e 'il testo non ne parla' è un **cavillo**, ed è l'utente a
-  chiuderlo. L'attestazione, che nel libro serve a contraddire un Arcimago, sta in
+  chiuderlo. L'attestazione, che nel libro serve a contraddire un Arcimago, è in
   `rules/Earthsea.md`, § 'Tutte le cose hanno un vero nome: il campo vuoto dice solo che NOI
   non lo sappiamo'.
 - ⚠️ **Il maschile è la grammatica dell'epiteto, non un'attestazione**: `Mago Nero` è
@@ -333,7 +333,7 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
 - ⚠️ **La forma con le MAIUSCOLE viene dalle fonti**: `Re di Tutte le Isole` compare così 4
   volte (e `King of All the Isles` altrettante), mentre l'utente l'aveva scritto in minuscolo.
   Il secondo titolo in italiano nel testo è minuscolo (`re di Terramare`, 9 occorrenze), e nel
-  dataset sta capitalizzato perché là è l'etichetta di una scheda, non prosa.
+  dataset è capitalizzato perché là è l'etichetta di una scheda, non prosa.
 
 ### 🐉 Keor, Sula e i tre draghi nuovi
 
@@ -383,12 +383,12 @@ l'altra metà, mandandola nel Tesoro delle Tombe.
   con un caso di genere nuovo: fin qui Mondadori lasciava il nome **inglese** dove Nord ne ha
   uno italiano (`Sparviere`, `Vetch`, `Hare`), qui i due traducono lo stesso nome kargade con
   due grafie. Misurato: nei **libri 1-3** di Nord `Intahin` **6** e `Intathin` **0**, in
-  Mondadori l'esatto rovescio (`Intathin` 6), e l'inglese sta con Mondadori.
-  - **Quindi `Intathin` sta fra i nomi alternativi ITALIANI e non fra quelli inglesi**, dove
+  Mondadori l'esatto rovescio (`Intathin` 6), e l'inglese concorda con Mondadori.
+  - **Quindi `Intathin` è fra i nomi alternativi ITALIANI e non fra quelli inglesi**, dove
     sarebbe il doppione di `nome_en`: è il caso di `Lepre`/`Hare`
     (§ 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi').
   - ⚠️ **Le 4 occorrenze di `Intathin` che il volume Nord porta NON contraddicono la regola**:
-    stanno tutte oltre metà file, nell'appendice *Una descrizione di Terramare*, cioè fuori
+    sono tutte oltre metà file, nell'appendice *Una descrizione di Terramare*, cioè fuori
     dai libri 1-3, dove la traduzione è condivisa con Mondadori e non c'è nulla da scegliere.
     Chi conta le occorrenze sul volume intero trova le due grafie e conclude il contrario.
 - ⚠️⚠️ **Le due citazioni vengono dallo STESSO dialogo, e ad attribuirle è l'inglese**: in
@@ -403,7 +403,7 @@ l'altra metà, mandandola nel Tesoro delle Tombe.
   vale oltre il caso: quello `stregone` è la resa **Mondadori** dove Nord scrive
   `incantatore`, cioè una divergenza di **vocabolario** che la tabella del sito non copre
   (là ci sono solo `mago`/`magio`); e la frase apre con un riferimento sospeso.
-- **Tutti e due hanno origine `Karego-At`**, ed è l'isola dove stanno le due città della
+- **Tutti e due hanno origine `Karego-At`**, ed è l'isola dove sono le due città della
   vicenda: Hupun, capitale dei re, e Awabath, la Città santa dei sacerdoti, a cinquanta
   miglia da lei. L'attestazione è nell'appendice: *l'ambizione dei re di **Hupun a
   Karego-At***. ⚠️ La prima stesura dava `Hupun` a Thoreg e lasciava vuoto Intahin: sbagliate
@@ -423,7 +423,7 @@ I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged*
 - ✅ **Sono immagini a colori fornite dall'utente** (`icons/Sorcerer.webp`,
   `icons/Mage.webp`, `icons/GedName.webp`), dalla `0.14`, al posto dei tre SVG segnaposto in
   `currentColor`.
-  - ⚠️ **Sono `img`, quindi NON seguono il colore del testo**: il colore sta nel file, e un
+  - ⚠️ **Sono `img`, quindi NON seguono il colore del testo**: il colore è nel file, e un
     cambio di tema non lo tocca. È la stessa via dei simboli di genere, `img` da sempre.
   - ⚠️⚠️ **I nomi dei file sono in INGLESE, ed è la regola generale del progetto**
     (istruzione dell'utente, 2026-08-23): `Sorcerer`, `Mage`, `GedName`, `Female`, `Male`.
@@ -474,7 +474,7 @@ I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged*
   *forse non funziona l'anteprima*. L'anteprima diceva davvero 'Nessuna scheda con questo
   badge', perché cercava campioni con `p.aratar`.
 - ⚠️ **I due simboli di GENERE funzionavano**, perché `male` e `female` esistono in entrambi i
-  mondi: era la spia che il difetto stava nell'**elenco** e non nel meccanismo.
+  mondi: era la spia che il difetto era nell'**elenco** e non nel meccanismo.
 - ⚠️ **Secondo difetto, dietro il primo**: l'unità di partenza dell'editor era scritta a mano
   (`'helcaraxe'`), quindi la modale moriva con un `TypeError` prima di comparire. Ora si legge
   da `BADGE_ADJUST_UNITS[0].id`, che non può invecchiare.
@@ -630,7 +630,7 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
 
 ✅ **Sono nel sito dalla `0.42`** (2026-08-23), e sono `signoredraghi`, `maestro`, `arcimago`.
 Le proposte scartate e la storia dei disegni restano in `.memo/proposte/badge-terramare/`
-(cartella non pubblicata da Pages, col suo `COME-SONO-FATTE.md`); qui sta ciò che vale oltre
+(cartella non pubblicata da Pages, col suo `COME-SONO-FATTE.md`); qui c'è ciò che vale oltre
 il disegno.
 
 - **Icone**: `Dragonlord.webp`, `MasterOfRoke.webp`, `ArchmageOfRoke.webp`, WebP **lossless**
@@ -640,7 +640,7 @@ il disegno.
   l'Arcimago), e non è una scelta estetica: le due forme differiscono per un punto che si
   sposta dal cerchio al centro, e a 17px il colore è l'unico canale che le distingue davvero.
   Richiesta esplicita dell'utente, dopo aver visto la coppia monocroma.
-- **In legenda stanno su UNA riga** (id di riga `roke`, che filtra l'unione dei due), col
+- **In legenda sono su UNA riga** (id di riga `roke`, che filtra l'unione dei due), col
   meccanismo `.leg-lbl-col` + `.leg-group` delle coppie di Arda. ⚠️ **Ma coi testi BREVI**:
   la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
   spiegazione fra parentesi la sfonda e la seconda metà le finisce **sopra**, illeggibile.
@@ -699,7 +699,7 @@ probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
   dell'utente). Quindi **Tehanu e Orm Irian ne restano fuori**, e con loro Kalessin e Orm
   Embar: il badge marca chi **parla** coi draghi, non chi è drago. È l'esclusione che un
   audit sbaglierebbe da sé, perché sono le voci più vicine al tema.
-- **Le attestazioni stanno nel canone**, non qui: `rules/Earthsea.md` § 'Signore dei Draghi',
+- **Le attestazioni vivono nel canone**, non qui: `rules/Earthsea.md` § 'Signore dei Draghi',
   col grado di prova voce per voce. ⚠️ Da sapere prima di fidarsi dell'elenco: per **Morred**
   nessun passo usa l'etichetta, e quel che c'è è la definizione del titolo applicata a lui
   («Morred ed Erreth-Akbe parlavano con i draghi»). L'elenco dell'utente regge, ma su una
@@ -720,7 +720,7 @@ le corna chiare appoggiate sulle spalle; `H` per la coppia, i due anelli col pun
 ## 🪶 I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua
 
 Istruzione dell'utente, 2026-08-21: a Terramare **il vero nome è la cosa più importante di
-ogni individuo**, quindi non sta fra gli alias. La card ha quattro livelli, in quest'ordine:
+ogni individuo**, quindi non è fra gli alias. La card ha quattro livelli, in quest'ordine:
 
 | livello | campo | resa sulla card |
 |---|---|---|
@@ -773,7 +773,7 @@ il riferimento del personaggio*). Quindi:
 
 Istruzione dell'utente, 2026-08-21. Un drago **non ha nome d'uso**: il suo nome è il vero nome. Quindi la seconda riga non
 esiste e la **prima** porta già la resa del vero nome, maiuscola e in tinta di famiglia.
-Nomi alternativi e titoli restano possibili e continuano a stare nel sottotitolo.
+Nomi alternativi e titoli restano possibili e continuano a comparire nel sottotitolo.
 ⚠️ L'utente ha dato questa regola definendo una **propria svista** il modello precedente,
 dove il drago aveva la riga del vero nome vuota e il nome d'uso in tondo.
 
@@ -806,7 +806,7 @@ Sparviero incontra nel prato di Ogion.
   questa è la prova che l'esclusione non nasceva da un ostacolo tecnico.
 - ⚠️ **Nelle fonti i Signori di Re Albi sono DUE persone**, a secoli di distanza: il
   *vecchio* Signore di *Un mago di Terramare*, padre di Serret, e quello di *Tehanu*, che
-  tiene Pioppo come mago. La voce sta sul primo, che è la prima apparizione dichiarata.
+  tiene Pioppo come mago. La voce è sul primo, che è la prima apparizione dichiarata.
 
 #### 🎩 La riga sola NON è una cosa da draghi: è di chi non ha nome comune
 
@@ -863,7 +863,7 @@ così: *è una differenza sostanziale... è uno dei punti-chiave del dataset*.
     attivo che con solo Umani attivo*. Sono **due livelli indipendenti**, ed è la cosa da non
     confondere: il doppio nome non le sposta fra gli umani, e la doppia categoria non le
     riporta alla resa dei draghi.
-    - ⚠️ **La sovrapposizione è NUOVA e non esisteva in Arda** (parole sue): là una voce stava
+    - ⚠️ **La sovrapposizione è NUOVA e non esisteva in Arda** (parole sue): là una voce era
       in una categoria sola, quindi il motore di provenienza non offre nessun precedente da
       copiare.
   - **Applicato nella `0.48`**: `Tehanu` ha `nome` e `nome_en` `Therru` (identico nelle due
@@ -874,7 +874,7 @@ così: *è una differenza sostanziale... è uno dei punti-chiave del dataset*.
     diventato **'drago PURO'** (`categorie(p)` di lunghezza 1). Sui draghi puri non cambia
     niente, quindi la modifica non aspetta la migrazione del dato.
   - ⚠️ **Non contraddice la scelta di rendere TEHANU in maiuscolo**: il nome resta in Cinzel
-    maiuscolo, solo che sta nella riga del **vero nome**, che è il suo posto. È il terzo giro
+    maiuscolo, solo che è nella riga del **vero nome**, che è il suo posto. È il terzo giro
     su questa card, e i tre non si annullano: card in tinta, poi maiuscolo in prima riga, poi
     maiuscolo in seconda con il nome d'uso davanti.
   - ✅ **E fa COMBACIARE il dataset col canone**, che nell'elenco dei portatori del badge
@@ -998,7 +998,7 @@ adesso è questa, su **due colonne**:
   descrizioni dei badge uscissero), mobile 390x844 con pannello **390x391** e i blocchi
   impilati nella bottom-sheet. Nessun errore JS, nessun 404, nessuno scroll orizzontale.
 
-### 👻 Il tag del filtro sta in FONDO, e il suo spazio lo riserva un fantasma
+### 👻 Il tag del filtro è in FONDO, e il suo spazio lo riserva un fantasma
 
 **Dal 2026-08-23** (istruzione dell'utente: *il badge mettilo in basso, dopo la legenda*).
 Due cambiamenti che risolvono la stessa cosa da due lati.
@@ -1039,7 +1039,7 @@ a destra, un tracciato solo, tutto a riempimento, disegnato in `#4d4048` su una 
 `1120x1120`.
 
 ⚠️⚠️ **La stella che sporge cambia il modo di MISURARE il logo**, e con lui il divisore
-dell'altezza: la regola sta nel blocco in fondo a questo paragrafo, ed è la prima cosa da
+dell'altezza: la regola è nel blocco in fondo a questo paragrafo, ed è la prima cosa da
 leggere prima di toccare il numero.
 
 - ⚠️ **Ne esistono CINQUE, e due sono arrivate lo stesso giorno**: il **monogramma dentro
@@ -1048,7 +1048,7 @@ leggere prima di toccare il numero.
   (`Mare e sole.svg`) ha tenuto dalla `0.23` alla `0.35`. Prima c'erano la figura a onde
   del 2026-08-21 e il segnaposto nato col progetto.
   - Ⓘ Il monogramma **non è un errore da correggere**: era la scelta di quel giro, e la sua
-    storia sta nella storia git. Chi legge un commit della `0.20` non stia a cercare perché
+    storia è nella storia git. Chi legge un commit della `0.20` non stia a cercare perché
     il logo sia diverso.
 - ⚠️⚠️ **La prima cosa da guardare in un logo nuovo è QUANTI `path` ha**, non il contenuto di
   uno: 1 nella prima versione (con `stroke`), **2** nella seconda e nella terza, di nuovo **1**
@@ -1200,7 +1200,7 @@ passa da `summary` a **`summary_large_image`**, o l'anteprima resterebbe il quad
 - ⚠️ **L'immagine è dell'utente e non si ricomprime**: 357 KB stanno larghi sotto il tetto
   pratico di 1 MB, e una ricompressione guadagnerebbe pochi KB al prezzo di un degrado su
   un'immagine che è il biglietto da visita del sito.
-- **Il contenuto sta nel quadrato centrale**: molti client ritagliano così, e il soggetto qui
+- **Il contenuto è nel quadrato centrale**: molti client ritagliano così, e il soggetto qui
   è già al centro. ⚠️ Il testo, se un domani se ne aggiunge, va **disegnato dentro
   l'immagine**: chi guarda l'anteprima non ha i font del sito.
 
@@ -1234,7 +1234,7 @@ cambiato cinque volte in quattro giorni**.
     il senso della richiesta: l'app installata si presenta col **verde del sito**, non con un
     blu che nel sito non compare più da nessuna parte.
   - ⚠️ La ricetta dei quattro gradini di 'più scuro e desaturato' che aveva prodotto `#3b6fa3`
-    è **decaduta**: sta nel commento dello script come storia, non come regola.
+    è **decaduta**: vive nel commento dello script come storia, non come regola.
 - ⚠️ **Il bbox si MISURA col browser**, non si assume dal viewBox: col quinto logo il canvas è
   1120x1120 e il disegno ne occupa **944,70x1011,50**, quindi il margine morto è reale e
   assumere il nominale darebbe un'icona piccola. Il glifo si **scala** a filo del riquadro,
@@ -1282,7 +1282,7 @@ deciso, e che non va rifatto: delle tinte del sito questa è **l'unica** dentro 
   due barre: è lo stesso numero calcolato per l'oro di Arda, e ritrovarlo qui lo conferma. Il
   punto di equilibrio esatto per il blu di prima era **`#007af5`** (3,54 / 3,53), e per ogni
   altra tinta si calcola allo stesso modo: si tiene la tonalità e si muove la luminanza.
-  - ⚠️ **Quindi il caso di Arda NON si trasporta qui**: là la favicon sta *fuori* dalla finestra
+  - ⚠️ **Quindi il caso di Arda NON si trasporta qui**: là la favicon è *fuori* dalla finestra
     del 3:1 perché all'utente non piaceva nessuna tinta *dentro*, non perché la finestra non
     esistesse. Qui la tinta in vigore ci sta dentro, quindi **nessuna deroga serve**, e chi
     legge quella nota non concluda che anche questa sia una deroga.
@@ -1335,7 +1335,7 @@ deciso, e che non va rifatto: delle tinte del sito questa è **l'unica** dentro 
     divergere, e il difetto non darebbe **nessun errore**: si vedrebbe solo aprendo l'app
     installata, che è la cosa che si guarda meno di tutte. È la stessa trappola della
     larghezza delle card (§ 'La Modalità XL è SPENTA, e la larghezza della colonna è una fonte unica'), risolta allo stesso modo.
-  - ⚠️ **`theme_color` è la barra di sistema, non il campo**, e sta sullo stesso verde perché
+  - ⚠️ **`theme_color` è la barra di sistema, non il campo**, ed è sullo stesso verde perché
     l'utente ha chiesto la schermata *uniforme su tutto lo schermo*. Conseguenza da conoscere:
     a pagina caricata subentra il `<meta name="theme-color">` della pagina (`#060a14` scuro,
     `#ebebef` chiaro), quindi la barra **cambia** dal verde al colore del sito. È un istante e
@@ -1390,7 +1390,7 @@ quelle vere, dove ogni riga porta scritto che cos'è (`Nome d'uso`, `Vero nome`,
 
 ⚠️⚠️ **L'ORDINE delle righe deve essere quello delle card vere**: nome d'uso, vero nome,
 nomi alternativi e titoli, **e per ultima l'opera della prima apparizione**. Alla prima
-stesura l'opera stava sopra gli alternativi e la legenda mostrava un ordine che la lista non
+stesura l'opera era sopra gli alternativi e la legenda mostrava un ordine che la lista non
 ha (segnalato dall'utente): con le classi reali è l'unico modo in cui questa legenda può
 sbagliare, perché tutto il resto lo eredita.
 
@@ -1433,7 +1433,7 @@ card che non esiste, che è l'unico modo in cui può sbagliare.
     là il titolo è stato schiarito a `#cfe8f5` -> `#5f9fd4` e questa riga è rimasta a
     `#78adc2`, che è il valore del **disco del FAB**. La ragione è che qui si tratta di
     **testo su un pannello scuro**: a `#cfe8f5` si leggerebbe come bianco e la card finta
-    perderebbe il colore, che è il motivo per cui la deroga esiste. Il percorso completo sta
+    perderebbe il colore, che è il motivo per cui la deroga esiste. Il percorso completo è
     in § 'La tavolozza applicata, e i punti dove era CABLATA'.
   - Ⓘ In scuro era `#a8e6dc` fino alla `0.35`, `#78adc2` dalla `0.36`. Chi ritocca la tinta
     dell'intestazione guardi **tutti e tre** i punti (titolo, disco del FAB, questa riga) e
@@ -1465,7 +1465,7 @@ card che non esiste, che è l'unico modo in cui può sbagliare.
     vuoto era già **1,31rem** contro 1,24rem fra categorie e filtro. La regola
     `#ctrl-panel .ctrl-cardleg` tiene il margine a zero e vince per specificità grazie all'id,
     quindi il mobile si aggiusta senza una media query nuova.
-  - ⚠️ **La card NON sta in fondo alla colonna, in nessuno dei due layout**: sta sotto la
+  - ⚠️ **La card NON è in fondo alla colonna, in nessuno dei due layout**: è sotto la
     toolbar e sopra le categorie. Ci sono ancora una regola (`.ctrl-tag-slot + .ctrl-cardleg`)
     e dei commenti che raccontano una disposizione precedente, e per un giro questa nota stessa
     ha ripetuto l'errore: la posizione si guarda nel DOM, non nei commenti.
@@ -1495,7 +1495,7 @@ Diamante; `stregone` a Solevivo.
    citazione**; due fonti secondarie indipendenti convergono sulla stessa scena, l'ULTIMA
    parte di *Tehanu*, dove **Therru chiama il drago 'Segoy'** parlando la Lingua della
    Creazione, e Ged poco dopo lo chiama *'the giver of names'*. ⚠️ **Non verificato sul
-   testo**: da qui il libro non è raggiungibile, e la conferma sta al capitolo finale di
+   testo**: da qui il libro non è raggiungibile, e la conferma è al capitolo finale di
    *Tehanu*, che l'utente ha in casa.
 3. ⚠️⚠️ **Diamante porta `stregone`, NON `mago`, e la decisione è del 2026-08-24**: quella
    del 2026-08-21 diceva l'opposto (*smette di praticare per sua scelta, ma ciò non gli
@@ -1522,9 +1522,9 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
 
 - **Il formato dei due campi è `Titolo (anno)`**, in `fonte` (italiano) e `fonte_en`
   (inglese). ⚠️ Ha richiesto un ramo in più in **`parseFonte`**: nel motore di Arda fra
-  parentesi sta `Autore, anno`, quindi `(1968)` finiva nel campo autore e l'anno non compariva
+  parentesi c'è `Autore, anno`, quindi `(1968)` finiva nel campo autore e l'anno non compariva
   **senza dare alcun errore**. Ora un contenuto di sole quattro cifre si legge come anno.
-- ⚠️⚠️ **Titoli e anni sono VERIFICATI sulle fonti, non ricordati**, e stanno nel canone
+- ⚠️⚠️ **Titoli e anni sono VERIFICATI sulle fonti, non ricordati**, e vivono nel canone
   (`rules/Earthsea.md`, § 'Le opere, in italiano' e § 'I racconti dentro *Le leggende di Terramare*'): i titoli italiani dai metadata dei sei
   epub Mondadori dell'utente e dall'indice di *Le leggende di Terramare*, gli anni dalle pagine
   di copyright delle edizioni inglesi. Chi ne aggiunge uno lo cerca là.
@@ -1539,7 +1539,7 @@ in italiano*, e *dopo l'opera aggiungi l'anno dopo averlo verificato*.
   non della raccolta** che li contiene.
   - ⚠️⚠️ **Della raccolta entrano nei corpora SOLO i due racconti di Terramare**, e il taglio
     si fa **allo scarico della fonte** (istruzione dell'utente, 2026-08-25). Confini, pagine
-    dell'edizione inglese e contro-prova stanno nel canone, § 'I due racconti dentro la
+    dell'edizione inglese e contro-prova vivono nel canone, § 'I due racconti dentro la
     raccolta *I dodici punti cardinali*': qui basta sapere che un corpus che porti anche gli
     altri quindici racconti è **da rifare**, perché un riscontro là dentro sarebbe un falso
     positivo con la forma di una prova.
@@ -1594,7 +1594,7 @@ altri sei volumi.
   - Di lui il testo dà invece **due navi**: la sua, la *Sterna* (`the Tern`), e la *Delfino*
     (`the Dolphin`), che il re gli affida «come già in passato». Sono in `CLAUDE.md` e non nel
     dataset perché non c'è un campo dove metterle.
-- **L'origine di Sege sta nel campo `origine` del dataset** (`Havnor`), che dalla `0.45` è il
+- **L'origine di Sege è nel campo `origine` del dataset** (`Havnor`), che dalla `0.45` è il
   campo dell'origine geografica e ha preso il posto del residuo `paese`. Storia, trappola e
   ragione per cui rinominare un campo qui è sicuro: § 'Il campo origine'.
   - ⚠️ **Due giri sbagliati prima di quello giusto**, e vale saperlo per non rifarli: nella
@@ -1628,7 +1628,7 @@ link del footer si nascondesse. Le note che le dànno per vive sono superate.
 - **L'etichetta si RICAVA, non si scrive**: con una risorsa sola è il titolo di quella mappa
   ('Map of Earthsea'), con più di una il nome della categoria ('Mappe' / 'Maps'). La dà
   `mapsLabel`, identica per il footer e per il Pannello.
-  - ⚠️ **Prima il testo del link stava in DUE punti e divergevano**: all'avvio diceva
+  - ⚠️ **Prima il testo del link era in DUE punti e divergevano**: all'avvio diceva
     'Risorse', dopo un cambio di lingua 'Risorse e note'. Nessuno l'aveva visto perché per
     vederlo bisogna premere il tasto della lingua **e poi** guardare in fondo alla pagina.
 - ⚠️ **Le etichette italiane sono quelle dell'utente e NON si uniformano**: la verticale dice
@@ -1660,12 +1660,12 @@ aveva regole CSS proprie, quindi il rinomino ha toccato i soli due punti JS che 
     **7,54**, l'ingombro torna giusto col tratto pieno.
   - **La centratura è ottica, non aritmetica** (avviso dell'utente). La testa tonda pesa e la
     punta no: il baricentro dell'inchiostro del segnaposto di Feather cade a **10,85**, più di
-    un'unità sopra l'asse, quindi centrato sul riquadro 24x24 si legge alto. Qui la testa sta a
+    un'unità sopra l'asse, quindi centrato sul riquadro 24x24 si legge alto. Qui la testa è a
     **11,27** e la punta a **22,17**, e il baricentro cade a **11,98**.
 - ⚠️⚠️ **L'asse della fila è 11,98 e NON la media delle quattro icone**, che varrebbe 12,24: la
   **luna** ha il baricentro a **13,02** perché è una falce, e l'incavo le toglie massa in alto:
   è una proprietà di quel glifo, non della fila. Sole, riordina e link, che sono simmetrici,
-  stanno tutti e tre a 11,97-11,98. Mediare dentro un glifo asimmetrico spostava il segnaposto
+  sono tutti e tre a 11,97-11,98. Mediare dentro un glifo asimmetrico spostava il segnaposto
   di 0,26 unità **dal verso sbagliato**: poco, ma preso per misura.
 - **Come si misura**, perché nessuna proprietà CSS lo dice: si rasterizza l'SVG a 480px coi
   valori veri del CSS (tratto 2, cap e join tondi), si pesano i pixel sull'alfa e si fa la
@@ -1726,7 +1726,7 @@ lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello
   non un filtro del visitatore"). È la ragione per cui l'utente l'ha chiesta al posto di una
   ricerca che si limiti alla vista.
 - **I mattoni sono quelli della Console, promossi a globali** (`computeMatches`, `fold`,
-  `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): stavano dentro uno scope che si apre solo con le
+  `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): erano dentro uno scope che si apre solo con le
   credenziali, quindi non erano né riusabili né provabili. ⚠️ Due copie sarebbero divergute al
   primo campo nuovo del dataset, ed è il difetto che la promozione evita.
 - ⚠️⚠️ **Una voce che nessun filtro mostra si SVELA per INDICE, e non spegnendo il filtro**
@@ -1755,7 +1755,7 @@ lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello
   pezzi insieme (gesto del FAB, ricerca, filtro delle voci nascoste), perché si reggono a
   vicenda e il difetto tipico non è un errore ma **un risultato che manca**.
   - ⚠️ **La prova sul Pannello deve cercare `#ctrl-panel.open`, non `#ctrl-panel`**: quel
-    contenitore sta **sempre** nel DOM e si apre con una classe, quindi contarne l'esistenza
+    contenitore è **sempre** nel DOM e si apre con una classe, quindi contarne l'esistenza
     dà 1 in ogni caso, cioè è una prova che non prova niente.
   - ⚠️ **L'indice della voce si prende dal DATASET, non dal testo delle card**: la stringa
     `Mago Grigio` compare anche dentro la citazione di Nereger, quindi cercarla nel DOM
@@ -1857,7 +1857,7 @@ applica dove non c'è un puntatore fine.
   stesso fondo con l'alone al massimo, e il calcolo lo conferma a **un punto per canale**
   (`#f9fbfa` + `rgba(40,44,60,0.129)` = `rgb(222,224,226)`). Nessun altro strato della pagina
   può produrre quella coppia di toni.
-- ⚠️ **Il discriminante è la CAPACITÀ DEL PUNTATORE, non i 768px**: la barra dinamica sta nei
+- ⚠️ **Il discriminante è la CAPACITÀ DEL PUNTATORE, non i 768px**: la barra dinamica è nei
   browser touch, tablet larghi compresi, mentre una finestra desktop stretta col mouse non ce
   l'ha e non deve perdere l'effetto. È lo stesso criterio già scelto per 'Al passaggio'.
 - ⚠️ **Perché si spegne invece di aggiustarlo** (la misura che si tiene è quella scartata). La
@@ -1895,7 +1895,7 @@ va tenuto dietro.
 
 - **Le altre tre di Arda sono USCITE col loro disegno** (`stars`, `foglia`, `weave`), e con
   loro `patStar`, che non aveva più chiamanti. Non sono un magazzino da cui ripescare: la
-  scelta è stata fatta, e la storia sta in git.
+  scelta è stata fatta, e la storia è in git.
 - ⚠️⚠️ **Il vincolo del tile è che il disegno sia una RETE CONNESSA, non una figura
   ripetuta**: una figura affiancata a sé stessa legge come 'scaglie di pesce', ed è un difetto
   misurato in Arda. Gli elementi sui bordi si duplicano a coordinate opposte, o la cucitura si
@@ -1908,7 +1908,7 @@ va tenuto dietro.
   `gorgo` lo ha dimostrato: le onde erano replicate a coordinate opposte e i **riccioli**
   no, quindi quattro spirali cadevano sul bordo superiore e la loro metà non ricompariva in
   fondo. Una fila su tre mostrava **mezzi archi a U**, e l'ha visto l'utente dopo aver scelto
-  la trama. Misurato: due spirali stavano **tutte fuori** dal tile (y da -33,6 a -15) e due a
+  la trama. Misurato: due spirali erano **tutte fuori** dal tile (y da -33,6 a -15) e due a
   cavallo (da -3,6 a 15). Corretto nella `0.68` replicando le spirali a `dy` di -120, 0 e
   +120, come le righe di `marea` e `corrente`.
   - ⚠️ **Il ciclo delle file va da 0 a 3, non a 4**: il tile è alto 120 e le file distano 30,
@@ -1959,7 +1959,7 @@ nel **solo** tema chiaro (`#0e6b5e` -> `#3e8f84`, smeraldo), che non si è mosso
   lo spegnimento dell'alone del numero in chiaro, che è una scelta vera). Segnalato
   dall'utente come un difetto: *passando da un tema all'altro le lettere sono più piccole in
   tema scuro*.
-  - **Non era un'illusione: era un PESO diverso.** Il nome della card stava a **600** in scuro
+  - **Non era un'illusione: era un PESO diverso.** Il nome della card era a **600** in scuro
     e a **700** in chiaro, e a parità di corpo il 600 lo rende più stretto di **3,78px su
     118,86** ('Sparviero' a 1200px di viewport, misurato coi font veri). Uguale storia per
     `.rank-title`, 400 in scuro e 500 in chiaro, ⚠️ **invisibile oggi** perché quella riga è
@@ -2022,7 +2022,7 @@ campo del dataset e per lo Schedario che lo alimenta.
   citazione va **centrata sulla coppia**: con una finestra larga il brano pescava il luogo da
   un'altra frase e sembrava una prova senza esserlo (Kalessin col brano di Orm Embar, Ivy con
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
-  di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
+  di un campo vuoto. Le trappole del grep sulle fonti vivono in `rules/Earthsea.md`.
 
 - ⚠️⚠️ **NEL CAMPO VA L'ISOLA, NON LA CITTÀ** (istruzione dell'utente, `1.45`, su Thoreg:
   *nell'origine si mette l'isola, non ha città*). Un personaggio legato a una città si
@@ -2045,7 +2045,7 @@ campo del dataset e per lo Schedario che lo alimenta.
     più occidentale delle Novanta Isole (*these are gathered into townships each of ten or
     twenty islets. One such was Low Torning, the westernmost*). Quindi come origine **resta
     com'è**: è già un'entità insulare, e un nome d'isola più preciso non esiste, perché le
-    isolette non ne hanno uno (Pechvarry sta *in un'isoletta vicina, a est di Low Torning*).
+    isolette non ne hanno uno (Pechvarry è *in un'isoletta vicina, a est di Low Torning*).
     - **La lezione vale oltre il caso**: che cosa sia un luogo lo dice il testo, e la parola
       che lo classifica (`village`, `township`, `isle`) si cerca col grep come un nome. Qui
       l'ho dedotta dal suono del nome, l'utente ha chiesto **da dove venisse**, e non veniva
@@ -2055,7 +2055,7 @@ campo del dataset e per lo Schedario che lo alimenta.
 
 ### 📍 Segno o parola nella colonna origine, e lo decide la CONSOLE
 
-Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) oppure la
+Dalla `0.62`. Nella colonna dell'origine c'è un **segno di luogo** (il default) oppure la
 **parola** 'origine'/'origin', e una riga del Pannello commuta le due rese senza ricaricare.
 
 - **Le due istruzioni dell'utente, in quest'ordine** (2026-08-24): prima *vai con il simbolo
@@ -2067,7 +2067,7 @@ Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) 
   la residenza è solo un ripiego'.
 - ⚠️⚠️ **DALLA `0.69` LE DUE SCELTE SONO FLAG DI SITO** (`orig` in `SITE_FLAGS`), governate
   dalla **Console** dell'admin e valide per tutti i visitatori, con una terza
-  voce (`on`) che spegne del tutto la colonna. Nella `0.66`-`0.68` stavano nel Pannello dei
+  voce (`on`) che spegne del tutto la colonna. Nella `0.66`-`0.68` erano nel Pannello dei
   **filtri** come preferenza del visitatore nel `localStorage`: era la lettura sbagliata di
   *mettimi nel Pannello di Controllo un'opzione*, e l'utente l'ha corretta (*devono stare nel
   Pannello di controllo, come avevo chiesto: sono riservati a chi ha le credenziali da
@@ -2137,7 +2137,7 @@ salvare alcunché, nemmeno in localStorage*). Le tre vie d'uscita senza salvatag
 il **clic sul velo** e **`Esc`** (che passa dalla ×), chiamano la stessa funzione del tasto
 Annulla, ridisegno dell'origine compreso.
 
-- ⚠️ **Prima era così SOLO in vista divisa**: il ripristino stava dentro `close` nel ramo `docked`,
+- ⚠️ **Prima era così SOLO in vista divisa**: il ripristino era dentro `close` nel ramo `docked`,
   quindi nella modale classica la × lasciava in vigore le modifiche provate, che restavano in
   pagina fino al reload senza che nessuno le avesse salvate.
 - ⚠️ **La funzione NON si sposta dentro `close`**, e non è una semplificazione mancata: da `close`
@@ -2157,15 +2157,15 @@ natura diversa: nella `0.79` **1px CSS** da una misura (*3 pixel apparenti* a DP
 sul corpo del pin (17px) fa 2,02px. Si scrive con `position:relative; top`.
 
 ⚠️ **Vale SOLO sotto i 480px**, dove l'origine scende sotto il contenuto e si mette in riga
-col toponimo: nella colonna desktop il pin sta **sopra** la parola, e là lo stesso
+col toponimo: nella colonna desktop il pin è **sopra** la parola, e là lo stesso
 spostamento non correggerebbe niente (l'utente lo ha confermato: *non avrebbe avuto senso
 spostare l'icona in verticale su desktop*).
 
 ⚠️ **L'asse ottico qui NON è il centro geometrico**, ed è la ragione per cui il secondo passo
 è arrivato dopo il primo: portati i due centri a coincidere (scarto 0,05px), l'occhio vedeva
 il segnaposto ancora basso. Con la goccia del pin, che ha la massa in alto e la punta in
-basso, il baricentro percepito sta **sopra** il centro del rettangolo. ✅ Misurato dopo: il
-centro del pin sta ora **0,97px sopra** quello del testo, e su desktop il `top` resta `auto`.
+basso, il baricentro percepito è **sopra** il centro del rettangolo. ✅ Misurato dopo: il
+centro del pin è ora **0,97px sopra** quello del testo, e su desktop il `top` resta `auto`.
 
 ### 🗃️ Il campo origine: si chiama così, e ha preso il posto di `paese`
 
@@ -2196,14 +2196,14 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
   - ⚠️⚠️ **QUI È CADUTO UN RILIEVO FALSO, ed è la ragione per cui questa voce esiste**: il
     2026-09-05 `Torning Bassa` è stato dato per resa dell'utente perché il grep girava sulle
     sole Mondadori, dove non compare mai. La fonte Nord **c'era** nel canone dal 2026-08-24, ma
-    **non nello script** che scarica i testi, quindi non era grep-abile: il difetto stava nella
+    **non nello script** che scarica i testi, quindi non era grep-abile: il difetto era nella
     macchina, non nella regola. Ora lo script la prende, col prefisso `ita-nord`.
   - ⚠️ **Il metodo che ne resta**: un nome del dataset assente dalle Mondadori si cerca
     **prima** nel Nord, e solo se manca in tutte e due si parla di resa dell'utente. È lo stesso
     errore già commesso su `Sparviero` e già corretto nel canone: chiamare 'scelta editoriale'
     l'applicazione della regola.
   - ⚠️ **Restano vere le rese dell'utente accertate come tali**, ed è un caso diverso:
-    `Cenerino` non compare in **nessuna** delle due edizioni, e la prova sta nel passo, che è
+    `Cenerino` non compare in **nessuna** delle due edizioni, e la prova è nel passo, che è
     identico in tutte e due (`Suo fratello veniva a trovarci in città ogni anno`, senza il
     nome, contro `Her brother, Littleash` dell'inglese). Là il grep non confermerà mai, ed è
     corretto: coerente col canone, dal quinto volume la traduzione è condivisa, quindi Nord e
@@ -2212,7 +2212,7 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
   (resa 'B', scelta dell'utente fra i mockup), e dalla `0.62` lo portano **111 voci su
   120**. La nota che lo dava non reso, con la scelta editoriale ancora aperta, valeva fino
   al 2026-08-23, quando la sola voce di **Sege** aveva il dato.
-  - **La colonna ha larghezza FISSA** (`--orig-col`), e il perché sta nel commento di
+  - **La colonna ha larghezza FISSA** (`--orig-col`), e il perché è nel commento di
     `.rank-orig` in `index.html`: con `auto` il filetto zigzaga da una card all'altra e si
     perde l'unica ragione della resa 'B', cioè trovare l'origine sempre nello stesso punto.
   - ⚠️ **Se l'origine manca non compare NULLA, nemmeno il filetto** (istruzione
@@ -2243,7 +2243,7 @@ riempiono nello stesso modo** (istruzione dell'utente, 2026-08-23).
   si traducono. Chi aggiungesse un `vero_nome_en` starebbe inventando un campo.
 - **Dove vive la metà inglese finché il dataset non c'è**: negli attributi delle schede dello
   Schedario, e l'esportazione la porta in **due colonne** (`nome d'uso EN`, `titoli EN`).
-  ⚠️ Prima stava solo nel mio scratchpad, che muore con la sessione, e ⚠️ la prima colonna si
+  ⚠️ Prima era solo nel mio scratchpad, che muore con la sessione, e ⚠️ la prima colonna si
   chiamava `alternativi EN`, che era il nome sbagliato: vedi § 'La metà inglese del nome'.
 
 ### 🔤 La metà inglese del nome: va in `nome_en`, non fra gli alternativi
@@ -2251,7 +2251,7 @@ riempiono nello stesso modo** (istruzione dell'utente, 2026-08-23).
 Le due metà del **nome d'uso** sono `nome` e `nome_en`: `Sparviero`/`Sparrowhawk`,
 `Giaggiolo`/`Flag`, `Dote`/`Gift`. ⚠️ **La forma inglese non è un nome alternativo**, e
 confonderla con quelli è l'errore che lo Schedario ha indotto (2026-08-23): il suggerimento
-`in inglese: Veil` stava sotto il campo **nomi alternativi** invece che sotto **nome
+`in inglese: Veil` era sotto il campo **nomi alternativi** invece che sotto **nome
 italiano**, e l'utente si è ritrovato a scriverci `Veil -> da mettere come nome comune ENG`.
 Corretto: il suggerimento vive sotto il campo di cui parla, e la colonna dell'esportazione si
 chiama `nome d'uso EN`.
@@ -2266,7 +2266,7 @@ chiama `nome d'uso EN`.
   ha una riga sua', e non si estende alle altre 94.
   - ✅ **`Orm Irian` NON è un'eccezione, ed è l'utente a chiuderla**: è un'IBRIDA, quindi segue
     la regola umana e il campo va riempito come per le altre otto. Il suo nome d'uso è
-    `Libellula` / `Dragonfly`, e `Orm Irian` è il vero nome. Il perché sta in
+    `Libellula` / `Dragonfly`, e `Orm Irian` è il vero nome. Il perché è in
     § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 - ⚠️ **Nell'esportazione la colonna `scheda` NON è un nome inglese**: è l'intestazione della
   scheda, che per quelle nove è il vero nome. Si chiamava `nome inglese` e mentiva.
@@ -2291,7 +2291,7 @@ chiama `nome d'uso EN`.
   d'uso alternativo per la voce italiana un nome inglese, per coprire le scelte di entrambe le
   edizioni (alcuni nomi non tradotti da Mondadori). Ovviamente, in tal caso nell'inglese non
   li devi aggiungere perché sarebbero doppioni dei nomi d'uso*). Suo esempio: `Lepre`/`Hare`,
-  dove `Hare` sta fra i `nomi_alternativi` della voce italiana perché un'edizione italiana
+  dove `Hare` è fra i `nomi_alternativi` della voce italiana perché un'edizione italiana
   lascia il nome non tradotto, ma in `nomi_alternativi_en` **non entra**: là è già `nome_en`, e
   comparirebbe due volte nella stessa scheda.
   - ⚠️ **Non contraddice la regola qui sopra**: quella vieta di mettere la metà inglese del
@@ -2305,7 +2305,7 @@ chiama `nome d'uso EN`.
     e là è giusto perché quei nomi sono identici nelle due edizioni. Copiare per abitudine è
     esattamente il modo in cui `Hare` finirebbe due volte.
 
-### ✍️ `Sparviero` è la forma scelta, e `Sparviere` sta fra gli alternativi
+### ✍️ `Sparviero` è la forma scelta, e `Sparviere` è fra gli alternativi
 
 Decisione dell'utente, 2026-08-23, dopo il grep che ha fatto emergere la divergenza: *la forma
 da me scelta è Sparviero. Metterò comunque `Sparviere` tra gli alternativi.*
@@ -2314,7 +2314,7 @@ da me scelta è Sparviero. Metterò comunque `Sparviere` tra gli alternativi.*
 scaricabili, che sono l'edizione **Mondadori 2024**, il nome d'uso di Ged è **Sparviere**, 411
 occorrenze contro 1. Un grep quindi **contraddice il dataset**, e ha ragione sul proprio corpus:
 è la resa **Nord** che prevale sui nomi, e Nord non è fra le fonti in scena. La misura e la
-trappola stanno in `rules/Earthsea.md` § 'Grep sugli epub'; qui sta la scelta.
+trappola vivono in `rules/Earthsea.md` § 'Grep sugli epub'; qui c'è la scelta.
 
 - **Conseguenza operativa**: il campo `nome` resta `Sparviero`, e `Sparviere` entra in
   `nomi_alternativi` quando l'utente compila la scheda. Nessuno dei due va dedotto da un grep.
@@ -2398,7 +2398,7 @@ Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
 - **Stato in memoria, non nel permalink né nel `localStorage`**: un filtro che sopravvive al
   ricaricamento senza dirlo fa credere che il dataset sia più corto di quello che è. ⚠️ Il
   rovescio, dichiarato: un link condiviso non porta con sé questo filtro.
-- Sta **fuori** dalla sezione `--filtri`, che è la lista delle categorie: mescolarvi una riga
+- È **fuori** dalla sezione `--filtri`, che è la lista delle categorie: mescolarvi una riga
   che categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
 
 ## 🏷️ 'Persone', e la trappola delle DUE mappe di etichette
@@ -2413,7 +2413,7 @@ inglese), istruzione dell'utente.
   anche la ragione per cui il difetto **non dà errore**, quindi una classe-etichetta nuova nel
   dataset va aggiunta a `TYPE_LABEL` il giorno che nasce.
 - ⚠️ **Verificarlo vuole le DUE lingue**, perché le mappe sono bilingui e la seconda si
-  dimentica: la prova sta in `showColorStats()` chiamata a mano (le Statistiche stanno dietro
+  dimentica: la prova è in `showColorStats()` chiamata a mano (le Statistiche sono dietro
   il bivio admin) con `locale` forzato, per la trappola del contesto in inglese registrata nel
   paragrafo dell'alone sfumato.
 
@@ -2475,7 +2475,7 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
     legenda e dove cominciano e finiscono i riquadri della legenda dei badge;
   - il `padding` della **cella** è il rientro del contenuto **dentro** l'hover, e vale
     `0.4rem + 1px`, che è quello delle righe di legenda: così la checkbox e l'icona del badge
-    stanno sulla stessa colonna.
+    sono sulla stessa colonna.
   - ⚠️ **Quel `+ 1px` non è tarato a occhio**: la riga di legenda porta un
     `border:1px solid transparent`, che le riserva lo spessore del bordo che compare quando
     il filtro si accende, e quel pixel sposta il suo contenuto verso l'interno. Senza,
@@ -2523,7 +2523,7 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   (istruzione dell'utente, `0.95`: *avevo sbagliato a farti spostare a sinistra i pulsanti:
   bisognava fare l'opposto*). Con quel tetto la card finiva a 356,19 mentre le righe sotto
   arrivavano a 368,72: **12,53px** di vuoto a destra, cioè 20,19px di margine a sinistra
-  contro **32,72** a destra. Ora card, toolbar, righe di filtro e legenda stanno tutte
+  contro **32,72** a destra. Ora card, toolbar, righe di filtro e legenda sono tutte
   fra gli stessi due bordi, con **20,19px** per parte, misurati a 1024, 1280 e 1600 e
   identici nelle due lingue.
   - ⚠️⚠️ **Su MOBILE vale lo stesso, dalla `0.96`** (istruzione dell'utente), e là la causa
@@ -2531,7 +2531,7 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
     significa 'larga quanto il contenuto'. La card finiva dove finiva la sua riga più lunga,
     che in italiano e in inglese non è la stessa: **237,75px contro 261,23** a 360px, cioè
     un **jitter orizzontale** a ogni cambio lingua, che è come l'utente se n'è accorto. Ora
-    card, sezione dei filtri e legenda sono a `width:100%` e stanno tutte fra gli stessi due
+    card, sezione dei filtri e legenda sono a `width:100%` e cadono tutte fra gli stessi due
     bordi: **24,98px per parte**, identici nelle due lingue, a 360, 390 e 768.
     - ⚠️⚠️ **I selettori sono DISCENDENTI, non `>` di `.ctrl-cols`**, e la trappola è
       costata una passata a vuoto: fra i due c'è `.ctrl-left`, che è `display:contents`.
@@ -2557,7 +2557,7 @@ celle**: le categorie sopra, i due generi e il vero nome sotto.
   legenda: due hover diversi nello stesso riquadro si vedrebbero. Prima era `#463E2B`, un
   marrone giallastro ereditato dal motore di Arda, che sul fondo scuro del Pannello
   (`rgba(36,40,43,0.94)`, fondo effettivo `rgb(34.6, 39.2, 42.5)`) si leggeva come un alone
-  **giallo**. ⚠️ Sta nella regola **base** e non in un ramo di tema, ed è una scelta: un
+  **giallo**. ⚠️ È nella regola **base** e non in un ramo di tema, ed è una scelta: un
   bianco a bassa opacità schiarisce e basta, quindi non può stonare col fondo qualunque esso
   sia (il tema **chiaro** ha il suo valore proprio, `rgba(104,144,168,0.12)`, perché là il
   bianco sparirebbe). Misurato: luminanza **0,0423** contro **0,0198** del fondo, stacco dello
@@ -2594,7 +2594,7 @@ tirare a indovinare*).
   interruttore e basta, senza manopole, perché la resa è già stata scelta fra tre mockup e
   qui serve solo poterla spegnere.
   - ⚠️ **Le due si sono SCAMBIATE di posto nella `1.01`** (richiesta dell'utente,
-    2026-08-26): fino alla `1.00` `deco` stava **sopra** `orig`. L'ordine di queste voci è
+    2026-08-26): fino alla `1.00` `deco` era **sopra** `orig`. L'ordine di queste voci è
     una scelta dell'utente e non un ordine tecnico, quindi non si 'sistema' a intuito, in
     nessuna delle due direzioni.
   - ⚠️ Il verso è **spenta di base, accesa dalla classe** (`fx-deco`), come ogni altro
@@ -2609,7 +2609,7 @@ tirare a indovinare*).
   - ⚠️ **L'anteprima non è codice dedicato**: la regola è iniettata da `injectFxRules`, che
     gli slider richiamano a ogni `input`, quindi il valore arriva in pagina mentre si
     trascina. L'unica aggiunta è `fxAnteprima`, che porta i tasti **a galla** durante la
-    regolazione: si dissolvono da soli e stanno a `z-index:160`, sotto il velo della modale
+    regolazione: si dissolvono da soli e sono a `z-index:160`, sotto il velo della modale
     (opaco al 92%, `z-index:200`). Senza, la manopola si regolerebbe a occhi chiusi.
     - ⚠️ Il timer si **riarma** a ogni movimento invece di contare dal primo: trascinando per
       più di un secondo l'anteprima sparirebbe proprio mentre la si usa.
@@ -2618,7 +2618,7 @@ tirare a indovinare*).
   scrivere il codice: **25 chiavi** dopo l'aggiunta, forma valida. Un salvataggio admin porta
   le due voci nuove in `dati.js` senza alcuna modifica lato server.
 - ⚠️ **Il segno 'solo mobile'** (una piccola icona di smartphone, `title` e `aria-label`
-  *Solo sito mobile*) accanto a 'Dito che scorre' e 'Tasti ⤒⤓': quelle voci stanno nella tab
+  *Solo sito mobile*) accanto a 'Dito che scorre' e 'Tasti ⤒⤓': quelle voci sono nella tab
   **Desktop** pur riguardando il solo mobile, che è una conseguenza della config unica
   (`FX_UNI`), e senza un segno la contraddizione si legge come un difetto. **Una dicitura a
   parole è la strada scartata** (prima idea dell'utente, corretta da lui stesso): in quella
@@ -2648,7 +2648,7 @@ bordo illuminato, **solo sul tema scuro**.
   **un'ombra ha bisogno di luce attorno per esistere**: sul fondo nero non si vede nulla,
   quindi il tema scuro non aveva niente che staccasse il Pannello dal fondo mentre il chiaro
   sì. Non è decorazione aggiunta al chiaro: è il pareggio di un'asimmetria.
-- ⚠️ **Sta in una variabile (`--pan-glow`) e il tema chiaro lo SPEGNE**, invece di riscrivere
+- ⚠️ **È in una variabile (`--pan-glow`) e il tema chiaro lo SPEGNE**, invece di riscrivere
   tutta la `box-shadow` là: riscriverla avrebbe duplicato anche l'ombra portata, cioè due
   copie dello stesso valore destinate a divergere. Ⓘ Lo spegnimento è un'ombra **nulla** e
   non `none`, così resta una voce valida della `box-shadow` composta.
@@ -2656,7 +2656,7 @@ bordo illuminato, **solo sul tema scuro**.
   con **tinta e alfa proprie**: là la tavolozza è neutra e il fondo del Pannello è caldo, quindi
   l'alone azzurro di qui sembrerebbe la luce di un altro ambiente. Le due tarature sono state
   **pareggiate a misura**, e il metodo (confronto A/B sullo stesso sito, non contro il fondo
-  lontano) sta in [`arda/top/CLAUDE.md`](../../arda/top/CLAUDE.md), § 'Il bagliore intorno al
+  lontano) vive in [`arda/top/CLAUDE.md`](../../arda/top/CLAUDE.md), § 'Il bagliore intorno al
   Pannello': è là perché è là che è nato il problema di pareggiare due tinte diverse.
 
 #### 🌒 La decorazione d'angolo
@@ -2677,7 +2677,7 @@ percettibile con dentro il **logo del progetto**, tagliato dal bordo e in positi
 - ⚠️⚠️ **Il tracciato del logo NON si duplica**: si usa il file `icons/Earthsea.svg`, lo
   stesso del FAB. Quel disegno vive già in **due** copie che vanno cambiate insieme; una
   terza sarebbe il modo garantito di ritrovarsi due loghi diversi nella stessa pagina.
-- ⚠️ **Sta sotto ai testi grazie a `position:relative` sui fratelli**, non a uno `z-index`
+- ⚠️ **È sotto ai testi grazie a `position:relative` sui fratelli**, non a uno `z-index`
   negativo: quello la manderebbe sotto al fondo del Pannello, cioè fuori vista.
 - ⚠️ **La stella a quattro punte resta intera dentro il riquadro** (istruzione dell'utente):
   è la ragione del rientro orizzontale a zero, contro il rientro negativo della prima resa,
@@ -2757,7 +2757,7 @@ viene dipinto, quindi si vede il fondo come se non ci fosse mai stato niente sop
 - ⚠️ **`mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+.** Dove manca, i due
   strati si **sommano** invece di sottrarsi: il difetto è una macchia di velo a forma di logo,
   non una pagina rotta.
-- ⚠️⚠️ **IL BLOCCO `html.fx-deco .ctrl-deco` NON STA NEL CSS STATICO: è INIETTATO via JS**,
+- ⚠️⚠️ **IL BLOCCO `html.fx-deco .ctrl-deco` NON È NEL CSS STATICO: è INIETTATO via JS**,
   in fondo allo script del `<head>`, accanto a quello della proprietà `d`. La ragione è la
   stessa: il Nu rifiuta la **virgola** di `mask-position`, che separa le posizioni dei due
   strati di maschera ed è valida per CSS Masking (`<position>#`). Era **l'unico** errore W3C
@@ -2824,7 +2824,7 @@ di sé togliendo il trascinamento.
   tornata la barretta, il padding è tornato a **zero**: lo stacco lo fa di nuovo lei, e
   tenerli tutti e due lo raddoppierebbe.
   - ⚠️ **Quell'altezza NON si recupera comprimendo il fondo**: sotto la legenda vive lo slot
-    del tag del filtro badge, che è spazio riservato da un fantasma (§ 'Il tag del filtro sta
+    del tag del filtro badge, che è spazio riservato da un fantasma (§ 'Il tag del filtro è
     in FONDO, e il suo spazio lo riserva un fantasma'), e toglierlo rimetterebbe il salto che
     quel fantasma esiste per evitare.
 - **La sheet non scorre** (`overflow:hidden`), perché da quando il contenuto ci sta tutto il
@@ -2868,7 +2868,7 @@ al basso) per richiudere il pannello mi piaceva*.
 #### 📐 Il crest a schermi strettissimi
 
 Dalla `0.78`: sotto i **360px** `ROCCOBOT PRESENTA` andava a capo mentre l'inglese `PRESENTS`
-stava su una riga, e l'intestazione cresceva di **17,9px** al cambio lingua. Era l'ultimo
+era su una riga, e l'intestazione cresceva di **17,9px** al cambio lingua. Era l'ultimo
 salto rimasto dopo il cambio di titolo, e **non veniva dal titolo**.
 
 - **Il tracking scende a `0.32em` e i margini dei fregi a `0.5em`, solo sotto la soglia**: a
@@ -2876,7 +2876,7 @@ salto rimasto dopo il cambio di titolo, e **non veniva dal titolo**.
   regola deve coprire anche quello. Sopra i 360px non cambia nulla.
 - ✅ Misurato: salto **0** da 300px a 1280px, con una riga sola in entrambe le lingue.
 
-### ↕️ Le freccine di salto pagina stanno a FILO del bordo
+### ↕️ Le freccine di salto pagina sono a FILO del bordo
 
 Dalla `0.71`, su segnalazione dell'utente: cadevano sopra la linea destra del riquadro della
 citazione. Il rientro mobile era `0.75rem`, ora è il solo `env(safe-area-inset-right)`.
@@ -2886,7 +2886,7 @@ il tondo dei tasti è spento (`FEATURES.jumpMobileCircle`), quindi ciò che si v
 freccia, **16px** dentro un box di **26,4**. Il riquadro della citazione finisce a **23,4px**
 dal bordo dello schermo, cioè **meno** della larghezza del box: nessun rientro può togliere la
 sovrapposizione al box, e per questo si ragiona sulla freccia. A 390px: `0.75rem` la metteva
-**9,8px dentro** la linea, `0.2rem` ancora 1px dentro, a filo del bordo sta **2,2px fuori**
+**9,8px dentro** la linea, `0.2rem` ancora 1px dentro, a filo del bordo è **2,2px fuori**
 restando a 5,2px dallo schermo.
 
 ## 🔤 Filtro al plurale, card al singolare: è deliberato
@@ -2897,7 +2897,7 @@ vede (istruzione dell'utente, 2026-08-21: nel filtro **tutto al plurale**).
 
 ⚠️ Non è un'incoerenza da sanare, ed è scritto qui perché a colpo d'occhio lo sembra: chi
 uniformasse i due registri romperebbe quello giusto. Le sei donne del dataset portano 'Donna'
-sulla card **e** stanno sotto 'Uomini' nel filtro, che è la razza.
+sulla card **e** sono sotto 'Uomini' nel filtro, che è la razza.
 
 ## 🚫 I nomi NON sono cliccabili, e la scheda personaggio non esiste
 
@@ -2965,12 +2965,12 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
       ogni anno*), con zero occorrenze di `Littleash` e di qualunque resa in tutte e due. Non
       è una coincidenza: dal quinto volume la traduzione è condivisa (`rules/Earthsea.md`,
       § 'Fonti ITA'), quindi là non c'era nulla da scegliere fra le due.
-    - **Sta in fondo agli umani, subito prima degli animali** (istruzione dell'utente,
+    - **È in fondo agli umani, subito prima degli animali** (istruzione dell'utente,
       2026-09-05). ⚠️ È l'unica voce con una posizione **chiesta**: le altre si accodano, e
       questa vale come precedente solo se lui lo dice.
     - `Her brother` dà il genere, e il fratello è quello della **madre di Lontra**, di
       Endlane: da lì l'origine, che è dove vive e non una nascita attestata. ⚠️ **Nel campo
-      c'è `Havnor` e non `Endlane` dalla `1.46`**, perché là va l'isola e quel villaggio sta
+      c'è `Havnor` e non `Endlane` dalla `1.46`**, perché là va l'isola e quel villaggio è
       sulle terre alte di Havnor (§ 'Origine: significa NASCITA, e la residenza è solo un
       ripiego', voce sull'isola).
 
@@ -3025,7 +3025,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
     - **Therru non è stata toccata**: aveva già il punto in tutte e due le lingue. Su sei
       campi con `[...]`, tre hanno avuto bisogno del segno.
   - ⚠️ **La sigla si VESTE in resa** (`vestiEllissi`, dalla `0.91`): tonda, 0.72em, più
-    tenue, sulla baseline, mentre nel dato resta il semplice `[...]`. Il perché sta nel CSS
+    tenue, sulla baseline, mentre nel dato resta il semplice `[...]`. Il perché è nel CSS
     di `.rc-ell`, e in breve: dentro una citazione tutta in corsivo la sigla si leggeva come
     una parola di Le Guin. ⚠️ Non confondere i due piani: **il taglio** vive nel dato (voce
     qui sopra), **la sua veste** in resa.
@@ -3038,7 +3038,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
      **vuoto** quando parla il personaggio della card o il narratore, perché là
      l'attribuzione ripeterebbe il titolo della scheda. Alla `0.87` la portano 40 citazioni
      su 105, contate sul DOM reale e non a mano.
-     - ⚠️⚠️ **La DIDASCALIA DI BATTUTA non sta nella citazione, mai** (istruzione
+     - ⚠️⚠️ **La DIDASCALIA DI BATTUTA non è nella citazione, mai** (istruzione
        dell'utente, `0.87`: *'disse Dulse' va tolto, perché è la firma di chi pronuncia la
        citazione, ma essendo lo stesso personaggio della card si omette*). Quindi:
        - parla il personaggio della card -> la didascalia **sparisce e basta**
@@ -3053,7 +3053,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
          valgono senza sporcare la battuta.
        - ⚠️ **Dodici citazioni su 105 ce l'avevano**, e dieci restano **verbatim** anche
          dopo il taglio. Le due che diventano **montaggi dichiarati** sono quelle in cui la
-         didascalia stava **in mezzo** alla battuta (Tuly e la Rosa del *Trovatore*): là
+         didascalia era **in mezzo** alla battuta (Tuly e la Rosa del *Trovatore*): là
          ricucire i due tronconi è l'unico modo di togliere la firma, ed è la stessa
          pratica dei montaggi del primo giro.
      - ⚠️ **Un TITOLO in firma non porta l'articolo** (convenzione dell'utente, `0.83`):
@@ -3070,7 +3070,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
   3. **E comincia dall'OPERA**: `<Opera>, cap. N - '<titolo>': <che cosa succede>.`
      - ⚠️⚠️ **La coda è PROSA, e si rilegge come tale** (richiesta dell'utente, 2026-08-25:
        *ti sei assicurato che il contesto non stoni col tono della citazione e sia
-       grammaticalmente impeccabile?*). Sta sotto una frase di Le Guin, quindi una sciatteria
+       grammaticalmente impeccabile?*). È sotto una frase di Le Guin, quindi una sciatteria
        si vede: nella rilettura della `0.85` ne sono uscite **sedici**, e le famiglie sono
        quattro, tutte da cercare a mano perché nessun controllo le vede.
        1. **Ridondanze e cacofonie**: *vorrebbe pavimentargli il pavimento*; e la coda che
@@ -3097,7 +3097,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
           che Ogion *vorrebbe* fare a Dulse e che invece gli aveva già fatto), o nominavano
           una forma che l'edizione italiana non usa (la barca `Vistavvento`: **zero**
           occorrenze in Mondadori, che quella barca non la nomina affatto). ⚠️ **Un nome che
-          sembra ovvio si verifica col grep come tutto il resto**, anche quando sta nel
+          sembra ovvio si verifica col grep come tutto il resto**, anche quando è nel
           contesto e non nella citazione.
        - ⚠️⚠️ **MA il grep da solo non basta a condannare una forma, e `La Divorata` lo
          dimostra**: l'avevo tolta perché in Mondadori ci sono **zero** occorrenze (là si
@@ -3124,7 +3124,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
   - **Perché `0.78em` e non `0.92em`**: Cinzel ha un occhio molto più grande di EB Garamond,
     quindi a parità di em sembrerebbe più grande del testo invece che più piccolo. Il corpo
     resta comunque **relativo** a quello della citazione, non un valore suo.
-  - **La barra rovescia sta DENTRO l'elemento**, non fra testo e attribuzione: fuori resterebbe
+  - **La barra rovescia è DENTRO l'elemento**, non fra testo e attribuzione: fuori resterebbe
     attaccata all'ultima parola quando la voce va a capo, e non seguirebbe il rientro.
   - **Il colore è quello della CARD** (`--cctxt`, col ripiego a catena di `.ro-val`): segue la
     scheda invece di essere un grigio buono per tutte.
@@ -3133,7 +3133,7 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
 
 Scelta dell'utente nella `0.70` (variante **B** di quattro mockup misurati sulla pagina vera):
 il flottante a filo del bordo destro *va oltre e sembra fuori posto*, quindi l'attribuzione
-rientra fino a stare a piombo sulla fine del testo.
+rientra fino a cadere a piombo sulla fine del testo.
 
 - ⚠️ **Il riferimento è cambiato nella `0.71`**, e la differenza si vede solo su certe schede:
   era la **riga precedente**, ora è la **più lunga fra le righe sopra** l'attribuzione. La
@@ -3145,7 +3145,7 @@ rientra fino a stare a piombo sulla fine del testo.
   lo si confronta col bordo destro della faccia; la differenza diventa un `position:relative` +
   `right`, che sposta senza toccare il flusso (quindi senza cambiare l'altezza della card, che
   è ciò che l'anti-jitter misura).
-  - ⚠️ La riga **su cui la voce sta** resta fuori dal massimo: finisce dove comincia lei,
+  - ⚠️ La riga **su cui la voce cade** resta fuori dal massimo: finisce dove comincia lei,
     quindi misurarla darebbe il posto già occupato.
 - ⚠️ **Tre passate, e l'ordine conta**: prima si azzera lo spostamento di tutte le
   attribuzioni, poi si misura, poi si applica. Misurare su un valore già applicato accumula,
@@ -3162,7 +3162,7 @@ rientra fino a stare a piombo sulla fine del testo.
     larghezza e sbagliato a un'altra: si calcola, come il rientro orizzontale.
   - **Come si misura: con una SONDA.** Un `inline-block` largo e alto 0 con
     `vertical-align:baseline` ha il bordo inferiore **esattamente** sulla baseline della riga
-    in cui sta (`baselineDi`). Una dentro la firma, una in coda al testo che la precede, e la
+    in cui si trova (`baselineDi`). Una dentro la firma, una in coda al testo che la precede, e la
     differenza è la correzione, scritta come `top` sul solito `position:relative`.
   - ⚠️ Si applica **solo se la firma siede su una riga di testo**: quando il float è sceso su
     una riga sua non c'è niente a cui allinearla, e lo scarto misurato sarebbe quello di una
@@ -3182,7 +3182,7 @@ rientra fino a stare a piombo sulla fine del testo.
     sopra un valore già applicato) e attribuzioni **ferme sulla misura vecchia** dopo un
     cambio lingua o un ridimensionamento (segno che un percorso ridisegna le card senza
     passare da `reflowRows`).
-  - ⚠️ **Sta qui e NON nel brief di consegna** (istruzione dell'utente, 2026-08-24: *il brief
+  - ⚠️ **È qui e NON nel brief di consegna** (istruzione dell'utente, 2026-08-24: *il brief
     non è un promemoria, e può anche darsi che quella scelta anticipata non serva mai*): è una
     decisione durevole senza lavoro attaccato, e nel brief avrebbe continuato a farsi rileggere
     a ogni sessione come se fosse una cosa da fare.
@@ -3234,7 +3234,7 @@ consapevole di ri-adattamento sul mio sito.*
 - **La lista dei nomi da sostituire è CHIUSA e si ricava dal censimento**, non da un'idea:
   Mondadori scrive il nome inglese dove Nord e il dataset ne hanno uno italiano
   (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`). Quale edizione decide sui nomi,
-  e perché sono i **libri 1, 2 e 3** di Nord, sta nel canone.
+  e perché sono i **libri 1, 2 e 3** di Nord, è nel canone.
   - ⚠️⚠️ **Col giro della `0.84` la lista si è allungata, e il modo in cui l'ha fatto vale
     più dei nomi nuovi**: cercando le candidate, **due voci non davano NESSUNA frase**
     (`Cenerino`, uscito dal dataset con la `1.04`, e `Gazzamarina`), e la causa non era che
@@ -3258,7 +3258,7 @@ convenzione tipografica del dataset, come quelle di 'I Grandi di Arda'.
   che conta: `dragonlord` è la forma che il testo attesta, e riscriverla in `dati.js`
   metterebbe nel dataset una grafia che nessuna fonte porta. Qui è tipografia di riga, come
   la maiuscola dopo il punto fermo.
-- ⚠️ **Vale per la riga LOGICA**: se il sottotitolo va a capo, la seconda riga fisica sta in
+- ⚠️ **Vale per la riga LOGICA**: se il sottotitolo va a capo, la seconda riga fisica è in
   mezzo a una frase e non si tocca. E tocca al pezzo che **apre** la riga, che è il primo
   presente: i titoli aprono la riga solo quando i nomi alternativi mancano.
 - ⚠️⚠️ **Il rovescio della regola: DENTRO una frase, l'articolo di un appellativo va
@@ -3292,7 +3292,7 @@ convenzione tipografica del dataset, come quelle di 'I Grandi di Arda'.
   piatto della sessione prima faceva cominciare *Un mago di Terramare* col primo capitolo
   delle *Tombe di Atuan*), e le **anteprime** del volume successivo si riconoscono invece di
   indovinarle, con una regola calcolata: un capitolo che vive in due libri è anteprima nel
-  libro dove sta **più lontano dall'inizio**. ⚠️ Due regole scartate, e conviene saperlo: la
+  libro dov'è **più lontano dall'inizio**. ⚠️ Due regole scartate, e conviene saperlo: la
   **lunghezza** (le anteprime non sono per forza troncate: 25 799 caratteri contro 25 784 per
   lo stesso capitolo) e il **nome del file**, che cambia col prossimo epub.
 
@@ -3307,7 +3307,7 @@ corrette nella `0.67`.
 | che cosa si muoveva | quante | perché |
 |---|---|---|
 | etichette e icone del nome, in **orizzontale** | 61 e 38 card | la gemella riservava la sola altezza, non la larghezza: `Sparviero` -> `Sparrowhawk` le spostava fino a **52px** |
-| testo e riga di contesto **dentro** il riquadro della citazione | 3 e 5 card | la gemella stava sul blocco intero, quindi il riquadro teneva l'altezza giusta e il contenuto ci ballava dentro di **24,75px**, una riga |
+| testo e riga di contesto **dentro** il riquadro della citazione | 3 e 5 card | la gemella era sul blocco intero, quindi il riquadro teneva l'altezza giusta e il contenuto ci ballava dentro di **24,75px**, una riga |
 | la riga Risorse nel **footer** | non più dalla `1.03` | il `hidden` della `0.62` toglieva il paragrafo dal flusso: **55,72px**. Da quando la riga non si nasconde in nessuna lingua il caso non ricorre: vedi § 'Le mappe' |
 
 - ⚠️⚠️ **La lezione vale oltre il caso**: una misura che guarda una dimensione sola può
@@ -3347,13 +3347,13 @@ corrette nella `0.67`.
   `visibility` e spegne il bottone con `disabled` invece che con `hidden`, perché quello
   usciva dal flusso portandosi via anche il suo bordo da 1px.
   - ⚠️⚠️ **Il secondo rimedio è stato SUPERATO nella `0.89`, e questa è la regola che ne
-    resta**: *la riserva anti-jitter non sta mai dentro un contenitore che si VEDE*. Impilare
+    resta**: *la riserva anti-jitter non è mai dentro un contenitore che si VEDE*. Impilare
     le due righe teneva ferme le righe, ma la cella era **dentro** al riquadro della
     citazione, quindi il riquadro si allungava fino alla lingua più alta e mostrava un vuoto
     fra la citazione e la riga di contesto (segnalazione dell'utente con tre screenshot sulla
     card di Penthe, dove l'inglese va a capo e l'italiano no).
   - **Il rimedio nuovo è lo stesso grid-stack un livello PIÙ SU** (`.rc-slot`): nella cella
-    stanno **due riquadri interi**, il visibile e la gemella dell'altra lingua. La cella
+    ci sono **due riquadri interi**, il visibile e la gemella dell'altra lingua. La cella
     riserva il massimo, il riquadro visibile tiene l'altezza del proprio contenuto, e il vuoto
     avanza **sotto** il riquadro, dove è invisibile perché la card non ha sfondo suo.
   - **La misura che chiude il caso** (2026-08-25, sei larghezze da 320 a 1440px, font veri):
@@ -3388,7 +3388,7 @@ etichette sono cinque.
   cambio lingua (fino a **23px**), perché il nome va a capo in una lingua sola.
   1. faccia visibile e gemella **alte uguale**;
   2. la **riga** non cambia altezza quando la classe viene messa (stringendo la cella si
-     libera spazio, e un'etichetta che stava a capo può rientrare in riga);
+     libera spazio, e un'etichetta che era a capo può rientrare in riga);
   3. la riga resta alta uguale anche con la cella alla larghezza **dell'altra lingua**: è la
      prova che ha salvato `Pannocchia` (345,5 -> 322,3px a 320px) e `Mago Rosso` a 360px.
 - ⚠️⚠️ **La QUARTA prova è un RIMEDIO, non una condizione in più**, e va letta così o sembra
@@ -3463,7 +3463,7 @@ stesso numero di righe **per costruzione** e non per taratura.
   domani il titolone cresce di corpo.
 - ⚠️ **A 320px resta un salto di 17,9px, e NON è il titolo** (che là misura identico, 114,8px
   in entrambe le lingue, su tre righe): è il **crest**, dove `ROCCOBOT PRESENTA` va a capo
-  mentre `ROCCOBOT PRESENTS` sta su una riga. Chi volesse chiuderlo agisca là, non sul titolo.
+  mentre `ROCCOBOT PRESENTS` è su una riga. Chi volesse chiuderlo agisca là, non sul titolo.
 - **L'a-capo NON è forzato** (scelta dell'utente): niente `<br>` nel dato, il browser manda a
   capo da sé. Su schermi molto larghi le due lingue diventerebbero una riga sola insieme, e
   il salto resta zero perché la struttura è simmetrica.
@@ -3487,7 +3487,7 @@ sulla card, nella riga che il motore chiama `.rank-title`.
 - ⚠️ **Wikipedia elenca le apparizioni, non necessariamente la prima**, e i valori che
   vengono dalla sua parentesi non sono tutti riverificati sul testo: dove il grep della
   verifica ha trovato una divergenza fra il valore dichiarato e la prima opera che porta
-  il nome, la divergenza sta nel brief e decide l'utente. ⚠️ Un nome assente dall'opera
+  il nome, la divergenza è nel brief e decide l'utente. ⚠️ Un nome assente dall'opera
   dichiarata non basta a dire che il valore sia sbagliato: un personaggio può comparire
   senza nome, ed è la stessa distinzione del canone fra apparizione del personaggio e
   prima comparsa del nome.
@@ -3496,7 +3496,7 @@ sulla card, nella riga che il motore chiama `.rank-title`.
 
 **Dal 2026-08-23** Terramare ha un Worker proprio, `earthsea-admin-proxy`
 (`proxy/earthsea/`), e `ADMIN_PROXY_URL_DEFAULT` punta a lui. Le regole del Worker vivono
-in [`proxy/CLAUDE.md`](../../proxy/CLAUDE.md) e qui non si duplicano: qui sta solo quello
+in [`proxy/CLAUDE.md`](../../proxy/CLAUDE.md) e qui non si duplicano: qui c'è solo quello
 che serve sapere **da questo lato**.
 
 - ⚠️⚠️ **Perché non si eredita l'URL di Arda, e va saputo prima di 'semplificare'**: quel
@@ -3509,7 +3509,7 @@ che serve sapere **da questo lato**.
   un refuso: è il difetto che questa nota previene.
 - ⚠️ **Il pannello NON diventa admin da solo**: servono i secret sul Worker, e finché non ci
   sono lo sblocco risponde `auth` e il salvataggio `no-github-pat`. Le tre cose da fare in
-  dashboard stanno in `proxy/earthsea/README.md`, e sono dell'utente: richiedono l'accesso
+  dashboard vivono in `proxy/earthsea/README.md`, e sono dell'utente: richiedono l'accesso
   all'account Cloudflare.
 - **La verifica che il Worker giusto risponda** è un GET sul suo URL: torna anche
   `site:"earthsea"`. ⚠️ Vale più di `rev` quando il dubbio è *quale* dei due Worker si sta
@@ -3631,7 +3631,7 @@ alla volta, con una prova in browser dopo ognuno.
   presente su ogni voce (`gb` su tutte e 360 quelle di Arda, vuoto su quelle di Terramare) e
   non lo leggeva nessuno. ⚠️ **Ha ingannato una sessione prima di uscire**, e la trappola vale
   per ogni altro residuo di questa sezione: un campo vuoto e senza lettori **somiglia a un
-  campo libero**. Il caso e il criterio stanno in § 'Il campo origine'.
+  campo libero**. Il caso e il criterio vivono in § 'Il campo origine'.
   - Ⓘ **Da dove veniva davvero**, trovato il 2026-08-23 e utile perché chiude la domanda: il
     capostipite non è 'I Grandi di Arda' ma **`artifacts/legion50/index.html`**, una classifica
     di saghe epiche dove `paese` è un **codice ISO che serve a pescare una bandiera**
@@ -3655,7 +3655,7 @@ alla volta, con una prova in browser dopo ognuno.
   FAB'), e con la `0.24` la **favicon** e le **icone dell'app** (vedi '🔖 Favicon e icone
   dell'app installabile'), che dal glifo si generano da sé.
   - Ⓘ **L'invio del 2026-08-22 portava DUE disegni**, e alla fine è il secondo, `Mare e
-    sole.svg`, quello in vigore: sta nel repo come `icons/Earthsea.svg`, che è il percorso del
+    sole.svg`, quello in vigore: è nel repo come `icons/Earthsea.svg`, che è il percorso del
     ruolo. Il primo, `Earthsea Roccobot.svg`, **non è nel repo** e non ha un uso: l'utente ha
     solo i file che gli sono stati restituiti in chat, quindi se un domani lo si vuole (per la
     favicon o l'anteprima) va richiesto a lui, perché i file passati in chat **non
