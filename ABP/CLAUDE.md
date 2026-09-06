@@ -2,7 +2,7 @@
 
 > **Cos'è questo file.** Le regole del progetto **'Roccobot ABP'**, le liste di
 > filtri AdBlock/AdGuard di questa cartella. Si carica quando si legge un file di
-> qui; le regole trasversali stanno nel `CLAUDE.md` di **root**.
+> qui; le regole trasversali vivono nel `CLAUDE.md` di **root**.
 
 ## 🛡️ Progetto '/ABP': Regole AdBlock (Roccobot ABP)
 
@@ -45,7 +45,7 @@
   `:has(:contains(/^\s*(Contatti|Contacts)\s*$/))`, cioè 'la colonna che contiene un titolo il
   cui testo è esattamente Contatti'.
   - ⚠️⚠️ **Lo stesso visualizzatore ha DUE strutture, ed è la trappola che ha fatto sbagliare
-    due volte**: aperto con un clic dal feed la colonna sta dentro `div[role="dialog"]`, ma dopo
+    due volte**: aperto con un clic dal feed la colonna è dentro `div[role="dialog"]`, ma dopo
     un **ricaricamento** la stessa schermata diventa una pagina `/photo/` **senza alcun dialog**,
     e là la colonna è un `complementary` di primo livello, indistinguibile dalla sidebar per
     qualunque criterio di posizione. Chi verifica una modifica a questa regola **deve provare
@@ -56,7 +56,7 @@
     - `:not(:has([role="article"]))` ('risparmia la colonna che contiene commenti'): **inutile**,
       perché su una foto **senza** commenti là dentro non c'è nessun `article`. Sarebbe stato un
       difetto **intermittente**, peggiore di quello di partenza.
-    - `:not([role="dialog"] div[role="complementary"])` ('risparmia quel che sta in un dialog'):
+    - `:not([role="dialog"] div[role="complementary"])` ('risparmia quel che è in un dialog'):
       copre **solo** l'apertura dal feed, per la trappola delle due strutture qui sopra.
     - `:contains(/Contatti/)` senza ancoraggio: prende anche una foto il cui **commento** nomina
       la parola dentro una frase.

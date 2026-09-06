@@ -2,7 +2,7 @@
 
 > **Cos'è questo file.** Le regole del **sito** RoccobotOS
 > (<https://roccobot.github.io/RoccobotOS>). Si carica quando si legge un file di
-> qui; le regole trasversali stanno nel `CLAUDE.md` di **root**.
+> qui; le regole trasversali vivono nel `CLAUDE.md` di **root**.
 
 ## 🖥️ Progetto '/RoccobotOS': un sito, non documentazione
 
@@ -23,7 +23,7 @@
   software'), che da progetto gli si applicano: la **lingua del sito è l'italiano** (è il
   riferimento personale dell'utente, non un prodotto per un pubblico anglofono), e **non
   c'è il footer standard** con la nota 'vibes ✦': il numero di versione, che quel footer
-  ospiterebbe, sta in cima per scelta dell'utente (vedi la sezione della versione).
+  ospiterebbe, è in cima per scelta dell'utente (vedi la sezione della versione).
 - **Struttura.** Pagina unica `index.html` più `RoccobotOS.css` e `RoccobotOS.js`, quattro
   **sotto-pagine** (`Characters.html`, `Formats.html`, `AdServers.html`, `BlendModes.html`) col
   loro `Pages.css` e `Pages.js`, e la **styleguide** in `Styleguide.html`.
@@ -35,7 +35,7 @@
     componenti): [`Styleguide.html`](Styleguide.html), pubblicata anche su
     <https://roccobot.github.io/RoccobotOS/Styleguide.html> perché la si possa dare a un altro
     agente. Questo file spiega le **decisioni** e la loro storia, il CSS le **implementa**, ma
-    i numeri stanno là e non si riscrivono qui: è la stessa regola della fonte unica che vale
+    i numeri sono là e non si riscrivono qui: è la stessa regola della fonte unica che vale
     per la versione.
     - ⚠️ **Era un `.md` fino al 2026-08-02**, ed è diventata una **pagina**: l'utente l'ha
       chiesta più visuale, e una tabella di codici esadecimali non fa vedere un colore. Adesso
@@ -49,7 +49,7 @@
       due punti, il CSS del sito e questa pagina, **nello stesso commit**.
     - ⚠️ **Un contrasto si dichiara sul fondo REALE del componente, non su quello della pagina**:
       il campione del codice inline diceva `4,89:1`, che è il rapporto di `#bc4a61` sul fondo
-      chiaro `#feffff`, mentre il codice sta sul grigio `#f7f8f8` e là vale `4,60:1` (corretto il
+      chiaro `#feffff`, mentre il codice è sul grigio `#f7f8f8` e là vale `4,60:1` (corretto il
       2026-08-02). Passa comunque il gate AA, ed è la ragione per cui l'errore poteva restare a
       lungo: un numero sbagliato ma verde non lo segnala nessuno.
   - **Codice inline a pillola: idea SCARTATA dall'utente** (2026-08-02), e si tiene la misura
@@ -61,9 +61,9 @@
     voluta dall'utente il 2026-08-02, nata come caso singolo della tabella delle sostituzioni.
     Quando una tabella ripete lo stesso gruppo di colonne per sfruttare la larghezza, la colonna
     stretta di ogni coppia (il glifo, la sigla) prende il fondo grigio: separa le coppie senza
-    aggiungere un bordo, che a otto colonne sarebbe rumore. I valori stanno nella styleguide.
+    aggiungere un bordo, che a otto colonne sarebbe rumore. I valori sono nella styleguide.
     - ⚠️ **Le classi sono DUE e non una**, `narrow-cols-odd` e `narrow-cols-even`, perché la
-      colonna stretta **non sta sempre dallo stesso lato**: è la prima nelle tabelle dei tasti
+      colonna stretta **non è sempre dallo stesso lato**: è la prima nelle tabelle dei tasti
       (simbolo, poi il nome esteso) e la seconda in quelle dei caratteri e delle sostituzioni
       (nome esteso, poi il glifo). Un solo `nth-child` avrebbe colorato la colonna sbagliata in
       metà delle tabelle.
@@ -74,7 +74,7 @@
     `collapse`, perché lì la cornice esterna la disegnano le **celle**, che restano quadrate.
     Serve il modello `separate`, la cornice sulla tabella, i soli tratti interni sulle celle e
     il raggio sulle **quattro celle d'angolo**, che devono seguire la curva da sole.
-    - ⚠️ **Il raggio delle celle è 7 px, non 8**: la cornice sta fuori, e con lo stesso raggio si
+    - ⚠️ **Il raggio delle celle è 7 px, non 8**: la cornice è fuori, e con lo stesso raggio si
       vedrebbe un filo di fondo pagina fra bordo e cella.
     - ⚠️ **La cornice ha imposto un cambio di LARGHEZZA, e non è un capriccio**: le tabelle della
       pagina principale sono `display:block` per poter scorrere, quindi il blocco era largo il
@@ -82,7 +82,7 @@
       bordo del blocco la differenza non si vedeva; disegnandolo, la cornice arrivava a fondo
       pagina con le celle ferme a metà. Da qui `width:fit-content`, col `max-width:100%` che
       tiene in piedi lo scorrimento.
-    - ⚠️ **Una cella unita a coppie che arriva in fondo** non sta nell'ultima riga, quindi le
+    - ⚠️ **Una cella unita a coppie che arriva in fondo** non è nell'ultima riga, quindi le
       regole d'angolo la mancano: le lascerebbero il tratto inferiore sopra la cornice e
       darebbero l'angolo tondo alla cella accanto. C'è una regola apposta, scritta sulla forma
       (`tbody tr:nth-last-child(2) td[rowspan="2"]`) e non sul caso che l'ha fatta nascere, che
@@ -90,7 +90,7 @@
     - ⚠️⚠️ **E l'altra faccia dello stesso problema, sfuggita alla prima passata e vista
       dall'utente**: nella riga **accorciata** dalla cella unita, l'ultima cella scritta non è
       l'ultima **colonna**. La regola che toglie il tratto destro a `td:last-child` la colpisce
-      lo stesso, e sparisce il bordo fra quella cella e la cella unita che le sta a fianco (in
+      lo stesso, e sparisce il bordo fra quella cella e la cella unita che le è a fianco (in
       pagina: il buco a sinistra delle frecce, sotto `Esc`). Il rimedio è una **classe nel
       markup**, `not-last-col`, non un selettore più furbo: il CSS non sa contare le colonne,
       `:last-child` guarda i fratelli **scritti**, e una cella unita che arriva da sopra fra
@@ -106,7 +106,7 @@
     - ⚠️ **Perché non l'aveva vista nessuna prova**: le misure guardavano la cella unita, che era
       giusta, e la lettura d'insieme era uno screenshot dell'intera tabella, dove un tratto di
       bordo mancante è un pelo di pixel. Un `rowspan` va verificato su **tutti e quattro** i
-      lati delle celle che tocca, comprese quelle che gli stanno accanto, e **bordi e raggi
+      lati delle celle che tocca, comprese quelle che gli sono accanto, e **bordi e raggi
       insieme**: sono due proprietà che le stesse regole d'angolo governano.
     - **Il separatore verticale delle INTESTAZIONI era più scuro** (`#555`, tono dell'export) e
       dal 2026-08-02 ha il grigio delle altre celle, perché l'utente l'ha visto e non gli
@@ -124,7 +124,7 @@
   - ⚠️ **Il LOGO in testata è SVG inline, e il file `RoccobotOS.svg` non esiste più** (2026-08-01).
     Era un `<img>`, e un'immagine esterna il foglio di stile non la può ricolorare: in tema scuro
     la sola parte grigia della scritta deve andare a `#DEDEDE`, il marchio verde no. Le due parti
-    portano `.logo-word` e `.logo-mark`, i colori stanno in `RoccobotOS.css`. Gli `id` che
+    portano `.logo-word` e `.logo-mark`, i colori sono in `RoccobotOS.css`. Gli `id` che
     l'export si portava dietro (`Header`, `R`, `O`, `B`...) sono stati tolti nel passaggio:
     inline avrebbero potuto collidere con quelli della pagina.
   - ⚠️⚠️ **Una dichiarazione SUPERATA non è una regola morta, e il censimento del CSS morto non
@@ -133,7 +133,7 @@
     più in basso nel file risulta viva. Sotto la scala dei titoli c'era tutto uno strato
     dell'export che coloriva h1-h6 di `#0595bf` e i titoli scuri di ciano: invisibile, perché le
     regole nuove vincono, ma pronto a ingannare chi modifica la riga sbagliata. Tolte le sole
-    dichiarazioni di **colore**, tenendo `font-size`, riempimenti e bordi che stavano nelle
+    dichiarazioni di **colore**, tenendo `font-size`, riempimenti e bordi che erano nelle
     stesse regole.
     - ⚠️ **Come si trova**: non con `querySelectorAll`, ma leggendo il **colore calcolato** di un
       elemento per ogni livello e confrontandolo con quello che il foglio dichiara. Un valore
@@ -145,7 +145,7 @@
     giorni (corretto in 3.46). Il bordo di h1 e h2 è dichiarato una volta sola, chiaro, e
     l'elenco che lo ricolora al buio comprendeva h1, h4, h5 e h6 ma **non h2**: su fondo
     `#121212` restava una riga `#e7e8e8`. Il motivo per cui è sopravvissuto è istruttivo: tutte
-    le prove sui titoli guardavano il **testo**, e il difetto stava nel **bordo**.
+    le prove sui titoli guardavano il **testo**, e il difetto era nel **bordo**.
   - ⚠️⚠️ **Il CSS morto NON si pota tutto, e la parte rimasta è una scelta, non una dimenticanza**
     (2026-08-01, potatura D1). Sono cadute le regole **impossibili**: residui di funzioni tolte
     (MathJax, `.lazy-section`, `.mweb-charts`), il tema dei token di Prism e le sue righe
@@ -173,7 +173,7 @@
     regole CSS che le vestivano. ⚠️ **Restano le ancore fatte a mano** (`<a id="ScorciatoieApp"></a>`
     e simili, comprese `CloudStorage` e `NotaFTop` che oggi nessuno punta): sono segnaposto
     voluti, non residui, e i link dell'indice ci passano.
-  - ⚠️⚠️ **I comandi fissi: dove stanno e QUANDO si vedono.** Su smartphone sono **tre**:
+  - ⚠️⚠️ **I comandi fissi: dove sono e QUANDO si vedono.** Su smartphone sono **tre**:
     l'indice in basso a **sinistra** nell'angolo, inizio e fine pagina in basso a **destra**. Su
     desktop ci sono i soli due salti, in basso a destra.
     - ⚠️ **La regola di visibilità è UNA SOLA per i due formati** (2026-08-02): si vedono
@@ -325,7 +325,7 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   - ⚠️ **L'allineamento orizzontale è APERTO, e la premessa da cui si parte è falsa**: in quella
     colonna i glifi **non condividono alcun bordo destro**. Misurato l'inchiostro vero con le
     metriche del canvas (`actualBoundingBoxRight`, non la scatola di layout), i bordi destri
-    stanno in un intervallo di **14 px**, da `♪` a `⌦`, perché ogni glifo ha la sua larghezza e
+    sono in un intervallo di **14 px**, da `♪` a `⌦`, perché ogni glifo ha la sua larghezza e
     la colonna è allineata a sinistra. Non esiste quindi un bordo a cui allinearsi 'al pixel', e
     lo spostamento sarà un valore ottico deciso dall'utente.
   - ⚠️ **La misura giusta è l'INCHIOSTRO, non la scatola**: un `getBoundingClientRect` su un
@@ -353,7 +353,7 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
 - ⚠️ **Le `icona1.png` ... `icona7.png` NON esistono più**, cancellate dal repo il 2026-07-31 su
   richiesta dell'utente: la conversione le aveva rese orfane tutte e sette (sei diventate SVG
   inline, `icona6.png` rimpiazzata dalle due PNG di Telegram, e `icona4.png` era orfana già
-  prima). Non cercarle e non ricrearle; se serve vederle, stanno nella storia git. È anche il
+  prima). Non cercarle e non ricrearle; se serve vederle, sono nella storia git. È anche il
   motivo per cui le icone del testo **non si nominano più per numero**: quei nomi non
   puntano a niente, e la sezione le chiama per quello che sono.
 - ⚠️⚠️ **Le due frecce di Telegram NON sono SVG: sono PNG prese dalla UI dell'app**
@@ -374,7 +374,7 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
     che non lo dicono: quando l'ordine conta, si chiede o si verifica, non si deduce.
   - ⚠️ **Le due misure in pagina sono DIVERSE di proposito** (20 px la legacy, 16 px la nuova),
     e non è una svista: nella nuova il disegno riempie tutto il quadrato di 64 px, nella legacy
-    l'inchiostro sta in 51 px su 64. A pari `height` la freccia legacy sarebbe apparsa più
+    l'inchiostro occupa 51 px su 64. A pari `height` la freccia legacy sarebbe apparsa più
     piccola di un quinto; con 20 px i due **inchiostri** misurano uguale.
 - 🎨 **Dove il ridisegno decide invece di copiare**, perché a 16 px la fedeltà letterale non
   paga: l'**occhio** e la **maschera di livello** sono in **negativo** come gli originali
@@ -408,7 +408,7 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   sia, e supera il criterio del giorno prima, che era il centro di una `o` minuscola.
   - ⚠️ **Il criterio vecchio è SUPERATO, non affiancato**: chi trova in giro la nota sul centro
     della `o` sta leggendo la versione del 2026-07-31. La differenza fra i due non è teorica: il
-    centro della maiuscola sta **più in alto** di (cap-height - x-height) / 2, che sul font di
+    centro della maiuscola è **più in alto** di (cap-height - x-height) / 2, che sul font di
     casa vale **0,094em** nel testo a 16 px e **0,069em** nelle tabelle a 14,4 px.
   - **Come si ottiene, in pratica.** `vertical-align:middle` allinea al centro della x-height:
     da lì si alza l'icona di quella differenza con un `transform:translateY` negativo. Il
@@ -427,21 +427,21 @@ Le sole due che restano raster sono le **frecce di Telegram**, per la ragione sc
   - **La taratura in vigore** (valori dell'utente, in suoi pixel a DPR 2, tutti verso l'alto):
     globo 3, maschera livello 2, slider diviso 2, freccia Telegram legacy 2, occhio 1, freccia
     Telegram nuova 1, ricarica del browser 1 (aggiunta il 2026-08-01, quando l'utente ha
-    approvato la forma nuova e ha chiesto un pixel in su); **Mission Control resta dove sta**,
+    approvato la forma nuova e ha chiesto un pixel in su); **Mission Control resta dov'è**,
     approvato così. Il logo Apple porta la sola regola generale, senza ottica.
     - ⚠️ **Il posto dove questa taratura si legge davvero è il CSS**, non questo elenco: fra il
       2026-08-01 e la 2.51 i due erano già divergenti sulla ricarica, e l'ha trovato un audit.
       Se un domani divergono ancora, vince il CSS e questa riga si aggiorna.
   - **E vale per gli `<img>` come per gli `<svg>`**: le due frecce raster di Telegram usano lo
     stesso meccanismo delle SVG.
-  - **Il difetto da cui tutto è partito, misurato**: i PNG originali stavano sulla **baseline**,
+  - **Il difetto da cui tutto è partito, misurato**: i PNG originali erano sulla **baseline**,
     quindi ogni icona sedeva tanto più alta quanto più era grande (da +1,4 px a +5,5 px). Il
     problema non era il verso ma il fatto che lo scarto **dipendesse dalla dimensione**.
   - ⚠️ **Questo supera il vincolo dei 0 px di spostamento** che governava il primo giro: le
     dimensioni restano identiche, la **posizione verticale cambia di proposito**.
 - ⚠️⚠️ **Il logo Apple è un'ICONA, non un carattere** (decisione dell'utente, 2026-08-01:
   *non mi piace che quel carattere sia visibile solo su OS di Apple*). Nella tabella delle
-  sostituzioni testo stava come `U+F8FF`, che è nell'**area privata** Unicode: sui sistemi
+  sostituzioni testo era scritto come `U+F8FF`, che è nell'**area privata** Unicode: sui sistemi
   Apple si vede, altrove è un quadratino vuoto. Ora è un SVG inline con `currentColor`, quindi
   si vede ovunque e segue il tema.
   - **L'asset l'ha fornito l'utente** ed è stato bonificato come sempre (1.375 byte a 1.022:
@@ -506,7 +506,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     tarare, ed è la ragione per cui le due rese si coprono a vicenda senza buchi. Fra 601 e
     860 px non c'è indice, quindi là vale il numero sopra il logo.
   - ⚠️ **La pillola NON può essere `absolute` dentro il riquadro**: quel riquadro ha lo
-    scorrimento interno, e la pillola scorrerebbe via con le voci. Sta in una riga **`sticky`
+    scorrimento interno, e la pillola scorrerebbe via con le voci. È in una riga **`sticky`
     ad altezza zero**, che resta incollata in cima allo scroll e non occupa spazio nel flusso,
     quindi non sposta di un pixel l'indice. Misurato: dopo 600 px di scorrimento dell'indice la
     pillola è ferma.
@@ -528,7 +528,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     l'equivoco che ha fatto sbagliare il primo giro: `position:fixed` lo teneva visibile per
     tutta la pagina, mentre deve uscire di scena insieme alla testata. La resa giusta è
     **`position:absolute`** dentro `#markdown_content`, che dà le due cose insieme: scorre col
-    documento e sta fuori dal flusso, quindi **non sposta nulla**. Misurato: **374 figli** di
+    documento ed è fuori dal flusso, quindi **non sposta nulla**. Misurato: **374 figli** di
     `#markdown_content`, **0 spostati**, altezza della pagina identica al pixel su desktop e
     mobile, e dopo 1500 px di scroll il numero è fuori dallo schermo.
   - **`left:0; bottom:100%`**, e funziona in tutti i formati per una ragione misurata, non per
@@ -542,7 +542,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     **0,0 px a DPR 3**, 0,5 px a DPR 2, 1 px a DPR 1, cioè sempre entro **un pixel di
     dispositivo**. Correggerlo con un `left` negativo peggiorerebbe gli altri DPR: scartato.
   - **Niente pillola, niente sfondo, niente bordo**, solo il numero: perciò il badge non
-    condivide più la lingua visiva dei toggle, che era la scelta del primo giro quando stava
+    condivide più la lingua visiva dei toggle, che era la scelta del primo giro quando era
     sovrapposto al contenuto e aveva bisogno di uno sfondo per staccarsi.
   - ⚠️⚠️ **L'opacità è DIVERSA nei due temi, `.3` sul chiaro e `.25` sullo scuro**, e il
     contrasto axe-core **non passa** in nessuno dei due: è una deroga **voluta**. La scelta è
@@ -560,7 +560,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
       **entrambe** guardando le immagini.
     - **Il conto, per sapere di quanto si deroga**: `#4a4a4a` al 30% su fondo chiaro dà un grigio
       effettivo attorno a `#c5c5c5`, cioè circa **1,6:1** contro i 4,5:1 che il criterio
-      chiederebbe per un testo di quel corpo; `#eaeaea` al 25% su `#121212` sta attorno a
+      chiederebbe per un testo di quel corpo; `#eaeaea` al 25% su `#121212` è attorno a
       **2,2:1**.
     - **Perché è difendibile qui e non altrove**: il numero di versione non è contenuto da
       leggere per usare il sito, e chi lo cerca sa dov'è. La stessa opacità su un testo della
@@ -572,7 +572,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
     un cursore che promette un'interazione che non c'è. ⚠️ Serve **anche** perché il numero è
     appoggiato sopra il link del logo: senza, ne mangerebbe una porzione cliccabile.
   - **Non si stampa** (`@media print`): su un foglio il numero di versione è rumore.
-  - ⚠️ **La posizione precedente resta scritta qui come lezione**: stava in alto a destra,
+  - ⚠️ **La posizione precedente resta scritta qui come lezione**: era in alto a destra,
     accanto al pulsante del tema, e a `top:12px` col corpo più grande **copriva la punta della
     foglia** della mela del logo, 141 pixel di inchiostro su desktop e 179 su mobile. La prova
     da rifare quando si sposta qualcosa lì: nascondere l'elemento, fotografare l'area che
@@ -588,7 +588,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
 
 ### 🎛️ Comandi e controlli fissi
 
-- **I tasti inizio e fine pagina stanno a DESTRA in ENTRAMBI i formati** (richiesta
+- **I tasti inizio e fine pagina sono a DESTRA in ENTRAMBI i formati** (richiesta
   dell'utente, 2026-08-01): 12 px dal bordo su desktop, 16 su mobile, e 16 e 60 px dal fondo.
   - ⚠️⚠️ **Su mobile ha comportato l'INVERSIONE COMPLETA dei due lati**, ed è la ragione per
     cui la disposizione mobile non somiglia più a quella di prima: cambio tema e interruttore
@@ -614,7 +614,7 @@ riferimento personale. Quindi non conta come documentazione, conta come progetto
 
 ### ⌨️ Tabella delle sostituzioni testo
 
-**Com'è fatto.** La tabella che in pagina sta sotto il titolo `Sostituzione testo` rispecchia
+**Com'è fatto.** La tabella che in pagina è sotto il titolo `Sostituzione testo` rispecchia
 le sostituzioni configurate dall'utente in macOS (Impostazioni di sistema, Tastiera, Testo). Non è un
 contenuto redazionale: è il **dump di una sua configurazione**, e si aggiorna quando lui ne
 manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
@@ -652,7 +652,7 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
 - **Il file pronto vive in `OS Files/Text Replacements.plist`** ed è scaricabile dalla pagina
   (dal 2026-08-02). ⚠️ **Si RIGENERA dalla tabella quando la tabella cambia**, o le due cose
   divergono in silenzio: la tabella è la fonte, il file è il prodotto, e nessuno rilegge un
-  allegato. Nel file i caratteri che le regole vietano e quelli dell'area privata stanno come
+  allegato. Nel file i caratteri che le regole vietano e quelli dell'area privata compaiono come
   **riferimenti numerici** (`&#x2014;`, `&#xF8FF;`): l'XML li risolve nel glifo giusto e il file
   tracciato resta pulito, che è la stessa soluzione già usata in pagina con le entità.
   - ⚠️⚠️ **ECCEZIONE DICHIARATA, da non 'correggere': in questo progetto vivono quattro
@@ -680,7 +680,7 @@ manda lo screenshot, riga per riga, nell'ordine in cui il pannello le mostra.
   - ✅ **Ma col formato giusto funziona, ed è provato**: l'utente ha importato il file di
     `OS Files/` su macOS 26.6, 63 voci in un colpo, senza errori. Quindi la causa del fallimento
     era il formato, non il pannello, e la soglia oltre la quale l'importazione diventa
-    imprevedibile sta più in alto di 63.
+    imprevedibile è più in alto di 63.
   - **Il `+` non è una conferma**: dice che la finestra accetta *un* file, non che *quel* file
     è valido. È il segno che rende il fallimento indistinguibile da un difetto del sistema.
   - **Due cause silenziose**: struttura sbagliata del plist (vedi sopra) e XML non valido

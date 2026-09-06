@@ -115,7 +115,7 @@ serve.
 
 - ⚠️⚠️ **L'icona è ADATTIVA, quindi NON porta nessuna forma propria** (istruzione dell'utente,
   2026-08-14): un quadrato **pieno** col glifo nella **zona sicura** (l'80% centrale, qui il
-  glifo sta al 44% del lato), e la forma la decide il launcher. **Uno squircle rasterizzato è un
+  glifo è al 44% del lato), e la forma la decide il launcher. **Uno squircle rasterizzato è un
   errore**, non una rifinitura: su un launcher che ritaglia in tondo o a goccia si vedrebbe la
   forma **dentro** la forma. È stato provato nella v15.04 e tolto il giorno stesso.
   - Un **solo set** di file con `purpose: "any maskable"`: l'icona adattiva serve anche i
@@ -163,7 +163,7 @@ tutti referenziati in testa alla pagina. Il colore è **`#ce9d3b`**, un gradino 
   *l'unico che mi piace è `#ce9d3b`*), fra otto candidate rese a **dimensione reale** sulle sue
   barre dei preferiti vere, **`#edeeed`** e **`#292929`**, dove misura **2,12:1** su chiaro e
   **5,90:1** su scuro. Il criterio è la **parentela con l'oro del sito**, non il massimo
-  contrasto: sta **sotto il 3:1** su barra chiara, ed è una scelta informata, non una svista.
+  contrasto: è **sotto il 3:1** su barra chiara, ed è una scelta informata, non una svista.
   Il percorso, che spiega perché il criterio è quello: l'oro nudo `#d2b25c` quasi svaniva su
   chiaro (**1,76:1**), da cui la prima passata a `#b87323` (3,27 / 3,82); l'utente l'ha
   giudicata **troppo scura**, poi ha bocciato anche il gradino intermedio.
@@ -172,11 +172,11 @@ tutti referenziati in testa alla pagina. Il colore è **`#ce9d3b`**, un gradino 
   (servirebbe Y ≤ 0,176 su chiaro e Y ≥ 0,239 su scuro). Il massimo simultaneo è **3,54:1**, al
   punto di equilibrio `#b16e22`, e nessuna tinta di nessuna tonalità può superarlo. La finestra
   che tiene il **3:1** su entrambe (Y fra 0,167 e 0,251) esiste, va da `#c27825` a `#a0641f`, e
-  là nessuna tinta piaceva all'utente: è la ragione per cui la favicon sta fuori da quella
+  là nessuna tinta piaceva all'utente: è la ragione per cui la favicon è fuori da quella
   finestra.
   - ⚠️ **La favicon vive nella chrome del browser, non nella pagina**: non entra nell'audit axe
     né nel gate W3C, e non intacca la conformità AA del sito, che resta un vincolo intatto per
-    tutto ciò che sta **dentro** la pagina.
+    tutto ciò che è **dentro** la pagina.
 - ⚠️ **Le misure si fanno sulle barre REALI, non su bianco puro**: su `#ffffff` la stessa tinta
   dà **2,47:1** invece di 2,12, cioè un terzo di punto di contrasto regalato, e su quel numero
   si è già preso un abbaglio. Le due misure vivono anche nel commento di `favicon.js`, sopra la
@@ -229,7 +229,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
      come default di sito, dalla Console. Vale solo su quel browser, **non tocca il
      sito**, si
      ricorda in `localStorage` (`arda-zoom-big`) e **scavalca** il default di
-     sito (nei due sensi, anche sui telefoni: è così che un telefono può stare
+     sito (nei due sensi, anche sui telefoni: è così che un telefono può essere
      in XL). Si salvano `'1'`/`'0'` **espliciti**: chiave assente =
      'segui il sito', non 'spento'. Toast di conferma (testi dell'utente, v12.40):
      **'Modalità XL' / 'Modalità normale'** (EN 'XL Mode' / 'Standard mode');
@@ -270,7 +270,7 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
   admin, e in modalità normale la misura è esatta.
 - **Verificato:** nessuno scroll orizzontale da **320px a 1600px**, modali e
   elementi fissi (FAB, tasti salto) dentro il viewport, axe **0** in entrambi i temi
-  con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può stare
+  con lo zoom attivo, W3C **0/0** (il Nu accetta `zoom`, quindi la regola può essere
   nel CSS statico).
 
 ## 🔎 Zoom a una mano nel visualizzatore: doppio tocco e trascina
@@ -311,7 +311,7 @@ secondo tocco si **trascina senza staccare il dito**, verso il basso per ingrand
   millesimo e il doppio tocco secco che salta a 2,187.
   - ⚠️ **Qui il soggetto di prova è l'icona PWA, non una mappa**, e non è una scelta di comodo:
     il server locale pubblica `arda/top/`, mentre le mappe vivono in `arda/res/`, cioè un
-    livello sopra. Il gesto non guarda che cosa sta nel viewer, quindi la prova vale uguale.
+    livello sopra. Il gesto non guarda che cosa c'è nel viewer, quindi la prova vale uguale.
 
 ## 🔍 La ricerca del sito, dal tocco lungo sul FAB
 
@@ -330,7 +330,7 @@ aprire il Pannello.
   (§ 'Struttura dati'). È la ragione per cui l'utente l'ha chiesta al posto di una ricerca che
   si limiti alla vista.
 - **I mattoni sono quelli dell'editor admin, promossi a globali** (`computeMatches`, `fold`,
-  `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): stavano dentro uno scope che si apre solo con le
+  `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): erano dentro uno scope che si apre solo con le
   credenziali, quindi non erano né riusabili né provabili. ⚠️ Due copie sarebbero divergute al
   primo campo nuovo del dataset, ed è il difetto che la promozione evita.
 - ⚠️⚠️ **Una voce che nessun filtro mostra si SVELA per INDICE, e non spegnendo il filtro**
@@ -397,7 +397,7 @@ se è acceso, **`fxCfg`** per la config in pagina, **`fxTh`** per una manopola p
 **`fxActiveSfx`** per la variante attiva; l'accesso diretto a `SITE_FLAGS` è riservato agli
 editor. Due assi **ortogonali** di suffissi: **`_m`** sull'effetto (piattaforma), **`_d`/`_l`**
 sulla manopola (tema). Fonti uniche: **`FX_RANGE`** per scale e limiti, **`FX_SEL`** per i
-valori a scelta, **`normSiteFlags`** per normalizzare. Le regole stanno in **`injectFxRules`**,
+valori a scelta, **`normSiteFlags`** per normalizzare. Le regole vivono in **`injectFxRules`**,
 scoped alla classe di flag su `<html>`, e le formule sono condivise con l'anteprima. In UI: tap
 sulla versione → sblocco → 'Area admin' → 5° pulsante (`showSiteFlagsEditor`); la regolazione è
 `showFxConfigEditor`. Salvataggio con `saveSiteFlagsToRepo`, **senza bump di versione**.
@@ -444,7 +444,7 @@ compaiono nella tab Mobile.
   variante 'A tocco' là è corretta anche se sembra un paradosso. Su quel dispositivo **non si
   vede la taratura desktop**, e non è un difetto.
 - ⚠️ **`hov` su mobile ESISTE e vale da selezione** (dato per assente una volta, e sbagliato):
-  il tap applica `:hover` e lo lascia appiccicato. Quindi ha la sua `_m` e sta anche nella tab
+  il tap applica `:hover` e lo lascia appiccicato. Quindi ha la sua `_m` ed è anche nella tab
   Mobile.
 - ⚠️ **L'interruttore di `hov` deve governare ATTIVAMENTE**: il fondo al passaggio è una
   funzione **base** del sistema cardcolor, quindi spegnere l'effetto non basta e serve un ramo
@@ -486,7 +486,7 @@ compaiono nella tab Mobile.
   default misura la sua taratura. Ha già prodotto due falsi FAIL: prima di dare la caccia a una
   regressione, leggere `var siteFlags`.
 - ⚠️ **axe NON serve come prova di contrasto sulle card**, quindi qui i limiti delle manopole
-  sono prudenti per scelta: la ragione e il metodo di verifica stanno in '🧭 Vocabolario
+  sono prudenti per scelta: la ragione e il metodo di verifica vivono in '🧭 Vocabolario
   strutturale' → '🎨 Colore card', voce sulle trappole, per non tenerne due copie.
 - ⚠️ **CASO CHIUSO, non è un difetto: 'spento su mobile, e lo trovo spento anche su desktop'.**
   Il Pannello scrive sempre e solo la variante giusta, accertato sui dati e dal vivo; l'equivoco
@@ -507,8 +507,8 @@ compaiono nella tab Mobile.
   Modalità XL, colonna della label larga **102px**), perché un a capo raddoppia l'altezza di una
   riga che deve restare uguale alle altre. ⚠️ Verifica in **entrambe le lingue** e **col font
   reale**.
-- ⚠️ **Il numero di posizione sta SOPRA il bagliore**, o la sfumatura vela i metalli del podio.
-- ⚠️ **I tasti salto vanno rivelati dal focus da tastiera**: stanno a opacità 0 ma restano
+- ⚠️ **Il numero di posizione è SOPRA il bagliore**, o la sfumatura vela i metalli del podio.
+- ⚠️ **I tasti salto vanno rivelati dal focus da tastiera**: sono a opacità 0 ma restano
   nella tabulazione, e il focus ci finiva **invisibile** (WCAG 2.4.7, che axe non intercetta).
   ⚠️ Serve `!important`, perché la dissolvenza pilota il contenitore con uno stile **inline**.
   Scelta di merito: rivelarli invece di toglierli dalla tabulazione, perché servono proprio a
@@ -541,7 +541,7 @@ compaiono nella tab Mobile.
 - ⚠️ **Anteprima del podio: numeri 1 e 2, ORO e ARGENTO** (utente), perché l'argento ha più
   bisogno d'occhio. Gli **altri** editor usano le posizioni 4 e 5, **fuori** dal podio,
   altrimenti l'anteprima mentirebbe.
-- **Contrasto dei controlli**: la tab inattiva sta a **0,78 e non 0,45** (là il testo scendeva a
+- **Contrasto dei controlli**: la tab inattiva è a **0,78 e non 0,45** (là il testo scendeva a
   2,85:1 in chiaro), e una riga disabilitata resta a **0,5 e non meno**, perché va comunque
   letta.
 - ⚠️ **I limiti di luminosità di `nums` sono di ACCESSIBILITÀ**, ed è il range stesso a
@@ -567,7 +567,7 @@ compaiono nella tab Mobile.
   manopola a dire dove finirà.
 - **Etichette: delle misure resta quella SCARTATA.** 'Colore al passaggio' misurava **147,2px**
   e 'Colore delle schede' **125,1px** su una colonna larga **102px**; l'inglese 'Coloured
-  numbers' sforava e 'Tinted numbers' stava a **125,8px**, margine troppo sottile, mentre il solo
+  numbers' sforava e 'Tinted numbers' era a **125,8px**, margine troppo sottile, mentre il solo
   'Numbers' si leggerebbe come 'mostra i numeri' e non 'tinta dei numeri'. Nel piè della
   sotto-modale 'Predefiniti' occupava **87,3px** su **88,5** disponibili, e 'Standard' ci stava
   (75,1px) ma dice uno **stato** dove gli altri tasti dicono un'**azione**.
@@ -616,10 +616,10 @@ compaiono nella tab Mobile.
 - **La trama non passa MAI sopra o sotto le schede né sulla testata**: la manopola che
   permetteva di scegliere è stata rimossa, e un valore residuo nei dati è ignorato. I tetti di
   opacità si sono potuti alzare ('più range di opacità') proprio perché quella modalità è caduta.
-- **'Azzera' / 'Reset'**, complementare a 'Ultimo salvato': quello riporta a ciò che sta sul
+- **'Azzera' / 'Reset'**, complementare a 'Ultimo salvato': quello riporta a ciò che è sul
   repo, questo alla resa con cui l'effetto è nato ('un tasto che ripristini il valore
   standard... per tornare ai valori correnti in qualsiasi momento dopo aver sperimentato'). Il
-  **doppio clic su uno slider** fa lo stesso per la sua sola manopola. ⚠️ 'Ultimo salvato' sta
+  **doppio clic su uno slider** fa lo stesso per la sua sola manopola. ⚠️ 'Ultimo salvato' occupa
   su due righe da sempre e va bene così.
 - **Slider 'solo pallino'**: il salto al punto cliccato sul binario è sgradito, quindi il valore
   si cambia solo trascinando il pallino, da tastiera o dal campo numerico.
@@ -685,7 +685,7 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
   salvare alcunché, nemmeno in localStorage*). Le tre vie d'uscita senza salvataggio (la ×, il
   clic sul velo, e `Esc`, che passa dalla ×) chiamano la **stessa** funzione del tasto Annulla.
   - ⚠️ **Prima era così SOLO in vista divisa**, ed è la nota che questa voce sostituisce: il
-    ripristino stava dentro `close` nel ramo `docked`, quindi nella modale classica la × lasciava
+    ripristino era dentro `close` nel ramo `docked`, quindi nella modale classica la × lasciava
     in vigore le modifiche provate, che restavano in pagina fino al reload senza che nessuno le
     avesse salvate.
   - ⚠️ **La funzione NON si sposta dentro `close`**, e non è una semplificazione mancata: da `close`
@@ -757,7 +757,7 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
     **INIETTATA a runtime**, non nel CSS statico: nel progetto quella proprietà è
     sempre stata tenuta fuori dal foglio che il Nu ispeziona (finora inline sul solo
     FAB) e il gate della release è 0 errori **e** 0 warning.
-  - ⚠️ **È un DETERRENTE, non una protezione**, e va detto: il testo sta comunque nel
+  - ⚠️ **È un DETERRENTE, non una protezione**, e va detto: il testo è comunque nel
     sorgente della pagina e resta leggibile da 'visualizza sorgente', dagli strumenti
     per sviluppatori o con JavaScript disattivato.
   - Verificato che non rompe nulla: scheda personaggio, Risorse e note, **pan del
@@ -975,7 +975,7 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
 
 - Gli **attributi** che non sono veri nomi o titoli (es. `Prima Regina
   Regnante di Númenor`, `fratello di Gwaihir`, `Capostipite della Casa di
-  Bëor`) stanno SOLO nella Info, mai tra Nomi/Titoli.
+  Bëor`) sono SOLO nella Info, mai tra Nomi/Titoli.
 - **I Titoli sono la carica nuda: i qualificatori non ne fanno MAI parte.**
   Aggettivi come `Ultimo`, `Primo`, `Grande` e simili non appartengono al
   titolo in sé, anche quando sono veri: il titolo è `Re di Gondor`, non `Ultimo
@@ -989,10 +989,10 @@ Corollari (bonifica completa v3.53, audit 2026-07-03):
   è la sostanza stessa della figura. Falso positivo da non toccare: `Grande
   Porta` di Ecthelion (`Grande` è parte del nome proprio Great Gate, non un
   qualificatore).
-- Le **genealogie** (`figlio/figlia di ...`) non stanno mai tra i Nomi o i
+- Le **genealogie** (`figlio/figlia di ...`) non sono mai tra i Nomi o i
   Titoli: ci sono i campi Genitori (eccezione tenuta: `Figlia del Fiume` di
   Baccador, epiteto canonico, non genealogia in senso proprio).
-- Gli **epiteti genuini** stanno nei Nomi e non si narrano nella Info (niente
+- Gli **epiteti genuini** sono nei Nomi e non si narrano nella Info (niente
   `detto X`), salvo quando la narrazione ha valore proprio (origine del
   soprannome: `Labadal` di Sador, `il Capo` di Lotho).
 - Restano lecite le **sovrapposizioni solo apparenti** (la Info descrive con
@@ -1008,7 +1008,7 @@ voce JSON per riga**, così i diff su GitHub sono per-personaggio, e identica si
 Worker. I salvataggi passano dal **Worker** `proxy/arda-admin-proxy.js`: il browser invia `dati` +
 parola d'ordine, il Worker valida, legge lo SHA e riscrive l'intero file con un PUT (race-safe).
 ⚠️ Il `FILE_PATH` del Worker punta a `arda/top/dati.js`: **se il file dati si sposta, va
-riallineato là**. L'URL del Worker sta in `ADMIN_PROXY_URL_DEFAULT` (non segreto), sovrascrivibile
+riallineato là**. L'URL del Worker è in `ADMIN_PROXY_URL_DEFAULT` (non segreto), sovrascrivibile
 dal campo 'Proxy' dell'editor; la parola d'ordine vive **solo in memoria** per la durata della
 sessione. Deploy e secret in `proxy/README.md`.
 
@@ -1152,7 +1152,7 @@ occorrenze in `index.html` e nel Worker. Tolto il 2026-08-23 su richiesta dell'u
   griglia dei flag-badge.
 - **La traduzione automatica IT↔EN al salvataggio è stata RIMOSSA**, in favore della modale di
   conferma dei campi dimenticati; il tasto manuale resta dietro `FEATURES.adminTranslate`.
-- **Le immagini delle Risorse stanno in `arda/res/`** e si aprono nel visualizzatore zoomabile;
+- **Le immagini delle Risorse sono in `arda/res/`** e si aprono nel visualizzatore zoomabile;
   aggiungerne una è una riga sola nell'elenco.
 
 ## ✒️ Convenzioni tipografiche dei dati (`dati.js`)
@@ -1232,7 +1232,7 @@ il tema chiaro spegne con un'ombra **nulla** (non `none`, così resta una voce v
 - ⚠️⚠️ **L'alfa è MISURATA, non scelta a gusto**, ed è più bassa di quella del gemello
   (**0,12/0,10** contro 0,13/0,10): a parità di alfa una luce quasi bianca **rende di più** di una
   tinta satura, e con 0,13 qui il bagliore batteva quello di Terramare dell'**11%** a ridosso del
-  bordo. Con 0,12 i due siti stanno al **98%** e al **94%** a 3px e 10px dal bordo.
+  bordo. Con 0,12 i due siti sono al **98%** e al **94%** a 3px e 10px dal bordo.
 - ⚠️ **Come si misura, perché il metodo ovvio NON funziona**: confrontare l'anello attorno al
   Pannello col 'fondo lontano' dà un delta **dentro il rumore**, perché il fondo dei due siti non è
   uniforme (trame, contenuto sotto). Misurato così, il bagliore di Terramare risultava
@@ -1324,13 +1324,13 @@ il tema chiaro spegne con un'ombra **nulla** (non `none`, così resta una voce v
 - **Ent e Ucorni NON sono animali**: vanno fra gli esseri arcani e semi-divini, e i casi-limite
   editoriali (il Vecchio Uomo Salice, 'Spirito della foresta') restano là.
 - **Troll**: tassonomicamente non sono Orchi, ma il sito non ha una categoria 'mostri', quindi per
-  scelta dell'utente stanno nella categoria degli Orchi, la cui legenda recita **'Orchi e Troll'**.
+  scelta dell'utente sono nella categoria degli Orchi, la cui legenda recita **'Orchi e Troll'**.
   La decisione è di **merito canonico ed editoriale**, non dettata dalla visibilità di default.
 - **Schede di Ent, Aquile e Vecchio Uomo Salice.** ⚠️ Riguarda la **card** (sfondo, bordo, hover) e
   **NON l'etichetta tipo**, che resta ai colori automatici: è l'errore in cui si è già caduti una
   volta, cambiando le **etichette** invece delle **schede**. Tutti gli Ent e tutte le Grandi Aquile
   prendono la scheda verde delle Creature primordiali; il Vecchio Uomo Salice, l'Osservatore
-  nell'Acqua e i Guardiani di Cirith Ungol stanno fra gli **Esseri crepuscolari** e **non** sono
+  nell'Acqua e i Guardiani di Cirith Ungol sono fra gli **Esseri crepuscolari** e **non** sono
   Entità angeliche. ⚠️ Per Fimbrethil il `tipo` è normalizzato a 'Ent' (genere invariato), così
   rientra nel match.
 - ⚠️ **Ordinale dei figli di Finarfin: Angrod SECONDO, Aegnor TERZO**, conseguenza coerente della
@@ -1365,7 +1365,7 @@ via grep sulle fonti locali. Quello che ne è uscito:
 **Riferimenti em del sito**, da riverificare al momento perché dipendono dal corpo del testo
 su cui si misura: desktop `1em ≈ 25.6px` CSS **sulla riga nome** della card, mobile
 `1em ≈ 16.19px`. La regola generale sulla conversione dei pixel forniti dall'utente (sono
-device px di uno screenshot, vanno resi in unità relative) sta nel `CLAUDE.md` di **root**,
+device px di uno screenshot, vanno resi in unità relative) vive nel `CLAUDE.md` di **root**,
 § '📐 Misure in pixel'.
 
 ⚠️ **Nell'ambiente Claude Code le webfont NON si caricano**: il foglio
@@ -1406,7 +1406,7 @@ dell'istruzione dell'utente 'devi fare le prove col **FONT** reale'.
 
 Oggetto **`FEATURES`** in testa allo script di `arda/top/index.html`: interruttori per spegnere
 elementi senza cancellarli. ⚠️ **Non sono bug né codice morto**, sono scelte deliberate, ed è per
-questo che stanno elencate qui.
+questo che sono elencate qui.
 
 - **`genderLegendPill`** (spento): la pill 'Maschio | Femmina' in fondo alla legenda, spenta per
   risparmiare spazio e lasciare implicita un'informazione ovvia. Da riaccendere se nasceranno
@@ -1424,9 +1424,9 @@ questo che stanno elencate qui.
   restano sempre.
 - **`jumpMobileCircle`** (spento): il **tondo** dei tasti salto su **mobile**, dove restano le sole
   freccine, più discrete. A `true` torna il cerchio velato, se le freccine non bastassero. Su
-  **desktop** il tondo c'è sempre. ⚠️ Il blocco CSS mobile sta **dopo** l'override chiaro apposta:
+  **desktop** il tondo c'è sempre. ⚠️ Il blocco CSS mobile è **dopo** l'override chiaro apposta:
   stessa specificità, sorgente più in basso, quindi vince senza `!important`.
-  - ⚠️ **Opacità di riposo e hover stanno sul SINGOLO tasto**, non sul contenitore, così l'hover
+  - ⚠️ **Opacità di riposo e hover sono sul SINGOLO tasto**, non sul contenitore, così l'hover
     illumina solo il tasto sotto il puntatore: sul contenitore si accendevano entrambi.
 - ⚠️ **Lo scorrimento di pagina NON è un flag**: la funzione condivisa ha due modi **fissi**, uno per
   tipo di comando (scelta dell'utente). I **tasti flottanti** scorrono con animazione fluida, le
@@ -1457,7 +1457,7 @@ modificatore sono disattivate in modalità admin.
   - ⚠️ La guardia dei campi blocca **solo dove si scrive**: checkbox, radio, range, button e color
     **non** bloccano, perché dopo un click su una checkbox il focus resta lì e `L`/`T` devono
     continuare a rispondere.
-  - ⚠️ Se una modale sta **sopra** un'altra, conserva l'hook di lingua precedente, su `L`
+  - ⚠️ Se una modale è **sopra** un'altra, conserva l'hook di lingua precedente, su `L`
     ricostruisce **prima il livello sotto** e poi sé stessa, e alla chiusura lo **ripristina**:
     azzerarlo lascerebbe il livello sotto senza `L`. Ogni rebuild conserva scroll, tab e selezioni.
 
@@ -1515,7 +1515,7 @@ modificatore sono disattivate in modalità admin.
 ## 🏅 Criteri editoriali dei badge
 
 L'ordine di resa, di legenda e dell'editor vive in **`ICON_ORDER`**; i raggruppamenti di filtro in
-**`BADGE_ROWS`**. Chi porta un badge lo dicono i dati: qui stanno **i criteri e le esclusioni
+**`BADGE_ROWS`**. Chi porta un badge lo dicono i dati: qui vivono **i criteri e le esclusioni
 motivate**, perché nei dati un'esclusione è indistinguibile da una dimenticanza.
 
 ### I criteri
@@ -1563,7 +1563,7 @@ motivate**, perché nei dati un'esclusione è indistinguibile da una dimenticanz
   Círdan, Maedhros, Maglor, Elrond, Elros non marciarono con la schiera, e Maedhros e Maglor
   vennero **dopo** la guerra, per i Silmaril.
 - **`calaquende`** ('vide la Luce dei Due Alberi'): chi vide di persona gli Alberi, cioè visse o
-  soggiornò in Aman prima dell'oscuramento. Sta **subito prima di `silmaril`**, così i due badge
+  soggiornò in Aman prima dell'oscuramento. È **subito prima di `silmaril`**, così i due badge
   della Luce sono vicini e gli Alberi vengono prima dei loro frutti. ⚠️ Fra i Rúmil vale **il
   Noldo, non il Silvano omonimo**. **Thingol** è l'unico Sinda, con **tooltip dedicato** (vide gli
   Alberi come ambasciatore, 'non annoverato tra i Moriquendi'). I portatori al 50% sono Calaquendi
@@ -1599,7 +1599,7 @@ motivate**, perché nei dati un'esclusione è indistinguibile da una dimenticanz
 - ⚠️ **La riga Re della legenda è testo INLINE**, e i **tooltip delle card non cambiano**, per non
   rompere la convenzione 'Re Supremo vs Alto Re'. Il filtro di quella riga accende tutti i Re,
   **incluso** quello mancante dalla legenda.
-- ⚠️ **I tooltip dei singoli anelli restano distinti** anche se in legenda gli Anelli stanno su una
+- ⚠️ **I tooltip dei singoli anelli restano distinti** anche se in legenda gli Anelli sono su una
   riga sola con didascalia unica.
 - ⚠️ Una voce può avere **più chiavi** nello stesso oggetto di override dei tooltip (Ecthelion ne
   ha due): aggiungendone una **non sostituire** quella che c'è.
@@ -1748,11 +1748,11 @@ accanto a `openResourcesModal`; il viewer è `openNoteViewer`. Aggiungere una no
 oggetto, e pulsante e viewer si generano da soli; ogni oggetto ha titolo pieno, **etichetta breve
 per mobile (obbligatoria)**, la categoria `'lore'` o `'editorial'` e i due corpi HTML. Note,
 Risorse e Info condividono il **guscio della scheda personaggio** (`buildStdModal` +
-`activateStdModal`); il contenuto tipografico sta nelle classi del viewer, private delle proprietà
+`activateStdModal`); il contenuto tipografico è nelle classi del viewer, private delle proprietà
 di box, perché larghezza e scroll li governa il guscio.
 
 **Tre sezioni, in quest'ordine:** **Risorse** (le mappe nel visualizzatore più la mappa
-interattiva esterna: non sono note e non stanno nell'array), **Note** (pura lore in-universe) e
+interattiva esterna: non sono note e non sono nell'array), **Note** (pura lore in-universe) e
 **Note editoriali** (le scelte editoriali e il modo in cui la pagina presenta i dati).
 ⚠️ **Discrimine, regola dell'utente:** se spiega il **mondo** va in Note; se riguarda una **sua
 scelta** o **come il sito rende i dati** va in Note editoriali.
@@ -1796,7 +1796,7 @@ note e da `RES_MAPS`: rendere condivisibile una nota nuova non chiede altro che 
   - **Discreto vuol dire contorno e non riempimento**, corpo piccolo, centrato sotto il titolo: è
     un comando di servizio e non deve competere col testo della nota.
   - ⚠️ **L'opacità è 0,88 e non 0,8**, ed è una misura: sul tema chiaro a 0,8 il contrasto era
-    **4,55:1**, cioè passava l'AA con un margine di due centesimi. A 0,88 sta a **5,53:1** in
+    **4,55:1**, cioè passava l'AA con un margine di due centesimi. A 0,88 è a **5,53:1** in
     chiaro e **5,75:1** in scuro.
 
 ### ⚠️ Trappole
@@ -1839,7 +1839,7 @@ note e da `RES_MAPS`: rendere condivisibile una nota nuova non chiede altro che 
   scuro le modali sono davvero GIALLE' come riferito ai **testi**, mentre l'utente parlava dello
   **SFONDO**, e ha chiesto di rimetterlo: 'Titolo, sottotitoli, note collegate e tutti gli altri
   collegamenti (in sostanza: qualsiasi cosa cliccabile che non è un personaggio) deve rimanere del
-  colore di accento del tema'. Regola che ne esce: **tutto ciò che non è un personaggio sta
+  colore di accento del tema'. Regola che ne esce: **tutto ciò che non è un personaggio è
   sull'oro del tema**, i personaggi sulla propria tinta.
 - ⚠️⚠️ **Il velo delle modali NON ha tinta, e la ragione è un'illusione ottica misurata.** Contro
   un velo freddo il fondo della modale, che è **grigio puro** (delta RGB **0**, verificato),
@@ -1858,7 +1858,7 @@ note e da `RES_MAPS`: rendere condivisibile una nota nuova non chiede altro che 
   lo renderebbe inerte proprio mentre lo si usa. ⚠️ In **uscita** l'elenco si ripulisce sempre,
   senza condizioni, o un `inert` appeso rende il FAB inservibile; e per la stessa ragione
   l'inertizzazione gira **prima** della guardia anti-doppio-lock.
-  - **Inertizzare header, main e footer non basta**: FAB, tasti salto e cambio lingua stanno
+  - **Inertizzare header, main e footer non basta**: FAB, tasti salto e cambio lingua sono
     **fuori** e col `Tab` si raggiungevano attraverso il velo (dal 18° `Tab` il focus finiva sui
     controlli velati). Da qui l'elenco extra.
   - **Il focus trap vero serve comunque**: l'`inert` impedisce di entrare nei controlli dietro il

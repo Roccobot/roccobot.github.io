@@ -2,7 +2,7 @@
 
 > **Cos'è questo file.** Le regole dei **Cloudflare Worker** che fanno da proxy ai
 > salvataggi delle aree admin. Si carica quando si legge un file di questa cartella; le
-> regole trasversali stanno nel `CLAUDE.md` di **root**, e il formato dei dati che il Worker
+> regole trasversali vivono nel `CLAUDE.md` di **root**, e il formato dei dati che il Worker
 > scrive in [`arda/top/CLAUDE.md`](../arda/top/CLAUDE.md), sezione '🗃️ Struttura dati'.
 
 ## ⚠️⚠️ I Worker sono DUE, e la separazione è la salvaguardia
@@ -56,7 +56,7 @@ diverse.
 
 **Il 2026-08-23, un quarto d'ora dopo il primo deploy del Worker di Terramare**: il secret
 `ADMIN_PASSWORD` non era ancora impostato, e il Worker rispondeva **`{"ok":true}`** a chiunque
-mandasse `password: ""`. La causa è una riga che sembra innocua e sta in **entrambi** i
+mandasse `password: ""`. La causa è una riga che sembra innocua ed è in **entrambi** i
 Worker: `safeEqual(String(body.password || ''), String(env.ADMIN_PASSWORD || ''))`. Senza il
 secret il secondo argomento vale `''`, e il confronto con una password vuota torna **true**:
 la serratura si apriva proprio quando la chiave non era stata messa.
@@ -118,7 +118,7 @@ Dal contenuto legge anche la versione, per bumparla.
   con confronto a tempo costante.
 - L'URL del Worker **non è un segreto** e vive nel client come default, sovrascrivibile dal
   campo 'Proxy' dell'editor admin.
-- ⚠️ **Da non confondere col Worker `rules-proxy`**, che sta nel repo `Roccobot/tools`, serve
+- ⚠️ **Da non confondere col Worker `rules-proxy`**, che vive nel repo `Roccobot/tools`, serve
   i file di regole e ha una password propria e sacrificabile: due Worker, due scopi, due
   segreti.
 
