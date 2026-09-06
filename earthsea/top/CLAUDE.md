@@ -371,6 +371,49 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
   tutti. Storia e conseguenze in
   § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 
+### 💍 Thoreg e Intahin, i due kargadi dell'Anello spezzato
+
+Voci chieste dall'utente nella `1.44`. Sono i due capi dell'episodio che genera l'intera
+trama delle *Tombe di Atuan*: **Thoreg** è il re di Hupun che accolse Erreth-Akbe e ne
+ricevette metà dell'Anello della Pace, **Intahin** il Gran Sacerdote che lo affrontò e tenne
+l'altra metà, mandandola nel Tesoro delle Tombe.
+
+- ⚠️⚠️ **`Intahin` è il primo nome del dataset in cui le due edizioni divergono sulla GRAFIA,
+  non sulla parola**, e per questo allunga la lista dei nomi da sostituire nelle citazioni
+  con un caso di genere nuovo: fin qui Mondadori lasciava il nome **inglese** dove Nord ne ha
+  uno italiano (`Sparviere`, `Vetch`, `Hare`), qui i due traducono lo stesso nome kargade con
+  due grafie. Misurato: nei **libri 1-3** di Nord `Intahin` **6** e `Intathin` **0**, in
+  Mondadori l'esatto rovescio (`Intathin` 6), e l'inglese sta con Mondadori.
+  - **Quindi `Intathin` sta fra i nomi alternativi ITALIANI e non fra quelli inglesi**, dove
+    sarebbe il doppione di `nome_en`: è il caso di `Lepre`/`Hare`
+    (§ 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi').
+  - ⚠️ **Le 4 occorrenze di `Intathin` che il volume Nord porta NON contraddicono la regola**:
+    stanno tutte oltre metà file, nell'appendice *Una descrizione di Terramare*, cioè fuori
+    dai libri 1-3, dove la traduzione è condivisa con Mondadori e non c'è nulla da scegliere.
+    Chi conta le occorrenze sul volume intero trova le due grafie e conclude il contrario.
+- ⚠️⚠️ **Le due citazioni vengono dallo STESSO dialogo, e ad attribuirle è l'inglese**: in
+  *Le tombe di Atuan*, cap. 12, Arha racconta la storia del casato di Hupun e Sparviero le
+  risponde recitando le Gesta di Erreth-Akbe. Nel testo italiano estratto la virgoletta di
+  **chiusura si perde**, quindi le due battute sembrano una sola e la firma finirebbe
+  sbagliata; nell'inglese il cambio di parlante si vede (`given him.” “That indeed is told`).
+  Di qui `\ Arha` sulla card di Thoreg e `\ Sparviero` su quella di Intahin.
+- **Della citazione di Thoreg resta la SCARTATA**, che è più corta di 11 caratteri: *L'altra
+  metà restò in mano allo stregone, ma prima di fuggire lui la consegnò a un reuccio della
+  zona, uno dei ribelli, che si chiamava Thoreg di Hupun.* Fuori per due ragioni, e la prima
+  vale oltre il caso: quello `stregone` è la resa **Mondadori** dove Nord scrive
+  `incantatore`, cioè una divergenza di **vocabolario** che la tabella del sito non copre
+  (là ci sono solo `mago`/`magio`); e la frase apre con un riferimento sospeso.
+- ⚠️ **L'`origine` di Intahin resta VUOTA**: le fonti lo dicono primo della Casa di Tarb e
+  fanno discendere da lui i re-sacerdoti **di Karego-At**, che è la discendenza e non la sua
+  nascita. Riempirla con Karego-At o con Awabath sarebbe la deduzione per simmetria che
+  § 'Origine: significa NASCITA, e la residenza è solo un ripiego' vieta. Quella di Thoreg è
+  `Hupun`, ed è residenza dichiarata (il suo palazzo, il suo trono), non nascita.
+- ⚠️ **Nessuno dei due porta badge, e Intahin è il caso da non sbagliare**: l'appendice dice
+  che *sfidò Erreth-Akbe a un duello di magia*, ma lo stesso passo spiega che i Karg **non
+  praticavano la magia** come gli hardici e **ipotizza** che l'abbia attirato dove i Vecchi
+  Poteri annullavano i poteri dell'eroe. Un'ipotesi del narratore non è un'attestazione, e
+  `stregone` sarebbe un badge dato su di essa.
+
 ## 🏅 I tre badge e il genere
 
 I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged**
@@ -2684,6 +2727,18 @@ viene dipinto, quindi si vede il fondo come se non ci fosse mai stato niente sop
 - ⚠️ **`mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+.** Dove manca, i due
   strati si **sommano** invece di sottrarsi: il difetto è una macchia di velo a forma di logo,
   non una pagina rotta.
+- ⚠️⚠️ **QUESTA REGOLA È L'UNICO ERRORE W3C DEL SITO, ed è un falso positivo del Nu**
+  (misurato nella `1.44`: un messaggio in tutto, `mask-position: ',' is an incorrect
+  operator`). La virgola separa le **due** posizioni dei due strati di maschera, che la
+  specifica CSS Masking ammette (`<position>#`), e il browser la applica: la prova è che il
+  logo buca il velo nel punto giusto. ⚠️ Il gemello `-webkit-mask-position` porta la stessa
+  virgola e **non** viene segnalato, perché il Nu non valida le proprietà con prefisso: chi
+  guardasse solo il messaggio penserebbe a due regole diverse.
+  - **Come si chiuderebbe**, se un giorno si vuole il gate a 0: iniettando quel blocco via
+    JS, che è la strada già battuta su 'I Grandi di Arda' per la proprietà `d` e per le
+    regole con `var()` dentro `rgba()` (`arda/top/CLAUDE.md`, § 'Gate W3C'). ⚠️ Non è stato
+    fatto: costa una modifica al CSS del Pannello per un difetto che non esiste in pagina, e
+    la scelta va all'utente.
 - ⚠️ **I due veli NON hanno la stessa densità, e non è una svista**: luce a **0,05** sullo
   scuro, ombra a **0,075** sul chiaro (ritocco dell'utente, `0.99`). Su un fondo già luminoso
   l'occhio distingue peggio uno scarto verso il basso, quindi la stessa alpha darebbe due
