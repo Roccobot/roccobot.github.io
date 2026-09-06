@@ -2035,11 +2035,23 @@ campo del dataset e per lo Schedario che lo alimenta.
     la nascita: era una lettura troppo stretta della regola qui sopra, che il ripiego lo
     prevede. Il campo vuoto resta per chi non ha **nessuna** delle due, non per chi ha la
     sola residenza.
-  - ⚠️ **Restano nel dataset tre valori che isole non sono**, e non sono stati toccati:
-    `Endlane` e `Torning Bassa`, che sono villaggi, e `Terre di Kargad`, che è l'arcipelago
-    intero. Uniformarli è una scelta dell'utente e non un'applicazione della regola: chi
-    volesse farlo glielo chieda, perché su `Cenerino` (Endlane) la residenza è l'unico dato
-    che il testo dà.
+  - **`Cenerino` passa da `Endlane` a `Havnor`** (istruzione dell'utente, `1.46`), ed è
+    l'applicazione della regola: `Endlane` è **villaggio** per attestazione diretta
+    (*Endlane village* / *il villaggio di Endlane*), *a nord-ovest del Monte Onn* e *oltre la
+    foresta dei Faliern*, che sono le terre alte di **Havnor** (*Havnor is also the Great
+    Isle... the farmlands of the slopes of Mount Onn*).
+  - ⚠️⚠️ **`Torning Bassa` NON è un villaggio, e la mia nota che lo diceva era
+    un'ASSUNZIONE**: il testo la definisce una **municipalità di dieci o venti isolette**, la
+    più occidentale delle Novanta Isole (*these are gathered into townships each of ten or
+    twenty islets. One such was Low Torning, the westernmost*). Quindi come origine **resta
+    com'è**: è già un'entità insulare, e un nome d'isola più preciso non esiste, perché le
+    isolette non ne hanno uno (Pechvarry sta *in un'isoletta vicina, a est di Low Torning*).
+    - **La lezione vale oltre il caso**: che cosa sia un luogo lo dice il testo, e la parola
+      che lo classifica (`village`, `township`, `isle`) si cerca col grep come un nome. Qui
+      l'ho dedotta dal suono del nome, l'utente ha chiesto **da dove venisse**, e non veniva
+      da nessuna parte.
+  - **`Terre di Kargad` resta**, per decisione dell'utente: è l'arcipelago intero, e va bene
+    finché non ci sono dati più precisi sulle quattro voci che lo portano.
 
 ### 📍 Segno o parola nella colonna origine, e lo decide la CONSOLE
 
@@ -2957,7 +2969,10 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
       2026-09-05). ⚠️ È l'unica voce con una posizione **chiesta**: le altre si accodano, e
       questa vale come precedente solo se lui lo dice.
     - `Her brother` dà il genere, e il fratello è quello della **madre di Lontra**, di
-      Endlane: da lì l'origine, che è dove vive e non una nascita attestata.
+      Endlane: da lì l'origine, che è dove vive e non una nascita attestata. ⚠️ **Nel campo
+      c'è `Havnor` e non `Endlane` dalla `1.46`**, perché là va l'isola e quel villaggio sta
+      sulle terre alte di Havnor (§ 'Origine: significa NASCITA, e la residenza è solo un
+      ripiego', voce sull'isola).
 
 - **I quattro campi**: `citazione` / `citazione_en` per il testo, `citazione_fonte` /
   `citazione_fonte_en` per il contesto. ⚠️ Esistono su **tutte** le voci, anche vuoti: un
