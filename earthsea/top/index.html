@@ -1528,23 +1528,13 @@ html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(18,58,53,0.075); --deco-
    dalla classe' e non il contrario, come per ogni altro effetto: così un flag che non
    arriva (dati vecchi, JS a metà) lascia il Pannello pulito invece di mostrare una
    decorazione che nessuno ha acceso. */
+/* ⚠️ Il blocco `html.fx-deco .ctrl-deco` NON sta qui: è INIETTATO via JS in fondo allo
+   script del <head>, perché il Nu Html Checker rifiuta la virgola di `mask-position`, che
+   separa le posizioni dei DUE strati di maschera ed è valida (CSS Masking, `<position>#`).
+   Era l'unico errore W3C del sito. Chi lo rimettesse nel CSS statico se lo riprende.
+   ⚠️ Niente si perde senza JS: la classe `fx-deco` la mette `applySiteFlags`, che è JS
+   anche lei, quindi la regola statica era già inerte a script spento. */
 .ctrl-deco { display:none; }
-html.fx-deco .ctrl-deco {
-  display:block;
-  position:absolute; right:0; bottom:0; width:66%; height:42%;
-  pointer-events:none; z-index:0; overflow:hidden;
-  background:linear-gradient(to top left, var(--deco-velo), var(--deco-velo0));
-  -webkit-mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%), url('icons/Earthsea.svg');
-  -webkit-mask-position:0 0, right 0 bottom -44%;
-  -webkit-mask-size:auto, 58% auto;
-  -webkit-mask-repeat:no-repeat, no-repeat;
-  -webkit-mask-composite:source-out;
-  mask-image:radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%), url('icons/Earthsea.svg');
-  mask-position:0 0, right 0 bottom -44%;
-  mask-size:auto, 58% auto;
-  mask-repeat:no-repeat, no-repeat;
-  mask-composite:subtract;
-}
 /* ⚠️⚠️ NIENTE `max-width` (istruzione dell'utente, 0.95): la card di legenda occupa la
    larghezza PIENA del contenuto, come le righe di filtro e la legenda sotto, e così le
    distanze del contenuto dai due bordi del Pannello sono uguali per costruzione invece
@@ -3182,12 +3172,43 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
   var st = document.createElement('style'); st.textContent = css;
   (document.head || document.documentElement).appendChild(st);
 })();
+// Decorazione d'angolo del Pannello: stessa ragione del blocco qui sopra, altra
+// proprietà. Il Nu rifiuta la VIRGOLA di `mask-position`, che separa le posizioni dei
+// due strati di maschera (la sfumatura e il logo) ed è valida per CSS Masking, dove
+// quella proprietà prende una lista `<position>#`. Era l'unico errore W3C del sito, e
+// il gemello `-webkit-mask-position` porta la stessa virgola senza essere segnalato,
+// perché il Nu non valida le proprietà con prefisso.
+// Il blocco sta INTERO qui e non spezzato a metà col CSS statico: una regola sola in
+// due posti si sarebbe disallineata al primo ritocco della geometria.
+// ⚠️ Il -44% verticale e la maschera a sottrazione sono spiegati nel CSS statico, accanto
+// a `.ctrl-deco`: là resta il default 'spenta', qui c'è solo l'accensione.
+(function(){
+  var logo = 'radial-gradient(125% 135% at 100% 100%, #000 0%, rgba(0,0,0,0.9) 26%, rgba(0,0,0,0.4) 58%, transparent 84%), url("icons/Earthsea.svg")';
+  var css = 'html.fx-deco .ctrl-deco {'
+    + ' display:block;'
+    + ' position:absolute; right:0; bottom:0; width:66%; height:42%;'
+    + ' pointer-events:none; z-index:0; overflow:hidden;'
+    + ' background:linear-gradient(to top left, var(--deco-velo), var(--deco-velo0));'
+    + ' -webkit-mask-image:' + logo + ';'
+    + ' -webkit-mask-position:0 0, right 0 bottom -44%;'
+    + ' -webkit-mask-size:auto, 58% auto;'
+    + ' -webkit-mask-repeat:no-repeat, no-repeat;'
+    + ' -webkit-mask-composite:source-out;'
+    + ' mask-image:' + logo + ';'
+    + ' mask-position:0 0, right 0 bottom -44%;'
+    + ' mask-size:auto, 58% auto;'
+    + ' mask-repeat:no-repeat, no-repeat;'
+    + ' mask-composite:subtract;'
+    + ' }';
+  var st = document.createElement('style'); st.textContent = css;
+  (document.head || document.documentElement).appendChild(st);
+})();
 </script>
 </head>
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.44</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.45</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

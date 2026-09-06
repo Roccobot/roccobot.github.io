@@ -403,11 +403,12 @@ l'altra metà, mandandola nel Tesoro delle Tombe.
   vale oltre il caso: quello `stregone` è la resa **Mondadori** dove Nord scrive
   `incantatore`, cioè una divergenza di **vocabolario** che la tabella del sito non copre
   (là ci sono solo `mago`/`magio`); e la frase apre con un riferimento sospeso.
-- ⚠️ **L'`origine` di Intahin resta VUOTA**: le fonti lo dicono primo della Casa di Tarb e
-  fanno discendere da lui i re-sacerdoti **di Karego-At**, che è la discendenza e non la sua
-  nascita. Riempirla con Karego-At o con Awabath sarebbe la deduzione per simmetria che
-  § 'Origine: significa NASCITA, e la residenza è solo un ripiego' vieta. Quella di Thoreg è
-  `Hupun`, ed è residenza dichiarata (il suo palazzo, il suo trono), non nascita.
+- **Tutti e due hanno origine `Karego-At`**, ed è l'isola dove stanno le due città della
+  vicenda: Hupun, capitale dei re, e Awabath, la Città santa dei sacerdoti, a cinquanta
+  miglia da lei. L'attestazione è nell'appendice: *l'ambizione dei re di **Hupun a
+  Karego-At***. ⚠️ La prima stesura dava `Hupun` a Thoreg e lasciava vuoto Intahin: sbagliate
+  tutte e due, e le ha corrette l'utente (§ 'Origine: significa NASCITA, e la residenza è
+  solo un ripiego', voce sull'isola).
 - ⚠️ **Nessuno dei due porta badge, e Intahin è il caso da non sbagliare**: l'appendice dice
   che *sfidò Erreth-Akbe a un duello di magia*, ma lo stesso passo spiega che i Karg **non
   praticavano la magia** come gli hardici e **ipotizza** che l'abbia attirato dove i Vecchi
@@ -2023,6 +2024,23 @@ campo del dataset e per lo Schedario che lo alimenta.
   quello di Lark). Tre valori sono stati **scartati** per questo, e una prova debole è peggio
   di un campo vuoto. Le trappole del grep sulle fonti stanno in `rules/Earthsea.md`.
 
+- ⚠️⚠️ **NEL CAMPO VA L'ISOLA, NON LA CITTÀ** (istruzione dell'utente, `1.45`, su Thoreg:
+  *nell'origine si mette l'isola, non ha città*). Un personaggio legato a una città si
+  registra con l'isola che la porta: Thoreg è re di **Hupun** e la sua origine è
+  **`Karego-At`**. Il titolo cittadino resta dove il dato ha un campo suo, cioè negli
+  `appellativi` (`Re di Hupun`).
+  - ⚠️⚠️ **E la RESIDENZA vale anche quando l'origine in senso stretto manca**, che è la
+    seconda metà della stessa istruzione (*dovresti sapere che vale anche la residenza*).
+    Avevo lasciato **vuota** l'origine di Intahin perché le fonti danno la discendenza e non
+    la nascita: era una lettura troppo stretta della regola qui sopra, che il ripiego lo
+    prevede. Il campo vuoto resta per chi non ha **nessuna** delle due, non per chi ha la
+    sola residenza.
+  - ⚠️ **Restano nel dataset tre valori che isole non sono**, e non sono stati toccati:
+    `Endlane` e `Torning Bassa`, che sono villaggi, e `Terre di Kargad`, che è l'arcipelago
+    intero. Uniformarli è una scelta dell'utente e non un'applicazione della regola: chi
+    volesse farlo glielo chieda, perché su `Cenerino` (Endlane) la residenza è l'unico dato
+    che il testo dà.
+
 ### 📍 Segno o parola nella colonna origine, e lo decide la CONSOLE
 
 Dalla `0.62`. Nella colonna dell'origine sta un **segno di luogo** (il default) oppure la
@@ -2727,18 +2745,25 @@ viene dipinto, quindi si vede il fondo come se non ci fosse mai stato niente sop
 - ⚠️ **`mask-composite` vuole Chrome 120+, Safari 15.4+ o Firefox 53+.** Dove manca, i due
   strati si **sommano** invece di sottrarsi: il difetto è una macchia di velo a forma di logo,
   non una pagina rotta.
-- ⚠️⚠️ **QUESTA REGOLA È L'UNICO ERRORE W3C DEL SITO, ed è un falso positivo del Nu**
-  (misurato nella `1.44`: un messaggio in tutto, `mask-position: ',' is an incorrect
-  operator`). La virgola separa le **due** posizioni dei due strati di maschera, che la
-  specifica CSS Masking ammette (`<position>#`), e il browser la applica: la prova è che il
-  logo buca il velo nel punto giusto. ⚠️ Il gemello `-webkit-mask-position` porta la stessa
-  virgola e **non** viene segnalato, perché il Nu non valida le proprietà con prefisso: chi
-  guardasse solo il messaggio penserebbe a due regole diverse.
-  - **Come si chiuderebbe**, se un giorno si vuole il gate a 0: iniettando quel blocco via
-    JS, che è la strada già battuta su 'I Grandi di Arda' per la proprietà `d` e per le
-    regole con `var()` dentro `rgba()` (`arda/top/CLAUDE.md`, § 'Gate W3C'). ⚠️ Non è stato
-    fatto: costa una modifica al CSS del Pannello per un difetto che non esiste in pagina, e
-    la scelta va all'utente.
+- ⚠️⚠️ **IL BLOCCO `html.fx-deco .ctrl-deco` NON STA NEL CSS STATICO: è INIETTATO via JS**,
+  in fondo allo script del `<head>`, accanto a quello della proprietà `d`. La ragione è la
+  stessa: il Nu rifiuta la **virgola** di `mask-position`, che separa le posizioni dei due
+  strati di maschera ed è valida per CSS Masking (`<position>#`). Era **l'unico** errore W3C
+  del sito, misurato nella `1.44`, e dalla `1.45` il gate dà **0 errori e 0 warning**.
+  - ⚠️ **Il gemello `-webkit-mask-position` porta la stessa virgola e NON era segnalato**,
+    perché il Nu non valida le proprietà con prefisso: chi guardasse solo il messaggio
+    penserebbe a due regole diverse.
+  - **Il blocco è spostato INTERO, non spezzato**: lasciare metà dichiarazioni nel CSS
+    statico e la sola `mask-position` in JS avrebbe fatto una regola sola in due posti, che
+    al primo ritocco della geometria si disallinea.
+  - **Niente si perde a JS spento**: la classe `fx-deco` la mette `applySiteFlags`, che è JS
+    anche lei, quindi la regola statica era già inerte in quel caso. Il default 'spenta'
+    resta nel CSS statico (`.ctrl-deco { display:none; }`), dove serve.
+  - ✅ **La resa è identica, ed è misurata**: screenshot dell'elemento nei due temi prima e
+    dopo, confrontati pixel per pixel. Chiaro **identico al byte**; scuro con 734 pixel su
+    196.176 diversi di **1** su un canale, che è il fondo sfocato dietro il velo
+    semitrasparente, cambiato perché nella stessa passata sono cambiate due righe del
+    dataset. ⚠️ Chi rifà la prova cambi **una cosa sola per volta**, o quel rumore torna.
 - ⚠️ **I due veli NON hanno la stessa densità, e non è una svista**: luce a **0,05** sullo
   scuro, ombra a **0,075** sul chiaro (ritocco dell'utente, `0.99`). Su un fondo già luminoso
   l'occhio distingue peggio uno scarto verso il basso, quindi la stessa alpha darebbe due
