@@ -424,6 +424,24 @@ a scelta multipla e il sottotitolo di un artefatto.
   l'apostrofo, qui la lingua, e in tutti e due i casi passa perché nessuna shell guarda quel
   testo. Chi corregge una delle due guardi anche l'altra.
 
+⚠️⚠️ **E IL RAGIONAMENTO SI SCRIVE IN ITALIANO, PERCHÉ LUI LO VEDE** (sua segnalazione,
+2026-09-07, a voce alta e per la terza volta nella stessa sessione: *stai scrivendo in inglese,
+basta* e *devi scrivere in italiano*). Il blocco di pensiero **compare a schermo** come le
+risposte, quindi è comunicazione a tutti gli effetti, e per un giorno intero è stato l'unico
+posto in cui la regola non era applicata: le risposte in chat erano in italiano e il
+ragionamento era tutto in inglese.
+- ⚠️⚠️ **È LA SUPERFICIE PIÙ GRANDE DI TUTTE**, e per questo la voce sta qui e non in una nota:
+  un ragionamento è molte volte più lungo della risposta che produce, quindi 'rispondo in
+  italiano' con il pensiero in inglese vuol dire che quasi tutto quello che lui legge è nella
+  lingua sbagliata.
+- ⚠️ **Il sintomo che lo ha rivelato è una frase MESCOLATA**, e va saputo perché è l'unico
+  indizio che arriva prima del rimprovero: lui ha citato *Now il pezzo condiviso*, che non
+  esiste in nessun file e in nessuna risposta. Veniva da un blocco di pensiero, dove una frase
+  inglese si era saldata a un pezzo di nome italiano. Chi si vede citare una riga che non trova
+  da nessuna parte guardi là.
+- ⚠️ **Non si rimedia a fine turno**: il pensiero si legge mentre esce, quindi una sola
+  ricaduta è già arrivata sotto i suoi occhi. La regola vale dal primo blocco.
+
 ## 🗣️ Registro: italiano corretto, non formale
 
 ⚠️⚠️ **NIENTE FORMULE COLLOQUIALI O DIALETTALI, in nessun output** (istruzione dell'utente,
