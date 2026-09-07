@@ -408,6 +408,22 @@ in `.claude/settings.json` (`"model": "opus"`), quindi non serve farlo a mano.
   delle PR, nomi di file) seguono le loro convenzioni, ma la **comunicazione con
   l'utente** è sempre in italiano.
 
+⚠️⚠️ **E LA COMUNICAZIONE NON È SOLO IL TESTO DELLA RISPOSTA: È OGNI CAMPO DI UNA CHIAMATA A
+UNO STRUMENTO CHE LUI VEDE A SCHERMO** (sua segnalazione, 2026-09-07: *hai scritto svariate
+frasi in inglese*). Il posto in cui è caduta è la **descrizione di un comando** (il campo
+`description` di una chiamata Bash), che nel suo terminale compare accanto al comando: erano
+decine, tutte in inglese, mentre le risposte in chat erano in italiano. Con lei valgono i
+titoli delle voci di lavoro, le etichette di una versione pubblicata, le opzioni di una domanda
+a scelta multipla e il sottotitolo di un artefatto.
+- **La distinzione che regge**: quello che finisce **dentro** un file o un repository (codice,
+  messaggi di commit, corpo delle PR) segue le sue convenzioni; quello che finisce **davanti
+  agli occhi dell'utente** è comunicazione, e va in italiano. Un campo di chiamata sta dalla
+  parte della comunicazione, anche quando la descrizione è tecnica.
+- ⚠️ **È la stessa superficie della regola sui caratteri** (§ '✒️ Caratteri vietati', voce sui
+  testi composti dentro una chiamata a uno strumento): là il difetto è l'accento scritto con
+  l'apostrofo, qui la lingua, e in tutti e due i casi passa perché nessuna shell guarda quel
+  testo. Chi corregge una delle due guardi anche l'altra.
+
 ## 🗣️ Registro: italiano corretto, non formale
 
 ⚠️⚠️ **NIENTE FORMULE COLLOQUIALI O DIALETTALI, in nessun output** (istruzione dell'utente,
