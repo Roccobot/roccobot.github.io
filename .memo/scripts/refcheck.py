@@ -429,6 +429,22 @@ FORMULE_BLOCCA = [
     (re.compile(r"'st[ao]\s+(?!(?:per|bene|male|qui|qua|così|ancora|sempre|solo|già)\b"
                 r"|[a-zà-ù]+(?:ando|endo)\b)[a-zà-ù]", re.I),
      "'sta/'sto per 'questa/questo' è una contrazione colloquiale: quest'ultima, questo"),
+    # ⚠️⚠️ `stare` PER `essere` (2026-09-07), E IL PRESIDIO ARRIVA DOPO UNA BONIFICA COMPLETA:
+    # il 2026-09-06 quella forma è stata corretta in 412 punti su tutti e quattordici i file di
+    # regole, e il giorno dopo era rientrata in cinque, scritta in tre commit diversi dello
+    # stesso giorno. Cioè la bonifica non protegge niente: era la voce più grande delle quattro
+    # cadute di lingua segnalate dall'utente, e la sola senza una macchina dietro.
+    # ⚠️⚠️ L'AVVERBIO DI LUOGO PURO BLOCCA, LA PREPOSIZIONE AVVISA, e la divisione è misurata
+    # sul corpus: `sta qui`, `sta sotto`, `sta accanto` non hanno nessun uso legittimo per dire
+    # dove una cosa è collocata, mentre `sta in` e `sta su` ne hanno parecchi che sono stato
+    # vero ('sta in coda', 'sta in primo piano') o capienza ('ci sta su una riga'). Le prime
+    # bloccano, le seconde stanno in `FORMULE_AVVISA`.
+    # ⚠️ La particella `ci` ESCLUDE, perché con lei il verbo dice 'entrarci' ed è italiano
+    # corretto: quel senso lo governa già la riga di `ci sta` qui sopra, che distingue la
+    # capienza dal `c'è` colloquiale. Senza questo vincolo le due righe si pesterebbero i piedi.
+    (re.compile(r"(?<!ci )\bst(?:a|anno)\s+(?:qui|là|lì|accanto|dentro|sopra|sotto|"
+                r"davanti|dietro|in cima|in fondo|a destra|a sinistra)\b", re.I),
+     "'stare' per 'essere' dove una cosa è collocata: è qui, vive qui, va sotto"),
 ]
 # ⚠️⚠️ QUESTA TABELLA VALE SOLO DOVE LA RIGA APRE UNA FRASE, e il perché sta sul calcolo di
 # `apre` in `formula_defects`: una forma vietata **in apertura** non si può cercare in una riga
@@ -475,6 +491,22 @@ FORMULE_AVVISA = [
                 r"[^.\n]{0,30}?\b(?:è|sono)\s+uscit[oaie]\b", re.I),
      "'uscire' per una cosa cancellata è la famiglia di 'esce': non c'è più, "
      "è stata cancellata, è stata tolta (legittimo per una versione che si pubblica)"),
+    # ⚠️ La metà che AVVISA di `stare` per `essere`: vedi la riga che blocca, in
+    # `FORMULE_BLOCCA`. Qui il complemento è una preposizione, e gli stati veri si escludono
+    # per nome perché sono di casa: un'app `sta in primo piano`, un run `sta in coda`, una
+    # regola `sta in vigore`. Quello che resta da guardare è la collocazione ('il perché sta
+    # nella voce sul velo') e la capienza senza particella ('le tre righe stanno su una riga').
+    (re.compile(r"(?<!ci )\bst(?:a|anno)\s+(?!in piedi|in silenzio|in guardia|in equilibrio|"
+                r"in ascolto|in attesa|in pausa|in primo piano|in coda|in scena|in vigore|"
+                r"in errore|in mezzo|in bilico)"
+                r"(?:in|nel|nella|nello|nei|negli|nelle|sul|sulla|sullo|sui|sugli|sulle|su|"
+                r"presso|fra|tra)\b", re.I),
+     "'stare' per 'essere' dove una cosa è collocata: è in, vive in, si trova in "
+     "(legittimo per uno stato: sta in coda, sta in primo piano)"),
+    # ⚠️ Il gerundio e `sta per` ESCLUDONO, perché là il verbo è un ausiliare e non dice dove
+    # una cosa è: `dove sta andando il lavoro` è italiano corretto e vive in `Roccobot.md`.
+    (re.compile(r"\bdove st(?:a|anno)\s+(?![a-zà-ù]+(?:ando|endo)\b|per\b)", re.I),
+     "'dove sta' per 'dov'è': dov'è il cursore, in che punto è"),
 ]
 # ⚠️ Una formula fra BACKTICK è una CITAZIONE, non un uso, ed è la stessa convenzione con cui
 # i trattini lunghi si possono nominare nella regola che li vieta: il divieto, per esistere,

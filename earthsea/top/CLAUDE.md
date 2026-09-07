@@ -988,7 +988,7 @@ adesso è questa, su **due colonne**:
     - ⚠️ `legLbl` **non è diventato codice morto**: è la rete che regge se un domani
       un'etichetta tornerà col formato `Titolo: spiegazione`. Chi lo togliesse dovrebbe
       prima garantire che non ricapiti, e non c'è modo di garantirlo.
-    - **Misurato con le etichette nuove**: le tre righe stanno su **una riga ciascuna** in
+    - **Misurato con le etichette nuove**: le tre righe entrano in **una riga ciascuna** in
       entrambi i layout (31px mobile, 32px desktop) e non c'è scroll orizzontale. Il capo a
       riga resta come rete, non come normalità.
   - Misura del guadagno: il pannello desktop è passato da **638** a **540** px di larghezza.
