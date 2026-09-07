@@ -430,7 +430,7 @@ basta* e *devi scrivere in italiano*). Il blocco di pensiero **compare a schermo
 risposte, quindi è comunicazione a tutti gli effetti, e per un giorno intero è stato l'unico
 posto in cui la regola non era applicata: le risposte in chat erano in italiano e il
 ragionamento era tutto in inglese.
-- ⚠️⚠️ **È LA SUPERFICIE PIÙ GRANDE DI TUTTE**, e per questo la voce sta qui e non in una nota:
+- ⚠️⚠️ **È LA SUPERFICIE PIÙ GRANDE DI TUTTE**, e per questo la voce è qui e non in una nota:
   un ragionamento è molte volte più lungo della risposta che produce, quindi 'rispondo in
   italiano' con il pensiero in inglese vuol dire che quasi tutto quello che lui legge è nella
   lingua sbagliata.

@@ -7,7 +7,7 @@ description: "Passaggio di consegne fra sessioni di lavoro su Roccobot/roccobot.
 
 Le sessioni di questo repo sono **effimere**: il container si ricicla, lo scratchpad
 sparisce e la chat non passa alla sessione dopo. Una sessione nuova ha in automatico
-solo il `CLAUDE.md` del repo (le regole universali stanno in un altro repo e vanno
+solo il `CLAUDE.md` del repo (le regole universali vivono in un altro repo e vanno
 lette: passo 0 del modo lettura) e **niente** di ciò che è appena successo. Questa
 skill copre esattamente quel salto, e nient'altro.
 
@@ -43,7 +43,7 @@ verifica ed evasione descritto qui sotto, che la sola lettura non fa.
 
 ⚠️⚠️ **Il modo SCRITTURA non aspetta di essere invocato: è OBBLIGATORIO in tre momenti**
 (istruzione dell'utente, 2026-08-01: *QUALSIASI COSA SUCCEDA O STIA PER SUCCEDERE non si deve
-perdere nulla di significativo*). La regola universale sta in `Roccobot.md`, § '⚙️ Automazione
+perdere nulla di significativo*). La regola universale vive in `Roccobot.md`, § '⚙️ Automazione
 e interazioni', e questi sono i tre momenti:
 
 1. **Quando una voce NASCE**: l'utente chiede una cosa che non si esegue subito, oppure una
@@ -106,7 +106,7 @@ committato, o si scrive che va rifatto e a che cosa serviva.
 ## ⚠️ Regola n. 3: una voce EVASA si cancella, non si annota come 'fatta'
 
 Il brief è la fotografia di ciò che è **ancora aperto**, non il registro di ciò che si è
-chiuso. Lo storico sta in git, che è già l'archivio e non invecchia. Una voce marcata
+chiuso. Lo storico è in git, che è già l'archivio e non invecchia. Una voce marcata
 'fatta' e lasciata lì è il difetto peggiore del formato: chi arriva deve rileggere e
 riverificare lavoro finito per capire che non lo riguarda, ed è esattamente il tempo che
 la skill esiste per risparmiare.
@@ -141,7 +141,7 @@ lasciare la voce.
 
 ⚠️ **Della voce evasa può restare un residuo vivo**, e allora resta **solo il residuo**:
 una domanda aperta all'utente, un controllo da fare alla prossima sessione. Non la cronaca
-di come è stata evasa, non i numeri che ormai stanno nel codice o in `CLAUDE.md`.
+di come è stata evasa, non i numeri che ormai vivono nel codice o in `CLAUDE.md`.
 
 **Vale per tutte le sezioni, non solo per `In sospeso`.** Recuperata la verifica arretrata,
 la voce sparisce e la sezione torna a `Niente`; committato lo script effimero, sparisce da
@@ -240,7 +240,7 @@ travasato, perché chi lo segue non trova nulla o trova la cosa sbagliata.
 
 In `Roccobot/tools`: `mkdir -p .memo`, poi scrivi `.memo/LATEST.md` col modello qui
 sotto. **Un solo file, sovrascritto**: l'archivio è la storia git, non una cartella di
-copie. Sta sotto una cartella con il punto, quindi GitHub Pages non lo pubblica.
+copie. Vive sotto una cartella con il punto, quindi GitHub Pages non lo pubblica.
 
 ### 3b. Porta con te i FILE che servono al lavoro in sospeso
 
@@ -446,7 +446,7 @@ protocollo **non** copre: verifica ed evasione.
    meglio una domanda ora che un errore dopo).
 5. Proponi **un** primo passo concreto, quello dell'handoff se ancora valido.
 6. Non riaprire indagini già chiuse: se l'handoff dice che una cosa è stata misurata,
-   la misura sta in `CLAUDE.md`.
+   la misura vive in `CLAUDE.md`.
 
 ⚠️ **Nelle richieste di consenso agli strumenti offri sempre l'opzione 'Consenti
 sempre'** quando è disponibile: l'utente lavora a lungo su questo repo e non vuole
@@ -457,7 +457,7 @@ autorizzare lo stesso comando a ogni chiamata.
 ## Cosa NON mettere nell'handoff
 
 - La cronaca della sessione, i tentativi intermedi, i dialoghi.
-- Regole, misure e decisioni durevoli: stanno in `CLAUDE.md` (passo 2). Qui al massimo
+- Regole, misure e decisioni durevoli: vivono in `CLAUDE.md` (passo 2). Qui al massimo
   il puntatore.
 - Quello che una sessione nuova scopre da sé con un comando: l'elenco dei file, la
   versione nel badge, quali effetti sono accesi.
