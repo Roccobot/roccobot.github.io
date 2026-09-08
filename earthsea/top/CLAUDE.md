@@ -374,12 +374,40 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
   tutti. Storia e conseguenze in
   § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 
-### 💍 Thoreg e Intahin, i due kargadi dell'Anello spezzato
+### 💍 La Casa di Hupun e l'Anello spezzato
 
-Voci chieste dall'utente nella `1.44`. Sono i due capi dell'episodio che genera l'intera
-trama delle *Tombe di Atuan*: **Thoreg** è il re di Hupun che accolse Erreth-Akbe e ne
-ricevette metà dell'Anello della Pace, **Intahin** il Gran Sacerdote che lo affrontò e tenne
-l'altra metà, mandandola nel Tesoro delle Tombe.
+Voci chieste dall'utente nella `1.44` (**Thoreg** e **Intahin**) e nella `1.48` (**Tiarath**,
+**Ensar** e **Anthil**). Sono l'episodio che genera l'intera trama delle *Tombe di Atuan*:
+**Thoreg** è il re di Hupun che accolse Erreth-Akbe e ne ricevette metà dell'Anello della
+Pace, **Intahin** il Gran Sacerdote che lo affrontò e tenne l'altra metà, mandandola nel
+Tesoro delle Tombe; **Tiarath** è la figlia di Thoreg a cui l'eroe affidò la sua metà,
+**Ensar** e **Anthil** gli ultimi due eredi, rapiti bambini e abbandonati su un'isola
+deserta, dove Anthil da vecchia diede il mezzo anello a Sparviero.
+
+- **La fila del dataset è CRONOLOGICA, e la posizione l'ho scelta io** (l'utente aveva chiesto
+  'posizioni appropriate'): `Thoreg` -> `Tiarath` -> `Ensar` -> `Anthil` -> `Thol`, con Ensar
+  e Anthil consecutivi come lui ha chiesto. ⚠️ Il criterio non l'ho inventato: è il vicinato
+  che **lui** aveva creato nella `1.47` mettendo Thoreg subito prima di **Thol**, il signore
+  della guerra che secoli dopo dice di discendere da lui. Le tre voci nuove entrano dentro
+  quella catena, così l'ordine resta quello delle generazioni.
+- ⚠️ **`Tiarath` è la prima voce UMANA con una genealogia**: `padre` vale `Thoreg`, e la card
+  rende *Figlia di Thoreg* / *Daughter of Thoreg*. Prima di lei quel campo viveva su una sola
+  voce, la gatta `Tiro` (madre `Grigina`). L'attestazione è doppia: *figlia del saggio re*
+  nelle Gesta di Erreth-Akbe e *la figlia di Thoreg* nell'appendice.
+- ⚠️⚠️ **La citazione di Anthil è la prima con l'INIZIALE ALZATA DAL TAGLIO, e questo cambia
+  il banco di verifica**: la fonte scrive *E fu proprio Anthil che ti diede l'anello
+  spezzato*, il campo comincia da `Fu` con la maiuscola (convenzione dei `[...]` agli
+  estremi), quindi un confronto verbatim alla lettera la dà **non trovata**. Il verificatore
+  deve provare anche la prima lettera **minuscola** e dichiarare quel caso: senza,
+  una citazione tagliata a regola sembra un errore, ed è il falso allarme peggiore perché
+  arriva proprio dove la convenzione è stata applicata bene.
+- **Gli appellativi hanno due gradi di attestazione, e la differenza è dichiarata**:
+  `Principessa` è nel testo (*la principessa Anthil*), mentre `Erede della Casa di Hupun`
+  è ricavato da *gli ultimi eredi della Casa di Hupun*, come `Re di Hupun` da *re Thoreg di
+  Hupun*. ⚠️ Il qualificatore **'ultimo' resta fuori**: dice un fatto, non una carica.
+- ⚠️ **`Ensar` è `Uomo` e non `Bambino`, al contrario di `Ioeth`**: fu esiliato bambino, ma
+  Sparviero sull'isola incontrò *il vecchio e la vecchia*, quindi arrivò alla vecchiaia. Il
+  tipo dice che cosa il personaggio è stato, non l'età al momento in cui la storia lo nomina.
 
 - ⚠️⚠️ **`Intahin` è il primo nome del dataset in cui le due edizioni divergono sulla GRAFIA,
   non sulla parola**, e per questo allunga la lista dei nomi da sostituire nelle citazioni
@@ -406,7 +434,7 @@ l'altra metà, mandandola nel Tesoro delle Tombe.
   vale oltre il caso: quello `stregone` è la resa **Mondadori** dove Nord scrive
   `incantatore`, cioè una divergenza di **vocabolario** che la tabella del sito non copre
   (là ci sono solo `mago`/`magio`); e la frase apre con un riferimento sospeso.
-- **Tutti e due hanno origine `Karego-At`**, ed è l'isola dove sono le due città della
+- **Tutte e cinque hanno origine `Karego-At`**, ed è l'isola dove sono le due città della
   vicenda: Hupun, capitale dei re, e Awabath, la Città santa dei sacerdoti, a cinquanta
   miglia da lei. L'attestazione è nell'appendice: *l'ambizione dei re di **Hupun a
   Karego-At***. ⚠️ La prima stesura dava `Hupun` a Thoreg e lasciava vuoto Intahin: sbagliate
