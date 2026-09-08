@@ -445,6 +445,30 @@ FORMULE_BLOCCA = [
     (re.compile(r"(?<!ci )\bst(?:a|anno)\s+(?:qui|là|lì|accanto|dentro|sopra|sotto|"
                 r"davanti|dietro|in cima|in fondo|a destra|a sinistra)\b", re.I),
      "'stare' per 'essere' dove una cosa è collocata: è qui, vive qui, va sotto"),
+    # ⚠️⚠️ IL VERBO DEI DENTI IN SENSO FIGURATO (2026-09-08), E IL PRESIDIO ARRIVA ALLA SESTA
+    # RICADUTA. La voce di `Roccobot.md` § '🙂 Formule da non usare' dichiarava che nessun
+    # controllo automatico poteva prendere questo caso, perché le prime cinque volte la forma
+    # era caduta in chat. La sesta è caduta nei FILE, e da lì è entrata in nove punti dei tre
+    # repository: le regole delle prove, tre KDoc del banco, il brief e due note di Terramare.
+    # Quella dichiarazione resta vera per la chat e non lo è più per i file, che sono
+    # esattamente quello che questo script guarda.
+    # ⚠️ IL SENSO LETTERALE NON ESISTE IN QUESTO CORPUS (nessuno di questi file parla di
+    # denti), quindi le forme del verbo non hanno bisogno di guardie e `rimordere` entra con
+    # loro, perché è la forma della quarta ricaduta.
+    # ⚠️⚠️ MA IL PARTICIPIO VUOLE L'AUSILIARE, e senza quel vincolo la riga farebbe rumore
+    # dove il corpus ha ragione: `morso` è anche un sostantivo, e nelle fonti tolkieniane di
+    # 'I Grandi di Arda' i morsi dei lupi e dei draghi sono attestati alla lettera. Un
+    # presidio che segnala una citazione del canone viene disattivato in due giorni.
+    # ⚠️⚠️ E LE DESINENZE SI ELENCANO INVECE DI SCRIVERE `\w*`, PERCHÉ IL CANONE HA UN
+    # TOPONIMO CHE COMINCIA COSÌ: la prima stesura di questa riga ha segnalato **Mordor** in
+    # `JRRT.md`, cioè un nome proprio attestato, che è il genere di rumore per cui un presidio
+    # viene disattivato. Trovato lanciando il verificatore, non leggendolo.
+    (re.compile(r"\b(?:ri)?mord(?:e|i|o|ono|eva|evi|evo|evano|ere|esse|essi|essero|endo|"
+                r"ente|enti|iamo|ete|erà|eranno|erebbe|erebbero|erei)\b|"
+                r"\b(?:ha|hanno|aveva|avevano|avesse|avessero|avrebbe|"
+                r"avrebbero)\s+(?:ri)?morso\b", re.I),
+     "il verbo dei denti in senso figurato: una prova FALLISCE col difetto rimesso, un "
+     "limite si applica o riguarda un caso, un errore si è ripetuto"),
 ]
 # ⚠️⚠️ QUESTA TABELLA VALE SOLO DOVE LA RIGA APRE UNA FRASE, e il perché sta sul calcolo di
 # `apre` in `formula_defects`: una forma vietata **in apertura** non si può cercare in una riga

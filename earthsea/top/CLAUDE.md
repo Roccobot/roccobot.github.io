@@ -171,7 +171,7 @@ bestia vera.
   card finisce fra gli **uomini senza dare alcun errore**: il ripiego di `tipoClass` è
   `type-man` per costruzione, quindi il difetto non ha nessuna spia. È la stessa trappola
   della tabella `TYPE_LABEL` (vedi § "'Persone', e la trappola delle DUE mappe di
-  etichette"), e qui morde più forte perché una tinta sbagliata somiglia a un dato inserito
+  etichette"), e qui pesa di più perché una tinta sbagliata somiglia a un dato inserito
   male invece che a un elenco incompleto.
   - ⚠️⚠️ **Le parole vanno nelle DUE LINGUE**, come il test `drago|dragon` accanto, e non è
     ridondanza: `typeClassesOf` delle Statistiche legge il tipo **localizzato**, quindi con le
