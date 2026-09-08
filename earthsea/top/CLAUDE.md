@@ -394,13 +394,17 @@ deserta, dove Anthil da vecchia diede il mezzo anello a Sparviero.
   rende *Figlia di Thoreg* / *Daughter of Thoreg*. Prima di lei quel campo viveva su una sola
   voce, la gatta `Tiro` (madre `Grigina`). L'attestazione è doppia: *figlia del saggio re*
   nelle Gesta di Erreth-Akbe e *la figlia di Thoreg* nell'appendice.
-- ⚠️⚠️ **La citazione di Anthil è la prima con l'INIZIALE ALZATA DAL TAGLIO, e questo cambia
-  il banco di verifica**: la fonte scrive *E fu proprio Anthil che ti diede l'anello
+- ⚠️⚠️ **L'INIZIALE ALZATA DAL TAGLIO cambia il banco di verifica, e il primo caso è la
+  citazione di Anthil**: la fonte scrive *E fu proprio Anthil che ti diede l'anello
   spezzato*, il campo comincia da `Fu` con la maiuscola (convenzione dei `[...]` agli
   estremi), quindi un confronto verbatim alla lettera la dà **non trovata**. Il verificatore
   deve provare anche la prima lettera **minuscola** e dichiarare quel caso: senza,
   una citazione tagliata a regola sembra un errore, ed è il falso allarme peggiore perché
   arriva proprio dove la convenzione è stata applicata bene.
+  - ⚠️ **Non è un caso isolato e non va trattato come tale**: con la `1.49` la porta anche
+    `Radice`, in **entrambe** le lingue (`Mio padre ha chiesto...` da *mio padre*, `My father
+    named...` da *my father*), quindi la prova sulla minuscola serve a ogni citazione tagliata
+    a metà periodo, che è la maggioranza di quelle brevi.
 - **Gli appellativi hanno due gradi di attestazione, e la differenza è dichiarata**:
   `Principessa` è nel testo (*la principessa Anthil*), mentre `Erede della Casa di Hupun`
   è ricavato da *gli ultimi eredi della Casa di Hupun*, come `Re di Hupun` da *re Thoreg di
@@ -445,6 +449,54 @@ deserta, dove Anthil da vecchia diede il mezzo anello a Sparviero.
   praticavano la magia** come gli hardici e **ipotizza** che l'abbia attirato dove i Vecchi
   Poteri annullavano i poteri dell'eroe. Un'ipotesi del narratore non è un'attestazione, e
   `stregone` sarebbe un badge dato su di essa.
+
+### 🌱 Radice: il mago che dimenticò le parole, e le TRE rese del suo ruolo
+
+Voce chiesta dall'utente nella `1.49`, subito dopo `Benderesk`: è il mago di corte di Enlad
+che alla festa degli Agnelli non sa più pronunciare l'incantesimo di Crescita, cioè il primo
+segno del disfacimento della magia che apre *La spiaggia più lontana*.
+
+- ⚠️⚠️ **Il ruolo ha TRE rese diverse, e la tabella del vocabolario del potere non prevede
+  questo caso**: l'inglese dice `wizard`, Mondadori `mago`, **Nord `incantatore`**. La
+  tabella di § 'Un testo che nessuna edizione ha, e la ragione per cui va bene' dà
+  `wizard` -> `mago` **anche** per Nord, e
+  qui Nord fa altro: quindi quella riga descrive la resa prevalente, non una legge (misurato
+  sul volume: 765 `mago` contro 54 `incantatore`).
+  - **Per il dato non cambia niente, e conviene sapere perché**: la citazione segue il
+    **testo Mondadori**, che scrive `mago`, e la sostituzione riguarda i **nomi**. Chi
+    prendesse `incantatore` da Nord starebbe applicando la regola dei nomi al lessico.
+  - **Il badge `mago` regge su due prove indipendenti**: il ruolo che il narratore gli dà
+    (`wizard` in inglese, `mago` in Mondadori) e il **bastone**, che nel passo lui *posa*
+    dichiarandosi impotente. `stregone`, il grado basso, sarebbe una lettura contro la fonte.
+- ⚠️ **`Root` vive fra i nomi alternativi ITALIANI, e non è un doppione**: Nord traduce
+  `Radice` (2 occorrenze) e Mondadori lascia `Root` (2), quindi la forma inglese copre la
+  resa dell'altra edizione italiana. È il caso di `Lepre`/`Hare`, e in
+  `nomi_alternativi_en` sarebbe il doppione di `nome_en`
+  (§ 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi').
+- ⚠️ **L'origine `Enlad` è RESIDENZA, non nascita**: il testo lo dà come il mago che il
+  principe di Enlad *designa* per il rito e che *torna al nostro palazzo*, e la festa *si
+  celebra a Enlad*. Nessun passo dice dove sia nato, quindi è il ripiego che la regola
+  prevede, come `Taon` per `Sula` (§ 'Origine: significa NASCITA, e la residenza è solo un
+  ripiego').
+- ⚠️⚠️ **L'attestazione è UNA SOLA, e il file delle Tombe inganna**: `Root` compare 2 volte
+  anche nel corpus di *Le tombe di Atuan*, che è l'**anteprima** del volume successivo. La
+  misura che lo accerta è la posizione relativa nel file: **93,5%** dentro le Tombe contro
+  **2,5%** dentro *La spiaggia più lontana*: è la regola dell'anteprima, già scritta in
+  § 'Le CITAZIONI nella card: testo Mondadori, nomi Nord', per cui un capitolo che vive in due
+  libri è anteprima là dov'è più lontano dall'inizio. Chi conta le occorrenze sui due file
+  conclude che il personaggio torni in due romanzi.
+  - ⚠️ **Il rimando è alla sezione MADRE e non alla sua voce**, che si intitola *Come si
+    VERIFICA una citazione, e le due trappole che l'hanno insegnato*: quel titolo contiene un
+    **apostrofo**, e nella forma citabile `§ '...'` l'apostrofo chiude la citazione, quindi il
+    verificatore legge un titolo troncato e lo dà per inesistente. È il primo rimando del repo
+    che incappa nel caso, e la via d'uscita è citare un titolo che l'apostrofo non ce l'ha.
+- **Della citazione resta la SCARTATA, ed è la più significativa**: *Ma Radice è tornato da
+  noi a palazzo, afflitto e angosciato, ha posato il bastone magico e ha dichiarato: "Mio
+  signore, non posso lanciare incantesimi"*. Dice il fatto per cui il personaggio esiste, ma
+  è mezza volta più lunga di quella scelta, e la regola vuole **la più corta fra le valide**
+  con la deroga solo per un divario enorme. ⚠️ La battuta nuda (*Mio signore, non posso
+  lanciare incantesimi*) è più corta di tutte e **non è valida**: non lo nomina, che è il
+  requisito su cui cadono le altre deroghe già registrate.
 
 ## 🏅 I tre badge e il genere
 
@@ -2335,6 +2387,25 @@ chiama `nome d'uso EN`.
     hanno portano lo stesso testo nei due campi (`Falco`, `Arha`, `Therru`, `Sterna`, `Otak`),
     e là è giusto perché quei nomi sono identici nelle due edizioni. Copiare per abitudine è
     esattamente il modo in cui `Hare` finirebbe due volte.
+  - ⚠️⚠️ **COME SI VERIFICA in pagina, e il metro sbagliato ACCUSA IL SITO A TORTO** (misurato
+    il 2026-09-08 sulla voce `Radice`, con lo stesso esito su `Lepre`). Il sottotitolo porta
+    **due facce** nella stessa cella di griglia, `bil-f` col testo della lingua corrente e
+    `bil-m` con quello dell'altra, che il CSS nasconde: la riserva anti-jitter. Due
+    conseguenze, e chi ne ignora una legge il contrario del vero.
+    1. **`textContent` dà il testo DOPPIO**, quindi da solo non dice che cosa si vede; e
+       `offsetParent !== null` **non** distingue le due facce, perché la gemella resta
+       posizionata e nascosta con `visibility`. Il metro giusto è lo **stile calcolato**.
+    2. ⚠️⚠️ **Il locale del browser VA FORZATO** (`newContext({locale:'it-IT'})`): il contesto
+       parte in **inglese**, quindi senza quella riga le due letture risultano **scambiate**.
+       Il sintomo non è un valore mancante ma un risultato **rovesciato**, cioè un rilievo
+       falso che accusa il sito di violare proprio questa regola. La trappola era già scritta
+       (§ "L'alone sfumato è SPENTO sui browser touch"), ma là il difetto è un `false` dove
+       c'è un `true`: qui è peggio, perché il risultato sembra sensato.
+    - **Che cosa deve risultare**: in italiano la faccia letta porta la forma inglese
+      (`Root`, `Hare`), in inglese è **vuota** e quella forma vive nella riserva. Il vuoto in
+      inglese si vede come spazio sopra la riga dell'opera, ed è il prezzo dichiarato
+      dell'anti-jitter: lo pagano già altre sette voci, e il commento di `bilingue` in
+      `index.html` le elenca.
 
 ### ✍️ `Sparviero` è la forma scelta, e `Sparviere` è fra gli alternativi
 
@@ -3233,9 +3304,19 @@ consapevole di ri-adattamento sul mio sito.*
   nomi. Misurato sulle 88 candidate verificate parola per parola: **52** verbatim su
   Mondadori e **11** su Nord. Il canone porta il dato e la sua conseguenza
   (`rules/Earthsea.md`, § 'Fonti ITA').
-- ⚠️ **Oggi la sostituzione non ha dovuto operare**: nessuna delle trenta citazioni scelte
-  contiene uno dei nomi divergenti nel corpo, quindi sono tutte verbatim Mondadori. Il patto
-  resta però quello, e vale per le citazioni future.
+- ⚠️⚠️ **DALLA `1.49` LA SOSTITUZIONE OPERA DAVVERO, e la prima è la citazione di `Radice`**:
+  la fonte Mondadori scrive *al mago Root*, il campo scrive `al mago Radice`, quindi quella
+  citazione **non è verbatim di nessuna edizione**, che è esattamente il patto di questa
+  sezione. Fino a quel giorno qui c'era scritto che la sostituzione non aveva dovuto operare
+  (nessuna delle trenta citazioni del primo giro conteneva un nome divergente nel corpo), e
+  quella riga adesso direbbe il falso.
+  - ⚠️⚠️ **Perciò il banco di verifica va scritto in DUE prove, o accusa un dato corretto**:
+    il confronto alla lettera contro Mondadori **deve** fallire, e la prova vera è il campo
+    col nome **rimesso** alla forma Mondadori (`Root`), più l'attestazione della forma Nord
+    nel suo volume. Con la sola prima prova il verbatim risulta 'non trovato' e sembra un
+    errore di trascrizione: è il falso allarme peggiore, perché arriva dove la regola è stata
+    applicata bene. Il banco vive nello scratchpad e muore col container: si rifà da queste
+    due prove.
 - ⚠️⚠️ **La sostituzione non riguarda i soli NOMI: riguarda anche il VOCABOLARIO DEL POTERE**
   (istruzione dell'utente, 2026-08-25). Mondadori distingue due parole dove Nord ne usa una:
 
@@ -3264,8 +3345,8 @@ consapevole di ri-adattamento sul mio sito.*
     Ennas), e nessuna nel resto del sito.
 - **La lista dei nomi da sostituire è CHIUSA e si ricava dal censimento**, non da un'idea:
   Mondadori scrive il nome inglese dove Nord e il dataset ne hanno uno italiano
-  (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`). Quale edizione decide sui nomi,
-  e perché sono i **libri 1, 2 e 3** di Nord, è nel canone.
+  (`Sparviere`, `Vetch`, `Jasper`, `Yarrow`, `Hare`, `Cob`, e `Root` dalla `1.49`). Quale
+  edizione decide sui nomi, e perché sono i **libri 1, 2 e 3** di Nord, è nel canone.
   - ⚠️⚠️ **Col giro della `0.84` la lista si è allungata, e il modo in cui l'ha fatto vale
     più dei nomi nuovi**: cercando le candidate, **due voci non davano NESSUNA frase**
     (`Cenerino`, uscito dal dataset con la `1.04`, e `Gazzamarina`), e la causa non era che
