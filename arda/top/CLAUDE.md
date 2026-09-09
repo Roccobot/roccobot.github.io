@@ -249,11 +249,15 @@ partito da 140%, poi ridotto: 'l'ho sparata troppo grossa').
     gemello di Terramare, dove quel gesto era **libero** perché là la XL è spenta
     da un flag di build. Qui era occupato, e messo davanti al conflitto ha scelto la
     ricerca, sapendo il costo.
-  - **La meccanica del gesto è rimasta identica** e vale per il nuovo padrone: SOLO
-    input touch (`e.pointerType === 'touch'`), tolleranza di movimento ~8px, il
-    **click al rilascio consumato una volta** (flag `lpFired`), `contextmenu`
-    preventato e callout iOS soppressi inline sul solo FAB. Chi tocca quel codice
-    non tocchi quelle guardie.
+  - **La meccanica del gesto è rimasta identica** e vale per il nuovo padrone:
+    tolleranza di movimento ~8px, il **click al rilascio consumato una volta** (flag
+    `lpFired`), `contextmenu` preventato e callout iOS soppressi inline sul solo FAB.
+    Chi tocca quel codice non tocchi quelle guardie.
+    - ⚠️⚠️ **La guardia 'SOLO input touch' è CADUTA nella `15.35`**, ed è l'unica delle
+      cinque che non c'è più: la pressione lunga vale anche col mouse, con una soglia
+      più alta e la guardia sul tasto premuto (§ 'La ricerca del sito, dal tocco lungo
+      sul FAB'). Chi legge `e.pointerType === 'touch'` in un commit vecchio sa che è
+      superata, e le altre quattro guardie restano tutte.
 - **Ripristino in due fasi** (la `dati.js` si carica DOPO il blocco iniziale):
   1. blocco iniziale in testa allo script: riapplica solo la **preferenza
      personale**, il più presto possibile, per non mostrare un lampo alla
@@ -333,6 +337,32 @@ aprire il Pannello.
   `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): erano dentro uno scope che si apre solo con le
   credenziali, quindi non erano né riusabili né provabili. ⚠️ Due copie sarebbero divergute al
   primo campo nuovo del dataset, ed è il difetto che la promozione evita.
+- ⚠️⚠️ **I CAMPI SI RICAVANO DAL DATASET, e `SEARCH_FIELDS` è solo l'ORDINE di preferenza**
+  (dalla `15.35`). Fino a quel giorno era un elenco scritto a mano, e teneva fuori **quattro**
+  campi di testo: `fonte` e `fonte_en`, che sono su **tutte e 360** le voci, e `tipo_label`
+  con la sua metà inglese. Quindi cercare il titolo di un'opera **non dava nulla**: dopo la
+  correzione `Silmarillion` dà 120 riscontri e `Signore degli Anelli` 142.
+  - ⚠️ **La promozione a globali non bastava**, e questa nota lo dice perché la voce qui sopra
+    può far credere il contrario: i due chiamanti condividono l'elenco, quindi non divergono
+    fra loro, ma **divergono dal dataset** appena nasce un campo. Il difetto è stato trovato
+    sul gemello di Terramare (l'utente cercava un'isola e non trovava la voce che ce l'ha come
+    origine) e qui era **identico**, benché la ricerca sia nata su questa pagina.
+  - ⚠️⚠️ **QUI I BADGE POSSONO ESSERE STRINGHE**, e per questo il criterio non è il tipo:
+    valgono `true` **oppure `'presunto'`** (il badge al 50%), quindi si escludono leggendo
+    **`ICON_ORDER`**, che è l'elenco che il progetto già mantiene per disegnarli. Un badge
+    nuovo entra là per forza, o non si disegna, quindi esce dalla ricerca da sé.
+    - ⚠️ **La misura scartata è un filtro sui VALORI-flag** (`true`/`false`/`1`/`0`): era la
+      mia prima stesura, e il banco ha trovato il buco subito, perché `'presunto'` non è un
+      flag riconoscibile e cercando `true` uscivano **66** riscontri. La lezione è la stessa
+      dei campi: la fonte è l'elenco che il codice usa già, non una lista nuova.
+  - **Per NOME escono i campi tecnici** che stringhe lo sono per caso: `genere`, le due tinte
+    della card, `tipo_color`, lo **slug di Tolkien Gateway** (`tg`), e i due campi di stato
+    dei badge (`aratar`, `apocrifo`). ⚠️ `apocrifo` esce anche per una ragione editoriale:
+    quella parola qualifica una **fonte** e non un personaggio, e per regola non compare nelle
+    card (§ 'Struttura dati').
+  - ⚠️ **Cercare `true` dà comunque 4 riscontri, e sono giusti**: cadono su `descrizione_en` e
+    `citazione_en`, perché in inglese quella è una parola. Un'attesa di zero era sbagliata, e
+    l'aveva scritta il banco, non il codice.
 - ⚠️⚠️ **Una voce che nessun filtro mostra si SVELA per INDICE, e non spegnendo il filtro**
   (`svelate`, letto in cima a `isVisibile`): gli altri filtri restano come li ha messi chi
   guarda, e la classifica non cambia sotto i piedi per una ricerca. Senza il ridisegno il
@@ -367,13 +397,24 @@ aprire il Pannello.
   browser trattano gli input di testo come sempre `focus-visible`, quindi l'anello comparirebbe
   anche aprendo col dito. ⚠️⚠️ **NON vale per i RISULTATI**: `.ss-hit:focus-visible` resta,
   perché là il fondo è l'**unico** indicatore che dice su quale riga si è arrivati col Tab.
-- ⚠️⚠️ **Su desktop NON ha una via d'accesso, ed è deciso: il tasto lente qui non si mette**
-  (offerto e rifiutato, 2026-09-05: *no, su Arda non serve*). Sul gemello di Terramare quel
-  tasto c'è, nella toolbar del Pannello, quindi la differenza fra i due siti è **voluta** e
-  non una copia lasciata a metà: chi la 'sanasse' rifarebbe un giro già chiuso.
-  - **Che cosa resta vero**: `openSiteSearch` è una funzione a sé e il tasto costerebbe poche
-    righe, quindi la decisione si può rovesciare in qualunque momento senza toccare altro. Ma
-    la sola cosa che manca è la **richiesta**, e adesso c'è la risposta contraria.
+- ⚠️⚠️ **SU DESKTOP LA VIA C'È DALLA `15.35`, ed è la PRESSIONE LUNGA COL MOUSE** (istruzione
+  dell'utente, 2026-09-09: *la voglio anche su desktop*, chiesta per i due siti insieme). Fino
+  a quel giorno qui non ce n'era **nessuna**, e la differenza con Terramare pesava: là il
+  tasto lente in toolbar copriva il desktop, qui il tasto è stato offerto e **rifiutato**
+  (2026-09-05: *no, su Arda non serve*), quindi la ricerca era raggiungibile solo col dito.
+  - ⚠️ **Il tasto lente resta fuori, e non è una contraddizione**: la richiesta nuova non lo
+    rimette in gioco, chiede il **gesto**. Chi lo aggiungesse rifarebbe un giro già chiuso.
+  - ⚠️⚠️ **LE SOGLIE SONO DUE, 500ms col dito e 700 col mouse**, e non è un vezzo: la ragione
+    per cui il gesto era riservato al dito era scritta nel codice, cioè che col mouse **un
+    click 'lento' aprirebbe la ricerca al posto del Pannello**. Un click deliberato dura meno di
+    ~400ms, quindi 700 separa il click dalla pressione voluta.
+  - ⚠️⚠️ **E si guarda `e.button`, o il gesto scatta col tasto DESTRO**: `pointerdown` lo
+    emette come gli altri, e qui il menu contestuale è preventato, quindi la ricerca si
+    aprirebbe da sé. Col dito `button` vale 0, perciò la guardia non tocca il caso touch.
+  - **Il banco è `prova-lp-mouse.js` nello scratchpad e serve i DUE siti** (`PROVA_SITO`),
+    come quello del gesto di zoom: prova cinque casi, e i **tre 'no' contano quanto i due
+    'sì'** (click breve, click lento a 550ms, tasto destro premuto, pressione trascinata).
+    Misura del 2026-09-09: 9 su 9 su entrambi.
 - ⚠️⚠️ **Il banco è `.memo/scripts/prova-ricerca-sito.js`, con eventi touch VERI via CDP**,
   come quello del gesto di zoom e per la stessa ragione: il tocco lungo vive su un
   `pointerdown` con `pointerType` `touch`, e un evento sintetico non lo sveglia. Serve i **due
