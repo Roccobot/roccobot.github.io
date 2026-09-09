@@ -1812,6 +1812,32 @@ lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello
   `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): erano dentro uno scope che si apre solo con le
   credenziali, quindi non erano né riusabili né provabili. ⚠️ Due copie sarebbero divergute al
   primo campo nuovo del dataset, ed è il difetto che la promozione evita.
+- ⚠️⚠️ **I CAMPI SI RICAVANO DAL DATASET, e `SEARCH_FIELDS` è solo l'ORDINE di preferenza**
+  (dalla `1.50`). Fino a quel giorno era un elenco scritto a mano, e teneva fuori **dieci**
+  campi di testo nati dopo di lui: `origine` e `origine_en`, `fonte` e `fonte_en`, e i sei
+  della citazione. Il difetto l'ha visto l'utente cercando `Enlad`: uscivano **2** riscontri
+  su **7**, e il mago di corte di quell'isola non era fra loro.
+  - ⚠️ **È la quarta volta che un elenco scritto a mano dimentica un campo nato dopo**, dopo
+    `BADGE_ADJUST_UNITS` con le unità di Arda, `TIPI_ANIMALE` e `TYPE_LABEL`: la famiglia è
+    sempre la stessa, e il sintomo è sempre **un risultato che manca**, senza nessun errore.
+    Chi aggiunge un elenco di campi al motore lo ricavi, o entra nella lista.
+  - **Le ESCLUSIONI sono per TIPO e non per nome**, ed è la parte che non invecchia: si guarda
+    solo ciò che è **stringa**, quindi ogni badge nuovo (booleano) resta fuori da sé. Per nome
+    escono i tre campi tecnici che stringhe lo sono per caso, e cercarli darebbe mezzo
+    dataset: `genere` (`m`/`f`), `cardcolor` (`man` pescherebbe tutti gli uomini) e
+    `tipo_color`.
+  - ⚠️ **Il calcolo è al PRIMO USO e non a livello globale**: un `dati.js` che non carica
+    lascia così la ricerca vuota, mentre un accesso globale a `dati` farebbe cadere l'intero
+    script con un `ReferenceError`. È lo stesso caso per cui il badge di versione ha un
+    ripiego nell'HTML.
+  - **Le citazioni sono in CODA all'ordine**, perché `computeMatches` mostra il **primo**
+    campo che combacia e quello è il testo più lungo e il riscontro meno significativo.
+    ⚠️ Ma dentro la ricerca ci sono, e la ragione è il mestiere di questa funzione: sostituisce
+    il 'trova nella pagina' che nella PWA non c'è, e quello vede **tutto** il testo a schermo,
+    citazioni e contesti compresi. Escluderle l'avrebbe resa meno capace di ciò che rimpiazza.
+  - **Un campo nuovo si accoda da sé**, cioè con la priorità più bassa, e la sua etichetta
+    ripiega sul nome grezzo (`FIELD_LABEL[f] || f`): visibile, non silenzioso, come il ripiego
+    di `typeName` per una classe-etichetta nuova.
 - ⚠️⚠️ **Una voce che nessun filtro mostra si SVELA per INDICE, e non spegnendo il filtro**
   (`svelate`, letto in cima a `isVisibile`): gli altri filtri restano come li ha messi chi
   guarda, e la classifica non cambia sotto i piedi per una ricerca. Senza il ridisegno il
