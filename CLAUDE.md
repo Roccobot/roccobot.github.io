@@ -471,6 +471,13 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     caduta tutte e cinque le volte: là resta questa riga, ed è la ragione per cui vive nel file
     che si ricarica a ogni turno.
 
+- ⚠️⚠️ **E UN'IMPLICITA NON CAMBIA SOGGETTO** (sua correzione, 2026-09-09: *non cambiare
+  soggetto con le implicite*): un gerundio, un participio o un infinito prendono il soggetto
+  dalla reggente, quindi *lo dava per rotto pur essendo giusto* dice che è giusto il
+  verificatore, e la forma è **anche se era giusto**. ⚠️ **Questa la macchina non la vede**,
+  perché il difetto vive nel legame fra due proposizioni e non in una parola: il presidio è la
+  rilettura, e il posto in cui serve è la chat.
+
 - ⚠️⚠️ **È QUI PERCHÉ QUESTO FILE SOPRAVVIVE ALLA COMPATTAZIONE, e `Roccobot.md` no.** È la
   stessa ragione per cui i caratteri vietati sono ripetuti qui sotto, ma la prova è più
   precisa: questo `CLAUDE.md` viene rifornito a ogni turno insieme alle istruzioni, mentre un
