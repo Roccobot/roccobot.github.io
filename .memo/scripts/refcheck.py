@@ -558,7 +558,18 @@ RE_MDLINK = re.compile(r"\[[^\]]*\]\(([^)#][^)]*)\)")
 # rimando morto in casa. Un controllo che non copre un caso non lo dichiara: dice che va tutto
 # bene, ed è il modo peggiore di fallire.
 RE_PATH = re.compile(r"`([\w./-]+/[\w.-]+(?: [\w.-]+)*\.(?:md|js|json|txt|py|css|html|toml))`")
-RE_SECT = re.compile(r"(?:§|sezione|sezioni)\s*'([^']{4,})'")
+# ⚠️⚠️ L'APOSTROFO DENTRO UN TITOLO NON CHIUDE LA CITAZIONE, e prima la chiudeva: con
+# `'([^']{4,})'` un rimando a '⚙️ Dove va un'impostazione, e chi la deve trovare' veniva letto
+# come il titolo '⚙️ Dove va un', che non esiste in nessun file, quindi il verificatore
+# segnalava come rotto un rimando corretto. È il sintomo rovesciato già visto due volte con la
+# copertura dei file, e taglia fuori una famiglia intera di titoli: quelli con un apostrofo,
+# che in italiano sono tanti (`L'inglese dell'app è americano`, `quando un'altra app chiede
+# un'immagine`, e altri).
+# ⚠️ A distinguere i due casi è quello che SEGUE l'apice: un apostrofo è sempre attaccato a
+# una lettera, mentre l'apice che chiude una citazione ha dopo di sé uno spazio, un segno di
+# punteggiatura o la fine della riga. Il quantificatore è pigro perché su una riga con due
+# citazioni la chiusura giusta è la PRIMA valida, non l'ultima.
+RE_SECT = re.compile(r"(?:§|sezione|sezioni)\s*'((?:[^']|'(?=\w)){4,}?)'(?!\w)")
 RE_HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*$")
 # un titolo non deve contenere niente che cambi: date ISO o numeri di versione
 RE_VOLATILE = re.compile(r"\d{4}-\d{2}-\d{2}|\bv?\d+\.\d+")
@@ -592,12 +603,14 @@ def sect_refs(righe, i, max_cont=2):
     line = righe[i]
     fuori = RE_SECT.findall(line)
     # Apertura senza chiusura sulla stessa riga: si ricuce con le righe dopo.
-    apre = re.search(r"(?:§|sezione|sezioni)\s*'([^']*)$", line)
+    apre = re.search(r"(?:§|sezione|sezioni)\s*'((?:[^']|'(?=\w))*)$", line)
     if apre:
         pezzi = [apre.group(1)]
         for j in range(i + 1, min(i + 1 + max_cont, len(righe))):
             testo = RE_CONT.sub("", righe[j])
-            fine = testo.find("'")
+            # Come sopra: chiude l'apice che NON è seguito da una lettera.
+            chiude = re.search(r"'(?!\w)", testo)
+            fine = chiude.start() if chiude else -1
             if fine != -1:
                 pezzi.append(testo[:fine])
                 intero = " ".join(p.strip() for p in pezzi if p.strip())
