@@ -3208,7 +3208,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.49</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.50</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5856,8 +5856,41 @@ function veroNomeInVigore() { return statoVeroNome().on; }
 // da lì non erano né riusabili né provabili. La ricerca del sito (tocco lungo sul
 // FAB) chiede le stesse cose, e due copie sarebbero divergute al primo campo nuovo.
 function escSearch(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
-var SEARCH_FIELDS = ['nome','nome_en','vero_nome','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en'];
-var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre', padre_en:'Padre EN', madre_en:'Madre EN', vero_nome:'Vero nome' };
+// I campi su cui gira la ricerca, in ORDINE DI PREFERENZA: `computeMatches` mostra il
+// PRIMO che combacia, quindi i nomi vengono prima dei titoli, l'origine e l'opera dopo, e
+// le citazioni per ultime, che sono il testo più lungo e il riscontro meno significativo.
+var SEARCH_FIELDS = ['nome','nome_en','vero_nome','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','origine','origine_en','fonte','fonte_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en','citazione_voce','citazione_voce_en','citazione','citazione_en','citazione_fonte','citazione_fonte_en'];
+var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', origine:'Origine', origine_en:'Origine EN', fonte:'Opera', fonte_en:'Opera EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', padre:'Padre', madre:'Madre', padre_en:'Padre EN', madre_en:'Madre EN', vero_nome:'Vero nome', citazione:'Citazione', citazione_en:'Citazione EN', citazione_fonte:'Contesto', citazione_fonte_en:'Contesto EN', citazione_voce:'Firma', citazione_voce_en:'Firma EN' };
+// ⚠️⚠️ L'elenco qui sopra NON è la fonte dei campi: la fonte è il DATASET, e `SEARCH_FIELDS`
+// dice soltanto in che ordine guardarli. Un elenco scritto a mano dimentica il campo nato
+// dopo, e lo fa senza dare alcun errore: `origine` è nata con la 0.45 e la ricerca non l'ha
+// mai guardata, quindi cercando `Enlad` non compariva il mago di corte di quell'isola
+// (segnalato dall'utente il 2026-09-09, con lo screenshot dei due soli riscontri sui
+// titoli). Con le citazioni erano DIECI i campi di testo fuori dalla ricerca.
+// Un campo nuovo del dataset si accoda da sé, cioè con la priorità più bassa, e la sua
+// etichetta ripiega sul nome grezzo del campo: visibile, non silenzioso.
+// ⚠️ Le ESCLUSIONI sono per TIPO e non per nome: si guarda solo ciò che è stringa, quindi
+// ogni badge nuovo (booleano) resta fuori da sé. Per nome escono i tre campi tecnici che
+// stringhe lo sono per caso, e cercarli darebbe mezzo dataset: `genere` ('m'/'f'),
+// `cardcolor` ('man' pescherebbe tutti gli uomini) e `tipo_color`.
+var SEARCH_SKIP = ['genere','cardcolor','tipo_color'];
+var searchFieldsCache = null;
+function searchFields(){
+  if (searchFieldsCache) return searchFieldsCache;
+  // ⚠️ Si calcola al PRIMO USO e non a livello globale: se `dati.js` non carica, la ricerca
+  // resta vuota invece di far cadere l'intero script con un ReferenceError.
+  if (typeof dati === 'undefined' || !dati.length) return SEARCH_FIELDS;
+  var visti = {}, fuori = [];
+  for (var i=0;i<SEARCH_FIELDS.length;i++){ visti[SEARCH_FIELDS[i]] = 1; fuori.push(SEARCH_FIELDS[i]); }
+  for (var k=0;k<dati.length;k++){
+    for (var f in dati[k]){
+      if (visti[f] || SEARCH_SKIP.indexOf(f) >= 0 || typeof dati[k][f] !== 'string') continue;
+      visti[f] = 1; fuori.push(f);
+    }
+  }
+  searchFieldsCache = fuori;
+  return fuori;
+}
 // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
 // i segni diacritici via NFD, così 'eonwe' trova 'Eönwë' e ogni vocale semplice
 // copre le sue varianti accentate. foldFind() localizza la query (già foldata,
@@ -5885,7 +5918,8 @@ function computeMatches(q){
     var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0)
               || (!p.nome && !p.nome_en && fold(p.vero_nome||'').indexOf(qf)>=0);
     var hf=null, hv=null;
-    for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
+    var campi = searchFields();
+    for (var k=0;k<campi.length;k++){ var f=campi[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
     if (!hf) continue;
     (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(nomeDiRif(p, currentLang === 'it') || '?'), val:hv, qf:qf });
   }
