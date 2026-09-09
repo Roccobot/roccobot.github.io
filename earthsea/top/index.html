@@ -1577,6 +1577,32 @@ html[data-theme="light"] #ctrl-panel { --deco-velo:rgba(18,58,53,0.075); --deco-
    scuro, (0,3,1) contro (0,2,1) in chiaro. */
 .ctrl-cardleg .rank-item { --ccrgb:120,173,194; --cctxt:120,173,194; }
 html[data-theme="light"] .ctrl-cardleg .rank-item { --ccrgb:14,107,94; --cctxt:14,107,94; }
+/* ⚠️⚠️ LA TARGHETTA 'LEGENDA' È IN SANS SERIF, ed è l'unica cosa del sito che lo sia
+   oltre al toast dei salvataggi (mockup dell'utente, 1.60). Non è un'incoerenza
+   tipografica: è il criterio già misurato due volte su questa card, cioè che dentro un
+   testo tutto in EB Garamond e Cinzel né il corsivo né il grassetto staccano, e stacca
+   il salto di FAMIGLIA (vedi la firma della citazione e la riga dell'opera). Qui il
+   salto dice una cosa in più: questa non è una scheda, è un'etichetta di interfaccia,
+   e la voce dell'interfaccia in questo sito è già il sans del toast.
+   ⚠️ Il fallback è esplicito e non si toglie: `system-ui` è un carattere DIVERSO su
+   ogni sistema, e su una targhetta di tre sillabe va bene, ma senza coda un sistema
+   che non lo risolve ricadrebbe sul serif della pagina, cioè proprio sull'effetto che
+   questa regola esiste per evitare.
+   ⚠️⚠️ LE DUE TINTE SONO I DISCHI DEL FAB, e sono scelte perché il bianco sopra è già
+   MISURATO: `#3072a1` in scuro (bianco 5,19:1) e `#267d71` in chiaro (4,94:1), cioè
+   entrambe sopra il 4,5:1 che questo testo esige. ⚠️ NON si usa la tinta della
+   card-legenda (`#78adc2` in scuro): là è un colore da TESTO su fondo scuro, e come
+   fondo di una targhetta bianca darebbe 1,9:1.
+   La targhetta è assoluta, quindi non entra nel flusso e il cambio lingua non muove
+   nulla, benché 'Legenda' e 'Legend' abbiano larghezze diverse. */
+.ctrl-cardleg .cardleg-tag {
+  position:absolute; top:0.45rem; right:0.5rem;
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  font-size:0.63rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  line-height:1.3; padding:0.16rem 0.44rem; border-radius:4px;
+  color:#fff; background:#3072a1;
+}
+html[data-theme="light"] .ctrl-cardleg .cardleg-tag { background:#267d71; }
 .ctrl-cardleg .rank-name { font-size:1.14rem; }
 /* La legenda scala anche il vero nome: senza, resterebbe al clamp delle card
    vere e nella card finta sarebbe più grande del nome d'uso, mostrando una
@@ -3208,7 +3234,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.50</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.60</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5874,6 +5900,12 @@ var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.'
 // stringhe lo sono per caso, e cercarli darebbe mezzo dataset: `genere` ('m'/'f'),
 // `cardcolor` ('man' pescherebbe tutti gli uomini) e `tipo_color`.
 var SEARCH_SKIP = ['genere','cardcolor','tipo_color'];
+// ⚠️⚠️ E si scartano le chiavi di `ICON_ORDER`, benché qui i badge siano booleani veri e
+// il filtro sul tipo già li tenga fuori: su 'I Grandi di Arda' gli stessi badge valgono
+// `true` oppure `'presunto'` (il 50%), quindi là il tipo non basta, e un badge-stringa
+// nato un domani qui entrerebbe nella ricerca senza che nessuno lo veda. Il criterio è
+// lo stesso sui due siti di proposito, e la fonte è l'elenco che il progetto già
+// mantiene per disegnarli, non una lista scritta qui.
 var searchFieldsCache = null;
 function searchFields(){
   if (searchFieldsCache) return searchFieldsCache;
@@ -5882,9 +5914,11 @@ function searchFields(){
   if (typeof dati === 'undefined' || !dati.length) return SEARCH_FIELDS;
   var visti = {}, fuori = [];
   for (var i=0;i<SEARCH_FIELDS.length;i++){ visti[SEARCH_FIELDS[i]] = 1; fuori.push(SEARCH_FIELDS[i]); }
+  var badge = typeof ICON_ORDER !== 'undefined' ? ICON_ORDER : [];
   for (var k=0;k<dati.length;k++){
     for (var f in dati[k]){
-      if (visti[f] || SEARCH_SKIP.indexOf(f) >= 0 || typeof dati[k][f] !== 'string') continue;
+      if (visti[f] || SEARCH_SKIP.indexOf(f) >= 0 || badge.indexOf(f) >= 0) continue;
+      if (typeof dati[k][f] !== 'string') continue;
       visti[f] = 1; fuori.push(f);
     }
   }
@@ -7929,9 +7963,28 @@ function addPanelDeco(panel) {
   panel.insertBefore(deco, panel.firstChild);
 }
 
+// La targhetta 'LEGENDA' sulla card finta (dalla 1.60, mockup dell'utente): dice a
+// colpo d'occhio che quella scheda non è una voce della classifica ma la spiegazione
+// dell'anatomia di una card.
+// ⚠️ Si costruisce A NODI e non dentro `controlPanelHTML()`, che finisce in un
+// `innerHTML`: stessa ragione della decorazione d'angolo, e il divieto non è
+// derogabile.
+// ⚠️ Si rimette a ogni ricostruzione del Pannello (cambio lingua compreso), perché
+// quella riscrive tutto il contenuto e se la porterebbe via.
+function addCardlegTag(panel) {
+  if (!panel) return;
+  var card = panel.querySelector('.ctrl-cardleg .rank-item');
+  if (!card || card.querySelector('.cardleg-tag')) return;
+  var tag = document.createElement('span');
+  tag.className = 'cardleg-tag';
+  tag.textContent = currentLang === 'it' ? 'Legenda' : 'Legend';
+  card.appendChild(tag);
+}
+
 function wireControlPanel() {
   var panel = document.getElementById('ctrl-panel');
   addPanelDeco(panel);
+  addCardlegTag(panel);
   function applyFilter() {
     pruneBadgeFilter(); // filtri badge non più validi (categorie cambiate) -> off
     renderList();
@@ -8571,19 +8624,29 @@ function buildControlPanel() {
   });
   fab.appendChild(fabSvg);
   // ── Tap LUNGO sul FAB = scorciatoia 'SEGRETA' della Modalità XL (v12.43) ────
-  // ~500ms di pressione aprono la RICERCA del sito (dalla 1.30). SOLO input touch
-  // (pointerType): col mouse un click 'lento' non deve scattare, e là il 'trova'
-  // del browser c'è ancora. Il gesto serve proprio dove quello manca, cioè nella
-  // PWA installata, dove non esiste interfaccia del browser.
+  // La pressione lunga apre la RICERCA del sito (dalla 1.30), e dalla 1.60 vale
+  // ANCHE COL MOUSE (richiesta dell'utente: *la voglio anche su desktop*).
   // ⚠️ Il posto era della Modalità XL, spenta col flag `FEATURES.xlMode`: se un
   // domani quel flag tornasse acceso, il tocco lungo NON torna a lei, perché ora
   // è occupato: servirebbe una scelta, non un ripristino.
+  // ⚠️⚠️ LE DUE SOGLIE NON SONO UN VEZZO, e la ragione era scritta qui come
+  // motivo per tenere il gesto fuori dal mouse: un click 'lento' aprirebbe la
+  // ricerca al posto del Pannello. Un click deliberato dura meno di ~400ms,
+  // quindi 700 separa il click dalla pressione voluta, mentre col dito 500
+  // bastano perché là la pressione lunga è un gesto che si conosce.
+  // ⚠️⚠️ E SI GUARDA `e.button`, o il gesto scatta col tasto DESTRO: `pointerdown`
+  // lo emette come gli altri, e qui il menu contestuale è preventato, quindi la
+  // ricerca si aprirebbe senza che nessuno l'abbia chiesta. Col dito `button`
+  // vale 0, perciò la guardia non tocca il caso touch.
+  // Un `pointerType` sconosciuto ripiega sulla soglia lunga, che è la prudente.
+  var LP_MS = { touch: 500, pen: 500, mouse: 700 };
   var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
   var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
   fab.addEventListener('pointerdown', function(e){
-    if (e.pointerType !== 'touch') return;
+    if (e.button !== 0) return;
     lpFired = false; lpX = e.clientX; lpY = e.clientY;
-    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; openSiteSearch(); }, 500);
+    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; openSiteSearch(); },
+                         LP_MS[e.pointerType] || LP_MS.mouse);
   });
   fab.addEventListener('pointerup', lpCancel);
   fab.addEventListener('pointercancel', lpCancel);

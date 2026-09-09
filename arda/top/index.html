@@ -2722,7 +2722,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.25</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.35</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5886,8 +5886,55 @@ function openResourcesModal() {
 // credenziali: da li non erano ne riusabili ne provabili. La ricerca del sito
 // (tocco lungo sul FAB) chiede le stesse cose, e due copie sarebbero divergute
 // al primo campo nuovo del dataset.
-var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','descrizione','descrizione_en','info','info_en','citazione','citazione_en','padre','madre','padre_en','madre_en'];
-var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre' };
+// I campi su cui gira la ricerca, in ORDINE DI PREFERENZA: `computeMatches` mostra
+// il PRIMO che combacia, quindi i nomi vengono prima dei titoli, l'opera dopo, e
+// le citazioni per ultime, che sono il testo più lungo e il riscontro meno
+// significativo.
+var SEARCH_FIELDS = ['nome','nome_en','nomi_alternativi','nomi_alternativi_en','appellativi','appellativi_en','tipo','tipo_en','tipo_label','tipo_label_en','fonte','fonte_en','descrizione','descrizione_en','info','info_en','padre','madre','padre_en','madre_en','citazione','citazione_en'];
+var FIELD_LABEL = { nome:'Nome', nome_en:'Nome EN', nomi_alternativi:'Nomi alt.', nomi_alternativi_en:'Nomi alt. EN', appellativi:'Titoli', appellativi_en:'Titoli EN', tipo:'Tipo', tipo_en:'Tipo EN', tipo_label:'Etichetta', tipo_label_en:'Etichetta EN', fonte:'Fonte', fonte_en:'Fonte EN', descrizione:'Descrizione', descrizione_en:'Descrizione EN', info:'Info', info_en:'Info EN', citazione:'Citazione', citazione_en:'Citazione EN', padre:'Padre', madre:'Madre', padre_en:'Padre EN', madre_en:'Madre EN' };
+// ⚠️⚠️ L'elenco qui sopra NON è la fonte dei campi: la fonte è il DATASET, e
+// `SEARCH_FIELDS` dice soltanto in che ordine guardarli. Un elenco scritto a mano
+// dimentica il campo nato dopo di lui, e lo fa senza dare alcun errore: `fonte` e
+// `fonte_en` sono su tutte e 360 le voci e la ricerca non le guardava, quindi
+// cercare il titolo di un'opera non dava nulla (accertato il 2026-09-09, dopo lo
+// stesso difetto sul gemello di Terramare). Un campo nuovo si accoda da sé, con la
+// priorità più bassa, e la sua etichetta ripiega sul nome grezzo: visibile.
+// ⚠️⚠️ QUI I BADGE POSSONO ESSERE STRINGHE, non booleani come sul gemello: valgono
+// `true` oppure **`'presunto'`** (il badge al 50%), quindi il filtro sul TIPO non li
+// esclude e cercando `presunto` uscirebbero decine di voci.
+// ⚠️⚠️ Si escludono leggendo **`ICON_ORDER`**, che è l'elenco dei badge che il progetto
+// già mantiene, e non una lista scritta qui: un badge nuovo entra là per forza (o non
+// si disegna), quindi esce dalla ricerca da sé. È la stessa lezione dell'elenco dei
+// campi: la fonte è quella che il codice usa già, non una copia.
+// ⚠️ La misura scartata è un filtro sui VALORI-flag (`true`/`false`/`1`/`0`): l'avevo
+// scritto così, e il banco ha trovato il buco, perché `'presunto'` e `'50'` non sono
+// flag riconoscibili. Cercando `true` si ottenevano **66** riscontri.
+// Per NOME escono i campi tecnici che stringhe lo sono per caso, e cercarli
+// darebbe mezzo dataset o un riscontro senza senso: `genere` ('m'/'f'), le due
+// tinte della card, lo slug del link a Tolkien Gateway, e i due campi di stato dei
+// badge (`apocrifo:'HoME'`, `aratar:'presunto'`). ⚠️ `apocrifo` è escluso anche per
+// una ragione editoriale: quella parola qualifica una FONTE e non un personaggio,
+// e per regola non compare nelle card (§ 'Struttura dati').
+var SEARCH_SKIP = ['genere','cardcolor','cardrgb','tipo_color','tg','apocrifo','aratar'];
+var searchFieldsCache = null;
+function searchFields(){
+  if (searchFieldsCache) return searchFieldsCache;
+  // ⚠️ Si calcola al PRIMO USO e non a livello globale: se `dati.js` non carica, la
+  // ricerca resta vuota invece di far cadere l'intero script con un ReferenceError.
+  if (typeof dati === 'undefined' || !dati.length) return SEARCH_FIELDS;
+  var visti = {}, fuori = [];
+  for (var i=0;i<SEARCH_FIELDS.length;i++){ visti[SEARCH_FIELDS[i]] = 1; fuori.push(SEARCH_FIELDS[i]); }
+  var badge = typeof ICON_ORDER !== 'undefined' ? ICON_ORDER : [];
+  for (var k=0;k<dati.length;k++){
+    for (var f in dati[k]){
+      if (visti[f] || SEARCH_SKIP.indexOf(f) >= 0 || badge.indexOf(f) >= 0) continue;
+      if (typeof dati[k][f] !== 'string') continue;
+      visti[f] = 1; fuori.push(f);
+    }
+  }
+  searchFieldsCache = fuori;
+  return fuori;
+}
 // 'qf') e restituisce gli indici NELLA stringa ORIGINALE [start,end), per
 // evidenziare/selezionare il testo vero (non quello foldato).
 function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
@@ -5904,7 +5951,8 @@ function computeMatches(q){
     var p = dati[i];
     var isName = (fold(p.nome||'').indexOf(qf)>=0) || (fold(p.nome_en||'').indexOf(qf)>=0);
     var hf=null, hv=null;
-    for (var k=0;k<SEARCH_FIELDS.length;k++){ var f=SEARCH_FIELDS[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
+    var campi = searchFields();
+    for (var k=0;k<campi.length;k++){ var f=campi[k], v=p[f]; if (v && fold(v).indexOf(qf)>=0){ hf=f; hv=String(v); break; } }
     if (!hf) continue;
     (isName?nameHits:other).push({ i:i, isName:isName, field:hf, name:(p.nome||p.nome_en||'?'), val:hv, qf:qf });
   }
@@ -7369,14 +7417,28 @@ function buildControlPanel() {
   // occupato, mentre sul gemello di Terramare era libero perché là la XL è
   // spenta da un flag di build. Chi trova le note della 'scorciatoia segreta'
   // della XL in un commit vecchio sa che sono superate.
-  // ~500ms di pressione, SOLO input touch (pointerType): col mouse un click
-  // 'lento' non deve scattare, e su desktop la ricerca ha il suo tasto.
+  // La pressione lunga apre la ricerca, e dalla `15.35` vale ANCHE COL MOUSE
+  // (richiesta dell'utente: *la voglio anche su desktop*). ⚠️ Qui pesa più che
+  // sul gemello, perché su questo sito il tasto lente in toolbar è stato offerto
+  // e rifiutato, quindi da desktop la ricerca NON aveva alcuna via d'accesso.
+  // ⚠️⚠️ LE DUE SOGLIE NON SONO UN VEZZO, e la ragione era scritta qui come
+  // motivo per tenere il gesto fuori dal mouse: un click 'lento' aprirebbe la
+  // ricerca al posto del Pannello. Un click deliberato dura meno di ~400ms,
+  // quindi 700 separa il click dalla pressione voluta, mentre col dito 500
+  // bastano perché là la pressione lunga è un gesto che si conosce.
+  // ⚠️⚠️ E SI GUARDA `e.button`, o il gesto scatta col tasto DESTRO: `pointerdown`
+  // lo emette come gli altri, e qui il menu contestuale è preventato, quindi la
+  // ricerca si aprirebbe senza che nessuno l'abbia chiesta. Col dito `button`
+  // vale 0, perciò la guardia non tocca il caso touch.
+  // Un `pointerType` sconosciuto ripiega sulla soglia lunga, che è la prudente.
+  var LP_MS = { touch: 500, pen: 500, mouse: 700 };
   var lpTimer = 0, lpFired = false, lpX = 0, lpY = 0;
   var lpCancel = function(){ if (lpTimer) { clearTimeout(lpTimer); lpTimer = 0; } };
   fab.addEventListener('pointerdown', function(e){
-    if (e.pointerType !== 'touch') return;
+    if (e.button !== 0) return;
     lpFired = false; lpX = e.clientX; lpY = e.clientY;
-    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; openSiteSearch(); }, 500);
+    lpTimer = setTimeout(function(){ lpTimer = 0; lpFired = true; openSiteSearch(); },
+                         LP_MS[e.pointerType] || LP_MS.mouse);
   });
   fab.addEventListener('pointerup', lpCancel);
   fab.addEventListener('pointercancel', lpCancel);

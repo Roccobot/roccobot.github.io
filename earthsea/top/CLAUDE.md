@@ -1466,6 +1466,46 @@ deciso, e che non va rifatto: delle tinte del sito questa è **l'unica** dentro 
 
 ## 🗂️ La legenda nel Pannello è una CARD FINTA
 
+### 🏷️ La targhetta 'LEGENDA', e perché è in SANS SERIF
+
+Dalla `1.60`, su mockup dell'utente: una targhetta in alto a destra della card finta, che
+dice a colpo d'occhio che quella scheda non è una voce della classifica ma la spiegazione
+dell'anatomia di una card.
+
+- ⚠️⚠️ **IL SANS SERIF È LA SCELTA GIUSTA, e la ragione è già misurata due volte su questa
+  stessa card**: dentro un testo tutto in EB Garamond e Cinzel né il corsivo né il grassetto
+  staccano, e stacca il salto di **famiglia**. È accaduto con la firma della citazione (tre
+  rese fallite in EB Garamond, risolta passando a Cinzel) e con la riga dell'opera. L'utente
+  lo ha proposto con quell'argomento (*mi sembra stacchi di più dal contesto*), e l'argomento
+  è quello di casa.
+  - **Qui il salto dice una cosa in più delle altre due volte**: là separava due righe di
+    contenuto, qui separa un'**etichetta di interfaccia** dal contenuto, e il sans è già la
+    voce dell'interfaccia in questo sito. Il precedente c'è: l'**unico** altro sans della
+    pagina è quello del **toast** dei salvataggi, che è l'altro elemento che parla come
+    interfaccia e non come contenuto.
+  - ⚠️ **Il rovescio, che resta vero per tutto il resto**: un sans **aggiunge** una famiglia,
+    e per una riga di testo sarebbe un difetto (è la ragione per cui la riga dell'opera passò
+    a Cinzel, che era già in pagina: *la card non guadagna un quarto alfabeto*). Vale per una
+    **targhetta**, non si estende al testo delle card.
+  - ⚠️ **Il fallback è esplicito e non si toglie**: `system-ui` è un carattere diverso su ogni
+    sistema, e su tre sillabe va bene, ma senza coda un sistema che non lo risolve ricadrebbe
+    sul serif della pagina, cioè sull'effetto che la regola esiste per evitare.
+- ⚠️⚠️ **LE DUE TINTE SONO I DISCHI DEL FAB**, `#3072a1` in scuro e `#267d71` in chiaro, e
+  sono scelte perché il bianco sopra è **già misurato**: 5,19:1 e 4,94:1, cioè sopra il 4,5:1
+  che questo testo esige (rimisurato sulla pagina vera: identico). ⚠️ **NON si usa la tinta
+  della card-legenda** (`#78adc2` in scuro): là è un colore da **testo** su fondo scuro, e
+  come fondo di una targhetta bianca darebbe 1,9:1.
+- ⚠️ **Si costruisce A NODI** (`addCardlegTag`), non dentro `controlPanelHTML()`, che finisce
+  in un `innerHTML`: stessa ragione della decorazione d'angolo, e il divieto non è derogabile.
+  Si rimette a ogni ricostruzione del Pannello, cambio lingua compreso.
+- **È ASSOLUTA, quindi il cambio lingua non muove nulla**: `Legenda` e `Legend` misurano
+  74,2px e 65,4px, e il Pannello resta a **358,56px** in tutte e quattro le combinazioni di
+  tema e lingua.
+  - ⚠️ **La sovrapposizione col nome si misura sull'INCHIOSTRO, non sul box**: `.rank-name` è
+    un blocco e occupa tutta la riga, quindi col box il verdetto è 'sovrappone' **sempre**,
+    anche con la targhetta lontanissima. Misurato sull'inchiostro: varco di **121,9px** in
+    italiano e **147,8px** in inglese.
+
 Il Pannello di Terramare è molto più vuoto di quello di Arda, e l'utente ha chiesto di
 riempirlo con la legenda dell'**anatomia di una card**: una card con le stesse classi di
 quelle vere, dove ogni riga porta scritto che cos'è (`Nome d'uso`, `Vero nome`,
@@ -1821,11 +1861,19 @@ lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello
     `BADGE_ADJUST_UNITS` con le unità di Arda, `TIPI_ANIMALE` e `TYPE_LABEL`: la famiglia è
     sempre la stessa, e il sintomo è sempre **un risultato che manca**, senza nessun errore.
     Chi aggiunge un elenco di campi al motore lo ricavi, o entra nella lista.
-  - **Le ESCLUSIONI sono per TIPO e non per nome**, ed è la parte che non invecchia: si guarda
-    solo ciò che è **stringa**, quindi ogni badge nuovo (booleano) resta fuori da sé. Per nome
-    escono i tre campi tecnici che stringhe lo sono per caso, e cercarli darebbe mezzo
-    dataset: `genere` (`m`/`f`), `cardcolor` (`man` pescherebbe tutti gli uomini) e
-    `tipo_color`.
+  - **Le ESCLUSIONI non sono un elenco scritto qui**, ed è la parte che non invecchia: si
+    guarda solo ciò che è **stringa** (i badge di questo sito sono booleani, quindi escono da
+    sé) e si scartano le chiavi di **`ICON_ORDER`**, che è l'elenco dei badge che il progetto
+    già mantiene per disegnarli. Per nome escono i tre campi tecnici che stringhe lo sono per
+    caso, e cercarli darebbe mezzo dataset: `genere` (`m`/`f`), `cardcolor` (`man`
+    pescherebbe tutti gli uomini) e `tipo_color`.
+    - ⚠️⚠️ **`ICON_ORDER` serve benché qui i badge siano booleani**, e la ragione viene da
+      'I Grandi di Arda': là gli stessi badge valgono `true` **oppure `'presunto'`** (il badge
+      al 50%), quindi il filtro sul tipo non li tiene fuori. ⚠️ **La misura scartata è un
+      filtro sui VALORI-flag** (`true`/`false`/`1`/`0`): l'avevo scritto così il 2026-09-09 e
+      il banco ha trovato il buco subito, perché `'presunto'` non è un flag riconoscibile e
+      cercando `true` su Arda uscivano **66** riscontri. La lezione è la stessa dei campi: la
+      fonte è l'elenco che il codice usa già, non una lista nuova.
   - ⚠️ **Il calcolo è al PRIMO USO e non a livello globale**: un `dati.js` che non carica
     lascia così la ricerca vuota, mentre un accesso globale a `dati` farebbe cadere l'intero
     script con un `ReferenceError`. È lo stesso caso per cui il badge di versione ha un
@@ -1876,6 +1924,30 @@ Dalla `1.40`, istruzione dell'utente: su desktop il tocco lungo non esiste, quin
 era irraggiungibile proprio dove la classifica si legge più a lungo. Il tasto è il **primo**
 della fila della toolbar, a sinistra di Riordina, e apre `openSiteSearch`, la stessa funzione
 del gesto: **una via d'accesso in più, non una seconda ricerca**.
+
+⚠️⚠️ **DALLA `1.60` SU DESKTOP CI SONO DUE VIE, perché la pressione lunga vale anche col
+MOUSE** (istruzione dell'utente: *la voglio anche su desktop*, chiesta per i due siti
+insieme). La premessa di questa sezione, *su desktop il tocco lungo non esiste*, non è più
+vera, e il tasto **non** diventa ridondante: resta la via visibile, mentre il gesto è quella
+che chi lo conosce si porta dietro dal telefono.
+
+- ⚠️⚠️ **LE SOGLIE SONO DUE, 500ms col dito e 700 col mouse**, e non è un vezzo: la ragione
+  per cui il gesto era riservato al dito era scritta nel codice, cioè che col mouse **un click
+  'lento' aprirebbe la ricerca al posto del Pannello**. Un click deliberato dura meno di
+  ~400ms, quindi 700 separa il click dalla pressione voluta; col dito 500 bastano, perché là
+  la pressione lunga è un gesto che si conosce.
+- ⚠️⚠️ **E si guarda `e.button`, o il gesto scatta col tasto DESTRO**: `pointerdown` lo emette
+  come gli altri, e su questo FAB il menu contestuale è preventato, quindi la ricerca si
+  aprirebbe senza che nessuno l'abbia chiesta. Col dito `button` vale 0, perciò la guardia non
+  tocca il caso touch.
+- **Il difetto del click di rilascio NON si ripresenta col mouse**, e vale saperlo per non
+  cercarlo: la guardia dei 400ms dalla comparsa del velo non guarda il tipo di puntatore, e la
+  prova lo misura (`la pressione lunga col mouse apre la ricerca` più `il click del rilascio
+  non la richiude`).
+- **Il banco è `prova-lp-mouse.js` nello scratchpad, e serve i DUE siti** (`PROVA_SITO`):
+  prova cinque casi, e i **tre 'no' contano quanto i due 'sì'** (click breve, click lento a
+  550ms, tasto destro tenuto premuto, pressione trascinata). Misura del 2026-09-09: 9 su 9 su
+  entrambi i siti.
 
 - **Chiude il Pannello prima di aprire**, come fa il tasto Mappe e per la stessa ragione:
   senza, restano due overlay sovrapposti e il gesto indietro torna al Pannello invece che
