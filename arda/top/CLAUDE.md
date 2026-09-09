@@ -426,6 +426,72 @@ aprire il Pannello.
     **dataset**, non dal testo delle card, perché una stringa può comparire dentro un altro
     campo e allora la prova proverebbe un'altra cosa.
 
+### ✨ Il velo ORO sulla card raggiunta, e il canale che il Bagliore occupava
+
+Dalla `15.45`, istruzione dell'utente (2026-09-09, chiesta per i due siti insieme): il
+risultato che si tocca arriva **evidenziato in oro** e il segno **sfuma in due secondi**. Lo
+scorrimento con la centratura **non è stato toccato**, ed era la sola cosa che lui ha
+dichiarato già perfetta.
+
+- ⚠️⚠️ **UN'EVIDENZIAZIONE C'ERA GIÀ, E QUI SPEGNEVA IL BAGLIORE per 2,6 secondi**: la classe
+  `ss-trovata` esisteva dalla `15.25` come **anello secco** in `box-shadow`, e su questa pagina
+  quel canale è **occupato** dall'effetto Bagliore, che dipinge una lista di ombre a lunghezza
+  e ordine fissi (la trappola vive nella sezione della **Console**, voce sulla lista di
+  ombre). L'anello la **sostituiva**, quindi il bagliore si spegneva sulla card appena
+  raggiunta, e nessuno l'aveva notato perché il difetto durava quanto l'evidenziazione. Il velo
+  nuovo vive in un **`::after`**, cioè in uno strato suo, e non litiga con nessuno.
+- ⚠️⚠️ **L'oro si scrive come colore PROPRIO, perché i token `--gold*` di qui sono GRIGI**: la
+  neutralizzazione della tavolozza li ha portati a grigio (`--gold-bright` vale `#bbbbbb`),
+  quindi l'anello vecchio, che leggeva quella variabile, era un anello **grigio** col nome
+  dell'oro. Chi cerca l'oro del sito in una variabile non lo trova, e il nome della variabile
+  lo manda fuori strada.
+- ⚠️ **Il velo va SOTTO il contenuto** (`z-index:-1`): sopra il testo ne abbasserebbe il
+  contrasto proprio nell'istante in cui lo si legge, che è quello per cui la card è stata
+  cercata. ⚠️ Un admin con le **linee mediane** accese non vede il velo su quella card: i due
+  usi del `::after` si escludono e vince la riga rossa, che ha un id nel selettore. È voluto in
+  quest'ordine, perché le linee sono uno strumento di misura momentaneo.
+- ⚠️⚠️ **LE DUE METRICHE DELLA VISIBILITÀ DICONO COSE DIVERSE, e il rapporto WCAG da solo
+  SOTTOSTIMA un velo oro**: quello guarda la sola **luminanza**, mentre qui il fondo si sposta
+  anche di **tinta** (un fondo freddo che si ingiallisce), e quello l'occhio lo vede. Misurato
+  al picco sui pixel della pagina vera:
+
+  | tema | fondo card -> col velo | rapporto | scostamento sRGB | nome sul velo |
+  |---|---|---|---|---|
+  | scuro | `[43,49,57]` -> `[83,80,68]` | **1,62:1** | 52 | **5,34:1** (senza velo 8,67) |
+  | chiaro | `[233,237,241]` -> `[219,209,186]` | **1,29:1** | 63 | **7,85:1** (senza velo 10,12) |
+
+  Sul rapporto il chiaro è più debole di un quarto, sullo scostamento è **più forte**: il velo
+  si vede in tutti e due i temi, e la disparità del primo numero è compensata dal secondo. Chi
+  guarda un numero solo conclude che in un tema il velo non si veda.
+- ⚠️⚠️ **In CHIARO visibilità e contrasto del testo si OPPONGONO per costruzione**, e non è una
+  taratura da rifinire: qualunque velo oro **scurisce** un fondo chiaro, e là il testo è scuro,
+  quindi ogni punto di visibilità guadagnato è un punto di contrasto perso. **La misura
+  scartata è il pareggio esatto**: con l'alfa centrale a 0,42 la visibilità chiara sale a
+  1,48:1, cioè quella dello scuro, ma sul gemello di Terramare il nome scende a **4,80:1**,
+  a tre decimi dalla soglia AA, che su un vincolo non derogabile è un margine troppo sottile.
+  In vigore c'è **0,34**, e il chiaro resta un po' meno visibile con un margine vero sul testo.
+- ⚠️ **Perciò l'alfa chiara è più ALTA della scura, e non è una svista**: 0,34 contro 0,30 al
+  centro del gradiente, e il filetto 0,68 contro 0,60. Chi le uniformasse per coerenza
+  toglierebbe al tema chiaro la sola compensazione che ha.
+- **Il timeout JS è 2100ms e non 2600**: l'animazione dura 2s, quindi la classe cade subito
+  dopo la fine. ⚠️ Col **movimento ridotto** l'animazione non gira e il velo **resta fermo a
+  pieno**, perché quel segno porta un'informazione (dove si è arrivati): si toglie il
+  movimento, non il segno, e allora è quel timeout a dargli la durata.
+- **I banchi sono DUE e servono i due siti** (`PROVA_SITO`), nello scratchpad: `prova-velo.js`
+  misura le tinte con l'animazione messa in pausa al picco
+  (`getAnimations({subtree:true})`), `prova-velo-flusso.js` prova il giro vero (pressione
+  lunga, query, click sul riscontro) invece di iniettare la classe a mano. Misura del
+  2026-09-09: **18 su 18** per sito.
+  - ⚠️⚠️ **Il fondo si campiona sui PIXEL, non da `getComputedStyle`**: quello dà il colore
+    **dichiarato**, mentre il fondo vero della card è un composito di strati semitrasparenti.
+    È la stessa trappola del fondo di riferimento dell'AA, che si compone strato per strato:
+    riquadro, card con l'alpha dello stato corrente, e i veli sopra di essa.
+  - ⚠️⚠️ **Il primo metro del flusso ACCUSAVA il codice, e il difetto era nel metro**:
+    misurando la centratura **150ms dopo il click** dava 3172px dal centro, perché lo
+    scorrimento è `smooth` e stava ancora andando, e al secondo giro dava 0 solo perché la
+    pagina era già arrivata. Va letta a scorrimento **finito**: una prova che dipende da
+    un'animazione, misurata prima della sua fine, accusa quello che non è stato toccato.
+
 ## ✨ Feature flag dell'aspetto (la Console)
 
 Pannello dell'**aspetto del sito**, valido per **tutti i visitatori**: la Modalità XL e 8

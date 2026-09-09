@@ -2019,6 +2019,44 @@ basta toccare qualsiasi punto fuori dalla barra di ricerca*. Col mouse la × res
   al tocco la × non c'è, col mouse sì, e su entrambi il velo chiude mentre il campo e le
   righe di risultato no.
 
+### ✨ Il velo ORO sulla card raggiunta
+
+Dalla `1.70`, istruzione dell'utente (2026-09-09, chiesta per i due siti insieme): il
+risultato che si tocca arriva **evidenziato in oro** e il segno **sfuma in due secondi**. Lo
+scorrimento con la centratura **non è stato toccato**, ed era la sola cosa che lui ha
+dichiarato già perfetta.
+
+⚠️⚠️ **Il criterio e le trappole vivono in [`arda/top/CLAUDE.md`](../../arda/top/CLAUDE.md),
+§ '✨ Il velo ORO sulla card raggiunta, e il canale che il Bagliore occupava'**: là è nato il
+caso peggiore (l'anello vecchio spegneva il Bagliore, che su quella pagina occupa il
+`box-shadow`), e là vivono le due metriche della visibilità, la tensione fra velo e contrasto
+del testo in tema chiaro, e la misura scartata. Qui restano le cose **di questo sito**.
+
+- **Le misure sono le sue**, campionate al picco sui pixel della pagina vera:
+
+  | tema | fondo card -> col velo | rapporto | scostamento sRGB | nome sul velo |
+  |---|---|---|---|---|
+  | scuro | `[29,52,58]` -> `[69,82,69]` | **1,59:1** | 51 | **6,51:1** (senza velo 10,32) |
+  | chiaro | `[214,230,228]` -> `[202,204,179]` | **1,27:1** | 57 | **5,59:1** (senza velo 7,12) |
+
+  ⚠️ **È questo sito a fissare il limite dell'alfa chiara**, e va saputo prima di ritoccarla
+  per l'altro: qui il nome parte da 7,12:1 contro i 10,12 del gemello, quindi il margine sopra
+  l'AA finisce **prima**. La tinta è la stessa sui due siti, ma il vincolo lo detta questo.
+- ⚠️ **`isolation:isolate` QUI SERVE, sul gemello no**: là quella riga è già sulla card di
+  base, e resta scritta per simmetria. Senza isolamento lo `z-index:-1` del velo lo manderebbe
+  sotto il fondo della card invece che sotto il suo contenuto, cioè fuori vista.
+- ⚠️ **L'anello vecchio leggeva `--note-acc`**, che non è oro: era il segno nato con la
+  `1.30`, e come sul gemello il velo lo sostituisce con un colore proprio. ⚠️ Qui la trappola
+  del nome è **già registrata** nella voce sulla tinta della selezione, dove `--gold` non è
+  oro ma un grigio-verde: una variabile che si chiama come un colore non è quel colore.
+- **Il timeout JS è 2100ms e non 2600**: l'animazione dura 2s, quindi la classe cade subito
+  dopo la fine. ⚠️ Col **movimento ridotto** il velo **resta fermo a pieno** e quel timeout
+  diventa la durata del segno, che porta un'informazione (dove si è arrivati).
+- **I banchi sono `prova-velo.js` e `prova-velo-flusso.js`**, nello scratchpad, e servono i
+  due siti (`PROVA_SITO`): il primo misura le tinte, il secondo prova il giro vero (pressione
+  lunga, query, click) invece di iniettare la classe a mano. Misura del 2026-09-09: **18 su
+  18** per sito.
+
 ## 🌫️ L'alone sfumato è SPENTO sui browser touch, e la ragione è la barra dinamica
 
 **Dal 2026-08-23**, per un difetto che l'utente ha fotografato: scorrendo, in fondo allo
