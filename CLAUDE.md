@@ -710,6 +710,14 @@ poi divergerebbe.
       un percorso, il nome del repo nelle righe intorno per un rimando a sezione), perché
       spegnere tutti i rimandi come si fa con `tools` costerebbe il controllo proprio nelle
       sessioni coi due repo classici.
+    - ⚠️⚠️ **E IL 2026-09-09 LO STESSO SINTOMO AVEVA UNA CAUSA TERZA: L'APOSTROFO DENTRO UN
+      TITOLO.** Il verificatore leggeva un rimando come `'([^']{4,})'`, quindi da
+      '⚙️ Dove va un'impostazione, e chi la deve trovare' prendeva '⚙️ Dove va un', che non
+      esiste, e dava per rotto un rimando giusto. ⚠️ Non riguardava un file: riguardava una
+      **famiglia di titoli**, quelli con un apostrofo, che in italiano sono tanti. Adesso
+      chiude la citazione solo l'apice che **non** è seguito da una lettera, perché un
+      apostrofo è sempre attaccato alla parola dopo. Chi rivede questa nota sappia che le
+      cause di quel sintomo sono tre, e la copertura è solo la prima.
   - ⚠️⚠️ **`checkjs.py` LASCIA UN FILE accanto a quello che controlla** (lo script estratto,
     come `index.html.js`), e con un `git add -A` quel file entra nel commit: misurato il
     2026-09-05 su `earthsea/top/index.html`, dove ha portato in staging quasi novemila righe e
