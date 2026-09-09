@@ -2049,6 +2049,9 @@ del testo in tema chiaro, e la misura scartata. Qui restano le cose **di questo 
   `1.30`, e come sul gemello il velo lo sostituisce con un colore proprio. ⚠️ Qui la trappola
   del nome è **già registrata** nella voce sulla tinta della selezione, dove `--gold` non è
   oro ma un grigio-verde: una variabile che si chiama come un colore non è quel colore.
+- ⚠️ **La curva tiene il velo pieno per i primi 18% e poi scende LINEARE** (dalla `1.71`), e
+  la misura scartata è l'`ease-out`: là il velo perdeva il 68% nel primo secondo. Il
+  ragionamento e i numeri vivono nella voce del gemello, con le altre trappole.
 - **Il timeout JS è 2100ms e non 2600**: l'animazione dura 2s, quindi la classe cade subito
   dopo la fine. ⚠️ Col **movimento ridotto** il velo **resta fermo a pieno** e quel timeout
   diventa la durata del segno, che porta un'informazione (dove si è arrivati).
