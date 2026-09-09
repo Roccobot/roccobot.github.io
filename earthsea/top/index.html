@@ -3098,14 +3098,19 @@ html[data-theme="light"] .ss-hit-snip mark { background:rgba(14,107,94,0.18); }
    sul fondo della card e lasciare il testo sopra la soglia AA, e i due temi partono da
    fondi opposti (scuro #192632, chiaro #e4e7ec), quindi l'oro chiaro che brilla sullo
    scuro sparirebbe sul chiaro. Valori e misure nel `CLAUDE.md` del progetto. */
-@keyframes ss-trovata-sfuma { from { opacity:1; } to { opacity:0; } }
+/* ⚠️ La curva TIENE il velo pieno per i primi 18%, poi scende LINEARE, e non è un
+   vezzo: con un `ease-out` da 1 a 0 il velo perdeva il 68% nel primo secondo (misurato:
+   opacità 0,32 a metà tempo), quindi di 'molto graduale' restava la sola coda tenue.
+   Con la tenuta il segno è pieno quando l'occhio arriva sulla card, e i due secondi si
+   consumano a passo costante. */
+@keyframes ss-trovata-sfuma { 0% { opacity:1; } 18% { opacity:1; } 100% { opacity:0; } }
 .rank-item.ss-trovata { isolation:isolate; }
 .rank-item.ss-trovata::after {
   content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
   border-radius:inherit;
   background:linear-gradient(100deg, rgba(233,196,110,0.06) 0%, rgba(233,196,110,0.30) 44%, rgba(233,196,110,0.11) 100%);
   box-shadow:inset 0 0 0 1.5px rgba(233,196,110,0.60), inset 0 0 24px rgba(233,196,110,0.16);
-  animation:ss-trovata-sfuma 2s ease-out forwards;
+  animation:ss-trovata-sfuma 2s linear forwards;
 }
 /* ⚠️ In CHIARO l'alfa è più alta di un terzo, e non è una svista: a parità di alfa il
    velo si vede molto meno, perché su un fondo già luminoso il salto verso il basso pesa
@@ -3275,7 +3280,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.70</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.71</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

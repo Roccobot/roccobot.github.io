@@ -473,6 +473,16 @@ dichiarato già perfetta.
 - ⚠️ **Perciò l'alfa chiara è più ALTA della scura, e non è una svista**: 0,34 contro 0,30 al
   centro del gradiente, e il filetto 0,68 contro 0,60. Chi le uniformasse per coerenza
   toglierebbe al tema chiaro la sola compensazione che ha.
+- ⚠️⚠️ **LA CURVA TIENE il velo pieno per i primi 18%, poi scende LINEARE** (dalla `15.46`),
+  e la misura scartata è **l'`ease-out`**, che pare la scelta ovvia per una dissolvenza: con
+  quello il velo perdeva il **68%** nel primo secondo (opacità **0,32** a metà tempo), quindi
+  di 'molto graduale', che è la richiesta, restava la sola coda tenue. Con la tenuta il segno
+  è pieno quando l'occhio arriva sulla card e i due secondi si consumano a passo costante:
+  **0,61** a metà tempo e 0,01 a 1990ms.
+  - ⚠️ **La curva si legge dall'ANIMAZIONE**: `getAnimations({subtree:true})` prende anche
+    quella dello pseudo-elemento, e portandola a un `currentTime` scelto si legge l'opacità
+    a quell'istante. È l'unico modo di avere un numero su una dissolvenza, e senza quei tre
+    istanti la differenza fra le due curve non si sarebbe vista.
 - **Il timeout JS è 2100ms e non 2600**: l'animazione dura 2s, quindi la classe cade subito
   dopo la fine. ⚠️ Col **movimento ridotto** l'animazione non gira e il velo **resta fermo a
   pieno**, perché quel segno porta un'informazione (dove si è arrivati): si toglie il
