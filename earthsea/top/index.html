@@ -3075,9 +3075,50 @@ html[data-theme="light"] .ss-hit-snip mark { background:rgba(14,107,94,0.18); }
 .ss-hit-tag { font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; opacity:.75;
   border:1px solid currentColor; border-radius:4px; padding:0 .3em; margin-left:.5rem; }
 .ss-more { font-size:.78rem; opacity:.7; text-align:center; margin:.6rem 0 0; }
-/* La card raggiunta: un alone che si spegne da sé, perché senza un segno il
-   salto lascia l'occhio a cercare quale delle card sia quella trovata. */
-.rank-item.ss-trovata { box-shadow:0 0 0 2px var(--note-acc), 0 0 22px rgba(120,173,194,0.35); }
+/* La card raggiunta: un velo ORO che si spegne da sé in 2s, perché senza un segno il
+   salto lascia l'occhio a cercare quale delle card sia quella trovata (richiesta
+   dell'utente, 1.70: *una sovrapposizione elegante e moderna in giallo/oro... che poi
+   sfumi molto gradualmente*). Prima era un anello secco di 2px che compariva e
+   spariva di colpo.
+   ⚠️⚠️ SI DIPINGE NEL `::after`, E NON IN `box-shadow`, e la ragione vale più del
+   caso: sul gemello di Arda quella proprietà la usa l'effetto **Bagliore**, con una
+   lista di ombre a lunghezza e ordine fissi, quindi la regola vecchia gli spegneva il
+   bagliore per tutta la durata dell'evidenziazione. Il velo qui vive in uno strato
+   suo, e non litiga con nessuno: né col fondo (che è del sistema cardcolor), né col
+   `::before` (gradiente e riflettore), né col `box-shadow`.
+   ⚠️ `isolation:isolate` + `z-index:-1` mettono il velo SOTTO il contenuto della card:
+   è la stessa tecnica delle linee mediane admin, già verificata a pixel qui sopra, e
+   serve perché un velo sopra il testo ne abbasserebbe il contrasto proprio mentre lo
+   si legge.
+   ⚠️ Un admin con le LINEE MEDIANE accese non vede il velo su quella card: i due usi
+   del `::after` si escludono e vince la riga rossa, che ha un id nel selettore. È
+   voluto in quest'ordine: le linee sono uno strumento di misura momentaneo, e chi le
+   accende le vuole vedere.
+   ⚠️ Le due tinte sono MISURATE, non scelte a occhio: al picco il velo deve vedersi
+   sul fondo della card e lasciare il testo sopra la soglia AA, e i due temi partono da
+   fondi opposti (scuro #192632, chiaro #e4e7ec), quindi l'oro chiaro che brilla sullo
+   scuro sparirebbe sul chiaro. Valori e misure nel `CLAUDE.md` del progetto. */
+@keyframes ss-trovata-sfuma { from { opacity:1; } to { opacity:0; } }
+.rank-item.ss-trovata { isolation:isolate; }
+.rank-item.ss-trovata::after {
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  border-radius:inherit;
+  background:linear-gradient(100deg, rgba(233,196,110,0.06) 0%, rgba(233,196,110,0.30) 44%, rgba(233,196,110,0.11) 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(233,196,110,0.60), inset 0 0 24px rgba(233,196,110,0.16);
+  animation:ss-trovata-sfuma 2s ease-out forwards;
+}
+/* ⚠️ In CHIARO l'alfa è più alta di un terzo, e non è una svista: a parità di alfa il
+   velo si vede molto meno, perché su un fondo già luminoso il salto verso il basso pesa
+   meno di quello verso l'alto su un fondo scuro. Misura e limite nel `CLAUDE.md`. */
+html[data-theme="light"] .rank-item.ss-trovata::after {
+  background:linear-gradient(100deg, rgba(176,124,16,0.09) 0%, rgba(176,124,16,0.34) 44%, rgba(176,124,16,0.13) 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(176,124,16,0.68), inset 0 0 24px rgba(176,124,16,0.18);
+}
+/* ⚠️ Col movimento ridotto il velo RESTA e non si anima: l'evidenziazione porta
+   un'informazione (dove sei arrivato), quindi si toglie il movimento e non il segno. */
+@media (prefers-reduced-motion: reduce) {
+  .rank-item.ss-trovata::after { animation:none; opacity:1; }
+}
 /* ⚠️ Colore proprio, non `--gold`: quel grigio dava **4.49:1** sul fondo scuro
    della modale, cioè 0.01 sotto la soglia 4.5:1 del testo normale (rilevato da
    axe, difetto preesistente sanato nella v13.86). Un filo più chiaro basta e
@@ -3234,7 +3275,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.60</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.70</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7163,7 +7204,10 @@ function openSiteSearch() {
       if (!card) return;
       card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       card.classList.add('ss-trovata');
-      setTimeout(function() { card.classList.remove('ss-trovata'); }, 2600);
+      // ⚠️ 2100 e non 2600: il velo si spegne con un'animazione di 2s, quindi la classe
+      // cade subito dopo la fine. Col movimento ridotto l'animazione non gira e questo
+      // timeout diventa la durata del segno, che resta i suoi due secondi.
+      setTimeout(function() { card.classList.remove('ss-trovata'); }, 2100);
     });
   }
 
