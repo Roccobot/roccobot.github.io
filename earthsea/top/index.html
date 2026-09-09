@@ -671,7 +671,21 @@ html[data-theme="light"] .rank-citaz { background:rgba(var(--ccrgb,111,116,130),
    forme multiparola ('Terre di Kargad' e 'Kargad Lands', 4 voci) vanno a capo in
    due righe, che è il prezzo giusto perché non allarghino la colonna per tutte e
    111. Per questo `.ro-val` NON è `nowrap`: dentro una parola non c'è punto di
-   rottura, quindi i toponimi singoli restano interi da soli. */
+   rottura, quindi i toponimi singoli restano interi da soli.
+   ⚠️⚠️ Ma il TRATTINO è un punto di rottura, e `Karego-At` era il solo toponimo che si
+   spezzava a metà parola: la sua larghezza minima è la porzione `Karego-` (86,2px), non
+   la parola intera (96,98px), quindi il contenitore si stringeva là. Da qui `.ro-uni`,
+   che il render mette sulle origini di UNA parola: quel nome torna su una riga sola e
+   occupa 1,5px MENO di `Lorbanery`, cioè rientra in un ingombro che la colonna già
+   tollera. Le forme multiparola restano fuori dalla classe e vanno a capo, e devono:
+   `Terre di Kargad` su una riga uscirebbe di 11,38px dal bordo della card.
+   ⚠️ `overflow-wrap:break-word` non spezza `Lorbanery` perché quella proprietà NON
+   abbassa la larghezza minima intrinseca: agisce solo dove non c'è nessun'altra
+   opportunità di rottura E il box è già stretto. Sarebbe `anywhere` a spezzare tutto.
+   ⚠️ Due vie SCARTATE a misura: `word-break:keep-all` non ha effetto (Chromium rompe
+   comunque dopo il trattino, resa identica), e il trattino non spezzabile nel dato
+   (`U+2011`) romperebbe la RICERCA, perché `fold` normalizza in NFD e quel carattere
+   non decompone in `-`: cercando `Karego-At` la voce non si troverebbe più. */
 html { --orig-col:6.6rem; }
 .rank-item.has-orig { grid-template-columns:clamp(54px,10vw,76px) 1fr var(--orig-col); }
 .rank-orig {
@@ -693,6 +707,8 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
   letter-spacing:0.05em; line-height:1.2; text-align:center;
   overflow-wrap:break-word;
 }
+/* Le origini di UNA parola non vanno a capo: vedi il blocco sopra, voce sul trattino. */
+.ro-val.ro-uni { white-space:nowrap; }
 /* Il segno di LUOGO al posto della parola, quando `orig.pin` è acceso: non va
    tradotto e non prende posizione fra nascita e residenza, che è la ragione per cui
    l'utente lo ha proposto. `currentColor` lo lega alla tinta dell'etichetta. */
@@ -3280,7 +3296,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.71</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.72</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6308,7 +6324,12 @@ function origHtml(p){
   if (!v) return '';
   var et = c.pin ? ORIG_PIN_SVG
     : '<span class="ro-lab">' + (currentLang === 'it' ? 'origine' : 'origin') + '</span>';
-  return '<span class="rank-orig">' + et + '<span class="ro-val">' + escapeHtml(v) + '</span></span>';
+  // ⚠️ Una sola PAROLA resta intera, e la classe serve al solo caso col TRATTINO: quello
+  // è un punto di rottura, quindi `Karego-At` si spezzava in `Karego-` / `At` mentre
+  // `Lorbanery`, che è più larga di 1,5px, resta su una riga da sé. Il criterio si calcola
+  // sul valore RESO, non sul campo italiano, o l'inglese ricadrebbe nell'altro ramo.
+  var uni = v.indexOf(' ') < 0 ? ' ro-uni' : '';
+  return '<span class="rank-orig">' + et + '<span class="ro-val' + uni + '">' + escapeHtml(v) + '</span></span>';
 }
 function renderList() {
   var list = document.getElementById('rank-list');

@@ -2442,6 +2442,33 @@ dello Schedario, ed è **l'unico** posto dove va l'origine geografica. Prima non
     il resto usa lo spazio. Un'etichetta vuota col divisorio sarebbe il difetto opposto.
   - ✅ **Parola o segno lo sceglie il VISITATORE, dalla `0.62`**: vedi § 'Segno o parola
     nella colonna origine, e lo decide la CONSOLE'.
+  - ⚠️⚠️ **UNA SOLA PAROLA NON VA MAI A CAPO, e la classe `.ro-uni` esiste per il solo caso
+    col TRATTINO** (dalla `1.72`, segnalazione dell'utente: `Karego-At` era l'unico toponimo
+    spezzato a metà parola). ⚠️ **La larghezza non c'entra, e l'intuizione porta fuori
+    strada**: lo spazio utile della colonna è **70,36px**, quindi quasi tutti i toponimi
+    lunghi lo sforano e restano su una riga **perché dentro una parola non c'è dove
+    rompere**. `Lorbanery` misura **98,48px** e sfora di 28, `Karego-At` ne misura **96,98**,
+    cioè 1,5 in MENO, e si spezzava soltanto perché il trattino è un punto di rottura: la
+    sua larghezza minima era `Karego-` (86,2px) e il contenitore si stringeva là.
+    - **Perché lo sforamento non si vede**: si consuma nel `padding-left` della colonna, e
+      il testo rientra di **14,05px** dal bordo destro della card. Con la classe,
+      `Karego-At` ne rientra di **14,8**, cioè in un ingombro che la colonna già tollera.
+    - ⚠️ **`overflow-wrap:break-word` non c'entra e non basta**: quella proprietà **non**
+      abbassa la larghezza minima intrinseca, quindi non spezza mai un toponimo senza
+      trattini. Sarebbe `anywhere` a spezzarli tutti, ed è il rovescio del difetto.
+    - ⚠️⚠️ **Le tre vie SCARTATE, tutte a misura**, perché ognuna sembra più economica:
+      `word-break:keep-all` **non ha effetto** (Chromium rompe comunque dopo il trattino,
+      resa identica al pixel); `white-space:nowrap` su **tutte** le origini fa uscire
+      `Terre di Kargad` di **11,38px** oltre il bordo della card; il **trattino non
+      spezzabile** nel dato (`U+2011`) romperebbe la **ricerca**, perché `fold` normalizza
+      in NFD e quel carattere non decompone in `-`, quindi cercando `Karego-At` la voce non
+      si troverebbe più (provato).
+    - **Il criterio si calcola sul valore RESO**, non sul campo italiano, o l'inglese
+      ricadrebbe nel ramo sbagliato: `Low Torning` e `Kargad Lands` hanno uno spazio e
+      restano su due righe, come le loro gemelle italiane.
+    - ✅ **Non tocca l'anti-jitter, ed è misurato**: la lista resta alta **31025,52px** al
+      centesimo, perché l'altezza della card la governa il blocco dei nomi e non l'origine.
+      Provato su 1280, 900 e 390px nelle due lingue, 24 controlli su 24.
 - Ⓘ **In `arda/top/dati.js` `paese` c'è ancora**, `gb` su 360 voci: toglierlo là è una modifica
   al flusso dati di 'I Grandi di Arda', che è fra i casi **pesanti** (conferma esplicita), e
   nessuno l'ha chiesta.

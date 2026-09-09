@@ -1,4 +1,4 @@
-var datiVersion = "1.71";
+var datiVersion = "1.72";
 // Colori delle due razze. ⚠️ Valori PROVVISORI: chiari e desaturati per scelta
 // dell'utente, ma da misurare sul gate di contrasto AA nei due temi.
 // ⚠️ Questa riga VINCE sul fallback dentro index.html: è la configurazione salvata,
