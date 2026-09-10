@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-09-04
+! Last updated: 2026-09-10
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -11,6 +11,10 @@
 !                                    intatti). Serve ai siti dietro un bot manager
 !                                    (Akamai e simili) che rispondono 403 Access Denied
 !                                    quando la richiesta risulta alterata.
+! $permissions                     : disattiva le regole $permissions, che riscrivono
+!                                    l'intestazione Permissions-Policy della pagina. Come
+!                                    $removeparam, è un modificatore a sé: nessuna delle
+!                                    forme qui sopra lo tocca.
 ! Doppia riga = banche, pagamenti, finanza, assicurazioni, PA/identità.
 
 @@||192.168.1.2^$important
@@ -272,6 +276,26 @@
 @@||ws-hp.com^$important
 @@||x.ai^$important
 @@||x.ai^$document,subdocument,important
+! xnxx: 'Questo video non è disponibile' con AdGuard per Android e il filtraggio
+! HTTPS acceso, mentre da un'altra rete lo stesso filmato parte. La schermata della
+! richiesta dichiara TRE modifiche e nessun blocco: i meta li cambiano la Protezione
+! dal tracciamento e l'Intestazione dei criteri di autorizzazione, il contenuto una
+! Regola cosmetica. Il sospetto principale è la Stealth, che nasconde il Referer alle
+! terze parti: i filmati arrivano da cdn77-vid.xnxx-cdn.com, e un CDN con protezione
+! hotlink senza Referer risponde con un errore invece che col video.
+! ⚠️ Servono tutte e quattro le righe per dominio, perché $document non tocca né la
+! Stealth né $permissions: quelli sono modificatori a sé, come già $removeparam.
+! ⚠️ NON si sblocca il circuito pubblicitario, che resta bloccato: s.zline0.com serve
+! i rimandi a giochi, incontri e webcam (misurato sulla pagina), e trafficfactory.com
+! è la concessionaria del gruppo. Nessuno dei due porta un fotogramma.
+@@||xnxx.com^$important
+@@||xnxx.com^$document,important
+@@||xnxx.com^$stealth,important
+@@||xnxx.com^$permissions
+@@||xnxx-cdn.com^$important
+@@||xnxx-cdn.com^$document,important
+@@||xnxx-cdn.com^$stealth,important
+@@||xnxx-cdn.com^$permissions
 
 ! ── Claude / Anthropic ──
 @@||anthropic.com^$important
