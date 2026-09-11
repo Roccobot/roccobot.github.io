@@ -870,6 +870,19 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
 - **Le tab Chiaro/Scuro restano anche in dock**, perché scelgono **quali manopole si editano**; per
   vedere l'altro tema in pagina c'è il tasto `T`.
 
+## 💬 Il messaggio del salvataggio dell'ordine
+
+Dalla `15.48` il toast dice `Ordine dei personaggi` / `aggiornato e salvato.` su **due
+righe**, al posto di `Classifica salvata` (istruzione dell'utente, 2026-09-11).
+
+- ⚠️⚠️ **È un testo CONDIVISO col sito gemello**, e va cambiato nei due insieme: la stringa e
+  lo stile del toast sono identici in 'I Grandi di Terramare', e ritoccarne uno solo li
+  farebbe divergere senza che nessuna prova lo dica. La nota completa, col perché dell'a
+  capo, vive in [`earthsea/top/CLAUDE.md`](../../earthsea/top/CLAUDE.md), § 'Il messaggio del
+  salvataggio dell'ordine'.
+- ⚠️ **L'a capo vuole `white-space:pre-line` sul toast**: `textContent` da solo non lo rende,
+  e `innerHTML` resta vietato.
+
 ## 🔐 Admin e segreti
 
 - **Selezione del testo e tasto destro SPENTI per i visitatori, attivi per l'admin**

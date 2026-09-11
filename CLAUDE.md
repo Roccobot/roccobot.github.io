@@ -677,6 +677,24 @@ poi divergerebbe.
   2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
      `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
      (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
+  - ⚠️⚠️ **QUANDO IL SALVATAGGIO ARRIVA A LAVORO INIZIATO, il suo file è la BASE e le
+    proprie modifiche si RIAPPLICANO sopra** (successo il 2026-09-11 su Terramare: un
+    `classifica: aggiorna ordine` ha spostato **46 posizioni** mentre la sessione aveva in
+    mano un `dati.js` con l'ordine vecchio e due campi cambiati). Pushare quello che si ha
+    in mano avrebbe **cancellato il suo riordino** senza che nessun conflitto lo dicesse:
+    il file è uno solo, e vince l'ultimo che scrive.
+    - **Le modifiche si riapplicano PER NOME, mai per indice**: dopo un riordino gli indici
+      di prima non valgono più, e uno script che scrive `dati[45]` colpisce un'altra voce.
+    - ⚠️⚠️ **`git checkout --theirs` in uno `stash pop` prende il lato SBAGLIATO**, ed è la
+      trappola che è costata il primo tentativo: in un `pop` 'theirs' è **lo stash**, cioè
+      le proprie modifiche, non il remoto. La via che non si presta a equivoci è nominare
+      il ref: `git checkout origin/master -- <file>`.
+    - **Come si verifica di non aver perso il suo lavoro**: si confronta l'**elenco dei
+      nomi nell'ordine** fra il proprio file e `origin/master`, e deve tornare identico.
+      Un `git diff` non basta: mostrerebbe comunque le proprie righe cambiate.
+    - ⚠️ **Anche il NUMERO DI VERSIONE è suo**: l'editor admin bumpa da sé (là era la
+      `1.83`), quindi il bump della sessione riparte da quello che il remoto porta, o due
+      commit diversi dichiarano la stessa versione.
 - **I controlli pre-commit**, che bloccano il commit **solo quando la configurazione
   è letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
   `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, **trattini
