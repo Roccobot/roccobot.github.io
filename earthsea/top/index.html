@@ -3338,7 +3338,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.81</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.82</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3528,7 +3528,11 @@ var SITE_FLAGS_DEFAULT = {
   // perché qui la resa la decide chi amministra il sito e vale per tutti i visitatori.
   //  • `on`   la colonna dell'origine esiste
   //  • `pin`  il segno di luogo al posto della parola 'origine'/'origin'
-  //  • `slot` lo spazio riservato anche sulle voci senza luogo (9 su 120)
+  //  • `slot` lo spazio riservato anche sulle voci senza luogo
+  // ⚠️ `slot` vale sulla sola TABELLA PRINCIPALE (istruzione dell'utente, 2026-09-11):
+  // gli apocrifi la colonna la riservano sempre, e quell'interruttore non li tocca.
+  // ⚠️ Quante siano le voci senza luogo non si scrive: si contano, e il numero è già
+  // cambiato due volte (erano nove, poi tredici con le voci della 1.80).
   orig:{ on:true, pin:true, slot:false },
   // ⚠️ Il 'dito che scorre' della bottom-sheet: SPENTO dalla 0.69 (istruzione
   // dell'utente: *ci sta tutto fin da subito, perciò spegni l'animazione*), e resta
@@ -6641,7 +6645,15 @@ function renderList() {
     // riservare lo spazio e disegnare un separatore sono due scelte diverse, e
     // l'utente ha chiesto la prima senza la seconda.
     var orig = origHtml(p);
-    if (orig || (origCfg().on && origCfg().slot)) classes += ' has-orig';
+    // ⚠️⚠️ GLI APOCRIFI TENGONO SEMPRE LA COLONNA, anche quando l'origine manca
+    // (istruzione dell'utente, 2026-09-11: *restringi i box citazione di Festin e Voll
+    // come se avessero l'origine, in modo che la centratura sia ottimale*). Festin e
+    // Voll sono le sole due della loro tabella senza luogo, quindi senza riserva le
+    // loro card sarebbero le uniche larghe quanto tutta la riga, e il riquadro della
+    // citazione si allargherebbe in mezzo a dodici card strette.
+    // ⚠️ Resta sotto l'interruttore `on` della Console, come il resto della colonna:
+    // a colonna spenta non si riserva niente a nessuno.
+    if (orig || (origCfg().on && (origCfg().slot || p.apocrifo))) classes += ' has-orig';
     // ⚠️⚠️ GRUPPO DI RIORDINO: una voce si riordina solo DENTRO il suo (istruzione
     // dell'utente, 2026-09-11: *non dev'essere consentito passare da una tabella o
     // sezione all'altra*). I gruppi sono tre e coincidono con le tre intestazioni:
@@ -10135,20 +10147,12 @@ var SITE_FLAG_ITEMS = [
   // scorre', perché la resa è già stata scelta fra tre mockup e qui serve solo
   // poterla spegnere. `noMob` perché la config è unica (vedi FX_UNI).
   { k:'deco', it:'Decorazione', en:'Corner mark', noMob:true },
-  // ⚠️ È l'unico effetto SOLO MOBILE, e la sua voce sta comunque nella tab Desktop: la
-  // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
-  // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
-  // trama, che sono desktop-only e stanno lì per la stessa ragione strutturale.
-  { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true, mobOnly:true },
-  // ⚠️ ULTIMA voce (posizione chiesta dall'utente, 1.00), e come 'Dito che scorre' è
-  // un effetto solo-mobile che sta nella tab Desktop: la tab Mobile mostra le varianti
-  // `_m`, e questo ha config unica, quindi una variante desktop non governerebbe nulla.
-  { k:'jumpx', it:'Tasti \u2912\u2913', en:'Jump buttons', cfg:true, noMob:true, mobOnly:true },
-  // ⚠️⚠️ ULTIMA VOCE E PRIMA DI UN GRUPPO NUOVO: tutte quelle sopra governano l'ASPETTO,
-  // questa governa il CONTENUTO (1.07, istruzione dell'utente). `gap` le dà lo stacco
-  // minimo che segna il cambio di gruppo senza aprire una sezione con un titolo, che per
-  // una voce sola sarebbe sproporzionata. ⚠️ La nota di `jumpx` diceva 'ULTIMA voce': resta
-  // vera fra gli EFFETTI, che è la posizione chiesta dall'utente nella 1.00.
+  // ⚠️⚠️ VIENE DOPO 'Decorazione' dal 2026-09-11 (istruzione dell'utente: *sposta
+  // 'Senza nome' sotto 'Decorazione'. Le due voci mobile devono restare in fondo*), dove
+  // prima chiudeva l'elenco. È l'unica voce che governa il CONTENUTO e non l'aspetto
+  // (1.07), quindi ha lo stacco di `gap` su ENTRAMBI i lati: il suo, e quello di 'Dito
+  // che scorre' qui sotto, che segna il ritorno agli effetti. ⚠️ Il secondo `gap` non è
+  // decorativo: senza, la voce di contenuto si legge come la prima delle due mobile.
   // ⚠️ `plain`: booleano piatto come `zoomBig`, senza varianti di piattaforma e senza
   // manopole, quindi niente `cfg` e niente riga nella tab Mobile.
   // ⚠️⚠️ L'ETICHETTA È CORTA PER FORZA, e non è la parola dell'utente accorciata a gusto:
@@ -10156,7 +10160,17 @@ var SITE_FLAG_ITEMS = [
   // ne misura **145,5** col font reale (contro gli 87,6 di 'Colore schede', che ci sta, e i
   // 120,7 di 'Colore delle schede', che va a capo). 'Senza nome' ne misura 74,8 e 'Nameless'
   // 58,9. Il nome per esteso resta quello della funzione, e vive nelle regole del progetto.
-  { k:'senzanome', it:'Senza nome', en:'Nameless', plain:true, gap:true }
+  { k:'senzanome', it:'Senza nome', en:'Nameless', plain:true, gap:true },
+  // ⚠️ È l'unico effetto SOLO MOBILE, e la sua voce sta comunque nella tab Desktop: la
+  // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
+  // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
+  // trama, che sono desktop-only e vivono lì per la stessa ragione strutturale.
+  { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true, mobOnly:true, gap:true },
+  // ⚠️ ULTIMA voce (posizione chiesta dall'utente nella 1.00 e riconfermata il
+  // 2026-09-11: *le due voci mobile devono restare in fondo*), e come 'Dito che scorre' è
+  // un effetto solo-mobile che vive nella tab Desktop: la tab Mobile mostra le varianti
+  // `_m`, e questo ha config unica, quindi una variante desktop non governerebbe nulla.
+  { k:'jumpx', it:'Tasti \u2912\u2913', en:'Jump buttons', cfg:true, noMob:true, mobOnly:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -10335,8 +10349,8 @@ var FX_KNOBS = {
       nit:'Il segnaposto della mappa al posto della parola \'origine\': non va tradotto e non prende posizione fra nascita e residenza.',
       nen:'The map pin instead of the word \'origin\': it needs no translation and takes no side between birth and residence.' },
     { p:'slot', t:'bool', dep:'on', it:'Spazio riservato', en:'Reserved space',
-      nit:'Tiene la colonna anche sulle nove voci senza luogo, invece di lasciare che la scheda si allarghi. Costa una riga in piu\' a quattro citazioni.',
-      nen:'Keeps the column on the nine entries with no place, instead of letting the card widen. It costs one extra line to four quotes.' }
+      nit:'Tiene la colonna anche sulle voci senza luogo della tabella principale, invece di lasciare che la scheda si allarghi. Costa una riga in piu\' a qualche citazione. Gli apocrifi la riservano sempre, e non dipendono da qui.',
+      nen:'Keeps the column on the entries with no place in the main table, instead of letting the card widen. It costs one extra line to a few quotes. The apocryphal ones always reserve it, and do not depend on this.' }
   ],
   // ⚠️ Una manopola sola, e con l'unità in px: qui il valore NON è una quantità
   // astratta come le opacità o le ampiezze degli altri effetti, è una distanza che
