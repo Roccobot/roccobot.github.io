@@ -389,6 +389,44 @@ html { --col-max:740px; }
   -webkit-user-select:text; user-select:text;
 }
 .rank-empty { text-align:center; padding:2.5rem 1rem; color:var(--parchment-dim); font-style:italic; }
+/* ── Intestazioni della seconda tabella (i personaggi APOCRIFI) ──────────────
+   Il titolo e la sua riga di spiegazione aprono la tabella dei due racconti-prototipo;
+   i due `h3` dividono le sezioni, una per racconto.
+   ⚠️⚠️ Le due lingue si IMPILANO come nelle card (`.apo-tx` è una cella `.bil`), e qui
+   la riserva pesa più che altrove: un titolo che cambiasse altezza al cambio lingua
+   sposterebbe DI COLPO tutte le card sotto di lui, cioè un terzo della pagina. È la
+   regola anti-jitter applicata a un'intestazione, dove l'asse che conta resta il
+   verticale (vedi § 'L'ANTI-JITTER' nel CLAUDE.md del progetto).
+   ⚠️ `justify-items:center` serve perché la cella impilata è una griglia: senza, le due
+   facce si ancorano a sinistra e il `text-align` del contenitore non le tocca. */
+.apo-head { margin:3.4rem auto 0.6rem; padding:0 1rem; text-align:center; }
+.apo-title {
+  font-family:'Cinzel',serif; font-weight:700;
+  font-size:clamp(1.34rem,4.2vw,2.05rem); letter-spacing:0.06em;
+  color:var(--gold-bright); margin:0;
+}
+/* ⚠️ `text-wrap:balance` e non una larghezza stretta: a 44ch la riga italiana andava a
+   capo lasciando sotto la sola parola `Terramare.`, che è il difetto tipico di una
+   riga di poco più lunga della sua colonna. Con le righe bilanciate il taglio cade a
+   metà frase, e la misura resta buona anche in inglese, dove il testo è più corto. */
+.apo-sub {
+  font-family:'EB Garamond',serif; font-style:italic;
+  font-size:clamp(0.9rem,2.4vw,1.05rem); line-height:1.35;
+  color:var(--parchment-dim); margin:0.45rem 0 0;
+  max-width:58ch; margin-inline:auto; text-wrap:balance;
+}
+.apo-sec {
+  font-family:'Cinzel',serif; font-weight:600;
+  font-size:clamp(0.94rem,2.6vw,1.16rem); letter-spacing:0.05em;
+  color:rgb(var(--apo-rgb,125,159,214)); margin:2.1rem 0 0.7rem; padding:0 1rem;
+  text-align:center;
+}
+.apo-sec::after {
+  content:''; display:block; width:min(200px,38%); height:1px; margin:0.55rem auto 0;
+  background:linear-gradient(90deg,transparent,rgba(var(--apo-rgb,125,159,214),0.55),transparent);
+}
+.apo-tx { justify-items:center; }
+html[data-theme="light"] .apo-title { color:var(--gold-deep); }
 .rank-item::before {
   content:''; position:absolute; inset:0;
   background:linear-gradient(90deg,transparent 0%,rgba(202,204,212,0.10) 50%,transparent 100%);
@@ -3296,7 +3334,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.72</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.80</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5212,11 +5250,25 @@ var CARDCOLORS_FALLBACK = {
   // ⚠️ I valori sono MISURATI, non provvisori: nel tema chiaro fanno anche da TESTO (il
   // vero nome prende la tinta), quindi devono passare AA e non solo distinguersi. I
   // numeri stanno in `earthsea/top/CLAUDE.md`.
+  // ⚠️ La QUINTA famiglia non è una razza: sono i personaggi APOCRIFI, quelli dei due
+  // racconti-prototipo, che vivono nella seconda tabella. La tinta è un BLU ACCIAIO
+  // perché è la sola casella di tinta che le altre quattro lasciano libera: misurate
+  // sui colori in vigore (`cardColors` in dati.js, che vince su questi), le distanze
+  // di tonalità sono 41° dal turchese degli uomini, 56° dal viola delle donne, 137°
+  // dal verde degli animali e 143° dal rosso dei draghi, cioè la distanza MINIMA più
+  // alta fra le candidate (l'ambra ne dava 39 dal rosso, il rosa 28).
+  // ⚠️ E i suoi due valori passano AA come TESTO su entrambi i fondi card (5,72 sul
+  // fondo scuro #192632, 5,99 sul chiaro #e4e7ec), che è la soglia vera qui: il vero
+  // nome prende la tinta della famiglia.
+  // ⚠️ Tinta UNICA, senza sdoppiamento per genere: è la scelta degli animali e non
+  // quella degli umani, perché in questa tabella il colore deve dire 'altro corpus'
+  // prima di ogni altra cosa. Il genere resta sulla card, nel suo simbolo.
   fam: {
     "man": { dark:"#9cb2f0", light:"#22449c" },
     "woman": { dark:"#6fd0d6", light:"#0c757e" },
     "dragon": { dark:"#e0a090", light:"#a8462f" },
-    "animale": { dark:"#e6c445", light:"#856508" }
+    "animale": { dark:"#e6c445", light:"#856508" },
+    "apocrifo": { dark:"#7d9fd6", light:"#2f5496" }
   },
   map: CARDCOLOR_OF
 };
@@ -5344,6 +5396,15 @@ function ccAaText(fg, bg, target) {
     css.push('.cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.dark) + ';--cctxt:' + ccFamTxt(f.dark, 'dark') + '}');
     css.push('html[data-theme="light"] .cc-' + k + '{--ccrgb:' + ccHexToTriplet(f.light) + ';--cctxt:' + ccFamTxt(f.light, 'light') + '}');
   });
+  // Le intestazioni della tabella apocrifa pescano la LORO tinta dalla stessa
+  // config delle card (`--apo-rgb`), invece di ripeterne i valori nel CSS: così un
+  // cambio di quella famiglia dall'editor colori muove anche i titoli, e non
+  // restano indietro a dire un colore che le card non hanno più.
+  var fa = CARDCOLORS.fam.apocrifo;
+  if (fa) {
+    css.push('#rank-list{--apo-rgb:' + ccHexToTriplet(fa.dark) + '}');
+    css.push('html[data-theme="light"] #rank-list{--apo-rgb:' + ccHexToTriplet(fa.light) + '}');
+  }
   var s = document.createElement('style');
   s.id = 'cc-fam-rules';
   s.textContent = css.join('');
@@ -6331,16 +6392,73 @@ function origHtml(p){
   var uni = v.indexOf(' ') < 0 ? ' ro-uni' : '';
   return '<span class="rank-orig">' + et + '<span class="ro-val' + uni + '">' + escapeHtml(v) + '</span></span>';
 }
+// ── I PERSONAGGI APOCRIFI: la seconda tabella ───────────────────────────────
+// Sono i personaggi dei due racconti-prototipo del 1964 (`La parola dello
+// scioglimento` e `La legge dei nomi`), che Le Guin scrisse PRIMA dei romanzi e che
+// il canone tiene fuori dalle opere di Terramare: il campo `apocrifo` del dato li
+// marca, e da qui in giù governa la loro tabella.
+// ⚠️ La suddivisione in due sezioni la dice la `fonte`, che già distingue i due
+// racconti: un campo `sezione` a sé sarebbe un secondo dato da tenere allineato, e
+// le sezioni SONO i racconti.
+var APO_TESTI = {
+  it: { titolo: 'Personaggi apocrifi',
+        sub: 'provenienti dai due racconti-prototipo dell\'universo di Terramare.' },
+  en: { titolo: 'Apocryphal characters',
+        sub: 'from the two prototype stories of the world of Earthsea.' }
+};
+// Il titolo del racconto SENZA l'anno: nel dato la fonte è `Titolo (1964)`, e qui
+// serve il solo titolo. Il ripiego bidirezionale è quello di `operaDi`.
+function operaSenzaAnno(p, it) {
+  var v = it ? (p.fonte || p.fonte_en) : (p.fonte_en || p.fonte);
+  return String(v || '').replace(/\s*\(\d{3,4}\)\s*$/, '');
+}
+// Intestazione della seconda tabella e intestazione di sezione: le due lingue si
+// IMPILANO come nelle card (vedi `bilingue`), così il cambio lingua non muove di un
+// pixel la tabella sottostante. È la stessa riserva delle righe delle schede,
+// applicata a un titolo invece che a un sottotitolo.
+function apoHeadHtml() {
+  var t = APO_TESTI;
+  return '<div class="apo-head">' +
+    '<h2 class="apo-title">' + bilingue('apo-tx', escapeHtml(t.it.titolo), escapeHtml(t.en.titolo), true) + '</h2>' +
+    '<p class="apo-sub">' + bilingue('apo-tx', escapeHtml(t.it.sub), escapeHtml(t.en.sub), true) + '</p>' +
+    '</div>';
+}
+function apoSecHtml(p) {
+  return '<h3 class="apo-sec">' +
+    bilingue('apo-tx', escapeHtml(operaSenzaAnno(p, true)), escapeHtml(operaSenzaAnno(p, false)), true) +
+    '</h3>';
+}
 function renderList() {
   var list = document.getElementById('rank-list');
   var html = '';
   var visN = 0;
-  for (var i = 0; i < dati.length; i++) {
+  // Due tabelle in una lista sola: prima i personaggi delle opere, poi gli apocrifi.
+  // ⚠️ Il filtro si applica PRIMA della divisione, così una seconda tabella rimasta
+  // senza voci non emette né il suo titolo né le sue sezioni.
+  var ordine = [], apo = [], q;
+  for (q = 0; q < dati.length; q++) {
+    if (!isVisibile(dati[q], q)) continue;
+    (dati[q].apocrifo ? apo : ordine).push(q);
+  }
+  var inizioApo = ordine.length;
+  ordine = ordine.concat(apo);
+  var secCorrente = null;
+  for (var k = 0; k < ordine.length; k++) {
+    var i = ordine[k];
     var p = dati[i];
-    if (!isVisibile(p, i)) continue;
+    // Passaggio alla seconda tabella: intestazione, e la numerazione riparte da 1
+    // perché è una tabella a sé e non la coda della prima.
+    if (k === inizioApo) { html += apoHeadHtml(); visN = 0; }
+    if (k >= inizioApo) {
+      var sec = operaSenzaAnno(p, true);
+      if (sec !== secCorrente) { html += apoSecHtml(p); secCorrente = sec; }
+    }
     var cat = categoria(p);
     visN++;
-    var isVisTop = visN <= 3;
+    // Il podio (striscia più spessa, nome più grande) è della PRIMA tabella: negli
+    // apocrifi le prime tre voci non sono le più importanti, sono le prime del
+    // racconto da cui vengono.
+    var isVisTop = k < inizioApo && visN <= 3;
     var nomeUso = currentLang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome);
     // Prima apparizione (istruzione dell'utente, 2026-08-21): il ripiego vale nei
     // DUE sensi, al contrario del resto dei campi bilingui. I titoli sono per ora
@@ -6535,7 +6653,9 @@ function renderList() {
     '</div>';
   }
   // Incrocio categorie × badge senza risultati: messaggio al posto del vuoto.
-  if (visN === 0) {
+  // ⚠️ Si guarda `ordine.length` e non `visN`: da quando le tabelle sono due, `visN`
+  // riparte da zero sulla seconda, quindi a fine ciclo conta le sole card apocrife.
+  if (!ordine.length) {
     html = '<p class="rank-empty">' + (currentLang === 'it'
       ? 'Nessun personaggio corrisponde ai filtri attivi.'
       : 'No character matches the active filters.') + '</p>';
