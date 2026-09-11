@@ -613,6 +613,68 @@ loro card sarebbero le sole larghe quanto tutta la riga, in mezzo a dodici stret
   della Console, è una **manopola** dentro la sotto-modale della riga `Origine`, insieme a
   `Attiva` e `Segno di luogo`. Chi la cerca fra gli interruttori dell'elenco non la vede.
 
+### ✍️ La firma di Astro, e il float che usciva dal riquadro
+
+**La firma è `Capo dei Figli del Mare Aperto`** (istruzione dell'utente, 2026-09-11), e
+⚠️ **diverge da tutte e tre le fonti**: la prosa Mondadori scrive *I Figli dell'Oceano*, il
+titolo del capitolo *I Figli dell'Oceano Aperto*, l'inglese `the Children of the Open Sea`.
+È una scelta editoriale come le altre, e la metà inglese resta quella attestata.
+
+- ⚠️⚠️ **`alignVoci` non guardava la larghezza della FIRMA**, e questo è il difetto che
+  l'utente ha visto: la funzione arretra il float per allinearlo alla riga di testo più
+  lunga sopra, ma nessuna delle due misure che usava (la distanza dal bordo e il tetto
+  dalla riga accanto) sa quanto è larga la firma stessa. Misurato a **390px** prima del
+  rimedio: firma di 214px su una riga di 257, arretrata di 86,5 -> **44px fuori dal
+  riquadro, a sinistra**. Ora l'arretramento è limitato anche allo spazio disponibile.
+- ⚠️ **Il difetto si vede solo dove la firma è LUNGA e la colonna STRETTA**: a 1280 e a
+  900px la stessa card stava dentro di quasi 300px. Una misura fatta al solo desktop
+  avrebbe detto che andava bene.
+
+### 🔀 La maniglia di riordino è in ALTO a destra
+
+**Segnalazione dell'utente, 2026-09-11**: *le maniglie spesso vanno a finire sopra il testo
+dell'origine*, con due vie proposte da lui (spostarle, o nascondere l'origine mentre si
+trascina). **Ha deciso la misura**, non il gusto.
+
+- **Al centro verticale la maniglia copriva il testo dell'origine su 85 card su 146**, fino
+  a 444px quadrati su `Terre di Kargad`. **In alto a destra: zero**, e lassù non tocca
+  nemmeno il nome, le etichette o il riquadro della citazione delle card senza colonna.
+- ⚠️ **La seconda via è stata scartata, e vale sapere perché**: far sparire e ricomparire
+  una colonna intera per la durata del trascinamento è un movimento grande per un difetto
+  che si toglie spostando un elemento di sedici pixel. E introdurrebbe un salto proprio
+  mentre l'utente sta mirando una posizione.
+- ⚠️ **Su 'I Grandi di Arda' NON si applica**: quel sito non ha la colonna dell'origine
+  (zero occorrenze di `rank-orig`), quindi là la maniglia al centro non copre niente.
+
+### 🧙 Mildi porta il badge `stregone`
+
+L'utente ha chiesto di verificare la sua prima impressione (*avevo interpretato Mildi come
+uno stregone, ma forse sbagliavo?*), e le fonti gli dànno ragione, per via indiretta.
+
+- **Che cosa dicono davvero**: a Lorbanery il processo della tintura *era controllato da
+  un'unica famiglia, i cui componenti si definivano 'stregoni'* (`a family who, in fact,
+  called themselves wizards`), e di Mildi si dice che finché era vivo *non pioveva mai in
+  questo periodo dell'anno*, cioè governava il tempo. Gli abitanti lo chiamavano `il
+  Piantatore` / `the Orcharder`.
+- ⚠️⚠️ **La prova che chiude il caso è la COERENZA INTERNA, non una parola**: `Akaren`, la
+  madre di Sopli, che praticava l'arte **insieme a lui** (*è ciò che Mildi e mia madre non
+  volevano capire*), porta già il badge `stregone` nel dataset. Erano i due praticanti della
+  stessa arte nello stesso luogo: darlo a una sola sarebbe una divergenza interna, non una
+  cautela.
+- ⚠️ **Niente badge `mago`**: quello dice 'educato a Roke', e Mildi non lo è di certo.
+
+### 💬 Il messaggio del salvataggio dell'ordine
+
+`Ordine dei personaggi` / `aggiornato e salvato.` su **due righe** (istruzione dell'utente,
+2026-09-11), al posto di `Classifica salvata`. ⚠️ Vale per **tutti e due i siti gemelli**:
+la stringa e lo stile del toast sono identici, e cambiarne uno solo li farebbe divergere in
+silenzio.
+
+- ⚠️ **L'a capo vive nel messaggio e il toast ha `white-space:pre-line`**: `textContent` da
+  solo non manda a capo un `\n`, e il divieto di `innerHTML` non si tocca nemmeno per un
+  messaggio di due righe. Senza quella proprietà il testo sarebbe uscito su una riga sola
+  con uno spazio in mezzo, cioè un a capo che non si vede e non dà errore.
+
 ### 🎛️ L'ordine delle voci nella Console
 
 ⚠️ **Non è un ordine tecnico: lo decide l'utente**, e per questo non si 'sistema' a intuito.

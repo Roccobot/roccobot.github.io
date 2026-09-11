@@ -3338,7 +3338,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.82</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.84</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6966,7 +6966,14 @@ function alignVoci(){
     // riga sopra molto corta l'attribuzione arriverebbe a toccare la frase.
     var gap = parseFloat(getComputedStyle(f).fontSize) * 0.8;
     var tetto = stessa ? Math.max(0, vb.left - (stessa.right + gap)) : d;
-    lav[i].px = Math.max(0, Math.min(d, tetto));
+    // ⚠️⚠️ E MAI OLTRE LO SPAZIO CHE LA FIRMA HA: arretrandola più della differenza fra
+    // la riga e la firma stessa, il float esce dal riquadro a SINISTRA, che è il difetto
+    // segnalato dall'utente su `Astro` (2026-09-11). Misurato a 390px prima del rimedio:
+    // firma larga 214px su 257 di riga, arretrata di 86,5 -> 44px fuori dal bordo. Le
+    // altre due misure (`d` e il tetto) guardano il testo sopra e la riga accanto, e
+    // nessuna delle due sa quanto è larga la firma.
+    var spazio = Math.max(0, f.getBoundingClientRect().width - vb.width);
+    lav[i].px = Math.max(0, Math.min(d, tetto, spazio));
   }
   for (i = 0; i < lav.length; i++) {
     if (lav[i].px > 0.5) lav[i].v.style.right = lav[i].px.toFixed(2) + 'px';
@@ -9167,7 +9174,16 @@ function enableDragDrop() {
     // Sovrascriverlo con l'indice visivo rompeva il riordino.
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
-    handle.style.cssText = 'position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);cursor:grab;color:var(--gold);opacity:0.22;transition:opacity 0.2s;touch-action:none;padding:0.35rem;display:flex;align-items:center;';
+    // ⚠️⚠️ IN ALTO A DESTRA, non al centro verticale (segnalazione dell'utente,
+    // 2026-09-11: *le maniglie spesso vanno a finire sopra il testo dell'origine*).
+    // La misura ha deciso fra le due vie che aveva proposto: al centro la maniglia
+    // copre il testo dell'origine su **85 card su 146** (fino a 444px quadrati su
+    // `Terre di Kargad`), in alto a destra su **zero**, e lassù non copre nemmeno il
+    // nome, le etichette o la citazione delle card senza colonna. L'altra proposta,
+    // nascondere l'origine per la durata del trascinamento, è stata scartata: fa
+    // sparire e ricomparire una colonna intera per un difetto che si toglie spostando
+    // un elemento di sedici pixel.
+    handle.style.cssText = 'position:absolute;right:0.75rem;top:0.55rem;cursor:grab;color:var(--gold);opacity:0.22;transition:opacity 0.2s;touch-action:none;padding:0.35rem;display:flex;align-items:center;';
     handle.innerHTML = '<svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor" style="pointer-events:none"><circle cx="4" cy="4" r="1.8"/><circle cx="10" cy="4" r="1.8"/><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="4" cy="16" r="1.8"/><circle cx="10" cy="16" r="1.8"/></svg>';
     item.appendChild(handle);
     handle.addEventListener('mouseenter', () => handle.style.opacity = '0.9');
@@ -9321,7 +9337,7 @@ function showToast(msg, isError, icon) {
     // z-index 600: sopra TUTTI gli overlay (fab-modal 400, imgv 500), altrimenti
     // il backdrop-filter:blur di un modale aperto lo sfoca (il toast dei salvataggi
     // dell'editor colori finiva dietro il velo).
-    t.style.cssText = 'position:fixed;bottom:3.5rem;right:5.6rem;transform:translateY(50%);z-index:600;padding:0.45rem 0.9rem;border-radius:6px;font-family:system-ui,-apple-system,sans-serif;font-size:0.82rem;font-weight:600;max-width:280px;pointer-events:none;transition:opacity 0.4s;';
+    t.style.cssText = 'position:fixed;bottom:3.5rem;right:5.6rem;transform:translateY(50%);z-index:600;padding:0.45rem 0.9rem;border-radius:6px;font-family:system-ui,-apple-system,sans-serif;font-size:0.82rem;font-weight:600;max-width:280px;white-space:pre-line;pointer-events:none;transition:opacity 0.4s;';
     document.body.appendChild(t);
   }
   // Icona opzionale come span PROPRIO (non dentro il testo): così si può allineare
@@ -9366,7 +9382,10 @@ function doSave(btn) {
       if (msg === 'no-auth') msg = 'sessione scaduta - sblocca di nuovo';
       showToast('✗ Salvataggio fallito: ' + msg, true);
     } else {
-      showToast('✓ Classifica salvata', false);
+      // ⚠️ L'a capo è nel messaggio (istruzione dell'utente, 2026-09-11), e per
+      // renderlo il toast ha `white-space:pre-line`: `textContent` da solo non manda
+      // a capo un `\n`, e il divieto di `innerHTML` resta.
+      showToast('✓ Ordine dei personaggi\naggiornato e salvato.', false);
       // Riordino concluso: esci dalla modalità (le maniglie spariscono) e
       // aggiorna il Pannello così il tasto torna ↑↓.
       reorderMode = false;
