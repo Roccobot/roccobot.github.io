@@ -3338,7 +3338,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.84</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.85</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5268,15 +5268,24 @@ var CARDCOLORS_FALLBACK = {
   // ⚠️ E i suoi due valori passano AA come TESTO su entrambi i fondi card (5,72 sul
   // fondo scuro #192632, 5,99 sul chiaro #e4e7ec), che è la soglia vera qui: il vero
   // nome prende la tinta della famiglia.
-  // ⚠️ Tinta UNICA, senza sdoppiamento per genere: è la scelta degli animali e non
-  // quella degli umani, perché in questa tabella il colore deve dire 'altro corpus'
-  // prima di ogni altra cosa. Il genere resta sulla card, nel suo simbolo.
+  // ⚠️⚠️ E SI SDOPPIA PER GENERE come gli umani, dal 2026-09-11 (istruzione dell'utente:
+  // *impostane un altro per le femmine, stessa logica della classifica principale*). La
+  // nota che diceva 'tinta unica, come gli animali' è superata: là il genere manca spesso,
+  // qui è attestato su tutte e quattordici le voci, quindi la ragione che reggeva la
+  // scelta non c'era.
+  // ⚠️ Il femminile è un ROSA ANTICO, e la casella era stretta: fra il viola delle donne
+  // (273 gradi) e il rosso dei draghi (0) c'è poco spazio, e le quattro candidate misurate
+  // dànno tutte una distanza minima fra 13 e 28 gradi. Vince questo perché ha la più alta
+  // (28, dai draghi) e i contrasti migliori (6,19 sul fondo card scuro, 5,10 sul chiaro,
+  // AA pieno su entrambi). ⚠️ Dal viola delle donne, che è il confronto che il lettore fa
+  // davvero scorrendo la pagina, dista 59 gradi; dal blu degli apocrifi maschi, 115.
   fam: {
     "man": { dark:"#9cb2f0", light:"#22449c" },
     "woman": { dark:"#6fd0d6", light:"#0c757e" },
     "dragon": { dark:"#e0a090", light:"#a8462f" },
     "animale": { dark:"#e6c445", light:"#856508" },
-    "apocrifo": { dark:"#7d9fd6", light:"#2f5496" }
+    "apocrifo": { dark:"#7d9fd6", light:"#2f5496" },
+    "apocrifa": { dark:"#d78fb0", light:"#9c3f68" }
   },
   map: CARDCOLOR_OF
 };
@@ -5527,6 +5536,10 @@ function familyOf(p) {
     // tenere allineato al genere a mano, voce per voce. I draghi non ci passano, perché
     // il loro `cardcolor` è già 'dragon'.
     if (p.cardcolor === 'man' && p.genere === 'f') return 'woman';
+    // ⚠️ Gli APOCRIFI seguono la stessa regola degli umani (istruzione dell'utente,
+    // 2026-09-11), e per la stessa ragione: il colore non diventa un campo da tenere
+    // allineato al genere voce per voce, resta un valore solo nel dato.
+    if (p.cardcolor === 'apocrifo' && p.genere === 'f') return 'apocrifa';
     return p.cardcolor;
   }
   // Classe crepuscolari -> famiglia 'demon' (dalla v8.83): copre i nomi il cui

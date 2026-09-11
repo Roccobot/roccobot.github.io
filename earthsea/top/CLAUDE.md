@@ -710,9 +710,28 @@ misurata, non di gusto.
   gli animali dànno **2,37** e **2,38**, cioè sotto AA. I numeri più alti che girano nelle
   note vecchie sono quelli del **fallback** in `index.html`, non di `cardColors` in
   `dati.js`, che è la config salvata e **vince**.
-- ⚠️ **Tinta UNICA, senza sdoppiamento per genere**: è la scelta degli animali e non
-  quella degli umani, perché in questa tabella il colore deve dire 'altro corpus' prima di
-  ogni altra cosa. Il genere resta leggibile sulla card, nel suo simbolo.
+- ⚠️⚠️ **SI SDOPPIA PER GENERE come gli umani, dal 2026-09-11** (istruzione dell'utente:
+  *impostane un altro per le femmine, stessa logica della classifica principale*), e la nota
+  che diceva 'tinta unica, come gli animali' è **superata**. La ragione per cui era stata
+  scelta unica non reggeva: gli animali non sdoppiano perché fra loro il genere manca
+  spesso, mentre qui è attestato su **tutte e quattordici** le voci.
+  - **Il femminile è un ROSA ANTICO**, `#d78fb0` scuro e `#9c3f68` chiaro, e lo portano le
+    cinque apocrife (Ruuna, Guld, Palani, Popi, Beltow). ⚠️ **La casella era stretta**: fra
+    il viola delle donne (273 gradi) e il rosso dei draghi (0) c'è poco spazio, e le quattro
+    candidate misurate dànno tutte una distanza minima fra **13 e 28 gradi**. Vince questo
+    perché ha la più alta (28, dai draghi) e i contrasti migliori: **6,19** sul fondo card
+    scuro e **5,10** sul chiaro, AA pieno su entrambi.
+  - ⚠️ **Il confronto che conta non è il più stretto**: dal viola delle donne, che è quello
+    che il lettore fa davvero scorrendo la pagina, il rosa dista **59 gradi**, e dal blu
+    degli apocrifi maschi **115**. I 28 gradi dal rosso dei draghi sono un confronto che
+    non avviene: quelle tre card aprono la prima tabella, queste cinque chiudono la
+    seconda.
+  - **La deduzione vive in `familyOf`**, come per gli umani, e per la stessa ragione: il
+    colore resta un valore solo nel dato (`cardcolor: 'apocrifo'`) invece di diventare un
+    campo da tenere allineato al genere voce per voce.
+  - ⚠️ **Le intestazioni di sezione restano BLU** (`--apo-rgb` viene dal maschile): il
+    titolo di un racconto non ha genere, e due titoli di colore diverso direbbero una cosa
+    che non esiste.
 - ⚠️ **I titoli delle sezioni pescano la tinta dalla stessa config** (`--apo-rgb`,
   iniettata accanto alle terne `--ccrgb`) invece di ripeterne i valori nel CSS: un cambio
   di quella famiglia dall'editor colori muove anche loro, e non restano indietro a dire un
