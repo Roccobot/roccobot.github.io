@@ -2597,6 +2597,11 @@ html[data-theme="light"] .note-charlink { color:var(--nl-l,var(--gold-bright)); 
 .ss-input { width:100%; box-sizing:border-box; font-family:'EB Garamond',serif; font-size:1.1rem;
   padding:.55rem .75rem; border-radius:8px; border:1px solid rgba(180,180,180,0.3);
   background:rgba(0,0,0,0.16); color:inherit; outline:none; }
+/* La × sparisce dove il tocco basta a chiudere: la classe la mette `openSiteSearch`,
+   che legge la media query del puntatore (vedi il suo commento). ⚠️ `display:none` e non
+   `visibility`: qui non c'è nessuno spazio da riservare, la × è in posizione assoluta
+   sopra il corpo, e così esce anche dal Tab. */
+#site-search.ss-senza-x .modal-close { display:none; }
 .ss-count { font-size:.78rem; opacity:.72; margin:.5rem 0 .35rem; text-align:right; }
 .ss-list { max-height:min(52vh,26rem); overflow-y:auto; -webkit-overflow-scrolling:touch; }
 .ss-hit { display:block; width:100%; text-align:left; background:none; color:inherit; cursor:pointer;
@@ -2768,7 +2773,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.46</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.47</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6036,6 +6041,14 @@ function openSiteSearch() {
   // si apre. Il consumo di `lpFired` non lo copre: quello guarda il FAB, e questo velo,
   // quando il gesto è cominciato, non esisteva. Misurato dal banco, non previsto.
   var apertaA = Date.now();
+  // ⚠️⚠️ SU TOUCH la × non c'è (istruzione dell'utente, 2026-09-11, portata dal gemello
+  // di Terramare che l'ha dalla `1.42`): là il velo basta a chiudere, e il tasto occupava
+  // l'angolo di una modale che sul telefono è già stretta.
+  // ⚠️ Il discriminante è la CAPACITÀ DEL PUNTATORE e non una soglia in px, come per il
+  // Colore schede: una finestra desktop stretta ha il mouse e la × la tiene.
+  // ⚠️ La media query si legge QUI e da qui esce la classe che il CSS guarda: il CSS da
+  // solo non saprebbe distinguere questa modale dalle altre, che la × la tengono.
+  if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) bd.classList.add('ss-senza-x');
   bd.addEventListener('click', function(e) {
     if (Date.now() - apertaA < 400) return;
     if (e.target === bd) chiudi();

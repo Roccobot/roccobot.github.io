@@ -397,6 +397,25 @@ aprire il Pannello.
   browser trattano gli input di testo come sempre `focus-visible`, quindi l'anello comparirebbe
   anche aprendo col dito. ⚠️⚠️ **NON vale per i RISULTATI**: `.ss-hit:focus-visible` resta,
   perché là il fondo è l'**unico** indicatore che dice su quale riga si è arrivati col Tab.
+- ⚠️⚠️ **SU TOUCH la × non c'è** (dalla `15.47`, istruzione dell'utente, 2026-09-11: *rimuovi
+  il tasto di chiusura della ricerca dalla versione mobile, come fatto su Earthsea*). Là il
+  velo basta a chiudere, e il tasto occupava l'angolo di una modale che sul telefono è già
+  stretta. Il gemello ce l'ha dalla `1.42`, e là vive il percorso della decisione
+  ([`earthsea/top/CLAUDE.md`](../../earthsea/top/CLAUDE.md), § 'E su TOUCH non c'è nemmeno
+  la ×'), compresa la strada scartata dall'utente stesso (estendere la chiusura alla
+  cornice della modale).
+  - ⚠️ **Il discriminante è la CAPACITÀ DEL PUNTATORE, non una soglia in px**: una finestra
+    desktop stretta ha il mouse e la × la tiene. È lo stesso criterio di `FX_PTR` per il
+    Colore schede, cioè la domanda 'questo browser fa hover?'.
+  - ⚠️ **La media query si legge in JS e da lì esce la classe** (`ss-senza-x` su
+    `#site-search`): dal CSS non si distinguerebbe questa modale dalle altre, che la × la
+    tengono tutte.
+  - ⚠️ **`display:none` e non `visibility`**: qui non c'è spazio da riservare (la × è in
+    posizione assoluta sopra il corpo) e così il tasto esce anche dalla **tabulazione**, che
+    su un tasto invisibile sarebbe una trappola per chi naviga da tastiera.
+  - **Il banco prova le DUE piattaforme**, perché un viewport solo non distingue il
+    puntatore, e serve i due siti (`prova-senzax.js` nello scratchpad, `PROVA_SITO`): 11
+    controlli su 11 per sito, con la controprova che il velo chiude e il campo no.
 - ⚠️⚠️ **SU DESKTOP LA VIA C'È DALLA `15.35`, ed è la PRESSIONE LUNGA COL MOUSE** (istruzione
   dell'utente, 2026-09-09: *la voglio anche su desktop*, chiesta per i due siti insieme). Fino
   a quel giorno qui non ce n'era **nessuna**, e la differenza con Terramare pesava: là il
