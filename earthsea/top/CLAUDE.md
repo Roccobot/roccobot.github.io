@@ -498,6 +498,105 @@ segno del disfacimento della magia che apre *La spiaggia più lontana*.
   lanciare incantesimi*) è più corta di tutte e **non è valida**: non lo nomina, che è il
   requisito su cui cadono le altre deroghe già registrate.
 
+## 📜 La SECONDA TABELLA: i personaggi apocrifi
+
+Dalla `1.80` la lista è divisa in **due tabelle**: i personaggi delle opere, e sotto i
+**personaggi apocrifi**, cioè quelli dei due racconti-prototipo del 1964 che Le Guin
+scrisse prima dei romanzi (`La parola dello scioglimento` e `La legge dei nomi`, dentro
+*I dodici punti cardinali*). Richiesta dell'utente, 2026-09-11, con la struttura dettata
+da lui: titolo `Personaggi apocrifi`, sotto e più in piccolo la riga *provenienti dai due
+racconti-prototipo dell'universo di Terramare.*, poi le due sezioni, una per racconto.
+
+- ⚠️⚠️ **La divisione in sezioni si RICAVA dalla `fonte`, e non c'è un campo che la
+  dichiari**: le due sezioni **sono** i due racconti, e la `fonte` li distingue già
+  (`La legge dei nomi (1964)` contro `La parola dello scioglimento (1964)`). Un campo
+  `sezione` sarebbe un secondo dato da tenere allineato al primo, e prima o poi uno dei
+  due mentirebbe. Nel dato c'è il solo `apocrifo`, che dice **in quale tabella** va la
+  voce.
+- ⚠️ **La numerazione RIPARTE da 1**, perché è una tabella a sé e non la coda della
+  prima; e per la stessa ragione il **podio** (striscia più spessa e nome più grande
+  sulle prime tre) resta alla prima tabella: là le prime tre voci sono le prime del
+  racconto da cui vengono, non le più importanti.
+- ⚠️⚠️ **Il filtro si applica PRIMA della divisione**, quindi una seconda tabella rimasta
+  senza voci non emette né il titolo né le sezioni: spegnendo gli umani spariscono anche
+  le sue intestazioni, invece di restare orfane sopra il vuoto. ⚠️ È la stessa ragione per
+  cui il messaggio 'nessun risultato' adesso guarda il **numero di voci visibili** e non
+  `visN`: da quando le tabelle sono due, quel contatore riparte da zero sulla seconda e a
+  fine ciclo conta le sole card apocrife.
+- ⚠️ **Le intestazioni IMPILANO le due lingue** come le righe delle card (`bilingue`), e
+  qui la riserva pesa più che altrove: un titolo che cambiasse altezza al cambio lingua
+  sposterebbe di colpo tutte le card sotto di lui, cioè un terzo della pagina. Misurato
+  sui 149 figli della lista: **zero** elementi si muovono al cambio lingua.
+
+### 🎨 La tinta della tabella apocrifa, e le due candidate scartate
+
+**Blu acciaio**, `#7d9fd6` scuro e `#2f5496` chiaro, quinta famiglia di `CARDCOLORS`
+(`apocrifo`). L'utente ha chiesto *forse con colori diversi? Proponi*, e la proposta è
+misurata, non di gusto.
+
+- **Il criterio è la distanza di TONALITÀ dalle quattro in uso**, presa al minimo: il blu
+  dista 41° dal turchese degli uomini, 56° dal viola delle donne, 137° dal verde degli
+  animali e 143° dal rosso dei draghi. ⚠️ **Le due scartate perdono proprio lì**: l'ambra
+  (`#d2a24c`) dista **39°** dal rosso dei draghi e il rosa (`#d78fb0`) **28°**, cioè
+  finirebbero accanto a una famiglia esistente.
+- ⚠️ **La soglia vera è quella del TESTO, non della decorazione**, perché il vero nome
+  prende la tinta della famiglia: il blu dà **5,72** sul fondo card scuro (`#192632`) e
+  **5,99** sul chiaro (`#e4e7ec`), cioè AA pieno su entrambi. ⚠️ Da sapere prima di
+  giudicare: **le tinte in vigore stanno più in basso**, e nel tema chiaro gli uomini e
+  gli animali dànno **2,37** e **2,38**, cioè sotto AA. I numeri più alti che girano nelle
+  note vecchie sono quelli del **fallback** in `index.html`, non di `cardColors` in
+  `dati.js`, che è la config salvata e **vince**.
+- ⚠️ **Tinta UNICA, senza sdoppiamento per genere**: è la scelta degli animali e non
+  quella degli umani, perché in questa tabella il colore deve dire 'altro corpus' prima di
+  ogni altra cosa. Il genere resta leggibile sulla card, nel suo simbolo.
+- ⚠️ **I titoli delle sezioni pescano la tinta dalla stessa config** (`--apo-rgb`,
+  iniettata accanto alle terne `--ccrgb`) invece di ripeterne i valori nel CSS: un cambio
+  di quella famiglia dall'editor colori muove anche loro, e non restano indietro a dire un
+  colore che le card non hanno più.
+
+### 🐲 Sotterra è Yevaud, e restano DUE voci
+
+Il mago dell'isola Sattins è il drago di Pendor sotto mentite spoglie, e il racconto lo
+dice alla lettera (*Il mio vero nome è Yevaud, e la mia vera forma è questa forma*).
+
+- **Nel dataset sono due voci**, e non è una svista: `Yevaud` è il **drago** della prima
+  tabella (riga sola, tinta dei draghi), `Sotterra` / `Underhill` è il **personaggio** del
+  racconto, con `vero_nome` `Yevaud` e la tinta degli apocrifi. La seconda porta la
+  citazione della rivelazione, che fino alla `1.80` stava sulla prima.
+- ⚠️ **Il `tipo` di Sotterra è `Uomo`**, cioè la forma in cui vive nel racconto: è la voce
+  che l'utente ha elencato fra i personaggi, col simbolo maschile. Chi volesse farne un
+  drago starebbe fondendo due voci che lui ha chiesto distinte.
+
+### 📖 Due voci per una frase sola: Granchio Blu e Albatro
+
+I due sposi delle zattere sono nominati **una volta sola in tutto il libro**, e nella
+**stessa frase**: non esiste un secondo passo da assegnare all'una o all'altra.
+
+- **Il rimedio è il TAGLIO, non un brano diverso**: Granchio Blu chiude a *erano marito e
+  moglie*, Albatro tiene la coda (*benché lui avesse solo diciassette anni e lei due di
+  meno*), che è l'unica cosa che il testo dice di lei. Due tagli della stessa frase, nessun
+  campo identico all'altro, e nulla di inventato.
+- ⚠️ **Non è una deroga al criterio della più corta**: è il caso in cui le valide sono
+  una, e la regola che vieta di riusare lo stesso brano non ha un secondo brano da offrire.
+
+### 🔤 `Astro`, e il secondo caso della forma non tradotta
+
+Mondadori lascia `Star` e Nord traduce `Astro`: il nome d'uso è quello Nord, e `Star` sta
+fra i `nomi_alternativi` **italiani**, dove copre la resa dell'altra edizione. In
+`nomi_alternativi_en` non entra, perché là è già `nome_en` e comparirebbe due volte.
+
+- ⚠️ **È esattamente il caso di `Lepre`/`Hare`** (§ 'Le due metà del dataset', voce sul
+  caso rovescio), ed è il secondo: la regola non era un'eccezione di una voce sola.
+- ⚠️ **La citazione segue i nomi Nord**, quindi il testo Mondadori *Tu torna alla zattera
+  di Star* diventa `Tu torna alla zattera di Astro`: è il patto dell'edizione Frankenstein
+  (§ 'Un testo che nessuna edizione ha, e la ragione per cui va bene'), e la lista delle
+  sostituzioni si allunga di un nome.
+- ⚠️ **Sulle tre rese di `Gemal` la scelta è dichiarata**: l'epiteto `Seaborn` ha **tre**
+  traduzioni italiane (`Figlio del Mare` in Mondadori, `Nato dal Mare` in Nord, entrambe
+  nel libro 3, e `il Marino` nella traduzione condivisa del libro 5). Il dataset porta
+  quella **Nord del volume da cui viene la citazione**, cioè `Nato dal Mare`: mescolare le
+  edizioni volume per volume darebbe una card che dice due cose diverse in due righe.
+
 ## 🏅 I tre badge e il genere
 
 I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged**
