@@ -528,6 +528,68 @@ racconti-prototipo dell'universo di Terramare.*, poi le due sezioni, una per rac
   sposterebbe di colpo tutte le card sotto di lui, cioè un terzo della pagina. Misurato
   sui 149 figli della lista: **zero** elementi si muovono al cambio lingua.
 
+### 🔒 Il riordino è CONFINATO al gruppo
+
+**Istruzione dell'utente, 2026-09-11**: *dev'essere possibile riordinare sia i personaggi
+normali che gli apocrifi, ma non dev'essere consentito passare da una tabella o sezione
+all'altra*. I gruppi sono **tre** e coincidono con le tre intestazioni: i personaggi delle
+opere, e le due sezioni dei racconti.
+
+- **Il gruppo è sulla card** (`data-grp`: `top`, oppure `apo:` più il titolo del racconto),
+  e il valore degli apocrifi è la **stessa cosa che disegna le sezioni**, cioè la `fonte`:
+  un campo a sé sarebbe un secondo dato da tenere allineato al primo.
+- ⚠️⚠️ **Il confinamento vive in UN punto solo**: l'elenco `allItems` che `pointerdown`
+  costruisce. Hit-detection, animazione di scorrimento e splice finale leggono tutti quello,
+  quindi filtrarlo là li confina tutti e tre insieme. Chi cercasse tre controlli separati
+  starebbe riscrivendo quello che c'è.
+- ⚠️ **Poggia sul fatto che le card di un gruppo sono CONTIGUE** nel DOM: le intestazioni
+  vivono fra un gruppo e l'altro, mai in mezzo. Il calcolo degli scorrimenti presuppone la
+  contiguità, e un gruppo spezzato lo romperebbe senza dare alcun errore.
+- **La prima sezione ha due voci e resta di due**: Festin e Voll si scambiano fra loro e non
+  escono, che è esattamente ciò che l'utente ha chiesto.
+
+#### ⚠️⚠️ Due trappole del banco, e la peggiore è una prova VERDE
+
+Provare il riordino vuol dire **trascinare davvero** con il mouse, perché il confinamento
+vive nell'hit-detection: chiamare a mano la funzione di riordino proverebbe un'altra cosa.
+E il primo banco scritto così ha dato **due prove verdi senza aver trascinato nulla**.
+
+- ⚠️⚠️ **Una prova che passa perché non ha fatto niente è il falso positivo peggiore**: 'la
+  card non ha cambiato gruppo' è vero anche quando la card non si è mossa affatto. Il rimedio
+  è strutturale: la funzione che trascina **dichiara se ci è riuscita**, e la prova fallisce
+  quando non ci è riuscita. Senza quella riga il banco diceva 13 su 15 mentre le due prove
+  del confinamento non avevano provato niente.
+- **Perché il drag non partiva, prima causa**: la maniglia era **fuori dal viewport**
+  (misurato: y=1562 su una finestra alta 900). Le card sono alte ~280px, quindi portare in
+  vista la sola destinazione lascia fuori la partenza: si centra il punto **medio** fra le
+  due, e si verifica che entrambe ci stiano.
+- **Seconda causa**: `scroll-behavior:smooth` è globale, quindi un salto di ventimila pixel
+  è **ancora in corso** mentre il banco rilegge le rect, che sono di un istante intermedio.
+  Si sospende per la durata del salto, come fa il drag stesso.
+- ⚠️ **Terza, e vale per chiunque scriva un banco di riordino**: fermarsi **sul** centro
+  della card di arrivo non basta, perché l'indice scatta quando il centro del clone lo
+  **supera** (la condizione è un `<` stretto). Un trascinamento che arriva esattamente lì
+  non muove niente e si legge come un riordino rotto.
+- ⚠️ **`pointerDragState` non è ispezionabile dall'esterno** (è `let`, non `var`, quindi non
+  è una proprietà di `window`): la spia osservabile è la classe `is-dragging` sul body e il
+  clone che compare come figlio diretto del body.
+
+### 🔢 Il numero: riparte a ogni sezione, e sugli apocrifi non si vede
+
+**Istruzione dell'utente, 2026-09-11**: *la seconda sezione degli apocrifi deve ricominciare
+dal numero 1; ma dev'essere solo una questione di dataset, perché in realtà per gli apocrifi
+non deve comparire il numero (lascia lo spazio com'è, per centrare le info)*.
+
+- **Il conteggio riparte a ogni SEZIONE**, non solo al passaggio alla seconda tabella: ogni
+  racconto conta i suoi dal primo.
+- ⚠️ **Si nasconde con `visibility:hidden`, non con `display:none`**: la colonna del numero
+  deve restare larga com'è, perché è lei a centrare il resto della card. Il numero continua
+  a esistere nel DOM, dove serve all'ordine della sezione, e porta `aria-hidden` perché un
+  numero che non si vede, letto ad alta voce, sarebbe rumore.
+- ⚠️ **La riga dell'OPERA non si emette sulle card apocrife** (stessa data, stessa
+  istruzione): la loro sezione **è** il racconto da cui vengono, quindi quella riga
+  ripeterebbe su ogni card il titolo che sta già sopra il gruppo.
+
 ### 🎨 La tinta della tabella apocrifa, e le due candidate scartate
 
 **Blu acciaio**, `#7d9fd6` scuro e `#2f5496` chiaro, quinta famiglia di `CARDCOLORS`
@@ -559,10 +621,12 @@ misurata, non di gusto.
 Il mago dell'isola Sattins è il drago di Pendor sotto mentite spoglie, e il racconto lo
 dice alla lettera (*Il mio vero nome è Yevaud, e la mia vera forma è questa forma*).
 
-- **Nel dataset sono due voci**, e non è una svista: `Yevaud` è il **drago** della prima
-  tabella (riga sola, tinta dei draghi), `Sotterra` / `Underhill` è il **personaggio** del
-  racconto, con `vero_nome` `Yevaud` e la tinta degli apocrifi. La seconda porta la
-  citazione della rivelazione, che fino alla `1.80` stava sulla prima.
+- ✅ **Nel dataset sono due voci, e l'utente ha CONFERMATO la scelta** (2026-09-11: *ottima
+  la decisione di duplicare Sotterra / Yevaud: anche se non l'avevo detto esplicitamente era
+  la cosa che volevo. Si tratta di due versioni diverse dello stesso personaggio*). `Yevaud`
+  è il **drago** della prima tabella (riga sola, tinta dei draghi), `Sotterra` / `Underhill`
+  è il **personaggio** del racconto, con `vero_nome` `Yevaud` e la tinta degli apocrifi. La
+  seconda porta la citazione della rivelazione, che fino alla `1.80` stava sulla prima.
 - ⚠️ **Il `tipo` di Sotterra è `Uomo`**, cioè la forma in cui vive nel racconto: è la voce
   che l'utente ha elencato fra i personaggi, col simbolo maschile. Chi volesse farne un
   drago starebbe fondendo due voci che lui ha chiesto distinte.
@@ -3317,8 +3381,11 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
   **verificata**: dove la verifica non è possibile, il campo vuoto è la risposta onesta.
 
 - **Chi resta senza**: i **dodici animali** (istruzione dell'utente: *lascia perdere gli
-  animali*), le tre voci che ha escluso a nome (`Barbanera`, `Mago Rosso di Ark`, `Keor`) e
-  `Cenerino`, per la ragione qui sopra. ⚠️ **Quante siano non si scrive**: si contano con
+  animali*), le due voci che ha escluso a nome (`Mago Rosso di Ark` e `Keor`) e
+  `Cenerino`, per la ragione qui sopra. ⚠️ **`Barbanera` ne è USCITO il 2026-09-11**, su
+  richiesta dell'utente (*se Barbanera è l'unico senza citazione, aggiungila*): l'esclusione
+  valeva finché era una voce come le altre, e nella tabella degli apocrifi sarebbe stato
+  l'unico campo vuoto di quattordici. ⚠️ **Quante siano non si scrive**: si contano con
   `dati.filter(x => !x.citazione)`, e il numero è già cambiato due volte.
   - ⚠️⚠️ **`Cenerino` è USCITO con la `1.04` e RIENTRATO con la `1.10`**, tutte e due le volte
     per scelta dell'utente, e la nota che diceva *non ne ricavi una voce da rimettere* è
