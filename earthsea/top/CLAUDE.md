@@ -590,6 +590,46 @@ non deve comparire il numero (lascia lo spazio com'è, per centrare le info)*.
   istruzione): la loro sezione **è** il racconto da cui vengono, quindi quella riga
   ripeterebbe su ogni card il titolo che sta già sopra il gruppo.
 
+### 📐 La colonna dell'origine è riservata SEMPRE agli apocrifi
+
+**Istruzione dell'utente, 2026-09-11**: *restringi i box citazione di Festin e Voll come se
+avessero l'origine (che resta vuota), in modo che la centratura sia ottimale*. Loro due sono
+le uniche della tabella apocrifa senza luogo attestato (il primo racconto non nomina l'isola
+di Festin, e Voll passa da un'isola all'altra: il canone lo dice), quindi senza riserva le
+loro card sarebbero le sole larghe quanto tutta la riga, in mezzo a dodici strette.
+
+- **Misurato**: il riquadro della citazione passa a **433px**, lo stesso di Sotterra,
+  Barbanera e Gan, che il luogo ce l'hanno. Prima era largo quanto la card.
+- ⚠️⚠️ **L'interruttore `Spazio riservato` della Console NON li governa** (seconda istruzione
+  dello stesso giorno: *fa' in modo che quel comando abbia effetto solo sulla tabella
+  principale e non sugli apocrifi*): gli apocrifi riservano la colonna a prescindere, e
+  quell'interruttore continua a decidere per le sole voci **principali** senza luogo.
+  Misurato accendendolo e spegnendolo: `Astro` passa da **571 a 433px**, Festin e Voll
+  restano a 433 in tutti e due i casi.
+- ⚠️ **Resta sotto l'interruttore `Attiva`**, come tutto il resto della colonna: a colonna
+  spenta non si riserva niente a nessuno, o si terrebbe uno spazio per una cosa che il sito
+  non mostra.
+- ⚠️ **Dove si trova quell'impostazione, perché l'utente non la trovava**: non è una riga
+  della Console, è una **manopola** dentro la sotto-modale della riga `Origine`, insieme a
+  `Attiva` e `Segno di luogo`. Chi la cerca fra gli interruttori dell'elenco non la vede.
+
+### 🎛️ L'ordine delle voci nella Console
+
+⚠️ **Non è un ordine tecnico: lo decide l'utente**, e per questo non si 'sistema' a intuito.
+Dal 2026-09-11 **`Senza nome` viene dopo `Decorazione`** (*sposta 'Senza nome' sotto
+'Decorazione'. Le due voci mobile devono restare in fondo*), dove prima chiudeva l'elenco.
+
+- **Le ultime cinque, in ordine**: `Origine`, `Decorazione`, `Senza nome`, `Dito che scorre`,
+  `Tasti di salto`. Le due solo-mobile chiudono, come l'utente ha chiesto due volte.
+- ⚠️ **`Senza nome` ha lo stacco su ENTRAMBI i lati**, e il secondo non è decorativo: è
+  l'unica voce che governa il **contenuto** e non l'aspetto, quindi senza lo stacco sotto si
+  leggerebbe come la prima delle due voci mobile. Prima ne bastava uno perché chiudeva la
+  lista.
+- ⚠️ **L'ordine si verifica sul SORGENTE e non in pagina**, e non è un ripiego pigro: la
+  Console è l'editor admin e senza credenziali non si apre, e l'elenco non è una variabile
+  globale raggiungibile da un banco. Ma quell'elenco è la fonte unica, perché la resa è un
+  ciclo su di lui: il suo ordine **è** l'ordine delle righe.
+
 ### 🎨 La tinta della tabella apocrifa, e le due candidate scartate
 
 **Blu acciaio**, `#7d9fd6` scuro e `#2f5496` chiaro, quinta famiglia di `CARDCOLORS`
