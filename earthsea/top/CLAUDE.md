@@ -507,13 +507,26 @@ presenta a Tenar come il soccorritore della bambina.
 - ⚠️ **Le due edizioni italiane CONCORDANO su tutti e due i nomi**, quindi qui non c'è
   nessuna divergenza da governare: 18 e 25 occorrenze in Mondadori, 19 e 26 in Nord. È il
   caso normale, e vale registrarlo solo perché le voci che fanno notizia sono le altre.
-- ⚠️⚠️ **L'ORIGINE DI FAINA È VUOTA DI PROPOSITO, e non è un campo da riempire**: il testo
-  lo dice **vagabondo** (*Vagabondava dalle parti di Re Albi*), quindi non ha né nascita né
-  residenza attestata, e 'vagabondare dalle parti di' è il contrario di una residenza. È il
-  caso di **Tosla** (§ 'Sege e Tosla: che cosa è attestato e che cosa no'), e un `Gont`
-  dedotto sarebbe un dato falso in un campo che sembra verificato.
-  - **Rivochiaro invece ha `Gont`**, per il ripiego che la regola ammette: la Fattoria delle
-    Querce è nella Valle di Mezzo, che il testo colloca su Gont, e nel campo va l'**isola**.
+- ⚠️⚠️ **TUTTI E DUE HANNO `Gont`, e l'origine di Faina è stata CORRETTA dall'utente nella
+  `1.92`**: l'avevo lasciata vuota perché il testo lo dice **vagabondo**, ed era una lettura
+  troppo stretta della regola. Sue parole: *ti ho già ripetuto almeno due volte che in
+  assenza della vera origine vale la residenza (che è chiaramente l'isola di Gont)*.
+  - ⚠️⚠️ **IL DISCRIMINE È SE IL TESTO NOMINA UN LUOGO DOVE IL PERSONAGGIO STA, non se
+    quel luogo è una casa**: Faina *vagabondava dalle parti di Re Albi* e lo si incontra al
+    porto di Gont, quindi l'isola c'è ed è una sola. Il campo vuoto resta a chi non ha
+    **nessuna** delle due, cioè a chi il testo non colloca da nessuna parte.
+  - ⚠️⚠️ **IL PRECEDENTE DI `Tosla` NON SI APPLICA QUI, ed è l'errore da cui guardarsi**: di
+    lui il testo non nomina **mai** un'isola (§ 'Sege e Tosla: che cosa è attestato e che
+    cosa no'), e quello è un caso di assenza; qui l'isola è nominata due volte. Invocare
+    quel precedente su un personaggio che il testo colloca è applicarlo al contrario.
+  - ⚠️⚠️ **È LA SECONDA VOLTA CHE LO STESSO ERRORE VIENE CORRETTO DALL'UTENTE**, dopo
+    `Intahin` (§ 'Origine: significa NASCITA, e la residenza è solo un ripiego', voce sulla
+    residenza): là avevo lasciato vuoto perché le fonti davano la discendenza e non la
+    nascita. La regola non è cambiata in mezzo, e la ripetizione dice che il ripiego si
+    legge come una concessione rara mentre è la **via normale**: le fonti danno quasi sempre
+    la residenza, e il canone lo misura (23 nascite contro 71 sole residenze su 103 voci).
+  - **Rivochiaro ha `Gont` per la stessa via**: la Fattoria delle Querce è nella Valle di
+    Mezzo, che il testo colloca su Gont, e nel campo va l'**isola**.
 - ⚠️⚠️ **NESSUNO DEI DUE PORTA BADGE, e i tre criteri lo dicono tutti**: non sono maghi né
   stregoni (il primo è un pastore, il secondo un manovale assoldato da un mago, che è un
   altro paio di maniche), e il terzo badge si assegna dal **solo** elenco del canone, dove
@@ -2656,6 +2669,16 @@ campo del dataset e per lo Schedario che lo alimenta.
     la nascita: era una lettura troppo stretta della regola qui sopra, che il ripiego lo
     prevede. Il campo vuoto resta per chi non ha **nessuna** delle due, non per chi ha la
     sola residenza.
+  - ⚠️⚠️ **LO STESSO ERRORE È STATO CORRETTO DUE VOLTE DALL'UTENTE**, con `Intahin` e poi con
+    `Faina` nella `1.92` (*ti ho già ripetuto almeno due volte che in assenza della vera
+    origine vale la residenza*). La regola non è cambiata in mezzo, quindi la ricaduta dice
+    come viene letta: il ripiego si legge come una **concessione rara**, mentre è la via
+    **normale**, e il dato lo prova, perché le fonti danno la residenza tre volte su quattro
+    (23 nascite contro 71 sole residenze su 103 voci, misurate il 2026-08-23).
+  - ⚠️⚠️ **Il discrimine è se il testo NOMINA UN LUOGO dove il personaggio sta, non se quel
+    luogo è una casa**: un vagabondo che *vagabonda dalle parti di Re Albi* ha un'isola, e il
+    campo la porta. Vuoto **solo** per chi il testo non colloca da nessuna parte, come
+    `Tosla`, di cui non si nomina mai un'isola.
   - **`Cenerino` passa da `Endlane` a `Havnor`** (istruzione dell'utente, `1.46`), ed è
     l'applicazione della regola: `Endlane` è **villaggio** per attestazione diretta
     (*Endlane village* / *il villaggio di Endlane*), *a nord-ovest del Monte Onn* e *oltre la
