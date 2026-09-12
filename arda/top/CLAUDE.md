@@ -870,6 +870,74 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
 - **Le tab Chiaro/Scuro restano anche in dock**, perché scelgono **quali manopole si editano**; per
   vedere l'altro tema in pagina c'è il tasto `T`.
 
+## 🏷️ Il titolone: le due lingue sullo STESSO numero di righe
+
+Dalla `15.50`, istruzione dell'utente (2026-09-12, chiesta per i due siti insieme): dove una
+lingua manda il titolo a capo e l'altra no, l'intestazione cambia altezza al cambio lingua e
+tutta la pagina scorre sotto gli occhi. Il rimedio **forza l'a-capo** sulle due lingue
+insieme, e `pareggiaTitolo()` decide misurando.
+
+- ⚠️⚠️ **LA PREMESSA DELLA RICHIESTA ERA ROVESCIATA, e la misura lo dice**: lui descriveva
+  l'italiano a due righe e l'inglese a una, mentre qui accade **sempre il contrario**, perché
+  `I Grandi di Arda` è più corto di `The Great Ones of Arda`. Da **430 a 1280px** l'italiano
+  stava su **una** riga e l'inglese su **due**; sotto i 360px l'inglese ne faceva **tre**
+  contro due. La regola vale lo stesso, letta come lui la intendeva: le due lingue devono
+  rendere lo **stesso** numero di righe, e si allinea quella che ne fa di meno.
+- ⚠️⚠️ **SU 'I GRANDI DI TERRAMARE' IL MECCANISMO C'È MA NON SI ACCENDE MAI**, ed è un fatto
+  misurato: quei due titoli rendono lo stesso numero di righe a ogni larghezza da 280 a
+  1600px, perché furono riscritti apposta con la stessa struttura
+  ([`earthsea/top/CLAUDE.md`](../../earthsea/top/CLAUDE.md), § 'Il TITOLO del sito è
+  cambiato, e ha chiuso il salto dell'intestazione'). Il codice è **identico** sui due siti
+  perché una regola messa da una parte sola divergerebbe al primo ritocco, e perché il giorno
+  in cui quel titolo cambia si accende da sé.
+- **Il punto di rottura preferito è STRUTTURALE**: cade **prima della preposizione**, quindi
+  il soggetto resta sopra e il mondo sotto (`I Grandi` / `di Arda`, `The Great Ones` /
+  `of Arda`). Vale per qualunque titolo della stessa forma, quindi un titolo nuovo non chiede
+  codice nuovo. ⚠️ Era la preferenza dell'utente (*dopo 'Ones'*), scritta come **regola**
+  invece che come due casi particolari.
+- ⚠️⚠️ **IL RIPIEGO NON È TEORICO E SERVE SOTTO I 360px**: là `The Great Ones` tenuto unito
+  misura **362px** contro i **268** disponibili, quindi il taglio preferito lo farebbe uscire
+  dal riquadro. `puntiTaglio` offre allora gli altri spazi, ordinati per **vicinanza al
+  centro** (il taglio più equilibrato), e il titolo si spezza dopo `Great`. Senza il ripiego
+  quelle quattro larghezze restavano dispari.
+- ⚠️ **Una metà fuori dal riquadro è peggio di una riga in più**, ed è la guardia che tiene la
+  regola onesta: dove nessuna coppia di tagli pareggia senza sbordare, si torna al libero. Il
+  caso esiste, e senza guardia il titolo uscirebbe dallo schermo.
+- ⚠️⚠️ **Il `nowrap` serve QUANTO il `display:block`**: senza, una metà troppo lunga si spezza
+  da sé e la riga in più torna. È il motivo per cui le due righe di CSS stanno insieme.
+- ⚠️⚠️ **NESSUNA SOGLIA IN PX, e non è un vezzo**: la larghezza a cui un titolo va a capo
+  dipende dal **font reso** e dallo zoom del visitatore, quindi una media query sarebbe un
+  numero indovinato su condizioni che non si controllano. `pareggiaTitolo` misura sul posto,
+  come già fanno `freeNames` e `alignVoci`.
+- ⚠️⚠️ **La misura dell'ALTRA lingua si fa SUL TITOLO STESSO, non su un clone**: la tipografia
+  del titolone vive in regole appese a `#title`, quindi un clone senza quell'id renderebbe con
+  un altro carattere e misurerebbe un'altra cosa. Le scritture avvengono nello stesso frame
+  di layout, quindi nessuno vede il titolo nella lingua sbagliata, e un `finally` lo rimette
+  anche se una misura va in errore.
+- ⚠️ **Si richiama in TRE punti**: `document.fonts.ready` (una misura fatta prima che i font
+  sbarchino vale per un altro carattere), il `resize` con lo stesso debounce di `reflowRows`,
+  e `setLang`, perché la lingua che entra può avere un conto diverso da quella che esce.
+
+### ⚠️ Le trappole di misura, che sono tre e valgono oltre il caso
+
+1. ⚠️⚠️ **`Range.getClientRects()` sul contenuto conta anche i box dei BLOCCHI**, quindi con
+   l'a-capo forzato dichiarava **tre** righe su un titolo che ne rende due. Le righe si
+   contano sui rettangoli dei soli **nodi di testo**, camminati con un `TreeWalker`.
+2. ⚠️⚠️ **Il bounding box di uno span SPEZZATO abbraccia due righe che cominciano a x
+   diversi**, e su un titolo centrato dichiara uno sbordamento che non esiste: `di Terramare`
+   risultava largo 270px contro 268 disponibili mentre stava benissimo. Lo sbordo si misura
+   sul rettangolo di **riga** più largo.
+3. ⚠️ **Lo sbordo si giudica solo dove la classe è ACCESA**: da libero la resa è quella di
+   sempre, e un titolo che già non ci stava non è una regressione di questa modifica. Il primo
+   banco lo misurava comunque e accusava il codice per un difetto suo.
+
+- ⚠️ **E il banco del cambio lingua non può cliccare il tasto a ogni larghezza**: sotto i
+  768px `#lang-switch` è nascosto (flag `langSwitchMobile`), quindi là la via vera è `Ctrl+L`.
+  Un banco che clicchi comunque va in timeout e sembra un difetto del sito.
+- **Misure del giro**: 144 controlli su 144 fra 280 e 1600px sui due siti, più 22 su 22 sui
+  percorsi dinamici (cambio lingua col tasto e con la scorciatoia, quattro ridimensionamenti),
+  con l'altezza dell'intestazione ferma a **146,86px** prima e dopo ogni cambio.
+
 ## 💬 Il messaggio del salvataggio dell'ordine
 
 Dalla `15.48` il toast dice `Ordine dei personaggi` / `aggiornato e salvato.` su **due
