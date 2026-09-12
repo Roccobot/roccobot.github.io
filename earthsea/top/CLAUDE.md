@@ -374,6 +374,52 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
   tutti. Storia e conseguenze in
   § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 
+### 🥇 L'appellativo di Kalessin, e la metà inglese che c'era già
+
+`Il Primogenito` entra fra gli `appellativi` con la `1.87`, su istruzione dell'utente, ed è
+**attestato due volte** in *La spiaggia più lontana* Mondadori: nel dialogo in cui Arren
+chiede chi sia Kalessin (*Il Primogenito...*) e nel finale (*Kalessin il Primogenito prese il
+volo*).
+
+- ⚠️⚠️ **`appellativi_en` resta VUOTO DI PROPOSITO, e non è una metà da completare**: la resa
+  inglese di quell'appellativo è `the Eldest` (*Kalessin the Eldest sprang into the air*, lo
+  stesso passo), e la card la porta **già** fra i `nomi_alternativi_en`, cioè comparirebbe due
+  volte nella stessa scheda. È la regola dei doppioni di § 'La metà inglese del nome: va in
+  `nome_en`, non fra gli alternativi', applicata fra due campi diversi invece che fra le due
+  metà di uno.
+  - **Il motore non ripiega sull'italiano**: `sottotitoloDi` legge `p.appellativi_en` senza
+    alternative, quindi il campo vuoto lascia la card inglese col solo `Segoy, the Eldest`, e
+    `Il Primogenito` non compare mai in inglese. Misurato nelle due lingue.
+  - ⚠️ Il vuoto in una lingua sola è il prezzo dichiarato dell'anti-jitter, già pagato da
+    altre voci: cade **sotto** il contenuto, dove la card non ha fondo suo, e non si vede.
+- ⚠️⚠️ **LO STESSO APPELLATIVO HA TRE RESE ITALIANE, e nessuna delle due edizioni è coerente
+  con sé stessa**: Mondadori scrive `il Primogenito` nel volume 3 e `Antichissimo` nel 4,
+  Nord scrive `l'Antichissimo` in tutti e due. L'inglese invece dice `the Eldest` ovunque,
+  quindi la divergenza è **tutta** nelle traduzioni. Chi 'uniformasse' i campi a una delle
+  tre starebbe scegliendo al posto dell'utente.
+  - ⚠️ **`l'Antico`, che il dataset porta fra i nomi alternativi, non è di NESSUNA edizione**:
+    zero occorrenze riferite a Kalessin o a Segoy in tutte e tre le fonti italiane. È una resa
+    dell'utente, come `Cenerino`, e il grep non la confermerà mai. Chi la trovasse assente non
+    stia cercando un errore di trascrizione.
+  - ⚠️ **Perciò la card italiana dice due volte la stessa cosa in due rese** (`l'Antico` fra i
+    nomi, `Il Primogenito` fra i titoli), ed è una conseguenza nota della richiesta, non un
+    difetto da sanare: la scelta di tenerle entrambe, o di far uscire `l'Antico`, è
+    dell'utente e gli è stata posta.
+- ⚠️⚠️ **La regola dei nomi Nord NON si applica qui, e sapere perché evita di 'correggere' il
+  campo**: quella governa i **nomi** dentro le citazioni (§ 'Un testo che nessuna edizione ha,
+  e la ragione per cui va bene'), e a rigore darebbe `l'Antichissimo`. Qui comanda
+  l'istruzione esplicita dell'utente, che è il livello più alto della scala.
+- ⚠️⚠️ **TRAPPOLA DEL BANCO, e vale per ogni misura di jitter su questa lista**:
+  `getBoundingClientRect` **include la `transform`**, quindi letto mentre l'animazione
+  d'ingresso delle card è in corso dichiara **131 card su 146** mosse al cambio lingua,
+  mentre l'altezza della lista è ferma al centesimo. Il metro giusto è `offsetTop` e
+  `offsetHeight`, che la transform non la vedono. ⚠️ La nota di § 'La tavolozza applicata, e i
+  punti dove era CABLATA' dà quello scarto per **0,3px**: è vero a pagina assestata, e questa
+  misura dice che durante un ridisegno vale molto di più.
+  - ⚠️ **E la prova del cambio lingua deve verificare che la lingua sia CAMBIATA**: senza
+    quella riga, 'nessuna card si è mossa' resta vero anche quando il tasto non ha fatto
+    niente, che è il falso positivo già costato due prove verdi nel giro degli apocrifi.
+
 ### 💍 La Casa di Hupun e l'Anello spezzato
 
 Voci chieste dall'utente nella `1.44` (**Thoreg** e **Intahin**) e nella `1.48` (**Tiarath**,
