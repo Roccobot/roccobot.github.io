@@ -610,6 +610,18 @@ scrisse prima dei romanzi (`La parola dello scioglimento` e `La legge dei nomi`,
 da lui: titolo `Personaggi apocrifi`, sotto e più in piccolo la riga *provenienti dai due
 racconti-prototipo dell'universo di Terramare.*, poi le due sezioni, una per racconto.
 
+⚠️⚠️ **LA TABELLA DEGLI APOCRIFI È CHIUSA, E NON NE ARRIVERANNO ALTRI** (istruzione durevole
+dell'utente, 2026-09-12): *non specificherò mai se i personaggi sono apocrifi, semplicemente
+perché TUTTI gli apocrifi sono già nella seconda/terza tabella, e non possono arrivarne
+altri. Tutti i personaggi cui farò riferimento saranno sempre personaggi regolari per la
+classifica numerata*.
+- **Conseguenza operativa**: una voce nuova nasce **sempre** regolare, e il campo `apocrifo`
+  resta `false` senza chiedere niente e senza dedurre niente. Chi si trovasse davanti un
+  personaggio dei due racconti-prototipo non lo aggiunga: è già nella tabella.
+- ⚠️ **Regge su un fatto, non su una preferenza**: gli apocrifi sono i personaggi dei **due**
+  racconti del 1964, che sono due e non aumentano. Un terzo racconto-prototipo non esiste,
+  quindi l'insieme è chiuso per costruzione.
+
 - ⚠️⚠️ **La divisione in sezioni si RICAVA dalla `fonte`, e non c'è un campo che la
   dichiari**: le due sezioni **sono** i due racconti, e la `fonte` li distingue già
   (`La legge dei nomi (1964)` contro `La parola dello scioglimento (1964)`). Un campo
