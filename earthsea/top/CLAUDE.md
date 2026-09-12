@@ -374,41 +374,41 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
   tutti. Storia e conseguenze in
   § 'Il dato dei draghi era INVERTITO, e il campo vuoto è il nome comune'.
 
-### 🥇 L'appellativo di Kalessin, e la metà inglese che c'era già
+### 🥇 I tre nomi di Kalessin, e la metà inglese che resta una
 
-`Il Primogenito` entra fra gli `appellativi` con la `1.87`, su istruzione dell'utente, ed è
-**attestato due volte** in *La spiaggia più lontana* Mondadori: nel dialogo in cui Arren
-chiede chi sia Kalessin (*Il Primogenito...*) e nel finale (*Kalessin il Primogenito prese il
-volo*).
+Dalla `1.90` i nomi alternativi sono **`Segoy, l'Antichissimo, il Primogenito`** e il campo
+dei titoli è **vuoto**, su istruzione dell'utente. Le due forme italiane sono **entrambe
+attestate**, in edizioni diverse, e traducono lo stesso appellativo inglese.
 
-- ⚠️⚠️ **`appellativi_en` resta VUOTO DI PROPOSITO, e non è una metà da completare**: la resa
-  inglese di quell'appellativo è `the Eldest` (*Kalessin the Eldest sprang into the air*, lo
-  stesso passo), e la card la porta **già** fra i `nomi_alternativi_en`, cioè comparirebbe due
-  volte nella stessa scheda. È la regola dei doppioni di § 'La metà inglese del nome: va in
-  `nome_en`, non fra gli alternativi', applicata fra due campi diversi invece che fra le due
-  metà di uno.
-  - **Il motore non ripiega sull'italiano**: `sottotitoloDi` legge `p.appellativi_en` senza
-    alternative, quindi il campo vuoto lascia la card inglese col solo `Segoy, the Eldest`, e
-    `Il Primogenito` non compare mai in inglese. Misurato nelle due lingue.
-  - ⚠️ Il vuoto in una lingua sola è il prezzo dichiarato dell'anti-jitter, già pagato da
-    altre voci: cade **sotto** il contenuto, dove la card non ha fondo suo, e non si vede.
-- ⚠️⚠️ **LO STESSO APPELLATIVO HA TRE RESE ITALIANE, e nessuna delle due edizioni è coerente
-  con sé stessa**: Mondadori scrive `il Primogenito` nel volume 3 e `Antichissimo` nel 4,
-  Nord scrive `l'Antichissimo` in tutti e due. L'inglese invece dice `the Eldest` ovunque,
-  quindi la divergenza è **tutta** nelle traduzioni. Chi 'uniformasse' i campi a una delle
-  tre starebbe scegliendo al posto dell'utente.
-  - ⚠️ **`l'Antico`, che il dataset porta fra i nomi alternativi, non è di NESSUNA edizione**:
-    zero occorrenze riferite a Kalessin o a Segoy in tutte e tre le fonti italiane. È una resa
-    dell'utente, come `Cenerino`, e il grep non la confermerà mai. Chi la trovasse assente non
-    stia cercando un errore di trascrizione.
-  - ⚠️ **Perciò la card italiana dice due volte la stessa cosa in due rese** (`l'Antico` fra i
-    nomi, `Il Primogenito` fra i titoli), ed è una conseguenza nota della richiesta, non un
-    difetto da sanare: la scelta di tenerle entrambe, o di far uscire `l'Antico`, è
-    dell'utente e gli è stata posta.
-- ⚠️⚠️ **La regola dei nomi Nord NON si applica qui, e sapere perché evita di 'correggere' il
-  campo**: quella governa i **nomi** dentro le citazioni (§ 'Un testo che nessuna edizione ha,
-  e la ragione per cui va bene'), e a rigore darebbe `l'Antichissimo`. Qui comanda
-  l'istruzione esplicita dell'utente, che è il livello più alto della scala.
+| dove | resa |
+|---|---|
+| Mondadori, *La spiaggia più lontana* | `il Primogenito` (due volte: il dialogo con Arren e il finale) |
+| Mondadori, *Tehanu* | `Antichissimo` |
+| Nord, tutti e due i volumi | `l'Antichissimo` |
+| inglese, ovunque | `the Eldest` |
+
+- ⚠️⚠️ **`nomi_alternativi_en` resta `Segoy, the Eldest`, cioè DUE voci contro tre**, e non è
+  una metà da completare: l'inglese ha **una** parola sola per quello che l'italiano rende in
+  due modi, e ripeterla la farebbe comparire due volte nella stessa scheda. È la regola dei
+  doppioni di § 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi',
+  applicata a una divergenza di **traduzione** invece che di edizione.
+  - ⚠️ **Questa asimmetria l'ha chiesta l'utente alla lettera** (*inglese inalterato*), quindi
+    un audit che conti i token delle due lingue la segnalerà: non è un difetto.
+- ⚠️⚠️ **`l'Antico` è USCITO con la `1.90`, e sapere perché evita di rimetterlo**: non era di
+  **nessuna** edizione (zero occorrenze riferite a Kalessin o a Segoy in tutte e tre le fonti
+  italiane), ed era una resa dell'utente che lui stesso ha sostituito con la forma Nord
+  attestata. Chi lo ritrovasse in un commit vecchio sa che è superato.
+- ⚠️ **I titoli restano VUOTI per scelta** (*niente titoli*): `Primogenito` e `Antichissimo`
+  sono **nomi** con cui il testo lo chiama, non cariche, quindi vivono fra i nomi alternativi.
+  È la stessa distinzione di § 'La Casa di Hupun e l'Anello spezzato', dove `Re di Hupun` è un
+  titolo e il qualificatore resta fuori.
+- ⚠️ **L'articolo minuscolo è quello della FONTE**: Mondadori scrive `il Primogenito` dentro la
+  frase, e il campo lo conserva. La maiuscola di riga la mette `capIniz` in resa, e solo al
+  pezzo che apre la riga (§ 'La prima lettera di ogni riga va MAIUSCOLA').
+- ⚠️⚠️ **La regola dei nomi Nord NON decide da sola qui**: quella governa i **nomi** dentro le
+  citazioni (§ 'Un testo che nessuna edizione ha, e la ragione per cui va bene'), e presa alla
+  lettera terrebbe il solo `l'Antichissimo`. Il dataset porta anche la forma Mondadori perché
+  l'ha chiesta l'utente, che è il livello più alto della scala.
 - ⚠️⚠️ **TRAPPOLA DEL BANCO, e vale per ogni misura di jitter su questa lista**:
   `getBoundingClientRect` **include la `transform`**, quindi letto mentre l'animazione
   d'ingresso delle card è in corso dichiara **131 card su 146** mosse al cambio lingua,
@@ -4047,6 +4047,19 @@ etichette sono cinque.
   pixel (0/120 in posizione relativa alla lista e in altezza).
 
 ### 🏷️ Il TITOLO del sito è cambiato, e ha chiuso il salto dell'intestazione
+
+⚠️⚠️ **DALLA `1.90` C'È ANCHE UN PRESIDIO AUTOMATICO, e qui NON si accende mai**: la regola
+generale (le due lingue sullo stesso numero di righe, con l'a-capo forzato dove divergono)
+vive in [`arda/top/CLAUDE.md`](../../arda/top/CLAUDE.md), § 'Il titolone: le due lingue sullo
+STESSO numero di righe', perché è là che il difetto esisteva davvero. Il codice è **identico**
+sui due siti, e qui resta inerte per un fatto **misurato**: `Il mondo di Terramare` e `The
+World of Earthsea` rendono lo stesso numero di righe a ogni larghezza da **280 a 1600px**.
+- ⚠️ **Non è una ridondanza da togliere**: è la rete per il giorno in cui questo titolo
+  cambia, e quel giorno si accende da sé senza che nessuno debba accorgersene. Una regola
+  messa sul solo gemello divergerebbe al primo ritocco.
+- ⚠️ **La cura editoriale qui sotto resta quella che ha risolto il caso**, e il presidio non
+  la sostituisce: un titolo scritto con la stessa struttura nelle due lingue non ha bisogno di
+  nessun a-capo forzato, che resta il rimedio per chi quella simmetria non ce l'ha.
 
 Fino alla `0.76` l'header cresceva di **36,5px** al cambio lingua a 390px (da 471,78 a
 508,27), e faceva scorrere in giù tutta la pagina. Non erano il sottotitolo né

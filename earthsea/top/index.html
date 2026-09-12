@@ -319,6 +319,17 @@ h1 {
   margin-bottom:calc(0.5rem - 0.14em);
 }
 #title a { color:inherit; text-decoration:none; -webkit-text-fill-color:inherit; cursor:pointer; }
+/* ── Anti-jitter del TITOLONE: le due lingue sullo stesso numero di righe ───────
+   Regola gemella di quella di 'I Grandi di Arda', e il gemellaggio è il punto: i
+   due siti condividono il motore, e una regola messa da una parte sola divergerebbe
+   al primo ritocco.
+   ⚠️ Qui la classe NON si accende mai, ed è un fatto misurato e non una previsione:
+   `Il mondo di Terramare` e `The World of Earthsea` rendono lo stesso numero di
+   righe a ogni larghezza da 280 a 1600px, perché furono riscritti apposta con la
+   stessa struttura. La regola c'è per il giorno in cui uno dei due titoli cambia:
+   quel giorno si accende da sé, senza che nessuno debba accorgersene. */
+#title.ti-rotto .ti-a, #title.ti-rotto .ti-b { white-space:nowrap; }
+#title.ti-rotto .ti-b { display:block; }
 .subtitle {
   font-family:'EB Garamond',serif; font-style:italic;
   font-size:clamp(1rem,2.5vw,1.3rem); color:var(--parchment-dim);
@@ -3338,7 +3349,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.87</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.90</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4997,13 +5008,135 @@ var imgvReturn = null, noteReturn = null, infoReturn = null;
 // attivo) registra qui una callback che la ricostruisce nel nuovo tema. La
 // chiama toggleTheme. Stessa guardia body.contains dei refresh di lingua.
 var themeRefresh = null;
+// ── Anti-jitter del TITOLONE: le due lingue sullo stesso numero di righe ───────
+// Istruzione dell'utente (2026-09-12): dove una lingua manda il titolo a capo e
+// l'altra no, l'intestazione cambia altezza al cambio lingua e tutta la pagina
+// scorre sotto gli occhi. ⚠️ Il rimedio NON è la riserva d'altezza usata sulle card:
+// là la gemella invisibile riserva il massimo delle due lingue, e su un titolo
+// terrebbe il vuoto di una riga anche alla lingua che non ne ha bisogno, che è
+// proprio quello che l'utente aveva escluso quando il titolo di Terramare fu
+// riscritto. Qui si FORZA l'a-capo, e sulle DUE lingue insieme.
+// ⚠️ Il punto di rottura preferito è STRUTTURALE, non un indice di carattere: cade
+// prima della preposizione, così il soggetto resta sopra e il mondo sotto ('I
+// Grandi' / 'di Arda', 'The Great Ones' / 'of Arda'). Vale identico sui due siti
+// gemelli e su qualunque titolo della stessa forma: un titolo nuovo non chiede
+// codice nuovo.
+var TIT_PREP = { it: 'di', en: 'of' };
+
+// Tutti i punti in cui il titolo si può spezzare, dal più desiderabile in giù:
+// prima quello strutturale, poi gli altri spazi ordinati per vicinanza al centro,
+// che è il taglio più equilibrato.
+// ⚠️ Il RIPIEGO non è teorico e serve a un caso misurato: sotto i 360px
+// `The Great Ones` tenuto unito misura 362px contro i 268 disponibili, quindi il
+// taglio preferito non è applicabile e il titolo si spezza dopo `Great`.
+function puntiTaglio(testo, lang) {
+  var pos = [], i;
+  for (i = 0; i < testo.length; i++) if (testo.charAt(i) === ' ') pos.push(i);
+  var prep = testo.lastIndexOf(' ' + (TIT_PREP[lang] || TIT_PREP.it) + ' ');
+  var mezzo = testo.length / 2;
+  var altri = pos.filter(function (x) { return x !== prep; })
+                 .sort(function (a, b) { return Math.abs(a - mezzo) - Math.abs(b - mezzo); });
+  return (prep >= 0 ? [prep] : []).concat(altri);
+}
+
+// Scrive il titolo come due span, spezzato al punto `idx`-esimo dell'elenco.
+// ⚠️ A NODI e mai con `innerHTML`: il divieto non guarda la provenienza del testo,
+// e che qui venga da `i18n` non è una deroga.
+function scriviTitolo(host, testo, lang, idx) {
+  var punti = puntiTaglio(testo, lang);
+  var taglio = punti[idx > 0 ? idx : 0];
+  host.textContent = '';
+  if (taglio === undefined) { host.textContent = testo; return; }
+  var a = document.createElement('span'); a.className = 'ti-a'; a.textContent = testo.slice(0, taglio);
+  var b = document.createElement('span'); b.className = 'ti-b'; b.textContent = testo.slice(taglio + 1);
+  host.appendChild(a);
+  host.appendChild(document.createTextNode(' '));
+  host.appendChild(b);
+}
+
+// Quante righe RENDE un elemento. ⚠️ Si contano le cime distinte dei rettangoli dei
+// soli NODI DI TESTO: un `Range` sull'intero contenuto restituisce anche i box degli
+// elementi a blocco, e con l'a-capo forzato dichiarava TRE righe su un titolo che ne
+// rende due. È il metro che ha fatto fallire il primo banco.
+function righeRese(host) {
+  var viste = {}, n = 0;
+  var w = document.createTreeWalker(host, NodeFilter.SHOW_TEXT, null, false), nodo;
+  while ((nodo = w.nextNode())) {
+    if (!nodo.textContent.trim()) continue;
+    var r = document.createRange(); r.selectNodeContents(nodo);
+    var rect = r.getClientRects();
+    for (var i = 0; i < rect.length; i++) {
+      if (rect[i].width <= 1) continue;
+      var k = Math.round(rect[i].top);
+      if (!viste[k]) { viste[k] = 1; n++; }
+    }
+  }
+  return n;
+}
+
+// Una metà che esce dal riquadro è peggio di una riga in più: col `nowrap` la parola
+// non ha dove rompersi e finisce fuori. ⚠️ Si misura sul rettangolo di RIGA più largo
+// e non sul bounding box: su un titolo centrato il box di uno span spezzato abbraccia
+// due righe che cominciano a x diversi, e dichiara uno sbordamento che non esiste.
+function titoloSborda(host, spazio) {
+  var m = host.querySelectorAll('.ti-a, .ti-b');
+  for (var i = 0; i < m.length; i++) {
+    var rect = m[i].getClientRects();
+    for (var j = 0; j < rect.length; j++) if (rect[j].width > spazio + 0.5) return true;
+  }
+  return false;
+}
+
+// ⚠️ La misura dell'ALTRA lingua si fa SUL TITOLO STESSO, non su un clone: la
+// tipografia del titolone vive in regole appese a `#title`, quindi un clone senza
+// quell'id renderebbe con un altro carattere e misurerebbe un'altra cosa. Le
+// scritture avvengono nello stesso frame di layout, quindi nessuno vede il titolo
+// nella lingua sbagliata; il `finally` lo garantisce anche se una misura va in errore.
+function pareggiaTitolo() {
+  var h1 = document.getElementById('title'), host = document.getElementById('title-link');
+  if (!h1 || !host || typeof i18n === 'undefined' || typeof currentLang === 'undefined') return;
+  var mia = currentLang, altra = mia === 'it' ? 'en' : 'it';
+  if (!i18n[mia] || !i18n[altra]) return;
+  var st = getComputedStyle(h1);
+  var spazio = h1.getBoundingClientRect().width - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight);
+  var scelta = -1;
+  function conta(lang, idx, rotto) {
+    h1.classList.toggle('ti-rotto', rotto);
+    scriviTitolo(host, i18n[lang].title, lang, idx);
+    return { righe: righeRese(host), sborda: titoloSborda(host, spazio) };
+  }
+  try {
+    if (conta(mia, 0, false).righe === conta(altra, 0, false).righe) return;
+    // Le due lingue divergono: si cerca la coppia di tagli che le pareggia senza
+    // far uscire nessuna metà dal riquadro. Il preferito è il primo di ogni elenco,
+    // quindi la prima coppia buona è anche la più desiderabile.
+    var quanti = puntiTaglio(i18n[mia].title, mia).length;
+    var quantiLa = puntiTaglio(i18n[altra].title, altra).length;
+    for (var i = 0; i < quanti; i++) {
+      var qui = conta(mia, i, true);
+      if (qui.sborda) continue;
+      for (var j = 0; j < quantiLa; j++) {
+        var la = conta(altra, j, true);
+        if (!la.sborda && la.righe === qui.righe) { scelta = i; break; }
+      }
+      if (scelta >= 0) break;
+    }
+    // Nessuna coppia pareggia: il libero è il male minore, e succede dove una metà
+    // è più larga del viewport in qualunque modo la si spezzi.
+  } finally {
+    h1.classList.toggle('ti-rotto', scelta >= 0);
+    scriviTitolo(host, i18n[mia].title, mia, scelta);
+  }
+}
+
 function setLang(lang) {
   currentLang = lang;
   LS.setItem('earthsea-lang', lang);
   document.documentElement.lang = lang;
   document.querySelector('#lang-switch .ls-face').textContent = lang === 'it' ? 'EN' : 'IT';
   document.getElementById('crest').innerHTML = i18n[lang].crest;
-  document.getElementById('title-link').textContent = i18n[lang].title;
+  scriviTitolo(document.getElementById('title-link'), i18n[lang].title, lang, -1);
+  pareggiaTitolo();
   document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
   document.getElementById('intro').innerHTML = i18n[lang].intro;
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
@@ -7112,9 +7245,9 @@ window.addEventListener('resize', function() {
   // ⚠️ `fitControlSheet` entra QUI e non in un listener suo: la rotazione dello schermo
   // cambia l'altezza disponibile, ed è il caso in cui la sheet passa da 'ci sta' a 'non
   // ci sta'. Function declaration, quindi è già definita a questo punto.
-  tightenTimer = setTimeout(function(){ reflowRows(); fitControlSheet(); }, 150);
+  tightenTimer = setTimeout(function(){ reflowRows(); fitControlSheet(); pareggiaTitolo(); }, 150);
 });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); pareggiaTitolo(); });
 
 
 document.addEventListener('keydown', function(e) {
