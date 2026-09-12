@@ -496,6 +496,63 @@ deserta, dove Anthil da vecchia diede il mezzo anello a Sparviero.
   Poteri annullavano i poteri dell'eroe. Un'ipotesi del narratore non è un'attestazione, e
   `stregone` sarebbe un badge dato su di essa.
 
+### 🌾 Rivochiaro e Faina: i due di Tehanu, e l'origine che resta vuota
+
+Voci chieste dall'utente nella `1.91`: **Rivochiaro** / `Clearbrook` è il vecchio pastore
+della Fattoria delle Querce, marito di Prunella, che con l'artrite può badare al solo
+frutteto e si ostina a non ammetterlo; **Faina** / `Handy` è il giovane vagabondo dal
+berretto di cuoio, uno dei tre che hanno ridotto Therru come è, e che al porto di Gont si
+presenta a Tenar come il soccorritore della bambina.
+
+- ⚠️ **Le due edizioni italiane CONCORDANO su tutti e due i nomi**, quindi qui non c'è
+  nessuna divergenza da governare: 18 e 25 occorrenze in Mondadori, 19 e 26 in Nord. È il
+  caso normale, e vale registrarlo solo perché le voci che fanno notizia sono le altre.
+- ⚠️⚠️ **L'ORIGINE DI FAINA È VUOTA DI PROPOSITO, e non è un campo da riempire**: il testo
+  lo dice **vagabondo** (*Vagabondava dalle parti di Re Albi*), quindi non ha né nascita né
+  residenza attestata, e 'vagabondare dalle parti di' è il contrario di una residenza. È il
+  caso di **Tosla** (§ 'Sege e Tosla: che cosa è attestato e che cosa no'), e un `Gont`
+  dedotto sarebbe un dato falso in un campo che sembra verificato.
+  - **Rivochiaro invece ha `Gont`**, per il ripiego che la regola ammette: la Fattoria delle
+    Querce è nella Valle di Mezzo, che il testo colloca su Gont, e nel campo va l'**isola**.
+- ⚠️⚠️ **NESSUNO DEI DUE PORTA BADGE, e i tre criteri lo dicono tutti**: non sono maghi né
+  stregoni (il primo è un pastore, il secondo un manovale assoldato da un mago, che è un
+  altro paio di maniche), e il terzo badge si assegna dal **solo** elenco del canone, dove
+  non compaiono. Un badge dedotto dal fatto che Faina lavorasse per il mago del castello
+  sarebbe la lettura sbagliata di quel criterio.
+- **Le posizioni sono chieste dal vicinato, non accodate**: entrano subito dopo `Selce` e
+  `Scintilla`, cioè la gente della fattoria di Tenar, che è il gruppo di Tehanu già formato
+  in quel punto della fila.
+- ⚠️⚠️ **LA CITAZIONE DI FAINA È UNA SUA BATTUTA, quindi NON lo nomina e la firma resta
+  vuota**, ed è la regola sulla didascalia di battuta applicata alla lettera: nella fonte il
+  passo è *«Non dovete fuggire» disse Faina*, e quel `disse Faina` sparisce perché
+  ripeterebbe il titolo della card. Chi verificasse che ogni citazione nomina il suo
+  personaggio darebbe questa per sbagliata: il criterio ha **tre** rami, e questo è il terzo
+  (vedi la trappola del banco, qui sotto).
+- **Quella di Rivochiaro invece lo nomina, e la dice Tenar**: da qui la firma `\ Tenar`, che
+  si riempie perché parla un altro.
+
+#### ⚠️ Le tre trappole di misura di questo giro
+
+1. ⚠️⚠️ **UN BANCO CHE CHIEDE 'la citazione nomina il personaggio?' ACCUSA UN DATO
+   CORRETTO**: i modi in cui una citazione è riconducibile al suo personaggio sono **tre**,
+   cioè il nome nel testo, la firma di chi parla, oppure **una sua battuta**, e là il nome
+   non c'è per regola. Il terzo ramo si prova cercando la **didascalia nella fonte** vicino
+   alla citazione, non dandolo per buono.
+2. ⚠️ **`.status-icon` conta i BADGE, non il simbolo di genere**, che ha una classe sua:
+   attendersi un'icona su una voce senza badge fa fallire una prova su un dato giusto.
+3. ⚠️⚠️ **IL NUMERO IN CLASSIFICA NON È L'INDICE NEL DATASET**: le due voci sono alla 118 e
+   alla 119 di `dati`, e la card mostra **113** e **114**, perché il flag `senzanome` tiene
+   fuori dalla lista le voci il cui nome d'uso è una perifrasi
+   (§ "'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore"). Chi
+   confronta i due numeri conclude che l'inserimento sia finito nel posto sbagliato.
+
+- ⚠️ **I capitoli si leggono dalle intestazioni del .txt, non si indovinano**: i corpora
+  estratti portano i titoli di capitolo come righe isolate, e l'indice in coda li conferma
+  nell'ordine. Così il capitolo si ricava dalla **posizione** della citazione nel file, e il
+  titolo inglese si legge dal corpus inglese invece di essere tradotto a orecchio (qui
+  `L'inverno` -> `Winter` e `La ricerca delle parole` -> `Finding Words`, quest'ultimo già
+  confermato da una voce che c'era).
+
 ### 🌱 Radice: il mago che dimenticò le parole, e le TRE rese del suo ruolo
 
 Voce chiesta dall'utente nella `1.49`, subito dopo `Benderesk`: è il mago di corte di Enlad
