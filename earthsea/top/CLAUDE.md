@@ -74,6 +74,42 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
 - ⚠️ **Il dataset piccolo inganna**: una voce sbagliata qui pesa quanto dieci su un dataset
   da centinaia di righe, e i nomi veri di Terramare si ricordano con sicurezza ingannevole.
 
+## 🧾 Come nasce una VOCE NUOVA: l'indice dei passi
+
+⚠️⚠️ **Questa sezione è un INDICE, non una copia delle regole**: ogni passo rimanda al posto
+dove la regola vive per esteso, e chi la modifica la modifica **là**. Esiste perché i passi
+erano tutti scritti ma **sparsi in nove sezioni**, e chi inserisce una voce deve ricordarseli
+tutti: l'utente lo ha chiesto il 2026-09-13 (*e verifica sempre il genere: avevi scritto tutto
+nelle regole?*), e la risposta onesta era 'sì, ma non in un posto solo'.
+
+| passo | dove vive la regola |
+|---|---|
+| **Il nome** nelle due lingue, cercato in **tutte e tre** le edizioni | § 'Le due metà del dataset: l'italiano è dell'utente, l'inglese è mio' |
+| Una forma **inglese** fra i nomi alternativi italiani, e il doppione da evitare | § 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi' |
+| **Il genere**, che si prova sull'INGLESE | § 'Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni' |
+| **L'origine**: nascita, ripiego sulla residenza, e nel campo va l'ISOLA | § 'Origine: significa NASCITA, e la residenza è solo un ripiego' |
+| **Il tipo**, e la parola da aggiungere al motore se è un animale | § 'Gli ANIMALI: una categoria, tante etichette' |
+| **I badge**, che non si deducono mai dalla scheda | § 'I tre badge e il genere' e § 'I TRE badge annunciati: il criterio di uno solo' |
+| **La citazione**: la più corta fra le valide, il taglio, la firma, il contesto col capitolo | § 'Le CITAZIONI nella card: testo Mondadori, nomi Nord' |
+| Il testo italiano coi **nomi Nord**, che non è verbatim di nessuna edizione | § 'Un testo che nessuna edizione ha, e la ragione per cui va bene' |
+| **La maiuscola** di riga, che si applica in resa e non nel dato | § 'La prima lettera di ogni riga va MAIUSCOLA' |
+| **La versione** e il badge HTML da tenerle dietro | § 'Versione' |
+
+- ⚠️⚠️ **IL GENERE È IL PASSO CHE SI PROVA MALE PIÙ SPESSO**, e la ragione è strutturale:
+  l'italiano **deve** assegnarne uno per grammatica, quindi `il vecchio Tiff` e `la capra è
+  uscita` sembrano attestazioni e non lo sono. La prova sta nell'inglese, e vale di più se
+  viene dal **narratore** invece che da un personaggio.
+  - **I quattro gradi di prova**, dal più forte al più debole: un pronome del narratore
+    (`seen him make the sign`); una parola che nomina il sesso (`her old husband`); la
+    **convenzione** dei maghi, che è una regola dichiarata e non un fatto; e la deduzione da
+    un ruolo o da una coppia, che è la più fragile e **va scritta come tale**.
+  - ⚠️ **Un campo vuoto è una risposta legittima**, e il precedente è `Tiro`: quando il dubbio
+    è nel testo, riempirlo sarebbe inventare.
+- ⚠️ **La posizione si chiede al VICINATO**, non si accoda: le voci nuove entrano accanto a
+  quelle del loro gruppo di trama, e l'ordine della lista non è una classifica.
+- ⚠️ **La tabella degli apocrifi non c'entra**: una voce nuova nasce **sempre** regolare,
+  senza chiedere niente (§ 'La SECONDA TABELLA: i personaggi apocrifi').
+
 ## 🧬 Le razze, e perché le tinte non contano come le categorie
 
 **Terramare ha due razze, uomini e draghi** (istruzione dell'utente), e dal 2026-08-23 una
@@ -565,6 +601,112 @@ presenta a Tenar come il soccorritore della bambina.
   titolo inglese si legge dal corpus inglese invece di essere tradotto a orecchio (qui
   `L'inverno` -> `Winter` e `La ricerca delle parole` -> `Finding Words`, quest'ultimo già
   confermato da una voce che c'era).
+
+### 🐐 La fattoria al completo, una capra e un mago di una favola
+
+Voci chieste dall'utente nella `1.93`, tutte e sei da *Tehanu*: **Prunella** / `Shandy` è la
+moglie di Rivochiaro, che alla fattoria fa il formaggio; **Tiff** e **Sis** sono l'altra
+coppia, che abita nella dipendenza e lavora i campi; **Townsend** è il sensale di pecore che
+porta a Tenar il messaggio di Ogion e le vuole comprare le capre; **Sippy** è la capra che
+scappa di continuo; **Brost** è il grande mago di una storia che zia Muschio racconta.
+
+- **Le posizioni vengono dal vicinato, come sempre**: le tre voci della fattoria entrano
+  subito dopo `Rivochiaro`, che era già là con `Selce` e `Scintilla`, e `Townsend` e `Brost`
+  chiudono il gruppo di Tehanu dopo `Faina`. `Sippy` va fra `Vaiavanti` e le galline, cioè
+  dove finiscono i mammiferi.
+- ⚠️⚠️ **LE DUE EDIZIONI ITALIANE CONCORDANO SU TUTTE E SEI LE CITAZIONI, parola per
+  parola**, e questo giro è quindi il rovescio esatto di `Radice`: là il testo Mondadori
+  scriveva `Root` e il campo porta `Radice`, cioè un testo che nessuna edizione ha
+  (§ 'Un testo che nessuna edizione ha, e la ragione per cui va bene'); qui non c'è **niente**
+  da sostituire, e un audit troverà le dodici metà identiche alla fonte. La misura è stata
+  fatta su tutte e sei prima di scegliere, perché è la sola via per saperlo.
+- ⚠️ **Nessuno dei sei nomi è tradotto, tranne uno**: `Townsend`, `Tiff`, `Sis`, `Sippy` e
+  `Brost` sono identici nelle tre edizioni, e la sola coppia divergente è
+  `Prunella`/`Shandy`. Vale registrarlo perché il caso normale non fa notizia, e chi conta
+  le voci con `nome` e `nome_en` uguali trova qui cinque aggiunte in un colpo.
+
+#### ⚠️⚠️ Il genere di `Sis` NON è attestato: è dedotto dalla parola 'coppia'
+
+È il rilievo del giro, ed è l'utente ad averlo chiesto (*verifica sempre il genere*). Su
+`Sis` le fonti tacciono: **quattro occorrenze in tutto il ciclo** (tre in inglese), e in
+nessuna compare un pronome, un aggettivo o una parola che ne dica il sesso.
+
+- **Che cosa regge il femminile**: il testo la mette in **coppia** con Tiff (*l'altra coppia
+  che abitava nella fattoria, Tiff e Sis*, `the other couple on the farm`), e il genere di
+  Tiff è attestato. Da lì il femminile per complementarità, che è una deduzione su una norma
+  sociale, non un fatto del testo.
+- **Il campo porta `f` perché lo ha dichiarato l'utente**, che è il livello più alto della
+  scala, e la voce è qui perché la deduzione **si dichiara invece di sparire nel dato**. È lo
+  stesso grado di prova del `Mago Nero`, dove il maschile è la grammatica dell'epiteto
+  (§ 'Mago Nero: il vero nome ESISTE nella storia, ma il testo non lo dà').
+- ⚠️ **Non è il caso di `Tiro`**, e la differenza conta: là il dubbio è **nel testo** (Tehanu
+  dice *credo che sia un maschio*) e il campo resta vuoto; qui il testo non dice nulla, e a
+  parlare è una convenzione nostra.
+- ⚠️⚠️ **E L'ITALIANO NON PROVA IL GENERE DI NESSUNO DEI SEI**, che è la trappola da tenere:
+  `il vecchio Tiff` ha l'articolo perché il traduttore ha dovuto sceglierne uno, e `Sippy è
+  uscita` concorda con `capra`, che è femminile per grammatica. Le prove stanno **solo**
+  nell'inglese, e ci sono: `you know him` e `Tenar had also seen him make the sign` per Tiff,
+  `heading her directly to the open gate` e `where she was supposed to be` per Sippy, dette
+  dal **narratore** e non da un personaggio. La regola era già scritta, ma dentro la voce di
+  `Vaiavanti` (§ 'I dodici animali: che cosa è attestato, e i sei punti dove il testo dice
+  altro'), cioè in un posto che si apre solo lavorando sugli animali: vale per **tutte** le
+  voci, e per questo è ripetuta qui.
+
+#### 🐐 `Sippy` apre due precedenti, e tutti e due vanno saputi
+
+1. ⚠️⚠️ **`capra` e `goat` sono entrati in `TIPI_ANIMALE`**, ed è la prima specie nuova da
+   quando quell'elenco esiste: senza, la sua card sarebbe finita **fra gli uomini senza dare
+   alcun errore**, perché il ripiego di `tipoClass` è `type-man` per costruzione. La nota che
+   lo prescrive (§ 'Gli ANIMALI: una categoria, tante etichette') ha fatto esattamente il
+   lavoro per cui era stata scritta, e questa riga è la prova che serviva.
+   - Le parole sono entrate **nelle due lingue**, come la nota impone: con le sole italiane
+     la tab 'Tipi' avrebbe contato la capra fra gli Esseri umani nella pagina inglese.
+   - ⚠️ **`TYPE_LABEL` invece non si tocca**, e sapere perché evita una modifica inutile: la
+     classe resta `type-animale`, che esiste già. Là si va solo quando nasce una **classe**,
+     non un'etichetta.
+2. ⚠️⚠️ **È IL PRIMO ANIMALE CON UNA CITAZIONE**, e rompe l'uniformità dei dodici che ne sono
+   senza. La ragione è l'istruzione del giro (*inserirli con citazioni bilingui verificate
+   verbatim*), che nomina tutti e sei; il *lascia perdere gli animali* del 2026-08-24 era una
+   scelta di **economia** durante il giro massivo delle 105, non un divieto di principio, e la
+   direzione dell'utente da allora va nel verso opposto (la regola 'una voce nuova nasce con
+   la sua citazione', e `Barbanera` che la riceve per non restare l'unico senza).
+   - ⚠️ **Resta però un'asimmetria visibile**: dodici animali muti e uno che parla. Se
+     l'utente la vuole chiusa, si chiude dando la citazione agli altri dodici, non togliendo
+     questa.
+
+#### 🐜 `Brost`: un mago dentro una favola, e l'origine che resta vuota davvero
+
+- **Una sola frase in tutto il ciclo**, identica nelle due edizioni italiane: la formica che
+  porta al formicaio un capello del mago, e il nido che di notte brilla come una stella. La
+  citazione è quella, perché non ce n'è un'altra.
+- ⚠️ **La firma resta VUOTA benché la storia la racconti zia Muschio**: il passo è
+  **narrazione indiretta** e non una battuta fra virgolette, quindi non c'è nessuno che
+  'parli'. Chi guardasse solo chi sta raccontando metterebbe `\ Muschio` e attribuirebbe a un
+  personaggio una riga del narratore.
+- ⚠️⚠️ **L'origine è VUOTA, ed è il caso di `Tosla` e non quello di `Faina`**: il testo non
+  nomina **nessun** luogo dove Brost stia, né una nascita né una residenza, e il palazzo
+  della storia non ha nome. È il vuoto che la regola prevede (§ 'Origine: significa NASCITA,
+  e la residenza è solo un ripiego'), e va distinto dal vuoto **sbagliato** che l'utente ha
+  corretto due volte, dove un luogo c'era.
+- **Il badge `mago` regge sul ruolo che il narratore gli dà**, `the great mage` e `il grande
+  mago` in tutte e tre le edizioni, che è la stessa prova con cui lo porta `Radice`. ⚠️ E il
+  **genere** viene dalla convenzione, non da un pronome: chi una fonte definisce `mage` è
+  maschio (§ 'Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni').
+
+#### ⚠️ La trappola del banco: la gemella anti-jitter ha TRE nomi di classe
+
+Misurare che cosa si vede in pagina vuole lo **stile calcolato** e non `offsetParent`, ed era
+già scritto; la cosa nuova è che la classe della faccia nascosta **cambia col blocco**:
+`bil-m` nei nomi e nei sottotitoli, **`tb-m`** nelle etichette di tipo, **`rc-m`** nel
+riquadro della citazione. Un banco che cerca la sola `bil-m` non trova nessuna faccia, ripiega
+sul `textContent` del contenitore e legge **le due lingue attaccate** (`CapraGoat`), cioè
+accusa il sito di un difetto che non ha.
+
+- **Il sintomo è riconoscibile**: un valore atteso che risulta doppio e con le due lingue
+  saldate, e in inglese lo stesso valore **rovesciato** (`GoatCapra`). Non è un dato sporco:
+  è il metro che sta leggendo anche la riserva.
+- **Misura del giro**: 36 prove su 36 in pagina coi font veri, e **48 su 48** sul verbatim
+  delle dodici citazioni, contro i corpora delle tre edizioni.
 
 ### 🌱 Radice: il mago che dimenticò le parole, e le TRE rese del suo ruolo
 

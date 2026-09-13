@@ -3349,7 +3349,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.92</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.93</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5339,8 +5339,10 @@ function processAlt(str) {
 // misurando la pagina in inglese il 2026-08-23, non rileggendo il codice: in italiano
 // tornava giusto.
 var TIPI_ANIMALE = ['gatto','gatta','gattino','gattina','cane','cagna','cucciolo',
-                    'gallina','gallo','pulcino','corvo','otak','harrekki',
-                    'cat','kitten','dog','puppy','hen','rooster','chick','raven'];
+                    'gallina','gallo','pulcino','capra','capro','capretto',
+                    'corvo','otak','harrekki',
+                    'cat','kitten','dog','puppy','hen','rooster','chick','goat',
+                    'raven'];
 function isTipoAnimale(t) {
   return TIPI_ANIMALE.some(function(a){ return t.indexOf(a) !== -1; });
 }
