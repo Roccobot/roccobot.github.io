@@ -147,17 +147,21 @@ dove restano, sono superate dalla voce sugli animali in fondo a questa sezione.
         all'altro modo (fondo e colore propri, selettore a una classe): dentro una card
         **perde** contro `.rank-item .type-badge`, che è più specifico. Non si vede perché
         quel ripiego non ha voci a cui applicarsi, ma è lo sbaglio da non ripetere.
-  - ⚠️⚠️ **Gli ibridi sono DUE, e la seconda va trattata come la prima**: istruzione
-    dell'utente, 2026-08-23, *gli 'ibridi' (umani-draghi) saranno due, entrambe di genere
-    femminile... applica a Orm Irian lo stesso trattamento di Tehanu*. Quindi **Orm Irian**
-    nasce con `tipo` `Donna | Drago`, `tipo_color` `type-donnadrago|` e `cardcolor` `dragon`,
-    esattamente come Tehanu: etichetta viola sulla prima metà, tinta dei draghi sulla card.
+  - ⚠️⚠️ **Le ibride sono TRE dal 2026-09-13, e la nota che le dava CHIUSE A DUE è
+    superata**: la coppia nasce il 2026-08-23 (*gli 'ibridi' (umani-draghi) saranno due,
+    entrambe di genere femminile... applica a Orm Irian lo stesso trattamento di Tehanu*) e
+    la **Donna di Kemay** la apre, per istruzione dell'utente (*come Libellula e Therru, è
+    sia donna che drago*). Tutte e tre nascono con `tipo` `Donna | Drago`, `tipo_color`
+    `type-donnadrago|` e `cardcolor` `dragon`: etichetta viola sulla prima metà, tinta dei
+    draghi sulla card.
+    - ⚠️ **Quante siano si CONTA, non si scrive**: `dati.filter(x => /\|/.test(x.tipo))`.
+      Il numero è già cambiato una volta, e una nota che lo fissa invecchia al primo ingresso.
     - ⚠️ **Nello Schedario l'utente le marca come DONNE** (razza `Uomo`, genere `f`), perché
       là la razza è a scelta esclusiva: **il doppio tipo lo costruisce il sito**, non il
-      dato in arrivo. Chi legge un export dello Schedario e vede `uomo` per quelle due voci
+      dato in arrivo. Chi legge un export dello Schedario e vede `uomo` per quelle voci
       non ha davanti un errore da segnalare, ma la metà di un dato che si completa qui.
-    - ⚠️ **Nessun altro personaggio-drago prende questo trattamento**: Kalessin e Orm Embar
-      sono `Drago` e basta. La coppia è chiusa a due, ed è l'utente a dirlo.
+    - ⚠️ **Un drago PURO non prende questo trattamento**: Kalessin e Orm Embar sono `Drago`
+      e basta. Il predicato è 'il testo la dice anche donna', non 'ha a che fare coi draghi'.
   - ⚠️ **La tinta NON è il solo canale del genere**: il simbolo di genere sulla card c'è già,
     quindi il colore è ridondante. È la ragione per cui la cosa si può fare senza perdere
     informazione per chi non distingue quelle due tinte.
@@ -759,6 +763,53 @@ accusa il sito di un difetto che non ha.
   è il metro che sta leggendo anche la riserva.
 - **Misura del giro**: 36 prove su 36 in pagina coi font veri, e **48 su 48** sul verbatim
   delle dodici citazioni, contro i corpora delle tre edizioni.
+
+### 🐉 La Donna di Kemay: la terza ibrida, e la prima SENZA NOME
+
+Voce chiesta dall'utente il 2026-09-13: la vecchia pescatrice di Kemay, sulla costa
+nord-ovest di Gont, che apre la porta a Ogion e per un istante è *la fiamma e la bellezza
+del fuoco, e un luccichio di scaglie e artigli dorati, e i grandi occhi del drago*. È lei a
+cantare la ballata in cui, all'inizio del tempo, uomini e draghi erano un popolo solo.
+
+- ⚠️⚠️ **È IL PRIMO INCROCIO FRA DUE MECCANISMI CHE NON SI ERANO MAI INCONTRATI**: l'ibrida
+  (§ 'Le razze, e perché le tinte non contano come le categorie') e il **senza nome**
+  (§ "'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore"). Le altre due
+  ibride hanno nome d'uso **e** vero nome, quindi due righe; qui il nome d'uso è una
+  **perifrasi** e il vero nome manca, quindi la card ne mostra **una sola**. Il motore ci
+  arriva da sé, perché `soloVero` guarda il campo vuoto e non la razza: non è stato
+  necessario toccare nulla.
+- ⚠️⚠️ **LA SUA CARD È INVISIBILE DI BASE, e un banco che la cerca in pagina la dà per
+  assente**: il flag di sito `senzanome` nasce spento, quindi in produzione la voce esiste
+  nel dato e non compare in lista finché l'admin non lo accende dalla Console. Chi la prova
+  deve accendere il flag a runtime, e chi conta le card ricordi che sono le voci **meno**
+  quelle senza nome.
+- ⚠️⚠️ **IL SUO VERO NOME ESISTE NEL TESTO, ED È `Drago`**, ma il campo resta **vuoto** per
+  istruzione dell'utente (*non si conosce il suo nome*). Il passo lo dice alla lettera:
+  Ogion *con paura e stupore pronunciò a voce alta il suo nome vero: 'Drago!'*
+  (`he said her true name aloud - 'Dragon!'`). ⚠️ Non è una svista da sanare: quella parola è
+  il **nome della specie**, non un nome proprio, ed è la stessa ragione per cui `Hoeg` non
+  entra nel dataset (§ 'Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle
+  fonti').
+  - **È il rovescio del `Mago Nero`**, dove il testo dice che il vero nome fu appreso da
+    qualcuno ma non lo pronuncia mai: là manca la parola, qui la parola c'è e non è un nome.
+- ⚠️ **La citazione viene da *I venti di Terramare*, non da *Tehanu***, che è la sua prima
+  apparizione: è il caso di `Orm` e di `Vaiavanti` (§ 'Le citazioni degli animali: nove sì e
+  quattro no, e la ragione di ognuno'). In *Tehanu* nessuna frase la **nomina** e insieme dice
+  che è un drago: le sei occorrenze parlano del suo canto, e il passo della trasformazione la
+  chiama *una vecchia*. Nei *Venti* invece Tenar ricorda *la storia che la donna di Kemay
+  aveva raccontato a Ogion*, che la nomina e porta il mito del personaggio.
+  - **Della citazione resta la SCARTATA**, ed è più corta di quasi un quarto: *Ah... i draghi,
+    nel canto della donna di Kemay* (46 caratteri contro 145). Dice che il suo canto parla di
+    draghi, non che uomini e draghi erano una cosa sola, ed è la deroga alla regola della più
+    corta che il criterio prevede per un divario di significato grande.
+- **La posizione è chiesta dall'utente** (*tra i senza nome, qualche posto dopo l'ultimo in
+  classifica dei draghi*): entra subito dopo il `Nemico di Morred`, che è il primo dei senza
+  nome, cioè sei posti dopo `Libellula`. ⚠️ **Le voci `senzanome` non sono contigue** nella
+  lista, quindi 'tra i senza nome' vale come **gruppo di appartenenza** e non come posizione
+  fra due di loro.
+- **Nessun badge**, e il solo che verrebbe in mente è quello sbagliato: `signoredraghi` marca
+  chi **parla** coi draghi, non chi è drago, e per questo non lo portano nemmeno Tehanu e Orm
+  Irian (§ 'I TRE badge annunciati: il criterio di uno solo').
 
 ### 🌱 Radice: il mago che dimenticò le parole, e le TRE rese del suo ruolo
 
