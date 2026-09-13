@@ -1401,9 +1401,12 @@ il disegno.
   Terramare*). ⚠️ **Thorion porta `maestro` e NON `arcimago`**: fu Evocatore, mai eletto.
   ⚠️ **Ard non lo porta**: 'Maestra di Heleth' non è un Maestro **di Roke**, e nemmeno
   Ogion ('Maestro di Ged') o Elt: il badge marca i nove uffici della Scuola.
-- **Chi porta che cosa dalla `0.52`**: `arcimago` su Sparviero, Nemmerle e Gensher (i tre
-  del canone, § 'Gli Arcimaghi che le fonti nominano'); `signoredraghi` su Sparviero,
-  Erreth-Akbe, Morred e Pannocchia. Non si estendono a intuito.
+- **Chi porta che cosa**: `arcimago` su Sparviero, Nemmerle e Gensher (i tre del canone,
+  § 'Gli Arcimaghi che le fonti nominano'); `signoredraghi` sui quattro del criterio
+  dell'utente **più Tenar**, che lui ha aggiunto il 2026-09-13 (vedi § 'Tenar porta stregone
+  e Signore dei Draghi, e sono due scelte editoriali difendibili'). Non si estendono a
+  intuito. ⚠️ **Chi siano si conta** (`dati.filter(x => x.signoredraghi)`): l'elenco è già
+  cambiato una volta.
 
 ⚠️⚠️ **Le DUE diciture riscritte nella `1.01`** (istruzione dell'utente, 2026-08-26), e la
 seconda va **più a fondo** della formula che sostituisce:
@@ -1433,12 +1436,18 @@ seconda va **più a fondo** della formula che sostituisce:
   il sito a dire due cose diverse nelle due lingue.
 
 **Il criterio del `Signore dei Draghi`**, dettato dall'utente il 2026-08-23: *è un titolo che
-probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*.
+probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*. ⚠️ **Il 'probabilmente'
+era nella formulazione originale**, e il 2026-09-13 l'utente ha aggiunto **Tenar**: quindi
+l'elenco dei quattro non era chiuso come quello delle eccezioni alla convenzione dei maghi,
+ed è lui a dirlo in tutti e due i casi.
 
 - ⚠️⚠️ **Le persone che sono esse stesse draghi NON sono Signori di Draghi** (parole
   dell'utente). Quindi **Tehanu e Orm Irian ne restano fuori**, e con loro Kalessin e Orm
   Embar: il badge marca chi **parla** coi draghi, non chi è drago. È l'esclusione che un
   audit sbaglierebbe da sé, perché sono le voci più vicine al tema.
+  - ⚠️ **Quell'esclusione NON tocca Tenar**, e conviene dirlo perché è la prima voce che la
+    sfiora: lei è umana e basta, quindi rientra nel criterio invece di essere l'eccezione
+    che lo rompe.
 - **Le attestazioni vivono nel canone**, non qui: `rules/Earthsea.md` § 'Signore dei Draghi',
   col grado di prova voce per voce. ⚠️ Da sapere prima di fidarsi dell'elenco: per **Morred**
   nessun passo usa l'etichetta, e quel che c'è è la definizione del titolo applicata a lui
@@ -1456,6 +1465,42 @@ l'elenco del canone.
 **I disegni scelti** (utente, 2026-08-23): `A12` per il `Signore dei Draghi`, la corona con
 le corna chiare appoggiate sulle spalle; `H` per la coppia, i due anelli col punto sul cerchio
 (Maestro) e al centro (Arcimago); e per l'Arcimago la tinta **teal** fra le tre candidate.
+
+### 🏵️ Tenar porta stregone e Signore dei Draghi, e sono due scelte editoriali difendibili
+
+Istruzione dell'utente, 2026-09-13, che le dichiara per quel che sono (*scelta editoriale
+mia, ma assolutamente difendibile*) e porta cinque argomenti. ⚠️ **Tutti e cinque sono
+attestati alla lettera in *Tehanu***, verificati col grep prima di applicare i badge: la
+scelta è sua, le prove sono del testo.
+
+| l'argomento | che cosa dice la fonte |
+|---|---|
+| conosce la Vera Lingua senza padroneggiarla | Ged parla al drago *nella lingua del drago*, e *anche Tenar fu in grado di comprendere le parole* |
+| risponde a un drago nella Lingua della Creazione | `Thesse Kalessin` dice il drago, `Thesse Tenar` risponde lei, *con voce chiara, anche se un po' tremante* |
+| è stata apprendista di Ogion | *Ogion ha insegnato la sua arte. Come se non fossi stata una donna. Come se fossi stato il suo apprendista, come Sparviere. Mi ha insegnato la Lingua della Creazione* |
+| sostiene lo sguardo del drago | *le avevano sempre detto che non si deve mai fissare un drago negli occhi, ma lei ignorò l'avvertimento*, e *la donna non abbassò gli occhi neri* |
+| Kalessin le rivolge la parola | il congedo, *vi affido mia figlia, come voi mi affidereste la vostra* |
+
+- ⚠️⚠️ **PER IL `signoredraghi` NON SERVE NEMMENO UNA DEROGA: il testo applica a lei la
+  definizione del titolo, nella stessa pagina.** Dopo l'incontro con Kalessin la narrazione
+  richiama la risposta che Ged le diede nel Labirinto (*un uomo con cui i draghi sono
+  disposti a parlare*) e conclude: *Così, lei era una donna con cui i draghi erano disposti a
+  parlare*. È la stessa forma di prova con cui **Morred** porta il badge da sempre, e di
+  grado più alto, perché su Morred il collegamento fra definizione e persona lo fa chi legge,
+  qui lo fa il libro. Il dettaglio, con la tabella dei gradi, vive in `rules/Earthsea.md`
+  § 'Signore dei Draghi: la definizione e chi la porta'.
+- ⚠️⚠️ **IL TESTO DICE ANCHE IL CONTRARIO, e un audit lo troverà**: nello stesso capoverso
+  c'è *non c'erano Poteri riconoscibili, adesso, in lei*, e altrove che all'insegnamento di
+  Ogion *lei aveva rinunciato, non l'aveva toccata*. Non è una smentita: il `signoredraghi`
+  è un titolo di **relazione** (il canone lo enuncia citando Ged: *non si tratta di conoscere
+  trucchi o magie*), e lo `stregone` chiede *qualche potere*, che è la soglia più bassa dei
+  tre badge. Chi legge solo quelle due righe conclude il contrario, ed è la ragione per cui
+  stanno scritte qui.
+- ⚠️ **`stregone` e non `mago`**, e non è una sfumatura: il badge alto dice 'educato a Roke'
+  (§ 'I 19 confrontati con Wikipedia', punto 3), che per Tenar non vale, e i due **non si
+  portano insieme**. La voce ha ora tre icone, perché conserva il `nomeged` che aveva.
+- **Nel dataset la voce è `Goha`**, col vero nome `Tenar`: chi cerca 'Tenar' fra i nomi
+  d'uso non la trova (§ 'I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua').
 
 ## 🪶 I QUATTRO livelli dei nomi, e perché il vero nome ha una riga sua
 
