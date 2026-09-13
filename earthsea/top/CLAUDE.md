@@ -287,6 +287,58 @@ c'è solo ciò che serve a non rifare il lavoro e a non 'correggere' un dato giu
     riga della genealogia stampa **'Figlio di'**, che è il ripiego del motore: non è un dato,
     è la mancanza di una forma neutra.
 
+### 💬 Le citazioni degli animali: nove sì e quattro no, e la ragione di ognuno
+
+Dal 2026-09-13, quando l'utente ha revocato il *lascia perdere gli animali* del giro massivo
+(§ 'Le CITAZIONI nella card: testo Mondadori, nomi Nord'). ⚠️ **La clausola che ha aggiunto
+vale come criterio generale e non solo per loro**: *nulla di obbligatorio: in assenza di
+citazioni significative, possono stare senza*. Quindi il campo vuoto è una **risposta**, non
+una lacuna da riempire a ogni costo.
+
+- **Le QUATTRO che restano senza, e nessuna per pigrizia**:
+  - ⚠️⚠️ **`Biddy` non ha una citazione ITALIANA possibile**, ed è il caso di `Cenerino`: il
+    suo nome compare **una volta sola in tutto il ciclo e solo in inglese** (`they sleep with
+    Aunty and Biddy`), perché Mondadori l'ha tolto e scrive *dormono con la zia*. Una metà
+    italiana che la nomini non esiste, e inventarla sarebbe l'unica via per riempire il campo.
+  - **`Grigia`, `Candore` e `Ghette` vivono in un ELENCO condiviso**, il pollaio di Heleth
+    (*Bucca Bruna, Grigia, Candore, Ghette e il re*), che è il loro unico passo: un brano solo
+    per tre voci, e la regola vieta di riusare lo stesso testo. ⚠️ Il **taglio** che salvò
+    `Granchio Blu` e `Albatro` qui non si applica: là erano due, e dentro un elenco non c'è
+    un pezzo diverso per ciascuna che la nomini.
+- **Le due Bucca invece ce l'hanno**, e la differenza dice il criterio: `Bucca Rossa` ha un
+  passo suo (è alla cova, con le uova che stanno per schiudersi) e `Bucca Bruna` pure (è *la
+  sua prediletta*, la sola del pollaio che risponda a Dulse). Non è il rango della voce a
+  decidere: è se il testo le dedica una frase.
+- ⚠️ **`Grigina` e `Nerone` sono DUE TAGLI della stessa frase**, come `Granchio Blu` e
+  `Albatro`: la gatta ha avuto quattro gattini, il gatto ne ha ucciso uno. Nessun campo
+  identico all'altro, e la firma è di **Erica**, che è chi parla.
+- ⚠️ **La citazione di `Vaiavanti` viene da *I venti di Terramare*, non dalla sua prima
+  apparizione**, ed è corretto: in *Un mago di Terramare* il cane c'è ma **senza nome** (*il
+  vecchio cane nero della strega, che non abbaiava mai*), e il nome arriva solo quando
+  Sparviero lo ricorda, tre libri dopo. Il campo `fonte` dice la prima apparizione del
+  **personaggio**, `citazione_fonte` dice da dove viene il **brano**: il precedente è `Orm`.
+
+#### ⚠️⚠️ 'Oltre i libri 1-3 la traduzione è condivisa' è VERO IN GRAN PARTE, non sempre
+
+`Fioccodineve` (Mondadori) contro **`Fiocchidineve`** (Nord) è la prova che nei libri 4-6 un
+nome può divergere lo stesso, dove il canone dice *non c'è nulla da scegliere*
+(`rules/Earthsea.md`, § 'Fonti ITA'). La resa Nord è entrata fra i **nomi alternativi
+italiani**, come `Intathin`, e il nome d'uso resta quello che l'utente ha scelto.
+
+- **La misura, sulle sole PAROLE**: prese 80 frasi Mondadori per libro e cercate nel volume
+  Nord, ne compaiono il **78%** nel libro 4, il **79%** nel 5 e il **66%** nel 6, contro lo
+  **0%** del libro 1. Quindi la traduzione dei libri 4-6 è largamente condivisa, ma un quarto
+  o un terzo delle frasi diverge, e con esse qualche nome.
+- ⚠️⚠️ **LA PRIMA MISURA ERA SBAGLIATA E DAVA 48-58%**, e la trappola vale per ogni confronto
+  fra le due edizioni: Nord apre i dialoghi col **trattino** dove Mondadori usa i caporali,
+  quindi un confronto che normalizza le virgolette ma non i trattini conta come divergenti
+  delle frasi **identiche parola per parola**. Il metro giusto toglie tutta la punteggiatura.
+  Chi vede una differenza fra le due edizioni guardi **le parole** prima di chiamarla
+  divergenza di traduzione.
+- **Il censimento sui tredici animali dà un solo caso**: gli altri dodici nomi sono identici
+  nelle due edizioni. Vale registrarlo perché rende la divergenza un'eccezione misurata e non
+  un sospetto da riaprire a ogni voce.
+
 ### 🚻 Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni
 
 Regola editoriale dell'utente, 2026-08-23, e nasce da un problema pratico che ricorre a ogni
@@ -3781,9 +3833,16 @@ dedicato: la citazione fa parte della scheda come il nome e l'opera.
   una citazione italiana che lo nomini non esiste. La regola chiede una citazione
   **verificata**: dove la verifica non è possibile, il campo vuoto è la risposta onesta.
 
-- **Chi resta senza**: i **dodici animali** (istruzione dell'utente: *lascia perdere gli
-  animali*), le due voci che ha escluso a nome (`Mago Rosso di Ark` e `Keor`) e
-  `Cenerino`, per la ragione qui sopra. ⚠️ **`Barbanera` ne è USCITO il 2026-09-11**, su
+⚠️⚠️ **L'ESCLUSIONE DEGLI ANIMALI È DECADUTA il 2026-09-13**, e la nota che la dava viva è
+superata: l'utente l'ha revocata (*prova ad aggiungere le citazioni agli altri animali*),
+con una clausola che vale come criterio generale, *nulla di obbligatorio: in assenza di
+citazioni significative, possono stare senza*. Nove animali su tredici ne hanno una; il
+perché degli altri quattro vive in § 'Le citazioni degli animali: nove sì e quattro no, e la
+ragione di ognuno'.
+
+- **Chi resta senza**: le due voci che l'utente ha escluso a nome (`Mago Rosso di Ark` e
+  `Keor`), `Cenerino` per la ragione qui sopra, e i **quattro animali** che una citazione
+  attestata non ce l'hanno. ⚠️ **`Barbanera` ne è USCITO il 2026-09-11**, su
   richiesta dell'utente (*se Barbanera è l'unico senza citazione, aggiungila*): l'esclusione
   valeva finché era una voce come le altre, e nella tabella degli apocrifi sarebbe stato
   l'unico campo vuoto di quattordici. ⚠️ **Quante siano non si scrive**: si contano con
