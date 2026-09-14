@@ -1402,12 +1402,26 @@ una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
   terzo badge fino al 2026-08-21, quando cambiò significato e diventò `nomeged` coi suoi 19
   valori azzerati (§ 'Il terzo badge ha CAMBIATO SIGNIFICATO'). Riusarla direbbe la cosa giusta
   oggi e renderebbe illeggibile ogni commit anteriore a quella data.
-- **L'icona è un rombo con una fessura, in teal `#1c7f92`**, scelta dall'utente fra quattro
-  forme rese alla **misura vera** (17px, quella della legenda), che è il solo metro che conta:
-  delle sette disegnate, tre si impastavano a quella misura e una si leggeva come un emoji
-  sorridente. ⚠️ La **tinta** è scelta sulla distanza, non sul gusto: è la più lontana dalle
-  sei in uso (23 gradi dall'azzurro del simbolo maschile) e la sola delle tre candidate coi
-  contrasti equilibrati sui due fondi (**3,30** sullo scuro, **3,76** sul chiaro).
+- ⚠️⚠️ **IL DISEGNO È DELL'UTENTE dalla `2.12`**, e ha sostituito il mio segnaposto: un rombo
+  stondato in teal `#1c7f92` con dentro una **doppia freccia** in `#7fd4e0`, arrivata come
+  export Illustrator. ⚠️ **Il mio era un rombo con una fessura**, e chi trova quella
+  descrizione in un commit della `2.10` o della `2.11` sa che descrive il segnaposto.
+  - ⚠️ **Le due TINTE sono rimaste le stesse**, ed erano scelte sulla distanza e non sul gusto:
+    il teal è il più lontano dalle sei icone in uso (23 gradi dall'azzurro del simbolo
+    maschile), e i contrasti sui due fondi veri della riga di una card sono **3,30** sullo
+    scuro e **3,76** sul chiaro. Rimisurati sul disegno nuovo: identici, perché le tinte sono
+    quelle.
+  - ⚠️ **Il glifo interno sul rombo fa 2,75**, cioè sotto il 3:1 dei componenti grafici, e va
+    saputo invece di scoprirlo: non è l'unico canale, perché a 17px l'icona si riconosce prima
+    per **forma** (l'unico rombo della fila) e per tinta. È la stessa soglia che le altre sei
+    icone non rispettano nel tema chiaro (§ 'I fondi VERI della riga di una card: come si
+    misurano').
+  - ⚠️ **Lo scudo dell'Arcimago è teal anche lui**, ed è la sola collisione di famiglia: regge
+    perché le due forme non si somigliano (rombo con freccia contro scudo con stella) e in
+    legenda stanno a cinque righe di distanza.
+  - **La ripulitura dell'export vale come per il logo** (§ 'Il logo del FAB'): via il blob
+    `i:aipgf`, il commento del generatore, lo `xmlns:i` di Adobe e i suoi attributi `i:`, da
+    **46.786 a 789 byte** (-98,3%), con geometria, `viewBox` e `fill` verificati identici.
 - ⚠️ **Ha la sua unità nei micro-aggiustamenti** (`BADGE_ADJUST_UNITS`), col seed `ml:0.12`
   dei precedenti: senza, sarebbe l'unica `img` della fila priva della classe `bi-<id>`, quindi
   immune ai micro-aggiustamenti e disallineata dalle altre **senza dare alcun errore**.
