@@ -729,8 +729,8 @@ compaiono nella tab Mobile.
   resta `siteFlags`. ⚠️ **Il rename toglie una COLLISIONE e non è un gusto**: il nome vecchio
   **conteneva** 'Pannello', che è la modale del FAB dei visitatori, quindi ogni abbreviazione
   li faceva coincidere. Scriverlo nelle regole non è bastato: sul gemello di Terramare la
-  stessa confusione è costata **due** versioni (`earthsea/top/CLAUDE.md`, § 'Personaggi senza
-  nome').
+  stessa confusione è costata **due** versioni (`earthsea/top/CLAUDE.md`, § "'Nessun nome
+  noto': dalla Console al Pannello").
 - **Nomi e ordine delle voci:** Modalità XL, Bagliore, Numeri colorati, Riflettore, Incisione,
   Alone sfumato, Effetto podio, Colore schede, Trama. Etichette brevi, di una parola dove
   possibile.

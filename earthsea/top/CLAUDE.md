@@ -89,7 +89,7 @@ nelle regole?*), e la risposta onesta era 'sì, ma non in un posto solo'.
 | **Il genere**, che si prova sull'INGLESE | § 'Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni' |
 | **L'origine**: nascita, ripiego sulla residenza, e nel campo va l'ISOLA | § 'Origine: significa NASCITA, e la residenza è solo un ripiego' |
 | **Il tipo**, e la parola da aggiungere al motore se è un animale | § 'Gli ANIMALI: una categoria, tante etichette' |
-| **I badge**, che non si deducono mai dalla scheda | § 'I tre badge e il genere' e § 'I TRE badge annunciati: il criterio di uno solo' |
+| **I badge**, che non si deducono mai dalla scheda | § 'I badge e il genere' e § 'I TRE badge annunciati: il criterio di uno solo' |
 | **La citazione**: la più corta fra le valide, il taglio, la firma, il contesto col capitolo | § 'Le CITAZIONI nella card: testo Mondadori, nomi Nord' |
 | Il testo italiano coi **nomi Nord**, che non è verbatim di nessuna edizione | § 'Un testo che nessuna edizione ha, e la ragione per cui va bene' |
 | **La maiuscola** di riga, che si applica in resa e non nel dato | § 'La prima lettera di ogni riga va MAIUSCOLA' |
@@ -646,9 +646,9 @@ presenta a Tenar come il soccorritore della bambina.
 2. ⚠️ **`.status-icon` conta i BADGE, non il simbolo di genere**, che ha una classe sua:
    attendersi un'icona su una voce senza badge fa fallire una prova su un dato giusto.
 3. ⚠️⚠️ **IL NUMERO IN CLASSIFICA NON È L'INDICE NEL DATASET**: le due voci sono alla 118 e
-   alla 119 di `dati`, e la card mostra **113** e **114**, perché il flag `senzanome` tiene
+   alla 119 di `dati`, e la card mostra **113** e **114**, perché il campo `senzanome` tiene
    fuori dalla lista le voci il cui nome d'uso è una perifrasi
-   (§ "'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore"). Chi
+   (§ "'Nessun nome noto': dalla Console al Pannello"). Chi
    confronta i due numeri conclude che l'inserimento sia finito nel posto sbagliato.
 
 - ⚠️ **I capitoli si leggono dalle intestazioni del .txt, non si indovinano**: i corpora
@@ -773,16 +773,17 @@ cantare la ballata in cui, all'inizio del tempo, uomini e draghi erano un popolo
 
 - ⚠️⚠️ **È IL PRIMO INCROCIO FRA DUE MECCANISMI CHE NON SI ERANO MAI INCONTRATI**: l'ibrida
   (§ 'Le razze, e perché le tinte non contano come le categorie') e il **senza nome**
-  (§ "'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore"). Le altre due
+  (§ "'Nessun nome noto': dalla Console al Pannello"). Le altre due
   ibride hanno nome d'uso **e** vero nome, quindi due righe; qui il nome d'uso è una
   **perifrasi** e il vero nome manca, quindi la card ne mostra **una sola**. Il motore ci
   arriva da sé, perché `soloVero` guarda il campo vuoto e non la razza: non è stato
   necessario toccare nulla.
 - ⚠️⚠️ **LA SUA CARD È INVISIBILE DI BASE, e un banco che la cerca in pagina la dà per
-  assente**: il flag di sito `senzanome` nasce spento, quindi in produzione la voce esiste
-  nel dato e non compare in lista finché l'admin non lo accende dalla Console. Chi la prova
-  deve accendere il flag a runtime, e chi conta le card ricordi che sono le voci **meno**
-  quelle senza nome.
+  assente**: la casella `Nessun nome noto` del Pannello nasce spenta, quindi la voce esiste nel
+  dato e non compare in lista finché chi guarda non la accende. Chi la prova deve accenderla,
+  e chi conta le card ricordi che sono le voci **meno** quelle senza nome. ⚠️ Fino alla `2.09`
+  quella scelta era un flag della **Console**, cioè dell'admin: le note che lo dicono sono
+  superate (§ "'Nessun nome noto': dalla Console al Pannello").
 - ⚠️⚠️ **IL SUO VERO NOME ESISTE NEL TESTO, ED È `Drago`**, ma il campo resta **vuoto** per
   istruzione dell'utente (*non si conosce il suo nome*). Il passo lo dice alla lettera:
   Ogion *con paura e stupore pronunciò a voce alta il suo nome vero: 'Drago!'*
@@ -1051,18 +1052,18 @@ silenzio.
 ### 🎛️ L'ordine delle voci nella Console
 
 ⚠️ **Non è un ordine tecnico: lo decide l'utente**, e per questo non si 'sistema' a intuito.
-Dal 2026-09-11 **`Senza nome` viene dopo `Decorazione`** (*sposta 'Senza nome' sotto
-'Decorazione'. Le due voci mobile devono restare in fondo*), dove prima chiudeva l'elenco.
 
-- **Le ultime quattro, in ordine**: `Origine`, `Decorazione`, `Senza nome`, `Dito che scorre`.
-  ⚠️ **Erano cinque fino alla `2.00`**, e l'ultima era `Tasti di salto`: è uscita con la colonna
-  che governava (vedi § 'Decorazione e scostamento dei tasti nella Console'). La richiesta
-  dell'utente (*le due voci mobile devono restare in fondo*) resta soddisfatta con quella che
-  rimane, `Dito che scorre`.
-- ⚠️ **`Senza nome` ha lo stacco su ENTRAMBI i lati**, e il secondo non è decorativo: è
-  l'unica voce che governa il **contenuto** e non l'aspetto, quindi senza lo stacco sotto si
-  leggerebbe come la prima delle due voci mobile. Prima ne bastava uno perché chiudeva la
-  lista.
+- **Le ultime tre, in ordine**: `Origine`, `Decorazione`, `Dito che scorre`. ⚠️ **Erano cinque
+  fino alla `2.00`** e quattro fino alla `2.09`, e le due uscite se ne sono andate insieme a
+  ciò che governavano: `Tasti di salto` con la colonna dei due tasti su mobile (§ 'Decorazione
+  e scostamento dei tasti nella Console'), `Senza nome` col suo flag, passato al Pannello
+  (§ "'Nessun nome noto': dalla Console al Pannello"). La richiesta dell'utente (*le due voci
+  mobile devono restare in fondo*) resta soddisfatta con quella che rimane, `Dito che scorre`.
+- Ⓘ **`Senza nome` era stata spostata sotto `Decorazione`** il 2026-09-11 (*sposta 'Senza nome'
+  sotto 'Decorazione'. Le due voci mobile devono restare in fondo*), dove prima chiudeva
+  l'elenco, e aveva lo stacco su **entrambi** i lati perché era la sola a governare il
+  contenuto e non l'aspetto. ⚠️ Con lei la Console torna a governare il solo aspetto, che era
+  la sua natura fino alla `1.07`.
 - ⚠️ **L'ordine si verifica sul SORGENTE e non in pagina**, e non è un ripiego pigro: la
   Console è l'editor admin e senza credenziali non si apre, e l'elenco non è una variabile
   globale raggiungibile da un banco. Ma quell'elenco è la fonte unica, perché la resa è un
@@ -1158,10 +1159,18 @@ fra i `nomi_alternativi` **italiani**, dove copre la resa dell'altra edizione. I
   quella **Nord del volume da cui viene la citazione**, cioè `Nato dal Mare`: mescolare le
   edizioni volume per volume darebbe una card che dice due cose diverse in due righe.
 
-## 🏅 I tre badge e il genere
+## 🏅 I badge e il genere
 
-I badge sono tre: **strega/stregone**, **mago**, **custode del vero nome di Ged**
-(`ICON_ORDER = ['stregone','mago','nomeged']`).
+⚠️ **Quanti siano non si scrive: si conta** (`ICON_ORDER.length`), perché il numero è già
+cambiato due volte (tre alla nascita, sei con la `0.42`, sette con la `2.10`) e una nota che
+lo fissa invecchia al primo badge nuovo. I primi tre sono **strega/stregone**, **mago** e
+quello del **vero nome di Ged**.
+
+⚠️⚠️ **L'ORDINE DI `ICON_ORDER` È DELL'UTENTE E NON È TECNICO** (2026-09-14, dettato voce per
+voce): apre `veronoto`, poi `nomeged`, cioè i due badge che parlano di **veri nomi**; poi la
+scala del potere (`stregone`, `mago`, `signoredraghi`); in fondo la coppia di Roke (`maestro`,
+`arcimago`). Vale per la resa in lista, per la legenda del Pannello e per la griglia
+dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
 
 - ✅ **Sono immagini a colori fornite dall'utente** (`icons/Sorcerer.webp`,
   `icons/Mage.webp`, `icons/GedName.webp`), dalla `0.14`, al posto dei tre SVG segnaposto in
@@ -1369,6 +1378,64 @@ sintetico: in UI è **'Custode del vero nome di Ged'** / **'Keeper of Ged's true
     vede non deve mettersi a cercare l'attestazione, e chi riempirà il dataset sulle fonti
     non deve riempire quel campo perché 'è vuoto'.
 
+### 🗝️ Il settimo badge: il vero nome rivelato dai testi canonici
+
+Dalla `2.10`, istruzione dell'utente (*tutti i personaggi con il vero nome noto devono avere
+una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
+`True name revealed in the canon`, icona `icons/TrueName.webp`, ed è il **primo** della fila.
+
+- ⚠️⚠️ **NON È UN CAMPO DEL DATO: SI DERIVA DA `vero_nome`**, ed è la decisione che regge tutto
+  il resto. Due fonti per la stessa cosa (il campo pieno e un booleano da spuntare)
+  divergerebbero alla prima voce nuova, e il difetto non darebbe **nessun errore**: una card
+  mostrerebbe il badge senza il nome, o il nome senza il badge. Il predicato è `veroNomeNoto`,
+  che regge questo badge da quando non regge più un filtro.
+  - ⚠️⚠️ **PERCIÒ NELLA CONSOLE NON HA UNA CHECKBOX**, e non è una dimenticanza: nella stessa
+    scheda c'è già il campo `Vero nome`, e una casella accanto prometterebbe di poterlo
+    contraddire. Chi la spuntasse su una voce senza vero nome non vedrebbe cambiare niente.
+  - ⚠️ **Il predicato vive in `haBadge(p, k)`, che è la porta UNICA**: lo usano la resa in
+    lista, il filtro del Pannello, il conto delle righe attivabili e l'anteprima dei
+    micro-aggiustamenti. Chi aggiunge un lettore che legga `p[k]` a mano lascia fuori proprio
+    questo badge, in silenzio.
+  - ⚠️ **Un eventuale campo `veronoto` nel dato NON conta**: `haBadge` guarda solo `vero_nome`,
+    o il derivato tornerebbe a essere una seconda fonte per la porta di servizio.
+- ⚠️⚠️ **LA CHIAVE È `veronoto` E NON `veronome`, ed è deliberato**: `veronome` fu la chiave del
+  terzo badge fino al 2026-08-21, quando cambiò significato e diventò `nomeged` coi suoi 19
+  valori azzerati (§ 'Il terzo badge ha CAMBIATO SIGNIFICATO'). Riusarla direbbe la cosa giusta
+  oggi e renderebbe illeggibile ogni commit anteriore a quella data.
+- **L'icona è un rombo con una fessura, in teal `#1c7f92`**, scelta dall'utente fra quattro
+  forme rese alla **misura vera** (17px, quella della legenda), che è il solo metro che conta:
+  delle sette disegnate, tre si impastavano a quella misura e una si leggeva come un emoji
+  sorridente. ⚠️ La **tinta** è scelta sulla distanza, non sul gusto: è la più lontana dalle
+  sei in uso (23 gradi dall'azzurro del simbolo maschile) e la sola delle tre candidate coi
+  contrasti equilibrati sui due fondi (**3,30** sullo scuro, **3,76** sul chiaro).
+- ⚠️ **Ha la sua unità nei micro-aggiustamenti** (`BADGE_ADJUST_UNITS`), col seed `ml:0.12`
+  dei precedenti: senza, sarebbe l'unica `img` della fila priva della classe `bi-<id>`, quindi
+  immune ai micro-aggiustamenti e disallineata dalle altre **senza dare alcun errore**.
+- ⚠️ **Misura del giro**: **50 controlli su 50** in pagina coi font veri, desktop e mobile.
+  Quello che conta di più è il conteggio incrociato: le icone in lista sono tante quante le
+  voci visibili con `vero_nome`, e il filtro di quella riga di legenda mostra esattamente
+  quelle.
+
+#### 🧙 L'icona del `Mago` è lo `Stregone` virato al rosso
+
+Dalla `2.10`, istruzione dell'utente (*la vorrei come 'Stregone' (usalo come base), ma molto
+più verso il rosso acceso*). Stessa forma, tinte `#f02311` e `#ff5c3d` al posto dei due gialli.
+
+- ⚠️ **Il ricolore proietta ogni pixel sul SEGMENTO fra le due tinte sorgente** e riapplica lo
+  stesso fattore fra le due di destinazione: così l'antialiasing resta pulito invece di
+  diventare una scaletta, che a 17px si vede. Una sostituzione secca dei due colori lascerebbe
+  i pixel intermedi gialli.
+- ⚠️⚠️ **LA COLLISIONE COL RUGGINE DEI DRAGHI È STATA DICHIARATA PRIMA DI PROCEDERE, e l'utente
+  ha scelto lo stesso**: il rosso acceso dista **4 gradi** di tonalità dal `#b4472e` del
+  `Signore dei Draghi`, e le altre tre candidate stavano fra 4 e 6 (solo il carminio a 16).
+  Sono icone diverse per forma e non si confondono, ma chi rimisurasse le distanze fra le
+  tinte dei badge trovi qui la ragione per cui questa è quella che è.
+- ⚠️ **WebP lossless verificato pixel per pixel** (scarto massimo per canale **0**), come i sei
+  precedenti: la strada del browser non è lossless e sembra esserlo
+  (§ 'I badge e il genere').
+- ⚠️ **Il file resta `Mage.webp`**: porta il nome del **badge**, non del disegno, ed è la quarta
+  volta che un'icona di questo progetto cambia aspetto senza che il codice se ne accorga.
+
 ### 🐲 I TRE badge annunciati: il criterio di uno solo
 
 ✅ **Sono nel sito dalla `0.42`** (2026-08-23), e sono `signoredraghi`, `maestro`, `arcimago`.
@@ -1437,6 +1504,47 @@ seconda va **più a fondo** della formula che sostituisce:
 - ⚠️ **Le metà inglesi seguono, e non si traducono a orecchio**: `Mage (trained on Roke; holds
   the true power)` e `Dragonlord (dragons regard him as an equal)`. Cambiarne una sola lascia
   il sito a dire due cose diverse nelle due lingue.
+
+⚠️⚠️ **E NELLA `2.10` LE HA RISCRITTE L'UTENTE, dettandole alla lettera**, con l'istruzione di
+riportarle identiche (*li riscrivo così come devono diventare i testi, perciò riportali
+identici, se ci stanno senza aggiustamenti complicati per la larghezza*). Ci stanno, e sono
+queste:
+
+| badge | prima | ora |
+|---|---|---|
+| `stregone` | `Strega o stregone (possiede qualche potere)` | `Strega o stregone/incantatore (ha qualche potere)` |
+| `mago` | `Mago (educato a Roke; detiene il vero potere)` | `Mago (uomo educato a Roke; detiene il vero potere)` |
+| `nomeged` | `Custode del vero nome di Sparviero (Ged)` | `Conobbe in vita il vero nome di Ged` |
+
+- ⚠️ **`incantatore` entra nella prima perché è la resa NORD del grado basso**: le tre parole
+  italiane del potere sotto il `mago` sono `strega`, `stregone` e `incantatore`, e l'etichetta
+  deve farsi riconoscere da chi ha in mano un volume qualunque (§ 'Un testo che nessuna
+  edizione ha, e la ragione per cui va bene', tabella del vocabolario del potere). ⚠️ In
+  inglese la parola è **una sola**, `sorcerer`, quindi la metà inglese **non** si allunga:
+  resta `Witch or sorcerer (holds some power)`. Chi la 'completasse' per simmetria inventerebbe
+  una distinzione che l'inglese non fa.
+- ⚠️ **`uomo educato a Roke` dice una cosa in più di `educato a Roke`**, ed è attestata: a Roke
+  si formano **uomini**, e la convenzione di genere del vocabolario del potere è una regola
+  dichiarata del canone (§ 'Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni').
+  La metà inglese segue: `Mage (a man trained on Roke; holds the true power)`.
+- ⚠️⚠️ **`Conobbe IN VITA il vero nome di Ged`, e la precisazione è dell'utente**: il badge
+  marca chi ricevette quel nome **mentre Ged era vivo**, non chi lo legge oggi sulla pagina.
+  È la stessa distinzione che il canone fa per il campo `vero_nome` vuoto (*noi non lo
+  sappiamo*), rovesciata: il vero nome di quel personaggio lo sappiamo **noi**, perché il
+  canone lo scrive. Metà inglese: `Knew Ged's true name in life`.
+  - ⚠️ **Il significato del badge NON cambia**: restano i nove che il canone elenca, e la fonte
+    resta quella (§ 'Il terzo badge ha CAMBIATO SIGNIFICATO'). A cambiare è la sola etichetta,
+    che adesso dice il criterio invece di nominare un ruolo.
+- ⚠️ **La coppia di Roke non è stata toccata**: l'utente l'ha dettata come `Maestro di Roke |
+  Arcimago di Roke`, che è esattamente quello che la legenda **già** mostrava coi suoi testi
+  brevi dedicati. I tooltip delle card restano quelli interi di `ICON_LABEL`, `(uno dei Nove)`
+  e `(il primo fra i Nove)`.
+- ⚠️ **Misurate coi font veri prima di applicarle**: da **360px in su** tutte e sei entrano in
+  una riga sola e il Pannello non cambia larghezza. A **320px** in italiano vanno a capo
+  `Strega o stregone/incantatore` e `Mago (uomo...)`, come già oggi fa `Signore dei Draghi`;
+  in inglese a 320px va a capo la sola `Mage (a man...)`. Il capo a riga è previsto dal CSS
+  (`white-space:normal`, `min-height` sulla riga, icona a `flex:none`), quindi non serviva
+  nessun aggiustamento.
 
 **Il criterio del `Signore dei Draghi`**, dettato dall'utente il 2026-08-23: *è un titolo che
 probabilmente spetta solo a Ged, Erreth-Akbe, Morred e Pannocchia*. ⚠️ **Il 'probabilmente'
@@ -1860,7 +1968,7 @@ leggere prima di toccare il numero.
   servirà altrove (favicon, immagine di anteprima).
   - ⚠️ **Il nome del file segue il RUOLO, non il disegno**: `Earthsea.svg` è 'il logo del
     progetto', e **cinque** disegni diversi sono passati per quel percorso senza che il
-    codice cambiasse. Stessa ragione delle PNG dei badge (§ 'I tre badge e il genere'), e vale
+    codice cambiasse. Stessa ragione delle PNG dei badge (§ 'I badge e il genere'), e vale
     anche quando l'utente manda un file con un altro nome, come è successo due volte.
 - ⚠️ **Si costruisce con `createElementNS`, non con `innerHTML`**, che è vietato senza
   deroghe: qui il motore di provenienza lo usava per il segnaposto, e sostituire il glifo è
@@ -2550,8 +2658,8 @@ lungo sul FAB apre la ricerca; il tocco **breve** continua ad aprire il Pannello
 
 - ⚠️⚠️ **Interroga il DATASET, non il DOM, e questo le dà quello che il 'trova' del browser
   non può avere**: vede anche le voci che i filtri del visitatore tengono fuori e quelle che
-  il flag dei senza nome nasconde a **tutti** (§ "'Personaggi senza nome': un FLAG DI SITO,
-  non un filtro del visitatore"). È la ragione per cui l'utente l'ha chiesta al posto di una
+  il flag dei senza nome nasconde a **tutti** (§ "'Nessun nome noto': dalla Console al
+  Pannello"). È la ragione per cui l'utente l'ha chiesta al posto di una
   ricerca che si limiti alla vista.
 - **I mattoni sono quelli della Console, promossi a globali** (`computeMatches`, `fold`,
   `foldFind`, `SEARCH_FIELDS`, `FIELD_LABEL`): erano dentro uno scope che si apre solo con le
@@ -3320,45 +3428,71 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
   `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
   centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
 
-## 🙈 'Personaggi senza nome': un FLAG DI SITO, non un filtro del visitatore
+## 🙈 'Nessun nome noto': dalla Console al Pannello
 
-Interruttore nella **Console** (l'editor admin) dalla `1.07`, istruzione
-dell'utente: decide se le voci il cui nome d'uso è una **perifrasi** compaiono in classifica.
-Nasce **spento**, quindi di base non ci sono, per tutti i visitatori.
+⚠️⚠️ **DALLA `2.10` È UNA CASELLA DEL PANNELLO, cioè un filtro del VISITATORE, e prima era un
+flag della Console** (istruzione dell'utente, 2026-09-14: *la visibilità dei personaggi senza
+nome sarà quindi governata direttamente dal Pannello, e deve essere spenta di default. La voce
+corrispondente della console, invece, può essere rimossa, perché non sarà più un'opzione
+globale*). Decide se le voci il cui nome d'uso è una **perifrasi** compaiono in classifica, e
+nasce **spenta**, quindi di base non ci sono.
 
-- ⚠️⚠️ **LA `1.06` L'AVEVA MESSO NEL PANNELLO, ED ERA LA SECONDA VOLTA**: la richiesta diceva
-  *Pannello di controllo*, che allora era il nome della **Console** e conteneva quello del
-  **Pannello**, cioè di un'altra cosa (vedi la nota nella sezione dell'origine). Il Pannello è
-  la modale del FAB, coi filtri del visitatore; la Console è l'editor admin, che salva in
-  `dati.js` e vale per tutti. ⚠️ È da questo secondo fraintendimento che nasce il rename del
-  2026-08-28. ⚠️ **Non è una
-  differenza di posto ma di sostanza**: qui non è una preferenza di chi guarda, è una
-  **scelta editoriale del sito**, quindi non ha senso che ognuno se la regoli.
+- ⚠️⚠️ **IL VERSO È ADDITIVO, e la differenza con la casella che sostituisce è tutta qui**:
+  accesa, quelle voci si **aggiungono** alle altre invece di diventare le sole visibili.
+  L'utente lo ha scritto fra parentesi (*che mostra (non più in modo esclusivo) anche tutti i
+  personaggi noti con un nome che è in realtà una perifrasi*), ed è la ragione per cui non
+  serve nessuno stato forzato: una casella additiva non può svuotare la lista, che era il caso
+  in cui l'altra smetteva di essere un filtro (§ "Ⓘ Il filtro 'solo chi ha un vero nome noto'
+  è USCITO con la 2.10").
+- ⚠️ **L'etichetta è `Nessun nome noto` / `No known name`, ed è una MISURA**: l'utente ha
+  offerto le due forme (*'Personaggi senza nome' o 'Nessun nome noto' (leggermente più
+  corto)*), e col font vero la lunga allarga il Pannello desktop di **17,94px** (da 359,48 a
+  377,42), perché diventa lei il blocco più largo; la corta misura **98,2px** contro i 98,0
+  dell'etichetta che sostituisce. ⚠️ Misurato **prima e dopo** su tutto il Pannello: da
+  **359,48 a 358,78** in larghezza (si stringe di 0,70) e da 483,14 a **514,64** in altezza,
+  cioè esattamente i 31,5px della riga di legenda in più, identici nelle due lingue.
+- ⚠️⚠️ **QUESTO NON SMENTISCE LA DISTINZIONE FRA PANNELLO E CONSOLE, che resta valida per ogni
+  altra voce**: il **Pannello** è la modale del FAB, coi filtri del visitatore, aperta a tutti;
+  la **Console** è l'editor admin, che salva in `dati.js` e vale per tutti i visitatori. La
+  `1.06` mise questa voce nel primo per un equivoco di nomi (la richiesta diceva *Pannello di
+  controllo*, che allora era il nome della Console e conteneva quello del Pannello) e la `1.07`
+  la spostò nel secondo; è da quel secondo fraintendimento che nasce il rename del 2026-08-28.
+  ⚠️ Adesso torna nel Pannello perché a cambiare è la **natura della scelta**, dichiarata
+  dall'utente, non il criterio dei due posti: chi legge le note vecchie sappia che descrivono
+  bene il criterio e male il posto di **questa** voce.
+- ⚠️ **Con lei la Console torna a governare il SOLO aspetto**, che era la sua natura fino alla
+  `1.07`: non c'è più nessuna voce di contenuto, e le ultime tre sono `Origine`, `Decorazione`
+  e `Dito che scorre`.
+- ⚠️ **Nel motore è `mostraSenzaNome`, una variabile in memoria** come lo era `soloVeroNome`:
+  niente permalink e niente `localStorage`, perché un filtro che sopravvive al ricaricamento
+  senza dirlo fa credere che il dataset sia più corto di quello che è. ⚠️ Il rovescio,
+  dichiarato: un link condiviso non porta con sé questo filtro.
+- ⚠️ **La chiave `senzanome` è rimasta dentro `siteFlags` di `dati.js`**, e non è un residuo da
+  rincorrere: nessuno la legge più, e sparisce da sé al primo salvataggio che riscriva i flag
+  dalla Console, perché il Worker riscrive quella riga con ciò che riceve. Un salvataggio dei
+  soli testi la preserva, ed è corretto.
 - ⚠️⚠️ **IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
   CODICE**, come per ogni altra proprietà. Sono le voci il cui **nome d'uso è una perifrasi** e
   non un nome proprio, e la previsione 'se un domani ne entra una terza le basta il campo' si è
   avverata due volte in un giorno: il **`Mago Grigio`** con la `1.09`, il **`Mago Nero`** e il
   **`Mago Rosso di Ark`** con la `1.10`, tutti su istruzione dell'utente e senza toccare una
   riga di codice. ⚠️ **Chi sono si conta** (`dati.filter(x=>x.senzanome)`), non si elenca qui.
-  - ⚠️ **Le loro card ERANO visibili, e il flag le nasconde**: quelle voci esistevano già come
-    schede normali, quindi non sono entrate in classifica, sono passate dietro
-    all'interruttore. Chi le cercasse in pagina col flag spento non stia cercando un difetto.
-- **Come è fatto il flag**: `senzanome` in `SITE_FLAGS`, booleano **piatto** come `zoomBig`
-  (niente varianti di piattaforma, niente manopole). Nel codice i flag piatti si riconoscono
-  da `plain:true` nella voce di `SITE_FLAG_ITEMS`, che li tiene fuori dalla tab Mobile e
-  dall'avviso delle varianti.
-- ⚠️ **È l'ULTIMA voce e apre un gruppo nuovo**: tutte le altre governano l'**aspetto**,
-  questa il **contenuto**. Lo stacco è `gap:true` (0.5rem di margine sopra la riga), che è lo
-  'spazio minimo' chiesto: una sezione con un titolo, per una voce sola, sarebbe sproporzionata.
-  ⚠️ **Fra gli EFFETTI l'ultima è ora `Dito che scorre`**, da quando `jumpx` è uscita con la
-  `2.00`: questa voce resta l'ultima della Console e la sola che governi il contenuto.
-- ⚠️⚠️ **L'ETICHETTA È 'Senza nome' / 'Nameless' E NON IL NOME PER ESTESO, e non è un
-  accorciamento a gusto**: la colonna della label misura ~102px a 320px in Modalità XL, e
-  'Personaggi senza nome' ne misura **145,5** col font reale, contro gli **87,6** di 'Colore
-  schede' (ci sta) e i **120,7** di 'Colore delle schede' (va a capo). 'Senza nome' misura
-  **74,8** e 'Nameless' **58,9**. Il nome per esteso è quello della **funzione** e vive qui.
-- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: a flag spento la lista mostra tutte le
-  voci **meno** quelle marcate `senzanome`, e non è un dato perso. ⚠️ **Quante siano non si
+  - ⚠️ **Le loro card ERANO visibili, e la casella le nasconde**: quelle voci esistevano già
+    come schede normali, quindi non sono entrate in classifica, sono passate dietro
+    all'interruttore. Chi le cercasse in pagina a casella spenta non stia cercando un difetto.
+- Ⓘ **Com'era fatto il flag, dalla `1.07` alla `2.09`**: `senzanome` in `SITE_FLAGS`, booleano
+  **piatto** come `zoomBig` (niente varianti di piattaforma, niente manopole), riconoscibile
+  da `plain:true` nella sua voce di `SITE_FLAG_ITEMS`, che lo teneva fuori dalla tab Mobile e
+  dall'avviso delle varianti. Era l'**ultima** voce della Console e apriva un gruppo suo, con
+  lo stacco di `gap` su entrambi i lati perché era la sola a governare il contenuto.
+  - Ⓘ **E la sua etichetta era corta per una MISURA**, che vale ancora per chiunque ne aggiunga
+    una là dentro: la colonna della label misura ~102px a 320px in Modalità XL, e 'Personaggi
+    senza nome' ne misura **145,5** col font reale, contro gli **87,6** di 'Colore schede' (ci
+    sta) e i **120,7** di 'Colore delle schede' (va a capo). 'Senza nome' misurava **74,8** e
+    'Nameless' **58,9**. ⚠️ Nel Pannello quel vincolo **non vale**, ed è la ragione per cui là
+    l'etichetta è una frase: la cella dei filtri è molto più larga di quella colonna.
+- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: a casella spenta la lista mostra tutte
+  le voci **meno** quelle marcate `senzanome`, e non è un dato perso. ⚠️ **Quante siano non si
   scrive**, perché cambia a ogni voce che entra nel gruppo o ne esce (`Roccobot.md`, § '🔢 I
   conti si contano, non si scrivono'): si contano sul DOM, o nel dataset con
   `dati.filter(x=>x.senzanome)`.
@@ -3366,24 +3500,36 @@ Nasce **spento**, quindi di base non ci sono, per tutti i visitatori.
     è una **card finta** con la stessa classe, quindi un conteggio su tutto il documento dà
     uno in più e sembra un fantasma nei dati.
 - **Il Worker non va toccato**: `validSiteFlags` controlla la **forma** e non un elenco di
-  chiavi (booleani ammessi, fino a 40 chiavi; con questa siamo a 18), quindi un flag nuovo
-  passa senza modifiche al proxy.
+  chiavi (booleani ammessi, fino a 40 chiavi), quindi né un flag nuovo né uno tolto chiedono
+  modifiche al proxy. ⚠️ Vale nei due sensi, ed è il motivo per cui il passaggio di questa
+  voce al Pannello non ha toccato una riga lato server.
 
-## 🔎 Il filtro 'solo chi ha un vero nome noto'
+## 🔎 Ⓘ Il filtro 'solo chi ha un vero nome noto' è USCITO
 
-Checkbox nel Pannello, sotto le categorie (istruzione dell'utente, 2026-08-21).
+Casella del Pannello dalla `0.92` (e prima, dal 2026-08-21, su una riga sua sotto le
+categorie), sostituita da 'Nessun nome noto' per istruzione dell'utente (*togli la checkbox
+'Solo veri nomi noti', che sarà sostituita da una nuova checkbox*). ⚠️ Con lei se ne sono
+andate `soloVeroNome`, `statoVeroNome` e `veroNomeInVigore`; **resta** `veroNomeNoto`, che
+dalla `2.10` regge il badge `veronoto` (§ 'Il settimo badge: il vero nome rivelato dai testi
+canonici').
 
-- ⚠️ **Un DRAGO conta come noto anche col campo vuoto**: il suo nome d'uso **è** il vero nome.
-  Guardare solo `vero_nome` avrebbe nascosto proprio le voci che di vero nome ne hanno uno
-  solo, ed è il difetto che il predicato `veroNomeNoto` esiste per evitare.
-- ⚠️ **Oggi non esclude nessuna delle 19 voci**, perché ognuna ha un vero nome noto: serve al
-  dataset che verrà. Che funzioni è provato svuotando due `vero_nome` a runtime (19 -> 17), non
-  dedotto dal fatto che la casella si spunta.
-- **Stato in memoria, non nel permalink né nel `localStorage`**: un filtro che sopravvive al
-  ricaricamento senza dirlo fa credere che il dataset sia più corto di quello che è. ⚠️ Il
-  rovescio, dichiarato: un link condiviso non porta con sé questo filtro.
-- È **fuori** dalla sezione `--filtri`, che è la lista delle categorie: mescolarvi una riga
-  che categoria non è avrebbe rotto il conteggio di `CATS` a occhio.
+- ⚠️⚠️ **LA LEZIONE CHE RESTA, e vale per qualunque casella futura**: una casella che in un
+  certo stato può **solo svuotare** la lista, o che **non può togliere niente**, non è un
+  filtro e mente su ciò che promette. Era il caso dei due estremi del dataset, ed è per questo
+  che `statoVeroNome` la forzava: coi soli **animali** accesi la spegneva e la bloccava (nessuno
+  dei 12 ha un vero nome, quindi accesa dava lista vuota), coi soli **draghi** la accendeva e
+  la bloccava (tutti ce l'hanno, e per un drago il nome È il vero nome, quindi spegnerla non
+  toglieva nulla). ⚠️ Chi ne aggiunge una guardi i due estremi **prima** di darla per buona.
+- ⚠️ **La casella nuova non ricade nel caso**, e per questo non ha nessuno stato forzato: è
+  additiva, quindi non svuota mai, e le voci che governa esistono in tutte e tre le categorie.
+- Ⓘ **Il valore scelto non si perdeva**: `soloVeroNome` restava com'era e la funzione decideva
+  solo che cosa **mostrare** e se lasciar toccare, così riaccendendo una terza categoria la
+  casella tornava in mano all'utente col valore di prima. È il modo giusto di scrivere uno
+  stato forzato, se un domani ne servisse un altro: **non** si scrive nella variabile.
+- Ⓘ **Era in memoria e non nel permalink né nel `localStorage`**, per la stessa ragione della
+  casella che l'ha sostituita, e stava **fuori** dalla sezione `--filtri`, che è la lista delle
+  categorie: mescolarvi una riga che categoria non è avrebbe rotto il conteggio di `CATS` a
+  occhio.
 
 ## 🏷️ 'Persone', e la trappola delle DUE mappe di etichette
 
@@ -3788,22 +3934,12 @@ blocca, come per le categorie; e la guardia è **anche** nel gestore, non solo n
   (40 femmine su 120 lasciano **80** card, non i 74 maschi), perché i 6 senza genere restano. È il
   prezzo giusto: l'alternativa era attribuire un sesso per omissione.
 
-#### 🔒 'Solo veri nomi noti' segue le categorie accese
+#### 🔒 Ⓘ La terza cella: 'Solo veri nomi noti', e oggi 'Nessun nome noto'
 
-Regola dell'utente, `0.92`, e i numeri del dataset la fondano.
-
-| categorie accese | la casella | perché |
-|---|---|---|
-| **soli animali** | si **spegne** e si blocca | **0 animali su 12** hanno un vero nome: accesa darebbe lista vuota |
-| **soli draghi** | si **accende** e si blocca | **8 draghi su 8** ce l'hanno, e per un drago il nome È il vero nome: spegnerla non toglierebbe nulla |
-
-- ⚠️ **Il valore scelto dall'utente non si perde**: `soloVeroNome` resta com'è e la regola
-  decide solo che cosa **mostrare** e se lasciar toccare. Riaccendendo una terza categoria la
-  casella torna in mano all'utente col valore di prima, ed è la ragione per cui lo stato
-  forzato non si scrive nella variabile.
-- ⚠️ **Il filtro legge `veroNomeInVigore()`, non `soloVeroNome`**: con una sola categoria
-  accesa comanda la regola, e leggere la variabile grezza farebbe dire alla lista una cosa e
-  alla casella un'altra.
+⚠️ La terza cella della seconda riga ha cambiato inquilino con la `2.10`. Quella di prima
+**seguiva le categorie accese** (regola dell'utente, `0.92`), e la lezione che ne resta vive
+in § "Ⓘ Il filtro 'solo chi ha un vero nome noto' è USCITO", insieme ai due
+estremi del dataset che la fondavano: qui non se ne tiene una copia, che divergerebbe.
 
 ### 📱 La sheet mobile: l'aria in cima e lo scorrimento spento
 

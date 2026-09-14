@@ -3363,7 +3363,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.00</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.10</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3497,11 +3497,17 @@ function fxSelOpts(k, p){
 }
 var SITE_FLAGS_DEFAULT = {
   zoomBig:false,
-  // ⚠️ `senzanome` NON è un effetto: è il primo flag di CONTENUTO (1.07), e decide se le
-  // voci col campo `senzanome` (il `Signore di Re Albi` e il `Nemico di Morred`, che per
-  // nome d'uso hanno una perifrasi) compaiono in classifica. Spento di default, come
-  // chiesto dall'utente, quindi di base quelle due non ci sono.
-  senzanome:false,
+  // ⚠️⚠️ `senzanome` È USCITO DA QUI CON LA 2.10, e non è una potatura: le voci il cui nome
+  // d'uso è una perifrasi non sono più una scelta EDITORIALE del sito ma un filtro del
+  // VISITATORE, quindi la loro visibilità vive nel Pannello e non nella Console (istruzione
+  // dell'utente, 2026-09-14: *la visibilità dei personaggi senza nome sarà governata
+  // direttamente dal Pannello... la voce corrispondente della console può essere rimossa,
+  // perché non sarà più un'opzione globale*). Il campo `senzanome` sulla VOCE resta dov'era:
+  // a cambiare è chi decide, non il criterio.
+  // ⚠️ La chiave `senzanome` è rimasta in `siteFlags` di `dati.js` e non fa danno: nessuno
+  // la legge più (`normSiteFlags` non la copia), e sparirà da sé al primo salvataggio che
+  // riscriva i FLAG dalla Console, perché il Worker riscrive quella riga con ciò che
+  // riceve. Un salvataggio dei soli testi la preserva, ed è corretto così.
   // glow: dalla v12.76 le manopole numeriche sono PER TEMA (suffisso _d/_l) e
   // esistono anche per il lato DESTRO (prefisso r). Le chiavi restano PIATTE, coi
   // suffissi nel nome, così il Worker continua a validarne solo la forma.
@@ -3804,8 +3810,6 @@ function fxStrOk(k, p, v){
 function normSiteFlags(src){
   src = (src && typeof src === 'object') ? src : {};
   var out = { zoomBig: (typeof src.zoomBig === 'boolean') ? src.zoomBig : SITE_FLAGS_DEFAULT.zoomBig };
-  // Flag di contenuto: booleano piatto come `zoomBig`, senza varianti di piattaforma.
-  out.senzanome = (typeof src.senzanome === 'boolean') ? src.senzanome : SITE_FLAGS_DEFAULT.senzanome;
   FX_EFFECTS.forEach(function(k){
     out[k] = normFxEffect(k, src[k]);
     out[k + '_m'] = (src[k + '_m'] !== undefined)
@@ -5700,7 +5704,16 @@ var BADGE_ICON = {
   // l'unico canale che le distingue davvero (richiesta esplicita dell'utente).
   signoredraghi: '<img class="status-icon si-signoredraghi" src="icons/Dragonlord.webp" title="%L%" alt="%L%">',
   maestro: '<img class="status-icon si-maestro" src="icons/MasterOfRoke.webp" title="%L%" alt="%L%">',
-  arcimago: '<img class="status-icon si-arcimago" src="icons/ArchmageOfRoke.webp" title="%L%" alt="%L%">'
+  arcimago: '<img class="status-icon si-arcimago" src="icons/ArchmageOfRoke.webp" title="%L%" alt="%L%">',
+  // ⚠️⚠️ IL SETTIMO BADGE, DALLA 2.10: il vero nome rivelato dai testi canonici. Disegnato
+  // qui e scelto dall'utente fra quattro forme rese alla MISURA VERA (17px in legenda),
+  // che è il solo metro che conta: delle sette disegnate, tre si impastavano a quella
+  // misura e una si leggeva come un emoji sorridente. Il rombo con la fessura è il più
+  // nitido dei quattro superstiti e non somiglia a nessuna delle sei già in uso.
+  // ⚠️ La tinta TEAL è scelta sulla distanza: è la più lontana dalle sei in uso
+  // (23 gradi dall'azzurro del simbolo maschile), e la sola delle tre candidate coi
+  // contrasti equilibrati sui due fondi (3,30 sullo scuro, 3,76 sul chiaro).
+  veronoto: '<img class="status-icon si-veronoto" src="icons/TrueName.webp" title="%L%" alt="%L%">'
 };
 
 // Ordine dei badge (riordinato dall'utente, v7.22-v7.23): vale per la resa in
@@ -5710,7 +5723,15 @@ var BADGE_ICON = {
 // gli altri hanno riga propria. 'est' precede 'Aman/west' (la nave che va, poi
 // quella che torna). 'morgoth' è un EASTER EGG (solo Fingolfin): saltato in
 // legenda e nella griglia admin, appare solo sulla sua card.
-var ICON_ORDER = ['stregone','mago','nomeged','signoredraghi','maestro','arcimago'];
+// ⚠️⚠️ L'ORDINE È DELL'UTENTE (2026-09-14) e non un ordine tecnico: `veronoto` apre,
+// poi `nomeged`, cioè i due badge che parlano di veri nomi, poi la scala del potere
+// (stregone, mago, Signore dei Draghi) e in fondo la coppia di Roke. Non si 'sistema' a
+// intuito: vale per la resa in lista, per la legenda del Pannello e per l'editor admin.
+// ⚠️⚠️ LA CHIAVE È `veronoto` E NON `veronome`, ed è deliberato: `veronome` fu la chiave
+// del terzo badge fino al 2026-08-21, quando cambio' significato e divento' `nomeged`, coi
+// suoi 19 valori azzerati. Riusarla direbbe la cosa giusta oggi e renderebbe illeggibile
+// ogni commit anteriore a quella data.
+var ICON_ORDER = ['veronoto','nomeged','stregone','mago','signoredraghi','maestro','arcimago'];
 // ── Filtro badge (dalla v4.05) ──────────────────────────────────────────
 // Selezione per RIGA di legenda (le righe raggruppate contano come unità):
 // la lista mostra chi ha ALMENO UNO dei badge delle righe selezionate
@@ -5722,10 +5743,24 @@ var BADGE_ROWS = {
   // quindi condividono un id di riga e il filtro prende l'UNIONE dei due.
   // ⚠️ L'id di riga `roke` non è il nome di un campo dei dati: i campi sono i suoi due
   // membri. Chi lo cercasse in `dati.js` non lo troverebbe.
-  stregone:['stregone'], mago:['mago'], nomeged:['nomeged'],
+  veronoto:['veronoto'], nomeged:['nomeged'], stregone:['stregone'], mago:['mago'],
   signoredraghi:['signoredraghi'], roke:['maestro','arcimago']
 };
 var badgeFilter = new Set(); // id di riga (chiavi di BADGE_ROWS) attivi
+// ⚠️⚠️ IL PREDICATO UNICO DI 'QUESTA VOCE PORTA QUEL BADGE', e serve perché `veronoto` NON
+// è un campo del dato: si DERIVA da `vero_nome`, che è già nel dataset. Due fonti per la
+// stessa cosa (il campo pieno e un booleano da spuntare) divergerebbero alla prima voce
+// nuova, e nessuno se ne accorgerebbe finché una card non mostrasse il badge senza il nome
+// o il contrario.
+// ⚠️ Lo usano TUTTI i lettori dei badge (la resa in lista, il filtro del Pannello, il conto
+// delle righe attivabili, l'anteprima dei micro-aggiustamenti): chi ne aggiunge uno che
+// legga `p[k]` a mano lascia fuori proprio il settimo badge, senza dare nessun errore.
+// ⚠️ Un eventuale `veronoto` scritto nel dato NON conta: qui si guarda solo `vero_nome`, o
+// il campo derivato tornerebbe a essere una seconda fonte per la porta di servizio.
+function haBadge(p, k) {
+  if (k === 'veronoto') return veroNomeNoto(p);
+  return !!p[k];
+}
 // Variante per la sola legenda: per gli Istari si usa il mago bianco come
 // emblema dell'ordine (in lista invece c'è un'icona per ciascun mago). Il
 // Fellowship (Hobbit) non ha più variante: una sola icona, come tutte le altre.
@@ -5757,6 +5792,11 @@ var ISTARI_ICON = {};
 // `male`/`female` c'erano in entrambi i mondi: era la spia che il difetto stava
 // nell'elenco e non nel meccanismo.
 var BADGE_ADJUST_UNITS = [
+  // ⚠️ `veronoto` è qui benché il suo badge sia DERIVATO da `vero_nome`: l'unità serve al
+  // disegno (margini, nudge, scala), non al dato, e la sua icona va in fila con le altre
+  // sulla card come qualunque altra. Chi lo lasciasse fuori avrebbe l'unica `img` della
+  // riga senza la classe `bi-<id>`, quindi immune ai micro-aggiustamenti e disallineata.
+  { id:'veronoto', it:'Vero nome noto',    en:'True name known',   members:['veronoto'] },
   { id:'stregone', it:'Strega o stregone', en:'Witch or sorcerer', members:['stregone'] },
   { id:'mago',     it:'Mago',              en:'Mage',              members:['mago'] },
   { id:'nomeged',  it:'Nome di Sparviero', en:"Sparrowhawk's name", members:['nomeged'] },
@@ -5796,7 +5836,7 @@ var BADGE_ADJUST_FALLBACK = {
   // numero dell'editor non sarebbe più quello che la pagina applica, e divergerebbe da
   // quello del gemello di Arda, dove i valori salvati sono assoluti. Scartata.
   stregone:{ml:0.12,mr:0,ny:0,sc:1}, mago:{ml:0.12,mr:0,ny:0,sc:1},
-  nomeged:{ml:0.12,mr:0,ny:0,sc:1},
+  nomeged:{ml:0.12,mr:0,ny:0,sc:1}, veronoto:{ml:0.12,mr:0,ny:0,sc:1},
   // I tre nuovi nascono col seed dei tre vecchi: sono `.status-icon` come loro e non
   // hanno CSS per-icona, quindi il margine di partenza è lo stesso.
   signoredraghi:{ml:0.12,mr:0,ny:0,sc:1}, maestro:{ml:0.12,mr:0,ny:0,sc:1},
@@ -5873,8 +5913,19 @@ document.addEventListener('error', function(e){
 // le due forme.
 var ICON_LABEL = {
   it: {
-    stregone: "Strega o stregone (possiede qualche potere)",
-    mago:     "Mago (educato a Roke; detiene il vero potere)",
+    // ⚠️⚠️ I SEI TESTI SONO DELL'UTENTE, DETTATI ALLA LETTERA il 2026-09-14, e si
+    // riportano identici: li ha scritti lui *così come devono diventare*. Misurati coi
+    // font veri prima di applicarli (§ 'Le etichette nuove: la misura che le ha ammesse'
+    // in `earthsea/top/CLAUDE.md`).
+    // ⚠️ `stregone/incantatore` nomina le DUE rese italiane dello stesso grado: Mondadori
+    // scrive `stregone`, Nord `incantatore`, e il sito segue Nord sui nomi ma qui li porta
+    // tutti e due perché l'etichetta deve farsi riconoscere da chi ha in mano un volume
+    // qualunque. In inglese la parola è una sola, `sorcerer`, quindi la metà inglese non
+    // si sdoppia.
+    stregone: "Strega o stregone/incantatore (ha qualche potere)",
+    // ⚠️ `uomo educato a Roke` e non solo `educato a Roke`: a Terramare la Scuola non
+    // ammetteva donne, e il badge alto lo dice invece di lasciarlo sottinteso.
+    mago:     "Mago (uomo educato a Roke; detiene il vero potere)",
     // ⚠️ Il terzo badge ha CAMBIATO significato il 2026-08-21 (istruzione
     // dell'utente): diceva 'di questo personaggio si conosce il vero nome', che la
     // riga del vero nome ora dice da sé. Adesso marca chi ha ricevuto in custodia
@@ -5885,7 +5936,10 @@ var ICON_LABEL = {
     // parentesi (`Sparviero (Ged)`), che è l'ordine delle card: là il nome d'uso sta
     // sopra e il vero nome sotto. Prima diceva il solo `Ged`, cioè il vero nome nudo,
     // che è l'informazione che il sito tratta come la più preziosa.
-    nomeged:  "Custode del vero nome di Sparviero (Ged)",
+    // ⚠️ `Conobbe IN VITA`, e la precisazione è dell'utente: il badge marca chi ricevette
+    // quel nome mentre Ged era vivo, non chi lo legge oggi sulla pagina. È la distinzione
+    // che lo separa dal badge nuovo `veronoto`, che invece parla di noi lettori.
+    nomeged:  "Conobbe in vita il vero nome di Ged",
     // ⚠️ La spiegazione fra parentesi dice il canone dal capo giusto, cioè la causa invece
     // del segno esteriore (scelta dell'utente, 2026-08-26). In 'Le tombe di Atuan' Ged
     // dice ad Arha che un Signore dei Draghi è uno con cui i draghi parlano, e aggiunge
@@ -5896,18 +5950,25 @@ var ICON_LABEL = {
     // in `earthsea/top/CLAUDE.md`, § 'I TRE badge annunciati: il criterio di uno solo';
     // attestazioni e portatori in `rules/Earthsea.md`, § 'Signore dei Draghi'.
     signoredraghi: "Signore dei Draghi (i draghi lo considerano loro pari)",
+    // ⚠️⚠️ IL BADGE NUOVO parla dei TESTI, non della storia: dice che il vero nome di quel
+    // personaggio lo sappiamo NOI, perché il canone lo scrive. Per questo non è un campo
+    // del dato ma si ricava da `vero_nome` (vedi `haBadge`): un booleano accanto a quel
+    // campo sarebbe un secondo dato da tenere allineato al primo, e prima o poi uno dei
+    // due mentirebbe.
+    veronoto: "Vero nome rivelato nei testi canonici",
     maestro:  "Maestro di Roke (uno dei Nove)",
     arcimago: "Arcimago di Roke (il primo fra i Nove)"
   },
   en: {
     stregone: "Witch or sorcerer (holds some power)",
-    mago:     "Mage (trained on Roke; holds the true power)",
+    mago:     "Mage (a man trained on Roke; holds the true power)",
     // ⚠️ 'Sparviero' e NON 'Sparrowhawk', ed è la stessa scelta che il dataset fa con
     // `nome_en`: le rese inglesi dei nomi non sono in scena, e tradurne una sola
     // farebbe sembrare attestate anche le altre. Chi la volesse inglese cambi prima
     // quella regola, non questa riga.
-    nomeged:  "Keeper of Sparviero's true name (Ged)",
+    nomeged:  "Knew Ged's true name in life",
     signoredraghi: "Dragonlord (dragons regard him as an equal)",
+    veronoto: "True name revealed in the canon",
     maestro:  "Master of Roke (one of the Nine)",
     arcimago: "Archmage of Roke (first among the Nine)"
   }
@@ -5948,7 +6009,7 @@ var ICON_LABEL_OVERRIDE = {
 };
 function buildStatus(p) {
   var L = ICON_LABEL[currentLang] || ICON_LABEL.it;
-  return ICON_ORDER.filter(function(k){ return p[k]; }).map(function(k){
+  return ICON_ORDER.filter(function(k){ return haBadge(p, k); }).map(function(k){
     // L'icona semitrasparente (valore dati 'presunto' → classe si-dim, 50%) è un
     // segnale visivo di 'stato a sé': il significato va dato caso per caso in
     // ICON_LABEL_OVERRIDE. Nessun suffisso '(presunto)' di default (scelta utente).
@@ -6078,15 +6139,27 @@ var GENDER_ICON = {
 // Predicato di visibilità UNICO (filtri categoria + filtro badge): condiviso da
 // renderList, visiblePos e stepVisible, così la posizione nella modale e la
 // navigazione con le frecce restano sempre coerenti con la lista.
-// Filtro 'solo i personaggi di cui è noto il vero nome' (checkbox nel Pannello,
-// istruzione dell'utente del 2026-08-21). Stato in memoria e non nel permalink né nel
-// localStorage: un filtro che sopravvive al ricaricamento senza dirlo è un modo per
-// far credere che il dataset sia più corto di quello che è.
-var soloVeroNome = false;
+// ⚠️⚠️ 'NESSUN NOME NOTO': la casella del Pannello che MOSTRA le voci senza nome d'uso, e
+// dalla 2.10 ha preso il posto di 'Solo veri nomi noti' (istruzione dell'utente, 2026-09-14).
+// ⚠️ Il verso è ADDITIVO e non esclusivo, ed è la differenza che conta rispetto alla casella
+// che sostituisce: accesa, le voci il cui nome d'uso è una perifrasi (il `Signore del Fuoco`,
+// il `Nemico di Morred`) si AGGIUNGONO alla lista invece di restare le sole visibili. Spenta
+// di default, come chiesto, quindi di base non ci sono.
+// ⚠️⚠️ È LO STESSO CRITERIO DEL FLAG DI SITO CHE SOSTITUISCE, cambia solo chi decide: il
+// campo `senzanome` sulla voce resta la fonte (§ del `CLAUDE.md` di progetto), e a passare
+// dalla Console al Pannello è la scelta, non il modo di riconoscere quelle voci.
+// Stato in memoria e non nel permalink né nel localStorage: un filtro che sopravvive al
+// ricaricamento senza dirlo è un modo per far credere che il dataset sia più corto di
+// quello che è. ⚠️ Il rovescio, dichiarato: un link condiviso non porta con sé questo filtro.
+var mostraSenzaNome = false;
 // Ⓘ Dalla 0.52 il campo basta da solo: i draghi puri portano il nome in `vero_nome`
 // (dato raddrizzato con lo Schedario), quindi il vecchio ramo 'un drago conta come noto
 // anche col campo vuoto' era diventato morto ed è uscito. Un drago con `vero_nome` vuoto
-// oggi è un dato sbagliato, e questo filtro lo farebbe emergere invece di coprirlo.
+// oggi è un dato sbagliato, e questo predicato lo farebbe emergere invece di coprirlo.
+// ⚠️⚠️ DALLA 2.10 NON REGGE PIÙ UN FILTRO MA UN BADGE, il settimo (`veronoto`), e il
+// cambiamento è di natura: era il predicato di una casella che nascondeva le altre voci,
+// adesso è la fonte unica di un'icona che si vede sulla card. Chi lo tocca guardi
+// `haBadge`, non più `isVisibile`.
 function veroNomeNoto(p) {
   return !!(p.vero_nome && String(p.vero_nome).trim());
 }
@@ -6110,43 +6183,33 @@ function genereAttivo(p) {
   return genereFiltro[g] !== false;
 }
 
-// ── 'Solo veri nomi noti' SEGUE le categorie accese (0.92, regola dell'utente) ───
-// Due casi estremi, e in entrambi la casella smette di essere una scelta:
-//   soli ANIMALI  -> si SPEGNE e si blocca. Nessuno dei 12 ha un vero nome (misurato
-//                    sul dataset), quindi lasciarla accendere darebbe una lista vuota:
-//                    una casella che può solo far sparire tutto non è un filtro.
-//   soli DRAGHI   -> si ACCENDE e si blocca. Tutti e 8 ce l'hanno, e per un drago il
-//                    nome È il vero nome: spegnerla non toglierebbe nulla, quindi la
-//                    casella mentirebbe promettendo un effetto che non c'è.
-// ⚠️ Il valore scelto dall'utente NON si perde: `soloVeroNome` resta com'è e questa
-// funzione decide solo che cosa MOSTRARE e se lasciar toccare. Riaccendendo una terza
-// categoria la casella torna in mano all'utente col suo valore di prima, che è la
-// ragione per cui lo stato forzato non si scrive nella variabile.
-// ⚠️ È calcolata a ogni ridisegno del Pannello e non memorizzata: le categorie possono
-// cambiare da più strade (le caselle, un permalink, il riordino), e uno stato copiato
-// resterebbe indietro da una di quelle.
-function statoVeroNome() {
-  var attive = CATS.filter(function(c){ return filterState[c]; });
-  if (attive.length === 1 && attive[0] === 'animale') return { on: false, locked: true };
-  if (attive.length === 1 && attive[0] === 'dragon') return { on: true, locked: true };
-  return { on: soloVeroNome, locked: false };
-}
-// Il valore che il FILTRO deve usare, che è quello mostrato: con una sola categoria
-// accesa comanda la regola qui sopra, altrimenti la scelta dell'utente.
-function veroNomeInVigore() { return statoVeroNome().on; }
+// ── Ⓘ 'Solo veri nomi noti' SEGUIVA le categorie accese (0.92): STORIA ───────────
+// ⚠️⚠️ La casella è USCITA con la 2.10, e con lei `statoVeroNome`/`veroNomeInVigore`, che
+// la forzavano con due casi estremi: soli ANIMALI la spegneva e la bloccava (nessuno dei 12
+// ha un vero nome, quindi accesa dava lista vuota), soli DRAGHI la accendeva e la bloccava
+// (tutti e 8 ce l'hanno, e per un drago il nome È il vero nome, quindi spegnerla non
+// toglieva nulla). A sostituirla è 'Nessun nome noto', per istruzione dell'utente.
+// ⚠️ La lezione che resta, ed è quella che pagava quel codice: una casella che in un certo
+// stato può solo svuotare la lista, o che non può togliere niente, **non è un filtro** e
+// mente su ciò che promette. Chi ne aggiunge una guardi i due estremi del dataset prima di
+// darla per buona. ⚠️ La casella nuova non ricade nel caso: è additiva, quindi non svuota
+// mai, e le voci che governa ci sono in tutte e tre le categorie.
+// ⚠️ Il predicato `veroNomeNoto` NON è uscito con lei: regge il badge `veronoto` (vedi
+// `haBadge`), che è il suo lavoro dalla 2.10.
 
-// ── 'Personaggi senza nome': FLAG DI SITO, non un filtro del visitatore ─────────
-// Le due voci il cui nome d'uso è una PERIFRASI e non un nome proprio (il `Signore di Re
-// Albi` e il `Nemico di Morred`) compaiono in classifica solo se l'admin accende
-// `SITE_FLAGS.senzanome`. Spento di default, quindi di base non ci sono.
-// ⚠️⚠️ STA NELLA CONSOLE E NON NEL PANNELLO, e sono due cose: il **Pannello** è la
-// modale del FAB, coi filtri del visitatore, aperta a tutti; la **Console** è l'editor admin,
-// che salva in `dati.js` e vale per tutti i visitatori. La `1.06` l'aveva messo nel primo, ed
-// era la seconda volta che quella confusione costava una versione.
-// ⚠️ Dal 2026-08-28 l'editor si chiama **Console** proprio per questo: 'Pannello di
-// controllo' conteneva l'altro nome, quindi ogni abbreviazione li faceva collidere.
-// ⚠️ Ne discende la differenza di sostanza, non solo di posto: non è una preferenza di chi
-// guarda ma una **scelta editoriale** del sito, quindi non ha senso che ognuno se la regoli.
+// ── Ⓘ 'Personaggi senza nome' è stato un FLAG DI SITO dalla 1.07 alla 2.09 ───────
+// ⚠️⚠️ DALLA 2.10 È UN FILTRO DEL PANNELLO (`mostraSenzaNome`, qui sopra), per istruzione
+// dell'utente: la visibilità di quelle voci è passata da scelta editoriale del sito a
+// preferenza di chi guarda. La storia serve a leggere i commit e le note vecchie, che lo
+// dànno nella Console, e a non rimettercelo per riflesso.
+// ⚠️⚠️ LA DISTINZIONE FRA I DUE POSTI RESTA VERA E VALE PER OGNI ALTRA VOCE: il **Pannello**
+// è la modale del FAB, coi filtri del visitatore, aperta a tutti; la **Console** è l'editor
+// admin, che salva in `dati.js` e vale per tutti i visitatori. La `1.06` mise questa voce nel
+// primo e la `1.07` la spostò nel secondo, ed era la seconda volta che quella confusione
+// costava una versione; dal 2026-08-28 l'editor si chiama **Console** proprio per questo,
+// perché 'Pannello di controllo' conteneva l'altro nome e ogni abbreviazione li faceva
+// collidere. ⚠️ Che stavolta la voce torni nel Pannello non smentisce niente di tutto questo:
+// a cambiare è la natura della scelta, dichiarata dall'utente, non il criterio dei due posti.
 // ⚠️⚠️ IL CRITERIO È UN CAMPO DEL DATO (`senzanome` sulla voce) E NON UN ELENCO DI NOMI NEL
 // CODICE, come per ogni altra proprietà: se un domani ne entra una terza le basta il campo,
 // mentre un elenco qui dentro nessuno lo verrebbe a cercare.
@@ -6243,18 +6306,15 @@ var svelate = new Set();
 
 function isVisibile(p, idx) {
   if (svelate.size && idx !== undefined && svelate.has(idx)) return true;
-  // ⚠️ Prima di tutti gli altri: è un filtro sul CONTENUTO, cioè decide se la voce esiste
-  // per la lista, mentre gli altri decidono come guardarla.
-  if (!SITE_FLAGS.senzanome && p.senzanome) return false;
-  // ⚠️ `veroNomeInVigore()` e non `soloVeroNome`: con una sola categoria accesa il valore
-  // lo decide la regola (vedi `statoVeroNome`), o la lista direbbe una cosa e la casella
-  // ne mostrerebbe un'altra.
-  if (veroNomeInVigore() && !veroNomeNoto(p)) return false;
+  // ⚠️ Resta il primo di tutti benché dalla 2.10 sia una casella come le altre: è l'unico
+  // che parte SPENTO, cioè l'unico che di base toglie qualcosa, e leggerlo per primo lo
+  // dice a chi passa di qui.
+  if (!mostraSenzaNome && p.senzanome) return false;
   if (!genereAttivo(p)) return false;
   if (badgeFilter.size) {
     var hit = false;
     badgeFilter.forEach(function(row){
-      if (!hit) BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; });
+      if (!hit) BADGE_ROWS[row].forEach(function(k){ if (haBadge(p, k)) hit = true; });
     });
     if (!hit) return false;
   }
@@ -6272,7 +6332,7 @@ function visibleCountWithBadgeSet(rowSet) {
     var p = dati[i];
     if (rowSet.size) {
       var hit = false;
-      rowSet.forEach(function(row){ if (!hit) BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; }); });
+      rowSet.forEach(function(row){ if (!hit) BADGE_ROWS[row].forEach(function(k){ if (haBadge(p, k)) hit = true; }); });
       if (!hit) continue;
     }
     if (!inCatsAttive(p)) continue;
@@ -6295,7 +6355,7 @@ function rowHasMembersInCats(row) {
     var p = dati[i];
     if (!inCatsAttive(p)) continue;
     var hit = false;
-    BADGE_ROWS[row].forEach(function(k){ if (p[k]) hit = true; });
+    BADGE_ROWS[row].forEach(function(k){ if (haBadge(p, k)) hit = true; });
     if (hit) return true;
   }
   return false;
@@ -7560,7 +7620,7 @@ function openSiteSearch() {
       }
       var s = document.createElement('span'); s.className = 'ss-hit-snip';
       s.appendChild(conEvidenza(r.val, r.qf)); b.appendChild(s);
-      if (dati[r.i] && dati[r.i].senzanome && !SITE_FLAGS.senzanome) {
+      if (dati[r.i] && dati[r.i].senzanome && !mostraSenzaNome) {
         var tag = document.createElement('span'); tag.className = 'ss-hit-tag';
         tag.textContent = it ? 'nascosto' : 'hidden'; b.appendChild(tag);
       }
@@ -8087,12 +8147,16 @@ function controlPanelHTML() {
                           color: CAT_COLOR[c], lbl: CL[c], lblAlt: CLo[c] });
   });
   destra += '</div>';
-  // Seconda riga: i due generi e il filtro del vero nome.
+  // Seconda riga: i due generi e la casella delle voci senza nome d'uso.
   var GEN = { it: { m: 'Maschi', f: 'Femmine' }, en: { m: 'Males', f: 'Females' } };
   var gCur = currentLang === 'it' ? GEN.it : GEN.en, gAlt = currentLang === 'it' ? GEN.en : GEN.it;
-  var vnLbl = currentLang === 'it' ? 'Solo veri nomi noti' : 'Known true names';
-  var vnAlt = currentLang === 'it' ? 'Known true names' : 'Solo veri nomi noti';
-  var vn = statoVeroNome();
+  // ⚠️⚠️ 'Nessun nome noto' E NON 'Personaggi senza nome', ed è una MISURA e non un gusto:
+  // l'utente ha offerto le due forme (*o 'Nessun nome noto' (leggermente più corto)*), e col
+  // font vero la lunga allarga il Pannello desktop di 17,94px (da 359,48 a 377,42), perché
+  // diventa lei il blocco più largo; la corta ne misura 98,2 contro i 98,0 dell'etichetta che
+  // sostituisce, cioè lascia il Pannello dov'è al decimo di pixel.
+  var vnLbl = currentLang === 'it' ? 'Nessun nome noto' : 'No known name';
+  var vnAlt = currentLang === 'it' ? 'No known name' : 'Nessun nome noto';
   destra += '<div class="ctrl-frow">';
   ['m', 'f'].forEach(function(g){
     // Stessa guardia delle categorie: l'ultimo genere acceso si blocca.
@@ -8100,17 +8164,19 @@ function controlPanelHTML() {
     destra += filtroRow({ attr: ' data-gen="' + g + '"', on: genereFiltro[g], locked: soloLui,
                           lbl: gCur[g], lblAlt: gAlt[g] });
   });
-  destra += filtroRow({ attr: ' id="ctrl-solovero"', on: vn.on, locked: vn.locked,
+  // ⚠️ Nessun `locked`: questa casella non ha lo stato forzato che aveva quella di prima
+  // (vedi la voce di storia accanto a `veroNomeNoto`), perché additiva non svuota mai la
+  // lista e le voci che governa esistono in tutte e tre le categorie.
+  destra += filtroRow({ attr: ' id="ctrl-senzanome"', on: mostraSenzaNome, locked: false,
                         title: vnLbl, lbl: vnLbl, lblAlt: vnAlt });
   destra += '</div>';
   destra += '</div>';
-  // Ⓘ Il filtro 'solo i personaggi di cui è noto il vero nome' aveva una sezione tutta
-  // sua (`--vero`) e stava su una riga a parte sotto le categorie: dalla `0.92` è la
-  // terza cella della seconda riga, accanto ai due generi (mockup dell'utente). ⚠️ Con
-  // lui è caduta la classe `.ctrl-row--wrap`, che gli serviva perché la frase andava a
-  // capo nella colonna stretta: nella riga distribuita ci sta in una riga sola.
-  // ⚠️ L'etichetta BREVE resta ('Solo veri nomi noti', istruzione della `0.69`): la forma
-  // lunga tornerebbe a spezzarsi.
+  // Ⓘ La terza cella di questa riga ha cambiato inquilino con la 2.10: era il filtro 'solo i
+  // personaggi di cui è noto il vero nome', che dalla `0.92` stava qui accanto ai due generi
+  // (mockup dell'utente) e prima ancora aveva una sezione tutta sua (`--vero`) su una riga a
+  // parte sotto le categorie. ⚠️ Con quel trasloco era caduta la classe `.ctrl-row--wrap`,
+  // che serviva perché la frase andava a capo nella colonna stretta: nella riga distribuita
+  // ci sta in una riga sola, e ci sta anche l'etichetta nuova, che è più corta di quella.
   // Tag del filtro badge (stile 'sistema a tag': riquadro stondato, × a sinistra).
   // Il click azzera tutti i badge.
   // ⚠️⚠️ STA IN FONDO AL PANNELLO, DOPO LA LEGENDA (istruzione dell'utente,
@@ -8375,8 +8441,8 @@ function wireControlPanel() {
       applyFilter();
     });
   });
-  var svn = panel.querySelector('#ctrl-solovero');
-  if (svn) svn.addEventListener('change', function(){ soloVeroNome = svn.checked; applyFilter(); });
+  var svn = panel.querySelector('#ctrl-senzanome');
+  if (svn) svn.addEventListener('change', function(){ mostraSenzaNome = svn.checked; applyFilter(); });
   // Caselle del GENERE. ⚠️ La guardia sta QUI e non solo nel `disabled` dell'ultima
   // accesa: `disabled` è la resa, questa è la regola. Un doppio clic rapido, una
   // scorciatoia da tastiera o un ridisegno arrivato a metà gesto possono portare un
@@ -10091,6 +10157,7 @@ function showAdminEditor() {
       p.fonte = g(i, 'fonte'); p.fonte_en = g(i, 'fonte_en');
       ICON_ORDER.forEach(function(k) {
         if (k === 'morgoth' || k === 'king_high_now') return; // nessuna checkbox: valore PRESERVATO (Morgoth su Fingolfin, Re 'in carica' su Finarfin)
+        if (k === 'veronoto') return; // derivato da `vero_nome`: non ha checkbox e non ha campo (vedi `haBadge`)
         const chkEl = document.getElementById('ae-' + i + '-flag-' + k);
         // Preserva il valore speciale 'presunto' (non impostabile da UI):
         // la checkbox lo mantiene se resta spuntata, lo rimuove se deselezionata.
@@ -10279,6 +10346,11 @@ function showAdminEditor() {
     ICON_ORDER.forEach(function(k) {
       if (k === 'morgoth') return; // easter egg (solo Fingolfin): non esposto nell'editor admin
       if (k === 'king_high_now') return; // Re 'in carica' (Finarfin): come Morgoth, solo card. Il valore è PRESERVATO al salvataggio (checkbox assente)
+      // ⚠️⚠️ `veronoto` NON HA UNA CHECKBOX, e non è una dimenticanza: il badge si DERIVA da
+      // `vero_nome` (vedi `haBadge`), che in questa stessa scheda è già un campo di testo
+      // qui sopra. Una casella accanto a quel campo prometterebbe di poterlo contraddire, e
+      // chi la spuntasse su una voce senza vero nome non vedrebbe cambiare niente.
+      if (k === 'veronoto') return;
       const lbl = document.createElement('label');
       lbl.className = 'admin-flag-chk';
       // Solo icone: il nome dell'indicatore resta accessibile via title (hover/long-press)
@@ -10544,20 +10616,11 @@ var SITE_FLAG_ITEMS = [
   // scorre', perché la resa è già stata scelta fra tre mockup e qui serve solo
   // poterla spegnere. `noMob` perché la config è unica (vedi FX_UNI).
   { k:'deco', it:'Decorazione', en:'Corner mark', noMob:true },
-  // ⚠️⚠️ VIENE DOPO 'Decorazione' dal 2026-09-11 (istruzione dell'utente: *sposta
-  // 'Senza nome' sotto 'Decorazione'. Le due voci mobile devono restare in fondo*), dove
-  // prima chiudeva l'elenco. È l'unica voce che governa il CONTENUTO e non l'aspetto
-  // (1.07), quindi ha lo stacco di `gap` su ENTRAMBI i lati: il suo, e quello di 'Dito
-  // che scorre' qui sotto, che segna il ritorno agli effetti. ⚠️ Il secondo `gap` non è
-  // decorativo: senza, la voce di contenuto si legge come la prima delle due mobile.
-  // ⚠️ `plain`: booleano piatto come `zoomBig`, senza varianti di piattaforma e senza
-  // manopole, quindi niente `cfg` e niente riga nella tab Mobile.
-  // ⚠️⚠️ L'ETICHETTA È CORTA PER FORZA, e non è la parola dell'utente accorciata a gusto:
-  // la colonna della label misura ~102px a 320px in Modalità XL, e 'Personaggi senza nome'
-  // ne misura **145,5** col font reale (contro gli 87,6 di 'Colore schede', che ci sta, e i
-  // 120,7 di 'Colore delle schede', che va a capo). 'Senza nome' ne misura 74,8 e 'Nameless'
-  // 58,9. Il nome per esteso resta quello della funzione, e vive nelle regole del progetto.
-  { k:'senzanome', it:'Senza nome', en:'Nameless', plain:true, gap:true },
+  // ⚠️⚠️ QUI STAVA 'Senza nome', ED È USCITA CON LA 2.10 insieme al suo flag: la visibilità
+  // delle voci senza nome d'uso è passata al Pannello, cioè da scelta del sito a filtro del
+  // visitatore (istruzione dell'utente, 2026-09-14). ⚠️ Con lei la Console torna a governare
+  // il SOLO aspetto, che era la sua natura prima della 1.07: chi cercasse qui l'interruttore
+  // lo trovi nella riga dei filtri del Pannello, accanto ai due generi.
   // ⚠️ È l'unico effetto SOLO MOBILE, e la sua voce sta comunque nella tab Desktop: la
   // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
   // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
@@ -10566,6 +10629,9 @@ var SITE_FLAG_ITEMS = [
   // riconfermato il 2026-09-11: *le due voci mobile devono restare in fondo*): 'Tasti di
   // salto' se n'è andata con la 2.00, quando su mobile la colonna dei due tasti ha ceduto
   // il posto al glifo del FAB e quella manopola non ha avuto più niente da governare.
+  // ⚠️ Il suo `gap` regge da solo dalla 2.10: fino a lì faceva coppia con quello di 'Senza
+  // nome', e insieme segnavano l'isola della voce di contenuto. Adesso stacca la sola voce
+  // mobile dal resto, che è la ragione per cui l'utente la volle in fondo.
   { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true, mobOnly:true, gap:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
@@ -12237,7 +12303,7 @@ function showBadgeAdjustEditor(initState){
       for (i = 0; i < dati.length && out.length < 3; i++){ p = dati[i]; if ((p.genere === 'f' ? 'f' : 'm') === g) out.push(p); }
       return out;
     }
-    for (i = 0; i < dati.length && out.length < 3; i++){ p = dati[i]; if (u.members.some(function(k){ return p[k]; })) out.push(p); }
+    for (i = 0; i < dati.length && out.length < 3; i++){ p = dati[i]; if (u.members.some(function(k){ return haBadge(p, k); })) out.push(p); }
     return out;
   }
   function iconFile(p, k){ if (k === 'istari'){ var a = ISTARI_ICON[p.nome]; return 'icons/' + ((a && a[0]) || 'Bianco.webp'); } var m = /src="([^"]+)"/.exec(BADGE_ICON[k] || ''); return m ? m[1] : ('icons/' + k + '.webp'); }
@@ -12246,7 +12312,7 @@ function showBadgeAdjustEditor(initState){
     var u = unitOf(cur); var ss = samples(u);
     if (!ss.length){ pane.innerHTML = '<div class="ba-pv-empty">' + (it ? 'Nessuna scheda con questo badge' : 'No card with this badge') + '</div>'; return; }
     pane.innerHTML = ss.map(function(p){
-      var badges = ICON_ORDER.filter(function(k){ return p[k]; }).map(function(k){
+      var badges = ICON_ORDER.filter(function(k){ return haBadge(p, k); }).map(function(k){
         var uid = BADGE_UNIT[k]; var v = uid ? BADGE_ADJUST[uid] : { ml:0, mr:0, ny:0, sc:1 }; var selc = (uid === cur);
         var img = '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
         return selc ? '<span class="ba-pv-sel">' + img + '</span>' : img;
