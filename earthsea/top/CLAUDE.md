@@ -1188,8 +1188,8 @@ dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
   - ⚠️ **I file portano il nome del BADGE, non del disegno** (`sparkle` -> `Sorcerer`, `wand`
     -> `Mage`, `ged` -> `GedName`): un domani il disegno cambia e il badge no, e un file che si
     chiama come il disegno costringerebbe a toccare il codice per sostituire un'immagine.
-    ⚠️ È già successo **tre volte** con `GedName`, che ha cambiato disegno il 2026-08-23 senza
-    che il codice si accorgesse di nulla: è la prova che la convenzione paga.
+    ⚠️ È già successo **quattro volte** con `GedName`, l'ultima nella `2.13`, e ogni volta
+    senza che il codice si accorgesse di nulla: è la prova che la convenzione paga.
   - ⚠️⚠️ **Formato WebP LOSSLESS** (istruzione dell'utente, 2026-08-23: *senza quantizzarli,
     come stabilito in Arda*). I tre PNG pesavano 39 KB, i WebP ne pesano 10: **-74%** a pixel
     **identici**, verificato confrontando ogni pixel dopo la conversione.
@@ -1204,9 +1204,12 @@ dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
     - ⚠️ **Restano PNG le icone PWA e le favicon**, e non è una svista: il manifest le dichiara
       `image/png` e le PNG della favicon sono il ripiego per i browser che non prendono l'SVG.
       Là il formato è un requisito di piattaforma, non una scelta di compressione.
-  - **`GedName.webp` non è quadrata** (194x256): sulla card la regola
-    `.rank-name .rank-flags .status-icon { width:auto }` le lascia le proporzioni; in legenda
-    il box è quadrato e `object-fit:contain` la contiene senza deformarla.
+  - Ⓘ **`GedName.webp` NON era quadrata** (194x256) fino alla `2.12`, e adesso lo è: col
+    disegno nuovo dell'utente la tavola è 256x256 come le altre sei. ⚠️ Le due regole che la
+    reggevano **restano e non sono codice morto**: sulla card
+    `.rank-name .rank-flags .status-icon { width:auto }` lascia le proporzioni a qualunque
+    icona, e in legenda `object-fit:contain` contiene senza deformare. Servono al giorno in
+    cui un'icona tornerà rettangolare, ed è già successo.
   - ⚠️ **Il rettangolo di immagine rotta era il difetto della prima stesura**: gli SVG in
     linea sono nati perché il motore copiato puntava alle icone di Arda, che qui non esistono.
     Chi aggiunge un badge aggiunge **anche il file**, o torna quel difetto.
@@ -3435,9 +3438,14 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
 
 - ⚠️ **Il 3:1 delle componenti grafiche NON è la soglia in vigore su queste icone**, e saperlo
   evita di 'sanare' una scelta dell'utente: misurate col tono che porta il segno in quel tema,
-  le cinque in uso dànno `Sorcerer` 10,26 / **1,51**, `Mage` 8,21 / 3,72, `GedName` 4,94 /
-  2,51, `Male` 4,69 / 2,65, `Female` 4,32 / 2,87. Nel tema chiaro sono quasi tutte sotto: sono
-  **marchi accanto a un'etichetta di testo**, non testo, e le ha scelte lui.
+  le cinque in uso dànno `Sorcerer` 10,26 / **1,51**, `Mage` 8,21 / 3,72, `GedName` 6,41 /
+  **1,94**, `Male` 4,69 / 2,65, `Female` 4,32 / 2,87. Nel tema chiaro sono quasi tutte sotto:
+  sono **marchi accanto a un'etichetta di testo**, non testo, e le ha scelte lui.
+  - ⚠️ **I numeri di `GedName` sono quelli del disegno della `2.13`**, cioè del disco
+    `#69ba54`, e la tinta unica di prima (`#62a151`) dava 4,94 e 2,51: il disco guadagna sullo
+    scuro e perde sul chiaro. ⚠️ **Ma là l'informazione non la porta il disco**: la porta la
+    runa `#00664b`, che sul disco fa **2,92** in tutti e due i temi, perché vive dentro la
+    figura e non sul fondo della card. È la stessa struttura del rombo di `TrueName`.
 - **Come si rimisura**, se i fondi cambiano: `realfont.js` serve il sito, si porta il tema con
   `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
   centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
