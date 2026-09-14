@@ -1183,6 +1183,27 @@ html[data-theme="light"] .cc-animale{--ccrgb:133,101,8}
 @keyframes fab-tap { from { transform:scale(1); } to { transform:scale(0.92); } }
 @keyframes fab-grow { from { transform:scale(0.92); } to { transform:scale(1); } }
 @media (prefers-reduced-motion:reduce){ #ctrl-fab.fab-tap, #ctrl-fab.fab-grow { animation:none; } }
+/* ── Il chevron del salto, dentro il FAB (solo mobile, dalla 2.00) ──────────────
+   ⚠️⚠️ IL CHEVRON PRENDE IL POSTO DEL LOGO invece di stare accanto a lui: è la
+   richiesta dell'utente (*NEL FAB, al posto del logo, che devono sostituire*), ed è
+   il motivo per cui qui non c'è nessuna colonna di tasti in più. Il pezzo nuovo non
+   esiste: quello che cambia è il disegno dentro un tasto che c'era già.
+   ⚠️ È `position:absolute` sul FAB, che è `fixed`: così il logo non si sposta di un
+   pixel quando il chevron entra in scena, e i due si sovrappongono esatti.
+   ⚠️⚠️ LA SCALA DEL CROSSFADE LA SCRIVE IL JS SUL CONTENITORE, e la `transition` di
+   questo elemento riguarda il SOLO ribaltamento: sono due movimenti con due tempi
+   (la scala segue il dito fotogramma per fotogramma, il verso si gira in 140 ms), e
+   metterli sullo stesso nodo farebbe animare anche la scala, cioè un glifo che
+   insegue invece di seguire.
+   ⚠️ `stroke`/`fill` vanno riaffermati: la regola `#ctrl-fab svg` qui sopra è fatta
+   per il LOGO, che è pieno e senza contorno, e il chevron è il contrario. */
+/* ⚠️ `transform-origin` esplicito sul logo: la scala del crossfade lo rimpicciolisce, e
+   un SVG che si riducesse verso l'angolo invece che verso il proprio centro uscirebbe
+   dal disco mentre se ne va. */
+#ctrl-fab svg.fab-home { transform-origin:50% 50%; }
+#ctrl-fab .fab-chev { position:absolute; left:50%; top:50%; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+#ctrl-fab svg.fab-chev-g { height:1.6rem; width:1.6rem; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; transition:transform 0.14s cubic-bezier(0.3,0,0.2,1); }
+@media (prefers-reduced-motion:reduce){ #ctrl-fab svg.fab-chev-g { transition:none; } }
 /* Categorie con bottone solo */
 /* ⚠️⚠️ LE DUE RIGHE DI FILTRI (0.92, mockup dell'utente): tre celle ciascuna,
    su una riga sola invece di essere impilate una per riga.
@@ -2733,7 +2754,6 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
    che l'utente voleva evitare.
    ⚠️ `!important` sull'opacità per la stessa ragione del focus qui sopra: la dissolvenza
    pilota il contenitore con uno stile INLINE, che batte qualunque regola del foglio. */
-html.fx-jumpx-live .jump-fabs { opacity:1 !important; z-index:230; }
 /* Desktop: in tinta col FAB (oro su scuro, teal su chiaro), un gradino sotto
    al FAB principale (opacità 0.82). L'opacità di riposo 0.5 sta sul SINGOLO
    tasto (non sul contenitore), così l'hover illumina solo il tasto sotto il
@@ -2759,34 +2779,28 @@ html.fx-jumpx-live .jump-fabs { opacity:1 !important; z-index:230; }
      versione nel pannello), resta solo roccobot.me centrato in piccolo */
   .version-badge { display:none; }
   .brand-corner { left:50%; transform:translateX(-50%); }
-  /* Cluster di navigazione (misure dal mockup utente): colonna quasi a filo
-     del bordo destro come il cluster admin, parte a ~2/3 della viewport
-     dall'alto e resta sopra il FAB principale; piccoli, distanziati, discreti */
-  /* ⚠️ A FILO DEL BORDO dalla 0.71 (era `0.75rem`), su segnalazione dell'utente: le due
-     freccine cadevano SOPRA la linea destra del riquadro della citazione.
-     ⚠️ Il numero non è un gusto ma una misura, e conviene conoscerla prima di ritoccarlo:
-     su mobile il tondo dei tasti è spento (`FEATURES.jumpMobileCircle`), quindi ciò che si
-     vede è la sola freccia, 16px dentro un box di 26,4. Il riquadro della citazione
-     finisce a 23,4px dal bordo dello schermo, cioè MENO della larghezza del box: nessun
-     rientro può togliere la sovrapposizione al box, e infatti si ragiona sulla freccia.
-     A 390px: `0.75rem` la metteva 9,8px DENTRO la linea, `0.2rem` ancora 1px dentro, e a
-     filo del bordo sta 2,2px fuori, restando a 5,2px dallo schermo.
-     ⚠️ `env(safe-area-inset-right)` non è ornamentale: in orizzontale, sui telefoni con
-     notch, senza di lui le freccine finirebbero sotto la tacca. */
-  /* ⚠️⚠️ Qui i tasti stanno A FILO del bordo, e lo scostamento NON è scritto in questa
-     regola: dalla 1.00 lo governa la manopola della Console (`jumpx`), che lo
-     inietta a runtime. ⚠️ Il valore statico è quindi lo stato **spento**, ed è voluto: se
-     fosse il valore di default, spegnere la manopola non riporterebbe i tasti a filo, e la
-     nota della manopola ('spento, i tasti tornano a filo del bordo') direbbe il falso.
-     Misurato prima del rimedio: a manopola spenta restavano a 2,33px.
-     ⚠️ Lo scostamento che l'utente aveva chiesto a misura (7 device px a DPR 3 = **2,33px
-     CSS**) sopravvive come DEFAULT del flag, quindi la resa non cambia per nessuno: cambia
-     solo chi la decide. E i px di uno screenshot sono device px, da dividere per il DPR
-     (regola universale in `Roccobot.md` § 'Grafica'): presi per buoni avrebbero spostato le
-     freccine del TRIPLO. */
-  .jump-fabs { right:env(safe-area-inset-right,0px); bottom:calc(6.6rem + env(safe-area-inset-bottom,0px)); gap:0.9rem; }
-  .jump-fab { width:1.65rem; height:1.65rem; opacity:1; }
-  .jump-fab svg { width:0.85rem; height:0.85rem; }
+  /* ⚠️⚠️ SU MOBILE LA COLONNA DEI DUE TASTI NON C'È PIÙ, DALLA 2.00: il salto in cima e in
+     fondo vive nel FAB, sul suo glifo (vedi `buildJumpArm` e il CSS di `.fab-chev`). È la
+     richiesta dell'utente alla lettera (*NEL FAB, al posto del logo, che devono
+     sostituire*), quindi qui non resta un tasto nascosto da riaccendere: il comando ha
+     traslocato, e due comandi identici in due posti sarebbero una ridondanza.
+     ⚠️ Su DESKTOP la colonna resta esattamente quella di sempre: la richiesta dice
+     *esclusivamente in versione mobile*, e là il FAB non ha nessuno scorrimento da
+     assecondare col dito.
+     ⚠️⚠️ CON LEI È CADUTA LA MANOPOLA `jumpx` della Console, che regolava lo scostamento
+     dal bordo destro **solo** su mobile: senza la colonna non governava più niente, e una
+     manopola che non fa niente è codice morto.
+     Ⓘ **Le misure scartate si tengono**, perché sono quelle che hanno deciso: i tasti erano
+     a filo del bordo dalla 0.71 (prima `0.75rem`) su segnalazione dell'utente, perché le
+     freccine cadevano SOPRA la linea destra del riquadro della citazione. Col tondo spento
+     su mobile (`FEATURES.jumpMobileCircle`) si vedeva la sola freccia, 16px dentro un box
+     di 26,4, e il riquadro finiva a 23,4px dal bordo, cioè MENO della larghezza del box:
+     nessun rientro poteva togliere la sovrapposizione al box, e si ragionava sulla freccia.
+     A 390px: `0.75rem` la metteva 9,8px DENTRO la linea, `0.2rem` ancora 1px dentro, a filo
+     del bordo stava 2,2px fuori. Lo scostamento chiesto a misura era 7 device px a DPR 3,
+     cioè **2,33px CSS**, e presi per device px avrebbero spostato le freccine del TRIPLO.
+     Chi rimettesse una colonna su mobile riparta da lì invece che da zero. */
+  .jump-fabs { display:none; }
   .fab-container { right:auto;left:2rem;align-items:flex-start; }
   .fab-item { flex-direction:row-reverse; }
   .admin-bilingual-grid { grid-template-columns:1fr; }
@@ -3349,7 +3363,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>1.96</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.00</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3421,7 +3435,7 @@ if (typeof dati === 'undefined' || !Array.isArray(dati)) {
 // SEMINATA come copia della desktop (comportamento identico finché l'admin non
 // differenzia). `zoomBig` resta UNICO (per regola v12.43 è desktop/tablet-only).
 var ZOOM_LS_KEY = 'earthsea-zoom-big'; // chiave della preferenza PERSONALE di zoom (tasto Z)
-var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat','deco','orig','hint','jumpx']; // effetti regolabili
+var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat','deco','orig','hint']; // effetti regolabili
 // Effetti con config UNICA per i due dispositivi: `fxCfg` non applica il suffisso
 // `_m` e nel Pannello non compaiono nella tab Mobile (flag `noMob` di
 // SITE_FLAG_ITEMS, che va tenuto allineato a questa mappa). Sono i tre
@@ -3437,12 +3451,13 @@ var FX_EFFECTS = ['glow','spot','press','vig','podium','nums','hov','pat','deco'
 // card NON esiste (la griglia torna a due), quindi una variante mobile sarebbe una
 // manopola che non muove niente (istruzione dell'utente, 2026-08-24: *su mobile, se
 // sta sotto, quella parte dev'essere comunque nascosta*).
-// ⚠️ `deco` e `jumpx` sono nati con config unica (1.00) per due ragioni opposte, che
-// vale la pena distinguere: la DECORAZIONE d'angolo si vede identica sulle due
-// piattaforme, quindi due varianti sarebbero due copie dello stesso valore; lo
-// SCOSTAMENTO dei tasti di salto invece è solo-mobile come `hint`, quindi una
-// variante desktop non avrebbe nulla da governare.
-var FX_UNI = { spot:true, pat:true, vig:true, orig:true, hint:true, deco:true, jumpx:true };
+// ⚠️ `deco` è nato con config unica (1.00) perché la DECORAZIONE d'angolo si vede
+// identica sulle due piattaforme, quindi due varianti sarebbero due copie dello stesso
+// valore. ⚠️ Era in coppia con `jumpx`, che stava qui per la ragione opposta (lo
+// scostamento dei tasti di salto era solo-mobile come `hint`, quindi una variante
+// desktop non avrebbe governato niente): dalla 2.00 quella manopola non c'è più, perché
+// su mobile la colonna dei tasti ha ceduto il posto al glifo del FAB.
+var FX_UNI = { spot:true, pat:true, vig:true, orig:true, hint:true, deco:true };
 // ⚠️ Effetti la cui variante si decide dalla CAPACITÀ del puntatore invece che
 // dalla larghezza (v14.22, scelta dell'utente). `hov` è il fondo della card sotto
 // il puntatore: su touch l'effetto ESISTE. Misurato: il tap applica `:hover` e lo
@@ -3559,7 +3574,6 @@ var SITE_FLAGS_DEFAULT = {
   // dell'utente: *così lo regolo io invece di tirare a indovinare*). Il default è
   // il valore che l'utente aveva chiesto a misura, 7 device px a DPR 3 = 2,33px CSS:
   // chi non tocca nulla vede esattamente quello che c'era prima della manopola.
-  jumpx:{ on:true, x:2.33 },
   // press: quali parti incidere, name = Nome (v12.53), lab = etichette tipo
   // (v12.53), num = numeri di classifica (v12.64). name+lab accesi = il
   // comportamento storico, dove l'ombra del Nome si ereditava sulle etichette.
@@ -3610,7 +3624,6 @@ var FX_RANGE = {
   // ⚠️ Il tetto è 24px e non di più: oltre, le freccine entrerebbero nella colonna
   // delle card, che sotto i 480px prende tutta la larghezza. Il minimo è 0, cioè il
   // filo del bordo, che era la posizione prima che l'utente chiedesse lo scostamento.
-  jumpx:{ x:[0,24] },
   vig:{ int:[0.05,0.6], start:[20,70] },
   // ⚠️ I tetti dell'opacità sono stati ALZATI nella v14.65 (0.10/0.09 -> 0.34/0.30):
   // il vincolo vecchio nasceva dalla modalità 'Dappertutto', in cui la trama passava
@@ -3654,7 +3667,7 @@ var FX_RANGE = {
 };
 // flag → classe su <html>. zoomBig è a parte: la preferenza PERSONALE (tasto Z,
 // in localStorage) la scavalca, perché riguarda solo chi guarda, non il sito.
-var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums', hov:'fx-hov', pat:'fx-pat', deco:'fx-deco', jumpx:'fx-jumpx' };
+var SITE_FLAG_CLASS = { glow:'fx-glow', spot:'fx-spot', press:'fx-press', vig:'fx-vig', podium:'fx-podium', nums:'fx-nums', hov:'fx-hov', pat:'fx-pat', deco:'fx-deco' };
 function fxClamp(k, p, v){
   var def = SITE_FLAGS_DEFAULT[k][p], r = FX_RANGE[k] && FX_RANGE[k][p];
   if (typeof v !== 'number' || !isFinite(v)) return def;
@@ -3746,25 +3759,17 @@ function fxRidisegna(k){
   renderList();
   if (typeof enableDragDrop === 'function') enableDragDrop();
 }
-// ⚠️⚠️ ANTEPRIMA IN PAGINA di una manopola (1.00, richiesta dell'utente: *sarebbe bello
-// se da mobile mi mostrasse un'anteprima dinamica della posizione*). Quasi tutti gli
-// effetti si vedono da soli mentre si regolano, perché agiscono su ciò che sta dietro
-// la modale; i tasti di salto no, per DUE ragioni insieme: si dissolvono da soli dopo
-// qualche secondo, e stanno a z-index 160 sotto il velo della modale, che è opaco al 92%.
-// Finché dura la regolazione vengono quindi portati a galla da una classe (vedi
-// `html.fx-jumpx-live` nel CSS), che si spegne da sé poco dopo l'ultimo movimento.
-// ⚠️ Il timer si RIARMA a ogni movimento invece di contare dal primo: trascinando lo
-// slider per più di un secondo l'anteprima sparirebbe proprio mentre la si sta usando.
-var FX_LIVE = { jumpx: 'fx-jumpx-live' };
-var fxLiveT = null;
-function fxAnteprima(k){
-  var cls = FX_LIVE[k];
-  if (!cls) return;
-  var r = document.documentElement;
-  r.classList.add(cls);
-  if (fxLiveT) clearTimeout(fxLiveT);
-  fxLiveT = setTimeout(function(){ r.classList.remove(cls); fxLiveT = null; }, 1600);
-}
+// Ⓘ **QUI VIVEVA L'ANTEPRIMA IN PAGINA di una manopola** (`fxAnteprima`, 1.00, richiesta
+// dell'utente: *sarebbe bello se da mobile mi mostrasse un'anteprima dinamica della
+// posizione*), e se n'è andata con `jumpx` nella 2.00, perché serviva a lei sola. Il
+// problema che risolveva vale però per chiunque altro capiti nello stesso caso, quindi
+// resta scritto: quasi tutti gli effetti si vedono da soli mentre si regolano, perché
+// agiscono su ciò che sta dietro la modale; quelli che si dissolvono da soli, o che
+// stanno sotto il velo della modale (opaco al 92%), no. Il rimedio era una classe sulla
+// radice che li portava a galla finché durava la regolazione, con un timer RIARMATO a
+// ogni movimento invece che contato dal primo: trascinando lo slider per più di un
+// secondo, un timer che parte una volta sola fa sparire l'anteprima proprio mentre la si
+// usa.
 function normFxEffect(k, v){
   var def = SITE_FLAGS_DEFAULT[k];
   var obj = (v && typeof v === 'object') ? fxMigrateLegacy(k, JSON.parse(JSON.stringify(v))) : {};
@@ -4756,16 +4761,6 @@ function injectFxRules(){
       inner.push(base + ' .rank-item::before{display:block;z-index:-1;background:' + fxSpotBg(s, light) + '}');
     });
     css.push('@media (hover:hover) and (pointer:fine){' + inner.join('') + '}');
-  }
-  // ⚠️ Scostamento dei tasti di salto su MOBILE (1.00): la regola sta QUI e non nel
-  // foglio statico proprio per l'anteprima. `injectFxRules` viene richiamata a ogni
-  // `input` dello slider, quindi il valore arriva in pagina mentre l'utente trascina,
-  // senza una riga di codice dedicata all'anteprima. Il valore statico resta come
-  // default: questa regola, iniettata in fondo al `head`, lo scavalca a parità di
-  // specificità per ordine di cascata.
-  if (flagOn('jumpx')) {
-    css.push('@media (max-width:768px){html.fx-jumpx .jump-fabs{right:calc(env(safe-area-inset-right,0px) + ' +
-             fxR2(fxCfg('jumpx').x) + 'px)}}');
   }
   var st = document.getElementById('fx-dyn');
   if (!st) { st = document.createElement('style'); st.id = 'fx-dyn'; document.head.appendChild(st); }
@@ -8951,6 +8946,228 @@ function toggleTheme() {
   if (typeof themeRefresh === 'function') themeRefresh();
 }
 
+// ── ⏫ IL SALTO IN CIMA E IN FONDO, SUL GLIFO DEL FAB (solo mobile, dalla 2.00) ──
+// ⚠️⚠️ PORTATO DALL'APP AIV, DOVE VIVE DALLA SUA 2.07, e la richiesta lo dice alla
+// lettera (*la stessa cosa che ho fatto nell'app AIV*). Quindi i numeri non sono scelte
+// di questo file: vengono da `Jump.kt`, e prima ancora dal mockup animato che l'utente ha
+// approvato guardandolo. Chi li ritocca li stacca da quella sorgente.
+// ⚠️ Il giro è andato al contrario del solito: la corsa dei tasti di salto di QUESTO sito
+// era già stata copiata in AIV (l'easing quintico e la durata `280 + dist*0.16` col tetto
+// a 800 di `pageScrollTo` stanno là con una nota che li attribuisce qui), e adesso torna
+// indietro il motore del glifo. Le due corse sono la stessa, e vanno tenute tali.
+//
+// ⚠️⚠️ IL TASTO È UNO SOLO, DECISO DAL VERSO DELLO SCORRIMENTO (*appare solo quello che
+// va nel verso dello scorrimento*): scorrendo verso il fondo il glifo diventa 'Vai in
+// fondo', scorrendo verso l'alto 'Vai in cima'. Le due domande di prima (dove voglio
+// andare, e quale dei due tasti tocco) diventano una sola.
+// ⚠️ Quello che si perde è dichiarato: i due versi non sono più disponibili insieme, e
+// chi vuole l'altro scorre un momento nell'altro senso.
+//
+// ⚠️⚠️ A TASTO ARMATO IL TOCCO FA IL SALTO E NON APRE IL PANNELLO, che è la conseguenza
+// diretta di un comando che vive SUL FAB: il tratto in cui il Pannello non si apre è
+// quello in cui il chevron si vede, e finisce da sé un secondo dopo l'ultimo pixel
+// scorso. ⚠️ Il tocco LUNGO resta la ricerca, sempre: quello non passa dal click.
+//
+// ⚠️⚠️ IL CAMBIO DI VERSO È UN RIBALTAMENTO, E NON DUE GLIFI CHE SI DÀNNO IL CAMBIO, e
+// la ragione è nei tracciati: i due glifi della colonna sono esattamente l'uno il
+// ribaltamento verticale dell'altro (la linea da y=8 va a y=16, e la punta `7 16 12 11
+// 17 16` diventa `7 8 12 13 17 8`, che è il secondo alla lettera). Quindi `scaleY(-1)`
+// su un nodo solo dà l'animazione veloce che l'utente ha chiesto per il cambio di
+// direzione, invece di una dissolvenza fra due disegni. ⚠️ In AIV il cambio è secco,
+// perché là la richiesta non lo nominava: qui la nomina (*con un'altra animazione molto
+// veloce*), e questo è il punto in cui i due si discostano di proposito.
+/** I pixel di scorrimento che portano il logo al chevron: è la corsa piena, non una
+    soglia, quindi il disegno segue il dito invece di scattare a un certo punto. */
+var JUMP_HAUL = 44;
+/** I pixel nel verso opposto che fanno cambiare idea al tasto. ⚠️ Senza questa soglia il
+    glifo sfarfalla: un dito che scorre non va mai in un verso solo. */
+var JUMP_SWERVE = 8;
+/** Il silenzio che dichiara fermo il dito quando la corsa è INCOMPLETA. È lo stesso
+    numero con cui la colonna distingue una pausa da un lancio inerziale. */
+var JUMP_QUIET_MS = 150;
+/** L'attesa prima che il logo rientri a tasto ARMATO. */
+var JUMP_WAIT_MS = 1000;
+/** Quanto dura il rientro del logo. */
+var JUMP_BACK_MS = 250;
+/** L'esponente delle due opacità incrociate.
+    ⚠️⚠️ SOTTO UNO, E IL PERCHÉ È MISURATO (in AIV, e vale identico qui): con due opacità
+    LINEARI incrociate, a metà corsa i due glifi sono tutti e due al 9% nello stesso
+    fotogramma, cioè il tasto resta vuoto. A 0,8 la somma non scende mai sotto il pieno. */
+var JUMP_FULL = 0.8;
+/** Quanto si rimpicciolisce il disegno che se ne va, e da quanto arriva quello che entra.
+    ⚠️ A distinguere i due glifi è la SCALA e non il turno: si incrociano per tutta la
+    corsa, quindi senza un movimento che li separi si vedrebbe una macchia sola. */
+var JUMP_ZOOM = 0.45;
+var jumpArm = null;
+
+// Il motore del glifo, uno per pagina. `home` è il logo di sempre, cioè quello che il FAB
+// porta a riposo.
+function buildJumpArm(fab, home) {
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var shown = 0, toward = 0, phase = 'idle', run = 0, against = 0;
+  var waitT = 0, backRAF = 0, wrap = null, glyph = null, restLabel = null;
+  // La curva del rientro: accelera in mezzo e frena in fondo (smootherstep).
+  // ⚠️ Non è un `ease-in-out` qualunque, ed è la scelta del mockup: una curva che accelera
+  // fino all'ultimo istante fa arrivare il glifo di schianto, e questo tratto lo si guarda
+  // per un quarto di secondo intero.
+  function smoother(x) { return x * x * x * (x * (x * 6 - 15) + 10); }
+  function reduced() { return window.matchMedia('(prefers-reduced-motion:reduce)').matches; }
+
+  // ⚠️ A riposo il chevron NON è nell'albero, e non è un risparmio: un nodo trasparente
+  // riceve comunque i tocchi e conta per il lettore di schermo, e questo ne porterebbe uno
+  // dentro un tasto che ha già la sua etichetta.
+  function born() {
+    if (wrap) return;
+    wrap = document.createElement('span');
+    wrap.className = 'fab-chev';
+    glyph = document.createElementNS(SVGNS, 'svg');
+    glyph.setAttribute('viewBox', '0 0 24 24');
+    glyph.setAttribute('class', 'fab-chev-g');
+    glyph.setAttribute('aria-hidden', 'true');
+    var line = document.createElementNS(SVGNS, 'line');
+    line.setAttribute('x1', '6'); line.setAttribute('y1', '8');
+    line.setAttribute('x2', '18'); line.setAttribute('y2', '8');
+    var tip = document.createElementNS(SVGNS, 'polyline');
+    tip.setAttribute('points', '7 16 12 11 17 16');
+    glyph.appendChild(line); glyph.appendChild(tip);
+    wrap.appendChild(glyph);
+    // ⚠️ Il PRIMO verso non si anima, e per questo la transizione parte spenta: un nodo
+    // appena inserito animerebbe il ribaltamento in entrata, cioè un chevron che si gira
+    // mentre arriva senza che nessuno abbia cambiato direzione. Il `offsetWidth` è la
+    // lettura che fissa lo stato di partenza prima di riaccenderla.
+    glyph.style.transition = 'none';
+    glyph.style.transform = toward > 0 ? 'scaleY(-1)' : 'scaleY(1)';
+    fab.appendChild(wrap);
+    void glyph.offsetWidth;
+    glyph.style.transition = '';
+  }
+  function gone() {
+    if (!wrap) return;
+    fab.removeChild(wrap); wrap = null; glyph = null;
+    home.style.opacity = ''; home.style.transform = '';
+    if (restLabel !== null) { fab.setAttribute('aria-label', restLabel); restLabel = null; }
+  }
+  // I due disegni incrociati, ridipinti a ogni pixel raccolto.
+  function paint() {
+    if (shown <= 0) { gone(); return; }
+    born();
+    home.style.opacity = Math.pow(1 - shown, JUMP_FULL);
+    home.style.transform = 'scale(' + (1 - JUMP_ZOOM * shown) + ')';
+    wrap.style.opacity = Math.pow(shown, JUMP_FULL);
+    wrap.style.transform = 'translate(-50%,-50%) scale(' + (1 - JUMP_ZOOM * (1 - shown)) + ')';
+    glyph.style.transform = toward > 0 ? 'scaleY(-1)' : 'scaleY(1)';
+    // Che cosa fa il FAB adesso, per il lettore di schermo: il salto, o quello che faceva.
+    if (phase === 'ready') {
+      if (restLabel === null) restLabel = fab.getAttribute('aria-label');
+      fab.setAttribute('aria-label', toward > 0
+        ? (currentLang === 'it' ? 'Vai in fondo' : 'Go to bottom')
+        : (currentLang === 'it' ? 'Vai in cima' : 'Go to top'));
+    } else if (restLabel !== null) {
+      fab.setAttribute('aria-label', restLabel); restLabel = null;
+    }
+  }
+  // C'è ancora dove andare, nel verso che il dito sta prendendo?
+  function room(sign) {
+    var el = sEl();
+    return sign > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 1;
+  }
+  // Il dito che scorre: ogni pixel porta il glifo un po' più verso il chevron.
+  // ⚠️ I segni qui sono UNO SOLO, al contrario di AIV, dove il puntatore e la lista
+  // contano al rovescio l'uno dell'altra: sul web `scrollY` cresce verso il fondo, e il
+  // verso del chevron è quello della pagina. Chi porta indietro una riga da `Jump.kt` si
+  // ricordi che là il segno va girato, qui no.
+  function pull(dy) {
+    var px = Math.abs(dy);
+    if (px < 0.5) return;
+    var sign = dy > 0 ? 1 : -1;
+    if (toward === 0) {
+      toward = sign;
+    } else if (sign !== toward) {
+      against += px;
+      if (against < JUMP_SWERVE) return;
+      against = 0; toward = sign;
+    } else {
+      against = 0;
+    }
+    // ⚠️⚠️ AL BORDO IL CHEVRON SE NE VA SUBITO, ed è una divergenza VOLUTA da AIV: là una
+    // lista pigra non sa dove finisce, qui `scrollTop` lo dice in un'espressione. Senza,
+    // l'inerzia che arriva in fondo lascerebbe per un secondo un tasto armato il cui tocco
+    // non fa niente E non apre il Pannello, che è il peggiore dei due mondi.
+    if (!room(sign)) { retreat(); return; }
+    if (backRAF) { cancelAnimationFrame(backRAF); backRAF = 0; }
+    phase = 'pull';
+    // ⚠️ La corsa accumulata NON si azzera prima della fine: un pixel che arriva mentre il
+    // glifo rientra riprende da dov'era invece di ricominciare.
+    run = Math.min(JUMP_HAUL, run + px);
+    shown = run / JUMP_HAUL;
+    if (shown >= 1) phase = 'ready';
+    paint();
+    hold();
+  }
+  // Il congedo, coi suoi due tempi: uno a corsa incompleta, l'altro a tasto armato.
+  // ⚠️ Il timer si RIARMA a ogni pixel invece di contare dal primo: un lancio inerziale è
+  // fatto di tanti eventi ravvicinati, e ognuno rimette il conto a zero.
+  function hold() {
+    clearTimeout(waitT);
+    waitT = setTimeout(retreat, phase === 'ready' ? JUMP_WAIT_MS : JUMP_QUIET_MS);
+  }
+  function retreat() {
+    if (phase === 'idle' || phase === 'back') return;
+    clearTimeout(waitT); waitT = 0;
+    phase = 'back';
+    var from = shown, ms = reduced() ? 0 : JUMP_BACK_MS, t0 = null;
+    if (ms <= 0) { land(); return; }
+    var step = function(ts) {
+      if (t0 === null) t0 = ts;
+      var k = Math.min(1, (ts - t0) / ms);
+      shown = from * (1 - smoother(k));
+      paint();
+      if (k < 1) backRAF = requestAnimationFrame(step);
+      else { backRAF = 0; land(); }
+    };
+    backRAF = requestAnimationFrame(step);
+  }
+  function land() {
+    shown = 0; run = 0; against = 0; toward = 0; phase = 'idle';
+    paint();
+  }
+  function wipe() {
+    if (backRAF) { cancelAnimationFrame(backRAF); backRAF = 0; }
+    clearTimeout(waitT); waitT = 0;
+    land();
+  }
+
+  var lastY = window.scrollY;
+  window.addEventListener('scroll', function() {
+    var y = window.scrollY, dy = y - lastY;
+    lastY = y;
+    // ⚠️ SOLO MOBILE, per richiesta esplicita: su desktop la colonna dei tasti resta
+    // quella di sempre, e il FAB porta il logo e basta.
+    if (!isMobileViewport()) { if (phase !== 'idle') wipe(); return; }
+    pull(dy);
+  }, { passive: true });
+  // Una finestra che si allarga oltre la soglia mobile senza che nessuno scorra
+  // lascerebbe il chevron in scena su un desktop.
+  window.addEventListener('resize', function() {
+    if (!isMobileViewport() && phase !== 'idle') wipe();
+  }, { passive: true });
+
+  return {
+    // Vero quando il tocco fa il salto invece di aprire il Pannello.
+    armed: function() { return phase === 'ready'; },
+    // La corsa verso il capo che il chevron indica.
+    // ⚠️⚠️ NON SERVE NESSUNA GUARDIA CHE ESCLUDA LA CORSA DAL CONTO DEL GESTO, ed è la
+    // stessa misura fatta in AIV: la corsa muove la pagina NEL VERSO che il chevron già
+    // indica, quindi gli eventi che genera confermano il verso armato invece di girarlo.
+    // Di più: sono proprio quelli a rimandare il rientro, così il glifo se ne va un
+    // secondo dopo che la corsa è finita e non mentre è in volo.
+    leap: function() {
+      pageScrollTo(toward > 0 ? sEl().scrollHeight : 0, true);
+      hold();
+    }
+  };
+}
+
 function buildControlPanel() {
   var bd = document.createElement('div');
   bd.id = 'ctrl-backdrop'; bd.className = 'ctrl-backdrop';
@@ -8995,6 +9212,10 @@ function buildControlPanel() {
   var fabSvg = document.createElementNS(SVGNS, 'svg');
   fabSvg.setAttribute('viewBox', '0 0 1120 1120');
   fabSvg.setAttribute('aria-hidden', 'true');
+  // ⚠️ La classe serve al salto (vedi `buildJumpArm`): il chevron che gli si sovrappone
+  // ha bisogno di distinguersi da lui nel CSS, perché la regola `#ctrl-fab svg` è scritta
+  // per un disegno pieno e senza contorno.
+  fabSvg.setAttribute('class', 'fab-home');
   FAB_LOGO_D.forEach(function(d){
     var fp = document.createElementNS(SVGNS, 'path');
     fp.setAttribute('d', d);
@@ -9002,6 +9223,10 @@ function buildControlPanel() {
     fabSvg.appendChild(fp);
   });
   fab.appendChild(fabSvg);
+  // Il salto in cima e in fondo, che su mobile prende il posto del logo (vedi
+  // `buildJumpArm`). Si aggancia qui perché il motore ha bisogno dei due disegni, e il
+  // logo è appena nato.
+  jumpArm = buildJumpArm(fab, fabSvg);
   // ── Tap LUNGO sul FAB = scorciatoia 'SEGRETA' della Modalità XL (v12.43) ────
   // La pressione lunga apre la RICERCA del sito (dalla 1.30), e dalla 1.60 vale
   // ANCHE COL MOUSE (richiesta dell'utente: *la voglio anche su desktop*).
@@ -9036,8 +9261,13 @@ function buildControlPanel() {
   });
   // A gesto riuscito il browser emette comunque il click al rilascio: va
   // consumato UNA volta, altrimenti si aprirebbe anche il Pannello.
+  // ⚠️⚠️ L'ORDINE DELLE DUE GUARDIE NON È INDIFFERENTE: il tocco lungo si consuma per
+  // primo perché è un gesto già concluso (la ricerca è aperta), mentre il salto è un
+  // comando che il click deve ancora eseguire. Invertendoli, una pressione lunga a tasto
+  // armato farebbe il salto sotto la ricerca appena aperta.
   fab.addEventListener('click', function(e){
     if (lpFired) { lpFired = false; e.preventDefault(); return; }
+    if (jumpArm && jumpArm.armed()) { e.preventDefault(); jumpArm.leap(); return; }
     toggleControlPanel();
   });
   // Su Android il long press aprirebbe il menu contestuale interrompendo il
@@ -10332,12 +10562,11 @@ var SITE_FLAG_ITEMS = [
   // tab Mobile mostra le varianti `_m`, e questo ha config unica (`FX_UNI`) perché una
   // variante desktop non avrebbe nulla da governare. Il rovescio esatto di riflettore e
   // trama, che sono desktop-only e vivono lì per la stessa ragione strutturale.
-  { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true, mobOnly:true, gap:true },
-  // ⚠️ ULTIMA voce (posizione chiesta dall'utente nella 1.00 e riconfermata il
-  // 2026-09-11: *le due voci mobile devono restare in fondo*), e come 'Dito che scorre' è
-  // un effetto solo-mobile che vive nella tab Desktop: la tab Mobile mostra le varianti
-  // `_m`, e questo ha config unica, quindi una variante desktop non governerebbe nulla.
-  { k:'jumpx', it:'Tasti \u2912\u2913', en:'Jump buttons', cfg:true, noMob:true, mobOnly:true }
+  // ⚠️ ULTIMA voce, ed è l'ultima rimasta delle DUE che l'utente volle in fondo (1.00,
+  // riconfermato il 2026-09-11: *le due voci mobile devono restare in fondo*): 'Tasti di
+  // salto' se n'è andata con la 2.00, quando su mobile la colonna dei due tasti ha ceduto
+  // il posto al glifo del FAB e quella manopola non ha avuto più niente da governare.
+  { k:'hint', it:'Dito che scorre', en:'Swipe hint', noMob:true, mobOnly:true, gap:true }
 ];
 // Manopole della sotto-modale, per effetto. `t` = 'bool' (checkbox) o 'num' (slider
 // + valore); i limiti dei numeri vengono da FX_RANGE, unica fonte.
@@ -10519,20 +10748,6 @@ var FX_KNOBS = {
       nit:'Tiene la colonna anche sulle voci senza luogo della tabella principale, invece di lasciare che la scheda si allarghi. Costa una riga in piu\' a qualche citazione. Gli apocrifi la riservano sempre, e non dipendono da qui.',
       nen:'Keeps the column on the entries with no place in the main table, instead of letting the card widen. It costs one extra line to a few quotes. The apocryphal ones always reserve it, and do not depend on this.' }
   ],
-  // ⚠️ Una manopola sola, e con l'unità in px: qui il valore NON è una quantità
-  // astratta come le opacità o le ampiezze degli altri effetti, è una distanza che
-  // l'utente misura a occhio sul suo schermo. Mostrarla senza unità (il default degli
-  // slider, due decimali) avrebbe costretto a indovinare in che cosa fosse espressa.
-  // ⚠️ Il passo è 0.5px e non 1: i px qui sono CSS, e su uno schermo a DPR 3 mezzo px
-  // CSS è un pixel e mezzo fisico, cioè uno scarto che si vede davvero.
-  jumpx: [
-    { p:'on', t:'bool', it:'Attiva', en:'Enable',
-      nit:'Lo scostamento dei due tasti di salto pagina dal bordo destro, su mobile. Spento, i tasti tornano a filo del bordo.',
-      nen:'The offset of the two page-jump buttons from the right edge, on mobile. Off, the buttons go back flush with the edge.' },
-    { p:'x', t:'num', dep:'on', step:0.5, unit:'px', it:'Scostamento', en:'Offset',
-      nit:'Misurato in px CSS: su uno schermo a DPR 3 ognuno vale tre pixel fisici. Da mobile i tasti si mostrano mentre muovi il cursore, cosi\' la posizione si vede mentre la scegli.',
-      nen:'Measured in CSS px: on a DPR 3 screen each one is three physical pixels. On mobile the buttons show themselves while you drag, so you can see the position as you set it.' }
-  ]
 };
 // Icona della sotto-modale: due CURSORI VERTICALI (fader) a manopole sfalsate,
 // monocromatica (currentColor), sul disegno scelto dall'utente. Le aste si
@@ -11304,7 +11519,7 @@ function showFxConfigEditor(key, sfx, onDone){
         SITE_FLAGS[vk][kn.p] = cb.checked;
         // Le caselle di POSIZIONE (e 'Attiva') decidono quali righe sono attive:
         // dopo un cambio si ridisegna l'elenco, così le dipendenze si aggiornano.
-        applySiteFlags(); paint(); renderKnobs(); fxRidisegna(key); fxAnteprima(key);
+        applySiteFlags(); paint(); renderKnobs(); fxRidisegna(key);
       });
       row.appendChild(cb);
     } else if (kn.t === 'sel') {
@@ -11356,7 +11571,7 @@ function showFxConfigEditor(key, sfx, onDone){
       };
       sl.addEventListener('input', function(){
         SITE_FLAGS[vk][kn.p] = fxClamp(key, kn.p, parseFloat(sl.value));
-        show(); injectFxRules(); paint(); fxAnteprima(key);
+        show(); injectFxRules(); paint();
       });
       // Doppio clic = valore PREDEFINITO della manopola (v13.38; su TUTTO lo
       // slider, binario compreso, dalla v13.39). Il default vive in
@@ -11367,7 +11582,7 @@ function showFxConfigEditor(key, sfx, onDone){
         var dv = dEff ? dEff[kn.p] : undefined;
         if (typeof dv !== 'number') return;
         SITE_FLAGS[vk][kn.p] = dv; sl.value = String(dv);
-        show(); injectFxRules(); paint(); fxAnteprima(key);
+        show(); injectFxRules(); paint();
       };
       sl.addEventListener('dblclick', toDefault);
       fxGuardSlider(sl, toDefault);

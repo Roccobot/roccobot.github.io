@@ -1639,10 +1639,14 @@ questo che sono elencate qui.
 - **`istariFiveIcons`** (spento): la **riga di legenda** Istari con le 5 icone in fila; spento resta
   la riga normale a icona singola. Riguarda **solo la legenda**: sulle card le icone per-mago
   restano sempre.
-- **`jumpMobileCircle`** (spento): il **tondo** dei tasti salto su **mobile**, dove restano le sole
-  freccine, più discrete. A `true` torna il cerchio velato, se le freccine non bastassero. Su
-  **desktop** il tondo c'è sempre. ⚠️ Il blocco CSS mobile è **dopo** l'override chiaro apposta:
-  stessa specificità, sorgente più in basso, quindi vince senza `!important`.
+- **`jumpMobileCircle`** (spento): il **tondo** dei tasti salto su **mobile**, dove restavano le
+  sole freccine, più discrete. ⚠️⚠️ **DALLA `15.60` NON GOVERNA PIÙ NIENTE DI VISIBILE**, perché su
+  mobile la colonna dei due tasti ha ceduto il posto al glifo del FAB (§ 'Il salto in cima e in
+  fondo, sul glifo del FAB'): il suo blocco CSS è ancora là e resterebbe inerte anche a `true`.
+  **Non è stato tolto** perché la colonna su desktop è viva e il flag ne descrive ancora il
+  contratto, ma chi lo accende per vedere qualcosa non vedrà nulla.
+  - Su **desktop** il tondo c'è sempre. ⚠️ Il blocco CSS mobile è **dopo** l'override chiaro
+    apposta: stessa specificità, sorgente più in basso, quindi vince senza `!important`.
   - ⚠️ **Opacità di riposo e hover sono sul SINGOLO tasto**, non sul contenitore, così l'hover
     illumina solo il tasto sotto il puntatore: sul contenitore si accendevano entrambi.
 - ⚠️ **Lo scorrimento di pagina NON è un flag**: la funzione condivisa ha due modi **fissi**, uno per
@@ -1692,6 +1696,123 @@ modificatore sono disattivate in modalità admin.
   - ⚠️ **Tentativi scartati:** una formula con `fontBoundingBox` e half-leading cadeva ~0,85px
     troppo in basso, e `measureText` dava sub-pixel diversi a dimensioni diverse. Il metodo attuale
     è verificato a pixel, con errore ~0, in pagina e nell'editor.
+
+## ⏫ Il salto in cima e in fondo, sul glifo del FAB
+
+⚠️⚠️ **DALLA `15.60` I DUE TASTI SU MOBILE NON CI SONO PIÙ: A PORTARE IN CIMA E IN FONDO È IL
+FAB, E IL SUO GLIFO DIVENTA UN CHEVRON** (richiesta dell'utente, 2026-09-14, chiesta per i due
+siti insieme: *i tasti 'in cima'/'in fondo' devono apparire in modo selettivo, uno per volta,
+solo quello che va nel verso dello scorrimento, e soprattutto NEL FAB, al posto del logo, che
+devono sostituire*). Il pezzo nuovo non esiste: niente colonna che compare, niente tasto in più
+da mettere da qualche parte, e il FAB non sparisce mai dallo schermo. Quello che cambia è il
+**disegno** dentro un tasto che c'era già.
+
+⚠️⚠️ **PORTATO DALL'APP AIV, DOVE VIVE DALLA SUA `2.07`**, e la richiesta lo dice alla lettera
+(*la stessa cosa che ho fatto nell'app AIV*). Quindi i numeri non sono scelte di questo file:
+vengono da `Jump.kt` di quel repo, e prima ancora dal mockup animato che l'utente ha approvato
+guardandolo. Chi li ritocca li stacca da quella sorgente.
+- ⚠️⚠️ **IL GIRO È ANDATO AL CONTRARIO DEL SOLITO**, e vale saperlo per non cercare la sorgente
+  dalla parte sbagliata: la **corsa** è nata qui e fu copiata **in** AIV (l'easing quintico
+  `1-(1-x)^5` e la durata `280 + dist*0.16` col tetto a 800 sono di `pageScrollTo`, e in
+  `Jump.kt` stanno con una nota che li attribuisce a questi siti); adesso torna **indietro** il
+  motore del glifo. Le due corse sono la stessa cosa, e vanno tenute tali.
+
+**I cinque numeri, e che cosa governano**:
+
+| costante | valore | che cosa fa |
+|---|---|---|
+| `JUMP_HAUL` | 44 px | la corsa piena che porta il logo al chevron |
+| `JUMP_SWERVE` | 8 px | quanto serve nel verso opposto per girare il chevron |
+| `JUMP_QUIET_MS` | 150 ms | la quiete che dichiara fermo il dito a corsa **incompleta** |
+| `JUMP_WAIT_MS` | 1000 ms | l'attesa prima del rientro a tasto **armato** |
+| `JUMP_BACK_MS` | 250 ms | quanto dura il rientro del logo |
+
+- ⚠️ **`JUMP_HAUL` è una CORSA, non una soglia**: ogni pixel ne sposta una frazione, quindi il
+  disegno segue il dito invece di scattare a un certo punto.
+- ⚠️⚠️ **SENZA `JUMP_SWERVE` IL GLIFO SFARFALLA**, ed è misurato nel mockup: un dito che scorre
+  non va mai in un verso solo, e un rimbalzo di pochi pixel girerebbe il disegno a ogni gesto.
+  ⚠️ Cambiare verso **non fa ricominciare** la corsa: il chevron si gira sul posto e quello che
+  è stato fatto resta, perché il tasto offre sempre la corsa che ha senso adesso.
+- ⚠️⚠️ **L'ESPONENTE DEL CROSSFADE È MINORE DI UNO, E IL PERCHÉ È MISURATO** (`JUMP_FULL` 0,8):
+  con due opacità **lineari** incrociate, a metà corsa i due glifi sono tutti e due al 9% nello
+  stesso fotogramma, cioè il tasto resta **vuoto**. A 0,8 la somma non scende mai sotto il
+  pieno, e il banco lo verifica.
+- ⚠️ **A distinguere i due disegni è la SCALA e non il turno** (`JUMP_ZOOM` 0,45): si incrociano
+  per tutta la corsa, quindi senza un movimento che li separi si vedrebbe una macchia sola.
+
+⚠️⚠️ **A TASTO ARMATO IL TOCCO FA IL SALTO E NON APRE IL PANNELLO**, che è la conseguenza
+diretta di un comando che vive **sul** FAB: il tratto in cui il Pannello non si apre è quello in
+cui il chevron si vede, e finisce da sé un secondo dopo l'ultimo pixel scorso.
+- ⚠️ **Il tocco LUNGO resta la ricerca, sempre**, e non passa dal click: le due guardie sono nel
+  medesimo gestore e l'**ordine conta**. Il tocco lungo si consuma per primo perché è un gesto
+  già concluso (la ricerca è aperta), mentre il salto è un comando che il click deve ancora
+  eseguire: invertendoli, una pressione lunga a tasto armato farebbe il salto **sotto** la
+  ricerca appena aperta.
+
+### ⚠️ Le due divergenze VOLUTE da AIV, e perché non sono sviste
+
+1. ⚠️⚠️ **IL CAMBIO DI VERSO È UN RIBALTAMENTO ANIMATO, dove in AIV è secco**, e la ragione è
+   nella richiesta: qui l'utente lo nomina (*ad un eventuale cambio di direzione, il chevron
+   deve cambiare verso per assecondarla, con un'altra animazione molto veloce*), là no.
+   - ⚠️⚠️ **E SI PUÒ FARE PERCHÉ I DUE GLIFI DELLA COLONNA ERANO L'UNO IL RIBALTAMENTO
+     DELL'ALTRO**, il che non era stato notato in anni: ribaltando `TOP` attorno a `y=12`, la
+     linea da `y=8` va a `y=16` e la punta `7 16 12 11 17 16` diventa `7 8 12 13 17 8`, che è
+     `BOT` **alla lettera**. Quindi `scaleY(-1)` su un nodo solo dà l'animazione, invece di una
+     dissolvenza fra due disegni che a metà lascerebbe il tasto confuso.
+   - ⚠️ **La transizione vive sul NODO INTERNO, non sul contenitore**: la scala del crossfade la
+     riscrive il JS a ogni fotogramma, e una `transition:transform` sullo stesso nodo
+     animerebbe anche quella, cioè un glifo che **insegue** invece di seguire. Due movimenti,
+     due tempi, due nodi.
+   - ⚠️ **Il PRIMO verso non si anima**, e per questo la transizione nasce spenta e si riaccende
+     dopo una lettura di `offsetWidth`: un nodo appena inserito animerebbe il ribaltamento **in
+     entrata**, cioè un chevron che si gira mentre arriva senza che nessuno abbia cambiato
+     direzione.
+2. ⚠️⚠️ **AL BORDO IL CHEVRON SE NE VA SUBITO, dove in AIV resta armato il suo secondo**: là una
+   lista pigra non sa dove finisce, qui `scrollTop` lo dice in un'espressione. Senza questa
+   guardia, l'inerzia che arriva in fondo lascerebbe per un secondo un tasto armato il cui tocco
+   **non fa niente E non apre il Pannello**, che è il peggiore dei due mondi.
+
+### ⚠️ Che cosa NON serve, e la misura che lo dice
+
+⚠️⚠️ **NESSUNA GUARDIA ESCLUDE LA CORSA DAL CONTO DEL GESTO**, ed è la stessa cosa accertata in
+AIV con due controprove: il salto muove la pagina **nel verso che il chevron già indica**,
+quindi gli eventi `scroll` che genera **confermano** il verso armato invece di girarlo. Di più:
+sono proprio quelli a rimandare il rientro, così il glifo se ne va un secondo dopo che la corsa
+è finita e non mentre è in volo. Una riga che non ha un caso è codice morto, e una prova che la
+presidiasse sarebbe verde con e senza di lei.
+
+- ⚠️ **I SEGNI qui sono UNO SOLO**, al contrario di AIV, dove il puntatore e la lista contano al
+  rovescio l'uno dell'altra: sul web `scrollY` cresce verso il fondo, e il verso del chevron è
+  quello della pagina. Chi porta indietro una riga da `Jump.kt` si ricordi che là il segno va
+  girato, qui no.
+
+### ⚠️ Le due trappole del banco
+
+1. ⚠️⚠️ **`html{scroll-behavior:smooth}` È GLOBALE SU QUESTI SITI, quindi un banco che scorre con
+   `scrollTop +=` misura un'altra cosa**: ogni passo viene **animato** e i passi si accavallano,
+   la pagina resta indietro, e il banco accusa il motore al posto del proprio metro. Misurato: a
+   62px attesi la pagina stava a **8**, e tre prove su ventisei fallivano su un codice giusto. Si
+   forza `scroll-behavior:auto` per la durata del gesto, che è la stessa cautela che prende
+   `pageScrollTo`.
+2. ⚠️ **Lo stato del motore è chiuso nello scope, e va bene così**: il banco misura quello che si
+   **vede** (la presenza del chevron nell'albero, le due opacità, il verso del ribaltamento nel
+   `transform` calcolato, l'etichetta del FAB e dove finisce la pagina), che è anche il metro
+   giusto. Un banco che leggesse le variabili proverebbe l'implementazione invece del
+   comportamento.
+
+- **Il banco è `prova-salto-fab.js` nello scratchpad e serve i DUE siti** (`PROVA_SITO`): 26
+  controlli per sito, mobile e desktop, e i **'no' contano quanto i 'sì'** (a metà corsa il FAB
+  non annuncia ancora il salto, un rimbalzo di 5px non gira il chevron, su desktop non succede
+  niente). Misura del 2026-09-14: **26 su 26** su entrambi.
+
+### 🕳️ Che cosa se n'è andato con la colonna
+
+- **Su DESKTOP la colonna resta esattamente quella di sempre**: la richiesta dice
+  *esclusivamente in versione mobile*, e là il FAB non ha nessuno scorrimento da assecondare col
+  dito. `.jump-fabs` è `display:none` nella sola media query mobile.
+- ⚠️ **Quello che si perde è dichiarato**: i due versi non sono più disponibili insieme, e chi
+  vuole l'altro scorre un momento nell'altro senso. È il patto di AIV, e l'utente lo ha chiesto
+  sapendolo (*uno per volta, solo quello che va nel verso dello scorrimento*).
 
 ## 🎨 Etichette tipo (colori e bordo)
 
