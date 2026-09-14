@@ -3363,7 +3363,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.10</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.11</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6145,6 +6145,15 @@ var GENDER_ICON = {
 // che sostituisce: accesa, le voci il cui nome d'uso è una perifrasi (il `Signore del Fuoco`,
 // il `Nemico di Morred`) si AGGIUNGONO alla lista invece di restare le sole visibili. Spenta
 // di default, come chiesto, quindi di base non ci sono.
+// ⚠️⚠️ MA 'ADDITIVO' DICE CHE COSA ENTRA IN GIOCO, NON CHE COSA SI VEDE, e la precisazione è
+// dell'utente (2026-09-14): questa casella RENDE DISPONIBILI quelle voci, che poi passano per
+// **tutti** gli altri filtri come ogni altra. Le caselle si sommano fra loro, ma ciascuna
+// **esclude**, quindi accendendo il filtro badge del vero nome le voci senza nome spariscono
+// da sé: non avendo nome d'uso non hanno nemmeno un vero nome attestato, e quel filtro chiede
+// proprio quello.
+// ⚠️ Non è un'eccezione al resto: questo è **un filtro in più nella catena** di `isVisibile`,
+// letto per primo (vedi là), e chi legge 'additivo' come 'quelle voci compaiono comunque' si
+// aspetta in pagina delle card che nessun filtro lascia passare.
 // ⚠️⚠️ È LO STESSO CRITERIO DEL FLAG DI SITO CHE SOSTITUISCE, cambia solo chi decide: il
 // campo `senzanome` sulla voce resta la fonte (§ del `CLAUDE.md` di progetto), e a passare
 // dalla Console al Pannello è la scelta, non il modo di riconoscere quelle voci.
@@ -6309,6 +6318,10 @@ function isVisibile(p, idx) {
   // ⚠️ Resta il primo di tutti benché dalla 2.10 sia una casella come le altre: è l'unico
   // che parte SPENTO, cioè l'unico che di base toglie qualcosa, e leggerlo per primo lo
   // dice a chi passa di qui.
+  // ⚠️⚠️ MA ESSERE IL PRIMO NON LO RENDE PRIVILEGIATO, ed è il punto che si legge male: questa
+  // catena è una fila di AND, quindi una voce che questa riga lascia passare deve superare
+  // anche il genere, i badge e le categorie. Accendere la casella non porta in pagina delle
+  // card: le mette **in gioco**, e sono gli altri filtri a decidere se si vedono.
   if (!mostraSenzaNome && p.senzanome) return false;
   if (!genereAttivo(p)) return false;
   if (badgeFilter.size) {

@@ -3441,9 +3441,26 @@ nasce **spenta**, quindi di base non ci sono.
   accesa, quelle voci si **aggiungono** alle altre invece di diventare le sole visibili.
   L'utente lo ha scritto fra parentesi (*che mostra (non più in modo esclusivo) anche tutti i
   personaggi noti con un nome che è in realtà una perifrasi*), ed è la ragione per cui non
-  serve nessuno stato forzato: una casella additiva non può svuotare la lista, che era il caso
-  in cui l'altra smetteva di essere un filtro (§ "Ⓘ Il filtro 'solo chi ha un vero nome noto'
-  è USCITO con la 2.10").
+  serve nessuno stato forzato: da sola questa casella non può svuotare la lista, che era il
+  caso in cui l'altra smetteva di essere un filtro (§ "Ⓘ Il filtro 'solo chi ha un vero nome
+  noto' è USCITO").
+  - ⚠️⚠️ **MA 'ADDITIVO' DICE CHE COSA ENTRA IN GIOCO, NON CHE COSA SI VEDE**, ed è la
+    precisazione dell'utente (2026-09-14): *la checkbox AGGIUNGE, nel senso che rende
+    disponibili le voci nascoste perché senza nome. Ma poi quelle sono soggette agli stessi
+    filtri del pannello (che sono esclusivi, oltre che additivi nel senso che si possono
+    sommare)*. Le caselle si sommano fra loro, e ciascuna **esclude**: `isVisibile` è una fila
+    di AND, quindi una voce resa disponibile deve superare anche il genere, i badge e le
+    categorie.
+  - ⚠️⚠️ **IL CASO CONCRETO, ed è quello che rende la cosa visibile**: accendendo il filtro
+    badge **`Vero nome rivelato nei testi canonici`** le voci senza nome spariscono **tutte**,
+    perché non avendo un nome d'uso non hanno nemmeno un vero nome attestato, e quel filtro
+    chiede proprio quello. ⚠️ **Non è una coincidenza del dataset di oggi**: il campo
+    `senzanome` marca chi ha una perifrasi al posto del nome, cioè le voci di cui le fonti non
+    dànno nessun nome proprio, e il vero nome è un nome proprio.
+  - ⚠️ **Chi legge 'additivo' come 'quelle voci compaiono comunque' si aspetta in pagina delle
+    card che nessun filtro lascia passare**, e va a cercare un difetto che non c'è. La
+    formulazione giusta è quella dell'utente: la casella **rende disponibili**, e gli altri
+    filtri decidono che cosa si vede.
 - ⚠️ **L'etichetta è `Nessun nome noto` / `No known name`, ed è una MISURA**: l'utente ha
   offerto le due forme (*'Personaggi senza nome' o 'Nessun nome noto' (leggermente più
   corto)*), e col font vero la lunga allarga il Pannello desktop di **17,94px** (da 359,48 a
