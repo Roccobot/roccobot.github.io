@@ -1405,23 +1405,17 @@ una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
   terzo badge fino al 2026-08-21, quando cambiò significato e diventò `nomeged` coi suoi 19
   valori azzerati (§ 'Il terzo badge ha CAMBIATO SIGNIFICATO'). Riusarla direbbe la cosa giusta
   oggi e renderebbe illeggibile ogni commit anteriore a quella data.
-- ⚠️⚠️ **IL DISEGNO È DELL'UTENTE dalla `2.12`**, e ha sostituito il mio segnaposto: un rombo
-  stondato in teal `#1c7f92` con dentro una **doppia freccia** in `#7fd4e0`, arrivata come
-  export Illustrator. ⚠️ **Il mio era un rombo con una fessura**, e chi trova quella
-  descrizione in un commit della `2.10` o della `2.11` sa che descrive il segnaposto.
-  - ⚠️ **Le due TINTE sono rimaste le stesse**, ed erano scelte sulla distanza e non sul gusto:
-    il teal è il più lontano dalle sei icone in uso (23 gradi dall'azzurro del simbolo
-    maschile), e i contrasti sui due fondi veri della riga di una card sono **3,30** sullo
-    scuro e **3,76** sul chiaro. Rimisurati sul disegno nuovo: identici, perché le tinte sono
-    quelle.
-  - ⚠️ **Il glifo interno sul rombo fa 2,75**, cioè sotto il 3:1 dei componenti grafici, e va
-    saputo invece di scoprirlo: non è l'unico canale, perché a 17px l'icona si riconosce prima
-    per **forma** (l'unico rombo della fila) e per tinta. È la stessa soglia che le altre sei
-    icone non rispettano nel tema chiaro (§ 'I fondi VERI della riga di una card: come si
-    misurano').
-  - ⚠️ **Lo scudo dell'Arcimago è teal anche lui**, ed è la sola collisione di famiglia: regge
-    perché le due forme non si somigliano (rombo con freccia contro scudo con stella) e in
-    legenda stanno a cinque righe di distanza.
+- ⚠️⚠️ **IL DISEGNO È DELL'UTENTE dalla `2.12`**, e dalla `2.14` è una **stella viola**
+  (`#c994ff` con dentro `#8748b0`), arrivata insieme alle altre sei nel rifacimento di tutta
+  la famiglia. ⚠️ **Il mio segnaposto era un rombo con una fessura** e la `2.12` un rombo
+  stondato in teal con una doppia freccia: chi trova l'una o l'altra descrizione in un commit
+  anteriore alla `2.14` sa che descrive un disegno superato.
+  - ⚠️⚠️ **LA MOTIVAZIONE DELLE TINTE NON SOPRAVVIVE AL RIFACIMENTO, e va saputo per non
+    ricostruirla a ritroso**: il teal della `2.12` era scelto sulla **distanza** (23 gradi
+    dall'azzurro del simbolo maschile) e i suoi contrasti erano 3,30 sullo scuro e 3,76 sul
+    chiaro. Il viola della `2.14` è una scelta dell'utente dentro un riassetto della tavolozza
+    intera, non l'erede di quel calcolo: i numeri di oggi vivono nella tabella dei contrasti
+    (§ 'I fondi VERI della riga di una card: come si misurano').
   - **La ripulitura dell'export vale come per il logo** (§ 'Il logo del FAB'): via il blob
     `i:aipgf`, il commento del generatore, lo `xmlns:i` di Adobe e i suoi attributi `i:`, da
     **46.786 a 789 byte** (-98,3%), con geometria, `viewBox` e `fill` verificati identici.
@@ -1433,25 +1427,30 @@ una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
   voci visibili con `vero_nome`, e il filtro di quella riga di legenda mostra esattamente
   quelle.
 
-#### 🧙 L'icona del `Mago` è lo `Stregone` virato al rosso
+#### 🧙 L'icona del `Mago` ha un disegno suo
 
-Dalla `2.10`, istruzione dell'utente (*la vorrei come 'Stregone' (usalo come base), ma molto
-più verso il rosso acceso*). Stessa forma, tinte `#f02311` e `#ff5c3d` al posto dei due gialli.
+Dalla `2.14` è un vettoriale dell'utente, magenta `#ff208e` con dentro `#ff0a1e`, e non più
+lo `Stregone` ricolorato. Fra la `2.10` e la `2.13` era la stessa forma dello `Stregone` con
+`#f02311` e `#ff5c3d` al posto dei due gialli, su richiesta sua (*la vorrei come 'Stregone'
+(usalo come base), ma molto più verso il rosso acceso*).
 
-- ⚠️ **Il ricolore proietta ogni pixel sul SEGMENTO fra le due tinte sorgente** e riapplica lo
-  stesso fattore fra le due di destinazione: così l'antialiasing resta pulito invece di
-  diventare una scaletta, che a 17px si vede. Una sostituzione secca dei due colori lascerebbe
-  i pixel intermedi gialli.
-- ⚠️⚠️ **LA COLLISIONE COL RUGGINE DEI DRAGHI È STATA DICHIARATA PRIMA DI PROCEDERE, e l'utente
-  ha scelto lo stesso**: il rosso acceso dista **4 gradi** di tonalità dal `#b4472e` del
-  `Signore dei Draghi`, e le altre tre candidate stavano fra 4 e 6 (solo il carminio a 16).
-  Sono icone diverse per forma e non si confondono, ma chi rimisurasse le distanze fra le
-  tinte dei badge trovi qui la ragione per cui questa è quella che è.
-- ⚠️ **WebP lossless verificato pixel per pixel** (scarto massimo per canale **0**), come i sei
-  precedenti: la strada del browser non è lossless e sembra esserlo
+- ⚠️⚠️ **QUEL RICOLORE È STATO L'UNICA ICONA SENZA VETTORIALE, e la lacuna è durata fino al
+  rifacimento**: nato dal **raster** dello `Stregone`, non aveva un SVG da cui ripartire, e
+  quando l'utente ha chiesto quali icone avessero il sorgente questa era l'unica che non
+  poteva averlo per costruzione. La procedura del ricolore resta valida e vive qui sotto,
+  perché un domani può servire di nuovo: un pixel si proietta sul **segmento** fra le due
+  tinte sorgente e si riapplica lo stesso fattore fra le due di destinazione, così
+  l'antialiasing resta pulito invece di diventare una scaletta, che a 17px si vede. Una
+  sostituzione secca dei due colori lascerebbe i pixel intermedi gialli.
+- ⚠️ **La collisione col ruggine dei Draghi era stata dichiarata prima di procedere** e
+  l'utente aveva scelto lo stesso: il rosso della `2.10` distava **4 gradi** di tonalità dal
+  `#b4472e` del `Signore dei Draghi`. Il magenta della `2.14` quella collisione non ce l'ha
+  più (dista 41 gradi), e ne ha un'altra: **6 gradi** dal rosa del simbolo femminile.
+- ⚠️ **WebP lossless verificato pixel per pixel** (scarto massimo per canale **0**), come
+  tutte le altre: la strada del browser non è lossless e sembra esserlo
   (§ 'I badge e il genere').
-- ⚠️ **Il file resta `Mage.webp`**: porta il nome del **badge**, non del disegno, ed è la quarta
-  volta che un'icona di questo progetto cambia aspetto senza che il codice se ne accorga.
+- ⚠️ **Il file resta `Mage.webp`**: porta il nome del **badge**, non del disegno, ed è la
+  ragione per cui un rifacimento di sette icone su sette non ha toccato una riga di codice.
 
 ### 🐲 I TRE badge annunciati: il criterio di uno solo
 
@@ -1463,10 +1462,14 @@ il disegno.
 - **Icone**: `Dragonlord.webp`, `MasterOfRoke.webp`, `ArchmageOfRoke.webp`, WebP **lossless**
   verificato pixel per pixel (scarto massimo per canale **0**), coi nomi in inglese e del
   BADGE, non del disegno, come i tre di prima.
-- ⚠️⚠️ **La coppia di Roke ha DUE TINTE diverse** (viola `#6f5bd0` il Maestro, teal `#1c7f92`
-  l'Arcimago), e non è una scelta estetica: le due forme differiscono per un punto che si
-  sposta dal cerchio al centro, e a 17px il colore è l'unico canale che le distingue davvero.
-  Richiesta esplicita dell'utente, dopo aver visto la coppia monocroma.
+- ⚠️⚠️ **DALLA `2.14` LA COPPIA DI ROKE HA UNA TINTA SOLA** (azzurro `#5195ed` col giallo
+  `#ffdf42`), e rovescia la regola che valeva dalla `0.42`: là erano due tinte diverse (viola
+  il Maestro, teal l'Arcimago) perché le due forme differivano per **un punto che si spostava
+  dal cerchio al centro**, e a 17px il colore era l'unico canale che le distinguesse.
+  - **Quello che è cambiato sono le FORME, non il criterio**: adesso sono un libro e uno
+    scudo, cioè due silhouette che non si somigliano, e la distinzione la fa il profilo. La
+    regola di allora resta vera per il disegno di allora, e chi la trova citata sappia che
+    cadde insieme a quelle forme.
 - **In legenda sono su UNA riga** (id di riga `roke`, che filtra l'unione dei due), col
   meccanismo `.leg-lbl-col` + `.leg-group` delle coppie di Arda. ⚠️ **Ma coi testi BREVI**:
   la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
@@ -3437,15 +3440,22 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
 **scuro `#192632`**, **chiaro `#e4e7ec`**.
 
 - ⚠️ **Il 3:1 delle componenti grafiche NON è la soglia in vigore su queste icone**, e saperlo
-  evita di 'sanare' una scelta dell'utente: misurate col tono che porta il segno in quel tema,
-  le cinque in uso dànno `Sorcerer` 10,26 / **1,51**, `Mage` 8,21 / 3,72, `GedName` 6,41 /
-  **1,94**, `Male` 4,69 / 2,65, `Female` 4,32 / 2,87. Nel tema chiaro sono quasi tutte sotto:
+  evita di 'sanare' una scelta dell'utente: misurate sulla tinta dominante, le nove in uso
+  alla `2.14` dànno `GedName` 9,07 / **1,37**, `Sorcerer` 8,21 / **1,51**, `TrueName` 6,71 /
+  **1,85**, la coppia di Roke 5,04 / **2,47**, `Male` 4,69 / **2,65**, `Mage` 4,29 / 2,90,
+  `Female` 4,32 / 2,87, `Dragonlord` **2,84** / 4,36. Nel tema chiaro sono quasi tutte sotto:
   sono **marchi accanto a un'etichetta di testo**, non testo, e le ha scelte lui.
-  - ⚠️ **I numeri di `GedName` sono quelli del disegno della `2.13`**, cioè del disco
-    `#69ba54`, e la tinta unica di prima (`#62a151`) dava 4,94 e 2,51: il disco guadagna sullo
-    scuro e perde sul chiaro. ⚠️ **Ma là l'informazione non la porta il disco**: la porta la
-    runa `#00664b`, che sul disco fa **2,92** in tutti e due i temi, perché vive dentro la
-    figura e non sul fondo della card. È la stessa struttura del rombo di `TrueName`.
+  - ⚠️⚠️ **QUESTI NUMERI VALGONO PER LA TAVOLOZZA DELLA `2.14` E NON PER QUELLA DI PRIMA**: là
+    il rifacimento ha cambiato **sette icone su sette**, quindi ogni contrasto misurato fino
+    alla `2.13` è superato in blocco. Chi ne trova uno citato altrove lo rimisuri invece di
+    fidarsene.
+  - ⚠️⚠️ **DUE COLLISIONI COI SIMBOLI DI GENERE, che vivono nella STESSA fila dei badge**, e
+    vanno sapute perché la tavolozza di prima le teneva lontane apposta: la coppia di Roke
+    (`#5195ed`) dista **1 grado** di tonalità dall'azzurro di `Male` (`#4a90e4`), e il magenta
+    del `Mago` (`#ff208e`) **6 gradi** dal rosa di `Female` (`#e94d8a`). La prima si vede
+    davvero: nella voce di Sparviero lo scudo dell'Arcimago e il simbolo maschile sono
+    **adiacenti**. Segnalata all'utente con la misura e con la foto della fila; le forme
+    restano diverse, e la scelta è sua.
 - **Come si rimisura**, se i fondi cambiano: `realfont.js` serve il sito, si porta il tema con
   `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
   centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
