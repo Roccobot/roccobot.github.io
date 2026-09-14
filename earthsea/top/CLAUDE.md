@@ -1172,11 +1172,31 @@ scala del potere (`stregone`, `mago`, `signoredraghi`); in fondo la coppia di Ro
 `arcimago`). Vale per la resa in lista, per la legenda del Pannello e per la griglia
 dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
 
-- ✅ **Sono immagini a colori fornite dall'utente** (`icons/Sorcerer.webp`,
-  `icons/Mage.webp`, `icons/GedName.webp`), dalla `0.14`, al posto dei tre SVG segnaposto in
-  `currentColor`.
-  - ⚠️ **Sono `img`, quindi NON seguono il colore del testo**: il colore è nel file, e un
-    cambio di tema non lo tocca. È la stessa via dei simboli di genere, `img` da sempre.
+- ✅⚠️⚠️ **DALLA `2.15` SONO SVG IN LINEA nel sorgente, e non più `img` verso `icons/*.webp`**
+  (richiesta dell'utente, 2026-09-14: *passiamo all'SVG inline*). Il markup vive in
+  `BADGE_ICON` e `GENDER_ICON`, i **sorgenti** in `.memo/sorgenti/earthsea-icons/`, e i nove
+  WebP sono stati **cancellati**: non li serviva più nessuno.
+  - ⚠️⚠️ **La ragione non è il peso, anche se il peso migliora**: inline le tinte diventano
+    raggiungibili dal CSS, che è il solo modo di dare a un badge **due colori diversi nei due
+    temi**. Col WebP il colore vive dentro il file e nessuna regola lo tocca, ed è la ragione
+    per cui la tabella dei contrasti aveva sette icone su nove sbilanciate verso lo scuro
+    senza che si potesse farci niente.
+  - **Il peso, misurato**: **7.019 byte** i nove frammenti contro **28.372** i nove WebP, e
+    nove richieste in meno. A 17px sono nitidi a qualunque densità, mentre un 256x256
+    ridimensionato no.
+  - ⚠️ **`currentColor` da solo NON basta**, e saperlo evita di prometterlo: `color` è una
+    proprietà sola per elemento, quindi dentro un SVG quella parola chiave vale sempre la
+    stessa tinta per quante forme ci siano. Ogni icona di qui ne ha **due**, quindi servono
+    due variabili CSS per icona, o la seconda resta ferma nel file.
+  - **Che cosa il passaggio ha portato via**, e non è codice morto lasciato indietro: il
+    listener `error` che marcava `.badge-broken` e la sua regola CSS (senza richieste non
+    esiste più un caricamento che possa fallire), `object-fit:contain` su `.status-icon`
+    (su un SVG non ha effetto: il `viewBox` fa quel lavoro), e `ISTARI_ICON`, che in questo
+    progetto era un oggetto **vuoto** ereditato da Arda.
+  - ⚠️ **L'anteprima dell'editor admin leggeva `src="..."` dal markup** per ricavare il
+    percorso del file, e con gli SVG sarebbe ripiegata su `icons/<chiave>.webp`, un percorso
+    che non è mai esistito (i file portavano il nome del disegno). Adesso una funzione sola,
+    `icoPreview`, inietta lo stile sull'`<svg>` per i badge e per i generi.
   - ⚠️⚠️ **I nomi dei file sono in INGLESE, ed è la regola generale del progetto**
     (istruzione dell'utente, 2026-08-23): `Sorcerer`, `Mage`, `GedName`, `Female`, `Male`.
     ⚠️ **In 'I Grandi di Arda' la regola è talvolta infranta**, e non è un modello da imitare:
@@ -1215,6 +1235,20 @@ dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
     Chi aggiunge un badge aggiunge **anche il file**, o torna quel difetto.
 
 ### 🎚️ I micro-aggiustamenti delle icone, e perché erano INERTI
+
+⚠️⚠️ **DALLA `2.15` SONO TUTTI A ZERO**, su istruzione dell'utente (*resetta tutti i
+micro-aggiustamenti*), e il reset è arrivato **insieme** al passaggio a SVG in linea perché i
+due sono legati: quei numeri erano tarati sul comportamento di una `img` con `object-fit`, su
+tavole di proporzioni diverse (il femminile era più stretto e alto) e su disegni che nel
+frattempo sono cambiati tutti e nove. Riportarli su icone nuove avrebbe spostato segni che non
+ne avevano bisogno.
+- **Il meccanismo resta in piedi e non è codice morto**: l'editor admin continua a scriverci i
+  valori che l'utente sceglie, e lo zero è il punto da cui si ricomincia.
+- ⚠️ **Con loro sono cadute due misure del CSS**: `GENDER_BASE` (era `.721` quadrata il
+  maschile e `.603x.844` il femminile) e le due `transform` dei simboli di genere. Le tavole
+  ora sono **quadrate come tutte le altre**, quindi quei numeri descrivevano file che non
+  esistono più.
+
 
 **Riparati nella `0.39`.** L'editor admin 'Micro-aggiustamenti icone badge' regola per ogni
 **unità** quattro numeri
