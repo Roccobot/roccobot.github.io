@@ -1311,23 +1311,38 @@ riferisco esclusivamente al tema scuro*).
   l'anello del `Mago` stava già a 5,48 sul fondo scuro, e a sparire erano il **nucleo**
   (`#004200`) e i **lacci** del `Vero nome` (`#423800`). Chi legge la dominante conclude che
   stacchino già bene.
-- ⚠️⚠️ **LE CORNA DEL `Signore dei Draghi` SONO GRIGIE, e la desaturazione è totale e
-  voluta** (*s6, ma in più desatura del tutto le corna*): croma **zero** in OKLCH alla
-  chiarezza del gradino scelto, cioè `#949494`. Il verde del corpo resta `#22ae88`, che lui
-  ha dichiarato *già eccellente*.
+- ⚠️⚠️ **DALLA `2.23` IL `Signore dei Draghi` È MONOCROMO NEL TEMA SCURO**: corpo **e** corna
+  valgono `#817c64`, un bruno-grigio caldo, dettato dall'utente alla lettera (*la base e le
+  corna nel tema scuro devono essere esattamente #817c64*). Contrasto **3,66** sul fondo di
+  card scuro e 4,21 sul fondo pagina.
+  - ⚠️ **Il contrasto INTERNO scende a 1,00 per costruzione**, e non è un difetto da
+    correggere: con una tinta sola la sagoma si legge per il **profilo esterno**, che su
+    questo disegno è netto (le corna sporgono dall'elmo). È la scelta dell'utente, presa dopo
+    aver guardato 55 combinazioni di tonalità e saturazione.
+  - ⚠️⚠️ **NEL TEMA CHIARO RESTA A DUE TINTE** (`#00805f` il corpo, `#0e4b46` le corna): la
+    decisione riguarda il solo tema scuro, ed è l'unica icona delle nove con un numero di
+    tinte **diverso fra i due temi**. Un banco che la dia per monocroma in entrambi accusa un
+    dato giusto.
+  - Ⓘ **Il percorso, perché le note dei giri precedenti dicono altro**: nella `2.22` le corna
+    erano `#949494`, un grigio a croma **zero** alla chiarezza del gradino scelto, e il verde
+    del corpo era `#22ae88`, che lui aveva dichiarato *già eccellente*. Quella coppia è
+    superata: prima ha corretto il tiro sulla saturazione (*sono stato precipitoso*), poi ha
+    visto che il problema era la **tonalità** (*i due verdi cozzano*), e infine ha scelto di
+    portare le due forme alla stessa tinta.
   - ⚠️ **Quella variabile governa anche la FASCIA sotto l'elmo**: nel disegno le due forme
     laterali e la banda orizzontale vivono nello **stesso** path, quindi condividono il
     `fill`. Separarle vorrebbe dire spezzare un tracciato suo, che è una modifica al disegno
     e non una tinta.
-  - ⚠️ **Si verifica sui tre canali UGUALI, non su un esadecimale atteso**: un valore
-    copiato passerebbe anche se il croma fosse rimasto.
+  - ⚠️ **Il banco prova che le DUE forme rendano lo stesso colore**, non la neutralità: dalla
+    `2.23` il controllo sui tre canali uguali fallirebbe su un dato giusto, perché `#817c64`
+    non è neutro.
 - **Come si è arrivati alla scelta**: tre scale da sei gradini con passo **+0,025** di
   chiarezza, che è all'incirca la soglia di percettibilità. ⚠️ Quando una proposta unica
   viene bocciata, la via che funziona è offrire una **scala fine** e far puntare il dito: è
   così che si sono chiuse anche le due scelte del tema chiaro, dopo quattro giri di proposte
   singole respinte.
 
-- **Banco della `2.22`**: 29 controlli su 29 coi font veri, che leggono il `fill` **calcolato**
+- **Banco della `2.23`**: 28 controlli su 28 coi font veri, che leggono il `fill` **calcolato**
   di ogni forma nei due temi. ⚠️ Le tinte non si leggono dalla variabile dichiarata ma dal
   valore **risolto** dal browser, o si sta verificando il CSS invece della resa.
 
