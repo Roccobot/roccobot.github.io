@@ -1,9 +1,10 @@
 # I vettoriali delle icone badge di 'I Grandi di Terramare'
 
-⚠️ **Sono i SORGENTI delle icone in uso, non proposte**: da questi nascono i `.webp` di
-[`earthsea/top/icons/`](../../../earthsea/top/icons/), e ogni file porta il nome della sua
-icona, non quello con cui è arrivato. Vivono sotto `.memo/`, che GitHub Pages non pubblica,
-perché il sito serve i WebP e un SVG in più sarebbe peso servito a nessuno.
+⚠️ **Sono i SORGENTI delle icone in uso, non proposte**: da questi nasce il markup in linea di
+`BADGE_ICON` e `GENDER_ICON` in [`earthsea/top/index.html`](../../../earthsea/top/index.html),
+e ogni file porta il nome della sua **icona**, non quello con cui è arrivato. Vivono sotto
+`.memo/`, che GitHub Pages non pubblica, perché il sito porta gli SVG dentro la pagina e un
+file in più sarebbe peso servito a nessuno.
 
 ⚠️⚠️ **ESISTONO PERCHÉ UNO SI ERA GIÀ PERSO.** Fino alla `2.14` i vettoriali vivevano solo
 nello scratchpad della sessione che li aveva ricevuti, e lo scratchpad muore col container:
@@ -15,18 +16,28 @@ un disegno che arriva si salva subito.
   dal **raster** dello `Stregone` ricolorato, quindi nessun vettoriale esisteva da nessuna
   parte. Dalla `2.14` ha un disegno suo.
 
-## Come si rigenera un `.webp` da qui
+## Come si installa un disegno che arriva
 
 1. **Ripulitura**, se l'export viene da Illustrator (§ 'Il logo del FAB' in
    [`earthsea/top/CLAUDE.md`](../../../earthsea/top/CLAUDE.md)): via il blob `i:aipgf`, il
    commento del generatore, lo `xmlns:i` di Adobe e i suoi attributi `i:`, con geometria,
-   `viewBox` e `fill` **riconfrontati** dopo. Questi sette erano già puliti.
-2. **Rasterizzazione alla tavola piena**, 256x256 su fondo trasparente: icone as-is, nessun
-   ritaglio e nessuno spostamento dei pixel nel canvas.
-3. **WebP lossless** con PIL (`lossless=True`), e **scarto massimo per canale verificato 0**
-   a conversione fatta: la strada del browser non è lossless e sembra esserlo.
+   `viewBox` e `fill` **riconfrontati** dopo. ⚠️ Dalla `2.18` l'utente li manda **già puliti**,
+   quindi si guarda il peso e si cerca il blob: se non c'è, il passo si salta.
+2. **Il `viewBox` si legge dal file** e si riporta nell'involucro del frammento, che lo
+   dichiara: scriverne uno sbagliato mostra il disegno in scala errata e tagliato, **senza dare
+   alcun errore**. Oggi le dieci tavole sono tutte `256x256`, ma la `2.18` ne portò una da
+   `800x800`, quindi la lettura si fa a ogni invio.
+3. **Le tinte diventano variabili CSS** (`--si-<chiave>-<n>`, nell'ordine in cui le forme
+   compaiono), e i due blocchi di palette in `index.html` ne portano il valore per tema. Il
+   criterio delle due palette vive in `earthsea/top/CLAUDE.md`, § 'Le DUE PALETTE, una per
+   tema, e il metro che le ha sbagliate tre volte'.
 
-⚠️ **Le tavole di partenza NON sono tutte 256**: `Sorcerer` è 36x36 (misura Twemoji) e `Mage`
-800x800. Sono tutte quadrate, quindi il passo 2 le porta alla stessa misura senza toccare la
-proporzione, ma chi legge un `viewBox` per dedurne la scala del segno sbaglia strada: la scala
-si misura sul raster, col rapporto fra il bounding box del contenuto e la tavola.
+⚠️⚠️ **QUANDO L'UTENTE MANDA LE DUE VARIANTI, I FILE SONO DUE**: `Mage-scuro.svg` e
+`Mage-chiaro.svg` sono lo stesso disegno con le sue tinte per tema, e il sito ne ricava un
+frammento solo perché il colore passa dalle variabili. Chi ne guarda uno solo vede metà della
+scelta.
+
+⚠️ **Un sorgente può portare una tinta che il sito NON usa**, e va saputo prima di fidarsi del
+file: `ArchmageOfRoke.svg` è arrivato con la `2.31` per la **forma**, e l'utente ha chiesto di
+tenere i due colori già in vigore (*i due colori (chiaro/scuro) devono rimanere gli stessi
+esistenti*). La fonte delle tinte resta sempre il blocco delle palette.

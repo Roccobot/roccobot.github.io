@@ -1321,15 +1321,19 @@ cerchio (rosso il `Nome di Ged`, arancione lo `Stregone`, giallo il `Vero nome`,
 
 ### 🌗 Le DUE PALETTE, una per tema, e il metro che le ha sbagliate tre volte
 
-Dalla `2.21`. I `fill` dei nove frammenti sono **variabili CSS** (`--si-<chiave>-<n>`, venti
-in tutto), definite col valore del tema **scuro** nel blocco base e ridefinite col valore del
-tema **chiaro** sotto `html[data-theme="light"]`. È il motivo per cui le icone erano passate
-a SVG in linea nella `2.15`: col WebP il colore vive dentro il file e nessuna regola lo
-raggiunge.
+Dalla `2.21`. I `fill` dei nove frammenti sono **variabili CSS** (`--si-<chiave>-<n>`),
+definite col valore del tema **scuro** nel blocco base e ridefinite col valore del tema
+**chiaro** sotto `html[data-theme="light"]`. È il motivo per cui le icone erano passate a SVG
+in linea nella `2.15`: col WebP il colore vive dentro il file e nessuna regola lo raggiunge.
+⚠️ **Quante siano si conta** (`--si-` nel blocco base), perché il numero cambia col disegno:
+la `2.31` ne ha tolta una portando il `Mago` da cinque forme a quattro.
 
-- ⚠️ **Tutte e venti le tinte cambiano fra i due temi**, su tutte e nove le icone, e zero
-  restano identiche: era la richiesta dell'utente (*in un modo o nell'altro mi piacerebbe che
-  cambiassero tutte*).
+- ⚠️⚠️ **'TUTTE LE TINTE CAMBIANO FRA I DUE TEMI' NON È PIÙ VERO DALLA `2.31`**, ed era la
+  richiesta con cui le due palette erano nate (*in un modo o nell'altro mi piacerebbe che
+  cambiassero tutte*): il riflesso del `Mago` vale `#ffffff` in tutti e due i temi, perché i
+  due file li ha disegnati lui e ha chiesto di riprodurre i colori **esattamente come sono**.
+  ⚠️ Non è una svista da sanare pareggiando la tinta chiara: è la sua istruzione, e vince sulla
+  richiesta precedente.
 - ⚠️⚠️ **LA TONALITÀ NON SI RUOTA MAI FRA I DUE TEMI**, e non è una raffinatezza: due varianti
   dello stesso badge con tonalità diverse si leggono come **due colori diversi**, e il badge
   perde identità al cambio tema. Si muove la sola **chiarezza**, con una traslazione uguale
@@ -1780,7 +1784,28 @@ una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
 
 #### 🧙 L'icona del `Mago` ha un disegno suo
 
-Dalla `2.14` è un vettoriale dell'utente, magenta `#ff208e` con dentro `#ff0a1e`, e non più
+⚠️⚠️ **DALLA `2.31` IL DISEGNO È IL TERZO, E ARRIVA IN DUE FILE, UNO PER TEMA** (`WizardDark` e
+`WizardLight`, salvati come `Mage-scuro.svg` e `Mage-chiaro.svg`): il bastone dentro il disco
+resta, ma le forme passano da **cinque a quattro**, perché disco e anello sono due `path` al
+posto di due `circle` e il bastone è fuso dentro di loro. L'istruzione dell'utente è che quei
+file valgano **per la forma e per i colori**, da riprodurre nei due temi esattamente come
+sono, e la loro tavolozza è verde: `#c5ff9e`, `#99e079`, `#f4ffed` e `#ffffff` nello scuro,
+`#73c764`, `#429c49`, `#005c3d` e `#ffffff` nel chiaro.
+- ⚠️⚠️ **CON LUI È USCITA UNA VARIABILE** (`--si-mago-5`), e chi conta le tinte delle due
+  palette la troverà in meno: una forma tolta è una variabile tolta, e il blocco non porta mai
+  una variabile che nessun `fill` nomina.
+- ⚠️⚠️ **I DUE TEMI SONO ROVESCIATI L'UNO RISPETTO ALL'ALTRO, ed è la misura da conoscere
+  prima di 'migliorare' una delle due varianti**: nello **scuro** l'icona stacca dal fondo
+  card (13,32 la tinta grande) e dentro è tenue (1,37 fra disco e anello, **1,03** fra la
+  sfera e il suo riflesso, cioè un riflesso che non si vede); nel **chiaro** è il contrario,
+  perché il disco dà **1,68** sul fondo ma la struttura interna arriva a **8,08**. Sono i suoi
+  numeri, non una taratura mia: il metro delle due palette dice che conta il contrasto interno,
+  e nel tema scuro quello lo porta il **bastone** insieme al profilo, non la sfera.
+- Ⓘ **Il magenta della `2.14` è storia**: la voce qui sotto descrive il secondo disegno, che
+  aveva cinque forme e due tinte principali. I contrasti e le collisioni di tonalità che
+  nomina sono superati in blocco, come a ogni rifacimento.
+
+Dalla `2.14` era un vettoriale dell'utente, magenta `#ff208e` con dentro `#ff0a1e`, e non più
 lo `Stregone` ricolorato. Fra la `2.10` e la `2.13` era la stessa forma dello `Stregone` con
 `#f02311` e `#ff5c3d` al posto dei due gialli, su richiesta sua (*la vorrei come 'Stregone'
 (usalo come base), ma molto più verso il rosso acceso*).
@@ -1821,21 +1846,36 @@ il disegno.
     scudo, cioè due silhouette che non si somigliano, e la distinzione la fa il profilo. La
     regola di allora resta vera per il disegno di allora, e chi la trova citata sappia che
     cadde insieme a quelle forme.
-- ⚠️⚠️ **DALLA `2.24` LO SCUDO DELL'ARCIMAGO HA LO STACCO LARGO IL DOPPIO**, disegno
-  dell'utente: fra l'elmo e il corpo dello scudo si passa da **10,49 a 20,49 unità** di
-  `viewBox`, e con lo stacco sono arrivati gli angoli **raccordati** (raggio 4) che prima
-  erano vivi. La ragione è la misura reale: l'icona in lista è resa a **26,78px** (desktop a
-  1280), quindi quelle 10,49 unità valevano **1,10px** e le due parti si chiudevano; adesso
-  sono **2,14px**.
-  - ⚠️ **Non è un rifacimento e non invalida niente**: resta **un tracciato solo** con **una
-    variabile sola** (`--si-arcimago-1`), quindi le due palette per tema valgono identiche
-    (`#8491ff` scuro, `#5c60e3` chiaro) e nessun contrasto misurato prima decade. È l'opposto
-    dei tre rifacimenti completi, che invece invalidano in blocco.
-  - ⚠️⚠️ **LA STELLA RESTA UN FORO, ed è la cosa da non rompere ritoccando il tracciato**:
+- ⚠️⚠️ **DALLA `2.31` LO SCUDO È INTERO: l'elmo staccato non c'è più**, disegno dell'utente, e
+  al suo posto il bordo alto è una **curva unica** che rientra al centro. Con lui sparisce lo
+  stacco di cui parla la voce qui sotto, che descrive il disegno precedente e resta come storia
+  della misura.
+  - ⚠️⚠️ **LE SUE DUE TINTE NON SI TOCCANO, ED È LA SUA ISTRUZIONE** (*l'icona Arcimago vale
+    per la forma, ma i due colori (chiaro/scuro) devono rimanere gli stessi esistenti*): il
+    file è arrivato con `#5e63e6`, che **non** è entrato, e in vigore restano `#8491ff` nello
+    scuro e `#5c60e3` nel chiaro. ⚠️ Chi apre `ArchmageOfRoke.svg` trova quella terza tinta: è
+    il sorgente della forma, non della tavolozza. Misura che chiude il caso: sul fondo di card
+    chiaro la tinta del file avrebbe dato **3,85** contro i **4,00** di quella in vigore.
+  - ⚠️ **La stella resta un foro anche nel tracciato nuovo**, e il centro si è spostato: adesso
+    la prova va fatta su **(128, 129.81)**, che è il punto dove i quattro bracci si incontrano.
+    Con le coordinate vecchie il controllo misura il pieno dello scudo e passa comunque, cioè
+    diventa una prova che non prova niente.
+- ⚠️⚠️ **DALLA `2.24` ALLA `2.30` LO SCUDO DELL'ARCIMAGO AVEVA LO STACCO LARGO IL DOPPIO**,
+  disegno dell'utente: fra l'elmo e il corpo dello scudo si passava da **10,49 a 20,49 unità** di
+  `viewBox`, e con lo stacco erano arrivati gli angoli **raccordati** (raggio 4) che prima
+  erano vivi. La ragione era la misura reale: l'icona in lista è resa a **26,78px** (desktop a
+  1280), quindi quelle 10,49 unità valevano **1,10px** e le due parti si chiudevano; con lo
+  stacco doppio erano **2,14px**.
+  - ⚠️ **Non era un rifacimento e non invalidava niente**: restava **un tracciato solo** con
+    **una variabile sola** (`--si-arcimago-1`), quindi le due palette per tema valevano
+    identiche e nessun contrasto misurato prima decadeva. È l'opposto dei tre rifacimenti
+    completi, che invece invalidano in blocco, e vale anche per il disegno della `2.31`.
+  - ⚠️⚠️ **LA STELLA È UN FORO, ed è la cosa da non rompere ritoccando il tracciato**:
     corpo e stella hanno **verso opposto**, quindi il `fill-rule` la toglie dal pieno e il
     segno mostra il fondo della card, come il `Nome di Ged` dalla `2.20`. Si prova con
-    `isPointInFill` sul centro (128, 157), che deve dare **falso**: un `d` ricopiato con la
-    stella nello stesso verso del corpo la riempirebbe **senza dare alcun errore**.
+    `isPointInFill` sul centro, che deve dare **falso**: un `d` ricopiato con la
+    stella nello stesso verso del corpo la riempirebbe **senza dare alcun errore**. ⚠️ Il
+    centro era (128, 157) fino alla `2.30` ed è (128, 129.81) dal disegno nuovo.
   - ⚠️ **Lo stacco si misura sulle BBOX dei due sottotracciati, non leggendo i numeri del
     comando**: con gli angoli raccordati il numero scritto nella `d` non è il bordo del
     disegno. La `d` si spezza sulle `M` **maiuscole**, che sono due, e la stella resta dentro
