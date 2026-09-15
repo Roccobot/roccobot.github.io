@@ -1791,23 +1791,31 @@ una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
 
 #### 🧙 L'icona del `Mago` ha un disegno suo
 
-⚠️⚠️ **DALLA `2.31` IL DISEGNO È IL TERZO, E ARRIVA IN DUE FILE, UNO PER TEMA** (`WizardDark` e
-`WizardLight`, salvati come `Mage-scuro.svg` e `Mage-chiaro.svg`): il bastone dentro il disco
-resta, ma le forme passano da **cinque a quattro**, perché disco e anello sono due `path` al
-posto di due `circle` e il bastone è fuso dentro di loro. L'istruzione dell'utente è che quei
-file valgano **per la forma e per i colori**, da riprodurre nei due temi esattamente come
-sono, e la loro tavolozza è verde: `#c5ff9e`, `#99e079`, `#f4ffed` e `#ffffff` nello scuro,
-`#73c764`, `#429c49`, `#005c3d` e `#ffffff` nel chiaro.
-- ⚠️⚠️ **CON LUI È USCITA UNA VARIABILE** (`--si-mago-5`), e chi conta le tinte delle due
-  palette la troverà in meno: una forma tolta è una variabile tolta, e il blocco non porta mai
-  una variabile che nessun `fill` nomina.
-- ⚠️⚠️ **I DUE TEMI SONO ROVESCIATI L'UNO RISPETTO ALL'ALTRO, ed è la misura da conoscere
-  prima di 'migliorare' una delle due varianti**: nello **scuro** l'icona stacca dal fondo
-  card (13,32 la tinta grande) e dentro è tenue (1,37 fra disco e anello, **1,03** fra la
-  sfera e il suo riflesso, cioè un riflesso che non si vede); nel **chiaro** è il contrario,
-  perché il disco dà **1,68** sul fondo ma la struttura interna arriva a **8,08**. Sono i suoi
-  numeri, non una taratura mia: il metro delle due palette dice che conta il contrasto interno,
-  e nel tema scuro quello lo porta il **bastone** insieme al profilo, non la sfera.
+⚠️⚠️ **IL DISEGNO IN VIGORE È QUELLO DELLA `2.34`, E ARRIVA IN DUE FILE, UNO PER TEMA**
+(`WizardDark` e `WizardLight`, salvati come `Mage-scuro.svg` e `Mage-chiaro.svg`). Le forme
+sono **quattro** dalla `2.31`, che ne aveva tolta una: disco e anello sono due `path` al posto
+di due `circle` e il bastone è fuso dentro di loro; la sfera è un `circle` e il riflesso un
+`path`. L'istruzione dell'utente, uguale nei due invii, è che quei file valgano **per la forma
+e per i colori**, da riprodurre nei due temi esattamente come sono.
+
+| | disco | anello | sfera | riflesso |
+|---|---|---|---|---|
+| scuro | `#c5ff9e` | `#99e079` | `#257333` | `#ffffff` |
+| chiaro | `#4ed16e` | `#7dff93` | `#00756e` | `#ffffff` |
+
+- ⚠️⚠️ **CON LA QUARTA FORMA È USCITA UNA VARIABILE** (`--si-mago-5`), e chi conta le tinte
+  delle due palette la troverà in meno: una forma tolta è una variabile tolta, e il blocco non
+  porta mai una variabile che nessun `fill` nomina.
+- ⚠️⚠️ **LA `2.34` HA RADDRIZZATO I DUE CONTRASTI INTERNI CHE LA `2.31` AVEVA DEBOLI**, e la
+  misura dice che cosa guardare: la sfera è passata da quasi bianca (`#f4ffed`) a verde scuro,
+  quindi il riflesso che nel tema scuro dava **1,03** (invisibile) adesso dà **5,87**, e
+  l'anello contro la sfera passa da 1,53 a **3,71**. Nel chiaro lo stesso rapporto vale
+  **5,57**.
+- ⚠️ **Il perimetro stacca poco dal fondo di card CHIARO**, ed è così per scelta sua in tutti
+  e due gli invii: il disco dà **1,59** (era 1,68 nella `2.31`). Quello che rende leggibile
+  l'icona là è la struttura interna, non il profilo.
+- Ⓘ **I numeri della `2.31` sono superati in blocco**, come a ogni invio che cambia le tinte:
+  là il tema scuro staccava dal fondo e dentro era tenue, e il chiaro il contrario.
 - Ⓘ **Il magenta della `2.14` è storia**: la voce qui sotto descrive il secondo disegno, che
   aveva cinque forme e due tinte principali. I contrasti e le collisioni di tonalità che
   nomina sono superati in blocco, come a ogni rifacimento.
