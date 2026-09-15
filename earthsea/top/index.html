@@ -3435,7 +3435,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.34</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.35</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -9865,7 +9865,7 @@ function doSave(btn) {
   if (_saving) return;
   _saving = true;
   if (btn) { btn.style.opacity = '0.35'; btn.disabled = true; }
-  doCommit('classifica: aggiorna ordine').then(res => {
+  doCommit('classifica: aggiorna ordine', null, null, true).then(res => {
     if (!res.ok) {
       var msg = res.reason || 'errore sconosciuto';
       if (msg === 'no-auth') msg = 'sessione scaduta - sblocca di nuovo';
@@ -9920,7 +9920,9 @@ async function doCommit(msg, payload, cardColors, keepVersion, badgeAdjustCfg, s
   // mutato l'array globale `dati` (vedi editor admin). Default: `dati`.
   // cardColors opzionale: config colori editabile (Fase 2). Se passata, il Worker
   // la scrive in dati.js; se omessa, il Worker PRESERVA quella esistente.
-  // keepVersion: se true il Worker NON bumpa datiVersion (salvataggi colore).
+  // keepVersion: se true il Worker NON bumpa datiVersion. Lo passano tutti i
+  // salvataggi che non toccano i CONTENUTI: colori, flag di sito, riordino e
+  // micro-aggiustamenti dei badge. Bumpano i soli testi del dataset.
   const data = payload || dati;
   if (!adminPassword) return { ok: false, reason: 'no-auth' };
   // Il commit passa dal proxy: il browser invia solo l'array dati e la parola
@@ -12123,9 +12125,13 @@ var CARDCOLORS_SAVED = JSON.parse(JSON.stringify(CARDCOLORS.fam));
 // (keepVersion). Ritorna la Promise di doCommit.
 function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
 // Salvataggio dei micro-aggiustamenti icone-badge: committa dati + badgeAdjust,
-// bumpando la versione (+0.01) come i salvataggi admin di contenuti (NON come i
-// colori, che usano keepVersion). Il Worker scrive `var badgeAdjust` in dati.js.
-function saveBadgeAdjustToRepo(msg){ return doCommit(msg, dati, null, false, BADGE_ADJUST); }
+// SENZA bumpare la versione (keepVersion), come i colori, i flag di sito e il
+// riordino. Il Worker scrive `var badgeAdjust` in dati.js.
+// ⚠️ Fino alla 2.34 di Terramare questo salvataggio bumpava, ed era l'unico dei
+// quattro a farlo: istruzione dell'utente, che vuole il bump sui soli CONTENUTI
+// (*riordinare i personaggi, cambiare i colori e modificare i micro-aggiustamenti
+// non dovrebbe causare un bump di versione*).
+function saveBadgeAdjustToRepo(msg){ return doCommit(msg, dati, null, true, BADGE_ADJUST); }
 // Snapshot dell'ultimo stato SALVATO dei micro-aggiustamenti (rete 'reset unità').
 var BADGE_ADJUST_SAVED = JSON.parse(JSON.stringify(BADGE_ADJUST));
 function baEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
