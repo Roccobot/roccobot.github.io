@@ -1011,8 +1011,15 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    ⚠️ La tonalità non cambia MAI fra i due temi: due varianti dello stesso badge con
    tonalità diverse si leggerebbero come due colori diversi, e il badge perderebbe
    identità al cambio tema. Si muove la sola chiarezza, col croma rifatto al massimo del
-   gamut sRGB: trascinarlo produce un colore che il browser taglia in silenzio. */
-:root {
+   gamut sRGB: trascinarlo produce un colore che il browser taglia in silenzio.
+   ⚠️⚠️ LE DUE CLASSI `si-pal-scuro` e `si-pal-chiaro` servono a chi deve mostrare una
+   palette DIVERSA da quella del tema in corso: le usano i due riquadri di anteprima
+   dell'editor dei micro-aggiustamenti, che affiancano un fondo scuro e uno chiaro dentro
+   la stessa pagina. Senza di esse le icone di tutti e due i riquadri prendevano le tinte
+   del tema del documento, quindi uno dei due mostrava sempre la palette sbagliata.
+   ⚠️ Vivono QUI e non nel CSS dell'editor apposta: i venti valori restano scritti una
+   volta sola, e una seconda copia divergerebbe al primo ritocco di una palette. */
+:root, .si-pal-scuro {
   --si-veronoto-1:#87862e;
   --si-veronoto-2:#b0ae40;
   --si-veronoto-3:#bebe78;
@@ -1034,7 +1041,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
   --si-male-1:#00a9ca;
   --si-female-1:#f56aa8;
 }
-html[data-theme="light"] {
+html[data-theme="light"], .si-pal-chiaro {
   --si-veronoto-1:#a3a21b;
   --si-veronoto-2:#aead3f;
   --si-veronoto-3:#bdbc76;
@@ -3413,7 +3420,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.25</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.26</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -12284,8 +12291,12 @@ function showBadgeAdjustEditor(initState){
   function showVal(k){ var c = ctrls[k]; var v = BADGE_ADJUST[cur][k]; c.rng.value = v; c.num.value = (k === 'sc') ? v.toFixed(2) : v.toFixed(3); c.val.textContent = fmtV(k); }
 
   var pvGrid = document.createElement('div'); pvGrid.className = 'ba-pvgrid';
-  var paneD = document.createElement('div'); paneD.className = 'ba-pane dark';
-  var paneL = document.createElement('div'); paneL.className = 'ba-pane light';
+  // ⚠️ Le classi `si-pal-*` portano la palette del riquadro, che non è quella del tema in
+  // corso: i due fondi convivono nella stessa pagina, e senza di esse le icone dell'uno e
+  // dell'altro rendevano tutte le tinte del documento. I valori vivono nel CSS delle due
+  // palette, in testa al file, e qui non si ripetono.
+  var paneD = document.createElement('div'); paneD.className = 'ba-pane dark si-pal-scuro';
+  var paneL = document.createElement('div'); paneL.className = 'ba-pane light si-pal-chiaro';
   pvGrid.appendChild(paneD); pvGrid.appendChild(paneL); right.appendChild(pvGrid);
 
   // Tabella riepilogo SEMPRE visibile in basso (niente toggle), scrollevole.
