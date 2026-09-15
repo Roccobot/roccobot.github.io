@@ -1710,6 +1710,25 @@ il disegno.
     scudo, cioè due silhouette che non si somigliano, e la distinzione la fa il profilo. La
     regola di allora resta vera per il disegno di allora, e chi la trova citata sappia che
     cadde insieme a quelle forme.
+- ⚠️⚠️ **DALLA `2.24` LO SCUDO DELL'ARCIMAGO HA LO STACCO LARGO IL DOPPIO**, disegno
+  dell'utente: fra l'elmo e il corpo dello scudo si passa da **10,49 a 20,49 unità** di
+  `viewBox`, e con lo stacco sono arrivati gli angoli **raccordati** (raggio 4) che prima
+  erano vivi. La ragione è la misura reale: l'icona in lista è resa a **26,78px** (desktop a
+  1280), quindi quelle 10,49 unità valevano **1,10px** e le due parti si chiudevano; adesso
+  sono **2,14px**.
+  - ⚠️ **Non è un rifacimento e non invalida niente**: resta **un tracciato solo** con **una
+    variabile sola** (`--si-arcimago-1`), quindi le due palette per tema valgono identiche
+    (`#8491ff` scuro, `#5c60e3` chiaro) e nessun contrasto misurato prima decade. È l'opposto
+    dei tre rifacimenti completi, che invece invalidano in blocco.
+  - ⚠️⚠️ **LA STELLA RESTA UN FORO, ed è la cosa da non rompere ritoccando il tracciato**:
+    corpo e stella hanno **verso opposto**, quindi il `fill-rule` la toglie dal pieno e il
+    segno mostra il fondo della card, come il `Nome di Ged` dalla `2.20`. Si prova con
+    `isPointInFill` sul centro (128, 157), che deve dare **falso**: un `d` ricopiato con la
+    stella nello stesso verso del corpo la riempirebbe **senza dare alcun errore**.
+  - ⚠️ **Lo stacco si misura sulle BBOX dei due sottotracciati, non leggendo i numeri del
+    comando**: con gli angoli raccordati il numero scritto nella `d` non è il bordo del
+    disegno. La `d` si spezza sulle `M` **maiuscole**, che sono due, e la stella resta dentro
+    il secondo pezzo senza spostarne il bordo alto.
 - **In legenda sono su UNA riga** (id di riga `roke`, che filtra l'unione dei due), col
   meccanismo `.leg-lbl-col` + `.leg-group` delle coppie di Arda. ⚠️ **Ma coi testi BREVI**:
   la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
