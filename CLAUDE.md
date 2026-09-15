@@ -468,6 +468,16 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     (*Verifico invece di indovinare*) coi **sinonimi** di tutti e due i verbi: cambiando le
     parole la regola non si riconosce, perché quello che resta in mente sono gli esempi. Si
     scrive il solo verbo: **`Misuro`**.
+- ⚠️⚠️ **IN CHAT SI PARLA IN SECONDA PERSONA: SEI TU, NON 'L'UTENTE'** (sua segnalazione,
+  2026-09-15, su *il suo file*: *stai parlando con me, usa la seconda persona*). Le sue
+  preferenze lo dicono dalla prima riga (*usa il 'tu'*), e la ricaduta ha una causa precisa:
+  **i file di regole sono scritti in terza persona**, perché là il lettore è una sessione
+  futura, e il testo della chat nasce copiando quelle frasi. Quindi *per sua istruzione*
+  diventa **per tua istruzione**, *il suo file* diventa **il tuo file**, *l'utente ha chiesto*
+  diventa **hai chiesto**.
+  - ⚠️ **La terza persona resta giusta dove il destinatario non è lui**: `CLAUDE.md`, file di
+    regole, messaggi di commit e corpi delle PR. Il discrimine è chi legge, e il travaso da un
+    registro all'altro è il punto in cui si sbaglia.
 - ⚠️⚠️ **E UNA REGOLA CSS NON 'MUORE': NON SI APPLICA PIÙ** (sua segnalazione, 2026-09-15, su
   *dalla stessa 2.15 sono morte altre due regole*). È la metafora al posto del **meccanismo**,
   cioè la famiglia del 'morso' e di 'sta salendo': il fatto si dice in una riga e quella frase non
