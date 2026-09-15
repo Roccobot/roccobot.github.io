@@ -898,8 +898,25 @@ sembra essere il padre di Therru, ferito col forcone da Ged e condannato alle ga
   alto: `He was glad to have a visitor` per Ventaglio, `old Relli came with his harp`, `said
   Shinny... her friend Apple` per Lucciola, `his wounds healed` per Tinca, `kept... in his
   pocket` per Heno. ⚠️ L'italiano non proverebbe niente: là l'articolo lo mette la grammatica.
-- ⚠️ **`Lord` è identico nelle tre edizioni** (4 occorrenze ciascuna), quindi l'appellativo di
-  Heno è quello in tutte e due le lingue: il traduttore non l'ha reso con `signore`.
+- ⚠️⚠️ **L'APPELLATIVO DI HENO È `Piccolo signore di Gont` / `Little lord of Gont`, e la
+  formula è DEL TESTO** (dalla `2.28`, scelta dell'utente fra quattro): *i piccoli signori di
+  Gont* in tutte e due le edizioni italiane, `the little lords of Gont` in inglese. ⚠️ `Lord`,
+  che la `2.27` aveva messo, è la parola dei **discorsi diretti** e Mondadori non la traduce:
+  è attestata (4 occorrenze per edizione) ma non è il titolo.
+  - ⚠️⚠️ **`Signore di Gont` sarebbe stato AMBIGUO IN UN MODO CHE IL DATASET PEGGIORA**: qui
+    dentro `Signore di <luogo>` è già una **carica vera**, quella del `Signore di Re Albi`,
+    quindi il parallelismo fa leggere la formula come 'il signore dell'isola' invece che 'uno
+    dei suoi signori'. L'ha visto l'utente prima di me.
+  - **L'aggettivo fa il lavoro dell'ARTICOLO INDETERMINATIVO**, che in un campo di appellativi
+    non si può scrivere: `Un signore di Gont` direbbe la cosa giusta e stonerebbe accanto a
+    `Principessa` e `Re di Hupun`. `Piccolo` la dice senza rompere il registro.
+  - ⚠️ **Il testo scioglie il dubbio da sé, e conviene saperlo**: `i signori di Gont` esiste al
+    **plurale** in tutte e tre le edizioni, e sono descritti come *troppo impegnati nelle loro
+    imprese di pirateria*, che è il ritratto di Heno. Quindi la classe esiste, ed è la sua.
+  - **La misura scartata è `Signore del Gont meridionale`**: circoscrive al territorio che
+    teneva davvero in pugno, e `South Gont` è attestato in inglese, ma in italiano **no**
+    (Mondadori scrive *la costa meridionale di Gont*), quindi la metà italiana sarebbe stata
+    una resa mia.
 - **Le origini sono tutte `Gont`, per residenza**: Re Albi e Valmouth sono su Gont, e nel campo
   va l'isola. È la via normale, non una concessione (§ 'Origine: significa NASCITA, e la
   residenza è solo un ripiego').
@@ -919,7 +936,7 @@ banco ripiega sul `textContent` del contenitore e legge **le due lingue attaccat
 trappola del banco: la gemella anti-jitter ha TRE nomi di classe', ed è tornata lo stesso al
 primo banco nuovo: il sintomo (un valore atteso che risulta doppio) è l'unica spia.
 
-- **Misura del giro**: 75 controlli su 75 coi font veri, dato e resa, nelle due lingue.
+- **Misura del giro**: 80 controlli su 80 coi font veri, dato e resa, nelle due lingue.
 
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
