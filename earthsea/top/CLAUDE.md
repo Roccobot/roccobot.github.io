@@ -1226,10 +1226,13 @@ cerchio (rosso il `Nome di Ged`, arancione lo `Stregone`, giallo il `Vero nome`,
   gradi** e la regolarità della distribuzione da **69 a 72%**; le icone dentro la finestra che
   regge tutti e due i temi passano da **una a tre** (`Arcimago`, `Maestro`, `Nome di Ged`).
 - ⚠️⚠️ **E SPARISCE LA COLLISIONE DI FORMA fra `Stregone` e `Mago`**, che era il difetto che
-  nessuna misura di colore vedeva: adesso lo `Stregone` è **tre stelle** e il `Mago` un disco
-  con l'albero. ⚠️ Ma il `Mago` ha preso **la forma che era dello `Stregone`**, quindi una
-  descrizione anteriore a questa versione nomina il disegno giusto attribuendolo all'altro
-  badge: chi legge un commit vecchio guardi la chiave, non la forma.
+  nessuna misura di colore vedeva: adesso lo `Stregone` è **tre stelle** e il `Mago` il
+  **bastone** dentro un disco. ⚠️ Ma il `Mago` ha preso **la forma che era dello `Stregone`**,
+  quindi una descrizione anteriore a questa versione nomina il disegno giusto attribuendolo
+  all'altro badge: chi legge un commit vecchio guardi la chiave, non la forma.
+  - ⚠️ **È un BASTONE e non un albero** (correzione dell'utente, 2026-09-15, su una mia
+    lettura sbagliata): a Roke il bastone è il segno del grado, quindi quel disegno dice il
+    badge alla lettera, e chiamarlo albero gli toglie il significato oltre che il nome.
 - ⚠️ **Il difetto del `Vero nome` era la SIMMETRIA e si vede che è passato**: la pergamena
   della `2.16` aveva due rulli uguali sopra e sotto e leggeva come un rocchetto di filo a
   qualunque misura; questa ha i rulli arrotolati e il foglio largo, e alla misura vera si legge
