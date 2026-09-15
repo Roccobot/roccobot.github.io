@@ -1350,9 +1350,34 @@ riferisco esclusivamente al tema scuro*).
   così che si sono chiuse anche le due scelte del tema chiaro, dopo quattro giri di proposte
   singole respinte.
 
-- **Banco della `2.23`**: 28 controlli su 28 coi font veri, che leggono il `fill` **calcolato**
+⚠️⚠️ **CHI DEVE MOSTRARE UNA PALETTE DIVERSA DA QUELLA DEL TEMA IN CORSO USA LE CLASSI
+`si-pal-scuro` E `si-pal-chiaro`** (dalla `2.26`), che ridefiniscono le venti variabili sul
+proprio sottoalbero. Le porta l'unico posto che ne ha bisogno: i **due riquadri di anteprima**
+dell'editor dei micro-aggiustamenti, che affiancano un fondo scuro e uno chiaro **dentro la
+stessa pagina**.
+- **Il difetto che tolgono**, segnalato dall'utente: le variabili si risolvono sul tema del
+  **documento**, quindi le icone dei due riquadri rendevano tutte la stessa palette e uno dei
+  due mostrava sempre quella sbagliata. ⚠️ **In pagina non si vedeva**, perché là il tema è uno
+  solo: l'anteprima 'live' (le card vere sotto la modale) è sempre stata esatta, ed è la
+  ragione per cui il difetto è vissuto a lungo in un posto solo.
+- ⚠️ **I due selettori si aggiungono ai blocchi che i valori li hanno già**, invece di
+  ridichiararli nel CSS dell'editor: i venti valori restano scritti una volta sola, e una
+  seconda copia divergerebbe al primo ritocco di una palette.
+- ⚠️ **La specificità non c'entra, ed è la ragione per cui funziona**: `html[data-theme=light]`
+  è più specifico di `.si-pal-scuro`, ma colpisce un altro elemento (la radice), e una
+  dichiarazione **sull'elemento** batte sempre l'eredità. Chi ci vede un conflitto da risolvere
+  con un `!important` sta guardando la cosa sbagliata.
+- ⚠️⚠️ **LA PROVA VUOLE UNA CONTROPROVA, o è verde per conto suo**: che `si-pal-chiaro` renda
+  le tinte chiare è vero anche col documento **già** in tema chiaro, cioè anche se la classe
+  non facesse niente. Il banco misura quindi tutti e due i temi del documento **e** un
+  riquadro senza classe, che deve seguire la pagina.
+
+- **Banco della `2.26`**: 43 controlli su 43 coi font veri, che leggono il `fill` **calcolato**
   di ogni forma nei due temi. ⚠️ Le tinte non si leggono dalla variabile dichiarata ma dal
   valore **risolto** dal browser, o si sta verificando il CSS invece della resa.
+  - ⚠️ **L'editor admin non si apre senza credenziali**, quindi di lui si prova il
+    **meccanismo** (due contenitori con quelle classi) più il fatto che i suoi due riquadri le
+    portino davvero. È lo stesso ripiego dichiarato per l'ordine delle voci della Console.
 
 ⚠️⚠️ **IL `viewBox` SI LEGGE DAL FILE E NON SI ASSUME 256**, ed è la trappola che l'invio della
 `2.18` ha portato: `mageSorcerer` arrivò con una tavola **800x800** mentre le altre otto erano
