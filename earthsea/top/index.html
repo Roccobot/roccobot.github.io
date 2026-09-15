@@ -1943,7 +1943,13 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    'Tutti'/'All' e la colonna 'Solo' restano fermi al pixel al cambio lingua. */
 .ctrl-label > span { grid-area:1 / 1; }
 .ctrl-label > .ctrl-label-alt { visibility:hidden; pointer-events:none; }
-.ctrl-legend-row img { font-size:1.141rem; flex-shrink:0; } /* 1.05rem / 0.92em */
+/* Corpo delle icone di legenda: 1.05rem / 0.92em, cioè il lato reso che la fila
+   ha sempre avuto. ⚠️ Il selettore mira alla CLASSE e non al tag: dalla 2.15 le
+   icone sono SVG in linea e in legenda non esiste più nessuna `img`, quindi la
+   regola scritta su `img` non pescava più nulla. Le sei dentro `.leg-ico` si
+   salvavano per il font-size proprio di quel contenitore; l'Arcimago, che vive in
+   `.leg-group`, ereditava lo 0.8rem della riga e rendeva 11,77px contro 16,78. */
+.ctrl-legend-row .status-icon { font-size:1.141rem; flex-shrink:0; }
 /* Colonna icone della legenda: slot a larghezza fissa con icona centrata.
    I box delle icone hanno larghezze diverse (.613-.935em): senza slot i
    centri ottici e l'attacco del testo risultano sfalsati. */
@@ -2016,7 +2022,11 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
 .leg-gender { display:flex; align-items:stretch; margin:0.5rem 0 0 0.3rem; background:rgba(104,144,168,0.10); border:1px solid rgba(104,144,168,0.30); border-radius:10px; overflow:hidden; }
 .leg-gender .leg-g-half { flex:1; display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.5rem 0.4rem; font-size:0.8rem; color:var(--parchment); white-space:nowrap; }
 .leg-gender .leg-g-half:first-child { border-right:1px solid rgba(104,144,168,0.25); }
-.leg-gender .leg-g-half img { font-size:1.141rem; flex-shrink:0; }
+/* ⚠️ Stessa correzione della riga delle icone di legenda, e per la stessa causa: dalla
+   2.15 qui non c'è nessuna `img`, i due simboli sono SVG in linea. Oggi non si vede,
+   perché la pill vive dietro `FEATURES.genderLegendPill` e il flag è spento: era un
+   difetto LATENTE, che sarebbe comparso il giorno in cui qualcuno accende il flag. */
+.leg-gender .leg-g-half .genere-svg { font-size:1.141rem; flex-shrink:0; }
 .leg-gender .genere-svg { display:inline-block; transform:none; }
 .leg-gender .genere-svg--m { width:.92em; height:.92em; }
 .leg-gender .genere-svg--f { width:.92em; height:.92em; }
@@ -3420,7 +3430,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.28</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.29</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
