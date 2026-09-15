@@ -264,6 +264,32 @@ pagina `options.html` di 'Image Max URL'.
   ricaricamento, quindi le prove su lingua e ripristino misurano il banco invece dello script.
   Va appoggiato a `localStorage`.
 
+## ⚠️⚠️ Uno userscript a `document-start` deve reggere l'assenza di `<html>`
+
+⚠️⚠️ **A `document-start` `document.documentElement` PUÒ ESSERE `null`, e chi lo tocca
+senza guardia ferma l'intero script.** Misurato il 2026-09-15 su `QwantRoccobot.user.js`,
+iniettandolo a documento vuoto sulla pagina vera: la prima riga del modulo di pulizia
+(`document.documentElement.classList`) dava *Cannot read properties of null*, e siccome i
+moduli sono IIFE dentro una IIFE sola, quell'errore portava via **anche i moduli dopo**.
+Lo `<style>` non entrava affatto, quindi la barra 'Usa l'app' restava in pagina insieme a
+tutto il resto che la pulizia toglie.
+
+- ⚠️ **Il sintomo non dice la causa, ed è la ragione per cui questa nota esiste**: si vede
+  una cosa sola non nascosta (il banner), e si va a cercare il difetto nel suo selettore,
+  che invece è giusto. A dirlo è stata la spia sullo `<style>`, cioè contare se la regola
+  fosse in pagina, non guardarla.
+- ⚠️⚠️ **Quanto presto parta lo script lo decide il GESTORE, e non è uguale dappertutto**:
+  con `documentElement` già in scena lo stesso script funziona, ed è il caso in cui gira il
+  desktop. Quindi un difetto di questa famiglia si vede **solo su un apparecchio**, e
+  chiunque provi sul proprio non lo riproduce.
+- **Il rimedio è una guardia sola**, `alDocumento(fn)` in testa allo script: chiama subito
+  se `<html>` c'è, altrimenti riprova al fotogramma dopo. I moduli che toccano il DOM
+  partono di lì. ⚠️ **Non si mette un try/catch al suo posto**: quello nasconderebbe
+  l'errore lasciando il modulo a metà, mentre qui il lavoro va fatto, solo più tardi di un
+  fotogramma.
+- **La controprova è il confronto fra le due corse**: a documento vuoto, prima lo `<style>`
+  era 0 e il banner alto 67 pixel, dopo lo `<style>` è 1 e il banner è a 0.
+
 ## ⚠️ Qwant: la barra 'Usa l'app' vive in DUE posti, ed è voluto
 
 Il selettore che nasconde lo smart banner di Qwant (`div:has(> div > a[href*="utm_medium=smartbanner"])`)
@@ -279,6 +305,27 @@ unica non è possibile, perché i due meccanismi non si leggono a vicenda. Il cr
 è stato scelto il selettore (l'URL invece delle classi, che in Qwant sono hashate; e il
 livello del contenitore misurato risalendo il DOM) vive in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md),
 per non scriverlo due volte.
+
+⚠️⚠️ **E DALLA `2.18.0` I BERSAGLI SONO DUE PER OGNI VIA, PIÙ UN RAMO IN JS.** Il selettore
+di prima dipende dalla **profondità**: vuole esattamente un livello fra il wrapper e il link.
+Adesso accanto a lui c'è `div:has(> a[href*="utm_medium=smartbanner"])`, che prende il banner
+stesso, e nello userscript c'è `nascondiSmartBanner()`, che **misura** quanto salire invece di
+saperlo. Sono tre vie per una cosa sola, e ognuna copre quello che le altre non coprono.
+
+- **Il conto che regge la seconda regola**: nascondendo l'uno o l'altro dei due bersagli, lo
+  spazio residuo è **zero** in tutte e tre le pagine mobili (iniziale, web, immagini). Quindi
+  nessuna delle due lascia la striscia vuota che il banner occupava (92 pixel sul banco a
+  412 di larghezza, 67 sulla pagina viva).
+- ⚠️ **Il ramo JS non è ridondanza del CSS**, e il criterio che li distingue è preciso: il CSS
+  arriva senza sfarfallio ma vuole `:has()` con un combinatore iniziale; il ramo JS gira dal
+  `MutationObserver`, quindi prende anche un banner rimesso in scena dopo, e la profondità la
+  ricava salendo finché l'antenato porta solo il testo del banner.
+- **La controprova è in tre corse**: con tutto acceso il banner è a 0; togliendo la regola CSS
+  resta 0 (lavora il ramo JS); togliendo anche la chiamata al ramo JS torna a **67**. Senza
+  quella terza corsa le prime due non misurerebbero niente.
+- ⚠️ **Il banco è Playwright con Chromium, in emulazione telefono, sulla pagina VERA**: la
+  pagina salvata su disco serve a misurare la struttura, ma non dice se lo script parte, ed è
+  proprio là che viveva il difetto della guardia di avvio, qui sopra.
 
 ## 📥 ENF Roccobot: il picker, e il sito che è stato tolto
 
