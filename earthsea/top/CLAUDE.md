@@ -1172,6 +1172,28 @@ scala del potere (`stregone`, `mago`, `signoredraghi`); in fondo la coppia di Ro
 `arcimago`). Vale per la resa in lista, per la legenda del Pannello e per la griglia
 dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
 
+⚠️⚠️ **DALLA `2.16` TUTTI E NOVE I DISEGNI SONO DELL'UTENTE, sette badge e due simboli di
+genere, ed è il secondo rifacimento completo dopo quello della `2.14`.** Sono arrivati in un
+archivio unico dopo che una mia proposta ex-novo era stata **bocciata** (*le tue proposte sono
+troppo grezze. Per il momento usa queste così come sono, poi ne riparliamo*), e vanno lette
+come uno stato **provvisorio dichiarato da lui**: il 'poi ne riparliamo' è la parte che conta.
+- ⚠️ **Le tinte sono pensate per il tema SCURO, e la misura lo dice**: sul fondo di card
+  chiaro sette icone su nove restano sotto il 3:1 (lo `Stregone` a **1,08**, il `Mago` 1,37, il
+  `Signore dei Draghi` 1,53, il `Vero nome` 1,65, i due generi 2,30 e 2,44), mentre sullo
+  scuro vanno da 2,94 a 13,46. È lo stesso sbilanciamento che la `2.15` doveva togliere, e non
+  si toglie coi disegni: vuole **due tinte per icona**, una per tema, che è il lavoro rimasto
+  aperto.
+- ⚠️ **La distanza minima di tonalità è 22°** (`Stregone` e `Nome di Ged`, due verdi), contro
+  i 6° della `2.14`: le collisioni di prima sono superate, e questa è più larga ma esiste.
+- ⚠️⚠️ **I NOMI DEI FILE CHE MANDA NON SEGUONO LA CONVENZIONE, e si rinominano installandoli**:
+  manda `mageSorcerer`, `mageWizard`, `genderMale`, `genderFemale`, mentre i file del progetto
+  portano il nome del **badge** (`Sorcerer`, `Mage`, `Male`, `Female`). Non è pignoleria: è la
+  regola che ha già pagato quattro volte su `GedName`, dove il disegno è cambiato senza che il
+  codice se ne accorgesse.
+- **La ripulitura degli export vale più che mai**: l'archivio della `2.16` pesava **1,3 MB** e
+  i nove frammenti installati **6.292 byte**, cioè il 99,5% era il blob `i:aipgf` di
+  Illustrator. La procedura è quella del logo del FAB, e la geometria si riconfronta dopo.
+
 - ✅⚠️⚠️ **DALLA `2.15` SONO SVG IN LINEA nel sorgente, e non più `img` verso `icons/*.webp`**
   (richiesta dell'utente, 2026-09-14: *passiamo all'SVG inline*). Il markup vive in
   `BADGE_ICON` e `GENDER_ICON`, i **sorgenti** in `.memo/sorgenti/earthsea-icons/`, e i nove
