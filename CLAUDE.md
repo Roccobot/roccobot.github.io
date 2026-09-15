@@ -649,6 +649,16 @@ poi divergerebbe.
     costante `VERSIONE` di `RoccobotOS/RoccobotOS.js`. ⚠️ Per RoccobotOS **non** è più
     l'intestazione di quel file: dal 2026-07-31 il commento non porta il numero, e un
     `head -c 30` non mostrerebbe nulla facendo credere a un deploy mancato.
+  - ⚠️⚠️ **L'HTML PUÒ RESTARE IN CACHE QUANDO LA SONDA È GIÀ AGGIORNATA, e si legge come un
+    deploy a metà**: misurato il 2026-09-15 su Terramare, `dati.js` rispondeva già `2.26`
+    mentre `index.html` serviva ancora il badge della `2.25` e non conteneva le classi appena
+    aggiunte. Non era il deploy: era la cache del distributore davanti a Pages.
+    - **Come si accerta in un comando**, e vale anche come rimedio: si rifà il `curl` con
+      `-H 'Cache-Control: no-cache'`, oppure aggiungendo una query qualunque (`?cb=...`). Se
+      là il contenuto nuovo c'è, il deploy è arrivato e non c'è niente da sbloccare.
+    - ⚠️ **Perciò una modifica che vive nel SOLO `index.html` non si verifica col `curl` nudo**:
+      quel file resta dietro la cache, mentre `dati.js` viene ripreso prima. Chi guarda l'HTML
+      e conclude 'non è andato live' ha davanti una copia vecchia.
   - Il disservizio può essere **intermittente per giorni**, con deploy riusciti in mezzo e la
     pagina di stato GitHub verde (i guasti a **raggio ristretto** non vi compaiono, cfr.
     deploy-pages issue 418): finché i push freschi pubblicano non è un blocco totale e basta
