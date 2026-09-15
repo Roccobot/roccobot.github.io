@@ -1127,6 +1127,34 @@ silenzio.
   messaggio di due righe. Senza quella proprietà il testo sarebbe uscito su una riga sola
   con uno spazio in mezzo, cioè un a capo che non si vede e non dà errore.
 
+### 🔢 Chi bumpa la versione: i soli CONTENUTI
+
+⚠️⚠️ **DAL 2026-09-15 BUMPA UN SALVATAGGIO SOLO, quello dei TESTI del dataset** (istruzione
+dell'utente: *riordinare i personaggi, cambiare i colori e modificare i micro-aggiustamenti
+non dovrebbe causare un bump di versione*). Vale per **tutti e due i siti gemelli**, che prima
+si comportavano identici anche nel difetto.
+
+| salvataggio | versione |
+|---|---|
+| testi dei personaggi | **bumpa** `+0.01` |
+| riordino, colori, flag di sito, micro-aggiustamenti dei badge | non bumpa |
+
+- **La leva è il quarto parametro di `doCommit`**, `keepVersion`, che il Worker legge come
+  `newVersion = (body.keepVersion === true) ? curVer : bumpVersion(curVer)`. Lato server non
+  c'è niente da cambiare: la decisione è tutta nel client.
+- ⚠️ **Il riordino lo passa per POSIZIONE**, cioè `doCommit('classifica: aggiorna ordine',
+  null, null, true)`: i due argomenti in mezzo restano vuoti e `payload` nullo ricade su
+  `dati`. Chi aggiunge un salvataggio nuovo controlli di essere al **quarto** posto.
+- ⚠️⚠️ **LA PROVA È SUL SORGENTE, ed è un ripiego dichiarato**: `doCommit` esce con `no-auth`
+  senza la parola d'ordine admin, e `adminPassword` è un `let` di modulo, quindi un banco non
+  può impostarla dall'esterno. Si legge il **quarto argomento** delle cinque chiamate e si
+  prova in pagina che le funzioni esistano e che il body porti `keepVersion` solo col
+  parametro vero.
+  - ⚠️ **Gli argomenti si spezzano al PRIMO LIVELLO di parentesi**: un estrattore che taglia
+    alla prima `)` legge mezza chiamata e conta male i pezzi, e il primo giro del banco ha
+    dato **sei prove rosse su codice giusto** proprio così. Il sintomo è un `keepVersion` che
+    risulta `SITE_FLAGS` o `(assente)` dove il sorgente dice `true`.
+
 ### 🎛️ L'ordine delle voci nella Console
 
 ⚠️ **Non è un ordine tecnico: lo decide l'utente**, e per questo non si 'sistema' a intuito.
