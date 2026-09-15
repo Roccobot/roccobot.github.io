@@ -860,6 +860,67 @@ segno del disfacimento della magia che apre *La spiaggia più lontana*.
   lanciare incantesimi*) è più corta di tutte e **non è valida**: non lo nomina, che è il
   requisito su cui cadono le altre deroghe già registrate.
 
+### 🧵 I cinque di Tehanu, e la FIABA dentro la fiaba
+
+Voci chieste dall'utente nella `2.27`, tutte da *Tehanu*: **Ventaglio** / `Fan` è il tessitore
+di Re Albi, quasi cieco, nella cui casetta Tenar aveva abitato e dal cui **ventaglio dipinto**
+di famiglia viene il nome d'uso; **Relli** è il vecchio arpista di Valmouth, che accoglie la
+nave del re cantando le Gesta di Morred; **Lucciola** / `Shinny` è l'amica di Melina che sul
+molo scambia Tenar per la madre del re e lo bacia; **Tinca** / `Hake` è quello dei tre che
+sembra essere il padre di Therru, ferito col forcone da Ged e condannato alle galee; **Heno**
+è il signore protettore dei pirati che teneva al suo soldo le guardie del Gont meridionale.
+
+- ⚠️⚠️ **ANDAUR E AVAD RESTANO FUORI, E LA RAGIONE È ATTESTATA ALLA LETTERA: sono personaggi
+  di una FIABA dentro il mondo di Terramare**, cioè finzione nella finzione. La domanda l'ha
+  posta l'utente (*non sono riuscito a capire se sono personaggi immaginari anche nel mondo di
+  Earthsea*), e a chiuderla è un passo di **un altro libro**: in *La spiaggia più lontana* il
+  narratore dice che *le vecchie storie che si raccontano ai bambini, i miti*, cominciavano
+  con *In un tempo lontano come mai, in un paese distante come Selidor, c'era un principe...*
+  La storia che Tenar racconta a Therru comincia **con quella formula esatta**, ed è una
+  storia che Lodola raccontava ai propri figli.
+  - ⚠️ **Il criterio che ne resta vale oltre il caso**: un nome che compare **solo** dentro una
+    storia raccontata da un personaggio non è una voce del dataset, come `Hoeg` non lo è perché
+    è il nome della specie. La prova non è il buon senso: è la **formula di apertura**, che il
+    ciclo dichiara come marcatore di genere.
+  - ⚠️ **La prova vive in un volume diverso da quello della storia**, ed è la ragione per cui un
+    grep sul solo *Tehanu* non basterebbe a rispondere: là la formula compare e basta, senza
+    nessuno che dica che cosa sia.
+
+- **Le due edizioni italiane concordano su TUTTO**, nomi e citazioni: stessi conteggi per i
+  cinque nomi (12, 3, 3, 8, 8 in ognuna) e le cinque citazioni sono **verbatim in tutte e tre**
+  le edizioni. Nessuna forma inglese compare nelle italiane, quindi qui non c'è niente da
+  coprire fra i nomi alternativi.
+- ⚠️⚠️ **LA CITAZIONE DI VENTAGLIO NON È QUELLA DEL VENTAGLIO, e il perché è il criterio**: il
+  passo che spiega il nome d'uso (*sotto l'oggetto che gli aveva dato il nome: un grande
+  ventaglio dipinto*) **non lo nomina**, dice `gli`, ed è narrazione, quindi non ha nemmeno una
+  firma che lo attribuisca. È il ramo del criterio su cui cadono le citazioni più belle.
+- **Il genere viene dal narratore INGLESE su tutti e cinque**, che è il grado di prova più
+  alto: `He was glad to have a visitor` per Ventaglio, `old Relli came with his harp`, `said
+  Shinny... her friend Apple` per Lucciola, `his wounds healed` per Tinca, `kept... in his
+  pocket` per Heno. ⚠️ L'italiano non proverebbe niente: là l'articolo lo mette la grammatica.
+- ⚠️ **`Lord` è identico nelle tre edizioni** (4 occorrenze ciascuna), quindi l'appellativo di
+  Heno è quello in tutte e due le lingue: il traduttore non l'ha reso con `signore`.
+- **Le origini sono tutte `Gont`, per residenza**: Re Albi e Valmouth sono su Gont, e nel campo
+  va l'isola. È la via normale, non una concessione (§ 'Origine: significa NASCITA, e la
+  residenza è solo un ripiego').
+- **Le posizioni vengono dal vicinato**: `Tinca` entra subito dopo `Faina`, perché sono due
+  della stessa banda e il testo li nomina insieme (*Tinca, Faina e l'altro*); gli altri quattro
+  chiudono il gruppo di Tehanu dopo `Brost`.
+- ⚠️ **Nessuno dei cinque porta badge**, e il solo che potrebbe ingannare è Heno: comanda dei
+  pirati e ha uno stregone al suo servizio (`il pirata-stregone Tally`), ma il badge marca chi
+  ha il potere, non chi lo assolda.
+
+#### ⚠️ La trappola del banco, ed è la stessa di sempre con un nome nuovo
+
+Misurare il tipo di una card vuole la classe della **gemella di quel blocco**: `bil-m` nei
+nomi, **`tb-m`** nelle etichette di tipo, `rc-m` nella citazione. Cercando la sola `bil-m` il
+banco ripiega sul `textContent` del contenitore e legge **le due lingue attaccate**
+(`UomoMan`), cioè accusa il sito di un difetto che non ha. ⚠️ **È già scritto** in § 'La
+trappola del banco: la gemella anti-jitter ha TRE nomi di classe', ed è tornata lo stesso al
+primo banco nuovo: il sintomo (un valore atteso che risulta doppio) è l'unica spia.
+
+- **Misura del giro**: 75 controlli su 75 coi font veri, dato e resa, nelle due lingue.
+
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
 Dalla `1.80` la lista è divisa in **due tabelle**: i personaggi delle opere, e sotto i
