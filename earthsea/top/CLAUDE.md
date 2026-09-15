@@ -1237,10 +1237,73 @@ cerchio (rosso il `Nome di Ged`, arancione lo `Stregone`, giallo il `Vero nome`,
   della `2.16` aveva due rulli uguali sopra e sotto e leggeva come un rocchetto di filo a
   qualunque misura; questa ha i rulli arrotolati e il foglio largo, e alla misura vera si legge
   per quello che è.
-- ⚠️ **Il contrasto sul tema chiaro resta il lavoro aperto**, e il conto non è cambiato: sei
-  icone su nove restano sotto il 3:1 (il `Mago` a **1,08**, il `Vero nome` 1,16, lo `Stregone`
-  1,85, il `Femminile` 2,03, i `Draghi` 2,11, il `Maschile` 2,15). Lo spettro pieno non lo
-  risolve, perché quello è un fatto di **chiarezza** e non di tonalità.
+- ✅ **Il contrasto sul tema chiaro è chiuso dalla `2.21`**, con le due palette: vedi la
+  sezione qui sotto. La nota che lo dava come lavoro aperto, con le sei icone sotto il 3:1,
+  descriveva lo stato fino alla `2.20`.
+
+### 🌗 Le DUE PALETTE, una per tema, e il metro che le ha sbagliate tre volte
+
+Dalla `2.21`. I `fill` dei nove frammenti sono **variabili CSS** (`--si-<chiave>-<n>`, venti
+in tutto), definite col valore del tema **scuro** nel blocco base e ridefinite col valore del
+tema **chiaro** sotto `html[data-theme="light"]`. È il motivo per cui le icone erano passate
+a SVG in linea nella `2.15`: col WebP il colore vive dentro il file e nessuna regola lo
+raggiunge.
+
+- ⚠️ **Tutte e venti le tinte cambiano fra i due temi**, su tutte e nove le icone, e zero
+  restano identiche: era la richiesta dell'utente (*in un modo o nell'altro mi piacerebbe che
+  cambiassero tutte*).
+- ⚠️⚠️ **LA TONALITÀ NON SI RUOTA MAI FRA I DUE TEMI**, e non è una raffinatezza: due varianti
+  dello stesso badge con tonalità diverse si leggono come **due colori diversi**, e il badge
+  perde identità al cambio tema. Si muove la sola **chiarezza**, con una traslazione uguale
+  per tutte le tinte della stessa icona, e il **croma si ricalcola** al massimo che il gamut
+  sRGB concede a quella chiarezza. ⚠️ Trascinare il croma produce un colore che il browser
+  taglia in silenzio, cioè una tinta diversa da quella calcolata.
+
+⚠️⚠️ **IL METRO GIUSTO NON È IL CONTRASTO SUL FONDO: È QUELLO FRA LE TINTE DENTRO L'ICONA**, e
+questa è la lezione che vale oltre il caso. Il contrasto sul fondo di card dice se l'icona si
+**stacca**; quello interno dice se dentro di lei si **vede** qualcosa. Scendendo di chiarezza
+il gamut si stringe, quindi una traslazione uniforme **comprime** i rapporti interni: il
+numero che si guarda migliora e il disegno peggiora.
+- **Misurato sulle proposte bocciate**: sul `Vero nome` il contrasto interno scendeva da
+  **1,85 a 1,22** mentre quello sul fondo saliva a 4,18; sul `Mago` restava inchiodato a 1,4
+  mentre quello sul fondo arrivava a 4,82. Sono i numeri della **macchia uniforme**, ed è
+  esattamente la parola con cui l'utente le ha bocciate (*le trasformi in macchie indistinte
+  di colore troppo scuro e uniforme, non si distinguono le sagome*).
+- ⚠️ **Si misura sulle tinte GRANDI**, cioè quelle che coprono almeno il 10-12% del disegno
+  reso: una linea sottilissima che passa il 4,5 non rende leggibile niente a 17px.
+- ⚠️ **I TRE ALTRI CRITERI PROVATI E SCARTATI**, con la misura che li ha bocciati, perché
+  sembrano tutti ragionevoli: portare le tinte **allo stesso** contrasto con la dominante le
+  rende identiche fra loro (`#85d94e` e `#398233` finivano a `#1f7200` e `#277122`);
+  **moltiplicare** i dislivelli non basta dove il dislivello di partenza è minuscolo (i rulli
+  del `Vero nome` restavano a 1,68 con un fattore 3); **ridistribuirli** a passo uniforme
+  schiarisce le tinte già scure (il nucleo del `Mago` saliva a `#539c4c`).
+
+⚠️⚠️ **NEL TEMA CHIARO TRE ICONE NON SEGUONO LA PALETTE CALCOLATA, ed è una scelta
+dell'utente presa guardando i disegni resi**, non un'omissione:
+
+| icona | tema chiaro | perché |
+|---|---|---|
+| `Stregone` | le tinte della `2.20`, invariate | ogni variante scurita gliele rendeva macchie (*Stregone può passare alla variante 2.20*) |
+| `Vero nome` | si muove la **sola pergamena** (foglio, riflesso, rulli), il resto resta fermo | la struttura scura c'è già ed è la scrittura |
+| `Mago` | traslazione uniforme **leggera** | il gradino che ha scelto fra i sette che gli sono stati mostrati |
+
+⚠️⚠️ **IL `Vero nome` HA UN CONFLITTO INTERNO MISURATO, e conviene conoscerlo prima di
+ritoccarlo**: la sua struttura scura è la **scrittura** sulla pergamena, un tracciato **senza
+`fill` esplicito** (quindi nero) a opacità `.77`. Quindi il foglio e la scrittura si muovono
+in versi opposti: ogni punto di chiarezza tolto al foglio per farlo staccare dal fondo lo
+avvicina alla scrittura e spegne l'interno.
+- **La finestra utile è stretta e cade fra OKLCH L 0,72 e 0,64**: là il foglio dà 2,0-2,7 sul
+  fondo chiaro e la scrittura resta a 6,1-4,8. Sotto L 0,60 crollano insieme, ed è là che
+  nascevano le macchie.
+- ⚠️ **Perciò sul `Vero nome` si sposta la sola pergamena**: muovere anche i lacci e il
+  rettangolo era il difetto delle proposte bocciate.
+- ⚠️ **La ricetta del `Mago` è l'OPPOSTA e non è un'incoerenza**: là la massa è un **anello**
+  che può sparire nel fondo perché il disco interno porta il segno; qui la massa **è** il
+  segno. Chi applica una ricetta sola alle due icone ne rompe una.
+
+- **Banco della `2.21`**: 26 controlli su 26 coi font veri, che leggono il `fill` **calcolato**
+  di ogni forma nei due temi. ⚠️ Le tinte non si leggono dalla variabile dichiarata ma dal
+  valore **risolto** dal browser, o si sta verificando il CSS invece della resa.
 
 ⚠️⚠️ **IL `viewBox` SI LEGGE DAL FILE E NON SI ASSUME 256**, ed è la trappola che l'invio della
 `2.18` ha portato: `mageSorcerer` arrivò con una tavola **800x800** mentre le altre otto erano
