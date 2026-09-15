@@ -1311,31 +1311,39 @@ riferisco esclusivamente al tema scuro*).
   l'anello del `Mago` stava già a 5,48 sul fondo scuro, e a sparire erano il **nucleo**
   (`#004200`) e i **lacci** del `Vero nome` (`#423800`). Chi legge la dominante conclude che
   stacchino già bene.
-- ⚠️⚠️ **DALLA `2.23` IL `Signore dei Draghi` È MONOCROMO NEL TEMA SCURO**: corpo **e** corna
-  valgono `#817c64`, un bruno-grigio caldo, dettato dall'utente alla lettera (*la base e le
-  corna nel tema scuro devono essere esattamente #817c64*). Contrasto **3,66** sul fondo di
-  card scuro e 4,21 sul fondo pagina.
-  - ⚠️ **Il contrasto INTERNO scende a 1,00 per costruzione**, e non è un difetto da
-    correggere: con una tinta sola la sagoma si legge per il **profilo esterno**, che su
-    questo disegno è netto (le corna sporgono dall'elmo). È la scelta dell'utente, presa dopo
-    aver guardato 55 combinazioni di tonalità e saturazione.
-  - ⚠️⚠️ **NEL TEMA CHIARO RESTA A DUE TINTE** (`#00805f` il corpo, `#0e4b46` le corna): la
-    decisione riguarda il solo tema scuro, ed è l'unica icona delle nove con un numero di
-    tinte **diverso fra i due temi**. Un banco che la dia per monocroma in entrambi accusa un
-    dato giusto.
+- ⚠️⚠️⚠️ **'LA BASE' DEL `Signore dei Draghi` È LA FASCIA SOTTO L'ELMO, NON IL CORPO DELLA
+  CORONA**, ed è la parola che ha prodotto il fraintendimento più costoso di questo giro. La
+  sua richiesta era *la base e le corna nel tema scuro devono essere esattamente #817c64*: la
+  `2.23` l'ha letta come 'tutta l'icona' e ha portato **tutte e due** le variabili a quel
+  bruno, la `2.25` la corregge. Valori in vigore nel tema **scuro**: corona **`#21ae88`**,
+  base con le corna **`#817c64`**.
+  - ⚠️⚠️ **LA PAROLA NOMINA UN PATH, E IL DISEGNO DICE QUALE**: il secondo tracciato contiene
+    la **banda orizzontale** (la base della corona) **e** le due corna, che condividono il
+    `fill`; il primo è il corpo. Quindi 'la base e le corna' è la descrizione esatta del
+    **secondo path**, e leggerla come il corpo è l'unico modo di sbagliare. ⚠️ Chi riceve
+    un'istruzione su un pezzo di icona **guardi quali forme vivono nello stesso path** prima
+    di decidere a quale variabile si riferisce.
+  - ⚠️ **Il tiro si corregge con UNA riga e mezza**, non col disegno: la geometria dei due
+    path è **identica al byte** fra l'invio della `2.18` e quello della `2.25`, e cambiano i
+    soli `fill` dichiarati. Un invio che 'sembra' un disegno nuovo può essere una tavolozza:
+    si confrontano le `d` prima di toccare il frammento.
+  - **Le misure in vigore**: la corona dà **5,48** sul fondo di card scuro e 6,29 sul fondo
+    pagina, la base con le corna **3,66** e 4,21, e il contrasto **interno** fra le due è
+    **1,49**. ⚠️ Il verde è passato da `#22ae88` a `#21ae88`, un punto di rosso in meno
+    dettato da lui: sul contrasto non cambia niente (5,48 tutti e due), quindi è una scelta
+    sua e non una misura.
+  - ⚠️⚠️ **NEL TEMA CHIARO NON SI TOCCA NIENTE** (`#00805f` la corona, `#0e4b46` la base con
+    le corna): tutte e due le istruzioni riguardavano il solo tema scuro, e lui lo ha
+    ripetuto (*mi riferisco esclusivamente al tema scuro*).
   - Ⓘ **Il percorso, perché le note dei giri precedenti dicono altro**: nella `2.22` le corna
-    erano `#949494`, un grigio a croma **zero** alla chiarezza del gradino scelto, e il verde
-    del corpo era `#22ae88`, che lui aveva dichiarato *già eccellente*. Quella coppia è
-    superata: prima ha corretto il tiro sulla saturazione (*sono stato precipitoso*), poi ha
-    visto che il problema era la **tonalità** (*i due verdi cozzano*), e infine ha scelto di
-    portare le due forme alla stessa tinta.
-  - ⚠️ **Quella variabile governa anche la FASCIA sotto l'elmo**: nel disegno le due forme
-    laterali e la banda orizzontale vivono nello **stesso** path, quindi condividono il
-    `fill`. Separarle vorrebbe dire spezzare un tracciato suo, che è una modifica al disegno
-    e non una tinta.
-  - ⚠️ **Il banco prova che le DUE forme rendano lo stesso colore**, non la neutralità: dalla
-    `2.23` il controllo sui tre canali uguali fallirebbe su un dato giusto, perché `#817c64`
-    non è neutro.
+    erano `#949494`, un grigio a croma **zero**; poi lui ha corretto il tiro sulla saturazione
+    (*sono stato precipitoso*), ha visto che il problema era la **tonalità** (*i due verdi
+    cozzano*), e ha dettato il bruno. ⚠️ Le note che dicono l'icona **monocroma** descrivono
+    la sola `2.23` e `2.24`, che erano il mio errore: sono superate.
+  - ⚠️ **Il banco prova che le due forme rendano colori DIVERSI**, in tutti e due i temi. Il
+    controllo sui tre canali uguali serviva al grigio della `2.22` e non torna; quello che
+    dava le due forme **uguali** valeva per le due versioni sbagliate, e avrebbe fatto passare
+    l'errore una terza volta.
 - **Come si è arrivati alla scelta**: tre scale da sei gradini con passo **+0,025** di
   chiarezza, che è all'incirca la soglia di percettibilità. ⚠️ Quando una proposta unica
   viene bocciata, la via che funziona è offrire una **scala fine** e far puntare il dito: è
