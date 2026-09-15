@@ -1251,6 +1251,19 @@ installa un invio nuovo legga la tavola di ogni file, una per una.
   sono tutte uguali: la regola resta perché il caso si ripresenta a ogni invio, non perché ci
   sia ancora un file fuori misura.
 
+⚠️⚠️ **UN SEGNO INTERNO FATTO COME FORO SI ADATTA DA SÉ AI DUE TEMI, e dalla `2.20` il `Nome
+di Ged` lo dimostra**: il suo disco ha la runa **bucata** (un sottotracciato in verso opposto,
+che il `fill-rule` toglie dal pieno) invece di una forma scura sopra, quindi il segno mostra il
+**fondo della card** e nel tema chiaro è chiaro, nello scuro è scuro. L'icona è passata da due
+tinte a **una sola**, e il contrasto interno lo garantisce il buco.
+- ⚠️⚠️ **È la strada che risolve il problema alla radice, dove il disegno la concede**: una
+  forma scura dipinta dentro un'icona chiara ha bisogno di **due tinte per tema**, il foro no.
+  Chi riprende il lavoro delle due palette guardi prima quali segni interni possono diventare
+  fori: ogni buco tolto dal conto è una variabile CSS in meno da mantenere.
+- ⚠️ **Non si applica a tutto**: funziona per un segno **dentro** una forma piena, non per una
+  silhouette che vive sul fondo (i due simboli di genere non hanno niente da bucare). E un foro
+  troppo sottile sparisce alla misura vera come qualunque altro dettaglio.
+
 ⚠️⚠️ **LA FINESTRA DI UNA TINTA SOLA PER I DUE TEMI È STRETTISSIMA, e per l'arancione del
 `Vero nome` è UN punto solo**: tenendo ferma la tonalità (OKLCH `54,3`) e scorrendo la
 chiarezza, l'unico gradino che passa il 3:1 su tutti e due i fondi di card è `L 0,62`, cioè
