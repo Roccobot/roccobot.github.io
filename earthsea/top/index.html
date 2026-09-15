@@ -1954,7 +1954,11 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    I box delle icone hanno larghezze diverse (.613-.935em): senza slot i
    centri ottici e l'attacco del testo risultano sfalsati. */
 .ctrl-legend-row .leg-ico { width:.95em; display:inline-flex; justify-content:center; flex-shrink:0; font-size:1.141rem; }
-.ctrl-legend-row .leg-ico img { margin-left:0; }
+/* ⚠️ Lo slot centra l'icona, quindi il `margin-left:0.12em` di `.status-icon` (che sulle
+   card separa un badge dal precedente) qui la sposterebbe a destra di 2,19px, cioè 1,1px
+   fuori dal centro. Anche questa regola nominava `img` ed era morta dalla 2.15: le icone
+   sono state fuori asse per quattordici versioni, e il ricentraggio è della 2.30. */
+.ctrl-legend-row .leg-ico .status-icon { margin-left:0; }
 /* ⚠️ Il badge 'Signore dei Draghi' sale di 0.1em NELLA SOLA LEGENDA del Pannello (0.81,
    richiesta dell'utente: *solo nel pannello, senza spostare altro*). La regola è scoped a
    `.ctrl-legend-row`, quindi sulle card l'icona non si muove di un pixel, e nomina la sola
@@ -2014,7 +2018,10 @@ html[data-theme="light"] .ctrl-badge-tag:hover { background:rgba(58,88,120,0.18)
    sovrapposizione dei PNG (era quella a dare il 'rotto'). Le card non cambiano:
    là il box resta quadrato con object-fit:contain, resa identica a prima. */
 .ctrl-legend-istari .si-istari { width:auto; }
-.ctrl-legend-row .leg-group img { margin-left:0; }
+/* Gemella della regola dello slot, per l'icona che vive nel gruppo secondario: là a
+   separarla dal testo che la precede c'è il `margin-left` del gruppo, non quello
+   dell'icona. Anche questa nominava `img`, ed era morta dalla 2.15. */
+.ctrl-legend-row .leg-group .status-icon { margin-left:0; }
 /* Riga del genere in legenda: pill unica a due metà (Maschio | Femmina). È
    l'unica icona di fatto sempre presente, quindi messa in evidenza su una
    riga sola. Larghezza dal bordo delle checkbox dei filtri (rientro .3rem del
@@ -3430,7 +3437,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.29</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.30</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
