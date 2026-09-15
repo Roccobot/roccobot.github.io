@@ -456,6 +456,13 @@ errore**, **fallisce**). ⚠️ Fuori anche la coda su quello che **non** si è 
 completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
 § '🙂 Formule da non usare'.
 
+- ⚠️⚠️ **QUELLA VOCE SI CHIAMA 'CODA' MA IL DIVIETO NON DIPENDE DALLA POSIZIONE**, ed è la
+  lettura che me l'ha fatta infrangere il 2026-09-15 aprendo un turno con *faccio il conto
+  invece di discutere a occhio*: la parola 'coda' descrive dove capita più spesso, non il
+  perimetro. Anche in **apertura**, e anche annunciando quello che si sta per fare, il
+  paragone con l'alternativa scartata non si scrive: resta la sola cosa che si fa (*faccio il
+  conto*).
+
 - ⚠️⚠️ **E FUORI `NIENTE DA FARE`, CHE È LA FORMA CADUTA CINQUE VOLTE**, più di ogni altra:
   chiudendo o aprendo un resoconto di routine (le notifiche di GitHub sono il punto esatto) si
   dice **il fatto** e non si scrive nessuna formula. ⚠️ **Il divieto è sul SENSO e non su
