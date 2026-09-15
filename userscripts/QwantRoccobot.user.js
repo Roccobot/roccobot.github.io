@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.17.1
+// @version      2.18.0
 // @description  Declutters Qwant and opens image results on the original file. Home page and results page: the official logo instead of event doodles; no left sidebar, footer, promo cards, options/filters button or ads (in-line data-testid adResult and right column); fixed search parameters per tab; the Filters button shown on image search; no image preview strip on web search; and, behind an experimental flag, result links rewritten to skip the fdn.qwant.com tracking redirect. Image search: a click opens the original file, taken from the React state already in the page or else from the thumbnail URL, which matters now that Qwant serves Bing thumbnails that cannot be reversed; when neither works, the click is left untouched. That module makes no network request and runs only on the Images tab, because its global listeners on web search used to trip Qwant's anti-bot (403).
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
@@ -44,6 +44,23 @@
   // set diversi). NON tocca gli aggiustamenti fatti via il pannello Filtri (stessa query
   // nella stessa tab). false = disattiva del tutto.
   const FORZA_PARAMETRI = true;
+
+  // ── Guardia di avvio: <html> può non esistere ancora ──────────────────
+  // @run-at document-start vuol dire PRIMA di tutto, e "tutto" comprende la
+  // creazione di <html>: in quell'istante document.documentElement è null.
+  // Chi lo tocca senza guardia va in errore, e siccome i moduli sono IIFE
+  // dentro una IIFE sola, quell'errore ferma ANCHE i moduli dopo: niente CSS,
+  // niente pulizia, niente modulo immagini. Misurato: iniettando lo script a
+  // documento vuoto, "Cannot read properties of null (reading 'classList')" e
+  // lo <style> non entra affatto, quindi la barra "Usa l'app" resta in pagina.
+  // Quanto presto parta davvero lo script lo decide il gestore, e non è uguale
+  // dappertutto: sul telefono può arrivare prima che sul desktop.
+  function alDocumento(fn) {
+    if (document.documentElement) { fn(); return; }
+    const riprova = () => alDocumento(fn);
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(riprova);
+    else setTimeout(riprova, 0);
+  }
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 0 -- Parametri di ricerca fissi e forzati (Web / Immagini)
@@ -107,7 +124,9 @@
   // Tutti gli agganci sono attributi STABILI (data-testid, aria-label, title):
   // le classi CSS di Qwant sono auto-generate e cambiano a ogni deploy.
   // Questo modulo è solo CSS + DOM: non fa richieste di rete, non tocca l'API.
-  (function pulizia() {
+  // ⚠️ Gira dentro alDocumento(): tocca <html> dalla prima riga, e a document-start
+  // quello può non esserci ancora (vedi la guardia in testa allo script).
+  alDocumento(function pulizia() {
     // Classe sull'<html> per la tab corrente: serve al CSS per mostrare il tasto Filtri
     // SOLO nella scheda Immagini (vedi NASCONDI_OPZIONI). Impostata subito, prima del CSS.
     function suImmagini() { try { return new URLSearchParams(location.search).get('t') === 'images'; } catch (e) { return false; } }
@@ -134,7 +153,12 @@
       // l'invariante è il link, che porta sempre utm_medium=smartbanner. Si nasconde
       // il WRAPPER (nonno del link), misurato risalendo il DOM: contiene solo il
       // banner, mentre un gradino più su ci sono già i risultati di ricerca.
-      'div:has(> div > a[href*="utm_medium=smartbanner"]){display:none!important}',
+      // ⚠️ I bersagli sono DUE perché il primo dipende dalla profondità esatta: il
+      // secondo prende il banner stesso (padre del link), e regge se Qwant togliesse
+      // un livello. Misurato sulle tre pagine mobili vere: nascondendo l'uno o
+      // l'altro lo spazio residuo è 0, quindi nessuno dei due lascia una striscia.
+      'div:has(> div > a[href*="utm_medium=smartbanner"]),' +
+      'div:has(> a[href*="utm_medium=smartbanner"]){display:none!important}',
       'a[href*="chrome.google.com/webstore"],a[href*="chromewebstore.google.com"]{display:none!important}'
     );
     if (NASCONDI_OPZIONI) regole.push(
@@ -234,6 +258,30 @@
       }
     }
 
+    function nascondiSmartBanner() {
+      if (!NASCONDI_PROMO) return;
+      // Ripiego JS della regola CSS qui sopra, e non è una ridondanza: quel selettore
+      // vuole :has() con un combinatore iniziale, che non tutti i motori che applicano
+      // CSS iniettato digeriscono, e dipende da quanti livelli separano il link dal
+      // wrapper. Qui la profondità si MISURA: si sale dal banner finché l'antenato
+      // porta solo il testo del banner, e ci si ferma prima di quello che contiene
+      // anche i risultati. Gira anche dal MutationObserver, quindi copre un banner
+      // rimesso in scena da React dopo l'idratazione.
+      for (const link of document.querySelectorAll('a[href*="utm_medium=smartbanner"]')) {
+        const banner = link.parentElement;
+        if (!banner || banner.dataset.rbsb) continue;   // il banner porta due link: si tratta una volta
+        banner.dataset.rbsb = '1';
+        const testo = (banner.textContent || '').trim();
+        let el = banner;
+        for (let i = 0; i < 4; i++) {
+          const su = el.parentElement;
+          if (!su || su === document.body || (su.textContent || '').trim() !== testo) break;
+          el = su;
+        }
+        el.style.setProperty('display', 'none', 'important');
+      }
+    }
+
     function nascondiAdsSidebar() {
       if (!NASCONDI_ADS_SIDEBAR) return;
       // SERP: la colonna a destra (.is-sidebar) dispone le card in una griglia.
@@ -256,7 +304,7 @@
       }
     }
 
-    function applica() { aggiornaClasseTab(); sistemaDoodle(); nascondiPromo(); nascondiBannerEstensione(); nascondiAdsSidebar(); }
+    function applica() { aggiornaClasseTab(); sistemaDoodle(); nascondiPromo(); nascondiSmartBanner(); nascondiBannerEstensione(); nascondiAdsSidebar(); }
 
     // La home è una SPA: doodle e card compaiono dopo il primo render → si osserva.
     function avvio() {
@@ -267,7 +315,7 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avvio);
     else avvio();
-  })();
+  });
 
   // ═══════════════════════════════════════════════════════════════════════
   //  MODULO 2. Immagini: il clic apre subito il file originale

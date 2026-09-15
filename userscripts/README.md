@@ -31,6 +31,11 @@ Uno script unico per Qwant, con due funzioni:
    **preservando il riquadro "Notizie"**. In home restano **solo logo e barra
    di ricerca, senza scorrimento verticale**; nella SERP restano i risultati e
    le notizie.
+   Fra le promozioni c'è anche la **barra "Qwant Search / Usa l'app subito!"**
+   che da telefono compare in cima a ogni pagina: viene tolta da tre vie
+   indipendenti (due selettori CSS e un ramo in JavaScript che misura quanto
+   risalire nel documento), così una sola che non funzioni non la lascia in
+   scena. Occupa 67 pixel in cima, e togliendola il contenuto sale di altrettanto.
 2. **Immagini dirette.** Nella ricerca immagini (`qwant.com` → scheda
    *Immagini*), il clic su una miniatura apre **direttamente il file
    originale** in una nuova scheda, invece del pannello di anteprima.
