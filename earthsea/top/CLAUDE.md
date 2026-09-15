@@ -1239,11 +1239,14 @@ cerchio (rosso il `Nome di Ged`, arancione lo `Stregone`, giallo il `Vero nome`,
   1,85, il `Femminile` 2,03, i `Draghi` 2,11, il `Maschile` 2,15). Lo spettro pieno non lo
   risolve, perché quello è un fatto di **chiarezza** e non di tonalità.
 
-⚠️⚠️ **IL `viewBox` SI LEGGE DAL FILE E NON SI ASSUME 256**, ed è la trappola che questo invio
-ha portato: `mageSorcerer` arriva con una tavola **800x800** mentre le altre otto sono 256.
-L'involucro del frammento dichiara il `viewBox`, quindi scrivendo 256 su un disegno da 800 la
-pagina lo mostra **ingrandito di tre volte e tagliato**, senza dare alcun errore. Chi installa
-un invio nuovo legga la tavola di ogni file, una per una.
+⚠️⚠️ **IL `viewBox` SI LEGGE DAL FILE E NON SI ASSUME 256**, ed è la trappola che l'invio della
+`2.18` ha portato: `mageSorcerer` arrivò con una tavola **800x800** mentre le altre otto erano
+256. L'involucro del frammento dichiara il `viewBox`, quindi scrivendo 256 su un disegno da 800
+la pagina lo mostra **ingrandito di tre volte e tagliato**, senza dare alcun errore. Chi
+installa un invio nuovo legga la tavola di ogni file, una per una.
+- Ⓘ **Quel file l'ha rifatto lui a 256 nella `2.19`**, centrandolo, quindi oggi le nove tavole
+  sono tutte uguali: la regola resta perché il caso si ripresenta a ogni invio, non perché ci
+  sia ancora un file fuori misura.
 
 ⚠️⚠️ **LA FINESTRA DI UNA TINTA SOLA PER I DUE TEMI È STRETTISSIMA, e per l'arancione del
 `Vero nome` è UN punto solo**: tenendo ferma la tonalità (OKLCH `54,3`) e scorrendo la
