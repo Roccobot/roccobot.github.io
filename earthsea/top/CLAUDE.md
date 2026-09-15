@@ -1301,7 +1301,33 @@ avvicina alla scrittura e spegne l'interno.
   che può sparire nel fondo perché il disco interno porta il segno; qui la massa **è** il
   segno. Chi applica una ricetta sola alle due icone ne rompe una.
 
-- **Banco della `2.21`**: 26 controlli su 26 coi font veri, che leggono il `fill` **calcolato**
+⚠️⚠️ **E NELLA `2.22` TRE TINTE DEL TEMA SCURO SONO SALITE, su richiesta dell'utente**
+(*Mago e Vero Nome in realtà sono un po' scure e staccano poco dal tema scuro, e anche le due
+corna dell'elmo di Signore dei Draghi*): il `Vero nome` di **+0,100** di chiarezza OKLCH e il
+`Mago` di **+0,150**, col croma rifatto al massimo del gamut, che è ciò che li rende anche
+più brillanti. ⚠️ **Il tema chiaro non è stato toccato**, ed è una sua precisazione (*mi
+riferisco esclusivamente al tema scuro*).
+- ⚠️ **Il numero da guardare su queste due icone non è quello della tinta principale**:
+  l'anello del `Mago` stava già a 5,48 sul fondo scuro, e a sparire erano il **nucleo**
+  (`#004200`) e i **lacci** del `Vero nome` (`#423800`). Chi legge la dominante conclude che
+  stacchino già bene.
+- ⚠️⚠️ **LE CORNA DEL `Signore dei Draghi` SONO GRIGIE, e la desaturazione è totale e
+  voluta** (*s6, ma in più desatura del tutto le corna*): croma **zero** in OKLCH alla
+  chiarezza del gradino scelto, cioè `#949494`. Il verde del corpo resta `#22ae88`, che lui
+  ha dichiarato *già eccellente*.
+  - ⚠️ **Quella variabile governa anche la FASCIA sotto l'elmo**: nel disegno le due forme
+    laterali e la banda orizzontale vivono nello **stesso** path, quindi condividono il
+    `fill`. Separarle vorrebbe dire spezzare un tracciato suo, che è una modifica al disegno
+    e non una tinta.
+  - ⚠️ **Si verifica sui tre canali UGUALI, non su un esadecimale atteso**: un valore
+    copiato passerebbe anche se il croma fosse rimasto.
+- **Come si è arrivati alla scelta**: tre scale da sei gradini con passo **+0,025** di
+  chiarezza, che è all'incirca la soglia di percettibilità. ⚠️ Quando una proposta unica
+  viene bocciata, la via che funziona è offrire una **scala fine** e far puntare il dito: è
+  così che si sono chiuse anche le due scelte del tema chiaro, dopo quattro giri di proposte
+  singole respinte.
+
+- **Banco della `2.22`**: 29 controlli su 29 coi font veri, che leggono il `fill` **calcolato**
   di ogni forma nei due temi. ⚠️ Le tinte non si leggono dalla variabile dichiarata ma dal
   valore **risolto** dal browser, o si sta verificando il CSS invece della resa.
 
