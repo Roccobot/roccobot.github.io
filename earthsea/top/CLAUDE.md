@@ -1328,12 +1328,19 @@ in linea nella `2.15`: col WebP il colore vive dentro il file e nessuna regola l
 ⚠️ **Quante siano si conta** (`--si-` nel blocco base), perché il numero cambia col disegno:
 la `2.31` ne ha tolta una portando il `Mago` da cinque forme a quattro.
 
-- ⚠️⚠️ **'TUTTE LE TINTE CAMBIANO FRA I DUE TEMI' NON È PIÙ VERO DALLA `2.31`**, ed era la
-  richiesta con cui le due palette erano nate (*in un modo o nell'altro mi piacerebbe che
-  cambiassero tutte*): il riflesso del `Mago` vale `#ffffff` in tutti e due i temi, perché i
-  due file li ha disegnati lui e ha chiesto di riprodurre i colori **esattamente come sono**.
-  ⚠️ Non è una svista da sanare pareggiando la tinta chiara: è la sua istruzione, e vince sulla
-  richiesta precedente.
+- ⚠️⚠️ **IL 'CAMBIANO TUTTE' RIGUARDA LE ICONE, NON LE SINGOLE TINTE**, ed è l'utente a
+  chiarirlo (2026-09-15): *intendevo che le icone (prese una ad una nel complesso) devono
+  essere diverse tra i due temi, NON che ogni singolo elemento deve cambiare colore per forza*.
+  ⚠️ **E non è una regola**: sono sue parole, *era più un vezzo di design, oltre alla volontà
+  di provare le potenzialità del motore dinamico*. Chi la legge come un vincolo si mette a
+  pareggiare tinte che nessuno ha chiesto di muovere.
+  - **Misurato sulle nove icone**: tutte e nove rendono diverse fra i due temi, e la sola
+    tinta che si ripete uguale è il riflesso del `Mago` (`#ffffff` in tutti e due), che dalla
+    `2.31` arriva dai suoi due file con l'istruzione di riprodurre i colori esattamente come
+    sono. Quell'icona cambia comunque **tre tinte su quattro**.
+  - ⚠️ **Il conto si rifà così**: si confrontano le due liste `--si-<chiave>-<n>` dei due
+    blocchi e si guarda **per icona**, non per variabile. Un totale sulle variabili dice
+    un'altra cosa e non risponde alla domanda.
 - ⚠️⚠️ **LA TONALITÀ NON SI RUOTA MAI FRA I DUE TEMI**, e non è una raffinatezza: due varianti
   dello stesso badge con tonalità diverse si leggono come **due colori diversi**, e il badge
   perde identità al cambio tema. Si muove la sola **chiarezza**, con una traslazione uguale
