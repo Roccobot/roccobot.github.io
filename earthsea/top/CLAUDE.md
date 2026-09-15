@@ -1845,6 +1845,32 @@ il disegno.
   la prima colonna è a larghezza fissa e `nowrap`, quindi l'etichetta intera con la
   spiegazione fra parentesi la sfonda e la seconda metà le finisce **sopra**, illeggibile.
   Misurato, non previsto. I tooltip delle card restano quelli interi di `ICON_LABEL`.
+  - ⚠️⚠️ **E PROPRIO PERCHÉ VIVE IN `.leg-group`, L'ARCIMAGO È L'UNICA ICONA CHE LA `2.15` HA
+    RIMPICCIOLITO**, difetto visto dall'utente il 2026-09-15 e chiuso dalla `2.29`: il corpo
+    delle icone di legenda era dichiarato su `.ctrl-legend-row img`, e dal passaggio agli SVG
+    in linea in legenda non esiste **nessuna `img`** (misurate: zero). Le sei dentro
+    `.leg-ico` si salvavano perché quel contenitore ha un `font-size:1.141rem` proprio;
+    l'Arcimago ereditava lo `0.8rem` della riga e rendeva **11,77px** contro **16,78**, cioè
+    il 70%. Adesso il selettore nomina la **classe** (`.ctrl-legend-row .status-icon`).
+    - ⚠️⚠️ **Il criterio vale oltre il caso: cambiando il TIPO DI NODO si spengono i selettori
+      che nominano il TAG, e nessuno dà errore.** Una regola inerte non si distingue da una
+      applicata leggendo il foglio di stile: si vede solo misurando lo stile **calcolato**
+      sull'elemento reso. Chi porta un'immagine a SVG in linea cerchi `img` nel CSS che la
+      riguarda, prima di dichiarare chiuso il passaggio.
+    - **Il difetto era in DUE regole gemelle, e l'altra è latente**: anche
+      `.leg-gender .leg-g-half img` (il corpo dei due simboli nella pill di genere) era morta
+      allo stesso modo, e oggi non si vede perché la pill vive dietro
+      `FEATURES.genderLegendPill`, che è spento. Corretta nello stesso giro, a resa invariata:
+      accendendo il flag i due simboli sarebbero nati piccoli come l'Arcimago.
+    - ⚠️ **Il Pannello NON si allarga, ed è misurato prima di applicare**: la riga della coppia
+      di Roke cresce di 5,67px (da 109,13 a 114,80), ma il blocco più largo è un altro, quindi
+      il Pannello resta **390x544,25** su mobile e **359,09x514,64** su desktop, identico al
+      centesimo. La riga non va a capo e resta alta come le altre sei.
+    - ⚠️ **Restano morte due regole di `margin-left`** (`.leg-ico img` e `.leg-group img`),
+      quindi le icone di legenda portano il `margin-left:0.12em` di `.status-icon`, cioè
+      **2,19px** che le spostano a destra dentro lo slot centrato `width:.95em`. Non è stato
+      toccato: l'utente non l'ha segnalato e riattivarle sposterebbe **tutte** le icone della
+      legenda.
 - ⚠️ **Il `Signore dei Draghi` sale di `0.1em` NELLA SOLA LEGENDA** del Pannello (`0.81`,
   istruzione dell'utente: *solo nel pannello... senza spostare altro*). La regola è scoped a
   `.ctrl-legend-row` e nomina la sola `.si-signoredraghi`, quindi le card e le altre cinque
@@ -3899,6 +3925,21 @@ nasce **spenta**, quindi di base non ci sono.
   - ⚠️ **Le loro card ERANO visibili, e la casella le nasconde**: quelle voci esistevano già
     come schede normali, quindi non sono entrate in classifica, sono passate dietro
     all'interruttore. Chi le cercasse in pagina a casella spenta non stia cercando un difetto.
+  - ⚠️⚠️ **IL FLAG SI DIMENTICA, E LO HA VISTO L'UTENTE**: il **`Signore del Fuoco`** era
+    rimasto senza (`2.29`), benché nella fila stesse **in mezzo** agli altri senza nome, fra
+    la `Donna di Kemay` e il `Mago Nero`. Quindi la contiguità nella lista non basta a
+    dichiararlo fatto, e il campo si verifica **a dato** ogni volta che entra una voce il cui
+    nome d'uso è un titolo.
+  - ⚠️⚠️ **IL CENSIMENTO SI FA SUI NOMI A PIÙ PAROLE, e i suoi scarti sono la parte che
+    serve**: cercando i nomi d'uso con uno spazio, i candidati senza flag sono pochissimi, e
+    quasi tutti vanno **lasciati stare**. `Granchio Blu`, `Il Re`, `Bucca Rossa` e
+    `Bucca Bruna` sono nomi **propri** (il gallo di Heleth si chiamava così, le galline pure),
+    e un titolo non lo sono.
+    - ⚠️⚠️ **E UN NOME A PAROLA SOLA NON È MAI IL CASO, benché sembri il contrario**: a
+      Terramare i nomi d'uso **sono** parole comuni (`Sparviero`, `Lontra`, `Muschio`,
+      `Segugio`, `Dragone`, `Aureo`), quindi un sostantivo al posto di un nome è la norma e
+      non una perifrasi. Il predicato è che il testo **non dia nessun nome proprio** e lo
+      nomini col ruolo, non che il nome somigli a una parola del vocabolario.
 - Ⓘ **Com'era fatto il flag, dalla `1.07` alla `2.09`**: `senzanome` in `SITE_FLAGS`, booleano
   **piatto** come `zoomBig` (niente varianti di piattaforma, niente manopole), riconoscibile
   da `plain:true` nella sua voce di `SITE_FLAG_ITEMS`, che lo teneva fuori dalla tab Mobile e
