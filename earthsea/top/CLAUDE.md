@@ -5258,6 +5258,52 @@ etichette sono cinque.
   dell'interruttore dello spazio riservato. Su **mobile** le card non si muovono di un
   pixel (0/120 in posizione relativa alla lista e in altezza).
 
+#### 🫁 Le icone andate a capo vogliono ARIA sotto, e la classe la mette il JS
+
+Dalla `2.36`, difetto visto dall'utente sul telefono (*quando i badge vanno a capo, risultano
+vicinissimi al Vero Nome*). Misurato a 320px sulla card di Sparviero: **0,10px** fra le icone
+e `GED`, contro i **9,42** che le separavano dal nome sopra.
+
+- ⚠️⚠️ **LA CAUSA È CHE IL NUDGE NON ENTRA NEL LAYOUT**: il gruppo icone porta un
+  `translateY` e i suoi figli un `top`, e nessuna delle due proprietà cambia il box, quindi
+  andato a capo il suo **inchiostro sborda sotto** la riga del nome (misurato: la coda vale
+  **-1,08px** sulle card col nome comune). Sotto, `.rank-vero` ha interlinea stretta e
+  comincia subito: il vuoto che resta è l'half-leading, cioè niente.
+- ⚠️⚠️ **SERVE UNA CLASSE DAL JS, perché il CSS non sa dire se un flex item è andato a capo**
+  (`marcaIconeACapo`, in coda a `freeNames`, che quel giro di misure lo fa già). ⚠️ La
+  decide la **posizione**, non chi l'ha prodotta: copre il wrap **naturale** e `nm-acapo`
+  con una regola sola.
+  - ⚠️ **Si legge `offsetTop`, non la rect**: la rect include la `transform`, quindi
+    direbbe dove l'inchiostro si **vede** invece che su quale riga del flex il layout l'ha
+    messo. È la stessa distinzione della trappola del jitter (§ 'I tre nomi di Kalessin, e
+    la metà inglese che resta una').
+  - ⚠️ **Solo dove il gruppo è un flex item vero** (sotto i 480px): con `display:contents`
+    non genera un box, quindi `offsetTop` sarebbe quello del genitore e la misura direbbe
+    'a capo' su **ogni** card del desktop.
+  - ⚠️ **Non disturba le prove di `freeNames`**, ed è la ragione per cui il margine vive su
+    `.rank-vero` e non sulla riga: quelle misurano l'altezza di `.rank-name`, che così non
+    cambia.
+- ⚠️⚠️ **IL NUMERO PAREGGIA IL VUOTO DI SOPRA, e non è scelto a occhio**: `0.56em` del corpo
+  del vero nome fa **8,96px** contro i 9,42 che il gruppo ha sopra di sé, quindi le icone
+  stanno in mezzo a due spazi uguali invece di appoggiarsi sul vero nome.
+- ⚠️⚠️ **IL SELETTORE ESCLUDE DA SÉ LE CARD SENZA NOME D'USO**, perché usa il **fratello
+  adiacente** (`.rank-name.nm-wrap + .rank-vero`): le `.name-vero` quella riga non ce l'hanno,
+  e sotto le loro icone il vuoto era già **10,26px**. Una classe in più per distinguerle
+  sarebbe stata un secondo dato da tenere allineato al markup.
+- ⚠️ **Il caso IN RIGA non si tocca, ed è misurato**: là fra nome e vero nome ci sono
+  **3,95px**, che è il ritmo di casa fra la prima e la seconda riga della card, e allargarlo
+  avrebbe allungato tutte e 158 le card per un difetto che si vede su nove.
+- ⚠️⚠️ **SU 'I GRANDI DI ARDA' IL DIFETTO NON ESISTE**, e chi porta di là questo rimedio
+  copierebbe una cura senza malattia: quel sito non ha la riga del vero nome, la coda del suo
+  gruppo icone è **positiva** (+6,49px) e sotto c'è il sottotitolo, lontano. Il difetto nasce
+  dall'incontro fra il nudge e l'interlinea stretta di `.rank-vero`, che è di qui.
+- **Misura del giro**: **15 controlli su 15** a 320, 360, 390 e 1280px, coi font veri. Il
+  jitter al cambio lingua resta **zero** (lista identica al centesimo), perché le card che
+  vanno a capo sono le stesse nelle due lingue.
+  - ⚠️ **Su mobile il tasto della lingua NON c'è** (`FEATURES.langSwitchMobile` è spento),
+    quindi un banco che lo cerca va in timeout: si chiama `setLang` e si **verifica** che la
+    lingua sia cambiata, o 'niente si è mosso' resta vero anche con la pagina ferma.
+
 ### 🏷️ Il TITOLO del sito è cambiato, e ha chiuso il salto dell'intestazione
 
 ⚠️⚠️ **DALLA `1.90` C'È ANCHE UN PRESIDIO AUTOMATICO, e qui NON si accende mai**: la regola

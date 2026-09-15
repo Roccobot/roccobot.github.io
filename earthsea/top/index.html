@@ -2717,6 +2717,18 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      `display:contents` e un `flex-basis` sul contenitore non avrebbe alcun effetto. Lo
      sa anche il JS, che prima di provare il rimedio guarda il `display` calcolato. */
   .rank-name.nm-acapo > .rank-flags { flex-basis:100%; }
+  /* ⚠️⚠️ ARIA SOTTO LE ICONE ANDATE A CAPO (2.36, difetto visto dall'utente sul
+     telefono: 'quando i badge vanno a capo risultano vicinissimi al Vero Nome').
+     La classe la mette `marcaIconeACapo()`, perché il CSS non sa dire se un flex item
+     è andato a capo. Serve solo dove sotto c'è il VERO NOME, e il markup lo dice da sé
+     col fratello adiacente: le card senza nome d'uso (`.name-vero`) non hanno quella
+     riga, e sotto le loro icone il vuoto era già 10,26px.
+     ⚠️ Il numero NON è a occhio: pareggia il vuoto che il gruppo ha SOPRA di sé
+     (9,42px su Sparviero a 320px), così le icone stanno in mezzo a due spazi uguali
+     invece di appoggiarsi sul vero nome. 0.56em del corpo del vero nome = 8,96px.
+     ⚠️ Il caso in riga NON si tocca, ed è misurato: là fra nome e vero nome ci sono
+     3,95px, che è il ritmo di casa fra prima e seconda riga della card. */
+  .rank-name.nm-wrap + .rank-vero { margin-top:0.56em; }
   /* Gap nome->(icone o etichette) come margine di coda del nome: presente
      anche quando .rank-flags è vuoto (creature senza icone), e mai
      indentante quando le etichette vanno a capo. */
@@ -3435,7 +3447,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.35</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.36</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7317,6 +7329,31 @@ function freeNames() {
     if (Math.abs(rim[i].conAcapo - rim[i].prima) > 0.5 || Math.abs(rim[i].acapoAltra - rim[i].prima) > 0.5) {
       rim[i].el.classList.remove('nm-libero'); rim[i].riga.classList.remove('nm-acapo');
     }
+  }
+  marcaIconeACapo();
+}
+// ⚠️⚠️ IL GRUPPO ICONE ANDATO A CAPO SI MARCA CON UNA CLASSE, perché il CSS non ha un
+// selettore per il wrap e il vero nome sotto aveva bisogno di respiro: là il nudge
+// `top` del gruppo non entra nel layout, quindi l'inchiostro delle icone SBORDA sotto
+// il box della riga e `.rank-vero`, che ha interlinea stretta, gli finisce addosso.
+// Misurato a 320px sulla card di Sparviero: 0,10px fra le icone e GED, contro i 9,42
+// che le separavano dal nome sopra.
+// ⚠️ Vale per il wrap NATURALE come per `nm-acapo`: la classe la decide la posizione,
+// non chi l'ha prodotta, quindi il rimedio copre tutti e due i casi con una regola sola.
+function marcaIconeACapo() {
+  // ⚠️ Si legge `offsetTop`, non la rect: il gruppo porta un `translateY`, e la rect
+  // direbbe dove l'inchiostro si VEDE, non su quale riga del flex il layout l'ha messo.
+  // ⚠️ E solo dove il gruppo è un flex item vero (sotto i 480px): con `display:contents`
+  // non genera un box, quindi `offsetTop` sarebbe quello del genitore e la misura
+  // direbbe 'a capo' su ogni card del desktop.
+  var righe = document.querySelectorAll('#rank-list .rank-name'), i, fl, nt, giu;
+  for (i = 0; i < righe.length; i++) {
+    fl = righe[i].querySelector(':scope > .rank-flags');
+    nt = righe[i].querySelector(':scope > .rank-name-text');
+    giu = !!(fl && nt && fl.children.length &&
+             getComputedStyle(fl).display !== 'contents' &&
+             fl.offsetTop >= nt.offsetTop + nt.offsetHeight - 1);
+    righe[i].classList.toggle('nm-wrap', giu);
   }
 }
 // ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE, è la cura di un difetto misurato: al CAMBIO
