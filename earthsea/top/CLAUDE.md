@@ -1172,61 +1172,78 @@ scala del potere (`stregone`, `mago`, `signoredraghi`); in fondo la coppia di Ro
 `arcimago`). Vale per la resa in lista, per la legenda del Pannello e per la griglia
 dell'editor admin, che leggono tutte quell'elenco: non si 'sistema' a intuito.
 
-⚠️⚠️ **DALLA `2.16` TUTTI E NOVE I DISEGNI SONO DELL'UTENTE, sette badge e due simboli di
-genere, ed è il secondo rifacimento completo dopo quello della `2.14`.** Sono arrivati in un
-archivio unico dopo che una mia proposta ex-novo era stata **bocciata** (*le tue proposte sono
-troppo grezze. Per il momento usa queste così come sono, poi ne riparliamo*), e vanno lette
-come uno stato **provvisorio dichiarato da lui**: il 'poi ne riparliamo' è la parte che conta.
-- ⚠️ **Le tinte sono pensate per il tema SCURO, e la misura lo dice**: sul fondo di card
-  chiaro sette icone su nove restano sotto il 3:1 (lo `Stregone` a **1,08**, il `Mago` 1,37, il
-  `Signore dei Draghi` 1,53, il `Vero nome` 1,65, i due generi 2,30 e 2,44), mentre sullo
-  scuro vanno da 2,94 a 13,46. È lo stesso sbilanciamento che la `2.15` doveva togliere, e non
-  si toglie coi disegni: vuole **due tinte per icona**, una per tema, che è il lavoro rimasto
-  aperto.
-- ⚠️⚠️ **LA DISTANZA DI TONALITÀ DA SOLA MENTE, e questa famiglia lo dimostra in tutti e due
-  i versi** (misurato il 2026-09-15 rifacendo i conti in OKLab): `Stregone` e `Nome di Ged`
-  distano **21°**, cioè il minimo della tavolozza, e a occhio non si confondono affatto,
-  perché uno ha chiarezza `0,86` e l'altro `0,63`; mentre `Mago` e `Femminile` distano **30°**
-  e si somigliano davvero, perché la chiarezza è quasi la stessa. Il metro onesto è la
-  **distanza percettiva completa** (dE OKLab, che tiene dentro chiarezza e croma), non il solo
-  angolo.
-  - **Le soglie che il giro ha usato**: sotto **0,10** due tinte si leggono come lo stesso
-    colore, sotto **0,16** si somigliano. Le coppie più vicine sono `Stregone`/`Draghi`
-    (0,104), `Nome di Ged`/`Maschile` (0,119) e `Mago`/`Femminile` (0,123).
-  - ⚠️ **Il `Vero nome` è la voce più affollata**, e questo decide dove intervenire: compare
-    in **quattro** delle sei coppie più vicine (contro Draghi, Femminile, Mago e di nuovo
-    Mago), perché il suo arancione cade in mezzo al quadrante caldo, dove vivono già quattro
-    icone su nove.
+⚠️⚠️ **TUTTI E NOVE I DISEGNI SONO DELL'UTENTE, sette badge e due simboli di genere**, dalla
+`2.16`, e i rifacimenti completi sono **tre** (`2.14`, `2.16`, `2.18`). Ⓘ La `2.16` nacque come
+stato **provvisorio dichiarato da lui**, dopo che una mia proposta ex-novo era stata bocciata
+(*le tue proposte sono troppo grezze. Per il momento usa queste così come sono, poi ne
+riparliamo*); il 'poi ne riparliamo' si è chiuso con la `2.18`, sulla quale ha detto *per la
+prima volta sono abbastanza soddisfatto*.
+
+⚠️⚠️ **COME SI MISURA UNA TAVOLOZZA DI ICONE, e vale oltre il giro che l'ha prodotta** (il
+metodo è del 2026-09-15, i numeri vivono nella voce della versione in vigore).
+- ⚠️⚠️ **LA DISTANZA DI TONALITÀ DA SOLA MENTE, in tutti e due i versi**: nella `2.16`
+  `Stregone` e `Nome di Ged` distavano **21°**, il minimo della tavolozza, e a occhio non si
+  confondevano affatto, perché uno aveva chiarezza `0,86` e l'altro `0,63`; mentre `Mago` e
+  `Femminile` distavano **30°** e si somigliavano davvero, perché la chiarezza era quasi la
+  stessa. Il metro onesto è la **distanza percettiva completa** (dE OKLab, che tiene dentro
+  chiarezza e croma), non il solo angolo.
+  - **Le soglie**: sotto **0,10** due tinte si leggono come lo stesso colore, sotto **0,16**
+    si somigliano.
+- ⚠️ **I due assi si guardano SEPARATI, perché sono indipendenti**: la tonalità dice se due
+  icone si somigliano, la **chiarezza** dice se si vedono. Una tavolozza può essere ottima
+  sull'uno e pessima sull'altro, ed è esattamente il caso di qui: le tonalità sono distribuite
+  bene e le chiarezze sono ammassate in alto, cioè tarate sul fondo scuro.
   - ⚠️ **La misura si fa su DUE tinte per icona, non su una**: la **dominante** per area e il
     **nucleo**, cioè la più satura fra quelle che coprono almeno il 15%. Su `Mago` e
     `Stregone` la dominante è l'alone chiarissimo, ma il colore che le identifica è il nucleo,
     e guardare solo la prima dà una lettura sbagliata di tutte e due.
-- ⚠️⚠️ **E LA COLLISIONE PEGGIORE NON È DI COLORE, È DI FORMA: `Stregone` e `Mago` hanno la
-  STESSA silhouette** (disco chiaro, asta grigia, sfera al centro, raggi), quindi alla misura
-  vera si distinguono **solo** per la tinta. Nessuna misura di contrasto o di tonalità la vede,
-  ed è la ragione per cui questa riga esiste: chi controlla la tavolozza guardi anche i profili.
+- ⚠️⚠️ **E UNA COLLISIONE PUÒ ESSERE DI FORMA, dove nessuna misura di colore arriva**: nella
+  `2.16` `Stregone` e `Mago` avevano la **stessa silhouette** (disco chiaro, asta, sfera,
+  raggi), quindi alla misura vera li distingueva solo la tinta. Chi controlla una tavolozza
+  guardi anche i profili, che è un controllo a sé.
 - ⚠️⚠️ **I NOMI DEI FILE CHE MANDA NON SEGUONO LA CONVENZIONE, e si rinominano installandoli**:
-  manda `mageSorcerer`, `mageWizard`, `genderMale`, `genderFemale`, mentre i file del progetto
-  portano il nome del **badge** (`Sorcerer`, `Mage`, `Male`, `Female`). Non è pignoleria: è la
-  regola che ha già pagato quattro volte su `GedName`, dove il disegno è cambiato senza che il
-  codice se ne accorgesse.
-- **La ripulitura degli export vale più che mai**: l'archivio della `2.16` pesava **1,3 MB** e
-  i nove frammenti installati **6.292 byte**, cioè il 99,5% era il blob `i:aipgf` di
-  Illustrator. La procedura è quella del logo del FAB, e la geometria si riconfronta dopo.
-- ⚠️⚠️ **LE DESCRIZIONI DEI DISEGNI ANTERIORI ALLA `2.16` SONO SUPERATE IN BLOCCO, e due
-  girano ancora in questo file**: il `Vero nome` **non** è la stella viola della `2.14`, è una
-  **pergamena arancione** coi due rulli e tre righe; il `Mago` non è il magenta della `2.14`,
-  è **rosa**. Un rifacimento completo invalida ogni descrizione e ogni contrasto misurato
-  prima, e il posto dove i numeri valgono è la voce della versione in vigore.
+  manda `mageSorcerer`, `mageWizard`, `genderMale`, `genderFemale`, `nameKnown`, `nameGed`,
+  `masterRoke`, `masterArchmage`, `dragonlord`, mentre i file del progetto portano il nome del
+  **badge** (`Sorcerer`, `Mage`, `Male`, `Female`, `TrueName`, `GedName`, `MasterOfRoke`,
+  `ArchmageOfRoke`, `Dragonlord`). Non è pignoleria: è la regola che ha già pagato quattro
+  volte su `GedName`, dove il disegno è cambiato senza che il codice se ne accorgesse.
+- **La ripulitura degli export pesa quando serve**: l'archivio della `2.16` pesava **1,3 MB**
+  e i nove frammenti installati **6.292 byte**, cioè il 99,5% era il blob `i:aipgf` di
+  Illustrator. ⚠️ Dalla `2.18` **manda i file già puliti**, quindi quel passo si salta: si
+  guarda il peso e si cerca il blob, e se non c'è si installa così com'è.
+- ⚠️⚠️ **UN RIFACIMENTO COMPLETO INVALIDA IN BLOCCO OGNI DESCRIZIONE E OGNI CONTRASTO
+  MISURATO PRIMA**, e in tre giorni è successo tre volte: il `Vero nome` è stato una stella
+  viola (`2.14`), una pergamena arancione (`2.16`) e adesso una pergamena gialla. Il posto
+  dove i numeri e le forme valgono è **la voce della versione in vigore**, e una descrizione
+  senza la sua versione accanto si legge come attuale per sempre.
 
-⚠️⚠️ **DALLA `2.17` IL `Mago` È UN DISEGNO NUOVO SUO**, che rifà quello della `2.16` tenendone
-l'impianto: stessa bacchetta con la sfera, ma **6 forme invece di 13** (gli otto raggi diventano
-un tracciato solo) e i raggi prendono una **tinta a sé** (`#ff5ea5`) invece di ripetere quella
-del disco medio. Il frammento scende da 1.983 a 1.776 byte.
-- ⚠️ **Sulla tavolozza cambia quasi nulla**, ed è la misura che lo dice: la dominante passa da
-  `#fab2cf` a `#faaccc`, cioè da 1,37 a **1,43** sul fondo chiaro, e resta l'icona più smorta
-  della fila dopo lo `Stregone`. Chi si aspettasse che un disegno nuovo sposti i conti delle
-  collisioni guardi la voce qui sopra: quelli li muove il **colore**, non la forma.
+⚠️⚠️ **DALLA `2.18` LA TAVOLOZZA COPRE LO SPETTRO INTERO, ed è il terzo rifacimento completo
+in tre giorni**: nove disegni suoi, arrivati già ripuliti, con una tinta per settore del
+cerchio (rosso il `Nome di Ged`, arancione lo `Stregone`, giallo il `Vero nome`, verde il
+`Mago`, verde acqua i `Draghi`, azzurro il `Maschile`, blu-viola l'`Arcimago`, viola il
+`Maestro`, rosa il `Femminile`). Le misure della `2.16` e della `2.17` sono superate in blocco.
+- **Che cosa migliora, misurato**: il passo minimo fra due tonalità sale da **20,3 a 26,6
+  gradi** e la regolarità della distribuzione da **69 a 72%**; le icone dentro la finestra che
+  regge tutti e due i temi passano da **una a tre** (`Arcimago`, `Maestro`, `Nome di Ged`).
+- ⚠️⚠️ **E SPARISCE LA COLLISIONE DI FORMA fra `Stregone` e `Mago`**, che era il difetto che
+  nessuna misura di colore vedeva: adesso lo `Stregone` è **tre stelle** e il `Mago` un disco
+  con l'albero. ⚠️ Ma il `Mago` ha preso **la forma che era dello `Stregone`**, quindi una
+  descrizione anteriore a questa versione nomina il disegno giusto attribuendolo all'altro
+  badge: chi legge un commit vecchio guardi la chiave, non la forma.
+- ⚠️ **Il difetto del `Vero nome` era la SIMMETRIA e si vede che è passato**: la pergamena
+  della `2.16` aveva due rulli uguali sopra e sotto e leggeva come un rocchetto di filo a
+  qualunque misura; questa ha i rulli arrotolati e il foglio largo, e alla misura vera si legge
+  per quello che è.
+- ⚠️ **Il contrasto sul tema chiaro resta il lavoro aperto**, e il conto non è cambiato: sei
+  icone su nove restano sotto il 3:1 (il `Mago` a **1,08**, il `Vero nome` 1,16, lo `Stregone`
+  1,85, il `Femminile` 2,03, i `Draghi` 2,11, il `Maschile` 2,15). Lo spettro pieno non lo
+  risolve, perché quello è un fatto di **chiarezza** e non di tonalità.
+
+⚠️⚠️ **IL `viewBox` SI LEGGE DAL FILE E NON SI ASSUME 256**, ed è la trappola che questo invio
+ha portato: `mageSorcerer` arriva con una tavola **800x800** mentre le altre otto sono 256.
+L'involucro del frammento dichiara il `viewBox`, quindi scrivendo 256 su un disegno da 800 la
+pagina lo mostra **ingrandito di tre volte e tagliato**, senza dare alcun errore. Chi installa
+un invio nuovo legga la tavola di ogni file, una per una.
 
 ⚠️⚠️ **LA FINESTRA DI UNA TINTA SOLA PER I DUE TEMI È STRETTISSIMA, e per l'arancione del
 `Vero nome` è UN punto solo**: tenendo ferma la tonalità (OKLCH `54,3`) e scorrendo la
