@@ -1866,11 +1866,23 @@ il disegno.
       di Roke cresce di 5,67px (da 109,13 a 114,80), ma il blocco più largo è un altro, quindi
       il Pannello resta **390x544,25** su mobile e **359,09x514,64** su desktop, identico al
       centesimo. La riga non va a capo e resta alta come le altre sei.
-    - ⚠️ **Restano morte due regole di `margin-left`** (`.leg-ico img` e `.leg-group img`),
-      quindi le icone di legenda portano il `margin-left:0.12em` di `.status-icon`, cioè
-      **2,19px** che le spostano a destra dentro lo slot centrato `width:.95em`. Non è stato
-      toccato: l'utente non l'ha segnalato e riattivarle sposterebbe **tutte** le icone della
-      legenda.
+    - ⚠️⚠️ **LE REGOLE MORTE ERANO QUATTRO, E LE ALTRE DUE ERANO QUELLE DEL `margin-left`**
+      (`.leg-ico img` e `.leg-group img`), riportate in vita nella `2.30` con una scelta
+      dell'utente, perché lui aveva segnalato la **dimensione** e non la posizione. Senza di
+      loro le icone portavano il `margin-left:0.12em` di `.status-icon`, che sulle card separa
+      un badge dal precedente e qui, dentro uno slot centrato, le spostava a destra: misurato
+      **+1,10px** fuori dal centro su tutte e sette, adesso **-0,01**.
+      - **Lo slot è largo `.95em` e l'icona `.92em`**, quindi il centraggio le lascia 0,28px
+        di rientro per lato: è per costruzione, e l'inchiostro non può cadere sulla stessa
+        ascissa del bordo. Il riferimento buono è il **bordo dello slot**, che cade a
+        `64,38px` come la colonna del contenuto della riga dei filtri (bordo più padding), al
+        centesimo.
+      - ⚠️ **La checkbox dei filtri sta 1px più a sinistra della propria colonna**, per conto
+        suo: misurata a `63,38`. Chi confronta l'icona con la **checkbox** invece che con la
+        colonna trova 1,26px e conclude che l'incolonnamento sia rotto, mentre lo scarto era
+        di 2,37px e il ricentraggio lo ha dimezzato. ⚠️ La nota della riga dei filtri che dà
+        'checkbox e icona badge entrambe a 32,38' descrive la misura della `0.93`: oggi quei
+        due numeri sono la colonna e la checkbox, non due elementi allineati.
 - ⚠️ **Il `Signore dei Draghi` sale di `0.1em` NELLA SOLA LEGENDA** del Pannello (`0.81`,
   istruzione dell'utente: *solo nel pannello... senza spostare altro*). La regola è scoped a
   `.ctrl-legend-row` e nomina la sola `.si-signoredraghi`, quindi le card e le altre cinque
