@@ -1183,8 +1183,28 @@ come uno stato **provvisorio dichiarato da lui**: il 'poi ne riparliamo' è la p
   scuro vanno da 2,94 a 13,46. È lo stesso sbilanciamento che la `2.15` doveva togliere, e non
   si toglie coi disegni: vuole **due tinte per icona**, una per tema, che è il lavoro rimasto
   aperto.
-- ⚠️ **La distanza minima di tonalità è 22°** (`Stregone` e `Nome di Ged`, due verdi), contro
-  i 6° della `2.14`: le collisioni di prima sono superate, e questa è più larga ma esiste.
+- ⚠️⚠️ **LA DISTANZA DI TONALITÀ DA SOLA MENTE, e questa famiglia lo dimostra in tutti e due
+  i versi** (misurato il 2026-09-15 rifacendo i conti in OKLab): `Stregone` e `Nome di Ged`
+  distano **21°**, cioè il minimo della tavolozza, e a occhio non si confondono affatto,
+  perché uno ha chiarezza `0,86` e l'altro `0,63`; mentre `Mago` e `Femminile` distano **30°**
+  e si somigliano davvero, perché la chiarezza è quasi la stessa. Il metro onesto è la
+  **distanza percettiva completa** (dE OKLab, che tiene dentro chiarezza e croma), non il solo
+  angolo.
+  - **Le soglie che il giro ha usato**: sotto **0,10** due tinte si leggono come lo stesso
+    colore, sotto **0,16** si somigliano. Le coppie più vicine sono `Stregone`/`Draghi`
+    (0,104), `Nome di Ged`/`Maschile` (0,119) e `Mago`/`Femminile` (0,123).
+  - ⚠️ **Il `Vero nome` è la voce più affollata**, e questo decide dove intervenire: compare
+    in **quattro** delle sei coppie più vicine (contro Draghi, Femminile, Mago e di nuovo
+    Mago), perché il suo arancione cade in mezzo al quadrante caldo, dove vivono già quattro
+    icone su nove.
+  - ⚠️ **La misura si fa su DUE tinte per icona, non su una**: la **dominante** per area e il
+    **nucleo**, cioè la più satura fra quelle che coprono almeno il 15%. Su `Mago` e
+    `Stregone` la dominante è l'alone chiarissimo, ma il colore che le identifica è il nucleo,
+    e guardare solo la prima dà una lettura sbagliata di tutte e due.
+- ⚠️⚠️ **E LA COLLISIONE PEGGIORE NON È DI COLORE, È DI FORMA: `Stregone` e `Mago` hanno la
+  STESSA silhouette** (disco chiaro, asta grigia, sfera al centro, raggi), quindi alla misura
+  vera si distinguono **solo** per la tinta. Nessuna misura di contrasto o di tonalità la vede,
+  ed è la ragione per cui questa riga esiste: chi controlla la tavolozza guardi anche i profili.
 - ⚠️⚠️ **I NOMI DEI FILE CHE MANDA NON SEGUONO LA CONVENZIONE, e si rinominano installandoli**:
   manda `mageSorcerer`, `mageWizard`, `genderMale`, `genderFemale`, mentre i file del progetto
   portano il nome del **badge** (`Sorcerer`, `Mage`, `Male`, `Female`). Non è pignoleria: è la
@@ -1193,6 +1213,30 @@ come uno stato **provvisorio dichiarato da lui**: il 'poi ne riparliamo' è la p
 - **La ripulitura degli export vale più che mai**: l'archivio della `2.16` pesava **1,3 MB** e
   i nove frammenti installati **6.292 byte**, cioè il 99,5% era il blob `i:aipgf` di
   Illustrator. La procedura è quella del logo del FAB, e la geometria si riconfronta dopo.
+- ⚠️⚠️ **LE DESCRIZIONI DEI DISEGNI ANTERIORI ALLA `2.16` SONO SUPERATE IN BLOCCO, e due
+  girano ancora in questo file**: il `Vero nome` **non** è la stella viola della `2.14`, è una
+  **pergamena arancione** coi due rulli e tre righe; il `Mago` non è il magenta della `2.14`,
+  è **rosa**. Un rifacimento completo invalida ogni descrizione e ogni contrasto misurato
+  prima, e il posto dove i numeri valgono è la voce della versione in vigore.
+
+⚠️⚠️ **DALLA `2.17` IL `Mago` È UN DISEGNO NUOVO SUO**, che rifà quello della `2.16` tenendone
+l'impianto: stessa bacchetta con la sfera, ma **6 forme invece di 13** (gli otto raggi diventano
+un tracciato solo) e i raggi prendono una **tinta a sé** (`#ff5ea5`) invece di ripetere quella
+del disco medio. Il frammento scende da 1.983 a 1.776 byte.
+- ⚠️ **Sulla tavolozza cambia quasi nulla**, ed è la misura che lo dice: la dominante passa da
+  `#fab2cf` a `#faaccc`, cioè da 1,37 a **1,43** sul fondo chiaro, e resta l'icona più smorta
+  della fila dopo lo `Stregone`. Chi si aspettasse che un disegno nuovo sposti i conti delle
+  collisioni guardi la voce qui sopra: quelli li muove il **colore**, non la forma.
+
+⚠️⚠️ **LA FINESTRA DI UNA TINTA SOLA PER I DUE TEMI È STRETTISSIMA, e per l'arancione del
+`Vero nome` è UN punto solo**: tenendo ferma la tonalità (OKLCH `54,3`) e scorrendo la
+chiarezza, l'unico gradino che passa il 3:1 su tutti e due i fondi di card è `L 0,62`, cioè
+**`#ca6800`** (4,02 sullo scuro, 3,08 sul chiaro). Sopra si perde il tema chiaro (`#ff9100` dà
+1,82), sotto si perde lo scuro (`#a85500` dà 2,91).
+- ⚠️ **Il tetto dei 3,51:1 non è contraddetto**: quello dice quanto si può raggiungere **allo
+  stesso tempo** sui due fondi, e questa misura dice **dove** sta quel punto per una tonalità
+  data. Sono la stessa cosa vista da due lati, e servono tutte e due: chi cerca la tinta unica
+  di un badge parta da qui invece di provare a occhio.
 
 - ✅⚠️⚠️ **DALLA `2.15` SONO SVG IN LINEA nel sorgente, e non più `img` verso `icons/*.webp`**
   (richiesta dell'utente, 2026-09-14: *passiamo all'SVG inline*). Il markup vive in
