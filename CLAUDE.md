@@ -462,6 +462,19 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   perimetro. Anche in **apertura**, e anche annunciando quello che si sta per fare, il
   paragone con l'alternativa scartata non si scrive: resta la sola cosa che si fa (*faccio il
   conto*).
+  - ⚠️⚠️ **E IL DIVIETO È SU UNA STRUTTURA, NON SU UN ELENCO DI FRASI**: un verbo alla prima
+    persona seguito da `invece di` più un altro verbo, dovunque cada. Il 2026-09-15 è caduta
+    una terza volta con *Misuro invece di ipotizzare*, che è la frase del 2026-09-11
+    (*Verifico invece di indovinare*) coi **sinonimi** di tutti e due i verbi: cambiando le
+    parole la regola non si riconosce, perché quello che resta in mente sono gli esempi. Si
+    scrive il solo verbo: **`Misuro`**.
+- ⚠️⚠️ **E UNA REGOLA CSS NON 'MUORE': NON SI APPLICA PIÙ** (sua segnalazione, 2026-09-15, su
+  *dalla stessa 2.15 sono morte altre due regole*). È la metafora al posto del **meccanismo**,
+  cioè la famiglia del 'morso' e di 'sta salendo': il fatto si dice in una riga e quella frase non
+  lo dice (nominavano `img`, e in legenda le `img` non ci sono più). ⚠️ **L'aggettivo tecnico
+  resta** (`codice morto`, `regola morta`, che questo file usa fra i criteri di igiene del
+  codice): fuori è il **verbo** che racconta l'evento, e con lui la costruzione presentativa
+  *sono morte altre due regole*, che ha la forma di un titolo di cronaca.
 
 - ⚠️⚠️ **E FUORI `NIENTE DA FARE`, CHE È LA FORMA CADUTA CINQUE VOLTE**, più di ogni altra:
   chiudendo o aprendo un resoconto di routine (le notifiche di GitHub sono il punto esatto) si
