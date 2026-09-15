@@ -578,6 +578,17 @@ privato finché l'utente non lo condivide.
   - ⚠️ **Va rifatto a ogni container, e non è una svista**: il container di queste sessioni è
     effimero, quindi il file sparisce con lui. La via 1 è l'unica che lo ricrea da sé.
 
+⚠️⚠️ **LA SORVEGLIANZA DI UN ARTEFATTO NON SI REGISTRA in queste sessioni remote, e non va
+promessa**: a ogni pubblicazione la sottoscrizione fallisce (`mint_failed`), quindi la sessione
+**non** viene svegliata se l'utente modifica la pagina o ci lascia un commento. Misurato tre
+volte di fila il 2026-09-15, su due artefatti diversi.
+- **Che cosa dire all'utente**: che il link funziona e la pagina si aggiorna ripubblicandola
+  da qui, ma che un commento sull'artefatto **non arriva**, quindi quello che vuole va scritto
+  in chat. ⚠️ Dirlo **una volta sola**: ripeterlo a ogni pubblicazione è rumore, e la seconda
+  volta non aggiunge niente alla prima.
+- ⚠️ **Non è un difetto da indagare**: la pubblicazione, la rilettura e il riaggiornamento
+  dello stesso URL funzionano tutti. Manca la sola sveglia.
+
 ## 📐 Misure in pixel → unità relative
 
 ⚠️ **La regola vive in `Roccobot.md`**, § '🎨 Grafica' → 'Misure UI web fornite dall'utente':
