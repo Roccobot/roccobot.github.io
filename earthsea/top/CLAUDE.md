@@ -1819,17 +1819,18 @@ una nuova icona badge*). Etichetta **`Vero nome rivelato nei testi canonici`** /
 
 #### 🧙 L'icona del `Mago` ha un disegno suo
 
-⚠️⚠️ **IL DISEGNO IN VIGORE È QUELLO DELLA `2.34`, E ARRIVA IN DUE FILE, UNO PER TEMA**
-(`WizardDark` e `WizardLight`, salvati come `Mage-scuro.svg` e `Mage-chiaro.svg`). Le forme
-sono **quattro** dalla `2.31`, che ne aveva tolta una: disco e anello sono due `path` al posto
-di due `circle` e il bastone è fuso dentro di loro; la sfera è un `circle` e il riflesso un
-`path`. L'istruzione dell'utente, uguale nei due invii, è che quei file valgano **per la forma
-e per i colori**, da riprodurre nei due temi esattamente come sono.
+⚠️⚠️ **LA FORMA IN VIGORE È QUELLA DELLA `2.34` E LA TAVOLOZZA CHIARA QUELLA DELLA `2.38`, E
+ARRIVANO IN FILE, UNO PER TEMA** (`WizardDark` e `WizardLight`, salvati come `Mage-scuro.svg`
+e `Mage-chiaro.svg`; l'ultimo si chiamava `wizard`). Le forme sono **quattro** dalla `2.31`,
+che ne aveva tolta una: disco e anello sono due `path` al posto di due `circle` e il bastone è
+fuso dentro di loro; la sfera è un `circle` e il riflesso un `path`. L'istruzione dell'utente,
+uguale a ogni invio, è che quei file valgano **per la forma e per i colori**, da riprodurre
+nei due temi esattamente come sono.
 
 | | disco | anello | sfera | riflesso |
 |---|---|---|---|---|
 | scuro | `#c5ff9e` | `#99e079` | `#257333` | `#ffffff` |
-| chiaro | `#70d989` | `#adecb8` | `#00756e` | `#ffffff` |
+| chiaro | `#91dba3` | `#bff2c8` | `#00756e` | `#ffffff` |
 
 ⚠️⚠️ **LUI LI CHIAMA 'CERCHIO ESTERNO' E 'CERCHIO INTERNO', e sono il disco e l'anello di
 questa tabella** (sue parole, 2026-09-16, dettando le due tinte chiare della `2.37`). I due
@@ -1848,23 +1849,30 @@ lo dicono i raggi del tracciato, 113 il primo e 73,06 il secondo sulla tavola da
   quindi il riflesso che nel tema scuro dava **1,03** (invisibile) adesso dà **5,87**, e
   l'anello contro la sfera passa da 1,53 a **3,71**. Nel chiaro lo stesso rapporto vale
   **5,57**.
-- ⚠️⚠️ **DALLA `2.37` LE DUE TINTE CHIARE DEI CERCHI SONO SUE, DETTATE A NUMERO** (`#70d989`
-  il disco e `#adecb8` l'anello, al posto di `#4ed16e` e `#7dff93`), e **il tema scuro non si
-  tocca**: la richiesta diceva *solo per il tema chiaro*.
-  - **Che cosa cambia, misurato**: il disco sul fondo di card chiaro passa da 1,59 a **1,41**
-    e i due cerchi fra loro da 1,56 a **1,29**, cioè si somigliano di più; l'anello contro la
-    sfera resta a **4,10** e il riflesso sulla sfera a **5,57**, che sono i due rapporti da cui
-    dipende la leggibilità.
+- ⚠️⚠️ **LE DUE TINTE CHIARE DEI CERCHI SONO SUE E SONO CAMBIATE DUE VOLTE NELLO STESSO
+  GIORNO**: `#4ed16e` e `#7dff93` fino alla `2.36`, `#70d989` e `#adecb8` con la `2.37`
+  (dettate **a numero in chat**), `#91dba3` e `#bff2c8` con la `2.38` (un **file**, con la
+  geometria identica al byte). ⚠️ **Il tema scuro non si è mosso in nessuno dei due giri**:
+  tutte e due le richieste dicevano *solo per il tema chiaro*.
+  - **Che cosa cambia, misurato sul fondo di card chiaro**: il disco stacca **meno** dal fondo
+    a ogni giro (1,59 -> 1,41 -> **1,32**), mentre la struttura interna **guadagna**, ed è lei
+    a rendere leggibile l'icona là: l'anello contro la sfera passa da 4,10 a **4,44** e il
+    disco contro la sfera da 3,18 a **3,41**. Il riflesso sulla sfera resta a **5,57**.
   - ⚠️ **Quindi la struttura che regge l'icona nel chiaro è tutta nella sfera scura**, e chi
     ritocca ancora quei due verdi guardi quei due numeri e non il perimetro.
-  - ⚠️⚠️ **IL SORGENTE `Mage-chiaro.svg` PORTA ANCORA LE TINTE VECCHIE, ed è corretto**: quel
-    file è l'invio della `2.34` e non si riscrive, perché queste due tinte sono arrivate **a
-    numero in chat** e non con un disegno nuovo. È il caso dell'Arcimago rovesciato, dove il
-    file porta una terza tinta che non è mai entrata: **la tavolozza in vigore vive nel CSS**,
-    e il sorgente dice la forma.
+  - ⚠️⚠️ **IL SORGENTE SEGUE L'INVIO, NON IL NUMERO, e la regola vale oltre il caso**: una
+    tinta dettata **a numero in chat** non tocca `Mage-chiaro.svg`, dove resta l'invio
+    precedente perché la tavolozza in vigore vive nel CSS; un **file** lo riscrive. Fra la
+    `2.37` e la `2.38` sono capitati tutti e due i casi, ed è la ragione per cui qui c'era
+    scritto che il sorgente portava le tinte vecchie: dalla `2.38` non è più vero.
+  - ⚠️⚠️ **E UN INVIO CON LA GEOMETRIA IDENTICA È UNA TAVOLOZZA**: nella `2.38` i quattro
+    tracciati, il `viewBox` e le due tinte non toccate coincidono **al byte** con quelli del
+    frammento in pagina, quindi non c'era nessun disegno da installare e il lavoro sono due
+    righe di CSS. È la lezione di 'la base e le corna' del `Signore dei Draghi`: si
+    confrontano le `d` **prima** di toccare il frammento.
 - ⚠️ **Il perimetro stacca poco dal fondo di card CHIARO**, ed è così per scelta sua a ogni
-  invio: il disco dà **1,41** (era 1,59 dalla `2.31` alla `2.36`). Quello che rende leggibile
-  l'icona là è la struttura interna, non il profilo.
+  invio: il disco dà **1,32** (era 1,41 nella `2.37` e 1,59 dalla `2.31` alla `2.36`). Quello
+  che rende leggibile l'icona là è la struttura interna, non il profilo.
 - Ⓘ **I numeri della `2.31` sono superati in blocco**, come a ogni invio che cambia le tinte:
   là il tema scuro staccava dal fondo e dentro era tenue, e il chiaro il contrario.
 - Ⓘ **Il magenta della `2.14` è storia**: la voce qui sotto descrive il secondo disegno, che
