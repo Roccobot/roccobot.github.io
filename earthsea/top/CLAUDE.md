@@ -1829,7 +1829,16 @@ e per i colori**, da riprodurre nei due temi esattamente come sono.
 | | disco | anello | sfera | riflesso |
 |---|---|---|---|---|
 | scuro | `#c5ff9e` | `#99e079` | `#257333` | `#ffffff` |
-| chiaro | `#4ed16e` | `#7dff93` | `#00756e` | `#ffffff` |
+| chiaro | `#70d989` | `#adecb8` | `#00756e` | `#ffffff` |
+
+⚠️⚠️ **LUI LI CHIAMA 'CERCHIO ESTERNO' E 'CERCHIO INTERNO', e sono il disco e l'anello di
+questa tabella** (sue parole, 2026-09-16, dettando le due tinte chiare della `2.37`). I due
+nomi vanno saputi perché è con quelli che arrivano le istruzioni, ed è la stessa lezione di
+'la base e le corna' del `Signore dei Draghi`: **il disegno dice quale forma è quale**, e qui
+lo dicono i raggi del tracciato, 113 il primo e 73,06 il secondo sulla tavola da 256.
+- ⚠️ **La sfera NON è un 'cerchio interno'**, benché sia l'unico `circle` del frammento: è il
+  pomo del bastone, sta al centro (raggio 30) e porta il riflesso. Chi leggesse 'interno' come
+  lei la scurirebbe o la schiarirebbe al posto dell'anello, e il riflesso bianco sparirebbe.
 
 - ⚠️⚠️ **CON LA QUARTA FORMA È USCITA UNA VARIABILE** (`--si-mago-5`), e chi conta le tinte
   delle due palette la troverà in meno: una forma tolta è una variabile tolta, e il blocco non
@@ -1839,8 +1848,22 @@ e per i colori**, da riprodurre nei due temi esattamente come sono.
   quindi il riflesso che nel tema scuro dava **1,03** (invisibile) adesso dà **5,87**, e
   l'anello contro la sfera passa da 1,53 a **3,71**. Nel chiaro lo stesso rapporto vale
   **5,57**.
-- ⚠️ **Il perimetro stacca poco dal fondo di card CHIARO**, ed è così per scelta sua in tutti
-  e due gli invii: il disco dà **1,59** (era 1,68 nella `2.31`). Quello che rende leggibile
+- ⚠️⚠️ **DALLA `2.37` LE DUE TINTE CHIARE DEI CERCHI SONO SUE, DETTATE A NUMERO** (`#70d989`
+  il disco e `#adecb8` l'anello, al posto di `#4ed16e` e `#7dff93`), e **il tema scuro non si
+  tocca**: la richiesta diceva *solo per il tema chiaro*.
+  - **Che cosa cambia, misurato**: il disco sul fondo di card chiaro passa da 1,59 a **1,41**
+    e i due cerchi fra loro da 1,56 a **1,29**, cioè si somigliano di più; l'anello contro la
+    sfera resta a **4,10** e il riflesso sulla sfera a **5,57**, che sono i due rapporti da cui
+    dipende la leggibilità.
+  - ⚠️ **Quindi la struttura che regge l'icona nel chiaro è tutta nella sfera scura**, e chi
+    ritocca ancora quei due verdi guardi quei due numeri e non il perimetro.
+  - ⚠️⚠️ **IL SORGENTE `Mage-chiaro.svg` PORTA ANCORA LE TINTE VECCHIE, ed è corretto**: quel
+    file è l'invio della `2.34` e non si riscrive, perché queste due tinte sono arrivate **a
+    numero in chat** e non con un disegno nuovo. È il caso dell'Arcimago rovesciato, dove il
+    file porta una terza tinta che non è mai entrata: **la tavolozza in vigore vive nel CSS**,
+    e il sorgente dice la forma.
+- ⚠️ **Il perimetro stacca poco dal fondo di card CHIARO**, ed è così per scelta sua a ogni
+  invio: il disco dà **1,41** (era 1,59 dalla `2.31` alla `2.36`). Quello che rende leggibile
   l'icona là è la struttura interna, non il profilo.
 - Ⓘ **I numeri della `2.31` sono superati in blocco**, come a ogni invio che cambia le tinte:
   là il tema scuro staccava dal fondo e dentro era tenue, e il chiaro il contrario.
