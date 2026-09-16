@@ -1,5 +1,5 @@
 ! Title: Roccobot Whitelist
-! Last updated: 2026-09-10
+! Last updated: 2026-09-16
 
 ! ── Schema delle eccezioni ──
 ! $important                       : l'eccezione vince anche sui blocchi $important.
@@ -36,6 +36,12 @@
 @@||animeworld.ac^$important
 @@||aruba.it^$important
 @@||aruba.it^$document,important
+! AuthKit (WorkOS): è il dominio delle pagine di login ospitate, una per cliente
+! (<tenant>.authkit.app). Dominio CONDIVISO fra i clienti, come workers.dev: la
+! whitelist lascia passare anche i tenant di terzi. Il resto del servizio vive sotto
+! workos.com, in fondo al file.
+@@||authkit.app^$important
+@@||authkit.app^$document,important
 @@||axerve.com^$important
 @@||axerve.com^$document,subdocument,important
 @@||battle.net^$important
@@ -273,6 +279,20 @@
 @@||validator.w3.org^$important
 @@||vhx.tv^$important
 @@||vimeocdn.com^$important
+! WorkOS: piattaforma di autenticazione e identità (SSO, directory sync, AuthKit).
+! La riga base copre tutti i sottodomini, quindi con una riga sola valgono api.
+! (l'endpoint che le applicazioni chiamano), auth. (la pagina di login ospitata),
+! cdn. e dashboard. Doppia riga perché è identità, come da schema in testa al file.
+! Niente subdocument: misurato, quelle pagine rispondono frame-ancestors 'self' e
+! X-Frame-Options SAMEORIGIN, quindi in un iframe di terzi non si caricano affatto
+! e il modificatore non entrerebbe mai in funzione.
+! workos-dns.com è il CNAME a cui puntano i sottodomini di authkit.app e i domini
+! personalizzati dei clienti (misurato: un sottodominio qualunque di authkit.app
+! risolve via cname.workos-dns.com). Con lo scoprimento dei CNAME una regola su quel
+! dominio colpirebbe le pagine di login, come è già successo con dd.qwant.com.
+@@||workos-dns.com^$important
+@@||workos.com^$important
+@@||workos.com^$document,important
 @@||ws-hp.com^$important
 @@||x.ai^$important
 @@||x.ai^$document,subdocument,important
