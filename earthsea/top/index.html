@@ -1848,6 +1848,7 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
 /* Stesso bianco traslucido delle righe di filtro, e per la stessa ragione: sono le
    'voci del Pannello' di cui parla la nota di `.ctrl-row:hover`, e due hover diversi
    nello stesso riquadro si vedrebbero. */
+.ctrl-legend-row .leg-lbl-m { display:none; }  /* variante mobile: la accende la media query a 768px, vedi `ICON_LABEL_MOBILE` */
 .ctrl-legend-row:hover { background:rgba(255,255,255,0.09); }
 .ctrl-legend-row:focus-visible { outline:2px solid var(--gold-bright); outline-offset:1px; }
 /* La dissolvenza vive QUI, sullo stato di arrivo: accendere un filtro badge è un
@@ -2080,6 +2081,11 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 /* Chiusura del popover desktop: fade out puro (vedi nota su .ctrl-panel.closing). */
 @keyframes ctrl-pop-fade { from { opacity:1; } to { opacity:0; } }
 @media (max-width:768px) {
+  /* ⚠️ Le due etichette di legenda si scambiano QUI, non in JS: nella bottom-sheet vale la
+     variante corta di `ICON_LABEL_MOBILE`, sul desktop quella piena. Il criterio è la stessa
+     soglia della sheet, quindi il Pannello non ha bisogno di ricostruirsi al resize. */
+  .ctrl-legend-row .leg-lbl-d { display:none; }
+  .ctrl-legend-row .leg-lbl-m { display:inline; }
   /* su mobile il pannello diventa una bottom-sheet onnicomprensiva. Apertura:
      SLIDE-UP intero dal bordo basso (transform translateY(100%) -> 0) con
      decelerazione molto graduale (ease-out, ~350ms) e un velo di fade (160ms),
@@ -3447,7 +3453,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.43</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.44</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6024,6 +6030,21 @@ var ICON_LABEL = {
     arcimago: "Archmage of Roke (first among the Nine)"
   }
 };
+// ⚠️⚠️ ETICHETTE PIÙ CORTE PER LA SOLA LEGENDA MOBILE, con le chiavi che divergono e basta
+// (richiesta dell'utente, 2026-09-18, col testo dettato da lui). Sul desktop il Pannello si
+// allarga per contenere la riga; nella bottom-sheet la larghezza è quella dello schermo,
+// quindi l'unica cosa che può cedere è l'ALTEZZA, e la riga va a capo.
+// Misurato a 390px coi font veri: lo spazio per il testo è 298,33px, l'etichetta piena ne
+// misura 307,99 (va a capo, +20,47px di Pannello) e questa 278,82 (sta).
+// ⚠️ L'INGLESE NON HA una variante, e non è una dimenticanza: la sua etichetta piena misura
+// 291,69px, cioè sta già. Un audit che conti le due lingue troverà l'asimmetria: è voluta,
+// come quella dei nomi di Kalessin.
+// ⚠️ Vale per la LEGENDA e non per i tooltip delle card, che restano quelli interi di
+// `ICON_LABEL`: su mobile un tooltip non si apre, quindi là non c'è niente da accorciare.
+var ICON_LABEL_MOBILE = {
+  it: { mago: "Mago (stregone educato a Roke o strega di grande potere)" },
+  en: {}
+};
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
 // il dimezzamento dell'opacità può cambiare significato, chiarito nel tooltip
 // (Elenwë: badge Helcaraxë al 50% = morte durante la traversata, non presunto).
@@ -8430,7 +8451,15 @@ function controlPanelHTML() {
            + '<span class="leg-group leg-group--roke">' + BADGE_ICON['arcimago'].split('%L%').join('') + '<span>' + arcimagoTxt + '</span></span>');
         return;
       }
-      s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + legLbl(IL[k]) + '</span>');
+      // ⚠️⚠️ Dove esiste una variante MOBILE si emettono TUTTE E DUE le etichette, e a
+      // sceglierle è il CSS: così il cambio di telaio al resize è immediato e non dipende da
+      // un rebuild del Pannello, che è la parte fragile. Le chiavi senza variante passano
+      // com'erano, quindi il markup cresce solo dove serve.
+      var ILM = (ICON_LABEL_MOBILE[lang] || {})[k];
+      var testo = ILM
+        ? '<span class="leg-lbl-d">' + legLbl(IL[k]) + '</span><span class="leg-lbl-m">' + legLbl(ILM) + '</span>'
+        : legLbl(IL[k]);
+      s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + testo + '</span>');
     });
     if (FEATURES.genderLegendPill) {
       var GLb = GENDER_LABEL[lang] || GENDER_LABEL.it;
