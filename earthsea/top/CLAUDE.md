@@ -1308,9 +1308,18 @@ verifica anche quando la certezza è *pressoché totale*. Il passo è in *Tehanu
 ricordare il nome del mago e pronuncia una parola **kargica**, che il testo scarta subito
 (`Tuaho, that was not his name` / *«Tuaho? No, non si chiamava così»*).
 
-- **Che cos'è davvero**: una parola della sua lingua d'infanzia che le affiora al posto del
-  nome, non un nome alternativo del personaggio. Metterla fra i suoi nomi direbbe il contrario
-  del testo.
+- ⚠️⚠️ **MA IL LEGAME COL PERSONAGGIO È DELIBERATO DELL'AUTRICE, e va saputo prima di
+  liquidare la richiesta**: l'inglese spiega che cosa sia quella parola, ed è la chiave del
+  passo. `Tuaho, a Kargish word for a kind of tree, she could not remember what tree`. Il nome
+  d'uso del mago è **`Aspen`**, cioè un albero, e Tenar, che è kargica, ricorda **la specie e
+  non la parola hardica**: quindi `Tuaho` non è un suono qualunque, è il nome di un albero che
+  le affiora al posto del suo nome-albero.
+- **Che cosa dice il testo, alla lettera**: lo nega **tre volte** (`that was not his name`,
+  `the one whose name was not Tuaho`, e la prima volta come tentativo fallito), quindi come
+  **nome attestato** non regge. Il legame invece regge, ed è di Le Guin.
+- ⚠️ **Il censimento è completo**: 3 occorrenze in inglese e 2 per edizione italiana, tutte in
+  *Tehanu*, tutte lette. È il metodo della sezione sul grep qui sopra, applicato dopo che lo
+  stesso giro me lo aveva fatto sbagliare su `l'Anziano`.
 - ⚠️ **Resta una scelta dell'utente**, che è il livello più alto della scala: se la vuole, entra
   **dichiarata** come resa sua, non come forma attestata. Il precedente è `l'Anziano`, qui
   sopra, con la differenza che là il testo tace e qui nega.
