@@ -938,6 +938,106 @@ primo banco nuovo: il sintomo (un valore atteso che risulta doppio) è l'unica s
 
 - **Misura del giro**: 80 controlli su 80 coi font veri, dato e resa, nelle due lingue.
 
+### 🧺 Il giro delle VENTISEI voci, e i casi che insegnano qualcosa
+
+Voci chieste dall'utente il 2026-09-18, venticinque nomi in un colpo solo (ventisei voci,
+perché una era doppia), da *Tehanu*, dai *Venti di Terramare* e da *Libellula*. Lui ha dato
+nome ITA/ENG e il simbolo di genere dove poteva, chiedendo di **contro-verificare tutto**:
+qui restano i casi che valgono oltre il giro, e i nomi si contano dal dato.
+
+⚠️⚠️ **DUE VOCI POSSONO AVERE LO STESSO NOME D'USO, e `Margherita` è la prima**: le fonti
+ne dànno **due**, la moglie del fabbro della Valle di Mezzo (*Tehanu*, amica di Lodola) e la
+vecchia cuoca di Iria Vecchia su Way (*Libellula*, che canta ballate in cucina), e le due
+edizioni italiane le chiamano tutte e due così. L'utente le ha volute **distinte** (*tutte e
+due, come voci distinte*), quindi a separarle sono **origine e opera**, che la card mostra
+entrambe.
+- ⚠️ **Perciò uno script che cerca una voce PER NOME non basta più**: con due omonime va
+  cercata per coppia (nome, fonte), o ne colpisce una a caso. Vale per l'inserimento, per il
+  riordino e per qualunque banco.
+- ⚠️ **In inglese l'omonimia è più larga che in italiano**, ed è il rovescio da conoscere:
+  `Berry` vale per `Bacca`, l'anziana serva di Tenar nei *Venti*, **e** per `Chicco`, il
+  fratello di Dote in *Nell'Alta Palude*. Là il dataset non ha due voci, perché Mondadori
+  traduce i due nomi in modo diverso: un grep su `Berry` trova due persone, un grep su
+  `Bacca` una sola.
+
+⚠️⚠️ **`Petro` ROVESCIA LA REGOLA DEI NOMI, ed è il primo caso in cui succede**: qui è
+**Nord** a lasciare il nome inglese (`Stony`, 1 occorrenza) e **Mondadori** a tradurre
+(`Petro`, 6). Fin qui era sempre il contrario (`Sparviero`, `Radice`, `Astro`, `Lepre`), e la
+regola generale (i nomi seguono Nord) darebbe `Stony` come nome d'uso.
+- **Il nome d'uso resta quello Mondadori**, perché l'ha scelto l'utente, che è il livello più
+  alto della scala. `Stony` va fra i **nomi alternativi italiani**, dove copre la resa
+  dell'altra edizione, come `Root` e `Star`.
+- ⚠️⚠️ **E la citazione NON si sostituisce**, che è la conseguenza da capire: la regola
+  dell'edizione Frankenstein sostituisce i nomi **per far coincidere la citazione con la
+  card**, quindi dove il nome della card è quello Mondadori il testo Mondadori va già bene.
+  Chi applicasse la lettera della regola scriverebbe `Stony` dentro la citazione di una card
+  intestata `Petro`.
+
+⚠️⚠️ **IL GENERE DI `Semino` È FEMMINILE E L'UTENTE AVEVA INDICATO MASCHILE**: la prova è del
+narratore inglese (*She would be named this year or next!*), ed è la nipote maggiore di Tenar,
+figlia di Melina, che a dodici anni sta per ricevere il vero nome. Gliel'ho chiesto e ha
+scelto la fonte (*femmina, come dice la fonte*).
+- ⚠️ **È la ragione per cui il simbolo che lui dà va sempre riverificato**: su venticinque
+  nomi questo è l'unico che il testo contraddice, e senza il grep sarebbe entrato sbagliato.
+- **Quattro voci restano senza genere attestato** e portano quello che lui ha indicato
+  (`Ciliegia`, `Girino`, `Tholy`, `Tally`, `Falcone`), e **due restano col campo vuoto**
+  (`Serry` e `Turby`), perché né le fonti né lui ne dànno uno: è il caso di `Tiro`, dove il
+  vuoto è una risposta.
+
+⚠️⚠️ **`Madre di Tehanu` e `Padre di Tehanu` SONO DUE TITOLI FORZATI, E LI HA VOLUTI LUI**
+(sue parole: *inserisci come titolo, anche se improprio, ma è una forzatura che voglio io*):
+vivono negli **appellativi** di `Senini` e di `Tinca`, che è una voce già in classifica.
+- ⚠️ **Il campo `madre` non è stato toccato**, ed è la differenza da capire: quel campo vive
+  sulla voce **figlia** e avrebbe cambiato la card di Tehanu, mentre un appellativo si legge
+  sulla card della madre e del padre. La sua scelta dice dove vuole che l'informazione si
+  veda.
+- ⚠️ **Su `Tinca` la paternità è una lettura, non un'attestazione**: il testo dice *the one
+  that seems to be the father*, e il titolo la dà per certa. È dichiarato qui perché un audit
+  sulle fonti lo segnalerebbe.
+
+⚠️ **`Senini` è il nome CORRETTO da Therru**: Tenar dice *si chiamava Senny, mi pare* e la
+bambina corregge. Quindi `Senny` è fra i nomi alternativi come forma attestata, e la
+citazione della card è quella di Tenar, col nome imperfetto: è l'unico modo di avere una
+frase che la nomini e dica chi era.
+
+⚠️ **`Zonzo` ha DUE forme inglesi nella stessa frase**: `Ramballs` in bocca a zia Muschio e
+`Rambles` in bocca a Sparviero, che è la resa della sua parlata. `nome_en` porta la seconda e
+la prima vive fra i nomi alternativi inglesi.
+
+⚠️ **`Sanguinoso` e `Falcone` hanno l'origine VUOTA**, ed è il caso di `Tosla`: il primo è uno
+schiavista che Tosla nomina di sfuggita, il secondo fu ucciso sulle mura durante l'assedio di
+**Sorra**, e di Sorra i corpora non dicono l'isola. Il vuoto qui è il dato.
+
+#### ⚠️ Come si ricava il CAPITOLO di una citazione dai corpora
+
+I `.txt` portano le intestazioni di capitolo come righe isolate, ma **in due modi diversi**,
+e un metodo solo non li prende tutti e due.
+- **Nei corpora italiani** il titolo compare **due volte ravvicinate** (occhiello più
+  intestazione): si tiene la **seconda**, che è quella da cui comincia il corpo.
+- **Negli inglesi** compare una volta sola, e accanto c'è un **indice** che elenca tutti i
+  titoli di fila. ⚠️ **L'indice può stare in testa o in coda** (in coda in *Tehanu*, in testa
+  in *Tales from Earthsea*), quindi 'si tiene la prima occorrenza' e 'si tiene l'ultima'
+  sbagliano tutte e due su un volume: l'indice si riconosce come **gruppo fitto**, cioè
+  quattro o più titoli entro duemila caratteri.
+- **Il numero del capitolo si prende dalla mappa italiana** e il titolo inglese da quella
+  inglese, e il risultato si **verifica contro il dataset**, che per parecchi capitoli il
+  numero ce l'ha già.
+
+#### ⚠️⚠️ La trappola del verbatim: uno spazio spurio del corpus non è un errore del dato
+
+Il verificatore del verbatim ha dato **tre rossi su quattro che non erano difetti del
+dataset**, e la lezione è che il metro va adattato ai corpora, non il dato al metro.
+1. **Uno spazio spurio dentro una parola**: il corpus dei *Venti* scrive `É a` dove il libro
+   ha `Éa`, quindi la citazione di `Beryl` risultava non trovata. Il confronto si fa
+   **ignorando tutti gli spazi**.
+2. **Un montaggio dichiarato**: nella citazione di `Falcone` la didascalia (*chiese Tosla*)
+   stava **in mezzo** alla battuta, quindi togliendola i due tronconi si ricuciono e la
+   sequenza continua non esiste nel testo. È la pratica già registrata per Tuly e la Rosa del
+   *Trovatore*, e il verificatore va istruito a provare i **tronconi**.
+3. **Un apostrofo che la fonte non ha**: il testo inglese di *Tehanu* scrive `the blacksmiths
+   wife` senza apostrofo, e io lo avevo aggiunto. Questo era un difetto vero del dato, ed è
+   l'unico dei quattro.
+
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
 Dalla `1.80` la lista è divisa in **due tabelle**: i personaggi delle opere, e sotto i
