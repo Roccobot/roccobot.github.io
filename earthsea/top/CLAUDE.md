@@ -1389,6 +1389,12 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
   Odren`, e la sola che sembra una persona (`Odren had been gathering his men`) è la metonimia
   del signore del dominio. Chi rilegge il primo elenco di cinque nomi sappia che ne conteneva
   uno che non è una voce.
+  - ⚠️⚠️ **E `dieci, non cinque` CONFRONTAVA DUE INSIEMI DIVERSI**, che è l'errore di
+    comunicazione da non rifare: il cinque erano i **nomi elencati** (con `Odren` dentro e
+    l'`Uomo Eretto` fuori), il dieci i **personaggi con un nome** (il contrario). Il conto vero
+    è che quei cinque valevano **quattro** personaggi, e ne mancavano sei con nome più uno
+    senza. Un numero si dà dicendo di che cosa è il numero, o corregge una cosa che nessuno
+    aveva detto.
 
 #### ⚠️⚠️ Il dataset NON ha uno schema fisso, e il campo `senzanome` lo dimostra
 
@@ -1464,9 +1470,24 @@ diverse**, e questa è la terza. Quello che hanno in comune è la forma, non il 
 | che cosa | come è sfuggito |
 |---|---|
 | `l'Anziano` | censimento **tagliato**: `grep -i` annegava le maiuscole e `head -6` leggeva i soli primi file |
-| i personaggi di *Odren* | filtro che **scartava i nomi già presenti nel dataset** come stringa: via `Ash`, `Clay`, `Lily`, `Bay`, `Clover`, `Garnet` |
+| i personaggi di *Odren* | uscita **tagliata** (`tail -30`), più due filtri: vedi la misura qui sotto |
 | `Halkel` | filtro sulla **posizione sintattica**, con elenchi chiusi di verbi e di ruoli |
 
+- ⚠️⚠️ **LA MISURA SUL SECONDO CASO DICE CHE IL FILTRO NON ERA LA CAUSA PRINCIPALE**, e il
+  conto è netto: rifatto il censimento sul dataset della `2.44`, **sette** degli undici nomi
+  erano **stampati**, e i primi tre dell'elenco erano proprio loro (`Ash` con 10 prove, `Clay`
+  10, `Bay` 8). L'uscita era di **47 righe**, e il `tail -30` mostrava da `Odren` in giù.
+  - **Da lì viene anche il primo elenco di cinque nomi** che l'utente si è visto dare: erano
+    esattamente quelli sopravvissuti al taglio (`Odren`, `Hovy`, `Fern`, `Weed`, `Linnet`),
+    `Odren` compreso, che non è un personaggio. Non era una selezione, era una coda.
+  - **Gli altri quattro li hanno fermati due filtri diversi**: `Lily` il filtro dei **nomi già
+    presenti nel dataset** (è il nome d'uso di un'altra voce), mentre `Garnet` (0 prove su 4
+    occorrenze), `Clover` (1 su 6) e `Standing` (0 su 12) non arrivavano alla **soglia delle
+    due prove**.
+  - ⚠️ **Quindi le cause sono TRE, e la sola che si vedeva rileggendo il codice è l'ultima**:
+    le altre due vivono nel comando che guarda l'uscita, non nello script. È la ragione per cui
+    'controlli parziali' non è una diagnosi: ogni caso ha il suo punto di rottura, e va
+    misurato.
 - **La misura sul terzo caso**, rifatta sui sei pattern del censimento: **zero su sei** lo
   prendono. `influenced Halkel` e `Halkel discouraged` hanno verbi fuori elenco; `by Halkel`
   usa una preposizione che nessun pattern prevede; e `Halkel, the first Archmage` fallisce
@@ -1492,7 +1513,14 @@ trentanove sono nate rosse così, su un dato giusto.
   `.bil-f` là non trova nulla. La riserva bilingue si crea **solo dove le due lingue
   divergono**.
 
-#### ⚠️⚠️ `Tuaho` NON è un nome di Pioppo: il testo lo NEGA alla lettera
+#### ⚠️⚠️ `Tuaho` è fra i nomi alternativi di `Pioppo`, e il testo lo NEGA: scelta dichiarata
+
+⚠️⚠️ **DALLA `2.46` LA VOCE LO PORTA, per istruzione dell'utente** (*metti `Tuaho` come nome
+alternativo di `Pioppo`*), ed è il caso in cui il dataset dice una cosa che le fonti negano:
+la nota vive qui perché un audit sulle fonti lo segnalerà, e non è un difetto. La forma è **identica
+nelle tre edizioni** (è una parola kargica), quindi vive nei **due** campi come `Therru` e
+`Otak`, e non è il caso di `Root` o di `Stony`, dove la forma inglese copre la resa dell'altra
+edizione italiana.
 
 È il solo dei dodici punti che le fonti contraddicono, ed è la ragione per cui il giro si
 verifica anche quando la certezza è *pressoché totale*. Il passo è in *Tehanu*: Tenar cerca di
@@ -1511,20 +1539,47 @@ ricordare il nome del mago e pronuncia una parola **kargica**, che il testo scar
 - ⚠️ **Il censimento è completo**: 3 occorrenze in inglese e 2 per edizione italiana, tutte in
   *Tehanu*, tutte lette. È il metodo della sezione sul grep qui sopra, applicato dopo che lo
   stesso giro me lo aveva fatto sbagliare su `l'Anziano`.
-- ⚠️ **Resta una scelta dell'utente**, che è il livello più alto della scala: se la vuole, entra
-  **dichiarata** come resa sua, non come forma attestata. Il precedente è `l'Anziano`, qui
-  sopra, con la differenza che là il testo tace e qui nega.
+- ⚠️ **Era una scelta dell'utente, ed è arrivata**: il livello più alto della scala decide, e
+  la forma entra **dichiarata** come sua, non come attestata. Il precedente è `l'Anziano`, qui
+  sopra, con la differenza che là il testo tace e qui nega, e che là la forma è attestata
+  davvero.
 
-#### 🏜️ `Atwah` e `Wuluah` erano uomini, e l'appendice lo dice
+#### 🏜️ `Atwah` e `Wuluah` restano FUORI: sono eroi di una SAGA, non uomini attestati
 
-Domanda dell'utente, dodicesimo punto. Sono i **Dèi Gemelli** dei Karg, invocati nei *Venti di
-Terramare* (*sia ringraziato Atwah-Wuluah*), e l'appendice ne dà l'origine: *the Twin Gods
-Atwah and Wuluah, originally heroes of a desert saga from Hur-at-Hur*.
+Decisione dell'utente, 2026-09-18, contro una mia risposta sbagliata dello stesso giorno. Sono
+i **Dèi Gemelli** dei Karg, invocati nei *Venti di Terramare* (*sia ringraziato Atwah-Wuluah*),
+e la sua tesi era che fossero *eroi letterari nella finzione di Earthsea, poi elevati a dèi*.
+Le fonti non la confutano, e il censimento completo lo dice meglio della frase dell'appendice
+presa da sola.
 
-- **Quindi la risposta è sì, in origine**: eroi umani di una saga del deserto, divinizzati
-  dopo. ⚠️ Nel presente della storia sono **dèi**, e una voce su di loro andrebbe decisa
-  sapendo che il dataset non ha una categoria per gli dèi: i tipi sono Persone, Draghi e
-  Animali (§ 'Le razze, e perché le tinte non contano come le categorie').
+- ⚠️⚠️ **HO RISPOSTO `erano uomini` COL GRADO `[Certo]`, E QUELLA ERA UN'INFERENZA**: la sola
+  fonte sulla loro origine dice *the Twin Gods Atwah and Wuluah, originally heroes of a desert
+  saga from Hur-at-Hur*, e una **saga** è un'opera che esiste **dentro** il mondo. Quella frase
+  dice dunque di che cosa sono personaggi, non che siano esistiti: leggerla come biografia è un
+  passaggio in più, e il grado di sicurezza andava sulla frase, non sulla lettura.
+- **Il conto per file, che è quello che rende la risposta**: **otto** passi distinti in tutto il
+  ciclo, e **uno solo** parla della loro origine. Gli altri sette li dànno già per dèi.
+
+  | dove | che cosa dice |
+  |---|---|
+  | *Un mago*, cap. 1 | il grido di guerra dei Karg, `Wuluah! Atwah!`, i `bianchi dèi-fratelli di Atuan` |
+  | *Le tombe*, 2 passi | le fanciulle imparano `i misteri degli dèi`; c'è il `tempio di Atwah e Wuluah`, con la sua gran sacerdotessa |
+  | appendice (volume 5, Nord e inglese) | `originally heroes of a desert saga from Hur-at-Hur` |
+  | *I venti*, 4 passi | Thol *sostenendo di discendere* dal dio Wuluah; la figlia `discendente di Wuluah`; `Wuluah mekrevt!`; `sia ringraziato Atwah-Wuluah` |
+
+- ⚠️ **La discendenza di Thol NON è un'attestazione, ed è il testo a marcarla**: `claiming
+  descent` / *sostenendo di discendere*, cioè la genealogia divina che un signore della guerra
+  si dà mentre si proclama re. Chi la prendesse per una prova di antenati umani starebbe
+  credendo a un personaggio invece che al narratore.
+- ⚠️⚠️ **IL PARALLELO CON `Andaur` E `Avad` NON COMBACIA DEL TUTTO, e va detto**: quei due
+  vivono **solo** dentro una fiaba raccontata da un personaggio (§ 'I cinque di Tehanu, e la
+  FIABA dentro la fiaba'), mentre questi hanno un culto attivo, un tempio e una sacerdotessa nel
+  presente della storia. Nella finzione **esistono**, ma esistono come **dèi**, e il dataset non
+  ha una categoria per loro: i tipi sono Persone, Draghi e Animali (§ 'Le razze, e perché le
+  tinte non contano come le categorie'). Quindi l'esclusione regge per due vie diverse, e
+  quella che decide è la seconda.
+- ⚠️ **Il 'per il momento' è suo**: se un domani vuole le voci, si decide prima che cosa siano
+  nel dataset, non si riapre la domanda sulle fonti, che è chiusa.
 
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
