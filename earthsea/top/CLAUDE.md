@@ -796,12 +796,12 @@ cantare la ballata in cui, all'inizio del tempo, uomini e draghi erano un popolo
   **perifrasi** e il vero nome manca, quindi la card ne mostra **una sola**. Il motore ci
   arriva da sé, perché `soloVero` guarda il campo vuoto e non la razza: non è stato
   necessario toccare nulla.
-- ⚠️⚠️ **LA SUA CARD È INVISIBILE DI BASE, e un banco che la cerca in pagina la dà per
-  assente**: la casella `Nessun nome noto` del Pannello nasce spenta, quindi la voce esiste nel
-  dato e non compare in lista finché chi guarda non la accende. Chi la prova deve accenderla,
-  e chi conta le card ricordi che sono le voci **meno** quelle senza nome. ⚠️ Fino alla `2.09`
+- ⚠️⚠️ **DALLA `2.47` LA SUA CARD SI VEDE DI BASE**, perché la casella `Nessun nome noto` del
+  Pannello nasce **accesa** (§ "'Nessun nome noto': dalla Console al Pannello"). ⚠️ **Fra la
+  `2.10` e la `2.46` era il contrario**, e un banco scritto allora la accendeva prima di
+  cercarla: adesso non serve più, e chi conta le card le conta **tutte**. ⚠️ Fino alla `2.09`
   quella scelta era un flag della **Console**, cioè dell'admin: le note che lo dicono sono
-  superate (§ "'Nessun nome noto': dalla Console al Pannello").
+  superate.
 - ⚠️⚠️ **IL SUO VERO NOME ESISTE NEL TESTO, ED È `Drago`**, ma il campo resta **vuoto** per
   istruzione dell'utente (*non si conosce il suo nome*). Il passo lo dice alla lettera:
   Ogion *con paura e stupore pronunciò a voce alta il suo nome vero: 'Drago!'*
@@ -4640,8 +4640,21 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
 flag della Console** (istruzione dell'utente, 2026-09-14: *la visibilità dei personaggi senza
 nome sarà quindi governata direttamente dal Pannello, e deve essere spenta di default. La voce
 corrispondente della console, invece, può essere rimossa, perché non sarà più un'opzione
-globale*). Decide se le voci il cui nome d'uso è una **perifrasi** compaiono in classifica, e
-nasce **spenta**, quindi di base non ci sono.
+globale*). Decide se le voci il cui nome d'uso è una **perifrasi** compaiono in classifica.
+
+⚠️⚠️ **DALLA `2.47` NASCE ACCESA, e la nota che la dà spenta descrive lo stato fino alla
+`2.46`**: istruzione dell'utente del 2026-09-18 (*fa' in modo che la checkbox dei senza nome
+sia attiva di default per i visitatori*), che rovescia la sua stessa richiesta del 2026-09-14,
+citata qui sopra. Quindi **di base quelle voci CI SONO**, e la casella serve a **toglierle**.
+- ⚠️ **Il verso del filtro NON è cambiato**, ed è la cosa da non confondere: resta additivo
+  (accesa aggiunge, spenta toglie), e a cambiare è il **solo valore iniziale** di
+  `mostraSenzaNome`. Un rimedio che rovesciasse il predicato direbbe la stessa cosa oggi e
+  renderebbe illeggibili le note e i commit di prima.
+- ⚠️⚠️ **PERCIÒ OGNI CONTO DI CARD SCRITTO PRIMA È SUPERATO**: a Pannello intonso le card sono
+  **tutte** le voci, e non più le voci meno il gruppo dei senza nome. Un banco che si aspetti
+  quelle voci assenti all'avvio accusa un codice giusto, ed è la trappola di questo cambio.
+- ⚠️ **La casella resta il posto dove si vede lo stato**: nasce **spuntata**, e chi la spegne
+  torna al comportamento di prima. Niente `localStorage` e niente permalink, come sempre.
 
 - ⚠️⚠️ **IL VERSO È ADDITIVO, e la differenza con la casella che sostituisce è tutta qui**:
   accesa, quelle voci si **aggiungono** alle altre invece di diventare le sole visibili.
@@ -4703,6 +4716,8 @@ nasce **spenta**, quindi di base non ci sono.
   - ⚠️ **Le loro card ERANO visibili, e la casella le nasconde**: quelle voci esistevano già
     come schede normali, quindi non sono entrate in classifica, sono passate dietro
     all'interruttore. Chi le cercasse in pagina a casella spenta non stia cercando un difetto.
+    ⚠️ **Dalla `2.47` quella casella nasce accesa**, quindi il caso si presenta solo a chi la
+    spegne: fra la `2.10` e la `2.46` era lo stato di partenza.
   - ⚠️⚠️ **IL FLAG SI DIMENTICA, E LO HA VISTO L'UTENTE**: il **`Signore del Fuoco`** era
     rimasto senza (`2.29`), benché nella fila stesse **in mezzo** agli altri senza nome, fra
     la `Donna di Kemay` e il `Mago Nero`. Quindi la contiguità nella lista non basta a
@@ -4729,11 +4744,12 @@ nasce **spenta**, quindi di base non ci sono.
     sta) e i **120,7** di 'Colore delle schede' (va a capo). 'Senza nome' misurava **74,8** e
     'Nameless' **58,9**. ⚠️ Nel Pannello quel vincolo **non vale**, ed è la ragione per cui là
     l'etichetta è una frase: la cella dei filtri è molto più larga di quella colonna.
-- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: a casella spenta la lista mostra tutte
-  le voci **meno** quelle marcate `senzanome`, e non è un dato perso. ⚠️ **Quante siano non si
-  scrive**, perché cambia a ogni voce che entra nel gruppo o ne esce (`Roccobot.md`, § '🔢 I
-  conti si contano, non si scrivono'): si contano sul DOM, o nel dataset con
-  `dati.filter(x=>x.senzanome)`.
+- ⚠️ **CONSEGUENZA DA SAPERE PRIMA DI CONTARE LE CARD**: dalla `2.47` a Pannello intonso le
+  card sono **tutte** le voci, e solo **spegnendo** la casella la lista scende di quelle
+  marcate `senzanome`. ⚠️ Fino alla `2.46` era il contrario, quindi un conto che parta dal
+  default va rifatto quando quel default cambia. ⚠️ **Quante siano non si scrive**, perché
+  cambia a ogni voce che entra nel gruppo o ne esce (`Roccobot.md`, § '🔢 I conti si contano,
+  non si scrivono'): si contano sul DOM, o nel dataset con `dati.filter(x=>x.senzanome)`.
   - ⚠️ **Contando le card sul DOM si prenda `#rank-list .rank-item`**: la legenda del Pannello
     è una **card finta** con la stessa classe, quindi un conteggio su tutto il documento dà
     uno in più e sembra un fantasma nei dati.
