@@ -1029,6 +1029,56 @@ dataset**, e la lezione è che il metro va adattato ai corpora, non il dato al m
    wife` senza apostrofo, e io lo avevo aggiunto. Questo era un difetto vero del dato, ed è
    l'unico dei quattro.
 
+### 🫐 `Chicco` e i due `Berry`, e il CORPUS della raccolta che era troppo largo
+
+Voce chiesta dall'utente il 2026-09-18 (`2.40`), insieme a un giro di censimento su tutto il
+corpus: `Chicco` / `Berry` è il fratello di **Dote**, l'ubriacone che vorrebbe cacciare di
+casa il guaritore folle in *Nell'Alta Palude*. Entra accanto a lei, che è il suo vicinato.
+
+- **Il genere viene dall'inglese**, e la prova è una parola che nomina il sesso, non un
+  pronome del narratore: `This is my brother Berry, sir` e `Berry went and fetched his
+  sister`. L'italiano non proverebbe niente, perché `fratello` ha un genere per grammatica.
+- **L'origine `Semel` è residenza**, come per Dote: il racconto si apre con *L'isola di Semel
+  si trova a nord-ovest di Havnor*, e lui vive nella casa della sorella.
+- ⚠️ **Le occorrenze sono 14 in Mondadori, 14 in Nord e 15 in inglese, e la differenza NON è
+  una lacuna**: là dove l'inglese scrive `When Berry went out again`, Mondadori rende *Quando
+  il fratello tornò fuori*. Chi conta i due numeri e li trova diversi guardi quale frase manca
+  prima di parlare di un nome perduto.
+- **Della citazione resta la SCARTATA**, ed è quella che ritrae il personaggio: *Chicco piegò
+  il capo e borbottò* / `Berry ducked his head and muttered`. È del narratore e più lunga di
+  nove caratteri, e il divario di significato non è quello enorme che la deroga richiede,
+  quindi vale la più corta fra le valide (*Mio fratello è Chicco.*), che la dice **Dote** e
+  porta la sua firma.
+- ⚠️ **`Bacca` e `Chicco` sono due persone diverse con lo stesso nome inglese**, come le due
+  `Margherita`: la prima è la donna dei *Venti di Terramare*, il secondo l'uomo di
+  *Nell'Alta Palude*. ⚠️⚠️ **Non se ne ricava nessuna regola**, ed è una scelta dell'utente:
+  quella dedotta dalle due Margherita l'ha fatta togliere il 2026-09-18 (§ 'Il giro delle
+  VENTISEI voci, e i casi che insegnano qualcosa').
+
+#### ⚠️⚠️ Il corpus della raccolta portava i quindici racconti estranei, e adesso no
+
+Il canone impone che della raccolta *I dodici punti cardinali* si tengano **i due soli
+racconti di Terramare**, e che il taglio si faccia **allo scarico della fonte**
+(`rules/Earthsea.md`, § 'I due racconti dentro la raccolta *I dodici punti cardinali*').
+⚠️ Fino al 2026-09-18 quel taglio era stato fatto **a mano una volta sola**, e
+`.memo/scripts/earthsea-fonti.py` riscriveva il volume intero a ogni rigenerazione: sul disco
+c'erano 550k e 580k caratteri contro i 39k e 43k che il canone dichiara.
+
+- **La spia che lo ha rivelato è un censimento**, non una rilettura: fra i nomi propri del
+  corpus inglese comparivano `Semley`, `Osden`, `Pugh`, `Omelas` e `Karhide`, che sono di
+  altri racconti di Le Guin e non hanno niente a che fare con Terramare. Chi conta i nomi di
+  un corpus se ne accorge; chi ci cerca dentro una citazione no, ed è il caso peggiore,
+  perché quel testo passerebbe la verifica alla lettera.
+- **Il taglio si ancora al TITOLO IN MAIUSCOLO del racconto**, in tutte e due le lingue
+  (`THE WORD OF UNBINDING` -> `WINTER'S KING`, `LA PAROLA DELLO SCIOGLIMENTO` ->
+  `IL RE D'INVERNO`), e comincia dal titolo perché così entra anche la **nota d'autrice**
+  premessa ai due, che è l'attestazione dell'anno. ⚠️ Se un marcatore non si trova lo script
+  **fallisce** invece di scrivere il volume intero: un corpus troppo largo non dà alcun errore
+  quando ci si cerca dentro.
+- ✅ **Le misure tornano a quelle del canone** (38.683 e 42.564 caratteri) e la **contro-prova**
+  che il canone prescrive regge: la citazione di `Sotterra` combacia ancora dentro il tratto
+  ritagliato, nelle due lingue.
+
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
 Dalla `1.80` la lista è divisa in **due tabelle**: i personaggi delle opere, e sotto i
