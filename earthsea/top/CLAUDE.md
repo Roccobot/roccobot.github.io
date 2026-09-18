@@ -1136,11 +1136,25 @@ ANIMALI: una categoria, tante etichette'): senza, la sua card sarebbe finita **f
 senza dare alcun errore**. Nella stessa riga sono entrate `mucca`, `vacca`, `vitello`, `cow` e
 `calf`, che sono le bestie che quel racconto nomina a ogni pagina, cioè i candidati prossimi.
 
-⚠️⚠️ **`Hega` È IL SOLO MAESTRO DI ROKE CHE PORTA `stregone` E NON `mago`**, e non è una
-dimenticanza: la fonte lo chiama `the sorcerer Hega of O` e lo dice `Master Hand`, quindi i
-due badge attestati sono **`stregone`** e **`maestro`**, che stanno insieme; `mago` dice
-'educato a Roke' e lui **insegna** in una Roke che sta nascendo. Gli altri otto Maestri del
-dataset portano `mago` più `maestro`, quindi un audit lo segnalerà: è il testo a dirlo.
+⚠️⚠️ **`Hega` PORTA `mago` DALLA `2.43`, PER SCELTA DELL'UTENTE, E LA RAGIONE VALE OLTRE LA
+VOCE**: sue parole, *era chiamato stregone solo perché il termine 'mago' non era ancora in
+uso. Qui si censiscono lo status e il potere, con i badge, non le nomenclature*. Quindi il
+badge misura **che cosa il personaggio è**, e la parola che il testo usa in quel secolo è una
+spia, non il criterio.
+- ⚠️ **La fonte dice l'altro**, ed è la ragione per cui la scelta va dichiarata: lo chiama
+  `the sorcerer Hega of O` e lo dice `Master Hand`. Un audit sulle fonti lo segnalerà, come
+  segnala `Tenar` fra i Signori dei Draghi: non è un difetto del dato.
+- ⚠️⚠️ **E il caso è specifico dell'ETÀ del personaggio**: Hega insegna in una Roke che **sta
+  nascendo**, cioè prima che il vocabolario del potere si fissasse (è `Halkel`, il primo
+  Arcimago, a codificarlo secoli dopo, § 'Le due fonti che il censimento non aveva
+  guardato'). Chi trovasse un altro personaggio di quell'epoca chiamato `sorcerer` guardi
+  qui prima di leggerlo come grado.
+- ✅ **Adesso i Maestri di Roke del dataset portano TUTTI `mago` più `maestro`**, e
+  l'eccezione che questa voce descriveva fino alla `2.42` non esiste più. ⚠️ **Quanti siano
+  si conta** (`dati.filter(x => x.maestro)`), che l'elenco si allunga.
+- ⚠️ **I due badge restano incompatibili**: il badge alto esclude il basso, quindi `stregone`
+  è stato **tolto** e non affiancato (§ 'I 19 confrontati con Wikipedia', punto 4). Il
+  controllo a dato è che le voci con tutti e due siano **zero**.
 
 ⚠️⚠️ **L'EDIZIONE MONDADORI DE *Le leggende di Terramare* NON CONTIENE L'APPENDICE**, e questo
 decide la metà italiana di una voce intera: `Salan`, il fratello di Elfarran che il Nemico fa
