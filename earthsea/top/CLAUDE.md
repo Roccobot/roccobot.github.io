@@ -1198,6 +1198,18 @@ il Maestro dei Nomi che insegna a Sparviero sull'Isola Solitaria, muore prima de
 Terramare*, dove al concilio di Roke ne siede un altro. A dirlo è la cronologia, non una riga
 che li distingua: nessuna edizione scrive `I` o `II`, quindi un audit sulle fonti troverà un
 nome solo. La distinzione è dell'utente, ed è ben fondata.
+
+⚠️⚠️ **DALLA `2.48` NEMMENO IL DATASET LI NUMERA: sono due voci OMONIME**, per istruzione
+dell'utente (*devono diventare entrambi `Kurremkarmerruk` senza il numerale romano. Anche se
+tecnicamente il secondo è davvero successore del primo, ho deciso che comunque non mi piace*).
+Fra la `2.42` e la `2.47` le card portavano `Kurremkarmerruk I` e `Kurremkarmerruk II`: le note
+che lo dicono descrivono quel tratto.
+- **A distinguerli restano opera e origine**, che la card mostra entrambe, ed è il modo in cui
+  il dataset tiene già distinti i tre omonimi precedenti (le due `Margherita`, i due `Berry`,
+  i due `Alder`: § 'Il CENSIMENTO del corpus, e le diciotto voci che ha trovato').
+- ⚠️ **La distinzione fra i due resta vera e non è stata revocata**: sono due persone, e il
+  primo porta `nomeged` mentre il secondo no. A cadere è il **numerale nel nome**, non il
+  fatto che siano due.
 - ⚠️ **`Kurremkarmerruk` è un nome d'ufficio, non un nome proprio**, ed è il motivo per cui il
   caso esiste: chi assume l'ufficio prende il nome. La sua attestazione è nella citazione
   stessa della voce nuova, *È il nome del Maestro dei Nomi.* / `It is the Namer's name.`
@@ -6002,6 +6014,68 @@ e `GED`, contro i **9,42** che le separavano dal nome sopra.
   - ⚠️ **Su mobile il tasto della lingua NON c'è** (`FEATURES.langSwitchMobile` è spento),
     quindi un banco che lo cerca va in timeout: si chiama `setLang` e si **verifica** che la
     lingua sia cambiata, o 'niente si è mosso' resta vero anche con la pagina ferma.
+
+### 📐 La riga del nome arriva al FILETTO, e i badge non si spezzano mai
+
+Due richieste dell'utente insieme, la `2.48`, e la seconda è la regola che conta: *i badge
+stanno sempre tutti di seguito: se non ci stanno dopo il nome, devono andare TUTTI a capo. In
+breve: o tutti in coda al nome, oppure tutti sotto. Mai spezzati.*
+
+⚠️⚠️ **IL GRUPPO DEI BADGE È UNA SCATOLA, e prima era `display:contents`**: con `contents` i
+figli diventano flex item di `.rank-name` e vanno a capo **uno per uno**, che è esattamente
+quello che lui ha fotografato su `Kurremkarmerruk I` (due badge in coda al nome e due sotto).
+Adesso `.rank-tipi` e `.rank-flags` sono `inline-flex` con `flex-wrap:nowrap`, e l'`order` sta
+sui **contenitori** invece che sui figli.
+- ⚠️ **La resa non è stata inventata: è quella che il telaio mobile aveva già** sotto i 480px,
+  portata sopra la soglia. Il commento che spiegava il `contents` è superato.
+- ⚠️ **Il `nowrap` interno è la metà che conta**: senza di lui il gruppo è un box ma i suoi
+  figli tornano a spezzarsi dentro di lui.
+- **Quante card ne soffrivano, misurato prima e dopo**: a 1280 una (`Kurremkarmerruk I`), a
+  520 cinque, zero alle altre larghezze. Dopo: **zero dappertutto**, e a 1280 quella card sta
+  di nuovo tutta in riga.
+
+⚠️⚠️ **E LA RIGA DEL NOME SI ALLUNGA DENTRO IL GAP DELLA GRIGLIA**, fino a `--name-rientro`
+(0.75rem) dal **filetto** dell'origine, che è dove il suo mockup ha messo la seconda linea: a
+1280 finisce a 856,22 invece di 836,22, con 12px di respiro dal filetto.
+- ⚠️ **La prende la SOLA riga del nome**, con una `width` maggiore della cella: il riquadro
+  della citazione e le altre righe restano dove sono, ed è misurato (scarto 0).
+- ⚠️ **Non invade la colonna dell'origine**, e il rientro è quello che lo impedisce: il testo
+  dell'origine è centrato in verticale, quindi su una card bassa cadrebbe alla stessa altezza
+  del nome. Chi porta il rientro a zero se lo trova addosso.
+- **Il gap è diventato una variabile** (`--card-gap`), perché ora lo conoscono in due, la
+  griglia e questa larghezza. Sotto i 480px la terza colonna non esiste e la riga torna larga
+  quanto la cella.
+
+⚠️⚠️ **IL RIENTRO DELLE MANIGLIE NON VALE PIÙ SULLE CARD CON LA COLONNA, ed è la ragione per
+cui il problema si vedeva soprattutto in modalità riordino**: `#rank-list.has-handles
+.rank-content` prendeva `padding-right:2.6rem` su tutte, ma la maniglia è
+`position:absolute; right:0.75rem` **sulla card**, quindi su una card `has-orig` cade sopra la
+colonna dell'origine e non sfiora il contenuto (misurato a 1280: maniglia da 956,8 a 982,
+contenuto fino a 836,22). Erano **41,6px** tolti al blocco dei nomi per un ostacolo che non
+c'era.
+- ⚠️ **Sotto i 480px serve ancora a tutte**, perché là la terza colonna non esiste e il
+  contenuto arriva quasi al bordo: la media query lo rimette.
+- ⚠️ **Oggi TUTTE le card portano `has-orig`**, perché il flag `Spazio riservato` della Console
+  tiene la colonna anche sulle voci senza luogo (§ 'Segno o parola nella colonna origine, e lo
+  decide la CONSOLE'): la regola per le card senza colonna è la rete per quando quel flag è
+  spento, e un banco che voglia provarla deve togliere la classe a mano.
+
+⚠️ **L'aria sotto le icone a capo ha ora un valore per telaio**: `0.2em` sopra i 480px e
+`0.56em` sotto, e non è un'incoerenza. Il criterio è lo stesso della `2.36` (pareggiare il
+vuoto che il gruppo ha **sopra** di sé), ma là il gruppo porta una risalita di `-0.156em` che
+qui non c'è: misurato fra 481 e 520px, sopra 6,34px e sotto 3,19, che `0.2em` del corpo del
+vero nome (16px) portano a 6,38.
+
+#### ⚠️⚠️ La trappola del banco: le righe si contano sui CENTRI, non sui `top`
+
+I badge hanno **altezze diverse** e sono centrati sulla riga, quindi il loro `top` differisce
+anche quando stanno tutti sulla stessa riga. Un banco che raggruppi per `top` arrotondato
+dichiara **spezzata ogni card che ha più di un badge**: misurato, 67 su un codice che ne aveva
+zero, cioè un rilievo falso che accusa proprio il rimedio appena applicato.
+- **Il metro giusto**: il centro di ogni badge contro il centro della **prima riga** del nome
+  (`getClientRects()[0]`, perché il testo può andare a capo), con una tolleranza di mezza riga.
+- ⚠️ **E il conto 'prima' va rifatto con lo stesso metro**, o il confronto non dice niente: il
+  `git stash` è il modo più corto per averlo.
 
 ### 🏷️ Il TITOLO del sito è cambiato, e ha chiuso il salto dell'intestazione
 
