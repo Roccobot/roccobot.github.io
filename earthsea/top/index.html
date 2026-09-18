@@ -3447,7 +3447,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.41</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.42</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5968,9 +5968,15 @@ var ICON_LABEL = {
     // qualunque. In inglese la parola è una sola, `sorcerer`, quindi la metà inglese non
     // si sdoppia.
     stregone: "Strega o stregone/incantatore (ha qualche potere)",
-    // ⚠️ `uomo educato a Roke` e non solo `educato a Roke`: a Terramare la Scuola non
-    // ammetteva donne, e il badge alto lo dice invece di lasciarlo sottinteso.
-    mago:     "Mago (uomo educato a Roke; detiene il vero potere)",
+    // ⚠️⚠️ DAL 2026-09-18 IL BADGE ALTO NON È PIÙ SOLO DEGLI UOMINI, e la dicitura è
+    // dell'utente, dettata alla lettera. Fino a quel giorno diceva `uomo educato a Roke`,
+    // perché la Scuola non ammetteva donne; adesso nomina anche l'`incantatrice di grande
+    // potere`, cioè la via femminile allo stesso grado. La modifica NON è cosmetica: è quella
+    // che permette a Tehanu di portare `mago` al posto di `stregone` (stessa data, sua
+    // istruzione), e chi la leggesse come un ritocco di testo non capirebbe quel passaggio.
+    // ⚠️ La metà inglese segue la sostanza e non le parole: `incantatrice` è la resa Nord del
+    // grado basso al femminile, e in inglese quel grado ha la sola parola `witch`.
+    mago:     "Mago (stregone educato a Roke o incantatrice di grande potere)",
     // ⚠️ Il terzo badge ha CAMBIATO significato il 2026-08-21 (istruzione
     // dell'utente): diceva 'di questo personaggio si conosce il vero nome', che la
     // riga del vero nome ora dice da sé. Adesso marca chi ha ricevuto in custodia
@@ -6006,7 +6012,7 @@ var ICON_LABEL = {
   },
   en: {
     stregone: "Witch or sorcerer (holds some power)",
-    mago:     "Mage (a man trained on Roke; holds the true power)",
+    mago:     "Mage (a sorcerer trained on Roke, or a witch of great power)",
     // ⚠️ 'Sparviero' e NON 'Sparrowhawk', ed è la stessa scelta che il dataset fa con
     // `nome_en`: le rese inglesi dei nomi non sono in scena, e tradurne una sola
     // farebbe sembrare attestate anche le altre. Chi la volesse inglese cambi prima
