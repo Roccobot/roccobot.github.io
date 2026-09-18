@@ -29,6 +29,14 @@
 # Bassa`, dato per resa dell'utente perché il grep sulle sole Mondadori trovava `Low Torning`.
 # ⚠️ Il suo txt porta il prefisso `ita-nord`, non `ita`: un glob `ita - *` prende le sole
 # Mondadori, che è quello che serve quando si confrontano le due edizioni.
+# ⚠️⚠️ DELLA RACCOLTA SI TIENE SOLO IL TRATTO DEI DUE RACCONTI DI TERRAMARE, e il taglio lo
+# fa questo script: il canone lo impone allo SCARICO della fonte (`rules/Earthsea.md`, § 'I
+# due racconti dentro la raccolta *I dodici punti cardinali*'), perché gli altri quindici
+# racconti sono testo di Le Guin e un riscontro là dentro passerebbe la verifica alla lettera
+# pur non riguardando Terramare: un falso positivo con la forma di una prova. Fino al
+# 2026-09-18 il taglio era stato fatto a mano una volta sola e lo script riscriveva il volume
+# intero a ogni rigenerazione, quindi la misura del canone (39k e 43k caratteri) e i file sul
+# disco (550k e 580k) dicevano cose diverse.
 
 import html
 import os
@@ -63,6 +71,30 @@ ITA_NORD = ['Saga di Earthsea']
 
 TAG = re.compile(r'<[^>]+>')
 SPAZI = re.compile(r'[ \t\r\f\v]+')
+
+# Il tratto da tenere della raccolta, per TITOLO IN MAIUSCOLO: è il marcatore che sopravvive a
+# una ri-conversione dell'epub, mentre un offset di caratteri no (e le pagine a stampa ci sono
+# nel solo epub inglese). Si comincia dal titolo del primo racconto, così entra anche la nota
+# d'autrice premessa ai due, che è quella che attesta l'anno; si finisce al racconto dopo.
+RITAGLIO = {
+    "The wind's Twelve Quarters": (r'THE\s+WORD\s+OF\s+UNBINDING', r'WINTER.S\s+KING'),
+    'I dodici punti cardinali': (r'LA\s+PAROLA\s+DELLO\s+SCIOGLIMENTO', r'IL\s+RE\s+D.INVERNO'),
+}
+
+
+def ritaglia(nome, t):
+    """Tiene il solo tratto fra i due marcatori. Se non li trova, FALLISCE invece di scrivere
+    il volume intero: un corpus troppo largo non dà alcun errore quando ci si cerca dentro."""
+    if nome not in RITAGLIO:
+        return t
+    apre, chiude = RITAGLIO[nome]
+    a = re.search(apre, t)
+    if not a:
+        raise SystemExit('marcatore di apertura non trovato in "%s": %s' % (nome, apre))
+    b = re.search(chiude, t[a.end():])
+    if not b:
+        raise SystemExit('marcatore di chiusura non trovato in "%s": %s' % (nome, chiude))
+    return t[a.start():a.end() + b.start()]
 
 
 def scarica(nome, lingua, dove):
@@ -103,7 +135,7 @@ def main():
         for nome in elenco:
             epub = scarica(nome, lingua, dove)
             fuori = os.path.join(txt, lingua + ' - ' + nome + '.txt')
-            t = testo(epub)
+            t = ritaglia(nome, testo(epub))
             open(fuori, 'w', encoding='utf-8').write(t)
             print('%-52s %8d caratteri' % (lingua + ' - ' + nome, len(t)))
     print('\ntesti in ' + txt)
