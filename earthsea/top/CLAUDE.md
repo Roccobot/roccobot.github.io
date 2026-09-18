@@ -1346,6 +1346,97 @@ diverse, e tutte e due valgono oltre il caso.
     § 'Gli Arcimaghi che le fonti nominano'): il badge `arcimago` si assegna da quell'elenco e
     non da una frase letta al volo, quindi chi ne aggiunge un altro cambia **prima** quel file.
 
+### 🏚️ Le UNDICI voci di *The daughter of Odren*, il primo gruppo senza edizione italiana
+
+Chieste dall'utente il 2026-09-18 (*le voci vanno create: aggiungi tutti i personaggi*), con
+le **rese italiane dettate da lui**, che è la condizione senza la quale il gruppo non poteva
+nascere: quel racconto non ha edizione italiana, quindi nessun nome si può cercare in una
+fonte nostra.
+
+⚠️⚠️ **LE RESE SONO SUE E VANNO TRATTATE COME ATTESTAZIONI DEL SITO, non come traduzioni**:
+`Weed` -> **Malva**, `Clay` -> **Limo**, `Lily` -> **Calla**, `Garnet` -> **Granato**,
+`Ash` -> **Olmo**, `Bay` -> **Lauro**, `Clover` -> **Trifoglio**, `Linnet` -> **Nella**,
+`Fern` -> **Felce**, `the Standing Man` -> **Uomo Eretto**; `Hovy` resta invariato. Un audit
+sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per undici.
+
+- ⚠️⚠️ **NESSUNA CITAZIONE, ed è una sua istruzione**: senza un'edizione italiana la metà
+  italiana non si potrebbe verificare, e inventarla sarebbe l'unico modo di riempire il campo.
+  ⚠️ È il **rovescio** di `Salan`, che la citazione ce l'ha di Nord perché Mondadori non
+  stampa l'appendice: là un testo italiano esiste, qui no.
+- ⚠️ **Il titolo dell'opera resta INGLESE anche nella metà italiana** (`The Daughter of Odren
+  (2014)`), perché il canone lo impone (`rules/Earthsea.md`, § 'Le opere, in italiano': *un
+  titolo italiano per quel racconto non esiste, quindi non si cita e non si inventa*). È la
+  sola voce del dataset con le due metà identiche in quel campo.
+- **Origine `O` per tutte**, attestata nella prima riga del racconto (`the Island of O`), e
+  quell'isola era già nel dataset con `Hega`.
+- **I generi vengono tutti dall'inglese**, che è l'unica fonte: `Farmer Bay` e `Bay's wife`,
+  `the boy Clay, the son of Odren`, `Hovy's sister, Linnet`, `My sister's daughter Fern`,
+  `Her stepdaughter, Clover, a girl of fifteen`.
+- ⚠️⚠️ **`Uomo Eretto` NON HA GENERE, e non è una dimenticanza**: il testo lo chiama sempre
+  `it` (`It stood there`, `its blunt arms`), quindi un maschile sarebbe la grammatica del nome
+  e non un dato. È il caso di `Tiro`, dove il vuoto è una risposta.
+- ⚠️ **Due nomi valgono DUE VOLTE**, e il testo lo dichiara: la figlia si chiamava `Lily` come
+  la madre e cambiò il nome d'uso in `Weed`; il fratello era `Little Garnet` come il padre e
+  fu lei a chiamarlo `Clay`. Quindi `Calla` e `Ninfea` vivono fra i nomi alternativi di
+  `Malva`, e `Piccolo Granato` e `Grano` fra quelli di `Limo`.
+- **Badge**: `stregone` a `Olmo` (`the sorcerer`, attestato) e a `Limo`, che dice di avere il
+  dono e ha studiato quattro anni con un mago di Roke **senza** passare da Roke: è il criterio
+  di `Avorio` e di `Diamante` (§ 'I 19 confrontati con Wikipedia', punto 3).
+- **La posizione**: il gruppo entra **prima di `Cenerino`**, che per istruzione dell'utente
+  resta l'ultima voce umana della lista, subito prima degli animali.
+- ⚠️ **`Odren` NON è un personaggio**, e per un giro è stato dato per tale: tutte le 29
+  occorrenze sono `the Lords of Odren`, `the Lady of Odren`, `Odren Cove`, `the great house of
+  Odren`, e la sola che sembra una persona (`Odren had been gathering his men`) è la metonimia
+  del signore del dominio. Chi rilegge il primo elenco di cinque nomi sappia che ne conteneva
+  uno che non è una voce.
+
+#### ⚠️⚠️ Il dataset NON ha uno schema fisso, e il campo `senzanome` lo dimostra
+
+Costruendo una voce nuova si copiano le **chiavi** di una esistente, ma quella scelta decide
+anche che cosa **non** si può scrivere: `senzanome` vive solo sulle voci che lo portano, e il
+modello usato per questo gruppo (`Salan`) non ce l'ha. Una guardia `if 'senzanome' in v`
+l'ha quindi scartato **in silenzio**, e `Uomo Eretto` è nato visibile in classifica.
+
+- **Come si scrive un campo che il modello non ha**: si legge da una voce che lo porta
+  (`Mago Nero`), così si prendono il valore e la **posizione fra le chiavi**, e la riga
+  somiglia alle sue sorelle.
+- ⚠️ **Perciò il conto dei campi NON è uguale per tutte le voci**: le dieci con nome ne hanno
+  34 e `Uomo Eretto` 35. Un banco che attenda un numero unico accusa un dato corretto.
+
+#### ⚠️⚠️ Il metro del NOME vuole la faccia E il ripiego, perché la gemella non c'è sempre
+
+`.rank-name-text` porta le due facce (`bil-f` visibile, `bil-m` nascosta) **solo dove le due
+lingue divergono**; dove il nome è identico (`Hovy`, `Hega`, `Halkel`) il testo è **nudo**.
+Quindi nessuno dei due metri da solo funziona su tutto il dataset:
+
+| metro | che cosa sbaglia |
+|---|---|
+| solo `.rank-name-text` | sui nomi divergenti dà le due lingue attaccate (`MalvaWeed`) |
+| solo `.bil-f` | sui nomi identici non trova nulla e dà `null` |
+
+- **La forma giusta**: si cerca `.bil-f` **dentro** il contenitore e si ripiega sul
+  contenitore stesso. Misurato: col metro sbagliato il banco di questo giro ha trovato
+  **1 card su 10**, e in un altro giro **zero** su una voce giusta.
+- ⚠️ **Vale anche per la riga dell'OPERA** (`.rank-title`), e questo gruppo lo dimostra: le
+  sue due metà sono identiche, quindi là la faccia non esiste e il testo è nudo.
+
+#### ⚠️⚠️⚠️ L'uscita di un banco si legge INTERA: un `tail` nasconde i suoi rossi
+
+Il banco di questo giro aveva trovato il campo `senzanome` mancante **al primo colpo**, e la
+sua riga rossa è stata tagliata via da un `| tail -20`, quindi il difetto è sopravvissuto a
+due giri di correzioni. ⚠️ **È la terza volta nella stessa sessione che un taglio dell'uscita
+nasconde un fatto**: le altre due sono `l'Anziano` (un `head -6` su file ordinati per volume)
+e i personaggi di questo stesso racconto (un `tail -30` che ha tolto i tre candidati con più
+prove).
+
+- **La regola**: l'uscita di un banco si legge **tutta**, e se è lunga si filtra sui **KO**
+  (`grep -A2 '^KO'`), mai sulla coda o sulla testa. Un banco stampa poche righe per prova,
+  quindi non c'è niente da risparmiare, e quello che si taglia è proprio ciò per cui il banco
+  esiste.
+- ⚠️ **Il conto finale non basta**: `38 su 38` si legge in fondo, ma `27 su 38` non dice
+  **quali**. Chi vede un numero minore del totale deve risalire all'elenco, non ripetere il
+  comando con un altro taglio.
+
 ### 🧮 `Halkel`, il primo Arcimago, e i tre filtri che lo avevano nascosto
 
 Voce chiesta dall'utente il 2026-09-18 con la posizione (*mettilo in classifica subito dopo
