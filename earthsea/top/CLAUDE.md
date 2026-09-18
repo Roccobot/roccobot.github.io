@@ -945,20 +945,11 @@ perché una era doppia), da *Tehanu*, dai *Venti di Terramare* e da *Libellula*.
 nome ITA/ENG e il simbolo di genere dove poteva, chiedendo di **contro-verificare tutto**:
 qui restano i casi che valgono oltre il giro, e i nomi si contano dal dato.
 
-⚠️⚠️ **DUE VOCI POSSONO AVERE LO STESSO NOME D'USO, e `Margherita` è la prima**: le fonti
-ne dànno **due**, la moglie del fabbro della Valle di Mezzo (*Tehanu*, amica di Lodola) e la
-vecchia cuoca di Iria Vecchia su Way (*Libellula*, che canta ballate in cucina), e le due
-edizioni italiane le chiamano tutte e due così. L'utente le ha volute **distinte** (*tutte e
-due, come voci distinte*), quindi a separarle sono **origine e opera**, che la card mostra
-entrambe.
-- ⚠️ **Perciò uno script che cerca una voce PER NOME non basta più**: con due omonime va
-  cercata per coppia (nome, fonte), o ne colpisce una a caso. Vale per l'inserimento, per il
-  riordino e per qualunque banco.
-- ⚠️ **In inglese l'omonimia è più larga che in italiano**, ed è il rovescio da conoscere:
-  `Berry` vale per `Bacca`, l'anziana serva di Tenar nei *Venti*, **e** per `Chicco`, il
-  fratello di Dote in *Nell'Alta Palude*. Là il dataset non ha due voci, perché Mondadori
-  traduce i due nomi in modo diverso: un grep su `Berry` trova due persone, un grep su
-  `Bacca` una sola.
+**Le due `Margherita` sono due personaggi diversi**, la moglie del fabbro della Valle di
+Mezzo (*Tehanu*, amica di Lodola) e la vecchia cuoca di Iria Vecchia su Way (*Libellula*, che
+canta ballate in cucina), e le due edizioni italiane le chiamano tutte e due così. L'utente le
+ha volute **distinte** (*tutte e due, come voci distinte*), quindi a separarle sono origine e
+opera, che la card mostra entrambe.
 
 ⚠️⚠️ **`Petro` ROVESCIA LA REGOLA DEI NOMI, ed è il primo caso in cui succede**: qui è
 **Nord** a lasciare il nome inglese (`Stony`, 1 occorrenza) e **Mondadori** a tradurre
