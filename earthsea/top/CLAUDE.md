@@ -1079,6 +1079,82 @@ c'erano 550k e 580k caratteri contro i 39k e 43k che il canone dichiara.
   che il canone prescrive regge: la citazione di `Sotterra` combacia ancora dentro il tratto
   ritagliato, nelle due lingue.
 
+### 🔎 Il CENSIMENTO del corpus, e le diciotto voci che ha trovato
+
+Istruzione dell'utente, 2026-09-18 (*fai un bel giro su tutto il corpus di Terramare/Earthsea
+e controlla se qua e là ci sono personaggi che mi sono sfuggiti*), e la sua scelta sull'esito
+(*tutti e diciotto*). ⚠️ **Quante siano oggi si conta** (`dati.length`): qui resta il metodo e
+i casi, perché il numero invecchia al primo ingresso.
+
+⚠️⚠️ **QUASI TUTTE LE VOCI TROVATE VENGONO DA UN VOLUME SOLO**, *Le leggende di Terramare*: le
+tre isole del dataset (i romanzi, gli animali, gli apocrifi) erano battute, i cinque racconti
+no. Chi ripete il censimento parta da lì, e lo veda **a dato**, contando le voci per `fonte`.
+
+- **Come si censisce**: si prendono i nomi propri del corpus **inglese** e si tengono i soli
+  che compaiono in una posizione da persona (soggetto di un verbo di discorso, dopo un nome di
+  ruolo, al possessivo), si scartano quelli già nel dataset e si **leggono i contesti**.
+  ⚠️ Il conto dei soli nomi maiuscoli non basta: dà più di mille candidati, quasi tutti
+  inizi di frase e toponimi.
+- ⚠️⚠️ **UN FILTRO SUL VOCABOLARIO BUTTA VIA I PERSONAGGI INSIEME AL RUMORE**, ed è il difetto
+  da non introdurre: a Terramare i nomi d'uso **sono** parole comuni (`Rush`, `Tarry`,
+  `Coney`, `Birch`, `Broom`), quindi scartare i token che compaiono anche in minuscolo elimina
+  proprio le voci che si stanno cercando. Il discrimine è la **posizione sintattica**, non la
+  parola.
+- ⚠️ **Il grep si fa sulla parola intera, e una resa italiana si trova solo se la si indovina
+  tutta**: `Broom` è `Ginestrone`, e una ricerca di `Ginestra` non lo trovava. Quando il nome
+  italiano non salta fuori, si cerca il **passo** (una frase vicina, un nome noto accanto) e
+  si legge la resa, invece di dedurla dal significato della parola inglese.
+
+⚠️⚠️ **`Alder` È IL TERZO OMONIMO, E IL PRIMO IDENTICO NELLE DUE LINGUE**: l'allevatore di
+*Nell'Alta Palude* e il protagonista dei *Venti di Terramare* si chiamano `Alder` in italiano
+e in inglese, mentre le due `Margherita` e i due `Berry` divergevano almeno da una parte. A
+distinguerli sulla card sono **origine e opera**. ⚠️ Come per gli altri due, **non se ne ricava
+nessuna regola**: l'utente ha fatto togliere quella dedotta dalle Margherita.
+
+⚠️⚠️ **`Ulla` È IL PRIMO ANIMALE CHE NON È IL COMPAGNO DI NESSUNO**: è la giovenca che guida
+il guaritore cieco di stanchezza fino alla fattoria di Dote, e con lei **`giovenca` e `heifer`
+sono entrate in `TIPI_ANIMALE`**, che è il passo obbligato per ogni specie nuova (§ 'Gli
+ANIMALI: una categoria, tante etichette'): senza, la sua card sarebbe finita **fra gli uomini
+senza dare alcun errore**. Nella stessa riga sono entrate `mucca`, `vacca`, `vitello`, `cow` e
+`calf`, che sono le bestie che quel racconto nomina a ogni pagina, cioè i candidati prossimi.
+
+⚠️⚠️ **`Hega` È IL SOLO MAESTRO DI ROKE CHE PORTA `stregone` E NON `mago`**, e non è una
+dimenticanza: la fonte lo chiama `the sorcerer Hega of O` e lo dice `Master Hand`, quindi i
+due badge attestati sono **`stregone`** e **`maestro`**, che stanno insieme; `mago` dice
+'educato a Roke' e lui **insegna** in una Roke che sta nascendo. Gli altri otto Maestri del
+dataset portano `mago` più `maestro`, quindi un audit lo segnalerà: è il testo a dirlo.
+
+⚠️⚠️ **L'EDIZIONE MONDADORI DE *Le leggende di Terramare* NON CONTIENE L'APPENDICE**, e questo
+decide la metà italiana di una voce intera: `Salan`, il fratello di Elfarran che il Nemico fa
+gebbeth, vive **solo** in *Una descrizione di Terramare*, che vive nel volume **Nord** e in
+inglese. La sua citazione italiana è quindi **di Nord**, ed è l'unica del dataset che non
+abbia un testo Mondadori dietro.
+- **La misura che lo accerta**: l'indice del volume Mondadori si ferma a *Libellula*, e
+  `Vedurnan` dà **zero** occorrenze là contro **13** in Nord.
+- ⚠️ **Non contraddice la regola dell'edizione Frankenstein**: quella dice di prendere il
+  testo Mondadori coi nomi Nord, e qui un testo Mondadori non esiste. Il precedente è
+  `Intahin`, che dall'appendice prende l'attestazione e non la citazione.
+
+#### ⚠️ Come si sceglie la citazione quando le più corte sono didascalie
+
+Su queste diciotto il criterio della **più corta fra le valide** ha dato quasi sempre una
+frase che del personaggio non dice niente (`Forse San, al villaggio`, `Entrò Chicco`), perché
+sono comparse di contorno e il testo le nomina di sfuggita. La via che funziona è **tagliare
+la coda** della frase che li ritrae: `San, un uomo duro e temprato che aveva passato la
+trentina.` esce da un periodo lungo il doppio, e `Un ragazzo quindicenne, Granello, un
+manipolatempo promettente.` pure.
+- ⚠️ **Il taglio in testa alza l'iniziale** (§ 'Le CITAZIONI nella card', convenzione dei
+  `[...]` agli estremi), quindi il verbatim va provato **anche con la minuscola**, o una
+  citazione tagliata a regola risulta non trovata.
+- **La firma si riempie solo dove parla un altro**, e qui sono quattro su diciotto: `Giunco`
+  su Dory, `Diamante` su Sul, `Rosa` su Ginestrone, `Kossil` su Gobar. Le altre quattordici
+  vengono dal narratore o sono battute del personaggio stesso.
+- ⚠️ **`Sul` resta senza genere**, ed è il caso di `Tiro`: il testo lo nomina due volte e non
+  dà mai un pronome. Il mulattiere di Aureo sarà con ogni probabilità un uomo, e proprio per
+  questo il campo resta vuoto.
+- **Misure del giro**: verbatim **36 su 36** contro i corpora delle tre edizioni, e **34 su
+  34** in pagina coi font veri, dato e resa, nelle due lingue.
+
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
 Dalla `1.80` la lista è divisa in **due tabelle**: i personaggi delle opere, e sotto i
