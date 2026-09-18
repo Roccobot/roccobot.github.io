@@ -368,7 +368,14 @@ FORMULE_BLOCCA = [
     # guardare` contrappone due MECCANISMI ('si risale la catena invece di guardare il solo
     # genitore', `Veil.kt`), che è contenuto e non una coda. La coda con quel verbo ha la
     # forma del gerundio, `non guardando`, e sta nella riga qui sotto.
-    (re.compile(r"invece (?:di|che) (?:indovinar|indovinat|andare a memoria|a memoria|"
+    # ⚠️⚠️ E UN INFINITO PUÒ STARE IN MEZZO, che è il buco per cui la riga non ha visto
+    # `guardo il dato invece di rispondere a memoria` (2026-09-18): il modo scartato non è
+    # attaccato alla congiunzione, ci si arriva passando per un verbo. Il gruppo opzionale
+    # lo assorbe, e resta stretto perché a decidere è sempre la parola DOPO, cioè il modo
+    # scartato: `invece di guardare il solo genitore` non combacia, perché là dopo l'infinito
+    # non c'è nessun modo di conoscere.
+    (re.compile(r"invece (?:di|che) (?:\w+(?:are|ere|ire|arsi|ersi|irsi) )?"
+                r"(?:indovinar|indovinat|andare a memoria|a memoria|"
                 r"andare a tentativi|ragionarci|crederlo|stimar|stimat|dedurr|dedott|"
                 r"decis\w*\s+a occhio|a occhio)", re.I),
      "coda su quello che NON si è fatto: scrivi il metodo (misurato sul file servito, "
@@ -745,9 +752,32 @@ def libere_di(paragrafo):
                 yield k
             k += 1
 
+    # ⚠️⚠️ LE COPPIE SI CERCANO IN UNA FINESTRA DI POCHE RIGHE, e questa è la correzione del
+    # 2026-09-18, che nasce da un falso positivo su `rules/Roccobot.md`. Il presupposto scritto
+    # qui sopra, cioè che un paragrafo duri quanto una citazione andata a capo, **regge solo
+    # dove i paragrafi sono corti**: in un elenco puntato fitto non c'è una riga vuota per
+    # centinaia di righe, e là il paragrafo misurato era di **377**. Con l'accoppiamento
+    # sequenziale su tutta quella lunghezza, un asterisco spaiato in cima sfasa ogni coppia che
+    # segue: un corsivo vero risultava scoperto (falso positivo) e, peggio, tratti di prosa
+    # risultavano dentro un corsivo che non c'era, quindi **non venivano controllati affatto**.
+    # Quattro righe sono quanto dura una citazione spezzata a cento colonne, che è il numero
+    # già dichiarato qui sopra: oltre quella distanza il marcatore torna a essere un carattere
+    # qualunque, esattamente come uno spaiato.
+    FINESTRA = 4
+
+    def riga_di(pos):
+        k = 0
+        for k, ini in enumerate(inizi):
+            if pos < ini:
+                return k - 1
+        return k
+
     aperti = list(marcatori())
     p = 0
     while p + 1 < len(aperti):
+        if riga_di(aperti[p + 1]) - riga_di(aperti[p]) > FINESTRA:
+            p += 1          # spaiato di fatto: nessun compagno abbastanza vicino
+            continue
         copri(aperti[p], aperti[p + 1] + 1)
         p += 2
 
