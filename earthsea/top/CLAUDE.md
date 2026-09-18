@@ -1617,7 +1617,7 @@ chiarezza, l'unico gradino che passa il 3:1 su tutti e due i fondi di card è `L
 - ⚠️ **Il tetto dei 3,51:1 non è contraddetto**: quello dice quanto si può raggiungere **allo
   stesso tempo** sui due fondi, e questa misura dice **dove** sta quel punto per una tonalità
   data. Sono la stessa cosa vista da due lati, e servono tutte e due: chi cerca la tinta unica
-  di un badge parta da qui invece di provare a occhio.
+  di un badge parta da qui.
 
 - ✅⚠️⚠️ **DALLA `2.15` SONO SVG IN LINEA nel sorgente, e non più `img` verso `icons/*.webp`**
   (richiesta dell'utente, 2026-09-14: *passiamo all'SVG inline*). Il markup vive in
