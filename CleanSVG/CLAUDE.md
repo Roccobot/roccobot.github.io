@@ -254,6 +254,21 @@ il disegno non cambia, e **una promessa che nessuno verifica prima o poi mente**
 
 - La soglia sotto la quale si parla di **arrotondamento dell'antialiasing** è lo **0,2%** dei
   pixel: sul file campione SVGO ne cambia **2 su 147456**, che sono i bordi.
+- ⚠️⚠️ **E DALLA `1.51` L'AVVISO DICE I PIXEL E NON UNA PERCENTUALE ARROTONDATA, PERCHÉ SCRIVEVA
+  'ATTENZIONE' E 'ZERO' NELLA STESSA RIGA** (segnalazione dell'utente, 2026-09-18, su un suo file
+  di Illustrator passato di qui: *mi dà uno strano avviso*). Il difetto è aritmetico e non
+  casuale: il ramo rosso scatta sopra lo **0,2%** e stampava `Math.round(quota * 100)`, quindi in
+  tutta la fascia fra lo 0,2% e lo 0,49% la percentuale cadeva a **zero**. Chi lo leggeva vedeva
+  un avviso che si smentiva da sé, e a sembrare rotto era lo strumento invece del file.
+  - **Adesso dice il numero di pixel**, come già fa il ramo verde sopra di lui, e la percentuale
+    porta le cifre che le servono (`quotaPercento`: due sotto l'uno per cento, una sotto il
+    dieci).
+  - ⚠️ **La soglia non si è toccata**: quei pixel sono pochi ma non sono l'antialiasing, e
+    alzarla per far tacere l'avviso avrebbe nascosto il fatto invece di dirlo meglio.
+  - **Che cosa c'era davvero in quel file**: 300-700 pixel di bordo su 147.456, cioè fra un
+    sesto e un terzo del perimetro del disegno spostato di una frazione di pixel. È il profilo
+    di un tracciato riscritto da SVGO (una curva che diventa un arco entro la sua tolleranza),
+    non di un pezzo di disegno cambiato, che darebbe percentuali intere.
 - Il confronto tiene conto dell'**alfa**: due pixel trasparenti sono uguali qualunque colore
   dichiarino sotto.
 

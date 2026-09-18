@@ -381,7 +381,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // SlimVer x.xx, come gli altri progetti del repo: il numero vive qui e la
 // pagina lo scrive da sé. È anche la sonda con cui si verifica il deploy.
-const VERSIONE = '1.50';
+const VERSIONE = '1.51';
 document.getElementById('versione').textContent = 'v' + VERSIONE;
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -714,6 +714,17 @@ function confronta(a, b) {
     if (Math.abs(x[i] - y[i]) > 8 || Math.abs(x[i + 1] - y[i + 1]) > 8 || Math.abs(x[i + 2] - y[i + 2]) > 8) diversi++;
   }
   return { diversi: diversi, contati: contati, quota: contati ? diversi / contati : 0 };
+}
+
+// Le cifre decimali si scelgono in base alla quota, perche il verdetto rosso
+// scatta allo 0,2% e una percentuale arrotondata all'intero scriverebbe '0%'
+// fino allo 0,49%: l'avviso diceva 'attenzione' e 'zero' nella stessa riga, e
+// a sembrare rotto era lo strumento invece del file. Sotto l'uno per cento
+// servono due cifre, sotto il dieci ne basta una.
+function quotaPercento(q) {
+  const p = q * 100;
+  const cifre = p >= 10 ? 0 : p >= 1 ? 1 : 2;
+  return p.toFixed(cifre).replace('.', ',') + '%';
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -1244,7 +1255,7 @@ async function misureDi(v) {
     } else if (differenza.quota < 0.002) {
       v.verdetto = { classe: 'uguale', testo: `Resa identica a meno di ${differenza.diversi} pixel di bordo su ${differenza.contati.toLocaleString('it-IT')}: è l'arrotondamento dell'antialiasing.` };
     } else {
-      v.verdetto = { classe: 'diversa', testo: `Attenzione: la resa cambia nel ${Math.round(differenza.quota * 100)}% dei pixel. Confronta con 'Originale' prima di scaricare.` };
+      v.verdetto = { classe: 'diversa', testo: `Attenzione: la resa cambia in ${differenza.diversi.toLocaleString('it-IT')} pixel su ${differenza.contati.toLocaleString('it-IT')} (${quotaPercento(differenza.quota)}). Confronta con 'Originale' prima di scaricare.` };
     }
   } catch (e) {
     v.fondoMisurato = true;
