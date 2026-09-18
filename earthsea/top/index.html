@@ -379,13 +379,18 @@ html[data-theme="dark"] .lang-switch, html[data-theme="dark"] .lang-switch > .ls
    ⚠️ I 620px come pavimento restano VALIDI e sono la misura da non perdere:
    sotto quella soglia le righe cominciano a spezzarsi, e va rimisurato. */
 html { --col-max:740px; }
+/* ⚠️ Il gap della card è una VARIABILE dalla 2.48, perché due punti lo devono conoscere:
+   la griglia e la riga del nome, che si allunga dentro quel vuoto fino al filetto
+   dell'origine (vedi `.rank-item.has-orig .rank-name`). Scritto due volte a numero,
+   divergerebbe al primo ritocco. */
+html { --card-gap:clamp(0.8rem,3vw,2rem); }
 .scroll { max-width:var(--col-max); margin:1.2rem auto 3rem; padding:0 1rem; }
 .rank-item {
   position:relative;
   display:grid;
   grid-template-columns:clamp(54px,10vw,76px) 1fr;
   align-items:center;
-  gap:clamp(0.8rem,3vw,2rem);
+  gap:var(--card-gap);
   padding:1.2rem 1.2rem 1.2rem 0.5rem;
   margin:0.4rem 0;
   background:linear-gradient(90deg,rgba(20,14,26,0.4) 0%,rgba(16,10,20,0.2) 100%);
@@ -509,8 +514,23 @@ html[data-theme="light"] .apo-title { color:var(--gold-deep); }
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.32em;
+  /* ⚠️ Il passo fra i pezzi della riga è una VARIABILE dalla 2.48: lo usano la riga e i
+     due gruppi (`.rank-tipi`, `.rank-flags`), che da quella versione hanno una scatola
+     propria e devono spaziare i figli come faceva il flex di prima. Scritto a numero in
+     tre punti, `name-tight` ne avrebbe stretto uno solo. */
+  --nm-gap: 0.32em;
+  gap: var(--nm-gap);
 }
+/* ⚠️⚠️ LA RIGA DEL NOME ARRIVA FIN QUASI AL FILETTO DELL'ORIGINE (2.48, richiesta
+   dell'utente col suo mockup: *spostare il margine destro del nome ... quasi alla linea
+   che separa dall'origine*). Si allunga dentro il gap della griglia, che è vuoto, e si
+   ferma a `--name-rientro` dal filetto: il riquadro della citazione e le altre righe
+   restano dove sono, perché la larghezza la prende la sola riga del nome.
+   ⚠️ NON invade la colonna dell'origine: il testo dell'origine è centrato in verticale e
+   su una card bassa cadrebbe alla stessa altezza del nome. Il rientro è quello che tiene
+   la distanza, e per questo è un valore e non zero. */
+html { --name-rientro:0.75rem; }
+.rank-item.has-orig .rank-name { width:calc(100% + var(--card-gap) - var(--name-rientro)); }
 /* Il nome NON è cliccabile a Terramare (decisione dell'utente, 2026-08-21):
    niente cursore a manina e niente colore al passaggio, che prometterebbero
    un'azione che non c'è. */
@@ -537,17 +557,42 @@ html[data-theme="light"] .apo-title { color:var(--gold-deep); }
 /* #2: Etichette (tipi) e icone raggruppate. Il DOM emette l'ordine di resa
    mobile (nome → icone → etichette), perché su mobile la riga è in flusso
    inline (vedi media query max-width:480px) e lì l'ordine visivo può venire
-   solo dal DOM. Su desktop/tablet display:contents rende i figli flex item di
-   .rank-name e l'order qui sotto ripristina la resa storica
-   nome → etichette → icone (identica a prima). */
-.rank-tipi, .rank-flags { display:contents; }
-.rank-name > .rank-tipi > * { order:1; }
-.rank-name > .rank-flags > * { order:2; }
+   solo dal DOM; l'`order` sui due contenitori ripristina la resa storica
+   nome → etichette → icone.
+   ⚠️⚠️ DALLA 2.48 I DUE GRUPPI SONO FLEX ITEM VERI ANCHE SU DESKTOP, e prima erano
+   `display:contents` (istruzione dell'utente: *i badge stanno sempre tutti di seguito: se
+   non ci stanno dopo il nome, devono andare TUTTI a capo. Mai spezzati*). Con `contents`
+   i figli diventano flex item di `.rank-name` e vanno a capo UNO PER UNO: misurate a
+   1280, 65 card su 223 avevano il gruppo dei badge diviso fra due righe.
+   ⚠️ È la stessa forma che il telaio mobile aveva già sotto i 480px: quella resa non è
+   stata inventata qui, è stata portata sopra la soglia.
+   ⚠️ Il `nowrap` interno è la metà che conta: senza di lui il gruppo è un box ma i suoi
+   figli tornerebbero a spezzarsi dentro di lui. */
+.rank-tipi, .rank-flags {
+  display:inline-flex; align-items:center; flex-wrap:nowrap; gap:var(--nm-gap);
+}
+.rank-tipi:empty, .rank-flags:empty { display:none; }
+.rank-name > .rank-name-text { order:0; }
+.rank-name > .rank-tipi { order:1; }
+.rank-name > .rank-flags { order:2; }
+/* L'a-capo FORZATO del gruppo icone, quarta prova di `freeNames`: il perché vive nella
+   media query dei 480px, dov'è nato. Dalla 2.48 vive nel blocco base, perché il gruppo è un
+   flex item nei due telai e il `flex-basis` opera in tutti e due. */
+.rank-name.nm-acapo > .rank-flags { flex-basis:100%; }
+/* ⚠️ ARIA SOTTO LE ICONE ANDATE A CAPO, la stessa della 2.36 e col medesimo criterio
+   (pareggiare il vuoto che il gruppo ha sopra di sé), ma con un valore SUO: qui il gruppo
+   non porta la risalita di -0.156em del telaio mobile, quindi il vuoto di partenza è un
+   altro. Misurato fra 481 e 520px: sopra 6,34px, sotto 3,19px, e 0.2em del corpo del vero
+   nome (16px) sono i 3,2px che li pareggiano.
+   ⚠️ Il caso qui si presenta solo dalla 2.48: prima i badge andavano a capo uno per uno e
+   non c'era nessun gruppo da distanziare. La media query dei 480px dichiara il proprio
+   valore dopo di questa e la scavalca. */
+.rank-name.nm-wrap + .rank-vero { margin-top:0.2em; }
 /* Compattazione mirata della riga nome (.name-tight, applicata da
    tightenNames): recupera ~3% di larghezza stringendo SOLO le spaziature
    (mai il corpo del font), e solo sulle card dove questo fa guadagnare una
    riga intera: i casi che 'per un pelo' sforano l'optimum. */
-.rank-name.name-tight { letter-spacing:0.006em; gap:0.24em; }
+.rank-name.name-tight { letter-spacing:0.006em; --nm-gap:0.24em; }
 .rank-title {
   /* ⚠️⚠️ LA RIGA DELL'OPERA CAMBIA CARATTERE nella 0.72 (istruzione dell'utente: *trova un
      modo per differenziarlo di più dal titolo dell'opera della prima apparizione*). Era in
@@ -2697,10 +2742,14 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      vivono la loro spaziatura interna e la risalita ottica di -0.156em, che con
      `contents` sparirebbero insieme alla scatola. Con `order` sul contenitore il gruppo
      si sposta intero, che è anche la resa migliore. */
-  .rank-name { display:flex; align-items:center; flex-wrap:wrap; gap:0.32em; line-height:1.5; }
+  .rank-name { display:flex; align-items:center; flex-wrap:wrap; gap:var(--nm-gap); line-height:1.5; }
   .rank-name > .rank-name-text { order:0; }
   .rank-name > .rank-tipi { order:1; }
   .rank-name > .rank-flags { order:2; }
+  /* ⚠️ Qui la terza colonna NON esiste (la griglia torna a due e l'origine scende sotto il
+     contenuto), quindi non c'è nessun gap in cui allungarsi: la riga del nome torna larga
+     quanto la cella. */
+  .rank-item.has-orig .rank-name { width:auto; }
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel è tutto
      maiuscolo e siede in alto nella line-box, perciò le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
@@ -2719,10 +2768,10 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      prezzo dell'anti-jitter (segnalato dall'utente su 'Nemico di Morred'). Tenendo le
      icone sempre a capo, la riga resta alta come oggi in ENTRAMBE le lingue e la cella si
      può stringere: il vuoto sparisce senza pagare un salto.
-     ⚠️ Vale solo qui sotto i 480px, dove `.rank-flags` è un flex item vero: sopra è
-     `display:contents` e un `flex-basis` sul contenitore non avrebbe alcun effetto. Lo
-     sa anche il JS, che prima di provare il rimedio guarda il `display` calcolato. */
-  .rank-name.nm-acapo > .rank-flags { flex-basis:100%; }
+     ⚠️ Ⓘ Fino alla 2.47 viveva SOLO qui, perché sopra i 480px `.rank-flags` era
+     `display:contents` e un `flex-basis` sul contenitore non avrebbe fatto niente. Dalla
+     2.48 il gruppo è un flex item nei due telai, quindi la regola è salita nel blocco
+     base e qui non c'è più: due copie sarebbero divergute al primo ritocco. */
   /* ⚠️⚠️ ARIA SOTTO LE ICONE ANDATE A CAPO (2.36, difetto visto dall'utente sul
      telefono: 'quando i badge vanno a capo risultano vicinissimi al Vero Nome').
      La classe la mette `marcaIconeACapo()`, perché il CSS non sa dire se un flex item
@@ -2855,8 +2904,19 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
    v9.58) anche l'anello di focus risulterebbe smorzato. */
 .jump-fab:hover, .jump-fab:focus-visible { filter:brightness(1.1); opacity:1; }
 .jump-fab svg { width:1.05rem;height:1.05rem;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
-/* Padding destro quando le maniglie di trascinamento sono visibili */
-#rank-list.has-handles .rank-content { padding-right:2.6rem; }
+/* Padding destro quando le maniglie di trascinamento sono visibili.
+   ⚠️⚠️ SOLO sulle card SENZA la colonna dell'origine (2.48): la maniglia è
+   `position:absolute; right:0.75rem` sulla CARD, quindi su una card `has-orig` cade sopra
+   la colonna dell'origine e non sfiora il contenuto (misurato a 1280: maniglia da 956,8 a
+   982, contenuto fino a 836,22, filetto a 868,22). Là quel padding toglieva 41,6px al
+   blocco dei nomi per un ostacolo che non c'era, ed è il motivo per cui il problema di
+   spazio si vedeva soprattutto in modalità riordino.
+   ⚠️ Sotto i 480px la terza colonna non esiste e il contenuto arriva quasi al bordo:
+   là serve a tutte, e la media query lo rimette. */
+#rank-list.has-handles .rank-item:not(.has-orig) .rank-content { padding-right:2.6rem; }
+@media (max-width:480px) {
+  #rank-list.has-handles .rank-content { padding-right:2.6rem; }
+}
 @media (max-width:768px) {
   /* FAB di controllo a destra su mobile (pollice destro); il pannello è una bottom-sheet a tutta larghezza */
   #ctrl-fab { left:auto; right:2rem; }
@@ -3453,7 +3513,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.47</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.48</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7375,9 +7435,9 @@ function freeNames() {
 function marcaIconeACapo() {
   // ⚠️ Si legge `offsetTop`, non la rect: il gruppo porta un `translateY`, e la rect
   // direbbe dove l'inchiostro si VEDE, non su quale riga del flex il layout l'ha messo.
-  // ⚠️ E solo dove il gruppo è un flex item vero (sotto i 480px): con `display:contents`
-  // non genera un box, quindi `offsetTop` sarebbe quello del genitore e la misura
-  // direbbe 'a capo' su ogni card del desktop.
+  // ⚠️ La guardia sul `display` resta e NON è codice morto: dalla 2.48 il gruppo è un flex
+  // item nei due telai, ma con `display:contents` `offsetTop` sarebbe quello del genitore
+  // e la misura direbbe 'a capo' su ogni card. Vale per chiunque rimetta quel valore.
   var righe = document.querySelectorAll('#rank-list .rank-name'), i, fl, nt, giu;
   for (i = 0; i < righe.length; i++) {
     fl = righe[i].querySelector(':scope > .rank-flags');
