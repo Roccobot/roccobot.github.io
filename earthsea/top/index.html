@@ -3453,7 +3453,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.46</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.47</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6216,8 +6216,11 @@ var GENDER_ICON = {
 // dalla 2.10 ha preso il posto di 'Solo veri nomi noti' (istruzione dell'utente, 2026-09-14).
 // ⚠️ Il verso è ADDITIVO e non esclusivo, ed è la differenza che conta rispetto alla casella
 // che sostituisce: accesa, le voci il cui nome d'uso è una perifrasi (il `Signore del Fuoco`,
-// il `Nemico di Morred`) si AGGIUNGONO alla lista invece di restare le sole visibili. Spenta
-// di default, come chiesto, quindi di base non ci sono.
+// il `Nemico di Morred`) si AGGIUNGONO alla lista invece di restare le sole visibili.
+// ⚠️⚠️ DALLA 2.47 NASCE ACCESA, per istruzione dell'utente (2026-09-18: `fa' in modo che la
+// checkbox dei senza nome sia attiva di default per i visitatori`), e fino alla 2.46 nasceva
+// SPENTA, come lui stesso aveva chiesto alla 2.10. Quindi di base quelle voci CI SONO, e un
+// commento o un banco che le dia per assenti a Pannello intonso descrive lo stato vecchio.
 // ⚠️⚠️ MA 'ADDITIVO' DICE CHE COSA ENTRA IN GIOCO, NON CHE COSA SI VEDE, e la precisazione è
 // dell'utente (2026-09-14): questa casella RENDE DISPONIBILI quelle voci, che poi passano per
 // **tutti** gli altri filtri come ogni altra. Le caselle si sommano fra loro, ma ciascuna
@@ -6233,7 +6236,7 @@ var GENDER_ICON = {
 // Stato in memoria e non nel permalink né nel localStorage: un filtro che sopravvive al
 // ricaricamento senza dirlo è un modo per far credere che il dataset sia più corto di
 // quello che è. ⚠️ Il rovescio, dichiarato: un link condiviso non porta con sé questo filtro.
-var mostraSenzaNome = false;
+var mostraSenzaNome = true;
 // Ⓘ Dalla 0.52 il campo basta da solo: i draghi puri portano il nome in `vero_nome`
 // (dato raddrizzato con lo Schedario), quindi il vecchio ramo 'un drago conta come noto
 // anche col campo vuoto' era diventato morto ed è uscito. Un drago con `vero_nome` vuoto
