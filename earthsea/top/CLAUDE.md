@@ -475,19 +475,30 @@ traducono lo stesso appellativo inglese.
 ⚠️⚠️ **DALLA `2.42` SONO QUATTRO E I TITOLI NON SONO PIÙ VUOTI**, per una richiesta dello stesso
 tenore: entra **`l'Anziano`** fra i nomi alternativi e **`Datore di Nomi`** / `the giver of
 names` fra i titoli. Le note che dicono 'tre nomi' e 'titoli vuoti' descrivono lo stato fino
-alla `2.41`. ⚠️ Il primo dei due **non è attestato**, ed è il caso di `l'Antico` qui sotto:
-il dettaglio vive in § 'I DUE Kurremkarmerruk, e i titoli del giro delle dodici richieste'.
+alla `2.41`. ⚠️⚠️ **`l'Anziano` È ATTESTATO, ed è la resa del SESTO volume in tutte e due le
+edizioni italiane**: le tre forme non erano un elenco chiuso, erano tre perché il censimento si
+era fermato ai primi quattro libri.
 
 | dove | resa |
 |---|---|
 | Mondadori, *La spiaggia più lontana* | `il Primogenito` (due volte: il dialogo con Arren e il finale) |
 | Mondadori, *Tehanu* | `Antichissimo` |
-| Nord, tutti e due i volumi | `l'Antichissimo` |
-| inglese, ovunque | `the Eldest` |
+| Mondadori, *I venti di Terramare* | **`l'Anziano`** (8 occorrenze con la maiuscola) |
+| Nord, volumi 3 e 4 | `l'Antichissimo` |
+| Nord, volume 6 | **`l'Anziano`** (6 occorrenze) |
+| inglese, ovunque | `the Eldest` (8 nel solo volume 6) |
 
-- ⚠️⚠️ **`nomi_alternativi_en` resta `Segoy, the Eldest`, cioè DUE voci contro tre**, e non è
-  una metà da completare: l'inglese ha **una** parola sola per quello che l'italiano rende in
-  due modi, e ripeterla la farebbe comparire due volte nella stessa scheda. È la regola dei
+- **Le due italiane CONCORDANO sul volume 6**, come prevede la regola della traduzione condivisa
+  dal quarto libro in poi: là non c'era nulla da scegliere fra le due edizioni, e infatti le
+  frasi sono le stesse (`Kalessin, detto l'Anziano`, `Kalessin, l'Anziano, mi chiama figlia`,
+  `«Anziano» disse il re al drago`).
+- ⚠️⚠️ **PERCIÒ NON È IL CASO DI `l'Antico`, e io ce l'avevo messo**: quello non è di nessuna
+  edizione, questo è la resa prevalente di un volume intero. La differenza fra i due la dice il
+  grep, e come me la sono persa vive in § 'Come si CENSISCE una resa in tre edizioni, e i due
+  modi in cui un grep mente'.
+- ⚠️⚠️ **`nomi_alternativi_en` resta `Segoy, the Eldest`, cioè DUE voci contro QUATTRO**, e non
+  è una metà da completare: l'inglese ha **una** parola sola per quello che l'italiano rende in
+  tre modi, e ripeterla la farebbe comparire più volte nella stessa scheda. È la regola dei
   doppioni di § 'La metà inglese del nome: va in `nome_en`, non fra gli alternativi',
   applicata a una divergenza di **traduzione** invece che di edizione.
   - ⚠️ **Questa asimmetria l'ha chiesta l'utente alla lettera** (*inglese inalterato*), quindi
@@ -1186,16 +1197,43 @@ nome solo. La distinzione è dell'utente, ed è ben fondata.
   CAMBIATO SIGNIFICATO', dove la voce era data per nascitura), e quello è il maestro di
   Sparviero. Il secondo non lo incontra mai.
 
-⚠️⚠️ **`l'Anziano` NON È ATTESTATO IN NESSUNA DELLE TRE EDIZIONI, ed è il caso di `l'Antico`
-che l'utente aveva fatto USCIRE con la `1.90`**: misurato, le occorrenze italiane di `Anziano`
-sono tutte l'aggettivo comune (un uomo anziano, il compagno più anziano), e le rese attestate
-di `the Eldest` restano le tre della tabella di § 'I tre nomi di Kalessin, e la metà inglese
-che resta una'. Quindi è una **resa dell'utente**, come `Cenerino`, e come tale va difesa: non
-è un'attestazione da citare.
+⚠️⚠️ **`l'Anziano` È ATTESTATO, E IO AVEVO DETTO IL CONTRARIO**: è la resa del **sesto volume**
+in tutte e due le edizioni italiane (8 occorrenze in Mondadori, 6 in Nord, contro 8 `the
+Eldest` nell'inglese dello stesso volume), quindi vale come `il Primogenito` del terzo e
+`Antichissimo` del quarto. La tabella completa vive in § 'I tre nomi di Kalessin, e la metà
+inglese che resta una'; come il censimento ha potuto dire il contrario è qui sotto, e vale più
+del caso.
 - ⚠️ **La metà inglese resta `Segoy, the Eldest`**, cioè due voci contro **quattro**: l'inglese
   ha una parola sola per quello che l'italiano rende in tre modi, e ripeterla la farebbe
   comparire più volte nella stessa scheda. L'asimmetria era già dichiarata là, e questo giro la
   allarga di un'unità.
+
+#### ⚠️⚠️ Come si CENSISCE una resa in tre edizioni, e i due modi in cui un grep mente
+
+Il 2026-09-18 ho dichiarato `l'Anziano` **non attestato in nessuna edizione**, col grado
+`[Certo]`, e l'utente ha trovato in dieci secondi un capoverso che lo porta **due volte**. Le
+due cause sono indipendenti e si sommano, e nessuna delle due dà un errore: il comando risponde
+sempre, con un numero plausibile.
+
+1. ⚠️⚠️ **`grep -i` ANNEGA IL SEGNALE quando la parola esiste anche come nome comune**: cercato
+   senza distinguere la cassa, `Anziano` dava 12 riscontri in un volume, e nessuno di quei
+   numeri diceva quanti fossero l'**appellativo** e quanti l'aggettivo (*un uomo anziano*, *il
+   compagno più anziano*). Con la sola **maiuscola** il conto diventa 8 e 6, tutti nel punto
+   giusto. La maiuscola è il discriminante, e va usata ogni volta che la resa candidata è una
+   parola del vocabolario, che a Terramare è il caso normale.
+2. ⚠️⚠️ **UN `head` SU UN ELENCO ORDINATO PER FILE NON È UN CAMPIONE: È IL PRIMO FILE.** I
+   contesti letti erano `... | head -6`, e i `.txt` sono ordinati per numero di volume, quindi
+   quei sei venivano tutti da *Le tombe di Atuan*, *La spiaggia* e *Tehanu*. ⚠️ **I *Venti di
+   Terramare* sono il sesto file**, cioè esattamente quello che conteneva la risposta, e il
+   taglio lo ha buttato via. Su quel campione ho scritto una frase che cominciava con 'tutte le
+   occorrenze'.
+- ⚠️⚠️ **LA REGOLA CHE NE RESTA: un censimento si chiude sul CONTO PER FILE, non su una manciata
+  di contesti.** Prima si stampa quante occorrenze ha ogni edizione (una riga per file), e solo
+  dopo si leggono i contesti, partendo dai file che ne hanno di più. Un `head` è legittimo per
+  *guardare com'è fatta* una riscontro, mai per concludere che una forma non esista.
+- ⚠️ **E il grado di sicurezza si dà sul metodo, non sull'impressione**: `[Certo]` su una
+  ricerca tagliata è peggio di nessun grado, perché chiude la questione invece di aprirla. Se il
+  conto per file non è stato fatto, la risposta onesta è che la ricerca non è conclusa.
 
 ⚠️ **`Ganai` è attestato UNA VOLTA PER EDIZIONE, e le due lingue non dicono la stessa cosa**:
 l'inglese scrive `Ganaí` (con l'accento) e lo chiama *her title in Kargish*, le due italiane
