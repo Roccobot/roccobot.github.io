@@ -1136,11 +1136,25 @@ ANIMALI: una categoria, tante etichette'): senza, la sua card sarebbe finita **f
 senza dare alcun errore**. Nella stessa riga sono entrate `mucca`, `vacca`, `vitello`, `cow` e
 `calf`, che sono le bestie che quel racconto nomina a ogni pagina, cioè i candidati prossimi.
 
-⚠️⚠️ **`Hega` È IL SOLO MAESTRO DI ROKE CHE PORTA `stregone` E NON `mago`**, e non è una
-dimenticanza: la fonte lo chiama `the sorcerer Hega of O` e lo dice `Master Hand`, quindi i
-due badge attestati sono **`stregone`** e **`maestro`**, che stanno insieme; `mago` dice
-'educato a Roke' e lui **insegna** in una Roke che sta nascendo. Gli altri otto Maestri del
-dataset portano `mago` più `maestro`, quindi un audit lo segnalerà: è il testo a dirlo.
+⚠️⚠️ **`Hega` PORTA `mago` DALLA `2.43`, PER SCELTA DELL'UTENTE, E LA RAGIONE VALE OLTRE LA
+VOCE**: sue parole, *era chiamato stregone solo perché il termine 'mago' non era ancora in
+uso. Qui si censiscono lo status e il potere, con i badge, non le nomenclature*. Quindi il
+badge misura **che cosa il personaggio è**, e la parola che il testo usa in quel secolo è una
+spia, non il criterio.
+- ⚠️ **La fonte dice l'altro**, ed è la ragione per cui la scelta va dichiarata: lo chiama
+  `the sorcerer Hega of O` e lo dice `Master Hand`. Un audit sulle fonti lo segnalerà, come
+  segnala `Tenar` fra i Signori dei Draghi: non è un difetto del dato.
+- ⚠️⚠️ **E il caso è specifico dell'ETÀ del personaggio**: Hega insegna in una Roke che **sta
+  nascendo**, cioè prima che il vocabolario del potere si fissasse (è `Halkel`, il primo
+  Arcimago, a codificarlo secoli dopo, § 'Le due fonti che il censimento non aveva
+  guardato'). Chi trovasse un altro personaggio di quell'epoca chiamato `sorcerer` guardi
+  qui prima di leggerlo come grado.
+- ✅ **Adesso i Maestri di Roke del dataset portano TUTTI `mago` più `maestro`**, e
+  l'eccezione che questa voce descriveva fino alla `2.42` non esiste più. ⚠️ **Quanti siano
+  si conta** (`dati.filter(x => x.maestro)`), che l'elenco si allunga.
+- ⚠️ **I due badge restano incompatibili**: il badge alto esclude il basso, quindi `stregone`
+  è stato **tolto** e non affiancato (§ 'I 19 confrontati con Wikipedia', punto 4). Il
+  controllo a dato è che le voci con tutti e due siano **zero**.
 
 ⚠️⚠️ **L'EDIZIONE MONDADORI DE *Le leggende di Terramare* NON CONTIENE L'APPENDICE**, e questo
 decide la metà italiana di una voce intera: `Salan`, il fratello di Elfarran che il Nemico fa
@@ -1277,6 +1291,37 @@ vero), l'inglese **37,30** (291,69 contro 254,39), e il prezzo si paga in due mo
   La via che funziona è intercettare la richiesta della pagina e servire l'HTML con l'etichetta
   vecchia, che non tocca il disco e non lascia niente da ripristinare.
 
+##### 📱 L'etichetta MOBILE, e la riga dell'altezza che è tornata indietro
+
+Dalla `2.44`, su richiesta dell'utente dopo aver visto gli scatti (*crea un'etichetta
+differenziata per il mobile*), col testo dettato da lui: **`Mago (stregone educato a Roke o
+strega di grande potere)`**, cioè `strega` al posto di `incantatrice`. Vive in
+`ICON_LABEL_MOBILE`, che porta le **sole chiavi che divergono**.
+
+- **Che cosa recupera, misurato a 390px**: la riga torna su **una riga** (31,41px contro 51,88)
+  e il Pannello torna a **390x544,25**, cioè identico a prima della `2.42`. Sul desktop non
+  cambia niente, e là resta l'etichetta piena.
+- ⚠️⚠️ **LO SCAMBIO LO FA IL CSS, non un rebuild del Pannello**: si emettono **tutte e due** le
+  etichette (`.leg-lbl-d` e `.leg-lbl-m`) e la media query dei 768px sceglie. Così il cambio di
+  telaio al resize è immediato, e non dipende dal fatto che il Pannello si ricostruisca, che è
+  la parte fragile. Le chiavi senza variante restano testo nudo, quindi il markup cresce solo
+  dove serve.
+- ⚠️ **L'INGLESE NON HA una variante**: la sua etichetta piena misura 291,69px contro i 298,33
+  disponibili, quindi sta già. Un audit che conti le due lingue troverà l'asimmetria: è voluta,
+  come quella dei nomi di Kalessin.
+- ⚠️⚠️ **SOTTO I 390px LA RIGA VA A CAPO LO STESSO, ed è dichiarato**: l'etichetta corta misura
+  **278,82px** e lo spazio disponibile scende con lo schermo (268,33 a 360px, 228,33 a 320).
+  Quindi a 360 il Pannello resta a 564,72 e a 320 a 605,66, dov'era. Il ripiego che l'utente
+  aveva previsto per quel caso è **`Mago (detiene il vero potere)`** (140,28px, sta
+  dappertutto), e non è stato applicato perché il caso che aveva visto era 390px.
+- ⚠️ **Vale per la LEGENDA e non per i tooltip delle card**, che restano quelli interi di
+  `ICON_LABEL`: su mobile un tooltip non si apre, quindi là non c'è niente da accorciare.
+- ⚠️⚠️ **IL BANCO LEGGE LO STILE CALCOLATO, o conta le due etichette insieme**: sono tutte e due
+  nel DOM, quindi il `textContent` della riga le restituisce attaccate, che è la stessa trappola
+  della gemella anti-jitter. E in **inglese** gli span non esistono affatto, perché quella chiave
+  non ha variante: un metro che cerchi `.leg-lbl-d` là dà `null` su un codice giusto, ed è
+  successo al primo giro.
+
 #### 🔎 Le due fonti che il censimento non aveva guardato
 
 L'utente ha chiesto se il giro delle diciotto avesse coperto anche *The daughter of Odren* e
@@ -1295,11 +1340,66 @@ diverse, e tutte e due valgono oltre il caso.
     **interamente** inglese.
 - ✅ **L'appendice invece ERA già nel corpus**, dentro il volume 5 inglese, e il censimento
   l'aveva letta senza saperlo: `Salan` e `Heru` vengono da lì. Ricensita a parte, l'unico nome
-  di persona che manca al dataset è **`Halkel`, il primo Arcimago** (*Ambition, arrogance, and
-  prejudice certainly influenced Halkel, the first Archmage*).
-  - ⚠️ **Allarga l'elenco degli Arcimaghi del canone**, che ne conta tre (`rules/Earthsea.md`,
-    § 'Gli Arcimaghi che le fonti nominano'): chi lo inserisse cambi **prima** quel file, perché
-    il badge `arcimago` si assegna dal suo elenco e non da una frase letta al volo.
+  di persona che mancava al dataset era **`Halkel`, il primo Arcimago** (*Ambition, arrogance,
+  and prejudice certainly influenced Halkel, the first Archmage*), ✅ **entrato con la `2.44`**.
+  - ⚠️ **Allarga l'elenco degli Arcimaghi del canone**, che ne contava tre (`rules/Earthsea.md`,
+    § 'Gli Arcimaghi che le fonti nominano'): il badge `arcimago` si assegna da quell'elenco e
+    non da una frase letta al volo, quindi chi ne aggiunge un altro cambia **prima** quel file.
+
+### 🧮 `Halkel`, il primo Arcimago, e i tre filtri che lo avevano nascosto
+
+Voce chiesta dall'utente il 2026-09-18 con la posizione (*mettilo in classifica subito dopo
+Ged*), che è il posto dove la carica lo colloca: apre la fila degli Arcimaghi.
+
+- **Che cosa fece, ed è la ragione per cui la voce pesa**: creò il **titolo** di Arcimago,
+  riformò i nove uffici di Roke (abolì il Trovatore e istituì il Cantore) e **codificò** in
+  gerarchia rigorosa l'uso fino ad allora impreciso delle parole `strega`, `stregone`, `mago`.
+  ⚠️⚠️ È dunque la **fonte in-universo** del vocabolario del potere che questo progetto usa per
+  i badge, e la regola di § 'Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni'
+  nasce dalle sue regole (*Witchery was restricted to women*).
+- ⚠️ **La citazione italiana è di NORD**, come per `Salan` e per la stessa ragione: Mondadori
+  non stampa l'appendice. Contro-prova fatta: quel testo **non** compare nel volume 5 Mondadori.
+  La regola dei nomi Nord qui non ha nulla da sostituire, perché la fonte è già Nord.
+- **Badge `mago` più `arcimago`**, come gli altri tre; niente `maestro`, perché nessuna fonte
+  gli dà uno dei nove uffici.
+- **Origine `Roke` per residenza**: il testo non dice dove sia nato, e lo colloca là (*finché
+  non giunse a Roke il primo Arcimago*). È la via normale, non una concessione.
+
+#### ⚠️⚠️ Perché era sfuggito: un FILTRO che toglie rumore toglie anche il segnale
+
+L'utente ha chiesto se fossero tutti controlli parziali, dopo `l'Anziano`. **No: sono tre cause
+diverse**, e questa è la terza. Quello che hanno in comune è la forma, non il difetto.
+
+| che cosa | come è sfuggito |
+|---|---|
+| `l'Anziano` | censimento **tagliato**: `grep -i` annegava le maiuscole e `head -6` leggeva i soli primi file |
+| i personaggi di *Odren* | filtro che **scartava i nomi già presenti nel dataset** come stringa: via `Ash`, `Clay`, `Lily`, `Bay`, `Clover`, `Garnet` |
+| `Halkel` | filtro sulla **posizione sintattica**, con elenchi chiusi di verbi e di ruoli |
+
+- **La misura sul terzo caso**, rifatta sui sei pattern del censimento: **zero su sei** lo
+  prendono. `influenced Halkel` e `Halkel discouraged` hanno verbi fuori elenco; `by Halkel`
+  usa una preposizione che nessun pattern prevede; e `Halkel, the first Archmage` fallisce
+  **due volte**, perché `archmage` non è fra i ruoli e perché l'aggettivo `first` si mette fra
+  l'articolo e il ruolo.
+- ⚠️⚠️ **LA REGOLA CHE NE RESTA: un filtro si tara sui FALSI NEGATIVI, non sul rumore che
+  toglie.** Prima di fidarsi, si prendono cinque o sei nomi che si **sa** essere nel corpus
+  (presi dal dataset, o letti a occhio in una pagina) e si verifica che passino il filtro. Se
+  uno solo non passa, il filtro è da rifare: il rumore che resta si legge, un nome perduto no.
+- ⚠️ **E nessuno dei tre difetti dà errore**: il comando risponde sempre, con un numero
+  plausibile, ed è questo che li rende difficili da vedere. Il sintomo è **un risultato che
+  manca**, cioè lo stesso della famiglia degli elenchi scritti a mano (§ 'La ricerca del sito,
+  dal TOCCO LUNGO sul FAB', voce sui campi ricavati dal dataset).
+
+#### ⚠️ La faccia VISIBILE della citazione non ha una classe propria
+
+Nel riquadro della citazione la gemella anti-jitter è `.rank-citaz.rc-m`, e quella visibile è
+`.rank-citaz` **senza** altra classe: un banco che cerchi `.rc-f`, per analogia con `bil-f`
+delle righe del nome, non trova niente e dà per vuota una citazione che c'è. Tre prove su
+trentanove sono nate rosse così, su un dato giusto.
+- ⚠️ **E sulle voci col nome IDENTICO nelle due lingue la gemella del nome non esiste
+  affatto**: `Halkel` e `Hega` hanno il testo nudo dentro `.rank-name-text`, quindi anche
+  `.bil-f` là non trova nulla. La riserva bilingue si crea **solo dove le due lingue
+  divergono**.
 
 #### ⚠️⚠️ `Tuaho` NON è un nome di Pioppo: il testo lo NEGA alla lettera
 
