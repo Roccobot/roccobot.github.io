@@ -468,9 +468,15 @@ lacuna (vedi § 'La riga sola NON è una cosa da draghi: è di chi non ha nome c
 
 ### 🥇 I tre nomi di Kalessin, e la metà inglese che resta una
 
-Dalla `1.90` i nomi alternativi sono **`Segoy, l'Antichissimo, il Primogenito`** e il campo
-dei titoli è **vuoto**, su istruzione dell'utente. Le due forme italiane sono **entrambe
-attestate**, in edizioni diverse, e traducono lo stesso appellativo inglese.
+Dalla `1.90` i nomi alternativi sono **`Segoy, l'Antichissimo, il Primogenito`**, su istruzione
+dell'utente. Le due forme italiane sono **entrambe attestate**, in edizioni diverse, e
+traducono lo stesso appellativo inglese.
+
+⚠️⚠️ **DALLA `2.42` SONO QUATTRO E I TITOLI NON SONO PIÙ VUOTI**, per una richiesta dello stesso
+tenore: entra **`l'Anziano`** fra i nomi alternativi e **`Datore di Nomi`** / `the giver of
+names` fra i titoli. Le note che dicono 'tre nomi' e 'titoli vuoti' descrivono lo stato fino
+alla `2.41`. ⚠️ Il primo dei due **non è attestato**, ed è il caso di `l'Antico` qui sotto:
+il dettaglio vive in § 'I DUE Kurremkarmerruk, e i titoli del giro delle dodici richieste'.
 
 | dove | resa |
 |---|---|
@@ -490,10 +496,11 @@ attestate**, in edizioni diverse, e traducono lo stesso appellativo inglese.
   **nessuna** edizione (zero occorrenze riferite a Kalessin o a Segoy in tutte e tre le fonti
   italiane), ed era una resa dell'utente che lui stesso ha sostituito con la forma Nord
   attestata. Chi lo ritrovasse in un commit vecchio sa che è superato.
-- ⚠️ **I titoli restano VUOTI per scelta** (*niente titoli*): `Primogenito` e `Antichissimo`
-  sono **nomi** con cui il testo lo chiama, non cariche, quindi vivono fra i nomi alternativi.
-  È la stessa distinzione di § 'La Casa di Hupun e l'Anello spezzato', dove `Re di Hupun` è un
-  titolo e il qualificatore resta fuori.
+- ⚠️ **`Primogenito` e `Antichissimo` restano fra i NOMI e non salgono fra i titoli**, ed è la
+  distinzione che regge anche ora che un titolo c'è: sono **nomi** con cui il testo lo chiama,
+  non cariche. `Datore di Nomi` invece dice che cosa **fece** (diede i nomi alle cose), quindi
+  sta dall'altra parte. È la stessa distinzione di § 'La Casa di Hupun e l'Anello spezzato',
+  dove `Re di Hupun` è un titolo e il qualificatore resta fuori.
 - ⚠️ **L'articolo minuscolo è quello della FONTE**: Mondadori scrive `il Primogenito` dentro la
   frase, e il campo lo conserva. La maiuscola di riga la mette `capIniz` in resa, e solo al
   pezzo che apre la riga (§ 'La prima lettera di ogni riga va MAIUSCOLA').
@@ -1154,6 +1161,132 @@ manipolatempo promettente.` pure.
   questo il campo resta vuoto.
 - **Misure del giro**: verbatim **36 su 36** contro i corpora delle tre edizioni, e **34 su
   34** in pagina coi font veri, dato e resa, nelle due lingue.
+
+### 🎓 I DUE Kurremkarmerruk, e i titoli del giro delle dodici richieste
+
+Istruzione dell'utente, 2026-09-18 (`2.42`), dodici punti in un colpo, premessi da *delle cose
+da aggiungere o modificare ho la certezza pressoché totale, ma comunque verifica come sempre*.
+Qui restano i casi che valgono oltre il giro.
+
+⚠️⚠️ **I DUE Kurremkarmerruk SONO UNA SCELTA EDITORIALE, E IL TESTO NON LI NUMERA**: il primo,
+il Maestro dei Nomi che insegna a Sparviero sull'Isola Solitaria, muore prima dei *Venti di
+Terramare*, dove al concilio di Roke ne siede un altro. A dirlo è la cronologia, non una riga
+che li distingua: nessuna edizione scrive `I` o `II`, quindi un audit sulle fonti troverà un
+nome solo. La distinzione è dell'utente, ed è ben fondata.
+- ⚠️ **`Kurremkarmerruk` è un nome d'ufficio, non un nome proprio**, ed è il motivo per cui il
+  caso esiste: chi assume l'ufficio prende il nome. La sua attestazione è nella citazione
+  stessa della voce nuova, *È il nome del Maestro dei Nomi.* / `It is the Namer's name.`
+- ⚠️⚠️ **LA CITAZIONE NON È VERBATIM DI NORD, ed è una divergenza di VOCABOLARIO, non di
+  nome**: là il ruolo si rende con `nominatore` dove Mondadori scrive `Maestro dei Nomi`. È il
+  caso di `Radice`, dove Nord dice `incantatore` per `wizard` (§ 'Radice: il mago che dimenticò
+  le parole, e le TRE rese del suo ruolo'): la regola dei nomi Nord governa i **nomi**, non il
+  lessico dei ruoli, e il testo resta quello Mondadori.
+- **Il primo porta `nomeged` e il secondo no**, ed era già previsto: il canone elenca
+  Kurremkarmerruk fra i nove che conobbero in vita il vero nome di Ged (§ 'Il terzo badge ha
+  CAMBIATO SIGNIFICATO', dove la voce era data per nascitura), e quello è il maestro di
+  Sparviero. Il secondo non lo incontra mai.
+
+⚠️⚠️ **`l'Anziano` NON È ATTESTATO IN NESSUNA DELLE TRE EDIZIONI, ed è il caso di `l'Antico`
+che l'utente aveva fatto USCIRE con la `1.90`**: misurato, le occorrenze italiane di `Anziano`
+sono tutte l'aggettivo comune (un uomo anziano, il compagno più anziano), e le rese attestate
+di `the Eldest` restano le tre della tabella di § 'I tre nomi di Kalessin, e la metà inglese
+che resta una'. Quindi è una **resa dell'utente**, come `Cenerino`, e come tale va difesa: non
+è un'attestazione da citare.
+- ⚠️ **La metà inglese resta `Segoy, the Eldest`**, cioè due voci contro **quattro**: l'inglese
+  ha una parola sola per quello che l'italiano rende in tre modi, e ripeterla la farebbe
+  comparire più volte nella stessa scheda. L'asimmetria era già dichiarata là, e questo giro la
+  allarga di un'unità.
+
+⚠️ **`Ganai` è attestato UNA VOLTA PER EDIZIONE, e le due lingue non dicono la stessa cosa**:
+l'inglese scrive `Ganaí` (con l'accento) e lo chiama *her title in Kargish*, le due italiane
+scrivono `Ganai` e dicono `in hardic` (Mondadori) e `in hardico` (Nord). Il dataset porta la
+grafia di ciascuna lingua, e la divergenza è dei traduttori: chi la trovasse non stia cercando
+un refuso.
+
+⚠️ **`Donna di Gont` è il titolo di Tehanu alla lettera** (`The Woman of Gont. Tehanu.`), e
+viene dalla profezia del Maestro dei Modelli, `Hama Gondun`. ⚠️ Mondadori lo scrive **minuscolo**
+dentro la frase (*la donna di Gont*) e il campo lo capitalizza, perché là è l'etichetta di una
+scheda e non prosa: è la convenzione di `Il Re` (§ 'I dodici animali').
+
+⚠️⚠️ **IL BADGE DI TEHANU PASSA A `mago` PERCHÉ LA DICITURA NUOVA LO PERMETTE, e i due fatti
+vanno letti insieme**: fino alla `2.41` il badge alto diceva *uomo educato a Roke*, quindi su
+di lei sarebbe stato una contraddizione in termini; la dicitura chiesta nello stesso giro
+(`Mago (stregone educato a Roke o incantatrice di grande potere)`) apre la seconda via, cioè
+l'incantatrice di grande potere, che è la sua. Chi trovasse `strega` in un commit anteriore sa
+che descrive lo stato in cui l'altra via non esisteva.
+- ⚠️ **Non tocca la convenzione dei maghi**, che riguarda il **genere** e vive altrove
+  (§ 'Dedurre il GENERE'): là le eccezioni restano tre, e questa è una riqualificazione del
+  badge, non una quarta.
+
+#### 📏 Quanto costa al Pannello l'etichetta nuova del `mago`
+
+L'etichetta italiana è **55,26px** più larga della precedente (307,99 contro 252,73 col font
+vero), l'inglese **37,30** (291,69 contro 254,39), e il prezzo si paga in due modi diversi:
+
+| larghezza | prima | dopo | che cosa cambia |
+|---|---|---|---|
+| desktop 1280 | 358,78 x 514,64 | **399,67** x 514,64 | il Pannello si allarga di **40,89px**, l'altezza non si muove |
+| mobile 390 | 390 x 544,25 | 390 x **564,72** | la larghezza è fissa, quindi la riga va a capo: **+20,47px** di altezza |
+| 320 | 320 x 605,66 | identico | là quella riga andava già a capo, insieme ad altre tre |
+
+- ⚠️ **Nessuno scroll orizzontale in nessuno dei tre casi**, e il capo a riga è previsto dal CSS
+  (`white-space:normal`, `min-height` sulla riga, icona a `flex:none`), quindi non è servito
+  nessun aggiustamento.
+- ⚠️⚠️ **LA MISURA SI FA SERVENDO DUE VERSIONI DELL'HTML, non riscrivendo `ICON_LABEL` a
+  runtime**: quel valore lo legge `controlPanelHTML` **mentre costruisce** il Pannello, quindi
+  cambiarlo a Pannello già montato dà due misure **identiche** e la conclusione che l'etichetta
+  non costi niente. Il primo banco di questo giro ha fatto esattamente così ed è stato buttato.
+  La via che funziona è intercettare la richiesta della pagina e servire l'HTML con l'etichetta
+  vecchia, che non tocca il disco e non lascia niente da ripristinare.
+
+#### 🔎 Le due fonti che il censimento non aveva guardato
+
+L'utente ha chiesto se il giro delle diciotto avesse coperto anche *The daughter of Odren* e
+l'appendice *A Description of Earthsea*, che esistono **solo in inglese**. Le risposte sono
+diverse, e tutte e due valgono oltre il caso.
+
+- ⚠️⚠️ **`The daughter of Odren` NON era mai stato censito, e non per una svista del
+  censimento: il suo corpus era VUOTO**. La causa viveva nell'estrattore, che non guardava i
+  file `.xml`, ed è raccontata in § 'Il corpus della raccolta portava i quindici racconti
+  estranei, e adesso no' per la parte del ritaglio. Corretto, il racconto dà **53.719
+  caratteri** e porta personaggi che il dataset non ha.
+  - ⚠️⚠️ **Le sue voci sarebbero un CASO NUOVO: nome e citazione in una lingua sola.** Non ha
+    edizione italiana, quindi la metà italiana non esiste e non si può cercare: è il rovescio
+    di `Salan`, che ha la citazione di Nord perché Mondadori l'appendice non la stampa. Prima di
+    inserirle serve una decisione dell'utente, perché il dataset non ha precedenti di una voce
+    **interamente** inglese.
+- ✅ **L'appendice invece ERA già nel corpus**, dentro il volume 5 inglese, e il censimento
+  l'aveva letta senza saperlo: `Salan` e `Heru` vengono da lì. Ricensita a parte, l'unico nome
+  di persona che manca al dataset è **`Halkel`, il primo Arcimago** (*Ambition, arrogance, and
+  prejudice certainly influenced Halkel, the first Archmage*).
+  - ⚠️ **Allarga l'elenco degli Arcimaghi del canone**, che ne conta tre (`rules/Earthsea.md`,
+    § 'Gli Arcimaghi che le fonti nominano'): chi lo inserisse cambi **prima** quel file, perché
+    il badge `arcimago` si assegna dal suo elenco e non da una frase letta al volo.
+
+#### ⚠️⚠️ `Tuaho` NON è un nome di Pioppo: il testo lo NEGA alla lettera
+
+È il solo dei dodici punti che le fonti contraddicono, ed è la ragione per cui il giro si
+verifica anche quando la certezza è *pressoché totale*. Il passo è in *Tehanu*: Tenar cerca di
+ricordare il nome del mago e pronuncia una parola **kargica**, che il testo scarta subito
+(`Tuaho, that was not his name` / *«Tuaho? No, non si chiamava così»*).
+
+- **Che cos'è davvero**: una parola della sua lingua d'infanzia che le affiora al posto del
+  nome, non un nome alternativo del personaggio. Metterla fra i suoi nomi direbbe il contrario
+  del testo.
+- ⚠️ **Resta una scelta dell'utente**, che è il livello più alto della scala: se la vuole, entra
+  **dichiarata** come resa sua, non come forma attestata. Il precedente è `l'Anziano`, qui
+  sopra, con la differenza che là il testo tace e qui nega.
+
+#### 🏜️ `Atwah` e `Wuluah` erano uomini, e l'appendice lo dice
+
+Domanda dell'utente, dodicesimo punto. Sono i **Dèi Gemelli** dei Karg, invocati nei *Venti di
+Terramare* (*sia ringraziato Atwah-Wuluah*), e l'appendice ne dà l'origine: *the Twin Gods
+Atwah and Wuluah, originally heroes of a desert saga from Hur-at-Hur*.
+
+- **Quindi la risposta è sì, in origine**: eroi umani di una saga del deserto, divinizzati
+  dopo. ⚠️ Nel presente della storia sono **dèi**, e una voce su di loro andrebbe decisa
+  sapendo che il dataset non ha una categoria per gli dèi: i tipi sono Persone, Draghi e
+  Animali (§ 'Le razze, e perché le tinte non contano come le categorie').
 
 ## 📜 La SECONDA TABELLA: i personaggi apocrifi
 
@@ -2286,6 +2419,15 @@ queste:
   si formano **uomini**, e la convenzione di genere del vocabolario del potere è una regola
   dichiarata del canone (§ 'Dedurre il GENERE: la convenzione dei maghi, e le DUE eccezioni').
   La metà inglese segue: `Mage (a man trained on Roke; holds the true power)`.
+  - ⚠️⚠️ **SUPERATA DALLA `2.42`, e la riga è la stessa che adesso ammette Tehanu fra i
+    maghi**: l'utente l'ha riscritta in **`Mago (stregone educato a Roke o incantatrice di
+    grande potere)`** / `Mage (a sorcerer trained on Roke, or a witch of great power)`. La
+    prima via resta quella di prima, la seconda apre il badge a chi il potere ce l'ha senza
+    essere passata da Roke, e la conseguenza sul dato vive in § 'I DUE Kurremkarmerruk, e i
+    titoli del giro delle dodici richieste', insieme al costo in pixel.
+  - ⚠️ **Perciò 'a Roke si formano uomini' NON è più tutta l'etichetta**, e chi rileggesse la
+    riga qui sopra da sola concluderebbe che il badge escluda le donne: è vero della prima
+    metà, non della seconda.
 - ⚠️⚠️ **`Conobbe IN VITA il vero nome di Ged`, e la precisazione è dell'utente**: il badge
   marca chi ricevette quel nome **mentre Ged era vivo**, non chi lo legge oggi sulla pagina.
   È la stessa distinzione che il canone fa per il campo `vero_nome` vuoto (*noi non lo

@@ -20,8 +20,11 @@
 # ⚠️ Serve lo User-Agent da browser: senza, il server risponde 403.
 # ⚠️ La terza fonte ITA ha l'accento PRECOMPOSTO nel nome (`piu%CC%80` non funziona): la
 # codifica la fa `quote` su una stringa normalizzata NFC, come qui sotto.
-# ⚠️ `Earthsea 07 - The daughter of Odren` risulta quasi VUOTO (214 byte di testo): quell'epub
-# non porta il testo in xhtml. Non è un difetto di questo script, e non ha edizione italiana.
+# ⚠️⚠️ `Earthsea 07 - The daughter of Odren` ERA QUASI VUOTO (214 byte) fino al 2026-09-18, e
+# la causa era QUI: quell'epub tiene il testo in file `.xml`, che l'estrattore non guardava.
+# Il commento che lo dava per un difetto dell'epub ha fatto sì che il racconto restasse fuori
+# da ogni verifica per un mese. Non ha edizione italiana, ed è la sola fonte in questa
+# condizione: un nome trovato là dentro non ha una metà italiana da cercare.
 # ⚠️⚠️ LA FONTE NORD È LA TERZA FAMIGLIA, e senza di lei ogni verifica sui NOMI risponde
 # sbagliato: il canone dice che la resa italiana dei nomi (persone E luoghi) è quella dei
 # libri 1-3 dell'edizione Nord, mentre le sei `Terramare NN` sono MONDADORI, che quei nomi li
@@ -115,7 +118,15 @@ def scarica(nome, lingua, dove):
 
 def testo(epub):
     z = zipfile.ZipFile(epub)
-    parti = sorted(n for n in z.namelist() if re.search(r'\.(x?html|htm)$', n, re.I))
+    # ⚠️⚠️ ANCHE `.xml`, o un epub intero resta fuori senza dare alcun errore: `The daughter of
+    # Odren` tiene il testo in `OPS/c01.xml` e il suo txt usciva di 214 byte, cioè vuoto. Il
+    # commento che lo dava per un difetto dell'epub era sbagliato, e per quel difetto il
+    # racconto non è mai entrato in nessuna verifica. Restano fuori `META-INF/` (il solo
+    # `container.xml`) e i due indici, che testo non ne portano.
+    parti = sorted(n for n in z.namelist()
+                   if re.search(r'\.(x?html|htm|xml)$', n, re.I)
+                   and not n.startswith('META-INF/')
+                   and not re.search(r'\.(ncx|opf)$', n, re.I))
     fuori = []
     for n in parti:
         s = z.read(n).decode('utf-8', 'replace')
