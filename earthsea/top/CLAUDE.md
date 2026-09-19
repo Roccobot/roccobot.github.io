@@ -6237,6 +6237,19 @@ in quei due numeri: le tre varianti misurate erano `0.31/0.24`, `0.36/0.27` e `0
   di **2,50px** in altezza (514,64 -> 517,14) e la larghezza non si muove.
 - ⚠️ **`--vr-aria` alza le tre misure INSIEME**, e oggi vale zero. È il punto unico da cui dare
   più aria a tutta la lista, se un domani serve.
+- ⚠️⚠️ **DUE VIE PIÙ SEMPLICI SONO STATE MISURATE E SCARTATE IN QUESTO GIRO, e la prima è quella
+  che viene in mente per prima**: *metti sempre la spaziatura di `Libellula`: ancora più statico,
+  basta un solo valore*. ⚠️ **Un solo valore di MARGINE non dà uno stacco unico, ed è la 2.57**:
+  il margine si somma a un inchiostro che parte da due profondità diverse, quindi i due gruppi
+  restano distanti 9px dovunque lo si metta. Chi ci ricade guardi la riga della `2.57` nella
+  tabella qui sopra, che è la misura di quella proposta.
+- ⚠️⚠️ **LA SECONDA ERA LA RISERVA DEL MASSIMO PIÙ UN `top`**, cioè dare a tutte le card lo
+  stacco della card più larga e risalire il vero nome con `position:relative` fino a farne cadere
+  l'inchiostro sempre allo stesso punto. Funziona: **30 controlli su 30**, scarto **0,00** su sei
+  larghezze e zero jitter. ⚠️ **L'ha scartata l'utente guardandone la resa**, e la ragione è
+  sotto: il `top` non entra nel layout, quindi il vuoto che il vero nome lascia **sotto** di sé
+  cresce di quanto è risalito, fino a **29,92px** sulle card miste. Lo stacco di sopra diventa
+  perfetto e quello di sotto si sfascia.
 - ⚠️⚠️ **I DUE METRI NON SONO INTERCAMBIABILI, e servono tutti e due**: la `x` di un carattere si
   chiede a un **`Range` sul DOM**, che porta il kerning vero, e la **profondità** a un **canvas**
   (`actualBoundingBoxDescent`), perché un `Range` è alto quanto la riga e di discendenti non sa
