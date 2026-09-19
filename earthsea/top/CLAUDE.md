@@ -6369,11 +6369,24 @@ abitata: l'iPhone 16 Pro ha un viewport di **402px**.
   link, e le sue due metà differiscono di una lettera senza andare a capo in nessuna fascia.
 - ⚠️ **Il titolone ha un presidio SUO e più raffinato** (`pareggiaTitolo`, che cerca la coppia di
   tagli che pareggia le due lingue): non si sostituisce con questo, che riserva e basta.
-- ⚠️⚠️ **DA CHIUDERE, ED È FUORI DA QUESTO GIRO: i tre `innerHTML` dell'intestazione**
-  (`crest`, `subtitle`, `intro` in `setLang`) violano un divieto **non derogabile** del repo. I
-  primi due sono un `textContent`; il crest porta un link e va composto a nodi, il che chiede di
-  spezzare la sua stringa i18n. Non è stato fatto qui per non mescolare una modifica di struttura
-  con una versione che deve essere certificata.
+- ⚠️⚠️ **GLI `innerHTML` DELL'INTESTAZIONE SONO CHIUSI DALLA `2.62`**, e la nota che li dava da
+  fare descrive lo stato fino alla `2.61`: le righe di testo piano (`subtitle`, `intro`,
+  `footer-text`) passano da `textContent`, e il crest lo compone `scriviCrest` a nodi, perché è
+  l'unico che porta del markup, cioè il link al profilo.
+  - ⚠️⚠️ **LA STRINGA i18n DEL CREST È SPEZZATA, E LA CHIAVE SI CHIAMA `crestVerbo`**: tiene il
+    solo `presenta` / `presents`, mentre nome e indirizzo vivono nella funzione, dove sono
+    costanti. Il nome è cambiato insieme al contenuto perché `crest` prometteva la riga intera,
+    e chi la leggesse aspettandosi il markup scriverebbe un link dentro un nodo di testo.
+  - ⚠️⚠️ **ERANO QUATTRO E NON TRE, e il quarto è `footer-text`**: vive nella stessa funzione e
+    aveva lo stesso difetto, ma l'elenco scritto a mano diceva 'i tre dell'intestazione' e lui
+    nell'intestazione non è. È la famiglia degli elenchi compilati a mano (§ 'La ricerca del
+    sito, dal TOCCO LUNGO sul FAB', voce sui campi ricavati dal dataset), qui in una nota invece
+    che nel codice: il grep di `innerHTML` in `setLang` li trova tutti e quattro in un comando.
+  - ⚠️ **Il divieto non guarda la PROVENIENZA del testo**, ed è la ragione per cui valeva anche
+    su quattro costanti del sorgente: a leggere la riga non si distinguono da un dato che un
+    domani arriva da fuori, e il rimedio costa quattro righe.
+  - ⚠️ **`riservaTesta` non è stata toccata**: lavorava già con `textContent` su un clone, e le
+    voci che copre sono le stesse.
 
 ⚠️⚠️ **E UN `ResizeObserver` SULLA LISTA COPRE I CAMBI DI LARGHEZZA CHE `window.resize` NON VEDE**
 (richiesta dell'utente, 2026-09-19: *voglio fare le cose bene e in modo pulito e future-proof*):

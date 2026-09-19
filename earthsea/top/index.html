@@ -3616,7 +3616,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.61</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.62</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5224,14 +5224,17 @@ window.addEventListener('scroll', syncBrandCorner, { passive: true });
 
 var i18n = {
   it: {
-    crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
+    // ⚠️ Il crest è l'unica voce che porta un LINK, e la sua stringa tiene il solo verbo:
+    // il resto lo compone `scriviCrest` a nodi, perché `innerHTML` è vietato senza deroghe.
+    // Dell'intera riga le due lingue cambiano questa parola e nient'altro.
+    crestVerbo: 'presenta',
     title: 'Il mondo di Terramare',
     subtitle: "I grandi dell'arcipelago di Terramare, dagli uomini ai draghi",
     intro: "Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare; nominarla significa dominarla.",
     footer: "Il potere, a Terramare, comincia da un nome."
   },
   en: {
-    crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
+    crestVerbo: 'presents',
     title: 'The World of Earthsea',
     subtitle: 'The great ones of the Earthsea archipelago, from men to dragons',
     intro: "Mages, witches, kings, dragons and common folk of the archipelago. In Earthsea power takes many forms, and nearly always runs through names: to know the true name of a thing is to be able to call it; to name it is to master it.",
@@ -5381,17 +5384,37 @@ function pareggiaTitolo() {
   }
 }
 
+// ⚠️⚠️ A NODI, e mai con `innerHTML`: il divieto è una regola non derogabile del repo e non
+// guarda la provenienza del testo, quindi vale anche per una costante del sorgente. Il crest
+// è l'unica riga dell'intestazione che porta del markup, cioè il link al profilo: nome e
+// indirizzo sono fissi, e la stringa i18n tiene il solo verbo che cambia fra le due lingue.
+function scriviCrest(lang) {
+  var el = document.getElementById('crest');
+  if (!el) return;
+  var a = document.createElement('a');
+  a.href = 'https://tolkiengateway.net/wiki/User:Roccobot';
+  a.target = '_blank';
+  a.rel = 'noopener';
+  var forte = document.createElement('strong');
+  forte.textContent = 'Roccobot';
+  a.appendChild(forte);
+  el.textContent = '';
+  el.appendChild(a);
+  el.appendChild(document.createTextNode(' ' + i18n[lang].crestVerbo));
+}
+
 function setLang(lang) {
   currentLang = lang;
   LS.setItem('earthsea-lang', lang);
   document.documentElement.lang = lang;
   document.querySelector('#lang-switch .ls-face').textContent = lang === 'it' ? 'EN' : 'IT';
-  document.getElementById('crest').innerHTML = i18n[lang].crest;
+  scriviCrest(lang);
   scriviTitolo(document.getElementById('title-link'), i18n[lang].title, lang, -1);
   pareggiaTitolo();
-  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
-  document.getElementById('intro').innerHTML = i18n[lang].intro;
-  document.getElementById('footer-text').innerHTML = i18n[lang].footer;
+  // Le altre tre righe sono testo piano, quindi `textContent` basta e chiude il caso.
+  document.getElementById('subtitle').textContent = i18n[lang].subtitle;
+  document.getElementById('intro').textContent = i18n[lang].intro;
+  document.getElementById('footer-text').textContent = i18n[lang].footer;
   // La voce del footer c'è in tutte e due le lingue dal 2026-08-26, e il suo testo dipende
   // da quante mappe ha la lingua: lo decide `mapsLabel`, che serve anche il tasto del
   // Pannello. ⚠️ Prima era scritto QUI e un'altra volta all'avvio, e le due copie
