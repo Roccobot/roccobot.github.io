@@ -3616,7 +3616,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.60</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.61</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7221,10 +7221,24 @@ function rankNameLines(el) {
   for (var j = 0; j < tops.length; j++) { if (tops[j] - cur > 8) { lines++; cur = tops[j]; } }
   return lines;
 }
+// ⚠️⚠️ SI MISURA SULLA CELLA RISERVATA, cioè togliendo `nm-libero` per la durata del conto,
+// e questa riga è ciò che rende la decisione UGUALE NELLE DUE LINGUE (2.61). La cella riservata
+// è larga quanto il nome più lungo fra le due lingue, quindi con lei il numero di righe non
+// dipende da quale testo è in scena; la cella liberata invece si stringe sul nome corrente, e
+// da lì `name-tight` cadeva da una parte sola.
+// ⚠️⚠️ IL DIFETTO CHE TOGLIE È UN JITTER VERO, misurato fra 330 e 353px: a 353 `Sparviero` era
+// alto 435px in italiano e 410 in inglese, perché il nome inglese è lungo, veniva stretto, e le
+// icone gli rientravano in riga, mentre l'italiano corto non veniva stretto e le mandava a capo.
+// ⚠️ E rompe la circolarità: così `tightenNames` non dipende più da quello che `freeNames` ha
+// deciso al giro prima, quindi il ciclo di `assestaRighe` converge al PRIMO confronto.
 function tightenNames() {
   var els = document.querySelectorAll('#rank-list .rank-name');
-  var i, cand = [];
+  var i, cand = [], liberate = [], c;
   for (i = 0; i < els.length; i++) els[i].classList.remove('name-tight');
+  for (i = 0; i < els.length; i++) {
+    c = els[i].querySelector(':scope > .rank-name-text');
+    if (c && c.classList.contains('nm-libero')) { c.classList.remove('nm-libero'); liberate.push(c); }
+  }
   for (i = 0; i < els.length; i++) {
     var n = rankNameLines(els[i]);
     if (n > 1) cand.push({ el: els[i], before: n });
@@ -7232,6 +7246,7 @@ function tightenNames() {
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('name-tight');
   for (i = 0; i < cand.length; i++)
     if (rankNameLines(cand[i].el) >= cand[i].before) cand[i].el.classList.remove('name-tight');
+  for (i = 0; i < liberate.length; i++) liberate[i].classList.add('nm-libero');
 }
 
 /* A capo ottimizzato delle righe bipartite (info | genealogia e nomi | titoli).
@@ -7771,7 +7786,38 @@ function freeRipasso() {
 }
 // ⚠️ `freeNames` sta DOPO `tightenNames`: quello decide gli a-capo del nome, e la prova
 // sulle altezze va fatta sulla disposizione definitiva, non su quella di partenza.
-function reflowRows() { tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); freeRipasso(); }
+// ⚠️⚠️ ANCHE L'INTESTAZIONE RISERVA L'ALTEZZA DELL'ALTRA LINGUA, e senza di lei una riga che
+// va a capo da una parte sola sposta TUTTA la pagina: misurato a 400px, dove il sottotitolo
+// inglese prende due righe e l'italiano una, e la lista scendeva di 24px al cambio lingua.
+// ⚠️ È la stessa riserva delle card, in una forma più semplice: là servono due facce nella
+// stessa cella perché a cambiare è anche la larghezza, qui basta il `min-height`, perché il
+// blocco è già largo quanto la colonna e a divergere è solo il numero di righe.
+// ⚠️ La misura si fa su un CLONE fuori dal flusso, non scrivendo il testo dell'altra lingua
+// nell'elemento vero: quello si vedrebbe per un fotogramma.
+// ⚠️ Copre le voci di testo PIANO. Il crest porta un link e resta fuori: le sue due metà
+// differiscono di una lettera e non vanno a capo in nessuna fascia (misurato).
+function riservaTesta() {
+  if (typeof i18n === 'undefined' || typeof currentLang === 'undefined') return;
+  var altra = currentLang === 'it' ? 'en' : 'it';
+  if (!i18n[altra]) return;
+  var voci = ['subtitle', 'intro'], i, el, testo, clone, h;
+  for (i = 0; i < voci.length; i++) {
+    el = document.getElementById(voci[i]);
+    testo = i18n[altra][voci[i]];
+    if (!el || typeof testo !== 'string') continue;
+    el.style.minHeight = '';
+    clone = el.cloneNode(false);
+    clone.removeAttribute('id');
+    clone.textContent = testo;
+    clone.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
+      'pointer-events:none;min-height:0;width:' + el.getBoundingClientRect().width + 'px';
+    el.parentNode.insertBefore(clone, el.nextSibling);
+    h = clone.getBoundingClientRect().height;
+    clone.parentNode.removeChild(clone);
+    if (h > el.getBoundingClientRect().height + 0.5) el.style.minHeight = h + 'px';
+  }
+}
+function reflowRows() { tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); riservaTesta(); freeRipasso(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);

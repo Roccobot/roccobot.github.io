@@ -6327,6 +6327,54 @@ per primo misura dunque lo stato dell'**ultima** larghezza, non di questa.
 - ⚠️ **Il ciclo vive nel ripasso DIFFERITO e non in `reflowRows`**: la prima resa resta a una
   passata, e la convergenza si paga una volta sola, quando la pagina è già disegnata.
 
+##### ⚠️⚠️ E `name-tight` SI DECIDE SULLA CELLA RISERVATA, o il jitter torna da un'altra parte
+
+Dalla `2.61`, e chiude un jitter **vero** che viveva fra **330 e 353px**: `Sparviero` era alto
+435px in italiano e **410** in inglese, `Libellula` 328 contro 301, e con loro scivolavano le 214
+card sotto. ⚠️ **Non era una regressione**: misurato identico sulla `2.59` pubblicata, riportando
+i file allo stato di `origin/master`.
+
+⚠️⚠️ **LA CAUSA È LA TERZA DECISIONE DI RIGA, quella che nessuna prova pareggiava**: `name-tight`
+si decideva sulla **cella liberata**, che è larga quanto il nome della lingua corrente. Il nome
+inglese è lungo, veniva stretto, e le icone gli rientravano in riga; l'italiano è corto, non
+veniva stretto, e le icone gli andavano a capo. Due decisioni giuste, ciascuna nella sua lingua,
+e un'altezza diversa.
+
+- **Il rimedio è misurare sulla cella RISERVATA**, cioè togliere `nm-libero` per la durata del
+  conto e rimetterlo subito dopo: la cella riservata è larga quanto il nome più lungo **fra le
+  due lingue**, quindi il numero di righe non dipende da quale testo è in scena.
+- ⚠️ **E rompe la circolarità descritta qui sopra**: `tightenNames` non dipende più da quello
+  che `freeNames` ha deciso al giro prima, quindi `assestaRighe` converge al primo confronto.
+  Il ciclo resta come rete, e adesso costa un giro solo.
+- **Misura del rimedio**: **zero** card con altezza diversa su 21 larghezze da 1280 a 320, dove
+  prima erano 1 o 2 su cinque di esse.
+- ⚠️⚠️ **IL BANCO LO NASCONDEVA TENENDO IL PANNELLO APERTO**, ed è la trappola che vale oltre il
+  caso: col Pannello aperto la pagina non scorre, quindi **sparisce la barra di scorrimento** e
+  la lista è ~15px più larga. Un difetto che vive in una fascia stretta di larghezze cade
+  esattamente in quei 15px. Chi misura il layout delle card lo fa a Pannello **chiuso**.
+
+##### 📐 L'intestazione riserva l'altezza dell'altra lingua
+
+Dalla `2.61`. A **400px** il sottotitolo inglese prende **due** righe e l'italiano una: l'intestazione
+cresceva di 24px al cambio lingua e **tutta la pagina** scivolava con lei. ⚠️ La fascia è
+abitata: l'iPhone 16 Pro ha un viewport di **402px**.
+
+- **Il rimedio è la riserva**, cioè lo stesso patto delle card, in una forma più semplice:
+  `riservaTesta()` misura l'altezza che il blocco avrebbe con il testo dell'altra lingua e la
+  impone come `min-height`. Là servono due facce nella stessa cella perché a cambiare è anche la
+  larghezza; qui basta l'altezza, perché il blocco è già largo quanto la colonna.
+- ⚠️ **La misura si fa su un CLONE fuori dal flusso**, non scrivendo il testo dell'altra lingua
+  nell'elemento vero: quello si vedrebbe per un fotogramma.
+- ⚠️ **Copre le voci di testo PIANO** (`subtitle`, `intro`). Il **crest** resta fuori: porta un
+  link, e le sue due metà differiscono di una lettera senza andare a capo in nessuna fascia.
+- ⚠️ **Il titolone ha un presidio SUO e più raffinato** (`pareggiaTitolo`, che cerca la coppia di
+  tagli che pareggia le due lingue): non si sostituisce con questo, che riserva e basta.
+- ⚠️⚠️ **DA CHIUDERE, ED È FUORI DA QUESTO GIRO: i tre `innerHTML` dell'intestazione**
+  (`crest`, `subtitle`, `intro` in `setLang`) violano un divieto **non derogabile** del repo. I
+  primi due sono un `textContent`; il crest porta un link e va composto a nodi, il che chiede di
+  spezzare la sua stringa i18n. Non è stato fatto qui per non mescolare una modifica di struttura
+  con una versione che deve essere certificata.
+
 ⚠️⚠️ **E UN `ResizeObserver` SULLA LISTA COPRE I CAMBI DI LARGHEZZA CHE `window.resize` NON VEDE**
 (richiesta dell'utente, 2026-09-19: *voglio fare le cose bene e in modo pulito e future-proof*):
 la comparsa della barra di scorrimento, lo zoom del browser, un font di sistema che cambia, un
