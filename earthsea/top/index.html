@@ -3588,7 +3588,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.55</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.56</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7532,7 +7532,54 @@ function freeNames() {
       rim[i].el.classList.remove('nm-libero'); rim[i].riga.classList.remove('nm-acapo');
     }
   }
+  provaSimmetria();
   marcaIconeACapo();
+}
+// ⚠️⚠️ LA QUINTA PROVA: CHE LA DECISIONE SIA LA STESSA NELLE DUE LINGUE (2.56, difetto
+// segnalato dall'utente, che vuole l'anti-jitter sempre in funzione). Le quattro prove
+// girano nella lingua CORRENTE, quindi possono liberare una card in italiano e non in
+// inglese: e lo stato liberato ha un'altezza diversa da quello riservato, quindi la card
+// balla al cambio lingua. Misurato a 360px su `Donna di Kemay` (2px) e a 320 su
+// `Mago Rosso di Ark` (1px).
+// ⚠️⚠️ LA CAUSA È CHE LA PROVA 3 SIMULA L'ALTRA LINGUA MALE: mette la cella alla larghezza
+// dell'altro nome ma ci lascia dentro il TESTO di questa lingua, che a quella larghezza va
+// a capo se è più lungo e non va a capo se è più corto. Lo stesso caso dà quindi esiti
+// OPPOSTI nelle due lingue, ed è esattamente il modo in cui nasce l'asimmetria.
+// ⚠️ Qui la simulazione è fedele perché la faccia si mette in `nowrap`: il testo non va a
+// capo, come non ci andrebbe il nome dell'altra lingua nella sua cella, quindi quello che
+// si misura è l'altezza che la riga AVREBBE con l'altra lingua attiva.
+// ⚠️ Nel dubbio NON si libera, e non è prudenza generica: lo stato riservato è identico
+// nelle due lingue PER COSTRUZIONE (la cella prende il massimo delle due larghezze), quindi
+// togliere la liberazione azzera il ballo invece di ridurlo.
+function provaSimmetria() {
+  var celle = document.querySelectorAll('#rank-list .rank-name-text.bil.nm-libero');
+  var i, c, prove = [];
+  for (i = 0; i < celle.length; i++) {
+    var m = celle[i].querySelector(':scope > .bil-m');
+    var f = celle[i].querySelector(':scope > .bil-f');
+    var riga = celle[i].closest('.rank-name');
+    if (!m || !f || !riga) continue;
+    // la larghezza dell'altra lingua si legge ORA dalla gemella, che con `nm-libero` è
+    // assoluta e larga quanto la cella: serve il suo INCHIOSTRO, non la sua scatola.
+    var ra = document.createRange(); ra.selectNodeContents(m);
+    var q = ra.getClientRects(), j, wAltra = 0;
+    for (j = 0; j < q.length; j++) if (q[j].width > wAltra) wAltra = q[j].width;
+    prove.push({ el: celle[i], f: f, riga: riga, wAltra: wAltra });
+  }
+  for (i = 0; i < prove.length; i++) prove[i].ora = prove[i].riga.getBoundingClientRect().height;
+  for (i = 0; i < prove.length; i++) {
+    c = prove[i];
+    c.f.style.whiteSpace = 'nowrap';
+    c.el.style.width = c.wAltra + 'px';
+  }
+  for (i = 0; i < prove.length; i++) prove[i].altra = prove[i].riga.getBoundingClientRect().height;
+  for (i = 0; i < prove.length; i++) { prove[i].f.style.whiteSpace = ''; prove[i].el.style.width = ''; }
+  for (i = 0; i < prove.length; i++) {
+    if (Math.abs(prove[i].altra - prove[i].ora) > 0.5) {
+      prove[i].el.classList.remove('nm-libero');
+      prove[i].riga.classList.remove('nm-acapo');
+    }
+  }
 }
 // ⚠️⚠️ IL GRUPPO ICONE ANDATO A CAPO SI MARCA CON UNA CLASSE, perché il CSS non ha un
 // selettore per il wrap e il vero nome sotto aveva bisogno di respiro: là il nudge
@@ -8646,7 +8693,17 @@ function controlPanelHTML() {
       } else {
         testo = legLbl(IL[k]);
       }
+      // ⚠️⚠️ SE LA VERSIONE CORTA NON C'È, LA FA LA MOBILE, E SENZA QUESTA RIGA L'ETICHETTA
+      // SPARISCE (2.56, difetto trovato misurando il jitter a 320px). Sotto i 354 la media
+      // query spegne `.leg-lbl-m` e accende `.leg-lbl-s`: per una chiave che ha la variante
+      // mobile ma non il ripiego, cioè il `mago` INGLESE, non si accendeva niente e la riga
+      // restava con la sola icona (misurata 27,72px contro i 31,41 dell'italiano).
+      // ⚠️ Il caso non riguarda le chiavi senza nessuna variante (testo nudo, che nessuna
+      // media query spegne) né quelle col solo ripiego (`.leg-lbl-w` più `.leg-lbl-s`): è
+      // proprio la combinazione 'variante mobile senza ripiego' a non avere copertura, e
+      // fino alla `2.55` esisteva su una chiave sola, dove nessuno l'ha vista.
       if (ILS) testo += '<span class="leg-lbl-s">' + legLbl(ILS) + '</span>';
+      else if (ILM) testo += '<span class="leg-lbl-s">' + legLbl(ILM) + '</span>';
       s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + testo + '</span>');
     });
     if (FEATURES.genderLegendPill) {

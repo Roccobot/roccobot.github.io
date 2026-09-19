@@ -6243,14 +6243,85 @@ richiesta da cui il giro è partito. A 320 vanno a capo, e l'utente lo ha accett
   si muoveva di **33px** (era `Libellula`) e adesso di **2**; a 374 passa da 1 card a **zero**. Il
   rilievo grezzo diceva il contrario, e a raddrizzarlo è stato il confronto **con lo stesso metro
   sullo stato di prima**, preso con un `git stash`.
-- ⚠️ **Il residuo è `Donna di Kemay`**, 1-2px fra le due lingue, e **preesiste** a questo giro
-  (ballava già a 375 e a 374 nello stato della `2.54`): il suo nome d'uso è una perifrasi di
-  lunghezza molto diversa nelle due lingue, e le quattro prove di `freeNames` non colgono il caso.
-  A 320 lo stesso capita a `Mago Rosso di Ark` per 1px. ⚠️ Non è stato inseguito in questo giro,
-  per non allargarlo: è una voce aperta.
+- ✅ **Il residuo di `Donna di Kemay` è CHIUSO dalla `2.56`**, con la quinta prova di
+  `freeNames` (sezione qui sotto). Fino alla `2.55` erano 1-2px fra le due lingue, e la nota
+  che li dà aperti descrive quel tratto.
 - **Misure del giro**: **38 controlli su 38** su diciannove larghezze da 1440 a 320 nelle due
   lingue (badge in riga, respiro, numero di colonne, scroll, numero di card), più il rientro delle
   maniglie su nove larghezze e le origini a capo su dieci.
+
+#### 🪞 La QUINTA prova di `freeNames`: che la decisione sia la stessa nelle due lingue
+
+Dalla `2.56`, su istruzione dell'utente (*il mio obiettivo è far sì che l'anti-jitter funzioni
+SEMPRE*), dopo che la `2.55` aveva lasciato un residuo di 1-2px su due card.
+
+⚠️⚠️ **LE QUATTRO PROVE GIRANO NELLA LINGUA CORRENTE, QUINDI POSSONO DECIDERE IN MODO DIVERSO
+NELLE DUE**: se una card viene liberata in italiano e non in inglese, i due stati hanno altezze
+diverse e la card balla al cambio lingua. Misurato sulla card **19** (`Donna di Kemay` /
+`Woman of Kemay`) a 375 e a 360px, e sulla **72** (`Mago Rosso di Ark`) a 320, dove il verso è
+rovesciato.
+
+⚠️⚠️ **LA CAUSA È CHE LA PROVA 3 SIMULA L'ALTRA LINGUA MALE**, e il difetto è istruttivo: mette
+la cella alla larghezza dell'altro nome ma ci lascia dentro il **testo di questa** lingua. Se
+quel testo è più lungo va a capo e la prova fallisce; se è più corto non va a capo e la prova
+passa. Lo stesso caso dà quindi **esiti opposti** nelle due lingue, ed è esattamente il modo in
+cui nasce l'asimmetria.
+
+- **Come la quinta prova rimedia**: rifà la misura con la faccia in `white-space:nowrap`, così
+  il testo non va a capo come non ci andrebbe il nome dell'altra lingua nella sua cella, e
+  quello che si misura è l'altezza che la riga **avrebbe** con l'altra lingua attiva.
+- ⚠️⚠️ **NEL DUBBIO NON SI LIBERA, e non è prudenza generica**: lo stato **non** liberato è
+  identico nelle due lingue **per costruzione**, perché la cella prende il massimo delle due
+  larghezze. Quindi togliere la liberazione azzera il ballo invece di ridurlo, al prezzo dello
+  spazio vuoto che `nm-libero` esiste per togliere.
+- ⚠️ **La larghezza dell'altra lingua si legge dall'INCHIOSTRO della gemella**, non dalla sua
+  scatola: con `nm-libero` la gemella è assoluta e `width:100%`, quindi la sua rect dice la
+  cella e non il nome. Si usa un `Range`.
+
+##### 🙈 E cercando il jitter è saltata fuori un'etichetta che SPARIVA
+
+⚠️⚠️ **SOTTO I 354px, IN INGLESE, LA VOCE `mago` DELLA LEGENDA NON AVEVA TESTO**: la riga
+mostrava la sola icona, alta 27,72px contro i 31,41 dell'italiano. In produzione dalla `2.51`,
+cioè da quando esiste la versione corta, e nessuno l'aveva visto.
+
+- **Il meccanismo**: la media query dei 353 spegne `.leg-lbl-m` e accende `.leg-lbl-s`. Per una
+  chiave che ha la **variante mobile** ma **non il ripiego**, cioè il `mago` inglese, non si
+  accendeva niente. Le chiavi senza nessuna variante (testo nudo) non sono toccate da nessuna
+  media query, e quelle col solo ripiego hanno `.leg-lbl-w` più `.leg-lbl-s`: è proprio la
+  combinazione intermedia a non avere copertura, e ne esisteva **una sola**.
+- **Il rimedio**: quando il ripiego manca, la versione corta ripete la **mobile**. Una riga nel
+  costruttore, e la fascia stretta non può più restare muta.
+- ⚠️⚠️ **LA NOTA CHE DICEVA 'L'INGLESE HA DUE FACCE SOLE, PERCHÉ IL SUO `mago` NON HA RIPIEGO'
+  DESCRIVEVA IL DIFETTO CREDENDOLO UNA SCELTA**: era vero che il testo inglese non aveva bisogno
+  di accorciarsi, e da lì si era concluso che non servisse la terza faccia. Quello che mancava
+  era accorgersi che **la media query lo spegne lo stesso**.
+
+##### 📏 Come si misura il jitter senza farsi ingannare dal proprio metro
+
+⚠️⚠️ **UN CONFRONTO SU TUTTI GLI ELEMENTI DELLA PAGINA DÀ CENTINAIA DI FALSI ALLARMI**, e il
+primo giro di questa misura ne ha contati **5.629**: dentro ci sono le **facce nascoste** delle
+riserve bilingui (che portano l'altro testo, quindi si muovono per definizione) e il contenuto
+**dentro** i riquadri delle citazioni (dove la riserva garantisce il riquadro, non i nodi al suo
+interno). Un numero così si legge come un disastro e non lo è.
+
+**Il metro che dice la verità separa quattro categorie**, e ognuna ha un criterio suo:
+
+| categoria | che cosa si guarda | valore atteso |
+|---|---|---|
+| le **card** della lista | posizione e altezza | zero |
+| tutto **fuori** dalla lista | posizione e altezza | zero |
+| il **Pannello** (contenitore, card di legenda, toolbar, righe, celle) | tutti e due gli assi | zero |
+| **dentro** le card e dentro la card di legenda | niente | si muove per progetto |
+
+- ⚠️ **Gli elementi nascosti si escludono risalendo gli ANTENATI fino al body**: una faccia di
+  riserva è visibile per conto suo, e a nasconderla è il contenitore.
+- ⚠️ **E le righe della legenda si confrontano scartando `.leg-measure`**: il Pannello ne porta
+  **due** copie, quella accesa e il fantasma di misura, e un confronto per indice paragona il
+  fantasma di una lingua alla faccia dell'altra. Il sintomo è una riga che sembra tradotta al
+  contrario (`ITA "Master of Roke"`), ed è la spia che il metro sta leggendo la copia sbagliata.
+- **Misura della `2.56`**: **zero** movimenti nelle prime tre categorie su **13 larghezze** da
+  1440 a 320 nelle due lingue, e **22 controlli su 22** sulla legenda (nessuna voce vuota,
+  nessuna a capo).
 
 ⚠️⚠️ **E LA RIGA DEL NOME SI ALLUNGA DENTRO IL GAP DELLA GRIGLIA**, fino a `--name-rientro`
 (0.75rem) dal **filetto** dell'origine, che è dove il suo mockup ha messo la seconda linea: a
