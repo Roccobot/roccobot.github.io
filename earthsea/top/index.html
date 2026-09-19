@@ -530,6 +530,11 @@ html[data-theme="light"] .apo-title { color:var(--gold-deep); }
    su una card bassa cadrebbe alla stessa altezza del nome. Il rientro è quello che tiene
    la distanza, e per questo è un valore e non zero. */
 html { --name-rientro:0.75rem; }
+/* ⚠️ Il respiro che la riga del nome lascia fra sé e la cornice quando si allunga nel
+   padding della card (telaio mobile, vedi la media query dei 480px). Vive qui accanto al
+   rientro del desktop perché i due numeri si leggono insieme: là è la distanza dal filetto
+   dell'origine, qui dal bordo del riquadro. */
+html { --name-aria:4px; }
 .rank-item.has-orig .rank-name { width:calc(100% + var(--card-gap) - var(--name-rientro)); }
 /* Il nome NON è cliccabile a Terramare (decisione dell'utente, 2026-08-21):
    niente cursore a manina e niente colore al passaggio, che prometterebbero
@@ -2766,10 +2771,21 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name > .rank-name-text { order:0; }
   .rank-name > .rank-tipi { order:1; }
   .rank-name > .rank-flags { order:2; }
-  /* ⚠️ Qui la terza colonna NON esiste (la griglia torna a due e l'origine scende sotto il
-     contenuto), quindi non c'è nessun gap in cui allungarsi: la riga del nome torna larga
-     quanto la cella. */
-  .rank-item.has-orig .rank-name { width:auto; }
+  /* ⚠️⚠️ QUI LA RIGA DEL NOME SI ALLUNGA NEL PADDING DELLA CARD, e non nel gap della griglia
+     come sul desktop: sotto i 480px la terza colonna non esiste (l'origine scende sotto il
+     contenuto), quindi lo spazio da recuperare è l'altro, cioè i `0.8rem` di fianco destro
+     che la card lascia fra il contenuto e la cornice.
+     ⚠️ Serve a tenere i badge IN RIGA dove ci stanno per un soffio: misurato a 360px, la riga
+     inglese di `Sparviero` (`Sparrowhawk` + tipo + badge) chiedeva 258,69px e ne aveva 256,03,
+     cioè ne mancavano 2,66, e il gruppo andava a capo in tutte e due le lingue (richiesta
+     dell'utente: *i badge dovrebbero stare tranquillamente dopo l'etichetta*).
+     ⚠️⚠️ NON si arriva a filo della cornice: `--name-aria` è il respiro che resta, e senza di
+     lui il testo toccherebbe il bordo (la card ha `overflow:hidden`, quindi verrebbe anche
+     tagliato). 4px è il minimo che l'utente ha chiesto di lasciare.
+     ⚠️ Allarga la SOLA riga del nome: le righe sotto (vero nome, alias, titoli, fonte, la
+     citazione) restano larghe quanto la cella, quindi nessun altro elemento si sposta. */
+  .rank-name { width:calc(100% + 0.8rem - var(--name-aria)); }
+  .rank-item.has-orig .rank-name { width:calc(100% + 0.8rem - var(--name-aria)); }
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel è tutto
      maiuscolo e siede in alto nella line-box, perciò le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
@@ -3533,7 +3549,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.53</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.54</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

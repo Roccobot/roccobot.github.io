@@ -6141,6 +6141,31 @@ sui **contenitori** invece che sui figli.
   520 cinque, zero alle altre larghezze. Dopo: **zero dappertutto**, e a 1280 quella card sta
   di nuovo tutta in riga.
 
+#### 📏 Su MOBILE la riga si allunga nel PADDING della card, non nel gap
+
+Dalla `2.54`, per sua richiesta (*concedi tutti i pixel che si possono lasciare in più senza
+arrivare appiccicati al bordo del riquadro*). Sotto i 480px la terza colonna non esiste
+(l'origine scende sotto il contenuto), quindi il gap della griglia non c'è: lo spazio da
+recuperare sono i **`0.8rem` di fianco destro** che la card lascia fra il contenuto e la
+cornice, meno il respiro di `--name-aria` (**4px**, il minimo che ha chiesto di lasciare).
+Il guadagno netto è **8,8px**, e la riga passa da 256,03 a **264,83** a 360px.
+
+- ⚠️ **Il respiro non è cortesia**: la card ha `overflow:hidden`, quindi senza di lui il testo
+  toccherebbe la cornice **e** verrebbe tagliato. Misurato dopo: il respiro è esattamente 4,00
+  su tutte le card a 430, 390, 360 e 320, e nessuna riga sfonda.
+- ⚠️ **Si allunga la SOLA riga del nome**: le righe sotto (vero nome, alias, titoli, fonte,
+  citazione) restano larghe quanto la cella, e il banco lo verifica contandole. In modalità
+  riordino la riga resta **32,8px** dentro il bordo del contenuto, lontana dalla maniglia.
+- ⚠️⚠️ **A `Sparviero` NON BASTA, ed è il caso che ha aperto il giro**: a 360px la riga offre
+  264,83, l'italiano ne chiede **235,70** (avanzano 29,13) e l'inglese **271,39**, quindi ne
+  mancano **6,56**. Finché `Sparrowhawk` non ci sta, il rimedio di `freeNames` manda i badge a
+  capo in tutte e due le lingue e la card resta alta 53,91 invece di 29,77.
+  - ⚠️⚠️ **I DUE PASSI FRA I PEZZI VANNO CONTATI, e per due volte non l'ho fatto**: `--nm-gap`
+    vale **6,35px** al corpo del nome mobile (19,84px), quindi fra nome, tipo e badge se ne
+    vanno 12,7. Senza di loro il conto dava 258,69 e diceva 'mancano 2,66px', cioè una cifra
+    che la riga allargata avrebbe coperto: **il numero sbagliato ha motivato una richiesta**.
+    Chi misura una riga sommi sempre i gap, che il `gap` del flex non fa vedere nei singoli box.
+
 ⚠️⚠️ **E LA RIGA DEL NOME SI ALLUNGA DENTRO IL GAP DELLA GRIGLIA**, fino a `--name-rientro`
 (0.75rem) dal **filetto** dell'origine, che è dove il suo mockup ha messo la seconda linea: a
 1280 finisce a 856,22 invece di 836,22, con 12px di respiro dal filetto.
