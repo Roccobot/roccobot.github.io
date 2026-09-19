@@ -6311,7 +6311,24 @@ interno). Un numero così si legge come un disastro e non lo è.
 | le **card** della lista | posizione e altezza | zero |
 | tutto **fuori** dalla lista | posizione e altezza | zero |
 | il **Pannello** (contenitore, card di legenda, toolbar, righe, celle) | tutti e due gli assi | zero |
-| **dentro** le card e dentro la card di legenda | niente | si muove per progetto |
+| **dentro** le card e dentro la card di legenda | niente | il contenuto si sposta, e deve |
+
+⚠️⚠️ **L'ULTIMA RIGA VA SPIEGATA, o si legge come un difetto lasciato in giro** (domanda
+dell'utente, 2026-09-19, su una prima stesura che diceva soltanto *si muove per progetto*, cioè
+una formula che non dice niente). **Dentro** una card il contenuto si sposta perché i due testi
+hanno lunghezze diverse, e non c'è modo di evitarlo tenendo la card ferma: quello che l'anti-jitter
+promette è che la **card** non cambi altezza, così niente di quello che viene dopo si muove.
+
+- **Il caso misurato è `Skiorh` a 390px**, la card che si sposta di più: la citazione italiana
+  occupa **4 righe** e l'inglese **2**, quindi la riga di contesto dentro la card cade **42,7px**
+  più in basso in italiano. La card resta alta **279,5** in tutte e due le lingue e comincia allo
+  stesso punto della pagina. Sono **65 card su 223** a 390px.
+- ⚠️ **Tenere ferma anche la riga di contesto vorrebbe dire riservare lo spazio LÀ DENTRO**, cioè
+  mostrare un vuoto di 42,7px sotto la citazione più corta: è esattamente la strada scartata nella
+  `0.89`, quando la riserva stava dentro il riquadro e l'utente ne aveva segnalato il vuoto con tre
+  screenshot sulla card di Penthe. Da allora la riserva è **fuori** dal riquadro, e il vuoto avanza
+  dove la card non ha sfondo (§ 'L'ANTI-JITTER, e perché una misura sola diceva zero mentre
+  l'occhio vedeva muoversi').
 
 - ⚠️ **Gli elementi nascosti si escludono risalendo gli ANTENATI fino al body**: una faccia di
   riserva è visibile per conto suo, e a nasconderla è il contenitore.
