@@ -666,7 +666,7 @@ presenta a Tenar come il soccorritore della bambina.
 3. ⚠️⚠️ **IL NUMERO IN CLASSIFICA NON È L'INDICE NEL DATASET**: le due voci sono alla 118 e
    alla 119 di `dati`, e la card mostra **113** e **114**, perché il campo `senzanome` tiene
    fuori dalla lista le voci il cui nome d'uso è una perifrasi
-   (§ "'Nessun nome noto': dalla Console al Pannello"). Chi
+   (§ "'Senza nome proprio': dalla Console al Pannello"). Chi
    confronta i due numeri conclude che l'inserimento sia finito nel posto sbagliato.
 
 - ⚠️ **I capitoli si leggono dalle intestazioni del .txt, non si indovinano**: i corpora
@@ -791,13 +791,13 @@ cantare la ballata in cui, all'inizio del tempo, uomini e draghi erano un popolo
 
 - ⚠️⚠️ **È IL PRIMO INCROCIO FRA DUE MECCANISMI CHE NON SI ERANO MAI INCONTRATI**: l'ibrida
   (§ 'Le razze, e perché le tinte non contano come le categorie') e il **senza nome**
-  (§ "'Nessun nome noto': dalla Console al Pannello"). Le altre due
+  (§ "'Senza nome proprio': dalla Console al Pannello"). Le altre due
   ibride hanno nome d'uso **e** vero nome, quindi due righe; qui il nome d'uso è una
   **perifrasi** e il vero nome manca, quindi la card ne mostra **una sola**. Il motore ci
   arriva da sé, perché `soloVero` guarda il campo vuoto e non la razza: non è stato
   necessario toccare nulla.
 - ⚠️⚠️ **DALLA `2.47` LA SUA CARD SI VEDE DI BASE**, perché la casella `Nessun nome noto` del
-  Pannello nasce **accesa** (§ "'Nessun nome noto': dalla Console al Pannello"). ⚠️ **Fra la
+  Pannello nasce **accesa** (§ "'Senza nome proprio': dalla Console al Pannello"). ⚠️ **Fra la
   `2.10` e la `2.46` era il contrario**, e un banco scritto allora la accendeva prima di
   cercarla: adesso non serve più, e chi conta le card le conta **tutte**. ⚠️ Fino alla `2.09`
   quella scelta era un flag della **Console**, cioè dell'admin: le note che lo dicono sono
@@ -1343,7 +1343,7 @@ divergono**, e dalla `2.49` ha tutte e due le lingue.
   dove serve.
 - ⚠️ **Dalla `2.51` non va a capo più niente, a nessuna larghezza**, e le tre voci che cedevano
   a 320 (`Strega o stregone`, il `mago` italiano e `Signore dei Draghi`) hanno una **terza
-  faccia**: vedi § 'La TERZA faccia, sotto i 348px' qui sotto.
+  faccia**: vedi § 'La TERZA faccia, sotto i 354px' qui sotto.
 - ⚠️⚠️ **IL METRO DELL'INCHIOSTRO SOTTOSTIMA UN TESTO CHE È GIÀ A CAPO**, e con lui si sceglie
   un candidato che poi cede: un `Range` su un testo spezzato dà **più rettangoli**, e prenderne
   il massimo misura il pezzo più largo, non la frase intera. In questo giro ha dato 254,61 per
@@ -1360,7 +1360,7 @@ divergono**, e dalla `2.49` ha tutte e due le lingue.
   su un codice giusto: dalla `2.49` ci sono in tutte e due le lingue, e quel falso allarme non
   si ripresenta.
 
-##### 📐 La TERZA faccia, sotto i 348px
+##### 📐 La TERZA faccia, sotto i 354px
 
 Dalla `2.51`, coi testi dettati dall'utente (*come fallback per il formato più piccolo*).
 Vive in `ICON_LABEL_MINI` e riguarda tre voci italiane: `stregone`, `mago`, `signoredraghi`.
@@ -1370,26 +1370,39 @@ delle due lingue.
 **Quale testo si vede a quale larghezza** (italiano; l'inglese ha due facce sole, perché il
 suo `mago` non ha ripiego):
 
-| voce | da 769 in su | da 348 a 768 | fino a 347 |
+| voce | da 769 in su | da 354 a 768 | fino a 353 |
 |---|---|---|---|
 | `stregone` | `Strega o stregone/incantatore (ha qualche potere)` | uguale | `Strega o stregone (ha qualche potere)` |
-| `mago` | `Mago (stregone educato a Roke o incantatrice di grande potere)` | `Mago (stregone educato a Roke / strega potente)` | `Mago (pratica la 'vera' arte magica)` |
+| `mago` | `Mago (stregone educato a Roke o strega di grande potere)` | `Mago (stregone educato a Roke o potentissima strega)` | `Mago (pratica la 'vera' arte magica)` |
 | `signoredraghi` | `Signore dei Draghi (i draghi lo considerano loro pari)` | uguale | `Signore dei Draghi (amico dell'Ovest)` |
 
 ⚠️ **Il `mago` è la sola voce con tre facce**, e le altre due ne hanno due: la sua piena non
 sta nemmeno a 390, quindi la fascia di mezzo le serve. Chi conta tre versioni per tutte e tre
 le voci sbaglia il costo di manutenzione per eccesso.
 
-- ⚠️⚠️ **LA SOGLIA LA DETTA LA VOCE CHE CEDE PER PRIMA**, non la media né il caso peggiore: è
-  il `Signore dei Draghi`, che **col testo normale** ha 0,98px di margine a 348 e va a capo a
-  344, mentre le altre due reggerebbero più giù. Perciò `max-width:347px`, e sotto quella
-  larghezza la legenda passa **tutta** alla versione corta, comprese le due voci che da sole
-  starebbero.
+⚠️⚠️ **DALLA `2.53` ANCHE LA FACCIA PIENA DICE `strega`**, per sua istruzione: era
+`incantatrice di grande potere` dal 2026-09-18, e adesso l'italiano dice quello che l'inglese
+diceva già (`witch`). ⚠️ **Non è solo una parola**: quella riga **detta la larghezza del
+Pannello desktop**, che passa da **399,67** a **383,38** (16,29px in meno). Chi cerca perché il
+Pannello si è stretto guardi qui, non nel CSS.
+
+- ⚠️⚠️ **LA SOGLIA LA DETTA LA VOCE CHE CEDE PER PRIMA**, non la media né il caso peggiore, e
+  **cambia con i testi**: nella `2.52` era il `Signore dei Draghi` (0,98px di margine a 348, a
+  capo a 344) e la soglia stava a 347; dalla `2.53`, col testo più lungo del `mago`
+  (`o potentissima strega`, 262,03px), la prima a cedere è quella riga, e la soglia sale a
+  **353**. Sotto di lei la legenda passa **tutta** alla versione corta, comprese le voci che
+  da sole starebbero.
   - ⚠️ **Non è un numero tondo perché non descrive uno schermo**, e la domanda è arrivata
     (*non ho capito perché parli di 344/347 se gli step sono 360 e 320*): 360 e 320 sono le
-    larghezze **di prova**, cioè telefoni veri; 347 è il punto in cui un testo smette di stare
-    in una riga, e il CSS ha bisogno di quello. I telefoni in produzione sono tutti sopra
+    larghezze **di prova**, cioè telefoni veri; la soglia è il punto in cui un testo smette di
+    stare in una riga, e il CSS ha bisogno di quello. I telefoni in produzione sono tutti sopra
     (430, 412, 390, 375, 360), quindi la soglia non divide due modelli: divide due stati.
+  - ⚠️⚠️ **QUINDI IL MARGINE SI GUARDA AL PRIMO TELEFONO VERO, non appena sopra la soglia**: a
+    354 il `mago` ha **1,28px** e a 356 ne ha 3,28, cifre che un font leggermente diverso si
+    mangia, ma là non vive nessuno schermo. Quello che conta è **360**, dove ne restano
+    **7,28**: è il margine vero di questa scelta, ed è quattro volte più stretto dei 33,11 che
+    aveva il testo della `2.52`. ⚠️ Il prezzo è dichiarato: un ingrandimento del testo di
+    sistema del **3%** spezza quella riga su un Galaxy, mentre prima ce ne voleva il 14%.
 - ⚠️⚠️ **PRIMA SI ACCORCIA IL TESTO, POI SEMMAI LA GEOMETRIA, e la `2.51` aveva fatto il
   contrario.** Il suo ripiego dei draghi (`amico del popolo dell'Ovest`) sforava di 7,6px, e
   invece di chiedere un testo più corto la media query aveva stretto gap e fianchi e calato il
@@ -1895,7 +1908,7 @@ si comportavano identici anche nel difetto.
   fino alla `2.00`** e quattro fino alla `2.09`, e le due uscite se ne sono andate insieme a
   ciò che governavano: `Tasti di salto` con la colonna dei due tasti su mobile (§ 'Decorazione
   e scostamento dei tasti nella Console'), `Senza nome` col suo flag, passato al Pannello
-  (§ "'Nessun nome noto': dalla Console al Pannello"). La richiesta dell'utente (*le due voci
+  (§ "'Senza nome proprio': dalla Console al Pannello"). La richiesta dell'utente (*le due voci
   mobile devono restare in fondo*) resta soddisfatta con quella che rimane, `Dito che scorre`.
 - Ⓘ **`Senza nome` era stata spostata sotto `Decorazione`** il 2026-09-11 (*sposta 'Senza nome'
   sotto 'Decorazione'. Le due voci mobile devono restare in fondo*), dove prima chiudeva
@@ -4723,7 +4736,7 @@ composito. Campionato dallo screenshot della pagina vera (2026-08-23, con `realf
   `data-theme`, si ritaglia uno screenshot di 3x3 px sulla riga del nome e si legge il pixel
   centrale. ⚠️ Leggere `getComputedStyle` darebbe il gradiente, non il composito.
 
-## 🙈 'Nessun nome noto': dalla Console al Pannello
+## 🙈 'Senza nome proprio': dalla Console al Pannello
 
 ⚠️⚠️ **DALLA `2.10` È UNA CASELLA DEL PANNELLO, cioè un filtro del VISITATORE, e prima era un
 flag della Console** (istruzione dell'utente, 2026-09-14: *la visibilità dei personaggi senza
@@ -4735,6 +4748,16 @@ globale*). Decide se le voci il cui nome d'uso è una **perifrasi** compaiono in
 `2.46`**: istruzione dell'utente del 2026-09-18 (*fa' in modo che la checkbox dei senza nome
 sia attiva di default per i visitatori*), che rovescia la sua stessa richiesta del 2026-09-14,
 citata qui sopra. Quindi **di base quelle voci CI SONO**, e la casella serve a **toglierle**.
+
+⚠️⚠️ **L'ETICHETTA ITALIANA È `Senza nome proprio` DALLA `2.53`**, per sua istruzione, e prima
+era `Nessun nome noto`. ⚠️ **L'inglese NON è cambiato** (*lasciando la versione inglese
+inalterata*), quindi le due lingue divergono di proposito: `No known name` parla di quello che
+non si sa, l'italiano di quello che il personaggio non ha. Un audit che le confronti troverà
+l'asimmetria: è voluta.
+- **Misurato prima di applicarla**, perché questa riga può diventare il blocco più largo del
+  Pannello: **103,36px** contro i 98,2 di prima, cioè 5,16 in più, e il Pannello non si muove
+  perché a dettarne la larghezza è la riga del `mago` in legenda (292,69 col suo contorno). Su
+  una riga a 1280, 360 e 320.
 - ⚠️ **Il verso del filtro NON è cambiato**, ed è la cosa da non confondere: resta additivo
   (accesa aggiunge, spenta toglie), e a cambiare è il **solo valore iniziale** di
   `mostraSenzaNome`. Un rimedio che rovesciasse il predicato direbbe la stessa cosa oggi e

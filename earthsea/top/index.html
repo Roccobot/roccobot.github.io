@@ -2315,7 +2315,7 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
    geometria.
    ⚠️ Deve stare DOPO la soglia dei 768px, o quella la sovrascrive: sotto i 347 si applicano
    tutte e due, e a decidere è l'ordine nel foglio. */
-@media (max-width:347px) {
+@media (max-width:353px) {
   #ctrl-panel .ctrl-legend-row .leg-lbl-m,
   #ctrl-panel .ctrl-legend-row .leg-lbl-w { display:none; }
   #ctrl-panel .ctrl-legend-row .leg-lbl-s { display:inline; }
@@ -3533,7 +3533,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.52</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.53</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6060,9 +6060,12 @@ var ICON_LABEL = {
     // potere`, cioè la via femminile allo stesso grado. La modifica NON è cosmetica: è quella
     // che permette a Tehanu di portare `mago` al posto di `stregone` (stessa data, sua
     // istruzione), e chi la leggesse come un ritocco di testo non capirebbe quel passaggio.
-    // ⚠️ La metà inglese segue la sostanza e non le parole: `incantatrice` è la resa Nord del
-    // grado basso al femminile, e in inglese quel grado ha la sola parola `witch`.
-    mago:     "Mago (stregone educato a Roke o incantatrice di grande potere)",
+    // ⚠️⚠️ DAL 2026-09-19 LA VIA FEMMINILE SI CHIAMA `strega` ANCHE QUI, per sua istruzione:
+    // fino a quel giorno diceva `incantatrice di grande potere`, cioè la resa Nord del grado
+    // basso al femminile, e adesso l'italiano dice quello che l'inglese diceva già (`witch`).
+    // ⚠️ Costa 29,17px in meno (308,00 contro 278,83) e il Pannello desktop si stringe con lui,
+    // perché è questa riga a dettarne la larghezza.
+    mago:     "Mago (stregone educato a Roke o strega di grande potere)",
     // ⚠️ Il terzo badge ha CAMBIATO significato il 2026-08-21 (istruzione
     // dell'utente): diceva 'di questo personaggio si conosce il vero nome', che la
     // riga del vero nome ora dice da sé. Adesso marca chi ha ricevuto in custodia
@@ -6131,7 +6134,7 @@ var ICON_LABEL = {
 // ⚠️ Vale per la LEGENDA e non per i tooltip delle card, che restano quelli interi di
 // `ICON_LABEL`: su mobile un tooltip non si apre, quindi là non c'è niente da accorciare.
 var ICON_LABEL_MOBILE = {
-  it: { mago: "Mago (stregone educato a Roke / strega potente)" },
+  it: { mago: "Mago (stregone educato a Roke o potentissima strega)" },
   en: { mago: "Mage (a sorcerer of Roke / a powerful witch)" }
 };
 // ⚠️⚠️ TERZA FACCIA, sotto i 348px (2.51): il ripiego delle tre voci che sugli schermi più
@@ -6384,7 +6387,8 @@ function genereAttivo(p) {
 // la forzavano con due casi estremi: soli ANIMALI la spegneva e la bloccava (nessuno dei 12
 // ha un vero nome, quindi accesa dava lista vuota), soli DRAGHI la accendeva e la bloccava
 // (tutti e 8 ce l'hanno, e per un drago il nome È il vero nome, quindi spegnerla non
-// toglieva nulla). A sostituirla è 'Nessun nome noto', per istruzione dell'utente.
+// toglieva nulla). A sostituirla è la casella dei senza nome, per istruzione dell'utente:
+// l'etichetta italiana è cambiata due volte, quindi qui non si nomina.
 // ⚠️ La lezione che resta, ed è quella che pagava quel codice: una casella che in un certo
 // stato può solo svuotare la lista, o che non può togliere niente, **non è un filtro** e
 // mente su ciò che promette. Chi ne aggiunge una guardi i due estremi del dataset prima di
@@ -8375,13 +8379,16 @@ function controlPanelHTML() {
   // Seconda riga: i due generi e la casella delle voci senza nome d'uso.
   var GEN = { it: { m: 'Maschi', f: 'Femmine' }, en: { m: 'Males', f: 'Females' } };
   var gCur = currentLang === 'it' ? GEN.it : GEN.en, gAlt = currentLang === 'it' ? GEN.en : GEN.it;
-  // ⚠️⚠️ 'Nessun nome noto' E NON 'Personaggi senza nome', ed è una MISURA e non un gusto:
-  // l'utente ha offerto le due forme (*o 'Nessun nome noto' (leggermente più corto)*), e col
-  // font vero la lunga allarga il Pannello desktop di 17,94px (da 359,48 a 377,42), perché
-  // diventa lei il blocco più largo; la corta ne misura 98,2 contro i 98,0 dell'etichetta che
-  // sostituisce, cioè lascia il Pannello dov'è al decimo di pixel.
-  var vnLbl = currentLang === 'it' ? 'Nessun nome noto' : 'No known name';
-  var vnAlt = currentLang === 'it' ? 'No known name' : 'Nessun nome noto';
+  // ⚠️⚠️ L'ETICHETTA ITALIANA SI SCEGLIE A MISURA, e non a gusto: questa riga può diventare il
+  // blocco più largo del Pannello e allargarlo. Storia delle tre forme, col font vero:
+  // 'Personaggi senza nome' allargava il Pannello desktop di 17,94px (da 359,48 a 377,42) ed è
+  // stata scartata per quello; 'Nessun nome noto' misurava 98,2 e lo lasciava dov'era;
+  // 'Senza nome proprio' è quella dal 2026-09-19, per sua istruzione.
+  // ⚠️ L'inglese NON cambia (*lasciando la versione inglese inalterata*), quindi le due lingue
+  // divergono di proposito: `No known name` parla di quello che non si sa, l'italiano di quello
+  // che il personaggio non ha.
+  var vnLbl = currentLang === 'it' ? 'Senza nome proprio' : 'No known name';
+  var vnAlt = currentLang === 'it' ? 'No known name' : 'Senza nome proprio';
   destra += '<div class="ctrl-frow">';
   ['m', 'f'].forEach(function(g){
     // Stessa guardia delle categorie: l'ultimo genere acceso si blocca.
