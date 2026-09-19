@@ -1894,6 +1894,7 @@ html[data-theme="light"] .ctrl-row:hover { background:rgba(104,144,168,0.12); }
    'voci del Pannello' di cui parla la nota di `.ctrl-row:hover`, e due hover diversi
    nello stesso riquadro si vedrebbero. */
 .ctrl-legend-row .leg-lbl-m { display:none; }  /* variante mobile: la accende la media query a 768px, vedi `ICON_LABEL_MOBILE` */
+.ctrl-legend-row .leg-lbl-s { display:none; }  /* ripiego sotto i 344px, vedi `ICON_LABEL_MINI` */
 .ctrl-legend-row:hover { background:rgba(255,255,255,0.09); }
 .ctrl-legend-row:focus-visible { outline:2px solid var(--gold-bright); outline-offset:1px; }
 /* La dissolvenza vive QUI, sullo stato di arrivo: accendere un filtro badge è un
@@ -2299,6 +2300,25 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
   }
   .ctrl-bottombar .ctrl-icon-btn { width:2rem; padding:0; }
   .ctrl-bottombar .ctrl-lang-btn { width:2rem; padding:0; }
+}
+/* ⚠️⚠️ LA TERZA FACCIA DELLA LEGENDA, sotto i 348px (2.51): accende i ripieghi di
+   `ICON_LABEL_MINI` e spegne la faccia di sopra, che è `.leg-lbl-m` dove esiste una
+   variante mobile e `.leg-lbl-w` dove c'è il solo ripiego.
+   ⚠️⚠️ LE TRE PROPRIETÀ DI SPAZIO NON SONO UN RITOCCO ESTETICO, e chi le toglie rimette il
+   difetto: il ripiego del `Signore dei Draghi` a corpo pieno misura 236,91px contro i 229,31
+   che la riga lascia, quindi da solo andrebbe a capo lo stesso. Il testo è dell'utente e non
+   si accorcia, così lo spazio si recupera qui: il gap e i fianchi si stringono e il corpo
+   cala del 2,5%, lo spazio sale a 240,52, il testo scende a 230,83 e restano 9,69px.
+   ⚠️ Scartate le due leve da sole, e la misura scartata è quella che conta: la sola
+   spaziatura lascia 3,61px di margine, che un font leggermente diverso si mangia; il solo
+   corpo a 0.75rem lascia 7,15 ma costa il 6% di dimensione invece del 2,5%.
+   ⚠️ Deve stare DOPO la soglia dei 768px, o quella la sovrascrive: sotto i 347 si applicano
+   tutte e due, e a decidere è l'ordine nel foglio. */
+@media (max-width:347px) {
+  #ctrl-panel .ctrl-legend-row { gap:0.3rem; padding-left:0.2rem; padding-right:0.2rem; font-size:0.78rem; }
+  #ctrl-panel .ctrl-legend-row .leg-lbl-m,
+  #ctrl-panel .ctrl-legend-row .leg-lbl-w { display:none; }
+  #ctrl-panel .ctrl-legend-row .leg-lbl-s { display:inline; }
 }
 /* ⚠️ RIMOSSO nella v14.67 il ramo `@media (min-width:640px) and (max-width:768px)`
    che nella bottom-sheet metteva il contenuto a DUE COLONNE affiancate (categorie a
@@ -3513,7 +3533,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.50</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.51</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6114,6 +6134,27 @@ var ICON_LABEL_MOBILE = {
   it: { mago: "Mago (stregone educato a Roke / strega potente)" },
   en: { mago: "Mage (a sorcerer of Roke / a powerful witch)" }
 };
+// ⚠️⚠️ TERZA FACCIA, sotto i 348px (2.51): il ripiego delle tre voci che sugli schermi più
+// stretti vanno a capo nella loro versione normale. I testi sono dell'utente, alla lettera.
+// ⚠️⚠️ LA SOGLIA LA DETTA LA VOCE CHE CEDE PER PRIMA, e qui è il `Signore dei Draghi`: a 348
+// il suo testo pieno ha 0,98px di margine e a 344 va a capo, mentre le altre due reggerebbero
+// più giù. Perciò 347 e non 320: sotto quella larghezza la legenda passa tutta alla versione
+// corta, comprese le due voci che da sole starebbero ancora.
+// ⚠️⚠️ IL RIPIEGO DEI DRAGHI NON BASTEREBBE DA SOLO: a corpo pieno misura 236,91px contro i
+// 229,31 che la riga lascia. Il testo è suo e non si accorcia, quindi lo spazio si recupera
+// nel CSS della soglia (gap e fianchi più stretti, corpo al 97,5%): a 320 lo spazio sale a
+// 240,52, il testo scende a 230,83 e restano 9,69px. Quelle tre proprietà e questo blocco
+// vivono o cadono insieme.
+// ⚠️ L'INGLESE NON HA ripieghi: le sue etichette stanno già tutte a 320. Vale la regola del
+// fantasma (`.leg-measure` occupa spazio), quindi se un giorno si allungano va riverificato.
+var ICON_LABEL_MINI = {
+  it: {
+    stregone:      "Strega o stregone (ha qualche potere)",
+    mago:          "Mago (pratica la 'vera' arte magica)",
+    signoredraghi: "Signore dei Draghi (amico del popolo dell'Ovest)"
+  },
+  en: {}
+};
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
 // il dimezzamento dell'opacità può cambiare significato, chiarito nel tooltip
 // (Elenwë: badge Helcaraxë al 50% = morte durante la traversata, non presunto).
@@ -8527,10 +8568,22 @@ function controlPanelHTML() {
       // sceglierle è il CSS: così il cambio di telaio al resize è immediato e non dipende da
       // un rebuild del Pannello, che è la parte fragile. Le chiavi senza variante passano
       // com'erano, quindi il markup cresce solo dove serve.
+      // ⚠️ Le facce sono fino a TRE, e la classe della piena dipende da chi la spegne:
+      // con una variante mobile è `.leg-lbl-d` (la spegne la soglia dei 768), con il solo
+      // ripiego è `.leg-lbl-w`, che resta accesa su desktop E su mobile e cade sotto i 344.
+      // Scambiarle nasconderebbe il testo su tutto il mobile.
       var ILM = (ICON_LABEL_MOBILE[lang] || {})[k];
-      var testo = ILM
-        ? '<span class="leg-lbl-d">' + legLbl(IL[k]) + '</span><span class="leg-lbl-m">' + legLbl(ILM) + '</span>'
-        : legLbl(IL[k]);
+      var ILS = (ICON_LABEL_MINI[lang] || {})[k];
+      var testo;
+      if (ILM) {
+        testo = '<span class="leg-lbl-d">' + legLbl(IL[k]) + '</span>'
+              + '<span class="leg-lbl-m">' + legLbl(ILM) + '</span>';
+      } else if (ILS) {
+        testo = '<span class="leg-lbl-w">' + legLbl(IL[k]) + '</span>';
+      } else {
+        testo = legLbl(IL[k]);
+      }
+      if (ILS) testo += '<span class="leg-lbl-s">' + legLbl(ILS) + '</span>';
       s += legRow(k, '<span class="leg-ico">' + (BADGE_KEY[k] || BADGE_ICON[k]).split('%L%').join('') + '</span><span>' + testo + '</span>');
     });
     if (FEATURES.genderLegendPill) {

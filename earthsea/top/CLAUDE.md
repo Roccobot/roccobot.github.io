@@ -1341,10 +1341,9 @@ divergono**, e dalla `2.49` ha tutte e due le lingue.
   telaio al resize è immediato, e non dipende dal fatto che il Pannello si ricostruisca, che è
   la parte fragile. Le chiavi senza variante restano testo nudo, quindi il markup cresce solo
   dove serve.
-- ⚠️ **Che cosa resta a capo, dichiarato**: a **320px** ci vanno `Strega o stregone`, `Signore
-  dei Draghi` e, dalla `2.50`, il `mago` italiano. Le prime due non sono state toccate perché
-  l'utente ha segnalato il solo `mago` e quei testi sono una sua scelta editoriale. Da **360px**
-  in su nessuna voce va a capo, in nessuna delle due lingue, e il Pannello sta a 544,25.
+- ⚠️ **Dalla `2.51` non va a capo più niente, a nessuna larghezza**, e le tre voci che cedevano
+  a 320 (`Strega o stregone`, il `mago` italiano e `Signore dei Draghi`) hanno una **terza
+  faccia**: vedi § 'La TERZA faccia, sotto i 348px' qui sotto.
 - ⚠️⚠️ **IL METRO DELL'INCHIOSTRO SOTTOSTIMA UN TESTO CHE È GIÀ A CAPO**, e con lui si sceglie
   un candidato che poi cede: un `Range` su un testo spezzato dà **più rettangoli**, e prenderne
   il massimo misura il pezzo più largo, non la frase intera. In questo giro ha dato 254,61 per
@@ -1360,6 +1359,37 @@ divergono**, e dalla `2.49` ha tutte e due le lingue.
   perché quella chiave non aveva variante, e un metro che cercasse `.leg-lbl-d` là dava `null`
   su un codice giusto: dalla `2.49` ci sono in tutte e due le lingue, e quel falso allarme non
   si ripresenta.
+
+##### 📐 La TERZA faccia, sotto i 348px
+
+Dalla `2.51`, coi testi dettati dall'utente (*come fallback per il formato più piccolo*).
+Vive in `ICON_LABEL_MINI` e riguarda tre voci italiane: `stregone`, `mago`, `signoredraghi`.
+Con lei, **nessuna voce di legenda va a capo a nessuna larghezza fra 1280 e 320**, in nessuna
+delle due lingue.
+
+- ⚠️⚠️ **LA SOGLIA LA DETTA LA VOCE CHE CEDE PER PRIMA**, non la media né il caso peggiore: è
+  il `Signore dei Draghi`, che a 348px ha **0,98px** di margine e a 344 va a capo, mentre le
+  altre due reggerebbero più giù. Perciò `max-width:347px`, e sotto quella larghezza la
+  legenda passa **tutta** alla versione corta, comprese le due voci che da sole starebbero.
+- ⚠️⚠️ **IL RIPIEGO DEI DRAGHI NON BASTAVA, e lo spazio si è recuperato invece di accorciare
+  il testo**: a corpo pieno misura 236,91px contro i 229,31 della riga. Il testo è
+  dell'utente, quindi la media query stringe il gap e i fianchi e cala il corpo del 2,5%: a
+  320 lo spazio sale a **240,52**, il testo scende a **230,83**, restano **9,69px**. ⚠️ Le tre
+  proprietà e i tre testi **vivono o cadono insieme**: chi le toglie rimette il difetto.
+  - **Le misure scartate**, che sono quelle che reggono la scelta: la sola spaziatura lascia
+    **3,61px**, che un font leggermente diverso si mangia; il solo corpo a `0.75rem` lascia
+    7,15 ma costa il **6%** di dimensione invece del 2,5%.
+- ⚠️⚠️ **LA CLASSE DELLA FACCIA PIENA DIPENDE DA CHI LA DEVE SPEGNERE**, ed è l'errore che il
+  codice previene: con una variante mobile è `.leg-lbl-d` (la spegne la soglia dei 768), col
+  solo ripiego è **`.leg-lbl-w`**, che resta accesa su desktop **e** su mobile e cade sotto i
+  348. Riusare `.leg-lbl-d` per la seconda famiglia nasconderebbe il testo su tutto il mobile.
+- ⚠️⚠️ **DUE TRAPPOLE DI MISURA, incontrate tutte e due in questo giro.** La prima: i testi
+  erano stati misurati **dentro la riga del mago**, dando per scontato che lo spazio fosse
+  uguale; lo è, ma il testo preso dal `textContent` era **troncato** (`un pari` invece di
+  `loro pari`), sei caratteri che spostano la soglia di 4px. La seconda: il banco confrontava
+  l'altezza di ogni riga col **minimo della schermata**, e bastava una riga più bassa delle
+  altre per marcarne undici come 'a capo'. ⚠️ **Il metro buono è il numero di rettangoli** del
+  `Range` sulla faccia accesa, riga per riga: dice il vero senza dipendere da un riferimento.
 
 #### 🔎 Le due fonti che il censimento non aveva guardato
 
