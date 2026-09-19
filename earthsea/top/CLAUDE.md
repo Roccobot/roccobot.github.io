@@ -6127,8 +6127,12 @@ e `GED`, contro i **9,42** che le separavano dal nome sopra.
 
 Dalla `2.57`, istruzione dell'utente, 2026-09-19, con due screenshot (`Pioppo | ERISEN` su desktop e
 `Giaggiolo | ANIEB` su mobile): *il nome vero sta troppo a ridosso del nome comune. Correggi in
-tutte le viste e le fasce aumentando lo spazio uniformemente.* Il valore è **`0.18em`** del
+tutte le viste e le fasce aumentando lo spazio uniformemente.* Il valore era **`0.18em`** del
 corpo del vero nome, su `.rank-name + .rank-vero`, cioè 4,09px su desktop e 2,88 sotto i 480.
+
+⚠️⚠️ **DALLA `2.58` LE MISURE SONO TRE E QUELLA UNIFORME NON C'È PIÙ**, per una seconda
+istruzione dello stesso giorno: la sezione qui sotto porta i valori in vigore, e questa descrive
+la tappa da cui vengono. Chi legge un commit fra le due sa che là il margine era uno solo.
 
 ⚠️⚠️ **LO STACCO AVEVA DUE SOLI VALORI, NON UNA DISTRIBUZIONE, E LA DIFFERENZA È IL DISCENDENTE
 DEL NOME**: il vero nome è in Cinzel **maiuscolo**, quindi il suo inchiostro comincia alla cap
@@ -6166,11 +6170,14 @@ grande, quindi lo stacco minimo è **7,88px** contro i 10,2 del desktop e i 10,8
   larghezza resta ferma a 383,38 e le due lingue restano identiche. A 320px non cresce affatto,
   perché la sheet è già al suo tetto.
 
-##### ⚖️ Perché il margine NON si differenzia per card: CINQUE card su ventisei
+##### ⚖️ Le TRE misure, e le cinque card che la doppia lingua tiene in mezzo
 
-Domanda dell'utente subito dopo il giro, ed è la misura scartata di questa scelta: *non credo
-sia possibile differenziare fra i nomi con e senza discendenti, a causa della doppia lingua*.
-Ha ragione, e il numero dice quanto.
+⚠️⚠️ **DALLA `2.58` IL MARGINE SI DIFFERENZIA PER CARD, e questa sezione nasce dicendo il
+contrario**: era la misura scartata della `2.57`, e a rovesciarla è l'utente in due mosse. Prima
+la diagnosi (*non credo sia possibile differenziare fra i nomi con e senza discendenti, a causa
+della doppia lingua*), che è giusta e vale per **cinque** card; poi la via d'uscita (*non si può
+provare a impostare 3 misure diverse? Con discendenti, senza e misto*), che quelle cinque le
+mette in una classe loro invece di lasciarle rompere le altre.
 
 | il caso | quante card |
 |---|---|
@@ -6182,23 +6189,47 @@ Le cinque sono `Millefoglie`/`Yarrow`, `Libellula`/`Dragonfly`, `Burrone`/`Gully
 `Solevivo`/`Sunbright` e `Melina`/`Apple`, e il discendente vale **8-9px**, cioè esattamente la
 differenza fra i due gruppi.
 
-- ⚠️⚠️ **LE DUE VIE POSSIBILI HANNO OGNUNA IL SUO DIFETTO, e sono tutte e due misurabili in
-  anticipo**: decidendo sulla **lingua corrente** quelle cinque card cambierebbero altezza di
-  8-9px al cambio lingua, che è jitter vero; decidendo sulle **due insieme** (il dato c'è, la
-  gemella `bil-m` porta l'altro nome nel DOM) il jitter non c'è, ma in una delle due lingue
-  quelle cinque avrebbero lo stacco sbagliato, largo o stretto secondo il verso della scelta.
-- **Il pareggio perfetto sarebbe un margine pari al discendente**, cioè 9px sulle card che ce
-  l'hanno e zero sulle altre, che porterebbe tutte a **15,13px** a 1280. Regge su 21 card e cade
-  su 5, e costerebbe un giro di misura in JS in più: per quel rapporto non vale, e la scelta
-  uniforme dell'utente è quella giusta.
-- ⚠️ **Il valore uniforme è immune per costruzione**: non guarda il contenuto, quindi non può
-  cambiare fra le due lingue. È la ragione che lui ha dato chiedendolo, ed è quella che regge.
-- ⚠️ **La decisione si prenderebbe UNA VOLTA SOLA, non a ogni reflow**, e conviene saperlo se un
-  domani la si riapre: il discendente dipende dal **nome**, non dalla larghezza, quindi non è il
-  caso di `freeNames`, che rimisura perché il suo esito cambia con lo spazio disponibile.
-- **Misure del giro**: **88 controlli su 88** su undici larghezze da 1440 a 320, coi font veri.
-  Zero card cambiano altezza o posizione al cambio lingua, nessuna riga sfonda la card, e
-  `freeNames` decide su ogni card esattamente come prima.
+⚠️⚠️ **LA CLASSE GUARDA LE DUE LINGUE INSIEME, E QUESTA È LA RIGA CHE REGGE TUTTO** (parole
+dell'utente alla proposta: *sì, esatto: è quello che intendevo*). Decidendola sulla **lingua
+corrente** quelle cinque card cambierebbero altezza di 8-9px al cambio lingua, che è jitter vero;
+guardando `p.nome` e `p.nome_en` insieme la classe è **identica nei due stati** per costruzione,
+e il metro lo prova (`vr-disc*` non cambia su nessuna card in nessuna delle undici larghezze).
+
+**I tre valori, e da dove vengono**: `0.35em` del corpo del vero nome dove il nome scende in
+tutte e due le lingue, `0.175em` dove scende in una sola, **zero** dove non scende mai. Il primo
+è il discendente misurato, il secondo la sua metà, che è il compromesso di chi non può avere
+ragione in tutte e due le lingue.
+
+| a 1280 | quante | prima (`2.57`) | dopo |
+|---|---|---|---|
+| discendente in due lingue | 6 | 10,2 | **14,1-15,1** |
+| in nessuna | 15 | 19,2 | **14,1-15,1** |
+| in una sola | 5 | 10,2 o 19,2 | 10,1 o 18,1-19,1 |
+
+- ⚠️ **SULLE CINQUE MISTE IL RISULTATO È QUASI QUELLO DI PRIMA, e va detto**: mezzo discendente
+  vale 4,3px, cioè quasi il valore uniforme della `2.57`, quindi restano ai due estremi. Il
+  guadagno è tutto sulle altre 21, che passano da due gruppi distanti 9px a un valore unico.
+- ⚠️⚠️ **LO SCARTO RESIDUO È 1,07px A 1280 E NON SCENDE A ZERO, per due cause misurate**: `p`
+  scende **8px** e `g j q y` ne scendono **9**, quindi un margine solo per classe non pareggia
+  due gradini; e `d` e `x` scendono **1px**, che è antialiasing e la soglia classifica come
+  'senza'. Nelle fasce strette arriva a **1,80** (a 769, dove il vero nome ha già il corpo mobile
+  e il nome no). Prima erano 9px netti.
+- ⚠️ **Il valore em è la MEDIA di cinque larghezze**, perché il discendente scala col corpo del
+  **nome** e il margine con quello del **vero nome**, che è più piccolo: il rapporto va da 0,359
+  a 0,396. Provati anche `0.38` (scarto fino a 2,47) e `0.36` (2,01): vince `0.35`.
+- ⚠️ **`--vr-aria` alza le tre classi INSIEME**, e oggi vale zero: con lui le tre misure
+  pareggiano e basta. È il punto unico da cui dare più aria a tutta la lista, se un domani serve.
+- ⚠️ **La decisione si prende UNA VOLTA SOLA, alla costruzione della card, non a ogni reflow**:
+  il discendente dipende dal **nome** e non dalla larghezza, quindi non è il caso di `freeNames`,
+  che rimisura perché il suo esito cambia con lo spazio disponibile.
+- ⚠️⚠️ **SI MISURA COL CANVAS E NON CON UN ELENCO DI LETTERE**: quell'elenco dipende dal font, e
+  il nome d'uso il font l'ha già cambiato una volta (da Cinzel a EB Garamond nella `0.05`).
+  ⚠️ Il font **caricato non conta**: se EB Garamond non è ancora pronto il canvas misura il serif
+  di ripiego, che ha i discendenti sulle **stesse** lettere, e dalla misura non passa nessun
+  pixel, perché il margine è in em nel CSS.
+- **Misure del giro**: **110 controlli su 110** su undici larghezze da 1440 a 320, coi font veri.
+  Zero card cambiano altezza o posizione al cambio lingua, zero cambiano **classe**, nessuna riga
+  sfonda la card, e `freeNames` decide su ogni card esattamente come prima.
   - ⚠️ **Il metro è l'INCHIOSTRO e va costruito, perché nessuna proprietà CSS lo dà**: la
     baseline si ricava dal rettangolo di riga del `Range` più le metriche del canvas
     (`fontBoundingBoxAscent/Descent` per centrarla nell'interlinea, `actualBoundingBox*` per
