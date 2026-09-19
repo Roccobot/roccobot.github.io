@@ -626,31 +626,38 @@ html { --card-pad-r:1.2rem; }
    non c'era nessun gruppo da distanziare. La media query dei 480px dichiara il proprio
    valore dopo di questa e la scavalca. */
 .rank-name.nm-wrap + .rank-vero { margin-top:0.2em; }
-/* ⚠️⚠️ TRE MISURE PER L'ARIA FRA IL NOME D'USO E IL VERO NOME (2.58, istruzione
-   dell'utente: *non si può provare a impostare 3 misure diverse? Con discendenti, senza e
-   misto*). La 2.57 dava un valore UNIFORME a tutti, e con lui lo stacco restava di due
-   grandezze diverse: qui invece si PAREGGIA, compensando il discendente dove c'è.
+/* ⚠️⚠️ TRE MISURE PER L'ARIA FRA IL NOME D'USO E IL VERO NOME, coi VALORI DELLA 2.59, scelti
+   dall'utente fra tre proposte misurate: *spaziare un po' di più il caso senza discendenti e
+   un po' di meno quello con, in modo che si avvicinino il più possibile*. La 2.57 dava un
+   valore UNIFORME a tutti, e con lui lo stacco restava di due grandezze diverse; la 2.58
+   compensava il discendente per intero, e sbagliava dall'altra parte.
    ⚠️⚠️ IL DISCENDENTE DEL NOME È LA CAUSA: il vero nome è in Cinzel maiuscolo, quindi il suo
    inchiostro comincia alla cap height, mentre `Pioppo` e `Giaggiolo` scendono sotto la linea
    di base. Misurato a 1280 sulle card a due righe: 6,13px di stacco con i discendenti e
    15,13 senza, cioè 9px di differenza su card fatte uguali.
-   ⚠️⚠️ LA CLASSE GUARDA TUTTE E DUE LE LINGUE, ed è la riga che evita il jitter: su 5 card
-   su 26 il discendente c'è in una lingua sola (`Libellula`/`Dragonfly`), quindi una classe
-   decisa sulla lingua corrente le farebbe cambiare altezza al cambio lingua. Con la terza
-   misura, che vale mezzo discendente, quelle card sbagliano di 4,5px in ognuna delle due
-   invece di essere giuste in una e fuori di 9 nell'altra. La assegna `classeDiscendente`.
-   ⚠️ I due numeri sono il DISCENDENTE e la sua METÀ, espressi nel corpo del vero nome: 0,38em
-   è la media misurata su cinque larghezze (da 0,359 a 0,396), perché il discendente scala col
-   corpo del NOME e il margine col corpo del VERO NOME, che è un filo più piccolo.
-   ⚠️ `--vr-aria` è il punto unico da cui alzare l'aria di TUTTE e tre le classi insieme: a
-   zero le tre misure pareggiano e basta, e un valore maggiore le solleva in blocco.
+   ⚠️⚠️ LA COMPENSAZIONE È PARZIALE, ED È DELIBERATA: questi valori recuperano circa la metà
+   di quei 9px (stacco d'inchiostro 18,98px senza discendenti contro 15,66-16,66 con), perché
+   l'occhio misura dalla MASSA della parola e non dalla punta della `p`. Pareggiarli per
+   intero è la misura scartata, ed era la 2.58: esatta col righello, sovra-compensata a
+   vederla. Nella stessa scelta il caso senza discendenti si alza da zero, perché il vero
+   nome restava troppo vicino alla riga sopra (utente, su `Therru`/`TEHANU`).
+   ⚠️⚠️ LA CLASSE GUARDA TUTTE E DUE LE LINGUE, ed è la riga che evita il jitter: su 4 card il
+   discendente c'è in una lingua sola (`Libellula`/`Dragonfly`), quindi una classe decisa sulla
+   lingua corrente le farebbe cambiare altezza al cambio lingua. Con la terza misura, che vale
+   mezzo discendente, quelle card sbagliano per metà in ognuna delle due invece di essere
+   giuste in una e fuori di 9 nell'altra. Le assegna `ariaVeroNome`.
+   ⚠️ Il caso SENZA discendenti è il DEFAULT e non ha una classe sua: così una card che il JS
+   non raggiunge prende comunque l'aria minima invece di restare a ridosso del nome, ed è
+   anche la resa della card di legenda del Pannello, che le classi vere le usa ma dal ciclo
+   delle card non passa.
+   ⚠️ `--vr-aria` è il punto unico da cui alzare l'aria di TUTTE e tre le misure insieme.
    ⚠️ Il caso A CAPO non si tocca, e non gli serve: là sotto il nome ci sono le icone, quindi
    il discendente non tocca più il vero nome, e il valore della regola qui sopra pareggia il
    vuoto che il gruppo ha sopra di sé. La sua specificità è maggiore, quindi lo fa da sé. */
 html { --vr-aria:0em; }
-.rank-vero { margin-top:var(--vr-aria); }
-.rank-vero.vr-disc1 { margin-top:calc(var(--vr-aria) + 0.175em); }
-.rank-vero.vr-disc2 { margin-top:calc(var(--vr-aria) + 0.35em); }
+.rank-vero { margin-top:calc(var(--vr-aria) + 0.17em); }
+.rank-vero.vr-disc1 { margin-top:calc(var(--vr-aria) + 0.30em); }
+.rank-vero.vr-disc2 { margin-top:calc(var(--vr-aria) + 0.42em); }
 /* Compattazione mirata della riga nome (.name-tight, applicata da
    tightenNames): recupera ~3% di larghezza stringendo SOLO le spaziature
    (mai il corpo del font), e solo sulle card dove questo fa guadagnare una
@@ -3613,7 +3620,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.58</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.59</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6748,40 +6755,6 @@ function descDi(p, it){
 // ha stabilito: *uno spazio vuoto è preferibile al jitter*.
 // ⚠️ Icone, simbolo di genere ed etichette non si duplicano affatto: sono uguali nelle
 // due lingue (le etichette hanno già lo slot a larghezza stabile, vedi `.tb-stack`).
-// ── Il discendente del nome d'uso, e le tre misure dell'aria sul vero nome ──
-// ⚠️⚠️ SI MISURA COL CANVAS E NON CON UN ELENCO DI LETTERE, perché quell'elenco
-// dipende dal font e questo progetto il font del nome l'ha già cambiato una volta
-// (da Cinzel a EB Garamond nella 0.05). Misurate sull'alfabeto in EB Garamond 700:
-// `g j q y` scendono di 9px su un corpo di 29,12, `p Q ç` di 8 e `J` di 6, mentre
-// `d x M 3 5 9` danno 1-2px, che è antialiasing e non un discendente: di qui la
-// soglia, espressa sul corpo di prova.
-// ⚠️ Il corpo di prova è fisso e non quello reso: qui serve un PREDICATO, non una
-// misura in pixel, e il rapporto fra discendente e corpo non cambia con la scala.
-// ⚠️ Nemmeno il font caricato conta: se EB Garamond non è ancora pronto il canvas
-// misura il serif di ripiego, che ha i discendenti sulle STESSE lettere. Il valore
-// del margine è in em nel CSS, quindi da questa misura non passa nessun pixel.
-var _discMem = Object.create(null);
-var _discCv = null;
-function haDiscendente(testo) {
-  if (!testo) return false;
-  if (testo in _discMem) return _discMem[testo];
-  if (!_discCv) {
-    _discCv = document.createElement('canvas').getContext('2d');
-    _discCv.font = '700 100px "EB Garamond",serif';
-  }
-  var v = _discCv.measureText(testo).actualBoundingBoxDescent > 10;
-  _discMem[testo] = v;
-  return v;
-}
-// La classe del vero nome: nessuna se il nome non scende in nessuna delle due lingue,
-// `vr-disc2` se scende in tutte e due, `vr-disc1` se scende in una sola.
-// ⚠️⚠️ SI GUARDANO LE DUE LINGUE E NON QUELLA CORRENTE: è ciò che rende la classe
-// identica nei due stati, quindi immune al jitter. Il ripiego è lo stesso di `nomeUso`.
-function classeDiscendente(p) {
-  var a = haDiscendente(p.nome || p.nome_en || '');
-  var b = haDiscendente(p.nome_en || p.nome || '');
-  return (a && b) ? ' vr-disc2' : ((a || b) ? ' vr-disc1' : '');
-}
 function rigaNomeHtml(nomeCur, nomeAlt, soloVero, statusStr, genereSym, tipoStr){
   var testo = (nomeAlt && nomeAlt !== nomeCur)
     ? '<span class="rank-name-text bil"><span class="bil-f">' + nomeCur + '</span>' +
@@ -7195,8 +7168,9 @@ function renderList() {
       '<span class="rank-num' + (p.apocrifo ? ' num-muto" aria-hidden="true' : '') + '">' + visN + '</span>' +
       '<span class="rank-content">' +
         rigaNome +
-        (veroNome && !soloVero
-          ? '<span class="rank-vero' + classeDiscendente(p) + '">' + veroNome + '</span>' : '') +
+        // ⚠️ La classe dell'aria NON si mette qui: la decide `ariaVeroNome()` sulla pagina
+        // resa, perché dipende da dove cade l'inchiostro e non dal solo testo del nome.
+        (veroNome && !soloVero ? '<span class="rank-vero">' + veroNome + '</span>' : '') +
         rigaDesc +
         riga2 +
         // ⚠️ Gli APOCRIFI non portano la riga dell'opera (istruzione dell'utente,
@@ -7594,6 +7568,7 @@ function freeNames() {
   }
   provaSimmetria();
   marcaIconeACapo();
+  ariaVeroNome();
 }
 // ⚠️⚠️ LA QUINTA PROVA: CHE LA DECISIONE SIA LA STESSA NELLE DUE LINGUE (2.56, difetto
 // segnalato dall'utente, che vuole l'anti-jitter sempre in funzione). Le quattro prove
@@ -7663,6 +7638,90 @@ function marcaIconeACapo() {
              getComputedStyle(fl).display !== 'contents' &&
              fl.offsetTop >= nt.offsetTop + nt.offsetHeight - 1);
     righe[i].classList.toggle('nm-wrap', giu);
+  }
+}
+// ── L'aria fra il nome d'uso e il vero nome: la decide l'INCHIOSTRO ──
+// ⚠️⚠️ CONTA SOLO IL DISCENDENTE CHE CADE SOPRA IL VERO NOME, e non quello che il nome ha da
+// qualche parte: `Millefoglie` scende con la `g`, ma quella `g` comincia una ventina di pixel
+// oltre la fine di `KEST`, quindi sotto il vero nome non c'è niente da schivare e la card va
+// col gruppo senza discendenti. Fino alla 2.58 il predicato guardava la stringa intera e la
+// metteva nel gruppo opposto, cioè le dava 9px di aria per una lettera che sta altrove.
+// ⚠️ Perciò la decisione dipende dal LAYOUT e non dal solo testo, e si rifà a ogni reflow
+// come `freeNames`: a larghezze diverse il nome va a capo e l'inchiostro si sposta.
+// ⚠️ Le classi sono DUE e i casi tre: il gruppo senza discendenti è il default del CSS.
+var _ariaCv = null;
+// L'ultima riga d'inchiostro di un elemento. ⚠️ Serve un `Range` e non la rect dell'elemento:
+// quella è alta quanto la riga di testo, quindi direbbe la scatola e non l'inchiostro.
+function inchiostroDi(el) {
+  var r = document.createRange();
+  r.selectNodeContents(el);
+  var tutti = r.getClientRects(), righe = [], k;
+  for (k = 0; k < tutti.length; k++) if (tutti[k].height > 1) righe.push(tutti[k]);
+  return righe.length ? righe[righe.length - 1] : null;
+}
+// Quanto scende il nome NELLA COLONNA del vero nome, in pixel, zero se non scende.
+// ⚠️⚠️ I DUE METRI NON SONO INTERCAMBIABILI, e servono tutti e due: la `x` di un carattere si
+// chiede a un `Range` sul DOM, che porta il kerning vero; la PROFONDITÀ a un canvas
+// (`actualBoundingBoxDescent`), perché un `Range` è alto quanto la riga e di discendenti non
+// sa nulla. Chiedere l'una all'altro dà una misura che sembra giusta e non lo è.
+// ⚠️ La soglia dei 2px separa il discendente dall'antialiasing: in EB Garamond 700 `g j q y`
+// scendono di 9px su un corpo di 29,12 e `p Q ç` di 8, mentre `d x M` danno 1px. Regge anche
+// nelle fasce strette, dove il corpo scende a ~19px e quel px diventa 0,7.
+// ⚠️ La guardia allarga di un filo l'intervallo del vero nome: una lettera che finisce a un
+// pixel dal suo bordo gli finisce addosso lo stesso.
+function codaUtile(faccia, veroRect) {
+  var nodo = null, w = document.createTreeWalker(faccia, NodeFilter.SHOW_TEXT), t;
+  while ((t = w.nextNode())) { if (t.textContent.trim()) { nodo = t; break; } }
+  if (!nodo) return 0;
+  var cs = getComputedStyle(faccia);
+  if (!_ariaCv) _ariaCv = document.createElement('canvas').getContext('2d');
+  _ariaCv.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+  var testo = nodo.textContent;
+  if (_ariaCv.measureText(testo).actualBoundingBoxDescent <= 2) return 0;
+  var ultima = inchiostroDi(faccia);
+  if (!ultima) return 0;
+  var guardia = parseFloat(cs.fontSize) * 0.08;
+  var giu = 0, r = document.createRange(), i, d, rc, box;
+  for (i = 0; i < testo.length; i++) {
+    d = _ariaCv.measureText(testo[i]).actualBoundingBoxDescent;
+    if (d <= 2 || d <= giu) continue;
+    r.setStart(nodo, i); r.setEnd(nodo, i + 1);
+    rc = r.getClientRects();
+    if (!rc.length) continue;
+    box = rc[rc.length - 1];
+    // ⚠️ Un carattere di una riga PRECEDENTE non cade sopra il vero nome: se il nome va a capo,
+    // sotto di lui c'è solo la sua ultima riga.
+    if (box.top < ultima.top - 1) continue;
+    if (box.left < veroRect.right + guardia && box.right > veroRect.left - guardia) giu = d;
+  }
+  return giu;
+}
+// ⚠️⚠️ SI GUARDANO LE DUE LINGUE E NON QUELLA CORRENTE: è ciò che rende la classe identica nei
+// due stati, quindi immune al jitter per costruzione. Dove il nome non ha una gemella le due
+// lingue coincidono, e la misura della faccia vale per tutte e due.
+// ⚠️ Le card con le icone A CAPO restano fuori: là sotto il nome ci sono le icone, e l'aria la
+// governa la regola di `nm-wrap`, che è più specifica.
+// ⚠️ Prima si legge tutto e poi si scrive: mescolare le due cose costringerebbe il browser a
+// ricalcolare il layout a ogni card.
+function ariaVeroNome() {
+  var veri = document.querySelectorAll('#rank-list .rank-vero'), i, scelte = [];
+  var vero, riga, cella, largo, vis, gem, dv, da;
+  for (i = 0; i < veri.length; i++) {
+    vero = veri[i];
+    riga = vero.previousElementSibling;
+    cella = riga && riga.classList.contains('rank-name')
+      ? riga.querySelector(':scope > .rank-name-text') : null;
+    largo = (cella && !riga.classList.contains('nm-wrap')) ? inchiostroDi(vero) : null;
+    if (!largo) { scelte.push([vero, 0]); continue; }
+    vis = cella.querySelector(':scope > .bil-f') || cella;
+    gem = cella.querySelector(':scope > .bil-m');
+    dv = codaUtile(vis, largo) > 0;
+    da = gem ? codaUtile(gem, largo) > 0 : dv;
+    scelte.push([vero, (dv && da) ? 2 : ((dv || da) ? 1 : 0)]);
+  }
+  for (i = 0; i < scelte.length; i++) {
+    scelte[i][0].classList.toggle('vr-disc2', scelte[i][1] === 2);
+    scelte[i][0].classList.toggle('vr-disc1', scelte[i][1] === 1);
   }
 }
 // ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE, è la cura di un difetto misurato: al CAMBIO
