@@ -6141,30 +6141,116 @@ sui **contenitori** invece che sui figli.
   520 cinque, zero alle altre larghezze. Dopo: **zero dappertutto**, e a 1280 quella card sta
   di nuovo tutta in riga.
 
-#### 📏 Su MOBILE la riga si allunga nel PADDING della card, non nel gap
+#### 📏 Dove la colonna NON c'è, la riga si allunga nel PADDING della card
 
 Dalla `2.54`, per sua richiesta (*concedi tutti i pixel che si possono lasciare in più senza
-arrivare appiccicati al bordo del riquadro*). Sotto i 480px la terza colonna non esiste
-(l'origine scende sotto il contenuto), quindi il gap della griglia non c'è: lo spazio da
-recuperare sono i **`0.8rem` di fianco destro** che la card lascia fra il contenuto e la
-cornice, meno il respiro di `--name-aria` (**4px**, il minimo che ha chiesto di lasciare).
-Il guadagno netto è **8,8px**, e la riga passa da 256,03 a **264,83** a 360px.
+arrivare appiccicati al bordo del riquadro*). Dove la terza colonna non esiste (l'origine
+scende sotto il contenuto) il gap della griglia non c'è: lo spazio da recuperare è il **fianco
+destro** che la card lascia fra il contenuto e la cornice, meno il respiro di `--name-aria`
+(**4px**, il minimo che ha chiesto di lasciare). A 360px la riga passa da 256,03 a **264,83**.
+
+⚠️⚠️ **DALLA `2.55` VALE IN TUTTE LE FASCE SENZA COLONNA E NON NEL SOLO TELAIO MOBILE**, perché
+la colonna adesso cade sotto i 769 (voce qui sotto): le note che dicono 'sotto i 480px' descrivono
+lo stato fino alla `2.54`.
+- ⚠️⚠️ **IL PADDING DESTRO È UNA VARIABILE (`--card-pad-r`) E NON IL NUMERO SCRITTO A MANO**, ed
+  è la riga che rende possibile la cosa: le due fasce ne hanno due diversi (**1.2rem** di base,
+  **0.8rem** sotto i 480), quindi la formula con `0.8rem` dentro sfondava di 6,4px appena la si
+  applicava sopra quella soglia, e il respiro non sarebbe più stato quello dichiarato.
 
 - ⚠️ **Il respiro non è cortesia**: la card ha `overflow:hidden`, quindi senza di lui il testo
-  toccherebbe la cornice **e** verrebbe tagliato. Misurato dopo: il respiro è esattamente 4,00
-  su tutte le card a 430, 390, 360 e 320, e nessuna riga sfonda.
+  toccherebbe la cornice **e** verrebbe tagliato. Misurato: il respiro è esattamente **4,00** su
+  tutte le card a ogni larghezza sotto i 769, e nessuna riga sfonda.
 - ⚠️ **Si allunga la SOLA riga del nome**: le righe sotto (vero nome, alias, titoli, fonte,
-  citazione) restano larghe quanto la cella, e il banco lo verifica contandole. In modalità
-  riordino la riga resta **32,8px** dentro il bordo del contenuto, lontana dalla maniglia.
-- ⚠️⚠️ **A `Sparviero` NON BASTA, ed è il caso che ha aperto il giro**: a 360px la riga offre
-  264,83, l'italiano ne chiede **235,70** (avanzano 29,13) e l'inglese **271,39**, quindi ne
-  mancano **6,56**. Finché `Sparrowhawk` non ci sta, il rimedio di `freeNames` manda i badge a
-  capo in tutte e due le lingue e la card resta alta 53,91 invece di 29,77.
-  - ⚠️⚠️ **I DUE PASSI FRA I PEZZI VANNO CONTATI, e per due volte non l'ho fatto**: `--nm-gap`
-    vale **6,35px** al corpo del nome mobile (19,84px), quindi fra nome, tipo e badge se ne
-    vanno 12,7. Senza di loro il conto dava 258,69 e diceva 'mancano 2,66px', cioè una cifra
-    che la riga allargata avrebbe coperto: **il numero sbagliato ha motivato una richiesta**.
-    Chi misura una riga sommi sempre i gap, che il `gap` del flex non fa vedere nei singoli box.
+  citazione) restano larghe quanto la cella, e il banco lo verifica contandole.
+- ⚠️⚠️ **I DUE PASSI FRA I PEZZI VANNO CONTATI, e per due volte non l'ho fatto**: `--nm-gap`
+  vale **6,35px** al corpo del nome mobile (19,84px), quindi fra nome, tipo e badge se ne vanno
+  12,7. Senza di loro il conto dava 258,69 e diceva 'mancano 2,66px', cioè una cifra che la riga
+  allargata avrebbe coperto: **il numero sbagliato ha motivato una richiesta dell'utente**. Chi
+  misura una riga sommi sempre i gap, che il `gap` del flex non fa vedere nei singoli box.
+
+##### 🗺️ La COLONNA dell'origine cade sotto i 769, e prima cadeva sotto i 480
+
+Scelta dell'utente, 2026-09-19 (`2.55`), fra due vie misurate. La sua intuizione era che *la
+riga di testo che si allunga fino al filetto vada applicata ogni volta che il riquadro origine
+è a destra*: quella regola **c'era già** a tutte le larghezze, e la misura ha mostrato che il
+difetto stava altrove.
+
+⚠️⚠️ **LA CAUSA È CHE `--orig-col` È LARGA FISSA**, 105,59px a ogni larghezza: su una card da
+708px è il 15%, su una da 488 il **21,6%**. Perciò il punto peggiore non era il telefono più
+stretto ma il **tablet in verticale**, e il dato lo dice:
+
+| larghezza | riga del nome, prima | note |
+|---|---|---|
+| 1280 | 453,22 | col filetto |
+| **520** | **271,63** | la più stretta di tutte |
+| 430 | 334,83 | senza colonna, telaio mobile |
+| 390 | 294,83 | senza colonna |
+
+- ⚠️ **Il recupero dal gap non poteva bastare, ed è aritmetica**: la riga si allunga di
+  `--card-gap` meno `--name-rientro`, e il gap è `clamp(0.8rem,3vw,2rem)`, cioè 32px a 1280 e
+  **15,6 a 520**. Il guadagno scende con la larghezza proprio dove servirebbe salire: 20px a
+  1280, **3,59 a 520**, 2,42 a 481.
+- **Che cosa cambia con la soglia a 768**: a 520 la riga passa da 271,63 a **404,41**, e le
+  origini che vanno a capo passano da 6 a **zero**, perché sotto il contenuto l'origine ha tutta
+  la larghezza.
+- ⚠️⚠️ **LA VIA SCARTATA È LA COLONNA ELASTICA** (`clamp(4.6rem,13vw,6.6rem)` al posto della
+  larghezza fissa), e va saputa perché è quella che verrebbe in mente: recuperava 32px a 520 e
+  risolveva quella larghezza, ma **non i 481** (ne mancavano ancora 17,12) e mandava `Terre di
+  Kargad` su **tre** righe sotto i 560. ⚠️ Non violava la ragione della colonna fissa (il
+  filetto resta incolonnato fra le card, perché il valore dipende dal viewport e non dal
+  contenuto): a bocciarla è stata la misura, non il principio.
+- ⚠️⚠️ **LA SOGLIA ERA SCRITTA IN DUE POSTI, E SPOSTARNE UNO SOLO APRE UN BUCO**: il **rientro
+  delle maniglie** di riordino vive in una media query sua, e lasciandola a 480 le card fra i
+  481 e i 768 sarebbero rimaste `has-orig` **senza** la colonna, cioè escluse dal rientro, con
+  la maniglia che cade sul testo. Trovato dal banco, non rileggendo il codice.
+
+##### 🔠 Sotto i 375 il corpo del nome scende di UN PIXEL
+
+Proposta dell'utente, 2026-09-19 (*che succede se diminuisci il corpo del font di mezzo punto
+solo per la fascia minima?*), misurata e applicata con un punto intero.
+
+⚠️⚠️ **UN PIXEL DI CORPO NE TOGLIE TREDICI ALLA RIGA**, ed è la ragione per cui la leva funziona
+dove le altre no: tipi, badge e passi sono tutti in **em**, quindi si stringono insieme al nome.
+Misurato a 360px sulla riga inglese di `Sparviero`, il richiesto passa da **271,39 a 258,39**.
+
+- ⚠️⚠️ **IL MEZZO PUNTO CHIESTO NON BASTAVA PER DUE CENTESIMI**: 19,34px lascia la riga a 264,85
+  contro i 264,83 disponibili. Un margine così è quello che un font di sistema ingrandito si
+  mangia, e il punto intero ne lascia **6,44**.
+- **Il pavimento del clamp è la sola leva**, perché da 360 in giù il corpo non scala da sé:
+  `3.7vw` vale 13,32px a 360, cioè meno del minimo, quindi il clamp è **sul pavimento** per tutta
+  la fascia. Da qui la variabile `--nm-min`.
+- ⚠️⚠️ **I DUE CLAMP SI MUOVONO INSIEME**, e il secondo è quello del podio (`.rank-item.vis-top
+  .rank-name`): con la sola variabile sul primo, le prime tre card resterebbero al corpo pieno e
+  la fascia stretta mostrerebbe due tipografie. È l'avviso già scritto in § 'La resa tipografica
+  delle due righe', che qui ha fatto il suo lavoro. ⚠️ Il terzo (`.ctrl-cardleg .rank-name`) è un
+  valore fisso e **non** si tocca: la card di legenda del Pannello non deve rimpicciolirsi.
+- ⚠️ **La soglia è 374 e non 480**, perché la riduzione serve solo dove manca lo spazio: a 375px
+  la riga inglese avanza già di 8,44, e ritoccare il corpo dove il testo ci sta sarebbe un prezzo
+  pagato per niente. A **320** non basta comunque (mancano 33,56), e là i badge vanno a capo per
+  scelta dichiarata dell'utente (*posso accettare che il testo vada a capo sui dispositivi più
+  piccoli*).
+- ⚠️ **Le altre tre leve sono state misurate e scartate**, e i numeri dicono perché: i passi
+  interni da 6,35 a 3,5 lasciavano mancare **0,86**; il respiro da 4 a 2px ne lasciava mancare
+  **4,56** col testo quasi a filo; la colonna del numero più stretta di 10px bastava ma portava i
+  numeri tagliati da 39 a **117**.
+
+##### ✅ Che cosa si vede dopo il giro, e il residuo dichiarato
+
+**I badge di `Sparviero` restano in riga da 1440px fino a 360px, nelle due lingue**, che era la
+richiesta da cui il giro è partito. A 320 vanno a capo, e l'utente lo ha accettato in anticipo.
+
+- ⚠️⚠️ **E IL JITTER AL CAMBIO LINGUA MIGLIORA, contro l'impressione del banco**: a 360 la lista
+  si muoveva di **33px** (era `Libellula`) e adesso di **2**; a 374 passa da 1 card a **zero**. Il
+  rilievo grezzo diceva il contrario, e a raddrizzarlo è stato il confronto **con lo stesso metro
+  sullo stato di prima**, preso con un `git stash`.
+- ⚠️ **Il residuo è `Donna di Kemay`**, 1-2px fra le due lingue, e **preesiste** a questo giro
+  (ballava già a 375 e a 374 nello stato della `2.54`): il suo nome d'uso è una perifrasi di
+  lunghezza molto diversa nelle due lingue, e le quattro prove di `freeNames` non colgono il caso.
+  A 320 lo stesso capita a `Mago Rosso di Ark` per 1px. ⚠️ Non è stato inseguito in questo giro,
+  per non allargarlo: è una voce aperta.
+- **Misure del giro**: **38 controlli su 38** su diciannove larghezze da 1440 a 320 nelle due
+  lingue (badge in riga, respiro, numero di colonne, scroll, numero di card), più il rientro delle
+  maniglie su nove larghezze e le origini a capo su dieci.
 
 ⚠️⚠️ **E LA RIGA DEL NOME SI ALLUNGA DENTRO IL GAP DELLA GRIGLIA**, fino a `--name-rientro`
 (0.75rem) dal **filetto** dell'origine, che è dove il suo mockup ha messo la seconda linea: a
@@ -6175,8 +6261,9 @@ Il guadagno netto è **8,8px**, e la riga passa da 256,03 a **264,83** a 360px.
   dell'origine è centrato in verticale, quindi su una card bassa cadrebbe alla stessa altezza
   del nome. Chi porta il rientro a zero se lo trova addosso.
 - **Il gap è diventato una variabile** (`--card-gap`), perché ora lo conoscono in due, la
-  griglia e questa larghezza. Sotto i 480px la terza colonna non esiste e la riga torna larga
-  quanto la cella.
+  griglia e questa larghezza. ⚠️ **Dalla `2.55` la regola vive in una media query `min-width:769`**,
+  perché sotto quella soglia la colonna non c'è e il riferimento diventa la cornice: prima era
+  globale e bastava, quando la colonna cadeva a 480 insieme al telaio mobile.
 
 ⚠️⚠️ **IL RIENTRO DELLE MANIGLIE NON VALE PIÙ SULLE CARD CON LA COLONNA, ed è la ragione per
 cui il problema si vedeva soprattutto in modalità riordino**: `#rank-list.has-handles
@@ -6185,8 +6272,10 @@ cui il problema si vedeva soprattutto in modalità riordino**: `#rank-list.has-h
 colonna dell'origine e non sfiora il contenuto (misurato a 1280: maniglia da 956,8 a 982,
 contenuto fino a 836,22). Erano **41,6px** tolti al blocco dei nomi per un ostacolo che non
 c'era.
-- ⚠️ **Sotto i 480px serve ancora a tutte**, perché là la terza colonna non esiste e il
-  contenuto arriva quasi al bordo: la media query lo rimette.
+- ⚠️ **Sotto i 769px serve ancora a tutte**, perché là la terza colonna non esiste e il
+  contenuto arriva quasi al bordo: la media query lo rimette. ⚠️ **La soglia era 480 fino alla
+  `2.54`** e si è mossa insieme a quella della colonna: sono due scritture della stessa cosa, e
+  spostarne una sola lascia le card della fascia nuova senza rientro, con la maniglia sul testo.
 - ⚠️ **Oggi TUTTE le card portano `has-orig`**, perché il flag `Spazio riservato` della Console
   tiene la colonna anche sulle voci senza luogo (§ 'Segno o parola nella colonna origine, e lo
   decide la CONSOLE'): la regola per le card senza colonna è la rete per quando quel flag è
