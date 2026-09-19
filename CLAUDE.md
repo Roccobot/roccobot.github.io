@@ -486,6 +486,19 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   codice): fuori è il **verbo** che racconta l'evento, e con lui la costruzione presentativa
   *sono morte altre due regole*, che ha la forma di un titolo di cronaca.
 
+- ⚠️⚠️ **E UN NOME INVENTATO PER IL CODICE NON SI USA IN CHAT** (sua segnalazione, 2026-09-19,
+  a voce alta: *che cazzo significa 'la faccia piena'?*). Là erano le tre versioni di una stessa
+  etichetta, che nel codice si distinguono per classe CSS (`.leg-lbl-d`, `-m`, `-s`) e che in
+  chat avevo battezzato **faccia piena**, **intermedia** e **ripiego**, senza dire mai che cosa
+  volessero dire: una metafora sua che vive nella testa di chi scrive e in nessun'altra.
+  - **Come si dice invece**: con la cosa che l'utente vede, cioè **versione desktop**,
+    **versione mobile**, **versione corta**. Un nome di comodo si può coniare, ma va **definito
+    la prima volta che compare** e poi usato sempre uguale, oppure non si conia.
+  - ⚠️ **Il travaso viene dal codice, e per questo è insidioso**: dentro un `CLAUDE.md` o un
+    commento quel nome è utile, perché là il lettore ha le classi davanti. Chi copia la frase
+    da un commento alla chat porta con sé un vocabolario che al di qua non esiste, ed è la
+    stessa dinamica della terza persona (voce sopra).
+
 - ⚠️⚠️ **E FUORI `NIENTE DA FARE`, CHE È LA FORMA CADUTA CINQUE VOLTE**, più di ogni altra:
   chiudendo o aprendo un resoconto di routine (le notifiche di GitHub sono il punto esatto) si
   dice **il fatto** e non si scrive nessuna formula. ⚠️ **Il divieto è sul SENSO e non su
