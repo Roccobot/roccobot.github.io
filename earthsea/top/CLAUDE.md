@@ -6330,6 +6330,24 @@ promette è che la **card** non cambi altezza, così niente di quello che viene 
   dove la card non ha sfondo (§ 'L'ANTI-JITTER, e perché una misura sola diceva zero mentre
   l'occhio vedeva muoversi').
 
+⚠️⚠️ **LA RISERVA NON FA SPARIRE LA DIFFERENZA FRA LE DUE LINGUE: LA SPOSTA DOVE NON HA UN
+CONTORNO CHE LA MOSTRI.** È la formulazione che risponde alla domanda naturale (*se la
+contromisura funziona, perché ci sono ancora cose che si allungano?*, utente, 2026-09-19), e i
+quattro pezzi hanno ruoli diversi. Misurati su `Skiorh` a 390px:
+
+| il pezzo | italiano | inglese | che mestiere fa |
+|---|---|---|---|
+| la **card** | 279,5 | 279,5 | è quello che conta: se è fermo, la pagina non scorre |
+| la **cella** `rc-slot` | 155,3 | 155,3 | porta la riserva, e **non si vede**: sfondo trasparente, bordo 0 |
+| il **riquadro** `rank-citaz` | 146,5 | 103,8 | si vede (sfondo teal, bordo 1px) e **deve** seguire il suo testo |
+| il **vuoto** sotto il riquadro | 8,8 | 51,5 | assorbe la differenza, dentro la cella invisibile |
+
+- ⚠️ **Il riquadro colorato deve accorciarsi**, e chi lo bloccasse all'altezza della cella
+  rifarebbe il difetto della `0.89`: in inglese mostrerebbe **51,5px** di vuoto dentro la cornice.
+- **Il criterio che ne resta, per qualunque riserva futura**: la si mette su un contenitore
+  **senza sfondo e senza bordo**, e si lascia che l'elemento **visibile** cambi dimensione. Se
+  l'elemento che riserva è anche quello che si vede, il vuoto si vede con lui.
+
 - ⚠️ **Gli elementi nascosti si escludono risalendo gli ANTENATI fino al body**: una faccia di
   riserva è visibile per conto suo, e a nasconderla è il contenitore.
 - ⚠️ **E le righe della legenda si confrontano scartando `.leg-measure`**: il Pannello ne porta
