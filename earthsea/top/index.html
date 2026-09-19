@@ -626,6 +626,23 @@ html { --card-pad-r:1.2rem; }
    non c'era nessun gruppo da distanziare. La media query dei 480px dichiara il proprio
    valore dopo di questa e la scavalca. */
 .rank-name.nm-wrap + .rank-vero { margin-top:0.2em; }
+/* ⚠️⚠️ ARIA FRA IL NOME D'USO E IL VERO NOME quando le icone sono IN RIGA (2.57,
+   istruzione dell'utente sugli screenshot di Pioppo|ERISEN e Giaggiolo|ANIEB: *il nome vero
+   sta troppo a ridosso del nome comune*). Fino alla 2.56 questo caso non aveva margine, e il
+   commento della 2.36 dichiarava di non toccarlo.
+   ⚠️⚠️ LO STACCO AVEVA DUE SOLI VALORI, e la differenza è il DISCENDENTE del nome d'uso: il
+   vero nome è in Cinzel maiuscolo, quindi il suo inchiostro comincia alla cap height, mentre
+   `Pioppo` e `Giaggiolo` scendono sotto la linea di base. Misurato a 1280: 6,13px con i
+   discendenti e 15,13 senza, cioè nove pixel di differenza su card identiche. Chi guarda una
+   card sola non vede la bimodalità e crede a un valore medio che non esiste.
+   ⚠️ Il numero è UNIFORME per richiesta dell'utente (*aumentando lo spazio uniformemente*),
+   quindi guadagnano anche le card senza discendenti, che erano già larghe: su quelle lo stacco
+   di sopra arriva a pareggiare quello di sotto. È il prezzo dichiarato di non avere un valore
+   per famiglia di nome, che sarebbe un dato in più da tenere allineato al testo.
+   ⚠️ Il caso A CAPO non si tocca: là il valore della regola qui sopra pareggia il vuoto che il
+   gruppo di icone ha sopra di sé, e aggiungerne dell'altro romperebbe quel pareggio. La sua
+   specificità è maggiore, quindi lo fa da sé. */
+.rank-name + .rank-vero { margin-top:0.18em; }
 /* Compattazione mirata della riga nome (.name-tight, applicata da
    tightenNames): recupera ~3% di larghezza stringendo SOLO le spaziature
    (mai il corpo del font), e solo sulle card dove questo fa guadagnare una
@@ -3588,7 +3605,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.56</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.57</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>

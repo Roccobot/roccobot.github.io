@@ -6108,9 +6108,10 @@ e `GED`, contro i **9,42** che le separavano dal nome sopra.
   adiacente** (`.rank-name.nm-wrap + .rank-vero`): le `.name-vero` quella riga non ce l'hanno,
   e sotto le loro icone il vuoto era già **10,26px**. Una classe in più per distinguerle
   sarebbe stata un secondo dato da tenere allineato al markup.
-- ⚠️ **Il caso IN RIGA non si tocca, ed è misurato**: là fra nome e vero nome ci sono
-  **3,95px**, che è il ritmo di casa fra la prima e la seconda riga della card, e allargarlo
-  avrebbe allungato tutte e 158 le card per un difetto che si vede su nove.
+- ⚠️⚠️ **IL CASO IN RIGA ADESSO SI TOCCA, dalla `2.57`, e questa riga diceva il contrario**:
+  fino a quel giorno non aveva margine, con la motivazione che allargarlo avrebbe allungato
+  tutte le card per un difetto che si vedeva su nove. È l'utente a rovesciarla, e la sezione
+  qui sotto porta il valore e le misure.
 - ⚠️⚠️ **SU 'I GRANDI DI ARDA' IL DIFETTO NON ESISTE**, e chi porta di là questo rimedio
   copierebbe una cura senza malattia: quel sito non ha la riga del vero nome, la coda del suo
   gruppo icone è **positiva** (+6,49px) e sotto c'è il sottotitolo, lontano. Il difetto nasce
@@ -6121,6 +6122,61 @@ e `GED`, contro i **9,42** che le separavano dal nome sopra.
   - ⚠️ **Su mobile il tasto della lingua NON c'è** (`FEATURES.langSwitchMobile` è spento),
     quindi un banco che lo cerca va in timeout: si chiama `setLang` e si **verifica** che la
     lingua sia cambiata, o 'niente si è mosso' resta vero anche con la pagina ferma.
+
+#### 🌬️ E anche IN RIGA il vero nome vuole aria
+
+Dalla `2.57`, istruzione dell'utente, 2026-09-19, con due screenshot (`Pioppo | ERISEN` su desktop e
+`Giaggiolo | ANIEB` su mobile): *il nome vero sta troppo a ridosso del nome comune. Correggi in
+tutte le viste e le fasce aumentando lo spazio uniformemente.* Il valore è **`0.18em`** del
+corpo del vero nome, su `.rank-name + .rank-vero`, cioè 4,09px su desktop e 2,88 sotto i 480.
+
+⚠️⚠️ **LO STACCO AVEVA DUE SOLI VALORI, NON UNA DISTRIBUZIONE, E LA DIFFERENZA È IL DISCENDENTE
+DEL NOME**: il vero nome è in Cinzel **maiuscolo**, quindi il suo inchiostro comincia alla cap
+height, mentre un nome d'uso come `Pioppo` o `Giaggiolo` scende sotto la linea di base. Misurato
+a 1280 sulle 26 card a due righe: **6,13px** con i discendenti e **15,13** senza, cioè nove
+pixel di differenza su card fatte uguali.
+- ⚠️ **È la ragione per cui i due esempi che l'utente ha mandato hanno tutti e due un
+  discendente**, e non è un caso: il difetto si vede **solo** su quella metà del gruppo. Chi
+  guarda una card sola non vede la bimodalità e crede a un valore medio che non esiste.
+- **Il riferimento che dice quanto era stretto è lo stacco di SOTTO**, cioè fra il vero nome e
+  la riga degli alias o dell'opera: **17,33-21,92px** su desktop e 15-20,59 su mobile. Il vero
+  nome stava dunque tre volte più vicino alla riga sopra che a quella sotto.
+
+⚠️⚠️ **IL PREZZO DELL'UNIFORMITÀ È DICHIARATO, e l'ha scelto l'utente**: guadagnano anche le
+card senza discendenti, che erano già larghe, e su quelle lo stacco di sopra arriva a pareggiare
+quello di sotto (19,2 contro 17,33-21,92 a 1280). Un valore per famiglia di nome curerebbe il
+solo gruppo stretto, ma sarebbe un dato in più da tenere allineato al testo, voce per voce.
+- ⚠️ **La sua motivazione regge, e va saputa**: *non può causare jitter essendo identica nelle
+  due lingue*. È vero per costruzione, perché è una proprietà CSS e non dipende dal contenuto,
+  e la misura lo conferma su undici larghezze.
+- **Quanto costa in altezza**: le card a due righe sono **26 su 223**, quindi la lista cresce di
+  **106px** su desktop e 66-75 su mobile, cioè meno di mezza card.
+
+⚠️ **Il caso A CAPO non è stato toccato**, e non è una dimenticanza: là il margine della voce
+qui sopra pareggia il vuoto che il gruppo di icone ha **sopra** di sé, e aggiungerne dell'altro
+romperebbe quel pareggio spostando le icone verso il nome. La regola `nm-wrap` ha specificità
+maggiore, quindi lo fa da sé senza una guardia.
+
+⚠️ **La fascia 481-768 resta la più stretta**, ed è dove guardare se un domani il difetto
+tornasse: là il vero nome ha già il corpo mobile (16px) mentre il nome d'uso ha ancora quello
+grande, quindi lo stacco minimo è **7,88px** contro i 10,2 del desktop e i 10,83 dei 390.
+
+- ⚠️ **Tocca anche la card di legenda del Pannello**, che usa le classi vere, ed è corretto che
+  la segua: il Pannello cresce di **2,64px** in altezza (514,64 -> 517,28 su desktop), la
+  larghezza resta ferma a 383,38 e le due lingue restano identiche. A 320px non cresce affatto,
+  perché la sheet è già al suo tetto.
+- **Misure del giro**: **88 controlli su 88** su undici larghezze da 1440 a 320, coi font veri.
+  Zero card cambiano altezza o posizione al cambio lingua, nessuna riga sfonda la card, e
+  `freeNames` decide su ogni card esattamente come prima.
+  - ⚠️ **Il metro è l'INCHIOSTRO e va costruito, perché nessuna proprietà CSS lo dà**: la
+    baseline si ricava dal rettangolo di riga del `Range` più le metriche del canvas
+    (`fontBoundingBoxAscent/Descent` per centrarla nell'interlinea, `actualBoundingBox*` per
+    l'estensione vera), e sul vero nome il testo va messo in **maiuscolo** prima di misurarlo,
+    o il canvas misura le minuscole del dato mentre la pagina rende le maiuscole.
+  - ⚠️ **Misurare le SCATOLE dice un'altra cosa e nasconde il difetto**: fra la riga del nome e
+    quella del vero nome il vuoto di box è **3,19px identico su tutte le card e a ogni
+    larghezza**, perché i discendenti vivono dentro l'interlinea. Con quel numero il difetto
+    dell'utente non esiste.
 
 ### 📐 La riga del nome arriva al FILETTO, e i badge non si spezzano mai
 
