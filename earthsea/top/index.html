@@ -506,9 +506,30 @@ html[data-theme="light"] .apo-title { color:var(--gold-deep); }
    una compensazione ottica non dichiarata non si distingue da una svista: se un domani
    si vuole alleggerire il nome sul fondo scuro (dove il chiaro su scuro 'fiorisce'), si
    fa con una nota che lo dica e con l'utente d'accordo. */
+/* ⚠️⚠️ IL PAVIMENTO DEL CLAMP È UNA VARIABILE, E SOTTO I 375px VALE UN PIXEL IN MENO
+   (2.55, proposta dell'utente: *che succede se diminuisci il corpo del font di mezzo punto
+   solo per la fascia minima?*). Da 360px in giù il clamp è **sul pavimento** (3.7vw vale
+   13,32px a 360, cioè meno del minimo), quindi il corpo là non scala da sé ed è quel minimo
+   la sola leva.
+   ⚠️⚠️ UN PIXEL DI CORPO NE TOGLIE TREDICI ALLA RIGA, ed è la ragione per cui la leva
+   funziona: tipi, badge e passi sono tutti in **em**, quindi si stringono insieme al nome.
+   Misurato a 360px sulla riga inglese di `Sparviero`: il richiesto passa da 271,39 a 258,39.
+   ⚠️ IL MEZZO PUNTO CHIESTO NON BASTAVA PER DUE CENTESIMI (19,34px lascia la riga a 264,85
+   contro i 264,83 disponibili), e un margine così è quello che un font di sistema ingrandito
+   si mangia: da qui il punto intero, che ne lascia 6,44.
+   ⚠️ La soglia è 374 e non 480 perché la riduzione serve solo dove manca lo spazio: a 375px
+   la riga inglese avanza già, e ritoccare il corpo dove il testo ci sta sarebbe un prezzo
+   pagato per niente. A 320 non basta comunque, e là i badge vanno a capo per scelta
+   dichiarata dell'utente (*posso accettare che il testo vada a capo sui dispositivi più
+   piccoli*).
+   ⚠️⚠️ I DUE CLAMP SI MUOVONO INSIEME, e il secondo è quello del podio
+   (`.rank-item.vis-top .rank-name`): con la sola variabile qui, le prime tre card
+   resterebbero al corpo pieno e la fascia stretta mostrerebbe due tipografie. */
+html { --nm-min:1.24rem; }
+@media (max-width:374px) { html { --nm-min:calc(1.24rem - 1px); } }
 .rank-name {
   font-family:'EB Garamond',serif; font-weight:700;
-  font-size:clamp(1.24rem,3.7vw,1.82rem);
+  font-size:clamp(var(--nm-min),3.7vw,1.82rem);
   color:var(--name); letter-spacing:0.01em;
   transition:color 0.35s; line-height:1.2;
   display: inline-flex;
@@ -531,11 +552,23 @@ html[data-theme="light"] .apo-title { color:var(--gold-deep); }
    la distanza, e per questo è un valore e non zero. */
 html { --name-rientro:0.75rem; }
 /* ⚠️ Il respiro che la riga del nome lascia fra sé e la cornice quando si allunga nel
-   padding della card (telaio mobile, vedi la media query dei 480px). Vive qui accanto al
-   rientro del desktop perché i due numeri si leggono insieme: là è la distanza dal filetto
-   dell'origine, qui dal bordo del riquadro. */
+   padding della card (cioè dovunque la colonna dell'origine non ci sia). Vive qui accanto
+   al rientro del desktop perché i due numeri si leggono insieme: là è la distanza dal
+   filetto dell'origine, qui dal bordo del riquadro. */
 html { --name-aria:4px; }
-.rank-item.has-orig .rank-name { width:calc(100% + var(--card-gap) - var(--name-rientro)); }
+/* ⚠️⚠️ DOVE LA COLONNA DELL'ORIGINE NON C'È, LA RIGA SI ALLUNGA NEL PADDING DESTRO DELLA
+   CARD, e dalla 2.55 vale in TUTTE le fasce senza colonna, non più nel solo telaio mobile:
+   la colonna adesso cade sotto i 769px (vedi la media query di `.rank-orig`), quindi la
+   fascia dei tablet in verticale ha lo stesso spazio del telefono.
+   ⚠️ Il padding destro è una VARIABILE e non il numero scritto a mano, perché le due fasce
+   ne hanno due diversi (1.2rem di base, 0.8rem sotto i 480): con la cifra fissa la riga
+   sfondava di 6,4px in una delle due, e il respiro non sarebbe più stato quello dichiarato. */
+html { --card-pad-r:1.2rem; }
+.rank-name { width:calc(100% + var(--card-pad-r) - var(--name-aria)); }
+/* Sopra i 768 la colonna c'è, e allora il riferimento è il filetto e non la cornice. */
+@media (min-width:769px) {
+  .rank-item.has-orig .rank-name { width:calc(100% + var(--card-gap) - var(--name-rientro)); }
+}
 /* Il nome NON è cliccabile a Terramare (decisione dell'utente, 2026-08-21):
    niente cursore a manina e niente colore al passaggio, che prometterebbero
    un'azione che non c'è. */
@@ -817,10 +850,20 @@ html[data-theme="light"] .rank-orig { border-left-color:rgba(22,36,44,0.16); }
    l'utente lo ha proposto. `currentColor` lo lega alla tinta dell'etichetta. */
 .ro-pin { width:1.05em; height:1.05em; display:block; opacity:0.8; }
 .ro-pin path { fill:rgba(var(--cctxt,var(--ccrgb,144,152,168)),1); }
-@media (max-width:480px) {
-  /* Sotto i 480px la terza colonna toglierebbe troppo al blocco dei nomi: l'origine
+@media (max-width:768px) {
+  /* Sotto i 769px la terza colonna toglierebbe troppo al blocco dei nomi: l'origine
      scende sotto il contenuto e torna in linea, senza filetto. La posizione va detta
-     a mano (`grid-column`), o la griglia a due colonne la metterebbe sotto il numero. */
+     a mano (`grid-column`), o la griglia a due colonne la metterebbe sotto il numero.
+     ⚠️⚠️ LA SOGLIA ERA 480 FINO ALLA 2.54, e l'ha spostata una misura: quella colonna è
+     LARGA FISSA (`--orig-col`, 105,59px a ogni larghezza), quindi più la card è stretta
+     più pesa, e fra i 481 e i 768 si prendeva fino al 21,6% della card contro il 15% del
+     desktop. Il punto peggiore non era il telefono più stretto ma il TABLET IN VERTICALE:
+     a 520px la riga del nome misurava 271,63px, cioè meno che a 430 (334,83), e i badge di
+     `Sparviero` andavano a capo dove a 390 stavano in riga.
+     ⚠️ La via scartata è una colonna ELASTICA (un clamp al posto della larghezza fissa):
+     recuperava 32px a 520 e risolveva quella larghezza, ma non i 481 (ne mancavano ancora
+     17,12), e in più mandava `Terre di Kargad` su tre righe sotto i 560. Scelta dell'utente
+     fra le due (2026-09-19). */
   .rank-item.has-orig { grid-template-columns:clamp(54px,10vw,76px) 1fr; }
   .rank-orig {
     grid-column:2; grid-row:2; flex-direction:row; align-items:baseline;
@@ -958,7 +1001,7 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
   transform:translateY(0.67px);
 }
 .rank-item.vis-top { padding:1.6rem 1.2rem 1.6rem 0.5rem; }
-.rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(1.24rem,3.9vw,1.82rem); }
+.rank-item.vis-top .rank-name { color:var(--name); font-size:clamp(var(--nm-min),3.9vw,1.82rem); }
 /* ⚠️ 0.62em e non 0.72em dal 2026-08-21: l'etichetta è ancorata in em al nome, e
    quando il nome d'uso è cresciuto (1.6 -> 1.82rem) è cresciuta con lui senza che
    nessuno l'avesse chiesto, arrivando quasi al corpo del nome. Il valore nuovo la
@@ -2740,6 +2783,9 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   header { padding:3rem 1rem 2rem; }
   .scroll { margin:1.2rem auto 2rem; padding:0 0.6rem; }
   .rank-item { padding:1rem 0.8rem 1rem 0.3rem; gap:0.7rem; }
+  /* ⚠️ Il padding destro cambia qui, quindi la variabile che lo dichiara lo segue: la
+     larghezza della riga del nome la legge, e con la cifra di base sfonderebbe di 6,4px. */
+  html { --card-pad-r:0.8rem; }
   /* Riga nome (mobile): FLUSSO INLINE, non flex. Regola: le etichette non
      vanno mai a capo forzato; proseguono sulla stessa riga di testo dopo
      l'ultima parola del nome (se il nome occupa due righe, l'etichetta segue
@@ -2771,21 +2817,10 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
   .rank-name > .rank-name-text { order:0; }
   .rank-name > .rank-tipi { order:1; }
   .rank-name > .rank-flags { order:2; }
-  /* ⚠️⚠️ QUI LA RIGA DEL NOME SI ALLUNGA NEL PADDING DELLA CARD, e non nel gap della griglia
-     come sul desktop: sotto i 480px la terza colonna non esiste (l'origine scende sotto il
-     contenuto), quindi lo spazio da recuperare è l'altro, cioè i `0.8rem` di fianco destro
-     che la card lascia fra il contenuto e la cornice.
-     ⚠️ Serve a tenere i badge IN RIGA dove ci stanno per un soffio: misurato a 360px, la riga
-     inglese di `Sparviero` (`Sparrowhawk` + tipo + badge) chiedeva 258,69px e ne aveva 256,03,
-     cioè ne mancavano 2,66, e il gruppo andava a capo in tutte e due le lingue (richiesta
-     dell'utente: *i badge dovrebbero stare tranquillamente dopo l'etichetta*).
-     ⚠️⚠️ NON si arriva a filo della cornice: `--name-aria` è il respiro che resta, e senza di
-     lui il testo toccherebbe il bordo (la card ha `overflow:hidden`, quindi verrebbe anche
-     tagliato). 4px è il minimo che l'utente ha chiesto di lasciare.
-     ⚠️ Allarga la SOLA riga del nome: le righe sotto (vero nome, alias, titoli, fonte, la
-     citazione) restano larghe quanto la cella, quindi nessun altro elemento si sposta. */
-  .rank-name { width:calc(100% + 0.8rem - var(--name-aria)); }
-  .rank-item.has-orig .rank-name { width:calc(100% + 0.8rem - var(--name-aria)); }
+  /* ⚠️ La larghezza della riga del nome NON si dichiara più qui: dalla 2.55 vive nel blocco
+     base insieme a `--name-aria`, perché vale dovunque la colonna dell'origine non ci sia e
+     non nel solo telaio mobile. Qui resta il solo padding destro, che è la variabile che
+     quella formula legge. */
   /* Risalita ottica del blocco icone (solo mobile): il nome in Cinzel è tutto
      maiuscolo e siede in alto nella line-box, perciò le icone centrate sulla
      riga cadevano ~0.07em troppo in basso rispetto alle maiuscole. Si sposta in
@@ -2947,10 +2982,14 @@ html[data-theme="light"] .admin-search-box { background:#ffffff; }
    982, contenuto fino a 836,22, filetto a 868,22). Là quel padding toglieva 41,6px al
    blocco dei nomi per un ostacolo che non c'era, ed è il motivo per cui il problema di
    spazio si vedeva soprattutto in modalità riordino.
-   ⚠️ Sotto i 480px la terza colonna non esiste e il contenuto arriva quasi al bordo:
-   là serve a tutte, e la media query lo rimette. */
+   ⚠️⚠️ Sotto i 769px la terza colonna non esiste e il contenuto arriva quasi al bordo:
+   là serve a tutte, e la media query lo rimette. LA SOGLIA È 768 E NON PIÙ 480 dalla 2.55,
+   perché la colonna adesso cade là: lasciandola a 480 le card fra i 481 e i 768 sarebbero
+   rimaste `has-orig` **senza** la colonna, cioè escluse dal rientro con la maniglia che
+   cade sul testo. È il difetto che una soglia scritta due volte produce quando se ne
+   sposta una sola. */
 #rank-list.has-handles .rank-item:not(.has-orig) .rank-content { padding-right:2.6rem; }
-@media (max-width:480px) {
+@media (max-width:768px) {
   #rank-list.has-handles .rank-content { padding-right:2.6rem; }
 }
 @media (max-width:768px) {
@@ -3549,7 +3588,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.54</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.55</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
