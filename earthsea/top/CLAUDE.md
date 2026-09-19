@@ -1367,6 +1367,13 @@ Vive in `ICON_LABEL_MINI` e riguarda tre voci italiane: `stregone`, `mago`, `sig
 Con lei, **nessuna voce di legenda va a capo a nessuna larghezza fra 1280 e 320**, in nessuna
 delle due lingue.
 
+⚠️ **'Faccia' qui vuol dire una VERSIONE del testo**, quella che il CSS accende in una certa
+fascia di larghezza: la prima è la **versione desktop** (`.leg-lbl-d` o `.leg-lbl-w`), la
+seconda la **versione mobile** (`.leg-lbl-m`), la terza la **versione corta** (`.leg-lbl-s`).
+⚠️⚠️ **Il nome vive QUI e non in chat**, dove l'utente non ha le classi davanti e non significa
+niente (sua segnalazione, 2026-09-19); parlando con lui si dicono i tre nomi per esteso, e la
+regola generale vive nel `CLAUDE.md` di root, § '🗣️ Registro: italiano corretto, non formale'.
+
 **Quale testo si vede a quale larghezza** (italiano; l'inglese ha due facce sole, perché il
 suo `mago` non ha ripiego):
 
