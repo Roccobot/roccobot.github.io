@@ -6170,7 +6170,7 @@ grande, quindi lo stacco minimo è **7,88px** contro i 10,2 del desktop e i 10,8
   larghezza resta ferma a 383,38 e le due lingue restano identiche. A 320px non cresce affatto,
   perché la sheet è già al suo tetto.
 
-##### ⚖️ Le TRE misure, e il discendente che conta solo se COLLIDE
+##### ⚖️ I TRE casi, le DUE misure, e il discendente che conta solo se COLLIDE
 
 ⚠️⚠️ **DALLA `2.58` IL MARGINE SI DIFFERENZIA PER CARD, e questa sezione nasce dicendo il
 contrario**: era la misura scartata della `2.57`, e a rovesciarla è l'utente in due mosse. Prima
@@ -6185,6 +6185,20 @@ spaziare un po' di più il caso senza discendenti e un po' di meno quello con, i
 avvicinino il più possibile*. Le due cose sono indipendenti e vanno lette separate, perché la
 prima cambia **quante** card finiscono in ciascun gruppo e la seconda **quanto** le distanzia.
 
+⚠️⚠️ **E DALLA `2.60` I VALORI SONO DUE SU TRE CASI, dettati da lui a numero**: `0.27em` dove il
+nome non scende **e** dove scende in una lingua sola, `0.39em` dove scende in tutte e due (*che è
+quello che provavo a spiegare fin dall'inizio*). Il criterio della collisione non si tocca: a
+cambiare sono i due numeri e il fatto che i primi due casi ora coincidano.
+- ⚠️ **I CASI restano TRE e la CLASSE è UNA**, `vr-disc`, che marca il solo caso pieno: il conto
+  in `ariaVeroNome` distingue ancora i tre, quindi farli divergere di nuovo è una riga qui e una
+  nel CSS. ⚠️ Le classi `vr-disc1` e `vr-disc2` della `2.59` non esistono più: chi le trova in un
+  commit sa che descrivono il tratto in cui i valori erano tre.
+- **Che cosa si vede**, a 1280: il caso senza discendenti e quello misto stanno tutti e due a
+  **21,26** di stacco d'inchiostro, il caso pieno a **15,98** con la `p` e **14,98** con la `g`.
+  Le due famiglie distano dunque **5,3px**, dove la `2.59` le teneva a 2,3.
+- ⚠️ **È la resa del mockup che lui ha approvato**, cioè quella in cui le card senza discendente
+  visibile sono tutte uguali fra loro, e il prezzo dichiarato è il divario col caso pieno.
+
 **Il criterio: conta solo il discendente che CADE SOPRA il vero nome.** `Millefoglie` scende con
 la `g`, ma quella `g` comincia una ventina di pixel oltre la fine di `KEST`: sotto il vero nome
 non c'è niente da schivare, quindi la card va col gruppo senza discendenti. Fino alla `2.58` il
@@ -6195,9 +6209,10 @@ predicato guardava la stringa intera e le dava 9px di aria per una lettera che s
   presa **una volta sola alla costruzione della card** è superata, e la sua motivazione col
   criterio nuovo non regge: a larghezze diverse il nome va a capo e l'inchiostro si sposta.
 - ⚠️ **Quante card per gruppo si CONTA, non si scrive** (`Roccobot.md`, § '🔢 I conti si contano,
-  non si scrivono'): sono le `.rank-vero` con `vr-disc2`, con `vr-disc1` e senza nessuna delle
-  due. La fotografia della `2.59` a 1280 è **16 senza discendenti, 4 in una lingua sola e 6 in
-  tutte e due**, e col criterio della `2.58` erano 15, 5 e 6.
+  non si scrivono'): dal DOM si leggono le `.rank-vero` con `vr-disc` e quelle senza, e per
+  separare i primi due casi si richiama `codaUtile` sulle due facce, come fa `ariaVeroNome`. La
+  fotografia della `2.59` a 1280 è **16 senza discendenti, 4 in una lingua sola e 6 in tutte e
+  due**, e col criterio della `2.58` erano 15, 5 e 6.
 - ⚠️ **L'unica card che il criterio nuovo sposta è `Millefoglie`**, dal gruppo misto a quello
   senza: `Yarrow` scende con la `y`, quindi la vecchia regola la metteva in mezzo per due
   discendenti che non toccano il vero nome né in italiano né in inglese.
@@ -6206,36 +6221,35 @@ predicato guardava la stringa intera e le dava 9px di aria per una lettera che s
 dell'utente alla proposta: *sì, esatto: è quello che intendevo*). Decidendola sulla **lingua
 corrente** le card miste cambierebbero altezza di 8-9px al cambio lingua, che è jitter vero;
 guardando le due facce insieme la classe è **identica nei due stati** per costruzione, e il metro
-lo prova (`vr-disc*` non cambia su nessuna card in nessuna delle dodici larghezze).
+lo prova (la classe non cambia su nessuna card in nessuna delle larghezze provate).
 
-**I tre valori della `2.59`**, nel corpo del vero nome: **`0.17em`** dove il nome non scende
-(default del CSS), **`0.42em`** dove scende in tutte e due le lingue, **`0.30em`** dove scende in
-una sola. Li ha scelti l'utente fra tre proposte rese a schermo, e la differenza fra loro è tutta
-in quei due numeri: le tre varianti misurate erano `0.31/0.24`, `0.36/0.27` e `0.42/0.30`.
+**I valori, giro per giro**, nel corpo del vero nome. La `2.59` ne aveva tre, scelti fra tre
+proposte rese a schermo (`0.17/0.42/0.30`, contro `0.17/0.31/0.24` e `0.17/0.36/0.27`); la `2.60`
+ne ha due, **`0.27em`** e **`0.39em`**, dettati da lui.
 
-| a 1280, stacco d'inchiostro | `2.57` | `2.58` | **`2.59`** |
-|---|---|---|---|
-| senza discendenti | 19,2 | 15,1 | **18,98** |
-| con discendente (`p`, 8px) | 10,2 | 14,1 | **16,66** |
-| con discendente (`g`, 9px) | 10,2 | 14,1 | **15,66** |
-| in una lingua sola, dov'è | 19,2 | 19,1 | **21,94** |
-| in una lingua sola, dove non è | 10,2 | 10,1 | **12,94** |
+| a 1280, stacco d'inchiostro | `2.57` | `2.58` | `2.59` | **`2.60`** |
+|---|---|---|---|---|
+| senza discendenti | 19,2 | 15,1 | 18,98 | **21,26** |
+| con discendente (`p`, 8px) | 10,2 | 14,1 | 16,66 | **15,98** |
+| con discendente (`g`, 9px) | 10,2 | 14,1 | 15,66 | **14,98** |
+| in una lingua sola, dov'è | 19,2 | 19,1 | 21,94 | **21,26** |
+| in una lingua sola, dove non è | 10,2 | 10,1 | 12,94 | **12,26** |
 
-- ⚠️⚠️ **LA COMPENSAZIONE È PARZIALE, ED È IL PUNTO DELLA `2.59`**: questi valori recuperano
-  circa la metà dei 9px, non tutti, quindi il gruppo col discendente resta più stretto di 2,3px.
+- ⚠️⚠️ **LA COMPENSAZIONE È PARZIALE, ED È IL PUNTO DI TUTTI E DUE I GIRI**: questi valori non
+  recuperano i 9px per intero, quindi il gruppo col discendente resta più stretto (di 2,3px nella
+  `2.59`, di 5,3 nella `2.60`, che allinea i primi due casi e paga di là).
   ⚠️ **Pareggiarli per intero è la misura scartata, ed era la `2.58`**: geometricamente esatta, e
   all'occhio sovra-compensata, perché **l'occhio misura dalla massa della parola e non dalla
   punta della `p`**. Chi rileggesse la tabella della `2.58` vedrebbe due numeri più vicini e
   concluderebbe che quella resa fosse migliore: lo è col righello, non a vederla.
-- ⚠️ **Nella stessa scelta il caso senza discendenti si alza da zero a `0.17em`**, perché il
+- ⚠️ **Nella `2.59` il caso senza discendenti si alza da zero a `0.17em`**, perché il
   vero nome restava troppo vicino alla riga sopra: è la segnalazione da cui il giro è partito (*sono entrambi
   nomi d'uso senza discendenti e `Tehanu` è decisamente troppo vicino alla riga precedente*).
 - ⚠️ **Il caso senza discendenti è il DEFAULT del CSS e non ha una classe sua**, ed è una scelta:
-  una card che il JS non raggiunge prende comunque l'aria minima invece di restare a ridosso del
+  una card che il JS non raggiunge prende comunque l'aria giusta invece di restare a ridosso del
   nome. ⚠️ Con lui la **card di legenda** del Pannello, che usa le classi vere ma dal ciclo delle
-  card non passa, torna ad avere l'aria che nella `2.58` aveva perso: il Pannello desktop cresce
-  di **2,50px** in altezza (514,64 -> 517,14) e la larghezza non si muove.
-- ⚠️ **`--vr-aria` alza le tre misure INSIEME**, e oggi vale zero. È il punto unico da cui dare
+  card non passa, torna ad avere l'aria che nella `2.58` aveva perso.
+- ⚠️ **`--vr-aria` alza le due misure INSIEME**, e oggi vale zero. È il punto unico da cui dare
   più aria a tutta la lista, se un domani serve.
 - ⚠️⚠️ **DUE VIE PIÙ SEMPLICI SONO STATE MISURATE E SCARTATE IN QUESTO GIRO, e la prima è quella
   che viene in mente per prima**: *metti sempre la spaziatura di `Libellula`: ancora più statico,
@@ -6279,12 +6293,117 @@ in quei due numeri: le tre varianti misurate erano `0.31/0.24`, `0.36/0.27` e `0
     quella del vero nome il vuoto di box è **3,19px identico su tutte le card e a ogni
     larghezza**, perché i discendenti vivono dentro l'interlinea. Con quel numero il difetto
     dell'utente non esiste.
-  - ⚠️⚠️ **DOPO UN CAMBIO DI LARGHEZZA IL PRIMO CAMBIO LINGUA PUÒ MISURARE UN LAYOUT NON ANCORA
-    ASSESTATO**, e il banco lo deve distinguere da un jitter vero: a **375px** una card
-    (`Donna di Kemay`) resta indietro di un giro e trascina di 1px le 204 sotto di lei. ⚠️ **È
-    preesistente e non è di questo giro**: misurato identico sulla `2.58` con un `git stash`, dove
-    vale 2px. Si chiude da sé al reflow successivo, quindi la prova si ripete e il rosso scatta
-    solo se resta. È un altro caso del ripasso differito di `freeNames`.
+  - Ⓘ **Fino alla `2.59` il banco doveva distinguere il jitter vero da un ASSESTAMENTO in
+    ritardo**: a 375px `Donna di Kemay` restava indietro di un giro e trascinava di 1px le 204
+    card sotto di lei, e la prova andava ripetuta perché al secondo giro spariva. ⚠️ **La causa è
+    stata trovata e curata con la `2.60`** (§ '🔄 `tightenNames` e `freeNames` si condizionano a
+    vicenda, e una passata sola non converge'), quindi quella ripetizione non serve più: un rosso
+    adesso è un rosso.
+
+#### 🔄 `tightenNames` e `freeNames` si condizionano a vicenda, e una passata sola non converge
+
+Dalla `2.60`, e chiude un difetto che si vedeva solo cambiando lingua **dopo** un ridimensionamento
+(misurato a 375px: `Donna di Kemay` alta 1px in più e 204 card scivolate con lei).
+
+⚠️⚠️ **LA DIPENDENZA È CIRCOLARE, ed è la ragione per cui un giro solo non basta**: `tightenNames`
+decide se stringere le spaziature guardando **quante righe** occupa il nome, e quel numero dipende
+dalla larghezza della cella, che `freeNames` cambia liberandola; `freeNames` decide se liberare la
+cella guardando **l'altezza della riga**, che `tightenNames` cambia stringendo il nome. Chi gira
+per primo misura dunque lo stato dell'**ultima** larghezza, non di questa.
+
+- ⚠️⚠️ **IL RIPASSO RIFACEVA IL SOLO `freeNames`, e la decisione sbagliata era dell'ALTRO**: ecco
+  perché la card restava indietro di un giro, e perché il giro glielo dava il **cambio lingua**,
+  che è l'evento successivo a chiamare `reflowRows`. La diagnosi si legge in tre misure: dopo il
+  resize lo stato si ferma a +200ms e non si muove più; un `freeNames()` a mano non cambia niente;
+  un `reflowRows()` a mano cambia tutto (cella da 140,88 a 149,78, altezza da 319 a 320).
+- **Il rimedio è un CICLO, non un giro in più**: `assestaRighe()` rifà `tightenNames` e
+  `freeNames` insieme finché la **firma** dello stato non si ripete, con un tetto di tre giri.
+  ⚠️ Un terzo giro a tempo avrebbe spostato la soglia invece di togliere la causa, e su una
+  macchina più lenta sarebbe tornato.
+- ⚠️ **La firma legge le sole CLASSI** (`name-tight`, `nm-acapo`, `nm-wrap`, `nm-libero`), non le
+  misure: `className` non forza un ricalcolo del layout, quindi costa un giro sul DOM e non una
+  passata di rendering. Il tetto di tre è la rete per il caso in cui due stati si alternino:
+  senza, sarebbe un anello.
+- ⚠️ **Il ciclo vive nel ripasso DIFFERITO e non in `reflowRows`**: la prima resa resta a una
+  passata, e la convergenza si paga una volta sola, quando la pagina è già disegnata.
+
+##### ⚠️⚠️ E `name-tight` SI DECIDE SULLA CELLA RISERVATA, o il jitter torna da un'altra parte
+
+Dalla `2.61`, e chiude un jitter **vero** che viveva fra **330 e 353px**: `Sparviero` era alto
+435px in italiano e **410** in inglese, `Libellula` 328 contro 301, e con loro scivolavano le 214
+card sotto. ⚠️ **Non era una regressione**: misurato identico sulla `2.59` pubblicata, riportando
+i file allo stato di `origin/master`.
+
+⚠️⚠️ **LA CAUSA È LA TERZA DECISIONE DI RIGA, quella che nessuna prova pareggiava**: `name-tight`
+si decideva sulla **cella liberata**, che è larga quanto il nome della lingua corrente. Il nome
+inglese è lungo, veniva stretto, e le icone gli rientravano in riga; l'italiano è corto, non
+veniva stretto, e le icone gli andavano a capo. Due decisioni giuste, ciascuna nella sua lingua,
+e un'altezza diversa.
+
+- **Il rimedio è misurare sulla cella RISERVATA**, cioè togliere `nm-libero` per la durata del
+  conto e rimetterlo subito dopo: la cella riservata è larga quanto il nome più lungo **fra le
+  due lingue**, quindi il numero di righe non dipende da quale testo è in scena.
+- ⚠️ **E rompe la circolarità descritta qui sopra**: `tightenNames` non dipende più da quello
+  che `freeNames` ha deciso al giro prima, quindi `assestaRighe` converge al primo confronto.
+  Il ciclo resta come rete, e adesso costa un giro solo.
+- **Misura del rimedio**: **zero** card con altezza diversa su 21 larghezze da 1280 a 320, dove
+  prima erano 1 o 2 su cinque di esse.
+- ⚠️⚠️ **IL BANCO LO NASCONDEVA TENENDO IL PANNELLO APERTO**, ed è la trappola che vale oltre il
+  caso: col Pannello aperto la pagina non scorre, quindi **sparisce la barra di scorrimento** e
+  la lista è ~15px più larga. Un difetto che vive in una fascia stretta di larghezze cade
+  esattamente in quei 15px. Chi misura il layout delle card lo fa a Pannello **chiuso**.
+
+##### 📐 L'intestazione riserva l'altezza dell'altra lingua
+
+Dalla `2.61`. A **400px** il sottotitolo inglese prende **due** righe e l'italiano una: l'intestazione
+cresceva di 24px al cambio lingua e **tutta la pagina** scivolava con lei. ⚠️ La fascia è
+abitata: l'iPhone 16 Pro ha un viewport di **402px**.
+
+- **Il rimedio è la riserva**, cioè lo stesso patto delle card, in una forma più semplice:
+  `riservaTesta()` misura l'altezza che il blocco avrebbe con il testo dell'altra lingua e la
+  impone come `min-height`. Là servono due facce nella stessa cella perché a cambiare è anche la
+  larghezza; qui basta l'altezza, perché il blocco è già largo quanto la colonna.
+- ⚠️ **La misura si fa su un CLONE fuori dal flusso**, non scrivendo il testo dell'altra lingua
+  nell'elemento vero: quello si vedrebbe per un fotogramma.
+- ⚠️ **Copre le voci di testo PIANO** (`subtitle`, `intro`). Il **crest** resta fuori: porta un
+  link, e le sue due metà differiscono di una lettera senza andare a capo in nessuna fascia.
+- ⚠️ **Il titolone ha un presidio SUO e più raffinato** (`pareggiaTitolo`, che cerca la coppia di
+  tagli che pareggia le due lingue): non si sostituisce con questo, che riserva e basta.
+- ⚠️⚠️ **GLI `innerHTML` DELL'INTESTAZIONE SONO CHIUSI DALLA `2.62`**, e la nota che li dava da
+  fare descrive lo stato fino alla `2.61`: le righe di testo piano (`subtitle`, `intro`,
+  `footer-text`) passano da `textContent`, e il crest lo compone `scriviCrest` a nodi, perché è
+  l'unico che porta del markup, cioè il link al profilo.
+  - ⚠️⚠️ **LA STRINGA i18n DEL CREST È SPEZZATA, E LA CHIAVE SI CHIAMA `crestVerbo`**: tiene il
+    solo `presenta` / `presents`, mentre nome e indirizzo vivono nella funzione, dove sono
+    costanti. Il nome è cambiato insieme al contenuto perché `crest` prometteva la riga intera,
+    e chi la leggesse aspettandosi il markup scriverebbe un link dentro un nodo di testo.
+  - ⚠️⚠️ **ERANO QUATTRO E NON TRE, e il quarto è `footer-text`**: vive nella stessa funzione e
+    aveva lo stesso difetto, ma l'elenco scritto a mano diceva 'i tre dell'intestazione' e lui
+    nell'intestazione non è. È la famiglia degli elenchi compilati a mano (§ 'La ricerca del
+    sito, dal TOCCO LUNGO sul FAB', voce sui campi ricavati dal dataset), qui in una nota invece
+    che nel codice: il grep di `innerHTML` in `setLang` li trova tutti e quattro in un comando.
+  - ⚠️ **Il divieto non guarda la PROVENIENZA del testo**, ed è la ragione per cui valeva anche
+    su quattro costanti del sorgente: a leggere la riga non si distinguono da un dato che un
+    domani arriva da fuori, e il rimedio costa quattro righe.
+  - ⚠️ **`riservaTesta` non è stata toccata**: lavorava già con `textContent` su un clone, e le
+    voci che copre sono le stesse.
+
+⚠️⚠️ **E UN `ResizeObserver` SULLA LISTA COPRE I CAMBI DI LARGHEZZA CHE `window.resize` NON VEDE**
+(richiesta dell'utente, 2026-09-19: *voglio fare le cose bene e in modo pulito e future-proof*):
+la comparsa della barra di scorrimento, lo zoom del browser, un font di sistema che cambia, un
+contenitore che si stringe da sé. Quando la larghezza si ferma, lancia `assestaRighe()`.
+
+- ⚠️⚠️ **SI GUARDA LA SOLA LARGHEZZA, ED È LA RIGA CHE EVITA L'ANELLO**: l'assestamento cambia le
+  **altezze**, quindi un osservatore che guardasse anche quelle richiamerebbe sé stesso a ogni
+  giro. La guardia sul valore invariato lo ferma comunque dopo il primo.
+- ⚠️ **L'evento `resize` resta dov'è**, e non è un doppione: l'altezza del viewport serve alla
+  sheet (`fitControlSheet`), e sopra i 740px la colonna non si muove più mentre il titolo sì,
+  quindi `pareggiaTitolo` non può dipendere dalla larghezza della lista.
+- ⚠️ **Il ritardo raccoglie il trascinamento del bordo della finestra**, che emette decine di
+  eventi: il timer riparte a ogni cambio e l'assestamento gira una volta sola, alla fine.
+- **Il precedente in casa è l'osservatore dell'intestazione** (`queuePatTop`), che sincronizza la
+  trama di sfondo: stessa forma, stessa guardia `window.ResizeObserver` e stesso `try/catch`, così
+  dove manca non succede niente e resta il comportamento di prima.
 
 ### 📐 La riga del nome arriva al FILETTO, e i badge non si spezzano mai
 

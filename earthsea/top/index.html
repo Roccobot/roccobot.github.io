@@ -626,38 +626,34 @@ html { --card-pad-r:1.2rem; }
    non c'era nessun gruppo da distanziare. La media query dei 480px dichiara il proprio
    valore dopo di questa e la scavalca. */
 .rank-name.nm-wrap + .rank-vero { margin-top:0.2em; }
-/* ⚠️⚠️ TRE MISURE PER L'ARIA FRA IL NOME D'USO E IL VERO NOME, coi VALORI DELLA 2.59, scelti
-   dall'utente fra tre proposte misurate: *spaziare un po' di più il caso senza discendenti e
-   un po' di meno quello con, in modo che si avvicinino il più possibile*. La 2.57 dava un
-   valore UNIFORME a tutti, e con lui lo stacco restava di due grandezze diverse; la 2.58
-   compensava il discendente per intero, e sbagliava dall'altra parte.
+/* ⚠️⚠️ DUE MISURE PER L'ARIA FRA IL NOME D'USO E IL VERO NOME, coi VALORI DELLA 2.60, dettati
+   dall'utente: `0.27em` dove il nome non scende E dove scende in una lingua sola, `0.39em`
+   dove scende in tutte e due. I casi restano TRE (li distingue `ariaVeroNome`), le misure
+   sono due, perché lui ha dato lo stesso valore ai primi due.
    ⚠️⚠️ IL DISCENDENTE DEL NOME È LA CAUSA: il vero nome è in Cinzel maiuscolo, quindi il suo
    inchiostro comincia alla cap height, mentre `Pioppo` e `Giaggiolo` scendono sotto la linea
    di base. Misurato a 1280 sulle card a due righe: 6,13px di stacco con i discendenti e
    15,13 senza, cioè 9px di differenza su card fatte uguali.
-   ⚠️⚠️ LA COMPENSAZIONE È PARZIALE, ED È DELIBERATA: questi valori recuperano circa la metà
-   di quei 9px (stacco d'inchiostro 18,98px senza discendenti contro 15,66-16,66 con), perché
-   l'occhio misura dalla MASSA della parola e non dalla punta della `p`. Pareggiarli per
-   intero è la misura scartata, ed era la 2.58: esatta col righello, sovra-compensata a
-   vederla. Nella stessa scelta il caso senza discendenti si alza da zero, perché il vero
-   nome restava troppo vicino alla riga sopra (utente, su `Therru`/`TEHANU`).
+   ⚠️⚠️ LA COMPENSAZIONE È PARZIALE, ED È DELIBERATA: questi valori ne recuperano poco più di
+   un terzo (stacco d'inchiostro 21,26px senza discendenti contro 15,98 con), perché l'occhio
+   misura dalla MASSA della parola e non dalla punta della `p`. Pareggiarli per intero è la
+   misura scartata, ed era la 2.58: esatta col righello, sovra-compensata a vederla.
    ⚠️⚠️ LA CLASSE GUARDA TUTTE E DUE LE LINGUE, ed è la riga che evita il jitter: su 4 card il
    discendente c'è in una lingua sola (`Libellula`/`Dragonfly`), quindi una classe decisa sulla
-   lingua corrente le farebbe cambiare altezza al cambio lingua. Con la terza misura, che vale
-   mezzo discendente, quelle card sbagliano per metà in ognuna delle due invece di essere
-   giuste in una e fuori di 9 nell'altra. Le assegna `ariaVeroNome`.
-   ⚠️ Il caso SENZA discendenti è il DEFAULT e non ha una classe sua: così una card che il JS
-   non raggiunge prende comunque l'aria minima invece di restare a ridosso del nome, ed è
-   anche la resa della card di legenda del Pannello, che le classi vere le usa ma dal ciclo
-   delle card non passa.
-   ⚠️ `--vr-aria` è il punto unico da cui alzare l'aria di TUTTE e tre le misure insieme.
+   lingua corrente le farebbe cambiare altezza di 9px al cambio lingua. Con questi valori
+   quelle card stanno col gruppo senza discendenti in tutte e due gli stati.
+   ⚠️ LA CLASSE È UNA SOLA perché i valori sono due: il caso senza discendenti è il DEFAULT,
+   quindi una card che il JS non raggiunge prende comunque l'aria giusta, e con lei la card di
+   legenda del Pannello, che le classi vere le usa ma dal ciclo delle card non passa. Se un
+   domani i primi due casi tornano a divergere, la classe del caso misto si riaggiunge qui e
+   in `ariaVeroNome`, dove il conto dei tre casi c'è già.
+   ⚠️ `--vr-aria` è il punto unico da cui alzare l'aria di tutte e due le misure insieme.
    ⚠️ Il caso A CAPO non si tocca, e non gli serve: là sotto il nome ci sono le icone, quindi
    il discendente non tocca più il vero nome, e il valore della regola qui sopra pareggia il
    vuoto che il gruppo ha sopra di sé. La sua specificità è maggiore, quindi lo fa da sé. */
 html { --vr-aria:0em; }
-.rank-vero { margin-top:calc(var(--vr-aria) + 0.17em); }
-.rank-vero.vr-disc1 { margin-top:calc(var(--vr-aria) + 0.30em); }
-.rank-vero.vr-disc2 { margin-top:calc(var(--vr-aria) + 0.42em); }
+.rank-vero { margin-top:calc(var(--vr-aria) + 0.27em); }
+.rank-vero.vr-disc { margin-top:calc(var(--vr-aria) + 0.39em); }
 /* Compattazione mirata della riga nome (.name-tight, applicata da
    tightenNames): recupera ~3% di larghezza stringendo SOLO le spaziature
    (mai il corpo del font), e solo sulle card dove questo fa guadagnare una
@@ -3620,7 +3616,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.59</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.62</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5228,14 +5224,17 @@ window.addEventListener('scroll', syncBrandCorner, { passive: true });
 
 var i18n = {
   it: {
-    crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
+    // ⚠️ Il crest è l'unica voce che porta un LINK, e la sua stringa tiene il solo verbo:
+    // il resto lo compone `scriviCrest` a nodi, perché `innerHTML` è vietato senza deroghe.
+    // Dell'intera riga le due lingue cambiano questa parola e nient'altro.
+    crestVerbo: 'presenta',
     title: 'Il mondo di Terramare',
     subtitle: "I grandi dell'arcipelago di Terramare, dagli uomini ai draghi",
     intro: "Maghi, streghe, re, draghi e gente comune dell'arcipelago. A Terramare il potere ha molte forme, e quasi sempre passa dai nomi: conoscere il vero nome di una cosa significa poterla chiamare; nominarla significa dominarla.",
     footer: "Il potere, a Terramare, comincia da un nome."
   },
   en: {
-    crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
+    crestVerbo: 'presents',
     title: 'The World of Earthsea',
     subtitle: 'The great ones of the Earthsea archipelago, from men to dragons',
     intro: "Mages, witches, kings, dragons and common folk of the archipelago. In Earthsea power takes many forms, and nearly always runs through names: to know the true name of a thing is to be able to call it; to name it is to master it.",
@@ -5385,17 +5384,37 @@ function pareggiaTitolo() {
   }
 }
 
+// ⚠️⚠️ A NODI, e mai con `innerHTML`: il divieto è una regola non derogabile del repo e non
+// guarda la provenienza del testo, quindi vale anche per una costante del sorgente. Il crest
+// è l'unica riga dell'intestazione che porta del markup, cioè il link al profilo: nome e
+// indirizzo sono fissi, e la stringa i18n tiene il solo verbo che cambia fra le due lingue.
+function scriviCrest(lang) {
+  var el = document.getElementById('crest');
+  if (!el) return;
+  var a = document.createElement('a');
+  a.href = 'https://tolkiengateway.net/wiki/User:Roccobot';
+  a.target = '_blank';
+  a.rel = 'noopener';
+  var forte = document.createElement('strong');
+  forte.textContent = 'Roccobot';
+  a.appendChild(forte);
+  el.textContent = '';
+  el.appendChild(a);
+  el.appendChild(document.createTextNode(' ' + i18n[lang].crestVerbo));
+}
+
 function setLang(lang) {
   currentLang = lang;
   LS.setItem('earthsea-lang', lang);
   document.documentElement.lang = lang;
   document.querySelector('#lang-switch .ls-face').textContent = lang === 'it' ? 'EN' : 'IT';
-  document.getElementById('crest').innerHTML = i18n[lang].crest;
+  scriviCrest(lang);
   scriviTitolo(document.getElementById('title-link'), i18n[lang].title, lang, -1);
   pareggiaTitolo();
-  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
-  document.getElementById('intro').innerHTML = i18n[lang].intro;
-  document.getElementById('footer-text').innerHTML = i18n[lang].footer;
+  // Le altre tre righe sono testo piano, quindi `textContent` basta e chiude il caso.
+  document.getElementById('subtitle').textContent = i18n[lang].subtitle;
+  document.getElementById('intro').textContent = i18n[lang].intro;
+  document.getElementById('footer-text').textContent = i18n[lang].footer;
   // La voce del footer c'è in tutte e due le lingue dal 2026-08-26, e il suo testo dipende
   // da quante mappe ha la lingua: lo decide `mapsLabel`, che serve anche il tasto del
   // Pannello. ⚠️ Prima era scritto QUI e un'altra volta all'avvio, e le due copie
@@ -7225,10 +7244,24 @@ function rankNameLines(el) {
   for (var j = 0; j < tops.length; j++) { if (tops[j] - cur > 8) { lines++; cur = tops[j]; } }
   return lines;
 }
+// ⚠️⚠️ SI MISURA SULLA CELLA RISERVATA, cioè togliendo `nm-libero` per la durata del conto,
+// e questa riga è ciò che rende la decisione UGUALE NELLE DUE LINGUE (2.61). La cella riservata
+// è larga quanto il nome più lungo fra le due lingue, quindi con lei il numero di righe non
+// dipende da quale testo è in scena; la cella liberata invece si stringe sul nome corrente, e
+// da lì `name-tight` cadeva da una parte sola.
+// ⚠️⚠️ IL DIFETTO CHE TOGLIE È UN JITTER VERO, misurato fra 330 e 353px: a 353 `Sparviero` era
+// alto 435px in italiano e 410 in inglese, perché il nome inglese è lungo, veniva stretto, e le
+// icone gli rientravano in riga, mentre l'italiano corto non veniva stretto e le mandava a capo.
+// ⚠️ E rompe la circolarità: così `tightenNames` non dipende più da quello che `freeNames` ha
+// deciso al giro prima, quindi il ciclo di `assestaRighe` converge al PRIMO confronto.
 function tightenNames() {
   var els = document.querySelectorAll('#rank-list .rank-name');
-  var i, cand = [];
+  var i, cand = [], liberate = [], c;
   for (i = 0; i < els.length; i++) els[i].classList.remove('name-tight');
+  for (i = 0; i < els.length; i++) {
+    c = els[i].querySelector(':scope > .rank-name-text');
+    if (c && c.classList.contains('nm-libero')) { c.classList.remove('nm-libero'); liberate.push(c); }
+  }
   for (i = 0; i < els.length; i++) {
     var n = rankNameLines(els[i]);
     if (n > 1) cand.push({ el: els[i], before: n });
@@ -7236,6 +7269,7 @@ function tightenNames() {
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('name-tight');
   for (i = 0; i < cand.length; i++)
     if (rankNameLines(cand[i].el) >= cand[i].before) cand[i].el.classList.remove('name-tight');
+  for (i = 0; i < liberate.length; i++) liberate[i].classList.add('nm-libero');
 }
 
 /* A capo ottimizzato delle righe bipartite (info | genealogia e nomi | titoli).
@@ -7699,6 +7733,9 @@ function codaUtile(faccia, veroRect) {
 // ⚠️⚠️ SI GUARDANO LE DUE LINGUE E NON QUELLA CORRENTE: è ciò che rende la classe identica nei
 // due stati, quindi immune al jitter per costruzione. Dove il nome non ha una gemella le due
 // lingue coincidono, e la misura della faccia vale per tutte e due.
+// ⚠️ I casi restano TRE e le classi UNA, perché dalla 2.60 i primi due condividono il valore:
+// il conto sotto li distingue lo stesso, così riaggiungere la classe del caso misto è una riga
+// qui e una nel CSS. Dei tre, solo il terzo porta `vr-disc`.
 // ⚠️ Le card con le icone A CAPO restano fuori: là sotto il nome ci sono le icone, e l'aria la
 // governa la regola di `nm-wrap`, che è più specifica.
 // ⚠️ Prima si legge tutto e poi si scrive: mescolare le due cose costringerebbe il browser a
@@ -7719,10 +7756,7 @@ function ariaVeroNome() {
     da = gem ? codaUtile(gem, largo) > 0 : dv;
     scelte.push([vero, (dv && da) ? 2 : ((dv || da) ? 1 : 0)]);
   }
-  for (i = 0; i < scelte.length; i++) {
-    scelte[i][0].classList.toggle('vr-disc2', scelte[i][1] === 2);
-    scelte[i][0].classList.toggle('vr-disc1', scelte[i][1] === 1);
-  }
+  for (i = 0; i < scelte.length; i++) scelte[i][0].classList.toggle('vr-disc', scelte[i][1] === 2);
 }
 // ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE, è la cura di un difetto misurato: al CAMBIO
 // LINGUA il primo `freeNames` decide su un layout non ancora assestato e sbaglia. Provato a
@@ -7737,15 +7771,76 @@ function ariaVeroNome() {
 // sproposito anche 1,2 secondi dopo, mentre un `freeNames()` a mano la rimetteva a posto).
 // Il colpo a tempo copre l'assestamento che i frame non vedono.
 var freeRipassoPend = false;
+// ⚠️⚠️ `tightenNames` E `freeNames` SI CONDIZIONANO A VICENDA, e una passata sola non basta
+// (misurato il 2026-09-19 a 375px su `Donna di Kemay`): il primo decide se stringere le
+// spaziature guardando quante righe occupa il nome, e quel numero dipende dalla larghezza
+// della cella, che il secondo cambia liberandola; il secondo decide se liberare la cella
+// guardando l'altezza della riga, che il primo cambia stringendo il nome. Chi gira per primo
+// misura dunque lo stato dell'ULTIMA larghezza, non di questa.
+// ⚠️ Il sintomo era un pixel che si vedeva solo cambiando lingua dopo un ridimensionamento,
+// perché il ripasso rifaceva il solo `freeNames` e la decisione sbagliata era dell'altro:
+// la card restava indietro di un giro, e il giro glielo dava il cambio lingua.
+// ⚠️ Qui non si aggiunge un terzo giro a tempo, che sposterebbe la soglia: si CICLA finché lo
+// stato non si ripete, che è la condizione vera. Il tetto di tre giri è la rete per il caso
+// in cui due stati si alternino: senza, sarebbe un anello.
+function firmaRighe() {
+  var n = document.querySelectorAll('#rank-list .rank-name'), i, el, c, s = '';
+  for (i = 0; i < n.length; i++) {
+    el = n[i]; c = el.querySelector(':scope > .rank-name-text');
+    s += (el.className.indexOf('name-tight') < 0 ? '0' : '1') +
+         (el.className.indexOf('nm-acapo') < 0 ? '0' : '1') +
+         (el.className.indexOf('nm-wrap') < 0 ? '0' : '1') +
+         (c && c.className.indexOf('nm-libero') >= 0 ? '1' : '0');
+  }
+  return s;
+}
+// ⚠️ Si leggono le sole CLASSI, non le misure: `className` non forza un ricalcolo del layout,
+// quindi la firma costa un giro sul DOM e non una passata di rendering.
+function assestaRighe() {
+  var giri = 3, prima;
+  do { prima = firmaRighe(); tightenNames(); freeNames(); giri--; }
+  while (giri > 0 && firmaRighe() !== prima);
+}
 function freeRipasso() {
   if (freeRipassoPend) return;
   freeRipassoPend = true;
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ freeNames(); }); });
-  setTimeout(function(){ freeRipassoPend = false; freeNames(); }, 160);
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ assestaRighe(); }); });
+  setTimeout(function(){ freeRipassoPend = false; assestaRighe(); }, 160);
 }
 // ⚠️ `freeNames` sta DOPO `tightenNames`: quello decide gli a-capo del nome, e la prova
 // sulle altezze va fatta sulla disposizione definitiva, non su quella di partenza.
-function reflowRows() { tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); freeRipasso(); }
+// ⚠️⚠️ ANCHE L'INTESTAZIONE RISERVA L'ALTEZZA DELL'ALTRA LINGUA, e senza di lei una riga che
+// va a capo da una parte sola sposta TUTTA la pagina: misurato a 400px, dove il sottotitolo
+// inglese prende due righe e l'italiano una, e la lista scendeva di 24px al cambio lingua.
+// ⚠️ È la stessa riserva delle card, in una forma più semplice: là servono due facce nella
+// stessa cella perché a cambiare è anche la larghezza, qui basta il `min-height`, perché il
+// blocco è già largo quanto la colonna e a divergere è solo il numero di righe.
+// ⚠️ La misura si fa su un CLONE fuori dal flusso, non scrivendo il testo dell'altra lingua
+// nell'elemento vero: quello si vedrebbe per un fotogramma.
+// ⚠️ Copre le voci di testo PIANO. Il crest porta un link e resta fuori: le sue due metà
+// differiscono di una lettera e non vanno a capo in nessuna fascia (misurato).
+function riservaTesta() {
+  if (typeof i18n === 'undefined' || typeof currentLang === 'undefined') return;
+  var altra = currentLang === 'it' ? 'en' : 'it';
+  if (!i18n[altra]) return;
+  var voci = ['subtitle', 'intro'], i, el, testo, clone, h;
+  for (i = 0; i < voci.length; i++) {
+    el = document.getElementById(voci[i]);
+    testo = i18n[altra][voci[i]];
+    if (!el || typeof testo !== 'string') continue;
+    el.style.minHeight = '';
+    clone = el.cloneNode(false);
+    clone.removeAttribute('id');
+    clone.textContent = testo;
+    clone.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
+      'pointer-events:none;min-height:0;width:' + el.getBoundingClientRect().width + 'px';
+    el.parentNode.insertBefore(clone, el.nextSibling);
+    h = clone.getBoundingClientRect().height;
+    clone.parentNode.removeChild(clone);
+    if (h > el.getBoundingClientRect().height + 0.5) el.style.minHeight = h + 'px';
+  }
+}
+function reflowRows() { tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); riservaTesta(); freeRipasso(); }
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
@@ -7754,6 +7849,31 @@ window.addEventListener('resize', function() {
   // ci sta'. Function declaration, quindi è già definita a questo punto.
   tightenTimer = setTimeout(function(){ reflowRows(); fitControlSheet(); pareggiaTitolo(); }, 150);
 });
+// ⚠️⚠️ L'OSSERVATORE GUARDA LA LARGHEZZA DELLA LISTA, che è la grandezza da cui dipendono
+// tutte le decisioni di riga, e copre i cambi che `window.resize` NON vede: la comparsa della
+// barra di scorrimento, lo zoom del browser, un font di sistema che cambia, un contenitore che
+// si stringe da sé. L'evento `resize` resta dov'è, perché l'altezza del viewport serve alla
+// sheet e a sopra i 740px la colonna non si muove più mentre il titolo sì.
+// ⚠️⚠️ SI GUARDA LA SOLA LARGHEZZA, ED È LA RIGA CHE EVITA L'ANELLO: l'assestamento cambia le
+// ALTEZZE, quindi un osservatore che guardasse anche quelle richiamerebbe sé stesso a ogni
+// giro. La guardia sul valore invariato lo ferma comunque dopo il primo.
+// ⚠️ Il ritardo raccoglie il trascinamento del bordo della finestra, che emette decine di
+// eventi: il timer riparte a ogni cambio e l'assestamento gira una volta sola, alla fine.
+var _roW = 0, _roTimer = null;
+(function(){
+  var lista = document.getElementById('rank-list');
+  if (!lista || !window.ResizeObserver) return;
+  _roW = Math.round(lista.getBoundingClientRect().width);
+  try {
+    new ResizeObserver(function(voci){
+      var w = Math.round(voci[0].contentRect.width);
+      if (w === _roW) return;
+      _roW = w;
+      clearTimeout(_roTimer);
+      _roTimer = setTimeout(assestaRighe, 220);
+    }).observe(lista);
+  } catch (e) {}
+})();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); pareggiaTitolo(); });
 
 
