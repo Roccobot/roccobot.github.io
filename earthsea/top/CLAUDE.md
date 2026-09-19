@@ -6165,6 +6165,37 @@ grande, quindi lo stacco minimo è **7,88px** contro i 10,2 del desktop e i 10,8
   la segua: il Pannello cresce di **2,64px** in altezza (514,64 -> 517,28 su desktop), la
   larghezza resta ferma a 383,38 e le due lingue restano identiche. A 320px non cresce affatto,
   perché la sheet è già al suo tetto.
+
+##### ⚖️ Perché il margine NON si differenzia per card: CINQUE card su ventisei
+
+Domanda dell'utente subito dopo il giro, ed è la misura scartata di questa scelta: *non credo
+sia possibile differenziare fra i nomi con e senza discendenti, a causa della doppia lingua*.
+Ha ragione, e il numero dice quanto.
+
+| il caso | quante card |
+|---|---|
+| discendente in **tutte e due** le lingue | 6 |
+| in **nessuna** delle due | 15 |
+| **solo** in una delle due | **5** |
+
+Le cinque sono `Millefoglie`/`Yarrow`, `Libellula`/`Dragonfly`, `Burrone`/`Gully`,
+`Solevivo`/`Sunbright` e `Melina`/`Apple`, e il discendente vale **8-9px**, cioè esattamente la
+differenza fra i due gruppi.
+
+- ⚠️⚠️ **LE DUE VIE POSSIBILI HANNO OGNUNA IL SUO DIFETTO, e sono tutte e due misurabili in
+  anticipo**: decidendo sulla **lingua corrente** quelle cinque card cambierebbero altezza di
+  8-9px al cambio lingua, che è jitter vero; decidendo sulle **due insieme** (il dato c'è, la
+  gemella `bil-m` porta l'altro nome nel DOM) il jitter non c'è, ma in una delle due lingue
+  quelle cinque avrebbero lo stacco sbagliato, largo o stretto secondo il verso della scelta.
+- **Il pareggio perfetto sarebbe un margine pari al discendente**, cioè 9px sulle card che ce
+  l'hanno e zero sulle altre, che porterebbe tutte a **15,13px** a 1280. Regge su 21 card e cade
+  su 5, e costerebbe un giro di misura in JS in più: per quel rapporto non vale, e la scelta
+  uniforme dell'utente è quella giusta.
+- ⚠️ **Il valore uniforme è immune per costruzione**: non guarda il contenuto, quindi non può
+  cambiare fra le due lingue. È la ragione che lui ha dato chiedendolo, ed è quella che regge.
+- ⚠️ **La decisione si prenderebbe UNA VOLTA SOLA, non a ogni reflow**, e conviene saperlo se un
+  domani la si riapre: il discendente dipende dal **nome**, non dalla larghezza, quindi non è il
+  caso di `freeNames`, che rimisura perché il suo esito cambia con lo spazio disponibile.
 - **Misure del giro**: **88 controlli su 88** su undici larghezze da 1440 a 320, coi font veri.
   Zero card cambiano altezza o posizione al cambio lingua, nessuna riga sfonda la card, e
   `freeNames` decide su ogni card esattamente come prima.
