@@ -468,6 +468,12 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
     (*Verifico invece di indovinare*) coi **sinonimi** di tutti e due i verbi: cambiando le
     parole la regola non si riconosce, perché quello che resta in mente sono gli esempi. Si
     scrive il solo verbo: **`Misuro`**.
+    - ⚠️⚠️ **E VALE ANCHE QUANDO LA STRADA SCARTATA È TECNICA, se la frase ANNUNCIA un lavoro**
+      (quarta caduta, 2026-09-19: *Misuro i pixel veri invece di calcolarli dal clamp*). Là il
+      secondo verbo non nominava me, quindi sembrava rientrare nell'eccezione che `Roccobot.md`
+      dichiara lecita: non rientra, perché quella vale per il testo che **registra** una misura
+      scartata (una nota di regole, un commento, il corpo di una PR) e non per una riga che apre
+      un turno. Aprendo o chiudendo, resta la sola cosa che si fa.
 - ⚠️⚠️ **IN CHAT SI PARLA IN SECONDA PERSONA: SEI TU, NON 'L'UTENTE'** (sua segnalazione,
   2026-09-15, su *il suo file*: *stai parlando con me, usa la seconda persona*). Le sue
   preferenze lo dicono dalla prima riga (*usa il 'tu'*), e la ricaduta ha una causa precisa:
