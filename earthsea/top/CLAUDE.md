@@ -1303,36 +1303,52 @@ vero), l'inglese **37,30** (291,69 contro 254,39), e il prezzo si paga in due mo
   La via che funziona è intercettare la richiesta della pagina e servire l'HTML con l'etichetta
   vecchia, che non tocca il disco e non lascia niente da ripristinare.
 
-##### 📱 L'etichetta MOBILE, e la riga dell'altezza che è tornata indietro
+##### 📱 L'etichetta MOBILE, e la taratura che si era fermata a 390px
 
 Dalla `2.44`, su richiesta dell'utente dopo aver visto gli scatti (*crea un'etichetta
-differenziata per il mobile*), col testo dettato da lui: **`Mago (stregone educato a Roke o
-strega di grande potere)`**, cioè `strega` al posto di `incantatrice`. Vive in
-`ICON_LABEL_MOBILE`, che porta le **sole chiavi che divergono**.
+differenziata per il mobile*). Vive in `ICON_LABEL_MOBILE`, che porta le **sole chiavi che
+divergono**, e dalla `2.49` ha tutte e due le lingue.
 
-- **Che cosa recupera, misurato a 390px**: la riga torna su **una riga** (31,41px contro 51,88)
-  e il Pannello torna a **390x544,25**, cioè identico a prima della `2.42`. Sul desktop non
-  cambia niente, e là resta l'etichetta piena.
+- ⚠️⚠️ **LA PRIMA TARATURA ERA SU 390px E IL DIFETTO È TORNATO SUBITO** (segnalazione
+  dell'utente, 2026-09-19: *su mobile la voce di legenda di 'Mago' va ancora a capo*). Il testo
+  della `2.44` misurava 278,83px: stava a 390 e a 375, e cedeva a **360**, che è la larghezza
+  di quasi tutti gli Android. ⚠️ **La lezione riguarda la larghezza di prova, non il testo**:
+  una misura presa dove il difetto si era visto lascia scoperte tutte le altre, e il rimedio
+  dura finché arriva uno schermo più stretto. La `2.49` è tarata su **320px**, la più stretta
+  che il sito serve.
+- **Le misure della `2.49`, a 320px coi font veri**: lo spazio per il testo è **229,31px**,
+  l'italiano ne prende **200,81** e l'inglese **202,86**. Quella scartata è l'etichetta della
+  `2.44` (278,83), che a 320 occupa due righe.
+- ⚠️⚠️ **E L'INGLESE ADESSO CE L'HA, perché le due lingue NON sono indipendenti**: quella non
+  attiva resta nel DOM come fantasma (`.leg-measure`, `visibility:hidden`) e **occupa spazio**,
+  quindi una riga inglese a capo alza la pila anche mentre si legge in italiano. Misurato prima
+  della `2.49`: a 375px la voce italiana stava su una riga e il Pannello era alto 564,72 lo
+  stesso, per la sola metà inglese. La nota che dava l'asimmetria per **voluta** descriveva lo
+  stato fino alla `2.48`, e chi accorciasse una lingua sola rifarebbe quel difetto.
 - ⚠️⚠️ **LO SCAMBIO LO FA IL CSS, non un rebuild del Pannello**: si emettono **tutte e due** le
   etichette (`.leg-lbl-d` e `.leg-lbl-m`) e la media query dei 768px sceglie. Così il cambio di
   telaio al resize è immediato, e non dipende dal fatto che il Pannello si ricostruisca, che è
   la parte fragile. Le chiavi senza variante restano testo nudo, quindi il markup cresce solo
   dove serve.
-- ⚠️ **L'INGLESE NON HA una variante**: la sua etichetta piena misura 291,69px contro i 298,33
-  disponibili, quindi sta già. Un audit che conti le due lingue troverà l'asimmetria: è voluta,
-  come quella dei nomi di Kalessin.
-- ⚠️⚠️ **SOTTO I 390px LA RIGA VA A CAPO LO STESSO, ed è dichiarato**: l'etichetta corta misura
-  **278,82px** e lo spazio disponibile scende con lo schermo (268,33 a 360px, 228,33 a 320).
-  Quindi a 360 il Pannello resta a 564,72 e a 320 a 605,66, dov'era. Il ripiego che l'utente
-  aveva previsto per quel caso è **`Mago (detiene il vero potere)`** (140,28px, sta
-  dappertutto), e non è stato applicato perché il caso che aveva visto era 390px.
+- ⚠️ **Che cosa resta a capo, dichiarato**: a **320px** due voci ci vanno ancora (`Strega o
+  stregone` e `Signore dei Draghi`), e non sono state toccate perché l'utente ha segnalato il
+  solo `mago` e quei testi sono una sua scelta editoriale. Da **360px** in su nessuna voce va a
+  capo, in nessuna delle due lingue, e il Pannello sta a 544,25 fino a 360 compreso.
+- ⚠️⚠️ **IL METRO DELL'INCHIOSTRO SOTTOSTIMA UN TESTO CHE È GIÀ A CAPO**, e con lui si sceglie
+  un candidato che poi cede: un `Range` su un testo spezzato dà **più rettangoli**, e prenderne
+  il massimo misura il pezzo più largo, non la frase intera. In questo giro ha dato 254,61 per
+  l'etichetta inglese, che ne misura **291,69**, e da lì la conclusione sbagliata che il numero
+  registrato fosse invecchiato. **Il metro che non mente è l'ALTEZZA della riga** (31,41 contro
+  51,88): un candidato si misura dove occupa una riga sola, e si prova alla larghezza in cui
+  deve reggere.
 - ⚠️ **Vale per la LEGENDA e non per i tooltip delle card**, che restano quelli interi di
   `ICON_LABEL`: su mobile un tooltip non si apre, quindi là non c'è niente da accorciare.
 - ⚠️⚠️ **IL BANCO LEGGE LO STILE CALCOLATO, o conta le due etichette insieme**: sono tutte e due
   nel DOM, quindi il `textContent` della riga le restituisce attaccate, che è la stessa trappola
-  della gemella anti-jitter. E in **inglese** gli span non esistono affatto, perché quella chiave
-  non ha variante: un metro che cerchi `.leg-lbl-d` là dà `null` su un codice giusto, ed è
-  successo al primo giro.
+  della gemella anti-jitter. ⚠️ Fino alla `2.48` in **inglese** gli span non esistevano affatto,
+  perché quella chiave non aveva variante, e un metro che cercasse `.leg-lbl-d` là dava `null`
+  su un codice giusto: dalla `2.49` ci sono in tutte e due le lingue, e quel falso allarme non
+  si ripresenta.
 
 #### 🔎 Le due fonti che il censimento non aveva guardato
 
