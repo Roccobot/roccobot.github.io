@@ -1367,18 +1367,38 @@ Vive in `ICON_LABEL_MINI` e riguarda tre voci italiane: `stregone`, `mago`, `sig
 Con lei, **nessuna voce di legenda va a capo a nessuna larghezza fra 1280 e 320**, in nessuna
 delle due lingue.
 
+**Quale testo si vede a quale larghezza** (italiano; l'inglese ha due facce sole, perché il
+suo `mago` non ha ripiego):
+
+| voce | da 769 in su | da 348 a 768 | fino a 347 |
+|---|---|---|---|
+| `stregone` | `Strega o stregone/incantatore (ha qualche potere)` | uguale | `Strega o stregone (ha qualche potere)` |
+| `mago` | `Mago (stregone educato a Roke o incantatrice di grande potere)` | `Mago (stregone educato a Roke / strega potente)` | `Mago (pratica la 'vera' arte magica)` |
+| `signoredraghi` | `Signore dei Draghi (i draghi lo considerano loro pari)` | uguale | `Signore dei Draghi (amico dell'Ovest)` |
+
+⚠️ **Il `mago` è la sola voce con tre facce**, e le altre due ne hanno due: la sua piena non
+sta nemmeno a 390, quindi la fascia di mezzo le serve. Chi conta tre versioni per tutte e tre
+le voci sbaglia il costo di manutenzione per eccesso.
+
 - ⚠️⚠️ **LA SOGLIA LA DETTA LA VOCE CHE CEDE PER PRIMA**, non la media né il caso peggiore: è
-  il `Signore dei Draghi`, che a 348px ha **0,98px** di margine e a 344 va a capo, mentre le
-  altre due reggerebbero più giù. Perciò `max-width:347px`, e sotto quella larghezza la
-  legenda passa **tutta** alla versione corta, comprese le due voci che da sole starebbero.
-- ⚠️⚠️ **IL RIPIEGO DEI DRAGHI NON BASTAVA, e lo spazio si è recuperato invece di accorciare
-  il testo**: a corpo pieno misura 236,91px contro i 229,31 della riga. Il testo è
-  dell'utente, quindi la media query stringe il gap e i fianchi e cala il corpo del 2,5%: a
-  320 lo spazio sale a **240,52**, il testo scende a **230,83**, restano **9,69px**. ⚠️ Le tre
-  proprietà e i tre testi **vivono o cadono insieme**: chi le toglie rimette il difetto.
-  - **Le misure scartate**, che sono quelle che reggono la scelta: la sola spaziatura lascia
-    **3,61px**, che un font leggermente diverso si mangia; il solo corpo a `0.75rem` lascia
-    7,15 ma costa il **6%** di dimensione invece del 2,5%.
+  il `Signore dei Draghi`, che **col testo normale** ha 0,98px di margine a 348 e va a capo a
+  344, mentre le altre due reggerebbero più giù. Perciò `max-width:347px`, e sotto quella
+  larghezza la legenda passa **tutta** alla versione corta, comprese le due voci che da sole
+  starebbero.
+  - ⚠️ **Non è un numero tondo perché non descrive uno schermo**, e la domanda è arrivata
+    (*non ho capito perché parli di 344/347 se gli step sono 360 e 320*): 360 e 320 sono le
+    larghezze **di prova**, cioè telefoni veri; 347 è il punto in cui un testo smette di stare
+    in una riga, e il CSS ha bisogno di quello. I telefoni in produzione sono tutti sopra
+    (430, 412, 390, 375, 360), quindi la soglia non divide due modelli: divide due stati.
+- ⚠️⚠️ **PRIMA SI ACCORCIA IL TESTO, POI SEMMAI LA GEOMETRIA, e la `2.51` aveva fatto il
+  contrario.** Il suo ripiego dei draghi (`amico del popolo dell'Ovest`) sforava di 7,6px, e
+  invece di chiedere un testo più corto la media query aveva stretto gap e fianchi e calato il
+  corpo del 2,5% per farcelo entrare. Con `amico dell'Ovest` (`2.52`, testo suo) il margine
+  passa da **-7,6** a **+47,2** e quelle tre proprietà non compensano più niente: sono uscite.
+  - ⚠️ **La misura che lo dimostra**: a 320 le tre facce corte hanno **49,79**, **61,64** e
+    **47,23** di margine col CSS intatto, contro i **9,69** che la `2.51` otteneva stringendo
+    la riga. Una geometria toccata per un testo lungo è debito che resta anche quando il testo
+    cambia.
 - ⚠️⚠️ **LA CLASSE DELLA FACCIA PIENA DIPENDE DA CHI LA DEVE SPEGNERE**, ed è l'errore che il
   codice previene: con una variante mobile è `.leg-lbl-d` (la spegne la soglia dei 768), col
   solo ripiego è **`.leg-lbl-w`**, che resta accesa su desktop **e** su mobile e cade sotto i

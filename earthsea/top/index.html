@@ -2304,18 +2304,18 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
 /* ⚠️⚠️ LA TERZA FACCIA DELLA LEGENDA, sotto i 348px (2.51): accende i ripieghi di
    `ICON_LABEL_MINI` e spegne la faccia di sopra, che è `.leg-lbl-m` dove esiste una
    variante mobile e `.leg-lbl-w` dove c'è il solo ripiego.
-   ⚠️⚠️ LE TRE PROPRIETÀ DI SPAZIO NON SONO UN RITOCCO ESTETICO, e chi le toglie rimette il
-   difetto: il ripiego del `Signore dei Draghi` a corpo pieno misura 236,91px contro i 229,31
-   che la riga lascia, quindi da solo andrebbe a capo lo stesso. Il testo è dell'utente e non
-   si accorcia, così lo spazio si recupera qui: il gap e i fianchi si stringono e il corpo
-   cala del 2,5%, lo spazio sale a 240,52, il testo scende a 230,83 e restano 9,69px.
-   ⚠️ Scartate le due leve da sole, e la misura scartata è quella che conta: la sola
-   spaziatura lascia 3,61px di margine, che un font leggermente diverso si mangia; il solo
-   corpo a 0.75rem lascia 7,15 ma costa il 6% di dimensione invece del 2,5%.
+   ⚠️⚠️ LA SOGLIA LA DETTA LA VOCE CHE CEDE PER PRIMA, ed è il `Signore dei Draghi`: col suo
+   testo normale ha 0,98px di margine a 348 e va a capo a 344, mentre le altre due
+   reggerebbero più giù. Non è un numero tondo perché non descrive uno schermo: descrive il
+   punto in cui un testo smette di stare in una riga, e i telefoni veri (430, 412, 390, 375,
+   360) sono tutti sopra. Chi la sposta rimisuri quel testo.
+   ⚠️ Qui dentro NON c'è nessuna proprietà di spazio, e nella 2.51 c'erano: gap e fianchi più
+   stretti e corpo al 97,5% servivano a far stare un ripiego troppo lungo, e con un testo più
+   corto (2.52) non compensano più niente. Prima si accorcia il testo, poi semmai la
+   geometria.
    ⚠️ Deve stare DOPO la soglia dei 768px, o quella la sovrascrive: sotto i 347 si applicano
    tutte e due, e a decidere è l'ordine nel foglio. */
 @media (max-width:347px) {
-  #ctrl-panel .ctrl-legend-row { gap:0.3rem; padding-left:0.2rem; padding-right:0.2rem; font-size:0.78rem; }
   #ctrl-panel .ctrl-legend-row .leg-lbl-m,
   #ctrl-panel .ctrl-legend-row .leg-lbl-w { display:none; }
   #ctrl-panel .ctrl-legend-row .leg-lbl-s { display:inline; }
@@ -3533,7 +3533,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.51</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.52</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6140,18 +6140,19 @@ var ICON_LABEL_MOBILE = {
 // il suo testo pieno ha 0,98px di margine e a 344 va a capo, mentre le altre due reggerebbero
 // più giù. Perciò 347 e non 320: sotto quella larghezza la legenda passa tutta alla versione
 // corta, comprese le due voci che da sole starebbero ancora.
-// ⚠️⚠️ IL RIPIEGO DEI DRAGHI NON BASTEREBBE DA SOLO: a corpo pieno misura 236,91px contro i
-// 229,31 che la riga lascia. Il testo è suo e non si accorcia, quindi lo spazio si recupera
-// nel CSS della soglia (gap e fianchi più stretti, corpo al 97,5%): a 320 lo spazio sale a
-// 240,52, il testo scende a 230,83 e restano 9,69px. Quelle tre proprietà e questo blocco
-// vivono o cadono insieme.
+// ⚠️⚠️ I TRE RIPIEGHI STANNO A 320px SENZA TOCCARE NIENT'ALTRO, e la 2.52 ha tolto le tre
+// proprietà di spazio che la 2.51 metteva in questa stessa media query (gap e fianchi più
+// stretti, corpo al 97,5%). Servivano al solo `amico del popolo dell'Ovest`, che sforava di
+// 7,6px: cambiato quel testo in `amico dell'Ovest`, il margine passa da -7,6 a +47,2 e la
+// spaziatura non ha più niente da compensare. ⚠️ La lezione è quella: prima si accorcia il
+// testo, e solo se non basta si tocca la geometria della riga.
 // ⚠️ L'INGLESE NON HA ripieghi: le sue etichette stanno già tutte a 320. Vale la regola del
 // fantasma (`.leg-measure` occupa spazio), quindi se un giorno si allungano va riverificato.
 var ICON_LABEL_MINI = {
   it: {
     stregone:      "Strega o stregone (ha qualche potere)",
     mago:          "Mago (pratica la 'vera' arte magica)",
-    signoredraghi: "Signore dei Draghi (amico del popolo dell'Ovest)"
+    signoredraghi: "Signore dei Draghi (amico dell'Ovest)"
   },
   en: {}
 };
