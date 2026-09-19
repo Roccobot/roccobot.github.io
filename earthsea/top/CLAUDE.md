@@ -1314,11 +1314,22 @@ divergono**, e dalla `2.49` ha tutte e due le lingue.
   della `2.44` misurava 278,83px: stava a 390 e a 375, e cedeva a **360**, che è la larghezza
   di quasi tutti gli Android. ⚠️ **La lezione riguarda la larghezza di prova, non il testo**:
   una misura presa dove il difetto si era visto lascia scoperte tutte le altre, e il rimedio
-  dura finché arriva uno schermo più stretto. La `2.49` è tarata su **320px**, la più stretta
+  dura finché arriva uno schermo più stretto. Da allora si misura a **320px**, la più stretta
   che il sito serve.
-- **Le misure della `2.49`, a 320px coi font veri**: lo spazio per il testo è **229,31px**,
-  l'italiano ne prende **200,81** e l'inglese **202,86**. Quella scartata è l'etichetta della
-  `2.44` (278,83), che a 320 occupa due righe.
+- ⚠️⚠️ **IL TESTO ITALIANO È DELL'UTENTE, e la `2.49` l'aveva scritto io**: là diceva `Mago
+  (stregone di Roke o strega potente)`, e lui l'ha rifiutato (*non è il testo che volevo*)
+  dettando quello della `2.50`, con la **barra** al posto della `o`. ⚠️ **Il confine è questo**:
+  di quanto un'etichetta deve accorciarsi lo dice la misura, **come** si accorcia lo decide
+  lui, e le due cose erano state confuse.
+- **Le misure della `2.50`, coi font veri**: l'italiano prende **236,20px** e sta fino a
+  **344px** compreso, l'inglese **217,78** e sta fino a 320. ⚠️ A **320px** l'italiano va a
+  capo, ed è **dichiarato**: nessun telefono in produzione è così stretto, e il testo è quello
+  che l'utente ha chiesto. Le misure scartate sono l'etichetta della `2.44` (278,83), che cede
+  già a 360, e la resa piena della barra in inglese (`a sorcerer trained on Roke`, 257,66),
+  che cede a 344 e alzerebbe la pila dove l'italiano sta.
+- ⚠️ **L'inglese deve reggere ALMENO quanto l'italiano**, e non è una simmetria estetica: per
+  il fantasma della voce qui sotto, una riga inglese a capo alza la pila anche in italiano,
+  quindi la lingua che cede prima detta la copertura di tutte e due.
 - ⚠️⚠️ **E L'INGLESE ADESSO CE L'HA, perché le due lingue NON sono indipendenti**: quella non
   attiva resta nel DOM come fantasma (`.leg-measure`, `visibility:hidden`) e **occupa spazio**,
   quindi una riga inglese a capo alza la pila anche mentre si legge in italiano. Misurato prima
@@ -1330,10 +1341,10 @@ divergono**, e dalla `2.49` ha tutte e due le lingue.
   telaio al resize è immediato, e non dipende dal fatto che il Pannello si ricostruisca, che è
   la parte fragile. Le chiavi senza variante restano testo nudo, quindi il markup cresce solo
   dove serve.
-- ⚠️ **Che cosa resta a capo, dichiarato**: a **320px** due voci ci vanno ancora (`Strega o
-  stregone` e `Signore dei Draghi`), e non sono state toccate perché l'utente ha segnalato il
-  solo `mago` e quei testi sono una sua scelta editoriale. Da **360px** in su nessuna voce va a
-  capo, in nessuna delle due lingue, e il Pannello sta a 544,25 fino a 360 compreso.
+- ⚠️ **Che cosa resta a capo, dichiarato**: a **320px** ci vanno `Strega o stregone`, `Signore
+  dei Draghi` e, dalla `2.50`, il `mago` italiano. Le prime due non sono state toccate perché
+  l'utente ha segnalato il solo `mago` e quei testi sono una sua scelta editoriale. Da **360px**
+  in su nessuna voce va a capo, in nessuna delle due lingue, e il Pannello sta a 544,25.
 - ⚠️⚠️ **IL METRO DELL'INCHIOSTRO SOTTOSTIMA UN TESTO CHE È GIÀ A CAPO**, e con lui si sceglie
   un candidato che poi cede: un `Range` su un testo spezzato dà **più rettangoli**, e prenderne
   il massimo misura il pezzo più largo, non la frase intera. In questo giro ha dato 254,61 per

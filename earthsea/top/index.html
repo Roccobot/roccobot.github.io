@@ -3513,7 +3513,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.49</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.50</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -6094,21 +6094,25 @@ var ICON_LABEL = {
 // (richiesta dell'utente, 2026-09-18, col testo dettato da lui). Sul desktop il Pannello si
 // allarga per contenere la riga; nella bottom-sheet la larghezza è quella dello schermo,
 // quindi l'unica cosa che può cedere è l'ALTEZZA, e la riga va a capo.
-// ⚠️⚠️ DALLA 2.49 LE DUE VARIANTI SONO TARATE SU 320px, non su 390 (segnalazione
-// dell'utente: *su mobile la voce di legenda di Mago va ancora a capo*). La prima versione
-// stava a 390 e cedeva subito sotto, cioè su quasi tutti gli Android, che sono larghi 360:
-// una misura presa alla larghezza in cui il difetto si era visto lascia fuori le altre.
-// Misurato coi font veri a 320px, la larghezza più stretta che il sito serve: lo spazio per
-// il testo è 229,31px, l'etichetta della 2.44 ne misurava 278,83 (a capo) e questa 200,81.
-// ⚠️⚠️ E L'INGLESE ADESSO CE L'HA, perché la sua metà non è indipendente: la lingua non
-// attiva resta nel DOM come fantasma (`.leg-measure`, `visibility:hidden`) e OCCUPA SPAZIO,
-// quindi una riga inglese a capo alza la pila anche mentre si legge in italiano. La sua
-// etichetta piena misura 291,69px: sta a 390 e va a capo da 375 in giù, e questa 202,86.
+// ⚠️⚠️ IL TESTO ITALIANO È DELL'UTENTE, dettato alla lettera nella 2.50: la barra al posto
+// della `o`, e `strega potente` al posto di `strega di grande potere`. La 2.49 diceva la
+// stessa sostanza con parole mie, e lui le ha rifiutate (*non è il testo che volevo*):
+// l'etichetta si accorcia per stare in una riga, e come si accorcia lo decide lui.
+// ⚠️⚠️ E SI MISURA ALLA LARGHEZZA PIÙ STRETTA, non a quella in cui il difetto si è visto:
+// la prima variante, della 2.44, era tarata su 390 e cedeva a 360, cioè su quasi tutti gli
+// Android. Misurato coi font veri: l'italiano prende 236,20px e sta fino a 344px compreso,
+// l'inglese 217,78 e sta fino a 320.
+// ⚠️ A 320px l'italiano va a capo, ed è dichiarato: nessun telefono in produzione è così
+// stretto, e il testo è quello che l'utente ha chiesto.
+// ⚠️⚠️ L'INGLESE DEVE REGGERE ALMENO QUANTO L'ITALIANO, perché la sua metà non è
+// indipendente: la lingua non attiva resta nel DOM come fantasma (`.leg-measure`,
+// `visibility:hidden`) e OCCUPA SPAZIO, quindi una riga inglese a capo alza la pila anche
+// mentre si legge in italiano. La sua etichetta piena misura 291,69px e cede da 375 in giù.
 // ⚠️ Vale per la LEGENDA e non per i tooltip delle card, che restano quelli interi di
 // `ICON_LABEL`: su mobile un tooltip non si apre, quindi là non c'è niente da accorciare.
 var ICON_LABEL_MOBILE = {
-  it: { mago: "Mago (stregone di Roke o strega potente)" },
-  en: { mago: "Mage (a sorcerer of Roke or a great witch)" }
+  it: { mago: "Mago (stregone educato a Roke / strega potente)" },
+  en: { mago: "Mage (a sorcerer of Roke / a powerful witch)" }
 };
 // Etichetta badge dedicata a un singolo personaggio (sovrascrive ICON_LABEL):
 // il dimezzamento dell'opacità può cambiare significato, chiarito nel tooltip
