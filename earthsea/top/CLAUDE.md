@@ -529,6 +529,17 @@ era fermato ai primi quattro libri.
   - ⚠️ **E la prova del cambio lingua deve verificare che la lingua sia CAMBIATA**: senza
     quella riga, 'nessuna card si è mossa' resta vero anche quando il tasto non ha fatto
     niente, che è il falso positivo già costato due prove verdi nel giro degli apocrifi.
+  - ⚠️⚠️ **LO STESSO VALE PER IL FAB, CHE SI RIMPICCIOLISCE QUANDO IL PANNELLO SI APRE**
+    (`fab-tap`, da scala 1 a **0,92** in 0,34s, e `forwards`, quindi resta piccolo finché il
+    Pannello è aperto; `fab-grow` lo riporta a 1 alla chiusura). Un banco che apra il Pannello
+    e scatti subito lo coglie **a metà corsa**: misurato a 1600px, a 120ms dal clic è largo
+    **44,34px** contro i 44,16 di quando è fermo, e l'angolo cade 0,09px più in alto. Quei 18
+    centesimi diventano un 'elemento mosso al cambio lingua' che la pagina non ha.
+    - **Il rimedio è aspettare la fine della corsa** prima del primo scatto, non allargare la
+      tolleranza: a regime il rettangolo è **identico al centesimo** prima e dopo il cambio
+      lingua. ⚠️ Nel banco esaustivo della `2.61` è capitato **una volta su 406**, perché
+      l'attesa bastava in tutti gli altri casi: un falso allarme che compare a intermittenza è
+      quello che si scambia più facilmente per un difetto vero.
 
 ### 💍 La Casa di Hupun e l'Anello spezzato
 
