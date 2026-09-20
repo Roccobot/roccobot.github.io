@@ -1468,11 +1468,11 @@ diverse, e tutte e due valgono oltre il caso.
   file `.xml`, ed è raccontata in § 'Il corpus della raccolta portava i quindici racconti
   estranei, e adesso no' per la parte del ritaglio. Corretto, il racconto dà **53.719
   caratteri** e porta personaggi che il dataset non ha.
-  - ⚠️⚠️ **Le sue voci sarebbero un CASO NUOVO: nome e citazione in una lingua sola.** Non ha
-    edizione italiana, quindi la metà italiana non esiste e non si può cercare: è il rovescio
-    di `Salan`, che ha la citazione di Nord perché Mondadori l'appendice non la stampa. Prima di
-    inserirle serve una decisione dell'utente, perché il dataset non ha precedenti di una voce
-    **interamente** inglese.
+  - ⚠️⚠️ **Le sue voci NACQUERO come caso nuovo, nome e citazione in una lingua sola**, perché
+    quel racconto non aveva edizione italiana: era il rovescio di `Salan`, che ha la citazione
+    di Nord perché Mondadori l'appendice non la stampa. ⚠️ **Dalla `2.67` non è più così**:
+    l'edizione italiana c'è (§ 'Le voci di *The daughter of Odren*, nate senza edizione
+    italiana'), quindi la metà italiana si cerca come per ogni altra voce.
 - ✅ **L'appendice invece ERA già nel corpus**, dentro il volume 5 inglese, e il censimento
   l'aveva letta senza saperlo: `Salan` e `Heru` vengono da lì. Ricensita a parte, l'unico nome
   di persona che mancava al dataset era **`Halkel`, il primo Arcimago** (*Ambition, arrogance,
@@ -1481,18 +1481,36 @@ diverse, e tutte e due valgono oltre il caso.
     § 'Gli Arcimaghi che le fonti nominano'): il badge `arcimago` si assegna da quell'elenco e
     non da una frase letta al volo, quindi chi ne aggiunge un altro cambia **prima** quel file.
 
-### 🏚️ Le voci di *The daughter of Odren*, il primo gruppo senza edizione italiana
+### 🏚️ Le voci di *The daughter of Odren*, nate senza edizione italiana
 
 Chieste dall'utente il 2026-09-18 (*le voci vanno create: aggiungi tutti i personaggi*), con
-le **rese italiane dettate da lui**, che è la condizione senza la quale il gruppo non poteva
-nascere: quel racconto non ha edizione italiana, quindi nessun nome si può cercare in una
-fonte nostra.
+le **rese italiane dettate da lui**, che allora era la condizione senza la quale il gruppo non
+poteva nascere: quel racconto non aveva edizione italiana, quindi nessun nome si poteva
+cercare in una fonte nostra.
+
+⚠️⚠️ **DAL 2026-09-20 L'EDIZIONE ITALIANA C'È**, fornita dall'utente (*La figlia di Odren*,
+fra le fonti scaricabili di `rules/Earthsea.md`), ed è entrata nel corpus con la `2.67`:
+**56.801 caratteri**, in linea con i 53.719 dell'inglese. Quindi le rese di questo gruppo si
+verificano col grep come tutte le altre, e le note che le dicono non verificabili descrivono
+lo stato fino alla `2.66`.
+- ⚠️⚠️ **E IL GREP LE CONFERMA TUTTE MENO UNA**: `Malva`, `Limo`, `Calla`, `Granato`, `Olmo`,
+  `Lauro`, `Trifoglio`, `Nella`, `Felce`, `Hovy`, `Uomo Eretto`, `Piccolo Granato` e
+  `Scoiattolo` sono **attestati alla lettera** nell'edizione. Le rese dettate da lui e quelle
+  dell'edizione coincidono, quindi non c'è nulla da scegliere.
+- ⚠️⚠️ **L'UNICA DIVERGENZA È `Collina`, che l'edizione rende `Montagna`** (*Ricordi che ti
+  chiamavo Scoiattolo? E tu mi chiamavi Montagna, perché mi sedevo sopra di te quando
+  giocavamo?*). ⚠️ **Resta `Collina`, e non si corregge d'ufficio**: è la regola delle
+  divergenze (§ 'Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti'),
+  dove vince il dato dell'utente finché non decide lui. ⚠️ Le sette occorrenze di `Collina`
+  nell'edizione sono un **toponimo** (`Fattoria della Collina`), che con questa voce non
+  c'entra: chi conta senza guardare il contesto la dà per confermata.
 
 ⚠️⚠️ **LE RESE SONO SUE E VANNO TRATTATE COME ATTESTAZIONI DEL SITO, non come traduzioni**:
 `Weed` -> **Malva**, `Clay` -> **Limo**, `Lily` -> **Calla**, `Garnet` -> **Granato**,
 `Ash` -> **Olmo**, `Bay` -> **Lauro**, `Clover` -> **Trifoglio**, `Linnet` -> **Nella**,
-`Fern` -> **Felce**, `the Standing Man` -> **Uomo Eretto**; `Hovy` resta invariato. Un audit
-sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per undici.
+`Fern` -> **Felce**, `the Standing Man` -> **Uomo Eretto**; `Hovy` resta invariato. ⚠️ Questo
+valeva **prima** che la fonte italiana arrivasse, e adesso quasi tutte hanno anche
+l'attestazione: la nota resta perché dice **da dove vengono**, cioè da lui.
 
 ⚠️⚠️ **`Uomo Eretto` NON È PIÙ UNA VOCE DALLA `2.66`**: per istruzione dell'utente la voce è
 stata **eliminata**, e quel nome vive adesso fra i **nomi alternativi di `Granato`**
@@ -1506,14 +1524,16 @@ Era stata **offerta** col giro del gruppo, il 2026-09-18, e lui ha risposto di n
 nota esiste perché un censimento la ritroverà**: chi rilegge il racconto cercando i
 personaggi mancanti trova lei per prima, e senza questa riga la riproporrebbe.
 
-- ⚠️⚠️ **NESSUNA CITAZIONE, ed è una sua istruzione**: senza un'edizione italiana la metà
-  italiana non si potrebbe verificare, e inventarla sarebbe l'unico modo di riempire il campo.
-  ⚠️ È il **rovescio** di `Salan`, che la citazione ce l'ha di Nord perché Mondadori non
-  stampa l'appendice: là un testo italiano esiste, qui no.
-- ⚠️ **Il titolo dell'opera resta INGLESE anche nella metà italiana** (`The Daughter of Odren
-  (2014)`), perché il canone lo impone (`rules/Earthsea.md`, § 'Le opere, in italiano': *un
-  titolo italiano per quel racconto non esiste, quindi non si cita e non si inventa*). È la
-  sola voce del dataset con le due metà identiche in quel campo.
+- ⚠️⚠️ **NESSUNA CITAZIONE, ed è una sua istruzione**: nacque perché senza un'edizione
+  italiana la metà italiana non si poteva verificare, e inventarla sarebbe stato l'unico modo
+  di riempire il campo. ⚠️⚠️ **Adesso la condizione è caduta**, perché l'edizione c'è: quelle
+  dieci voci **potrebbero** avere una citazione come tutte le altre, ma metterla è una
+  decisione sua e non una conseguenza, quindi il campo resta vuoto finché non lo dice.
+- ⚠️ **Il titolo dell'opera è italiano nella metà italiana DALLA `2.67`** (`La figlia di
+  Odren (2014)`), e il campo è `fonte`: fino alla `2.66` portava il titolo inglese in tutte e
+  due le metà, perché un titolo italiano non esisteva. ⚠️ L'anno resta quello
+  dell'**originale**, come in ogni altra voce del dataset (`Tehanu (1990)` in tutte e due le
+  lingue), e la metà inglese non si tocca.
 - **Origine `O` per tutte**, attestata nella prima riga del racconto (`the Island of O`), e
   quell'isola era già nel dataset con `Hega`.
 - **I generi vengono tutti dall'inglese**, che è l'unica fonte: `Farmer Bay` e `Bay's wife`,
@@ -1535,8 +1555,8 @@ personaggi mancanti trova lei per prima, e senza questa riga la riproporrebbe.
     on you when we played?*).
   - **Con la `2.63` erano usciti `Ninfea` da `Malva` e `Grano` da `Limo`**, per sua istruzione,
     e la metà inglese non era stata toccata: `Lily` e `Little Garnet` sono quello che il
-    racconto attesta, mentre quei due erano rese **italiane**, che di attestato non hanno
-    niente perché il racconto in italiano non esiste.
+    racconto attesta, mentre quei due erano rese **italiane**, che allora non avevano nulla di
+    attestato, perché l'edizione italiana è arrivata dopo (`2.67`).
   - ⚠️⚠️ **DA QUESTE SCELTE NON SI RICAVA NESSUN CRITERIO SUL NUMERO DEI NOMI ALTERNATIVI**, e
     qui ne era stato scritto uno (*l'alternativo italiano è uno per voce dalla `2.63`*) che
     l'utente ha smentito: *non è mai stata una regola e non doveva essere una regola*. Due
