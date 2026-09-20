@@ -1514,14 +1514,22 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
   la madre e cambiò il nome d'uso in `Weed`; il fratello era `Little Garnet` come il padre e
   fu lei a chiamarlo `Clay`. Quindi `Calla` vive fra i nomi alternativi di `Malva`, e
   `Piccolo Granato` fra quelli di `Limo`.
-  - ⚠️⚠️ **DALLA `2.63` L'ALTERNATIVO ITALIANO È UNO PER VOCE**, per istruzione dell'utente:
-    sono usciti `Ninfea` da `Malva` e `Grano` da `Limo`, che erano sue **seconde** rese dello
-    stesso nome inglese. Le note che ne elencano due per voce descrivono lo stato fino alla
-    `2.62`.
-  - ⚠️ **La metà inglese non è stata toccata**, e la distinzione regge la scelta: `Lily` e
-    `Little Garnet` sono quello che il racconto attesta, mentre a uscire sono due rese
-    **italiane**, che di attestato non hanno niente perché quel racconto in italiano non
-    esiste.
+  - ⚠️⚠️ **E DALLA `2.65` CIASCUNA PORTA ANCHE IL SOPRANNOME D'INFANZIA DELL'ALTRA**, per
+    istruzione dell'utente: `Scoiattolo` / `Squirrel` a `Limo` e `Collina` / `Mountain` a
+    `Malva`. ⚠️ **Sono due nomi INCROCIATI, e scambiarli è l'errore naturale**: a darli è ogni
+    volta l'altro fratello, e la fonte li attesta in una frase sola, dove `Weed` parla a
+    `Clay` (*Remember I called you Squirrel? And you called me Mountain, because I used to sit
+    on you when we played?*).
+  - ⚠️⚠️ **QUESTO NON RIAPRE LA PORTA A `Ninfea` E `Grano`, usciti con la `2.63`**, ed è la
+    distinzione da tenere ferma: là erano due **seconde rese italiane dello stesso** nome
+    inglese, cioè doppioni senza controparte; qui è un **nome in più**, che porta con sé la
+    propria metà inglese attestata. Il conto dei nomi alternativi per voce non è dunque un
+    criterio, e la regola che si legge come 'uno per voce dalla `2.63`' descrive lo stato fino
+    alla `2.64`.
+  - ⚠️ **Nell'uscita della `2.63` la metà inglese non era stata toccata**, e la distinzione
+    regge quella scelta: `Lily` e `Little Garnet` sono quello che il racconto attesta, mentre
+    a uscire erano due rese **italiane**, che di attestato non hanno niente perché quel
+    racconto in italiano non esiste.
 - **Badge**: `stregone` a `Limo`, che dice di avere il dono e ha studiato quattro anni con un
   mago di Roke **senza** passare da Roke: è il criterio di `Avorio` e di `Diamante`
   (§ 'I 19 confrontati con Wikipedia', punto 3).
