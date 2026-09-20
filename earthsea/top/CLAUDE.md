@@ -1481,7 +1481,7 @@ diverse, e tutte e due valgono oltre il caso.
     § 'Gli Arcimaghi che le fonti nominano'): il badge `arcimago` si assegna da quell'elenco e
     non da una frase letta al volo, quindi chi ne aggiunge un altro cambia **prima** quel file.
 
-### 🏚️ Le UNDICI voci di *The daughter of Odren*, il primo gruppo senza edizione italiana
+### 🏚️ Le voci di *The daughter of Odren*, il primo gruppo senza edizione italiana
 
 Chieste dall'utente il 2026-09-18 (*le voci vanno create: aggiungi tutti i personaggi*), con
 le **rese italiane dettate da lui**, che è la condizione senza la quale il gruppo non poteva
@@ -1493,6 +1493,12 @@ fonte nostra.
 `Ash` -> **Olmo**, `Bay` -> **Lauro**, `Clover` -> **Trifoglio**, `Linnet` -> **Nella**,
 `Fern` -> **Felce**, `the Standing Man` -> **Uomo Eretto**; `Hovy` resta invariato. Un audit
 sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per undici.
+
+⚠️⚠️ **`Uomo Eretto` NON È PIÙ UNA VOCE DALLA `2.66`**: per istruzione dell'utente la voce è
+stata **eliminata**, e quel nome vive adesso fra i **nomi alternativi di `Granato`**
+(`Standing Man` nella metà inglese, che era il suo `nome_en`). Quindi le rese restano undici
+e le voci sono dieci, e le note che lo trattano come una voce a sé descrivono il dataset fino
+alla `2.65`.
 
 - ⚠️⚠️ **NESSUNA CITAZIONE, ed è una sua istruzione**: senza un'edizione italiana la metà
   italiana non si potrebbe verificare, e inventarla sarebbe l'unico modo di riempire il campo.
@@ -1507,9 +1513,10 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
 - **I generi vengono tutti dall'inglese**, che è l'unica fonte: `Farmer Bay` e `Bay's wife`,
   `the boy Clay, the son of Odren`, `Hovy's sister, Linnet`, `My sister's daughter Fern`,
   `Her stepdaughter, Clover, a girl of fifteen`.
-- ⚠️⚠️ **`Uomo Eretto` NON HA GENERE, e non è una dimenticanza**: il testo lo chiama sempre
-  `it` (`It stood there`, `its blunt arms`), quindi un maschile sarebbe la grammatica del nome
-  e non un dato. È il caso di `Tiro`, dove il vuoto è una risposta.
+- ⚠️⚠️ **`Uomo Eretto` NON AVEVA GENERE, e non era una dimenticanza**: il testo lo chiama
+  sempre `it` (`It stood there`, `its blunt arms`), quindi un maschile sarebbe stato la
+  grammatica del nome e non un dato. Era il caso di `Tiro`, dove il vuoto è una risposta, e
+  vale per chiunque lo rimetta nel dataset.
 - ⚠️ **Due nomi valgono DUE VOLTE**, e il testo lo dichiara: la figlia si chiamava `Lily` come
   la madre e cambiò il nome d'uso in `Weed`; il fratello era `Little Garnet` come il padre e
   fu lei a chiamarlo `Clay`. Quindi `Calla` vive fra i nomi alternativi di `Malva`, e
@@ -1548,10 +1555,11 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
       controllo a dato è che le voci con tutti e due siano **zero**
       (§ 'I 19 confrontati con Wikipedia', punto 4).
 - **La posizione**: il gruppo entrò **prima di `Cenerino`**, che allora era l'ultima voce
-  umana della lista. ⚠️ **`Olmo` se n'è andato con la `2.64`**, dove l'utente lo ha spostato a
-  20 posizioni dall'ultimo mago (la forma di quell'istruzione è in § 'Stato: lo Schedario è
-  IMPORTATO, e il dataset è verificato sulle fonti'): oggi è lui l'ultima voce umana, e
-  `Cenerino` è terzultimo.
+  umana della lista. ⚠️ **`Olmo` se n'è andato, e in due tappe**: con la `2.64` a 20 posizioni
+  dall'ultimo mago, con la `2.66` **prima di `Sul`** (la forma di quelle istruzioni è in
+  § 'Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti'). ⚠️ **Dove sta
+  oggi una voce NON si scrive: si conta**, perché ogni spostamento muove tutti quelli che
+  seguono, e questa riga ha già mentito una volta.
 - ⚠️ **`Odren` NON è un personaggio**, e per un giro è stato dato per tale: tutte le 29
   occorrenze sono `the Lords of Odren`, `the Lady of Odren`, `Odren Cove`, `the great house of
   Odren`, e la sola che sembra una persona (`Odren had been gathering his men`) è la metonimia
@@ -1569,13 +1577,15 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
 Costruendo una voce nuova si copiano le **chiavi** di una esistente, ma quella scelta decide
 anche che cosa **non** si può scrivere: `senzanome` vive solo sulle voci che lo portano, e il
 modello usato per questo gruppo (`Salan`) non ce l'ha. Una guardia `if 'senzanome' in v`
-l'ha quindi scartato **in silenzio**, e `Uomo Eretto` è nato visibile in classifica.
+l'ha quindi scartato **in silenzio**, e `Uomo Eretto` era nato visibile in classifica.
 
 - **Come si scrive un campo che il modello non ha**: si legge da una voce che lo porta
   (`Mago Nero`), così si prendono il valore e la **posizione fra le chiavi**, e la riga
   somiglia alle sue sorelle.
-- ⚠️ **Perciò il conto dei campi NON è uguale per tutte le voci**: le dieci con nome ne hanno
-  34 e `Uomo Eretto` 35. Un banco che attenda un numero unico accusa un dato corretto.
+- ⚠️ **Perciò il conto dei campi NON è uguale per tutte le voci**, e un banco che attenda un
+  numero unico accusa un dato corretto. ⚠️ **Quante chiavi abbia una voce si CONTA**: il
+  gruppo di *Odren* le aveva disuguali finché portava `Uomo Eretto`, uscito con la `2.66`, e
+  un numero scritto qui invecchierebbe alla prima voce che nasce con un campo in più.
 
 #### ⚠️⚠️ Il metro del NOME vuole la faccia E il ripiego, perché la gemella non c'è sempre
 
@@ -5659,11 +5669,11 @@ ragione di ognuno'.
       2026-09-05). ⚠️ Fu la prima voce con una posizione **chiesta**: le altre si accodano, e
       questa vale come precedente solo se lui lo dice.
       - ⚠️⚠️ **QUEL POSTO NON È PIÙ SUO, e le note che lo dicono l'ultima voce umana sono
-        superate**: gliel'hanno preso `Chicco` (`2.40`) e poi `Olmo` (`2.64`, spostato a 20
-        posizioni dall'ultimo mago), quindi oggi è terzultimo fra gli umani. **Non è una
-        regressione**: la sua posizione fu chiesta per un vicinato che nessuna istruzione
-        successiva ha difeso, e le due voci che lo hanno scavalcato sono arrivate con una
-        posizione chiesta a loro volta.
+        superate**: glielo ha preso `Chicco` con la `2.40`, e per due versioni anche `Olmo`
+        (`2.64`), che poi se n'è andato con la `2.66`. **Non è una regressione**: la sua
+        posizione fu chiesta per un vicinato che nessuna istruzione successiva ha difeso, e
+        chi lo ha scavalcato è arrivato con una posizione chiesta a sua volta. ⚠️ **Chi sia
+        oggi l'ultima voce umana si CONTA**, perché cambia a ogni spostamento.
     - `Her brother` dà il genere, e il fratello è quello della **madre di Lontra**, di
       Endlane: da lì l'origine, che è dove vive e non una nascita attestata. ⚠️ **Nel campo
       c'è `Havnor` e non `Endlane` dalla `1.46`**, perché là va l'isola e quel villaggio è
