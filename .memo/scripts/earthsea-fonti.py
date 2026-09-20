@@ -23,8 +23,11 @@
 # ⚠️⚠️ `Earthsea 07 - The daughter of Odren` ERA QUASI VUOTO (214 byte) fino al 2026-09-18, e
 # la causa era QUI: quell'epub tiene il testo in file `.xml`, che l'estrattore non guardava.
 # Il commento che lo dava per un difetto dell'epub ha fatto sì che il racconto restasse fuori
-# da ogni verifica per un mese. Non ha edizione italiana, ed è la sola fonte in questa
-# condizione: un nome trovato là dentro non ha una metà italiana da cercare.
+# da ogni verifica per un mese.
+# ⚠️⚠️ E DAL 2026-09-20 QUEL RACCONTO HA LA SUA EDIZIONE ITALIANA, `Terramare 07 - La figlia
+# di Odren`, fornita dall'utente: fino a quel giorno era la sola fonte senza metà italiana, e
+# un nome trovato là dentro non aveva dove essere cercato. Adesso ce l'ha, quindi le rese
+# italiane di quelle voci si verificano come tutte le altre.
 # ⚠️⚠️ LA FONTE NORD È LA TERZA FAMIGLIA, e senza di lei ogni verifica sui NOMI risponde
 # sbagliato: il canone dice che la resa italiana dei nomi (persone E luoghi) è quella dei
 # libri 1-3 dell'edizione Nord, mentre le sei `Terramare NN` sono MONDADORI, che quei nomi li
@@ -68,6 +71,7 @@ ITA = ['Terramare 01 - Un mago di Terramare',
        'Terramare 04 - Tehanu',
        'Terramare 05 - Le leggende di Terramare',
        'Terramare 06 - I venti di Terramare',
+       'Terramare 07 - La figlia di Odren',
        'I dodici punti cardinali']
 # L'edizione NORD in volume unico, che decide sui nomi. Vive in `Fonti ITA` come le altre.
 ITA_NORD = ['Saga di Earthsea']
