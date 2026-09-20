@@ -1520,16 +1520,16 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
     volta l'altro fratello, e la fonte li attesta in una frase sola, dove `Weed` parla a
     `Clay` (*Remember I called you Squirrel? And you called me Mountain, because I used to sit
     on you when we played?*).
-  - ⚠️⚠️ **QUESTO NON RIAPRE LA PORTA A `Ninfea` E `Grano`, usciti con la `2.63`**, ed è la
-    distinzione da tenere ferma: là erano due **seconde rese italiane dello stesso** nome
-    inglese, cioè doppioni senza controparte; qui è un **nome in più**, che porta con sé la
-    propria metà inglese attestata. Il conto dei nomi alternativi per voce non è dunque un
-    criterio, e la regola che si legge come 'uno per voce dalla `2.63`' descrive lo stato fino
-    alla `2.64`.
-  - ⚠️ **Nell'uscita della `2.63` la metà inglese non era stata toccata**, e la distinzione
-    regge quella scelta: `Lily` e `Little Garnet` sono quello che il racconto attesta, mentre
-    a uscire erano due rese **italiane**, che di attestato non hanno niente perché quel
-    racconto in italiano non esiste.
+  - **Con la `2.63` erano usciti `Ninfea` da `Malva` e `Grano` da `Limo`**, per sua istruzione,
+    e la metà inglese non era stata toccata: `Lily` e `Little Garnet` sono quello che il
+    racconto attesta, mentre quei due erano rese **italiane**, che di attestato non hanno
+    niente perché il racconto in italiano non esiste.
+  - ⚠️⚠️ **DA QUESTE SCELTE NON SI RICAVA NESSUN CRITERIO SUL NUMERO DEI NOMI ALTERNATIVI**, e
+    qui ne era stato scritto uno (*l'alternativo italiano è uno per voce dalla `2.63`*) che
+    l'utente ha smentito: *non è mai stata una regola e non doveva essere una regola*. Due
+    rimozioni puntuali sono due rimozioni puntuali, ed è la regola già scritta in § 'Stato: lo
+    Schedario è IMPORTATO, e il dataset è verificato sulle fonti' (*non ti fornisco regole
+    perché non esistono: li ho già valutati io singolarmente*) applicata ai nomi.
 - **Badge**: `stregone` a `Limo`, che dice di avere il dono e ha studiato quattro anni con un
   mago di Roke **senza** passare da Roke: è il criterio di `Avorio` e di `Diamante`
   (§ 'I 19 confrontati con Wikipedia', punto 3).
