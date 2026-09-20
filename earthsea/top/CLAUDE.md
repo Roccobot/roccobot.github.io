@@ -1500,6 +1500,12 @@ stata **eliminata**, e quel nome vive adesso fra i **nomi alternativi di `Granat
 e le voci sono dieci, e le note che lo trattano come una voce a sé descrivono il dataset fino
 alla `2.65`.
 
+⚠️⚠️ **E L'OSTESSA NON ENTRA, per decisione dell'utente** (`2026-09-20`): è la donna che
+racconta la storia e non ha nome proprio, quindi sarebbe stata una voce fra i **senza nome**.
+Era stata **offerta** col giro del gruppo, il 2026-09-18, e lui ha risposto di no. ⚠️ **La
+nota esiste perché un censimento la ritroverà**: chi rilegge il racconto cercando i
+personaggi mancanti trova lei per prima, e senza questa riga la riproporrebbe.
+
 - ⚠️⚠️ **NESSUNA CITAZIONE, ed è una sua istruzione**: senza un'edizione italiana la metà
   italiana non si potrebbe verificare, e inventarla sarebbe l'unico modo di riempire il campo.
   ⚠️ È il **rovescio** di `Salan`, che la citazione ce l'ha di Nord perché Mondadori non
