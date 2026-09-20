@@ -29,6 +29,21 @@ e le citazioni ci sono dalla `0.60` (vedi la sezione apposita).
     - **La `1.47` lo mostra in un caso solo**: spostato `Thoreg` all'indice 36, `Diamante` è
       passato da 78 a **79**, quindi `Intahin` andava all'80 e non al 79. Con due indici
       scritti in anticipo la seconda voce sarebbe finita **prima** della sua.
+    - ⚠️⚠️ **DALLA `2.64` ESISTE ANCHE LA FORMA A DISTANZA, *X a N posti sotto Y***, e va
+      saputa perché il bersaglio **si calcola** invece di essere nominato: l'istruzione era
+      *spostalo 20 posti sotto l'ultimo mago in classifica*, e il riferimento (`Beryl`) non
+      compare nelle sue parole. Tre cose decidono il risultato, e sbagliarne una sposta la
+      voce altrove.
+      - **La classifica è quella RESA IN PAGINA, non il dataset**: le voci `apocrifo` vivono
+        in una **seconda tabella con numerazione propria**, quindi contarle insieme alle altre
+        dà un numero che in pagina non si legge da nessuna parte. Si misura sul DOM
+        (`#rank-list .rank-item` col loro `data-grp`), che è la cosa che l'utente ha davanti.
+      - ⚠️ **La voce da spostare NON conta nel calcolo del riferimento**: `Olmo` portava
+        `stregone`, ma se lo spostamento avesse riguardato un mago, prenderlo come 'ultimo
+        mago' avrebbe dato una distanza da sé stesso, cioè zero.
+      - **Il conto si fa sulle POSIZIONI di arrivo**: l'ultimo mago era al numero 175, quindi
+        la destinazione è il **195**, e la verifica è rileggere in pagina il numero della
+        card e la differenza fra i due.
 - ⚠️ **Le due metà si riempiono in modi diversi** (la sezione sulle due metà del dataset,
   più sotto, dice come): la colonna italiana è **dello Schedario**,
   cioè dell'utente, coi nomi Nord dove divergono da Mondadori; la metà inglese (`nome_en`,
@@ -1507,11 +1522,28 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
     `Little Garnet` sono quello che il racconto attesta, mentre a uscire sono due rese
     **italiane**, che di attestato non hanno niente perché quel racconto in italiano non
     esiste.
-- **Badge**: `stregone` a `Olmo` (`the sorcerer`, attestato) e a `Limo`, che dice di avere il
-  dono e ha studiato quattro anni con un mago di Roke **senza** passare da Roke: è il criterio
-  di `Avorio` e di `Diamante` (§ 'I 19 confrontati con Wikipedia', punto 3).
-- **La posizione**: il gruppo entra **prima di `Cenerino`**, che per istruzione dell'utente
-  resta l'ultima voce umana della lista, subito prima degli animali.
+- **Badge**: `stregone` a `Limo`, che dice di avere il dono e ha studiato quattro anni con un
+  mago di Roke **senza** passare da Roke: è il criterio di `Avorio` e di `Diamante`
+  (§ 'I 19 confrontati con Wikipedia', punto 3).
+  - ⚠️⚠️ **`OLMO` PORTA `mago` DALLA `2.64`, e nacque `stregone`**: scelta dell'utente, sue
+    parole, *il testo dice stregone, ma lo dice con le parole di personaggi ignoranti. Il
+    bastone e il tipo di potere dimostrato nel racconto dimostrano che è di rango superiore*.
+    Quindi le note che lo dànno fra gli stregoni descrivono lo stato fino alla `2.63`.
+    - ⚠️ **È il secondo caso dopo `Hega`** (§ 'Il CENSIMENTO del corpus, e le diciotto voci
+      che ha trovato'), e insieme dicono il criterio meglio di ciascuno da solo: là la parola
+      `sorcerer` invecchiava col secolo, qui la pronunciano personaggi che non sanno
+      distinguere i gradi. **La causa è diversa, la conseguenza è la stessa**: la parola del
+      testo è una spia, e il badge misura che cosa il personaggio è.
+    - ⚠️ **La fonte dice l'altro**, ed è da dichiarare come per `Hega`: `the sorcerer` è
+      attestato, quindi un audit sulle fonti lo segnalerà, e non sarà un difetto del dato.
+    - ⚠️ **`stregone` è stato TOLTO, non affiancato**: i due badge restano incompatibili, e il
+      controllo a dato è che le voci con tutti e due siano **zero**
+      (§ 'I 19 confrontati con Wikipedia', punto 4).
+- **La posizione**: il gruppo entrò **prima di `Cenerino`**, che allora era l'ultima voce
+  umana della lista. ⚠️ **`Olmo` se n'è andato con la `2.64`**, dove l'utente lo ha spostato a
+  20 posizioni dall'ultimo mago (la forma di quell'istruzione è in § 'Stato: lo Schedario è
+  IMPORTATO, e il dataset è verificato sulle fonti'): oggi è lui l'ultima voce umana, e
+  `Cenerino` è terzultimo.
 - ⚠️ **`Odren` NON è un personaggio**, e per un giro è stato dato per tale: tutte le 29
   occorrenze sono `the Lords of Odren`, `the Lady of Odren`, `Odren Cove`, `the great house of
   Odren`, e la sola che sembra una persona (`Odren had been gathering his men`) è la metonimia
@@ -5615,9 +5647,15 @@ ragione di ognuno'.
       ogni anno*), con zero occorrenze di `Littleash` e di qualunque resa in tutte e due. Non
       è una coincidenza: dal quinto volume la traduzione è condivisa (`rules/Earthsea.md`,
       § 'Fonti ITA'), quindi là non c'era nulla da scegliere fra le due.
-    - **È in fondo agli umani, subito prima degli animali** (istruzione dell'utente,
-      2026-09-05). ⚠️ È l'unica voce con una posizione **chiesta**: le altre si accodano, e
+    - **Nacque in fondo agli umani, subito prima degli animali** (istruzione dell'utente,
+      2026-09-05). ⚠️ Fu la prima voce con una posizione **chiesta**: le altre si accodano, e
       questa vale come precedente solo se lui lo dice.
+      - ⚠️⚠️ **QUEL POSTO NON È PIÙ SUO, e le note che lo dicono l'ultima voce umana sono
+        superate**: gliel'hanno preso `Chicco` (`2.40`) e poi `Olmo` (`2.64`, spostato a 20
+        posizioni dall'ultimo mago), quindi oggi è terzultimo fra gli umani. **Non è una
+        regressione**: la sua posizione fu chiesta per un vicinato che nessuna istruzione
+        successiva ha difeso, e le due voci che lo hanno scavalcato sono arrivate con una
+        posizione chiesta a loro volta.
     - `Her brother` dà il genere, e il fratello è quello della **madre di Lontra**, di
       Endlane: da lì l'origine, che è dove vive e non una nascita attestata. ⚠️ **Nel campo
       c'è `Havnor` e non `Endlane` dalla `1.46`**, perché là va l'isola e quel villaggio è
