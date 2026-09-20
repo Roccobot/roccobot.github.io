@@ -1497,8 +1497,16 @@ sulle fonti non ne troverà nessuna: è il caso di `Cenerino`, moltiplicato per 
   e non un dato. È il caso di `Tiro`, dove il vuoto è una risposta.
 - ⚠️ **Due nomi valgono DUE VOLTE**, e il testo lo dichiara: la figlia si chiamava `Lily` come
   la madre e cambiò il nome d'uso in `Weed`; il fratello era `Little Garnet` come il padre e
-  fu lei a chiamarlo `Clay`. Quindi `Calla` e `Ninfea` vivono fra i nomi alternativi di
-  `Malva`, e `Piccolo Granato` e `Grano` fra quelli di `Limo`.
+  fu lei a chiamarlo `Clay`. Quindi `Calla` vive fra i nomi alternativi di `Malva`, e
+  `Piccolo Granato` fra quelli di `Limo`.
+  - ⚠️⚠️ **DALLA `2.63` L'ALTERNATIVO ITALIANO È UNO PER VOCE**, per istruzione dell'utente:
+    sono usciti `Ninfea` da `Malva` e `Grano` da `Limo`, che erano sue **seconde** rese dello
+    stesso nome inglese. Le note che ne elencano due per voce descrivono lo stato fino alla
+    `2.62`.
+  - ⚠️ **La metà inglese non è stata toccata**, e la distinzione regge la scelta: `Lily` e
+    `Little Garnet` sono quello che il racconto attesta, mentre a uscire sono due rese
+    **italiane**, che di attestato non hanno niente perché quel racconto in italiano non
+    esiste.
 - **Badge**: `stregone` a `Olmo` (`the sorcerer`, attestato) e a `Limo`, che dice di avere il
   dono e ha studiato quattro anni con un mago di Roke **senza** passare da Roke: è il criterio
   di `Avorio` e di `Diamante` (§ 'I 19 confrontati con Wikipedia', punto 3).
