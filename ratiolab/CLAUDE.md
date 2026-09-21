@@ -28,11 +28,11 @@ divergerebbero al primo bump distratto.
 - ⚠️ **È anche la sonda del deploy**: la verifica di pubblicazione si fa con un `curl` su
   `https://roccobot.github.io/ratiolab/index.html` cercando `const VERSIONE`.
 
-## 📥 Il file arriva dall'utente, e due cose sono cambiate entrando qui
+## 📥 Il file arriva dall'utente, e tre cose sono cambiate entrando qui
 
 La pagina è sua, scritta fuori da questo repo e consegnata in chat. Quello che è stato toccato
-nel trasporto è **solo** ciò che una regola del repo impone, e sono due cose: chi ritocca
-questo file sappia che il resto è come l'ha scritto lui.
+nel trasporto sono **due** cose che una regola del repo impone, più un refuso che ha chiesto di
+correggere: chi ritocca questo file sappia che il resto è come l'ha scritto lui.
 
 - ⚠️⚠️ **I TRE `innerHTML` SONO DIVENTATI NODI COMPOSTI**, perché 'mai `innerHTML`' è una
   regola **non derogabile** del repo (`CLAUDE.md` di root, § '🔒 Regole NON derogabili a
@@ -42,10 +42,12 @@ questo file sappia che il resto è come l'ha scritto lui.
   `writeNumber` e `copyableNumber`.
 - **La versione scritta in pagina**, per la regola qui sopra: nessun progetto del repo è senza
   versione.
-
-⚠️ **Un esempio in un commento non descrive il conto**: quello accanto alla riga dei dettagli
-dice `19:7 -> ~3:1 +10,5%`, mentre il calcolo su quei due numeri dà **-9,52%** (il rapporto
-2,71 sta **sotto** il 3:1). È il commento a essere impreciso, e il conto è quello giusto.
+- **Un esempio in un commento diceva un numero che il conto non dà**, ed è la terza cosa
+  cambiata, su sua istruzione: quello accanto alla riga dei dettagli scriveva
+  `19:7 -> ~3:1 +10,5%`, mentre su quei due numeri il calcolo dà **-9,52%**, perché il
+  rapporto 2,71 è **minore** del 3:1 e lo scarto viene negativo. ⚠️ **Il codice era giusto e
+  resta intatto**: a cambiare è la sola riga di commento, quindi la versione **non** si bumpa
+  (sua istruzione, 2026-09-21).
 
 ## 🗣️ Lingua della UI: italiano, ed è una deroga dichiarata
 
