@@ -16,6 +16,7 @@
 | **Regole AdBlock** ('Roccobot ABP') | `ABP/` | [`ABP/CLAUDE.md`](ABP/CLAUDE.md) |
 | **Userscript** | `userscripts/` | [`userscripts/CLAUDE.md`](userscripts/CLAUDE.md) |
 | **CleanSVG**, la paginetta che ripulisce un SVG (nata il 2026-08-25) | `CleanSVG/` | [`CleanSVG/CLAUDE.md`](CleanSVG/CLAUDE.md) |
+| **RatioLab**, la paginetta dei rapporti fra due numeri (nata il 2026-09-21) | `ratiolab/` | [`ratiolab/CLAUDE.md`](ratiolab/CLAUDE.md) |
 | **RoccobotOS**, il sito di riferimento personale | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
 | **Worker di amministrazione** | `proxy/` | [`proxy/CLAUDE.md`](proxy/CLAUDE.md) |
 
