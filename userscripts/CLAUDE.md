@@ -327,6 +327,33 @@ saperlo. Sono tre vie per una cosa sola, e ognuna copre quello che le altre non 
   pagina salvata su disco serve a misurare la struttura, ma non dice se lo script parte, ed è
   proprio là che viveva il difetto della guardia di avvio, qui sopra.
 
+⚠️⚠️ **E DALLA `2.19.0` LA DOPPIA MANUTENZIONE VALE ANCHE PER LA CARD DELL'INSERZIONISTA**
+(sua segnalazione, 2026-09-21, con schermata: *su mobile hanno iniziato ad apparire queste
+pubblicità*). È un riquadro che si apre sopra i risultati, con la firma del venditore, il
+titolo, l'immagine e un tasto, e vive nei due posti di sempre: lo userscript e la lista.
+
+- **L'appiglio sono i `data-testid` dei suoi pezzi**, che Qwant tiene stabili mentre le classi
+  della card sono hashate: il criterio, i due selettori e la forma dichiarata dal componente
+  vivono in [`ABP/CLAUDE.md`](../ABP/CLAUDE.md), per non scriverli due volte.
+- **La terza via è `nascondiAnnuncioInserzionista()`, e MISURA invece di sapere**: sale dal
+  titolo finché l'antenato porta soltanto il testo dei pezzi marcati, e si ferma appena ne
+  aggiunge dell'altro. È il freno dello smart banner detto con un conto invece che con un
+  confronto: un antenato che comprende anche un risultato porta decine di caratteri in più,
+  quindi non viene mai nascosto.
+- **La controprova è in quattro corse**, su una pagina di prova che riproduce l'albero
+  ricostruito dal componente: con tutto acceso le due forme della card valgono **0**; col solo
+  CSS **0**; col solo ramo JS **0**; senza niente **213** pixel l'una. Le due vie bastano
+  quindi ognuna da sola, ed è quello che le quattro corse servono a dire.
+  - ⚠️ **La prova porta una terza forma, con la card e un risultato nello STESSO
+    contenitore**: là il risultato resta alto **86** pixel in tutte e quattro le corse, ed è la
+    misura che dice che la salita non si porta via la lista.
+- ⚠️⚠️ **MA L'ANNUNCIO VERO NON SI È VISTO, e va detto invece di darlo per provato**: dal
+  container di una sessione Qwant risponde **403** a ogni ricerca (è il suo anti-bot) e la
+  regione è Stati Uniti, quindi nessun annuncio arriva. La conferma la dà il telefono.
+- **Quello che invece si è misurato sulla pagina viva vale**, ed è la non-regressione: lo
+  script si inietta a documento vuoto **senza errori**, lo `<style>` entra, e la barra 'Usa
+  l'app' resta a **0** contro i 67 pixel che occupa senza.
+
 ## 📥 ENF Roccobot: il picker, e il sito che è stato tolto
 
 **Com'è fatto** (dalla 1.2.0, con javguru rimossa nella 1.3.0). Il tasto apre un **picker** quando la pagina ha più di un

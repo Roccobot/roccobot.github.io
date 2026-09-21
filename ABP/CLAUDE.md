@@ -152,6 +152,25 @@
   - ⚠️ **Non è lo userscript**: `QwantRoccobot` gira solo dove ci sono le estensioni, e il
     problema si vede sul **telefono**, dove non ne gira nessuna. Vale il criterio dei tre
     livelli già scritto sopra.
+- **Qwant: la card dell'inserzionista si aggancia ai `data-testid`** (2026-09-21), ed è lo
+  stesso criterio della barra qui sopra applicato a un bersaglio nuovo: su mobile è comparsa
+  una card pubblicitaria sopra i risultati, con la firma del venditore, il titolo, l'immagine e
+  un tasto. I suoi **pezzi** portano marcatori stabili (`advertiserAdsSignature`,
+  `advertiserAdsTitle`, `advertiserAdsImage`, `advertiserAdsButton`), la **card** che li
+  contiene no, perché le sue classi sono hashate come tutte le altre.
+  - **Da qui i due bersagli**: `a[data-testid="aal"]:has([data-testid="advertiserAdsTitle"])`,
+    cioè il link che avvolge la card, e
+    `div:has(> div > div > [data-testid="advertiserAdsSignature"])`, cioè la card stessa, che
+    serve quando quel link non c'è.
+  - **I tre livelli del secondo non sono contati a occhio**: sono la forma che il componente
+    dichiara nel bundle servito da Qwant (card, poi la riga, poi la colonna, poi la firma).
+    Ancorati col combinatore di figlio, nessun altro elemento della pagina li soddisfa, quindi
+    quel selettore non può portarsi via un risultato.
+  - ⚠️⚠️ **LA CARD NON SI È POTUTA MISURARE SULLA PAGINA VIVA, e va detto invece di darla per
+    provata**: dal container di una sessione Qwant risponde **403** a ogni ricerca (è il suo
+    anti-bot) e la regione è Stati Uniti, quindi nessun annuncio arriva. La misura è su una
+    pagina di prova che riproduce l'albero **ricostruito dal componente**, e la conferma vera
+    la dà il telefono.
 - **ANSA: lo spazio vuoto in alto NON è un difetto del blocco, è il contenitore che resta**
   (2026-08-17). Il posto dell'annuncio è un `.ad-section` con altezza riservata dal CSS del
   sito: bloccare la richiesta svuota il riquadro ma non lo toglie, e il risultato è una banda
