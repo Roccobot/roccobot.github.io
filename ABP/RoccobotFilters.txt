@@ -1,5 +1,5 @@
 ! Title: Roccobot Filters
-! Last updated: 2026-09-15
+! Last updated: 2026-09-21
 
 *ads.js
 *pagead.js
@@ -443,8 +443,10 @@ pornolab.net###logo
 pornolab.net###sidebar1
 pr0gramm.com##.gpt.mobile-sticky-header
 pr0gramm.com###footer-links
+qwant.com##a[data-testid="aal"]:has([data-testid="advertiserAdsTitle"])
 qwant.com##div:has(> div > a[href*="utm_medium=smartbanner"])
 qwant.com##div:has(> a[href*="utm_medium=smartbanner"])
+qwant.com##div:has(> div > div > [data-testid="advertiserAdsSignature"])
 repubblica.it,www.repubblica.it##.iubenda-cs-container
 repubblica.it,www.repubblica.it##.iubenda-cs-visible.iubenda-cs-black
 rutracker.org##.w100.tCenter > div

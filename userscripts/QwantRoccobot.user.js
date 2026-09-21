@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Qwant Roccobot
 // @namespace    https://roccobot.github.io/
-// @version      2.18.0
-// @description  Declutters Qwant and opens image results on the original file. Home page and results page: the official logo instead of event doodles; no left sidebar, footer, promo cards, options/filters button or ads (in-line data-testid adResult and right column); fixed search parameters per tab; the Filters button shown on image search; no image preview strip on web search; and, behind an experimental flag, result links rewritten to skip the fdn.qwant.com tracking redirect. Image search: a click opens the original file, taken from the React state already in the page or else from the thumbnail URL, which matters now that Qwant serves Bing thumbnails that cannot be reversed; when neither works, the click is left untouched. That module makes no network request and runs only on the Images tab, because its global listeners on web search used to trip Qwant's anti-bot (403).
+// @version      2.19.0
+// @description  Declutters Qwant and opens image results on the original file. Home page and results page: the official logo instead of event doodles; no left sidebar, footer, promo cards, options/filters button or ads (in-line data-testid adResult, advertiser cards with their vendor badge, image and call to action, and right column); fixed search parameters per tab; the Filters button shown on image search; no image preview strip on web search; and, behind an experimental flag, result links rewritten to skip the fdn.qwant.com tracking redirect. Image search: a click opens the original file, taken from the React state already in the page or else from the thumbnail URL, which matters now that Qwant serves Bing thumbnails that cannot be reversed; when neither works, the click is left untouched. That module makes no network request and runs only on the Images tab, because its global listeners on web search used to trip Qwant's anti-bot (403).
 // @author       Rocco Casadei, a.k.a. Roccobot
 // @icon         https://raw.githubusercontent.com/Roccobot/roccobot.github.io/refs/heads/master/userscripts/Roccobot.png
 // @match        https://www.qwant.com/*
@@ -24,7 +24,7 @@
   const NASCONDI_FOOTER    = true;  // piè di pagina (l'intero elemento <footer>)
   const HOME_SENZA_SCROLL  = true;  // home: niente scorrimento verticale (resta solo logo + ricerca)
   const NASCONDI_PROMO     = true;  // tile, card promozionali (es. "Follow Soccer"), banner app, promo estensione
-  const NASCONDI_ADS_SIDEBAR = true; // SERP: card pubblicitarie (colonna destra + annunci in-line)
+  const NASCONDI_ADS_SIDEBAR = true; // SERP: card pubblicitarie (colonna destra, annunci in-line e card dell'inserzionista)
   const NASCONDI_FASCIA_IMMAGINI = true; // SERP web: la fascia "Immagini <query>" (anteprime inline)
   const SOSTITUISCI_DOODLE = true;  // doodle/veste d'evento → logo Qwant ufficiale (home + SERP)
   const LOGO_PERSONALIZZATO = '';   // URL di un logo a tua scelta; vuoto = logo ufficiale integrato nello script
@@ -174,7 +174,18 @@
       // Annunci IN-LINE tra i risultati: il loro contenitore ha data-testid="adResult"
       // (marcatore semantico stabile, non una classe auto-generata). CSS puro: zero JS,
       // nessun rischio per l'anti-bot. NON tocca i risultati veri (che non hanno adResult).
-      '[data-testid="adResult"]{display:none!important}'
+      '[data-testid="adResult"]{display:none!important}',
+      // Card dell'inserzionista, quella che su mobile si apre sopra i risultati: firma
+      // del venditore, titolo, immagine e tasto. Ogni pezzo porta un data-testid stabile
+      // (advertiserAdsSignature, ...Title, ...Image, ...Button), la card che li contiene
+      // NO: le sue classi sono hashate come tutte quelle di Qwant. Quindi i bersagli
+      // sono due, come per lo smart banner: il link esterno che avvolge la card, e la
+      // card stessa, ancorata alla firma a tre livelli esatti. Quei tre livelli non sono
+      // contati a occhio, sono la forma che il componente dichiara (card > riga > colonna
+      // > firma), e ancorandoli con il combinatore di figlio nessun altro elemento della
+      // pagina li soddisfa. Il ramo JS qui sotto copre il resto.
+      'a[data-testid="aal"]:has([data-testid="advertiserAdsTitle"]),' +
+      'div:has(> div > div > [data-testid="advertiserAdsSignature"]){display:none!important}'
     );
     if (NASCONDI_FASCIA_IMMAGINI) regole.push(
       // Fascia "Immagini <query>" (anteprime inline) nella SERP web: contenitore stabile
@@ -282,6 +293,40 @@
       }
     }
 
+    function nascondiAnnuncioInserzionista() {
+      if (!NASCONDI_ADS_SIDEBAR) return;
+      // Ripiego JS delle due regole CSS qui sopra, e come per lo smart banner non è una
+      // ridondanza: quei selettori vogliono :has() con un combinatore iniziale, e il
+      // secondo dipende da quanti livelli separano la firma dalla card. Qui la profondità
+      // si MISURA: si sale dal titolo finché l'antenato porta soltanto testo dei pezzi
+      // marcati dell'annuncio, e ci si ferma appena ne aggiunge dell'altro. È il freno che
+      // rende la salita sicura: un antenato che comprende anche un risultato di ricerca
+      // porta decine di caratteri in più, quindi non viene mai nascosto.
+      // Gira anche dal MutationObserver, perché la card arriva dopo l'idratazione.
+      const PEZZO = '[data-testid^="advertiserAds"]';
+      // Quanto testo NON marcato si concede a un antenato prima di considerarlo fuori
+      // dall'annuncio: Qwant scrive accanto alla card una parola sola ('Sponsorizzato',
+      // 'Gesponsert'), e il risultato di ricerca più corto ne porta molti di più.
+      const TESTO_LIBERO = 32;
+      function soloAnnuncio(el) {
+        let marcato = '';
+        for (const pezzo of el.querySelectorAll(PEZZO)) marcato += pezzo.textContent || '';
+        const tutto = (el.textContent || '').replace(/\s+/g, '');
+        return tutto.length <= marcato.replace(/\s+/g, '').length + TESTO_LIBERO;
+      }
+      for (const titolo of document.querySelectorAll('[data-testid="advertiserAdsTitle"]')) {
+        if (titolo.dataset.rbaa) continue;
+        titolo.dataset.rbaa = '1';
+        let el = titolo;
+        for (let i = 0; i < 8; i++) {
+          const su = el.parentElement;
+          if (!su || su === document.body || !soloAnnuncio(su)) break;
+          el = su;
+        }
+        if (el !== titolo) el.style.setProperty('display', 'none', 'important');
+      }
+    }
+
     function nascondiAdsSidebar() {
       if (!NASCONDI_ADS_SIDEBAR) return;
       // SERP: la colonna a destra (.is-sidebar) dispone le card in una griglia.
@@ -304,7 +349,7 @@
       }
     }
 
-    function applica() { aggiornaClasseTab(); sistemaDoodle(); nascondiPromo(); nascondiSmartBanner(); nascondiBannerEstensione(); nascondiAdsSidebar(); }
+    function applica() { aggiornaClasseTab(); sistemaDoodle(); nascondiPromo(); nascondiSmartBanner(); nascondiBannerEstensione(); nascondiAdsSidebar(); nascondiAnnuncioInserzionista(); }
 
     // La home è una SPA: doodle e card compaiono dopo il primo render → si osserva.
     function avvio() {
