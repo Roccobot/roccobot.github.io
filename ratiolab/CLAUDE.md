@@ -44,7 +44,9 @@ correggere: chi ritocca questo file sappia che il resto è come l'ha scritto lui
   nessun livello'). Il testo interpolato nasce dai due campi, che accettano solo cifre e un
   separatore, quindi il rischio pratico era nullo: la regola vieta comunque il canale, non il
   caso. I pezzi sono `separatorNodes` (il separatore decimale dentro il suo `span`),
-  `writeNumber` e `copyableNumber`.
+  `writeNumber` e `writeCopyable`. ⚠️ **Il terzo si chiamava `copyableNumber` fino alla `1.02`**,
+  e con lui creava il nodo invece di riscriverlo: il perché è cambiato vive in § '⏱️ Il risultato
+  aspetta la fine della digitazione, e chi entra o esce sfuma'.
 - **La versione scritta in pagina**, per la regola qui sopra: nessun progetto del repo è senza
   versione.
 - **Un esempio in un commento diceva un numero che il conto non dà**, ed è la terza cosa
@@ -68,6 +70,62 @@ su un formato standard diceva il falso.
 - ⚠️ **'Esatto' vuol dire lo scarto arrotondato a due decimali**, che è la definizione che la
   percentuale usava già: uno scarto di un millesimo di punto conta come esatto in tutti e due i
   posti, perché i due segni leggono lo stesso numero.
+
+⚠️⚠️ **E DALLA `1.03` LA RIGA SPARISCE DEL TUTTO QUANDO RIPETE QUELLO CHE È GIÀ SCRITTO SOPRA,
+ED È SUA ISTRUZIONE** (2026-09-22, con una schermata di `6:2`: *quando la misura è esattamente
+uno degli 'standard', si ripete 3 volte la stessa cosa. In quelle circostanze, l'intera riga con
+le due diciture in piccolo deve essere nascosta*).
+
+- ⚠️⚠️ **LA CONDIZIONE SONO LE TRE DICITURE UGUALI, NON 'IL RAPPORTO È ESATTO'**, e la differenza
+  si vede in due casi che restano visibili: `16:9` cade esattamente su uno standard e la riga
+  scrive `1,78:1`, che è un'altra cosa; `18:27` dà `2:3` con `1:1,5` accanto. Sparisce solo dove
+  il decimale, il bersaglio e la riga grande sono la **stessa stringa**, cioè quando il rapporto
+  è un numero intero.
+- ⚠️ **La riga nascosta tiene il suo posto**: il riquadro delle proporzioni, che viene dopo di
+  lei, non deve spostarsi passando da un rapporto all'altro, che è la stessa ragione per cui il
+  ritardo esiste.
+
+## ⏱️ Il risultato aspetta la fine della digitazione, e chi entra o esce sfuma
+
+⚠️⚠️ **DALLA `1.03`, ED È SUA ISTRUZIONE** (2026-09-22: *per rendere tutto un po' meno
+schizofrenico (visto che ad ogni cifra digitata c'è un aggiornamento), stabiliamo che
+l'aggiornamento avviene con un ritardo, in modo che se si digitano due cifre di seguito
+l'aggiornamento è quando si smette di digitare*, e *elementi che scompaiono o appaiono lo devono
+fare con una piccola dissolvenza di 50 ms*).
+
+- ⚠️⚠️ **IL RITARDO È DI 330 MS, E IL NUMERO È SUO DOPO IL CONTO** (stesso giorno: la richiesta
+  diceva 300 e chiedeva se non fosse troppo, e la risposta è arrivata guardando i dati). È
+  l'intervallo **medio fra due tasti su telefono**; su tastiera fisica la media è di circa 240 ms,
+  quindi aspettare il più lento dei due copre tutti e due i casi. Sotto quella soglia
+  l'aggiornamento in mezzo a un numero tornerebbe a vedersi, cioè proprio la cosa che la richiesta
+  esiste per togliere, e un terzo di secondo dopo l'ultima cifra resta molto sotto il secondo
+  entro cui una risposta si legge come immediata.
+- ⚠️ **A ritardare è il RISULTATO e non la scrittura**: quello che si digita compare subito,
+  perché la pulizia del campo resta immediata. Chi guarda il campo non vede nessuna attesa.
+- ⚠️⚠️ **UN GESTO SINGOLO NON ASPETTA, ed è una lettura dichiarata**: lo scambio e il cambio di
+  separatore ridisegnano all'istante, perché la richiesta nasce dalla **raffica** della
+  digitazione e quei due comandi non ne producono nessuna. ⚠️ E un ricalcolo in attesa si annulla
+  prima, o un disegno vecchio arriverebbe dopo quello nuovo.
+
+⚠️⚠️ **LE DISSOLVENZE SONO DI 50 MS E I MODI DI SPARIRE SONO DUE, PERCHÉ IL POSTO CONTA**: il
+blocco del risultato e la riga dei dettagli **tengono il loro spazio** (`visibility`), o quello
+che viene dopo di loro salterebbe; la pastiglia della percentuale **esce dal flusso**, o la riga
+che la contiene resterebbe centrata attorno a un vuoto.
+
+- ⚠️ **`visibility` fa anche il lavoro che prima faceva `pointer-events-none`**: quello che è
+  nascosto non prende tocchi e non si legge con un lettore di schermo, quindi un numero
+  invisibile non si può più copiare per sbaglio.
+- ⚠️⚠️ **I QUATTRO PEZZI DELLA RIGA SONO FISSI E SI RISCRIVONO, e senza quello non c'è niente da
+  sfumare**: fino alla `1.02` la riga si ricomponeva a ogni ricalcolo, quindi i suoi nodi
+  nascevano e morivano, e una pastiglia che nasce non può dissolversi. ⚠️ **Si scrivono anche
+  quando la riga è nascosta**: costa nulla e le tiene l'altezza giusta, che è quello su cui si
+  regge lo spazio conservato.
+- ⚠️ **Fra il rientro nel flusso e l'opacità serve un reflow**, o il browser unisce i due
+  cambiamenti in un fotogramma solo e la dissolvenza non si vede affatto.
+- ⚠️ **La durata vive in due posti**, il foglio di stile e lo script, e non è un doppione: il
+  secondo deve sapere **quando** un elemento ha finito di uscire, per toglierlo dal flusso.
+- ⚠️ **Il riquadro delle proporzioni non ha una dissolvenza**: quello non compare e non sparisce,
+  cambia misura, e la sua transizione è quella che aveva già.
 
 ## 🔍 La pagina cresce con lo spazio che ha
 
@@ -129,7 +187,10 @@ trasporto del suo `assets/mark-tian.svg` di Claude Design.
 - **Occupa metà del lato del logo**, e il conto dice che ci sta: con quella misura l'angolo del
   glifo cade a 17,4 unità dal centro contro le 28 che il bordo obliquo concede.
 - **In negativo vuol dire col colore del fondo pagina**, quindi si legge come ritagliato dalle
-  forme colorate che ha sotto, nei due temi.
+  forme colorate che ha sotto, nei due temi. ⚠️⚠️ **E DALLA `1.03` STA AL 30%, ED È SUA
+  ISTRUZIONE** (2026-09-22: *glifo Roccobot sopra il logo: dagli un'opacità del 30%*): con quel
+  valore non è più un buco nelle forme ma un velo sopra di loro, e il segno si legge senza
+  prendersi la scena.
 - ⚠️ **`fill-rule` resta quella che il file dichiara** (`evenodd`), e qui non cambia un pixel
   (misurato: **zero** differenze su 52.320): la regola dichiarata dice quello che il disegno
   vuole, e la coincidenza cade il giorno che qualcuno aggiunge un sottotracciato.
