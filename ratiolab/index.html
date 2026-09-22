@@ -132,12 +132,12 @@
                  the path is never edited and the fill rule is the one that file declares.
                  The viewBox is the measured ink bounding box, so the glyph is optically
                  centred in the oblique rounded square by construction rather than by a
-                 correction on top; half the side keeps it clear of that border. It takes
-                 the page background at 30%, so it reads as a veil over the coloured
-                 shapes rather than as a hole cut out of them. -->
+                 correction on top; 35% of the side keeps it clear of that border. It is
+                 black at 30%, the colour the source file draws it in, so it reads as a
+                 veil over the coloured shapes rather than as a hole cut out of them. -->
             <div class="absolute inset-0 flex items-center justify-center">
                 <svg viewBox="14.5 11.63 151.57 137.89" fill="currentColor" fill-rule="evenodd"
-                    aria-hidden="true" class="w-1/2 h-auto opacity-30 text-slate-50 dark:text-slate-950">
+                    aria-hidden="true" class="w-[35%] h-auto opacity-30 text-black">
                     <path d="M103.08,73.5h57.41l-4.92-61.87H24.67v15.55h57.09c-.82,11.19-1.97,21.3-3.61,30.62H20.24l4.43,15.7h49.7c-2.46,8.39-5.41,15.55-9.02,21.3-10.01,15.86-26.9,29.69-50.85,41.35l10.99,13.37c26.25-13.68,44.95-29.69,55.94-48.19,3.28-5.6,6.07-12.28,8.69-20.05,12.14,29.23,33.79,51.92,65.12,68.24l10.83-13.37c-30.51-14.77-51.51-35.6-62.99-62.65ZM99.14,27.18h42.71l1.34,30.62h-47.67c1.48-9.02,2.62-19.28,3.61-30.62Z" />
                 </svg>
             </div>
@@ -249,7 +249,7 @@
     <script>
         // Project version (SlimVer x.xx), single source: the page prints it under the
         // title, and a curl for `const VERSIONE` is the deploy probe. See CLAUDE.md.
-        const VERSIONE = '1.03';
+        const VERSIONE = '1.04';
 
         // A redraw lands this long after the last keystroke: typing a two-digit
         // number would otherwise show the ratio of the first digit on the way. The
