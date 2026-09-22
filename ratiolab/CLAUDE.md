@@ -22,11 +22,16 @@ Nasce il **2026-09-21** da un file dell'utente.
 
 **SlimVer `x.xx`**, la regola universale dei progetti (`rules/Roccobot.md`, § '🌿 Workflow git
 e versioni'). La fonte unica è la costante `VERSIONE` in testa allo script, e la pagina scrive
-il numero da sé sotto il titolo, accanto al collegamento: due numeri scritti a mano
-divergerebbero al primo bump distratto.
+il numero da sé sotto il titolo: due numeri scritti a mano divergerebbero al primo bump
+distratto.
 
 - ⚠️ **È anche la sonda del deploy**: la verifica di pubblicazione si fa con un `curl` su
   `https://roccobot.github.io/ratiolab/index.html` cercando `const VERSIONE`.
+- ⚠️⚠️ **VIENE PRIMA DEL COLLEGAMENTO, DALLA `1.01`, ED È SUA ISTRUZIONE** (2026-09-22: *il
+  numero di versione deve essere PRIMA di roccobot.me, sennò sembra riferito a quest'ultimo
+  anziché al calcolatore di proporzioni*). Sono due cose sulla stessa riga e l'ordine dice a
+  quale delle due il numero appartiene: scritto dopo un nome di dominio si legge come la
+  versione di quel sito.
 
 ## 📥 Il file arriva dall'utente, e tre cose sono cambiate entrando qui
 
@@ -48,6 +53,34 @@ correggere: chi ritocca questo file sappia che il resto è come l'ha scritto lui
   rapporto 2,71 è **minore** del 3:1 e lo scarto viene negativo. ⚠️ **Il codice era giusto e
   resta intatto**: a cambiare è la sola riga di commento, quindi la versione **non** si bumpa
   (sua istruzione, 2026-09-21).
+
+## 📏 Il `:` fra i due campi, e perché la sua misura si fa a runtime
+
+⚠️⚠️ **DALLA `1.01` IL SIMBOLO È CENTRATO SULL'INCHIOSTRO E NON SULLA SUA SCATOLA, ED È SUA
+ISTRUZIONE** (2026-09-22: *il simbolo `:` deve essere esattamente centrato in verticale con i
+due campi di testo principali*). Il contenitore aveva già l'altezza dei campi e
+`items-center`: quello che il flexbox centra è la **scatola di linea**, e l'inchiostro dei due
+punti va dalla linea di base a mezza altezza della `x`, cioè occupa la metà bassa di quella
+scatola. Misurato: a 72px di corpo il segno cadeva **5,5 pixel sotto** il centro dei campi, e
+adesso lo scarto è **zero**.
+
+- ⚠️⚠️ **LO SCARTO NON DIPENDE DALLA `line-height`, E QUESTO CHIUDE LA STRADA PIÙ OVVIA**: il
+  conto vale `(ascendente - discendente del font)/2 - (ascendente - discendente
+  dell'inchiostro)/2`, e la `line-height` si semplifica. Quindi non esiste nessun valore di
+  `leading-*` che rimetta il segno al centro: serve uno spostamento.
+- ⚠️⚠️ **E QUELLO SCARTO DIPENDE DAL FONT, PERCIÒ NON SI SCRIVE COME COSTANTE**: la pagina non
+  carica nessun carattere e dichiara `Inter, system-ui, sans-serif`, quindi il font vero è
+  quello del dispositivo di chi guarda, e un numero misurato qui varrebbe per un carattere
+  solo. La misura la fa il browser (`measureText` su un canvas), e il risultato è espresso in
+  **em**, cioè si scala da sé fra il corpo del telefono e quello del desktop.
+- ⚠️ **Lo spostamento è un `transform`**, quindi non tocca il layout e non è una
+  compensazione: nessun secondo margine di segno opposto (`Roccobot.md`, § '🎨 Grafica').
+- ⚠️ **Il degrado è dichiarato**: dove il canvas non dà il riquadro del font (motori vecchi) la
+  funzione non fa niente e il segno resta dov'era, invece di spostarsi di una quantità
+  sbagliata.
+- ⚠️ **Si chiama due volte**, subito e su `load`: la prima perché il simbolo non si veda mai
+  fuori posto, la seconda perché il foglio di stile del CDN può arrivare dopo lo script e
+  cambiare peso o famiglia, cioè le metriche su cui la misura si regge.
 
 ## 🗣️ Lingua della UI: italiano, ed è una deroga dichiarata
 
