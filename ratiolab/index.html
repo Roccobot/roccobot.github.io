@@ -97,12 +97,14 @@
             RatioLab
         </h1>
         <div class="mt-1 flex items-baseline gap-2 text-sm tracking-wide text-slate-500 dark:text-slate-400">
+            <!-- Project version (SlimVer): written by the script from its single source.
+                 It comes before the link on purpose: right after it, the number reads as
+                 the version of roccobot.me rather than the one of this page. -->
+            <span id="versione" class="text-xs opacity-70"></span>
             <a href="https://roccobot.me/" target="_blank" rel="noopener" tabindex="-1"
                 class="font-sans hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
                 roccobot.me
             </a>
-            <!-- Project version (SlimVer): written by the script from its single source -->
-            <span id="versione" class="text-xs opacity-70"></span>
         </div>
     </header>
 
@@ -125,7 +127,7 @@
 
             <!-- Colon Symbol ':' + swap button -->
             <div class="relative flex items-center justify-center h-20 sm:h-24">
-                <span class="text-6xl sm:text-7xl font-black text-slate-900 dark:text-slate-100 leading-none">
+                <span id="colon" class="text-6xl sm:text-7xl font-black text-slate-900 dark:text-slate-100 leading-none">
                     :
                 </span>
                 <button id="swapBtn" type="button" tabindex="-1" title="Scambia i valori" aria-label="Scambia i valori"
@@ -190,7 +192,7 @@
     <script>
         // Project version (SlimVer x.xx), single source: the page prints it under the
         // title, and a curl for `const VERSIONE` is the deploy probe. See CLAUDE.md.
-        const VERSIONE = '1.00';
+        const VERSIONE = '1.01';
 
         // Core standard ratios to snap to (between 1:2 and 2:1)
         const BASE_STANDARD_RATIOS = [
@@ -523,6 +525,41 @@
             themeOverride = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
             applyTheme();
         });
+
+        // Vertically centre the ':' ink on the two fields.
+        //
+        // Flexbox centres the span's line box, not the glyph inside it: the ':' ink
+        // runs from the baseline up to about half the x-height, so it sits below the
+        // middle of the box and the symbol reads lower than the numbers beside it.
+        // The gap is (fontAscent - fontDescent)/2 - (inkAscent - inkDescent)/2, which
+        // does not depend on the line height but does depend on the font metrics, so
+        // it is measured on the font the browser actually picked. The result is a
+        // ratio of the font size, written in em so it holds at both type sizes.
+        function centreColon() {
+            const el = document.getElementById('colon');
+            if (!el) return;
+            const style = getComputedStyle(el);
+            const size = parseFloat(style.fontSize);
+            if (!size) return;
+            const ctx = document.createElement('canvas').getContext('2d');
+            if (!ctx) return;
+            ctx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+            const m = ctx.measureText(':');
+            const metrics = [
+                m.fontBoundingBoxAscent, m.fontBoundingBoxDescent,
+                m.actualBoundingBoxAscent, m.actualBoundingBoxDescent
+            ];
+            // Older engines omit the font bounding box: leave the glyph where it is.
+            if (!metrics.every(Number.isFinite)) return;
+            const drop = ((m.fontBoundingBoxAscent - m.fontBoundingBoxDescent)
+                - (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent)) / 2;
+            el.style.transform = `translateY(${(-drop / size).toFixed(4)}em)`;
+        }
+
+        // Twice: now, so the symbol never shows uncentred, and again on load in case
+        // the CDN stylesheet landed after this script and changed weight or family.
+        centreColon();
+        window.addEventListener('load', centreColon);
 
         // Initial setup focus
         window.addEventListener('DOMContentLoaded', () => {
