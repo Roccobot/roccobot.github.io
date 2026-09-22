@@ -278,11 +278,15 @@ Banco Playwright (`banco-cleansvg.js` nello scratchpad, quindi **da rifare** se 
 locale sulla cartella, `DataTransfer` costruito nella pagina per simulare il trascinamento
 vero, e due giri, **con** e **senza** SVGO.
 
-- ⚠️⚠️ **In questo contenitore Chromium NON arriva ai CDN**: l'uscita passa da un proxy che il
-  browser non usa, quindi un banco ingenuo misura il **ripiego** credendo di misurare SVGO. La
-  spia che lo rivela è che i due casi danno lo **stesso identico risultato**: quando succede,
-  è il banco che mente, non la pagina. Il rimedio è servire il bundle vero di SVGO con
-  `ctx.route`, scaricandolo a parte con `curl`.
+- ⚠️⚠️ **DAL 2026-09-22 CHROMIUM CI ARRIVA, e questa riga diceva il contrario**: misurato
+  aprendo la pagina in questo contenitore, tutti e tre gli indirizzi rispondono e il motore
+  che si carica è **SVGO 4.1.0**. Quindi un banco può misurare la pulizia vera senza
+  artifici. ⚠️ **Prima non era così**, e la nota indirizzava il lavoro: chi trova un banco
+  vecchio che serve il bundle con `ctx.route` sappia che quel rimedio non serve più, e resta
+  buono solo per un contenitore senza uscita.
+  - ⚠️ **La spia resta valida e va guardata comunque**: se i due giri, con e senza SVGO,
+    dànno lo **stesso identico risultato**, il banco sta misurando il **ripiego** credendo di
+    misurare SVGO. Quando succede è il banco che mente, non la pagina.
   - ✅ **Il rimedio funziona, provato il 2026-08-26**, e la misura che lo dimostra è la
     differenza: sullo stesso file il ripiego lascia **264 byte** e SVGO 4.1.0 ne lascia
     **164**. Due numeri diversi significano che il banco stava guardando due motori diversi.

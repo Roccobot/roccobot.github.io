@@ -54,6 +54,86 @@ correggere: chi ritocca questo file sappia che il resto è come l'ha scritto lui
   resta intatto**: a cambiare è la sola riga di commento, quindi la versione **non** si bumpa
   (sua istruzione, 2026-09-21).
 
+## 🧮 La tilde dice 'approssimato', e la dice solo quando è vero
+
+⚠️⚠️ **DALLA `1.02` LA SECONDA RIGA SCRIVE `2:3` E NON `~2:3` QUANDO IL RAPPORTO È ESATTO, ED È
+SUA ISTRUZIONE** (2026-09-22: *quando una proporzione è esatta, la dicitura della seconda riga
+deve essere senza `~`*). La tilde vuol dire 'circa', quindi su un rapporto che cade esattamente
+su un formato standard diceva il falso.
+
+- ⚠️⚠️ **A DECIDERE È LO STESSO TEST CHE DECIDE LA PERCENTUALE**, `isExactMatch`, e non un
+  secondo confronto: la percentuale non si scriveva già da prima nel caso esatto, quindi con
+  due criteri distinti la riga poteva annunciare un'approssimazione e poi non dire di quanto.
+  Un criterio solo non si può contraddire.
+- ⚠️ **'Esatto' vuol dire lo scarto arrotondato a due decimali**, che è la definizione che la
+  percentuale usava già: uno scarto di un millesimo di punto conta come esatto in tutti e due i
+  posti, perché i due segni leggono lo stesso numero.
+
+## 🔍 La pagina cresce con lo spazio che ha
+
+⚠️⚠️ **DALLA `1.02`, ED È SUA ISTRUZIONE** (2026-09-22: *voglio che tutti gli elementi siano
+scalati più in grande su una pagina spaziosa (specialmente desktop), con un massimo che sia
+almeno 2,5x / 3x*). A scalare tutto è **una riga sola**, il corpo del carattere di radice, perché
+Tailwind scrive misure e spaziature in `rem`: un punto di comando invece di un valore per
+elemento.
+
+```
+font-size: clamp(16px, min(100vw / 34, 100vh / 48.5), 48px);
+```
+
+- ⚠️⚠️ **I DUE DIVISORI SONO MISURATI, E LA MISURA SI FA A PAGINA PIENA**: col risultato in scena
+  il contenuto è alto **46,75rem** e la riga dei campi chiede **32,8rem**, e i due numeri scritti
+  portano un'aria del 3,7%. ⚠️ **Misurata a riposo la pagina mente**: a campi vuoti le due righe
+  del risultato sono alte zero, quindi il contenuto misura 40,25rem, e il divisore che ne esce fa
+  traboccare la finestra di **107 pixel** su un desktop. È il difetto che il banco ha preso alla
+  prima corsa.
+- ⚠️⚠️ **IL VINCOLO È L'ALTEZZA E NON LA LARGHEZZA, E IL CONTO DICE PERCHÉ IL TETTO NON SI TOCCA
+  QUASI MAI**: a 3x il contenuto sarebbe alto 2.244 pixel, cioè più di qualunque finestra di un
+  monitor comune. Misurato: **1,22x** su 1920x950, **1,71x** su 2560x1330, **2,58x** su 3840x2000,
+  e il tetto si raggiunge da 2.352 pixel di finestra in su. Chi si aspetta 3x su uno schermo Full
+  HD guardi questi numeri prima di cercare un difetto.
+- **Il termine della larghezza protegge il telefono**: là dà meno di 16 pixel, quindi vince il
+  minimo del `clamp` e la pagina resta quella di sempre.
+- ⚠️ **Le misure in pixel andavano convertite, e sono tre**: la larghezza massima dei due campi
+  (adesso `12.5rem`), l'area del riquadro dell'orientamento (18rem per 9rem, risolta a runtime
+  contro il corpo di radice, perché quel conto vive in JavaScript), e i **bordi**, che sono l'unica
+  scala che Tailwind scrive in pixel (`.scaled-edge`, 0,25rem).
+- ⚠️ **Chrome arrotonda per difetto la larghezza di un bordo a pixel interi**, quindi a 1,22x un
+  bordo da 4,9 si rende 4: non è un bordo che non scala, ed è la ragione per cui il controllo del
+  banco concede un pixel.
+- ⚠️ **Il riquadro si ridisegna al ridimensionamento della finestra**: la sua area dipende dal
+  corpo di radice, che dipende dalla finestra, e senza quella riga resterebbe alla misura che
+  aveva al caricamento.
+
+## ✒️ Il glifo personale dentro il logo
+
+⚠️⚠️ **DALLA `1.02`, ED È SUA ISTRUZIONE** (2026-09-22: *in mezzo al logo esistente, aggiungi un
+glifo Roccobot in negativo, centrato otticamente rispetto al quadrato arrotondato obliquo*). Il
+tracciato arriva **identico** da `AIV/app/src/main/res/drawable/ic_tian.xml`, che a sua volta è il
+trasporto del suo `assets/mark-tian.svg` di Claude Design.
+
+- ⚠️⚠️ **QUEL DISEGNO NON SI TOCCA MAI**: è la regola universale di `rules/Roccobot.md`
+  § '🧹 Bonifica e ottimizzazione degli asset'. Niente arrotondamenti, niente ritocchi, niente
+  numeri riscritti: quello che si sceglie qui è l'inquadratura, non il disegno.
+- ⚠️⚠️ **LA CENTRATURA OTTICA È PER COSTRUZIONE E NON UNA CORREZIONE AGGIUNTA**: il `viewBox` è il
+  riquadro **misurato** dell'inchiostro (`14.5 11.63 151.57 137.89`), quindi l'elemento coincide
+  con l'inchiostro, e centrare l'elemento centra quello che si vede. In un file di risorse Android
+  quel lavoro lo fa il gruppo di traslazione, perché là il `viewBox` non esiste.
+- ⚠️ **Il riferimento che ha nominato è il quadrato obliquo, e il suo centro è quello del
+  contenitore**: una rotazione attorno al centro non sposta il centro, quindi centrare nel
+  contenitore **è** centrare in quel quadrato. Il glifo non si ruota con lui: la richiesta parla
+  di centratura.
+- ⚠️ **Lo scarto fra centrare l'inchiostro e centrare la tela è lo 0,19% del lato** (0,285 unità
+  su 151), perché la tela del file è già quasi simmetrica: si usa comunque l'inchiostro, perché è
+  quello che la parola 'otticamente' chiede.
+- **Occupa metà del lato del logo**, e il conto dice che ci sta: con quella misura l'angolo del
+  glifo cade a 17,4 unità dal centro contro le 28 che il bordo obliquo concede.
+- **In negativo vuol dire col colore del fondo pagina**, quindi si legge come ritagliato dalle
+  forme colorate che ha sotto, nei due temi.
+- ⚠️ **`fill-rule` resta quella che il file dichiara** (`evenodd`), e qui non cambia un pixel
+  (misurato: **zero** differenze su 52.320): la regola dichiarata dice quello che il disegno
+  vuole, e la coincidenza cade il giorno che qualcuno aggiunge un sottotracciato.
+
 ## 📏 Il `:` fra i due campi, e perché la sua misura si fa a runtime
 
 ⚠️⚠️ **DALLA `1.01` IL SIMBOLO È CENTRATO SULL'INCHIOSTRO E NON SULLA SUA SCATOLA, ED È SUA
@@ -100,9 +180,17 @@ La pagina carica `cdn.tailwindcss.com` e configura il tema in linea (famiglia di
 raggio a pastiglia, i due toni di `brand`). Senza quella risposta la pagina **funziona e non si
 vede bene**: il conto, la copia e il riquadro restano, la grafica no.
 
-- ⚠️⚠️ **DAL CONTENITORE DI UNA SESSIONE QUEL CDN NON SI RAGGIUNGE**, quindi un banco di prova
-  misura il **comportamento** e non la resa, e chi guarda uno screenshot da qui vede una pagina
-  senza stili. È lo stesso fatto già scritto per CleanSVG, § '🧪 Come si prova'.
+- ⚠️⚠️ **DAL CONTENITORE DI UNA SESSIONE QUEL CDN SI RAGGIUNGE, dal 2026-09-22**, quindi un banco
+  di prova misura la **resa vera** e uno screenshot mostra la pagina come la vede lui. Misurato:
+  l'indirizzo risponde `302` e poi `200` con 407.279 byte, e Chromium applica le utility (il
+  `display` del `body` risponde `flex`, che senza Tailwind sarebbe `block`).
+  - ⚠️ **Fino a quel giorno qui c'era scritto il contrario**, e la nota indirizzava il lavoro:
+    un banco imponeva **a mano** le misure che Tailwind genera, cioè misurava la propria
+    emulazione. Chi trova quella riga in un banco vecchio, o la stessa nota in
+    [`CleanSVG/CLAUDE.md`](../CleanSVG/CLAUDE.md), sappia che oggi non serve più.
+  - ⚠️ **Resta vero che senza quella risposta la pagina funziona e non si vede bene**: la
+    verifica va comunque fatta con la rete, e un contenitore senza uscita darebbe una pagina
+    nuda invece di un errore.
 
 ## ⌨️ I gesti, e perché sono quelli
 

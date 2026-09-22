@@ -38,6 +38,24 @@
         })();
     </script>
     <style>
+        /* One scale for the whole page, driven by the root font size: Tailwind
+           writes its type and spacing in rem, so everything here grows from a
+           single clamp instead of a breakpoint per element.
+           The two divisors are measured, not chosen: with the result rows on
+           screen, which is the tallest the page ever gets, the content is
+           46.74rem tall and the input row needs 32.8rem, each with a little air.
+           The smaller term wins, so the page never outgrows the window in either
+           direction, and 48px is three times the base. */
+        html {
+            font-size: clamp(16px, min(100vw / 34, 100vh / 48.5), 48px);
+        }
+
+        /* Border widths are the one Tailwind scale written in px: left to the
+           border-4 utility they would stay 4px while everything else tripled. */
+        .scaled-edge {
+            border-width: 0.25rem;
+        }
+
         .pill-input {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
@@ -91,7 +109,19 @@
         <div class="relative w-16 h-16 mb-4">
             <div class="absolute inset-0 bg-brand-500 rounded-xl opacity-80 mix-blend-multiply dark:mix-blend-screen transform rotate-12 scale-90"></div>
             <div class="absolute inset-0 bg-indigo-400 rounded-full opacity-80 mix-blend-multiply dark:mix-blend-screen transform -translate-x-2 translate-y-2"></div>
-            <div class="absolute inset-0 border-4 border-slate-900 dark:border-white rounded-lg transform -rotate-6"></div>
+            <div class="absolute inset-0 scaled-edge border-slate-900 dark:border-white rounded-lg transform -rotate-6"></div>
+            <!-- Personal mark, carried over verbatim from AIV, res/drawable/ic_tian.xml:
+                 the path is never edited and the fill rule is the one that file declares.
+                 The viewBox is the measured ink bounding box, so the glyph is optically
+                 centred in the oblique rounded square by construction rather than by a
+                 correction on top; half the side keeps it clear of that border. It takes
+                 the page background, so it reads as cut out of the coloured shapes. -->
+            <div class="absolute inset-0 flex items-center justify-center">
+                <svg viewBox="14.5 11.63 151.57 137.89" fill="currentColor" fill-rule="evenodd"
+                    aria-hidden="true" class="w-1/2 h-auto text-slate-50 dark:text-slate-950">
+                    <path d="M103.08,73.5h57.41l-4.92-61.87H24.67v15.55h57.09c-.82,11.19-1.97,21.3-3.61,30.62H20.24l4.43,15.7h49.7c-2.46,8.39-5.41,15.55-9.02,21.3-10.01,15.86-26.9,29.69-50.85,41.35l10.99,13.37c26.25-13.68,44.95-29.69,55.94-48.19,3.28-5.6,6.07-12.28,8.69-20.05,12.14,29.23,33.79,51.92,65.12,68.24l10.83-13.37c-30.51-14.77-51.51-35.6-62.99-62.65ZM99.14,27.18h42.71l1.34,30.62h-47.67c1.48-9.02,2.62-19.28,3.61-30.62Z" />
+                </svg>
+            </div>
         </div>
         <h1 class="text-4xl font-extrabold tracking-tighter text-slate-900 dark:text-white">
             RatioLab
@@ -113,7 +143,7 @@
         <!-- Input Pair -->
         <div class="flex items-center justify-center gap-4 sm:gap-6 w-full mb-10">
             <!-- Input 1 -->
-            <div class="flex-1 max-w-[200px]">
+            <div class="flex-1 max-w-[12.5rem]">
                 <input 
                     type="text" 
                     id="num1" 
@@ -121,7 +151,7 @@
                     maxlength="5"
                     inputmode="decimal"
                     autocomplete="off"
-                    class="pill-input w-full text-4xl sm:text-5xl font-semibold h-20 sm:h-24 rounded-pill border-4 border-slate-900 dark:border-slate-100 bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-300 dark:placeholder-slate-700 tracking-wider"
+                    class="pill-input w-full text-4xl sm:text-5xl font-semibold h-20 sm:h-24 rounded-pill scaled-edge border-slate-900 dark:border-slate-100 bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-300 dark:placeholder-slate-700 tracking-wider"
                 />
             </div>
 
@@ -137,7 +167,7 @@
             </div>
 
             <!-- Input 2 -->
-            <div class="flex-1 max-w-[200px]">
+            <div class="flex-1 max-w-[12.5rem]">
                 <input 
                     type="text" 
                     id="num2" 
@@ -145,7 +175,7 @@
                     maxlength="5"
                     inputmode="decimal"
                     autocomplete="off"
-                    class="pill-input w-full text-4xl sm:text-5xl font-semibold h-20 sm:h-24 rounded-pill border-4 border-slate-900 dark:border-slate-100 bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-300 dark:placeholder-slate-700 tracking-wider"
+                    class="pill-input w-full text-4xl sm:text-5xl font-semibold h-20 sm:h-24 rounded-pill scaled-edge border-slate-900 dark:border-slate-100 bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-300 dark:placeholder-slate-700 tracking-wider"
                 />
             </div>
         </div>
@@ -165,7 +195,7 @@
 
             <!-- Line 3: CSS Visual Orientation Box -->
             <div class="h-36 flex items-center justify-center w-full">
-                <div id="orientationBox" class="border-4 border-slate-900 dark:border-white rounded-xl bg-slate-200/50 dark:bg-slate-800/50"></div>
+                <div id="orientationBox" class="scaled-edge border-slate-900 dark:border-white rounded-xl bg-slate-200/50 dark:bg-slate-800/50"></div>
             </div>
 
         </div>
@@ -192,7 +222,7 @@
     <script>
         // Project version (SlimVer x.xx), single source: the page prints it under the
         // title, and a curl for `const VERSIONE` is the deploy probe. See CLAUDE.md.
-        const VERSIONE = '1.01';
+        const VERSIONE = '1.02';
 
         // Core standard ratios to snap to (between 1:2 and 2:1)
         const BASE_STANDARD_RATIOS = [
@@ -377,6 +407,10 @@
             // its decimal separator enlarged
             const isExactMatch = formattedDev === '0';
             const deviationStr = sign + formattedDev + '%';
+            // The tilde reads 'approximated', so the same test drives it and the
+            // percentage: on an exact match the row would otherwise claim a gap
+            // and then print none. Undefined means 'write the ratio as it is'.
+            const targetShown = isExactMatch ? undefined : `~${targetRatioStr}`;
 
             const arrow = document.createElement('span');
             arrow.className = 'text-slate-400 font-bold';
@@ -386,7 +420,7 @@
             rowDetails.append(
                 copyableNumber(actualStr, 'copyable'),
                 arrow,
-                copyableNumber(targetRatioStr, 'copyable text-brand-500 dark:text-brand-400', `~${targetRatioStr}`)
+                copyableNumber(targetRatioStr, 'copyable text-brand-500 dark:text-brand-400', targetShown)
             );
             if (!isExactMatch) {
                 rowDetails.append(copyableNumber(
@@ -397,9 +431,12 @@
 
             // --- 3. CSS Visual Orientation Box ---
             // Fitted inside a fixed bounding area so it can never spill over
-            // neighbouring elements, even on narrow screens
-            const MAX_W = 288; // CSS px
-            const MAX_H = 144; // CSS px
+            // neighbouring elements, even on narrow screens. The area is stated
+            // in rem and resolved against the current root size: written in px
+            // it would stay at its 16px value while the page around it grew.
+            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            const MAX_W = 18 * rem;
+            const MAX_H = 9 * rem; // the height of the row that holds it (h-36)
             // Cap extreme ratios to avoid degenerate slivers
             const visualRatio = Math.min(actualRatio, 6);
 
@@ -560,6 +597,11 @@
         // the CDN stylesheet landed after this script and changed weight or family.
         centreColon();
         window.addEventListener('load', centreColon);
+
+        // The root font size follows the window, so the shape's bounding area
+        // moves with it and the row is redrawn. While the two fields are empty
+        // calculate() returns on its own.
+        window.addEventListener('resize', calculate);
 
         // Initial setup focus
         window.addEventListener('DOMContentLoaded', () => {
