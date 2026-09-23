@@ -423,6 +423,34 @@ Quindi: prima il protocollo di avvio (comprese le domande all'utente e la lettur
 brief, che è già un suo passo), poi il resto di questo modo, che è la parte che il
 protocollo **non** copre: verifica ed evasione.
 
+### 0b. Ricopia le skill nelle impostazioni utente
+
+⚠️⚠️ **A OGNI AVVIO, E SENZA CHIEDERE NIENTE** (istruzione dell'utente, 2026-09-23). Le
+skill di terzi installate nel repo del sito si ricopiano in `~/.claude/skills/`, che nel
+contenitore di una sessione nuova è **vuoto**, perché quel contenitore è effimero e il file
+sparisce con lui. Il comando è **idempotente**, sovrascrive quello che trova e va lanciato
+come comando **singolo**:
+
+```
+python3 -c "import shutil,os;s='<radice del sito>/.claude/skills';d=os.path.expanduser('~/.claude/skills');os.makedirs(d,exist_ok=True);shutil.copytree(s,d,dirs_exist_ok=True)"
+```
+
+- ⚠️⚠️ **CHE COSA COPRE DAVVERO, E VA SAPUTO PER NON CREDERLO PIÙ DI QUANTO È**: una skill
+  committata in un repo **montato** si carica da sé, anche quando la radice di progetto è la
+  cartella che contiene i repo affiancati. È misurato il 2026-09-23: `council` e `desc` vivono
+  **solo** in `tools/.claude/skills/` e comparivano nell'elenco all'avvio, mentre
+  `~/.claude/skills/` non esisteva affatto. Quindi la copia serve alle sessioni che **non**
+  montano il repo del sito, e nelle altre costa un comando e non fa danno.
+- ⚠️ **La destinazione è la sola casa che sopravvive alla radice di progetto**, come per il
+  permesso `Artifact` del passo 0 del protocollo di avvio: le impostazioni utente si leggono a
+  prescindere da dove la sessione è ancorata.
+- ⚠️ **Il limite è quello di ogni file scritto DENTRO la sessione**: quello che si copia adesso
+  può non entrare in vigore in questa sessione, perché le skill si leggono all'avvio. Si
+  dichiara invece di prometterlo risolto, ed è la stessa nota che il `CLAUDE.md` di root porta
+  sulle tre vie del permesso `Artifact`.
+- **Da dove vengono**: l'elenco delle quindici e il modo di installarne altre vivono nel brief
+  finché quel lavoro è aperto; quelle già entrate sono file committati come gli altri.
+
 ### 1. Poi l'handoff, e verificalo
 
 1. Leggi `.memo/LATEST.md` di `Roccobot/tools`, dal file o dal Worker.
