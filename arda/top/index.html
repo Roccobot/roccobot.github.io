@@ -314,13 +314,6 @@ h1 {
   font-size:0.95rem; color:var(--parchment-dim); line-height:1.5;
   padding:0.9rem 1.8rem;
 }
-.intro-cta {
-  display:block; margin-top:0.7rem; color:var(--gold); font-size:0.9rem;
-}
-/* Sfondo pagina neutro (v8.72): i testi ardesia dell'intestazione erano tarati
-   sul vecchio fondo quasi-nero; su #303030 vanno schiariti per restare >=4.5:1
-   (solo tema scuro; il titolo e il resto del chrome restano invariati). */
-html[data-theme="dark"] .intro-cta { color:#a8a8a8; }
 /* Accento verso il colore del FAB (dalla v8.82, entrambi i temi; nato in v8.81
    come esperimento caldo solo-scuro): il link 'Risorse e note' vira verso il colore
    del FAB del tema (scuro = oro, vedi qui; chiaro = teal, vedi tema chiaro). Il
@@ -1890,6 +1883,15 @@ footer {
 }
 
 footer p { color:var(--parchment-dim); font-size:0.95rem; max-width:500px; margin:0 auto; }
+/* ⚠️ Il footer resta INVISIBILE finché la lista è vuota (15.62, dal collaudo del 2026-09-25,
+   la stessa regola della 2.68 di Terramare). Il markup lo mette subito sotto `#rank-list`,
+   quindi il browser lo disegnava a metà schermo mentre `dati.js` era in arrivo, e la lista lo
+   spingeva poi fuori: era quasi tutto lo spostamento del layout al caricamento (0,265 su
+   mobile e 0,250 su desktop con rete lenta). `visibility` e non `display`: lo spazio resta, e
+   lo spostamento di un elemento invisibile non conta. Misurato con la regola iniettata: da
+   0,310 a 0,023 su mobile e da 0,268 a 0,013 su desktop. Se `dati.js` non carica, la lista
+   riceve il messaggio d'errore, non è più vuota e il footer ricompare. */
+#rank-list:empty ~ footer { visibility:hidden; }
 #footer-links { font-size:1.2rem; }
 @media (max-width:768px) {
   footer p { max-width:100%; }
@@ -2592,8 +2594,6 @@ html[data-theme="light"] .note-viewer-box p { color:inherit; opacity:1; }
 .note-viewer-box ul { margin:.2em 0 0; padding:0; list-style:none; }
 .note-viewer-box li { margin:.55em 0; position:relative; padding-left:1.1em; }
 .note-viewer-box li::before { content:'•'; position:absolute; left:.15em; color:var(--note-acc); }
-.note-viewer-box .note-sub { margin:.25em 0 .25em .4em; position:relative; padding-left:1em; }
-.note-viewer-box .note-sub::before { content:'-'; position:absolute; left:0; color:var(--gold-bright); }
 /* Liste numerate (le tre unioni della tradizione): numeri, niente pallino. */
 .note-viewer-box ol { margin:.3em 0 .3em .6em; padding-left:1.4em; list-style:decimal; }
 .note-viewer-box ol > li { margin:.3em 0; padding-left:.2em; }
@@ -2813,7 +2813,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.61</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.62</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -3656,10 +3656,6 @@ var PODIUM_IDENT = {
        d:{ s:0.55, L:[0.64,0.43,0.43,0.36,0.57,0.31], topMax:0.88, flashMax:0.88 },
        l:{ s:0.58, L:[0.61,0.44,0.31,0.34,0.54,0.24], topMax:0.82, flashMax:0.82 } }
 };
-// Ruoli delle 7 fermate: bordo in cima, lume, corpo, LAMPO, ombra, ripresa, ancora.
-// La seconda (fine del bordo luminoso) non è più fissa: la governa la manopola
-// 'Ampiezza del bordo' (`tamp`, default 18 = il valore storico).
-var PODIUM_POS = [3, 18, 40, 54, 70, 86, 100];
 // Fascia della corsa del gradiente che il glifo intercetta davvero (misurata a
 // bande nette, v13.45): fuori da qui le fermate non toccano un solo pixel della
 // cifra. Vedi la nota in fondo a fxPodiumGrad. Estremo alto a 76 e non 75: un
@@ -4792,7 +4788,6 @@ function cardTriplet(v) {
   if (/^\d{1,3},\d{1,3},\d{1,3}$/.test(t) && t.split(',').every(function(n){ return +n >= 0 && +n <= 255; })) return t;
   return null;
 }
-function validCardRgb(s) { return cardTriplet(s) !== null; }
 // Colore individuale PER-TEMA (Modifica mirata, dalla v9.7x). p.cardrgb accetta:
 //  - OGGETTO {dark,light} (nuovo): due hex/terne, uno per tema;
 //  - STRINGA singola (legacy): stesso colore in entrambi i temi.
