@@ -102,7 +102,7 @@ function showActionChoiceModal() {
     b.onclick = fn; return b;
   }
   function viewMain(){
-    box.innerHTML = ''; box.appendChild(mkClose());
+    box.replaceChildren(); box.appendChild(mkClose());
     if (reorderMode) {
       // In riordino: tasto 'in sospeso' -> apre il trivio Conferma/Chiudi/Scarta
       box.appendChild(mkBtn(T.reorderExit, '', 'is-pending', viewConfirm));
@@ -119,7 +119,7 @@ function showActionChoiceModal() {
     }));
   }
   function viewConfirm(){
-    box.innerHTML = ''; box.appendChild(mkClose());
+    box.replaceChildren(); box.appendChild(mkClose());
     // Conferma: commit permanente (doSave esce dal riordino al successo).
     box.appendChild(mkBtn(T.confirm, T.confirmSub, 'is-primary', function(){ dismiss(); doSave(); }));
     // Chiudi: tiene le modifiche come bozza locale (localStorage) ed esce dal riordino.
@@ -388,7 +388,7 @@ function showAdminEditor() {
     const nameItLbl = document.createElement('label');
     nameItLbl.className = 'admin-label'; nameItLbl.textContent = 'Nome'; nameItLbl.htmlFor = 'ae-' + i + '-nome';
     const nameItField = document.createElement('div'); nameItField.className = 'admin-name-field';
-    const fIt = document.createElement('div'); fIt.className = 'admin-flag'; fIt.innerHTML = FLAG_IT;
+    const fIt = document.createElement('div'); fIt.className = 'admin-flag'; fIt.appendChild(svgNodo(FLAG_IT));
     const nameItInp = mkInp(i, 'nome', false);
     nameItInp.className += ' admin-name-input'; nameItInp.value = p.nome || '';
     nameItField.appendChild(fIt); nameItField.appendChild(nameItInp);
@@ -400,7 +400,7 @@ function showAdminEditor() {
     const nameEnField = document.createElement('div'); nameEnField.className = 'admin-name-field';
     const nameEnInp = mkInp(i, 'nome_en', false);
     nameEnInp.className += ' admin-name-input'; nameEnInp.value = p.nome_en || '';
-    const fEn = document.createElement('div'); fEn.className = 'admin-flag'; fEn.innerHTML = FLAG_EN;
+    const fEn = document.createElement('div'); fEn.className = 'admin-flag'; fEn.appendChild(svgNodo(FLAG_EN));
     nameEnField.appendChild(nameEnInp); nameEnField.appendChild(fEn);
     nameEnWrap.appendChild(nameEnLbl); nameEnWrap.appendChild(nameEnField);
     nameRow.appendChild(nameItWrap); nameRow.appendChild(nameEnWrap);
@@ -566,7 +566,7 @@ function showAdminEditor() {
   nav.className = 'admin-nav';
   const mkNav = (svg, delta, label) => {
     const b = document.createElement('button');
-    b.className = 'admin-nav-btn'; b.innerHTML = svg;
+    b.className = 'admin-nav-btn'; b.appendChild(svgNodo(svg));
     b.title = label; b.setAttribute('aria-label', label);
     b.onclick = () => goToCard(currentCardIndex() + delta);
     return b;
@@ -598,7 +598,7 @@ function showAdminEditor() {
   function renderResults(q){
     var all = computeMatches(q); sel = 0; lastQuery = q;
     results = all.slice(0, SEARCH_CAP);
-    listEl.innerHTML = '';
+    listEl.replaceChildren();
     countEl.textContent = q.trim() ? (all.length + (all.length===1?' risultato':' risultati') + (all.length > SEARCH_CAP ? ' (primi ' + SEARCH_CAP + ')' : '')) : '';
     if (q.trim() && !results.length){ var e=document.createElement('div'); e.className='admin-search-empty'; e.textContent='Nessun risultato'; listEl.appendChild(e); return; }
     results.forEach(function(r, idx){
@@ -1941,7 +1941,7 @@ function showSiteFlagsEditor(initState){
       row.appendChild(cb); row.appendChild(txt);
       if (f.cfg) {
         var gear = document.createElement('button'); gear.type = 'button'; gear.className = 'fx-gear';
-        gear.innerHTML = FX_SLIDERS_SVG;
+        gear.appendChild(svgNodo(FX_SLIDERS_SVG));
         gear.setAttribute('aria-label', (it ? 'Regola: ' : 'Adjust: ') + (it ? f.it : f.en));
         gear.title = it ? 'Regolazioni' : 'Settings';
         gear.onclick = function(){
@@ -2053,7 +2053,7 @@ function showAdminChoiceModal() {
   var b4 = document.createElement('button'); b4.className = 'fab-modal-confirm';
   // A capo forzato dopo 'aggiustamenti' (richiesta utente): riga1 Micro-aggiustamenti,
   // riga2 icone badge.
-  b4.innerHTML = it ? 'Micro-aggiustamenti<br>icone badge' : 'Badge-icon<br>micro-tuning';
+  b4.replaceChildren(it ? 'Micro-aggiustamenti' : 'Badge-icon', document.createElement('br'), it ? 'icone badge' : 'micro-tuning');
   b4.onclick = function(){ close(); showBadgeAdjustEditor(); };
   // Console (dalla v12.24, allora 'Feature flag'): governa l'ASPETTO del sito
   // (effetti grafici + modalità ingrandita) per tutti i visitatori.
@@ -2432,7 +2432,7 @@ function showColorStats(initState) {
   // ── Stack di viste (drill-down). Ogni vista è una fn(host). Il primo elemento
   //    è la vista base della tab corrente; push apre un dettaglio, pop torna su. ──
   var stack = [];
-  function renderTop(){ content.innerHTML = ''; box.scrollTop = 0; stack[stack.length - 1](content); }
+  function renderTop(){ content.replaceChildren(); box.scrollTop = 0; stack[stack.length - 1](content); }
   function pushView(fn){ stack.push(fn); renderTop(); }
   function popView(){ if (stack.length > 1){ stack.pop(); renderTop(); } }
   // Barra 'indietro' + titolo per le viste di dettaglio.
@@ -2592,7 +2592,7 @@ function showColorEditor(initState) {
     curTab = which;
     tMirata.style.opacity = which === 'm' ? '1' : '0.5';
     tFam.style.opacity = which === 'f' ? '1' : '0.5';
-    content.innerHTML = '';
+    content.replaceChildren();
     if (which === 'm') buildMirata(content); else buildFamilies(content);
   }
   tMirata.onclick = function(){ setTab('m'); };
@@ -2637,7 +2637,7 @@ function showColorEditor(initState) {
     var panel = document.createElement('div');
     root.appendChild(hint); root.appendChild(search); root.appendChild(results); root.appendChild(panel);
     function renderResults(q){
-      results.innerHTML = ''; panel.innerHTML = '';
+      results.replaceChildren(); panel.replaceChildren();
       q = (q || '').trim().toLowerCase(); if (q.length < 1) return;
       var hits = [];
       for (var i = 0; i < dati.length && hits.length < 20; i++){
@@ -2657,7 +2657,7 @@ function showColorEditor(initState) {
     setTimeout(function(){ search.focus(); }, 60);
   }
   function selectChar(i, panel){
-    var p = dati[i]; panel.innerHTML = '';
+    var p = dati[i]; panel.replaceChildren();
     var cp = customPair(p);
     var isCustom = !!cp;
     var fam = familyOf(p);
@@ -2709,7 +2709,7 @@ function showColorEditor(initState) {
   function famCount(fam){ var n = 0; for (var i = 0; i < dati.length; i++) if (familyOf(dati[i]) === fam) n++; return n; }
   function buildFamPanel(fam, panel){
     revertFamPending(); // la famiglia che si abbandona torna all'ultimo salvato
-    panel.innerHTML = '';
+    panel.replaceChildren();
     // 1) Colore: si sceglie UN colore, le due varianti tema sono derivate in
     // automatico (AA-safe) e mostrate in anteprima. Titolo 'Colore' e tasto sono
     // dentro il controllo condiviso.
@@ -2768,7 +2768,7 @@ function showColorEditor(initState) {
   // bordo famiglia + testo AA-safe (--cctext via ccAaText) + filetto fonte.
   // Fedele a renderList/openModal; colori concreti (nessun var(), mai visto dal Nu).
   function renderPreview(host, darkHex, lightHex, sampleName, sampleTipo){
-    host.innerHTML = '';
+    host.replaceChildren();
     // [tema, hex, sfondoPagina, sfondoScheda, opacitàCard, coloreTesto]
     // Ordine: CHIARO a sinistra, SCURO a destra (in colonna con le caselle sopra).
     [['light', lightHex, '#F5F5F5', '#F4F4F4', 0.05, 'rgba(30,30,34,0.92)'],
