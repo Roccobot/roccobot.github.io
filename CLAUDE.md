@@ -123,8 +123,9 @@ sessione:
          routine, cioè una sessione, come `create_session`. Gli altri cinque dei trigger sono in
          lista per sua richiesta (2026-09-25: *non puoi aggiungere tu quello che l'altra
          sessione era sul punto di mergiare?*), compresi `create_trigger` e `update_trigger`,
-         che programmano sessioni anche ricorrenti. I quattro di GitHub Actions sono quelli con
-         cui una sessione lancia e verifica il rilascio di AIV.
+         che programmano sessioni anche ricorrenti. I quattro di GitHub (tre di Actions e
+         `get_release_by_tag`) sono quelli con cui una sessione lancia e verifica il rilascio di
+         AIV.
      - ⚠️⚠️ **SCRITTO DENTRO LA SESSIONE, IL PERMESSO NON VALE PER QUELLA SESSIONE, ED È
        MISURATO** (2026-09-25): aggiunti `subscribe_pr_activity` e `unsubscribe_pr_activity`
        alle impostazioni utente, le due chiamate successive hanno chiesto di nuovo il consenso,
