@@ -6533,6 +6533,17 @@ abitata: l'iPhone 16 Pro ha un viewport di **402px**.
   link, e le sue due metà differiscono di una lettera senza andare a capo in nessuna fascia.
 - ⚠️ **Il titolone ha un presidio SUO e più raffinato** (`pareggiaTitolo`, che cerca la coppia di
   tagli che pareggia le due lingue): non si sostituisce con questo, che riserva e basta.
+- ⚠️⚠️ **DALLA `2.72` GLI `innerHTML` SONO 17, ERANO 43** (censiti con l'AST sui due sorgenti):
+  via i 10 svuotamenti (`replaceChildren()`) e le 16 costanti (icone, bandiere, X di chiusura,
+  span decorativi), costruite con **`svgNodo`**, che passa dal parser XML di `DOMParser` e
+  riceve **solo costanti del codice**, mai testo del dataset. Verificato: DOM identico alla
+  `2.71` su 7.431 elementi in dodici stati della pagina.
+  - **I 17 che restano** sono stringhe composte con dati: l'editor admin (`admin.src.js`) e i
+    generatori pubblici (`renderList`, `controlPanelHTML`, la nota informativa, il corpo delle
+    note, i pulsanti `mkBtn`). ⚠️ **`renderList` per ultimo e col banco anti-jitter**: è il cuore
+    della pagina, e la sua struttura a gemelle è quella che la certificazione protegge.
+  - ⚠️ **Un'icona nuova si aggiunge con `svgNodo`, non con `innerHTML`**: il divieto non guarda
+    la provenienza del testo, e la via pulita adesso costa una chiamata.
 - ⚠️⚠️ **GLI `innerHTML` DELL'INTESTAZIONE SONO CHIUSI DALLA `2.62`**, e la nota che li dava da
   fare descrive lo stato fino alla `2.61`: le righe di testo piano (`subtitle`, `intro`,
   `footer-text`) passano da `textContent`, e il crest lo compone `scriviCrest` a nodi, perché è
