@@ -7,6 +7,37 @@
 > derogabili, lingua, git e go-live) vivono nel `CLAUDE.md` di **root**, che si
 > carica sempre: quello resta l'hub, e questo file non lo sostituisce.
 
+## ⚠️⚠️⚠️ SI MODIFICANO `index.src.html` E `admin.src.js`: `index.html` E `admin.js` SONO GENERATI
+
+Dalla `15.64` (collaudo del 2026-09-25, approvato dall'utente), come Terramare dalla `2.70`. Il
+sorgente commentato è **`index.src.html`**, e il codice dell'amministrazione vive in
+**`admin.src.js`**; la pagina pubblicata (**`index.html`**) e **`admin.js`** li genera la GitHub
+Action `.github/workflows/arda-minify.yml` con `.github/scripts/minify.mjs arda/top` a ogni push
+su `master` che tocca i sorgenti, e li committa lei (`github-actions[bot]`). Il perché è il peso:
+i commenti erano il 41% del codice servito, e la pagina compressa scende da 252 a **71,9 KB**.
+
+- ⚠️⚠️ **In tutto questo file, 'index.html' vuol dire il SORGENTE**: le note sono nate prima
+  dello sdoppiamento, e i numeri di riga che citano valgono in `index.src.html`. Chi apre
+  `index.html` trova codice minificato, e una modifica fatta lì la cancella il build successivo.
+- **Il badge di ripiego si scrive nel sorgente**, e `datiVersion` resta in `dati.js`: il bump
+  tocca `index.src.html` e `dati.js`, e `index.html` lo segue da sé. Gli hook di
+  `.claude/settings.json` leggono il badge dal sorgente, e così `favicon.js` e `pwaicons.js`.
+- ⚠️⚠️ **Il codice admin si scarica al PRIMO INGRESSO**: 31 funzioni e 4 tabelle costanti,
+  trovate col grafo delle chiamate perché raggiungibili solo da `openAdminGate`. Nel sorgente
+  resta un segnaposto `openAdminGate` che, con `caricaAdmin`, carica `admin.js` una volta sola.
+  Una funzione nuova dell'amministrazione va in `admin.src.js`; se il codice pubblico ne
+  chiamasse direttamente un'altra, serve un secondo segnaposto. Le variabili che fotografano la
+  configurazione al caricamento (`*_SAVED`) restano nel sorgente principale.
+- **Chi prova in locale** lancia `node .github/scripts/minify.mjs arda/top` dalla radice (con
+  esbuild) e serve la cartella come sempre.
+- **Certificazione della `15.64`**: stato finale delle 249 card identico alla `15.63` su 21
+  larghezze da 1280 a 320, stesse aperture dell'area admin con lo stesso esito, `admin.js`
+  richiesto solo dopo l'ingresso, nessun errore nei due temi.
+  - ⚠️ **Il banco ha misurato anche una cosa PREESISTENTE**, identica nelle due versioni: da 8 a
+    68 card per larghezza cambiano altezza fra italiano e inglese. Qui la riserva anti-jitter
+    delle card al cambio lingua **non esiste** (è nata su Terramare), quindi non è una
+    regressione: portarla è una decisione dell'utente.
+
 ## 🏷️ Come si chiama questo progetto
 
 **Tre nomi, tutti buoni e interscambiabili** (istruzione dell'utente, 2026-07-30): **'Arda

@@ -1,28 +1,28 @@
-# Genera la pagina pubblicata di 'I Grandi di Terramare' (earthsea/top/index.html) dal suo
-# sorgente commentato (earthsea/top/index.src.html), minificandola: i commenti erano il 61%
-# del codice servito. Dalla 2.71 genera anche admin.js da admin.src.js. I sorgenti sono i
-# soli file che si modificano.
+# Genera la pagina pubblicata di 'I Grandi di Arda' (arda/top/index.html) e il suo admin.js
+# dai sorgenti commentati (arda/top/index.src.html e admin.src.js), minificandoli: i commenti
+# erano il 41% del codice servito. I sorgenti sono i soli file che si modificano. Gemella di
+# earthsea-minify.yml, con cui condivide lo script.
 #
 # Il commit che produce è di github-actions[bot] e tocca il solo index.html: non riattiva
 # questo workflow (il filtro sui percorsi lo esclude, e i push fatti col GITHUB_TOKEN non
 # fanno partire altri workflow), ma fa partire il deploy di Pages come ogni push.
-name: Terramare, pagina minificata
+name: Arda, pagina minificata
 
 on:
   push:
     branches: [master]
     paths:
-      - 'earthsea/top/index.src.html'
-      - 'earthsea/top/admin.src.js'
+      - 'arda/top/index.src.html'
+      - 'arda/top/admin.src.js'
       - '.github/scripts/minify.mjs'
-      - '.github/workflows/earthsea-minify.yml'
+      - '.github/workflows/arda-minify.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: earthsea-minify
+  group: arda-minify
   cancel-in-progress: false
 
 jobs:
@@ -36,17 +36,17 @@ jobs:
       - name: Installa esbuild
         run: npm install --no-save --no-package-lock esbuild@0.28.2
       - name: Genera index.html
-        run: node .github/scripts/minify.mjs earthsea/top
+        run: node .github/scripts/minify.mjs arda/top
       - name: Pubblica se è cambiato
         run: |
-          if git diff --quiet -- earthsea/top/index.html earthsea/top/admin.js && [ -z "$(git ls-files --others --exclude-standard earthsea/top/admin.js)" ]; then
+          if git diff --quiet -- arda/top/index.html arda/top/admin.js && [ -z "$(git ls-files --others --exclude-standard arda/top/admin.js)" ]; then
             echo "index.html già allineato al sorgente"
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add earthsea/top/index.html earthsea/top/admin.js
-          git commit -m 'Terramare: index.html rigenerato dal sorgente'
+          git add arda/top/index.html arda/top/admin.js
+          git commit -m 'Arda: index.html rigenerato dal sorgente'
           for i in 1 2 3 4; do
             git pull --rebase origin master && git push origin HEAD:master && exit 0
             sleep $((i * 5))
