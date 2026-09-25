@@ -520,6 +520,33 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    sulla prima riga, .bp-break la manda a capo per intero e nasconde il '|'. */
 .bp-break .bp-sep { display:none; }
 .bp-break .bp-b { display:block; }
+/* ── Righe BILINGUI: la gemella invisibile che riserva lo spazio (15.67) ─────────
+   Faccia visibile e testo dell'altra lingua nella stessa cella di griglia: il box
+   prende la misura MAGGIORE delle due, e il cambio lingua non muove più le card
+   (vedi `bilingue`). Viene dal sito gemello di Terramare.
+   ⚠️ Queste regole stanno DOPO `.rank-title`, che è un flex: `.bil` ha la stessa
+   specificità e vince perché viene dopo. Spostarle sopra riporterebbe la riga
+   dell'opera a flex, con le due facce affiancate invece che impilate.
+   ⚠️ La riserva non sta mai dentro un contenitore che si VEDE: queste righe non hanno
+   sfondo né bordo, quindi il vuoto della lingua più corta cade sul fondo della card
+   e non disegna niente (è la regola che Terramare ha imparato col riquadro delle
+   citazioni, nella sua 0.89). */
+.bil { display:grid; }
+.bil > .bil-f, .bil > .bil-m { grid-area:1 / 1; min-width:0; }
+.bil > .bil-m { visibility:hidden; pointer-events:none; }
+/* Il NOME impila il solo TESTO, e la cella dev'essere `inline-grid`: su desktop
+   `.rank-name` è un flex e il figlio andrebbe bene comunque, ma su mobile è un blocco
+   e un `display:grid` porterebbe il nome a tutta larghezza, mandando etichette e icone
+   sulla riga sotto. `justify-items:start` tiene le due facce ancorate a sinistra. */
+.rank-name-text.bil { display:inline-grid; justify-items:start; }
+/* IL NOME LIBERO dalla riserva ORIZZONTALE: la cella bilingue è larga quanto la lingua
+   più larga, e nella più corta quella riserva si vede come un vuoto fra il nome e le
+   etichette. Con la classe la gemella esce dal flusso orizzontale (resta invisibile e
+   non sposta niente), quindi la cella si stringe sul nome vero.
+   ⚠️⚠️ La classe NON si mette a tutte: la dà `freeNames()` card per card, e solo dove è
+   provato che l'altezza non cambi fra le due lingue. */
+.rank-name-text.bil.nm-libero { position:relative; }
+.rank-name-text.bil.nm-libero > .bil-m { position:absolute; left:0; top:0; width:100%; }
 /* Separatore bipartito: barra verticale DISEGNATA (non il glifo '|' del font, così
    è più spessa e con altezza controllata, e resta identica anche col fallback
    serif quando i Google Fonts sono bloccati). Altezza = cap-height + 2px@DPR1.5
@@ -559,6 +586,14 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    testo+parentesi in flusso inline, così lo spazio 'Elfo (' resta preservato. */
 .type-badge .tpwrap { display:inline; }
 .type-badge .tparen { display:inline-block; transform:translateY(-0.03em); }
+/* SLOT A LARGHEZZA STABILE fra le due lingue (15.67, vedi `tipoSegHtml`): etichetta
+   visibile e gemella nella stessa cella, centrate; la pastiglia prende la larghezza
+   maggiore. Nelle etichette-freccia lo slot è la .ttx stessa, e là il testo resta
+   ancorato a sinistra, contro la freccia. */
+.type-badge .tb-stack { display:inline-grid; justify-items:center; align-items:center; }
+.type-badge .tb-stack > span { grid-area:1 / 1; }
+.type-badge .tb-m { visibility:hidden; pointer-events:none; }
+.type-badge .ttx.tb-stack { justify-items:start; }
 /* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
    centrato (viewBox), NON come glifo di testo. Motivo: 'EB Garamond' arriva da
    Google Fonts e può non caricarsi (blocklist/rete); col fallback serif il glifo
@@ -1576,6 +1611,10 @@ html[data-theme="light"] .ctrl-scroll-hint .csh-tail { background:rgba(31,85,98,
     font-style:italic; font-size:0.8rem; color:var(--parchment-dim);
     padding:0 0.3rem; margin-top:0.5rem;
   }
+  /* Le due lingue impilate (vedi `.bil`): il selettore porta l'id perché deve battere
+     il `display:block` qui sopra e quello di `#ctrl-panel .ctrl-mobile-note`, e vive in
+     questo blocco perché fuori dal mobile la nota resta `display:none`. */
+  #ctrl-panel .ctrl-mobile-note.bil { display:grid; }
   /* barra sticky in basso: [versione | (tema lingua) | chiudi] */
   .ctrl-bottombar {
     display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
@@ -2819,7 +2858,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.66</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.67</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -5268,6 +5307,127 @@ function pruneBadgeFilter() {
   badgeFilter.forEach(function(row){ if (!rowHasMembersInCats(row)) badgeFilter['delete'](row); });
 }
 
+// ── Cambio lingua ANTI-JITTER (15.67) ───────────────────────────────────────────
+// Istruzione dell'utente (2026-09-25): *voglio assolutamente l'anti-jitter verticale
+// anche su Arda! Passo spesso da una lingua all'altra ed evitare che gli oggetti ballino
+// è una mia fissazione.* È il meccanismo del sito gemello di Terramare, dove vive dalla
+// 0.59 con tutte le sue trappole misurate (il suo CLAUDE.md, § 'L'ANTI-JITTER').
+// ⚠️⚠️ Faccia visibile e testo dell'altra lingua nella STESSA cella di griglia: il box
+// prende la misura MAGGIORE delle due, e non è un'altezza indovinata ma quella vera
+// dell'altra lingua, misurata dal browser alla stessa larghezza.
+// ⚠️ La gemella si emette SOLO se le due lingue divergono: dove il testo coincide sarebbe
+// DOM sprecato. Misura di partenza, sulla 15.66: da 11 a 69 card per larghezza cambiavano
+// altezza fra italiano e inglese (409 in tutto su undici larghezze), quasi tutte per le
+// righe `.rank-desc` e `.rank-subtitle`, qualcuna per la riga del nome sotto i 430px.
+function bilingue(cls, itHtml, enHtml, sempre){
+  var cur = currentLang === 'it' ? itHtml : enHtml;
+  var alt = currentLang === 'it' ? enHtml : itHtml;
+  if (!cur && !alt && !sempre) return '';
+  if (cur === alt) return '<span class="' + cls + '">' + cur + '</span>';
+  return '<span class="' + cls + ' bil"><span class="bil-f">' + cur + '</span>' +
+         '<span class="bil-m" aria-hidden="true">' + alt + '</span></span>';
+}
+// Il CONTENUTO delle righe, per lingua: servono a `bilingue`, che le chiede in entrambe.
+// ⚠️ Sono la costruzione di prima, parametrizzata sulla lingua invece che su `currentLang`:
+// qui `it` è un argomento, e chi le tocca deve ricordarselo.
+function nomeDi(p, it){ return it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); }
+function etichettaTipoDi(p, it){
+  var tipo = it ? p.tipo : (p.tipo_en || p.tipo);
+  return it ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
+}
+// Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i genitori dal nome
+// tradotto (Tuc/Took, Brandibuck/Brandybuck, di/of...); assenti = nome identico nelle due
+// lingue (ripiego su padre/madre).
+function descDi(p, it){
+  var padre = escapeHtml(it ? (p.padre || '') : (p.padre_en || p.padre || ''));
+  var madre = escapeHtml(it ? (p.madre || '') : (p.madre_en || p.madre || ''));
+  var info = escapeHtml(it ? (p.info || '') : (p.info_en || p.info || ''));
+  var parti = [];
+  if (info) parti.push(info);
+  if (padre || madre) {
+    var pre = (p.genere || 'm') === 'f' ? (it ? 'Figlia di' : 'Daughter of') : (it ? 'Figlio di' : 'Son of');
+    var lin = [];
+    if (padre) lin.push(padre);
+    if (madre) lin.push(madre);
+    parti.push(pre + ' ' + lin.join(it ? ' e ' : ' and '));
+  }
+  return joinBipartite(parti);
+}
+function sottotitoloDi(p, it){
+  var alt = it ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
+  var app = escapeHtml(it ? (p.appellativi || '') : (p.appellativi_en || ''));
+  if (!alt && !app) return '';
+  // Ogni voce separata da virgola diventa un .alt-token (nowrap): la riga va a capo solo
+  // ai separatori (virgola, |), mai dentro un titolo di più parole. (app è già escapato;
+  // i nomi passano da processAlt.)
+  var parti = [];
+  if (alt) parti.push(alt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
+  if (app) parti.push(app.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
+  // Solo titoli (nessun nome): vanno resi in corsivo come i titoli bipartiti;
+  // joinBipartite() a parte singola li lascerebbe 'nudi'.
+  if (app && !alt) return '<span class="bp-solo">' + parti[0] + '</span>';
+  return joinBipartite(parti);
+}
+function operaDi(p, it){
+  var pf = parseFonte(it ? p.fonte : (p.fonte_en || p.fonte));
+  return escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+}
+// La cella del NOME, con la gemella sul SOLO TESTO: così la cella prende il massimo delle
+// due lingue in larghezza e in altezza, e le etichette partono dallo stesso punto nelle
+// due lingue. Il vuoto che resta dietro il nome più corto lo toglie `freeNames`, card per
+// card e solo dove non costa un salto verticale.
+// ⚠️ Ruolo, `tabindex` ed etichetta restano sul contenitore, che è quello che riceve il
+// clic della scheda; la gemella è `aria-hidden`.
+function nomeCellaHtml(nome, nomeAltro, visN){
+  var a = ' role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '"';
+  if (nomeAltro && nomeAltro !== nome)
+    return '<span class="rank-name-text bil"' + a + '><span class="bil-f">' + nome + '</span>' +
+           '<span class="bil-m" aria-hidden="true">' + nomeAltro + '</span></span>';
+  return '<span class="rank-name-text"' + a + '>' + nome + '</span>';
+}
+// Il contenuto di un'etichetta di tipo, con lo SLOT A LARGHEZZA STABILE fra le due lingue:
+// l'etichetta visibile e quella dell'altra lingua nella stessa cella, quindi la pastiglia
+// prende la larghezza MAGGIORE e non si restringe passando da 'Uomo' a 'Man'. Non è una
+// rifinitura: la riga del NOME va a capo in base alla larghezza delle etichette.
+// Freccia iniziale '→' (etichette di stato acquisito): resa come SVG geometricamente
+// centrato (classe .tarrow), NON glifo di testo, così l'allineamento verticale è
+// indipendente dal font (vedi CSS .tarrow).
+// ⚠️ La freccia SVG e la .ttx devono restare ENTRAMBE figlie DIRETTE del flex .type-badge:
+// è align-items:center a centrare la freccia. NON avvolgerle in .tpwrap (il fix parentesi
+// lo faceva e la freccia, finita dentro .tpwrap, perdeva il centraggio e cadeva in basso
+// sulle etichette con freccia E parentesi, es. '→ Elfo (Noldo)'). Per la stessa ragione lo
+// slot bilingue delle etichette-freccia è la .ttx stessa, non un contenitore intorno alla
+// freccia.
+// Rimosso lo spazio 'letterale' dopo la freccia (replace ^\s+); il testo è avvolto in .ttx
+// così un margine sinistro può regolare la distanza punta→stelo (vedi CSS .type-badge .ttx).
+// Etichette SENZA freccia con parentesi: solo i due glifi '(' ')' avvolti in .tparen per
+// alzarli otticamente (contenuto e testo esterno invariati), il tutto in un wrapper inline
+// .tpwrap (unico flex-item) così il contenitore flex non taglia lo spazio 'Elfo ('.
+// ⚠️ La gemella passa dalle STESSE trasformazioni della faccia, o le due larghezze non
+// sarebbero confrontabili. Nel dataset le frecce coincidono segmento per segmento fra le
+// due lingue (7 su 7, censite il 2026-09-25); se un domani divergessero, la gemella della
+// freccia resta fuori e l'etichetta torna a larghezza naturale.
+var TARROW_SVG = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M1.83 7H18.18M12 1.83L18.18 7L12 12.18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+function tparenHtml(s){ return s.split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>'); }
+function tbStack(f, m){
+  return '<span class="tb-stack"><span class="tb-f">' + f + '</span><span class="tb-m" aria-hidden="true">' + m + '</span></span>';
+}
+function tipoSegHtml(cur, alt){
+  if (cur.charAt(0) === '→') {
+    var t = tparenHtml(cur.slice(1).replace(/^\s+/, ''));
+    var a = (alt && alt.charAt(0) === '→') ? tparenHtml(alt.slice(1).replace(/^\s+/, '')) : '';
+    // ⚠️⚠️ Lo slot è la `.ttx` STESSA, non un contenitore dentro di lei: un `inline-grid`
+    // annidato nella riga della `.ttx` allargava di un soffio la sua riga, e l'etichetta si
+    // abbassava di 0,06-0,8px secondo la larghezza (misurato contro la 15.66). Da figlia
+    // diretta del flex la `.ttx` diventa una griglia a pieno titolo, alta quanto la sua riga.
+    if (a && a !== t) return TARROW_SVG + '<span class="ttx tb-stack"><span class="tb-f">' + t + '</span><span class="tb-m" aria-hidden="true">' + a + '</span></span>';
+    return TARROW_SVG + '<span class="ttx">' + t + '</span>';
+  }
+  var paren = function(s){ return (s.indexOf('(') !== -1 || s.indexOf(')') !== -1) ? '<span class="tpwrap">' + tparenHtml(s) + '</span>' : s; };
+  var c = paren(cur);
+  if (!alt || alt === cur || alt.charAt(0) === '→') return c;
+  return tbStack(c, paren(alt));
+}
 function renderList() {
   var list = document.getElementById('rank-list');
   var html = '';
@@ -5278,14 +5438,13 @@ function renderList() {
     var cat = categoria(p);
     visN++;
     var isVisTop = visN <= 3;
-    var nome = escapeHtml(currentLang === 'it' ? (p.nome || p.nome_en) : (p.nome_en || p.nome));
-    var fonte = currentLang === 'it' ? p.fonte : (p.fonte_en || p.fonte);
-    var nomiAlt = currentLang === 'it' ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
-    var appell = escapeHtml(currentLang === 'it' ? (p.appellativi || '') : (p.appellativi_en || ''));
+    var nome = escapeHtml(nomeDi(p, currentLang === 'it'));
+    var nomeAltro = escapeHtml(nomeDi(p, currentLang !== 'it'));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
-    var tipoLabel = currentLang === 'it' ? (p.tipo_label || tipo) : (p.tipo_label_en || p.tipo_label || tipo);
-    var pf = parseFonte(fonte);
-    var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+    var tipoLabel = etichettaTipoDi(p, currentLang === 'it');
+    // L'etichetta dell'ALTRA lingua, per lo slot a larghezza stabile (vedi `tipoSegHtml`).
+    var tipoAlt = etichettaTipoDi(p, currentLang !== 'it');
+    var tipoAltSeg = ((currentLang === 'it' ? (p.tipo_en || p.tipo) : p.tipo) || '').split('|');
     var genere = p.genere || 'm';
     var gl = GENDER_LABEL[currentLang] || GENDER_LABEL.it;
     // Classe di unità bi-male/bi-female sul simbolo ♂/♀: aggancio ai
@@ -5305,35 +5464,17 @@ function renderList() {
       seg = seg.trim();
       var labelSegs = tipoLabel.split('|');
       var displaySeg = escapeHtml((labelSegs[idx] || seg).trim());
-      var isArrowSeg = displaySeg.charAt(0) === '→';
-      // Freccia iniziale '→' (etichette di stato acquisito): resa come SVG
-      // geometricamente centrato (classe .tarrow), NON glifo di testo, così
-      // l'allineamento verticale è indipendente dal font (vedi CSS .tarrow).
-      // ⚠️ La freccia SVG e la .ttx devono restare ENTRAMBE figlie DIRETTE del
-      // flex .type-badge: è align-items:center a centrare la freccia. NON
-      // avvolgerle in .tpwrap (il fix parentesi lo faceva e la freccia, finita
-      // dentro .tpwrap, perdeva il centraggio e cadeva in basso sulle etichette
-      // con freccia E parentesi, es. '→ Elfo (Noldo)'). Le eventuali parentesi
-      // del testo-freccia sono alzate DENTRO la .ttx (che è già figlia diretta).
-      // Rimosso lo spazio 'letterale' dopo la freccia (replace ^\s+); il testo è
-      // avvolto in .ttx così un margine sinistro può regolare la distanza
-      // punta→stelo (vedi CSS .type-badge .ttx).
-      if (isArrowSeg) displaySeg = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M1.83 7H18.18M12 1.83L18.18 7L12 12.18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path></svg>' + '<span class="ttx">' + displaySeg.slice(1).replace(/^\s+/, '').split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>') + '</span>';
+      // ⚠️ Lo STESSO ripiego della faccia: dove l'etichetta ha meno segmenti del tipo, il
+      // segmento mancante lo dà il tipo. Senza, la seconda etichetta di Idril (`Elfa (Vanya)`
+      // contro `Elf (Vanya)`) restava senza gemella e la card ballava a 375px.
+      var altSeg = escapeHtml((((tipoAlt || '').split('|')[idx]) || (tipoAltSeg[idx] || '')).trim());
       var ov = (colorSegs[idx] || '').trim();
       // Whitelist: l'override finisce in un attributo class senza escaping,
       // quindi si accetta solo la forma 'type-xxx' (tutto il resto è ignorato).
       if (!/^type-[a-z-]*$/.test(ov)) ov = '';
       var segCls = ov || tipoClass(seg);
       badgeClasses.push(segCls);
-      // Etichette SENZA freccia con parentesi: solo i due glifi '(' ')' avvolti in
-      // .tparen per alzarli otticamente (contenuto e testo esterno invariati),
-      // il tutto in un wrapper inline .tpwrap (unico flex-item) così il contenitore
-      // flex non taglia lo spazio 'Elfo (' tra i due item. Le etichette-freccia sono
-      // già gestite sopra (parentesi dentro la .ttx, SVG figlio diretto del flex).
-      if (!isArrowSeg && (displaySeg.indexOf('(') !== -1 || displaySeg.indexOf(')') !== -1)) {
-        displaySeg = '<span class="tpwrap">' + displaySeg.split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>') + '</span>';
-      }
-      return '<span class="type-badge ' + segCls + '">' + displaySeg + '</span>';
+      return '<span class="type-badge ' + segCls + '">' + tipoSegHtml(displaySeg, altSeg) + '</span>';
     }).join('') : '';
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con più
     // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
@@ -5352,36 +5493,13 @@ function renderList() {
     // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i
     // genitori dal nome tradotto (Tuc/Took, Brandibuck/Brandybuck, di/of...);
     // assenti = nome identico nelle due lingue (fallback su padre/madre).
-    var padre = escapeHtml(currentLang === 'it' ? (p.padre || '') : (p.padre_en || p.padre || ''));
-    var madre = escapeHtml(currentLang === 'it' ? (p.madre || '') : (p.madre_en || p.madre || ''));
-    var desc = escapeHtml(currentLang === 'it' ? (p.info || '') : (p.info_en || p.info || ''));
-    var descParts = [];
-    if (desc) descParts.push(desc);
-    if (padre || madre) {
-      var preL = genere === 'f' ? (currentLang === 'it' ? 'Figlia di' : 'Daughter of') : (currentLang === 'it' ? 'Figlio di' : 'Son of');
-      var linParts = [];
-      if (padre) linParts.push(padre);
-      if (madre) linParts.push(madre);
-      descParts.push(preL + ' ' + linParts.join(currentLang === 'it' ? ' e ' : ' and '));
-    }
-    var rigaDesc = '<span class="rank-desc">' + joinBipartite(descParts) + '</span>';
+    // ⚠️ Le tre righe di testo si costruiscono in ENTRAMBE le lingue e passano da
+    // `bilingue`, che impila la gemella invisibile: è così che il cambio lingua non
+    // muove le card (vedi la nota di `bilingue`). La riga `.rank-desc` si emette
+    // sempre, anche vuota, come prima: toglierla cambierebbe il ritmo verticale.
+    var rigaDesc = bilingue('rank-desc', descDi(p, true), descDi(p, false), true);
     // Riga 3: nomi alternativi + appellativi
-    var riga2 = '';
-    if (nomiAlt || appell) {
-      // Ogni voce separata da virgola diventa un .alt-token (nowrap): la riga va
-      // a capo solo ai separatori (virgola, |), mai dentro un titolo di più
-      // parole. (appell è già escapato; i nomi passano da processAlt.)
-      var altParts = [];
-      if (nomiAlt) altParts.push(nomiAlt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
-      if (appell) altParts.push(appell.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
-      // Solo titoli (nessun nome): vanno resi in corsivo come i titoli
-      // bipartiti; joinBipartite() a parte singola li lascerebbe 'nudi'.
-      if (appell && !nomiAlt) {
-        riga2 = '<span class="rank-subtitle"><span class="bp-solo">' + altParts[0] + '</span></span>';
-      } else {
-        riga2 = '<span class="rank-subtitle">' + joinBipartite(altParts) + '</span>';
-      }
-    }
+    var riga2 = bilingue('rank-subtitle', sottotitoloDi(p, true), sottotitoloDi(p, false));
     // vis-1/2/3 (dalla v12.24): posizione esatta sul podio, per i numeri metallici
     // (oro/argento/bronzo). visN è il numero d'ordine tra i VISIBILI, quindi il
     // podio segue i filtri attivi, come lo spessore 8px della striscia.
@@ -5429,10 +5547,10 @@ function renderList() {
       '<span class="rank-strip" aria-hidden="true"></span>' + apoPill +
       '<span class="rank-num">' + visN + '</span>' +
       '<span class="rank-content">' +
-        '<span class="rank-name"><span class="rank-name-text" role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '">' + nome + '</span>' + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
+        '<span class="rank-name">' + nomeCellaHtml(nome, nomeAltro, visN) + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
         rigaDesc +
         riga2 +
-        '<span class="rank-title">' + titleYear + '</span>' +
+        bilingue('rank-title', operaDi(p, true), operaDi(p, false), true) +
       '</span>' +
     '</div>';
   }
@@ -5491,17 +5609,32 @@ function rankNameLines(el) {
   for (var j = 0; j < tops.length; j++) { if (tops[j] - cur > 8) { lines++; cur = tops[j]; } }
   return lines;
 }
+// ⚠️⚠️ SI MISURA SULLA CELLA RISERVATA, cioè togliendo `nm-libero` per la durata del conto
+// (15.67, dal gemello di Terramare): è ciò che rende la decisione UGUALE NELLE DUE LINGUE. La
+// cella riservata è larga quanto il nome più lungo fra le due, quindi con lei il numero di
+// righe non dipende da quale testo è in scena; con la cella liberata `name-tight` potrebbe
+// cadere da una parte sola, e la card ballerebbe al cambio lingua.
+// ⚠️ E rompe la circolarità con `freeNames`: così questa decisione non dipende da quello che
+// l'altra ha deciso al giro prima, e il ciclo di `assestaRighe` converge al primo confronto.
 function tightenNames() {
   var els = document.querySelectorAll('#rank-list .rank-name');
-  var i, cand = [];
+  var i, cand = [], liberate = [], c;
   for (i = 0; i < els.length; i++) els[i].classList.remove('name-tight');
+  for (i = 0; i < els.length; i++) {
+    c = els[i].querySelector(':scope > .rank-name-text');
+    if (c && c.classList.contains('nm-libero')) { c.classList.remove('nm-libero'); liberate.push(c); }
+  }
   for (i = 0; i < els.length; i++) {
     var n = rankNameLines(els[i]);
     if (n > 1) cand.push({ el: els[i], before: n });
   }
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('name-tight');
-  for (i = 0; i < cand.length; i++)
-    if (rankNameLines(cand[i].el) >= cand[i].before) cand[i].el.classList.remove('name-tight');
+  // ⚠️ Prima si LEGGE tutto e poi si scrive (15.67): togliere la classe dentro il ciclo delle
+  // misure costringe il browser a ricalcolare la lista intera prima della lettura dopo, una
+  // volta per card. Le card non si influenzano fra loro, quindi il risultato è lo stesso.
+  for (i = 0; i < cand.length; i++) cand[i].via = rankNameLines(cand[i].el) >= cand[i].before;
+  for (i = 0; i < cand.length; i++) if (cand[i].via) cand[i].el.classList.remove('name-tight');
+  for (i = 0; i < liberate.length; i++) liberate[i].classList.add('nm-libero');
 }
 
 /* A capo ottimizzato delle righe bipartite (info | genealogia e nomi | titoli).
@@ -5525,18 +5658,35 @@ function rowLines(el) {
   for (i = 0; i < tops.length; i++) { if (tops[i] - cur > 8) { lines++; cur = tops[i]; } }
   return lines;
 }
+// Righe di una riga bipartita che può essere IMPILATA (vedi `bilingue`): si misura ogni
+// faccia a sé e si tiene la MAGGIORE.
+// ⚠️⚠️ Misurare la riga intera con un `Range` darebbe un numero SBAGLIATO: il range prende
+// anche i rettangoli della gemella nascosta, che si trova nella stessa cella ma può avere un
+// numero di righe diverso, e `rowLines` li conterebbe come righe in più.
+// ⚠️ Si prende il MASSIMO, e non la sola faccia visibile, perché la decisione dev'essere la
+// stessa nelle due lingue: decidendo sulla visibile, l'italiano potrebbe spezzare e
+// l'inglese no, e il jitter rientrerebbe dalla finestra.
+function righeBipartite(row) {
+  var facce = row.querySelectorAll(':scope > .bil-f, :scope > .bil-m');
+  if (!facce.length) return rowLines(row);
+  var n = 0;
+  for (var i = 0; i < facce.length; i++) n = Math.max(n, rowLines(facce[i]));
+  return n;
+}
 function optimizeBipartite() {
   var rows = document.querySelectorAll('#rank-list .rank-desc, #rank-list .rank-subtitle');
   var i, cand = [];
   for (i = 0; i < rows.length; i++) rows[i].classList.remove('bp-break');
   for (i = 0; i < rows.length; i++) {
     if (!rows[i].querySelector('.bp-b')) continue;
-    var n = rowLines(rows[i]);
+    var n = righeBipartite(rows[i]);
     if (n > 1) cand.push({ el: rows[i], before: n });
   }
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('bp-break');
-  for (i = 0; i < cand.length; i++)
-    if (rowLines(cand[i].el) > cand[i].before) cand[i].el.classList.remove('bp-break');
+  // ⚠️ Letture tutte insieme, poi le scritture (15.67): alternate, a 390px costavano 400 ms
+  // su un telefono medio, perché ogni classe tolta faceva ricalcolare la lista intera.
+  for (i = 0; i < cand.length; i++) cand[i].via = righeBipartite(cand[i].el) > cand[i].before;
+  for (i = 0; i < cand.length; i++) if (cand[i].via) cand[i].el.classList.remove('bp-break');
 }
 // Emissione delle righe bipartite: con due parti, ciascuna in uno span
 // misurabile e separatore a sé (nascosto da .bp-break); con una sola, testo nudo.
@@ -5628,7 +5778,9 @@ function placeMidlinesFor(pairs) {
 function placeCardMidlines() {
   var pairs = [];
   document.querySelectorAll('#rank-list .rank-item').forEach(function(item) {
-    pairs.push({ host: item, nm: item.querySelector('.rank-name-text') });
+    // ⚠️ Dove il nome è impilato serve la FACCIA VISIBILE, non il contenitore: quello porta
+    // dentro anche la gemella, e lo strut finirebbe in una cella di griglia a sé.
+    pairs.push({ host: item, nm: item.querySelector('.rank-name-text > .bil-f') || item.querySelector('.rank-name-text') });
   });
   placeMidlinesFor(pairs);
 }
@@ -5638,13 +5790,197 @@ function toggleCardMidlines() {
   list.classList.toggle('show-midlines', midlinesOn);
   if (midlinesOn) placeCardMidlines();
 }
-function reflowRows() { tightenNames(); optimizeBipartite(); reflowApoLabels(); if (midlinesOn) placeCardMidlines(); }
+// ── Il nome libero dalla riserva orizzontale, dove non costa un salto (15.67) ───
+// Dal gemello di Terramare (sua 0.71 e 2.56). La cella bilingue del nome è larga quanto la
+// lingua più larga: tiene ferme le etichette al cambio lingua, ma nella lingua più corta
+// lascia un vuoto fra il nome e le etichette. Qui la riserva si toglie SOLO dove quattro
+// prove dicono che l'altezza della riga non cambia:
+//   1. faccia visibile e gemella ALTE UGUALE, o il nome andrebbe a capo in una lingua sola;
+//   2. la riga non cambia altezza quando la classe viene messa (stringendo la cella si
+//      libera spazio, e un'etichetta che era a capo può rientrare in riga);
+//   3. la riga resta alta uguale con la cella alla larghezza DELL'ALTRA lingua;
+//   4. `provaSimmetria`: la stessa misura con la faccia in `nowrap`, che simula fedelmente
+//      l'altra lingua (la 3 ci lascia dentro il testo di questa, che a quella larghezza va a
+//      capo o no a seconda di quanto è lungo, quindi darebbe esiti opposti nelle due lingue).
+// ⚠️ Nel dubbio NON si libera: lo stato riservato è identico nelle due lingue PER
+// COSTRUZIONE, quindi togliere la liberazione azzera il ballo invece di ridurlo.
+// ⚠️⚠️ LE CARD APOCRIFE RESTANO FUORI, e la ragione è di questo sito: `reflowApoLabels`
+// manda a capo le loro etichette se toccano la pill 'Solo HoME', misurando la posizione
+// delle etichette nella lingua corrente. Con la cella riservata quella posizione è la
+// stessa nelle due lingue; liberata, no, e la decisione potrebbe cadere da una parte sola.
+// ⚠️ Il 'rimedio delle scartate' di Terramare (le icone mandate a capo con `nm-acapo`) qui
+// non c'è: su mobile la riga del nome di questo sito è un blocco e non un flex, quindi
+// `flex-basis` non avrebbe alcun effetto.
+function freeNames() {
+  var celle = document.querySelectorAll('#rank-list .rank-name-text.bil');
+  var i, cand = [];
+  for (i = 0; i < celle.length; i++) celle[i].classList.remove('nm-libero');
+  for (i = 0; i < celle.length; i++) {
+    var f = celle[i].querySelector(':scope > .bil-f'), m = celle[i].querySelector(':scope > .bil-m');
+    var riga = celle[i].closest('.rank-name'), card = celle[i].closest('.rank-item');
+    if (!f || !m || !riga || (card && card.classList.contains('apocrifo'))) continue;
+    if (Math.abs(f.getBoundingClientRect().height - m.getBoundingClientRect().height) > 0.5) continue;
+    // La larghezza della gemella si legge ORA, finché è nel flusso: liberata, prende quella
+    // della faccia e non direbbe più quanto misura il nome dell'altra lingua.
+    cand.push({ el: celle[i], riga: riga, prima: riga.getBoundingClientRect().height,
+                altra: m.getBoundingClientRect().width });
+  }
+  // ⚠️ Ogni prova legge TUTTE le card e poi scrive, mai a turno: alternare letture e scritture
+  // costringe il browser a ricalcolare la lista intera a ogni card.
+  for (i = 0; i < cand.length; i++) cand[i].el.classList.add('nm-libero');
+  for (i = 0; i < cand.length; i++)
+    cand[i].fuori = Math.abs(cand[i].riga.getBoundingClientRect().height - cand[i].prima) > 0.5;
+  for (i = 0; i < cand.length; i++) if (cand[i].fuori) cand[i].el.classList.remove('nm-libero');
+  for (i = 0; i < cand.length; i++) if (!cand[i].fuori) cand[i].el.style.width = cand[i].altra + 'px';
+  for (i = 0; i < cand.length; i++) if (!cand[i].fuori) cand[i].conAltra = cand[i].riga.getBoundingClientRect().height;
+  for (i = 0; i < cand.length; i++) {
+    if (cand[i].fuori) continue;
+    cand[i].el.style.width = '';
+    if (Math.abs(cand[i].conAltra - cand[i].prima) > 0.5) cand[i].el.classList.remove('nm-libero');
+  }
+  provaSimmetria();
+}
+function provaSimmetria() {
+  var celle = document.querySelectorAll('#rank-list .rank-name-text.bil.nm-libero');
+  var i, c, prove = [];
+  for (i = 0; i < celle.length; i++) {
+    var m = celle[i].querySelector(':scope > .bil-m');
+    var f = celle[i].querySelector(':scope > .bil-f');
+    var riga = celle[i].closest('.rank-name');
+    if (!m || !f || !riga) continue;
+    // la larghezza dell'altra lingua si legge dalla gemella, che con `nm-libero` è assoluta e
+    // larga quanto la cella: serve il suo INCHIOSTRO, non la sua scatola.
+    var ra = document.createRange(); ra.selectNodeContents(m);
+    var q = ra.getClientRects(), j, wAltra = 0;
+    for (j = 0; j < q.length; j++) if (q[j].width > wAltra) wAltra = q[j].width;
+    prove.push({ el: celle[i], f: f, riga: riga, wAltra: wAltra });
+  }
+  for (i = 0; i < prove.length; i++) prove[i].ora = prove[i].riga.getBoundingClientRect().height;
+  for (i = 0; i < prove.length; i++) {
+    c = prove[i];
+    c.f.style.whiteSpace = 'nowrap';
+    c.el.style.width = c.wAltra + 'px';
+  }
+  for (i = 0; i < prove.length; i++) prove[i].altra = prove[i].riga.getBoundingClientRect().height;
+  for (i = 0; i < prove.length; i++) { prove[i].f.style.whiteSpace = ''; prove[i].el.style.width = ''; }
+  for (i = 0; i < prove.length; i++)
+    if (Math.abs(prove[i].altra - prove[i].ora) > 0.5) prove[i].el.classList.remove('nm-libero');
+}
+// ⚠️⚠️ `tightenNames` E `freeNames` SI CONDIZIONANO A VICENDA, e una passata sola può non
+// bastare: il primo decide guardando quante righe occupa il nome, il secondo guardando
+// l'altezza della riga, che il primo cambia. Si CICLA finché lo stato non si ripete, con un
+// tetto di tre giri come rete per due stati che si alternino. La firma legge le sole CLASSI,
+// che non forzano un ricalcolo del layout.
+function firmaRighe() {
+  var n = document.querySelectorAll('#rank-list .rank-name'), i, el, c, s = '';
+  for (i = 0; i < n.length; i++) {
+    el = n[i]; c = el.querySelector(':scope > .rank-name-text');
+    s += (el.className.indexOf('name-tight') < 0 ? '0' : '1') +
+         (c && c.className.indexOf('nm-libero') >= 0 ? '1' : '0');
+  }
+  return s;
+}
+function assestaRighe() {
+  var giri = 3, prima;
+  do { prima = firmaRighe(); tightenNames(); freeNames(); giri--; }
+  while (giri > 0 && firmaRighe() !== prima);
+  reflowApoLabels();
+}
+// ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE: a Terramare, al cambio lingua il primo `freeNames`
+// decideva su un layout non ancora assestato e sbagliava (una card che cambiava altezza, cioè
+// il difetto che esiste per evitare). Due `requestAnimationFrame` annidati (il primo consegna
+// il frame con lo stile nuovo, il secondo misura quando è disposto) più un colpo a tempo, che
+// copre l'assestamento che i frame non vedono.
+var freeRipassoPend = false;
+function freeRipasso() {
+  if (freeRipassoPend) return;
+  freeRipassoPend = true;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ assestaRighe(); }); });
+  setTimeout(function(){ freeRipassoPend = false; assestaRighe(); }, 160);
+}
+// ⚠️⚠️ ANCHE L'INTESTAZIONE RISERVA L'ALTEZZA DELL'ALTRA LINGUA: senza, una riga che va a capo
+// da una parte sola sposta TUTTA la pagina (misurato sulla 15.66: l'intestazione cambiava
+// altezza di 8-23px al cambio lingua a otto larghezze su undici).
+// ⚠️ La misura si fa su un CLONE fuori dal flusso, non scrivendo il testo dell'altra lingua
+// nell'elemento vero, che si vedrebbe per un fotogramma. ⚠️ Il sottotitolo porta del markup
+// (la nota con l'asterisco): il clone lo riceve da `DOMParser`, che compone nodi da una
+// COSTANTE del codice (i18n), non da un dato.
+function riservaTesta() {
+  if (typeof i18n === 'undefined' || typeof currentLang === 'undefined') return;
+  var altra = currentLang === 'it' ? 'en' : 'it';
+  if (!i18n[altra]) return;
+  // ⚠️ `footer-text` c'è per una misura: a 320px la citazione del footer va a capo in una
+  // lingua sola e il footer cambiava altezza di 19px (chiave i18n `footer`, id diverso).
+  var voci = [['subtitle', 'subtitle'], ['intro', 'intro'], ['footer-text', 'footer']], i, el, testo, clone, h, corpo;
+  for (i = 0; i < voci.length; i++) {
+    el = document.getElementById(voci[i][0]);
+    testo = i18n[altra][voci[i][1]];
+    if (!el || typeof testo !== 'string') continue;
+    el.style.minHeight = '';
+    // ⚠️⚠️ Il clone TIENE l'id, al contrario di Terramare: qui `#footer-text` ha un corpo suo
+    // nel blocco mobile, e un clone senza id si misurava col corpo di base, cioè dava
+    // un'altezza falsa (a 390px 48,6px contro i 72,9 veri dell'inglese). L'id doppio vive per
+    // la sola durata di questa funzione, che è sincrona, e nessuno lo cerca nel frattempo.
+    clone = el.cloneNode(false);
+    corpo = new DOMParser().parseFromString(testo, 'text/html').body;
+    while (corpo.firstChild) clone.appendChild(document.adoptNode(corpo.firstChild));
+    clone.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
+      'pointer-events:none;min-height:0;width:' + el.getBoundingClientRect().width + 'px';
+    el.parentNode.insertBefore(clone, el.nextSibling);
+    h = clone.getBoundingClientRect().height;
+    clone.parentNode.removeChild(clone);
+    if (h > el.getBoundingClientRect().height + 0.5) el.style.minHeight = h + 'px';
+  }
+}
+// ⚠️ All'avvio le passate si tengono al minimo, come a Terramare dalla 2.69: mentre i font
+// sono in arrivo il ripasso differito NON parte (misurerebbe il font di ripiego, e
+// `fonts.ready` rifà comunque `reflowRows`), e `fonts.ready` salta il suo `reflowRows` se
+// l'ultimo è già girato coi font caricati e alla stessa larghezza.
+// ⚠️ La chiave conta anche i font GIÀ CARICATI: prima che il browser cominci a scaricarli lo
+// stato vale già 'loaded', e senza il conteggio un `reflowRows` fatto in quell'istante
+// sembrerebbe uguale a quello coi font veri.
+var _reflowChiave = '';
+function chiaveReflow() {
+  var l = document.getElementById('rank-list'), n = 0, st = 'loaded';
+  if (document.fonts) { st = document.fonts.status; document.fonts.forEach(function(f){ if (f.status === 'loaded') n++; }); }
+  return st + '|' + n + '|' + (l ? l.clientWidth : 0);
+}
+// ⚠️ `freeNames` sta DOPO `tightenNames`: quello decide gli a-capo del nome, e la prova sulle
+// altezze va fatta sulla disposizione definitiva. `reflowApoLabels` sta dopo tutti e due,
+// perché misura dove sono finite le etichette.
+function reflowRows() {
+  tightenNames(); freeNames(); optimizeBipartite(); reflowApoLabels(); if (midlinesOn) placeCardMidlines(); riservaTesta();
+  _reflowChiave = chiaveReflow();
+  if (!(document.fonts && document.fonts.status === 'loading')) freeRipasso();
+}
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
   tightenTimer = setTimeout(function(){ reflowRows(); pareggiaTitolo(); }, 150);
 });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); pareggiaTitolo(); });
+// ⚠️⚠️ L'OSSERVATORE GUARDA LA LARGHEZZA DELLA LISTA, e copre i cambi che `window.resize` NON
+// vede: la comparsa della barra di scorrimento, lo zoom del browser, un contenitore che si
+// stringe da sé. Si guarda la SOLA larghezza, ed è ciò che evita l'anello: l'assestamento
+// cambia le altezze, e un osservatore che guardasse anche quelle richiamerebbe sé stesso.
+var _roW = 0, _roTimer = null;
+(function(){
+  var lista = document.getElementById('rank-list');
+  if (!lista || !window.ResizeObserver) return;
+  _roW = Math.round(lista.getBoundingClientRect().width);
+  try {
+    new ResizeObserver(function(voci){
+      var w = Math.round(voci[0].contentRect.width);
+      if (w === _roW) return;
+      _roW = w;
+      clearTimeout(_roTimer);
+      _roTimer = setTimeout(assestaRighe, 220);
+    }).observe(lista);
+  } catch (e) {}
+})();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){
+  if (chiaveReflow() !== _reflowChiave) reflowRows();
+  pareggiaTitolo();
+});
 
 var currentIdx = null;
 
@@ -6939,9 +7275,13 @@ function controlPanelHTML() {
   // Nota nomi (solo mobile, via CSS): in fondo, dopo la legenda, DENTRO
   // .ctrl-cols così segue la larghezza/posizione del blocco a ogni viewport
   // (prima era fuori e andava allineata a mano).
-  h += '<div class="ctrl-mobile-note">' + (currentLang === 'it'
-     ? 'Nelle schede dei personaggi i veri nomi sono in grassetto.'
-     : 'On character cards, the true names are in bold.') + '</div>';
+  // ⚠️ Con la gemella dell'altra lingua (15.67): sul telefono la lingua si cambia DA QUI, e a
+  // 320px la nota andava a capo in italiano soltanto, quindi il fondo della sheet cambiava
+  // altezza di 20px sotto il dito. Il `display:grid` che la impila vive nel blocco mobile.
+  var mnIt = 'Nelle schede dei personaggi i veri nomi sono in grassetto.';
+  var mnEn = 'On character cards, the true names are in bold.';
+  h += '<div class="ctrl-mobile-note bil"><span class="bil-f">' + (currentLang === 'it' ? mnIt : mnEn) + '</span>' +
+       '<span class="bil-m" aria-hidden="true">' + (currentLang === 'it' ? mnEn : mnIt) + '</span></div>';
   h += '</div>'; // chiude .ctrl-cols
   // Barra sticky in basso (solo mobile): versione (anche accesso admin) a
   // sinistra, tema + lingua centrati come gruppo, chiudi a destra (vicino a
