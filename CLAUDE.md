@@ -674,10 +674,12 @@ poi divergerebbe.
   stop-hook), col comando e la ragione per cui riallineare il branch remoto **elimina la
   causa** dell'avviso invece di farla interpretare ogni volta. Qui il branch principale è
   `master`.
-- ⚠️ **Dopo un merge la sottoscrizione alla PR non si toglie a mano**: la chiusura per merge
-  la toglie da sé, e lo dice l'evento `pull_request.closed` (*automatically unsubscribed*,
-  misurato il 2026-09-25). Una chiamata in più a `unsubscribe_pr_activity` è solo un prompt di
-  consenso in più per l'utente, finché quel tool chiede.
+- ⚠️⚠️ **UNA PR CHE SI MERGIA SUBITO NON SI ISCRIVE E NON SI DISISCRIVE A MANO** (istruzione
+  dell'utente, 2026-09-25: *sì, vai*): la sessione vi si iscrive da sé all'apertura e se ne
+  disiscrive da sé alla chiusura, quindi le due chiamate erano solo due prompt di consenso
+  senza 'Consenti sempre'. La regola e le misure vivono in `Roccobot.md` § '🌿 Workflow git e
+  versioni'; qui c'è il promemoria, perché questo file resta in scena anche dopo una
+  compattazione.
 - **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta a pubblicare:
   serve che il workflow `pages build and deployment` vada a buon fine. Se fallisce con
   `Deployment failed, try again later` (errore transitorio della piattaforma: il build
