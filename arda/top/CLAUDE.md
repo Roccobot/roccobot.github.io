@@ -38,6 +38,22 @@ i commenti erano il 41% del codice servito, e la pagina compressa scende da 252 
     delle card al cambio lingua **non esiste** (è nata su Terramare), quindi non è una
     regressione: portarla è una decisione dell'utente.
 
+## 🧩 `innerHTML`: quanti restano e perché
+
+**Dalla `15.65` sono 26, erano 54.** Censiti con l'AST sui due sorgenti (collaudo del 2026-09-25). Via i 12 svuotamenti
+(`replaceChildren()`) e le 16 costanti SVG (icone, bandiere, la X di chiusura, gli span del
+suggerimento di scorrimento, l'etichetta a due righe dell'editor), costruite con **`svgNodo`**,
+lo stesso helper di Terramare: parser XML di `DOMParser`, e **solo costanti del codice**, mai
+testo del dataset. Verificato: DOM identico alla `15.64` su 37.784 elementi in undici stati.
+
+- ⚠️ **`BADGE_ICON` qui NON è SVG**: sono tag `<img>` delle icone WebP, che il parser XML
+  rifiuta. Per questo la riga dell'editor admin che li inserisce è rimasta com'era: la sua
+  conversione è costruire gli `<img>` a nodi, in una tappa successiva.
+- **Restano 26**: le stringhe composte con dati (editor admin, `renderList`, scheda, Pannello,
+  nota informativa, corpo delle note) e le **quattro righe dell'intestazione** in `setLang`
+  (`crest`, `subtitle`, `intro`, `footer-text`), che Terramare ha convertito nella `2.62` con
+  `textContent` e `scriviCrest`.
+
 ## 🏷️ Come si chiama questo progetto
 
 **Tre nomi, tutti buoni e interscambiabili** (istruzione dell'utente, 2026-07-30): **'Arda

@@ -2813,7 +2813,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.64</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.65</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -4451,6 +4451,21 @@ function parseFonte(fonte) {
 
 // Neutralizza i caratteri speciali HTML: i campi testuali dei dati non devono
 // mai poter iniettare markup nella pagina (difesa anti-XSS).
+// ⚠️⚠️ NODI da un markup SVG COSTANTE del codice (icone, bandiere), senza `innerHTML` (15.65, lo stesso helper della 2.72 di Terramare):
+// il parser XML di `DOMParser` dà nodi inerti, e qui passano solo stringhe scritte nel
+// sorgente, MAI testo che viene dal dataset o da un campo. Se la costante non è XML valido
+// il parser non lancia: lo dice il nodo `parsererror`, e allora si segnala in console.
+// L'`xmlns` serve al parser e si toglie dopo l'import, così il nodo è identico a quello che
+// dava `innerHTML`.
+function svgNodo(markup) {
+  var apertura = markup.slice(0, markup.indexOf('>'));
+  var s = /\sxmlns=/.test(apertura) ? markup : markup.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  var doc = new DOMParser().parseFromString(s, 'image/svg+xml');
+  if (doc.getElementsByTagName('parsererror').length) console.error('svgNodo: costante SVG non valida', markup.slice(0, 80));
+  var el = document.importNode(doc.documentElement, true);
+  if (!/\sxmlns=/.test(apertura)) el.removeAttribute('xmlns');
+  return el;
+}
 function escapeHtml(str) {
   if (str == null) return '';
   return String(str)
@@ -5724,7 +5739,7 @@ function openModal(idx, instant) {
       refLink.onclick = goNote;
       refLink.onkeydown = function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goNote(); } };
     } else {
-      refEl.hidden = true; refEl.innerHTML = '';
+      refEl.hidden = true; refEl.replaceChildren();
     }
   }
   // citazione è testo puro: textContent azzera ogni rischio di injection.
@@ -5877,7 +5892,7 @@ function buildStdModal(id) {
   var modal = document.createElement('div'); modal.className = 'modal';
   var close = document.createElement('button'); close.className = 'modal-close';
   close.setAttribute('aria-label', currentLang === 'it' ? 'Chiudi' : 'Close');
-  close.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>';
+  close.replaceChildren(svgNodo('<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg>'));
   var body = document.createElement('div'); body.className = 'modal-body';
   modal.appendChild(close); modal.appendChild(body); bd.appendChild(modal);
   return { backdrop: bd, modal: modal, body: body, close: close };
@@ -6395,7 +6410,7 @@ function openImageViewer(src, titleIt, titleEn, slug) {
   // ⚠️ Il 'copia link' va PRIMA della chiusura, e non è estetica: il tasto
   // Indietro del browser chiude questo visualizzatore cliccando l'ULTIMO
   // .imgv-btn della barra, quindi la X deve restare l'ultima.
-  if (slug) { var sb = mkBtn('', itL ? 'Copia il link a questa risorsa' : 'Copy the link to this resource', function(){ copyShareLink(sb, shareRouteUrl(slug)); }); sb.insertAdjacentHTML('beforeend', ICON_LINK); bar.appendChild(sb); }
+  if (slug) { var sb = mkBtn('', itL ? 'Copia il link a questa risorsa' : 'Copy the link to this resource', function(){ copyShareLink(sb, shareRouteUrl(slug)); }); sb.appendChild(svgNodo(ICON_LINK)); bar.appendChild(sb); }
   bar.appendChild(mkBtn('✕', itL ? 'Chiudi' : 'Close', close));
   ov.appendChild(bar); ov.appendChild(stage); document.body.appendChild(ov); lockPageScroll(true);
   document.addEventListener('keydown', onKey); window.addEventListener('resize', fit);
@@ -7152,7 +7167,7 @@ function makeShareBtn(slug) {
   b.type = 'button'; b.className = 'note-share';
   var lbl = currentLang === 'it' ? 'Copia il link a questa nota' : 'Copy the link to this note';
   b.setAttribute('title', lbl); b.setAttribute('aria-label', lbl);
-  b.insertAdjacentHTML('beforeend', ICON_LINK);
+  b.appendChild(svgNodo(ICON_LINK));
   var txt = document.createElement('span');
   txt.textContent = currentLang === 'it' ? 'Copia link' : 'Copy link';
   b.appendChild(txt);
@@ -7191,14 +7206,14 @@ function copyShareLink(btn, urlOv) {
   var url = urlOv || buildShareUrl();
   var feedback = function(){
     if (btn._shareT) clearTimeout(btn._shareT);
-    else { btn._shareHTML = btn.innerHTML; btn._shareLbl = btn.getAttribute('title'); }
+    else { btn._shareNodi = Array.prototype.slice.call(btn.childNodes); btn._shareLbl = btn.getAttribute('title'); }
     btn.classList.add('ctrl-share-done');
-    btn.innerHTML = ICON_CHECK;
+    btn.replaceChildren(svgNodo(ICON_CHECK));
     var copied = currentLang === 'it' ? 'Link copiato!' : 'Link copied!';
     btn.setAttribute('title', copied); btn.setAttribute('aria-label', copied);
     btn._shareT = setTimeout(function(){
       btn.classList.remove('ctrl-share-done');
-      btn.innerHTML = btn._shareHTML;
+      btn.replaceChildren.apply(btn, btn._shareNodi);
       btn.setAttribute('title', btn._shareLbl); btn.setAttribute('aria-label', btn._shareLbl);
       btn._shareT = null;
     }, 1600);
@@ -7825,7 +7840,7 @@ function buildControlPanel() {
   var scrollHint = document.createElement('div');
   scrollHint.id = 'ctrl-scroll-hint'; scrollHint.className = 'ctrl-scroll-hint';
   scrollHint.setAttribute('aria-hidden', 'true');
-  scrollHint.innerHTML = '<span class="csh-tail"></span><span class="csh-dot"></span>';
+  scrollHint.replaceChildren.apply(scrollHint, ['csh-tail', 'csh-dot'].map(function(c){ var e = document.createElement('span'); e.className = c; return e; }));
   document.body.appendChild(scrollHint);
   // Trascinamento per chiudere (solo mobile, stile app-drawer): se la sheet è
   // già in cima (scrollTop 0), un trascinamento verso il basso da QUALSIASI
@@ -7961,7 +7976,7 @@ function showJumpFabsTemporarily() {
   var PGDN = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
   function mk(svg, label, fn){
     var b = document.createElement('button');
-    b.className = 'jump-fab'; b.innerHTML = svg;
+    b.className = 'jump-fab'; b.appendChild(svgNodo(svg));
     b.title = label; b.setAttribute('aria-label', label);
     b.addEventListener('click', fn);
     return b;
@@ -8066,7 +8081,7 @@ function enableDragDrop() {
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
     handle.style.cssText = 'position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);cursor:grab;color:var(--gold);opacity:0.22;transition:opacity 0.2s;touch-action:none;padding:0.35rem;display:flex;align-items:center;';
-    handle.innerHTML = '<svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor" style="pointer-events:none"><circle cx="4" cy="4" r="1.8"/><circle cx="10" cy="4" r="1.8"/><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="4" cy="16" r="1.8"/><circle cx="10" cy="16" r="1.8"/></svg>';
+    handle.replaceChildren(svgNodo('<svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor" style="pointer-events:none"><circle cx="4" cy="4" r="1.8"/><circle cx="10" cy="4" r="1.8"/><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="4" cy="16" r="1.8"/><circle cx="10" cy="16" r="1.8"/></svg>'));
     item.appendChild(handle);
     handle.addEventListener('mouseenter', () => handle.style.opacity = '0.9');
     handle.addEventListener('mouseleave', () => { if (!pointerDragState) handle.style.opacity = '0.22'; });
@@ -8331,7 +8346,7 @@ function showPasswordModal(promptText, onSuccess, extra) {
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closePw(); });
 
   function buildStep1() {
-    box.innerHTML = '';
+    box.replaceChildren();
     const cl = document.createElement('button');
     cl.className = 'fab-modal-close'; cl.textContent = '×';
     cl.onclick = () => closePw();
@@ -8410,7 +8425,7 @@ function showFAB() {
   const copyBtn = document.createElement('button');
   copyBtn.className = 'fab-btn';
   copyBtn.title = CTRL_I18N[currentLang].exportLabel; copyBtn.setAttribute('aria-label', CTRL_I18N[currentLang].exportLabel);
-  copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 3v11"/><polyline points="8 10 12 14 16 10"/><path d="M5 21h14"/></svg>`;
+  copyBtn.replaceChildren(svgNodo(`<svg viewBox="0 0 24 24"><path d="M12 3v11"/><polyline points="8 10 12 14 16 10"/><path d="M5 21h14"/></svg>`));
   copyBtn.onclick = () => doExport();
   // Tasto Esporta icona-only: NIENTE etichetta di testo (scelta deliberata,
   // come il tasto Salva; non reintrodurla). Il nome resta in title/aria-label.
@@ -8422,7 +8437,7 @@ function showFAB() {
   saveBtn.id = 'fab-save';
   saveBtn.title = 'Salva'; saveBtn.setAttribute('aria-label', 'Salva');
   saveBtn.className = 'fab-btn' + (saveUnlocked ? ' fab-unlocked' : '');
-  saveBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
+  saveBtn.replaceChildren(svgNodo(`<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`));
   saveBtn.onclick = () => showDesktopReorderModal();
   saveItem.appendChild(saveBtn);
 
