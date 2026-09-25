@@ -2193,6 +2193,14 @@ cerchio (rosso il `Nome di Ged`, arancione lo `Stregone`, giallo il `Vero nome`,
 - ✅ **Il contrasto sul tema chiaro è chiuso dalla `2.21`**, con le due palette: vedi la
   sezione qui sotto. La nota che lo dava come lavoro aperto, con le sei icone sotto il 3:1,
   descriveva lo stato fino alla `2.20`.
+  - ⚠️⚠️ **Quella chiusura riguardava le ICONE, non i TESTI**: fino alla `2.67` Lighthouse
+    contava **730** testi sotto soglia nel chiaro (accessibilità 95, mentre il tema scuro dava
+    100). Chiusi nella `2.68` (accessibilità 100 nei due temi, mobile e desktop), con tre
+    rimedi descritti nei commenti del codice: `ccFamTxt` misura la tinta di famiglia sul
+    fondo **velato** al 20% e non sulla pagina nuda, `fxNumColor` ha un tetto di luminosità
+    `min(l, 0.6)` nel chiaro, e sottotitolo, fonte della citazione e genealogia hanno opacità
+    chiare più alte (0.9 / 0.92 / 0.9). ⚠️ **Il sintomo che li nascondeva**: i report di
+    Lighthouse dell'utente erano fatti col tema scuro, dove tutto passa.
 
 ### 🌗 Le DUE PALETTE, una per tema, e il metro che le ha sbagliate tre volte
 
@@ -3491,9 +3499,13 @@ passa da `summary` a **`summary_large_image`**, o l'anteprima resterebbe il quad
 - **Il formato resta JPEG o PNG, non WebP** (risposta a una domanda dell'utente, 2026-08-24):
   Facebook e WhatsApp lo digeriscono, ma X/Twitter, LinkedIn e vari client di posta e chat no,
   e un'anteprima non è un posto dove un formato non supportato degrada: sparisce e basta.
-- ⚠️ **L'immagine è dell'utente e non si ricomprime**: 357 KB stanno larghi sotto il tetto
-  pratico di 1 MB, e una ricompressione guadagnerebbe pochi KB al prezzo di un degrado su
-  un'immagine che è il biglietto da visita del sito.
+- ⚠️⚠️ **Il tetto è 300 KB, non 1 MB: ricompressa nella `2.68` su istruzione dell'utente**
+  (2026-09-25: *l'immagine social puoi comprimerla a ≤300 KB*). WhatsApp tende a non mostrare
+  l'anteprima sopra i 300 KB circa, e i 357 KB dell'originale stavano sopra. Adesso pesa
+  **288.894 byte**: JPEG progressivo, qualità 93, sottocampionamento 4:2:2, profilo colore
+  conservato, PSNR 41,1 dB sull'originale, cioè differenze non visibili. La nota che la diceva
+  'da non ricomprimere' descriveva lo stato fino alla `2.67`.
+  - ⚠️ **Una sostituzione futura rispetta lo stesso tetto**, e il `?v=` sale con lei (ora `2`).
 - **Il contenuto è nel quadrato centrale**: molti client ritagliano così, e il soggetto qui
   è già al centro. ⚠️ Il testo, se un domani se ne aggiunge, va **disegnato dentro
   l'immagine**: chi guarda l'anteprima non ha i font del sito.
