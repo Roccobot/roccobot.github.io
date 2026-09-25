@@ -305,6 +305,14 @@ h1 {
      tutta sua (es. 'Age' / 'Era' a larghezza piena). Vale in entrambe le lingue. */
   text-wrap:balance;
 }
+/* A CAPO PAREGGIATO (15.68, regola dell'utente: *se una lingua va a capo deve andare a capo
+   anche l'altra, anche se non ne avrebbe bisogno*). Ogni lingua ha un punto fisso, dopo
+   `Tolkien,` e dopo `world,`: a riposo c'è lo spazio e il `<br>` è spento; con `.sub-acapo`,
+   che `pareggiaSottotitolo` mette quando una delle due lingue non sta su una riga, si spegne
+   lo spazio e si accende il `<br>`. Così la nota con l'asterisco resta alla stessa quota. */
+.sub-br { display:none; }
+.subtitle.sub-acapo .sub-br { display:inline; }
+.subtitle.sub-acapo .sub-sp { display:none; }
 .subtitle-note { display:block; font-size:0.62rem; font-style:normal; opacity:0.69; letter-spacing:0.04em; margin-top:0.15rem; }
 
 .flourish { width:200px; height:30px; margin:0.7rem auto; opacity:0.7; }
@@ -520,33 +528,40 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    sulla prima riga, .bp-break la manda a capo per intero e nasconde il '|'. */
 .bp-break .bp-sep { display:none; }
 .bp-break .bp-b { display:block; }
-/* ── Righe BILINGUI: la gemella invisibile che riserva lo spazio (15.67) ─────────
-   Faccia visibile e testo dell'altra lingua nella stessa cella di griglia: il box
-   prende la misura MAGGIORE delle due, e il cambio lingua non muove più le card
-   (vedi `bilingue`). Viene dal sito gemello di Terramare.
-   ⚠️ Queste regole stanno DOPO `.rank-title`, che è un flex: `.bil` ha la stessa
-   specificità e vince perché viene dopo. Spostarle sopra riporterebbe la riga
-   dell'opera a flex, con le due facce affiancate invece che impilate.
-   ⚠️ La riserva non sta mai dentro un contenitore che si VEDE: queste righe non hanno
-   sfondo né bordo, quindi il vuoto della lingua più corta cade sul fondo della card
-   e non disegna niente (è la regola che Terramare ha imparato col riquadro delle
-   citazioni, nella sua 0.89). */
+/* ── Le due LINGUE delle card: la gemella è fuori dal layout (15.68) ─────────────────
+   Ogni testo che diverge fra le lingue porta la `.gemella` dell'altra, che NON si vede e non
+   occupa spazio: la card si dispone come se non ci fosse. Compare solo quando `misuraCard`
+   mette `.lingua-altra` sulla card, dentro una funzione sincrona, quindi mai davanti agli occhi
+   di nessuno (vedi `misuraCard`).
+   ⚠️ Nella 15.67 le due lingue erano impilate in una griglia e la card prendeva la misura
+   maggiore anche in LARGHEZZA: bocciata dall'utente, e cinque volte più cara da disporre. */
+#rank-list .gemella { display:none; }
+#rank-list .lingua-altra .faccia { display:none; }
+#rank-list .lingua-altra .gemella { display:inline; }
+/* L'ALTEZZA MINIMA che pareggia le due lingue (vedi `misuraCard`) deve lasciare il contenuto
+   IN ALTO: nelle due righe flex con `flex-wrap` il valore iniziale di `align-content` allunga le
+   righe di flex sullo spazio in più, e con `align-items:center` il nome e l'opera scenderebbero
+   verso il centro. Senza altezza minima la regola non cambia niente. */
+.rank-name, .rank-title { align-content:flex-start; }
+/* SE UNA LINGUA VA A CAPO, CI VA ANCHE L'ALTRA (regola dell'utente, 2026-09-25): nella lingua
+   più corta la riga del nome va a capo nello stesso punto della più lunga, prima delle etichette
+   (`nm-giu`) o prima delle icone (`nm-giu-f`, solo desktop, dove le icone vengono dopo le
+   etichette). Su desktop l'a capo è un elemento vuoto a tutta larghezza fra i due gruppi.
+   ⚠️ Quell'elemento è una riga di flex a sé, alta zero, quindi i vuoti fra le righe diventano
+   DUE: per questo in quelle card il vuoto verticale è la METÀ (0,16em contro 0,32em, e 0,12em
+   con `name-tight`), e la somma torna quella di un a capo naturale. Mobile nel suo blocco. */
+.rank-name.nm-giu, .rank-name.nm-giu-f { row-gap:0.16em; }
+.rank-name.name-tight.nm-giu, .rank-name.name-tight.nm-giu-f { row-gap:0.12em; }
+.rank-name.nm-giu::after, .rank-name.nm-giu-f::after { content:""; flex-basis:100%; height:0; order:1; }
+.rank-name.nm-giu > .rank-tipi > * { order:2; }
+.rank-name.nm-giu > .rank-flags > *, .rank-name.nm-giu-f > .rank-flags > * { order:3; }
+.rank-name.nm-giu-f::after { order:2; }
+/* Le righe impilate del Pannello (la nota mobile): faccia visibile e gemella nella stessa
+   cella di griglia, così il riquadro prende la misura maggiore delle due. Le card NON usano
+   più questa classe. */
 .bil { display:grid; }
 .bil > .bil-f, .bil > .bil-m { grid-area:1 / 1; min-width:0; }
 .bil > .bil-m { visibility:hidden; pointer-events:none; }
-/* Il NOME impila il solo TESTO, e la cella dev'essere `inline-grid`: su desktop
-   `.rank-name` è un flex e il figlio andrebbe bene comunque, ma su mobile è un blocco
-   e un `display:grid` porterebbe il nome a tutta larghezza, mandando etichette e icone
-   sulla riga sotto. `justify-items:start` tiene le due facce ancorate a sinistra. */
-.rank-name-text.bil { display:inline-grid; justify-items:start; }
-/* IL NOME LIBERO dalla riserva ORIZZONTALE: la cella bilingue è larga quanto la lingua
-   più larga, e nella più corta quella riserva si vede come un vuoto fra il nome e le
-   etichette. Con la classe la gemella esce dal flusso orizzontale (resta invisibile e
-   non sposta niente), quindi la cella si stringe sul nome vero.
-   ⚠️⚠️ La classe NON si mette a tutte: la dà `freeNames()` card per card, e solo dove è
-   provato che l'altezza non cambi fra le due lingue. */
-.rank-name-text.bil.nm-libero { position:relative; }
-.rank-name-text.bil.nm-libero > .bil-m { position:absolute; left:0; top:0; width:100%; }
 /* Separatore bipartito: barra verticale DISEGNATA (non il glifo '|' del font, così
    è più spessa e con altezza controllata, e resta identica anche col fallback
    serif quando i Google Fonts sono bloccati). Altezza = cap-height + 2px@DPR1.5
@@ -586,14 +601,6 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
    testo+parentesi in flusso inline, così lo spazio 'Elfo (' resta preservato. */
 .type-badge .tpwrap { display:inline; }
 .type-badge .tparen { display:inline-block; transform:translateY(-0.03em); }
-/* SLOT A LARGHEZZA STABILE fra le due lingue (15.67, vedi `tipoSegHtml`): etichetta
-   visibile e gemella nella stessa cella, centrate; la pastiglia prende la larghezza
-   maggiore. Nelle etichette-freccia lo slot è la .ttx stessa, e là il testo resta
-   ancorato a sinistra, contro la freccia. */
-.type-badge .tb-stack { display:inline-grid; justify-items:center; align-items:center; }
-.type-badge .tb-stack > span { grid-area:1 / 1; }
-.type-badge .tb-m { visibility:hidden; pointer-events:none; }
-.type-badge .ttx.tb-stack { justify-items:start; }
 /* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
    centrato (viewBox), NON come glifo di testo. Motivo: 'EB Garamond' arriva da
    Google Fonts e può non caricarsi (blocklist/rete); col fallback serif il glifo
@@ -2221,6 +2228,12 @@ html[data-theme="light"] .admin-field.admin-modified .admin-label { color:#c75b1
      reflowApoLabels misurando riga per riga). Con nomi corti (es. Duilin,
      Penlod) resta lo spazio per tenerle in coda al nome, come le card ordinarie. */
   .rank-item.apocrifo.apo-wrap .rank-name > .rank-tipi { display:flex; margin-top:0.3em; }
+  /* A capo simmetrico (vedi `nm-giu` più sopra): qui la riga è in flusso inline, e le etichette
+     scendono diventando un blocco flex alto quanto una riga di testo (1.5em, l'interlinea di
+     questo blocco), centrate come quando ci vanno da sole. L'elemento vuoto del desktop qui non
+     serve, e l'a capo prima delle icone non esiste: vengono subito dopo il nome. */
+  .rank-name.nm-giu::after, .rank-name.nm-giu-f::after { content:none; }
+  .rank-name.nm-giu > .rank-tipi { display:flex; min-height:1.5em; }
   .modal-body { padding:1.8rem 1.2rem; }
   .modal-close { top:14px; right:14px; }
   .lang-switch { top: 1rem; right: 1rem; font-size: 0.7rem; padding: 5px 10px; }
@@ -2858,12 +2871,12 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.67</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.68</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
   <h1 id="title"><a id="title-link" href="https://roccobot.github.io/arda/top/">I Grandi di Arda</a></h1>
-  <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
+  <p class="subtitle" id="subtitle">Gli esseri più potenti* del mondo di Tolkien,<span class="sub-sp"> </span><br class="sub-br">dall'Ainulindalë alla Terza Era<span class="subtitle-note">*o diversamente tali</span></p>
   <svg class="flourish" viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 15 Q 50 5, 100 15 Q 150 25, 200 15" stroke="#8b8b8b" stroke-width="0.8" fill="none" opacity="0.6"/>
     <circle cx="100" cy="15" r="3" fill="#bbbbbb"/>
@@ -4190,7 +4203,7 @@ var i18n = {
   it: {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presenta',
     title: 'I Grandi di Arda',
-    subtitle: "Gli esseri più potenti* del mondo di Tolkien, dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
+    subtitle: "Gli esseri più potenti* del mondo di Tolkien,<span class='sub-sp'> </span><br class='sub-br'>dall'Ainulindalë alla Terza Era<span class='subtitle-note'>*o diversamente tali</span>",
     intro: "Dalle potenze semi-divine al più umile dei servitori. In Arda il potere si manifesta in forme diverse: può essere padronanza della magia, abilità in combattimento, potere politico o militare, resistenza alla seduzione dell'oscurità, capacità di plasmare il destino del mondo.",
     footer: "<em>Non tutto quel ch'è oro brilla, né gli erranti sono perduti.</em><br>Il potere, in Arda, non sempre indossa una corona.",
     position: 'Posizione',
@@ -4199,7 +4212,7 @@ var i18n = {
   en: {
     crest: '<a href="https://tolkiengateway.net/wiki/User:Roccobot" target="_blank" rel="noopener"><strong>Roccobot</strong></a> presents',
     title: 'The Great Ones of Arda',
-    subtitle: 'The mightiest beings* in Tolkien\'s world, from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
+    subtitle: 'The mightiest beings* in Tolkien\'s world,<span class="sub-sp"> </span><br class="sub-br">from the Ainulindalë to the Third Age<span class="subtitle-note">*or otherwise such</span>',
     intro: "From the semi-divine powers to the humblest of servants. In Arda power takes many forms: it may be mastery of magic, skill in combat, political or military power, resistance to the seduction of darkness, the ability to shape the fate of the world.",
     footer: "<em>Not all that glitters is gold, nor all who wander are lost.</em><br>Power in Arda does not always wear a crown.",
     position: 'Position',
@@ -4339,6 +4352,9 @@ function pareggiaTitolo() {
 }
 
 function setLang(lang) {
+  // Fotografia delle decisioni di riga PRIMA di toccare qualunque cosa (cache delle misure,
+  // vedi `fotografaRighe`): con la riserva valgono anche nell'altra lingua.
+  var foto = fotografaRighe();
   currentLang = lang;
   LS.setItem('arda-lang', lang);
   document.documentElement.lang = lang;
@@ -4351,7 +4367,7 @@ function setLang(lang) {
   document.getElementById('footer-text').innerHTML = i18n[lang].footer;
   var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
-  renderList();
+  renderList(foto);
   if (typeof refreshControlPanel === 'function') refreshControlPanel();
   // Se una scheda è aperta, ricarica la modale nella nuova lingua (la parte
   // admin non usa questa modale, quindi resta esclusa di fatto).
@@ -5312,20 +5328,24 @@ function pruneBadgeFilter() {
 // anche su Arda! Passo spesso da una lingua all'altra ed evitare che gli oggetti ballino
 // è una mia fissazione.* È il meccanismo del sito gemello di Terramare, dove vive dalla
 // 0.59 con tutte le sue trappole misurate (il suo CLAUDE.md, § 'L'ANTI-JITTER').
-// ⚠️⚠️ Faccia visibile e testo dell'altra lingua nella STESSA cella di griglia: il box
-// prende la misura MAGGIORE delle due, e non è un'altezza indovinata ma quella vera
-// dell'altra lingua, misurata dal browser alla stessa larghezza.
+// ⚠️⚠️ Il testo della lingua in scena (`.faccia`) e quello dell'altra (`.gemella`) viaggiano
+// insieme, ma la gemella è `display:none` e compare solo durante la misura (vedi `misuraCard`):
+// è così che si conosce l'altezza vera dell'altra lingua, misurata dal browser alla stessa
+// larghezza, senza che la pagina ne porti il peso. Dalla 15.68; nella 15.67 le due erano
+// impilate in una griglia e riservavano anche la larghezza.
 // ⚠️ La gemella si emette SOLO se le due lingue divergono: dove il testo coincide sarebbe
 // DOM sprecato. Misura di partenza, sulla 15.66: da 11 a 69 card per larghezza cambiavano
 // altezza fra italiano e inglese (409 in tutto su undici larghezze), quasi tutte per le
 // righe `.rank-desc` e `.rank-subtitle`, qualcuna per la riga del nome sotto i 430px.
+function dueLingue(cur, alt){
+  return '<span class="faccia">' + cur + '</span><span class="gemella" aria-hidden="true">' + alt + '</span>';
+}
 function bilingue(cls, itHtml, enHtml, sempre){
   var cur = currentLang === 'it' ? itHtml : enHtml;
   var alt = currentLang === 'it' ? enHtml : itHtml;
   if (!cur && !alt && !sempre) return '';
   if (cur === alt) return '<span class="' + cls + '">' + cur + '</span>';
-  return '<span class="' + cls + ' bil"><span class="bil-f">' + cur + '</span>' +
-         '<span class="bil-m" aria-hidden="true">' + alt + '</span></span>';
+  return '<span class="' + cls + '">' + dueLingue(cur, alt) + '</span>';
 }
 // Il CONTENUTO delle righe, per lingua: servono a `bilingue`, che le chiede in entrambe.
 // ⚠️ Sono la costruzione di prima, parametrizzata sulla lingua invece che su `currentLang`:
@@ -5372,32 +5392,26 @@ function operaDi(p, it){
   var pf = parseFonte(it ? p.fonte : (p.fonte_en || p.fonte));
   return escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
 }
-// La cella del NOME, con la gemella sul SOLO TESTO: così la cella prende il massimo delle
-// due lingue in larghezza e in altezza, e le etichette partono dallo stesso punto nelle
-// due lingue. Il vuoto che resta dietro il nome più corto lo toglie `freeNames`, card per
-// card e solo dove non costa un salto verticale.
+// La cella del NOME, con la gemella sul SOLO TESTO (vedi `bilingue`).
 // ⚠️ Ruolo, `tabindex` ed etichetta restano sul contenitore, che è quello che riceve il
-// clic della scheda; la gemella è `aria-hidden`.
+// clic della scheda.
 function nomeCellaHtml(nome, nomeAltro, visN){
   var a = ' role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '"';
-  if (nomeAltro && nomeAltro !== nome)
-    return '<span class="rank-name-text bil"' + a + '><span class="bil-f">' + nome + '</span>' +
-           '<span class="bil-m" aria-hidden="true">' + nomeAltro + '</span></span>';
-  return '<span class="rank-name-text"' + a + '>' + nome + '</span>';
+  return '<span class="rank-name-text"' + a + '>' + (nomeAltro && nomeAltro !== nome ? dueLingue(nome, nomeAltro) : nome) + '</span>';
 }
-// Il contenuto di un'etichetta di tipo, con lo SLOT A LARGHEZZA STABILE fra le due lingue:
-// l'etichetta visibile e quella dell'altra lingua nella stessa cella, quindi la pastiglia
-// prende la larghezza MAGGIORE e non si restringe passando da 'Uomo' a 'Man'. Non è una
-// rifinitura: la riga del NOME va a capo in base alla larghezza delle etichette.
+// Il contenuto di un'etichetta di tipo, con la gemella dell'altra lingua (vedi `bilingue`).
+// ⚠️⚠️ La pastiglia è larga quanto il SUO testo, e passando da 'Uomo' a 'Man' si restringe:
+// è voluto (2026-09-25, sulla card di Elros: *l'anti-jitter orizzontale deve avere delle
+// eccezioni, e una è sicuramente la larghezza delle etichette*). La gemella serve alla sola
+// misura, perché la riga del NOME va a capo in base alla larghezza delle etichette.
 // Freccia iniziale '→' (etichette di stato acquisito): resa come SVG geometricamente
 // centrato (classe .tarrow), NON glifo di testo, così l'allineamento verticale è
 // indipendente dal font (vedi CSS .tarrow).
 // ⚠️ La freccia SVG e la .ttx devono restare ENTRAMBE figlie DIRETTE del flex .type-badge:
 // è align-items:center a centrare la freccia. NON avvolgerle in .tpwrap (il fix parentesi
 // lo faceva e la freccia, finita dentro .tpwrap, perdeva il centraggio e cadeva in basso
-// sulle etichette con freccia E parentesi, es. '→ Elfo (Noldo)'). Per la stessa ragione lo
-// slot bilingue delle etichette-freccia è la .ttx stessa, non un contenitore intorno alla
-// freccia.
+// sulle etichette con freccia E parentesi, es. '→ Elfo (Noldo)'). Per la stessa ragione le
+// due lingue delle etichette-freccia vivono DENTRO la .ttx, non intorno alla freccia.
 // Rimosso lo spazio 'letterale' dopo la freccia (replace ^\s+); il testo è avvolto in .ttx
 // così un margine sinistro può regolare la distanza punta→stelo (vedi CSS .type-badge .ttx).
 // Etichette SENZA freccia con parentesi: solo i due glifi '(' ')' avvolti in .tparen per
@@ -5406,29 +5420,48 @@ function nomeCellaHtml(nome, nomeAltro, visN){
 // ⚠️ La gemella passa dalle STESSE trasformazioni della faccia, o le due larghezze non
 // sarebbero confrontabili. Nel dataset le frecce coincidono segmento per segmento fra le
 // due lingue (7 su 7, censite il 2026-09-25); se un domani divergessero, la gemella della
-// freccia resta fuori e l'etichetta torna a larghezza naturale.
+// freccia resta fuori e quella card si misura senza l'etichetta dell'altra lingua.
 var TARROW_SVG = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M1.83 7H18.18M12 1.83L18.18 7L12 12.18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
 function tparenHtml(s){ return s.split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>'); }
-function tbStack(f, m){
-  return '<span class="tb-stack"><span class="tb-f">' + f + '</span><span class="tb-m" aria-hidden="true">' + m + '</span></span>';
-}
 function tipoSegHtml(cur, alt){
   if (cur.charAt(0) === '→') {
     var t = tparenHtml(cur.slice(1).replace(/^\s+/, ''));
     var a = (alt && alt.charAt(0) === '→') ? tparenHtml(alt.slice(1).replace(/^\s+/, '')) : '';
-    // ⚠️⚠️ Lo slot è la `.ttx` STESSA, non un contenitore dentro di lei: un `inline-grid`
-    // annidato nella riga della `.ttx` allargava di un soffio la sua riga, e l'etichetta si
-    // abbassava di 0,06-0,8px secondo la larghezza (misurato contro la 15.66). Da figlia
-    // diretta del flex la `.ttx` diventa una griglia a pieno titolo, alta quanto la sua riga.
-    if (a && a !== t) return TARROW_SVG + '<span class="ttx tb-stack"><span class="tb-f">' + t + '</span><span class="tb-m" aria-hidden="true">' + a + '</span></span>';
-    return TARROW_SVG + '<span class="ttx">' + t + '</span>';
+    return TARROW_SVG + '<span class="ttx">' + (a && a !== t ? dueLingue(t, a) : t) + '</span>';
   }
   var paren = function(s){ return (s.indexOf('(') !== -1 || s.indexOf(')') !== -1) ? '<span class="tpwrap">' + tparenHtml(s) + '</span>' : s; };
   var c = paren(cur);
   if (!alt || alt === cur || alt.charAt(0) === '→') return c;
-  return tbStack(c, paren(alt));
+  return dueLingue(c, paren(alt));
 }
-function renderList() {
+// ── Le dimensioni vere delle icone, scritte PRIMA di ogni misura (15.68) ──────────
+// ⚠️⚠️ SENZA, LA PRIMA MISURA DOPO OGNI RICOSTRUZIONE DELLA LISTA SBAGLIA: le `<img>` appena
+// create hanno larghezza ZERO finché il browser non le ha decodificate, anche se sono in cache
+// (misurato a 320px: 180 icone su 180 senza larghezza nel momento della prima misura, e così
+// anche nella 15.66). Sulle card l'altezza è fissa e la larghezza segue le proporzioni del file,
+// quindi senza proporzioni note la riga del nome si misura più corta del vero, e `misuraCard`
+// deciderebbe a capo e altezze minime su righe che un istante dopo sono più lunghe (nella prova
+// della 15.67 la card di Will Whitfoot saliva di 26px per un istante).
+// ⚠️ I FILE DELLE ICONE NON SONO TOCCATI (decisione dell'utente, 2026-09-25): qui si scrivono
+// soltanto due attributi dell'HTML, con le dimensioni che i file hanno già.
+// ⚠️ Con `width` e `height` il browser conosce le proporzioni prima della decodifica; a icona
+// caricata vincono comunque quelle del file (`aspect-ratio: auto w / h`), quindi una voce di
+// tabella invecchiata sposterebbe la sola misura d'avvio, non la resa. E il CSS di
+// `.status-icon` fissa sempre almeno l'altezza, quindi gli attributi non danno mai la misura.
+// Chi aggiunge o ridisegna un'icona aggiorna la sua voce qui (PIL: `Image.open(f).size`).
+var ICON_DIM = { 'Aman.webp':[256,256], 'Aratar.webp':[256,256], 'Balrog.webp':[256,256], 'Balrog_B.webp':[256,228], 'Bianco.webp':[174,256], 'Blu1.webp':[174,256], 'Blu2.webp':[174,256], 'Bruno.webp':[174,256], 'Calaquendi.webp':[256,256], 'Drago.webp':[256,256], 'Drago_B.webp':[256,244], 'Est.webp':[256,256], 'Femmina.webp':[180,252], 'Grigio.webp':[174,256], 'Helcaraxe.webp':[256,256], 'Hobbit.webp':[220,256], 'Ira.webp':[240,256], 'Mappa.webp':[256,256], 'Maschio.webp':[256,256], 'Morgoth.webp':[236,256], 'Morgoth_B.webp':[220,256], 'Morte.webp':[256,256], 'Narya.webp':[195,256], 'Nenya.webp':[195,256], 'Nove.webp':[234,256], 'ReFinarfin.webp':[256,256], 'ReNoldor.webp':[256,256], 'ReSupremo.webp':[256,256], 'Ritorno.webp':[228,256], 'Sette.webp':[234,256], 'Silmaril.webp':[256,256], 'Teschio.webp':[240,256], 'TolkienGateway.webp':[180,180], 'Unico.webp':[512,512], 'Unico_B.webp':[256,256], 'Valinor.webp':[256,256], 'Vilya.webp':[195,256] };
+function dimensioniIcone(radice) {
+  var imgs = radice.querySelectorAll('img[src*="icons/"]'), i, f, d;
+  for (i = 0; i < imgs.length; i++) {
+    if (imgs[i].hasAttribute('width')) continue;
+    f = imgs[i].getAttribute('src').split('/').pop().split('?')[0];
+    d = ICON_DIM[f];
+    if (d) { imgs[i].setAttribute('width', d[0]); imgs[i].setAttribute('height', d[1]); }
+  }
+}
+// ⚠️ `foto` arriva SOLO da `setLang` (vedi `fotografaRighe`): le altre chiamate non la passano,
+// e un argomento che non è una fotografia valida (un evento, per esempio) la fa scartare.
+function renderList(foto) {
   var list = document.getElementById('rank-list');
   var html = '';
   var visN = 0;
@@ -5442,7 +5475,7 @@ function renderList() {
     var nomeAltro = escapeHtml(nomeDi(p, currentLang !== 'it'));
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = etichettaTipoDi(p, currentLang === 'it');
-    // L'etichetta dell'ALTRA lingua, per lo slot a larghezza stabile (vedi `tipoSegHtml`).
+    // L'etichetta dell'ALTRA lingua, per la misura (vedi `tipoSegHtml`).
     var tipoAlt = etichettaTipoDi(p, currentLang !== 'it');
     var tipoAltSeg = ((currentLang === 'it' ? (p.tipo_en || p.tipo) : p.tipo) || '').split('|');
     var genere = p.genere || 'm';
@@ -5494,8 +5527,8 @@ function renderList() {
     // genitori dal nome tradotto (Tuc/Took, Brandibuck/Brandybuck, di/of...);
     // assenti = nome identico nelle due lingue (fallback su padre/madre).
     // ⚠️ Le tre righe di testo si costruiscono in ENTRAMBE le lingue e passano da
-    // `bilingue`, che impila la gemella invisibile: è così che il cambio lingua non
-    // muove le card (vedi la nota di `bilingue`). La riga `.rank-desc` si emette
+    // `bilingue`, che aggiunge la gemella per la misura: è così che il cambio lingua non
+    // muove le card (vedi `misuraCard`). La riga `.rank-desc` si emette
     // sempre, anche vuota, come prima: toglierla cambierebbe il ritmo verticale.
     var rigaDesc = bilingue('rank-desc', descDi(p, true), descDi(p, false), true);
     // Riga 3: nomi alternativi + appellativi
@@ -5531,7 +5564,10 @@ function renderList() {
     if (p.apocrifo) {
       var apoSrc = (typeof p.apocrifo === 'string') ? p.apocrifo : 'HoME';
       var apoTxt = currentLang === 'it' ? ('Solo ' + apoSrc) : (apoSrc + '-only');
-      apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + escapeHtml(apoTxt) + '</span>';
+      var apoAlt = currentLang === 'it' ? (apoSrc + '-only') : ('Solo ' + apoSrc);
+      // ⚠️ Anche la pill ha la gemella: su mobile `reflowApoLabels` manda a capo le etichette
+      // che la toccano, e nell'altra lingua la pill ha un'altra larghezza.
+      apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + dueLingue(escapeHtml(apoTxt), escapeHtml(apoAlt)) + '</span>';
     }
     // Voci 'custom' (Modifica mirata): le due terne per-tema arrivano inline
     // (--ccdark/--cclight) e le regole .cc-custom iniettate le mappano su --ccrgb
@@ -5571,6 +5607,7 @@ function renderList() {
     list.classList.remove('list-animate');
   }
   list.innerHTML = html;
+  dimensioniIcone(list);
 
   var items = list.querySelectorAll('.rank-item');
   for (var j = 0; j < items.length; j++) {
@@ -5585,7 +5622,11 @@ function renderList() {
       }
     })(items[j]);
   }
-  reflowRows();
+  if (applicaFoto(foto)) {
+    riservaTesta(); if (midlinesOn) placeCardMidlines();
+    _reflowChiave = chiaveReflow();
+    verificaInOzio();
+  } else reflowRows();
 }
 
 /* Compattazione mirata della riga nome. Conta le righe di testo occupate da
@@ -5594,6 +5635,15 @@ function renderList() {
    intera. Dipende da viewport e font: si ricalcola a ogni render, al resize
    e al caricamento dei font. Tre sole passate di layout (misura tutti,
    applica ai candidati, verifica), niente lavoro per-card ripetuto. */
+// Gli elementi della lista che rispondono a `sel`, in tutta la lista o nelle sole card di
+// `scope` (un elenco di `.rank-item`): è ciò che permette di misurare un gruppo di card alla
+// volta (vedi `verificaInOzio`). Senza `scope` è la lista intera.
+function inLista(sel, scope) {
+  if (!scope) return document.querySelectorAll(sel.split(',').map(function(x){ return '#rank-list ' + x.trim(); }).join(', '));
+  var out = [], i, j, q;
+  for (i = 0; i < scope.length; i++) { q = scope[i].querySelectorAll(sel); for (j = 0; j < q.length; j++) out.push(q[j]); }
+  return out;
+}
 function rankNameLines(el) {
   var tops = [];
   // Anche i FIGLI di .rank-flags: su desktop il contenitore è display:contents
@@ -5609,32 +5659,27 @@ function rankNameLines(el) {
   for (var j = 0; j < tops.length; j++) { if (tops[j] - cur > 8) { lines++; cur = tops[j]; } }
   return lines;
 }
-// ⚠️⚠️ SI MISURA SULLA CELLA RISERVATA, cioè togliendo `nm-libero` per la durata del conto
-// (15.67, dal gemello di Terramare): è ciò che rende la decisione UGUALE NELLE DUE LINGUE. La
-// cella riservata è larga quanto il nome più lungo fra le due, quindi con lei il numero di
-// righe non dipende da quale testo è in scena; con la cella liberata `name-tight` potrebbe
-// cadere da una parte sola, e la card ballerebbe al cambio lingua.
-// ⚠️ E rompe la circolarità con `freeNames`: così questa decisione non dipende da quello che
-// l'altra ha deciso al giro prima, e il ciclo di `assestaRighe` converge al primo confronto.
-function tightenNames() {
-  var els = document.querySelectorAll('#rank-list .rank-name');
-  var i, cand = [], liberate = [], c;
+// Agisce sulla lingua IN SCENA nella card: la sua o, durante la misura, l'altra (vedi
+// `misuraCard`), perché `name-tight` è sempre la classe della lingua che si vede.
+// ⚠️ Lascia su ogni riga il numero di righe finale (`_righe`), che `misuraCard` confronta fra le
+// due lingue: ricontarle costerebbe un'altra passata su tutta la lista, per lingua.
+function tightenNames(scope) {
+  var els = inLista('.rank-name', scope);
+  var i, cand = [];
   for (i = 0; i < els.length; i++) els[i].classList.remove('name-tight');
   for (i = 0; i < els.length; i++) {
-    c = els[i].querySelector(':scope > .rank-name-text');
-    if (c && c.classList.contains('nm-libero')) { c.classList.remove('nm-libero'); liberate.push(c); }
-  }
-  for (i = 0; i < els.length; i++) {
-    var n = rankNameLines(els[i]);
+    var n = els[i]._righe = rankNameLines(els[i]);
     if (n > 1) cand.push({ el: els[i], before: n });
   }
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('name-tight');
   // ⚠️ Prima si LEGGE tutto e poi si scrive (15.67): togliere la classe dentro il ciclo delle
   // misure costringe il browser a ricalcolare la lista intera prima della lettura dopo, una
   // volta per card. Le card non si influenzano fra loro, quindi il risultato è lo stesso.
-  for (i = 0; i < cand.length; i++) cand[i].via = rankNameLines(cand[i].el) >= cand[i].before;
-  for (i = 0; i < cand.length; i++) if (cand[i].via) cand[i].el.classList.remove('name-tight');
-  for (i = 0; i < liberate.length; i++) liberate[i].classList.add('nm-libero');
+  for (i = 0; i < cand.length; i++) { cand[i].dopo = rankNameLines(cand[i].el); cand[i].via = cand[i].dopo >= cand[i].before; }
+  for (i = 0; i < cand.length; i++) {
+    if (cand[i].via) cand[i].el.classList.remove('name-tight');
+    else cand[i].el._righe = cand[i].dopo;
+  }
 }
 
 /* A capo ottimizzato delle righe bipartite (info | genealogia e nomi | titoli).
@@ -5658,35 +5703,39 @@ function rowLines(el) {
   for (i = 0; i < tops.length; i++) { if (tops[i] - cur > 8) { lines++; cur = tops[i]; } }
   return lines;
 }
-// Righe di una riga bipartita che può essere IMPILATA (vedi `bilingue`): si misura ogni
-// faccia a sé e si tiene la MAGGIORE.
-// ⚠️⚠️ Misurare la riga intera con un `Range` darebbe un numero SBAGLIATO: il range prende
-// anche i rettangoli della gemella nascosta, che si trova nella stessa cella ma può avere un
-// numero di righe diverso, e `rowLines` li conterebbe come righe in più.
-// ⚠️ Si prende il MASSIMO, e non la sola faccia visibile, perché la decisione dev'essere la
-// stessa nelle due lingue: decidendo sulla visibile, l'italiano potrebbe spezzare e
-// l'inglese no, e il jitter rientrerebbe dalla finestra.
-function righeBipartite(row) {
-  var facce = row.querySelectorAll(':scope > .bil-f, :scope > .bil-m');
-  if (!facce.length) return rowLines(row);
-  var n = 0;
-  for (var i = 0; i < facce.length; i++) n = Math.max(n, rowLines(facce[i]));
-  return n;
-}
-function optimizeBipartite() {
-  var rows = document.querySelectorAll('#rank-list .rank-desc, #rank-list .rank-subtitle');
-  var i, cand = [];
-  for (i = 0; i < rows.length; i++) rows[i].classList.remove('bp-break');
+// ⚠️⚠️ OGNI LINGUA DECIDE L'A CAPO DEL SUO TESTO (15.68): la classe va sulla `.faccia` o sulla
+// `.gemella`, non sulla riga. Nella 15.67 la decisione era comune alle due lingue, e dove l'a
+// capo allungava l'inglese veniva tolto anche all'italiano: il `|` restava in fondo alla prima
+// riga e la seconda parte scendeva da sola (segnalato dall'utente sulla card di Dior). Il `|`
+// separa due parti della STESSA riga, e non chiude mai una riga.
+// Dove le due lingue hanno lo stesso testo la riga non ha gemella, e la classe va sulla riga:
+// la decisione è la stessa per costruzione, quindi nella misura dell'altra lingua non si tocca.
+function unitaBipartite(rows, altra) {
+  var out = [], i, u;
   for (i = 0; i < rows.length; i++) {
-    if (!rows[i].querySelector('.bp-b')) continue;
-    var n = righeBipartite(rows[i]);
-    if (n > 1) cand.push({ el: rows[i], before: n });
+    u = rows[i].querySelector(altra ? ':scope > .gemella' : ':scope > .faccia');
+    if (u) out.push(u); else if (!altra) out.push(rows[i]);
+  }
+  return out;
+}
+function optimizeBipartite(scope, altra) {
+  var unita = unitaBipartite(inLista('.rank-desc, .rank-subtitle', scope), altra);
+  var i, cand = [];
+  for (i = 0; i < unita.length; i++) { unita[i].classList.remove('bp-break'); unita[i]._righe = 0; }
+  for (i = 0; i < unita.length; i++) {
+    if (!unita[i].querySelector('.bp-b')) continue;
+    var n = unita[i]._righe = rowLines(unita[i]);
+    if (n > 1) cand.push({ el: unita[i], before: n });
   }
   for (i = 0; i < cand.length; i++) cand[i].el.classList.add('bp-break');
   // ⚠️ Letture tutte insieme, poi le scritture (15.67): alternate, a 390px costavano 400 ms
   // su un telefono medio, perché ogni classe tolta faceva ricalcolare la lista intera.
-  for (i = 0; i < cand.length; i++) cand[i].via = righeBipartite(cand[i].el) > cand[i].before;
-  for (i = 0; i < cand.length; i++) if (cand[i].via) cand[i].el.classList.remove('bp-break');
+  // Come `tightenNames`, lascia le righe finali in `_righe` (zero dove la riga ha una parte sola).
+  for (i = 0; i < cand.length; i++) { cand[i].dopo = rowLines(cand[i].el); cand[i].via = cand[i].dopo > cand[i].before; }
+  for (i = 0; i < cand.length; i++) {
+    if (cand[i].via) cand[i].el.classList.remove('bp-break');
+    else cand[i].el._righe = cand[i].dopo;
+  }
 }
 // Emissione delle righe bipartite: con due parti, ciascuna in uno span
 // misurabile e separatore a sé (nascosto da .bp-break); con una sola, testo nudo.
@@ -5699,20 +5748,25 @@ function joinBipartite(parts) {
    (≤480px): lì la riga del nome è in flusso inline e le etichette scorrerebbero
    SOTTO la pill. Si misura in stato inline e si aggiunge .apo-wrap solo a chi
    sovrappone la pill; i nomi corti (Duilin, Penlod) restano in linea. */
-function reflowApoLabels() {
+// ⚠️ Anche qui prima tutte le letture e poi le scritture (15.68): la classe tolta e la misura
+// alternate card per card ricalcolavano la lista a ogni card apocrifa.
+function reflowApoLabels(scope) {
   var mobile = window.matchMedia('(max-width:480px)').matches;
-  var items = document.querySelectorAll('#rank-list .rank-item.apocrifo');
-  for (var i = 0; i < items.length; i++) {
-    var it = items[i];
-    it.classList.remove('apo-wrap');
-    if (!mobile) continue;
-    var tipi = it.querySelector('.rank-name > .rank-tipi');
-    var pill = it.querySelector('.pill-home');
+  var items = scope ? scope.filter(function(x){ return x.classList.contains('apocrifo'); })
+                    : Array.prototype.slice.call(document.querySelectorAll('#rank-list .rank-item.apocrifo'));
+  var i, it, tipi, pill, t, p, via = [];
+  for (i = 0; i < items.length; i++) items[i].classList.remove('apo-wrap');
+  if (!mobile) return;
+  for (i = 0; i < items.length; i++) {
+    it = items[i];
+    tipi = it.querySelector('.rank-name > .rank-tipi');
+    pill = it.querySelector('.pill-home');
     if (!tipi || !pill || !tipi.children.length) continue;
-    var t = tipi.getBoundingClientRect(), p = pill.getBoundingClientRect();
+    t = tipi.getBoundingClientRect(); p = pill.getBoundingClientRect();
     // Sovrapposizione su entrambi gli assi (stessa riga della pill + invasione a destra).
-    if (t.right > p.left - 4 && t.left < p.right && t.top < p.bottom && t.bottom > p.top) it.classList.add('apo-wrap');
+    if (t.right > p.left - 4 && t.left < p.right && t.top < p.bottom && t.bottom > p.top) via.push(it);
   }
+  for (i = 0; i < via.length; i++) via[i].classList.add('apo-wrap');
 }
 // Linee mediane di allineamento sulla pagina reale (tasto '.', ADMIN-only, dalla
 // v11.80): una riga tratteggiata a metà del maiuscoletto del nome di ogni card, per
@@ -5778,9 +5832,9 @@ function placeMidlinesFor(pairs) {
 function placeCardMidlines() {
   var pairs = [];
   document.querySelectorAll('#rank-list .rank-item').forEach(function(item) {
-    // ⚠️ Dove il nome è impilato serve la FACCIA VISIBILE, non il contenitore: quello porta
-    // dentro anche la gemella, e lo strut finirebbe in una cella di griglia a sé.
-    pairs.push({ host: item, nm: item.querySelector('.rank-name-text > .bil-f') || item.querySelector('.rank-name-text') });
+    // ⚠️ Dove il nome ha la gemella serve la FACCIA, non il contenitore: lo strut va nel testo
+    // che si vede.
+    pairs.push({ host: item, nm: item.querySelector('.rank-name-text > .faccia') || item.querySelector('.rank-name-text') });
   });
   placeMidlinesFor(pairs);
 }
@@ -5790,152 +5844,306 @@ function toggleCardMidlines() {
   list.classList.toggle('show-midlines', midlinesOn);
   if (midlinesOn) placeCardMidlines();
 }
-// ── Il nome libero dalla riserva orizzontale, dove non costa un salto (15.67) ───
-// Dal gemello di Terramare (sua 0.71 e 2.56). La cella bilingue del nome è larga quanto la
-// lingua più larga: tiene ferme le etichette al cambio lingua, ma nella lingua più corta
-// lascia un vuoto fra il nome e le etichette. Qui la riserva si toglie SOLO dove quattro
-// prove dicono che l'altezza della riga non cambia:
-//   1. faccia visibile e gemella ALTE UGUALE, o il nome andrebbe a capo in una lingua sola;
-//   2. la riga non cambia altezza quando la classe viene messa (stringendo la cella si
-//      libera spazio, e un'etichetta che era a capo può rientrare in riga);
-//   3. la riga resta alta uguale con la cella alla larghezza DELL'ALTRA lingua;
-//   4. `provaSimmetria`: la stessa misura con la faccia in `nowrap`, che simula fedelmente
-//      l'altra lingua (la 3 ci lascia dentro il testo di questa, che a quella larghezza va a
-//      capo o no a seconda di quanto è lungo, quindi darebbe esiti opposti nelle due lingue).
-// ⚠️ Nel dubbio NON si libera: lo stato riservato è identico nelle due lingue PER
-// COSTRUZIONE, quindi togliere la liberazione azzera il ballo invece di ridurlo.
-// ⚠️⚠️ LE CARD APOCRIFE RESTANO FUORI, e la ragione è di questo sito: `reflowApoLabels`
-// manda a capo le loro etichette se toccano la pill 'Solo HoME', misurando la posizione
-// delle etichette nella lingua corrente. Con la cella riservata quella posizione è la
-// stessa nelle due lingue; liberata, no, e la decisione potrebbe cadere da una parte sola.
-// ⚠️ Il 'rimedio delle scartate' di Terramare (le icone mandate a capo con `nm-acapo`) qui
-// non c'è: su mobile la riga del nome di questo sito è un blocco e non un flex, quindi
-// `flex-basis` non avrebbe alcun effetto.
-function freeNames() {
-  var celle = document.querySelectorAll('#rank-list .rank-name-text.bil');
-  var i, cand = [];
-  for (i = 0; i < celle.length; i++) celle[i].classList.remove('nm-libero');
-  for (i = 0; i < celle.length; i++) {
-    var f = celle[i].querySelector(':scope > .bil-f'), m = celle[i].querySelector(':scope > .bil-m');
-    var riga = celle[i].closest('.rank-name'), card = celle[i].closest('.rank-item');
-    if (!f || !m || !riga || (card && card.classList.contains('apocrifo'))) continue;
-    if (Math.abs(f.getBoundingClientRect().height - m.getBoundingClientRect().height) > 0.5) continue;
-    // La larghezza della gemella si legge ORA, finché è nel flusso: liberata, prende quella
-    // della faccia e non direbbe più quanto misura il nome dell'altra lingua.
-    cand.push({ el: celle[i], riga: riga, prima: riga.getBoundingClientRect().height,
-                altra: m.getBoundingClientRect().width });
-  }
-  // ⚠️ Ogni prova legge TUTTE le card e poi scrive, mai a turno: alternare letture e scritture
-  // costringe il browser a ricalcolare la lista intera a ogni card.
-  for (i = 0; i < cand.length; i++) cand[i].el.classList.add('nm-libero');
-  for (i = 0; i < cand.length; i++)
-    cand[i].fuori = Math.abs(cand[i].riga.getBoundingClientRect().height - cand[i].prima) > 0.5;
-  for (i = 0; i < cand.length; i++) if (cand[i].fuori) cand[i].el.classList.remove('nm-libero');
-  for (i = 0; i < cand.length; i++) if (!cand[i].fuori) cand[i].el.style.width = cand[i].altra + 'px';
-  for (i = 0; i < cand.length; i++) if (!cand[i].fuori) cand[i].conAltra = cand[i].riga.getBoundingClientRect().height;
-  for (i = 0; i < cand.length; i++) {
-    if (cand[i].fuori) continue;
-    cand[i].el.style.width = '';
-    if (Math.abs(cand[i].conAltra - cand[i].prima) > 0.5) cand[i].el.classList.remove('nm-libero');
-  }
-  provaSimmetria();
+// ── Anti-jitter senza riserva orizzontale: misura nell'altra lingua, card per card (15.68) ──
+// ⚠️⚠️ PERCHÉ NON C'È PIÙ LA GEMELLA IMPILATA DELLA 15.67: la cella di griglia con i due testi
+// sovrapposti prendeva la misura maggiore anche in LARGHEZZA, e l'utente l'ha bocciata subito
+// (2026-09-25: *nelle card dei personaggi non solo non occorre, ma è terribile*): le etichette
+// inglesi di Elros restavano larghe quanto quelle italiane, col vuoto dentro. E costava: col DOM
+// quasi doppio e tutte quelle griglie, trascinando il bordo della finestra il browser spendeva
+// nel layout CINQUE volte il tempo della 15.66 (misurato a CPU 4x: 7,9 s contro 1,5).
+// ⚠️⚠️ ADESSO LA GEMELLA È `display:none`: la pagina si dispone come nella 15.66, a larghezza
+// naturale nella lingua in scena. L'altra lingua compare solo per la durata di una misura, dentro
+// una funzione sincrona (`lingua-altra` sulla card), quindi nessuno la vede mai.
+// La misura fa tre cose, in quest'ordine:
+//   1. prende le decisioni di sempre (`name-tight`, a capo bipartito, `apo-wrap`) IN OGNI LINGUA,
+//      ciascuna sul suo testo: le classi della lingua che non si vede aspettano col suffisso `-m`;
+//   2. SE UNA LINGUA VA A CAPO, CI VA ANCHE L'ALTRA (regola dell'utente, 2026-09-25, nata sul
+//      sottotitolo): nella riga del nome la lingua più corta manda a capo le etichette (o le
+//      icone) nello stesso punto dell'altra, e in una riga bipartita va a capo sul `|`;
+//   3. quello che resta diverso lo pareggia un'ALTEZZA MINIMA sulla riga, pari alla maggiore
+//      delle due: è verticale soltanto, e nella lingua più corta lascia un filo di spazio sotto.
+// ⚠️ Una card non influenza le altre (la larghezza è la stessa per tutte), quindi la misura si
+// può fare su un gruppo di card qualunque: è ciò che usa la verifica della cache.
+var RIGHE_CARD = ['.rank-name', '.rank-desc', '.rank-subtitle', '.rank-title'];
+// Le classi di card che dipendono dalla lingua: [quella della lingua in scena, quella che aspetta,
+// dove sta] (0 = la riga del nome, -1 = la card). L'a capo bipartito non è qui perché sta già
+// sul testo di ciascuna lingua (vedi `unitaBipartite`).
+var SCAMBIO_LINGUA = [['name-tight', 'name-tight-m', 0], ['nm-giu', 'nm-giu-m', 0],
+                      ['nm-giu-f', 'nm-giu-f-m', 0], ['apo-wrap', 'apo-wrap-m', -1]];
+function righeCard(it) {
+  return RIGHE_CARD.map(function(s){ return it.querySelector(':scope > .rank-content > ' + s); });
 }
-function provaSimmetria() {
-  var celle = document.querySelectorAll('#rank-list .rank-name-text.bil.nm-libero');
-  var i, c, prove = [];
-  for (i = 0; i < celle.length; i++) {
-    var m = celle[i].querySelector(':scope > .bil-m');
-    var f = celle[i].querySelector(':scope > .bil-f');
-    var riga = celle[i].closest('.rank-name');
-    if (!m || !f || !riga) continue;
-    // la larghezza dell'altra lingua si legge dalla gemella, che con `nm-libero` è assoluta e
-    // larga quanto la cella: serve il suo INCHIOSTRO, non la sua scatola.
-    var ra = document.createRange(); ra.selectNodeContents(m);
-    var q = ra.getClientRects(), j, wAltra = 0;
-    for (j = 0; j < q.length; j++) if (q[j].width > wAltra) wAltra = q[j].width;
-    prove.push({ el: celle[i], f: f, riga: riga, wAltra: wAltra });
+function scambiaLingua(cards, altra) {
+  var i, j, p, el, a, b;
+  for (i = 0; i < cards.length; i++) {
+    cards[i].it.classList.toggle('lingua-altra', altra);
+    for (j = 0; j < SCAMBIO_LINGUA.length; j++) {
+      p = SCAMBIO_LINGUA[j]; el = p[2] < 0 ? cards[i].it : cards[i].r[0];
+      if (!el) continue;
+      a = el.classList.contains(p[0]); b = el.classList.contains(p[1]);
+      el.classList.toggle(p[0], b); el.classList.toggle(p[1], a);
+    }
   }
-  for (i = 0; i < prove.length; i++) prove[i].ora = prove[i].riga.getBoundingClientRect().height;
-  for (i = 0; i < prove.length; i++) {
-    c = prove[i];
-    c.f.style.whiteSpace = 'nowrap';
-    c.el.style.width = c.wAltra + 'px';
+}
+function primoTop(els) {
+  for (var i = 0; i < els.length; i++) {
+    var q = els[i].getClientRects();
+    for (var k = 0; k < q.length; k++) if (q[k].width > 0.5) return q[k].top;
   }
-  for (i = 0; i < prove.length; i++) prove[i].altra = prove[i].riga.getBoundingClientRect().height;
-  for (i = 0; i < prove.length; i++) { prove[i].f.style.whiteSpace = ''; prove[i].el.style.width = ''; }
-  for (i = 0; i < prove.length; i++)
-    if (Math.abs(prove[i].altra - prove[i].ora) > 0.5) prove[i].el.classList.remove('nm-libero');
+  return null;
 }
-// ⚠️⚠️ `tightenNames` E `freeNames` SI CONDIZIONANO A VICENDA, e una passata sola può non
-// bastare: il primo decide guardando quante righe occupa il nome, il secondo guardando
-// l'altezza della riga, che il primo cambia. Si CICLA finché lo stato non si ripete, con un
-// tetto di tre giri come rete per due stati che si alternino. La firma legge le sole CLASSI,
-// che non forzano un ricalcolo del layout.
-function firmaRighe() {
-  var n = document.querySelectorAll('#rank-list .rank-name'), i, el, c, s = '';
-  for (i = 0; i < n.length; i++) {
-    el = n[i]; c = el.querySelector(':scope > .rank-name-text');
-    s += (el.className.indexOf('name-tight') < 0 ? '0' : '1') +
-         (c && c.className.indexOf('nm-libero') >= 0 ? '1' : '0');
+// Quello che serve della lingua in scena: le righe della riga del nome e, dove sono più d'una,
+// dove comincia ciascun gruppo (per sapere DOVE va a capo), e le righe dei due testi bipartiti.
+// I conteggi li hanno lasciati `tightenNames` e `optimizeBipartite`.
+function leggiLingua(cards, altra) {
+  return cards.map(function(c){
+    var n = c.r[0], out = { bp: [0, 0] };
+    if (n) {
+      out.righe = n._righe || 0;
+      if (out.righe > 1) {
+        out.tN = primoTop(n.querySelectorAll(':scope > .rank-name-text'));
+        out.tE = primoTop(n.querySelectorAll('.rank-tipi > .type-badge'));
+        out.tI = primoTop(n.querySelectorAll('.rank-flags > *'));
+      }
+    }
+    [1, 2].forEach(function(k, j){
+      var row = c.r[k], u = row && row.querySelector(altra ? ':scope > .gemella' : ':scope > .faccia');
+      if (u) out.bp[j] = u._righe || 0;
+    });
+    return out;
+  });
+}
+// ⚠️⚠️ LE MISURE SI SCRIVONO IN PX DI LAYOUT: `getBoundingClientRect` li dà già moltiplicati per
+// lo zoom della Modalità XL, mentre un'altezza o una larghezza si scrivono DENTRO quello zoom.
+// Scritte così come sono, valgono 1,3 volte il vero (nella 15.67 l'intestazione in XL cresceva di
+// 155px al cambio lingua). Il fattore si ricava come in `placeMidlinesFor`, dall'elemento stesso.
+function zoomDi(el) {
+  var z = el && el.offsetWidth > 0 ? el.getBoundingClientRect().width / el.offsetWidth : 1;
+  return (!(z > 0.1) || Math.abs(z - 1) < 0.01) ? 1 : z;
+}
+function altezzeRighe(cards) {
+  var z = cards.length ? zoomDi(cards[0].it) : 1;
+  return cards.map(function(c){
+    return c.r.map(function(row){ return row ? row.getBoundingClientRect().height / z : 0; });
+  });
+}
+function decidiRighe(items, altra) {
+  tightenNames(items); optimizeBipartite(items, altra); reflowApoLabels(items);
+}
+// Dove la lingua più corta deve andare a capo, guardando dove ci va la più lunga: prima delle
+// etichette, o prima delle icone (solo su desktop, dove le icone vengono DOPO le etichette; su
+// mobile vengono subito dopo il nome, e a capo ci vanno le etichette).
+function acapoNome(lunga, corta, mobile) {
+  var giu = function(t){ return t != null && lunga.tN != null && t - lunga.tN > 8; };
+  var tipo = giu(lunga.tE) ? 'nm-giu' : (!mobile && giu(lunga.tI)) ? 'nm-giu-f' : 'nm-giu';
+  // Le etichette e le icone sono le stesse nelle due lingue: se la più lunga non ne ha, non ne ha
+  // nemmeno la più corta (che, a una riga sola, non si è fatta leggere le posizioni).
+  if (tipo === 'nm-giu' && lunga.tE == null) tipo = (!mobile && lunga.tI != null) ? 'nm-giu-f' : null;
+  return tipo;
+}
+function misuraCard(items) {
+  var cards = items.map(function(it){ return { it: it, r: righeCard(it) }; });
+  var mobile = window.matchMedia('(max-width:480px)').matches;
+  var i, j, k, c, A, B, fA = [], fB = [], hA, hB, a, b;
+  for (i = 0; i < cards.length; i++) {
+    c = cards[i];
+    for (k = 0; k < c.r.length; k++) if (c.r[k]) c.r[k].style.minHeight = '';
+    if (c.r[0]) c.r[0].classList.remove('nm-giu', 'nm-giu-m', 'nm-giu-f', 'nm-giu-f-m');
   }
-  return s;
+  decidiRighe(items, false);
+  A = leggiLingua(cards, false);
+  scambiaLingua(cards, true);
+  decidiRighe(items, true);
+  B = leggiLingua(cards, true);
+  for (i = 0; i < cards.length; i++) {
+    c = cards[i];
+    if (c.r[0] && A[i].righe !== B[i].righe) {
+      var aCorta = A[i].righe < B[i].righe;
+      var tipo = aCorta ? acapoNome(B[i], A[i], mobile) : acapoNome(A[i], B[i], mobile);
+      if (tipo) (aCorta ? fA : fB).push({ el: c.r[0], cls: tipo });
+    }
+    for (j = 0; j < 2; j++) {
+      var row = c.r[j + 1], lA = A[i].bp[j], lB = B[i].bp[j];
+      if (!row || !lA || !lB || lA === lB || Math.min(lA, lB) !== 1) continue;
+      var u = row.querySelector(lA < lB ? ':scope > .faccia' : ':scope > .gemella');
+      if (u && u.querySelector('.bp-b') && !u.classList.contains('bp-break')) (lA < lB ? fA : fB).push({ el: u, cls: 'bp-break' });
+    }
+  }
+  for (i = 0; i < fB.length; i++) fB[i].el.classList.add(fB[i].cls);
+  hB = altezzeRighe(cards);
+  scambiaLingua(cards, false);
+  for (i = 0; i < fA.length; i++) fA[i].el.classList.add(fA[i].cls);
+  hA = altezzeRighe(cards);
+  for (i = 0; i < cards.length; i++)
+    for (k = 0; k < cards[i].r.length; k++) {
+      a = hA[i][k]; b = hB[i][k];
+      // ⚠️ Anche i centesimi: sotto il mezzo pixel una card da sola non si vede muovere, ma
+      // 249 scarti sommati spostavano il fondo della lista di 0,3px a 320px.
+      if (cards[i].r[k] && Math.abs(a - b) > 0.01) cards[i].r[k].style.minHeight = Math.max(a, b).toFixed(2) + 'px';
+    }
 }
-function assestaRighe() {
-  var giri = 3, prima;
-  do { prima = firmaRighe(); tightenNames(); freeNames(); giri--; }
-  while (giri > 0 && firmaRighe() !== prima);
-  reflowApoLabels();
+// ── Cache delle misure, livello 1: il cambio lingua RIUSA le decisioni (15.68) ─────
+// Richiesta dell'utente (2026-09-25: *mi piacerebbe implementarla se c'è un modo furbo per
+// esser certi che 'si accorga' di tutti i cambiamenti*, poi *vai con il livello 1*).
+// ⚠️⚠️ PERCHÉ È LECITO: la misura decide GIÀ per le due lingue, quindi al cambio lingua, a parità
+// di larghezza, font e dati, non c'è niente da rimisurare: si fotografano le classi e le altezze
+// minime prima di ricostruire la lista e si riapplicano con i ruoli scambiati (quello che era
+// `-m` diventa della lingua in scena).
+// ⚠️⚠️ IL MODO DI NON SBAGLIARE MAI È LA VERIFICA: dopo aver riapplicato, `verificaInOzio`
+// rifà le misure vere a blocchi di 20 card quando il browser è libero, e se una card non
+// torna la corregge. Il caso peggiore è un errore che dura un istante, non uno che resta.
+// ⚠️ La fotografia si scarta, e si torna alla via lunga, se l'ultima misura completa non è
+// della larghezza e dei font di adesso (`_reflowChiave`).
+var _verifica = 0;
+// Lo stato di una card: le quattro classi della lingua in scena, le quattro che aspettano, l'a
+// capo bipartito dei due testi (in scena, altra), poi le altezze minime delle quattro righe.
+function bpCoppia(row) {
+  if (!row) return '00';
+  var f = row.querySelector(':scope > .faccia'), g = row.querySelector(':scope > .gemella');
+  if (f && g) return (f.classList.contains('bp-break') ? '1' : '0') + (g.classList.contains('bp-break') ? '1' : '0');
+  return row.classList.contains('bp-break') ? '11' : '00';
 }
-// ⚠️⚠️ IL RIPASSO NON È UNA PRECAUZIONE: a Terramare, al cambio lingua il primo `freeNames`
-// decideva su un layout non ancora assestato e sbagliava (una card che cambiava altezza, cioè
-// il difetto che esiste per evitare). Due `requestAnimationFrame` annidati (il primo consegna
-// il frame con lo stile nuovo, il secondo misura quando è disposto) più un colpo a tempo, che
-// copre l'assestamento che i frame non vedono.
-var freeRipassoPend = false;
-function freeRipasso() {
-  if (freeRipassoPend) return;
-  freeRipassoPend = true;
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ assestaRighe(); }); });
-  setTimeout(function(){ freeRipassoPend = false; assestaRighe(); }, 160);
+function statoCard(it) {
+  var r = righeCard(it), s = '', j, k, el;
+  for (k = 0; k < 2; k++)
+    for (j = 0; j < SCAMBIO_LINGUA.length; j++) {
+      el = SCAMBIO_LINGUA[j][2] < 0 ? it : r[0];
+      s += el && el.classList.contains(SCAMBIO_LINGUA[j][k]) ? '1' : '0';
+    }
+  return s + bpCoppia(r[1]) + bpCoppia(r[2]) + '|' + r.map(function(x){ return x ? x.style.minHeight : ''; }).join(',');
+}
+function applicaStato(it, s, scambia) {
+  var r = righeCard(it), n = SCAMBIO_LINGUA.length;
+  var qui = s.substr(scambia ? n : 0, n), la = s.substr(scambia ? 0 : n, n), mh = s.split('|')[1].split(',');
+  SCAMBIO_LINGUA.forEach(function(p, j){
+    var el = p[2] < 0 ? it : r[0];
+    if (!el) return;
+    el.classList.toggle(p[0], qui.charAt(j) === '1'); el.classList.toggle(p[1], la.charAt(j) === '1');
+  });
+  [1, 2].forEach(function(k, j){
+    var row = r[k], c = s.substr(2 * n + 2 * j, 2);
+    if (!row) return;
+    var f = row.querySelector(':scope > .faccia'), g = row.querySelector(':scope > .gemella');
+    if (f && g) {
+      f.classList.toggle('bp-break', c.charAt(scambia ? 1 : 0) === '1');
+      g.classList.toggle('bp-break', c.charAt(scambia ? 0 : 1) === '1');
+    } else row.classList.toggle('bp-break', c.charAt(0) === '1');
+  });
+  r.forEach(function(row, k){ if (row) row.style.minHeight = mh[k] || ''; });
+}
+function fotografaRighe() {
+  if (_reflowChiave !== chiaveReflow()) return null;
+  var items = document.querySelectorAll('#rank-list .rank-item'), righe = {}, i;
+  if (!items.length) return null;
+  for (i = 0; i < items.length; i++) righe[items[i].getAttribute('data-idx')] = statoCard(items[i]);
+  return { chiave: _reflowChiave, lingua: currentLang, righe: righe };
+}
+// Riapplica la fotografia alla lista appena ricostruita (con `currentLang` già cambiata). Torna
+// `false`, e allora chi chiama rifà le misure, se la chiave è cambiata o manca anche una card.
+function applicaFoto(foto) {
+  if (!foto || !foto.righe || foto.chiave !== chiaveReflow()) return false;
+  var items = document.querySelectorAll('#rank-list .rank-item'), i;
+  if (!items.length) return false;
+  for (i = 0; i < items.length; i++) if (typeof foto.righe[items[i].getAttribute('data-idx')] !== 'string') return false;
+  for (i = 0; i < items.length; i++) applicaStato(items[i], foto.righe[items[i].getAttribute('data-idx')], foto.lingua !== currentLang);
+  return true;
+}
+function pianificaOzio(f) {
+  if (window.requestIdleCallback) requestIdleCallback(f, { timeout: 1000 }); else setTimeout(f, 30);
+}
+// ⚠️ Un gettone per giro: una misura completa (`reflowRows`) o un nuovo cambio lingua lo fa
+// scadere, e i blocchi rimasti si fermano invece di lavorare su una lista vecchia.
+// ⚠️ L'esito resta in `window.__verificaCache` (quante card la verifica ha dovuto correggere):
+// il banco lo legge, e deve valere zero.
+function verificaInOzio() {
+  var tok = ++_verifica, pos = 0, diverse = 0;
+  var items = Array.prototype.slice.call(document.querySelectorAll('#rank-list .rank-item'));
+  window.__verificaCache = null;
+  var passo = function() {
+    if (tok !== _verifica) return;
+    var fine = Math.min(items.length, pos + 20), blocco = items.slice(pos, fine), i;
+    var prima = blocco.map(statoCard);
+    misuraCard(blocco);
+    for (i = 0; i < blocco.length; i++) if (statoCard(blocco[i]) !== prima[i]) diverse++;
+    pos = fine;
+    if (pos < items.length) { pianificaOzio(passo); return; }
+    _reflowChiave = chiaveReflow();
+    window.__verificaCache = diverse;
+    if (diverse) console.warn('Cache delle misure: ' + diverse + ' card corrette dalla verifica');
+  };
+  pianificaOzio(passo);
 }
 // ⚠️⚠️ ANCHE L'INTESTAZIONE RISERVA L'ALTEZZA DELL'ALTRA LINGUA: senza, una riga che va a capo
 // da una parte sola sposta TUTTA la pagina (misurato sulla 15.66: l'intestazione cambiava
 // altezza di 8-23px al cambio lingua a otto larghezze su undici).
 // ⚠️ La misura si fa su un CLONE fuori dal flusso, non scrivendo il testo dell'altra lingua
-// nell'elemento vero, che si vedrebbe per un fotogramma. ⚠️ Il sottotitolo porta del markup
-// (la nota con l'asterisco): il clone lo riceve da `DOMParser`, che compone nodi da una
-// COSTANTE del codice (i18n), non da un dato.
+// nell'elemento vero, che si vedrebbe per un fotogramma.
+// Un clone dell'elemento col testo dell'ALTRA lingua, fuori vista e alla stessa larghezza:
+// `misura(clone)` ne legge quello che serve, poi il clone sparisce. Lo usano `riservaTesta` e
+// `pareggiaSottotitolo`.
+// ⚠️⚠️ Il clone TIENE l'id, al contrario di Terramare: qui `#footer-text` ha un corpo suo nel
+// blocco mobile, e un clone senza id si misurava col corpo di base, cioè dava un'altezza falsa
+// (a 390px 48,6px contro i 72,9 veri dell'inglese). L'id doppio vive per la sola durata di
+// questa funzione, che è sincrona, e nessuno lo cerca nel frattempo.
+// ⚠️ Il testo porta del markup (la nota con l'asterisco, gli a capo del sottotitolo): il clone
+// lo riceve da `DOMParser`, che compone nodi da una COSTANTE del codice (i18n), non da un dato.
+function misuraAltraLingua(el, testo, misura) {
+  var clone = el.cloneNode(false), corpo = new DOMParser().parseFromString(testo, 'text/html').body, v;
+  while (corpo.firstChild) clone.appendChild(document.adoptNode(corpo.firstChild));
+  clone.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
+    'pointer-events:none;min-height:0;width:' + (el.getBoundingClientRect().width / zoomDi(el)) + 'px';
+  el.parentNode.insertBefore(clone, el.nextSibling);
+  v = misura(clone);
+  clone.parentNode.removeChild(clone);
+  return v;
+}
+// Le righe del testo del sottotitolo, nota con l'asterisco esclusa (è un blocco suo).
+function righeSottotitolo(el) {
+  var r = document.createRange(), nota = el.querySelector('.subtitle-note'), q, i, tops = [];
+  r.setStart(el, 0);
+  if (nota) r.setEndBefore(nota); else r.setEnd(el, el.childNodes.length);
+  q = r.getClientRects();
+  for (i = 0; i < q.length; i++) if (q[i].width > 0.5 && q[i].height > 1) tops.push(q[i].top);
+  tops.sort(function(a, b){ return a - b; });
+  var n = tops.length ? 1 : 0;
+  for (i = 1; i < tops.length; i++) if (tops[i] - tops[i - 1] > 4) n++;
+  return n;
+}
+// ⚠️⚠️ SE UNA LINGUA VA A CAPO, CI VA ANCHE L'ALTRA (regola dell'utente, 2026-09-25): prima la
+// riserva teneva fermo il blocco, ma dentro la nota con l'asterisco scendeva di 31px passando
+// all'inglese, che sopra gli 840px va su due righe mentre l'italiano sta su una. Si misurano le
+// due lingue SENZA a capo forzato, e se una delle due non sta su una riga si accende in tutte e
+// due il punto fisso (vedi `.sub-acapo`).
+function pareggiaSottotitolo() {
+  var el = document.getElementById('subtitle'), altra = currentLang === 'it' ? 'en' : 'it';
+  if (!el || !i18n[altra]) return;
+  el.classList.remove('sub-acapo');
+  var qui = righeSottotitolo(el);
+  var la = misuraAltraLingua(el, i18n[altra].subtitle, righeSottotitolo);
+  el.classList.toggle('sub-acapo', qui > 1 || la > 1);
+}
 function riservaTesta() {
   if (typeof i18n === 'undefined' || typeof currentLang === 'undefined') return;
   var altra = currentLang === 'it' ? 'en' : 'it';
   if (!i18n[altra]) return;
+  pareggiaSottotitolo();
   // ⚠️ `footer-text` c'è per una misura: a 320px la citazione del footer va a capo in una
   // lingua sola e il footer cambiava altezza di 19px (chiave i18n `footer`, id diverso).
-  var voci = [['subtitle', 'subtitle'], ['intro', 'intro'], ['footer-text', 'footer']], i, el, testo, clone, h, corpo;
+  var voci = [['subtitle', 'subtitle'], ['intro', 'intro'], ['footer-text', 'footer']], i, el, testo, h;
   for (i = 0; i < voci.length; i++) {
     el = document.getElementById(voci[i][0]);
     testo = i18n[altra][voci[i][1]];
     if (!el || typeof testo !== 'string') continue;
     el.style.minHeight = '';
-    // ⚠️⚠️ Il clone TIENE l'id, al contrario di Terramare: qui `#footer-text` ha un corpo suo
-    // nel blocco mobile, e un clone senza id si misurava col corpo di base, cioè dava
-    // un'altezza falsa (a 390px 48,6px contro i 72,9 veri dell'inglese). L'id doppio vive per
-    // la sola durata di questa funzione, che è sincrona, e nessuno lo cerca nel frattempo.
-    clone = el.cloneNode(false);
-    corpo = new DOMParser().parseFromString(testo, 'text/html').body;
-    while (corpo.firstChild) clone.appendChild(document.adoptNode(corpo.firstChild));
-    clone.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
-      'pointer-events:none;min-height:0;width:' + el.getBoundingClientRect().width + 'px';
-    el.parentNode.insertBefore(clone, el.nextSibling);
-    h = clone.getBoundingClientRect().height;
-    clone.parentNode.removeChild(clone);
-    if (h > el.getBoundingClientRect().height + 0.5) el.style.minHeight = h + 'px';
+    // ⚠️ Il clone del sottotitolo porta anche `.sub-acapo`, perché copia le classi: l'a capo
+    // pareggiato vale per tutte e due le lingue, e la riserva misura l'altra con lo stesso.
+    h = misuraAltraLingua(el, testo, function(c){ return c.getBoundingClientRect().height; });
+    // ⚠️ Il confronto è fra due misure zoomate, l'altezza si scrive in px di layout (`zoomDi`).
+    if (h > el.getBoundingClientRect().height + 0.5) el.style.minHeight = (h / zoomDi(el)) + 'px';
   }
 }
-// ⚠️ All'avvio le passate si tengono al minimo, come a Terramare dalla 2.69: mentre i font
-// sono in arrivo il ripasso differito NON parte (misurerebbe il font di ripiego, e
-// `fonts.ready` rifà comunque `reflowRows`), e `fonts.ready` salta il suo `reflowRows` se
-// l'ultimo è già girato coi font caricati e alla stessa larghezza.
+// ⚠️ `fonts.ready` salta il suo `reflowRows` se l'ultimo è già girato coi font caricati e alla
+// stessa larghezza, e lo stesso fa il ridimensionamento.
 // ⚠️ La chiave conta anche i font GIÀ CARICATI: prima che il browser cominci a scaricarli lo
 // stato vale già 'loaded', e senza il conteggio un `reflowRows` fatto in quell'istante
 // sembrerebbe uguale a quello coi font veri.
@@ -5945,24 +6153,36 @@ function chiaveReflow() {
   if (document.fonts) { st = document.fonts.status; document.fonts.forEach(function(f){ if (f.status === 'loaded') n++; }); }
   return st + '|' + n + '|' + (l ? l.clientWidth : 0);
 }
-// ⚠️ `freeNames` sta DOPO `tightenNames`: quello decide gli a-capo del nome, e la prova sulle
-// altezze va fatta sulla disposizione definitiva. `reflowApoLabels` sta dopo tutti e due,
-// perché misura dove sono finite le etichette.
 function reflowRows() {
-  tightenNames(); freeNames(); optimizeBipartite(); reflowApoLabels(); if (midlinesOn) placeCardMidlines(); riservaTesta();
+  _verifica++;
+  misuraCard(Array.prototype.slice.call(document.querySelectorAll('#rank-list .rank-item')));
+  if (midlinesOn) placeCardMidlines();
+  // ⚠️ Anche il titolone (15.68): chi chiama `reflowRows` ha cambiato la larghezza utile o la
+  // scala (lo zoom della Modalità XL col tasto `Z`, la vista divisa degli editor), e il titolo
+  // restava pareggiato sulla misura di prima. Col tasto `Z` il primo cambio lingua lo faceva
+  // passare da una riga a due, e con lui l'intestazione di 109px.
+  pareggiaTitolo(); riservaTesta();
   _reflowChiave = chiaveReflow();
-  if (!(document.fonts && document.fonts.status === 'loading')) freeRipasso();
 }
+// ⚠️⚠️ AL RIDIMENSIONAMENTO SI MISURA UNA VOLTA SOLA, A LARGHEZZA FERMA (15.68): la finestra e
+// l'osservatore della lista chiamano lo STESSO timer, e le card si rimisurano solo se la larghezza
+// della lista è cambiata davvero. Nella 15.67 partivano insieme `reflowRows`, il suo ripasso
+// differito e l'assestamento dell'osservatore, cioè tre misure complete per un ridimensionamento.
+// ⚠️ L'intestazione si ripareggia comunque: sopra la larghezza massima della lista la colonna non
+// cambia, mentre titolo, sottotitolo e introduzione seguono la finestra.
 var tightenTimer = null;
-window.addEventListener('resize', function() {
+function pianificaReflow() {
   clearTimeout(tightenTimer);
-  tightenTimer = setTimeout(function(){ reflowRows(); pareggiaTitolo(); }, 150);
-});
+  tightenTimer = setTimeout(function(){
+    if (chiaveReflow() !== _reflowChiave) reflowRows(); else { pareggiaTitolo(); riservaTesta(); }
+  }, 150);
+}
+window.addEventListener('resize', pianificaReflow);
 // ⚠️⚠️ L'OSSERVATORE GUARDA LA LARGHEZZA DELLA LISTA, e copre i cambi che `window.resize` NON
 // vede: la comparsa della barra di scorrimento, lo zoom del browser, un contenitore che si
 // stringe da sé. Si guarda la SOLA larghezza, ed è ciò che evita l'anello: l'assestamento
 // cambia le altezze, e un osservatore che guardasse anche quelle richiamerebbe sé stesso.
-var _roW = 0, _roTimer = null;
+var _roW = 0;
 (function(){
   var lista = document.getElementById('rank-list');
   if (!lista || !window.ResizeObserver) return;
@@ -5972,8 +6192,7 @@ var _roW = 0, _roTimer = null;
       var w = Math.round(voci[0].contentRect.width);
       if (w === _roW) return;
       _roW = w;
-      clearTimeout(_roTimer);
-      _roTimer = setTimeout(assestaRighe, 220);
+      pianificaReflow();
     }).observe(lista);
   } catch (e) {}
 })();
