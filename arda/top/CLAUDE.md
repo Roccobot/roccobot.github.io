@@ -33,10 +33,59 @@ i commenti erano il 41% del codice servito, e la pagina compressa scende da 252 
 - **Certificazione della `15.64`**: stato finale delle 249 card identico alla `15.63` su 21
   larghezze da 1280 a 320, stesse aperture dell'area admin con lo stesso esito, `admin.js`
   richiesto solo dopo l'ingresso, nessun errore nei due temi.
-  - ⚠️ **Il banco ha misurato anche una cosa PREESISTENTE**, identica nelle due versioni: da 8 a
-    68 card per larghezza cambiano altezza fra italiano e inglese. Qui la riserva anti-jitter
-    delle card al cambio lingua **non esiste** (è nata su Terramare), quindi non è una
-    regressione: portarla è una decisione dell'utente.
+  - Ⓘ **Il banco aveva misurato anche una cosa PREESISTENTE**: da 8 a 68 card per larghezza
+    cambiavano altezza fra italiano e inglese, perché qui la riserva anti-jitter non c'era.
+    **Dalla `15.67` c'è**: vedi la sezione qui sotto.
+
+## ↕️ Anti-jitter al cambio lingua
+
+Istruzione dell'utente, 2026-09-25: *voglio assolutamente l'anti-jitter verticale anche su Arda!
+Passo spesso da una lingua all'altra ed evitare che gli oggetti ballino è una mia fissazione.* È
+il meccanismo di Terramare, dove vive dalla `0.59`: le sue trappole misurate sono nel suo
+`CLAUDE.md` (§ 'L'ANTI-JITTER, e perché una misura sola diceva zero mentre l'occhio vedeva
+muoversi'), e qui restano le cose **di questo sito**.
+
+- **Come funziona, in breve**: ogni riga di testo che diverge fra le lingue (nome, `.rank-desc`,
+  `.rank-subtitle`, `.rank-title`, le etichette di tipo) porta la **gemella invisibile**
+  dell'altra lingua nella stessa cella di griglia, quindi prende la misura maggiore delle due.
+  `freeNames` toglie la riserva orizzontale del nome dove quattro prove dicono che l'altezza non
+  cambia; `riservaTesta` fa lo stesso per `subtitle`, `intro` e `footer-text` con un
+  `min-height` misurato su un clone.
+- **La misura**: sulla `15.66` cambiavano altezza da 11 a 69 card per larghezza, **409** su
+  undici larghezze; sulla `15.67` **zero** su 51 larghezze da 1440 a 320, con lista, intestazione
+  e footer identici al centesimo, anche dopo un ridimensionamento e nel tema chiaro. Etichette,
+  frecce, icone e simbolo di genere restano **alla stessa quota della `15.66`** (scarto massimo
+  0,002px su sette larghezze e due lingue): le micro-regolazioni non si toccano.
+- ⚠️⚠️ **Le card APOCRIFE non si liberano mai**: `reflowApoLabels` manda a capo le loro
+  etichette misurandone la posizione nella lingua corrente, e con la cella liberata quella
+  posizione cambierebbe con la lingua. Con la cella riservata è la stessa per costruzione.
+- ⚠️ **Il 'rimedio delle scartate' di Terramare (`nm-acapo`) qui non c'è**: su mobile la riga
+  del nome di questo sito è un blocco e non un flex, quindi `flex-basis` non avrebbe effetto.
+- ⚠️⚠️ **Tre trappole di questo sito, trovate dal banco**:
+  1. **La gemella di un'etichetta deve fare lo STESSO ripiego della faccia**: dove
+     `tipo_label` ha meno segmenti del tipo, il segmento mancante lo dà il tipo. Senza, la
+     seconda etichetta di Idril (`Elfa (Vanya)` / `Elf (Vanya)`) restava senza gemella e la card
+     ballava a 375px.
+  2. **Nelle etichette con la freccia lo slot è la `.ttx` STESSA**: un `inline-grid` annidato
+     dentro di lei allargava di un soffio la sua riga, e il testo scendeva di 0,06-0,8px.
+  3. **Il clone di `riservaTesta` tiene l'id**, al contrario di Terramare: `#footer-text` ha un
+     corpo suo nel blocco mobile, e senza id il clone misurava un'altezza falsa.
+- ⚠️ **Sul telefono la lingua si cambia DAL PANNELLO**, quindi anche lui deve stare fermo:
+  misurato, il riquadro e le righe non si muovono, e l'unico salto verticale (la nota in fondo,
+  che a 320px andava a capo in italiano soltanto) ha la sua gemella.
+- **Che cosa costa, misurato con CPU rallentata di quattro volte** (un telefono medio): nodi
+  della lista da 5.322 a **9.317**; cambio lingua da 0,92 a **1,06 s** su desktop e da 0,98 a
+  **1,39 s** a 390px; tempo bloccante al caricamento **+220-270 ms**. La parte grossa è la
+  costruzione della lista, più lunga col DOM doppio.
+  - ⚠️ **Nella stessa versione `tightenNames`, `optimizeBipartite` e `freeNames` leggono prima
+    tutte le card e poi scrivono**: alternate, ogni classe tolta faceva ricalcolare la lista
+    intera prima della misura dopo (`optimizeBipartite` a 390px da 400 a 155 ms). Il difetto
+    c'era già nella `15.66`, e il risultato non cambia perché ogni card si misura da sola.
+- **Che cosa si muove ancora, ed è dichiarato**: testi centrati che cambiano larghezza (titolo,
+  firma, tasto della lingua, link del footer) e le facce del Pannello dentro spazi fissi, tutti
+  in **orizzontale**; sopra i 900px la **nota con l'asterisco** del sottotitolo, che scende di
+  31px dentro un blocco che resta fermo (il sottotitolo inglese va su due righe); a 320px la
+  citazione del footer, che va a capo in un altro punto dentro un blocco fermo.
 
 ## 🧩 `innerHTML`: quanti restano e perché
 
