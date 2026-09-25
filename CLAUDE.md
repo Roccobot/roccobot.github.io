@@ -115,14 +115,18 @@ sessione:
      sessione.
      - ⚠️⚠️ **UN TOOL MCP NUOVO CHE CHIEDE SI AGGIUNGE IN DUE POSTI, SUBITO E SENZA CHIEDERE**:
        nelle impostazioni utente della sessione, con lo stesso comando, e **nella lista del
-       comando qui sopra**, così la sessione dopo lo porta da sé. Sempre **per nome intero**
-       (`mcp__<server>__<tool>`, coi nomi che la sessione mostra). ⚠️ **Mai un jolly sul
-       server**: dentro `Claude_Code_Remote` vivono anche `archive_session` e `create_session`,
-       che non c'entrano niente con lo scrivere un promemoria.
-     - ⚠️ **Il limite resta quello della via 3**: un file scritto **dentro** la sessione può
-       non entrare in vigore in quella sessione, quindi il prompt di oggi lo si paga comunque.
-       Solo lo script di setup dell'ambiente (via 1) lo evita dal primo turno, e la riga da
-       incollare là è questo stesso comando: quando la lista cambia, all'utente si ridà.
+       comando qui sopra**, che è anche la riga dello script di setup. Sempre **per nome
+       intero** (`mcp__<server>__<tool>`, coi nomi che la sessione mostra). ⚠️ **Mai un jolly
+       sul server**: dentro `Claude_Code_Remote` vivono anche `archive_session` e
+       `create_session`, che non c'entrano niente con lo scrivere un promemoria.
+     - ⚠️⚠️ **SCRITTO DENTRO LA SESSIONE, IL PERMESSO NON VALE PER QUELLA SESSIONE, ED È
+       MISURATO** (2026-09-25): aggiunti `subscribe_pr_activity` e `unsubscribe_pr_activity`
+       alle impostazioni utente, le due chiamate successive hanno chiesto di nuovo il consenso,
+       senza 'Consenti sempre'. E il file muore col container, quindi arriva a una sessione dopo
+       solo se il container è lo stesso. **Il rimedio che toglie il prompt è lo script di setup
+       dell'ambiente** (via 1), che gira prima che la sessione parta: la riga da incollare là è
+       questo stesso comando, e quando la lista cambia all'utente si ridà. ⚠️ **Non si promette
+       che la sessione dopo non chiederà**: senza lo script, chiederà.
      - Storico: accertato il 2026-08-26, quando `~/.claude/settings.json` **non esisteva
        affatto** perché il passo 0 era stato saltato, e l'utente ha dovuto autorizzare a mano
        `send_later` senza avere l'opzione durevole. Fino al 2026-09-25 il comando portava il solo
@@ -670,6 +674,10 @@ poi divergerebbe.
   stop-hook), col comando e la ragione per cui riallineare il branch remoto **elimina la
   causa** dell'avviso invece di farla interpretare ogni volta. Qui il branch principale è
   `master`.
+- ⚠️ **Dopo un merge la sottoscrizione alla PR non si toglie a mano**: la chiusura per merge
+  la toglie da sé, e lo dice l'evento `pull_request.closed` (*automatically unsubscribed*,
+  misurato il 2026-09-25). Una chiamata in più a `unsubscribe_pr_activity` è solo un prompt di
+  consenso in più per l'utente, finché quel tool chiede.
 - **Deploy Pages inceppato: come sbloccarlo.** Il merge su `master` NON basta a pubblicare:
   serve che il workflow `pages build and deployment` vada a buon fine. Se fallisce con
   `Deployment failed, try again later` (errore transitorio della piattaforma: il build
