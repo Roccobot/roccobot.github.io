@@ -1,7 +1,7 @@
 // favicon.js - rigenera la favicon di 'I Grandi di Arda'.
 //
 // PERCHÉ ESISTE: come le icone PWA, la favicon non è un disegno a parte ma IL
-// GLIFO DEL FAB, estratto da `arda/top/index.html`. Se il simbolo cambia, la
+// GLIFO DEL FAB, estratto da `arda/top/index.src.html` (il sorgente: `index.html` è generato). Se il simbolo cambia, la
 // favicon si rifà invece di divergere in silenzio. Vive qui come `pwaicons.js`
 // e per la stessa ragione: è specifico di quel progetto e il repo sempre
 // presente è questo.
@@ -24,7 +24,7 @@
 //    browser lo rasterizza nitido da sé.
 const { chromium } = require('playwright');
 const fs = require('fs');
-const HTML = fs.readFileSync('arda/top/index.html', 'utf8');
+const HTML = fs.readFileSync('arda/top/index.src.html', 'utf8');
 const D = HTML.match(/<path fill="currentColor" d="([^"]+)"\/><\/svg>';/)[1];
 
 // Non l'oro del FAB (#d2b25c), che sulla barra dei preferiti chiara stava a 1,76:1 e

@@ -1,7 +1,7 @@
 // pwaicons.js - rigenera le icone dell'app installabile di 'I Grandi di Arda'.
 //
 // PERCHÉ ESISTE: le icone non sono un disegno a parte, sono IL GLIFO DEL FAB.
-// Questo script lo estrae da `arda/top/index.html` e lo rasterizza, così se il
+// Questo script lo estrae da `arda/top/index.src.html` (il sorgente) e lo rasterizza, così se il
 // simbolo o i colori del FAB cambiano le icone si rifanno invece di divergere in
 // silenzio. Vive qui come `realfont.js`, per la stessa ragione: è specifico di
 // quel progetto e il repo sempre presente è questo.
@@ -18,7 +18,7 @@
 // ridimensionato, che è come la prima passata ha prodotto icone tagliate.
 const { chromium } = require('playwright');
 const fs = require('fs');
-const HTML = fs.readFileSync('arda/top/index.html', 'utf8');
+const HTML = fs.readFileSync('arda/top/index.src.html', 'utf8');
 const path = HTML.match(/<path fill="currentColor" d="([^"]+)"\/><\/svg>';/)[1];
 const GW = 452, GH = 605.87;
 

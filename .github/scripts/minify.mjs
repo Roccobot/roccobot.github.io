@@ -1,9 +1,10 @@
-// Genera `earthsea/top/index.html` minificato da `earthsea/top/index.src.html`, e dalla 2.71
-// anche `earthsea/top/admin.js` da `earthsea/top/admin.src.js`.
+// Genera `<cartella>/index.html` minificato da `<cartella>/index.src.html`, e `admin.js` da
+// `admin.src.js` se c'è. Lo usano 'I Grandi di Terramare' (earthsea/top, dalla 2.70) e
+// 'I Grandi di Arda' (arda/top, dalla 15.64).
 //
-// PERCHÉ C'È: nel sorgente di 'I Grandi di Terramare' i commenti erano il 61% del codice
-// servito (563 KB su 918 alla 2.67), e ogni visitatore li scaricava. Il sorgente resta
-// commentato e si modifica lui; questo file ne ricava la pagina pubblicata.
+// PERCHÉ C'È: nei due sorgenti i commenti erano il 61% (Terramare) e il 41% (Arda) del codice
+// servito, e ogni visitatore li scaricava. Il sorgente resta commentato e si modifica lui;
+// questo file ne ricava la pagina pubblicata.
 //
 // CHE COSA FA, e che cosa NO:
 // - minifica con esbuild ogni <script> in linea e ogni <style>, senza commenti;
@@ -13,14 +14,17 @@
 // - NON rinomina i nomi globali: in uno script classico esbuild tiene i simboli di primo
 //   livello, che servono ai gestori scritti nel markup e agli accessi `window[nome]`.
 //
-// Uso: `node .github/scripts/earthsea-minify.mjs` dalla radice del repo. La GitHub Action
-// `earthsea-minify.yml` lo lancia a ogni push che tocca il sorgente.
+// Uso: `node .github/scripts/minify.mjs earthsea/top` (o `arda/top`) dalla radice del repo. Le
+// GitHub Action `earthsea-minify.yml` e `arda-minify.yml` lo lanciano a ogni push che tocca i
+// sorgenti del loro progetto.
 import { transform } from 'esbuild';
 import fs from 'node:fs';
 
-const SRC = 'earthsea/top/index.src.html';
-const OUT = 'earthsea/top/index.html';
-const BANNER = '<!-- FILE GENERATO da index.src.html con .github/scripts/earthsea-minify.mjs: si modifica il sorgente, mai questo file. -->\n';
+const DIR = (process.argv[2] || '').replace(/\/+$/, '');
+if (!DIR || !fs.existsSync(DIR + '/index.src.html')) { console.error('uso: node .github/scripts/minify.mjs <cartella con index.src.html>'); process.exit(1); }
+const SRC = DIR + '/index.src.html';
+const OUT = DIR + '/index.html';
+const BANNER = '<!-- FILE GENERATO da index.src.html con .github/scripts/minify.mjs: si modifica il sorgente, mai questo file. -->\n';
 
 const src = fs.readFileSync(SRC, 'utf8');
 const parti = [];
@@ -51,10 +55,11 @@ if (!out.includes(BANNER)) out = BANNER + out;
 fs.writeFileSync(OUT, out);
 console.log(`${SRC}: ${src.length.toLocaleString('it-IT')} caratteri -> ${OUT}: ${out.length.toLocaleString('it-IT')}`);
 
-// Il codice dell'amministrazione (dalla 2.71): stesso trattamento, file a parte. La pagina lo
-// scarica solo al primo ingresso nell'area admin (vedi `caricaAdmin` nel sorgente).
-const ADMIN_SRC = 'earthsea/top/admin.src.js', ADMIN_OUT = 'earthsea/top/admin.js';
+// Il codice dell'amministrazione, se il progetto lo tiene a parte: stesso trattamento, file a
+// parte. La pagina lo scarica solo al primo ingresso nell'area admin (vedi `caricaAdmin`).
+const ADMIN_SRC = DIR + '/admin.src.js', ADMIN_OUT = DIR + '/admin.js';
+if (!fs.existsSync(ADMIN_SRC)) process.exit(0);
 const adminSrc = fs.readFileSync(ADMIN_SRC, 'utf8');
 const adminMin = await transform(adminSrc, { loader: 'js', minify: true, legalComments: 'none', charset: 'utf8' });
-fs.writeFileSync(ADMIN_OUT, '// FILE GENERATO da admin.src.js con .github/scripts/earthsea-minify.mjs: si modifica il sorgente, mai questo file.\n' + adminMin.code);
+fs.writeFileSync(ADMIN_OUT, '// FILE GENERATO da admin.src.js con .github/scripts/minify.mjs: si modifica il sorgente, mai questo file.\n' + adminMin.code);
 console.log(`${ADMIN_SRC}: ${adminSrc.length.toLocaleString('it-IT')} caratteri -> ${ADMIN_OUT}: ${adminMin.code.length.toLocaleString('it-IT')}`);

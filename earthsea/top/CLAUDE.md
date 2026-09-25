@@ -26,7 +26,7 @@
 
 Dalla `2.70` (collaudo della `2.67`, approvato dall'utente il 2026-09-25). Il sorgente
 commentato è **`index.src.html`**; la pagina pubblicata, **`index.html`**, la genera la GitHub
-Action `.github/workflows/earthsea-minify.yml` con `.github/scripts/earthsea-minify.mjs` a ogni
+Action `.github/workflows/earthsea-minify.yml` con `.github/scripts/minify.mjs earthsea/top` (dalla 15.64 di Arda lo script è condiviso fra i due siti) a ogni
 push su `master` che tocca il sorgente, e la committa lei (`github-actions[bot]`). Il perché è
 il peso: i commenti erano il 61% del codice servito, e la pagina compressa scende da circa 316
 a **92,5 KB**.
@@ -35,7 +35,7 @@ a **92,5 KB**.
   dello sdoppiamento, e i numeri di riga che citano valgono in `index.src.html`. Chi apre
   `index.html` trova una riga sola di codice minificato, e una modifica fatta lì la
   cancella il build successivo.
-- **Chi prova in locale** lancia `node .github/scripts/earthsea-minify.mjs` dalla radice (con
+- **Chi prova in locale** lancia `node .github/scripts/minify.mjs earthsea/top` dalla radice (con
   esbuild installato) e serve la cartella come sempre; `index.src.html` si apre anche da sé,
   perché le sue risorse hanno gli stessi percorsi.
 - ⚠️ **Il badge di ripiego della versione si scrive nel sorgente**, come tutto il resto, e
