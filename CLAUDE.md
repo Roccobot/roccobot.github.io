@@ -94,34 +94,39 @@ quindi è da qui che parte tutto il resto (scelta dell'utente, 2026-07-29).
 I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
 sessione:
 
-0. ⚠️⚠️ **PRIMA DI TUTTO, il permesso `Artifact` nelle impostazioni UTENTE**, senza chiederlo
-   e senza annunciarlo (istruzione dell'utente, 2026-08-23: *fa' in modo che questa cosa
-   avvenga ad ogni nuova sessione, all'inizio, senza che lo debba chiedere io*). Il comando è
-   **idempotente** e conserva le altre chiavi di un file già esistente:
+0. ⚠️⚠️ **PRIMA DI TUTTO, i permessi di `Artifact` e dei tool MCP nelle impostazioni UTENTE**,
+   senza chiederlo e senza annunciarlo (istruzione dell'utente, 2026-08-23: *fa' in modo che
+   questa cosa avvenga ad ogni nuova sessione, all'inizio, senza che lo debba chiedere io*; e per
+   i tool MCP, 2026-09-25: *questo devi farlo sempre*). Il comando è **idempotente** e conserva le
+   altre chiavi di un file già esistente:
    ```
-   python3 -c "import json,os;p=os.path.expanduser('~/.claude/settings.json');os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault('permissions',{}).setdefault('allow',[]);'Artifact' in al or al.append('Artifact');json.dump(d,open(p,'w'),indent=1)"
+   python3 -c "import json,os;p=os.path.expanduser('~/.claude/settings.json');os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault('permissions',{}).setdefault('allow',[]);[al.append(t) for t in ['Artifact','mcp__github__create_pull_request','mcp__github__merge_pull_request','mcp__Claude_Code_Remote__subscribe_pr_activity','mcp__Claude_Code_Remote__unsubscribe_pr_activity','mcp__Claude_Code_Remote__send_later','mcp__Claude_Code_Remote__add_repo','mcp__Claude_Code_Remote__register_repo_root'] if t not in al];json.dump(d,open(p,'w'),indent=1)"
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. Il perché la regola non
    basti scritta altrove, e le altre due vie che la coprono, vivono in § '🖼️ Artefatti'.
-   - ⚠️⚠️ **Quel file è anche l'unica casa possibile dei permessi MCP, e il comando qui sopra
-     NON li porta**: copre `Artifact` e basta. È una lacuna, non una scelta, perché gli
-     strumenti **MCP** sono uno dei due soli punti in cui si vede l'assenza delle
-     impostazioni di progetto (l'altro è la modifica della configurazione: vedi la trappola in
-     fondo a questo file). Quindi nelle sessioni coi repo affiancati un tool MCP chiede il
-     consenso **e non offre 'Consenti sempre'**, che è una violazione della regola universale
-     'Offrire sempre Consenti sempre' (`Roccobot.md`, § '⚙️ Automazione e interazioni') di cui
-     nessuno ha colpa: il prompt non lo compone la sessione.
-     - **Come si rimedia**: si aggiungono alla stessa lista `allow` i tool MCP **per nome
-       intero** (`mcp__<server>__<tool>`), man mano che chiedono. ⚠️ **Mai un jolly sul
-       server**: dentro `claude-code-remote` vivono anche `archive_session` e
-       `create_session`, che non c'entrano niente con lo scrivere un promemoria.
+   - ⚠️⚠️ **Quel file è anche l'unica casa possibile dei permessi MCP, e dal 2026-09-25 il
+     comando li porta**: gli strumenti **MCP** sono uno dei due soli punti in cui si vede
+     l'assenza delle impostazioni di progetto (l'altro è la modifica della configurazione: vedi
+     la trappola in fondo a questo file), quindi nelle sessioni coi repo affiancati un tool MCP
+     che non è in quella lista chiede il consenso **e non offre 'Consenti sempre'**. È una
+     violazione della regola universale 'Offrire sempre Consenti sempre' (`Roccobot.md`,
+     § '⚙️ Automazione e interazioni') di cui nessuno ha colpa: il prompt non lo compone la
+     sessione.
+     - ⚠️⚠️ **UN TOOL MCP NUOVO CHE CHIEDE SI AGGIUNGE IN DUE POSTI, SUBITO E SENZA CHIEDERE**:
+       nelle impostazioni utente della sessione, con lo stesso comando, e **nella lista del
+       comando qui sopra**, così la sessione dopo lo porta da sé. Sempre **per nome intero**
+       (`mcp__<server>__<tool>`, coi nomi che la sessione mostra). ⚠️ **Mai un jolly sul
+       server**: dentro `Claude_Code_Remote` vivono anche `archive_session` e `create_session`,
+       che non c'entrano niente con lo scrivere un promemoria.
      - ⚠️ **Il limite resta quello della via 3**: un file scritto **dentro** la sessione può
        non entrare in vigore in quella sessione, quindi il prompt di oggi lo si paga comunque.
-       Solo lo script di setup dell'ambiente (via 1) lo evita dal primo turno.
+       Solo lo script di setup dell'ambiente (via 1) lo evita dal primo turno, e la riga da
+       incollare là è questo stesso comando: quando la lista cambia, all'utente si ridà.
      - Storico: accertato il 2026-08-26, quando `~/.claude/settings.json` **non esisteva
        affatto** perché il passo 0 era stato saltato, e l'utente ha dovuto autorizzare a mano
-       `send_later` senza avere l'opzione durevole.
+       `send_later` senza avere l'opzione durevole. Fino al 2026-09-25 il comando portava il solo
+       `Artifact`, e i tool MCP si aggiungevano a mano man mano che chiedevano.
    - ⚠️⚠️ **E NELLO STESSO PASSO SI CONTROLLA CLAUDE DESIGN, che dalla richiesta dell'utente
      del 2026-09-02 va agganciato SEMPRE** (*aggiorna le routine delle nuove sessioni in modo
      che sia sempre agganciato anche Claude Design*). Là vive il **design system** dei
