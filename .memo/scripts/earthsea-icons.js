@@ -2,7 +2,7 @@
 // 'I Grandi di Terramare'.
 //
 // PERCHÉ ESISTE: come per 'I Grandi di Arda', favicon e icone PWA non sono un
-// disegno a parte ma IL GLIFO DEL FAB, estratto da `earthsea/top/index.html`.
+// disegno a parte ma IL GLIFO DEL FAB, estratto da `earthsea/top/index.src.html` (il sorgente: `index.html` è generato e minificato).
 // Se il simbolo cambia, le icone si rifanno invece di divergere in silenzio, e
 // in questo progetto il simbolo è cambiato QUATTRO volte in tre giorni: qui la
 // divergenza non è un rischio teorico.
@@ -31,7 +31,7 @@
 // il resto della catena tutto verde.
 const { chromium } = require('playwright');
 const fs = require('fs');
-const HTML = fs.readFileSync('earthsea/top/index.html', 'utf8');
+const HTML = fs.readFileSync('earthsea/top/index.src.html', 'utf8');
 const DS = JSON.parse(HTML.match(/var FAB_LOGO_D = (\[[\s\S]*?\]);/)[1]);
 
 // ── FAVICON ──────────────────────────────────────────────────────────────────
@@ -91,7 +91,7 @@ const FAV_AMOUNT = 0.35;
 // lo stesso colore del FAB in tema chiaro come sfondo dell'icona e della schermata della
 // webapp*), cioè `#267d71`, la tinta media del titolone chiaro. Quindi non è un valore
 // autonomo: **si cambia quando cambia quel disco**, e il posto dove leggerlo è
-// `html[data-theme="light"] #ctrl-fab` in `earthsea/top/index.html`.
+// `html[data-theme="light"] #ctrl-fab` in `earthsea/top/index.src.html`.
 // ⚠️ Il TEMA di riferimento è cambiato, e va saputo per non 'ripararlo': fino alla 0.65
 // era il disco del tema SCURO (`#3072a1`, istruzione del 2026-08-23), e prima ancora
 // `#78adc2` per un giorno solo. Chi trova uno di quei due in una nota sa a che giro

@@ -1,7 +1,7 @@
 # I vettoriali delle icone badge di 'I Grandi di Terramare'
 
 ⚠️ **Sono i SORGENTI delle icone in uso, non proposte**: da questi nasce il markup in linea di
-`BADGE_ICON` e `GENDER_ICON` in [`earthsea/top/index.html`](../../../earthsea/top/index.html),
+`BADGE_ICON` e `GENDER_ICON` in [`earthsea/top/index.src.html`](../../../earthsea/top/index.src.html),
 e ogni file porta il nome della sua **icona**, non quello con cui è arrivato. Vivono sotto
 `.memo/`, che GitHub Pages non pubblica, perché il sito porta gli SVG dentro la pagina e un
 file in più sarebbe peso servito a nessuno.
