@@ -8,6 +8,30 @@
 > derogabili, lingua, git e go-live) vivono nel `CLAUDE.md` di **root**, che si carica
 > sempre: quello resta l'hub, e questo file non lo sostituisce.
 
+## ⚠️⚠️⚠️ SI MODIFICA `index.src.html`: `index.html` È GENERATO
+
+Dalla `2.70` (collaudo della `2.67`, approvato dall'utente il 2026-09-25). Il sorgente
+commentato è **`index.src.html`**; la pagina pubblicata, **`index.html`**, la genera la GitHub
+Action `.github/workflows/earthsea-minify.yml` con `.github/scripts/earthsea-minify.mjs` a ogni
+push su `master` che tocca il sorgente, e la committa lei (`github-actions[bot]`). Il perché è
+il peso: i commenti erano il 61% del codice servito, e la pagina compressa scende da circa 316
+a **92,5 KB**.
+
+- ⚠️⚠️ **In tutto questo file, 'index.html' vuol dire il SORGENTE**: le note sono nate prima
+  dello sdoppiamento, e i numeri di riga che citano valgono in `index.src.html`. Chi apre
+  `index.html` trova una riga sola di codice minificato, e una modifica fatta lì la
+  cancella il build successivo.
+- **Chi prova in locale** lancia `node .github/scripts/earthsea-minify.mjs` dalla radice (con
+  esbuild installato) e serve la cartella come sempre; `index.src.html` si apre anche da sé,
+  perché le sue risorse hanno gli stessi percorsi.
+- ⚠️ **Il badge di ripiego della versione si scrive nel sorgente**, come tutto il resto, e
+  `datiVersion` resta in `dati.js`. Il bump di una modifica al sito tocca quindi
+  `index.src.html` e `dati.js`, e `index.html` lo segue da sé col build.
+- ⚠️ **Il build NON tocca gli spazi del markup e NON rinomina i nomi globali** (lo dice il
+  commento in testa allo script): i gestori scritti nel markup e gli accessi `window[nome]`
+  restano validi. La certificazione della `2.70`: stato finale delle 222 card identico al
+  sorgente su 21 larghezze, zero jitter fra le lingue, nessun errore nei due temi.
+
 ## ⚠️⚠️ Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti
 
 Dal 2026-08-23 (`0.52`) il dataset porta le **100 schede** dello Schedario compilate
