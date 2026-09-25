@@ -100,7 +100,7 @@ sessione:
    i tool MCP, 2026-09-25: *questo devi farlo sempre*). Il comando è **idempotente** e conserva le
    altre chiavi di un file già esistente:
    ```
-   python3 -c "import json,os;p=os.path.expanduser('~/.claude/settings.json');os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault('permissions',{}).setdefault('allow',[]);[al.append(t) for t in ['Artifact','mcp__github__create_pull_request','mcp__github__merge_pull_request','mcp__Claude_Code_Remote__subscribe_pr_activity','mcp__Claude_Code_Remote__unsubscribe_pr_activity','mcp__Claude_Code_Remote__send_later','mcp__Claude_Code_Remote__add_repo','mcp__Claude_Code_Remote__register_repo_root'] if t not in al];json.dump(d,open(p,'w'),indent=1)"
+   python3 -c "import json,os;p=os.path.expanduser('~/.claude/settings.json');os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault('permissions',{}).setdefault('allow',[]);[al.append(t) for t in ['Artifact','mcp__github__create_pull_request','mcp__github__merge_pull_request','mcp__Claude_Code_Remote__subscribe_pr_activity','mcp__Claude_Code_Remote__unsubscribe_pr_activity','mcp__Claude_Code_Remote__send_later','mcp__Claude_Code_Remote__add_repo','mcp__Claude_Code_Remote__register_repo_root','mcp__Claude_Code_Remote__create_trigger','mcp__Claude_Code_Remote__list_triggers','mcp__Claude_Code_Remote__get_trigger','mcp__Claude_Code_Remote__update_trigger','mcp__Claude_Code_Remote__delete_trigger','mcp__github__actions_run_trigger','mcp__github__actions_list','mcp__github__actions_get','mcp__github__get_release_by_tag'] if t not in al];json.dump(d,open(p,'w'),indent=1)"
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. Il perché la regola non
@@ -119,6 +119,12 @@ sessione:
        intero** (`mcp__<server>__<tool>`, coi nomi che la sessione mostra). ⚠️ **Mai un jolly
        sul server**: dentro `Claude_Code_Remote` vivono anche `archive_session` e
        `create_session`, che non c'entrano niente con lo scrivere un promemoria.
+       - ⚠️ **`fire_trigger` resta fuori, e prima di aggiungerlo si chiede**: avvia subito una
+         routine, cioè una sessione, come `create_session`. Gli altri cinque dei trigger sono in
+         lista per sua richiesta (2026-09-25: *non puoi aggiungere tu quello che l'altra
+         sessione era sul punto di mergiare?*), compresi `create_trigger` e `update_trigger`,
+         che programmano sessioni anche ricorrenti. I quattro di GitHub Actions sono quelli con
+         cui una sessione lancia e verifica il rilascio di AIV.
      - ⚠️⚠️ **SCRITTO DENTRO LA SESSIONE, IL PERMESSO NON VALE PER QUELLA SESSIONE, ED È
        MISURATO** (2026-09-25): aggiunti `subscribe_pr_activity` e `unsubscribe_pr_activity`
        alle impostazioni utente, le due chiamate successive hanno chiesto di nuovo il consenso,
