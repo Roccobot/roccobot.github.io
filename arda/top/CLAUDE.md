@@ -1983,7 +1983,13 @@ svuotarla dal proprio lato. Il parametro va messo in **entrambi** i meta, `og:im
 
 - **Formato JPEG o PNG, non WebP**: diversi client social non lo mostrano affatto, e
   un'anteprima non degrada, sparisce.
-- ⚠️ **L'immagine è dell'utente e non si ricomprime.**
+- ⚠️⚠️ **Il tetto è 300 KB: ricompressa nella `15.63` su istruzione dell'utente** (2026-09-25:
+  *comprimi esattamente come Terramare*). WhatsApp tende a non mostrare l'anteprima sopra i 300
+  KB circa, e l'originale ne pesava 318.729. Adesso pesa **245.396 byte**: JPEG progressivo,
+  qualità 95, **senza sottocampionamento dei colori** (4:4:4), profilo colore conservato, PSNR
+  47,1 dB sull'originale. Il procedimento è quello di Terramare: la qualità più alta sotto i
+  300.000 byte fra i tre sottocampionamenti, scegliendo il PSNR migliore. La nota che la diceva
+  'da non ricomprimere' descriveva lo stato fino alla `15.62`; il `?v=` è salito a `3`.
 
 ## 🧹 Asset del progetto
 
