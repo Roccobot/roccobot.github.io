@@ -283,6 +283,24 @@ def dentro_identificatore(riga, col):
     return prima in ("-", "_")
 
 
+def dentro_stringa(riga, col):
+    """Vero se l'apostrofo del token CHIUDE una stringa di codice invece di essere un accento.
+
+    \u26a0\ufe0f Il criterio \u00e8 la PARIT\u00c0 degli apici che precedono il token, e non il segno prima come
+    in `dentro_identificatore`: un numero dispari vuol dire che una stringa \u00e8 aperta, quindi
+    l'apice del token la chiude. Il caso vero, misurato il 2026-09-25 sulle trentacinque skill
+    di terzi entrate in `.claude/skills/`: `['cat-file', '-e', 'x']` porta il token `e'` col
+    carattere `l` davanti, cio\u00e8 in mezzo alla parola `file`, e il segno prima non dice niente.
+    \u26a0\ufe0f Con lui cade la prima stesura, che guardava quel segno: copriva `{ to: 'e' }` e non
+    `'cat-file'`, cio\u00e8 met\u00e0 dei casi dello stesso file.
+    \u26a0\ufe0f Vale nei SOLI file che non sono prosa, e la restrizione non \u00e8 prudenza generica: in un
+    testo italiano un apice apre una citazione (`si scrive 'perch\u00e9'`), e l\u00e0 la parit\u00e0 direbbe
+    esattamente il contrario del vero. I file di regole sono coperti dal modo a file intero,
+    dove questa esenzione non esiste.
+    """
+    return riga[:col - 1].count("'") % 2 == 1
+
+
 VIETATI = {
     "\u2014": "em-dash: usa due punti, virgole o parentesi",
     "\u2013": "en-dash: usa il trattino breve, anche negli intervalli numerici (dal 2026-08-01)",
@@ -1250,8 +1268,12 @@ def main_diff():
             # qualunque sorgente. La riga in un'altra lingua salta le regole italiane sugli
             # accenti (vedi `altra_lingua`), e il token incollato a un identificatore non è
             # prosa (vedi `dentro_identificatore`).
+            # ⚠️ La terza uscita è `dentro_stringa`, e vale nei soli file che non sono prosa:
+            # il perché, e il caso misurato che l'ha fatta nascere, vivono là.
             if ("accento" in motivo and not altra_lingua(righe[n - 1])
-                    and not dentro_identificatore(righe[n - 1], col)):
+                    and not dentro_identificatore(righe[n - 1], col)
+                    and not (not f.endswith((".md", ".txt"))
+                             and dentro_stringa(righe[n - 1], col))):
                 blocca.append((f, righe[n - 1].strip()[:100], etichetta(ch), motivo))
         for n, tok, motivo in accent_warnings(testo):
             if altra_lingua(righe[n - 1]):
