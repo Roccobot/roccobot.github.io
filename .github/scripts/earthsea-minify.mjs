@@ -1,4 +1,5 @@
-// Genera `earthsea/top/index.html` minificato da `earthsea/top/index.src.html`.
+// Genera `earthsea/top/index.html` minificato da `earthsea/top/index.src.html`, e dalla 2.71
+// anche `earthsea/top/admin.js` da `earthsea/top/admin.src.js`.
 //
 // PERCHÉ C'È: nel sorgente di 'I Grandi di Terramare' i commenti erano il 61% del codice
 // servito (563 KB su 918 alla 2.67), e ogni visitatore li scaricava. Il sorgente resta
@@ -49,3 +50,11 @@ out = out.replace(/^(<!doctype html>\s*)/i, '$1' + BANNER);
 if (!out.includes(BANNER)) out = BANNER + out;
 fs.writeFileSync(OUT, out);
 console.log(`${SRC}: ${src.length.toLocaleString('it-IT')} caratteri -> ${OUT}: ${out.length.toLocaleString('it-IT')}`);
+
+// Il codice dell'amministrazione (dalla 2.71): stesso trattamento, file a parte. La pagina lo
+// scarica solo al primo ingresso nell'area admin (vedi `caricaAdmin` nel sorgente).
+const ADMIN_SRC = 'earthsea/top/admin.src.js', ADMIN_OUT = 'earthsea/top/admin.js';
+const adminSrc = fs.readFileSync(ADMIN_SRC, 'utf8');
+const adminMin = await transform(adminSrc, { loader: 'js', minify: true, legalComments: 'none', charset: 'utf8' });
+fs.writeFileSync(ADMIN_OUT, '// FILE GENERATO da admin.src.js con .github/scripts/earthsea-minify.mjs: si modifica il sorgente, mai questo file.\n' + adminMin.code);
+console.log(`${ADMIN_SRC}: ${adminSrc.length.toLocaleString('it-IT')} caratteri -> ${ADMIN_OUT}: ${adminMin.code.length.toLocaleString('it-IT')}`);

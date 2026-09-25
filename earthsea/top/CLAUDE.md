@@ -8,7 +8,21 @@
 > derogabili, lingua, git e go-live) vivono nel `CLAUDE.md` di **root**, che si carica
 > sempre: quello resta l'hub, e questo file non lo sostituisce.
 
-## ⚠️⚠️⚠️ SI MODIFICA `index.src.html`: `index.html` È GENERATO
+## ⚠️⚠️⚠️ SI MODIFICANO `index.src.html` E `admin.src.js`: `index.html` E `admin.js` SONO GENERATI
+
+- ⚠️⚠️ **IL CODICE DELL'AMMINISTRAZIONE VIVE IN `admin.src.js`**, sempre dalla `2.70`: 35 funzioni
+  e 4 tabelle costanti, trovate col **grafo delle chiamate** (erano raggiungibili solo da
+  `openAdminGate`). La pagina pubblicata lo scarica come `admin.js` al **primo ingresso**
+  nell'area admin, attraverso il segnaposto `openAdminGate` e `caricaAdmin` del sorgente; chi
+  non entra non lo scarica mai (31 KB compressi risparmiati, e la pagina scende a **62,8 KB**).
+  - ⚠️ **Una funzione nuova dell'amministrazione va in `admin.src.js`**. Se il codice pubblico
+    ne chiamasse direttamente una seconda, oltre a `openAdminGate`, quella chiamata fallirebbe
+    prima dell'ingresso: serve un altro segnaposto come il primo.
+  - ⚠️ **Le variabili che fotografano la configurazione al caricamento** (`CARDCOLORS_SAVED`,
+    `BADGE_ADJUST_SAVED`, `SITE_FLAGS_SAVED`) sono rimaste nel sorgente principale anche se le
+    usa solo l'amministrazione: spostarle avrebbe spostato l'istante della fotografia.
+  - I due script condividono lo scope globale, quindi `admin.src.js` usa per nome tutto quello
+    che vive in `index.src.html`.
 
 Dalla `2.70` (collaudo della `2.67`, approvato dall'utente il 2026-09-25). Il sorgente
 commentato è **`index.src.html`**; la pagina pubblicata, **`index.html`**, la genera la GitHub
