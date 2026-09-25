@@ -6439,6 +6439,19 @@ per primo misura dunque lo stato dell'**ultima** larghezza, non di questa.
   senza, sarebbe un anello.
 - ⚠️ **Il ciclo vive nel ripasso DIFFERITO e non in `reflowRows`**: la prima resa resta a una
   passata, e la convergenza si paga una volta sola, quando la pagina è già disegnata.
+- ⚠️⚠️ **ALL'AVVIO LE PASSATE SCENDONO DA SETTE A QUATTRO DALLA `2.69`**, con due guardie che
+  il commento sopra `reflowRows` descrive: il ripasso differito non parte mentre i font sono
+  in arrivo (misurerebbe il font di ripiego, e `fonts.ready` lo rifà comunque), e
+  `fonts.ready` salta il suo `reflowRows` quando la **chiave** (stato dei font, quanti ne
+  sono caricati, larghezza della lista) è la stessa dell'ultimo. ⚠️ **Il doppio colpo di
+  `freeRipasso` resta**, e le quattro sono il minimo che lo rispetta.
+  - **Certificazione**: stato finale identico al riferimento della `2.68` (classi e altezze
+    di tutte le 222 card) e zero card di altezza diversa fra le lingue, su 21 larghezze da
+    1280 a 320 e alla seconda visita coi font in cache. **Guadagno**, Lighthouse mobile in
+    locale, mediana di tre: blocco da 428 a 100 ms, thread principale da 7,4 a 5,5 s.
+  - ⚠️ **Il conteggio dei font caricati nella chiave non è un ornamento**: prima che il browser
+    cominci a scaricarli lo stato vale già `loaded`, e senza quel numero un `reflowRows`
+    fatto in quell'istante sembrerebbe uguale a quello coi font veri.
 
 ##### ⚠️⚠️ E `name-tight` SI DECIDE SULLA CELLA RISERVATA, o il jitter torna da un'altra parte
 

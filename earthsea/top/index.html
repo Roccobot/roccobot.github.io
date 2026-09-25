@@ -3617,7 +3617,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.68</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.69</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7834,7 +7834,30 @@ function riservaTesta() {
     if (h > el.getBoundingClientRect().height + 0.5) el.style.minHeight = h + 'px';
   }
 }
-function reflowRows() { tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); riservaTesta(); freeRipasso(); }
+// ⚠️⚠️ ALL'AVVIO LE PASSATE ERANO SETTE, e due rimedi le portano a tre (2.69, dal collaudo
+// della 2.67: circa 210 ms l'una su un telefono medio). Nessuno dei due tocca il doppio colpo
+// di `freeRipasso`, che ha la sua ragione misurata qui sopra.
+// 1. Mentre i font sono in arrivo il ripasso differito NON parte: misurerebbe il testo nel
+//    font di ripiego, e `fonts.ready` rifà comunque `reflowRows` col suo ripasso appena i
+//    font arrivano. La prima resa resta, perché serve a disegnare subito una pagina decente.
+// 2. `fonts.ready` salta il suo `reflowRows` se l'ultimo è già girato coi font caricati e
+//    alla stessa larghezza (il caso dei font in cache): rifarlo darebbe lo stesso stato.
+// La certificazione è quella dell'anti-jitter: stesso stato finale delle card e zero card di
+// altezza diversa fra le due lingue, su 21 larghezze da 1280 a 320.
+var _reflowChiave = '';
+// ⚠️ La chiave conta anche i font GIÀ CARICATI, non il solo stato: prima che il browser
+// cominci a scaricarli lo stato vale già 'loaded', e senza il conteggio un `reflowRows` fatto
+// in quell'istante sembrerebbe uguale a quello coi font veri, e il salto scatterebbe a torto.
+function chiaveReflow() {
+  var l = document.getElementById('rank-list'), n = 0, st = 'loaded';
+  if (document.fonts) { st = document.fonts.status; document.fonts.forEach(function(f){ if (f.status === 'loaded') n++; }); }
+  return st + '|' + n + '|' + (l ? l.clientWidth : 0);
+}
+function reflowRows() {
+  tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); riservaTesta();
+  _reflowChiave = chiaveReflow();
+  if (!(document.fonts && document.fonts.status === 'loading')) freeRipasso();
+}
 var tightenTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(tightenTimer);
@@ -7868,7 +7891,10 @@ var _roW = 0, _roTimer = null;
     }).observe(lista);
   } catch (e) {}
 })();
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reflowRows(); pareggiaTitolo(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){
+  if (chiaveReflow() !== _reflowChiave) reflowRows();
+  pareggiaTitolo();
+});
 
 
 document.addEventListener('keydown', function(e) {
