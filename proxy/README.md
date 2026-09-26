@@ -43,7 +43,7 @@ https://arda-admin-proxy.<tuo-sottodominio>.workers.dev
 ```
 
 Quell'URL va messo nel sito (costante `ADMIN_PROXY_URL_DEFAULT` in
-`arda/top/index.html`, oppure impostabile al volo dal campo **Proxy**
+`index.src.html` del repo `Roccobot/arda`, oppure impostabile al volo dal campo **Proxy**
 nell'editor admin). Comunicalo e lo cablo nel codice.
 
 ## Deploy dal dashboard (senza CLI)

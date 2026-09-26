@@ -11,7 +11,7 @@
 
 | progetto | cartella | file di regole |
 |---|---|---|
-| **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre) | `arda/top/` | [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md) |
+| **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/arda` | il `CLAUDE.md` di quel repo |
 | **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/earthsea` | il `CLAUDE.md` di quel repo |
 | **Regole AdBlock** ('Roccobot ABP'; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ABP` | il `CLAUDE.md` di quel repo |
 | **Userscript** (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/userscripts` | il `CLAUDE.md` di quel repo |
@@ -50,9 +50,9 @@ vive in AIV e non qui
     prende quel numero per il peso dell'app lo dimezza senza accorgersene, ed è già successo
     qui.
 - ⚠️ **Un commit su `master` che arriva da `github-actions[bot]` e tocca `AIV/` è quello**, non
-  un salvataggio admin: è la seconda sorgente di commit esterni di questo repo, dopo l'editor di
-  'I Grandi di Arda', e conta come quella per la regola dell'allineamento al remoto. (L'editor
-  di Terramare era la terza fino al 2026-09-26: da allora committa nel repo `Roccobot/earthsea`.)
+  un salvataggio admin: è l'unica sorgente di commit esterni di questo repo, e conta per la
+  regola dell'allineamento al remoto. (Gli editor admin di Arda e di Terramare erano le altre
+  due fino al 2026-09-26: da allora committano nei repo `Roccobot/arda` e `Roccobot/earthsea`.)
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, dov'era
 un'assunzione su cui poggiava tutto lo split in sei file. All'avvio le istruzioni portano i
@@ -317,12 +317,12 @@ Dalla più forte alla più debole:
    di lavorare: mettere una regola di processo sopra un fatto attestato sarebbe
    rovesciato. Nel proprio dominio hanno la stessa autorevolezza di `Roccobot.md`, o più.
    - ⚠️ **Non competono fra loro**: parlano di due mondi diversi, e ognuno vale per il
-     progetto che lo riguarda (`JRRT.md` per `arda/top/`, `Earthsea.md` per
+     progetto che lo riguarda (`JRRT.md` per il repo `Roccobot/arda`, `Earthsea.md` per
      il repo `Roccobot/earthsea`). Applicare l'uno all'altro sarebbe un errore di dominio, non una
      questione di scala.
    - ⚠️ **`Earthsea.md` attesta dal 2026-08-21**: fino a quel giorno era un guscio che
      dichiarava di non essere un'autorità, e le note che lo dicono ancora sono superate.
-   - ⚠️ Ma resta **sotto** [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), il solo
+   - ⚠️ Ma resta **sotto** il `CLAUDE.md` del repo `Roccobot/arda`, il solo
      progetto a cui si applica, e non per gerarchia astratta: **là** vivono le
      **scelte editoriali deliberate** che divergono dal canone pubblicato
      (Orodreth figlio di Angrod, Celeborn senza `Teleporno`, l'elenco degli
@@ -353,14 +353,14 @@ può allentarle. Questo è l'indice, la formulazione completa è dove indicato.
 
 | regola | dove vive |
 |---|---|
-| Parola d'ordine admin validata **solo lato server**; mai nel sorgente, nemmeno in base64 | `arda/top/CLAUDE.md`, '🔐 Admin e segreti' |
-| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `proxy/CLAUDE.md` e `arda/top/CLAUDE.md`, '🔐 Admin e segreti' |
+| Parola d'ordine admin validata **solo lato server**; mai nel sorgente, nemmeno in base64 | `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
+| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `proxy/CLAUDE.md` e `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
 | `RULES_PASSWORD` letta a runtime e **mai stampata** né fatta transitare in chat | `Roccobot.md`, Worker `rules-proxy` |
-| Mai `innerHTML` | qui, e la nota di `setVersionBadge` in `arda/top/CLAUDE.md` |
+| Mai `innerHTML` | qui, e la nota di `setVersionBadge` nel `CLAUDE.md` del repo `Roccobot/arda` |
 | **Trattini lunghi mai** (em-dash ed en-dash), in nessun output; apici dritti; `...` e non `…` | qui, '✒️ Caratteri vietati', e `Roccobot.md`, 'Caratteri' |
 | Comunicazione con l'utente **sempre in italiano** | qui, '🗣️ Lingua di risposta' |
-| Quello che l'utente mette in `res/`, in **qualsiasi** progetto: **non si tocca mai** | `Roccobot.md`, 'Bonifica e ottimizzazione degli asset'; `arda/top/CLAUDE.md`, '🧹 Asset del progetto' per `favicon.png` |
-| Quantizzazione a palette **vietata** (banding) | `arda/top/CLAUDE.md`, '🧹 Asset del progetto' |
+| Quello che l'utente mette in `res/`, in **qualsiasi** progetto: **non si tocca mai** | `Roccobot.md`, 'Bonifica e ottimizzazione degli asset'; `CLAUDE.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' per `favicon.png` |
+| Quantizzazione a palette **vietata** (banding) | `CLAUDE.md` del repo `Roccobot/arda`, '🧹 Asset del progetto' |
 | Icone **as-is**: niente ritaglio, niente spostamento dei pixel nel canvas | `Roccobot.md`, 'Grafica' |
 | Niente **compensazioni** (coppie `margin` di segno opposto per isolare un movimento) | `Roccobot.md`, 'Grafica' |
 | **Verifica alla lettera** delle fonti tramite grep, mai a memoria; ciò che non è attestato non si scrive | `JRRT.md`, 'Verifica alla lettera' |
@@ -388,7 +388,7 @@ che delle misure si tiene quella **scartata**. Vale per questo file come per ogn
 
 - L'unica nota che resta locale: gli **elenchi di portatori dei badge** non si scrivono qui,
   perché si ricavano da `dati.js`; il **criterio** e le **esclusioni motivate** sì, e vivono
-  in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🏅 Criteri editoriali dei badge'.
+  nel `CLAUDE.md` del repo `Roccobot/arda`, § '🏅 Criteri editoriali dei badge'.
 
 ## 🏷️ Nomi dei progetti (terminologia condivisa)
 
@@ -396,11 +396,11 @@ I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in 
 **prima** che si apra un file di quel progetto: perciò il minimo indispensabile è qui e
 non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
 
-- **Il sito ha TRE nomi equivalenti** (`arda/top/`): **'Arda Top'**, **'I Grandi di Arda'** e
+- **Il sito ha TRE nomi equivalenti** (repo `Roccobot/arda`): **'Arda Top'**, **'I Grandi di Arda'** e
   **'Arda'** (istruzione dell'utente, 2026-07-30). Sono sinonimi, non un nome giusto e due
   tollerati, e l'utente li alterna: nessuno dei tre va corretto. Le sfumature d'uso (nei testi
   pubblicati resta il titolo per esteso, e 'Arda' da solo è ambiguo col mondo di cui il sito
-  parla) vivono in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § 'Come si chiama questo
+  parla) vivono nel `CLAUDE.md` del repo `Roccobot/arda`, § 'Come si chiama questo
   progetto'.
   - ⚠️ **'Grimorio' NON è un quarto sinonimo: è terminologia morta** (sopravvive solo in
     branch vecchi e commit storici): non usarla mai, né nei testi né parlando con l'utente.
@@ -603,7 +603,7 @@ perché **questo file ha priorità più alta**.
   occorrenze di `1954-55` nelle fonti di 'I Grandi di Arda', più gli intervalli di `JRRT.md`
   e pochi usi puntuativi. Da allora il presidio automatico li tratta come l'em-dash.
 - Le convenzioni tipografiche **specifiche del dataset** (maiuscola iniziale delle righe,
-  nomi di creatura, toponimi con o senza articolo) vivono in `arda/top/CLAUDE.md`.
+  nomi di creatura, toponimi con o senza articolo) vivono nel `CLAUDE.md` del repo `Roccobot/arda`.
 
 ## 🖼️ Artefatti
 
@@ -657,7 +657,7 @@ con la deroga ammessa nei casi difficili. Qui non se ne tiene una copia più cor
 poi divergerebbe.
 
 - ⚠️ I **riferimenti em concreti** dipendono dal progetto e dal corpo del testo: quelli di
-  'I Grandi di Arda' vivono in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔬 Misure
+  'I Grandi di Arda' vivono nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔬 Misure
   tipografiche'.
 
 ## 🌿 Branch, allineamento e push
@@ -709,7 +709,8 @@ poi divergerebbe.
     coda. Non perdere tempo a cancellarli.
   - **Verifica di pubblicazione avvenuta:** un `curl` sul file appena pubblicato, confrontando
     con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
-    `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
+    `datiVersion` in `https://roccobot.github.io/arda/dati.js` (per Terramare in
+    `https://roccobot.github.io/earthsea/dati.js`), per le liste AdBlock
     l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS la
     costante `VERSIONE` di `https://roccobot.github.io/RoccobotOS/RoccobotOS.js`. ⚠️ Per RoccobotOS **non** è più
     l'intestazione di quel file: dal 2026-07-31 il commento non porta il numero, e un
@@ -752,16 +753,20 @@ poi divergerebbe.
       job del run è la misura: `total_count: 0` significa che nessun runner l'ha preso.
 - ⚠️ **Allineamento al remoto prima di toccare un file: la regola vive in `Roccobot.md`**
   ('Workflow git e versioni') ed è **non derogabile**, col confronto dei ref come comando.
-  Qui si aggiunge solo perché **questo repo è il caso peggiore**: l'editor admin di 'I Grandi
-  di Arda' committa via API, quindi `master` si muove anche quando nessuna sessione lo tocca,
-  e più sessioni possono lavorarci in parallelo.
+  Qui si aggiungeva che **questo repo era il caso peggiore**, perché l'editor admin di 'I Grandi
+  di Arda' committava via API: dal 2026-09-26 lo fa nel repo `Roccobot/arda`, e là vale la
+  stessa cautela. Qui `master` si muove ancora da solo coi commit del bot di AIV, e più sessioni
+  possono lavorarci in parallelo.
   - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
-    'I Grandi di Arda' vive in [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md), § '🔢 Versione del
+    'I Grandi di Arda' vive nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔢 Versione del
     sito', perché legge il badge e `datiVersion`, che sono suoi.
 - Il **SessionStart hook** standard (regola universale) è già configurato
   in `.claude/settings.json` di questo repo.
 - **Salvaguardie anti-conflitto coi salvataggi admin** (in `.claude/settings.json`).
-  L'editor admin committa `dati.js` direttamente su `master` via Worker: se la
+  ⚠️ **Dal 2026-09-26 gli editor admin committano nei repo dei progetti** (`Roccobot/arda` e
+  `Roccobot/earthsea`), quindi qui i due hook proteggono dai commit del bot di AIV; la regola
+  sui salvataggi arrivati a lavoro iniziato vale identica in quei repo.
+  L'editor admin committava `dati.js` direttamente su `master` via Worker: se la
   sessione lavora su un branch `claude/*` basato su un `master` vecchio, al merge
   scoppia il conflitto. Due hook prevengono il caso:
   1. **`UserPromptSubmit`**: a ogni turno fa `git fetch` e, se il branch è

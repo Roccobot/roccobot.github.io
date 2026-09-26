@@ -9,7 +9,7 @@
  *
  * ⚠️⚠️ È un Worker SEPARATO da `arda-admin-proxy`, e la separazione È la
  * salvaguardia (scelta dell'utente, 2026-08-23): quello di Arda ha il percorso di
- * scrittura cablato su `arda/top/dati.js`, quindi puntare Terramare al suo URL
+ * scrittura cablato sul `dati.js` di Arda, quindi puntare Terramare al suo URL
  * avrebbe committato queste voci SOPRA il dataset di Arda, con la versione bumpata
  * e il deploy verde: nessun errore da nessuna parte, e l'altro sito distrutto in
  * silenzio. Due Worker, due FILE_PATH, due secret.

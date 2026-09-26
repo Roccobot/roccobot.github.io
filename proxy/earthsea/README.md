@@ -2,7 +2,7 @@
 
 Worker **separato** da quello di Arda (`proxy/`), con secret e Durable Object propri.
 La separazione è la salvaguardia: il Worker di Arda ha il percorso di scrittura
-cablato su `arda/top/dati.js`, quindi puntare Terramare al suo URL avrebbe committato
+cablato sul `dati.js` di Arda, quindi puntare Terramare al suo URL avrebbe committato
 queste voci **sopra il dataset di Arda**, senza un errore da nessuna parte.
 
 Il browser manda la parola d'ordine al Worker; il Worker la valida lato server e, solo
