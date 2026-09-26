@@ -1382,7 +1382,7 @@ Uscito nella `15.12`. Era su tutte e **360** le voci, con lo stesso valore `gb`,
 leggeva nessuno**: zero
 occorrenze in `index.html` e nel Worker. Tolto il 2026-08-23 su richiesta dell'utente.
 
-- **Da dove veniva**: da **`artifacts/legion50/index.html`**, il capostipite di questo motore,
+- **Da dove veniva**: dalla pagina **`legion50`** della cartella `artifacts` (cancellata il 2026-09-26: resta nella storia git del repo), il capostipite di questo motore,
   una classifica di saghe epiche dove `paese` è un **codice ISO che pesca una bandiera**
   (`getFlag(paese)`) e i valori sono veri e diversi (`gb`, `jp`, `gr`, `cn`, `is`...). Qui
   diventano tutti `gb`, perché Tolkien è uno solo, e la bandiera è uscita dalla resa: da lì in
