@@ -1403,8 +1403,12 @@ def main():
                 seen["path"] += 1
                 testa, _, coda = p.partition("/")
                 clone = next((r for n, r in PROGETTI.items() if n.lower() == testa.lower()), None)
+                # Un percorso scritto nel CLAUDE.md di un progetto è relativo alla radice del
+                # SUO repo (`worker/README.md`), o di quello del gemello che la riga nomina:
+                # si cerca quindi anche nella radice di ogni clone dei progetti.
                 if not (any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent))
-                        or (clone is not None and coda and (clone / coda).exists())):
+                        or (clone is not None and coda and (clone / coda).exists())
+                        or any((r / p).exists() for r in PROGETTI.values())):
                     dove = non_verif if aiv_missing and p.startswith("AIV/") else bad_paths
                     dove.append((f, n, p))
             for s in sect_refs(righe, n - 1):
