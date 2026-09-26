@@ -621,6 +621,17 @@ html { --card-pad-r:1.2rem; }
    media query dei 480px, dov'è nato. Dalla 2.48 vive nel blocco base, perché il gruppo è un
    flex item nei due telai e il `flex-basis` opera in tutti e due. */
 .rank-name.nm-acapo > .rank-flags { flex-basis:100%; }
+/* ⚠️⚠️ GLI A CAPO DELLE ETICHETTE NUDE, NEGLI STESSI PUNTI DELLO SLOT RISERVATO (2.73): con
+   le etichette più strette una riga potrebbe starci dove con lo slot non ci stava, e allora
+   la card cambierebbe altezza al cambio lingua. `etichetteNude` guarda dove andavano a capo i
+   due gruppi con lo slot riservato, uguale nelle due lingue, e lo impone: prima delle
+   etichette il nome prende la riga intera, prima delle icone la prende il loro gruppo (come
+   `nm-acapo`). È la regola dell'utente nata su Arda: *se una lingua va a capo deve andare a
+   capo anche l'altra*.
+   ⚠️ Nessuna riga in più, quindi nessun vuoto da ritoccare: il gruppo che scende occupa la
+   stessa riga di flex che occupava con lo slot, e con etichette più strette ci sta per forza. */
+.rank-name.et-giu > .rank-name-text { flex-basis:100%; }
+.rank-name.ic-giu > .rank-flags { flex-basis:100%; }
 /* ⚠️ ARIA SOTTO LE ICONE ANDATE A CAPO, la stessa della 2.36 e col medesimo criterio
    (pareggiare il vuoto che il gruppo ha sopra di sé), ma con un valore SUO: qui il gruppo
    non porta la risalita di -0.156em del telaio mobile, quindi il vuoto di partenza è un
@@ -1056,6 +1067,15 @@ html[data-theme="dark"] .rank-subtitle .bp-solo { color:#c0c0c0; }
 .type-badge .tb-stack { display:inline-grid; justify-items:center; align-items:center; }
 .type-badge .tb-stack > span { grid-area:1 / 1; }
 .type-badge .tb-m { visibility:hidden; pointer-events:none; }
+/* ⚠️⚠️ SULLE CARD LO SLOT SERVE SOLO ALLE MISURE (2.73): l'utente ha bocciato le etichette
+   larghe quanto la lingua più lunga, col vuoto dentro (2026-09-25 su Arda, *una eccezione è
+   sicuramente la larghezza delle etichette*; 2026-09-26 qui: *limita la modifica alle sole
+   etichette*). Le decisioni di riga si prendono ancora con lo slot riservato, cioè uguali
+   nelle due lingue, e poi `etichetteNude` accende `.et-nude` sulla lista: la gemella esce dal
+   layout e la pastiglia torna larga quanto il suo testo. Gli a capo li tiene fermi lei (vedi
+   `.et-giu`). Il Pannello, che è un componente, tiene lo slot riservato. */
+#rank-list.et-nude .type-badge .tb-stack { display:inline; }
+#rank-list.et-nude .type-badge .tb-m { display:none; }
 .type-badge .tpwrap { display:inline; }
 .type-badge .tparen { display:inline-block; transform:translateY(-0.03em); }
 /* Freccia '→' delle etichette di stato acquisito: resa come SVG geometricamente
@@ -3617,7 +3637,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.72</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.73</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7695,8 +7715,46 @@ function firmaRighe() {
 // quindi la firma costa un giro sul DOM e non una passata di rendering.
 function assestaRighe() {
   var giri = 3, prima;
+  etichetteRiservate();
   do { prima = firmaRighe(); tightenNames(); freeNames(); giri--; }
   while (giri > 0 && firmaRighe() !== prima);
+  etichetteNude();
+}
+// ── Le etichette a larghezza naturale, con gli a capo dello slot riservato (2.73) ────────
+// ⚠️⚠️ TUTTE LE MISURE DELLA RIGA DEL NOME SI FANNO CON LO SLOT RISERVATO, ed è la ragione per
+// cui queste due funzioni stanno ai due capi di `reflowRows` e di `assestaRighe`: le prove di
+// `tightenNames` e di `freeNames` danno lo stesso esito nelle due lingue solo se le etichette
+// hanno la stessa larghezza nelle due lingue. Le etichette nude sono solo il modo di mostrarle.
+function etichetteRiservate() {
+  var l = document.getElementById('rank-list'), r, i;
+  if (!l) return;
+  l.classList.remove('et-nude');
+  r = l.querySelectorAll('.rank-name.et-giu, .rank-name.ic-giu');
+  for (i = 0; i < r.length; i++) r[i].classList.remove('et-giu', 'ic-giu');
+}
+// Dove un gruppo va a capo lo dice `offsetTop`, che ignora le `transform` e i `top` dei nudge:
+// un gruppo è sceso se comincia sotto il fondo dell'elemento che lo precede. Sulla stessa riga
+// di flex i due sono centrati, quindi il più basso comincia comunque sopra il fondo dell'altro.
+// ⚠️ Solo le card con lo slot: dove le etichette coincidono nelle due lingue la resa nuda è
+// identica a quella riservata, e non c'è niente da imporre.
+function etichetteNude() {
+  var l = document.getElementById('rank-list'), righe, i, r, nt, tp, fl, dec = [];
+  if (!l) return;
+  var sceso = function(a, b){ return !!(a && b) && b.offsetTop >= a.offsetTop + a.offsetHeight - 1; };
+  righe = l.querySelectorAll('.rank-name');
+  for (i = 0; i < righe.length; i++) {
+    r = righe[i];
+    if (!r.querySelector('.tb-stack')) continue;
+    nt = r.querySelector(':scope > .rank-name-text');
+    tp = r.querySelector(':scope > .rank-tipi'); if (tp && !tp.offsetHeight) tp = null;
+    fl = r.querySelector(':scope > .rank-flags'); if (fl && !fl.offsetHeight) fl = null;
+    dec.push([r, sceso(nt, tp), !r.classList.contains('nm-acapo') && sceso(tp || nt, fl)]);
+  }
+  for (i = 0; i < dec.length; i++) {
+    if (dec[i][1]) dec[i][0].classList.add('et-giu');
+    if (dec[i][2]) dec[i][0].classList.add('ic-giu');
+  }
+  l.classList.add('et-nude');
 }
 function freeRipasso() {
   if (freeRipassoPend) return;
@@ -7757,7 +7815,9 @@ function chiaveReflow() {
   return st + '|' + n + '|' + (l ? l.clientWidth : 0);
 }
 function reflowRows() {
+  etichetteRiservate();
   tightenNames(); freeNames(); optimizeBipartite(); alignVoci(); if (midlinesOn) placeCardMidlines(); riservaTesta();
+  etichetteNude();
   _reflowChiave = chiaveReflow();
   if (!(document.fonts && document.fonts.status === 'loading')) freeRipasso();
 }

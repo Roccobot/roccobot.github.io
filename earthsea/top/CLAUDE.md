@@ -1537,9 +1537,10 @@ lo stato fino alla `2.66`.
   dell'edizione coincidono, quindi non c'è nulla da scegliere.
 - ⚠️⚠️ **L'UNICA DIVERGENZA È `Collina`, che l'edizione rende `Montagna`** (*Ricordi che ti
   chiamavo Scoiattolo? E tu mi chiamavi Montagna, perché mi sedevo sopra di te quando
-  giocavamo?*). ⚠️ **Resta `Collina`, e non si corregge d'ufficio**: è la regola delle
-  divergenze (§ 'Stato: lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti'),
-  dove vince il dato dell'utente finché non decide lui. ⚠️ Le sette occorrenze di `Collina`
+  giocavamo?*). ⚠️ **Dalla `2.73` è `Montagna`, scelta dell'utente** (2026-09-26: *scelgo
+  'Montagna'*). Fino a quel giorno restava `Collina` per la regola delle divergenze (§ 'Stato:
+  lo Schedario è IMPORTATO, e il dataset è verificato sulle fonti'), che non si correggono
+  d'ufficio: vince il dato dell'utente finché non decide lui. ⚠️ Le sette occorrenze di `Collina`
   nell'edizione sono un **toponimo** (`Fattoria della Collina`), che con questa voce non
   c'entra: chi conta senza guardare il contesto la dà per confermata.
 
@@ -1586,8 +1587,8 @@ personaggi mancanti trova lei per prima, e senza questa riga la riproporrebbe.
   fu lei a chiamarlo `Clay`. Quindi `Calla` vive fra i nomi alternativi di `Malva`, e
   `Piccolo Granato` fra quelli di `Limo`.
   - ⚠️⚠️ **E DALLA `2.65` CIASCUNA PORTA ANCHE IL SOPRANNOME D'INFANZIA DELL'ALTRA**, per
-    istruzione dell'utente: `Scoiattolo` / `Squirrel` a `Limo` e `Collina` / `Mountain` a
-    `Malva`. ⚠️ **Sono due nomi INCROCIATI, e scambiarli è l'errore naturale**: a darli è ogni
+    istruzione dell'utente: `Scoiattolo` / `Squirrel` a `Limo` e `Montagna` / `Mountain` a
+    `Malva` (`Collina` fino alla `2.72`). ⚠️ **Sono due nomi INCROCIATI, e scambiarli è l'errore naturale**: a darli è ogni
     volta l'altro fratello, e la fonte li attesta in una frase sola, dove `Weed` parla a
     `Clay` (*Remember I called you Squirrel? And you called me Mountain, because I used to sit
     on you when we played?*).
@@ -6163,6 +6164,32 @@ corrette nella `0.67`.
   vuoto è preferibile al jitter*). ⚠️ **Il patto è CADUTO nella `0.71`**: vedi qui sotto. Non
   perché fosse sbagliato, ma perché in una LISTA quello che conta è il jitter **verticale**, e
   nessuno lo aveva scritto: applicandolo anche all'orizzontale è nato il vuoto di Ged.
+
+### 🏷️ Le ETICHETTE non riservano più la larghezza
+
+Dalla `2.73`, istruzione dell'utente del 2026-09-26: la riserva orizzontale sulle etichette è il difetto che ha
+chiamato *terribile* su Arda (etichette inglesi larghe quanto le italiane, col vuoto dentro), e
+qui ha chiesto di toglierla **limitando la modifica alle sole etichette** (*tutto il resto però
+va bene*). Nome, righe di testo, citazione e intestazione restano come sono.
+
+- **Come**: lo slot `tb-stack` resta nel DOM e **tutte le misure della riga del nome si fanno
+  con lui** (`tightenNames`, le quattro prove di `freeNames`, `nm-acapo`, `marcaIconeACapo`),
+  quindi danno lo stesso esito nelle due lingue come prima. Alla fine di `reflowRows` e di
+  `assestaRighe`, `etichetteNude` guarda dove i due gruppi andavano a capo con lo slot, lo
+  impone (`et-giu`: il nome prende la riga intera; `ic-giu`: la prende il gruppo icone) e
+  accende `.et-nude` sulla lista, che toglie la gemella dal layout.
+- ⚠️⚠️ **Gli a capo imposti sono la regola dell'utente nata su Arda** (*se una lingua va a capo
+  deve andare a capo anche l'altra*): con le etichette più strette un gruppo potrebbe rientrare
+  in riga in una lingua sola. Il gruppo che scende occupa la stessa riga di flex che occupava con
+  lo slot, e con etichette più strette ci sta per forza, quindi non nasce nessuna riga in più.
+- ⚠️ **Il Pannello tiene lo slot riservato**: è un componente, dove vale l'anti-jitter pieno sui
+  due assi (vedi la sezione qui sopra), e `.et-nude` vive sulla sola lista.
+- **Misura** (`et-terra.mjs` nello scratchpad, contro la `2.72`, sette larghezze e due lingue):
+  altezza di ogni card **identica al millesimo**, testo delle etichette alla **stessa quota**
+  nella pastiglia, vuoto massimo nella pastiglia da **41,1px a 14,0** (il suo margine interno).
+  Zero card che cambiano altezza al cambio lingua su 20 larghezze da 1440 a 320, anche dopo un
+  ridimensionamento. Gli a capo imposti sono pochi e tutti in basso: 1 card a 390px, 3 a 360, 9-10
+  a 320, quasi tutte col gruppo icone.
 
 ### 🔓 Il nome si LIBERA dalla riserva orizzontale dove non costa un salto
 
