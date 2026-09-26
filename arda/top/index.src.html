@@ -2871,7 +2871,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.68</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>15.69</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -2936,9 +2936,9 @@ var LS = {
 if (typeof dati === 'undefined' || !Array.isArray(dati)) {
   (function(){
     var rl = document.getElementById('rank-list');
-    if (rl) rl.innerHTML = '<p style="text-align:center;padding:2rem 1rem;opacity:.8">' +
-      'Impossibile caricare i dati della classifica. Ricarica la pagina tra qualche istante.<br>' +
-      'Could not load the ranking data. Please reload the page in a moment.</p>';
+    if (rl) rl.replaceChildren(nodo('p', { style: 'text-align:center;padding:2rem 1rem;opacity:.8' },
+      'Impossibile caricare i dati della classifica. Ricarica la pagina tra qualche istante.', nodo('br'),
+      'Could not load the ranking data. Please reload the page in a moment.'));
   })();
   throw new Error('dati.js non caricato');
 }
@@ -4359,12 +4359,14 @@ function setLang(lang) {
   LS.setItem('arda-lang', lang);
   document.documentElement.lang = lang;
   document.querySelector('#lang-switch .ls-face').textContent = lang === 'it' ? 'EN' : 'IT';
-  document.getElementById('crest').innerHTML = i18n[lang].crest;
+  // Le quattro righe dell'intestazione sono COSTANTI di `i18n`, col loro markup (link, a capo,
+  // la nota con l'asterisco): `htmlCostante`, come le icone (15.69).
+  document.getElementById('crest').replaceChildren(htmlCostante(i18n[lang].crest));
   scriviTitolo(document.getElementById('title-link'), i18n[lang].title, lang, -1);
   pareggiaTitolo();
-  document.getElementById('subtitle').innerHTML = i18n[lang].subtitle;
-  document.getElementById('intro').innerHTML = i18n[lang].intro;
-  document.getElementById('footer-text').innerHTML = i18n[lang].footer;
+  document.getElementById('subtitle').replaceChildren(htmlCostante(i18n[lang].subtitle));
+  document.getElementById('intro').replaceChildren(htmlCostante(i18n[lang].intro));
+  document.getElementById('footer-text').replaceChildren(htmlCostante(i18n[lang].footer));
   var rl = document.getElementById('res-link'); if (rl) rl.textContent = lang === 'it' ? 'Risorse e note' : 'Resources and notes';
   var mc = document.getElementById('modal-close'); if (mc) mc.setAttribute('aria-label', lang === 'it' ? 'Chiudi' : 'Close');
   renderList(foto);
@@ -4510,15 +4512,21 @@ function parseFonte(fonte) {
   return { title: title, author: inside.slice(0, fc).trim(), year: inside.slice(fc + 1).trim() };
 }
 
-// Neutralizza i caratteri speciali HTML: i campi testuali dei dati non devono
-// mai poter iniettare markup nella pagina (difesa anti-XSS).
 // ⚠️⚠️ NODI da un markup SVG COSTANTE del codice (icone, bandiere), senza `innerHTML` (15.65, lo stesso helper della 2.72 di Terramare):
 // il parser XML di `DOMParser` dà nodi inerti, e qui passano solo stringhe scritte nel
 // sorgente, MAI testo che viene dal dataset o da un campo. Se la costante non è XML valido
 // il parser non lancia: lo dice il nodo `parsererror`, e allora si segnala in console.
 // L'`xmlns` serve al parser e si toglie dopo l'import, così il nodo è identico a quello che
 // dava `innerHTML`.
+// ⚠️ Il nodo si tiene e si CLONA (15.69), come fa `htmlCostante`: la freccia delle etichette
+// passa di qui a ogni ricostruzione della lista, e un parser a chiamata si pagava ogni volta.
+var _svgCostanti = {};
 function svgNodo(markup) {
+  var t = _svgCostanti[markup];
+  if (!t) t = _svgCostanti[markup] = svgNodoNuovo(markup);
+  return t.cloneNode(true);
+}
+function svgNodoNuovo(markup) {
   var apertura = markup.slice(0, markup.indexOf('>'));
   var s = /\sxmlns=/.test(apertura) ? markup : markup.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
   var doc = new DOMParser().parseFromString(s, 'image/svg+xml');
@@ -4527,6 +4535,90 @@ function svgNodo(markup) {
   if (!/\sxmlns=/.test(apertura)) el.removeAttribute('xmlns');
   return el;
 }
+// ── NODI AL POSTO DI `innerHTML`, dappertutto (15.69) ─────────────────────────────────
+// Istruzione dell'utente, 2026-09-26: *converti tutto*. Dalla 15.65 ne restavano 26, tutti
+// stringhe composte con i dati, e la regola non derogabile è una sola: il testo che finisce nel
+// DOM si scrive componendo nodi, mai assegnando `innerHTML` (vedi il CLAUDE.md di root).
+// Gli strumenti sono tre, uno per provenienza del testo:
+//   1. `nodo(tag, attributi, ...figli)` per tutto ciò che contiene DATI: un figlio stringa
+//      diventa un nodo di testo, quindi un nome col carattere '<' resta un nome, per
+//      costruzione e non per un escape che qualcuno potrebbe dimenticare;
+//   2. `htmlCostante(markup)` per le COSTANTI del codice (icone, testi dell'interfaccia): è
+//      `svgNodo` per l'HTML, con lo stesso patto, cioè MAI testo del dataset o di un campo;
+//   3. `nodiRistretti(markup)` per le due convenzioni di testo che il dataset porta con sé
+//      (il vero nome in grassetto, i `<br>`/`<em>`/`**` della descrizione): legge SOLO quei
+//      tag e le entità di `escapeHtml`, e tutto il resto lo lascia testo.
+// Attributi: `class` va in `className`, `null`/`false` si saltano, il resto è `setAttribute`.
+// ⚠️ Un solo figlio di testo si scrive con `textContent`: è il caso più frequente della lista
+// (nomi, etichette, righe), e un nodo di testo creato a parte costava un terzo della costruzione.
+function nodo(tag, attr) {
+  var el = document.createElement(tag), k, v, i, c;
+  if (attr) for (k in attr) {
+    v = attr[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v; else el.setAttribute(k, v === true ? '' : String(v));
+  }
+  if (arguments.length === 3 && ((c = arguments[2]), typeof c === 'string' || typeof c === 'number')) { if (c !== '') el.textContent = c; return el; }
+  for (i = 2; i < arguments.length; i++) appendiA(el, arguments[i]);
+  return el;
+}
+// Figli ammessi: nodi, frammenti, stringhe e numeri (testo), array annidati; `null`, `false` e
+// la stringa vuota non aggiungono niente.
+function appendiA(el, c) {
+  if (c == null || c === false || c === '') return el;
+  if (Array.isArray(c)) { for (var i = 0; i < c.length; i++) appendiA(el, c[i]); return el; }
+  el.appendChild(typeof c === 'object' ? c : document.createTextNode(String(c)));
+  return el;
+}
+function frammento() {
+  var f = document.createDocumentFragment();
+  for (var i = 0; i < arguments.length; i++) appendiA(f, arguments[i]);
+  return f;
+}
+// ⚠️ Il parser si paga UNA volta per costante: il modello si tiene e si clona. Nella lista le
+// icone dei badge sono qualche centinaio, e un `DOMParser` a icona costava più della lista.
+// ⚠️ `unaVolta` salta la memoria, per i markup che cambiano a ogni chiamata (il Pannello, che
+// porta lo stato dei filtri): tenerli tutti sarebbe una memoria che cresce a ogni clic.
+var _htmlCostanti = {};
+function htmlCostante(markup, unaVolta) {
+  var t = unaVolta ? null : _htmlCostanti[markup];
+  if (!t) {
+    var corpo = new DOMParser().parseFromString(markup, 'text/html').body;
+    t = document.createDocumentFragment();
+    while (corpo.firstChild) t.appendChild(document.adoptNode(corpo.firstChild));
+    if (unaVolta) return t;
+    _htmlCostanti[markup] = t;
+  }
+  return t.cloneNode(true);
+}
+// ⚠️⚠️ NON È UN PARSER HTML, ed è la sua ragione d'essere: riconosce `<strong>`, `<em>` e
+// `<br>` (con le loro chiusure) e le cinque entità che `escapeHtml` produce; qualunque altra
+// cosa resta testo. Riceve stringhe già passate da `escapeHtml`, dove quei tag sono stati
+// rimessi apposta, quindi dal dataset non può uscire nessun altro elemento.
+// ⚠️ Un tag chiuso che non corrisponde a uno aperto si ignora, e uno lasciato aperto si chiude
+// alla fine: sono i casi che `innerHTML` avrebbe sistemato a modo suo, e nel dataset non ce ne
+// sono (lo dice il banco del DOM, che confronta la scheda di ogni voce nelle due lingue).
+var _entita = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" };
+function nodiRistretti(markup) {
+  var f = document.createDocumentFragment(), pila = [f], re = /<(\/?)(strong|em|br)\s*\/?>|&(amp|lt|gt|quot|#39);|[^<&]+|[<&]/gi, m, testo = '';
+  var cima = function(){ return pila[pila.length - 1]; };
+  var versa = function(){ if (testo) { cima().appendChild(document.createTextNode(testo)); testo = ''; } };
+  while ((m = re.exec(markup))) {
+    if (m[2]) {
+      versa();
+      var tag = m[2].toLowerCase();
+      if (tag === 'br') cima().appendChild(document.createElement('br'));
+      else if (!m[1]) { var el = document.createElement(tag); cima().appendChild(el); pila.push(el); }
+      else for (var i = pila.length - 1; i > 0; i--) if (pila[i].tagName.toLowerCase() === tag) { pila.length = i; break; }
+    } else if (m[3]) testo += _entita[m[3].toLowerCase()];
+    else testo += m[0];
+  }
+  versa();
+  return f;
+}
+// Neutralizza i caratteri speciali HTML: i campi testuali dei dati non devono
+// mai poter iniettare markup nella pagina (difesa anti-XSS). Dalla 15.69 serve solo a
+// preparare le stringhe per `nodiRistretti`: tutto il resto va nel DOM come testo.
 function escapeHtml(str) {
   if (str == null) return '';
   return String(str)
@@ -5337,15 +5429,29 @@ function pruneBadgeFilter() {
 // DOM sprecato. Misura di partenza, sulla 15.66: da 11 a 69 card per larghezza cambiavano
 // altezza fra italiano e inglese (409 in tutto su undici larghezze), quasi tutte per le
 // righe `.rank-desc` e `.rank-subtitle`, qualcuna per la riga del nome sotto i 430px.
+// ⚠️ Dalla 15.69 i contenuti sono NODI (vedi `nodo`). `bilingue` riceve una FUNZIONE che li
+// costruisce per una lingua e la CHIAVE di ciascuna lingua, cioè i campi grezzi da cui nascono:
+// a chiavi uguali la riga si costruisce una volta sola, e la gemella non serve. Costruire le
+// due lingue e confrontarle con `isEqualNode` dava lo stesso esito, e costava il 10-20% del
+// cambio lingua.
 function dueLingue(cur, alt){
-  return '<span class="faccia">' + cur + '</span><span class="gemella" aria-hidden="true">' + alt + '</span>';
+  return [nodo('span', { 'class': 'faccia' }, cur), nodo('span', { 'class': 'gemella', 'aria-hidden': 'true' }, alt)];
 }
-function bilingue(cls, itHtml, enHtml, sempre){
-  var cur = currentLang === 'it' ? itHtml : enHtml;
-  var alt = currentLang === 'it' ? enHtml : itHtml;
-  if (!cur && !alt && !sempre) return '';
-  if (cur === alt) return '<span class="' + cls + '">' + cur + '</span>';
-  return '<span class="' + cls + '">' + dueLingue(cur, alt) + '</span>';
+function bilingue(cls, costruisci, chiave, sempre){
+  var qui = currentLang === 'it', kCur = chiave(qui), kAlt = chiave(!qui);
+  if (kCur === kAlt) {
+    var c = nodo('span', { 'class': cls }, costruisci(qui));
+    return (c.hasChildNodes() || sempre) ? c : null;
+  }
+  var due = dueLingue(costruisci(qui), costruisci(!qui));
+  if (!due[0].hasChildNodes() && !due[1].hasChildNodes() && !sempre) return null;
+  return nodo('span', { 'class': cls }, due);
+}
+// Una lista di nodi col separatore in mezzo, come faceva `join` sulle stringhe.
+function intercala(arr, sep){
+  var out = [];
+  for (var i = 0; i < arr.length; i++) { if (i) out.push(sep); out.push(arr[i]); }
+  return out;
 }
 // Il CONTENUTO delle righe, per lingua: servono a `bilingue`, che le chiede in entrambe.
 // ⚠️ Sono la costruzione di prima, parametrizzata sulla lingua invece che su `currentLang`:
@@ -5358,10 +5464,21 @@ function etichettaTipoDi(p, it){
 // Genealogia bilingue: i campi opzionali padre_en/madre_en coprono i genitori dal nome
 // tradotto (Tuc/Took, Brandibuck/Brandybuck, di/of...); assenti = nome identico nelle due
 // lingue (ripiego su padre/madre).
+// Le CHIAVI di `bilingue`: i campi grezzi da cui ciascuna riga nasce, in quella lingua.
+// ⚠️ La lingua entra nella chiave della descrizione SOLO se ci sono i genitori: 'Figlio di' e
+// 'Son of' li scrive il codice, quindi con gli stessi campi le due righe restano diverse; senza
+// genitori, a campi uguali la riga è la stessa.
+function chiaveDesc(p, it){
+  var padre = it ? (p.padre || '') : (p.padre_en || p.padre || ''), madre = it ? (p.madre || '') : (p.madre_en || p.madre || '');
+  return [it ? (p.info || '') : (p.info_en || p.info || ''), padre, madre, (padre || madre) ? (it ? 'it' : 'en') : ''].join('\u0001');
+}
+function chiaveSottotitolo(p, it){
+  return (it ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '')) + '\u0001' + (it ? (p.appellativi || '') : (p.appellativi_en || ''));
+}
 function descDi(p, it){
-  var padre = escapeHtml(it ? (p.padre || '') : (p.padre_en || p.padre || ''));
-  var madre = escapeHtml(it ? (p.madre || '') : (p.madre_en || p.madre || ''));
-  var info = escapeHtml(it ? (p.info || '') : (p.info_en || p.info || ''));
+  var padre = it ? (p.padre || '') : (p.padre_en || p.padre || '');
+  var madre = it ? (p.madre || '') : (p.madre_en || p.madre || '');
+  var info = it ? (p.info || '') : (p.info_en || p.info || '');
   var parti = [];
   if (info) parti.push(info);
   if (padre || madre) {
@@ -5375,29 +5492,29 @@ function descDi(p, it){
 }
 function sottotitoloDi(p, it){
   var alt = it ? (p.nomi_alternativi || '') : (p.nomi_alternativi_en || '');
-  var app = escapeHtml(it ? (p.appellativi || '') : (p.appellativi_en || ''));
+  var app = it ? (p.appellativi || '') : (p.appellativi_en || '');
   if (!alt && !app) return '';
   // Ogni voce separata da virgola diventa un .alt-token (nowrap): la riga va a capo solo
-  // ai separatori (virgola, |), mai dentro un titolo di più parole. (app è già escapato;
-  // i nomi passano da processAlt.)
+  // ai separatori (virgola, |), mai dentro un titolo di più parole. I titoli vanno nel DOM
+  // come testo; i nomi passano da processAlt, per il grassetto del vero nome.
   var parti = [];
-  if (alt) parti.push(alt.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + processAlt(t) + '</span>'; }).join(', '));
-  if (app) parti.push(app.split(/\s*,\s*/).map(function(t){ return '<span class="alt-token">' + t + '</span>'; }).join(', '));
+  if (alt) parti.push(intercala(alt.split(/\s*,\s*/).map(function(t){ return nodo('span', { 'class': 'alt-token' }, nodiRistretti(processAlt(t))); }), ', '));
+  if (app) parti.push(intercala(app.split(/\s*,\s*/).map(function(t){ return nodo('span', { 'class': 'alt-token' }, t); }), ', '));
   // Solo titoli (nessun nome): vanno resi in corsivo come i titoli bipartiti;
   // joinBipartite() a parte singola li lascerebbe 'nudi'.
-  if (app && !alt) return '<span class="bp-solo">' + parti[0] + '</span>';
+  if (app && !alt) return nodo('span', { 'class': 'bp-solo' }, parti[0]);
   return joinBipartite(parti);
 }
 function operaDi(p, it){
   var pf = parseFonte(it ? p.fonte : (p.fonte_en || p.fonte));
-  return escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
+  return pf.title + (pf.year ? ' (' + pf.year + ')' : '');
 }
 // La cella del NOME, con la gemella sul SOLO TESTO (vedi `bilingue`).
 // ⚠️ Ruolo, `tabindex` ed etichetta restano sul contenitore, che è quello che riceve il
 // clic della scheda.
-function nomeCellaHtml(nome, nomeAltro, visN){
-  var a = ' role="button" tabindex="0" aria-label="' + nome + ', posizione ' + visN + '"';
-  return '<span class="rank-name-text"' + a + '>' + (nomeAltro && nomeAltro !== nome ? dueLingue(nome, nomeAltro) : nome) + '</span>';
+function nomeCella(nome, nomeAltro, visN){
+  return nodo('span', { 'class': 'rank-name-text', role: 'button', tabindex: '0', 'aria-label': nome + ', posizione ' + visN },
+    nomeAltro && nomeAltro !== nome ? dueLingue(nome, nomeAltro) : nome);
 }
 // Il contenuto di un'etichetta di tipo, con la gemella dell'altra lingua (vedi `bilingue`).
 // ⚠️⚠️ La pastiglia è larga quanto il SUO testo, e passando da 'Uomo' a 'Man' si restringe:
@@ -5422,17 +5539,18 @@ function nomeCellaHtml(nome, nomeAltro, visN){
 // due lingue (7 su 7, censite il 2026-09-25); se un domani divergessero, la gemella della
 // freccia resta fuori e quella card si misura senza l'etichetta dell'altra lingua.
 var TARROW_SVG = '<svg class="tarrow" viewBox="0 0 19.5 16" aria-hidden="true" focusable="false"><path d="M1.83 7H18.18M12 1.83L18.18 7L12 12.18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
-function tparenHtml(s){ return s.split('(').join('<span class="tparen">(</span>').split(')').join('<span class="tparen">)</span>'); }
-function tipoSegHtml(cur, alt){
+function tparen(s){
+  return s.split(/([()])/).map(function(x){ return (x === '(' || x === ')') ? nodo('span', { 'class': 'tparen' }, x) : x; });
+}
+function tipoSeg(cur, alt){
   if (cur.charAt(0) === '→') {
-    var t = tparenHtml(cur.slice(1).replace(/^\s+/, ''));
-    var a = (alt && alt.charAt(0) === '→') ? tparenHtml(alt.slice(1).replace(/^\s+/, '')) : '';
-    return TARROW_SVG + '<span class="ttx">' + (a && a !== t ? dueLingue(t, a) : t) + '</span>';
+    var t = cur.slice(1).replace(/^\s+/, '');
+    var a = (alt && alt.charAt(0) === '→') ? alt.slice(1).replace(/^\s+/, '') : '';
+    return [svgNodo(TARROW_SVG), nodo('span', { 'class': 'ttx' }, a && a !== t ? dueLingue(tparen(t), tparen(a)) : tparen(t))];
   }
-  var paren = function(s){ return (s.indexOf('(') !== -1 || s.indexOf(')') !== -1) ? '<span class="tpwrap">' + tparenHtml(s) + '</span>' : s; };
-  var c = paren(cur);
-  if (!alt || alt === cur || alt.charAt(0) === '→') return c;
-  return dueLingue(c, paren(alt));
+  var paren = function(s){ return (s.indexOf('(') !== -1 || s.indexOf(')') !== -1) ? nodo('span', { 'class': 'tpwrap' }, tparen(s)) : s; };
+  if (!alt || alt === cur || alt.charAt(0) === '→') return paren(cur);
+  return dueLingue(paren(cur), paren(alt));
 }
 // ── Le dimensioni vere delle icone, scritte PRIMA di ogni misura (15.68) ──────────
 // ⚠️⚠️ SENZA, LA PRIMA MISURA DOPO OGNI RICOSTRUZIONE DELLA LISTA SBAGLIA: le `<img>` appena
@@ -5463,7 +5581,7 @@ function dimensioniIcone(radice) {
 // e un argomento che non è una fotografia valida (un evento, per esempio) la fa scartare.
 function renderList(foto) {
   var list = document.getElementById('rank-list');
-  var html = '';
+  var carte = document.createDocumentFragment();
   var visN = 0;
   for (var i = 0; i < dati.length; i++) {
     var p = dati[i];
@@ -5471,11 +5589,11 @@ function renderList(foto) {
     var cat = categoria(p);
     visN++;
     var isVisTop = visN <= 3;
-    var nome = escapeHtml(nomeDi(p, currentLang === 'it'));
-    var nomeAltro = escapeHtml(nomeDi(p, currentLang !== 'it'));
+    var nome = nomeDi(p, currentLang === 'it');
+    var nomeAltro = nomeDi(p, currentLang !== 'it');
     var tipo = currentLang === 'it' ? p.tipo : (p.tipo_en || p.tipo);
     var tipoLabel = etichettaTipoDi(p, currentLang === 'it');
-    // L'etichetta dell'ALTRA lingua, per la misura (vedi `tipoSegHtml`).
+    // L'etichetta dell'ALTRA lingua, per la misura (vedi `tipoSeg`).
     var tipoAlt = etichettaTipoDi(p, currentLang !== 'it');
     var tipoAltSeg = ((currentLang === 'it' ? (p.tipo_en || p.tipo) : p.tipo) || '').split('|');
     var genere = p.genere || 'm';
@@ -5485,30 +5603,30 @@ function renderList(foto) {
     var genereSym = genere === 'f' ? GENDER_ICON.f.split('%L%').join(gl.f).replace('genere-svg--f', 'genere-svg--f bi-female')
                   : genere === 'm' ? GENDER_ICON.m.split('%L%').join(gl.m).replace('genere-svg--m', 'genere-svg--m bi-male') : '';
     // Badge 'Ainu' per Valar/Maiar via isAinu() (fonte unica con categoria()),
-    // Balrog INCLUSI: mostrano 'Ainu' come primo badge (tipoStr costruito prima
+    // Balrog INCLUSI: mostrano 'Ainu' come primo badge (la lista `tipi` costruita prima
     // dei segmenti di p.tipo), poi 'Maia decaduto'/'Balrog'. Lúthien esclusa.
     var hasAinur = p.nome !== 'Lúthien' && isAinu(p);
     var badgeClasses = hasAinur ? ['type-ainu'] : [];
-    var tipoStr = hasAinur ? '<span class="type-badge type-ainu">Ainu</span>' : '';
+    var tipi = hasAinur ? [nodo('span', { 'class': 'type-badge type-ainu' }, 'Ainu')] : [];
     // tipo_color: override del colore allineato per segmento ('|'), come tipo/tipo_label.
     // Un segmento vuoto lascia il colore automatico da tipoClass().
     var colorSegs = (p.tipo_color || '').split('|');
-    tipoStr += tipo ? tipo.split('|').map(function(seg, idx){
+    if (tipo) tipo.split('|').forEach(function(seg, idx){
       seg = seg.trim();
       var labelSegs = tipoLabel.split('|');
-      var displaySeg = escapeHtml((labelSegs[idx] || seg).trim());
+      var displaySeg = (labelSegs[idx] || seg).trim();
       // ⚠️ Lo STESSO ripiego della faccia: dove l'etichetta ha meno segmenti del tipo, il
       // segmento mancante lo dà il tipo. Senza, la seconda etichetta di Idril (`Elfa (Vanya)`
       // contro `Elf (Vanya)`) restava senza gemella e la card ballava a 375px.
-      var altSeg = escapeHtml((((tipoAlt || '').split('|')[idx]) || (tipoAltSeg[idx] || '')).trim());
+      var altSeg = (((tipoAlt || '').split('|')[idx]) || (tipoAltSeg[idx] || '')).trim();
       var ov = (colorSegs[idx] || '').trim();
-      // Whitelist: l'override finisce in un attributo class senza escaping,
-      // quindi si accetta solo la forma 'type-xxx' (tutto il resto è ignorato).
+      // Whitelist: l'override diventa una classe, quindi si accetta solo la forma
+      // 'type-xxx' (tutto il resto è ignorato).
       if (!/^type-[a-z-]*$/.test(ov)) ov = '';
       var segCls = ov || tipoClass(seg);
       badgeClasses.push(segCls);
-      return '<span class="type-badge ' + segCls + '">' + tipoSegHtml(displaySeg, altSeg) + '</span>';
-    }).join('') : '';
+      tipi.push(nodo('span', { 'class': 'type-badge ' + segCls }, tipoSeg(displaySeg, altSeg)));
+    });
     // Colore del bordino sinistro = contorno dell'etichetta tipo; con più
     // etichette renderizzate si usa la SECONDA ('Ainu' conta come prima).
     // Nessuna etichetta -> grigio generico.
@@ -5530,9 +5648,9 @@ function renderList(foto) {
     // `bilingue`, che aggiunge la gemella per la misura: è così che il cambio lingua non
     // muove le card (vedi `misuraCard`). La riga `.rank-desc` si emette
     // sempre, anche vuota, come prima: toglierla cambierebbe il ritmo verticale.
-    var rigaDesc = bilingue('rank-desc', descDi(p, true), descDi(p, false), true);
+    var rigaDesc = bilingue('rank-desc', function(it){ return descDi(p, it); }, function(it){ return chiaveDesc(p, it); }, true);
     // Riga 3: nomi alternativi + appellativi
-    var riga2 = bilingue('rank-subtitle', sottotitoloDi(p, true), sottotitoloDi(p, false));
+    var riga2 = bilingue('rank-subtitle', function(it){ return sottotitoloDi(p, it); }, function(it){ return chiaveSottotitolo(p, it); });
     // vis-1/2/3 (dalla v12.24): posizione esatta sul podio, per i numeri metallici
     // (oro/argento/bronzo). visN è il numero d'ordine tra i VISIBILI, quindi il
     // podio segue i filtri attivi, come lo spessore 8px della striscia.
@@ -5560,14 +5678,14 @@ function renderList(foto) {
     // logica (filtri/raggruppamenti), non colora più la card.
     classes += ' cc-' + cardFam;
     // Pill 'Solo HoME/NoME' (catalogo esteso): in alto a destra della card.
-    var apoPill = '';
+    var apoPill = null;
     if (p.apocrifo) {
       var apoSrc = (typeof p.apocrifo === 'string') ? p.apocrifo : 'HoME';
       var apoTxt = currentLang === 'it' ? ('Solo ' + apoSrc) : (apoSrc + '-only');
       var apoAlt = currentLang === 'it' ? (apoSrc + '-only') : ('Solo ' + apoSrc);
       // ⚠️ Anche la pill ha la gemella: su mobile `reflowApoLabels` manda a capo le etichette
       // che la toccano, e nell'altra lingua la pill ha un'altra larghezza.
-      apoPill = '<span class="pill-home" title="' + escapeHtml(apoTxt) + '">' + dueLingue(escapeHtml(apoTxt), escapeHtml(apoAlt)) + '</span>';
+      apoPill = nodo('span', { 'class': 'pill-home', title: apoTxt }, dueLingue(apoTxt, apoAlt));
     }
     // Voci 'custom' (Modifica mirata): le due terne per-tema arrivano inline
     // (--ccdark/--cclight) e le regole .cc-custom iniettate le mappano su --ccrgb
@@ -5575,26 +5693,28 @@ function renderList(foto) {
     // stessa terna nei due tag.
     var _cp = cardFam === 'custom' ? customPair(p) : null;
     var ccInline = _cp ? (';--ccdark:' + _cp.dark + ';--cclight:' + _cp.light) : '';
-    html += '<div class="' + classes + '" style="animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline +
-      '" data-idx="' + i + '">' +
+    // ⚠️ Icone dei badge e simbolo di genere vengono da COSTANTI del codice (i modelli di
+    // `BADGE_ICON` e `GENDER_ICON`, con le etichette di `ICON_LABEL`), quindi passano da
+    // `htmlCostante`; tutto il resto della card è dato e va nel DOM come testo.
+    carte.appendChild(nodo('div', { 'class': classes, style: 'animation-delay:' + (Math.min(visN, 12) * 0.04) + 's' + ccInline, 'data-idx': i },
       // Bordino sinistro: striscia in sovrapposizione (assoluta, nessun impatto
       // sul layout), colore dal contorno dell'etichetta tipo (2a se più d'una).
       // Spessore 4px normali / 8px podio via CSS (.vis-top .rank-strip).
-      '<span class="rank-strip" aria-hidden="true"></span>' + apoPill +
-      '<span class="rank-num">' + visN + '</span>' +
-      '<span class="rank-content">' +
-        '<span class="rank-name">' + nomeCellaHtml(nome, nomeAltro, visN) + '<span class="rank-flags">' + statusStr + genereSym + '</span><span class="rank-tipi">' + tipoStr + '</span></span>' +
-        rigaDesc +
-        riga2 +
-        bilingue('rank-title', operaDi(p, true), operaDi(p, false), true) +
-      '</span>' +
-    '</div>';
+      nodo('span', { 'class': 'rank-strip', 'aria-hidden': 'true' }), apoPill,
+      nodo('span', { 'class': 'rank-num' }, visN),
+      nodo('span', { 'class': 'rank-content' },
+        nodo('span', { 'class': 'rank-name' }, nomeCella(nome, nomeAltro, visN),
+          nodo('span', { 'class': 'rank-flags' }, htmlCostante(statusStr), genereSym ? htmlCostante(genereSym) : null),
+          nodo('span', { 'class': 'rank-tipi' }, tipi)),
+        rigaDesc,
+        riga2,
+        bilingue('rank-title', function(it){ return operaDi(p, it); }, function(it){ return operaDi(p, it); }, true))));
   }
   // Incrocio categorie × badge senza risultati: messaggio al posto del vuoto.
   if (visN === 0) {
-    html = '<p class="rank-empty">' + (currentLang === 'it'
+    carte = nodo('p', { 'class': 'rank-empty' }, currentLang === 'it'
       ? 'Nessun personaggio corrisponde ai filtri attivi.'
-      : 'No character matches the active filters.') + '</p>';
+      : 'No character matches the active filters.');
   }
   if (isFirstRender) {
     list.classList.add('list-animate');
@@ -5606,7 +5726,7 @@ function renderList(foto) {
   } else {
     list.classList.remove('list-animate');
   }
-  list.innerHTML = html;
+  list.replaceChildren(carte);
   dimensioniIcone(list);
 
   var items = list.querySelectorAll('.rank-item');
@@ -5740,8 +5860,8 @@ function optimizeBipartite(scope, altra) {
 // Emissione delle righe bipartite: con due parti, ciascuna in uno span
 // misurabile e separatore a sé (nascosto da .bp-break); con una sola, testo nudo.
 function joinBipartite(parts) {
-  if (parts.length < 2) return parts.join(' | ');
-  return '<span class="bp-a">' + parts[0] + '</span><span class="bp-sep"><i class="bp-bar"></i></span><span class="bp-b">' + parts[1] + '</span>';
+  if (parts.length < 2) return parts.length ? parts[0] : '';
+  return [nodo('span', { 'class': 'bp-a' }, parts[0]), nodo('span', { 'class': 'bp-sep' }, nodo('i', { 'class': 'bp-bar' })), nodo('span', { 'class': 'bp-b' }, parts[1])];
 }
 /* Etichette delle card apocrife: in linea al nome se c'è spazio, a capo solo se
    collidono con la pill 'Solo HoME' (assoluta, in alto a destra). Solo mobile
@@ -6268,15 +6388,13 @@ function openModal(idx, instant) {
   tgBtn.title = i18n[lang].tgLink;
   tgBtn.setAttribute('aria-label', i18n[lang].tgLink);
   var pf = parseFonte(fonte);
-  var titleYear = escapeHtml(pf.title + (pf.year ? ' (' + pf.year + ')' : ''));
-  // titleYear e autore sono testo puro → escapati.
-  document.getElementById('modal-source').innerHTML =
-    '<span>' + titleYear + '</span>' +
-    '<span class="modal-author">' + escapeHtml(pf.author) + '</span>';
-  // La descrizione ammette SOLO i <br> come markup: si escapa tutto e si
-  // ripristinano i soli <br>, così il sink innerHTML non può eseguire nulla.
-  document.getElementById('modal-info').innerHTML =
-    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>').replace(/&lt;(\/?)em&gt;/gi, '<$1em>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  document.getElementById('modal-source').replaceChildren(
+    nodo('span', null, pf.title + (pf.year ? ' (' + pf.year + ')' : '')),
+    nodo('span', { 'class': 'modal-author' }, pf.author));
+  // La descrizione ammette SOLO `<br>`, `<em>` e `**grassetto**` come markup: si escapa tutto,
+  // si rimettono quei tre, e `nodiRistretti` crea soltanto quegli elementi (15.69).
+  document.getElementById('modal-info').replaceChildren(nodiRistretti(
+    escapeHtml(info).replace(/&lt;br\s*\/?&gt;/gi, '<br>').replace(/&lt;(\/?)em&gt;/gi, '<$1em>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')));
   // Rimando cliccabile alla nota editoriale collegata (se il personaggio ne ha
   // una in NOTE_BY_CHAR): '→ Nota Editoriale: <titolo>' apre il viewer.
   var refEl = document.getElementById('modal-noteref');
@@ -6289,8 +6407,8 @@ function openModal(idx, instant) {
       // tinta (v13.98, richiesta dell'utente): è il titolo il rimando, il prefisso
       // è solo un'introduzione. Nelle note (`.note-seealso`) il prefisso stava già
       // fuori dal link; qui era dentro, quindi si colorava anche lui.
-      refEl.innerHTML = '<span class="modal-noteref-link" role="button" tabindex="0"><span class="nr-pre">'
-        + escapeHtml(refLbl) + ' &rarr;</span> <strong>' + escapeHtml(refTitle) + '</strong></span>';
+      refEl.replaceChildren(nodo('span', { 'class': 'modal-noteref-link', role: 'button', tabindex: '0' },
+        nodo('span', { 'class': 'nr-pre' }, refLbl + ' \u2192'), ' ', nodo('strong', null, refTitle)));
       refEl.hidden = false;
       var refLink = refEl.querySelector('.modal-noteref-link');
       // Anche questo è un passaggio (scheda -> nota): si apre la finestra di
@@ -6564,7 +6682,9 @@ function openResourcesModal() {
   // Su mobile i testi lunghi usano un'etichetta abbreviata (niente a-capo).
   var mobile = isMobileViewport();
   function section(txt, extra) { var p = document.createElement('p'); p.className = 'res-modal-title' + (extra ? ' ' + extra : ''); p.textContent = txt; box.appendChild(p); }
-  function mkBtn(txt, fn, asHtml) { var b = document.createElement('button'); b.className = 'fab-modal-confirm'; if (asHtml) b.innerHTML = txt; else b.textContent = txt; b.onclick = fn; box.appendChild(b); }
+  // ⚠️ `asHtml` porta soltanto l'a capo delle etichette, cioè COSTANTI (titoli delle note e
+  // delle risorse, scritti nel sorgente): `htmlCostante`, mai testo di un campo (15.69).
+  function mkBtn(txt, fn, asHtml) { var b = document.createElement('button'); b.className = 'fab-modal-confirm'; if (asHtml) b.replaceChildren(htmlCostante(txt)); else b.textContent = txt; b.onclick = fn; box.appendChild(b); }
   function label(itF, enF, itS, enS) { var it = mobile && itS ? itS : itF, en = mobile && enS ? enS : enF; return currentLang === 'it' ? it : en; }
   // ── Risorse: le due mappe (viewer immagini) + il link esterno ──
   section(currentLang === 'it' ? 'Risorse' : 'Resources');
@@ -6579,7 +6699,7 @@ function openResourcesModal() {
   // Mappe PDF (in arda/res): due tasti sulla STESSA riga (flex), aprono in
   // nuova scheda lasciando la modale aperta.
   var mapRow = document.createElement('div'); mapRow.className = 'res-map-row';
-  function mapBtn(txt, url) { var mb = document.createElement('button'); mb.className = 'fab-modal-confirm'; mb.innerHTML = txt; mb.onclick = function(){ window.open(url, '_blank', 'noopener'); }; mapRow.appendChild(mb); }
+  function mapBtn(txt, url) { var mb = document.createElement('button'); mb.className = 'fab-modal-confirm'; mb.replaceChildren(htmlCostante(txt)); mb.onclick = function(){ window.open(url, '_blank', 'noopener'); }; mapRow.appendChild(mb); }
   mapBtn(label('Mappa fisica<br>della T.d.M.', 'Physical Map<br>of M.E.'), '/arda/res/Physical%20Map.pdf');
   mapBtn(label('Mappa vettoriale', 'Vector map'), '/arda/res/Vector%20Map.pdf');
   box.appendChild(mapRow);
@@ -7153,16 +7273,29 @@ function noteCharTint(p) {
   var soft = function(hex){ var h = ccHexToHsl(hex); return ccHslToHex(h[0], h[1] * NOTE_TINT_SAT, h[2]); };
   return '--nl-d:' + ccAaText(soft(hd), '#252525', 4.5) + ';--nl-l:' + ccAaText(soft(hl), '#F4F4F4', 4.5);
 }
-function renderNoteBodyHtml(html) {
-  var idx = noteCharIndex();
-  return html.replace(/#\{([^}|]+)(?:\|([^}]+))?\}#/g, function(_, disp, look) {
-    var key = look || disp, i = idx[key];
-    if (i === undefined) return '<strong>' + disp + '</strong>';
-    // <span> (non <button>): inline puro, così la punteggiatura seguente non
-    // va mai a capo da sola (un button è inline-block e crea un break-point).
-    return '<span class="note-charlink" role="button" tabindex="0" data-idx="' + i + '"'
-         + ' style="' + noteCharTint(dati[i]) + '">' + disp + '</span>';
+// ⚠️⚠️ IL CORPO DI UNA NOTA È UNA COSTANTE, e passa da `htmlCostante` COI MARCATORI ANCORA
+// TESTO (15.69): i nomi `#{Nome}#` si sostituiscono dopo, dentro i nodi di testo, con elementi
+// costruiti a mano. Così nel parser entra solo il sorgente, e l'indice della voce e la tinta
+// della sua famiglia (che viene da `dati.js`) diventano attributi, mai markup.
+function renderNoteBody(html) {
+  var f = htmlCostante(html), idx = noteCharIndex(), testi = [], t;
+  var tw = document.createTreeWalker(f, NodeFilter.SHOW_TEXT);
+  while ((t = tw.nextNode())) if (t.nodeValue.indexOf('#{') !== -1) testi.push(t);
+  testi.forEach(function(t){
+    var re = /#\{([^}|]+)(?:\|([^}]+))?\}#/g, s = t.nodeValue, da = 0, parti = [], m, i;
+    while ((m = re.exec(s))) {
+      if (m.index > da) parti.push(s.slice(da, m.index));
+      da = re.lastIndex;
+      i = idx[m[2] || m[1]];
+      // <span> (non <button>): inline puro, così la punteggiatura seguente non
+      // va mai a capo da sola (un button è inline-block e crea un break-point).
+      parti.push(i === undefined ? nodo('strong', null, m[1])
+        : nodo('span', { 'class': 'note-charlink', role: 'button', tabindex: '0', 'data-idx': i, style: noteCharTint(dati[i]) }, m[1]));
+    }
+    if (da < s.length) parti.push(s.slice(da));
+    t.replaceWith.apply(t, parti);
   });
+  return f;
 }
 
 function openNoteViewer(note) {
@@ -7201,7 +7334,7 @@ function openNoteViewer(note) {
   setShareRoute(note.slug); box.appendChild(makeShareBtn(note.slug));
   langRefresh = function(){ if (!document.body.contains(ov)) { langRefresh = null; return; } document.removeEventListener('keydown', onKey); dismissStdModal(ov, 'now'); langRefresh = null; openNoteViewer(note); };
   var body = document.createElement('div');
-  body.innerHTML = renderNoteBodyHtml(currentLang === 'it' ? note.bodyIt : note.bodyEn);
+  body.appendChild(renderNoteBody(currentLang === 'it' ? note.bodyIt : note.bodyEn));
   box.appendChild(body);
   // Un nome cliccato apre la scheda del personaggio (chiude prima il viewer).
   function openChar(b) {
@@ -7249,6 +7382,15 @@ var CTRL_I18N = {
         introAdmin:"Admin-only feature: enter the password. If you are a visitor, use 'Export' to save your personal ranking." }
 };
 
+// ⚠️⚠️ IL PANNELLO SI COMPONE DI SOLE COSTANTI DEL CODICE e di stati (filtri accesi, badge
+// attivi, conteggi), quindi passa da `htmlCostante` (15.69), come le icone. L'unico testo che
+// viene da fuori è il numero di versione, che vive in `dati.js`: le due caselle nascono VUOTE e
+// `riempiPannello` ci scrive il numero come testo.
+function riempiPannello(panel) {
+  panel.replaceChildren(htmlCostante(controlPanelHTML(), true));
+  var v = document.querySelector('.version-badge').textContent;
+  ['ctrl-ver-desk', 'ctrl-ver'].forEach(function(id){ var el = document.getElementById(id); if (el) el.textContent = v; });
+}
 function controlPanelHTML() {
   var T = CTRL_I18N[currentLang], CL = CAT_LABEL[currentLang], IL = ICON_LABEL[currentLang];
   var CLo = CAT_LABEL[currentLang === 'it' ? 'en' : 'it']; // etichette nell'altra lingua (segnaposto di larghezza)
@@ -7295,7 +7437,7 @@ function controlPanelHTML() {
   // la versione vive nella barra inferiore (#ctrl-ver, altro comportamento).
   h += '<div class="ctrl-toolbar">'
      + '<span class="ctrl-left-group">' + LOGO_HTML
-     +   '<span class="ctrl-ver-desk" id="ctrl-ver-desk">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>'
+     +   '<span class="ctrl-ver-desk" id="ctrl-ver-desk"></span>'
      + '</span>'
      + '<span class="ctrl-toolbar-btns">'
      +   reorderBtn
@@ -7506,7 +7648,7 @@ function controlPanelHTML() {
   // sinistra, tema + lingua centrati come gruppo, chiudi a destra (vicino a
   // dove sta il FAB a pannello chiuso). La versione resta letta dal badge.
   h += '<div class="ctrl-bottombar">'
-     +   '<span class="ctrl-ver" id="ctrl-ver">' + escapeHtml(document.querySelector('.version-badge').textContent) + '</span>'
+     +   '<span class="ctrl-ver" id="ctrl-ver"></span>'
      +   '<span class="ctrl-bb-group">'
      +     infoBtn
      +     '<button class="ctrl-lang-btn" aria-label="' + langLbl + '" title="' + langLbl + '">' + (currentLang === 'it' ? 'EN' : 'IT') + '</button>'
@@ -7521,7 +7663,7 @@ function controlPanelHTML() {
 function refreshControlPanel() {
   var panel = document.getElementById('ctrl-panel');
   if (!panel) return;
-  panel.innerHTML = controlPanelHTML();
+  riempiPannello(panel);
   wireControlPanel();
 }
 
@@ -7568,7 +7710,7 @@ function wireControlPanel() {
     enableDragDrop();
     syncUrl();
     var st = panel.scrollTop;
-    panel.innerHTML = controlPanelHTML();
+    riempiPannello(panel);
     panel.scrollTop = st;
     wireControlPanel();
   }
@@ -7901,7 +8043,7 @@ function confirmDiscardReorder(){
   q.textContent = it ? 'Vuoi davvero scartare le modifiche?' : 'Discard your changes?';
   box.appendChild(q);
   langRefresh = function(){ if (!document.body.contains(overlay)) { langRefresh = null; return; } overlay.remove(); langRefresh = null; confirmDiscardReorder(); };
-  function mkBtn(main, sub, extra, fn){ var b = document.createElement('button'); b.className = 'fab-modal-confirm' + (extra ? ' ' + extra : ''); b.innerHTML = '<span class="fmc-main">' + main + '</span><span class="fmc-sub">' + sub + '</span>'; b.onclick = fn; return b; }
+  function mkBtn(main, sub, extra, fn){ var b = nodo('button', { 'class': 'fab-modal-confirm' + (extra ? ' ' + extra : '') }, nodo('span', { 'class': 'fmc-main' }, main), nodo('span', { 'class': 'fmc-sub' }, sub)); b.onclick = fn; return b; }
   box.appendChild(mkBtn('No', it ? '(continua a riordinare)' : '(keep reordering)', '', dismiss));
   box.appendChild(mkBtn(it ? 'Sì' : 'Yes', it ? '(scarta le modifiche)' : '(discard changes)', 'is-danger', function(){
     clearDraftOrderKeys();
@@ -7975,7 +8117,7 @@ function showInfoNote() {
   // guardie 'overlay aperto' e gli handler Escape che lo cercano per id.
   var m = buildStdModal('fab-modal'); var overlay = m.backdrop;
   var box = document.createElement('div'); box.className = 'info-note-box'; m.body.appendChild(box);
-  box.insertAdjacentHTML('beforeend', currentLang === 'it' ? INFO_NOTE_HTML_IT : INFO_NOTE_HTML_EN);
+  box.appendChild(htmlCostante(currentLang === 'it' ? INFO_NOTE_HTML_IT : INFO_NOTE_HTML_EN));
   // Il tasto va DOPO il titolo, che qui arriva dentro il blocco di markup:
   // si aggancia al suo h3 invece di ricomporre la nota a nodi.
   var infoH3 = box.querySelector('h3');
