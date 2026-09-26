@@ -119,21 +119,40 @@ restano le cose **di questo sito**.
   nota con l'asterisco resta ferma solo perché il sottotitolo va a capo nello stesso punto nelle
   due lingue; a 320px la citazione del footer va a capo in un altro punto dentro un blocco fermo.
 
-## 🧩 `innerHTML`: quanti restano e perché
+## 🧩 `innerHTML`: non ne resta NESSUNO
 
-**Dalla `15.65` sono 26, erano 54.** Censiti con l'AST sui due sorgenti (collaudo del 2026-09-25). Via i 12 svuotamenti
-(`replaceChildren()`) e le 16 costanti SVG (icone, bandiere, la X di chiusura, gli span del
-suggerimento di scorrimento, l'etichetta a due righe dell'editor), costruite con **`svgNodo`**,
-lo stesso helper di Terramare: parser XML di `DOMParser`, e **solo costanti del codice**, mai
-testo del dataset. Verificato: DOM identico alla `15.64` su 37.784 elementi in undici stati.
+**Dalla `15.69` sono zero**, contati con l'AST sui due sorgenti (e zero `insertAdjacentHTML`), per
+istruzione dell'utente del 2026-09-26 (*converti tutto*). Erano 54 prima della `15.65` e 26 dopo.
+Gli strumenti vivono accanto a `svgNodo`, e sono uno per **provenienza** del testo:
 
-- ⚠️ **`BADGE_ICON` qui NON è SVG**: sono tag `<img>` delle icone WebP, che il parser XML
-  rifiuta. Per questo la riga dell'editor admin che li inserisce è rimasta com'era: la sua
-  conversione è costruire gli `<img>` a nodi, in una tappa successiva.
-- **Restano 26**: le stringhe composte con dati (editor admin, `renderList`, scheda, Pannello,
-  nota informativa, corpo delle note) e le **quattro righe dell'intestazione** in `setLang`
-  (`crest`, `subtitle`, `intro`, `footer-text`), che Terramare ha convertito nella `2.62` con
-  `textContent` e `scriviCrest`.
+| strumento | per che cosa | perché è sicuro |
+|---|---|---|
+| **`nodo(tag, attributi, ...figli)`** | tutto ciò che porta DATI: la lista, la scheda, l'area admin | una stringa figlia diventa un nodo di testo, per costruzione |
+| **`htmlCostante(markup)`** | le COSTANTI del codice: icone di `BADGE_ICON` e `GENDER_ICON`, righe di `i18n`, note, Pannello | è `svgNodo` per l'HTML, e ci passa solo il sorgente |
+| **`nodiRistretti(markup)`** | le due convenzioni di testo del dataset: il vero nome in grassetto, `<br>`/`<em>`/`**` della descrizione | conosce solo quei tre tag e le entità di `escapeHtml`, il resto resta testo |
+
+- ⚠️⚠️ **Il Pannello passa da `htmlCostante` perché si compone di sole costanti e di stati**
+  (filtri, badge, conteggi). L'unico testo che viene da fuori è la **versione**, che sta in
+  `dati.js`: le due caselle nascono vuote e `riempiPannello` ci scrive il numero come testo. Chi
+  aggiunge al Pannello un testo che viene dal dataset lo scrive allo stesso modo, mai nel markup.
+- ⚠️⚠️ **Il corpo di una nota passa dal parser coi marcatori `#{Nome}#` ANCORA TESTO**, e
+  `renderNoteBody` li sostituisce dopo, dentro i nodi di testo: così l'indice della voce e la
+  tinta della sua famiglia, che vengono da `dati.js`, diventano attributi e mai markup.
+- ⚠️ **`replaceChildren` scrive `null` come testo**, mentre `nodo` e `appendiA` lo saltano: il
+  tasto dell'area admin senza sottotitolo mostrava la parola `null` al primo giro del banco.
+- ⚠️ **`bilingue` riceve una funzione e una CHIAVE per lingua**, non i nodi già fatti: a chiavi
+  uguali la riga si costruisce una volta sola. Costruire le due lingue e confrontarle con
+  `isEqualNode` dava lo stesso DOM e costava il 10-20% del cambio lingua. ⚠️ Nella chiave della
+  descrizione la lingua entra **solo se ci sono i genitori**, perché 'Figlio di' lo scrive il codice.
+- **Che cosa costa**: la costruzione della lista passa da 19,4 a **22,2 ms** (CPU 1, misurata senza
+  le misure di riga). `htmlCostante` e `svgNodo` tengono il modello e lo clonano, perché un parser
+  per icona costava più della lista.
+- **Certificazione**: DOM **identico** alla `15.68` su 2.600.417 voci normalizzate (attributi
+  ordinati, testo adiacente fuso, `style` per proprietà) in 53 stati: avvio e cambio lingua, la
+  scheda di **ogni** voce nelle due lingue, le note, Risorse, ricerca, Pannello, e le undici
+  aperture dell'area admin con la ricerca, a 1350 e a 390px. Il banco è `dom-eq.mjs` nello
+  scratchpad. ⚠️ **L'area admin si prova sulla pagina GENERATA**: il sorgente carica comunque
+  `admin.js`, quindi un banco su `index.src.html` guarda il codice admin vecchio.
 
 ## 🏷️ Come si chiama questo progetto
 

@@ -98,7 +98,8 @@ function showActionChoiceModal() {
   function mkBtn(main, sub, extra, fn){
     var b = document.createElement('button');
     b.className = 'fab-modal-confirm' + (extra ? (' ' + extra) : '');
-    b.innerHTML = '<span class="fmc-main">' + main + '</span>' + (sub ? '<span class="fmc-sub">' + sub + '</span>' : '');
+    // ⚠️ `appendiA` e non `replaceChildren`: questo scrive `null` come testo, quello lo salta.
+    appendiA(b, [nodo('span', { 'class': 'fmc-main' }, main), sub ? nodo('span', { 'class': 'fmc-sub' }, sub) : null]);
     b.onclick = fn; return b;
   }
   function viewMain(){
@@ -479,7 +480,7 @@ function showAdminEditor() {
       chk.id = 'ae-' + i + '-flag-' + k;
       chk.checked = !!p[k];
       const iconEl = document.createElement('span');
-      iconEl.innerHTML = BADGE_ICON[k].split('%L%').join('');
+      iconEl.replaceChildren(htmlCostante(BADGE_ICON[k].split('%L%').join('')));
       lbl.appendChild(chk); lbl.appendChild(iconEl);
       flagsRow.appendChild(lbl);
     });
@@ -582,16 +583,17 @@ function showAdminEditor() {
   // anche quelle non ancora renderizzate, interrogando il modello dati `dati`.
   // I match sul Nome (IT/EN) vengono mostrati per primi ed evidenziati di più.
   var searchLayer=null, results=[], sel=0, lastQuery='', countEl, inputEl, listEl;
-  function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }); }
   // Ricerca insensibile agli accenti (come il 'trova' di Chromium): fold() toglie
   // i segni diacritici via NFD, così 'eonwe' trova 'Eönwë' e ogni vocale semplice
   // copre le sue varianti accentate. foldFind() localizza la query (già foldata,
+  // Dalla 15.69 torna NODI: il testo del campo va nel DOM come testo, e l'evidenza è un
+  // `<mark>` costruito a mano.
   function snippet(val, qf){
     val = String(val).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
     var sp = foldFind(val, qf);
-    if (!sp) return esc(val.slice(0,70));
+    if (!sp) return val.slice(0,70);
     var os=sp[0], oe=sp[1], a=Math.max(0, os-24);
-    return (a>0?'...':'') + esc(val.slice(a,os)) + '<mark>' + esc(val.slice(os,oe)) + '</mark>' + esc(val.slice(oe, oe+36)) + (oe+36<val.length?'...':'');
+    return [(a>0?'...':'') + val.slice(a,os), nodo('mark', null, val.slice(os,oe)), val.slice(oe, oe+36) + (oe+36<val.length?'...':'')];
   }
   function clearHit(){ Array.prototype.slice.call(overlay.querySelectorAll('.admin-search-hit')).forEach(function(w){ w.classList.remove('admin-search-hit'); }); }
   var SEARCH_CAP = 100; // tetto alla LISTA renderizzata (query corte = centinaia di nodi); il conteggio resta totale
@@ -605,9 +607,9 @@ function showAdminEditor() {
       var it = document.createElement('div');
       it.className = 'admin-search-item' + (r.isName?' as-namematch':'') + (idx===0?' sel':'');
       var nm = document.createElement('span'); nm.className='as-name';
-      nm.innerHTML = r.isName ? snippet(r.name, r.qf) : esc(r.name);
+      appendiA(nm, r.isName ? snippet(r.name, r.qf) : r.name);
       it.appendChild(nm);
-      if (!r.isName){ var sp=document.createElement('span'); sp.className='as-snip'; sp.innerHTML='<em>'+esc(FIELD_LABEL[r.field]||r.field)+':</em> '+snippet(r.val, r.qf); it.appendChild(sp); }
+      if (!r.isName) it.appendChild(nodo('span', { 'class': 'as-snip' }, nodo('em', null, (FIELD_LABEL[r.field] || r.field) + ':'), ' ', snippet(r.val, r.qf)));
       it.onmousedown = function(ev){ ev.preventDefault(); sel=idx; jump(); };
       listEl.appendChild(it);
     });
@@ -2075,7 +2077,6 @@ function saveColorsToRepo(msg){ return doCommit(msg, dati, CARDCOLORS, true); }
 // (*riordinare i personaggi, cambiare i colori e modificare i micro-aggiustamenti
 // non dovrebbe causare un bump di versione*).
 function saveBadgeAdjustToRepo(msg){ return doCommit(msg, dati, null, true, BADGE_ADJUST); }
-function baEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function baInjectEditorCss(){
   if (document.getElementById('ba-editor-css')) return;
   var css = [
@@ -2269,9 +2270,13 @@ function showBadgeAdjustEditor(initState){
     var f = function(x){ return (x < 0 ? '−' : '') + Math.abs(x).toFixed(3); };
     var rows = BADGE_ADJUST_UNITS.map(function(u){
       var v = BADGE_ADJUST[u.id];
-      return '<tr data-id="' + u.id + '"' + (u.id === cur ? ' class="on"' : '') + '><td>' + baEsc(it ? u.it : u.en) + (u.grp ? ' <span style="opacity:.5">×' + u.grp + '</span>' : '') + '</td><td>' + f(v.ml) + '</td><td>' + f(v.mr) + '</td><td>' + f(v.ny) + '</td><td>' + v.sc.toFixed(2) + '×</td></tr>';
-    }).join('');
-    tblWrap.innerHTML = '<table class="ba-table"><thead><tr><th>' + (it ? 'Icona / gruppo' : 'Icon / group') + '</th><th>ml</th><th>mr</th><th>nudge</th><th>scale</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      return nodo('tr', { 'data-id': u.id, 'class': u.id === cur ? 'on' : null },
+        nodo('td', null, it ? u.it : u.en, u.grp ? [' ', nodo('span', { style: 'opacity:.5' }, '×' + u.grp)] : null),
+        nodo('td', null, f(v.ml)), nodo('td', null, f(v.mr)), nodo('td', null, f(v.ny)), nodo('td', null, v.sc.toFixed(2) + '×'));
+    });
+    tblWrap.replaceChildren(nodo('table', { 'class': 'ba-table' },
+      nodo('thead', null, nodo('tr', null, nodo('th', null, it ? 'Icona / gruppo' : 'Icon / group'), nodo('th', null, 'ml'), nodo('th', null, 'mr'), nodo('th', null, 'nudge'), nodo('th', null, 'scale'))),
+      nodo('tbody', null, rows)));
     Array.prototype.forEach.call(tblWrap.querySelectorAll('tbody tr'), function(tr){ tr.onclick = function(){ cur = tr.dataset.id; sync(); }; });
   }
   // Aggiorna in-place le celle della riga dell'unità corrente (senza rifare la
@@ -2298,23 +2303,23 @@ function showBadgeAdjustEditor(initState){
   function nmOf(p){ return it ? (p.nome || p.nome_en) : (p.nome_en || p.nome); }
   function renderPane(pane){
     var u = unitOf(cur); var ss = samples(u);
-    if (!ss.length){ pane.innerHTML = '<div class="ba-pv-empty">' + (it ? 'Nessuna scheda con questo badge' : 'No card with this badge') + '</div>'; return; }
-    pane.innerHTML = ss.map(function(p){
+    if (!ss.length){ pane.replaceChildren(nodo('div', { 'class': 'ba-pv-empty' }, it ? 'Nessuna scheda con questo badge' : 'No card with this badge')); return; }
+    pane.replaceChildren.apply(pane, ss.map(function(p){
       var badges = ICON_ORDER.filter(function(k){ return p[k]; }).map(function(k){
         var uid = BADGE_UNIT[k]; var v = uid ? BADGE_ADJUST[uid] : { ml:0, mr:0, ny:0, sc:1 }; var selc = (uid === cur);
-        var img = '<img src="' + iconFile(p, k) + '" alt="" class="ba-pv-ico" style="height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)">';
-        return selc ? '<span class="ba-pv-sel">' + img + '</span>' : img;
-      }).join('');
+        var img = nodo('img', { src: iconFile(p, k), alt: '', 'class': 'ba-pv-ico', style: 'height:calc(0.92em * ' + v.sc + ');margin-left:' + v.ml + 'em;margin-right:' + v.mr + 'em;transform:translateY(' + v.ny + 'em)' });
+        return selc ? nodo('span', { 'class': 'ba-pv-sel' }, img) : img;
+      });
       // Simbolo di genere in coda (come sulla card): ORA è un'unità regolabile
       // (bi-male/bi-female). Reso coi valori LIVE della sua unità (dimensioni base
       // proprie, non 0.92em) ed evidenziato dalla freccia quando è quello selezionato.
       var gid = (p.genere === 'f') ? 'female' : 'male';
       var gv = BADGE_ADJUST[gid], gb = GENDER_BASE[gid];
-      var gsym = (p.genere === 'f' ? GENDER_ICON.f : GENDER_ICON.m).split('%L%').join('')
-        .replace('<img ', '<img style="width:calc(' + gb.w + 'em * ' + gv.sc + ');height:calc(' + gb.h + 'em * ' + gv.sc + ');margin-left:' + gv.ml + 'em;margin-right:' + gv.mr + 'em;transform:translateY(' + gv.ny + 'em)" ');
-      if (cur === gid) gsym = '<span class="ba-pv-sel">' + gsym + '</span>';
-      return '<div class="ba-pv-row"><span class="ba-pv-name">' + baEsc(nmOf(p)) + '</span><span class="ba-pv-badges">' + badges + gsym + '</span></div>';
-    }).join('');
+      var gsym = htmlCostante((p.genere === 'f' ? GENDER_ICON.f : GENDER_ICON.m).split('%L%').join('')).firstChild;
+      gsym.setAttribute('style', 'width:calc(' + gb.w + 'em * ' + gv.sc + ');height:calc(' + gb.h + 'em * ' + gv.sc + ');margin-left:' + gv.ml + 'em;margin-right:' + gv.mr + 'em;transform:translateY(' + gv.ny + 'em)');
+      if (cur === gid) gsym = nodo('span', { 'class': 'ba-pv-sel' }, gsym);
+      return nodo('div', { 'class': 'ba-pv-row' }, nodo('span', { 'class': 'ba-pv-name' }, nmOf(p)), nodo('span', { 'class': 'ba-pv-badges' }, badges, gsym));
+    }));
     placeMidlines(pane);
   }
   // Posiziona la linea di mezzo (--mid) a metà del MAIUSCOLETTO del nome, con lo
@@ -2332,7 +2337,7 @@ function showBadgeAdjustEditor(initState){
   function sync(){
     Array.prototype.forEach.call(chipWrap.children, function(c){ c.classList.toggle('on', c.dataset.id === cur); });
     var u = unitOf(cur);
-    selHead.innerHTML = '<b>' + baEsc(it ? u.it : u.en) + '</b> · ' + (u.grp ? (it ? ('Gruppo · ' + u.grp + ' icone, stessi valori') : ('Group · ' + u.grp + ' icons, shared values')) : (it ? 'Icona singola' : 'Single icon'));
+    selHead.replaceChildren(nodo('b', null, it ? u.it : u.en), ' · ' + (u.grp ? (it ? ('Gruppo · ' + u.grp + ' icone, stessi valori') : ('Group · ' + u.grp + ' icons, shared values')) : (it ? 'Icona singola' : 'Single icon')));
     ['ml','mr','ny','sc'].forEach(showVal);
     renderPreview();
     buildTable();
@@ -2398,7 +2403,7 @@ function showColorStats(initState) {
     var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;overflow-wrap:anywhere;line-height:1.2;'; nm.textContent = o.name; nm.title = o.name; row.appendChild(nm);
     var track = document.createElement('span'); track.style.cssText = 'display:block;width:100%;height:13px;background:rgba(128,128,128,0.14);border-radius:7px;overflow:hidden;';
     var fill = document.createElement('span'); fill.style.cssText = 'display:block;height:100%;border-radius:7px;min-width:2px;width:' + (o.n / o.max * 100) + '%;background:' + o.barColor + ';'; track.appendChild(fill); row.appendChild(track);
-    var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.innerHTML = '<b>' + o.n + '</b> · ' + pct + '%'; row.appendChild(cnt);
+    var cnt = document.createElement('span'); cnt.style.cssText = 'font-variant-numeric:tabular-nums;text-align:right;opacity:0.85;min-width:56px;'; cnt.replaceChildren(nodo('b', null, o.n), ' · ' + pct + '%'); row.appendChild(cnt);
     if (o.onClick){
       row.style.cursor = 'pointer'; row.style.borderRadius = '6px'; row.style.padding = '0.12rem 0.25rem'; row.style.margin = '0.18rem -0.25rem';
       row.tabIndex = 0; row.setAttribute('role', 'button'); row.setAttribute('aria-label', o.name + ', ' + o.n);
@@ -2745,7 +2750,7 @@ function showColorEditor(initState) {
       withBtn(btn, saveColorsToRepo('colori: rinomina famiglia ' + fam + ' -> ' + nn), function(){ if (document.body.contains(overlay)) close(); });
     }, true);
     // 3) Sposta per tipo → questa famiglia
-    var h3 = mkH(''); h3.innerHTML = (it ? 'Sposta un tipo in ' : 'Move a type into ') + '<strong>' + escapeHtml(fam) + '</strong>';
+    var h3 = mkH(''); h3.replaceChildren(it ? 'Sposta un tipo in ' : 'Move a type into ', nodo('strong', null, fam));
     var selT = document.createElement('select'); selT.style.cssText = 'width:100%;padding:0.35rem;'; selT.setAttribute('aria-label', it ? 'Tipo da spostare' : 'Type to move');
     // La destinazione è SEMPRE la famiglia in cima (fam). Nella option mostriamo
     // il tipo + la sua famiglia ATTUALE (senza freccia, che faceva sembrare la
@@ -2783,19 +2788,15 @@ function showColorEditor(initState) {
       var cardBgHex = ccTripletToHex(_bg.map(function(c,i){ return Math.round(c*(1-cardOp)+_fg[i]*cardOp); }).join(','));
       var tct = ccHexToTriplet(ccAaText(hex, cardBgHex, 4.6));
       var col = document.createElement('div'); col.style.cssText = 'flex:1;min-width:0;';
-      col.innerHTML =
-        '<div style="background:' + pageBg + ';border:1px solid rgba(128,128,128,0.5);border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;">' +
-          '<div style="position:relative;background:rgba(' + trip + ',' + cardOp + ');border:1px solid rgba(128,128,128,0.18);border-radius:6px;padding:0.4rem 0.5rem 0.4rem 0.75rem;overflow:hidden;">' +
-            '<span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:rgba(' + trip + ',0.85);"></span>' +
-            '<div style="color:' + txt + ';font-weight:600;font-size:0.78rem;line-height:1.15;">' + escapeHtml(sampleName) + '</div>' +
-            '<span style="display:inline-block;margin-top:0.28rem;font-size:0.6rem;padding:1px 6px;border-radius:4px;color:rgba(' + tct + ',1);border:1px solid rgba(' + trip + ',0.8);">' + escapeHtml(sampleTipo) + '</span>' +
-          '</div>' +
-          '<div style="background:' + modalBg + ';border:1px solid rgba(' + trip + ',0.9);border-radius:6px;padding:0.4rem 0.55rem;">' +
-            '<div style="color:rgba(' + cct + ',1);font-size:0.56rem;letter-spacing:0.09em;font-weight:700;">' + (it ? 'POSIZIONE' : 'RANK') + ' 1</div>' +
-            '<div style="color:' + txt + ';font-size:0.74rem;margin:0.12rem 0 0.2rem;">' + escapeHtml(sampleName) + '</div>' +
-            '<div style="color:rgba(' + cct + ',1);font-size:0.6rem;border-bottom:1px solid rgba(' + trip + ',0.32);padding-bottom:0.2rem;display:inline-block;">' + (it ? 'Il Silmarillion' : 'The Silmarillion') + '</div>' +
-          '</div>' +
-        '</div>';
+      col.appendChild(nodo('div', { style: 'background:' + pageBg + ';border:1px solid rgba(128,128,128,0.5);border-radius:8px;padding:0.5rem;display:flex;flex-direction:column;gap:0.5rem;' },
+        nodo('div', { style: 'position:relative;background:rgba(' + trip + ',' + cardOp + ');border:1px solid rgba(128,128,128,0.18);border-radius:6px;padding:0.4rem 0.5rem 0.4rem 0.75rem;overflow:hidden;' },
+          nodo('span', { style: 'position:absolute;left:0;top:0;bottom:0;width:5px;background:rgba(' + trip + ',0.85);' }),
+          nodo('div', { style: 'color:' + txt + ';font-weight:600;font-size:0.78rem;line-height:1.15;' }, sampleName),
+          nodo('span', { style: 'display:inline-block;margin-top:0.28rem;font-size:0.6rem;padding:1px 6px;border-radius:4px;color:rgba(' + tct + ',1);border:1px solid rgba(' + trip + ',0.8);' }, sampleTipo)),
+        nodo('div', { style: 'background:' + modalBg + ';border:1px solid rgba(' + trip + ',0.9);border-radius:6px;padding:0.4rem 0.55rem;' },
+          nodo('div', { style: 'color:rgba(' + cct + ',1);font-size:0.56rem;letter-spacing:0.09em;font-weight:700;' }, (it ? 'POSIZIONE' : 'RANK') + ' 1'),
+          nodo('div', { style: 'color:' + txt + ';font-size:0.74rem;margin:0.12rem 0 0.2rem;' }, sampleName),
+          nodo('div', { style: 'color:rgba(' + cct + ',1);font-size:0.6rem;border-bottom:1px solid rgba(' + trip + ',0.32);padding-bottom:0.2rem;display:inline-block;' }, it ? 'Il Silmarillion' : 'The Silmarillion'))));
       host.appendChild(col);
     });
   }
