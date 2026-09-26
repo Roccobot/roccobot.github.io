@@ -6560,17 +6560,30 @@ abitata: l'iPhone 16 Pro ha un viewport di **402px**.
   link, e le sue due metà differiscono di una lettera senza andare a capo in nessuna fascia.
 - ⚠️ **Il titolone ha un presidio SUO e più raffinato** (`pareggiaTitolo`, che cerca la coppia di
   tagli che pareggia le due lingue): non si sostituisce con questo, che riserva e basta.
-- ⚠️⚠️ **DALLA `2.72` GLI `innerHTML` SONO 17, ERANO 43** (censiti con l'AST sui due sorgenti):
-  via i 10 svuotamenti (`replaceChildren()`) e le 16 costanti (icone, bandiere, X di chiusura,
-  span decorativi), costruite con **`svgNodo`**, che passa dal parser XML di `DOMParser` e
-  riceve **solo costanti del codice**, mai testo del dataset. Verificato: DOM identico alla
-  `2.71` su 7.431 elementi in dodici stati della pagina.
-  - **I 17 che restano** sono stringhe composte con dati: l'editor admin (`admin.src.js`) e i
-    generatori pubblici (`renderList`, `controlPanelHTML`, la nota informativa, il corpo delle
-    note, i pulsanti `mkBtn`). ⚠️ **`renderList` per ultimo e col banco anti-jitter**: è il cuore
-    della pagina, e la sua struttura a gemelle è quella che la certificazione protegge.
-  - ⚠️ **Un'icona nuova si aggiunge con `svgNodo`, non con `innerHTML`**: il divieto non guarda
-    la provenienza del testo, e la via pulita adesso costa una chiamata.
+- ⚠️⚠️ **DALLA `2.74` NON RESTA NESSUN `innerHTML`**, contati con l'AST sui due sorgenti (e
+  zero `insertAdjacentHTML`), per istruzione dell'utente del 2026-09-26 (*converti tutto*). Erano
+  43 prima della `2.72` e 17 dopo. Gli strumenti sono quelli di Arda, identici e accanto a
+  `svgNodo`, uno per **provenienza** del testo:
+  - **`nodo(tag, attributi, ...figli)`** per tutto ciò che porta DATI (la lista, l'area admin):
+    una stringa figlia diventa un nodo di testo, per costruzione;
+  - **`htmlCostante(markup)`** per le COSTANTI del codice: icone (qui SVG in linea), note, nota
+    informativa, Pannello. È `svgNodo` per l'HTML, e ci passa solo il sorgente;
+  - **`nodiRistretti(markup)`** per il grassetto del vero nome dei nomi alternativi: conosce
+    solo `<strong>`, `<em>` e `<br>` e le entità di `escapeHtml`, il resto resta testo.
+  - ⚠️ **Il Pannello scrive la VERSIONE come testo** (`riempiPannello`), perché è l'unico testo
+    che viene da fuori, da `dati.js`; la card di legenda che porta dentro usa
+    `joinBipartiteHtml`, la versione in markup della riga bipartita, perché è fatta di costanti.
+  - ⚠️ **Le etichette con le parentesi hanno la gemella anche a testi uguali**, ed è replicato
+    alla lettera: il confronto di prima avveniva fra il markup della faccia (già vestito di
+    `.tparen`) e il testo nudo dell'altra lingua, quindi non coincideva mai. Cambiarlo avrebbe
+    cambiato il DOM, e la conversione doveva lasciarlo identico.
+  - ⚠️ **`replaceChildren` scrive `null` come testo**, mentre `nodo` e `appendiA` lo saltano.
+  - **Certificazione**: DOM **identico** alla `2.73` su 1.231.892 voci normalizzate in 37 stati
+    (avvio e cambio lingua, note, Risorse, ricerca, Pannello, le undici aperture dell'area admin
+    con la ricerca, a 1350 e a 390px), più l'origine scritta a parole, che dipende dalla Console.
+    Il banco è `dom-eq.mjs` nello scratchpad, e l'area admin si prova sulla pagina **generata**,
+    perché il sorgente carica comunque `admin.js`. Zero jitter, e la costruzione della lista
+    scende da 24,3 a **21,2 ms** (a chiavi uguali `bilingue` costruisce la riga una volta sola).
 - ⚠️⚠️ **GLI `innerHTML` DELL'INTESTAZIONE SONO CHIUSI DALLA `2.62`**, e la nota che li dava da
   fare descrive lo stato fino alla `2.61`: le righe di testo piano (`subtitle`, `intro`,
   `footer-text`) passano da `textContent`, e il crest lo compone `scriviCrest` a nodi, perché è
