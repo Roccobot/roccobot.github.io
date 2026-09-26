@@ -665,7 +665,7 @@ def sect_refs(righe, i, max_cont=2):
     return fuori
 
 
-def cita_aiv(righe, i, intorno=1):
+def cita_aiv(righe, i, intorno=2):
     """Vero se il rimando che parte dalla riga `i` parla del repo `AIV`.
 
     Serve solo quando quel repo NON è agganciato, per distinguere un rimando rotto da uno

@@ -167,11 +167,12 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   `CLAUDE.md`; il brief copre entrambi.
 - **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
   root (convenzione registrata nelle regole universali). Qui vivono:
-  `arda/top/` = **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre),
-  `proxy/` = il **Worker** di amministrazione. Dal 2026-09-26 **Regole AdBlock**,
+  `proxy/` = i **Worker** di amministrazione. Dal 2026-09-26 **'I Grandi di Arda'** (il
+  sito, quello che si tocca quasi sempre), **'I Grandi di Terramare'**, **Regole AdBlock**,
   **userscript**, **RoccobotOS**, CleanSVG e RatioLab vivono ciascuno in un repo suo
-  (`Roccobot/ABP`, `Roccobot/userscripts`, `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`,
-  `Roccobot/ratiolab`), serviti da Pages agli stessi indirizzi.
+  (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,
+  `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`, `Roccobot/ratiolab`), serviti da Pages; Arda e
+  Terramare all'indirizzo senza `top`.
   ⚠️ Ogni progetto ha convenzioni proprie: solo 'I Grandi di Arda' ha un numero di
   versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
   `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
@@ -197,8 +198,8 @@ da fuori e GitHub Pages pubblica in ritardo. Quindi si guardano i fatti:
 ```bash
 git fetch origin master && git rev-list --left-right --count origin/master...HEAD
 git log --oneline -6 && git status --short
-grep -oE 'datiVersion = "[0-9.]+' arda/top/dati.js
-curl -sS "https://roccobot.github.io/arda/top/dati.js" | head -1   # versione LIVE
+grep -oE 'datiVersion = "[0-9.]+' ../arda/dati.js                  # dal clone di Roccobot/arda
+curl -sS "https://roccobot.github.io/arda/dati.js" | head -1       # versione LIVE
 ```
 
 Il primo numero di `rev-list` è quanti commit si è dietro: se è >0 sono arrivati

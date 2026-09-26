@@ -3,13 +3,13 @@
 > **Cos'è questo file.** Le regole dei **Cloudflare Worker** che fanno da proxy ai
 > salvataggi delle aree admin. Si carica quando si legge un file di questa cartella; le
 > regole trasversali vivono nel `CLAUDE.md` di **root**, e il formato dei dati che il Worker
-> scrive in [`arda/top/CLAUDE.md`](../arda/top/CLAUDE.md), sezione '🗃️ Struttura dati'.
+> scrive nel `CLAUDE.md` del repo `Roccobot/arda`, sezione '🗃️ Struttura dati'.
 
 ## ⚠️⚠️ I Worker sono DUE, e la separazione è la salvaguardia
 
 | Worker | sorgente | scrive su | serve |
 |---|---|---|---|
-| `arda-admin-proxy` | `proxy/arda-admin-proxy.js` | `arda/top/dati.js` | 'I Grandi di Arda' |
+| `arda-admin-proxy` | `proxy/arda-admin-proxy.js` | `dati.js` del repo `Roccobot/arda` (fino al 2026-09-26 il `dati.js` della cartella `arda/top/` di questo repo) | 'I Grandi di Arda' |
 | `earthsea-admin-proxy` | `proxy/earthsea/earthsea-admin-proxy.js` | `dati.js` del repo `Roccobot/earthsea` (fino al 2026-09-26 il `dati.js` della cartella `earthsea/top/` di questo repo) | 'I Grandi di Terramare' (dal 2026-08-23) |
 
 **Perché due e non uno multi-sito** (scelta dell'utente, 2026-08-23, fra le due strade
@@ -98,7 +98,7 @@ invia i dati più la parola d'ordine; lui **valida**, prende lo SHA del file dat
 e **riscrive l'intero file** con un PUT sulla Contents API, che con lo SHA è **race-safe**.
 Dal contenuto legge anche la versione, per bumparla.
 
-- ⚠️ **`FILE_PATH` punta a `arda/top/dati.js`**: se il file dati si rinomina o si sposta,
+- ⚠️ **`REPO` e `FILE_PATH` puntano al `dati.js` alla radice del repo `Roccobot/arda`** (dal `rev` 17): se il file dati si rinomina o si sposta,
   **va riallineato qui**, o i salvataggi admin scrivono nel posto sbagliato.
 - **Validatori e preservazione.** Ogni config ha lettore e validatore propri, e un
   salvataggio che **non** invia una config la **preserva**; una config malformata è rifiutata
