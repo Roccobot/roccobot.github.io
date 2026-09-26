@@ -168,13 +168,15 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
 - **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
   root (convenzione registrata nelle regole universali). Qui vivono:
   `arda/top/` = **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre),
-  `ABP/` = **Regole AdBlock**, `userscripts/` = gli **userscript**, `RoccobotOS/` = la
-  **guida di riferimento**, `proxy/` = il **Worker** di amministrazione.
+  `proxy/` = il **Worker** di amministrazione. Dal 2026-09-26 **Regole AdBlock**,
+  **userscript**, **RoccobotOS**, CleanSVG e RatioLab vivono ciascuno in un repo suo
+  (`Roccobot/ABP`, `Roccobot/userscripts`, `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`,
+  `Roccobot/ratiolab`), serviti da Pages agli stessi indirizzi.
   ⚠️ Ogni progetto ha convenzioni proprie: solo 'I Grandi di Arda' ha un numero di
   versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
   `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
   installazione da ripetere dopo ogni go-live; RoccobotOS ha una versione **interna**, nel
-  commento in testa a `RoccobotOS/RoccobotOS.js`, che non compare in pagina e non va messa nel badge
+  commento in testa a `RoccobotOS.js` (repo `Roccobot/RoccobotOS`), che non compare in pagina e non va messa nel badge
   di nessuno.
 - **Sessione** = questa chat e questo container: **effimera**. Il salto da una all'altra
   è quello che l'handoff serve a superare.

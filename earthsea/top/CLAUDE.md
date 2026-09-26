@@ -7115,7 +7115,7 @@ alla volta, con una prova in browser dopo ognuno.
   per ogni altro residuo di questa sezione: un campo vuoto e senza lettori **somiglia a un
   campo libero**. Il caso e il criterio vivono in § 'Il campo origine'.
   - Ⓘ **Da dove veniva davvero**, trovato il 2026-08-23 e utile perché chiude la domanda: il
-    capostipite non è 'I Grandi di Arda' ma **`artifacts/legion50/index.html`**, una classifica
+    capostipite non è 'I Grandi di Arda' ma la pagina **`legion50`** della cartella `artifacts` (cancellata il 2026-09-26: resta nella storia git del repo), una classifica
     di saghe epiche dove `paese` è un **codice ISO che serve a pescare una bandiera**
     (`getFlag(paese)` costruisce l'`img` da `country-flags`), e i valori sono veri e diversi
     (`gb`, `jp`, `gr`, `cn`, `is`...). In Arda diventano tutti `gb`, perché Tolkien è uno solo,

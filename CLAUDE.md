@@ -13,11 +13,11 @@
 |---|---|---|
 | **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre) | `arda/top/` | [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md) |
 | **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20) | `earthsea/top/` | [`earthsea/top/CLAUDE.md`](earthsea/top/CLAUDE.md) |
-| **Regole AdBlock** ('Roccobot ABP') | `ABP/` | [`ABP/CLAUDE.md`](ABP/CLAUDE.md) |
-| **Userscript** | `userscripts/` | [`userscripts/CLAUDE.md`](userscripts/CLAUDE.md) |
-| **CleanSVG**, la paginetta che ripulisce un SVG (nata il 2026-08-25) | `CleanSVG/` | [`CleanSVG/CLAUDE.md`](CleanSVG/CLAUDE.md) |
+| **Regole AdBlock** ('Roccobot ABP'; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ABP` | il `CLAUDE.md` di quel repo |
+| **Userscript** (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/userscripts` | il `CLAUDE.md` di quel repo |
+| **CleanSVG**, la paginetta che ripulisce un SVG (nata il 2026-08-25; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/CleanSVG` | il `CLAUDE.md` di quel repo |
 | **RatioLab**, la paginetta dei rapporti fra due numeri (nata il 2026-09-21; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ratiolab` | il `CLAUDE.md` di quel repo |
-| **RoccobotOS**, il sito di riferimento personale | `RoccobotOS/` | [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md) |
+| **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | il `CLAUDE.md` di quel repo |
 | **Worker di amministrazione** | `proxy/` | [`proxy/CLAUDE.md`](proxy/CLAUDE.md) |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
@@ -69,7 +69,7 @@ un file di quella cartella.
 **RoccobotOS** seguono **SlimVer**, lo schema `x.xx` che dal 2026-08-01 è il default dei
 progetti (`Roccobot.md`, § '🌿 Workflow git e versioni'), il primo con la fonte in
 `datiVersion` e il badge in testata, il secondo col numero visibile in cima e sopra il logo
-(dettagli in [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md), § 'Versione del progetto'); le
+(dettagli nel `CLAUDE.md` del repo `Roccobot/RoccobotOS`, § 'Versione del progetto'); le
 liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e
 il link di installazione da ripetere dopo ogni go-live; 'I Grandi di Terramare' nasce con
 SlimVer e la fonte in `datiVersion`, come il progetto da cui è copiato. ⚠️ 'Senza versione'
@@ -404,13 +404,13 @@ non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
   progetto'.
   - ⚠️ **'Grimorio' NON è un quarto sinonimo: è terminologia morta** (sopravvive solo in
     branch vecchi e commit storici): non usarla mai, né nei testi né parlando con l'utente.
-- **Le liste AdBlock sono 'Roccobot ABP'** (`ABP/`), che l'utente chiama anche 'Regole
+- **Le liste AdBlock sono 'Roccobot ABP'** (repo `Roccobot/ABP`), che l'utente chiama anche 'Regole
   AdBlock' o 'Regole Adguard'. I sinonimi colloquiali delle due liste (blocco ed eccezioni)
   vivono in `Roccobot.md`, § '📦 Terminologia e convenzioni di scambio file'; quale file per
-  quale comando lo dice [`ABP/CLAUDE.md`](ABP/CLAUDE.md).
-- Gli altri tre progetti si chiamano col nome della loro cartella: **userscript**,
+  quale comando lo dice il `CLAUDE.md` del repo `Roccobot/ABP`.
+- Gli altri tre progetti si chiamano col nome della loro cartella o del loro repo: **userscript**,
   **RoccobotOS** (il sito di riferimento personale, non 'la guida': vedi
-  [`RoccobotOS/CLAUDE.md`](RoccobotOS/CLAUDE.md)) e il **Worker di amministrazione** in `proxy/`.
+  il `CLAUDE.md` del repo `Roccobot/RoccobotOS`) e il **Worker di amministrazione** in `proxy/`.
 
 ## 🤖 Modello da usare
 
@@ -711,7 +711,7 @@ poi divergerebbe.
     con quello che si attende. La sonda dipende dal progetto: per 'I Grandi di Arda' è
     `datiVersion` in `https://roccobot.github.io/arda/top/dati.js`, per le liste AdBlock
     l'header `! Last updated:`, per uno userscript il suo `@version`, per RoccobotOS la
-    costante `VERSIONE` di `RoccobotOS/RoccobotOS.js`. ⚠️ Per RoccobotOS **non** è più
+    costante `VERSIONE` di `https://roccobot.github.io/RoccobotOS/RoccobotOS.js`. ⚠️ Per RoccobotOS **non** è più
     l'intestazione di quel file: dal 2026-07-31 il commento non porta il numero, e un
     `head -c 30` non mostrerebbe nulla facendo credere a un deploy mancato.
   - ⚠️⚠️ **L'HTML PUÒ RESTARE IN CACHE QUANDO LA SONDA È GIÀ AGGIORNATA, e si legge come un
