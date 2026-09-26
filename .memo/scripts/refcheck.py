@@ -51,6 +51,24 @@ MIHON = SITO.parent / "mihon-aniyomi-ext"
 # inesistente proprio perché il file era fuori copertura. È il sintomo rovesciato già visto
 # con `Earthsea.md`, e la lezione è la stessa: un file di regole nuovo deve entrare da sé.
 AIV = SITO.parent / "AIV"
+# ⚠️ Dal 2026-09-26 i progetti vivono ciascuno nel SUO repo, clonato accanto a questo, e i loro
+# `CLAUDE.md` sono file di regole come quello di AIV: fuori dall'indice, un rimando corretto a
+# una loro sezione risultava 'inesistente', che è il sintomo rovesciato già visto due volte.
+# Qui l'elenco è il NOME del repo come compare nel testo (`Roccobot/earthsea`), ed è l'unico
+# elenco a mano del file: un repo nuovo si aggiunge qui il giorno in cui nasce.
+# La cartella si cerca SENZA badare alle maiuscole: il clone prende il nome che gli dà chi lo
+# fa, e in queste sessioni `Roccobot/ABP` finisce in `abp`. Col nome esatto il repo risultava
+# assente pur essendo lì, e i suoi rimandi passavano per non verificabili.
+def _clone(nome):
+    for d in SITO.parent.iterdir() if SITO.parent.is_dir() else ():
+        if d.is_dir() and d.name.lower() == nome.lower():
+            return d
+    return SITO.parent / nome
+
+
+PROGETTI = {nome: _clone(nome) for nome in (
+    "earthsea", "arda", "ratiolab", "CleanSVG", "ABP", "userscripts", "RoccobotOS",
+    "cheparolae")}
 
 RULEFILES = [
     SITO / "CLAUDE.md",
@@ -67,6 +85,7 @@ RULEFILES = [
 # nascono è una manutenzione che prima o poi si dimentica; un glob no.
 ] + sorted(SITO.glob("*/CLAUDE.md")) + sorted(SITO.glob("*/*/CLAUDE.md")) \
   + sorted(AIV.glob("CLAUDE.md")) + sorted(AIV.glob("*/CLAUDE.md")) \
+  + [f for r in PROGETTI.values() for f in sorted(r.glob("CLAUDE.md")) + sorted(r.glob("*/CLAUDE.md"))] \
   + sorted(TOOLS.glob("rules/*.md")) + [
 # Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollerà
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
@@ -659,6 +678,16 @@ def cita_aiv(righe, i, intorno=1):
     """
     vicine = righe[max(0, i - intorno):i + intorno + 1]
     return any("AIV" in r for r in vicine)
+
+
+def cita_progetto_assente(righe, i, intorno=1):
+    """Vero se il rimando che parte dalla riga `i` nomina il repo di un progetto che questa
+    sessione non monta (`Roccobot/earthsea`, e gli altri di `PROGETTI`). Stesso criterio di
+    `cita_aiv`, col nome completo del repo perché `arda` o `ABP` da soli comparirebbero in
+    righe che parlano d'altro."""
+    vicine = righe[max(0, i - intorno): i + intorno + 1]
+    assenti = [n for n, r in PROGETTI.items() if not r.exists()]
+    return any(f"Roccobot/{n}" in r for r in vicine for n in assenti)
 
 
 def variants(title):
@@ -1372,7 +1401,10 @@ def main():
                 if p in SKIP_PATHS or p.startswith(SKIP_PREFIXES):
                     continue
                 seen["path"] += 1
-                if not any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent)):
+                testa, _, coda = p.partition("/")
+                clone = next((r for n, r in PROGETTI.items() if n.lower() == testa.lower()), None)
+                if not (any((d / p).exists() for d in (base, SITO, TOOLS, SITO.parent))
+                        or (clone is not None and coda and (clone / coda).exists())):
                     dove = non_verif if aiv_missing and p.startswith("AIV/") else bad_paths
                     dove.append((f, n, p))
             for s in sect_refs(righe, n - 1):
@@ -1380,12 +1412,14 @@ def main():
                     continue
                 seen["sect"] += 1
                 if norm(s) not in titles:
-                    dove = non_verif if aiv_missing and cita_aiv(righe, n - 1) else bad_sects
+                    assente = ((aiv_missing and cita_aiv(righe, n - 1))
+                               or cita_progetto_assente(righe, n - 1))
+                    dove = non_verif if assente else bad_sects
                     dove.append((f, n, s))
 
     def rel(p):
         for etichetta_repo, radice in (("SITO", SITO), ("TOOLS", TOOLS), ("AIV", AIV),
-                                       ("MIHON", MIHON)):
+                                       ("MIHON", MIHON), *PROGETTI.items()):
             try:
                 return f"{etichetta_repo}/{p.relative_to(radice)}"
             except ValueError:
@@ -1438,8 +1472,8 @@ def main():
         report("rimandi a sezioni inesistenti", bad_sects,
                "il titolo citato non esiste in nessun file di regole: aggiornalo alla nuova collocazione")
     if non_verif and not missing_repo:
-        print(f"\n(avviso) {len(non_verif)} riferimenti ad AIV non verificabili senza quel "
-              "repo, non contati come difetti")
+        print(f"\n(avviso) {len(non_verif)} riferimenti ad AIV o ai repo dei progetti non "
+              "verificabili senza quei repo, non contati come difetti")
 
     tot = sum(seen.values())
     rotti = (len(bad_links) + len(bad_paths) + len(bad_sects) + len(volatile)
@@ -1454,6 +1488,11 @@ def main():
     if aiv_missing:
         print(f"\nNota: {AIV} non è agganciato, quindi `AIV/CLAUDE.md` non è stato guardato "
               "e i suoi titoli non sono nell'indice: i rimandi che lo nominano restano non "
+              "verificabili. Non è un difetto: è copertura mancante.")
+    assenti = [n for n, r in PROGETTI.items() if not r.exists()]
+    if assenti:
+        print(f"\nNota: i repo dei progetti {', '.join(assenti)} non sono agganciati, quindi i "
+              "loro `CLAUDE.md` non sono nell'indice e i rimandi che li nominano restano non "
               "verificabili. Non è un difetto: è copertura mancante.")
     if not MIHON.exists():
         print(f"\nNota: {MIHON} non è agganciato, quindi i suoi documenti non sono stati "

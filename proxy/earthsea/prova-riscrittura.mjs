@@ -4,13 +4,15 @@
 // di provarla sarebbe un salvataggio in produzione, cioè sul file che deve non
 // rovinare. Qui gira a vuoto, in locale, e confronta il risultato con l'originale.
 //
-// Uso:  node proxy/earthsea/prova-riscrittura.mjs
+// Uso:  node proxy/earthsea/prova-riscrittura.mjs [percorso di dati.js]
+// Senza argomento cerca il repo `Roccobot/earthsea` clonato accanto a questo: dal
+// 2026-09-26 il sito vive là, e `dati.js` sta alla sua radice.
 // Esce 0 se tutte le prove passano, 1 alla prima che fallisce.
 
 import { readFileSync } from 'node:fs';
 import { rewriteDatiFile } from './earthsea-admin-proxy.js';
 
-const FILE = new URL('../../earthsea/top/dati.js', import.meta.url);
+const FILE = process.argv[2] || new URL('../../../earthsea/dati.js', import.meta.url);
 const src = readFileSync(FILE, 'utf8');
 
 let falliti = 0;
