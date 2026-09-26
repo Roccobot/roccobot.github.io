@@ -12,7 +12,7 @@
 | progetto | cartella | file di regole |
 |---|---|---|
 | **'I Grandi di Arda'** (il sito, quello che si tocca quasi sempre) | `arda/top/` | [`arda/top/CLAUDE.md`](arda/top/CLAUDE.md) |
-| **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20) | `earthsea/top/` | [`earthsea/top/CLAUDE.md`](earthsea/top/CLAUDE.md) |
+| **'I Grandi di Terramare'** (il sito su Earthsea, nato il 2026-08-20; dal 2026-09-26 in un repo suo, servito da Pages all'indirizzo senza `top`) | repo `Roccobot/earthsea` | il `CLAUDE.md` di quel repo |
 | **Regole AdBlock** ('Roccobot ABP'; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ABP` | il `CLAUDE.md` di quel repo |
 | **Userscript** (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/userscripts` | il `CLAUDE.md` di quel repo |
 | **CleanSVG**, la paginetta che ripulisce un SVG (nata il 2026-08-25; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/CleanSVG` | il `CLAUDE.md` di quel repo |
@@ -50,9 +50,9 @@ vive in AIV e non qui
     prende quel numero per il peso dell'app lo dimezza senza accorgersene, ed è già successo
     qui.
 - ⚠️ **Un commit su `master` che arriva da `github-actions[bot]` e tocca `AIV/` è quello**, non
-  un salvataggio admin: è la terza sorgente di commit esterni di questo repo, dopo l'editor di
-  'I Grandi di Arda' e quello di Terramare, e conta come le altre due per la regola
-  dell'allineamento al remoto.
+  un salvataggio admin: è la seconda sorgente di commit esterni di questo repo, dopo l'editor di
+  'I Grandi di Arda', e conta come quella per la regola dell'allineamento al remoto. (L'editor
+  di Terramare era la terza fino al 2026-09-26: da allora committa nel repo `Roccobot/earthsea`.)
 
 ⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, dov'era
 un'assunzione su cui poggiava tutto lo split in sei file. All'avvio le istruzioni portano i
@@ -244,7 +244,7 @@ sessione:
 - **`rules/JRRT.md`**: il canone tolkieniano (priorità delle fonti, edizioni
   ammesse, acronimi, divieti, verifica alla lettera).
 - **`rules/Earthsea.md`**: il canone di Terramare (opere, edizioni e traduttori italiani,
-  sigle, fonti scaricabili). Serve al progetto `earthsea/top/`. ⚠️ **La sua filologia è di un
+  sigle, fonti scaricabili). Serve al progetto 'I Grandi di Terramare' (repo `Roccobot/earthsea`). ⚠️ **La sua filologia è di un
   altro genere da quella tolkieniana**: ogni scritto pubblicato è canone per definizione, non
   esistono apocrifi, e gli unici dubbi riguardano le scelte di traduzione italiana, sulle
   quali decide l'utente.
@@ -318,7 +318,7 @@ Dalla più forte alla più debole:
    rovesciato. Nel proprio dominio hanno la stessa autorevolezza di `Roccobot.md`, o più.
    - ⚠️ **Non competono fra loro**: parlano di due mondi diversi, e ognuno vale per il
      progetto che lo riguarda (`JRRT.md` per `arda/top/`, `Earthsea.md` per
-     `earthsea/top/`). Applicare l'uno all'altro sarebbe un errore di dominio, non una
+     il repo `Roccobot/earthsea`). Applicare l'uno all'altro sarebbe un errore di dominio, non una
      questione di scala.
    - ⚠️ **`Earthsea.md` attesta dal 2026-08-21**: fino a quel giorno era un guscio che
      dichiarava di non essere un'autorità, e le note che lo dicono ancora sono superate.
@@ -812,7 +812,8 @@ poi divergerebbe.
     raccomandazione non verificabile.
   - ⚠️ **Quali file copre si ricava a GLOB, non da un elenco** (dal 2026-08-21): i `CLAUDE.md`
     di progetto e i file di `rules/` entrano da sé. Prima erano scritti a mano, e due file di
-    regole nati nello stesso giorno (`earthsea/top/CLAUDE.md` e `rules/Earthsea.md`) sono
+    regole nati nello stesso giorno (il `CLAUDE.md` di Terramare, allora nella cartella `earthsea/top/`,
+    e `rules/Earthsea.md`) sono
     rimasti fuori copertura senza che nessuno lo notasse. ⚠️ **Il sintomo era rovesciato**, ed
     è la ragione per cui vale scriverlo: un rimando **corretto** a una sezione di un file non
     coperto veniva segnalato come 'sezione inesistente', cioè l'errore compariva dove il file

@@ -548,7 +548,7 @@ aprire il Pannello.
   il tasto di chiusura della ricerca dalla versione mobile, come fatto su Earthsea*). Là il
   velo basta a chiudere, e il tasto occupava l'angolo di una modale che sul telefono è già
   stretta. Il gemello ce l'ha dalla `1.42`, e là vive il percorso della decisione
-  ([`earthsea/top/CLAUDE.md`](../../earthsea/top/CLAUDE.md), § 'E su TOUCH non c'è nemmeno
+  (il `CLAUDE.md` del repo `Roccobot/earthsea`, § 'E su TOUCH non c'è nemmeno
   la ×'), compresa la strada scartata dall'utente stesso (estendere la chiusura alla
   cornice della modale).
   - ⚠️ **Il discriminante è la CAPACITÀ DEL PUNTATORE, non una soglia in px**: una finestra
@@ -876,8 +876,8 @@ compaiono nella tab Mobile.
   resta `siteFlags`. ⚠️ **Il rename toglie una COLLISIONE e non è un gusto**: il nome vecchio
   **conteneva** 'Pannello', che è la modale del FAB dei visitatori, quindi ogni abbreviazione
   li faceva coincidere. Scriverlo nelle regole non è bastato: sul gemello di Terramare la
-  stessa confusione è costata **due** versioni (`earthsea/top/CLAUDE.md`, § "'Nessun nome
-  noto': dalla Console al Pannello").
+  stessa confusione è costata **due** versioni (il `CLAUDE.md` del repo `Roccobot/earthsea`, § "'Senza nome
+  proprio': dalla Console al Pannello").
 - **Nomi e ordine delle voci:** Modalità XL, Bagliore, Numeri colorati, Riflettore, Incisione,
   Alone sfumato, Effetto podio, Colore schede, Trama. Etichette brevi, di una parola dove
   possibile.
@@ -975,7 +975,7 @@ commuta il telaio conservando tab, scroll, sotto-modale aperta e regolazioni non
     passano anche i rebuild **tecnici** (cambio di telaio al resize, tasto `L`), dove le regolazioni
     non salvate devono **sopravvivere**.
   - ⚠️ **Su Terramare la stessa funzione ridisegna anche la lista**, perché là un effetto tocca il
-    markup (vedi `earthsea/top/CLAUDE.md`); qui non serve, e la riga in più sarebbe un ridisegno
+    markup (vedi il `CLAUDE.md` del repo `Roccobot/earthsea`); qui non serve, e la riga in più sarebbe un ridisegno
     sprecato a ogni chiusura.
   - **Il 'nemmeno in localStorage' era già vero, ed è ora misurato**: dalla Console non
     parte nessuna scrittura (l'unica chiave vicina è la preferenza personale di zoom, che la scrive
@@ -1033,7 +1033,7 @@ insieme, e `pareggiaTitolo()` decide misurando.
 - ⚠️⚠️ **SU 'I GRANDI DI TERRAMARE' IL MECCANISMO C'È MA NON SI ACCENDE MAI**, ed è un fatto
   misurato: quei due titoli rendono lo stesso numero di righe a ogni larghezza da 280 a
   1600px, perché furono riscritti apposta con la stessa struttura
-  ([`earthsea/top/CLAUDE.md`](../../earthsea/top/CLAUDE.md), § 'Il TITOLO del sito è
+  (il `CLAUDE.md` del repo `Roccobot/earthsea`, § 'Il TITOLO del sito è
   cambiato, e ha chiuso il salto dell'intestazione'). Il codice è **identico** sui due siti
   perché una regola messa da una parte sola divergerebbe al primo ritocco, e perché il giorno
   in cui quel titolo cambia si accende da sé.
@@ -1093,7 +1093,7 @@ righe**, al posto di `Classifica salvata` (istruzione dell'utente, 2026-09-11).
 - ⚠️⚠️ **È un testo CONDIVISO col sito gemello**, e va cambiato nei due insieme: la stringa e
   lo stile del toast sono identici in 'I Grandi di Terramare', e ritoccarne uno solo li
   farebbe divergere senza che nessuna prova lo dica. La nota completa, col perché dell'a
-  capo, vive in [`earthsea/top/CLAUDE.md`](../../earthsea/top/CLAUDE.md), § 'Il messaggio del
+  capo, vive in il `CLAUDE.md` del repo `Roccobot/earthsea`, § 'Il messaggio del
   salvataggio dell'ordine'.
 - ⚠️ **L'a capo vuole `white-space:pre-line` sul toast**: `textContent` da solo non lo rende,
   e `innerHTML` resta vietato.
@@ -1391,7 +1391,7 @@ occorrenze in `index.html` e nel Worker. Tolto il 2026-08-23 su richiesta dell'u
 - ⚠️⚠️ **Perché valeva toglierlo, e non è pulizia estetica**: un campo presente su ogni voce,
   **vuoto o uniforme, e senza lettori, somiglia a un campo libero**. Sul gemello di Terramare
   vi è finita dentro l'origine geografica di un personaggio, e ci sono voluti tre giri per
-  rimetterla al posto giusto (`earthsea/top/CLAUDE.md`, § 'Il campo origine').
+  rimetterla al posto giusto (il `CLAUDE.md` del repo `Roccobot/earthsea`, § 'Il campo origine').
 - **Perché era sicuro**: il Worker serializza ogni voce con `JSON.stringify(d)` e valida il
   solo `nome`, e l'editor admin lavora su una copia profonda dell'array. Le chiavi passano
   intatte, quindi nessuna lista di campi da tenere allineata. ⚠️ Verificato **prima**, e la

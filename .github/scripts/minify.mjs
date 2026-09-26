@@ -1,6 +1,6 @@
 // Genera `<cartella>/index.html` minificato da `<cartella>/index.src.html`, e `admin.js` da
-// `admin.src.js` se c'è. Lo usano 'I Grandi di Terramare' (earthsea/top, dalla 2.70) e
-// 'I Grandi di Arda' (arda/top, dalla 15.64).
+// `admin.src.js` se c'è. Lo usa 'I Grandi di Arda' (arda/top, dalla 15.64). 'I Grandi di Terramare'
+// lo usava dalla 2.70, e dal 2026-09-26 ne ha una copia nel suo repo, `Roccobot/earthsea`.
 //
 // PERCHÉ C'È: nei due sorgenti i commenti erano il 61% (Terramare) e il 41% (Arda) del codice
 // servito, e ogni visitatore li scaricava. Il sorgente resta commentato e si modifica lui;
@@ -14,9 +14,8 @@
 // - NON rinomina i nomi globali: in uno script classico esbuild tiene i simboli di primo
 //   livello, che servono ai gestori scritti nel markup e agli accessi `window[nome]`.
 //
-// Uso: `node .github/scripts/minify.mjs earthsea/top` (o `arda/top`) dalla radice del repo. Le
-// GitHub Action `earthsea-minify.yml` e `arda-minify.yml` lo lanciano a ogni push che tocca i
-// sorgenti del loro progetto.
+// Uso: `node .github/scripts/minify.mjs arda/top` dalla radice del repo. La GitHub Action
+// `arda-minify.yml` lo lancia a ogni push che tocca i sorgenti del progetto.
 import { transform } from 'esbuild';
 import fs from 'node:fs';
 

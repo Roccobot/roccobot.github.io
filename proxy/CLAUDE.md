@@ -10,7 +10,7 @@
 | Worker | sorgente | scrive su | serve |
 |---|---|---|---|
 | `arda-admin-proxy` | `proxy/arda-admin-proxy.js` | `arda/top/dati.js` | 'I Grandi di Arda' |
-| `earthsea-admin-proxy` | `proxy/earthsea/earthsea-admin-proxy.js` | `earthsea/top/dati.js` | 'I Grandi di Terramare' (dal 2026-08-23) |
+| `earthsea-admin-proxy` | `proxy/earthsea/earthsea-admin-proxy.js` | `dati.js` del repo `Roccobot/earthsea` (fino al 2026-09-26 il `dati.js` della cartella `earthsea/top/` di questo repo) | 'I Grandi di Terramare' (dal 2026-08-23) |
 
 **Perché due e non uno multi-sito** (scelta dell'utente, 2026-08-23, fra le due strade
 messe a confronto): il percorso di scrittura è cablato lato server, quindi un solo Worker
@@ -39,7 +39,8 @@ diverse.
     prima il salvataggio si ferma. È la verifica che rende la conservazione un fatto invece
     di un'intenzione.
   - ⚠️ **C'è un banco di prova, e va lanciato**: `node proxy/earthsea/prova-riscrittura.mjs`
-    esercita quella funzione sul `dati.js` **vero**, in locale. Va usato **prima di ogni
+    esercita quella funzione sul `dati.js` **vero**, in locale: lo cerca nel repo `Roccobot/earthsea`
+    clonato accanto a questo (`../earthsea/dati.js`), oppure nel percorso passato come argomento. Va usato **prima di ogni
     modifica** a `rewriteDatiFile`, perché l'unico altro modo di provarla è un salvataggio
     in produzione, cioè sul file che deve non rovinare.
 - **La spia `site`**: i due Worker rispondono al GET diagnostico anche con `site`

@@ -75,10 +75,11 @@ l'altro Worker.
 ## Il banco di prova
 
 `prova-riscrittura.mjs` esercita la funzione che riscrive `dati.js` sul file **vero**,
-in locale e senza toccare niente:
+in locale e senza toccare niente. Lo prende dal repo `Roccobot/earthsea` clonato accanto a
+questo, oppure dal percorso passato come argomento:
 
 ```bash
-node proxy/earthsea/prova-riscrittura.mjs
+node proxy/earthsea/prova-riscrittura.mjs [percorso di dati.js]
 ```
 
 Va lanciato **prima di ogni modifica** a `rewriteDatiFile`, perché l'unico altro modo
