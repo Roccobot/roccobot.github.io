@@ -9,7 +9,7 @@
  *
  * Secret da impostare (mai nel repo!):
  *   GITHUB_PAT      → PAT fine-grained, scope minimo: Contents = Read & Write
- *                     SOLO sul repo roccobot/roccobot.github.io
+ *                     SOLO sul repo roccobot/arda (dal rev 17, 2026-09-26)
  *   ADMIN_PASSWORD  → la parola d'ordine admin (validata qui, assente dal client)
  *   GEMINI_API_KEY  → (opzionale) API key di Google Gemini per l'action 'translate'.
  *                     Serve solo se si usa la traduzione automatica IT↔EN.
@@ -27,10 +27,12 @@
  * Deploy: vedi proxy/README.md
  */
 
-const REPO = 'roccobot/roccobot.github.io';
+// Dal rev 17 (2026-09-26) il sito vive nel repo suo, e `dati.js` sta alla radice: prima era
+// `arda/top/dati.js` dentro `roccobot/roccobot.github.io`.
+const REPO = 'roccobot/arda';
 // I dati vivono in un file dedicato (separato da index.html): il Worker
 // riscrive l'INTERO file a ogni commit, niente più marker /*DS*/.../*DE*/.
-const FILE_PATH = 'arda/top/dati.js';
+const FILE_PATH = 'dati.js';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
 // Versione del sito: la fonte unica è `var datiVersion` in cima a dati.js.
@@ -308,7 +310,7 @@ export default {
     // `gem` è la chiave della traduzione, opzionale: un `false` lì significa solo che
     // l'action `translate` risponderà `no-gemini-key`, non che l'admin sia rotto.
     if (request.method !== 'POST') {
-      return json({ ok: false, error: 'method', rev: 16, rl: !!env.RL_DO,
+      return json({ ok: false, error: 'method', rev: 17, rl: !!env.RL_DO,
         pw: !!(env.ADMIN_PASSWORD && String(env.ADMIN_PASSWORD).length),
         pat: !!(env.GITHUB_PAT && String(env.GITHUB_PAT).length),
         gem: !!(env.GEMINI_API_KEY && String(env.GEMINI_API_KEY).length) }, 405, ch);
