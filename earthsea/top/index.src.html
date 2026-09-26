@@ -3637,7 +3637,7 @@ var FEATURES = { genderLegendPill: false, langSwitchMobile: false, oneRing: 'A',
 <body>
 <header>
   <div class="brand-corner">
-    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.74</span>
+    <a class="home-link" href="https://roccobot.me" target="_blank" rel="noopener">roccobot.me</a><span class="version-badge"><span class="vb-v">v</span>2.75</span>
   </div>
   <button class="lang-switch" id="lang-switch" aria-label="Switch language"><span class="ls-face">EN</span><span class="ls-measure" aria-hidden="true">EN</span></button>
   <div class="crest" id="crest">Roccobot presenta</div>
@@ -7109,12 +7109,11 @@ function renderList() {
       // ⚠️ I segmenti con la FRECCIA restano fuori: là la freccia SVG dev'essere
       // figlia DIRETTA del flex per restare centrata (vedi la nota qui sopra), e uno
       // slot in mezzo la scentrerebbe. Oggi non ce ne sono, ma il ripiego regge.
-      // ⚠️ Con le parentesi la gemella c'è SEMPRE, anche a testi uguali: il confronto di prima
-      // avveniva fra il markup della faccia (già vestito di `.tparen`) e il testo nudo dell'altra
-      // lingua, quindi non coincideva mai. Replicato alla lettera nella 2.74, perché il DOM resti
-      // identico; la gemella nuda di queste etichette è testo piano, come allora.
+      // La gemella nasce solo dove i due TESTI divergono, parentesi comprese (2.75): fino alla
+      // 2.74 un'etichetta con le parentesi la portava sempre, perché il confronto guardava il
+      // markup già vestito di `.tparen` contro il testo nudo dell'altra lingua.
       var altSeg = ((tipoAlt || '').split('|')[idx] || '').trim();
-      if (!isArrowSeg && altSeg && (conParentesi || altSeg !== displaySeg)) {
+      if (!isArrowSeg && altSeg && altSeg !== displaySeg) {
         contenuto = nodo('span', { 'class': 'tb-stack' }, nodo('span', { 'class': 'tb-f' }, contenuto),
                          nodo('span', { 'class': 'tb-m', 'aria-hidden': 'true' }, altSeg));
       }

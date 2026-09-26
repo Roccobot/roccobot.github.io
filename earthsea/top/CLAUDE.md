@@ -6573,10 +6573,12 @@ abitata: l'iPhone 16 Pro ha un viewport di **402px**.
   - ⚠️ **Il Pannello scrive la VERSIONE come testo** (`riempiPannello`), perché è l'unico testo
     che viene da fuori, da `dati.js`; la card di legenda che porta dentro usa
     `joinBipartiteHtml`, la versione in markup della riga bipartita, perché è fatta di costanti.
-  - ⚠️ **Le etichette con le parentesi hanno la gemella anche a testi uguali**, ed è replicato
-    alla lettera: il confronto di prima avveniva fra il markup della faccia (già vestito di
-    `.tparen`) e il testo nudo dell'altra lingua, quindi non coincideva mai. Cambiarlo avrebbe
-    cambiato il DOM, e la conversione doveva lasciarlo identico.
+  - ⚠️ **Dalla `2.75` anche le etichette con le parentesi hanno la gemella solo se i due testi
+    divergono**, per istruzione dell'utente (2026-09-26). Nella `2.74` la portavano sempre, e
+    l'anomalia era stata replicata alla lettera perché la conversione lasciasse il DOM identico:
+    il confronto di prima avveniva fra il markup della faccia (già vestito di `.tparen`) e il
+    testo nudo dell'altra lingua, quindi non coincideva mai. ⚠️ **Nessuna etichetta del dataset
+    ha parentesi**, quindi il DOM di oggi non cambia: la correzione vale per quelle future.
   - ⚠️ **`replaceChildren` scrive `null` come testo**, mentre `nodo` e `appendiA` lo saltano.
   - **Certificazione**: DOM **identico** alla `2.73` su 1.231.892 voci normalizzate in 37 stati
     (avvio e cambio lingua, note, Risorse, ricerca, Pannello, le undici aperture dell'area admin
