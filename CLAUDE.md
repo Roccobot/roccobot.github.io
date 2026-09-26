@@ -268,7 +268,7 @@ sessione:
 - **Scrittura su `Roccobot/tools` via Worker `rules-proxy`**: farla **sempre e
   in automatico** (senza chiedere conferma), con la parola d'ordine nella
   variabile d'ambiente `RULES_PASSWORD`. Protocollo completo (formato POST,
-  User-Agent da browser, bump SemVer) nella sezione 'Worker `rules-proxy`' di
+  User-Agent da browser, bump SlimVer) nella sezione 'Worker `rules-proxy`' di
   `Roccobot.md`.
 - ⚠️ **Dove questo `CLAUDE.md` deroga alle regole di sviluppo** (`Roccobot.md`,
   sezione '🏗️ Sviluppo software'). Non sono
