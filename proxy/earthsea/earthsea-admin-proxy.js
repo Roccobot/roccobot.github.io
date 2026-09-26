@@ -20,7 +20,7 @@
  *
  * Secret da impostare (mai nel repo!):
  *   GITHUB_PAT      → PAT fine-grained, scope minimo: Contents = Read & Write
- *                     SOLO sul repo roccobot/roccobot.github.io
+ *                     SOLO sul repo roccobot/earthsea (dal rev 3, 2026-09-26)
  *   ADMIN_PASSWORD  → la parola d'ordine admin (validata qui, assente dal client)
  *
  * Variabili non segrete (impostabili come plain var):
@@ -40,11 +40,13 @@
  * Deploy: vedi proxy/earthsea/README.md
  */
 
-const REPO = 'roccobot/roccobot.github.io';
+// Dal rev 3 (2026-09-26) il sito vive nel repo suo, e `dati.js` sta alla radice: prima era
+// `earthsea/top/dati.js` dentro `roccobot/roccobot.github.io`.
+const REPO = 'roccobot/earthsea';
 // ⚠️ DIFFERENZA VOLUTA n. 1 rispetto al Worker di Arda: il percorso del file dati.
 // Se il file si rinomina o si sposta, va riallineato QUI, o i salvataggi admin
 // scrivono nel posto sbagliato.
-const FILE_PATH = 'earthsea/top/dati.js';
+const FILE_PATH = 'dati.js';
 const GH_API = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
 
 // Versione del sito: la fonte unica è `var datiVersion` in cima a dati.js.
@@ -353,7 +355,7 @@ export default {
     // serratura è fail-closed e in quel caso rifiuta tutto. Significa 'admin
     // inutilizzabile finché non metti il secret'.
     if (request.method !== 'POST') {
-      return json({ ok: false, error: 'method', rev: 2, rl: !!env.RL_DO, site: 'earthsea',
+      return json({ ok: false, error: 'method', rev: 3, rl: !!env.RL_DO, site: 'earthsea',
         pw: !!(env.ADMIN_PASSWORD && String(env.ADMIN_PASSWORD).length),
         pat: !!(env.GITHUB_PAT && String(env.GITHUB_PAT).length) }, 405, ch);
     }
