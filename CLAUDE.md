@@ -18,7 +18,7 @@
 | **CleanSVG**, la paginetta che ripulisce un SVG (nata il 2026-08-25; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/CleanSVG` | il `CLAUDE.md` di quel repo |
 | **RatioLab**, la paginetta dei rapporti fra due numeri (nata il 2026-09-21; dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/ratiolab` | il `CLAUDE.md` di quel repo |
 | **RoccobotOS**, il sito di riferimento personale (dal 2026-09-26 in un repo suo, servito da Pages allo stesso indirizzo) | repo `Roccobot/RoccobotOS` | il `CLAUDE.md` di quel repo |
-| **Worker di amministrazione** | `proxy/` | [`proxy/CLAUDE.md`](proxy/CLAUDE.md) |
+| **Worker di amministrazione** (dal 2026-09-26 ognuno nel repo del suo sito; prima in `proxy/` di questo repo) | cartella `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea` | il `CLAUDE.md` di quella cartella |
 
 ⚠️ **PRIMA di lavorare su un progetto, LEGGI il suo `CLAUDE.md`**: costa una lettura e rende
 il lavoro corretto in ogni caso.
@@ -354,7 +354,7 @@ può allentarle. Questo è l'indice, la formulazione completa è dove indicato.
 | regola | dove vive |
 |---|---|
 | Parola d'ordine admin validata **solo lato server**; mai nel sorgente, nemmeno in base64 | `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
-| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `proxy/CLAUDE.md` e `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
+| `GITHUB_PAT` solo come secret del Worker: mai nel client, nel `localStorage`, nel codice o nelle variabili d'ambiente | `worker/CLAUDE.md` dei repo `Roccobot/arda` e `Roccobot/earthsea`, e `CLAUDE.md` del repo `Roccobot/arda`, '🔐 Admin e segreti' |
 | `RULES_PASSWORD` letta a runtime e **mai stampata** né fatta transitare in chat | `Roccobot.md`, Worker `rules-proxy` |
 | Mai `innerHTML` | qui, e la nota di `setVersionBadge` nel `CLAUDE.md` del repo `Roccobot/arda` |
 | **Trattini lunghi mai** (em-dash ed en-dash), in nessun output; apici dritti; `...` e non `…` | qui, '✒️ Caratteri vietati', e `Roccobot.md`, 'Caratteri' |
@@ -410,7 +410,7 @@ non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
   quale comando lo dice il `CLAUDE.md` del repo `Roccobot/ABP`.
 - Gli altri tre progetti si chiamano col nome della loro cartella o del loro repo: **userscript**,
   **RoccobotOS** (il sito di riferimento personale, non 'la guida': vedi
-  il `CLAUDE.md` del repo `Roccobot/RoccobotOS`) e il **Worker di amministrazione** in `proxy/`.
+  il `CLAUDE.md` del repo `Roccobot/RoccobotOS`) e i **Worker di amministrazione**, in `worker/` dei repo `Roccobot/arda` e `Roccobot/earthsea`.
 
 ## 🤖 Modello da usare
 

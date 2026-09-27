@@ -167,12 +167,12 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   `CLAUDE.md`; il brief copre entrambi.
 - **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
   root (convenzione registrata nelle regole universali). Qui vivono:
-  `proxy/` = i **Worker** di amministrazione. Dal 2026-09-26 **'I Grandi di Arda'** (il
+  la cartella `AIV/` generata e i file dell'hub. Dal 2026-09-26 **'I Grandi di Arda'** (il
   sito, quello che si tocca quasi sempre), **'I Grandi di Terramare'**, **Regole AdBlock**,
   **userscript**, **RoccobotOS**, CleanSVG e RatioLab vivono ciascuno in un repo suo
   (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,
   `Roccobot/RoccobotOS`, `Roccobot/CleanSVG`, `Roccobot/ratiolab`), serviti da Pages; Arda e
-  Terramare all'indirizzo senza `top`.
+  Terramare all'indirizzo senza `top`, ciascuno col suo Worker di amministrazione in `worker/`.
   ⚠️ Ogni progetto ha convenzioni proprie: solo 'I Grandi di Arda' ha un numero di
   versione `x.xx` e un deploy da attendere; le liste AdBlock hanno l'header
   `! Last updated:`; gli userscript hanno un `@version` SemVer e il link di
