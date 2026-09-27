@@ -793,8 +793,9 @@ poi divergerebbe.
     di AIV** qui, le altre sessioni in `tools`) se il ramo è pulito e senza commit propri,
     altrimenti avvisa; prima di toccare un file allinea il suo repo; **prima di un `git commit`
     blocca** se il repo è dietro al remoto, se badge e `datiVersion` differiscono, se ci sono
-    trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nei file di regole, nel
-    messaggio o nelle righe aggiunte; **prima di aprire o commentare una PR, di fare una domanda
+    trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nel messaggio o nelle
+    righe aggiunte, o nei file di regole **quando il commit ne tocca uno** (su un commit di AIV
+    che non li cambia bloccava per difetti di altri repo, 2026-09-27); **prima di aprire o commentare una PR, di fare una domanda
     a scelta multipla o di pubblicare un artefatto** passa il testo a `refcheck.py`, e blocca.
   - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
     quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
@@ -859,6 +860,9 @@ poi divergerebbe.
       cioè lo stesso sintomo rovesciato. Adesso entra anche lui (`AIV/CLAUDE.md` e
       `AIV/*/CLAUDE.md`), e il suo indice ha aggiunto **nove** titoli citabili senza rivelare
       difetti.
+    - ⚠️ **Lo stesso vale per i repo dei progetti** (dal 2026-09-27): un percorso che vive in un
+      repo non clonato (`worker/`, `scripts/` dei siti) è non verificabile. Prima una sessione
+      senza `arda` ed `earthsea` si vedeva dare per rotti sette percorsi giusti.
     - ⚠️ **Un rimando ad AIV in una sessione senza quel repo NON blocca il commit**: come per
       `tools` assente, è **non verificabile** e non rotto, e il verificatore lo dice contando
       quanti sono. Il riconoscimento è sorvegliato invece di generale (il prefisso `AIV/` per
