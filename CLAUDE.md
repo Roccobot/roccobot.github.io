@@ -101,11 +101,11 @@ sessione:
    i tool MCP, 2026-09-25: *questo devi farlo sempre*). Il comando è **idempotente** e conserva le
    altre chiavi di un file già esistente:
    ```
-   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hook.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hook.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hook.py\" /home/user/roccobot.github.io/.memo/scripts/hook.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume", "avvio", 60]], "UserPromptSubmit": [["", "turno", 40]], "PreToolUse": [["Edit|Write", "modifica", 30], ["Bash", "bash", 90], ["T", "testo", 30]], "PreCompact": [["manual|auto", "compatta", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if "ganci.py" not in json.dumps(x) and "/hook.py" not in json.dumps(x)]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];json.dump(d,open(p,"w"),indent=1)'
+   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume", "avvio", 60]], "UserPromptSubmit": [["", "turno", 40]], "PreToolUse": [["Edit|Write", "modifica", 30], ["Bash", "bash", 90], ["T", "testo", 30]], "PreCompact": [["manual|auto", "compatta", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if not any(k in json.dumps(x) for k in ("ganci.py","/hook.py","/hooks.py"))]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];json.dump(d,open(p,"w"),indent=1)'
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. ⚠️ **Dal 2026-09-27 la riga
-   installa anche gli hook** (il dispatcher `.memo/scripts/hook.py`, voce sugli hook in
+   installa anche gli hook** (il dispatcher `.memo/scripts/hooks.py`, voce sugli hook in
    § '🌿 Branch, allineamento e push'), perché le impostazioni utente sono le sole che si
    leggono anche coi repo affiancati. Resta **autosufficiente**, senza leggere niente dai repo:
    lo script di setup può girare prima che i repo siano clonati, e il comando degli hook cerca
@@ -221,7 +221,7 @@ sessione:
      dentro non si legge con precisione.
    - **Il riassunto di una compattazione può accorciare, non può perdere voci aperte**: se
      una cosa da fare esiste solo nel riassunto, è già a rischio. Il gancio `PreCompact` del
-     dispatcher (`hook.py`, modo `compatta`) lo ricorda a ogni compattazione e dice se il brief
+     dispatcher (`hooks.py`, modo `compatta`) lo ricorda a ogni compattazione e dice se il brief
      è di oggi, ⚠️ ma **solo dove gli hook sono installati** (vedi la trappola in fondo a questo
      file): altrove resta solo la regola, ed è la ragione per cui è scritta in tre file invece
      che in uno.
@@ -630,7 +630,7 @@ privato finché l'utente non lo condivide.
      repo): è l'unico che gira **prima** che la sessione parta, quindi l'unico che toglie il
      prompt **anche al primo artefatto della prima sessione** di un container nuovo. La riga
      da incollare là è quella del passo 0 del protocollo di avvio.
-  2. **Il gancio di avvio del dispatcher** (`hook.py`, modo `avvio`): gira da sé, senza che
+  2. **Il gancio di avvio del dispatcher** (`hooks.py`, modo `avvio`): gira da sé, senza che
      nessuno ricordi niente, e scrive il permesso se manca, ⚠️ ma **solo dove gli hook sono
      installati**, e scritto da lui il permesso vale dalla sessione dopo. Vale come rete: costa
      nulla e non dipende da me.
@@ -769,7 +769,7 @@ poi divergerebbe.
   - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
     'I Grandi di Arda' vive nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔢 Versione del
     sito', perché legge il badge e `datiVersion`, che sono suoi.
-- ⚠️⚠️ **GLI HOOK SONO UN DISPATCHER SOLO, `.memo/scripts/hook.py`, e valgono per TUTTI i repo
+- ⚠️⚠️ **GLI HOOK SONO UN DISPATCHER SOLO, `.memo/scripts/hooks.py`, e valgono per TUTTI i repo
   clonati accanto all'hub** (dal 2026-09-27, richiesta dell'utente: *aggiorna gli hook e fai tutto
   quello che devi fare per farli funzionare al meglio con l'attuale struttura*). Prima ogni repo
   aveva i suoi hook scritti in linea, e quelli dell'hub guardavano cartelle (`arda/top/`) che dal
@@ -783,9 +783,10 @@ poi divergerebbe.
     `.claude/settings.json` dell'hub, di `tools`, di `arda` e di `earthsea`. Claude Code toglie i
     doppioni fra comandi identici, quindi ogni controllo gira una volta sola. ⚠️ **Chi ritocca il
     comando lo ritocca in tutti e cinque i posti**, o i doppioni tornano a girare due volte.
-  - ⚠️ **Il file si chiamava `ganci.py`** per le prime ore del 2026-09-27, e l'utente l'ha fatto
-    rinominare (*puoi chiamarlo `hook.py`?*). La riga del passo 0 toglie anche le voci col nome
-    vecchio, quindi chi l'aveva già installata non si ritrova gli hook doppi.
+  - ⚠️ **Il file ha cambiato nome due volte il 2026-09-27**: è nato `ganci.py`, l'utente l'ha
+    fatto chiamare `hook.py` (*puoi chiamarlo `hook.py`?*) e poi `hooks.py` (*scrivilo al
+    plurale*). La riga del passo 0 toglie le voci con tutti e due i nomi vecchi, quindi chi
+    l'aveva già installata non si ritrova gli hook doppi.
   - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
     recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, il **bot
@@ -824,7 +825,7 @@ poi divergerebbe.
       `1.83`), quindi il bump della sessione riparte da quello che il remoto porta, o due
       commit diversi dichiarano la stessa versione.
 - **I controlli pre-commit**, che bloccano il commit **solo quando gli hook sono installati**
-  (vedi la trappola in fondo a questa voce; `hook.py`, modo `bash`): badge contro
+  (vedi la trappola in fondo a questa voce; `hooks.py`, modo `bash`): badge contro
   `datiVersion`, ritardo sul remoto, **trattini lunghi** nelle righe aggiunte, i **riferimenti
   incrociati** dei file di regole, e i **caratteri del messaggio di commit**, anche quando
   arriva da un file con `-F`. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
@@ -887,7 +888,7 @@ poi divergerebbe.
     ignorato: 8 autorizzazioni chieste all'utente in una sola sessione.
   - ⚠️ **Quali script vivono QUI e quali no** (criterio dell'utente, 2026-09-27: *tutte le cose
     relative al singolo repo vanno in quel repo, le cose comuni stanno in Pages che fa da hub*).
-    Qui restano quelli che servono **più progetti**: `refcheck.py` e `hook.py`, che guardano
+    Qui restano quelli che servono **più progetti**: `refcheck.py` e `hooks.py`, che guardano
     tutti i repo; `realfont.js` e i due banchi `prova-gesto-zoom.js` e `prova-ricerca-sito.js`,
     che servono i due siti; `checkjs.py`, `fixcom.py`, `provapagina.py` e `skills-update.sh`.
     Quelli di un sito solo vivono in `scripts/` del suo repo (`favicon.js` e `pwaicons.js` in
@@ -904,7 +905,7 @@ poi divergerebbe.
     che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
     è aperto e nessun hook è registrato.
     - ✅ **Il rimedio strutturale c'è dal 2026-09-27**: gli hook nelle impostazioni **utente**, che
-      si leggono da qualunque radice, col dispatcher `hook.py` che capisce da sé il repo (voce
+      si leggono da qualunque radice, col dispatcher `hooks.py` che capisce da sé il repo (voce
       sugli hook, più sopra). ⚠️ **Scritti dentro la sessione valgono dalla sessione dopo**, e il
       file muore col container: quello che li porta davvero è la riga del passo 0 nello **script
       di setup dell'ambiente**. Se il gancio di avvio dice che gli hook NON sono nelle
