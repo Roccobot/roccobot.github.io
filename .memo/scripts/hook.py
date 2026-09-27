@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ganci.py - gli hook di Claude per tutti i repo di Roccobot, da un posto solo.
+"""hook.py - gli hook di Claude per tutti i repo di Roccobot, da un posto solo.
 
 PERCHÉ ESISTE. Fino al 2026-09-27 ogni repo aveva i suoi hook scritti in linea nel proprio
 `.claude/settings.json`, e quelli dell'hub guardavano cartelle (`arda/top/`) che dal
@@ -140,7 +140,7 @@ def modo_avvio(_ev):
         d = json.loads(utente.read_text(encoding='utf-8'))
     except (OSError, ValueError):
         d = {}
-    installati = 'ganci.py' in json.dumps(d.get('hooks', {}))
+    installati = 'hook.py' in json.dumps(d.get('hooks', {}))
     # Il permesso `Artifact` nelle impostazioni utente, come faceva l'hook dell'hub: vale dalla
     # sessione successiva, e copre chi non ha ancora la riga nello script di setup.
     al = d.setdefault('permissions', {}).setdefault('allow', [])
@@ -404,7 +404,7 @@ MODI = {'avvio': modo_avvio, 'turno': modo_turno, 'modifica': modo_modifica,
 if __name__ == '__main__':
     modo = sys.argv[1] if len(sys.argv) > 1 else ''
     if modo not in MODI:
-        print(f'uso: ganci.py {{{"|".join(MODI)}}} < evento.json', file=sys.stderr)
+        print(f'uso: hook.py {{{"|".join(MODI)}}} < evento.json', file=sys.stderr)
         sys.exit(0)
     evento = leggi_evento()
     try:
@@ -412,5 +412,5 @@ if __name__ == '__main__':
     except SystemExit:
         raise
     except Exception as e:                      # un guasto del gancio non blocca il lavoro
-        print(f'[ganci] {modo}: errore interno, controllo saltato ({type(e).__name__}: {e})')
+        print(f'[hook] {modo}: errore interno, controllo saltato ({type(e).__name__}: {e})')
         sys.exit(0)
