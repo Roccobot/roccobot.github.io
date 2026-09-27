@@ -88,7 +88,12 @@ RULEFILES = [
 ] + sorted(SITO.glob("*/CLAUDE.md")) + sorted(SITO.glob("*/*/CLAUDE.md")) \
   + sorted(AIV.glob("CLAUDE.md")) + sorted(AIV.glob("*/CLAUDE.md")) \
   + [f for r in PROGETTI.values() for f in sorted(r.glob("CLAUDE.md")) + sorted(r.glob("*/CLAUDE.md"))] \
-  + sorted(TOOLS.glob("rules/*.md")) + [
+  + sorted(TOOLS.glob("rules/*.md")) \
+  + [r / nome for r in (SITO, TOOLS, AIV, *PROGETTI.values()) for nome in ("AGENTS.md", "Rules.md")] + [
+# ⚠️ Dal 2026-09-27 le regole di un repo stanno in tre file: `AGENTS.md` (il nucleo, letto da
+# tutti gli agenti), `Rules.md` (il testo completo) e un `CLAUDE.md` corto che li importa. I due
+# nuovi entrano qui per ogni repo, anche dove non esistono ancora: un file assente si scarta più
+# sotto, e così il repo che li riceve entra nel controllo da sé.
 # Gli snippet di `tools/snippets/` sono regole anche loro: testi che qualcuno incollerà
 # in una sessione nuova come istruzioni di partenza. Sono entrati qui il 2026-07-30 dopo
 # averne trovati DUE stantii nello stesso momento, entrambi con rimandi a file di regole
