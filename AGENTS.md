@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.02
+> **Versione**: 1.03
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
@@ -177,7 +177,9 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - **Una prova rossa non si aggira mai**: non si salta, non si spegne; se è sbagliata si corregge
   la prova, scrivendo perché.
 - Prima di un commit si lancia `refcheck.py` (in `.memo/scripts/` del repo
-  `roccobot.github.io`) sui file di regole, sul diff e sul testo del messaggio. Un testo composto
+  `roccobot.github.io`) sui file di regole, sul diff e sul testo del messaggio. In ogni clone si
+  attivano gli **hook di git** con `git config core.hooksPath .githooks`, e l'Action `rules-check`
+  rifà i controlli su GitHub (`Roccobot.md` § '🛡️ I controlli per tutti gli agenti'). Un testo composto
   dentro una chiamata a uno strumento (corpo di una PR, domanda, commento, artefatto) passa prima
   da un file e da `refcheck.py --text`.
 - **Una misura di layout vale solo col font reale caricato.**
