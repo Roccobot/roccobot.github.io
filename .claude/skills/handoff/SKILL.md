@@ -167,8 +167,8 @@ Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non pe
   (branch `main`), che ospita le regole **universali** (`rules/`), il Worker `rules-proxy` e
   il brief. Ognuno ha il suo `CLAUDE.md`; il brief copre tutti.
 - **Progetto** = di norma **un repo suo** (fino al 2026-09-26 era una cartella di
-  `roccobot.github.io`). Nel repo dell'hub restano soltanto la cartella `AIV/` generata e i
-  file dell'hub. **'I Grandi di Arda'** (il
+  `roccobot.github.io`). Nel repo dell'hub restano soltanto i file dell'hub: la cartella `AIV/`
+  generata è uscita il 2026-09-27, quando la paginetta è passata al Pages del repo di AIV. **'I Grandi di Arda'** (il
   sito, quello che si tocca quasi sempre), **'I Grandi di Terramare'**, **Regole AdBlock**,
   **userscript**, **RoccobotOS**, CleanSVG e RatioLab vivono ciascuno in un repo suo
   (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,
