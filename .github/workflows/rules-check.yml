@@ -1,0 +1,52 @@
+# Rules checks for every repo of Roccobot, whoever made the commit.
+#
+# The Claude hooks run only on Claude Code, and the git hooks in `.githooks/` only for whoever
+# commits from a terminal with them enabled: a commit made from a web page, by the admin
+# editors or by an agent that skips hooks reaches the remote unchecked. This workflow is the
+# net under all of them. It does not block the push (it cannot, on a direct push), but a red
+# check is visible on the commit and GitHub notifies the owner.
+#
+# Every repo calls it with a few lines in its own `.github/workflows/rules-check.yml`; the
+# logic lives here, in `.memo/scripts/githook.py`, so a change reaches all of them at once.
+#
+# Author: Rocco Casadei, a.k.a. Roccobot
+name: rules-check
+
+on:
+  workflow_call:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # The three repos side by side, as in a session: refcheck.py finds its neighbours by
+      # folder name, so the repo of the push goes in a folder named after it.
+      - name: Repo del push
+        uses: actions/checkout@v5
+        with:
+          path: ${{ github.event.repository.name }}
+          fetch-depth: 0
+      - name: Hub
+        if: github.event.repository.name != 'roccobot.github.io'
+        uses: actions/checkout@v5
+        with:
+          repository: Roccobot/roccobot.github.io
+          path: roccobot.github.io
+      - name: tools
+        if: github.event.repository.name != 'tools'
+        uses: actions/checkout@v5
+        with:
+          repository: Roccobot/tools
+          path: tools
+      - name: Controllo delle regole
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 ../roccobot.github.io/.memo/scripts/githook.py ci "$BASE" "$HEAD"

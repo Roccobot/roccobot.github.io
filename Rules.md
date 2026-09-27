@@ -604,6 +604,31 @@ poi divergerebbe.
     `origin/<ramo>` con un refspec esplicito: il clone di `earthsea` non aveva
     `remote.origin.fetch`, quindi un `git fetch` nudo aggiornava solo `FETCH_HEAD` e il confronto
     diceva 'allineato' con un salvataggio admin già arrivato (misurato il 2026-09-27).
+- ⚠️⚠️ **E I CONTROLLI VALGONO ANCHE PER CHI NON È CLAUDE, dal 2026-09-27** (punto 7 della
+  ristrutturazione multipiattaforma): gli hook di Claude girano solo su Claude Code, quindi un
+  commit di Codex, Cursor, Antigravity, di un editor admin o fatto dal sito di GitHub arrivava sul
+  remoto senza nessun controllo. Adesso ci sono due strati, con la logica in un file solo,
+  `.memo/scripts/githook.py`:
+  - **gli hook di git**, `.githooks/pre-commit` e `.githooks/commit-msg` in ogni repo (lo stesso
+    file sotto due nomi, che trova l'hub accanto e gli passa il controllo). Bloccano il commit a
+    chiunque committi da un terminale, e si attivano **una volta per clone** con `git config
+    core.hooksPath .githooks`: nelle sessioni Claude lo fa da sé il gancio di avvio di
+    `hooks.py`, le altre piattaforme lo leggono nel nucleo. Senza l'hub clonato accanto lo dicono
+    e lasciano passare, perché la rete sotto c'è;
+  - **l'Action `rules-check`**, il workflow riusabile `.github/workflows/rules-check.yml` di
+    questo repo, che ogni repo richiama con poche righe nel suo `.github/workflows/`: a ogni push
+    sul ramo principale e a ogni PR clona accanto hub e `tools` e rifà i controlli su tutti i
+    commit arrivati. Non può bloccare un push diretto, ma il controllo rosso si vede sul commit e
+    GitHub ne avvisa il proprietario.
+  - **Che cosa controllano**: quello che `hooks.py` controlla sul commit, meno le due cose che
+    vogliono la rete o i siti (il ritardo sul remoto, il badge contro `datiVersion`). Cioè i
+    trattini lunghi nelle righe aggiunte, `refcheck.py` sulle righe aggiunte e sul messaggio, e
+    `refcheck.py` completo quando il commit tocca un file di regole.
+  - ⚠️ **`core.hooksPath` sostituisce `.git/hooks`**: un hook messo là da un altro strumento non
+    girerebbe più. Il 2026-09-27 nessun clone ne aveva; chi ne trova uno lo sposta in
+    `.githooks/` invece di spegnere l'impostazione.
+  - ⚠️ **Un repo nuovo riceve i due file e il richiamo del workflow** (lo snippet di onboarding
+    lo dice), o resta fuori da tutti e due gli strati.
 - **Salvataggi admin arrivati a lavoro iniziato** (repo `Roccobot/arda` e `Roccobot/earthsea`,
   dove l'editor admin committa `dati.js` via Worker direttamente su `main`). Il dispatcher
   intercetta il caso a ogni turno e prima del commit; quello che resta a chi lavora è qui sotto.
