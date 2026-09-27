@@ -161,13 +161,14 @@ provato, si aggiunge ciò che è rimasto appeso, e il file resta la fotografia d
 
 Il vocabolario conta, perché lo stato da consegnare è **per progetto**, non per repo.
 
-- **Repository** = **due**: `Roccobot/roccobot.github.io` (branch `master`), che ospita i
-  cinque progetti qui sotto e le regole trasversali, e `Roccobot/tools` (branch `main`), che
-  ospita le regole **universali** (`rules/`) e i sorgenti dei Worker. Ognuno ha il suo
-  `CLAUDE.md`; il brief copre entrambi.
-- **Progetto** = una **parte** del repo, per convenzione almeno uno per cartella di
-  root (convenzione registrata nelle regole universali). Qui vivono:
-  la cartella `AIV/` generata e i file dell'hub. Dal 2026-09-26 **'I Grandi di Arda'** (il
+- **Repository** = **uno per progetto** dal 2026-09-26, più due di servizio:
+  `Roccobot/roccobot.github.io` (branch `master`), che non ospita più progetti ma l'hub delle
+  regole trasversali, gli script di `.memo/scripts/` e questa skill, e `Roccobot/tools`
+  (branch `main`), che ospita le regole **universali** (`rules/`), il Worker `rules-proxy` e
+  il brief. Ognuno ha il suo `CLAUDE.md`; il brief copre tutti.
+- **Progetto** = di norma **un repo suo** (fino al 2026-09-26 era una cartella di
+  `roccobot.github.io`). Nel repo dell'hub restano soltanto la cartella `AIV/` generata e i
+  file dell'hub. **'I Grandi di Arda'** (il
   sito, quello che si tocca quasi sempre), **'I Grandi di Terramare'**, **Regole AdBlock**,
   **userscript**, **RoccobotOS**, CleanSVG e RatioLab vivono ciascuno in un repo suo
   (`Roccobot/arda`, `Roccobot/earthsea`, `Roccobot/ABP`, `Roccobot/userscripts`,

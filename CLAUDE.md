@@ -1,11 +1,11 @@
 # CLAUDE.md: regole del repo roccobot.github.io
 
-> **Cos'è questo file.** Le regole **trasversali** del repository
-> `Roccobot/roccobot.github.io`, che ospita **più di un progetto** (per convenzione
-> `progetto` ≠ `repo`: almeno un progetto per cartella di root, vedi
-> `rules/Roccobot.md`). Qui c'è solo ciò che vale per **tutti** i progetti;
-> ogni progetto ha il suo `CLAUDE.md` nella propria cartella. Tutto ciò che non è
-> specifico di questo repo vive nelle regole universali.
+> **Cos'è questo file.** L'**hub** delle regole: il repository
+> `Roccobot/roccobot.github.io` non ospita più progetti (dal 2026-09-26 ognuno ha un repo
+> suo, servito da Pages all'indirizzo `/<repo>/`), e qui restano il protocollo di avvio, le
+> regole **trasversali** a tutti i progetti e gli strumenti che le fanno rispettare
+> (`.memo/scripts/`, la skill `handoff`). Ogni progetto ha il suo `CLAUDE.md` nel proprio
+> repo; tutto ciò che non è trasversale vive nelle regole universali.
 
 ## 🗂️ I progetti e i loro file di regole
 
@@ -54,12 +54,13 @@ vive in AIV e non qui
   regola dell'allineamento al remoto. (Gli editor admin di Arda e di Terramare erano le altre
   due fino al 2026-09-26: da allora committano nei repo `Roccobot/arda` e `Roccobot/earthsea`.)
 
-⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, dov'era
-un'assunzione su cui poggiava tutto lo split in sei file. All'avvio le istruzioni portano i
-**soli** `CLAUDE.md` di root; quello di una sottocartella compare nel momento in cui si legge
-un file di quella cartella.
-- **Perciò la lettura esplicita non è ridondanza**: chi lavora su un progetto senza aprire
-  nessuno dei suoi file (una discussione in chat, un file creato da zero) non ha le sue regole
+⚠️ **Il caricamento è DINAMICO, alla lettura: accertato il 2026-07-30**, quando i progetti
+vivevano ancora in cartelle di questo repo. All'avvio le istruzioni portano i **soli**
+`CLAUDE.md` alla radice dei repo montati; uno che vive più in basso (come `worker/CLAUDE.md`
+nei repo di Arda e di Terramare) compare nel momento in cui si legge un file di quella
+cartella, e il `CLAUDE.md` di un repo **non montato** non compare affatto.
+- **Perciò la lettura esplicita non è ridondanza**: chi lavora su un progetto senza montarne
+  il repo o senza aprire nessuno dei suoi file (una discussione in chat, un file creato da zero) non ha le sue regole
   in scena, ed è la lettura a portarle.
 - **Conseguenza prudenziale invariata**: una regola che serve **sempre** non può vivere là. Se
   è di portata generale è qui, se è universale vive in `rules/Roccobot.md`. Nel dubbio, questo
@@ -73,10 +74,10 @@ progetti (`Roccobot.md`, § '🌿 Workflow git e versioni'), il primo con la fon
 liste AdBlock hanno l'header `! Last updated:`; gli userscript hanno un `@version` SemVer e
 il link di installazione da ripetere dopo ogni go-live; 'I Grandi di Terramare' nasce con
 SlimVer e la fonte in `datiVersion`, come il progetto da cui è copiato. ⚠️ 'Senza versione'
-non è vero per nessun progetto del repo.
-- ⚠️ Il **deploy Pages da attendere è UNICO e riguarda tutti i progetti del repo**: la
-  verifica di pubblicazione si fa con la sonda del progetto toccato (vedi '🌿 Branch,
-  allineamento e push').
+non è vero per nessun progetto.
+- ⚠️ **Ogni progetto ha il SUO deploy Pages da attendere**, nel suo repo (fino al 2026-09-26
+  era uno solo per tutti): la verifica di pubblicazione si fa con la sonda del progetto
+  toccato (vedi '🌿 Branch, allineamento e push').
 - ⚠️ **Su RoccobotOS la regola di versione è cambiata TRE volte in tre giorni**, e conviene
   saperlo per non applicare una versione vecchia della regola: numero nato **interno** il
   2026-07-30, **visibile e SemVer** il 2026-07-31 (quando l'utente ha stabilito che il
@@ -308,7 +309,7 @@ Dalla più forte alla più debole:
 1. **Istruzioni esplicite dell'utente nella sessione corrente**: prevalgono su tutto;
    se durature, vanno poi registrate nel file giusto.
 2. **Il `CLAUDE.md` pertinente**: questo file di root per ciò che è **trasversale**
-   a tutti i progetti, quello della sottocartella (vedi la tabella in testa a
+   a tutti i progetti, quello del repo del progetto (vedi la tabella in testa a
    questo file) per ciò che è **specifico** di un progetto. Non competono fra
    loro: vince quello che parla nel proprio dominio (vedi 'La specificità vale
    per DOMINIO' più sotto).
@@ -394,7 +395,8 @@ che delle misure si tiene quella **scartata**. Vale per questo file come per ogn
 
 I nomi con cui l'utente chiama i progetti servono **sempre**, perché li usa in chat
 **prima** che si apra un file di quel progetto: perciò il minimo indispensabile è qui e
-non nei `CLAUDE.md` di sottocartella, che si caricherebbero troppo tardi.
+non nei `CLAUDE.md` dei repo dei progetti, che si caricherebbero troppo tardi o, a repo
+non montato, per niente.
 
 - **Il sito ha TRE nomi equivalenti** (repo `Roccobot/arda`): **'Arda Top'**, **'I Grandi di Arda'** e
   **'Arda'** (istruzione dell'utente, 2026-07-30). Sono sinonimi, non un nome giusto e due
@@ -674,8 +676,9 @@ poi divergerebbe.
     apre comunque la PR ma **non si mergia**, si presenta in breve cosa cambia e perché è
     delicato, e si **chiede conferma**. ⚠️ **Che cosa conta come pesante lo dice
     `Roccobot.md`**, § '⚙️ Automazione e interazioni' (elenco universale, col principio 'nel
-    dubbio trattala come pesante'): qui basta sapere che in questo repo il flusso dati di 'I
-    Grandi di Arda' (`dati.js` e il Worker) rientra fra i casi pesanti.
+    dubbio trattala come pesante'): qui basta sapere che il flusso dati di 'I Grandi di Arda' e
+    di 'I Grandi di Terramare' (`dati.js` e il Worker, nei loro repo) rientra fra i casi
+    pesanti.
 - **Dopo il go-live su branch `claude/*`: riallineare il branch**, remoto compreso.
   ⚠️ **Regola universale in `Roccobot.md`**, § '🌿 Workflow git e versioni' (voce sullo
   stop-hook), col comando e la ragione per cui riallineare il branch remoto **elimina la
