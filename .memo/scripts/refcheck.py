@@ -74,10 +74,10 @@ PROGETTI = {nome: _clone(nome) for nome in (
 
 RULEFILES = [
     SITO / "CLAUDE.md",
-    SITO / ".claude/skills/handoff/SKILL.md",
+    SITO / ".agents/skills/handoff/SKILL.md",
     TOOLS / ".memo/LATEST.md",
     TOOLS / "CLAUDE.md",
-    TOOLS / ".claude/skills/desc/SKILL.md",
+    TOOLS / ".agents/skills/desc/SKILL.md",
 # ⚠️ I `CLAUDE.md` di progetto e i file di `rules/` si prendono a GLOB e non a elenco, dal
 # 2026-08-21, per la stessa ragione degli snippet qui sotto: erano un elenco scritto a mano, e
 # due file di regole nati lo stesso giorno (`earthsea/top/CLAUDE.md` e `rules/Earthsea.md`)
@@ -317,7 +317,7 @@ def dentro_stringa(riga, col):
     \u26a0\ufe0f Il criterio \u00e8 la PARIT\u00c0 degli apici che precedono il token, e non il segno prima come
     in `dentro_identificatore`: un numero dispari vuol dire che una stringa \u00e8 aperta, quindi
     l'apice del token la chiude. Il caso vero, misurato il 2026-09-25 sulle trentacinque skill
-    di terzi entrate in `.claude/skills/`: `['cat-file', '-e', 'x']` porta il token `e'` col
+    di terzi entrate in `.agents/skills/`: `['cat-file', '-e', 'x']` porta il token `e'` col
     carattere `l` davanti, cio\u00e8 in mezzo alla parola `file`, e il segno prima non dice niente.
     \u26a0\ufe0f Con lui cade la prima stesura, che guardava quel segno: copriva `{ to: 'e' }` e non
     `'cat-file'`, cio\u00e8 met\u00e0 dei casi dello stesso file.
@@ -374,7 +374,7 @@ SIMBOLI_OK = [
 # ricordo. ⚠️ Chi modifica il riquadro tocca la SORGENTE e ricopia; l'ordine inverso funziona
 # ma perde la ragione per cui la sorgente è una.
 MARCATORI = ("<!-- brief-intro:inizio -->", "<!-- brief-intro:fine -->")
-INTRO_SORGENTE = SITO / ".claude/skills/handoff/SKILL.md"
+INTRO_SORGENTE = SITO / ".agents/skills/handoff/SKILL.md"
 INTRO_COPIA = TOOLS / ".memo/LATEST.md"
 
 # ── Il lessico: le formule bandite e il registro ──
