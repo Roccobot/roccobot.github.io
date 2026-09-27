@@ -95,16 +95,22 @@ quindi è da qui che parte tutto il resto (scelta dell'utente, 2026-07-29).
 I file di regole vivono in `rules/` del repo `Roccobot/tools`. All'avvio di ogni
 sessione:
 
-0. ⚠️⚠️ **PRIMA DI TUTTO, i permessi di `Artifact` e dei tool MCP nelle impostazioni UTENTE**,
+0. ⚠️⚠️ **PRIMA DI TUTTO, i permessi di `Artifact` e dei tool MCP, e gli HOOK, nelle impostazioni UTENTE**,
    senza chiederlo e senza annunciarlo (istruzione dell'utente, 2026-08-23: *fa' in modo che
    questa cosa avvenga ad ogni nuova sessione, all'inizio, senza che lo debba chiedere io*; e per
    i tool MCP, 2026-09-25: *questo devi farlo sempre*). Il comando è **idempotente** e conserva le
    altre chiavi di un file già esistente:
    ```
-   python3 -c "import json,os;p=os.path.expanduser('~/.claude/settings.json');os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault('permissions',{}).setdefault('allow',[]);[al.append(t) for t in ['Artifact','mcp__github__create_pull_request','mcp__github__merge_pull_request','mcp__Claude_Code_Remote__subscribe_pr_activity','mcp__Claude_Code_Remote__unsubscribe_pr_activity','mcp__Claude_Code_Remote__send_later','mcp__Claude_Code_Remote__add_repo','mcp__Claude_Code_Remote__register_repo_root','mcp__Claude_Code_Remote__create_trigger','mcp__Claude_Code_Remote__list_triggers','mcp__Claude_Code_Remote__get_trigger','mcp__Claude_Code_Remote__update_trigger','mcp__Claude_Code_Remote__delete_trigger','mcp__github__actions_run_trigger','mcp__github__actions_list','mcp__github__actions_get','mcp__github__get_release_by_tag'] if t not in al];json.dump(d,open(p,'w'),indent=1)"
+   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/ganci.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/ganci.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/ganci.py\" /home/user/roccobot.github.io/.memo/scripts/ganci.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume", "avvio", 60]], "UserPromptSubmit": [["", "turno", 40]], "PreToolUse": [["Edit|Write", "modifica", 30], ["Bash", "bash", 90], ["T", "testo", 30]], "PreCompact": [["manual|auto", "compatta", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if "ganci.py" not in json.dumps(x)]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];json.dump(d,open(p,"w"),indent=1)'
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
-   chiedere il consenso a ogni artefatto, ed è successo per giorni. Il perché la regola non
+   chiedere il consenso a ogni artefatto, ed è successo per giorni. ⚠️ **Dal 2026-09-27 la riga
+   installa anche gli hook** (il dispatcher `.memo/scripts/ganci.py`, voce sugli hook in
+   § '🌿 Branch, allineamento e push'), perché le impostazioni utente sono le sole che si
+   leggono anche coi repo affiancati. Resta **autosufficiente**, senza leggere niente dai repo:
+   lo script di setup può girare prima che i repo siano clonati, e il comando degli hook cerca
+   il dispatcher al momento in cui scatta. Quando la riga cambia, all'utente si ridà per lo
+   script di setup. Il perché la regola non
    basti scritta altrove, e le altre due vie che la coprono, vivono in § '🖼️ Artefatti'.
    - ⚠️⚠️ **Quel file è anche l'unica casa possibile dei permessi MCP, e dal 2026-09-25 il
      comando li porta**: gli strumenti **MCP** sono uno dei due soli punti in cui si vede
@@ -214,11 +220,11 @@ sessione:
      preavviso dichiara che la percentuale è una **stima** e chiede conferma, perché dal di
      dentro non si legge con precisione.
    - **Il riassunto di una compattazione può accorciare, non può perdere voci aperte**: se
-     una cosa da fare esiste solo nel riassunto, è già a rischio. Un hook `PreCompact` in
-     `.claude/settings.json` lo ricorda a ogni compattazione e dice se il brief è di oggi,
-     ⚠️ ma **non gira quando la sessione monta i due repo affiancati** (vedi la trappola in
-     fondo a questo file): là resta solo la regola, ed è la ragione per cui è scritta in tre
-     file invece che in uno.
+     una cosa da fare esiste solo nel riassunto, è già a rischio. Il gancio `PreCompact` del
+     dispatcher (`ganci.py`, modo `compatta`) lo ricorda a ogni compattazione e dice se il brief
+     è di oggi, ⚠️ ma **solo dove gli hook sono installati** (vedi la trappola in fondo a questo
+     file): altrove resta solo la regola, ed è la ragione per cui è scritta in tre file invece
+     che in uno.
 5. **Dal momento del caricamento in poi, quei file sono regole consolidate e
    condivise**: si dànno per scontate e ci si riferisce al loro contenuto senza
    ri-chiedere e senza rileggerle a ogni turno.
@@ -555,9 +561,8 @@ completa, con le alternative e il perché di ognuna, vive in `Roccobot.md`
   2026-09-03 due divieti scritti alle 03:27 sono stati infranti verso le 11, con una
   compattazione in mezzo: non mancava la regola, mancava il suo testo.
 - ⚠️ **Il presidio è `refcheck.py`**, che dal 2026-09-03 blocca queste forme come già i
-  trattini lunghi. Nelle sessioni coi repo affiancati gli hook non girano (trappola in fondo a
-  questo file), quindi prima di un commit si lancia a mano, come comando singolo e **senza
-  pipe**.
+  trattini lunghi. Dove gli hook non sono installati nelle impostazioni utente (trappola in fondo
+  a questo file) prima di un commit si lancia a mano, come comando singolo e **senza pipe**.
 
 ## ✒️ Caratteri vietati
 
@@ -625,13 +630,14 @@ privato finché l'utente non lo condivide.
      repo): è l'unico che gira **prima** che la sessione parta, quindi l'unico che toglie il
      prompt **anche al primo artefatto della prima sessione** di un container nuovo. La riga
      da incollare là è quella del passo 0 del protocollo di avvio.
-  2. **L'hook `SessionStart` di questo `settings.json`**: gira da sé, senza che nessuno
-     ricordi niente, ⚠️ ma **solo nelle sessioni la cui radice è il repo** (dove il permesso
-     `Artifact` di questo stesso file già bastava). Vale come rete: costa nulla e non dipende
-     da me.
-  3. **Il passo 0 del protocollo di avvio**, che è l'unico che copre il caso peggiore, le
-     sessioni coi **due repo affiancati**: là nessun hook gira e nessun `settings.json` di
-     progetto si legge, ma **questo file si carica sempre**, quindi la regola arriva comunque.
+  2. **Il gancio di avvio del dispatcher** (`ganci.py`, modo `avvio`): gira da sé, senza che
+     nessuno ricordi niente, e scrive il permesso se manca, ⚠️ ma **solo dove gli hook sono
+     installati**, e scritto da lui il permesso vale dalla sessione dopo. Vale come rete: costa
+     nulla e non dipende da me.
+  3. **Il passo 0 del protocollo di avvio**, che copre il caso peggiore, le sessioni coi **repo
+     affiancati** e senza la riga nello script di setup: là nessun hook gira e nessun
+     `settings.json` di progetto si legge, ma **questo file si carica sempre**, quindi la regola
+     arriva comunque.
   - ⚠️ **Il limite che resta, e va detto invece di prometterlo risolto**: un file scritto
     **dentro** la sessione può non entrare in vigore in quella sessione, perché le
     impostazioni si leggono all'avvio. Nelle vie 2 e 3 il permesso è certo dalla sessione
@@ -763,23 +769,39 @@ poi divergerebbe.
   - ⚠️ Il controllo specifico del progetto è un passo **in più**, non un'alternativa, e per
     'I Grandi di Arda' vive nel `CLAUDE.md` del repo `Roccobot/arda`, § '🔢 Versione del
     sito', perché legge il badge e `datiVersion`, che sono suoi.
-- Il **SessionStart hook** standard (regola universale) è già configurato
-  in `.claude/settings.json` di questo repo.
-- **Salvaguardie anti-conflitto coi salvataggi admin** (in `.claude/settings.json`).
-  ⚠️ **Dal 2026-09-26 gli editor admin committano nei repo dei progetti** (`Roccobot/arda` e
-  `Roccobot/earthsea`), quindi qui i due hook proteggono dai commit del bot di AIV; la regola
-  sui salvataggi arrivati a lavoro iniziato vale identica in quei repo.
-  L'editor admin committava `dati.js` direttamente su `master` via Worker: se la
-  sessione lavora su un branch `claude/*` basato su un `master` vecchio, al merge
-  scoppia il conflitto. Due hook prevengono il caso:
-  1. **`UserPromptSubmit`**: a ogni turno fa `git fetch` e, se il branch è
-     **pulito e 0 ahead** ma dietro `origin/master`, fa `git reset --hard
-     origin/master` (riallineamento sicuro = solo fast-forward, nessuna perdita);
-     altrimenti avvisa. Così, se fai un salvataggio admin e poi mi scrivi, parto
-     già aggiornato.
-  2. **`PreToolUse`/`Bash`**: prima di un `git commit`, se HEAD è dietro
-     `origin/master` **blocca** il commit (exit 2) chiedendo di riallinearsi
-     (rete di sicurezza per i salvataggi admin che arrivano a turno già avviato).
+- ⚠️⚠️ **GLI HOOK SONO UN DISPATCHER SOLO, `.memo/scripts/ganci.py`, e valgono per TUTTI i repo
+  clonati accanto all'hub** (dal 2026-09-27, richiesta dell'utente: *aggiorna gli hook e fai tutto
+  quello che devi fare per farli funzionare al meglio con l'attuale struttura*). Prima ogni repo
+  aveva i suoi hook scritti in linea, e quelli dell'hub guardavano cartelle (`arda/top/`) che dal
+  giorno prima vivevano in repo propri, quindi non controllavano più niente.
+  - **Perché uno solo e non uno per repo**: con un repo per progetto la sessione monta quasi
+    sempre più repo affiancati, e allora gli hook di progetto **non girano** (trappola in fondo a
+    questa voce). Girano quelli delle impostazioni **utente**, che però non sanno in che repo si
+    lavora: il dispatcher lo ricava dal comando (`cd`, `git -C`) o dal file toccato.
+  - **Dove si installa, con lo stesso comando identico**: le impostazioni utente (le scrive la
+    riga del passo 0 del protocollo di avvio, che è anche la riga dello script di setup), e il
+    `.claude/settings.json` dell'hub, di `tools`, di `arda` e di `earthsea`. Claude Code toglie i
+    doppioni fra comandi identici, quindi ogni controllo gira una volta sola. ⚠️ **Chi ritocca il
+    comando lo ritocca in tutti e cinque i posti**, o i doppioni tornano a girare due volte.
+  - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
+    puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
+    recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, il **bot
+    di AIV** qui, le altre sessioni in `tools`) se il ramo è pulito e senza commit propri,
+    altrimenti avvisa; prima di toccare un file allinea il suo repo; **prima di un `git commit`
+    blocca** se il repo è dietro al remoto, se badge e `datiVersion` differiscono, se ci sono
+    trattini lunghi nelle righe aggiunte, se `refcheck.py` trova difetti nei file di regole, nel
+    messaggio o nelle righe aggiunte; **prima di aprire o commentare una PR, di fare una domanda
+    a scelta multipla o di pubblicare un artefatto** passa il testo a `refcheck.py`, e blocca.
+  - ⚠️ **Con un `git add` nello stesso comando del commit** le righe non sono ancora in stage
+    quando l'hook guarda: il dispatcher controlla allora il lavoro contro `HEAD`, file nuovi
+    compresi, e non il diff vuoto dello stage.
+  - ⚠️ **Il ramo principale lo legge dal remoto** (`master` solo qui, `main` altrove), e aggiorna
+    `origin/<ramo>` con un refspec esplicito: il clone di `earthsea` non aveva
+    `remote.origin.fetch`, quindi un `git fetch` nudo aggiornava solo `FETCH_HEAD` e il confronto
+    diceva 'allineato' con un salvataggio admin già arrivato (misurato il 2026-09-27).
+- **Salvataggi admin arrivati a lavoro iniziato** (repo `Roccobot/arda` e `Roccobot/earthsea`,
+  dove l'editor admin committa `dati.js` via Worker direttamente su `main`). Il dispatcher
+  intercetta il caso a ogni turno e prima del commit; quello che resta a chi lavora è qui sotto.
   - ⚠️⚠️ **QUANDO IL SALVATAGGIO ARRIVA A LAVORO INIZIATO, il suo file è la BASE e le
     proprie modifiche si RIAPPLICANO sopra** (successo il 2026-09-11 su Terramare: un
     `classifica: aggiorna ordine` ha spostato **46 posizioni** mentre la sessione aveva in
@@ -791,18 +813,18 @@ poi divergerebbe.
     - ⚠️⚠️ **`git checkout --theirs` in uno `stash pop` prende il lato SBAGLIATO**, ed è la
       trappola che è costata il primo tentativo: in un `pop` 'theirs' è **lo stash**, cioè
       le proprie modifiche, non il remoto. La via che non si presta a equivoci è nominare
-      il ref: `git checkout origin/master -- <file>`.
+      il ref: `git checkout origin/main -- <file>`.
     - **Come si verifica di non aver perso il suo lavoro**: si confronta l'**elenco dei
-      nomi nell'ordine** fra il proprio file e `origin/master`, e deve tornare identico.
+      nomi nell'ordine** fra il proprio file e `origin/main`, e deve tornare identico.
       Un `git diff` non basta: mostrerebbe comunque le proprie righe cambiate.
     - ⚠️ **Anche il NUMERO DI VERSIONE è suo**: l'editor admin bumpa da sé (là era la
       `1.83`), quindi il bump della sessione riparte da quello che il remoto porta, o due
       commit diversi dichiarano la stessa versione.
-- **I controlli pre-commit**, che bloccano il commit **solo quando la configurazione
-  è letta** (vedi la trappola in fondo a questa voce; `.claude/settings.json`, hook
-  `PreToolUse`/`Bash`): badge contro `datiVersion`, ritardo su `origin/master`, **trattini
-  lunghi** nelle righe aggiunte, i **riferimenti incrociati** dei file di regole, e i
-  **caratteri del messaggio di commit**. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
+- **I controlli pre-commit**, che bloccano il commit **solo quando gli hook sono installati**
+  (vedi la trappola in fondo a questa voce; `ganci.py`, modo `bash`): badge contro
+  `datiVersion`, ritardo sul remoto, **trattini lunghi** nelle righe aggiunte, i **riferimenti
+  incrociati** dei file di regole, e i **caratteri del messaggio di commit**, anche quando
+  arriva da un file con `-F`. Gli ultimi due li verifica `.memo/scripts/refcheck.py` (committato,
   e controlla anche i file di `Roccobot/tools`, il `CLAUDE.md` di `Roccobot/AIV` e i
   **documenti** di `Roccobot/mihon-aniyomi-ext` quando quei repo sono agganciati; di un repo
   assente lo **dichiara**). ⚠️ Criterio,
@@ -860,22 +882,30 @@ poi divergerebbe.
     la chiede **ogni volta**, perché per le modifiche l'approvazione scade con la sessione.
     Il percorso assoluto serve in più: la `cwd` non è la radice del repo. Costo di averlo
     ignorato: 8 autorizzazioni chieste all'utente in una sola sessione.
-  - ⚠️ **Perché gli script vivono QUI e non in `Roccobot/tools`** (domanda dell'utente,
-    2026-07-30). Perché l'hook che li lancia deve trovarli **sempre**, e il repo sempre
-    presente è questo, dove vive l'hub delle regole: `tools` in molte sessioni non è
-    agganciato. Spostarli non eliminerebbe il degrado, lo **sposterebbe** sulle sessioni che
-    toccano di più i file di regole, che sono queste. `realfont.js` in più è **specifico** di
-    'I Grandi di Arda' (serve il sito su HTTP locale e si aspetta Cinzel ed EB Garamond): in
-    `tools` non avrebbe nemmeno un sito da servire.
-    - Il rovescio, che è la ragione per cui la domanda è legittima: `tools` lancia
-      `refcheck.py` **dal repo sibling**, quindi in una sessione che monta solo `tools` il
-      controllo non c'è. Da qui **lo dichiara** invece di saltare in silenzio, ed è il
-      minimo che si può fare senza duplicare lo script, che divergerebbe.
+  - ⚠️ **Quali script vivono QUI e quali no** (criterio dell'utente, 2026-09-27: *tutte le cose
+    relative al singolo repo vanno in quel repo, le cose comuni stanno in Pages che fa da hub*).
+    Qui restano quelli che servono **più progetti**: `refcheck.py` e `ganci.py`, che guardano
+    tutti i repo; `realfont.js` e i due banchi `prova-gesto-zoom.js` e `prova-ricerca-sito.js`,
+    che servono i due siti; `checkjs.py`, `fixcom.py`, `provapagina.py` e `skills-update.sh`.
+    Quelli di un sito solo vivono in `scripts/` del suo repo (`favicon.js` e `pwaicons.js` in
+    `arda`; `earthsea-icons.js`, `earthsea-fonti.py` e `prova-tasto-ricerca.js` in `earthsea`),
+    e gli originali delle icone di Terramare in `orig/` di quel repo.
+    - **E perché non in `Roccobot/tools`** (domanda dell'utente, 2026-07-30): gli hook li devono
+      trovare **sempre**, e il repo sempre presente è questo, dove vive l'hub delle regole;
+      `tools` in molte sessioni non è agganciato. In una sessione che monta solo `tools` il
+      dispatcher non c'è, e allora i controlli non girano: il gancio non trova il file ed esce
+      senza bloccare, ed è la ragione per cui la riga del passo 0 va nello script di setup.
   - ⚠️⚠️ **MA NON GIRANO AFFATTO quando la sessione monta i DUE repo affiancati**, e allora un
     commit sbagliato passa liscio (misurato il 2026-07-30 da una sessione vergine, che è la sola
     in cui la prova valga). La causa non è negli hook: là la **radice di progetto** è la cartella
     che *contiene* i due repo, dove non esiste alcun `.claude/`, quindi questo `settings.json` non
     è aperto e nessun hook è registrato.
+    - ✅ **Il rimedio strutturale c'è dal 2026-09-27**: gli hook nelle impostazioni **utente**, che
+      si leggono da qualunque radice, col dispatcher `ganci.py` che capisce da sé il repo (voce
+      sugli hook, più sopra). ⚠️ **Scritti dentro la sessione valgono dalla sessione dopo**, e il
+      file muore col container: quello che li porta davvero è la riga del passo 0 nello **script
+      di setup dell'ambiente**. Se il gancio di avvio dice che gli hook NON sono nelle
+      impostazioni utente, vale il rimedio manuale più sotto.
     - ⚠️⚠️ **Che il file non sia letto è provato anche dal TESTO di un prompt**, che è la prova
       più diretta: la modifica di `.claude/settings.json` è stata chiesta all'utente con 'non
       l'hai ancora concesso', mentre in quel file la regola `Edit(/.claude/**)` copre proprio
@@ -894,7 +924,8 @@ poi divergerebbe.
       § '⚙️ Automazione e interazioni'): il difetto è un livello più a monte, il file non si legge.
       Chi trova ancora prompt di autorizzazione **non riscriva i permessi**: sono già corretti, ed
       è un lavoro che una sessione ha già fatto per niente.
-    - **Il rimedio, finché la causa resta**: prima di ogni commit lanciare a mano i controlli,
+    - **Il rimedio manuale, quando gli hook non sono installati** (lo dice il gancio di avvio,
+      o l'assenza delle sue righe `[avvio]`): prima di ogni commit lanciare a mano i controlli,
       come **comandi singoli** e con percorso assoluto: `python3 <radice>/.memo/scripts/refcheck.py`
       per i file di regole,
       `git diff --cached | python3 <radice>/.memo/scripts/refcheck.py --diff` per le righe
