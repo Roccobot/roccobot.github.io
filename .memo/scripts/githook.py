@@ -58,6 +58,15 @@ def check_diff(diff):
             problems.append('accento reso con apostrofo, o formula fuori regola, nelle righe '
                             f'aggiunte (vale in ogni file, commenti compresi).\n{out}')
     touched = re.findall(r'^\+\+\+ b/(.+)$', diff, flags=re.M)
+    # A new version of a file of rules/ goes with a line in rules/Changelog.md, the short log
+    # that catchup.py shows and that the Worker serves to agents without a clone.
+    bumped = [f for f, body in re.findall(r'^\+\+\+ b/(rules/[^\n]+\.md)\n(.*?)(?=^diff --git|\Z)',
+                                          diff, flags=re.M | re.S)
+              if f != 'rules/Changelog.md' and re.search(r'^\+> \*\*Versione\*\*:', body, re.M)]
+    if bumped and 'rules/Changelog.md' not in touched:
+        problems.append('versione nuova di ' + ', '.join(bumped) + ' senza la sua riga in '
+                        'rules/Changelog.md (data, file e versione, agente, una riga su che cosa '
+                        'cambia).')
     if any(t.endswith(RULE_SUFFIXES) or t.startswith(RULE_PREFIXES) for t in touched):
         rc, out = refcheck()
         if rc:
@@ -75,6 +84,10 @@ def clean_message(text):
         if not line.startswith('#'):
             lines.append(line)
     return '\n'.join(lines).strip()
+
+
+def has_agent(text):
+    return bool(re.search(r'^Agent: *\S', text, re.M))
 
 
 def check_message(text):
@@ -98,7 +111,13 @@ def main(argv):
         # it, the legitimate dashes of a moved rule file (the rule that names them) would block.
         return report(check_diff(git('diff', '--cached', '-M')), 'commit bloccato')
     if mode == 'commit-msg' and len(argv) == 2:
-        return report(check_message(Path(argv[1]).read_text(encoding='utf-8')), 'commit bloccato')
+        text = Path(argv[1]).read_text(encoding='utf-8')
+        if not has_agent(clean_message(text)):
+            # A warning, not a block: the line says who made the commit (catchup.py shows it),
+            # and a commit without it is still a good commit.
+            print('githook: manca la riga "Agent: <piattaforma>" in coda al messaggio '
+                  '(Claude Code, Codex, Cursor, Antigravity...).', file=sys.stderr)
+        return report(check_message(text), 'commit bloccato')
     if mode == 'ci' and len(argv) == 3:
         base, head = argv[1], argv[2]
         # A new branch has no BASE (all zeros): then only HEAD itself is checked.
@@ -108,9 +127,15 @@ def main(argv):
         diff = git('diff', '-M', base, head) if base else git('show', '-M', '--format=', head)
         problems = check_diff(diff)
         commits = git('rev-list', '--no-merges', span).split()
+        anonymous = []
         for sha in commits:
-            for p in check_message(git('log', '-1', '--format=%B', sha)):
+            body = git('log', '-1', '--format=%B', sha)
+            for p in check_message(body):
                 problems.append(f'commit {sha[:7]}: {p}')
+            if not has_agent(body):
+                anonymous.append(sha[:7])
+        if anonymous:
+            print(f'(avviso) senza riga Agent: {" ".join(anonymous)}')
         # A green run says what it looked at: an empty range would pass too, and only this
         # line tells the two apart in the log.
         added = sum(1 for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++'))

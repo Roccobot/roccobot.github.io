@@ -167,6 +167,20 @@ def mode_start(_ev):
                      'di setup dell\'ambiente li porta dalla sessione successiva.')
     for r in righe:
         print(f'[start] {r}')
+    # What the other agents did since the last turn: catchup.py reads the stamp of the brief.
+    # The remote branches were just fetched above, hence --no-fetch.
+    catchup = HUB / '.memo' / 'scripts' / 'catchup.py'
+    if catchup.is_file():
+        try:
+            r = subprocess.run([sys.executable, str(catchup), '--no-fetch'], capture_output=True,
+                               text=True, timeout=20)
+            out = r.stdout.strip().splitlines()
+        except (subprocess.TimeoutExpired, OSError):
+            out = []
+        for riga in out[:40]:
+            print(f'[catchup] {riga}')
+        if len(out) > 40:
+            print(f'[catchup] ... altre {len(out) - 40} righe: lancia catchup.py per il resto')
 
 
 # ── turno ─────────────────────────────────────────────────────────────────────
