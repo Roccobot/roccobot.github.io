@@ -260,7 +260,7 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   vive in `.memo/scripts/githook.py`, ogni repo ha `.githooks/` e richiama il workflow riusabile
   di questo repo (`Rules.md` § '🌿 Branch, allineamento e push').
 - **Qui vivono solo gli script che servono più progetti** (`refcheck.py`, `hooks.py`, `githook.py`,
-  `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
+  `catchup.py`, `realfont.js`, i due banchi dei siti, `checkjs.py`, `fixcomments.py`, `testpage.py`,
   `skills-update.sh`); quelli di un sito solo vivono nel suo repo.
 - **Le regole universali si leggono dal Worker `rules-proxy`** quando `tools` non è clonato: i raw
   di GitHub rispondono 404 (`Rules.md` § '🗂️ Che cosa contiene ciascun file').

@@ -246,6 +246,12 @@ In `Roccobot/tools`: `mkdir -p .memo`, poi scrivi `.memo/LATEST.md` col modello 
 sotto. **Un solo file, sovrascritto**: l'archivio è la storia git, non una cartella di
 copie. Vive sotto una cartella con il punto, quindi GitHub Pages non lo pubblica.
 
+⚠️ **La seconda riga è il timbro `Last turn`**, e si genera, non si scrive a mano:
+`python3 <radice dell'hub>/.memo/scripts/catchup.py --stamp "Claude Code"`, come comando
+singolo, e la riga che stampa va sotto il titolo così com'è. Dice a chi arriva da quale
+commit di ogni repo ripartire, ed è da lì che il suo `catchup.py` conta le novità (regola in
+`Roccobot.md` § '🕰️ Che cosa è cambiato dall'ultimo turno').
+
 ### 3b. Porta con te i FILE che servono al lavoro in sospeso
 
 ⚠️⚠️ **Il brief porta anche gli ALLEGATI, e non solo il testo** (istruzione dell'utente,
@@ -352,6 +358,7 @@ una cosa che nessuno poteva verificare.
 
 ```markdown
 # Handoff - AAAA-MM-GG
+> **Last turn**: [la riga stampata da catchup.py --stamp]
 
 > [riquadro fisso di istruzioni: si riprende dal file precedente senza modifiche]
 
@@ -457,7 +464,10 @@ python3 -c "import shutil,os;s='<radice del sito>/.agents/skills';d=os.path.expa
 
 ### 1. Poi l'handoff, e verificalo
 
-1. Leggi `.memo/LATEST.md` di `Roccobot/tools`, dal file o dal Worker.
+1. Leggi `.memo/LATEST.md` di `Roccobot/tools`, dal file o dal Worker, e lancia
+   `python3 <radice dell'hub>/.memo/scripts/catchup.py`: elenca i commit arrivati in ogni repo
+   dopo il timbro `Last turn`, con quelli che toccano regole e configurazione segnati. È il
+   modo più rapido di sapere che cosa hanno fatto gli altri agenti e gli editor admin.
 2. ⚠️ **Verificalo contro la realtà prima di fidarti.** Il file è una fotografia e può
    essere vecchio di giorni: rifai i comandi del passo 1 del modo scrittura e confronta.
    Possono essere cambiati **la versione live** (deploy arrivato dopo), **i ref**
