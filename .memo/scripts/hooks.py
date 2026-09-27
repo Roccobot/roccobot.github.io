@@ -310,7 +310,7 @@ def mode_bash(ev):
         if dietro:
             blocca(f'Commit bloccato in {repo.name}: {dietro} commit dietro origin/{ramo} (salvataggio '
                    'admin, bot o altra sessione). Riallinea a origin/' + ramo + ' e riapplica sopra: '
-                   'se il file è dati.js, per nome e mai per indice (CLAUDE.md di root, § Branch, '
+                   'se il file è dati.js, per nome e mai per indice (Rules.md di roccobot.github.io, § Branch, '
                    'allineamento e push).')
         v = versioni(repo)
         if v and v[0] != v[1]:
