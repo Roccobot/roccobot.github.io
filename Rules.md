@@ -581,8 +581,8 @@ poi divergerebbe.
     l'aveva già installata non si ritrova gli hook doppi.
   - ⚠️ **E i suoi modi si chiamano in inglese dallo stesso giorno** (`start`, `prompt`, `edit`,
     `bash`, `text`, `compact`; prima `avvio`, `turno`, `modifica`, `testo`, `compatta`), per la
-    regola sui nomi dell'impianto (`Roccobot.md`, § '🏷️ I nomi dell'impianto sono in inglese, il
-    contenuto no'). ⚠️ **I nomi vecchi restano accettati** dal dispatcher, così una sessione
+    regola sui nomi (`Roccobot.md`, § '🏷️ Nomi in inglese, contenuto nella lingua che c'è già').
+    ⚠️ **I nomi vecchi restano accettati** dal dispatcher, così una sessione
     aperta con la riga di setup precedente non perde gli hook; si tolgono quando nessuna
     installazione li usa più.
   - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
