@@ -101,7 +101,7 @@ sessione:
    i tool MCP, 2026-09-25: *questo devi farlo sempre*). Il comando è **idempotente** e conserva le
    altre chiavi di un file già esistente:
    ```
-   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume", "avvio", 60]], "UserPromptSubmit": [["", "turno", 40]], "PreToolUse": [["Edit|Write", "modifica", 30], ["Bash", "bash", 90], ["T", "testo", 30]], "PreCompact": [["manual|auto", "compatta", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if not any(k in json.dumps(x) for k in ("ganci.py","/hook.py","/hooks.py"))]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];json.dump(d,open(p,"w"),indent=1)'
+   python3 -c 'import json,os;p=os.path.expanduser("~/.claude/settings.json");os.makedirs(os.path.dirname(p),exist_ok=True);d=json.load(open(p)) if os.path.exists(p) else {};al=d.setdefault("permissions",{}).setdefault("allow",[]);[al.append(t) for t in ["Artifact", "mcp__github__create_pull_request", "mcp__github__merge_pull_request", "mcp__Claude_Code_Remote__subscribe_pr_activity", "mcp__Claude_Code_Remote__unsubscribe_pr_activity", "mcp__Claude_Code_Remote__send_later", "mcp__Claude_Code_Remote__add_repo", "mcp__Claude_Code_Remote__register_repo_root", "mcp__Claude_Code_Remote__create_trigger", "mcp__Claude_Code_Remote__list_triggers", "mcp__Claude_Code_Remote__get_trigger", "mcp__Claude_Code_Remote__update_trigger", "mcp__Claude_Code_Remote__delete_trigger", "mcp__github__actions_run_trigger", "mcp__github__actions_list", "mcp__github__actions_get", "mcp__github__get_release_by_tag"] if t not in al];G="P=; for c in \"$CLAUDE_PROJECT_DIR/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/../roccobot.github.io/.memo/scripts/hooks.py\" \"$CLAUDE_PROJECT_DIR/roccobot.github.io/.memo/scripts/hooks.py\" /home/user/roccobot.github.io/.memo/scripts/hooks.py; do [ -f \"$c\" ] && P=\"$c\" && break; done; [ -n \"$P\" ] || exit 0; exec python3 \"$P\" ";T="Artifact|AskUserQuestion|mcp__github__create_pull_request|mcp__github__update_pull_request|mcp__github__add_issue_comment|mcp__github__add_reply_to_pull_request_comment|mcp__github__add_comment_to_pending_review|mcp__github__pull_request_review_write";E={"SessionStart": [["startup|resume", "start", 60]], "UserPromptSubmit": [["", "prompt", 40]], "PreToolUse": [["Edit|Write", "edit", 30], ["Bash", "bash", 90], ["T", "text", 30]], "PreCompact": [["manual|auto", "compact", 20]]};h=d.setdefault("hooks",{});[h.__setitem__(e,[x for x in h.get(e,[]) if not any(k in json.dumps(x) for k in ("ganci.py","/hook.py","/hooks.py"))]+[dict(([("matcher",T if m=="T" else m)] if m else [])+[("hooks",[{"type":"command","command":G+o,"timeout":s}])]) for m,o,s in L]) for e,L in E.items()];json.dump(d,open(p,"w"),indent=1)'
    ```
    ⚠️ È **il passo zero e non un dettaglio di cortesia**: senza di lui l'utente si vede
    chiedere il consenso a ogni artefatto, ed è successo per giorni. ⚠️ **Dal 2026-09-27 la riga
@@ -221,7 +221,7 @@ sessione:
      dentro non si legge con precisione.
    - **Il riassunto di una compattazione può accorciare, non può perdere voci aperte**: se
      una cosa da fare esiste solo nel riassunto, è già a rischio. Il gancio `PreCompact` del
-     dispatcher (`hooks.py`, modo `compatta`) lo ricorda a ogni compattazione e dice se il brief
+     dispatcher (`hooks.py`, modo `compact`) lo ricorda a ogni compattazione e dice se il brief
      è di oggi, ⚠️ ma **solo dove gli hook sono installati** (vedi la trappola in fondo a questo
      file): altrove resta solo la regola, ed è la ragione per cui è scritta in tre file invece
      che in uno.
@@ -630,7 +630,7 @@ privato finché l'utente non lo condivide.
      repo): è l'unico che gira **prima** che la sessione parta, quindi l'unico che toglie il
      prompt **anche al primo artefatto della prima sessione** di un container nuovo. La riga
      da incollare là è quella del passo 0 del protocollo di avvio.
-  2. **Il gancio di avvio del dispatcher** (`hooks.py`, modo `avvio`): gira da sé, senza che
+  2. **Il gancio di avvio del dispatcher** (`hooks.py`, modo `start`): gira da sé, senza che
      nessuno ricordi niente, e scrive il permesso se manca, ⚠️ ma **solo dove gli hook sono
      installati**, e scritto da lui il permesso vale dalla sessione dopo. Vale come rete: costa
      nulla e non dipende da me.
@@ -787,6 +787,12 @@ poi divergerebbe.
     fatto chiamare `hook.py` (*puoi chiamarlo `hook.py`?*) e poi `hooks.py` (*scrivilo al
     plurale*). La riga del passo 0 toglie le voci con tutti e due i nomi vecchi, quindi chi
     l'aveva già installata non si ritrova gli hook doppi.
+  - ⚠️ **E i suoi modi si chiamano in inglese dallo stesso giorno** (`start`, `prompt`, `edit`,
+    `bash`, `text`, `compact`; prima `avvio`, `turno`, `modifica`, `testo`, `compatta`), per la
+    regola sui nomi dell'impianto (`Roccobot.md`, § '🏷️ I nomi dell'impianto sono in inglese, il
+    contenuto no'). ⚠️ **I nomi vecchi restano accettati** dal dispatcher, così una sessione
+    aperta con la riga di setup precedente non perde gli hook; si tolgono quando nessuna
+    installazione li usa più.
   - **Che cosa fa**, per ogni repo clonato accanto all'hub: a inizio sessione riallinea i repo
     puliti sul loro ramo principale e confronta badge e `datiVersion` dei siti; a ogni turno
     recupera i commit arrivati da fuori (**salvataggi admin** in `arda` ed `earthsea`, il **bot
@@ -893,10 +899,10 @@ poi divergerebbe.
   - ⚠️ **Quali script vivono QUI e quali no** (criterio dell'utente, 2026-09-27: *tutte le cose
     relative al singolo repo vanno in quel repo, le cose comuni stanno in Pages che fa da hub*).
     Qui restano quelli che servono **più progetti**: `refcheck.py` e `hooks.py`, che guardano
-    tutti i repo; `realfont.js` e i due banchi `prova-gesto-zoom.js` e `prova-ricerca-sito.js`,
-    che servono i due siti; `checkjs.py`, `fixcom.py`, `provapagina.py` e `skills-update.sh`.
+    tutti i repo; `realfont.js` e i due banchi `test-zoom-gesture.js` e `test-site-search.js`,
+    che servono i due siti; `checkjs.py`, `fixcomments.py`, `testpage.py` e `skills-update.sh`.
     Quelli di un sito solo vivono in `scripts/` del suo repo (`favicon.js` e `pwaicons.js` in
-    `arda`; `earthsea-icons.js`, `earthsea-fonti.py` e `prova-tasto-ricerca.js` in `earthsea`),
+    `arda`; `earthsea-icons.js`, `earthsea-sources.py` e `test-search-button.js` in `earthsea`),
     e gli originali delle icone di Terramare in `orig/` di quel repo.
     - **E perché non in `Roccobot/tools`** (domanda dell'utente, 2026-07-30): gli hook li devono
       trovare **sempre**, e il repo sempre presente è questo, dove vive l'hub delle regole;
@@ -933,7 +939,7 @@ poi divergerebbe.
       Chi trova ancora prompt di autorizzazione **non riscriva i permessi**: sono già corretti, ed
       è un lavoro che una sessione ha già fatto per niente.
     - **Il rimedio manuale, quando gli hook non sono installati** (lo dice il gancio di avvio,
-      o l'assenza delle sue righe `[avvio]`): prima di ogni commit lanciare a mano i controlli,
+      o l'assenza delle sue righe `[start]`): prima di ogni commit lanciare a mano i controlli,
       come **comandi singoli** e con percorso assoluto: `python3 <radice>/.memo/scripts/refcheck.py`
       per i file di regole,
       `git diff --cached | python3 <radice>/.memo/scripts/refcheck.py --diff` per le righe

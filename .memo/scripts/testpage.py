@@ -16,7 +16,7 @@ un passo che dice *si prova* senza dire con che cosa è un proposito, e i propos
    i nodi che devono esserci contati. Una pagina con la sintassi buona può morire alla prima
    riga eseguita, ed è la ragione per cui i controlli sono due.
 
-**Uso**: `python3 provapagina.py pagina.html [--voci N] [--domande N] [--attesa MS]`
+**Uso**: `python3 testpage.py pagina.html [--voci N] [--domande N] [--attesa MS]`
 I due conti sono facoltativi: senza, si stampa quello che si è trovato e non si giudica.
 """
 import argparse
@@ -160,7 +160,7 @@ def main():
             print('!! le domande sono %d e ne aspettavo %d' % (reso['domande'], arg.domande))
             difetti += 1
 
-    print('provapagina: ' + ('DIFETTI TROVATI' if difetti else 'tutto in ordine'))
+    print('testpage: ' + ('DIFETTI TROVATI' if difetti else 'tutto in ordine'))
     sys.exit(1 if difetti else 0)
 
 

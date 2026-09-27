@@ -58,7 +58,7 @@ e interazioni', e questi sono i tre momenti:
 lettera-numero, aperti e chiusi: vedi la sezione apposita del modello. È la cosa che un
 riassunto perde per prima, perché sembra forma ed è invece la chiave d'accesso al resto.
 
-⚠️ **Un gancio `PreCompact`** (il dispatcher `.memo/scripts/hooks.py`, modo `compatta`) scatta a
+⚠️ **Un gancio `PreCompact`** (il dispatcher `.memo/scripts/hooks.py`, modo `compact`) scatta a
 ogni compattazione e ricorda il punto 2, dicendo anche se il brief è di oggi. **Non è infallibile
 e non va creduto tale**: gira solo dove gli hook sono installati (le impostazioni utente, con la
 riga del passo 0 del `CLAUDE.md` di root), e altrove resta solo la regola.
