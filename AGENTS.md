@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.04
+> **Versione**: 1.05
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
@@ -111,6 +111,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
   ordine, con il modo di verificare; finché il clic manca, la cosa non è fatta.
 - **Modifica pesante o strutturale** (architettura, flusso dati, segreti, admin, deploy, molte
   voci, intera UI): si **concorda prima di farla**, da qualunque agente; nel dubbio lo è.
+- **Un agente solo per sessione**, che crea la propria squadra di sottoagenti se serve; solo Grok
+  Bot ha una squadra fissa coi nomi permanenti (`Roccobot.md` § '👥 Un agente solo, e le squadre').
 - **Un lavoro grosso non parte senza la stima**: quanti agenti, quanto tempo, quanti token
   (`Roccobot.md` § '📊 La stima PRIMA di far partire un lavoro grosso').
 - **Le priorità le decide l'agente, e le dichiara nel turno in cui le decide**; un messaggio che
