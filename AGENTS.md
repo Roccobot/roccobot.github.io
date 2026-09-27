@@ -10,7 +10,7 @@
 
 # Core.md: il nucleo delle regole universali
 
-> **Versione**: 1.00
+> **Versione**: 1.01
 >
 > **Cos'è questo file.** Le regole che ogni agente deve avere **sempre**, su qualunque
 > piattaforma (Claude Code, Codex, Cursor, Antigravity, Grok Bot) e in qualunque repo di
@@ -162,7 +162,8 @@ Un file più specifico vince **dove parla**, e il suo silenzio non è una deroga
 - Una domanda rimasta senza risposta entro un turno finisce nel brief, con le opzioni e il
   parere; una risposta a scelta si travasa con la **sua chiave** accanto.
 - **Come si scrive**: con un commit, oppure dal Worker dichiarando `baseSha`, cioè la versione da
-  cui si parte (`Roccobot.md` § '🔌 Worker `rules-proxy`').
+  cui si parte; chi non committa da sé usa la parola d'ordine che scrive soltanto il brief, e manda
+  il file intero con la sua voce aggiunta (`Roccobot.md` § '🔌 Worker `rules-proxy`').
 - Le regole durevoli non vivono nel brief: vivono nei file di regole.
 
 ## 🧪 Verifiche e controlli
